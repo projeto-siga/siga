@@ -120,9 +120,8 @@
 
 			<p style="padding-top: 30px; font-weight: bold; color: #365b6d;">
 				<c:if test="${solicitacao.parteDeArvore}">
-					<siga:checkbox name="todoOContexto" value="${todoOContexto}"
-						onchange="postback();"></siga:checkbox> Todo o Contexto
-                &nbsp;&nbsp;
+					<siga:checkbox name="todoOContexto" value="${todoOContexto}" onchange="postback();"></siga:checkbox> Todo o Contexto
+                    &nbsp;&nbsp;
             </c:if>
 				<siga:checkbox name="ocultas" value="${ocultas}" onchange="postback();"></siga:checkbox>
 				Mais Detalhes
@@ -160,10 +159,14 @@
 										</c:choose>
 
 										<c:if test="${todoOContexto}">
-											<td><a style="color: #365b6d;"
-												href="${linkTo[SolicitacaoController].exibir[movimentacao.solicitacao.idSolicitacao]}"
-												style="text-decoration: none">
-													${movimentacao.solicitacao.numSequenciaString}</td>
+											<td>
+											     <c:if test="${movimentacao.solicitacao.filha}">
+												     <a style="color: #365b6d;" 
+												        href="${linkTo[SolicitacaoController].exibir[movimentacao.solicitacao.idSolicitacao]}" 
+												        style="text-decoration: none">
+														${movimentacao.solicitacao.numSequenciaString} </a>
+											     </c:if>
+											</td>
 										</c:if>
 										<td>${movimentacao.tipoMov.nome}</td>
 										<td><siga:selecionado

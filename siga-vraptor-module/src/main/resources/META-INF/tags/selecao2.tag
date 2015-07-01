@@ -22,7 +22,7 @@
 <c:forEach var="parametro" items="${fn:split(paramList,';')}">
 	<c:set var="p2" value="${fn:split(parametro,'=')}" />
 	<c:if test="${not empty p2 and not empty p2[0]}">
-		<c:set var="selecaoParams" value="${urlParams}&${p2[0]}=${p2[1]}" />
+		<c:set var="selecaoParams" value="${selecaoParams}&${p2[0]}=${p2[1]}" />
 	</c:if>
 </c:forEach>
 

@@ -491,6 +491,10 @@ public class SolicitacaoController extends SrController {
         if (id == null) {
             solicitacao = new SrSolicitacao();
             solicitacao.setSolicitante(getTitular());
+            solicitacao.setLotaCadastrante(getLotaCadastrante());
+            solicitacao.setTitular(getTitular());
+            solicitacao.setLotaTitular(getLotaTitular());
+            solicitacao.deduzirLocalRamalEMeioContato();
         } else
             solicitacao = SrSolicitacao.AR.findById(id);
 

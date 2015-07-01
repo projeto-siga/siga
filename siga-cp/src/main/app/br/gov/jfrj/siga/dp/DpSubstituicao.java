@@ -30,6 +30,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -40,6 +41,8 @@ import br.gov.jfrj.siga.base.util.Catalogs;
 @Entity
 @Table(name = "DP_SUBSTITUICAO", schema = Catalogs.CORPORATIVO)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@NamedQuery(name = "consultarSubstituicoesPermitidas", query = "from DpSubstituicao dps where (dps.dtIniSubst < sysdate or dps.dtIniSubst = null) and (dps.dtFimSubst > sysdate or dps.dtFimSubst = null) and ((dps.substituto = null and dps.lotaSubstituto.idLotacao in (select lot.idLotacao from DpLotacao as lot where lot.idLotacaoIni = :idLotaSubstitutoIni)) or dps.substituto.idPessoa in (select pes.idPessoa from DpPessoa as pes where pes.idPessoaIni = :idSubstitutoIni)) and dps.dtFimRegistro = null")
+
 public class DpSubstituicao extends AbstractDpSubstituicao implements Serializable{
 
 	/**

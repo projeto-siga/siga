@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
@@ -798,5 +799,15 @@ public class SolicitacaoController extends SrController {
         else {
         	result.forwardTo(SelecaoController.class).ajaxVazio();
         }
+    }
+    
+    @SuppressWarnings("rawtypes")
+    @Path("/gadget")
+    public void gadget() {
+        Query query = ContextoPersistencia.em().createNamedQuery("contarSrMarcas");
+        query.setParameter("idPessoaIni", getTitular().getIdInicial());
+        query.setParameter("idLotacaoIni", getLotaTitular().getIdInicial());
+        List contagens = query.getResultList();
+        result.include("contagens", contagens);
     }
 }

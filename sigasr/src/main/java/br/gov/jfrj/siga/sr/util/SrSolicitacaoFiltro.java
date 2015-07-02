@@ -19,6 +19,7 @@ import br.gov.jfrj.siga.sr.model.SrAcordo;
 import br.gov.jfrj.siga.sr.model.SrAcordoSelecao;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
+import br.gov.jfrj.siga.sr.model.SrItemConfiguracaoSelecao;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 
@@ -61,9 +62,10 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
     private DpPessoaSelecao solicitanteSel;
     private DpLotacaoSelecao lotaSolicitanteSel;
-    
+
     private SrAcaoSelecao acaoSel;
     private SrAcordoSelecao acordoSel;
+    private SrItemConfiguracaoSelecao itemConfiguracaoSel;
 
     public SrSolicitacaoFiltro() {
         super();
@@ -95,17 +97,21 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
         if (lotaSolicitanteSel != null) {
             this.setLotaSolicitante(lotaSolicitanteSel.buscarObjeto());
         }
-        
+
         if (acaoSel != null) {
             this.setAcao(acaoSel.getObjeto());
         }
-        
+
         if (acordoSel != null) {
             this.setAcordo(acordoSel.buscarObjeto());
         }
-        
+
         if (situacao != null && situacao.getIdMarcador() != null) {
             this.setSituacao(CpMarcador.AR.findById(situacao.getIdMarcador()));
+        }
+
+        if (getItemConfiguracaoSel() != null) {
+            this.setItemConfiguracao(getItemConfiguracaoSel().buscarObjeto());
         }
     }
 
@@ -444,6 +450,14 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
     public void setAcordoSel(SrAcordoSelecao acordoSel) {
         this.acordoSel = acordoSel;
+    }
+
+    public SrItemConfiguracaoSelecao getItemConfiguracaoSel() {
+        return itemConfiguracaoSel;
+    }
+
+    public void setItemConfiguracaoSel(SrItemConfiguracaoSelecao itemConfiguracaoSel) {
+        this.itemConfiguracaoSel = itemConfiguracaoSel;
     }
 
 }

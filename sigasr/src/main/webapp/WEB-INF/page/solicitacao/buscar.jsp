@@ -82,8 +82,8 @@
 	                    <tr>
 	                        <td>Item</td>
 	                        <td>
-	                           <input type="hidden" name="filtro.itemConfiguracao" value="" />
-	                           <siga:selecao2 propriedade="filtro.itemConfiguracao" tipo="itemConfiguracao" tema="simple" modulo="sigasr"/>
+	                           <input type="hidden" name="filtro.itemConfiguracaoSel" value="" />
+	                           <siga:selecao2 propriedade="filtro.itemConfiguracaoSel" tipo="itemConfiguracao" tema="simple" modulo="sigasr"/>
 	                        </td>
 	                    </tr>
 	                    <tr>
@@ -107,9 +107,9 @@
 	                    <tr>
 	                        <td>Lista de Prioridade</td>
 	                        <td>
-	                           <select name="filtro.idListaPrioridade" id="filtroidListaPrioridade" value="${filtro.idListaPrioridade}" style="width:250px;">
-	                               <option value="-1">Qualquer Uma</option>
-	                               <option value="0">Nenhuma</option>
+	                           <select name="filtro.idListaPrioridade" id="filtroidListaPrioridade" style="width:250px;">
+	                               <option value="-1" ${-1 == filtro.idListaPrioridade ? 'selected' : ''}>Qualquer Uma</option>
+	                               <option value="0" ${0 == filtro.idListaPrioridade ? 'selected' : ''}>Nenhuma</option>
 	                               <c:forEach items="${listasPrioridade}" var="item">
 	                                   <option value="${item.idLista}" ${item.idLista == filtro.idListaPrioridade ? 'selected' : ''}>${item.nomeLista }</option>
 	                               </c:forEach>

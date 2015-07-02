@@ -18,7 +18,16 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
 import junit.framework.TestCase;
+
+import org.w3c.tidy.Configuration;
+import org.w3c.tidy.Tidy;
+
 import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.bl.ExPartes;
 
@@ -89,4 +98,53 @@ public class DocumentoColaborativoTest extends TestCase {
 		assertFalse(partes.getPartes().get(3).isAtivo());
 	}
 
+	private String indent(String s) throws IOException {
+		s = s.replaceAll("\\[\\#", "<p class=\"indent\">[#");
+		
+		final Tidy tidy = new Tidy();
+		tidy.setXmlOut(true);
+		tidy.setXmlPi(true);
+		tidy.setXmlPIs(true);
+		tidy.setXHTML(true);
+		tidy.setFixComments(true);
+		tidy.setFixBackslash(true);
+		tidy.setTidyMark(false);
+		tidy.setCharEncoding(Configuration.LATIN1);
+		tidy.setRawOut(false);
+		tidy.setIndentAttributes(false);
+		tidy.setEncloseBlockText(true);
+		tidy.setEncloseText(true);
+		tidy.setMakeClean(true);
+		tidy.setShowWarnings(false);
+		tidy.setSmartIndent(false);
+		tidy.setSpaces(0);
+		tidy.setTidyMark(false);
+		tidy.setIndentContent(true);
+		
+		final ByteArrayOutputStream os = new ByteArrayOutputStream();
+		tidy.parse(new ByteArrayInputStream(s.getBytes("iso-8859-1")), os);
+		os.flush();
+		String sResult = new String(os.toByteArray(), "iso-8859-1");
+		sResult = ProcessadorHtml.bodyOnly(sResult);
+		return sResult;
+	}
+	
+	public void testIndentacao() throws Exception {
+		String s = "[#macro parte depende=\"\"][/#macro]";
+		String sResult = indent(s);
+//    <div>[#if !esconder]
+//        <div>[#if root[id]??]
+//          <div>[#local preenchido = root[id]/]</div>
+//        <div>[#else]</div>
+//          <div/>[#local preenchido = false/]
+//        </div>[/#if]
+//      </div>[/#if]
+//    <div/>[#else]
+//        <div/>[#nested]
+//    </div>[/#if]
+//</div>[/#macro]
+
+		
+		System.out.println(sResult);
+	}
 }

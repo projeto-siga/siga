@@ -11,7 +11,29 @@
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
 <siga:cabecalho titulo="Documento" popup="${param.popup}" />
 
-<script src="/siga/javascript/viz.js" language="JavaScript1.1" type="text/javascript"></script>
+<script>
+	if (window.Worker) {
+		window.VizWorker = new Worker("/siga/javascript/viz.js");
+		window.VizWorker.onmessage = function(oEvent) {
+			document.getElementById(oEvent.data.id).innerHTML = oEvent.data.svg;
+			$(document).ready(function() {
+				try {
+					updateContainerTramitacao();
+				} catch(ex) {};
+				try {
+					updateContainerRelacaoDocs();
+				} catch(ex) {};
+				try {
+					updateContainerColaboracao();
+				} catch(ex) {};
+			});
+		};
+	} else {
+		document
+				.write("<script src='/siga/javascript/viz.js' language='JavaScript1.1' type='text/javascript'>"
+						+ "<"+"/script>");
+	}
+</script>
 	
 <c:if test="${not docVO.digital}">
 	<script type="text/javascript">
@@ -481,6 +503,16 @@
 			if ($('#naoCarregouBigColaboracao')[0] != undefined){
 				var input = 'digraph ""{ graph[tooltip="Colaboração"] ${docVO.dotColaboracao} }';
 				input = escapeAcentos(input);
+
+				if (window.VizWorker) {
+					document.getElementById("output2Colaboracao").innerHTML = "Aguarde...";
+					window.VizWorker.postMessage({
+						id : "output2Colaboracao",
+						graph : input
+					});
+					return;
+				}
+				
 				var result = Viz(input, "svg", "dot");
 		  		document.getElementById("output2Colaboracao").innerHTML = result;
 			}
@@ -511,6 +543,16 @@
 			var bgcolor = rgb2hex($("#outputColaboracao").css("background-color"));
 			var input = 'digraph "" { graph[tooltip="Colaboração" ratio="' + ratioColaboracao() + '"  color="'+ bgcolor +'" bgcolor="'+bgcolor+'" URL="javascript: bigmapColaboracao();"]; node[fillcolor=white fontsize=50 style=filled ]; edge[fontsize=30]; ${docVO.dotColaboracao} }';
 			input = escapeAcentos(input);
+
+			if (window.VizWorker) {
+				document.getElementById("outputColaboracao").innerHTML = "Aguarde...";
+				window.VizWorker.postMessage({
+					id : "outputColaboracao",
+					graph : input
+				});
+				return;
+			}
+			
 			var result = Viz(input, "svg", "dot");
 		  	document.getElementById("outputColaboracao").innerHTML = result;
 			updateContainerColaboracao();
@@ -598,6 +640,16 @@
 					if ($('#naoCarregouBigRelacaoDocs')[0] != undefined) {
 						var input = 'digraph "" { graph[tooltip="Documentos Relacionados"]; edge[penwidth=2]; ${docVO.dotRelacaoDocs} }';
 						input = escapeAcentos(input);
+
+						if (window.VizWorker) {
+							document.getElementById("output2RelacaoDocs").innerHTML = "Aguarde...";
+							window.VizWorker.postMessage({
+								id : "output2RelacaoDocs",
+								graph : input
+							});
+							return;
+						}
+						
 						var result = Viz(input, "svg", "dot");
 						document.getElementById("output2RelacaoDocs").innerHTML = result;
 					}
@@ -626,6 +678,16 @@
 							+ bgcolor
 							+ '" URL="javascript: bigmapRelacaoDocs();"]; node[fillcolor=white fontsize=20 style=filled]; edge[penwidth=2]; ${docVO.dotRelacaoDocs} }';
 					input = escapeAcentos(input);
+
+					if (window.VizWorker) {
+						document.getElementById("outputRelacaoDocs").innerHTML = "Aguarde...";
+						window.VizWorker.postMessage({
+							id : "outputRelacaoDocs",
+							graph : input
+						});
+						return;
+					}
+					
 					var result = Viz(input, "svg", "dot");
 					document.getElementById("outputRelacaoDocs").innerHTML = result;
 					updateContainerRelacaoDocs();
@@ -705,6 +767,16 @@
 			if ($('#naoCarregouBigTramitacao')[0] != undefined){
 				var input = 'digraph ""{ graph[tooltip="Tramitação"] ${docVO.dotTramitacao} }';
 				input = escapeAcentos(input);
+
+				if (window.VizWorker) {
+					document.getElementById("output2Tramitacao").innerHTML = "Aguarde...";
+					window.VizWorker.postMessage({
+						id : "output2Tramitacao",
+						graph : input
+					});
+					return;
+				}
+
 				var result = Viz(input, "svg", "dot");
 		  		document.getElementById("output2Tramitacao").innerHTML = result;
 			}
@@ -736,6 +808,16 @@
 			var input = 'digraph "" { graph[tooltip="Tramitação" ratio="' + ratioTramitacao() + '"  color="'+ bgcolor +'" bgcolor="'+bgcolor+'" URL="javascript: bigmapTramitacao();"]; node[fillcolor=white fontsize=50 style=filled ]; edge[fontsize=30]; ${docVO.dotTramitacao} }';
 			input = escapeAcentos(input);
 			var result = Viz(input, "svg", "dot");
+
+			if (window.VizWorker) {
+				document.getElementById("outputTramitacao").innerHTML = "Aguarde...";
+				window.VizWorker.postMessage({
+					id : "outputTramitacao",
+					graph : input
+				});
+				return;
+			}
+			
 		  	document.getElementById("outputTramitacao").innerHTML = result;
 			updateContainerTramitacao();
 		}

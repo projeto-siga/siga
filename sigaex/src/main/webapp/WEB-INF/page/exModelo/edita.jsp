@@ -8,13 +8,7 @@
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
 
 <link rel="stylesheet" href="/siga/codemirror/lib/codemirror.css">
-<script src="/siga/codemirror/lib/codemirror.js"></script> 
-<script src="/siga/codemirror/lib/overlay.js"></script> 
-<script src="/siga/codemirror/mode/xml/xml.js"></script> 
-<script src="/siga/codemirror/mode/javascript/javascript.js"></script> 
-<script src="/siga/codemirror/mode/css/css.js"></script> 
 <link rel="stylesheet" href="/siga/codemirror/theme/default.css">
-<script src="/siga/codemirror/mode/htmlmixed/htmlmixed.js"></script> 
 
 <style type="text/css"> 
   .CodeMirror {
@@ -32,6 +26,15 @@
 </style> 
 
 <siga:pagina titulo="Modelo">
+	<script src="/siga/codemirror/lib/codemirror.js"></script> 
+	<script src="/siga/codemirror/lib/overlay.js"></script> 
+	<script src="/siga/codemirror/mode/xml/xml.js"></script> 
+	<script src="/siga/codemirror/mode/javascript/javascript.js"></script> 
+	<script src="/siga/codemirror/mode/css/css.js"></script> 
+	<script src="/siga/codemirror/mode/htmlmixed/htmlmixed.js"></script> 
+	<script type="text/javascript"
+		src="/siga/javascript/jquery.blockUI.js"></script>
+
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
@@ -39,7 +42,7 @@
 
 			<div class="gt-content-box gt-for-table">
 			
-			<form name="frm" action="gravar" method="POST">
+			<form name="frm" id="frm" action="gravar" method="POST">
 				<input type="hidden" name="postback" value="1" />
 				<input type="hidden" name="id" value="${id}" id="modelo_gravar_id" />
 
@@ -165,7 +168,7 @@
 			var span = document.getElementById(id.value);
 			span.style.display="";
 			if (editor == null && id.value == "template/freemarker") {
-				editor = CodeMirror.fromTextArea(document.getElementById("conteudo"), {mode: "freemarker", tabMode: "indent", lineNumbers: true, firstLineNumber: 4,
+				editor = CodeMirror.fromTextArea(document.getElementById("conteudo"), {mode: "freemarker", tabMode: "indent", lineNumbers: true, firstLineNumber: 4, electricChars: false, smartIndent: false,
 					onCursorActivity: function() {
 						editor.setLineClass(hlLine, null);
 						hlLine = editor.setLineClass(editor.getCursor().line, "activeline");
@@ -221,6 +224,35 @@
 			montaTableCadastradas('tableCadastradasNivelAcessoMaximo', 18, 0 ,${id});
 			montaTableCadastradas('tableCadastradasNivelAcessoMinimo', 19, 0 ,${id});
 		</c:if>
+	</script>
+	
+	<script>
+				$(document).ready(function () {
+					$(window)
+					.keydown(
+							function(e) {
+								if (!(String.fromCharCode(event.which).toLowerCase() == 's' && (event.ctrlKey || event.metaKey))
+										&& !(event.which == 19))
+									return true;
+								event.preventDefault();
+								editor.save();
+								//		switch (e.keyCode) {
+								//		case 116: // f5
+								$.ajax({
+									type : "POST",
+									url : '/sigaex/app/modelo/gravar',
+									data : $("#frm").serialize(), // serializes the form's elements.
+									error : function(data) {
+										alert("Erro gravando as alterações!");
+									}
+								});
+				
+								return false; //"return false" will avoid further events
+								return; //using "return" other attached events will execute
+							});
+					$.blockUI.defaults.message = '<span style="font-size: 200%">Gravando modelo...</span>';
+					$(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
+				});
 	</script>
 	
 </siga:pagina>

@@ -2641,6 +2641,8 @@ public class ExBL extends CpBL {
 
 		// Inicializar as listas de movimentações de pendência ou recebimento
 		List<ExMovimentacao> movs = new ArrayList<>();
+		if(mob.getExMovimentacaoSet() == null)
+			mob.setExMovimentacaoSet(new TreeSet<ExMovimentacao>());
 		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 			if (mov.isCancelada())
 				continue;

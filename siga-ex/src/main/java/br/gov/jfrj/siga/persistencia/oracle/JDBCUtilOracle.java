@@ -46,7 +46,7 @@ public final class JDBCUtilOracle {
 	}
 
 	public static Connection getConnection() {
-		JDBCUtilOracle.log.debug("chamado o método com parametro do arquivo properties");
+		JDBCUtilOracle.log.debug("chamado o mÃ©todo com parametro do arquivo properties");
 		return JDBCUtilOracle.getConnection(Messages.getString("Oracle.URL"), Messages.getString("Oracle.usuario"), Messages
 				.getString("Oracle.credencial"));
 	}
@@ -65,7 +65,7 @@ public final class JDBCUtilOracle {
 	}
 
 	public static Connection getConnectionPool() {
-		JDBCUtilOracle.log.debug("chamado o método com parametro do arquivo properties");
+		JDBCUtilOracle.log.debug("chamado o mÃ©todo com parametro do arquivo properties");
 		return JDBCUtilOracle.getConnectionPool(Messages.getString("Oracle.MeuConnection"));
 	}
 

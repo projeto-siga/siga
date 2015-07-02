@@ -14,7 +14,7 @@ public class ConversorHTMLFactory extends AbstractConversorHTMLFactory {
 	public static final int EXT_CONVERSOR = 2;
 
 	/**
-	 * Retorna um conversor. Se tiver a configuraÁ„o permitir o uso de extens„o
+	 * Retorna um conversor. Se tiver a configura√ß√£o permitir o uso de extens√£o
 	 * de conversor html, retorna o PD4ML.
 	 */
 	@Override
@@ -66,7 +66,7 @@ public class ConversorHTMLFactory extends AbstractConversorHTMLFactory {
 					SigaExProperties.getExtensaoConversorHTML()).newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new AplicacaoException("N„o foi possÌvel carregar a extens„o do conversor HTML para PDF: " + e.getMessage());
+			throw new AplicacaoException("N√£o foi poss√≠vel carregar a extens√£o do conversor HTML para PDF: " + e.getMessage());
 		}
 	}
 }

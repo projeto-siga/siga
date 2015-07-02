@@ -155,13 +155,13 @@ public class HierarquizadorBoletimInternoTRF2 {
 
 		ordemPorTipo = new HashMap<Long, Integer>();
 		
-		//Documentos da Presidência
-		NodoMaior nodoPresidencia = new NodoMaior("Presidência");
+		//Documentos da PresidÃªncia
+		NodoMaior nodoPresidencia = new NodoMaior("PresidÃªncia");
 		
 		adicionaTipoDeDocumentoANodo(nodoPresidencia);
 
-		//Documentos da Vice-Presidência
-		NodoMaior nodoVicePresidencia = new NodoMaior("Vice-Presidência");
+		//Documentos da Vice-PresidÃªncia
+		NodoMaior nodoVicePresidencia = new NodoMaior("Vice-PresidÃªncia");
 		
 		adicionaTipoDeDocumentoANodo(nodoVicePresidencia);
 
@@ -198,16 +198,16 @@ public class HierarquizadorBoletimInternoTRF2 {
 		nodosPrincipais.add(nodoCcjf);
 		nodosPrincipais.add(nodoSpo);
 
-		//TRF-PRES Resolução da Presidência
+		//TRF-PRES ResoluÃ§Ã£o da PresidÃªncia
 		ordemPorTipo.put(84L, 0);
 
-		//Resolução
+		//ResoluÃ§Ã£o
 		ordemPorTipo.put(92L, 0);
 		
-		//TRF-PRES Ato da Presidência
+		//TRF-PRES Ato da PresidÃªncia
 		ordemPorTipo.put(86L, 1);
 		
-		//TRF-PRES Portaria da Presidência
+		//TRF-PRES Portaria da PresidÃªncia
 		ordemPorTipo.put(85L, 2);
 		
 		//Portarias da EMARF
@@ -222,65 +222,65 @@ public class HierarquizadorBoletimInternoTRF2 {
 		//Portaria
 		ordemPorTipo.put(6L, 2);
 		
-		//Intrução Normativa não encontrado
+		//IntruÃ§Ã£o Normativa nÃ£o encontrado
 		
 		
-		//TRF-PRES Ordem de Serviço da Presidência
+		//TRF-PRES Ordem de ServiÃ§o da PresidÃªncia
 		ordemPorTipo.put(83L, 4);
 		
-		//Ordem de Serviço
+		//Ordem de ServiÃ§o
 		ordemPorTipo.put(7L, 4);
 		
-		//TRF-PRES Edital da Presidência
+		//TRF-PRES Edital da PresidÃªncia
 		ordemPorTipo.put(82L, 5);
 		
 		//Despacho
 		ordemPorTipo.put(8L, 6);
 		
-		//TRF - CJEFs Decisão
+		//TRF - CJEFs DecisÃ£o
 		ordemPorTipo.put(99L, 6);
 		
-		//Circulares não encontada
+		//Circulares nÃ£o encontada
 		
-		//Ofício Circular
+		//OfÃ­cio Circular
 		ordemPorTipo.put(42L, 8);
 		
-		//Concessão de Diárias - Ainda não desenvolvido
+		//ConcessÃ£o de DiÃ¡rias - Ainda nÃ£o desenvolvido
 		
-		//Escala de Férias - Ainda não desenvolvido
+		//Escala de FÃ©rias - Ainda nÃ£o desenvolvido
 		
-		//Pagamento de Diárias  - Ainda não desenvolvido
+		//Pagamento de DiÃ¡rias  - Ainda nÃ£o desenvolvido
 		
-		//Concessão de Suprimento de Fundos
+		//ConcessÃ£o de Suprimento de Fundos
 	}
 	
 	private void adicionaTipoDeDocumentoANodo(NodoMaior nodo){
 		
-		nodo.getNodos().add(	new NodoMenor("Resoluções", new DataComparator()));
+		nodo.getNodos().add(	new NodoMenor("ResoluÃ§Ãµes", new DataComparator()));
 		
 		nodo.getNodos().add(	new NodoMenor("Atos", new DataComparator()));
 
 		nodo.getNodos().add(	new NodoMenor("Portarias", new DataComparator()));
 
-		nodo.getNodos().add(	new NodoMenor("Instruções Normativas", new DataComparator()));
+		nodo.getNodos().add(	new NodoMenor("InstruÃ§Ãµes Normativas", new DataComparator()));
 		
-		nodo.getNodos().add(	new NodoMenor("Ordens de Serviço", new DataComparator()));
+		nodo.getNodos().add(	new NodoMenor("Ordens de ServiÃ§o", new DataComparator()));
 		
 		nodo.getNodos().add(	new NodoMenor("Editais", new DataComparator()));
 
-		nodo.getNodos().add(	new NodoMenor("Despachos/Decisões", new DataComparator()));
+		nodo.getNodos().add(	new NodoMenor("Despachos/DecisÃµes", new DataComparator()));
 
 		nodo.getNodos().add(	new NodoMenor("Circulares", new DataComparator()));
 
-		nodo.getNodos().add(	new NodoMenor("Ofícios Circulares", new DataComparator()));
+		nodo.getNodos().add(	new NodoMenor("OfÃ­cios Circulares", new DataComparator()));
 		
-		nodo.getNodos().add(	new NodoMenor("Concessão de Diárias", new DataComparator()));//Modelo Ainda não foi desenvolvido
+		nodo.getNodos().add(	new NodoMenor("ConcessÃ£o de DiÃ¡rias", new DataComparator()));//Modelo Ainda nÃ£o foi desenvolvido
 
-		nodo.getNodos().add(	new NodoMenor("Escala de Férias", new DataComparator()));//Modelo Ainda não foi desenvolvido
+		nodo.getNodos().add(	new NodoMenor("Escala de FÃ©rias", new DataComparator()));//Modelo Ainda nÃ£o foi desenvolvido
 
-		nodo.getNodos().add(	new NodoMenor("Pagamentos de Diárias", new DataComparator()));//Modelo Ainda não foi desenvolvido
+		nodo.getNodos().add(	new NodoMenor("Pagamentos de DiÃ¡rias", new DataComparator()));//Modelo Ainda nÃ£o foi desenvolvido
 
-		nodo.getNodos().add(	new NodoMenor("Concessão de Suprimentos e Fundos", new DataComparator()));//Modelo Ainda não foi desenvolvido
+		nodo.getNodos().add(	new NodoMenor("ConcessÃ£o de Suprimentos e Fundos", new DataComparator()));//Modelo Ainda nÃ£o foi desenvolvido
 	}
 
 	private void alocaDocumento(ExDocumento doc) {

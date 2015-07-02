@@ -1,86 +1,86 @@
--Foi alterada a rotina de envio de email na transferÍncia de documentos eletrÙnico. Para permitir enviar email para todos da lotaÁ„o e outros emails cadastrados.
--Foi alterado o mÈtodo 'podeCancelarVia' da classe 'ExCompetenciaBL' para n„o permitir cancelar via de documento que j· est· assinado.
--AlteraÁ„o para n„o permitir editar documento eletrÙnico que j· foi finalizado e est· com todas as vias canceladas
--AlteraÁ„o para exibir somente documentos filhos que n„o est„o cancelados
--Feita limpeza em toda a parte de indexaÁ„o
-	. ExcluÌdas classes, mÈtodos e coment·rios in˙teis. 
-	. Permitida alimentaÁ„o da fila de indexaÁ„o sÛ com documentos index·veis, assinados, evitando erro no processamento posterior da fila por haver nela algum documento que j· tenha sido excluÌdo
-	. Criada rotina para listar documentos index·veis da base que n„o estejam indexados
-- quando desce do nÌvel da action, tipoMateria se transforma de "'A'" para "A"
-- ResoluÁ„o do problema de cancelamento de co-signat·rio. O sistema n„o permite 'desfazer movimentaÁ„o' quando o documento est· tempor·rio.
-- Foram feitas alteraÁıes no mÈtodo 'isCancelado' de documento e 'isCancelada' de via.
+-Foi alterada a rotina de envio de email na transfer√™ncia de documentos eletr√¥nico. Para permitir enviar email para todos da lota√ß√£o e outros emails cadastrados.
+-Foi alterado o m√©todo 'podeCancelarVia' da classe 'ExCompetenciaBL' para n√£o permitir cancelar via de documento que j√° est√° assinado.
+-Altera√ß√£o para n√£o permitir editar documento eletr√¥nico que j√° foi finalizado e est√° com todas as vias canceladas
+-Altera√ß√£o para exibir somente documentos filhos que n√£o est√£o cancelados
+-Feita limpeza em toda a parte de indexa√ß√£o
+	. Exclu√≠das classes, m√©todos e coment√°rios in√∫teis. 
+	. Permitida alimenta√ß√£o da fila de indexa√ß√£o s√≥ com documentos index√°veis, assinados, evitando erro no processamento posterior da fila por haver nela algum documento que j√° tenha sido exclu√≠do
+	. Criada rotina para listar documentos index√°veis da base que n√£o estejam indexados
+- quando desce do n√≠vel da action, tipoMateria se transforma de "'A'" para "A"
+- Resolu√ß√£o do problema de cancelamento de co-signat√°rio. O sistema n√£o permite 'desfazer movimenta√ß√£o' quando o documento est√° tempor√°rio.
+- Foram feitas altera√ß√µes no m√©todo 'isCancelado' de documento e 'isCancelada' de via.
 	
-- - - - - - Fechada vers„o em 09/11/2009
+- - - - - - Fechada vers√£o em 09/11/2009
 
-Mescladas alteraÁıes equipe desenvolvimento ConfiguracaoBL
-Permitida assinatura digital de externos eletrÙnicos
-AlteraÁıes na definiÁ„o de cadernos ("A"/"J") do DJE
-DJE passa a acessar servidor de produÁ„o
+Mescladas altera√ß√µes equipe desenvolvimento ConfiguracaoBL
+Permitida assinatura digital de externos eletr√¥nicos
+Altera√ß√µes na defini√ß√£o de cadernos ("A"/"J") do DJE
+DJE passa a acessar servidor de produ√ß√£o
 Checagem da CRL desenvolvida, mas desabilitada (cadeia.checkCRL(false))
-CorreÁ„o no problema do volume cancelado
+Corre√ß√£o no problema do volume cancelado
 
-- - - - - - Fechada vers„o em 18/11/2009
+- - - - - - Fechada vers√£o em 18/11/2009
 
-AlteraÁıes nas rotinas de assinatura digital, relacionadas ‡ validaÁ„o das CRL's
+Altera√ß√µes nas rotinas de assinatura digital, relacionadas √† valida√ß√£o das CRL's
 Impedido o reprocessamento do documento depois de assinado
-CriaÁ„o de action para testes com o gerador de PDF/RTF
-AdequaÁ„o do sistema para acesso por meio do usu·rio siga_con
-AlteraÁıes nas rotinas do DJE
-Documentos sÛ entram na fila de indexaÁ„o se forem index·veis
-Documentos index·veis s„o indexados no ato da finalizaÁ„o
-DJE: permiss„o aos atendentes de pedidos de publ. para cancelar agendamento de qualquer documento
+Cria√ß√£o de action para testes com o gerador de PDF/RTF
+Adequa√ß√£o do sistema para acesso por meio do usu√°rio siga_con
+Altera√ß√µes nas rotinas do DJE
+Documentos s√≥ entram na fila de indexa√ß√£o se forem index√°veis
+Documentos index√°veis s√£o indexados no ato da finaliza√ß√£o
+DJE: permiss√£o aos atendentes de pedidos de publ. para cancelar agendamento de qualquer documento
 
-- - - - - - Fechada vers„o em 30/10/2009
+- - - - - - Fechada vers√£o em 30/10/2009
 
-Corrigido problema no tÌtulo do modelo Processos
-Habilitada busca a processos administrativos. A lista de tipos de forma sÛ mostrava 'Expediente'. Isso havia sido forÁado, por causa de erro na tela de busca. Agora, a lista de formas È alimentada por ajax.
-IncluÌdos os modelos 'alvaraSolturaApelacaoCriminal.jsp' e 'alvaraSolturaHabeasCorpus.jsp', desenvolvidos pelo TRF. O 'alvaraSoltura.jsp' permanece, mas est· em desuso
+Corrigido problema no t√≠tulo do modelo Processos
+Habilitada busca a processos administrativos. A lista de tipos de forma s√≥ mostrava 'Expediente'. Isso havia sido for√ßado, por causa de erro na tela de busca. Agora, a lista de formas √© alimentada por ajax.
+Inclu√≠dos os modelos 'alvaraSolturaApelacaoCriminal.jsp' e 'alvaraSolturaHabeasCorpus.jsp', desenvolvidos pelo TRF. O 'alvaraSoltura.jsp' permanece, mas est√° em desuso
 
-- - - - - - Fechada vers„o em 01/12/2009
+- - - - - - Fechada vers√£o em 01/12/2009
 
-Aumentado o n˙mero de resultados da busca de documentos restritos para 800
-Criada rotina para numerar todas as movimentaÁıes de todos os documentos
+Aumentado o n√∫mero de resultados da busca de documentos restritos para 800
+Criada rotina para numerar todas as movimenta√ß√µes de todos os documentos
 Corrigido problema de filtro de formas na tela de busca ser apagado
-Corrigido problema de sÛ ser possÌvel consultar docs por formas das quais se pode criar docs
-Data de movimentaÁ„o inserida pelo usu·rio n„o sobrescreve mais a data de registro da movimentaÁ„o no campo dt_ini_mov
-DJE: retirada assinatura do signat·rio dos RTF's
-DJE: marcado o modelo Edital e tornado public·vel 
-Inclus„o modelo di·rias
+Corrigido problema de s√≥ ser poss√≠vel consultar docs por formas das quais se pode criar docs
+Data de movimenta√ß√£o inserida pelo usu√°rio n√£o sobrescreve mais a data de registro da movimenta√ß√£o no campo dt_ini_mov
+DJE: retirada assinatura do signat√°rio dos RTF's
+DJE: marcado o modelo Edital e tornado public√°vel 
+Inclus√£o modelo di√°rias
 
-- - - - - - Fechada vers„o em 04/12/2009 10:45
+- - - - - - Fechada vers√£o em 04/12/2009 10:45
 
-Alterada solicitaÁ„o de publicaÁ„o para enviar e-mail aos atendentes, n„o a edsonsr@
-Ao duplicar ou refazer, sÛ copia movs feitas antes da finalizaÁ„o
+Alterada solicita√ß√£o de publica√ß√£o para enviar e-mail aos atendentes, n√£o a edsonsr@
+Ao duplicar ou refazer, s√≥ copia movs feitas antes da finaliza√ß√£o
 DJE: consertada rotina que parseia os xml's de retorno
-C·lculos das Di·rias continuam sendo desenvolvidos. Arquivos adicionados
-Criado Filter para capturar o tempo das operaÁıes do siga 
-Desenvolvida a conferÍncia de cÛpia de documento
+C√°lculos das Di√°rias continuam sendo desenvolvidos. Arquivos adicionados
+Criado Filter para capturar o tempo das opera√ß√µes do siga 
+Desenvolvida a confer√™ncia de c√≥pia de documento
 Alterado o carregamento da lista de preenchimentos, para levar em conta o lotaTitular
-DJE: ReferÍncia direcionada para o servidor de testes do TRF
+DJE: Refer√™ncia direcionada para o servidor de testes do TRF
 
-- - - - - - Fechada vers„o em 17/12/2009 18:00 
+- - - - - - Fechada vers√£o em 17/12/2009 18:00 
 
 Desenvolvido o modelo SEC
 
-- - - - - - Fechada vers„o homologaÁ„o em 29/12/2009 10:40
+- - - - - - Fechada vers√£o homologa√ß√£o em 29/12/2009 10:40
 
 ...
 ...
 Alterada a folha de rosto do processo interno importado
-Aviso sugerindo criaÁ„o de documento eletrÙnico, na edita.jsp, foi retirado
-Documento interno importado n„o pode mais ser finalizado sem n˙mero antigo. Campo est· em negrito.
-Permitida finalizaÁ„o de processo interno importado sem subscritor.
-Processos Internos Importados n„o numeram mais as p·ginas automaticamente
-O mobil geral aparece sempre, mesmo quando n„o h· nenhuma movimentaÁ„o, assim, ficam visÌveis os documentos filhos e apensos.
-CriaÁ„o de subprocessos passa a ser permitida para todos
-(N√O)Habilitada verificaÁ„o ds CRL's (checkCRL, no AssinaturaDigital.java)
-Alterado LogThreadFilter para n„o imprimir par‚metros com valor muito extenso
-A primeira pagina de qualquer documento que isProcesso n„o recebe mais o carimbo de numeraÁ„o contÌnua
-Foi alterada a permiss„o de Anexar Arquivo para n„o permitir anexar arquivo em Volume que est· encerrado.
-Foi alterada a permiss„o de Despachar para n„o permitir fazer despacho em volume que est· encerrado.
-Foi alterada a permiss„o de Juntar para n„o permitir juntar documento a volume que est· encerrado.
+Aviso sugerindo cria√ß√£o de documento eletr√¥nico, na edita.jsp, foi retirado
+Documento interno importado n√£o pode mais ser finalizado sem n√∫mero antigo. Campo est√° em negrito.
+Permitida finaliza√ß√£o de processo interno importado sem subscritor.
+Processos Internos Importados n√£o numeram mais as p√°ginas automaticamente
+O mobil geral aparece sempre, mesmo quando n√£o h√° nenhuma movimenta√ß√£o, assim, ficam vis√≠veis os documentos filhos e apensos.
+Cria√ß√£o de subprocessos passa a ser permitida para todos
+(N√ÉO)Habilitada verifica√ß√£o ds CRL's (checkCRL, no AssinaturaDigital.java)
+Alterado LogThreadFilter para n√£o imprimir par√¢metros com valor muito extenso
+A primeira pagina de qualquer documento que isProcesso n√£o recebe mais o carimbo de numera√ß√£o cont√≠nua
+Foi alterada a permiss√£o de Anexar Arquivo para n√£o permitir anexar arquivo em Volume que est√° encerrado.
+Foi alterada a permiss√£o de Despachar para n√£o permitir fazer despacho em volume que est√° encerrado.
+Foi alterada a permiss√£o de Juntar para n√£o permitir juntar documento a volume que est√° encerrado.
 
-- - - - - - Fechada vers„o homologaÁ„o em 07/01/2010 17:00
+- - - - - - Fechada vers√£o homologa√ß√£o em 07/01/2010 17:00
 
-- - - - - - Fechada vers„o para produÁ„o em 08/01/2010 10:30
+- - - - - - Fechada vers√£o para produ√ß√£o em 08/01/2010 10:30
 

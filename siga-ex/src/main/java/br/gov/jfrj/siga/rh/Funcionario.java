@@ -25,7 +25,7 @@
 package br.gov.jfrj.siga.rh;
 
 /**
- * RepresentaÁ„o da Tabela rh_funcionario
+ * Representa√ß√£o da Tabela rh_funcionario
  * 
  * @author SEANS
  * 
@@ -47,7 +47,7 @@ public class Funcionario extends Pessoa {
 			return false;
 		final Funcionario fun = (Funcionario) obj;
 		/*
-		 * o funcionamento do operador tern·rio condiÁ„o ? valorVerdadeiro :
+		 * o funcionamento do operador tern√°rio condi√ß√£o ? valorVerdadeiro :
 		 * valorFalso
 		 */
 		if ((this.siglaSecaoSubSecao == null ? fun.siglaSecaoSubSecao == null : this.siglaSecaoSubSecao
@@ -83,12 +83,12 @@ public class Funcionario extends Pessoa {
 	}
 
 	/**
-	 * ImplementaÁ„o obrigatÛria
+	 * Implementa√ß√£o obrigat√≥ria
 	 * 
 	 * @see interface Funcionario
 	 */
 	public String getNomeLotacao() {
-		String s = "LotaÁ„o n„o Informada";
+		String s = "Lota√ß√£o n√£o Informada";
 		if (lotacaoAtual != null)
 			s = lotacaoAtual.getDescricaoLotacao();
 		return s;

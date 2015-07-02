@@ -511,14 +511,14 @@ public class PDFTable extends PdfPTable {
  * 
  * $Log: PDFTable.java,v $
  * Revision 1.3  2009/08/05 19:02:03  kpf
- * Esta atualizaÁ„o resolve o seuinte problema:
+ * Esta atualiza√ß√£o resolve o seuinte problema:
  *
- * - O bras„o n„o est· aparecendo quando se pede para visualizar a impress„o de um memorando recÈm criado.
+ * - O bras√£o n√£o est√° aparecendo quando se pede para visualizar a impress√£o de um memorando rec√©m criado.
  *
  * Revision 1.2  2009/07/30 14:43:36  kpf
- * MudanÁa de pacote: itext v.1.4 para itext v 2.1.5.
+ * Mudan√ßa de pacote: itext v.1.4 para itext v 2.1.5.
  *
- * AlteraÁıes para suportar a nova  vers„o do text 2.1.5
+ * Altera√ß√µes para suportar a nova  vers√£o do text 2.1.5
  *
  * Revision 1.1  2007/12/26 15:57:41  tah
  * *** empty log message ***
@@ -536,7 +536,7 @@ public class PDFTable extends PdfPTable {
  * *** empty log message ***
  *
  * Revision 1.6  2006/07/05 16:00:47  nts
- * Refatorando para melhorar qualidade do cÛdigo
+ * Refatorando para melhorar qualidade do c√≥digo
  *
  * Revision 1.5  2006/05/23 19:35:06  tah
  * *** empty log message ***

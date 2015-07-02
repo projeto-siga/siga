@@ -1,4 +1,5 @@
 /*******************************************************************************
+ * /*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
  *     This file is part of SIGA.
@@ -32,10 +33,10 @@ import org.hibernate.cfg.Configuration;
 import java.util.List;
 
 /**
- * Testa as funcionalidades de c·lculo da ExCalculoPCD.
+ * Testa as funcionalidades de c√°lculo da ExCalculoPCD.
  * 
- * Os testes s„o baseados em planilhas fornecidas pela SOF e sues nomes est„o no
- * formato testDadosExcelPlanilhaXLinhaXX. A planiha 1 contÈm os dados originais
+ * Os testes s√£o baseados em planilhas fornecidas pela SOF e sues nomes est√£o no
+ * formato testDadosExcelPlanilhaXLinhaXX. A planiha 1 cont√©m os dados originais
  * e foi enviada, por e-mail, em 20 de outubro de 2009 16:23. A planiha 2 foi
  * enviada, por e-mail, em 1 de fevereiro de 2010 16:58.
  * 
@@ -50,7 +51,7 @@ public class CalculoPCDTest extends TestCase {
 	private CalculoPCD c;
 
 	/**
-	 * Inicia os par‚metros de teste.
+	 * Inicia os par√¢metros de teste.
 	 * 
 	 * @throws Exception
 	 */
@@ -75,8 +76,8 @@ public class CalculoPCDTest extends TestCase {
 		this.c.setBeneficiario(b);
 		this.c.setDataInicio("27/09/2009");
 		this.c.setDataFim("02/10/2009");
-		this.c.setCargo("T…CNICO JUDICI¡RIO");
-		this.c.setFuncao("SEM FUN«√O");
+		this.c.setCargo("T√âCNICO JUDICI√ÅRIO");
+		this.c.setFuncao("SEM FUN√á√ÉO");
 
 		c.setCarroOficial(false);
 		c.setSolicitaAuxTransporte(true);
@@ -113,8 +114,8 @@ public class CalculoPCDTest extends TestCase {
 		this.c.setBeneficiario(b);
 		this.c.setDataInicio("30/08/2009");
 		this.c.setDataFim("04/09/2009");
-		this.c.setCargo("T…CNICO JUDICI¡RIO");
-		this.c.setFuncao("SEM FUN«√O");
+		this.c.setCargo("T√âCNICO JUDICI√ÅRIO");
+		this.c.setFuncao("SEM FUN√á√ÉO");
 
 		c.setCarroOficial(false);
 		c.setSolicitaAuxTransporte(true);
@@ -152,7 +153,7 @@ public class CalculoPCDTest extends TestCase {
 		this.c.setDataInicio("15/09/2009");
 		this.c.setDataFim("18/09/2009");
 		this.c.setCargo("JUIZ FEDERAL TITULAR");
-		this.c.setFuncao("SEM FUN«√O");
+		this.c.setFuncao("SEM FUN√á√ÉO");
 
 		c.setCarroOficial(true);
 		c.setSolicitaAuxTransporte(true);
@@ -188,7 +189,7 @@ public class CalculoPCDTest extends TestCase {
 		this.c.setBeneficiario(b);
 		this.c.setDataInicio("13/09/2009");
 		this.c.setDataFim("15/09/2009");
-		this.c.setCargo("ANALISTA JUDICI¡RIO");
+		this.c.setCargo("ANALISTA JUDICI√ÅRIO");
 		this.c.setFuncao("ASSISTENTE IV");
 		this.c.setCarroOficial(false);
 		this.c.setSolicitaAuxTransporte(true);
@@ -224,8 +225,8 @@ public class CalculoPCDTest extends TestCase {
 		this.c.setBeneficiario(b);
 		this.c.setDataInicio("29/09/2009");
 		this.c.setDataFim("02/10/2009");
-		this.c.setCargo("ANALISTA JUDICI¡RIO");
-		this.c.setFuncao("SEM FUN«√O");
+		this.c.setCargo("ANALISTA JUDICI√ÅRIO");
+		this.c.setFuncao("SEM FUN√á√ÉO");
 
 		this.c.setExecutorMandado(true);
 
@@ -259,8 +260,8 @@ public class CalculoPCDTest extends TestCase {
 		this.c.setBeneficiario(b);
 		this.c.setDataInicio("27/01/2010");
 		this.c.setDataFim("28/01/2010");
-		this.c.setCargo("ANALISTA JUDICI¡RIO");
-		this.c.setFuncao("SEM FUN«√O");
+		this.c.setCargo("ANALISTA JUDICI√ÅRIO");
+		this.c.setFuncao("SEM FUN√á√ÉO");
 		this.c.setCarroOficial(false);
 		this.c.setSolicitaAuxTransporte(true);
 

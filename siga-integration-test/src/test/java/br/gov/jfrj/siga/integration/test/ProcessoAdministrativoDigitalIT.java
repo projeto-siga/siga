@@ -88,7 +88,7 @@ public class ProcessoAdministrativoDigitalIT extends IntegrationTestBase {
 
 	@Test(enabled = true, priority = 3)
 	public void juntar() {
-		// Se o documento for digital, o anterior ter� sido juntado automaticamente ao processo no evento da assinatura do processo.
+		// Se o documento for digital, o anterior terá sido juntado automaticamente ao processo no evento da assinatura do processo.
 		// Clicar em "Visualizar Dossiê"
 		operacoesDocumentoPage.clicarLinkVisualizarDossie();
 

@@ -175,7 +175,7 @@ public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase {
 		// Clicar em "Abrir Novo Volume"
 		operacoesDocumentoPage.clicarLinkAbrirNovoVolume();
 
-		// Garantir que os textos "1� Volume - Apensado" e "2� Volume - Aguardando Andamento" apareçam na tela
+		// Garantir que os textos "1º Volume - Apensado" e "2º Volume - Aguardando Andamento" apareçam na tela
 		WebElement volume1 = util.getWebElement(driver, By.xpath("//div[h3 = 'Volumes']/ul/li[1][contains(., 'Apensado')]"));
 		WebElement volume2 = util.getWebElement(driver, By.xpath("//div[h3 = 'Volumes']/ul/li[2][contains(., 'Aguardando Andamento')]"));
 
@@ -199,7 +199,7 @@ public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase {
 
 		// Garantir que "2º Volume - Aguardando Andamento" apareça na tela
 		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//h3[contains(text(), 'Volume - Aguardando Andamento')]|//div[h3 = 'Volumes']/ul/li[2][contains(., 'Aguardando Andamento')]")),
-				"'Texto 2� Volume - Aguardando Andamento' não encontrado!");
+				"'Texto 2º Volume - Aguardando Andamento' não encontrado!");
 	}
 
 	@Test(enabled = true, priority = 6)

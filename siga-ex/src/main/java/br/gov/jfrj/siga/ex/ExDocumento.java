@@ -494,7 +494,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 */
 	public java.lang.String getDescrCurta() {
 		if (getDescrDocumento() == null)
-			return "[sem descri��o]";
+			return "[sem descrição]";
 		if (getDescrDocumento().length() > 40)
 			return getDescrDocumento().substring(0, 39) + "...";
 		else
@@ -526,7 +526,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 */
 	@Field(name = "nivelAcesso", store = Store.COMPRESS)
 	public String getNivelAcesso() {
-		log.debug("[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da cria��o do mesmo");
+		log.debug("[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da criação do mesmo");
 		String nivel = null;
 		ExNivelAcesso nivelAcesso = getExNivelAcesso();
 
@@ -534,7 +534,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			nivel = nivelAcesso.getGrauNivelAcesso().toString();
 
 		} else {
-			log.warn("[getNivelAcesso] - O nível de acesso ou o grau do n�vel de acesso do documento � nulo.");
+			log.warn("[getNivelAcesso] - O nível de acesso ou o grau do nível de acesso do documento é nulo.");
 		}
 
 		return nivel;
@@ -1381,7 +1381,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		if (getExFormaDocumento() == null)
 			return null;
 		return getExFormaDocumento().getDescrFormaDoc()
-				+ (isEletronico() ? "" : " (f�sico)");
+				+ (isEletronico() ? "" : " (físico)");
 	}
 
 	/**
@@ -2472,7 +2472,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		// pdf não será refeito.
 		if (isAssinado() || isAssinadoDigitalmente())
 			throw new AplicacaoException(
-					"O conte�do n�o pode ser alterado pois o documento j� est� assinado");
+					"O conteúdo não pode ser alterado pois o documento já está assinado");
 		setConteudoBlob("doc.pdf", conteudo);
 	}
 
@@ -2547,7 +2547,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			if (s.length() > 0)
 				s += ", ";
 			if (ExAcesso.ACESSO_PUBLICO.equals(o))
-				s += "P�blico";
+				s += "Público";
 			else if (o instanceof CpOrgaoUsuario)
 				s += ((CpOrgaoUsuario) o).getSigla();
 			else if (o instanceof DpLotacao)

@@ -199,18 +199,18 @@ public class HTML2PDFParser extends HTML2MParser {
  * Revision 1.1 2007/12/26 15:57:41 tah *** empty
  * log message ***
  * 
- * Revision 1.7 2007/07/19 21:17:22 nts Inserindo coment·rios
+ * Revision 1.7 2007/07/19 21:17:22 nts Inserindo coment√°rios
  * 
  * Revision 1.6 2007/06/29 16:20:45 tah *** empty log message ***
  * 
  * Revision 1.5 2006/11/23 21:39:59 tah *** empty log message ***
  * 
  * Revision 1.4 2006/10/24 18:02:38 tah *** empty log message *** Revision 1.3
- * 2006/07/05 16:00:47 nts Refatorando para melhorar qualidade do cÛdigo
+ * 2006/07/05 16:00:47 nts Refatorando para melhorar qualidade do c√≥digo
  * 
  * Revision 1.2 2006/04/11 19:43:46 tah *** empty log message *** Revision 1.1
  * 2006/04/03 21:30:42 tah Utilizando o nheengatu Revision 1.10 2006/01/02
- * 18:27:27 neyanderson Adaptando para geraÁ„o do arquivo direto no
+ * 18:27:27 neyanderson Adaptando para gera√ß√£o do arquivo direto no
  * OutputStream.
  * 
  * Revision 1.9 2006/01/01 13:45:32 aryjr Feliz 2006!!!

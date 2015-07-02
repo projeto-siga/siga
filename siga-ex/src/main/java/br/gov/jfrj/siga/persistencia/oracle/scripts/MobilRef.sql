@@ -1,9 +1,9 @@
 /*
  * Script que :
- * 1) Copia todos os ExMobilPai das movimentações dos tipos JUNTADA e 
+ * 1) Copia todos os ExMobilPai das movimentaÃ§Ãµes dos tipos JUNTADA e 
  * CANCELAMENTO_DE_JUNTADA para ExMobilRef
  * 
- * 2) Copia todos os ExMobilMestre das movimentações dos tipos APENSACAO
+ * 2) Copia todos os ExMobilMestre das movimentaÃ§Ãµes dos tipos APENSACAO
  * e DESAPENSACAO para ExMobilRef
  * 
  * 3) Elimina os campos ExMobilPai e ExMobilMestre.
@@ -19,7 +19,7 @@ DECLARE
 
  CURSOR MOV_APENSACAO IS
     SELECT mov.* FROM ex_movimentacao mov,
-    (SELECT tpMov.* FROM ex_tipo_movimentacao tpMov WHERE descr_tipo_movimentacao = 'Apensação' OR descr_tipo_movimentacao = 'Desapensação') tpMov
+    (SELECT tpMov.* FROM ex_tipo_movimentacao tpMov WHERE descr_tipo_movimentacao = 'ApensaÃ§Ã£o' OR descr_tipo_movimentacao = 'DesapensaÃ§Ã£o') tpMov
     WHERE mov.id_tp_mov = tpMov.id_tp_mov AND mov.id_mob_mestre IS not NULL;
 
 BEGIN

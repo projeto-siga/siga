@@ -87,7 +87,7 @@ public class OperacoesDocumentoPage {
 	@FindBy(linkText="Despachar/Transferir")
 	private WebElement linkDespacharTransferir;
 
-	@FindBy(linkText="Desfazer Transfer�ncia")
+	@FindBy(linkText="Desfazer Transferência")
 	private WebElement linkDesfazerTransferencia;
 
 	@FindBy(linkText="Desentranhar")
@@ -293,7 +293,7 @@ public class OperacoesDocumentoPage {
 	}
 
 	public void clicarCancelarVia() {
-		//WebElement element = new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.xpath("(//a[contains(text(),'Cancelar�Via')])")));
+		//WebElement element = new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.xpath("(//a[contains(text(),'Cancelar Via')])")));
 		linkCancelarVia.click();
 		util.closeAlertAndGetItsText(driver);
 	}

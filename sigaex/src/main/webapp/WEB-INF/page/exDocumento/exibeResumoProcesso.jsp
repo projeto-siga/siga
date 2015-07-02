@@ -50,7 +50,7 @@
 
 				<table class="list" style="width: 100%;">
 					<tr class="header">
-						<b>Anexações&nbsp;com&nbsp;motivo</b>
+						<b>AnexaÃ§Ãµes&nbsp;com&nbsp;motivo</b>
 					</tr>
 					<tr class="header">
 						<td>Documento</td>

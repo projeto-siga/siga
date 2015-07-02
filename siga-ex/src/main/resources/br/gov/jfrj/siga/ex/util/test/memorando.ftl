@@ -173,12 +173,12 @@
 		<table align="left" width="100%">
 			<tr>
 				<td width="100%" align="left">
-				<p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">PODER JUDICI¡RIO</p>
+				<p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">PODER JUDICI√ÅRIO</p>
 				</td>
 			</tr>
 			<tr>
 				<td width="100%" align="left">
-				<p style="font-family: Arial; font-size: 10pt; font-weight: bold;">JUSTI«A FEDERAL</p>
+				<p style="font-family: Arial; font-size: 10pt; font-weight: bold;">JUSTI√áA FEDERAL</p>
 				</td>
 			</tr>
 			<tr>
@@ -204,12 +204,12 @@
 		<table width="100%">
 			<tr>
 				<td width="100%" align="left">
-				<p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">PODER	JUDICI¡RIO</p>
+				<p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">PODER	JUDICI√ÅRIO</p>
 				</td>
 			</tr>
 			<tr>
 				<td width="100%" align="left">
-				<p style="font-family: Arial; font-size: 10pt; font-weight: bold;">JUSTI«A FEDERAL</p>
+				<p style="font-family: Arial; font-size: 10pt; font-weight: bold;">JUSTI√áA FEDERAL</p>
 				</td>
 			</tr>
 			<tr>
@@ -273,7 +273,7 @@
 				${doc.nmFuncao}
 			<#elseif (doc.titular.funcaoConfianca.nomeFuncao)??>
 				${doc.titular.funcaoConfianca.nomeFuncao}
-				<#if (doc.titular.idPessoa)! != (doc.subscritor.idPessoa)!>	EM EXERCÕCIO </#if>
+				<#if (doc.titular.idPessoa)! != (doc.subscritor.idPessoa)!>	EM EXERC√çCIO </#if>
 			<#elseif (doc.subscritor.funcaoConfianca.nomeFuncao)??>
 				${doc.subscritor.funcaoConfianca.nomeFuncao}
 			<#else>
@@ -303,7 +303,7 @@
 					${mov.nmFuncao}
 				<#elseif (mov.titular.funcaoConfianca.nomeFuncao)??>
 					${mov.titular.funcaoConfianca.nomeFuncao} 
-					<#if substituicao && (doc.titular.idPessoa)! != (doc.subscritor.idPessoa)!>	EM EXERCÕCIO </#if>
+					<#if substituicao && (doc.titular.idPessoa)! != (doc.subscritor.idPessoa)!>	EM EXERC√çCIO </#if>
 				<#elseif (mov.subscritor.funcaoConfianca.nomeFuncao)??>
 					${mov.subscritor.funcaoConfianca.nomeFuncao}
 				<#else>
@@ -400,10 +400,10 @@
 </@documento>
 <@finalizacao>
 	{Memorando Finalizado!}
-	<#assign f = wf.criarWorkflow('Teste de IntegraÁ„o', doc)/>
+	<#assign f = wf.criarWorkflow('Teste de Integra√ß√£o', doc)/>
 </@finalizacao>
 <@assinatura>
 	{Memorando Assinado!}
-	<#assign f = wf.criarWorkflow('Teste de IntegraÁ„o', doc)/>
+	<#assign f = wf.criarWorkflow('Teste de Integra√ß√£o', doc)/>
 </@assinatura>
 </#compress>

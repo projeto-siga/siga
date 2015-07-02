@@ -474,9 +474,9 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
  * 
  * $Log: PDFDocument.java,v $
  * Revision 1.4  2009/07/30 14:43:36  kpf
- * Mudança de pacote: itext v.1.4 para itext v 2.1.5.
+ * MudanÃ§aa de pacote: itext v.1.4 para itext v 2.1.5.
  *
- * Alterações para suportar a nova  versão do text 2.1.5
+ * AlteraÃ§Ãµes para suportar a nova  versÃ£o do text 2.1.5
  *
  * Revision 1.3  2009/07/06 19:32:37  dud
  * *** empty log message ***
@@ -501,7 +501,7 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
  * Revision 1.8 2006/07/06 15:45:26 tah *** empty log message ***
  * 
  * Revision 1.7 2006/07/05 16:00:47 nts Refatorando para melhorar qualidade do
- * código
+ * cÃ³digo
  * 
  * Revision 1.6 2006/07/04 20:29:39 tah *** empty log message *** Revision 1.5
  * 2006/05/23 19:35:06 tah *** empty log message ***
@@ -515,7 +515,7 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
  * 
  * Revision 1.19 2006/01/05 15:29:22 aryjr Working with ROWSPAN again!!!
  * 
- * Revision 1.18 2006/01/02 18:27:27 neyanderson Adaptando para geração do
+ * Revision 1.18 2006/01/02 18:27:27 neyanderson Adaptando para geraÃ§Ã£o do
  * arquivo direto no OutputStream.
  * 
  * Revision 1.17 2006/01/01 13:45:32 aryjr Feliz 2006!!!

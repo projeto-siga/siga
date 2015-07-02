@@ -2,13 +2,13 @@
 <META HTTP-EQUIV="Expires" CONTENT="-1">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
 [@entrevista]
-[@selecao var="catFuncionario" titulo="Categoria do Funcionário"
+[@selecao var="catFuncionario" titulo="Categoria do FuncionÃ¡rio"
     reler=true opcoes="Servidor; Terceiro"/]
 
 
 
 [@grupo]
-[@texto titulo="Ano Posse/Contratação" var="ano" largura="4" maxcaracteres="4" obrigatorio="Sim" reler="ajax" idAjax="anoAjax" relertab="sim"/]
+[@texto titulo="Ano Posse/ContrataÃ§Ã£o" var="ano" largura="4" maxcaracteres="4" obrigatorio="Sim" reler="ajax" idAjax="anoAjax" relertab="sim"/]
 [/@grupo]
 [@grupo depende="anoAjax"]
   [#if (ano!"") == ""]
@@ -18,7 +18,7 @@
 [/@grupo]
 
 
-[@lotacao titulo="Lotação" var="lotacao" reler=true idAjax="lotacaoAjax"/]
+[@lotacao titulo="LotaÃ§Ã£o" var="lotacao" reler=true idAjax="lotacaoAjax"/]
 
 [@br/]
 
@@ -26,14 +26,14 @@
 
 [@br/]
 
-[@memo var="informacoes" titulo="Dados sobre a Formação" colunas="63" linhas="3" /]
+[@memo var="informacoes" titulo="Dados sobre a FormaÃ§Ã£o" colunas="63" linhas="3" /]
 
 [@checkbox var="fazertrein" titulo="Deseja fazer treinamento?" default="Sim"/]
 
 [@br/]
 
-[@grupo titulo="Turno de Preferência"]
-[@radio titulo="Manhã" var="radio_resp" valor="1" default="Manhã" /]
+[@grupo titulo="Turno de PreferÃªncia"]
+[@radio titulo="ManhÃ£" var="radio_resp" valor="1" default="ManhÃ£" /]
 [@radio titulo="Tarde" var="radio_resp" valor="0" /]
 [/@grupo]
 [@br/]

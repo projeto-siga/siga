@@ -26,7 +26,7 @@ package br.gov.jfrj.siga.rh;
 
 /**
  * 
- * @author SEANS RepresentaÁ„o parcial da tabela RH_PESSOAL ou da tabela
+ * @author SEANS Representa√ß√£o parcial da tabela RH_PESSOAL ou da tabela
  *         RH_CONTRATADOS
  */
 public abstract class Pessoa {
@@ -48,7 +48,7 @@ public abstract class Pessoa {
 			return false;
 		final Pessoa coisa = (Pessoa) obj;
 		/*
-		 * o funcionamento do operador tern·rio condiÁ„o ? valorVerdadeiro :
+		 * o funcionamento do operador tern√°rio condi√ß√£o ? valorVerdadeiro :
 		 * valorFalso
 		 */
 		if ((this.cpf == null ? coisa.cpf == null : this.cpf.equals(coisa.cpf))) {

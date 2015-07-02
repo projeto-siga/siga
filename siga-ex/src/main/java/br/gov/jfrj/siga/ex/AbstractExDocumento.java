@@ -243,7 +243,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Retornao ano de emiss„o do documento, que compıe o cÛdigo
+	 * Retornao ano de emiss√£o do documento, que comp√µe o c√≥digo
 	 */
 	public java.lang.Long getAnoEmissao() {
 		return this.anoEmissao;
@@ -280,14 +280,14 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Retorna a descriÁ„o do documento
+	 * Retorna a descri√ß√£o do documento
 	 */
 	public java.lang.String getDescrDocumento() {
 		return this.descrDocumento;
 	}
 
 	/**
-	 * Retorna a pessoa destinat·ria do documento
+	 * Retorna a pessoa destinat√°ria do documento
 	 */
 	public DpPessoa getDestinatario() {
 		return destinatario;
@@ -305,7 +305,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Retorna a data de finalizaÁ„o do documento
+	 * Retorna a data de finaliza√ß√£o do documento
 	 * 
 	 * @return
 	 */
@@ -331,7 +331,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Retorna a classificaÁ„o do documento
+	 * Retorna a classifica√ß√£o do documento
 	 * 
 	 * @return
 	 */
@@ -350,7 +350,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Retorna o tipo do documento (OfÌcio, Memorando, etc)
+	 * Retorna o tipo do documento (Of√≠cio, Memorando, etc)
 	 * 
 	 * @return
 	 */
@@ -359,7 +359,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Retorna o mÛbil do qual o documento È filho
+	 * Retorna o m√≥bil do qual o documento √© filho
 	 * 
 	 * @return
 	 */
@@ -368,7 +368,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Retorna o conjunto de mÛbil's do documento
+	 * Retorna o conjunto de m√≥bil's do documento
 	 * 
 	 * @return
 	 */
@@ -386,7 +386,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Retorna o nÌvel de acesso do documento
+	 * Retorna o n√≠vel de acesso do documento
 	 * 
 	 * @return
 	 */
@@ -402,7 +402,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Retorna, no formato String (S/N) se o documento È eletrÙnico
+	 * Retorna, no formato String (S/N) se o documento √© eletr√¥nico
 	 * 
 	 * @return
 	 */
@@ -418,28 +418,28 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Retorna a lotaÁ„o cadastrante do documento
+	 * Retorna a lota√ß√£o cadastrante do documento
 	 */
 	public DpLotacao getLotaCadastrante() {
 		return lotaCadastrante;
 	}
 
 	/**
-	 * Retorna a lotaÁ„o destinat·ria do documento
+	 * Retorna a lota√ß√£o destinat√°ria do documento
 	 * */
 	public DpLotacao getLotaDestinatario() {
 		return lotaDestinatario;
 	}
 
 	/**
-	 * Retorna a lotaÁ„o subscritora do documento
+	 * Retorna a lota√ß√£o subscritora do documento
 	 * */
 	public DpLotacao getLotaSubscritor() {
 		return lotaSubscritor;
 	}
 
 	/**
-	 * Retorna a lotaÁ„o titular do documento
+	 * Retorna a lota√ß√£o titular do documento
 	 * 
 	 * @return
 	 */
@@ -455,14 +455,14 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * @return Retorna o nome do destinat·rio n„o tabelado digitado.
+	 * @return Retorna o nome do destinat√°rio n√£o tabelado digitado.
 	 */
 	public String getNmDestinatario() {
 		return nmDestinatario;
 	}
 
 	/**
-	 * Retorna o valor completo digitado no campo FunÁ„o;LotaÁ„o;Localidade
+	 * Retorna o valor completo digitado no campo Fun√ß√£o;Lota√ß√£o;Localidade
 	 * 
 	 * @return
 	 */
@@ -471,7 +471,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * COMPLETAR Retorna o nome do Ûrg„o externo
+	 * COMPLETAR Retorna o nome do √≥rg√£o externo
 	 * 
 	 * @return
 	 */
@@ -487,7 +487,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Retorna o n˙mero antigo digitado
+	 * Retorna o n√∫mero antigo digitado
 	 * 
 	 * @return
 	 */
@@ -496,22 +496,22 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Retorna o n˙mero do expediente (n„o o cÛdigo completo)
+	 * Retorna o n√∫mero do expediente (n√£o o c√≥digo completo)
 	 */
 	public java.lang.Long getNumExpediente() {
 		return this.numExpediente;
 	}
 
 	/**
-	 * Retorna o n˙mero externo digitado.
+	 * Retorna o n√∫mero externo digitado.
 	 */
 	public java.lang.String getNumExtDoc() {
 		return this.numExtDoc;
 	}
 
 	/**
-	 * Retorna o n˙mero de sequÍncia do documento. N„o È o n˙mero do expediente.
-	 * No caso de ser um subprocesso, retorna o n˙mero que gera o cÛdigo .01,
+	 * Retorna o n√∫mero de sequ√™ncia do documento. N√£o √© o n√∫mero do expediente.
+	 * No caso de ser um subprocesso, retorna o n√∫mero que gera o c√≥digo .01,
 	 * .02, etc.
 	 * 
 	 * @return
@@ -521,7 +521,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * retorna a observaÁ„o sobre o Ûrg„o externo de origem do documento
+	 * retorna a observa√ß√£o sobre o √≥rg√£o externo de origem do documento
 	 * 
 	 * @return
 	 */
@@ -530,7 +530,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Retorna o Ûrg„o externo de origem do documento
+	 * Retorna o √≥rg√£o externo de origem do documento
 	 * 
 	 * @return
 	 */
@@ -539,7 +539,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Retorna o Ûrg„o externo a que se destina o documento
+	 * Retorna o √≥rg√£o externo a que se destina o documento
 	 * 
 	 * @return
 	 */
@@ -548,7 +548,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * @return Retorna o Ûrg„o usu·rio em que o documento foi produzido.
+	 * @return Retorna o √≥rg√£o usu√°rio em que o documento foi produzido.
 	 */
 	public CpOrgaoUsuario getOrgaoUsuario() {
 		return orgaoUsuario;

@@ -84,7 +84,7 @@ public class Document {
  * *** empty log message ***
  *
  * Revision 1.3  2006/07/05 16:00:49  nts
- * Refatorando para melhorar qualidade do código
+ * Refatorando para melhorar qualidade do cÃ³digo
  *
  * Revision 1.2  2006/04/11 19:43:49  tah
  * *** empty log message ***

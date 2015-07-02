@@ -7,7 +7,7 @@ import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 
 /**
- * Tratador de logs de sincronismo que envia e-mail com relatório das operações
+ * Tratador de logs de sincronismo que envia e-mail com relatÃ³rio das operaÃ§Ãµes
  * @author kpf
  *
  */
@@ -15,7 +15,7 @@ public class SincLogHandler extends Handler {
 
 	private StringBuffer sb = new StringBuffer();
 	private String[] destinatariosEmail;
-	private String assunto = "Log de Importação";
+	private String assunto = "Log de ImportaÃ§Ã£o";
 	
 	public SincLogHandler(){
 		
@@ -42,7 +42,7 @@ public class SincLogHandler extends Handler {
 		try {
 			enviarEmail();
 		} catch (Exception e) {
-			throw new RuntimeException("Não foi possível enviar o e-mail!");
+			throw new RuntimeException("NÃ£o foi possÃ­vel enviar o e-mail!");
 		}
 	}
 	

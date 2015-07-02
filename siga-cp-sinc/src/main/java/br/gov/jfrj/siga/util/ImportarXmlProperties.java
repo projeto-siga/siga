@@ -31,7 +31,7 @@ public class ImportarXmlProperties extends SigaBaseProperties {
 	 * 
 	 *  Antes a classe se chamava Mensagens (foi renomeada - refactor)
 	 *  
-	 *  Atenção: foi renomeada antes do código abaixo ser comentado
+	 *  AtenÃ§Ã£o: foi renomeada antes do cÃ³digo abaixo ser comentado
 	 *  
 	 */
 	/*private static final String BUNDLE_NAME = "application";

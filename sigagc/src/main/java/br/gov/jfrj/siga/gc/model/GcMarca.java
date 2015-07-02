@@ -66,7 +66,7 @@ public class GcMarca extends CpMarca implements Comparable<GcMarca> {
 
 	// @Override
 	// public <T extends JPABase> T save() {
-	// // Edson: Ver no Util o coment·rio sobre a chamada abaixo
+	// // Edson: Ver no Util o coment√°rio sobre a chamada abaixo
 	// if (getIdMarca() == null)
 	// setIdMarca(Util.nextVal("CORPORATIVO.CP_MARCA_SEQ"));
 	// return super.save();

@@ -152,8 +152,8 @@ public class WorkflowDigitalIT extends IntegrationTestBase {
 
 		// Garantir que o nome da pessoa apareça na tela
 		Assert.assertNotNull(util.getWebElement(driver, By.id("atorSelSpan")), "Nome da pessoa não encontrado!");
-		// Garantir que o bot�o "Pegar tarefa para mim" não apareça na tela
-		Assert.assertTrue(util.isElementInvisible(driver, By.xpath("//input[@value='Pegar tarefa para mim']")), "Bot�o 'Pegar tarefa para mim' ainda está sendo exibido!");
+		// Garantir que o botão "Pegar tarefa para mim" não apareça na tela
+		Assert.assertTrue(util.isElementInvisible(driver, By.xpath("//input[@value='Pegar tarefa para mim']")), "Botão 'Pegar tarefa para mim' ainda está sendo exibido!");
 	}
 
 	@Test(enabled = true, priority = 2)
@@ -164,7 +164,7 @@ public class WorkflowDigitalIT extends IntegrationTestBase {
 		util.getWebElement(driver, By.partialLinkText("Prosseguir »")).click();
 
 		// Garantir que "Tarefa: Verificar programação anual" apareça na tela
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[contains(.,'Tarefa: Verificar programa��o anual')]")),
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[contains(.,'Tarefa: Verificar programação anual')]")),
 				"'Tarefa: Verificar programação anual' não encontrada!");
 
 		// Garantir que os botões "Sim" e "não" apareçam na tela
@@ -182,13 +182,13 @@ public class WorkflowDigitalIT extends IntegrationTestBase {
 		// Clicar em Sim
 		util.getClickableElement(driver, By.xpath("//input[contains(@value, 'Sim')]")).click();
 
-		// Garantir que "Tarefa: Realizar cota��o" apareça na tela
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//div[h3 = 'Dados da Tarefa']//p[contains(.,'Tarefa: Realizar cota��o')]")),
-				"'Tarefa: Realizar cota��o' não encontrada!");
+		// Garantir que "Tarefa: Realizar cotação" apareça na tela
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//div[h3 = 'Dados da Tarefa']//p[contains(.,'Tarefa: Realizar cotação')]")),
+				"'Tarefa: Realizar cotação' não encontrada!");
 
 		// Garantir que o link "Retificar SEC" e "Prosseguir" apareçam na tela
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//input[contains(@value, 'Retificar SEC')]")), "Bot�o 'Retificar SEC' não encontrado!");
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//input[contains(@value, 'Prosseguir')]")), "Bot�o 'Prosseguir' não encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//input[contains(@value, 'Retificar SEC')]")), "Botão 'Retificar SEC' não encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//input[contains(@value, 'Prosseguir')]")), "Botão 'Prosseguir' não encontrado!");
 
 		// Armazenando dados do início da tarefa e descrição da tarefa
 		String inicio = util.getWebElement(driver, By.xpath("//div[h3 = 'Dados da Tarefa']//p[contains(.,'início:')]")).getText();
@@ -206,7 +206,7 @@ public class WorkflowDigitalIT extends IntegrationTestBase {
 		url = driver.getCurrentUrl();
 		System.out.println("Url: " + url);
 
-		// Situa��o: aguardando andamento - Tipo: Portaria - Clicar em "buscar"
+		// Situação: aguardando andamento - Tipo: Portaria - Clicar em "buscar"
 		PesquisaDocumentoPage pesquisaDocumentoPage = PageFactory.initElements(driver, PesquisaDocumentoPage.class);
 		pesquisaDocumentoPage.buscaPortaria();
 
@@ -241,17 +241,17 @@ public class WorkflowDigitalIT extends IntegrationTestBase {
 		tarefaPage.prosseguirPagamento(codigoDocumento);
 
 		// Garantir que "Tarefa: É registro de preços - pagamento" apareça na tela
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//div[h3 = 'Dados da Tarefa']//p[contains(.,'Tarefa: � registro de preços - pagamento')]")),
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//div[h3 = 'Dados da Tarefa']//p[contains(.,'Tarefa: É registro de preços - pagamento')]")),
 				"'Tarefa:  É registro de preços - pagamento' não encontrada!");
 
 		// Garantir que os botões "Sim" e "não" apareçam na tela
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//input[contains(@value, 'Sim') and @type = 'submit']")), "Bot�o 'Sim' não encontrado!");
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//input[contains(@value, 'Nao') and @type = 'submit']")), "Bot�o 'não' não encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//input[contains(@value, 'Sim') and @type = 'submit']")), "Botão 'Sim' não encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//input[contains(@value, 'Nao') and @type = 'submit']")), "Botão 'não' não encontrado!");
 
 		// Clicar no link da sigla do Processo
 		util.getClickableElement(driver, By.partialLinkText(codigoDocumento)).click();
 
-		// Garantir que "Tarefa: � registro de preços - pagamento" apareça na tela
+		// Garantir que "Tarefa: É registro de preços - pagamento" apareça na tela
 		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[contains(.,'Tarefa: É registro de preços - pagamento')]")),
 				"'Tarefa: É registro de preços - pagamento' não encontrada!");
 

@@ -79,14 +79,14 @@
 	               FilesAdded: function(up, files) {
 	                   if(up.files.length == 1) {
 	                       $('#uploader').plupload('notify', 'info', "Dica! <br />" + 
-	                                               "Clique duas vezes em cima do nome do arquivo, caso queira alter�-lo.");
+	                                               "Clique duas vezes em cima do nome do arquivo, caso queira alterá-lo.");
 	                       $("div.plupload_message").addClass("dica");
 	                       $(".dica").delay(10000).fadeOut("fast", "linear");        
 	                   }
 	                   else if(up.files.length == $maxFiles) {
 	                       $("div.plupload_message").remove();
-	                       $('#uploader').plupload('notify', 'info', "Aviso: Limite m�ximo atingido.<br /> N�o � poss�vel anexar "
-	                               + $maxFiles + " arquivos de uma �nica vez.");
+	                       $('#uploader').plupload('notify', 'info', "Aviso: Limite máximo atingido.<br /> Não é possível anexar "
+	                               + $maxFiles + " arquivos de uma única vez.");
 	                       up.disableBrowse();
 	                       $("#uploader_browse").addClass("ui-button-disabled ui-state-disabled");
 	                   }

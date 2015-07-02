@@ -118,7 +118,7 @@ public class HTML2MParser {
  * *** empty log message ***
  *
  * Revision 1.8  2007/07/19 21:16:42  nts
- * Inserindo coment·rios
+ * Inserindo coment√°rios
  *
  * Revision 1.7  2007/06/29 16:20:45  tah
  * *** empty log message ***
@@ -129,7 +129,7 @@ public class HTML2MParser {
  * log message ***
  * 
  * Revision 1.4 2006/07/05 16:00:51 nts Refatorando para melhorar qualidade do
- * cÛdigo
+ * c√≥digo
  * 
  * Revision 1.3 2006/04/11 19:43:51 tah *** empty log message *** Revision 1.2
  * 2006/04/10 20:26:41 tah *** empty log message ***

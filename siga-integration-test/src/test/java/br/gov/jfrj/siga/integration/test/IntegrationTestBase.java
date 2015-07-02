@@ -84,14 +84,14 @@ public class IntegrationTestBase {
 		operacoesDocumentoPage.clicarLinkAutuar();
 		ProcessoAssuntosAdministrativosPage processoAssuntosAdministrativosPage = PageFactory.initElements(driver, ProcessoAssuntosAdministrativosPage.class);
 		processoAssuntosAdministrativosPage.criaProcesso(propDocumentos, isDigital, modeloDocumento);
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//b[contains(., 'Processo Nº')]")), "Texto 'Processo N�' não foi encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//b[contains(., 'Processo Nº')]")), "Texto 'Processo Nº' não foi encontrado!");
 	}
 
 	public void finalizarProcesso() {
 		operacoesDocumentoPage.clicarLinkFinalizar();
 
 		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO +
-		 "[contains(text(), '1º Volume - Pendente de Assinatura, Como Subscritor')]|//div[h3 = 'Volumes']/ul/li[contains(., 'Pendente de Assinatura') and contains(., 'Como Subscritor')]")), "Texto '1� Volume - Pendente de Assinatura, Como Subscritor' não foi encontrado!");
+		 "[contains(text(), '1º Volume - Pendente de Assinatura, Como Subscritor')]|//div[h3 = 'Volumes']/ul/li[contains(., 'Pendente de Assinatura') and contains(., 'Como Subscritor')]")), "Texto '1º Volume - Pendente de Assinatura, Como Subscritor' não foi encontrado!");
 	}
 
 	public void finalizarDocumento() {
@@ -183,7 +183,7 @@ public class IntegrationTestBase {
 		// Garantir que a descrição do documento apareça na tela (é a seção OBJETO, da capa do processo)
 		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//p[contains(., '" + textoBuscado + "')]")), "Texto '" + textoBuscado + " ' não encontrado!");
 
-		// usar o link /sigaex/app/expediente/mov/simular_assinatura?sigla=<c�digo do documento> para gerar uma movimentação de assinatura digital
+		// usar o link /sigaex/app/expediente/mov/simular_assinatura?sigla=<código do documento> para gerar uma movimentação de assinatura digital
 		AssinaturaDigitalPage assinaturaDigitalPage = PageFactory.initElements(driver, AssinaturaDigitalPage.class);
 		assinaturaDigitalPage.registrarAssinaturaDigital(baseURL, codigoDocumento);
 

@@ -149,11 +149,11 @@ public class RomanList extends List {
 	 * @return  String contains the next character (A-Z or a-z)
 	 */
 	    private String nextLetter() {
-	    	/*Markenson: O código abaixo foi desabilitado quando o
-	    	 * nheengatu deixou de utilizar o itext-1.4.jar. Como este método tem 
-			 * forte dependência com o itext v 1.4, mas não está sendo utilizado,
-			 * o mesmo foi desativado. Além disso, foram feitos vários testes e 
-			 * para qualquer valor retornado, não afeta o resultado em romano.
+	    	/*Markenson: O cÃ³digo abaixo foi desabilitado quando o
+	    	 * nheengatu deixou de utilizar o itext-1.4.jar. Como este mÃ©todo tem 
+			 * forte dependÃªncia com o itext v 1.4, mas nÃ£o estÃ¡ sendo utilizado,
+			 * o mesmo foi desativado. AlÃ©m disso, foram feitos vÃ¡rios testes e 
+			 * para qualquer valor retornado, nÃ£o afeta o resultado em romano.
 	    	 */ 
 /*	        int num_in_list = listItemsInList(); //list.size();
 	        int max_ival = (lastCh + 0);
@@ -187,15 +187,15 @@ public class RomanList extends List {
 	// ****************************************************************************************
 
 	/*
-	 * Wandelt eine Integer-Zahl in römische Schreibweise um
+	 * Wandelt eine Integer-Zahl in rÃ¶mische Schreibweise um
 	 *
 	 * Regeln: http://de.wikipedia.org/wiki/R%F6mische_Ziffern
 	 *  
-	 * 1. Die Ziffern werden addiert, wobei sie von groß nach klein sortiert sind:
+	 * 1. Die Ziffern werden addiert, wobei sie von groÃŸ nach klein sortiert sind:
 	 *
 	 *  XVII = 10+5+1+1=17 
 	 *
-	 * 2. Eine kleinere Ziffer, die links von einer größeren steht, wird abgezogen:
+	 * 2. Eine kleinere Ziffer, die links von einer grÃ¶ÃŸeren steht, wird abgezogen:
 	 * 
 	 *  IV = 5-1=4 
 	 *  CM = 1000-100=900 
@@ -204,25 +204,25 @@ public class RomanList extends List {
 	 * 
 	 *  XL = 40 (und nicht XXXX) 
 	 *  IX = 9 (und nicht VIIII) 
-	 *  Diese "Subtraktionsschreibweise" ist erst im Mittelalter allgemein gebräuchlich geworden. 
-	 *  Vorher wurde oft "IIII" für "4" geshrieben. 
+	 *  Diese "Subtraktionsschreibweise" ist erst im Mittelalter allgemein gebrÃ¤uchlich geworden. 
+	 *  Vorher wurde oft "IIII" fÃ¼r "4" geshrieben. 
 	 *
-	 * 4. Bei mehreren möglichen Schreibweisen wird in der Regel der kürzesten der Vorzug gegeben:
+	 * 4. Bei mehreren mÃ¶glichen Schreibweisen wird in der Regel der kÃ¼rzesten der Vorzug gegeben:
 	 *
 	 *  IC = 99 (auch LXLIX) 
 	 *  IL = 49 (auch XLIX oder sogar XLVIV) 
 	 *  Andererseits gibt es die Vorschrift, nach der ein Symbol, das einen Wert von 10n darstellt, 
 	 *  nicht einem Symbol, das einen Wert von 10(n+1) darstellt, direkt voranstehen darf. 
-	 *  Nach dieser Regel wäre die Schreibweise "XCIX" für "99" der Schreibweise "IC" vorzuziehen. 
+	 *  Nach dieser Regel wÃ¤re die Schreibweise "XCIX" fÃ¼r "99" der Schreibweise "IC" vorzuziehen. 
 	 *
-	 * 5. Die römischen Zahlen V, L und D können nicht größeren Zahlen voran gestellt werden:
+	 * 5. Die rÃ¶mischen Zahlen V, L und D kÃ¶nnen nicht grÃ¶ÃŸeren Zahlen voran gestellt werden:
 	 *
 	 *  XCV = 95 (nicht VC) 
 	 * 
-	 *  Zahlen über 3000 werden dargestellt durch Einkastung der Tausender: |IX|LIV=9054
+	 *  Zahlen Ã¼ber 3000 werden dargestellt durch Einkastung der Tausender: |IX|LIV=9054
 	 * 
 	 *
-	 * Zahlen größer als 3.000.000 werden durch Doppelstrich etc. dargestellt.
+	 * Zahlen grÃ¶ÃŸer als 3.000.000 werden durch Doppelstrich etc. dargestellt.
 	 */
 
 	/**
@@ -272,7 +272,7 @@ public class RomanList extends List {
 			number = -number;
 		}
 
-		// größer 3000
+		// grÃ¶ÃŸer 3000
 		if (number > 3000) {
 			// rekursiver Aufruf (ohne tausender-Bereich)
 			buf.append('|');
@@ -288,9 +288,9 @@ public class RomanList extends List {
 			// roman-array durchlaufen
 			RomanDigit dig = roman[pos];
 
-			// solange Zahl größer roman-Wert
+			// solange Zahl grÃ¶ÃŸer roman-Wert
 			while (number >= dig.value) {
-				// Zeichen hinzufügen
+				// Zeichen hinzufÃ¼gen
 				buf.append(dig.digit);
 				// Wert des Zeichens abziehen
 				number -= dig.value;
@@ -304,9 +304,9 @@ public class RomanList extends List {
 			int j = pos;
 			while (!roman[++j].pre);
 
-			// neuer Wert größer
+			// neuer Wert grÃ¶ÃŸer
 			if (number + roman[j].value >= dig.value) {
-				// hinzufügen
+				// hinzufÃ¼gen
 				buf.append(roman[j].digit).append(dig.digit);
 				// Wert vom Rest abziehen
 				number -= dig.value - roman[j].value;

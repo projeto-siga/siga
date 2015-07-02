@@ -99,7 +99,7 @@ public class TesteTabelao {
 		for (int inc = 0; inc < 100; inc++) {
 			row = new Tag("tr");
 			row.setPropertyValue("bgcolor", "#EEEEEE");
-			font = new Tag("font", "FASE LITORÂNEA " + inc);
+			font = new Tag("font", "FASE LITORÃ‚NEA " + inc);
 			font.setPropertyValue("color", "#DD0000");
 			cell = new Tag("td", font);
 			cell.setPropertyValue("align", "center");
@@ -127,7 +127,7 @@ public class TesteTabelao {
  * *** empty log message ***
  *
  * Revision 1.3  2006/07/05 16:00:48  nts
- * Refatorando para melhorar qualidade do código
+ * Refatorando para melhorar qualidade do cÃ³digo
  *
  * Revision 1.2  2006/04/11 19:43:47  tah
  * *** empty log message ***

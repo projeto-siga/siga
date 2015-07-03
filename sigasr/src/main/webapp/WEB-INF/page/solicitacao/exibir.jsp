@@ -90,8 +90,7 @@
 						type="hidden" name="movimentacao.solicitacao.idSolicitacao"
 						value="${movimentacao.solicitacao.idSolicitacao}">
 
-					<c:if
-						test="${solicitacao.podeTrocarAtendente(titular, lotaTitular)}">
+					<c:if test="${solicitacao.podeTrocarAtendente(titular, lotaTitular)}">
 						<c:if test="${atendentes.size() >= 1}">
 							<div class="gt-form-row">
 								<label>Atendente</label>
@@ -121,12 +120,10 @@
 
 			<p style="padding-top: 30px; font-weight: bold; color: #365b6d;">
 				<c:if test="${solicitacao.parteDeArvore}">
-					<siga:checkbox name="todoOContexto" value="${todoOContexto}"
-						onchange="postback();"></siga:checkbox> Todo o Contexto
-                &nbsp;&nbsp;
+					<siga:checkbox name="todoOContexto" value="${todoOContexto}" onchange="postback();"></siga:checkbox> Todo o Contexto
+                    &nbsp;&nbsp;
             </c:if>
-				<siga:checkbox name="ocultas" value="${ocultas}"
-					onchange="postback();"></siga:checkbox>
+				<siga:checkbox name="ocultas" value="${ocultas}" onchange="postback();"></siga:checkbox>
 				Mais Detalhes
 			</p>
 
@@ -162,10 +159,14 @@
 										</c:choose>
 
 										<c:if test="${todoOContexto}">
-											<td><a style="color: #365b6d;"
-												href="${linkTo[SolicitacaoController].exibir[movimentacao.solicitacao.idSolicitacao]}"
-												style="text-decoration: none">
-													${movimentacao.solicitacao.numSequenciaString}</td>
+											<td>
+											     <c:if test="${movimentacao.solicitacao.filha}">
+												     <a style="color: #365b6d;" 
+												        href="${linkTo[SolicitacaoController].exibir[movimentacao.solicitacao.idSolicitacao]}" 
+												        style="text-decoration: none">
+														${movimentacao.solicitacao.numSequenciaString} </a>
+											     </c:if>
+											</td>
 										</c:if>
 										<td>${movimentacao.tipoMov.nome}</td>
 										<td><siga:selecionado
@@ -186,32 +187,27 @@
 													descricao="${movimentacao.atendente.descricaoIniciaisMaiusculas}"></siga:selecionado>
 											</td>
 										</c:if>
-										<td id="descrMovimentacao${movimentacao.idMovimentacao}">${movimentacao.descrMovimentacao}
+										<td id="descrMovimentacao${movimentacao.idMovimentacao}">
+										    <span id="descrMovimentacaoTexto${movimentacao.idMovimentacao}">${movimentacao.descrMovimentacao}</span>
 											<c:if test="${movimentacao.arquivo != null}">
 												&nbsp;|&nbsp;
                                         		<siga:arquivo arquivo="${movimentacao.arquivo}" />
-											</c:if> <c:if test="${movimentacao.tipoMov.idTipoMov == 16}">
-												<c:forEach items="${movimentacao.respostaSet}"
-													var="resposta">
-													<c:if
-														test="${resposta.pergunta.tipoPergunta.idTipoPergunta == 1}">
-														<b>- ${resposta.pergunta.descrPergunta}:</b> 
-                                                ${resposta.descrResposta}
-                                            </c:if>
-													<c:if
-														test="${resposta.pergunta.tipoPergunta.idTipoPergunta == 2}">
-														<b>- ${resposta.pergunta.descrPergunta}:</b> 
-                                                ${resposta.grauSatisfacao}
-                                            </c:if>
-													</li>
+											</c:if>
+											<c:if test="${movimentacao.tipoMov.idTipoMov == 16}">
+												<c:forEach items="${movimentacao.respostaSet}" var="resposta">
+													<c:if test="${resposta.pergunta.tipoPergunta.idTipoPergunta == 1}">
+														<b>- ${resposta.pergunta.descrPergunta}:</b> ${resposta.descrResposta}
+                                                    </c:if>
+													<c:if test="${resposta.pergunta.tipoPergunta.idTipoPergunta == 2}">
+														<b>- ${resposta.pergunta.descrPergunta}:</b> ${resposta.grauSatisfacao}
+                                                    </c:if>
 												</c:forEach>
 											</c:if>
 										</td>
 										<script language="javascript">
-											var descricao = document
-													.getElementById('descrMovimentacao${movimentacao.idMovimentacao}');
-											descricao.innerHTML = descricao.innerHTML
-													.replace(/\n\r?/g, '<br />');
+											var descricao = document.getElementById('descrMovimentacaoTexto${movimentacao.idMovimentacao}');
+											console.log('descrMovimentacaoTexto${movimentacao.idMovimentacao}'+descricao.innerHTML);
+											descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
 										</script>
 									</tr>
 								</c:forEach>
@@ -371,7 +367,7 @@
 						<br />
 						<c:forEach items="${solicitacao.movimentacoesAnexacao}" var="anexacao">
 							<siga:arquivo arquivo="${anexacao.arquivo}" /> 
-							${anexacao.descrMovimentacao}<br />
+							&nbsp;-&nbsp;${anexacao.descrMovimentacao}<br />
                     	</c:forEach>
                 	</p>
 	            </div>

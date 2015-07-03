@@ -24,7 +24,7 @@ public class PrincipalQuadrosController extends SigaController {
 		PrincipalQuadrosController.modulos.put("sigaex", "/sigaex/app/expediente/gadget?idTpFormaDoc=1&apenasQuadro=true");
 		PrincipalQuadrosController.modulos.put("processos", "/sigaex/app/expediente/gadget?idTpFormaDoc=2");
 		PrincipalQuadrosController.modulos.put("sigawf", "/sigawf/inbox.action");
-		PrincipalQuadrosController.modulos.put("sigasr", "/sigasr/solicitacao/gadget");
+		PrincipalQuadrosController.modulos.put("sigasr", "/sigasr/app/solicitacao/gadget");
 		PrincipalQuadrosController.modulos.put("sigagc", "/sigagc/app/gadget");
 	}
 

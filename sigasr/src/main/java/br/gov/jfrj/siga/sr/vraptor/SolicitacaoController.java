@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
@@ -337,15 +338,20 @@ public class SolicitacaoController extends SrController {
         return !validator.hasErrors();
     }
 
-	public boolean todoOContexto() {
+	public Boolean todoOContexto() {
          return Boolean.parseBoolean(getRequest().getParameter("todoOContexto"));
     }
 
-    public boolean ocultas() {
+    public Boolean ocultas() {
          return Boolean.parseBoolean(getRequest().getParameter("ocultas"));
     }
+    
+    @Path("/exibir/{id}/{todoOContexto}/{ocultas}")
+    public void exibirComParametros(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
+        result.forwardTo(this).exibir(id, todoOContexto, ocultas);
+    }
 
-    @Path({"/exibir/{id}", "/exibir/{id}/{todoOContexto}/{ocultas}"})
+    @Path("/exibir/{id}")
     public void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         if (solicitacao == null)
@@ -371,6 +377,9 @@ public class SolicitacaoController extends SrController {
 
         result.include(SOLICITACAO, solicitacao);
         result.include("movimentacao", movimentacao);
+        if (movimentacao.getAtendente() != null) {
+            result.include("idPessoa",movimentacao.getAtendente().getId());
+        }
         result.include("todoOContexto", todoOContexto);
         result.include("ocultas", ocultas);
         result.include("movs", movs);
@@ -490,6 +499,10 @@ public class SolicitacaoController extends SrController {
         if (id == null) {
             solicitacao = new SrSolicitacao();
             solicitacao.setSolicitante(getTitular());
+            solicitacao.setLotaCadastrante(getLotaCadastrante());
+            solicitacao.setTitular(getTitular());
+            solicitacao.setLotaTitular(getLotaTitular());
+            solicitacao.deduzirLocalRamalEMeioContato();
         } else
             solicitacao = SrSolicitacao.AR.findById(id);
 
@@ -761,7 +774,7 @@ public class SolicitacaoController extends SrController {
     public void darAndamento(SrMovimentacao movimentacao) throws Exception {
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        result.redirectTo(this).exibir(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
+        result.redirectTo(this).exibirComParametros(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
     }
 
     @Path("/exibir/priorizarLista")
@@ -786,5 +799,15 @@ public class SolicitacaoController extends SrController {
         else {
         	result.forwardTo(SelecaoController.class).ajaxVazio();
         }
+    }
+    
+    @SuppressWarnings("rawtypes")
+    @Path("/gadget")
+    public void gadget() {
+        Query query = ContextoPersistencia.em().createNamedQuery("contarSrMarcas");
+        query.setParameter("idPessoaIni", getTitular().getIdInicial());
+        query.setParameter("idLotacaoIni", getLotaTitular().getIdInicial());
+        List contagens = query.getResultList();
+        result.include("contagens", contagens);
     }
 }

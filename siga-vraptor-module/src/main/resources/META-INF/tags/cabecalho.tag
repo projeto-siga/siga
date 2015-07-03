@@ -142,12 +142,12 @@ ${meta}
 												<c:when
 													test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong>${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
 													<span class="gt-util-separator">|</span>
-													<a href="/siga/substituicao/finalizar.action">finalizar</a>
+													<a href="${linkTo[SubstituicaoController].finalizar}">finalizar</a>
 												</c:when>
 												<c:when
 													test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong>${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
 													<span class="gt-util-separator">|</span>
-													<a href="/siga/substituicao/finalizar.action">finalizar</a>
+													<a href="${linkTo[SubstituicaoController].finalizar}">finalizar</a>
 												</c:when>
 												<c:otherwise></c:otherwise>
 											</c:choose>

@@ -66,4 +66,12 @@ public class DpPessoaSelecao extends Selecao<DpPessoa> {
 	public String getAcaoBusca() {
 		return "/pessoa";
 	}
+
+    public void carregarDadosParaView(DpPessoa atendente) {
+        if (atendente != null) {
+            this.setId(atendente.getId());
+            this.setDescricao(atendente.getNomePessoa());
+            this.setSigla(atendente.getSigla());
+        }
+    }
 }

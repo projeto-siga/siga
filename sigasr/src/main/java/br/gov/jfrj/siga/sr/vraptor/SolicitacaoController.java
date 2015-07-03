@@ -547,7 +547,7 @@ public class SolicitacaoController extends SrController {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(idSolicitacao);
         SrLista lista = SrLista.AR.findById(idLista);
         solicitacao.retirarDeLista(lista, getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        result.forwardTo(this).exibirLista(idLista);
+        result.redirectTo(this).exibirLista(idLista);
     }
 
     private SrSolicitacao criarSolicitacaoComSolicitante() {

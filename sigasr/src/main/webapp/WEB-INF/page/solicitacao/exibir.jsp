@@ -330,8 +330,7 @@
 			</div>
 		</div>
 
-		<c:set var="vinculadas:solicitacao"
-			value="${solicitacao.solicitacoesVinculadas}" />
+		<c:set var="vinculadas"	value="${solicitacao.solicitacoesVinculadas}" />
 		<c:if test="${vinculadas != null && !vinculadas.isEmpty()}">
 			<div class="gt-sidebar">
 				<div class="gt-sidebar-content">

@@ -1877,12 +1877,12 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
     public Set<SrSolicitacao> getSolicitacoesVinculadas() {
         Set<SrSolicitacao> solVinculadas = new HashSet<SrSolicitacao>();
 
-        // vinculaï¿½ï¿½es partindo desta solicitação
+        // vinculacoes partindo desta solicitacao
         for (SrMovimentacao mov : getMovimentacaoSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO))
             if (mov.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_VINCULACAO && mov.getSolicitacaoReferencia() != null)
                 solVinculadas.add(mov.getSolicitacaoReferencia());
 
-        // vinculaï¿½ï¿½es partindo de outra solicitação referenciando esta
+        // vinculacoes partindo de outra solicitacao referenciando esta
         for (SrMovimentacao mov : getMovimentacaoReferenciaSetPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO))
             if (this.equals(mov.getSolicitacaoReferencia()))
                 solVinculadas.add(mov.getSolicitacao());

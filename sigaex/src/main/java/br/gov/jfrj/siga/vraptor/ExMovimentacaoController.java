@@ -802,6 +802,9 @@ public class ExMovimentacaoController extends ExController {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 
 		final ExDocumento doc = buscarDocumento(builder);
+		final ExMobil mob = builder.getMob();
+		
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia().setMob(mob);
 
 		if (!Ex.getInstance().getComp().podeIncluirCosignatario(getTitular(), getLotaTitular(), builder.getMob())) {
 			throw new AplicacaoException("Não é possível incluir cossignatário");
@@ -809,6 +812,7 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("sigla", sigla);
 		result.include("documento", doc);
+	    result.include("cosignatarioSel", movimentacaoBuilder.getSubscritorSel());
 		result.include("mob", builder.getMob());
 	}
 

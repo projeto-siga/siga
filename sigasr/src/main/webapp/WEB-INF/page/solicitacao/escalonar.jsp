@@ -23,10 +23,12 @@
 		}
 		
 		function carregarAcao() {
+			var inputIdItem = $("#formulario_solicitacaoitemConfiguracao").val();
 			var inputIdSolicitacao = document.getElementById('id');
-			var inputIdItem = document.getElementById('formulario_itemConfiguracao');
 			var params = 'id=' + inputIdSolicitacao.value
-					+ '&itemConfiguracao=' + inputIdItem.value;
+					+ '&itemConfiguracao=' + inputIdItem;
+			
+			$("#itemConfiguracao").val(inputIdItem);
 			jQuery.blockUI(objBlock);
 			PassAjaxResponseToFunction(
 					'${linkTo[SolicitacaoController].exibirAcaoEscalonar}?'
@@ -59,7 +61,8 @@
 				</label>
 				<br/>
 				<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label>
-				<siga:selecao2 propriedade="itemConfiguracao" tipo="itemConfiguracao" tema="simple" modulo="sigasr"
+				<input type="hidden" name=itemConfiguracao id="itemConfiguracao" value="${solicitacao.itemConfiguracao.id}" />
+				<siga:selecao2 propriedade="solicitacao.itemConfiguracao" tipo="itemConfiguracao" tema="simple" modulo="sigasr"
 					onchange="carregarAcao()"
 					paramList="sol.solicitante=${solicitacao.solicitante.idPessoa};sol.local=${solicitacao.local.idComplexo};sol.titular=${cadastrante.idPessoa};sol.lotaTitular=${lotaTitular.idLotacao}" />
 				<span style="color: red" />

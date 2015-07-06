@@ -876,15 +876,8 @@ public class ExBL extends CpBL {
 					.isApensadoAVolumeDoMesmoProcesso();
 
 			long m = CpMarcador.MARCADOR_CANCELADO;
-			long m_aDevolverFora = CpMarcador.MARCADOR_A_DEVOLVER_FORA_DO_PRAZO;
-			long m_aDevolver = CpMarcador.MARCADOR_A_DEVOLVER;
-			long m_aguardando = CpMarcador.MARCADOR_AGUARDANDO;
-			long m_aguardandoFora = CpMarcador.MARCADOR_AGUARDANDO_DEVOLUCAO_FORA_DO_PRAZO;
 			long mAnterior = m;
 			Date dt = null;
-			// ExMovimentacao movT = new ExMovimentacao();
-			Set<ExMovimentacao> movT = new TreeSet<ExMovimentacao>();
-			// contemDataRetorno = false;
 
 			for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 				if (mov.isCancelada())
@@ -999,67 +992,8 @@ public class ExBL extends CpBL {
 				}
 			}
 
-			List<ExMovimentacao> transferenciasMobil = mob
-					.getMovimentacoesPorTipo(3);
-			Set<ExMovimentacao> transferenciasRetornoMobil = new TreeSet<ExMovimentacao>();
-
-			Iterator it = transferenciasMobil.iterator();
-
-			while (it.hasNext()) {
-				ExMovimentacao elemento = (ExMovimentacao) it.next();
-				if (elemento.getDtFimMov() != null) {
-					transferenciasRetornoMobil.add(elemento);
-				}
-			}
-
-			Iterator itr = transferenciasRetornoMobil.iterator();
-
-			while (itr.hasNext()) {
-				ExMovimentacao element = (ExMovimentacao) itr.next();
-
-				ExMobil mobil = element.getExMobil();
-
-				if (element.getExMobil().isJuntado()) {
-					mobil = element.getExMobil().getMobilPrincipal();
-				}
-
-				if (element.getLotaCadastrante() != null
-						&& !transferenciasRetornoMobil.isEmpty()
-						&& !contemRetornoTransferencia(element, mobil)) {
-
-					Date dtMarca = element.getDtFimMov();
-					dtMarca.setHours(23);
-					dtMarca.setMinutes(59);
-					dtMarca.setSeconds(59);
-
-					acrescentarMarcaTransferencia(set, mob, m_aguardando, dt,
-							dtMarca, element.getCadastrante(),
-							element.getLotaCadastrante()); // acrescenta a
-															// marca
-															// "Aguardando Devolução"
-
-					acrescentarMarcaTransferencia(set, mob, m_aDevolver, dt,
-							dtMarca, element.getResp(), element.getLotaResp());// acrescenta
-																				// a
-																				// marca
-																				// "A Devolver"
-
-					acrescentarMarcaTransferencia(set, mob, m_aguardandoFora,
-							dtMarca, null, element.getCadastrante(),
-							element.getLotaCadastrante()); // acrescenta a
-															// marca
-															// "Aguardando Devolução (Fora do Prazo)"
-
-					acrescentarMarcaTransferencia(set, mob, m_aDevolverFora,
-							dtMarca, null, element.getResp(),
-							element.getLotaResp());// acrescenta
-													// a
-													// marca
-													// "A Devolver (Fora do Prazo)"
-				}
-
-			}
-
+			calcularMarcadoresTransferencia(mob, set, dt);
+		
 			if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {
 				if (!mob.getDoc().isAssinadoSubscritor())
 					acrescentarMarca(set, mob,
@@ -1122,32 +1056,91 @@ public class ExBL extends CpBL {
 		}
 		return set;
 	}
+	
+	public void calcularMarcadoresTransferencia(ExMobil mob, SortedSet<ExMarca> set, Date dt){
+		long m_aDevolverFora = CpMarcador.MARCADOR_A_DEVOLVER_FORA_DO_PRAZO;
+		long m_aDevolver = CpMarcador.MARCADOR_A_DEVOLVER;
+		long m_aguardando = CpMarcador.MARCADOR_AGUARDANDO;
+		long m_aguardandoFora = CpMarcador.MARCADOR_AGUARDANDO_DEVOLUCAO_FORA_DO_PRAZO;
+		
+		List<ExMovimentacao> transferencias = mob
+				.getMovimentacoesPorTipo(3);
+		transferencias.removeAll(mob.getMovimentacoesCanceladas());
+		Set<ExMovimentacao> transferenciasComData = new TreeSet<ExMovimentacao>();
 
-	public boolean contemRetornoTransferencia(ExMovimentacao mov, ExMobil mob) {
-		boolean contains = false;
-		Iterator it;
-		List<ExMovimentacao> listaTransf = mob.getMovimentacoesPorTipo(3);
-		it = listaTransf.iterator();
-
+		Iterator it = transferencias.iterator();
 		while (it.hasNext()) {
-
-			ExMovimentacao element = (ExMovimentacao) it.next();
-			if (ExTipoMovimentacao.hasTransferencia(element.getIdTpMov()) == ExTipoMovimentacao
-					.hasTransferencia(mov.getIdTpMov()))
-				if (mov != null) {
-					if (element.getIdMov() != mov.getIdMov()
-							&& ExTipoMovimentacao.hasTransferencia(element
-									.getIdTpMov())
-							&& ExTipoMovimentacao.hasTransferencia(mov
-									.getIdTpMov())
-							&& mov.getLotaCadastrante() == element
-									.getLotaResp()) {
-						contains = !contains;
-						mov.setDtFimMov(null);
-					}
-				}
+			ExMovimentacao elemento = (ExMovimentacao) it.next();
+			if (elemento.getDtFimMov() != null) {
+				transferenciasComData.add(elemento);
+			}
 		}
-		return contains;
+
+		Iterator itr = transferenciasComData.iterator();
+		while (itr.hasNext()) {
+			ExMovimentacao transfComData = (ExMovimentacao) itr.next();
+			
+			ExMobil mobil = transfComData.getExMobil();
+
+			if (transfComData.getExMobil().isJuntado()) {
+				mobil = transfComData.getExMobil().getMobilPrincipal();
+			}
+			
+			ExMovimentacao movRetorno = contemTransferenciaRetorno(transfComData, mobil);
+			
+			if(movRetorno != null){
+				transferencias.remove(movRetorno);
+			}
+			else{
+				Date dtMarca = transfComData.getDtFimMov();
+				dtMarca.setHours(23);
+				dtMarca.setMinutes(59);
+				dtMarca.setSeconds(59);
+
+				acrescentarMarcaTransferencia(set, mob, m_aguardando, dt,
+						dtMarca, transfComData.getCadastrante(),
+						transfComData.getLotaCadastrante()); // acrescenta a
+														// marca
+														// "Aguardando Devolução"
+
+				acrescentarMarcaTransferencia(set, mob, m_aDevolver, dt,
+						dtMarca, transfComData.getResp(), transfComData.getLotaResp());// acrescenta
+																			// a
+																			// marca
+																			// "A Devolver"
+
+				acrescentarMarcaTransferencia(set, mob, m_aguardandoFora,
+						dtMarca, null, transfComData.getCadastrante(),
+						transfComData.getLotaCadastrante()); // acrescenta a
+														// marca
+														// "Aguardando Devolução (Fora do Prazo)"
+
+				acrescentarMarcaTransferencia(set, mob, m_aDevolverFora,
+						dtMarca, null, transfComData.getResp(),
+						transfComData.getLotaResp());// acrescenta
+												// a
+												// marca
+												// "A Devolver (Fora do Prazo)"
+			}
+
+		}
+	}
+	
+	public ExMovimentacao contemTransferenciaRetorno(ExMovimentacao mov, ExMobil mob){
+		ExMovimentacao movRetorno = null;
+		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3);
+		transferencias.removeAll(mob.getMovimentacoesCanceladas());
+		
+		Iterator it = transferencias.iterator();
+		while(it.hasNext()){
+			ExMovimentacao transferencia = (ExMovimentacao)it.next();
+			
+			if(mov.getLotaCadastrante() == transferencia.getLotaResp() && transferencia.getData().after(mov.getData())){
+				movRetorno = transferencia;
+				break;
+			}
+		}
+		return movRetorno;
 	}
 
 	/**

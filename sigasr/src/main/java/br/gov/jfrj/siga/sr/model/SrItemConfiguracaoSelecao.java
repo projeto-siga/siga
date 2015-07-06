@@ -47,4 +47,12 @@ public class SrItemConfiguracaoSelecao extends Selecao<SrItemConfiguracao> {
         return true;
     }
 
+    public void carregarDadosParaView(SrItemConfiguracao itemConfiguracao) {
+        if (itemConfiguracao != null) {
+            this.setId(itemConfiguracao.getId());
+            this.setDescricao(itemConfiguracao.getDescricao());
+            this.setSigla(itemConfiguracao.getSigla());
+        }
+    }
+
 }

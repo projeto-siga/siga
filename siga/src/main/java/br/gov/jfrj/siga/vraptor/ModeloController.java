@@ -30,17 +30,20 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpModelo;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.util.FreemarkerIndent;
 
 @Resource
 public class ModeloController extends SigaController {
 
-	public ModeloController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
+	public ModeloController(HttpServletRequest request, Result result,
+			SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 
 		result.on(AplicacaoException.class).forwardTo(this).appexception();
@@ -63,16 +66,16 @@ public class ModeloController extends SigaController {
 
 		if (id != null) {
 			CpModelo mod = daoMod(id);
-			Cp.getInstance().getBL().alterarCpModelo(mod, conteudo,
-					getIdentidadeCadastrante());
+			Cp.getInstance().getBL()
+					.alterarCpModelo(mod, conteudo, getIdentidadeCadastrante());
 		} else {
 			try {
 				ModeloDao.iniciarTransacao();
 				CpModelo mod = new CpModelo();
 				mod.setConteudoBlobString(conteudo);
 				if (paramLong("idOrgUsu") != null)
-					mod.setCpOrgaoUsuario(dao().consultar(paramLong("idOrgUsu"),
-							CpOrgaoUsuario.class, false));
+					mod.setCpOrgaoUsuario(dao().consultar(
+							paramLong("idOrgUsu"), CpOrgaoUsuario.class, false));
 				mod.setHisDtIni(dao().consultarDataEHoraDoServidor());
 				dao().gravarComHistorico(mod, getIdentidadeCadastrante());
 				ModeloDao.commitTransacao();
@@ -82,7 +85,13 @@ public class ModeloController extends SigaController {
 						"Não foi possível gravar o modelo.", 9, e);
 			}
 		}
-		
+
 		result.redirectTo(this).lista();
+	}
+
+	@Post("/app/modelo/indentar")
+	public void indentar(String conteudo) throws Exception {
+		String r = FreemarkerIndent.indent(conteudo);
+		result.use(Results.http()).body(r);
 	}
 }

@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
 
 public class ProcessoFinanceiroPage extends EditaDocumentoPage {
 
@@ -11,11 +12,12 @@ public class ProcessoFinanceiroPage extends EditaDocumentoPage {
 		super(driver);		
 	}
 	
-	public void criaProcessoFinanceiro(Properties propDocumentos, Boolean isDigital, String modeloDocumento) {
+	public OperacoesDocumentoPage criaProcessoFinanceiro(Properties propDocumentos, Boolean isDigital, String modeloDocumento) {
 		preencheOrigem(propDocumentos.getProperty("internoProduzido"));
 		selectTipoDocumento("Processo de Execução Orçamentária e Financeira", modeloDocumento,  By.xpath("//td[text() = 'Dados complementares']"));
 		preencheDocumentoInterno(propDocumentos, isDigital, Boolean.TRUE);
 		botaoOk.click();
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 
 }

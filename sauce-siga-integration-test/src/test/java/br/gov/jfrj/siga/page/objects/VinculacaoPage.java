@@ -40,6 +40,10 @@ public class VinculacaoPage {
 	public VinculacaoPage(WebDriver driver) {
 		this.driver = driver;
 		util = new IntegrationTestUtil();
+		
+		if(!util.isDescricaoPaginaVisivel(driver, "Vinculação de Documento")) {
+			throw new RuntimeException("Esta não é a página de Vinculação de Documento!");
+		}
 	}
 	
 	public String vincularDocumento(Properties propDocumentos, String codigoDocumento) {
@@ -63,7 +67,13 @@ public class VinculacaoPage {
 			util.closePopup(driver);
 		}
 
-		new WebDriverWait(driver, 30).until(ExpectedConditions.titleIs("SIGA - Referência"));
+		// Aparentemente existe um bug ao selecionar um documento na página de PesquisaDocumento
+		// Aparentemente o Mouse termina sua posição na parte de cima da tela e ao pedir para clicar no botão de Ok
+		// o mouse passa pelo menu do Siga, que abre e acaba que o click é dado numa oção do menu em vez do botão de Ok.
+		// Esses cliques foram colocados para tentar fazer com que o Webdriver clique no botão certo.
+		data.click();
+		responsavel.click();
+		documento.click();
 		new WebDriverWait(driver, 30).until(ExpectedConditions.elementToBeClickable(botaoOk)).click();	
 		
 		return codigoDocumentoVinculado;

@@ -5,8 +5,10 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 
 import br.gov.jfrj.siga.integration.test.util.IntegrationTestUtil;
 
@@ -53,7 +55,7 @@ public class OperacoesDocumentoPage {
 	
 	@FindBy(linkText="Registrar Assinatura Manual")
 	private WebElement linkRegistrarAssinaturaManual;
-	
+
 	@FindBy(linkText="Assinar")
 	private WebElement linkAssinarDigitalmente;
 	
@@ -131,12 +133,21 @@ public class OperacoesDocumentoPage {
 	public OperacoesDocumentoPage(WebDriver driver) {
 		this.driver = driver;
 		util = new IntegrationTestUtil();
+		
+		if(util.getWebElement(driver, By.xpath("/html/body/div[4]/div/h2")) == null ||
+				util.getWebElement(driver, By.xpath("/html/body/div[4]/div/h3")) == null) {
+			throw new RuntimeException("Esta não é a página de Operações do documento!");
+		}
 	}
 		
-	public String getTextoVisualizacaoDocumento(String xpathElemento) {
+	public WebElement getLinkSolicitarPublicacaoBoletim() {
+		return linkSolicitarPublicacaoBoletim;
+	}
+	
+	public String getTextoVisualizacaoDocumento() {
 		WebElement element = null;
 		try {
-			element =  new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpathElemento)));
+			element =  new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/div[4]/div/h2")));
 			System.out.println("Texto: " + element.getText());
 		} catch (TimeoutException e) {
 			e.printStackTrace();
@@ -145,141 +156,193 @@ public class OperacoesDocumentoPage {
 		return (element != null ? element.getText().trim() : "");
 	}
 
-	public void excluirCossignatario() {
-		driver.findElement(By.xpath("(//a[contains(text(),'Excluir')])[2]")).click();
+	public OperacoesDocumentoPage excluirCossignatario(String cossignatario) {	
+		util.getWebElement(driver, By.xpath("//div[h3 = 'Cossignatários']/ul/li[contains(., '"+ cossignatario +"')]/a")).click();
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
-	public void clicarLinkFazerAnotacao() {
-		linkFazerAnotacao.click();
+	public OperacoesDocumentoPage excluirAnotacao(String nota) {
+		util.getWebElement(driver, By.xpath("//td[4][contains(., '"+ nota +"')]/a")).click();
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
+	}
+	
+	public AnotacaoPage clicarLinkFazerAnotacao() {
+		linkFazerAnotacao.click();		
+		return PageFactory.initElements(driver, AnotacaoPage.class);
 	}
 	
 	public void clicarLinkEditar() {
 		linkEditar.click();
 	}	
 	
-	public void clicarLinkIncluirCossignatario() {
+	public InclusaoCossignatarioPage clicarLinkIncluirCossignatario() {
 		linkIncluirCossignatario.click();
+		return PageFactory.initElements(driver, InclusaoCossignatarioPage.class);
 	}
 	
-	public void clicarLinkAnexarArquivo() {
+	public AnexoPage clicarLinkAnexarArquivo() {
 		linkAnexarArquivo.click();
+		return PageFactory.initElements(driver, AnexoPage.class);
 	}
 	
-	public void clicarLinkAgendarPublicacao() {
+	public AgendamentoPublicacaoPage clicarLinkAgendarPublicacao() {
 		linkAgendarPublicacao.click();
+		return PageFactory.initElements(driver, AgendamentoPublicacaoPage.class);
 	}
 	
-	public void clicarLinkRedefinirNivelAcesso() {
+	public RedefineNivelAcessoPage clicarLinkRedefinirNivelAcesso() {
 		linkRedefinirNivelAcesso.click();
+		return PageFactory.initElements(driver, RedefineNivelAcessoPage.class);
 	}
 	
-	public void clicarLinkDefinirPerfil() {
+	public DefinePerfilPage clicarLinkDefinirPerfil() {
 		linkDefinirPerfil.click();
+		return PageFactory.initElements(driver, DefinePerfilPage.class);
 	}
 
 	public void clicarLinkDesfazerRedefinicaoSigilo() {
 		linkDesfazerRedefinicaoSigilo.click();
-		util.closeAlertAndGetItsText(driver);
+		util.closeAlertAndGetItsText(driver);		
 	}
 	
 	public void clicarCriarVia() {
 		linkCriarVia.click();
 	}
 	
-	public void clicarLinkRegistrarAssinaturaManual() {
+	public RegistraAssinaturaManualPage clicarLinkRegistrarAssinaturaManual() {
 		linkRegistrarAssinaturaManual.click();
+		return PageFactory.initElements(driver, RegistraAssinaturaManualPage.class);
 	}
 	
-	public void clicarLinkAssinarDigitalmente() {
+	public AssinaturaDigitalPage clicarLinkAssinarDigitalmente() {
 		linkAssinarDigitalmente.click();
+		
+		return PageFactory.initElements(driver, AssinaturaDigitalPage.class);
 	}
 	
-	public void clicarLinkSolicitarPublicacaoBoletim() {
+	public OperacoesDocumentoPage clicarLinkSolicitarPublicacaoBoletimPre17Horas() {
 		linkSolicitarPublicacaoBoletim.click();
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
-	public void clicarLinkDesfazerSolicitacaoPublicacaoBoletim() {
+	public Boolean clicarLinkSolicitarPublicacaoBoletimPos17Horas() {
+		linkSolicitarPublicacaoBoletim.click();
+		
+		return isNotificacaoHorarioSolicitacaoVisivel();
+	}
+	
+	public OperacoesDocumentoPage clicarLinkDesfazerSolicitacaoPublicacaoBoletim() {
 		linkDesfazerSolicitacaoPublicacaoBoletim.click();
 		util.closeAlertAndGetItsText(driver);
+		util.isElementInvisible(driver, By.linkText("Desfazer Solicitação de Publicação no Boletim"));
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
-	public void clicarLinkSobrestar() {
+	public OperacoesDocumentoPage clicarLinkSobrestar() {
 		linkSobrestar.click();
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
-	public void clicarLinkDesobrestar() {
+	public OperacoesDocumentoPage clicarLinkDesobrestar() {
 		linkDesobrestar.click();
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
-	public void clicarLinkVincular() {
+	public VinculacaoPage clicarLinkVincular() {
 		linkVincular.click();
+		return PageFactory.initElements(driver, VinculacaoPage.class);
 	}
 	
-	public void clicarLinkArquivarCorrente() {
+	public OperacoesDocumentoPage clicarLinkArquivarCorrente() {
 		linkArquivarCorrente.click();
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
-	public void clicarLinkDesfazerArquivamentoCorrente() {
+	public OperacoesDocumentoPage clicarLinkDesfazerArquivamentoCorrente() {
 		linkDesfazerArquivamentoCorrente.click();
 		util.closeAlertAndGetItsText(driver);
+		util.isElementInvisible(driver, By.linkText("Desfazer Arquivamento Corrente"));
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
-	public void clicarLinkApensar() {
+	public ApensacaoPage clicarLinkApensar() {
 		linkApensar.click();
+		return PageFactory.initElements(driver, ApensacaoPage.class);
 	}
 	
-	public void clicarLinkDesapensar() {
+	public DesapensamentoPage clicarLinkDesapensar() {
 		linkDesapensar.click();
+		return PageFactory.initElements(driver, DesapensamentoPage.class);
 	}
 	
-	public void clicarLinkDespacharTransferir() {
+	public TransferenciaPage clicarLinkDespacharTransferir() {
 		linkDespacharTransferir.click();
+		return PageFactory.initElements(driver, TransferenciaPage.class);
 	}
 	
-	public void clicarLinkDesentranhar() {
+	public OperacoesDocumentoPage clicarLinkDesentranhar() {
 		linkDesentranhar.click();
+		new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Desfazer Desentranhamento")));	
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
-	public void clicarlinkJuntar() {
+	public CancelamentoJuntadaPage clicarLinkDesentranharDigital() {
+		linkDesentranhar.click();
+		return PageFactory.initElements(driver, CancelamentoJuntadaPage.class);
+	}
+	
+	public JuntadaDocumentoPage clicarlinkJuntar() {
 		linkJuntar.click();
+		return PageFactory.initElements(driver, JuntadaDocumentoPage.class);
 	}
 	
-	public void clicarLinkVisualizarDossie() {
+	public VisualizacaoDossiePage clicarLinkVisualizarDossie() {
 		linkVisualizarDossie.click();
+		return PageFactory.initElements(driver, VisualizacaoDossiePage.class);
 	}
 	
-	public void clicarLinkExibirInformacoesCompletas() {
+	public OperacoesDocumentoPage clicarLinkExibirInformacoesCompletas() {
 		new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOf(linkExibirInformacoesCompletas));	
 		linkExibirInformacoesCompletas.click();
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
-	public void clicarLinkAutuar() {
+	public ProcessoAssuntosAdministrativosPage clicarLinkAutuar() {
 		linkAutuar.click();
+		return PageFactory.initElements(driver, ProcessoAssuntosAdministrativosPage.class);
 	}
 	
-	public void clicarLinkCriarSubprocesso() {
+	public ProcessoFinanceiroPage clicarLinkCriarSubprocesso() {
 		linkCriarSubprocesso.click();
+		return PageFactory.initElements(driver, ProcessoFinanceiroPage.class);
 	}
 
-	public void clicarLinkAbrirNovoVolume() {
+	public OperacoesDocumentoPage clicarLinkAbrirNovoVolume() {
 		linkAbrirNovoVolume.click();
 		util.closeAlertAndGetItsText(driver);
 		util.getWebElement(driver,By.xpath("//h3[contains(text(),'Volumes')]"));
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
-	public void clicarLinkEncerrarVolume() {
+	public OperacoesDocumentoPage clicarLinkEncerrarVolume() {
 		linkEncerrarVolume.click();
 		util.closeAlertAndGetItsText(driver);
+		util.isElementInvisible(driver, By.linkText("Encerrar Volume"));
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
-	public void clicarLinkDesfazerDefinicaoPerfil() {
+	public OperacoesDocumentoPage clicarLinkDesfazerDefinicaoPerfil() {
 		linkDesfazerDefinicaoPerfil.click();
 		util.closeAlertAndGetItsText(driver);
+		util.isElementInvisible(driver, By.linkText("Desfazer Definição de Perfil"));
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
-	public void clicarLinkDesfazerTransferencia() {
+	public OperacoesDocumentoPage clicarLinkDesfazerTransferencia() {
 		linkDesfazerTransferencia.click();
 		util.closeAlertAndGetItsText(driver);		
+		util.isElementInvisible(driver, By.linkText("Desfazer Transferência"));
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
 	public Boolean clicarLinkVisualizarImpressao() {
@@ -299,32 +362,53 @@ public class OperacoesDocumentoPage {
 		util.closeAlertAndGetItsText(driver);
 	}
 		
-	public void clicarLinkDuplicar() {
+	public OperacoesDocumentoPage clicarLinkDuplicar() {
 		linkDuplicar.click();
 		util.closeAlertAndGetItsText(driver);
 		String URL= driver.getCurrentUrl();
 		new WebDriverWait(driver, 30).until(util.trocaURL(URL));
+		
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}	
 	
-	public void clicarLinkExcluir() {
+	public PrincipalPage clicarLinkExcluir() {
 		linkExcluir.click();
 		util.closeAlertAndGetItsText(driver);
 		new WebDriverWait(driver, 30).until(ExpectedConditions.titleIs("SIGA - Página Inicial"));
+		return PageFactory.initElements(driver, PrincipalPage.class);
 	}	
 	
-	public void clicarLinkFinalizar() {
+	public OperacoesDocumentoPage clicarLinkFinalizar() {
 		linkFinalizar.click();
 	    util.closeAlertAndGetItsText(driver);
-	    new WebDriverWait(driver, 30).until(ExpectedConditions.invisibilityOfElementLocated(By.linkText("Finalizar")));
+	    util.isElementInvisible(driver, By.linkText("Finalizar"));
+	    return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}	
 	
-	public void clicarLinkAssinarCopia() {
-		new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.linkText("Assinar/Autenticar"))).click();
+	public AssinaturaAnexoPage clicarLinkAssinarCopia() {
+		util.getWebElement(driver, By.linkText("Assinar/Autenticar")).click();
+		return PageFactory.initElements(driver, AssinaturaAnexoPage.class);
 	}
 	
 	public void clicarLinkCancelarAnexo() {
 		WebElement anexacao = util.getWebElement(driver, By.xpath("//tr[contains(@class, 'anexacao ')]"));
 		util.getWebElement(driver, anexacao, By.linkText("Cancelar")).click();
+	}
+	
+	public OperacoesDocumentoPage clicarLinkDocumentoJuntado(String codigoDocumento) {
+		WebElement trJuntada = util.getWebElement(driver, By.xpath("//tr[contains(@class, 'juntada ')]"));
+		WebElement documentoJuntado =  util.getWebElement(driver, trJuntada, By.partialLinkText(codigoDocumento));
+		documentoJuntado.click();
+		new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/div[4]/div/h2[contains(.,'"+codigoDocumento +"')]")));
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
+	}
+	
+	public OperacoesDocumentoPage clicarLinkDocumentoDesentranhado(String codigoDocumento) {
+		WebElement desentranhamentoDocumento = util.getWebElement(driver, By.xpath("//tr[contains(@class, 'desentranhamento ')]"));
+		WebElement linkProcessoDesentranhado = util.getWebElement(driver, desentranhamentoDocumento, By.partialLinkText(codigoDocumento));
+		linkProcessoDesentranhado.click();
+		new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/div[4]/div/h2[contains(.,'"+codigoDocumento +"')]")));
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
 	public void efetuaBuscaDocumento(String codigoDocumento) {
@@ -334,7 +418,7 @@ public class OperacoesDocumentoPage {
 		new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Visualizar Impressão")));
 	}
 
-	public void clicarAssinarDespacho(String baseURL, String codigoDocumento) {		
+	public OperacoesDocumentoPage clicarAssinarDespacho(String baseURL, String codigoDocumento) {		
 /*		WebElement despacho = new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//td[7][contains(., '" + propDocumentos.getProperty("despacho") + "')]")));
 		despacho.findElement(By.linkText("Ver/Assinar")).click();*/
 		new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.linkText("Ver/Assinar"))).click();
@@ -355,6 +439,8 @@ public class OperacoesDocumentoPage {
 
 		driver.get(baseURL + "/sigaex/expediente/mov/simular_assinatura_mov.action?sigla="+ codigoDocumento + "&id="+codigoDespacho);				
 		System.out.println("URL: " + driver.getCurrentUrl());
+		
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
 	public Boolean clicarAssinarEncerramentoVolume() {
@@ -373,7 +459,7 @@ public class OperacoesDocumentoPage {
 		return (textoEncerramento != null);
 	}
 	
-	public void clicarProtocolo() {	
+	public OperacoesDocumentoPage clicarProtocolo() {	
 		new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.linkText("Protocolo"))).click();		
 		util.openPopup(driver);
 		try {	
@@ -382,6 +468,145 @@ public class OperacoesDocumentoPage {
 		} finally {
 			util.closePopup(driver);
 		}
+		
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
+	public Boolean isIdentificacaoDocumentoVisivel(String identificacaoDocumento) {			
+		return util.getWebElement(driver, By.xpath("//div[@class='gt-content-box']//p[contains(., '"+ identificacaoDocumento +"')]")) != null;
+	}
+	
+	public Boolean isCossignatarioVisivel(String cossignatario) {		
+		return util.getWebElement(driver, By.xpath("//div[h3 = 'Cossignatários']/ul/li[contains(., '"+ cossignatario +"')]")) != null;
+	}
+	
+	public Boolean isCossignatarioInvisivel(String cossignatario) {		
+		return util.isElementInvisible(driver, By.xpath("//div[h3 = 'Cossignatários']/ul/li[contains(., '"+ cossignatario +"')]"));
+	}
+	
+	public Boolean isDocumentoFinalizado() {
+		return util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + 
+				 "[contains(text(), 'Pendente de Assinatura, Como Subscritor')]|//div[h3 = 'Vias']/ul/li[contains(., 'Pendente de Assinatura') and contains(., 'Como Subscritor')]")) != null;
+	}
+	
+	public Boolean isAnexoAssinado() {
+		return util.getWebElement(driver, By.xpath("//td[4][contains(., 'Assinado por')]")) != null;
+	}
+	
+	public Boolean isAnotacaoVisivel(String nota) {
+		return util.getWebElement(driver, By.xpath("//td[4][contains(., '"+ nota +"')]")) != null;
+	}
+	
+	public Boolean isAnotacaoInvisivel(String nota) {
+		return util.isElementInvisible(driver, By.xpath("//td[4][contains(., '"+ nota +"')]"));
+	}
+	
+	public Boolean isPerfilVisivel(String perfil, String nomeResponsavel) {
+		return (util.getWebElement(driver, By.xpath("//div[h3 = 'Perfis' and p/b[contains(., '"+ perfil +"')] and ul/li[contains(., '" + nomeResponsavel + "')]]")) != null);
+	}
+	
+	public Boolean isPerfilInvisivel(String perfil) {
+		return util.isElementInvisible(driver, By.xpath("//div[h3 = 'Perfis']/p/b[contains(., '"+ perfil +"')]"));
+	}
+	
+	public Boolean isDocumentoAssinado() {
+		return util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + 
+				"[contains(text(), 'Aguardando Andamento')]|"
+				+ "//div[h3 = 'Volumes' or h3 = 'Vias']/ul/li[contains(., 'Aguardando Andamento')]")) != null;
+	}
+	
+	public Boolean isEstadoAtualDocumento(String status) {
+		return util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), '"+ status +"')]|"
+				+ "//div[h3 = 'Vias']/ul/li[contains(., '"+ status +"')]")) != null;
+	}
+	
+	public Boolean isEstadoAtualVolume(String status) {
+		return util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), '"+ status +"')]|"
+				+ "//div[h3 = 'Volumes']/ul/li[contains(., '"+ status +"')]")) != null;
+	}
+	
+	public Boolean isSolicitacaoPublicacaoBoletimVisivel() {
+		return util.getWebElement(driver, By.xpath("//td[3][contains(., 'Solicitação de Publicação no Boletim')]")) != null;
+	}
+	
+	public Boolean isSolicitacaoPublicacaoBoletimInvisivel() {
+		return 	util.isElementInvisible(driver, By.xpath("//td[3][contains(., 'Solicitação de Publicação no Boletim')]"));
+	}
+	
+	public Boolean isNotificacaoHorarioSolicitacaoVisivel() {
+		return util.getWebElement(driver, By.xpath("//h3[contains(., 'A solicitação de publicação no BIE apenas é permitida até as 17:00')]")) != null;
+	}
+	
+	public Boolean isDocumentoConectadoVisivel(String codigoDocumento) {
+		WebElement documentosRelacionados = util.getWebElement(driver, By.id("outputRelacaoDocs"));		
+		return documentosRelacionados != null && documentosRelacionados.getText().contains(codigoDocumento);
+	}
+	
+	public Boolean isDocumentoConectadoInvisivel() {
+		return util.isElementInvisible(driver, By.id("outputRelacaoDocs"));
+	}
+	
+	public CancelamentoMovimentacaoPage cancelarVinculoDocumento() {
+		WebElement vinculacao = util.getWebElement(driver, By.xpath("//td[7][contains(., 'Ver também:')]"));
+		Assert.assertNotNull(vinculacao, "Texto 'Ver também:' não encontrado");
+		util.getClickableElement(driver, vinculacao.findElement(By.linkText("Cancelar"))).click();
+		return  PageFactory.initElements(driver, CancelamentoMovimentacaoPage.class);
+	}
+	
+	public Boolean isDespachoVisivel(String despacho) {
+		return util.getWebElement(driver, By.xpath("//td[4][contains(., '" + despacho + "')]")) != null;
+	}
+	
+	public Boolean isDespachoAssinado() {
+		return util.getWebElement(driver, By.xpath("//td[4][contains(., 'Assinado por')]")) != null;
+	}
+	
+	public Boolean isNivelAcessoModificado(String nivelAcesso) {
+		return util.getWebElement(driver, By.xpath("(//p/b[contains(.,'" + nivelAcesso + "')])")) != null;
+	}
+	
+	public Boolean isDocumentoJuntadoVisivel(String codigoDocumentoJuntado) {		
+		return util.getWebElement(driver, By.xpath("//td[4][contains(., 'Documento juntado:') and contains(., '" + codigoDocumentoJuntado +"')]")) != null;
+	}
+	
+	public Boolean isNumeroProcessoVisivel() {
+		return util.getWebElement(driver, By.xpath("//b[contains(., 'Processo Nº')]")) != null;
+	}
+	
+	public Boolean isProcessoFinalizado() {
+		return util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + 
+				 "[contains(text(), '1º Volume - Pendente de Assinatura, Como Subscritor')]|"
+				 + "//div[h3 = 'Volumes']/ul/li[contains(., 'Pendente de Assinatura') and contains(., 'Como Subscritor')]")) != null;
+	}
+	
+	public Boolean isDocumentoJuntadoInvisivel() {
+		return util.isElementInvisible(driver, By.xpath("//tr[contains(@class, 'juntada ')]"));
+	}
+	
+	public Boolean isDesentramentoVisivel() {
+		return util.getWebElement(driver, By.xpath("//tr[contains(@class, 'desentranhamento ')]")) != null;
+	}
+	
+	public Boolean isEncerramentoVolumeVisivel() {
+		return util.getWebElement(driver, By.xpath("//td[3][contains(text(),'Encerramento de Volume')]")) != null;
+	}
+	
+	public Boolean isNovoVolumeVisivel(String statusVolume1, String statusVolume2) {
+		WebElement volume1 = util.getWebElement(driver, By.xpath("//div[h3 = 'Volumes']/ul/li[1][contains(., '" + statusVolume1 + "')]"));
+		WebElement volume2 = util.getWebElement(driver, By.xpath("//div[h3 = 'Volumes']/ul/li[2][contains(., '" + statusVolume2 + "')]"));
+		
+		return volume1 != null && volume2 != null;
+	}
+	
+	public Boolean isVolumeAssinado() {
+		return util.getWebElement(driver, By.xpath("//h3[contains(text(), 'Volume - Aguardando Andamento')]|//div[h3 = 'Volumes']/ul/li[2][contains(., 'Aguardando Andamento')]")) != null;
+	}
+	
+	public Boolean isNumeroProcessoVisivel(String codigoProcesso) {
+		return util.getWebElement(driver, By.xpath("//h2[contains(text(), '" + codigoProcesso + "')]")) != null;
+	}
+	
+	public Boolean isPendenciaAssinaturaInvisivel() {
+		return util.isElementInvisible(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), 'Anexo Pendente de Assinatura/Conferência')]"));
+	}
 }

@@ -7,6 +7,7 @@ import java.util.Properties;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 import br.gov.jfrj.siga.integration.test.util.IntegrationTestUtil;
 
@@ -36,12 +37,17 @@ public class JuntadaDocumentoPage {
 	public JuntadaDocumentoPage(WebDriver driver) {
 		this.driver = driver;
 		util = new IntegrationTestUtil();
+		
+		if(!util.isDescricaoPaginaVisivel(driver, "Juntada de Documento")) {
+			throw new RuntimeException("Esta não é a página de Juntada de Documento!");
+		}
 	}
 	
-	public void juntarDocumento(Properties propDocumentos, String codigoDocumento) {
+	public OperacoesDocumentoPage juntarDocumento(Properties propDocumentos, String codigoDocumento) {
 		util.preencheElemento(driver, documento, codigoDocumento);
 		util.preencheElemento(driver, data, new SimpleDateFormat("ddMMyyyy").format(Calendar.getInstance().getTime()));
 		util.preencheElemento(driver, responsavel, propDocumentos.getProperty("responsavel"));
-		botaoOk.click();		
+		botaoOk.click();	
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 }

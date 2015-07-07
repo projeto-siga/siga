@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.integration.test.util;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.xpath.operations.Bool;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -52,10 +53,20 @@ public class IntegrationTestUtil {
 		return we;
 	}
 	
-	public WebElement checkCampo(WebDriver driver, WebElement element) {
+	public Boolean isDescricaoPaginaVisivel(WebDriver driver, String descricaoPagina) {
 		WebElement we = null; 
 		try {
-			we = new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOf(element));	
+			we = new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//h2[contains(text(), '" + descricaoPagina + "')]")));	
+		} catch (TimeoutException e) {
+			e.printStackTrace();
+		}
+		return we != null;
+	}
+	
+	public WebElement checkCampo(WebDriver driver, By locator) {
+		WebElement we = null; 
+		try {
+			we = new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(locator));	
 		} catch (TimeoutException e) {
 		}
 		return we;

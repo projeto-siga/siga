@@ -5,6 +5,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -36,17 +37,20 @@ public class PesquisaDocumentoPage {
 	public PesquisaDocumentoPage(WebDriver driver) {
 		this.driver = driver;
 		util= new IntegrationTestUtil();		
+		
+		System.out.println("Handle buscar: " + driver.getWindowHandle());
+		System.out.println("URL: " + driver.getCurrentUrl());
+/*		new WebDriverWait(driver, 30).until(ExpectedConditions.titleIs("SIGA - Lista de Expedientes"));
+		new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.id("ultMovLotaRespSelSpan")));
+		new WebDriverWait(driver, 30).until(ExpectedConditions.elementToBeClickable(botaoBuscar));*/
+		
+		if(util.isDescricaoPaginaVisivel(driver, "Pesquisa de Documentos") == null) {
+			throw new RuntimeException("Esta não é a página de Pesquisa de Documentos!");
+		}
 	}
 	
 	public String buscarDocumento(String codigoDocumento, String situacaoDocumento) {		
-		System.out.println("Handle buscar: " + driver.getWindowHandle());
-		System.out.println("URL: " + driver.getCurrentUrl());
-		new WebDriverWait(driver, 30).until(ExpectedConditions.titleIs("SIGA - Lista de Expedientes"));
-		new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.id("ultMovLotaRespSelSpan")));
-		new WebDriverWait(driver, 30).until(ExpectedConditions.elementToBeClickable(botaoBuscar));
-		descricao.click();
-		util.getSelect(driver, situacao).selectByVisibleText(situacaoDocumento);
-		botaoBuscar.click();
+		filtrarDocumentos(situacaoDocumento);
 		WebElement element = new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//td[1]/a[not(contains(., '" +codigoDocumento+"'))]")));
 		String codigoDocumentoApensado = element.getText();
 		element.click();
@@ -63,5 +67,14 @@ public class PesquisaDocumentoPage {
 		botaoBuscar.click();
 		
 		util.getClickableElement(driver, By.xpath("//td[1]/a")).click();
+	}
+	
+	public PesquisaDocumentoPage filtrarDocumentos(String situacaoDocumento) {
+		descricao.click();
+		util.getSelect(driver, situacao).selectByVisibleText(situacaoDocumento);
+		botaoBuscar.click();
+		descricao.click();
+		util.getWebElement(driver, By.id("descrDocumento")).click();
+		return PageFactory.initElements(driver, PesquisaDocumentoPage.class);
 	}
 }

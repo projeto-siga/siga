@@ -55,20 +55,27 @@ public class TransferenciaPage {
 	public TransferenciaPage(WebDriver driver) {
 		this.driver = driver;
 		util = new IntegrationTestUtil();
+		
+		util.openPopup(driver);	
+		if(!util.isDescricaoPaginaVisivel(driver, "Despacho / Transferencia")) {
+			util.closePopup(driver);
+			throw new RuntimeException("Esta não é a página de Despacho / Transferencia!");
+		}
 	}
 	
-	public void despacharDocumento(Properties propDocumentos) {
-		util.openPopup(driver);		
+	public OperacoesDocumentoPage despacharDocumento(Properties propDocumentos) {
+	
 		try {
 			despachar(propDocumentos);
 			new WebDriverWait(driver, 30).until(util.popupFechada());
 		} finally {
 			util.closePopup(driver);
 		}
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
 	public Boolean despacharVolumeEncerrado(Properties propDocumentos) {		
-		util.openPopup(driver);		
+		//util.openPopup(driver);		
 		try {
 			despachar(propDocumentos);
 			if(util.getWebElement(driver, By.xpath("//h3[contains(text(), 'Não é permitido')]")) != null) {
@@ -91,9 +98,7 @@ public class TransferenciaPage {
 		botaoOk.click();
 	}
 	
-	public void transferirDocumento(Properties propDocumentos) {
-		util.openPopup(driver);
-		
+	public OperacoesDocumentoPage transferirDocumento(Properties propDocumentos) {		
 		try {
 			util.getSelect(driver, tipoAtendente).selectByVisibleText(propDocumentos.getProperty("tipoAtendente"));
 			util.preencheElemento(driver, atendente, propDocumentos.getProperty("atendente"));			
@@ -105,6 +110,8 @@ public class TransferenciaPage {
 		} finally {
 			util.closePopup(driver);
 		}
+		
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
 	/**
@@ -114,7 +121,6 @@ public class TransferenciaPage {
 	 * @return
 	 */
 	public String despachoDocumentoFilho(Properties propDocumentos, String codigoDocumento) {
-		util.openPopup(driver);
 		String codigoDocumentoJuntado;
 		
 		try {
@@ -138,7 +144,7 @@ public class TransferenciaPage {
 			operacoesDocumentoPage.clicarlinkJuntar();
 			JuntadaDocumentoPage juntadaDocumentoPage = PageFactory.initElements(driver, JuntadaDocumentoPage.class);
 			juntadaDocumentoPage.juntarDocumento(propDocumentos, codigoDocumento);
-			codigoDocumentoJuntado = operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div/h2");
+			codigoDocumentoJuntado = operacoesDocumentoPage.getTextoVisualizacaoDocumento();
 			
 		} finally {
 			util.closePopup(driver);

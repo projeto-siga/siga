@@ -8,22 +8,14 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.PageFactory;
-import org.testng.Assert;
-import org.testng.SkipException;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 //Bibliotecas para o saucelabs
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
-import org.testng.annotations.Listeners;
-
-import com.saucelabs.common.SauceOnDemandAuthentication;
-import com.saucelabs.common.SauceOnDemandSessionIdProvider;
-import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
-import com.saucelabs.testng.SauceOnDemandTestListener;
-//fim saucelabs
+import org.openqa.selenium.support.PageFactory;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import br.gov.jfrj.siga.page.objects.EstatisticaProcedimentoPage;
 import br.gov.jfrj.siga.page.objects.OperacoesDocumentoPage;
@@ -31,6 +23,11 @@ import br.gov.jfrj.siga.page.objects.PesquisaDocumentoPage;
 import br.gov.jfrj.siga.page.objects.PrincipalPage;
 import br.gov.jfrj.siga.page.objects.SolicitacaoEletronicaContratacaoPage;
 import br.gov.jfrj.siga.page.objects.TarefaPage;
+
+import com.saucelabs.common.SauceOnDemandAuthentication;
+import com.saucelabs.common.SauceOnDemandSessionIdProvider;
+import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
+//fim saucelabs
 
 //O listener envia o resultado do testng para o saucelab
 //@Listeners({SauceOnDemandTestListener.class})
@@ -47,7 +44,12 @@ public class WorkflowDigitalIT extends IntegrationTestBase implements SauceOnDem
 	
 	@BeforeClass(dependsOnMethods={"iniciaWebDriver"}, enabled = true)
 	public void login() {
-		efetuaLogin();		
+		try {
+			efetuaLogin();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 		tarefaPage = PageFactory.initElements(driver, TarefaPage.class);
 		operacoesDocumentoPage = PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
@@ -68,21 +70,21 @@ public class WorkflowDigitalIT extends IntegrationTestBase implements SauceOnDem
 			operacoesDocumentoPage.clicarLinkFinalizar();
 			
 			// Assinar Digitalmente (simular assinatura)
-			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div/h2");
+			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento();
 			assinarDigitalmente(codigoDocumento, "Nº " + codigoDocumento);
 			
-			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div/h2");
+			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento();
 			
 			// Garantir que "Tarefa: Anexar Arquivos" apareça na tela
 			WebElement tarefaElement = util.getWebElement(driver, By.xpath("//td[contains(., 'Tarefa: Anexar Arquivos')]"));
 			if(tarefaElement == null) {
-				throw new SkipException("Tarefa não encontrada!");
+				throw new RuntimeException("Tarefa não encontrada!");
 			}
 			
 			// Garantir que o link "Prosseguir" apareça na tela
 			WebElement linkProsseguir = util.getWebElement(driver, By.xpath("//a[contains(text(), 'Prosseguir')]"));		
 			if(linkProsseguir == null) {
-				throw new SkipException("Link Prosseguir não encontrado!");
+				throw new RuntimeException("Link Prosseguir não encontrado!");
 			}
 			
 			// Armazenando nome da tarefa
@@ -94,7 +96,7 @@ public class WorkflowDigitalIT extends IntegrationTestBase implements SauceOnDem
 			inicioTarefa = procedimento.substring(procedimento.indexOf("(") + 1, procedimento.indexOf(")"));				
 		} catch(Exception e) {
 			e.printStackTrace();
-			throw new SkipException("Exceção no método setUp!");
+			throw new RuntimeException("Exceção no método setUp!");
 		}
 	}
 	
@@ -120,7 +122,7 @@ public class WorkflowDigitalIT extends IntegrationTestBase implements SauceOnDem
 						geraProcesso();
 					} catch(Exception e) {
 						e.printStackTrace();
-						throw new SkipException("Exceção no método geraProcesso!");
+						throw new RuntimeException("Exceção no método geraProcesso!");
 					}
 				}
 				
@@ -228,7 +230,7 @@ public class WorkflowDigitalIT extends IntegrationTestBase implements SauceOnDem
 		// Finalizar e assinar Processo criado
 		operacoesDocumentoPage.clicarLinkFinalizar();
 		// Assinar Digitalmente (simular assinatura)
-		codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div/h2");
+		codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento();
 		assinarDigitalmente(codigoDocumento, propDocumentos.getProperty("descricao"));
 	}	
 	

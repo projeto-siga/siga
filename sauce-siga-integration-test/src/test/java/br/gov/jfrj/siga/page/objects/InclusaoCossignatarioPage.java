@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -28,9 +29,13 @@ public class InclusaoCossignatarioPage {
 	public InclusaoCossignatarioPage(WebDriver driver) {
 		this.driver = driver;
 		util = new IntegrationTestUtil();
+		
+		if(!util.isDescricaoPaginaVisivel(driver, "Inclusão de Cossignatário")) {
+			throw new RuntimeException("Esta não é a página de Inclusão de Cossignatário!");
+		}
 	}
 	
-	public void incluiCossignatario(Properties propDocumento) {
+	public OperacoesDocumentoPage incluiCossignatario(Properties propDocumento) {
 		cossignatario.clear();
 		util.preencheElemento(driver, cossignatario, propDocumento.getProperty("siglaCossignatario"));
 		funcaoLocalidade.click();
@@ -38,5 +43,7 @@ public class InclusaoCossignatarioPage {
 		funcaoLocalidade.clear();
 		util.preencheElemento(driver, funcaoLocalidade, propDocumento.getProperty("funcaoLocalidade"));
 		botaoOk.click();
+		
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}	
 }

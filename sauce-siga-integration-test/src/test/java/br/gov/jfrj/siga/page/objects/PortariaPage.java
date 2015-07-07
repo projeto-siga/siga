@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 public class PortariaPage extends EditaDocumentoPage{
 	
@@ -16,11 +17,13 @@ public class PortariaPage extends EditaDocumentoPage{
 		super(driver);
 	}
 	
-	public void criaPortaria(Properties propDocumentos) {
+	public OperacoesDocumentoPage criaPortaria(Properties propDocumentos) {
 		preencheOrigem(propDocumentos.getProperty("internoProduzido"));		
 		selectTipoDocumento("Portaria", "Portaria", By.xpath("//td[text() = 'Texto da portaria']"));
 		preencheDocumentoInterno(propDocumentos, Boolean.TRUE, Boolean.TRUE);
 		util.preencheElemento(driver, dispoeSobre, propDocumentos.getProperty("dispoeSobre"));
 		botaoOk.click();
+		esperaBugSauce();
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 }

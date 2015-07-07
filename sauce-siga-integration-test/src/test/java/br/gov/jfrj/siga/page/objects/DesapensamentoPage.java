@@ -4,9 +4,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Properties;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 import br.gov.jfrj.siga.integration.test.util.IntegrationTestUtil;
 
@@ -33,12 +35,17 @@ public class DesapensamentoPage {
 	public DesapensamentoPage(WebDriver driver) {
 		this.driver = driver;
 		util = new IntegrationTestUtil();
+		
+		if(util.getWebElement(driver, By.xpath("//h2[contains(text(), 'Desapensamento de Documento')]")) == null) {
+			throw new RuntimeException("Esta não é a página de Desapensamento de Documento!");
+		}
 	}
 	
-	public void desapensarDocumento(Properties propDocumentos) {
+	public OperacoesDocumentoPage desapensarDocumento(Properties propDocumentos) {
 		util.preencheElemento(driver, data, new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()));
 		util.preencheElemento(driver, responsavel, propDocumentos.getProperty("responsavel"));
 		util.preencheElemento(driver, titular, propDocumentos.getProperty("siglaSubscritor"));
 		botaoOk.click();
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 }

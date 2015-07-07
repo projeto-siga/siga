@@ -7,6 +7,7 @@ import java.util.Properties;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 import br.gov.jfrj.siga.integration.test.util.IntegrationTestUtil;
 
@@ -35,10 +36,11 @@ public class DefinePerfilPage {
 		util = new IntegrationTestUtil();
 	}
 	
-	public void definirPerfil(Properties propDocumentos) {
+	public OperacoesDocumentoPage definirPerfil(Properties propDocumentos) {
 		util.preencheElemento(driver, data, new SimpleDateFormat("ddMMyyyy").format(Calendar.getInstance().getTime()));
 		util.preencheElemento(driver, responsavel, propDocumentos.getProperty("responsavel"));
 		util.getSelect(driver, perfil).selectByVisibleText(propDocumentos.getProperty("perfil"));
 		botaoOk.click();
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 }

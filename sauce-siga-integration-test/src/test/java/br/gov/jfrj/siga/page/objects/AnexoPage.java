@@ -1,13 +1,14 @@
 package br.gov.jfrj.siga.page.objects;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Properties;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 import br.gov.jfrj.siga.integration.test.util.IntegrationTestUtil;
 
@@ -37,9 +38,13 @@ public class AnexoPage {
 	public AnexoPage(WebDriver driver) {
 		this.driver = driver;
 		util = new IntegrationTestUtil();
+		
+		if(!util.isDescricaoPaginaVisivel(driver, "Anexação de Arquivo")) {
+			throw new RuntimeException("Esta não é a página de Anexo!");
+		}
 	}
 	
-	public void anexarArquivo(Properties propDocumentos) {
+	public AnexoPage anexarArquivo(Properties propDocumentos) {
 		botaoOk.click();
 		util.closeAlertAndGetItsText(driver);
 		util.preencheElemento(driver,dataAnexo, new SimpleDateFormat("ddMMyyyy").format(Calendar.getInstance().getTime()));
@@ -48,10 +53,16 @@ public class AnexoPage {
 		//File file = new File("src/test/resources/" + propDocumentos.getProperty("arquivoAnexo"));
 		//arquivo.sendKeys(file.getAbsolutePath());
 		arquivo.sendKeys(System.getProperty("baseURL") + "/siga/apostila_sigawf.pdf");
-		botaoOk.click();	
+		botaoOk.click();
+		return this;
 	}
 	
-	public void clicarBotaovoltar() {
+	public OperacoesDocumentoPage clicarBotaovoltar() {
 		botaoVoltar.click();
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
+	}
+	
+	public Boolean isAnexoVisivel(String nomeArquivo) {
+		return util.getWebElement(driver, By.partialLinkText(nomeArquivo.toLowerCase())) != null;
 	}
 }

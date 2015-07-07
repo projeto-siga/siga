@@ -6,6 +6,7 @@ import java.util.Calendar;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 import br.gov.jfrj.siga.integration.test.util.IntegrationTestUtil;
 
@@ -29,11 +30,15 @@ public class RegistraAssinaturaManualPage {
 	public RegistraAssinaturaManualPage(WebDriver driver) {
 		this.driver = driver;
 		util = new IntegrationTestUtil();
+				
+		if(!util.isDescricaoPaginaVisivel(driver, "Registro de Assinatura de Documento")) {
+			throw new RuntimeException("Esta não é a página de Registro de Assinatura!");
+		}
 	}
 	
-	public void registarAssinaturaManual() {
+	public OperacoesDocumentoPage registarAssinaturaManual() {
 		util.preencheElemento(driver, data, new SimpleDateFormat("ddMMyyyy").format(Calendar.getInstance().getTime()));
 		botaoSim.click();
-	}
-	
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
+	}	
 }

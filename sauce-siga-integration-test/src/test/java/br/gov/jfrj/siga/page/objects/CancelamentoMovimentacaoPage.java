@@ -33,6 +33,11 @@ public class CancelamentoMovimentacaoPage {
 	public CancelamentoMovimentacaoPage(WebDriver driver) {
 		this.driver = driver;
 		util = new IntegrationTestUtil();
+		
+		if(!util.isDescricaoPaginaVisivel(driver, "Cancelamento de Movimentação")) {
+			throw new RuntimeException("Esta não é a página de Cancelamento de Movimentação!");
+		}
+		
 	}
 	
 	public void cancelarMovimentacao(Properties propDocumentos) {

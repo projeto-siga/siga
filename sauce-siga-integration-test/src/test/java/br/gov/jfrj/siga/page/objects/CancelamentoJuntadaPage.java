@@ -7,6 +7,7 @@ import java.util.Properties;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 import br.gov.jfrj.siga.integration.test.util.IntegrationTestUtil;
 
@@ -33,12 +34,17 @@ public class CancelamentoJuntadaPage {
 	public CancelamentoJuntadaPage(WebDriver driver) {
 		this.driver = driver;
 		util = new IntegrationTestUtil();
+		
+		if(!util.isDescricaoPaginaVisivel(driver, "Cancelamento de Juntada de Documento")) {
+			throw new RuntimeException("Esta não é a página de Juntada de Documento!");
+		}
 	}
 	
-	public void cancelarJuntada(Properties propDocumentos) {
+	public OperacoesDocumentoPage cancelarJuntada(Properties propDocumentos) {
 		util.preencheElemento(driver, data, new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()));
 		util.preencheElemento(driver, responsavel, propDocumentos.getProperty("responsavel"));
 		util.preencheElemento(driver, motivo, propDocumentos.getProperty("motivo"));
 		botaoOk.click();
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 }

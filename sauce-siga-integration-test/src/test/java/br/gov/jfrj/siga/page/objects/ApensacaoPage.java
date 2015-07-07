@@ -40,6 +40,10 @@ public class ApensacaoPage {
 	public ApensacaoPage(WebDriver driver) {
 		this.driver = driver;
 		util = new IntegrationTestUtil();
+		
+		if(!util.isDescricaoPaginaVisivel(driver, "Apensação de Documento")) {
+			throw new RuntimeException("Esta não é a página de Apensação de Documento!");
+		}
 	}
 	
 	public String apensarDocumento(Properties propDocumentos, String codigoDocumento) {
@@ -63,7 +67,10 @@ public class ApensacaoPage {
 		} finally {
 			util.closePopup(driver);
 		}
-		new WebDriverWait(driver, 30).until(ExpectedConditions.titleIs("SIGA - Apensar Documento"));
+		//new WebDriverWait(driver, 30).until(ExpectedConditions.titleIs("SIGA - Apensar Documento"));
+		data.click();
+		responsavel.click();
+		documentoMestre.click();
 		new WebDriverWait(driver, 30).until(ExpectedConditions.elementToBeClickable(botaoOk)).click();		
 		
 		return codigoDocumentoApensado;

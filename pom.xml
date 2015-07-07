@@ -151,10 +151,10 @@
             <id>java.net</id>
             <url>http://download.java.net/maven/2/</url>
         </repository>
-        <repository>
+<!--         <repository>
      		<id>ZK PE/EE Evaluation</id>
     		<url>http://mavensync.zkoss.org/eval/</url>
-   		</repository>
+   		</repository> -->
  		
     </repositories>
 

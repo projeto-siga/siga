@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 public class MemorandoPage extends EditaDocumentoPage {
 	
@@ -19,11 +20,13 @@ public class MemorandoPage extends EditaDocumentoPage {
 		super(driver);
 	}
 	
-	public void criaMemorando(Properties propDocumentos) {
+	public OperacoesDocumentoPage criaMemorando(Properties propDocumentos) {
 		preencheOrigem(propDocumentos.getProperty("internoProduzido"));
 		selectTipoDocumento("Memorando", "Memorando", By.xpath("//td[text() = 'Dados complementares']"));
 		util.isElementVisible(driver, tableCkEditor);
 		preencheDocumentoInterno(propDocumentos, Boolean.TRUE, Boolean.TRUE);	
 		botaoOk.click();
+		esperaBugSauce();
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 }

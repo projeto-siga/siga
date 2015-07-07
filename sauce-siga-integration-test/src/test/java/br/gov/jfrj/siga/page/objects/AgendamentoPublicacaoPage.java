@@ -4,8 +4,11 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import br.gov.jfrj.siga.integration.test.util.IntegrationTestUtil;
 
 public class AgendamentoPublicacaoPage {
 	private WebDriver driver;
@@ -23,15 +26,15 @@ public class AgendamentoPublicacaoPage {
 		this.driver = driver;
 	}
 	
-	public Boolean visualizaPagina() {
+	public OperacoesDocumentoPage visualizaPagina() {
 		try {
 			new WebDriverWait(driver, 30).until(ExpectedConditions.elementToBeClickable(botaoOk));
 			new WebDriverWait(driver, 30).until(ExpectedConditions.elementToBeClickable(botaoVisualizarPublicacao));
 			new WebDriverWait(driver, 30).until(ExpectedConditions.elementToBeClickable(botaoCancela)).click();
-			return true;
+			return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 		} catch (TimeoutException e) {
 			e.printStackTrace();
-			return false;
+			return null;
 		}
 	}
 }

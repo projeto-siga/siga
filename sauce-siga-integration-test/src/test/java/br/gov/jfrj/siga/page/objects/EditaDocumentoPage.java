@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -83,6 +84,10 @@ public class EditaDocumentoPage {
 	public EditaDocumentoPage(WebDriver driver) {
 		this.driver = driver;
 		util = new IntegrationTestUtil();
+		
+		if(util.getWebElement(driver, By.id("codigoDoc")) == null) {
+			throw new RuntimeException("Esta não é a página de Edição de Documento!");
+		}
 	}
 	
 	public void preencheTipoDestinatario(String tipoDestinatario, String siglaDestinatario) {
@@ -160,7 +165,7 @@ public class EditaDocumentoPage {
 	public void selectTipoDocumento(String tipoDocumento, String modeloDocumento, By checkMudancaTipo) {
 		util.getSelect(driver,tipo).selectByVisibleText(tipoDocumento);
 		util.getWebElement(driver, checkMudancaTipo);
-		if(util.checkCampo(driver, modelo) != null) {
+		if(util.checkCampo(driver, By.id("frm_idMod")) != null) {
 			util.getSelect(driver,modelo).selectByVisibleText(modeloDocumento);
 			util.getWebElement(driver, By.xpath("//td[text() = 'Dados básicos:']"));	
 		}
@@ -180,7 +185,7 @@ public class EditaDocumentoPage {
 		util.getWebElement(driver, By.id("subscritorSelSpan"));
 	}	
 	
-	public void preencheDocumentoExterno(Properties propDocumentos) {
+	public OperacoesDocumentoPage preencheDocumentoExterno(Properties propDocumentos) {
 		preencheOrigem(propDocumentos.getProperty("externo"));
 		preencheDocumento(Boolean.TRUE, Boolean.TRUE, propDocumentos);
 		util.preencheElemento(driver,dataOriginalDocumento, new SimpleDateFormat("ddMMyyyy").format(Calendar.getInstance().getTime()));
@@ -191,15 +196,19 @@ public class EditaDocumentoPage {
 		util.preencheElemento(driver,observacaoOrgaoExterno, propDocumentos.getProperty("observacaoOrgaoExterno"));
 		util.preencheElemento(driver,subscritor, propDocumentos.getProperty("subscritorExterno"));
 		botaoOk.click();
+		
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 		
-	public void preencheDocumentoInternoImportado(Properties propDocumentos) {	
+	public OperacoesDocumentoPage preencheDocumentoInternoImportado(Properties propDocumentos) {	
 		preencheOrigem(propDocumentos.getProperty("internoImportado"));
 		util.isElementVisible(driver, botaoOk);
 		selectTipoDocumento("Memorando", "Memorando", By.xpath("//td[text() = 'Dados básicos:']"));
 		preencheDocumentoInterno(propDocumentos, Boolean.TRUE, Boolean.TRUE);
 		util.preencheElemento(driver, numeroOriginal, propDocumentos.getProperty("numeroOriginal"));
 		botaoOk.click();
+		
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
 	public void preencheAcesso() {
@@ -215,5 +224,9 @@ public class EditaDocumentoPage {
 		} else {
 			util.isElementInvisible(driver, By.id("frm_numAntigoDoc"));
 		}
+	}
+	
+	public void esperaBugSauce() {
+		new WebDriverWait(driver, 300).until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/div[4]/div/h3")));	
 	}
 }

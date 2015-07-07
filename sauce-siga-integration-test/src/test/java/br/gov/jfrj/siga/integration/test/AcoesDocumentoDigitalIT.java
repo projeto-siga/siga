@@ -4,29 +4,23 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.support.PageFactory;
-import org.testng.Assert;
-import org.testng.SkipException;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 //Bibliotecas para o saucelabs
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
-import org.testng.annotations.Listeners;
+import org.openqa.selenium.support.PageFactory;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import br.gov.jfrj.siga.page.objects.PortariaPage;
+import br.gov.jfrj.siga.page.objects.PrincipalPage;
+import br.gov.jfrj.siga.page.objects.TransferenciaPage;
 
 import com.saucelabs.common.SauceOnDemandAuthentication;
 import com.saucelabs.common.SauceOnDemandSessionIdProvider;
 import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
-import com.saucelabs.testng.SauceOnDemandTestListener;
 // fim saucelabs
-
-
-import br.gov.jfrj.siga.page.objects.OperacoesDocumentoPage;
-import br.gov.jfrj.siga.page.objects.PortariaPage;
-import br.gov.jfrj.siga.page.objects.PrincipalPage;
-import br.gov.jfrj.siga.page.objects.TransferenciaPage;
 
 //O listener envia o resultado do testng para o saucelab
 //@Listeners({SauceOnDemandTestListener.class})
@@ -40,17 +34,15 @@ public class AcoesDocumentoDigitalIT extends IntegrationTestBase implements Sauc
 	@BeforeClass(dependsOnMethods={"iniciaWebDriver"})
 	public void setUp() {
 		try {
-			efetuaLogin();
-			PrincipalPage principalPage = PageFactory.initElements(driver, PrincipalPage.class);
-			operacoesDocumentoPage = PageFactory.initElements(driver, OperacoesDocumentoPage.class);
-
-			principalPage.clicarBotaoNovoDocumentoEx();			
+			PrincipalPage principalPage = efetuaLogin();			
+			principalPage.clicarBotaoNovoDocumentoEx();		
+			
 			PortariaPage portariaPage = PageFactory.initElements(driver, PortariaPage.class);
-			portariaPage.criaPortaria(propDocumentos);			
-			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div/h2");
+			operacoesDocumentoPage = portariaPage.criaPortaria(propDocumentos);			
+			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new SkipException("Exceção no método setUp!");
+			throw new RuntimeException("Exceção no método setUp!");
 		} 
 	}
 	
@@ -63,7 +55,7 @@ public class AcoesDocumentoDigitalIT extends IntegrationTestBase implements Sauc
 				driver.get(baseURL + "/sigaex/expediente/doc/exibir.action?sigla=" + codigoDocumento);			
 			}
 			
-			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div/h2");
+			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -77,25 +69,21 @@ public class AcoesDocumentoDigitalIT extends IntegrationTestBase implements Sauc
 	@Test(enabled = true, priority = 2)
 	public void assinarDigitalmente() {
 		super.assinarDigitalmente(codigoDocumento, "Nº");
-		//Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[2][contains(., 'Assinatura')]")), "Linha de registro da assinatura não encontrada!");
 	}
 	
 	@Test(enabled = true, priority = 3)
 	public void anexarArquivo() {
-		super.anexarArquivo(propDocumentos.getProperty("arquivoAnexo"));
-		
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + 
-				"[contains(text(), 'Anexo Pendente Assinatura/Conferência')]|//div[h3 = 'Vias']/ul/li[contains(., 'Anexo Pendente Assinatura/Conferência')]")), "Texto 'Anexo Pendente de Assinatura/Conferência' não foi encontrado!");		
+		super.anexarArquivo(propDocumentos.getProperty("arquivoAnexo"));		
+		Assert.assertTrue(operacoesDocumentoPage.isEstadoAtualDocumento("Anexo Pendente Assinatura/Conferência"), "Texto 'Anexo Pendente de Assinatura/Conferência' não foi encontrado!");		
 	}
 	
 	@Test(enabled = true, priority = 3)
 	public void despacharDocumento() {
-		operacoesDocumentoPage.clicarLinkDespacharTransferir();
-		TransferenciaPage transferenciaPage = PageFactory.initElements(driver, TransferenciaPage.class);
+		TransferenciaPage transferenciaPage = operacoesDocumentoPage.clicarLinkDespacharTransferir();
 		transferenciaPage.despacharDocumento(propDocumentos);
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[4][contains(., '" + propDocumentos.getProperty("despacho") + "')]")),
-				"Texto " + propDocumentos.getProperty("despacho") + " não encontrado.");
+		Assert.assertTrue(operacoesDocumentoPage.isDespachoVisivel(propDocumentos.getProperty("despacho")));
 	}
+	
 	// os métodos abaixo são necessários para implementar as interfaces SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider
 	@Override
 	public String getSessionId() {

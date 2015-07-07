@@ -28,10 +28,16 @@ public class PrincipalPage {
 	public PrincipalPage(WebDriver driver) {	
 		this.driver = driver;
 		util = new IntegrationTestUtil();
+		
+		// Verificando se as divs com informações de documento foram carregadas
 		List<WebElement> divs = driver.findElements(By.cssSelector("div.gt-content-box.gt-for-table"));
 		for (WebElement webElement : divs) {
 			new WebDriverWait(driver, 30).until(ExpectedConditions.elementToBeClickable(webElement));
 			webElement.click();
+		}
+		
+		if(util.getWebElement(driver, By.cssSelector("a.gt-btn-small.gt-btn-right")) == null) {
+			throw new RuntimeException("Esta não é a página principal!");
 		}
 	}
 	

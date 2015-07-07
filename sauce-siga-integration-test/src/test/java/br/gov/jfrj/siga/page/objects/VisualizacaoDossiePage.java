@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -25,6 +26,10 @@ public class VisualizacaoDossiePage {
 	public VisualizacaoDossiePage(WebDriver driver) {
 		this.driver = driver;
 		util = new IntegrationTestUtil();
+		
+		if(util.getWebElement(driver, By.xpath("//td[contains(., 'Documentos do Dossiê')]")) == null) {
+			throw new RuntimeException("Esta não é a página de Visualização de Dossiê!");
+		}
 	}
 	
 	public Boolean visualizarDossie() {
@@ -53,8 +58,13 @@ public class VisualizacaoDossiePage {
 		util.getWebElement(driver, By.partialLinkText(codigoDocumento)).click();
 	}
 	
-	public void clicarLinkVisualizarMovimentacoes() {
+	public OperacoesDocumentoPage clicarLinkVisualizarMovimentacoes() {
 		linkVisualizarMovimentacoes.click();
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
+	}
+	
+	public Boolean visualizaConteudoDocumento(String codigoDocumento) {
+		return visualizaConteudo(By.xpath("//p[contains(text(), '"+ codigoDocumento +"')]"));
 	}
 	
 	public Boolean visualizaConteudo(By option) {
@@ -75,5 +85,19 @@ public class VisualizacaoDossiePage {
 	public Boolean visualizaNumeroPagina(String documentoDossie) {
 		clicarLinkDocumentoDossie(documentoDossie);				
 		return visualizaConteudo(By.xpath("//div[contains(@class, 'numeracao') and contains(text(), '" + getNumeroPagina(documentoDossie) +"')]"));
+	}
+	
+	public Boolean isAnexoVisivel(String nomeArquivo) {
+		return util.getWebElement(driver, By.partialLinkText(nomeArquivo)) != null;
+	}
+	
+	public Boolean visualizaConteudoAnexo(String documentoDossie) {
+		return visualizaConteudo(By.xpath("//td[contains(div[@class = 'numeracao'], '" + getNumeroPagina(documentoDossie) +"') "
+				+ "and contains(div[@class = 'anexo'], a[text()='" + documentoDossie +"'])]"));
+	}
+	
+	public Boolean visualizaCertidaoDesentranhamento(String nomeResponsavel) {
+		return visualizaConteudo(By.xpath("//div[@class='documento'][contains(., 'CERTIDÃO DE DESENTRANHAMENTO')"+ 
+				" and contains(., '" + nomeResponsavel + "')]"));
 	}
 }

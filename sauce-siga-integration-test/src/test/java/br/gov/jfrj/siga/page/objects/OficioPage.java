@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 public class OficioPage extends EditaDocumentoPage {
 
@@ -34,7 +35,7 @@ public class OficioPage extends EditaDocumentoPage {
 		super(driver);
 	}
 	
-	public void criaOficio(Properties propDocumentos) {
+	public OperacoesDocumentoPage criaOficio(Properties propDocumentos) {
 		preencheOrigem(propDocumentos.getProperty("internoProduzido"));		
 		selectTipoDocumento("Ofício", "Ofício", By.xpath("//td[contains(., 'Tipo de Autoridade:')]"));
 		util.isElementVisible(driver, tableCkEditor);
@@ -46,5 +47,7 @@ public class OficioPage extends EditaDocumentoPage {
 		//util.getSelect(driver, generoAutoridade).selectByVisibleText(propDocumentos.getProperty("generoAutoridade"));
 		util.preencheElemento(driver, enderecoDestinatario, propDocumentos.getProperty("enderecoDestinatario"));
 		botaoOk.click();
+		esperaBugSauce();
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 }

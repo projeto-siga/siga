@@ -7,6 +7,7 @@ import java.util.Properties;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 import br.gov.jfrj.siga.integration.test.util.IntegrationTestUtil;
 
@@ -35,10 +36,11 @@ public class RedefineNivelAcessoPage {
 		util = new IntegrationTestUtil();
 	}
 	
-	public void redefineNivelAcesso(Properties propDocumentos) {
+	public OperacoesDocumentoPage redefineNivelAcesso(Properties propDocumentos) {
 		util.preencheElemento(driver, data, new SimpleDateFormat("ddMMyyyy").format(Calendar.getInstance().getTime()));
 		util.preencheElemento(driver, responsavel, propDocumentos.getProperty("responsavel"));
 		util.getSelect(driver, nivelAcesso).selectByVisibleText(propDocumentos.getProperty("nivelAcesso"));
 		botaoOk.click();
+		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 }

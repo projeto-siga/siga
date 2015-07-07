@@ -7,6 +7,7 @@ import java.util.Properties;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 import br.gov.jfrj.siga.integration.test.util.IntegrationTestUtil;
 
@@ -32,13 +33,18 @@ public class AnotacaoPage {
 	public AnotacaoPage(WebDriver driver) {
 		this.driver = driver;
 		util = new IntegrationTestUtil();
+		
+		if(!util.isDescricaoPaginaVisivel(driver, "Anotação")) {
+			throw new RuntimeException("Esta não é a página de Anotação!");
+		}
 	}
 	
-	public void fazerAnotacao(Properties propDocumentos) {
+	public OperacoesDocumentoPage fazerAnotacao(Properties propDocumentos) {
 		util.preencheElemento(driver, data, new SimpleDateFormat("ddMMyyyy").format(Calendar.getInstance().getTime()));
 		util.preencheElemento(driver, responsavel, propDocumentos.getProperty("siglaDestinatario"));
 		util.preencheElemento(driver, funcaoResponsavel, propDocumentos.getProperty("funcaoLocalidade"));
 		util.preencheElemento(driver, nota, propDocumentos.getProperty("nota"));
 	    botaoOk.click();
+	    return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 }

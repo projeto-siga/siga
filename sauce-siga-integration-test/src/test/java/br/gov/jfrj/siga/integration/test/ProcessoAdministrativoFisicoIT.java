@@ -4,24 +4,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.PageFactory;
-import org.testng.Assert;
-import org.testng.SkipException;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 //Bibliotecas para o saucelabs
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
-import org.testng.annotations.Listeners;
-
-import com.saucelabs.common.SauceOnDemandAuthentication;
-import com.saucelabs.common.SauceOnDemandSessionIdProvider;
-import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
-import com.saucelabs.testng.SauceOnDemandTestListener;
-//fim saucelabs
+import org.openqa.selenium.support.PageFactory;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import br.gov.jfrj.siga.page.objects.AssinaturaDigitalPage;
 import br.gov.jfrj.siga.page.objects.JuntadaDocumentoPage;
@@ -31,6 +21,11 @@ import br.gov.jfrj.siga.page.objects.PrincipalPage;
 import br.gov.jfrj.siga.page.objects.ProcessoFinanceiroPage;
 import br.gov.jfrj.siga.page.objects.TransferenciaPage;
 import br.gov.jfrj.siga.page.objects.VisualizacaoDossiePage;
+
+import com.saucelabs.common.SauceOnDemandAuthentication;
+import com.saucelabs.common.SauceOnDemandSessionIdProvider;
+import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
+//fim saucelabs
 
 //O listener envia o resultado do testng para o saucelab
 //@Listeners({SauceOnDemandTestListener.class})
@@ -45,24 +40,21 @@ public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase implemen
 	@BeforeClass(dependsOnMethods={"iniciaWebDriver"})
 	public void setUp() {
 		try{
-			efetuaLogin();			
-			operacoesDocumentoPage = PageFactory.initElements(driver, OperacoesDocumentoPage.class);
-			PrincipalPage principalPage = PageFactory.initElements(driver, PrincipalPage.class);
+			PrincipalPage principalPage =  efetuaLogin();			
 			principalPage.clicarBotaoNovoDocumentoEx();
 
 			OficioPage oficioPage = PageFactory.initElements(driver, OficioPage.class);
-			oficioPage.criaOficio(propDocumentos);		
-			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div/h2");
+			operacoesDocumentoPage = oficioPage.criaOficio(propDocumentos);		
+			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento();
 						
 			operacoesDocumentoPage.clicarLinkFinalizar();
-			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div/h2");
+			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento();
 			
-			operacoesDocumentoPage.clicarLinkAssinarDigitalmente();			
-			AssinaturaDigitalPage assinaturaDigitalPage = PageFactory.initElements(driver, AssinaturaDigitalPage.class);
-			assinaturaDigitalPage.registrarAssinaturaDigital(baseURL, codigoDocumento);			
+			AssinaturaDigitalPage assinaturaDigitalPage = operacoesDocumentoPage.clicarLinkAssinarDigitalmente();			
+			operacoesDocumentoPage = assinaturaDigitalPage.registrarAssinaturaDigital(baseURL, codigoDocumento);			
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new SkipException("Exceção no método setUp!");
+			throw new RuntimeException("Exceção no método setUp!");
 		}
 	}
 	
@@ -80,7 +72,7 @@ public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase implemen
 				}	
 			}
 			
-			codigoProcesso = operacoesDocumentoPage.getTextoVisualizacaoDocumento("/html/body/div[4]/div[1]/h2");
+			codigoProcesso = operacoesDocumentoPage.getTextoVisualizacaoDocumento();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -111,38 +103,37 @@ public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase implemen
 	public void juntar() {
 		// Acessar o documento anterior
 		driver.get(baseURL + "/sigaex/expediente/doc/exibir.action?sigla=" + codigoDocumento);	
+		operacoesDocumentoPage = PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 /*		PrincipalPage principalPage = PageFactory.initElements(driver, PrincipalPage.class);
 		principalPage.buscarDocumento(codigoDocumento);*/
 		
 		// Clicar em "Juntar"
-		operacoesDocumentoPage.clicarlinkJuntar();
+		JuntadaDocumentoPage juntadaDocumentoPage = operacoesDocumentoPage.clicarlinkJuntar();
 		
 		// Selecionar o processo - Clicar "OK"
-		JuntadaDocumentoPage juntadaDocumentoPage = PageFactory.initElements(driver, JuntadaDocumentoPage.class);
-		juntadaDocumentoPage.juntarDocumento(propDocumentos, codigoProcesso);	
+		operacoesDocumentoPage = juntadaDocumentoPage.juntarDocumento(propDocumentos, codigoProcesso);	
 		
 		// Clicar no link com o número do processo ao qual o documento foi juntado para retornar à visualização das movimentações do processo
-		util.getWebElement(driver, By.xpath("//tr[contains(@class, 'juntada ')]"));
-		util.getClickableElement(driver, By.partialLinkText(codigoProcesso)).click();
+		operacoesDocumentoPage = operacoesDocumentoPage.clicarLinkDocumentoJuntado(codigoProcesso);
 		
 		// Clicar em "Visualizar Dossiê"
-		operacoesDocumentoPage.clicarLinkVisualizarDossie();
+		VisualizacaoDossiePage visualizacaoDossiePage = operacoesDocumentoPage.clicarLinkVisualizarDossie();
 		
-		// Garantir que alguma parte do texto do documento juntado apareça na tela
-		VisualizacaoDossiePage visualizacaoDossiePage = PageFactory.initElements(driver, VisualizacaoDossiePage.class);	
-		Assert.assertTrue(visualizacaoDossiePage.visualizaConteudo(By.xpath("//p[contains(text(), '"+ codigoDocumento +"')]")), "Conteúdo do documento juntado não encontrado!");
-		visualizacaoDossiePage.clicarLinkVisualizarMovimentacoes();
+		// Garantir que alguma parte do texto do documento juntado apareça na tela	
+		Assert.assertTrue(visualizacaoDossiePage.visualizaConteudoDocumento(codigoDocumento), "Conteúdo do documento juntado não encontrado!");
+		operacoesDocumentoPage = visualizacaoDossiePage.clicarLinkVisualizarMovimentacoes();
 	}
 	
 	@Test(enabled = true, priority = 4)
 	public void cancelarJuntada() {
 		// Acessar o documento juntado, por meio do link existente no TR do evento de juntada
-		WebElement linkDocumentoJuntado = util.getClickableElement(driver, By.partialLinkText(codigoDocumento));
-		linkDocumentoJuntado.click();
+/*		WebElement linkDocumentoJuntado = util.getClickableElement(driver, By.partialLinkText(codigoDocumento));
+		linkDocumentoJuntado.click();*/
+		operacoesDocumentoPage = operacoesDocumentoPage.clicarLinkDocumentoJuntado(codigoDocumento);
 		
 		// Clicar em "Desentranhar"
-		operacoesDocumentoPage.clicarLinkDesentranhar();
-		Assert.assertTrue(util.isElementInvisible(driver, By.xpath("//tr[contains(@class, 'juntada ')]")), "Evento de juntada continua visível!");
+		operacoesDocumentoPage = operacoesDocumentoPage.clicarLinkDesentranhar();
+		Assert.assertTrue(operacoesDocumentoPage.isDocumentoJuntadoInvisivel(), "Evento de juntada continua visível!");
 		
 		validaDesentranhamento(codigoProcesso);		
 	}
@@ -153,14 +144,13 @@ public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase implemen
 		super.anexarArquivo(nomeArquivo);
 		
 		// Clicar em "Visualizar Dossiê"
-		operacoesDocumentoPage.clicarLinkVisualizarDossie();
+		VisualizacaoDossiePage visualizacaoDossiePage = operacoesDocumentoPage.clicarLinkVisualizarDossie();
 		
 		// Garantir que o nome do anexo apareça na tela (é a seção OBJETO, da capa do processo)
 		//Assert.assertNotNull(util.getWebElement(driver, By.linkText(nomeArquivo.substring(0, nomeArquivo.indexOf(".")).toLowerCase())), "Nome do arquivo selecionado não encontrado na visualização do Dossiê!");
-		Assert.assertNotNull(util.getWebElement(driver, By.partialLinkText(nomeArquivo.toLowerCase())), "Nome do arquivo selecionado não encontrado na visualização do Dossiê!");
+		Assert.assertNotNull(visualizacaoDossiePage.isAnexoVisivel(nomeArquivo.toLowerCase()), "Nome do arquivo selecionado não encontrado na visualização do Dossiê!");
 
 		// Clicar em "Visualizar Movimentações"
-		VisualizacaoDossiePage visualizacaoDossiePage = PageFactory.initElements(driver, VisualizacaoDossiePage.class);
 		visualizacaoDossiePage.clicarLinkVisualizarMovimentacoes();
 	}
 	
@@ -186,49 +176,47 @@ public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase implemen
 	@Test(enabled = true, priority = 5)
 	public void criarVolume() {
 		// Clicar em "Abrir Novo Volume"
-		operacoesDocumentoPage.clicarLinkAbrirNovoVolume();
+		operacoesDocumentoPage = operacoesDocumentoPage.clicarLinkAbrirNovoVolume();
 						
 		// Garantir que os textos "1º Volume - Apensado" e "2º Volume - Aguardando Andamento" apareçam na tela	
-		WebElement volume1 = util.getWebElement(driver, By.xpath("//div[h3 = 'Volumes']/ul/li[1][contains(., 'Apensado')]"));
-		WebElement volume2 = util.getWebElement(driver, By.xpath("//div[h3 = 'Volumes']/ul/li[2][contains(., 'Aguardando Andamento')]"));
+/*		WebElement volume1 = util.getWebElement(driver, By.xpath("//div[h3 = 'Volumes']/ul/li[1][contains(., 'Apensado')]"));
+		WebElement volume2 = util.getWebElement(driver, By.xpath("//div[h3 = 'Volumes']/ul/li[2][contains(., 'Aguardando Andamento')]"));*/
 		
-		Assert.assertTrue(volume1 != null && volume2 != null, "Textos 'V01  -  Apensado' e 'V02  -  Aguardando Andamento' não encontrados!");
+		Assert.assertTrue(operacoesDocumentoPage.isNovoVolumeVisivel("Apensado", "Aguardando Andamento"), "Textos 'V01  -  Apensado' e 'V02  -  Aguardando Andamento' não encontrados!");
 		
 		// Clicar sobre a segunda ocorrência do link "Despachar/Transferir"
-		operacoesDocumentoPage.clicarLinkDespacharTransferir();
+		TransferenciaPage transferenciaPage = operacoesDocumentoPage.clicarLinkDespacharTransferir();
 		
 		// Selecionar um atendente qualquer - Clicar "OK"
-		TransferenciaPage transferenciaPage = PageFactory.initElements(driver, TransferenciaPage.class);
 		transferenciaPage.transferirDocumento(propDocumentos);
 		
 		// Garantir que os textos "1º Volume - Apensado" e "2º Volume - Caixa de Entrada (Digital)"		
-		volume1 = util.getWebElement(driver, By.xpath("//div[h3 = 'Volumes']/ul/li[1][contains(., 'Apensado')]"));
-		volume2 = util.getWebElement(driver, By.xpath("//div[h3 = 'Volumes']/ul/li[2][contains(., 'A Receber (Físico)')]"));
+/*		volume1 = util.getWebElement(driver, By.xpath("//div[h3 = 'Volumes']/ul/li[1][contains(., 'Apensado')]"));
+		volume2 = util.getWebElement(driver, By.xpath("//div[h3 = 'Volumes']/ul/li[2][contains(., 'A Receber (Físico)')]"));*/
 		
-		Assert.assertTrue(volume1 != null && volume2 != null, "Textos 'V01  -  Apensado' e 'V02  -  A Receber (Físico)' não encontrados!");
+		Assert.assertTrue(operacoesDocumentoPage.isNovoVolumeVisivel("Apensado", "A Receber (Físico)"), "Textos 'V01  -  Apensado' e 'V02  -  A Receber (Físico)' não encontrados!");
 		
 		// Clicar em "Desfazer Transferência"
-		operacoesDocumentoPage.clicarLinkDesfazerTransferencia();
+		operacoesDocumentoPage = operacoesDocumentoPage.clicarLinkDesfazerTransferencia();
 		
 		// Garantir que "2º Volume - Aguardando Andamento" apareça na tela
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//h3[contains(text(), 'Volume - Aguardando Andamento')]|//div[h3 = 'Volumes']/ul/li[2][contains(., 'Aguardando Andamento')]")),
+		Assert.assertTrue(operacoesDocumentoPage.isVolumeAssinado(),
 				"'Texto 2º Volume - Aguardando Andamento' não encontrado!");
 	}
 	
 	@Test(enabled = true, priority = 6)
 	public void criarSubprocesso() {
 		// Clicar em "Criar Subprocesso"
-		operacoesDocumentoPage.clicarLinkCriarSubprocesso();
+		ProcessoFinanceiroPage processoFinanceiroPage = operacoesDocumentoPage.clicarLinkCriarSubprocesso();
 		
 		// Selecionar um subscritor qualquer - Clicar "OK"
-		ProcessoFinanceiroPage processoFinanceiroPage = PageFactory.initElements(driver, ProcessoFinanceiroPage.class);
-		processoFinanceiroPage.criaProcessoFinanceiro(propDocumentos, Boolean.FALSE, "Processo de Execução Orçamentária e Financeira");
+		operacoesDocumentoPage = processoFinanceiroPage.criaProcessoFinanceiro(propDocumentos, Boolean.FALSE, "Processo de Execução Orçamentária e Financeira");
 		
 		// Clicar em Finalizar
-		operacoesDocumentoPage.clicarLinkFinalizar();
+		operacoesDocumentoPage = operacoesDocumentoPage.clicarLinkFinalizar();
 		
 		// Garantir que o texto "<Número do processo principal>.01" apareça na tela 
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//h2[contains(text(), '" + codigoProcesso + ".01')]")));		
+		Assert.assertNotNull(operacoesDocumentoPage.isNumeroProcessoVisivel(codigoProcesso + ".01"));		
 	}
 	// os métodos abaixo são necessários para implementar as interfaces SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider
 	@Override

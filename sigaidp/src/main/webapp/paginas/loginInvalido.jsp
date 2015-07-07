@@ -4,7 +4,7 @@
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
 <siga:pagina titulo="Login Inválido" desabilitarbusca="sim"
-	incluirJs="jquery.placeholder.js">
+	incluirJs="/siga/javascript/jquery.placeholder.js">
 
 	<script type="text/javascript">
 		/*  converte para mai￺scula a sigla do estado  */

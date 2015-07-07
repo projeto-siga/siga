@@ -84,7 +84,7 @@ ${meta}
 <!-- <link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/development-bundle/themes/base/jquery.ui.all.css"
 	type="text/css" media="screen, projection"> -->
 <c:if test="${not empty incluirJs}">
-    <script src="/siga/javascript/${incluirJs}" type="text/javascript"></script>
+    <script src="${incluirJs}" type="text/javascript"></script>
 </c:if>
 		
 <%-- Desabilitado porque requer o jquery 1.7 ou maior. 	

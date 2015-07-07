@@ -4,7 +4,7 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
-<siga:pagina titulo="P&aacute;gina Inicial" incluirJs="principal.js">
+<siga:pagina titulo="P&aacute;gina Inicial" incluirJs="/siga/javascript/principal.js">
 
 	<div class="gt-bd">
 		<div class="gt-content">

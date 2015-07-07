@@ -47,4 +47,12 @@ public class SrAcordoSelecao extends Selecao<SrAcordo>{
         return true;
     }
 
+    public void carregarDadosParaView(SrAcordo acordo) {
+        if (acordo != null) {
+            this.setId(acordo.getId());
+            this.setDescricao(acordo.getDescricao());
+            this.setSigla(acordo.getSigla());
+        }
+    }
+
 }

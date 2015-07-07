@@ -47,4 +47,12 @@ public class SrAcaoSelecao extends Selecao<SrAcao> {
         return true;
     }
 
+    public void carregarDadosParaView(SrAcao acao) {
+        if (acao != null) {
+            this.setId(acao.getId());
+            this.setDescricao(acao.getDescricao());
+            this.setSigla(acao.getSigla());
+        }
+    }
+
 }

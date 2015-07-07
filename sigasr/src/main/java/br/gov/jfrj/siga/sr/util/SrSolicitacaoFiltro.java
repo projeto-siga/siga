@@ -84,34 +84,41 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
         if (cadastranteSel != null) {
             this.setCadastrante(cadastranteSel.buscarObjeto());
+            cadastranteSel.carregarDadosParaView(this.getCadastrante());
         }
 
         if (lotaCadastranteSel != null) {
             this.setLotaCadastrante(lotaCadastranteSel.buscarObjeto());
+            this.lotaCadastranteSel.carregarDadosParaView(this.getLotaCadastrante());
         }
 
         if (solicitanteSel != null) {
             this.setSolicitante(solicitanteSel.buscarObjeto());
+            solicitanteSel.carregarDadosParaView(this.getSolicitante());
         }
 
         if (lotaSolicitanteSel != null) {
             this.setLotaSolicitante(lotaSolicitanteSel.buscarObjeto());
+            lotaSolicitanteSel.carregarDadosParaView(this.getLotaSolicitante());
         }
 
         if (acaoSel != null) {
             this.setAcao(acaoSel.getObjeto());
+            acaoSel.carregarDadosParaView(this.getAcao());
         }
 
         if (acordoSel != null) {
             this.setAcordo(acordoSel.buscarObjeto());
+            acordoSel.carregarDadosParaView(this.getAcordo());
         }
 
         if (situacao != null && situacao.getIdMarcador() != null) {
             this.setSituacao(CpMarcador.AR.findById(situacao.getIdMarcador()));
         }
 
-        if (getItemConfiguracaoSel() != null) {
+        if (itemConfiguracaoSel != null) {
             this.setItemConfiguracao(getItemConfiguracaoSel().buscarObjeto());
+            itemConfiguracaoSel.carregarDadosParaView(this.getItemConfiguracao());
         }
     }
 

@@ -39,6 +39,8 @@ import java.util.logging.Logger;
 
 import javax.naming.NamingException;
 
+import net.sf.ehcache.CacheManager;
+
 import org.hibernate.cfg.Configuration;
 import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;
@@ -552,7 +554,7 @@ public class SigaCpSinc {
 		}
 		long total = (System.currentTimeMillis()-inicio)/1000;
 		log("Tempo total de execução: " + total + " segundos (" + total/60 +" min)" );
-
+		CacheManager.getInstance().shutdown();
 	}
 
 	private void logComDestaque(String msg) {

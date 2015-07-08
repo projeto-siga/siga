@@ -4,11 +4,14 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
-
 <c:catch var="selectException">
 	<c:if test="${empty exceptionGeral or empty exceptionStackGeral}">
 		<%
+			
  			java.lang.Throwable t = (Throwable) pageContext.getRequest().getAttribute("exception");
+			if (t == null){
+				t = (Throwable) exception;
+			}
  			if (t != null) {
  				if (!t.getClass().getSimpleName().equals("AplicacaoException") && t.getCause() != null) {
  					if (t.getCause().getClass().getSimpleName().equals("AplicacaoException")) {

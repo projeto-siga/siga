@@ -6,8 +6,10 @@
 <c:catch var="selectException">
 	<c:if test="${empty exceptionGeral or empty exceptionStackGeral}">
 		<%
-			//java.lang.Throwable t = (Throwable) pageContext.getRequest().getAttribute("exception");
-			java.lang.Throwable t = exception;
+			java.lang.Throwable t = (Throwable) pageContext.getRequest().getAttribute("exception");
+			if (t == null){
+				t = (Throwable) exception;
+			}
 			if (t != null) {
 				if (!t.getClass().getSimpleName()
 						.equals("AplicacaoException")

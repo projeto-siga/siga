@@ -165,6 +165,10 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 				&& situacao.getIdMarcador() > 0)
 			subquery.append(" and situacao.cpMarcador.idMarcador = "
 					+ situacao.getIdMarcador());
+			subquery.append(" and (situacao.dtIniMarca is null or "
+					+ "situacao.dtIniMarca < sysdate) ");
+			subquery.append(" and (situacao.dtFimMarca is null or "
+					+ "situacao.dtFimMarca > sysdate) ");
 		if (atendente != null)
 			subquery.append("and situacao.dpPessoaIni.idPessoa = "
 					+ atendente.getIdInicial());

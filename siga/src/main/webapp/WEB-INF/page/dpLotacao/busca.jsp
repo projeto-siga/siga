@@ -30,7 +30,7 @@
 			</tr>
 			<tr>
 				<td><label>Nome ou Sigla:</label></td>
-				<td><input type="text" name="nome" value="${nome}" /></td>
+				<td><input type="text" name="sigla" value="${sigla}" /></td>
 			</tr>
 			<tr>
 				<td><label>Órgão:</label></td>

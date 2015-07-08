@@ -39,7 +39,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	@Get
 	@Post
 	@Path({"/app/lotacao/buscar", "/lotacao/buscar.action"})
-	public void busca(String nome, Long idOrgaoUsu, Integer offset, String postback) throws Exception{
+	public void busca(String sigla, Long idOrgaoUsu, Integer offset, String postback) throws Exception{
 		if (postback == null)
 			orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 		else
@@ -47,10 +47,10 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		
 		this.getP().setOffset(offset);
 		
-		if (nome == null)
-			nome = "";
+		if (sigla == null)
+			sigla = "";
 		
-		super.aBuscar(nome, postback);
+		super.aBuscar(sigla, postback);
 		
 		result.include("param", getRequest().getParameterMap());
 		result.include("request",getRequest());
@@ -58,7 +58,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		result.include("tamanho",getTamanho());
 		result.include("orgaosUsu", getOrgaosUsu());
 		result.include("idOrgaoUsu",orgaoUsu);
-		result.include("nome",nome);
+		result.include("sigla",sigla);
 		result.include("postbak",postback);
 		result.include("offset",offset);
 	}

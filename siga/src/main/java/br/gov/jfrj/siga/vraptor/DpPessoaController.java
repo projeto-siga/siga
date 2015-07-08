@@ -64,7 +64,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	@Get
 	@Post
 	@Path({"/app/pessoa/buscar","/app/cosignatario/buscar", "/pessoa/buscar.action", "/cosignatario/buscar.action"})
-	public void buscar(String nome, String postback, Integer offset, Long idOrgaoUsu, DpLotacaoSelecao lotacaoSel) throws Exception {
+	public void buscar(String sigla, String postback, Integer offset, Long idOrgaoUsu, DpLotacaoSelecao lotacaoSel) throws Exception {
 		final DpLotacao lotacaoTitular = getLotaTitular();
 		if ( postback == null && lotacaoTitular != null ) {
 			orgaoUsu = lotacaoTitular.getIdOrgaoUsuario();
@@ -76,11 +76,11 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		}
 		this.getP().setOffset(offset);
 		
-		if (nome == null){
-			nome = "";
+		if (sigla == null){
+			sigla = "";
 		}
 		
-		super.aBuscar(nome, postback);
+		super.aBuscar(sigla, postback);
 		
 		result.include("param", getRequest().getParameterMap());
 		result.include("request",getRequest());
@@ -89,7 +89,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		result.include("orgaosUsu",getOrgaosUsu());
 		result.include("lotacaoSel",lotacaoSel == null ? new DpLotacaoSelecao() : lotacaoSel);
 		result.include("idOrgaoUsu",orgaoUsu);
-		result.include("nome",nome);
+		result.include("sigla",sigla);
 		result.include("postbak",postback);
 		result.include("offset",offset);
 	}

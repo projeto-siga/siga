@@ -33,7 +33,7 @@ function sbmt(offset) {
 				<label>Nome ou Matrícula:</label>
 			</td>
 			<td>
-				<input type="text" name="nome" value="${nome}" />
+				<input type="text" name="sigla" value="${sigla}" />
 			</td>
 		</tr>
 		<tr>

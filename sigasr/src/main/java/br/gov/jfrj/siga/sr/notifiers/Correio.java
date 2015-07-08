@@ -10,6 +10,7 @@ import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
+import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
 import br.gov.jfrj.siga.sr.vraptor.SolicitacaoController;
 import freemarker.template.TemplateException;
 
@@ -36,13 +37,18 @@ public class Correio {
 		return SigaBaseProperties.getString("servidor.smtp.usuario.remetente");
 	}
 
-	public void notificarAtendente(SrMovimentacao movimentacao) {
-		SrSolicitacao solicitacao = movimentacao.getSolicitacao().getSolicitacaoAtual();
+	public void notificarAtendente(SrMovimentacao movimentacao, SrSolicitacao sol) {
+		
 		List<String> recipients = movimentacao.getEmailsNotificacaoAtendende();
 
 		if (!recipients.isEmpty()) {
-			String assunto = MOVIMENTACAO_DA_SOLICITACAO + solicitacao.getCodigo();
-			String conteudo = getConteudoComSolicitacaoEMovimentacao(TEMPLATE_NOTIFICAR_ATENDENTE, movimentacao, solicitacao);
+			String assunto = "";
+			if (movimentacao.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
+		        assunto = "Fechamento de solicitação escalonada a partir de " + sol.getCodigo();
+			else
+		        assunto = "Solicitação " + sol.getCodigo() + " aguarda atendimento";
+			
+			String conteudo = getConteudoComSolicitacaoEMovimentacao(TEMPLATE_NOTIFICAR_ATENDENTE, movimentacao, sol);
 			enviar(assunto, conteudo, recipients);
 		}
 	}

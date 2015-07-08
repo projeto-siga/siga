@@ -4,12 +4,15 @@
 <c:if test="${locaisDisponiveis.size() > 1}">
 	<div class="gt-form-row gt-width-66">
 		<label>Local</label>
-		<siga:select id="local" 
-		             name="solicitacao.local" 
-		             list="locaisDisponiveis" 
-		             listValue="nomeComplexo" 
-		             listKey="idComplexo" 
-		             value="${solicitacao.local.idComplexo}" />
+		<select name="solicitacao.local" value="${solicitacao.local.idComplexo}" id="local">
+        <c:forEach items="${locaisDisponiveis.keySet()}" var="orgao">
+                <optgroup label="${orgao.acronimoOrgaoUsu}">
+                <c:forEach items="${locaisDisponiveis.get(orgao)}" var="local">
+                        <option value="${local.idComplexo}">${local.nomeComplexo}</option>
+                </c:forEach>
+                </optgroup>
+        </c:forEach>
+		</select>
 	</div>
 	<script>
 		$("#local").change(function() {

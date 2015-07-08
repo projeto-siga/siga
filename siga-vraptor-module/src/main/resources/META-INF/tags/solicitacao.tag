@@ -52,6 +52,33 @@
 	</table>
 </div>
 
+<div class="legenda-prioridade">
+			<div class="PRIORIDADE-IMEDIATO">
+				<span class="cor"></span>
+				<span class="descricao">Imediata</span>
+			</div>
+			
+			<div class="PRIORIDADE-ALTO">
+				<span class="cor"></span>
+				<span class="descricao">Alta</span>
+			</div>
+			
+			<div class=PRIORIDADE-MEDIO>
+				<span class="cor"></span>
+				<span class="descricao">M&eacute;dia</span>
+			</div>
+			
+			<div class="PRIORIDADE-BAIXO">
+				<span class="cor"></span>
+				<span class="descricao">Baixa</span>
+			</div>
+			
+			<div class="PRIORIDADE-PLANEJADO">
+				<span class="cor"></span>
+				<span class="descricao">Planejada</span>
+			</div>
+</div>
+
 <script type="text/javascript">
 	var tabelaDinamica = new TabelaDinamica('#solicitacoes_table', '${modoExibicao}').criar();
 
@@ -101,12 +128,16 @@
 	});
 
 	function formatarDetalhes(data) {
-		return tabelaDinamica.formatarDetalhes(data, tabelaDinamica.objetoTabela);
+		var quantidadeColunas = tabelaDinamica.table.table.find('th').size();
+		return tabelaDinamica.formatarDetalhes(data, tabelaDinamica.objetoTabela, quantidadeColunas);
 	}
 
 	function solicitacoesRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-		if (aData && aData.prioridadeSolicitacaoVO)
-			$(nRow).addClass('PRIORIDADE-' + aData.prioridadeSolicitacaoVO.prioridade);
+		if (aData) 
+			if (aData.prioridadeSolicitacaoVO)
+				$(nRow).addClass('PRIORIDADE-' + aData.prioridadeSolicitacaoVO.prioridade);
+			else 
+				$(nRow).addClass('PRIORIDADE-' + aData.prioridadeTecnica);
 
 		$(nRow).attr('id', aData.idSolicitacao);
 		$(nRow).attr('data-json', JSON.stringify(aData));

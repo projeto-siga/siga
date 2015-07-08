@@ -90,42 +90,40 @@ public class SrSolicitacaoListaVO {
         if (telaDeListas) {
             colunasVO.add(new ColunasVO("#", "prioridadeListaFormatada", "gt-celula-nowrap solicitacao-dados solicitacao-prioridade numero-solicitacao", LARGURA_COLUNA_PRIORIDADE));
             colunasVO.addAll(getColunasEmComum());
-            colunasVO.add(new ColunasVO("Lota\u00e7\u00e3o", "lotaAtendenteFormatada", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
-            colunasVO.add(new ColunasVO("\u00daltima Movimenta\u00e7\u00e3o", ULTIMA_MOVIMENTACAOFORMATADA, GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
 
             if (podeRemover || podePriorizar)
                 colunasVO.add(new ColunasVO("", "botaoRemoverPriorizar", "gt-celula-nowrap solicitacao-dados solicitacao-remover", LARGURA_COLUNA_REMOVER_PRIORIZAR));
         } else {
-            colunasVO.add(new ColunasVO(SigaPlayUtil.botaoExpandir(), "botaoExpandir", "hide-sort-arrow bt-expandir-tabela gt-celula-nowrap details-control"));
-            colunasVO.addAll(getColunasEmComum());
-            colunasVO.add(new ColunasVO("Situa\u00e7\u00e3o", "marcadoresEmHtml", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
-            colunasVO.add(new ColunasVO("\u00daltimo Andamento", ULTIMA_MOVIMENTACAOFORMATADA, GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
-            colunasVO.add(new ColunasVO("Prioridade", "prioridadeFormatada", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
+        	colunasVO.add(new ColunasVO(SigaPlayUtil.botaoExpandir(), "botaoExpandir", "hide-sort-arrow bt-expandir-tabela gt-celula-nowrap details-control"));
+			colunasVO.addAll(getColunasEmComum());	
         }
 
         return colunasVO;
     }
 
     private List<ColunasVO> getColunasEmComum() {
-        List<ColunasVO> colunasVO = new ArrayList<ColunasVO>();
-        colunasVO.add(new ColunasVO("C\u00f3digo", "codigoFormatado", "gt-celula-nowrap solicitacao-codigo", LARGURA_COLUNA_CODIGO));
-        colunasVO.add(new ColunasVO("Teor", "teorFormatado", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
-        colunasVO.add(new ColunasVO("Solicitante", "solicitanteFormatado", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
-        colunasVO.add(new ColunasVO("Aberto", "dtRegString", GT_CELULA_NOWRAP_SOLICITACAO_DADOS));
-
-        return colunasVO;
+    	List<ColunasVO> colunasVO = new ArrayList<ColunasVO>();
+		colunasVO.add(new ColunasVO("Código", "codigoFormatado", "gt-celula-nowrap numero-solicitacao solicitacao-codigo", LARGURA_COLUNA_CODIGO));
+		colunasVO.add(new ColunasVO("Teor", "teorFormatado", "gt-celula-nowrap solicitacao-dados"));
+		colunasVO.add(new ColunasVO("Solicitante", "solicitanteFormatado", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
+		colunasVO.add(new ColunasVO("Aberto", "dtRegString", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
+		colunasVO.add(new ColunasVO("Movimentado", "dtUltimaMovimentacaoString", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO, false, false, true));
+		colunasVO.add(new ColunasVO("Prioridade", "prioridadeFormatada", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO, false, false, true));
+		colunasVO.add(new ColunasVO("Prior. Tecnica", "prioridadeTecnicaFormatada", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
+		colunasVO.add(new ColunasVO("Prazo", "prazo", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
+		colunasVO.add(new ColunasVO("Situação", "marcadoresEmHtml", "gt-celula-nowrap solicitacao-dados", null, false, false, true));
+		colunasVO.add(new ColunasVO("Último Andamento", "ultimaMovimentacaoformatada", "gt-celula-nowrap solicitacao-dados", null, false, false, true));
+		return colunasVO;
     }
 
     public List<ColunasVO> gerarColunasDetalhamentoSolicitacao(boolean telaDeListas) {
-        List<ColunasVO> colunasDetalhamentoSolicitacao = new ArrayList<ColunasVO>();
-
-        colunasDetalhamentoSolicitacao.add(new ColunasVO("Teor", "teorFormatado"));
-        colunasDetalhamentoSolicitacao.add(new ColunasVO("Solicitante", "solicitanteFormatado"));
-        colunasDetalhamentoSolicitacao.add(new ColunasVO("Prioridade", "prioridadeFormatada"));
-        colunasDetalhamentoSolicitacao.add(new ColunasVO("Situa\u00e7\u00e3o", "marcadoresEmHtmlDetalhes"));
-        colunasDetalhamentoSolicitacao.add(new ColunasVO("\u00datima Movimenta\u00e7\u00e3o", ULTIMA_MOVIMENTACAOFORMATADA));
-
-        return colunasDetalhamentoSolicitacao;
+List<ColunasVO> colunasDetalhamento = new ArrayList<ColunasVO>();
+		
+		colunasDetalhamento.add(new ColunasVO("Teor", "teorFormatado"));
+		colunasDetalhamento.add(new ColunasVO("Situação", "marcadoresEmHtmlDetalhes", "", null, true, true, true));
+		colunasDetalhamento.add(new ColunasVO("Última Movimentação", "ultimaMovimentacaoformatada"));
+		
+		return colunasDetalhamento;
     }
 
     public String toJson() {

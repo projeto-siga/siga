@@ -602,7 +602,7 @@ public class Application extends SrController {
         }
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(idSolicitacao);
         SrLista lista = SrLista.AR.findById(idLista);
-        solicitacao.incluirEmLista(lista, getCadastrante(), getLotaTitular(), prioridade, naoReposicionarAutomatico);
+       // solicitacao.incluirEmLista(lista, getCadastrante(), getLotaTitular(), prioridade, naoReposicionarAutomatico);
         exibir(idSolicitacao, todoOContexto(), ocultas());
     }
 
@@ -716,7 +716,7 @@ public class Application extends SrController {
 
     public void alterarPrazo(Long id, String motivo, String calendario, String horario) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
-        sol.alterarPrazo(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), motivo, calendario, horario);
+        //sol.alterarPrazo(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), motivo, calendario, horario);
         exibir(id, todoOContexto(), ocultas());
     }
 

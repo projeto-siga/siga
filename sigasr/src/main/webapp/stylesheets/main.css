@@ -1,5 +1,6 @@
 .dataTables_div {
-    padding-top: 10px;
+    padding-top: 10px;`
+    min-width: 400px;
 }
 
 .dataTables_length {	
@@ -140,6 +141,7 @@ td.padding-table {
 	font-weight: bold; 
 	border-bottom: 1px solid #ccc !important; 
 	padding: 7px 10px;
+	/*width: 100% !important;*/
 }
 
 .solicitacao-dados {
@@ -157,6 +159,76 @@ td.padding-table {
 
 td.solicitacao-prioridade {
 	cursor:move;
+}
+
+#sortable table { height: 1.5em; line-height: 1.2em; }
+.ui-state-highlight { height: 1.5em; line-height: 1.2em; }
+		
+/** CSS do numero **/
+.numero-solicitacao a {
+	color: black;
+}
+.PRIORIDADE-IMEDIATO .numero-solicitacao a {
+	color: red !important;
+	font-weight: bold;
+}
+.PRIORIDADE-ALTO .numero-solicitacao a {
+	color: #E0E000 !important;
+	font-weight: bold;
+}
+.PRIORIDADE-MEDIO .numero-solicitacao a {
+	color: blue !important;
+	font-weight: bold;
+}
+.PRIORIDADE-BAIXO .numero-solicitacao a {
+	color: green !important;
+	font-weight: bold;
+}
+.PRIORIDADE-PLANEJADO .numero-solicitacao a {
+	color: gray !important;
+	font-weight: bold;
+}
+
+.legenda-prioridade {
+	margin-top: 10px;
+}
+
+/** CSS da leganda **/
+.legenda-prioridade span{
+	display: inline-block;
+}
+.legenda-prioridade .cor {
+	height: 15px;
+	width: 15px;
+	display: inline-block;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.legenda-prioridade div {
+	display: inline-block;
+}
+.legenda-prioridade .descricao {
+	display: block;
+    margin-left: 20px;
+    margin-right: 15px;
+    margin-top: -18px;
+}
+.legenda-prioridade .PRIORIDADE-IMEDIATO .cor {
+	background-color: red;
+}
+.legenda-prioridade .PRIORIDADE-ALTO .cor {
+	background-color: #E0E000;
+}
+.legenda-prioridade .PRIORIDADE-MEDIO .cor {
+	background-color: blue;
+}
+.legenda-prioridade .PRIORIDADE-BAIXO .cor {
+	background-color: green;
+}
+.legenda-prioridade .PRIORIDADE-PLANEJADO .cor {
+	background-color: gray;
 }
 
 .siga-multiple-select {

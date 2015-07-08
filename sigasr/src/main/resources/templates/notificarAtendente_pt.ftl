@@ -6,21 +6,22 @@
 	</p>
 	<blockquote>
 		<p>Tipo de movimenta&ccedil;&atilde;o: ${(movimentacao.tipoMov.nome)!}</p>
-		<p>${(movimentacao.descrMovimentacao)?default("")}</p>
-		<p>
-			Por ${(movimentacao.cadastrante.descricaoIniciaisMaiusculas)!}
-				(${(movimentacao.lotaCadastrante.siglaLotacao)!})
-		</p>
+		<p>Atendente: <#if (movimentacao.atendente)??> ${(movimentacao.atendente.descricaoIniciaisMaiusculas)!}, </#if>
+                        ${(movimentacao.lotaAtendente.siglaLotacao)!}</p>
+		<p>Solicitante: ${(sol.solicitante.descricaoIniciaisMaiusculas)!}, ${(sol.lotaSolicitante.siglaLotacao)!} </p>
+		<p>${(sol.descrSolicitacao)!}</p>
 	</blockquote>
+	<#if (movimentacao.tipoMov.idTipoMov == models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)>
 	<p>
-		<#if (sol.solicitacaoPai.atendente)??>
-			<#assign descricao = (sol.solicitacaoPai.atendente.descricaoIniciaisMaiusculas)!>
+		<#if (sol.atendente != null)>
+        	<#assign descricao = (sol.atendente.descricaoIniciaisMaiusculas)!>
 		<#else>
-			<#assign descricao = (sol.solicitacaoPai.lotaAtendente.descricao)!>
+			<#assign descricao = (sol.lotaAtendente.descricao)!> 
 		</#if>
-		Este email foi enviado porque <b>${(descricao)!}</b> &eacute; atendente atual da solicita&ccedil;&atilde;o <b>${(sol.solicitacaoPai.codigo)!}</b>, 
-		que gerou a solicita&ccedil;&atilde;o acima atrav&eacute;s da a&ccedil;&atilde;o <b>Escalonar</b>.
+		Este email foi enviado porque <b>${descricao}</b> é atendente atual da solicitação <b>${(sol.codigo)!}</b>,
+		que gerou a solicitação acima através da ação <b>Escalonar</b>.
 	</p>
+	</#if>
 	<p>
 		Para acessar a solicita&ccedil;&atilde;o, clique <a href="${link}">aqui</a>.
 	</p>

@@ -26,6 +26,9 @@ import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.validator.ValidationMessage;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -43,6 +46,7 @@ import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacaoMap;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
+import br.gov.jfrj.siga.sr.model.SrConfiguracaoBL;
 import br.gov.jfrj.siga.sr.model.SrFormaAcompanhamento;
 import br.gov.jfrj.siga.sr.model.SrGravidade;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
@@ -385,6 +389,7 @@ public class SolicitacaoController extends SrController {
         result.include("movs", movs);
         result.include("atendentes", atendentes);
         result.include("motivosPendencia",SrTipoMotivoPendencia.values());
+        result.include(PRIORIDADE_LIST, SrPrioridade.values());
     }
 
     @Path("/exibirLocalRamalEMeioContato")
@@ -575,7 +580,7 @@ public class SolicitacaoController extends SrController {
         }
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(idSolicitacao);
         SrLista lista = SrLista.AR.findById(idLista);
-        solicitacao.incluirEmLista(lista, getCadastrante(), getLotaTitular(), prioridade, naoReposicionarAutomatico);
+        solicitacao.incluirEmLista(lista, getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), prioridade, naoReposicionarAutomatico);
         result.redirectTo(this).exibir(idSolicitacao, todoOContexto(), ocultas());
     }
 
@@ -618,8 +623,22 @@ public class SolicitacaoController extends SrController {
         solicitacao = solicitacao.getSolicitacaoAtual();
         Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
 
+        CpConfiguracao filtro = new CpConfiguracao();
+        filtro.setDpPessoa(getTitular());
+        filtro.setLotacao(getLotaTitular());
+        filtro.setBuscarPorPerfis(true);
+        filtro.setCpTipoConfiguracao((CpTipoConfiguracao)CpTipoConfiguracao.AR.findById(CpTipoConfiguracao.TIPO_CONFIG_SR_ESCALONAMENTO_SOL_FILHA));
+        CpSituacaoConfiguracao situacao = SrConfiguracaoBL.get().buscaSituacao(filtro,
+                        new int[] { 0 }, null);
+        boolean criarFilhaDefault = false;
+        if (situacao != null
+                        && (situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE
+                        || situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT))
+                criarFilhaDefault = true;
+
         result.include(SOLICITACAO, solicitacao);
         result.include("acoesEAtendentes", acoesEAtendentes);
+        result.include("criarFilhaDefault", criarFilhaDefault);
         result.include(TIPO_MOTIVO_ESCALONAMENTO_LIST, SrTipoMotivoEscalonamento.values());
     }
 
@@ -661,11 +680,13 @@ public class SolicitacaoController extends SrController {
             mov.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao.getId()));
             mov.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
             mov.setLotaAtendente(atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente);
+            // Edson: isso abaixo talvez pudesse valer pra todas as movimentacoes e ficar la no
+            // mov.checarCampos()
             if (solicitacao.getAtendente() != null && !mov.getLotaAtendente().equivale(solicitacao.getAtendente().getLotacao()))
                 mov.setAtendente(null);
             mov.setMotivoEscalonamento(motivo);
             mov.setDesignacao(SrConfiguracao.AR.findById(idDesignacao));
-            mov.setDescrMovimentacao("Motivo: " + mov.getMotivoEscalonamento() + "; Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() + "; A\u00e7\u00e3o: " + mov.getAcao().getTituloAcao()
+            mov.setDescrMovimentacao("Motivo: " + mov.getMotivoEscalonamento().getDescrTipoMotivoEscalonamento() + "; Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() + "; A\u00e7\u00e3o: " + mov.getAcao().getTituloAcao()
                     + "; Atendente: " + mov.getLotaAtendente().getSigla());
             mov.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
             result.redirectTo(this).exibir(solicitacao.getIdSolicitacao(), todoOContexto(), ocultas());
@@ -756,10 +777,10 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(id, todoOContexto(), ocultas());
     }
 
-    @Path("/exibir/alterarPrazo")
-    public void alterarPrazo(Long id, String motivo, String calendario, String horario) throws Exception {
+    @Path("/exibir/alterarPrioridade")
+    public void alterarPrioridade(Long id, SrPrioridade prioridade) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
-        sol.alterarPrazo(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), motivo, calendario, horario);
+        sol.alterarPrioridade(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), prioridade);
         result.redirectTo(this).exibir(id, todoOContexto(), ocultas());
     }
 

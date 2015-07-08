@@ -211,8 +211,15 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
         StringBuilder subquery = new StringBuilder();
 
-        if (getSituacao() != null && getSituacao().getIdMarcador() != null && getSituacao().getIdMarcador() > 0)
-            subquery.append(" and situacao.cpMarcador.idMarcador = " + getSituacao().getIdMarcador());
+        if (getSituacao() != null && getSituacao().getIdMarcador() != null && getSituacao().getIdMarcador() > 0){
+        	subquery.append(" and situacao.cpMarcador.idMarcador = "
+					+ getSituacao().getIdMarcador());
+			subquery.append(" and (situacao.dtIniMarca is null or "
+					+ "situacao.dtIniMarca < sysdate) ");
+			subquery.append(" and (situacao.dtFimMarca is null or "
+					+ "situacao.dtFimMarca > sysdate) ");
+        }
+            
         if (Filtros.deveAdicionar(getAtendente()))
             subquery.append("and situacao.dpPessoaIni.idPessoa = " + getAtendente().getIdInicial());
         else if (Filtros.deveAdicionar(getLotaAtendente())) {

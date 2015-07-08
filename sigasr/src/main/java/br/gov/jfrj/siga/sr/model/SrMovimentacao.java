@@ -27,10 +27,13 @@ import org.joda.time.DateTime;
 
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.gov.jfrj.siga.base.util.Catalogs;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.sr.notifiers.Correio;
 import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
 import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
 import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
@@ -105,8 +108,8 @@ public class SrMovimentacao extends ObjetoVraptor {
     @Column(name = "NUM_SEQUENCIA")
     private Long numSequencia;
 
-    @Column(name = "ID_PRIORIDADE")
-    private Long prioridade;
+    @Enumerated
+    public SrPrioridade prioridade;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PESQUISA")
@@ -218,7 +221,8 @@ public class SrMovimentacao extends ObjetoVraptor {
     public String getDtIniString() {
         SigaPlayCalendar cal = new SigaPlayCalendar();
         cal.setTime(getDtIniMov());
-        return cal.getTempoTranscorridoString(false);
+        return "<span style=\"display: none\">" + new SimpleDateFormat("yyyyMMdd").format(dtIniMov)
+                + "</span>" + cal.getTempoTranscorridoString(false);
     }
 
     public String getDtIniMovDDMMYYHHMM() {
@@ -254,7 +258,7 @@ public class SrMovimentacao extends ObjetoVraptor {
     }
 
     public String getCadastranteString() {
-        return getAtendente().getSigla() + " (" + getLotaAtendente().getSigla() + ")";
+    	return cadastrante.getSigla() + " (" + lotaCadastrante.getSigla() + ")";
     }
 
     public SrMovimentacao salvar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
@@ -278,16 +282,16 @@ public class SrMovimentacao extends ObjetoVraptor {
         getSolicitacao().refresh();
 
         getSolicitacao().atualizarMarcas();
+
+        //notificação usuário
         if (getSolicitacao().getMovimentacaoSetComCancelados().size() > 1
                 && getTipoMov().getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
                 && getSolicitacao().getFormaAcompanhamento() != SrFormaAcompanhamento.ABERTURA
-                && !(getSolicitacao().getFormaAcompanhamento() == SrFormaAcompanhamento.ABERTURA_FECHAMENTO && getTipoMov().getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && getTipoMov()
-                        .getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
+                && !(getSolicitacao().getFormaAcompanhamento() == SrFormaAcompanhamento.ABERTURA_FECHAMENTO && getTipoMov().getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO))
             notificar();
 
-//         Necessaria condicao a parte, pois o solicitante pode escolher nunca receber notificacao (SrFormaAcompanhamento.NUNCA)
-        if (getSolicitacao().isFilha() && getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
-            CorreioHolder.get().notificarAtendente(this); // notifica o atendente da solicitacao pai, caso a filha seja fechada
+        //notificação atendente
+        notificarAtendente();
 
     }
 
@@ -316,6 +320,15 @@ public class SrMovimentacao extends ObjetoVraptor {
 
     private void checarCampos() throws Exception {
 
+    	if (cadastrante == null)
+            throw new Exception("Cadastrante não pode ser nulo");
+    	if (lotaCadastrante == null)
+            lotaCadastrante = cadastrante.getLotacao();
+    	if (titular == null)
+            titular = cadastrante;
+    	if (lotaTitular == null)
+            lotaTitular = titular.getLotacao();
+    	
         if (getSolicitacao() == null)
             throw new Exception("Movimentaï¿½ï¿½o precisa fazer parte de uma solicitaï¿½ï¿½o");
 
@@ -356,7 +369,7 @@ public class SrMovimentacao extends ObjetoVraptor {
     }
 
 	public void notificar() throws Exception {
-        if (getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRAZO)
+        if (getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE)
             CorreioHolder
             	.get()
             	.notificarReplanejamentoMovimentacao(this);
@@ -369,6 +382,25 @@ public class SrMovimentacao extends ObjetoVraptor {
         		.get()
         		.notificarCancelamentoMovimentacao(this);
     }
+	
+	public void notificarAtendente() throws Exception {
+        if (tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
+                        || tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO
+                                || tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA
+                                || (lotaAtendente != null && lotaTitular != null && !lotaTitular.equivale(lotaAtendente))) {
+                if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
+                                lotaAtendente, "SIGA;SR;EMAILATEND:Receber Notificação Atendente"))
+                	CorreioHolder
+            	 	.get().notificarAtendente(this, solicitacao);
+        }
+        else if (tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO
+                        && solicitacao.isFilha()) {
+                if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
+                                solicitacao.getSolicitacaoPai().getLotaAtendente(), "SIGA;SR;EMAILATEND:Receber Notificação Atendente"))
+                	CorreioHolder
+            	 	.get().notificarAtendente(this, solicitacao.getSolicitacaoPai());
+        }
+}
 
     public String getMotivoPendenciaString() {
         return this.getMotivoPendencia() != null ? this.getMotivoPendencia().getDescrTipoMotivoPendencia() : "";
@@ -536,12 +568,12 @@ public class SrMovimentacao extends ObjetoVraptor {
     public void setNumSequencia(Long numSequencia) {
         this.numSequencia = numSequencia;
     }
-
-    public Long getPrioridade() {
+    
+    public SrPrioridade getPrioridade() {
         return prioridade;
     }
 
-    public void setPrioridade(Long prioridade) {
+    public void setPrioridade(SrPrioridade prioridade) {
         this.prioridade = prioridade;
     }
 
@@ -627,21 +659,35 @@ public class SrMovimentacao extends ObjetoVraptor {
 	public List<String> getEmailsNotificacaoAtendende() {
 		List<String> recipients = new ArrayList<String>();
 		String email = null;
-
-		DpPessoa atendenteSolPai = solicitacao.getSolicitacaoPai().getAtendente();
-		if (atendenteSolPai != null) {
-			email = atendenteSolPai.getPessoaAtual().getEmailPessoa();
+		DpPessoa atendente = null;
+		
+		atendente = solicitacao.getAtendente();
+		if (atendente != null){
+			email = atendente.getPessoaAtual().getEmailPessoa();
 			if (email != null)
 				recipients.add(email);
 		} else {
-			DpLotacao lotaAtendenteSolPai = solicitacao.getSolicitacaoPai().getLotaAtendente();
-			if (lotaAtendenteSolPai != null)
-				for (DpPessoa pessoaDaLotacao : lotaAtendenteSolPai.getDpPessoaLotadosSet())
-					if (pessoaDaLotacao.getDataFim() == null) {
-						email = pessoaDaLotacao.getPessoaAtual().getEmailPessoa();
-						if (email != null)
-							recipients.add(email);
-					}
+			List<DpPessoa> listaPessoasAtendentes = solicitacao.getPessoasAtendentesDisponiveis();
+			List<DpSubstituicao> listaSubstitutos = solicitacao.getSubstitutos();
+			if (listaPessoasAtendentes.size() > 0)
+			        for (DpPessoa pessoaDaLotacao : listaPessoasAtendentes) {
+			                atendente = pessoaDaLotacao.getPessoaAtual();
+			                if (atendente.getDataFim() == null) {
+			                        email = atendente.getEmailPessoa();
+			                        if (email != null)
+			                                recipients.add(email);
+			                }
+			        }
+			if (listaSubstitutos.size() > 0)
+			        for (DpSubstituicao pessoaSubstitutaDaLotacao : listaSubstitutos) {
+			                atendente = pessoaSubstitutaDaLotacao.getSubstituto().getPessoaAtual();
+			                if (atendente.getDataFim() == null) {
+			                        email = atendente.getEmailPessoa();
+			                        if (email != null)
+			                                recipients.add(email);
+			                }
+			        }
+			        
 		}
 		return recipients;
 	}

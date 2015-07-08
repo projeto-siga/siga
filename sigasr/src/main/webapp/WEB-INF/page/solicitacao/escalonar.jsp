@@ -47,8 +47,8 @@
 	<div class="gt-content-box gt-form">
 		<form id="formEscalonar" action="${linkTo[SolicitacaoController].escalonarGravar}" onsubmit="javascript: return block();" method="POST">
 			<div class="gt-form-row">
-				<label><c:set var="valueCheckbox" value="${titular.orgaoUsuario.idOrgaoUsu == 1 ? false : true}" />
-					<siga:checkbox name="criaFilha" onchange="onchangeCheckCriaFilha()" value="valueCheckbox" /> 
+				<label>
+					<siga:checkbox name="criaFilha" onchange="onchangeCheckCriaFilha()" value="${criarFilhaDefault}" /> 
 					<c:choose>
 						<c:when test="${solicitacao.isFilha()}">
 							<c:set var="codigo" value="${solicitacao.solicitacaoPai.codigo}" />

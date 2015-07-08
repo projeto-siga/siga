@@ -70,7 +70,7 @@ public class EmailController {
 			public void executar() throws Exception {
 				CorreioHolder
 				.get()
-				.notificarAtendente(SrMovimentacao.AR.findById(4860L));
+				.notificarAtendente(SrMovimentacao.AR.findById(4860L), null);
 			}
 		}, "notificarAtendente");
 	}

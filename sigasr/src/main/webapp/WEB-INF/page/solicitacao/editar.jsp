@@ -9,6 +9,10 @@
     <%=SrGravidade.NORMAL.name()%>
 </c:set>
 
+<c:set var="sem_gravidade">
+    <%=SrGravidade.SEM_GRAVIDADE.name()%>
+</c:set>
+
 <c:set var="urgencia_normal">
     <%=SrUrgencia.NORMAL.name()%>
 </c:set>
@@ -22,10 +26,10 @@
 </c:set>
 
 <c:set var="prioridade_desc">
-    <%=SrPrioridade.PLANEJADO.getDescPrioridade()%>
+    <%=SrPrioridade.BAIXO.getDescPrioridade()%>
 </c:set>
 
-<siga:pagina titulo="Cadastro de Solicitação">
+<siga:pagina titulo="Cadastro de Solicitaï¿½ï¿½o">
 	<jsp:include page="../main.jsp"></jsp:include>
 	
 	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
@@ -199,12 +203,12 @@
 	
 		function carregarPrioridade() {
 			gravidade 	= document.getElementById('gravidade');
-			urgencia 	= document.getElementById('urgencia');
-			tendencia 	= document.getElementById('tendencia'); 
+			//urgencia 	= document.getElementById('urgencia');
+			//tendencia = document.getElementById('tendencia'); 
 			params = '';
-			params = gravidade.name + '=' + escape(gravidade.value) + '&' + 
-						urgencia.name + '=' + escape(urgencia.value) + '&' +
-						tendencia.name + '=' + escape(tendencia.value) + '&';
+			params = gravidade.name + '=' + escape(gravidade.value) + '&';
+						//urgencia.name + '=' + escape(urgencia.value) + '&' +
+						//tendencia.name + '=' + escape(tendencia.value) + '&';
 			
 			var url = '${linkTo[SolicitacaoController].exibirPrioridade}?' + params;
 			Siga.ajax(url, null, "GET", function(response){		
@@ -590,11 +594,11 @@
 					<div class="gt-form-row box-wrapper">
 						<div class="gt-form-row gt-width-33">
 							<label>Gravidade</label> 
-							<siga:select name="solicitacao.gravidade" id="gravidade" list="gravidadeList" listValue="respostaEnunciado" listKey="nivelGravidade" isEnum="true"
-							value="${solicitacao.gravidade != null ? solicitacao.gravidade: gravidade_normal}" onchange="carregarPrioridade()"
+							<siga:select name="solicitacao.gravidade" id="gravidade" list="gravidadeList" listValue="descrGravidade" listKey="nivelGravidade" isEnum="true"
+							value="${solicitacao.gravidade != null ? solicitacao.gravidade: sem_gravidade}" onchange="carregarPrioridade()"
 							style="width:235px"  />
 						</div>
-						<div class="gt-form-row gt-width-33">
+						<!--  <div class="gt-form-row gt-width-33">
 							<label>Urg&ecirc;ncia</label> 
 							<siga:select name="solicitacao.urgencia" id="urgencia" list="urgenciaList" listValue="respostaEnunciado" listKey="nivelUrgencia" isEnum="true"
 							value="${solicitacao.urgencia != null ? solicitacao.urgencia: urgencia_normal}" 
@@ -605,14 +609,14 @@
 							<siga:select name="solicitacao.tendencia" id="tendencia" list="tendenciaList" listValue="respostaEnunciado" listKey="nivelTendencia" isEnum="true"
 							value="${solicitacao.tendencia != null ? solicitacao.tendencia: tendencia_piora}"
 							onchange="carregarPrioridade()" style="width:235px;"/>
-						</div>
+						</div>-->
 					</div>
 					<div id="divPrioridade" class="gt-form-row gt-width-66">
 						<label style="float: left">Prioridade: &nbsp;</label>
 						<span>${solicitacao.prioridade != null ? solicitacao.prioridade.descPrioridade: prioridade_desc}</span>
 						
 						<siga:select name="solicitacao.prioridade" id="prioridade" list="prioridadeList" listValue="descPrioridade" listKey="idPrioridade" isEnum="true"
-							value="${solicitacao.prioridade != null ? solicitacao.prioridade: prioridade_planejado}" style="width:235px;border:none;display:none;"/>
+							value="${solicitacao.prioridade != null ? solicitacao.prioridade: prioridade_baixo}" style="width:235px;border:none;display:none;"/>
 							<br />
 					</div>
 		

@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Movimentação de solicitação">
+<siga:pagina titulo="Movimentaï¿½ï¿½o de solicitaï¿½ï¿½o">
 	<jsp:include page="../main.jsp"></jsp:include>
 
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
@@ -91,17 +91,28 @@
 						value="${movimentacao.solicitacao.idSolicitacao}">
 
 					<c:if test="${solicitacao.podeTrocarAtendente(titular, lotaTitular)}">
-						<c:if test="${atendentes.size() >= 1}">
-							<div class="gt-form-row">
-								<label>Atendente</label>
-								<div id="divAtendente">
-									<siga:select name="movimentacao.atendente" list="atendentes"
-										listKey="id" id="movimentacao.atendente" headerValue=""
-										headerKey="0" listValue="descricaoIniciaisMaiusculas"
-										value="${idPessoa}" />
-								</div>
+						<div class="gt-form-row">
+							<label>Atendente</label>
+							<div id="divAtendente">
+								<select name="solicitacao.acao" id="selectAcao" value="${solicitacao.acao.idAcao}" onchange="carregarAtributos();notificarCampoMudou('#selectAcao', 'A&ccedil;&atilde;o', 'solicitacao.acao');">
+            						<option value="0">#</option>
+									<c:if test="${atendentes.size() >= 1}">
+										<c:forEach items="${atendentes}" var="pessoa">
+											<option value="${pessoa.pessoaAtual.idPessoa}">${pessoa.pessoaAtual.descricaoIniciaisMaiusculas}</option>
+										</c:forEach>
+									</c:if>
+									<c:set var="susbtitutos" value="${solicitacao.substitutos}" />
+									<c:if test="${substitutos.size() >= 1}">
+										<optgroup label="Substitutos">
+											<c:forEach items="${substitutos}" var="pessoaSubst">
+												<option value="${pessoaSubst.substituto.pessoaAtual.idPessoa}">${pessoaSubst.substituto.pessoaAtual.descricaoIniciaisMaiusculas}</option>
+											</c:forEach>
+										</optgroup>
+									</c:if>
+								</select>
 							</div>
-						</c:if>
+						</div>
+						
 					</c:if>
 
 					<div style="display: inline" class="gt-form-row gt-width-66">
@@ -137,9 +148,7 @@
 							</c:if>
 							<th>Evento</th>
 							<th colspan="2">Cadastrante</th>
-							<c:if test="${ocultas}">
-								<th colspan="2">Atendente</th>
-							</c:if>
+							<th colspan="2">Atendente</th>
 							<th>Descri&ccedil;&atilde;o</th>
 						</tr>
 					</thead>
@@ -177,16 +186,14 @@
 												sigla="${movimentacao.cadastrante.nomeAbreviado}"
 												descricao="${movimentacao.cadastrante.descricaoIniciaisMaiusculas}"></siga:selecionado>
 										</td>
-										<c:if test="${ocultas}">
-											<td><siga:selecionado
-													sigla="${movimentacao.lotaAtendente.siglaLotacao}"
-													descricao="${movimentacao.lotaAtendente.nomeLotacao}"></siga:selecionado>
-											</td>
-											<td><siga:selecionado
-													sigla="${movimentacao.atendente.nomeAbreviado}"
-													descricao="${movimentacao.atendente.descricaoIniciaisMaiusculas}"></siga:selecionado>
-											</td>
-										</c:if>
+										<td><siga:selecionado
+												sigla="${movimentacao.lotaAtendente.siglaLotacao}"
+												descricao="${movimentacao.lotaAtendente.nomeLotacao}"></siga:selecionado>
+										</td>
+										<td><siga:selecionado
+												sigla="${movimentacao.atendente.nomeAbreviado}"
+												descricao="${movimentacao.atendente.descricaoIniciaisMaiusculas}"></siga:selecionado>
+										</td>
 										<td id="descrMovimentacao${movimentacao.idMovimentacao}">
 										    <span id="descrMovimentacaoTexto${movimentacao.idMovimentacao}">${movimentacao.descrMovimentacao}</span>
 											<c:if test="${movimentacao.arquivo != null}">
@@ -233,10 +240,8 @@
 				<p>
 					<b>Solicitante:</b>
 					${solicitacao.solicitante.descricaoIniciaisMaiusculas},
-					${solicitacao.lotaSolicitante.siglaLotacao}
-					<c:if test="${solicitacao.local != null}"> 
-                    (${solicitacao.local.nomeComplexo})
-                </c:if>
+					${solicitacao.lotaSolicitante.siglaLotacao},
+                    ${solicitacao.local.nomeComplexo}
 				</p>
 				<c:if test="${solicitacao.interlocutor != null}">
 					<p>
@@ -277,7 +282,7 @@
 					<span class="historico-label">Item de Configura&ccedil;&atilde;o:</span>
 				<div class="historico-item-container hidden">
 					<button type="button" class="button-historico"
-						title="Clique para abrir/fechar o histórico">+</button>
+						title="Clique para abrir/fechar o histï¿½rico">+</button>
 
 					<ul class="lista-historico historico-item">
 						<c:forEach items="${solicitacao.historicoItem}" var="item">
@@ -290,7 +295,7 @@
 					<span class="historico-label">A&ccedil;&atilde;o:</span>
 				<div class="historico-acao-container hidden">
 					<button type="button" class="button-historico"
-						title="Clique para abrir/fechar o histórico">+</button>
+						title="Clique para abrir/fechar o histï¿½rico">+</button>
 
 					<ul class="lista-historico historico-acao">
 						<c:forEach items="${solicitacao.historicoAcao}" var="acao">
@@ -299,23 +304,14 @@
 					</ul>
 				</div>
 				</p>
-				<c:choose>
-					<c:when test="${(solicitacao.GUT > 80)}">
-						<c:set var="priorColor" value="${'color: red'}" />
-					</c:when>
-					<c:when test="${(solicitacao.GUT > 60)}">
-						<c:set var="priorColor" value="${'color: orange'}" />
-					</c:when>
-					<c:otherwise>
-						<c:set var="priorColor" value="${''}" />
-					</c:otherwise>
-				</c:choose>
 				<p>
-					<b>Prioridade:</b> <span style="">${solicitacao.GUTPercent}
-						${solicitacao.prioridade.descPrioridade} <br />
-						${solicitacao.GUTString}
-					</span>
+					<b>Prioridade:</b> <span style="">${solicitacao.prioridade.descPrioridade}</span>
 				</p>
+				<c:if test="${solicitacao.prioridadeTecnica != solicitacao.prioridade}">
+					<p>
+						<b>Prioridade T&eacute;cnica:</b> <span style="">${solicitacao.prioridadeTecnica.descPrioridade}</span>
+					</p>
+				</c:if>
 				<p>
 					<b>Notifica&ccedil;&atilde;o:</b>
 					${solicitacao.formaAcompanhamento.descrFormaAcompanhamento}
@@ -324,7 +320,7 @@
 					test="${solicitacao.isFechadoAutomaticamente() != null && solicitacao.isPai()}">
 					<p>
 						<b>Fechamento Autom&aacute;tico:</b>
-						${solicitacao.isFechadoAutomaticamente() ? "Sim" : "Não"}
+						${solicitacao.isFechadoAutomaticamente() ? "Sim" : "Nï¿½o"}
 					</p>
 				</c:if>
 			</div>
@@ -453,7 +449,7 @@
     
     <siga:modal nome="incluirEmLista" titulo="Definir Lista" url="${linkTo[SolicitacaoController].incluirEmLista}?id=${solicitacao.idSolicitacao}" />
     
-    <siga:modal nome="escalonar" titulo="Escalonar Solicitação" url="${linkTo[SolicitacaoController].escalonar}?id=${solicitacao.idSolicitacao}" />
+    <siga:modal nome="escalonar" titulo="Escalonar Solicitaï¿½ï¿½o" url="${linkTo[SolicitacaoController].escalonar}?id=${solicitacao.idSolicitacao}" />
 
     <siga:modal nome="juntar" titulo="Juntar">
         <form action="${linkTo[SolicitacaoController].juntar}" method="post" enctype="multipart/form-data" id="formGravarJuncao">
@@ -502,7 +498,7 @@
 
     <siga:modal nome="responderPesquisa" titulo="Responder Pesquisa" url="responderPesquisa?id=${solicitacao.id}" />
 
-    <siga:modal nome="deixarPendente" titulo="Pendência">
+    <siga:modal nome="deixarPendente" titulo="Pendï¿½ncia">
             <div class="gt-content-box gt-form clearfix">
                 <form action="${linkTo[SolicitacaoController].deixarPendente}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
                     <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
@@ -531,23 +527,17 @@
                 </form>
             </div>
     </siga:modal> 
-    <siga:modal nome="alterarPrazo" titulo="Alterar Prazo">
+    <siga:modal nome="alterarPrioridade" titulo="Alterar Prioridade">
         <div class="gt-form gt-content-box">
-            <form action="${linkTo[SolicitacaoController].alterarPrazo}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
+            <form action="${linkTo[SolicitacaoController].alterarPrioridade}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
                 <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
                 <input type="hidden" name="ocultas" value="${ocultas}" />
-                <div class="gt-form-row gt-width-66">
-                    <label>Data</label>
-                    <siga:dataCalendar nome="calendario" id="calendarioReplanejar"/>
-                </div>
-                <div class="gt-form-row gt-width-66">
-                    <label>Hora</label>
-                    <input type="text" name="horario" id="horarioReplanejar">
-                </div>
-                <div class="gt-form-row gt-width-66">
-                    <label>Motivo</label>
-                    <textarea name="motivo" cols="50" rows="4"> </textarea> 
-                </div>
+                <div class="gt-form-row gt-width-33">
+					<label>Prioridade</label> 
+					<siga:select name="prioridade" id="prioridade" list="prioridadeList" listValue="descPrioridade" listKey="idPrioridade" isEnum="true"
+							value="${solicitacao.prioridadeTecnica}" 
+							style="width:235px"  />
+ 				</div>
                 <div class="gt-form-row">
                 	<input type="hidden" name="id" value="${solicitacao.id}" /> 
                 	<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
@@ -566,7 +556,7 @@
                 type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
         </form>
     </siga:modal>   
-    <siga:modal nome="terminarPendenciaModal" titulo="Terminar Pendência">
+    <siga:modal nome="terminarPendenciaModal" titulo="Terminar Pendï¿½ncia">
         <form action="${linkTo[SolicitacaoController].terminarPendencia}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
             <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
             <input type="hidden" name="ocultas" value="${ocultas}" />
@@ -714,9 +704,9 @@
 		}
 	}
 
-	new MostradorHistorico($('.historico-item-container'), "Item não informado")
+	new MostradorHistorico($('.historico-item-container'), "Item nï¿½o informado")
 			.init();
 
-	new MostradorHistorico($('.historico-acao-container'), "Ação não informada")
+	new MostradorHistorico($('.historico-acao-container'), "Aï¿½ï¿½o nï¿½o informada")
 			.init();
 </script>

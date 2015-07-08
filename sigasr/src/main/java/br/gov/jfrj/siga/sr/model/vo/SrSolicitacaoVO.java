@@ -26,6 +26,9 @@ public class SrSolicitacaoVO {
     private String dtUltimaMovimentacaoFormatada = "";
     private String ultimaMovimentacaoformatada = "";
     private String prioridadeFormatada = "";
+    private String prioridadeTecnica = "";
+    private String prioridadeTecnicaFormatada = "";
+    private String prazo = "";
     private String botaoExpandir = "+";
     private String marcadoresEmHtmlDetalhes = "";
     private String lotaAtendenteFormatada = "";
@@ -54,7 +57,7 @@ public class SrSolicitacaoVO {
         this.setDtRegString(sol.getSolicitacaoInicial().getDtRegString());
         this.setLotaAtendente(sol.getLotaAtendente() != null ? SelecionavelVO.createFrom(sol.getLotaAtendente()) : null);
         this.setUltimaMovimentacao(sol.getUltimaMovimentacaoQuePossuaDescricao() != null ? sol.getUltimaMovimentacaoQuePossuaDescricao().getDescrMovimentacao() : "");
-        this.setDtUltimaMovimentacaoString(sol.getUltimaMovimentacao() != null ? sol.getUltimaMovimentacao().getDtIniMovDDMMYYYYHHMM() : "");
+        this.setDtUltimaMovimentacaoString(sol.getUltimaMovimentacao() != null ? sol.getUltimaMovimentacao().getDtIniString() : "");
 
         this.setTeorFormatado(getTeorFormatado(sol.getItemAtual(), this.getDescricao()));
         this.setSolicitanteFormatado(getSolicitanteFormatado(this.getNomeSolicitante(), this.getDescricaoSolicitante(), this.getLotaSolicitante()));
@@ -62,7 +65,10 @@ public class SrSolicitacaoVO {
         this.setUltimaMovimentacaoformatada(SigaVraptorUtil.selecionado(this.getUltimaMovimentacao(), this.getUltimaMovimentacao()));
 
         this.setLotaAtendenteFormatada(this.getLotaAtendente() != null ? getLotacaoFormatada(this.getLotaAtendente()) : "");
-        this.setPrioridadeFormatada(sol.getPrioridade() != null ? SigaVraptorUtil.selecionado(sol.getPrioridade().getDescPrioridade(), sol.getPrioridade().getDescPrioridade()) : "");
+        this.prioridadeFormatada = sol.getPrioridadeString();
+        this.prioridadeTecnica = sol.getPrioridadeTecnica() != null ? sol.getPrioridadeTecnica().toString() : "";
+        this.prioridadeTecnicaFormatada = sol.getPrioridadeTecnicaString();
+        this.prazo = sol.getDtPrazoAtendimentoAcordadoDDMMYYYYHHMM();
     }
 
     public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista, SrPrioridadeSolicitacao prioridadeSolicitacao, boolean podeRemover, boolean podePriorizar) throws Exception {
@@ -141,7 +147,15 @@ public class SrSolicitacaoVO {
         return new String("<b>" + lotacao.getSigla() + "</b>");
     }
 
-    private String getDtUltimaMovimentacaoFormatado(String dtUltimaMovimentacao) {
+    public String getPrioridadeTecnica() {
+		return prioridadeTecnica;
+	}
+
+	public void setPrioridadeTecnica(String prioridadeTecnica) {
+		this.prioridadeTecnica = prioridadeTecnica;
+	}
+
+	private String getDtUltimaMovimentacaoFormatado(String dtUltimaMovimentacao) {
         return new String("<b>" + SigaVraptorUtil.selecionado(dtUltimaMovimentacao, dtUltimaMovimentacao) + "</b>");
     }
 
@@ -155,7 +169,15 @@ public class SrSolicitacaoVO {
         return sb.toString();
     }
 
-    public void setMarcadoresEmHtml(String valor) {
+    public String getPrazo() {
+		return prazo;
+	}
+
+	public void setPrazo(String prazo) {
+		this.prazo = prazo;
+	}
+
+	public void setMarcadoresEmHtml(String valor) {
         if (valor != null)
             this.marcadoresEmHtml = valor;
         else
@@ -243,7 +265,15 @@ public class SrSolicitacaoVO {
         return botaoExpandir;
     }
 
-    public void setBotaoExpandir(String botaoExpandir) {
+    public String getPrioridadeTecnicaFormatada() {
+		return prioridadeTecnicaFormatada;
+	}
+
+	public void setPrioridadeTecnicaFormatada(String prioridadeTecnicaFormatada) {
+		this.prioridadeTecnicaFormatada = prioridadeTecnicaFormatada;
+	}
+
+	public void setBotaoExpandir(String botaoExpandir) {
         this.botaoExpandir = botaoExpandir;
     }
 

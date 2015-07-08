@@ -12,78 +12,6 @@
 	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
 	<script src="/sigasr/javascripts/base-service.js"></script>
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>		
-
-	<style>
-		#sortable table { height: 1.5em; line-height: 1.2em; }
-		.ui-state-highlight { height: 1.5em; line-height: 1.2em; }
-		
-		/** CSS do numero **/
-		.numero-solicitacao a {
-			color: black;
-		}
-		.PRIORIDADE-IMEDIATO .numero-solicitacao a {
-			color: red !important;
-			font-weight: bold;
-		}
-		.PRIORIDADE-ALTO .numero-solicitacao a {
-			color: #E0E000 !important;
-			font-weight: bold;
-		}
-		.PRIORIDADE-MEDIO .numero-solicitacao a {
-			color: blue !important;
-			font-weight: bold;
-		}
-		.PRIORIDADE-BAIXO .numero-solicitacao a {
-			color: green !important;
-			font-weight: bold;
-		}
-		.PRIORIDADE-PLANEJADO .numero-solicitacao a {
-			color: gray !important;
-			font-weight: bold;
-		}
-		
-		.legenda-prioridade {
-			margin-top: 10px;
-		}
-		
-		/** CSS da leganda **/
-		.legenda-prioridade span{
-			display: inline-block;
-		}
-		.legenda-prioridade .cor {
-			height: 15px;
-			width: 15px;
-			display: inline-block;
-			-webkit-border-radius: 3px;
-			-moz-border-radius: 3px;
-			border-radius: 3px;
-		}
-		
-		.legenda-prioridade div {
-			display: inline-block;
-		}
-		.legenda-prioridade .descricao {
-			display: block;
-		    margin-left: 20px;
-		    margin-right: 15px;
-		    margin-top: -18px;
-		}
-		.legenda-prioridade .PRIORIDADE-IMEDIATO .cor {
-			background-color: red;
-		}
-		.legenda-prioridade .PRIORIDADE-ALTO .cor {
-			background-color: #E0E000;
-		}
-		.legenda-prioridade .PRIORIDADE-MEDIO .cor {
-			background-color: blue;
-		}
-		.legenda-prioridade .PRIORIDADE-BAIXO .cor {
-			background-color: green;
-		}
-		.legenda-prioridade .PRIORIDADE-PLANEJADO .cor {
-			background-color: gray;
-		}
-	</style>
 	
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
@@ -97,33 +25,6 @@
 				</c:if>
 			</p>
 			<siga:solicitacao solicitacaoListaVO="solicitacaoListaVO" filtro="filtro" modoExibicao="lista"></siga:solicitacao>
-		</div>
-		
-		<div class="legenda-prioridade">
-			<div class="PRIORIDADE-IMEDIATO">
-				<span class="cor"></span>
-				<span class="descricao">Imediata</span>
-			</div>
-			
-			<div class="PRIORIDADE-ALTO">
-				<span class="cor"></span>
-				<span class="descricao">Alta</span>
-			</div>
-			
-			<div class=PRIORIDADE-MEDIO>
-				<span class="cor"></span>
-				<span class="descricao">M&eacute;dia</span>
-			</div>
-			
-			<div class="PRIORIDADE-BAIXO">
-				<span class="cor"></span>
-				<span class="descricao">Baixa</span>
-			</div>
-			
-			<div class="PRIORIDADE-PLANEJADO">
-				<span class="cor"></span>
-				<span class="descricao">Planejada</span>
-			</div>
 		</div>
 		
 		<!-- /content box -->
@@ -215,6 +116,7 @@
     			}
 	 	    });
 	 	    if (prioridades.length > 0) {
+	 	    	jQuery.blockUI(objBlock);
 	 	    	$.post('${linkTo[SolicitacaoController].priorizarLista}?' + prioridades, {
 		 	    	id : $('[name=idLista]').val()
 	 	    	}).success(function() {

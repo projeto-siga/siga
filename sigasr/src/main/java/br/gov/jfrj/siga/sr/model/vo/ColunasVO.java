@@ -5,6 +5,7 @@ public class ColunasVO {
     private String nome;
     private String classe;
     private Long largura;
+    public boolean detalheFormatado;
     private boolean exibir;
     private boolean alteravel;
 
@@ -26,9 +27,11 @@ public class ColunasVO {
         this.setLargura(largura);
     }
 
-    public ColunasVO(String titulo, String nome, String classe, boolean exibir, boolean alteravel) {
+    public ColunasVO(String titulo, String nome, String classe, Long largura, boolean detalheFormatado, boolean exibir, boolean alteravel) {
         this(titulo, nome, classe);
         this.setExibir(exibir);
+        this.detalheFormatado = detalheFormatado;
+        this.largura = largura;
         this.setAlteravel(alteravel);
     }
 

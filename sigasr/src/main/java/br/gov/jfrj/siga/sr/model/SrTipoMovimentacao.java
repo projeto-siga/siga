@@ -25,9 +25,9 @@ public class SrTipoMovimentacao extends ObjetoVraptor {
 
     public static final long TIPO_MOVIMENTACAO_INCLUSAO_LISTA = 3;
 
-    public static final long TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO = 4;
+    //public static final long TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO = 4;
 
-    public static final long TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO = 5;
+    //public static final long TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO = 5;
 
     public static final long TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA = 6;
 
@@ -59,7 +59,7 @@ public class SrTipoMovimentacao extends ObjetoVraptor {
 
     public static final long TIPO_MOVIMENTACAO_VINCULACAO = 20;
 
-    public static final long TIPO_MOVIMENTACAO_ALTERACAO_PRAZO = 21;
+    public static final long TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE = 21;
 
     // final static public long TIPO_MOVIMENTACAO_RASCUNHO = 22;
 

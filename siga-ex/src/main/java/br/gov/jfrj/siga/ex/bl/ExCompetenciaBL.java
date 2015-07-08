@@ -565,10 +565,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeAnexarArquivo(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
-		
+	
 		if (mob.doc().isFinalizado())
 			return !mob.isEmTransito()
-					&& !mob.isGeral()
+					&& (!mob.isGeral() 
+							|| (mob.doc().isExterno() && !mob.doc().jaTransferido() ))
 					&& !mob.isJuntado()
 					&& !mob.isArquivado()
 					&& !mob.isSobrestado()

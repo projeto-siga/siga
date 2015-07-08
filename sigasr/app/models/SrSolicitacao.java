@@ -1703,6 +1703,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		filha.rascunho = null;
 		filha.solicitacaoInicial = null;
 		filha.meuMovimentacaoSet = null;
+		filha.acordos = null;
 		filha.dtIniEdicao = new Date();
 		filha.meuMovimentacaoReferenciaSet = null;
 		for (SrSolicitacao s : getSolicitacaoFilhaSet())

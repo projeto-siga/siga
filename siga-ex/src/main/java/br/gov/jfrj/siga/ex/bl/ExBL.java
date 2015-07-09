@@ -838,8 +838,7 @@ public class ExBL extends CpBL {
 										set,
 										mob,
 										CpMarcador.MARCADOR_PENDENTE_DE_COLABORACAO,
-										mov.getDtIniMov(),
-										mov.getSubscritor(),
+										mov.getDtIniMov(), mov.getSubscritor(),
 										mov.getLotaSubscritor());
 							}
 						}
@@ -993,7 +992,7 @@ public class ExBL extends CpBL {
 			}
 
 			calcularMarcadoresTransferencia(mob, set, dt);
-		
+
 			if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {
 				if (!mob.getDoc().isAssinadoSubscritor())
 					acrescentarMarca(set, mob,
@@ -1056,15 +1055,15 @@ public class ExBL extends CpBL {
 		}
 		return set;
 	}
-	
-	public void calcularMarcadoresTransferencia(ExMobil mob, SortedSet<ExMarca> set, Date dt){
+
+	public void calcularMarcadoresTransferencia(ExMobil mob,
+			SortedSet<ExMarca> set, Date dt) {
 		long m_aDevolverFora = CpMarcador.MARCADOR_A_DEVOLVER_FORA_DO_PRAZO;
 		long m_aDevolver = CpMarcador.MARCADOR_A_DEVOLVER;
 		long m_aguardando = CpMarcador.MARCADOR_AGUARDANDO;
 		long m_aguardandoFora = CpMarcador.MARCADOR_AGUARDANDO_DEVOLUCAO_FORA_DO_PRAZO;
-		
-		List<ExMovimentacao> transferencias = mob
-				.getMovimentacoesPorTipo(3);
+
+		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3);
 		transferencias.removeAll(mob.getMovimentacoesCanceladas());
 		Set<ExMovimentacao> transferenciasComData = new TreeSet<ExMovimentacao>();
 
@@ -1079,19 +1078,19 @@ public class ExBL extends CpBL {
 		Iterator itr = transferenciasComData.iterator();
 		while (itr.hasNext()) {
 			ExMovimentacao transfComData = (ExMovimentacao) itr.next();
-			
+
 			ExMobil mobil = transfComData.getExMobil();
 
 			if (transfComData.getExMobil().isJuntado()) {
 				mobil = transfComData.getExMobil().getMobilPrincipal();
 			}
-			
-			ExMovimentacao movRetorno = contemTransferenciaRetorno(transfComData, mobil);
-			
-			if(movRetorno != null){
+
+			ExMovimentacao movRetorno = contemTransferenciaRetorno(
+					transfComData, mobil);
+
+			if (movRetorno != null) {
 				transferencias.remove(movRetorno);
-			}
-			else{
+			} else {
 				Date dtMarca = transfComData.getDtFimMov();
 				dtMarca.setHours(23);
 				dtMarca.setMinutes(59);
@@ -1100,42 +1099,45 @@ public class ExBL extends CpBL {
 				acrescentarMarcaTransferencia(set, mob, m_aguardando, dt,
 						dtMarca, transfComData.getCadastrante(),
 						transfComData.getLotaCadastrante()); // acrescenta a
-														// marca
-														// "Aguardando Devolução"
+				// marca
+				// "Aguardando Devolução"
 
 				acrescentarMarcaTransferencia(set, mob, m_aDevolver, dt,
-						dtMarca, transfComData.getResp(), transfComData.getLotaResp());// acrescenta
-																			// a
-																			// marca
-																			// "A Devolver"
+						dtMarca, transfComData.getResp(),
+						transfComData.getLotaResp());// acrescenta
+				// a
+				// marca
+				// "A Devolver"
 
 				acrescentarMarcaTransferencia(set, mob, m_aguardandoFora,
 						dtMarca, null, transfComData.getCadastrante(),
 						transfComData.getLotaCadastrante()); // acrescenta a
-														// marca
-														// "Aguardando Devolução (Fora do Prazo)"
+				// marca
+				// "Aguardando Devolução (Fora do Prazo)"
 
 				acrescentarMarcaTransferencia(set, mob, m_aDevolverFora,
 						dtMarca, null, transfComData.getResp(),
 						transfComData.getLotaResp());// acrescenta
-												// a
-												// marca
-												// "A Devolver (Fora do Prazo)"
+				// a
+				// marca
+				// "A Devolver (Fora do Prazo)"
 			}
 
 		}
 	}
-	
-	public ExMovimentacao contemTransferenciaRetorno(ExMovimentacao mov, ExMobil mob){
+
+	public ExMovimentacao contemTransferenciaRetorno(ExMovimentacao mov,
+			ExMobil mob) {
 		ExMovimentacao movRetorno = null;
 		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3);
 		transferencias.removeAll(mob.getMovimentacoesCanceladas());
-		
+
 		Iterator it = transferencias.iterator();
-		while(it.hasNext()){
-			ExMovimentacao transferencia = (ExMovimentacao)it.next();
-			
-			if(mov.getLotaCadastrante() == transferencia.getLotaResp() && transferencia.getData().after(mov.getData())){
+		while (it.hasNext()) {
+			ExMovimentacao transferencia = (ExMovimentacao) it.next();
+
+			if (mov.getLotaCadastrante() == transferencia.getLotaResp()
+					&& transferencia.getData().after(mov.getData())) {
 				movRetorno = transferencia;
 				break;
 			}
@@ -2632,9 +2634,9 @@ public class ExBL extends CpBL {
 		partes.calcular();
 		ExMobil mob = doc.getMobilGeral();
 
-		// Inicializar as listas de movimentações de pendência ou recebimento
+		// Inicializar as listas de movimentações de controle de colaboração
 		List<ExMovimentacao> movs = new ArrayList<>();
-		if(mob.getExMovimentacaoSet() == null)
+		if (mob.getExMovimentacaoSet() == null)
 			mob.setExMovimentacaoSet(new TreeSet<ExMovimentacao>());
 		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 			if (mov.isCancelada())
@@ -2646,7 +2648,7 @@ public class ExBL extends CpBL {
 
 		for (ExParte parte : partes.getPartes()) {
 			String atual = parte.getDescricaoMov();
-			// Remove pendencia
+			// Localiza a parte
 			ExMovimentacao encontrada = null;
 			for (ExMovimentacao mov : movs) {
 				if (!parte.isMesmaId(mov.getDescrMov()))
@@ -2662,20 +2664,22 @@ public class ExBL extends CpBL {
 						cadastrante, lotaCadastrante, mob, null, null, null,
 						null, null, null);
 				m.setDescrMov(parte.getDescricaoMov());
-				gravarMovimentacao(m);
 
 				if (encontrada != null) {
-					mob.getExMovimentacaoSet().remove(encontrada);
-					dao().excluir(encontrada);
+					// mob.getExMovimentacaoSet().remove(encontrada);
+					gravarMovimentacaoCancelamento(m, encontrada);
+					// dao().excluir(encontrada);
+				} else {
+					gravarMovimentacao(m);
 				}
 			}
 		}
 
 		// Remove movimentações referentes a partes inativas
-		for (ExMovimentacao mov : movs) {
-			mob.getExMovimentacaoSet().remove(mov);
-			dao().excluir(mov);
-		}
+		// for (ExMovimentacao mov : movs) {
+		// mob.getExMovimentacaoSet().remove(mov);
+		// dao().excluir(mov);
+		// }
 	}
 
 	/**
@@ -3885,8 +3889,11 @@ public class ExBL extends CpBL {
 				doc.setDtRegDoc(dao().dt());
 
 			// Nato: para obter o numero do TMP na primeira gravação
-			if (doc.getIdDoc() == null)
+			boolean primeiraGravacao = false;
+			if (doc.getIdDoc() == null) {
 				doc = ExDao.getInstance().gravar(doc);
+				primeiraGravacao = true;
+			}
 
 			if (doc.getExModelo().isDescricaoAutomatica())
 				doc.setDescrDocumento(processarComandosEmTag(doc, "descricao"));
@@ -3955,6 +3962,12 @@ public class ExBL extends CpBL {
 			String s = processarComandosEmTag(doc, "gravacao");
 
 			concluirAlteracao(doc);
+
+			// Finaliza o documento automaticamente se ele for coloborativo
+			if (!primeiraGravacao && doc.isColaborativo() && !doc.isFisico()
+					&& !doc.isFinalizado()) {
+				finalizar(cadastrante, lotaCadastrante, doc, realPath);
+			}
 
 			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
 					+ ", PESSOA " + doc.getCadastrante().getIdPessoa()
@@ -4554,8 +4567,11 @@ public class ExBL extends CpBL {
 
 		// é necessário gravar novamente pois uma movimentação de inclusão
 		// de cossignatário pode ter sido introduzida, gerando a necessidade
-		// de refazer o HTML e o PDF.
-		novoDoc = gravar(cadastrante, lotaCadastrante, novoDoc, null);
+		// de refazer o HTML e o PDF. Quando o documento é colaborativo, não
+		// deve ser gravado novamente pois isso faria com que ele fosse
+		// automaticamente finalizado, o que não é desejavel na duplicação.
+		if (!doc.isColaborativo())
+			novoDoc = gravar(cadastrante, lotaCadastrante, novoDoc, null);
 
 		return novoDoc;
 	}

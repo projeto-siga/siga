@@ -65,7 +65,8 @@ public class FreemarkerIndent {
 
 			if (open) {
 				if (ftl.startsWith("[#else") || ftl.startsWith("[#case")
-						|| ftl.startsWith("[#default")) {
+						|| ftl.startsWith("[#default")
+						|| ftl.startsWith("[#recover")) {
 					open = false;
 					unindent = true;
 				}
@@ -128,9 +129,10 @@ public class FreemarkerIndent {
 			matcher.appendReplacement(output, rep.replace("$", "\\$"));
 		}
 		matcher.appendTail(output);
-		
+
 		String result = output.toString();
 		result = result.replace("  {{unindent}}", "");
+		result = result.replace("{{unindent}}", "");
 		return result;
 	}
 
@@ -157,8 +159,8 @@ public class FreemarkerIndent {
 		tidy.setCharEncoding(Configuration.LATIN1);
 		tidy.setRawOut(false);
 		tidy.setIndentAttributes(false);
-		tidy.setEncloseBlockText(true);
-		tidy.setEncloseText(true);
+		tidy.setEncloseBlockText(false);
+		tidy.setEncloseText(false);
 		tidy.setMakeClean(true);
 		tidy.setShowWarnings(false);
 		tidy.setSmartIndent(false);
@@ -166,6 +168,7 @@ public class FreemarkerIndent {
 		tidy.setTidyMark(false);
 		tidy.setIndentContent(true);
 		tidy.setWraplen(0);
+		
 
 		final ByteArrayOutputStream os = new ByteArrayOutputStream();
 		tidy.parse(new ByteArrayInputStream(s.getBytes("iso-8859-1")), os);

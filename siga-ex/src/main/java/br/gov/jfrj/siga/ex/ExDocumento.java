@@ -1245,6 +1245,21 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
+	 * Verifica se um documento possui controle de colaboração.
+	 */
+	public boolean isColaborativo() {
+		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
+		
+		for (final ExMovimentacao mov : movs) {
+			if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO)
+					&& mov.getExMovimentacaoCanceladora() == null) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Verifica se um documento possui agendamento de publicação no DJE. ()
 	 */
 	public boolean isPublicacaoAgendada() {

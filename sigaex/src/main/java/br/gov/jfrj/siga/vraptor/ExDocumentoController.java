@@ -902,7 +902,7 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@Get("app/expediente/doc/exibirAntigo")
-	public void aExibirAntigo(final String sigla, final boolean popup)
+	public void aExibirAntigo(final String sigla, final boolean popup, final boolean exibirCompleto)
 			throws Exception {
 		assertAcesso("");
 
@@ -941,7 +941,7 @@ public class ExDocumentoController extends ExController {
 		result.include("msg", exDocumentoDTO.getMsg());
 		result.include("docVO", docVO);
 		result.include("mob", exDocumentoDTO.getMob());
-		result.include("exibirCompleto", exDocumentoDTO.isExibirCompleto());
+		result.include("exibirCompleto", exibirCompleto);
 		result.include("currentTimeMillis", System.currentTimeMillis());
 		result.include("popup", popup);
 	}

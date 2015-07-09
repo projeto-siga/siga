@@ -69,7 +69,7 @@
 				<c:set var="dtUlt" value="" />
 				<c:set var="temmov" value="${false}" />
 				<c:forEach var="mov" items="${m.movs}">
-					<c:if test="${ (exibirCompleto == 'true') or (mov.idTpMov != 14 and not mov.cancelada)}">
+					<c:if test="${ (exibirCompleto == true) or (mov.idTpMov != 14 and not mov.cancelada)}">
 						<c:set var="temmov" value="${true}" />
 					</c:if>
 				</c:forEach>
@@ -127,7 +127,7 @@
 							</thead>
 							<c:set var="evenorodd" value="odd" />
 							<c:forEach var="mov" items="${m.movs}">
-								<c:if test="${ (exibirCompleto == 'true') or (mov.idTpMov != 14 and not mov.cancelada)}">
+								<c:if test="${ (exibirCompleto == true) or (mov.idTpMov != 14 and not mov.cancelada)}">
 									<tr class="${mov.classe} ${mov.disabled}">
 										<c:if test="${ (exibirCompleto == 'true')}">
 											<c:set var="dt" value="${mov.dtRegMovDDMMYYHHMMSS}" />

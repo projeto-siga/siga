@@ -14,6 +14,10 @@ public class ExGraph {
 	protected class Nodo {
 
 		private String nome, shape, label, URL, tooltip, color;
+		public String getNome() {
+			return nome;
+		}
+
 		private boolean destacar;
 
 		protected Nodo(String nome) {

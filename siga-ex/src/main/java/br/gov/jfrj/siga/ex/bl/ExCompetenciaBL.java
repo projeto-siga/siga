@@ -3320,6 +3320,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 								.getSubscritor().equivale(titular)) || (mob
 						.doc().getTitular() != null && mob.doc().getTitular()
 						.equivale(titular)))
+						&& !mob.doc().isColaborativo()
 						&& (!mob.doc().isAssinado() || (mob.doc()
 								.getExTipoDocumento().getIdTpDoc() != 1L && !mob
 								.doc().hasPDF())) && (mob.doc()

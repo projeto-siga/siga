@@ -126,24 +126,21 @@ public class TransferenciaPage {
 		try {
 			util.getSelect(driver, despacho).selectByVisibleText(propDocumentos.getProperty("despachoTextoLongo"));
 			DespachoPage despachoPage = PageFactory.initElements(driver, DespachoPage.class);
-			despachoPage.criarDespacho(propDocumentos, Boolean.FALSE);
+			OperacoesDocumentoPage operacoesDocumentoPage = despachoPage.criarDespacho(propDocumentos, Boolean.FALSE);
 			
 			new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//h3[1][contains(text(), 'Geral - Em Elaboração, Revisar')]|//div[h3 = 'Vias']/ul/li[contains(., 'Geral - Em Elaboração')]")));
 						
-			OperacoesDocumentoPage operacoesDocumentoPage = PageFactory.initElements(driver, OperacoesDocumentoPage.class);
-			operacoesDocumentoPage.clicarLinkFinalizar();
+			operacoesDocumentoPage = operacoesDocumentoPage.clicarLinkFinalizar();
 			
-			operacoesDocumentoPage.clicarLinkRegistrarAssinaturaManual();
-			RegistraAssinaturaManualPage registraAssinaturaManualPage = PageFactory.initElements(driver, RegistraAssinaturaManualPage.class);
-			registraAssinaturaManualPage.registarAssinaturaManual();
+			RegistraAssinaturaManualPage registraAssinaturaManualPage = operacoesDocumentoPage.clicarLinkRegistrarAssinaturaManual();
+			operacoesDocumentoPage = registraAssinaturaManualPage.registarAssinaturaManual();
 			
 			new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//h3[1][contains(text(), 'Juntado')]|//div[h3 = 'Vias']/ul/li[contains(., 'Juntado')]")));			
-			operacoesDocumentoPage.clicarLinkDesentranhar();
+			operacoesDocumentoPage = operacoesDocumentoPage.clicarLinkDesentranhar();
 			new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//h3[1][contains(text(), 'Aguardando Andamento')]|//div[h3 = 'Vias']/ul/li[contains(., 'Aguardando Andamento')]")));	
 			
-			operacoesDocumentoPage.clicarlinkJuntar();
-			JuntadaDocumentoPage juntadaDocumentoPage = PageFactory.initElements(driver, JuntadaDocumentoPage.class);
-			juntadaDocumentoPage.juntarDocumento(propDocumentos, codigoDocumento);
+			JuntadaDocumentoPage juntadaDocumentoPage = operacoesDocumentoPage.clicarlinkJuntar();
+			operacoesDocumentoPage = juntadaDocumentoPage.juntarDocumento(propDocumentos, codigoDocumento);
 			codigoDocumentoJuntado = operacoesDocumentoPage.getTextoVisualizacaoDocumento();
 			
 		} finally {

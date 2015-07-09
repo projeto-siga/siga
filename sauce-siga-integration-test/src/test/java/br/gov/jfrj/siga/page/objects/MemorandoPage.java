@@ -9,10 +9,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 public class MemorandoPage extends EditaDocumentoPage {
-	
-	@FindBy(id="scayt_0")
-	private WebElement frameMemorando;
-	
+		
 	@FindBy(css="table.cke_editor")
 	private WebElement tableCkEditor;
 		
@@ -25,8 +22,9 @@ public class MemorandoPage extends EditaDocumentoPage {
 		selectTipoDocumento("Memorando", "Memorando", By.xpath("//td[text() = 'Dados complementares']"));
 		util.isElementVisible(driver, tableCkEditor);
 		preencheDocumentoInterno(propDocumentos, Boolean.TRUE, Boolean.TRUE);	
+		preencheCKEditor();
 		botaoOk.click();
-		esperaBugSauce();
+
 		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 }

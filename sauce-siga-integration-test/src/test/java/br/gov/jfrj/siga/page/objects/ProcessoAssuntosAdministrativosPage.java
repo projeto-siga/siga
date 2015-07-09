@@ -17,7 +17,7 @@ public class ProcessoAssuntosAdministrativosPage extends EditaDocumentoPage {
 		selectTipoDocumento("Processo de Outros Assuntos Administrativos", modeloDocumento, By.xpath("//td[text() = 'Dados complementares']"));
 		preencheDocumentoInterno(propDocumentos, isDigital, Boolean.TRUE);
 		botaoOk.click();
-		esperaBugSauce();
+
 		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 }

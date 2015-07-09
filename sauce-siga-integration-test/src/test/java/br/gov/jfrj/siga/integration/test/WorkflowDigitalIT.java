@@ -51,7 +51,6 @@ public class WorkflowDigitalIT extends IntegrationTestBase implements SauceOnDem
 			e.printStackTrace();
 		}		
 		tarefaPage = PageFactory.initElements(driver, TarefaPage.class);
-		operacoesDocumentoPage = PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 	
 	@BeforeClass(enabled = true)
@@ -66,6 +65,7 @@ public class WorkflowDigitalIT extends IntegrationTestBase implements SauceOnDem
 			SolicitacaoEletronicaContratacaoPage secPage = PageFactory.initElements(driver, SolicitacaoEletronicaContratacaoPage.class);
 			secPage.criaSolicitacaoEletronicaContratacao(propDocumentos);
 			
+			operacoesDocumentoPage = PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 			// Clicar em Finalizar
 			operacoesDocumentoPage.clicarLinkFinalizar();
 			

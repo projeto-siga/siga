@@ -10,6 +10,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -106,7 +107,7 @@ public class IntegrationTestUtil {
 		Boolean invisible = Boolean.FALSE;
 		
 		try {
-			invisible = new WebDriverWait(driver, 30).until(ExpectedConditions.invisibilityOfElementLocated(option));
+			invisible = new WebDriverWait(driver, 30).ignoring(WebDriverException.class).until(ExpectedConditions.invisibilityOfElementLocated(option));
 		} catch (TimeoutException e) {
 			e.printStackTrace();
 		}

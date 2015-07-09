@@ -46,8 +46,9 @@ public class OficioPage extends EditaDocumentoPage {
 		util.getWebElement(driver, By.xpath("//b[text() = 'Forma de tratamento']"));	
 		//util.getSelect(driver, generoAutoridade).selectByVisibleText(propDocumentos.getProperty("generoAutoridade"));
 		util.preencheElemento(driver, enderecoDestinatario, propDocumentos.getProperty("enderecoDestinatario"));
+		preencheCKEditor();
 		botaoOk.click();
-		esperaBugSauce();
+
 		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 }

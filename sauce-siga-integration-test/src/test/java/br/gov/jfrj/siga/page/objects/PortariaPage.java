@@ -22,8 +22,9 @@ public class PortariaPage extends EditaDocumentoPage{
 		selectTipoDocumento("Portaria", "Portaria", By.xpath("//td[text() = 'Texto da portaria']"));
 		preencheDocumentoInterno(propDocumentos, Boolean.TRUE, Boolean.TRUE);
 		util.preencheElemento(driver, dispoeSobre, propDocumentos.getProperty("dispoeSobre"));
+		preencheCKEditor();
 		botaoOk.click();
-		esperaBugSauce();
+
 		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 }

@@ -61,7 +61,7 @@ public class CriacaoDocumentoIT extends IntegrationTestBase implements SauceOnDe
 		}
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void criaDocumentoExterno() {
 		EditaDocumentoPage editaDocumentoPage = PageFactory.initElements(driver, EditaDocumentoPage.class);
 		operacoesDocumentoPage = editaDocumentoPage.preencheDocumentoExterno(propDocumentos);		
@@ -91,15 +91,12 @@ public class CriacaoDocumentoIT extends IntegrationTestBase implements SauceOnDe
 		
 		Assert.assertTrue(operacoesDocumentoPage.isIdentificacaoDocumentoVisivel("PORTARIA Nº TMP"), "Texto PORTARIA Nº TMP não foi encontrado!");
 		Assert.assertTrue(operacoesDocumentoPage.isIdentificacaoDocumentoVisivel("Testes de Integração"), "Informação sobre o que Dispõe o documento não encontrada!");
-		Assert.assertTrue(operacoesDocumentoPage.isIdentificacaoDocumentoVisivel("Exmo. Sr. Juiz Federal"), "Texto do memorando não encontrado!");
 	}
 	
 	@Test(enabled = true)
 	public void criaOficio() {
 		OficioPage oficioPage = PageFactory.initElements(driver, OficioPage.class);
 		operacoesDocumentoPage = oficioPage.criaOficio(propDocumentos);
-		if(Boolean.TRUE)
-			throw new RuntimeException("Vendo se pula apenas 1 método!");
 
 		Assert.assertTrue(operacoesDocumentoPage.isIdentificacaoDocumentoVisivel("OFÍCIO Nº TMP"), "Texto OFÍCIO Nº TMP não foi encontrado!");
 		Assert.assertTrue(operacoesDocumentoPage.isIdentificacaoDocumentoVisivel(propDocumentos.getProperty("enderecoDestinatario")), "Endereço não encontrado!");

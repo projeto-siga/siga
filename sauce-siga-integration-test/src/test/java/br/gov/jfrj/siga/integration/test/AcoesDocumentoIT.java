@@ -279,7 +279,7 @@ public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDema
 		Assert.assertTrue(juntada.getText().contains(codigoDocumentoJuntado), "Código do documento juntado não encontrado!");	*/
 	}
 	
-	@Test(enabled = false, priority = 4)
+	@Test(enabled = true, priority = 4)
 	public void visualizarDossie() {
 		VisualizacaoDossiePage visualizacaoDossiePage = operacoesDocumentoPage.clicarLinkVisualizarDossie();
 		Assert.assertTrue(visualizacaoDossiePage.visualizarDossie(), "Texto 'DESPACHO Nº' não foi encontrado");

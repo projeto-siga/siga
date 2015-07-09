@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Properties;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -73,6 +74,9 @@ public class EditaDocumentoPage {
 	
 	@FindBy(name = "gravar")
 	protected WebElement botaoOk;
+	
+	@FindBy(id="scayt_0")
+	protected WebElement frameMemorando;
 	
 	protected IntegrationTestUtil util;
 	
@@ -195,8 +199,9 @@ public class EditaDocumentoPage {
 		new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("cpOrgaoSelSpan")));
 		util.preencheElemento(driver,observacaoOrgaoExterno, propDocumentos.getProperty("observacaoOrgaoExterno"));
 		util.preencheElemento(driver,subscritor, propDocumentos.getProperty("subscritorExterno"));
-		botaoOk.click();
+		descricao.click();
 		
+		((JavascriptExecutor)driver).executeScript("arguments[0].click()", botaoOk);
 		return PageFactory.initElements(driver, OperacoesDocumentoPage.class);
 	}
 		
@@ -225,8 +230,13 @@ public class EditaDocumentoPage {
 			util.isElementInvisible(driver, By.id("frm_numAntigoDoc"));
 		}
 	}
-	
-	public void esperaBugSauce() {
-		new WebDriverWait(driver, 300).until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/div[4]/div/h3")));	
+		
+	public EditaDocumentoPage preencheCKEditor() {
+		String windowHandle = driver.getWindowHandle();
+		new WebDriverWait(driver, 30).until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.id("scayt_0")));			
+		WebElement ckEditor = util.getWebElement(driver, By.tagName("body"));
+		((JavascriptExecutor)driver).executeScript("arguments[0].innerHTML = 'Teste de integração do Siga!'", ckEditor);
+		driver.switchTo().window(windowHandle);
+		return this;
 	}
 }

@@ -13,8 +13,9 @@
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
 <siga:cabecalho titulo="Documento" popup="${param.popup}" />
 
-<script src="/siga/javascript/viz.js" language="JavaScript1.1" type="text/javascript"></script>
+<!-- <script src="/siga/javascript/viz.js" language="JavaScript1.1" type="text/javascript"></script> -->
 <!-- <script src="http://mdaines.github.io/viz.js/viz.js"></script> -->
+<script src="https://rawgit.com/mdaines/viz.js/gh-pages/viz.js"></script>
 
 <c:if test="${not docVO.digital}">
 	<script type="text/javascript">

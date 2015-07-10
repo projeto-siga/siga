@@ -19,21 +19,26 @@
 package br.gov.jfrj.siga.cp;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import br.gov.jfrj.siga.cp.util.Blob;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDaoUtil;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
 @Table(name = "CP_MODELO", schema = "CORPORATIVO")
-@NamedQuery(name = "consultarCpModelos", query = "select u from CpModelo u where u.hisDtFim is null")
+@NamedQueries({
+		@NamedQuery(name = "consultarCpModelos", query = "select u from CpModelo u where u.hisDtFim is null"),
+		@NamedQuery(name = "consultarPorIdInicialCpModelo", query = "select mod from CpModelo mod where mod.hisIdIni = :idIni and mod.hisDtFim = null") })
 public class CpModelo extends AbstractCpModelo {
 	private static final long serialVersionUID = 1256614496347273713L;
 
@@ -72,12 +77,13 @@ public class CpModelo extends AbstractCpModelo {
 		return cacheConteudo;
 	}
 
-	//**
+	// **
 	public void setConteudoBlobString(String conteudo)
 			throws UnsupportedEncodingException {
 		if (conteudo != null && conteudo.trim().length() == 0)
 			conteudo = null;
-		setConteudoBlobMod(conteudo != null ? CpDaoUtil.createBlob(conteudo) : null);
+		setConteudoBlobMod(conteudo != null ? CpDaoUtil.createBlob(conteudo)
+				: null);
 		cacheConteudo = conteudo;
 	}
 
@@ -88,4 +94,5 @@ public class CpModelo extends AbstractCpModelo {
 		cacheConteudo = new String(Blob.toByteArray(getConteudoBlobMod()),
 				"ISO-8859-1");
 	}
+
 }

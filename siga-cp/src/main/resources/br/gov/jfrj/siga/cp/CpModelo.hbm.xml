@@ -31,6 +31,11 @@
 	      ]]>
 	</query>
 
+	<query name="consultarPorIdInicialCpModelo">
+	 <![CDATA[select mod from CpModelo mod where mod.hisIdIni = :idIni and mod.hisDtFim = null
+	      ]]>
+	</query>
+
 </hibernate-mapping>
 
 

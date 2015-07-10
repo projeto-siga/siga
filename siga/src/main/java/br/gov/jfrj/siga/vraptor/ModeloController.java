@@ -54,6 +54,10 @@ public class ModeloController extends SigaController {
 		return dao().consultar(id, CpModelo.class, false);
 	}
 
+	public CpModelo daoModAtual(long id) {
+		return dao().consultarPorIdInicialCpModelo(daoMod(id).getIdInicial());
+	}
+
 	@Get("/app/modelo/listar")
 	public void lista() throws Exception {
 		assertAcesso("FE:Ferramentas;MODVER:Visualizar modelos");
@@ -65,7 +69,7 @@ public class ModeloController extends SigaController {
 		assertAcesso("FE:Ferramentas;MODEDITAR:Editar modelos");
 
 		if (id != null) {
-			CpModelo mod = daoMod(id);
+			CpModelo mod = daoModAtual(id);
 			Cp.getInstance().getBL()
 					.alterarCpModelo(mod, conteudo, getIdentidadeCadastrante());
 		} else {

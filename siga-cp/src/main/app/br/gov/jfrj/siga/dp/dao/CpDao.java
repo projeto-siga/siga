@@ -1873,6 +1873,19 @@ public class CpDao extends ModeloDao {
 				l.add(mod);
 		return l;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public CpModelo consultarPorIdInicialCpModelo(final Long idInicial) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarPorIdInicialCpModelo");
+		query.setLong("idIni", idInicial);
+
+		query.setCacheable(false);
+		final List<CpModelo> l = query.list();
+		if (l.size() != 1)
+			return null;
+		return l.get(0);
+	}
 
 	public CpServico consultarPorSiglaCpServico(String siglaServico) {
 		final Query query = getSessao().getNamedQuery(

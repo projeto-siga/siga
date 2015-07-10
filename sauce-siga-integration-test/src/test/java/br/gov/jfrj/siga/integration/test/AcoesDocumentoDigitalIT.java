@@ -62,22 +62,22 @@ public class AcoesDocumentoDigitalIT extends IntegrationTestBase implements Sauc
 	}
 	
 	@Test(enabled = true, priority = 1)
-	public void finalizarDocumento() {
+	public void finalizar() {
 		super.finalizarDocumento(); 
 	}
 	
-	@Test(enabled = true, priority = 2)
-	public void assinarDigitalmente() {
+	@Test(enabled = true, priority = 2, dependsOnMethods = {"finalizar"})
+	public void assinarDocumentoDigitalmente() {
 		super.assinarDigitalmente(codigoDocumento, "Nº");
 	}
 	
-	@Test(enabled = true, priority = 3)
+	@Test(enabled = true, priority = 3, dependsOnMethods = {"assinarDocumentoDigitalmente"})
 	public void anexarArquivo() {
 		super.anexarArquivo(propDocumentos.getProperty("arquivoAnexo"));		
 		Assert.assertTrue(operacoesDocumentoPage.isEstadoAtualDocumento("Anexo Pendente Assinatura/Conferência"), "Texto 'Anexo Pendente de Assinatura/Conferência' não foi encontrado!");		
 	}
 	
-	@Test(enabled = true, priority = 3)
+	@Test(enabled = true, priority = 3, dependsOnMethods = {"assinarDocumentoDigitalmente"})
 	public void despacharDocumento() {
 		TransferenciaPage transferenciaPage = operacoesDocumentoPage.clicarLinkDespacharTransferir();
 		transferenciaPage.despacharDocumento(propDocumentos);

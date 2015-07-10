@@ -1,5 +1,11 @@
 package br.gov.jfrj.siga.page.objects;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -346,14 +352,38 @@ public class OperacoesDocumentoPage {
 	}
 	
 	public Boolean clicarLinkVisualizarImpressao() {
-		linkVisualizarImpressao.click();
+/*		linkVisualizarImpressao.click();
+		
 		util.openPopup(driver);
 		
 		try {		
 			return util.isPDF(driver);
 		} finally {
 			util.closePopup(driver);
-		}		
+		}		*/
+		HttpURLConnection urlConnection = null;
+		try {
+			String href = linkVisualizarImpressao.getAttribute("href");
+			String urlSiga = System.getProperty("baseURL") + href.substring(href.indexOf("'")+1, href.indexOf("')"));
+			System.out.println("URL: " + urlSiga);
+			
+			urlConnection = (HttpURLConnection) new URL(urlSiga).openConnection();
+			Integer responseCode = urlConnection.getResponseCode();
+			System.out.println("Response code: " + responseCode);
+			
+			return (responseCode.equals(200) ? Boolean.TRUE : Boolean.FALSE);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			if(urlConnection != null) {
+				try {
+					urlConnection.getInputStream().close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	public void clicarCancelarVia() {

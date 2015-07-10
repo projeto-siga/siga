@@ -102,22 +102,22 @@ public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDema
 		Assert.assertTrue(operacoesDocumentoPage.isCossignatarioInvisivel(propDocumentos.getProperty("nomeCossignatario")), "Nome do cossignatário continua aparecendo na tela!");
 	}
 	
-	@Test(enabled = true, priority = 2)
+	@Test(enabled = true, priority = 2, dependsOnMethods= {"finalizar"})
 	public void anexarArquivo() {
 		super.anexarArquivo(propDocumentos.getProperty("arquivoAnexo"));
 	}
 	
-	@Test(enabled = true, priority = 3)
+	@Test(enabled = true, priority = 3, dependsOnMethods= {"finalizar", "anexarArquivo"})
 	public void assinarAnexo() {
 		super.assinarAnexo(codigoDocumento);
 	}
 	
 	@Test(enabled = true, priority = 1)
-	public void finalizarDocumento() {
+	public void finalizar() {
 		super.finalizarDocumento(); 
 	}
 	
-	@Test(enabled = true, priority = 3)
+	@Test(enabled = true, priority = 3, dependsOnMethods= {"assinarDocumentoDigitalmente"})
 	public void fazerAnotacao() {
 		AnotacaoPage anotacaoPage = operacoesDocumentoPage.clicarLinkFazerAnotacao();
 		operacoesDocumentoPage = anotacaoPage.fazerAnotacao(propDocumentos);
@@ -127,7 +127,7 @@ public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDema
 		Assert.assertTrue(operacoesDocumentoPage.isAnotacaoInvisivel(nota), "Anotação continua sendo exibida");*/
 	}
 	
-	@Test(enabled = true, priority = 5)
+	@Test(enabled = true, priority = 5, dependsOnMethods= {"assinarDocumentoDigitalmente"})
 	public void redefineNivelAcesso() {
 		RedefineNivelAcessoPage redefineNivelAcessoPage = operacoesDocumentoPage.clicarLinkRedefinirNivelAcesso();		
 		operacoesDocumentoPage = redefineNivelAcessoPage.redefineNivelAcesso(propDocumentos);
@@ -136,8 +136,8 @@ public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDema
 		Assert.assertNotNull(util.getWebElement(driver, By.xpath("(//p/b[contains(.,'Público')])")), "Nível de acesso não foi modificado para público");*/
 	}
 	
-	@Test(enabled = true, priority = 3)
-	public void definirPerfil() throws InterruptedException {
+	@Test(enabled = true, priority = 3, dependsOnMethods= {"assinarDocumentoDigitalmente"})
+	public void definirPerfil() {
 		DefinePerfilPage definePerfilPage = operacoesDocumentoPage.clicarLinkDefinirPerfil();
 		operacoesDocumentoPage = definePerfilPage.definirPerfil(propDocumentos);
 		
@@ -146,7 +146,7 @@ public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDema
 		Assert.assertTrue(operacoesDocumentoPage.isPerfilInvisivel(propDocumentos.getProperty("perfil")), "Texto " + propDocumentos.getProperty("perfil") + " continua visível!");
 	}
 	
-	@Test(enabled = false, priority = 2)
+	@Test(enabled = false, priority = 2, dependsOnMethods= {"finalizar"})
 	public void criarVia() {
 		operacoesDocumentoPage.clicarCriarVia();
 		WebElement divVias = util.getContentDiv(driver, By.cssSelector("div.gt-sidebar-content"), "Vias");		
@@ -165,18 +165,18 @@ public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDema
 		Assert.assertNotNull(util.getWebElement(driver, By.xpath("(//ul/li["+ (i+1) +"][contains(.,'Cancelado')])")), "Texto Cancelado não encontrado!");
 	}
 	
-	@Test(enabled = true, priority = 3)
+	@Test(enabled = true, priority = 3, dependsOnMethods= {"finalizar"})
 	public void registrarAssinaturaManual() {		
 		super.registrarAssinaturaManual();
 	}
 	
-	@Test(enabled = true, priority = 3)
-	public void assinarDigitalmente() {
+	@Test(enabled = true, priority = 3, dependsOnMethods= {"finalizar"})
+	public void assinarDocumentoDigitalmente() {
 		super.assinarDigitalmente(codigoDocumento, "Nº");
 		//Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[2][contains(., 'Assinatura')]")), "Texto 'Assinatura' não encontrado!");
 	}
 	
-	@Test(enabled = true, priority = 4)
+	@Test(enabled = true, priority = 4, dependsOnMethods= {"assinarDocumentoDigitalmente"})
 	public void agendarPublicacao() {
 		AgendamentoPublicacaoPage agendamentoPublicacaoPage = operacoesDocumentoPage.clicarLinkAgendarPublicacao();
 		operacoesDocumentoPage = agendamentoPublicacaoPage.visualizaPagina();
@@ -184,7 +184,7 @@ public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDema
 	}
 	
 	// Rever amanhã!
-	@Test(enabled = true, priority = 4)
+	@Test(enabled = true, priority = 4, dependsOnMethods= {"assinarDocumentoDigitalmente"})
 	public void solicitarPublicacaoBoletim() {		
 		if(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) >= 17) {
 			Assert.assertTrue(operacoesDocumentoPage.clicarLinkSolicitarPublicacaoBoletimPos17Horas(),
@@ -199,7 +199,7 @@ public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDema
 		}
 	}
 	
-	@Test(enabled = true, priority = 4)
+	@Test(enabled = true, priority = 4, dependsOnMethods= {"assinarDocumentoDigitalmente"})
 	public void sobrestar() {
 		operacoesDocumentoPage = operacoesDocumentoPage.clicarLinkSobrestar();
 		Assert.assertTrue(operacoesDocumentoPage.isEstadoAtualDocumento("Sobrestado"), "Texto 'Sobrestado' não encontrado!");	
@@ -208,7 +208,7 @@ public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDema
 		//Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[2][contains(., 'Desobrestar')]")), "Texto 'Desobrestar' não encontrado!");
 	}
 	
-	@Test(enabled = true, priority = 4)
+	@Test(enabled = true, priority = 4, dependsOnMethods= {"assinarDocumentoDigitalmente"})
 	public void vincularDocumento() {
 		VinculacaoPage vinculacaoPage = operacoesDocumentoPage.clicarLinkVincular();		
 		String documentoApensado = vinculacaoPage.vincularDocumento(propDocumentos, codigoDocumento);
@@ -221,7 +221,7 @@ public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDema
 		Assert.assertTrue(operacoesDocumentoPage.isDocumentoConectadoInvisivel());
 	}
 	
-	@Test(enabled = true, priority = 4)
+	@Test(enabled = true, priority = 4, dependsOnMethods= {"assinarDocumentoDigitalmente"})
 	public void arquivarCorrente() {
 		operacoesDocumentoPage = operacoesDocumentoPage.clicarLinkArquivarCorrente();
 		Assert.assertTrue(operacoesDocumentoPage.isEstadoAtualDocumento("Arquivo Corrente"), "Texto Arquivado Corrente não foi encontrado!");
@@ -229,7 +229,7 @@ public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDema
 		Assert.assertTrue(operacoesDocumentoPage.isEstadoAtualDocumento("Aguardando Andamento"), "Texto 'Aguardando Andamento' não foi encontrado!");	
 	}
 	
-	@Test(enabled = true, priority = 4)
+	@Test(enabled = true, priority = 4, dependsOnMethods= {"assinarDocumentoDigitalmente"})
 	public void apensarDocumento() {
 		ApensacaoPage apensacaoPage = operacoesDocumentoPage.clicarLinkApensar();
 		String documentoApensado = apensacaoPage.apensarDocumento(propDocumentos, codigoDocumento);
@@ -242,20 +242,20 @@ public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDema
 		Assert.assertTrue(operacoesDocumentoPage.isDocumentoConectadoInvisivel(), "Área de Documentos Relacionados ainda está visível!");	
 	}
 	
-	@Test(enabled = true, priority = 4)
+	@Test(enabled = true, priority = 4, dependsOnMethods= {"assinarDocumentoDigitalmente"})
 	public void despacharDocumento() {
 		TransferenciaPage transferenciaPage = operacoesDocumentoPage.clicarLinkDespacharTransferir();
 		operacoesDocumentoPage = transferenciaPage.despacharDocumento(propDocumentos);
 		Assert.assertTrue(operacoesDocumentoPage.isDespachoVisivel(propDocumentos.getProperty("despacho")), "Texto do despacho não encontrado!");
 	}
 	
-	@Test(enabled = true, priority = 5)
+	@Test(enabled = true, priority = 5, dependsOnMethods= {"despachoDocumentoFilho"})
 	public void assinarDespacho() {
 		operacoesDocumentoPage = operacoesDocumentoPage.clicarAssinarDespacho(baseURL, codigoDocumento);
 		Assert.assertTrue(operacoesDocumentoPage.isDespachoAssinado(), "Texto 'Assinado por' não foi encontrado!");
 	}
 	  
-	@Test(enabled = true, priority = 4)
+	@Test(enabled = true, priority = 4, dependsOnMethods= {"assinarDocumentoDigitalmente"})
 	public void transferirDocumento() {
 		TransferenciaPage transferenciaPage = operacoesDocumentoPage.clicarLinkDespacharTransferir();
 		operacoesDocumentoPage = transferenciaPage.transferirDocumento(propDocumentos);
@@ -267,7 +267,7 @@ public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDema
 		Assert.assertNotNull(operacoesDocumentoPage.isEstadoAtualDocumento("Aguardando Andamento"), "Texto 'Aguardando Andamento' não foi encontrado!");	
 	}
 	
-	@Test(enabled = true, priority = 4)
+	@Test(enabled = true, priority = 4, dependsOnMethods= {"assinarDocumentoDigitalmente"})
 	public void despachoDocumentoFilho() {
 		TransferenciaPage transferenciaPage = operacoesDocumentoPage.clicarLinkDespacharTransferir();
 		
@@ -279,7 +279,7 @@ public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDema
 		Assert.assertTrue(juntada.getText().contains(codigoDocumentoJuntado), "Código do documento juntado não encontrado!");	*/
 	}
 	
-	@Test(enabled = true, priority = 4)
+	@Test(enabled = true, priority = 4, dependsOnMethods= {"despachoDocumentoFilho"})
 	public void visualizarDossie() {
 		VisualizacaoDossiePage visualizacaoDossiePage = operacoesDocumentoPage.clicarLinkVisualizarDossie();
 		Assert.assertTrue(visualizacaoDossiePage.visualizarDossie(), "Texto 'DESPACHO Nº' não foi encontrado");

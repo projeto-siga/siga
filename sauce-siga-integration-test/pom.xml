@@ -4,8 +4,8 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<parent>
 		<artifactId>projeto-siga</artifactId>
-        <groupId>projeto-siga</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+		<groupId>projeto-siga</groupId>
+		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -15,147 +15,142 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-failsafe-plugin</artifactId>
-						<version>2.12</version>
-						<configuration>
-					<!--  <systemProperties>
-								<property>
-									<name>webdriver.ie.driver</name>
-									<value>src/test/resources/drivers/Win32/IEDriverServer.exe</value>
-								</property>
-							</systemProperties> -->
-							<suiteXmlFiles>
-								<suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
-							</suiteXmlFiles>
-						</configuration>
-						<executions>
-							<execution>
-								<goals>
-									<goal>integration-test</goal>
-									<goal>verify</goal>
-								</goals>
-							</execution>
-						</executions>
-				</plugin>								
+				<version>2.12</version>
+				<configuration>
+					<!-- <systemProperties> <property> <name>webdriver.ie.driver</name> 
+						<value>src/test/resources/drivers/Win32/IEDriverServer.exe</value> </property> 
+						</systemProperties> -->
+					<suiteXmlFiles>
+						<suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+					</suiteXmlFiles>
+<!-- 					<environmentVariables>
+						<BUILD_NUMBER>107</BUILD_NUMBER>
+						<JOB_NAME>SigaTest</JOB_NAME>
+					</environmentVariables> -->
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
 	<profiles>
 		<profile>
-		<id>docker</id>
+			<id>docker</id>
 			<activation>
 				<property>
 					<name>server.ip</name>
 				</property>
 			</activation>
 			<build>
-				<plugins>					
+				<plugins>
 					<plugin>
 						<groupId>org.jolokia</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
 						<version>0.11.5</version>
-						<configuration>
-							<dockerHost>https://${server.ip}:2376</dockerHost>
-							<!-- SEM TLS: --> 
-							<!-- <dockerHost>http://${server.ip}:2375</dockerHost> -->
-							<!-- <certPath>C:\Users\${user.name}\.boot2docker\certs\boot2docker-vm</certPath> -->
-							<autoPull>true</autoPull>
-							<images>
-								<image>
-									<name>wnameless/oracle-xe-11g:latest</name>
-									<alias>db.server</alias>
-									<!-- No futuro, apontar p/ o repositório local da sjsrj -->
-									<!-- <registry>classec250.corp.jfrj.gov.br:5000</registry> -->
-									<run>
-										<ports>
-											<port>49160:22</port>
-											<port>49161:1521</port>
-											<port>49162:8080</port>
-										</ports>
-										<wait>
-											<url>http://${server.ip}:49162/apex</url>
-											<time>100000</time>
-										</wait>
-									</run>
-								</image>
-								<image>
-									<name>previousnext/mailcatcher:latest</name>
-									<alias>email.server</alias>
-									<!-- No futuro, apontar p/ o repositório local da sjsrj -->
-									<!-- <registry>classec250.corp.jfrj.gov.br:5000</registry> -->
-									<run>
-										<ports>
-											<port>49163:1080</port>
-											<port>49164:25</port>
-										</ports>
-										<wait>
-											<url>http://${server.ip}:49163</url>
-											<time>100000</time>
-										</wait>
-									</run>
-								</image>
-								
-								<image>
-									<name>siga/web.server:latest</name>
-									<alias>web.server</alias>
-									<!-- No futuro, apontar p/ o repositório local da sjsrj -->
-									<!-- <registry>classec250.corp.jfrj.gov.br:5000</registry> -->
-									<run>
-										<ports>
-											<port>80:80</port>
-										</ports>
-										<links>
-											<link>app.server</link>
-										</links>
-										<command>/usr/sbin/httpd -DFOREGROUND</command>
-										<wait>
-											<url>http://${server.ip}/siga</url>
-											<time>100000</time>
-										</wait>
-									</run>
-								</image>
-<!--  							<image>
-									<name>siga/sigavolumes:latest</name>
-									<alias>sigaVolumes</alias>
-									<build>
-										<from>busybox:latest</from>
-										<assemblyDescriptor>src/test/resources/docker-assembly.xml</assemblyDescriptor>
-										<command>true</command>
-									</build>
-								</image>  -->
-								<image>
-									<name>siga/app.server:modificada</name>
-									<alias>app.server</alias>
-									
-									<build>
-										<from>siga/app.server:latest</from>
-										<assembly>
-										   <basedir>/siga/jboss-eap-5.2/jboss-as/server/sigadoc/deploy</basedir>
-										   <descriptor>docker-assembly.xml</descriptor>
-										</assembly>   
-										<command>true</command>
-									</build>
-									
-									<run>
-										<links>
-											<link>db.server</link>
-											<link>email.server</link>
-										</links>
-										<env>
-											<init_db>on</init_db>
-											<flyway_run>auto</flyway_run>											
-										</env>
-										<ports>
-											<port>50000:8080</port>
-										</ports>
-										<wait>
-											<url>http://${server.ip}:50000/siga</url>
-											<time>500000</time>
-										</wait>
-										<command>bash -c '/siga/inicializacao.sh'</command>
-									</run>
-								</image> 
-							</images>
-						</configuration>
+								<configuration>
+									<dockerHost>https://${server.ip}:2376</dockerHost>
+									<!-- SEM TLS: -->
+									<!-- <dockerHost>http://${server.ip}:2375</dockerHost> -->
+									<!-- <certPath>C:\Users\${user.name}\.boot2docker\certs\boot2docker-vm</certPath> -->
+									<autoPull>true</autoPull>
+									<images>
+										<image>
+											<name>wnameless/oracle-xe-11g:latest</name>
+											<alias>db.server</alias>
+											<!-- No futuro, apontar p/ o repositório local da sjsrj -->
+											<!-- <registry>classec250.corp.jfrj.gov.br:5000</registry> -->
+											<run>
+												<ports>
+													<port>49160:22</port>
+													<port>49161:1521</port>
+													<port>49162:8080</port>
+												</ports>
+												<wait>
+													<url>http://${server.ip}:49162/apex</url>
+													<time>100000</time>
+												</wait>
+											</run>
+										</image>
+										<image>
+											<name>previousnext/mailcatcher:latest</name>
+											<alias>email.server</alias>
+											<!-- No futuro, apontar p/ o repositório local da sjsrj -->
+											<!-- <registry>classec250.corp.jfrj.gov.br:5000</registry> -->
+											<run>
+												<ports>
+													<port>49163:1080</port>
+													<port>49164:25</port>
+												</ports>
+												<wait>
+													<url>http://${server.ip}:49163</url>
+													<time>100000</time>
+												</wait>
+											</run>
+										</image>
+
+										<image>
+											<name>siga/web.server:latest</name>
+											<alias>web.server</alias>
+											<!-- No futuro, apontar p/ o repositório local da sjsrj -->
+											<!-- <registry>classec250.corp.jfrj.gov.br:5000</registry> -->
+											<run>
+												<ports>
+													<port>80:80</port>
+												</ports>
+												<links>
+													<link>app.server</link>
+												</links>
+												<command>/usr/sbin/httpd -DFOREGROUND</command>
+												<wait>
+													<url>http://${server.ip}/siga</url>
+													<time>100000</time>
+												</wait>
+											</run>
+										</image>
+										<!-- <image> <name>siga/sigavolumes:latest</name> <alias>sigaVolumes</alias> 
+											<build> <from>busybox:latest</from> <assemblyDescriptor>src/test/resources/docker-assembly.xml</assemblyDescriptor> 
+											<command>true</command> </build> </image> -->
+										<image>
+											<name>siga/app.server:modificada</name>
+											<alias>app.server</alias>
+
+											<build>
+												<from>siga/app.server:latest</from>
+												<assembly>
+													<basedir>/siga/jboss-eap-5.2/jboss-as/server/sigadoc/deploy</basedir>
+													<descriptor>docker-assembly.xml</descriptor>
+												</assembly>
+												<command>true</command>
+											</build>
+
+											<run>
+												<links>
+													<link>db.server</link>
+													<link>email.server</link>
+												</links>
+												<env>
+													<init_db>on</init_db>
+													<flyway_run>auto</flyway_run>
+												</env>
+												<ports>
+													<port>50000:8080</port>
+												</ports>
+												<wait>
+													<url>http://${server.ip}:50000/siga</url>
+													<time>500000</time>
+												</wait>
+												<command>bash -c '/siga/inicializacao.sh'</command>
+											</run>
+										</image>
+									</images>
+								</configuration>
 
 						<!-- Connect start/stop to pre- and post-integration-test phase, respectively -->
 						<executions>
@@ -167,16 +162,26 @@
 									<goal>start</goal>
 								</goals>
 							</execution>
- 						 	<execution>
+							<execution>
 								<id>stop</id>
 								<phase>post-integration-test</phase>
 								<goals>
- 									<goal>stop</goal>
-									<goal>remove</goal>  
+									<goal>stop</goal>
 								</goals>
-							</execution> 
+							</execution>														
+							<execution>
+								<id>remove</id>
+								<configuration>
+									<removeAll>true</removeAll>
+									<image>app.server</image>
+								</configuration>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>remove</goal>
+								</goals>
+							</execution>																					
 						</executions>
-					</plugin>					
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -223,7 +228,7 @@
 			</build>
 		</profile>
 	</profiles>
-		
+
 	<reporting>
 		<plugins>
 			<plugin>
@@ -253,28 +258,24 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-	        <groupId>commons-lang</groupId>
-	        <artifactId>commons-lang</artifactId>
-	        <version>2.6</version>
-	        <scope>test</scope>
-    	</dependency>
-    	<dependency>
-	         <groupId>commons-codec</groupId>
-	         <artifactId>commons-codec</artifactId>
-	         <version>1.4</version>
-		</dependency>
-<!-- 		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>6.8.8</version>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
 			<scope>test</scope>
-		</dependency> -->
+		</dependency>
 		<dependency>
-            <groupId>com.saucelabs</groupId>
-            <artifactId>sauce_testng</artifactId>
-            <version>[1.0.0,)</version>
-            <scope>test</scope>
-        </dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<!-- <dependency> <groupId>org.testng</groupId> <artifactId>testng</artifactId> 
+			<version>6.8.8</version> <scope>test</scope> </dependency> -->
+		<dependency>
+			<groupId>com.saucelabs</groupId>
+			<artifactId>sauce_testng</artifactId>
+			<version>[1.0.0,)</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>projeto-siga</groupId>
 			<artifactId>siga</artifactId>
@@ -300,29 +301,29 @@
 			<version>${siga.version}</version>
 		</dependency>
 	</dependencies>
-	
+
 	<repositories>
-	   <repository>
-	       <id>saucelabs-repository</id>
-	       <url>http://repository-saucelabs.forge.cloudbees.com/release</url>
-	       <releases>
-	           <enabled>true</enabled>
-	       </releases>
-	       <snapshots>
-	           <enabled>true</enabled>
-	       </snapshots>
-	   </repository>
+		<repository>
+			<id>saucelabs-repository</id>
+			<url>http://repository-saucelabs.forge.cloudbees.com/release</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
 	<pluginRepositories>
-	    <pluginRepository>
-	       <id>saucelabs-repository</id>
-	       <url>http://repository-saucelabs.forge.cloudbees.com/release</url>
-	       <releases>
-	           <enabled>true</enabled>
-	       </releases>
-	       <snapshots>
-	           <enabled>true</enabled>
-	       </snapshots>
-	   </pluginRepository>
-	</pluginRepositories>	
+		<pluginRepository>
+			<id>saucelabs-repository</id>
+			<url>http://repository-saucelabs.forge.cloudbees.com/release</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 </project>

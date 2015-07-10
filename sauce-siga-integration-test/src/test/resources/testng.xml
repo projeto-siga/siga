@@ -6,12 +6,12 @@
 		    <parameter name="Operating_System" value="VISTA"/>
         	<parameter name="Browser_Name" value="internet explorer"/>
         	<parameter name="Browser_Version" value="10.0"/>		
-  		 	<class name="br.gov.jfrj.siga.integration.test.CriacaoDocumentoIT"/> 
-  		    <class name="br.gov.jfrj.siga.integration.test.AcoesDocumentoIT"/>		
+  			<class name="br.gov.jfrj.siga.integration.test.CriacaoDocumentoIT"/> 
+   		    <class name="br.gov.jfrj.siga.integration.test.AcoesDocumentoIT"/>		
 			<class name="br.gov.jfrj.siga.integration.test.AcoesDocumentoDigitalIT"/>
 			<class name="br.gov.jfrj.siga.integration.test.ProcessoAdministrativoFisicoIT"/>  
-			<class name="br.gov.jfrj.siga.integration.test.ProcessoAdministrativoDigitalIT"/>
-			<!-- <class name="br.gov.jfrj.siga.integration.test.WorkflowDigitalIT"/> --> 	 	 				
+			<class name="br.gov.jfrj.siga.integration.test.ProcessoAdministrativoDigitalIT"/> 
+			<!-- <class name="br.gov.jfrj.siga.integration.test.WorkflowDigitalIT"/>  -->	 	 				
 		</classes>
 	</test>	
 		

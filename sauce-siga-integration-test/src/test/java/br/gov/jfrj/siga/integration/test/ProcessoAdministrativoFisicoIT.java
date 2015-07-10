@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+
 //Bibliotecas para o saucelabs
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
@@ -79,27 +80,27 @@ public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase implemen
 	}
 	
 	@Test(enabled = true)
-	public void autuar(){
+	public void autuarProcesso(){
 		super.autuar(Boolean.FALSE, "Processo de Outros Assuntos Administrativos");	
 	}
 	
-	@Test(enabled = false, priority = 1)
-	public void visualizarImpressao() {
+	@Test(enabled = true, priority = 1, dependsOnMethods = {"autuarProcesso"})
+	public void visualizarImpressao() throws Exception {
 		// Clicar em Visualizar Impressão - Garantir que não retorne um erro
 		Assert.assertTrue(operacoesDocumentoPage.clicarLinkVisualizarImpressao());
 	}
 	
-	@Test(enabled = true, priority = 1)
+	@Test(enabled = true, priority = 1, dependsOnMethods = {"autuarProcesso"})
 	public void finalizar() {
 		super.finalizarProcesso();
 	}
 	
-	@Test(enabled = true, priority = 2)
-	public void registrarAssinaturaManual() {
+	@Test(enabled = true, priority = 2, dependsOnMethods = {"finalizar"})
+	public void registrarAssinaturaManualProcesso() {
 		super.registrarAssinaturaManual();
 	}
 	
-	@Test(enabled = true, priority = 3)
+	@Test(enabled = true, priority = 3, dependsOnMethods = {"registrarAssinaturaManualProcesso"})
 	public void juntar() {
 		// Acessar o documento anterior
 		driver.get(baseURL + "/sigaex/expediente/doc/exibir.action?sigla=" + codigoDocumento);	
@@ -124,7 +125,7 @@ public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase implemen
 		operacoesDocumentoPage = visualizacaoDossiePage.clicarLinkVisualizarMovimentacoes();
 	}
 	
-	@Test(enabled = true, priority = 4)
+	@Test(enabled = true, priority = 4, dependsOnMethods = {"juntar"})
 	public void cancelarJuntada() {
 		// Acessar o documento juntado, por meio do link existente no TR do evento de juntada
 /*		WebElement linkDocumentoJuntado = util.getClickableElement(driver, By.partialLinkText(codigoDocumento));
@@ -138,7 +139,7 @@ public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase implemen
 		validaDesentranhamento(codigoProcesso);		
 	}
 	
-	@Test(enabled = true, priority = 2)
+	@Test(enabled = true, priority = 2, dependsOnMethods = {"finalizar"})
 	public void anexarArquivo() {
 		String nomeArquivo = propDocumentos.getProperty("arquivoAnexo");
 		super.anexarArquivo(nomeArquivo);
@@ -154,7 +155,7 @@ public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase implemen
 		visualizacaoDossiePage.clicarLinkVisualizarMovimentacoes();
 	}
 	
-	@Test(enabled = true, priority = 3)
+	@Test(enabled = true, priority = 3, dependsOnMethods = {"anexarArquivo"})
 	public void assinarAnexo() {
 		super.assinarAnexo(codigoProcesso);
 	}
@@ -168,12 +169,12 @@ public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase implemen
 		visualizacaoDossiePage.clicarLinkVisualizarMovimentacoes();		
 	}
 	
-	@Test(enabled = true, priority = 4)
-	public void encerrarVolume() {
+	@Test(enabled = true, priority = 4, dependsOnMethods = {"cancelarJuntada"} )
+	public void encerrarVolumeProcesso() {
 		super.encerrarVolume();
 	}
 	
-	@Test(enabled = true, priority = 5)
+	@Test(enabled = true, priority = 5, dependsOnMethods = {"encerrarVolumeProcesso"})
 	public void criarVolume() {
 		// Clicar em "Abrir Novo Volume"
 		operacoesDocumentoPage = operacoesDocumentoPage.clicarLinkAbrirNovoVolume();
@@ -204,7 +205,7 @@ public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase implemen
 				"'Texto 2º Volume - Aguardando Andamento' não encontrado!");
 	}
 	
-	@Test(enabled = true, priority = 6)
+	@Test(enabled = true, priority = 6, dependsOnMethods = {"criarVolume"})
 	public void criarSubprocesso() {
 		// Clicar em "Criar Subprocesso"
 		ProcessoFinanceiroPage processoFinanceiroPage = operacoesDocumentoPage.clicarLinkCriarSubprocesso();

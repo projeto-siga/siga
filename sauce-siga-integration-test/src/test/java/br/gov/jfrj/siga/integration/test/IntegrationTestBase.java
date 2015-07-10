@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openqa.selenium.By;
@@ -35,6 +36,7 @@ import org.testng.annotations.Parameters;
 
 
 
+
 //As libs abaixo são necessárias para que o sessionid seja passado ao jenkins ou bamboo
 //e também para que o testlistener invoque o sauce rest api no qual notificará o sauce
 //se o teste passou ou não
@@ -44,6 +46,7 @@ import com.saucelabs.saucerest.SauceREST;
 import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
 import com.saucelabs.testng.SauceOnDemandTestListener;
 // fim saucelabs 
+
 
 
 
@@ -245,15 +248,18 @@ public class IntegrationTestBase implements SauceOnDemandSessionIdProvider, Sauc
 	}		
 	
 	@AfterClass(alwaysRun = true)
-	public void tearDown() {
-		
+	public void tearDown() {		
 		//atualiza o saucelabs dashboard com fail ou pass em função da variável isTestSuccesful. É utilizado o sauce Rest API
 		SauceREST sauceREST = new SauceREST(USUARIO_SAUCELAB, ACCESSKEY_SAUCELAB);
+		Map<String, Object> updates = new HashMap<String, Object>();
+		updates.put("name", (System.getenv("JOB_NAME") != null ? System.getenv("JOB_NAME") + " - " : "") + getClass().getSimpleName());
+		updates.put("build", System.getenv("BUILD_NUMBER"));
 		if(isTestSuccesful) {
-			sauceREST.jobPassed(getSessionId());
+			updates.put("passed", true);
 		} else {
-			sauceREST.jobFailed(getSessionId());
+			updates.put("passed", false);
 		}
+		sauceREST.updateJobInfo(getSessionId(), updates);
 		driver.quit();
 	}
 	//Checa se algum assert no método fracassou(fail). Se algum assert fracassou marca-se o teste para a classe como fail setando a variável isTestSuccesful para false

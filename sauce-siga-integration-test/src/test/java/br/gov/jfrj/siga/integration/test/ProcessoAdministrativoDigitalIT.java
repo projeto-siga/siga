@@ -76,21 +76,21 @@ public class ProcessoAdministrativoDigitalIT extends IntegrationTestBase impleme
 	}
 	
 	@Test(enabled = true)
-	public void autuar(){
+	public void autuarProcesso(){
 		super.autuar(Boolean.TRUE, "Processo de Outros Assuntos Administrativos");
 	}
 	
-	@Test(enabled = true, priority = 1)
+	@Test(enabled = true, priority = 1, dependsOnMethods = {"autuarProcesso"})
 	public void finalizar() {
 		super.finalizarProcesso();
 	}
 	
-	@Test(enabled = true, priority = 2)
-	public void assinarDigitalmente() {
+	@Test(enabled = true, priority = 2, dependsOnMethods = {"finalizar"})
+	public void assinarDocumentoDigitalmente() {
 		super.assinarDigitalmente(codigoProcesso, propDocumentos.getProperty("descricao"));
 	}
 	
-	@Test(enabled = true, priority = 3)
+	@Test(enabled = true, priority = 3, dependsOnMethods = {"assinarDocumentoDigitalmente"})
 	public void juntar() {
 		// Se o documento for digital, o anterior terá sido juntado automaticamente ao processo no evento da assinatura do processo. 
 		// Clicar em "Visualizar Dossiê"
@@ -103,7 +103,7 @@ public class ProcessoAdministrativoDigitalIT extends IntegrationTestBase impleme
 		operacoesDocumentoPage = visualizacaoDossiePage.clicarLinkVisualizarMovimentacoes();
 	}
 	
-	@Test(enabled = true, priority = 4)	
+	@Test(enabled = true, priority = 4, dependsOnMethods = {"juntar"})	
 	public void cancelarJuntada() {
 		// Acessar o documento juntado, por meio do link existente no TR do evento de juntada
 /*		WebElement linkDocumentoJuntado = util.getClickableElement(driver, By.partialLinkText(codigoDocumento));
@@ -123,8 +123,8 @@ public class ProcessoAdministrativoDigitalIT extends IntegrationTestBase impleme
 		validaDesentranhamento(codigoProcesso);
 	}
 	
-	@Test(enabled = true, priority = 3)
-	public void anexarArquivo() {
+	@Test(enabled = true, priority = 3, dependsOnMethods = {"assinarDocumentoDigitalmente"})
+	public void anexarArquivoProcesso() {
 		String nomeArquivo = propDocumentos.getProperty("arquivoAnexo");
 		super.anexarArquivo(nomeArquivo);
 		
@@ -145,7 +145,7 @@ public class ProcessoAdministrativoDigitalIT extends IntegrationTestBase impleme
 		visualizacaoDossiePage.clicarLinkVisualizarMovimentacoes();
 	}	
 	
-	@Test(enabled = true, priority = 4)
+	@Test(enabled = true, priority = 4, dependsOnMethods = {"anexarArquivoProcesso"})
 	public void assinarAnexo() {
 		super.assinarAnexo(codigoDocumento);
 		
@@ -166,7 +166,7 @@ public class ProcessoAdministrativoDigitalIT extends IntegrationTestBase impleme
 		visualizacaoDossiePage.clicarLinkVisualizarMovimentacoes();
 	}
 	
-	@Test(enabled = true, priority = 6)
+	@Test(enabled = true, priority = 6, dependsOnMethods = {"assinarDocumentoDigitalmente"})
 	public void encerrarVolume() {
 		super.encerrarVolume();
 		

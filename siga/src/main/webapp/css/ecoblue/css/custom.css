@@ -415,7 +415,7 @@ ul#navmenu-h li:hover ul,ul#navmenu-h ul li:hover ul,ul#navmenu-h ul ul li:hover
 
 table.entrevista {
 	padding: 0px;
-	background-color: #fff;
+	/*background-color: #fff;*/
 	border-radius: 0px;
 }
 
@@ -425,7 +425,7 @@ table.entrevista TR.header {
 	padding: 0px;
 	color: #333;
 	border-bottom: 1px solid #ccc !important;
-	background-color: #fff;
+	/*background-color: #fff;*/
 	border-radius: 0px;
 }
 
@@ -450,7 +450,7 @@ table.parte TR.header {
 	margin: .2em 0px .2em 0px;
 	color: #333;
 	border-bottom: 1px solid #ccc !important;
-	background-color: #fff;
+	/*background-color: #fff;*/
 	border-radius: 0px;
 }
 
@@ -520,3 +520,13 @@ div#carregando {
 
 input, textarea { color: #000; }
 .placeholder { color: #aaa; }
+
+fieldset[disabled=disabled] {
+	opacity: 0.4;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+}
+
+input[type=checkbox]:disabled+label{
+	opacity: 0.4;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+}

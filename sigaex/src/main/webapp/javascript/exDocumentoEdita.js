@@ -241,3 +241,99 @@ function tryAgainAutoSave(){
 	clearTimeout(saveTimer);
 	saveTimer=setTimeout('autoSave()',60000 * 2);
 }
+
+function parte_bloquear(partes, p, blocked) {
+    partes[p].blocked = blocked;
+    for (var i = 0; i < partes[p].adeps.length; i++) {
+        var d = partes[p].adeps[i];
+        if (!partes[d].blocked) {
+            console.log(partes[d].id + " bloqueada por :" + partes[p].id);
+            parte_bloquear(partes, d, true);
+        }
+    }
+}
+
+function parte_limpar_dependentes(fBlock, titular, lotaTitular) {
+    // prepara um vetor com a informação sobre as partes
+    var partes = {};
+    $(".parte_dependentes").each(function(index) {
+        var info = $(this).val().split(":");
+        var id = info[0];
+        var adeps = info[1].split(";");
+        for (var i = 0; i < adeps.length; i++) {
+        	adeps[i] = adeps[i].trim();
+            if (adeps[i] == "") {
+            	adeps.splice(i, 1);
+            	break;
+            }
+        }
+        partes[id] = {
+            id: id,
+            adeps: adeps,
+            block: info[2] == "true",
+            resp: ';' + info[3] + ';',
+            checked: $('#parte_chk_' + id).is(":checked"),
+            locked: false, // modificações proibidas pois está marcado como já preenchido
+            disabled: false, // disabilitado porque depende de algum que ainda não foi preenchido ou não é da alçada do responsável
+            blocked: false, // bloqueado por haver um dependente que força o bloquei dos predecessores
+            active: false
+        };
+        //console.log('checked: ' + id + ' - ' + partes[id].checked);
+    });
+
+    // para cada parte
+    for (p in partes) {
+        var id = partes[p].id;
+
+        // verifica o responsavel
+        if (partes[p].resp.indexOf(';' + titular + ';') == -1 && partes[p].resp.indexOf(';' + lotaTitular + ';') == -1) {
+            console.log(id + " desabilitado por ser outro responsável");
+            partes[p].disabled = true;
+        }
+        if (!partes[p].disabled && partes[p].checked) {
+            console.log(id + " trancado por estar preenchido");
+            $('#parte_fieldset_' + id).attr('disabled', 'disabled');
+        }
+
+        // para cada dependencia
+        for (var i = 0; i < partes[p].adeps.length; i++) {
+            var d = partes[p].adeps[i];
+            if (!partes[d].checked) {
+                if (partes[p].checked) {
+                    console.log(id + " limpo por ser dependente de :" + d);
+                    $('#parte_chk_' + id).prop('checked', false);
+                    partes[p].checked = false;
+                    document.getElementById(id).value = 'Nao';
+                }
+                if (!partes[p].disabled && fBlock) {
+                    console.log(id + " desabilitado por ser dependente de :" + d);
+                    partes[p].disabled = true;
+                }
+            }
+        }
+
+        // bloquear
+        //
+        if (partes[p].block && partes[p].checked)
+            parte_bloquear(partes, p, false);
+    }
+
+
+    for (id in partes) {
+        $('#parte_chk_' + id).prop('checked', partes[id].checked);
+
+        if (partes[id].locked) {
+            $('#parte_fieldset_' + id).attr('disabled', 'disabled');
+        }
+
+        if (partes[id].disabled) {
+            $('#parte_fieldset_' + id).attr('disabled', 'disabled');
+            $('#parte_chk_' + id).attr('disabled', 'disabled');
+        }
+        if (partes[id].blocked) {
+            $('#parte_fieldset_' + id).attr('disabled', 'disabled');
+            $('#parte_chk_' + id).attr('disabled', 'disabled');
+        }
+    }
+}
+

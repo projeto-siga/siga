@@ -65,7 +65,7 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		root.put("root", root);
 		root.put("func", new FuncoesEL());
 		root.put("exbl", Ex.getInstance().getBL());
-		
+
 		root.putAll(attrs);
 		root.put("param", params);
 
@@ -90,7 +90,7 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		if (attrs.containsKey("descricao"))
 			root.put("gerar_descricao", true);
 
-		String sTemplate = "[#compress]\n[#include \"GERAL\"]\n";
+		String sTemplate = "[#compress]\n[#include \"DEFAULT\"][#include \"GERAL\"]\n";
 		if (ou != null) {
 			sTemplate += "[#include \"" + ou.getAcronimoOrgaoUsu() + "\"]";
 		}
@@ -99,19 +99,21 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		try {
 			Template temp = new Template((String) attrs.get("nmMod"),
 					new StringReader(sTemplate), cfg);
-	
+
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			Writer out = new OutputStreamWriter(baos);		
+			Writer out = new OutputStreamWriter(baos);
 			temp.process(root, out);
 			out.flush();
 			return baos.toString();
 		} catch (TemplateException e) {
-			if (e.getCauseException() != null && e.getCauseException() instanceof AplicacaoException)
+			if (e.getCauseException() != null
+					&& e.getCauseException() instanceof AplicacaoException)
 				throw (AplicacaoException) e.getCauseException();
-			return (e.getMessage() + "\n" + e.getFTLInstructionStack()).replace("\n", "<br/>").replace("\r", "");
+			return (e.getMessage() + "\n" + e.getFTLInstructionStack())
+					.replace("\n", "<br/>").replace("\r", "");
 		} catch (IOException e) {
 			return e.getMessage();
-		}				
+		}
 	}
 
 	public void closeTemplateSource(Object arg0) throws IOException {
@@ -120,12 +122,15 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 	public Object findTemplateSource(String source) throws IOException {
 		List<CpModelo> l = ExDao.getInstance().consultaCpModelos();
 		for (CpModelo mod : l) {
-			if ("GERAL".equals(source) && mod.getCpOrgaoUsuario() == null) {
+			if ("DEFAULT".equals(source) ) {
+				return FreemarkerDefault.getDefaultTemplate();
+			} else if ("GERAL".equals(source)
+					&& mod.getCpOrgaoUsuario() == null) {
 				return mod.getConteudoBlobString() == null ? "" : mod
 						.getConteudoBlobString();
 			} else if (mod.getCpOrgaoUsuario() != null
-					&& mod.getCpOrgaoUsuario().getAcronimoOrgaoUsu().equals(
-							source)) {
+					&& mod.getCpOrgaoUsuario().getAcronimoOrgaoUsu()
+							.equals(source)) {
 				return mod.getConteudoBlobString() == null ? "" : mod
 						.getConteudoBlobString();
 			}

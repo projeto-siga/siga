@@ -37,8 +37,7 @@ import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-public class ProcessadorFreemarkerSimples implements 
-		TemplateLoader {
+public class ProcessadorFreemarkerSimples implements TemplateLoader {
 
 	private Configuration cfg;
 
@@ -64,7 +63,7 @@ public class ProcessadorFreemarkerSimples implements
 		root.putAll(attrs);
 		root.put("param", params);
 
-		String sTemplate = "[#compress]\n[#include \"GERAL\"]\n";
+		String sTemplate = "[#compress]\n[#include \"DEFAULT\"][#include \"GERAL\"]\n";
 		if (ou != null) {
 			sTemplate += "[#include \"" + ou.getAcronimoOrgaoUsu() + "\"]";
 		}
@@ -78,7 +77,8 @@ public class ProcessadorFreemarkerSimples implements
 		try {
 			temp.process(root, out);
 		} catch (TemplateException e) {
-			return (e.getMessage() + "\n" + e.getFTLInstructionStack()).replace("\n", "<br/>").replace("\r", "");
+			return (e.getMessage() + "\n" + e.getFTLInstructionStack())
+					.replace("\n", "<br/>").replace("\r", "");
 		} catch (IOException e) {
 			return e.getMessage();
 		}
@@ -92,12 +92,15 @@ public class ProcessadorFreemarkerSimples implements
 	public Object findTemplateSource(String source) throws IOException {
 		List<CpModelo> l = CpDao.getInstance().consultaCpModelos();
 		for (CpModelo mod : l) {
-			if ("GERAL".equals(source) && mod.getCpOrgaoUsuario() == null) {
+			if ("DEFAULT".equals(source)) {
+				return FreemarkerSimplesDefault.getDefaultTemplate();
+			} else if ("GERAL".equals(source)
+					&& mod.getCpOrgaoUsuario() == null) {
 				return mod.getConteudoBlobString() == null ? "" : mod
 						.getConteudoBlobString();
 			} else if (mod.getCpOrgaoUsuario() != null
-					&& mod.getCpOrgaoUsuario().getAcronimoOrgaoUsu().equals(
-							source)) {
+					&& mod.getCpOrgaoUsuario().getAcronimoOrgaoUsu()
+							.equals(source)) {
 				return mod.getConteudoBlobString() == null ? "" : mod
 						.getConteudoBlobString();
 			}

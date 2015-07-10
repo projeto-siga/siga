@@ -1115,6 +1115,7 @@ public class AppController extends GcController {
 	@Path("/app/revisado/{sigla}")
 	public void revisado(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
+		boolean temPedidoDeRevisao = false;
 		if (informacao.movs != null) {
 			DpPessoa titular = getTitular();
 			DpLotacao lotaTitular = getLotaTitular();
@@ -1126,6 +1127,7 @@ public class AppController extends GcController {
 				if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO
 						&& (titular.equivale(mov.pessoaAtendente) || lotaTitular
 								.equivale(mov.lotacaoAtendente))) {
+					temPedidoDeRevisao = true;
 					GcMovimentacao m = bl
 							.movimentar(
 									informacao,
@@ -1149,7 +1151,8 @@ public class AppController extends GcController {
 				}
 			}
 		}
-		throw new AplicacaoException("Não há pedido de revisão pendente para "
+		if (!temPedidoDeRevisao)
+			throw new AplicacaoException("Não há pedido de revisão pendente para "
 				+ getIdentidadeCadastrante().getDpPessoa().getSigla());
 	}
 

@@ -1256,7 +1256,8 @@ public class ExDocumentoController extends ExController {
 								+ "classificação para ser incluída na próxima revisão da tabela de classificações.");
 			}
 
-			if (exDocumentoDTO.getDoc().getDescrDocumento().length() > exDocumentoDTO
+			if (exDocumentoDTO.getDoc().getDescrDocumento() != null 
+					&& exDocumentoDTO.getDoc().getDescrDocumento().length() > exDocumentoDTO
 					.getTamanhoMaximoDescricao()) {
 				throw new AplicacaoException(
 						"O campo descrição possui mais do que "

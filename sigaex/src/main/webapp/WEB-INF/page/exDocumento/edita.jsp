@@ -397,7 +397,7 @@
 						</c:otherwise>
 					</c:choose>
 					<tr style="display:${displayDescricao}">
-					    <c:if test="${modelo.descricaoAutomatica}">
+					    <c:if test="${exDocumentoDTO.modelo.descricaoAutomatica}">
 							<input type="hidden" id="descricaoAutomatica" value="sim" />
 						</c:if>
 						<input type="hidden" name="campos" value="descrDocumento" />

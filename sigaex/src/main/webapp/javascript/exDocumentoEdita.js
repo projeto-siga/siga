@@ -64,11 +64,6 @@ function validar(silencioso){
 		return false;
 	}
 	
-	if (descr==null || descr=="") {
-		aviso("Preencha o campo Descrição antes de gravar o documento.", silencioso);
-		return false;
-	}
-	
 	if (eletroHidden == null && !eletro1.checked && !eletro2.checked) {
 		aviso("É necessário informar se o documento será digital ou físico, na parte superior da tela.", silencioso);
 		return false;

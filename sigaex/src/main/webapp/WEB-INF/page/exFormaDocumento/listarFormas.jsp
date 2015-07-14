@@ -10,7 +10,7 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
-		<h2>Cadastro de Formas</h2>
+		<h2>Cadastro de Espécies Documentais</h2>
 
 			<div class="gt-content-box gt-for-table">
 
@@ -31,7 +31,7 @@
 	</form>
 	</div>
 
-	<h3 style="margin-top: 25px;">Lista de Formas</h3>
+	<h3 style="margin-top: 25px;">Lista de Espécies Documentais</h3>
 	<div class="gt-content-box" style="margin-bottom: 25px;">
 	<table class="gt-table" width="100%">
 	<thead>

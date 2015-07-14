@@ -36,7 +36,7 @@
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
-			<h2>Edição de Forma</h2>
+			<h2>Edição de Espécie Documental</h2>
 
 			<div class="gt-content-box gt-for-table">
 			
@@ -47,7 +47,7 @@
 			
 				<table class="gt-form-table">
 					<tr class="header">
-						<td colspan="2">Dados da Forma</td>
+						<td colspan="2">Dados da Espécie Documental</td>
 					</tr>
 					<tr>
 						<td width="20%">Descrição:</td>

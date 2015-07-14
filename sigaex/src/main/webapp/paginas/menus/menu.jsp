@@ -78,7 +78,7 @@
 		<ul>
 			<li><siga:monolink
 					href="${pageContext.request.contextPath}/app/forma/listar"
-					texto="Cadastro de Formas" /></li>
+					texto="Cadastro de Espécies" /></li>
 			<li><a href="/sigaex/app/modelo/listar">Cadastro de modelos</a>
 			</li>
 			<c:if

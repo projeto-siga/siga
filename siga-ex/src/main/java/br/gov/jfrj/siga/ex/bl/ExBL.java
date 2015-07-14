@@ -2629,7 +2629,7 @@ public class ExBL extends CpBL {
 	}
 
 	public void atualizarMovimentacoesDePartes(final ExDocumento doc,
-			DpPessoa cadastrante, DpLotacao lotaCadastrante) throws Exception {
+			DpPessoa cadastrante, DpLotacao lotaCadastrante, Date dt) throws Exception {
 		ExPartes partes = processarDadosDasPartes(doc);
 		partes.calcular();
 		ExMobil mob = doc.getMobilGeral();
@@ -2662,7 +2662,7 @@ public class ExBL extends CpBL {
 				ExMovimentacao m = criarNovaMovimentacao(
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO,
 						cadastrante, lotaCadastrante, mob, null, null, null,
-						null, null, null);
+						null, null, dt);
 				m.setDescrMov(parte.getDescricaoMov());
 
 				if (encontrada != null) {
@@ -3875,6 +3875,8 @@ public class ExBL extends CpBL {
 		 */
 
 		try {
+			Date dt = dao().dt();
+
 			// System.out.println(System.currentTimeMillis() + " - INI gravar");
 			iniciarAlteracao();
 
@@ -3885,8 +3887,9 @@ public class ExBL extends CpBL {
 				if (doc.getLotaCadastrante() == null)
 					doc.setLotaCadastrante(doc.getCadastrante().getLotacao());
 			}
-			if (doc.getDtRegDoc() == null)
-				doc.setDtRegDoc(dao().dt());
+			if (doc.getDtRegDoc() == null) {
+				doc.setDtRegDoc(dt);
+			}
 
 			// Nato: para obter o numero do TMP na primeira gravação
 			boolean primeiraGravacao = false;
@@ -3957,7 +3960,7 @@ public class ExBL extends CpBL {
 				obterMetodoPorString(funcao, doc);
 			}
 
-			atualizarMovimentacoesDePartes(doc, cadastrante, lotaCadastrante);
+			atualizarMovimentacoesDePartes(doc, cadastrante, lotaCadastrante, dt);
 
 			String s = processarComandosEmTag(doc, "gravacao");
 

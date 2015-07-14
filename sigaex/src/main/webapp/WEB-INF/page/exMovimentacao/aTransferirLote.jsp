@@ -248,7 +248,7 @@
 						<c:if test="${empty primeiro}">
 							<br />
 							<h2>
-								Atendente:
+								Destinatário:
 								<c:choose>
 									<c:when test="${secao==0}">
 										${titular.descricao}

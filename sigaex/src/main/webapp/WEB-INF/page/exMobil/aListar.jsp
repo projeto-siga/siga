@@ -765,7 +765,7 @@
 							</c:otherwise>
 						</c:choose>
 
-						<td>Tipo:</td>
+						<td>Espécie:</td>
 						<td><select id="tipoForma" name="idTipoFormaDoc"
 							onchange="javascript:alteraTipoDaForma();">
 								<option value="0">[Todos]</option>

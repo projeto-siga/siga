@@ -871,7 +871,7 @@
 				<b>Cadastrante:</b> ${docVO.cadastranteString} ${docVO.lotaCadastranteString}
 			</p>
 			<p>
-				<b>Tipo:</b> ${docVO.forma}
+				<b>Espécie:</b> ${docVO.forma}
 			</p>
 			<p>
 				<b>Modelo:</b> ${docVO.modelo}

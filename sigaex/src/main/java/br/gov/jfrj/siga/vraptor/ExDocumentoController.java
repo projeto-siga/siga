@@ -2093,7 +2093,7 @@ public class ExDocumentoController extends ExController {
 				"<!-- INICIO FECHO -->", "<!-- FIM FECHO -->" };
 
 		final String as[] = vars;
-		if (as != null) {
+		if (as != null && as.length > 0) {
 			for (final String s : as) {
 				if (baos.size() > 0)
 					baos.write('&');

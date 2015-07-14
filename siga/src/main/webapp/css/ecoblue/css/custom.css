@@ -530,3 +530,7 @@ input[type=checkbox]:disabled+label{
 	opacity: 0.4;
     filter: alpha(opacity=40); /* For IE8 and earlier */
 }
+
+div .gt-error:empty {
+   display: none;
+}

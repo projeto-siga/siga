@@ -291,7 +291,7 @@
 
 					<c:if test='${ exDocumentoDTO.tipoDocumento != "externo"}'>
 						<tr>
-							<td>Tipo:</td>
+							<td>Espécie:</td>
 							<td colspan="3">
 								<select  name="exDocumentoDTO.idFormaDoc" onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();" cssStyle="${estiloTipo}">
 									<c:forEach items="${exDocumentoDTO.formasDoc}" var="item">

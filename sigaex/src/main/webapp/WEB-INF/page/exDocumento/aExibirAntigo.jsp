@@ -379,7 +379,7 @@
 			</p>
 			<p>
 				<b>
-					Tipo:
+					Espécie:
 				</b>
 				 ${docVO.forma}
 			</p>

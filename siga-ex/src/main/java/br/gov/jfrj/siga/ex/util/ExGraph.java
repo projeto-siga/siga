@@ -78,6 +78,7 @@ public class ExGraph {
 
 		private String nodo1, nodo2, estilo, tooltip, label, color;
 		private boolean directed, aoContrario;
+		private boolean constraint = true;
 
 		protected Transicao(String nodo1, String nodo2) {
 			this.nodo1 = nodo1;
@@ -125,9 +126,20 @@ public class ExGraph {
 				toString += "[color=\"" + color + "\"]";
 			if (aoContrario)
 				toString += "[dir=back]";
+			if (!constraint)
+				toString += "[constraint=false]";
 			if (label != null)
 				toString += "[label=\"" + label + "\"]";
 			return toString;
+		}
+
+		public boolean isConstraint() {
+			return constraint;
+		}
+
+		public Transicao setConstraint(boolean constraint) {
+			this.constraint = constraint;
+			return this;
 		}
 	}
 

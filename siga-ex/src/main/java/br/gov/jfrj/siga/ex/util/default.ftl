@@ -1,3 +1,51 @@
+[#macro parte id titulo depende="" responsavel="" bloquear=true esconder=false]
+    [#if !esconder]
+      [#if gerar_partes!false]
+        [#if root[id]??]
+          [#local preenchido = root[id]/]
+        [#else]
+          [#local preenchido = false/]
+        [/#if]
+        [#local body][#nested/][/#local]
+        [#local hash = false/]
+          <parte id="${id}" titulo="${titulo}" preenchido="${(preenchido == "Sim")?string("1","0")}" responsavel="${responsavel}" [#if .vars["parte_mensagem_" + id]??] mensagem="${.vars["parte_mensagem_" + id]!default}" [/#if]>
+          [#if depende!=""]
+            [#list depende?split(";") as dependencia]
+              <depende id="${dependencia}" hash="hash"/>
+            [/#list]
+          [/#if]
+        </parte>
+      [#else]
+        [#local idDiv = "parte_div_" + id /] 
+        [@div id=idDiv depende=depende suprimirIndependente=true]
+          <input type="hidden" id="parte_dependentes_${id}" class="parte_dependentes" value="${id}:${depende}:${bloquear?c}:${responsavel}"/>
+          [@oculto var="parte_mensagem_${id}" /]
+          
+          <table class="parte" width="100%">
+            <tr class="header">
+              <td>${titulo}
+                <span style="float: right"><input type="button" value="Solicitar Alteração" onclick="parte_solicitar_alteracao('${id}', '${titular}', '${lotaTitular}');"/> [@checkbox titulo="Preenchimento Concluído" var=id reler=true idAjax=id id="parte_chk_"+id onclique="parte_atualizar('${titular}', '${lotaTitular}');" /]</span>
+                <span style="float: right; padding-right: 2em;">Responsável: ${responsavel}</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+              	<div id="parte_div_mensagem_${id}" class="gt-error"></div>
+				<fieldset id="parte_fieldset_${id}">[#nested]</fieldset></td>
+            </tr>
+          </table>
+          [#local titular = .vars['sigla_titular']!""]
+          [#local lotaTitular = .vars['sigla_lota_titular']!""]
+            <script type="text/javascript">
+                $(document).ready(function(){parte_atualizar('${titular}', '${lotaTitular}')});
+            </script>
+        [/@div]
+      [/#if]
+    [#else]
+        [#nested]
+    [/#if]
+[/#macro]
+
 [#-- Assinatura de Parte de Documento Colaborativo --]
 [#macro assinaturaParte doc parte formatarOrgao=false]
   [#attempt]
@@ -31,50 +79,6 @@
   </p>
 [/#macro]
 
-
-[#macro parte id titulo depende="" responsavel="" bloquear=true esconder=false]
-    [#if !esconder]
-      [#if gerar_partes!false]
-        [#if root[id]??]
-          [#local preenchido = root[id]/]
-        [#else]
-          [#local preenchido = false/]
-        [/#if]
-        [#local body][#nested/][/#local]
-        [#local hash = false/]
-          <parte id="${id}" titulo="${titulo}" preenchido="${(preenchido == "Sim")?string("1","0")}" responsavel="${responsavel}">
-          [#if depende!=""]
-            [#list depende?split(";") as dependencia]
-              <depende id="${dependencia}" hash="hash"/>
-            [/#list]
-          [/#if]
-        </parte>
-      [#else]
-        [#local idDiv = "parte_div_" + id /] 
-        [@div id=idDiv depende=depende suprimirIndependente=true]
-          <input type="hidden" id="parte_dependentes_${id}" class="parte_dependentes" value="${id}:${depende}:${bloquear?c}:${responsavel}"/>
-          <table class="parte" width="100%">
-            <tr class="header">
-              <td>${titulo}
-                <span style="float: right">[@checkbox titulo="Preenchimento Concluído" var=id reler=true idAjax=id id="parte_chk_"+id onclique="parte_limpar_dependentes(false, '${titular}', '${lotaTitular}');" /]</span>
-                <span style="float: right; padding-right: 2em;">Responsável: ${responsavel}</span>
-              </td>
-            </tr>
-            <tr>
-              <td><fieldset id="parte_fieldset_${id}">[#nested]</fieldset></td>
-            </tr>
-          </table>
-          [#local titular = .vars['sigla_titular']!""]
-          [#local lotaTitular = .vars['sigla_lota_titular']!""]
-            <script type="text/javascript">
-                $(document).ready(function(){parte_limpar_dependentes(true, '${titular}', '${lotaTitular}')});
-            </script>
-        [/@div]
-      [/#if]
-    [#else]
-        [#nested]
-    [/#if]
-[/#macro]
 
 [#function par parameter]
     [#if param[parameter]??]

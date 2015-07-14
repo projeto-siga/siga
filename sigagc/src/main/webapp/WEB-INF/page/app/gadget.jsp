@@ -22,6 +22,6 @@
 	</table>
 </div>
 <br />
-<input type="button" value="Novo"
+<input type="button" value="Novo Conhecimento"
 	onclick="javascript: window.location='${linkTo[AppController].editar}';"
-	class="gt-btn-small gt-btn-right" style="cursor: pointer;" title="Criar Novo Conhecimento"/>
+	class="gt-btn-large gt-btn-right" style="cursor: pointer;" title="Criar Novo Conhecimento"/>

@@ -17,6 +17,7 @@ public class ExParte {
 	private String titulo;
 	private String hash;
 	private String responsavel;
+	private String mensagem;
 	private boolean preenchido;
 	private boolean ativo;
 	private List<ExDependencia> dependencias = new ArrayList<>();
@@ -59,7 +60,7 @@ public class ExParte {
 		this.dependencias = dependencias;
 	}
 
-	public String getDescricaoMov() { 
+	public String getDescricaoMov() {
 
 		String deps = "";
 		for (ExDependencia d : this.dependencias) {
@@ -68,12 +69,20 @@ public class ExParte {
 			deps += d.getId();
 		}
 
-		return "id=\"" + getId()
+		return "id=\""
+				+ getId()
 				+ (deps.length() > 0 ? "\" depende=\"" + deps : "")
-				+ "\" titulo=\"" + getTitulo() + "\" ativo=\""
-				+ (isAtivo() ? 1 : 0) + "\" preenchido=\""
-				+ (isPreenchido() ? 1 : 0) + "\" responsavel=\""
-				+ getResponsavel() + "\"";
+				+ "\" titulo=\""
+				+ getTitulo()
+				+ "\" ativo=\""
+				+ (isAtivo() ? 1 : 0)
+				+ "\" preenchido=\""
+				+ (isPreenchido() ? 1 : 0)
+				+ "\" responsavel=\""
+				+ getResponsavel()
+				+ "\""
+				+ (getMensagem() != null ? " mensagem=\"" + getMensagem()
+						+ "\"" : "");
 	}
 
 	public String getString() {
@@ -152,6 +161,15 @@ public class ExParte {
 	@XmlAttribute(name = "titulo")
 	public void setTitulo(String titulo) {
 		this.titulo = titulo;
+	}
+
+	public String getMensagem() {
+		return mensagem;
+	}
+
+	@XmlAttribute(name = "mensagem")
+	public void setMensagem(String mensagem) {
+		this.mensagem = mensagem;
 	}
 
 }

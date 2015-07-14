@@ -189,7 +189,7 @@ function popitup_movimentacao() {
 						</tr>
 					</c:if>
 					<tr>
-						<td>Atendente:</td>
+						<td>Destinatário:</td>
 						<td>
 						<select name="tipoResponsavel" onchange="javascript:sbmt();" >
 							<c:forEach items="${listaTipoResp}" var="item">

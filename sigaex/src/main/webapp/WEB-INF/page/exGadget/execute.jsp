@@ -139,14 +139,14 @@ submitOk = function() {
 </div>
 <c:if test="${apenasQuadro != true}">
 	<br />
-	<a class="gt-btn-small gt-btn-right"
+	<a class="gt-btn-large gt-btn-right"
 		href="javascript: window.location.href='${pageContext.request.contextPath}/app/expediente/doc/editar'"
 		title="Criar novo expediente ou processo administrativo">
-			Novo
+			Novo Documento
 	</a>
-	<a class="gt-btn-medium gt-btn-right"
+	<a class="gt-btn-large gt-btn-right"
 		href="javascript: window.location.href='${pageContext.request.contextPath}/app/expediente/doc/listar?primeiraVez=sim'"
 		title="Pesquisar expedientes e processos administrativos">
-			Pesquisar
+			Pesquisar Documentos
 	</a>
 	</c:if>

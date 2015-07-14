@@ -23,7 +23,7 @@ Siga.principal = {
         },
         sigatp: {
         	name: "sigatp",
-        	url: "/sigatp/gadget",
+        	url: "/sigatp/app/gadget",
           viewId: "rightbottom3"
         },
         processos: {

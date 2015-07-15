@@ -1097,6 +1097,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if (mob.isArquivado() || mob.isEliminado())
 			return false;
+		
+		if (mob.isPendenteDeColaboracao())
+			return false;
 
 		// cosignatario pode assinar depois que o subscritor já tiver assinado
 
@@ -1155,7 +1158,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeAssinarComSenha(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
 				ExTipoMovimentacao.class, false);
@@ -1907,6 +1910,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		
 		if (mob.doc().isEliminado())
+			return false;
+			
+		if (mob.doc().getMobilGeral().isPendenteDeColaboracao())
 			return false;
 			
 		if (mob.doc().getExMobilPai() != null && !mob.doc().isAssinado())

@@ -41,6 +41,10 @@
 		<class>br.gov.jfrj.siga.dp.CpTipoMarcador</class>
 		<class>br.gov.jfrj.siga.dp.CpMarca</class>
 		<class>br.gov.jfrj.siga.dp.CpTipoMarca</class>
+		<class>br.gov.jfrj.siga.cp.CpPerfil</class>
+		<class>br.gov.jfrj.siga.cp.CpGrupoDeEmail</class>
+		<class>br.gov.jfrj.siga.cp.CpPerfilJEE</class>
+		
 		
 <!-- 			colocar as classes do SigaSR -->
 

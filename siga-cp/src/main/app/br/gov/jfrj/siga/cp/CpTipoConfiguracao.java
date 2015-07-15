@@ -24,15 +24,18 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.model.ActiveRecord;
+
 @Entity
-@Table(name = "CP_TIPO_CONFIGURACAO", schema="CORPORATIVO")
+@Table(name = "CP_TIPO_CONFIGURACAO", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
+public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao  {
 
 	/**
 	 * 
 	 */
 	public static final long serialVersionUID = 3624557793773660738L;
+	public static final ActiveRecord<CpTipoConfiguracao> AR = new ActiveRecord<CpTipoConfiguracao>(CpTipoConfiguracao.class);
 
 	// SIGA-EX
 
@@ -138,4 +141,5 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	public CpTipoConfiguracao() {
 	}
+	
 }

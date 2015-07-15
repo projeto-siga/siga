@@ -35,10 +35,12 @@ function TabelaDinamica (tableSelector, modoExibicao) {
 						estruturaColuna = { 
 							"sTitle" : coluna.titulo, 
 							"mDataProp" : coluna.nome,
+							"mDetalheFormatado" : colDetalhe.detalheFormatado,
 							"sName" : coluna.nome,
 							"sClass" : coluna.classe,
 							"bVisible" : coluna.exibir,
-							"sWidth" : coluna.largura};
+							"sWidth" : coluna.largura
+						};
 					 
 					objetoTabela.estrutura.push(estruturaColuna);
 				}
@@ -84,6 +86,10 @@ function TabelaDinamica (tableSelector, modoExibicao) {
 	this.criar = function() {
 		this.jSon = this.table.data("json");
 		this.objetoTabela = this.prepararDadosTabela(this.jSon);
+		var me = this;
+		$(window).on('resize', function() {
+			me.table.dataTable.api().columns.adjust();
+		});
 		return this;
 	}
 	
@@ -140,6 +146,7 @@ function TabelaDinamica (tableSelector, modoExibicao) {
 			this.alterarColunasTabela(select[0].options, select[0].selectedOptions);
 		else if (tipo == this.TIPO_COLUNA_DETALHE)
 			this.alterarColunasDetalhamento(select[0].selectedOptions);
+		this.table.dataTable.api().columns.adjust();
 	}
 	
 	this.addOptions = function(select, colunas) {
@@ -199,17 +206,16 @@ function TabelaDinamica (tableSelector, modoExibicao) {
 }
 
 /* Função de formatação para células de detalhes */
-TabelaDinamica.prototype.formatarDetalhes = function( d, objetoTabela ) {
+TabelaDinamica.prototype.formatarDetalhes = function( d, objetoTabela, quantidadeColunas ) {
 	var tr = $('<tr class="detail">'),
 		// 'd' é o objeto contendo os dados da linha
-		detailHTML = '<td colspan="6"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="margin-left:60px;">'+
-			'<tr>';
+		detailHTML = TabelaDinamica.prototype.detailConfig(quantidadeColunas);
 
 	if (objetoTabela && objetoTabela.detalhesSelecionados) {
 		for (var i = 0; i < objetoTabela.detalhesSelecionados.length; i++) {
 			var detalhe = objetoTabela.detalhesSelecionados[i];
 			
-			detailHTML += '<tr><td style="min-width: 140px;"><b>' + detalhe.sTitle + ':</b></td>';
+			detailHTML += '<tr><td><b>' + detalhe.sTitle + ':</b></td>';
 
 			if (detalhe.mDetalheFormatado)
 				 detailHTML += d[detalhe.mDataProp];
@@ -223,4 +229,13 @@ TabelaDinamica.prototype.formatarDetalhes = function( d, objetoTabela ) {
 	detailHTML += '</tr></table></td>';
 
     return tr.append(detailHTML);
+    
+}
+
+TabelaDinamica.prototype.detailConfig = function(quantidadeColunas) {
+	if(quantidadeColunas > 2) {
+		// 'd' é o objeto contendo os dados da linha
+		return '<td></td><td colspan="' + quantidadeColunas + '"><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="margin-left:30px;"><tr>';
+	}
+	return '<td></td><td><table class="datatable" cellpadding="5" cellspacing="0" border="0" style="margin-left:30px;"><tr>';
 }

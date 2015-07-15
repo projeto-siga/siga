@@ -32,6 +32,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity

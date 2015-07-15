@@ -1,7 +1,22 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Servi�os">
+<siga:pagina titulo="A��es">
+
+	<jsp:include page="../main.jsp"></jsp:include>
+
+	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.populate.js"></script>
+	<script src="/sigasr/javascripts/base-service.js"></script>
+	
+	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
+	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
+	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
+	<script src="/sigasr/javascripts/moment.js"></script>
+
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
 			<h2>A&ccedil;&otilde;es</h2>
@@ -9,7 +24,7 @@
 			<div class="gt-content-box dataTables_div">
 				<div class="gt-form-row dataTables_length">
 					<label>
-						<siga:checkbox name="mostrarDesativado" value="${mostrarDesativado}"></siga:checkbox>
+						<siga:checkbox name="mostrarDesativados" value="${mostrarDesativados}"></siga:checkbox>
 						<b>Incluir Inativas</b>
 					</label>
 				</div>
@@ -24,7 +39,7 @@
 					</thead>
 					<tbody>
 						<c:forEach items="${acoes}" var="acao">
-							<tr <c:if test="${!acao.ativo}"> class="configuracao-herdada" </c:if> data-json-id="${acao.idAcao}" data-json="${acao.toJson()}" onclick="acaoService.editar($(this).data('json'), 'Alterar A&ccedil;&atilde;o')" style="cursor: pointer;">
+							<tr data-json-id="${acao.idAcao}" data-json='${acao.toJson()}' onclick="acaoService.editar($(this).data('json'), 'Alterar A&ccedil;&atilde;o')" style="cursor: pointer;">
 								<td>${acao.siglaAcao}</td>
 								<td>
 									<span style="margin-left: ${(acao.nivel-1)*2}em; <c:if test="${acao.nivel == 1}">font-weight: bold;</c:if>">
@@ -84,35 +99,36 @@
 	}();
 
 	var opts = {
-			 urlDesativar : "${linkTo[AcaoController].desativarAcao}",
-			 urlReativar : "${linkTo[AcaoController].reativarAcao}",
-			 urlGravar : "${linkTo[AcaoController].gravarAcao}",
+			 urlDesativar : "${linkTo[AcaoController].desativar}",
+			 urlReativar : "${linkTo[AcaoController].reativar}",
+			 urlGravar : "${linkTo[AcaoController].gravar}",
 			 dialogCadastro : $('#acao_dialog'),
 			 tabelaRegistros : $('#acoes_table'),
 			 objectName : 'acao',
 			 formCadastro : $('#acaoForm'),
-			 mostrarDesativados : QueryString.mostrarDesativados,
+			 mostrarDesativados : $('#checkmostrarDesativados').attr('checked') ? true : false, //QueryString.mostrarDesativados,
 			 colunas : colunasAcao.acoes
 	};
 	
 	$(document).ready(function() {
 		if (QueryString.mostrarDesativados != undefined) {
-			document.getElementById('checkmostrarDesativado').checked = QueryString.mostrarDesativados == 'true';
-			document.getElementById('checkmostrarDesativado').value = QueryString.mostrarDesativados == 'true';
+			document.getElementById('checkmostrarDesativados').checked = QueryString.mostrarDesativados == 'true';
+			document.getElementById('checkmostrarDesativados').value = QueryString.mostrarDesativados == 'true';
 		}
 			
-		$("#checkmostrarDesativado").click(function() {
+		$("#checkmostrarDesativados").click(function() {
 			jQuery.blockUI(objBlock);
-			if (document.getElementById('checkmostrarDesativado').checked)
-				location.href = "${linkTo[AcaoController].listarAcaoDesativados}";
+			if (document.getElementById('checkmostrarDesativados').checked)
+				location.href = "${linkTo[AcaoController].listar}"  + "?mostrarDesativados=true";
 			else
-				location.href = "${linkTo[AcaoController].listarAcao}";
+				location.href = "${linkTo[AcaoController].listar}"  + "?mostrarDesativados=false";
 		});
 		
 		/* Table initialization */
 		opts.dataTable = $('#acoes_table').dataTable({
+			stateSave : true,
 			"language": {
-				"emptyTable":     "Não existem resultados",
+				"emptyTable":     "N&aacute;o existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -125,13 +141,13 @@
 			    "zeroRecords":    "Nenhum registro encontrado",
 			    "paginate": {
 			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
+			        "last":       "&Uacute;timo",
+			        "next":       "Pr&oacute;ximo",
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
+			        "sortAscending":  ": clique para ordena&ccedil;&atilde;o crescente",
+			        "sortDescending": ": clique para ordena&ccedil;&atilde;o decrescente"
 			    }
 			},
 			"columnDefs": [{
@@ -170,8 +186,31 @@
 	var acaoService = new AcaoService(opts);
 	
 	acaoService.getId = function(acao) {
-		return acao.id;
+		return acao.id || acao['acao.idAcao'];
 	}
+
+	acaoService.editar = function(obj, title) {
+		acaoService.limparTipoAcao();
+		BaseService.prototype.editar.call(this, obj, title);
+	}
+
+	acaoService.cadastrar = function(title) {
+        acaoService.limparTipoAcao();
+        BaseService.prototype.cadastrar.call(this, title);
+	}
+
+	acaoService.limparTipoAcao = function() {
+	    $("#formulario_tipoAcaoSel_id").val('');
+	    $("#formulario_tipoAcaoSel_descricao").val('');
+	    $("#formulario_tipoAcaoSel_sigla").val('');
+	    $("#tipoAcaoSelSpan").html('');
+
+	}
+
+	acaoService.serializar = function(obj) {
+        var query = BaseService.prototype.serializar.call(this, obj);
+        return query + "&acao=" + this.getId(obj);
+    }
 
 	acaoService.getRow = function(acao) {
 		var marginLeft = (acao.nivel-1) * 2,
@@ -188,13 +227,5 @@
 	acaoService.onRowClick = function(acao) {
 		acaoService.editar(acao, 'Alterar A&ccedil;&atilde;o');
 	}
-</script>
 
-<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
-<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
-<script src="/sigasr/public/javascripts/jquery.serializejson.min.js"></script>
-<script src="/sigasr/public/javascripts/jquery.populate.js"></script>
-<script src="/sigasr/public/javascripts/base-service.js"></script>
-<script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
-<script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
+</script>

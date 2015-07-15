@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.sr.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -11,60 +12,66 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
+import edu.emory.mathcs.backport.java.util.Collections;
+
+import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.vo.SrAcordoVO;
+import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
 @Table(name = "SR_ACORDO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrAcordo extends HistoricoSuporte implements Selecionavel {
+public class SrAcordo extends HistoricoSuporteVraptor implements Selecionavel, ConvertableEntity{
+	//public class SrAcordo extends HistoricoSuporteVraptor implements ConvertableEntity {
+	
 	private static final long serialVersionUID = 1L;
 	
-	public static ActiveRecord<SrAcordo> AR = new ActiveRecord<>(SrAcordo.class);	
+	public static final ActiveRecord<SrAcordo> AR = new ActiveRecord<>(SrAcordo.class);	
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_ACORDO_SEQ", name = "srAcordoSeq")
+	@SequenceGenerator(sequenceName = "SIGASR" +".SR_ACORDO_SEQ", name = "srAcordoSeq")
 	@GeneratedValue(generator = "srAcordoSeq")
 	@Column(name = "ID_ACORDO")
-	public Long idAcordo;
+	private Long idAcordo;
 
 	@Column(name = "NOME_ACORDO")
-	public String nomeAcordo;
+	private String nomeAcordo;
 
 	@Column(name = "DESCR_ACORDO")
-	public String descrAcordo;
+	private String descrAcordo;
 
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
-	public SrAcordo acordoInicial;
+	private SrAcordo acordoInicial;
 
 	@OneToMany(targetEntity = SrAcordo.class, mappedBy = "acordoInicial", fetch = FetchType.LAZY)
-	//@OrderBy("hisDtIni desc")
 	public List<SrAcordo> meuAcordoHistoricoSet;
 
 	@OneToMany(targetEntity = SrAtributoAcordo.class, mappedBy = "acordo", fetch = FetchType.LAZY)
-	public Set<SrAtributoAcordo> atributoAcordoSet;
+	private List<SrAtributoAcordo> atributoAcordoSet;
 
 	public SrAcordo() {
-
+	    this.atributoAcordoSet = new ArrayList<>();
+	    this.meuAcordoHistoricoSet = new ArrayList<>();
 	}
 
+	@Override
 	public Long getId() {
-		return this.idAcordo;
+		return getIdAcordo();
 	}
 
-	public void setId(Long id) {
-		idAcordo = id;
+	@Override
+	public void setId(Long idAcordo) {
+		this.setIdAcordo(idAcordo);
 	}
 
 	@Override
@@ -72,10 +79,11 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<SrAcordo> getHistoricoAcordo() {
-		if (acordoInicial != null)
-			return acordoInicial.meuAcordoHistoricoSet;
-		return null;
+		if (getAcordoInicial() != null)
+			return getAcordoInicial().meuAcordoHistoricoSet;
+		return Collections.emptyList();
 	}
 
 	public SrAcordo getAcordoAtual() {
@@ -113,9 +121,9 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 	@Override
 	public void salvar() throws Exception {
 		super.salvar();
-		if (atributoAcordoSet != null)
-			for (SrAtributoAcordo atributoAcordo : atributoAcordoSet) {
-				atributoAcordo.acordo = this;
+		if (getAtributoAcordoSet() != null)
+			for (SrAtributoAcordo atributoAcordo : getAtributoAcordoSet()) {
+				atributoAcordo.setAcordo(this);
 				atributoAcordo.salvar();
 			}
 	}
@@ -124,21 +132,21 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 	@Override
 	public void finalizar() throws Exception {
 		super.finalizar();
-		if (atributoAcordoSet != null)
-			for (SrAtributoAcordo atributoAcordo : atributoAcordoSet) {
+		if (getAtributoAcordoSet() != null)
+			for (SrAtributoAcordo atributoAcordo : getAtributoAcordoSet()) {
 				atributoAcordo.finalizar();
 			}
 	}
 
 	public SrAtributoAcordo getAtributo(SrAtributo att) {
-		for (SrAtributoAcordo pa : atributoAcordoSet)
-			if (pa.atributo.equals(att))
+		for (SrAtributoAcordo pa : getAtributoAcordoSet())
+			if (pa.getAtributo().equals(att))
 				return pa;
 		return null;
 	}
 
 	private SrAtributoAcordo getAtributo(String codigo) {
-		if (atributoAcordoSet == null)
+		if (getAtributoAcordoSet() == null)
 			return null;
 		SrAtributo att = SrAtributo.get(codigo);
 		if (att == null)
@@ -153,9 +161,55 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 		return pa.getValorEmSegundos();
 	}
 
-	@Override
 	public String getSigla() {
-		return idAcordo.toString();
+	    if (getIdAcordo() != null)
+	        return getIdAcordo().toString();
+	    else
+	        return "";
+	}
+
+	public String getDescricao() {
+		return getNomeAcordo();
+	}
+	
+	public SrAcordoVO toVO() throws Exception {
+		return SrAcordoVO.createFrom(this);
+	}
+	
+	public String toJson() throws Exception {
+		return this.toVO().toJson();
+	}
+	
+	public Long getIdAcordo() {
+		return idAcordo;
+	}
+
+	public void setIdAcordo(Long idAcordo) {
+		this.idAcordo = idAcordo;
+	}
+
+	public String getNomeAcordo() {
+		return nomeAcordo;
+	}
+
+	public void setNomeAcordo(String nomeAcordo) {
+		this.nomeAcordo = nomeAcordo;
+	}
+
+	public String getDescrAcordo() {
+		return descrAcordo;
+	}
+
+	public void setDescrAcordo(String descrAcordo) {
+		this.descrAcordo = descrAcordo;
+	}
+
+	public SrAcordo getAcordoInicial() {
+		return acordoInicial;
+	}
+
+	public void setAcordoInicial(SrAcordo acordoInicial) {
+		this.acordoInicial = acordoInicial;
 	}
 
 	@Override
@@ -163,17 +217,12 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 		
 	}
 
-	@Override
-	public String getDescricao() {
-		return nomeAcordo;
-	}
-	
-	public SrAcordoVO toVO() {
-		return SrAcordoVO.createFrom(this);
-	}
-	
-	public String toJson() {
-		return this.toVO().toJson();
+	public List<SrAtributoAcordo> getAtributoAcordoSet() {
+		return atributoAcordoSet;
 	}
 
+	public void setAtributoAcordoSet(List<SrAtributoAcordo> atributoAcordoSet) {
+		this.atributoAcordoSet = atributoAcordoSet;
+	}	
+	
 }

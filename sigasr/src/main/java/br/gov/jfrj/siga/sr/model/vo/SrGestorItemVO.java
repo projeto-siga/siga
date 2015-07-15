@@ -8,13 +8,37 @@ import br.gov.jfrj.siga.sr.model.SrGestorItem;
  * Classe que representa um V.O. de {@link SrGestorItem}.
  */
 public class SrGestorItemVO {
-	public Long idGestorItem;
-	public SelecionavelVO dpPessoaVO;
-	public SelecionavelVO dpLotacaoVO;
-	
-	public SrGestorItemVO(Long idGestorItem, DpPessoa dpPessoa, DpLotacao dpLotacao) {
-		this.idGestorItem = idGestorItem;
-		this.dpPessoaVO = SelecionavelVO.createFrom(dpPessoa);
-		this.dpLotacaoVO = SelecionavelVO.createFrom(dpLotacao);
-	}
+    private Long idGestorItem;
+    private SelecionavelVO dpPessoaVO;
+    private SelecionavelVO dpLotacaoVO;
+
+    public SrGestorItemVO(Long idGestorItem, DpPessoa dpPessoa, DpLotacao dpLotacao) {
+        this.setIdGestorItem(idGestorItem);
+        this.setDpPessoaVO(SelecionavelVO.createFrom(dpPessoa));
+        this.setDpLotacaoVO(SelecionavelVO.createFrom(dpLotacao));
+    }
+
+    public Long getIdGestorItem() {
+        return idGestorItem;
+    }
+
+    public void setIdGestorItem(Long idGestorItem) {
+        this.idGestorItem = idGestorItem;
+    }
+
+    public SelecionavelVO getDpPessoaVO() {
+        return dpPessoaVO;
+    }
+
+    public void setDpPessoaVO(SelecionavelVO dpPessoaVO) {
+        this.dpPessoaVO = dpPessoaVO;
+    }
+
+    public SelecionavelVO getDpLotacaoVO() {
+        return dpLotacaoVO;
+    }
+
+    public void setDpLotacaoVO(SelecionavelVO dpLotacaoVO) {
+        this.dpLotacaoVO = dpLotacaoVO;
+    }
 }

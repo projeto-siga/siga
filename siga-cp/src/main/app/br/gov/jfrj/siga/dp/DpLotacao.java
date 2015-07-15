@@ -40,6 +40,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.base.Texto;
+
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -53,7 +54,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Table(name = "DP_LOTACAO", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpLotacao extends AbstractDpLotacao implements Serializable,
-		Selecionavel, Historico, Sincronizavel,  Comparable  {
+		Selecionavel, Historico, Sincronizavel,  Comparable, DpConvertableEntity  {
 	private static final long serialVersionUID = 5628179687234082413L;
 	public static ActiveRecord<DpLotacao> AR = new ActiveRecord<>(DpLotacao.class);
 
@@ -242,8 +243,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	public Long getIdInicial() {
-		// TODO Auto-generated method stub
-		return getIdLotacaoIni().longValue();
+		return getIdLotacaoIni();
 	}
 
 	public Boolean isSubsecretaria() {

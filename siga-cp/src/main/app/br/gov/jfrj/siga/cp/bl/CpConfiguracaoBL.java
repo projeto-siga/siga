@@ -224,7 +224,7 @@ public class CpConfiguracaoBL {
 				cfg.getCpServico().getDescricao();
 			if (cfg.getCpIdentidade() != null)
 				cfg.getCpIdentidade().getNmLoginIdentidade();
-			if (cfg.getCpGrupo() != null)
+			if (cfg.getCpGrupo() != null && cfg.getCpGrupo().getId() != null)
 				cfg.getCpGrupo().getNivel();
 			if (cfg.getCpTipoLotacao() != null)
 				cfg.getCpTipoLotacao().getDscTpLotacao();

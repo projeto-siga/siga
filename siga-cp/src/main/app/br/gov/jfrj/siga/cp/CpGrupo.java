@@ -29,6 +29,9 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 public abstract class CpGrupo extends AbstractCpGrupo implements Selecionavel,
 		Comparable<CpGrupo> {
 
+	public CpGrupo() {
+	}
+	
 	public int compareTo(CpGrupo o) {
 		return getId().compareTo(o.getId());
 	}
@@ -74,7 +77,7 @@ public abstract class CpGrupo extends AbstractCpGrupo implements Selecionavel,
 	}
 
 	public int getNivel() {
-		if (getCpGrupoPai() != null)
+		if (getCpGrupoPai() != null && getCpGrupoPai().getId() != null)
 			return getCpGrupoPai().getNivel() + 1;
 		return 0;
 	}

@@ -39,7 +39,7 @@ public class ActiveRecord<T extends Objeto> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public T findById(Object id) throws Exception {
+	public T findById(Object id) {
 		return (T) em().find(clazz, id);
 	}
 

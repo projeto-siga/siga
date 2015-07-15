@@ -19,7 +19,6 @@
 package br.gov.jfrj.siga.cp;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
@@ -29,7 +28,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import br.gov.jfrj.siga.cp.util.Blob;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDaoUtil;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;

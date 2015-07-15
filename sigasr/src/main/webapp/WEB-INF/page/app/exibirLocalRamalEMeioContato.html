@@ -1,17 +1,17 @@
 
 #{set locaisDisponiveis:solicitacao.locaisDisponiveis /}
-			#{if locaisDisponiveis.size() > 1}	
-				<div class="gt-form-row gt-width-66">
-					<label>Local</label> 
-					#{select name:'solicitacao.local', items:locaisDisponiveis, valueProperty:'idComplexo',
-					labelProperty:'nomeComplexo', value:solicitacao.local?.idComplexo, id:'local' /}
-				</div>
-				<script>
-					$("#local").change(function() {
-						  carregarItem();
-					});
-				</script>
-			#{/if}
+#{if locaisDisponiveis.size() > 1}	
+	<div class="gt-form-row gt-width-66">
+		<label>Local</label> 
+		#{select name:'solicitacao.local', items:locaisDisponiveis, valueProperty:'idComplexo',
+		labelProperty:'nomeComplexo', value:solicitacao.local?.idComplexo, id:'local' /}
+	</div>
+	<script>
+		$("#local").change(function() {
+			  carregarItem();
+		});
+	</script>
+#{/if}
 
 <div class="gt-form-row gt-width-66">
 	<label>Telefone</label> <input type="text"

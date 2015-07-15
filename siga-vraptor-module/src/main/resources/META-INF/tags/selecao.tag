@@ -1,5 +1,6 @@
 <%@ tag body-content="empty" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
 <%@ attribute name="titulo" required="false"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ attribute name="propriedade"%>
@@ -22,6 +23,16 @@
 <%@ attribute name="onchange" required="false"%>
 <%@ attribute name="prefix" required="false"%>
 <!-- A lista de par -->
+
+
+
+
+
+
+
+
+
+
 
 <c:forEach var="parametro" items="${fn:split(paramList,';')}">
 	<c:set var="p2" value="${fn:split(parametro,'=')}" />
@@ -55,6 +66,7 @@
 
 <c:choose>
 	<c:when test="${empty prefix}">
+
 		<c:set var="prefixSel" value="" />
 	</c:when>
 	<c:otherwise>
@@ -65,9 +77,12 @@
 <c:choose>
 	<c:when test="${empty urlAcao}">
 		<c:set var="urlBuscar" value="/app${prefixSel}${acaoBusca}/buscar" />
+
+
 	</c:when>
 	<c:otherwise>
 		<c:set var="urlBuscar" value="/app${prefixSel}${acaoBusca}/${urlAcao}" />
+
 	</c:otherwise>
 </c:choose>
 
@@ -107,6 +122,8 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
 	<c:if test="${reler == 'ajax'}">
 		sbmt('${empty idAjax ? propriedade : idAjax}');
 	</c:if> 
+
+
 }
  
  
@@ -206,6 +223,10 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	</c:when>
 </c:choose>
 
+
+
+
+
 <input type="hidden" name="req${inputNameTipoSel}"  />
 <input type="hidden" name="alterouSel" value="" id="alterouSel" />
 <input type="hidden" name="${inputNameTipoSel}.id" value="<c:out value="${requestScope[propriedadeTipoSel].id}"/>" id="formulario_${inputNameTipoSel}_id"/>
@@ -229,6 +250,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 		<c:out value="${requestScope[propriedadeTipoSel].descricao}" />
 	</span>
 </c:if>
+
 
 <c:if test="${not empty tipo}">
 	<c:choose>

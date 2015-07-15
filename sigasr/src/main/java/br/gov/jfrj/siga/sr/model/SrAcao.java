@@ -21,10 +21,13 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
+
+import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.SrTipoAcao.SrTipoAcaoVO;
+import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -32,13 +35,13 @@ import com.google.gson.GsonBuilder;
 @Entity
 @Table(name = "SR_ACAO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparable<SrAcao> {
+public class SrAcao extends HistoricoSuporteVraptor implements SrSelecionavel, Comparable<SrAcao>, ConvertableEntity, Selecionavel {
 	private static final long serialVersionUID = 8387408543308440033L;
 
-	public static ActiveRecord<SrAcao> AR = new ActiveRecord<>(SrAcao.class);
+	public static final ActiveRecord<SrAcao> AR = new ActiveRecord<>(SrAcao.class);
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_ACAO_SEQ", name = "srAcaoSeq")
+	@SequenceGenerator(sequenceName = "SIGASR" +".SR_ACAO_SEQ", name = "srAcaoSeq")
 	@GeneratedValue(generator = "srAcaoSeq")
 	@Column(name = "ID_ACAO")
 	private Long idAcao;
@@ -103,7 +106,6 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparab
 		return tituloAcao;
 	}
 
-	@Override
 	public void setDescricao(String descricao) {
 		this.tituloAcao = descricao;
 	}
@@ -128,7 +130,6 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparab
 		return false;
 	}
 
-	@Override
 	public SrAcao selecionar(String sigla) throws Exception {
 		return selecionar(sigla, null);
 	}
@@ -143,7 +144,6 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparab
 
 	}
 
-	@Override
 	public List<SrAcao> buscar() throws Exception {
 		return buscar(null);
 	}

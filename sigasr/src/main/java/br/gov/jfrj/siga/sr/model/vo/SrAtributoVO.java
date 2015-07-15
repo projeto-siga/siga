@@ -16,69 +16,146 @@ import com.google.gson.JsonObject;
  * Classe que representa um V.O. de {@link SrGestorItem}.
  */
 public class SrAtributoVO {
-	public boolean ativo;
-	public Long idAtributo;
-	public String nomeAtributo;
-	public String descrAtributo;
-	public String codigoAtributo;
-	public SrTipoAtributo tipoAtributo;
-	public SrObjetivoAtributoVO objetivoAtributo;
-	public String descrPreDefinido;
-	public Long hisIdIni;
-	public List<SrConfiguracaoVO> associacoesVO;
-	
-	public SrAtributoVO(SrAtributo atributo, List<SrConfiguracao> associacoes) {
-		this.ativo = atributo.isAtivo();
-		this.idAtributo = atributo.idAtributo;
-		this.nomeAtributo = atributo.nomeAtributo;
-		this.descrAtributo = atributo.descrAtributo;
-		this.codigoAtributo = atributo.codigoAtributo;
-		this.tipoAtributo = atributo.tipoAtributo;
-		this.objetivoAtributo = SrObjetivoAtributoVO.createFrom(atributo.objetivoAtributo);
-		this.descrPreDefinido = atributo.descrPreDefinido;
-		this.hisIdIni = atributo.getHisIdIni();
-		this.associacoesVO = new ArrayList<SrConfiguracaoVO>();
+    private boolean ativo;
+    private Long idAtributo;
+    private String nomeAtributo;
+    private String descrAtributo;
+    private String codigoAtributo;
+    private SrTipoAtributo tipoAtributo;
+    private SrObjetivoAtributoVO objetivoAtributo;
+    private String descrPreDefinido;
+    private Long hisIdIni;
+    private List<SrConfiguracaoVO> associacoesVO;
 
-		if (associacoes != null)
-			for (SrConfiguracao associacao : associacoes) {
-				associacoesVO.add(associacao.toVO());
-			}
-	}
+    public SrAtributoVO(SrAtributo atributo, List<SrConfiguracao> associacoes) throws Exception {
+        this.setAtivo(atributo.isAtivo());
+        this.setIdAtributo(atributo.getIdAtributo());
+        this.setNomeAtributo(atributo.getNomeAtributo());
+        this.setDescrAtributo(atributo.getDescrAtributo());
+        this.setCodigoAtributo(atributo.getCodigoAtributo());
+        this.setTipoAtributo(atributo.getTipoAtributo());
+        this.setObjetivoAtributo(SrObjetivoAtributoVO.createFrom(atributo.getObjetivoAtributo()));
+        this.setDescrPreDefinido(atributo.getDescrPreDefinido());
+        this.setHisIdIni(atributo.getHisIdIni());
+        this.setAssociacoesVO(new ArrayList<SrConfiguracaoVO>());
 
-	/**
-	 * Converte o objeto para Json.
-	 */
-	public String toJson() {
-		GsonBuilder builder = new GsonBuilder();
-		builder.setPrettyPrinting().serializeNulls();
-		Gson gson = builder.create();
+        if (associacoes != null)
+            for (SrConfiguracao associacao : associacoes) {
+                getAssociacoesVO().add(associacao.toVO());
+            }
+    }
 
-		JsonObject jsonTree = (JsonObject) gson.toJsonTree(this);
+    /**
+     * Converte o objeto para Json.
+     */
+    public String toJson() {
+        GsonBuilder builder = new GsonBuilder();
+        builder.setPrettyPrinting().serializeNulls();
+        Gson gson = builder.create();
 
-		if (this.tipoAtributo != null) {
-			jsonTree.add("descrTipoAtributo",
-					gson.toJsonTree(this.tipoAtributo.descrTipoAtributo));
-		}
-		
-		if (this.objetivoAtributo != null) {
-			jsonTree.add("descrObjetivoAtributo",
-					gson.toJsonTree(this.objetivoAtributo.getDescricao()));
-		}
-		
-		return jsonTree.toString();
-	}
+        JsonObject jsonTree = (JsonObject) gson.toJsonTree(this);
 
-	public static SrAtributoVO createFrom(SrAtributo atributo, boolean listarAssociacoes) {
-		if (atributo != null) {
-			List<SrConfiguracao> associacoes = new ArrayList<SrConfiguracao>();
-			
-			if (listarAssociacoes)
-				associacoes = SrConfiguracao
-						.listarAssociacoesAtributo(atributo, Boolean.FALSE);
-			
-			return new SrAtributoVO(atributo, associacoes);
-		}
-		
-		return null;
-	}
+        if (this.getTipoAtributo() != null) {
+            jsonTree.add("descrTipoAtributo", gson.toJsonTree(this.getTipoAtributo().getDescrTipoAtributo()));
+        }
+
+        if (this.getObjetivoAtributo() != null) {
+            jsonTree.add("descrObjetivoAtributo", gson.toJsonTree(this.getObjetivoAtributo().getDescricao()));
+        }
+
+        return jsonTree.toString();
+    }
+
+    public static SrAtributoVO createFrom(SrAtributo atributo, boolean listarAssociacoes) throws Exception {
+        if (atributo != null) {
+            List<SrConfiguracao> associacoes = new ArrayList<SrConfiguracao>();
+
+            if (listarAssociacoes)
+                associacoes = SrConfiguracao.listarAssociacoesAtributo(atributo, Boolean.FALSE);
+
+            return new SrAtributoVO(atributo, associacoes);
+        }
+
+        return null;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public Long getIdAtributo() {
+        return idAtributo;
+    }
+
+    public void setIdAtributo(Long idAtributo) {
+        this.idAtributo = idAtributo;
+    }
+
+    public String getNomeAtributo() {
+        return nomeAtributo;
+    }
+
+    public void setNomeAtributo(String nomeAtributo) {
+        this.nomeAtributo = nomeAtributo;
+    }
+
+    public String getDescrAtributo() {
+        return descrAtributo;
+    }
+
+    public void setDescrAtributo(String descrAtributo) {
+        this.descrAtributo = descrAtributo;
+    }
+
+    public String getCodigoAtributo() {
+        return codigoAtributo;
+    }
+
+    public void setCodigoAtributo(String codigoAtributo) {
+        this.codigoAtributo = codigoAtributo;
+    }
+
+    public SrTipoAtributo getTipoAtributo() {
+        return tipoAtributo;
+    }
+
+    public void setTipoAtributo(SrTipoAtributo tipoAtributo) {
+        this.tipoAtributo = tipoAtributo;
+    }
+
+    public SrObjetivoAtributoVO getObjetivoAtributo() {
+        return objetivoAtributo;
+    }
+
+    public void setObjetivoAtributo(SrObjetivoAtributoVO objetivoAtributo) {
+        this.objetivoAtributo = objetivoAtributo;
+    }
+
+    public String getDescrPreDefinido() {
+        return descrPreDefinido;
+    }
+
+    public void setDescrPreDefinido(String descrPreDefinido) {
+        this.descrPreDefinido = descrPreDefinido;
+    }
+
+    public Long getHisIdIni() {
+        return hisIdIni;
+    }
+
+    public void setHisIdIni(Long hisIdIni) {
+        this.hisIdIni = hisIdIni;
+    }
+
+    public List<SrConfiguracaoVO> getAssociacoesVO() {
+        return associacoesVO;
+    }
+
+    public void setAssociacoesVO(List<SrConfiguracaoVO> associacoesVO) {
+        this.associacoesVO = associacoesVO;
+    }
 }

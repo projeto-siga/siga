@@ -68,6 +68,5 @@
 			<artifactId>mvel2</artifactId>
 			<version>2.2.4.Final</version>
 		</dependency>
-		
 	</dependencies>
 </project>

@@ -29,29 +29,30 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
-@Table(schema="CORPORATIVO", name="CP_OCORRENCIA_FERIADO")
-public class CpOcorrenciaFeriado extends AbstractCpOcorrenciaFeriado implements Serializable,
-		Selecionavel {
+@Table(schema = "CORPORATIVO", name = "CP_OCORRENCIA_FERIADO")
+public class CpOcorrenciaFeriado extends AbstractCpOcorrenciaFeriado implements Serializable, Selecionavel {
 
-	public String getDescricao() {
-		return "";
-	}
+    public static ActiveRecord<CpOcorrenciaFeriado> AR = new ActiveRecord<>(CpOcorrenciaFeriado.class);
 
-	public Long getId() {
-		return new Long(getIdOcorrencia());
-	}
+    public String getDescricao() {
+        return "";
+    }
 
-	public String getSigla() {
-		return "";
-	}
+    public Long getId() {
+        return new Long(getIdOcorrencia());
+    }
 
-	public void setSigla(String sigla) {
-	
-	}
-	
-	
+    public String getSigla() {
+        return "";
+    }
+
+    public void setSigla(String sigla) {
+
+    }
 
 }

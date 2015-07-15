@@ -26,6 +26,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @NamedQueries({
@@ -43,6 +44,8 @@ public class CpServico extends AbstractCpServico implements Selecionavel {
 	 * 
 	 */
 	public static final long serialVersionUID = 3624557793773660739L;
+	
+	public static ActiveRecord<CpServico> AR = new ActiveRecord<>(CpServico.class);
 
 	// SIGA e seus módulos
 

@@ -2,16 +2,31 @@ package br.gov.jfrj.siga.sr.model;
 
 public enum SrMeioComunicacao {
 
-	TELEFONE(1, "Telefone"), EMAIL(2, "Email"), CONTATO_DIRETO(3, "Contato Direto"),
-	PANDION(4, "Mensageiro (Pandion, Lync, etc)"), CHAT(5, "Chat");
+    TELEFONE(1, "Telefone"), EMAIL(2, "Email"), CONTATO_DIRETO(3, "Contato Direto"), PANDION(4, "Mensageiro (Pandion, Lync, etc)"), CHAT(5, "Chat");
 
-	public int idTipoContato;
+    private int idTipoContato;
 
-	public String descrMeioComunicacao;
+    private String descrMeioComunicacao;
 
-	private SrMeioComunicacao(int idTipoContato, String descrTipoContato) {
-		this.idTipoContato = idTipoContato;
-		this.descrMeioComunicacao = descrTipoContato;
-	}
+    private SrMeioComunicacao(int idTipoContato, String descrTipoContato) {
+        this.setIdTipoContato(idTipoContato);
+        this.setDescrMeioComunicacao(descrTipoContato);
+    }
+
+    public int getIdTipoContato() {
+        return idTipoContato;
+    }
+
+    public void setIdTipoContato(int idTipoContato) {
+        this.idTipoContato = idTipoContato;
+    }
+
+    public String getDescrMeioComunicacao() {
+        return descrMeioComunicacao;
+    }
+
+    public void setDescrMeioComunicacao(String descrMeioComunicacao) {
+        this.descrMeioComunicacao = descrMeioComunicacao;
+    }
 
 }

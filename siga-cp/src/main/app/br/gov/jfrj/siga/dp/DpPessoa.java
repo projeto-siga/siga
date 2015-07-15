@@ -27,9 +27,9 @@ package br.gov.jfrj.siga.dp;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Date;
 import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -49,6 +49,7 @@ import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -65,12 +66,12 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @NamedQuery(name = "consultarPorIdInicialDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni and pes.dataFimPessoa = null")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpPessoa extends AbstractDpPessoa implements Serializable,
-		Selecionavel, Historico, Sincronizavel, Comparable {
+		Selecionavel, Historico, Sincronizavel, Comparable, DpConvertableEntity {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5743631829922578717L;
-	public static ActiveRecord<DpPessoa> AR = new ActiveRecord<>(DpPessoa.class);
+	public static final ActiveRecord<DpPessoa> AR = new ActiveRecord<>(DpPessoa.class);
 
 	@Formula(value = "REMOVE_ACENTO(NOME_PESSOA)")
 	@Desconsiderar
@@ -187,7 +188,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 
 	public boolean equivale(Object other) {
-		if (other == null)
+		if (other == null || ((DpPessoa) other).getId() == null || this.getId() == null)
 			return false;
 		return this.getIdInicial().longValue() == ((DpPessoa) other)
 				.getIdInicial().longValue();

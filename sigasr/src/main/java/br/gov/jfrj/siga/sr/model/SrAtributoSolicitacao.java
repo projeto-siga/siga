@@ -9,40 +9,72 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import play.db.jpa.GenericModel;
+
+import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
+import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 @Entity
-@Table(name="SR_ATRIBUTO_SOLICITACAO", schema="SIGASR")
-public class SrAtributoSolicitacao extends GenericModel {
+@Table(name="SR_ATRIBUTO_SOLICITACAO", schema = "SIGASR")
+public class SrAtributoSolicitacao extends ObjetoVraptor implements ConvertableEntity {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_ATRIBUTO_SOLICITACAO_SEQ", name = "srAtributoSolicitacaoSeq")
+	@SequenceGenerator(sequenceName = "SIGASR" +".SR_ATRIBUTO_SOLICITACAO_SEQ", name = "srAtributoSolicitacaoSeq")
 	@GeneratedValue(generator = "srAtributoSolicitacaoSeq")
 	@Column(name = "ID_ATRIBUTO_SOLICITACAO")
-	public long id;
+    private long id;
 	
 	@Column(name = "VALOR_ATRIBUTO_SOLICITACAO")
-	public String valorAtributoSolicitacao;
+    private String valorAtributoSolicitacao;
 	
 	@ManyToOne
 	@JoinColumn(name="ID_ATRIBUTO")
-	public SrAtributo atributo;
+    private SrAtributo atributo;
 	
 	@ManyToOne
 	@JoinColumn(name="ID_SOLICITACAO")
-	public SrSolicitacao solicitacao;
+    private SrSolicitacao solicitacao;
 	
 	public SrAtributoSolicitacao(){
 	}
 	
 	public SrAtributoSolicitacao(SrAtributo tipo, String valor, SrSolicitacao sol){
-		this.atributo = tipo;
-		this.valorAtributoSolicitacao = valor;
-		this.solicitacao = sol;
+		this.setAtributo(tipo);
+		this.setValorAtributoSolicitacao(valor);
+		this.setSolicitacao(sol);
 	}
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getValorAtributoSolicitacao() {
+        return valorAtributoSolicitacao;
+    }
+
+    public void setValorAtributoSolicitacao(String valorAtributoSolicitacao) {
+        this.valorAtributoSolicitacao = valorAtributoSolicitacao;
+    }
+
+    public SrAtributo getAtributo() {
+        return atributo;
+    }
+
+    public void setAtributo(SrAtributo atributo) {
+        this.atributo = atributo;
+    }
+
+    public SrSolicitacao getSolicitacao() {
+        return solicitacao;
+    }
+
+    public void setSolicitacao(SrSolicitacao solicitacao) {
+        this.solicitacao = solicitacao;
+    }
 }

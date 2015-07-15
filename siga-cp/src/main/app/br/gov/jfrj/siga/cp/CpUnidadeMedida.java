@@ -1,9 +1,9 @@
 package br.gov.jfrj.siga.cp;
 
-import java.util.Calendar;
-
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
+
 
 @Entity
 @Table(name = "CP_UNIDADE_MEDIDA", schema = "CORPORATIVO")

@@ -61,8 +61,7 @@
 			<td align="left">Nome</td>
 			<td>Fim de Vigência</td>
 		</tr>
-		<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}"
-			itens="${itens}" var="item">
+		<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}" itens="${itens}" var="item">
 			<tr class="${evenorodd}">
 				<td width="10%" align="center"><a
 					href="javascript: opener.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>

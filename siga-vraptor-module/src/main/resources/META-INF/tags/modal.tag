@@ -29,8 +29,8 @@ function carregouAjax${nome}(response, param){
 </div>
 
 <script>
-var altura = ${altura} == "" ? "'auto'" : ${altura};
-var largura = ${largura} == "" ? "'auto'" : ${largura};
+var altura = "${altura}" != "" ? "${altura}" : "auto";
+var largura = "${largura}" != "" ? "${largura}" : "auto";
 
 $("#${nome}_dialog").dialog({
     autoOpen: false,

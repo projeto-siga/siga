@@ -344,7 +344,7 @@ public class ProcessadorHtml {
 	}
 
 	public static String bodyOnly(String s) {
-		Pattern p = Pattern.compile("<body[^>]*>\n(\\s*+.*?)\\s*+</body>",
+		Pattern p = Pattern.compile("<body[^>]*>\n?(\\s*+.*?)\\s*+</body>",
 				Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
 		Matcher m = p.matcher(s);
 		if (m.find()) {

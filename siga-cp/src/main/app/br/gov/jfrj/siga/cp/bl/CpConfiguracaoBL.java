@@ -115,6 +115,8 @@ public class CpConfiguracaoBL {
 
 		hashListas.clear();
 		for (CpConfiguracao cfg : results) {
+			if (cfg.getCpTipoConfiguracao() == null)
+				continue;
 			Long idTpConfiguracao = cfg.getCpTipoConfiguracao()
 					.getIdTpConfiguracao();
 			TreeSet<CpConfiguracao> tree = hashListas.get(idTpConfiguracao);

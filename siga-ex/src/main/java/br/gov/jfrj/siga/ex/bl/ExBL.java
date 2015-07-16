@@ -40,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -869,6 +870,10 @@ public class ExBL extends CpBL {
 			return set;
 		}
 
+		if (mob.doc().getMobilGeral().isPendenteDeColaboracao()) {
+			return set;
+		}
+		
 		if (!isDocumentoSemEfeito) {
 
 			boolean apensadoAVolumeDoMesmoProcesso = mob
@@ -7168,5 +7173,64 @@ public class ExBL extends CpBL {
 
 		return jsonOutput;
 	}
-
+	
+	public List<ExAssinavelDoc> obterAssinaveis(DpPessoa titular, DpLotacao lotaTitular) {
+		List<ExAssinavelDoc> assinaveis = new ArrayList<ExAssinavelDoc>();
+		Map<Long, ExAssinavelDoc> map = new HashMap<>();
+		
+		// Acrescenta documentos
+		//
+		for (final ExDocumento doc : dao().listarDocPendenteAssinatura(titular)) {
+			if (!doc.isFinalizado()) 
+				continue;
+			ExAssinavelDoc 	ass = map.get(doc.getIdDoc());
+			if (ass == null) {
+				ass = new ExAssinavelDoc();
+				ass.setDoc(doc);
+				map.put(doc.getIdDoc(), ass);
+				assinaveis.add(ass);
+			}
+			ass.setPodeAssinar(true);
+			ass.setPodeSenha(Ex.getInstance().getComp().podeAssinarComSenha(titular, lotaTitular, doc.getMobilGeral()));
+		}
+		
+		// Acrescenta despachos
+		//
+		for (final ExMovimentacao mov : dao().listarDespachoPendenteAssinatura(titular)) {
+			if (mov.isAssinada() || mov.isCancelada())  
+				continue;
+			
+			ExDocumento doc = mov.getExDocumento();
+			ExAssinavelDoc 	ass = map.get(doc.getIdDoc());
+			if (ass == null) {
+				ass = new ExAssinavelDoc();
+				ass.setDoc(doc);
+				map.put(doc.getIdDoc(), ass);
+				assinaveis.add(ass);
+			}
+			ExAssinavelMov assmov = new ExAssinavelMov();
+			assmov.setMov(mov);
+			assmov.setPodeSenha(Ex.getInstance().getComp().podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov));
+			ass.getMovs().add(assmov);
+		}
+		
+		// Acrescenta anexos
+		//
+		for (final ExAssinavelDoc assdoc : assinaveis) {
+			for (ExMobil mob : assdoc.getDoc().getExMobilSet()) {
+				for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
+					if (mov.isAssinada() || mov.isCancelada() || !mov.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO))  
+						continue;
+					ExDocumento doc = mov.getExDocumento();
+					ExAssinavelMov assmov = new ExAssinavelMov();
+					assmov.setMov(mov);
+					assmov.setPodeSenha(Ex.getInstance().getComp().podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov));
+					assmov.setPodeAutenticar(true);
+					assdoc.getMovs().add(assmov);
+				}
+			}
+		}
+		
+		return assinaveis;
+	}
 }

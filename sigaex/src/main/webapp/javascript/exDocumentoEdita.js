@@ -301,7 +301,7 @@ function parte_atualizar(titular, lotaTitular) {
 		// verifica o responsavel
 		if (partes[p].resp.indexOf(';' + titular + ';') == -1
 				&& partes[p].resp.indexOf(';' + lotaTitular + ';') == -1) {
-			console.log(id + " desabilitado por ser outro responsável");
+			console.log(id + " desabilitado por ser outro responsável (" + partes[p].resp + ")" + " titular: " + titular + " lotaTitular: " + lotaTitular);
 			partes[p].disabled = true;
 		}
 		if (!partes[p].disabled && partes[p].checked) {
@@ -386,7 +386,7 @@ function parte_solicitar_alteracao(id, titular, lotaTitular) {
 						$('#parte_chk_' + id).prop('checked', false);
 						$('#parte_mensagem_' + id).val($('#motivo').val());
 						$('#parte_div_mensagem_' + id).html($('#motivo').val());
-						parte_atualizar(true, titular, lotaTitular);
+						parte_atualizar(titular, lotaTitular);
 						$(this).dialog('destroy');
 					},
 					"Cancelar" : function() {

@@ -14,6 +14,7 @@ public class ExGraph {
 	protected class Nodo {
 
 		private String nome, shape, label, URL, tooltip, color;
+
 		public String getNome() {
 			return nome;
 		}
@@ -124,7 +125,9 @@ public class ExGraph {
 				toString += "[tooltip=\"" + tooltip + "\"]";
 			if (color != null)
 				toString += "[color=\"" + color + "\"]";
-			if (aoContrario)
+			if (!directed)
+				toString += "[dir=none]";
+			else if (aoContrario)
 				toString += "[dir=back]";
 			if (!constraint)
 				toString += "[constraint=false]";
@@ -154,15 +157,8 @@ public class ExGraph {
 		String toString = "";
 		for (Nodo nodo : nodos)
 			toString += "\n" + nodo + ";";
-		toString += " subgraph \"\" {";
 		for (Transicao t : trans)
-			if (t.directed)
 				toString += "\n" + t + ";";
-		toString += "} subgraph \"\" {edge [dir=none]";
-		for (Transicao t : trans)
-			if (!t.directed)
-				toString += "\n" + t + ";";
-		toString += "}";
 		return toString.replace("\n", " ").replace("\r", " ");
 	}
 
@@ -185,7 +181,7 @@ public class ExGraph {
 	public List<Nodo> getNodos() {
 		return this.nodos;
 	}
-	
+
 	public List<Transicao> getTransicoes() {
 		return this.trans;
 	}

@@ -65,6 +65,7 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTopicoDestinacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
@@ -1792,6 +1793,15 @@ public class ExMovimentacaoController extends ExController {
 		result.include("itensSolicitados", itensFinalizados);
 		result.include("request", getRequest());
 	}
+	
+	@Get("/app/expediente/mov/assinar_tudo")
+	public void assina_tudo() throws Exception {
+		List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL().obterAssinaveis(getTitular(), getLotaTitular());
+		
+		result.include("assinaveis", assinaveis);
+		result.include("request", getRequest());
+	}
+
 
 	@Post("/app/expediente/mov/assinar_gravar")
 	public void aAssinarGravar(final String sigla, final Boolean copia, final String tipoAssinaturaMov, 

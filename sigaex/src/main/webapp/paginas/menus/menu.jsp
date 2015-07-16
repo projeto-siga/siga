@@ -18,6 +18,9 @@
 		<li><siga:monolink
 				href="${pageContext.request.contextPath}/app/expediente/mov/anotar_lote"
 				texto="Anotar em lote" /></li>
+			<li><siga:monolink
+					href="${pageContext.request.contextPath}/app/expediente/mov/assinar_tudo"
+					texto="Assinar Documentos, Despachos e Anexos" /></li>
 		<c:catch>
 			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">

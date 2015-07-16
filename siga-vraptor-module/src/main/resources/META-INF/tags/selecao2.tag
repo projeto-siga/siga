@@ -29,6 +29,7 @@
 <c:set var="larguraPopup" value="600" />
 <c:set var="alturaPopup" value="400" />
 
+
 <script type="text/javascript">
 
 self.retorna_${propriedadeClean} = function(id, sigla, descricao) {
@@ -37,7 +38,7 @@ self.retorna_${propriedadeClean} = function(id, sigla, descricao) {
     } catch (E) {
     } finally {
     }
-
+    
 	document.getElementsByName('${propriedade}.id')[0].value = id;
 	
 	<c:if test="${ocultardescricao != 'sim'}">

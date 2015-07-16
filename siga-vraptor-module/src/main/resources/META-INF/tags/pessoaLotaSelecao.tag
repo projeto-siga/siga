@@ -5,16 +5,13 @@
 
 <%@ attribute name="nomeSelPessoa" required="false"%>
 <%@ attribute name="nomeSelLotacao" required="false"%>
-
 <%@ attribute name="valuePessoa" required="false"%>
 <%@ attribute name="valueLotacao" required="false"%>
-
 <%@ attribute name="disabled" required="false"%>
 <%@ attribute name="requiredValue" required="false"%>
 
-<c:if test="${requiredValue == null}">
-	<c:set var="requiredValue" value="" />
-</c:if>
+<c:set var="nomeSelPessoaClean" value="${fn:replace(nomeSelPessoa,'.','')}" />
+<c:set var="nomeSelLotacaoClean" value="${fn:replace(nomeSelLotacao,'.','')}" />
 
 <c:set var="desativar" value="nao"></c:set>
 <c:if test="${disabled == 'sim'}">
@@ -22,48 +19,45 @@
 	<c:set var="desativar" value="sim"></c:set>
 </c:if>
 
-<select id="${nomeSelPessoa}${nomeSelLotacao}" onchange="" ${pessoaLotaSelecaoDisabled} >
+<select id="${requestScope._nomeSelPessoaClean}${requestScope._nomeSelLotacaoClean}" onchange="" ${pessoaLotaSelecaoDisabled} >
   <option value="1">Pessoa</option>
   <option value="2">LotaÃ§Ã£o</option>
 </select>
 
-<span id="spanPessoa${nomeSelPessoa}">
-	<input type="hidden" name="${nomeSelPessoa}" id="${nomeSelPessoa}" class="pessoaLotaSelecao">
-	<siga:selecao propriedade="${nomeSelPessoa}" tema="simple" modulo="siga" 
-		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valuePessoa}" requiredValue="${requiredValue}"/>
+<span id="spanPessoa${requestScope._nomeSelPessoaClean}">
+	<siga:selecao tipo="pessoa" propriedade="pessoa" tema="simple" modulo="siga" inputName="${nomeSelPessoaClean}" 
+		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valuePessoa}"/>
 </span>
 
-<span id="spanLotacao${nomeSelLotacao}">
-	<input type="hidden" name="${nomeSelLotacao}" id="${nomeSelLotacao}" class="pessoaLotaSelecao">
-	<siga:selecao propriedade="${nomeSelLotacao}" tema="simple" modulo="siga"  
-		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueLotacao}" requiredValue="${requiredValue}"/>
+<span id="spanLotacao${requestScope._nomeSelLotacaoClean}">
+	<siga:selecao tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" inputName="${nomeSelLotacaoClean}" 
+		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueLotacao}"/>
 </span>
-
 <script language="javascript">
-var select = document.getElementById('${nomeSelPessoa}${nomeSelLotacao}');
-if (document.getElementById('${nomeSelPessoa}').value)
+var select = document.getElementById('${requestScope._nomeSelPessoaClean}${requestScope._nomeSelLotacaoClean}');
+if (document.getElementById('${requestScope._nomeSelPessoaClean}').value)
 	select.value = 1;
 else select.value= 2;
 // O onchange tem de ser definido da forma abaixo porque, quando esta tag esta dentro de um codigo
 // carregado por ajax, nao funciona o tratamento do modo tradicional (onchange="", etc)
 // http://stackoverflow.com/questions/8893786/uncaught-referenceerror-x-is-not-defined
 select.onchange = function(){
-	var select = document.getElementById('${nomeSelPessoa}${nomeSelLotacao}');
+	var select = document.getElementById('${requestScope._nomeSelPessoaClean}${requestScope._nomeSelLotacaoClean}');
 
 	if (select.value == '1'){
-		document.getElementById('spanLotacao${nomeSelLotacao}').style.display = 'none';
-		document.getElementById('spanPessoa${nomeSelPessoa}').style.display = 'inline';
-		document.getElementById('formulario_${nomeSelLotacao}Sel_id').value='';
-		document.getElementById('formulario_${nomeSelLotacao}Sel_sigla').value='';
-		document.getElementById('formulario_${nomeSelLotacao}Sel_descricao').value='';
-		document.getElementById('${nomeSelLotacao}SelSpan').innerHTML='';
+		document.getElementById('spanLotacao${requestScope._nomeSelLotacaoClean}').style.display = 'none';
+		document.getElementById('spanPessoa${requestScope._nomeSelPessoaClean}').style.display = 'inline';
+		document.getElementById('${requestScope._nomeSelLotacaoClean}').value='';
+		document.getElementById('${requestScope._nomeSelLotacaoClean}_sigla').value='';
+		document.getElementById('${requestScope._nomeSelLotacaoClean}_descricao').value='';
+		document.getElementById('${requestScope._nomeSelLotacaoClean}Span').innerHTML='';
 	} else if (select.value == '2'){
-		document.getElementById('spanPessoa${nomeSelPessoa}').style.display = 'none';
-		document.getElementById('spanLotacao${nomeSelLotacao}').style.display = 'inline';
-		document.getElementById('formulario_${nomeSelPessoa}Sel_id').value='';
-		document.getElementById('formulario_${nomeSelPessoa}Sel_sigla').value='';
-		document.getElementById('formulario_${nomeSelPessoa}Sel_descricao').value='';
-		document.getElementById('${nomeSelPessoa}SelSpan').innerHTML='';
+		document.getElementById('spanPessoa${requestScope._nomeSelPessoaClean}').style.display = 'none';
+		document.getElementById('spanLotacao${requestScope._nomeSelLotacaoClean}').style.display = 'inline';
+		document.getElementById('${requestScope._nomeSelPessoaClean}').value='';
+		document.getElementById('${requestScope._nomeSelPessoaClean}_sigla').value='';
+		document.getElementById('${requestScope._nomeSelPessoaClean}_descricao').value='';
+		document.getElementById('${requestScope._nomeSelPessoaClean}Span').innerHTML='';
 	}
 }
 select.onchange();

@@ -19,6 +19,7 @@ public class ValidarAnoDataConstraintValidator implements ConstraintValidator<Va
 	public boolean isValid(Calendar value, ConstraintValidatorContext constraintValidatorContext) {
 		if (!validarAnoData(value)) {
 			int ano = Calendar.getInstance().get(Calendar.YEAR) + annotation.intervalo();
+			constraintValidatorContext.disableDefaultConstraintViolation();
 			constraintValidatorContext
 				.buildConstraintViolationWithTemplate(MessageFormat.format("Ano de {0} nao deve ser maior que o ano de {1}.", annotation.descricaoCampo(), ano))
 				.addConstraintViolation();

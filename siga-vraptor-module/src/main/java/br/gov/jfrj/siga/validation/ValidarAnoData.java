@@ -26,4 +26,6 @@ public @interface ValidarAnoData {
 	int intervalo() default 1;
 
 	String descricaoCampo();
+
+	String message() default "Data inv&aacutelida";
 }

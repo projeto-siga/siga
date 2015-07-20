@@ -50,6 +50,7 @@
 <script language="javascript">
 	var select = document
 			.getElementById('${propriedadePessoaClean}${propriedadeLotacaoClean}');
+
 	if (document.getElementById('formulario_${propriedadePessoaClean}_id').value)
 		select.value = 1;
 	else
@@ -69,6 +70,7 @@
 					.getElementById('formulario_${propriedadeLotacaoClean}_sigla').value = '';
 			document
 					.getElementById('formulario_${propriedadeLotacaoClean}_descricao').value = '';
+
 			document.getElementById('${propriedadeLotacaoClean}Span').innerHTML = '';
 
 			document.getElementById('spanEmail${propriedadeEmailClean}').style.display = 'none';
@@ -100,6 +102,7 @@
 					.getElementById('formulario_${propriedadePessoaClean}_sigla').value = '';
 			document
 					.getElementById('formulario_${propriedadePessoaClean}_descricao').value = '';
+
 			document.getElementById('${propriedadePessoaClean}Span').innerHTML = '';
 
 			document.getElementById('spanEmail${propriedadeEmailClean}').style.display = 'inline';

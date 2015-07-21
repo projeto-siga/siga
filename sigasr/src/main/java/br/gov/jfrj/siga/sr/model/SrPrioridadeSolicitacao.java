@@ -13,12 +13,11 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
-
 import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sr.model.vo.SrPrioridadeSolicitacaoVO;
 import br.gov.jfrj.siga.sr.util.AtualizacaoLista;
 import br.gov.jfrj.siga.sr.util.Util;
-import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -26,7 +25,7 @@ import com.google.gson.JsonObject;
 
 @Entity
 @Table(name = "SR_PRIORIDADE_SOLICITACAO", schema = "SIGASR")
-public class SrPrioridadeSolicitacao extends ObjetoVraptor {
+public class SrPrioridadeSolicitacao extends Objeto {
 
     public static final ActiveRecord<SrPrioridadeSolicitacao> AR = new ActiveRecord<>(SrPrioridadeSolicitacao.class);
     private static final long serialVersionUID = 1L;
@@ -163,6 +162,6 @@ public class SrPrioridadeSolicitacao extends ObjetoVraptor {
         this.setPrioridade(atualizacaoLista.getPrioridade());
         this.setNumPosicao(atualizacaoLista.getNumPosicao());
         this.setNaoReposicionarAutomatico(atualizacaoLista.isNaoReposicionarAutomatico());
-        this.salvar();
+        this.save();
     }
 }

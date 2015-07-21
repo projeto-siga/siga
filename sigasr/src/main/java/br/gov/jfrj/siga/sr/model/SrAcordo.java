@@ -2,7 +2,6 @@ package br.gov.jfrj.siga.sr.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,20 +17,19 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import edu.emory.mathcs.backport.java.util.Collections;
-
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.vo.SrAcordoVO;
-import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
+import edu.emory.mathcs.backport.java.util.Collections;
 
 @Entity
 @Table(name = "SR_ACORDO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrAcordo extends HistoricoSuporteVraptor implements Selecionavel, ConvertableEntity{
-	//public class SrAcordo extends HistoricoSuporteVraptor implements ConvertableEntity {
+public class SrAcordo extends HistoricoSuporte implements Selecionavel, ConvertableEntity{
+	//public class SrAcordo extends HistoricoSuporte implements ConvertableEntity {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -119,12 +117,12 @@ public class SrAcordo extends HistoricoSuporteVraptor implements Selecionavel, C
 
 	// Edson: Não consegui fazer com que esse cascade fosse automático.
 	@Override
-	public void salvar() throws Exception {
-		super.salvar();
+	public void salvarComHistorico() throws Exception {
+		super.salvarComHistorico();
 		if (getAtributoAcordoSet() != null)
 			for (SrAtributoAcordo atributoAcordo : getAtributoAcordoSet()) {
 				atributoAcordo.setAcordo(this);
-				atributoAcordo.salvar();
+				atributoAcordo.salvarComHistorico();
 			}
 	}
 

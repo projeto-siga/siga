@@ -82,7 +82,7 @@ public class EquipeController extends SrController {
 				equipe.setLotacaoEquipe(lotacaoEquipeSel.buscarObjeto());
 			}
 		}
-		equipe.salvar();
+		equipe.salvarComHistorico();
 		result.use(Results.http()).body(equipe.toJson());
 	}
 

@@ -21,6 +21,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
@@ -29,11 +30,10 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.vo.SrListaVO;
 import br.gov.jfrj.siga.sr.util.AtualizacaoLista;
-import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
 @Table(name = "SR_LISTA", schema = "SIGASR")
-public class SrLista extends HistoricoSuporteVraptor implements ConvertableEntity {
+public class SrLista extends HistoricoSuporte implements ConvertableEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -255,7 +255,7 @@ public class SrLista extends HistoricoSuporteVraptor implements ConvertableEntit
             posicao++;
             if (!posicao.equals(prioridadeSolicitacao.getNumPosicao())) {
                 prioridadeSolicitacao.setNumPosicao(posicao);
-                prioridadeSolicitacao.salvar();
+                prioridadeSolicitacao.save();
             }
         }
     }
@@ -290,12 +290,12 @@ public class SrLista extends HistoricoSuporteVraptor implements ConvertableEntit
         for (SrPrioridadeSolicitacao prioridadeSolic : getPrioridadeSolicitacaoSet()) {
             if (prioridadeSolic.getNumPosicao() >= posicao) {
                 prioridadeSolic.incrementarPosicao();
-                prioridadeSolic.salvar();
+                prioridadeSolic.save();
             }
         }
         prioridadeSolicitacao.setNumPosicao(posicao);
         getMeuPrioridadeSolicitacaoSet().add(prioridadeSolicitacao);
-        prioridadeSolicitacao.salvar();
+        prioridadeSolicitacao.save();
     }
 
     /**
@@ -313,7 +313,7 @@ public class SrLista extends HistoricoSuporteVraptor implements ConvertableEntit
                 break;
             }
         }
-        salvar();
+        salvarComHistorico();
         recalcularPrioridade(pessoa, lotacao);
     }
 

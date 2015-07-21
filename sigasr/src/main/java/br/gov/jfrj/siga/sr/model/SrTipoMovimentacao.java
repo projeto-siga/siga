@@ -8,14 +8,13 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-
 import br.gov.jfrj.siga.model.ActiveRecord;
-import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
+import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
 @Table(name = "SR_TIPO_MOVIMENTACAO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class SrTipoMovimentacao extends ObjetoVraptor {
+public class SrTipoMovimentacao extends Objeto {
 
     private static final long serialVersionUID = 1L;
 
@@ -89,8 +88,7 @@ public class SrTipoMovimentacao extends ObjetoVraptor {
     public Long getIdTipoMov() {
         return idTipoMov;
     }
-
-    @Override
+    
     protected Long getId() {
         return this.getIdTipoMov();
     }

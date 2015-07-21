@@ -42,7 +42,7 @@ public class CpComplexo extends AbstractCpComplexo {
 
 	@Override
 	public boolean equals(Object other) {
-		if (other == null)
+		if (other == null || ((CpComplexo) other).getIdComplexo() == null)
 			return false;
 		return this.getIdComplexo().longValue() == ((CpComplexo) other)
 				.getIdComplexo().longValue();

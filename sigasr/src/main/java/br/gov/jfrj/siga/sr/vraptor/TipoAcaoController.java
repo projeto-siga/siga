@@ -50,7 +50,7 @@ public class TipoAcaoController extends SrController {
 	public void gravar(SrTipoAcao tipoAcao) throws Exception {
 		validarFormEditar(tipoAcao);
 		if(srValidator.hasErrors()) return;
-		tipoAcao.salvar();
+		tipoAcao.salvarComHistorico();
 
 		result.use(Results.http()).body(tipoAcao.toJson());
 	}
@@ -68,7 +68,7 @@ public class TipoAcaoController extends SrController {
 	@Path("/reativar")
 	public void reativar(Long id, boolean mostrarDesativados) throws Exception {
 		SrTipoAcao tipoAcao = SrTipoAcao.AR.findById(id);
-		tipoAcao.salvar();
+		tipoAcao.salvarComHistorico();
 
 		result.use(Results.http()).body(tipoAcao.toJson());
 	}

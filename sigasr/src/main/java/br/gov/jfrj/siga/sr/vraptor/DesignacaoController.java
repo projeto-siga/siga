@@ -69,7 +69,7 @@ public class DesignacaoController extends SrController {
 	public void reativar(Long id) throws Exception {
 		SrConfiguracao designacao = SrConfiguracao.AR.em().find(
 				SrConfiguracao.class, id);
-		designacao.salvar();
+		designacao.salvarComHistorico();
 
 		result.use(Results.http()).body(designacao.toJson());
 	}
@@ -92,7 +92,7 @@ public class DesignacaoController extends SrController {
 		if (designacao.getDescrConfiguracao() == null
 				|| designacao.getDescrConfiguracao().isEmpty())
 			srValidator.addError("designacao.descrConfiguracao",
-					"Descrição não informada");
+					"Descriï¿½ï¿½o nï¿½o informada");
 
 		if (srValidator.hasErrors())
 			enviarErroValidacao();

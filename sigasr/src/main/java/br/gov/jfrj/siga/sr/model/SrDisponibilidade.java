@@ -26,7 +26,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -34,7 +34,6 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 import br.gov.jfrj.siga.sr.model.vo.DisponibilidadesPorOrgaoCache;
 import br.gov.jfrj.siga.sr.model.vo.DisponibilidadesPorOrgaoCacheHolder;
 import br.gov.jfrj.siga.sr.model.vo.PaginaItemConfiguracao;
-import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -44,7 +43,7 @@ import com.google.gson.JsonObject;
 @Entity
 @Table(name = "SR_DISPONIBILIDADE", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrDisponibilidade extends HistoricoSuporteVraptor implements Cloneable {
+public class SrDisponibilidade extends HistoricoSuporte implements Cloneable {
 
     private static final long serialVersionUID = 7243562288736225097L;
 
@@ -209,7 +208,7 @@ public class SrDisponibilidade extends HistoricoSuporteVraptor implements Clonea
     }
 
     public void salvar(PaginaItemConfiguracao pagina) throws Exception {
-        this.salvar();
+        this.salvarComHistorico();
 
         pagina.buscarItens(Arrays.asList(orgao));
         configurarAtualizacaoDisponibilidades(itemConfiguracao, Arrays.asList(orgao));

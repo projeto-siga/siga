@@ -19,12 +19,11 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.util.FieldNameExclusionEstrategy;
-import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -33,7 +32,7 @@ import com.google.gson.JsonObject;
 @Entity
 @Table(name = "SR_TIPO_ACAO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrTipoAcao extends HistoricoSuporteVraptor implements Comparable<SrTipoAcao>, Selecionavel {
+public class SrTipoAcao extends HistoricoSuporte implements Comparable<SrTipoAcao>, Selecionavel {
 
     public static final ActiveRecord<SrTipoAcao> AR = new ActiveRecord<>(SrTipoAcao.class);
 
@@ -309,11 +308,11 @@ public class SrTipoAcao extends HistoricoSuporteVraptor implements Comparable<Sr
     }
 
     @Override
-    public void salvar() throws Exception {
+    public void salvarComHistorico() throws Exception {
         if (getNivel() > 1) {
             pai = getPaiPorSigla();
         }
-        super.salvar();
+        super.salvarComHistorico();
     }
 
     public List<SrTipoAcao> getAcaoETodasDescendentes() {

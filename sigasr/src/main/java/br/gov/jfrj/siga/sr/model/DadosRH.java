@@ -6,13 +6,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
 import br.gov.jfrj.siga.model.ActiveRecord;
-import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
+import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
 @Table(name = "DADOS_RH", schema = "SIGASR")
-public class DadosRH  extends ObjetoVraptor {
+public class DadosRH  extends Objeto {
     
     public static final ActiveRecord<DadosRH> AR = new ActiveRecord<>(DadosRH.class);
 	private static final long serialVersionUID = -3610233962047379185L;
@@ -549,7 +548,6 @@ public class DadosRH  extends ObjetoVraptor {
 		return org;
 	}
 
-    @Override
     protected Long getId() {
         return this.getPessoa_id();
     }

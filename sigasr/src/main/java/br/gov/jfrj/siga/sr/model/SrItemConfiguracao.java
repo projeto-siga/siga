@@ -33,6 +33,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
@@ -41,14 +42,13 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.vo.PaginaItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.vo.SrItemConfiguracaoVO;
-import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.JsonArray;
 
 @Entity
 @Table(name = "SR_ITEM_CONFIGURACAO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSelecionavel, ConvertableEntity, Selecionavel {
+public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionavel, ConvertableEntity, Selecionavel {
 
 	public static final ActiveRecord<SrItemConfiguracao> AR = new ActiveRecord<>(SrItemConfiguracao.class);
 
@@ -140,7 +140,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
         }
         if (podeAdicionar(designacao)) {
             getDesignacoesSet().add(designacao);
-            salvar();
+            salvarComHistorico();
         }
     }
 
@@ -416,11 +416,11 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
     }
 
     @Override
-    public void salvar() throws Exception {
+    public void salvarComHistorico() throws Exception {
         if (getNivel() > 1 && getPai() == null) {
             setPai(getPaiPorSigla());
         }
-        super.salvar();
+        super.salvarComHistorico();
 
         if (getGestorSet() != null)
             for (SrGestorItem gestor : getGestorSet()) {
@@ -431,7 +431,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
         if (getFatorMultiplicacaoSet() != null)
             for (SrFatorMultiplicacao fator : getFatorMultiplicacaoSet()) {
                 fator.setItemConfiguracao(this);
-                fator.salvar();
+                fator.save();
             }
 
         // DB1: precisa salvar item a item
@@ -442,7 +442,7 @@ public class SrItemConfiguracao extends HistoricoSuporteVraptor implements SrSel
                     // se estiver marcada como "não Herdar"
                     if (!designacao.isUtilizarItemHerdado()) {
                         // cria uma nova entrada na tabela, para que seja ignorada nas próximas vezes
-                        SrConfiguracaoIgnorada.createNew(this, designacao).salvar();
+                        SrConfiguracaoIgnorada.createNew(this, designacao).save();
                     }
 
                     // verifica se existia entrada para "não Herdar", e remove (usuário marcou para usar herança)

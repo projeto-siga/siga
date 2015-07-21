@@ -69,10 +69,10 @@ import org.joda.time.format.DateTimeFormatter;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.Texto;
-
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -87,11 +87,10 @@ import br.gov.jfrj.siga.sr.notifiers.Destinatario;
 import br.gov.jfrj.siga.sr.util.Cronometro;
 import br.gov.jfrj.siga.sr.util.Util;
 import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
-import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
 @Table(name = "SR_SOLICITACAO", schema = "SIGASR")
-public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecionavel {
+public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     private static final String MODAL_TRUE = "modal=true";
     private static final String HH_MM = "HH:mm";
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
@@ -1395,12 +1394,12 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
         this.setLotaCadastrante(lotaCadastrante);
         this.setTitular(titular);
         this.setLotaTitular(lotaTitular);
-        salvar();
+        salvarComHistorico();
     }
 
     @SuppressWarnings("unused")
     @Override
-    public void salvar() throws Exception {
+    public void salvarComHistorico() throws Exception {
 
         checarEPreencherCampos();
         // Edson: Ver por que isto estï¿½ sendo necessï¿½rio. Sem isso, apï¿½s o salvar(),
@@ -1411,7 +1410,7 @@ public class SrSolicitacao extends HistoricoSuporteVraptor implements SrSelecion
                 }
             }
 
-        super.salvar();
+        super.salvarComHistorico();
 
         // Edson: melhorar isto, pra nao precisar salvar novamente
 

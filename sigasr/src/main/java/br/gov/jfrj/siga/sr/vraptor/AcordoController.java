@@ -79,7 +79,7 @@ public class AcordoController extends SrController {
         if (isNotEmptyUnidadeMedida(unidadeMedida))
             acordo.getAtributoAcordoSet().addAll(buscaAtributosAcordo(atributoAcordoSet, unidadeMedida));
 
-        acordo.salvar();
+        acordo.salvarComHistorico();
         result.use(Results.http()).body(acordo.toJson());
     }
 
@@ -123,7 +123,7 @@ public class AcordoController extends SrController {
     @Path("/reativar")
     public void reativar(Long id) throws Exception {
         SrAcordo acordo = SrAcordo.AR.findById(id);
-        acordo.salvar();
+        acordo.salvarComHistorico();
 
         result.use(Results.http()).body(acordo.toJson());
     }

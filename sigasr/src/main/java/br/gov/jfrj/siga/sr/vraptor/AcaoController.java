@@ -61,7 +61,7 @@ public class AcaoController extends SrController {
 	public void gravar(SrAcao acao, TipoAcaoSelecao tipoAcaoSel) throws Exception {
 		validarFormEditarAcao(acao);
 		acao.setTipoAcao(tipoAcaoSel.buscarObjeto());
-		acao.salvar();
+		acao.salvarComHistorico();
 
 		result.use(Results.http()).body(acao.toJson());
 	}
@@ -79,7 +79,7 @@ public class AcaoController extends SrController {
 	@Path("/reativar")
 	public void reativar(Long id, boolean mostrarDesativados) throws Exception {
 		SrAcao acao = SrAcao.AR.findById(id);
-		acao.salvar();
+		acao.salvarComHistorico();
 
 		result.use(Results.http()).body(acao.toJson());
 	}
@@ -121,10 +121,10 @@ public class AcaoController extends SrController {
 
 	private void validarFormEditarAcao(SrAcao acao) {
 		if ("".equals(acao.getSiglaAcao()))
-			srValidator.addError("siglaAcao", "Código não informado");
+			srValidator.addError("siglaAcao", "Cï¿½digo nï¿½o informado");
 
 		if ("".equals(acao.getTituloAcao()))
-			srValidator.addError("tituloAcao", "Titulo não informado");
+			srValidator.addError("tituloAcao", "Titulo nï¿½o informado");
 
 		if (srValidator.hasErrors())
 			enviarErroValidacao();

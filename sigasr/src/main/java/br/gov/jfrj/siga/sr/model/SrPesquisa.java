@@ -16,12 +16,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.util.Util;
-import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -31,7 +30,7 @@ import edu.emory.mathcs.backport.java.util.Collections;
 
 @Entity
 @Table(name = "SR_PESQUISA", schema = "SIGASR")
-public class SrPesquisa extends HistoricoSuporteVraptor implements ConvertableEntity {
+public class SrPesquisa extends HistoricoSuporte implements ConvertableEntity {
 
 	/**
 	 *
@@ -104,12 +103,12 @@ public class SrPesquisa extends HistoricoSuporteVraptor implements ConvertableEn
 
 	// Edson: Não consegui fazer com que esse cascade fosse automático.
 	@Override
-	public void salvar() throws Exception {
-		super.salvar();
+	public void salvarComHistorico() throws Exception {
+		super.salvarComHistorico();
 		if (perguntaSet != null)
 			for (SrPergunta pergunta : perguntaSet) {
 				pergunta.setPesquisa(this);
-				pergunta.salvar();
+				pergunta.salvarComHistorico();
 			}
 	}
 

@@ -12,13 +12,13 @@ import javax.persistence.Table;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 import br.gov.jfrj.siga.sr.model.vo.SrFatorMultiplicacaoVO;
-import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 @Entity
 @Table(name = "SR_FATOR_MULTIPLICACAO", schema = "SIGASR")
-public class SrFatorMultiplicacao extends ObjetoVraptor {
+public class SrFatorMultiplicacao extends Objeto {
 
     /**
 	 * 
@@ -102,7 +102,6 @@ public class SrFatorMultiplicacao extends ObjetoVraptor {
         this.itemConfiguracao = itemConfiguracao;
     }
 
-    @Override
     protected Long getId() {
         return this.getIdFatorMultiplicacao();
     }

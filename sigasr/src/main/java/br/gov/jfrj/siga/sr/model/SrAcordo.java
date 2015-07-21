@@ -90,7 +90,7 @@ public class SrAcordo extends HistoricoSuporteVraptor implements Selecionavel, C
 		if (getHisDtFim() == null)
 			return this;
 		List<SrAcordo> acordos = getHistoricoAcordo();
-		if (acordos == null)
+		if (acordos == null || acordos.size() < 1)
 			return null;
 		return acordos.get(0);
 	}

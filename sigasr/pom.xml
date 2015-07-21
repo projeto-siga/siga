@@ -55,6 +55,10 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>siga-vraptor-module</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>net.objectlab.kit</groupId>
 			<artifactId>datecalc-joda</artifactId>
 			<version>1.2.0</version>
@@ -170,11 +174,6 @@
 			<artifactId>siga-infinispan</artifactId>
 			<version>0.0.1</version>
 			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>siga</groupId>
-			<artifactId>siga-vraptor-module</artifactId>
 		</dependency>
 
 		<!-- Siga Play Module -->

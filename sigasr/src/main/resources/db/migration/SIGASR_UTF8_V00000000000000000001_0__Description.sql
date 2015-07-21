@@ -15,8 +15,6 @@ ALTER SESSION SET CURRENT_SCHEMA = corporativo;
 	insert into cp_marcador (id_marcador, descr_marcador, id_tp_marcador) values (307,	'Como cadastrante',	1);
 	insert into cp_marcador (id_marcador, descr_marcador, id_tp_marcador) values (308,	'Como solicitante',	1);
   
-	insert into cp_tipo_marca(id_tp_marca, descr_tp_marca) values (2, 'SIGA-SR');
-  
 -- - - - - - - - - - - - - - - - - - - - - - 
 -- - - tipo de configuração -
 -- - - - - - - - - - - - - - - - - - - - - -	

@@ -11,9 +11,7 @@ insert into corporativo.cp_servico(id_servico, sigla_servico, desc_servico, id_s
 
 	
 ALTER SESSION SET CURRENT_SCHEMA=sigasr;
-alter table sigasr.sr_resposta 
-add CONSTRAINT RESPOSTA_MOVIMENTACAO_FK FOREIGN KEY (ID_MOVIMENTACAO) REFERENCES SR_MOVIMENTACAO(ID_MOVIMENTACAO);
 
-update sigasr.sr_tipo_movimentacao set nome_tipo_movimentacao = 'Alteração de Prioridade' where id_tipo_movimentacao = 21;
+update sigasr.sr_tipo_movimentacao set nome_tipo_movimentacao = 'AlteraÃ§Ã£o de Prioridade' where id_tipo_movimentacao = 21;
 alter table sigasr.sr_movimentacao add PRIORIDADE NUMBER(10,0);
 alter table sigasr.sr_movimentacao drop column ID_PRIORIDADE;

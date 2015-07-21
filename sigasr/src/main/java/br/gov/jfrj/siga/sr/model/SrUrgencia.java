@@ -1,28 +1,48 @@
 package br.gov.jfrj.siga.sr.model;
 
-
 public enum SrUrgencia {
 
-	SEM_PRESSA(1, "Sem urgÃªncia.", "Sem pressa"), NORMAL(2,
-			"UrgÃªncia normal.", "Quando for oportuno"), URGENCIA(
-			3, "Urgente.", "Com urgÃªncia"), MUITA_URGENCIA(
-			4, "Muito urgente.", "Com muita urgÃªncia"), AGIR_IMEDIATO(5,
-			"Extremamente urgente.", "Imediatamente");
+    SEM_PRESSA(1, "Sem urgência.", "Sem pressa"), NORMAL(2, "Urgência normal.", "Quando for oportuno"), URGENCIA(3, "Urgente.", "Com urgência"), MUITA_URGENCIA(4, "Muito urgente.",
+            "Com muita urgência"), AGIR_IMEDIATO(5, "Extremamente urgente.", "Imediatamente");
 
-	public int nivelUrgencia;
+    private int nivelUrgencia;
 
-	public String descrUrgencia;
+    private String descrUrgencia;
 
-	public String respostaEnunciado;
+    private String respostaEnunciado;
 
-	private SrUrgencia(int nivelUrgencia, String descrUrgencia) {
-		this(nivelUrgencia, descrUrgencia, descrUrgencia);
-	}
+    private SrUrgencia(int nivelUrgencia, String descrUrgencia) {
+        this(nivelUrgencia, descrUrgencia, descrUrgencia);
+    }
 
-	SrUrgencia(int nivel, String descricao, String respostaEnunciado) {
-		this.nivelUrgencia = nivel;
-		this.descrUrgencia = descricao;
-		this.respostaEnunciado = respostaEnunciado;
-	}
+    SrUrgencia(int nivel, String descricao, String respostaEnunciado) {
+        this.setNivelUrgencia(nivel);
+        this.setDescrUrgencia(descricao);
+        this.setRespostaEnunciado(respostaEnunciado);
+    }
+
+    public int getNivelUrgencia() {
+        return nivelUrgencia;
+    }
+
+    public void setNivelUrgencia(int nivelUrgencia) {
+        this.nivelUrgencia = nivelUrgencia;
+    }
+
+    public String getDescrUrgencia() {
+        return descrUrgencia;
+    }
+
+    public void setDescrUrgencia(String descrUrgencia) {
+        this.descrUrgencia = descrUrgencia;
+    }
+
+    public String getRespostaEnunciado() {
+        return respostaEnunciado;
+    }
+
+    public void setRespostaEnunciado(String respostaEnunciado) {
+        this.respostaEnunciado = respostaEnunciado;
+    }
 
 }

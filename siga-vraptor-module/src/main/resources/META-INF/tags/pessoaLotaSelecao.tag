@@ -5,13 +5,19 @@
 
 <%@ attribute name="nomeSelPessoa" required="false"%>
 <%@ attribute name="nomeSelLotacao" required="false"%>
+
 <%@ attribute name="valuePessoa" required="false"%>
 <%@ attribute name="valueLotacao" required="false"%>
+
 <%@ attribute name="disabled" required="false"%>
 <%@ attribute name="requiredValue" required="false"%>
 
 <c:set var="nomeSelPessoaClean" value="${fn:replace(nomeSelPessoa,'.','')}" />
 <c:set var="nomeSelLotacaoClean" value="${fn:replace(nomeSelLotacao,'.','')}" />
+
+<c:if test="${requiredValue == null}">
+	<c:set var="requiredValue" value="" />
+</c:if>
 
 <c:set var="desativar" value="nao"></c:set>
 <c:if test="${disabled == 'sim'}">
@@ -21,18 +27,19 @@
 
 <select id="${requestScope._nomeSelPessoaClean}${requestScope._nomeSelLotacaoClean}" onchange="" ${pessoaLotaSelecaoDisabled} >
   <option value="1">Pessoa</option>
-  <option value="2">LotaÃ§Ã£o</option>
+  <option value="2">Lota&ccedil;&atilde;o</option>
 </select>
 
 <span id="spanPessoa${requestScope._nomeSelPessoaClean}">
 	<siga:selecao tipo="pessoa" propriedade="pessoa" tema="simple" modulo="siga" inputName="${nomeSelPessoaClean}" 
-		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valuePessoa}"/>
+		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valuePessoa}" requiredValue="${requiredValue}"/>
 </span>
 
 <span id="spanLotacao${requestScope._nomeSelLotacaoClean}">
 	<siga:selecao tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" inputName="${nomeSelLotacaoClean}" 
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueLotacao}"/>
 </span>
+
 <script language="javascript">
 var select = document.getElementById('${requestScope._nomeSelPessoaClean}${requestScope._nomeSelLotacaoClean}');
 if (document.getElementById('${requestScope._nomeSelPessoaClean}').value)

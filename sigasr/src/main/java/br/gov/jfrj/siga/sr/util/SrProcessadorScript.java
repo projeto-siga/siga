@@ -1,9 +1,16 @@
 package br.gov.jfrj.siga.sr.util;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import bsh.EvalError;
+import bsh.Interpreter;
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class SrProcessadorScript {
 
-	/*public String executar(Map<String, Object> attrs) throws Exception {
+	public String executar(Map<String, Object> attrs) throws Exception {
 		Interpreter bsh = new Interpreter();
 		String codigo = "import models.*;";
 		for (String key : attrs.keySet()) {
@@ -25,6 +32,6 @@ public class SrProcessadorScript {
 		map.put("codigo", sb.toString());
 		
 		s.executar(map);
-	}*/
+	}
 
 }

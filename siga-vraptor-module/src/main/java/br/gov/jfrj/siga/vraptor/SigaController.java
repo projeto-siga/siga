@@ -18,9 +18,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.HttpResult;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Paginador;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -142,26 +144,30 @@ public class SigaController {
 	public void exception() {
 		HttpResult res = this.result.use(http());
 		res.setStatusCode(500);
-		result.forwardTo("/WEB-INF/page/erroGeral.jsp");
+		if (requisicaoEhAjax()) {
+		    result.forwardTo("/WEB-INF/page/erroGeralAjax.jsp");
+		} else {
+		    result.forwardTo("/WEB-INF/page/erroGeral.jsp");
+		}
 	}
 
+    private boolean requisicaoEhAjax() {
+        return request.getHeader("X-Requested-With") != null;
+    }
+
 	protected DpLotacao getLotaTitular() {
-		// TODO Auto-generated method stub
 		return so.getLotaTitular();
 	}
 	
 	protected void setLotaTitular(DpLotacao lotaTitular) {
-		// TODO Auto-generated method stub
 		so.setLotaTitular(lotaTitular);
 	}	
 
 	protected DpPessoa getTitular() {
-		// TODO Auto-generated method stub
 		return so.getTitular();
 	}
 	
 	protected void setTitular(DpPessoa titular) {
-		// TODO Auto-generated method stub
 		so.setTitular(titular);
 	}
 	
@@ -277,6 +283,7 @@ public class SigaController {
 		this.p = p;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void setPar(final Map par) {
 		this.par = par;
 	}
@@ -299,6 +306,11 @@ public class SigaController {
 	
 	protected Paginador getP() {
 		return p;
+	}
+	
+	protected boolean podeUtilizarServico(String servico)
+			throws Exception {
+		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(), servico);
 	}
 
 }

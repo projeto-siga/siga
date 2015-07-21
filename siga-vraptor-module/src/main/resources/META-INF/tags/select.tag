@@ -12,16 +12,19 @@
 <%@ attribute name="multiple" required="false"%>
 <%@ attribute name="headerValue" required="false"%>
 <%@ attribute name="headerKey" required="false"%>
+<%@ attribute name="isEnum" required="false"%>
+<%@ attribute name="style" required="false"%>
 
 <!-- wwselect -->
 <%-- Seria ótimo se pudéssemos chamar a EL para calcular a expressão "name", mas não sei como fazer isso. --%>
 <c:if test="${empty value}">
 	<c:set var="value" value="${requestScope[name]}"/>
 </c:if>
+
 <c:if test="${theme != 'simple'}">
 <tr><td>${label}</td><td>
 </c:if>
-<select id="${id}" name="${name}" <c:if test="${not empty onchange}">onchange="${onchange}"</c:if>>
+<select id="${id}" name="${name}" <c:if test="${not empty onchange}">onchange="${onchange}"</c:if> class="select-siga" style="${style != null ? style : ''}">
 <c:if test="${not empty headerKey or not empty headerValue}">
 	<option value="${headerKey}"
 			${headerKey == value ? 'selected' : ''}
@@ -32,7 +35,9 @@
 			${item[listKey] == value ? 'selected' : ''}
 			>${item[listValue]}</option>  
 	</c:forEach>
+
 </select>
+
 <c:if test="${theme != 'simple'}">
 </td></tr>
 </c:if>

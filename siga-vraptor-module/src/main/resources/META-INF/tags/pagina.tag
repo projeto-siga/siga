@@ -15,6 +15,7 @@
 </c:if>
 
 <c:set var="titulo_pagina" scope="request">${titulo}</c:set>
+
 <siga:cabecalho titulo="${titulo}" popup="${popup}" meta="${meta}"
 	onLoad="${onLoad}" desabilitarbusca="${desabilitarbusca}"
 	desabilitarmenu="${desabilitarmenu}" incluirJs="${incluirJs}" />

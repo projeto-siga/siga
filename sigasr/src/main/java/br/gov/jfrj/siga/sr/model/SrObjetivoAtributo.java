@@ -8,34 +8,55 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import play.db.jpa.GenericModel;
+
+import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
+import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 @Entity
 @Table(name = "SR_OBJETIVO_ATRIBUTO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class SrObjetivoAtributo extends GenericModel {
+public class SrObjetivoAtributo extends ObjetoVraptor implements ConvertableEntity {
 
-	private static final long serialVersionUID = 1L;
+    public static final ActiveRecord<SrObjetivoAtributo> AR = new ActiveRecord<>(SrObjetivoAtributo.class);
 
-	final static public long OBJETIVO_SOLICITACAO = 1;
+    private static final long serialVersionUID = 1L;
 
-	final static public long OBJETIVO_ACORDO = 2;
+    final static public long OBJETIVO_SOLICITACAO = 1;
 
-	final static public long OBJETIVO_INDICADOR = 3;
-	
-	@Id
-	@Column(name = "ID_OBJETIVO")
-	public long idObjetivo;
+    final static public long OBJETIVO_ACORDO = 2;
 
-	@Column(name = "DESCR_OBJETIVO", nullable = false)
-	public String descrObjetivo;
-	
-	public Long getId() {
-		return this.idObjetivo;
-	}
-	
-	public String getDescricao() {
-		return this.descrObjetivo;
-	}
+    final static public long OBJETIVO_INDICADOR = 3;
+
+    @Id
+    @Column(name = "ID_OBJETIVO")
+    private long idObjetivo;
+
+    @Column(name = "DESCR_OBJETIVO", nullable = false)
+    private String descrObjetivo;
+
+    public Long getId() {
+        return this.getIdObjetivo();
+    }
+
+    public String getDescricao() {
+        return this.getDescrObjetivo();
+    }
+
+    public long getIdObjetivo() {
+        return idObjetivo;
+    }
+
+    public void setIdObjetivo(long idObjetivo) {
+        this.idObjetivo = idObjetivo;
+    }
+
+    public String getDescrObjetivo() {
+        return descrObjetivo;
+    }
+
+    public void setDescrObjetivo(String descrObjetivo) {
+        this.descrObjetivo = descrObjetivo;
+    }
 
 }

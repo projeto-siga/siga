@@ -5,7 +5,6 @@ import java.util.TreeSet;
 
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
-import br.gov.jfrj.siga.sr.util.SrProcessadorFreemarker;
 
 public class SrModeloRelatorio  extends HistoricoSuporte{
 

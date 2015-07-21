@@ -128,7 +128,7 @@ function alterarNivel(nivelAlterado){
 					</c:otherwise>
 				</c:choose>
 				<td ${rowSpan}><a
-					href="javascript: opener.retorna_${param.propriedade}('${classificacao.id}','${classificacao.sigla}','${classificacao.descricao}');window.close()">${classificacao.sigla}</a>
+					href="javascript: opener.retorna_${param.propriedade}('${classificacao.id}','${classificacao.sigla}',escape('${classificacao.descricao}'));window.close()">${classificacao.sigla}</a>
 				</td>
 				<td align="left"${rowSpan}>${classificacao.descricao}</td>
 				<c:choose>

@@ -3,19 +3,19 @@ package br.gov.jfrj.siga.sr.model;
 import java.util.List;
 
 public interface SrSelecionavel {
-	public Long getId();
-	
-	public void setId(Long id);
+    public Long getId();
 
-	public String getSigla();
+    public void setId(Long id);
 
-	public void setSigla(String sigla);
+    public String getSigla();
 
-	public String getDescricao();
-	
-	public void setDescricao(String descricao);
+    public void setSigla(String sigla);
 
-	public SrSelecionavel selecionar(String sigla) throws Exception;
+    public String getDescricao();
 
-	public List<? extends SrSelecionavel> buscar() throws Exception;
+    public void setDescricao(String descricao);
+
+    public SrSelecionavel selecionar(String sigla) throws Exception;
+
+    public List<? extends SrSelecionavel> buscar() throws Exception;
 }

@@ -68,6 +68,7 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
@@ -1275,7 +1276,7 @@ public class ExDao extends CpDao {
 
 		StringBuffer sbf = new StringBuffer();
 
-		sbf.append("select * from siga.ex_configuracao ex inner join corporativo.cp_configuracao cp on ex.id_configuracao_ex = cp.id_configuracao ");
+		sbf.append("select * from siga.ex_configuracao ex inner join " + "CORPORATIVO" + ".cp_configuracao cp on ex.id_configuracao_ex = cp.id_configuracao ");
 
 		sbf.append("" + "where 1 = 1");
 
@@ -1316,16 +1317,16 @@ public class ExDao extends CpDao {
 		if (orgao != null && orgao.getId() != null && orgao.getId() != 0) {
 			sbf.append(" and (cp.id_orgao_usu = ");
 			sbf.append(orgao.getId());
-			sbf.append(" or cp.id_lotacao in (select id_lotacao from corporativo.dp_lotacao lot where lot.id_orgao_usu= ");
+			sbf.append(" or cp.id_lotacao in (select id_lotacao from " + "CORPORATIVO" + ".dp_lotacao lot where lot.id_orgao_usu= ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
-			sbf.append(" or cp.id_pessoa in (select id_pessoa from corporativo.dp_pessoa pes where pes.id_orgao_usu = ");
+			sbf.append(" or cp.id_pessoa in (select id_pessoa from " + "CORPORATIVO" + ".dp_pessoa pes where pes.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
-			sbf.append(" or cp.id_cargo in (select id_cargo from corporativo.dp_cargo cr where cr.id_orgao_usu = ");
+			sbf.append(" or cp.id_cargo in (select id_cargo from " + "CORPORATIVO" + ".dp_cargo cr where cr.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
-			sbf.append(" or cp.id_funcao_confianca in (select id_funcao_confianca from corporativo.dp_funcao_confianca fc where fc.id_orgao_usu = ");
+			sbf.append(" or cp.id_funcao_confianca in (select id_funcao_confianca from " + "CORPORATIVO" + ".dp_funcao_confianca fc where fc.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
 			sbf.append(" or (cp.id_orgao_usu is null and cp.id_lotacao is null and cp.id_pessoa is null and cp.id_cargo is null and cp.id_funcao_confianca is null");

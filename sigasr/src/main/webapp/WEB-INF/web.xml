@@ -20,7 +20,7 @@
 	
 	<context-param>
 		<param-name>br.com.caelum.vraptor.packages</param-name>
-		<param-value>br.gov.jfrj.siga.vraptor</param-value>
+		<param-value>br.gov.jfrj.siga.vraptor, br.gov.jfrj.siga.feature.entity.instantiator.vraptor</param-value>
 	</context-param>
 
 	<filter>

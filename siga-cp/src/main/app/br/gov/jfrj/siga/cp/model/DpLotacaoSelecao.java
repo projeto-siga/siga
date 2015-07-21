@@ -95,4 +95,12 @@ public class DpLotacaoSelecao extends Selecao<DpLotacao> {
 	public String getAcaoBusca() {
 		return "/lotacao";
 	}
+
+    public void carregarDadosParaView(DpLotacao lotaAtendente) {
+        if (lotaAtendente != null) {
+            this.setId(lotaAtendente.getId());
+            this.setDescricao(lotaAtendente.getNomeLotacao());
+            this.setSigla(lotaAtendente.getSigla());
+        }
+    }
 }

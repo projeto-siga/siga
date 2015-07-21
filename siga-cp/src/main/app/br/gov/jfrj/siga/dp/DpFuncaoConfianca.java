@@ -34,6 +34,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
+
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
@@ -44,7 +45,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Table(name = "DP_FUNCAO_CONFIANCA", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpFuncaoConfianca extends AbstractDpFuncaoConfianca implements
-		Serializable, Selecionavel, Sincronizavel {
+		Serializable, Selecionavel, Sincronizavel, DpConvertableEntity {
 
 	/**
 	 * 

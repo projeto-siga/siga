@@ -1,414 +1,51 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<div class="gt-content">
-	<!-- content bomex -->
-	<div class="gt-content-box dataTables_div">
-		<c:if test="${modoExibicao == 'designacao'}">
-		<div class="gt-form-row dataTables_length">
-			<label>
-<%-- 				<siga:checkbox name="mostrarDesativado" value="${mostrarDesativado}"></siga:checkbox> --%>
-<%-- 				#{checkbox name:'mostrarDesativado', value:mostrarDesativado/} <b>Incluir Inativas</b> --%>
-			</label>
-		</div>
-		</c:if>
+<siga:pagina titulo="Designa��o de Solicita��es">
+	<jsp:include page="../main.jsp"></jsp:include>
 
-		<table id="designacoes_table" border="0" class="gt-table display">
-			<thead>
-				<tr>
-					<th style="color: #333">
-						<button class="bt-expandir" type="button">
-							<span id="iconeBotaoExpandirTodos">+</span>
-						</button>
-					</th>
-					<th>Orgão</th>
-					<th>Local</th>
-					<th>Solicitante</th>
-					<th>Descrição</th>
-					<th>Atendente</th>
-					<th>Ações</th>
-					<th>JSon - Designação</th>
-					<th>Checkbox Herança</th>
-					<th>Herdado</th>
-					<th>Utilizar Herdado</th>
-				</tr>
-			</thead>
-
-<!-- 			<tbody> -->
-<%-- 				#{list items:_designacoes, as:'design'} --%>
-<%-- 				<tr data-json-id="${design.id}" data-json="${design.toVO().toJson()}" onclick="designacaoService.editar($(this).data('json'), 'Alterar designacao')"  --%>
-<!-- 					style="cursor: pointer;"> -->
-<!-- 					<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td> -->
-<%-- 					<td>${design.orgaoUsuario?.acronimoOrgaoUsu}</td> --%>
-<%-- 					<td>${design.complexo?.nomeComplexo}</td> --%>
-<%-- 					<td>${design.solicitante?.sigla}</td> --%>
-<%-- 					<td>${design.descrConfiguracao}</td> --%>
-<%-- 					<td>${design.atendente?.lotacaoAtual?.siglaLotacao }</td> --%>
-<!-- 					<td class="acoes">  -->
-<%-- 						#{desativarReativar id:design.id,  --%>
-<%-- 											onReativar:'designacaoService.reativar', --%>
-<%-- 											onDesativar :'designacaoService.desativar', --%>
-<%-- 											isAtivo:design.isAtivo() } --%>
-<%-- 						#{/desativarReativar} --%>
-<!-- 						<a class="once gt-btn-ativar" onclick="duplicarDesignacao(event)" title="Duplicar"> -->
-<!-- 							<img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;">  -->
-<!-- 						</a> -->
-<!-- 					</td> -->
-<%-- 					<td>${design.getSrConfiguracaoJson()}</td> --%>
-<!-- 					<td class="checkbox-hidden" -->
-<!-- 						style="width: 25px !important; padding-left: 5px; padding-right: 5px;"> -->
-<%-- 						<input type="checkbox" checked="${design.utilizarItemHerdado}" --%>
-<%-- 						id="check${design.id}" /> --%>
-<!-- 					</td> -->
-<%-- 					<th>${design.isHerdado}</th> --%>
-<%-- 					<th>${design.utilizarItemHerdado}</th> --%>
-<!-- 				</tr> -->
-<%-- 				#{/list} --%>
-<!-- 			</tbody> -->
-		</table>
-	</div>
-	<!-- /content box -->
-	<div class="gt-table-buttons">
-		<a onclick="designacaoService.cadastrar('Incluir Designação')" class="gt-btn-medium gt-btn-left">Incluir</a>
-	</div>
-</div>
-
-<siga:modal nome="designacao" titulo="Cadastrar Designacao">
-	<div id="divEditarDesignacaoItem">
-<%-- 		#{include 'Application/editarDesignacaoItem.html' /} --%>
-	</div>
-</siga:modal>
-
-<siga:modal nome="erroAoSalvar" titulo="Problemas ao Salvar" altura="200" largura="450">
-	<div id="divProblemaAoSalvar" class="gt-form gt-content-box"
-		style="text-align: justify;">
-		<label style="padding-top: 5px;">Pelo menos um dos campos
-			"Atendente", "Pré-Atendente" ou "Pós-Atendente" precisa
-			necessáriamente ser a mesma lotação que foi selecionada na tela de
-			equipe. Por favor verifique e tente novamente.</label>
-	</div>
-	<div class="gt-form-row" style="margin-left: 297px;">
-		<a href="javascript: fecharModalErroAoSalvar()"
-			class="gt-btn-medium gt-btn-left">OK</a>
-	</div>
-</siga:modal>
-
-<script type="text/javascript">
-	var parametroTela = '${modoExibicao}';
+	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.populate.js"></script>
+	<script src="/sigasr/javascripts/base-service.js"></script>
+	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
+	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
+	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
+	<script src="/sigasr/javascripts/moment.js"></script>
 	
-	var colunasDesignacao = {};
-	colunasDesignacao.acaoExpandir=					0 ;
-	colunasDesignacao.orgao=						1 ;
-	colunasDesignacao.local=						2 ;
-	colunasDesignacao.solicitante=					3 ;
-	colunasDesignacao.descrConfiguracao = 			4 ;
-	colunasDesignacao.atendente=					5 ;
-	colunasDesignacao.acoes=						6 ;
-	colunasDesignacao.jSonDesignacao= 				7 ;
-	colunasDesignacao.checkBoxHeranca = 			8;
-	colunasDesignacao.herdado= 						9;
-	colunasDesignacao.utilizarHerdado= 				10;
-	
-	var mostrarDesativados = window.QueryString ? QueryString.mostrarDesativados : false,
-			
-	designacaoOpts = {
-		 urlDesativar : '@{Application.desativarDesignacao()}?',
-		 urlReativar : '@{Application.reativarDesignacao()}?',
-		 urlGravar : '@{Application.gravarDesignacao()}?',
-		 dialogCadastro : jQuery('#designacao_dialog'),
-		 tabelaRegistros : jQuery('#designacoes_table'),
-		 objectName : 'designacao',
-		 formCadastro : jQuery('#formDesignacao'),
-		 mostrarDesativados : mostrarDesativados,
-		 colunas : colunasDesignacao.acoes,
-	};	
-	
-	// Define a "classe" designacaoService
-	function DesignacaoService(opts) {
-		// super(opts)
-		BaseService.call(this, opts);
-	}
-	// designacaoService extends BaseService
-	DesignacaoService.prototype = Object.create(BaseService.prototype);
+	<div class="gt-bd clearfix">
+		<div class="gt-content clearfix">
+			<h2>Designa&ccedil;&otilde;es</h2>
 
-	var designacaoService = new DesignacaoService(designacaoOpts);
-	// Sobescreve o metodo cadastrar para limpar a tela
-	designacaoService.cadastrar = function(title) {
-		BaseService.prototype.cadastrar.call(this, title);
-		// atualiza os dados da Designação
-		atualizarDesignacaoEdicao();
-	}
-
-	designacaoService.getId = function(designacao) {
-		if (designacao)
-			return designacao.idConfiguracao;
-		else
-			return;
-	}
-	
-	designacaoService.getRow = function(designacao) {
-		return ['+',
-				designacao.orgaoUsuario != null ? designacao.orgaoUsuario.sigla : ' ',
-				designacao.complexo != null ? designacao.complexo.descricao : ' ',
-				designacao.solicitante != null ? designacao.solicitante.sigla : ' ',
-				designacao.descrConfiguracao,
-				designacao.atendente != null ? designacao.atendente.sigla : '',
-				'COLUNA_ACOES',
-				JSON.stringify(designacao),
-				' ',
-				designacao.isHerdado,
-				designacao.utilizarItemHerdado];
-	}
-	
-	designacaoService.onRowClick = function(designacao) {
-		designacaoService.editar(designacao, 'Alterar designacao');
-	}
-	/**
-	 * Customiza o metodo editar
-	 */
-	designacaoService.editar = function(obj, title) {
-		BaseService.prototype.editar.call(this, obj, title); // super.editar();
-		// atualiza as listas
-		atualizarDesignacaoEdicao(obj);
-	}
-
-	designacaoService.duplicarButton = '<a class="once gt-btn-ativar" onclick="duplicarDesignacao(event)" title="Duplicar"><img src="/siga/css/famfamfam/icons/application_double.png" style="margin-right: 5px;"></a>';
-
-	designacaoService.serializar = function(obj) {
-		return BaseService.prototype.serializar.call(this, obj)  + "&" + designacaoService.getListasAsString();
-	}
-	
-	designacaoService.onGravar = function(obj, objSalvo) {
-		var tr = BaseService.prototype.onGravar.call(this, obj, objSalvo);
-		afterGravarDesignacao(tr, objSalvo, this);
-		return tr;
-	}
-
-	designacaoService.isValidForm = function() {
-	    return jQuery(this.opts.formCadastro).valid() && camposObrigatoriosPreenchidos();
-	}
-
-	designacaoService.desativar = function(event, id) {
-		var ajax = BaseService.prototype.desativar.call(this, event, id),
-			service = this;
-
-		ajax.success().done(function(jSonDesignacao) {
-			var design = JSON.parse(jSonDesignacao),
-				tr = designacaoService.opts.tabelaRegistros.find("tr[data-json-id=" + service.getId(design) + "]");
-			afterGravarDesignacao(tr, design, service);
-		});
-	}
-
-	designacaoService.reativar = function(event, id) {
-		var ajax = BaseService.prototype.reativar.call(this, event, id),
-			service = this;
-
-		ajax.success().done(function(jSonDesignacao) {
-			var design = JSON.parse(jSonDesignacao),
-				tr = designacaoService.opts.tabelaRegistros.find("tr[data-json-id=" + service.getId(design) + "]");
- 			afterGravarDesignacao(tr, design, service);
-		});
-	}
-
-	designacaoService.opts.formCadastro.resetForm = function(form) {
-		jQuery("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].changeValue(1);
-	}
-
-	function designacaoRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-		$('td:eq(' + colunasDesignacao.acaoExpandir + ')', nRow).addClass('details-control');
-		var desig = undefined;
-		
-		try {
-			desig = JSON.parse($(nRow).data('json'));
-		}
-		catch(err) {
-			desig = $(nRow).data('json');
-		}
-		
-		if (desig) {
-			if (desig.ativo == false)
-				$('td', nRow).addClass('item-desativado');
-			else
-				$('td', nRow).removeClass('item-desativado');
-		}
-	}
-
-	function possuiValor(inputField) {
-		return inputField.val() != '' && inputField.val() != undefined;
-	}
-	
-	function camposObrigatoriosPreenchidos() {
-		if (possuiValor($("#atendente")))
-			return true;
-		else {
-			alert("Por favor preencha pelo menos um dos seguintes campos: Atendente")
-			return false;
-		}
-	}
-
-	designacaoService.populateFromJSonList = function(listaJSon) {
-		if(designacaoService.designacaoTable) {
-			designacaoService.designacaoTable.destruir();
-		}
-		var table = designacaoOpts.tabelaRegistros;
-		
-		for (var i = 0; i < listaJSon.length; i++) {
-			designacaoService.adicionarLinha(table, listaJSon[i]);
-		}
-		designacaoService.configurarDataTable();
-	}
-
-	designacaoService.configurarDataTable = function() {
-		this.designacaoTable = new SigaTable('#designacoes_table')
-		.configurar("columnDefs", [{
-				"targets": [colunasDesignacao.checkBoxHeranca, 
-							colunasDesignacao.jSonDesignacao,  
-							colunasDesignacao.herdado, 
-							colunasDesignacao.utilizarHerdado],
-				"visible": false,
-				"searchable": false
-			},
-			{
-				"targets": [0],
-				"sortable": false,
-				"searchable" : false
-			}])
-		.configurar("fnRowCallback", designacaoRowCallback)
-		.configurar("iDisplayLength", 100)
-		.criar()
-		.detalhes(detalhesDesignacao);
-	
-		this.opts.dataTable = designacaoService.designacaoTable.dataTable;
-	}
-	
-	designacaoService.adicionarLinha = function(table, design) {
-		var tr = TableHelper.criarTd(this.getRow(design));
-		var tdAcoes = tr.find('td:nth(' + this.indiceAcoes(tr) + ')');
-		tdAcoes.addClass('acoes');
-		tr.find('td:first').addClass('details-control');
-		tr.data('json', design);
-		tr.data('json-id', design.idConfiguracao);
-		tr.attr('data-json', JSON.stringify(design));
-		tr.attr('data-json-id', design.idConfiguracao);
-
-		tr.on('click', function() {
-			var json = $(this).data('json');
-			designacaoService.editar(json, 'Alterar designacao');
-		});
-
-		new DesativarReativar(this)
-			.ativo(design.ativo)
-			.innerHTML(tdAcoes, design.idConfiguracao);
-		
-		afterGravarDesignacao(tr, design, this);
-
-		table.append(tr);
-	}
-
-	designacaoService.getListasAsString = function () {
-		return configuracaoItemAcaoService.getItemAcaoAsString(designacaoService.opts.objectName);
-    }
-
-	function afterGravarDesignacao(tr, designacao, service) {
-		var acoes = tr.find('td.acoes');
-
-		// tratamentos de herança e botão duplicar
-		if (designacao && (designacao.isHerdado == 'true' || designacao.isHerdado == true))
-			$('td', tr).addClass('configuracao-herdada');
-		else
-			acoes = acoes.append(" " + designacaoService.duplicarButton);
-		
-		// Para atualizar o detalhe caso esteja aberto
-		if(designacaoService.designacaoTable)
-			designacaoService.designacaoTable.atualizarDetalhes(service.getId(designacao));
-	}
-
-	function duplicarDesignacao(event) {
-		var tr = $(event.currentTarget).parent().parent();
-		event.stopPropagation();
-		designacaoService.editar(tr.data('json'), 'Duplicar Designação');
-		resetId();
-	}
-
-	function resetId() {
-		$("#idConfiguracao").val('');
-	}
-	
-	function detalhesDesignacao(d, designacao) {
-		var tr = designacao.ativo == true ? $('<tr class="detail">') : $('<tr class="detail item-desativado">'),
-			td = $('<td colspan="10">'),
-			table  = $('<table style="margin-left: 60px;">'),
-			trDescricao = $('<tr>'),
-			tdDescricao = $('<td>'),
-			trItens = $('<tr>'),
-			trAcoes = $('<tr>'),
-			descricao = designacao.descrConfiguracao != undefined ? designacao.descrConfiguracao : '';
-		
-		TableHelper.detalheLista("<b>Itens de configuração:</b>", designacao.listaItemConfiguracaoVO, trItens);
-		TableHelper.detalheLista("<b>Ações:</b>", designacao.listaAcaoVO, trAcoes);
-		detalheDescricaoLista("<b>Descrição:</b>", descricao, trDescricao);
-
-		if (designacao.ativo == false) {
-			$('td', trDescricao).addClass('item-desativado');
-			$('td', trItens).addClass('item-desativado');
-			$('td', trAcoes).addClass('item-desativado');
-		}
+			<script type="text/javascript">
+				var telaOrigem = 'listarDesignacao';
 				
-		table.append(trDescricao);
-		table.append(trItens);
-		table.append(trAcoes);
+				//removendo a referencia de '$' para o jQuery
+				$( document ).ready(function() {
+					if ("${mostrarDesativados}" != "") {
+						document.getElementById('checkmostrarDesativados').checked = ${mostrarDesativados};
+						document.getElementById('checkmostrarDesativados').value = ${mostrarDesativados};
+					}
+					
+					$("#checkmostrarDesativados").click(function() {
+						jQuery.blockUI(objBlock);
+						if (document.getElementById('checkmostrarDesativados').checked)
+							location.href = '${linkTo[DesignacaoController].listar}' + '?mostrarDesativados=true';
+						else
+							location.href = '${linkTo[DesignacaoController].listar}' + '?mostrarDesativados=false';
+					});
+				});
+			</script>
 		
-		td.append(table);
-		tr.append(td);
-		return tr;
-	}
-
-	function detalheDescricaoLista(label, descricao, tr) {
-		var tdTituloItem = $('<td colspan="2">' + label + '</td>'),
-		    tdDadosItem = $('<td colspan="5">'),
-		    table = $('<table>'),
-		    item = descricao,
-	    	trItem = $('<tr>'),
-	    	tdDescricao = $('<td>');
-	
-		tdDescricao.html(item);
-		trItem.append(tdDescricao);
-		table.append(trItem);
-		
-		tdDadosItem.append(table);
-		
-		tr.append(tdTituloItem);
-		tr.append(tdDadosItem);
-	}
-
-	function atualizarDesignacaoEdicao(designacaoJson) {
-		if(!designacaoJson) {
-			configuracaoItemAcaoService.iniciarDataTables();
-		}else configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(designacaoJson);
-
-		#{if _modoExibicao == 'equipe'}
-			// Caso seja cadastro a partir da tela de equipe, atualiza os dados da Lotação atendente
-			var lota = JSON.parse($("#lotacaoUsuario").val());
-
-			if(!designacaoJson) {
-				designacaoJson = {};
-			}
-			designacaoJson.atendente = lota.id,
-			designacaoJson.atendente_descricao = lota.descricao,
-			designacaoJson.atendenteSpan = lota.descricao,
-			designacaoJson.atendente_sigla = lota.sigla
-		
-			// chama o editar para popular o campo da lotação
-			designacaoService.formularioHelper.populateFromJson(designacaoJson);
-		#{/if}
-	}
-	
-	function designacaoModalFechar() {
-		isEditing = false;
-		$("#designacao_dialog").dialog("close");
-	};
-	
-	function fecharModalErroAoSalvar() {
-		$("#erroAoSalvar_dialog").dialog("close");
-	}
-</script>
+			<siga:designacao modoExibicao="modoExibicao" designacoes="designacoes" mostrarDesativados="mostrarDesativados"/> 
+			
+			<script>
+				$(document).ready(function() {
+					designacaoService.configurarDataTable()
+				});
+			</script>
+		</div>
+	</div>
+</siga:pagina>

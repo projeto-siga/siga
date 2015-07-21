@@ -1,8 +1,9 @@
 <%@ tag body-content="empty" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
-<%@ attribute name="titulo" required="false"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+
+<%@ attribute name="titulo" required="false"%>
 <%@ attribute name="propriedade"%>
 <%@ attribute name="reler" required="false"%>
 <%@ attribute name="relertab" required="false"%>
@@ -13,13 +14,15 @@
 <%@ attribute name="modulo" required="false"%>
 <%@ attribute name="idAjax" required="false"%>
 <%@ attribute name="onchange" required="false"%>
+<%@ attribute name="paramList" required="false"%>
+<%@ attribute name="tamanho" required="false"%>
 
 <c:set var="propriedadeClean" value="${fn:replace(propriedade,'.','')}" />
 
 <c:forEach var="parametro" items="${fn:split(paramList,';')}">
 	<c:set var="p2" value="${fn:split(parametro,'=')}" />
 	<c:if test="${not empty p2 and not empty p2[0]}">
-		<c:set var="selecaoParams" value="${urlParams}&${p2[0]}=${p2[1]}" />
+		<c:set var="selecaoParams" value="${selecaoParams}&${p2[0]}=${p2[1]}" />
 	</c:if>
 </c:forEach>
 
@@ -28,7 +31,6 @@
 <c:set var="tam" value="${requestScope[propriedadeSel].tamanho}" />
 <c:set var="larguraPopup" value="600" />
 <c:set var="alturaPopup" value="400" />
-
 
 <script type="text/javascript">
 
@@ -66,8 +68,8 @@ self.retorna_${propriedadeClean} = function(id, sigla, descricao) {
 self.newwindow_${propriedadeClean} = '';
 self.popitup_${propriedadeClean} = function(sigla) {
 
-	var url = '/${modulo}${urlBuscar}?propriedade=${propriedade}&sigla='+encodeURI($.trim(sigla)) +'${selecaoParams}';
-		
+	var url = '/${modulo}${urlBuscar}?propriedade=${propriedadeClean}&popup=true&sigla='+encodeURI($.trim(sigla)) +'${selecaoParams}';
+	
 	if (!newwindow_${propriedadeClean}.closed && newwindow_${propriedadeClean}.location) {
 		newwindow_${propriedadeClean}.location.href = url;
 	} else {
@@ -88,7 +90,7 @@ self.popitup_${propriedadeClean} = function(sigla) {
 			var winleft = (screen.width - popW) / 2;
 			var winUp = (screen.height - popH) / 2;	
 		winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
-		newwindow_${propriedadeClean}=window.open(url,'${propriedade}',winProp);
+		newwindow_${propriedadeClean}=window.open(url,'${propriedadeClean}',winProp);
 	}
 	newwindow_${propriedadeClean}.opener = self;
 	
@@ -153,9 +155,8 @@ self.ajax_${propriedadeClean} = function() {
 	value="<c:out value="${f:evaluate(f:concat(propriedade,'.sigla'),requestScope)}"/>"
 	id="formulario_${propriedadeClean}_sigla"
 	onkeypress="return handleEnter(this, event)"
-	onblur="javascript: ajax_${propriedadeClean}();<c:if test="${not empty onchange}">${onchange};</c:if>"
-	size="25" <c:if test="${not empty onchange}">onchange="${onchange}"</c:if>
-	${disabledTxt} />
+	onblur="javascript: ajax_${propriedadeClean}();
+	size="25" ${disabledTxt} />
 
 <c:if test="${buscar != 'nao'}">
 	<input type="button" id="${propriedadeClean}SelButton" value="..."

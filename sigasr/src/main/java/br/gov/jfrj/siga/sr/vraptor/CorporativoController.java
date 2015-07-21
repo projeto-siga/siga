@@ -16,7 +16,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.SrCorreio;
 import br.gov.jfrj.siga.sr.model.DadosRH;
 import br.gov.jfrj.siga.sr.model.DadosRH.Cargo;
@@ -25,14 +27,13 @@ import br.gov.jfrj.siga.sr.model.DadosRH.Lotacao;
 import br.gov.jfrj.siga.sr.model.DadosRH.Orgao;
 import br.gov.jfrj.siga.sr.model.DadosRH.Papel;
 import br.gov.jfrj.siga.sr.model.DadosRH.Pessoa;
+import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 public class CorporativoController extends SrController {
 
-		public CorporativoController(HttpServletRequest request, Result result, 
-				SigaObjects so, EntityManager em, SrCorreio correio) throws Exception{
-			super(request, result, so, em);
-
+		public CorporativoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em,  SrValidator srValidator, Validator validator) {
+			super(request, result, dao, so, em, srValidator);
 		}
 	
 	public void dadosrh() throws ParserConfigurationException {
@@ -50,29 +51,29 @@ public class CorporativoController extends SrController {
 		for (DadosRH d : l) {
 			Pessoa p = d.getPessoa();
 			if (p != null
-					&& (!mp.containsKey(p.pessoa_id) || p.lotacao_tipo_papel.equals("Principal"))
-					&& (p.pessoa_situacao.equals(1)
-							|| p.pessoa_situacao.equals(2) || p.pessoa_situacao
+					&& (!mp.containsKey(p.getPessoa_id()) || p.getLotacao_tipo_papel().equals("Principal"))
+					&& (p.getPessoa_situacao().equals(1)
+							|| p.getPessoa_situacao().equals(2) || p.getPessoa_situacao()
 								.equals(31)))
-				mp.put(p.pessoa_id, p);
+				mp.put(p.getPessoa_id(), p);
 
 			Lotacao x = d.getLotacao();
-			if (x != null && !ml.containsKey(x.lotacao_id))
-				ml.put(x.lotacao_id, x);
+			if (x != null && !ml.containsKey(x.getLotacao_id()))
+				ml.put(x.getLotacao_id(), x);
 
 			Cargo c = d.getCargo();
-			if (c != null && !mc.containsKey(c.cargo_id))
-				mc.put(c.cargo_id, c);
+			if (c != null && !mc.containsKey(c.getCargo_id()))
+				mc.put(c.getCargo_id(), c);
 
 			Funcao f = d.getFuncao();
-			if (f != null && !mf.containsKey(f.funcao_id))
-				mf.put(f.funcao_id, f);
+			if (f != null && !mf.containsKey(f.getFuncao_id()))
+				mf.put(f.getFuncao_id(), f);
 
 			Papel pp = d.getPapel();
-			if (pp != null && !mpp.containsKey(pp.papel_pessoa_id))
-				mpp.put(pp.papel_pessoa_id, new ArrayList<Papel>());
+			if (pp != null && !mpp.containsKey(pp.getPapel_pessoa_id()))
+				mpp.put(pp.getPapel_pessoa_id(), new ArrayList<Papel>());
 			if (pp != null)
-				mpp.get(pp.papel_pessoa_id).add(pp);
+				mpp.get(pp.getPapel_pessoa_id()).add(pp);
 			
 			Orgao org = d.getOrgao();
 
@@ -89,8 +90,8 @@ public class CorporativoController extends SrController {
 		rootElement.appendChild(cargos);
 		for (Cargo c : mc.values()) {
 			Element e = doc.createElement("cargo");
-			setAttr(e, "id", c.cargo_id.toString());
-			setAttr(e, "nome", c.cargo_nome);
+			setAttr(e, "id", c.getCargo_id().toString());
+			setAttr(e, "nome", c.getCargo_nome());
 			cargos.appendChild(e);
 		}
 
@@ -98,9 +99,9 @@ public class CorporativoController extends SrController {
 		rootElement.appendChild(funcoes);
 		for (Funcao f : mf.values()) {
 			Element e = doc.createElement("funcao");
-			setAttr(e, "id", f.funcao_id.toString());
-			setAttr(e, "nome", f.funcao_nome);
-			setAttr(e, "sigla", f.funcao_sigla);
+			setAttr(e, "id", f.getFuncao_id().toString());
+			setAttr(e, "nome", f.getFuncao_nome());
+			setAttr(e, "sigla", f.getFuncao_sigla());
 			funcoes.appendChild(e);
 		}
 
@@ -108,12 +109,12 @@ public class CorporativoController extends SrController {
 		rootElement.appendChild(lotacoes);
 		for (Lotacao x : ml.values()) {
 			Element e = doc.createElement("lotacao");
-			setAttr(e, "id", x.lotacao_id.toString());
-			setAttr(e, "nome", x.lotacao_nome);
-			setAttr(e, "sigla", x.lotacao_sigla);
-			setAttr(e, "idPai", x.lotacao_id_pai);
-			setAttr(e, "tipo", x.lotacao_tipo);
-			setAttr(e, "papel", x.lotacao_tipo_papel);
+			setAttr(e, "id", x.getLotacao_id().toString());
+			setAttr(e, "nome", x.getLotacao_nome());
+			setAttr(e, "sigla", x.getLotacao_sigla());
+			setAttr(e, "idPai", x.getLotacao_id_pai());
+			setAttr(e, "tipo", x.getLotacao_tipo());
+			setAttr(e, "papel", x.getLotacao_tipo_papel());
 			lotacoes.appendChild(e);
 		}
 
@@ -121,48 +122,48 @@ public class CorporativoController extends SrController {
 		rootElement.appendChild(pessoas);
 		for (Pessoa p : mp.values()) {
 			Element e = doc.createElement("pessoa");
-			setAttr(e, "id", p.pessoa_id);
-			setAttr(e, "cpf", p.pessoa_cpf);
-			setAttr(e, "nome", p.pessoa_nome);
-			setAttr(e, "sexo", p.pessoa_sexo);
-			setAttr(e, "dtNascimento", p.pessoa_data_nascimento);
-			setAttr(e, "rua", p.pessoa_rua);
-			setAttr(e, "bairro", p.pessoa_bairro);
-			setAttr(e, "cidade", p.pessoa_cidade);
-			setAttr(e, "uf", p.pessoa_uf);
-			setAttr(e, "cep", p.pessoa_cep);
-			setAttr(e, "atoNomeacao", p.pessoa_ato_nomeacao);
-			setAttr(e, "dtAtoPublicacao", p.pessoa_dt_publ_nomeacao);
-			setAttr(e, "dtInicioExercicio", p.pessoa_data_inicio_exercicio);
-			setAttr(e, "dtNomeacao", p.pessoa_data_nomeacao);
-			setAttr(e, "dtPosse", p.pessoa_data_posse);
-			setAttr(e, "email", p.pessoa_email);
-			setAttr(e, "estCivil", p.pessoa_estado_civil);
-			setAttr(e, "grauInstrucao", p.pessoa_grau_de_instrucao);
-			setAttr(e, "matricula", p.pessoa_matricula);
-			setAttr(e, "padraoReferencia", p.pessoa_padrao_referencia);
-			setAttr(e, "rg", p.pessoa_rg);
-			setAttr(e, "rgDtExp", p.pessoa_data_expedicao_rg);
-			setAttr(e, "rgOrgao", p.pessoa_rg_orgao);
-			setAttr(e, "rgUf", p.pessoa_rg_uf);
-			setAttr(e, "sigla", p.pessoa_sigla);
-			setAttr(e, "situacao", p.pessoa_situacao);
-			setAttr(e, "lotacao", p.lotacao_id);
-			setAttr(e, "cargo", p.cargo_id);
-			setAttr(e, "funcaoConfianca", p.funcao_id);
-			setAttr(e, "tipo", p.tipo_rh);
-			setAttr(e, "tipoSanguineo", p.pessoa_tp_sanguineo);
-			setAttr(e, "naturalidade", p.pessoa_naturalidade);
-			setAttr(e, "nacionalidade", p.pessoa_nacionalidade);
+			setAttr(e, "id", p.getPessoa_id());
+			setAttr(e, "cpf", p.getPessoa_cpf());
+			setAttr(e, "nome", p.getPessoa_nome());
+			setAttr(e, "sexo", p.getPessoa_sexo());
+			setAttr(e, "dtNascimento", p.getPessoa_data_nascimento());
+			setAttr(e, "rua", p.getPessoa_rua());
+			setAttr(e, "bairro", p.getPessoa_bairro());
+			setAttr(e, "cidade", p.getPessoa_cidade());
+			setAttr(e, "uf", p.getPessoa_uf());
+			setAttr(e, "cep", p.getPessoa_cep());
+			setAttr(e, "atoNomeacao", p.getPessoa_ato_nomeacao());
+			setAttr(e, "dtAtoPublicacao", p.getPessoa_dt_publ_nomeacao());
+			setAttr(e, "dtInicioExercicio", p.getPessoa_data_inicio_exercicio());
+			setAttr(e, "dtNomeacao", p.getPessoa_data_nomeacao());
+			setAttr(e, "dtPosse", p.getPessoa_data_posse());
+			setAttr(e, "email", p.getPessoa_email());
+			setAttr(e, "estCivil", p.getPessoa_estado_civil());
+			setAttr(e, "grauInstrucao", p.getPessoa_grau_de_instrucao());
+			setAttr(e, "matricula", p.getPessoa_matricula());
+			setAttr(e, "padraoReferencia", p.getPessoa_padrao_referencia());
+			setAttr(e, "rg", p.getPessoa_rg());
+			setAttr(e, "rgDtExp", p.getPessoa_data_expedicao_rg());
+			setAttr(e, "rgOrgao", p.getPessoa_rg_orgao());
+			setAttr(e, "rgUf", p.getPessoa_rg_uf());
+			setAttr(e, "sigla", p.getPessoa_sigla());
+			setAttr(e, "situacao", p.getPessoa_situacao());
+			setAttr(e, "lotacao", p.getLotacao_id());
+			setAttr(e, "cargo", p.getCargo_id());
+			setAttr(e, "funcaoConfianca", p.getFuncao_id());
+			setAttr(e, "tipo", p.getTipo_rh());
+			setAttr(e, "tipoSanguineo", p.getPessoa_tp_sanguineo());
+			setAttr(e, "naturalidade", p.getPessoa_naturalidade());
+			setAttr(e, "nacionalidade", p.getPessoa_nacionalidade());
 			pessoas.appendChild(e);
-			if (mpp.containsKey(p.pessoa_id)) {
-				for (Papel papeis : mpp.get(p.pessoa_id))	{
+			if (mpp.containsKey(p.getPessoa_id())) {
+				for (Papel papeis : mpp.get(p.getPessoa_id()))	{
 					Element papel = doc.createElement("papel"); 
-					setAttr(papel, "id", papeis.papel_id); 
-					setAttr(papel, "tipo",papeis.papel_lotacao_tipo);
-					setAttr(papel, "cargo", papeis.papel_cargo_id); 
-					setAttr(papel,"funcaoConfianca", papeis.papel_funcao_id); 
-					setAttr(papel, "lotacao", papeis.papel_lotacao_id); 
+					setAttr(papel, "id", papeis.getPapel_id()); 
+					setAttr(papel, "tipo",papeis.getPapel_lotacao_tipo());
+					setAttr(papel, "cargo", papeis.getPapel_cargo_id()); 
+					setAttr(papel,"funcaoConfianca", papeis.getPapel_funcao_id()); 
+					setAttr(papel, "lotacao", papeis.getPapel_lotacao_id()); 
 					e.appendChild(papel);	
 				}
 			}

@@ -14,116 +14,109 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import play.db.jpa.JPA;
+
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.vo.SrAtributoVO;
+import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
 @Table(name = "SR_ATRIBUTO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrAtributo extends HistoricoSuporte {
+public class SrAtributo extends HistoricoSuporteVraptor implements ConvertableEntity {
 	private static final long serialVersionUID = 1L;
-	
-	public static ActiveRecord<SrAtributo> AR = new ActiveRecord<>(SrAtributo.class);	
-	
+
+	public static final ActiveRecord<SrAtributo> AR = new ActiveRecord<>(SrAtributo.class);
+
 	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_ATRIBUTO_SEQ", name = "srAtributoSeq")
+	@SequenceGenerator(sequenceName = "SIGASR" +".SR_ATRIBUTO_SEQ", name = "srAtributoSeq")
 	@GeneratedValue(generator = "srAtributoSeq")
 	@Column(name = "ID_ATRIBUTO")
-	public Long idAtributo;
+	private Long idAtributo;
 
 	@Column(name = "NOME")
-	public String nomeAtributo;
+	private String nomeAtributo;
 
 	@Column(name = "DESCRICAO")
-	public String descrAtributo;
+	private String descrAtributo;
 
 	@Column(name = "TIPO_ATRIBUTO")
 	@Enumerated
-	public SrTipoAtributo tipoAtributo;
+	private SrTipoAtributo tipoAtributo;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ID_OBJETIVO")
-	public SrObjetivoAtributo objetivoAtributo;
+	private SrObjetivoAtributo objetivoAtributo;
 
 	@Column(name = "DESCR_PRE_DEFINIDO")
-	public String descrPreDefinido;
+	private String descrPreDefinido;
 
 	@Column(name = "CODIGO_ATRIBUTO")
-	public String codigoAtributo;
+	private String codigoAtributo;
 
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
-	public SrAtributo atributoInicial;
+	private SrAtributo atributoInicial;
 
 	@OneToMany(targetEntity = SrAtributo.class, mappedBy = "atributoInicial", fetch = FetchType.LAZY)
-	//@OrderBy("hisDtIni desc")
-	public List<SrAtributo> meuAtributoHistoricoSet;
+	// @OrderBy("hisDtIni desc")
+	private List<SrAtributo> meuAtributoHistoricoSet;
 
 	@Override
 	public Long getId() {
-		return idAtributo;
+		return getIdAtributo();
 	}
 
 	@Override
 	public void setId(Long id) {
-		idAtributo = id;
+		setIdAtributo(id);
 	}
 
-	public static List<SrAtributo> listarParaSolicitacao(
-			boolean mostrarDesativados) {
-		SrObjetivoAtributo obj = SrObjetivoAtributo
-				.findById(SrObjetivoAtributo.OBJETIVO_SOLICITACAO);
+	public static List<SrAtributo> listarParaSolicitacao(boolean mostrarDesativados) throws Exception {
+		SrObjetivoAtributo obj = SrObjetivoAtributo.AR.findById(SrObjetivoAtributo.OBJETIVO_SOLICITACAO);
 		return listar(obj, mostrarDesativados);
 	}
 
-	public static List<SrAtributo> listarParaAcordo(boolean mostrarDesativados) {
-		SrObjetivoAtributo obj = SrObjetivoAtributo
-				.findById(SrObjetivoAtributo.OBJETIVO_ACORDO);
+	public static List<SrAtributo> listarParaAcordo(boolean mostrarDesativados) throws Exception {
+		SrObjetivoAtributo obj = SrObjetivoAtributo.AR.findById(SrObjetivoAtributo.OBJETIVO_ACORDO);
 		return listar(obj, mostrarDesativados);
 	}
 
-	public static List<SrAtributo> listarParaIndicador(
-			boolean mostrarDesativados) {
-		SrObjetivoAtributo obj = SrObjetivoAtributo
-				.findById(SrObjetivoAtributo.OBJETIVO_INDICADOR);
+	public static List<SrAtributo> listarParaIndicador(boolean mostrarDesativados) throws Exception {
+		SrObjetivoAtributo obj = SrObjetivoAtributo.AR.findById(SrObjetivoAtributo.OBJETIVO_INDICADOR);
 		return listar(obj, mostrarDesativados);
 	}
 
-	public static List<SrAtributo> listar(SrObjetivoAtributo objetivo,
-			boolean mostrarDesativados) {
+	public static List<SrAtributo> listar(SrObjetivoAtributo objetivo, boolean mostrarDesativados) {
 		StringBuilder queryBuilder = new StringBuilder();
 
 		if (!mostrarDesativados) {
 			queryBuilder.append(" hisDtFim is null");
 		} else {
 			queryBuilder.append("SELECT ta FROM SrAtributo ta ");
-			queryBuilder
-					.append("WHERE ta.idAtributo in (SELECT MAX(idAtributo) FROM SrAtributo GROUP BY hisIdIni) ");
+			queryBuilder.append("WHERE ta.idAtributo in (SELECT MAX(idAtributo) FROM SrAtributo GROUP BY hisIdIni) ");
 		}
 
 		if (objetivo != null)
-			queryBuilder.append(" and objetivoAtributo.idObjetivo = "
-					+ objetivo.idObjetivo);
+			queryBuilder.append(" and objetivoAtributo.idObjetivo = " + objetivo.getIdObjetivo());
 
-		return SrAtributo.find(queryBuilder.toString()).fetch();
+		return SrAtributo.AR.find(queryBuilder.toString()).fetch();
 	}
 
 	public List<SrAtributo> getHistoricoAtributo() {
-		if (atributoInicial != null)
-			return atributoInicial.meuAtributoHistoricoSet;
+		if (getAtributoInicial() != null)
+			return getAtributoInicial().getMeuAtributoHistoricoSet();
 		return null;
 	}
 
@@ -143,70 +136,142 @@ public class SrAtributo extends HistoricoSuporte {
 
 	public Set<String> getPreDefinidoSet() {
 		Set<String> preDefinidos = new HashSet<String>();
-		if (tipoAtributo == SrTipoAtributo.VL_PRE_DEFINIDO) {
-			preDefinidos.addAll(Arrays.asList(descrPreDefinido.split(";")));
+		if (getTipoAtributo() == SrTipoAtributo.VL_PRE_DEFINIDO) {
+			preDefinidos.addAll(Arrays.asList(getDescrPreDefinido().split(";")));
 		}
 		return preDefinidos;
 	}
 
-	public List<SrConfiguracao> getAssociacoes(DpLotacao lotaTitular,
-			DpPessoa pess) {
+	public List<SrConfiguracao> getAssociacoes(DpLotacao lotaTitular, DpPessoa pess) {
 		try {
 			SrConfiguracao confFiltro = new SrConfiguracao();
 			confFiltro.setLotacao(lotaTitular);
 			confFiltro.setDpPessoa(pess);
-			confFiltro
-					.setCpTipoConfiguracao(JPA
-							.em()
-							.find(CpTipoConfiguracao.class,
-									CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
-			return SrConfiguracao.listar(confFiltro,
-					new int[] { SrConfiguracaoBL.TIPO_ATRIBUTO });
+			confFiltro.setCpTipoConfiguracao(ContextoPersistencia.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
+			return SrConfiguracao.listar(confFiltro, new int[] { SrConfiguracaoBL.TIPO_ATRIBUTO });
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	public static SrAtributo get(String codigo) {
-		return SrAtributo.find("byCodigoAtributo", codigo).first();
+		return SrAtributo.AR.find("byCodigoAtributo", codigo).first();
 	}
 
 	@Override
 	public void salvar() throws Exception {
 
-		if (objetivoAtributo == null)
+		if (getObjetivoAtributo() == null)
 			throw new IllegalStateException("Objetivo nao informado");
 
 		super.salvar();
 	}
 
 	public String asGetter() {
-		if (codigoAtributo == null || codigoAtributo.isEmpty())
+		if (getCodigoAtributo() == null || getCodigoAtributo().isEmpty())
 			return null;
-		return "get" + codigoAtributo.substring(0, 1).toUpperCase()
-				+ codigoAtributo.substring(1);
+		return "get" + getCodigoAtributo().substring(0, 1).toUpperCase() + getCodigoAtributo().substring(1);
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
-		return this.idAtributo.equals(((SrAtributo)obj).idAtributo);
+		return this.getIdAtributo().equals(((SrAtributo) obj).getIdAtributo());
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
 	}
 	
-	public SrAtributoVO toVO(boolean listarAssociacoes) {
+	public SrAtributoVO toVO(boolean listarAssociacoes) throws Exception {
 		return SrAtributoVO.createFrom(this, listarAssociacoes);
 	}
-	
+
 	/**
 	 * Retorna um Json de {@link SrAtributo}.
+	 * @throws Exception 
 	 */
-	public String toJson(boolean listarAssociacoes) {
+	public String toJson(boolean listarAssociacoes) throws Exception {
 		return this.toVO(listarAssociacoes).toJson();
 	}
-	
+
 	/**
 	 * Retorna um Json de {@link SrAtributo}.
+	 * @throws Exception 
 	 */
-	public String toJson() {
+	public String toJson() throws Exception {
 		return this.toVO(false).toJson();
+	}
+
+	public Long getIdAtributo() {
+		return idAtributo;
+	}
+
+	public void setIdAtributo(Long idAtributo) {
+		this.idAtributo = idAtributo;
+	}
+
+	public String getNomeAtributo() {
+		return nomeAtributo;
+	}
+
+	public void setNomeAtributo(String nomeAtributo) {
+		this.nomeAtributo = nomeAtributo;
+	}
+
+	public String getDescrAtributo() {
+		return descrAtributo;
+	}
+
+	public void setDescrAtributo(String descrAtributo) {
+		this.descrAtributo = descrAtributo;
+	}
+
+	public SrTipoAtributo getTipoAtributo() {
+		return tipoAtributo;
+	}
+
+	public void setTipoAtributo(SrTipoAtributo tipoAtributo) {
+		this.tipoAtributo = tipoAtributo;
+	}
+
+	public SrObjetivoAtributo getObjetivoAtributo() {
+		return objetivoAtributo;
+	}
+
+	public void setObjetivoAtributo(SrObjetivoAtributo objetivoAtributo) {
+		this.objetivoAtributo = objetivoAtributo;
+	}
+
+	public String getDescrPreDefinido() {
+		return descrPreDefinido;
+	}
+
+	public void setDescrPreDefinido(String descrPreDefinido) {
+		this.descrPreDefinido = descrPreDefinido;
+	}
+
+	public String getCodigoAtributo() {
+		return codigoAtributo;
+	}
+
+	public void setCodigoAtributo(String codigoAtributo) {
+		this.codigoAtributo = codigoAtributo;
+	}
+
+	public SrAtributo getAtributoInicial() {
+		return atributoInicial;
+	}
+
+	public void setAtributoInicial(SrAtributo atributoInicial) {
+		this.atributoInicial = atributoInicial;
+	}
+
+	public List<SrAtributo> getMeuAtributoHistoricoSet() {
+		return meuAtributoHistoricoSet;
+	}
+
+	public void setMeuAtributoHistoricoSet(List<SrAtributo> meuAtributoHistoricoSet) {
+		this.meuAtributoHistoricoSet = meuAtributoHistoricoSet;
 	}
 }

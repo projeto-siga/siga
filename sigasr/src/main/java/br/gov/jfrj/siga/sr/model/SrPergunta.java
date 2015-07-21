@@ -2,7 +2,6 @@ package br.gov.jfrj.siga.sr.model;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,73 +9,133 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
+
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
+import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
 @Table(name = "SR_PERGUNTA", schema = "SIGASR")
-public class SrPergunta extends HistoricoSuporte {
+public class SrPergunta extends HistoricoSuporteVraptor {
 
-	@Id
-	@SequenceGenerator(sequenceName = "SIGASR.SR_PERGUNTA_SEQ", name = "srPerguntaSeq")
-	@GeneratedValue(generator = "srPerguntaSeq")
-	@Column(name = "ID_PERGUNTA")
-	public Long idPergunta;
+    private static final long serialVersionUID = 8405698996883999900L;
+    public static final ActiveRecord<SrPergunta> AR = new ActiveRecord<>(SrPergunta.class);
 
-	@Column(name = "DESCR_PERGUNTA")
-	public String descrPergunta;
+    @Id
+    @SequenceGenerator(sequenceName = "SIGASR" + ".SR_PERGUNTA_SEQ", name = "srPerguntaSeq")
+    @GeneratedValue(generator = "srPerguntaSeq")
+    @Column(name = "ID_PERGUNTA")
+    private Long idPergunta;
 
-	@ManyToOne()
-	@JoinColumn(name = "ID_PESQUISA")
-	public SrPesquisa pesquisa;
+    @Column(name = "DESCR_PERGUNTA")
+    private String descrPergunta;
 
-	@ManyToOne()
-	@JoinColumn(name = "ID_TIPO_PERGUNTA")
-	public SrTipoPergunta tipoPergunta;
+    @ManyToOne()
+    @JoinColumn(name = "ID_PESQUISA")
+    private SrPesquisa pesquisa;
 
-	@Column(name = "ORDEM_PERGUNTA")
-	public Long ordemPergunta;
+    @ManyToOne()
+    @JoinColumn(name = "ID_TIPO_PERGUNTA")
+    private SrTipoPergunta tipoPergunta;
 
-	@ManyToOne()
-	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
-	public SrPergunta perguntaInicial;
+    @Column(name = "ORDEM_PERGUNTA")
+    private Long ordemPergunta;
 
-	@OneToMany(targetEntity = SrPergunta.class, mappedBy = "perguntaInicial")
-	//@OrderBy("hisDtIni desc")
-	public List<SrPergunta> meuPerguntaHistoricoSet;
+    @ManyToOne()
+    @JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
+    private SrPergunta perguntaInicial;
 
-	public SrPergunta() {
+    @OneToMany(targetEntity = SrPergunta.class, mappedBy = "perguntaInicial")
+    private List<SrPergunta> meuPerguntaHistoricoSet;
 
-	}
+    public SrPergunta() {
+    }
 
-	public Long getId() {
-		return this.idPergunta;
-	}
+    @Override
+    public Long getId() {
+        return this.getIdPergunta();
+    }
 
-	public void setId(Long id) {
-		idPergunta = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.setIdPergunta(id);
+    }
 
-	@Override
-	public boolean semelhante(Assemelhavel obj, int profundidade) {
-		return false;
-	}
+    @Override
+    public boolean semelhante(Assemelhavel obj, int profundidade) {
+        return false;
+    }
 
-	public List<SrPergunta> getHistoricoPergunta() {
-		if (perguntaInicial != null)
-			return perguntaInicial.meuPerguntaHistoricoSet;
-		return null;
-	}
+    public List<SrPergunta> getHistoricoPergunta() {
+        if (perguntaInicial != null)
+            return perguntaInicial.meuPerguntaHistoricoSet;
+        return null;
+    }
 
-	public SrPergunta getPerguntaAtual() {
-		List<SrPergunta> perguntas = getHistoricoPergunta();
-		if (perguntas == null)
-			return null;
-		return perguntas.get(0);
-	}
-	
+    public SrPergunta getPerguntaAtual() {
+        List<SrPergunta> perguntas = getHistoricoPergunta();
+        if (perguntas == null)
+            return null;
+        return perguntas.get(0);
+    }
+
+    public Long getIdPergunta() {
+        return idPergunta;
+    }
+
+    public void setIdPergunta(Long idPergunta) {
+        this.idPergunta = idPergunta;
+    }
+
+    public String getDescrPergunta() {
+        return descrPergunta;
+    }
+
+    public void setDescrPergunta(String descrPergunta) {
+        this.descrPergunta = descrPergunta;
+    }
+
+    public SrPesquisa getPesquisa() {
+        return pesquisa;
+    }
+
+    public void setPesquisa(SrPesquisa pesquisa) {
+        this.pesquisa = pesquisa;
+    }
+
+    public SrTipoPergunta getTipoPergunta() {
+        return tipoPergunta;
+    }
+
+    public void setTipoPergunta(SrTipoPergunta tipoPergunta) {
+        this.tipoPergunta = tipoPergunta;
+    }
+
+    public Long getOrdemPergunta() {
+        return ordemPergunta;
+    }
+
+    public void setOrdemPergunta(Long ordemPergunta) {
+        this.ordemPergunta = ordemPergunta;
+    }
+
+    public SrPergunta getPerguntaInicial() {
+        return perguntaInicial;
+    }
+
+    public void setPerguntaInicial(SrPergunta perguntaInicial) {
+        this.perguntaInicial = perguntaInicial;
+    }
+
+    public List<SrPergunta> getMeuPerguntaHistoricoSet() {
+        return meuPerguntaHistoricoSet;
+    }
+
+    public void setMeuPerguntaHistoricoSet(List<SrPergunta> meuPerguntaHistoricoSet) {
+        this.meuPerguntaHistoricoSet = meuPerguntaHistoricoSet;
+    }
+
 }

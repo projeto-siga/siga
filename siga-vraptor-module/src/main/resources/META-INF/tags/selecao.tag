@@ -239,7 +239,7 @@ self.ajax_${propriedade}${tipoSel}${inputName} = function() {
 <input type="hidden" name="${inputNameTipoSel}.buscar" value="<c:out value="${requestScope[propriedadeTipoSel].buscar}"/>" id="formulario_${inputNameTipoSel}_buscar"/>
 <input type="text" name="${inputNameTipoSel}.sigla" value="<c:out value="${requestScope[propriedadeTipoSel].sigla}"/>" id="formulario_${inputNameTipoSel}_sigla" 
 	onkeypress="return handleEnter(this, event)" ${requiredValue}
-	onblur="javascript: ajax_${propriedade}${tipoSel}${inputName}();<c:if test="${not empty onblur}">${onblur};</c:if>" size="25"
+	onblur="javascript: ajax_${propriedade}${tipoSel}${inputName}();" <c:if test="${not empty onblur}">${onblur};</c:if> size="25"
 	onchange="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>"
 	${disabledTxt} />	
 	

@@ -598,18 +598,6 @@
 							value="${solicitacao.gravidade != null ? solicitacao.gravidade: sem_gravidade}" onchange="carregarPrioridade()"
 							style="width:235px"  />
 						</div>
-						<!--  <div class="gt-form-row gt-width-33">
-							<label>Urg&ecirc;ncia</label> 
-							<siga:select name="solicitacao.urgencia" id="urgencia" list="urgenciaList" listValue="respostaEnunciado" listKey="nivelUrgencia" isEnum="true"
-							value="${solicitacao.urgencia != null ? solicitacao.urgencia: urgencia_normal}" 
-							onchange="carregarPrioridade()" style="width:235px" />
-						</div>
-						<div class="gt-form-row gt-width-33">
-							<label>Tend&ecirc;ncia</label>
-							<siga:select name="solicitacao.tendencia" id="tendencia" list="tendenciaList" listValue="respostaEnunciado" listKey="nivelTendencia" isEnum="true"
-							value="${solicitacao.tendencia != null ? solicitacao.tendencia: tendencia_piora}"
-							onchange="carregarPrioridade()" style="width:235px;"/>
-						</div>-->
 					</div>
 					<div id="divPrioridade" class="gt-form-row gt-width-66">
 						<label style="float: left">Prioridade: &nbsp;</label>

@@ -155,7 +155,7 @@ self.ajax_${propriedadeClean} = function() {
 	value="<c:out value="${f:evaluate(f:concat(propriedade,'.sigla'),requestScope)}"/>"
 	id="formulario_${propriedadeClean}_sigla"
 	onkeypress="return handleEnter(this, event)"
-	onblur="javascript: ajax_${propriedadeClean}();
+	onblur="javascript: ajax_${propriedadeClean}();"
 	size="25" ${disabledTxt} />
 
 <c:if test="${buscar != 'nao'}">

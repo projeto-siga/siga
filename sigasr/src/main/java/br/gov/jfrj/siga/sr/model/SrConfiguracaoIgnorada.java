@@ -11,13 +11,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-
 import br.gov.jfrj.siga.model.ActiveRecord;
-import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
+import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
 @Table(name = "SR_CONFIGURACAO_IGNORADA", schema = "SIGASR")
-public class SrConfiguracaoIgnorada extends ObjetoVraptor {
+public class SrConfiguracaoIgnorada extends Objeto {
 
     private static final long serialVersionUID = 1L;
 
@@ -98,7 +97,6 @@ public class SrConfiguracaoIgnorada extends ObjetoVraptor {
         this.configuracao = configuracao;
     }
 
-    @Override
     protected Long getId() {
         return this.getIdConfiguracaoIgnorada();
     }

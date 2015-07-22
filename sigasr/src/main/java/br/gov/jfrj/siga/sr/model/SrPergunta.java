@@ -12,14 +12,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
-import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
 @Table(name = "SR_PERGUNTA", schema = "SIGASR")
-public class SrPergunta extends HistoricoSuporteVraptor {
+public class SrPergunta extends HistoricoSuporte {
 
     private static final long serialVersionUID = 8405698996883999900L;
     public static final ActiveRecord<SrPergunta> AR = new ActiveRecord<>(SrPergunta.class);

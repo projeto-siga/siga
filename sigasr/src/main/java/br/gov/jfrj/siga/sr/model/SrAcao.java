@@ -21,13 +21,12 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.Texto;
-
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.SrTipoAcao.SrTipoAcaoVO;
-import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -35,7 +34,7 @@ import com.google.gson.GsonBuilder;
 @Entity
 @Table(name = "SR_ACAO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrAcao extends HistoricoSuporteVraptor implements SrSelecionavel, Comparable<SrAcao>, ConvertableEntity, Selecionavel {
+public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparable<SrAcao>, ConvertableEntity, Selecionavel {
 	private static final long serialVersionUID = 8387408543308440033L;
 
 	public static final ActiveRecord<SrAcao> AR = new ActiveRecord<>(SrAcao.class);
@@ -279,11 +278,12 @@ public class SrAcao extends HistoricoSuporteVraptor implements SrSelecionavel, C
 		return Texto.slugify(tituloAcao, true, false);
 	}
 
-	public void salvar() throws Exception {
+	@Override
+	public void salvarComHistorico() throws Exception {
 		if (getNivel() > 1) {
 			pai = getPaiPorSigla();
 		}
-		super.salvar();
+		super.salvarComHistorico();
 	}
 
 	public List<SrAcao> getAcaoETodasDescendentes() {

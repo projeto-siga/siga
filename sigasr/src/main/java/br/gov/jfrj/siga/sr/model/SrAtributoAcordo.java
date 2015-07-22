@@ -13,16 +13,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
-import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.model.vo.SrAtributoAcordoVO;
-import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 @Entity
 @Table(name = "SR_ATRIBUTO_ACORDO", schema = "SIGASR")
-public class SrAtributoAcordo extends HistoricoSuporteVraptor {
+public class SrAtributoAcordo extends HistoricoSuporte {
 
 	private static final long serialVersionUID = 1L;
 

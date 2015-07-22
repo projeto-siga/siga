@@ -94,7 +94,7 @@ public class ItemConfiguracaoController extends SrController {
     @Path("/reativar")
     public void reativar(Long id, boolean mostrarDesativados) throws Exception {
         SrItemConfiguracao item = SrItemConfiguracao.AR.findById(id);
-        item.salvar();
+        item.salvarComHistorico();
 
         result.use(Results.http()).body(item.getSrItemConfiguracaoJson());
     }
@@ -107,7 +107,7 @@ public class ItemConfiguracaoController extends SrController {
         itemConfiguracao.setFatorMultiplicacaoSet(fatorMultiplicacaoSet);
 
         validarFormEditarItem(itemConfiguracao);
-        itemConfiguracao.salvar();
+        itemConfiguracao.salvarComHistorico();
 
         // Atualiza os conhecimentos relacionados
         // Edson: deveria ser feito por webservice. Nao estah sendo coberta

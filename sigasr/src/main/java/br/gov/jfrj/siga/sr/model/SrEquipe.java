@@ -14,7 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-
+import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
@@ -23,7 +23,6 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
 import br.gov.jfrj.siga.sr.util.Util;
-import br.gov.jfrj.siga.vraptor.entity.HistoricoSuporteVraptor;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -31,7 +30,7 @@ import com.google.gson.JsonObject;
 
 @Entity
 @Table(name = "SR_EQUIPE", schema = "SIGASR")
-public class SrEquipe extends HistoricoSuporteVraptor implements ConvertableEntity {
+public class SrEquipe extends HistoricoSuporte implements ConvertableEntity {
 
     public static final ActiveRecord<SrEquipe> AR = new ActiveRecord<>(SrEquipe.class);
 
@@ -77,8 +76,8 @@ public class SrEquipe extends HistoricoSuporteVraptor implements ConvertableEnti
     // fazer automaticamente a conexao abaixo, entre os horarios e a equipe,
     // visto que a equipe nao tem ID
     @Override
-    public void salvar() throws Exception {
-        super.salvar();
+    public void salvarComHistorico() throws Exception {
+        super.salvarComHistorico();
         if (getExcecaoHorarioSet() != null) {
             for (SrExcecaoHorario eh : getExcecaoHorarioSet()) {
                 eh.setEquipe(this);

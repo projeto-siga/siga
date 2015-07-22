@@ -196,7 +196,7 @@ public class SolicitacaoController extends SrController {
     @Path("/reativarConfiguracaoAutomaticaGravar")
     public void reativarConfiguracaoAutomaticaGravar(Long id) throws Exception {
         SrConfiguracao configuracao = ContextoPersistencia.em().find(SrConfiguracao.class, id);
-        configuracao.salvar();
+        configuracao.salvarComHistorico();
         result.use(Results.http()).body(configuracao.toVO().toJson());
     }
 
@@ -218,7 +218,7 @@ public class SolicitacaoController extends SrController {
     public void gravarLista(SrLista lista) throws Exception {
         lista.setLotaCadastrante(getLotaTitular());
         validarFormEditarLista(lista);
-        lista.salvar();
+        lista.salvarComHistorico();
         SrListaVO srListaVO = getSrListaVOComPermissoes(lista);
         result.use(Results.http()).body(srListaVO.toJson());
     }
@@ -251,7 +251,7 @@ public class SolicitacaoController extends SrController {
     @Path("/reativarLista")
     public void reativarLista(Long id, boolean mostrarDesativados) throws Exception {
         SrLista lista = SrLista.AR.findById(id);
-        lista.salvar();
+        lista.salvarComHistorico();
         result.use(Results.http()).body(lista.toJson());
     }
 

@@ -18,8 +18,8 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Type;
 
-
 import br.gov.jfrj.siga.cp.CpComplexo;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -30,7 +30,6 @@ import br.gov.jfrj.siga.sr.model.SrAcao.SrAcaoVO;
 import br.gov.jfrj.siga.sr.model.vo.SrConfiguracaoAssociacaoVO;
 import br.gov.jfrj.siga.sr.model.vo.SrConfiguracaoVO;
 import br.gov.jfrj.siga.sr.model.vo.SrItemConfiguracaoVO;
-import br.gov.jfrj.siga.vraptor.entity.ConfiguracaoVraptor;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -40,7 +39,7 @@ import com.google.gson.JsonObject;
 @Entity
 @Table(name = "SR_CONFIGURACAO", schema = "SIGASR")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
-public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEntity {
+public class SrConfiguracao extends CpConfiguracao implements ConvertableEntity {
 
     public static final ActiveRecord<SrConfiguracao> AR = new ActiveRecord<>(SrConfiguracao.class);
 
@@ -253,7 +252,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 
     public void salvarComoDesignacao() throws Exception {
         setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
-        salvar();
+        salvarComHistorico();
     }
 
     public boolean isDesignacao() {
@@ -265,7 +264,7 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 
     public void salvarComoInclusaoAutomaticaLista(SrLista srLista) throws Exception {
         setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA));
-        salvar();
+        salvarComHistorico();
     }
 
     @SuppressWarnings("unchecked")
@@ -341,13 +340,13 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 
     public void salvarComoAbrangenciaAcordo() throws Exception {
         setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
-        salvar();
+        salvarComHistorico();
 
     }
 
     public void salvarComoPermissaoUsoLista() throws Exception {
         setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_PERMISSAO_USO_LISTA));
-        salvar();
+        salvarComHistorico();
     }
 
     @SuppressWarnings("unchecked")
@@ -382,12 +381,12 @@ public class SrConfiguracao extends ConfiguracaoVraptor implements ConvertableEn
 
     public void salvarComoAssociacaoAtributo() throws Exception {
         setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO));
-        salvar();
+        salvarComHistorico();
     }
 
     public void salvarComoAssociacaoPesquisa() throws Exception {
         setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ASSOCIACAO_PESQUISA));
-        salvar();
+        salvarComHistorico();
     }
 
     @SuppressWarnings("unchecked")

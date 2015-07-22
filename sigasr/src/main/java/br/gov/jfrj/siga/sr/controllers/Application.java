@@ -857,7 +857,7 @@ public class Application extends SrController {
 
     public String gravarAcordo(SrAcordo acordo) throws Exception {
         assertAcesso("ADM:Administrar");
-        acordo.salvar();
+        acordo.salvarComHistorico();
 
         return acordo.toJson();
     }
@@ -873,7 +873,7 @@ public class Application extends SrController {
     public String reativarAcordo(Long id, boolean mostrarDesativados) throws Exception {
         assertAcesso("ADM:Administrar");
         SrAcordo acordo = SrAcordo.AR.findById(id);
-        acordo.salvar();
+        acordo.salvarComHistorico();
 
         return acordo.toJson();
     }
@@ -894,13 +894,13 @@ public class Application extends SrController {
     public void reativarAbrangencia(Long id, boolean mostrarDesativados) throws Exception {
         assertAcesso("ADM:Administrar");
         SrConfiguracao associacao = ContextoPersistencia.em().find(SrConfiguracao.class, id);
-        associacao.salvar();
+        associacao.salvarComHistorico();
     }
 
     public String reativarDesignacao(Long id, boolean mostrarDesativados) throws Exception {
         assertAcesso("ADM:Administrar");
         SrConfiguracao designacao = ContextoPersistencia.em().find(SrConfiguracao.class, id);
-        designacao.salvar();
+        designacao.salvarComHistorico();
 
         return designacao.getSrConfiguracaoJson();
     }
@@ -1013,7 +1013,7 @@ public class Application extends SrController {
     public void reativarAssociacao(Long id, boolean mostrarDesativados) throws Exception {
         assertAcesso("ADM:Administrar");
         SrConfiguracao associacao = ContextoPersistencia.em().find(SrConfiguracao.class, id);
-        associacao.salvar();
+        associacao.salvarComHistorico();
     }
 
     @SuppressWarnings("unchecked")
@@ -1082,7 +1082,7 @@ public class Application extends SrController {
     public String gravarItem(SrItemConfiguracao itemConfiguracao) throws Exception {
         assertAcesso("ADM:Administrar");
         validarFormEditarItem(itemConfiguracao);
-        itemConfiguracao.salvar();
+        itemConfiguracao.salvarComHistorico();
 
         // Atualiza os conhecimentos relacionados
         // Edson: deveria ser feito por webservice. Nao estah sendo coberta
@@ -1127,7 +1127,7 @@ public class Application extends SrController {
     public String reativarItem(Long id, boolean mostrarDesativados) throws Exception {
         assertAcesso("ADM:Administrar");
         SrItemConfiguracao item = SrItemConfiguracao.AR.findById(id);
-        item.salvar();
+        item.salvarComHistorico();
         return item.getSrItemConfiguracaoJson();
     }
 
@@ -1299,7 +1299,7 @@ public class Application extends SrController {
         assertAcesso("ADM:Administrar");
         pesquisa = (SrPesquisa) Objeto.getImplementation(pesquisa);
         pesquisa.setPerguntaSet((pesquisa.getPerguntaSet() != null) ? pesquisa.getPerguntaSet() : new ArrayList<SrPergunta>());
-        pesquisa.salvar();
+        pesquisa.salvarComHistorico();
 
         return pesquisa.atualizarTiposPerguntas().toJson();
     }
@@ -1315,7 +1315,7 @@ public class Application extends SrController {
     public String reativarPesquisa(Long id, boolean mostrarDesativados) throws Exception {
         assertAcesso("ADM:Administrar");
         SrPesquisa pesq = SrPesquisa.AR.findById(id);
-        pesq.salvar();
+        pesq.salvarComHistorico();
 
         return pesq.toJson();
     }
@@ -1359,7 +1359,7 @@ public class Application extends SrController {
 
     public String gravarEquipe(SrEquipe equipe) throws Exception {
         assertAcesso("ADM:Administrar");
-        equipe.salvar();
+        equipe.salvarComHistorico();
         return equipe.toJson();
     }
 
@@ -1384,7 +1384,7 @@ public class Application extends SrController {
     public String gravarAcao(SrAcao acao) throws Exception {
         assertAcesso("ADM:Administrar");
         validarFormEditarAcao(acao);
-        acao.salvar();
+        acao.salvarComHistorico();
 
         // Atualiza os conhecimentos relacionados.
         // Edson: deveria ser feito por webservice. Nao estah sendo coberta
@@ -1427,7 +1427,7 @@ public class Application extends SrController {
     public String reativarAcao(Long id, boolean mostrarDesativados) throws Exception {
         assertAcesso("ADM:Administrar");
         SrAcao acao = SrAcao.AR.findById(id);
-        acao.salvar();
+        acao.salvarComHistorico();
         return acao.toJson();
     }
 
@@ -1474,7 +1474,7 @@ public class Application extends SrController {
     public String gravarTipoAcao(SrTipoAcao tipoAcao) throws Exception {
         assertAcesso("ADM:Administrar");
         validarFormEditarTipoAcao(tipoAcao);
-        tipoAcao.salvar();
+        tipoAcao.salvarComHistorico();
         return tipoAcao.toJson();
     }
 
@@ -1487,7 +1487,7 @@ public class Application extends SrController {
     public Long reativarTipoAcao(Long id, boolean mostrarDesativados) throws Exception {
         assertAcesso("ADM:Administrar");
         SrTipoAcao tipoAcao = SrTipoAcao.AR.findById(id);
-        tipoAcao.salvar();
+        tipoAcao.salvarComHistorico();
         return tipoAcao.getId();
     }
 
@@ -1541,7 +1541,7 @@ public class Application extends SrController {
     public String gravarLista(SrLista lista) throws Exception {
         lista.setLotaCadastrante(getLotaTitular());
         validarFormEditarLista(lista);
-        lista.salvar();
+        lista.salvarComHistorico();
         return lista.toJson();
     }
 
@@ -1564,7 +1564,7 @@ public class Application extends SrController {
 
     public String reativarLista(Long id, boolean mostrarDesativados) throws Exception {
         SrLista lista = SrLista.AR.findById(id);
-        lista.salvar();
+        lista.salvarComHistorico();
         return lista.toJson();
     }
 
@@ -1603,7 +1603,7 @@ public class Application extends SrController {
 
     public String reativarConfiguracaoAutomaticaGravar(Long id) throws Exception {
         SrConfiguracao configuracao = ContextoPersistencia.em().find(SrConfiguracao.class, id);
-        configuracao.salvar();
+        configuracao.salvarComHistorico();
         return configuracao.toVO().toJson();
     }
 }

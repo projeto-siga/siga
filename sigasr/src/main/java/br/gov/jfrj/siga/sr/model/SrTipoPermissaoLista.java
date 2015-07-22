@@ -5,14 +5,13 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
 import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
-import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
+import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
 @Table(name = "SR_TIPO_PERMISSAO_LISTA", schema = "SIGASR")
-public class SrTipoPermissaoLista extends ObjetoVraptor implements ConvertableEntity {
+public class SrTipoPermissaoLista extends Objeto implements ConvertableEntity {
 
     private static final long serialVersionUID = 1555809464123606397L;
 

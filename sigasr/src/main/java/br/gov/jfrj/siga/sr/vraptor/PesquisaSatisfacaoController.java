@@ -73,7 +73,7 @@ public class PesquisaSatisfacaoController extends SrController {
 	@Path("/reativar")
 	public void reativar(Long id) throws Exception {
 		SrPesquisa pesq = SrPesquisa.AR.findById(id);
-		pesq.salvar();
+		pesq.salvarComHistorico();
 
 		result.use(Results.http()).body(pesq.toJson());
 	}
@@ -92,7 +92,7 @@ public class PesquisaSatisfacaoController extends SrController {
 	@Path("/gravar")
 	public void gravarPesquisa(SrPesquisa pesquisa, List<SrPergunta> perguntaSet) throws Exception {
 		pesquisa.setPerguntaSet(perguntaSet != null ? perguntaSet : new ArrayList<SrPergunta>());
-		pesquisa.salvar();
+		pesquisa.salvarComHistorico();
 
 		result.use(Results.http()).body(pesquisa.atualizarTiposPerguntas().toJson());
 	}

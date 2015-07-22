@@ -26,21 +26,19 @@ import javax.persistence.TemporalType;
 import org.joda.time.DateTime;
 
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
-
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.sr.notifiers.Correio;
+import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
 import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
-import br.gov.jfrj.siga.vraptor.entity.ObjetoVraptor;
 
 @Entity
 @Table(name = "SR_MOVIMENTACAO", schema = "SIGASR")
-public class SrMovimentacao extends ObjetoVraptor {
+public class SrMovimentacao extends Objeto {
     private static final long serialVersionUID = 1L;
     public static final ActiveRecord<SrMovimentacao> AR = new ActiveRecord<>(SrMovimentacao.class);
 
@@ -436,7 +434,6 @@ public class SrMovimentacao extends ObjetoVraptor {
         return this.getMotivoEscalonamento().getDescrTipoMotivoEscalonamento();
     }
 
-    @Override
     protected Long getId() {
         return idMovimentacao;
     }

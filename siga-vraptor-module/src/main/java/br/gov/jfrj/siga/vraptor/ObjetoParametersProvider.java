@@ -107,6 +107,8 @@ public class ObjetoParametersProvider implements ParametersProvider {
 			String[] parameterValues = request
 					.getParameterValues(parameterName);
 			for (String value : parameterValues) {
+				if (value == null || value.trim().length() == 0)
+					continue;
 				Parameter newParameter = new Parameter(parameterName, value);
 				parameterList.add(newParameter);
 			}

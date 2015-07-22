@@ -84,11 +84,11 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		String s2 = "";
 		if (s.length >= 2) {
 			s2 = s[s.length - 1].toLowerCase();
-			if (CpLocalidade.MUNICIPIOS.contains(s2))
+			if (CpLocalidade.getMunicipios().contains(s2))
 				return s2;
 			// Fix:
 			s2 = s[s.length - 2] + " de " + s[s.length - 1];
-			if (CpLocalidade.MUNICIPIOS.contains(s2))
+			if (CpLocalidade.getMunicipios().contains(s2))
 				return s2;
 		}
 		return getOrgaoUsuario().getMunicipioOrgaoUsu();

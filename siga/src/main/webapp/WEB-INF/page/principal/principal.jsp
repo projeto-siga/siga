@@ -57,9 +57,9 @@
                             <h2 class="gt-table-head">
                             	Solicitações
                             </h2>
-                            <span id='rightbottom' style="margin:0;padding:0;">
+                            <div id='rightbottom' >
                                  <jsp:include page="loading.jsp" />
-                            </span>
+                            </div>
                             </c:if>
                             <br />
 						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC:Módulo de Gestão de Conhecimento')}">
@@ -69,7 +69,7 @@
 							<div id='rightbottom2'>
                                 <jsp:include page="loading.jsp" />
 							</div>
-						</c:if>
+						</c:if> 
 						<br />
 						<c:if
 							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:Módulo de Transportes')}">

@@ -29,7 +29,7 @@
     <%=SrPrioridade.BAIXO.getDescPrioridade()%>
 </c:set>
 
-<siga:pagina titulo="Cadastro de Solicitaï¿½ï¿½o">
+<siga:pagina titulo="Cadastro de Solicitação">
 	<jsp:include page="../main.jsp"></jsp:include>
 	
 	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>

@@ -4,7 +4,7 @@
 <c:if test="${locaisDisponiveis.size() > 1}">
 	<div class="gt-form-row gt-width-66">
 		<label>Local</label>
-		<select name="solicitacao.local" value="${solicitacao.local.idComplexo}" id="local">
+		<select name="solicitacao.local.id" value="${solicitacao.local.idComplexo}" id="local">
         <c:forEach items="${locaisDisponiveis.keySet()}" var="orgao">
                 <optgroup label="${orgao.acronimoOrgaoUsu}">
                 <c:forEach items="${locaisDisponiveis.get(orgao)}" var="local">

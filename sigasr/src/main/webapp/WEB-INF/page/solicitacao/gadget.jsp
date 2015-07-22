@@ -32,9 +32,8 @@
         </tbody>
     </table>
 </div>
-<form action="${linkTo[SolicitacaoController].editar}" enctype="multipart/form-data">
-<div id='rightbottom'></div>
-<br>
-<h2><input type="submit" value="Nova" class="gt-btn-small gt-btn-right" /></h2> 
-</form>
-
+<br/> 
+<a title="Nova Solicita&ccedil;&atilde;o" class="gt-btn-large gt-btn-right" href="${linkTo[SolicitacaoController].editar}" >Nova Solicita&ccedil;&atilde;o</a>
+<a title="Pesquisar Solicita&ccedil;&otilde;es" class="gt-btn-large gt-btn-right" href="${linkTo[SolicitacaoController].buscar}">Pesquisar Solicita&ccedil;&otilde;es</a>
+<br/>
+<br/>

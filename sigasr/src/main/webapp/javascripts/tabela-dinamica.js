@@ -35,7 +35,7 @@ function TabelaDinamica (tableSelector, modoExibicao) {
 						estruturaColuna = { 
 							"sTitle" : coluna.titulo, 
 							"mDataProp" : coluna.nome,
-							"mDetalheFormatado" : colDetalhe.detalheFormatado,
+							"mDetalheFormatado" : coluna.detalheFormatado,
 							"sName" : coluna.nome,
 							"sClass" : coluna.classe,
 							"bVisible" : coluna.exibir,

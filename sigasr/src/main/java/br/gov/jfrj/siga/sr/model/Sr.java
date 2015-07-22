@@ -22,7 +22,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
 
 /**
- * Classe que fornece uma inst‚ncia do workflow.
+ * Classe que fornece uma inst√¢ncia do workflow.
  * 
  * @author kpf
  * 
@@ -33,11 +33,11 @@ public class Sr extends Cp /*
 							 */{
 
 	/**
-	 * Retorna uma inst‚ncia do sistema de workflow. AtravÈs dessa inst‚ncia È
-	 * possÌvel acessar a lÛgica de negÛcio, competÍncias e configuraÁıes do
+	 * Retorna uma inst√¢ncia do sistema de workflow. Atrav√©s dessa inst√¢ncia √©
+	 * poss√≠vel acessar a l√≥gica de neg√≥cio, compet√™ncias e configura√ß√µes do
 	 * sistema de workflow.
 	 * 
-	 * @return Inst‚ncia de workflow
+	 * @return Inst√¢ncia de workflow
 	 */
 	public static Sr getInstance() {
 	    if (!(Cp.getInstance() instanceof Sr)) {

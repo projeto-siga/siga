@@ -15,5 +15,5 @@
 </c:forEach>
 
 <c:if test="solicitacoesRelacionadas == null || solicitacoesRelacionadas.size() == 0}">
-	<tr><td colspan="2" style="text-align: center;">Não há solicitações relacionadas</td></tr>
+	<tr><td colspan="2" style="text-align: center;">NÃ£o hÃ¡ solicitaÃ§Ãµes relacionadas</td></tr>
 </c:if>

@@ -1,4 +1,4 @@
-#{extends 'main.html' /} #{set title:'Edição de atributo' /}
+#{extends 'main.html' /} #{set title:'EdiÃ§Ã£o de atributo' /}
 
 <script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
 <script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
@@ -14,7 +14,7 @@
 				<input type="text" name="nomeAcordo" size="60" required />
 			</div>
 			<div class="gt-form-row gt-width-66">
-				<label>Descrição</label>
+				<label>DescriÃ§Ã£o</label>
 				<input type="text" name="descrAcordo" size="60" />
 			</div>
 			<div class="gt-form-row">
@@ -43,8 +43,8 @@
 									<span id="iconeBotaoExpandirTodos">+</span>
 								</button>
 							</th>
-							<th>ID Orgão</th>
-							<th>Orgão</th>
+							<th>ID OrgÃ£o</th>
+							<th>OrgÃ£o</th>
 							<th>ID Local</th>
 							<th>Local</th>
 							<th>Tipo Solicitante</th>
@@ -57,7 +57,7 @@
 							<th>ID Prioridade</th>
 							<th>Prioridade</th>
 							<th>idAssociacao</th>
-							<th>Id Histórico Associação</th>
+							<th>Id HistÃ³rico AssociaÃ§Ã£o</th>
 							<th></th>
 							<th>JSon</th>
 						</tr>
@@ -84,7 +84,7 @@
 							<td class="gt-celula-nowrap"
 								style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
 								<a class="once desassociar" onclick="desassociar(event, ${abrang?.idConfiguracao})"
-									title="Remover permissão"> 
+									title="Remover permissÃ£o"> 
 									<input class="idAssociacao" type="hidden" value="${abrang?.idConfiguracao}" /> 
 									<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">
 								</a>
@@ -138,7 +138,7 @@
 	</div>
 </div>
 
-#{modal nome:'associacao', titulo:'Cadastrar Associação'}
+#{modal nome:'associacao', titulo:'Cadastrar AssociaÃ§Ã£o'}
 <div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
 	<input id="idConfiguracao" type="hidden" name="idConfiguracao">
 	<input id="hisIdIni" type="hidden" name="hisIdIni">
@@ -153,7 +153,7 @@
 	</div>
 
 	<div class="gt-form-row gt-width-100">
-		<label>Órgão</label> #{select name:'orgaoUsuario', items:orgaos,
+		<label>ÃrgÃ£o</label> #{select name:'orgaoUsuario', items:orgaos,
 		valueProperty:'idOrgaoUsu', labelProperty:'acronimoOrgaoUsu',
 		value:orgaoUsuario?.idOrgaoUsu, class:'select-siga', style:'width:
 		100%;'} #{option 0}#{/option} #{/select}
@@ -257,7 +257,7 @@
 	      		acordoService.populateFromJSonList(listaJSon, associacaoTable);
 	      	 },
 	      	 error: function(error) {
-	          	alert("Não foi possível carregar as Abrangências deste Acordo.");
+	          	alert("NÃ£o foi possÃ­vel carregar as AbrangÃªncias deste Acordo.");
 	      	 }
        });
     });
@@ -347,8 +347,8 @@
 		if (itemArray && itemArray[colunasAssociacao.jSon]) {
 			var associacao = itemArray[colunasAssociacao.jSon];
 			
-			TableHelper.detalheLista("<b>Itens de configuração:</b>", associacao.listaItemConfiguracaoVO, trItens);
-			TableHelper.detalheLista("<b>Ações:</b>", associacao.listaAcaoVO, trAcoes);
+			TableHelper.detalheLista("<b>Itens de configuraÃ§Ã£o:</b>", associacao.listaItemConfiguracaoVO, trItens);
+			TableHelper.detalheLista("<b>AÃ§Ãµes:</b>", associacao.listaAcaoVO, trAcoes);
 
 			table.append(trItens);
 			table.append(trAcoes);
@@ -383,7 +383,7 @@
 		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].onchange();
 	}
 	
-	// Alimenta os campos do Popup antes de abrir ao usuário.
+	// Alimenta os campos do Popup antes de abrir ao usuÃ¡rio.
 	function atualizarAssociacaoModal(itemArray) {
 		limparDadosAssociacaoModal();
 
@@ -416,7 +416,7 @@
         
         $("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].onchange();
 
-        // atualiza os dados da lista de Itens e Ações
+        // atualiza os dados da lista de Itens e AÃ§Ãµes
         configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(itemArray[colunasAssociacao.jSon]);
 	}
 
@@ -514,7 +514,7 @@
              	params += '&associacao.cpGrupo=';
 
 		
-		// caso seja lotação
+		// caso seja lotaÃ§Ã£o
 		} else if (rowValues[colunasAssociacao.tipoSolicitante] == 2){
 			params += '&associacao.lotacao=' + rowValues[colunasAssociacao.idSolicitante];
 			params += '&associacao.dpPessoa=';
@@ -523,7 +523,7 @@
              	params += '&associacao.cpGrupo=';
 
 		
-		// caso seja função
+		// caso seja funÃ§Ã£o
 		} else if (rowValues[colunasAssociacao.tipoSolicitante] == 3){
 			params += '&associacao.funcaoConfianca=' + rowValues[colunasAssociacao.idSolicitante];
 			params += '&associacao.dpPessoa=';
@@ -595,7 +595,7 @@
 		        var associacao = JSON.parse(jSon); 
 		        var html = 
 					'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-						'<a class="once desassociar" onclick="desassociar(event, '+ associacao.idConfiguracao + ')" title="Remover permissão">' +
+						'<a class="once desassociar" onclick="desassociar(event, '+ associacao.idConfiguracao + ')" title="Remover permissÃ£o">' +
 							'<input class="idAssociacao" type="hidden" value="' + associacao.idConfiguracao + '}"/>' +
 							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
 						'</a>' +

@@ -4,7 +4,7 @@
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
-		<h2 class="gt-form-head">Cadastro de Permissão para Uso de Lista de Prioridade</h2>
+		<h2 class="gt-form-head">Cadastro de PermissÃ£o para Uso de Lista de Prioridade</h2>
 
 		<div class="gt-form gt-content-box">
 			<form action="@Application.gravarPermissaoUsoLista()" enctype="multipart/form-data">
@@ -12,11 +12,11 @@
 				name="permissao.idConfiguracao"
 				value="${permissao.idConfiguracao}"> </c:if>
 			<c:if test="${not empty errors}">
-			<p class="gt-error">Alguns campos obrigatórios não foram
+			<p class="gt-error">Alguns campos obrigatÃ³rios nÃ£o foram
 				preenchidos <sigasr:error /></p>
 			</c:if>
 			<div class="gt-form-row gt-width-66">
-				<label>Órgão</label> 
+				<label>ÃrgÃ£o</label> 
 				<sigasr:select name="permissao.orgaoUsuario" items="${orgaos}" valueProperty="idOrgaoUsu"
 				labelProperty="nmOrgaoUsu" value="${permissao.orgaoUsuario?.idOrgaoUsu}">
 				<sigasr:opcao valor="0">Nenhum</sigasr:opcao> 
@@ -32,7 +32,7 @@
 				</sigasr:select>
 			</div>		
 			<div class="gt-form-row gt-width-66">
-				<label>Lotação</label><sigasr:selecao
+				<label>LotaÃ§Ã£o</label><sigasr:selecao
 					tipo="lotacao" nome="permissao.lotacao"
 					value="${permissao.lotacao?.lotacaoAtual}" />
 			</div>
@@ -50,7 +50,7 @@
 			</div>
 			
 			<div class="gt-form-row gt-width-66">
-				<label>Função</label><sigasr:selecao
+				<label>FunÃ§Ã£o</label><sigasr:selecao
 					tipo="funcao" nome="permissao.funcaoConfianca"
 					value="${permissao.funcaoConfianca}" />
 			</div>

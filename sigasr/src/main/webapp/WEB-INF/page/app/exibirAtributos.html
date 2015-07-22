@@ -62,7 +62,7 @@
 				#{/if}
 				#{if atributo.tipoAtributo.name() == "NUM_DECIMAL"}
 					<input type="text" name="solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]" value="${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}" 
-						id="numDecimal" pattern="^\d*(\,\d{2}$)?" title="Somente número e com duas casas decimais EX: 222,22" class="${atributo.idAtributo}"
+						id="numDecimal" pattern="^\d*(\,\d{2}$)?" title="Somente nÃºmero e com duas casas decimais EX: 222,22" class="${atributo.idAtributo}"
 						onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');" maxlength="9"/>
 					<span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span>
 				#{/if}
@@ -70,7 +70,7 @@
 					<input type="text" name="solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]" value="${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}" id="horarioAtributo${atributo.idAtributo}" class="${atributo.idAtributo}"
 						onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${atributo.idAtributo}]');" />
 					<span style="color: red">#{error 'solicitacao.atributoSolicitacaoMap['+atributo.idAtributo+']' /}</span>
-					<span style="color: red; display: none;" id="erroHoraAtributo${atributo.idAtributo}">Horário inválido</span>
+					<span style="color: red; display: none;" id="erroHoraAtributo${atributo.idAtributo}">HorÃ¡rio invÃ¡lido</span>
 					<script>
 						$(function() {
 							$("#horarioAtributo${atributo.idAtributo}").mask("99:99");

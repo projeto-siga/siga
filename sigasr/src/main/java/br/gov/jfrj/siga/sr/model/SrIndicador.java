@@ -21,8 +21,8 @@ public class SrIndicador {
         SrProcessadorScript s = new SrProcessadorScript();
         Map<String, Object> attrs = new HashMap<String, Object>();
         attrs.put("codigo", getConteudoBlobString());
-        attrs.put("lista", Arrays.asList(new String[] { "manga", "pêssego", "abacaxi" }));
-        List<String> lista = Arrays.asList(new String[] { "manga", "pêssego", "abacaxi" });
+        attrs.put("lista", Arrays.asList(new String[] { "manga", "pÃªssego", "abacaxi" }));
+        List<String> lista = Arrays.asList(new String[] { "manga", "pÃªssego", "abacaxi" });
         return s.executar(attrs);
     }
 

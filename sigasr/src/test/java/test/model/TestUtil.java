@@ -30,7 +30,7 @@ public class TestUtil {
 //		if (rj == null) {
 //			rj = new CpOrgaoUsuario();
 //			rj.setIdOrgaoUsu(1L);
-//			rj.setNmOrgaoUsu("Se��o Judici�ria do Rio de Janeiro");
+//			rj.setNmOrgaoUsu("Seï¿½ï¿½o Judiciï¿½ria do Rio de Janeiro");
 //			rj.setSigla("RJ");
 //			rj.setAcronimoOrgaoUsu("JFRJ");
 //			rj.save();
@@ -43,7 +43,7 @@ public class TestUtil {
 //		if (t2 == null) {
 //			t2 = new CpOrgaoUsuario();
 //			t2.setIdOrgaoUsu(3L);
-//			t2.setNmOrgaoUsu("Tribunal Regional Federal da 2� Regi�o");
+//			t2.setNmOrgaoUsu("Tribunal Regional Federal da 2ï¿½ Regiï¿½o");
 //			t2.setSigla("T2");
 //			t2.setAcronimoOrgaoUsu("TRF2");
 //			t2.save();
@@ -98,7 +98,7 @@ public class TestUtil {
 //			sesia.setSiglaLotacao("SESIA");
 //			sesia.setOrgaoUsuario(rj());
 //			sesia.setLotacaoPai(csis());
-//			sesia.setNomeLotacao("Se��o de Sistemas Administrativos");
+//			sesia.setNomeLotacao("Seï¿½ï¿½o de Sistemas Administrativos");
 //			sesia.salvar();
 //			sesia.refresh();
 //		}
@@ -112,7 +112,7 @@ public class TestUtil {
 //			segep.setSiglaLotacao("SEGEP");
 //			segep.setOrgaoUsuario(rj());
 //			segep.setLotacaoPai(csis());
-//			segep.setNomeLotacao("Se��o de Sistemas de Gest�o de Pessoas");
+//			segep.setNomeLotacao("Seï¿½ï¿½o de Sistemas de Gestï¿½o de Pessoas");
 //			segep.salvar();
 //			segep.refresh();
 //		}
@@ -125,7 +125,7 @@ public class TestUtil {
 //			sesuti = new DpLotacao();
 //			sesuti.setSiglaLotacao("SESUTI");
 //			sesuti.setOrgaoUsuario(t2());
-//			sesuti.setNomeLotacao("Se��o de Suporte do TRF");
+//			sesuti.setNomeLotacao("Seï¿½ï¿½o de Suporte do TRF");
 //			sesuti.salvar();
 //			sesuti.refresh();
 //		}
@@ -167,7 +167,7 @@ public class TestUtil {
 //		if (design == null) {
 //			design = new CpTipoConfiguracao();
 //			design.setIdTpConfiguracao(300L);
-//			design.setDscTpConfiguracao("Designa��o");
+//			design.setDscTpConfiguracao("Designaï¿½ï¿½o");
 //			design.salvar();
 //		}
 //		return design;
@@ -178,7 +178,7 @@ public class TestUtil {
 //		if (assoc == null) {
 //			assoc = new CpTipoConfiguracao();
 //			assoc.setIdTpConfiguracao(301L);
-//			assoc.setDscTpConfiguracao("Associa��o");
+//			assoc.setDscTpConfiguracao("Associaï¿½ï¿½o");
 //			assoc.salvar();
 //		}
 //		return assoc;
@@ -189,7 +189,7 @@ public class TestUtil {
 //		if (design == null) {
 //			design = new CpTipoConfiguracao();
 //			design.setIdTpConfiguracao(302L);
-//			design.setDscTpConfiguracao("Permiss�o para Uso de Lista");
+//			design.setDscTpConfiguracao("Permissï¿½o para Uso de Lista");
 //			design.salvar();
 //		}
 //		return design;
@@ -215,9 +215,9 @@ public class TestUtil {
 //				"bySiglaItemConfiguracaoAndHisDtFimIsNull", "99.01.00").first();
 //		if (sysDoc == null) {
 //			sysDoc = new SrItemConfiguracao();
-//			sysDoc.descrItemConfiguracao = "Sistema de Gest�o Documental";
+//			sysDoc.descrItemConfiguracao = "Sistema de Gestï¿½o Documental";
 //			sysDoc.siglaItemConfiguracao = "99.01.00";
-//			sysDoc.tituloItemConfiguracao = "Sistema de Gest�o Documental";
+//			sysDoc.tituloItemConfiguracao = "Sistema de Gestï¿½o Documental";
 //			sysDoc.salvar();
 //			sysDoc.refresh();
 //		}
@@ -260,9 +260,9 @@ public class TestUtil {
 //				"bySiglaItemConfiguracaoAndHisDtFimIsNull", "99.02.00").first();
 //		if (systrab == null) {
 //			systrab = new SrItemConfiguracao();
-//			systrab.descrItemConfiguracao = "Sistema de Gest�o do Trabalho";
+//			systrab.descrItemConfiguracao = "Sistema de Gestï¿½o do Trabalho";
 //			systrab.siglaItemConfiguracao = "99.02.00";
-//			systrab.tituloItemConfiguracao = "Sistema de Gest�o do Trabalho";
+//			systrab.tituloItemConfiguracao = "Sistema de Gestï¿½o do Trabalho";
 //			systrab.salvar();
 //			systrab.refresh();
 //		}
@@ -274,9 +274,9 @@ public class TestUtil {
 //				.first();
 //		if (acaoSoft == null) {
 //			acaoSoft = new SrAcao();
-//			acaoSoft.descrAcao = "A��o para Software";
+//			acaoSoft.descrAcao = "Aï¿½ï¿½o para Software";
 //			acaoSoft.siglaAcao = "99.00";
-//			acaoSoft.tituloAcao = "A��o para Software";
+//			acaoSoft.tituloAcao = "Aï¿½ï¿½o para Software";
 //			acaoSoft.salvar();
 //			acaoSoft.refresh();
 //		}
@@ -365,23 +365,23 @@ public class TestUtil {
 //	}
 //
 //	public static void tiposMov() {
-//		new SrTipoMovimentacao(1L, "In�cio do Atendimento").save();
+//		new SrTipoMovimentacao(1L, "Inï¿½cio do Atendimento").save();
 //		new SrTipoMovimentacao(2L, "Andamento").save();
 //		new SrTipoMovimentacao(3L, "Inclusao em Lista").save();
-//		new SrTipoMovimentacao(4L, "In�cio do Pr�-Atendimento").save();
-//		new SrTipoMovimentacao(5L, "In�cio do P�s-Atendimento").save();
-//		new SrTipoMovimentacao(6L, "Cancelamento de Inclus�o em Lista").save();
+//		new SrTipoMovimentacao(4L, "Inï¿½cio do Prï¿½-Atendimento").save();
+//		new SrTipoMovimentacao(5L, "Inï¿½cio do Pï¿½s-Atendimento").save();
+//		new SrTipoMovimentacao(6L, "Cancelamento de Inclusï¿½o em Lista").save();
 //		new SrTipoMovimentacao(7L, "Fechamento").save();
-//		new SrTipoMovimentacao(8L, "Cancelamento da Solicita��o").save();
-//		new SrTipoMovimentacao(9L, "In�cio de Pend�ncia").save();
+//		new SrTipoMovimentacao(8L, "Cancelamento da Solicitaï¿½ï¿½o").save();
+//		new SrTipoMovimentacao(9L, "Inï¿½cio de Pendï¿½ncia").save();
 //		new SrTipoMovimentacao(10L, "Reabertura").save();
-//		new SrTipoMovimentacao(11L, "Fim de Pend�ncia").save();
-//		new SrTipoMovimentacao(12L, "Anexa��o de Arquivo").save();
-//		new SrTipoMovimentacao(13L, "Altera��o de Prioridade em Lista").save();
-//		new SrTipoMovimentacao(14L, "Cancelamento de Movimenta��o").save();
+//		new SrTipoMovimentacao(11L, "Fim de Pendï¿½ncia").save();
+//		new SrTipoMovimentacao(12L, "Anexaï¿½ï¿½o de Arquivo").save();
+//		new SrTipoMovimentacao(13L, "Alteraï¿½ï¿½o de Prioridade em Lista").save();
+//		new SrTipoMovimentacao(14L, "Cancelamento de Movimentaï¿½ï¿½o").save();
 //		new SrTipoMovimentacao(15L, "Fechamento Parcial").save();
-//		new SrTipoMovimentacao(16L, "Avalia��o").save();
-//		new SrTipoMovimentacao(17L, "In�cio do Controle de Qualidade").save();
+//		new SrTipoMovimentacao(16L, "Avaliaï¿½ï¿½o").save();
+//		new SrTipoMovimentacao(17L, "Inï¿½cio do Controle de Qualidade").save();
 //	}
 //
 //	public static void marcadores() {
@@ -428,13 +428,13 @@ public class TestUtil {
 //
 //		CpMarcador m46 = new CpMarcador();
 //		m46.setIdMarcador(46L);
-//		m46.setDescrMarcador("Pr�-Atendimento");
+//		m46.setDescrMarcador("Prï¿½-Atendimento");
 //		m46.setCpTipoMarcador(cptm);
 //		m46.save();
 //
 //		CpMarcador m47 = new CpMarcador();
 //		m47.setIdMarcador(47L);
-//		m47.setDescrMarcador("P�s-Atendimento");
+//		m47.setDescrMarcador("Pï¿½s-Atendimento");
 //		m47.setCpTipoMarcador(cptm);
 //		m47.save();
 //

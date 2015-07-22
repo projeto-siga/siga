@@ -70,7 +70,7 @@ public class SrSolicitacaoListaVO {
             if (lista != null) {
                 SrPrioridadeSolicitacao prioridade = lista.getSrPrioridadeSolicitacao(sol);
 
-                // só adiciona caso exista o vínculo entre a lista e a Solicitação
+                // sÃ³ adiciona caso exista o vÃ­nculo entre a lista e a SolicitaÃ§Ã£o
                 if (prioridade != null)
                     solicitacoesVO.getItens().add(
                             new SrSolicitacaoVO(sol, lista, prioridade, propriedade, isPopup, lotaTitular, cadastrante, solicitacoesVO.isPodeRemover(), solicitacoesVO.isPodePriorizar()));
@@ -103,7 +103,7 @@ public class SrSolicitacaoListaVO {
 
     private List<ColunasVO> getColunasEmComum() {
     	List<ColunasVO> colunasVO = new ArrayList<ColunasVO>();
-		colunasVO.add(new ColunasVO("C�digo", "codigoFormatado", "gt-celula-nowrap numero-solicitacao solicitacao-codigo", LARGURA_COLUNA_CODIGO));
+		colunasVO.add(new ColunasVO("Código", "codigoFormatado", "gt-celula-nowrap numero-solicitacao solicitacao-codigo", LARGURA_COLUNA_CODIGO));
 		colunasVO.add(new ColunasVO("Teor", "teorFormatado", "gt-celula-nowrap solicitacao-dados"));
 		colunasVO.add(new ColunasVO("Solicitante", "solicitanteFormatado", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
 		colunasVO.add(new ColunasVO("Aberto", "dtRegString", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
@@ -111,8 +111,8 @@ public class SrSolicitacaoListaVO {
 		colunasVO.add(new ColunasVO("Prioridade", "prioridadeFormatada", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO, false, false, true));
 		colunasVO.add(new ColunasVO("Prior. Tecnica", "prioridadeTecnicaFormatada", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
 		colunasVO.add(new ColunasVO("Prazo", "prazo", "gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO));
-		colunasVO.add(new ColunasVO("Situa��o", "marcadoresEmHtml", "gt-celula-nowrap solicitacao-dados", null, false, false, true));
-		colunasVO.add(new ColunasVO("�ltimo Andamento", "ultimaMovimentacaoformatada", "gt-celula-nowrap solicitacao-dados", null, false, false, true));
+		colunasVO.add(new ColunasVO("Situação", "marcadoresEmHtml", "gt-celula-nowrap solicitacao-dados", null, false, false, true));
+		colunasVO.add(new ColunasVO("Último Andamento", "ultimaMovimentacaoformatada", "gt-celula-nowrap solicitacao-dados", null, false, false, true));
 		return colunasVO;
     }
 
@@ -120,8 +120,8 @@ public class SrSolicitacaoListaVO {
 List<ColunasVO> colunasDetalhamento = new ArrayList<ColunasVO>();
 		
 		colunasDetalhamento.add(new ColunasVO("Teor", "teorFormatado"));
-		colunasDetalhamento.add(new ColunasVO("Situa��o", "marcadoresEmHtmlDetalhes", "", null, true, true, true));
-		colunasDetalhamento.add(new ColunasVO("�ltima Movimenta��o", "ultimaMovimentacaoformatada"));
+		colunasDetalhamento.add(new ColunasVO("Situação", "marcadoresEmHtmlDetalhes", "", null, true, true, true));
+		colunasDetalhamento.add(new ColunasVO("Última Movimentação", "ultimaMovimentacaoformatada"));
 		
 		return colunasDetalhamento;
     }
@@ -136,7 +136,7 @@ List<ColunasVO> colunasDetalhamento = new ArrayList<ColunasVO>();
         List<ColunasVO> colunasResult = null;
         Gson gson = builder.create();
 
-        // remove a primeira coluna, que será sempre o detalhamento ou posição na lista
+        // remove a primeira coluna, que serÃ¡ sempre o detalhamento ou posiÃ§Ã£o na lista
         if (!colunas.isEmpty()) {
             if (telaDeListas)
                 colunasResult = colunas.subList(1, colunas.size() - 1);

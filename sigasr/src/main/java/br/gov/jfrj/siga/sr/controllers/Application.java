@@ -127,7 +127,7 @@ public class Application extends SrController {
     }
 
     // protected static void assertAcesso(String path) throws Exception {
-    // SigaApplication.assertAcesso("SR:M�dulo de Servi�os;" + path);
+    // SigaApplication.assertAcesso("SR:Mï¿½dulo de Serviï¿½os;" + path);
     // }
 
     // @Catch()
@@ -310,7 +310,7 @@ public class Application extends SrController {
     @SuppressWarnings("static-access")
     private void validarFormEditarItem(SrItemConfiguracao itemConfiguracao) throws Exception {
         if (itemConfiguracao.getSiglaItemConfiguracao().equals("")) {
-            srValidator.addError("siglaAcao", "C�digo n�o informado");
+            srValidator.addError("siglaAcao", "Cï¿½digo nï¿½o informado");
         }
         if (srValidator.hasErrors()) {
             enviarErroValidacao();
@@ -321,10 +321,10 @@ public class Application extends SrController {
     @SuppressWarnings("static-access")
     private void validarFormEditarAcao(SrAcao acao) {
         if (acao.getSiglaAcao().equals("")) {
-            srValidator.addError("siglaAcao", "C�digo n�o informado");
+            srValidator.addError("siglaAcao", "Cï¿½digo nï¿½o informado");
         }
         if (acao.getTituloAcao().equals("")) {
-            srValidator.addError("tituloAcao", "Titulo n�o informado");
+            srValidator.addError("tituloAcao", "Titulo nï¿½o informado");
         }
         if (srValidator.hasErrors()) {
             enviarErroValidacao();
@@ -333,10 +333,10 @@ public class Application extends SrController {
 
     private void validarFormEditarTipoAcao(SrTipoAcao acao) {
         if (acao.getSiglaTipoAcao().equals("")) {
-            srValidator.addError("siglaAcao", "Código não informado");
+            srValidator.addError("siglaAcao", "CÃ³digo nÃ£o informado");
         }
         if (acao.getTituloTipoAcao().equals("")) {
-            srValidator.addError("tituloAcao", "Titulo não informado");
+            srValidator.addError("tituloAcao", "Titulo nÃ£o informado");
         }
         if (srValidator.hasErrors()) {
             enviarErroValidacao();
@@ -358,7 +358,7 @@ public class Application extends SrController {
         StringBuffer sb = new StringBuffer();
 
         if (designacao.getDescrConfiguracao() == null || designacao.getDescrConfiguracao().isEmpty())
-            srValidator.addError("designacao.descrConfiguracao", "Descri��o n�o informada");
+            srValidator.addError("designacao.descrConfiguracao", "Descriï¿½ï¿½o nï¿½o informada");
 
         for (SrError error : srValidator.getErros()) {
             sb.append(error.getKey() + ";");
@@ -458,7 +458,7 @@ public class Application extends SrController {
 
         // Header
         StringBuilder sbevol = new StringBuilder();
-        sbevol.append("['M�s','Fechados','Abertos'],");
+        sbevol.append("['Mï¿½s','Fechados','Abertos'],");
 
         // Values
         for (int i = -6; i <= 0; i++) {
@@ -517,7 +517,7 @@ public class Application extends SrController {
 
         // Header
         StringBuilder sbGUT = new StringBuilder();
-        sbGUT.append("['Gravidade','Urg�ncia','Total'],");
+        sbGUT.append("['Gravidade','Urgï¿½ncia','Total'],");
 
         // Values
         for (Iterator<String[]> itgut = listaGUT.iterator(); itgut.hasNext();) {
@@ -542,12 +542,12 @@ public class Application extends SrController {
     public void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         if (solicitacao == null)
-            throw new Exception("Solicita��o n�o encontrada");
+            throw new Exception("Solicitaï¿½ï¿½o nï¿½o encontrada");
         else
             solicitacao = solicitacao.getSolicitacaoAtual();
 
         if (solicitacao == null)
-            throw new Exception("Esta solicita��o foi exclu�da");
+            throw new Exception("Esta solicitaï¿½ï¿½o foi excluï¿½da");
 
         SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 
@@ -576,7 +576,7 @@ public class Application extends SrController {
         String jsonPrioridades = SrPrioridade.getJSON().toString();
 
         if (!lista.podeConsultar(getLotaTitular(), getCadastrante())) {
-            throw new Exception("Exibi��o n�o permitida");
+            throw new Exception("Exibiï¿½ï¿½o nï¿½o permitida");
         }
 
         try {
@@ -598,7 +598,7 @@ public class Application extends SrController {
 
     public void incluirEmListaGravar(Long idSolicitacao, Long idLista, SrPrioridade prioridade, Boolean naoReposicionarAutomatico) throws Exception {
         if (idLista == null) {
-            throw new Exception("Selecione a lista para inclusão da solicitação");
+            throw new Exception("Selecione a lista para inclusÃ£o da solicitaÃ§Ã£o");
         }
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(idSolicitacao);
         SrLista lista = SrLista.AR.findById(idLista);
@@ -626,10 +626,10 @@ public class Application extends SrController {
         // render("@selecionar", sel);
     }
 
-    // DB1: foi necess�rio receber e passar o parametro "nome"(igual ao buscarItem())
+    // DB1: foi necessï¿½rio receber e passar o parametro "nome"(igual ao buscarItem())
     // para chamar a function javascript correta,
-    // e o parametro "popup" porque este metodo � usado tamb�m na lista,
-    // e n�o foi poss�vel deixar default no template(igual ao buscarItem.html)
+    // e o parametro "popup" porque este metodo ï¿½ usado tambï¿½m na lista,
+    // e nï¿½o foi possï¿½vel deixar default no template(igual ao buscarItem.html)
     @SuppressWarnings("unchecked")
     public void buscarSolicitacao(SrSolicitacaoFiltro filtro, String nome, boolean popup) throws Exception {
         SrSolicitacaoListaVO solicitacaoListaVO;
@@ -646,7 +646,7 @@ public class Application extends SrController {
         }
 
         // Montando o filtro...
-        String[] tipos = new String[] { "Pessoa", "Lota��o" };
+        String[] tipos = new String[] { "Pessoa", "Lotaï¿½ï¿½o" };
         List<CpMarcador> marcadores = ContextoPersistencia.em().createQuery("select distinct cpMarcador from SrMarca").getResultList();
 
         List<SrAtributo> atributosDisponiveisAdicao = atributosDisponiveisAdicaoConsulta(filtro);
@@ -686,7 +686,7 @@ public class Application extends SrController {
     public void responderPesquisa(Long id) throws Exception {
         /*
          * SrSolicitacao sol = SrSolicitacao.findById(id); SrPesquisa pesquisa = sol.getPesquisaDesignada(); if (pesquisa == null) throw new
-         * Exception("Não foi encontrada nenhuma pesquisa designada para esta solicitação."); pesquisa = SrPesquisa.findById(pesquisa.idPesquisa); pesquisa = pesquisa.getPesquisaAtual(); render(id,
+         * Exception("NÃ£o foi encontrada nenhuma pesquisa designada para esta solicitaÃ§Ã£o."); pesquisa = SrPesquisa.findById(pesquisa.idPesquisa); pesquisa = pesquisa.getPesquisaAtual(); render(id,
          * pesquisa);
          */
     }
@@ -788,7 +788,7 @@ public class Application extends SrController {
                 mov.setAtendente(null);
             mov.setMotivoEscalonamento(motivo);
             mov.setDesignacao(SrConfiguracao.AR.findById(idDesignacao));
-            mov.setDescrMovimentacao("Motivo: " + mov.getMotivoEscalonamento() + "; Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() + "; A��o: " + mov.getAcao().getTituloAcao()
+            mov.setDescrMovimentacao("Motivo: " + mov.getMotivoEscalonamento() + "; Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() + "; Aï¿½ï¿½o: " + mov.getAcao().getTituloAcao()
                     + "; Atendente: " + mov.getLotaAtendente().getSigla());
             mov.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
             exibir(solicitacao.getIdSolicitacao(), todoOContexto(), ocultas());
@@ -1230,7 +1230,7 @@ public class Application extends SrController {
     @SuppressWarnings("static-access")
     private void validarFormEditarAtributo(SrAtributo atributo) {
         if (atributo.getTipoAtributo() == SrTipoAtributo.VL_PRE_DEFINIDO && atributo.getDescrPreDefinido().equals("")) {
-            srValidator.addError("att.descrPreDefinido", "Valores Pr�-definido n�o informados");
+            srValidator.addError("att.descrPreDefinido", "Valores Prï¿½-definido nï¿½o informados");
         }
 
         if (srValidator.hasErrors()) {
@@ -1391,7 +1391,7 @@ public class Application extends SrController {
         // a atualizacao da classificacao quando ocorre mudanca de posicao na
         // hierarquia, pois isso eh mais complexo de acertar.
 
-        // Karina: Comentado pois precisa ser refatorado devido ao uso do ConexaoHTTP que est� deprecated
+        // Karina: Comentado pois precisa ser refatorado devido ao uso do ConexaoHTTP que estï¿½ deprecated
         // try {
         // HashMap<String, String> atributos = new HashMap<String, String>();
         // for (Http.Header h : request.headers.values())
@@ -1547,7 +1547,7 @@ public class Application extends SrController {
 
     private void validarFormEditarLista(SrLista lista) {
         if (lista.getNomeLista() == null || lista.getNomeLista().trim().equals("")) {
-            srValidator.addError("lista.nomeLista", "Nome da Lista não informados");
+            srValidator.addError("lista.nomeLista", "Nome da Lista nÃ£o informados");
         }
 
         if (srValidator.hasErrors()) {
@@ -1581,7 +1581,7 @@ public class Application extends SrController {
                 sol.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
             }
         }
-        // renderText("Atualização realizada com sucesso");
+        // renderText("AtualizaÃ§Ã£o realizada com sucesso");
     }
 
     public String configuracoesParaInclusaoAutomatica(Long idLista, boolean mostrarDesativados) throws Exception {

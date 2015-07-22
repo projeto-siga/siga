@@ -78,7 +78,7 @@
 			if(listaService.selecionou()) {
 				if(listaService.podePriorizar()) listaService.abrirModalPrioridade();
 				else  listaService.form.submit();
-			} else alert('Selecione uma lista para inclus„o da solicitaÁ„o');
+			} else alert('Selecione uma lista para inclus√£o da solicita√ß√£o');
 		}
 
 		listaService.abrirModalPrioridade = function() {

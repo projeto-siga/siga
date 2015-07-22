@@ -9,13 +9,13 @@
 						<td align="center" valign="top" colspan="4">Dados da a&ccedil;&atilde;o</td>
 					</tr>
 					<tr>
-						<td>Código:</td>
+						<td>CÃ³digo:</td>
 						<td><input type="text" name="filtro.siglaAcao"
 							value="${filtro?.siglaAcao}" />
 						</td>
 					</tr>
 					<tr>
-						<td>Título</td>
+						<td>TÃ­tulo</td>
 						<td><input type="text" name="filtro.tituloAcao"
 							value="${filtro?.tituloAcao}" />  <input type="hidden" name="nome"
 							value="${nome}" />
@@ -36,7 +36,7 @@
 	<div class="gt-content-box gt-for-table">
 		<table class="gt-table">
 			<tr>
-				<th>Código
+				<th>CÃ³digo
 				</td>
 				<th>Descri&ccedil;&atilde;o
 				</td>

@@ -45,49 +45,49 @@ public class SrRelPrazo extends RelatorioTemplate {
 		super(parametros);
 		if (parametros.get("dtIni").equals("")) {
 			throw new DJBuilderException(
-					"Par‚metro data inicial n„o informado!");
+					"Par√¢metro data inicial n√£o informado!");
 		}
 		if (parametros.get("dtFim").equals("")) {
-			throw new DJBuilderException("Par‚metro data final n„o informado!");
+			throw new DJBuilderException("Par√¢metro data final n√£o informado!");
 		}
 		if (parametros.get("local") == null) {
-			throw new DJBuilderException("Par‚metro local n„o informado!");
+			throw new DJBuilderException("Par√¢metro local n√£o informado!");
 		}
 	}
 
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException {
 
-		this.setTitle("RelatÛrio de SolicitaÁıes por NÌvel de ServiÁo");
+		this.setTitle("Relat√≥rio de Solicita√ß√µes por N√≠vel de Servi√ßo");
 		estiloTituloColuna.setFont(new Font(8, "Arial", true));
 
 		this.addColuna("Local", 100, RelatorioRapido.DIREITA, true,
 				String.class);
-		Coluna cls_1 = this.addColuna("AtÈ 1h", 11, RelatorioRapido.DIREITA,
+		Coluna cls_1 = this.addColuna("At√© 1h", 11, RelatorioRapido.DIREITA,
 				false, Double.class);
 		cls_1.setPadrao("0");
 		Coluna perc_cls_1 = this.addColuna("%Total", 11,
 				RelatorioRapido.DIREITA, false, Double.class);
 		perc_cls_1.setPadrao("0.00%");
-		Coluna cls_2 = this.addColuna("AtÈ 2hs", 11, RelatorioRapido.DIREITA,
+		Coluna cls_2 = this.addColuna("At√© 2hs", 11, RelatorioRapido.DIREITA,
 				false, Double.class);
 		cls_2.setPadrao("0");
 		Coluna perc_cls_2 = this.addColuna("%Total", 11,
 				RelatorioRapido.DIREITA, false, Double.class);
 		perc_cls_2.setPadrao("0.00%");
-		Coluna cls_4 = this.addColuna("AtÈ 4hs", 11, RelatorioRapido.DIREITA,
+		Coluna cls_4 = this.addColuna("At√© 4hs", 11, RelatorioRapido.DIREITA,
 				false, Double.class);
 		cls_4.setPadrao("0");
 		Coluna perc_cls_4 = this.addColuna("%Total", 11,
 				RelatorioRapido.DIREITA, false, Double.class);
 		perc_cls_4.setPadrao("0.00%");
-		Coluna cls_12 = this.addColuna("AtÈ 12hs", 11, RelatorioRapido.DIREITA,
+		Coluna cls_12 = this.addColuna("At√© 12hs", 11, RelatorioRapido.DIREITA,
 				false, Double.class);
 		cls_12.setPadrao("0");
 		Coluna perc_cls_12 = this.addColuna("%Total", 11,
 				RelatorioRapido.DIREITA, false, Double.class);
 		perc_cls_12.setPadrao("0.00%");
-		Coluna cls_24 = this.addColuna("AtÈ 24 hs", 11,
+		Coluna cls_24 = this.addColuna("At√© 24 hs", 11,
 				RelatorioRapido.DIREITA, false, Double.class);
 		cls_24.setPadrao("0");
 		Coluna perc_cls_24 = this.addColuna("%Total", 11,

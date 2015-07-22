@@ -36,7 +36,7 @@
 					<thead>
 						<tr>
 							<th style="font-weight: bold;">Sigla</th>
-							<th>Lotação</th>
+							<th>LotaÃ§Ã£o</th>
 						</tr>
 					</thead>	
 					<tbody>
@@ -84,7 +84,7 @@
 			opts.dataTable = $('#equipes_table').dataTable({
 				stateSave : true,
 				"language": {
-					"emptyTable":     "Não existem resultados",
+					"emptyTable":     "NÃ£o existem resultados",
 				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -97,13 +97,13 @@
 				    "zeroRecords":    "Nenhum registro encontrado",
 				    "paginate": {
 				        "first":      "Primeiro",
-				        "last":       "Último",
-				        "next":       "Próximo",
+				        "last":       "Ãšltimo",
+				        "next":       "PrÃ³ximo",
 				        "previous":   "Anterior"
 				    },
 				    "aria": {
-				        "sortAscending":  ": clique para ordenação crescente",
-				        "sortDescending": ": clique para ordenação decrescente"
+				        "sortAscending":  ": clique para ordenaÃ§Ã£o crescente",
+				        "sortDescending": ": clique para ordenaÃ§Ã£o decrescente"
 				    }
 				},
 				"iDisplayLength": 25
@@ -138,7 +138,7 @@
 	equipeService.getListasAsString = function() {
 		var params = '', dataAux = new Date();
 
-		// Percorre lista de Exceções
+		// Percorre lista de ExceÃ§Ãµes
 		equipeService.excecoesTable.api().rows().indexes().each(
 				function(i) {
 					var rowValues = equipeService.excecoesTable.api().row(i)
@@ -197,7 +197,7 @@
 					.dataTable(
 							{
 								"language" : {
-									"emptyTable" : "Não existem resultados",
+									"emptyTable" : "NÃ£o existem resultados",
 									"info" : "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 									"infoEmpty" : "Mostrando de 0 a 0 do total de 0 registros",
 									"infoFiltered" : "(filtrando do total de _MAX_ registros)",
@@ -210,13 +210,13 @@
 									"zeroRecords" : "Nenhum registro encontrado",
 									"paginate" : {
 										"first" : "Primeiro",
-										"last" : "Último",
-										"next" : "Próximo",
+										"last" : "Ãšltimo",
+										"next" : "PrÃ³ximo",
 										"previous" : "Anterior"
 									},
 									"aria" : {
-										"sortAscending" : ": clique para ordenação crescente",
-										"sortDescending" : ": clique para ordenação decrescente"
+										"sortAscending" : ": clique para ordenaÃ§Ã£o crescente",
+										"sortDescending" : ": clique para ordenaÃ§Ã£o decrescente"
 									}
 								},
 								"columnDefs" : [ {
@@ -228,7 +228,7 @@
 							});
 		}
 
-		// Remover exceções
+		// Remover exceÃ§Ãµes
 		$('#excecoes_table tbody').on(
 				'click',
 				'a.excecao_remove',
@@ -247,7 +247,7 @@
 			equipeService.carregarExcecoes(equipe);
 			equipeService.carregarDesignacoes(equipe.idEquipe);
 		}
-		// Caso seja cadastro, atualiza os dados da Lotação
+		// Caso seja cadastro, atualiza os dados da LotaÃ§Ã£o
 		else {
 			var lotacaoUsuarioValue = $("#lotacaoUsuario").val();
 		    if (lotacaoUsuarioValue && lotacaoUsuarioValue != "") {
@@ -261,7 +261,7 @@
 		    }else{
 		    	equipeEdicao = {};
 			}
-			// chama o editar para popular o campo da lotação
+			// chama o editar para popular o campo da lotaÃ§Ã£o
 			equipeService.formularioHelper.populateFromJson(equipeEdicao);
 			designacaoService.populateFromJSonList({});
 		}
@@ -284,7 +284,7 @@
 		var table = $('#excecoes_table');
 
 		if (equipe.excecaoHorarioSet) {
-			// cria a lista de Exceções de horário, e adiciona na tela
+			// cria a lista de ExceÃ§Ãµes de horÃ¡rio, e adiciona na tela
 			for (i = 0; i < equipe.excecaoHorarioSet.length; i++) {
 				var item = equipe.excecaoHorarioSet[i];
 				row = [
@@ -328,7 +328,7 @@
 						designacaoService.populateFromJSonList(listaJSon);
 					},
 					error : function(error) {
-						alert("Não foi possível carregar as Designações desta Equipe.");
+						alert("NÃ£o foi possÃ­vel carregar as DesignaÃ§Ãµes desta Equipe.");
 					}
 				});
 	}

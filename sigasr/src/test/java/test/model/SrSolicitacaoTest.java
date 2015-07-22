@@ -67,12 +67,12 @@ package test.model;
 		apagaCacheDesignacao();
 		assertEquals(4, sol.getItensDisponiveis().size());
 =======
-//		// N�o traz nenhum pois n�o tem designa��o
+//		// Nï¿½o traz nenhum pois nï¿½o tem designaï¿½ï¿½o
 //		SrSolicitacao sol = new SrSolicitacao();
 //		sol.solicitante = eeh();
 //		assertEquals(0, sol.getItensDisponiveis().size());
 //
-//		// N�o traz nenhum, pois est� fora do escopo
+//		// Nï¿½o traz nenhum, pois estï¿½ fora do escopo
 //		SrConfiguracao designTRF = new SrConfiguracao();
 //		designTRF.atendente = sesuti();
 //		designTRF.setOrgaoUsuario(t2());
@@ -80,7 +80,7 @@ package test.model;
 //		apagaCacheDesignacao();
 //		assertEquals(0, sol.getItensDisponiveis().size());
 //
-//		// Traz todos, pois designa��o n�o define item
+//		// Traz todos, pois designaï¿½ï¿½o nï¿½o define item
 //		sol.solicitante = funcionarioTRF();
 //		assertEquals(5, sol.getItensDisponiveis().size());
 //
@@ -161,7 +161,7 @@ package test.model;
 //		sol.itemConfiguracao = systrab();
 //		assertEquals(0, sol.getAcoesDisponiveis().size());
 //
-//		// Traz todas as acoes, mas associadas � mesma lotacao, que eh a
+//		// Traz todas as acoes, mas associadas ï¿½ mesma lotacao, que eh a
 //		// definida na designacao
 //		sol.itemConfiguracao = sigadoc();
 //		Map<SrAcao, DpLotacao> acoesELotas = sol
@@ -170,7 +170,7 @@ package test.model;
 //		assertTrue(acoesELotas.get(manterSoft()).equivale(csis()));
 //		assertTrue(acoesELotas.get(criarSoft()).equivale(csis()));
 //
-//		// Traz todas as a��es,ainda associadas � mesma lotacao, visto que a
+//		// Traz todas as aï¿½ï¿½es,ainda associadas ï¿½ mesma lotacao, visto que a
 //		// nova design criada abaixo nao fica visivel por ser de menor
 //		// prioridade do que a designacao anterior, que define item
 //		SrConfiguracao design2 = new SrConfiguracao();
@@ -271,7 +271,7 @@ package test.model;
 		sol.refresh();
 		assertEquals(3, sol.getMovimentacaoSet().size());
 =======
-		// Ver se a lista de movimenta��es � a mesma
+		// Ver se a lista de movimentaï¿½ï¿½es ï¿½ a mesma
 //		SrConfiguracao d = new SrConfiguracao();
 //		d.atendente = sesia();
 //		d.salvarComoDesignacao();
@@ -488,7 +488,7 @@ package test.model;
 //		lista.refresh();
 //
 //		SrLista lista2 = new SrLista();
-//		lista2.nomeLista = "Lista de Teste de Outra Lota��o";
+//		lista2.nomeLista = "Lista de Teste de Outra Lotaï¿½ï¿½o";
 //		lista2.lotaCadastrante = csis();
 //		lista2.salvar();
 //		lista2.refresh();
@@ -518,14 +518,14 @@ package test.model;
 //		assertEquals(2, sol2.getPrioridadeNaLista(lista));
 //		assertEquals(3, sol3.getPrioridadeNaLista(lista));
 //
-//		// Tirando a sol n�1, a 2 e 3 mudam de ordem para ocupar a vaga
+//		// Tirando a sol nï¿½1, a 2 e 3 mudam de ordem para ocupar a vaga
 //		sol.retirarDeLista(lista, eeh(), sesia());
 //		assertEquals(1, sol2.getPrioridadeNaLista(lista));
 //		assertEquals(2, sol3.getPrioridadeNaLista(lista));
 //		assertFalse(sol.isEmLista(lista));
 //
 //		// Editar a lista e garantir que continua ok, retirando
-//		// a sol n� 3 e checando ordem
+//		// a sol nï¿½ 3 e checando ordem
 //		lista.nomeLista = "Lista de Teste alterada";
 //		lista.salvar();
 //		lista.refresh();
@@ -536,9 +536,9 @@ package test.model;
 //		assertEquals(1, sol2.getPrioridadeNaLista(lista));
 //		assertFalse(sol3.isEmLista(lista));
 //
-//		// reincluir as solicita��es retiradas (fica 2-1-3), mandar reordenar
-//		// pra 3-1-2 e checar ordem, conferindo se a n� 1 ficou sem mov
-//		// de prioriza��o, visto que n�o saiu da posi��o
+//		// reincluir as solicitaï¿½ï¿½es retiradas (fica 2-1-3), mandar reordenar
+//		// pra 3-1-2 e checar ordem, conferindo se a nï¿½ 1 ficou sem mov
+//		// de priorizaï¿½ï¿½o, visto que nï¿½o saiu da posiï¿½ï¿½o
 //		sol.incluirEmLista(lista, eeh(), sesia());
 //		sol3.incluirEmLista(lista, eeh(), sesia());
 //		lista.priorizar(eeh(), sesia(),
@@ -585,7 +585,7 @@ package test.model;
 //		sol.solicitante = eeh();
 //		sol.salvar();
 //
-//		sol.fechar(sesia(), eeh(), "Fechando. Iniciar p�s-atendimento.");
+//		sol.fechar(sesia(), eeh(), "Fechando. Iniciar pï¿½s-atendimento.");
 //		assertTrue(sol.isEmPosAtendimento());
 //		assertTrue(sol.isMarcada(
 //				CpMarcador.MARCADOR_SOLICITACAO_POS_ATENDIMENTO, csis()));
@@ -667,7 +667,7 @@ package test.model;
 //		assertTrue(sol.isMarcada(
 //				CpMarcador.MARCADOR_SOLICITACAO_FECHADO_PARCIAL, sesia()));
 //
-//		// N�o pode fechar diretamente nesse est�gio
+//		// Nï¿½o pode fechar diretamente nesse estï¿½gio
 //		assertFalse(sol.podeFechar(sesia(), eeh()));
 //
 //		// Soh quem pode responder a pesquisa eh o subscritor

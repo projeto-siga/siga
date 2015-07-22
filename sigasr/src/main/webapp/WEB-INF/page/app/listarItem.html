@@ -1,4 +1,4 @@
-#{extends 'main.html' /} #{set title:'Designação de solicitações' /}
+#{extends 'main.html' /} #{set title:'DesignaÃ§Ã£o de solicitaÃ§Ãµes' /}
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
@@ -49,7 +49,7 @@ tr.shown td.details-control {
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
-		<h2>Itens de Configuração</h2>
+		<h2>Itens de ConfiguraÃ§Ã£o</h2>
 		<!-- content bomex -->
 		<div class="gt-content-box dataTables_div">
 			<div class="gt-form-row dataTables_length">
@@ -63,9 +63,9 @@ tr.shown td.details-control {
 								<span id="iconeBotaoExpandirTodos">+</span>
 							</button>
 						</th>
-						<th>Código</th>
-						<th>Título</th>
-						<th>Descrição</th>
+						<th>CÃ³digo</th>
+						<th>TÃ­tulo</th>
+						<th>DescriÃ§Ã£o</th>
 						<th>Similaridade</th>
 						<th></th>
 						<th>VO Item</th>
@@ -75,7 +75,7 @@ tr.shown td.details-control {
 				<tbody>
 					#{list items:itens, as:'item'}
 						<tr data-json-id="${item.idItemConfiguracao}" data-json="${item.toVO().toJson()}" 
-							onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuração')"
+							onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuraÃ§Ã£o')"
 							style="cursor: pointer;">
 							<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
 							<td>${item.siglaItemConfiguracao}</td>
@@ -242,7 +242,7 @@ tr.shown td.details-control {
 	itemConfiguracaoService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		atualizarModalItem(obj);
-		// carrega as designações do item
+		// carrega as designaÃ§Ãµes do item
 		carregarDesignacoes(obj.id);
 	}
 
@@ -298,7 +298,7 @@ tr.shown td.details-control {
         		designacaoService.populateFromJSonList(listaJSon);
         	},
         	error: function(error) {
-            	alert("Não foi possível carregar as Designações deste item.");
+            	alert("NÃ£o foi possÃ­vel carregar as DesignaÃ§Ãµes deste item.");
         	}
        	});
     }

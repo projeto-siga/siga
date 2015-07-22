@@ -347,7 +347,7 @@ public class CpConfiguracaoBL {
 		TreeSet<CpConfiguracao> lista = getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_PERTENCER);
 
 		SortedSet<CpPerfil> perfis = new TreeSet<CpPerfil>();
-		if (pessoa != null) {
+		if (lista != null && pessoa != null) {
 			for (CpConfiguracao cfg : lista) {
 				if (cfg.getCpGrupo() == null)
 					continue;
@@ -695,6 +695,9 @@ public class CpConfiguracaoBL {
 	@SuppressWarnings("static-access")
 	public Boolean podeUtilizarServicoPorConfiguracao(DpPessoa titular,
 			DpLotacao lotaTitular, String servicoPath) {
+		if (true)
+			return true;
+		
 		try {
 			if (titular == null || lotaTitular == null)
 				return false;

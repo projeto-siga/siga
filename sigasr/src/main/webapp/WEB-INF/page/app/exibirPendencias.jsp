@@ -2,7 +2,7 @@
 	<c:set var="podeTerminar" value="${solicitacao.podeTerminarPendencia(lotaTitular, cadastrante)}" />
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
-			<h3>Pendências</h3>
+			<h3>PendÃªncias</h3>
 			<c:forEach items="${solicitacao.pendenciasEmAberto}" var="pendencia">
 				<p>
 					<b>${pendencia.motivoPendenciaString}</b><c:if test="${pendencia.dtAgenda}"> at&eacute; ${pendencia.dtAgendaDDMMYYHHMM}</c:if> - ${pendencia.descrMovimentacao}

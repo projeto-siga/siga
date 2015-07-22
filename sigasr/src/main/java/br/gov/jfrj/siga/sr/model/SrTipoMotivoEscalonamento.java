@@ -2,7 +2,7 @@ package br.gov.jfrj.siga.sr.model;
 
 public enum SrTipoMotivoEscalonamento {
 
-    ERRO_ESCALONAMENTO(1, "Erro de escalonamento"), NOVO_ATENDENTE(2, "Escalonar solicitação para novo atendente"), DADOS_INSUFICIENTES(3, "Dados insuficientes");
+    ERRO_ESCALONAMENTO(1, "Erro de escalonamento"), NOVO_ATENDENTE(2, "Escalonar solicitaÃ§Ã£o para novo atendente"), DADOS_INSUFICIENTES(3, "Dados insuficientes");
 
     private int nivelTipoMotivoEscalonamento;
     private String descrTipoMotivoEscalonamento;

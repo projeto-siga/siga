@@ -71,7 +71,7 @@
                 <c:if test="${atributo.tipoAtributo.name() == 'NUM_DECIMAL'}">
                     <input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
                     <input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" 
-                        id="numDecimal" pattern="^\d*(\,\d{2}$)?" title="Somente número e com duas casas decimais EX: 222,22" class="${atributo.idAtributo}"
+                        id="numDecimal" pattern="^\d*(\,\d{2}$)?" title="Somente nÃºmero e com duas casas decimais EX: 222,22" class="${atributo.idAtributo}"
                         onchange="notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" maxlength="9"/>
 					<siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
                 </c:if>

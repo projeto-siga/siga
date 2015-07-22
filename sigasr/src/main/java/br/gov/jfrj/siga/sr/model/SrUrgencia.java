@@ -2,8 +2,8 @@ package br.gov.jfrj.siga.sr.model;
 
 public enum SrUrgencia {
 
-    SEM_PRESSA(1, "Sem urgência.", "Sem pressa"), NORMAL(2, "Urgência normal.", "Quando for oportuno"), URGENCIA(3, "Urgente.", "Com urgência"), MUITA_URGENCIA(4, "Muito urgente.",
-            "Com muita urgência"), AGIR_IMEDIATO(5, "Extremamente urgente.", "Imediatamente");
+    SEM_PRESSA(1, "Sem urgÃªncia.", "Sem pressa"), NORMAL(2, "UrgÃªncia normal.", "Quando for oportuno"), URGENCIA(3, "Urgente.", "Com urgÃªncia"), MUITA_URGENCIA(4, "Muito urgente.",
+            "Com muita urgÃªncia"), AGIR_IMEDIATO(5, "Extremamente urgente.", "Imediatamente");
 
     private int nivelUrgencia;
 

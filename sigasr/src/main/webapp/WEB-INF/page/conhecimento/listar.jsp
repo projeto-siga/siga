@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Edição de Conhecimento">
+<siga:pagina titulo="EdiÃ§Ã£o de Conhecimento">
 	<jsp:include page="../main.jsp"></jsp:include>
 	<div class="gt-bd gt-cols clearfix">
 	    <div class="gt-content">
@@ -9,7 +9,7 @@
             <div class="gt-form gt-content-box">
             	<form enctype="multipart/form-data">
                		<div class="gt-form-row">
-						<label>Item de Configuração</label> 
+						<label>Item de ConfiguraÃ§Ã£o</label> 
 						<siga:selecao2 propriedade="itemConfiguracao" tipo="itemConfiguracao" tema="simple" modulo="sigasr" onchange="mostraOuEscondeAcao();carregarRelacionados();"/>
 					</div>
 					<div style="display: inline-block" >

@@ -100,7 +100,7 @@
 		</form>
 	</div>
 
-	<siga:modal nome="lotacaoAtendente" titulo="Alterar Atendente padrão">
+	<siga:modal nome="lotacaoAtendente" titulo="Alterar Atendente padrÃ£o">
 		<div id="dialogAtendente">
 			<div class="gt-content">
 				<div class="gt-form gt-content-box">

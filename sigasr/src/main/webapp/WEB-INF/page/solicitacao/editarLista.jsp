@@ -174,7 +174,7 @@
 	</form>
 </div>
 
-<siga:modal nome="controleAcesso" titulo="Cadastrar Permiss„o">
+<siga:modal nome="controleAcesso" titulo="Cadastrar Permiss√£o">
 	<form id="formControleAcesso" enctype="multipart/form-data">
 		<div class="gt-form gt-content-box" id="modal-permissao">
 			<div>
@@ -715,7 +715,7 @@
 	             }	        	 
 	         },
 	         error: function(response) {
-	        	alert("N„o foi possÌvel desativar esta permiss„o.");
+	        	alert("N√£o foi poss√≠vel desativar esta permiss√£o.");
 	         }
 	   });
 	       
@@ -785,10 +785,10 @@
 		itemTipoPermissaoOptions = $("#itemTipoPermissao").clone();
 		
 		if (isEdicao)
-			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permiss„o');
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permiss√£o');
 		else {
 			limparDadosAcessoModal();
-			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permiss„o');
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permiss√£o');
 		}
 	
 		atualizarComboTipoPermissao();
@@ -1049,7 +1049,7 @@
 	        if ($("#itemTipoPermissao")[0].options.length > 0)
 	        	jDialog.data('acao', permissoes.incluirItem).dialog('open');
 	        else
-	            alert("N„o existem mais Tipos de Permiss„o para serem incluidos");
+	            alert("N√£o existem mais Tipos de Permiss√£o para serem incluidos");
 	    });
 	   
 	    jDialog.dialog({
@@ -1268,7 +1268,7 @@
 	    		populatePermissoesFromJSonList(permissoesJSon);
 	    	},
 	    	error: function(error) {
-	        	alert("N„o foi possÌvel carregar as Permissıes desta Lista.");
+	        	alert("N√£o foi poss√≠vel carregar as Permiss√µes desta Lista.");
 	    	}
 	   	});
 	}

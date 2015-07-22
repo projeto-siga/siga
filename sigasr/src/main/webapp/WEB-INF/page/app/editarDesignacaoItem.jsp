@@ -17,7 +17,7 @@
 		<input type="hidden" id="hisIdIni" name="hisIdIni" value="${hisIdIni}" />
 		<div>
 			<div class="gt-form-row">
-				<label>Descrição <span>*</span></label>
+				<label>DescriÃ§Ã£o <span>*</span></label>
 				<input id="descrConfiguracao"
 					   type="text"
 					   name="descrConfiguracao"
@@ -25,7 +25,7 @@
 					   maxlength="255"
 					   style="width: 791px;"
 					   required/> 
-				<span style="display:none;color: red" id="designacao.descrConfiguracao">Descrição não informada.</span>
+				<span style="display:none;color: red" id="designacao.descrConfiguracao">DescriÃ§Ã£o nÃ£o informada.</span>
 			</div>
 			<div class="gt-form-row box-wrapper">
 				<div id="divSolicitante" class="box box-left gt-width-50">
@@ -44,7 +44,7 @@
 						disabled:disabled/}
 				</div>
 				<div class="box gt-width-50">
-					<label>Órgão</label> 
+					<label>ÃrgÃ£o</label> 
 					#{select name:'orgaoUsuario', 
 						items:_orgaos, 
 						valueProperty:'idOrgaoUsu',
@@ -74,7 +74,7 @@
 					<label>Atendente <span>*</span></label>#{selecao
 						tipo:'lotacao', nome:'atendente', value:atendente?.lotacaoAtual,
 						disabled:_modoExibicao == 'equipe' ? 'true' : disabled /}
-					<span style="display:none;color: red" id="designacao.atendente">Atendente não informado;</span>
+					<span style="display:none;color: red" id="designacao.atendente">Atendente nÃ£o informado;</span>
 				</div>
 			</div>	
 			
@@ -90,7 +90,7 @@
 			</div>
 			
 			<div class="gt-form-row gt-width-100">
-				<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Alguns campos obrigatórios não foram
+				<p class="gt-error" style="display:none;" id="erroCamposObrigatorios">Alguns campos obrigatÃ³rios nÃ£o foram
 					preenchidos.</p>
 			</div>
 		</div>

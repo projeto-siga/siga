@@ -43,7 +43,7 @@ function carregouAcao(response, param){
 					#{checkbox name:'criaFilha', onchange:'onchangeCheckCriaFilha();', value: valueCheckbox /} 
 					#{if solicitacao.isFilha()} #{set codigo : solicitacao.solicitacaoPai.codigo /} #{/if}
 					#{else} #{set codigo : solicitacao.codigo /} #{/else}
-					Criar Solicitação filha de ${codigo}</label>
+					Criar SolicitaÃ§Ã£o filha de ${codigo}</label>
 			<br />
 			<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label> #{selecao tipo:'item',
 			nome:'itemConfiguracao',
@@ -57,13 +57,13 @@ function carregouAcao(response, param){
 		<input type="hidden" name="idAtendenteNaoDesignado" id="atendenteNaoDesignado" value="" />
 		<br />
 		<div id="outrasInformacoesDaFilha" class="gt-form-row">
-			<label>Descrição</label>
+			<label>DescriÃ§Ã£o</label>
 			<textarea name="descricao" cols="85" rows="7">${solicitacao.descrSolicitacao}</textarea>
 			<br /><br />	
 			#{if !solicitacao.isPai() && !solicitacao.isFilha()}
 				#{checkbox name:'fechadoAuto',
-					value:solicitacao.fechadoAutomaticamente /} Fechar automaticamente a solicitação <b>${codigo}</b>, quando 
-					todas as solicitaç&otilde;es filhas forem fechadas pelos seus respectivos atendentes.
+					value:solicitacao.fechadoAutomaticamente /} Fechar automaticamente a solicitaÃ§Ã£o <b>${codigo}</b>, quando 
+					todas as solicitaÃ§&otilde;es filhas forem fechadas pelos seus respectivos atendentes.
 			#{/if}
 		</div>
 		<div  id="motivoEscalonamento" class="gt-form-row">
@@ -83,17 +83,17 @@ function carregouAcao(response, param){
 	</form>
 </div>
 
-#{modal nome:'lotacaoAtendente', titulo:'Alterar Atendente padrão'}
+#{modal nome:'lotacaoAtendente', titulo:'Alterar Atendente padrÃ£o'}
 	<div id="dialogAtendente">
 		<div class="gt-content">
 			<div class="gt-form gt-content-box">
 				<div class="gt-form-row">
 					<div class="gt-form-row">
-						<label>Lotação Atendente</label>
+						<label>LotaÃ§Ã£o Atendente</label>
 							#{selecao tipo:'lotacao',
 								nome:'lotacaoSelecao',
 								value:lotacaoSelecao /}			
-						<span style="display:none;color: red" id="atendente">Atendente não informado.</span>
+						<span style="display:none;color: red" id="atendente">Atendente nÃ£o informado.</span>
 					</div>
 					<div class="gt-form-row">
 						<a href="javascript: alterarAtendente()" class="gt-btn-medium gt-btn-left">Ok</a>

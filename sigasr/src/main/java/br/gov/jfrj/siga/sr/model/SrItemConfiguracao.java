@@ -437,20 +437,20 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
         // DB1: precisa salvar item a item
         if (this.getDesignacoes() != null) {
             for (SrConfiguracao designacao : this.getDesignacoes()) {
-                // se for uma configuração herdada
+                // se for uma configuraÃ§Ã£o herdada
                 if (designacao.isHerdado()) {
-                    // se estiver marcada como "não Herdar"
+                    // se estiver marcada como "nÃ£o Herdar"
                     if (!designacao.isUtilizarItemHerdado()) {
-                        // cria uma nova entrada na tabela, para que seja ignorada nas próximas vezes
+                        // cria uma nova entrada na tabela, para que seja ignorada nas prÃ³ximas vezes
                         SrConfiguracaoIgnorada.createNew(this, designacao).save();
                     }
 
-                    // verifica se existia entrada para "não Herdar", e remove (usuário marcou para usar herança)
+                    // verifica se existia entrada para "nÃ£o Herdar", e remove (usuÃ¡rio marcou para usar heranÃ§a)
                     else {
                         List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada.findByConfiguracao(designacao);
 
                         for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
-                            // se a configuração for do Item ou de um de seus históricos, remove
+                            // se a configuraÃ§Ã£o for do Item ou de um de seus histÃ³ricos, remove
                             if (igItem != null && this.getHistoricoItemConfiguracao() != null && this.getHistoricoItemConfiguracao().size() > 0) {
                                 for (SrItemConfiguracao itemHist : this.getHistoricoItemConfiguracao()) {
                                     if (itemHist.getId().equals(igItem.getItemConfiguracao().getId())) {
@@ -518,7 +518,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
     }
 
     /**
-     * Lista as Designações que são vinculadas aos {@link SrItemConfiguracao Pai} deste item.
+     * Lista as DesignaÃ§Ãµes que sÃ£o vinculadas aos {@link SrItemConfiguracao Pai} deste item.
      */
     public List<SrConfiguracao> getDesignacoesPai() {
         List<SrConfiguracao> listasDesignacoesPai = new ArrayList<SrConfiguracao>();
@@ -551,12 +551,12 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
             List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada.findByConfiguracao(conf);
 
             for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
-                // Se a configuração for do Item, vai como desmarcado
+                // Se a configuraÃ§Ã£o for do Item, vai como desmarcado
                 if (item.getId().equals(igItem.getItemConfiguracao().getId())) {
                     conf.setUtilizarItemHerdado(false);
                 }
 
-                // se a configuração for do Item (histórico), vai como desmarcado
+                // se a configuraÃ§Ã£o for do Item (histÃ³rico), vai como desmarcado
                 else if (item.getHistoricoItemConfiguracao() != null && item.getHistoricoItemConfiguracao().size() > 0) {
                     for (SrItemConfiguracao itemHist : item.getHistoricoItemConfiguracao()) {
                         if (itemHist.getId().equals(igItem.getItemConfiguracao().getId())) {
@@ -572,7 +572,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
 
                     while (itemPai != null) {
 
-                        // Se for configuração do pai, não aparece na tela caso esteja marcada para Ignorar no Pai
+                        // Se for configuraÃ§Ã£o do pai, nÃ£o aparece na tela caso esteja marcada para Ignorar no Pai
                         if (itemPai.getId().equals(igItem.getItemConfiguracao().getId())) {
                             i.remove();
                             break;
@@ -581,7 +581,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
                     }
                 }
 
-                // Caso tenha encontrado a configuração correta, interrompe o loop
+                // Caso tenha encontrado a configuraÃ§Ã£o correta, interrompe o loop
                 if (encontrou)
                     break;
             }

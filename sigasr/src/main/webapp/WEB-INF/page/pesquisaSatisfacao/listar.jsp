@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Pesquisa de Satisfa��o">
+<siga:pagina titulo="Pesquisa de Satisfação">
 
 	<jsp:include page="../main.jsp"></jsp:include>
 
@@ -136,8 +136,8 @@
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordena��o crescente",
-			        "sortDescending": ": clique para ordena��o decrescente"
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenação decrescente"
 			    }
 			},
 			"columnDefs": [{
@@ -209,7 +209,7 @@
 		BaseService.prototype.cadastrar.call(this, title); // super.cadastrar();
 
 		$('#perguntas').html('');
-		// limpa a lista de Associações
+		// limpa a lista de AssociaÃ§Ãµes
 		associacaoService.limparDadosAssociacoes();
 		associacaoService.atualizarListaAssociacoes({});
 	}
@@ -228,11 +228,11 @@
 		    	dataType: "text",
 		    	success: function(obj) {
 		    		var associacaoJson = JSON.parse(obj);
-		    		// alimenta a lista de AssociaÃ§Ãµes
+		    		// alimenta a lista de AssociaÃÂ§ÃÂµes
 					associacaoService.atualizarListaAssociacoes(associacaoJson);
 		    	},
 		    	error: function(error) {
-		        	alert("N�o foi poss�vel carregar as Associa��es deste Atributo.");
+		        	alert("Não foi possível carregar as Associações deste Atributo.");
 		    	}
 		   	});
 		}

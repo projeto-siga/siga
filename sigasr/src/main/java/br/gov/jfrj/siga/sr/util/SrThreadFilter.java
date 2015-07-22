@@ -22,7 +22,7 @@ public class SrThreadFilter extends ThreadFilter{
 	private static final Logger log = Logger.getLogger(SrThreadFilter.class);
 
 	/**
-	 * Pega a sess„o.
+	 * Pega a sess√£o.
 	 */
 	public void doFilter(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain)
@@ -59,7 +59,7 @@ public class SrThreadFilter extends ThreadFilter{
 
 		// Novo
 		if (!SrDao.getInstance().sessaoEstahAberta())
-			throw new AplicacaoException("Erro: sess„o do Hibernate est· fechada.");
+			throw new AplicacaoException("Erro: sess√£o do Hibernate est√° fechada.");
 
 		SrDao.iniciarTransacao();
 		doFiltro(request, response, chain);
@@ -73,7 +73,7 @@ public class SrThreadFilter extends ThreadFilter{
 		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
-			log.info("Ocorreu um erro durante a execuÁ„o da operaÁ„o: "+ e.getMessage());
+			log.info("Ocorreu um erro durante a execu√ß√£o da opera√ß√£o: "+ e.getMessage());
 			throw e;
 		}
 	}
@@ -82,7 +82,7 @@ public class SrThreadFilter extends ThreadFilter{
 		try {
 			HibernateUtil.fechaSessaoSeEstiverAberta();
 		} catch (Exception ex) {
-			log.error("Ocorreu um erro ao fechar uma sess„o do Hibernate", ex);
+			log.error("Ocorreu um erro ao fechar uma sess√£o do Hibernate", ex);
 		}
 	}
 

@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Ações">
+<siga:pagina titulo="AÃ§Ãµes">
 
 	<jsp:include page="../main.jsp"></jsp:include>
 

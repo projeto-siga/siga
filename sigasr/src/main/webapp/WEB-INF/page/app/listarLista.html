@@ -18,8 +18,8 @@
 				<thead>
 					<tr>
 						<th>Nome</th>
-						<th>Lotação</th>
-						<th>Ações</th>
+						<th>LotaÃ§Ã£o</th>
+						<th>AÃ§Ãµes</th>
 					</tr>
 				</thead>
 
@@ -139,7 +139,7 @@
 		/* Table initialization */
 		opts.dataTable= $('#listas_table').dataTable({
 			"language": {
-				"emptyTable":     "Não existem resultados",
+				"emptyTable":     "NÃ£o existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -152,13 +152,13 @@
 			    "zeroRecords":    "Nenhum registro encontrado",
 			    "paginate": {
 			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
+			        "last":       "Ãltimo",
+			        "next":       "PrÃ³ximo",
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
+			        "sortAscending":  ": clique para ordenaÃ§Ã£o crescente",
+			        "sortDescending": ": clique para ordenaÃ§Ã£o decrescente"
 			    }
 			},
 			"columnDefs": [{
@@ -219,7 +219,7 @@
 	listaService.editar = function(lista, title) {
 		BaseService.prototype.editar.call(this, lista, title); // super.editar();
 		limparDadosListaModal();
-		// carrega as permissões da lista
+		// carrega as permissÃµes da lista
 		carregarPermissoes(lista.idLista);
 		configuracaoInclusaoAutomaticaService.carregarParaLista(lista.idLista);
 	}
@@ -238,7 +238,7 @@
 	}
 
 	/**
-	 * Sobrescreve o método para adicionar também o botão editar.
+	 * Sobrescreve o mÃ©todo para adicionar tambÃ©m o botÃ£o editar.
 	 */
 	listaService.gerarColunaAtivar = function(id) {
 		var column = BaseService.prototype.gerarColunaAtivar.call(this, id);
@@ -246,7 +246,7 @@
 		return column;
 	}
 	/**
-	 * Sobrescreve o método para adicionar também o botão editar.
+	 * Sobrescreve o mÃ©todo para adicionar tambÃ©m o botÃ£o editar.
 	 */
 	listaService.gerarColunaDesativar = function(id) {
 		var column = BaseService.prototype.gerarColunaDesativar.call(this, id);

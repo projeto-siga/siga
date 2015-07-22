@@ -1,4 +1,4 @@
-#{extends 'main.html' /} #{set title:'Associações de tipo de atributo' /}
+#{extends 'main.html' /} #{set title:'AssociaÃ§Ãµes de tipo de atributo' /}
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
@@ -55,7 +55,7 @@
 					})
 			.dataTable({
 			"language": {
-				"emptyTable":     "Não existem resultados",
+				"emptyTable":     "NÃ£o existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -68,13 +68,13 @@
 			    "zeroRecords":    "Nenhum registro encontrado",
 			    "paginate": {
 			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
+			        "last":       "Ãltimo",
+			        "next":       "PrÃ³ximo",
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
+			        "sortAscending":  ": clique para ordenaÃ§Ã£o crescente",
+			        "sortDescending": ": clique para ordenaÃ§Ã£o decrescente"
 			    }
 			},
 			"columnDefs": [{
@@ -95,7 +95,7 @@
 			td = $('<td colspan="6">'),
 			table = $('<table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">');
 			
-		table.append(htmlConteudo(d, "Item de configuração:", 6, 2));
+		table.append(htmlConteudo(d, "Item de configuraÃ§Ã£o:", 6, 2));
 		table.append(htmlConteudo(d, "A&ccedil;&atilde;o:", 7, 3));
 		
 		td.append(table);
@@ -137,7 +137,7 @@
 	</div>
 	
 	<div class="gt-content">
-		<h2>Associações de Tipo de Atributo</h2>
+		<h2>AssociaÃ§Ãµes de Tipo de Atributo</h2>
 		<!-- content bomex -->
 		<div class="gt-content-box dataTables_div">
 			<div class="gt-form-row dataTables_length">
@@ -156,10 +156,10 @@
 						<th><i>Item &darr;</i></th>
 						<th>A&ccedil;&atilde;o</th>
 						<th>Tipo de atributo</th>
-						<th>Obrigatório</th>
+						<th>ObrigatÃ³rio</th>
 						<th></th>
 						<th></th>
-						<th>Ações</th>
+						<th>AÃ§Ãµes</th>
 					</tr>
 				</thead>
 				<tbody>

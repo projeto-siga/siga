@@ -57,10 +57,10 @@ public class SrArquivo extends Objeto implements ConvertableEntity {
         }
     }
     
-    // Edson: Necessário porque é preciso garantir
-    // que o SrArquivo não seja instanciado a não ser que realmente tenha sido
-    // selecionado um arquivo no form (para que não surja um registro SrArquivo
-    // sem conteúdo no banco)
+    // Edson: NecessÃ¡rio porque Ã© preciso garantir
+    // que o SrArquivo nÃ£o seja instanciado a nÃ£o ser que realmente tenha sido
+    // selecionado um arquivo no form (para que nÃ£o surja um registro SrArquivo
+    // sem conteÃºdo no banco)
     public static SrArquivo newInstance(UploadedFile file) {
     	if (file != null)
     		return new SrArquivo(file);

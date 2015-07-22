@@ -6,7 +6,7 @@
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
-	<h2>Pesquisa de Solicitações</h2>
+	<h2>Pesquisa de SolicitaÃ§Ãµes</h2>
 	#{if solicitacaoListaVO?.getItens()}
 		#{solicitacoes solicitacaoListaVO:solicitacaoListaVO, filtro:filtro, modoExibicao:'solicitacao' /}
 	#{/if}
@@ -24,7 +24,7 @@
 				<td align="center" valign="top" colspan="4">Dados para busca</td>
 				</tr>
 					<tr>
-						<td>Situação</td>
+						<td>SituaÃ§Ã£o</td>
 						<td>#{select name:'filtro.situacao', items:marcadores,
 							labelProperty:'descrMarcador', valueProperty:'idMarcador',
 							value:filtro.situacao?.idMarcador} #{option 0}Todas#{/option}
@@ -34,7 +34,7 @@
 							valuePessoa:filtro.atendente, valueLotacao:filtro.lotaAtendente /}
 							<div id="chkNaoDesignados" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
 								<label>#{checkbox name:'filtro.naoDesignados',
-								value:filtro.naoDesignados /} Apenas não designadas</label>
+								value:filtro.naoDesignados /} Apenas nÃ£o designadas</label>
 							</div>
 							<script language="javascript">
 								$("#chkNaoDesignados").appendTo("#spanLotacaofiltrolotaAtendente");
@@ -57,7 +57,7 @@
 							valueLotacao:filtro.lotaSolicitante /}</td>
 					</tr>
 					<tr>
-						<td>Data de criação</td>
+						<td>Data de criaÃ§Ã£o</td>
 						<td>
 							#{dataCalendar nome:'filtro.dtIni', value:filtro.dtIni /} a
 							#{dataCalendar nome:'filtro.dtFim', value:filtro.dtFim /}
@@ -69,12 +69,12 @@
 							value:filtro.itemConfiguracao /}</td>
 					</tr>
 					<tr>
-						<td>Ação</td>
+						<td>AÃ§Ã£o</td>
 						<td>#{selecao tipo:'acao', nome:'filtro.acao',
 							value:filtro.acao /}</td>
 					</tr>
 					<tr>
-						<td>Prioridade Mínima</td>
+						<td>Prioridade MÃ­nima</td>
 						<td>#{select 'filtro.prioridade', items:models.SrPrioridade.values(), 
 							labelProperty:'descPrioridade', value:filtro.prioridade, style:'width:250px;' } 
 							#{option 0}Todas#{/option} #{/select}</td>
@@ -87,7 +87,7 @@
 								#{option 0}Nenhuma#{/option}#{/select}</td>
 						</tr>
 						<tr>
-							<td>Descrição</td>
+							<td>DescriÃ§Ã£o</td>
 							<td>
 								<input type="text" name="filtro.descrSolicitacao" style="width: 500px;"
 									id="filtro.descrSolicitacao" value="${filtro.descrSolicitacao}">

@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Designação de Solicitações">
+<siga:pagina titulo="DesignaÃ§Ã£o de SolicitaÃ§Ãµes">
 	<jsp:include page="../main.jsp"></jsp:include>
 
 	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>

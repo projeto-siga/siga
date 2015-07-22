@@ -2,7 +2,7 @@ package br.gov.jfrj.siga.sr.model;
 
 public enum SrTipoExecucaoAcao {
 	
-	ESCALONAMENTO(0, "Escalonamento"), EXECUCAO(1, "Execução"), TENTATIVA(2, "Tentativa");
+	ESCALONAMENTO(0, "Escalonamento"), EXECUCAO(1, "ExecuÃ§Ã£o"), TENTATIVA(2, "Tentativa");
 
 	private long idTipoExecucaoAcao;
 	private String descrTipoExecucaoAcao;

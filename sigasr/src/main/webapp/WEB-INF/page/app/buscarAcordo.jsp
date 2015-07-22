@@ -21,7 +21,7 @@
 				<thead>
 					<tr>
 						<th>Nome</th>
-						<th>Descrição</th>
+						<th>DescriÃ§Ã£o</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -113,7 +113,7 @@
 		
 		optsAcordo.acordoTable = $('#acordo_table').dataTable({
 			"language": {
-				"emptyTable":     "Não existem resultados",
+				"emptyTable":     "NÃ£o existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -126,13 +126,13 @@
 			    "zeroRecords":    "Nenhum registro encontrado",
 			    "paginate": {
 			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
+			        "last":       "Ãltimo",
+			        "next":       "PrÃ³ximo",
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
+			        "sortAscending":  ": clique para ordenaÃ§Ã£o crescente",
+			        "sortDescending": ": clique para ordenaÃ§Ã£o decrescente"
 			    }
 			},
 			"columnDefs": [{
@@ -198,14 +198,14 @@
 	}
 
 	/**
-	* Sobrescreve o método gravar para tratar a lista de parâmetros.
+	* Sobrescreve o mÃ©todo gravar para tratar a lista de parÃ¢metros.
 	*/
 	acordoService.gravar = function() {
 		gravarAplicar(this, false);
 	}
 
 	/**
-	* Sobrescreve o método aplicar para tratar a lista de parâmetros.
+	* Sobrescreve o mÃ©todo aplicar para tratar a lista de parÃ¢metros.
 	*/
 	acordoService.aplicar = function() {
 		return gravarAplicar(this, true);
@@ -251,10 +251,10 @@
 	acordoService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 
-		// Atualiza a lista de parâmetros
+		// Atualiza a lista de parÃ¢metros
 		atualizarParametrosAcordo(obj);
 
-		// carrega a Abrangências do Acordo
+		// carrega a AbrangÃªncias do Acordo
 		carregarAbrangenciasAcordo(obj.id);
 	}
 
@@ -271,7 +271,7 @@
 	        		acordoService.populateFromJSonList(listaJSon, associacaoTable);
 	        	},
 	        	error: function(error) {
-	            	alert("Não foi possível carregar as Abrangências deste Acordo.");
+	            	alert("NÃ£o foi possÃ­vel carregar as AbrangÃªncias deste Acordo.");
 	        	}
 	       	});
 		}
@@ -315,7 +315,7 @@
 	acordoService.conteudoColunaAcao = function(abrangencia){
         if (abrangencia.ativo) {          
             return '<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-					'<a class="once desassociar" onclick="desassociar(event, ' + abrangencia.idConfiguracao + ')" title="Remover permissão">' +
+					'<a class="once desassociar" onclick="desassociar(event, ' + abrangencia.idConfiguracao + ')" title="Remover permissÃ£o">' +
 					'<input class="idAssociacao" type="hidden" value="'+abrangencia.idConfiguracao+'"/>' +
 					'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
 					'</a>' +	
@@ -324,7 +324,7 @@
         return ' ';
 	}	
 
-	// Atualizando lista de Parâmetros de Acordo
+	// Atualizando lista de ParÃ¢metros de Acordo
 	function atualizarParametrosAcordo(acordo) {
 		removerItensLista('parametrosAcordo');
 
@@ -348,10 +348,10 @@
 	 * Sobescreve o metodo cadastrar para limpar a tela.
 	 */
 	acordoService.cadastrar = function(title) {
-		// Atualiza a lista de parâmetros
+		// Atualiza a lista de parÃ¢metros
 		atualizarParametrosAcordo();
 
-		// carrega a Abrangências do Acordo
+		// carrega a AbrangÃªncias do Acordo
 		carregarAbrangenciasAcordo();
 		
 		BaseService.prototype.cadastrar.call(this, title); // super.editar();

@@ -15,7 +15,7 @@ public class SrConfiguracaoComparator extends CpConfiguracaoComparator {
             SrConfiguracao srC1 = (SrConfiguracao) c1;
             SrConfiguracao srC2 = (SrConfiguracao) c2;
 
-            // Quando c1 é mais abstrato, retorna 1.
+            // Quando c1 Ã© mais abstrato, retorna 1.
 
             if (srC1.getItemConfiguracaoSet() == null) {
                 if (srC2.getItemConfiguracaoSet() != null)

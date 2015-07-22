@@ -76,7 +76,7 @@ ${moreHead?.raw()}
 		/* Table initialization */
 		$('#solicitacoes_table').DataTable({
 			"language": {
-				"emptyTable":     "Não existem resultados",
+				"emptyTable":     "NÃ£o existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -89,13 +89,13 @@ ${moreHead?.raw()}
 			    "zeroRecords":    "Nenhum registro encontrado",
 			    "paginate": {
 			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
+			        "last":       "Ãltimo",
+			        "next":       "PrÃ³ximo",
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
+			        "sortAscending":  ": clique para ordenaÃ§Ã£o crescente",
+			        "sortDescending": ": clique para ordenaÃ§Ã£o decrescente"
 			    }
 			}
 		});
@@ -118,21 +118,21 @@ ${moreHead?.raw()}
 	<input type="hidden" name="id" value="${solicitacaoAVincular.idSolicitacao}"> 
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
-		<h2>Vincular Solicitações</h2>
+		<h2>Vincular SolicitaÃ§Ãµes</h2>
  		
  		<div class="gt-content-box gt-form" id="vincularSolicitacao">
 			<form action="@{Application.vincularSolicitacoesGravar()}" id="formGravarVinculo" enctype="multipart/form-data">
 				<input type="hidden" name="idSolicitacaoAVincular" value="${solicitacaoAVincular.idSolicitacao}"> 
 				<input type="hidden" name="idSolicitacaoRecebeVinculo" id="idSolicitacaoRecebeVinculo" value=""> 
 				<div style="display: inline;" class="gt-form-row gt-width-66">
-					<label style=" margin-bottom: 15px !important;">Vincular solicitação: ${solicitacaoAVincular.codigo} a <b id="codigoRecebe"></b></label>
+					<label style=" margin-bottom: 15px !important;">Vincular solicitaÃ§Ã£o: ${solicitacaoAVincular.codigo} a <b id="codigoRecebe"></b></label>
 				</div>
 				<div style="display: inline" class="gt-form-row gt-width-66">
 					<label>Justificativa</label>
 					<textarea style="width: 60%" name="justificativa" id="justificativa" cols="70" rows="4" maxlength="255" value=""></textarea>
 				</div>
 				<div style="display: none" id="erroJustificativa" class="gt-form-row gt-width-66">
-					<span style="color: red;">Justificativa não informada.</span>
+					<span style="color: red;">Justificativa nÃ£o informada.</span>
 				</div>
 				<div style="display: inline" class="gt-form-row ">
 					<input type="button" onclick="gravar();" value="Gravar" class="gt-btn-medium gt-btn-left" />
@@ -154,12 +154,12 @@ ${moreHead?.raw()}
 			    		<col width="15%" />
 			    		<thead>
 							<tr>
-								<th style="color: #333; font-weight: bold; padding: 7px 10px;">Código</th>
+								<th style="color: #333; font-weight: bold; padding: 7px 10px;">CÃ³digo</th>
 								<th style="color: #333; font-weight: bold; padding: 7px 0px;">Teor</th>
 								<th style="color: #333; font-weight: bold; padding: 7px 0px;">Solicitante</th>
 								<th style="color: #333; font-weight: bold; padding: 7px 0px;">Aberto</th>
-								<th style="color: #333; font-weight: bold; padding: 7px 0px;">Situação</th>
-								<th style="color: #333; font-weight: bold; padding: 7px 0px;">Último Andamento</th>
+								<th style="color: #333; font-weight: bold; padding: 7px 0px;">SituaÃ§Ã£o</th>
+								<th style="color: #333; font-weight: bold; padding: 7px 0px;">Ãltimo Andamento</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -206,7 +206,7 @@ ${moreHead?.raw()}
 						<td align="center" valign="top" colspan="4">Dados para busca</td>
 						</tr>
 							<tr>
-								<td>Situação</td>
+								<td>SituaÃ§Ã£o</td>
 								<td>#{select name:'filtro.situacao', items:marcadores,
 									labelProperty:'descrMarcador', valueProperty:'idMarcador',
 									value:filtro.situacao?.idMarcador /} com #{pessoaLotaSelecao
@@ -216,7 +216,7 @@ ${moreHead?.raw()}
 									/}
 									<div id="chkNaoDesignados" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
 										<label>#{checkbox name:'filtro.naoDesignados',
-										value:filtro.naoDesignados /} Apenas não designadas</label>
+										value:filtro.naoDesignados /} Apenas nÃ£o designadas</label>
 									</div>
 									<script language="javascript">
 										$("#chkNaoDesignados").appendTo("#spanLotacaofiltrolotaAtendente");
@@ -269,7 +269,7 @@ ${moreHead?.raw()}
 									0}Todas#{/option}#{/select}</td>
 							</tr>
 							<tr>
-								<td>Descrição</td>
+								<td>DescriÃ§Ã£o</td>
 								<td><input type="text" name="filtro.descrSolicitacao"
 									id="filtro.descrSolicitacao" value="${filtro.descrSolicitacao}" size="60"></input>
 								</td>

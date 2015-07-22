@@ -1,8 +1,8 @@
-#{extends 'main.html' /} #{set title:'Pesquisas de Satisfação' /}
+#{extends 'main.html' /} #{set title:'Pesquisas de SatisfaÃ§Ã£o' /}
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
-		<h2>Pesquisas de Satisfação</h2>
+		<h2>Pesquisas de SatisfaÃ§Ã£o</h2>
 		<!-- content bomex -->
 		<div class="gt-content-box dataTables_div">
 			<div class="gt-form-row dataTables_length">
@@ -13,7 +13,7 @@
 				<thead>
 					<tr>
 						<th>Nome</th>
-						<th>Descrição</th>
+						<th>DescriÃ§Ã£o</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -113,7 +113,7 @@
 		
 		opts.dataTable= $('#pesquisa_table').dataTable({
 			"language": {
-				"emptyTable":     "Não existem resultados",
+				"emptyTable":     "NÃ£o existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -126,13 +126,13 @@
 			    "zeroRecords":    "Nenhum registro encontrado",
 			    "paginate": {
 			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
+			        "last":       "Ãltimo",
+			        "next":       "PrÃ³ximo",
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
+			        "sortAscending":  ": clique para ordenaÃ§Ã£o crescente",
+			        "sortDescending": ": clique para ordenaÃ§Ã£o decrescente"
 			    }
 			},
 			"columnDefs": [{
@@ -172,7 +172,7 @@
 	// Sobescreve o metodo cadastrar para limar as perguntas da tela
 	pesquisaService.cadastrar = function(title) {
 		perguntas.limpar();
-		// limpa a lista de Associações
+		// limpa a lista de AssociaÃ§Ãµes
 		associacaoService.limparDadosAssociacoes();
 		BaseService.prototype.cadastrar.call(this, title);
 	}
@@ -200,7 +200,7 @@
 			perguntas.incluirItem(pergunta.descrPergunta, pergunta.tipoPergunta.idTipoPergunta, pergunta.tipoPergunta.nomeTipoPergunta, pergunta.idPergunta);
 		}
 
-		// atualiza a lista de Associações
+		// atualiza a lista de AssociaÃ§Ãµes
 		pesquisaService.buscarAssociacoes(obj);
 	}
 
@@ -214,11 +214,11 @@
 	        	dataType: "text",
 	        	success: function(obj) {
 	        		var pesquisaJson = JSON.parse(obj);
-	        		// alimenta a lista de Associações
+	        		// alimenta a lista de AssociaÃ§Ãµes
 	    			associacaoService.atualizarListaAssociacoes(pesquisaJson);
 	        	},
 	        	error: function(error) {
-	            	alert("Não foi possível carregar as Associações desta Pesquisa.");
+	            	alert("NÃ£o foi possÃ­vel carregar as AssociaÃ§Ãµes desta Pesquisa.");
 	        	}
 	       	});
 		}

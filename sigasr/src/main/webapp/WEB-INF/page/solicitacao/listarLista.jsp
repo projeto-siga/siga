@@ -230,7 +230,7 @@
 	listaService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		limparDadosListaModal();
-		// carrega as permissÃµes da lista
+		// carrega as permissÃÂµes da lista
 		carregarPermissoes(obj.idLista);
 		configuracaoInclusaoAutomaticaService.carregarParaLista(obj.idLista);
 	}
@@ -256,7 +256,7 @@
 	}
 
 	/**
-	 * Sobrescreve o mÃ©todo para adicionar tambÃ©m o botÃ£o editar.
+	 * Sobrescreve o mÃÂ©todo para adicionar tambÃÂ©m o botÃÂ£o editar.
 	 */
 	listaService.gerarColunaAtivar = function(id) {
 		var column = BaseService.prototype.gerarColunaAtivar.call(this, id);
@@ -264,7 +264,7 @@
 		return column;
 	}
 	/**
-	 * Sobrescreve o mÃ©todo para adicionar tambÃ©m o botÃ£o editar.
+	 * Sobrescreve o mÃÂ©todo para adicionar tambÃÂ©m o botÃÂ£o editar.
 	 */
 	listaService.gerarColunaDesativar = function(id) {
 		var column = BaseService.prototype.gerarColunaDesativar.call(this, id);

@@ -58,7 +58,7 @@ function drawTop10() {
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 		<div class="gt-left-col">
-			<h2>Solicitações Abertas/Atendidas</h2>
+			<h2>SolicitaÃ§Ãµes Abertas/Atendidas</h2>
 				<div id="evolution" class="gt-content-box">
 				</div>
 		</div>

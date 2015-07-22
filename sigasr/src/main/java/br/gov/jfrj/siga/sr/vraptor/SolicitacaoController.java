@@ -397,7 +397,7 @@ public class SolicitacaoController extends SrController {
         if (solicitacao == null || solicitacao.getCadastrante() == null)
             solicitacao = criarSolicitacaoComSolicitante();
 
-        // preenche com os dados da �ltima solicita��o do usu�rio
+        // preenche com os dados da ï¿½ltima solicitaï¿½ï¿½o do usuï¿½rio
         solicitacao.deduzirLocalRamalEMeioContato();
 
         result.include(SOLICITACAO, solicitacao);
@@ -446,10 +446,10 @@ public class SolicitacaoController extends SrController {
         result.include("solicitacoesRelacionadas", solicitacoesRelacionadas);
     }
 
-    // DB1: foi necess�rio receber e passar o parametro "nome"(igual ao buscarItem())
+    // DB1: foi necessï¿½rio receber e passar o parametro "nome"(igual ao buscarItem())
     // para chamar a function javascript correta,
-    // e o parametro "popup" porque este metodo � usado tamb�m na lista,
-    // e n�o foi poss�vel deixar default no template(igual ao buscarItem.html)
+    // e o parametro "popup" porque este metodo ï¿½ usado tambï¿½m na lista,
+    // e nï¿½o foi possï¿½vel deixar default no template(igual ao buscarItem.html)
     @SuppressWarnings("unchecked")
     @Path("/buscar")
     public void buscar(SrSolicitacaoFiltro filtro, String propriedade, boolean popup) throws Exception {
@@ -595,7 +595,7 @@ public class SolicitacaoController extends SrController {
     public void responderPesquisa(Long id) throws Exception {
         /*
          * SrSolicitacao sol = SrSolicitacao.findById(id); SrPesquisa pesquisa = sol.getPesquisaDesignada(); if (pesquisa == null) throw new
-         * Exception("Não foi encontrada nenhuma pesquisa designada para esta solicitação."); pesquisa = SrPesquisa.findById(pesquisa.idPesquisa); pesquisa = pesquisa.getPesquisaAtual(); render(id,
+         * Exception("NÃ£o foi encontrada nenhuma pesquisa designada para esta solicitaÃ§Ã£o."); pesquisa = SrPesquisa.findById(pesquisa.idPesquisa); pesquisa = pesquisa.getPesquisaAtual(); render(id,
          * pesquisa);
          */
     }

@@ -1,4 +1,4 @@
-#{extends 'main.html' /} #{set title:'Edição de atributo' /}
+#{extends 'main.html' /} #{set title:'EdiÃ§Ã£o de atributo' /}
 <script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
 <script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
 
@@ -14,7 +14,7 @@
 					value="${nomeAtributo}" size="50" maxlength="255" required/>
 			</div>
 			<div class="box gt-width-50">
-				<label>Descrição</label> <input maxlength="255" type="text"
+				<label>DescriÃ§Ã£o</label> <input maxlength="255" type="text"
 					name="descrAtributo"
 					id="descrAtributo"
 					value="${descrAtributo}" 
@@ -39,7 +39,7 @@
 			class:'select-siga' /}
 		</div>
 		<div class="gt-form-row gt-width-66" id="vlPreDefinidos" style="display: none;">
-			<label>Valores pré-definidos (Separados por ponto-e-vígula(;))</label> 
+			<label>Valores prÃ©-definidos (Separados por ponto-e-vÃ­gula(;))</label> 
 			<input maxlength="255" type="text"
 				name="descrPreDefinido"
 				id="descrPreDefinido"
@@ -94,7 +94,7 @@
 			td = $('<td colspan="6">'),
 			table = $('<table class="datatable" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">');
 			
-		table.append(htmlConteudo(d, "Item de configuração:", associacao.itemConfiguracaoUnitario.siglaItemConfiguracao, associacao.itemConfiguracaoUnitario.tituloItemConfiguracao, table));
+		table.append(htmlConteudo(d, "Item de configuraÃ§Ã£o:", associacao.itemConfiguracaoUnitario.siglaItemConfiguracao, associacao.itemConfiguracaoUnitario.tituloItemConfiguracao, table));
 		table.append(htmlConteudo(d, "A&ccedil;&atilde;o:", associacao.acaoUnitaria.sigla, associacao.acaoUnitaria.descricao, table));
 		
 		td.append(table);
@@ -129,7 +129,7 @@
 				var assoc = jSon.associacoesVO[i],
 					html = 
 					'<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' +
-						'<a class="once desassociar gt-btn-ativar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover permissão">' +
+						'<a class="once desassociar gt-btn-ativar" onclick="desassociar(event, ' + assoc.idConfiguracao + ')" title="Remover permissÃ£o">' +
 							'<input class="idAssociacao" type="hidden" value="' + assoc.idConfiguracao + '"/>' +
 							'<img id="imgCancelar" src="/siga/css/famfamfam/icons/cancel_gray.png" style="margin-right: 5px;">' + 
 						'</a>' +
@@ -149,7 +149,7 @@
 								html
 			   				];
 	   				
-				// Adiciona na tabela de Associações
+				// Adiciona na tabela de AssociaÃ§Ãµes
 				var newRow = associacaoTable.dataTable
 					.api()
 					.row
@@ -178,7 +178,7 @@
 
 	function getAtributoObrigatorioString() {
 		var isChecked = $("#checkatributoObrigatorio")[0].checked;
-		return isChecked ? "Sim": "Não";
+		return isChecked ? "Sim": "NÃ£o";
 	}
 
 	function desassociar(event, idAssociacaoDesativar) {

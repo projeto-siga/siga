@@ -29,7 +29,7 @@
     <%=SrPrioridade.BAIXO.getDescPrioridade()%>
 </c:set>
 
-<siga:pagina titulo="Cadastro de Solicita��o">
+<siga:pagina titulo="Cadastro de Solicitaï¿½ï¿½o">
 	<jsp:include page="../main.jsp"></jsp:include>
 	
 	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
@@ -80,7 +80,7 @@
 	
 			carregarFiltrosAoIniciar();
 	
-			// DB1: Sobrescreve o método onchange para que faça o tratamento das informações 
+			// DB1: Sobrescreve o mÃ©todo onchange para que faÃ§a o tratamento das informaÃ§Ãµes 
 			// do campo vinculado ao evento
 			jQuery("#checkmostrarInterlocutor")[0].onchange = function(event) {
 				changemostrarInterlocutor();
@@ -216,7 +216,7 @@
 			});					
 	 	}
 		
-		// funções usadas para solicitações relacionadas
+		// funÃ§Ãµes usadas para solicitaÃ§Ãµes relacionadas
 		function addFiltro(divFiltro, campoRef, optionHtml, optionVl) {
 			/**
 			 * Se o valor foi preenchido e se existe label
@@ -310,7 +310,7 @@
 			return null;
 		}
 		
-		// Valida se o cadastrante é o solicitante, e neste caso irá ocultar
+		// Valida se o cadastrante Ã© o solicitante, e neste caso irÃ¡ ocultar
 		// alguns campos na tela
 		function validarCadastranteSolicitante() {
 			var siglaCadastrante = $('#siglaCadastrante').val();

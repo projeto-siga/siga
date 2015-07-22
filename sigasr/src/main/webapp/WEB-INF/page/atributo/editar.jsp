@@ -14,7 +14,7 @@
 					value="${nomeAtributo}" size="50" maxlength="255" required/>
 			</div>
 			<div class="box gt-width-50">
-				<label>Descrição</label> <input maxlength="255" type="text"
+				<label>DescriÃ§Ã£o</label> <input maxlength="255" type="text"
 					name="atributo.descrAtributo"
 					id="descrAtributo"
 					value="${descrAtributo}" 
@@ -43,7 +43,7 @@
 			</select>
 		</div>
 		<div class="gt-form-row gt-width-66" id="vlPreDefinidos" style="display: none;">
-			<label>Valores pré-definidos (Separados por ponto-e-vígula(;))</label> 
+			<label>Valores prÃ©-definidos (Separados por ponto-e-vÃ­gula(;))</label> 
 			<input maxlength="255" type="text"
 				name="atributo.descrPreDefinido"
 				id="descrPreDefinido"

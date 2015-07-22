@@ -31,7 +31,7 @@ function carregarLotacaoDaAcao(){
 }
 
 function removeSelectedDuplicado() {
-	//solucao de contorno temporaria para op��es no select com mesmo value.
+	//solucao de contorno temporaria para opções no select com mesmo value.
 	var primeiro = $("#selectAcao option:eq(0)");
 	var segundo = $("#selectAcao option:eq(1)");
 	if (primeiro.val() == segundo.val()) {
@@ -43,7 +43,7 @@ function removeSelectedDuplicado() {
 
 #{if solicitacao.itemConfiguracao && acoesEAtendentes} 
 	<div class="gt-form-row gt-width-66">
-	<label>Ação</label>	
+	<label>AÃ§Ã£o</label>	
 		#{select name:'acao.idAcao', value:solicitacao.acao?.idAcao, onchange:"carregarLotacaoDaAcao();", id:'selectAcao'}
 			#{option 0}#{/option}
 			#{list items:acoesEAtendentes.keySet(), as:'cat' }

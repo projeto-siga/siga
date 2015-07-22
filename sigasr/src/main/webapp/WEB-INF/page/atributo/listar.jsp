@@ -60,9 +60,9 @@
 					<thead>
 						<tr>
 							<th>Nome</th>
-							<th>Descrição</th>
+							<th>DescriÃ§Ã£o</th>
 							<th>Objetivo</th>
-							<th>Código</th>
+							<th>CÃ³digo</th>
 							<th>Formato</th>
 							<th></th>
 							<th style="display: none;">jSon</th>
@@ -157,7 +157,7 @@
 	opts.dataTable= $('#atributo_table').dataTable({
 		    stateSave : true,
 			"language": {
-				"emptyTable":     "Não existem resultados",
+				"emptyTable":     "NÃ£o existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -170,13 +170,13 @@
 			    "zeroRecords":    "Nenhum registro encontrado",
 			    "paginate": {
 			        "first":      "Primeiro",
-			        "last":       "Úšltimo",
-			        "next":       "Próximo",
+			        "last":       "ÃšÂšltimo",
+			        "next":       "PrÃ³ximo",
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
+			        "sortAscending":  ": clique para ordenaÃ§Ã£o crescente",
+			        "sortDescending": ": clique para ordenaÃ§Ã£o decrescente"
 			    }
 			},
 			"columnDefs": [{
@@ -263,7 +263,7 @@
 	*/
 	atributoService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
-// 		atualiza a lista de Associações
+// 		atualiza a lista de AssociaÃ§Ãµes
 		this.buscarAssociacoes(obj);
 		associacaoService.verificarTipoAtributo();
 	}
@@ -274,7 +274,7 @@
 	atributoService.cadastrar = function(title) {
 		BaseService.prototype.cadastrar.call(this, title); // super.cadastrar();
 		
-		// limpa a lista de Associações
+		// limpa a lista de AssociaÃ§Ãµes
 		associacaoService.limparDadosAssociacoes();
 		associacaoService.atualizarListaAssociacoes({});
 		associacaoService.verificarTipoAtributo();
@@ -294,11 +294,11 @@
 		    	dataType: "text",
 		    	success: function(obj) {
 		    		var associacaoJson = JSON.parse(obj);
-		    		// alimenta a lista de AssociaÃ§Ãµes
+		    		// alimenta a lista de AssociaÃƒÂ§ÃƒÂµes
 					associacaoService.atualizarListaAssociacoes(associacaoJson);
 		    	},
 		    	error: function(error) {
-		        	alert("Não foi possível carregar as Associações deste Atributo.");
+		        	alert("NÃ£o foi possÃ­vel carregar as AssociaÃ§Ãµes deste Atributo.");
 		    	}
 		   	});
 		}

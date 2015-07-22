@@ -5,7 +5,7 @@
 <jsp:include page="../main.jsp"></jsp:include>
 
 
-<head><title>Pesquisa de Ações</title></head>
+<head><title>Pesquisa de AÃ§Ãµes</title></head>
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
@@ -17,12 +17,12 @@
 						<td align="center" valign="top" colspan="4">Dados da a&ccedil;&atilde;o</td>
 					</tr>
 					<tr>
-						<td>Código:</td>
+						<td>CÃ³digo:</td>
 						<td><input type="text" name="siglaAcao" value="${filtro.siglaAcao}" />
 						</td>
 					</tr>
 					<tr>
-						<td>Título</td>
+						<td>TÃ­tulo</td>
 						<td>
 							<input type="text" name="tituloAcao" value="${filtro.tituloAcao}" />
 							<input type="hidden" name="nome" value="${nome}" />
@@ -43,7 +43,7 @@
 	<div class="gt-content-box gt-for-table">
 		<table class="gt-table">
 			<tr>
-				<th>Código
+				<th>CÃ³digo
 				</td>
 				<th>Descri&ccedil;&atilde;o
 				</td>

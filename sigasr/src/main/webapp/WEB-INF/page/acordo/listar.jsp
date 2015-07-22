@@ -138,8 +138,8 @@
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordena��o crescente",
-			        "sortDescending": ": clique para ordena��o decrescente"
+			        "sortAscending":  ": clique para ordenação crescente",
+			        "sortDescending": ": clique para ordenação decrescente"
 			    }
 			},
 			"columnDefs": [{
@@ -250,10 +250,10 @@
 	acordoService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 
-		// Atualiza a lista de parâmetros
+		// Atualiza a lista de parÃ¢metros
 		atualizarParametrosAcordo(obj);
 
-		// carrega a Abrangências do Acordo
+		// carrega a AbrangÃªncias do Acordo
 		carregarAbrangenciasAcordo(obj.id);
 	}
 
@@ -261,10 +261,10 @@
 	 * Sobescreve o metodo cadastrar para limpar a tela.
 	 */
 	acordoService.cadastrar = function(title) {
-		// Atualiza a lista de parâmetros
+		// Atualiza a lista de parÃ¢metros
 		atualizarParametrosAcordo();
 
-		// carrega a Abrangências do Acordo
+		// carrega a AbrangÃªncias do Acordo
 		carregarAbrangenciasAcordo();
 		
 		BaseService.prototype.cadastrar.call(this, title); // super.editar();
@@ -287,7 +287,7 @@
 	        		acordoService.populateFromJSonList(listaJSon, associacaoTable);
 	        	},
 	        	error: function(error) {
-	            	alert("N�o foi poss�vel carregar as Abrang�ncias deste Acordo.");
+	            	alert("Não foi possível carregar as Abrangências deste Acordo.");
 	        	}
 	       	});
 		}
@@ -402,7 +402,7 @@
         return ' ';
 	}	
 
-	// Atualizando lista de Parâmetros de Acordo
+	// Atualizando lista de ParÃ¢metros de Acordo
 	function atualizarParametrosAcordo(acordo) {
 		removerItensLista('parametrosAcordo');
 

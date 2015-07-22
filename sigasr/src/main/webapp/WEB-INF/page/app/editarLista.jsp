@@ -1,4 +1,4 @@
-#{extends 'main.html' /} #{set title:'Edição de Lista' /}
+#{extends 'main.html' /} #{set title:'EdiÃ§Ã£o de Lista' /}
 <script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
 <script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
 <script src="/sigasr/public/javascripts/detalhe-tabela.js"></script>
@@ -18,7 +18,7 @@
 				required/>
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Abrangência</label>
+			<label>AbrangÃªncia</label>
 			<textarea cols="98" rows="5" name="descrAbrangencia"
 				id="descrAbrangencia" maxlength="8192">${descrAbrangencia}</textarea>
 		</div>
@@ -28,14 +28,14 @@
 				id="descrJustificativa" maxlength="8192">${descrJustificativa}</textarea>
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Priorização</label>
+			<label>PriorizaÃ§Ã£o</label>
 			<textarea cols="98" rows="5" name="descrPriorizacao"
 				id="descrPriorizacao" maxlength="8192">${descrPriorizacao}</textarea>
 		</div>
 		
 		<div class="container">
 			<div class="title-table">
-				<h3 style="padding-top: 25px;">Permissões</h3>
+				<h3 style="padding-top: 25px;">PermissÃµes</h3>
 			</div>
 		</div>
 		<div class="gt-content-box gt-for-table dataTables_div">
@@ -45,26 +45,26 @@
 			<table id="permissoes_table" border="0" class="gt-table display">
 				<thead>
 					<tr>
-						<th>ID Orgão</th>
-						<th>Orgão</th>
+						<th>ID OrgÃ£o</th>
+						<th>OrgÃ£o</th>
 						<th>ID Local</th>
 						<th>Local</th>
-						<th>ID Lotação</th>
-						<th>Nome Lotação</th>
-						<th>Lotação</th>
+						<th>ID LotaÃ§Ã£o</th>
+						<th>Nome LotaÃ§Ã£o</th>
+						<th>LotaÃ§Ã£o</th>
 						<th>ID Pessoa</th>
 						<th>Nome Pessoa</th>
 						<th>Pessoa</th>
 						<th>ID Cargo</th>
 						<th>Cargo</th>
 						<th>Cargo</th>
-						<th>ID Função</th>
-						<th>Função</th>
-						<th>Função</th>
-						<th>Tipo Permissão JSON</th>
+						<th>ID FunÃ§Ã£o</th>
+						<th>FunÃ§Ã£o</th>
+						<th>FunÃ§Ã£o</th>
+						<th>Tipo PermissÃ£o JSON</th>
 						<th>ID Tipo Permissao</th>
-						<th>Tipo Permissão</th>	
-						<th>Tipo Permissão</th>	
+						<th>Tipo PermissÃ£o</th>	
+						<th>Tipo PermissÃ£o</th>	
 						<th></th>
 					</tr>
 				</thead>
@@ -93,7 +93,7 @@
 							<td></td>
 							<td>${perm.descrTipoPermissao}</td>
 							<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-								<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, ${perm.id})" title="Remover permissão">
+								<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, ${perm.id})" title="Remover permissÃ£o">
 									<input class="idPermissao" type="hidden" value="${perm.id}"/>
 									<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;"> 
 								</a>
@@ -109,7 +109,7 @@
 		
 		<div class="container">
 			<div class="title-table">
-				<h3 style="padding-top: 25px;">Configurações de inclusão automática</h3>
+				<h3 style="padding-top: 25px;">ConfiguraÃ§Ãµes de inclusÃ£o automÃ¡tica</h3>
 			</div>
 		</div>
 		<div class="gt-content-box gt-for-table dataTables_div">
@@ -127,13 +127,13 @@
 							</button>
 						</th>
 						<th>Solicitante</th>
-						<th>Orgão</th>
+						<th>OrgÃ£o</th>
 						<th>Item</th>
-						<th>Ação</th>
-						<th>Lotação atendente</th>
+						<th>AÃ§Ã£o</th>
+						<th>LotaÃ§Ã£o atendente</th>
 						<th>Prioridade</th>
 						<th>Prioridade na lista</th>
-						<th>Ações</th>
+						<th>AÃ§Ãµes</th>
 					</tr>
 				</thead>
 				
@@ -143,7 +143,7 @@
 		</div>
 		
 		<div class="gt-table-buttons">
-            <a href="javascript: configuracaoInclusaoAutomaticaService.cadastrar('Cadastro de configuração de inclusão automática')" class="gt-btn-small gt-btn-left">Incluir</a>
+            <a href="javascript: configuracaoInclusaoAutomaticaService.cadastrar('Cadastro de configuraÃ§Ã£o de inclusÃ£o automÃ¡tica')" class="gt-btn-small gt-btn-left">Incluir</a>
 		</div>	
 		
 		<div class="gt-form-row">
@@ -153,18 +153,18 @@
 		</div>
 
 		<div class="gt-form-row gt-width-100">
-			<p class="gt-error" style="display:none;" id="erroAoSalvar">Não foi possível salvar o registro.</p>
+			<p class="gt-error" style="display:none;" id="erroAoSalvar">NÃ£o foi possÃ­vel salvar o registro.</p>
 		</div>
 	</form>
 </div>
 
-#{modal nome:'controleAcesso', titulo:'Cadastrar Permissão'}
+#{modal nome:'controleAcesso', titulo:'Cadastrar PermissÃ£o'}
 	<form id="formControleAcesso" enctype="multipart/form-data">
 		<div class="gt-form gt-content-box" id="modal-permissao">
 			<div>
 				<input id="idConfiguracao" type="hidden" name="idConfiguracao"> 
 				<div class="gt-form-row div-modal-table">
-					<label>Órgão</label> 
+					<label>ÃrgÃ£o</label> 
 					#{select name:'orgaoUsuario', items:orgaos, valueProperty:'idOrgaoUsu',
 					labelProperty:'acronimoOrgaoUsu', value:orgaoUsuario?.idOrgaoUsu}
 					#{option 0}#{/option} 
@@ -180,7 +180,7 @@
 					#{/select}
 				</div>		
 				<div class="gt-form-row div-modal-table">
-					<label>Lotação</label>#{selecao
+					<label>LotaÃ§Ã£o</label>#{selecao
 						tipo:'lotacao', nome:'lotacao',
 						value:lotacao?.lotacaoAtual /}
 				</div>
@@ -198,13 +198,13 @@
 				</div>
 				
 				<div class="gt-form-row div-modal-table">
-					<label>Função</label>#{selecao
+					<label>FunÃ§Ã£o</label>#{selecao
 						tipo:'funcao', nome:'funcaoConfianca',
 						value:funcaoConfianca /}
 				</div>
 				
 				<div class="gt-form-row div-modal-table">
-					<label>Tipo Permissão</label>
+					<label>Tipo PermissÃ£o</label>
 						<ul id="ulPermissoes" style="color: #365b6d" name="ulPermissoes"></ul>
 						<input type="button" value="Incluir" id="botaoIncluir"
 			                      class="gt-btn-small gt-btn-left" style="font-size: 10px;" />
@@ -230,7 +230,7 @@
 						<div id="tiposPermissaoContainer" data-json="${tiposPermissaoJson}"></div>
 					
 						<div class="gt-form-row gt-width-66">
-							<label>Tipo de Permissão</label> #{select name:'itemTipoPermissao', id:'itemTipoPermissao'}
+							<label>Tipo de PermissÃ£o</label> #{select name:'itemTipoPermissao', id:'itemTipoPermissao'}
 								 #{list items:tiposPermissao, as:'item'} #{option item.idTipoPermissaoLista} ${item.descrTipoPermissaoLista} #{/option} #{/list} #{/select}
 						</div>
 						<div class="gt-form-row">
@@ -260,7 +260,7 @@
 	</form>
 #{/modal}
 
-#{modal nome:'configuracao_inclusao_automatica', titulo:'Configuração para inclusão automática'}
+#{modal nome:'configuracao_inclusao_automatica', titulo:'ConfiguraÃ§Ã£o para inclusÃ£o automÃ¡tica'}
 	<form id="formConfiguracaoInclusaoAutomatica">
 		<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
 			<input id="idConfiguracao" type="hidden" name="idConfiguracao">
@@ -273,14 +273,14 @@
 			</div>
 		
 			<div class="gt-form-row gt-width-100">
-				<label>Órgão</label> 
+				<label>ÃrgÃ£o</label> 
 				#{select name:'orgaoUsuario', items:orgaos, valueProperty:'idOrgaoUsu', labelProperty:'acronimoOrgaoUsu', class:'select-siga', style:'width: 100%;'} 
 					#{option 0}#{/option} 
 				#{/select}
 			</div>
 		
 			<div class="gt-form-row gt-width-100">
-				<label>Lotação</label>
+				<label>LotaÃ§Ã£o</label>
 				#{selecao tipo:'lotacao', nome:'lotacaoParaInclusaoAutomatica'/}
 			</div>
 			
@@ -490,7 +490,7 @@
 		this.configuracaoInclusaoAutomaticaTable.detalhes(DetalheConfiguracao.detalhes);
 	}
 	configuracaoInclusaoAutomaticaService.onRowClick = function(configuracao) {
-		configuracaoInclusaoAutomaticaService.editar(configuracao, 'Alterar configuração para inclusão automática');
+		configuracaoInclusaoAutomaticaService.editar(configuracao, 'Alterar configuraÃ§Ã£o para inclusÃ£o automÃ¡tica');
 	}
 	configuracaoInclusaoAutomaticaService.editar = function(configuracao, title) {
 		configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(configuracao);
@@ -610,7 +610,7 @@
                  }	        	 
 	         },
 	         error: function(response) {
-	        	alert("Não foi possível desativar esta permissão.");
+	        	alert("NÃ£o foi possÃ­vel desativar esta permissÃ£o.");
 	         }
        });
 	       
@@ -671,10 +671,10 @@
 		itemTipoPermissaoOptions = $("#itemTipoPermissao").clone();
 		
 		if (isEdicao)
-			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar Permissão');
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Alterar PermissÃ£o');
 		else {
 			limparDadosAcessoModal();
-			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir Permissão');
+			$("#controleAcesso_dialog").dialog('option', 'title', 'Incluir PermissÃ£o');
 		}
 
 		atualizarComboTipoPermissao();
@@ -831,7 +831,7 @@
 	}
 	function getColunaAtivarDesativar (permissao) {
 		return '<td class="gt-celula-nowrap" style="cursor:pointer; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">' + 
-					'<a class="once desassociarPermissao" title="Remover permissão">' + 
+					'<a class="once desassociarPermissao" title="Remover permissÃ£o">' + 
 						'<input class="idPermissao" type="hidden" value="' + permissao.idConfiguracao + '"/>' + 
 						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
 					'</a>' + 
@@ -929,7 +929,7 @@
             if ($("#itemTipoPermissao")[0].options.length > 0)
             	jDialog.data('acao', permissoes.incluirItem).dialog('open');
             else
-                alert("Não existem mais Tipos de Permissão para serem incluidos");
+                alert("NÃ£o existem mais Tipos de PermissÃ£o para serem incluidos");
         });
        
         jDialog.dialog({
@@ -942,7 +942,7 @@
                     jDialog.data('tipoPermissao','');
             },
             open: function(){
-                    jDialog.dialog('option', 'title', 'Incluir Tipo de Permissão');
+                    jDialog.dialog('option', 'title', 'Incluir Tipo de PermissÃ£o');
                     jTipoPermissao.find("option[value=" + jDialog.data("tipoPermissao") + "]").prop('selected', true);
             }
         });
@@ -1090,7 +1090,7 @@
 		else {
 			permissoesTable = permissoesTable = $('#permissoes_table').dataTable({
 				"language": {
-					"emptyTable":     "Não existem resultados",
+					"emptyTable":     "NÃ£o existem resultados",
 				    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 				    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 				    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -1103,13 +1103,13 @@
 				    "zeroRecords":    "Nenhum registro encontrado",
 				    "paginate": {
 				        "first":      "Primeiro",
-				        "last":       "Último",
-				        "next":       "Próximo",
+				        "last":       "Ãltimo",
+				        "next":       "PrÃ³ximo",
 				        "previous":   "Anterior"
 				    },
 				    "aria": {
-				        "sortAscending":  ": clique para ordenação crescente",
-				        "sortDescending": ": clique para ordenação decrescente"
+				        "sortAscending":  ": clique para ordenaÃ§Ã£o crescente",
+				        "sortDescending": ": clique para ordenaÃ§Ã£o decrescente"
 				    }
 				},
 				"columnDefs": [{
@@ -1148,7 +1148,7 @@
         		populatePermissoesFromJSonList(permissoesJSon);
         	},
         	error: function(error) {
-            	alert("Não foi possível carregar as Permissões desta Lista.");
+            	alert("NÃ£o foi possÃ­vel carregar as PermissÃµes desta Lista.");
         	}
        	});
     }
@@ -1156,7 +1156,7 @@
     $(document).ready(function() {
     	listaService.conteudoColunaAcao = function(permissao) {
     		if (permissao.ativo) { 		 
-    			return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permissão">' + 
+    			return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permissÃ£o">' + 
     			'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'}"/>' + 
     			'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
     			'</a>'																	//20

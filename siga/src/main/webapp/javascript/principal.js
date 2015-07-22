@@ -13,7 +13,7 @@ Siga.principal = {
         },
         sigasr: {
         	name: "sigasr",
-        	url: "/sigasr/app/gadget",
+        	url: "/sigasr/app/solicitacao/gadget", 
           viewId: "rightbottom"
         },
         sigagc: {

@@ -6,9 +6,9 @@
 	<div class="gt-content clearfix">
 		<c:choose>
 		<c:when test="${associacao?.idConfiguracao}">
-		<h2 class="gt-form-head">Associação Nº ${associacao?.hisIdIni}</h2>
+		<h2 class="gt-form-head">AssociaÃ§Ã£o NÂº ${associacao?.hisIdIni}</h2>
 		</c:when> <c:otherwise>
-		<h2 class="gt-form-head">Cadastro de Associação</h2>
+		<h2 class="gt-form-head">Cadastro de AssociaÃ§Ã£o</h2>
 		</c:otherwise>
 		</c:choose>
 
@@ -25,7 +25,7 @@
 			</div>
 
 			<div class="gt-form-row gt-width-66">
-				<label>Serviço</label> <sigasr:selecao tipo="acao"
+				<label>ServiÃ§o</label> <sigasr:selecao tipo="acao"
 				nome="associacao.acaoUnitaria" value="${associacao.acaoUnitaria?.atual}" />
 			</div>
 			<div class="gt-form-row gt-width-66">
@@ -37,7 +37,7 @@
 			</div>
 			<div class="gt-form-row">
 				<label><siga:checkbox name="associacao.atributoObrigatorio"
-					value="${associacao.atributoObrigatorio}" /> Obrigatório</label>
+					value="${associacao.atributoObrigatorio}" /> ObrigatÃ³rio</label>
 			</div>
 			<div class="gt-form-row">
 				<c:if test="${!associacao.hisDtFim}">

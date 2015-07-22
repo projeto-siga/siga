@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Designação de Solicitações">
+<siga:pagina titulo="DesignaÃ§Ã£o de SolicitaÃ§Ãµes">
 
 	<jsp:include page="../main.jsp"></jsp:include>
 	
@@ -54,7 +54,7 @@
 	
 	<div class="gt-bd clearfix">
 		<div class="gt-content">
-			<h2>Itens de Configuração</h2>
+			<h2>Itens de ConfiguraÃ§Ã£o</h2>
 			<!-- content bomex -->
 			<div class="gt-content-box dataTables_div">
 				<div class="gt-form-row dataTables_length">
@@ -71,9 +71,9 @@
 									<span id="iconeBotaoExpandirTodos">+</span>
 								</button>
 							</th>
-							<th>Código</th>
-							<th>Título</th>
-							<th>Descrição</th>
+							<th>CÃ³digo</th>
+							<th>TÃ­tulo</th>
+							<th>DescriÃ§Ã£o</th>
 							<th>Similaridade</th>
 							<th></th>
 							<th style="display: none;">VO Item</th>
@@ -83,7 +83,7 @@
 					<tbody>
 						<c:forEach items="${itens}" var="item">
 							<tr data-json-id="${item.idItemConfiguracao}" data-json='${item.toVO().toJson()}' 
-								onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuração')"
+								onclick="itemConfiguracaoService.editar($(this).data('json'), 'Alterar item de configuraÃ§Ã£o')"
 								style="cursor: pointer;">
 								<td class="gt-celula-nowrap details-control" style="text-align: center;">+</td>
 								<td>${item.siglaItemConfiguracao}</td>
@@ -256,7 +256,7 @@
 	itemConfiguracaoService.editar = function(obj, title) {
 		BaseService.prototype.editar.call(this, obj, title); // super.editar();
 		atualizarModalItem(obj);
-		// carrega as designaÃƒÂ§ÃƒÂµes do item
+		// carrega as designaÃƒÂƒÃ‚Â§ÃƒÂƒÃ‚Âµes do item
 		carregarDesignacoes(this.getId(obj));
 	}
 
@@ -314,7 +314,7 @@
         		designacaoService.populateFromJSonList(listaJSon);
         	},
         	error: function(error) {
-            	alert("Não foi possível carregar as Designações deste item.");
+            	alert("NÃ£o foi possÃ­vel carregar as DesignaÃ§Ãµes deste item.");
         	}
        	});
     }

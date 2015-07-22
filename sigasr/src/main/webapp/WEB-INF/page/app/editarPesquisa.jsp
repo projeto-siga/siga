@@ -1,4 +1,4 @@
-#{extends 'main.html' /} #{set title:'Edição de Pesquisa' /}
+#{extends 'main.html' /} #{set title:'EdiÃ§Ã£o de Pesquisa' /}
 <script src="/sigasr/public/javascripts/jquery.validate.min.js"></script>
 <script src="/sigasr/public/javascripts/language/messages_pt_BR.min.js"></script>
 
@@ -24,7 +24,7 @@
 				name="nomePesquisa" id="nomePesquisa" size="60" maxlength="255" required />
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Descrição</label> <input type="text" name="descrPesquisa" id="descrPesquisa"
+			<label>DescriÃ§Ã£o</label> <input type="text" name="descrPesquisa" id="descrPesquisa"
 				size="60" maxlength="255" />
 		</div>
 

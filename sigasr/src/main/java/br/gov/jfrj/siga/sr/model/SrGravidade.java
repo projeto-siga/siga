@@ -3,8 +3,8 @@ package br.gov.jfrj.siga.sr.model;
 public enum SrGravidade {
 
 	SEM_GRAVIDADE(1, "Sem gravidade", ""), NORMAL(2, "Solicitante impossibilitado de realizar o trabalho",
-            ""), GRAVE(3, "Serviço fora do ar", ""), MUITO_GRAVE(4,
-            "Evento em andamento (audiência, etc) ou solicitante prioritário", ""), EXTREMAMENTE_GRAVE(5,
+            ""), GRAVE(3, "ServiÃ§o fora do ar", ""), MUITO_GRAVE(4,
+            "Evento em andamento (audiÃªncia, etc) ou solicitante prioritÃ¡rio", ""), EXTREMAMENTE_GRAVE(5,
             "Extremamente grave", "");
 
 

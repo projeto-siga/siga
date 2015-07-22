@@ -121,10 +121,10 @@ public class AcaoController extends SrController {
 
 	private void validarFormEditarAcao(SrAcao acao) {
 		if ("".equals(acao.getSiglaAcao()))
-			srValidator.addError("siglaAcao", "C�digo n�o informado");
+			srValidator.addError("siglaAcao", "Cï¿½digo nï¿½o informado");
 
 		if ("".equals(acao.getTituloAcao()))
-			srValidator.addError("tituloAcao", "Titulo n�o informado");
+			srValidator.addError("tituloAcao", "Titulo nï¿½o informado");
 
 		if (srValidator.hasErrors())
 			enviarErroValidacao();

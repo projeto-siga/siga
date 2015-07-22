@@ -43,7 +43,7 @@
 			<div class="gt-content clearfix">
 
 				<div id="caption" class="gt-error-page-hd">
-					<h2>Não Foi Possível Completar a Operação</h2>
+					<h2>NÃ£o Foi PossÃ­vel Completar a OperaÃ§Ã£o</h2>
 				</div>
 
 				<div class="gt-content-box">

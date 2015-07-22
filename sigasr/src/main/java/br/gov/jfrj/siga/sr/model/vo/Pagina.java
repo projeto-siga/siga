@@ -25,7 +25,7 @@ public class Pagina {
      */
     private String orderBy;
     /**
-     * Direção do order by
+     * DireÃ§Ã£o do order by
      */
     private String direcaoOrdenacao;
 

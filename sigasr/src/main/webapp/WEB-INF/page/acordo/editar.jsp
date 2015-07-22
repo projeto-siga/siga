@@ -304,7 +304,7 @@
 	      		acordoService.populateFromJSonList(listaJSon, associacaoTable);
 	      	 },
 	      	 error: function(error) {
-	          	alert("Não foi possível carregar as Abrangências deste Acordo.");
+	          	alert("NÃ£o foi possÃ­vel carregar as AbrangÃªncias deste Acordo.");
 	      	 }
        });
     });
@@ -426,7 +426,7 @@
 		$("#dpPessoalotacaofuncaoConfiancacargocpGrupo")[0].onchange();
 	}
 	
-	// Alimenta os campos do Popup antes de abrir ao usuÃ¡rio.
+	// Alimenta os campos do Popup antes de abrir ao usuÃÂ¡rio.
 	function atualizarAssociacaoModal(itemArray, associacao) {
 		limparDadosAssociacaoModal();
 
@@ -459,7 +459,7 @@
         getSiglaFieldSolicitante(itemArray[colunasAssociacao.tipoSolicitante]).val(itemArray[colunasAssociacao.solicitante]);
         getSpanFieldSolicitante(itemArray[colunasAssociacao.tipoSolicitante]).html(itemArray[colunasAssociacao.descricaoSolicitante]);
 
-        // atualiza os dados da lista de Itens e Ações
+        // atualiza os dados da lista de Itens e AÃ§Ãµes
         configuracaoItemAcaoService.atualizaDadosTabelaItemAcao(associacao);
 	}
 
@@ -624,7 +624,7 @@
              	params += '&associacao.cpGrupo=';
 
 		
-		// caso seja lotação
+		// caso seja lotaÃ§Ã£o
 		} else if (rowValues[colunasAssociacao.tipoSolicitante] == 2){
 			params += '&associacao.lotacao=' + rowValues[colunasAssociacao.idSolicitante];
 			params += '&associacao.dpPessoa=';
@@ -633,7 +633,7 @@
              	params += '&associacao.cpGrupo=';
 
 		
-		// caso seja função
+		// caso seja funÃ§Ã£o
 		} else if (rowValues[colunasAssociacao.tipoSolicitante] == 3){
 			params += '&associacao.funcaoConfianca=' + rowValues[colunasAssociacao.idSolicitante];
 			params += '&associacao.dpPessoa=';

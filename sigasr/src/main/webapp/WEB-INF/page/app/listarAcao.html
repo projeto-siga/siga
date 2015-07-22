@@ -1,4 +1,4 @@
-#{extends 'main.html' /} #{set title:'Ações' /}
+#{extends 'main.html' /} #{set title:'AÃ§Ãµes' /}
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
@@ -11,7 +11,7 @@
 
 <div class="gt-bd clearfix">
 	<div class="gt-content">
-		<h2>Ações</h2>
+		<h2>AÃ§Ãµes</h2>
 		<!-- content bomex -->
 		<div class="gt-content-box dataTables_div">
 			<div class="gt-form-row dataTables_length">
@@ -20,9 +20,9 @@
 			<table id="acoes_table" class="gt-table display">
 				<thead>
 					<tr>
-						<th>Código</th>
-						<th>Título</th>
-						<th>Descrição</th>
+						<th>CÃ³digo</th>
+						<th>TÃ­tulo</th>
+						<th>DescriÃ§Ã£o</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -120,7 +120,7 @@
 		/* Table initialization */
 		opts.dataTable = $('#acoes_table').dataTable({
 			"language": {
-				"emptyTable":     "Não existem resultados",
+				"emptyTable":     "NÃ£o existem resultados",
 			    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 			    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
 			    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
@@ -133,13 +133,13 @@
 			    "zeroRecords":    "Nenhum registro encontrado",
 			    "paginate": {
 			        "first":      "Primeiro",
-			        "last":       "Último",
-			        "next":       "Próximo",
+			        "last":       "Ãltimo",
+			        "next":       "PrÃ³ximo",
 			        "previous":   "Anterior"
 			    },
 			    "aria": {
-			        "sortAscending":  ": clique para ordenação crescente",
-			        "sortDescending": ": clique para ordenação decrescente"
+			        "sortAscending":  ": clique para ordenaÃ§Ã£o crescente",
+			        "sortDescending": ": clique para ordenaÃ§Ã£o decrescente"
 			    }
 			},
 			"columnDefs": [{

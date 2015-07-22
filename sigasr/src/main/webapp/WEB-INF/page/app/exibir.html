@@ -1,4 +1,4 @@
-#{extends 'main.html' /} #{set title:'Movimentação de solicitação' /}
+#{extends 'main.html' /} #{set title:'MovimentaÃ§Ã£o de solicitaÃ§Ã£o' /}
 <script src="/sigasr/public/javascripts/jquery.maskedinput.min.js"></script>
 
 <style>
@@ -155,7 +155,7 @@ function postback(){
 						<th>Evento</th>
 						<th colspan="2">Cadastrante</th> #{if ocultas}
 						<th colspan="2">Atendente</th> #{/if}
-						<th>Descrição</th>
+						<th>DescriÃ§Ã£o</th>
 					</tr>
 				</thead>
 				
@@ -218,7 +218,7 @@ function postback(){
 	#{include 'Application/exibirPendencias.html' /}
 	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
-			<h3>Solicitação</h3>
+			<h3>SolicitaÃ§Ã£o</h3>
 			<p>
 				<b>Solicitante:</b>
 				${solicitacao.solicitante?.descricaoIniciaisMaiusculas}, ${solicitacao.lotaSolicitante?.siglaLotacao} #{if
@@ -259,9 +259,9 @@ function postback(){
 				#{set acaoEscalonar : solicitacao.getAcaoAtual().toString().raw() /}
 			#{/if}
 			<p>
-				<span class="historico-label">Item de Configuração:</span>
+				<span class="historico-label">Item de ConfiguraÃ§Ã£o:</span>
 				<div class="historico-item-container hidden">
-					<button type="button" class="button-historico" title="Clique para abrir/fechar o histórico">+</button>
+					<button type="button" class="button-historico" title="Clique para abrir/fechar o histÃ³rico">+</button>
 				
 					<ul class="lista-historico historico-item">
 						#{list items:solicitacao.historicoItem, as:'item'}
@@ -275,7 +275,7 @@ function postback(){
 			<p>
 				<span class="historico-label">A&ccedil;&atilde;o:</span>
 				<div class="historico-acao-container hidden">
-					<button type="button" class="button-historico" title="Clique para abrir/fechar o histórico">+</button>
+					<button type="button" class="button-historico" title="Clique para abrir/fechar o histÃ³rico">+</button>
 					
 					<ul class="lista-historico historico-acao">
 						#{list items:solicitacao.historicoAcao, as:'acao'}
@@ -294,12 +294,12 @@ function postback(){
 					<br /> ${solicitacao.GUTString}</span>
 			</p>
 			<p>
-				<b>Notificação:</b>
+				<b>NotificaÃ§Ã£o:</b>
 				${solicitacao.formaAcompanhamento.descrFormaAcompanhamento.raw()}
 			</p>
 			#{if solicitacao.fechadoAutomaticamente != null && solicitacao.isPai()}
 			<p>
-				<b>Fechamento Automático:</b> ${solicitacao.fechadoAutomaticamente.yesno('Sim', 'Não')  }
+				<b>Fechamento AutomÃ¡tico:</b> ${solicitacao.fechadoAutomaticamente.yesno('Sim', 'NÃ£o')  }
 			</p>
 			#{/if}
 		</div>
@@ -393,7 +393,7 @@ function postback(){
 					name="movimentacao.arquivo">
 			</div>
 			<div style="display: inline" class="gt-form-row gt-width-66">
-				<label>Descrição</label>
+				<label>DescriÃ§Ã£o</label>
 				<textarea style="width: 100%" name="movimentacao.descrMovimentacao"
 					id="descrSolicitacao" cols="70" rows="4"
 					value="${movimentacao.descrMovimentacao}"></textarea>
@@ -420,7 +420,7 @@ function postback(){
 	#{modal nome:'incluirEmLista', titulo:'Definir Lista', url:'/sigasr/solicitacao/incluirEmLista?idSolicitacao='+solicitacao.idSolicitacao}
 	#{/modal}
 		
-	#{modal nome:'escalonar', titulo:'Escalonar Solicitação', 
+	#{modal nome:'escalonar', titulo:'Escalonar SolicitaÃ§Ã£o', 
 				url:'/sigasr/solicitacao/escalonar?id='+solicitacao.idSolicitacao  /}
 
 	#{modal nome:'juntar', titulo:'Juntar'}
@@ -430,16 +430,16 @@ function postback(){
 			<input type="hidden" name="ocultas" value="${ocultas}" />
 			<input type="hidden" name="idSolicitacaoAJuntar" value="${solicitacao.idSolicitacao}"> 
 			<div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
-				<label>Solicitação</label> <br />
+				<label>SolicitaÃ§Ã£o</label> <br />
 				#{selecao tipo:'solicitacao', nome:'idSolicitacaoRecebeJuntada',
 					value: idSolicitacaoRecebeJuntada, grande:true,
 					onchange: "validarAssociacao('Juncao');"  /}
-				<span id="erroSolicitacaoJuncao" style="color: red; display: none;">Solicitação não informada.</span>
+				<span id="erroSolicitacaoJuncao" style="color: red; display: none;">SolicitaÃ§Ã£o nÃ£o informada.</span>
 			</div>
 			<div class="gt-form-row gt-width-100" style="padding: 10px 0;">
 				<label>Justificativa</label>
 				<textarea style="width: 100%;" cols="70" rows="4" name="justificativa" id="justificativaJuncao" maxlength="255" onkeyup="validarAssociacao('Juncao')"></textarea>
-				<span id="erroJustificativaJuncao" style="color: red; display: none;"><br />Justificativa não informada.</span>
+				<span id="erroJustificativaJuncao" style="color: red; display: none;"><br />Justificativa nÃ£o informada.</span>
 			</div>
 			<div style="display: inline" class="gt-form-row ">
 				<input type="button" onclick="gravarAssociacao('Juncao');" value="Gravar" class="gt-btn-medium gt-btn-left" />
@@ -453,16 +453,16 @@ function postback(){
 			<input type="hidden" name="ocultas" value="${ocultas}" />
 			<input type="hidden" name="idSolicitacaoAVincular" value="${solicitacao.idSolicitacao}"> 
 			<div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
-				<label>Solicitação</label> <br />
+				<label>SolicitaÃ§Ã£o</label> <br />
 				#{selecao tipo:'solicitacao', nome:'idSolicitacaoRecebeVinculo',
 					value: idSolicitacaoRecebeVinculo, grande:true,
 					onchange: "validarAssociacao('Vinculo');"  /}
-				<span id="erroSolicitacaoVinculo" style="color: red; display: none;">Solicitação não informada.</span>
+				<span id="erroSolicitacaoVinculo" style="color: red; display: none;">SolicitaÃ§Ã£o nÃ£o informada.</span>
 			</div>
 			<div class="gt-form-row gt-width-100" style="padding: 10px 0;">
 				<label>Justificativa</label>
 				<textarea style="width: 100%;" cols="70" rows="4" name="justificativa" id="justificativaVinculo" maxlength="255" onkeyup="validarAssociacao('Vinculo')"></textarea>
-				<span id="erroJustificativaVinculo" style="color: red; display: none;"><br />Justificativa não informada.</span>
+				<span id="erroJustificativaVinculo" style="color: red; display: none;"><br />Justificativa nÃ£o informada.</span>
 			</div>
 			<div style="display: inline" class="gt-form-row ">
 				<input type="button" onclick="gravarAssociacao('Vinculo');" value="Gravar" class="gt-btn-medium gt-btn-left" />
@@ -473,18 +473,18 @@ function postback(){
 	#{/modal} 
 	#{modal nome:'responderPesquisa', titulo:'Responder Pesquisa', url:'/sigasr/solicitacao/responderPesquisa?id='+solicitacao.idSolicitacao}
 	#{/modal}
-	#{modal nome:'pendencia', titulo:'Pendência'}
+	#{modal nome:'pendencia', titulo:'PendÃªncia'}
 	<div class="gt-bd gt-cols clearfix" style="padding: 20px;">
 	<div class="gt-content-box gt-for-table gt-form">
 	<form action="@{Application.deixarPendente()}" method="post" enctype="multipart/form-data" onsubmit="javascript: return block();">
 		<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 		<input type="hidden" name="ocultas" value="${ocultas}" />
 		<div class="gt-form-row gt-width-66">
-			<label>Data de Término</label>
+			<label>Data de TÃ©rmino</label>
 			<input type="text" name="calendario" id="calendario">
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Horário de Término</label>
+			<label>HorÃ¡rio de TÃ©rmino</label>
 			<input type="text" name="horario" id="horario">
 		</div>
 		<div class="gt-form-row gt-width-66">
@@ -584,7 +584,7 @@ function postback(){
 		<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 		<input type="hidden" name="ocultas" value="${ocultas}" />
 		<div style="display: inline" class="gt-form-row gt-width-66">
-			<label>Descrição</label>
+			<label>DescriÃ§Ã£o</label>
 			<textarea style="width: 100%" name="descricao" cols="50" rows="4"> </textarea>
 		</div>
 		<input
@@ -676,9 +676,9 @@ function postback(){
 		}
 	}
 
-	new MostradorHistorico($('.historico-item-container'), "Item não informado")
+	new MostradorHistorico($('.historico-item-container'), "Item nÃ£o informado")
 		.init();
 
-	new MostradorHistorico($('.historico-acao-container'), "Ação não informada")
+	new MostradorHistorico($('.historico-acao-container'), "AÃ§Ã£o nÃ£o informada")
 		.init();
 </script>

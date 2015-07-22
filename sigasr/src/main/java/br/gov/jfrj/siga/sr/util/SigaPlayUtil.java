@@ -5,18 +5,18 @@ import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 public class SigaPlayUtil {
 
 	/**
-	 * Retorna uma String formatada para renderizar as informações do componente 
+	 * Retorna uma String formatada para renderizar as informaÃ§Ãµes do componente 
 	 * #{descricaoItem}.
 	 */
 	public static String descricaoItem(SrItemConfiguracao itemConfiguracao) {
 		if (itemConfiguracao != null)
 			return itemConfiguracao.getTituloItemConfiguracao();
 		else
-			return new String("Item não informado");
+			return new String("Item nÃ£o informado");
 	}
 	
 	/**
-	 * Retorna uma String formatada para renderizar as informações do componente 
+	 * Retorna uma String formatada para renderizar as informaÃ§Ãµes do componente 
 	 * #{selecionado}
 	 */
 	public static String selecionado(String sigla, String descricao) {
@@ -44,7 +44,7 @@ public class SigaPlayUtil {
 	
 	public static String botaoPriorizarSolicitacao() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("<a class=\"once gt-btn-ativar\" onclick=\"listaService.alterarPosicao(event)\" title=\"Alterar posição\">");
+		sb.append("<a class=\"once gt-btn-ativar\" onclick=\"listaService.alterarPosicao(event)\" title=\"Alterar posiÃ§Ã£o\">");
 		sb.append("<img src=\"/siga/css/famfamfam/icons/arrow_refresh_small_up_down.png\" style=\"margin-right: 3px;\"></img></a>");
 		sb.append("<a class=\"once gt-btn-ativar\" onclick=\"listaService.alterarPrioridade(event)\" title=\"Alterar prioridade\">");
 		sb.append("<img src=\"/siga/css/famfamfam/icons/arrow_switch.png\"></img></a>");

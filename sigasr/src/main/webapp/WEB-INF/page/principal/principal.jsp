@@ -5,4 +5,4 @@
 <script src="/sigasr/public/javascripts/jquery.blockUI.js"></script>
 <script src="/sigasr/public/javascripts/jquery-config.js"></script>
 
-<siga:pagina titulo="Serviços"></siga:pagina>
+<siga:pagina titulo="ServiÃ§os"></siga:pagina>

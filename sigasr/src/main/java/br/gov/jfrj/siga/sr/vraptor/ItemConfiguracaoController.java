@@ -65,13 +65,13 @@ public class ItemConfiguracaoController extends SrController {
         result.include(PESQUISA_SATISFACAO, pesquisaSatisfacao);
         result.include(MOSTRAR_DESATIVADOS, mostrarDesativados);
 
-        // Includes para os componentes de pessoaLotaSelecao de Gestor e Fator de Multiplicação
+        // Includes para os componentes de pessoaLotaSelecao de Gestor e Fator de MultiplicaÃ§Ã£o
         result.include("gestorPessoaSel", new DpPessoaSelecao());
         result.include("gestorLotacaoSel", new DpLotacaoSelecao());
         result.include("fatorPessoaSel", new DpPessoaSelecao());
         result.include("fatorLotacaoSel", new DpLotacaoSelecao());
 
-        // includes para o componente de Designação
+        // includes para o componente de DesignaÃ§Ã£o
         result.include("modoExibicao", "item");
         result.include("designacoes", designacoes);
         result.include("atendenteSel", new DpLotacaoSelecao());
@@ -102,7 +102,7 @@ public class ItemConfiguracaoController extends SrController {
     @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/gravar")
     public void gravar(SrItemConfiguracao itemConfiguracao, List<SrGestorItem> gestorSet, List<SrFatorMultiplicacao> fatorMultiplicacaoSet) throws Exception {
-        // WO para tratar o erro de conversão de listas do Vraptor
+        // WO para tratar o erro de conversÃ£o de listas do Vraptor
         itemConfiguracao.setGestorSet(gestorSet);
         itemConfiguracao.setFatorMultiplicacaoSet(fatorMultiplicacaoSet);
 
@@ -157,7 +157,7 @@ public class ItemConfiguracaoController extends SrController {
 
     private void validarFormEditarItem(SrItemConfiguracao itemConfiguracao) throws Exception {
         if (itemConfiguracao.getSiglaItemConfiguracao().equals("")) {
-            srValidator.addError("siglaAcao", "Código não informado");
+            srValidator.addError("siglaAcao", "CÃ³digo nÃ£o informado");
         }
         if (srValidator.hasErrors()) {
             enviarErroValidacao();

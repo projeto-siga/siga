@@ -42,7 +42,7 @@
 	</siga:modal>
 	
 	<!-- modal de posicao -->	
-	<siga:modal nome="posicao" titulo="PosiÁ„o de SolicitaÁ„o na Lista">
+	<siga:modal nome="posicao" titulo="Posi√ß√£o de Solicita√ß√£o na Lista">
 		<div class="gt-form gt-content-box" style="width: 280px; height: 100px;">
 			<form id="posicaoForm">
 				<input id="idPrioridadePosicao" type="hidden" name="idSolicitacao" />
@@ -156,12 +156,12 @@
 		BaseService.prototype.editar.call(this, lista, title); // super.editar();
 
 		limparDadosListaModal();
-		// carrega as permissıes da lista
+		// carrega as permiss√µes da lista
 		carregarPermissoes(lista.idLista);
 		configuracaoInclusaoAutomaticaService.carregarParaLista(lista.idLista);
 	}
 	/**
-	* Customiza o mÈtodo onGravar()
+	* Customiza o m√©todo onGravar()
 	*/
 	listaService.onGravar = function(obj, objSalvo) {
 		listaJson = objSalvo;
@@ -210,14 +210,14 @@
         		populatePermissoesFromJSonList(permissoesJSon);
         	},
         	error: function(error) {
-            	alert("N„o foi possÌvel carregar as Permissıes desta Lista.");
+            	alert("N√£o foi poss√≠vel carregar as Permiss√µes desta Lista.");
         	}
        	});
     }
 
 	function getAcaoPermissao(permissao) {
 		if(permissao.ativo) {
-	 			return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permiss„o">' + 
+	 			return '<a class="once desassociarPermissao" onclick="desativarPermissaoUsoListaEdicao(event, '+permissao.idConfiguracao+')" title="Remover permiss√£o">' + 
 						'<input class="idPermissao" type="hidden" value="'+permissao.idConfiguracao+'}"/>' + 
 						'<img id="imgCancelar" src="/siga/css/famfamfam/icons/delete.png" style="margin-right: 5px;">' + 
 					'</a>';

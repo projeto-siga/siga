@@ -231,7 +231,7 @@ public class SrLista extends HistoricoSuporte implements ConvertableEntity {
 
         for (SrPrioridadeSolicitacao prioridadeSolicitacao : getPrioridadeSolicitacaoSet()) {
             if (!prioridadeSolicitacao.getSolicitacao().isEmLista(this))
-                throw new IllegalArgumentException("A solicita��o " + prioridadeSolicitacao.getSolicitacao().getCodigo() + " n�o faz parte da lista");
+                throw new IllegalArgumentException("A solicitaï¿½ï¿½o " + prioridadeSolicitacao.getSolicitacao().getCodigo() + " nï¿½o faz parte da lista");
 
             AtualizacaoLista atualizacaoLista = atualizacoesAgrupadas.get(prioridadeSolicitacao.getId());
             if (atualizacaoLista != null) {
@@ -270,7 +270,7 @@ public class SrLista extends HistoricoSuporte implements ConvertableEntity {
 
     public void validarPodeExibirLista(DpLotacao lotacao, DpPessoa cadastrante) throws Exception {
         if (!podeConsultar(lotacao, cadastrante)) {
-            throw new Exception("Exibi��o n�o permitida");
+            throw new Exception("Exibiï¿½ï¿½o nï¿½o permitida");
         }
     }
 

@@ -115,7 +115,7 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel, Converta
 		}
 	}
 
-	// Edson: Não consegui fazer com que esse cascade fosse automático.
+	// Edson: NÃ£o consegui fazer com que esse cascade fosse automÃ¡tico.
 	@Override
 	public void salvarComHistorico() throws Exception {
 		super.salvarComHistorico();
@@ -126,7 +126,7 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel, Converta
 			}
 	}
 
-	// Edson: Não consegui fazer com que esse cascade fosse automático.
+	// Edson: NÃ£o consegui fazer com que esse cascade fosse automÃ¡tico.
 	@Override
 	public void finalizar() throws Exception {
 		super.finalizar();

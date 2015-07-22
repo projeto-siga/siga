@@ -76,19 +76,19 @@ public class SrCalendar extends GregorianCalendar {
 		if (fazMenosDeUmMinuto())
 			haQuantoTempo = "Neste instante";
 		else if (fazMenosDeDoisMinutos())
-			haQuantoTempo = "Há 1 minuto";
+			haQuantoTempo = "HÃ¡ 1 minuto";
 		else if (fazMenosDeUmaHora())
-			haQuantoTempo = "Há " + tempoTranscorridoMinutos() + " minutos";
+			haQuantoTempo = "HÃ¡ " + tempoTranscorridoMinutos() + " minutos";
 		else if (foiHoje())
-			haQuantoTempo = "Às " + format.format(this.getTime());
+			haQuantoTempo = "Ãs " + format.format(this.getTime());
 		else if (foiOntemOuHoje())
-			haQuantoTempo = "Ontem, às " + format.format(this.getTime());
+			haQuantoTempo = "Ontem, Ã s " + format.format(this.getTime());
 		else if (fazMenosDeUmaSemana()) {
 			switch (this.get(Calendar.DAY_OF_WEEK)) {
 			case Calendar.MONDAY:
 				haQuantoTempo = "Segunda-feira"; break;
 			case Calendar.TUESDAY:
-				haQuantoTempo = "Terça-feira"; break;
+				haQuantoTempo = "TerÃ§a-feira"; break;
 			case Calendar.WEDNESDAY:
 				haQuantoTempo = "Quarta-feira"; break;
 			case Calendar.THURSDAY:
@@ -96,12 +96,12 @@ public class SrCalendar extends GregorianCalendar {
 			case Calendar.FRIDAY:
 				haQuantoTempo = "Sexta"; break;
 			case Calendar.SATURDAY:
-				haQuantoTempo = "Sábado"; break;
+				haQuantoTempo = "SÃ¡bado"; break;
 			case Calendar.SUNDAY:
 				haQuantoTempo = "Domingo"; break;
 			}
 
-			haQuantoTempo += ", às " + format.format(this.getTime());
+			haQuantoTempo += ", Ã s " + format.format(this.getTime());
 
 		} else {
 			format.applyPattern("dd/MM/yy HH:mm");

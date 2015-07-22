@@ -23,7 +23,7 @@ public class Correio {
 	private static final String TEMPLATE_NOTIFICAR_CANCELAMENTO_MOVIMENTACAO = "notificarCancelamentoMovimentacao";
 	private static final String TEMPLATE_NOTIFICAR_MOVIMENTACAO = "notificarMovimentacao";
 	private static final String TEMPLATE_NOTIFICAR_ABERTURA = "notificarAbertura";
-	private static final String MOVIMENTACAO_DA_SOLICITACAO = "Movimentação da solicitação ";
+	private static final String MOVIMENTACAO_DA_SOLICITACAO = "MovimentaÃ§Ã£o da solicitaÃ§Ã£o ";
 
 	private Freemarker freemarker;
 	private PathBuilder pathBuilder;
@@ -44,9 +44,9 @@ public class Correio {
 		if (!recipients.isEmpty()) {
 			String assunto = "";
 			if (movimentacao.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
-		        assunto = "Fechamento de solicita��o escalonada a partir de " + sol.getCodigo();
+		        assunto = "Fechamento de solicitação escalonada a partir de " + sol.getCodigo();
 			else
-		        assunto = "Solicita��o " + sol.getCodigo() + " aguarda atendimento";
+		        assunto = "Solicitação " + sol.getCodigo() + " aguarda atendimento";
 			
 			String conteudo = getConteudoComSolicitacaoEMovimentacao(TEMPLATE_NOTIFICAR_ATENDENTE, movimentacao, sol);
 			enviar(assunto, conteudo, recipients);
@@ -80,8 +80,8 @@ public class Correio {
 
 		if (destinatario.possuiEmailCadastrado()) {
 			String assunto = solicitacao.isFilha() ? 
-					MessageFormat.format("Escalonamento da solicitação {0}", solicitacao.getSolicitacaoPai().getCodigo()) : 
-					MessageFormat.format("Abertura da solicitação {0}",
+					MessageFormat.format("Escalonamento da solicitaÃ§Ã£o {0}", solicitacao.getSolicitacaoPai().getCodigo()) : 
+					MessageFormat.format("Abertura da solicitaÃ§Ã£o {0}",
 					solicitacao.getCodigo());
 
 			String conteudo = getConteudoComSolicitacao(TEMPLATE_NOTIFICAR_ABERTURA, solicitacao);

@@ -30,7 +30,7 @@ function carregouAcao(response, param){
 </script>
 
 <div class="gt-form-row gt-width-66" >
-    <label>Produto, Servi&ccedil;o ou Sistema relacionado à Solicita&ccedil;&atilde;o</label>
+    <label>Produto, Servi&ccedil;o ou Sistema relacionado Ã  Solicita&ccedil;&atilde;o</label>
 <%--     <input type="hidden" name="solicitacao.acao" value="${solicitacao.acao.idAcao}" id="idAcaoTeste"> --%>
     <siga:selecao2 propriedade="solicitacao.itemConfiguracao" 
                    tipo="itemConfiguracao" 

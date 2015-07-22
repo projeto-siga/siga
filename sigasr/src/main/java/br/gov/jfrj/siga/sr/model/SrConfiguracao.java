@@ -247,7 +247,7 @@ public class SrConfiguracao extends CpConfiguracao implements ConvertableEntity 
     }
 
     public String getAtributoObrigatorioString() {
-        return atributoObrigatorio ? "Sim" : "N�o";
+        return atributoObrigatorio ? "Sim" : "Nï¿½o";
     }
 
     public void salvarComoDesignacao() throws Exception {
@@ -538,9 +538,9 @@ public class SrConfiguracao extends CpConfiguracao implements ConvertableEntity 
     }
 
     /**
-     * M�todo que retorna um n�mero referente ao tipo de solicitante selecionado. Esse n�mero refere-se ao �ndice do item selecionado no componente pessoaLotaFuncCargoSelecao.html
+     * Mï¿½todo que retorna um nï¿½mero referente ao tipo de solicitante selecionado. Esse nï¿½mero refere-se ao ï¿½ndice do item selecionado no componente pessoaLotaFuncCargoSelecao.html
      *
-     * @return <li>1 para Pessoa; <li>2 para Lota��o; <li>3 para Fun��o; <li>4 para Cargo;
+     * @return <li>1 para Pessoa; <li>2 para Lotaï¿½ï¿½o; <li>3 para Funï¿½ï¿½o; <li>4 para Cargo;
      */
     public int getTipoSolicitante() {
         if (this.getLotacao() != null && this.getLotacao().getLotacaoAtual() != null)
@@ -556,7 +556,7 @@ public class SrConfiguracao extends CpConfiguracao implements ConvertableEntity 
     }
 
     /**
-     * Retorna um Json de {@link SrConfiguracaoVO} que contém: <li> {@link SrListaConfiguracaoVO}</li> <li> {@link SrItemConfiguracaoVO}</li> <li> {@link SrAcaoVO}</li>
+     * Retorna um Json de {@link SrConfiguracaoVO} que contÃ©m: <li> {@link SrListaConfiguracaoVO}</li> <li> {@link SrItemConfiguracaoVO}</li> <li> {@link SrAcaoVO}</li>
      * 
      * @throws Exception
      *

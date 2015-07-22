@@ -1,4 +1,4 @@
-#{extends 'main.html' /} #{set title:'Cadastro de solicitação' /}
+#{extends 'main.html' /} #{set title:'Cadastro de solicitaÃ§Ã£o' /}
 <style>
 .barra-subtitulo {
 	color: #365b6d !important;
@@ -45,7 +45,7 @@
 
 		carregarFiltrosAoIniciar();
 
-		// DB1: Sobrescreve o método onchange para que faça o tratamento das informações 
+		// DB1: Sobrescreve o mÃ©todo onchange para que faÃ§a o tratamento das informaÃ§Ãµes 
 		// do campo vinculado ao evento
 		jQuery("#checkmostrarInterlocutor")[0].onchange = function(event) {
 			changemostrarInterlocutor();
@@ -174,7 +174,7 @@
 		});					
  	}
 	
-	// funções usadas para solicitações relacionadas
+	// funÃ§Ãµes usadas para solicitaÃ§Ãµes relacionadas
 	function addFiltro(divFiltro, campoRef, optionHtml, optionVl) {
 		/**
 		 * Se o valor foi preenchido e se existe label
@@ -268,7 +268,7 @@
 		return null;
 	}
 	
-	// Valida se o cadastrante é o solicitante, e neste caso irá ocultar
+	// Valida se o cadastrante Ã© o solicitante, e neste caso irÃ¡ ocultar
 	// alguns campos na tela
 	function validarCadastranteSolicitante() {
 		var siglaCadastrante = $('#siglaCadastrante').val();
@@ -519,7 +519,7 @@
 				'Application/exibirItemConfiguracao.html' /}</div>
 
 			<div class="gt-form-row gt-width-66">
-				<label>Descrição</label>
+				<label>DescriÃ§Ã£o</label>
 				<textarea cols="85" rows="10" name="solicitacao.descrSolicitacao"
 					id="descrSolicitacao" maxlength="8192">${solicitacao.descrSolicitacao}</textarea>
 				<span style="color: red">#{error
@@ -583,10 +583,10 @@
 			#{/if}
 			#{elseif solicitacao.isPai() && solicitacao.idSolicitacao != null}
 			<div class="gt-form-table">
-				<div class="barra-subtitulo header" align="center" valign="top"> Fechamento Automático</div>
+				<div class="barra-subtitulo header" align="center" valign="top"> Fechamento AutomÃ¡tico</div>
 			</div>
 			<p> #{checkbox name:'solicitacao.fechadoAutomaticamente',
-				value:solicitacao.fechadoAutomaticamente /}Fechar automaticamente a solicitação <b>${solicitacao.codigo}</b>.</p>
+				value:solicitacao.fechadoAutomaticamente /}Fechar automaticamente a solicitaÃ§Ã£o <b>${solicitacao.codigo}</b>.</p>
 			<br />
 			#{/elseif}
 			<div class="gt-form-row">

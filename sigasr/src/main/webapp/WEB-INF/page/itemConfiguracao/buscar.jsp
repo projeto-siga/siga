@@ -11,7 +11,7 @@ function sbmt(nivel){
 }
 </script>
 
-<head><title>Pesquisa de Itens de Configuração</title></head>
+<head><title>Pesquisa de Itens de ConfiguraÃ§Ã£o</title></head>
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
@@ -23,12 +23,12 @@ function sbmt(nivel){
 						<td align="center" valign="top" colspan="4">Dados do item</td>
 					</tr>
 					<tr>
-						<td>Código:</td>
+						<td>CÃ³digo:</td>
 						<td><input type="text" name="siglaItemConfiguracao" value="${filtro.siglaItemConfiguracao}" />
 						</td>
 					</tr>
 					<tr>
-						<td>Título</td>
+						<td>TÃ­tulo</td>
 						<td><input type="text" name="tituloItemConfiguracao" value="${filtro.tituloItemConfiguracao}" /></td>
 					</tr>
 					<tr>
@@ -56,11 +56,11 @@ function sbmt(nivel){
 	  		<col width="25%">
 	  		<thead>
 				<tr id="plim">
-					<th>Título
+					<th>TÃ­tulo
 					</td>
-					<th>Código
+					<th>CÃ³digo
 					</td>
-					<th>Descrição</th>
+					<th>DescriÃ§Ã£o</th>
 					<th>Itens Similares</th>
 				</tr>
 			</thead>

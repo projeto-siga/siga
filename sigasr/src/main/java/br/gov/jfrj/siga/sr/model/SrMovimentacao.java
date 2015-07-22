@@ -281,14 +281,14 @@ public class SrMovimentacao extends Objeto {
 
         getSolicitacao().atualizarMarcas();
 
-        //notifica��o usu�rio
+        //notificaï¿½ï¿½o usuï¿½rio
         if (getSolicitacao().getMovimentacaoSetComCancelados().size() > 1
                 && getTipoMov().getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
                 && getSolicitacao().getFormaAcompanhamento() != SrFormaAcompanhamento.ABERTURA
                 && !(getSolicitacao().getFormaAcompanhamento() == SrFormaAcompanhamento.ABERTURA_FECHAMENTO && getTipoMov().getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO))
             notificar();
 
-        //notifica��o atendente
+        //notificaï¿½ï¿½o atendente
         notificarAtendente();
 
     }
@@ -319,7 +319,7 @@ public class SrMovimentacao extends Objeto {
     private void checarCampos() throws Exception {
 
     	if (cadastrante == null)
-            throw new Exception("Cadastrante n�o pode ser nulo");
+            throw new Exception("Cadastrante nï¿½o pode ser nulo");
     	if (lotaCadastrante == null)
             lotaCadastrante = cadastrante.getLotacao();
     	if (titular == null)
@@ -328,12 +328,12 @@ public class SrMovimentacao extends Objeto {
             lotaTitular = titular.getLotacao();
     	
         if (getSolicitacao() == null)
-            throw new Exception("Movimenta��o precisa fazer parte de uma solicita��o");
+            throw new Exception("Movimentaï¿½ï¿½o precisa fazer parte de uma solicitaï¿½ï¿½o");
 
         if (getArquivo() != null) {
             double lenght = (double) getArquivo().getBlob().length / 1024 / 1024;
             if (lenght > 2)
-                throw new IllegalArgumentException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) � maior que o m�ximo permitido (2MB)");
+                throw new IllegalArgumentException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) ï¿½ maior que o mï¿½ximo permitido (2MB)");
         }
 
         if (getDtIniMov() == null)
@@ -359,7 +359,7 @@ public class SrMovimentacao extends Objeto {
 
 //        if (!getSolicitacao().isRascunho()) {
 //            if (getAtendente() == null && getLotaAtendente() == null)
-//                throw new Exception("Atendente n�o pode ser nulo");
+//                throw new Exception("Atendente nï¿½o pode ser nulo");
 //
 //            if (getLotaAtendente() == null)
 //                setLotaAtendente(getAtendente().getLotacao());
@@ -387,14 +387,14 @@ public class SrMovimentacao extends Objeto {
                                 || tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA
                                 || (lotaAtendente != null && lotaTitular != null && !lotaTitular.equivale(lotaAtendente))) {
                 if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
-                                lotaAtendente, "SIGA;SR;EMAILATEND:Receber Notifica��o Atendente"))
+                                lotaAtendente, "SIGA;SR;EMAILATEND:Receber Notificaï¿½ï¿½o Atendente"))
                 	CorreioHolder
             	 	.get().notificarAtendente(this, solicitacao);
         }
         else if (tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO
                         && solicitacao.isFilha()) {
                 if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
-                                solicitacao.getSolicitacaoPai().getLotaAtendente(), "SIGA;SR;EMAILATEND:Receber Notifica��o Atendente"))
+                                solicitacao.getSolicitacaoPai().getLotaAtendente(), "SIGA;SR;EMAILATEND:Receber Notificaï¿½ï¿½o Atendente"))
                 	CorreioHolder
             	 	.get().notificarAtendente(this, solicitacao.getSolicitacaoPai());
         }

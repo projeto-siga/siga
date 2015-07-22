@@ -1,27 +1,27 @@
-#{extends 'main.html' /} #{set title:'Edição de A&ccedil;&atilde;o' /}
+#{extends 'main.html' /} #{set title:'EdiÃ§Ã£o de A&ccedil;&atilde;o' /}
 <div class="gt-form gt-content-box">
 	<form id="acaoForm" enctype="multipart/form-data">
 		<input type="hidden" name="idAcao">
 		
 		#{ifErrors}
-		<p class="gt-error">Alguns campos obrigatórios não foram
+		<p class="gt-error">Alguns campos obrigatÃ³rios nÃ£o foram
 			preenchidos ${error}</p>
 		#{/ifErrors}
 		<div class="gt-form-row gt-width-66">
-			<label>Código <span>*</span></label> 
+			<label>CÃ³digo <span>*</span></label> 
 			<input type="text" name="sigla" maxlength="255" required/>
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Título <span>*</span></label> <input type="text"
+			<label>TÃ­tulo <span>*</span></label> <input type="text"
 				name="tituloAcao" size="100" maxlength="255" required/>
 		</div>
 		<div class="gt-form-row gt-width-66">
-			<label>Descrição</label> <input type="text"
+			<label>DescriÃ§Ã£o</label> <input type="text"
 				name="descrAcao" size="100" maxlength="255"/>
 		</div>
 		
 		<div class="gt-form-row gt-width-66">
-			<label>Tipo de ação</label>
+			<label>Tipo de aÃ§Ã£o</label>
 				#{selecao tipo:'tipoAcao', nome:'tipoAcao', value:tipoAcao?.atual /}
 		</div>
 		

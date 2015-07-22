@@ -3,7 +3,7 @@
 
 <script>
 $(document).ready(function() {
-    notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');
+    notificarCampoMudou('#selectAcao', 'AÃ§Ã£o', 'solicitacao.acao');
     removeSelectedDuplicado();
 });
 

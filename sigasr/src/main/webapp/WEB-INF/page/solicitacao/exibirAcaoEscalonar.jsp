@@ -33,7 +33,7 @@
 	}
 	
 	function removeSelectedDuplicado() {
-		//solucao de contorno temporaria para opções no select com mesmo value.
+		//solucao de contorno temporaria para opÃ§Ãµes no select com mesmo value.
 		var primeiro = $("#selectAcao option:eq(0)");
 		var segundo = $("#selectAcao option:eq(1)");
 		if (primeiro.val() == segundo.val()) {

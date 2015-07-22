@@ -109,7 +109,7 @@ public class AtributoController extends SrController {
 
 	private boolean validarFormEditarAtributo(SrAtributo atributo) {
 		if (atributo.getTipoAtributo() == SrTipoAtributo.VL_PRE_DEFINIDO && (atributo.getDescrPreDefinido() == null || atributo.getDescrPreDefinido().isEmpty() ) ) {
-			srValidator.addError("atributo.descrPreDefinido", "Valores PrÈ-definido n„o informados");
+			srValidator.addError("atributo.descrPreDefinido", "Valores Pr√©-definido n√£o informados");
 		}
 
 		if (srValidator.hasErrors()) {

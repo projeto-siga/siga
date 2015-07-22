@@ -171,13 +171,13 @@ public class AcessoController extends GiControllerSupport {
 		DpLotacao lotacao = null;
 		CpOrgaoUsuario orgao = null;
 
-		if (pessoaSel != null) {
+		if (pessoaSel != null && pessoaSel.getId() != null) {
 			pessoa = daoPes(pessoaSel.getId());
-		} else if (lotacaoSel != null) {
+		} else if (lotacaoSel != null && lotacaoSel.getId() != null) {
 			lotacao = daoLot(lotacaoSel.getId());
-		} else if (perfilSel != null) {
+		} else if (perfilSel != null && perfilSel.getId() != null) {
 			perfil = dao().consultar(perfilSel.getId(), CpPerfil.class,false);
-		} else if (idOrgaoUsuSel != null) {
+		} else if (idOrgaoUsuSel != null && idOrgaoUsuSel != null) {
 			orgao = dao().consultar(idOrgaoUsuSel,CpOrgaoUsuario.class, false);
 		} else {
 			throw new AplicacaoException(

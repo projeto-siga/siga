@@ -78,7 +78,7 @@ public class WfCompetenciaBL extends CpCompetenciaBL {
 		WfConfiguracao cfgFiltro = new WfConfiguracao();
 
 		cfgFiltro.setCargo(titularIniciador!=null?titularIniciador.getCargo():null);
-		cfgFiltro.setOrgaoUsuario(lotaTitularIniciador.getOrgaoUsuario());
+		cfgFiltro.setOrgaoUsuario(lotaTitularIniciador!=null?lotaTitularIniciador.getOrgaoUsuario():null);
 		cfgFiltro.setFuncaoConfianca(titularIniciador!=null?titularIniciador.getFuncaoConfianca():null);
 		cfgFiltro.setLotacao(lotaTitularIniciador);
 		cfgFiltro.setDpPessoa(titularIniciador!=null?titularIniciador:null);

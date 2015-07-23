@@ -183,10 +183,15 @@ public class CpConfiguracaoBL {
 			for (CpConfiguracao cpConfiguracao : alteracoes) {
 				Long idTpConf = cpConfiguracao.getCpTipoConfiguracao()
 						.getIdTpConfiguracao();
+				TreeSet<CpConfiguracao> tree = hashListas.get(idTpConf);
+				if (tree == null) {
+					tree = new TreeSet<CpConfiguracao>(comparator);
+					hashListas.put(idTpConf, tree);
+				}
 				if (cpConfiguracao.ativaNaData(dt)) {
-					hashListas.get(idTpConf).add(cpConfiguracao);
+					tree.add(cpConfiguracao);
 				} else {
-					hashListas.get(idTpConf).remove(cpConfiguracao);
+					tree.remove(cpConfiguracao);
 				}
 			}
 		}

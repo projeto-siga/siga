@@ -2473,6 +2473,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         return getDataAPartirDe(getDtInicioAtendimento(), menorTempoAcordado);
     }
     
+    public String getDtPrazoCadastramentoAcordadoDDMMYYYYHHMM() {
+        Date dt = getDtPrazoCadastramentoAcordado();
+        if (dt != null) {
+                final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                return "<span style=\"display: none\">" + new SimpleDateFormat("yyyyMMdd").format(dt)
+                                + "</span>" + df.format(dt);
+        }
+        return "";
+    }
+    
     public String getDtPrazoAtendimentoAcordadoDDMMYYYYHHMM() {
         Date dt = getDtPrazoAtendimentoAcordado();
         if (dt != null) {
@@ -2481,6 +2491,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
                                 + "</span>" + df.format(dt);
         }
         return "";
+    }
+    
+    public String getDtPrazoDDMMYYYYHHMM(){
+    	if (jaFoiDesignada())
+    		return getDtPrazoAtendimentoAcordadoDDMMYYYYHHMM();
+    	else return getDtPrazoCadastramentoAcordadoDDMMYYYYHHMM();
     }
 
     public Cronometro getCronometro() throws Exception {

@@ -17,7 +17,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
-import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sr.util.Util;
@@ -30,7 +29,7 @@ import edu.emory.mathcs.backport.java.util.Collections;
 
 @Entity
 @Table(name = "SR_PESQUISA", schema = "SIGASR")
-public class SrPesquisa extends HistoricoSuporte implements ConvertableEntity {
+public class SrPesquisa extends HistoricoSuporte {
 
 	/**
 	 *

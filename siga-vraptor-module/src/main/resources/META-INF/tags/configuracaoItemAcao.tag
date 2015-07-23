@@ -317,7 +317,7 @@
 			
 			// Atualiza a string serializada
 			if (rowValues) {
-	        	params 	+= '&itemConfiguracaoSet[' + i + ']=' + rowValues[0];
+	        	params 	+= '&itemConfiguracaoSet[' + i + '].id=' + rowValues[0];
 			}
 		});
 		
@@ -327,7 +327,7 @@
 			
 			// Atualiza a string serializada
 			if (rowValues) {
-				params 	+= '&acoesSet[' + i + ']=' + rowValues[0];
+				params 	+= '&acoesSet[' + i + '].id=' + rowValues[0];
 			}
 		});
 		

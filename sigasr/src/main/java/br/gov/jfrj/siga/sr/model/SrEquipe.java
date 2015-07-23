@@ -17,7 +17,6 @@ import javax.persistence.Transient;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -30,7 +29,7 @@ import com.google.gson.JsonObject;
 
 @Entity
 @Table(name = "SR_EQUIPE", schema = "SIGASR")
-public class SrEquipe extends HistoricoSuporte implements ConvertableEntity {
+public class SrEquipe extends HistoricoSuporte {
 
     public static final ActiveRecord<SrEquipe> AR = new ActiveRecord<>(SrEquipe.class);
 

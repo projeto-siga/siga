@@ -45,7 +45,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Table(name = "DP_FUNCAO_CONFIANCA", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpFuncaoConfianca extends AbstractDpFuncaoConfianca implements
-		Serializable, Selecionavel, Sincronizavel, DpConvertableEntity {
+		Serializable, Selecionavel, Sincronizavel {
 
 	/**
 	 * 

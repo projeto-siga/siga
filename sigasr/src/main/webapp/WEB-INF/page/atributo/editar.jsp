@@ -28,7 +28,7 @@
 		</div>
 		<div class="gt-form-row gt-width-66">
 			<label>Objetivo do atributo<span>*</span></label>
-			<select id="objetivoAtributo" name="atributo.objetivoAtributo" class="select-siga" style="width:393px;" onchange="javascript:ocultaAssociacoes();">
+			<select id="objetivoAtributo" name="atributo.objetivoAtributo.id" class="select-siga" style="width:393px;" onchange="javascript:ocultaAssociacoes();">
 				<c:forEach items="${objetivos}" var="objetivo">
 					<option value="${objetivo.idObjetivo}">${objetivo.descrObjetivo}</option>
 				</c:forEach>
@@ -36,7 +36,7 @@
 		</div>
 		<div class="gt-form-row gt-width-100">
 			<label>Tipo de atributo</label>
-			<select id="tipoAtributo" name="atributo.tipoAtributo" class="select-siga" style="width:100%;">
+			<select id="tipoAtributo" name="atributo.tipoAtributo.id" class="select-siga" style="width:100%;">
 				<c:forEach items="${tiposAtributo}" var="tipoAtt">
 					<option value="${tipoAtt}">${tipoAtt.descrTipoAtributo}</option>
 				</c:forEach>

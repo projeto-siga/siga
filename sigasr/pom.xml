@@ -26,14 +26,14 @@
 			<groupId>ar.com.fdvs</groupId>
 			<artifactId>DynamicJasper</artifactId>
 			<exclusions>
-				<exclusion>
+				<!--<exclusion>
 					<groupId>bouncycastle</groupId>
 					<artifactId>bcmail-jdk14</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>bouncycastle</groupId>
 					<artifactId>bcprov-jdk14</artifactId>
-				</exclusion>
+				</exclusion>-->
 				<exclusion>
 					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>

@@ -112,10 +112,6 @@
 		<path>/META-INF/tags/pessoaLotaFuncCargoSelecao.tag</path>
 	</tag-file>
 	<tag-file>
-		<name>pessoaLotaSelecao</name>
-		<path>/META-INF/tags/pessoaLotaSelecao.tag</path>
-	</tag-file>
-	<tag-file>
 		<name>pessoaLotaSelecao2</name>
 		<path>/META-INF/tags/pessoaLotaSelecao2.tag</path>
 	</tag-file>

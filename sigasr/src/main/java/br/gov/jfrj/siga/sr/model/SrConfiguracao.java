@@ -23,7 +23,6 @@ import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.SrAcao.SrAcaoVO;
@@ -39,7 +38,7 @@ import com.google.gson.JsonObject;
 @Entity
 @Table(name = "SR_CONFIGURACAO", schema = "SIGASR")
 @PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_SR")
-public class SrConfiguracao extends CpConfiguracao implements ConvertableEntity {
+public class SrConfiguracao extends CpConfiguracao {
 
     public static final ActiveRecord<SrConfiguracao> AR = new ActiveRecord<>(SrConfiguracao.class);
 

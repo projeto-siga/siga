@@ -94,11 +94,11 @@
 						<div class="gt-form-row">
 							<label>Atendente</label>
 							<div id="divAtendente">
-								<select name="solicitacao.acao" id="selectAcao" value="${solicitacao.acao.idAcao}" onchange="carregarAtributos();notificarCampoMudou('#selectAcao', 'A&ccedil;&atilde;o', 'solicitacao.acao');">
-            						<option value="0">#</option>
+								<select name="movimentacao.atendente.id" id="selectActendente">
+            						<option value=""></option>
 									<c:if test="${atendentes.size() >= 1}">
 										<c:forEach items="${atendentes}" var="pessoa">
-											<option value="${pessoa.pessoaAtual.idPessoa}">${pessoa.pessoaAtual.descricaoIniciaisMaiusculas}</option>
+											<option value="${pessoa.pessoaAtual.idPessoa}" ${movimentacao.atendente.idInicial.equals(pessoa.idInicial) ? 'selected' : ''}>${pessoa.pessoaAtual.descricaoIniciaisMaiusculas}</option>
 										</c:forEach>
 									</c:if>
 									<c:set var="susbtitutos" value="${solicitacao.substitutos}" />

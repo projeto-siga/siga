@@ -22,7 +22,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
-import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -34,7 +33,7 @@ import com.google.gson.GsonBuilder;
 @Entity
 @Table(name = "SR_ACAO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparable<SrAcao>, ConvertableEntity, Selecionavel {
+public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparable<SrAcao>,  Selecionavel {
 	private static final long serialVersionUID = 8387408543308440033L;
 
 	public static final ActiveRecord<SrAcao> AR = new ActiveRecord<>(SrAcao.class);

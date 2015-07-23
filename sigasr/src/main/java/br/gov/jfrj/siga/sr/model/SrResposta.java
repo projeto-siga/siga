@@ -10,13 +10,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
 @Table(name = "SR_RESPOSTA", schema = "SIGASR")
-public class SrResposta extends Objeto implements ConvertableEntity {
+public class SrResposta extends Objeto {
     private static final long serialVersionUID = 6748786172865091607L;
     public static final ActiveRecord<SrResposta> AR = new ActiveRecord<>(SrResposta.class);
 
@@ -45,7 +44,6 @@ public class SrResposta extends Objeto implements ConvertableEntity {
 
     }
 
-    @Override
     public Long getId() {
         return this.getIdResposta();
     }

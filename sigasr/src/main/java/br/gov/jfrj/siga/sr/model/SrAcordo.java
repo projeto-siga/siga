@@ -18,7 +18,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
-import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -28,7 +27,7 @@ import edu.emory.mathcs.backport.java.util.Collections;
 @Entity
 @Table(name = "SR_ACORDO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrAcordo extends HistoricoSuporte implements Selecionavel, ConvertableEntity{
+public class SrAcordo extends HistoricoSuporte implements Selecionavel{
 	//public class SrAcordo extends HistoricoSuporte implements ConvertableEntity {
 	
 	private static final long serialVersionUID = 1L;

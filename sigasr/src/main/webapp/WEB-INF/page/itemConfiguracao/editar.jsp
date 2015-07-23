@@ -205,13 +205,9 @@
 				<div class="gt-form-row">
 					<label>Gestor: <span>*</span></label>
 					<div id="divGestor">
-						<siga:pessoaLotaSelecao
-							nomeSelPessoa="gestorPessoa"
-							nomeSelLotacao="gestorLotacao"
-							valuePessoa="${gestor != null ? gestor.pessoa :'' }"
-							valueLotacao="${gestor != null ? gestor.lotacao : '' }"
-							requiredValue="required"
- 							disabled="disabled"/>
+						<siga:pessoaLotaSelecao2
+							propriedadePessoa="gestorPessoa"
+							propriedadeLotacao="gestorLotacao"/>
 					</div>
 				</div>
 				<div class="gt-form-row">
@@ -231,13 +227,9 @@
 				<div class="gt-form-row ">
 					<label>Solicitante: <span>*</span></label>
 					<div id="divFator">
- 						<siga:pessoaLotaSelecao
- 							nomeSelPessoa="fatorPessoa"
- 							nomeSelLotacao="fatorLotacao"
- 							valuePessoa="${fator != null ? fator.pessoa :'' }"
-							valueLotacao="${fator != null ? fator.lotacao : '' }"
-							requiredValue="required"
- 							disabled="disabled"/>
+ 						<siga:pessoaLotaSelecao2
+ 							propriedadePessoa="fatorPessoa"
+ 							propriedadeLotacao="fatorLotacao"/>
 					</div>
 				</div>
 				<div class="gt-form-row ">

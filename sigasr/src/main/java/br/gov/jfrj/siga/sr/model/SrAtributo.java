@@ -24,7 +24,6 @@ import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -33,7 +32,7 @@ import br.gov.jfrj.siga.sr.model.vo.SrAtributoVO;
 @Entity
 @Table(name = "SR_ATRIBUTO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrAtributo extends HistoricoSuporte implements ConvertableEntity {
+public class SrAtributo extends HistoricoSuporte {
 	private static final long serialVersionUID = 1L;
 
 	public static final ActiveRecord<SrAtributo> AR = new ActiveRecord<>(SrAtributo.class);

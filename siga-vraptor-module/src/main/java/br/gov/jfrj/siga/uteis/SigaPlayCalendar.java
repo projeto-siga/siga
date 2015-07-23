@@ -76,20 +76,20 @@ public class SigaPlayCalendar extends GregorianCalendar {
         if (fazMenosDeUmMinuto())
             haQuantoTempo = "Neste instante";
         else if (fazMenosDeDoisMinutos())
-            haQuantoTempo = "Há 1 minuto";
+            haQuantoTempo = "HÃ¡ 1 minuto";
         else if (fazMenosDeUmaHora())
-            haQuantoTempo = "Há " + tempoTranscorridoMinutos() + " minutos";
+            haQuantoTempo = "HÃ¡ " + tempoTranscorridoMinutos() + " minutos";
         else if (foiHoje())
-            haQuantoTempo = "Às " + format.format(this.getTime());
+            haQuantoTempo = "Ã s " + format.format(this.getTime());
         else if (foiOntemOuHoje())
-            haQuantoTempo = "Ontem, às " + format.format(this.getTime());
+            haQuantoTempo = "Ontem, Ã s " + format.format(this.getTime());
         else if (fazMenosDeUmaSemana()) {
             switch (this.get(Calendar.DAY_OF_WEEK)) {
             case Calendar.MONDAY:
                 haQuantoTempo = "Segunda-feira";
                 break;
             case Calendar.TUESDAY:
-                haQuantoTempo = "Terça-feira";
+                haQuantoTempo = "TerÃ§a-feira";
                 break;
             case Calendar.WEDNESDAY:
                 haQuantoTempo = "Quarta-feira";
@@ -101,14 +101,14 @@ public class SigaPlayCalendar extends GregorianCalendar {
                 haQuantoTempo = "Sexta";
                 break;
             case Calendar.SATURDAY:
-                haQuantoTempo = "Sábado";
+                haQuantoTempo = "SÃ¡bado";
                 break;
             case Calendar.SUNDAY:
                 haQuantoTempo = "Domingo";
                 break;
             }
 
-            haQuantoTempo += ", Às " + format.format(this.getTime());
+            haQuantoTempo += ", Ã s " + format.format(this.getTime());
 
         } else {
             if (ocultarMinutos)

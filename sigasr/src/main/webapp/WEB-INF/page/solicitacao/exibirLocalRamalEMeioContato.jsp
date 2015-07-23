@@ -4,11 +4,11 @@
 <c:if test="${locaisDisponiveis.size() > 1}">
 	<div class="gt-form-row gt-width-66">
 		<label>Local</label>
-		<select name="solicitacao.local.id" value="${solicitacao.local.idComplexo}" id="local">
+		<select name="solicitacao.local.id" id="local">
         <c:forEach items="${locaisDisponiveis.keySet()}" var="orgao">
                 <optgroup label="${orgao.acronimoOrgaoUsu}">
                 <c:forEach items="${locaisDisponiveis.get(orgao)}" var="local">
-                        <option value="${local.idComplexo}">${local.nomeComplexo}</option>
+                        <option value="${local.idComplexo}" ${solicitacao.local.idComplexo.equals(local.idComplexo) ? 'selected' : ''}>${local.nomeComplexo}</option>
                 </c:forEach>
                 </optgroup>
         </c:forEach>

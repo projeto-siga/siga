@@ -35,7 +35,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -48,7 +47,7 @@ import com.google.gson.JsonArray;
 @Entity
 @Table(name = "SR_ITEM_CONFIGURACAO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionavel, ConvertableEntity, Selecionavel {
+public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionavel,  Selecionavel {
 
 	public static final ActiveRecord<SrItemConfiguracao> AR = new ActiveRecord<>(SrItemConfiguracao.class);
 

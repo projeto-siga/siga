@@ -45,7 +45,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Table(name = "DP_CARGO", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpCargo extends AbstractDpCargo implements Serializable,
-		Selecionavel, Sincronizavel, DpConvertableEntity {
+		Selecionavel, Sincronizavel {
 
 	/**
 	 * 

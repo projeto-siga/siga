@@ -24,7 +24,6 @@ import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -33,7 +32,7 @@ import br.gov.jfrj.siga.sr.util.AtualizacaoLista;
 
 @Entity
 @Table(name = "SR_LISTA", schema = "SIGASR")
-public class SrLista extends HistoricoSuporte implements ConvertableEntity {
+public class SrLista extends HistoricoSuporte {
 
     private static final long serialVersionUID = 1L;
 

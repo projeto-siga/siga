@@ -68,7 +68,7 @@ public class SrSolicitacaoVO {
         this.prioridadeFormatada = sol.getPrioridadeString();
         this.prioridadeTecnica = sol.getPrioridadeTecnica() != null ? sol.getPrioridadeTecnica().toString() : "";
         this.prioridadeTecnicaFormatada = sol.getPrioridadeTecnicaString();
-        this.prazo = sol.getDtPrazoAtendimentoAcordadoDDMMYYYYHHMM();
+        this.prazo = sol.getDtPrazoDDMMYYYYHHMM();
     }
 
     public SrSolicitacaoVO(SrSolicitacao sol, SrLista lista, SrPrioridadeSolicitacao prioridadeSolicitacao, boolean podeRemover, boolean podePriorizar) throws Exception {

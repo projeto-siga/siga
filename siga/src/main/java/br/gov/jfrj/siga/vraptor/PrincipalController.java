@@ -85,7 +85,7 @@ public class PrincipalController extends SigaController {
 				if (Cp.getInstance()
 						.getConf()
 						.podeUtilizarServicoPorConfiguracao(pes, lot, "SIGA;SR"))
-					URLSelecionar = urlBase + "/sigasr" + testes+ "/solicitacao/selecionar?sigla=" + sigla + incluirMatricula;
+					URLSelecionar = urlBase + "/sigasr" + testes+ "/app/solicitacao/selecionar?sigla=" + sigla + incluirMatricula;
 			}
 			//alterado formato da sigla de requisições, missões e serviços
 			//else if (copiaSigla.startsWith("MTP")

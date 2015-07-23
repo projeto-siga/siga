@@ -94,7 +94,7 @@ function carregarLotacaoDaAcao(){
     <div class="gt-form-row gt-width-66">
     	<label>A&ccedil;&atilde;o</label>   
         <select name="solicitacao.acao.id" id="selectAcao" value="${solicitacao.acao.idAcao}" onchange="carregarAtributos();notificarCampoMudou('#selectAcao', 'A&ccedil;&atilde;o', 'solicitacao.acao');">
-            <option value="0">#</option>
+            <option value="0"></option>
             <c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
                 <optgroup label="${cat.tituloAcao}">
                     <c:forEach items="${acoesEAtendentes.get(cat)}" var="tarefa">

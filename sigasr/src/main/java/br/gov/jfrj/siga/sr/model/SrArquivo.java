@@ -13,13 +13,12 @@ import javax.persistence.Table;
 import org.apache.commons.io.IOUtils;
 
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
-import br.gov.jfrj.siga.feature.converter.entity.vraptor.ConvertableEntity;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
 @Table(name = "SR_ARQUIVO", schema = "SIGASR")
-public class SrArquivo extends Objeto implements ConvertableEntity {
+public class SrArquivo extends Objeto {
 
     private static final long serialVersionUID = -4338358297062727340L;
     
@@ -68,7 +67,6 @@ public class SrArquivo extends Objeto implements ConvertableEntity {
     		return null;
     }
 
-    @Override
     public Long getId() {
         return this.getIdArquivo();
     }

@@ -282,7 +282,7 @@
 					<span class="historico-label">Item de Configura&ccedil;&atilde;o:</span>
 				<div class="historico-item-container hidden">
 					<button type="button" class="button-historico"
-						title="Clique para abrir/fechar o histï¿½rico">+</button>
+						title="Clique para abrir/fechar o histórico">+</button>
 
 					<ul class="lista-historico historico-item">
 						<c:forEach items="${solicitacao.historicoItem}" var="item">
@@ -295,7 +295,7 @@
 					<span class="historico-label">A&ccedil;&atilde;o:</span>
 				<div class="historico-acao-container hidden">
 					<button type="button" class="button-historico"
-						title="Clique para abrir/fechar o histï¿½rico">+</button>
+						title="Clique para abrir/fechar o histórico">+</button>
 
 					<ul class="lista-historico historico-acao">
 						<c:forEach items="${solicitacao.historicoAcao}" var="acao">
@@ -320,7 +320,7 @@
 					test="${solicitacao.isFechadoAutomaticamente() != null && solicitacao.isPai()}">
 					<p>
 						<b>Fechamento Autom&aacute;tico:</b>
-						${solicitacao.isFechadoAutomaticamente() ? "Sim" : "Nï¿½o"}
+						${solicitacao.isFechadoAutomaticamente() ? "Sim" : "Não"}
 					</p>
 				</c:if>
 			</div>
@@ -449,7 +449,7 @@
     
     <siga:modal nome="incluirEmLista" titulo="Definir Lista" url="${linkTo[SolicitacaoController].incluirEmLista}?id=${solicitacao.idSolicitacao}" />
     
-    <siga:modal nome="escalonar" titulo="Escalonar Solicitaï¿½ï¿½o" url="${linkTo[SolicitacaoController].escalonar}?id=${solicitacao.idSolicitacao}" />
+    <siga:modal nome="escalonar" titulo="Escalonar Solicitação" url="${linkTo[SolicitacaoController].escalonar}?id=${solicitacao.idSolicitacao}" />
 
     <siga:modal nome="juntar" titulo="Juntar">
         <form action="${linkTo[SolicitacaoController].juntar}" method="post" enctype="multipart/form-data" id="formGravarJuncao">
@@ -498,7 +498,7 @@
 
     <siga:modal nome="responderPesquisa" titulo="Responder Pesquisa" url="responderPesquisa?id=${solicitacao.id}" />
 
-    <siga:modal nome="deixarPendente" titulo="Pendï¿½ncia">
+    <siga:modal nome="deixarPendente" titulo="Pendência">
             <div class="gt-content-box gt-form clearfix">
                 <form action="${linkTo[SolicitacaoController].deixarPendente}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
                     <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
@@ -556,7 +556,7 @@
                 type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
         </form>
     </siga:modal>   
-    <siga:modal nome="terminarPendenciaModal" titulo="Terminar Pendï¿½ncia">
+    <siga:modal nome="terminarPendenciaModal" titulo="Terminar Pendência">
         <form action="${linkTo[SolicitacaoController].terminarPendencia}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
             <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
             <input type="hidden" name="ocultas" value="${ocultas}" />
@@ -704,9 +704,9 @@
 		}
 	}
 
-	new MostradorHistorico($('.historico-item-container'), "Item nï¿½o informado")
+	new MostradorHistorico($('.historico-item-container'), "Item não informado")
 			.init();
 
-	new MostradorHistorico($('.historico-acao-container'), "Aï¿½ï¿½o nï¿½o informada")
+	new MostradorHistorico($('.historico-acao-container'), "Ação não informada")
 			.init();
 </script>

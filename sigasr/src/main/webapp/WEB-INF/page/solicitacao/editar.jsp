@@ -594,9 +594,13 @@
 					<div class="gt-form-row box-wrapper">
 						<div class="gt-form-row gt-width-33">
 							<label>Gravidade</label> 
-							<siga:select name="solicitacao.gravidade" id="gravidade" list="gravidadeList" listValue="descrGravidade" listKey="nivelGravidade" isEnum="true"
-							value="${solicitacao.gravidade != null ? solicitacao.gravidade: sem_gravidade}" onchange="carregarPrioridade()"
-							style="width:235px"  />
+							<select name="solicitacao.gravidade" id="gravidade" onchange="carregarPrioridade()" style="width:235px">
+								<c:forEach items="${gravidadeList}" var="gravidade">
+									<c:if test="${gravidade != 'EXTREMAMENTE_GRAVE'}">
+										<option value="${gravidade}">${gravidade.descrGravidade}</option>
+									</c:if>
+								</c:forEach>
+							</select>
 						</div>
 					</div>
 					<div id="divPrioridade" class="gt-form-row gt-width-66">

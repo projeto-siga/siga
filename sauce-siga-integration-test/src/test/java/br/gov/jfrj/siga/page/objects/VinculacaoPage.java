@@ -42,7 +42,7 @@ public class VinculacaoPage {
 		util = new IntegrationTestUtil();
 		
 		if(!util.isDescricaoPaginaVisivel(driver, "Vinculação de Documento")) {
-			throw new RuntimeException("Esta não é a página de Vinculação de Documento!");
+			throw new IllegalStateException("Esta não é a página de Vinculação de Documento!");
 		}
 	}
 	

@@ -32,7 +32,7 @@ public class RegistraAssinaturaManualPage {
 		util = new IntegrationTestUtil();
 				
 		if(!util.isDescricaoPaginaVisivel(driver, "Registro de Assinatura de Documento")) {
-			throw new RuntimeException("Esta não é a página de Registro de Assinatura!");
+			throw new IllegalStateException("Esta não é a página de Registro de Assinatura!");
 		}
 	}
 	

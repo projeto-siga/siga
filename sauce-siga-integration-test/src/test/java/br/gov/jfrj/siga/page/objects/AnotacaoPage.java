@@ -35,7 +35,7 @@ public class AnotacaoPage {
 		util = new IntegrationTestUtil();
 		
 		if(!util.isDescricaoPaginaVisivel(driver, "Anotação")) {
-			throw new RuntimeException("Esta não é a página de Anotação!");
+			throw new IllegalStateException("Esta não é a página de Anotação!");
 		}
 	}
 	

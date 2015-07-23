@@ -37,7 +37,7 @@ public class PrincipalPage {
 		}
 		
 		if(util.getWebElement(driver, By.cssSelector("a.gt-btn-small.gt-btn-right")) == null) {
-			throw new RuntimeException("Esta não é a página principal!");
+			throw new IllegalStateException("Esta não é a página principal!");
 		}
 	}
 	

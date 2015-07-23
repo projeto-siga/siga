@@ -37,7 +37,7 @@ public class DesapensamentoPage {
 		util = new IntegrationTestUtil();
 		
 		if(util.getWebElement(driver, By.xpath("//h2[contains(text(), 'Desapensamento de Documento')]")) == null) {
-			throw new RuntimeException("Esta não é a página de Desapensamento de Documento!");
+			throw new IllegalStateException("Esta não é a página de Desapensamento de Documento!");
 		}
 	}
 	

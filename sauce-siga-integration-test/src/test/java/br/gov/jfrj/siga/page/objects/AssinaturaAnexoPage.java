@@ -18,7 +18,7 @@ public class AssinaturaAnexoPage {
 		util.openPopup(driver);
 		if(util.getWebElement(driver, By.xpath("//b[contains(text(), 'Link para assinatura externa')]")) == null) {
 			util.closePopup(driver);
-			throw new RuntimeException("Esta não é a página de Assinatura de Anexo!");
+			throw new IllegalStateException("Esta não é a página de Assinatura de Anexo!");
 		}
 	}
 	

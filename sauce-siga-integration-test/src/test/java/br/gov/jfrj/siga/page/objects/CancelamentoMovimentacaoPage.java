@@ -35,7 +35,7 @@ public class CancelamentoMovimentacaoPage {
 		util = new IntegrationTestUtil();
 		
 		if(!util.isDescricaoPaginaVisivel(driver, "Cancelamento de Movimentação")) {
-			throw new RuntimeException("Esta não é a página de Cancelamento de Movimentação!");
+			throw new IllegalStateException("Esta não é a página de Cancelamento de Movimentação!");
 		}
 		
 	}

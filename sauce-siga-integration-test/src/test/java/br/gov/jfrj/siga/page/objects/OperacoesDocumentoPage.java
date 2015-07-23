@@ -142,7 +142,7 @@ public class OperacoesDocumentoPage {
 		
 		if(util.getWebElement(driver, By.xpath("/html/body/div[4]/div/h2")) == null ||
 				util.getWebElement(driver, By.xpath("/html/body/div[4]/div/h3")) == null) {
-			throw new RuntimeException("Esta não é a página de Operações do documento!");
+			throw new IllegalStateException("Esta não é a página de Operações do documento!");
 		}
 	}
 		

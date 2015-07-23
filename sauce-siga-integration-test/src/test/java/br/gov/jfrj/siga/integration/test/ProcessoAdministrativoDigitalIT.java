@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+
+
 //Bibliotecas para o saucelabs
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
@@ -51,7 +53,7 @@ public class ProcessoAdministrativoDigitalIT extends IntegrationTestBase impleme
 			operacoesDocumentoPage = assinaturaDigitalPage.registrarAssinaturaDigital(baseURL, codigoDocumento);			
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("Exceção no método setUp!");
+			throw new IllegalStateException("Exceção no método setUp: " + e);
 		}
 	}
 	

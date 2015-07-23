@@ -40,7 +40,7 @@ public class AnexoPage {
 		util = new IntegrationTestUtil();
 		
 		if(!util.isDescricaoPaginaVisivel(driver, "Anexação de Arquivo")) {
-			throw new RuntimeException("Esta não é a página de Anexo!");
+			throw new IllegalStateException("Esta não é a página de Anexo!");
 		}
 	}
 	

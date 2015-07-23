@@ -90,7 +90,7 @@ public class EditaDocumentoPage {
 		util = new IntegrationTestUtil();
 		
 		if(util.getWebElement(driver, By.id("codigoDoc")) == null) {
-			throw new RuntimeException("Esta não é a página de Edição de Documento!");
+			throw new IllegalStateException("Esta não é a página de Edição de Documento!");
 		}
 	}
 	

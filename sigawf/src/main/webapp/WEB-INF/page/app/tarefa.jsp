@@ -53,9 +53,11 @@
 						</c:if>
 
 						<c:set var="fieldIndex" value="0" />
+						<c:set var="editable" value="${false}" />
 						<c:forEach var="variable" items="${task.variableList}">
 							<c:if test="${not variable.aviso}">
 								<tr>
+									<!-- ${fieldIndex} -->
 									<c:if
 										test="${(empty doc_ref) or (not (doc_ref eq taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]))}">
 										<c:choose>

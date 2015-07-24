@@ -202,6 +202,10 @@ public class AppController extends WfController {
 								c++;
 
 							}
+							
+							if (value instanceof StringQualquer)
+								value = ((StringQualquer) value).toString();
+							
 							// Verifica se as variáveis "required" foram
 							// preenchidas"
 							if (variable.isRequired()

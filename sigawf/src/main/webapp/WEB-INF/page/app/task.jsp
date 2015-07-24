@@ -59,7 +59,7 @@
 						<table class="gt-form-table">
 							<input type="hidden" value="${task.taskInstance.id}" name="tiId" />
 
-							<c:forEach var="variable" items="${task.variableList}">
+							<c:forEach var="variable" items="${task.variableList}" varStatus="status" begin="0">
 								<c:if test="${not variable.aviso}">
 									<tr>
 										<c:choose>
@@ -74,7 +74,7 @@
 										<td width=""><c:set var="editable"
 												value="${variable.writable and (variable.readable or empty taskInstance.token.processInstance.contextInstance.variables[variable.mappedName])}" />
 											<c:if test="${editable}">
-												<input name="fieldNames" type="hidden"
+												<input name="fieldNames[${status.index-1}]" type="hidden"
 													value="${variable.mappedName}" />
 											</c:if> <c:choose>
 												<c:when test="${fn:startsWith(variable.mappedName,'doc_')}">
@@ -120,7 +120,7 @@
 												<c:when test="${fn:startsWith(variable.mappedName,'dt_')}">
 													<c:choose>
 														<c:when test="${editable}">
-															<input name="fieldValues" type="text"
+															<input name="fieldValues[${status.index-1}]" type="text"
 																value="<fmt:formatDate pattern="dd/MM/yyyy"	value="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />"
 																onblur="javascript:verifica_data(this, true);" />
 														</c:when>
@@ -133,7 +133,7 @@
 												<c:when test="${fn:startsWith(variable.mappedName,'sel_')}">
 													<c:choose>
 														<c:when test="${editable}">
-															<select name="fieldValues">
+															<select name="fieldValues[${status.index-1}]">
 																<c:forEach var="opcao"
 																	items="${wf:listarOpcoes(variable.variableName)}">
 																	<option value="${opcao}">${opcao}</option>
@@ -148,7 +148,7 @@
 												<c:otherwise>
 													<c:choose>
 														<c:when test="${editable}">
-															<input name="fieldValues" type="text"
+															<input name="fieldValues[${status.index-1}]" type="text"
 																value="${taskInstance.token.processInstance.contextInstance.variables[variable.mappedName]}" />
 														</c:when>
 														<c:otherwise>

@@ -107,7 +107,9 @@ public class ObjetoParametersProvider implements ParametersProvider {
 			String[] parameterValues = request
 					.getParameterValues(parameterName);
 			for (String value : parameterValues) {
-				if (value == null || value.trim().length() == 0)
+				// Removendo parametros vazios para impedir a criação de objetos com todos os campos nulos.
+				// Deixando os campos quando o nome do parametro referencia um array, para garantir a continuidade dos itens do array, mesmo que um seja nulo.
+				if ((!parameterName.endsWith("]")) && (value == null || value.trim().length() == 0))
 					continue;
 				Parameter newParameter = new Parameter(parameterName, value);
 				parameterList.add(newParameter);

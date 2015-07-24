@@ -100,7 +100,7 @@
 
 <script type="text/javascript">
 
-self.retorna_${propriedade}${tipoSel}${inputName} = function(id, sigla, descricao) {
+self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
     try {
 		newwindow_${propriedade}.close();
     } catch (E) {
@@ -142,9 +142,9 @@ self.retorna_${propriedade}${tipoSel}${inputName} = function(id, sigla, descrica
 </c:choose>
 
 self.newwindow_${propriedade} = '';
-self.popitup_${propriedade}${tipoSel}${inputName} = function(sigla) {
+self.popitup_${propriedade}${tipoSel} = function(sigla) {
 
-	var url = '/${urlPrefix}${urlBuscar}?propriedade=${propriedade}${tipoSel}${inputName}&sigla='+encodeURI($.trim(sigla)) +'${selecaoParams}';
+	var url = '/${urlPrefix}${urlBuscar}?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI($.trim(sigla)) +'${selecaoParams}';
 		
 	if (!newwindow_${propriedade}.closed && newwindow_${propriedade}.location) {
 		newwindow_${propriedade}.location.href = url;
@@ -166,7 +166,7 @@ self.popitup_${propriedade}${tipoSel}${inputName} = function(sigla) {
 			var winleft = (screen.width - popW) / 2;
 			var winUp = (screen.height - popH) / 2;	
 		winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
-		newwindow_${propriedade}=window.open(url,'${propriedade}${tipoSel}${inputName}',winProp);
+		newwindow_${propriedade}=window.open(url,'${propriedade}${tipoSel}',winProp);
 	}
 	newwindow_${propriedade}.opener = self;
 	
@@ -176,16 +176,16 @@ self.popitup_${propriedade}${tipoSel}${inputName} = function(sigla) {
 	return false;
 }
 
-self.resposta_ajax_${propriedade}${tipoSel}${inputName} = function(response, d1, d2, d3) {
+self.resposta_ajax_${propriedade}${tipoSel} = function(response, d1, d2, d3) {
 	var sigla = document.getElementsByName('${inputNameTipoSel}.sigla')[0].value;
     var data = response.split(';');
     if (data[0] == '1')
-	    return retorna_${propriedade}${tipoSel}${inputName}(data[1], data[2], data[3]);
-    retorna_${propriedade}${tipoSel}${inputName}('', '', '');
+	    return retorna_${propriedade}${tipoSel}(data[1], data[2], data[3]);
+    retorna_${propriedade}${tipoSel}('', '', '');
     
     <c:choose>
 		<c:when test="${buscar != 'nao'}">
-			return popitup_${propriedade}${tipoSel}${inputName}(sigla);
+			return popitup_${propriedade}${tipoSel}(sigla);
 		</c:when>
 		<c:otherwise>
 			return;
@@ -193,22 +193,22 @@ self.resposta_ajax_${propriedade}${tipoSel}${inputName} = function(response, d1,
 	</c:choose>
 }
 
-self.ajax_${propriedade}${tipoSel}${inputName} = function() {
+self.ajax_${propriedade}${tipoSel} = function() {
 	var sigla = $.trim(document.getElementsByName('${inputNameTipoSel}.sigla')[0].value);
 	if (sigla == '') {
-		return retorna_${propriedade}${tipoSel}${inputName}('', '', '');
+		return retorna_${propriedade}${tipoSel}('', '', '');
 	}
 	<c:choose>
 		<c:when test="${empty urlSelecionar}">
-			var url = '/${urlPrefix}/app${acaoBusca}/selecionar?propriedade=${propriedade}${tipoSel}${inputName}'+'${selecaoParams}';
+			var url = '/${urlPrefix}/app${acaoBusca}/selecionar?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
 		</c:when>
 		<c:otherwise>
-			var url = '/${urlPrefix}/app${acaoBusca}/${urlSelecionar}?propriedade=${propriedade}${tipoSel}${inputName}'+'${selecaoParams}';
+			var url = '/${urlPrefix}/app${acaoBusca}/${urlSelecionar}?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
 		</c:otherwise>
 	</c:choose>
 	url = url + '&sigla=' + sigla;
 	Siga.ajax(url, null, "GET", function(response){		
-		resposta_ajax_${propriedade}${tipoSel}${inputName}(response);
+		resposta_ajax_${propriedade}${tipoSel}(response);
 	});	
 	//PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedade}${tipoSel}', false);
 	
@@ -239,13 +239,13 @@ self.ajax_${propriedade}${tipoSel}${inputName} = function() {
 <input type="hidden" name="${inputNameTipoSel}.buscar" value="<c:out value="${requestScope[propriedadeTipoSel].buscar}"/>" id="formulario_${inputNameTipoSel}_buscar"/>
 <input type="text" name="${inputNameTipoSel}.sigla" value="<c:out value="${requestScope[propriedadeTipoSel].sigla}"/>" id="formulario_${inputNameTipoSel}_sigla" 
 	onkeypress="return handleEnter(this, event)" ${requiredValue}
-	onblur="javascript: ajax_${propriedade}${tipoSel}${inputName}();" <c:if test="${not empty onblur}">${onblur};</c:if> size="25"
+	onblur="javascript: ajax_${propriedade}${tipoSel}();" <c:if test="${not empty onblur}">${onblur};</c:if> size="25"
 	onchange="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>"
 	${disabledTxt} />	
 	
 <c:if test="${buscar != 'nao'}">
-	<input type="button" id="${propriedade}${tipoSel}${inputName}SelButton" value="..."
-		onclick="javascript: popitup_${propriedade}${tipoSel}${inputName}('');"
+	<input type="button" id="${propriedade}${tipoSel}SelButton" value="..."
+		onclick="javascript: popitup_${propriedade}${tipoSel}('');"
 		${disabledBtn} theme="simple">
 </c:if>
 

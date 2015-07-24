@@ -286,10 +286,14 @@ public class WfUtil {
 	}
 	
 	private static boolean atorDeveReexecutarTarefa(DpPessoa ator, TaskInstance ti) {
-		DpLotacaoDaoFiltro lotflt = new DpLotacaoDaoFiltro();
-		lotflt.setSiglaCompleta(((PooledActor) ti.getPooledActors().toArray()[0]).getActorId());
-		DpLotacao lotacao = (DpLotacao) WfDao.getInstance().consultarPorSigla(lotflt);
-		return !ator.isFechada() && ator.getLotacao().equivale(lotacao);
+		if (ti.getPooledActors().size() == 1) {
+			DpLotacaoDaoFiltro lotflt = new DpLotacaoDaoFiltro();
+			lotflt.setSiglaCompleta(((PooledActor) ti.getPooledActors().toArray()[0]).getActorId());
+			DpLotacao lotacao = (DpLotacao) WfDao.getInstance().consultarPorSigla(lotflt);
+			return !ator.isFechada() && ator.getLotacao().equivale(lotacao);
+		} else {
+			return false;
+		}
 	}
 
 	public void assertPodeTransferirDocumentosVinculados(TaskInstance ti,

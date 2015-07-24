@@ -9,6 +9,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import br.gov.jfrj.siga.base.auditoria.filter.ThreadFilter;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.vraptor.WfInterceptor;
 

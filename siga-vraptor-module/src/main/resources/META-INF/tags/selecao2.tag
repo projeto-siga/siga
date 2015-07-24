@@ -146,13 +146,13 @@ self.ajax_${propriedadeClean} = function() {
 
 <input type="hidden" name="alterouSel" value="" id="alterouSel" />
 <input type="hidden" name="${propriedade}.id"
-	value="<c:out value="${f:evaluate(f:concat(propriedade,'.id'),requestScope)}"/>"
+	value="<c:out value="${requestScope[propriedade].id}"/>"
 	id="formulario_${propriedadeClean}_id" />
 <input type="hidden" name="${propriedade}.descricao"
-	value="<c:out value="${f:evaluate(f:concat(propriedade,'.descricao'),requestScope)}"/>"
+	value="<c:out value="${requestScope[propriedade].descricao}"/>"
 	id="formulario_${propriedadeClean}_descricao" />
 <input type="text" name="${propriedade}.sigla"
-	value="<c:out value="${f:evaluate(f:concat(propriedade,'.sigla'),requestScope)}"/>"
+	value="<c:out value="${requestScope[propriedade].sigla}"/>"
 	id="formulario_${propriedadeClean}_sigla"
 	onkeypress="return handleEnter(this, event)"
 	onblur="javascript: ajax_${propriedadeClean}();"
@@ -166,7 +166,7 @@ self.ajax_${propriedadeClean} = function() {
 
 <c:if test="${ocultardescricao != 'sim'}">
 	<span id="${propriedadeClean}Span"> <c:out
-			value="${f:evaluate(f:concat(propriedade,'.descricao'),requestScope)}" />
+			value="${requestScope[propriedade].descricao}" />
 	</span>
 </c:if>
 

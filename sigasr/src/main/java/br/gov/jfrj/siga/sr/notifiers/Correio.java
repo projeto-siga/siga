@@ -23,7 +23,7 @@ public class Correio {
 	private static final String TEMPLATE_NOTIFICAR_CANCELAMENTO_MOVIMENTACAO = "notificarCancelamentoMovimentacao";
 	private static final String TEMPLATE_NOTIFICAR_MOVIMENTACAO = "notificarMovimentacao";
 	private static final String TEMPLATE_NOTIFICAR_ABERTURA = "notificarAbertura";
-	private static final String MOVIMENTACAO_DA_SOLICITACAO = "MovimentaÃ§Ã£o da solicitaÃ§Ã£o ";
+	private static final String MOVIMENTACAO_DA_SOLICITACAO = "Movimentação da Solicitação";
 
 	private Freemarker freemarker;
 	private PathBuilder pathBuilder;

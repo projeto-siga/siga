@@ -2248,8 +2248,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             throw new Exception(OPERACAO_NAO_PERMITIDA);
         if (solRecebeJuntada.equivale(this))
             throw new Exception("N\u00E3o \u00E9 possivel juntar uma solicita\u00E7\u00E3o a si mesma.");
-        if (solRecebeJuntada.isJuntada() && solRecebeJuntada.getSolicitacaoPrincipal().equivale(this))
-            throw new Exception("N\u00E3o e possivel realizar juntada circular.");
+        // Edson: comentei porque, como o ObjetoObjectInstantiator executa o detach na solRecebeJuntada, dava lazy exception abaixo
+        // if (solRecebeJuntada.isJuntada() && solRecebeJuntada.getSolicitacaoPrincipal().equivale(this))
+        //    throw new Exception("N\u00E3o e possivel realizar juntada circular.");
         if (solRecebeJuntada.isFilha() && solRecebeJuntada.getSolicitacaoPai().equivale(this))
             throw new Exception("N\u00E3o e possivel juntar uma solicita\u00E7\u00E3o a uma das suas filhas. Favor realizar o processo inverso.");
 
@@ -2450,7 +2451,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             return null;
         Long menorTempoAcordado = null;
         for (SrAcordo a : getAcordos()) {
-            Long acordado = a.getAcordoAtual().getAtributoEmSegundos("tempoDecorridoCadastramento");
+            Long acordado = a.getAtributoEmSegundos("tempoDecorridoCadastramento");
             if (menorTempoAcordado == null || (acordado != null && acordado < menorTempoAcordado))
                 menorTempoAcordado = acordado;
         }
@@ -2464,7 +2465,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             return null;
         Long menorTempoAcordado = null;
         for (SrAcordo a : getAcordos()) {
-            Long acordado = a.getAcordoAtual().getAtributoEmSegundos("tempoDecorridoAtendimento");
+            Long acordado = a.getAtributoEmSegundos("tempoDecorridoAtendimento");
             if (menorTempoAcordado == null || (acordado != null && acordado < menorTempoAcordado))
                 menorTempoAcordado = acordado;
         }
@@ -2588,10 +2589,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public boolean isAcordoSatisfeito(SrAcordo acordo) {
         if (acordo == null)
             return true;
-        SrAcordo acordoAtual = acordo.getAcordoAtual();
-        if (acordoAtual.getAtributoAcordoSet() == null)
+        if (acordo.getAtributoAcordoSet() == null)
             return true;
-        for (SrAtributoAcordo pa : acordoAtual.getAtributoAcordoSet()) {
+        for (SrAtributoAcordo pa : acordo.getAtributoAcordoSet()) {
             if (!isAtributoAcordoSatisfeito(pa))
                 return false;
         }

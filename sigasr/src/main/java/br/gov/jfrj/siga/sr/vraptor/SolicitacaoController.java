@@ -708,18 +708,16 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/exibir/vincular")
-    public void vincular(Long idSolicitacaoAVincular, Long idSolicitacaoRecebeVinculo, String justificativa) throws Exception {
+    public void vincular(Long idSolicitacaoAVincular, SrSolicitacao solicitacaoRecebeVinculo, String justificativa) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(idSolicitacaoAVincular);
-        SrSolicitacao solRecebeVinculo = SrSolicitacao.AR.findById(idSolicitacaoRecebeVinculo);
-        sol.vincular(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solRecebeVinculo, justificativa);
+        sol.vincular(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solicitacaoRecebeVinculo, justificativa);
         result.redirectTo(this).exibir(idSolicitacaoAVincular, todoOContexto(), ocultas());
     }
 
     @Path("/exibir/juntar")
-    public void juntar(Long idSolicitacaoAJuntar, Long idSolicitacaoRecebeJuntada, String justificativa) throws Exception {
+    public void juntar(Long idSolicitacaoAJuntar, SrSolicitacao solicitacaoRecebeJuntada, String justificativa) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(idSolicitacaoAJuntar);
-        SrSolicitacao solRecebeJuntada = SrSolicitacao.AR.findById(idSolicitacaoRecebeJuntada);
-        sol.juntar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solRecebeJuntada, justificativa);
+        sol.juntar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solicitacaoRecebeJuntada, justificativa);
         result.redirectTo(this).exibir(idSolicitacaoAJuntar, todoOContexto(), ocultas());
     }
 

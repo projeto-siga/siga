@@ -11,15 +11,15 @@
 		<p>Solicitante: ${(sol.solicitante.descricaoIniciaisMaiusculas)!}, ${(sol.lotaSolicitante.siglaLotacao)!} </p>
 		<p>${(sol.descrSolicitacao)!}</p>
 	</blockquote>
-	<#if (movimentacao.tipoMov.idTipoMov == models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)>
+	<#if ((movimentacao.tipoMov.idTipoMov)! == 7)> <#--Fechamento-->
 	<p>
 		<#if (sol.atendente != null)>
         	<#assign descricao = (sol.atendente.descricaoIniciaisMaiusculas)!>
 		<#else>
 			<#assign descricao = (sol.lotaAtendente.descricao)!> 
 		</#if>
-		Este email foi enviado porque <b>${descricao}</b> é atendente atual da solicitação <b>${(sol.codigo)!}</b>,
-		que gerou a solicitação acima através da ação <b>Escalonar</b>.
+		Este email foi enviado porque <b>${descricao}</b> Ã© atendente atual da solicitaÃ§Ã£o <b>${(sol.codigo)!}</b>,
+		que gerou a solicitaÃ§Ã£o acima atravï¿½s da aÃ§Ã£o <b>Escalonar</b>.
 	</p>
 	</#if>
 	<p>

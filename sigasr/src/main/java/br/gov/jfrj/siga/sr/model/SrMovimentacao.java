@@ -319,7 +319,7 @@ public class SrMovimentacao extends Objeto {
     private void checarCampos() throws Exception {
 
     	if (cadastrante == null)
-            throw new Exception("Cadastrante nï¿½o pode ser nulo");
+            throw new Exception("Cadastrante não pode ser nulo");
     	if (lotaCadastrante == null)
             lotaCadastrante = cadastrante.getLotacao();
     	if (titular == null)
@@ -328,12 +328,12 @@ public class SrMovimentacao extends Objeto {
             lotaTitular = titular.getLotacao();
     	
         if (getSolicitacao() == null)
-            throw new Exception("Movimentaï¿½ï¿½o precisa fazer parte de uma solicitaï¿½ï¿½o");
+            throw new Exception("Movimentação precisa fazer parte de uma solicitação");
 
         if (getArquivo() != null) {
             double lenght = (double) getArquivo().getBlob().length / 1024 / 1024;
             if (lenght > 2)
-                throw new IllegalArgumentException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) ï¿½ maior que o mï¿½ximo permitido (2MB)");
+                throw new IllegalArgumentException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) é maior que o máximo permitido (2MB)");
         }
 
         if (getDtIniMov() == null)

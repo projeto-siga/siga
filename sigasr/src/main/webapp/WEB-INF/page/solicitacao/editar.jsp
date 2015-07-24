@@ -527,9 +527,9 @@
 							<label>Cadastrante</label> ${cadastrante.nomePessoa} <input
 								type="hidden" id="siglaCadastrante" name="solicitacao.cadastrante.sigla"
 								value="${cadastrante.sigla}" />
-								<input type="hidden" id="idCadastrante" name="solicitacao.cadastrante" value="${cadastrante.idPessoa}" />
-								<input type="hidden" name="solicitacao.lotaTitular" value="${lotaTitular != null ? lotaTitular.idLotacao:''}" />
-								<input type="hidden" name="solicitacao.titular" value="${titular!= null ? titular.idPessoa:''}" />
+								<input type="hidden" id="idCadastrante" name="solicitacao.cadastrante.id" value="${cadastrante.idPessoa}" />
+								<input type="hidden" name="solicitacao.lotaTitular.id" value="${lotaTitular != null ? lotaTitular.idLotacao:''}" />
+								<input type="hidden" name="solicitacao.titular.id" value="${titular!= null ? titular.idPessoa:''}" />
 						</div>
 					</div>	 
 		

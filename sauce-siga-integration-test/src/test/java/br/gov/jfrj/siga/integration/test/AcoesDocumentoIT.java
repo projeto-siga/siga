@@ -53,7 +53,7 @@ public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDema
 			codigoDocumento = criaDocumento();				
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("Exceção no método setUp!");
+			throw new IllegalStateException("Exceção no método setUp: " + e);
 		} 
 	}
 	

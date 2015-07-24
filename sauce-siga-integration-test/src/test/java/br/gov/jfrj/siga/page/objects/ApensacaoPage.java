@@ -42,7 +42,7 @@ public class ApensacaoPage {
 		util = new IntegrationTestUtil();
 		
 		if(!util.isDescricaoPaginaVisivel(driver, "Apensação de Documento")) {
-			throw new RuntimeException("Esta não é a página de Apensação de Documento!");
+			throw new IllegalStateException("Esta não é a página de Apensação de Documento!");
 		}
 	}
 	

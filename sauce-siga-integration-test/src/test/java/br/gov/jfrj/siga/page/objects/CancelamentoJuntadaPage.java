@@ -36,7 +36,7 @@ public class CancelamentoJuntadaPage {
 		util = new IntegrationTestUtil();
 		
 		if(!util.isDescricaoPaginaVisivel(driver, "Cancelamento de Juntada de Documento")) {
-			throw new RuntimeException("Esta não é a página de Juntada de Documento!");
+			throw new IllegalStateException("Esta não é a página de Juntada de Documento!");
 		}
 	}
 	

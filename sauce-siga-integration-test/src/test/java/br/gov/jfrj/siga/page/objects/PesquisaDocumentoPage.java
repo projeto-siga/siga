@@ -45,7 +45,7 @@ public class PesquisaDocumentoPage {
 		new WebDriverWait(driver, 30).until(ExpectedConditions.elementToBeClickable(botaoBuscar));*/
 		
 		if(util.isDescricaoPaginaVisivel(driver, "Pesquisa de Documentos") == null) {
-			throw new RuntimeException("Esta não é a página de Pesquisa de Documentos!");
+			throw new IllegalStateException("Esta não é a página de Pesquisa de Documentos!");
 		}
 	}
 	
@@ -73,6 +73,7 @@ public class PesquisaDocumentoPage {
 		descricao.click();
 		util.getSelect(driver, situacao).selectByVisibleText(situacaoDocumento);
 		botaoBuscar.click();
+		PageFactory.initElements(driver, PesquisaDocumentoPage.class);
 		descricao.click();
 		util.getWebElement(driver, By.id("descrDocumento")).click();
 		return PageFactory.initElements(driver, PesquisaDocumentoPage.class);

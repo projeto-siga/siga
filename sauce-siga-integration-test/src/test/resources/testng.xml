@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
- <!--  <suite name="Testes de Integração do SigaDoc" allow-return-values="true" verbose="1" parallel="tests" thread-count="5"> --> 
-  <suite name="Testes de Integração do SigaDoc" allow-return-values="true" verbose="1" > 
+ <!-- <suite name="Testes de Integração do SigaDoc" allow-return-values="true" verbose="1" parallel="tests" thread-count="5"> -->
+ <suite name="Testes de Integração do SigaDoc" configfailurepolicy="continue">
  	<test name="SigaDoc - Windows 7 Explorer 10.0">
 		<classes>
 		    <parameter name="Operating_System" value="VISTA"/>

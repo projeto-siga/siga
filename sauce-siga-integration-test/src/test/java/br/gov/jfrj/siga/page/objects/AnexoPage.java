@@ -40,7 +40,7 @@ public class AnexoPage {
 		util = new IntegrationTestUtil();
 		
 		if(!util.isDescricaoPaginaVisivel(driver, "Anexação de Arquivo")) {
-			throw new RuntimeException("Esta não é a página de Anexo!");
+			throw new IllegalStateException("Esta não é a página de Anexo!");
 		}
 	}
 	
@@ -52,8 +52,7 @@ public class AnexoPage {
 		util.preencheElemento(driver, descricao, propDocumentos.getProperty("descricaoAnexo") ); 
 		//File file = new File("src/test/resources/" + propDocumentos.getProperty("arquivoAnexo"));
 		//arquivo.sendKeys(file.getAbsolutePath());
-		// arquivo.sendKeys(System.getProperty("baseURL") + "/siga/apostila_sigawf.pdf");  jboss 5
-		arquivo.sendKeys(System.getProperty("baseURL") + "/siga/arquivos/apostila_sigawf.pdf");  // jboss 6
+		arquivo.sendKeys(System.getProperty("baseURL") + "/siga/apostila_sigawf.pdf"); 
 		botaoOk.click();
 		return this;
 	}

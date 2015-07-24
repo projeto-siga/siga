@@ -31,7 +31,7 @@ public class InclusaoCossignatarioPage {
 		util = new IntegrationTestUtil();
 		
 		if(!util.isDescricaoPaginaVisivel(driver, "Inclusão de Cossignatário")) {
-			throw new RuntimeException("Esta não é a página de Inclusão de Cossignatário!");
+			throw new IllegalStateException("Esta não é a página de Inclusão de Cossignatário!");
 		}
 	}
 	

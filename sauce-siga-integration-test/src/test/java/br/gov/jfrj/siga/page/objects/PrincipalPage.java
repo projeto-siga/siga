@@ -37,9 +37,8 @@ public class PrincipalPage {
 			webElement.click();
 		}
 		
-		// if(util.getWebElement(driver, By.cssSelector("a.gt-btn-small.gt-btn-right")) == null) { Jboss 5
-		if(util.getWebElement(driver, By.partialLinkText("Novo Documento")) == null) {
-			throw new RuntimeException("Esta não é a página principal!");
+		if(util.getWebElement(driver, By.cssSelector("a.gt-btn-small.gt-btn-right")) == null) {
+			throw new IllegalStateException("Esta não é a página principal!");
 		}
 	}
 	

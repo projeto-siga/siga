@@ -38,7 +38,7 @@ public class CriacaoDocumentoIT extends IntegrationTestBase implements SauceOnDe
 			principalPage = efetuaLogin();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("Exceção no método setUp!");
+			throw new IllegalStateException("Exceção no método setUp: " + e);
 		} 
 	}
 	

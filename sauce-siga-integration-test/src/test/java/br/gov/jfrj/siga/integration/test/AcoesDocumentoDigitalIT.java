@@ -7,6 +7,7 @@ import br.gov.jfrj.siga.page.objects.PortariaPage;
 import br.gov.jfrj.siga.page.objects.PrincipalPage;
 import br.gov.jfrj.siga.page.objects.TransferenciaPage;
 
+
 //Bibliotecas para o saucelabs
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
@@ -39,7 +40,7 @@ public class AcoesDocumentoDigitalIT extends IntegrationTestBase implements Sauc
 			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("Exceção no método setUp!");
+			throw new IllegalStateException("Exceção no método setUp: " + e);
 		} 
 	}
 	

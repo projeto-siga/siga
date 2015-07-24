@@ -21,7 +21,7 @@ public class AssinaturaDigitalPage {
 		util = new IntegrationTestUtil();
 		
 		if(!util.isDescricaoPaginaVisivel(driver,"Confirme os dados do documento abaixo:")) {
-			throw new RuntimeException("Esta não é a página de Assinatura Digital!");
+			throw new IllegalStateException("Esta não é a página de Assinatura Digital!");
 		}
 	}
 	

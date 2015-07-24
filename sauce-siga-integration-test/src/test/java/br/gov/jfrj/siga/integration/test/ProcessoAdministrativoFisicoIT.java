@@ -12,6 +12,8 @@ import br.gov.jfrj.siga.page.objects.ProcessoFinanceiroPage;
 import br.gov.jfrj.siga.page.objects.TransferenciaPage;
 import br.gov.jfrj.siga.page.objects.VisualizacaoDossiePage;
 
+
+
 //Bibliotecas para o saucelabs
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
@@ -51,7 +53,7 @@ public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase implemen
 			operacoesDocumentoPage = assinaturaDigitalPage.registrarAssinaturaDigital(baseURL, codigoDocumento);			
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("Exceção no método setUp!");
+			throw new IllegalStateException("Exceção no método setUp: " + e);
 		}
 	}
 	

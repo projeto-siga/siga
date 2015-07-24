@@ -77,13 +77,13 @@ public class WorkflowDigitalIT extends IntegrationTestBase implements SauceOnDem
 			// Garantir que "Tarefa: Anexar Arquivos" apareça na tela
 			WebElement tarefaElement = util.getWebElement(driver, By.xpath("//td[contains(., 'Tarefa: Anexar Arquivos')]"));
 			if(tarefaElement == null) {
-				throw new RuntimeException("Tarefa não encontrada!");
+				throw new IllegalStateException("Tarefa não encontrada!");
 			}
 			
 			// Garantir que o link "Prosseguir" apareça na tela
 			WebElement linkProsseguir = util.getWebElement(driver, By.xpath("//a[contains(text(), 'Prosseguir')]"));		
 			if(linkProsseguir == null) {
-				throw new RuntimeException("Link Prosseguir não encontrado!");
+				throw new IllegalStateException("Link Prosseguir não encontrado!");
 			}
 			
 			// Armazenando nome da tarefa
@@ -95,7 +95,7 @@ public class WorkflowDigitalIT extends IntegrationTestBase implements SauceOnDem
 			inicioTarefa = procedimento.substring(procedimento.indexOf("(") + 1, procedimento.indexOf(")"));				
 		} catch(Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("Exceção no método setUp!");
+			throw new IllegalStateException("Exceção no método setUp!");
 		}
 	}
 	
@@ -121,7 +121,7 @@ public class WorkflowDigitalIT extends IntegrationTestBase implements SauceOnDem
 						geraProcesso();
 					} catch(Exception e) {
 						e.printStackTrace();
-						throw new RuntimeException("Exceção no método geraProcesso!");
+						throw new IllegalStateException("Exceção no método geraProcesso!");
 					}
 				}
 				

@@ -28,7 +28,7 @@ public class VisualizacaoDossiePage {
 		util = new IntegrationTestUtil();
 		
 		if(util.getWebElement(driver, By.xpath("//td[contains(., 'Documentos do Dossiê')]")) == null) {
-			throw new RuntimeException("Esta não é a página de Visualização de Dossiê!");
+			throw new IllegalStateException("Esta não é a página de Visualização de Dossiê!");
 		}
 	}
 	

@@ -59,7 +59,7 @@ public class TransferenciaPage {
 		util.openPopup(driver);	
 		if(!util.isDescricaoPaginaVisivel(driver, "Despacho / Transferencia")) {
 			util.closePopup(driver);
-			throw new RuntimeException("Esta não é a página de Despacho / Transferencia!");
+			throw new IllegalStateException("Esta não é a página de Despacho / Transferencia!");
 		}
 	}
 	

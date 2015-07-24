@@ -424,9 +424,9 @@ public class AppController extends WfController {
 
 		if (fActorChanged) {
 			if (actorId != null) {
-				util.assertLotacaoAscendenteOuDescendente(
-						lotAtualAtor != null ? lotAtualAtor : lotAtualPool,
-						daoPes(ator_pessoaSel.getId()).getLotacao());
+//				util.assertLotacaoAscendenteOuDescendente(
+//						lotAtualAtor != null ? lotAtualAtor : lotAtualPool,
+//						daoPes(ator_pessoaSel.getId()).getLotacao());
 			}
 			taskInstance.setActorId(actorId);
 		}
@@ -435,13 +435,14 @@ public class AppController extends WfController {
 			if (lotaActorId == null)
 				taskInstance.setPooledActors(new String[] {});
 			else {
-				util.assertLotacaoAscendenteOuDescendente(
-						lotAtualPool != null ? lotAtualPool : lotAtualAtor,
-						daoLot(lotaAtor_lotacaoSel.getId()));
+				//util.assertLotacaoAscendenteOuDescendente(
+				//		lotAtualPool != null ? lotAtualPool : lotAtualAtor,
+				//		daoLot(lotaAtor_lotacaoSel.getId()));
 				taskInstance.setPooledActors(new String[] { lotaActorId });
 				if (taskInstance.getSwimlaneInstance() != null){
-					PooledActor pa = (PooledActor) taskInstance.getSwimlaneInstance().getPooledActors().iterator().next();
-					pa.setActorId(lotaActorId);
+					//PooledActor pa = (PooledActor) taskInstance.getSwimlaneInstance().getPooledActors().iterator().next();
+					//pa.setActorId(lotaActorId);
+					taskInstance.getSwimlaneInstance().setPooledActors(new String[] {lotaActorId});
 				}else{
 				}
 			}

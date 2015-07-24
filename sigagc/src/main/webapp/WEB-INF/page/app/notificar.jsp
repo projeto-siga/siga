@@ -18,10 +18,6 @@
 						<siga:pessoaLotaSelecao2 propriedadePessoa="pessoa"
 							propriedadeLotacao="lotacao" propriedadeEmail="email" />
 					</div>
-
-					<siga:selecao2 tema='simple' titulo="Perfil:" propriedade="perfil"
-						modulo="siga" />
-
 					<br />
 					<div class="gt-form-row gt-width-100">
 						<input type="submit" value="Notificar"

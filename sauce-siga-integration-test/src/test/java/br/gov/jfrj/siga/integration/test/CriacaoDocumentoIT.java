@@ -3,8 +3,13 @@ package br.gov.jfrj.siga.integration.test;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Method;
-
+import br.gov.jfrj.siga.page.objects.EditaDocumentoPage;
+import br.gov.jfrj.siga.page.objects.MemorandoPage;
+import br.gov.jfrj.siga.page.objects.OficioPage;
+import br.gov.jfrj.siga.page.objects.PortariaPage;
+import br.gov.jfrj.siga.page.objects.PrincipalPage;
 import org.openqa.selenium.By;
+
 //Biliotecas para o saucelabs
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
@@ -14,18 +19,12 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import br.gov.jfrj.siga.page.objects.EditaDocumentoPage;
-import br.gov.jfrj.siga.page.objects.MemorandoPage;
-import br.gov.jfrj.siga.page.objects.OficioPage;
-import br.gov.jfrj.siga.page.objects.PortariaPage;
-import br.gov.jfrj.siga.page.objects.PrincipalPage;
-
 import com.saucelabs.common.SauceOnDemandAuthentication;
 import com.saucelabs.common.SauceOnDemandSessionIdProvider;
 import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
 // fim saucelabs
 
-//@Listeners({SauceOnDemandTestListener.class})
+
 public class CriacaoDocumentoIT extends IntegrationTestBase implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider{
 	private PrincipalPage principalPage;
 	

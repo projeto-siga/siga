@@ -8,6 +8,14 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+
+import br.gov.jfrj.siga.page.objects.EstatisticaProcedimentoPage;
+import br.gov.jfrj.siga.page.objects.OperacoesDocumentoPage;
+import br.gov.jfrj.siga.page.objects.PesquisaDocumentoPage;
+import br.gov.jfrj.siga.page.objects.PrincipalPage;
+import br.gov.jfrj.siga.page.objects.SolicitacaoEletronicaContratacaoPage;
+import br.gov.jfrj.siga.page.objects.TarefaPage;
+
 //Bibliotecas para o saucelabs
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
@@ -17,20 +25,11 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import br.gov.jfrj.siga.page.objects.EstatisticaProcedimentoPage;
-import br.gov.jfrj.siga.page.objects.OperacoesDocumentoPage;
-import br.gov.jfrj.siga.page.objects.PesquisaDocumentoPage;
-import br.gov.jfrj.siga.page.objects.PrincipalPage;
-import br.gov.jfrj.siga.page.objects.SolicitacaoEletronicaContratacaoPage;
-import br.gov.jfrj.siga.page.objects.TarefaPage;
-
 import com.saucelabs.common.SauceOnDemandAuthentication;
 import com.saucelabs.common.SauceOnDemandSessionIdProvider;
 import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
 //fim saucelabs
 
-//O listener envia o resultado do testng para o saucelab
-//@Listeners({SauceOnDemandTestListener.class})
 public class WorkflowDigitalIT extends IntegrationTestBase implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider {
 	private String codigoDocumento;
 	private TarefaPage tarefaPage;

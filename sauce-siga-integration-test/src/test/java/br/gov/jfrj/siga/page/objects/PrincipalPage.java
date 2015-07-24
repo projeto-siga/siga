@@ -17,7 +17,8 @@ public class PrincipalPage {
 
 	protected WebDriver driver;
 	
-	@FindBy(css="a.gt-btn-small.gt-btn-right")
+	//@FindBy(css="a.gt-btn-small.gt-btn-right") versão jboss 5
+	@FindBy(partialLinkText="Novo Documento")
 	private WebElement botaoNovoDocumentoEx;
 	
 	@FindBy(id="buscar_genericoSel_sigla")
@@ -36,7 +37,8 @@ public class PrincipalPage {
 			webElement.click();
 		}
 		
-		if(util.getWebElement(driver, By.cssSelector("a.gt-btn-small.gt-btn-right")) == null) {
+		// if(util.getWebElement(driver, By.cssSelector("a.gt-btn-small.gt-btn-right")) == null) { Jboss 5
+		if(util.getWebElement(driver, By.partialLinkText("Novo Documento")) == null) {
 			throw new RuntimeException("Esta não é a página principal!");
 		}
 	}

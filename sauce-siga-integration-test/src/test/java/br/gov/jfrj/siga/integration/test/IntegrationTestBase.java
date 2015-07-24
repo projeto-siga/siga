@@ -26,16 +26,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Listeners;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
-
-
-
-
-
-
-
 
 //As libs abaixo são necessárias para que o sessionid seja passado ao jenkins ou bamboo
 //e também para que o testlistener invoque o sauce rest api no qual notificará o sauce
@@ -44,15 +36,7 @@ import com.saucelabs.common.SauceOnDemandAuthentication;
 import com.saucelabs.common.SauceOnDemandSessionIdProvider;
 import com.saucelabs.saucerest.SauceREST;
 import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
-import com.saucelabs.testng.SauceOnDemandTestListener;
 // fim saucelabs 
-
-
-
-
-
-
-
 
 import br.gov.jfrj.siga.integration.test.util.IntegrationTestUtil;
 import br.gov.jfrj.siga.page.objects.AnexoPage;
@@ -66,8 +50,6 @@ import br.gov.jfrj.siga.page.objects.ProcessoAssuntosAdministrativosPage;
 import br.gov.jfrj.siga.page.objects.RegistraAssinaturaManualPage;
 import br.gov.jfrj.siga.page.objects.TransferenciaPage;
 
-//O listener envia o resultado do testng para o saucelab
-//@Listeners({SauceOnDemandTestListener.class})
 public class IntegrationTestBase implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider {
 	protected WebDriver driver;
 	protected OperacoesDocumentoPage operacoesDocumentoPage;
@@ -75,9 +57,9 @@ public class IntegrationTestBase implements SauceOnDemandSessionIdProvider, Sauc
 	protected String baseURL;
 	protected Properties propDocumentos = new Properties();
 	protected Boolean isTestSuccesful = Boolean.TRUE;
+	//Necessário para o saucelabs 
 	private String USUARIO_SAUCELAB = "sigadoc";
 	private String ACCESSKEY_SAUCELAB = "6b7f5b5c-0a1e-4c59-b9b5-e3dba4a198d8";
-	//Necessário para o saucelabs  
 	public SauceOnDemandAuthentication authentication;
 
 	public IntegrationTestBase() throws FileNotFoundException, IOException {
@@ -88,12 +70,11 @@ public class IntegrationTestBase implements SauceOnDemandSessionIdProvider, Sauc
 		propDocumentos.setProperty("siglaSubscritor", System.getProperty("userSiga"));
 	}
 	
-	// Necessário para o saucelabs
+	// Classe necessária para o saucelabs
 	@BeforeClass
 	@Parameters({"Operating_System", "Browser_Name", "Browser_Version"})
 	public void iniciaWebDriver(@Optional() String operatingSystem, @Optional() String browserName, @Optional() String browserVersion) throws MalformedURLException { 
 		// Necessário para acesso ao saucelabs
-
 		authentication = new SauceOnDemandAuthentication(USUARIO_SAUCELAB , ACCESSKEY_SAUCELAB);
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 	    capabilities.setBrowserName(browserName);
@@ -106,8 +87,8 @@ public class IntegrationTestBase implements SauceOnDemandSessionIdProvider, Sauc
 	           new URL("http://" + USUARIO_SAUCELAB + ":" + ACCESSKEY_SAUCELAB + "@ondemand.saucelabs.com:80/wd/hub"),
 	           capabilities);
 		// Fim do bloco necessário ao acesso ao saucelabs
-	}
-	
+	}   
+	// Fim d classe necessária para o saucelabs
 	
 	public PrincipalPage efetuaLogin() throws Exception {
 		try {					    			
@@ -247,9 +228,9 @@ public class IntegrationTestBase implements SauceOnDemandSessionIdProvider, Sauc
 		Assert.assertTrue(operacoesDocumentoPage.isDocumentoAssinado(), "Texto 'Aguardando Andamento' não encontrado!");					
 	}		
 	
+	//Necessário ao saucelabs. Atualiza o saucelabs dashboard com fail ou pass em função da variável isTestSuccesful. É utilizado o sauce Rest API
 	@AfterClass(alwaysRun = true)
 	public void tearDown() {		
-		//atualiza o saucelabs dashboard com fail ou pass em função da variável isTestSuccesful. É utilizado o sauce Rest API
 		SauceREST sauceREST = new SauceREST(USUARIO_SAUCELAB, ACCESSKEY_SAUCELAB);
 		Map<String, Object> updates = new HashMap<String, Object>();
 		updates.put("name", (System.getenv("JOB_NAME") != null ? System.getenv("JOB_NAME") + " - " : "") + getClass().getSimpleName());
@@ -262,7 +243,7 @@ public class IntegrationTestBase implements SauceOnDemandSessionIdProvider, Sauc
 		sauceREST.updateJobInfo(getSessionId(), updates);
 		driver.quit();
 	}
-	//Checa se algum assert no método fracassou(fail). Se algum assert fracassou marca-se o teste para a classe como fail setando a variável isTestSuccesful para false
+	//Necessário ao saucelabs. Checa se algum assert no método fracassou(fail). Se algum assert fracassou marca-se o teste para a classe como fail setando a variável isTestSuccesful para false
 	@AfterMethod
 	public void avaliaResultadoTeste(ITestResult result) {
 		if(!result.isSuccess()) {

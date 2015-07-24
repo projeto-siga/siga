@@ -52,7 +52,8 @@ public class AnexoPage {
 		util.preencheElemento(driver, descricao, propDocumentos.getProperty("descricaoAnexo") ); 
 		//File file = new File("src/test/resources/" + propDocumentos.getProperty("arquivoAnexo"));
 		//arquivo.sendKeys(file.getAbsolutePath());
-		arquivo.sendKeys(System.getProperty("baseURL") + "/siga/apostila_sigawf.pdf");
+		// arquivo.sendKeys(System.getProperty("baseURL") + "/siga/apostila_sigawf.pdf");  jboss 5
+		arquivo.sendKeys(System.getProperty("baseURL") + "/siga/arquivos/apostila_sigawf.pdf");  // jboss 6
 		botaoOk.click();
 		return this;
 	}

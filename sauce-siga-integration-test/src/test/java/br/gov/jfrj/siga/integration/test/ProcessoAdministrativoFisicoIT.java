@@ -3,7 +3,14 @@ package br.gov.jfrj.siga.integration.test;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Method;
-
+import br.gov.jfrj.siga.page.objects.AssinaturaDigitalPage;
+import br.gov.jfrj.siga.page.objects.JuntadaDocumentoPage;
+import br.gov.jfrj.siga.page.objects.OficioPage;
+import br.gov.jfrj.siga.page.objects.OperacoesDocumentoPage;
+import br.gov.jfrj.siga.page.objects.PrincipalPage;
+import br.gov.jfrj.siga.page.objects.ProcessoFinanceiroPage;
+import br.gov.jfrj.siga.page.objects.TransferenciaPage;
+import br.gov.jfrj.siga.page.objects.VisualizacaoDossiePage;
 
 //Bibliotecas para o saucelabs
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -14,22 +21,11 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import br.gov.jfrj.siga.page.objects.AssinaturaDigitalPage;
-import br.gov.jfrj.siga.page.objects.JuntadaDocumentoPage;
-import br.gov.jfrj.siga.page.objects.OficioPage;
-import br.gov.jfrj.siga.page.objects.OperacoesDocumentoPage;
-import br.gov.jfrj.siga.page.objects.PrincipalPage;
-import br.gov.jfrj.siga.page.objects.ProcessoFinanceiroPage;
-import br.gov.jfrj.siga.page.objects.TransferenciaPage;
-import br.gov.jfrj.siga.page.objects.VisualizacaoDossiePage;
-
 import com.saucelabs.common.SauceOnDemandAuthentication;
 import com.saucelabs.common.SauceOnDemandSessionIdProvider;
 import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
 //fim saucelabs
 
-//O listener envia o resultado do testng para o saucelab
-//@Listeners({SauceOnDemandTestListener.class})
 public class ProcessoAdministrativoFisicoIT extends IntegrationTestBase implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider {	
 	private String codigoDocumento;
 	private String codigoProcesso;

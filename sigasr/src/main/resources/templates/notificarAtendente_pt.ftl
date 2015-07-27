@@ -13,7 +13,7 @@
 	</blockquote>
 	<#if ((movimentacao.tipoMov.idTipoMov)! == 7)> <#--Fechamento-->
 	<p>
-		<#if (sol.atendente != null)>
+		<#if (sol.atendente)??>
         	<#assign descricao = (sol.atendente.descricaoIniciaisMaiusculas)!>
 		<#else>
 			<#assign descricao = (sol.lotaAtendente.descricao)!> 

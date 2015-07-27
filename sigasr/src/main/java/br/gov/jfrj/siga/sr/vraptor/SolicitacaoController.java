@@ -622,6 +622,7 @@ public class SolicitacaoController extends SrController {
         solicitacao.setLotaTitular(getLotaTitular());
         solicitacao = solicitacao.getSolicitacaoAtual();
         Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
+        solicitacao.setAcao(null);
 
         CpConfiguracao filtro = new CpConfiguracao();
         filtro.setDpPessoa(getTitular());
@@ -708,16 +709,16 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/exibir/vincular")
-    public void vincular(Long idSolicitacaoAVincular, SrSolicitacao solicitacaoRecebeVinculo, String justificativa) throws Exception {
+    public void vincular(Long idSolicitacaoAVincular, SrSolicitacao solRecebeVinculo, String justificativa) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(idSolicitacaoAVincular);
-        sol.vincular(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solicitacaoRecebeVinculo, justificativa);
+        sol.vincular(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solRecebeVinculo, justificativa);
         result.redirectTo(this).exibir(idSolicitacaoAVincular, todoOContexto(), ocultas());
     }
 
     @Path("/exibir/juntar")
-    public void juntar(Long idSolicitacaoAJuntar, SrSolicitacao solicitacaoRecebeJuntada, String justificativa) throws Exception {
+    public void juntar(Long idSolicitacaoAJuntar, SrSolicitacao solRecebeJuntada, String justificativa) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(idSolicitacaoAJuntar);
-        sol.juntar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solicitacaoRecebeJuntada, justificativa);
+        sol.juntar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solRecebeJuntada, justificativa);
         result.redirectTo(this).exibir(idSolicitacaoAJuntar, todoOContexto(), ocultas());
     }
 
@@ -793,7 +794,7 @@ public class SolicitacaoController extends SrController {
     public void darAndamento(SrMovimentacao movimentacao) throws Exception {
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        result.redirectTo(this).exibirComParametros(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
     }
 
     @Path("/exibir/priorizarLista")

@@ -46,12 +46,12 @@
 <c:if test="${not empty solicitacao.itemConfiguracao && not empty acoesEAtendentes}"> 
 	<div class="gt-form-row gt-width-66">
 		<label>A&ccedil;&atilde;o</label>	
-		<select name="acao.idAcao" id="selectAcao" value="${solicitacao.acao.idAcao}" onchange="carregarLotacaoDaAcao()">
-		    <option value="0">#</option>
+		<select name="acao.id" id="selectAcao" onchange="carregarLotacaoDaAcao()">
+		    <option value="0"></option>
 			<c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
 				<optgroup  label="${cat.tituloAcao}">
 					<c:forEach items="${acoesEAtendentes.get(cat)}" var="tarefa">
-						<option value="${tarefa.acao.idAcao}"> ${tarefa.acao.tituloAcao} (${tarefa.conf.atendente.siglaCompleta})</option>
+						<option value="${tarefa.acao.idAcao}" ${solicitacao.acao.idAcao.equals(tarefa.acao.idAcao) ? 'selected' : ''}> ${tarefa.acao.tituloAcao} (${tarefa.conf.atendente.siglaCompleta})</option>
 					</c:forEach>					 
 				</optgroup>
 			</c:forEach>

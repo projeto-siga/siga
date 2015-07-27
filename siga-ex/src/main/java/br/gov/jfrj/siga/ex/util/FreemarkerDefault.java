@@ -8,13 +8,18 @@ import java.nio.file.Paths;
 
 import org.apache.commons.io.IOUtils;
 
+import br.gov.jfrj.siga.ex.bl.Ex;
+
 public class FreemarkerDefault {
 	public static String getDefaultTemplate() {
 		try {
-			return new String(
-					Files.readAllBytes(Paths
-							.get("/Users/nato/Repositories/projeto-siga/siga/siga-ex/src/main/java/br/gov/jfrj/siga/ex/util/default.ftl")),
-					"UTF-8");
+			String pathname = Ex
+					.getInstance()
+					.getProp()
+					.obterPropriedade("siga.ex.debug.default.template.pathname");
+			if (pathname != null)
+				return new String(Files.readAllBytes(Paths.get(pathname)),
+						"UTF-8");
 		} catch (Exception e1) {
 		}
 
@@ -25,9 +30,8 @@ public class FreemarkerDefault {
 		try {
 			template = IOUtils.toString(stream, "UTF-8");
 			return template;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		} finally {
 			IOUtils.closeQuietly(stream);
 		}

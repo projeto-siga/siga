@@ -22,7 +22,8 @@ public class Correio {
 
 	public void notificar(GcInformacao informacao, DpPessoa pesResponsavel,
 			DpLotacao lotResponsavel, String email) throws Exception {
-
+		if(lotResponsavel != null && lotResponsavel.getId() != null)
+			lotResponsavel = DpLotacao.AR.findById(lotResponsavel.getId());		
 		String msgDestinatario = "";
 		String[] destinatarios = null;
 

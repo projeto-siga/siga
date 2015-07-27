@@ -97,17 +97,18 @@ public class ObjetoObjectInstantiator implements Instantiator<Object> {
 			// }
 
 			if (obj == null)
-				obj = target
+				return target
 						.constructors(parameterNamesProvider,
 								dependenciesInjector)
 						.compatibleWith(parametersForTarget).largest()
 						.instantiate(argumentInstantiator)
 						.valueWithPropertiesSet();
-
-			NewObject nobj = new NewObject(argumentInstantiator,
+			else {
+				NewObject nobj = new NewObject(argumentInstantiator,
 					parametersForTarget, obj);
 
-			return nobj.valueWithPropertiesSet();
+				return nobj.valueWithPropertiesSet();
+			}
 		} else {
 			obj = target
 					.constructors(parameterNamesProvider, dependenciesInjector)

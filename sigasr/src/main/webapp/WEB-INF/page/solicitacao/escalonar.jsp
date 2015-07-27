@@ -135,14 +135,14 @@
 		
 		// limpa campos do componente de busca - tag selecao
 		function limparCampos() {
-			$("#formulario_lotacao").val('');
+			$("#formulario_lotacao_id").val('');
 			$("#formulario_lotacao_descricao").val('');
 			$("#formulario_lotacao_sigla").val('');
 			$("#lotacaoSpan").html('');
 		}
 		
 		function alterarAtendente() {
-			var inputNovoAtendente = $("#formulario_lotacao").val();
+			var inputNovoAtendente = $("#formulario_lotacao_id").val();
 			var spanNovoAtendente = $("#formulario_lotacao_sigla").val() + " - "
 					+ $("#formulario_lotacao_descricao").val();
 			modalFechar('lotacaoAtendente');

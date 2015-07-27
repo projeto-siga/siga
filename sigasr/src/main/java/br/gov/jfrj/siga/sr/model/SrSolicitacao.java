@@ -1922,7 +1922,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public List<DpPessoa> getPessoasAtendentesDisponiveis() {
         List<DpPessoa> listaFinal = new ArrayList<DpPessoa>();
         if (getLotaAtendente() != null) {
-            DpLotacao atendente = getLotaAtendente().getLotacaoAtual();
+            DpLotacao atendente = DpLotacao.AR.findById(getLotaAtendente().getIdLotacao());
+            atendente = atendente.getLotacaoAtual();
             if (atendente == null)
                 atendente = getLotaAtendente();
             for (DpPessoa p : atendente.getDpPessoaLotadosSet()) {

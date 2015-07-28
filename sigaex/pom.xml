@@ -128,15 +128,34 @@
 			<groupId>org.directwebremoting</groupId>
 			<artifactId>dwr</artifactId>
 		</dependency>
-
+		
 		<dependency>
-			<groupId>org.jboss.spec.javax.servlet</groupId>
-			<artifactId>jboss-servlet-api_2.5_spec</artifactId>
-			<scope>provided</scope>
+			<groupId>siga</groupId>
+			<artifactId>siga-cp</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>bcmail-jdk14</artifactId>
+					<groupId>bouncycastle</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>net.sf.jasperreports</groupId>
+					<artifactId>jasperreports</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>bcprov-jdk14</artifactId>
+					<groupId>bouncycastle</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jboss.spec.javax.servlet</groupId>
+			<artifactId>jboss-servlet-api_2.5_spec</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>

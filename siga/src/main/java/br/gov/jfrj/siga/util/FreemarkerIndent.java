@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -22,14 +23,28 @@ public class FreemarkerIndent {
 	static Pattern patternFMM = Pattern.compile(
 			"\\{\\{fm\\}\\}(.*?)\\{\\{\\/fm\\}\\}", Pattern.DOTALL);
 
-	static Pattern patternUnmarshallOpen = Pattern
-			.compile("<div\\s+class=\"ftl\">\\s*<div\\s+data-ftl=\"([^\"]*)\">\\s*<span>0</span>\\s*</div>");
+	static Pattern patternUnmarshall = Pattern
+			.compile("<!--fm-\\w+=\"([^\"]*)\"-->");
 
-	static Pattern patternUnmarshallClose = Pattern
-			.compile("\\s*<div\\s+data-ftl=\"([^\"]*)\">\\s*<span>0</span>\\s*</div>\\n(\\s*)<\\/div>");
+	static Pattern patternAfterOpen = Pattern
+			.compile(
+					"^(\\s*)(<!--fm-(?:open|selfcontained|unindent)=\"\\d+\"-->)\\s*([^\\s].*?)$",
+					Pattern.MULTILINE);
 
-	static Pattern patternUnmarshallSelfContained = Pattern
-			.compile("<div\\s+data-ftl=\"([^\"]*)\">\\s*<span>[01]</span>\\s*</div>");
+	static Pattern patternBeforeClose = Pattern
+			.compile(
+					"^(\\s*)([^\\s].*?)\\s*(<!--fm-(?:close|selfcontained|unindent)=\"\\d+\"-->.*)$",
+					Pattern.MULTILINE);
+
+	static Pattern patternSingleTag = Pattern
+			.compile(
+					"^([ ]*)([^ ].*?)[ ]*(<!--fm-(?:open|close|selfcontained|unindent)=\"\\d+\"-->)[ ]*(.*)$",
+					Pattern.MULTILINE);
+
+	static Pattern patternMultipleTags = Pattern
+			.compile(
+					"^([ ]*)(.*<!--fm-(?:open|close|selfcontained|unindent)=\"\\d+\"-->)(.*<!--fm-(?:open|close|selfcontained|unindent)=\"\\d+\"-->.*)$",
+					Pattern.MULTILINE);
 
 	public static String bodyOnly(String s) {
 		Matcher m = patternBody.matcher(s);
@@ -76,15 +91,19 @@ public class FreemarkerIndent {
 					open = false;
 			}
 
-			if (open)
-				rep += "<div class=\"ftl\">";
+			rep += "<!--fm-";
+			if (unindent)
+				rep += "unindent";
+			else if (!open && !close)
+				rep += "selfcontained";
+			else if (open)
+				rep += "open";
+			else if (close)
+				rep += "close";
 
-			rep += "<" + (open || close ? "div" : "div") + " data-ftl=\""
-					+ lftl.size() + "\"><span>" + (unindent ? "1" : "0")
-					+ "</span></div>";
+			rep += "=\"" + lftl.size() + "\"";
 
-			if (close)
-				rep += "</div>";
+			rep += "-->";
 
 			// System.out.println("rep: " + rep);
 			matcher.appendReplacement(output, rep);
@@ -93,9 +112,9 @@ public class FreemarkerIndent {
 		return output.toString();
 	}
 
-	private static String unmarshalOpen(String input, List<String> lftl) {
+	private static String unmarshal(String input, List<String> lftl) {
 		StringBuffer output = new StringBuffer();
-		Matcher matcher = patternUnmarshallOpen.matcher(input);
+		Matcher matcher = patternUnmarshall.matcher(input);
 		while (matcher.find()) {
 			String ftl = matcher.group(1);
 			String rep = lftl.get(Integer.valueOf(ftl) - 1);
@@ -105,49 +124,117 @@ public class FreemarkerIndent {
 		return output.toString();
 	}
 
-	private static String unmarshalClose(String input, List<String> lftl) {
+	public static String convertHtml2Ftl(String input, List<String> lftl) {
+		String output = input;
+		output = unmarshal(output, lftl);
+		return output;
+	}
+
+	private static String multipleTags(String input) {
 		StringBuffer output = new StringBuffer();
-		Matcher matcher = patternUnmarshallClose.matcher(input);
+		Matcher matcher = patternMultipleTags.matcher(input);
 		while (matcher.find()) {
-			String ftl = matcher.group(1);
-			String spc = matcher.group(2);
-			String rep = "\n" + spc + lftl.get(Integer.valueOf(ftl) - 1);
+			String spc = matcher.group(1);
+			String open = matcher.group(2);
+			String after = matcher.group(3);
+			String rep = spc + open + "\n" + spc + after;
 			matcher.appendReplacement(output, rep.replace("$", "\\$"));
 		}
 		matcher.appendTail(output);
 		return output.toString();
 	}
 
-	private static String unmarshalSelfContained(String input, List<String> lftl) {
+	private static String afterOpen(String input) {
 		StringBuffer output = new StringBuffer();
-		Matcher matcher = patternUnmarshallSelfContained.matcher(input);
+		Matcher matcher = patternAfterOpen.matcher(input);
 		while (matcher.find()) {
-			String ftl = matcher.group(1);
-			String rep = (matcher.group().contains("<span>1</span>") ? "{{unindent}}"
-					: "")
-					+ lftl.get(Integer.valueOf(ftl) - 1);
+			String spc = matcher.group(1);
+			String open = matcher.group(2);
+			String after = matcher.group(3);
+			String rep = spc + open + "\n" + spc + after;
 			matcher.appendReplacement(output, rep.replace("$", "\\$"));
 		}
 		matcher.appendTail(output);
-
-		String result = output.toString();
-		result = result.replace("  {{unindent}}", "");
-		result = result.replace("{{unindent}}", "");
-		return result;
+		return output.toString();
 	}
 
-	public static String convertHtml2Ftl(String input, List<String> lftl) {
-		String output = input;
-		output = unmarshalOpen(output, lftl);
-		output = unmarshalClose(output, lftl);
-		output = unmarshalSelfContained(output, lftl);
-		return output;
+	private static String beforeClose(String input) {
+		StringBuffer output = new StringBuffer();
+		Matcher matcher = patternBeforeClose.matcher(input);
+		while (matcher.find()) {
+			String spc = matcher.group(1);
+			String before = matcher.group(2);
+			String close = matcher.group(3);
+			String rep = spc + before + "\n" + spc + close;
+			matcher.appendReplacement(output, rep.replace("$", "\\$"));
+		}
+		matcher.appendTail(output);
+		return output.toString();
 	}
 
-	public static String indent(String s) throws IOException {
-		List<String> lftl = new ArrayList<>();
-		s = convertFtl2Html(s, lftl);
+	private static String singleTag(String input) {
+		StringBuffer output = new StringBuffer();
+		Matcher matcher = patternSingleTag.matcher(input);
+		while (matcher.find()) {
+			String spc = matcher.group(1);
+			String before = matcher.group(2);
+			String tag = matcher.group(3);
+			String after = matcher.group(4);
+			String rep = "";
+			if (before.trim().length() > 0)
+				rep += spc + before + "\n";
+			rep += spc + tag;
+			if (after.trim().length() > 0)
+				rep += "\n" + spc + after;
+			matcher.appendReplacement(output, rep.replace("$", "\\$"));
+		}
+		matcher.appendTail(output);
+		return output.toString();
+	}
 
+	private static String removeOddSpace(String input) {
+		String lines[] = input.split("\n");
+		StringBuffer sb = new StringBuffer();
+
+		for (String s : lines) {
+			if (sb.length() > 0)
+				sb.append("\n");
+			int len = 0;
+			for (; len < s.length() && s.charAt(len) == ' '; len++)
+				;
+			if (len % 2 == 1)
+				sb.append(s, 1, s.length());
+			else
+				sb.append(s);
+		}
+		return sb.toString();
+	}
+
+	private static String indentBasedOnFreemarkerTags(String input) {
+		String lines[] = input.split("\n");
+		StringBuffer sb = new StringBuffer();
+
+		int indent = 0;
+		boolean unindent = false;
+		for (String s : lines) {
+			if (s.trim().startsWith("<!--fm-unindent"))
+				unindent = true;
+			if (s.trim().startsWith("<!--fm-close"))
+				indent--;
+			if (sb.length() > 0)
+				sb.append("\n");
+			for (int i = 0; i < (indent - (unindent ? 1 : 0)); i++)
+				sb.append("  ");
+			unindent = false;
+			sb.append(s);
+			if (s.trim().startsWith("<!--fm-open"))
+				indent++;
+		}
+		return sb.toString();
+	}
+
+	protected static String tidy(String s) throws UnsupportedEncodingException,
+			IOException {
 		final Tidy tidy = new Tidy();
 		tidy.setXmlOut(true);
 		tidy.setXmlPi(true);
@@ -165,17 +252,41 @@ public class FreemarkerIndent {
 		tidy.setShowWarnings(false);
 		tidy.setSmartIndent(false);
 		tidy.setSpaces(2);
+		tidy.setTabsize(2);
 		tidy.setTidyMark(false);
 		tidy.setIndentContent(true);
 		tidy.setWraplen(0);
-		
+		tidy.setWrapSection(false);
 
 		final ByteArrayOutputStream os = new ByteArrayOutputStream();
 		tidy.parse(new ByteArrayInputStream(s.getBytes("iso-8859-1")), os);
 		os.flush();
 		String sResult = new String(os.toByteArray(), "iso-8859-1");
+		return sResult;
+	}
+
+	public static String indent(String s) throws IOException {
+		List<String> lftl = new ArrayList<>();
+		s = convertFtl2Html(s, lftl);
+
+		s = "<body>" + s + "</body>";
+
+		String sResult = tidy(s);
 		sResult = bodyOnly(sResult);
 		// if (true) return sResult;
+		while (true) {
+			String sLastResult = multipleTags(sResult);
+			if (sResult.equals(sLastResult))
+				break;
+			else
+				sResult = sLastResult;
+		}
+
+		sResult = singleTag(sResult);
+		sResult = removeOddSpace(sResult);
+		// sResult = afterOpen(sResult);
+		// sResult = beforeClose(sResult);
+		sResult = indentBasedOnFreemarkerTags(sResult);
 
 		sResult = convertHtml2Ftl(sResult, lftl);
 		return sResult;

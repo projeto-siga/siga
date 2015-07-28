@@ -1848,17 +1848,12 @@ public class ExMovimentacaoController extends ExController {
 					Ex.getInstance().getBL().assinarDocumento(getCadastrante(), getLotaTitular(), mob.doc(), dt, assinatura, certificado, tpMovAssinatura));
 
 		} catch (final Exception e) {
-			if (fApplet) {
-				result.include("err", e.getMessage());
-				result.use(Results.page()).forwardTo("/WEB-INF/page/erro.jsp");	
-			}
-
-			//throw e;
+			result.include("err", e.getMessage());
+			result.use(Results.page()).forwardTo("/WEB-INF/page/erro.jsp");	
+			return;
 		}
 
-		if (fApplet) {
-			result.use(Results.page()).forwardTo("/WEB-INF/page/ok.jsp");
-		}
+		result.use(Results.page()).forwardTo("/WEB-INF/page/ok.jsp");
 	}
 
 	@Post("/app/expediente/mov/assinar_senha_gravar")

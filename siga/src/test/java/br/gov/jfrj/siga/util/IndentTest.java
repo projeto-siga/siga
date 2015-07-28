@@ -8,20 +8,45 @@ import junit.framework.TestCase;
 public class IndentTest extends TestCase {
 
 	public void testIndentacao() throws Exception {
-		assertEquals("<p>\n  oi\n</p>", FreemarkerIndent.indent("oi"));
+		assertEquals("oi", FreemarkerIndent.indent("oi"));
 
 		assertEquals("[#entrevista]\n[/#entrevista]",
 				FreemarkerIndent.indent("[#entrevista][/#entrevista]"));
 
-		assertEquals("[#if]\n  <p>\n    oi\n  </p>\n[/#if]",
+		assertEquals("[#if]\n  oi\n[/#if]",
 				FreemarkerIndent.indent("[#if]oi[/#if]"));
+	}
 
+	public void testIndentacaoUnindent() throws Exception {
 		assertEquals("[#if]\n[#else]\n[/#if]",
 				FreemarkerIndent.indent("[#if][#else][/#if]"));
-		
+	}
+
+	public void testIndentacaoUnindentComplexo() throws Exception {
 		assertEquals("[#if]\n  [@br/]\n[#else]\n  [@br/]\n[/#if]",
 				FreemarkerIndent.indent("[#if][@br/][#else][@br/][/#if]"));
+	}
 
+	public void testIndentacaoComentarios() throws Exception {
+		assertEquals("<!--Teste-->oi",
+				FreemarkerIndent.indent("<!--Teste-->oi"));
+	}
+	
+	public void testIndentacaoInlineIf() throws Exception {
+		assertEquals("<div>\n  oi1\n  [#if]\n    oi2\n  [/#if]\n  oi3\n</div>",
+				FreemarkerIndent.indent("<div>oi1[#if]oi2[/#if]oi3</div>"));
+	}
+	
+	public void testIndentacaoProblemaDe1CharAMais() throws Exception {
+		assertEquals("<div>\n  oi1\n  [#if]\n    oi2\n  [/#if]\n  oi3\n</div>",
+				FreemarkerIndent.indent("<div>\n  oi1\n  [#if]\n    oi2\n  [/#if]\n  oi3\n</div>"));
+	}
+	
+	
+
+	public void testIndentacaoDentroDeDiv() throws Exception {
+		assertEquals("<div>\n  [#if]\n    oi\n  [/#if]\n</div>",
+				FreemarkerIndent.indent("<div>[#if]oi[/#if]</div>"));
 	}
 
 	public void testFtlParser() {
@@ -44,9 +69,12 @@ public class IndentTest extends TestCase {
 	}
 
 	public void testConvertFtl2Html() {
-		assertEquals(
-				"<div class=\"ftl\"><div data-ftl=\"1\"><span>0</span></div>",
-				FreemarkerIndent.convertFtl2Html("[#entrevista]",
+		assertEquals("<!--fm-open=\"1\"-->", FreemarkerIndent.convertFtl2Html(
+				"[#entrevista]", new ArrayList<String>()));
+		assertEquals("<!--fm-close=\"1\"-->", FreemarkerIndent.convertFtl2Html(
+				"[/#entrevista]", new ArrayList<String>()));
+		assertEquals("<!--fm-selfcontained=\"1\"-->",
+				FreemarkerIndent.convertFtl2Html("[#entrevista/]",
 						new ArrayList<String>()));
 	}
 

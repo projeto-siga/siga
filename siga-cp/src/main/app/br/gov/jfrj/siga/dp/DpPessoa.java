@@ -49,7 +49,6 @@ import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
-
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -66,7 +65,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @NamedQuery(name = "consultarPorIdInicialDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni and pes.dataFimPessoa = null")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpPessoa extends AbstractDpPessoa implements Serializable,
-		Selecionavel, Historico, Sincronizavel, Comparable{
+		Selecionavel, Historico, Sincronizavel, Comparable, DpConvertableEntity {
 	/**
 	 * 
 	 */
@@ -164,13 +163,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		return Texto.maiusculasEMinusculas(getDescricao());
 	}
 
-	public void setSigla(final String sigla) {
-		if (sigla == null) {
-			setSesbPessoa(null);
-			setMatricula(null);
-			return;
-		}
-		
+	public void setSigla(String sigla) {
+	    if (sigla == null) {
+	        sigla = "";
+	    }
 		final Pattern p1 = Pattern.compile("^([A-Za-z][A-Za-z0-9])([0-9]+)");
 		final Matcher m = p1.matcher(sigla);
 		if (m.find()) {
@@ -206,8 +202,8 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 
 	public String getPadraoReferenciaInvertido() {
 		if (getPadraoReferencia() != null && !getPadraoReferencia().equals("")) {
-			//Caso o padrão de referência não esteja no formado utilizado pela SJRJ.
-			//Retorna o padrão cadastrado no BD sem inverter.
+			//Caso o padr�o de refer�ncia n�o esteja no formado utilizado pela SJRJ.
+			//Retorna o padr�o cadastrado no BD sem inverter.
 			try {
 				String partes[] = getPadraoReferencia().split("-");
 				String partesConcat = partes[1] + "-" + partes[0];
@@ -226,7 +222,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		return getSigla();
 	}
 
-	// Métodos necessários para ser "Sincronizavel"
+	// M�todos necess�rios para ser "Sincronizavel"
 	//
 	public Date getDataFim() {
 		return getDataFimPessoa();
@@ -280,7 +276,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 
 	//
-	// Funções utilizadas nas fórmulas de inclusão em grupos de email.
+	// Fun��es utilizadas nas f�rmulas de inclus�o em grupos de email.
 	//
 
 	public boolean tipoLotacaoSiglaIgual(String s) {
@@ -505,10 +501,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 	
     /**
-     * Retorna a data de início da pessoa no formato dd/mm/aa HH:MI:SS,
+     * Retorna a data de in�cio da pessoa no formato dd/mm/aa HH:MI:SS,
      * por exemplo, 01/02/10 14:10:00.
      * 
-     * @return Data de início da pessoa no formato dd/mm/aa HH:MI:SS, por
+     * @return Data de in�cio da pessoa no formato dd/mm/aa HH:MI:SS, por
      *         exemplo, 01/02/10 14:10:00.
      * 
      */
@@ -525,7 +521,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
      * Retorna a data de fim da pessoa no formato dd/mm/aa HH:MI:SS,
      * por exemplo, 01/02/10 14:10:00.
      * 
-     * @return Data de início da fim no formato dd/mm/aa HH:MI:SS, por
+     * @return Data de in�cio da fim no formato dd/mm/aa HH:MI:SS, por
      *         exemplo, 01/02/10 14:10:00.
      * 
      */
@@ -550,16 +546,16 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
     
    /**
-    * Método que filtra o pessoaPosteriores para que apareça somente o histórico com informações corporativas, comparando 
-    * uma linha da lista com a próxima para verificar se ocorreu alguma alteração de lotação, função ou padrão.
-    * @return lista com histórico referentes as seguintes informações: lotações, função e padrão.
+    * M�todo que filtra o pessoaPosteriores para que apare�a somente o hist�rico com informa��es corporativas, comparando 
+    * uma linha da lista com a pr�xima para verificar se ocorreu alguma altera��o de lota��o, fun��o ou padr�o.
+    * @return lista com hist�rico referentes as seguintes informa��es: lota��es, fun��o e padr�o.
     */
     public List<DpPessoa> getHistoricoInfoCorporativas() {
-    	//transforma um treeSet (pessoaPosteriores) em um list para que se possa percorrer a lista do fim para o começo 
+    	//transforma um treeSet (pessoaPosteriores) em um list para que se possa percorrer a lista do fim para o come�o 
     	List<DpPessoa> listaPessoaPosterioresA = new ArrayList<DpPessoa>(getPessoaInicial().getPessoasPosteriores());
     	List<DpPessoa> listaPessoaPosterioresB = listaPessoaPosterioresA;
     	List<DpPessoa> listaHistoricoPessoa = new ArrayList<DpPessoa>();
-    	//define que o iterator começa pelo fim da lista 
+    	//define que o iterator come�a pelo fim da lista 
     	ListIterator<DpPessoa> itPessoaPosteriorA = listaPessoaPosterioresA.listIterator(listaPessoaPosterioresA.size());
     	ListIterator<DpPessoa> itPessoaPosteriorB = listaPessoaPosterioresB.listIterator(listaPessoaPosterioresB.size());
     	DpPessoa pessoaPost = null;
@@ -572,17 +568,17 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
     	while (itPessoaPosteriorB.hasPrevious() ) {
 			pessoaPost = itPessoaPosteriorA.previous();
 			pessoaHist = itPessoaPosteriorB.previous();
-			//verifica se a lotação da lista listaPessoaPosterioresA é a mesma que da lista listaPessoaPosterioresB, 
-			//que está um registro a frente (linha seguinte)
-			//somente adiciona na lista listaHistoricoPessoa,que será retornada pelo método, caso as lotações sejam diferentes
+			//verifica se a lota��o da lista listaPessoaPosterioresA � a mesma que da lista listaPessoaPosterioresB, 
+			//que est� um registro a frente (linha seguinte)
+			//somente adiciona na lista listaHistoricoPessoa,que ser� retornada pelo m�todo, caso as lota��es sejam diferentes
 			if(!pessoaHist.getLotacao().getSigla().equals(pessoaPost.getLotacao().getSigla())) 
 				listaHistoricoPessoa.add(pessoaHist);
-			//verifica se o padrão de referência da lista listaPessoaPosterioresA é o mesma que da lista listaPessoaPosterioresB
+			//verifica se o padr�o de refer�ncia da lista listaPessoaPosterioresA � o mesma que da lista listaPessoaPosterioresB
 			else if((pessoaHist.getPadraoReferencia() == null ^ pessoaPost.getPadraoReferencia() == null) || 
 						((pessoaHist.getPadraoReferencia() != null && pessoaPost.getPadraoReferencia() != null) &&
 								!pessoaHist.getPadraoReferencia().equals(pessoaPost.getPadraoReferencia())) ) 
 				listaHistoricoPessoa.add(pessoaHist);	
-			//verifica se a função de confiança da lista listaPessoaPosterioresA é a mesma que da lista listaPessoaPosterioresB
+			//verifica se a fun��o de confian�a da lista listaPessoaPosterioresA � a mesma que da lista listaPessoaPosterioresB
 			else if((pessoaHist.getFuncaoConfianca() == null ^ pessoaPost.getFuncaoConfianca() == null) || 
 						((pessoaHist.getFuncaoConfianca() != null && pessoaPost.getFuncaoConfianca() != null) &&
 								!pessoaHist.getFuncaoConfianca().getNomeFuncao().equals(pessoaPost.getFuncaoConfianca().getNomeFuncao())) ) 

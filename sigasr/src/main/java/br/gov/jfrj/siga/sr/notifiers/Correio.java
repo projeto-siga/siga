@@ -80,8 +80,8 @@ public class Correio {
 
 		if (destinatario.possuiEmailCadastrado()) {
 			String assunto = solicitacao.isFilha() ? 
-					MessageFormat.format("Escalonamento da solicitaÃ§Ã£o {0}", solicitacao.getSolicitacaoPai().getCodigo()) : 
-					MessageFormat.format("Abertura da solicitaÃ§Ã£o {0}",
+					MessageFormat.format("Escalonamento da solicitação {0}", solicitacao.getSolicitacaoPai().getCodigo()) : 
+					MessageFormat.format("Abertura da solicitação {0}",
 					solicitacao.getCodigo());
 
 			String conteudo = getConteudoComSolicitacao(TEMPLATE_NOTIFICAR_ABERTURA, solicitacao);

@@ -1103,7 +1103,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public boolean podeAlterarPrioridade(DpPessoa pess, DpLotacao lota) {
-        return !isRascunho() && !isFechado() && estaCom(pess, lota);
+        return isAtivo() && estaCom(pess, lota);
     }
 
     public boolean podeTerminarPendencia(DpPessoa pess, DpLotacao lota) {
@@ -1402,18 +1402,21 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public void salvarComHistorico() throws Exception {
 
         checarEPreencherCampos();
-        // Edson: Ver por que isto estÃ¯Â¿Â½ sendo necessÃ¯Â¿Â½rio. Sem isso, apÃ¯Â¿Â½s o salvar(),
+                   
+        // Edson: Ver por que isto está sendo necessário. Sem isso, após o salvar(),
         // ocorre LazyIniException ao tentar acessar esses meuMovimentacaoSet's
-        if (getSolicitacaoInicial() != null)
-            for (SrSolicitacao s : getSolicitacaoInicial().getMeuSolicitacaoHistoricoSet()) {
-                for (SrMovimentacao m : s.getMeuMovimentacaoSet()) {
-                }
-            }
+        if (getSolicitacaoInicial() != null){
+        	for (SrSolicitacao s : getSolicitacaoInicial().getMeuSolicitacaoHistoricoSet()) {
+        		for (SrMovimentacao m : s.getMeuMovimentacaoSet()) {
+        		}
+        	}
+        }
 
         super.salvarComHistorico();
+        refresh();
+        getSolicitacaoInicial().refresh();
 
         // Edson: melhorar isto, pra nao precisar salvar novamente
-
         if (isRascunho()) {
             atualizarCodigo();
             save();
@@ -1947,6 +1950,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             List<DpSubstituicao> listaSubstitutos = new ArrayList<DpSubstituicao>();
             if (getLotaAtendente() != null && getLotaAtendente().getLotacaoAtual() != null){
                     DpLotacao lotaAtendente = getLotaAtendente().getLotacaoAtual();
+                    
+                    //Edson: por causa do detach no ObjetoObjectInstantiator
+                    lotaAtendente = DpLotacao.AR.findById(lotaAtendente.getIdLotacao());
 
                     listaSubstitutos = ContextoPersistencia.em().createQuery("from DpSubstituicao dps where dps.titular = null and dps.lotaTitular.idLotacao in "
                                             + "     (select lot.idLotacao from DpLotacao lot where lot.idLotacaoIni = :idLotacaoIni) and "

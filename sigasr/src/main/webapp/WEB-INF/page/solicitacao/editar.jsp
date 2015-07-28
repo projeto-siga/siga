@@ -498,11 +498,11 @@
 				<form action="${linkTo[SolicitacaoController].gravar}" method="post"
 					enctype="multipart/form-data" id="formSolicitacao" onsubmit="javascript:return block();"> 
 					<c:if test="${solicitacao.solicitacaoPai != null}">
-						<input type="hidden" name="solicitacao.solicitacaoPai.idSolicitacao" 
+						<input type="hidden" name="solicitacao.solicitacaoPai.id" 
 						value="${solicitacao.solicitacaoPai.idSolicitacao}" /> 
 					</c:if>
 					
-					<input type="hidden" name="solicitacao.idSolicitacao" id="idSol" value="${solicitacao.idSolicitacao}" /> 
+					<input type="hidden" name="solicitacao.id" id="idSol" value="${solicitacao.idSolicitacao}" /> 
 					<input type="hidden" name="solicitacao.dtIniEdicaoDDMMYYYYHHMMSS" value="${solicitacao.dtIniEdicaoDDMMYYYYHHMMSS}" /> 
 					<input type="hidden" name="solicitacao.numSolicitacao" value="${solicitacao.numSolicitacao}" />
 					<input type="hidden" name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />

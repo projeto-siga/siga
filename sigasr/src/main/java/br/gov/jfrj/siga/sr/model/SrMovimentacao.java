@@ -276,7 +276,7 @@ public class SrMovimentacao extends Objeto {
 
         checarCampos();
         super.save();
-        ContextoPersistencia.em().flush();
+
         getSolicitacao().refresh();
 
         getSolicitacao().atualizarMarcas();

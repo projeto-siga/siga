@@ -104,6 +104,10 @@ public class SolicitacaoController extends SrController {
 
     @Path("/exibirAcao")
     public void exibirAcao(SrSolicitacao solicitacao) throws Exception {
+    	//Edson: por causa do detach no ObjetoObjectInstantiator:
+    	if (solicitacao.getSolicitacaoInicial() != null)
+    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
+    	
         Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
         result.include(SOLICITACAO, solicitacao);
         result.include(ACOES_E_ATENDENTES, acoesEAtendentes);
@@ -111,6 +115,10 @@ public class SolicitacaoController extends SrController {
 
     @Path("/exibirAtributos")
     public void exibirAtributos(SrSolicitacao solicitacao) throws Exception {
+    	//Edson: por causa do detach no ObjetoObjectInstantiator:
+    	if (solicitacao.getSolicitacaoInicial() != null)
+    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
+    	
         result.include(SOLICITACAO, solicitacao);
     }
 
@@ -303,6 +311,17 @@ public class SolicitacaoController extends SrController {
 
     @Path("/gravar")
     public void gravar(SrSolicitacao solicitacao) throws Exception {
+    	//Edson: por causa do detach no ObjetoObjectInstantiator:
+    	if (solicitacao.getSolicitacaoInicial() != null){
+    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId())); 
+    		solicitacao.getSolicitacaoFilhaSet();
+    	}
+    	
+    	//Edson: antigamente, ao regravar uma solicitação que já estava em elaboração, o atributo arquivo era
+    	//setado como null pelo Play automaticamente, mas agora os atributos vazios são eliminados do request
+    	if (solicitacao.getArquivo() != null && solicitacao.getArquivo().getId() != null)
+    		solicitacao.setArquivo(null);
+    	
         if (!solicitacao.isRascunho() && !validarFormEditar(solicitacao)) {
         	incluirListasEdicaoSolicitacao(solicitacao);
             validator.onErrorUsePageOf(SolicitacaoController.class).editar(solicitacao.getId());
@@ -394,6 +413,11 @@ public class SolicitacaoController extends SrController {
 
     @Path("/exibirLocalRamalEMeioContato")
     public void exibirLocalRamalEMeioContato(SrSolicitacao solicitacao, DpPessoa solicitante) throws Exception {
+    	
+    	//Edson: por causa do detach no ObjetoObjectInstantiator:
+    	if (solicitacao.getSolicitacaoInicial() != null)
+    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
+    	
         if (solicitacao == null || solicitacao.getCadastrante() == null)
             solicitacao = criarSolicitacaoComSolicitante();
 
@@ -407,9 +431,14 @@ public class SolicitacaoController extends SrController {
 
     @Path("/exibirItemConfiguracao")
     public void exibirItemConfiguracao(SrSolicitacao solicitacao) throws Exception {
-        if (solicitacao.getSolicitante() == null)
+        
+    	//Edson: por causa do detach no ObjetoObjectInstantiator:
+    	if (solicitacao.getSolicitacaoInicial() != null)
+    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
+    	
+    	if (solicitacao.getSolicitante() == null)
             result.include(SOLICITACAO, solicitacao);
-
+        
         else if (!solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao())) {
             solicitacao.setItemConfiguracao(null);
 
@@ -510,6 +539,10 @@ public class SolicitacaoController extends SrController {
             solicitacao.deduzirLocalRamalEMeioContato();
         } else
             solicitacao = SrSolicitacao.AR.findById(id);
+        
+        //Edson: por causa do detach no ObjetoObjectInstantiator:
+    	if (solicitacao.getSolicitacaoInicial() != null)
+    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
 
         if (solicitacao.getDtOrigem() == null)
             solicitacao.setDtOrigem(new Date());

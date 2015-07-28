@@ -129,8 +129,12 @@
 							<th rowspan="2">Evento</th>
 							<th colspan="2" align="left">Cadastrante</th>
 							<th colspan="2" align="left">Titular</th>
+							<th colspan="2" align="left">Atendente</th>
+							<th colspan="2" align="left">Descrição</th>
 						</tr>
 						<tr>
+							<th align="left">Lotação</th>
+							<th align="left">Pessoa</th>
 							<th align="left">Lotação</th>
 							<th align="left">Pessoa</th>
 							<th align="left">Lotação</th>
@@ -145,10 +149,11 @@
 								</c:when>
 								<c:when test="${m.tipo.id == 12 && m.movRef != null}">
 									<c:choose>
-										<c:when test="${m.movRef.tipo.id==13}">
+										 <c:when test="${m.movRef.tipo.id==13}">
 											<c:set var="descricao"
-												value="${m.movRef.tipo.nome + ': ' + m.movRef.arq.titulo}" />
-										</c:when>
+												value="${m.movRef.tipo.nome} : ${m.movRef.arq.titulo}" />
+												 
+										</c:when> 
 										<c:when
 											test="${m.movRef.tipo.id == 4 || m.movRef.tipo.id == 6}">
 											<c:set var="pessoa"
@@ -200,6 +205,11 @@
 								<td align="left"><span
 									title="${m.lotacaoTitular.descricao}">${m.lotacaoTitular.sigla}</span></td>
 								<td align="left"><span title="${m.pessoaTitular.descricao}">${m.pessoaTitular.nomeAbreviado}</span></td>
+								<td align="left"><span title="${m.lotacaoAtendente.descricao}">${m.lotacaoAtendente.sigla}</span></td>
+								<td align="left"><span title="${m.pessoaAtendente.descricao}">${m.pessoaAtendente.nomeAbreviado}</span></td>
+								<td>
+									${descricao}					
+								</td>
 							</tr>
 						</c:forEach>
 					</tbody>

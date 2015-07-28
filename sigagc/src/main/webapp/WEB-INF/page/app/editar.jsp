@@ -102,7 +102,7 @@
 							<c:choose>
 								<c:when
 									test="not empty informacao && not empty informacao.id && informacao.id != 0}">
-								ou <a href="${linkTo[AppController].}editar[informacao.sigla]}">cancelar
+								ou <a href="${linkTo[AppController].editar[informacao.sigla]}">cancelar
 										alterações</a>
 								ou <a
 										href="${linkTo[AppController].movimentacoes[informacao.sigla]}">exibir

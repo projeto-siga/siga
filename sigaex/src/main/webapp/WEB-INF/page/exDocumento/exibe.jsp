@@ -807,7 +807,6 @@
 			var bgcolor = rgb2hex($("#outputTramitacao").css("background-color"));
 			var input = 'digraph "" { graph[tooltip="Tramitação" ratio="' + ratioTramitacao() + '"  color="'+ bgcolor +'" bgcolor="'+bgcolor+'" URL="javascript: bigmapTramitacao();"]; node[fillcolor=white fontsize=50 style=filled ]; edge[fontsize=30]; ${docVO.dotTramitacao} }';
 			input = escapeAcentos(input);
-			var result = Viz(input, "svg", "dot");
 
 			if (window.VizWorker) {
 				document.getElementById("outputTramitacao").innerHTML = "Aguarde...";
@@ -818,6 +817,7 @@
 				return;
 			}
 			
+			var result = Viz(input, "svg", "dot");
 		  	document.getElementById("outputTramitacao").innerHTML = result;
 			updateContainerTramitacao();
 		}

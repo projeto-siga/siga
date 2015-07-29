@@ -13,6 +13,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -20,6 +21,7 @@ import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.gc.service.GcService;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrFatorMultiplicacao;
@@ -108,6 +110,11 @@ public class ItemConfiguracaoController extends SrController {
 
         validarFormEditarItem(itemConfiguracao);
         itemConfiguracao.salvarComHistorico();
+        
+        // Chama o webservice do SIGA-GC para atualizar as tags dos conhecimentos relacionados
+        //
+        GcService gc = Service.getGcService();
+        gc.atualizarTag(itemConfiguracao.getGcTags().replace("&tags=", ", ").substring(2));
 
         // Atualiza os conhecimentos relacionados
         // Edson: deveria ser feito por webservice. Nao estah sendo coberta

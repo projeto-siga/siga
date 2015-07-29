@@ -152,6 +152,8 @@ public class GcServiceImpl implements GcService {
 
 				}
 			}
+			
+			inf.corrigirClassificacao();
 		}
 		return count;
 	}

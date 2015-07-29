@@ -1,0 +1,1 @@
+alter table gc_tag modify "CATEGORIA" VARCHAR2(20 CHAR);

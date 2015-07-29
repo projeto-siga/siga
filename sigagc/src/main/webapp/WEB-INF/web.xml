@@ -8,7 +8,7 @@
 		<welcome-file>/WEB-INF/index.jsp</welcome-file>
 	</welcome-file-list>
 
-	
+
 	<jsp-config>
 		<taglib>
 			<taglib-uri>http://localhost/customtag</taglib-uri>
@@ -49,6 +49,16 @@
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
+
+	<filter>
+		<filter-name>GcFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.gc.util.GcThreadFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>GcFilter</filter-name>
+		<url-pattern>/servicos/*</url-pattern>
+	</filter-mapping>
+
 
 	<!-- Inicio de WebServer -->
 	<context-param>
@@ -98,14 +108,14 @@
 			<role-name>sigausuario</role-name>
 		</auth-constraint>
 	</security-constraint>
-	
+
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Recursos Publicos</web-resource-name>
 			<url-pattern>/public/*</url-pattern>
 			<url-pattern>/rest/*</url-pattern>
 			<url-pattern>/servicos/*</url-pattern>
-			
+
 		</web-resource-collection>
 	</security-constraint>
 

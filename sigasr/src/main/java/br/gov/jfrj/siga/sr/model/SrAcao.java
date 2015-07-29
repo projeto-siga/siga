@@ -270,7 +270,7 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparab
 		SrAcao pai = this.pai;
 		if (pai != null)
 			tags += pai.getGcTags();
-		return tags + "&tags=@" + getTituloSlugify();
+		return tags + "&tags=@sr-acao-" + nivel + "-" + getIdInicial() + ":" + getTituloSlugify();
 	}
 
 	public String getTituloSlugify() {

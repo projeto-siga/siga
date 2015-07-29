@@ -402,7 +402,8 @@ public class SrItemConfiguracao extends HistoricoSuporte implements SrSelecionav
         SrItemConfiguracao pai = this.getPai();
         if (pai != null)
             tags += pai.getGcTags();
-        return tags + "&tags=@" + getTituloSlugify();
+		return tags + "&tags=@sr-item-" + nivel + "-" + getIdInicial() + ":" + getTituloSlugify();
+
     }
 
     public String getGcTagAbertura() {

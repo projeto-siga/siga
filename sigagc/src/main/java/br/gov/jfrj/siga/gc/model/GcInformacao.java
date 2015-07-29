@@ -128,9 +128,10 @@ public class GcInformacao extends Objeto {
 	@JoinColumn(name = "ID_GRUPO")
 	private CpPerfil grupo;
 
+	@Sort(type = SortType.NATURAL)
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "GC_TAG_X_INFORMACAO", schema = "SIGAGC", joinColumns = @JoinColumn(name = "id_informacao"), inverseJoinColumns = @JoinColumn(name = "id_tag"))
-	public Set<GcTag> tags;
+	public SortedSet<GcTag> tags;
 
 	@Column(name = "DT_ELABORACAO_FIM")
 	public Date elaboracaoFim;
@@ -765,5 +766,24 @@ public class GcInformacao extends Objeto {
 
 	public void setGrupo(CpPerfil grupo) {
 		this.grupo = grupo;
+	}
+
+	public void corrigirClassificacao() {
+		if (arq == null)
+			return;
+
+		if (arq == null) {
+			if (arq.classificacao != null)
+				arq.classificacao = null;
+			return;
+		}
+
+		String s = "";
+		for (GcTag tag : getTags()) {
+			if (s.length() > 0)
+				s += ", ";
+			s += tag.toString();
+		}
+		arq.classificacao = s;
 	}
 }

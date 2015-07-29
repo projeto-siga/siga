@@ -204,8 +204,8 @@ public class GcBL {
 		}
 	}
 
-	public Set<GcTag> buscarTags(String[] a, boolean fValidos) throws Exception {
-		Set<GcTag> set = new TreeSet<GcTag>();
+	public SortedSet<GcTag> buscarTags(String[] a, boolean fValidos) throws Exception {
+		SortedSet<GcTag> set = new TreeSet<GcTag>();
 		for (String s : a) {
 			String categoria = null;
 			String titulo = null;
@@ -592,6 +592,9 @@ public class GcBL {
 				return -1;
 			else
 				return 0;
+		} else {
+			if (s2 == null)
+				return 1;
 		}
 		return s1.compareTo(s2);
 	}

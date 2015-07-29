@@ -12,7 +12,9 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.gc.service.GcService;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
@@ -62,6 +64,11 @@ public class AcaoController extends SrController {
 		validarFormEditarAcao(acao);
 		acao.setTipoAcao(tipoAcaoSel.buscarObjeto());
 		acao.salvarComHistorico();
+		
+        // Chama o webservice do SIGA-GC para atualizar as tags dos conhecimentos relacionados
+        //
+        GcService gc = Service.getGcService();
+        gc.atualizarTag(acao.getGcTags().replace("&tags=", ", ").substring(2));
 
 		result.use(Results.http()).body(acao.toJson());
 	}

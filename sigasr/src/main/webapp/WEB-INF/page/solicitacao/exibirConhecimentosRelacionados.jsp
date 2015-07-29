@@ -4,7 +4,7 @@
 	<div class="gt-sidebar-content" id="gc"></div>
 </div>
 <c:if
-	test="${solicitacao.itemConfiguracao != null && podeUtilizarServico}">
+	test="${solicitacao.itemConfiguracao != null && podeUtilizarServicoSigaGC}">
 	<script type="text/javascript">
 		SetInnerHTMLFromAjaxResponse(
 				"/../sigagc/app/knowledge?${solicitacao.gcTags}&estilo=sidebar&testarAcesso=true&popup=true&estiloBusca=algumIgualNenhumDiferente&ts=${currentTimeMillis}",

@@ -76,7 +76,6 @@ function carregarLotacaoDaAcao(){
     }
 }
 </script>
-
 <c:if test="${solicitacao.itemConfiguracao != null && podeUtilizarServicoSigaGC}">
     <div style="display: inline-block" >
         <div id="gc-ancora-item"></div>

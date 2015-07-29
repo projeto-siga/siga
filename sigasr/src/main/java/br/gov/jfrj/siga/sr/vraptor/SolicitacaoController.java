@@ -111,6 +111,7 @@ public class SolicitacaoController extends SrController {
         Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
         result.include(SOLICITACAO, solicitacao);
         result.include(ACOES_E_ATENDENTES, acoesEAtendentes);
+        result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
     }
 
     @Path("/exibirAtributos")
@@ -120,6 +121,7 @@ public class SolicitacaoController extends SrController {
     		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
     	
         result.include(SOLICITACAO, solicitacao);
+        result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
     }
 
     @SuppressWarnings("unchecked")
@@ -450,12 +452,13 @@ public class SolicitacaoController extends SrController {
             result.include(TITULAR, titular);
             result.include(LOTA_TITULAR, lotaTitular);
             result.include(ACOES_E_ATENDENTES, acoesEAtendentes);
+            result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
         }
     }
 
     public void exibirConhecimentosRelacionados(SrSolicitacao solicitacao) throws Exception {
         result.include(SOLICITACAO, solicitacao);
-        result.include("podeUtilizarServico",podeUtilizarServico("SIGA;GC"));
+        result.include("podeUtilizarServicoSigaGC",podeUtilizarServico("SIGA;GC"));
     }
 
     @Path("/exibirPrioridade")
@@ -577,7 +580,7 @@ public class SolicitacaoController extends SrController {
         result.include("locaisDisponiveis", solicitacao.getLocaisDisponiveis());
         result.include("meiosComunicadaoList", SrMeioComunicacao.values());
         result.include("itemConfiguracao", solicitacao.getItemConfiguracao());
-        result.include("podeUtilizarServicoSigaGC", false);
+        result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
 	}
 
     @Path("/retirarDeLista")

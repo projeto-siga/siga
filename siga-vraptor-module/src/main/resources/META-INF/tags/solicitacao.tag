@@ -46,7 +46,8 @@
 	</div>
 	<div>
 	</div>
-	<table id="solicitacoes_table" border="0" class="gt-table-nowrap display" data-json='${requestScope[solicitacaoListaVO].toJson()}'>
+	<c:set var="jsonEscaped"><c:out value="${requestScope[solicitacaoListaVO].toJson()}" escapeXml='true'/></c:set>
+	<table id="solicitacoes_table" border="0" class="gt-table-nowrap display" data-json="${jsonEscaped}">
 		<thead></thead>
 		<tbody id="sortable" class="ui-sortable"></tbody>
 	</table>

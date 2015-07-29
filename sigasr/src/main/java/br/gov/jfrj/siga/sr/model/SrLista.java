@@ -312,7 +312,6 @@ public class SrLista extends HistoricoSuporte {
                 break;
             }
         }
-        salvarComHistorico();
         recalcularPrioridade(pessoa, lotacao);
     }
 

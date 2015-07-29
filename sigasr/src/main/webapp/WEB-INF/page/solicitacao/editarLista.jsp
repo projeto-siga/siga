@@ -10,7 +10,7 @@
 	style="width: 800px !important; max-width: 800px !important;">
 	<form id="formLista" method="post" enctype="multipart/form-data">
 
-		<input type="hidden" id="idLista" name="lista" value="${lista.idLista}"> 
+		<input type="hidden" id="idLista" name="lista.id" value="${lista.idLista}"> 
 		<input type="hidden" id="hisIdIni" name="lista.hisIdIni" value="${lista.hisIdIni}">
 
 		<div class="gt-form-row gt-width-66">
@@ -81,7 +81,7 @@
 							<td>${perm.complexo.idComplexo}</td>
 							<td>${perm.complexo.nomeComplexo}</td>
 							<td>${perm.lotacao.lotacaoAtual.id}</td>
-							<td>${f:decode(perm.lotacao.lotacaoAtual.nomeLotacao, 'iso-8859-1')}</td>
+							<td>${perm.lotacao.lotacaoAtual.nomeLotacao}</td>
 							<td>${perm.lotacao.lotacaoAtual.siglaLotacao}</td>
 							<td>${perm.dpPessoa.id}</td>
 							<td>${perm.dpPessoa.nomePessoa}</td>
@@ -197,20 +197,20 @@
 				</div>
 				<div class="gt-form-row div-modal-table">
 					<label>Lota&ccedil;&atilde;o</label>
-					<siga:selecao propriedade="lotacao.lotacaoAtual" tema="simple"
+					<siga:selecao propriedade="lotacao" tema="simple"
 						modulo="siga"  inputName="lotacaoAtual"/>
 				</div>
 
 				<div class="gt-form-row div-modal-table">
 					<label>Pessoa</label>
 					<input type="hidden" name="Pessoa" id="Pessoa" class="selecao">
-						<siga:selecao propriedade="dpPessoa.pessoaAtual" tema="simple" modulo="siga" urlAcao="buscar" 
+						<siga:selecao propriedade="dpPessoa" tema="simple" modulo="siga" urlAcao="buscar" 
 						inputName="dpPessoaAtual"/>
 				</div>
 
 				<div class="gt-form-row div-modal-table">
 					<label>Cargo</label>
-					<siga:selecao propriedade="cargo.cargoAtual" tema="simple" modulo="siga" inputName="cargoAtual" />
+					<siga:selecao propriedade="cargo" tema="simple" modulo="siga" inputName="cargoAtual" />
 				</div>
 
 				<div class="gt-form-row div-modal-table">
@@ -845,28 +845,28 @@
 		
 		// caso exista algum item na tabela
 		if (row[colunas.idOrgao] != '' && row[colunas.idOrgao] > 0)
-			params += '&permissao.orgaoUsuario=' + row[colunas.idOrgao];
+			params += '&permissao.orgaoUsuario.id=' + row[colunas.idOrgao];
 		
 		if (row[colunas.idLocal] != '' && row[colunas.idLocal] > 0)
-	    	params += '&permissao.complexo=' + row[colunas.idLocal];
+	    	params += '&permissao.complexo.id=' + row[colunas.idLocal];
 		
 		if (row[colunas.idLotacao] != '')
-	    	params += '&permissao.lotacao=' + row[colunas.idLotacao];
+	    	params += '&permissao.lotacao.id=' + row[colunas.idLotacao];
 		
 		if (row[colunas.idPessoa] != '')
-	    	params += '&permissao.dpPessoa=' + row[colunas.idPessoa];
+	    	params += '&permissao.dpPessoa.id=' + row[colunas.idPessoa];
 		
 		if (row[colunas.idCargo] != '')
-	    	params += '&permissao.cargo=' + row[colunas.idCargo];
+	    	params += '&permissao.cargo.id=' + row[colunas.idCargo];
 		
 		if (row[colunas.idFuncao] != '')
-	    	params += '&permissao.funcaoConfianca=' + row[colunas.idFuncao];
+	    	params += '&permissao.funcaoConfianca.id=' + row[colunas.idFuncao];
 		if(row[colunas.idTipoPerm] == '')
 			row[colunas.idTipoPerm] = 0;
-		params += '&permissao=' + row[colunas.idTipoPerm];
+		params += '&permissao.id=' + row[colunas.idTipoPerm];
 	
 		if ($("#idLista").val() != undefined && $("#idLista").val() != '')
-			params += '&permissao.listaPrioridade=' + $("#idLista").val();
+			params += '&permissao.listaPrioridade.id=' + $("#idLista").val();
 	
 		// lista de TipoPermissao
 		params += row[colunas.tipoPerm];
@@ -1009,7 +1009,7 @@
 		$("#ulPermissoes").find("li").each(function(i){
 	        var jDivs=$(this).find("span");
 	        listaTipoPermissaoListaVO.push({
-	        	"idTipoPermissaoLista": jDivs[0].id,
+	        	"id": jDivs[0].id,
 	        	"descrTipoPermissaoLista": jDivs[0].innerHTML
 	        });
 	    });
@@ -1028,7 +1028,7 @@
 	        var jDivs=$(this).find("span");
 	        
 	        // Atualiza a string serializada
-	    	params += '&tipoPermissaoSet[' + i + ']=' + jDivs[0].id;
+	    	params += '&tipoPermissaoSet[' + i + '].id=' + jDivs[0].id;
 	    });
 		return params;
 	}

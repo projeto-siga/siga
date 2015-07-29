@@ -233,8 +233,8 @@ public class SolicitacaoController extends SrController {
 
     private SrListaVO getSrListaVOComPermissoes(SrLista lista) {
         SrListaVO srListaVO = lista.toVO();
-        srListaVO.setPodeConsultar(lista.podeConsultar(getLotaTitular(), getCadastrante()));
-        srListaVO.setPodeEditar(lista.podeEditar(getLotaTitular(), getCadastrante()));
+        srListaVO.setPodeConsultar(lista.podeConsultar(getLotaTitular(), getTitular()));
+        srListaVO.setPodeEditar(lista.podeEditar(getLotaTitular(), getTitular()));
         return srListaVO;
     }
 
@@ -277,7 +277,7 @@ public class SolicitacaoController extends SrController {
         lista = lista.getListaAtual();
         String jsonPrioridades = SrPrioridade.getJSON().toString();
 
-        if (!lista.podeConsultar(getLotaTitular(), getCadastrante())) {
+        if (!lista.podeConsultar(getLotaTitular(), getTitular())) {
             throw new Exception("Exibi\u00e7\u00e3o n\u00e3o permitida");
         }
 
@@ -289,9 +289,9 @@ public class SolicitacaoController extends SrController {
         }
 
         result.include(LISTA, lista);
-        result.include(PODE_REMOVER, lista.podeRemover(getLotaTitular(), getCadastrante()));
-        result.include(PODE_EDITAR, lista.podeEditar(getLotaTitular(), getCadastrante()));
-        result.include(PODE_PRIORIZAR, lista.podePriorizar(getLotaTitular(), getCadastrante()));
+        result.include(PODE_REMOVER, lista.podeRemover(getLotaTitular(), getTitular()));
+        result.include(PODE_EDITAR, lista.podeEditar(getLotaTitular(), getTitular()));
+        result.include(PODE_PRIORIZAR, lista.podePriorizar(getLotaTitular(), getTitular()));
         result.include(ORGAOS, orgaos);
         result.include(LOCAIS, locais);
         result.include(TIPOS_PERMISSAO, tiposPermissao);

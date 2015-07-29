@@ -2965,9 +2965,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
 	public Long getNumSequencia() {
-		if (numSequencia == null) {
-			return 0L;
-		}
 		return numSequencia;
     }
 

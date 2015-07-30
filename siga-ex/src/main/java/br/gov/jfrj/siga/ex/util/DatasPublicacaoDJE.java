@@ -66,21 +66,21 @@ public class DatasPublicacaoDJE {
 		
 		if(proximaDataDisponivel != null && getDataDisponibilizacao().before(proximaDataDisponivel)) {
 			SimpleDateFormat formatBra = new SimpleDateFormat("dd/MM/yyyy");  
-			return "Data de disponibilização inferior a próxima data dispon￭vel. Próxima data para disponibilização ￩ " + formatBra.format(proximaDataDisponivel) + ".";
+			return "Data de disponibilização inferior a próxima data disponível. Próxima data para disponibilização ￩ " + formatBra.format(proximaDataDisponivel) + ".";
 		}
 		
 		if(proximaDataDisponivel == null || getDataDisponibilizacao().after(proximaDataDisponivel)) {
 		
 			if (isDisponibilizacaoDMais30())
-				return "Data de disponibilização est￡ al￩m do limite: mais de 31 dias a partir de hoje";
+				return "Data de disponibilização está além do limite: mais de 31 dias a partir de hoje";
 			else if (foraDoHorarioDe11as17horas() && apenasSolicitacao)
-				return "Data de disponibilização n￣o permitida: Excedido Hor￡rio de Solicitação (17 Horas). Defina a disponibilização com mais de 2 dias a partir de hoje";
+				return "Data de disponibilização não permitida: Excedido Horário de Solicitação (17 Horas). Defina a disponibilização com mais de 2 dias a partir de hoje";
 			else if (isDisponibilizacaoAntesDeDMais2())
-				return "Data de disponibilização n￣o permitida: menos de 2 dias a partir de hoje";
+				return "Data de disponibilização não permitida: menos de 2 dias a partir de hoje";
 			else if (isDisponibilizacaoDomingo())
-				return "Data de disponibilização ￩ domingo";
+				return "Data de disponibilização é domingo";
 			else if (isDisponibilizacaoSabado())
-				return "Data de disponibilização ￩ s￡bado";
+				return "Data de disponibilização é sábado";
 			else if (isDisponibilizacaoFeriado())
 				return "Data de disponibilização ￩ feriado: "
 						+ getFeriadoDisponibilizacao().getDscFeriado();

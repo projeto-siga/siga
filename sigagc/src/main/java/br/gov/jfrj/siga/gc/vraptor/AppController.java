@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -201,9 +202,9 @@ public class AppController extends GcController {
 				.toUpperCase() + estiloBusca.substring(1) : "";
 		Query query = em().createNamedQuery("buscarConhecimento" + estiloBusca);
 		query.setParameter("tags", set);
-		if ("ExatoOuNada".equals(estiloBusca) )
-			query.setParameter("numeroDeTags", (long)tags.length);
-			
+		if ("ExatoOuNada".equals(estiloBusca))
+			query.setParameter("numeroDeTags", (long) tags.length);
+
 		List<Object[]> conhecimentosCandidatos = query.getResultList();
 		List<Object[]> conhecimentos = new ArrayList<Object[]>();
 		for (Object[] o : conhecimentosCandidatos) {
@@ -212,10 +213,21 @@ public class AppController extends GcController {
 				continue;
 
 			info = GcInformacao.AR.findById(idOutroConhecimento);
-			
-			// Nato: Como a busca ExatoOuNada não estava funcionando bem, inclui esse IF
-			if ("ExatoOuNada".equals(estiloBusca) && (long)tags.length != info.getTags().size())
-				continue;
+
+			// Nato: Como a busca ExatoOuNada não estava funcionando bem, inclui
+			// esse IF
+			if ("ExatoOuNada".equals(estiloBusca)) {
+				if (tags.length != info.getTags().size())
+					continue;
+
+				HashSet<String> infoTags = new HashSet<String>();
+				for (GcTag t : info.getTags())
+					infoTags.add(t.toString());
+				for (String s : tags)
+					infoTags.remove(s);
+				if (infoTags.size() != 0)
+					continue;
+			}
 
 			if (testarAcesso
 					&& !info.acessoPermitido(getTitular(), getLotaTitular(),
@@ -297,10 +309,10 @@ public class AppController extends GcController {
 				"from GcTag where titulo like '%" + before
 						+ "%' and tipo.id = 3").getResultList();
 		for (GcTag t : tags) {
-			t.setTitulo(t.getTitulo().replaceAll("^" + before + "(-.+|$)", after
-					+ "$1"));
-			t.setTitulo(t.getTitulo().replaceAll("(.+-|^)" + before + "$", "$1"
-					+ after));
+			t.setTitulo(t.getTitulo().replaceAll("^" + before + "(-.+|$)",
+					after + "$1"));
+			t.setTitulo(t.getTitulo().replaceAll("(.+-|^)" + before + "$",
+					"$1" + after));
 			t.save();
 		}
 
@@ -721,7 +733,7 @@ public class AppController extends GcController {
 		if (movNotificacao != null)
 			bl.notificado(informacao, idc, titular, lotaTitular, movNotificacao);
 		bl.logarVisita(informacao, idc, titular, lotaTitular);
-		
+
 		if (historico) {
 			diff_match_patch diff = new diff_match_patch();
 
@@ -780,20 +792,19 @@ public class AppController extends GcController {
 			}
 		}
 
-		for(GcTag t : informacao.getTags())
+		for (GcTag t : informacao.getTags())
 			;
 		em().detach(informacao);
 		String conteudo = bl.marcarLinkNoConteudo(informacao.arq
 				.getConteudoTXT());
-//		if (conteudo != null)
-//			informacao.arq.setConteudoTXT(conteudo);
+		// if (conteudo != null)
+		// informacao.arq.setConteudoTXT(conteudo);
 
 		result.include("informacao", informacao);
 		result.include("mensagem", mensagem);
 		result.include("movimentacoes", movimentacoes);
 		result.include("historico", historico);
 		result.include("conteudo", conteudo);
-
 
 	}
 
@@ -807,8 +818,8 @@ public class AppController extends GcController {
 				informacao.visualizacao.id)) {
 			String conteudo = bl.marcarLinkNoConteudo(informacao.arq
 					.getConteudoTXT());
-//			if (conteudo != null)
-//				informacao.arq.setConteudoTXT(conteudo);
+			// if (conteudo != null)
+			// informacao.arq.setConteudoTXT(conteudo);
 			bl.logarVisita(informacao, idc, titular, lotaTitular);
 			result.include("informacao", informacao);
 			result.include("conteudo", conteudo);
@@ -1051,13 +1062,12 @@ public class AppController extends GcController {
 	}
 
 	public void gravarArquivo(GcInformacao informacao, String titulo,
-			UploadedFile upload, UploadedFile file, String CKEditorFuncNum, String origem)
-			throws Exception {
+			UploadedFile upload, UploadedFile file, String CKEditorFuncNum,
+			String origem) throws Exception {
 		// Nato: precisei fazer isso pq não vem attached e depois será feito um
 		// lazy-load. Precisamos melhorar depois.
 		informacao = GcInformacao.AR.findById(informacao.id);
 
-		
 		if (file != null) {
 			upload = file;
 		}
@@ -1112,7 +1122,7 @@ public class AppController extends GcController {
 		result.include("informacao", informacao);
 	}
 
-	@Path({"/app/baixar/{id}","/app/baixar"})
+	@Path({ "/app/baixar/{id}", "/app/baixar" })
 	public Download baixar(Long id) throws Exception {
 		GcArquivo arq = GcArquivo.AR.findById(id);
 		if (arq != null)
@@ -1128,9 +1138,9 @@ public class AppController extends GcController {
 		if (informacao.movs != null) {
 			DpPessoa titular = getTitular();
 			DpLotacao lotaTitular = getLotaTitular();
-			SortedSet<GcMovimentacao> movsCopy = new TreeSet<GcMovimentacao>();  
-			movsCopy.addAll(informacao.movs); 
-			for( GcMovimentacao mov : movsCopy){
+			SortedSet<GcMovimentacao> movsCopy = new TreeSet<GcMovimentacao>();
+			movsCopy.addAll(informacao.movs);
+			for (GcMovimentacao mov : movsCopy) {
 				if (mov.isCancelada())
 					continue;
 				if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO
@@ -1161,8 +1171,10 @@ public class AppController extends GcController {
 			}
 		}
 		if (!temPedidoDeRevisao)
-			throw new AplicacaoException("Não há pedido de revisão pendente para "
-				+ getIdentidadeCadastrante().getDpPessoa().getSigla());
+			throw new AplicacaoException(
+					"Não há pedido de revisão pendente para "
+							+ getIdentidadeCadastrante().getDpPessoa()
+									.getSigla());
 	}
 
 	@Path("/app/marcarComoInteressado/{sigla}")

@@ -29,7 +29,7 @@
 	
 	<c:choose>
 		<c:when test="${itemConfiguracao.idItemConfiguracao != null and acao.idAcao != null}">
-			SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledgeInplace?tags=^sr:${acao.tituloSlugify}-${itemConfiguracao.tituloSlugify}&testarAcesso=true&popup=true&msgvazio=&titulo=${acao.tituloAcao}%20-%20${itemConfiguracao.tituloItemConfiguracao}&ts=${currentTimeMillis}",document.getElementById('gc-ancora-item-acao'));
+			SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledgeInplace?tags=${solicitacao.gcTagAbertura}&testarAcesso=true&popup=true&msgvazio=&titulo=${acao.tituloAcao}%20-%20${itemConfiguracao.tituloItemConfiguracao}&ts=${currentTimeMillis}",document.getElementById('gc-ancora-item-acao'));
 		</c:when>
 		<c:otherwise>
 			$('#gc-ancora-item-acao').html('');

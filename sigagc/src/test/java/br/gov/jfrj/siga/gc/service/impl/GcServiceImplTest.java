@@ -42,14 +42,14 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class GcServiceImplTest extends TestCase {
 	GcServiceImpl service;
-	GcTag t1, t2, t3;
+	GcTag t1, t2, t3, t4, t5, t6;
 	List<GcTag> list;
-	GcInformacao i1;
+	GcInformacao i1, i2, i3;
 	Long tagSequential = 0L;
 
 	private EntityTransaction transaction;
 	private EntityManager em;
-	private GcTipoTag tt1;
+	private GcTipoTag tt1, tt2, tt3;
 	private GcArquivo a1;
 	private DpPessoa p1;
 	private GcAcesso acc1;
@@ -69,6 +69,12 @@ public class GcServiceImplTest extends TestCase {
 
 		tt1 = new GcTipoTag(1, "@");
 		tt1.save();
+
+		tt2 = new GcTipoTag(2, "#");
+		tt2.save();
+
+		tt3 = new GcTipoTag(3, "^");
+		tt3.save();
 
 		t1 = GcTag.getInstance("@sr-item-1-123:sistemas", null, true, true);
 		t1.save();
@@ -126,6 +132,44 @@ public class GcServiceImplTest extends TestCase {
 		i1.hisIdcIni = id1;
 		i1.save();
 
+		t4 = GcTag.getInstance("^sr-item-1-123:sistemas", null, true, true);
+		t4.save();
+
+		t5 = GcTag
+				.getInstance("^sr-item-1-123:sistemas", null, true, true);
+		t5.save();
+
+		t6 = GcTag
+				.getInstance("^sr-acao-2-789:corrigir", null, true, true);
+		t6.save();
+
+		i2 = new GcInformacao();
+		i2.tipo = ti1;
+		i2.arq = a1;
+		i2.autor = p1;
+		i2.lotacao = l1;
+		i2.edicao = acc1;
+		i2.visualizacao = acc1;
+		i2.tags = new TreeSet<GcTag>();
+		i2.tags.add(t4);
+		i2.ou = ou1;
+		i2.hisIdcIni = id1;
+		i2.save();
+
+		i3 = new GcInformacao();
+		i3.tipo = ti1;
+		i3.arq = a1;
+		i3.autor = p1;
+		i3.lotacao = l1;
+		i3.edicao = acc1;
+		i3.visualizacao = acc1;
+		i3.tags = new TreeSet<GcTag>();
+		i3.tags.add(t5);
+		i3.tags.add(t6);
+		i3.ou = ou1;
+		i3.hisIdcIni = id1;
+		i3.save();
+
 		em.getTransaction().commit();
 
 		service = new GcServiceImpl();
@@ -133,6 +177,34 @@ public class GcServiceImplTest extends TestCase {
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
+	}
+
+	public void testInplaceAlteracaoSimples() throws Exception {
+		service.atualizarTag("^sr-item-1-123:sistemas-informatizados");
+		assertEquals("[^sr-item-1-123:sistemas-informatizados]", i2.getTags()
+				.toString());
+	}
+
+	public void testInplaceAlteracaoSimplesPrimeiroNivel() throws Exception {
+		service.atualizarTag("^sr-item-1-123:sistemas-informatizados");
+		assertEquals("[^sr-acao-2-789:corrigir, ^sr-item-1-123:sistemas-informatizados]", i3.getTags()
+				.toString());
+		
+		// Não pode alterar os tags de classificacao
+		assertEquals(
+				"[@sr-item-1-123:sistemas, @sr-item-2-231:gestao-do-trabalho, @sr-item-3-312:siga-doc]",
+				i1.getTags().toString());
+	}
+
+	public void testInplaceAlteracaoSimplesUltimoNivel() throws Exception {
+		service.atualizarTag("^sr-acao-2-789:corrigir-bugs");
+		assertEquals("[^sr-acao-2-789:corrigir-bugs, ^sr-item-1-123:sistemas]", i3.getTags()
+				.toString());
+		
+		// Não pode alterar os tags de classificacao
+		assertEquals(
+				"[@sr-item-1-123:sistemas, @sr-item-2-231:gestao-do-trabalho, @sr-item-3-312:siga-doc]",
+				i1.getTags().toString());
 	}
 
 	public void testAlteracaoSimplesUltimoNivel() throws Exception {

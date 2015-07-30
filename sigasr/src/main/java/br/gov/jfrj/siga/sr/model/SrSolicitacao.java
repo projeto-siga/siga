@@ -2304,11 +2304,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public String getGcTagAbertura() {
-        String s = "^sr:";
+        String s = "";
+		if (getItemConfiguracao() != null)
+			s += getItemConfiguracao().getGcTagAncora();
         if (getAcao() != null)
-            s += Texto.slugify(getAcao().getTituloAcao(), true, false);
-        if (getItemConfiguracao() != null)
-            s += "-" + Texto.slugify(getItemConfiguracao().getTituloItemConfiguracao(), true, false);
+            s += getAcao().getGcTagAncora();
         return s;
     }
 

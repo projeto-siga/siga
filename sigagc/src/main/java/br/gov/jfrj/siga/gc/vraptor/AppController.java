@@ -195,10 +195,15 @@ public class AppController extends GcController {
 		Set<GcTag> set = null;
 		if (tags != null)
 			set = bl.buscarTags(tags, true);
+		if ("inplace".equals(estilo) && estiloBusca == null)
+			estiloBusca = "ExatoOuNada";
 		estiloBusca = estiloBusca != null ? estiloBusca.substring(0, 1)
 				.toUpperCase() + estiloBusca.substring(1) : "";
 		Query query = em().createNamedQuery("buscarConhecimento" + estiloBusca);
 		query.setParameter("tags", set);
+		if ("ExatoOuNada".equals(estiloBusca))
+			query.setParameter("numeroDeTags", (long)set.size());
+			
 		List<Object[]> conhecimentosCandidatos = query.getResultList();
 		List<Object[]> conhecimentos = new ArrayList<Object[]>();
 		for (Object[] o : conhecimentosCandidatos) {
@@ -207,6 +212,10 @@ public class AppController extends GcController {
 				continue;
 
 			info = GcInformacao.AR.findById(idOutroConhecimento);
+			
+			// Nato: Como a busca ExatoOuNada não estava funcionando bem, inclui esse IF
+			if ("ExatoOuNada".equals(estiloBusca) && set.size() != info.getTags().size())
+				continue;
 
 			if (testarAcesso
 					&& !info.acessoPermitido(getTitular(), getLotaTitular(),

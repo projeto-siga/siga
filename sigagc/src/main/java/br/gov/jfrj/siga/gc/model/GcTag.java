@@ -84,7 +84,7 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 		if (lista != null) {
 			for (GcTag t : lista) {
 				if (grupo != null && ide != null) {
-					if (grupo.equals(t.getHierarquiaGrupo())
+					if (tipo.equals(t.getTipo().getNome()) && grupo.equals(t.getHierarquiaGrupo())
 							&& ide.equals(t.getHierarquiaId())) {
 						tag = t;
 						break;
@@ -93,9 +93,22 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 			}
 		}
 
+		GcTipoTag tipoTag;
+		switch (tipo) {
+		case "@":
+			tipoTag = GcTipoTag.AR
+					.findById(GcTipoTag.TIPO_TAG_CLASSIFICACAO);
+			break;
+		case "#":
+			tipoTag = GcTipoTag.AR.findById(GcTipoTag.TIPO_TAG_HASHTAG);
+			break;
+		default:
+			tipoTag = GcTipoTag.AR.findById(GcTipoTag.TIPO_TAG_ANCORA);
+		}
+		
 		// Se não estiver na lista, busca no banco
 		if (tag == null) {
-			String query = "from GcTag where 1=1";
+			String query = "from GcTag where tipo = " + tipoTag.id;
 			if (grupo != null && ide != null) {
 				query += " and categoria like '" + grupo + "-%-" + ide + "'";
 			}
@@ -110,19 +123,6 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 		}
 
 		if (tag == null) {
-			GcTipoTag tipoTag;
-			switch (tipo) {
-			case "@":
-				tipoTag = GcTipoTag.AR
-						.findById(GcTipoTag.TIPO_TAG_CLASSIFICACAO);
-				break;
-			case "#":
-				tipoTag = GcTipoTag.AR.findById(GcTipoTag.TIPO_TAG_HASHTAG);
-				break;
-			default:
-				tipoTag = GcTipoTag.AR.findById(GcTipoTag.TIPO_TAG_ANCORA);
-			}
-
 			tag = new GcTag();
 			tag.setCategoria(grupo + "-" + indice + "-" + ide);
 			tag.tipo = tipoTag;

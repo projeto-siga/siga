@@ -115,6 +115,7 @@ public class ItemConfiguracaoController extends SrController {
         //
         GcService gc = Service.getGcService();
         gc.atualizarTag(itemConfiguracao.getGcTags().replace("&tags=", ", ").substring(2));
+        gc.atualizarTag(itemConfiguracao.getGcTagAncora().replace("&tags=", ", ").substring(2));
 
         // Atualiza os conhecimentos relacionados
         // Edson: deveria ser feito por webservice. Nao estah sendo coberta

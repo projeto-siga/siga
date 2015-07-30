@@ -69,6 +69,8 @@ public class AcaoController extends SrController {
         //
         GcService gc = Service.getGcService();
         gc.atualizarTag(acao.getGcTags().replace("&tags=", ", ").substring(2));
+		gc.atualizarTag(acao.getGcTagAncora().replace("&tags=", ", ")
+				.substring(2));
 
 		result.use(Results.http()).body(acao.toJson());
 	}

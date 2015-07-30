@@ -31,6 +31,7 @@ import javax.persistence.TypedQuery;
 
 import br.gov.jfrj.siga.gc.model.GcInformacao;
 import br.gov.jfrj.siga.gc.model.GcTag;
+import br.gov.jfrj.siga.gc.model.GcTipoTag;
 import br.gov.jfrj.siga.gc.service.GcService;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
@@ -75,17 +76,23 @@ public class GcServiceImpl implements GcService {
 			throw new Exception("Tag inválido. Deve seguir o padrão: "
 					+ GcTag.tagPattern.toString());
 		}
+		String tipo = matcher.group(1);
 		String grupo = matcher.group(2);
 		Integer indice = (matcher.group(3) != null) ? Integer.parseInt(matcher
 				.group(3)) : null;
 		String id = matcher.group(4);
 		String titulo = matcher.group(5);
 
+		GcTipoTag tipoTag = GcTipoTag.findBySymbol(tipo);
+
 		int count = 0;
-		TypedQuery<GcInformacao> q = ContextoPersistencia.em().createQuery(
-				"select distinct inf from GcInformacao as inf join inf.tags tag"
-						+ " where tag.categoria like :categoria",
-				GcInformacao.class);
+		TypedQuery<GcInformacao> q = ContextoPersistencia
+				.em()
+				.createQuery(
+						"select distinct inf from GcInformacao as inf join inf.tags tag"
+								+ " where tag.tipo.id = :tipo and tag.categoria like :categoria",
+						GcInformacao.class);
+		q.setParameter("tipo", tipoTag.id);
 		q.setParameter("categoria", grupo + "-%-" + id);
 		List<GcInformacao> infs = q.getResultList();
 
@@ -152,7 +159,7 @@ public class GcServiceImpl implements GcService {
 
 				}
 			}
-			
+
 			inf.corrigirClassificacao();
 		}
 		return count;

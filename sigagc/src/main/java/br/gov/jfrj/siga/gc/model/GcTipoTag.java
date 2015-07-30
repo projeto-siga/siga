@@ -42,4 +42,19 @@ public class GcTipoTag extends Objeto {
 	public String getNome() {
 		return nome;
 	}
+
+	static public GcTipoTag findBySymbol(String symbol) {
+		GcTipoTag tipoTag;
+		switch (symbol) {
+		case "@":
+			tipoTag = GcTipoTag.AR.findById(GcTipoTag.TIPO_TAG_CLASSIFICACAO);
+			break;
+		case "#":
+			tipoTag = GcTipoTag.AR.findById(GcTipoTag.TIPO_TAG_HASHTAG);
+			break;
+		default:
+			tipoTag = GcTipoTag.AR.findById(GcTipoTag.TIPO_TAG_ANCORA);
+		}
+		return tipoTag;
+	}
 }

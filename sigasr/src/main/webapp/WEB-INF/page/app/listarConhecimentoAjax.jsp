@@ -20,7 +20,7 @@
 	#{/else}
 
 	#{if item && acao}
-		SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledgeInplace?tags=^sr:${acao.tituloSlugify}-${item.tituloSlugify}&testarAcesso=true&popup=true&msgvazio=&titulo=${acao.tituloAcao}%20-%20${item.tituloItemConfiguracao}&ts=${currentTimeMillis}",document.getElementById('gc-ancora-item-acao'));
+		SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledgeInplace?tags=${solicitacao.gcTagAbertura}&testarAcesso=true&popup=true&msgvazio=&titulo=${acao.tituloAcao}%20-%20${item.tituloItemConfiguracao}&ts=${currentTimeMillis}",document.getElementById('gc-ancora-item-acao'));
 	#{/if}
 	#{else}
 		$('#gc-ancora-item-acao').html('');

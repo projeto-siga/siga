@@ -201,8 +201,8 @@ public class AppController extends GcController {
 				.toUpperCase() + estiloBusca.substring(1) : "";
 		Query query = em().createNamedQuery("buscarConhecimento" + estiloBusca);
 		query.setParameter("tags", set);
-		if ("ExatoOuNada".equals(estiloBusca))
-			query.setParameter("numeroDeTags", (long)set.size());
+		if ("ExatoOuNada".equals(estiloBusca) )
+			query.setParameter("numeroDeTags", (long)tags.length);
 			
 		List<Object[]> conhecimentosCandidatos = query.getResultList();
 		List<Object[]> conhecimentos = new ArrayList<Object[]>();
@@ -214,7 +214,7 @@ public class AppController extends GcController {
 			info = GcInformacao.AR.findById(idOutroConhecimento);
 			
 			// Nato: Como a busca ExatoOuNada não estava funcionando bem, inclui esse IF
-			if ("ExatoOuNada".equals(estiloBusca) && set.size() != info.getTags().size())
+			if ("ExatoOuNada".equals(estiloBusca) && (long)tags.length != info.getTags().size())
 				continue;
 
 			if (testarAcesso

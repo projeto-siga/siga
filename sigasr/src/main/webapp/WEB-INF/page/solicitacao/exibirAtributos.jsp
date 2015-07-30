@@ -17,7 +17,7 @@
         <div id="gc-ancora-item-acao"></div>
     </div>
     <script type="text/javascript">
-        var url = "/../sigagc/app/knowledge?tags=${solicitacao.gcTagAbertura}&testarAcesso=true&estilo=inplace&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=&titulo=${solicitacao.gcTituloAbertura}";
+        var url = "/../sigagc/app/knowledgeInplace?tags=${solicitacao.gcTagAbertura}&testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=&titulo=${solicitacao.gcTituloAbertura}";
         Siga.ajax(url, null, "GET", function(response){
             document.getElementById('gc-ancora-item-acao').innerHTML = response;
         });

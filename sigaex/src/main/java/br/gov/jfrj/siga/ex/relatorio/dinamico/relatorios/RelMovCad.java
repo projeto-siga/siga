@@ -80,7 +80,7 @@ public class RelMovCad extends RelatorioTemplate {
 								+ "and mov.lotaCadastrante.idLotacao = :id "
 								+ "and mov.dtIniMov >= :dtini "
 								+ "and mov.dtIniMov <= :dtfim "
-								+ "order by mov.resp.idPessoa");
+								+ "order by mov.cadastrante.idPessoaIni, mob.idMobil, mov.dtIniMov");
 
 		query.setParameter("id",
 				Long.valueOf((String) parametros.get("lotacao")));

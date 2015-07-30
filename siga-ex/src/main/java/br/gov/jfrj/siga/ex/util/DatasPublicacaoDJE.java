@@ -61,7 +61,7 @@ public class DatasPublicacaoDJE {
 
 		Date proximaDataDisponivel = null;
 		
-		if(!(sao17Horas() && apenasSolicitacao))
+		if(!(foraDoHorarioDe11as17horas() && apenasSolicitacao))
 			proximaDataDisponivel = consultarProximaDataDisponivel();
 		
 		if(proximaDataDisponivel != null && getDataDisponibilizacao().before(proximaDataDisponivel)) {
@@ -73,7 +73,7 @@ public class DatasPublicacaoDJE {
 		
 			if (isDisponibilizacaoDMais30())
 				return "Data de disponibilização est￡ al￩m do limite: mais de 31 dias a partir de hoje";
-			else if (sao17Horas() && apenasSolicitacao)
+			else if (foraDoHorarioDe11as17horas() && apenasSolicitacao)
 				return "Data de disponibilização n￣o permitida: Excedido Hor￡rio de Solicitação (17 Horas). Defina a disponibilização com mais de 2 dias a partir de hoje";
 			else if (isDisponibilizacaoAntesDeDMais2())
 				return "Data de disponibilização n￣o permitida: menos de 2 dias a partir de hoje";
@@ -201,7 +201,12 @@ public class DatasPublicacaoDJE {
 		int hora = getCalHoje().get(Calendar.HOUR_OF_DAY);
 		return (hora >= 17 && getDifHojeDisponib() <= 2);
 	}
-
+	
+	public boolean foraDoHorarioDe11as17horas() {
+		int hora = getCalHoje().get(Calendar.HOUR_OF_DAY);
+		return ((hora < 11 || hora >= 17) && getDifHojeDisponib() <= 2);
+	}
+	
 	public Date getDataDisponibilizacao() {
 		return dataDisponibilizacao;
 	}

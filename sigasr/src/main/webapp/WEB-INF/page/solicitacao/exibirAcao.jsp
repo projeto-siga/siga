@@ -90,7 +90,7 @@ function carregarLotacaoDaAcao(){
 </c:if>
 
 <c:if test="${not empty solicitacao.itemConfiguracao && not empty acoesEAtendentes}" > 
-    <div class="gt-form-row gt-width-66">
+    <div class="gt-form-row gt-width-66" style="margin-top: 10px;">
     	<label>A&ccedil;&atilde;o</label>   
         <select name="solicitacao.acao.id" id="selectAcao" onchange="carregarAtributos();notificarCampoMudou('#selectAcao', 'A&ccedil;&atilde;o', 'solicitacao.acao');">
             <option value="0"></option>
@@ -119,7 +119,7 @@ function carregarLotacaoDaAcao(){
 	        </c:forEach>
         </c:forEach>
         <label>Atendente</label>
-        <span id="atendentePadrao" style="display:block;">
+        <span id="atendentePadrao" style="display:block; style="margin-bottom: 10px;"">
             ${lotacaoDesignada}
         </span>
         <input type="hidden" id="solicitacaoDesignacao" name="solicitacao.designacao.id" value="${idDesignacao}" />

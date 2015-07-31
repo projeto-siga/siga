@@ -118,10 +118,17 @@
 	 	    });
 	 	    if (prioridades.length > 0) {
 	 	    	jQuery.blockUI(objBlock);
-	 	    	$.post('${linkTo[SolicitacaoController].priorizarLista}?' + prioridades, {
-		 	    	id : $('[name=idLista]').val()
-	 	    	}).success(function() {
-		 	    		alert('Lista gravada com sucesso')});
+	 	    	$.ajax({
+		 	    	type: "POST",
+		 	    	url: "${linkTo[SolicitacaoController].priorizarLista}",
+		 	    	data: "id=" + $('[name=idLista]').val() + "&" + prioridades,
+		 	    	success: function() {
+		 	    		alert('Lista gravada com sucesso');
+		 	    	},
+		 	    	error: function(XMLHttpRequest, textStatus, errorThrown) {
+		 	    		alert('Não foi possível efetivar a priorização');
+		 	    	}
+	 	    	});
 		 	}
 	    });
 	});

@@ -7,10 +7,15 @@ function carregar${action}(){
 	jQuery.blockUI(objBlock);
 	frm = document.getElementById('div${action}').parent;
 	params = '';
+	paramsObj = {};
 	for (i = 0; i < frm.length; i++){
 		params = params + '&' + frm[i].name + '=' + escape(frm[i].value);
+		paramsObj[frm[i].name] = frm[i].value;
 	}
-	PassAjaxResponseToFunction('${linkto['+action+']}', 'carregou${action}', null, false, params);
+	Siga.ajax(${linkto['+action+']}, paramsObj, "GET", function(response){		
+		carregou${action}(response);
+	});	
+	//PassAjaxResponseToFunction('${linkto['+action+']}', 'carregou${action}', null, false, params);
 }
 
 function carregou${action}(response, param){

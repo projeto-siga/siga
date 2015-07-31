@@ -16,7 +16,10 @@ function carregarAcao(){
         if (frm[i].name && frm[i].value)
             params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
     }
-    PassAjaxResponseToFunction('${linkTo[SolicitacaoController].exibirAcao}?' + params, 'carregouAcao', null, false, null);
+    Siga.ajax('${linkTo[SolicitacaoController].exibirAcao}?' + params, null, "GET", function(response){		
+    	carregouAcao(response);
+	});	
+    //PassAjaxResponseToFunction('${linkTo[SolicitacaoController].exibirAcao}?' + params, 'carregouAcao', null, false, null);
 }
 
 function carregouAcao(response, param){

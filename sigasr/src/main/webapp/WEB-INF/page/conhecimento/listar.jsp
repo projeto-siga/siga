@@ -48,8 +48,12 @@ function mostraOuEscondeAcao(){
 
 function carregarRelacionados() {
 	jQuery.blockUI(objBlock);
-	PassAjaxResponseToFunction('/sigasr/app/solicitacao/conhecimento/listar?ajax=true&idItem=' 
-			+ $("#formulario_itemConfiguracao_id").val() + '&idAcao=' + $("#formulario_acao_id").val(), 'carregouRelacionados', null, false, null);
+    Siga.ajax('/sigasr/app/solicitacao/conhecimento/listar?ajax=true&idItem=' 
+			+ $("#formulario_itemConfiguracao_id").val() + '&idAcao=' + $("#formulario_acao_id").val(), null, "GET", function(response){		
+				carregouRelacionados(response);
+	});	
+	//PassAjaxResponseToFunction('/sigasr/app/solicitacao/conhecimento/listar?ajax=true&idItem=' 
+	//		+ $("#formulario_itemConfiguracao_id").val() + '&idAcao=' + $("#formulario_acao_id").val(), 'carregouRelacionados', null, false, null);
 }
 
 function carregouRelacionados(response, param){

@@ -780,7 +780,10 @@ Fim comentário --]
         }
           var url = '${acaoBusca}/selecionar?var=${var}${tipoSel}&sigla='+encodeURI(sigla)+'${selecaoParams!}';
         url = url + '&sigla=' + sigla;
-        PassAjaxResponseToFunction(url, 'resposta_ajax_${var}${tipoSel}', false);
+        Siga.ajax(url, null, "GET", function(response){		
+			resposta_ajax_${var}${tipoSel}(response);
+		});	
+        //PassAjaxResponseToFunction(url, 'resposta_ajax_${var}${tipoSel}', false);
     }
     
     </script>

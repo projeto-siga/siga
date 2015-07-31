@@ -30,9 +30,12 @@
 			
 			$("#itemConfiguracao").val(inputIdItem);
 			jQuery.blockUI(objBlock);
-			PassAjaxResponseToFunction(
-					'${linkTo[SolicitacaoController].exibirAcaoEscalonar}?'
-							+ params, 'carregouAcao', null, false, null);
+			Siga.ajax('${linkTo[SolicitacaoController].exibirAcaoEscalonar}?' + params, null, "GET", function(response){		
+			    	carregouAcao(response);
+			});	
+			//PassAjaxResponseToFunction(
+			//		'${linkTo[SolicitacaoController].exibirAcaoEscalonar}?'
+			//				+ params, 'carregouAcao', null, false, null);
 		}
 
 		function carregouAcao(response, param) {

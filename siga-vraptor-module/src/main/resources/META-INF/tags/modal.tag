@@ -12,7 +12,10 @@ function ${nome}(){
 	var url = '${url}';
 	
 	if(url != "")
-		PassAjaxResponseToFunction('${url}', 'carregouAjax${nome}', null, false, null);
+		Siga.ajax(url, null, "GET", function(response){		
+			carregouAjax${nome}(response);
+		});	
+		//PassAjaxResponseToFunction('${url}', 'carregouAjax${nome}', null, false, null);
 	else 
 		$( "#${nome}_dialog" ).dialog( "open" );
 }

@@ -28,4 +28,6 @@ public @interface ValidarAnoData {
 	String descricaoCampo();
 
 	String message() default "Data inv&aacutelida";
+	
+	boolean nullable() default true;
 }

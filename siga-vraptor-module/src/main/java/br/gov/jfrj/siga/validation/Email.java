@@ -25,5 +25,5 @@ public @interface Email {
 
 	Class<? extends Payload>[] payload() default {};
 
-	boolean nullable() default false;
+	boolean nullable() default true;
 }

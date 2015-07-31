@@ -542,7 +542,7 @@ public class SrConfiguracao extends CpConfiguracao {
      * @return <li>1 para Pessoa; <li>2 para Lotaï¿½ï¿½o; <li>3 para Funï¿½ï¿½o; <li>4 para Cargo;
      */
     public int getTipoSolicitante() {
-        if (this.getLotacao() != null && this.getLotacao().getLotacaoAtual() != null)
+        if (this.getLotacao() != null)
             return 2;
         else if (this.getFuncaoConfianca() != null)
             return 3;

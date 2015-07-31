@@ -116,7 +116,7 @@
 				class="gt-btn-small gt-btn-left">Incluir</a>
 		</div>
 
-		<div class="container">
+		<%-- <div class="container">
 			<div class="title-table">
 				<h3 style="padding-top: 25px;">Configura&ccedil;&otilde;es de
 					inclus&atilde;o autom&aacute;tica</h3>
@@ -159,6 +159,7 @@
 				href="javascript: configuracaoInclusaoAutomaticaService.cadastrar('Cadastro de configura\u00e7\u00e3o de inclus\u00e3o autom\u00e1tica')"
 				class="gt-btn-small gt-Sbtn-left">Incluir</a>
 		</div>
+		--%>
 		<div class="gt-form-row">
 			<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left"
 				onclick="listaService.gravar()" /> <a
@@ -198,7 +199,7 @@
 				<div class="gt-form-row div-modal-table">
 					<label>Lota&ccedil;&atilde;o</label>
 					<siga:selecao propriedade="lotacao" tema="simple"
-						modulo="siga"  inputName="lotacaoAtual"/>
+						modulo="siga"  inputName="lotacaoAtual" />
 				</div>
 
 				<div class="gt-form-row div-modal-table">
@@ -283,6 +284,7 @@
 	</form>
 </siga:modal>
 
+<%-- 
 <siga:modal nome="configuracao_inclusao_automatica"
 	titulo="Configura&ccedil;&atilde;o para inclus&atilde;o autom&aacute;tica">
 	<form id="formConfiguracaoInclusaoAutomatica">
@@ -343,6 +345,7 @@
 		</div>
 	</form>
 </siga:modal>
+--%>
 
 <script language="javascript"> 
 	function ConfiguracaoInclusaoAutomaticaDecorator(configuracaoInclusaoAutomatica, service) {

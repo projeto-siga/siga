@@ -69,7 +69,7 @@ public class DpCargo extends AbstractDpCargo implements Serializable,
 
 	// Nato: Essas linha precisaram ser comentadas para que a rotina de
 	// sincronismo funcione corretamente. Se existe a necessidade de eliminar o
-	// que est� escrito entre par�ntesis, essa altera��o deve ser realizada no
+	// que esta escrito entre parentesis, essa alteracao deve ser realizada no
 	// programa que gera o XML. No caso, atualmente, no MUMPS.
 	//
 	// @Override
@@ -106,7 +106,7 @@ public class DpCargo extends AbstractDpCargo implements Serializable,
 
 	}
 
-	// M�todos necess�rios para ser "Sincronizavel"
+	// Metodos necessarios para ser "Sincronizavel"
 	//
 	public Date getDataFim() {
 		return getDataFimCargo();

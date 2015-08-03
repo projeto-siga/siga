@@ -181,7 +181,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	// que no futuro essa necessidade seja revista.
 	public String getSiglaAmpliada() {
 		if (getOrgaoUsuario().getIdOrgaoUsu() == 1L && isSubsecretaria())
-			return getSiglaLotacao() + " Dire��o";
+			return getSiglaLotacao() + " Direção";
 		return getSiglaLotacao();
 	}
 
@@ -195,7 +195,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 
 	public String getDescricaoAmpliada() {
 		if (getOrgaoUsuario().getIdOrgaoUsu() == 1L && isSubsecretaria())
-			return "Dire��o da " + getNomeLotacao();
+			return "Direção da " + getNomeLotacao();
 		return getNomeLotacao();
 	}
 
@@ -265,7 +265,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		return lot;
 	}
 
-	// M�todos necess�rios para ser "Sincronizavel"
+	// Metodos necessarios para ser "Sincronizavel"
 	//
 	public Date getDataFim() {
 		return getDataFimLotacao();
@@ -335,7 +335,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	/**
-	 * Retorna a lota��o atual no hist�rico desta lota��o
+	 * Retorna a lotacao atual no historico desta lotacao
 	 * 
 	 * @return DpLotacao
 	 */
@@ -388,7 +388,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 
 	/**
 	 * 
-	 * @return o id do �rg�o do usu�rio
+	 * @return o id do orgao do usuario
 	 */
 	public Long getIdOrgaoUsuario() {
 		Long idOrgaoUsuario = null;
@@ -400,10 +400,10 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 	
 	 /**
-     * Retorna a data de in�cio da lota��o no formato dd/mm/aa HH:MI:SS,
+     * Retorna a data de inicio da lotacao no formato dd/mm/aa HH:MI:SS,
      * por exemplo, 01/02/10 14:10:00.
      * 
-     * @return Data de in�cio da pessoa no formato dd/mm/aa HH:MI:SS, por
+     * @return Data de inicio da pessoa no formato dd/mm/aa HH:MI:SS, por
      *         exemplo, 01/02/10 14:10:00.
      * 
      */
@@ -417,10 +417,10 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
     }
 
     /**
-     * Retorna a data de fim da lota��o no formato dd/mm/aa HH:MI:SS,
+     * Retorna a data de fim da lotacao no formato dd/mm/aa HH:MI:SS,
      * por exemplo, 01/02/10 14:10:00.
      * 
-     * @return Data de in�cio da fim no formato dd/mm/aa HH:MI:SS, por
+     * @return Data de inicio da fim no formato dd/mm/aa HH:MI:SS, por
      *         exemplo, 01/02/10 14:10:00.
      * 
      */

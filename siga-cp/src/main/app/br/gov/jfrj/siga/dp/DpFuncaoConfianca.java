@@ -118,7 +118,7 @@ public class DpFuncaoConfianca extends AbstractDpFuncaoConfianca implements
 		this.nmFuncaoConfiancaAI = nmFuncaoConfiancaAI;
 	}
 
-	// M�todos necess�rios para ser "Sincronizavel"
+	// Metodos necessarios para ser "Sincronizavel"
 	//
 	public Date getDataFim() {
 		return getDataFimFuncao();

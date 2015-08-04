@@ -45,14 +45,20 @@ public class ObjetoObjectInstantiator implements Instantiator<Object> {
 				&& Objeto.class
 						.isAssignableFrom(((Class) target.getType()))) {
 			Long id = null;
+			boolean allNull = true;
 
 			String keyName = target.getName() + ".id";
 			for (Parameter p : parameters.forTarget(target)) {
-				if (keyName.equals(p.getName()) && p.getValue() != null
+				if (p.getValue() != null
 						&& p.getValue().length() > 0) {
-					id = Long.valueOf(p.getValue());
+					allNull = false;
+					if (keyName.equals(p.getName())) 
+						id = Long.valueOf(p.getValue());
 				}
 			}
+			
+			if (allNull)
+				return null;
 
 			// Desabilitei a leitura a partir da id para simplificar o
 			// polimorfismo

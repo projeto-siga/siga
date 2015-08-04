@@ -13,8 +13,8 @@ import edu.emory.mathcs.backport.java.util.Collections;
 
 public class SrSolicitacaoVO {
 
-    private String botaoRemover;
-    private String botaoPriorizar;
+    private String botaoRemover = "";
+    private String botaoPriorizar = "";
 
     private Long idSolicitacao;
     private String codigo = "";

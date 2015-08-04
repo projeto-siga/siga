@@ -195,7 +195,7 @@
 		<div class="gt-form-row gt-width-100">
 			<label>Prioridade</label> 
 		    <select name="prioridade" id="prioridade">
-				<option value="0"></option>
+				<option value=""></option>
 				<c:forEach items="${prioridades}" var="item">
 				   <option value="${item}">${item.descPrioridade}</option>
 				</c:forEach>

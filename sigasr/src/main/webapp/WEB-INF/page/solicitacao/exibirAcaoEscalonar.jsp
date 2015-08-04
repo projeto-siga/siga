@@ -47,7 +47,7 @@
 	<div class="gt-form-row gt-width-66">
 		<label>A&ccedil;&atilde;o</label>	
 		<select name="acao.id" id="selectAcao" onchange="carregarLotacaoDaAcao()">
-		    <option value="0"></option>
+		    <option value=""></option>
 			<c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
 				<optgroup  label="${cat.tituloAcao}">
 					<c:forEach items="${acoesEAtendentes.get(cat)}" var="tarefa">

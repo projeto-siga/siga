@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -71,6 +72,7 @@ public class SrLista extends HistoricoSuporte {
     private SrLista listaInicial;
 
     @OneToMany(targetEntity = SrLista.class, mappedBy = "listaInicial", fetch = FetchType.LAZY)
+    @OrderBy("idLista DESC")
     private List<SrLista> meuListaHistoricoSet;
 
     public static List<SrLista> listar(boolean mostrarDesativado) {

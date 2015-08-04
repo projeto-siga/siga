@@ -8,12 +8,10 @@ import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_CAN
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_DESENTRANHAMENTO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO;
-import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_LISTA;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA;
-import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO;
 import static org.joda.time.format.DateTimeFormat.forPattern;
 
@@ -62,13 +60,13 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
+import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.gov.jfrj.siga.base.Par;
-import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
@@ -100,6 +98,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     private static final long serialVersionUID = 1L;
 
     public static final ActiveRecord<SrSolicitacao> AR = new ActiveRecord<>(SrSolicitacao.class);
+    private final static Logger log = Logger.getLogger(SrSolicitacao.class);
 
     @Id
     @SequenceGenerator(sequenceName = "SIGASR" + ".SR_SOLICITACAO_SEQ", name = "srSolicitacaoSeq")
@@ -239,6 +238,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     @OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "solicitacao", fetch = FetchType.LAZY)
     // @OrderBy("dtIniMov DESC")
     private Set<SrMovimentacao> meuMovimentacaoSet;
+    
+    @OneToMany(targetEntity = SrPrioridadeSolicitacao.class, mappedBy = "solicitacao", fetch = FetchType.LAZY)
+    private Set<SrPrioridadeSolicitacao> meuPrioridadeSolicitacaoSet;
 
     @OneToMany(mappedBy = "solicitacaoPai", fetch = FetchType.LAZY)
     // @OrderBy("numSequencia asc")
@@ -668,7 +670,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public SrMovimentacao getUltimaMovimentacaoCancelavel() {
         for (SrMovimentacao mov : getMovimentacaoSet()) {
-            if (mov.getNumSequencia() > 1 && mov.getTipoMov().getIdTipoMov() != TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA && mov.getTipoMov().getIdTipoMov() != TIPO_MOVIMENTACAO_INCLUSAO_LISTA
+            if (mov.getNumSequencia() > 1 && mov.getTipoMov().getIdTipoMov() != TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
                     && mov.getTipoMov().getIdTipoMov() != TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA && mov.getTipoMov().getIdTipoMov() != TIPO_MOVIMENTACAO_AVALIACAO)
                 return mov;
         }
@@ -879,6 +881,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
                     for (SrSolicitacao filha : sol.getMeuSolicitacaoFilhaSet())
                         if (filha.getHisDtFim() == null)
                             listaCompleta.add(filha);
+            }
+        }
+        return listaCompleta;
+    }
+    
+    public Set<SrPrioridadeSolicitacao> getPrioridadeSolicitacaoSet() {
+        Set<SrPrioridadeSolicitacao> listaCompleta = new HashSet<SrPrioridadeSolicitacao>();
+        if (getSolicitacaoInicial() != null) {
+            for (SrSolicitacao sol : getHistoricoSolicitacao()) {
+                if (sol.getMeuPrioridadeSolicitacaoSet() != null)
+                	listaCompleta.addAll(sol.getMeuPrioridadeSolicitacaoSet());
             }
         }
         return listaCompleta;
@@ -1431,10 +1444,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
             incluirEmListasAutomaticas();
 
+            try{
              if (!isEditado() && getFormaAcompanhamento() != SrFormaAcompanhamento.ABERTURA_FECHAMENTO)
             	 CorreioHolder
             	 	.get()
             	 	.notificarAbertura(this);
+            } catch(Exception e){
+            	log.error("Erro ao notificar", e);
+            }
+            
         } else
             atualizarMarcas();
         
@@ -1991,13 +2009,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public Set<SrLista> getListasAssociadas() {
-        Set<SrLista> associadas = new HashSet<SrLista>();
-        for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente())
-            if (mov.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_INCLUSAO_LISTA || mov.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA && mov.getLista().isAtivo())
-                associadas.add(mov.getLista());
-            else if (mov.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA)
-                associadas.remove(mov.getLista());
-        return associadas;
+        Set<SrLista> listas = new HashSet<SrLista>();
+    	for (SrPrioridadeSolicitacao prior : getPrioridadeSolicitacaoSet()){
+        	listas.add(prior.getLista().getListaAtual());
+        }
+        return listas;
     }
 
     public Set<SrSolicitacao> getSolicitacoesVinculadas() {
@@ -2056,17 +2072,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         if (isEmLista(lista))
             throw new IllegalArgumentException("Lista " + lista.getNomeLista() + " j\u00E1 cont\u00E9m a solicita\u00E7\u00E3o " + getCodigo());
 
-        SrMovimentacao mov = new SrMovimentacao();
-        mov.setCadastrante(pess);
-        mov.setLotaCadastrante(lota);
-        mov.setTitular(pessTitular);
-        mov.setLotaTitular(lota);
-        mov.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_INCLUSAO_LISTA));
-        mov.setDescrMovimentacao("Inclus\u00E3o na lista " + lista.getNomeLista());
-        mov.setLista(lista);
-        mov.setSolicitacao(this);
-        mov.salvarAtualizandoSolicitacao();
-
         lista.incluir(this, prioridade, naoReposicionarAutomatico);
         ContextoPersistencia.em().flush();
     }
@@ -2075,16 +2080,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         if (lista == null)
             throw new IllegalArgumentException("Lista n\u00E3o informada");
 
-        SrMovimentacao mov = new SrMovimentacao();
-        mov.setCadastrante(cadastrante);
-        mov.setLotaCadastrante(lotaCadastrante);
-        mov.setTitular(titular);
-        mov.setLotaTitular(lotaTitular);
-        mov.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA));
-        mov.setDescrMovimentacao("Cancelamento de Inclus\u00E3o em Lista");
-        mov.setSolicitacao(this);
-        mov.setLista(lista);
-        mov.salvarAtualizandoSolicitacao();
         lista.retirar(this, cadastrante, lotaCadastrante);
     }
 
@@ -2169,7 +2164,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     private void reInserirListasDePrioridade(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
-        for (SrMovimentacao mov : getMovimentacaoSet()) {
+        
+    	/*for (SrMovimentacao mov : getMovimentacaoSet()) {
             if (mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO
                     || mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO)
                 break;
@@ -2177,7 +2173,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             if (mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA)
                 incluirEmLista(mov.getLista(), cadastrante, lotaCadastrante, titular, lotaTitular, getPrioridade(), false);
 
-        }
+        }*/
     }
 
     public void deixarPendente(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrTipoMotivoPendencia motivo, String calendario, String horario,
@@ -2988,7 +2984,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         this.meuSolicitacaoHistoricoSet = meuSolicitacaoHistoricoSet;
     }
 
-    public Set<SrMovimentacao> getMeuMovimentacaoSet() {
+    public Set<SrPrioridadeSolicitacao> getMeuPrioridadeSolicitacaoSet() {
+		return meuPrioridadeSolicitacaoSet;
+	}
+
+	public void setMeuPrioridadeSolicitacaoSet(
+			Set<SrPrioridadeSolicitacao> meuPrioridadeSolicitacaoSet) {
+		this.meuPrioridadeSolicitacaoSet = meuPrioridadeSolicitacaoSet;
+	}
+
+	public Set<SrMovimentacao> getMeuMovimentacaoSet() {
         return meuMovimentacaoSet;
     }
 

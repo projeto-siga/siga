@@ -847,22 +847,22 @@
 		var params = "";
 		
 		// caso exista algum item na tabela
-		if (row[colunas.idOrgao] != '' && row[colunas.idOrgao] > 0)
+		//if (row[colunas.idOrgao] != '' && row[colunas.idOrgao] > 0)
 			params += '&permissao.orgaoUsuario.id=' + row[colunas.idOrgao];
 		
-		if (row[colunas.idLocal] != '' && row[colunas.idLocal] > 0)
+		//if (row[colunas.idLocal] != '' && row[colunas.idLocal] > 0)
 	    	params += '&permissao.complexo.id=' + row[colunas.idLocal];
 		
-		if (row[colunas.idLotacao] != '')
+		//if (row[colunas.idLotacao] != '')
 	    	params += '&permissao.lotacao.id=' + row[colunas.idLotacao];
 		
-		if (row[colunas.idPessoa] != '')
+		//if (row[colunas.idPessoa] != '')
 	    	params += '&permissao.dpPessoa.id=' + row[colunas.idPessoa];
 		
-		if (row[colunas.idCargo] != '')
+		//if (row[colunas.idCargo] != '')
 	    	params += '&permissao.cargo.id=' + row[colunas.idCargo];
 		
-		if (row[colunas.idFuncao] != '')
+		//if (row[colunas.idFuncao] != '')
 	    	params += '&permissao.funcaoConfianca.id=' + row[colunas.idFuncao];
 		if(row[colunas.idTipoPerm] == '')
 			row[colunas.idTipoPerm] = 0;

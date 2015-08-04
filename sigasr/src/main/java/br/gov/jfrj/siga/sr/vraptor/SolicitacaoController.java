@@ -610,7 +610,7 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/exibir/incluirEmListaGravar")
-    public void incluirEmListaGravar(Long idSolicitacao, Long idLista, SrPrioridade prioridade, Boolean naoReposicionarAutomatico) throws Exception {
+    public void incluirEmListaGravar(Long idSolicitacao, Long idLista, SrPrioridade prioridade, boolean naoReposicionarAutomatico) throws Exception {
         if (idLista == null) {
             throw new Exception("Selecione a lista para inclus\u00e3o da solicita\u00e7\u00e3o");
         }

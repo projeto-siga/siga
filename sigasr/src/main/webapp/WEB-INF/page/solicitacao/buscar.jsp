@@ -110,7 +110,7 @@
 	                        <td>
 	                           <select name="filtro.idListaPrioridade" id="filtroidListaPrioridade" style="width:250px;">
 	                               <option value="-1" ${-1 == filtro.idListaPrioridade ? 'selected' : ''}>Qualquer Uma</option>
-	                               <option value="0" ${0 == filtro.idListaPrioridade ? 'selected' : ''}>Nenhuma</option>
+	                               <option value="" ${0 == filtro.idListaPrioridade ? 'selected' : ''}>Nenhuma</option>
 	                               <c:forEach items="${listasPrioridade}" var="item">
 	                                   <option value="${item.idLista}" ${item.idLista == filtro.idListaPrioridade ? 'selected' : ''}>${item.nomeLista }</option>
 	                               </c:forEach>

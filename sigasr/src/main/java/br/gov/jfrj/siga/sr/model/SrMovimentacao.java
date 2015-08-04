@@ -23,6 +23,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
@@ -31,7 +32,6 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.model.ActiveRecord;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
 import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
@@ -41,6 +41,7 @@ import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
 public class SrMovimentacao extends Objeto {
     private static final long serialVersionUID = 1L;
     public static final ActiveRecord<SrMovimentacao> AR = new ActiveRecord<>(SrMovimentacao.class);
+    private final static Logger log = Logger.getLogger(SrMovimentacao.class);
 
     @Id
     @SequenceGenerator(sequenceName = "SIGASR" + ".SR_MOVIMENTACAO_SEQ", name = "srMovimentacaoSeq")
@@ -367,38 +368,46 @@ public class SrMovimentacao extends Objeto {
     }
 
 	public void notificar() throws Exception {
-        if (getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE)
-            CorreioHolder
-            	.get()
-            	.notificarReplanejamentoMovimentacao(this);
-        else if (!isCancelada())
-        	CorreioHolder
-        		.get()
-        		.notificarMovimentacao(this);
-        else
-        	CorreioHolder
-        		.get()
-        		.notificarCancelamentoMovimentacao(this);
+		try{
+			if (getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE)
+				CorreioHolder
+				.get()
+				.notificarReplanejamentoMovimentacao(this);
+			else if (!isCancelada())
+				CorreioHolder
+				.get()
+				.notificarMovimentacao(this);
+			else
+				CorreioHolder
+				.get()
+				.notificarCancelamentoMovimentacao(this);
+		} catch(Exception e){
+			log.error("Erro ao notificar", e);
+		}
     }
 	
 	public void notificarAtendente() throws Exception {
-        if (tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
-                        || tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO
-                                || tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA
-                                || (lotaAtendente != null && lotaTitular != null && !lotaTitular.equivale(lotaAtendente))) {
-                if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
-                                lotaAtendente, "SIGA;SR;EMAILATEND:Receber Notificaï¿½ï¿½o Atendente"))
-                	CorreioHolder
-            	 	.get().notificarAtendente(this, solicitacao);
-        }
-        else if (tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO
-                        && solicitacao.isFilha()) {
-                if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
-                                solicitacao.getSolicitacaoPai().getLotaAtendente(), "SIGA;SR;EMAILATEND:Receber Notificaï¿½ï¿½o Atendente"))
-                	CorreioHolder
-            	 	.get().notificarAtendente(this, solicitacao.getSolicitacaoPai());
-        }
-}
+		try{
+			if (tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
+					|| tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO
+					|| tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA
+					|| (lotaAtendente != null && lotaTitular != null && !lotaTitular.equivale(lotaAtendente))) {
+				if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
+						lotaAtendente, "SIGA;SR;EMAILATEND:Receber Notificaï¿½ï¿½o Atendente"))
+					CorreioHolder
+					.get().notificarAtendente(this, solicitacao);
+			}
+			else if (tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO
+					&& solicitacao.isFilha()) {
+				if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
+						solicitacao.getSolicitacaoPai().getLotaAtendente(), "SIGA;SR;EMAILATEND:Receber Notificaï¿½ï¿½o Atendente"))
+					CorreioHolder
+					.get().notificarAtendente(this, solicitacao.getSolicitacaoPai());
+			}
+		} catch (Exception e){
+			log.error("Erro ao notificar", e);
+		}
+	}
 
     public String getMotivoPendenciaString() {
         return this.getMotivoPendencia() != null ? this.getMotivoPendencia().getDescrTipoMotivoPendencia() : "";

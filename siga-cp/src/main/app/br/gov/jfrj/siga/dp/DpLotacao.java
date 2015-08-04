@@ -40,7 +40,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.base.Texto;
-
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -54,7 +53,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Table(name = "DP_LOTACAO", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpLotacao extends AbstractDpLotacao implements Serializable,
-		Selecionavel, Historico, Sincronizavel,  Comparable  {
+		Selecionavel, Historico, Sincronizavel,  Comparable, DpConvertableEntity  {
 	private static final long serialVersionUID = 5628179687234082413L;
 	public static ActiveRecord<DpLotacao> AR = new ActiveRecord<>(DpLotacao.class);
 
@@ -148,12 +147,9 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	public void setSigla(String sigla) {
-		if (sigla == null) {
-			setOrgaoUsuario(null);
-			setSiglaLotacao(null);
-			return;
-		}
-		
+	    if (sigla == null) {
+	        sigla = "";
+	    }
 		String siglasOrgaoUsu = "";
 		List<CpOrgaoUsuario> lou = CpDao.getInstance()
 				.listarOrgaosUsuarios();
@@ -269,7 +265,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		return lot;
 	}
 
-	// Métodos necessários para ser "Sincronizavel"
+	// Metodos necessarios para ser "Sincronizavel"
 	//
 	public Date getDataFim() {
 		return getDataFimLotacao();
@@ -339,7 +335,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	/**
-	 * Retorna a lotação atual no histórico desta lotação
+	 * Retorna a lotacao atual no historico desta lotacao
 	 * 
 	 * @return DpLotacao
 	 */
@@ -392,7 +388,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 
 	/**
 	 * 
-	 * @return o id do órgão do usuário
+	 * @return o id do orgao do usuario
 	 */
 	public Long getIdOrgaoUsuario() {
 		Long idOrgaoUsuario = null;
@@ -404,10 +400,10 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 	
 	 /**
-     * Retorna a data de início da lotação no formato dd/mm/aa HH:MI:SS,
+     * Retorna a data de inicio da lotacao no formato dd/mm/aa HH:MI:SS,
      * por exemplo, 01/02/10 14:10:00.
      * 
-     * @return Data de início da pessoa no formato dd/mm/aa HH:MI:SS, por
+     * @return Data de inicio da pessoa no formato dd/mm/aa HH:MI:SS, por
      *         exemplo, 01/02/10 14:10:00.
      * 
      */
@@ -421,10 +417,10 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
     }
 
     /**
-     * Retorna a data de fim da lotação no formato dd/mm/aa HH:MI:SS,
+     * Retorna a data de fim da lotacao no formato dd/mm/aa HH:MI:SS,
      * por exemplo, 01/02/10 14:10:00.
      * 
-     * @return Data de início da fim no formato dd/mm/aa HH:MI:SS, por
+     * @return Data de inicio da fim no formato dd/mm/aa HH:MI:SS, por
      *         exemplo, 01/02/10 14:10:00.
      * 
      */

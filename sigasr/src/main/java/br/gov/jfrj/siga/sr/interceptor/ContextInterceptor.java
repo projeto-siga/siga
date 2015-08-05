@@ -6,49 +6,55 @@ import org.hibernate.Session;
 
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
+import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.core.InterceptorStack;
 import br.com.caelum.vraptor.interceptor.Interceptor;
 import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.com.caelum.vraptor.resource.ResourceMethod;
 import br.com.caelum.vraptor.util.jpa.extra.ParameterLoaderInterceptor;
-import br.gov.jfrj.siga.model.ActiveRecord;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.sr.dao.SrDao;
-import br.gov.jfrj.siga.sr.model.SrConfiguracaoBL;
+import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import br.gov.jfrj.siga.sr.model.Sr;
 import br.gov.jfrj.siga.vraptor.ParameterOptionalLoaderInterceptor;
 
-/**
- * Interceptor que inicia a instancia do DAO a ser utilizado pelo sistema. O DAO deve ser utilizado quando se deseja realizar operacoes quando nao se pode utilizar o {@link ActiveRecord}.
- * 
- * @author db1.
- *
- */
 @RequestScoped
-@Intercepts(before = { ParameterLoaderInterceptor.class, ParameterOptionalLoaderInterceptor.class })
+@Intercepts(before = { ParameterLoaderInterceptor.class,
+		ParameterOptionalLoaderInterceptor.class })
 public class ContextInterceptor implements Interceptor {
 
-	private EntityManager em;
+	private final static ThreadLocal<EntityManager> emByThread = new ThreadLocal<EntityManager>();
 
-	public ContextInterceptor(EntityManager em) {
-		this.em = em;
+	private final static ThreadLocal<Result> resultByThread = new ThreadLocal<Result>();
+
+	public ContextInterceptor(EntityManager em, Result result) throws Exception{
+		ContextoPersistencia.setEntityManager(em);
+		resultByThread.set(result);
+		CpDao.freeInstance();
+		CpDao.getInstance((Session) em.getDelegate(), ((Session) em
+				.getDelegate()).getSessionFactory().openStatelessSession());
+		HibernateUtil.setSessao((Session)em.getDelegate());
+		Sr.getInstance().getConf().limparCacheSeNecessario();
+
 	}
 
-	@Override
-	public void intercept(InterceptorStack stack, ResourceMethod method, Object resourceInstance) throws InterceptionException {
-		try {
-			ContextoPersistencia.setEntityManager(em);
-			SrDao.freeInstance();
-			SrDao.getInstance((Session) em.getDelegate(), ((Session) em.getDelegate()).getSessionFactory().openStatelessSession());
-			//SrConfiguracaoBL.get().inicializarCache();
-			
-			stack.next(method, resourceInstance);
-		} catch (Exception e) {
-			throw new InterceptionException(e);
-		} 
+	static public EntityManager em() {
+		return emByThread.get();
+	}
+
+	static public Result result() {
+		return resultByThread.get();
 	}
 
 	@Override
 	public boolean accepts(ResourceMethod method) {
-		return Boolean.TRUE;
+		return false;
 	}
+
+	@Override
+	public void intercept(InterceptorStack stack, ResourceMethod method,
+			Object resourceInstance) throws InterceptionException {
+		return;
+	}
+
 }

@@ -752,7 +752,7 @@
 								name="dtDocString" value="${dtDocString}"
 								onblur="javascript:verifica_data(this,0);" /> &nbsp; Data
 								Final: <input type="text" name="dtDocFinalString"
-								value="${dtDocString}"
+								value="${dtDocFinalString}"
 								onblur="javascript:verifica_data(this,0);" /></td>
 						</tr>
 

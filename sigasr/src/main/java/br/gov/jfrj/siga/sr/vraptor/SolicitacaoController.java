@@ -485,7 +485,11 @@ public class SolicitacaoController extends SrController {
     @SuppressWarnings("unchecked")
     @Path("/buscar")
     public void buscar(SrSolicitacaoFiltro filtro, String propriedade, boolean popup) throws Exception {
-        SrSolicitacaoListaVO solicitacaoListaVO;
+        
+    	if (filtro == null)
+    		filtro = new SrSolicitacaoFiltro();
+    	
+    	SrSolicitacaoListaVO solicitacaoListaVO;
         try {
             if (filtro.isPesquisar()) {
                 filtro.carregarSelecao();

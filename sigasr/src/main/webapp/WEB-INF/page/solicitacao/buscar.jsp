@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Cadastro de Solicitação">
+<siga:pagina titulo="Pesquisar Solicitações">
 
 <jsp:include page="../main.jsp"></jsp:include>
 
@@ -110,7 +110,7 @@
 	                        <td>
 	                           <select name="filtro.idListaPrioridade" id="filtroidListaPrioridade" style="width:250px;">
 	                               <option value="-1" ${-1 == filtro.idListaPrioridade ? 'selected' : ''}>Qualquer Uma</option>
-	                               <option value="" ${0 == filtro.idListaPrioridade ? 'selected' : ''}>Nenhuma</option>
+	                               <option value="0" ${0 == filtro.idListaPrioridade ? 'selected' : ''}>Nenhuma</option>
 	                               <c:forEach items="${listasPrioridade}" var="item">
 	                                   <option value="${item.idLista}" ${item.idLista == filtro.idListaPrioridade ? 'selected' : ''}>${item.nomeLista }</option>
 	                               </c:forEach>

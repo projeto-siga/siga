@@ -864,8 +864,8 @@
 		
 		//if (row[colunas.idFuncao] != '')
 	    	params += '&permissao.funcaoConfianca.id=' + row[colunas.idFuncao];
-		if(row[colunas.idTipoPerm] == '')
-			row[colunas.idTipoPerm] = 0;
+		//if(row[colunas.idTipoPerm] == '')
+		//	row[colunas.idTipoPerm] = 0;
 		params += '&permissao.id=' + row[colunas.idTipoPerm];
 	
 		if ($("#idLista").val() != undefined && $("#idLista").val() != '')

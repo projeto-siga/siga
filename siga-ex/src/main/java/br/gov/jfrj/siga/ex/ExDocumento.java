@@ -2478,7 +2478,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	public void setConteudoBlobHtmlString(final String s) throws Exception {
 		final String sHtml = (new ProcessadorHtml()).canonicalizarHtml(s,
 				false, true, false, false, false);
-		setConteudoBlob("doc.htm", sHtml.getBytes("ISO-8859-1"));
+		if (sHtml != null)
+			setConteudoBlob("doc.htm", sHtml.getBytes("ISO-8859-1"));
+		else
+			setConteudoBlob("doc.htm", null);
 	}
 
 	public void setConteudoBlobPdf(final byte[] conteudo) throws Exception {

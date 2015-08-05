@@ -1,6 +1,18 @@
 /**
  * 
  */
+
+function testpdf(x) {
+	padrao = /\.pdf/;
+	a = x.arquivo.value;
+	OK = padrao.exec(a);
+	if (a != '' && !OK) {
+		window.alert("Somente é permitido anexar arquivo PDF!");
+		x.arquivo.value = '';
+		x.arquivo.focus();
+	}
+}
+
 // <c:set var="url" value="editar" />
 function sbmt(id) {
 

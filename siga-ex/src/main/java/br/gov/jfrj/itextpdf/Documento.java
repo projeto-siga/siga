@@ -1312,12 +1312,16 @@ public class Documento {
 						+ "\" target=\"_blank\">");
 				sb.append(an.getNome());
 				sb.append("</a>");
-				if (((ExMovimentacao) an.getArquivo()).getDescrMov() != null)
-					if (an.getArquivo() instanceof ExMovimentacao) {
+				if (an.getArquivo() instanceof ExMovimentacao) {
+					if (((ExMovimentacao) an.getArquivo()).getDescrMov() != null)
 						sb.append(": "
 								+ ((ExMovimentacao) an.getArquivo())
 										.getDescrMov());
-					}
+				} else {
+					if (((ExDocumento) an.getArquivo()).getDescrDocumento() != null)
+						sb.append(": "
+								+ ((ExDocumento) an.getArquivo()).getDescrDocumento());
+				}
 
 				sb.append("</div>");
 			}

@@ -23,7 +23,8 @@
 <script type="text/javascript">
 	var iframeids = [ "maincntnt" ]
 	var iframehide = "no"
-	var getFFVersion = navigator.userAgent.substring(navigator.userAgent.indexOf("Firefox")).split("/")[1]
+	var getFFVersion = navigator.userAgent.substring(
+			navigator.userAgent.indexOf("Firefox")).split("/")[1]
 	var FFextraHeight = parseFloat(getFFVersion) >= 0.1 ? 3 : 0
 	var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 	if (is_chrome) {
@@ -103,31 +104,36 @@
 
 		<p class="gt-table-action-list">
 			<siga:links inline="${true}">
-				<a name="inicio" style="float: right; padding-right: 5pt;" class="once" href="#final">
-					<img src="/siga/css/famfamfam/icons/arrow_down.png" style="margin-right: 5px;">
-						Ir para o Final
-					</a>
-				<siga:link icon="application_view_list" classe="once" title="Visualizar&nbsp;Movimentações" url="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}" test="${true}" />
-				<siga:link icon="wrench" title="Preferência:" test="${true}" url="#"/>
-				<input type="radio" id="radioHTML" name="formato" value="html" checked="checked" onclick="exibir(htmlAtual,pdfAtual,'');">
+				<a name="inicio" style="float: right; padding-right: 5pt;"
+					class="once" href="#final"> <img
+					src="/siga/css/famfamfam/icons/arrow_down.png"
+					style="margin-right: 5px;"> Ir para o Final
+				</a>
+				<siga:link icon="application_view_list" classe="once"
+					title="Visualizar&nbsp;Movimentações"
+					url="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}"
+					test="${true}" />
+				<siga:link icon="wrench" title="Preferência:" test="${true}" url="#" />
+				<input type="radio" id="radioHTML" name="formato" value="html"
+					checked="checked" onclick="exibir(htmlAtual,pdfAtual,'');">
 					&nbsp;HTML
 				</input>
 
-				<input type="radio" id="radioPDF" name="formato" value="pdf" onclick="exibir(htmlAtual,pdfAtual,'');">
+				<input type="radio" id="radioPDF" name="formato" value="pdf"
+					onclick="exibir(htmlAtual,pdfAtual,'');">
 					&nbsp;PDF - 
-					<a id="pdflink">
-						abrir&nbsp;
-					</a>
+					<a id="pdflink"> abrir&nbsp; </a>
 				</input>
 
-				<input type="radio" id="radioPDFSemMarcas" name="formato" value="pdfsemmarcas" onclick="exibir(htmlAtual,pdfAtual,'semmarcas/');">
+				<input type="radio" id="radioPDFSemMarcas" name="formato"
+					value="pdfsemmarcas"
+					onclick="exibir(htmlAtual,pdfAtual,'semmarcas/');">
 				&nbsp;PDF sem marcas - 
-				<a id="pdfsemmarcaslink">
-					abrir&nbsp;
-				</a>
+				<a id="pdfsemmarcaslink"> abrir&nbsp; </a>
 				</input>
 
-				<input type="checkbox" id="TelaCheia" name="telacheia"	value="telacheia" " onclick="javascript: telaCheia(this.checked);">
+				<input type="checkbox" id="TelaCheia" name="telacheia"
+					value="telacheia" " onclick="javascript: telaCheia(this.checked);">
 					&nbsp;Tela cheia
 				</input>
 			</siga:links>
@@ -168,8 +174,7 @@
 							</c:if> <a
 							title="${fn:substring(tooltipResumo,0,fn:length(tooltipResumo)-4)}"
 							href="javascript:exibir('${arqNumerado.referenciaHtml}','${arqNumerado.referenciaPDF}','')">${arqNumerado.nome}</a>
-							<c:set var="tooltipResumo" value="" />
-						</td>
+							<c:set var="tooltipResumo" value="" /></td>
 						<td align="center">${arqNumerado.arquivo.lotacao.sigla}</td>
 						<td align="center">${arqNumerado.paginaInicial}</td>
 					</tr>
@@ -180,18 +185,19 @@
 
 					<c:set var="arquivo" value="${arqNumerado}" scope="request" />
 					<%
-				ExArquivo arq = ((ExArquivoNumerado) request.getAttribute("arquivo")).getArquivo();
-			
-				if (arq instanceof ExMovimentacao) {
-					request.setAttribute("mov", (ExMovimentacao) arq);
+						ExArquivo arq = ((ExArquivoNumerado) request
+									.getAttribute("arquivo")).getArquivo();
+
+							if (arq instanceof ExMovimentacao) {
+								request.setAttribute("mov", (ExMovimentacao) arq);
 					%>
 					<c:if
 						test="${mov.exTipoMovimentacao.id == 2 && !empty mov.descrMov}">
 						<c:set var="possuiResumo" value="sim" />
 					</c:if>
 					<%
-				}
-				%>
+						}
+					%>
 
 				</c:forEach>
 				<tr>
@@ -221,7 +227,8 @@
 			style="margin: 0px; padding: 0px; border: 0px; clear: both;">
 			<iframe style="visibility: visible; margin: 0px; padding: 0px;"
 				name="painel" id="painel" src="" align="right" width="100%"
-				onload="resize();" frameborder="0" scrolling="auto"></iframe>
+				onload="$(document).ready(function () {resize();});" frameborder="0"
+				scrolling="auto"></iframe>
 		</div>
 
 		<div style="margin: 0px; padding: 0px; border: 0px; clear: both;">
@@ -251,6 +258,7 @@
 				+ "&semmarcas=1";
 	}
 
+	//Nato: convem remover as outras maneiras de chamar o resize() e deixar apenas o jquery.
 	function exibir(refHTML, refPDF, semMarcas) {
 		var ifr = document.getElementById('painel');
 		var ifrp = document.getElementById('paipainel');
@@ -280,6 +288,11 @@
 		pdfAtual = refPDF;
 
 		fixlinks(refHTML, refPDF);
+		$('#painel').load(function() {
+			setTimeout(function() {
+				resize();
+			}, 100);
+		});
 	}
 
 	exibir(window.htmlAtual, window.pdfAtual);

@@ -24,7 +24,7 @@
 		</h2>
 				
 		<div class="gt-content-box gt-for-table">
-			<form id="frm" name="frm" theme="simple" method="post">
+			<form id="frm" name="frm" theme="simple" method="post" enctype="multipart/form-data">
 				<input type="hidden" id="idTamanhoMaximoDescricao" name="exDocumentoDTO.tamanhoMaximoDescricao" value="${exDocumentoDTO.tamanhoMaximoDescricao}" />
 				<input type="hidden" id="alterouModelo" name="alterouModelo" />
 				<input type="hidden" name="postback" value="1" />
@@ -197,7 +197,7 @@
 					</tr>
 					<tr>
 						<c:choose>
-							<c:when test='${exDocumentoDTO.tipoDocumento == "externo"}'>
+							<c:when test='${exDocumentoDTO.tipoDocumento == "externo" or exDocumentoDTO.tipoDocumento == "capturado"}'>
 								<td>Subscritor:</td>
 								<input type="hidden" name="campos" value="nmSubscritorExt" />
 								<td colspan="3">
@@ -334,6 +334,7 @@
 							</c:otherwise>
 						</c:choose>
 						
+						<c:if test='${exDocumentoDTO.tipoDocumento != "capturado" }'>
 						<tr>
 							<td>Preenchimento Automático:</td>
 							<input type="hidden" name="campos" value="preenchimento" />
@@ -356,6 +357,7 @@
 								<input type="button" value="Adicionar" name="btnAdicionar" onclick="javascript:adicionaPreench()">
 							</td>
 						</tr>
+					</c:if>
 
 						
 					</c:if>
@@ -407,8 +409,18 @@
 							<span><b>(preencher o campo acima com palavras-chave, sempre usando substantivos, gênero masculino e singular)</b></span>
 						</td>
 					</tr>
+					
+					<c:if test='${exDocumentoDTO.tipoDocumento == "capturado"}'>
+						<tr>
+							<input type="hidden" name="campos" value="descrDocumento" />
+							<td>Arquivo PDF:</td>
+							<td colspan="3">
+								<input type="file" name="arquivo" accept="application/pdf" onchange="testpdf(this.form)" />
+							</td>
+						</tr>
+					</c:if>
 				
-					<c:if test='${exDocumentoDTO.tipoDocumento == "interno"}'>
+					<c:if test='${exDocumentoDTO.tipoDocumento == "interno" or exDocumentoDTO.tipoDocumento == "capturado"}'>
 						<c:if test="${exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker' or not empty exDocumentoDTO.modelo.nmArqMod}">
 							<tr class="header">
 								<td colspan="4">Dados complementares</td>

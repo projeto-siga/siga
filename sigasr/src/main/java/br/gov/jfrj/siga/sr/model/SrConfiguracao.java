@@ -356,7 +356,12 @@ public class SrConfiguracao extends CpConfiguracao {
         sb.append(lista.getHisIdIni());
 
         if (!mostrarDesativado)
-            sb.append(" and conf.hisDtFim is null ");
+            sb.append(" and conf.hisDtFim is null");
+        else {
+            sb.append(" and conf.idConfiguracao in (");
+            sb.append(" SELECT max(idConfiguracao) as idConfiguracao FROM ");
+            sb.append(" SrConfiguracao GROUP BY hisIdIni) ");
+        }
 
         sb.append(" order by conf.orgaoUsuario");
 
@@ -371,7 +376,12 @@ public class SrConfiguracao extends CpConfiguracao {
         sb.append(lista.getHisIdIni());
 
         if (!mostrarDesativado)
-            sb.append(" and conf.hisDtFim is null ");
+            sb.append(" and conf.hisDtFim is null");
+        else {
+            sb.append(" and conf.idConfiguracao in (");
+            sb.append(" SELECT max(idConfiguracao) as idConfiguracao FROM ");
+            sb.append(" SrConfiguracao GROUP BY hisIdIni) ");
+        }
 
         sb.append(" order by conf.orgaoUsuario");
 

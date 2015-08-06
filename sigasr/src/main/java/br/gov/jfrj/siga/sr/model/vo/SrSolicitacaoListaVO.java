@@ -9,7 +9,7 @@ import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrPrioridadeSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.util.JsonUtil;
-import br.gov.jfrj.siga.sr.util.SigaPlayUtil;
+import br.gov.jfrj.siga.sr.util.SrViewUtil;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
 
 import com.google.gson.Gson;
@@ -94,7 +94,7 @@ public class SrSolicitacaoListaVO {
             if (podeRemover || podePriorizar)
                 colunasVO.add(new ColunasVO("", "botaoRemoverPriorizar", "gt-celula-nowrap solicitacao-dados solicitacao-remover", LARGURA_COLUNA_REMOVER_PRIORIZAR));
         } else {
-        	colunasVO.add(new ColunasVO(SigaPlayUtil.botaoExpandir(), "botaoExpandir", "hide-sort-arrow bt-expandir-tabela gt-celula-nowrap details-control"));
+        	colunasVO.add(new ColunasVO(SrViewUtil.botaoExpandir(), "botaoExpandir", "hide-sort-arrow bt-expandir-tabela gt-celula-nowrap details-control"));
 			colunasVO.addAll(getColunasEmComum());	
         }
 

@@ -52,7 +52,7 @@ public class ObjetoObjectInstantiator implements Instantiator<Object> {
 				if (p.getValue() != null
 						&& p.getValue().length() > 0) {
 					allNull = false;
-					if (keyName.equals(p.getName())) 
+					if (keyName.equals(p.getName()) || keyName.equals(p.getName().replaceAll("\\[\\d+\\]", ""))) 
 						id = Long.valueOf(p.getValue());
 				}
 			}

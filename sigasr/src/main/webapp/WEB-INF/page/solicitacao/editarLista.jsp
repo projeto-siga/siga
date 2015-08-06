@@ -987,13 +987,10 @@
 		return descricao;
 	}
 	function getDescricaoTipoPermissao() {
-		var descricao = $('#ulPermissoes').find("li:first-child").find("span:eq(0)").html();
-		
-		if (descricao != null || descricao != undefined) {
-			return descricao + " ...";
-		}
-		else
-			descricao = '';
+		var descricao = '';
+		$('#ulPermissoes').find("li").each(function(i){ 
+			descricao += (i > 0 ? '; ': '') + $(this).find("span:eq(0)").html();
+		});
 		
 		return descricao;
 	}
@@ -1031,7 +1028,7 @@
 	        var jDivs=$(this).find("span");
 	        
 	        // Atualiza a string serializada
-	    	params += '&tipoPermissaoSet[' + i + '].id=' + jDivs[0].id;
+	    	params += '&permissao.tipoPermissaoSet[' + i + '].id=' + jDivs[0].id;
 	    });
 		return params;
 	}

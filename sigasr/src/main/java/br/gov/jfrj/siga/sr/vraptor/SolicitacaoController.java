@@ -153,10 +153,8 @@ public class SolicitacaoController extends SrController {
 
     @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/gravarPermissaoUsoLista")
-    public void gravarPermissaoUsoLista(SrConfiguracao permissao, List<SrTipoPermissaoLista> tipoPermissaoSet) throws Exception {
-    	permissao.setTipoPermissaoSet(tipoPermissaoSet);
+    public void gravarPermissaoUsoLista(SrConfiguracao permissao) throws Exception {
         permissao.salvarComoPermissaoUsoLista();
-
         result.use(Results.http()).body(permissao.toVO().toJson());
     }
 

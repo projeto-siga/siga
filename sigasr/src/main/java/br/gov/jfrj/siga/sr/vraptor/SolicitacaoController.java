@@ -25,6 +25,7 @@ import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.validator.ValidationMessage;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
@@ -267,6 +268,8 @@ public class SolicitacaoController extends SrController {
     @Path("/exibirLista/{id}")
     public void exibirLista(Long id) throws Exception {
         SrLista lista = SrLista.AR.findById(id);
+        if (lista == null)
+        	throw new AplicacaoException("Lista não encontrada");
         List<CpOrgaoUsuario> orgaos = ContextoPersistencia.em().createQuery("from CpOrgaoUsuario").getResultList();
         List<CpComplexo> locais = CpComplexo.AR.all().fetch();
         List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.AR.all().fetch();

@@ -12,7 +12,6 @@ import br.com.caelum.vraptor.interceptor.Interceptor;
 import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.com.caelum.vraptor.resource.ResourceMethod;
 import br.com.caelum.vraptor.util.jpa.extra.ParameterLoaderInterceptor;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.sr.model.Sr;
@@ -30,12 +29,8 @@ public class ContextInterceptor implements Interceptor {
 	public ContextInterceptor(EntityManager em, Result result) throws Exception{
 		ContextoPersistencia.setEntityManager(em);
 		resultByThread.set(result);
-		CpDao.freeInstance();
-		CpDao.getInstance((Session) em.getDelegate(), ((Session) em
-				.getDelegate()).getSessionFactory().openStatelessSession());
-		HibernateUtil.setSessao((Session)em.getDelegate());
+		HibernateUtil.configurarHibernate((Session)em.getDelegate());
 		Sr.getInstance().getConf().limparCacheSeNecessario();
-
 	}
 
 	static public EntityManager em() {

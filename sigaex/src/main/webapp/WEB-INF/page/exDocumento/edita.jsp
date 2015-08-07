@@ -69,7 +69,7 @@
 						<td width="10%">Origem:</td>
 						<td width="10%">
 						
-							<select  name="exDocumentoDTO.idTpDoc" onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();" cssStyle="${estiloTipo}">
+							<select  name="exDocumentoDTO.idTpDoc" onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();" style="${estiloTipo}">
 								<c:forEach items="${exDocumentoDTO.tiposDocumento}" var="item">
 									<option value="${item.idTpDoc}" ${item.idTpDoc == exDocumentoDTO.idTpDoc ? 'selected' : ''}>
 										${item.descrTipoDocumento}
@@ -293,7 +293,7 @@
 						<tr>
 							<td>Espécie:</td>
 							<td colspan="3">
-								<select  name="exDocumentoDTO.idFormaDoc" onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();" cssStyle="${estiloTipo}">
+								<select  name="exDocumentoDTO.idFormaDoc" onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();" style="${estiloTipo}">
 									<c:forEach items="${exDocumentoDTO.formasDoc}" var="item">
 										<option value="${item.idFormaDoc}" ${item.idFormaDoc == exDocumentoDTO.idFormaDoc ? 'selected' : ''}>
 											${item.descrFormaDoc}
@@ -312,7 +312,7 @@
 									<td colspan="3">
 										<siga:div id="modelo" depende="forma">
 											
-											<select  name="exDocumentoDTO.idMod" onchange="document.getElementById('alterouModelo').value='true';sbmt();" cssStyle="${estiloTipo}">
+											<select  name="exDocumentoDTO.idMod" onchange="document.getElementById('alterouModelo').value='true';sbmt();" style="${estiloTipo}">
 												<c:forEach items="${exDocumentoDTO.modelos}" var="item">
 													<option value="${item.idMod}" ${item.idMod == exDocumentoDTO.idMod ? 'selected' : ''}>
 														${item.nmMod}

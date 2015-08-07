@@ -258,7 +258,7 @@ public class SubstituicaoController extends SigaController {
 
 			subst.setDtIniRegistro(new Date());
 
-			if (substituicao.getIdSubstituicao() != null) {
+			if (substituicao != null && substituicao.getIdSubstituicao() != null) {
 				DpSubstituicao substAntiga = dao().consultar(substituicao.getIdSubstituicao(), DpSubstituicao.class, false);
 				substAntiga.setDtFimRegistro(new Date());
 				substAntiga = dao().gravar(substAntiga);

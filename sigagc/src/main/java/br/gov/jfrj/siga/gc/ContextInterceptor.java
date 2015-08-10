@@ -29,12 +29,10 @@ public class ContextInterceptor implements Interceptor {
 
 	public ContextInterceptor(EntityManager em, Result result) throws Exception{
 		ContextoPersistencia.setEntityManager(em);
-		resultByThread.set(result);
-		CpDao.freeInstance();
-		CpDao.getInstance((Session) em.getDelegate(), ((Session) em
-				.getDelegate()).getSessionFactory().openStatelessSession());
-		HibernateUtil.configurarHibernate((Session)em.getDelegate());
-		Cp.getInstance().getConf().limparCacheSeNecessario();
+ 		resultByThread.set(result);
+ 		CpDao.freeInstance();
+ 		CpDao.getInstance((Session) em.getDelegate(), ((Session) em
+ 				.getDelegate()).getSessionFactory().openStatelessSession());
 	}
 
 	static public EntityManager em() {

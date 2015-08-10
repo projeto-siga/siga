@@ -20,14 +20,21 @@ public class GcThreadFilter extends ThreadFilter {
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
+		EntityManager em = Persistence.createEntityManagerFactory("default")
+				.createEntityManager();
+		ContextoPersistencia.setEntityManager(em);
+
+		em.getTransaction().begin();
+
 		try {
 			chain.doFilter(request, response);
+			em.getTransaction().commit();
 		} catch (Exception e) {
+			em.getTransaction().rollback();
 			throw new ServletException(e);
 		} finally {
+			em.close();
 			ContextoPersistencia.setEntityManager(null);
-			HibernateUtil.fechaSessaoSeEstiverAberta();
-			CpDao.freeInstance();
 		}
 	}
 }

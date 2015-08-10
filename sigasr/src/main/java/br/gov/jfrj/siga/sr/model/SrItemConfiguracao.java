@@ -468,51 +468,6 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 				fator.setItemConfiguracao(this);
 				fator.save();
 			}
-
-		// DB1: precisa salvar item a item
-		if (this.getDesignacoes() != null) {
-			for (SrConfiguracao designacao : this.getDesignacoes()) {
-				// se for uma configuraÃ§Ã£o herdada
-				if (designacao.isHerdado()) {
-					// se estiver marcada como "nÃ£o Herdar"
-					if (!designacao.isUtilizarItemHerdado()) {
-						// cria uma nova entrada na tabela, para que seja
-						// ignorada nas prÃ³ximas vezes
-						SrConfiguracaoIgnorada.createNew(this, designacao)
-								.save();
-					}
-
-					// verifica se existia entrada para "nÃ£o Herdar", e remove
-					// (usuÃ¡rio marcou para usar heranÃ§a)
-					else {
-						List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada
-								.findByConfiguracao(designacao);
-
-						for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
-							// se a configuraÃ§Ã£o for do Item ou de um de seus
-							// histÃ³ricos, remove
-							if (igItem != null
-									&& this.getHistoricoItemConfiguracao() != null
-									&& this.getHistoricoItemConfiguracao()
-											.size() > 0) {
-								for (SrItemConfiguracao itemHist : this
-										.getHistoricoItemConfiguracao()) {
-									if (itemHist.getId().equals(
-											igItem.getItemConfiguracao()
-													.getId())) {
-										igItem.delete();
-										break;
-									}
-								}
-							}
-						}
-					}
-				} else {
-					designacao.salvarComoDesignacao();
-				}
-			}
-		}
-		ContextoPersistencia.em().flush();
 	}
 
 	public List<SrItemConfiguracao> getItemETodosDescendentes() {

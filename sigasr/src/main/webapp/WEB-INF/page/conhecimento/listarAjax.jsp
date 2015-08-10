@@ -17,10 +17,10 @@
 </div>	
 
 
-<script>
+<script id="gc">
 	<c:choose>		
 		<c:when test="${itemConfiguracao.idItemConfiguracao != null}">
-			SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledgeInplace?tags=${itemConfiguracao.gcTagAbertura}&testarAcesso=true&popup=true&msgvazio=&titulo=${itemConfiguracao.tituloItemConfiguracao}&ts=${currentTimeMillis}",document.getElementById('gc-ancora-item'));
+			SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&msgvazio=&titulo=${itemConfiguracao.tituloItemConfiguracao}&ts=${currentTimeMillis}${itemConfiguracao.gcTagAbertura}",document.getElementById('gc-ancora-item'));
 		</c:when>
 		<c:otherwise>
 			$('#gc-ancora-item').html('');
@@ -29,7 +29,7 @@
 	
 	<c:choose>
 		<c:when test="${itemConfiguracao.idItemConfiguracao != null and acao.idAcao != null}">
-			SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledgeInplace?tags=${solicitacao.gcTagAbertura}&testarAcesso=true&popup=true&msgvazio=&titulo=${acao.tituloAcao}%20-%20${itemConfiguracao.tituloItemConfiguracao}&ts=${currentTimeMillis}",document.getElementById('gc-ancora-item-acao'));
+			SetInnerHTMLFromAjaxResponse("/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&msgvazio=&titulo=${acao.tituloAcao}%20-%20${itemConfiguracao.tituloItemConfiguracao}&ts=${currentTimeMillis}${itemConfiguracao.gcTagAbertura}",document.getElementById('gc-ancora-item-acao'));
 		</c:when>
 		<c:otherwise>
 			$('#gc-ancora-item-acao').html('');

@@ -26,6 +26,7 @@
 						<td>
 							<input type="text" name="tituloAcao" value="${filtro.tituloAcao}" />
 							<input type="hidden" name="nome" value="${nome}" />
+							<input type="hidden" name="propriedade" value="${propriedade}" />
 						</td>
 					</tr>
 					<tr>

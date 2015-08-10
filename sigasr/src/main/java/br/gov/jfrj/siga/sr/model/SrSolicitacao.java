@@ -66,6 +66,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -1533,7 +1534,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     private void checarEPreencherCampos() throws Exception {
 
         if (getCadastrante() == null)
-            throw new Exception("Cadastrante n\u00E3o pode ser nulo");
+            throw new AplicacaoException("Cadastrante n\u00E3o pode ser nulo");
 
         if (getDtReg() == null)
             setDtReg(new Date());
@@ -1541,7 +1542,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         if (getArquivo() != null) {
             double lenght = (double) getArquivo().getBlob().length / 1024 / 1024;
             if (lenght > 2)
-                throw new IllegalArgumentException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) \u00E9 maior que o m\u00E1ximo permitido (2MB)");
+                throw new AplicacaoException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) \u00E9 maior que o m\u00E1ximo permitido (2MB)");
         }
 
         if (getLotaCadastrante() == null || getLotaCadastrante().getId() == null)
@@ -1586,7 +1587,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
         // sÃÂ³ valida o atendente caso nÃÂ£o seja rascunho
         if (!isRascunho() && getDesignacao() == null)
-            throw new Exception("N\u00E3o foi encontrado nenhum atendente designado " + "para esta solicita\u00E7\u00E3o. Sugest\u00E3o: alterar item de " + "configura\u00E7\u00E3o e/ou a\u00E7\u00E3o");
+            throw new AplicacaoException("N\u00E3o foi encontrado nenhum atendente designado " + "para esta solicita\u00E7\u00E3o. Sugest\u00E3o: alterar item de " + "configura\u00E7\u00E3o e/ou a\u00E7\u00E3o");
 
         if (isFilha()) {
             if (getDescrSolicitacao() != null && (getDescrSolicitacao().equals(getSolicitacaoPai().getDescrSolicitacao()) || getDescrSolicitacao().trim().isEmpty()))
@@ -1601,7 +1602,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public void desfazerUltimaMovimentacao(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
         if (!podeDesfazerMovimentacao(cadastrante, lotaTitular))
-            throw new Exception(OPERACAO_NAO_PERMITIDA);
+            throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
 
         SrMovimentacao movimentacao = getUltimaMovimentacaoCancelavel();
 
@@ -2067,10 +2068,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public void incluirEmLista(SrLista lista, DpPessoa pess, DpLotacao lota, DpPessoa pessTitular, DpLotacao lotaTitular, SrPrioridade prioridade, boolean naoReposicionarAutomatico) throws Exception {
         if (lista == null)
-            throw new IllegalArgumentException("Lista n\u00E3o informada");
+            throw new AplicacaoException("Lista n\u00E3o informada");
 
         if (isEmLista(lista))
-            throw new IllegalArgumentException("Lista " + lista.getNomeLista() + " j\u00E1 cont\u00E9m a solicita\u00E7\u00E3o " + getCodigo());
+            throw new AplicacaoException("Lista " + lista.getNomeLista() + " j\u00E1 cont\u00E9m a solicita\u00E7\u00E3o " + getCodigo());
 
         lista.incluir(this, prioridade, naoReposicionarAutomatico);
         ContextoPersistencia.em().flush();
@@ -2078,7 +2079,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public void retirarDeLista(SrLista lista, DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
         if (lista == null)
-            throw new IllegalArgumentException("Lista n\u00E3o informada");
+            throw new AplicacaoException("Lista n\u00E3o informada");
 
         lista.retirar(this, cadastrante, lotaCadastrante);
     }
@@ -2096,10 +2097,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public void fechar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String motivo) throws Exception {
 
         if (isPai() && !isAFechar())
-            throw new Exception("Opera\u00E7\u00E3o n\u00E3o permitida. Necess\u00E1rio fechar toda solicita\u00E7\u00E3o " + "filha criada partir dessa que deseja fechar.");
+            throw new AplicacaoException("Opera\u00E7\u00E3o n\u00E3o permitida. Necess\u00E1rio fechar toda solicita\u00E7\u00E3o " + "filha criada partir dessa que deseja fechar.");
 
         if ((cadastrante != null) && !podeFechar(cadastrante, lotaTitular))
-            throw new Exception(OPERACAO_NAO_PERMITIDA);
+            throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
 
         SrMovimentacao mov = new SrMovimentacao(this);
         mov.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_FECHAMENTO));
@@ -2131,7 +2132,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public void responderPesquisa(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, Map<Long, String> respostaMap) throws Exception {
         if (!podeResponderPesquisa(titular, lotaTitular))
-            throw new Exception(OPERACAO_NAO_PERMITIDA);
+            throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         movimentacao.setDescrMovimentacao("Avalia\u00E7\u00E3o realizada.");
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_AVALIACAO));
@@ -2147,11 +2148,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public void reabrir(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
         if (!podeReabrir(titular, lotaTitular))
-            throw new Exception(OPERACAO_NAO_PERMITIDA);
+            throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
         DpLotacao lotacaoAtendente = getLotaAtendente();
 
         if (lotacaoAtendente.isFechada())
-                throw new Exception("Operaï¿½ï¿½o nï¿½o permitida: A Lotaï¿½ï¿½o atendente (" + lotacaoAtendente.getSiglaCompleta() +
+                throw new AplicacaoException("Operaï¿½ï¿½o nï¿½o permitida: A Lotaï¿½ï¿½o atendente (" + lotacaoAtendente.getSiglaCompleta() +
                                 ") foi extinta. Necessï¿½rio abrir nova solicitaï¿½ï¿½o. Crie um vinculo dessa solicitaï¿½ï¿½o com a nova, atravï¿½s do recurso Vincular");
         
         reInserirListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
@@ -2179,7 +2180,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public void deixarPendente(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrTipoMotivoPendencia motivo, String calendario, String horario,
             String detalheMotivo) throws Exception {
         if (!podeDeixarPendente(titular, lotaTitular))
-            throw new Exception(OPERACAO_NAO_PERMITIDA);
+            throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
         SrMovimentacao movimentacao = new SrMovimentacao(this);
 
         if (calendario != null && !"".equals(calendario)) {
@@ -2207,7 +2208,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public void alterarPrioridade(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrPrioridade prioridade) throws Exception{
     	if (!podeAlterarPrioridade(titular, lotaTitular))
-            throw new Exception("Operaï¿½ï¿½o nï¿½o permitida");
+            throw new AplicacaoException("Operaï¿½ï¿½o nï¿½o permitida");
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE));
         movimentacao.setDescrMovimentacao("Prioridade tecnica: " + prioridade.getDescPrioridade());
@@ -2217,7 +2218,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public void terminarPendencia(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String descricao, Long idMovimentacao) throws Exception {
         if (!podeTerminarPendencia(titular, lotaTitular))
-            throw new Exception(OPERACAO_NAO_PERMITIDA);
+            throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA));
 
@@ -2236,7 +2237,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public void cancelar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
         if (!podeCancelar(titular, lotaTitular))
-            throw new Exception(OPERACAO_NAO_PERMITIDA);
+            throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO));
         movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
@@ -2248,14 +2249,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public void juntar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrSolicitacao solRecebeJuntada, String justificativa) throws Exception {
         if ((cadastrante != null) && !podeJuntar(titular, lotaTitular))
-            throw new Exception(OPERACAO_NAO_PERMITIDA);
+            throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
         if (solRecebeJuntada.equivale(this))
-            throw new Exception("N\u00E3o \u00E9 possivel juntar uma solicita\u00E7\u00E3o a si mesma.");
+            throw new AplicacaoException("N\u00E3o \u00E9 possivel juntar uma solicita\u00E7\u00E3o a si mesma.");
         // Edson: comentei porque, como o ObjetoObjectInstantiator executa o detach na solRecebeJuntada, dava lazy exception abaixo
         // if (solRecebeJuntada.isJuntada() && solRecebeJuntada.getSolicitacaoPrincipal().equivale(this))
-        //    throw new Exception("N\u00E3o e possivel realizar juntada circular.");
+        //    throw new AplicacaoException("N\u00E3o e possivel realizar juntada circular.");
         if (solRecebeJuntada.isFilha() && solRecebeJuntada.getSolicitacaoPai().equivale(this))
-            throw new Exception("N\u00E3o e possivel juntar uma solicita\u00E7\u00E3o a uma das suas filhas. Favor realizar o processo inverso.");
+            throw new AplicacaoException("N\u00E3o e possivel juntar uma solicita\u00E7\u00E3o a uma das suas filhas. Favor realizar o processo inverso.");
 
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_JUNTADA));
@@ -2266,7 +2267,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public void desentranhar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String justificativa) throws Exception {
         if (!podeDesentranhar(titular, lotaTitular))
-            throw new Exception(OPERACAO_NAO_PERMITIDA);
+            throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_DESENTRANHAMENTO));
         movimentacao.setDescrMovimentacao(justificativa);
@@ -2280,9 +2281,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public void vincular(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrSolicitacao solRecebeVinculo, String justificativa) throws Exception {
         if ((cadastrante != null) && !podeVincular(titular, lotaTitular))
-            throw new Exception(OPERACAO_NAO_PERMITIDA);
+            throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
         if (solRecebeVinculo.equivale(this))
-            throw new Exception("N\u00E3o e poss\u00EDvel vincular uma solicita\u00E7\u00E3o a si mesma.");
+            throw new AplicacaoException("N\u00E3o e poss\u00EDvel vincular uma solicita\u00E7\u00E3o a si mesma.");
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_VINCULACAO));
         movimentacao.setSolicitacaoReferencia(solRecebeVinculo);

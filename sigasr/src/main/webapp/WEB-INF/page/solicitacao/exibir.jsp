@@ -214,7 +214,6 @@
 										</td>
 										<script language="javascript">
 											var descricao = document.getElementById('descrMovimentacaoTexto${movimentacao.idMovimentacao}');
-											console.log('descrMovimentacaoTexto${movimentacao.idMovimentacao}'+descricao.innerHTML);
 											descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
 										</script>
 									</tr>

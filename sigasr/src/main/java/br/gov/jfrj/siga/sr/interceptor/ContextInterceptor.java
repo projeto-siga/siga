@@ -33,7 +33,11 @@ public class ContextInterceptor implements Interceptor {
 		CpDao.freeInstance();
 		CpDao.getInstance((Session) em.getDelegate(), ((Session) em
 				.getDelegate()).getSessionFactory().openStatelessSession());
+		
+		//Edson: não sei por que o HibernateUtil precisa de uma sessao. Os Dao's
+				//que chamam essa classe já têm o objeto sessão 
 		HibernateUtil.configurarHibernate((Session)em.getDelegate());
+		
 		Sr.getInstance().getConf().limparCacheSeNecessario();
 	}
 

@@ -281,7 +281,7 @@ public class SolicitacaoController extends SrController {
         String jsonPrioridades = SrPrioridade.getJSON().toString();
 
         if (!lista.podeConsultar(getLotaTitular(), getTitular())) {
-            throw new Exception("Exibi\u00e7\u00e3o n\u00e3o permitida");
+            throw new AplicacaoException("Exibi\u00e7\u00e3o n\u00e3o permitida");
         }
 
         try {
@@ -381,12 +381,12 @@ public class SolicitacaoController extends SrController {
     public void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         if (solicitacao == null)
-            throw new Exception("Solicita\u00e7\u00e3o n\u00e3o encontrada");
+            throw new AplicacaoException("Solicita\u00e7\u00e3o n\u00e3o encontrada");
         else
             solicitacao = solicitacao.getSolicitacaoAtual();
 
         if (solicitacao == null)
-            throw new Exception("Esta solicita\u00e7\u00e3o foi exclu\u00edda");
+            throw new AplicacaoException("Esta solicita\u00e7\u00e3o foi exclu\u00edda");
 
         SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 
@@ -617,7 +617,7 @@ public class SolicitacaoController extends SrController {
     @Path("/exibir/incluirEmListaGravar")
     public void incluirEmListaGravar(Long idSolicitacao, Long idLista, SrPrioridade prioridade, boolean naoReposicionarAutomatico) throws Exception {
         if (idLista == null) {
-            throw new Exception("Selecione a lista para inclus\u00e3o da solicita\u00e7\u00e3o");
+            throw new AplicacaoException("Selecione a lista para inclus\u00e3o da solicita\u00e7\u00e3o");
         }
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(idSolicitacao);
         SrLista lista = SrLista.AR.findById(idLista);
@@ -688,7 +688,7 @@ public class SolicitacaoController extends SrController {
     public void escalonarGravar(Long id, SrItemConfiguracao itemConfiguracao, SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, Long idDesignacao, SrTipoMotivoEscalonamento motivo, String descricao,
             Boolean criaFilha, Boolean fechadoAuto) throws Exception {
         if (itemConfiguracao == null || itemConfiguracao.getId() == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
-            throw new Exception("Opera\u00e7\u00e3o n\u00e3o permitida. Necessario informar um item de configura\u00e7\u00e3o e uma a\u00e7\u00e3o.");
+            throw new AplicacaoException("Opera\u00e7\u00e3o n\u00e3o permitida. Necessario informar um item de configura\u00e7\u00e3o e uma a\u00e7\u00e3o.");
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
 
         DpLotacao atendenteNaoDesignado = null;

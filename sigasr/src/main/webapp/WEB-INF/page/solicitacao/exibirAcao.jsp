@@ -82,7 +82,7 @@ function carregarLotacaoDaAcao(){
     </div>
     <!-- CONHECIMENTOS RELACIONADOS -->
     <script type="text/javascript">
-    var url = "/../sigagc/app/knowledgeInplace?tags=${solicitacao.itemConfiguracao.gcTagAbertura}&testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=&titulo=${solicitacao.itemConfiguracao.tituloItemConfiguracao}";
+    var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=&titulo=${solicitacao.itemConfiguracao.tituloItemConfiguracao}${solicitacao.itemConfiguracao.gcTagAbertura}";
     Siga.ajax(url, null, "GET", function(response){
         $("#gc-ancora-item").html(response);
     });

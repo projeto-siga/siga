@@ -7,9 +7,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-<siga:pagina titulo="Documento"
-						 onLoad="javascript: TestarAssinaturaDigital();"
-						 incluirJs="/sigaex/javascript/assinatura.js" compatibilidade="IE=EmulateIE9">
+<siga:pagina titulo="Documento" onLoad="javascript: TestarAssinaturaDigital();" compatibilidade="IE=EmulateIE9">
 	<script type="text/javascript" language="Javascript1.1">
 		/*  converte para maiúscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {
@@ -92,42 +90,10 @@
 					</c:if>
 					<c:set var="lote" value="false" />
 				</div>
-
-				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-					<div id="capicom-div">
-						<c:if test="${not autenticando}">
-							<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Documento</a>
-						</c:if>
-						<c:if test="${autenticando}">
-							<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar Documento</a>
-						</c:if>
-					</div>
-					<p id="ie-missing" style="display: none;">
-						A assinatura digital utilizando padrão do SIGA-DOC só poderá ser
-						realizada no Internet Explorer. No navegador atual, apenas a
-						assinatura com <i>Applet Java</i> é permitida.
-					</p>
-					<p id="capicom-missing" style="display: none;">
-						Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://drive.google.com/file/d/0B_WTuFAmL6ZERGhIczRBS0ZMaVE/view">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.
-					</p>
-					<script type="text/javascript">
-						if (window.navigator.userAgent.indexOf("MSIE ") > 0
-								|| window.navigator.userAgent
-										.indexOf(" rv:11.0") > 0) {
-							document.getElementById("capicom-div").style.display = "block";
-							document.getElementById("ie-missing").style.display = "none";
-						} else {
-							document.getElementById("capicom-div").style.display = "none";
-							document.getElementById("ie-missing").style.display = "block";
-						}
-					</script>
-				</c:if>
-
-				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-					${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,pageContext.request.scheme,pageContext.request.serverName,pageContext.request.serverPort,urlPath,jspServer,nextURL,botao,lote)}
-				</c:if>
+				
+				<tags:assinatura_botoes
+					autenticar="${autenticando}"
+					assinarComSenha="${f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"/>
 			</div>
 		</div>
 	</div>
@@ -182,19 +148,5 @@
 	</c:if>
 
 
-
-	<a id="bot-assinar" href="#"
-		onclick="javascript: AssinarDocumentos(false, true);"
-		class="gt-btn-large gt-btn-left">Assinar com Applet</a>
-
-	<Applet Code="bluecrystal.applet.sign.SignApplet.class"
-		archive="/bluecrystal.example.web/bluc_p11.jar" width=1 Height=1
-		id="signer">
-		<PARAM name="module"
-			value="aetpkss1.dll;eTPKCS11.dll;asepkcs.dll;libaetpkss.dylib;libeTPkcs11.dylib" />
-		<PARAM name="otherPath" value="/usr/local/lib" />
-	</Applet>
-	 
-	<script src="/sigaex/javascript/assinatura-digital.js"></script>
-
+	<tags:assinatura_rodape/>
 </siga:pagina>

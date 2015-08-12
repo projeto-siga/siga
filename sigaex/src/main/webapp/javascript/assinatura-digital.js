@@ -537,7 +537,7 @@ function Erro(err) {
 function ExecutarAssinarDocumentos(Copia) {
 	process.reset();
 
-	if (Copia == "true") {
+	if (Copia || Copia == "true") {
 		Copia = "true";
 		// alert("Iniciando conferência")
 		process.push(function() {
@@ -672,8 +672,8 @@ function GravarAssinatura(url, datatosend) {
 		data : datatosend,
 		async : false,
 		error : function(xhr) {
-			result = TrataErro(xhr.responseText ? xhr.responseText : xhr, "");
-			result = "Erro na gravação da assinatura. " + result;
+			//result = TrataErro(xhr.responseText ? xhr.responseText : xhr, "");
+			result = "Erro na gravação da assinatura. " + xhr.responseText;
 		}
 	});
 	return result;

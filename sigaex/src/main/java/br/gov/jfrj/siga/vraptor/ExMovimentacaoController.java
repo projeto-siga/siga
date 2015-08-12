@@ -1848,8 +1848,9 @@ public class ExMovimentacaoController extends ExController {
 					Ex.getInstance().getBL().assinarDocumento(getCadastrante(), getLotaTitular(), mob.doc(), dt, assinatura, certificado, tpMovAssinatura));
 
 		} catch (final Exception e) {
-			result.include("err", e.getMessage());
-			result.use(Results.page()).forwardTo("/WEB-INF/page/erro.jsp");	
+			//result.include("err", e.getMessage());
+			result.use(Results.http()).body("ERRO - " + e.getMessage()).setStatusCode(500);	
+			//result.use(Results.page()).forwardTo("/WEB-INF/page/erro.jsp");	
 			return;
 		}
 

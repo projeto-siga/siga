@@ -35,7 +35,11 @@ public class ObjetoObjectInstantiator implements Instantiator<Object> {
 
 	public Object instantiate(final Target<?> target,
 			final Parameters parameters) {
-		expectingAConcreteTarget(target);
+
+		//Edson: comentei porque, em alguns casos (por exemplo, CpConfiguracao.CpGrupo), 
+		//o tipo da propriedade é uma abstract mas vem do formulário o id de um objeto de 
+		//uma subclasse (por exemplo, CpPerfil)
+		//expectingAConcreteTarget(target);
 
 		final Parameters parametersForTarget = parameters.focusedOn(target);
 

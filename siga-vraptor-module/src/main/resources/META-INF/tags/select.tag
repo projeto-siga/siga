@@ -32,7 +32,7 @@
 <select id="${id}" name="${name}" <c:if test="${not empty onchange}">onchange="${onchange}"</c:if> class="select-siga" style="${style != null ? style : ''}">
 <c:choose>
     <c:when test="${ehEnum}">
-        <c:if test="${not empty headerKey}">
+        <c:if test="${not empty headerKey || not empty headerValue}">
             <option value="${headerKey}"
                     ${headerKey == value ? 'selected' : ''}
                     >${headerValue}</option>  
@@ -45,7 +45,7 @@
     </c:when>
     
     <c:otherwise>
-		<c:if test="${not empty headerKey}">
+		<c:if test="${not empty headerKey || not empty headerValue}">
 		    <option value="${headerKey}"
 		            ${headerKey == value ? 'selected' : ''}
 		            >${headerValue}</option>  

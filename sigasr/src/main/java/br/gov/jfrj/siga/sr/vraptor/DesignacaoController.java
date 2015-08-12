@@ -85,6 +85,7 @@ public class DesignacaoController extends SrController {
 			return;
 
 		designacao.salvarComoDesignacao();
+		
 		result.use(Results.http()).body(designacao.toJson());
 	}
 

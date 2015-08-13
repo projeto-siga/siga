@@ -151,8 +151,10 @@ var providerIttruP11 = {
 		try {
 			var to = typeof (document.getElementById("signer"));
 			if (to == 'function' || to == 'object') {
-				ittruSignApplet = document.signer;
-				return true;
+				if (document.signer.isActive()) {
+					ittruSignApplet = document.signer;
+					return true;
+				}
 			}
 		} catch (Err) {
 		}

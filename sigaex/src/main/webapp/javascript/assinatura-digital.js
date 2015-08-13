@@ -154,10 +154,6 @@ var providerIttruP11 = {
 				ittruSignApplet = document.signer;
 				return true;
 			}
-			if ($('#signer').get(0).ready() == 'yes') {
-				ittruSignApplet = document.signer;
-				return true;
-			}
 		} catch (Err) {
 		}
 		return false;

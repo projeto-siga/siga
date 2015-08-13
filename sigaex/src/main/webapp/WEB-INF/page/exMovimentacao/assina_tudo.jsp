@@ -9,21 +9,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <siga:pagina
-	titulo="Assinatura em Lote de Documentos, Despachos e Anexos"
-	onLoad="javascript: TestarAssinaturaDigital();"
-	incluirJs="/sigaex/javascript/assinatura.js" compatibilidade="IE=EmulateIE9">
-
-	<script type="text/javascript" language="Javascript1.1">
-		/*  converte para maiúscula a sigla do estado  */
-		function converteUsuario(nomeusuario) {
-			re = /^[a-zA-Z]{2}\d{3,6}$/;
-			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
-			tmp = nomeusuario.value;
-			if (tmp.match(re) || tmp.match(ret2)) {
-				nomeusuario.value = tmp.toUpperCase();
-			}
-		}
-	</script>
+	titulo="Assinatura em Lote de Documentos, Despachos e Anexos" compatibilidade="IE=EmulateIE9">
 
 	<script type="text/javascript" language="Javascript1.1"
 		src="<c:url value="/staticJavascript.action"/>"></script>

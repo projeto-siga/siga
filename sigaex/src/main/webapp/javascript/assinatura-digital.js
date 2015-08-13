@@ -58,24 +58,18 @@ function AssinarDocumentos(copia, politica) {
 	}
 
 	if (tipo == 1) {
-		alert("assinar token");
-
 		provider.inicializar(function() {
 			ExecutarAssinarDocumentos(copia);
 		});
 	}
 
 	if (tipo == 2) {
-		alert("assinar com senha");
-
 		providerPassword.inicializar(function() {
 			ExecutarAssinarDocumentos(copia);
 		});
 	}
 
 	if (tipo == 3) {
-		alert("assinar hibrido");
-
 		providerPassword.inicializar(function() {
 			if ("OK" == provider.inicializar(function() {
 				ExecutarAssinarDocumentos(copia);
@@ -646,8 +640,6 @@ function ExecutarAssinarDocumentos(Copia) {
 
 		process.push("Copia=" + Copia + ";");
 		if (!o.usePassword) {
-			alert("autenticar = "
-					+ (o.hasOwnProperty('autenticar') ? o.autenticar : Copia));
 			process
 					.push("gNome='"
 							+ o.nome
@@ -779,8 +771,7 @@ function identificarOperacoes() {
 				operacao.usePassword = oChkPwd.checked;
 			}
 
-			var oChk = document.getElementsByName("ad_chk_"
-					+ operacao.codigo)[0];
+			var oChk = document.getElementsByName("ad_chk_" + operacao.codigo)[0];
 			if (oChk == null) {
 				operacao.enabled = true;
 			} else {
@@ -793,7 +784,7 @@ function identificarOperacoes() {
 				operacao.autenticar = oChkAut.checked;
 				if (operacao.autenticar)
 					operacao.enabled = true;
-			} 
+			}
 
 			gOperacoes.push(operacao);
 		}

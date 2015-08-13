@@ -7,8 +7,7 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-<siga:pagina titulo="Documento" popup="true"
-			onLoad="javascript: TestarAssinaturaDigital();" compatibilidade="IE=EmulateIE9">
+<siga:pagina titulo="Documento" popup="true" compatibilidade="IE=EmulateIE9">
 	<script type="text/javascript" language="Javascript1.1">
 		/*  converte para maiúscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {
@@ -294,22 +293,12 @@ function visualizarImpressao(via) {
 			</form>
 			<div style="padding-left: 10;">
 				<div id="dados-assinatura" style="visible: hidden">
-					<input type="hidden" name="pdfchk_${mov.idMov}" id="pdfchk_${mov.idMov}" value="${mov.referencia}" />
-					<input type="hidden" name="urlchk_${mov.idMov}" id="urlchk_${mov.idMov}" value="/app/arquivo/exibir?arquivo=${mov.nmPdf}" />
-
-					<c:set var="jspServer" value="${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
-					<c:set var="jspServerSenha" value="${request.contextPath}/app/expediente/mov/assinar_mov_login_senha_gravar" />
-					<c:set var="nextURL" value="${request.contextPath}/app/expediente/mov/fechar_popup?sigla=${mob.sigla}" />
-					<c:set var="urlPath" value="${request.contextPath}" />
-					
-					<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />
-					<input type="hidden" id="jspServerSenha" name="jspServerSenha" value="${jspServerSenha}" />
-					<input type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" />
-					<input type="hidden" id="urlpath" name="urlpath" value="${urlPath}" />
-					<c:set var="url">${request.requestURL}</c:set>
-					<c:set var="uri" value="${request.requestURI}" />
-					<c:set var="urlBase" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
-					<input type="hidden" id="urlbase" name="urlbase" value="${urlBase}" />
+					<input type="hidden" name="ad_url_base" value="${fn:substring(pageContext.request.requestURL.toString(), 0, fn:length(pageContext.request.requestURL.toString()) - fn:length(pageContext.request.requestURI.toString()))}" />
+					<input type="hidden" name="ad_url_next" value="/sigaex/app/expediente/mov/fechar_popup?sigla=${mob.sigla}" />
+					<input type="hidden" name="ad_descr_0" value="${mov.referencia}" /> 
+					<input type="hidden" name="ad_url_pdf_0" value="/sigaex/app/arquivo/exibir?arquivo=${mov.nmPdf}" />
+					<input type="hidden" name="ad_url_post_0" value="/sigaex/app/expediente/mov/assinar_mov_gravar" />
+					<input type="hidden" name="ad_url_post_password_0" value="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" />
 					
 					<c:if test="${not autenticando}">
 						<c:choose>

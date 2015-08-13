@@ -18,70 +18,11 @@
 			class="gt-btn-medium gt-btn-left">Autenticar</a>
 	</c:if>
 
-	<%--
-	<p class="gt-cancel" style="height: 38px; padding-top: 10px;">
-		<label> <input type="checkbox" name="bot-com-senha" /> Com
-			Senha
-		</label>
-	</p>
-	 --%>
-
 	<c:if test="${assinarComSenha || autenticarComSenha}">
-		<a id="bot-assinar-senha" href="#"
-			onclick="javascript: assinarComSenha();"
-			class="gt-btn-medium gt-btn-left">Usar Senha</a>
-
-		<div id="dialog-form" title="Assinar/Autenticar com Senha">
-			<form id="form-assinarSenha" method="post"
-				action="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar">
-				<input type="hidden" id="id" name="id" value="${idMovimentacao}" />
-				<input type="hidden" id="tipoAssinaturaMov" name="tipoAssinaturaMov"
-					value="A" />
-				<fieldset>
-					<label>Matrícula</label> <br /> <input id="nomeUsuarioSubscritor"
-						type="text" name="nomeUsuarioSubscritor"
-						class="text ui-widget-content ui-corner-all"
-						onblur="javascript:converteUsuario(this)" /><br /> <br /> <label>Senha</label>
-					<br /> <input type="password" id="senhaUsuarioSubscritor"
-						name="senhaUsuarioSubscritor"
-						class="text ui-widget-content ui-corner-all" autocomplete="off" />
-				</fieldset>
-			</form>
-		</div>
-
-		<script> 
-			    dialog = $("#dialog-form").dialog({
-			      autoOpen: false,
-			      height: 210,
-			      width: 350,
-			      modal: true,
-			      buttons: {
-			    	  <c:if test="${assinarComSenha}">
-			          	"Assinar": assinarGravar,
-			          </c:if>	
-			    	  <c:if test="${autenticarComSenha}">
-				          "Autenticar": conferirCopiaGravar,
-			          </c:if>	
-			          "Cancelar": function() {
-			            dialog.dialog( "close" );
-			          }
-			      },
-			      close: function() {
-			        
-			      }
-			    });
-			
-			    function assinarComSenha() {
-			       dialog.dialog( "open" );
-			    }
-	
-			    function assinarGravar() {
-			    	AssinarDocumentosSenha('false', this);
-				}
-	
-			    function conferirCopiaGravar() {
-			    	AssinarDocumentosSenha('true', this);
-				}
-			  </script>
+		<p class="gt-cancel" style="height: 38px; padding-top: 10px;">
+			<label> <input type="checkbox" name="ad_password_0" /> Com
+				Senha
+			</label>
+		</p>
 	</c:if>
 </div>

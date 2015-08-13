@@ -2886,7 +2886,7 @@ public class ExBL extends CpBL {
 		} catch (final Exception e) {
 			log.error("Erro ao assinar movimentação.", e);
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao assinar movimentação.", 0, e);
+			throw new AplicacaoException("Erro ao assinar movimentação. " + e.getMessage(), 0, e);
 		}
 
 	}

@@ -12,6 +12,10 @@ var gPolitica = false;
 var gCopia;
 var gNome;
 var gUrlDocumento;
+var gUrlPost;
+var gOperacoes;
+var gLogin;
+var gPassword;
 
 var ittruSignAx;
 var ittruSignApplet;
@@ -43,14 +47,43 @@ function TestarAssinaturaDigital() {
 function AssinarDocumentos(copia, politica) {
 	if (politica != undefined)
 		gPolitica = politica;
-	
-	if (!TestarAssinaturaDigital())
-		return;
 
-	if ("OK" == provider.inicializar(function() {
-		ExecutarAssinarDocumentos(copia);
-	}))
-		ExecutarAssinarDocumentos(copia);
+	identificarOperacoes();
+
+	var tipo = verificarTipoDeAssinatura();
+
+	if (tipo == 1 || tipo == 3) {
+		if (!TestarAssinaturaDigital())
+			return;
+	}
+
+	if (tipo == 1) {
+		alert("assinar token");
+
+		provider.inicializar(function() {
+			ExecutarAssinarDocumentos(copia);
+		});
+	}
+
+	if (tipo == 2) {
+		alert("assinar com senha");
+
+		providerPassword.inicializar(function() {
+			ExecutarAssinarDocumentos(copia);
+		});
+	}
+
+	if (tipo == 3) {
+		alert("assinar hibrido");
+
+		providerPassword.inicializar(function() {
+			if ("OK" == provider.inicializar(function() {
+				ExecutarAssinarDocumentos(copia);
+			})) {
+				ExecutarAssinarDocumentos(copia);
+			}
+		});
+	}
 }
 
 //
@@ -125,8 +158,12 @@ var providerIttruP11 = {
 			var to = typeof (document.getElementById("signer"));
 			if (to == 'function' || to == 'object') {
 				ittruSignApplet = document.signer;
+				return true;
 			}
-			return true;
+			if ($('#signer').get(0).ready() == 'yes') {
+				ittruSignApplet = document.signer;
+				return true;
+			}
 		} catch (Err) {
 		}
 		return false;
@@ -389,6 +426,43 @@ if ((window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAge
 //
 var providerPassword = {
 
+	inicializar : function(cont) {
+		try {
+			this.dialog = $(
+					'<div id="dialog-form" title="Assinar/Autenticar com Senha"><fieldset><label>Matrícula</label> <br /> <input id="nomeUsuarioSubscritor" type="text" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)" /><br /> <br /> <label>Senha</label><br /> <input type="password" id="senhaUsuarioSubscritor" class="text ui-widget-content ui-corner-all" autocomplete="off" /></fieldset></div>')
+					.dialog({
+						title : "Identificação",
+						width : '50%',
+						height : 'auto',
+						resizable : false,
+						autoOpen : true,
+						position : {
+							my : "center top+25%",
+							at : "center top",
+							of : window
+						},
+						modal : true,
+						closeText : "hide",
+						buttons : {
+							"OK" : function() {
+								gLogin = $("#nomeUsuarioSubscritor").val();
+								gPassword = $("#senhaUsuarioSubscritor").val();
+								$(this).dialog('destroy').remove();
+								cont();
+							},
+							"Cancelar" : function() {
+								$(this).dialog('destroy').remove();
+							}
+						},
+						close : function() {
+						}
+					});
+			return "AGUARDE";
+		} catch (Err) {
+			return Err.description;
+		}
+	},
+
 }
 
 //
@@ -553,108 +627,104 @@ function ExecutarAssinarDocumentos(Copia) {
 
 	var oUrlPost, oNextUrl, oUrlBase, oUrlPath, oNome, oUrl, oChk;
 
-	oUrlPost = document.getElementById("jspserver");
-	if (oUrlPost == null) {
-		alert("element jspserver does not exist");
-		return;
-	}
-	oUrlNext = document.getElementById("nexturl");
-	if (oUrlNext == null) {
-		alert("element nexturl does not exist");
-		return;
-	}
-	oUrlBase = document.getElementById("urlbase");
+	oUrlBase = document.getElementsByName("ad_url_base")[0];
 	if (oUrlBase == null) {
-		alert("element urlbase does not exist");
-		return;
-	}
-	oUrlPath = document.getElementById("urlpath");
-	if (oUrlPath == null) {
-		alert("element urlpath does not exist");
+		alert("element ad_url_base does not exist");
 		return;
 	}
 
-	var Codigo;
-	var NodeList = document.getElementsByTagName("INPUT");
-	for (var i = 0, len = NodeList.length; i < len; i++) {
-		var Elem = NodeList[i];
-		if (Elem.name.substr(0, 7) == "pdfchk_") {
-			Codigo = Elem.name.substr(7);
-			// alert(Codigo)
+	oUrlNext = document.getElementsByName("ad_url_next")[0];
+	if (oUrlNext == null) {
+		alert("element ad_url_next does not exist");
+		return;
+	}
 
-			var oNome = document.getElementsByName("pdfchk_" + Codigo)[0];
-			if (oNome == null) {
-				alert("element pdfchk_" + Codigo + " does ! exist");
-				return;
-			}
-			oUrl = document.getElementsByName("urlchk_" + Codigo)[0];
-			oChk = document.getElementsByName("chk_" + Codigo)[0];
+	for (var i = 0, len = gOperacoes.length; i < len; i++) {
+		var o = gOperacoes[i];
+		if (!o.enabled)
+			continue;
 
-			var b;
-			if (oChk == null) {
-				b = true;
-			} else {
-				b = oChk.checked;
-			}
+		process.push("Copia=" + Copia + ";");
+		if (!o.usePassword) {
+			alert("autenticar = "
+					+ (o.hasOwnProperty('autenticar') ? o.autenticar : Copia));
+			process
+					.push("gNome='"
+							+ o.nome
+							+ "'; gAutenticar = "
+							+ (o.hasOwnProperty('autenticar') ? o.autenticar
+									: Copia)
+							+ "; gUrlPost = '"
+							+ oUrlBase.value
+							+ o.urlPost
+							+ "'; gUrlDocumento = '"
+							+ oUrlBase.value
+							+ o.urlPdf
+							+ "&semmarcas=1'; if (gPolitica){gUrlDocumento = gUrlDocumento + '&certificadoB64=' + encodeURIComponent(gCertificadoB64);};");
+			process.push(function() {
+				Log(o.nome + ": Buscando no servidor...")
+			});
+			process.push(function() {
+				gDocumento = Conteudo(gUrlDocumento);
+				if (typeof gDocumento == "string"
+						&& gDocumento.indexOf("Não") == 0)
+					return gDocumento;
+			});
 
-			process.push("Copia=" + Copia + ";");
-			if (b) {
-				process
-						.push("gNome='"
-								+ oNome.value
-								+ "'; gUrlDocumento = '"
-								+ oUrlBase.value
-								+ oUrlPath.value
-								+ oUrl.value
-								+ "&semmarcas=1'; if (gPolitica){gUrlDocumento = gUrlDocumento + '&certificadoB64=' + encodeURIComponent(gCertificadoB64);};");
-				process.push(function() {
-					Log(gNome + ": Buscando no servidor...")
-				});
-				process.push(function() {
-					gDocumento = Conteudo(gUrlDocumento);
-					if (typeof gDocumento == "string"
-							&& gDocumento.indexOf("Não") == 0)
-						return gDocumento;
-				});
+			var ret;
+			process.push(function() {
+				Log(o.nome + ": Assinando...")
+			});
+			process.push(function() {
+				gRet = provider.assinar(gDocumento)
+			});
+			process.push(function() {
+				Log(o.nome + ": Gravando assinatura de " + gRet.assinante)
+			});
 
-				var ret;
-				process.push(function() {
-					Log(gNome + ": Assinando...")
-				});
-				process.push(function() {
-					gRet = provider.assinar(gDocumento)
-				});
-				process.push(function() {
-					Log(gNome + ": Gravando assinatura de " + gRet.assinante)
-				});
+			process.push(function() {
+				var DadosDoPost = "sigla=" + encodeURIComponent(gNome)
+						+ "&copia=" + gAutenticar + "&assinaturaB64="
+						+ encodeURIComponent(gRet.assinaturaB64)
+						+ "&assinante=" + encodeURIComponent(gRet.assinante);
+				if (gPolitica) {
+					DadosDoPost = DadosDoPost + "&certificadoB64="
+							+ encodeURIComponent(gCertificadoB64);
+					DadosDoPost = DadosDoPost + "&atributoAssinavelDataHora="
+							+ gAtributoAssinavelDataHora;
+				}
 
-				process.push(function() {
-					var DadosDoPost = "sigla=" + encodeURIComponent(gNome)
-							+ "&copia=" + Copia + "&assinaturaB64="
-							+ encodeURIComponent(gRet.assinaturaB64)
-							+ "&assinante="
-							+ encodeURIComponent(gRet.assinante);
-					if (gPolitica) {
-						DadosDoPost = DadosDoPost + "&certificadoB64="
-								+ encodeURIComponent(gCertificadoB64);
-						DadosDoPost = DadosDoPost
-								+ "&atributoAssinavelDataHora="
-								+ gAtributoAssinavelDataHora;
-					}
+				// alert("oNome: " + oNome.value);
+				var aNome = gNome.split(":");
+				if (aNome.length == 2) {
+					// alert("id: " + aNome(1));
+					DadosDoPost = "id=" + aNome[1] + "&" + DadosDoPost;
+				}
 
-					// alert("oNome: " + oNome.value);
-					var aNome = gNome.split(":");
-					if (aNome.length == 2) {
-						// alert("id: " + aNome(1));
-						DadosDoPost = "id=" + aNome[1] + "&" + DadosDoPost;
-					}
+				Status = GravarAssinatura(gUrlPost, DadosDoPost);
+				return Status;
+			});
+		} else {
+			process.push(function() {
+				Log(o.nome + ": Gravando assinatura com senha de " + gLogin)
+			});
 
-					Status = GravarAssinatura(oUrlPost.value, DadosDoPost);
-					return Status;
-				});
-			}
+			process.push("gNome='" + o.nome + "'; gAutenticar = "
+					+ (o.hasOwnProperty('autenticar') ? o.autenticar : Copia)
+					+ "; gUrlPostPassword = '" + oUrlBase.value
+					+ o.urlPostPassword + "';");
+
+			process.push(function() {
+				var DadosDoPost = "sigla=" + o.nome + "&nomeUsuarioSubscritor="
+						+ gLogin + "&senhaUsuarioSubscritor=" + gPassword
+						+ "&copia=" + gAutenticar;
+				Status = GravarAssinatura(gUrlPostPassword, DadosDoPost);
+				return Status;
+			});
 		}
+
 	}
+
 	process.push(function() {
 		Log("Concluído, redirecionando...");
 	});
@@ -662,6 +732,72 @@ function ExecutarAssinarDocumentos(Copia) {
 		location.href = oUrlNext.value;
 	});
 	process.run();
+}
+
+// 1 = digital, 2 = com senha, 3 = híbrida
+function verificarTipoDeAssinatura() {
+	var usePassword = false;
+	var useToken = false;
+
+	for (var i = 0, len = gOperacoes.length; i < len; i++) {
+		if (gOperacoes[i].enabled) {
+			if (gOperacoes[i].usePassword)
+				usePassword = true;
+			else
+				useToken = true;
+		}
+	}
+	return (useToken ? 1 : 0) + (usePassword ? 2 : 0);
+}
+
+function identificarOperacoes() {
+	gOperacoes = [];
+
+	var NodeList = document.getElementsByTagName("INPUT");
+	for (var i = 0, len = NodeList.length; i < len; i++) {
+		var Elem = NodeList[i];
+		if (Elem.name.substr(0, 9) == "ad_descr_") {
+			var operacao = {};
+
+			operacao.codigo = Elem.name.substr(9);
+			operacao.nome = document.getElementsByName("ad_descr_"
+					+ operacao.codigo)[0].value;
+			operacao.urlPdf = document.getElementsByName("ad_url_pdf_"
+					+ operacao.codigo)[0].value;
+			operacao.urlPost = document.getElementsByName("ad_url_post_"
+					+ operacao.codigo)[0].value;
+			operacao.urlPostPassword = document
+					.getElementsByName("ad_url_post_password_"
+							+ operacao.codigo)[0].value;
+			operacao.usePassword = false;
+
+			var oChkPwd = document.getElementsByName("ad_password_"
+					+ operacao.codigo)[0];
+			if (oChkPwd == null) {
+				operacao.usePassword = false;
+			} else {
+				operacao.usePassword = oChkPwd.checked;
+			}
+
+			var oChk = document.getElementsByName("ad_chk_"
+					+ operacao.codigo)[0];
+			if (oChk == null) {
+				operacao.enabled = true;
+			} else {
+				operacao.enabled = oChk.checked;
+			}
+
+			var oChkAut = document.getElementsByName("ad_aut_"
+					+ operacao.codigo)[0];
+			if (oChkAut != null) {
+				operacao.autenticar = oChkAut.checked;
+				if (operacao.autenticar)
+					operacao.enabled = true;
+			} 
+
+			gOperacoes.push(operacao);
+		}
+	}
 }
 
 function GravarAssinatura(url, datatosend) {
@@ -672,7 +808,8 @@ function GravarAssinatura(url, datatosend) {
 		data : datatosend,
 		async : false,
 		error : function(xhr) {
-			//result = TrataErro(xhr.responseText ? xhr.responseText : xhr, "");
+			// result = TrataErro(xhr.responseText ? xhr.responseText : xhr,
+			// "");
 			result = "Erro na gravação da assinatura. " + xhr.responseText;
 		}
 	});
@@ -859,5 +996,15 @@ function WaitForAppletLoad(applet_id, attempts, delay, onSuccessCallback,
 						onSuccessCallback, onFailCallback);
 			}, delay);
 		}
+	}
+}
+
+/* converte para maiúscula a sigla do estado */
+function converteUsuario(nomeusuario) {
+	re = /^[a-zA-Z]{2}\d{3,6}$/;
+	ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
+	tmp = nomeusuario.value;
+	if (tmp.match(re) || tmp.match(ret2)) {
+		nomeusuario.value = tmp.toUpperCase();
 	}
 }

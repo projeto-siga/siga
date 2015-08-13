@@ -73,37 +73,9 @@ public class AcordoController extends SrController {
 
     @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/gravar")
-    public void gravarAcordo(SrAcordo acordo, List<SrAtributoAcordo> atributoAcordoSet, List<Integer> unidadeMedida) throws Exception {
-        if (acordo.getAtributoAcordoSet() != null)
-            acordo.getAtributoAcordoSet().clear();
-        if (isNotEmptyUnidadeMedida(unidadeMedida))
-            acordo.getAtributoAcordoSet().addAll(buscaAtributosAcordo(atributoAcordoSet, unidadeMedida));
-
+    public void gravarAcordo(SrAcordo acordo) throws Exception {
         acordo.salvarComHistorico();
         result.use(Results.http()).body(acordo.toJson());
-    }
-
-    private HashMap<Integer, CpUnidadeMedida> getUnidadesMedida(List<Integer> unidadeMedida) {
-        HashMap<Integer, CpUnidadeMedida> unidadesMedidaEncontradas = new HashMap<>();
-
-        for (int i = 0; i < unidadeMedida.size(); i++) {
-            CpUnidadeMedida cpUnidadeMedida = new CpUnidadeMedida();
-            cpUnidadeMedida.setIdUnidadeMedida(Long.valueOf(unidadeMedida.get(i)));
-            cpUnidadeMedida.setDescricao(SrUnidadeMedida.values()[unidadeMedida.get(i) - 1].getNome());
-            unidadesMedidaEncontradas.put(i, cpUnidadeMedida);
-        }
-        return unidadesMedidaEncontradas;
-    }
-
-    private List<SrAtributoAcordo> buscaAtributosAcordo(List<SrAtributoAcordo> atributoAcordo, List<Integer> unidadeMedida) {
-        HashMap<Integer, CpUnidadeMedida> unidadesMedidaEncontradas = getUnidadesMedida(unidadeMedida);
-
-        for (int i = 0; i < atributoAcordo.size(); i++) {
-            CpUnidadeMedida cpUnidadeMedida = unidadesMedidaEncontradas.get(i);
-            SrAtributoAcordo srAtributoAcordo = atributoAcordo.get(i);
-            srAtributoAcordo.setUnidadeMedida(cpUnidadeMedida);
-        }
-        return atributoAcordo;
     }
 
     private boolean isNotEmptyUnidadeMedida(List<Integer> unidadeMedida) {

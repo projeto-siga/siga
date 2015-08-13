@@ -26,5 +26,12 @@ public class CpUnidadeMedida extends AbstractCpUnidadeMedida {
 			return getDescricao() + "es";
 		return getDescricao() + "s";
 	}
+	
+	public void setId(Long id) {
+		setIdUnidadeMedida(id);
+	}
+	public Long getId() {
+		return getIdUnidadeMedida();
+	}
 
 }

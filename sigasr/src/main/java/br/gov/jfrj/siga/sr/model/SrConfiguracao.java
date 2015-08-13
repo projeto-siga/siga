@@ -102,12 +102,6 @@ public class SrConfiguracao extends CpConfiguracao {
     public SrConfiguracao() {
     }
 
-    public SrConfiguracao(DpPessoa solicitante, CpComplexo local, SrItemConfiguracao item) {
-        this.setDpPessoa(solicitante);
-        this.setComplexo(local);
-        this.itemConfiguracaoFiltro = item;
-    }
-
     public SrItemConfiguracao getItemConfiguracaoFiltro() {
         return itemConfiguracaoFiltro;
     }

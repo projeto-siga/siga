@@ -210,16 +210,13 @@
 		});
 
 		var orgaoUsuarioValue = $('#orgaoUsuario').find(":selected").val();
-		if(orgaoUsuarioValue != "") 
-		    $("input[name='designacao.orgaoUsuario.id']").val(orgaoUsuarioValue);
+		$("input[name='designacao.orgaoUsuario.id']").val(orgaoUsuarioValue);
 			
 		var complexoValue = $('#complexo').find(":selected").val();
-		if(complexoValue != "")
-		    $("input[name='designacao.complexo.id']").val(complexoValue);
+		$("input[name='designacao.complexo.id']").val(complexoValue);
 
 		var atendenteValue =$( "input[name='atendenteSel.id']" ).val();
-		if(atendenteValue != "") 
-		    $("input[name='designacao.atendente.id']").val(atendenteValue);
+		$("input[name='designacao.atendente.id']").val(atendenteValue);
 	}
 	
 	designacaoOpts = {

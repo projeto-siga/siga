@@ -194,7 +194,7 @@
 	var acordoService = new AcordoService(optsAcordo);
 	
 	acordoService.getId = function(acordo) {
-		return acordo.idAcordo || acordo['acordo.idAcordo'] || acordo['id'] || '';
+		return acordo.idAcordo || acordo['acordo.id'] || acordo['id'] || '';
 	}
 
 	acordoService.getRow = function(acordo) {
@@ -418,7 +418,7 @@
 
 	function removerItensLista(nomeLista) {
 		$("#"+nomeLista).find("li").each(function(i){
-            this.remove();
+            $(this).remove();
             $("#"+nomeLista)[0]["index"]--;
         });
     }

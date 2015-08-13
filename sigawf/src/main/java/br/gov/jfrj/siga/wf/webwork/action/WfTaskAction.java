@@ -706,10 +706,13 @@ public class WfTaskAction extends WfSigaActionSupport {
 	}
 	
 	private static boolean atorDeveReexecutarTarefa(DpPessoa ator, TaskInstance ti) {
-		DpLotacaoDaoFiltro lotflt = new DpLotacaoDaoFiltro();
-		lotflt.setSiglaCompleta(((PooledActor) ti.getPooledActors().toArray()[0]).getActorId());
-		DpLotacao lotacao = (DpLotacao) WfDao.getInstance().consultarPorSigla(lotflt);
-		return !ator.isFechada() && ator.getLotacao().equivale(lotacao);
+		if (ti != null && ti.getPooledActors() != null && ti.getPooledActors().size() > 0){
+			DpLotacaoDaoFiltro lotflt = new DpLotacaoDaoFiltro();
+			lotflt.setSiglaCompleta(((PooledActor) ti.getPooledActors().toArray()[0]).getActorId());
+			DpLotacao lotacao = (DpLotacao) WfDao.getInstance().consultarPorSigla(lotflt);
+			return !ator.isFechada() && ator.getLotacao().equivale(lotacao);
+		}
+		return false;
 	}
 
 

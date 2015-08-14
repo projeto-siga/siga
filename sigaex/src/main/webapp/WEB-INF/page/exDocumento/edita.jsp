@@ -195,6 +195,7 @@
 							<siga:selecao titulo="Documento Pai:" propriedade="mobilPai" inputName="exDocumentoDTO.mobilPai" tema="simple" modulo="sigaex" desativar="${exDocumentoDTO.desativarDocPai}" reler="sim" />
 						</td>
 					</tr>
+<c:if test='${exDocumentoDTO.tipoDocumento != "capturado" }'>
 					<tr>
 						<c:choose>
 							<c:when test='${exDocumentoDTO.tipoDocumento == "externo" or exDocumentoDTO.tipoDocumento == "capturado"}'>
@@ -285,7 +286,7 @@
 								</c:choose>
 							</siga:span>
 					</tr>
-
+</c:if>
 					<%--</c:if>--%>
 
 

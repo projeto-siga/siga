@@ -2223,7 +2223,12 @@ public class ExDocumentoController extends ExController {
 		if (exDocumentoDTO.getIdMod() != null && exDocumentoDTO.getIdMod() != 0) {
 			for (final DpLotacao lotacao : lotacaoSet) {
 				preench.setDpLotacao(lotacao);
-				exDocumentoDTO.getPreenchSet().addAll(dao().consultar(preench));
+				try {
+					exDocumentoDTO.getPreenchSet().addAll(dao().consultar(preench));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 

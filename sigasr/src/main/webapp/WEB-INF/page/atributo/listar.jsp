@@ -234,7 +234,7 @@
 	var atributoService = new AtributoService(opts);
 	
 	atributoService.getId = function(atributo) {
-		return atributo.idAtributo || atributo['atributo.idAtributo'];
+		return atributo.idAtributo || atributo['atributo.id'];
 	}
 	
 	atributoService.onRowClick = function(atributo) {
@@ -283,7 +283,7 @@
 
 	atributoService.serializar = function(obj) {
 		var query = BaseService.prototype.serializar.call(this, obj);
-		return query + "&atributo=" + this.getId(obj);
+		return query + "&atributo.id=" + this.getId(obj);
 	}
 	
 	atributoService.buscarAssociacoes = function(assoc) {

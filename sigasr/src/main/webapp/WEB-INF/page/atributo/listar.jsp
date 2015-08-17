@@ -283,7 +283,9 @@
 
 	atributoService.serializar = function(obj) {
 		var query = BaseService.prototype.serializar.call(this, obj);
-		return query + "&atributo.id=" + this.getId(obj);
+		if (query.indexOf('atributo.id=')<=-1)
+			query + "&atributo.id=" + this.getId(obj);
+		return query;
 	}
 	
 	atributoService.buscarAssociacoes = function(assoc) {

@@ -58,6 +58,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 import org.jboss.logging.Logger;
@@ -492,13 +493,18 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public List<SrAtributoSolicitacao> getAtributoSolicitacaoSet() {
-        if (meuAtributoSolicitacaoSet == null || meuAtributoSolicitacaoSet.isEmpty()) {
-            if (isFilha())
-                return getSolicitacaoPai().getAtributoSolicitacaoSet();
-            else
-                return new ArrayList<SrAtributoSolicitacao>();
-        } else
-            return meuAtributoSolicitacaoSet;
+    	try{
+    		if (meuAtributoSolicitacaoSet != null && !meuAtributoSolicitacaoSet.isEmpty())
+    			return meuAtributoSolicitacaoSet;
+    		if (isFilha())
+    			return getSolicitacaoPai().getAtributoSolicitacaoSet();
+    	} catch(LazyInitializationException lie){
+    		//Edson: isso está ruim. Durante o preenchimento do formulário de edição, acontecem
+    		//alguns requests nos quais o meuAtributoSolicitacaoSet não pode ser acessado
+    		//por causa do ObjetoInstantiator.detach(). Este try catch impede o lazy exception mas
+    		//apaga os atributos já preenchidos pelo usuário. O mesmo vale para o getAtributoSolicitacaoMap()
+    	}
+    	return new ArrayList<SrAtributoSolicitacao>();
     }
 
     public String getDtRegString() {
@@ -835,6 +841,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             meuAtributoSolicitacaoSet = new ArrayList<SrAtributoSolicitacao>();
 
             for (SrAtributoSolicitacaoMap atribSolicitacao : atributoSolicitacaoMap) {
+            	if (atribSolicitacao.getIdAtributo() == null)
+            		continue;
             	SrAtributo att = SrAtributo.AR.findById(atribSolicitacao.getIdAtributo());
 	            SrAtributoSolicitacao attSolicitacao = new SrAtributoSolicitacao(att, atribSolicitacao.getValorAtributo(), this);
 	            meuAtributoSolicitacaoSet.add(attSolicitacao);
@@ -853,18 +861,25 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public List<SrAtributoSolicitacaoMap> getAtributoSolicitacaoMap() {
     	List<SrAtributoSolicitacaoMap> list = new ArrayList<>();
-    	if(meuAtributoSolicitacaoSet != null){
-    		for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
-    			if(att.getAtributo() != null)
-    				list.add(new SrAtributoSolicitacaoMap(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao()));
+    	try{
+    		if(meuAtributoSolicitacaoSet != null){
+    			for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
+    				if(att.getAtributo() != null)
+    					list.add(new SrAtributoSolicitacaoMap(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao()));
+    			}
     		}
+    		Collections.sort(list, new Comparator<SrAtributoSolicitacaoMap>() {
+    			@Override
+    			public int compare(SrAtributoSolicitacaoMap o1, SrAtributoSolicitacaoMap o2) {
+    				return o1.getIdAtributo().compareTo(o2.getIdAtributo());
+    			}
+    		});
+    	} catch(LazyInitializationException lie){
+    		//Edson: isso está ruim. Durante o preenchimento do formulário de edição, acontecem
+    		//alguns requests nos quais o meuAtributoSolicitacaoSet não pode ser acessado
+    		//por causa do ObjetoInstantiator.detach(). Este try catch impede o lazy exception mas
+    		//apaga os atributos já preenchidos pelo usuário. O mesmo vale para o getAtributoSolicitacaoSet()
     	}
-    	Collections.sort(list, new Comparator<SrAtributoSolicitacaoMap>() {
-			@Override
-			public int compare(SrAtributoSolicitacaoMap o1, SrAtributoSolicitacaoMap o2) {
-				return o1.getIdAtributo().compareTo(o2.getIdAtributo());
-			}
-		});
     	return list;
     }
 

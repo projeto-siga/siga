@@ -103,28 +103,6 @@ public class SolicitacaoController extends SrController {
         this.validator = validator;
     }
 
-    @Path("/exibirAcao")
-    public void exibirAcao(SrSolicitacao solicitacao) throws Exception {
-    	//Edson: por causa do detach no ObjetoObjectInstantiator:
-    	if (solicitacao.getSolicitacaoInicial() != null)
-    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
-    	
-        Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
-        result.include(SOLICITACAO, solicitacao);
-        result.include(ACOES_E_ATENDENTES, acoesEAtendentes);
-        result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
-    }
-
-    @Path("/exibirAtributos")
-    public void exibirAtributos(SrSolicitacao solicitacao) throws Exception {
-    	//Edson: por causa do detach no ObjetoObjectInstantiator:
-    	if (solicitacao.getSolicitacaoInicial() != null)
-    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
-    	
-        result.include(SOLICITACAO, solicitacao);
-        result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
-    }
-
     @SuppressWarnings("unchecked")
     @Path("/listarLista")
     public void listarLista(boolean mostrarDesativados) throws Exception {
@@ -420,16 +398,13 @@ public class SolicitacaoController extends SrController {
     	//Edson: por causa do detach no ObjetoObjectInstantiator:
     	if (solicitacao.getSolicitacaoInicial() != null)
     		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
-    	
-        if (solicitacao == null || solicitacao.getCadastrante() == null)
-            solicitacao = criarSolicitacaoComSolicitante();
 
-        // preenche com os dados da ï¿½ltima solicitaï¿½ï¿½o do usuï¿½rio
         solicitacao.deduzirLocalRamalEMeioContato();
 
         result.include(SOLICITACAO, solicitacao);
         result.include("locaisDisponiveis", solicitacao.getLocaisDisponiveis());
         result.include("meiosComunicadaoList", SrMeioComunicacao.values());
+        result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
     }
 
     @Path("/exibirItemConfiguracao")
@@ -438,36 +413,61 @@ public class SolicitacaoController extends SrController {
     	//Edson: por causa do detach no ObjetoObjectInstantiator:
     	if (solicitacao.getSolicitacaoInicial() != null)
     		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
-    	
-    	if (solicitacao.getSolicitante() == null)
-            result.include(SOLICITACAO, solicitacao);
-        
-        else if (!solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao())) {
+         
+        if (!solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao()))
             solicitacao.setItemConfiguracao(null);
+        
+        solicitacao.setAcao(null);
 
-            DpPessoa titular = solicitacao.getTitular();
-            DpLotacao lotaTitular = solicitacao.getLotaTitular();
-            Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
-
-            result.include(SOLICITACAO, solicitacao);
-            result.include(TITULAR, titular);
-            result.include(LOTA_TITULAR, lotaTitular);
-            result.include(ACOES_E_ATENDENTES, acoesEAtendentes);
-            result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
-        }
+    	result.include(SOLICITACAO, solicitacao);
+    	result.include(TITULAR, solicitacao.getTitular());
+    	result.include(LOTA_TITULAR, solicitacao.getLotaTitular());
+    	result.include(ACOES_E_ATENDENTES, solicitacao.getAcoesEAtendentes());
+    	result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
     }
-
-    public void exibirConhecimentosRelacionados(SrSolicitacao solicitacao) throws Exception {
+    
+    @Path("/exibirAcao")
+    public void exibirAcao(SrSolicitacao solicitacao) throws Exception {
+    	
+    	//Edson: por causa do detach no ObjetoObjectInstantiator:
+    	if (solicitacao.getSolicitacaoInicial() != null)
+    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
+    	
+    	solicitacao.setAcao(null);
+    	
         result.include(SOLICITACAO, solicitacao);
-        result.include("podeUtilizarServicoSigaGC",podeUtilizarServico("SIGA;GC"));
+        result.include(ACOES_E_ATENDENTES, solicitacao.getAcoesEAtendentes());
+        result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
     }
+
+    @Path("/exibirAtributos")
+    public void exibirAtributos(SrSolicitacao solicitacao) throws Exception {
+    	
+    	//Edson: por causa do detach no ObjetoObjectInstantiator:
+    	if (solicitacao.getSolicitacaoInicial() != null)
+    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
+    	
+        result.include(SOLICITACAO, solicitacao);
+        result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
+    }
+
 
     @Path("/exibirPrioridade")
     public void exibirPrioridade(SrSolicitacao solicitacao) {
+    	
+    	//Edson: por causa do detach no ObjetoObjectInstantiator:
+    	if (solicitacao.getSolicitacaoInicial() != null)
+    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
+    	
         solicitacao.associarPrioridadePeloGUT();
 
         result.include(SOLICITACAO, solicitacao);
         result.include(PRIORIDADE_LIST, SrPrioridade.values());
+    }
+    
+    public void exibirConhecimentosRelacionados(SrSolicitacao solicitacao) throws Exception {
+        result.include(SOLICITACAO, solicitacao);
+        result.include("podeUtilizarServicoSigaGC",podeUtilizarServico("SIGA;GC"));
     }
 
     @Path("/listarSolicitacoesRelacionadas")

@@ -53,6 +53,8 @@ public class AssociacaoController extends SrController {
 	@AssertAcesso(ADM_ADMINISTRAR)
 	public void gravarAssociacao(SrConfiguracao associacao,SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
 			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao dpPessoaSel, DpFuncaoConfiancaSelecao funcaoConfiancaSel, DpCargoSelecao cargoSel, CpPerfilSelecao cpGrupoSel, SrPesquisa pesquisaSatisfacao) throws Exception {
+		if (associacao == null)
+			associacao = new SrConfiguracao();
 		setDadosAssociacao(associacao, atributo, itemConfiguracaoSet, acoesSet, complexo, orgaoUsuario, lotacaoSel, dpPessoaSel, funcaoConfiancaSel, cargoSel, cpGrupoSel, pesquisaSatisfacao);
 		associacao.salvarComoAssociacaoAtributo();
 		result.use(Results.http()).body(associacao.toVO().toJson());

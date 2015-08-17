@@ -70,9 +70,11 @@ function carregarLotacaoDaAcao(){
 
         $("#solicitacaoDesignacao").val(idDesignacaoDaAcao);
         $("#atendentePadrao").html(descLotacao);
+        $("#labelAtendentePadrao").show();
     } catch(err) {
         $("#solicitacaoDesignacao").val('');
         $("#atendentePadrao").html('');
+        $("#labelAtendentePadrao").hide();
     }
 }
 </script>
@@ -104,25 +106,25 @@ function carregarLotacaoDaAcao(){
         </select> 
         <siga:error name="solicitacao.acao"/>
     </div>
-    <div>
-        <!-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao
-                ja que acima no select nao tem como "esconder" essa informacao -->
+    <div class="gt-form-row gt-width-66" style="margin-top: 10px;">
+        <%-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao
+                ja que acima no select nao tem como "esconder" essa informacao --%>
         <c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
             <c:forEach items="${acoesEAtendentes.get(cat)}" var="t">
 	            <span class="idDesignacao-${t.acao.idAcao}" style="display:none;">${t.conf.idConfiguracao}</span>
 	            <span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.siglaCompleta} - ${t.conf.atendente.descricao}</span>
 	            
-	            <c:if test="${cat_isFirst && cat_isLast && t_isFirst && t_isLast}">
+	            <%--<c:if test="${cat_isFirst && cat_isLast && t_isFirst && t_isLast}">
 	               <c:set var="lotacaoDesignada" value="${t.conf.atendente.siglaCompleta + ' - ' + t.conf.atendente.descricao}"/>
 	               <c:set var="idDesignacao" value="${t.conf.idConfiguracao}"/>
-	            </c:if>
+	            </c:if> --%>
 	        </c:forEach>
         </c:forEach>
-        <label>Atendente</label>
-        <span id="atendentePadrao" style="display:block; style="margin-bottom: 10px;"">
-            ${lotacaoDesignada}
+        <label id="labelAtendentePadrao" style="display: none">Atendente</label>
+        <span id="atendentePadrao" style="display:block;" style="margin-bottom: 10px;">
         </span>
         <input type="hidden" id="solicitacaoDesignacao" name="solicitacao.designacao.id" value="${idDesignacao}" />
+        <script>carregarLotacaoDaAcao();</script>
     </div>
 </c:if>
 

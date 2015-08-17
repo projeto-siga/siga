@@ -30,7 +30,7 @@
 
 <c:set var="atributoSolicitacaoMap" value="${solicitacao.atributoSolicitacaoMap}"/>
 
-<div id="atributos">
+<div id="atributos" class="gt-form-row gt-width-66" style="margin-top: 10px;">
     <c:forEach items="${solicitacao.atributoAssociados}" var="atributo" varStatus="loop">
         <div class="gt-form-row gt-width-66">
             <label>

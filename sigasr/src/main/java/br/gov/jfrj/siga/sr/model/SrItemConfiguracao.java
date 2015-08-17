@@ -24,6 +24,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Query;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -37,7 +38,6 @@ import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.vo.PaginaItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.vo.SrItemConfiguracaoVO;
@@ -105,7 +105,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	private SrItemConfiguracao itemInicial;
 
 	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "itemInicial", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-	// @OrderBy("hisDtIni desc")
+	@OrderBy("hisDtIni desc")
 	private List<SrItemConfiguracao> meuItemHistoricoSet;
 
 	@OneToMany(targetEntity = SrGestorItem.class, mappedBy = "itemConfiguracao", fetch = FetchType.LAZY)

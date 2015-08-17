@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -58,7 +59,7 @@ public class SrTipoAcao extends HistoricoSuporte implements Comparable<SrTipoAca
     private SrTipoAcao tipoAcaoInicial;
 
     @OneToMany(targetEntity = SrTipoAcao.class, mappedBy = "tipoAcaoInicial", fetch = FetchType.LAZY)
-    // @OrderBy("hisDtIni desc")
+    @OrderBy("hisDtIni desc")
     private List<SrTipoAcao> meuTipoAcaoHistoricoSet;
 
     @ManyToOne()

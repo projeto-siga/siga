@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -68,7 +69,7 @@ public class SrAtributo extends HistoricoSuporte {
 	private SrAtributo atributoInicial;
 
 	@OneToMany(targetEntity = SrAtributo.class, mappedBy = "atributoInicial", fetch = FetchType.LAZY)
-	// @OrderBy("hisDtIni desc")
+	@OrderBy("hisDtIni desc")
 	private List<SrAtributo> meuAtributoHistoricoSet;
 
 	@Override

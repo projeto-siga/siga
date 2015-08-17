@@ -1504,46 +1504,32 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public void atualizarAcordos() throws Exception {
         setAcordos(new ArrayList<SrAcordo>());
 
-        List<SrConfiguracao> filtrosConf = new ArrayList<SrConfiguracao>();
-
-        SrConfiguracao confSolicitante = new SrConfiguracao();
-        confSolicitante.setDpPessoa(getSolicitante());
-        confSolicitante.setLotacao(getLotaSolicitante());
-        confSolicitante.setComplexo(getLocal());
-        confSolicitante.setBuscarPorPerfis(true);
-        filtrosConf.add(confSolicitante);
-
-        if (getTitular() != null && getTitular().getId() != null) {
-            SrConfiguracao confTitular = new SrConfiguracao();
-            confTitular.setDpPessoa(getTitular());
-            confTitular.setLotacao(getLotaTitular());
-            confTitular.setComplexo(getLocal());
-            confTitular.setBuscarPorPerfis(true);
-            filtrosConf.add(confTitular);
+        SrConfiguracao c = new SrConfiguracao();
+        c.setDpPessoa(getSolicitante());
+        c.setLotacao(getLotaSolicitante());
+        c.setComplexo(getLocal());
+        c.setBuscarPorPerfis(true);
+        c.setItemConfiguracaoFiltro(getItemConfiguracao());
+        c.setAcaoFiltro(getAcao());
+        c.setPrioridade(getPrioridade());
+        if (jaFoiDesignada()) {
+        	if (getDesignacao() != null && getDesignacao().getId() != null)
+        		c.setAtendente(getDesignacao().getAtendente());
+        } else {
+        	c.setAtendente(getLotaTitular());
+        	c.setComplexo(getLocal());
+        	c.setBuscarPorPerfis(true);
         }
+        c.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
 
-        for (SrConfiguracao c : filtrosConf) {
-
-            c.setItemConfiguracaoFiltro(getItemConfiguracao());
-            c.setAcaoFiltro(getAcao());
-            c.setPrioridade(getPrioridade());
-            if (getDesignacao() != null && getDesignacao().getId() != null)
-                c.setAtendente(getDesignacao().getAtendente());
-            c.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
-
-            List<SrConfiguracao> confs = SrConfiguracao.listar(c);
-            for (SrConfiguracao conf : confs) {
-                if (conf.getAcordo() != null && conf.getAcordo().getId() != null) {
-                    adicionarAcordoAtual(conf);
-                }
-            }
+        List<SrConfiguracao> confs = SrConfiguracao.listar(c);
+        for (SrConfiguracao conf : confs) {
+        	if (conf.getAcordo() != null && conf.getAcordo().getId() != null) {
+        		SrAcordo acordoAtual = SrAcordo.AR.findById(conf.getAcordo().getIdAcordo()).getAcordoAtual();
+        		if (acordoAtual != null && acordoAtual.getHisDtFim() == null && !getAcordos().contains(acordoAtual))
+        			getAcordos().add(acordoAtual);
+        	}
         }
-    }
-
-    private void adicionarAcordoAtual(SrConfiguracao conf) throws Exception {
-        SrAcordo acordoAtual = SrAcordo.AR.findById(conf.getAcordo().getIdAcordo()).getAcordoAtual();
-        if (acordoAtual != null && !getAcordos().contains(acordoAtual))
-            getAcordos().add(acordoAtual);
     }
 
     private void checarEPreencherCampos() throws Exception {
@@ -2586,6 +2572,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public SrValor getTempoDecorridoAtendimento() {
+    	if (!jaFoiDesignada())
+    		return null;
         Date dtFechamento = isFechado() ? getDtEfetivoFechamento() : isCancelado() ? getDtCancelamento() : new Date();
         return getTempoDecorrido(getDtInicioAtendimento(), dtFechamento);
     }

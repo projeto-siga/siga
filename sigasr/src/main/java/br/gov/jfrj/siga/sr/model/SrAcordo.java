@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -51,6 +52,7 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel{
 	private SrAcordo acordoInicial;
 
 	@OneToMany(targetEntity = SrAcordo.class, mappedBy = "acordoInicial", fetch = FetchType.LAZY)
+	@OrderBy("hisDtIni desc")
 	public List<SrAcordo> meuAcordoHistoricoSet;
 
 	@OneToMany(targetEntity = SrAtributoAcordo.class, mappedBy = "acordo", fetch = FetchType.LAZY)

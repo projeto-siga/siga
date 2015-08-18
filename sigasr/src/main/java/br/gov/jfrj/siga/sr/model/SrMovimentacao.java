@@ -206,6 +206,17 @@ public class SrMovimentacao extends Objeto {
         return isCancelada() || getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO;
     }
 
+    public boolean isInicioAtendimento(){
+    	return  getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO
+					|| getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
+					|| getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA;
+    }
+    
+    public boolean isFimAtendimento(){
+    	return  getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO
+					|| getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO;
+    }
+    
     public SrMovimentacao getAnterior() {
         boolean pronto = false;
         for (SrMovimentacao mov : getSolicitacao().getMovimentacaoSet()) {

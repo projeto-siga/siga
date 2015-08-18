@@ -18,7 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.relatorio.dinamico;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +28,12 @@ import java.util.Map;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.export.JExcelApiExporter;
+import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
+import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 
@@ -194,7 +200,7 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 
 		relatorio = configurarRelatorio();
 		dados = processarDados();
-		if (dados!=null && dados.size() > 0) {
+		if (dados != null && dados.size() > 0) {
 			relatorio.setDados(dados);
 		} else {
 			throw new Exception("Não há dados para gerar o relatório!");
@@ -228,7 +234,7 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 	 * @return Retorna um builder de relatórios.
 	 * @throws DJBuilderException
 	 * @throws JRException
-	 * @throws ColumnBuilderException 
+	 * @throws ColumnBuilderException
 	 */
 	public abstract AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException, ColumnBuilderException;
@@ -286,6 +292,27 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 
 		htmlExp.exportReport();
 		return sb;
+	}
+
+	public byte[]  getRelatorioExcel() throws JRException, IOException {
+		ByteArrayOutputStream xlsReport = new ByteArrayOutputStream();
+		JRXlsxExporter excelExp = new JRXlsxExporter();
+		excelExp.setParameter(JRExporterParameter.JASPER_PRINT,
+				relatorio.getRelatorioJasperPrint());
+		
+		excelExp.setParameter(JRExporterParameter.OUTPUT_STREAM, xlsReport);
+		excelExp.setParameter(JRXlsExporterParameter.MAXIMUM_ROWS_PER_SHEET, 0);
+		excelExp.setParameter(JRXlsExporterParameter.IGNORE_PAGE_MARGINS, true);
+		excelExp.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS, true);
+		excelExp.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, true);
+		excelExp.setParameter(JRXlsExporterParameter.IS_IMAGE_BORDER_FIX_ENABLED, true);
+		excelExp.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, false);
+		excelExp.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, true);
+		
+		excelExp.exportReport();
+		byte[] arquivo = xlsReport.toByteArray();
+		xlsReport.close();
+		return arquivo;
 	}
 
 }

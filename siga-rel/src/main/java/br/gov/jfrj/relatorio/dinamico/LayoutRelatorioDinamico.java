@@ -21,6 +21,7 @@ package br.gov.jfrj.relatorio.dinamico;
 import net.sf.jasperreports.engine.JRHyperlink;
 import net.sf.jasperreports.engine.design.JRDesignExpression;
 import net.sf.jasperreports.engine.design.JRDesignTextField;
+import net.sf.jasperreports.engine.type.HyperlinkTypeEnum;
 import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
 import ar.com.fdvs.dj.domain.entities.DJGroup;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
@@ -54,7 +55,7 @@ public class LayoutRelatorioDinamico extends ClassicLayoutManager {
 						dsnExpLink.setValueClassName(String.class.getName());
 						dsnExpLink.addFieldChunk(link);
 
-						textfield.setHyperlinkType(JRHyperlink.HYPERLINK_TYPE_REFERENCE);
+						textfield.setHyperlinkType(HyperlinkTypeEnum.REFERENCE);
 						textfield.setHyperlinkTooltipExpression(dsnExpLink);
 						textfield.setHyperlinkReferenceExpression(dsnExpLink);
 					}

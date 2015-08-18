@@ -37,6 +37,7 @@ function selecionarProvider() {
 }
 
 function TestarAssinaturaDigital() {
+	console.log("Testando provedores de assinatura digital.");
 	provider = selecionarProvider();
 	return provider != undefined;
 }
@@ -58,9 +59,11 @@ function AssinarDocumentos(copia, politica) {
 	}
 
 	if (tipo == 1) {
-		provider.inicializar(function() {
+		if ("OK" == provider.inicializar(function() {
 			ExecutarAssinarDocumentos(copia);
-		});
+		})) {
+			ExecutarAssinarDocumentos(copia);
+		}
 	}
 
 	if (tipo == 2) {
@@ -88,11 +91,14 @@ var providerIttruAx = {
 
 	testar : function() {
 		try {
+			return false;
 			if (ittruSignAx == undefined) {
 				ittruSignAx = new ActiveXObject("ittru");
 			}
+			console.log("IttruAx: OK!");
 			return true;
-		} catch (Err) {
+		} catch (err) {
+			console.log("IttruAx:" + err.message);
 		}
 		return false;
 	},
@@ -142,6 +148,87 @@ var providerIttruAx = {
 }
 
 //
+// Provider: Ittru CAPI
+//
+var providerIttruCAPI = {
+	nome : 'Ittru CAPI',
+
+	testar : function() {
+		return false;
+		try {
+			var to = typeof (document.getElementById("signerCAPI"));
+			if (to == 'function' || to == 'object') {
+				if (document.signerCAPI.isActive()) {
+					ittruSignApplet = document.signerCAPI;
+					console.log("IttruCAPI: OK!");
+					return true;
+				} else {
+					console.log("IttruCAPI:" + document.signerCAPI.getMsg());
+				}
+			}
+		} catch (err) {
+			console.log("IttruCAPI:" + err.message);
+		}
+		return false;
+	},
+
+	inicializar : function() {
+		try {
+			gCertificadoB64 = ittruSignApplet.getCertificate('Certificados',
+					'Selecione para assinatura', '', '');
+			return "OK";
+
+		} catch (Err) {
+			return Err.description;
+		}
+	},
+
+	assinar : function(conteudo) {
+		var ret = {};
+		try {
+			// alert(conteudo);
+			// gAssinatura.Content = gUtil.Base64Decode(conteudo)
+
+			var keySize = ittruSignApplet.getKeySize();
+
+			if (gPolitica) {
+				var alg = 'sha1';
+
+				if (keySize < 2048) {
+					// alert("assinando sha1");
+					ret.assinaturaB64 = ittruSignApplet.sign(0, conteudo);
+				} else {
+					alg = 'sha256';
+					// alert("assinando sha256");
+					ret.assinaturaB64retSign = ittruSignApplet
+							.sign(2, conteudo);
+				}
+			} else {
+				// alert("assinando pkcs7");
+				ret.assinaturaB64 = ittruSignApplet.sign(99, conteudo);
+			}
+			// alert(ret.assinaturaB64);
+
+			ret.assinante = ittruSignApplet.getSubject();
+
+			// alert(ret.assinante);
+
+			var re = /CN=([^,]+),/gi;
+			var m;
+			if ((m = re.exec(ret.assinante)) != null) {
+				ret.assinante = m[1];
+			}
+			ret.status = "OK"
+			return ret;
+		} catch (err) {
+			Erro(err);
+			ret.status = err.message;
+			return ret;
+		}
+	}
+}
+
+//
 // Provider: Ittru PKCS#11
 //
 var providerIttruP11 = {
@@ -153,10 +240,14 @@ var providerIttruP11 = {
 			if (to == 'function' || to == 'object') {
 				if (document.signer.isActive()) {
 					ittruSignApplet = document.signer;
+					console.log("IttruP11: OK!");
 					return true;
+				} else {
+					console.log("IttruP11:" + document.signer.getMsg());
 				}
 			}
-		} catch (Err) {
+		} catch (err) {
+			console.log("IttruP11:" + err.message);
 		}
 		return false;
 	},
@@ -296,124 +387,6 @@ var providerIttruP11 = {
 }
 
 //
-// Provider: CAPICOM
-//
-var providerCAPICOM = {
-	nome : 'CAPICOM',
-
-	testar : function() {
-		try {
-			if (!(window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgent
-					.indexOf(" rv:11.0") > 0)) {
-				return false;
-			}
-			oTest = new ActiveXObject("CAPICOM.Settings");
-			gPolitica = false;
-			return true;
-		} catch (err) {
-			var oMissing = document.getElementById("capicom-missing");
-			if (oMissing != null) {
-				oMissing.style.display = "block";
-			}
-			var oDiv = document.getElementById("capicom-div");
-			if (oDiv != null) {
-				oDiv.style.display = "none";
-			}
-		}
-		return false;
-	},
-
-	inicializar : function() {
-		var Desprezar;
-		try {
-			gConfiguracao = new ActiveXObject("CAPICOM.Settings");
-			gConfiguracao.EnablePromptForCertificateUI = true;
-			gAssinatura = new ActiveXObject("CAPICOM.SignedData");
-			gUtil = new ActiveXObject("CAPICOM.Utilities");
-		} catch (err) {
-			return Erro(err);
-		}
-
-		gSigner = new ActiveXObject("CAPICOM.Signer");
-
-		var oStore = new ActiveXObject("CAPICOM.Store");
-		oStore.Open(2, "My", 0);
-
-		var oCertificates = oStore.Certificates.Find(2, "ICP-Brasil", true);
-
-		if (oCertificates.Count > 1) {
-			oCertificates = oCertificates
-					.Select(
-							"Seleção de Certificado Digital",
-							"Escolha o certificado digital que deseja utilizar para assinar ou autenticar:",
-							false);
-		}
-
-		if (oCertificates.Count == 0) {
-			return "Nenhum certificado digital disponível.";
-		}
-
-		gSigner.Certificate = oCertificates.Item(1);
-
-		if (gPolitica) {
-			gCertificadoB64 = gSigner.Certificate.Export(0);
-		}
-		if (gPolitica) {
-			if (typeof gCertificadoB64 == 'undefined') {
-				alert("Atenção: Produzindo assinatura apenas para obter o certificado.");
-				gAssinatura.Content = "Produz assinatura apenas para identificar o certificado a ser utilizado.";
-				var nothing;
-				gSigner = new ActiveXObject("CAPICOM.Signer");
-				Desprezar = gAssinatura.Sign(gSigner, 1, 0);
-				gCertificadoB64 = gAssinatura.Signers(1).Certificate.Export(0)
-			}
-		}
-
-		return "OK";
-	},
-
-	assinar : function(conteudo) {
-		var ret = {};
-		try {
-			// alert(conteudo);
-			// gAssinatura.Content = gUtil.Base64Decode(conteudo)
-			gAssinatura.Content = conteudo;
-			ret.assinaturaB64 = gAssinatura.Sign(gSigner, true, 0);
-			var assinante = gAssinatura.Signers(1).Certificate.SubjectName;
-			assinante = assinante.split("CN=")[1];
-			assinante = assinante.split(",")[0];
-			ret.assinante = assinante;
-		} catch (err) {
-			Erro(err);
-			ret.status = err.message;
-			return ret;
-		}
-		ret.status = "OK";
-		return ret;
-	}
-}
-
-if ((window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgent
-		.indexOf(" rv:11.0") > 0)
-		&& !/opera/i.test(navigator.userAgent)) {
-	var VBConteudo_Script = '<!-- VBConteudo -->\r\n'
-			+ '<script type="text/vbscript">\r\n'
-			+ 'Dim gVBConteudoArray, gVBAtributoAssinavelDataHora\r\n'
-			+ 'Function VBConteudo(url)\r\n'
-			+ '	Set objHTTP = CreateObject("MSXML2.XMLHTTP")\r\n'
-			+ '	objHTTP.open "GET", url, False\r\n'
-			+ '	objHTTP.send\r\n'
-			+ '	If (objHTTP.Status = 200) or (objHTTP.Status = 400) or (objHTTP.Status = 500) Then\r\n'
-			+ '	    gVBAtributoAssinavelDataHora = objHTTP.getResponseHeader("Atributo-Assinavel-Data-Hora")\r\n'
-			+ '	    VBConteudo = objHTTP.responseText\r\n'
-			+ '	    gVBConteudoArray = objHTTP.responseBody\r\n'
-			+ '	End If\r\n' + 'End Function\r\n' + '\<\/script>\r\n';
-
-	// inject VBScript
-	document.write(VBConteudo_Script);
-}
-
-//
 // Provider: Assinador com senha
 //
 var providerPassword = {
@@ -473,31 +446,26 @@ function Conteudo(url) {
 	// Conteudo = objHTTP.responseText;
 
 	// Conteudo = objHTTP.responseText;
-	if (provider.nome == 'Ittru ActiveX' || provider.nome == 'Ittru PKCS#11') {
-		$.ajax({
-			type : "GET",
-			url : url,
-			dataType : "text",
-			accepts : {
-				text : "text/vnd.siga.b64encoded"
-			},
-			success : function(data, textStatus, XMLHttpRequest) {
-				// alert(data);
-				// alert(XMLHttpRequest.getResponseHeader('Atributo-Assinavel-Data-Hora'));
-				gAtributoAssinavelDataHora = XMLHttpRequest
-						.getResponseHeader('Atributo-Assinavel-Data-Hora');
-				Conteudo = data;
-			},
-			error : function(jqXHR, textStatus, errorThrown) {
-				err = textStatus + ": " + errorThrown;
-			},
-			async : false,
-			cache : false
-		});
-
-	} else {
-		Conteudo = VBConteudo(url);
-	}
+	$.ajax({
+		type : "GET",
+		url : url,
+		dataType : "text",
+		accepts : {
+			text : "text/vnd.siga.b64encoded"
+		},
+		success : function(data, textStatus, XMLHttpRequest) {
+			// alert(data);
+			// alert(XMLHttpRequest.getResponseHeader('Atributo-Assinavel-Data-Hora'));
+			gAtributoAssinavelDataHora = XMLHttpRequest
+					.getResponseHeader('Atributo-Assinavel-Data-Hora');
+			Conteudo = data;
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+			err = textStatus + ": " + errorThrown;
+		},
+		async : false,
+		cache : false
+	});
 
 	if (err != undefined)
 		return err;
@@ -514,20 +482,13 @@ function Conteudo(url) {
 				+ Texto;
 	}
 
-	if (provider.nome == 'Capicom') {
-		Conteudo = gVBConteudoArray;
-		// gAtributoAssinavelDataHora =
-		// objHTTP.getResponseHeader("Atributo-Assinavel-Data-Hora");
-		gAtributoAssinavelDataHora = gVBAtributoAssinavelDataHora;
-	}
-
 	// alert(Conteudo);
 	return Conteudo;
 	// }
 	return "Não foi possível obter o conteúdo do documento a ser assinado.";
 }
 
-var providers = [ providerIttruAx, providerIttruP11, providerCAPICOM ];
+var providers = [ providerIttruAx, providerIttruCAPI, providerIttruP11 ];
 
 //
 // Processamento de assinaturas em lote, com progress bar

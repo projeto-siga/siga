@@ -168,8 +168,8 @@ public class CdServiceImpl implements CdService {
 	
 	private void assertAssinatura(byte[] assinatura) {
 		if (assinatura==null){
-			throw new AplicacaoException("A assinatura nÃ£o foi enviada para validaÃ§Ã£o! Principais motivos: 1) o usuÃ¡rio cancelou "
-					+ "a operaÃ§Ã£o de assinatura; 2) o usuÃ¡rio impediu que o navegador acessasse o certificado.");
+			throw new AplicacaoException("A assinatura não foi enviada para validação! Principais motivos: 1) o usuário cancelou "
+					+ "a operação de assinatura; 2) o usuário impediu que o navegador acessasse o certificado.");
 		}
 	};
 

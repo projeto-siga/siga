@@ -200,7 +200,7 @@ var providerIttruCAPI = {
 				} else {
 					alg = 'sha256';
 					// alert("assinando sha256");
-					ret.assinaturaB64retSign = ittruSignApplet
+					ret.assinaturaB64 = ittruSignApplet
 							.sign(2, conteudo);
 				}
 			} else {
@@ -357,7 +357,7 @@ var providerIttruP11 = {
 				} else {
 					alg = 'sha256';
 					// alert("assinando sha256");
-					ret.assinaturaB64retSign = document.signer.sign(gStore, 2,
+					ret.assinaturaB64 = document.signer.sign(gStore, 2,
 							gPIN, gCertAlias, conteudo);
 				}
 			} else {

@@ -91,7 +91,7 @@ var providerIttruAx = {
 
 	testar : function() {
 		try {
-			return false;
+			// return false;
 			if (ittruSignAx == undefined) {
 				ittruSignAx = new ActiveXObject("ittru");
 			}
@@ -200,8 +200,7 @@ var providerIttruCAPI = {
 				} else {
 					alg = 'sha256';
 					// alert("assinando sha256");
-					ret.assinaturaB64 = ittruSignApplet
-							.sign(2, conteudo);
+					ret.assinaturaB64 = ittruSignApplet.sign(2, conteudo);
 				}
 			} else {
 				// alert("assinando pkcs7");
@@ -285,6 +284,16 @@ var providerIttruP11 = {
 								},
 								close : function() {
 
+								},
+								open : function() {
+									$("#pin")
+											.keyup(
+													function(event) {
+														if (event.keyCode == 13) {
+															$('.ui-dialog-buttonpane button:eq(0)')
+																	.click();
+														}
+													});
 								}
 							});
 
@@ -320,7 +329,7 @@ var providerIttruP11 = {
 				var html = '<br /><label>Selecione o certificado que deseja usar:</label><br />';
 				for (var i = 0; i < json.length; i++) {
 					html += "<input type=\"radio\" name=\"cert_alias\" value=\""
-							+ json[i].alias + "\"> " + json[i].subject + "<br>";
+							+ json[i].alias + "\"" + (i==0?"checked":"") + "> " + json[i].subject + "<br>";
 				}
 				$("#certChoice").html(html);
 
@@ -357,8 +366,8 @@ var providerIttruP11 = {
 				} else {
 					alg = 'sha256';
 					// alert("assinando sha256");
-					ret.assinaturaB64 = document.signer.sign(gStore, 2,
-							gPIN, gCertAlias, conteudo);
+					ret.assinaturaB64 = document.signer.sign(gStore, 2, gPIN,
+							gCertAlias, conteudo);
 				}
 			} else {
 				// alert("assinando pkcs7");

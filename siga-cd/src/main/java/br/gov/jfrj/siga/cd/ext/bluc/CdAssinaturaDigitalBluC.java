@@ -67,18 +67,6 @@ public class CdAssinaturaDigitalBluC implements ICdAssinaturaDigital {
 					.encodeBase64String(assinatura));
 
 			politica = sc.getPsOid();
-			// CMSSignedMessage cms = (CMSSignedMessage) CMSSignedMessage
-			// .getCMSInstance(assinatura);
-			// CMSSignerInformation sigInfo = cms.getSignerInformation(0);
-			// X509Attribute attrPol =
-			// sigInfo.getSignedAttributes().getAttribute(
-			// ETSISignaturePolicyAttribute.OID);
-			// if (attrPol == null)
-			// return null;
-			// ETSISignaturePolicyAttribute spa = (ETSISignaturePolicyAttribute)
-			// attrPol;
-			// ETSISignaturePolicyId policyId = spa.getSignaturePolicyId();
-			// politica = policyId.getSigPolicyId();
 		} catch (Exception e) {
 		}
 		return politica;
@@ -102,7 +90,7 @@ public class CdAssinaturaDigitalBluC implements ICdAssinaturaDigital {
 					encodeDate(dtAssinatura), verificarLCRs);
 			if (!f)
 				return Service.ERRO
-						+ "Não foi possível validar a assinatura digital";
+						+ "NÃ£o foi possÃ­vel validar a assinatura digital";
 			return nome;
 			// return AssinaturaDigital.validarAssinaturaPKCS7(MessageDigest
 			// .getInstance("SHA1").digest(documento), "1.3.14.3.2.26",
@@ -127,13 +115,13 @@ public class CdAssinaturaDigitalBluC implements ICdAssinaturaDigital {
 					encodeDate(dtAssinatura), verificarLCRs);
 			if (!f)
 				return Service.ERRO
-						+ "Não foi possível validar a assinatura digital";
+						+ "NÃ£o foi possÃ­vel validar a assinatura digital";
 
 			if (signServ.validateSignatureByPolicy(sAssinatura, null))
 				return nome + " (" + recuperarNomePolitica(politica) + ")";
 			else
 				return Service.ERRO
-						+ "Não foi possível validar a assinatura com política";
+						+ "NÃ£o foi possÃ­el validar a assinatura com polÃ­tica";
 		}
 	}
 
@@ -278,16 +266,16 @@ public class CdAssinaturaDigitalBluC implements ICdAssinaturaDigital {
 					.getArquivosPolitica();
 			String s = mapArquivosPolitica.get(oid);
 			if (s == null)
-				return null;
+				return oid;
 			try {
 				s = (String) s.subSequence(s.lastIndexOf("/") + 1,
 						s.lastIndexOf(".der"));
 			} catch (Exception e) {
-				return null;
+				return oid;
 			}
 			return s.replace("PA_", "").replace("_", "-");
 		} catch (Exception e) {
-			return null;
+			return oid;
 		}
 	}
 
@@ -297,43 +285,5 @@ public class CdAssinaturaDigitalBluC implements ICdAssinaturaDigital {
 			throws Exception {
 		return assinatura;
 	}
-
-	// private static X509CertificateImpl getCertificadoDoAssinante(
-	// PKCS7SignedMessage pacoteAssinatura) throws Exception {
-	//
-	// // Recupera o SignerInformation de índice 0.
-	// SignerInformation sigInfo = pacoteAssinatura.getSignerInformation(0);
-	//
-	// // Busca o certificado do assinante através do serialNumber e issuer
-	// X509CertificateImpl signerCert = findCertificate(pacoteAssinatura,
-	// sigInfo.getSerialNumber(), sigInfo.getIssuer());
-	//
-	// // Se o certificado não existir, lança erro.
-	// if (signerCert == null)
-	// throw new Exception("O certificado do assinante não foi encontrado");
-	//
-	// return signerCert;
-	// }
-	//
-	// private static X509CertificateImpl findCertificate(
-	// PKCS7SignedMessage signedMessage, BigInteger serialNumber,
-	// Principal issuer) {
-	//
-	// // Carrega lista de certificados contidas no PKCS#7
-	// CertificateSet certSet = signedMessage.getCertificates();
-	// X509Certificate[] certs = certSet.getCertificates();
-	// for (int i = 0; i < certs.length; i++) {
-	// // Para cada um dos certificados da lista, verifica se o
-	// // serialNumber e issuer
-	// // coincidem com o apresentado por parâmetro. Caso sim, retorna o
-	// // certificado.
-	// if (certs[i].getSerialNumber().equals(serialNumber)
-	// && certs[i].getIssuerDN().equals(issuer))
-	// return (X509CertificateImpl) certs[i];
-	// }
-	// // Retorna nothing para dizer que nenhum certificado foi encontrado
-	// // com o serialNumber e issuer solicitados.
-	// return null;
-	// }
 
 }

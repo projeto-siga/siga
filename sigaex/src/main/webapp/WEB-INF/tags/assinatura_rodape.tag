@@ -8,10 +8,10 @@
 	<PARAM name="otherPath" value="/usr/local/lib" />
 </Applet>
 
+<%--
 <Applet Code="bluecrystal.applet.capi.SignApplet.class"
 		archive="/sigacd/bluc_capi_2.jar,/sigacd/jna-platform-4.1.0_2.jar,/sigacd/jna-4.1.0_2.jar" width=1
 		Height=1 id="signerCAPI"> </Applet>
-<%--
  --%>
 <script src="/sigaex/javascript/assinatura-digital.js"></script>
 

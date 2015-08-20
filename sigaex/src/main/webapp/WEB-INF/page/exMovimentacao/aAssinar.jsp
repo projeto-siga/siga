@@ -21,7 +21,7 @@
 			}
 		}
 	</script>
-	
+
 	<c:if test="${not doc.eletronico}">
 		<script type="text/javascript">$("html").addClass("fisico");</script>
 	</c:if>
@@ -80,9 +80,9 @@
 				<div id="dados-assinatura" style="visible: hidden">
 					<input type="hidden" id="pdfchk_0" name="pdfchk_${doc.idDoc}" value="${sigla}" />
 					<input type="hidden" id="urlchk_0" name="urlchk_${doc.idDoc}" value="/app/arquivo/exibir?arquivo=${doc.codigoCompacto}.pdf" />
-				
-					<c:set var="jspServer" value="${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.localPort}${pageContext.request.contextPath}/app/expediente/mov/assinar_gravar" />
-					<c:set var="nextURL" value="${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.localPort}${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}" />
+
+					<c:set var="jspServer" value="${pageContext.request.contextPath}/app/expediente/mov/assinar_gravar" />
+					<c:set var="nextURL" value="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}" />
 					<c:set var="urlPath" value="${pageContext.request.contextPath}" />
 
 					<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />
@@ -99,7 +99,7 @@
 					</c:if>
 					<c:set var="lote" value="false" />
 				</div>
-				
+
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 					<c:import url="/javascript/inc_assina_js.jsp" />
@@ -127,10 +127,10 @@
 					}
 				 </script>
 				</c:if>
-				 
+
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-					${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,pageContext.request.scheme,pageContext.request.serverName,pageContext.request.serverPort,urlPath,jspServer,nextURL,botao,lote)}	
+					${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,pageContext.request.scheme,pageContext.request.serverName,pageContext.request.serverPort,urlPath,jspServer,nextURL,botao,lote)}
 				</c:if>
 			</div>
 		</div>
@@ -138,7 +138,7 @@
 	<c:if test="${not autenticando}">
 		<c:if test="${f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}">
 			<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar com Senha</a>
-		        		
+
 			<div id="dialog-form" title="Assinar com Senha">
 	 			<form id="form-assinarSenha" method="post" action="/sigaex/app/expediente/mov/assinar_senha_gravar" >
 	 				<input type="hidden" id="sigla" name="sigla"	value="${sigla}" />
@@ -150,8 +150,8 @@
 	    			</fieldset>
 	  			</form>
 			</div>
-		
-			 <script> 
+
+			 <script>
 			    dialog = $("#dialog-form").dialog({
 			      autoOpen: false,
 			      height: 210,
@@ -164,14 +164,14 @@
 			          }
 			      },
 			      close: function() {
-			        
+
 			      }
 			    });
-				
+
 			    function assinarComSenha() {
 			       dialog.dialog( "open" );
 			    }
-		
+
 			    function assinarGravar() {
 			    	$("#form-assinarSenha").submit();
 				}

@@ -94,7 +94,7 @@
 				<div class="gt-content-box gt-for-table">
 					<form action="anexar_gravar" method="POST" enctype="multipart/form-data" class="form">
 
-						<input type="hidden" name="postback" value="1" /> 
+						<input type="hidden" name="postback" value="1" />
 						<input type="hidden" name="sigla" value="${sigla}"/>
 
 						<table class="gt-form-table">
@@ -122,7 +122,7 @@
 									<tr id="tr_titular" style="">
 								</c:otherwise>
 							</c:choose>
-	
+
 								<td>Titular:</td>
 								<input type="hidden" name="campos" value="titularSel.id" />
 								<td colspan="3"><siga:selecao propriedade="titular" tema="simple" modulo="siga" /></td>
@@ -165,13 +165,13 @@
 							<tr>
 								<td colspan="2">
 									<input type="submit" value="Ok" class="gt-btn-medium gt-btn-left"
-										onclick="javascript: return validaSelecaoAnexo( this.form );" /> 
+										onclick="javascript: return validaSelecaoAnexo( this.form );" />
 									<input type="button"
 										value="Voltar"
 										onclick="javascript:window.location.href='/sigaex/app/expediente/doc/exibir?sigla=${mobilVO.sigla}'"
-										class="gt-btn-medium gt-btn-left" /> 
-									<br /> 
-									<input type="checkbox" name="check" onclick="javascript:montaTableAssinados(check.checked);" /> 
+										class="gt-btn-medium gt-btn-left" />
+									<br />
+									<input type="checkbox" name="check" onclick="javascript:montaTableAssinados(check.checked);" />
 										<b>Exibir anexos assinados</b>
 								</td>
 							</tr>
@@ -196,9 +196,9 @@
 					</h2>
 					<div class="gt-content-box gt-for-table">
 						<form name="frm_anexo" id="frm_anexo" class="form">
-							<input type="hidden" name="popup" value="true" /> 
+							<input type="hidden" name="popup" value="true" />
 							<input type="hidden" name="copia" id="copia" value="false" />
-		
+
 							<table class="gt-table mov">
 								<thead>
 									<tr>
@@ -262,8 +262,8 @@
 											<td align="left"><siga:selecionado sigla="${mov.parte.resp.nomeAbreviado}"
 													descricao="${mov.parte.resp.descricao} - ${mov.parte.resp.sigla}" /></td>
 											<td>${mov.descricao}
-												<c:if test='${mov.idTpMov != 2}'> ${mov.complemento}</c:if> 
-												<c:set var="assinadopor" value="${true}" /> 
+												<c:if test='${mov.idTpMov != 2}'> ${mov.complemento}</c:if>
+												<c:set var="assinadopor" value="${true}" />
 												<siga:links inline="${true}" separator="${not empty mov.descricao and mov.descricao != null}">
 													<c:forEach var="acao" items="${mov.acoes}">
 														<c:choose>
@@ -282,7 +282,7 @@
 															    </c:url>
 														    </c:otherwise>
 														</c:choose>
-														
+
 														<c:set var="retornaTela" value='${acao.acao == "excluir"}'></c:set>
 														<c:choose>
 															<c:when test="${retornaTela}">
@@ -296,12 +296,12 @@
 																ajax="${acao.ajax}" idAjax="${mov.idMov}" />
 															</c:otherwise>
 														</c:choose>
-														
+
 														<c:if test='${assinadopor and mov.idTpMov == 2}'> ${mov.complemento}
 															    <c:set var="assinadopor" value="${false}" />
 														</c:if>
 													</c:forEach>
-												</siga:links> 
+												</siga:links>
 												<c:if
 												test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 													<input type="hidden" name="pdf${x}" value="${mov.mov.referencia}" />
@@ -318,20 +318,20 @@
 					<br />
 					<div id="dados-assinatura" style="visible: hidden">
 						<c:set var="jspServer" value="${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
-						<c:set var="jspServerSenha" value="${request.contextPath}/app/expediente/mov/assinar_mov_login_senha_gravar"/>							
+						<c:set var="jspServerSenha" value="${request.contextPath}/app/expediente/mov/assinar_mov_login_senha_gravar"/>
 						<c:set var="nextURL" value="${request.contextPath}/app/expediente/doc/atualizar_marcas?sigla=${mobilVO.sigla}" />
 						<c:set var="urlPath" value="${request.contextPath}" />
-		
+
 						<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />
 						<input type="hidden" id="jspServerSenha" name="jspServerSenha" value="${jspServerSenha}" />
-						<input type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" /> 
+						<input type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" />
 						<input type="hidden" id="urlpath" name="urlpath" value="${urlPath}" />
-						
+
 						<c:set var="url">${request.requestURL}</c:set>
 						<c:set var="uri" value="${request.requestURI}" />
 						<c:set var="urlBase" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
 						<input type="hidden" id="urlbase" name="urlbase" value="${urlBase}" />
-		
+
 						<c:set var="botao" value="ambos" />
 						<c:set var="lote" value="true" />
 					</div>
@@ -367,15 +367,15 @@
 					</c:if>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-						    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}						
+						    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}
 					</c:if>
-					
+
 					<c:set var="podeAssinarMovimentacaoComSenha" value="${f:podeAssinarMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
 					 <c:set var="podeConferirCopiaMovimentacaoComSenha" value="${f:podeConferirCopiaMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
-			
+
 					 <c:if test="${podeAssinarMovimentacaoComSenha || podeConferirCopiaMovimentacaoComSenha}">
 		  				     <a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar/Conferir com Senha</a>
-		  				     
+
 							<div id="dialog-form" title="Assinar com Senha">
 					 			<form id="form-assinarSenha" method="post" action="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" >
 					 				<input type="hidden" id="id" name="id" value="${mov.idMov}" />
@@ -389,8 +389,8 @@
 					    			</fieldset>
 					  			</form>
 							</div>
-		  				     
-			  				 <script> 
+
+			  				 <script>
 							    dialog = $("#dialog-form").dialog({
 								    autoOpen: false,
 						      		height: 210,
@@ -399,27 +399,27 @@
 						      		buttons: {
 						    	  		<c:if test="${podeAssinarMovimentacaoComSenha}">
 						          			"Assinar": assinarGravar,
-						          		</c:if>	
+						          		</c:if>
 						    	  		<c:if test="${podeConferirCopiaMovimentacaoComSenha}">
 							          		"Autenticar": conferirCopiaGravar,
-						          		</c:if>	
+						          		</c:if>
 						          			"Cancelar": function() {
 						            		dialog.dialog( "close" );
 						          	}
 					      		},
 			    		      close: function() {
-					        
+
 						      }
 					    	});
-					
+
 							    function assinarComSenha() {
 							       dialog.dialog( "open" );
 							    }
-					
+
 							    function assinarGravar() {
 							    	AssinarDocumentosSenha('false', this);
 								}
-					
+
 							    function conferirCopiaGravar() {
 							    	AssinarDocumentosSenha('true', this);
 								}

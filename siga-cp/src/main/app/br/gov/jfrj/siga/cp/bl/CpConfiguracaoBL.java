@@ -700,8 +700,6 @@ public class CpConfiguracaoBL {
 	@SuppressWarnings("static-access")
 	public Boolean podeUtilizarServicoPorConfiguracao(DpPessoa titular,
 			DpLotacao lotaTitular, String servicoPath) {
-		if (true)
-			return true;
 		
 		try {
 			if (titular == null || lotaTitular == null)

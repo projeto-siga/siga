@@ -202,8 +202,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 			List<SrItemConfiguracao> listaBase) throws Exception {
 		setSigla(sigla);
 		List<SrItemConfiguracao> itens = buscar(listaBase, false);
-		if (itens.size() == 0
-				|| (itens.size() > 1 && itens.get(0).isGenerico()))
+		if (itens.size() == 0 || itens.size() > 1 || itens.get(0).isGenerico())
 			return null;
 		return itens.get(0);
 	}

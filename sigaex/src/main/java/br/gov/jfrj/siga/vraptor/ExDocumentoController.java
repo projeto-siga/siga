@@ -1326,10 +1326,15 @@ public class ExDocumentoController extends ExController {
 					throw new AplicacaoException(MessageFormat.format("O arquivo {0} está corrompido. Favor gera-lo novamente antes de anexar.", arquivo.getFileName()));
 				}
 			} 
-
+			
 			final String realPath = getContext().getRealPath("");
 			exBL.gravar(getCadastrante(), getLotaTitular(),
 					exDocumentoDTO.getDoc(), realPath);
+			
+			if (!exDocumentoDTO.getDoc().isFinalizado()
+					&& exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)
+				exBL.finalizar(getCadastrante(), getLotaTitular(),
+						exDocumentoDTO.getDoc(), realPath);
 
 			lerEntrevista(exDocumentoDTO);
 

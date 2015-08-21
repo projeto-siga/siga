@@ -75,64 +75,65 @@
 										${item.descrTipoDocumento}
 									</option>  
 								</c:forEach>
-							</select>&nbsp;												
-								 
-							<span style="${estiloTipoSpan}">${exDocumentoDTO.doc.exTipoDocumento.descrTipoDocumento}</span>
+							</select>
 						</td>
-						<td width="5%" align="right">Data:</td>
-						<input type="hidden" name="campos" value="dtDocString" />
 						<td>
-							<input type="text" name="exDocumentoDTO.dtDocString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocString}" /> &nbsp;&nbsp; 
-						
-							<input type="hidden" name="campos" value="nivelAcesso" />
-							
-							Acesso 
-							<select  name="exDocumentoDTO.nivelAcesso" >
-								<c:forEach items="${exDocumentoDTO.listaNivelAcesso}" var="item">
-									<option value="${item.idNivelAcesso}" ${item.idNivelAcesso == exDocumentoDTO.nivelAcesso ? 'selected' : ''}>
-										${item.nmNivelAcesso}
-									</option>  
-								</c:forEach>
-							</select>								 
-							
-							<input type="hidden" name="campos" value="eletronico" /> 
-								
-							<c:choose>
-								<c:when test="${exDocumentoDTO.eletronicoFixo}">
-									<input type="hidden" name="exDocumentoDTO.eletronico" id="eletronicoHidden" value="${exDocumentoDTO.eletronico}" />
-									${exDocumentoDTO.eletronicoString}
-									<c:if test="${exDocumentoDTO.eletronico == 2}">
+							<span style="display: ${exDocumentoDTO.tipoDocumento != 'capturado' ? 'inline' : 'none'};">
+								<input type="hidden" name="campos" value="dtDocString" />
+									Data:
+								<input type="text" name="exDocumentoDTO.dtDocString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocString}" /> &nbsp;&nbsp; 
+							</span>
+							<span style="display: ${(exDocumentoDTO.listaNivelAcesso).size() != 1 ? 'inline' : 'none'};">
+								<input type="hidden" name="campos" value="nivelAcesso" />
+								Acesso 
+								<select  name="exDocumentoDTO.nivelAcesso" >
+									<c:forEach items="${exDocumentoDTO.listaNivelAcesso}" var="item">
+										<option value="${item.idNivelAcesso}" ${item.idNivelAcesso == exDocumentoDTO.nivelAcesso ? 'selected' : ''}>
+											${item.nmNivelAcesso}
+										</option>  
+									</c:forEach>
+								</select>								 
+							</span>
+							<span style="float: right; display: ${exDocumentoDTO.eletronicoFixo ? 'none' : 'inline'};">
+								<input type="hidden" name="campos" value="eletronico" /> 
+									
+								<c:choose>
+									<c:when test="${exDocumentoDTO.eletronicoFixo}">
+										<input type="hidden" name="exDocumentoDTO.eletronico" id="eletronicoHidden" value="${exDocumentoDTO.eletronico}" />
+										${exDocumentoDTO.eletronicoString}
+										<c:if test="${exDocumentoDTO.eletronico == 2}">
+											<script type="text/javascript">
+												$("html").addClass("fisico");
+											</script>
+										</c:if>
+									</c:when>
+									<c:otherwise>
+									    <input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck1" value="1" 
+									    	onchange="javascript:setFisico();" 
+									    	<c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>
+									    	<c:if test="${exDocumentoDTO.eletronico == 1}">checked</c:if>	
+									    />
+									    <label for="eletronicoCheck1">Digital</label>
+									    
+									    <input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck2" value="2" 
+									    	onchange="javascript:setFisico();" 
+									    	<c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>
+									    	<c:if test="${exDocumentoDTO.eletronico == 2}">checked</c:if>
+									    />
+									    <label for="eletronicoCheck2">Físico</label>
+									    
 										<script type="text/javascript">
-											$("html").addClass("fisico");
-										</script>
-									</c:if>
-								</c:when>
-								<c:otherwise>
-								    <input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck1" value="1" 
-								    	onchange="javascript:setFisico();" 
-								    	<c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>
-								    	<c:if test="${exDocumentoDTO.eletronico == 1}">checked</c:if>	
-								    />
-								    <label for="eletronicoCheck1">Digital</label>
-								    
-								    <input type="radio" name="exDocumentoDTO.eletronico" id="eletronicoCheck2" value="2" 
-								    	onchange="javascript:setFisico();" 
-								    	<c:if test="${exDocumentoDTO.eletronicoFixo}">disabled</c:if>
-								    	<c:if test="${exDocumentoDTO.eletronico == 2}">checked</c:if>
-								    />
-								    <label for="eletronicoCheck2">Físico</label>
-								    
-									<script type="text/javascript">
-										function setFisico() {
-											if ($('input[name=exDocumentoDTO\\.eletronico]:checked').val() == 2)
-												$('html').addClass('fisico'); 
-											else 
-												$('html').removeClass('fisico');
-										}; 
-										setFisico();
-									</script>									
-								</c:otherwise>
-							</c:choose>
+											function setFisico() {
+												if ($('input[name=exDocumentoDTO\\.eletronico]:checked').val() == 2)
+													$('html').addClass('fisico'); 
+												else 
+													$('html').removeClass('fisico');
+											}; 
+											setFisico();
+										</script>									
+									</c:otherwise>
+								</c:choose>
+							</span>
 						</td>
 					</tr>
 					<c:if test='${exDocumentoDTO.tipoDocumento == "antigo"}'>
@@ -291,7 +292,7 @@
 
 
 					<c:if test='${ exDocumentoDTO.tipoDocumento != "externo"}'>
-						<tr>
+						<tr style="display: ${(exDocumentoDTO.formasDoc).size() != 1 ? 'visible' : 'none'};">
 							<td>Espécie:</td>
 							<td colspan="3">
 								<select  name="exDocumentoDTO.idFormaDoc" onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();" style="${estiloTipo}">
@@ -312,8 +313,8 @@
 									<td>Modelo:</td>
 									<td colspan="3">
 										<siga:div id="modelo" depende="forma">
-											
-											<select  name="exDocumentoDTO.idMod" onchange="document.getElementById('alterouModelo').value='true';sbmt();" style="${estiloTipo}">
+											<%-- onchange="document.getElementById('alterouModelo').value='true';sbmt();" --%>
+											<select name="exDocumentoDTO.idMod" style="${estiloTipo}" class="dependent">
 												<c:forEach items="${exDocumentoDTO.modelos}" var="item">
 													<option value="${item.idMod}" ${item.idMod == exDocumentoDTO.idMod ? 'selected' : ''}>
 														${item.nmMod}
@@ -325,7 +326,7 @@
 												<span style="${estiloTipoSpan}">${exDocumentoDTO.doc.exModelo.nmMod}</span>
 											</c:if>
 											<!-- sbmt('modelo') -->
-											<c:if test='${exDocumentoDTO.tipoDocumento!="interno"}'>(opcional)</c:if>
+											<c:if test='${exDocumentoDTO.tipoDocumento!="interno" and exDocumentoDTO.tipoDocumento!="capturado"}'>(opcional)</c:if>
 										</siga:div>
 									</td>
 								</tr>
@@ -460,7 +461,23 @@
 	<!--  tabela do rodapé -->
 </siga:pagina>
 
+<script src="/siga/javascript/jquery.dependent-selects.js"></script>
+
 <script type="text/javascript">
+$(document).ready(function() {$('.dependent').dependentSelects({
+	  separator: ': ', // String: The separator used to define the nesting in the option field's text
+	  placeholderOption: false,
+	  placeholderSelect: false,
+	  changed:function() {
+		  document.getElementById('alterouModelo').value='true';
+//		  var conceptName = $('select[name="exDocumentoDTO.idMod"]').find(":selected").text();
+//		  console.log('valor ' + conceptName);
+		  sbmt();
+		  },
+	  class: false, // String: Add an extra class to all sub selects
+	  labels: [" "] // Array of strings: The text used for the sub select boxes' labels. Label element is
+	                // inserted before sub select.
+	});});
 // window.customOnsubmit = function() {return true;};
 // {
 //	var frm = document.getElementById('frm');

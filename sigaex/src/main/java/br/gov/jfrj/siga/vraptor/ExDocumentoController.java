@@ -1211,6 +1211,9 @@ public class ExDocumentoController extends ExController {
 			}
 
 			lerForm(exDocumentoDTO, vars);
+			
+			if (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO && exDocumentoDTO.getDoc().getIdDoc() == null && arquivo == null)
+				throw new AplicacaoException("Documento capturado não pode ser gravado sem que seja informado o arquivo PDF.");
 
 			if (!ex.getConf().podePorConfiguracao(getTitular(),
 					getLotaTitular(),
@@ -1322,7 +1325,7 @@ public class ExDocumentoController extends ExController {
 				if (d.getContarNumeroDePaginas() == null || d.getArquivoComStamp() == null) {
 					throw new AplicacaoException(MessageFormat.format("O arquivo {0} está corrompido. Favor gera-lo novamente antes de anexar.", arquivo.getFileName()));
 				}
-			}
+			} 
 
 			final String realPath = getContext().getRealPath("");
 			exBL.gravar(getCadastrante(), getLotaTitular(),

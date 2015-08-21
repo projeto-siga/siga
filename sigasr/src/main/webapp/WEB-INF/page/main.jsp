@@ -2,7 +2,7 @@
 
 <!-- DataTables CSS -->
 <link rel="stylesheet" type="text/css" href="/sigasr/stylesheets/main.css">
-<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.2/css/jquery.dataTables.css">
+<link rel="stylesheet" type="text/css" href="/sigasr/stylesheets/jquery.dataTables.min.css">
 
 <style>
 	.ui-widget-header {

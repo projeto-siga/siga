@@ -9,7 +9,7 @@
 
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
-	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.dataTables.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.populate.js"></script>
 	<script src="/sigasr/javascripts/base-service.js"></script>

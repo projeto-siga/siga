@@ -1,5 +1,14 @@
 package br.gov.jfrj.siga.sr.model;
 
+import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO;
+import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_AVALIACAO;
+import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO;
+import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO;
+import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO;
+
+import java.util.Arrays;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -67,6 +76,23 @@ public class SrTipoMovimentacao extends Objeto {
     public static final long TIPO_MOVIMENTACAO_ESCALONAMENTO = 24;
 
     public static final ActiveRecord<SrTipoMovimentacao> AR = new ActiveRecord<>(SrTipoMovimentacao.class);
+    
+	public static List<Long> TIPOS_MOV_INI_ATENDIMENTO = Arrays
+			.asList(new Long[] {
+					SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO,
+					SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO,
+					SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA});
+	
+	public static List<Long> TIPOS_MOV_FIM_ATENDIMENTO = Arrays
+			.asList(new Long[] {
+					SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO,
+					SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO,
+					SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO });
+	
+	public static List<Long> TIPOS_MOV_PRINCIPAIS = Arrays.asList(
+			TIPO_MOVIMENTACAO_ANDAMENTO, TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO,
+			TIPO_MOVIMENTACAO_FECHAMENTO, TIPO_MOVIMENTACAO_AVALIACAO,
+			TIPO_MOVIMENTACAO_ESCALONAMENTO);
 
     @Id
     @Column(name = "ID_TIPO_MOVIMENTACAO")

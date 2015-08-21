@@ -24,7 +24,7 @@ import br.gov.jfrj.siga.sr.enumeration.SrUnidadeMedida;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
-import br.gov.jfrj.siga.sr.model.SrAtributoAcordo;
+import br.gov.jfrj.siga.sr.model.SrParametroAcordo;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrOperador;

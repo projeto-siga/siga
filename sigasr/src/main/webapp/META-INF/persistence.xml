@@ -54,7 +54,7 @@
 		<class>br.gov.jfrj.siga.sr.model.SrAcordo</class>
 		<class>br.gov.jfrj.siga.sr.model.SrArquivo</class>
 		<class>br.gov.jfrj.siga.sr.model.SrAtributo</class>
-		<class>br.gov.jfrj.siga.sr.model.SrAtributoAcordo</class>
+		<class>br.gov.jfrj.siga.sr.model.SrParametroAcordo</class>
 		<class>br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao</class>
 		<class>br.gov.jfrj.siga.sr.model.SrConfiguracao</class>
 		<class>br.gov.jfrj.siga.sr.model.SrConfiguracaoIgnorada</class>

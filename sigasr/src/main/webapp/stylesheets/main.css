@@ -247,3 +247,11 @@ div > ul > li {
 	margin-left: 1em !important;
 	margin-bottom: 2px !important;
 }
+
+ul.acordo {
+    list-style-type: none;
+}
+
+ul.acordo > li {
+	margin: 5pt;
+}

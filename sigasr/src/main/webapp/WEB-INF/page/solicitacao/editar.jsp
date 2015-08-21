@@ -545,7 +545,7 @@
 			</div>
 		</div>
 		
- 		<jsp:include page="exibirCronometro.jsp"/>
+ 		<jsp:include page="exibirAcordos.jsp"/>
 		<jsp:include page="exibirPendencias.jsp"/>
 		
 		<div id="divConhecimentosRelacionados" depende="solicitacao.local;solicitacao.solicitante;solicitacao.acao;solicitacao.itemConfiguracao">

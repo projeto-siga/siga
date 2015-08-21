@@ -200,9 +200,13 @@ public class SrMovimentacao extends Objeto {
     public boolean isCancelada() {
         return getMovCanceladora() != null;
     }
-
-    public boolean isFinalizada() {
-        return getMovFinalizadora() != null;
+    
+    public Date getDtFimMov() {
+        return getMovFinalizadora() != null ? getMovFinalizadora().getDtIniMov() : getDtAgenda();
+    }
+    
+    public boolean isFinalizadaOuExpirada() {
+        return getDtFimMov() != null && getDtFimMov().before(new Date());
     }
 
     public boolean isCanceladoOuCancelador() {
@@ -444,10 +448,6 @@ public class SrMovimentacao extends Objeto {
         if (getMovFinalizadaSet() == null || getMovFinalizadaSet().size() == 0)
             return null;
         return getMovFinalizadaSet().get(0);
-    }
-
-    public Date getDtFimMov() {
-        return getMovFinalizadora() != null ? getMovFinalizadora().getDtIniMov() : getDtAgenda();
     }
 
     public SrItemConfiguracao getItemConfiguracao() {

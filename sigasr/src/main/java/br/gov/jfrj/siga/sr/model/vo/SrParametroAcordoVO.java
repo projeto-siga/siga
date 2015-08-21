@@ -1,44 +1,44 @@
 package br.gov.jfrj.siga.sr.model.vo;
 
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
-import br.gov.jfrj.siga.sr.model.SrAtributoAcordo;
+import br.gov.jfrj.siga.sr.model.SrParametroAcordo;
 import br.gov.jfrj.siga.sr.model.SrOperador;
 
-public class SrAtributoAcordoVO {
+public class SrParametroAcordoVO {
 
-    private Long idAtributoAcordo;
+    private Long idParametroAcordo;
     private SrOperador operador;
     private String operadorNome;
     private Long valor;
     private CpUnidadeMedida unidadeMedida;
     private String unidadeMedidaPlural;
-    private SrAtributoVO atributo;
+    private SrAtributoVO parametro;
     private boolean ativo;
 
-    public SrAtributoAcordoVO(SrAtributoAcordo atributoAcordo) throws Exception {
-        this.setIdAtributoAcordo(atributoAcordo.getIdAtributoAcordo());
-        this.setOperador(atributoAcordo.getOperador());
-        this.setOperadorNome(atributoAcordo.getOperador() != null ? atributoAcordo.getOperador().getNome() : "");
-        this.setValor(atributoAcordo.getValor());
-        this.setUnidadeMedida(atributoAcordo.getUnidadeMedida());
-        this.setUnidadeMedidaPlural(atributoAcordo.getUnidadeMedida() != null ? atributoAcordo.getUnidadeMedida().getPlural() : "");
-        this.setAtributo(SrAtributoVO.createFrom(atributoAcordo.getAtributo(), false));
-        this.setAtivo(atributoAcordo.isAtivo());
+    public SrParametroAcordoVO(SrParametroAcordo parametroAcordo) throws Exception {
+        this.setIdParametroAcordo(parametroAcordo.getIdParametroAcordo());
+        this.setOperador(parametroAcordo.getOperador());
+        this.setOperadorNome(parametroAcordo.getOperador() != null ? parametroAcordo.getOperador().getNome() : "");
+        this.setValor(parametroAcordo.getValor());
+        this.setUnidadeMedida(parametroAcordo.getUnidadeMedida());
+        this.setUnidadeMedidaPlural(parametroAcordo.getUnidadeMedida() != null ? parametroAcordo.getUnidadeMedida().getPlural() : "");
+        this.setParametro(SrAtributoVO.createFrom(parametroAcordo.getParametro(), false));
+        this.setAtivo(parametroAcordo.isAtivo());
     }
 
-    public static SrAtributoAcordoVO createFrom(SrAtributoAcordo atributoAcordo) throws Exception {
+    public static SrParametroAcordoVO createFrom(SrParametroAcordo atributoAcordo) throws Exception {
         if (atributoAcordo != null)
-            return new SrAtributoAcordoVO(atributoAcordo);
+            return new SrParametroAcordoVO(atributoAcordo);
         else
             return null;
     }
 
-    public Long getIdAtributoAcordo() {
-        return idAtributoAcordo;
+    public Long getIdParametroAcordo() {
+        return idParametroAcordo;
     }
 
-    public void setIdAtributoAcordo(Long idAtributoAcordo) {
-        this.idAtributoAcordo = idAtributoAcordo;
+    public void setIdParametroAcordo(Long idAtributoAcordo) {
+        this.idParametroAcordo = idAtributoAcordo;
     }
 
     public SrOperador getOperador() {
@@ -81,12 +81,12 @@ public class SrAtributoAcordoVO {
         this.unidadeMedidaPlural = unidadeMedidaPlural;
     }
 
-    public SrAtributoVO getAtributo() {
-        return atributo;
+    public SrAtributoVO getParametro() {
+        return parametro;
     }
 
-    public void setAtributo(SrAtributoVO atributo) {
-        this.atributo = atributo;
+    public void setParametro(SrAtributoVO atributo) {
+        this.parametro = atributo;
     }
 
     public boolean isAtivo() {

@@ -724,7 +724,7 @@ public class SolicitacaoController extends SrController {
             mov.setLotaAtendente(atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente);
             // Edson: isso abaixo talvez pudesse valer pra todas as movimentacoes e ficar la no
             // mov.checarCampos()
-            if (solicitacao.getAtendente() != null && !mov.getLotaAtendente().equivale(solicitacao.getAtendente().getLotacao()))
+            if (solicitacao.getAtendente() != null && !mov.getLotaAtendente().equivale(solicitacao.getLotaAtendente()))
                 mov.setAtendente(null);
             mov.setMotivoEscalonamento(motivo);
             mov.setDesignacao(SrConfiguracao.AR.findById(idDesignacao));

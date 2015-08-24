@@ -3122,7 +3122,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		DpLotacao lotacaoDestino = null;
 		
 		try {
-			if (ultimaFilha != null) {		
+			if (ultimaFilha != null &&
+					(this.isFechado() || this.isAFechar())) {		
 				dataFinalFilha = ultimaFilha.isCancelado() ? ultimaFilha.getDtCancelamento()
 						: ultimaFilha.getDtEfetivoFechamento();
 				listaAtendimentos.add(getFimAtendimentoSolicitacaoPai(dataFinalFilha));

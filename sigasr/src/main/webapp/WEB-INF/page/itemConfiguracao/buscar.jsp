@@ -77,11 +77,11 @@ function sbmt(nivel){
 								</c:otherwise>
 							</c:choose>
 							<c:choose>
-								<c:when test="${item.especifico || (not empty sol.solicitante && not empty sol.local) }">
+								<c:when test="${item.especifico || (empty sol.solicitante && empty sol.local) }">
 									<a href="javascript:opener.retorna_${param.propriedade}${nome}('${item.id}','${item.sigla}','${item.descricao}');window.close()">${item.tituloItemConfiguracao}</a>
 								</c:when>
 								<c:otherwise>
-									<span>${item.tituloItemConfiguracao} / </span>
+									<span>${item.tituloItemConfiguracao}</span>
 								</c:otherwise>
 							</c:choose>
 						</td>

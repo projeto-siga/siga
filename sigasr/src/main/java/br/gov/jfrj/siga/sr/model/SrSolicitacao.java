@@ -698,22 +698,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public Set<SrMovimentacao> getMovimentacaoSetOrdemCrescente() {
         return getMovimentacaoSet(false, null, true, false, false, false);
     }
-
-	public Set<SrMovimentacao> getMovimentacaoSetDeInicioEFimAtendimento(boolean todoOContexto) {
-		//movimentacoes que marcam o inicio e fim de um atendimento
-		List<Long> tiposPrincipais = Arrays.asList(TIPO_MOVIMENTACAO_ESCALONAMENTO,
-				TIPO_MOVIMENTACAO_FECHAMENTO, TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO, 
-				TIPO_MOVIMENTACAO_REABERTURA);//, TIPO_MOVIMENTACAO_INICIO_PENDENCIA, TIPO_MOVIMENTACAO_FIM_PENDENCIA);
-		
-		return getMovimentacaoSet(false, null, false, todoOContexto, false, false, tiposPrincipais);	
-	}
-	
-    public Set<SrMovimentacao> getMovimentacaoSet(boolean considerarCanceladas, Long tipoMov, boolean ordemCrescente, boolean todoOContexto, boolean apenasPrincipais, boolean inversoJPA) {
-        return getMovimentacaoSet(considerarCanceladas, tipoMov, ordemCrescente, todoOContexto, apenasPrincipais, inversoJPA, SrTipoMovimentacao.TIPOS_MOV_PRINCIPAIS);
+    
+    private Set<SrMovimentacao> getMovimentacaoSetOrdemCrescentePorTipo(Long idTipoMovimentacao) {
+        return getMovimentacaoSet(false, idTipoMovimentacao, true, false, false, false);
     }
 
-    public Set<SrMovimentacao> getMovimentacaoSet(boolean considerarCanceladas, Long tipoMov, boolean ordemCrescente, boolean todoOContexto, boolean apenasPrincipais, boolean inversoJPA,
-            List<Long> tiposPrincipais) {
+    public Set<SrMovimentacao> getMovimentacaoSet(boolean considerarCanceladas, Long tipoMov, boolean ordemCrescente, boolean todoOContexto, boolean apenasPrincipais, boolean inversoJPA) {
 
         Set<SrMovimentacao> listaCompleta = new TreeSet<SrMovimentacao>(new SrMovimentacaoComparator(ordemCrescente));
 
@@ -733,7 +723,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
                                 continue;
                             if (tipoMov != null && movimentacao.getTipoMov().getIdTipoMov() != tipoMov)
                                 continue;
-                            if (apenasPrincipais && !tiposPrincipais.contains(movimentacao.getTipoMov().getIdTipoMov()))
+                            if (apenasPrincipais && !SrTipoMovimentacao.TIPOS_MOV_PRINCIPAIS.contains(movimentacao.getTipoMov().getIdTipoMov()))
                                 continue;
 
                             listaCompleta.add(movimentacao);
@@ -771,7 +761,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     
 	public List<SrPendencia> getPendencias(boolean incluirTerminadas) {
 		List<SrPendencia> pendentes = new ArrayList<SrPendencia>();
-		for (SrMovimentacao mov : getMovimentacaoSetPorTipo(TIPO_MOVIMENTACAO_INICIO_PENDENCIA)) {
+		for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescentePorTipo(TIPO_MOVIMENTACAO_INICIO_PENDENCIA)) {
 			if (incluirTerminadas || !mov.isFinalizadaOuExpirada())
 				pendentes.add(new SrPendencia(mov.getDtIniMov(), mov
 						.getDtFimMov(), mov.getDescrMovimentacao(),
@@ -783,37 +773,44 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public List<SrPendencia> getPendenciasIncluindoTerminadas(){
     	return getPendencias(true);
     }
+    
+    private List<SrIntervaloEmAtendimento> getTrechosNaoPendentes(){
+    	List<SrIntervaloEmAtendimento> is = new ArrayList<SrIntervaloEmAtendimento>();
 
+    	Date iniEmAtendmto = getDtIniEdicao();
+    	for (SrPendencia p : getPendenciasIncluindoTerminadas()) {
+    		if (p.comecouDepoisDe(iniEmAtendmto))
+    			is.add(new SrIntervaloEmAtendimento(iniEmAtendmto, p.getInicio(), "Período de atendimento"));
+    		if (p.isInfinita())
+    			return is;
+    		iniEmAtendmto = p.getFim();
+    	}
+    	is.add(new SrIntervaloEmAtendimento(iniEmAtendmto, null, "Período de atendimento"));
+    	return is;
+    }
+    
+    private List<SrIntervaloEmAtendimento> getTrechosNaoPendentesPorEtapa(SrEtapa e){
+    	Date dtIni = e.getInicio(), dtFim = e.getFim();
+    	List<SrIntervaloEmAtendimento> is = new ArrayList<SrIntervaloEmAtendimento>();
+    	for (SrIntervaloEmAtendimento i : getTrechosNaoPendentes()) {
+    		if (i.terminouAntesDe(dtIni))
+    			continue;
+    		if (i.comecouDepoisDe(dtFim))
+    			break;
+    		SrIntervaloEmAtendimento newI = new SrIntervaloEmAtendimento(i.getInicio(), i.getFim(), i.getDescricao());
+    		if (i.comecouAntesDe(dtIni))
+    			newI.setInicio(dtIni);
+    		if (i.isInfinita() || i.terminouDepoisDe(dtFim))
+    			newI.setFim(dtFim);
+    		is.add(newI);
+    	}
+    	return is;
+    }
+    
     public List<SrPendencia> getPendenciasEmAberto() {
         return getPendencias(false);
     }
     
-    public List<SrPendencia> getPendenciasLineares(){
-		// Edson: retorna os periodos de pausa de forma linear, ou seja,
-		// colapsando as sobreposicoes, para facilitar os calculos:
-		// Transforma: 	-------
-		// 				   -------
-		// em: 			----------
-    	List<SrPendencia> novasPausas = new ArrayList<SrPendencia>();
-    	SrPendencia novaPausa = null;
-    	for (SrPendencia p : getPendenciasIncluindoTerminadas()) {
-    		if (novaPausa != null && novaPausa.terminouAntesDe(p.getDtIni())) {
-    			novasPausas.add(novaPausa.copy());
-    			novaPausa = null;
-    		}
-    		if (novaPausa == null)
-    			novaPausa = new SrPendencia(p.getDtIni());
-    		if (novaPausa.getDtFim() == null
-    				|| novaPausa.terminouAntesDe(p.getDtFim()))
-    			novaPausa.setDtFim(p.getDtFim());
-    		if (novaPausa.isInfinita())
-    			break;
-    	}
-    	if (novaPausa != null)
-    		novasPausas.add(novaPausa.copy());
-    	return novasPausas;
-	}
-
     // Edson: ver comentario abaixo, em getTiposAtributoAssociados()
     public Map<Long, Boolean> getObrigatoriedadeTiposAtributoAssociados() throws Exception {
         Map<Long, Boolean> map = new HashMap<Long, Boolean>();
@@ -2600,29 +2597,65 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             return null;
         return cancelamento.getDtIniMov();
     }
+    
+    public SrCadastro getCadastro(){
+    	SrCadastro c = new SrCadastro();
+    	c.setInicio(getDtInicioPrimeiraEdicao());
+    	if (isFechado())
+			c.setFim(getDtEfetivoFechamento());
+		else if (isCancelado())
+			c.setFim(getDtCancelamento());
+		else if (jaFoiDesignada())
+			c.setFim(getDtInicioAtendimento());
+		c.setLotaResponsavel(getLotaCadastrante());
+		c.setResponsavel(getCadastrante());
+    	c.setParamAcordo(getParametroAcordoMaisRestritivo(c));
+    	c.setIntervalos(getTrechosNaoPendentesPorEtapa(c));
+    	return c;
+    }
+    
+    public SrAtendimentoGeral getAtendimentoGeral(){
+    	SrAtendimentoGeral g = new SrAtendimentoGeral();
+    	g.setInicio(getDtInicioAtendimento());
+    	if (isFechado())
+			g.setFim(getDtEfetivoFechamento());
+		else if (isCancelado())
+			g.setFim(getDtCancelamento());
+    	g.setParamAcordo(getParametroAcordoMaisRestritivo(g));
+    	g.setIntervalos(getAtendimentos());
+    	return g;
+    }
+    
+    public SrAtendimento getAtendimento(SrMovimentacao movIni, SrMovimentacao mov){
+    	SrAtendimento a = new SrAtendimento();
+    	a.setInicio(movIni.getDtIniMov());
+    	a.setFim(mov != null ? mov.getDtIniMov() : null);
+    	a.setResponsavel(movIni.getAtendente());
+    	a.setLotaResponsavel(movIni.getLotaAtendente());
+    	a.setParamAcordo(getParametroAcordoMaisRestritivo(a));
+    	a.setIntervalos(getTrechosNaoPendentesPorEtapa(a));
+    	return a;
+    }
             
-    public List<SrParametroAcordoSolicitacao> getEtapas(){
-    	List<SrParametroAcordoSolicitacao> etapas = new ArrayList<SrParametroAcordoSolicitacao>();
-    	if (!isFilha())
-    		etapas.add(new SrCadastro(this));
+    public List<AbstractSrEtapa> getEtapas(){
+    	List<AbstractSrEtapa> etapas = new ArrayList<AbstractSrEtapa>();
+    	etapas.add(getCadastro());
     	if (jaFoiDesignada()){
-    		SrAtendimentoGeral geral = new SrAtendimentoGeral(this);
-    		etapas.add(geral);
-    		//Edson: Abaixo, poderia adicionar usando sol.getAtendimentos(), mas o geral já 
-    		//chama esse método. Não precisa chamar duas vezes.
+    		SrAtendimentoGeral geral = getAtendimentoGeral();
     		etapas.addAll(geral.getAtendimentos());
+    		etapas.add(geral);
     	}
     	return etapas;
     }
     
-    public SrEtapaSolicitacao getEtapaPrincipal(){
-    	return jaFoiDesignada() ? new SrAtendimentoGeral(this) : new SrCadastro(this);
+    public AbstractSrEtapa getEtapaPrincipal(){
+    	return jaFoiDesignada() ? getAtendimentoGeral() : getCadastro();
     }
     
-	public List<SrAtendimento> getAtendimentos() {
+	private List<SrAtendimento> getAtendimentos() {
 		List<SrAtendimento> atendimentos = new ArrayList<SrAtendimento>();
 		SrMovimentacao movIni = null;
-		for (SrMovimentacao mov : getMovimentacaoSet()) {
+		for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente()) {
 			boolean isInicio = SrTipoMovimentacao.TIPOS_MOV_INI_ATENDIMENTO.contains(mov.getTipoMov().getId());
 			boolean isFim = SrTipoMovimentacao.TIPOS_MOV_FIM_ATENDIMENTO.contains(mov.getTipoMov().getId());
 			if (!isInicio && !isFim)
@@ -2630,23 +2663,21 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			if (movIni != null) {
 				if (isInicio && mov.getLotaAtendente().equivale(movIni.getLotaAtendente()))
 					continue;
-				atendimentos.add(new SrAtendimento(this, movIni.getDtIniMov(), mov
-						.getDtFimMov(), movIni.getAtendente(), movIni.getLotaAtendente()));
+				atendimentos.add(getAtendimento(movIni, mov));
 				movIni = null;
 			}
 			if (isInicio)
 				movIni = mov;
 		}
 		if (movIni != null)
-			atendimentos.add(new SrAtendimento(this, movIni.getDtIniMov(), movIni
-					.getDtFimMov(), movIni.getAtendente(), movIni.getLotaAtendente()));
+			atendimentos.add(getAtendimento(movIni, null));
 		return atendimentos;
 	}
 
     public boolean isAcordosSatisfeitos() {
     	//Edson: poderia também varrer os acordos em vez das etapas, mas uma etapa já considera 
     	//o acordo mais restritivo cajo haja mais de um (veja construtor SrParametroAcordoSolicitacao)
-        for (SrParametroAcordoSolicitacao etapa : getEtapas()) {
+        for (AbstractSrEtapa etapa : getEtapas()) {
             if (etapa.isAcordoSatisfeito())
                 return false;
         }
@@ -2657,12 +2688,29 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	return acordo.isSatisfeitoParaASolicitacao(this);
     }
     
+    public Set<SrParametroAcordo> getParametrosAcordoOrdenados(){
+    	Set<SrParametroAcordo> set = new TreeSet<SrParametroAcordo>(
+			new SrParametroAcordoComparator());
+    	for (SrAcordo a : getAcordos())
+    		set.addAll(a.getParametroAcordoSet());
+    	return set;
+    }
+    
+    public SrParametroAcordo getParametroAcordoMaisRestritivo(SrParametroAcordoSolicitacao p){
+    	//Edson: o primeiro que aparece na lista com a classe correta é o mais
+    	//restritivo, pois a lista está ordenada
+    	for (SrParametroAcordo par : getParametrosAcordoOrdenados())
+    		if (par.getClasse().equals(p.getClass()))
+    			return par;
+    	return null;
+    }
+    
     public Date getDtPrazoCadastramentoPrevisto(){
-    	return new SrCadastro(this).getFimPrevisto();
+    	return getCadastro().getFimPrevisto();
     }
     
     public Date getDtPrazoAtendimentoPrevisto(){
-    	return new SrAtendimentoGeral(this).getFimPrevisto();
+    	return getAtendimentoGeral().getFimPrevisto();
     }
 
     public String getDtPrazoCadastramentoPrevistoDDMMYYYYHHMM(){
@@ -2755,10 +2803,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             }
         }
         return historicoAcoes;
-    }
-
-    private Set<SrMovimentacao> getMovimentacaoSetOrdemCrescentePorTipo(Long idTipoMovimentacao) {
-        return getMovimentacaoSet(false, null, true, false, false, false, Arrays.asList(idTipoMovimentacao));
     }
 
     private List<SrAcao> listaHistoricoAcaoInicial() {

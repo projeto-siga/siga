@@ -22,7 +22,9 @@ public class SrAtendimento implements Comparable<SrAtendimento> {
 	private String itemConfiguracao;
 	private String acao;
 	
-	
+	public SrAtendimento() {
+		
+	}
 	public SrAtendimento(SrSolicitacao solicitacao, Date dataInicio,
 			Date dataFinal, SrValor tempoAtendimento,
 			DpLotacao lotacaoAtendente, DpLotacao lotacaoAtendenteDestino,

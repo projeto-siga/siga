@@ -11,22 +11,22 @@
 		<div class="gt-sidebar-content">
 			<h3>Acordos</h3>
 			<c:forEach items="${solicitacao.etapas}" var="etapa">
-				<p><b>${etapa.descricao}</b></p>
+				<p class="acordo"><b>${etapa.descricao}</b>
 				<ul class="acordo">
 					<li><b>In&iacute;cio:</b> ${etapa.inicioString}</li>
 					<c:if test="${not empty etapa.fimPrevisto}">
 			 			<li><b>Fim Previsto:</b> ${etapa.fimPrevistoString}</li>
 					</c:if>
-					<c:if test="${not empty etapa.fimEfetivo}">
-			 			<li><b>Fim:</b> ${etapa.fimEfetivoString}</li>
+					<c:if test="${not empty etapa.fim}">
+			 			<li><b>Fim:</b> ${etapa.fimString}</li>
 					</c:if>
-			 		<li><span class="crono decorrido ${etapa.rodando ? 'ligado' : 'desligado'}"><b>Decorrido:</b> <span class="descrValor"></span><span class="valor">${etapa.decorridoEmSegundos}</span></span></li>
+			 		<li><span class="crono decorrido ${etapa.ativo ? 'ligado' : 'desligado'}"><b>Decorrido:</b> <span class="descrValor"></span><span class="valor">${etapa.decorridoEmSegundos}</span></span></li>
 					<c:set var="restante" value="${etapa.restanteEmSegundos}" />
 					<c:if test="${not empty restante}">
-			 			<li><span class="crono restante ${etapa.rodando ? 'ligado' : 'desligado'}"><b><span class="label"></span></b><span class="descrValor"></span><span class="valor">${etapa.restanteEmSegundos}</span></span></li>
+			 			<li><span class="crono restante ${etapa.ativo ? 'ligado' : 'desligado'}"><b><span class="label"></span></b><span class="descrValor"></span><span class="valor">${restante}</span></span></li>
 					</c:if>
 					<c:if test="${not empty etapa.paramAcordo}">
-						<c:set var="situacao" value="${etapa.situacao}" />
+						<c:set var="situacao" value="${etapa.situacaoAcordo}" />
 						<c:choose>
 							<c:when test="${situacao == 'NAO_CUMPRIDO'}">
 								<c:set var="style" value="color: red" />
@@ -40,6 +40,7 @@
 		    			<li style="${style}"><b>Acordo:</b> ${etapa.paramAcordo.descricao} ${descrSituacao}<span></span></li>
 					</c:if>
 				</ul>
+				</p>
 			</c:forEach>
 		</div>
 	</div>
@@ -47,7 +48,7 @@
 <c:otherwise>
 <div class="gt-sidebar">
 	<c:set var="etapa" value="${solicitacao.etapaPrincipal.descricao}" />
-	<div class="gt-sidebar-content cronometro ${etapa.rodando ? 'ligado' : 'desligado'}">
+	<div class="gt-sidebar-content cronometro ${etapa.ativo ? 'ligado' : 'desligado'}">
 		<h3>
 			<img src="/siga/css/famfamfam/icons/clock.png" width="15px;"
 				style="vertical-align: bottom;">&nbsp;${etapa.descricao}
@@ -56,8 +57,8 @@
 		    <p><b>In&iacute;cio: </b>${etapa.inicioString}</p>
 		</c:if>
 		<c:choose>
-			<c:when test="${not empty etapa.fimEfetivo}">
-				<p>Fim: ${etapa.fimEfetivoString}</p>
+			<c:when test="${not empty etapa.fim}">
+				<p>Fim: ${etapa.fimString}</p>
 			</c:when>
 			<c:when test="${not empty etapa.fimPrevisto}">
 				<p>Previs&atilde;o: ${etapa.fimPrevistoString}

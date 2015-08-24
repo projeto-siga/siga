@@ -253,5 +253,9 @@ ul.acordo {
 }
 
 ul.acordo > li {
-	margin: 5pt;
+	margin-top: 5pt;
+}
+p.acordo {
+	margin-top: 5pt;
+}
 }

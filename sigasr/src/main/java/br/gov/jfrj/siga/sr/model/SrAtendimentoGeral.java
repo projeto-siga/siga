@@ -13,7 +13,7 @@ public class SrAtendimentoGeral extends AbstractSrEtapa {
 	
 	@SuppressWarnings("unchecked")
 	public List<SrAtendimento> getAtendimentos(){
-		return (List<SrAtendimento>)getIntervalos();
+		return (List<SrAtendimento>)getIntervalosCorrentes();
 	}
 	
 }

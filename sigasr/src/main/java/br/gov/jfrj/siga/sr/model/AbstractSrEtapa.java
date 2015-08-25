@@ -10,9 +10,10 @@ import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 
 public abstract class AbstractSrEtapa extends SrIntervaloCorrente implements SrParametroAcordoSolicitacao {
 
+	//Edson: esta propriedade deveria estar em SrParametroAcordoSolicitacao
 	protected SrParametroAcordo paramAcordo;
 	
-	private List<? extends SrIntervaloCorrente> intervalos;
+	private List<? extends SrIntervaloCorrente> intervalosCorrentes;
 	
 	public AbstractSrEtapa() {
 		
@@ -48,7 +49,7 @@ public abstract class AbstractSrEtapa extends SrIntervaloCorrente implements SrP
 	@Override
 	public Long getDecorridoMillis(){
 		long decorrido = 0L;
-		for (SrIntervaloCorrente i : intervalos){
+		for (SrIntervaloCorrente i : intervalosCorrentes){
 			if (i.isFuturo())
 				break;
 			decorrido += i.getDecorridoMillis();
@@ -57,32 +58,29 @@ public abstract class AbstractSrEtapa extends SrIntervaloCorrente implements SrP
 	}
 	
 	public SrIntervaloCorrente getIntervaloCorrendoNaData(Date dt){
-		for (SrIntervaloCorrente i : intervalos)
+		for (SrIntervaloCorrente i : intervalosCorrentes)
 			if (i.abrange(dt))
 				return i;
 		return null;
 	}
-		
-	@Override
-	public boolean isAtivo() {
-		return isAtivo(new Date());
-	}
 
+	@Override
 	public boolean isAtivo(Date dt) {
-		SrIntervalo a = getIntervaloCorrendoNaData(dt);
-		return a != null;
+		SrIntervaloCorrente a = getIntervaloCorrendoNaData(dt);
+		return a != null ? a.isAtivo() : false;
 	}
 
 	@Override
-	public Date getDataContandoDoInicio(Long millisAdiante) {
-		Date possivelDtFim = null;
-		Iterator<? extends SrIntervaloCorrente> it = intervalos.iterator();
+	public Date getDataContandoDoInicio(Long millisAdiante, boolean desconsiderarLimiteFim) {
+		Iterator<? extends SrIntervaloCorrente> it = intervalosCorrentes.iterator();
+		SrIntervaloCorrente i = null;
 		while (it.hasNext() && millisAdiante > 0) {
-			SrIntervaloCorrente i = it.next();
-			possivelDtFim = i.getDataContandoDoInicio(millisAdiante);
+			i = it.next();
+			if (i.isFuturo())
+				break;
 			millisAdiante -= i.getDecorridoMillis();
 		}
-		return possivelDtFim;
+		return i.getDataContandoDoInicio(millisAdiante, desconsiderarLimiteFim);
 	}
 
 	private Long getRestanteMillis() {
@@ -97,8 +95,11 @@ public abstract class AbstractSrEtapa extends SrIntervaloCorrente implements SrP
 	}
 	
 	public Date getFimPrevisto() {
+		//Edson: se esta etapa está terminada, perguntar qual o fim previsto significa
+		//imaginar quando provavelmente finalizaria o último intervalo se esta etapa
+		//não tivesse terminado. Isso é feito pelo parâmetro boolean abaixo
 		if (paramAcordo != null)
-			return getDataContandoDoInicio(paramAcordo.getValorEmMilissegundos());
+			return getDataContandoDoInicio(paramAcordo.getValorEmMilissegundos(), !isInfinita());
 		return null;
 	}
 	
@@ -106,12 +107,12 @@ public abstract class AbstractSrEtapa extends SrIntervaloCorrente implements SrP
 		return toStr(getFimPrevisto());
 	}
 
-	public List<? extends SrIntervaloCorrente> getIntervalos() {
-		return intervalos;
+	public List<? extends SrIntervaloCorrente> getIntervalosCorrentes() {
+		return intervalosCorrentes;
 	}
 
-	public void setIntervalos(List<? extends SrIntervaloCorrente> intervalos) {
-		this.intervalos = intervalos;
+	public void setIntervalosCorrentes(List<? extends SrIntervaloCorrente> intervalos) {
+		this.intervalosCorrentes = intervalos;
 	}
 
 }

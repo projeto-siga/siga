@@ -30,17 +30,16 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 	}
 
 	@Override
-	public Date getDataContandoDoInicio(Long millisAdiante) {
+	public Date getDataContandoDoInicio(Long millisAdiante, boolean desconsiderarLimiteFim) {
 		//Edson: chamar o mecanismo acima para fazer previsões
-		if (isInfinita() || millisAdiante <= getDecorridoMillis())
+		if (isInfinita() || millisAdiante <= getDecorridoMillis() || desconsiderarLimiteFim)
 			return new Date(getInicio().getTime() + millisAdiante);
 		return null;
 	}
 
 	@Override
-	public boolean isAtivo() {
-		//Edson: chamar o mecanismo acima para verificar se há feriado
-		//no momento atual ou se está fora do período de trabalho
+	public boolean isAtivo(Date dt) {
+		// TODO Auto-generated method stub
 		return true;
 	}
 

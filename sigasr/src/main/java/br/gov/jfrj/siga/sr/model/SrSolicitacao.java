@@ -2610,7 +2610,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		c.setLotaResponsavel(getLotaCadastrante());
 		c.setResponsavel(getCadastrante());
     	c.setParamAcordo(getParametroAcordoMaisRestritivo(c));
-    	c.setIntervalos(getTrechosNaoPendentesPorEtapa(c));
+    	c.setIntervalosCorrentes(getTrechosNaoPendentesPorEtapa(c));
     	return c;
     }
     
@@ -2622,18 +2622,19 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		else if (isCancelado())
 			g.setFim(getDtCancelamento());
     	g.setParamAcordo(getParametroAcordoMaisRestritivo(g));
-    	g.setIntervalos(getAtendimentos());
+    	g.setIntervalosCorrentes(getAtendimentos());
     	return g;
     }
     
-    public SrAtendimento getAtendimento(SrMovimentacao movIni, SrMovimentacao mov){
+    public SrAtendimento getAtendimento(SrMovimentacao movIni, SrMovimentacao movFim){
     	SrAtendimento a = new SrAtendimento();
     	a.setInicio(movIni.getDtIniMov());
-    	a.setFim(mov != null ? mov.getDtIniMov() : null);
+    	a.setFim(movFim != null ? movFim.getDtIniMov() : null);
     	a.setResponsavel(movIni.getAtendente());
     	a.setLotaResponsavel(movIni.getLotaAtendente());
     	a.setParamAcordo(getParametroAcordoMaisRestritivo(a));
-    	a.setIntervalos(getTrechosNaoPendentesPorEtapa(a));
+    	//DefinicaoHorario  h = getDefinicioarHorarioPorPessoalELota()
+    	a.setIntervalosCorrentes(getTrechosNaoPendentesPorEtapa(a));
     	return a;
     }
             
@@ -2652,7 +2653,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	return jaFoiDesignada() ? getAtendimentoGeral() : getCadastro();
     }
     
-	private List<SrAtendimento> getAtendimentos() {
+	public List<SrAtendimento> getAtendimentos() {
 		List<SrAtendimento> atendimentos = new ArrayList<SrAtendimento>();
 		SrMovimentacao movIni = null;
 		for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente()) {

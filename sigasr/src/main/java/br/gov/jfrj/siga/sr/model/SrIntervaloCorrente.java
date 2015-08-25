@@ -14,12 +14,16 @@ public abstract class SrIntervaloCorrente extends SrIntervalo {
 	
 	public abstract Long getDecorridoMillis();
 	
-	public abstract boolean isAtivo();
+	public boolean isAtivo(){
+		return isAtivo(new Date());
+	}
+	
+	public abstract boolean isAtivo(Date dt);
 	
 	public Long getDecorridoEmSegundos(){
 		return segundos(getDecorridoMillis());
 	}
 	
-	public abstract Date getDataContandoDoInicio(Long millisAdiante);
+	public abstract Date getDataContandoDoInicio(Long millisAdiante, boolean desconsiderarLimiteFim);
 	
 }

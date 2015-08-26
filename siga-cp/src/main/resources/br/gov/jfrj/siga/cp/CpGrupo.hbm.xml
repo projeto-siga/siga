@@ -56,6 +56,7 @@
 			from br.gov.jfrj.siga.cp.CpGrupo cpgrp
 			where ( cpgrp.cpTipoGrupo.idTpGrupo = :idTpGrupo)
 			and cpgrp.hisAtivo = 1
+			order by cpgrp.siglaGrupo
 		]]>
 	</query>
 	<query name="consultarQuantidadeCpGrupoPorCpTipoGrupoId">
@@ -81,6 +82,7 @@
 			where ( cpgrp.cpTipoGrupo.idTpGrupo = :idTpGrupo)
 			and (upper(cpgrp.siglaGrupo) like upper('%'||:siglaGrupo||'%') or upper(cpgrp.dscGrupo) like upper('%'||:siglaGrupo||'%'))
 			and cpgrp.hisAtivo = 1
+			order by cpgrp.siglaGrupo
 		]]>
 	</query>
 

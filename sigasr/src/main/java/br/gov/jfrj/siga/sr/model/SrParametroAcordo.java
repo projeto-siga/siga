@@ -93,36 +93,12 @@ public class SrParametroAcordo extends HistoricoSuporte {
 		return paramAcordos.get(0);
 	}
 
-	public boolean isSatisfeitoPeloValor(SrValor valor) {
-		return getSituacaoParaOValor(valor).equals(SrSituacaoAcordo.OK) ? true
-				: false;
-	}
-
 	public SrSituacaoAcordo getSituacaoParaOValor(SrValor valor) {
 		if (valor == null)
 			return SrSituacaoAcordo.NAO_SE_APLICA;
 		if (isNaFaixa(valor))
 			return SrSituacaoAcordo.OK;
 		return SrSituacaoAcordo.NAO_CUMPRIDO;
-	}
-
-	public SrSituacaoAcordo getSituacaoParaASolicitacao(SrSolicitacao sol) {
-		SrParametroAcordoSolicitacao paSol = getParametroAcordoSolicitacao(sol);
-		return paSol.getSituacaoAcordo();
-	}
-
-	public SrParametroAcordoSolicitacao getParametroAcordoSolicitacao(
-			SrSolicitacao sol) {
-		try {
-			Constructor<SrParametroAcordoSolicitacao> c = getClasse()
-					.getConstructor(this.getClass());
-			return c.newInstance(sol);
-		} catch (NoSuchMethodException | SecurityException
-				| InstantiationException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 
 	public boolean isNaFaixa(SrValor v) {
@@ -144,17 +120,6 @@ public class SrParametroAcordo extends HistoricoSuporte {
 		return new SrValor(getValor(),
 				getUnidadeMedida() != null ? getUnidadeMedida()
 						.getIdUnidadeMedida().intValue() : null);
-	}
-
-	// Edson: enquanto o parâmetro não passa a ser um enum em vez de um
-	// SrAtributo...
-	public Class getClasse() {
-		try {
-			return Class.forName(this.getClass().getPackage().getName()+"."+parametro.getCodigoAtributo());
-		} catch (ClassNotFoundException | NullPointerException e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 
 	public Long getValorEmSegundos() {

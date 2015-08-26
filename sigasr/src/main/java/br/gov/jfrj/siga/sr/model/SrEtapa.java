@@ -1,30 +1,33 @@
 package br.gov.jfrj.siga.sr.model;
 
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
+public enum SrEtapa {
 
-public abstract class SrEtapa extends AbstractSrEtapa {
+	CADASTRO(1, "Cadastro"), PRIMEIRO_ATENDIMENTO(2, "Atendimento"), ATENDIMENTO(
+			3, "Atendimento"), ULTIMO_ATENDIMENTO(2, "Atendimento"), ATENDIMENTO_GERAL(
+			2, "Atendimento (Total)");
 
-	public SrEtapa() {
+	private long idEtapa;
+	private String descrEtapa;
+
+	private SrEtapa(long idEtapa, String descrEtapa) {
+		this.idEtapa = idEtapa;
+		this.descrEtapa = descrEtapa;
 	}
 
-	private DpLotacao lotaResponsavel;
-	private DpPessoa responsavel;
-
-	public DpLotacao getLotaResponsavel() {
-		return lotaResponsavel;
+	public long getIdEtapa() {
+		return idEtapa;
 	}
 
-	public void setLotaResponsavel(DpLotacao lotaResponsavel) {
-		this.lotaResponsavel = lotaResponsavel;
+	public void setIdEtapa(long idEtapa) {
+		this.idEtapa = idEtapa;
 	}
 
-	public DpPessoa getResponsavel() {
-		return responsavel;
+	public String getDescrEtapa() {
+		return descrEtapa;
 	}
 
-	public void setResponsavel(DpPessoa responsavel) {
-		this.responsavel = responsavel;
+	public void setDescrEtapa(String descrEtapa) {
+		this.descrEtapa = descrEtapa;
 	}
 
 }

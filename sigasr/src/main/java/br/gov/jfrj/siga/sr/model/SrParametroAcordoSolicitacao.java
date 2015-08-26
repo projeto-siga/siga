@@ -1,7 +1,6 @@
 package br.gov.jfrj.siga.sr.model;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.List;
 
 public interface SrParametroAcordoSolicitacao {
 
@@ -11,8 +10,8 @@ public interface SrParametroAcordoSolicitacao {
 	
 	public SrSituacaoAcordo getSituacaoAcordo();
 
-	public SrParametroAcordo getParamAcordo();
+	public List<SrParametroAcordo> getParamsAcordo();
 
-	public void setParamAcordo(SrParametroAcordo paramAcordo);
+	public void setParamsAcordo(List<SrParametroAcordo> paramsAcordo);
 
 }

@@ -147,23 +147,6 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 		return null;
 	}
 
-	public SrSituacaoAcordo getSituacaoParaASolicitacao(SrSolicitacao sol) {
-		if (getParametroAcordoSet() == null)
-			return null;
-		SrSituacaoAcordo situ = SrSituacaoAcordo.NAO_SE_APLICA;
-		for (SrParametroAcordo pa : getParametroAcordoSet()) {
-			SrSituacaoAcordo situPa = pa.getSituacaoParaASolicitacao(sol);
-			if (situPa != null && situPa.getId() > situ.getId())
-				situ = situPa;
-		}
-		return situ;
-	}
-
-	public boolean isSatisfeitoParaASolicitacao(SrSolicitacao sol) {
-		SrSituacaoAcordo situ = getSituacaoParaASolicitacao(sol);
-		return situ != null ? situ.isSatisfatoria() : null;
-	}
-
 	public String getSigla() {
 		if (getIdAcordo() != null)
 			return getIdAcordo().toString();

@@ -7,40 +7,53 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
+import br.gov.jfrj.siga.dp.DpLotacao;
 
-public abstract class AbstractSrEtapa extends SrIntervaloCorrente implements SrParametroAcordoSolicitacao {
+public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParametroAcordoSolicitacao {
 
 	//Edson: esta propriedade deveria estar em SrParametroAcordoSolicitacao
-	protected SrParametroAcordo paramAcordo;
+	private List<SrParametroAcordo> paramsAcordo; 
 	
 	private List<? extends SrIntervaloCorrente> intervalosCorrentes;
 	
-	public AbstractSrEtapa() {
-		
+	private DpLotacao lotaResponsavel;
+	
+	private SrEtapa etapa;
+	
+	public SrEtapaSolicitacao(SrEtapa etapa) {
+		this.etapa = etapa;
+		setDescricao(etapa.getDescrEtapa());
 	}
 	
 	//Edson: métodos que deveriam estar em SrParmetroAcordoSolicitaocao
 	@Override
 	public boolean isAcordoSatisfeito(){
-		return paramAcordo.isSatisfeitoPeloValor(getValorRealizado());
+		SrSituacaoAcordo situ = getSituacaoAcordo();
+		return situ == SrSituacaoAcordo.OK || situ == SrSituacaoAcordo.NAO_SE_APLICA;
 	}
 	
 	@Override
 	public SrSituacaoAcordo getSituacaoAcordo(){
-		return paramAcordo.getSituacaoParaOValor(getValorRealizado());
+		return getParamAcordo() != null ? getParamAcordo().getSituacaoParaOValor(getValorRealizado()) : SrSituacaoAcordo.NAO_SE_APLICA;
 	}
 
-	@Override
 	public SrParametroAcordo getParamAcordo() {
-		return paramAcordo;
+		if (paramsAcordo != null && paramsAcordo.size() > 0)
+			return paramsAcordo.get(0);
+		return null;
+	}
+	
+	@Override
+	public List<SrParametroAcordo> getParamsAcordo(){
+		return paramsAcordo;
 	}
 
 	@Override
-	public void setParamAcordo(SrParametroAcordo paramAcordo) {
-		this.paramAcordo = paramAcordo;
+	public void setParamsAcordo(List<SrParametroAcordo> paramsAcordo) {
+		this.paramsAcordo = paramsAcordo;
 	}
 	//Edson: FIM métodos que deveriam estar em SrParmetroAcordoSolicitaocao	
-
+	
 	@Override
 	public SrValor getValorRealizado() {
 		return new SrValor(getDecorridoEmSegundos(), CpUnidadeMedida.SEGUNDO);
@@ -84,8 +97,8 @@ public abstract class AbstractSrEtapa extends SrIntervaloCorrente implements SrP
 	}
 
 	private Long getRestanteMillis() {
-		if (paramAcordo != null){
-			return paramAcordo.getValorEmMilissegundos() - getDecorridoMillis();
+		if (getParamAcordo() != null){
+			return getParamAcordo().getValorEmMilissegundos() - getDecorridoMillis();
 		}
 		return null;
 	}
@@ -98,8 +111,8 @@ public abstract class AbstractSrEtapa extends SrIntervaloCorrente implements SrP
 		//Edson: se esta etapa está terminada, perguntar qual o fim previsto significa
 		//imaginar quando provavelmente finalizaria o último intervalo se esta etapa
 		//não tivesse terminado. Isso é feito pelo parâmetro boolean abaixo
-		if (paramAcordo != null)
-			return getDataContandoDoInicio(paramAcordo.getValorEmMilissegundos(), !isInfinita());
+		if (getParamAcordo() != null)
+			return getDataContandoDoInicio(getParamAcordo().getValorEmMilissegundos(), !isInfinita());
 		return null;
 	}
 	
@@ -113,6 +126,22 @@ public abstract class AbstractSrEtapa extends SrIntervaloCorrente implements SrP
 
 	public void setIntervalosCorrentes(List<? extends SrIntervaloCorrente> intervalos) {
 		this.intervalosCorrentes = intervalos;
+	}
+	
+	public DpLotacao getLotaResponsavel() {
+		return lotaResponsavel;
+	}
+
+	public void setLotaResponsavel(DpLotacao lotaResponsavel) {
+		this.lotaResponsavel = lotaResponsavel;
+	}
+
+	public SrEtapa getEtapa() {
+		return etapa;
+	}
+
+	public void setEtapa(SrEtapa etapa) {
+		this.etapa = etapa;
 	}
 
 }

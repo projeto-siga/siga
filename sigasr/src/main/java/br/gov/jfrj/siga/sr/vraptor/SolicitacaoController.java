@@ -130,14 +130,12 @@ public class SolicitacaoController extends SrController {
         result.include("cargocargoAtualSel", new DpCargoSelecao());
     }
 
-    @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/gravarPermissaoUsoLista")
     public void gravarPermissaoUsoLista(SrConfiguracao permissao) throws Exception {
         permissao.salvarComoPermissaoUsoLista();
         result.use(Results.http()).body(permissao.toVO().toJson());
     }
 
-    @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/listarPermissaoUsoLista")
     public void listarPermissaoUsoLista(Long idLista, boolean mostrarDesativados) throws Exception {
 
@@ -149,7 +147,6 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
     }
 
-    @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/desativarPermissaoUsoListaEdicao")
     public void desativarPermissaoUsoListaEdicao(Long idLista, Long idPermissao) throws Exception {
         SrConfiguracao configuracao = ContextoPersistencia.em().find(SrConfiguracao.class, idPermissao);

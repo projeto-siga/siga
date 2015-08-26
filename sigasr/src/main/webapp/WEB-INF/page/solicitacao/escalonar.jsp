@@ -23,7 +23,7 @@
 		}
 		
 		function carregarAcao() {
-			var inputIdItem = $("#formulario_solicitacaoitemConfiguracao").val();
+			var inputIdItem = $("#formulario_solicitacaoitemConfiguracao_id").val();
 			var inputIdSolicitacao = document.getElementById('id');
 			var params = 'id=' + inputIdSolicitacao.value
 					+ '&itemConfiguracao=' + inputIdItem;

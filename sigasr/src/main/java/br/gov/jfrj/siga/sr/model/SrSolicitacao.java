@@ -3176,7 +3176,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	    ContextoPersistencia.em().refresh(this);
 	}
 	
-	public Set<SrAtendimento> getAtendimentosSet() {
+	/*public Set<SrAtendimento> getAtendimentosSet() {
 		Set<SrMovimentacao> listaMov = getMovimentacaoSetDeInicioEFimAtendimento(false);
 		Set<SrAtendimento> listaAtendimentos = new TreeSet<SrAtendimento>();
 		SrAtendimento atendimento = null;
@@ -3390,28 +3390,28 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			e.printStackTrace();
 		}
 		return tempoAtendimento;
-	}
+	}*/
 
 	public SrItemConfiguracao getDnmItemConfiguracao() {
 		return dnmItemConfiguracao;
 	}
-
+	
 	public void setDnmItemConfiguracao(SrItemConfiguracao dnmItemConfiguracao) {
 		this.dnmItemConfiguracao = dnmItemConfiguracao;
 	}
-
+	
 	public SrAcao getDnmAcao() {
 		return dnmAcao;
 	}
-
+	
 	public void setDnmAcao(SrAcao dnmAcao) {
 		this.dnmAcao = dnmAcao;
 	}
-
+	
 	public SrPrioridade getDnmPrioridadeTecnica() {
 		return dnmPrioridadeTecnica;
 	}
-
+	
 	public void setDnmPrioridadeTecnica(SrPrioridade dnmPrioridadeTecnica) {
 		this.dnmPrioridadeTecnica = dnmPrioridadeTecnica;
 	}

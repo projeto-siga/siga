@@ -86,7 +86,7 @@ public class SrRelAtendimento extends RelatorioTemplate {
 				idsIniciais = listarLotacoesPorExpressao();
 
 			lista = consultarAtendimentoPorLotacao(idsIniciais);
-			for (SrSolicitacao sol : lista) {
+			/*for (SrSolicitacao sol : lista) {
 				if (sol.isPai())
 					listaAtendimento = sol.getAtendimentosSetSolicitacaoPai();
 				else 
@@ -118,7 +118,7 @@ public class SrRelAtendimento extends RelatorioTemplate {
 				listaFinal.add(Float.parseFloat(String.format(Locale.US,"%.2f", 
 						(quantRegistros * 100f)/tamanhoLista)));
 				quantRegistros++;
-			}
+			}*/
 		}
 		catch (Exception e) {
 			throw new Exception(e.getMessage());

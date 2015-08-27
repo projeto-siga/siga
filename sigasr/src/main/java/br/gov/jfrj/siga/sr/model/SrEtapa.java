@@ -3,8 +3,8 @@ package br.gov.jfrj.siga.sr.model;
 public enum SrEtapa {
 
 	CADASTRO(1, "Cadastro"), PRIMEIRO_ATENDIMENTO(2, "Atendimento"), ATENDIMENTO(
-			3, "Atendimento"), ULTIMO_ATENDIMENTO(2, "Atendimento"), ATENDIMENTO_GERAL(
-			2, "Atendimento (Total)");
+			3, "Atendimento"), ULTIMO_ATENDIMENTO(4, "Atendimento"), ATENDIMENTO_GERAL(
+			5, "Atendimento (Total)");
 
 	private long idEtapa;
 	private String descrEtapa;

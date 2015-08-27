@@ -258,4 +258,6 @@ ul.acordo > li {
 p.acordo {
 	margin-top: 5pt;
 }
+.crono > .valor {
+	display:none;
 }

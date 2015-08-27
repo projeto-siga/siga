@@ -2635,21 +2635,33 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	a.setIntervalosCorrentes(getTrechosNaoPendentesPorEtapa(a));
     	return a;
     }
-            
+    
+    public List<SrEtapaSolicitacao> getEtapas(){
+    	return getEtapas(null);
+    }
+  
     @SuppressWarnings("unchecked")
-	public List<SrEtapaSolicitacao> getEtapas(){
+	public List<SrEtapaSolicitacao> getEtapas(DpLotacao lota){
     	List<SrEtapaSolicitacao> etapas = new ArrayList<SrEtapaSolicitacao>();
-    	etapas.add(getCadastro());
     	if (jaFoiDesignada()){
     		SrEtapaSolicitacao geral = getAtendimentoGeral();
-    		etapas.addAll((List<SrEtapaSolicitacao>)geral.getIntervalosCorrentes());
-    		etapas.add(geral);
+    		List<SrEtapaSolicitacao> atendmtos = (List<SrEtapaSolicitacao>)geral.getIntervalosCorrentes();
+    		Collections.reverse(atendmtos);
+    		if (lota == null)
+    			etapas.addAll(atendmtos);
+    		else {
+    			for (SrEtapaSolicitacao a : atendmtos)
+        			if (a.isAtivo() && a.getLotaResponsavel().equivale(lota)){
+        				etapas.add(a);
+        				break;
+        			}
+    		}
+    		if (etapas.size() == 0 || geral.getParamAcordo() != null || lota == null)
+    			etapas.add(geral);
     	}
+    	if (!isFilha() && (lota == null || etapas.size() == 0))
+    		etapas.add(getCadastro());
     	return etapas;
-    }
-    
-    public SrEtapaSolicitacao getEtapaPrincipal(){
-    	return jaFoiDesignada() ? getAtendimentoGeral() : getCadastro();
     }
     
 	public List<SrEtapaSolicitacao> getAtendimentos() {

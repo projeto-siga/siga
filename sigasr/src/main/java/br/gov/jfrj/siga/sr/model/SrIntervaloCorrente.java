@@ -24,6 +24,6 @@ public abstract class SrIntervaloCorrente extends SrIntervalo {
 		return segundos(getDecorridoMillis());
 	}
 	
-	public abstract Date getDataContandoDoInicio(Long millisAdiante, boolean desconsiderarLimiteFim);
+	public abstract Date getDataContandoDoInicio(Long millisAdiante);
 	
 }

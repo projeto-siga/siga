@@ -13,6 +13,7 @@
 	<script src="/sigasr/javascripts/base-service.js"></script>
 	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
 	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
+	<script src="/sigasr/javascripts/cronometro.js"></script>
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
 
 	<style>
@@ -133,17 +134,21 @@
 					</div>
 				</form>
 			</div>
-
 			<p style="padding-top: 30px; font-weight: bold; color: #365b6d;">
-				<c:if test="${solicitacao.parteDeArvore}">
-					<siga:checkbox name="todoOContexto" value="${todoOContexto}" onchange="postback();"></siga:checkbox> Todo o Contexto
-                    &nbsp;&nbsp;
-            </c:if>
-				<siga:checkbox name="ocultas" value="${ocultas}" onchange="postback();"></siga:checkbox>
-				Mais Detalhes
+				<c:if test="${solicitacao.estaSendoAtendidaPor(titular, lotaTitular) || exibirMenuAdministrar}">
+					<input type="radio" name="exibirEtapas" value="false" id="radioMovs" onclick="exibirMovs();" />&nbsp;Movimenta&ccedil;&otilde;es&nbsp;
+					<input type="radio" name="exibirEtapas" value="true" id="radioEtapas" onclick="exibirEtapas();" />&nbsp;Atendimentos&nbsp;&nbsp;
+				</c:if>
+				<span id="todoOContexto">
+					<c:if test="${solicitacao.parteDeArvore}">
+						<siga:checkbox name="todoOContexto" value="${todoOContexto}" onchange="postback();"></siga:checkbox> Todo o Contexto
+                    	&nbsp;&nbsp;
+           			</c:if>
+           		</span>
+				<span id="maisDetalhes"><siga:checkbox name="ocultas" value="${ocultas}" onchange="postback();"></siga:checkbox>
+				Mais Detalhes</span>
 			</p>
-
-			<div class="gt-content-box">
+			<div class="gt-content-box" id="movs">
 				<table border="0" width="100%" class="gt-table mov">
 					<thead>
 						<tr>
@@ -234,9 +239,69 @@
 					</tbody>
 				</table>
 			</div>
+			<div class="gt-content-box" id="etapas">
+				<table border="0" width="100%" class="gt-table mov">
+					<thead>
+						<tr>
+							<th>Etapa</th>
+							<th>Equipe</th>
+							<th>Início</th>
+							<th>Fim</th>
+							<th>Decorrido</th>
+							<th>Restante</th>
+							<th>Acordo</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<c:set var="etapas" value="${solicitacao.etapas}" />
+						<c:choose>
+							<c:when test="${not empty etapas}">
+								<c:forEach items="${etapas}" var="etapa">
+									<tr>
+										<td>${etapa.descricao}</td>
+										<td>${not empty etapa.lotaResponsavel ? etapa.lotaResponsavel : ''}</td>
+										<td>${etapa.inicioString}</td>
+										<td>${etapa.fimString}</td>
+										<td class="crono resumido decorrido ${etapa.ativo ? 'ligado' : 'desligado'}">
+											<nobr><span class="descrValor"></span><span class="valor">${etapa.decorridoEmSegundos}</span></nobr>
+										</td>
+										<td class="crono resumido restante ${etapa.ativo ? 'ligado' : 'desligado'}">
+											<nobr><span class="descrValor"></span><span class="valor">${etapa.restanteEmSegundos}</span></nobr>
+										</td>
+										<td><c:if test="${not empty etapa.paramAcordo}">${etapa.paramAcordo.acordo.nomeAcordo}</c:if></td>
+									</tr>
+								</c:forEach>
+							</c:when>
+							<c:otherwise>
+								<tr>
+									<td align="center" colspan="10">N&atilde;o h&aacute;
+										atendimentos nesse modo de
+										exibi&ccedil;&atilde;o</td>
+								</tr>
+							</c:otherwise>
+						</c:choose>
+					</tbody>
+				</table>
+			</div>
+			<script>
+				function exibirMovs(){
+					$("#movs").show();
+					$("#maisDetalhes").show();
+					$("#todoOContexto").show();
+					$("#etapas").hide();
+				}
+				function exibirEtapas(){
+					$("#etapas").show();
+					$("#movs").hide();
+					$("#maisDetalhes").hide();
+					$("#todoOContexto").show();
+				}
+				$("#radioMovs").trigger("click");
+			</script>
 		</div>
 
-		<jsp:include page="exibirAcordos.jsp"></jsp:include>
+		<jsp:include page="exibirCronometro.jsp"></jsp:include>
 		<jsp:include page="exibirPendencias.jsp"></jsp:include>
 		<div class="gt-sidebar">
 			<div class="gt-sidebar-content">

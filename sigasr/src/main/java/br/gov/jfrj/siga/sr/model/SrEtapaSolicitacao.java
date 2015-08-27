@@ -59,6 +59,10 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 		return new SrValor(getDecorridoEmSegundos(), CpUnidadeMedida.SEGUNDO);
 	}
 	
+	public String getDescricaoComLotaResponsavel(){
+		return getDescricao() + (lotaResponsavel != null ? " ("+ lotaResponsavel.getSiglaCompleta() +")" : "");
+	}
+	
 	@Override
 	public Long getDecorridoMillis(){
 		long decorrido = 0L;
@@ -84,16 +88,19 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 	}
 
 	@Override
-	public Date getDataContandoDoInicio(Long millisAdiante, boolean desconsiderarLimiteFim) {
+	public Date getDataContandoDoInicio(Long millisAdiante) {
 		Iterator<? extends SrIntervaloCorrente> it = intervalosCorrentes.iterator();
 		SrIntervaloCorrente i = null;
-		while (it.hasNext() && millisAdiante > 0) {
+		while (it.hasNext()) {
 			i = it.next();
 			if (i.isFuturo())
 				break;
+			Date dt = i.getDataContandoDoInicio(millisAdiante);
+			if (dt != null)
+				return dt;
 			millisAdiante -= i.getDecorridoMillis();
 		}
-		return i.getDataContandoDoInicio(millisAdiante, desconsiderarLimiteFim);
+		return null;
 	}
 
 	private Long getRestanteMillis() {
@@ -108,11 +115,8 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 	}
 	
 	public Date getFimPrevisto() {
-		//Edson: se esta etapa está terminada, perguntar qual o fim previsto significa
-		//imaginar quando provavelmente finalizaria o último intervalo se esta etapa
-		//não tivesse terminado. Isso é feito pelo parâmetro boolean abaixo
-		if (getParamAcordo() != null)
-			return getDataContandoDoInicio(getParamAcordo().getValorEmMilissegundos(), !isInfinita());
+		if (getFim() == null && getParamAcordo() != null)
+			return getDataContandoDoInicio(getParamAcordo().getValorEmMilissegundos());
 		return null;
 	}
 	

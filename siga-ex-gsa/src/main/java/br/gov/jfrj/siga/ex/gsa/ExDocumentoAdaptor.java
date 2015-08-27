@@ -18,14 +18,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
-import java.util.logging.Level;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.hibernate.Query;
@@ -37,13 +33,16 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 import com.google.enterprise.adaptor.AbstractAdaptor;
+import com.google.enterprise.adaptor.Acl;
 import com.google.enterprise.adaptor.Adaptor;
 import com.google.enterprise.adaptor.AdaptorContext;
 import com.google.enterprise.adaptor.Config;
 import com.google.enterprise.adaptor.DocId;
 import com.google.enterprise.adaptor.DocIdPusher;
+import com.google.enterprise.adaptor.GroupPrincipal;
 import com.google.enterprise.adaptor.Request;
 import com.google.enterprise.adaptor.Response;
+import com.google.enterprise.adaptor.UserPrincipal;
 
 /**
  * Adaptador Google Search Appliance para documentos do SIGA-DOC.
@@ -123,6 +122,9 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor {
 			return;
 		}
 
+		Acl acl = makeAclForDoc(doc);
+		if (acl != null)
+			resp.setAcl(acl);
 		resp.setCrawlOnce(true);
 		resp.setLastModified(doc.getDtFinalizacao());
 		try {
@@ -134,6 +136,19 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor {
 
 		resp.setContentType("application/pdf");
 		resp.getOutputStream().write(doc.getPdf());
+	}
+
+	private Acl makeAclForDoc(ExDocumento doc) {
+		String sAcessos = doc.getDnmAcesso();
+		if ("PUBLICO".equals(sAcessos))
+			return null;
+
+		List<GroupPrincipal> groups = new ArrayList<>();
+		for (String s : sAcessos.split(",")) {
+			groups.add(new GroupPrincipal(s));
+		}
+		return new Acl.Builder().setPermitGroups(groups)
+				.setEverythingCaseInsensitive().build();
 	}
 
 	public static void main(String[] args) {

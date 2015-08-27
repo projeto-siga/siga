@@ -1148,11 +1148,12 @@ public class ExDocumentoController extends ExController {
 		}
 
 		try {
+			final String realPath = getContext().getRealPath("");
 			exDocumentoDto.setMsg(Ex
 					.getInstance()
 					.getBL()
 					.finalizar(getCadastrante(), getLotaTitular(),
-							exDocumentoDto.getDoc(), null));
+							exDocumentoDto.getDoc(), realPath));
 
 			if (exDocumentoDto.getDoc().getForm() != null) {
 				if (exDocumentoDto.getDoc().getForm().get("acaoFinalizar") != null

@@ -416,10 +416,10 @@
         removerItensLista('parametrosAcordo');
 
         if (acordo) {
-            for (var i = 0; i < acordo.atributoAcordoSet.length; i++) {
-                var item = acordo.atributoAcordoSet[i];
+            for (var i = 0; i < acordo.parametroAcordoSet.length; i++) {
+                var item = acordo.parametroAcordoSet[i];
 
-                $("#parametrosAcordo")[0].incluirItem(item.atributo.idAtributo, item.atributo.nomeAtributo, item.operador, item.operadorNome, item.valor, item.unidadeMedida.idUnidadeMedida, item.unidadeMedidaPlural, item.idAtributoAcordo);
+                $("#parametrosAcordo")[0].incluirItem(item.atributo.idAtributo, item.atributo.nomeAtributo, item.operador, item.operadorNome, item.valor, item.unidadeMedida.idUnidadeMedida, item.unidadeMedidaPlural, item.idParametroAcordo);
             }
         }
     }

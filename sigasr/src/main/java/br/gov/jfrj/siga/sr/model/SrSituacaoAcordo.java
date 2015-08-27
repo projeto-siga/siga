@@ -5,33 +5,33 @@ public enum SrSituacaoAcordo {
 	NAO_SE_APLICA(1, "Não se aplica"), OK(2, "Cumprido"), ALERTA(3, "Alerta"), NAO_CUMPRIDO(
 			4, "Não Cumprido");
 
-	private long idSituacaoAtributoAcordo;
-	private String descrSituacaoAtributoAcordo;
+	private long idSituacaoAcordo;
+	private String descrSituacaoAcordo;
 
 	SrSituacaoAcordo(int id, String descricao) {
-		this.setidSituacaoAtributoAcordo(id);
-		this.setDescrSituacaoAtributoAcordo(descricao);
+		this.setidSituacaoAcordo(id);
+		this.setDescrSituacaoAcordo(descricao);
 	}
 
-	public long getidSituacaoAtributoAcordo() {
-		return idSituacaoAtributoAcordo;
+	public long getidSituacaoAcordo() {
+		return idSituacaoAcordo;
 	}
 	
 	public long getId(){
-		return getidSituacaoAtributoAcordo();
+		return getidSituacaoAcordo();
 	}
 
-	public void setidSituacaoAtributoAcordo(long idSituacaoAtributoAcordo) {
-		this.idSituacaoAtributoAcordo = idSituacaoAtributoAcordo;
+	public void setidSituacaoAcordo(long idSituacaoAcordo) {
+		this.idSituacaoAcordo = idSituacaoAcordo;
 	}
 
-	public String getDescrSituacaoAtributoAcordo() {
-		return descrSituacaoAtributoAcordo;
+	public String getDescrSituacaoAcordo() {
+		return descrSituacaoAcordo;
 	}
 
-	public void setDescrSituacaoAtributoAcordo(
-			String descrSituacaoAtributoAcordo) {
-		this.descrSituacaoAtributoAcordo = descrSituacaoAtributoAcordo;
+	public void setDescrSituacaoAcordo(
+			String descrSituacaoAcordo) {
+		this.descrSituacaoAcordo = descrSituacaoAcordo;
 	}
 
 	public boolean isSatisfatoria() {

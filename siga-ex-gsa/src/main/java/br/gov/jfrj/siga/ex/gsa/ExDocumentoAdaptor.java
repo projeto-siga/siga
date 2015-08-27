@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.hibernate.Query;
@@ -122,9 +123,8 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor {
 			return;
 		}
 
-		Acl acl = makeAclForDoc(doc);
-		if (acl != null)
-			resp.setAcl(acl);
+		addMetadataForDoc(doc, resp);
+		addAclForDoc(doc, resp);
 		resp.setCrawlOnce(true);
 		resp.setLastModified(doc.getDtFinalizacao());
 		try {
@@ -138,17 +138,33 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor {
 		resp.getOutputStream().write(doc.getPdf());
 	}
 
-	private Acl makeAclForDoc(ExDocumento doc) {
+	private void addAclForDoc(ExDocumento doc, Response resp) {
 		String sAcessos = doc.getDnmAcesso();
 		if ("PUBLICO".equals(sAcessos))
-			return null;
+			return;
 
 		List<GroupPrincipal> groups = new ArrayList<>();
 		for (String s : sAcessos.split(",")) {
 			groups.add(new GroupPrincipal(s));
 		}
-		return new Acl.Builder().setPermitGroups(groups)
+		Acl acl = new Acl.Builder().setPermitGroups(groups)
 				.setEverythingCaseInsensitive().build();
+		resp.setAcl(acl);
+
+	}
+
+	private void addMetadataForDoc(ExDocumento doc, Response resp) {
+		if (doc.getSubscritor() != null)
+			resp.addMetadata("Subscritor", doc.getSubscritor().getNomePessoa());
+		if (doc.getLotaSubscritor() != null)
+			resp.addMetadata("Lotação do Subscritor", doc.getLotaSubscritor()
+					.getNomeLotacao());
+
+		Map<String, String> map = doc.getResumo();
+		if (map != null)
+			for (String s : map.keySet()) {
+				resp.addMetadata(s, map.get(s));
+			}
 	}
 
 	public static void main(String[] args) {

@@ -110,13 +110,13 @@
 										${line.separator}
 										${line.separator}
 									</message>
-									<regex>(develop|(release-|hotfix-)?\d{1,}\.\d{1,}\.\d{1,}(\.\d{1,})?)</regex>
+									<regex>(develop|(release-|hotfix-)?\d{1,}\.\d{1,}\.\d{1,}(\.\d{1,})?)(-alfa|-beta|-teste)?</regex>
 									<regexMessage>
 										${line.separator}
 										${line.separator}
 	FORMATO INVALIDO DO PARAMETRO siga.versao.
 										${line.separator}
-	Exemplos: 3.10.0, 3.11.1.5, release-1.0.0, hotfix-1.2.3.4, develop										
+	Exemplos: 3.10.0, 3.11.1.5, release-1.0.0, hotfix-1.2.3.4, develop, 4.5.0-beta										
 										${line.separator}
 										${line.separator}
 									</regexMessage>

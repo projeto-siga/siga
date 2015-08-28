@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <jsp:include page="../popupHeader.jsp"></jsp:include>
-<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<!-- <script src="//code.jquery.com/jquery-1.11.0.min.js"></script> -->
 <jsp:include page="../main.jsp"></jsp:include>
 
 <script language="javascript">
@@ -34,10 +34,10 @@ function sbmt(nivel){
 					<tr>
 						<td><input type="hidden" name="nome" value="${nome}" />
 							<input type="hidden" name="propriedade" value="${propriedade}" />
-							<input type="hidden" name="sol.solicitante" value="${sol.solicitante.idPessoa}" />
-							<input type="hidden" name="sol.titular" value="${sol.titular.idPessoa}" />
-							<input type="hidden" name="sol.lotaTitular" value="${sol.lotaTitular.idLotacao}" />
-							<input type="hidden" name="sol.local" value="${sol.local.idComplexo}" />
+							<input type="hidden" name="sol.solicitante.id" value="${sol.solicitante.idPessoa}" />
+							<input type="hidden" name="sol.titular.id" value="${sol.titular.idPessoa}" />
+							<input type="hidden" name="sol.lotaTitular.id" value="${sol.lotaTitular.idLotacao}" />
+							<input type="hidden" name="sol.local.id" value="${sol.local.idComplexo}" />
 							<input type="submit" class="gt-btn-small gt-btn-left" value="Pesquisar" />
 						</td>
 					</tr>
@@ -77,11 +77,11 @@ function sbmt(nivel){
 								</c:otherwise>
 							</c:choose>
 							<c:choose>
-								<c:when test="${item.especifico || (not empty sol.solicitante && not empty sol.local) }">
+								<c:when test="${item.especifico || (empty sol.solicitante && empty sol.local) }">
 									<a href="javascript:opener.retorna_${param.propriedade}${nome}('${item.id}','${item.sigla}','${item.descricao}');window.close()">${item.tituloItemConfiguracao}</a>
 								</c:when>
 								<c:otherwise>
-									<span>${item.tituloItemConfiguracao} / </span>
+									<span>${item.tituloItemConfiguracao}</span>
 								</c:otherwise>
 							</c:choose>
 						</td>

@@ -59,7 +59,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 		@NamedQuery(name = "consultarCpConfiguracoesAtivas", query = " from "
 				+ "CpConfiguracao cpcfg where hisDtFim is null")
 })
-public class CpConfiguracao extends AbstractCpConfiguracao  {
+public class CpConfiguracao extends AbstractCpConfiguracao implements CpConvertableEntity {
 
 	/**
 	 * 

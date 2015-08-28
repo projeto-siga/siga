@@ -24,6 +24,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Query;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -37,7 +38,6 @@ import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.vo.PaginaItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.vo.SrItemConfiguracaoVO;
@@ -105,7 +105,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	private SrItemConfiguracao itemInicial;
 
 	@OneToMany(targetEntity = SrItemConfiguracao.class, mappedBy = "itemInicial", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-	// @OrderBy("hisDtIni desc")
+	@OrderBy("hisDtIni desc")
 	private List<SrItemConfiguracao> meuItemHistoricoSet;
 
 	@OneToMany(targetEntity = SrGestorItem.class, mappedBy = "itemConfiguracao", fetch = FetchType.LAZY)
@@ -202,8 +202,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 			List<SrItemConfiguracao> listaBase) throws Exception {
 		setSigla(sigla);
 		List<SrItemConfiguracao> itens = buscar(listaBase, false);
-		if (itens.size() == 0
-				|| (itens.size() > 1 && itens.get(0).isGenerico()))
+		if (itens.size() == 0 || itens.size() > 1 || itens.get(0).isGenerico())
 			return null;
 		return itens.get(0);
 	}
@@ -468,51 +467,6 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 				fator.setItemConfiguracao(this);
 				fator.save();
 			}
-
-		// DB1: precisa salvar item a item
-		if (this.getDesignacoes() != null) {
-			for (SrConfiguracao designacao : this.getDesignacoes()) {
-				// se for uma configuraÃ§Ã£o herdada
-				if (designacao.isHerdado()) {
-					// se estiver marcada como "nÃ£o Herdar"
-					if (!designacao.isUtilizarItemHerdado()) {
-						// cria uma nova entrada na tabela, para que seja
-						// ignorada nas prÃ³ximas vezes
-						SrConfiguracaoIgnorada.createNew(this, designacao)
-								.save();
-					}
-
-					// verifica se existia entrada para "nÃ£o Herdar", e remove
-					// (usuÃ¡rio marcou para usar heranÃ§a)
-					else {
-						List<SrConfiguracaoIgnorada> itensIgnorados = SrConfiguracaoIgnorada
-								.findByConfiguracao(designacao);
-
-						for (SrConfiguracaoIgnorada igItem : itensIgnorados) {
-							// se a configuraÃ§Ã£o for do Item ou de um de seus
-							// histÃ³ricos, remove
-							if (igItem != null
-									&& this.getHistoricoItemConfiguracao() != null
-									&& this.getHistoricoItemConfiguracao()
-											.size() > 0) {
-								for (SrItemConfiguracao itemHist : this
-										.getHistoricoItemConfiguracao()) {
-									if (itemHist.getId().equals(
-											igItem.getItemConfiguracao()
-													.getId())) {
-										igItem.delete();
-										break;
-									}
-								}
-							}
-						}
-					}
-				} else {
-					designacao.salvarComoDesignacao();
-				}
-			}
-		}
-		ContextoPersistencia.em().flush();
 	}
 
 	public List<SrItemConfiguracao> getItemETodosDescendentes() {

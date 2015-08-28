@@ -216,8 +216,8 @@ public abstract class ExArquivo extends Objeto {
 	 * 
 	 */
 	public String getReferenciaHtml() {
-		if (getHtml() == null)
-			return null;
+//		if (getHtml() == null)
+//			return null;
 		return getReferencia() + ".html";
 	}
 

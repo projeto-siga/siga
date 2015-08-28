@@ -47,11 +47,11 @@
 	<div class="gt-form-row gt-width-66">
 		<label>A&ccedil;&atilde;o</label>	
 		<select name="acao.id" id="selectAcao" onchange="carregarLotacaoDaAcao()">
-		    <option value="0"></option>
+		    <option value="" selected></option>
 			<c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
 				<optgroup  label="${cat.tituloAcao}">
 					<c:forEach items="${acoesEAtendentes.get(cat)}" var="tarefa">
-						<option value="${tarefa.acao.idAcao}" ${solicitacao.acao.idAcao.equals(tarefa.acao.idAcao) ? 'selected' : ''}> ${tarefa.acao.tituloAcao} (${tarefa.conf.atendente.siglaCompleta})</option>
+						<option value="${tarefa.acao.idAcao}"> ${tarefa.acao.tituloAcao} (${tarefa.conf.atendente.siglaCompleta})</option>
 					</c:forEach>					 
 				</optgroup>
 			</c:forEach>
@@ -67,17 +67,12 @@
 				<span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.siglaCompleta} 
 									- ${t.conf.atendente.descricao}</span>
 				<span class="idLotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.idLotacao}</span>
-				<c:if test="${catPosition.first && catPosition.last && tPosition.first}"> 
-					<c:set var="lotacaoDesignada" value="${t.conf.atendente.siglaCompleta} - ${t.conf.atendente.descricao}"/>  
-					<c:set var="idLotaAtendente" value="${t.conf.atendente.idLotacao}"/>
-					<c:set var="idDesignacao" value="${t.conf.idConfiguracao}"/>
-				</c:if>
 			</c:forEach>
 		</c:forEach>
 
 		<label>Atendente</label>
-		<span id="atendentePadrao" style="display:block;">${lotacaoDesignada}</span>
-		<input type="hidden" id="idDesignacao" name="idDesignacao" value="${idDesignacao}" />
-		<input type="hidden" name="idAtendente" id="idAtendente" value="${idLotaAtendente}" />
+		<span id="atendentePadrao" style="display:block;"></span>
+		<input type="hidden" id="idDesignacao" name="idDesignacao" value="" />
+		<input type="hidden" name="idAtendente" id="idAtendente" value="" />
 	</div>
 </c:if>

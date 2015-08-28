@@ -35,7 +35,11 @@ public class ObjetoObjectInstantiator implements Instantiator<Object> {
 
 	public Object instantiate(final Target<?> target,
 			final Parameters parameters) {
-		expectingAConcreteTarget(target);
+
+		//Edson: comentei porque, em alguns casos (por exemplo, CpConfiguracao.CpGrupo), 
+		//o tipo da propriedade é uma abstract mas vem do formulário o id de um objeto de 
+		//uma subclasse (por exemplo, CpPerfil)
+		//expectingAConcreteTarget(target);
 
 		final Parameters parametersForTarget = parameters.focusedOn(target);
 
@@ -45,14 +49,20 @@ public class ObjetoObjectInstantiator implements Instantiator<Object> {
 				&& Objeto.class
 						.isAssignableFrom(((Class) target.getType()))) {
 			Long id = null;
+			boolean allNull = true;
 
 			String keyName = target.getName() + ".id";
 			for (Parameter p : parameters.forTarget(target)) {
-				if (keyName.equals(p.getName()) && p.getValue() != null
+				if (p.getValue() != null
 						&& p.getValue().length() > 0) {
-					id = Long.valueOf(p.getValue());
+					allNull = false;
+					if (keyName.equals(p.getName()) || keyName.equals(p.getName().replaceAll("\\[\\d+\\]", ""))) 
+						id = Long.valueOf(p.getValue());
 				}
 			}
+			
+			if (allNull)
+				return null;
 
 			// Desabilitei a leitura a partir da id para simplificar o
 			// polimorfismo

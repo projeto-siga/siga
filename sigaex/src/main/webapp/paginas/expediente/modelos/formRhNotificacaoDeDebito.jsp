@@ -46,7 +46,7 @@
 							<td align="left"><p style="font-family:Arial;font-size:11pt;font-weight:bold;" >SUBSECRETARIA DE GESTÃO DE PESSOAS (SGP)</p></td>
 						</tr>
 						<tr>
-							<td align="left"><p style="font-family:Arial;font-size:11pt;font-weight:bold;" >Av. Almirante Barroso, 78 - 5º andar - CEP 20.031-001</p></td>
+							<td align="left"><p style="font-family:Arial;font-size:11pt;font-weight:bold;" >Rua Dom Gerardo, 46 - 9º andar  - CEP 20.090-030</p></td>
 						</tr>
 						<tr>
 							<td align="center">

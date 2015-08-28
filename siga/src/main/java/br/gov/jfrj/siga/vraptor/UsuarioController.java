@@ -174,7 +174,7 @@ public class UsuarioController extends SigaController {
 
 		default:
 			result.include("mensagem", "Método inválido!");
-			result.redirectTo("/app/esqueci_senha");
+			result.redirectTo("/app/usuario/esqueci_senha");
 			return;
 		}
 
@@ -189,7 +189,7 @@ public class UsuarioController extends SigaController {
 		result.include("mensagem", "A Senha foi alterada com sucesso e foi enviada para seu email" + msgAD);
 		result.include("volta", "esqueci");
 		result.include("titulo", "Esqueci Minha Senha");
-		result.redirectTo("/app/esqueci_senha");
+		result.redirectTo("/");
 	}
 
 	

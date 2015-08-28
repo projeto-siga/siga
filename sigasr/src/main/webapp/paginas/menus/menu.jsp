@@ -34,8 +34,9 @@
 </c:if>
 
 <c:if test="${exibirMenuRelatorios}">
-	<li><a href="#">Relat&oacute;rio</a></li>
-	<ul>
-		<li><a href="@{Application.estatistica}">Estat&iacute;sticas</a></li>
-	</ul>
+	<li><a href="#">Relat&oacute;rio</a>
+		<ul>
+			<li><a href="${linkTo[RelatorioController].exibirRelAtendimentos}">Atendimentos</a></li>
+		</ul>
+	</li>
 </c:if>

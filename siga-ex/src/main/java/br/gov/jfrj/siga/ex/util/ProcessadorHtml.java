@@ -208,6 +208,9 @@ public class ProcessadorHtml {
 	public String canonicalizarHtml(String s, boolean fRemoverEspacos,
 			boolean fRemoverTagsDesconhecidos, boolean fIso8859,
 			boolean fBodyOnly, boolean desprezarComentarios) throws Exception {
+		if (s == null || s.trim().length() == 0)
+			return null;
+		
 		// System.out.println(System.currentTimeMillis()
 		// + " - INI canonicalizarHtml");
 

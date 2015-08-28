@@ -1303,6 +1303,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if(doc.getExTipoDocumento().getIdTpDoc().equals(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO))
 			return true;
 		
+		if(doc.getExTipoDocumento().getIdTpDoc().equals(ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO))
+			return true;
+		
 		return podeSerSubscritor(doc.getTitular(), doc.getLotaTitular(), doc.getExModelo());
 	}
 	

@@ -5,7 +5,7 @@
 	<div>
 		<form id="acordoForm" enctype="multipart/form-data">
 			
-			<input type="hidden" name="acordo.idAcordo" id="id" value="${idAcordo}"> 
+			<input type="hidden" name="acordo.id" id="id" value="${idAcordo}"> 
 			<input type="hidden" name="acordo.hisIdIni" id="hisIdIni" value="${hisIdIni}">
 			
 			<div class="gt-form-row gt-width-66">
@@ -128,10 +128,11 @@
 				</div>
 				<div class="gt-form-row">
 					<label>Valor <span>*</span></label> 
-					<siga:select name="operador" list="operadores"
-							listKey="idOperador" id="operador"
-							listValue="nome" theme="simple"
-							value="${operador}" />
+					<select id="operador" name="operador">
+						<c:forEach items="${operadores}" var="ope">
+							<option value="${ope}">${ope.nome}</option>
+						</c:forEach>
+					</select>
 					<input type="text" id="valor" name="valor" value="" maxlength="4" style="width: 3em; text-align: right;" required />
 					<select id="unidadeMedida" name="unidadeMedida">
 						<c:forEach items="${unidadesMedida}" var="unidadeMedida">
@@ -174,7 +175,7 @@
 			<label>&Oacute;rg&atilde;o</label> 
 			<siga:select name="orgaoUsuario" list="orgaos"
 				listKey="idOrgaoUsu" id="orgaoUsuario"
-				headerValue="" headerKey="0"
+				headerValue="Nenhum" headerKey=""
 				listValue="nmOrgaoUsu"
 				value="${idOrgaoUsu}" />
 		</div>
@@ -182,20 +183,20 @@
 			<label>Local</label> 
 			<siga:select name="complexo" list="locais"
 				listKey="idComplexo" id="complexo"
-				headerValue="" headerKey="0"
+				headerValue="Nenhum" headerKey=""
 				listValue="nomeComplexo" theme="simple"
 				value="${idComplexo}" />
 		</div>
 		<div class="gt-form-row gt-width-100">
 			<label>Atendente</label>
-				<input type="hidden" name="atendente" id="atendente" class="selecao">
-				<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente"/>
+				<input type="hidden" name="atendente.id" id="atendente" class="selecao">
+				<siga:selecao propriedade="atendente" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente"/>
 		</div>
 
 		<div class="gt-form-row gt-width-100">
 			<label>Prioridade</label> 
 		    <select name="prioridade" id="prioridade">
-				<option value="0"></option>
+				<option value=""></option>
 				<c:forEach items="${prioridades}" var="item">
 				   <option value="${item}">${item.descPrioridade}</option>
 				</c:forEach>
@@ -275,21 +276,17 @@
 		solicitanteTypes.forEach(function(entry) {
 			var inputName = entry + "Sel.id";
 			var inputValue = $( "input[name='" + inputName + "']" ).val();
-		    if(inputValue != "")
-			    $("input[name='associacao." + entry + "']" ).val(inputValue);
+		    $("input[name='associacao." + entry + ".id']" ).val(inputValue);
 		});
 
 		var orgaoUsuarioValue = $('#orgaoUsuario').find(":selected").val();
-		if(orgaoUsuarioValue != "") 
-		    $("input[name='associacao.orgaoUsuario']").val(orgaoUsuarioValue);
+		$("input[name='associacao.orgaoUsuario']").val(orgaoUsuarioValue);
 			
 		var complexoValue = $('#complexo').find(":selected").val();
-		if(complexoValue != "")
-		    $("input[name='associacao.complexo']").val(complexoValue);
+		$("input[name='associacao.complexo']").val(complexoValue);
 
 		var atendenteValue =$( "input[name='atendenteSel.id']" ).val();
-		if(atendenteValue != "") 
-		    $("input[name='associacao.atendente']").val(atendenteValue);
+		$("input[name='associacao.atendente']").val(atendenteValue);
 	}
 	
     jQuery("#checkmostrarAssocDesativada").click(function() {
@@ -548,26 +545,25 @@
 	function serializeAssociacao(row) {
 		var params = "";
 
-		if(row[colunasAssociacao.idOrgao] != "") 
-			params += '&associacao.orgaoUsuario=' + row[colunasAssociacao.idOrgao];
+		params += '&associacao.orgaoUsuario.id=' + row[colunasAssociacao.idOrgao];
 			
-		if(row[colunasAssociacao.idLocal] != "")
-			params += '&associacao.complexo=' + row[colunasAssociacao.idLocal];
+		params += '&associacao.complexo.id=' + row[colunasAssociacao.idLocal];
 
-		if(row[colunasAssociacao.idPrioridade] != 0)
-			params += '&associacao.prioridade=' + row[colunasAssociacao.idPrioridade];
+		params += '&associacao.prioridade.id=' + row[colunasAssociacao.idPrioridade];
 
-		
 		// caso exista algum item na tabela
-        params += '&associacao=' + row[colunasAssociacao.idAssociacao];
+        params += '&associacao.id=' + row[colunasAssociacao.idAssociacao];
         params += '&associacao.hisIdIni=' + row[colunasAssociacao.hisIdIni];
        	params += configuracaoItemAcaoService.getItemAcaoAsString('associacao');
 
+		var atendenteValue =$( "input[name='atendenteSel.id']" ).val();
+		params += '&associacao.atendente.id=' + $('#formulario_atendenteSel_id').val();
+       	
        	// atualiza o solicitante
-		params += getDadosSolicitanteSel();
+		params += getDadosSolicitante(row);
 		
 		if ($("#id").val() != undefined && $("#id").val() != '')
-		params += '&associacao.acordo.idAcordo=' + $("#id").val();
+		params += '&associacao.acordo.id=' + $("#id").val();
 
 		return params;
 	};
@@ -575,13 +571,8 @@
 	function getDadosSolicitanteSel() {
 		var params = "";
 
-		var atendenteValue =$( "input[name='atendenteSel.id']" ).val();
-		if(atendenteValue != "") 
-			params += '&associacao.atendente=' + $('#formulario_atendenteSel_id').val();
-
 		var solicitante = getSolicitante();
-		if(solicitante != null && solicitante.id != "")
-			params += '&associacao.' + solicitante.name + '=' + solicitante.id;
+		params += '&associacao.' + solicitante.name + '.id=' + solicitante.id;
 
 		return params;
 	};
@@ -594,15 +585,15 @@
 		var solicitante = {"name": '', "id":'', "descricao": '', "sigla": ''};
 		$('#divSolicitante span').each(function(i,span){
 			$(span).find('input').filter(function(i, input){
-			    if($(input).attr('name') !== undefined && $(input).val() !== ''){
+			    if($(input).attr('name') !== undefined){
 			      
-			    	if(endsWith($(input).attr('name'),'descricao'))
+			    	if(!solicitante.name && endsWith($(input).attr('name'),'descricao'))
 			       		solicitante.descricao = $(input).val();
 			     
-			     	if(endsWith($(input).attr('name'),'sigla'))
+			     	if(!solicitante.sigla && endsWith($(input).attr('name'),'sigla'))
 			      		solicitante.sigla = $(input).val();
 			    
-			      	if(endsWith($(input).attr('name'),'id')) {
+			      	if(!solicitante.id && endsWith($(input).attr('name'),'id')) {
 			        	solicitante.name = $(input).closest('span').find(".pessoaLotaFuncCargoSelecao").attr('name');
 			        	solicitante.id = $(input).val();
 			      	}
@@ -617,46 +608,46 @@
     	var params = '';
  
 		if (rowValues[colunasAssociacao.tipoSolicitante] == 1){
-             	params += '&associacao.dpPessoa=' + rowValues[colunasAssociacao.idSolicitante];
-             	params += '&associacao.lotacao=';
-             	params += '&associacao.funcaoConfianca=';
-             	params += '&associacao.cargo=';
-             	params += '&associacao.cpGrupo=';
+             	params += '&associacao.dpPessoa.id=' + rowValues[colunasAssociacao.idSolicitante];
+             	params += '&associacao.lotacao.id=';
+             	params += '&associacao.funcaoConfianca.id=';
+             	params += '&associacao.cargo.id=';
+             	params += '&associacao.cpGrupo.id=';
 
 		
 		// caso seja lotaÃ§Ã£o
 		} else if (rowValues[colunasAssociacao.tipoSolicitante] == 2){
-			params += '&associacao.lotacao=' + rowValues[colunasAssociacao.idSolicitante];
-			params += '&associacao.dpPessoa=';
-             	params += '&associacao.funcaoConfianca=';
-             	params += '&associacao.cargo=';
-             	params += '&associacao.cpGrupo=';
+			params += '&associacao.lotacao.id=' + rowValues[colunasAssociacao.idSolicitante];
+			params += '&associacao.dpPessoa.id=';
+             	params += '&associacao.funcaoConfianca.id=';
+             	params += '&associacao.cargo.id=';
+             	params += '&associacao.cpGrupo.id=';
 
 		
 		// caso seja funÃ§Ã£o
 		} else if (rowValues[colunasAssociacao.tipoSolicitante] == 3){
-			params += '&associacao.funcaoConfianca=' + rowValues[colunasAssociacao.idSolicitante];
-			params += '&associacao.dpPessoa=';
-             	params += '&associacao.lotacao=';
-             	params += '&associacao.cargo=';
-             	params += '&associacao.cpGrupo=';
+			params += '&associacao.funcaoConfianca.id=' + rowValues[colunasAssociacao.idSolicitante];
+			params += '&associacao.dpPessoa.id=';
+             	params += '&associacao.lotacao.id=';
+             	params += '&associacao.cargo.id=';
+             	params += '&associacao.cpGrupo.id=';
 
 		
 		// caso seja cargo
 		} else if (rowValues[colunasAssociacao.tipoSolicitante] == 4){
-			params += '&associacao.cargo=' + rowValues[colunasAssociacao.idSolicitante];
-			params += '&associacao.dpPessoa=';
-             	params += '&associacao.funcaoConfianca=';
-             	params += '&associacao.lotacao=';
-             	params += '&associacao.cpGrupo=';
+			params += '&associacao.cargo.id=' + rowValues[colunasAssociacao.idSolicitante];
+			params += '&associacao.dpPessoa.id=';
+             	params += '&associacao.funcaoConfianca.id=';
+             	params += '&associacao.lotacao.id=';
+             	params += '&associacao.cpGrupo.id=';
 
 		// caso seja grupo
 		} else if (rowValues[colunasAssociacao.tipoSolicitante] == 5){
-			params += '&associacao.cpGrupo=' + rowValues[colunasAssociacao.idSolicitante];
-			params += '&associacao.dpPessoa=';
-     			params += '&associacao.funcaoConfianca=';
-     			params += '&associacao.lotacao=';
-     			params += '&associacao.cargo=';
+			params += '&associacao.cpGrupo.id=' + rowValues[colunasAssociacao.idSolicitante];
+			params += '&associacao.dpPessoa.id=';
+     			params += '&associacao.funcaoConfianca.id=';
+     			params += '&associacao.lotacao.id=';
+     			params += '&associacao.cargo.id=';
 		}
     	
     	return params;
@@ -781,13 +772,13 @@
 		$("#parametrosAcordo").find("li").each(function(i) {
 			var jDivs=$(this).find("span");
 
-			params += '&atributoAcordoSet[' + i + '].valor=' + jDivs[2].innerHTML;
-		    params += '&atributoAcordoSet[' + i + '].atributo=' + jDivs[0].id;
-		    params += '&unidadeMedida[' + i + '].id=' + jDivs[3].id;
-		    params += '&atributoAcordoSet[' + i + '].operador=' + jDivs[1].id;
+			params += '&acordo.atributoAcordoSet[' + i + '].valor=' + jDivs[2].innerHTML;
+		    params += '&acordo.atributoAcordoSet[' + i + '].atributo.id=' + jDivs[0].id;
+		    params += '&acordo.atributoAcordoSet[' + i + '].unidadeMedida[' + i + '].id=' + jDivs[3].id;
+		    params += '&acordo.atributoAcordoSet[' + i + '].operador=' + jDivs[1].id;
 
 		    if (this.id.indexOf("novo_") < 0)
-		    	params += '&atributoAcordoSet[' + i + '].idAtributoAcordo=' + this.id;
+		    	params += '&atributoAcordoSet[' + i + '].id=' + this.id;
 		});
 
 		return params;
@@ -827,15 +818,14 @@
 		    			limparErros();
 		    		});
 			        
-	                if (jDialog.data("valor"))
+	                if (jDialog.data("valor")){
 		                jDialog.dialog('option', 'title', 'Alterar Parametro');
-	                else
+		                jValor.val(jDialog.data("valor"));
+		                jParametro.find("option[value=" + jDialog.data("parametro") + "]").prop('selected', true);
+		                jUnidadeMedida.find("option[value=" + jDialog.data("unidadeMedida") + "]").prop('selected', true);
+		                jOperador.find("option[value=" + jDialog.data("operador") + "]").prop('selected', true);
+	                } else
 		                jDialog.dialog('option', 'title', 'Incluir Parametro');
-	                
-	                jValor.val(jDialog.data("valor"));
-	                jParametro.find("option[value=" + jDialog.data("parametro") + "]").prop('selected', true);
-	                jUnidadeMedida.find("option[value=" + jDialog.data("unidadeMedida") + "]").prop('selected', true);
-	                jOperador.find("option[value=" + jDialog.data("operador") + "]").prop('selected', true);
 		        }
 		});
 		$("#modalOk").click(function(){

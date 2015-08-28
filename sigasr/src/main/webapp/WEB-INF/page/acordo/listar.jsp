@@ -6,7 +6,7 @@
 
 	<jsp:include page="../main.jsp"></jsp:include>
 
-	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.dataTables.min.js"></script>
 	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.populate.js"></script>
@@ -194,7 +194,7 @@
 	var acordoService = new AcordoService(optsAcordo);
 	
 	acordoService.getId = function(acordo) {
-		return acordo.idAcordo || acordo['acordo.idAcordo'] || acordo['id'] || '';
+		return acordo.idAcordo || acordo['acordo.id'] || acordo['id'] || '';
 	}
 
 	acordoService.getRow = function(acordo) {
@@ -418,7 +418,7 @@
 
 	function removerItensLista(nomeLista) {
 		$("#"+nomeLista).find("li").each(function(i){
-            this.remove();
+            $(this).remove();
             $("#"+nomeLista)[0]["index"]--;
         });
     }

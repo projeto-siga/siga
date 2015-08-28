@@ -77,7 +77,7 @@
 				<label>Órgão</label>
 				
 				<select name="orgaoUsuario.idOrgaoUsu" id="orgaoUsuario" class="select-siga" style="width: 100%;">
-					<option value="0">Nenhum</option>
+					<option value="">Nenhum</option>
 					<c:forEach items="${orgaos}" var="orgao">
 						<option value="${orgao.idOrgaoUsu}">${orgao.nmOrgaoUsu}</option>
 					</c:forEach>
@@ -88,7 +88,7 @@
 				<label>Local</label>
 				
 				<select name="complexo.idComplexo" id="complexo" class="select-siga" style="width: 100%;">
-					<option value="0">Nenhum</option>
+					<option value="">Nenhum</option>
 					<c:forEach items="${locais}" var="local">
 						<option value="${local.idComplexo}">${local.nomeComplexo}</option>
 					</c:forEach>
@@ -285,7 +285,7 @@
 
 	associacaoService.serializar = function(obj) {
 		var serializado = BaseService.prototype.serializar.call(this, obj) + "&" + associacaoService.getListasAsString();
-		return serializado + "&associacao=" + this.getId(obj);
+		return serializado + "&associacao.id=" + this.getId(obj);
 	}
 	
 	associacaoService.getRow = function(assoc) {

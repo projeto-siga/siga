@@ -1,6 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@ page isErrorPage="true"%>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" buffer="64kb"%>
+<%@ page isErrorPage="true" import="java.io.*" contentType="text/html"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
@@ -8,6 +7,9 @@
 	<c:if test="${empty exceptionGeral or empty exceptionStackGeral}">
 		<%
 			java.lang.Throwable t = (Throwable) pageContext.getRequest().getAttribute("exception");
+			if (t == null){
+				t = (Throwable) exception;
+			}
 			if (t != null) {
 				if (!t.getClass().getSimpleName()
 						.equals("AplicacaoException")
@@ -44,6 +46,12 @@
 
 				<div id="caption" class="gt-error-page-hd">
 					<h2>Não Foi Possível Completar a Operação</h2>
+						 <%-- <c:forEach items="${requestScope}" var='p'>
+							<ul>
+            				<li>Parameter Name: <c:out value='${p.key}'/></li>
+							<li>Parameter Value: <c:out value='${p.value}'/></li>
+      						</ul>
+      					</c:forEach>--%>
 				</div>
 
 				<div class="gt-content-box">

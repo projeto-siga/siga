@@ -23,25 +23,6 @@
    		</param-value>  
 	</context-param>  
 	
-
-	<filter>
-		<filter-name>vraptor</filter-name>
-		<filter-class>br.com.caelum.vraptor.VRaptor</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>vraptor</filter-name>
-		<url-pattern>/app/*</url-pattern>
-		<dispatcher>FORWARD</dispatcher>
-		<dispatcher>REQUEST</dispatcher>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>vraptor</filter-name>
-		<url-pattern>*.action</url-pattern>
-		<dispatcher>FORWARD</dispatcher>
-		<dispatcher>REQUEST</dispatcher>
-	</filter-mapping>
-
-
 	<listener>
 		<listener-class>br.gov.jfrj.siga.jee.BouncyCastleServletContextListener</listener-class>
 	</listener>
@@ -75,7 +56,27 @@
 	<filter-mapping>
 		<filter-name>HibernateFilter</filter-name>
 		<url-pattern>*.action</url-pattern>
+		<url-pattern>/app/*</url-pattern>
 	</filter-mapping>
+	
+
+	<filter>
+		<filter-name>vraptor</filter-name>
+		<filter-class>br.com.caelum.vraptor.VRaptor</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>vraptor</filter-name>
+		<url-pattern>/app/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>vraptor</filter-name>
+		<url-pattern>*.action</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+
 
 	<filter-mapping>
 		<filter-name>ResponseHeaderFilter</filter-name>

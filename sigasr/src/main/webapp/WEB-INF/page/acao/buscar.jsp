@@ -1,7 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <jsp:include page="../popupHeader.jsp"></jsp:include>
-<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<!-- ja existe em main.jsp -->
+<!-- <script src="//code.jquery.com/jquery-1.11.0.min.js"></script> -->
 <jsp:include page="../main.jsp"></jsp:include>
 
 
@@ -26,6 +27,7 @@
 						<td>
 							<input type="text" name="tituloAcao" value="${filtro.tituloAcao}" />
 							<input type="hidden" name="nome" value="${nome}" />
+							<input type="hidden" name="propriedade" value="${propriedade}" />
 						</td>
 					</tr>
 					<tr>

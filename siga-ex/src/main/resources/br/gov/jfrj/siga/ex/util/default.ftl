@@ -129,6 +129,13 @@
         </html>
     [/#if]
 [/#macro]
+[#macro descricao]
+   [#if gerar_descricao!false]
+    <!-- descricao -->
+      [#nested]
+    <!-- /descricao -->
+   [/#if]
+[/#macro]
 [#macro finalizacao]
     [#if gerar_finalizacao!false]
         [#nested]

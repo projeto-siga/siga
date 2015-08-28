@@ -27,7 +27,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
 public abstract class CpGrupo extends AbstractCpGrupo implements Selecionavel,
-		Comparable<CpGrupo> {
+		Comparable<CpGrupo>, CpConvertableEntity {
 
 	public CpGrupo() {
 	}

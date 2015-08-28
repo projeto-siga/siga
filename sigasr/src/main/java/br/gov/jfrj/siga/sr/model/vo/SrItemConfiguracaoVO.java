@@ -3,6 +3,8 @@ package br.gov.jfrj.siga.sr.model.vo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.LazyInitializationException;
+
 import br.gov.jfrj.siga.sr.model.SrFatorMultiplicacao;
 import br.gov.jfrj.siga.sr.model.SrGestorItem;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
@@ -48,15 +50,23 @@ public class SrItemConfiguracaoVO implements ISelecionavel {
         this.setGestorSetVO(new ArrayList<SrGestorItemVO>());
         this.setFatorMultiplicacaoSetVO(new ArrayList<SrFatorMultiplicacaoVO>());
 
-        if (gestorSet != null)
-            for (SrGestorItem item : gestorSet) {
-                getGestorSetVO().add(item.toVO());
-            }
+        try{
+        	if (gestorSet != null)
+        		for (SrGestorItem item : gestorSet) {
+        			getGestorSetVO().add(item.toVO());
+        		}
+        } catch(LazyInitializationException lie){
+        	//Swallow!
+        }
 
-        if (fatorMultiplicacaoSet != null)
-            for (SrFatorMultiplicacao item : fatorMultiplicacaoSet) {
-                getFatorMultiplicacaoSetVO().add(item.toVO());
-            }
+        try{
+        	if (fatorMultiplicacaoSet != null)
+        		for (SrFatorMultiplicacao item : fatorMultiplicacaoSet) {
+        			getFatorMultiplicacaoSetVO().add(item.toVO());
+        		}
+        } catch(LazyInitializationException lie){
+        	//Swallow!
+        }
     }
 
     /**

@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Cadastro de Solicitação">
+<siga:pagina titulo="Pesquisar Solicitações">
 
 <jsp:include page="../main.jsp"></jsp:include>
 

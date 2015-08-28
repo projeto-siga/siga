@@ -8,6 +8,9 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import org.jboss.logging.Logger;
+import org.jfree.util.Log;
+
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -32,6 +35,7 @@ public class AcaoController extends SrController {
 
 	private static final String ACAO = "acao";
 	private static final String ACOES = "acoes";
+	private final static Logger log = Logger.getLogger(AcaoController.class);
 
 	@AssertAcesso(ADM_ADMINISTRAR)
 	@Path("/listar")
@@ -65,12 +69,16 @@ public class AcaoController extends SrController {
 		acao.setTipoAcao(tipoAcaoSel.buscarObjeto());
 		acao.salvarComHistorico();
 		
-        // Chama o webservice do SIGA-GC para atualizar as tags dos conhecimentos relacionados
-        //
-        GcService gc = Service.getGcService();
-        gc.atualizarTag(acao.getGcTags().replace("&tags=", ", ").substring(2));
-		gc.atualizarTag(acao.getGcTagAncora().replace("&tags=", ", ")
-				.substring(2));
+		try{
+			// Chama o webservice do SIGA-GC para atualizar as tags dos conhecimentos relacionados
+	        //
+	        GcService gc = Service.getGcService();
+	        gc.atualizarTag(acao.getGcTags().replace("&tags=", ", ").substring(2));
+			gc.atualizarTag(acao.getGcTagAncora().replace("&tags=", ", ")
+					.substring(2));
+		} catch(Exception e){
+			Log.error("Não foi possível atualizar tags vinculadas à ação " + acao.getSigla(), e);
+		}
 
 		result.use(Results.http()).body(acao.toJson());
 	}
@@ -95,7 +103,7 @@ public class AcaoController extends SrController {
 
 	@Path("/selecionar")
 	public void selecionar(String sigla, SrSolicitacao sol)throws Exception {
-		SrAcao acao = new SrAcao().selecionar(sigla, sol.getAcoesDisponiveis());
+		SrAcao acao = new SrAcao().selecionar(sigla, sol != null ? sol.getAcoesDisponiveis() : null);
 		result
 			.forwardTo(SelecaoController.class)
 			.ajaxRetorno(acao);

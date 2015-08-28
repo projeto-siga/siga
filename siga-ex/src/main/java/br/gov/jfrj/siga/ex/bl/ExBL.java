@@ -3942,7 +3942,7 @@ public class ExBL extends CpBL {
 					+ ". Terminou processar: "
 					+ (System.currentTimeMillis() - tempoIni));
 			tempoIni = System.currentTimeMillis();
-
+			
 			if (doc.getConteudoBlobDoc() != null)
 				doc.setConteudoTpDoc("application/zip");
 
@@ -5281,6 +5281,10 @@ public class ExBL extends CpBL {
 
 	public void processar(final ExDocumento doc, final boolean gravar,
 			final boolean transacao, String realPath) {
+		// Não existe processamento de modelo para documento capturado
+		if (doc.getExTipoDocumento().getId().equals(ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)) 
+			return;
+
 		try {
 			if (doc != null
 					&& (doc.isAssinado() || doc.isAssinadoDigitalmente()))
@@ -5330,20 +5334,22 @@ public class ExBL extends CpBL {
 
 				doc.setConteudoBlobHtmlString(strHtml);
 
-				final byte pdf[];
-				AbstractConversorHTMLFactory fabricaConvHtml = AbstractConversorHTMLFactory
-						.getInstance();
-				ConversorHtml conversor = fabricaConvHtml.getConversor(
-						getConf(), doc, strHtml);
-
-				try {
-					pdf = Documento.generatePdf(strHtml, conversor, realPath);
-				} catch (Exception e) {
-					throw new AplicacaoException(
-							"Erro na geração do PDF. Por favor, verifique se existem recursos de formatação não suportados. Para eliminar toda a formatação do texto clique em voltar e depois, no editor, clique no botõo de 'Selecionar Tudo' e depois no botão de 'Remover Formatação'.",
-							0, e);
+				if (strHtml != null && strHtml.trim().length() > 0) {
+					final byte pdf[];
+					AbstractConversorHTMLFactory fabricaConvHtml = AbstractConversorHTMLFactory
+							.getInstance();
+					ConversorHtml conversor = fabricaConvHtml.getConversor(
+							getConf(), doc, strHtml);
+					
+					try {
+						pdf = Documento.generatePdf(strHtml, conversor, realPath);
+					} catch (Exception e) {
+						throw new AplicacaoException(
+								"Erro na geração do PDF. Por favor, verifique se existem recursos de formatação não suportados. Para eliminar toda a formatação do texto clique em voltar e depois, no editor, clique no botõo de 'Selecionar Tudo' e depois no botão de 'Remover Formatação'.",
+								0, e);
+					}
+					doc.setConteudoBlobPdf(pdf);
 				}
-				doc.setConteudoBlobPdf(pdf);
 
 				if (gravar) {
 					doc.setNumPaginas(doc.getContarNumeroDePaginas());
@@ -6532,6 +6538,11 @@ public class ExBL extends CpBL {
 
 			mov.setDescrMov(motivo);
 			gravarMovimentacao(mov);
+			
+			String funcao = doc.getForm().get("acaoExcluir");
+			if (funcao != null) {
+				obterMetodoPorString(funcao, doc);
+			}
 
 			concluirAlteracao(doc);
 		} catch (final Exception e) {

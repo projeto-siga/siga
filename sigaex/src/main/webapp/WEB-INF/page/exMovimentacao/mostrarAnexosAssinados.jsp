@@ -9,11 +9,11 @@
 
 <c:choose>
 	<c:when test="${(not empty mobilVO.movs)}">
-	    <h2>Anexos Assinados</h2> 	
+	    <h2>Anexos Assinados</h2>
 		<div class="gt-content-box gt-for-table">
 		    <form name="frm_anexo" id="frm_anexo" class="form">
 				<input type="hidden" name="popup" value="true" />
-				<input type="hidden" name="copia" id="copia" value="false" />			
+				<input type="hidden" name="copia" id="copia" value="false" />
 				<table class="gt-table mov">
 				    <thead>
 					    <tr>
@@ -30,7 +30,7 @@
 											onclick="checkUncheckAll(this)" /></td>
 									</c:when>
 									<c:otherwise><td></td></c:otherwise>
-								</c:choose>	
+								</c:choose>
 								<th align="left">Lotação</th>
 								<th align="left">Pessoa</th>
 								<th align="left">Lotação</th>
@@ -60,7 +60,7 @@
 											<td align="center"><input type="checkbox" name="${x}"
 												value="true" ${x_checked} /></td>
 										</c:when>
-										<c:otherwise><td></td></c:otherwise>		
+										<c:otherwise><td></td></c:otherwise>
 									</c:choose>
 									<td align="center">${dt}</td>
 									<td align="left"><siga:selecionado
@@ -110,40 +110,38 @@
 										<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 											<input type="hidden" name="pdf${x}" value="${mov.mov.referencia}" />
 											<input type="hidden" name="url${x}" value="${mov.mov.nmPdf}" />
-										</c:if>	
+										</c:if>
 									</siga:links></td>
 								</tr>
 							</c:if>
 	     				</c:forEach>
-				</table>	
+				</table>
 			</form>
 	    </div>
 		<div id="dados-assinatura" style="visible: hidden">
-	    	<c:set var="jspServer"
-			       value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
-			<c:set var="nextURL"
-				   value="${request.scheme}://${request.serverName}:${request.localPort}/${request.contextPath}/app/expediente/doc/atualizar_marcas?sigla=${mobilVO.sigla}" />
-		    <c:set var="urlPath" value="/${request.contextPath}" />
-		    
-	   		<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />
+	    <c:set var="jspServer" value="${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
+			<c:set var="nextURL" value="${request.contextPath}/app/expediente/doc/atualizar_marcas?sigla=${mobilVO.sigla}" />
+		  <c:set var="urlPath" value="${request.contextPath}" />
+
+	   	<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />
 			<input type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" />
 			<input type="hidden" id="urlpath" name="urlpath" value="${urlPath}" />
 			<c:set var="url">${request.requestURL}</c:set>
 			<c:set var="uri" value="${request.requestURI}" />
 			<c:set var="urlBase" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
 			<input type="hidden" id="urlbase" name="urlbase" value="${urlBase}" />
-		    						
+
 		    <c:set var="botao" value="ambos" />
-		    <c:set var="lote" value="true" />			
-		</div>    					
-		<c:if 
+		    <c:set var="lote" value="true" />
+		</div>
+		<c:if
 			test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 				<div id="capicom-div">
-					<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar em Lote</a> 
+					<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar em Lote</a>
 					<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar em Lote</a>
-				</div> 
+				</div>
 			<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
-			<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://code.google.com/p/projeto-siga/downloads/detail?name=Capicom.zip&can=2&q=#makechanges">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
+			<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://drive.google.com/file/d/0B_WTuFAmL6ZERGhIczRBS0ZMaVE/view">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
 					<script type="text/javascript">
 						 if (window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgent.indexOf(" rv:11.0") > 0) {
 							 document.getElementById("capicom-div").style.display = "block";
@@ -154,13 +152,12 @@
 						}
 					 </script>
 		</c:if>
-	    
+
 		<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-		    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}						
+		    ${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}
 		</c:if>
 	</c:when>
 	<c:otherwise>
 			<b>Não há anexos assinados</b>
 	</c:otherwise>
 </c:choose>
-

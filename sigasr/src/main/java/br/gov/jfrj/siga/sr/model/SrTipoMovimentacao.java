@@ -22,13 +22,13 @@ public class SrTipoMovimentacao extends Objeto {
 
     public static final long TIPO_MOVIMENTACAO_ANDAMENTO = 2;
 
-    public static final long TIPO_MOVIMENTACAO_INCLUSAO_LISTA = 3;
+    //public static final long TIPO_MOVIMENTACAO_INCLUSAO_LISTA = 3;
 
     //public static final long TIPO_MOVIMENTACAO_INICIO_PRE_ATENDIMENTO = 4;
 
     //public static final long TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO = 5;
 
-    public static final long TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA = 6;
+    //public static final long TIPO_MOVIMENTACAO_RETIRADA_DE_LISTA = 6;
 
     public static final long TIPO_MOVIMENTACAO_FECHAMENTO = 7;
 

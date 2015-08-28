@@ -5,7 +5,7 @@
 <siga:pagina titulo="${solicitacao.codigo}">
 	<jsp:include page="../main.jsp"></jsp:include>
 
-	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.dataTables.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.populate.js"></script>
 	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
@@ -89,33 +89,36 @@
 					<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 					<input type="hidden" name="ocultas" value="${ocultas}" /> <input
 						type="hidden" name="movimentacao.solicitacao.idSolicitacao"
-						value="${movimentacao.solicitacao.idSolicitacao}">
+						value="${movimentacao.solicitacao.idSolicitacao}" />
 
-					<c:if test="${solicitacao.podeTrocarAtendente(titular, lotaTitular)}">
-						<div class="gt-form-row">
-							<label>Atendente</label>
-							<div id="divAtendente">
-								<select name="movimentacao.atendente.id" id="selectActendente">
-            						<option value=""></option>
-									<c:if test="${atendentes.size() >= 1}">
-										<c:forEach items="${atendentes}" var="pessoa">
-											<option value="${pessoa.pessoaAtual.idPessoa}" ${movimentacao.atendente.idInicial.equals(pessoa.idInicial) ? 'selected' : ''}>${pessoa.pessoaAtual.descricaoIniciaisMaiusculas}</option>
-										</c:forEach>
-									</c:if>
-									<c:set var="susbtitutos" value="${solicitacao.substitutos}" />
-									<c:if test="${substitutos.size() >= 1}">
-										<optgroup label="Substitutos">
-											<c:forEach items="${substitutos}" var="pessoaSubst">
-												<option value="${pessoaSubst.substituto.pessoaAtual.idPessoa}">${pessoaSubst.substituto.pessoaAtual.descricaoIniciaisMaiusculas}</option>
+					<c:choose>
+						<c:when test="${solicitacao.podeTrocarAtendente(titular, lotaTitular)}">
+							<div class="gt-form-row">
+								<label>Atendente</label>
+								<div id="divAtendente">
+									<select name="movimentacao.atendente.id" id="selectActendente">
+	            						<option value=""></option>
+										<c:if test="${atendentes.size() >= 1}">
+											<c:forEach items="${atendentes}" var="pessoa">
+												<option value="${pessoa.pessoaAtual.idPessoa}" ${movimentacao.atendente.idInicial.equals(pessoa.idInicial) ? 'selected' : ''}>${pessoa.pessoaAtual.descricaoIniciaisMaiusculas}</option>
 											</c:forEach>
-										</optgroup>
-									</c:if>
-								</select>
+										</c:if>
+										<c:set var="substitutos" value="${solicitacao.substitutos}" />
+										<c:if test="${substitutos.size() >= 1}">
+											<optgroup label="Substitutos">
+												<c:forEach items="${substitutos}" var="pessoaSubst">
+													<option value="${pessoaSubst.substituto.pessoaAtual.idPessoa}">${pessoaSubst.substituto.pessoaAtual.descricaoIniciaisMaiusculas}</option>
+												</c:forEach>
+											</optgroup>
+										</c:if>
+									</select>
+								</div>
 							</div>
-						</div>
-						
-					</c:if>
-
+						</c:when>
+						<c:otherwise>
+							<input type="hidden" name="movimentacao.atendente.id" value="${movimentacao.solicitacao.atendente.pessoaAtual.idPessoa}" />
+						</c:otherwise>
+					</c:choose>
 					<div style="display: inline" class="gt-form-row gt-width-66">
 						<label>Pr&oacute;ximo Andamento</label>
 						<textarea style="width: 100%"
@@ -214,7 +217,6 @@
 										</td>
 										<script language="javascript">
 											var descricao = document.getElementById('descrMovimentacaoTexto${movimentacao.idMovimentacao}');
-											console.log('descrMovimentacaoTexto${movimentacao.idMovimentacao}'+descricao.innerHTML);
 											descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
 										</script>
 									</tr>

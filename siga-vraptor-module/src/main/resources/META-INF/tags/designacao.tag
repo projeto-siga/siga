@@ -97,7 +97,7 @@
 		<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
 			<form id="formDesignacao">
 				<input type="hidden" id="designacao" name="designacao" value="" />
-				<input type="hidden" id="idConfiguracao" name="designacao.idConfiguracao" value="${idConfiguracao}" />
+				<input type="hidden" id="idConfiguracao" name="designacao.id" value="${idConfiguracao}" />
 				<input type="hidden" id="hisIdIni" name="designacao.hisIdIni" value="${hisIdIni}" />
 				<div>
 					<div class="gt-form-row">
@@ -124,28 +124,28 @@
 						</div>
 						<div class="box gt-width-50">
 							<label>&Oacute;rg&atilde;o</label>
-							<siga:select id="orgaoUsuario" name="orgaoUsuario" list="orgaos" listKey="idOrgaoUsu" listValue="nmOrgaoUsu" value="${orgaoUsuario.idOrgaoUsu}" headerKey="0" headerValue="Nenhum"/>
+							<siga:select id="orgaoUsuario" name="orgaoUsuario" list="orgaos" listKey="idOrgaoUsu" listValue="nmOrgaoUsu" value="${orgaoUsuario.idOrgaoUsu}" headerKey="" headerValue="Nenhum"/>
 						</div>
 					</div>
-					<input type="hidden" id="designacao.lotacao" name="designacao.lotacao" />
-					<input type="hidden" id="designacao.dpPessoa" name="designacao.dpPessoa" />
-					<input type="hidden" id="designacao.funcaoConfianca" name="designacao.funcaoConfianca" />
-					<input type="hidden" id="designacao.cargo" name="designacao.cargo" />
-					<input type="hidden" id="designacao.cpGrupo" name="designacao.cpGrupo" />
-					<input type="hidden" id="designacao.complexo" name="designacao.complexo" />
-					<input type="hidden" id="designacao.orgaoUsuario" name="designacao.orgaoUsuario" />
-					<input type="hidden" name="designacao.atendente" id="designacao.atendente">
+					<input type="hidden" id="designacao.lotacao.id" name="designacao.lotacao.id" />
+					<input type="hidden" id="designacao.dpPessoa.id" name="designacao.dpPessoa.id" />
+					<input type="hidden" id="designacao.funcaoConfianca.id" name="designacao.funcaoConfianca.id" />
+					<input type="hidden" id="designacao.cargo.id" name="designacao.cargo.id" />
+					<input type="hidden" id="designacao.cpGrupo.id" name="designacao.cpGrupo.id" />
+					<input type="hidden" id="designacao.complexo.id" name="designacao.complexo.id" />
+					<input type="hidden" id="designacao.orgaoUsuario.id" name="designacao.orgaoUsuario.id" />
+					<input type="hidden" name="designacao.atendente.id" id="designacao.atendente.id">
 		
 					<div class="gt-form-row box-wrapper">
 						<div class="box box-left gt-width-50">
 							<label>Local</label>
-							<siga:select id="complexo" name="complexo" list="locais" listKey="idComplexo" listValue="nomeComplexo" value="${complexo.idComplexo}" headerKey="0" headerValue="Nenhum"/>
+							<siga:select id="complexo" name="complexo" list="locais" listKey="idComplexo" listValue="nomeComplexo" value="${complexo.idComplexo}" headerKey="" headerValue="Nenhum"/>
 						</div>
 						<div class="box gt-width-50">
-							<label>Atendente <span>*</span></label>
+							<label>Atendente<span>*</span></label>
 							
 							<input type="hidden" name="atendente" id="atendente" class="selecao">
-							<siga:selecao propriedade="lotacao" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente" desativar="${requestScope[modoExibicao] == 'equipe' ? 'true' : disabled}"/>
+							<siga:selecao propriedade="atendente" tema="simple" modulo="siga" urlAcao="buscar" inputName="atendente" desativar="${requestScope[modoExibicao] == 'equipe' ? 'true' : disabled}"/>
 		
 							<span style="display:none;color: red" id="designacao.atendente">Atendente n&atilde;o informado;</span>
 						</div>
@@ -206,21 +206,17 @@
 		solicitanteTypes.forEach(function(entry) {
 			var inputName = entry + "Sel.id";
 			var inputValue = $( "input[name='" + inputName + "']" ).val();
-		    if(inputValue != "")
-			    $("input[name='designacao." + entry + "']" ).val(inputValue);
+		    $("input[name='designacao." + entry + ".id']" ).val(inputValue);
 		});
 
 		var orgaoUsuarioValue = $('#orgaoUsuario').find(":selected").val();
-		if(orgaoUsuarioValue != "") 
-		    $("input[name='designacao.orgaoUsuario']").val(orgaoUsuarioValue);
+		$("input[name='designacao.orgaoUsuario.id']").val(orgaoUsuarioValue);
 			
 		var complexoValue = $('#complexo').find(":selected").val();
-		if(complexoValue != "")
-		    $("input[name='designacao.complexo']").val(complexoValue);
+		$("input[name='designacao.complexo.id']").val(complexoValue);
 
 		var atendenteValue =$( "input[name='atendenteSel.id']" ).val();
-		if(atendenteValue != "") 
-		    $("input[name='designacao.atendente']").val(atendenteValue);
+		$("input[name='designacao.atendente.id']").val(atendenteValue);
 	}
 	
 	designacaoOpts = {
@@ -255,7 +251,7 @@
 
 	designacaoService.getId = function(designacao) {
 		if (designacao)
-			return designacao.idConfiguracao || designacao["designacao.idConfiguracao"];
+			return designacao.idConfiguracao || designacao["designacao.id"];
 		else
 			return;
 	}

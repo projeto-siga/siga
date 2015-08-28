@@ -3,6 +3,8 @@ package br.gov.jfrj.siga.sr.model.vo;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
@@ -64,6 +66,7 @@ public class SrConfiguracaoVO {
         setListaItemConfiguracaoVO(new ArrayList<SrItemConfiguracaoVO>());
         if (configuracao.getItemConfiguracaoSet() != null) {
             for (SrItemConfiguracao item : configuracao.getItemConfiguracaoSet()) {
+            	
                 getListaItemConfiguracaoVO().add(item.toVO());
             }
         }
@@ -82,8 +85,11 @@ public class SrConfiguracaoVO {
             }
         }
 
-        if (configuracao.getAtendente() != null)
-            setAtendente(SelecionavelVO.createFrom(configuracao.getAtendente().getLotacaoAtual()));
+        if (configuracao.getAtendente() != null){
+        	//Edson: por causa do detach no ObjectInstantiator...
+        	DpLotacao atendente = DpLotacao.AR.findById(configuracao.getAtendente().getId());
+            setAtendente(SelecionavelVO.createFrom(atendente.getLotacaoAtual()));
+        }
 
         if (configuracao.getOrgaoUsuario() != null)
             setOrgaoUsuario(SelecionavelVO.createFrom(configuracao.getOrgaoUsuario().getId(), configuracao.getOrgaoUsuario().getDescricao(), configuracao.getOrgaoUsuario().getAcronimoOrgaoUsu()));

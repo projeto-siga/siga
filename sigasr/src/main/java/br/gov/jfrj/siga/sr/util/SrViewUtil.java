@@ -2,21 +2,21 @@ package br.gov.jfrj.siga.sr.util;
 
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 
-public class SigaPlayUtil {
+public class SrViewUtil {
 
 	/**
-	 * Retorna uma String formatada para renderizar as informaÃ§Ãµes do componente 
+	 * Retorna uma String formatada para renderizar as informações do componente 
 	 * #{descricaoItem}.
 	 */
 	public static String descricaoItem(SrItemConfiguracao itemConfiguracao) {
 		if (itemConfiguracao != null)
 			return itemConfiguracao.getTituloItemConfiguracao();
 		else
-			return new String("Item nÃ£o informado");
+			return new String("Item não informado");
 	}
 	
 	/**
-	 * Retorna uma String formatada para renderizar as informaÃ§Ãµes do componente 
+	 * Retorna uma String formatada para renderizar as informações do componente 
 	 * #{selecionado}
 	 */
 	public static String selecionado(String sigla, String descricao) {
@@ -34,7 +34,7 @@ public class SigaPlayUtil {
 	
 	public static String botaoRemoverSolicitacao(Long idSolicitacao, Long idLista) {
 		StringBuffer sb = new StringBuffer();
-		sb.append("<a onclick=\"jQuery.blockUI(objBlock);\" href=\"/sigasr/solicitacao/retirarDeLista?idSolicitacao=");
+		sb.append("<a onclick=\"javascript: return block();\" href=\"/sigasr/app/solicitacao/retirarDeLista?idSolicitacao=");
 		sb.append(idSolicitacao + "&idLista=" + idLista + "\" title=\"Remover da Lista\" name=\"idSolicitacao\" ");
 		sb.append("value=\"" + idSolicitacao + "\">");
 		sb.append("<img id=\"imgCancelar\" src=\"/siga/css/famfamfam/icons/delete.png\" style=\"margin-right: 3px;\"></a></td>");
@@ -44,7 +44,7 @@ public class SigaPlayUtil {
 	
 	public static String botaoPriorizarSolicitacao() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("<a class=\"once gt-btn-ativar\" onclick=\"listaService.alterarPosicao(event)\" title=\"Alterar posiÃ§Ã£o\">");
+		sb.append("<a class=\"once gt-btn-ativar\" onclick=\"listaService.alterarPosicao(event)\" title=\"Alterar posição\">");
 		sb.append("<img src=\"/siga/css/famfamfam/icons/arrow_refresh_small_up_down.png\" style=\"margin-right: 3px;\"></img></a>");
 		sb.append("<a class=\"once gt-btn-ativar\" onclick=\"listaService.alterarPrioridade(event)\" title=\"Alterar prioridade\">");
 		sb.append("<img src=\"/siga/css/famfamfam/icons/arrow_switch.png\"></img></a>");

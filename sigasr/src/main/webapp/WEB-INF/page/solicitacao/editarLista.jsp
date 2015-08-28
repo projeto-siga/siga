@@ -847,25 +847,25 @@
 		var params = "";
 		
 		// caso exista algum item na tabela
-		if (row[colunas.idOrgao] != '' && row[colunas.idOrgao] > 0)
+		//if (row[colunas.idOrgao] != '' && row[colunas.idOrgao] > 0)
 			params += '&permissao.orgaoUsuario.id=' + row[colunas.idOrgao];
 		
-		if (row[colunas.idLocal] != '' && row[colunas.idLocal] > 0)
+		//if (row[colunas.idLocal] != '' && row[colunas.idLocal] > 0)
 	    	params += '&permissao.complexo.id=' + row[colunas.idLocal];
 		
-		if (row[colunas.idLotacao] != '')
+		//if (row[colunas.idLotacao] != '')
 	    	params += '&permissao.lotacao.id=' + row[colunas.idLotacao];
 		
-		if (row[colunas.idPessoa] != '')
+		//if (row[colunas.idPessoa] != '')
 	    	params += '&permissao.dpPessoa.id=' + row[colunas.idPessoa];
 		
-		if (row[colunas.idCargo] != '')
+		//if (row[colunas.idCargo] != '')
 	    	params += '&permissao.cargo.id=' + row[colunas.idCargo];
 		
-		if (row[colunas.idFuncao] != '')
+		//if (row[colunas.idFuncao] != '')
 	    	params += '&permissao.funcaoConfianca.id=' + row[colunas.idFuncao];
-		if(row[colunas.idTipoPerm] == '')
-			row[colunas.idTipoPerm] = 0;
+		//if(row[colunas.idTipoPerm] == '')
+		//	row[colunas.idTipoPerm] = 0;
 		params += '&permissao.id=' + row[colunas.idTipoPerm];
 	
 		if ($("#idLista").val() != undefined && $("#idLista").val() != '')
@@ -987,13 +987,10 @@
 		return descricao;
 	}
 	function getDescricaoTipoPermissao() {
-		var descricao = $('#ulPermissoes').find("li:first-child").find("span:eq(0)").html();
-		
-		if (descricao != null || descricao != undefined) {
-			return descricao + " ...";
-		}
-		else
-			descricao = '';
+		var descricao = '';
+		$('#ulPermissoes').find("li").each(function(i){ 
+			descricao += (i > 0 ? '; ': '') + $(this).find("span:eq(0)").html();
+		});
 		
 		return descricao;
 	}
@@ -1031,7 +1028,7 @@
 	        var jDivs=$(this).find("span");
 	        
 	        // Atualiza a string serializada
-	    	params += '&tipoPermissaoSet[' + i + '].id=' + jDivs[0].id;
+	    	params += '&permissao.tipoPermissaoSet[' + i + '].id=' + jDivs[0].id;
 	    });
 		return params;
 	}

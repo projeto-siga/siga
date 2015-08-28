@@ -8,7 +8,7 @@
 	<jsp:include page="../main.jsp"></jsp:include>
 	
 	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
-	<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+	<script src="/sigasr/javascripts/jquery.dataTables.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.populate.js"></script>
 	<script src="/sigasr/javascripts/base-service.js"></script>
@@ -234,7 +234,7 @@
 	var atributoService = new AtributoService(opts);
 	
 	atributoService.getId = function(atributo) {
-		return atributo.idAtributo || atributo['atributo.idAtributo'];
+		return atributo.idAtributo || atributo['atributo.id'];
 	}
 	
 	atributoService.onRowClick = function(atributo) {
@@ -283,7 +283,9 @@
 
 	atributoService.serializar = function(obj) {
 		var query = BaseService.prototype.serializar.call(this, obj);
-		return query + "&atributo=" + this.getId(obj);
+		if (query.indexOf('atributo.id=')<=-1)
+			query + "&atributo.id=" + this.getId(obj);
+		return query;
 	}
 	
 	atributoService.buscarAssociacoes = function(assoc) {

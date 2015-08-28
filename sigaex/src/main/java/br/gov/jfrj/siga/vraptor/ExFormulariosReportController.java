@@ -63,7 +63,7 @@ public class ExFormulariosReportController extends ExController {
 	}
 
 	public byte[] gerarRelatorio(String arquivo, SortedSet<ListItem> ll) throws JRException, Exception {
-		final Map<String, String> parametros = new HashMap<String, String>();
+		final Map<String, Object> parametros = new HashMap<String, Object>();
 		final String cam = getContext().getRealPath("/WEB-INF/page/exRelatorio/");
 
 		/*

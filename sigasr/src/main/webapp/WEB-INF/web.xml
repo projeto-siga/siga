@@ -32,11 +32,21 @@
 		<param-name>br.com.caelum.vraptor.packages</param-name>
 		<param-value>br.gov.jfrj.siga.vraptor, br.gov.jfrj.siga.feature.entity.instantiator.vraptor</param-value>
 	</context-param>
+	
+	<filter>
+        <filter-name>SrFilter</filter-name>
+        <filter-class>br.gov.jfrj.siga.sr.util.SrThreadFilter</filter-class>
+    </filter>
 
 	<filter>
 		<filter-name>vraptor</filter-name>
 		<filter-class>br.com.caelum.vraptor.VRaptor</filter-class>
 	</filter>
+	
+	<filter-mapping>
+        <filter-name>SrFilter</filter-name>
+        <url-pattern>/app/*</url-pattern>
+    </filter-mapping>
 	
 	<filter-mapping>
 		<filter-name>vraptor</filter-name>

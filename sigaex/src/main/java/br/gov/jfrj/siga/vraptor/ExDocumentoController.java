@@ -60,6 +60,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -1147,11 +1148,12 @@ public class ExDocumentoController extends ExController {
 		}
 
 		try {
+			final String realPath = getContext().getRealPath("");
 			exDocumentoDto.setMsg(Ex
 					.getInstance()
 					.getBL()
 					.finalizar(getCadastrante(), getLotaTitular(),
-							exDocumentoDto.getDoc(), null));
+							exDocumentoDto.getDoc(), realPath));
 
 			if (exDocumentoDto.getDoc().getForm() != null) {
 				if (exDocumentoDto.getDoc().getForm().get("acaoFinalizar") != null
@@ -1173,7 +1175,7 @@ public class ExDocumentoController extends ExController {
 
 	@Post("/app/expediente/doc/gravar")
 	public void gravar(final ExDocumentoDTO exDocumentoDTO,
-			final String[] vars, final String[] campos) {
+			final String[] vars, final String[] campos, final UploadedFile arquivo) {
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();
 
@@ -1210,6 +1212,9 @@ public class ExDocumentoController extends ExController {
 			}
 
 			lerForm(exDocumentoDTO, vars);
+			
+			if (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO && exDocumentoDTO.getDoc().getIdDoc() == null && arquivo == null)
+				throw new AplicacaoException("Documento capturado não pode ser gravado sem que seja informado o arquivo PDF.");
 
 			if (!ex.getConf().podePorConfiguracao(getTitular(),
 					getLotaTitular(),
@@ -1295,10 +1300,42 @@ public class ExDocumentoController extends ExController {
 						false);
 				exDocumentoDTO.getDoc().setExMobilAutuado(mobilAutuado);
 			}
-
+			
+			// Insere PDF de documento capturado
+			//
+			if (arquivo != null) {
+				ExDocumento d = exDocumentoDTO.getDoc();
+				
+				if (arquivo.getFile() == null) {
+					throw new AplicacaoException("O arquivo a ser anexado não foi selecionado!");
+				}
+	
+				try {
+					final byte[] baArquivo = toByteArray(arquivo);
+					if (baArquivo == null) {
+						throw new AplicacaoException("Arquivo vazio não pode ser anexado.");
+					}
+					if (baArquivo.length > 10 * 1024 * 1024) {
+						throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 10MB.");
+					}
+					d.setConteudoBlobPdf(baArquivo);
+				} catch (IOException e) {
+					throw new AplicacaoException("Falha ao manipular aquivo", 1, e);
+				}
+	
+				if (d.getContarNumeroDePaginas() == null || d.getArquivoComStamp() == null) {
+					throw new AplicacaoException(MessageFormat.format("O arquivo {0} está corrompido. Favor gera-lo novamente antes de anexar.", arquivo.getFileName()));
+				}
+			} 
+			
 			final String realPath = getContext().getRealPath("");
 			exBL.gravar(getCadastrante(), getLotaTitular(),
 					exDocumentoDTO.getDoc(), realPath);
+			
+			if (!exDocumentoDTO.getDoc().isFinalizado()
+					&& exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)
+				exBL.finalizar(getCadastrante(), getLotaTitular(),
+						exDocumentoDTO.getDoc(), realPath);
 
 			lerEntrevista(exDocumentoDTO);
 
@@ -2195,7 +2232,12 @@ public class ExDocumentoController extends ExController {
 		if (exDocumentoDTO.getIdMod() != null && exDocumentoDTO.getIdMod() != 0) {
 			for (final DpLotacao lotacao : lotacaoSet) {
 				preench.setDpLotacao(lotacao);
-				exDocumentoDTO.getPreenchSet().addAll(dao().consultar(preench));
+				try {
+					exDocumentoDTO.getPreenchSet().addAll(dao().consultar(preench));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 

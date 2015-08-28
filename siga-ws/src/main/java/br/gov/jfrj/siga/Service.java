@@ -47,45 +47,45 @@ public abstract class Service {
 	public static WfService getWfService() {
 		if (wf == null)
 			wf = getService(WfService.class,
-					SigaWsProperties.getString("wfservice.endpoint"),
-					SigaWsProperties.getString("wfservice.qname"),
-					SigaWsProperties.getString("wfservice.servicename"));
+					System.getProperty( "wfservice.endpoint" ),
+					System.getProperty( "wfservice.qname" ),
+					System.getProperty( "wfservice.servicename" ));
 		return wf;
 	}
 
 	public static ExService getExService() {
 		if (ex == null)
-			ex = getService(ExService.class,
-					SigaWsProperties.getString("exservice.endpoint"),
-					SigaWsProperties.getString("exservice.qname"),
-					SigaWsProperties.getString("exservice.servicename"));
+			ex = getService(ExService.class, 
+					System.getProperty( "exservice.endpoint" ),
+					System.getProperty( "exservice.qname" ),
+					System.getProperty( "exservice.servicename" ));
 		return ex;
 	}
 
 	public static CdService getCdService() {
 		if (cd == null)
 			cd = getService(CdService.class,
-					SigaWsProperties.getString("cdservice.endpoint"),
-					SigaWsProperties.getString("cdservice.qname"),
-					SigaWsProperties.getString("cdservice.servicename"));
+					System.getProperty( "cdservice.endpoint" ),
+					System.getProperty( "cdservice.qname" ),
+					System.getProperty( "cdservice.servicename" ));
 		return cd;
 	}
 
 	public static GiService getGiService() {
 		if (gi == null)
 			gi = getService(GiService.class,
-					SigaWsProperties.getString("giservice.endpoint"),
-					SigaWsProperties.getString("giservice.qname"),
-					SigaWsProperties.getString("giservice.servicename"));
+					System.getProperty( "giservice.endpoint" ),
+					System.getProperty( "giservice.qname" ),
+					System.getProperty( "giservice.servicename" ));
 		return gi;
 	}
 
 	public static GcService getGcService() {
 		if (gc == null)
 			gc = getService(GcService.class,
-					SigaWsProperties.getString("gcservice.endpoint"),
-					SigaWsProperties.getString("gcservice.qname"),
-					SigaWsProperties.getString("gcservice.servicename"));
+					System.getProperty("gcservice.endpoint"),
+					System.getProperty("gcservice.qname"),
+					System.getProperty("gcservice.servicename"));
 		return gc;
 	}
 	

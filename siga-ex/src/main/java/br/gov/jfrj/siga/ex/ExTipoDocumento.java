@@ -39,6 +39,7 @@ public class ExTipoDocumento extends AbstractExTipoDocumento implements
 	final static public long TIPO_DOCUMENTO_INTERNO = 1;
 	final static public long TIPO_DOCUMENTO_INTERNO_ANTIGO = 2;
 	final static public long TIPO_DOCUMENTO_EXTERNO = 3;
+	final static public long TIPO_DOCUMENTO_CAPTURADO = 4;
 
 	/**
 	 * 

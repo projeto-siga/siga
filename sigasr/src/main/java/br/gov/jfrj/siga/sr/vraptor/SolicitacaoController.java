@@ -25,6 +25,7 @@ import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.validator.ValidationMessage;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
@@ -102,28 +103,6 @@ public class SolicitacaoController extends SrController {
         this.validator = validator;
     }
 
-    @Path("/exibirAcao")
-    public void exibirAcao(SrSolicitacao solicitacao) throws Exception {
-    	//Edson: por causa do detach no ObjetoObjectInstantiator:
-    	if (solicitacao.getSolicitacaoInicial() != null)
-    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
-    	
-        Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
-        result.include(SOLICITACAO, solicitacao);
-        result.include(ACOES_E_ATENDENTES, acoesEAtendentes);
-        result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
-    }
-
-    @Path("/exibirAtributos")
-    public void exibirAtributos(SrSolicitacao solicitacao) throws Exception {
-    	//Edson: por causa do detach no ObjetoObjectInstantiator:
-    	if (solicitacao.getSolicitacaoInicial() != null)
-    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
-    	
-        result.include(SOLICITACAO, solicitacao);
-        result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
-    }
-
     @SuppressWarnings("unchecked")
     @Path("/listarLista")
     public void listarLista(boolean mostrarDesativados) throws Exception {
@@ -151,16 +130,12 @@ public class SolicitacaoController extends SrController {
         result.include("cargocargoAtualSel", new DpCargoSelecao());
     }
 
-    @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/gravarPermissaoUsoLista")
-    public void gravarPermissaoUsoLista(SrConfiguracao permissao, List<SrTipoPermissaoLista> tipoPermissaoSet) throws Exception {
-    	permissao.setTipoPermissaoSet(tipoPermissaoSet);
+    public void gravarPermissaoUsoLista(SrConfiguracao permissao) throws Exception {
         permissao.salvarComoPermissaoUsoLista();
-
         result.use(Results.http()).body(permissao.toVO().toJson());
     }
 
-    @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/listarPermissaoUsoLista")
     public void listarPermissaoUsoLista(Long idLista, boolean mostrarDesativados) throws Exception {
 
@@ -172,7 +147,6 @@ public class SolicitacaoController extends SrController {
         result.use(Results.http()).body(SrConfiguracao.convertToJSon(associacoes));
     }
 
-    @AssertAcesso(ADM_ADMINISTRAR)
     @Path("/desativarPermissaoUsoListaEdicao")
     public void desativarPermissaoUsoListaEdicao(Long idLista, Long idPermissao) throws Exception {
         SrConfiguracao configuracao = ContextoPersistencia.em().find(SrConfiguracao.class, idPermissao);
@@ -269,6 +243,8 @@ public class SolicitacaoController extends SrController {
     @Path("/exibirLista/{id}")
     public void exibirLista(Long id) throws Exception {
         SrLista lista = SrLista.AR.findById(id);
+        if (lista == null)
+        	throw new AplicacaoException("Lista não encontrada");
         List<CpOrgaoUsuario> orgaos = ContextoPersistencia.em().createQuery("from CpOrgaoUsuario").getResultList();
         List<CpComplexo> locais = CpComplexo.AR.all().fetch();
         List<SrTipoPermissaoLista> tiposPermissao = SrTipoPermissaoLista.AR.all().fetch();
@@ -280,7 +256,7 @@ public class SolicitacaoController extends SrController {
         String jsonPrioridades = SrPrioridade.getJSON().toString();
 
         if (!lista.podeConsultar(getLotaTitular(), getTitular())) {
-            throw new Exception("Exibi\u00e7\u00e3o n\u00e3o permitida");
+            throw new AplicacaoException("Exibi\u00e7\u00e3o n\u00e3o permitida");
         }
 
         try {
@@ -380,12 +356,12 @@ public class SolicitacaoController extends SrController {
     public void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         if (solicitacao == null)
-            throw new Exception("Solicita\u00e7\u00e3o n\u00e3o encontrada");
+            throw new AplicacaoException("Solicita\u00e7\u00e3o n\u00e3o encontrada");
         else
             solicitacao = solicitacao.getSolicitacaoAtual();
 
         if (solicitacao == null)
-            throw new Exception("Esta solicita\u00e7\u00e3o foi exclu\u00edda");
+            throw new AplicacaoException("Esta solicita\u00e7\u00e3o foi exclu\u00edda");
 
         SrMovimentacao movimentacao = new SrMovimentacao(solicitacao);
 
@@ -419,16 +395,13 @@ public class SolicitacaoController extends SrController {
     	//Edson: por causa do detach no ObjetoObjectInstantiator:
     	if (solicitacao.getSolicitacaoInicial() != null)
     		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
-    	
-        if (solicitacao == null || solicitacao.getCadastrante() == null)
-            solicitacao = criarSolicitacaoComSolicitante();
 
-        // preenche com os dados da ï¿½ltima solicitaï¿½ï¿½o do usuï¿½rio
         solicitacao.deduzirLocalRamalEMeioContato();
 
         result.include(SOLICITACAO, solicitacao);
         result.include("locaisDisponiveis", solicitacao.getLocaisDisponiveis());
         result.include("meiosComunicadaoList", SrMeioComunicacao.values());
+        result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
     }
 
     @Path("/exibirItemConfiguracao")
@@ -437,36 +410,61 @@ public class SolicitacaoController extends SrController {
     	//Edson: por causa do detach no ObjetoObjectInstantiator:
     	if (solicitacao.getSolicitacaoInicial() != null)
     		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
-    	
-    	if (solicitacao.getSolicitante() == null)
-            result.include(SOLICITACAO, solicitacao);
-        
-        else if (!solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao())) {
+         
+        if (!solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao()))
             solicitacao.setItemConfiguracao(null);
+        
+        solicitacao.setAcao(null);
 
-            DpPessoa titular = solicitacao.getTitular();
-            DpLotacao lotaTitular = solicitacao.getLotaTitular();
-            Map<SrAcao, List<SrTarefa>> acoesEAtendentes = solicitacao.getAcoesEAtendentes();
-
-            result.include(SOLICITACAO, solicitacao);
-            result.include(TITULAR, titular);
-            result.include(LOTA_TITULAR, lotaTitular);
-            result.include(ACOES_E_ATENDENTES, acoesEAtendentes);
-            result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
-        }
+    	result.include(SOLICITACAO, solicitacao);
+    	result.include(TITULAR, solicitacao.getTitular());
+    	result.include(LOTA_TITULAR, solicitacao.getLotaTitular());
+    	result.include(ACOES_E_ATENDENTES, solicitacao.getAcoesEAtendentes());
+    	result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
     }
-
-    public void exibirConhecimentosRelacionados(SrSolicitacao solicitacao) throws Exception {
+    
+    @Path("/exibirAcao")
+    public void exibirAcao(SrSolicitacao solicitacao) throws Exception {
+    	
+    	//Edson: por causa do detach no ObjetoObjectInstantiator:
+    	if (solicitacao.getSolicitacaoInicial() != null)
+    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
+    	
+    	solicitacao.setAcao(null);
+    	
         result.include(SOLICITACAO, solicitacao);
-        result.include("podeUtilizarServicoSigaGC",podeUtilizarServico("SIGA;GC"));
+        result.include(ACOES_E_ATENDENTES, solicitacao.getAcoesEAtendentes());
+        result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
     }
+
+    @Path("/exibirAtributos")
+    public void exibirAtributos(SrSolicitacao solicitacao) throws Exception {
+    	
+    	//Edson: por causa do detach no ObjetoObjectInstantiator:
+    	if (solicitacao.getSolicitacaoInicial() != null)
+    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
+    	
+        result.include(SOLICITACAO, solicitacao);
+        result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
+    }
+
 
     @Path("/exibirPrioridade")
     public void exibirPrioridade(SrSolicitacao solicitacao) {
+    	
+    	//Edson: por causa do detach no ObjetoObjectInstantiator:
+    	if (solicitacao.getSolicitacaoInicial() != null)
+    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
+    	
         solicitacao.associarPrioridadePeloGUT();
 
         result.include(SOLICITACAO, solicitacao);
         result.include(PRIORIDADE_LIST, SrPrioridade.values());
+    }
+    
+    public void exibirConhecimentosRelacionados(SrSolicitacao solicitacao) throws Exception {
+        result.include(SOLICITACAO, solicitacao);
+        result.include("podeUtilizarServicoSigaGC",podeUtilizarServico("SIGA;GC"));
     }
 
     @Path("/listarSolicitacoesRelacionadas")
@@ -485,7 +483,11 @@ public class SolicitacaoController extends SrController {
     @SuppressWarnings("unchecked")
     @Path("/buscar")
     public void buscar(SrSolicitacaoFiltro filtro, String propriedade, boolean popup) throws Exception {
-        SrSolicitacaoListaVO solicitacaoListaVO;
+        
+    	if (filtro == null)
+    		filtro = new SrSolicitacaoFiltro();
+    	
+    	SrSolicitacaoListaVO solicitacaoListaVO;
         try {
             if (filtro.isPesquisar()) {
                 filtro.carregarSelecao();
@@ -610,9 +612,9 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/exibir/incluirEmListaGravar")
-    public void incluirEmListaGravar(Long idSolicitacao, Long idLista, SrPrioridade prioridade, Boolean naoReposicionarAutomatico) throws Exception {
+    public void incluirEmListaGravar(Long idSolicitacao, Long idLista, SrPrioridade prioridade, boolean naoReposicionarAutomatico) throws Exception {
         if (idLista == null) {
-            throw new Exception("Selecione a lista para inclus\u00e3o da solicita\u00e7\u00e3o");
+            throw new AplicacaoException("Selecione a lista para inclus\u00e3o da solicita\u00e7\u00e3o");
         }
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(idSolicitacao);
         SrLista lista = SrLista.AR.findById(idLista);
@@ -683,7 +685,7 @@ public class SolicitacaoController extends SrController {
     public void escalonarGravar(Long id, SrItemConfiguracao itemConfiguracao, SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, Long idDesignacao, SrTipoMotivoEscalonamento motivo, String descricao,
             Boolean criaFilha, Boolean fechadoAuto) throws Exception {
         if (itemConfiguracao == null || itemConfiguracao.getId() == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
-            throw new Exception("Opera\u00e7\u00e3o n\u00e3o permitida. Necessario informar um item de configura\u00e7\u00e3o e uma a\u00e7\u00e3o.");
+            throw new AplicacaoException("Opera\u00e7\u00e3o n\u00e3o permitida. Necessario informar um item de configura\u00e7\u00e3o e uma a\u00e7\u00e3o.");
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
 
         DpLotacao atendenteNaoDesignado = null;
@@ -719,7 +721,7 @@ public class SolicitacaoController extends SrController {
             mov.setLotaAtendente(atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente);
             // Edson: isso abaixo talvez pudesse valer pra todas as movimentacoes e ficar la no
             // mov.checarCampos()
-            if (solicitacao.getAtendente() != null && !mov.getLotaAtendente().equivale(solicitacao.getAtendente().getLotacao()))
+            if (solicitacao.getAtendente() != null && !mov.getLotaAtendente().equivale(solicitacao.getLotaAtendente()))
                 mov.setAtendente(null);
             mov.setMotivoEscalonamento(motivo);
             mov.setDesignacao(SrConfiguracao.AR.findById(idDesignacao));

@@ -53,6 +53,8 @@ public class AssociacaoController extends SrController {
 	@AssertAcesso(ADM_ADMINISTRAR)
 	public void gravarAssociacao(SrConfiguracao associacao,SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
 			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao dpPessoaSel, DpFuncaoConfiancaSelecao funcaoConfiancaSel, DpCargoSelecao cargoSel, CpPerfilSelecao cpGrupoSel, SrPesquisa pesquisaSatisfacao) throws Exception {
+		if (associacao == null)
+			associacao = new SrConfiguracao();
 		setDadosAssociacao(associacao, atributo, itemConfiguracaoSet, acoesSet, complexo, orgaoUsuario, lotacaoSel, dpPessoaSel, funcaoConfiancaSel, cargoSel, cpGrupoSel, pesquisaSatisfacao);
 		associacao.salvarComoAssociacaoAtributo();
 		result.use(Results.http()).body(associacao.toVO().toJson());
@@ -70,41 +72,17 @@ public class AssociacaoController extends SrController {
 
 	private void setDadosAssociacao(SrConfiguracao associacao, SrAtributo atributo, List<SrItemConfiguracao> itemConfiguracaoSet, List<SrAcao> acoesSet, CpComplexo complexo, CpOrgaoUsuario orgaoUsuario,
 			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao pessoaSel, DpFuncaoConfiancaSelecao funcaoSel, DpCargoSelecao cargoSel, CpPerfilSelecao perfilSel, SrPesquisa pesquisaSatisfacao) throws Exception {
-		
-		if (atributo != null && atributo.getId() != null) {
-			associacao.setAtributo(SrAtributo.AR.findById(atributo.getId()));
-		}
-		
-		if (pesquisaSatisfacao != null && pesquisaSatisfacao.getId() != null) {
-			associacao.setPesquisaSatisfacao(SrPesquisa.AR.findById(pesquisaSatisfacao.getId()));
-		}
-		
-		if (complexo != null && complexo.getIdComplexo() != null) {
-			associacao.setComplexo(CpComplexo.AR.findById(complexo.getIdComplexo()));
-		}
-		
-		if (orgaoUsuario != null && orgaoUsuario.getIdOrgaoUsu() != null) {
-			associacao.setOrgaoUsuario(CpOrgaoUsuario.AR.findById(orgaoUsuario.getIdOrgaoUsu()));
-		}
-		
 		associacao.setItemConfiguracaoSet(itemConfiguracaoSet);
 		associacao.setAcoesSet(acoesSet);
-
-		if (pessoaSel != null)
-			associacao.setDpPessoa(pessoaSel.buscarObjeto());
-
-		if (lotacaoSel != null)
-			associacao.setLotacao(lotacaoSel.buscarObjeto());
-
-		if (funcaoSel != null)
-			associacao.setFuncaoConfianca(funcaoSel.buscarObjeto());
-
-		if (cargoSel != null)
-			associacao.setCargo(cargoSel.buscarObjeto());
-
-		if (perfilSel != null){
-			associacao.setCpGrupo(perfilSel.buscarObjeto());
-		}
+		associacao.setAtributo(atributo == null ? null : SrAtributo.AR.findById(atributo.getId()));
+		associacao.setPesquisaSatisfacao(pesquisaSatisfacao == null ? null : SrPesquisa.AR.findById(pesquisaSatisfacao.getId()));
+		associacao.setComplexo(complexo == null ? null : CpComplexo.AR.findById(complexo.getIdComplexo()));
+		associacao.setOrgaoUsuario(orgaoUsuario == null ? null : CpOrgaoUsuario.AR.findById(orgaoUsuario.getIdOrgaoUsu()));
+		associacao.setDpPessoa(pessoaSel.buscarObjeto());
+		associacao.setLotacao(lotacaoSel.buscarObjeto());
+		associacao.setFuncaoConfianca(funcaoSel.buscarObjeto());
+		associacao.setCargo(cargoSel.buscarObjeto());
+		associacao.setCpGrupo(perfilSel.buscarObjeto());
 	}
 
 }

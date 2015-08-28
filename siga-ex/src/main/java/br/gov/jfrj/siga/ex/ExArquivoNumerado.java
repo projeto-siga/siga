@@ -113,8 +113,8 @@ public class ExArquivoNumerado implements Comparable {
 	}
 
 	public String getReferenciaHtml() {
-		if (getArquivo().getHtml() == null)
-			return null;
+//		if (getArquivo().getHtml() == null)
+//			return null;
 		return getReferencia() + ".html";
 	}
 

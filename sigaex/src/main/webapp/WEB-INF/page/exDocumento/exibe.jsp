@@ -33,6 +33,22 @@
 				.write("<script src='/siga/javascript/viz.js' language='JavaScript1.1' type='text/javascript'>"
 						+ "<"+"/script>");
 	}
+
+	function pageHeight() {
+		return window.innerHeight != null ? window.innerHeight
+				: document.documentElement
+						&& document.documentElement.clientHeight ? document.documentElement.clientHeight
+						: document.body != null ? document.body.clientHeight
+								: null;
+	}
+
+	function resize() {
+		var ifr = document.getElementById('painel');
+
+		ifr.height = pageHeight() - 300;
+		console.log("resize foi chamado!");
+	}
+
 </script>
 	
 <c:if test="${not docVO.digital}">
@@ -174,19 +190,30 @@
 
 				</c:if>
 
-				<div class="gt-content-box" style="padding: 10px;">
-					<table style="width: 100%">
-						<tr>
-							<td>
-								<c:if test="${docVO.conteudoBlobHtmlString != null}">
-									<tags:fixdocumenthtml>
-										${docVO.conteudoBlobHtmlString}
-									</tags:fixdocumenthtml>
-								</c:if>
-							</td>
-						</tr>
-					</table>
-				</div>
+				<c:choose>
+					<c:when test="${docVO.conteudoBlobHtmlString != null}">
+						<div class="gt-content-box" style="padding: 10px;">
+							<table style="width: 100%">
+								<tr>
+									<td>
+										<tags:fixdocumenthtml>
+											${docVO.conteudoBlobHtmlString}
+										</tags:fixdocumenthtml>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</c:when>
+					<c:when test="${docVO.doc.pdf}">
+						<iframe style="visibility: visible; margin: 0px; padding: 0px;" 
+							name="painel" id="painel" src="/sigaex/app/arquivo/exibir?arquivo=${docVO.doc.referenciaPDF}" align="right" width="100%"
+							frameborder="0" 
+							scrolling="auto"></iframe>
+						<script>
+							$(document).ready(function(){resize();$(window).resize(function(){resize();});});
+						</script>
+					</c:when>
+				</c:choose>
 
 				<c:if test="${temmov}">
 					<div class="gt-content-box gt-for-table"

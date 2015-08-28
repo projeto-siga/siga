@@ -11,7 +11,7 @@
 				<ul>
 					<c:forEach items="${acordo.acordoAtual.atributoAcordoSet}"
 						var="att">
-						<li>${att.atributo.nomeAtributo}${att.operador.nome}
+						<li>${att.atributo.nomeAtributo} ${att.operador.nome}
 							${att.valor} ${att.unidadeMedida.plural}: 
 							<c:choose>
 								<c:when test="${solicitacao.isAtributoAcordoSatisfeito(att)}">

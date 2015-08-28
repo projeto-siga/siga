@@ -558,6 +558,8 @@ public class ExDocumentoDTO {
 			return "antigo";
 		else if (getIdTpDoc() == 3L)
 			return "externo";
+		else if (getIdTpDoc() == 4L)
+			return "capturado";
 
 		// if (param("idTpDoc") == null)
 		// setParam("idTpDoc", "1");

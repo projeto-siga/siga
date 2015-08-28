@@ -947,7 +947,7 @@ public class ExDocumentoController extends ExController {
 		result.include("popup", popup);
 	}
 
-	@Get("/app/expediente/doc/exibir")
+	@Get({"/app/expediente/doc/exibir","/expediente/doc/exibir.action"})
 	public void exibe(final boolean conviteEletronico, final String sigla,
 			final ExDocumentoDTO exDocumentoDTO, final Long idmob)
 			throws Exception {

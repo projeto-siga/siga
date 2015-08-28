@@ -1,6 +1,10 @@
 language: java
 jdk:
-  - oraclejdk7
+- oraclejdk7
 install: mvn install -DskipTests=true -Dsiga.versao=3.14.0.0
 script: mvn test -B -Dsiga.versao=3.14.0.0
-  
+after_success:
+- .utility/push-javadoc-to-gh-pages.sh
+env:
+  global:
+    secure: JjAbNw5rSFhPRlaG2Q07ffXBYSNGG1YmTZGTaT/1QZYxxF9hPIQZIELC27q/AJqqAC5pIM+dndRphuhNkojzAYeh/sqcgxT96m3rOoD5Re+84KvDcoGfPZbPrtTfO3ppOcSvAYa4ST5/EDAHfhH2Q9DVfBfwLqoYW+zfh8BWTNk=

@@ -100,7 +100,7 @@
                 </c:if>
                 
                 	<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SE:Módulo de Servicos Externos')}">
-						<li><a href="/sigase/">Dados Externos</a>
+						<li><a href="/sigade/">Dados Externos</a>
 						</li>
 					</c:if>
 					

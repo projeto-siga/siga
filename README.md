@@ -1,6 +1,10 @@
 Projeto Siga
 ============
+## Versões
 
+ * Página com o histórico de [versões](https://github.com/projeto-siga/siga/wiki/Vers%C3%B5esSIGA) do siga
+ * Rode o [siga no docker](https://github.com/projeto-siga/docker)
+ 
 ## Dependências do Projeto
 * [Git](https://windows.github.com/)
 * Maven ftp://mirror.reverse.net/pub/apache/maven/maven-3/3.2.3/binaries/apache-maven-3.2.3-bin.zip

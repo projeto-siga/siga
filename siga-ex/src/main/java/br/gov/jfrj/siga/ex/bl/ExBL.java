@@ -6538,6 +6538,11 @@ public class ExBL extends CpBL {
 
 			mov.setDescrMov(motivo);
 			gravarMovimentacao(mov);
+			
+			String funcao = doc.getForm().get("acaoExcluir");
+			if (funcao != null) {
+				obterMetodoPorString(funcao, doc);
+			}
 
 			concluirAlteracao(doc);
 		} catch (final Exception e) {

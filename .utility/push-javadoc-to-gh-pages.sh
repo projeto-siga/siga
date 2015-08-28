@@ -13,7 +13,8 @@ if [ "$TRAVIS_REPO_SLUG" == “projeto-siga/siga” ] && [ "$TRAVIS_JDK_VERSION"
 
   cd gh-pages
   git rm -rf ./javadoc
-  cp -Rf $HOME/javadoc-latest ./javadoc
+  pwd
+  cp -Rf $HOME/target/site/apidocs ./javadoc
   git add -f .
   git commit -m "Lastest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
   git push -fq origin gh-pages > /dev/null

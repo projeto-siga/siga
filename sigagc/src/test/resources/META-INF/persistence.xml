@@ -65,7 +65,7 @@
 			<property name="hibernate.connection.password" value="" />
 			<property name="hibernate.cache.use_second_level_cache"
 				value="false" />
-			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.show_sql" value="false" />
 			<property name="hibernate.default_batch_fetch_size" value="1000" />
 		</properties>
 	</persistence-unit>

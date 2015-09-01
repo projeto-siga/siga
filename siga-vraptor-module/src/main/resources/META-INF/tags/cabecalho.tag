@@ -14,6 +14,7 @@
 <%@ attribute name="desabilitarbusca"%>
 <%@ attribute name="desabilitarmenu"%>
 <%@ attribute name="incluirJs"%>
+<%@ attribute name="compatibilidade"%>
 
 <c:if test="${not empty titulo}">
 	<c:set var="titulo" scope="request" value="${titulo}" />
@@ -35,6 +36,11 @@
 	<c:set var="barranav" scope="request">${barra}</c:set>
 </c:if>
 
+<c:set var="XUACompatible" scope="request">IE=EDGE</c:set>
+<c:if test="${not empty compatibilidade}">
+	<c:set var="XUACompatible" scope="request">${compatibilidade}</c:set>
+</c:if>
+
 <c:set var="ambiente">
 	<c:if test="${f:resource('isVersionTest') or f:resource('isBaseTest')}">
 		<c:if test="${f:resource('isVersionTest')}">SISTEMA</c:if>
@@ -50,7 +56,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>SIGA - ${titulo_pagina}</title>
-<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9"/>
+<meta http-equiv="X-UA-Compatible" content="${XUACompatible}"/>
 <META HTTP-EQUIV="Expires" CONTENT="0">
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache">

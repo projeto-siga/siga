@@ -9,7 +9,7 @@
 <%@ attribute name="desabilitarbusca"%>
 <%@ attribute name="desabilitarmenu"%>
 <%@ attribute name="incluirJs"%>
-<%@ attribute name="emularIE9"%>
+<%@ attribute name="compatibilidade"%>
 
 <c:if test="${not empty pagina_de_erro}">
 	<c:set var="pagina_de_erro" scope="request" value="${pagina_de_erro}" />
@@ -20,7 +20,7 @@
 <siga:cabecalho titulo="${titulo}" popup="${popup}" meta="${meta}"
 	onLoad="${onLoad}" desabilitarbusca="${desabilitarbusca}"
 	desabilitarmenu="${desabilitarmenu}" incluirJs="${incluirJs}" 
-	emularIE9="${emularIE9}" />
+	compatibilidade="${compatibilidade}" />
 
 <jsp:doBody />
 

@@ -36,9 +36,9 @@
 	<c:set var="barranav" scope="request">${barra}</c:set>
 </c:if>
 
-<c:set var="XUACompatible" scope="request">EDGE</c:set>
+<c:set var="XUACompatible" scope="request">IE=EDGE</c:set>
 <c:if test="${not empty emularIE9}">
-	<c:set var="XUACompatible" scope="request">EmulateIE9</c:set>
+	<c:set var="XUACompatible" scope="request">${emularIE9}</c:set>
 </c:if>
 
 <c:set var="ambiente">
@@ -56,7 +56,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>SIGA - ${titulo_pagina}</title>
-<meta http-equiv="X-UA-Compatible" content="IE=${XUACompatible}"/>
+<meta http-equiv="X-UA-Compatible" content="${XUACompatible}"/>
 <META HTTP-EQUIV="Expires" CONTENT="0">
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache">

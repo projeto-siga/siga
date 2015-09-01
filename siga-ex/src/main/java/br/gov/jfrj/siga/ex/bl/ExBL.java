@@ -797,13 +797,18 @@ public class ExBL extends CpBL {
 										m = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
 									else
 										m = CpMarcador.MARCADOR_REVISAR;
-									for (ExMovimentacao assinatura : mob
-											.getDoc().getTodasAsAssinaturas()) {
-										if (assinatura.getSubscritor()
-												.equivale(mov.getSubscritor())) {
-											m = null;
-											break;
+									
+									if(mob.getDoc().getExTipoDocumento().getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO) {
+										for (ExMovimentacao assinatura : mob
+												.getDoc().getTodasAsAssinaturas()) {
+											if (assinatura.getSubscritor()
+													.equivale(mov.getSubscritor())) {
+												m = null;
+												break;
+											}
 										}
+									} else {
+										m = null;
 									}
 								}
 								if (m != null)

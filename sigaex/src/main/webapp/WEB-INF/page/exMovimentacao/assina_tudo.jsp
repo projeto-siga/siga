@@ -11,7 +11,7 @@
 <siga:pagina
 	titulo="Assinatura em Lote de Documentos, Despachos e Anexos"
 	onLoad="javascript: TestarAssinaturaDigital();"
-	incluirJs="/sigaex/javascript/assinatura.js">
+	incluirJs="/sigaex/javascript/assinatura.js" compatibilidade="IE=EmulateIE9">
 
 	<script type="text/javascript" language="Javascript1.1">
 		/*  converte para maiúscula a sigla do estado  */

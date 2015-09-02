@@ -7,7 +7,7 @@
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
-<siga:pagina titulo="Assinatura em Lote" onLoad="javascript: TestarAssinaturaDigital()">
+<siga:pagina titulo="Assinatura em Lote" onLoad="javascript: TestarAssinaturaDigital()" compatibilidade="IE=EmulateIE9">
 
 <script type="text/javascript" language="Javascript1.1">
 

@@ -9,7 +9,7 @@
 
 <siga:pagina titulo="Documento" popup="true"
 			onLoad="javascript: TestarAssinaturaDigital();"
-			incluirJs="/sigaex/javascript/assinatura.js">
+			incluirJs="/sigaex/javascript/assinatura.js" compatibilidade="IE=EmulateIE9">
 	<script type="text/javascript" language="Javascript1.1">
 		/*  converte para maiúscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {

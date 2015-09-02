@@ -1,7 +1,5 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
-import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -10,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -40,7 +40,6 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrArquivo;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
@@ -67,6 +66,7 @@ import br.gov.jfrj.siga.sr.model.vo.SrListaVO;
 import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoListaVO;
 import br.gov.jfrj.siga.sr.util.AtualizacaoLista;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
+import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro.SentidoOrdenacao;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -259,12 +259,7 @@ public class SolicitacaoController extends SrController {
             throw new AplicacaoException("Exibi\u00e7\u00e3o n\u00e3o permitida");
         }
 
-        try {
-            solicitacaoListaVO = SrSolicitacaoListaVO.fromFiltro(filtro, true, "", false, getLotaTitular(), getCadastrante());
-        } catch (Exception e) {
-            e.printStackTrace();
-            solicitacaoListaVO = new SrSolicitacaoListaVO();
-        }
+        solicitacaoListaVO = new SrSolicitacaoListaVO(filtro, true, "", false, getLotaTitular(), getCadastrante());
 
         result.include(LISTA, lista);
         result.include(PODE_REMOVER, lista.podeRemover(getLotaTitular(), getTitular()));
@@ -476,46 +471,44 @@ public class SolicitacaoController extends SrController {
         result.include("solicitacoesRelacionadas", solicitacoesRelacionadas);
     }
 
-    // DB1: foi necessï¿½rio receber e passar o parametro "nome"(igual ao buscarItem())
-    // para chamar a function javascript correta,
-    // e o parametro "popup" porque este metodo ï¿½ usado tambï¿½m na lista,
-    // e nï¿½o foi possï¿½vel deixar default no template(igual ao buscarItem.html)
     @SuppressWarnings("unchecked")
     @Path("/buscar")
-    public void buscar(SrSolicitacaoFiltro filtro, String propriedade, boolean popup) throws Exception {
+    public void buscar(SrSolicitacaoFiltro filtro, String propriedade, boolean popup, Long start, Long length, boolean telaDeListas) throws Exception {
         
-    	if (filtro == null)
-    		filtro = new SrSolicitacaoFiltro();
-    	
-    	SrSolicitacaoListaVO solicitacaoListaVO;
-        try {
-            if (filtro.isPesquisar()) {
-                filtro.carregarSelecao();
-                solicitacaoListaVO = SrSolicitacaoListaVO.fromFiltro(filtro, false, propriedade, popup, getLotaTitular(), getCadastrante());
-            } else {
-                solicitacaoListaVO = new SrSolicitacaoListaVO();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            solicitacaoListaVO = new SrSolicitacaoListaVO();
+        if (filtro != null && filtro.isPesquisar()){
+        	
+        	//Edson: dar um jeito de fazer isso pelo VRaptor ou pelo javascript:
+        	filtro.setLength(length);
+        	filtro.setStart(start);
+        	Pattern p = Pattern.compile("^order\\[(\\d)\\]\\[(dir|column)\\]$");
+        	for (Object k : getRequest().getParameterMap().keySet()){
+        		String chave = (String) k;
+                final Matcher m = p.matcher(chave);
+        		if (m.find()){
+        			String value = (String) getRequest().getParameter(chave);
+        			if (m.group(2).equals("column"))
+        				filtro.setOrderBy(getRequest().getParameter("columns[" + value + "][name]"));
+        			else filtro.setSentidoOrdenacao(value.equals("asc") ? SentidoOrdenacao.ASC : SentidoOrdenacao.DESC);
+        		}
+        	}
+        	
+        	filtro.carregarSelecao();
+        	SrSolicitacaoListaVO solicitacaoListaVO = new SrSolicitacaoListaVO(filtro, telaDeListas, propriedade, popup, getLotaTitular(), getCadastrante());
+        	result.use(Results.json()).withoutRoot().from(solicitacaoListaVO).excludeAll().include("recordsFiltered").include("data").serialize();
+        } else {
+        	if (filtro == null){
+        		filtro = new SrSolicitacaoFiltro();
+        	}
+        	filtro.carregarSelecao();
+        	result.include("solicitacaoListaVO", new SrSolicitacaoListaVO(filtro, false, propriedade, popup, getLotaTitular(), getCadastrante()));
+        	result.include("tipos", new String[] { "Pessoa", "Lota\u00e7\u00e3o" });
+        	result.include("marcadores", ContextoPersistencia.em().createQuery("select distinct cpMarcador from SrMarca").getResultList());
+        	result.include("filtro", filtro);
+        	result.include("propriedade", propriedade);
+        	result.include("popup", popup);
+        	result.include("listasPrioridade", SrLista.listar(false));
+        	result.include("prioridadesEnum", SrPrioridade.values());
         }
-
-        // Montando o filtro...
-        String[] tipos = new String[] { "Pessoa", "Lota\u00e7\u00e3o" };
-        List<CpMarcador> marcadores = ContextoPersistencia.em().createQuery("select distinct cpMarcador from SrMarca").getResultList();
-
-        List<SrAtributo> atributosDisponiveisAdicao = atributosDisponiveisAdicaoConsulta(filtro);
-        List<SrLista> listasPrioridade = SrLista.listar(false);
-
-        result.include("solicitacaoListaVO", solicitacaoListaVO);
-        result.include("tipos", tipos);
-        result.include("marcadores", marcadores);
-        result.include("filtro", filtro);
-        result.include("propriedade", propriedade);
-        result.include("popup", popup);
-        result.include("atributosDisponiveisAdicao", atributosDisponiveisAdicao);
-        result.include("listasPrioridade", listasPrioridade);
-        result.include("prioridadesEnum", SrPrioridade.values());
     }
 
     public List<SrAtributo> atributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) throws Exception {
@@ -728,6 +721,11 @@ public class SolicitacaoController extends SrController {
             mov.setDescrMovimentacao("Motivo: " + mov.getMotivoEscalonamento().getDescrTipoMotivoEscalonamento() + "; Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() + "; A\u00e7\u00e3o: " + mov.getAcao().getTituloAcao()
                     + "; Atendente: " + mov.getLotaAtendente().getSigla());
             mov.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
+            
+            solicitacao.setDnmItemConfiguracao(mov.getItemConfiguracao());
+            solicitacao.setDnmAcao(mov.getAcao());
+            solicitacao.save();
+            
             result.redirectTo(this).exibir(solicitacao.getIdSolicitacao(), todoOContexto(), ocultas());
         }
     }
@@ -831,6 +829,11 @@ public class SolicitacaoController extends SrController {
     @Path("/exibir/darAndamento")
     public void darAndamento(SrMovimentacao movimentacao) throws Exception {
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
+        if (movimentacao.getDescrMovimentacao() == null || movimentacao.getDescrMovimentacao().trim().equals("") && movimentacao.isTrocaDePessoaAtendente()){
+        	if (movimentacao.getAtendente() != null)
+        		movimentacao.setDescrMovimentacao("Atribuindo a " + movimentacao.getAtendente().getNomeAbreviado());
+        	else movimentacao.setDescrMovimentacao("Retirando atribuição (retornando a " + movimentacao.getLotaAtendente().getSiglaCompleta() + ")");
+        }
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(this).exibir(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
     }

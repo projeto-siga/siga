@@ -141,7 +141,7 @@ function SigaTable (tableSelector) {
 			"emptyTable":     "Não existem resultados",
 		    "info":           "Mostrando de _START_ a _END_ do total de _TOTAL_ registros",
 		    "infoEmpty":      "Mostrando de 0 a 0 do total de 0 registros",
-		    "infoFiltered":   "(filtrando do total de _MAX_ registros)",
+		    "infoFiltered":   "",
 		    "infoPostFix":    "",
 		    "thousands":      ".",
 		    "lengthMenu":     "Mostrar _MENU_ registros",

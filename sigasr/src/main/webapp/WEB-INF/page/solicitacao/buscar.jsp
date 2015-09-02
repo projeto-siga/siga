@@ -6,25 +6,25 @@
 
 <jsp:include page="../main.jsp"></jsp:include>
 
-<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+<%--<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>--%>
 <script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
 
 <div class="gt-bd clearfix">
     <div class="gt-content clearfix">
 	    <h2>Pesquisa de Solicita&ccedil;&otilde;es</h2>
-	    <c:choose>
-	        <c:when test="${not empty solicitacaoListaVO.getItens()}">
+	     <%--<c:choose>
+	       <c:when test="${not empty solicitacaoListaVO.getItens()}"> --%>
 	           <siga:solicitacao solicitacaoListaVO="solicitacaoListaVO" filtro="filtro" modoExibicao="solicitacao" />
-	        </c:when>
+	        <%--</c:when>
 	        <c:when test="${filtro.pesquisar}">
 	            <div align="center" style="font-size: 14px; color: #365b6d; font-weight: bold">Nenhum item foi encontrado.</div>
 	        </c:when>
-	    </c:choose>
+	    </c:choose> --%>
 	    
 	    <div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-	        <form action="${linkTo[SolicitacaoController].buscar}" method="GET" onsubmit="javascript: return block();" >
-	            <input type="hidden" name="filtro.pesquisar" value="true" />
+	        <form id="frm" action="${linkTo[SolicitacaoController].buscar}" method="get" onsubmit="javascript: return block();" >
+	            <%--<input type="hidden" name="filtro.pesquisar" value="true" /> --%>
 	            <input type="hidden" name="propriedade" value="${propriedade}" />
 	            <input type="hidden" name="popup" value="${popup}" />
 	            <table class="gt-form-table">
@@ -49,7 +49,7 @@
 	                            <div id="chkNaoDesignados" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
 	                                <label> 
 	                                   <siga:checkbox nameInput="filtro.naoDesignados" name="filtro.naoDesignados" value="${filtro.naoDesignados}"/> 
-	                                   Apenas n&atilde;o designadas
+	                                   Apenas n&atilde;o atribu&iacute;das a pessoa
 	                                </label>
 	                            </div>
 	                            <script language="javascript">
@@ -129,15 +129,6 @@
 	                        <td>
 	                           <input type="hidden" name="filtro.acordoSel" value="" />
 	                           <siga:selecao2 tamanho="grande" propriedade="filtro.acordoSel" tipo="acordo" tema="simple" modulo="sigasr" paramList="popup=true;"/>
-	                           <div id="chkNaoSatisfatorios" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
-	                              <label>
-		                             <siga:checkbox nameInput="filtro.naoSatisfatorios" name="filtro.naoSatisfatorios" value="${filtro.naoSatisfatorios}"/>
-		                             Apenas solicita&ccedil;&otilde;es em descumprimento dos seus acordos
-	                              </label>
-	                           </div>
-	                           <script language="javascript">
-	                               $("#chkNaoSatisfatorios").appendTo("#spanAcordofiltroacordo");
-	                           </script>
 	                        </td>
 	                    </tr>   
 	                    <tr>

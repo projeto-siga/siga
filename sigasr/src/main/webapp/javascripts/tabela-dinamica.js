@@ -26,8 +26,8 @@ function TabelaDinamica (tableSelector, modoExibicao) {
 			objetoTabela.podeFiltrar = jSon.podeFiltrar;
 			objetoTabela.podePaginar = jSon.podePaginar;
 			
-			if (jSon.itens)
-				objetoTabela.dados = jSon.itens;
+			if (jSon.data)
+				objetoTabela.dados = jSon.data;
 			
 			if (jSon.colunas) {
 				for (var i = 0; i < jSon.colunas.length; i++) {
@@ -156,8 +156,8 @@ function TabelaDinamica (tableSelector, modoExibicao) {
 					opt = $('<option />', {
 					value: coluna.nome,
 					text: coluna.titulo,
-					selected: coluna.exibir,
-					disabled: colunas.alteravel
+					selected: coluna.exibirPorDefault,
+					disabled: colunas.ocultavel
 				});
 
 				opt.appendTo(select);

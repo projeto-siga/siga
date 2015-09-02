@@ -227,6 +227,15 @@ public class SrMovimentacao extends Objeto {
         }
         return null;
     }
+    
+    public boolean isTrocaDePessoaAtendente(){
+    	SrMovimentacao anterior = getAnterior();
+    	return (anterior != null 
+    			&& getTipoMov().getId().equals(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO) 
+    			&& ((getAtendente() != null && anterior.getAtendente() == null) 
+    				|| (getAtendente() == null && anterior.getAtendente() != null) 
+    				|| (!anterior.getAtendente().equivale(this.getAtendente()))));
+    }
 
     public String getDtIniString() {
         SigaPlayCalendar cal = new SigaPlayCalendar();
@@ -292,6 +301,9 @@ public class SrMovimentacao extends Objeto {
         getSolicitacao().refresh();
 
         getSolicitacao().atualizarMarcas();
+        
+        getSolicitacao().setDnmUltimaMovimentacao(this);
+        getSolicitacao().save();
 
         //notificaï¿½ï¿½o usuï¿½rio
         if (getSolicitacao().getMovimentacaoSetComCancelados().size() > 1

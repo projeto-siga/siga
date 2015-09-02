@@ -95,6 +95,10 @@
 		</div>
 		
 		<div id="jsonPrioridades" data-json='${jsonPrioridades}'></div>
+		<form id="frm">
+			<input type="hidden" name="filtro.idListaPrioridade" value="${filtro.idListaPrioridade}" />
+			<input type="hidden" name="telaDeListas" value="true" />
+		</form>
 	</siga:modal>	
 	
 </siga:pagina>

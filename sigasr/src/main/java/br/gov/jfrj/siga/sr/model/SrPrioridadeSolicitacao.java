@@ -100,6 +100,10 @@ public class SrPrioridadeSolicitacao extends Objeto {
     public void setPrioridade(SrPrioridade prioridade) {
         this.prioridade = prioridade;
     }
+    
+    public String getPrioridadeString(){
+        return prioridade == null ? "" : prioridade.getDescPrioridade();
+    }
 
     public SrSolicitacao getSolicitacao() {
         return solicitacao;

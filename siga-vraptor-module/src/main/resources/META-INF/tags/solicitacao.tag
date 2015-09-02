@@ -13,6 +13,8 @@
 <%@ attribute name="filtro" required="false"%>
 <%@ attribute name="modoExibicao" required="false"%>
 
+
+
 <style>
 	.bt-expandir {
 		background: none !important;
@@ -81,6 +83,7 @@
 </div>
 
 <script type="text/javascript">
+
 	var tabelaDinamica = new TabelaDinamica('#solicitacoes_table', '${modoExibicao}').criar();
 
 	if (tabelaDinamica && tabelaDinamica.objetoTabela && tabelaDinamica.objetoTabela.podePriorizar) {
@@ -91,13 +94,34 @@
 
 	$(document).ready(function() {
 		/* Table initialization */
-		tabelaDinamica.table = new SigaTable('#solicitacoes_table')
+		tabelaDinamica.table = new SigaTable('#solicitacoes_table', '')
 			.configurar("aoColumns", tabelaDinamica.objetoTabela.estrutura)
-			.configurar("data", tabelaDinamica.objetoTabela.dados)
 			.configurar("iDisplayLength", 25)
 			.configurar("bSort", tabelaDinamica.objetoTabela.podeOrdenar)
 			.configurar("bFilter", tabelaDinamica.objetoTabela.podeFiltrar)
 			.configurar("bPaginate", tabelaDinamica.objetoTabela.podePaginar)
+			.configurar("serverSide", true)
+			.configurar("ajax",{
+				"url":  "${linkTo[SolicitacaoController].buscar}",
+				"type": "POST",
+				"beforeSend": function () {
+					jQuery.noConflict().blockUI();
+				    },
+				"complete": function () {
+					jQuery.noConflict().unblockUI();
+				    },
+				"data": function (d) {
+					$("#frm").find("input").each(function(){
+						if (this.name && this.value)
+							d[this.name] = this.value;
+					});
+					$("#frm").find("select").each(function(){
+						if (this.name && $(this).val())
+							d[this.name] = $(this).val();
+					});
+					d['filtro.pesquisar'] = true;
+				    }
+				})
 			.configurar("fnRowCallback", solicitacoesRowCallback)
 			.criar()
 			.detalhes(formatarDetalhes);
@@ -126,6 +150,9 @@
 
 			tabelaDinamica.atualizarColunasSelecionadas(selectColunasDetalhamento, tabelaDinamica.objetoTabela.colunasDetalhamentoJson, tabelaDinamica.TIPO_COLUNA_DETALHE);
 		}
+
+		//Edson: insere os menus de seleção de colunas dentro da dataTable
+		$(".siga-multiple-select").insertAfter("#solicitacoes_table_length");
 	});
 
 	function formatarDetalhes(data) {
@@ -135,10 +162,7 @@
 
 	function solicitacoesRowCallback( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 		if (aData) 
-			if (aData.prioridadeSolicitacaoVO)
-				$(nRow).addClass('PRIORIDADE-' + aData.prioridadeSolicitacaoVO.prioridade);
-			else 
-				$(nRow).addClass('PRIORIDADE-' + aData.prioridadeTecnica);
+			$(nRow).addClass(aData.cssClass);
 
 		$(nRow).attr('id', aData.idSolicitacao);
 		$(nRow).attr('data-json', JSON.stringify(aData));

@@ -1,7 +1,7 @@
 language: java
 jdk:
 - oraclejdk7
-install: mvn install -q -B -DskipTests=true -Dsiga.versao=3.14.0.0
+install: mvn install -q -B -Dmaven.test.skip=true -Dsiga.versao=3.14.0.0
 script: mvn test javadoc:aggregate -B -Dsiga-integration-test.skip.tests=true -Dsiga.versao=3.14.0.0
 after_success:
 - .utility/push-javadoc-to-gh-pages.sh

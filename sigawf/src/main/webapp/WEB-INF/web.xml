@@ -54,6 +54,7 @@
 	<filter-mapping>
 		<filter-name>WfFilter</filter-name>
 		<url-pattern>/servicos/*</url-pattern>
+		<url-pattern>/upload</url-pattern>
 	</filter-mapping>
 
 	<filter>

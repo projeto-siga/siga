@@ -3,7 +3,6 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 <mod:modelo>
 	<input type="hidden" name="isFormularioPublicacao" value="true" />
@@ -17,10 +16,13 @@
 				<mod:mensagem titulo="Tipo de Matéria:" />
 				<c:choose>
 					<c:when test="${param.entrevista == 1}">
-						<ww:select
-							onchange="javascript:document.getElementById('descrTipoMateria').value=this.options[this.selectedIndex].text;document.getElementById('idTipoMateria').value=this.options[this.selectedIndex].value"
-							name="tipoMateria" value="idTipoMateria" list="listaPublicacao"
-							listKey="idDocPublicacaoString" listValue="nmDocPublicacao" />
+						<select  name="tipoMateria" onchange="javascript:document.getElementById('descrTipoMateria').value=this.options[this.selectedIndex].text;document.getElementById('idTipoMateria').value=this.options[this.selectedIndex].value">
+							<c:forEach items="${f:listaPublicacao(exDocumentoDTO.modelo.idMod)}" var="item">
+								<option value="${item.idDocPublicacaoString}" ${item.idDocPublicacao == idTipoMateria ? 'selected' : ''}>
+									${item.nmDocPublicacao}
+								</option>  
+							</c:forEach>
+						</select>
 					</c:when>
 					<c:otherwise>
 						<span class="valor">${descrTipoMateria}</span>

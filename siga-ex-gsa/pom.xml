@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
-		<groupId>siga</groupId>
 		<artifactId>siga-doc</artifactId>
-		<version>1.1</version>
+		<groupId>siga</groupId>
+		<version>1.2-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -46,14 +46,22 @@
 			<groupId>siga</groupId>
 			<artifactId>siga-ex</artifactId>
 			<version>1.2-SNAPSHOT</version>
-		</dependency>
+		</dependency> 
+		
+		<dependency>
+			<groupId>com.sun</groupId>
+			<artifactId>tools</artifactId>
+			<version>1.6.0</version>
+			<scope>system</scope>
+			<systemPath>c:/Desenvolvimento/jdk1.7.0_71/lib/tools.jar</systemPath>
+		</dependency>  
 
 		<dependency>
-			<groupId>com.google.enterprise</groupId>
+			<groupId>com.google.enterprise</groupId>   
 			<artifactId>adaptor</artifactId>
 			<version>4.1.0</version>
 			<scope>system</scope>
-			<systemPath>/Users/nato/Downloads/adaptor-4.1.0-withlib.jar</systemPath>
+			<systemPath>c:/Users/tah/Downloads/adaptor-4.1.0-withlib.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>siga</groupId>

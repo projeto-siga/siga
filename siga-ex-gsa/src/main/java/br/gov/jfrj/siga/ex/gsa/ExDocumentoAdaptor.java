@@ -19,7 +19,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +42,6 @@ import com.google.enterprise.adaptor.DocIdPusher;
 import com.google.enterprise.adaptor.GroupPrincipal;
 import com.google.enterprise.adaptor.Request;
 import com.google.enterprise.adaptor.Response;
-import com.google.enterprise.adaptor.UserPrincipal;
 
 /**
  * Adaptador Google Search Appliance para documentos do SIGA-DOC.
@@ -144,6 +142,10 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor {
 			return;
 
 		List<GroupPrincipal> groups = new ArrayList<>();
+		if (sAcessos == null) {
+			log.fine("acessos is null for");
+			return;
+		}
 		for (String s : sAcessos.split(",")) {
 			groups.add(new GroupPrincipal(s));
 		}

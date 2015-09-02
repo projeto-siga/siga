@@ -1,19 +1,26 @@
 package br.gov.jfrj.siga.wf.vraptor;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jbpm.bytes.ByteArray;
+import org.jbpm.file.def.FileDefinition;
 import org.jbpm.graph.def.Node;
+import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.Token;
 
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.wf.bl.Wf;
@@ -78,24 +85,44 @@ public class AdminController extends WfController {
 		redirectToHome();
 	}
 	
-	private void downloadArquivoDeployed() throws IOException {
-		Long id_processimage = null;
-		Long id_processdefinition = null;
-		Long id_gpd = null;
-		ByteArray b = dao.consultar(id_processimage, ByteArray.class, false);
-		FileOutputStream fos = new FileOutputStream("processimage.jpg");
-		fos.write(b.getBytes());
-		fos.close();
+	@Get
+	@Path("/app/download/{pdId}")
+	public ByteArrayDownload downloadArquivoDeployed(Long pdId) throws IOException {
+		
+		String _proc_img = "processimage.jpg";
+		String _proc_def = "processdefinition.xml";
+		String _gpd_xml = "gpd.xml";
+		
+		ProcessDefinition processDefinition = WfDao.getInstance().getProcessDefinition(pdId);
+		FileDefinition fileDefinition = processDefinition.getFileDefinition();
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ZipOutputStream zos = new ZipOutputStream(baos);
+		
+		byte[] arquivo = fileDefinition.getBytes(_proc_img);
+		ZipEntry entry = new ZipEntry(_proc_img);
+		entry.setSize(arquivo.length);
+		zos.putNextEntry(entry);
+		zos.write(arquivo);
+		zos.closeEntry();
+		
+		arquivo = fileDefinition.getBytes(_proc_def);
+		entry = new ZipEntry(_proc_def);
+		entry.setSize(arquivo.length);
+		zos.putNextEntry(entry);
+		zos.write(arquivo);
+		zos.closeEntry();
+	
+		arquivo = fileDefinition.getBytes(_gpd_xml);
+		entry = new ZipEntry(_gpd_xml);
+		entry.setSize(arquivo.length);
+		zos.putNextEntry(entry);
+		zos.write(arquivo);
+		zos.closeEntry();
 
-		b = dao.consultar(id_processdefinition, ByteArray.class, false);
-		fos = new FileOutputStream("processdefinition.xml");
-		fos.write(b.getBytes());
-		fos.close();
-
-		b = dao.consultar(id_gpd, ByteArray.class, false);
-		fos = new FileOutputStream("gpd.xml");
-		fos.write(b.getBytes());
-		fos.close();
+		zos.close();
+		
+		return new ByteArrayDownload(baos.toByteArray(), "applicatiion/zip", "process-definition-" + processDefinition.getName() + "-" + pdId + ".zip");
 
 	}
 

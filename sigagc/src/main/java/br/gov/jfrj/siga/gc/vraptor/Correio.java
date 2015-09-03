@@ -38,10 +38,12 @@ public class Correio {
 					+ lotResponsavel.getSigla();
 			email = "";
 			for (DpPessoa p : lotResponsavel.getDpPessoaLotadosSet()) {
-				if (p.getHisDtFim() == null)
-					if (email.length() > 0)
+				if (p.getHisDtFim() == null){
+					if (email.length() > 0){
 						email += " ";
-				email += p.getEmailPessoa();
+					}
+						email += p.getEmailPessoa();
+				}
 			}
 			destinatarios = email.split("\\s+");
 		}

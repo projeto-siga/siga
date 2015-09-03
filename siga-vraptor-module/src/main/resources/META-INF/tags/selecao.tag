@@ -232,7 +232,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	<c:set var="onblur" value="${onchange}"></c:set>
 </c:if>
 
-<input type="hidden" name="req${inputNameTipoSel}"  />
+<input type="hidden" name="req${inputNameTipoSel}" value="" id="formulario_req${inputNameTipoSel}" />
 <input type="hidden" name="alterouSel" value="" id="alterouSel" />
 <input type="hidden" name="${inputNameTipoSel}.id" value="<c:out value="${requestScope[propriedadeTipoSel].id}"/>" id="formulario_${inputNameTipoSel}_id"/>
 <input type="hidden" name="${inputNameTipoSel}.descricao" value="<c:out value="${requestScope[propriedadeTipoSel].descricao}"/>" id="formulario_${inputNameTipoSel}_descricao"/>
@@ -259,7 +259,8 @@ self.ajax_${propriedade}${tipoSel} = function() {
 <c:if test="${not empty tipo}">
 	<c:choose>
 		<c:when test="${empty idInicial}">
-			<c:set var="idSubst" value="${requestScope[propriedadeTipoSel].id}" />
+		    <c:set var="idSubstTexto" value="${propriedadeTipoSel}.id" />
+			<c:set var="idSubst" value="${requestScope[idSubstTexto]}" />
 		</c:when>
 		<c:otherwise>
 			<c:set var="idSubst" value="${idInicial}" />
@@ -267,7 +268,8 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	</c:choose>
 	<c:choose>
 		<c:when test="${empty siglaInicial}">
-			<c:set var="siglaSubst" value="${requestScope[propriedadeTipoSel].sigla}" />
+			<c:set var="siglaSubstTexto" value="${propriedadeTipoSel}.sigla" />
+			<c:set var="siglaSubst" value="${requestScope[siglaSubstTexto]}" />
 		</c:when>
 		<c:otherwise>
 			<c:set var="siglaSubst" value="${siglaInicial}" />
@@ -275,7 +277,8 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	</c:choose>
 	<c:choose>
 		<c:when test="${empty descricaoInicial}">
-			<c:set var="descricaoSubst"  value="${requestScope[propriedadeTipoSel].descricao}" />
+			<c:set var="descricaoSubstTexto" value="${propriedadeTipoSel}.descricao" />
+			<c:set var="descricaoSubst"  value="${requestScope[descricaoSubstTexto]}" />
 		</c:when>
 		<c:otherwise>
 			<c:set var="descricaoSubst" value="${descricaoInicial}" />

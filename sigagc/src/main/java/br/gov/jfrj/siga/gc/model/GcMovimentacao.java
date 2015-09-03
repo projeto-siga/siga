@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.gc.model;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -50,7 +51,7 @@ public class GcMovimentacao extends Objeto implements
 	@JoinColumn(name = "ID_MOVIMENTACAO_REF")
 	public GcMovimentacao movRef;
 
-	@ManyToOne(optional = true)
+	@ManyToOne(optional = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_MOVIMENTACAO_CANCELADORA")
 	public GcMovimentacao movCanceladora;
 

@@ -58,6 +58,7 @@ public class ExFormaDocumentoController extends ExController {
 			boolean origemExterno = false;
 			boolean origemInternoImportado = false;
 			boolean origemInternoProduzido = false;
+			boolean origemCapturado = false;
 
 			if (forma.getExTipoDocumentoSet() != null) {
 				for (ExTipoDocumento origem : forma.getExTipoDocumentoSet()) {
@@ -70,12 +71,16 @@ public class ExFormaDocumentoController extends ExController {
 					if (origem.getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO) {
 						origemInternoImportado = true;
 					}
+					if (origem.getId() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO) {
+						origemCapturado = true;
+					}
 				}
 			}
 
 			result.include("origemExterno", origemExterno);
 			result.include("origemInternoImportado", origemInternoImportado);
 			result.include("origemInternoProduzido", origemInternoProduzido);
+			result.include("origemCapturado", origemCapturado);
 		}
 
 		result.include("id", id);
@@ -105,7 +110,7 @@ public class ExFormaDocumentoController extends ExController {
 
 	@Post("app/forma/gravar")
 	public void gravar(final Integer postback, final Integer id, final String descricao, final String sigla, final Long idTipoFormaDoc, final boolean origemExterno,
-			final boolean origemInternoImportado, final boolean origemInternoProduzido) {
+			final boolean origemInternoImportado, final boolean origemInternoProduzido, final boolean origemCapturado) {
 		assertAcesso("MOD:Gerenciar modelos");
 		setPostback(postback);
 
@@ -130,6 +135,10 @@ public class ExFormaDocumentoController extends ExController {
 			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO, ExTipoDocumento.class, false));
 		}
 
+		if (origemCapturado) {
+			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO, ExTipoDocumento.class, false));
+		}
+
 		Ex.getInstance().getBL().gravarForma(forma);
 
 		result.include("id", forma.getIdFormaDoc());
@@ -139,6 +148,7 @@ public class ExFormaDocumentoController extends ExController {
 		result.include("origemExterno", origemExterno);
 		result.include("origemInternoImportado", origemInternoImportado);
 		result.include("origemInternoProduzido", origemInternoProduzido);
+		result.include("origemCapturado", origemCapturado);
 		
 		result.redirectTo("/app/forma/editar?id=" + forma.getIdFormaDoc());
 	}

@@ -14,7 +14,7 @@
 		</Handler>
 		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2IssuerTrustHandler" />
 		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2LogOutHandler" />
-		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2AuthenticationHandler" />
+		<Handler class="br.gov.jfrj.siga.picketlink.SigaAuthenticationHandler" />
 		<Handler class="org.picketlink.identity.federation.web.handlers.saml2.RolesGenerationHandler" />
 	</Handlers>
 

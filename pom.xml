@@ -110,7 +110,7 @@
 										${line.separator}
 										${line.separator}
 									</message>
-									<regex>(develop|(release-|hotfix-)?\d{1,}\.\d{1,}\.\d{1,}(\.\d{1,})?)(-alfa|-beta|-teste)?</regex>
+									<regex>(develop|(release-|hotfix-)?\d{1,}\.\d{1,}\.\d{1,}(\.\d{1,})?)(-alfa|-beta|-teste)?(\d.*)?</regex>
 									<regexMessage>
 										${line.separator}
 										${line.separator}

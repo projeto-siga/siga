@@ -60,12 +60,9 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor {
 	private Charset encoding = Charset.forName("UTF-8");
 
 	private int maxIdsPerFeedFile;
-	private String dbname, tablename;
 
 	@Override
 	public void initConfig(Config config) {
-		config.addKey("db.name", null);
-		config.addKey("db.tablename", null);
 	}
 
 	@Override

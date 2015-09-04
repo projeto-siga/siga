@@ -2,7 +2,6 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 <mod:modelo>
 	<mod:entrevista>
@@ -292,13 +291,14 @@
 				<td>
 					<p style="font-family: Arial; font-size: 8pt;">
 						<b>Cabe readaptação?</b>&nbsp;&nbsp;&nbsp;
-						<ww:if test="${readaptacao == '2'}">
-							Não.
-						</ww:if>
-						<ww:else>
-							Sim.
-						</ww:else>
-						
+						<c:choose> 
+  							<c:when test="${readaptacao == '2'}">
+    							Não.
+  							</c:when>
+  							<c:otherwise>
+    							Sim.
+  							</c:otherwise>
+						</c:choose>
 					</p>
 				</td>
 			</tr>
@@ -306,26 +306,30 @@
 				<td>
 					<p style="font-family: Arial; font-size: 8pt;">
 						<b>O(A) servidor(a) encontra-se inválido(a) permanentemente nos termos do art. 186, inciso I, da Lei nº 8.112/90?</b>&nbsp;&nbsp;&nbsp; 
-						<ww:if test="${invalido == '2'}">
-							Não.
-						</ww:if>
-						<ww:else>
-							Sim.
-						</ww:else>
+						<c:choose> 
+  							<c:when test="${invalido == '2'}">
+    							Não.
+  							</c:when>
+  							<c:otherwise>
+    							Sim.
+  							</c:otherwise>
+						</c:choose>
 					</p>
 				</td>
 			</tr>
 			<tr>
 				<td>
 					<p style="font-family: Arial; font-size: 8pt;">
-						<b>Enquadra-se a doença dentre aquelas específicas no art. 186, §1º da Lei 8.112/90?</b>&nbsp;&nbsp;&nbsp; 
-						<ww:if test="${doeEspecifica == '2'}">
-							Não.
-						</ww:if>
-						<ww:else>
-							Sim.<br/>
-							<b>Nome da doença:</b>&nbsp;&nbsp;&nbsp;${nomDoeEspecifica}
-						</ww:else>
+						<b>Enquadra-se a doença dentre aquelas específicas no art. 186, §1º da Lei 8.112/90?</b>&nbsp;&nbsp;&nbsp;
+						<c:choose> 
+  							<c:when test="${doeEspecifica == '2'}">
+    							Não.
+  							</c:when>
+  							<c:otherwise>
+								Sim.<br/>
+								<b>Nome da doença:</b>&nbsp;&nbsp;&nbsp;${nomDoeEspecifica}
+  							</c:otherwise>
+						</c:choose>
 					</p>
 				</td>
 			</tr>
@@ -333,13 +337,15 @@
 				<td>
 					<p style="font-family: Arial; font-size: 8pt;">
 						<b>Enquadra-se a doença como acidente em serviço?</b>&nbsp;&nbsp;&nbsp; 
-						<ww:if test="${doeAcidente == '2'}">
-							Não.
-						</ww:if>
-						<ww:else>
-							Sim.<br/>
-							<b>Nome da doença:</b>&nbsp;&nbsp;&nbsp;${nomDoeAcidente}&nbsp;&nbsp;&nbsp;<b>Nº do PA:</b>&nbsp;&nbsp;&nbsp;${numPAAcidente}
-						</ww:else>
+						<c:choose> 
+  							<c:when test="${doeAcidente == '2'}">
+    							Não.
+  							</c:when>
+  							<c:otherwise>
+								Sim.<br/>
+								<b>Nome da doença:</b>&nbsp;&nbsp;&nbsp;${nomDoeAcidente}&nbsp;&nbsp;&nbsp;<b>Nº do PA:</b>&nbsp;&nbsp;&nbsp;${numPAAcidente}
+  							</c:otherwise>
+						</c:choose>
 					</p>
 				</td>
 			</tr>
@@ -347,13 +353,15 @@
 				<td>
 					<p style="font-family: Arial; font-size: 8pt;">
 						<b>Enquadra-se a doença como moléstia profissional?</b>&nbsp;&nbsp;&nbsp;
-						<ww:if test="${doeMolestia == '2'}">
-							Não.
-						</ww:if>
-						<ww:else>
-							Sim.<br/>
-							<b>Nome da doença:</b>&nbsp;&nbsp;&nbsp;${nomDoeMolestia}&nbsp;&nbsp;&nbsp;<b>Nº do PA:</b>&nbsp;&nbsp;&nbsp;${numPAMolestia}
-						</ww:else>
+						<c:choose> 
+  							<c:when test="${doeMolestia == '2'}">
+    							Não.
+  							</c:when>
+  							<c:otherwise>
+								Sim.<br/>
+								<b>Nome da doença:</b>&nbsp;&nbsp;&nbsp;${nomDoeMolestia}&nbsp;&nbsp;&nbsp;<b>Nº do PA:</b>&nbsp;&nbsp;&nbsp;${numPAMolestia}
+  							</c:otherwise>
+						</c:choose>
 					</p>
 				</td>
 			</tr>
@@ -361,12 +369,14 @@
 				<td>
 					<p style="font-family: Arial; font-size: 8pt;">
 						<b>Caso constatada alienação mental no exame, sugere curatela para o recebimento de proventos?</b>&nbsp;&nbsp;&nbsp; 
-						<ww:if test="${aliMental == '2'}">
-							Não.
-						</ww:if>
-						<ww:else>
-							Sim.
-						</ww:else>
+						<c:choose> 
+  							<c:when test="${aliMental == '2'}">
+    							Não.
+  							</c:when>
+  							<c:otherwise>
+								Sim.
+  							</c:otherwise>
+						</c:choose>
 					</p>
 				</td>
 			</tr>
@@ -374,24 +384,28 @@
 				<td>
 					<p style="font-family: Arial; font-size: 8pt;">
 						<b>Foi constatada, no exame, doença para fins de isenção no imposto de renda, nos termos da Lei nº 7.713/1988, com a redação atual, art. 30 da Lei nº 9.250/1995 e IN nº 15/2001/SRF?:</b>&nbsp;&nbsp;&nbsp; 
-						<ww:if test="${doeInsencaoIR == 'Nao'}">
-							Não.
-						</ww:if>
-						<ww:else>
-							Sim.
-						</ww:else>
+						<c:choose> 
+  							<c:when test="${doeInsencaoIR == 'Nao'}">
+    							Não.
+  							</c:when>
+  							<c:otherwise>
+								Sim.
+  							</c:otherwise>
+						</c:choose>
 					</p>
 				</td>
 			</tr>
 			<tr>
 				<td>
 					<p style="font-family: Arial; font-size: 8pt;"><b>Foi constatada, no exame, doença considerada incapacitante nos termos do art. 40, §21 (desconto para o plano de seguridade do servidor público - PSS), da Constituição Federal?</b>&nbsp;&nbsp;&nbsp; 
-						<ww:if test="${doeIncapacitante == 'Nao'}">
-							Não.
-						</ww:if>
-						<ww:else>
-							Sim.
-						</ww:else>
+						<c:choose> 
+  							<c:when test="${doeIncapacitante == 'Nao'}">
+    							Não.
+  							</c:when>
+  							<c:otherwise>
+								Sim.
+  							</c:otherwise>
+						</c:choose>
 					</p>
 				</td>
 			</tr>
@@ -403,31 +417,33 @@
 			<tr>
 				<td><b>3 - REAVALIAÇÃO</b></td>
 			</tr>
-				<ww:if test="${reavaliacao == '2'}">				
-					<tr>
-						<td>
-							<p style="font-family: Arial; font-size: 8pt;">
-								<b>Cabe reavaliação?</b>&nbsp;&nbsp;&nbsp;Não.
-							</p>
-						</td>
-					</tr>
-				</ww:if>
-				<ww:else>
-					<tr>
-						<td>
-							<p style="font-family: Arial; font-size: 8pt;">
-								<b>Cabe reavaliação?</b>&nbsp;&nbsp;&nbsp;Sim.&nbsp;&nbsp;&nbsp;<b>Finalidade:</b>&nbsp;&nbsp;&nbsp;${nomFinalidade}
-							</p>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<p style="font-family: Arial; font-size: 8pt;">
-								<b>Período</b>&nbsp;&nbsp;&nbsp;<b>De:</b>&nbsp;&nbsp;&nbsp;${nomFinalidadeI}&nbsp;&nbsp;&nbsp;<b>Até:</b>&nbsp;&nbsp;&nbsp;${nomFinalidadeF}
-							</p>
-						</td>
-					</tr>				
-				</ww:else>
+				<c:choose> 
+  					<c:when test="${reavaliacao == '2'}">
+						<tr>
+							<td>
+								<p style="font-family: Arial; font-size: 8pt;">
+									<b>Cabe reavaliação?</b>&nbsp;&nbsp;&nbsp;Não.
+								</p>
+							</td>
+						</tr>
+  					</c:when>
+  					<c:otherwise>
+						<tr>
+							<td>
+								<p style="font-family: Arial; font-size: 8pt;">
+									<b>Cabe reavaliação?</b>&nbsp;&nbsp;&nbsp;Sim.&nbsp;&nbsp;&nbsp;<b>Finalidade:</b>&nbsp;&nbsp;&nbsp;${nomFinalidade}
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p style="font-family: Arial; font-size: 8pt;">
+									<b>Período</b>&nbsp;&nbsp;&nbsp;<b>De:</b>&nbsp;&nbsp;&nbsp;${nomFinalidadeI}&nbsp;&nbsp;&nbsp;<b>Até:</b>&nbsp;&nbsp;&nbsp;${nomFinalidadeF}
+								</p>
+							</td>
+						</tr>				
+  					</c:otherwise>
+				</c:choose>
 		</table>
 	
 	 

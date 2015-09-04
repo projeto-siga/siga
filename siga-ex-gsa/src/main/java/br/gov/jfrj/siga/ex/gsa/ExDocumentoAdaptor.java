@@ -92,7 +92,8 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor {
 		Query q = dao
 				.getSessao()
 				.createQuery(
-						"select doc.idDoc from ExDocumento doc where doc.dtFinalizacao != null order by doc.idDoc");
+						"select doc.idDoc from ExDocumento doc where doc.dtFinalizacao != null order by doc.idDoc desc");
+		q.setMaxResults(200);
 		Iterator i = q.iterate();
 		while (i.hasNext()) {
 			DocId id = new DocId("" + i.next());
@@ -132,8 +133,20 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor {
 			throw new RuntimeException(e);
 		}
 
-		resp.setContentType("application/pdf");
-		resp.getOutputStream().write(doc.getPdf());
+		String html = doc.getHtml();
+		if (html != null) {
+			resp.setContentType("text/html");
+			resp.getOutputStream().write(html.getBytes());
+			return;
+		}
+
+		byte pdf[] = doc.getPdf();
+		if (pdf != null) {
+			resp.setContentType("application/pdf");
+			resp.getOutputStream().write(pdf);
+			return;
+		}
+		log.fine("no content from doc: " + doc.toString());
 	}
 
 	private void addAclForDoc(ExDocumento doc, Response resp) {

@@ -3,7 +3,6 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 <mod:modelo>
 	<mod:entrevista>
@@ -49,31 +48,33 @@
 			<mod:grupo>
 				<mod:texto titulo="Descrição do objeto" var="objeto" largura="70" obrigatorio="Sim" />
 			</mod:grupo>
-			<ww:if test="${secao != 'SIE'}">
-				<mod:grupo>
-					<mod:pessoa titulo="Fiscal Técnico" var="fiscalTec" obrigatorio="Sim"/>
-				</mod:grupo>
-				<mod:grupo>
-					<mod:pessoa titulo="Suplente" var="fiscalSup"  obrigatorio="Sim"/>
-				</mod:grupo>
-			</ww:if>
-			<ww:else>
-				<mod:grupo>
-					<mod:selecao titulo="Quantidade de fiscais" var="numFiscais" opcoes="1;2;3;4;5;6;7;8;9;10" 
+			<c:choose>									
+				<c:when test="${secao != 'SIE'}">
+					<mod:grupo>
+						<mod:pessoa titulo="Fiscal Técnico" var="fiscalTec" obrigatorio="Sim"/>
+					</mod:grupo>
+					<mod:grupo>
+						<mod:pessoa titulo="Suplente" var="fiscalSup"  obrigatorio="Sim"/>
+					</mod:grupo>
+				</c:when>
+				<c:otherwise>										
+					<mod:grupo>
+						<mod:selecao titulo="Quantidade de fiscais" var="numFiscais" opcoes="1;2;3;4;5;6;7;8;9;10" 
 											reler="ajax" idAjax="numFiscaisAjax" />
-				</mod:grupo>	
-				<mod:grupo depende="numFiscaisAjax">
-					<c:forEach var="i" begin="1" end="${numFiscais}">
-						<mod:grupo>
-							<b>${i}.</b><mod:texto titulo="Fiscal Técnico" var="tipoFiscal${i}" largura="20" obrigatorio="Sim" />
-							<mod:pessoa titulo="" var="fiscalTec${i}" obrigatorio="Sim"/>
-						</mod:grupo>
-						<mod:grupo>
-							&nbsp;&nbsp;&nbsp;<mod:pessoa titulo="Suplente" var="fiscalSup${i}"  obrigatorio="Sim"/>
-						</mod:grupo>
-					</c:forEach>	
-				</mod:grupo>			
-			</ww:else>
+					</mod:grupo>	
+					<mod:grupo depende="numFiscaisAjax">
+						<c:forEach var="i" begin="1" end="${numFiscais}">
+							<mod:grupo>
+								<b>${i}.</b><mod:texto titulo="Fiscal Técnico" var="tipoFiscal${i}" largura="20" obrigatorio="Sim" />
+								<mod:pessoa titulo="" var="fiscalTec${i}" obrigatorio="Sim"/>
+							</mod:grupo>
+							<mod:grupo>
+								&nbsp;&nbsp;&nbsp;<mod:pessoa titulo="Suplente" var="fiscalSup${i}"  obrigatorio="Sim"/>
+							</mod:grupo>
+						</c:forEach>	
+					</mod:grupo>	
+				</c:otherwise>	
+			</c:choose>	
 							
 			<c:if test="${secao == 'SIE' or secao == 'SGS' or secao == 'STI' or secao == 'DSEG'}">
 				<hr color="#FFFFFF" />
@@ -110,13 +111,15 @@
 				</mod:grupo>					
 			</mod:grupo>	
 			<hr color="#FFFFFF" />
-	<%--	<span> AQUI AQUI ${secao}</span>  --%>				
-			<ww:if test="${secao == 'CAMS'}">
-				<c:import url="/paginas/expediente/modelos/formAtestoFreqFuncCAMS.jsp" /> 				
-			</ww:if>
-			<ww:else>
-				<c:import url="/paginas/expediente/modelos/formAtestoFreqFuncOutros.jsp" /> 	
-			</ww:else>	
+	<%--	<span> AQUI AQUI ${secao}</span>  --%>
+			<c:choose>									
+				<c:when test="${secao == 'CAMS'}">
+					<c:import url="/paginas/expediente/modelos/formAtestoFreqFuncCAMS.jsp" /> 				
+				</c:when>
+				<c:otherwise>										
+					<c:import url="/paginas/expediente/modelos/formAtestoFreqFuncOutros.jsp" /> 	
+				</c:otherwise>	
+			</c:choose>					
 		</mod:grupo>
 	</mod:entrevista>
 	<mod:documento>
@@ -161,61 +164,70 @@
 			</tr>
 			<tr>
 				<td width="50%">Nº Processo: <b>${numProcesso}</b></td>
-				<ww:if test="${secao == 'CAMS' or secao == 'SEGRA'}">
-					<td width="50%" align="right">Mês de Referência: <b>${mes}</b></td>
-				</ww:if>
-				<ww:else><td width="50%"> </td></ww:else>				
+				<c:choose>									
+					<c:when test="${secao == 'CAMS' or secao == 'SEGRA'}">
+						<td width="50%" align="right">Mês de Referência: <b>${mes}</b></td>
+					</c:when>
+					<c:otherwise>		
+						<td width="50%"> </td>								
+					</c:otherwise>	
+				</c:choose>
 			</tr>
 			<tr><td colspan="2">Nome da Empresa: <b>${descContrato}</b></td></tr>
 			<tr><td colspan="2">Descrição do Objeto: <b>${objeto}</b></td></tr>
 		</table>
 		<br>
 		<table style="float: none; clear: both" width="100%" border="0" align="left" cellspacing="0" cellpadding="5">	
-			<ww:if test="${secao != 'SIE'}">
-				<c:if test="${not empty requestScope['fiscalTec_pessoaSel.id']}">
-					<tr>
-						<td width="75%">Fiscal Técnico: ${f:maiusculasEMinusculas(requestScope['fiscalTec_pessoaSel.descricao'])}</td>
-						<td width="25%" align="right">matrícula: ${f:pessoa(requestScope['fiscalTec_pessoaSel.id']).matricula}</td>			
-					</tr>
-					<tr>
-						<td width="75%">Suplente: ${f:maiusculasEMinusculas(requestScope['fiscalSup_pessoaSel.descricao'])}</td>
-						<td width="25%" align="right">matrícula: ${f:pessoa(requestScope['fiscalSup_pessoaSel.id']).matricula}</td>			
-					</tr>
-				</c:if>	
-			</ww:if>
-			<ww:else>
-				<c:if test="${numFiscais > 0}">
-					<c:forEach var="i" begin="1" end="${numFiscais}">
-					    <c:set var="tec"
-							value="${f:pessoa(requestScope[f:concat(f:concat('fiscalTec',i),'_pessoaSel.id')])}" />
-						<c:set var="sup"
-							value="${f:pessoa(requestScope[f:concat(f:concat('fiscalSup',i),'_pessoaSel.id')])}" />
+			<c:choose>									
+				<c:when test="${secao != 'SIE'}">
+					<c:if test="${not empty requestScope['fiscalTec_pessoaSel.id']}">
 						<tr>
-							<td width="5%">${i}.</td>
-							<td width="70%">Fiscal Técnico ${requestScope[f:concat('tipoFiscal',i)]}: ${f:maiusculasEMinusculas(tec.descricao)}</td>
-							<td width="25%" align="right">matrícula: ${tec.matricula}</td>			
+							<td width="75%">Fiscal Técnico: ${f:maiusculasEMinusculas(requestScope['fiscalTec_pessoaSel.descricao'])}</td>
+							<td width="25%" align="right">matrícula: ${f:pessoa(requestScope['fiscalTec_pessoaSel.id']).matricula}</td>			
 						</tr>
 						<tr>
-							<td width="5%"></td>
-							<td width="70%">Suplente: ${f:maiusculasEMinusculas(sup.descricao)}</td>
-							<td width="25%" align="right">matrícula: ${sup.matricula}</td>			
+							<td width="75%">Suplente: ${f:maiusculasEMinusculas(requestScope['fiscalSup_pessoaSel.descricao'])}</td>
+							<td width="25%" align="right">matrícula: ${f:pessoa(requestScope['fiscalSup_pessoaSel.id']).matricula}</td>			
 						</tr>
-					</c:forEach>
-				</c:if>	
-			</ww:else>	
+					</c:if>	
+				</c:when>
+				<c:otherwise>										
+					<c:if test="${numFiscais > 0}">
+						<c:forEach var="i" begin="1" end="${numFiscais}">
+						    <c:set var="tec"
+								value="${f:pessoa(requestScope[f:concat(f:concat('fiscalTec',i),'_pessoaSel.id')])}" />
+							<c:set var="sup"
+								value="${f:pessoa(requestScope[f:concat(f:concat('fiscalSup',i),'_pessoaSel.id')])}" />
+							<tr>
+								<td width="5%">${i}.</td>
+								<td width="70%">Fiscal Técnico ${requestScope[f:concat('tipoFiscal',i)]}: ${f:maiusculasEMinusculas(tec.descricao)}</td>
+								<td width="25%" align="right">matrícula: ${tec.matricula}</td>			
+							</tr>
+							<tr>
+								<td width="5%"></td>
+								<td width="70%">Suplente: ${f:maiusculasEMinusculas(sup.descricao)}</td>
+								<td width="25%" align="right">matrícula: ${sup.matricula}</td>			
+							</tr>
+						</c:forEach>
+					</c:if>	
+				</c:otherwise>	
+			</c:choose>	
 		</table>
 		<br>
 		<table style="float: none; clear: both" width="100%" border="0" align="left" cellspacing="0" cellpadding="5">				
 			<c:if test="${secao == 'SIE' or secao == 'SGS' or secao == 'STI' or secao == 'DSEG'}">
 				<tr>
-					<ww:if test="${not empty nota}">					
-						<td>Nota Fiscal: ${nota}</td>
-						<td>Período: ${dataIni} a ${dataFim}</td>
-					</ww:if>						
-					<ww:else>
-						<td colspan="2">Período: ${dataIni} a ${dataFim}</td>
-					</ww:else>	
-				</tr>			
+					<c:choose>									
+						<c:when test="${not empty nota}">
+							<td>Nota Fiscal: ${nota}</td>
+							<td>Período: ${dataIni} a ${dataFim}</td>
+						</c:when>
+						<c:otherwise>										
+							<td colspan="2">Período: ${dataIni} a ${dataFim}</td>
+						</c:otherwise>	
+					</c:choose>	
+				</tr>	
+						
 				<c:if test="${not empty nota}">
 					<tr>						
 						<td colspan="2">Valor: ${valNota}&nbsp;
@@ -229,21 +241,24 @@
 			<tr>
 				<td colspan="2">
 				    O atesto ${noPrazoNao} está sendo encaminhado no prazo (entre o último dia útil do mês de competência e o segundo dia útil do mês subsequente)
-					<ww:if test="${noPrazo == '2'}">
-						${jusNoPrazo}
-					</ww:if>
-					<ww:else>.</ww:else>	
+					<c:choose>									
+						<c:when test="${noPrazo == '2'}">
+							${jusNoPrazo}
+						</c:when>
+						<c:otherwise>.</c:otherwise>	
+					</c:choose>						
 				</td>
 			</tr>			
 		</table>
 		<br>
-		
-		<ww:if test="${secao == 'CAMS'}">
+		<c:choose>									
+			<c:when test="${secao == 'CAMS'}">
 				<c:import url="/paginas/expediente/modelos/formAtestoFreqFuncCAMS.jsp" /> 				
-			</ww:if>
-			<ww:else>
+			</c:when>
+			<c:otherwise>										
 				<c:import url="/paginas/expediente/modelos/formAtestoFreqFuncOutros.jsp" /> 	
-			</ww:else>	
+			</c:otherwise>	
+		</c:choose>			
 		
 		<br><br><br> 
 

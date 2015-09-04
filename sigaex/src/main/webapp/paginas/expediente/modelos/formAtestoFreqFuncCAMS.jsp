@@ -3,7 +3,6 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 <mod:modelo>
 	<mod:entrevista>			
@@ -43,22 +42,24 @@
 			</c:if>
 			<mod:grupo largura="73">
 				<mod:grupo depende="atrasoAjax">
-					<ww:if test="${atrasoVal == '2'}">
-						<mod:grupo largura="3">
-							Com que frequência?
-						</mod:grupo>
-						<mod:grupo largura="18">						
-								<mod:radio titulo="Sempre." var="frequencia" valor="1" marcado="Sim"/>							
-								<mod:radio titulo="Em cerca de 50% das aulas." var="frequencia" valor="2"/>								
-								<mod:radio titulo="Em menos de 50% das aulas." var="frequencia" valor="3"/>																				
-						</mod:grupo>						
-					</ww:if>						
-					<ww:else>
-						<mod:grupo largura="20">
-							<%-- acertar o mod grupo --%>							
-						</mod:grupo>
-						<mod:oculto var="atrasoNao" valor="não"/>		
-					</ww:else>
+					<c:choose>									
+						<c:when test="${atrasoVal == '2'}">
+							<mod:grupo largura="3">
+								Com que frequência?
+							</mod:grupo>
+							<mod:grupo largura="18">						
+									<mod:radio titulo="Sempre." var="frequencia" valor="1" marcado="Sim"/>							
+									<mod:radio titulo="Em cerca de 50% das aulas." var="frequencia" valor="2"/>								
+									<mod:radio titulo="Em menos de 50% das aulas." var="frequencia" valor="3"/>																				
+							</mod:grupo>						
+						</c:when>
+						<c:otherwise>										
+							<mod:grupo largura="20">
+								<%-- acertar o mod grupo --%>							
+							</mod:grupo>
+							<mod:oculto var="atrasoNao" valor="não"/>		
+						</c:otherwise>	
+					</c:choose>						
 				</mod:grupo>
 			</mod:grupo>
 		</mod:grupo> 
@@ -74,12 +75,14 @@
 				<c:if test="${duracaoVal == '2' or duracaoVal == '3' }"> 
 					<mod:memo titulo="Observações" var="obsDuracao" linhas="2"
 						colunas="60" obrigatorio="Sim" />					
-					<ww:if test="${duracaoVal == '2'}" >
-						<mod:oculto var="duracaoNao" valor="não" />	
-					</ww:if>
-					<ww:else>
-						<mod:oculto var="duracaoNao" valor=", às vezes," />	
-					</ww:else>
+					<c:choose>									
+						<c:when test="${duracaoVal == '2'}">
+							<mod:oculto var="duracaoNao" valor="não" />	
+						</c:when>
+						<c:otherwise>										
+							<mod:oculto var="duracaoNao" valor=", às vezes," />	
+						</c:otherwise>	
+					</c:choose>						
 				</c:if>				
 			</mod:grupo>  
 			
@@ -217,12 +220,14 @@
 				<mod:oculto var="avisoNao" valor="nunca" />	
 			</c:when>
 		</c:choose>	
-		<ww:if test="${freqFunc eq 'Integral'}">
-			<mod:oculto var="freqFuncTipo" valor="integral" />	
-		</ww:if>
-		<ww:else>
-			<mod:oculto var="freqFuncTipo" valor="parcial" />	
-		</ww:else>
+		<c:choose>									
+			<c:when test="${freqFunc eq 'Integral'}">
+				<mod:oculto var="freqFuncTipo" valor="integral" />	
+			</c:when>
+			<c:otherwise>										
+				<mod:oculto var="freqFuncTipo" valor="parcial" />	
+			</c:otherwise>	
+		</c:choose>			
 						
 		<table style="float:none; clear:both" width="100%" border="0" align="left" cellspacing="0" cellpadding="5">
 			<tr>
@@ -270,20 +275,24 @@
 						profissionais ou reposição de aulas.</td>
 				</tr>
 				<tr>
-					<ww:if test="${not empty numFaltas and numFaltas != '0'}">					
-						<td>Número de faltas sem reposição: ${numFaltas} </td>					
-					</ww:if>
-					<ww:else>
-						<td>Não houve faltas sem reposição.</td>
-					</ww:else>
+					<c:choose>									
+						<c:when test="${not empty numFaltas and numFaltas != '0'}">
+							<td>Número de faltas sem reposição: ${numFaltas} </td>					
+						</c:when>
+						<c:otherwise>										
+							<td>Não houve faltas sem reposição.</td>
+						</c:otherwise>	
+					</c:choose>					
 				</tr>
 				<tr>
-					<ww:if test="${not empty quantMinutos and quantMinutos != '0'}">					
-						<td>Quantidade de minutos em atrasos sem reposição: ${quantMinutos} </td>					
-					</ww:if>
-					<ww:else>
-						<td>Não houve minutos em atrasos sem reposição.</td>
-					</ww:else>
+					<c:choose>									
+						<c:when test="${not empty quantMinutos and quantMinutos != '0'}">
+							<td>Quantidade de minutos em atrasos sem reposição: ${quantMinutos} </td>					
+						</c:when>
+						<c:otherwise>										
+							<td>Não houve minutos em atrasos sem reposição.</td>
+						</c:otherwise>	
+					</c:choose>					
 				</tr>
 				<c:if test="${not empty ressalvaFreq}">
 					<tr>

@@ -3,17 +3,18 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 <mod:modelo>
 	<mod:entrevista>		
 		<c:if test="${secao == 'SEGRA' or secao == 'SGS'}">	
-			<ww:if test="${secao == 'SEGRA'}">			
-				<p><b>Quanto aos suprimentos (exceto papel):</b></p>
-			</ww:if>
-			<ww:else>
-				<p><b>Quanto aos materiais/equipamentos de limpeza:</b></p>
-			</ww:else>
+			<c:choose>									
+				<c:when test="${secao == 'SEGRA'}">
+					<p><b>Quanto aos suprimentos (exceto papel):</b></p>
+				</c:when>
+				<c:otherwise>										
+					<p><b>Quanto aos materiais/equipamentos de limpeza:</b></p>
+				</c:otherwise>	
+			</c:choose>			
 			<mod:grupo titulo="A entrega foi realizada no prazo?">		
 				<mod:radio titulo="Sim." var="entrNoPrazo" valor="1" marcado="Sim"
 							reler="ajax" idAjax="entrNoPrazoAjax" />	
@@ -72,14 +73,16 @@
 				</c:if>
 				<mod:grupo largura="93">
 					<mod:grupo depende="tempExecAjax">
-						<ww:if test="${tempExecVal == '2'}">
-							<mod:memo titulo="Ressalvas" var="ressalvaTempExec" linhas="2"
-								colunas="60" obrigatorio="Sim" />
-							<mod:oculto var="tempExecNao" valor="Não foram"/>		
-						</ww:if>
-						<ww:else>
-							<mod:oculto var="tempExecNao" valor="Foram"/>	
-						</ww:else>					
+						<c:choose>									
+							<c:when test="${tempExecVal == '2'}">
+								<mod:memo titulo="Ressalvas" var="ressalvaTempExec" linhas="2"
+									colunas="60" obrigatorio="Sim" />
+								<mod:oculto var="tempExecNao" valor="Não foram"/>		
+							</c:when>
+							<c:otherwise>										
+								<mod:oculto var="tempExecNao" valor="Foram"/>	
+							</c:otherwise>	
+						</c:choose>						
 					</mod:grupo>
 				</mod:grupo>			
 			</mod:grupo>
@@ -133,7 +136,7 @@
 				</c:if>
 				<mod:grupo largura="97">
 					<mod:grupo depende="boaCondEquipAjax">  
-						<ww:if test="${boaCondEquipVal == '2'}">
+						<c:if test="${boaCondEquipVal == '2'}">
 							<mod:oculto var="boaCondEquipNao" valor="não" />
 							A substituição foi solicitada?							
 							<mod:radio titulo="Sim." var="substitEquip" valor="1" marcado="Sim"
@@ -158,7 +161,7 @@
 								</mod:grupo>	
 							</mod:grupo>														
 							</mod:grupo>														
-						</ww:if>					
+						</c:if>					
 					</mod:grupo>
 				</mod:grupo>				 
 			</mod:grupo>	
@@ -206,13 +209,15 @@
 				</c:if>				
 				<mod:grupo largura="93">
 					<mod:grupo depende="totImagAjax">
-						<ww:if test="${totImagVal == '2'}">
-							<mod:memo titulo="Ressalvas" var="ressalvaTotImag" linhas="2"
-								colunas="60" obrigatorio="Sim" />						
-						</ww:if>						
-						<ww:else>
-							<mod:oculto var="totImagNao" valor="não"/>	
-						</ww:else>
+						<c:choose>									
+							<c:when test="${totImagVal == '2'}">
+								<mod:memo titulo="Ressalvas" var="ressalvaTotImag" linhas="2"
+									colunas="60" obrigatorio="Sim" />						
+							</c:when>
+							<c:otherwise>										
+								<mod:oculto var="totImagNao" valor="não"/>	
+							</c:otherwise>	
+						</c:choose>						
 					</mod:grupo>
 				</mod:grupo>
 			</mod:grupo>
@@ -275,11 +280,11 @@
 				</c:if>
 				<mod:grupo largura="93">
 					<mod:grupo depende="deslocamentoAjax">
-						<ww:if test="${deslocamentoVal == '2'}">
+						<c:if test="${deslocamentoVal == '2'}">
 							<mod:texto titulo="Ressalvas" var="ressalvaDeslocamento" largura="60"
 								maxcaracteres="60" obrigatorio="Sim" />
 							<mod:oculto var="deslocamentoNao" valor="não"/>		
-						</ww:if>										
+						</c:if>										
 					</mod:grupo>
 				</mod:grupo>			
 			</mod:grupo>
@@ -298,7 +303,7 @@
 
 			<mod:grupo largura="97">
 				<mod:grupo depende="boaCondUnifAjax">
-					<ww:if test="${boaCondUnifVal == '2'}">
+					<c:if test="${boaCondUnifVal == '2'}">
 						<mod:oculto var="boaCondUnifNao" valor="não"/>
 						</br><b>A substituição foi solicitada?</b>
 						<mod:radio titulo="Sim." var="substitUnif" valor="1" reler="ajax" idAjax="substitUnifAjax" marcado="Sim"/>
@@ -321,7 +326,7 @@
 							</mod:grupo>
 						</mod:grupo>
 							
-					</ww:if>
+					</c:if>
 				</mod:grupo>
 			</mod:grupo>
 		</mod:grupo>	
@@ -341,16 +346,17 @@
 			</c:if>			
 			<mod:grupo largura="93">
 				<mod:grupo depende="irregContCheqAjax">
-					<ww:if test="${irregContCheqVal == '2'}">
-						<mod:memo titulo="Ressalvas" var="ressalvaIrregContCheq" linhas="2"
-								colunas="60" obrigatorio="Sim" />						
-					</ww:if>
-					<ww:else>
-						<c:if test="${irregContCheqVal == '1'}">
-							<mod:oculto var="irregContCheqNao" valor="não"/>	
-						</c:if>						
-					</ww:else>
-					
+					<c:choose>									
+						<c:when test="${irregContCheqVal == '2'}">
+							<mod:memo titulo="Ressalvas" var="ressalvaIrregContCheq" linhas="2"
+									colunas="60" obrigatorio="Sim" />						
+						</c:when>
+						<c:otherwise>										
+							<c:if test="${irregContCheqVal == '1'}">
+								<mod:oculto var="irregContCheqNao" valor="não"/>	
+							</c:if>						
+						</c:otherwise>	
+					</c:choose>					
 				</mod:grupo>
 			</mod:grupo>
 			<mod:radio titulo="Não se aplica (cópias encaminhada diretamente para a sede)." var="irregContCheq" valor="3" 
@@ -401,32 +407,34 @@
 				</c:if>
 				<mod:grupo largura="97">
 					<mod:grupo depende="visitaSupAjax">  
-						<ww:if test="${visitaSupVal == '2'}">												
-							<mod:grupo largura="15">
-								<b>Como avalia a visita?</b>
-								<mod:grupo largura ="85">
-								<mod:radio titulo="Satisfatória" var="avalVisita" valor="1" marcado="Sim"
+						<c:choose>									
+							<c:when test="${visitaSupVal == '2'}">
+								<mod:grupo largura="15">
+									<b>Como avalia a visita?</b>
+									<mod:grupo largura ="85">
+									<mod:radio titulo="Satisfatória" var="avalVisita" valor="1" marcado="Sim"
+													reler="ajax" idAjax="avalVisitaAjax" />
+									<mod:radio titulo="Regular." var="avalVisita" valor="2" 
 												reler="ajax" idAjax="avalVisitaAjax" />
-								<mod:radio titulo="Regular." var="avalVisita" valor="2" 
-											reler="ajax" idAjax="avalVisitaAjax" />
-								<mod:radio titulo="Insatisfatória." var="avalVisita" valor="3" 
-												reler="ajax" idAjax="avalVisitaAjax" />
-								<c:set var="avalVisitaVal" value="${avalVisita}" />
-								<c:if test="${empty avalVisitaVal}">
-									<c:set var="avalVisitaVal" value="${param['avalVisita']}" />
-								</c:if>								
-								<mod:grupo depende="avalVisitaAjax">	
-									<c:if test="${avalVisitaVal == '2' or avalVisitaVal == '3'}">										
-										<mod:memo titulo="Justificar" var="jusAvalVisita" linhas="2"
-										colunas="60" obrigatorio="Sim" />										
-									</c:if>										
-								</mod:grupo>						
-								</mod:grupo>	
-							</mod:grupo>															
-						</ww:if>
-						<ww:else>					
-							<mod:oculto var="visitaSupNao" valor="não" />
-						</ww:else>						
+									<mod:radio titulo="Insatisfatória." var="avalVisita" valor="3" 
+													reler="ajax" idAjax="avalVisitaAjax" />
+									<c:set var="avalVisitaVal" value="${avalVisita}" />
+									<c:if test="${empty avalVisitaVal}">
+										<c:set var="avalVisitaVal" value="${param['avalVisita']}" />
+									</c:if>								
+									<mod:grupo depende="avalVisitaAjax">	
+										<c:if test="${avalVisitaVal == '2' or avalVisitaVal == '3'}">										
+											<mod:memo titulo="Justificar" var="jusAvalVisita" linhas="2"
+											colunas="60" obrigatorio="Sim" />										
+										</c:if>										
+									</mod:grupo>						
+									</mod:grupo>	
+								</mod:grupo>															
+							</c:when>
+							<c:otherwise>										
+								<mod:oculto var="visitaSupNao" valor="não" />
+							</c:otherwise>	
+						</c:choose>						
 					</mod:grupo>
 				</mod:grupo> 				
 			</mod:grupo>					
@@ -467,11 +475,11 @@
 				</c:if>
 				<mod:grupo largura="93">
 					<mod:grupo depende="equipUtilAjax">
-						<ww:if test="${equipUtilVal == '2'}">
+						<c:if test="${equipUtilVal == '2'}">
 							<mod:memo titulo="Ressalvas" var="ressalvaEquipUtil" linhas="2"
 								colunas="60" obrigatorio="Sim" />
 							<mod:oculto var="equipUtilNao" valor="não"/>		
-						</ww:if>										
+						</c:if>										
 					</mod:grupo>
 				</mod:grupo>			
 			</mod:grupo>
@@ -506,12 +514,14 @@
 			</mod:grupo>	
 		</c:if>
 		<c:if test="${secao == 'SGS' or secao == 'SIE'}">
-			<ww:if test="${secao == 'SGS'}">
-				<mod:oculto var="tipoServico" valor="jardinagem"/>	
-			</ww:if>
-			<ww:else>
-				<mod:oculto var="tipoServico" valor="limpeza de calha"/>	
-			</ww:else>
+			<c:choose>									
+				<c:when test="${secao == 'SGS'}">
+					<mod:oculto var="tipoServico" valor="jardinagem"/>	
+				</c:when>
+				<c:otherwise>										
+					<mod:oculto var="tipoServico" valor="limpeza de calha"/>	
+				</c:otherwise>	
+			</c:choose>			
 			<mod:grupo titulo="Possui serviço de ${tipoServico}?">
 				<mod:radio titulo="Não." var="possuiTipo" valor="1" marcado="Sim" reler="ajax" idAjax="possuiTipoAjax"/>		
 				<mod:grupo largura="3">
@@ -523,66 +533,68 @@
 				</c:if>
 				<mod:grupo largura="97">
 					<mod:grupo depende="possuiTipoAjax">
-						<ww:if test="${possuiTipoVal == '2'}">	
-							<mod:oculto var="possuiTipoNao" valor="Possui"/>												
-							<b>O cronograma foi cumprido?</b>
-							<mod:radio titulo="Sim." var="cronograma" valor="1" reler="ajax" idAjax="cronogramaAjax" marcado="Sim"/>
-						 	<mod:grupo>
-								<mod:grupo largura="7">
-									<mod:radio titulo="Não." var="cronograma" valor="2" reler="ajax" idAjax="cronogramaAjax"/>
-									<c:set var="cronogramaVal" value="${cronograma}"/>
-									<c:if test="${empty cronogramaVal}">
-										<c:set var="cronogramaVal" value="${param['cronograma']}"/>
-									</c:if>							
-									<mod:grupo largura="93">
-										<mod:grupo depende="cronogramaAjax">	
-											<c:if test="${cronogramaVal == '2'}">
-												<mod:memo titulo="Justificar" var="jusCronograma" linhas="2"
-								                 colunas="60" obrigatorio="Sim"/>
-												<mod:oculto var="cronogramaNao" valor="não"/>		
-											</c:if>
+						<c:choose>									
+							<c:when test="${possuiTipoVal == '2'}">
+								<mod:oculto var="possuiTipoNao" valor="Possui"/>												
+								<b>O cronograma foi cumprido?</b>
+								<mod:radio titulo="Sim." var="cronograma" valor="1" reler="ajax" idAjax="cronogramaAjax" marcado="Sim"/>
+							 	<mod:grupo>
+									<mod:grupo largura="7">
+										<mod:radio titulo="Não." var="cronograma" valor="2" reler="ajax" idAjax="cronogramaAjax"/>
+										<c:set var="cronogramaVal" value="${cronograma}"/>
+										<c:if test="${empty cronogramaVal}">
+											<c:set var="cronogramaVal" value="${param['cronograma']}"/>
+										</c:if>							
+										<mod:grupo largura="93">
+											<mod:grupo depende="cronogramaAjax">	
+												<c:if test="${cronogramaVal == '2'}">
+													<mod:memo titulo="Justificar" var="jusCronograma" linhas="2"
+									                 colunas="60" obrigatorio="Sim"/>
+													<mod:oculto var="cronogramaNao" valor="não"/>		
+												</c:if>
+											</mod:grupo>
 										</mod:grupo>
 									</mod:grupo>
 								</mod:grupo>
-							</mod:grupo>
-							<b>Como avalia a execução dos serviços?</b>								
-							<mod:radio titulo="Satisfatória" var="avalServico" valor="1" marcado="Sim"
+								<b>Como avalia a execução dos serviços?</b>								
+								<mod:radio titulo="Satisfatória" var="avalServico" valor="1" marcado="Sim"
+												reler="ajax" idAjax="avalServicoAjax" />
+								<mod:radio titulo="Regular." var="avalServico" valor="2" 
 											reler="ajax" idAjax="avalServicoAjax" />
-							<mod:radio titulo="Regular." var="avalServico" valor="2" 
-										reler="ajax" idAjax="avalServicoAjax" />
-							<mod:radio titulo="Insatisfatória." var="avalServico" valor="3" 
-											reler="ajax" idAjax="avalServicoAjax" />
-							<c:set var="avalServicoVal" value="${avalServico}" />
-							<c:if test="${empty avalServicoVal}">
-								<c:set var="avalServicoVal" value="${param['avalServico']}" />
-							</c:if>								
-							<mod:grupo depende="avalServicoAjax">	
-								<c:if test="${avalServicoVal == '2' or avalServicoVal == '3'}">										
-									<mod:memo titulo="Justificar" var="jusAvalServico" linhas="2"
-								colunas="60" obrigatorio="Sim" />										
-								</c:if>										
-							</mod:grupo>
-							<b>Como avalia a qualidade e quantidade dos equipamentos/insumos?</b>								
-							<mod:radio titulo="Satisfatória" var="avalEquip" valor="1" marcado="Sim"
+								<mod:radio titulo="Insatisfatória." var="avalServico" valor="3" 
+												reler="ajax" idAjax="avalServicoAjax" />
+								<c:set var="avalServicoVal" value="${avalServico}" />
+								<c:if test="${empty avalServicoVal}">
+									<c:set var="avalServicoVal" value="${param['avalServico']}" />
+								</c:if>								
+								<mod:grupo depende="avalServicoAjax">	
+									<c:if test="${avalServicoVal == '2' or avalServicoVal == '3'}">										
+										<mod:memo titulo="Justificar" var="jusAvalServico" linhas="2"
+									colunas="60" obrigatorio="Sim" />										
+									</c:if>										
+								</mod:grupo>
+								<b>Como avalia a qualidade e quantidade dos equipamentos/insumos?</b>								
+								<mod:radio titulo="Satisfatória" var="avalEquip" valor="1" marcado="Sim"
+												reler="ajax" idAjax="avalEquipAjax" />
+								<mod:radio titulo="Regular." var="avalEquip" valor="2" 
 											reler="ajax" idAjax="avalEquipAjax" />
-							<mod:radio titulo="Regular." var="avalEquip" valor="2" 
-										reler="ajax" idAjax="avalEquipAjax" />
-							<mod:radio titulo="Insatisfatória." var="avalEquip" valor="3" 
-											reler="ajax" idAjax="avalEquipAjax" />
-							<c:set var="avalEquipVal" value="${avalEquip}" />
-							<c:if test="${empty avalEquipVal}">
-								<c:set var="avalEquipVal" value="${param['avalEquip']}" />
-							</c:if>								
-							<mod:grupo depende="avalEquipAjax">	
-								<c:if test="${avalEquipVal == '2' or avalEquipVal == '3'}">										
-									<mod:memo titulo="Justificar" var="jusAvalEquip" linhas="2"
-								     colunas="60" obrigatorio="Sim" />										
-								</c:if>										
-							</mod:grupo>																											
-						</ww:if>
-						<ww:else>
-							<mod:oculto var="possuiTipoNao" valor="Não possui"/>
-						</ww:else>
+								<mod:radio titulo="Insatisfatória." var="avalEquip" valor="3" 
+												reler="ajax" idAjax="avalEquipAjax" />
+								<c:set var="avalEquipVal" value="${avalEquip}" />
+								<c:if test="${empty avalEquipVal}">
+									<c:set var="avalEquipVal" value="${param['avalEquip']}" />
+								</c:if>								
+								<mod:grupo depende="avalEquipAjax">	
+									<c:if test="${avalEquipVal == '2' or avalEquipVal == '3'}">										
+										<mod:memo titulo="Justificar" var="jusAvalEquip" linhas="2"
+									     colunas="60" obrigatorio="Sim" />										
+									</c:if>										
+								</mod:grupo>																											
+							</c:when>
+							<c:otherwise>										
+								<mod:oculto var="possuiTipoNao" valor="Não possui"/>
+							</c:otherwise>	
+						</c:choose>						
 					</mod:grupo>
 				</mod:grupo>
 			</mod:grupo>	
@@ -628,68 +640,76 @@
 							reler="ajax" idAjax="infSimplAjax" />
 						</mod:grupo>
 						<mod:grupo depende="infSimplAjax">
-							<ww:if test="${infSimpl == 'Sim'}">
-								<mod:grupo>
-									<mod:texto titulo="Número de faltas sem reposição" var="numFaltas" 
-									 					largura="10" valor="0" />
-								</mod:grupo>
-								<mod:grupo>
-									<mod:texto titulo="Quantidade de minutos em atrasos sem reposição" 
-									 					var="quantMinutos" largura="10" valor="0" />
-								</mod:grupo>			
-							</ww:if>
-							<ww:else>							
-								<mod:radio titulo="com reposição" var="reposicao" valor="1" reler="ajax"
-					  						idAjax="reposicaoAjax" marcado="Sim"/>
-		    					<mod:radio titulo="sem reposição" var="reposicao" valor="2" reler="ajax"
-											idAjax="reposicaoAjax" />
-								<c:set var="reposicaoVal" value="${reposicao}" />
-								<c:if test="${empty reposicaoVal}">
-									<c:set var="reposicaoVal" value="${param['reposicao']}" />
+							<c:choose>
+								<c:when test="${infSimpl == 'Sim'}">	
+									<mod:grupo>
+										<mod:texto titulo="Número de faltas sem reposição" var="numFaltas" 
+										 					largura="10" valor="0" />
+									</mod:grupo>
+									<mod:grupo>
+										<mod:texto titulo="Quantidade de minutos em atrasos sem reposição" 
+										 					var="quantMinutos" largura="10" valor="0" />
+									</mod:grupo>			
+								</c:when>
+								<c:otherwise>							
+									<mod:radio titulo="com reposição" var="reposicao" valor="1" reler="ajax"
+						  						idAjax="reposicaoAjax" marcado="Sim"/>
+			    					<mod:radio titulo="sem reposição" var="reposicao" valor="2" reler="ajax"
+												idAjax="reposicaoAjax" />
+									<c:set var="reposicaoVal" value="${reposicao}" />
 									<c:if test="${empty reposicaoVal}">
-										<c:set var="reposicaoVal" value="1" />
-									</c:if>
-								</c:if>		
-								<mod:selecao titulo="Informe a quantidade de funcionários com frequência parcial" 
-								var="numFuncParcial" opcoes="1;2;3;4;5;6;7;8;9;10" reler="ajax" idAjax="numFuncParcialAjax" />
-								<mod:grupo depende="numFuncParcialAjax">	
-									<mod:grupo depende="reposicaoAjax">								
-										<c:forEach var="i" begin="1" end="${numFuncParcial}">											
-											<mod:grupo>
-												<b>${i}.</b><mod:data titulo="De" var="dataIni${i}"  />
-															<mod:data titulo="Até" var="dataFim${i}"  />
-											</mod:grupo>
-											<mod:grupo>	
-										 		&nbsp;&nbsp;&nbsp;<mod:texto titulo="Nome do funcionário faltoso" var="nomeFunc${i}" 
-										 					largura="73"  />
-											</mod:grupo>																									
-											<ww:if test="${reposicaoVal == '1'}">
-												<mod:grupo>	
-											 		&nbsp;&nbsp;&nbsp;<mod:texto titulo="Nome do funcionário que cobriu a falta" var="nomeSubst${i}" 
-											 					largura="62" />
+										<c:set var="reposicaoVal" value="${param['reposicao']}" />
+										<c:if test="${empty reposicaoVal}">
+											<c:set var="reposicaoVal" value="1" />
+										</c:if>
+									</c:if>		
+									<mod:selecao titulo="Informe a quantidade de funcionários com frequência parcial" 
+									var="numFuncParcial" opcoes="1;2;3;4;5;6;7;8;9;10" reler="ajax" idAjax="numFuncParcialAjax" />
+									<mod:grupo depende="numFuncParcialAjax">	
+										<mod:grupo depende="reposicaoAjax">								
+											<c:forEach var="i" begin="1" end="${numFuncParcial}">											
+												<mod:grupo>
+													<b>${i}.</b><mod:data titulo="De" var="dataIni${i}"  />
+																<mod:data titulo="Até" var="dataFim${i}"  />
 												</mod:grupo>
 												<mod:grupo>	
-											 		&nbsp;&nbsp;&nbsp;<mod:texto titulo="Motivo da ausência" 
-											 					var="motivo${i}" largura="81" />
+											 		&nbsp;&nbsp;&nbsp;<mod:texto titulo="Nome do funcionário faltoso" var="nomeFunc${i}" 
+											 					largura="73"  />
 												</mod:grupo>
-											</ww:if>
-											<ww:else>
-													&nbsp;&nbsp;&nbsp;<mod:texto titulo="Observações" var="obs${i}" 
-											 					largura="70" />
-											</ww:else>														
-										</c:forEach>
+												
+												<c:choose>									
+													<c:when test="${reposicaoVal == '1'}">
+														<mod:grupo>	
+													 		&nbsp;&nbsp;&nbsp;<mod:texto titulo="Nome do funcionário que cobriu a falta" var="nomeSubst${i}" 
+													 					largura="62" />
+														</mod:grupo>
+														<mod:grupo>	
+													 		&nbsp;&nbsp;&nbsp;<mod:texto titulo="Motivo da ausência" 
+													 					var="motivo${i}" largura="81" />
+														</mod:grupo>
+													</c:when>
+													<c:otherwise>										
+														&nbsp;&nbsp;&nbsp;<mod:texto titulo="Observações" var="obs${i}" 
+												 					largura="70" />
+													</c:otherwise>	
+												</c:choose>	
+											</c:forEach>
+										</mod:grupo>									
 									</mod:grupo>									
-								</mod:grupo>									
-							</ww:else>
+								</c:otherwise>
+							</c:choose>	
 						</mod:grupo> 
 					</c:when>
 					</c:choose>	
-					<ww:if test="${secao == 'DSEG'}">
-						<mod:oculto var="titMemo" valor="Informações adicionais"/>						
-					</ww:if>
-					<ww:else>	
-						<mod:oculto var="titMemo" valor="Ressalvas"/>					
-					</ww:else>
+					
+					<c:choose>									
+						<c:when test="${secao == 'DSEG'}">
+							<mod:oculto var="titMemo" valor="Informações adicionais"/>						
+						</c:when>
+						<c:otherwise>										
+							<mod:oculto var="titMemo" valor="Ressalvas"/>					
+						</c:otherwise>	
+					</c:choose>						
 					<mod:grupo>
 						<mod:memo titulo="${titMemo}" var="ressalvaFreq" linhas="2"
 								colunas="80" />
@@ -761,13 +781,15 @@
 			<c:when test="${avalEquip == '3'}">
 				<mod:oculto var="avalEquipNao" valor="insatisfatórias" />
 			</c:when>
-		</c:choose>											
-		<ww:if test="${freqFunc eq 'Integral'}">
-			<mod:oculto var="freqFuncTipo" valor="integral" />	
-		</ww:if>
-		<ww:else>
-			<mod:oculto var="freqFuncTipo" valor="parcial" />	
-		</ww:else>
+		</c:choose>		
+		<c:choose>									
+			<c:when test="${freqFunc eq 'Integral'}">
+				<mod:oculto var="freqFuncTipo" valor="integral" />	
+			</c:when>
+			<c:otherwise>										
+				<mod:oculto var="freqFuncTipo" valor="parcial" />	
+			</c:otherwise>	
+		</c:choose>	
 		
 		<table style="float: none; clear: both" width="100%" border="0" align="left" cellspacing="0" cellpadding="5">			
 			<tr><th><b>
@@ -813,37 +835,43 @@
 			</td></tr>	
 			<c:if test="${secao == 'STI'}">
 				<tr><td>
-				<ww:if test="${not empty numChamados and numChamados != '0'}">								
-					 Número de chamados atendidos pelo técnico de informática: ${numChamados}				
-				</ww:if>
-				<ww:else>
-					Não houve abertura de chamados para o técnico de informática. 
-				</ww:else>
+				<c:choose>									
+					<c:when test="${not empty numChamados and numChamados != '0'}">
+						 Número de chamados atendidos pelo técnico de informática: ${numChamados}				
+					</c:when>
+					<c:otherwise>										
+						Não houve abertura de chamados para o técnico de informática. 
+					</c:otherwise>	
+				</c:choose>					
 				</td></tr>	
 			</c:if>	
 			<c:if test="${secao == 'SEGRA' or secao == 'SGS' or secao == 'SIE'}">
-				<ww:if test="${boaCondEquip == '3'}">
-					<tr><td>A informação referente às condições dos ${tipoEquip} não se aplica .</td></tr>
-				</ww:if>
-				<ww:else>
-				<tr><td>Os ${tipoEquip} ${boaCondEquipNao} estão em boas condições. 
-					<c:if test="${boaCondEquip == '2'}">			
-						<br>&nbsp; - A substituição ${substitEquipNao} foi solicitada. 		
-						<c:if test="${substitEquip == '2'}">			
-							&nbsp;&nbsp;${ressalvaSubstitEquip} 					
-						</c:if>			
-					</c:if>
-				</td></tr>
-				</ww:else>	
+				<c:choose>									
+					<c:when test="${boaCondEquip == '3'}">
+						<tr><td>A informação referente às condições dos ${tipoEquip} não se aplica .</td></tr>
+					</c:when>
+					<c:otherwise>										
+						<tr><td>Os ${tipoEquip} ${boaCondEquipNao} estão em boas condições. 
+							<c:if test="${boaCondEquip == '2'}">			
+								<br>&nbsp; - A substituição ${substitEquipNao} foi solicitada. 		
+								<c:if test="${substitEquip == '2'}">			
+									&nbsp;&nbsp;${ressalvaSubstitEquip} 					
+								</c:if>			
+							</c:if>
+						</td></tr>
+					</c:otherwise>	
+				</c:choose>				
 			</c:if>
 			<c:if test="${secao == 'SEGRA'}">
 				<tr><td>
-				<ww:if test="${not empty numManutencoes and numManutencoes != '0'}">								
-					 Número de manutenções (preventivas e corretivas) nos equipamentos: ${numManutencoes}				
-				</ww:if>
-				<ww:else>
-					Não houve manutenções (preventivas / corretivas) nos equipamentos. 
-				</ww:else>
+				<c:choose>									
+					<c:when test="${not empty numManutencoes and numManutencoes != '0'}">
+						 Número de manutenções (preventivas e corretivas) nos equipamentos: ${numManutencoes}				
+					</c:when>
+					<c:otherwise>										
+						Não houve manutenções (preventivas / corretivas) nos equipamentos. 
+					</c:otherwise>	
+				</c:choose>					
 				</td></tr>	
 				<tr><td>A quantidade dos equipamentos foi avalidada como ${quantEquipNao}.
 					<c:if test="${quantEquip == '2' or quantEquip == '3'}">			
@@ -856,28 +884,32 @@
 					</c:if>
 				</td></tr>	
 			</c:if>
-			<ww:if test="${valeAlim == '3'}">
-				<tr><td>A informação referente à compatibilidade dos valores do vale alimentação com os dias trabalhados não se aplica.
-				(cópias encaminhadas diretamente para a sede).</td></tr>
-			</ww:if>
-			<ww:else>
-				<tr><td>Os valores do vale alimentação ${valeAlimNao} foram compatíveis com os dias trabalhados.
-					<c:if test="${valeAlim == '2'}">		
-						<br>${ressalvaValeAlim}					
-					</c:if>
-				</td></tr>
-			</ww:else>	
-			<ww:if test="${valeTransp == '3'}">
-				<tr><td>A informação referente à compatibilidade dos valores do vale transporte com os dias trabalhados não se aplica.
-				(cópias encaminhadas diretamente para a sede).</td></tr>
-			</ww:if>
-			<ww:else>
-				<tr><td>Os valores do vale transporte ${valeTranspNao} foram compatíveis com os dias trabalhados.
-					<c:if test="${valeTransp == '2'}">		
-						<br>${ressalvaValeTransp}					
-					</c:if>
-				</td></tr>
-			</ww:else>
+			<c:choose>									
+				<c:when test="${valeAlim == '3'}">
+					<tr><td>A informação referente à compatibilidade dos valores do vale alimentação com os dias trabalhados não se aplica.
+					(cópias encaminhadas diretamente para a sede).</td></tr>
+				</c:when>
+				<c:otherwise>										
+					<tr><td>Os valores do vale alimentação ${valeAlimNao} foram compatíveis com os dias trabalhados.
+						<c:if test="${valeAlim == '2'}">		
+							<br>${ressalvaValeAlim}					
+						</c:if>
+					</td></tr>
+				</c:otherwise>	
+			</c:choose>	
+			<c:choose>									
+				<c:when test="${valeTransp == '3'}">
+					<tr><td>A informação referente à compatibilidade dos valores do vale transporte com os dias trabalhados não se aplica.
+					(cópias encaminhadas diretamente para a sede).</td></tr>
+				</c:when>
+				<c:otherwise>										
+					<tr><td>Os valores do vale transporte ${valeTranspNao} foram compatíveis com os dias trabalhados.
+						<c:if test="${valeTransp == '2'}">		
+							<br>${ressalvaValeTransp}					
+						</c:if>
+					</td></tr>
+				</c:otherwise>	
+			</c:choose>	
 			<c:if test="${secao == 'SIE'}">		
 				<tr><td>Os valores para deslocamento entre subseções ${deslocamentoNao} foram compatíveis com os dias trabalhados.
 					<c:if test="${deslocamento == '2'}">
@@ -948,20 +980,24 @@
 					</c:if>
 				</td></tr>	
 				<tr><td>
-					<ww:if test="${not empty numChamadosEletr and numChamadosEletr != '0'}">								
-						 Número de chamados atendidos pelo eletricista: ${numChamadosEletr}				
-					</ww:if>
-					<ww:else>
-						Não houve abertura de chamados para o eletricista. 
-					</ww:else>
+					<c:choose>									
+						<c:when test="${not empty numChamadosEletr and numChamadosEletr != '0'}">
+							 Número de chamados atendidos pelo eletricista: ${numChamadosEletr}				
+						</c:when>
+						<c:otherwise>										
+							Não houve abertura de chamados para o eletricista. 
+						</c:otherwise>	
+					</c:choose>					
 				</td></tr>	
 				<tr><td>
-					<ww:if test="${not empty numChamadosBomb and numChamadosBomb != '0'}">								
-						 Número de chamados atendidos pelo bombeiro hidráulico: ${numChamadosBomb}				
-					</ww:if>
-					<ww:else>
-						Não houve abertura de chamados para o bombeiro hidráulico. 
-					</ww:else>
+					<c:choose>									
+						<c:when test="${not empty numChamadosBomb and numChamadosBomb != '0'}">
+							 Número de chamados atendidos pelo bombeiro hidráulico: ${numChamadosBomb}				
+						</c:when>
+						<c:otherwise>										
+							Não houve abertura de chamados para o bombeiro hidráulico. 
+						</c:otherwise>	
+					</c:choose>					
 				</td></tr>	
 				<tr><td>As rotinas de manutenção preventiva ${manutPreventNao} estão sendo realizadas (diárias, semanais, quinzenais, mensais, semestrais).
 					<c:if test="${manutPrevent == '2'}">	
@@ -1011,41 +1047,49 @@
 							<td width="95%">Categoria profissional: ${requestScope[f:concat('catProfis',i)]}</td>  																
 						</tr>
 						<tr><td width="5%"></td>
-							<td width="95%"> 		
-								<ww:if test="${not empty requestScope[f:concat('numFaltas',i)] and requestScope[f:concat('numFaltas',i)] != '0'}">					
-									Número de faltas sem reposição: ${requestScope[f:concat('numFaltas',i)]} 			
-								</ww:if>
-								<ww:else>
-									Não houve faltas sem reposição. 
-								</ww:else>	
+							<td width="95%"> 
+								<c:choose>									
+									<c:when test="${not empty requestScope[f:concat('numFaltas',i)] and requestScope[f:concat('numFaltas',i)] != '0'}">
+										Número de faltas sem reposição: ${requestScope[f:concat('numFaltas',i)]} 			
+									</c:when>
+									<c:otherwise>										
+										Não houve faltas sem reposição. 
+									</c:otherwise>	
+								</c:choose>										
 						</td></tr>
 						<tr><td width="5%"></td>	
-							<td width="95%"> 		
-								<ww:if test="${not empty requestScope[f:concat('quantMinutos',i)] and requestScope[f:concat('quantMinutos',i)] != '0'}">					
-									Quantidade de minutos em atrasos sem reposição: ${requestScope[f:concat('quantMinutos',i)]}	
-								</ww:if>
-								<ww:else>
-									Não houve minutos em atrasos sem reposição.
-								</ww:else>	
+							<td width="95%"> 	
+								<c:choose>									
+									<c:when test="${not empty requestScope[f:concat('quantMinutos',i)] and requestScope[f:concat('quantMinutos',i)] != '0'}">
+										Quantidade de minutos em atrasos sem reposição: ${requestScope[f:concat('quantMinutos',i)]}	
+									</c:when>
+									<c:otherwise>										
+										Não houve minutos em atrasos sem reposição.
+									</c:otherwise>	
+								</c:choose>									
 						</td></tr>						
 					</c:forEach>
 				</c:when>				
 				<c:when test="${(secao == 'STI') or (secao == 'DSEG' and infSimpl == 'Sim')}">
-					<tr><td>	
-						<ww:if test="${not empty numFaltas and numFaltas != '0'}">					
+					<tr><td>
+						<c:choose>									
+							<c:when test="${not empty numFaltas and numFaltas != '0'}">
 								Número de faltas sem reposição: ${numFaltas} 			
-						</ww:if>
-						<ww:else>
+							</c:when>
+							<c:otherwise>										
 								Não houve faltas sem reposição. 
-						</ww:else>
+							</c:otherwise>	
+						</c:choose>	
 					</td></tr>				
 					<tr><td>	
-						<ww:if test="${not empty numFaltas and numFaltas != '0'}">					
+						<c:choose>									
+							<c:when test="${not empty numFaltas and numFaltas != '0'}">
 								Quantidade de minutos em atrasos sem reposição: ${quantMinutos} 			
-						</ww:if>
-						<ww:else>
+							</c:when>
+							<c:otherwise>										
 								Não houve minutos em atrasos sem reposição.
-						</ww:else>
+							</c:otherwise>	
+						</c:choose>						
 					</td></tr>				
 				</c:when>	
 				<c:when test="${secao == 'DSEG' and infSimpl == 'Não'}">
@@ -1053,16 +1097,18 @@
 						<tr><td width="5%">${i}.</td>
 							<td width="95%">Nome do funcionário faltoso: ${requestScope[f:concat('nomeFunc',i)]}</td>  																
 						</tr>
-						<ww:if test="${reposicao == '1'}">						
-							<tr><td width="5%"></td>
-								<td width="95%">Nome do funcionário que cobriu a falta: ${requestScope[f:concat('nomeSubst',i)]}</td></tr>
-							<tr><td width="5%"></td>
-								<td width="95%">Motivo da ausência: ${requestScope[f:concat('motivo',i)]}</td></tr>
-						</ww:if>
-						<ww:else>
-							<tr><td width="5%"></td>
+						<c:choose>									
+							<c:when test="${reposicao == '1'}">
+								<tr><td width="5%"></td>
+									<td width="95%">Nome do funcionário que cobriu a falta: ${requestScope[f:concat('nomeSubst',i)]}</td></tr>
+								<tr><td width="5%"></td>
+									<td width="95%">Motivo da ausência: ${requestScope[f:concat('motivo',i)]}</td></tr>
+							</c:when>
+							<c:otherwise>										
+								<tr><td width="5%"></td>
 								<td width="95%">Observações: ${requestScope[f:concat('obs',i)]}</td></tr>
-						</ww:else>									
+							</c:otherwise>	
+						</c:choose>							
 					</c:forEach>					
 				</c:when>					
 				</c:choose>

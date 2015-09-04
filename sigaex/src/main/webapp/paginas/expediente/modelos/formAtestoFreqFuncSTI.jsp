@@ -3,7 +3,6 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 <mod:modelo>
 	<mod:entrevista>			
@@ -80,34 +79,36 @@
 				<c:set var="boaCondEquipVal" value="${param['boaCondEquip']}" />
 			</c:if>
 			<mod:grupo largura="73">
-				<mod:grupo depende="boaCondEquipAjax">  
-					<ww:if test="${boaCondEquipVal == '2'}">
-						<mod:oculto var="boaCondEquipNao" valor="não" />
-						<mod:grupo largura="3">
-							A substituição foi solicitada? 
-								<mod:radio titulo="Sim." var="substitEquip" valor="1" marcado="Sim"
-											reler="ajax" idAjax="substitEquipAjax" />
-								<mod:radio titulo="Não." var="substitEquip" valor="2" 
-											reler="ajax" idAjax="substitEquipAjax" />
-						</mod:grupo>					
-						<c:set var="substitEquipVal" value="${substitEquip}" />
-						<c:if test="${empty substitEquipVal}">
-							<c:set var="substitEquipVal" value="${param['substitEquip']}" />
-						</c:if>
-						<mod:grupo largura="17">
-							<mod:grupo depende="substitEquipAjax">	
-								<c:if test="${substitEquipVal == '2'}">
-									<br> <br> 
-									<mod:texto titulo="Ressalvas" var="ressalvaSubstitEquip" largura="60"
-										maxcaracteres="60" obrigatorio="Sim" />
-									<mod:oculto var="substitEquipNao" valor="não" />	
-								</c:if>									
-							</mod:grupo>												
-						</mod:grupo>														
-					</ww:if>
-					<ww:else>
-						<mod:grupo largura="20"><%-- para acertar mod grupo --%></mod:grupo>
-					</ww:else>
+				<mod:grupo depende="boaCondEquipAjax">
+			 	   <c:choose>									
+						<c:when test="${boaCondEquipVal == '2'}">
+							<mod:oculto var="boaCondEquipNao" valor="não" />
+							<mod:grupo largura="3">
+								A substituição foi solicitada? 
+									<mod:radio titulo="Sim." var="substitEquip" valor="1" marcado="Sim"
+												reler="ajax" idAjax="substitEquipAjax" />
+									<mod:radio titulo="Não." var="substitEquip" valor="2" 
+												reler="ajax" idAjax="substitEquipAjax" />
+							</mod:grupo>					
+							<c:set var="substitEquipVal" value="${substitEquip}" />
+							<c:if test="${empty substitEquipVal}">
+								<c:set var="substitEquipVal" value="${param['substitEquip']}" />
+							</c:if>
+							<mod:grupo largura="17">
+								<mod:grupo depende="substitEquipAjax">	
+									<c:if test="${substitEquipVal == '2'}">
+										<br> <br> 
+										<mod:texto titulo="Ressalvas" var="ressalvaSubstitEquip" largura="60"
+											maxcaracteres="60" obrigatorio="Sim" />
+										<mod:oculto var="substitEquipNao" valor="não" />	
+									</c:if>									
+								</mod:grupo>												
+							</mod:grupo>														
+						</c:when>
+						<c:otherwise>										
+							<mod:grupo largura="20"><%-- para acertar mod grupo --%></mod:grupo>
+						</c:otherwise>	
+					</c:choose>	
 				</mod:grupo>
 			</mod:grupo> 
 		</mod:grupo>	
@@ -146,13 +147,15 @@
 			</c:if>
 			<mod:grupo largura="93">
 				<mod:grupo depende="totImagAjax">
-					<ww:if test="${totImagVal == '2'}">
-						<mod:texto titulo="Ressalvas" var="ressalvaTotImag" largura="60"
-							maxcaracteres="60" obrigatorio="Sim" />						
-					</ww:if>						
-					<ww:else>
-						<mod:oculto var="totImagNao" valor="não"/>	
-					</ww:else>
+					<c:choose>									
+						<c:when test="${totImagVal == '2'}">
+							<mod:texto titulo="Ressalvas" var="ressalvaTotImag" largura="60"
+								maxcaracteres="60" obrigatorio="Sim" />						
+						</c:when>
+						<c:otherwise>										
+							<mod:oculto var="totImagNao" valor="não"/>	
+						</c:otherwise>	
+					</c:choose>					
 				</mod:grupo>
 			</mod:grupo>
 		</mod:grupo>
@@ -214,7 +217,7 @@
 
 			<mod:grupo largura="97">
 				<mod:grupo depende="boaCondUnifAjax">
-					<ww:if test="${boaCondUnifVal == '2'}">
+					<c:if test="${boaCondUnifVal == '2'}">
 						<mod:oculto var="boaCondUnifNao" valor="não"/>
 						<b>Testando novamente ...</b>
 						<mod:radio titulo="Sim." var="substitUnif" valor="1" reler="ajax" idAjax="substitUnifAjax" marcado="Sim"/>
@@ -236,7 +239,7 @@
 							</mod:grupo>
 						</mod:grupo>
 							
-					</ww:if>
+					</c:if>
 				</mod:grupo>
 			</mod:grupo>
 		</mod:grupo>
@@ -358,12 +361,14 @@
 				</c:if>
 			</td></tr>	
 			<tr><td>
-			<ww:if test="${not empty numManutencoes}">								
-				 5. Número de manutenções (preventivas e corretivas) nos equipamentos: ${numManutencoes}				
-			</ww:if>
-			<ww:else>
-				5. Não houve manutenções (preventivas / corretivas) nos equipamentos. 
-			</ww:else>
+			<c:choose>									
+				<c:when test="${not empty numManutencoes}">
+					 5. Número de manutenções (preventivas e corretivas) nos equipamentos: ${numManutencoes}				
+				</c:when>
+				<c:otherwise>										
+					5. Não houve manutenções (preventivas / corretivas) nos equipamentos. 
+				</c:otherwise>	
+			</c:choose>	
 			</td></tr>	
 			<tr><td>6. A quantidade dos equipamentos foi avalidada como ${quantEquipNao}.
 				<c:if test="${quantEquip == '2' or quantEquip == '3'}">			
@@ -375,28 +380,32 @@
 					<br>${ressalvaTotImag}					
 				</c:if>
 			</td></tr>	
-			<ww:if test="${valeAlim == '3'}">
-				<tr><td>8. A compatibilidade dos valores do vale alimentação com os dias trabalhados não se aplica.
-				(cópias encaminhadas diretamente para a sede).</td></tr>
-			</ww:if>
-			<ww:else>
-				<tr><td>8. Os valores do vale alimentação ${valeAlimNao} foram compatíveis com os dias trabalhados.
-					<c:if test="${valeAlim == '2'}">		
-						<br>${ressalvaValeAlim}					
-					</c:if>
-				</td></tr>
-			</ww:else>	
-			<ww:if test="${valeTransp == '3'}">
-				<tr><td>9. A compatibilidade dos valores do vale transporte com os dias trabalhados não se aplica.
-				(cópias encaminhadas diretamente para a sede).</td></tr>
-			</ww:if>
-			<ww:else>
-				<tr><td>9. Os valores do vale transporte ${valeTranspNao} foram compatíveis com os dias trabalhados.
-					<c:if test="${valeTransp == '2'}">		
-						<br>${ressalvaValeTransp}					
-					</c:if>
-				</td></tr>
-			</ww:else>	
+			<c:choose>									
+				<c:when test="${valeAlim == '3'}">
+					<tr><td>8. A compatibilidade dos valores do vale alimentação com os dias trabalhados não se aplica.
+					(cópias encaminhadas diretamente para a sede).</td></tr>
+				</c:when>
+				<c:otherwise>										
+					<tr><td>8. Os valores do vale alimentação ${valeAlimNao} foram compatíveis com os dias trabalhados.
+						<c:if test="${valeAlim == '2'}">		
+							<br>${ressalvaValeAlim}					
+						</c:if>
+					</td></tr>
+				</c:otherwise>	
+			</c:choose>			
+			<c:choose>									
+				<c:when test="${valeTransp == '3'}">
+					<tr><td>9. A compatibilidade dos valores do vale transporte com os dias trabalhados não se aplica.
+					(cópias encaminhadas diretamente para a sede).</td></tr>
+				</c:when>
+				<c:otherwise>										
+					<tr><td>9. Os valores do vale transporte ${valeTranspNao} foram compatíveis com os dias trabalhados.
+						<c:if test="${valeTransp == '2'}">		
+							<br>${ressalvaValeTransp}					
+						</c:if>
+					</td></tr>
+				</c:otherwise>	
+			</c:choose>					
 			<tr><td>10. Os uniformes ${boaCondUnifNao} estão em boas condições. 
 				<c:if test="${boaCondUnif == '2'}">			
 					<br>A substituição ${substitUnifNao} foi solicitada. 		
@@ -405,8 +414,6 @@
 					</c:if>			
 				</c:if>
 			</td></tr>	
-						
-						
 		</table>	
 	</mod:documento>
 </mod:modelo>

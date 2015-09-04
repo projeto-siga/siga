@@ -2,7 +2,6 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ page language="java" contentType="text/html; charset=utf-8" buffer="64kb"%>
 <script language="javascript">
@@ -252,31 +251,33 @@ A prestaÃ§Ã£o remunerada de serviÃ§o extraordinÃ¡rio aos sÃ¡bados, dom
 					<td bgcolor="#FFFFFF" width="5%" align="center"><p style="font-size:8px">${f:pessoa(servidorX).lotacao.descricao}</p></td>
 					<c:forEach var="j" begin="1"
 						end="${requestScope[f:concat('numDatas',i)]}">
-						<ww:if test="${j == 1}">
-							<td bgcolor="#FFFFFF" width="10%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('dataServico',i),j)]}</p></td>
-							<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('dataSemana',i),j)]}</p></td>
-							<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('feriado',i),j)]}</p></td>
-							<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('adicionalBanco',i),j)]}</p></td>
-							<td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaIni',i),j)]}:${requestScope[f:concat(f:concat('minutoIni',i),j)]}:00</p></td>
-							<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('intervalo',i),j)]}</p></td>
-						    <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaFim',i),j)]}:${requestScope[f:concat(f:concat('minutoFim',i),j)]}:00</p></td>
-                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('totalHoras',i),j)]}:${requestScope[f:concat(f:concat('totalMinutos',i),j)]}:00</p></td>
-						</ww:if>
-						<ww:else>
-							<tr>
-							<td bgcolor="#FFFFFF" width="20%" align="center"><p style="font-size:11px">${f:maiusculasEMinusculas(f:pessoa(servidorX).nomePessoa)}</p></td>
-                            <td bgcolor="#FFFFFF" width="07%" align="center"><p style="font-size:11px">${f:pessoa(servidorX).matricula}</p></td>
-                            <td bgcolor="#FFFFFF" width="05%" align="center"><p style="font-size:11px">${f:pessoa(servidorX).lotacao.descricao}</p></td>
-							<td bgcolor="#FFFFFF" width="10%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('dataServico',i),j)]}</p></td>
-                            <td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('dataSemana',i),j)]}</p></td>
-                            <td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('feriado',i),j)]}</p></td>
-                            <td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('adicionalBanco',i),j)]}</p></td>
-                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaIni',i),j)]}:${requestScope[f:concat(f:concat('minutoIni',i),j)]}:00</p></td>
-                            <td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('intervalo',i),j)]}</p></td>
-                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaFim',i),j)]}:${requestScope[f:concat(f:concat('minutoFim',i),j)]}:00</p></td>
-                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('totalHoras',i),j)]}:${requestScope[f:concat(f:concat('totalMinutos',i),j)]}:00</p></td>
-							</tr>
-						</ww:else>
+						<c:choose>									
+							<c:when test="${j == 1}">
+								<td bgcolor="#FFFFFF" width="10%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('dataServico',i),j)]}</p></td>
+								<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('dataSemana',i),j)]}</p></td>
+								<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('feriado',i),j)]}</p></td>
+								<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('adicionalBanco',i),j)]}</p></td>
+								<td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaIni',i),j)]}:${requestScope[f:concat(f:concat('minutoIni',i),j)]}:00</p></td>
+								<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('intervalo',i),j)]}</p></td>
+							    <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaFim',i),j)]}:${requestScope[f:concat(f:concat('minutoFim',i),j)]}:00</p></td>
+	                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('totalHoras',i),j)]}:${requestScope[f:concat(f:concat('totalMinutos',i),j)]}:00</p></td>
+							</c:when>
+							<c:otherwise>										
+								<tr>
+								<td bgcolor="#FFFFFF" width="20%" align="center"><p style="font-size:11px">${f:maiusculasEMinusculas(f:pessoa(servidorX).nomePessoa)}</p></td>
+	                            <td bgcolor="#FFFFFF" width="07%" align="center"><p style="font-size:11px">${f:pessoa(servidorX).matricula}</p></td>
+	                            <td bgcolor="#FFFFFF" width="05%" align="center"><p style="font-size:11px">${f:pessoa(servidorX).lotacao.descricao}</p></td>
+								<td bgcolor="#FFFFFF" width="10%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('dataServico',i),j)]}</p></td>
+	                            <td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('dataSemana',i),j)]}</p></td>
+	                            <td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('feriado',i),j)]}</p></td>
+	                            <td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('adicionalBanco',i),j)]}</p></td>
+	                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaIni',i),j)]}:${requestScope[f:concat(f:concat('minutoIni',i),j)]}:00</p></td>
+	                            <td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('intervalo',i),j)]}</p></td>
+	                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaFim',i),j)]}:${requestScope[f:concat(f:concat('minutoFim',i),j)]}:00</p></td>
+	                            <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('totalHoras',i),j)]}:${requestScope[f:concat(f:concat('totalMinutos',i),j)]}:00</p></td>
+								</tr>
+							</c:otherwise>	
+						</c:choose>							
 					</c:forEach>
 
 				</tr>

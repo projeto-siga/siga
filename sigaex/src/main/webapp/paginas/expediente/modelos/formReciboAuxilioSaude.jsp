@@ -2,7 +2,6 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 <mod:modelo>
 	<mod:entrevista>		
@@ -109,14 +108,16 @@
 			<table width="80%"  border="0" cellspacing="0" align="left">				
 					<c:forEach var="i" begin="1" end="${numDependentes}">
 						<tr>
-							<ww:if test="${i == 1}">
-								<td width="17"><b>Dependentes:</b></td>
-								<td width="63" align="left"> ${requestScope[f:concat('nomeDep',i)]}</td>
-							</ww:if>							
-							<ww:else>
-								<td width="17"></td>
-								<td width="63" align="left"> ${requestScope[f:concat('nomeDep',i)]}</td>
-							</ww:else>	
+							<c:choose>									
+								<c:when test="${i == 1}">
+									<td width="17"><b>Dependentes:</b></td>
+									<td width="63" align="left"> ${requestScope[f:concat('nomeDep',i)]}</td>
+								</c:when>
+								<c:otherwise>										
+									<td width="17"></td>
+									<td width="63" align="left"> ${requestScope[f:concat('nomeDep',i)]}</td>
+								</c:otherwise>	
+							</c:choose>							
 						</tr>				
 					</c:forEach>				
 			</table>			

@@ -3,7 +3,6 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 <mod:modelo>
 	<mod:entrevista>
@@ -235,14 +234,16 @@
 		</c:choose> <c:if test="${(opcao eq 'Alteração') or (opcao eq 'Cancelamento')}">
 			<p style="TEXT-INDENT: 2cm" align="justify">Deseja manter os
 			demais períodos já marcados? <b>${manterPeriodos}</b></p>
-			<ww:if test="${motivo == 'Outros'}">
-				<p style="TEXT-INDENT: 2cm" align="justify">Qual o motivo desta
-				solicitação? ${motivoDesc}</p>
-			</ww:if>
-			<ww:else>
-				<p style="TEXT-INDENT: 2cm" align="justify">Qual o motivo desta
-				solicitação? <b>${motivo}</b></p>
-			</ww:else>
+			<c:choose>									
+				<c:when test="${motivo == 'Outros'}">
+					<p style="TEXT-INDENT: 2cm" align="justify">Qual o motivo desta
+					solicitação? ${motivoDesc}</p>
+				</c:when>
+				<c:otherwise>										
+					<p style="TEXT-INDENT: 2cm" align="justify">Qual o motivo desta
+					solicitação? <b>${motivo}</b></p>
+				</c:otherwise>	
+			</c:choose>	
 		</c:if> <c:if test="${(opcao eq 'Alteração') or (opcao eq 'Marcação')}">
 			<p style="TEXT-INDENT: 2cm" align="justify">Conforme o art.8º, parágrafo 8º, da Resolução CF-RES-2012/00221 de 19/12/2012, declaro estar CIENTE de que cabe à Administração, comunicar, com antecedência de 90 dias do fim do prazo de fruição das férias, ao servidor e à chefia imediata, a obrigatoriedade de gozo dessas férias e que, não havendo manifestação de minha parte ou de meu superior hierárquico acerca da marcação, a Administração o fará de ofício.</p>
 		</c:if> <c:import url="/paginas/expediente/modelos/inc_deferimento.jsp" /> <c:import

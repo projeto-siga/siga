@@ -3,7 +3,6 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 
 <mod:modelo>
@@ -59,12 +58,14 @@
 					<br/><br/>
 					<table width="100%" border="0" >
 						<tr>
-						<ww:if test="${tipo == 'Requisitado'}">
-							<td align="center"><mod:letra tamanho="${tl}"><p style="font-family:Arial;font-weight:bold" >GUIA PR&Eacute;-ADMISSIONAL/REQUISITADO</p></mod:letra></td>			   				
-						</ww:if>
-						<ww:else>
-			    			 <td align="center"><mod:letra tamanho="${tl}"><p style="font-family:Arial;font-weight:bold" >GUIA PR&Eacute;-ADMISSIONAL</p></mod:letra></td>	
-						</ww:else>								
+						<c:choose>									
+							<c:when test="${tipo == 'Requisitado'}">
+								<td align="center"><mod:letra tamanho="${tl}"><p style="font-family:Arial;font-weight:bold" >GUIA PR&Eacute;-ADMISSIONAL/REQUISITADO</p></mod:letra></td>			   				
+							</c:when>
+							<c:otherwise>										
+				    			 <td align="center"><mod:letra tamanho="${tl}"><p style="font-family:Arial;font-weight:bold" >GUIA PR&Eacute;-ADMISSIONAL</p></mod:letra></td>	
+							</c:otherwise>	
+						</c:choose>							
 						</tr>
 						<tr>
 						<td align="right"><br/><br/><br/><b>SOLICITA&Ccedil;&Atilde;O Nº ${doc.codigo}</b>

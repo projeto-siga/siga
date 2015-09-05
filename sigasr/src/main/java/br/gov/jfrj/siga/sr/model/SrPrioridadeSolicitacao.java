@@ -15,8 +15,6 @@ import org.hibernate.annotations.Type;
 
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
-import br.gov.jfrj.siga.sr.model.vo.SrPrioridadeSolicitacaoVO;
-import br.gov.jfrj.siga.sr.util.AtualizacaoLista;
 import br.gov.jfrj.siga.sr.util.Util;
 
 import com.google.gson.Gson;
@@ -158,14 +156,4 @@ public class SrPrioridadeSolicitacao extends Objeto {
         return solicitacao;
     }
 
-    public SrPrioridadeSolicitacaoVO toVO() {
-        return SrPrioridadeSolicitacaoVO.createFrom(this);
-    }
-
-    public void atualizar(AtualizacaoLista atualizacaoLista) throws Exception {
-        this.setPrioridade(atualizacaoLista.getPrioridade());
-        this.setNumPosicao(atualizacaoLista.getNumPosicao());
-        this.setNaoReposicionarAutomatico(atualizacaoLista.isNaoReposicionarAutomatico());
-        this.save();
-    }
 }

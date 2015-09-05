@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -34,7 +32,6 @@ import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
 import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
-import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -54,6 +51,7 @@ import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrMeioComunicacao;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
+import br.gov.jfrj.siga.sr.model.SrPrioridadeSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao.SrTarefa;
 import br.gov.jfrj.siga.sr.model.SrTendencia;
@@ -64,9 +62,7 @@ import br.gov.jfrj.siga.sr.model.SrTipoPermissaoLista;
 import br.gov.jfrj.siga.sr.model.SrUrgencia;
 import br.gov.jfrj.siga.sr.model.vo.SrListaVO;
 import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoListaVO;
-import br.gov.jfrj.siga.sr.util.AtualizacaoLista;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
-import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro.SentidoOrdenacao;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -473,25 +469,9 @@ public class SolicitacaoController extends SrController {
 
     @SuppressWarnings("unchecked")
     @Path("/buscar")
-    public void buscar(SrSolicitacaoFiltro filtro, String propriedade, boolean popup, Long start, Long length, boolean telaDeListas) throws Exception {
+    public void buscar(SrSolicitacaoFiltro filtro, String propriedade, boolean popup, boolean telaDeListas) throws Exception {
         
         if (filtro != null && filtro.isPesquisar()){
-        	
-        	//Edson: dar um jeito de fazer isso pelo VRaptor ou pelo javascript:
-        	filtro.setLength(length);
-        	filtro.setStart(start);
-        	Pattern p = Pattern.compile("^order\\[(\\d)\\]\\[(dir|column)\\]$");
-        	for (Object k : getRequest().getParameterMap().keySet()){
-        		String chave = (String) k;
-                final Matcher m = p.matcher(chave);
-        		if (m.find()){
-        			String value = (String) getRequest().getParameter(chave);
-        			if (m.group(2).equals("column"))
-        				filtro.setOrderBy(getRequest().getParameter("columns[" + value + "][name]"));
-        			else filtro.setSentidoOrdenacao(value.equals("asc") ? SentidoOrdenacao.ASC : SentidoOrdenacao.DESC);
-        		}
-        	}
-        	
         	filtro.carregarSelecao();
         	SrSolicitacaoListaVO solicitacaoListaVO = new SrSolicitacaoListaVO(filtro, telaDeListas, propriedade, popup, getLotaTitular(), getCadastrante());
         	result.use(Results.json()).withoutRoot().from(solicitacaoListaVO).excludeAll().include("recordsFiltered").include("data").serialize();
@@ -832,16 +812,25 @@ public class SolicitacaoController extends SrController {
         if (movimentacao.getDescrMovimentacao() == null || movimentacao.getDescrMovimentacao().trim().equals("") && movimentacao.isTrocaDePessoaAtendente()){
         	if (movimentacao.getAtendente() != null)
         		movimentacao.setDescrMovimentacao("Atribuindo a " + movimentacao.getAtendente().getNomeAbreviado());
-        	else movimentacao.setDescrMovimentacao("Retirando atribuição (retornando a " + movimentacao.getLotaAtendente().getSiglaCompleta() + ")");
+        	else movimentacao.setDescrMovimentacao("Retirando atribuição");
         }
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(this).exibir(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
     }
 
     @Path("/exibir/priorizarLista")
-    public void priorizarLista(List<AtualizacaoLista> listaPrioridadeSolicitacao, Long id) throws Exception {
-        SrLista lista = SrLista.AR.findById(id);
-        lista.priorizar(getCadastrante(), getLotaTitular(), listaPrioridadeSolicitacao);
+    public void priorizarLista(List<SrPrioridadeSolicitacao> listaPrioridadeSolicitacao, Long id) throws Exception {
+    	for (SrPrioridadeSolicitacao pNova : listaPrioridadeSolicitacao){
+    		SrPrioridadeSolicitacao p = SrPrioridadeSolicitacao.AR.findById(pNova.getId());
+    		if (p.getNumPosicao() != pNova.getNumPosicao()
+    				|| p.getPrioridade() != pNova.getPrioridade()
+    				|| p.getNaoReposicionarAutomatico() != pNova.getNaoReposicionarAutomatico()){
+    			p.setNumPosicao(pNova.getNumPosicao());
+    			p.setPrioridade(pNova.getPrioridade());
+    			p.setNaoReposicionarAutomatico(pNova.getNaoReposicionarAutomatico());
+    			p.save();
+    		}
+    	}
         exibirLista(id);
         result.use(Results.http()).setStatusCode(200);
     }

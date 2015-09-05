@@ -61,8 +61,8 @@
 	                        <td>Cadastrante</td>
 	                        <td>
 	                           <input type="hidden" name="filtro.cadastranteSel" value="" />
-	                           <input type="hidden" name="filtro.lotaCadastranteSel" value="" />
-	                           <siga:pessoaLotaSelecao2 propriedadePessoa="filtro.cadastranteSel" propriedadeLotacao="filtro.lotaCadastranteSel"/>
+	                           <input type="hidden" name="filtro.lotaTitularSel" value="" />
+	                           <siga:pessoaLotaSelecao2 propriedadePessoa="filtro.cadastranteSel" propriedadeLotacao="filtro.lotaTitularSel"/>
 	                        </td>
 	                    </tr>
 	                    <tr>

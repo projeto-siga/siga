@@ -273,7 +273,8 @@
 				</c:if>
 				<p>
 					<b>Cadastrante:</b>
-					${solicitacao.cadastrante.descricaoIniciaisMaiusculas}
+					${solicitacao.cadastrante.descricaoIniciaisMaiusculas},
+					${solicitacao.lotaTitular.siglaLotacao}
 				</p>
 				<c:if test="${solicitacao.isEscalonada()}">
 					<c:set var="itemEscalonar"

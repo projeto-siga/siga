@@ -17,12 +17,16 @@ function ${nome}(){
 		});	
 		//PassAjaxResponseToFunction('${url}', 'carregouAjax${nome}', null, false, null);
 	else 
-		$( "#${nome}_dialog" ).dialog( "open" );
+		${nome}_dialog.dialog( "open" );
+}
+
+function ${nome}_fechar(){
+	${nome}_dialog.dialog( "close" );
 }
 
 function carregouAjax${nome}(response, param){
-		$("#${nome}_dialog").html(response);
-		$("#${nome}_dialog").dialog( "open" );
+	${nome}_dialog.html(response);
+	${nome}_dialog.dialog( "open" );
 }
 
 </script>
@@ -34,8 +38,7 @@ function carregouAjax${nome}(response, param){
 <script>
 var altura = "${altura}" != "" ? "${altura}" : "auto";
 var largura = "${largura}" != "" ? "${largura}" : "auto";
-
-$("#${nome}_dialog").dialog({
+var ${nome}_dialog = $("#${nome}_dialog").dialog({
     autoOpen: false,
     height: altura,
     width: largura,

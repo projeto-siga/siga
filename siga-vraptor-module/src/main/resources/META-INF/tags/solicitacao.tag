@@ -120,6 +120,12 @@
 							d[this.name] = $(this).val();
 					});
 					d['filtro.pesquisar'] = true;
+					d['filtro.start'] = d['start'];
+					d['filtro.length'] = d['length'];
+					if (d['order'].length > 0){
+						d['filtro.orderBy'] = d['columns'][d['order'][0].column].name;
+						d['filtro.sentidoOrdenacao'] = d['order'][0].dir.toUpperCase();
+					}
 				    }
 				})
 			.configurar("fnRowCallback", solicitacoesRowCallback)

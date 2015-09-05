@@ -2,9 +2,7 @@ package br.gov.jfrj.siga.sr.model;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -29,7 +27,6 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.vo.SrListaVO;
-import br.gov.jfrj.siga.sr.util.AtualizacaoLista;
 
 @Entity
 @Table(name = "SR_LISTA", schema = "SIGASR")
@@ -226,30 +223,7 @@ public class SrLista extends HistoricoSuporte {
 
         return prioridades.get(prioridades.size() - 1).getNumPosicao() + 1;
     }
-
-    public void priorizar(DpPessoa cadastrante, DpLotacao lotaCadastrante, List<AtualizacaoLista> listaPrioridadeSolicitacao) throws Exception {
-        Map<Long, AtualizacaoLista> atualizacoesAgrupadas = agruparAtualizacoes(listaPrioridadeSolicitacao);
-
-        for (SrPrioridadeSolicitacao prioridadeSolicitacao : getPrioridadeSolicitacaoSet()) {
-            if (!prioridadeSolicitacao.getSolicitacao().isEmLista(this))
-                throw new IllegalArgumentException("A solicitaï¿½ï¿½o " + prioridadeSolicitacao.getSolicitacao().getCodigo() + " nï¿½o faz parte da lista");
-
-            AtualizacaoLista atualizacaoLista = atualizacoesAgrupadas.get(prioridadeSolicitacao.getId());
-            if (atualizacaoLista != null) {
-                prioridadeSolicitacao.atualizar(atualizacaoLista);
-            }
-        }
-        // this.refresh();
-    }
-
-    private Map<Long, AtualizacaoLista> agruparAtualizacoes(List<AtualizacaoLista> listaPrioridadeSolicitacao) {
-        Map<Long, AtualizacaoLista> atualizacoesAgrupadas = new HashMap<Long, AtualizacaoLista>();
-        for (AtualizacaoLista atualizacaoLista : listaPrioridadeSolicitacao) {
-            atualizacoesAgrupadas.put(atualizacaoLista.getIdPrioridadeSolicitacao(), atualizacaoLista);
-        }
-        return atualizacoesAgrupadas;
-    }
-
+    
     protected void recalcularPrioridade(DpPessoa pessoa, DpLotacao lota) throws Exception {
         Long posicao = 0L;
         for (SrPrioridadeSolicitacao prioridadeSolicitacao : getPrioridadeSolicitacaoSet()) {

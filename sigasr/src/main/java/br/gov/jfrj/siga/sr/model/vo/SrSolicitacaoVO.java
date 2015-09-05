@@ -5,6 +5,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrMarca;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
+import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.model.SrPrioridadeSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.util.SrViewUtil;
@@ -18,6 +19,7 @@ public class SrSolicitacaoVO {
 	private String botaoExpandir = "+";
 	private String botaoRemoverPriorizar = "";
 	private Long idSolicitacao;
+	private Long idPrioridadeSolicitacao;
 
 	// Edson: colunas ordenáveis:
 	private String dtReg = "";
@@ -26,11 +28,12 @@ public class SrSolicitacaoVO {
 	private String solicitante = "";
 	private String lotaSolicitante = "";
 	private String cadastrante = "";
-	private String lotaCadastrante = "";
+	private String lotaTitular = "";
 	private String prioridade = "";
-	private String prioridadeNaLista = "";
+	private SrPrioridade prioridadeNaLista;
 	private String prioridadeTecnica = "";
 	private String posicaoNaLista = "";
+	private boolean naoReposicionarAutomaticoNaLista = false;
 	private String situacao = "";
 	private String atendente = "";
 	private String lotaAtendente = "";
@@ -39,10 +42,11 @@ public class SrSolicitacaoVO {
 
 	public SrSolicitacaoVO(SrSolicitacao sol, SrMarca m, SrMovimentacao ultMov, SrLista lista,
 			SrPrioridadeSolicitacao prioridadeSolicitacao,
-			DpLotacao lotaTitular, DpPessoa titular, String propriedade,
-			boolean podeRemover, boolean podePriorizar, boolean isPopup)
+			DpLotacao lotaTitular, DpPessoa titular, String propriedade, boolean isPopup,
+			boolean podeRemover, boolean podePriorizar)
 			throws Exception {
 		this.setIdSolicitacao(sol.getId());
+		this.setIdPrioridadeSolicitacao(prioridadeSolicitacao != null ? prioridadeSolicitacao.getIdPrioridadeSolicitacao() : null);
 
 		this.setDtReg(sol.getSolicitacaoInicial().getDtRegString());
 		if (isPopup)
@@ -55,7 +59,7 @@ public class SrSolicitacaoVO {
 					+ "\">" + sol.getCodigo() + "</a>");
 
 		this.setDescrSolicitacao("<b>"
-				+ sol.getItemConfiguracao().getTituloItemConfiguracao()
+				+ (sol.getItemConfiguracao() != null ? sol.getItemConfiguracao().getTituloItemConfiguracao() : "Item não informado")
 				+ ":</b>&nbsp;" + SrViewUtil.selecionado(sol.getDescricao(), sol.getDescricao()));
 
 		String nomeCadastranteAbreviado = sol.getCadastrante() != null ? sol
@@ -64,7 +68,7 @@ public class SrSolicitacaoVO {
 				.getCadastrante().getNomePessoa() : "";
 		this.setCadastrante(SrViewUtil.selecionado(nomeCadastranteAbreviado,nomeCadastrante));
 		
-		this.setLotaCadastrante(SrViewUtil.selecionado(sol.getLotaCadastrante()
+		this.setLotaTitular(SrViewUtil.selecionado(sol.getLotaTitular()
 				.getSiglaCompleta(), sol.getLotaTitular().getNomeLotacao()));
 
 		String nomeSolicitanteAbreviado = sol.getSolicitante() != null ? sol.getSolicitante().getNomeAbreviado() : "";
@@ -79,12 +83,14 @@ public class SrSolicitacaoVO {
 		this.setPosicaoNaLista(prioridadeSolicitacao != null ? prioridadeSolicitacao
 				.getNumPosicao().toString() : "");
 		this.setPrioridadeNaLista(prioridadeSolicitacao != null ? prioridadeSolicitacao
-				.getPrioridadeString() : "");
+				.getPrioridade() : null);
+		this.setNaoReposicionarAutomaticoNaLista(prioridadeSolicitacao != null ? prioridadeSolicitacao
+				.getNaoReposicionarAutomatico() : false);
 		this.setPrioridadeTecnica(sol.getPrioridadeTecnicaString());
 		
 		if (prioridadeSolicitacao != null)
 			this.setCssClass("PRIORIDADE-" + prioridadeSolicitacao.getPrioridade());
-		this.setCssClass("PRIORIDADE-" + sol.getPrioridadeTecnica());
+		else this.setCssClass("PRIORIDADE-" + sol.getPrioridadeTecnica());
 
 		this.setSituacao(m.getCpMarcador().getDescrMarcador());
 
@@ -113,6 +119,14 @@ public class SrSolicitacaoVO {
 		if (podeRemover || podePriorizar)
 			this.setBotaoRemoverPriorizar(this.botaoRemover
 					+ this.botaoPriorizar);
+	}
+
+	public SrPrioridade getPrioridadeNaLista() {
+		return prioridadeNaLista;
+	}
+
+	public void setPrioridadeNaLista(SrPrioridade prioridadeNaLista) {
+		this.prioridadeNaLista = prioridadeNaLista;
 	}
 
 	public Long getIdSolicitacao() {
@@ -235,12 +249,12 @@ public class SrSolicitacaoVO {
 		this.lotaSolicitante = lotaSolicitante;
 	}
 
-	public String getLotaCadastrante() {
-		return lotaCadastrante;
+	public String getLotaTitular() {
+		return lotaTitular;
 	}
 
-	public void setLotaCadastrante(String lotaCadastrante) {
-		this.lotaCadastrante = lotaCadastrante;
+	public void setLotaTitular(String lotaCadastrante) {
+		this.lotaTitular = lotaCadastrante;
 	}
 
 	public String getLotaAtendente() {
@@ -257,14 +271,6 @@ public class SrSolicitacaoVO {
 
 	public void setCssClass(String cssClass) {
 		this.cssClass = cssClass;
-	}
-
-	public String getPrioridadeNaLista() {
-		return prioridadeNaLista;
-	}
-
-	public void setPrioridadeNaLista(String prioridadeNaLista) {
-		this.prioridadeNaLista = prioridadeNaLista;
 	}
 
 	public String getPrioridadeTecnica() {
@@ -290,4 +296,22 @@ public class SrSolicitacaoVO {
 	public void setUltimaMovimentacao(String ultimaMovimentacao) {
 		this.ultimaMovimentacao = ultimaMovimentacao;
 	}
+	
+	public boolean isNaoReposicionarAutomaticoNaLista() {
+		return naoReposicionarAutomaticoNaLista;
+	}
+
+	public void setNaoReposicionarAutomaticoNaLista(
+			boolean naoReposicionarAutomaticoNaLista) {
+		this.naoReposicionarAutomaticoNaLista = naoReposicionarAutomaticoNaLista;
+	}
+
+	public Long getIdPrioridadeSolicitacao() {
+		return idPrioridadeSolicitacao;
+	}
+
+	public void setIdPrioridadeSolicitacao(Long idPrioridadeSolicitacao) {
+		this.idPrioridadeSolicitacao = idPrioridadeSolicitacao;
+	}
+
 }

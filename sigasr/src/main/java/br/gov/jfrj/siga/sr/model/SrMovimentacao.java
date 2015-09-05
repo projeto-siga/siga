@@ -218,9 +218,13 @@ public class SrMovimentacao extends Objeto {
     }
     
     public SrMovimentacao getAnterior() {
+        return getAnteriorPorTipo(null);
+    }
+    
+    public SrMovimentacao getAnteriorPorTipo(Long idTpMov) {
         boolean pronto = false;
         for (SrMovimentacao mov : getSolicitacao().getMovimentacaoSet()) {
-            if (pronto)
+            if (pronto && (idTpMov == null || mov.getTipoMov().getIdTipoMov().equals(idTpMov)))
                 return mov;
             if (mov.getIdMovimentacao() == this.getIdMovimentacao())
                 pronto = true;

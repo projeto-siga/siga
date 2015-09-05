@@ -13,6 +13,7 @@ import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.util.JsonUtil;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
 import br.gov.jfrj.siga.sr.util.SrViewUtil;
+import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro.SentidoOrdenacao;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -51,6 +52,7 @@ public class SrSolicitacaoListaVO {
 		setPodeFiltrar(false);
 		if (telaDeListas && lista != null) {
 			filtro.setOrderBy("posicaoNaLista");
+			filtro.setSentidoOrdenacao(SentidoOrdenacao.ASC);
 			setPodePriorizar(lista.podePriorizar(lotaTitular, cadastrante));
 			setPodeRemover(lista.podeRemover(lotaTitular, cadastrante));
 			setPodePaginar(false);
@@ -75,7 +77,7 @@ public class SrSolicitacaoListaVO {
 				"gt-celula-nowrap solicitacao-dados");
 		ColunaVO cad = new ColunaVO("Cadastrante", "cadastrante",
 				"gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO).setExibirPorDefault(false);
-		ColunaVO lotaCad = new ColunaVO("Lot. Cadastrante", "lotaCadastrante",
+		ColunaVO lotaCad = new ColunaVO("Lot. Cadastrante", "lotaTitular",
 				"gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO).setExibirPorDefault(false);
 		ColunaVO solictt = new ColunaVO("Solicitante", "solicitante",
 				"gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO);
@@ -88,8 +90,6 @@ public class SrSolicitacaoListaVO {
 		ColunaVO prioridadeTecnica = new ColunaVO("Prior. Técnica",
 				"prioridadeTecnica",
 				"gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO);
-		ColunaVO prioridadeNaLista = new ColunaVO("Prioridade na Lista", "prioridadeNaLista",
-				"gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO).setExibirPorDefault(false);
 		ColunaVO situacao = new ColunaVO("Situação", "situacao",
 				"gt-celula-nowrap solicitacao-dados").setExibirPorDefault(false);
 		ColunaVO atendente = new ColunaVO("Atendente", "atendente",
@@ -131,7 +131,7 @@ public class SrSolicitacaoListaVO {
 		colunas.add(ultMov);
 
 		if (telaDeListas){
-			colunas.add(prioridadeNaLista);
+			//colunas.add(prioridadeNaLista);
 			if (podeRemover || podePriorizar)
 				colunas.add(botaoRemoverPriorizar);
 		}

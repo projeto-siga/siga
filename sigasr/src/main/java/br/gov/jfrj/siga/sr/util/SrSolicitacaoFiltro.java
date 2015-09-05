@@ -66,7 +66,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	private DpLotacaoSelecao lotaAtendenteSel;
 
 	private DpPessoaSelecao cadastranteSel;
-	private DpLotacaoSelecao lotaCadastranteSel;
+	private DpLotacaoSelecao lotaTitularSel;
 
 	private DpPessoaSelecao solicitanteSel;
 	private DpLotacaoSelecao lotaSolicitanteSel;
@@ -99,10 +99,10 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			cadastranteSel.carregarDadosParaView(this.getCadastrante());
 		}
 
-		if (lotaCadastranteSel != null) {
-			this.setLotaCadastrante(lotaCadastranteSel.buscarObjeto());
-			this.lotaCadastranteSel.carregarDadosParaView(this
-					.getLotaCadastrante());
+		if (lotaTitularSel != null) {
+			this.setLotaTitular(lotaTitularSel.buscarObjeto());
+			this.lotaTitularSel.carregarDadosParaView(this
+					.getLotaTitular());
 		}
 
 		if (solicitanteSel != null) {
@@ -170,8 +170,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" sol.lotaSolicitante.siglaLotacao ");
 		else if (orderBy.equals("cadastrante"))
 			query.append(" sol.cadastrante ");
-		else if (orderBy.equals("lotaCadastrante"))
-			query.append(" sol.lotaCadastrante.siglaLotacao ");
+		else if (orderBy.equals("lotaTitular"))
+			query.append(" sol.lotaTitular.siglaLotacao ");
 		else if (orderBy.equals("prioridade"))
 			query.append(" sol.prioridade ");
 		else if (orderBy.equals("prioridadeTecnica"))
@@ -227,19 +227,13 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 					+ getLotaSolicitante().getIdInicial());
 		
 		if (Filtros.deveAdicionar(getItemConfiguracao())){
-			query.append(" and ((sol.dnmItemConfiguracao.itemInicial.idItemConfiguracao = "
+			query.append(" and sol.dnmItemConfiguracao.hisIdIni = "
 					+ getItemConfiguracao().getItemInicial()
 							.getIdItemConfiguracao());
-			query.append(" or (sol.dnmItemConfiguracao is null and sol.itemConfiguracao.itemInicial.idItemConfiguracao = "
-					+ getItemConfiguracao().getItemInicial()
-							.getIdItemConfiguracao() + ")) ");
 		}
 		if (Filtros.deveAdicionar(getAcao())){
-			query.append(" and ((sol.dnmAcao.acaoInicial.idAcao = "
+			query.append(" and sol.dnmAcao.hisIdIni = "
 					+ getAcao().getAcaoInicial().getIdAcao());
-			query.append(" or (sol.dnmAcao is null and sol.acao.itemInicial.idItemConfiguracao = "
-					+ getItemConfiguracao().getItemInicial()
-							.getIdItemConfiguracao() + ")) ");
 		}
 		
 		if (getPrioridade() != null && getPrioridade().getIdPrioridade() > 0L){
@@ -250,11 +244,11 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (getIdListaPrioridade() != null
 				&& !getIdListaPrioridade().equals(QUALQUER_LISTA_OU_NENHUMA)) {
 			if (getIdListaPrioridade().equals(NENHUMA_LISTA)) {
-				query.append(" and not exists (from SrPrioridadeSolicitacao prio where prio.solicitacao.solicitacaoInicial = sol.solicitacaoInicial) ");
+				query.append(" and not exists (from SrPrioridadeSolicitacao prio where prio.solicitacao.hisIdIni = sol.hisIdIni) ");
 			} else {
 				SrLista lista = SrLista.AR.findById(getIdListaPrioridade());
-				query.append(" and l.lista.listaInicial.idLista = "
-						+ lista.getListaInicial().getId() + ") ");
+				query.append(" and l.lista.hisIdIni = "
+						+ lista.getListaInicial().getId());
 			}
 		}
 
@@ -307,14 +301,11 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append("and situacao.dpPessoaIni.idPessoa = "
 					+ getAtendente().getIdInicial());
 		else if (Filtros.deveAdicionar(getLotaAtendente())) {
-			if (isNaoDesignados())
-				query.append("and situacao.dpLotacaoIni.idLotacao = "
-						+ getLotaAtendente().getIdInicial()
-						+ " and situacao.dpPessoaIni is null");
-			else
 				query.append("and situacao.dpLotacaoIni.idLotacao = "
 						+ getLotaAtendente().getIdInicial());
 		}
+		if (isNaoDesignados())
+			query.append(" and situacao.dpPessoaIni is null ");
 
 		montarQueryAtributos(query);
 	}
@@ -407,7 +398,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 				|| dtFim != null
 				|| itemConfiguracaoSel != null
 				|| acaoSel != null
-				|| (idListaPrioridade != null && idListaPrioridade > 0)
+				|| acordoSel != null
+				|| (idListaPrioridade != null && idListaPrioridade >= 0)
 				|| (getDescrSolicitacao() != null && !getDescrSolicitacao()
 						.trim().equals("")) || getPrioridade() != null;
 	}
@@ -542,12 +534,12 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		this.cadastranteSel = cadastranteSel;
 	}
 
-	public DpLotacaoSelecao getLotaCadastranteSel() {
-		return lotaCadastranteSel;
+	public DpLotacaoSelecao getLotaTitularSel() {
+		return lotaTitularSel;
 	}
 
-	public void setLotaCadastranteSel(DpLotacaoSelecao lotacadastranteSel) {
-		this.lotaCadastranteSel = lotacadastranteSel;
+	public void setLotaTitularSel(DpLotacaoSelecao lotacadastranteSel) {
+		this.lotaTitularSel = lotacadastranteSel;
 	}
 
 	public DpPessoaSelecao getSolicitanteSel() {

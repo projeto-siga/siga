@@ -50,7 +50,7 @@
 				
 				<div id="numPosicao" class="gt-form-row gt-width-66">
 					<label>Mover Para</label> 
-					<input type="number" min="0" name="numPosicao"/>
+					<input type="number" min="0" name="posicaoNaLista"/>
 				</div>
 				
 				<div class="gt-form-row">
@@ -71,7 +71,7 @@
 				<div id="prioridade" class="gt-form-row gt-width-66">
 					<label>Prioridade</label> 
 					<td>
-						<siga:select name="prioridade" id="selectPrioridade" list="prioridadeList"
+						<siga:select name="prioridadeNaLista" id="selectPrioridade" list="prioridadeList"
 								listKey="idPrioridade" listValue="descPrioridade" theme="simple"
 								headerValue="[Nenhuma]" headerKey="0" value="${solicitacao.prioridade.idPrioridade}" isEnum="true"/>
 							 
@@ -111,16 +111,22 @@
 	$(function(){
 	    $('#btn').click(function() {
 	        var prioridades="";
+	        var idLista = $('[name=idLista]').val();
 	    	$("#sortable > tr").each(function(index) {
 	    		var solicitacaoString = $(this).attr('data-json'),
 	    			solicitacao = JSON.parse(solicitacaoString);
     			if (solicitacao){
-        			for (atributo in solicitacao.prioridadeSolicitacaoVO){
-        				prioridades += "listaPrioridadeSolicitacao["+index+"]."+atributo+"="+solicitacao.prioridadeSolicitacaoVO[atributo]+"&";
-        			}
+    				prioridades += "listaPrioridadeSolicitacao["+index+"].naoReposicionarAutomatico="+solicitacao.naoReposicionarAutomaticoNaLista+"&";
+    				prioridades += "listaPrioridadeSolicitacao["+index+"].numPosicao="+solicitacao.posicaoNaLista+"&";
+    				prioridades += "listaPrioridadeSolicitacao["+index+"].prioridade="+solicitacao.prioridadeNaLista+"&";
+    				prioridades += "listaPrioridadeSolicitacao["+index+"].idPrioridadeSolicitacao="+solicitacao.idPrioridadeSolicitacao+"&";
+    				prioridades += "listaPrioridadeSolicitacao["+index+"].lista.id="+idLista+"&";
+    				prioridades += "listaPrioridadeSolicitacao["+index+"].solicitacao.id="+solicitacao.idSolicitacao+"&";
+    				
     			}
 	 	    });
 	 	    if (prioridades.length > 0) {
+		 	    window.location.href=
 	 	    	jQuery.blockUI(objBlock);
 	 	    	$.ajax({
 		 	    	type: "POST",
@@ -128,9 +134,11 @@
 		 	    	data: "id=" + $('[name=idLista]').val() + "&" + prioridades,
 		 	    	success: function() {
 		 	    		alert('Lista gravada com sucesso');
+		 	    		jQuery.unblockUI(objBlock);
 		 	    	},
 		 	    	error: function(XMLHttpRequest, textStatus, errorThrown) {
 		 	    		alert('Não foi possível efetivar a priorização');
+		 	    		jQuery.unblockUI(objBlock);
 		 	    	}
 	 	    	});
 		 	}
@@ -187,8 +195,10 @@
 			obj = JSON.parse(tr.attr('data-json'));
 
 		if (obj) {
-			$('#posicao_dialog').dialog('open');
-			new Formulario($('#posicaoForm')).populateFromJson(obj.prioridadeSolicitacaoVO);
+			posicao();
+			//new Formulario($('#posicaoForm')).populateFromJson(obj);
+			$("#idPrioridadePosicao").val(obj.idSolicitacao);
+			$("input[name='posicaoNaLista']").val(obj.posicaoNaLista);
 		}
 	}
 
@@ -197,9 +207,11 @@
 			obj = JSON.parse(tr.attr('data-json'));
 
 		if (obj) {
-			$('#prioridade_dialog').dialog('open');
-			obj.prioridadeSolicitacaoVO.checknaoReposicionarAutomatico = obj.prioridadeSolicitacaoVO.naoReposicionarAutomatico;
-			new Formulario($('#prioridadeForm')).populateFromJson(obj.prioridadeSolicitacaoVO);
+			prioridade();
+			$("#idPrioridadePrior").val(obj.idSolicitacao);
+			$("select[name='prioridadeNaLista']").val(obj.prioridadeNaLista);
+			$("input[name='naoReposicionarAutomatico']").val(obj.naoReposicionarAutomaticoNaLista);
+			$("#checknaoReposicionarAutomatico")[0].checked = obj.naoReposicionarAutomaticoNaLista;
 		}
 	}
 
@@ -238,7 +250,7 @@
 	}
 	
 	function reposicionar() {
-		var novaPosicao = $('[name=numPosicao]').val(),
+		var novaPosicao = $('[name=posicaoNaLista]').val(),
 			lista = $("#sortable > tr"),
 			idSolicitacao = $('#idPrioridadePosicao').val(),
 			tr = $('[data-json-id= '+ idSolicitacao + ']'),
@@ -253,7 +265,7 @@
 			tr.insertAfter($(lista[size-1]));
 		}
 		else {
-			if (solicitacao && solicitacao.prioridadeSolicitacaoVO && solicitacao.prioridadeSolicitacaoVO.numPosicao < novaPosicao) {
+			if (solicitacao && solicitacao.posicaoNaLista && solicitacao.posicaoNaLista < novaPosicao) {
 				tr.insertBefore($(lista[novaPosicao]));
 			}
 			else tr.insertBefore($(lista[novaPosicao-1]));
@@ -263,11 +275,7 @@
 	}
 
 	function modalPosicaoFechar() {
-		$("#posicao_dialog").dialog("close");
-	}
-
-	function modalPosicaoFechar() {
-		$("#posicao_dialog").dialog("close");
+		posicao_fechar();
 	}
 	
 	function recalcularPosicao() {
@@ -278,10 +286,10 @@
 				obj = JSON.parse(objString),
 				numPosicaoAntiga = -1;
 
-			if (obj && obj.prioridadeSolicitacaoVO) {
-				numPosicaoAntiga = obj.prioridadeSolicitacaoVO.numPosicao;
+			if (obj) {
+				numPosicaoAntiga = obj.posicaoNaLista;
 				posicao++;
-				obj.prioridadeSolicitacaoVO.numPosicao = posicao;
+				obj.posicaoNaLista = posicao;
 			}
 			me.attr('data-json', JSON.stringify(obj));
 			me.find('td:first').find('a').html(posicao);
@@ -296,18 +304,18 @@
 			objString = $(tr).attr('data-json'),
 			obj = JSON.parse(objString);
 		
-		if (obj && obj.prioridadeSolicitacaoVO) {
-			var prioridadeAntiga = obj.prioridadeSolicitacaoVO.prioridade;
-			tr.removeClass('PRIORIDADE-' + obj.prioridadeSolicitacaoVO.prioridade);
+		if (obj) {
+			var prioridadeAntiga = obj.prioridadeNaLista;
+			tr.removeClass('PRIORIDADE-' + obj.prioridadeNaLista);
 			tr.addClass('PRIORIDADE-' + novaPrioridade);
 
-			obj.prioridadeSolicitacaoVO.prioridade = novaPrioridade;
-			obj.prioridadeSolicitacaoVO.naoReposicionarAutomatico = $('#checknaoReposicionarAutomatico').is(':checked');
+			obj.prioridadeNaLista = novaPrioridade;
+			obj.naoReposicionarAutomaticoNaLista = $('#checknaoReposicionarAutomatico').is(':checked');
 			
 			tr.attr('data-json', JSON.stringify(obj));
 			
 			if(prioridadeAntiga != novaPrioridade) {
-				if (!obj.prioridadeSolicitacaoVO.naoReposicionarAutomatico) {
+				if (!obj.naoReposicionarAutomaticoNaLista) {
 					reposicionarPorPrioridade(obj, tr);
 				}
 			}
@@ -317,7 +325,7 @@
 	}
 
 	function modalPrioridadeFechar() {
-		$("#prioridade_dialog").dialog("close");
+		prioridade_fechar();
 	}
 	
 	function reposicionarPorPrioridade(listaVO, tr) {
@@ -340,7 +348,7 @@
 				listaVOAdicionado = JSON.parse(trAdicionado.attr('data-json'));
 
 			if (registrosPrioridadesDiferentes(listaVO, listaVOAdicionado)) {
-				if (listaVO && listaVO.prioridadeSolicitacaoVO && listaVO.prioridadeSolicitacaoVO.prioridade == listaVOAdicionado.prioridadeSolicitacaoVO.prioridade) {
+				if (listaVO && listaVO.prioridadeNaLista && listaVO.prioridadeNaLista == listaVOAdicionado.prioridadeNaLista) {
 					tr.insertAfter(trAdicionado);
 					return true;
 				}
@@ -353,11 +361,11 @@
 		var jsonPrioridades = $('#jsonPrioridades').data('json');
 		
 		for (var i = 0; i <= lista.size() - 1; i++) {
-			if(listaVO && listaVO.prioridadeSolicitacaoVO) {
+			if(listaVO && listaVO.prioridadeNaLista) {
 				var trAdicionado = $(lista[i]),
 					listaVOAdicionado = JSON.parse(trAdicionado.attr('data-json')),
-					idPrioridadeNovo = jsonPrioridades[listaVO.prioridadeSolicitacaoVO.prioridade],
-					idPrioridadeAntigo = jsonPrioridades[listaVOAdicionado.prioridadeSolicitacaoVO.prioridade];
+					idPrioridadeNovo = jsonPrioridades[listaVO.prioridadeNaLista],
+					idPrioridadeAntigo = jsonPrioridades[listaVOAdicionado.prioridadeNaLista];
 				
 				if (idPrioridadeNovo > idPrioridadeAntigo) {
 					tr.insertBefore(trAdicionado);
@@ -369,7 +377,7 @@
 	}
 
 	function registrosPrioridadesDiferentes(listaVO, listaVOAdicionado) {
-		return listaVO.prioridadeSolicitacaoVO.idPrioridadeSolicitacao != listaVOAdicionado.prioridadeSolicitacaoVO.idPrioridadeSolicitacao;
+		return listaVO.idPrioridadeSolicitacao != listaVOAdicionado.idPrioridadeSolicitacao;
 	}
 </script>
 

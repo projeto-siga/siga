@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.sr.model;
 
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA;
+import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_AVALIACAO;
@@ -1640,6 +1641,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         atualizarAcordos();
         
         setDnmPrioridadeTecnica(getPrioridade());
+        setDnmItemConfiguracao(getItemConfiguracao());
+        setDnmAcao(getAcao());
     }
 
     public void desfazerUltimaMovimentacao(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
@@ -1648,18 +1651,28 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
         SrMovimentacao movimentacao = getUltimaMovimentacaoCancelavel();
 
-        // tratamento pois pode ter retorno nulo do mÃ¯Â¿Â½todo
-        // getUltimaMovimentacaoCancelave()
         if (movimentacao != null) {
-
             if (movimentacao.getTipoMov() != null) {
-                // caso seja movimentacao cancelada ou fechada, reinsere nas
-                // listas de prioridade
-                if (movimentacao.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO || movimentacao.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_FECHAMENTO)
+            	
+                if (movimentacao.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO 
+                		|| movimentacao.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_FECHAMENTO)
                     reInserirListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
 
                 if (movimentacao.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_JUNTADA) {
                     this.save();
+                }
+                
+                if (movimentacao.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_ESCALONAMENTO){
+                	SrMovimentacao anterior = movimentacao.getAnteriorPorTipo(TIPO_MOVIMENTACAO_ESCALONAMENTO);
+                	setDnmItemConfiguracao(anterior != null ? anterior.getItemConfiguracao() : this.getItemConfiguracao());
+                	setDnmAcao(anterior != null ? anterior.getAcao() : this.getAcao());
+                	this.save();
+                }
+                
+                if (movimentacao.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE){
+                	SrMovimentacao anterior = movimentacao.getAnteriorPorTipo(TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE);
+                	setDnmPrioridadeTecnica(anterior != null ? anterior.getPrioridade() : this.getPrioridade());
+                	this.save();
                 }
             }
 

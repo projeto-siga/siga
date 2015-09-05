@@ -38,7 +38,7 @@ function TabelaDinamica (tableSelector, modoExibicao) {
 							"mDetalheFormatado" : coluna.detalheFormatado,
 							"sName" : coluna.nome,
 							"sClass" : coluna.classe,
-							"bVisible" : coluna.exibir,
+							"bVisible" : coluna.exibirPorDefault,
 							"sWidth" : coluna.largura
 						};
 					 
@@ -58,7 +58,7 @@ function TabelaDinamica (tableSelector, modoExibicao) {
 						detalhe = {
 							"sTitle" : colDetalhe.titulo,
 							"mDataProp" : colDetalhe.nome,
-							"bVisible" : coluna.exibir,
+							"bVisible" : coluna.exibirPorDefault,
 							"sName" : colDetalhe.nome
 						};
 
@@ -181,7 +181,7 @@ function TabelaDinamica (tableSelector, modoExibicao) {
 				
 				// caso já exista no cookie, atualiza
 				if (colunaInCookie)
-					coluna.exibir = colunaInCookie.bVisible;
+					coluna.exibirPorDefault = colunaInCookie.bVisible;
 			}
 		}
 	}

@@ -14,7 +14,7 @@ function carregarAcao(){
     params = '';
     for (i = 0; i < frm.length; i++){
         if (frm[i].name && frm[i].value)
-            params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
+            params = params + frm[i].name + '=' + encodeURIComponent(frm[i].value) + '&';
     }
     Siga.ajax('${linkTo[SolicitacaoController].exibirAcao}?' + params, null, "GET", function(response){		
     	carregouAcao(response);

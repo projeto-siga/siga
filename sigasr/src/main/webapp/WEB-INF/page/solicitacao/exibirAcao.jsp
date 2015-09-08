@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <script>
@@ -84,7 +85,7 @@ function carregarLotacaoDaAcao(){
     </div>
     <!-- CONHECIMENTOS RELACIONADOS -->
     <script type="text/javascript">
-    var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=&titulo=${solicitacao.itemConfiguracao.tituloItemConfiguracao}${solicitacao.itemConfiguracao.gcTagAbertura}";
+    var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=&titulo=${f:urlEncode(solicitacao.itemConfiguracao.tituloItemConfiguracao)}${solicitacao.itemConfiguracao.gcTagAbertura}";
     Siga.ajax(url, null, "GET", function(response){
         $("#gc-ancora-item").html(response);
     });

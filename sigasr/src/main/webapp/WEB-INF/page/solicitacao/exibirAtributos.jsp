@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
@@ -17,7 +18,7 @@
         <div id="gc-ancora-item-acao"></div>
     </div>
     <script type="text/javascript">
-        var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=&titulo=${solicitacao.gcTituloAbertura}${solicitacao.gcTagAbertura}";
+        var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=&titulo=${f:urlEncode(solicitacao.gcTituloAbertura)}${solicitacao.gcTagAbertura}";
         Siga.ajax(url, null, "GET", function(response){
             document.getElementById('gc-ancora-item-acao').innerHTML = response;
         });

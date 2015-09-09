@@ -18,11 +18,11 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 	
 	private DpLotacao lotaResponsavel;
 	
-	private SrEtapa etapa;
+	private SrParametro etapa;
 	
-	public SrEtapaSolicitacao(SrEtapa etapa) {
+	public SrEtapaSolicitacao(SrParametro etapa) {
 		this.etapa = etapa;
-		setDescricao(etapa.getDescrEtapa());
+		setDescricao(etapa.getTituloEtapa());
 	}
 	
 	//Edson: métodos que deveriam estar em SrParmetroAcordoSolicitaocao
@@ -140,11 +140,11 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 		this.lotaResponsavel = lotaResponsavel;
 	}
 
-	public SrEtapa getEtapa() {
+	public SrParametro getEtapa() {
 		return etapa;
 	}
 
-	public void setEtapa(SrEtapa etapa) {
+	public void setEtapa(SrParametro etapa) {
 		this.etapa = etapa;
 	}
 

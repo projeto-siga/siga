@@ -1,0 +1,5 @@
+
+ALTER SESSION SET CURRENT_SCHEMA=sigasr;
+
+alter table SR_ATRIBUTO_ACORDO add ("PARAMETRO" NUMBER(10,0));
+alter table SR_ATRIBUTO_ACORDO modify (ID_ATRIBUTO null);

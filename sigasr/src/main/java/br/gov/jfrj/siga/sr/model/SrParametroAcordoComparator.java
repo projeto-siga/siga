@@ -9,7 +9,7 @@ public class SrParametroAcordoComparator implements Comparator<SrParametroAcordo
 		
 		int compare = 0;
 		
-		compare = a1.getParametro().getCodigoAtributo().compareTo(a2.getParametro().getCodigoAtributo());
+		compare = a1.getParametro().getId().compareTo(a2.getParametro().getId());
 		if (compare != 0)
 			return compare;
 		

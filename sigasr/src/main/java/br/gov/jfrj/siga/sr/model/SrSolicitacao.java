@@ -2599,7 +2599,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
     
     public SrEtapaSolicitacao getCadastro(){
-    	SrEtapaSolicitacao c = new SrEtapaSolicitacao(SrEtapa.CADASTRO);
+    	SrEtapaSolicitacao c = new SrEtapaSolicitacao(SrParametro.CADASTRO);
     	c.setInicio(getDtInicioPrimeiraEdicao());
     	if (isFechado())
 			c.setFim(getDtEfetivoFechamento());
@@ -2614,7 +2614,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
     
     public SrEtapaSolicitacao getAtendimentoGeral(){
-    	SrEtapaSolicitacao g = new SrEtapaSolicitacao(SrEtapa.ATENDIMENTO_GERAL);
+    	SrEtapaSolicitacao g = new SrEtapaSolicitacao(SrParametro.ATENDIMENTO_GERAL);
     	g.setInicio(getDtInicioAtendimento());
     	if (isFechado())
 			g.setFim(getDtEfetivoFechamento());
@@ -2626,7 +2626,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
     
     public SrEtapaSolicitacao getAtendimento(SrMovimentacao movIni, SrMovimentacao movFim){
-    	SrEtapaSolicitacao a = new SrEtapaSolicitacao(SrEtapa.ATENDIMENTO);
+    	SrEtapaSolicitacao a = new SrEtapaSolicitacao(SrParametro.ATENDIMENTO);
     	a.setInicio(movIni.getDtIniMov());
     	a.setFim(movFim != null ? movFim.getDtIniMov() : null);
     	a.setLotaResponsavel(movIni.getLotaAtendente());
@@ -2713,7 +2713,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public List<SrParametroAcordo> getParametrosAcordoOrdenados(SrEtapaSolicitacao p){
     	List<SrParametroAcordo> l = new ArrayList<SrParametroAcordo>();
     	for (SrParametroAcordo par : getParametrosAcordoOrdenados())
-    		if (par.getParametro().getCodigoAtributo().equals(p.getEtapa().name()))
+    		if (par.getParametro().equals(p.getEtapa()))
     			l.add(par);
     	return l;
     }

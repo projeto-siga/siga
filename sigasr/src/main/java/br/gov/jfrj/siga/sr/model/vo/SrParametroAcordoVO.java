@@ -1,8 +1,9 @@
 package br.gov.jfrj.siga.sr.model.vo;
 
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
-import br.gov.jfrj.siga.sr.model.SrParametroAcordo;
 import br.gov.jfrj.siga.sr.model.SrOperador;
+import br.gov.jfrj.siga.sr.model.SrParametro;
+import br.gov.jfrj.siga.sr.model.SrParametroAcordo;
 
 public class SrParametroAcordoVO {
 
@@ -12,7 +13,8 @@ public class SrParametroAcordoVO {
     private Long valor;
     private CpUnidadeMedida unidadeMedida;
     private String unidadeMedidaPlural;
-    private SrAtributoVO parametro;
+    private SrParametro parametro;
+    private String parametroNome;
     private boolean ativo;
 
     public SrParametroAcordoVO(SrParametroAcordo parametroAcordo) throws Exception {
@@ -22,7 +24,8 @@ public class SrParametroAcordoVO {
         this.setValor(parametroAcordo.getValor());
         this.setUnidadeMedida(parametroAcordo.getUnidadeMedida());
         this.setUnidadeMedidaPlural(parametroAcordo.getUnidadeMedida() != null ? parametroAcordo.getUnidadeMedida().getPlural() : "");
-        this.setParametro(SrAtributoVO.createFrom(parametroAcordo.getParametro(), false));
+        this.setParametro(parametroAcordo.getParametro());
+        this.setParametroNome(parametroAcordo.getParametro() != null ? parametroAcordo.getParametro().getDescricao() : "");
         this.setAtivo(parametroAcordo.isAtivo());
     }
 
@@ -81,11 +84,11 @@ public class SrParametroAcordoVO {
         this.unidadeMedidaPlural = unidadeMedidaPlural;
     }
 
-    public SrAtributoVO getParametro() {
+    public SrParametro getParametro() {
         return parametro;
     }
 
-    public void setParametro(SrAtributoVO atributo) {
+    public void setParametro(SrParametro atributo) {
         this.parametro = atributo;
     }
 
@@ -96,4 +99,12 @@ public class SrParametroAcordoVO {
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
     }
+
+	public String getParametroNome() {
+		return parametroNome;
+	}
+
+	public void setParametroNome(String parametroNome) {
+		this.parametroNome = parametroNome;
+	}
 }

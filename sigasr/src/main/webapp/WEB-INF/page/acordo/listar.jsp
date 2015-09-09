@@ -412,7 +412,7 @@
 			for (var i = 0; i < acordo.parametroAcordoSet.length; i++) {
 				var item = acordo.parametroAcordoSet[i];
 
-				$("#parametrosAcordo")[0].incluirItem(item.parametro.idAtributo, item.parametro.nomeAtributo, item.operador, item.operadorNome, item.valor, item.unidadeMedida.idUnidadeMedida, item.unidadeMedidaPlural, item.idParametroAcordo);
+				$("#parametrosAcordo")[0].incluirItem(item.parametro, item.parametroNome, item.operador, item.operadorNome, item.valor, item.unidadeMedida.idUnidadeMedida, item.unidadeMedidaPlural, item.idParametroAcordo);
 			}
 		}
 	}

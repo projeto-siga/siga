@@ -48,9 +48,8 @@ public class SrParametroAcordo extends HistoricoSuporte {
 	@JoinColumn(name = "UNIDADE_MEDIDA")
 	private CpUnidadeMedida unidadeMedida;
 
-	@ManyToOne()
-	@JoinColumn(name = "ID_ATRIBUTO")
-	private SrAtributo parametro;
+	@Enumerated
+	private SrParametro parametro;
 
 	@ManyToOne()
 	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
@@ -70,7 +69,7 @@ public class SrParametroAcordo extends HistoricoSuporte {
 	}
 
 	public String getDescricao() {
-		return acordo.getNomeAcordo() + " - " + parametro.getNomeAtributo() + " "
+		return acordo.getNomeAcordo() + " - " + parametro.getDescricao() + " "
 				+ operador.getNome() + " " + valor + " " + unidadeMedida.getPlural();
 	}
 
@@ -174,11 +173,11 @@ public class SrParametroAcordo extends HistoricoSuporte {
 		this.unidadeMedida = unidadeMedida;
 	}
 
-	public SrAtributo getParametro() {
+	public SrParametro getParametro() {
 		return parametro;
 	}
 
-	public void setParametro(SrAtributo parametro) {
+	public void setParametro(SrParametro parametro) {
 		this.parametro = parametro;
 	}
 

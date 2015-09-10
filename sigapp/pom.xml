@@ -5,12 +5,16 @@
 	<parent>
 		<artifactId>siga-doc</artifactId>
 		<groupId>siga</groupId>
-		<version>1.1</version>
+		<version>1.2-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>sigapp</artifactId>
 	<modelVersion>4.0.0</modelVersion>
-	<packaging>war</packaging>	
+	<packaging>war</packaging>
+	<properties>
+		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+	</properties>
+	
 	
 	<dependencies>
 		<dependency>

@@ -31,6 +31,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -42,6 +44,13 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 @Table(name = "CP_GRUPO", schema = "CORPORATIVO")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "ID_TP_GRUPO", discriminatorType = DiscriminatorType.INTEGER)
+@NamedQueries({
+	@NamedQuery(name = "consultarCpGrupoPorCpTipoGrupoId",
+			query = "from br.gov.jfrj.siga.cp.CpGrupo cpgrp " + 
+			" where ( cpgrp.cpTipoGrupo.idTpGrupo = :idTpGrupo) " +
+			" and cpgrp.hisDtFim = null " +
+			" order by cpgrp.siglaGrupo")
+})
 public abstract class AbstractCpGrupo extends HistoricoAuditavelSuporte {
 	@SequenceGenerator(name = "generator", sequenceName = "CP_GRUPO_SEQ")
 	@Id

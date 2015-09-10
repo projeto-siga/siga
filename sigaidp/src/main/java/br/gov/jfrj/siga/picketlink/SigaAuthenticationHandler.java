@@ -290,7 +290,7 @@ public class SigaAuthenticationHandler extends BaseSAML2Handler {
                 //Nato: Include a member-of multivalued attribute for each role. GSA requirement.
                 AttributeType attr = new AttributeType("member-of");
                 for (String role : roles) {
-                    attr.addAttributeValue(role);
+                	attr.addAttributeValue(role.toLowerCase());
                 }
                 attStatement.addAttribute(new ASTChoiceType(attr));
             }

@@ -30,8 +30,8 @@
 		<module>sigasr</module>
 		<module>siga-cd</module>
 		<module>sigacd</module>
- 		<!--<module>sigapp</module>
-		<module>sigari</module>
+ 		<module>sigapp</module>
+		<!--<module>sigari</module>
  		<module>sigacd</module>
  		<module>siga-cd</module>
  		<module>siga-cd-aut</module>

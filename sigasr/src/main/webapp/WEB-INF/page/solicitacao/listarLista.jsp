@@ -39,7 +39,7 @@
 				<tbody>
 					<c:forEach items="${listas}" var="item">
 						<tr data-json-id="${item.idLista}" data-json='${item.toJson()}'
-							<c:if test="${item.podeConsultar(lotaTitular, cadastrante)}">
+							<c:if test="${item.podeConsultar(lotaTitular, titular)}">
  								onclick="javascript:window.location='${linkTo[SolicitacaoController].exibirLista[item.idLista]}'" style="cursor: pointer;"
  							</c:if>>
  							
@@ -47,7 +47,7 @@
 							<td>${item.lotaCadastrante.nomeLotacao}</td>
 
 							<td class="acoes"> 
-								<c:if test="${item.podeEditar(lotaTitular, cadastrante)}">	
+								<c:if test="${item.podeEditar(lotaTitular, titular)}">	
 									<siga:desativarReativar id="${item.idLista}" onReativar="listaService.reativar" onDesativar="listaService.desativar" isAtivo="${item.isAtivo()}"></siga:desativarReativar>
 									<a onclick="javascript:editarLista(event, $(this).parent().parent().data('json'))"> 
 										<img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;">

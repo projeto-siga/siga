@@ -18,10 +18,16 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 	
 	private DpLotacao lotaResponsavel;
 	
-	private SrParametro etapa;
+	private SrPrioridade prioridade;
+	
+	private SrItemConfiguracao item;
+	
+	private SrAcao acao;
+
+	private SrParametro parametro;
 	
 	public SrEtapaSolicitacao(SrParametro etapa) {
-		this.etapa = etapa;
+		this.parametro = etapa;
 		setDescricao(etapa.getTituloEtapa());
 	}
 	
@@ -140,12 +146,36 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 		this.lotaResponsavel = lotaResponsavel;
 	}
 
-	public SrParametro getEtapa() {
-		return etapa;
+	public SrParametro getParametro() {
+		return parametro;
 	}
 
-	public void setEtapa(SrParametro etapa) {
-		this.etapa = etapa;
+	public void setParametro(SrParametro etapa) {
+		this.parametro = etapa;
+	}
+	
+	public SrPrioridade getPrioridade() {
+		return prioridade;
+	}
+
+	public void setPrioridade(SrPrioridade prioridade) {
+		this.prioridade = prioridade;
+	}
+
+	public SrItemConfiguracao getItem() {
+		return item;
+	}
+
+	public void setItem(SrItemConfiguracao item) {
+		this.item = item;
+	}
+
+	public SrAcao getAcao() {
+		return acao;
+	}
+
+	public void setAcao(SrAcao acao) {
+		this.acao = acao;
 	}
 
 }

@@ -1,6 +1,5 @@
 package br.gov.jfrj.siga.sr.model;
 
-import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO;
@@ -28,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -63,8 +63,6 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
-import org.joda.time.Interval;
-import org.joda.time.Seconds;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -669,7 +667,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public SrMovimentacao getUltimaMovimentacaoCancelavel() {
         for (SrMovimentacao mov : getMovimentacaoSet()) {
             if (mov.getNumSequencia() > 1 && mov.getTipoMov().getIdTipoMov() != TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
-                    && mov.getTipoMov().getIdTipoMov() != TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE_LISTA && mov.getTipoMov().getIdTipoMov() != TIPO_MOVIMENTACAO_AVALIACAO)
+                    && mov.getTipoMov().getIdTipoMov() != TIPO_MOVIMENTACAO_AVALIACAO)
                 return mov;
         }
         return null;
@@ -1582,21 +1580,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         c.setItemConfiguracaoFiltro(getItemConfiguracao());
         c.setAcaoFiltro(getAcao());
         c.setPrioridade(getPrioridade());
-        if (jaFoiDesignada()) {
-        	if (getDesignacao() != null && getDesignacao().getId() != null)
-        		c.setAtendente(getDesignacao().getAtendente());
-        } else {
-        	c.setAtendente(getLotaTitular());
-        	c.setComplexo(getLocal());
-        	c.setBuscarPorPerfis(true);
-        }
+        c.setAtendente(getLotaTitular());
+        c.setComplexo(getLocal());
+        c.setBuscarPorPerfis(true);
         c.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
-
+        
         List<SrConfiguracao> confs = SrConfiguracao.listar(c);
         for (SrConfiguracao conf : confs) {
         	if (conf.getAcordo() != null && conf.getAcordo().getId() != null) {
         		SrAcordo acordoAtual = SrAcordo.AR.findById(conf.getAcordo().getIdAcordo()).getAcordoAtual();
-        		if (acordoAtual != null && acordoAtual.getHisDtFim() == null && !getAcordos().contains(acordoAtual))
+        		if (acordoAtual != null && acordoAtual.getHisDtFim() == null && !getAcordos().contains(acordoAtual)
+        			&& acordoAtual.contemParametro(SrParametro.CADASTRO, SrParametro.ATENDIMENTO_GERAL))
         			getAcordos().add(acordoAtual);
         	}
         }
@@ -2608,7 +2602,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		else if (jaFoiDesignada())
 			c.setFim(getDtInicioAtendimento());
 		c.setLotaResponsavel(getLotaCadastrante());
-		c.setParamsAcordo(getParametrosAcordoOrdenados(c));
+		c.setParamsAcordo(getParametrosAcordoOrdenados(c.getParametro()));
     	c.setIntervalosCorrentes(getTrechosNaoPendentesPorEtapa(c));
     	return c;
     }
@@ -2620,22 +2614,27 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			g.setFim(getDtEfetivoFechamento());
 		else if (isCancelado())
 			g.setFim(getDtCancelamento());
-    	g.setParamsAcordo(getParametrosAcordoOrdenados(g));
+    	g.setParamsAcordo(getParametrosAcordoOrdenados(g.getParametro()));
     	g.setIntervalosCorrentes(getAtendimentos());
     	return g;
     }
     
-    public SrEtapaSolicitacao getAtendimento(SrMovimentacao movIni, SrMovimentacao movFim){
+    public SrEtapaSolicitacao getAtendimento(SrMovimentacao movIni, SrMovimentacao movMeio, SrMovimentacao movFim){
+    	if (movMeio == null)
+    		movMeio = movIni;
     	SrEtapaSolicitacao a = new SrEtapaSolicitacao(SrParametro.ATENDIMENTO);
     	a.setInicio(movIni.getDtIniMov());
     	a.setFim(movFim != null ? movFim.getDtIniMov() : null);
     	a.setLotaResponsavel(movIni.getLotaAtendente());
-    	a.setParamsAcordo(getParametrosAcordoOrdenados(a));
+    	a.setParamsAcordo(movMeio.getParametrosAcordoOrdenados(a.getParametro()));
     	//DefinicaoHorario  h = getDefinicioarHorarioPorPessoalELota()
     	a.setIntervalosCorrentes(getTrechosNaoPendentesPorEtapa(a));
+    	a.setPrioridade(movMeio.getPrioridade());
+    	a.setItem(movMeio.getItemConfiguracao());
+    	a.setAcao(movMeio.getAcao());
     	return a;
     }
-    
+  
     public List<SrEtapaSolicitacao> getEtapas(){
     	return getEtapas(null);
     }
@@ -2656,7 +2655,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         				break;
         			}
     		}
-    		if (etapas.size() == 0 || geral.getParamAcordo() != null || lota == null)
+    		if (etapas.size() == 0 || geral.getParamAcordo() != null)
     			etapas.add(geral);
     	}
     	if (!isFilha() && (lota == null || etapas.size() == 0))
@@ -2666,23 +2665,27 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     
 	public List<SrEtapaSolicitacao> getAtendimentos() {
 		List<SrEtapaSolicitacao> atendimentos = new ArrayList<SrEtapaSolicitacao>();
-		SrMovimentacao movIni = null;
+		SrMovimentacao movIni = null, movAtualizacao = null;
 		for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente()) {
-			boolean isInicio = SrTipoMovimentacao.TIPOS_MOV_INI_ATENDIMENTO.contains(mov.getTipoMov().getId());
+			boolean isInicio = SrTipoMovimentacao.TIPOS_MOV_INI_ATENDIMENTO.contains(mov.getTipoMov().getId())
+					&& (movIni == null || !mov.getLotaAtendente().equivale(movIni.getLotaAtendente()));
 			boolean isFim = SrTipoMovimentacao.TIPOS_MOV_FIM_ATENDIMENTO.contains(mov.getTipoMov().getId());
-			if (!isInicio && !isFim)
+			boolean isAtualizacao = SrTipoMovimentacao.TIPOS_MOV_ATUALIZACAO_ATENDIMENTO.contains(mov.getTipoMov().getId())
+					&& !isInicio;
+			if (!isInicio && !isFim && !isAtualizacao)
 				continue;
-			if (movIni != null) {
-				if (isInicio && mov.getLotaAtendente().equivale(movIni.getLotaAtendente()))
-					continue;
-				atendimentos.add(getAtendimento(movIni, mov));
+			if (movIni != null && (isInicio || isFim)) {
+				atendimentos.add(getAtendimento(movIni, movAtualizacao, mov));
 				movIni = null;
+				movAtualizacao = null;
 			}
 			if (isInicio)
 				movIni = mov;
+			else if (isAtualizacao)
+				movAtualizacao = mov;
 		}
 		if (movIni != null)
-			atendimentos.add(getAtendimento(movIni, null));
+			atendimentos.add(getAtendimento(movIni, movAtualizacao, null));
 		return atendimentos;
 	}
 
@@ -2710,10 +2713,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	return set;
     }
     
-    public List<SrParametroAcordo> getParametrosAcordoOrdenados(SrEtapaSolicitacao p){
+    public List<SrParametroAcordo> getParametrosAcordoOrdenados(SrParametro p){
     	List<SrParametroAcordo> l = new ArrayList<SrParametroAcordo>();
     	for (SrParametroAcordo par : getParametrosAcordoOrdenados())
-    		if (par.getParametro().equals(p.getEtapa()))
+    		if (par.getParametro().equals(p))
     			l.add(par);
     	return l;
     }

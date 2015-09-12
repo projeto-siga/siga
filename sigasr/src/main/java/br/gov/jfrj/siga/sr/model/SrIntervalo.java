@@ -99,4 +99,8 @@ public abstract class SrIntervalo {
 		return fim != null ? fim : new Date();
 	}
 	
+	public Long getId(){
+		return getInicio().getTime();
+	}
+	
 }

@@ -24,6 +24,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.vo.SrAcordoVO;
+import edu.emory.mathcs.backport.java.util.Arrays;
 import edu.emory.mathcs.backport.java.util.Collections;
 
 @Entity
@@ -95,6 +96,14 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 		if (acordos == null || acordos.size() < 1)
 			return null;
 		return acordos.get(0);
+	}
+	
+	public boolean contemParametro(SrParametro... param){
+		List<SrParametro> paramList = Arrays.asList(param);
+		for (SrParametroAcordo paramAcordo : getParametroAcordoSet())
+			if (paramList.contains(paramAcordo.getParametro()))
+				return true;
+		return false;
 	}
 
 	public SrAcordo selecionar(String sigla) {

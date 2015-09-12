@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -22,7 +21,6 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
-import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrOperador;
@@ -31,6 +29,7 @@ import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 @Resource
 @Path("app/acordo")

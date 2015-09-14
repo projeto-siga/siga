@@ -292,11 +292,6 @@ public class CpBL {
 							novaSenha.getBytes(), "MD5");
 					idNova.setDscSenhaIdentidade(hashNova);
 
-					BASE64Encoder encoderBase64 = new BASE64Encoder();
-					String chave = encoderBase64.encode(id.getDpPessoa()
-							.getIdInicial().toString().getBytes());
-					String senhaCripto = encoderBase64.encode(Criptografia
-							.criptografar(novaSenha, chave));
 					idNova.setDscSenhaIdentidadeCripto(null);
 					idNova.setDscSenhaIdentidadeCriptoSinc(null);
 
@@ -497,11 +492,11 @@ public class CpBL {
 						senhaNova.getBytes(), "MD5");
 				idNova.setDscSenhaIdentidade(hashNova);
 
-				BASE64Encoder encoderBase64 = new BASE64Encoder();
-				String chave = encoderBase64.encode(id.getDpPessoa()
-						.getIdInicial().toString().getBytes());
-				String senhaCripto = encoderBase64.encode(Criptografia
-						.criptografar(senhaNova, chave));
+//				BASE64Encoder encoderBase64 = new BASE64Encoder();
+//				String chave = encoderBase64.encode(id.getDpPessoa()
+//						.getIdInicial().toString().getBytes());
+//				String senhaCripto = encoderBase64.encode(Criptografia
+//						.criptografar(senhaNova, chave));
 				idNova.setDscSenhaIdentidadeCripto(null);
 				idNova.setDscSenhaIdentidadeCriptoSinc(null);
 
@@ -668,11 +663,6 @@ public class CpBL {
 						senhaNova.getBytes(), "MD5");
 				idNova.setDscSenhaIdentidade(hashNova);
 
-				BASE64Encoder encoderBase64 = new BASE64Encoder();
-				String chave = encoderBase64.encode(id.getDpPessoa()
-						.getIdInicial().toString().getBytes());
-				String senhaCripto = encoderBase64.encode(Criptografia
-						.criptografar(senhaNova, chave));
 				idNova.setDscSenhaIdentidadeCripto(null);
 				idNova.setDscSenhaIdentidadeCriptoSinc(null);
 

@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import com.google.enterprise.adaptor.Config;
 import com.google.enterprise.adaptor.DocId;
 import com.google.enterprise.adaptor.DocIdPusher;
 import com.google.enterprise.adaptor.GroupPrincipal;
+import com.google.enterprise.adaptor.PollingIncrementalLister;
 import com.google.enterprise.adaptor.Request;
 import com.google.enterprise.adaptor.Response;
 
@@ -54,12 +56,13 @@ import com.google.enterprise.adaptor.Response;
  * br.gov.jfrj.siga.ex.gsa.ExDocumentoAdaptor \ -Dgsa.hostname=myGSA
  * -Dservidor=desenv \ -Djournal.reducedMem=true
  */
-public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor {
+public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor, PollingIncrementalLister {
 	private static final Logger log = Logger.getLogger(ExDocumentoAdaptor.class
 			.getName());
 	private Charset encoding = Charset.forName("UTF-8");
 
 	private int maxIdsPerFeedFile;
+	private Date dateLastUpdated;	
 
 	@Override
 	public void initConfig(Config config) {
@@ -79,17 +82,32 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor {
 			cfg = ExDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
 
 		HibernateUtil.configurarHibernate(cfg);
+		context.setPollingIncrementalLister(this);
 	}
 
 	/** Get all doc ids from database. */
 	public void getDocIds(DocIdPusher pusher) throws IOException,
 			InterruptedException {
+		this.dateLastUpdated = ExDao.getInstance().dt();
+		pushDocIds(pusher, new Date(0L));
+	}
+
+	@Override
+	public void getModifiedDocIds(DocIdPusher pusher) throws IOException,
+			InterruptedException {
+		Date dt  = ExDao.getInstance().dt();
+		pushDocIds(pusher, this.dateLastUpdated);
+		this.dateLastUpdated = dt;
+	}
+	
+	private void pushDocIds(DocIdPusher pusher, Date date) throws InterruptedException {
 		BufferingPusher outstream = new BufferingPusher(pusher);
 		ExDao dao = ExDao.getInstance();
 		Query q = dao
 				.getSessao()
 				.createQuery(
-						"select doc.idDoc from ExDocumento doc where doc.dtFinalizacao != null order by doc.idDoc desc");
+						"select doc.idDoc from ExDocumento doc where doc.dtFinalizacao != null and doc.dtFinalizacao > :dt order by doc.idDoc desc");
+		q.setDate("dt", date);
 		q.setMaxResults(200);
 		Iterator i = q.iterate();
 		while (i.hasNext()) {
@@ -98,6 +116,8 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor {
 		}
 		outstream.forcePush();
 	}
+	
+	
 
 	/** Gives the bytes of a document referenced with id. */
 	public void getDocContent(Request req, Response resp) throws IOException {
@@ -114,14 +134,14 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor {
 		ExDocumento doc = ExDao.getInstance().consultar(primaryKey,
 				ExDocumento.class, false);
 
-		if (doc == null) {
+		if (doc == null || doc.isCancelado()) {
 			resp.respondNotFound();
 			return;
 		}
 
 		addMetadataForDoc(doc, resp);
 		addAclForDoc(doc, resp);
-		resp.setCrawlOnce(true);
+		//resp.setCrawlOnce(true);
 		resp.setLastModified(doc.getDtFinalizacao());
 		try {
 			resp.setDisplayUrl(new URI("http://siga/sigaex/app/exibir?sigla="
@@ -166,6 +186,8 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor {
 	}
 
 	private void addMetadataForDoc(ExDocumento doc, Response resp) {
+		if (doc.getDescrFormaDoc() != null)
+			resp.addMetadata("Espécie", doc.getDescrFormaDoc());
 		if (doc.getSubscritor() != null)
 			resp.addMetadata("Subscritor", doc.getSubscritor().getNomePessoa());
 		if (doc.getLotaSubscritor() != null)
@@ -215,4 +237,6 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor {
 			}
 		}
 	}
+
+	
 }

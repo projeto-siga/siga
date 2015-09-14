@@ -1,24 +1,23 @@
 <PicketLink xmlns="urn:picketlink:identity-federation:config:2.1">
 	<PicketLinkIDP xmlns="urn:picketlink:identity-federation:config:2.1"
-                   SupportsSignatures="true">
+                   SupportsSignatures="${idp.supports.signatures}">
 		<IdentityURL>${idp.url::http://localhost:8080/sigaidp/}</IdentityURL>
 		<Trust>
-			<Domains>google.com,172.16.1.105,${idp.trusted.domains::localhost}</Domains>
+			<Domains>projeto-siga.github.io,google.com,172.16.1.105,${idp.trusted.domains::localhost}</Domains>
 		</Trust>
 		<KeyProvider
 			ClassName="org.picketlink.identity.federation.core.impl.KeyStoreKeyManager">
-			<Auth Key="KeyStoreURL" Value="/jbid_test_keystore.jks" />
-			<!-- <Auth Key="KeyStorePass" Value="store123" /> -->
-			<Auth Key="KeyStorePass" Value="MASK-O1P+U1Domeec8lCaoIkTGg==" />
-			<!-- <Auth Key="SigningKeyPass" Value="test123" /> -->
-			<Auth Key="SigningKeyPass" Value="MASK-AJbh4WmHwy8=" />
-			<Auth Key="SigningKeyAlias" Value="servercert" />
-			<Auth Key="salt" Value="18273645" />
-			<Auth Key="iterationCount" Value="11" />
-			<ValidatingAlias Key="localhost" Value="servercert" />
-			<ValidatingAlias Key="127.0.0.1" Value="servercert" />
-			<ValidatingAlias Key="csis-trf-10" Value="servercert" />
- 			<ValidatingAlias Key="10.34.5.76" Value="servercert" />
+			<Auth Key="KeyStoreURL" Value="${idp.keystore.url::/jbid_test_keystore.jks}" />
+			<Auth Key="KeyStorePass" Value="${idp.keystore.pass::MASK-O1P+U1Domeec8lCaoIkTGg==}" />
+			<Auth Key="SigningKeyPass" Value="${idp.signing.key.pass::MASK-AJbh4WmHwy8=}" />
+			<Auth Key="SigningKeyAlias" Value="${idp.signing.key.alias::servercert}" />
+			<Auth Key="salt" Value="${idp.salt::18273645}" />
+			<Auth Key="iterationCount" Value="${idp.iteration.count::11}" />
+			<ValidatingAlias Key="localhost" Value="${idp.signing.key.alias::servercert}" />
+			<ValidatingAlias Key="127.0.0.1" Value="${idp.signing.key.alias::servercert}" />
+			<ValidatingAlias Key="${idp.validating.alias.1::localhost}" Value="${idp.signing.key.alias::servercert}" />
+ 			<ValidatingAlias Key="${idp.validating.alias.2::localhost}" Value="${idp.signing.key.alias::servercert}" />
+ 			<ValidatingAlias Key="${idp.validating.alias.3::localhost}" Value="${idp.signing.key.alias::servercert}" />
 		</KeyProvider>
 	</PicketLinkIDP>
 	<Handlers xmlns="urn:picketlink:identity-federation:handler:config:2.1">

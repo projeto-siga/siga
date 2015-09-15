@@ -7,6 +7,7 @@ import java.net.URI;
 import java.security.Principal;
 import java.security.PrivateKey;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -283,6 +284,10 @@ public class SigaAuthenticationHandler extends BaseSAML2Handler {
             }
 
             // Add in the attributes information
+            if (attribs == null) //Nato: At least one attribute should exist to create the attStatement
+            	attribs = new HashMap<String, Object>();
+            if (attribs.size() == 0)
+            	attribs.put("idp-name", "sigaidp");
             if (attribs != null && attribs.size() > 0) {
                 AttributeStatementType attStatement = StatementUtil.createAttributeStatement(attribs);
                 assertion.addStatement(attStatement);

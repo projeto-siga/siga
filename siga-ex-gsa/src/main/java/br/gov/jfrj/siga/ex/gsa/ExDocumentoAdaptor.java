@@ -56,13 +56,14 @@ import com.google.enterprise.adaptor.Response;
  * br.gov.jfrj.siga.ex.gsa.ExDocumentoAdaptor \ -Dgsa.hostname=myGSA
  * -Dservidor=desenv \ -Djournal.reducedMem=true
  */
-public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor, PollingIncrementalLister {
+public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor,
+		PollingIncrementalLister {
 	private static final Logger log = Logger.getLogger(ExDocumentoAdaptor.class
 			.getName());
 	private Charset encoding = Charset.forName("UTF-8");
 
 	private int maxIdsPerFeedFile;
-	private Date dateLastUpdated;	
+	private Date dateLastUpdated;
 
 	@Override
 	public void initConfig(Config config) {
@@ -95,12 +96,13 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor, Poll
 	@Override
 	public void getModifiedDocIds(DocIdPusher pusher) throws IOException,
 			InterruptedException {
-		Date dt  = ExDao.getInstance().dt();
+		Date dt = ExDao.getInstance().dt();
 		pushDocIds(pusher, this.dateLastUpdated);
 		this.dateLastUpdated = dt;
 	}
-	
-	private void pushDocIds(DocIdPusher pusher, Date date) throws InterruptedException {
+
+	private void pushDocIds(DocIdPusher pusher, Date date)
+			throws InterruptedException {
 		BufferingPusher outstream = new BufferingPusher(pusher);
 		ExDao dao = ExDao.getInstance();
 		Query q = dao
@@ -116,8 +118,6 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor, Poll
 		}
 		outstream.forcePush();
 	}
-	
-	
 
 	/** Gives the bytes of a document referenced with id. */
 	public void getDocContent(Request req, Response resp) throws IOException {
@@ -141,7 +141,7 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor, Poll
 
 		addMetadataForDoc(doc, resp);
 		addAclForDoc(doc, resp);
-		//resp.setCrawlOnce(true);
+		// resp.setCrawlOnce(true);
 		resp.setLastModified(doc.getDtFinalizacao());
 		try {
 			resp.setDisplayUrl(new URI("http://siga/sigaex/app/exibir?sigla="
@@ -186,13 +186,41 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor, Poll
 	}
 
 	private void addMetadataForDoc(ExDocumento doc, Response resp) {
-		if (doc.getDescrFormaDoc() != null)
-			resp.addMetadata("Espécie", doc.getDescrFormaDoc());
-		if (doc.getSubscritor() != null)
-			resp.addMetadata("Subscritor", doc.getSubscritor().getNomePessoa());
+		if (doc.getExTipoDocumento() != null) {
+			resp.addMetadata("Origem", doc.getExTipoDocumento().getSigla());
+		}
+		if (doc.getExFormaDocumento() != null)
+			resp.addMetadata("Espécie", doc.getExFormaDocumento()
+					.getDescricao());
+		if (doc.getExModelo() != null)
+			resp.addMetadata("Modelo", doc.getExModelo().getNmMod());
+		if (doc.getDescrDocumento() != null)
+			resp.addMetadata("Descrição", doc.getDescrDocumento());
+		if (doc.getDnmExNivelAcesso() != null)
+			resp.addMetadata("Nível de Acesso", doc.getDnmExNivelAcesso()
+					.getNmNivelAcesso());
+		if (doc.getDtDocDDMMYYYY() != null)
+			resp.addMetadata("Data", doc.getDtDocDDMMYYYY());
+		if (doc.getExClassificacaoAtual() != null) {
+			resp.addMetadata("Código da Classificação", doc
+					.getExClassificacaoAtual().getSigla());
+			resp.addMetadata(
+					"Descrição da Classificação",
+					doc.getExClassificacaoAtual().getDescricao()
+							.replace(": ", ", "));
+		}
 		if (doc.getLotaSubscritor() != null)
 			resp.addMetadata("Lotação do Subscritor", doc.getLotaSubscritor()
-					.getNomeLotacao());
+					.getSiglaLotacao());
+		if (doc.getSubscritor() != null)
+			resp.addMetadata("Subscritor", doc.getSubscritor().getNomePessoa());
+
+		if (doc.getLotaCadastrante() != null)
+			resp.addMetadata("Lotação do Cadastrante", doc.getLotaCadastrante()
+					.getSiglaLotacao());
+		if (doc.getCadastrante() != null)
+			resp.addMetadata("Cadastrante", doc.getCadastrante()
+					.getNomePessoa());
 
 		Map<String, String> map = doc.getResumo();
 		if (map != null)
@@ -238,5 +266,4 @@ public class ExDocumentoAdaptor extends AbstractAdaptor implements Adaptor, Poll
 		}
 	}
 
-	
 }

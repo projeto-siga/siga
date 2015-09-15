@@ -1,6 +1,6 @@
 <PicketLink xmlns="urn:picketlink:identity-federation:config:2.1">
 	<PicketLinkIDP xmlns="urn:picketlink:identity-federation:config:2.1"
-                   SupportsSignatures="${idp.supports.signatures}">
+                   SupportsSignatures="${idp.supports.signatures::false}">
 		<IdentityURL>${idp.url::http://localhost:8080/sigaidp/}</IdentityURL>
 		<Trust>
 			<Domains>projeto-siga.github.io,google.com,172.16.1.105,${idp.trusted.domains::localhost}</Domains>

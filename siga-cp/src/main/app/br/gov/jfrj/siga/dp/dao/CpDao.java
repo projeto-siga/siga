@@ -1320,7 +1320,8 @@ public class CpDao extends ModeloDao {
 
 	public Date consultarDataUltimaAtualizacao() throws AplicacaoException {
 	//	Query sql = (Query) getSessao().getNamedQuery("consultarDataUltimaAtualizacao");
-		Query sql = (Query) HibernateUtil.getSessionFactory().openStatelessSession().getNamedQuery("consultarDataUltimaAtualizacao");
+		StatelessSession statelessSession = HibernateUtil.getSessionFactory().openStatelessSession();
+		Query sql = (Query) statelessSession.getNamedQuery("consultarDataUltimaAtualizacao");
 		
 		sql.setCacheable(false);
 		List result = sql.list();
@@ -1330,6 +1331,7 @@ public class CpDao extends ModeloDao {
 
 		Date dtIni = (Date) ((Object[]) (result.get(0)))[0];
 		Date dtFim = (Date) ((Object[]) (result.get(0)))[1];
+		statelessSession.close();
 		return DateUtils.max(dtIni, dtFim);
 	}
 

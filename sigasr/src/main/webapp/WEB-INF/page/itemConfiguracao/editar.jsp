@@ -206,8 +206,8 @@
 					<label>Gestor: <span>*</span></label>
 					<div id="divGestor">
 						<siga:pessoaLotaSelecao2
-							propriedadePessoa="gestorPessoa"
-							propriedadeLotacao="gestorLotacao"/>
+							propriedadePessoa="gestorPessoaSel"
+							propriedadeLotacao="gestorLotacaoSel"/>
 					</div>
 				</div>
 				<div class="gt-form-row">
@@ -228,8 +228,8 @@
 					<label>Solicitante: <span>*</span></label>
 					<div id="divFator">
  						<siga:pessoaLotaSelecao2
- 							propriedadePessoa="fatorPessoa"
- 							propriedadeLotacao="fatorLotacao"/>
+ 							propriedadePessoa="fatorPessoaSel"
+ 							propriedadeLotacao="fatorLotacaoSel"/>
 					</div>
 				</div>
 				<div class="gt-form-row ">
@@ -295,7 +295,7 @@
 		gestores = jGestores[0];
 		jDialog = $("#dialog");
 		dialog = jDialog[0];
-		jSelect = $("#gestorPessoagestorLotacao");
+		jSelect = $("#gestorPessoaSelgestorLotacaoSel");
 		
 		$( "#gestoresUl" ).sortable({placeholder: "ui-state-highlight"});
 		$( "#gestoresUl" ).disableSelection();
@@ -337,7 +337,8 @@
 		    jGestores.append("<li style=\"cursor: move\" id =\"" + id + "\"></li>");
 		   	var jNewTr = jGestores.find("li:last-child");
 		   	jNewTr.append("<span id=\"" + tipoGestor + "\">" + siglaGestor + "</span> - <span style=\"display: inline-block\" id=\"" 
-			        + idDerivadoGestor + "\">" + nomeGestor + "</span>&nbsp;&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\"cursor: pointer;\" />");
+			        + idDerivadoGestor + "\">" + nomeGestor + "</span>&nbsp;&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\" visibility:hidden; cursor: pointer;\" />");
+
 		   	jNewTr.find("img:eq(0)").click(function(){
 		   		gestores.removerItem(jNewTr.attr("id"));
 		   	});
@@ -359,7 +360,7 @@
 		fatores = jFatores[0];
 		jDialogFator = $("#dialogFator");
 		dialogFator = jDialogFator[0];
-		jSelectFator = $("#fatorPessoafatorLotacao");
+		jSelectFator = $("#fatorPessoaSelfatorLotacaoSel");
 		jNumFatorMult = $("#numfatorMult");
 		
 		$( "#fatoresUl" ).sortable({placeholder: "ui-state-highlight"});
@@ -404,7 +405,7 @@
 		    jFatores.append("<li style=\"cursor: move\" id =\"" + idF + "\"></li>");
 		
 		    var jNewFatorTr = jFatores.find("li:last-child");
-		    jNewFatorTr.append("<span id=\"" + tipoFator + "\">" + siglaSolicitante + "-" 
+		    jNewFatorTr.append("<span id=\"" + tipoFator + "\">" + siglaSolicitante + " - " 
 			      	+ nomeSolicitante + "</span> <span style=\"display: inline-block\" id=\"" + idDerivadoFator + "\"> / Fator: "
 		      	+ numFator + "</span>&nbsp;&nbsp;<img src=\"/siga/css/famfamfam/icons/cross.png\" style=\" visibility:hidden; cursor: pointer;\" />");
 		  	
@@ -430,7 +431,7 @@
 	$("#modalOk").click(function(){
 		if (!jQuery("#formGestor").valid())
 		    return false;
-		
+	    
 		var acao = jDialog.data('acao');
 		var jTipoEscolhido = jSelect.find("option:selected");
 		

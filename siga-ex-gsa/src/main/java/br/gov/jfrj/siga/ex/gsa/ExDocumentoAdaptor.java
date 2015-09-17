@@ -98,8 +98,7 @@ public class ExDocumentoAdaptor extends ExAdaptor {
 		// resp.setCrawlOnce(true);
 		resp.setLastModified(doc.getDtFinalizacao());
 		try {
-			resp.setDisplayUrl(new URI("http://siga/siga/permalink/"
-					+ doc.getCodigoCompacto()));
+			resp.setDisplayUrl(new URI(permalink + doc.getCodigoCompacto()));
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
@@ -153,8 +152,8 @@ public class ExDocumentoAdaptor extends ExAdaptor {
 		if (doc.getDnmExNivelAcesso() != null)
 			resp.addMetadata("Nível de Acesso", doc.getDnmExNivelAcesso()
 					.getNmNivelAcesso());
-		if (doc.getDtDocDDMMYYYY() != null)
-			resp.addMetadata("Data", doc.getDtDocDDMMYYYY());
+		if (doc.getDtDocYYYYMMDD() != null)
+			resp.addMetadata("Data", doc.getDtDocYYYYMMDD());
 		if (doc.getExClassificacaoAtual() != null) {
 			resp.addMetadata("Código da Classificação", doc
 					.getExClassificacaoAtual().getSigla());

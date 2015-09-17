@@ -137,8 +137,8 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 		if (doc.getDnmExNivelAcesso() != null)
 			resp.addMetadata("Nível de Acesso", doc.getDnmExNivelAcesso()
 					.getNmNivelAcesso());
-		if (mov.getDtMovDDMMYYYY() != null)
-			resp.addMetadata("Data", mov.getDtMovDDMMYYYY());
+		if (mov.getDtMovYYYYMMDD() != null)
+			resp.addMetadata("Data", mov.getDtMovYYYYMMDD());
 		if (mov.getLotaSubscritor() != null)
 			resp.addMetadata("Lotação do Subscritor", mov.getLotaSubscritor()
 					.getSiglaLotacao());

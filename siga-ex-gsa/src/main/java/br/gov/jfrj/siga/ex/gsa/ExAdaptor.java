@@ -116,7 +116,7 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor,
 		ExDao dao = ExDao.getInstance();
 		Query q = dao.getSessao().createQuery(getIdsHql());
 		q.setDate("dt", date);
-		q.setMaxResults(200);
+		q.setMaxResults(2000);
 		Iterator i = q.iterate();
 		while (i.hasNext()) {
 			DocId id = new DocId("" + i.next());

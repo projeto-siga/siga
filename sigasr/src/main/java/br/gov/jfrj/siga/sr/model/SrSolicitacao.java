@@ -2604,6 +2604,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		c.setLotaResponsavel(getLotaCadastrante());
 		c.setParamsAcordo(getParametrosAcordoOrdenados(c.getParametro()));
     	c.setIntervalosCorrentes(getTrechosNaoPendentesPorEtapa(c));
+    	c.setPrioridade(getPrioridade());
+    	c.setItem(getItemConfiguracao());
+    	c.setAcao(getAcao());
     	return c;
     }
     

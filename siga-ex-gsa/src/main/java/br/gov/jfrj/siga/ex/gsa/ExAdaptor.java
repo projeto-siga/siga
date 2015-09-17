@@ -68,14 +68,13 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor,
 
 	@Override
 	public void initConfig(Config config) {
-		if ("application-overrided".equals(config.getValue("feed.name")))
-			config.overrideKey("feed.name", getFeedName());
-		String serverPort = config.getValue("server.port.base");
-		config.overrideKey("server.port", Integer.parseInt(serverPort)
-				+ getServerPortIncrement());
-		System.out.println(config.getValue("feed.name"));
-		config.addKey("feed.name", "teste123");
-		return;
+		config.overrideKey("feed.name", getFeedName());
+		String serverPort = "6677";
+		String serverDashboardPort = "5677";
+		config.overrideKey("server.port", Integer.toString((Integer
+				.parseInt(serverPort) + getServerPortIncrement())));
+		config.overrideKey("server.dashboardPort", Integer.toString((Integer
+				.parseInt(serverDashboardPort) + getServerPortIncrement())));
 	}
 
 	@Override

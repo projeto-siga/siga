@@ -61,7 +61,7 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 
 	@Override
 	public String getIdsHql() {
-		return "select mov.idMov from ExDocumento doc, doc.ExMovimentacaoSet mov where doc.dtFinalizacao > :dt or mov.dtIniMov > :dt order by doc.idMov desc";
+		return "select mov.idMov from ExMovimentacao mov where mov.exTipoMovimentacao.idTpMov in (2, 5, 6, 7, 8, 18) and (:dt is null or mov.exMobil.exDocumento.dtFinalizacao > :dt or mov.dtIniMov > :dt) order by mov.idMov desc";
 	}
 
 	@Override

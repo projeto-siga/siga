@@ -8,3 +8,6 @@ after_success:
 env:
   global:
     secure: JjAbNw5rSFhPRlaG2Q07ffXBYSNGG1YmTZGTaT/1QZYxxF9hPIQZIELC27q/AJqqAC5pIM+dndRphuhNkojzAYeh/sqcgxT96m3rOoD5Re+84KvDcoGfPZbPrtTfO3ppOcSvAYa4ST5/EDAHfhH2Q9DVfBfwLqoYW+zfh8BWTNk=
+notifications:
+  slack:
+    secure: Yu+TR8fk59IIRT5BAtVj2/4t4b5p1rJS4fN/dFJYmEHTLOUkLO56FUu89L1w46pMjP0N87GbYwhPa5l8/EqsR1G8B/rpwIBrV5yA7+jcUO3NWjqcfWsuCZrDhtlKby4FpwteID8L9669QZvvdjPPzewHwzWGhwztw55MirUqBiY=

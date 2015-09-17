@@ -30,11 +30,11 @@ public class PermissaoController extends PpController {
     @Path("/exclui")
     public void exclui(String matricula_proibida){
 		String mensagem = "";
-		// pega usu·rio do sistema
+		// pega usu√°rio do sistema
 		String matriculaSessao = getUsuarioMatricula();
 		String lotacaoSessao = getUsuarioLotacao();
 		UsuarioForum objUsuario = UsuarioForum.AR.find("matricula_usu = '"+matriculaSessao+"'").first();
-		if ((objUsuario !=null) && ( (lotacaoSessao.trim().equals("CSIS")||lotacaoSessao.trim().equals("SESIA")) )){ //pode excluir a permiss„o
+		if ((objUsuario !=null) && ( (lotacaoSessao.trim().equals("CSIS")||lotacaoSessao.trim().equals("SESIA")) )){ //pode excluir a permiss√£o
 			List<UsuarioForum> listPermitidos = new ArrayList<UsuarioForum>();
 			if((matricula_proibida!=null) && (!matricula_proibida.isEmpty())){ // deleta permissao
 				try{
@@ -50,7 +50,7 @@ public class PermissaoController extends PpController {
 				}
 			 } else{ // lista permitidos
 				try{
-					 listPermitidos = (List) UsuarioForum.AR.find(" order by nome_usu ").fetch(); // isso n„o d· erro no caso de retorno vazio.
+					 listPermitidos = (List) UsuarioForum.AR.find(" order by nome_usu ").fetch(); // isso n√£o d√° erro no caso de retorno vazio.
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -64,7 +64,7 @@ public class PermissaoController extends PpController {
     @Path("/inclui")
     public void inclui(String matricula_permitida, String nome_permitido, String forum_permitido ) throws Exception {
 		String mensagem = "";
-		// pega usu·rio do sistema
+		// pega usu√°rio do sistema
 		String matriculaSessao = getUsuarioMatricula();
 		// String nomeSessao = cadastrante().getNomeAbreviado();
 		String lotacaoSessao = getUsuarioLotacao();

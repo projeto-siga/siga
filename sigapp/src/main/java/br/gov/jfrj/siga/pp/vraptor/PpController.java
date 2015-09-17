@@ -28,7 +28,7 @@ public class PpController extends SigaController {
     
     @Override
     protected void assertAcesso(String pathServico) throws AplicacaoException {
-        super.assertAcesso("SR:Módulo de Serviços;" + pathServico);
+        super.assertAcesso("SR:MÃ³dulo de ServiÃ§os;" + pathServico);
     }
     
     protected  HttpServletResponse getResponse() {

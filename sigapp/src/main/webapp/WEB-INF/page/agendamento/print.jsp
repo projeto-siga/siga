@@ -11,7 +11,7 @@
 </script>
 <center>
 	<img src="/siga/imagens/brasao.gif"><br/> 
-	PODER JUDICI&Aacute;ÅRIO<br> Justi&ccedil;a Federal do Rio de Janeiro
+	PODER JUDICI&Aacute;¬ÅRIO<br> Justi&ccedil;a Federal do Rio de Janeiro
 </center>
 <div style="font-family: arial, calibri;">
 	<center>
@@ -34,7 +34,7 @@
 				<th>DATA</th>
 				<th>HORA</th>
 				<th>SALA</th>
-				<th>&Oacute;RG&Atilde;ÉO</th>
+				<th>&Oacute;RG&Atilde;¬ÉO</th>
 				<th>PERITO JU&Iacute;ZO</th>
 				<th>PERITO PARTE</th>
 			</tr>

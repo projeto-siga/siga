@@ -23,6 +23,13 @@
         <param-name>br.com.caelum.vraptor.packages</param-name>
         <param-value>br.gov.jfrj.siga.vraptor, br.gov.jfrj.siga.feature.entity.instantiator.vraptor</param-value>
     </context-param>
+    
+    <jsp-config>
+		<jsp-property-group>
+			<url-pattern>*.jsp</url-pattern>
+			<page-encoding>UTF-8</page-encoding>
+		</jsp-property-group>
+	</jsp-config>
 
     <filter>
         <filter-name>vraptor</filter-name>

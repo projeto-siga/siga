@@ -47,7 +47,7 @@ public class UsuarioFormController extends PpController {
                     mensagem = "Ok.";
                 } catch (Exception e) {
                     e.printStackTrace();
-                    mensagem = "Não Ok.";
+                    mensagem = "NÃ£o Ok.";
                 }
             } else {
                 paramCodForum = Integer.toString(objUsuario.getForumFk().getCod_forum());

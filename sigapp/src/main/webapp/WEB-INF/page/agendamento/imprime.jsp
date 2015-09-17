@@ -32,7 +32,7 @@
 			<th>&nbsp; Hora &nbsp; </th>
 			<th>&nbsp; Sala/Local &nbsp;</th>
 			<th>&nbsp; Periciado &nbsp;</th>
-			<th>&nbsp; &Oacute;“rg&atilde;o &nbsp;</th>
+			<th>&nbsp; &Oacute;Â“rg&atilde;o &nbsp;</th>
 			<th>&nbsp; Processo &nbsp;</th>
 			<th>&nbsp; Perito Ju&iacute;zo &nbsp;</th>
 			<th>&nbsp; Perito Parte &nbsp;</th>

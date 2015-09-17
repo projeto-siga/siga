@@ -61,7 +61,7 @@
 	</script>
 	<center><h3 class="ui-accordion-header">IMPRIME <i>MEUS</i> AGENDAMENTOS DE <i>UMA</i> SALA</h3></center>
 	<div style="position:relative;left:05%;">
-		<h4 class="ui-accordion-header">&Oacute;RG&Atilde;ƒO:<input class="ui-spinner-input" type="text" value="${lotacaoSessao}" readonly="true" /></h4>
+		<h4 class="ui-accordion-header">&Oacute;RG&Atilde;ÂƒO:<input class="ui-spinner-input" type="text" value="${lotacaoSessao}" readonly="true" /></h4>
 		<br>
 		<h4 class="ui-accordion-header">SALA: &nbsp;<input class="ui-spinner-input" type="text" value="${local}" readonly="true" /></h4>
 		</div> 

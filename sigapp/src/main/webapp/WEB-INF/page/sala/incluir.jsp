@@ -20,7 +20,7 @@ function formata(){
 	<br/> 
 	<font style="position:absolute;left:5%;right:76%;" class="ui-state-default" size="3px">Descri&ccedil;&atilde;o: </font> <input type="text" class="ui-widget" style="position:absolute;left:25%;" name="formLocal.local" maxlength="30" size="50" /> <!-- String --><br/>
 	<br/>
-	<font style="position:absolute;left:5%;right:76%;" class="ui-state-default" size="3px">C&oacute;digo do forum: </font> <input type="text" class="ui-widget" style="position:absolute;left:25%;" name="cod_forum" id="cod_forum01" maxlength="3" size="50" onchange="if(isNaN(document.getElementById('cod_forum01').value) ){alert('Esse campo tem que ser numérico');}" /> <!-- int --><br/>
+	<font style="position:absolute;left:5%;right:76%;" class="ui-state-default" size="3px">C&oacute;digo do forum: </font> <input type="text" class="ui-widget" style="position:absolute;left:25%;" name="cod_forum" id="cod_forum01" maxlength="3" size="50" onchange="if(isNaN(document.getElementById('cod_forum01').value) ){alert('Esse campo tem que ser numÃ©rico');}" /> <!-- int --><br/>
 	<br/>
 	<font style="position:absolute;left:5%;right:76%;" class="ui-state-default" size="3px">Dias de atendimento: </font> <input type="text" class="ui-widget" style="position:absolute;left:25%;" name="formLocal.dias" maxlength="40" size="50" /> <!-- String --><br/>
 	<br/>

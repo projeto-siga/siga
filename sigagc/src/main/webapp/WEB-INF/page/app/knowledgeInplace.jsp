@@ -28,7 +28,7 @@
 				</c:when>
 				<c:otherwise>
 					Nenhum conhecimento relacionado registrado. 
-					Clique <a href="${lurl}" ${popup?'target="_blank" ':''}>aqui</a>
+					Clique <a href="${url}" ${popup?'target="_blank" ':''}>aqui</a>
 					para registrar um novo conhecimento.
 				</c:otherwise>
 			</c:choose>

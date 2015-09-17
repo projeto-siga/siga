@@ -11,14 +11,14 @@
             	<form enctype="multipart/form-data">
                		<div class="gt-form-row">
 						<label>Item de Configuração</label> 
-						<siga:selecao2 propriedade="itemConfiguracao" tipo="itemConfiguracao" tema="simple" modulo="sigasr" onchange="mostraOuEscondeAcao();carregarRelacionados();"/>
+						<siga:selecao2 tamanho="grande" propriedade="itemConfiguracao" tipo="itemConfiguracao" tema="simple" modulo="sigasr" onchange="mostraOuEscondeAcao();carregarRelacionados();"/>
 					</div>
 					<div style="display: inline-block" >
 						<div id="gc-ancora-item"></div>
 					</div>
 					<div class="gt-form-row" id="divAcao">
 						<label>A&ccedil;&atilde;o</label> 
-						<siga:selecao2 propriedade="acao" tipo="acao" tema="simple" modulo="sigasr" onchange="carregarRelacionados();"/>
+						<siga:selecao2 tamanho="grande" propriedade="acao" tipo="acao" tema="simple" modulo="sigasr" onchange="carregarRelacionados();"/>
 					</div>
 					<div style="display: inline-block" >
 						<div id="gc-ancora-item-acao"></div>

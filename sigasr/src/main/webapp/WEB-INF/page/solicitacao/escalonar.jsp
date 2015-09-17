@@ -66,7 +66,7 @@
 				<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label>
 				<input type="hidden" name=itemConfiguracao.id id="itemConfiguracao" value="${solicitacao.itemConfiguracao.id}" />
 				<%--<c:forEach items="${requestScope}" var="t">--${t}--</c:forEach> --%>
-				<siga:selecao2 propriedade="solicitacao.itemConfiguracao" tipo="itemConfiguracao" tema="simple" modulo="sigasr"
+				<siga:selecao2 tamanho="grande" propriedade="solicitacao.itemConfiguracao" tipo="itemConfiguracao" tema="simple" modulo="sigasr"
 					onchange="carregarAcao()"
 					paramList="sol.solicitante.id=${solicitacao.solicitante.idPessoa};sol.local.id=${solicitacao.local.idComplexo};sol.titular.id=${cadastrante.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}" />
 				<span style="color: red" />

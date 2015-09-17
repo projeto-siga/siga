@@ -22,7 +22,7 @@
 		<div class="gt-form-row gt-width-66">
 			<label>Tipo de a&ccedil;&atilde;o</label>
 			<input type="hidden" name="tipoAcaoSel" id="tipoAcao" class="selecao" value="">
-			<siga:selecao2 propriedade="tipoAcaoSel" tipo="tipoAcao" tema="simple" modulo="sigasr"/>
+			<siga:selecao2 tamanho="grande" propriedade="tipoAcaoSel" tipo="tipoAcao" tema="simple" modulo="sigasr"/>
 		</div>
 
 		<div class="gt-form-row">

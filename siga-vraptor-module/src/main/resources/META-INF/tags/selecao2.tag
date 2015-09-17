@@ -28,7 +28,8 @@
 
 <c:set var="urlBuscar" value="/app/${tipo}/buscar" />
 
-<c:set var="tam" value="${requestScope[propriedadeSel].tamanho}" />
+<%-- <c:set var="tam" value="${requestScope[propriedadeSel].tamanho}" /> --%>
+<c:set var="tam" value="${tamanho}" />
 <c:set var="larguraPopup" value="600" />
 <c:set var="alturaPopup" value="400" />
 

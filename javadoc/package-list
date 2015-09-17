@@ -36,6 +36,7 @@ br.gov.jfrj.siga.ex
 br.gov.jfrj.siga.ex.bl
 br.gov.jfrj.siga.ex.bl.BIE
 br.gov.jfrj.siga.ex.ext
+br.gov.jfrj.siga.ex.gsa
 br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios
 br.gov.jfrj.siga.ex.service
 br.gov.jfrj.siga.ex.service.impl
@@ -65,6 +66,10 @@ br.gov.jfrj.siga.persistencia
 br.gov.jfrj.siga.persistencia.oracle
 br.gov.jfrj.siga.picketlink
 br.gov.jfrj.siga.picketlink.servlet
+br.gov.jfrj.siga.pp.dao
+br.gov.jfrj.siga.pp.interceptor
+br.gov.jfrj.siga.pp.models
+br.gov.jfrj.siga.pp.vraptor
 br.gov.jfrj.siga.relatorio
 br.gov.jfrj.siga.rh
 br.gov.jfrj.siga.sinc.lib

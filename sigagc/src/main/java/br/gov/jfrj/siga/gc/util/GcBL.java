@@ -978,7 +978,6 @@ public class GcBL {
 
 		Pattern padraoHashTag = Pattern.compile(
 		// reconhece uma hashTag (#)
-				//"(#[\\w-]+)");
 				"(#(?:[0-9a-fA-F]+[G-Zg-z]|[G-Zg-z])[\\w-]*[\\w])");
 
 		Matcher matcherHashTag = padraoHashTag.matcher(conteudo);
@@ -997,7 +996,6 @@ public class GcBL {
 
 		Pattern padraoHashTag = Pattern.compile(
 		// reconhece uma hashTag (#)
-				//"(#[\\w-]+)");
 				"(#(?:[0-9a-fA-F]+[G-Zg-z]|[G-Zg-z])[\\w-]*[\\w])");
 
 		Matcher matcherHashTag = padraoHashTag.matcher(conteudo);

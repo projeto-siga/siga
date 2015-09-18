@@ -131,7 +131,7 @@ public class PrincipalController extends SigaController {
 					.getConf()
 					.podeUtilizarServicoPorConfiguracao(pes, lot, "SIGA;TP")) {
 				URLSelecionar = urlBase + "/sigatp"
-						+ "/selecionar.action?sigla=" + sigla
+						+ "/app/documento/selecionar?sigla=" + sigla
 						+ incluirMatricula;
 			}
 		}
@@ -175,7 +175,7 @@ public class PrincipalController extends SigaController {
 					(copiaSigla.endsWith("M") ||
 					 copiaSigla.endsWith("S") ||
 					 copiaSigla.endsWith("R")))
-				uRLExibir = "/sigatp/exibir.action?sigla=" + response[2];
+				uRLExibir = "/sigatp/app/documento/exibir?sigla=" + response[2];
 			else
 				uRLExibir = "/sigaex/app/expediente/doc/exibir?sigla="+ response[2];
 		}

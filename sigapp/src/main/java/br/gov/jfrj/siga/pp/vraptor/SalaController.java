@@ -145,7 +145,7 @@ public class SalaController extends PpController {
 				resposta = "Esta sala possui agendamentos. Delete primeiro os agendamentos referenciados.";
 			}
 		} else {
-			resposta = "Não Ok.";
+			resposta = "NÃ£o Ok.";
 		}
 		result.include("resposta", resposta);
 	}

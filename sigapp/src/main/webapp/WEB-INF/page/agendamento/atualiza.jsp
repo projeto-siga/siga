@@ -50,7 +50,7 @@
 		  
 		  <input class="ui-widget" name="perito_parte" type="text" style="position:absolute;left:40%;" size="50" maxlength="50" value="${perito_parte}" />
 		  <br><br> 
-		  <font class="ui-state-default" size="3px" style="position:absolute;left:25%;left:25%;">&Oacute;“rg&atilde;o julgador: </font>
+		  <font class="ui-state-default" size="3px" style="position:absolute;left:25%;left:25%;">&Oacute;Â“rg&atilde;o julgador: </font>
 		 
 		  <input class="ui-widget" name="orgao_ag" type="text" style="position:absolute;left:40%;" size="50" maxlength="15" value="${orgao_julgador}" readonly="readonly" />
 		  <br><br><br>

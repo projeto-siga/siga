@@ -84,14 +84,14 @@
 	                        <td>Item</td>
 	                        <td>
 	                           <input type="hidden" name="filtro.itemConfiguracaoSel" value="" />
-	                           <siga:selecao2 propriedade="filtro.itemConfiguracaoSel" tipo="itemConfiguracao" tema="simple" modulo="sigasr"/>
+	                           <siga:selecao2 tamanho="grande" propriedade="filtro.itemConfiguracaoSel" tipo="itemConfiguracao" tema="simple" modulo="sigasr"/>
 	                        </td>
 	                    </tr>
 	                    <tr>
 	                        <td>A&ccedil;&atilde;o</td>
 	                        <td>
 	                           <input type="hidden" name="filtro.acaoSel" value="" />
-	                           <siga:selecao2 propriedade="filtro.acaoSel" tipo="acao" tema="simple" modulo="sigasr"/>
+	                           <siga:selecao2 tamanho="grande" propriedade="filtro.acaoSel" tipo="acao" tema="simple" modulo="sigasr"/>
 	                        </td>
 	                    </tr>
 	                    <tr>

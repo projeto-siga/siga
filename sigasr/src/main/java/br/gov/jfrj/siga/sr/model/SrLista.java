@@ -243,8 +243,8 @@ public class SrLista extends HistoricoSuporte {
         return new SrListaVO(this);
     }
 
-    public void validarPodeExibirLista(DpLotacao lotacao, DpPessoa cadastrante) throws Exception {
-        if (!podeConsultar(lotacao, cadastrante)) {
+    public void validarPodeExibirLista(DpLotacao lotacao, DpPessoa titular) throws Exception {
+        if (!podeConsultar(lotacao, titular)) {
             throw new Exception("Exibiï¿½ï¿½o nï¿½o permitida");
         }
     }

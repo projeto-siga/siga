@@ -840,12 +840,11 @@ public class GcBL {
 		GcInformacao infoReferenciada = null;
 		StringBuffer sb = new StringBuffer();
 
-		// lembrar de retirar o RJ quando for para a produção.
 		Pattern padraoSigla = Pattern.compile(
 		// reconhece tais tipos de códigos: JFRJ-EOF-2013/01494.01,
 		// JFRJ-REQ-2013/03579-A, JFRJ-EOF-2013/01486.01-V01,
 		// TRF2-PRO-2013/00001-V01
-				"(?i)(?:(?:RJ|"
+				"(?i)(?:(?:"
 						+ acronimoOrgao
 						+ ")-([A-Za-z]{2,3})-[0-9]{4}/[0-9]{5}(?:.[0-9]{2})?(?:-V[0-9]{2})?(?:-[A-Za-z]{1})?)");
 
@@ -885,12 +884,11 @@ public class GcBL {
 		GcInformacao infoReferenciada = null;
 		StringBuffer sb = new StringBuffer();
 
-		// lembrar de retirar o RJ quando for para a produção.
 		Pattern padraoSigla = Pattern.compile(
 		// reconhece tais tipos de códigos: JFRJ-EOF-2013/01494.01,
 		// JFRJ-REQ-2013/03579-A, JFRJ-EOF-2013/01486.01-V01,
 		// TRF2-PRO-2013/00001-V01
-				"(?i)(?:(?:RJ|"
+				"(?i)(?:(?:"
 						+ acronimoOrgao
 						+ ")-([A-Za-z]{2,3})-[0-9]{4}/[0-9]{5}(?:.[0-9]{2})?(?:-V[0-9]{2})?(?:-[A-Za-z]{1})?)");
 
@@ -978,7 +976,7 @@ public class GcBL {
 
 		Pattern padraoHashTag = Pattern.compile(
 		// reconhece uma hashTag (#)
-				"(#[\\w-]+)");
+				"(#(?:[0-9a-fA-F]+[G-Zg-z]|[G-Zg-z])[\\w-]*[\\w])");
 
 		Matcher matcherHashTag = padraoHashTag.matcher(conteudo);
 		while (matcherHashTag.find()) {
@@ -996,7 +994,7 @@ public class GcBL {
 
 		Pattern padraoHashTag = Pattern.compile(
 		// reconhece uma hashTag (#)
-				"(#[\\w-]+)");
+				"(#(?:[0-9a-fA-F]+[G-Zg-z]|[G-Zg-z])[\\w-]*[\\w])");
 
 		Matcher matcherHashTag = padraoHashTag.matcher(conteudo);
 		while (matcherHashTag.find()) {

@@ -2046,12 +2046,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             return listaSubstitutos;
     }
 
-    public List<SrLista> getListasDisponiveisParaInclusao(DpLotacao lotaTitular, DpPessoa cadastrante) throws Exception {
+    public List<SrLista> getListasDisponiveisParaInclusao(DpLotacao lotaTitular, DpPessoa titular) throws Exception {
         List<SrLista> listaFinal = SrLista.getCriadasPelaLotacao(lotaTitular);
 
         for (SrLista l : SrLista.listar(false)) {
             SrLista atual = l.getListaAtual();
-            if (atual.podeIncluir(lotaTitular, cadastrante) && !listaFinal.contains(atual))
+            if (atual.podeIncluir(lotaTitular, titular) && !listaFinal.contains(atual))
                 listaFinal.add(atual);
         }
         listaFinal.removeAll(getListasAssociadas());
@@ -2639,8 +2639,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public boolean isAtributoAcordoSatisfeito(SrAtributoAcordo atributoAcordo) {
-        try {
-            SrValor valor = (SrValor) SrSolicitacao.class.getMethod(atributoAcordo.getAtributo().asGetter()).invoke(this);
+    	try {
+        	SrValor valor = null;
+        	if (atributoAcordo != null && atributoAcordo.getAtributo() != null )
+        		valor = (SrValor) SrSolicitacao.class.getMethod(atributoAcordo.getAtributo().asGetter()).invoke(this);
             if (valor == null)
                 return true;
             return atributoAcordo.isNaFaixa(valor);

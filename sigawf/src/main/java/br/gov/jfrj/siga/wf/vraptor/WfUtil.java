@@ -270,7 +270,7 @@ public class WfUtil {
 							}
 						}
 						
-						if (destino == null){
+						if (destino == null && ti.getPooledActors() != null){
 							for (PooledActor lot : (Collection<PooledActor>) ti
 									.getPooledActors()) {
 								destino = "@" + lot.getActorId();
@@ -286,7 +286,7 @@ public class WfUtil {
 	}
 	
 	private static boolean atorDeveReexecutarTarefa(DpPessoa ator, TaskInstance ti) {
-		if (ti.getPooledActors().size() == 1) {
+		if (ti.getPooledActors()!=null && ti.getPooledActors().size() == 1) {
 			DpLotacaoDaoFiltro lotflt = new DpLotacaoDaoFiltro();
 			lotflt.setSiglaCompleta(((PooledActor) ti.getPooledActors().toArray()[0]).getActorId());
 			DpLotacao lotacao = (DpLotacao) WfDao.getInstance().consultarPorSigla(lotflt);

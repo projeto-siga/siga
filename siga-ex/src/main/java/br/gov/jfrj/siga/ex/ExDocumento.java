@@ -626,6 +626,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
+	 * Retorna a data do documento no formato dd/mm/aaaa, por exemplo,
+	 * 01/02/2010.
+	 */
+	public String getDtDocYYYYMMDD() {
+		if (getDtDoc() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			return df.format(getDtDoc());
+		}
+		return "";
+	}
+
+	/**
 	 * Retorna a data de finalização do documento no formato dd/mm/aa, por
 	 * exemplo, 01/02/10.
 	 */

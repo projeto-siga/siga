@@ -39,6 +39,7 @@ function carregouAcao(response, param){
                    tipo="itemConfiguracao" 
                    tema="simple" 
                    modulo="sigasr" 
+                   tamanho="grande"
                    onchange="carregarAcao();notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao')"
                    paramList="sol.solicitante.id=${solicitacao.solicitante.idPessoa};sol.local.id=${solicitacao.local.idComplexo};sol.titular.id=${titular.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}"/>
     <siga:error name="solicitacao.itemConfiguracao"/>

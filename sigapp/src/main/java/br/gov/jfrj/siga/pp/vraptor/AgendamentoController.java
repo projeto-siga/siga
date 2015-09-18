@@ -38,7 +38,7 @@ public class AgendamentoController extends PpController {
 		String matriculaSessao = getUsuarioMatricula();
 		UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao);
 		if (objUsuario != null) {
-			// busca locais em fun��o da configura��o do usu�rio
+			// busca locais em função da configuração do usuário
 			String criterioSalas="";
 			List<Locais> listaDeSalas = Locais.AR.find("forumFk="+objUsuario.getForumFk().getCod_forum()).fetch();
 			// monta string de criterio
@@ -67,7 +67,7 @@ public class AgendamentoController extends PpController {
                 for (int i = 0; i < listAgendamentos.size(); i++) {
                     // varre listAgendamentos
                     for (int ii = 0; ii < listLocais.size(); ii++) {
-                        // compara com cada local do forum do usuário
+                        // compara com cada local do forum do usuÃ¡rio
                         if (listAgendamentos.get(i).getLocalFk().getCod_local() == listLocais.get(ii).getCod_local()) {
                             auxAgendamentos.add((Agendamentos) listAgendamentos.get(i));
                         }
@@ -89,7 +89,7 @@ public class AgendamentoController extends PpController {
 		String matriculaSessao = getUsuarioMatricula();
 		UsuarioForum objUsuario = UsuarioForum.AR.find("matricula_usu =" + matriculaSessao).first();
 		if (objUsuario != null) {
-			// busca locais em fun��o da configura��o do usu�rio
+			// busca locais em função da configuração do usuário
 			String criterioSalas="";
 			List<Locais> listaDeSalas = Locais.AR.find("forumFk="+objUsuario.getForumFk().getCod_forum()).fetch();
 			// monta string de criterio
@@ -140,12 +140,12 @@ public class AgendamentoController extends PpController {
 		UsuarioForum objUsuario = UsuarioForum.AR.find(
 			"matricula_usu =" + matriculaSessao).first();
 		if (objUsuario != null) {
-			// Pega o usu�rio do sistema, e, busca os locais(salas) daquele
-			// forum onde ele est�.
-			listSalas = ((List) Locais.AR.find("forumFk='" + objUsuario.getForumFk().getCod_forum() + "' order by ordem_apresentacao ").fetch()); // isso n�o d� erro no caso de retorno vazio.
+			// Pega o usuário do sistema, e, busca os locais(salas) daquele
+			// forum onde ele está.
+			listSalas = ((List) Locais.AR.find("forumFk='" + objUsuario.getForumFk().getCod_forum() + "' order by ordem_apresentacao ").fetch()); // isso não dá erro no caso de retorno vazio.
 			List<Agendamentos> listAgendamentosMeusSala = new ArrayList();
 			if(!(frm_cod_local==null||frm_data_ag.isEmpty())){
-				//lista os agendamentos do dia, e, da lota��o do cadastrante
+				//lista os agendamentos do dia, e, da lotação do cadastrante
 				listAgendamentosMeusSala = ((List) Agendamentos.AR.find("localFk.cod_local='" + frm_cod_local + "' and data_ag = to_date('" + frm_data_ag + "','yy-mm-dd') order by hora_ag").fetch());
 				for(int i=0;i<listSalas.size();i++){
 					if(listSalas.get(i).getCod_local().equals(frm_cod_local)){
@@ -182,7 +182,7 @@ public class AgendamentoController extends PpController {
 					perito_parte, processo, orgao);
 			hr = frm_hora_ag;
 			Agendamentos agendamentoEmConflito = null;
-			// begin transaction, que, segundo o Da Rocha é automatico no inicio da action
+			// begin transaction, que, segundo o Da Rocha Ã© automatico no inicio da action
 			String hrAux = hr.substring(0, 2);
 			String minAux = hr.substring(3, 5);
 			if (hr != null && (!hr.isEmpty())) {
@@ -226,20 +226,20 @@ public class AgendamentoController extends PpController {
 				em.getTransaction().commit();
 			    em.close();
 				// floop
-				// end transaction, que, segundo o Da Rocha é automático; no fim
+				// end transaction, que, segundo o Da Rocha Ã© automÃ¡tico; no fim
 				// da action
 			} else {
-				resposta = "N�o Ok.";
+				resposta = "Não Ok.";
 			}
 		} catch (Exception e) {
-			// rollback transaction, que segundo o Da Rocha é automático; ocorre
+			// rollback transaction, que segundo o Da Rocha Ã© automÃ¡tico; ocorre
 			// em qualquer erro
 			e.printStackTrace();
 			String erro = e.getMessage();
 			if (erro.substring(24, 52).equals("ConstraintViolationException")) {
-				resposta = "N�o Ok. O lote n�o foi agendado.";
+				resposta = "Não Ok. O lote não foi agendado.";
 			} else {
-				resposta = "N�o Ok. Verifique se preencheu todos os campos do agendamento.";
+				resposta = "Não Ok. Verifique se preencheu todos os campos do agendamento.";
 			}
 		} finally {
 		    result.include("resposta", resposta);
@@ -258,11 +258,11 @@ public class AgendamentoController extends PpController {
         UsuarioForum objUsuario = UsuarioForum.AR.find(
                 "matricula_usu =" + matriculaSessao).first();
         if (objUsuario != null) {
-            // Pega o usu�rio do sistema, e, busca os locais(salas) daquele
-            // forum onde ele est�.
+            // Pega o usuário do sistema, e, busca os locais(salas) daquele
+            // forum onde ele está.
             listSalas = (List) Locais.AR.find(
                     "cod_forum='" + objUsuario.getForumFk().getCod_forum()
-                            + "' order by ordem_apresentacao ").fetch(); // isso n�o d� erro no caso de retorno vazio.
+                            + "' order by ordem_apresentacao ").fetch(); // isso não dá erro no caso de retorno vazio.
             listPeritos =  (List) Peritos.AR.find("1=1 order by nome_perito").fetch();
             //   buscar o nome do perito fixo na lista se existir
             if(fixo_perito_juizo!=null){
@@ -310,10 +310,10 @@ public class AgendamentoController extends PpController {
 			}
 		}catch(PersistenceException e){
 			e.printStackTrace();
-			resultado = "N�o Ok.";
+			resultado = "Não Ok.";
 		}catch(Exception ee){
 			ee.printStackTrace();
-			resultado = "N�o Ok.";
+			resultado = "Não Ok.";
 		}finally{
 		    result.include("resultado", resultado);
 		    result.include("data_ag", dtt);
@@ -333,7 +333,7 @@ public class AgendamentoController extends PpController {
     		else{
     			listAgendamentos = Agendamentos.AR.find( "data_ag=to_date('" + frm_data_ag + "','dd-mm-yy') order by hora_ag, cod_local" ).fetch();
     			DpPessoa p = null;
-    			// deleta os agendamentos de outros org�os
+    			// deleta os agendamentos de outros orgãos
     			for(int i=0;i<listAgendamentos.size();i++){
     				 p = (DpPessoa) DpPessoa.AR.find("orgaoUsuario.idOrgaoUsu = " + getCadastrante().getOrgaoUsuario().getIdOrgaoUsu()
     								+ " and dataFimPessoa is null and matricula='"+ listAgendamentos.get(i).getMatricula() + "'").first();
@@ -383,7 +383,7 @@ public class AgendamentoController extends PpController {
     		}
     	} catch (Exception e) {
     		e.printStackTrace();
-    		resultado = "N�o Ok.";
+    		resultado = "Não Ok.";
     	} finally {
     	    String dtt = data_ag.replace("/", "-");
     	    result.include("resultado", resultado);
@@ -395,24 +395,24 @@ public class AgendamentoController extends PpController {
     public void excluir(String data) {
         // pega matricula do usuario do sistema
         String matriculaSessao = getUsuarioMatricula();
-        // pega a permissão do usuario
+        // pega a permissÃ£o do usuario
         UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao);
         // verifica se tem permissao
         if (objUsuario != null) {
             List<Agendamentos> listAgendamentos = new ArrayList<Agendamentos>();
-            // verifica se o formulário submeteu alguma data
+            // verifica se o formulÃ¡rio submeteu alguma data
             if (data != null) {
-                // Busca os agendamentos da data do formulário
+                // Busca os agendamentos da data do formulÃ¡rio
                 listAgendamentos = Agendamentos.AR.find("data_ag = to_date('" + data + "','dd-mm-yy') order by hora_ag , cod_local")
                         .fetch();
                 // busca os locais do forum do usuario
                 List<Locais> listLocais = Locais.AR.find(
                         "cod_forum='" + objUsuario.getForumFk().getCod_forum() + "'")
                         .fetch();
-                // Verifica se existe local naquele forum do usuário
+                // Verifica se existe local naquele forum do usuÃ¡rio
                 if (!listAgendamentos.isEmpty()) {
-                    // para cada agendamento, inlcui na lista a sala que é do
-                    // forum daquele usu�rio
+                    // para cada agendamento, inlcui na lista a sala que Ã© do
+                    // forum daquele usuário
                     List<Agendamentos> auxAgendamentos = new ArrayList<Agendamentos>();
                     for (Integer i = 0; i < listAgendamentos.size(); i++) {
                         // pega o agendamento
@@ -420,7 +420,7 @@ public class AgendamentoController extends PpController {
                             // varre os locais do forum
                             if (listAgendamentos.get(i).getLocalFk().getCod_local() == listLocais
                                     .get(ii).getCod_local()) {
-                                // pertence à lista de agendamentos do forum do
+                                // pertence Ã  lista de agendamentos do forum do
                                 // usuario
                                 auxAgendamentos
                                         .add((Agendamentos) listAgendamentos
@@ -438,7 +438,7 @@ public class AgendamentoController extends PpController {
             if (!listAgendamentos.isEmpty()) {
                 List <Peritos> listPeritos = new ArrayList<Peritos>();
                 listPeritos = Peritos.AR.findAll();
-                // excluir do arraylist, os peritos que n�o possuem agendamentos nesta data.
+                // excluir do arraylist, os peritos que não possuem agendamentos nesta data.
                 result.include("listAgendamentos", listAgendamentos);
                 result.include("listPeritos", listPeritos);
             } else {
@@ -457,9 +457,9 @@ public class AgendamentoController extends PpController {
     	UsuarioForum objUsuario = UsuarioForum.AR.find(
     			"matricula_usu =" + matriculaSessao).first();
     	if (objUsuario != null) {
-    		// Pega o usu�rio do sistema, e, busca os locais(salas) daquele
-    		// forum onde ele est�.
-    		Locais objSala = Locais.AR.find("cod_forum='" + objUsuario.getForumFk().getCod_forum() + "' and cod_local='" + cod_sala + "'").first(); // isso n�o d� erro no caso de retorno vazio?
+    		// Pega o usuário do sistema, e, busca os locais(salas) daquele
+    		// forum onde ele está.
+    		Locais objSala = Locais.AR.find("cod_forum='" + objUsuario.getForumFk().getCod_forum() + "' and cod_local='" + cod_sala + "'").first(); // isso não dá erro no caso de retorno vazio?
     		String sala_ag = objSala.getLocal();
     		String lotacaoSessao = getCadastrante().getLotacao().getIdLotacao().toString();;
     		//System.out.println(lotacaoSessao);
@@ -524,7 +524,7 @@ public class AgendamentoController extends PpController {
                     .fetch();
             // verifica se veio algum agendamento
             if (results.size() != 0) {
-                // preenche as datas do local no 'MÊS' na agenda
+                // preenche as datas do local no 'MÃS' na agenda
                 // CORRENTE
                 for (Iterator it = results.iterator(); it.hasNext();) {
                     objAgendamento = (Agendamentos) it.next();
@@ -536,12 +536,12 @@ public class AgendamentoController extends PpController {
                 // conta os agendamentos de cada dia, do local que
                 // veio do form
                 for (Iterator it = listDatasDoMes.iterator(); it.hasNext();) {
-                    dia_ag_prox = (String) it.next(); // pegou o pr�ximo
+                    dia_ag_prox = (String) it.next(); // pegou o próximo
                     if (i == 0) {
                         dia_ag_ant = dia_ag_prox;
                     }
                     if (dia_ag_prox.equals(dia_ag_ant)) {
-                        i++; // contou a repeti��o
+                        i++; // contou a repetição
                     } else {
                         i = 1;
                         dia_ag_ant = dia_ag_prox;
@@ -554,7 +554,7 @@ public class AgendamentoController extends PpController {
                 // veio algum agendamento
                 // System.out.println(results.size() + " agendamentos...");
             } else {
-                // n�o veio nenhum agendamento
+                // não veio nenhum agendamento
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -628,7 +628,7 @@ public class AgendamentoController extends PpController {
                         "data_ag = to_date('" + dtt.trim()
                                 + "','dd-mm-yy') and cod_local='"
                                 + frm_cod_local.trim() + "'").fetch();
-                // zera os horários ocupados na frm_data_ag
+                // zera os horÃ¡rios ocupados na frm_data_ag
                 // selecionada, no local frm_cod_local
                 String hrr = "";
                 for (Iterator it = results.iterator(); it.hasNext();) {
@@ -641,7 +641,7 @@ public class AgendamentoController extends PpController {
                 e.printStackTrace();
                 if (e.getMessage().equals("-1")) {
                     listHorasLivres.clear();
-                    listHorasLivres.add("Erro de hor�rio inv�lido na base.");
+                    listHorasLivres.add("Erro de horário inválido na base.");
                 }
             } finally {
                 result.include("listHorasLivres", listHorasLivres);

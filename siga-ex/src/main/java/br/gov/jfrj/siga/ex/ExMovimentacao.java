@@ -180,6 +180,22 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return "";
 	}
 
+	public String getDtMovDDMMYYYY() {
+		if (getDtMov() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+			return df.format(getDtMov());
+		}
+		return "";
+	}
+
+	public String getDtMovYYYYMMDD() {
+		if (getDtMov() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			return df.format(getDtMov());
+		}
+		return "";
+	}
+
 	/**
 	 * Retorna a data de início da movimentação no formato dd/mm/aa, por
 	 * exemplo, 01/02/10.

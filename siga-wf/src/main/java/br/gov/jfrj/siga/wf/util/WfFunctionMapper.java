@@ -21,6 +21,8 @@ package br.gov.jfrj.siga.wf.util;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jbpm.graph.def.Transition;
 import org.jbpm.graph.exe.ExecutionContext;
@@ -89,11 +91,19 @@ public class WfFunctionMapper implements FunctionMapper {
 			if (ator == null)
 				return null;
 			lota = ator.getLotacao();
-		} else if (ti.getPooledActors().size() != 0) {
+		} else if (ti.getPooledActors() != null && ti.getPooledActors().size() != 0) {
 			String groupId = (String) ((PooledActor) (ti.getPooledActors()
 					.toArray()[0])).getActorId();
 			lota = WfDao.getInstance().getLotacaoFromSigla(groupId);
 		}
+		
+		if (lota == null){
+			String msg = "Nenhum ator está definido ou é candidato a executar a taskInstance " + ti.getId();
+			Logger.getLogger("siga.wf.mail").log(Level.SEVERE,msg);
+			throw new AplicacaoException(msg);
+		}
+		
+
 		return lota.getSiglaCompleta();
 	}
 

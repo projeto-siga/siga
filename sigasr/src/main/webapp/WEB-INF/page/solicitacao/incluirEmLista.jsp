@@ -17,10 +17,10 @@
 		  				</tr>
 		  			</thead>
 				<tbody>
-				<c:forEach items="${solicitacao.getListasDisponiveisParaInclusao(lotaTitular, cadastrante)}" var="lista">
+				<c:forEach items="${solicitacao.getListasDisponiveisParaInclusao(lotaTitular, titular)}" var="lista">
 					<tr>
 						<td class="gt-celula-nowrap" style="font-size: 13px; font-weight: bold; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-							<input type="radio" name="idLista" value="${lista.idLista}" data-pode-priorizar="${lista.podePriorizar(lotaTitular, cadastrante)}">	
+							<input type="radio" name="idLista" value="${lista.idLista}" data-pode-priorizar="${lista.podePriorizar(lotaTitular, titular)}">	
 						</td>
 						<td class="gt-celula-nowrap" style="font-size: 9pt; padding: 7px 10px; border-bottom: 1px solid #ccc !important;" "id="descrLista">
 							${lista.nomeLista}

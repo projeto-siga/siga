@@ -33,7 +33,7 @@ import com.google.gson.JsonObject;
 @Entity
 @Table(name = "SR_TIPO_ACAO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrTipoAcao extends HistoricoSuporte implements Comparable<SrTipoAcao>, Selecionavel {
+public class SrTipoAcao extends HistoricoSuporte implements SrSelecionavel, Comparable<SrTipoAcao>, Selecionavel {
 
     public static final ActiveRecord<SrTipoAcao> AR = new ActiveRecord<>(SrTipoAcao.class);
 

@@ -12,7 +12,7 @@
 </script>
 <center>
 	<img src="/siga/imagens/brasao.gif"><br /> 
-	PODER JUDICI&Aacute;ÅRIO<br> Justi&ccedil;a Federal do Rio de Janeiro 
+	PODER JUDICI&Aacute;¬ÅRIO<br> Justi&ccedil;a Federal do Rio de Janeiro 
 </center>
 <div style="font-family: arial, calibri;">
 	<center>

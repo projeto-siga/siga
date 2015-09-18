@@ -22,8 +22,8 @@
     <%=SrTendencia.PIORA_MEDIO_PRAZO.name()%>
 </c:set>
 
-<c:set var="prioridade_planejado">
-    <%=SrPrioridade.PLANEJADO.name()%>
+<c:set var="prioridade_baixo">
+    <%=SrPrioridade.BAIXO.name()%>
 </c:set>
 
 <c:set var="prioridade_desc">

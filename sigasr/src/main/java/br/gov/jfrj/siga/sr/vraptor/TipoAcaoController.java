@@ -73,22 +73,26 @@ public class TipoAcaoController extends SrController {
 		result.use(Results.http()).body(tipoAcao.toJson());
 	}
 
-	@Path("/selecionar/{sigla}")
+	@Path("/selecionar")
 	public void selecionar(String sigla) throws Exception {
 		SrTipoAcao tipoAcao = new SrTipoAcao().selecionar(sigla);
-
-		result.include("sel", tipoAcao);
+		result
+			.forwardTo(SelecaoController.class)
+			.ajaxRetorno(tipoAcao);
 	}
 
 	@Path("/buscar")
-	public void buscar(SrTipoAcao tipoAcao, String nome, String propriedade) {
-		List<SrTipoAcao> itens = null;
+	public void buscar(String sigla, String nome, String siglaTipoAcao, String tituloTipoAcao, String propriedade) {	
 
-		SrTipoAcao filtro = null;
+		List<SrTipoAcao> itens = null;
+		
+		SrTipoAcao filtro = new SrTipoAcao();
+		filtro.setSiglaTipoAcao(siglaTipoAcao);
+		filtro.setTituloTipoAcao(tituloTipoAcao);
+		
 		try {
-			filtro = (null != tipoAcao) ? tipoAcao : new SrTipoAcao();
-			if (temSigla(tipoAcao.getSiglaTipoAcao()))
-				filtro.setSigla(tipoAcao.getSiglaTipoAcao());
+			if (temSigla(sigla))
+				filtro.setSigla(sigla);
 
 			itens = filtro.buscar();
 		} catch (Exception e) {
@@ -96,7 +100,7 @@ public class TipoAcaoController extends SrController {
 		}
 
 		result.include("itens", itens);
-		result.include("tipoAcao", filtro);
+		result.include("filtro", filtro);
 		result.include("nome", nome);
 		result.include("param.propriedade", propriedade);
 	}

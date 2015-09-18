@@ -55,7 +55,7 @@
 						<artifactId>docker-maven-plugin</artifactId>
 						<version>0.11.5</version>
 								<configuration>
-									<dockerHost>https://${server.ip}:2376</dockerHost>
+									<dockerHost>http://${server.ip}:2375</dockerHost>
 									<!-- SEM TLS: -->
 									<!-- <dockerHost>http://${server.ip}:2375</dockerHost> -->
 									<!-- <certPath>C:\Users\${user.name}\.boot2docker\certs\boot2docker-vm</certPath> -->

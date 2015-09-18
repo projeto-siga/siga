@@ -7,6 +7,12 @@
 $(document).ready(function() {
     notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao');
 });
+function dispararFuncoesOnBlurItem() {
+	if (valorInputMudou('formulario_solicitacaoitemConfiguracao_id', 'item')) {
+		carregarAcao();
+		notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao');
+	}	
+}
 
 function carregarAcao(){
     jQuery.blockUI(objBlock);
@@ -40,7 +46,7 @@ function carregouAcao(response, param){
                    tema="simple" 
                    modulo="sigasr" 
                    tamanho="grande"
-                   onchange="carregarAcao();notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao')"
+                   onchange="dispararFuncoesOnBlurItem();"
                    paramList="sol.solicitante.id=${solicitacao.solicitante.idPessoa};sol.local.id=${solicitacao.local.idComplexo};sol.titular.id=${titular.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}"/>
     <siga:error name="solicitacao.itemConfiguracao"/>
 </div>

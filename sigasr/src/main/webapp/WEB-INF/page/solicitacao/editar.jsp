@@ -58,6 +58,7 @@
 	</style>
 	
 	<script>
+		var item_default = "";
 		jQuery(document).ready(function($) {
 			$('#gravar').click(function() {
 				if ($('#siglaCadastrante').val() != $('#formulario_solicitacaosolicitante_sigla')[0].value) {
@@ -87,6 +88,8 @@
 				changemostrarInterlocutor();
 				showInterlocutor(this.checked, 'interlocutor');
 			};
+			//inicializa valores default para serem usados na function valorInputMudou()
+			item_default = $("#formulario_solicitacaoitemConfiguracao_id").val();
 		});
 	
 		function showInterlocutor(checked, divName){
@@ -128,7 +131,7 @@
 			Siga.ajax(url, null, "GET", function(response){
 				carregouLocalRamalEMeioContato(response);
 			});
-		//	PassAjaxResponseToFunction(, 'carregouLocalRamalEMeioContato', null, false, null);
+			//	PassAjaxResponseToFunction(, 'carregouLocalRamalEMeioContato', null, false, null);
 		}
 		
 		function carregouLocalRamalEMeioContato(response){
@@ -262,6 +265,17 @@
 	
 		function existeFiltroSelecionavel() {
 			return $("#filtro .filtro-sol-relacionadas").size() > 0;
+		}
+
+		// param_1: id do input que deseja verificar se mudou do valor default
+		// param_2: tipo de input (solicitante, item...)
+		function valorInputMudou(id, tipo){
+			var input = $("#"+ id);
+			if (input.val() != window[tipo + '_default']) {
+				window[tipo + '_default'] = input.val(); 
+				return true;
+			}
+			return false;
 		}
 		
 		function notificarCampoMudou(campoRef, tipoCampo, optionVl) {

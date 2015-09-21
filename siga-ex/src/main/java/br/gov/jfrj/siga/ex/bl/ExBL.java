@@ -290,49 +290,53 @@ public class ExBL extends CpBL {
 
 	public void atualizarMarcas(ExDocumento doc, boolean apenasTemporalidade) {
 		for (ExMobil mob : doc.getExMobilSet()) {
-			SortedSet<ExMarca> setA = null, setB = null;
+			atualizarMarcas(apenasTemporalidade, mob);
+		}
+	}
 
-			if (apenasTemporalidade) {
-				setA = mob.getExMarcaSetTemporalidade();
-				setB = calcularMarcadoresTemporalidade(mob);
-			} else {
-				setA = mob.getExMarcaSet();
-				setB = calcularMarcadores(mob);
-			}
+	private void atualizarMarcas(boolean apenasTemporalidade, ExMobil mob) {
+		SortedSet<ExMarca> setA = null, setB = null;
 
-			if (setA == null)
-				setA = new TreeSet<ExMarca>();
+		if (apenasTemporalidade) {
+			setA = mob.getExMarcaSetTemporalidade();
+			setB = calcularMarcadoresTemporalidade(mob);
+		} else {
+			setA = mob.getExMarcaSet();
+			setB = calcularMarcadores(mob);
+		}
 
-			Set<ExMarca> incluir = new TreeSet<ExMarca>();
-			Set<ExMarca> excluir = new TreeSet<ExMarca>();
-			Set<Par<ExMarca, ExMarca>> atualizar = new TreeSet<Par<ExMarca, ExMarca>>();
-			encaixar(setA, setB, incluir, excluir, atualizar);
-			for (ExMarca i : incluir) {
-				if (i.getExMobil().getExMarcaSet() == null) {
-					i.getExMobil().setExMarcaSet(new TreeSet<ExMarca>());
-				}
-				i.getExMobil().getExMarcaSet().add(i);
-				dao().gravar(i);
+		if (setA == null)
+			setA = new TreeSet<ExMarca>();
+
+		Set<ExMarca> incluir = new TreeSet<ExMarca>();
+		Set<ExMarca> excluir = new TreeSet<ExMarca>();
+		Set<Par<ExMarca, ExMarca>> atualizar = new TreeSet<Par<ExMarca, ExMarca>>();
+		encaixar(setA, setB, incluir, excluir, atualizar);
+		for (ExMarca i : incluir) {
+			if (i.getExMobil().getExMarcaSet() == null) {
+				i.getExMobil().setExMarcaSet(new TreeSet<ExMarca>());
 			}
-			for (ExMarca e : excluir) {
-				if (e.getExMobil().getExMarcaSet() == null) {
-					e.getExMobil().setExMarcaSet(new TreeSet<ExMarca>());
-				}
-				e.getExMobil().getExMarcaSet().remove(e);
-				dao().excluir(e);
+			i.getExMobil().getExMarcaSet().add(i);
+			dao().gravar(i);
+		}
+		for (ExMarca e : excluir) {
+			if (e.getExMobil().getExMarcaSet() == null) {
+				e.getExMobil().setExMarcaSet(new TreeSet<ExMarca>());
 			}
-			for (Entry<ExMarca, ExMarca> pair : atualizar) {
-				ExMarca a = pair.getKey();
-				ExMarca b = pair.getValue();
-				if (a.getExMobil().getExMarcaSet() == null) {
-					a.getExMobil().setExMarcaSet(new TreeSet<ExMarca>());
-				}
-				a.setDpLotacaoIni(b.getDpLotacaoIni());
-				a.setDpPessoaIni(b.getDpPessoaIni());
-				a.setDtFimMarca(b.getDtFimMarca());
-				a.setDtIniMarca(b.getDtIniMarca());
-				dao().gravar(a);
+			e.getExMobil().getExMarcaSet().remove(e);
+			dao().excluir(e);
+		}
+		for (Entry<ExMarca, ExMarca> pair : atualizar) {
+			ExMarca a = pair.getKey();
+			ExMarca b = pair.getValue();
+			if (a.getExMobil().getExMarcaSet() == null) {
+				a.getExMobil().setExMarcaSet(new TreeSet<ExMarca>());
 			}
+			a.setDpLotacaoIni(b.getDpLotacaoIni());
+			a.setDpPessoaIni(b.getDpPessoaIni());
+			a.setDtFimMarca(b.getDtFimMarca());
+			a.setDtIniMarca(b.getDtIniMarca());
+			dao().gravar(a);
 		}
 	}
 	
@@ -341,7 +345,7 @@ public class ExBL extends CpBL {
 		Iterator itJuntados = mobilJuntados.iterator();
 		while(itJuntados.hasNext()){
 			ExMobil mobilJuntado = (ExMobil) itJuntados.next();
-			atualizarMarcas(mobilJuntado.doc());
+			atualizarMarcas(false, mobilJuntado);
 		}
 	}
 

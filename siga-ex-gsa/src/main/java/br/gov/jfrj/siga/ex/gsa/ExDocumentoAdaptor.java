@@ -29,7 +29,9 @@ import org.hibernate.Query;
 import org.hibernate.cfg.Configuration;
 
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
+import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
@@ -154,14 +156,27 @@ public class ExDocumentoAdaptor extends ExAdaptor {
 					.getNmNivelAcesso());
 		if (doc.getDtDocYYYYMMDD() != null)
 			resp.addMetadata("Data", doc.getDtDocYYYYMMDD());
-		if (doc.getExClassificacaoAtual() != null) {
-			resp.addMetadata("Código da Classificação", doc
-					.getExClassificacaoAtual().getSigla());
-			resp.addMetadata(
-					"Descrição da Classificação",
-					doc.getExClassificacaoAtual().getDescricao()
-							.replace(": ", ", "));
+
+		ExClassificacao cAtual = doc.getExClassificacaoAtual();
+		if (cAtual == null && doc.getExClassificacao() != null)
+			cAtual = doc.getExClassificacao();
+		if (cAtual != null) {
+			int i = 1;
+			String[] pais = MascaraUtil.getInstance().getPais(
+					cAtual.getCodificacao());
+			if (pais != null) {
+				for (String sigla : pais) {
+					ExClassificacao c = new ExClassificacao();
+					c.setSigla(sigla);
+					ExClassificacao cPai = ExDao.getInstance()
+							.consultarPorSigla(c);
+					resp.addMetadata("Classificação " + i++,
+							cPai.getDescricao());
+				}
+			}
+			resp.addMetadata("Classificação " + i, cAtual.getDescricao());
 		}
+
 		if (doc.getLotaSubscritor() != null)
 			resp.addMetadata("Lotação do Subscritor", doc.getLotaSubscritor()
 					.getSiglaLotacao());

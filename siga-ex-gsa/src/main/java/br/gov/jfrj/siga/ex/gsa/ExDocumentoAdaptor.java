@@ -170,11 +170,11 @@ public class ExDocumentoAdaptor extends ExAdaptor {
 					c.setSigla(sigla);
 					ExClassificacao cPai = ExDao.getInstance()
 							.consultarPorSigla(c);
-					resp.addMetadata("Classificação " + i++,
-							cPai.getDescricao());
+					resp.addMetadata("Classificação " + MascaraUtil.getInstance().calcularNivel(c.getCodificacao()),
+							cPai.getDescrClassificacao());
 				}
 			}
-			resp.addMetadata("Classificação " + i, cAtual.getDescricao());
+			resp.addMetadata("Classificação " + MascaraUtil.getInstance().calcularNivel(cAtual.getCodificacao()), cAtual.getDescricao());
 		}
 
 		if (doc.getLotaSubscritor() != null)

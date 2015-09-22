@@ -1635,10 +1635,10 @@ public class CpDao extends ModeloDao {
 		cfg.setProperty("hibernate.current_session_context_class", "thread");
 		cfg.setProperty("hibernate.query.substitutions", "true 1, false 0");
 
-		//cfg.setProperty("hibernate.cache.region.factory_class", "org.jboss.as.jpa.hibernate4.infinispan.InfinispanRegionFactory");
+		cfg.setProperty("hibernate.cache.region.factory_class", "org.jboss.as.jpa.hibernate4.infinispan.InfinispanRegionFactory");
 
-		cfg.setProperty("hibernate.cache.use_second_level_cache", "false");
-//		cfg.setProperty("hibernate.cache.infinispan.cachemanager","java:jboss/infinispan/container/hibernate");
+		cfg.setProperty("hibernate.cache.use_second_level_cache", "true");
+		cfg.setProperty("hibernate.cache.infinispan.cachemanager","java:jboss/infinispan/container/hibernate");
 		cfg.setProperty("hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup");
 
 		cfg.setProperty("hibernate.cache.use_query_cache", "false");

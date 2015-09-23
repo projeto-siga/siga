@@ -1100,8 +1100,9 @@ public class CpDao extends ModeloDao {
 					.getIdPessoaIni());
 			query.setLong("idLotaSubstitutoIni", exemplo.getLotaSubstituto()
 					.getIdLotacaoIni());
-			// query.setCacheable(true);
-			// query.setCacheRegion(CACHE_QUERY_SUBSTITUICAO);
+			// Reativado pois esse query é executado a cada chamada, inclusive as ajax.
+			query.setCacheable(true);
+			query.setCacheRegion(CACHE_QUERY_SUBSTITUICAO);
 			return query.list();
 		} catch (final IllegalArgumentException e) {
 			throw e;
@@ -1641,7 +1642,7 @@ public class CpDao extends ModeloDao {
 		cfg.setProperty("hibernate.cache.infinispan.cachemanager","java:jboss/infinispan/container/hibernate");
 		cfg.setProperty("hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup");
 
-		cfg.setProperty("hibernate.cache.use_query_cache", "false");
+		cfg.setProperty("hibernate.cache.use_query_cache", "true");
 		cfg.setProperty("hibernate.cache.use_minimal_puts", "false");
 		cfg.setProperty("hibernate.max_fetch_depth", "3");
 		cfg.setProperty("hibernate.default_batch_fetch_size", "1000");
@@ -1650,7 +1651,7 @@ public class CpDao extends ModeloDao {
 
 		// descomentar para inpecionar o SQL
 		// cfg.setProperty("hibernate.show_sql", "true");
-		// cfg.setProperty("hibernate.format_sql", "true");
+		// cfg.setProperty("hibernate.format_sql", "false");
 		// cfg.setProperty("hibernate.use_sql_comments", "true");
 		// Disable second-level cache.
 		// <property

@@ -17,7 +17,7 @@ if [ "$TRAVIS_REPO_SLUG" == "projeto-siga/siga" ] && [ "$TRAVIS_JDK_VERSION" == 
   cd $HOME
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "travis-ci"
-  git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/projeto-siga/siga gh-pages > /dev/null
+  git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/projeto-siga/artifacts gh-pages > /dev/null
 
   cd gh-pages
   git rm -rf ./javadoc

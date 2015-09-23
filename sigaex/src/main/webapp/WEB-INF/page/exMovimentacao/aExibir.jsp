@@ -416,6 +416,7 @@ function visualizarImpressao(via) {
 			      autoOpen: false,
 			      height: 210,
 			      width: 350,
+//			      position: [0,0],
 			      modal: true,
 			      buttons: {
 			    	  <c:if test="${podeAssinarMovimentacaoComSenha}">
@@ -434,7 +435,12 @@ function visualizarImpressao(via) {
 			    });
 			
 			    function assinarComSenha() {
-			       dialog.dialog( "open" );
+			       window.scrollTo(0, 0);
+			       dialog.dialog( "open" ).dialog('widget').position({
+			           my: "center top",
+			           at: "center top",
+			           collision: "fit"
+			         });
 			    }
 	
 			    function assinarGravar() {

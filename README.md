@@ -7,7 +7,7 @@ Projeto Siga
  
 ## Documentação
 
- * [Javadoc](http://projeto-siga.github.io/siga/javadoc/)
+ * [Javadoc](http://projeto-siga.github.io/artifacts/javadoc/)
  * [Wiki](https://github.com/projeto-siga/siga/wiki)
 
 ## Dependências do Projeto

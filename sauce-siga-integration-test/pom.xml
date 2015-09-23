@@ -23,10 +23,10 @@
 					<suiteXmlFiles>
 						<suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
 					</suiteXmlFiles>
-<!-- 					<environmentVariables>
-						<BUILD_NUMBER>107</BUILD_NUMBER>
-						<JOB_NAME>SigaTest</JOB_NAME>
-					</environmentVariables> -->
+ 					<environmentVariables>
+						<BUILD_NUMBER>${env.BUILD_NUMBER}</BUILD_NUMBER>
+						<JOB_NAME>${env.JOB_NAME}</JOB_NAME>
+					</environmentVariables> 
 				</configuration>
 				<executions>
 					<execution>

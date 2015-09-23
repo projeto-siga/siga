@@ -58,6 +58,13 @@ public class ExAutenticacaoController extends ExController{
 		}
 		return null;
 	}
+
+	@Get
+	@Path("/autenticar.action")
+	public void redirecionar() throws Exception {
+		result.redirectTo(this).autenticar(null, null, null, null, null, null);
+	}
+
 	
 //	antigo metodo exec()
 	@Get

@@ -2234,14 +2234,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeDuplicar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
-		
-		if (podeAcessarDocumento(titular, lotaTitular, mob))
-			return true;
-			
-
 		return !mob.isEliminado()
-				&& getConf().podePorConfiguracao(titular, lotaTitular,
-						CpTipoConfiguracao.TIPO_CONFIG_DUPLICAR);
+				&& podeAcessarDocumento(titular, lotaTitular, mob)
+				&& getConf().podePorConfiguracao(titular, lotaTitular, mob.getDoc().getExTipoDocumento(), mob.getDoc().getExFormaDocumento(), 
+						mob.getDoc().getExModelo(), CpTipoConfiguracao.TIPO_CONFIG_DUPLICAR);
 	}
 	
 	/**

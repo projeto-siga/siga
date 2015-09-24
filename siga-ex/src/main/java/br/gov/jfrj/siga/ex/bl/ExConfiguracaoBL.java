@@ -406,6 +406,27 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 				dpPessoa, nivelAcesso, idTpConf);
 	}
 	
+	/**
+	 * 
+	 * @param dpPessoa
+	 * @param lotacao
+	 * @param exTpDoc
+	 * @param exFormaDoc
+	 * @param exMod
+	 * @param exClassif
+	 * @param nivelAcesso
+	 * @param idTpConf
+	 * @throws Exception
+	 */
+	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao lotacao,
+			ExTipoDocumento exTpDoc, ExFormaDocumento exFormaDoc,
+			ExModelo exMod, Long idTpConf) {
+		return podePorConfiguracao(null, null, null, exTpDoc, exFormaDoc,
+				exMod, null, null, null, null, null, null, lotacao,
+				dpPessoa, null, idTpConf);
+	}
+	
+	
 
 	/**
 	 * 

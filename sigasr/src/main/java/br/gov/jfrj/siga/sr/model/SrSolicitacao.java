@@ -1107,6 +1107,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public boolean temArquivosAnexos() {
         return getArquivoAnexoNaCriacao() != null || !getMovimentacoesAnexacao().isEmpty();
     }
+    
+    private boolean temOutrasFilhasAbertas(SrSolicitacao filha) {
+        for (SrSolicitacao outraFilha : getSolicitacaoFilhaSet()){
+            if (!outraFilha.equivale(filha) && outraFilha.isAtivo())
+            	return true;
+        }
+        return false;    	
+    }
 
     public SrArquivo getArquivoAnexoNaCriacao() {
         if (getSolicitacaoInicial() != null)
@@ -1216,9 +1224,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public boolean podeFecharPaiAutomatico() {
-        return isFilha() && getSolicitacaoPai().getSolicitacaoAtual().isFechadoAutomaticamente() && getSolicitacaoPai().isAFechar();
+        return isFilha() && getSolicitacaoPai().getSolicitacaoAtual().isFechadoAutomaticamente() && 
+        		getSolicitacaoPai().isAtivo() && getSolicitacaoPai().isAFechar();
     }
-
+    
     @SuppressWarnings("unchecked")
     public SrSolicitacao deduzirLocalRamalEMeioContato() {
 
@@ -1512,19 +1521,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         } else
             atualizarMarcas();
         
-      //Edson: melhorar este codigo, tirando o loop daqui
-        if (isFilha()){
-                boolean temOutrasFilhasAbertas = false;
-                for (SrSolicitacao filha : solicitacaoPai.getSolicitacaoFilhaSet()){
-                        if (!filha.equivale(this) && filha.isAtivo())
-                                temOutrasFilhasAbertas = true;
-                }
-                if (!temOutrasFilhasAbertas)
-                        solicitacaoPai.deixarPendente(cadastrante, lotaCadastrante,
-                                        titular, lotaTitular,
-                                        SrTipoMotivoPendencia.ATENDIMENTO_NA_FILHA, null, null, "");
-
-        }
+        if (isFilha())
+        	getSolicitacaoPai().deixarPendenteAguardandoFilha(this);
     }
 
     private void incluirEmListasAutomaticas() throws Exception {
@@ -1648,16 +1646,24 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public void desfazerUltimaMovimentacao(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
         if (!podeDesfazerMovimentacao(cadastrante, lotaTitular))
             throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
-
+       
+        boolean podeDeixarPaiPendente = false;
         SrMovimentacao movimentacao = getUltimaMovimentacaoCancelavel();
 
         if (movimentacao != null) {
             if (movimentacao.getTipoMov() != null) {
             	
                 if (movimentacao.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO 
-                		|| movimentacao.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_FECHAMENTO)
+                		|| movimentacao.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_FECHAMENTO) {    
+                	if(isFilha()) {
+	                    if (getSolicitacaoPai().isAtivo()) 
+	                    	podeDeixarPaiPendente = true;
+	                	else
+	                		throw new AplicacaoException("Operação não permitida: A solicitação principal " +
+	                			this.getSolicitacaoPai().getCodigo() + " não está ativa.");
+                	}
                     reInserirListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
-
+                }
                 if (movimentacao.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_JUNTADA) {
                     this.save();
                 }
@@ -1677,6 +1683,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             }
 
             movimentacao.desfazer(cadastrante, lotaCadastrante, titular, lotaTitular);
+            if(podeDeixarPaiPendente)
+            	getSolicitacaoPai().deixarPendenteAguardandoFilha(this);
         }
     }
 
@@ -2151,9 +2159,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public void fechar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String motivo) throws Exception {
-
         if (isPai() && !isAFechar())
-            throw new AplicacaoException("Opera\u00E7\u00E3o n\u00E3o permitida. Necess\u00E1rio fechar toda solicita\u00E7\u00E3o " + "filha criada partir dessa que deseja fechar.");
+            throw new AplicacaoException("Operação não permitida. Necessário fechar toda solicitação " + 
+            			"filha criada a partir dessa que deseja fechar.");
 
         if ((cadastrante != null) && !podeFechar(cadastrante, lotaTitular))
             throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
@@ -2205,22 +2213,33 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public void reabrir(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
-        if (!podeReabrir(titular, lotaTitular))
+    	if (!podeReabrir(titular, lotaTitular))
             throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
-        DpLotacao lotacaoAtendente = getLotaAtendente();
-
-        if (lotacaoAtendente.isFechada())
-                throw new AplicacaoException("Operaï¿½ï¿½o nï¿½o permitida: A Lotaï¿½ï¿½o atendente (" + lotacaoAtendente.getSiglaCompleta() +
-                                ") foi extinta. Necessï¿½rio abrir nova solicitaï¿½ï¿½o. Crie um vinculo dessa solicitaï¿½ï¿½o com a nova, atravï¿½s do recurso Vincular");
         
-        reInserirListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
-
+        boolean podeDeixarPaiPendente = false;
+        DpLotacao lotacaoAtendente = getLotaAtendente();
+        
+        if (lotacaoAtendente.isFechada())
+        	throw new AplicacaoException("Operação não permitida: A Lotação atendente (" + lotacaoAtendente.getSiglaCompleta() +
+                ") foi extinta. Necessário abrir nova solicitação. Crie um vínculo dessa solicitação com a nova, através do recurso Vincular");
+        
+    	if(isFilha()) {
+            if (getSolicitacaoPai().isAtivo()) 
+            	podeDeixarPaiPendente = true;
+        	else
+        		throw new AplicacaoException("Operação não permitida: A solicitação principal " +
+        			this.getSolicitacaoPai().getCodigo() + " não está ativa.");
+    	}    		
         SrMovimentacao mov = new SrMovimentacao(this);
         mov.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA));
         if (mov.getDescrMovimentacao() == null || mov.getDescrMovimentacao().trim().equals(""))
         	mov.setDescrMovimentacao("Reabrindo a solicitação");
         mov.setLotaAtendente(lotacaoAtendente);
-        mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
+        mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);    	
+        
+        reInserirListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
+        if(podeDeixarPaiPendente)
+        	getSolicitacaoPai().deixarPendenteAguardandoFilha(this);
     }
 
     private void reInserirListasDePrioridade(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
@@ -2737,6 +2756,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         return itensConfiguracao;
     }
 
+    private void deixarPendenteAguardandoFilha(SrSolicitacao filha) throws Exception {
+        if (!temOutrasFilhasAbertas(filha)) 
+        	deixarPendente(getCadastrante(),  getLotaCadastrante(), getTitular(), getLotaTitular(),
+                    SrTipoMotivoPendencia.ATENDIMENTO_NA_FILHA, null, null, "");
+    }
     public SrItemConfiguracao getItemAtual() {
     	return getDnmItemConfiguracao();
     }

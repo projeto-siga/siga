@@ -124,7 +124,7 @@
 											<alias>app.server</alias>
 
 											<build>
-												<from>siga/app.server:3.13.0.2</from>
+												<from>siga/app.server:3.15.0.17</from>
 												<assembly>
 													<basedir>/siga/jboss-eap-5.2/jboss-as/server/sigadoc/deploy</basedir>
 													<descriptor>docker-assembly.xml</descriptor>

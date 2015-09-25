@@ -1522,7 +1522,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             atualizarMarcas();
         
         if (isFilha())
-        	getSolicitacaoPai().deixarPendenteAguardandoFilha(this);
+        	getSolicitacaoPai().deixarPendenteAguardandoFilha(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular(), this);
     }
 
     private void incluirEmListasAutomaticas() throws Exception {
@@ -1684,7 +1684,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
             movimentacao.desfazer(cadastrante, lotaCadastrante, titular, lotaTitular);
             if(podeDeixarPaiPendente)
-            	getSolicitacaoPai().deixarPendenteAguardandoFilha(this);
+            	getSolicitacaoPai().deixarPendenteAguardandoFilha(cadastrante, lotaCadastrante, titular, lotaTitular, this);
         }
     }
 
@@ -2235,7 +2235,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         
         reInserirListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
         if(podeDeixarPaiPendente)
-        	getSolicitacaoPai().deixarPendenteAguardandoFilha(this);
+        	getSolicitacaoPai().deixarPendenteAguardandoFilha(cadastrante, lotaCadastrante, titular, lotaTitular, this);
     }
 
     private void reInserirListasDePrioridade(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
@@ -2756,9 +2756,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         return itensConfiguracao;
     }
 
-    private void deixarPendenteAguardandoFilha(SrSolicitacao filha) throws Exception {
+    private void deixarPendenteAguardandoFilha(DpPessoa cadastrante, DpLotacao lotaCadastrante, 
+    		DpPessoa titular, DpLotacao lotaTitular, SrSolicitacao filha) throws Exception {
         if (!temOutrasFilhasAbertas(filha)) 
-        	deixarPendente(getCadastrante(),  getLotaCadastrante(), getTitular(), getLotaTitular(),
+        	deixarPendente(cadastrante, lotaCadastrante, titular, lotaTitular,
                     SrTipoMotivoPendencia.ATENDIMENTO_NA_FILHA, null, null, "");
     }
     

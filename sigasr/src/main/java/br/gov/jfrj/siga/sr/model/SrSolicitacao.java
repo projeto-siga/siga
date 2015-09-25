@@ -2175,12 +2175,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
         removerDasListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
 
-        if (isFilha() && solicitacaoPai.isAFechar()){
-            for (SrMovimentacao iniP : solicitacaoPai.getPendenciasEmAberto()){
-                    if (iniP.getMotivoPendencia().equals(SrTipoMotivoPendencia.ATENDIMENTO_NA_FILHA))
-                            solicitacaoPai.terminarPendencia(cadastrante, lotaCadastrante, titular, lotaTitular, "", iniP.getIdMovimentacao());
-            }
-        }
+        if (isFilha())
+        	getSolicitacaoPai().terminarPendenciaAguardandoFilha(cadastrante, lotaCadastrante, titular, lotaTitular);
         
         if (podeFecharPaiAutomatico())
             getSolicitacaoPai().fechar(cadastrante, lotaCadastrante, titular, lotaTitular, "Solicita\u00E7\u00E3o fechada automaticamente");
@@ -2324,6 +2320,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	movimentacao.setDescrMovimentacao("Cancelando a solicitação");
         movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
         removerDasListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
+        if (isFilha())
+        	getSolicitacaoPai().terminarPendenciaAguardandoFilha(cadastrante, lotaCadastrante, titular, lotaTitular);
+        if (podeFecharPaiAutomatico())
+            getSolicitacaoPai().fechar(cadastrante, lotaCadastrante, titular, lotaTitular, "Solicitação fechada automaticamente");
     }
 
     public void juntar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrSolicitacao solRecebeJuntada, String justificativa) throws Exception {
@@ -2761,6 +2761,22 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	deixarPendente(getCadastrante(),  getLotaCadastrante(), getTitular(), getLotaTitular(),
                     SrTipoMotivoPendencia.ATENDIMENTO_NA_FILHA, null, null, "");
     }
+    
+    private void terminarPendenciaAguardandoFilha(DpPessoa cadastrante, DpLotacao lotaCadastrante, 
+    		DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+        if (isAFechar()) 
+        	terminarPendenciaPorMotivo(cadastrante, lotaCadastrante, titular, 
+        			lotaTitular, SrTipoMotivoPendencia.ATENDIMENTO_NA_FILHA);
+    }
+    
+    private void terminarPendenciaPorMotivo(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, 
+    		DpLotacao lotaTitular, SrTipoMotivoPendencia motivoDaPendencia) throws Exception {
+        for (SrMovimentacao iniP : getPendenciasEmAberto()) {
+            if (iniP.getMotivoPendencia().equals(motivoDaPendencia))
+                    terminarPendencia(cadastrante, lotaCadastrante, titular, lotaTitular, "", iniP.getIdMovimentacao());
+        }
+    }
+    
     public SrItemConfiguracao getItemAtual() {
     	return getDnmItemConfiguracao();
     }

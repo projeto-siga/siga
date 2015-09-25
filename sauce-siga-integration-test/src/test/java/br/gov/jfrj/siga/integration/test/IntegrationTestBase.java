@@ -82,6 +82,7 @@ public class IntegrationTestBase implements SauceOnDemandSessionIdProvider, Sauc
 	    System.out.println("Dados: " + operatingSystem + " - " + browserName + " - " + browserVersion );
 	    capabilities.setCapability("platform", Platform.valueOf(operatingSystem));
 	    //capabilities.setCapability("screen-resolution", "1680x1050");
+	    capabilities.setCapability("idleTimeout", 1000);
 	    capabilities.setCapability("name", "teste SIGA-DOC selenium-testng-saucelab");
 	    this.driver = new RemoteWebDriver(
 	           new URL("http://" + USUARIO_SAUCELAB + ":" + ACCESSKEY_SAUCELAB + "@ondemand.saucelabs.com:80/wd/hub"),

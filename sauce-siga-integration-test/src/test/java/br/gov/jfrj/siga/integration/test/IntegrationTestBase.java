@@ -98,7 +98,6 @@ public class IntegrationTestBase implements SauceOnDemandSessionIdProvider, Sauc
 			return loginPage.login(System.getProperty("userSiga"), System.getProperty("passSiga"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			driver.quit();
 			throw e;
 		}
 	}

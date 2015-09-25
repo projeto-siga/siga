@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
- <suite name="Testes de Integração do SigaDoc" allow-return-values="true" verbose="1" parallel="tests" thread-count="5"> 
- 
+ <suite name="Testes de Integração do SigaDoc" allow-return-values="true" verbose="1" parallel="tests" thread-count="5" 
+ configfailurepolicy="continue"> 
+ <!---configfailurepolicy skip|continue Whether TestNG should continue to execute the remaining tests in the suite or skip them if an @Before* method fails. Default behavior is skip.  -->
  	<test name="SigaDoc - Windows 7 Explorer 10.0">
 		<classes>
 		    <parameter name="Operating_System" value="VISTA"/>

@@ -16,6 +16,7 @@ import br.gov.jfrj.siga.page.objects.PrincipalPage;
 import br.gov.jfrj.siga.page.objects.SolicitacaoEletronicaContratacaoPage;
 import br.gov.jfrj.siga.page.objects.TarefaPage;
 
+
 //Bibliotecas para o saucelabs
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
@@ -46,6 +47,7 @@ public class WorkflowDigitalIT extends IntegrationTestBase implements SauceOnDem
 		try {
 			efetuaLogin();
 		} catch (Exception e) {
+			isTestSuccesful = Boolean.FALSE;
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		

@@ -3,11 +3,13 @@ package br.gov.jfrj.siga.integration.test;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Method;
+
 import br.gov.jfrj.siga.page.objects.EditaDocumentoPage;
 import br.gov.jfrj.siga.page.objects.MemorandoPage;
 import br.gov.jfrj.siga.page.objects.OficioPage;
 import br.gov.jfrj.siga.page.objects.PortariaPage;
 import br.gov.jfrj.siga.page.objects.PrincipalPage;
+
 import org.openqa.selenium.By;
 
 //Biliotecas para o saucelabs
@@ -37,6 +39,7 @@ public class CriacaoDocumentoIT extends IntegrationTestBase implements SauceOnDe
 		try {
 			principalPage = efetuaLogin();
 		} catch (Exception e) {
+			isTestSuccesful = Boolean.FALSE;
 			e.printStackTrace();
 			throw new IllegalStateException("Exceção no método setUp: " + e);
 		} 

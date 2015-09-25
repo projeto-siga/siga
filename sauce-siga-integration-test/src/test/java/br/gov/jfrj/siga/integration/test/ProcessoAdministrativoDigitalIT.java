@@ -3,11 +3,13 @@ package br.gov.jfrj.siga.integration.test;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Method;
+
 import br.gov.jfrj.siga.page.objects.AssinaturaDigitalPage;
 import br.gov.jfrj.siga.page.objects.CancelamentoJuntadaPage;
 import br.gov.jfrj.siga.page.objects.PortariaPage;
 import br.gov.jfrj.siga.page.objects.PrincipalPage;
 import br.gov.jfrj.siga.page.objects.VisualizacaoDossiePage;
+
 
 
 
@@ -49,6 +51,7 @@ public class ProcessoAdministrativoDigitalIT extends IntegrationTestBase impleme
 			AssinaturaDigitalPage assinaturaDigitalPage = operacoesDocumentoPage.clicarLinkAssinarDigitalmente();			
 			operacoesDocumentoPage = assinaturaDigitalPage.registrarAssinaturaDigital(baseURL, codigoDocumento);			
 		} catch (Exception e) {
+			isTestSuccesful = Boolean.FALSE;
 			e.printStackTrace();
 			throw new IllegalStateException("Exceção no método setUp: " + e);
 		}

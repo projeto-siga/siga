@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
 import br.gov.jfrj.siga.page.objects.AgendamentoPublicacaoPage;
 import br.gov.jfrj.siga.page.objects.AnotacaoPage;
 import br.gov.jfrj.siga.page.objects.ApensacaoPage;
@@ -22,6 +23,7 @@ import br.gov.jfrj.siga.page.objects.RedefineNivelAcessoPage;
 import br.gov.jfrj.siga.page.objects.TransferenciaPage;
 import br.gov.jfrj.siga.page.objects.VinculacaoPage;
 import br.gov.jfrj.siga.page.objects.VisualizacaoDossiePage;
+
 
 //Biliotecas para o saucelabs
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -52,6 +54,7 @@ public class AcoesDocumentoIT extends IntegrationTestBase implements SauceOnDema
 			principalPage = efetuaLogin();					
 			codigoDocumento = criaDocumento();				
 		} catch (Exception e) {
+			isTestSuccesful = Boolean.FALSE;
 			e.printStackTrace();
 			throw new IllegalStateException("Exceção no método setUp: " + e);
 		} 

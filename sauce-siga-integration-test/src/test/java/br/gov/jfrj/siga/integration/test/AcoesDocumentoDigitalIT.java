@@ -3,9 +3,11 @@ package br.gov.jfrj.siga.integration.test;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Method;
+
 import br.gov.jfrj.siga.page.objects.PortariaPage;
 import br.gov.jfrj.siga.page.objects.PrincipalPage;
 import br.gov.jfrj.siga.page.objects.TransferenciaPage;
+
 
 
 //Bibliotecas para o saucelabs
@@ -39,6 +41,7 @@ public class AcoesDocumentoDigitalIT extends IntegrationTestBase implements Sauc
 			operacoesDocumentoPage = portariaPage.criaPortaria(propDocumentos);			
 			codigoDocumento = operacoesDocumentoPage.getTextoVisualizacaoDocumento();
 		} catch (Exception e) {
+			isTestSuccesful = Boolean.FALSE;
 			e.printStackTrace();
 			throw new IllegalStateException("Exceção no método setUp: " + e);
 		} 

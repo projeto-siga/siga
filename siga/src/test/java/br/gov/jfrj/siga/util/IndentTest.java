@@ -33,19 +33,19 @@ public class IndentTest extends TestCase {
 	}
 	
 	public void testIndentacaoInlineIf() throws Exception {
-		assertEquals("<div>\n  oi1\n  [#if]\n    oi2\n  [/#if]\n  oi3\n</div>",
+		assertEquals("<div>\r\n  oi1\n  [#if]\n    oi2\n  [/#if]\n  oi3\r\n</div>",
 				FreemarkerIndent.indent("<div>oi1[#if]oi2[/#if]oi3</div>"));
 	}
 	
 	public void testIndentacaoProblemaDe1CharAMais() throws Exception {
-		assertEquals("<div>\n  oi1\n  [#if]\n    oi2\n  [/#if]\n  oi3\n</div>",
+		assertEquals("<div>\r\n  oi1\n  [#if]\r\n    oi2\n  [/#if]\r\n  oi3\r\n</div>",
 				FreemarkerIndent.indent("<div>\n  oi1\n  [#if]\n    oi2\n  [/#if]\n  oi3\n</div>"));
 	}
 	
 	
 
 	public void testIndentacaoDentroDeDiv() throws Exception {
-		assertEquals("<div>\n  [#if]\n    oi\n  [/#if]\n</div>",
+		assertEquals("<div>\r\n  [#if]\n    oi\n  [/#if]\r\n</div>",
 				FreemarkerIndent.indent("<div>[#if]oi[/#if]</div>"));
 	}
 

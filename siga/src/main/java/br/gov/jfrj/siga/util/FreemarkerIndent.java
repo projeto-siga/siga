@@ -14,7 +14,7 @@ import org.w3c.tidy.Tidy;
 
 public class FreemarkerIndent {
 	static Pattern patternBody = Pattern.compile(
-			"<body[^>]*>\n(\\s*+.*?)\\s*+</body>", Pattern.CASE_INSENSITIVE
+			"<body[^>]*>(.*?)</body>", Pattern.CASE_INSENSITIVE
 					+ Pattern.DOTALL);
 
 	static Pattern patternRemoveBodyIndent = Pattern.compile("^    (.*)$",
@@ -49,7 +49,7 @@ public class FreemarkerIndent {
 	public static String bodyOnly(String s) {
 		Matcher m = patternBody.matcher(s);
 		if (m.find()) {
-			String body = m.group(1);
+			String body = m.group(1).trim();
 
 			Matcher matcher = patternRemoveBodyIndent.matcher(body);
 			StringBuffer output = new StringBuffer();

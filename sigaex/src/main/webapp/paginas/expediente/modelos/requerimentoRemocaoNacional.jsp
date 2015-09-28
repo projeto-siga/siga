@@ -118,7 +118,8 @@ escolhidas e concordo com as regras previstas no edital do concurso Nacional de
 Remoção de ${anoRemocao}.<br/>
 &nbsp;&nbsp;&nbsp;Afirmo que estou ciente de que, se contemplado com a remoção, deverei cancelar as
 férias deferidas pelo órgão de origem para remarcá-las diretamente no órgão de
-destino.
+destino.<br/>
+Concordo em receber e-mail dos candidatos inscritos no SINAR.
 		</body>
 		</html>
 	</mod:documento>

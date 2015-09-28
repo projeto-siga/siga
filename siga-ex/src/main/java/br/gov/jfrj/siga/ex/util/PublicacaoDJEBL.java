@@ -230,18 +230,14 @@ public class PublicacaoDJEBL {
 		}
 
 		Element retornoPublicacao = dc.getRootElement();
-		String codErro = retornoPublicacao.getAttributeValue("CODRETORNO");
-		if (codErro == null)
-			codErro = retornoPublicacao.getChildTextTrim("CODIGO");
+		Element erro = retornoPublicacao.getChild("ERRO");
 
-		if (codErro != null && !codErro.equals("0")) {
-			String descricaoErro = retornoPublicacao
-					.getAttributeValue("DESCRICAO");
-			if (descricaoErro == null)
-				descricaoErro = retornoPublicacao.getChildText("DESCRICAO");
-			if (descricaoErro == null)
-				descricaoErro = retornoPublicacao.getValue();
-
+		if (erro != null) {
+			String codErro = erro
+					.getAttributeValue("CODERRO");
+			String descricaoErro = erro
+					.getAttributeValue("DESCRERRO");
+			
 			throw new AplicacaoException("TRF -> ERRO: " + codErro
 					+ " DESCRIÇÃO: " + descricaoErro);
 		}

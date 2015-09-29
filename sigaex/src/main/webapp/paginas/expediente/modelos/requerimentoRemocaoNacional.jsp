@@ -8,8 +8,11 @@
 <mod:modelo>
 	<mod:entrevista>
 		<mod:grupo>
-			<mod:selecao titulo="Ano da Remoção" opcoes="2014;2015;2016;2017;2018"
+			<mod:selecao titulo="Ano da Remoção" opcoes="2015;2016;2017;2018;2019"
 			var="anoRemocao" />
+			&nbsp;&nbsp;&nbsp;
+			<mod:texto var="numEdital" titulo="Número do Edital"
+			largura="22" obrigatorio="Sim"/>
 			&nbsp;&nbsp;&nbsp;
 			<mod:data  var="dataEdital" titulo="Data de publicação do Edital" obrigatorio="Sim"/>
 		</mod:grupo>
@@ -82,7 +85,7 @@ first-page-body {
 		Concurso Nacional de Remoção ${anoRemocao},com base no art. 20 da Lei n. 11.416/2006 c/c a Lei n.
 8.112/1990, no Anexo IV da Portaria Conjunta n. 3, de 31 de maio de 2007, e no art. 27, § 3º,
 da Resolução n. 3, de 10 de março de 2008, do Conselho da Justiça Federal e declaro que
-concordo com os termos do EDITAL n. CJF-EDT-2014/00003, de ${dataEdital}.</p>
+concordo com os termos do EDITAL n. ${numEdital}, de ${dataEdital}.</p>
 		
 		<br />
 		<p>Nestes termos,</p>
@@ -112,7 +115,7 @@ concordo com os termos do EDITAL n. CJF-EDT-2014/00003, de ${dataEdital}.</p>
 responsabilidade pela participação no certame.<br/>
 &nbsp;&nbsp;&nbsp;Afirmo que estou ciente que posso ser removido para qualquer das opções
 escolhidas e concordo com as regras previstas no edital do concurso Nacional de
-Remoção de 2014.<br/>
+Remoção de ${anoRemocao}.<br/>
 &nbsp;&nbsp;&nbsp;Afirmo que estou ciente de que, se contemplado com a remoção, deverei cancelar as
 férias deferidas pelo órgão de origem para remarcá-las diretamente no órgão de
 destino.

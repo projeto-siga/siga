@@ -6,7 +6,7 @@
 <mod:modelo>
 	<mod:entrevista>
 		<mod:selecao titulo="Quantidade de Materias a informar"
-			opcoes="1" var="materias" reler="sim" />
+			opcoes="1;2;3;4;5;6;7;8;9;10" var="materias" reler="sim" />
 		<mod:grupo>
 			<c:forEach var="i" begin="1" end="${materias}">
 

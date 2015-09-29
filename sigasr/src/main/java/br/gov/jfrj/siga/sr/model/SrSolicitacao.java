@@ -2789,6 +2789,24 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         return getDnmAcao();
     }
 	
+	public SrItemConfiguracao getItemAtualRelatorio() {
+		List<SrItemConfiguracao> historicoItem = getHistoricoItem();
+		if (historicoItem.isEmpty()) {
+			return null;
+		}
+		int size = historicoItem.size();
+		return historicoItem.get(size - 1);
+	}
+
+	public SrAcao getAcaoAtualRelatorio() {
+		List<SrAcao> historicoAcao = getHistoricoAcao();
+		if (historicoAcao.isEmpty()) {
+			return null;
+		}
+		int size = historicoAcao.size();
+		return historicoAcao.get(size - 1);
+	}
+	
     public Long getIdSolicitacao() {
         return idSolicitacao;
     }
@@ -3121,7 +3139,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		try {
 			if (!isFechado()) 
 				atendimento = new SrAtendimento(this, new Date(), getAtendente(), 
-						this.itemConfiguracao.toString(), this.acao.toString(), null, null);
+						this.getItemConfiguracao().toString(), this.getAcao().toString(), null, null);
 
 			for (SrMovimentacao mov : listaMov) {	
 				if (mov.isInicioAtendimento()) {
@@ -3140,7 +3158,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 								mov.getTipoMov().getNome(), mov.getLotaAtendente());
 					else 
 						atendimento = new SrAtendimento(this, mov.getDtIniMov(), mov.getAtendente(), 
-								getItemAtual().toString(), getAcaoAtual().toString(), 
+								getItemAtualRelatorio().toString(), getAcaoAtualRelatorio().toString(), 
 								mov.getTipoMov().getNome(), null);	
 				}
 			}
@@ -3176,7 +3194,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						atendimento = new SrAtendimento(this, dataFinalFilha,  mov.getDtIniMov(), 
 							getTempoEfetivoAtendimento(dataFinalFilha, mov.getDtIniMov()), lotacaoAtendente, 
 							mov.getLotaAtendente(), mov.getTitular(), "Escalonamento com sol. filha", 
-							this.itemConfiguracao.toString(), this.acao.toString());					
+							this.getItemConfiguracao().toString(), this.getAcao().toString());					
 						atendimento.definirFaixa(lotacaoAtendente.getOrgaoUsuario());
 						listaAtendimentos.add(atendimento);
 					}
@@ -3191,7 +3209,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 							atendimento = new SrAtendimento(this, dtInicio,  dtFinal, 
 								getTempoEfetivoAtendimento(dtInicio, dtFinal), lotacaoAtendente, 
 								lotacaoDestino, pessoaAtendente, "Escalonamento com sol. filha", 
-								this.itemConfiguracao.toString(), this.acao.toString());		
+								this.getItemConfiguracao().toString(), this.getAcao().toString());		
 							atendimento.definirFaixa(lotacaoAtendente.getOrgaoUsuario());
 							listaAtendimentos.add(atendimento);
 						}
@@ -3220,7 +3238,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		atendimento = new SrAtendimento(this, dataFinalUltimaFilha, dataFinalPai, 
 				getTempoEfetivoAtendimento(dataFinalUltimaFilha, dataFinalPai), lotacaoAtendente, null, getAtendente(), 
-				tipoAtendimento, getItemAtual().toString(), getAcaoAtual().toString());
+				tipoAtendimento, getItemAtualRelatorio().toString(), getAcaoAtualRelatorio().toString());
 		atendimento.definirFaixa(lotacaoAtendente.getOrgaoUsuario());
 		return atendimento;
 	}

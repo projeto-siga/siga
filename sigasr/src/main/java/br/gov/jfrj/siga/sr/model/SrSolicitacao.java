@@ -795,7 +795,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public DpPessoa getAtendente() {
-        return getUltimaMovimentacao().getAtendente();
+    	if (getUltimaMovimentacao() != null)
+    		return getUltimaMovimentacao().getAtendente();
+    	else 
+    		return null;
     }
 
     public boolean isFilha() {

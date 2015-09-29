@@ -13,17 +13,29 @@ update sigasr.sr_solicitacao sol set dnm_id_ult_mov = (
 );
 update sigasr.sr_solicitacao sol set dnm_id_item_configuracao = (
   select id_item_configuracao from sigasr.sr_movimentacao where id_movimentacao = (
-    select max(id_movimentacao) from sigasr.sr_movimentacao where id_solicitacao = sol.id_solicitacao and id_tipo_movimentacao = 24
+    select max(id_movimentacao) 
+    from sigasr.sr_movimentacao 
+    where id_solicitacao = sol.id_solicitacao 
+    and id_tipo_movimentacao = 24
+    and id_mov_canceladora is null
   )
 ); 
 update sigasr.sr_solicitacao sol set dnm_id_acao = (
   select id_acao from sigasr.sr_movimentacao where id_movimentacao = (
-    select max(id_movimentacao) from sigasr.sr_movimentacao where id_solicitacao = sol.id_solicitacao and id_tipo_movimentacao = 24
+    select max(id_movimentacao) 
+    from sigasr.sr_movimentacao 
+    where id_solicitacao = sol.id_solicitacao 
+    and id_tipo_movimentacao = 24
+    and id_mov_canceladora is null
   )
 ); 
 update sigasr.sr_solicitacao sol set dnm_prioridade_tecnica = (
   select prioridade from sigasr.sr_movimentacao where id_movimentacao = (
-    select max(id_movimentacao) from sigasr.sr_movimentacao where id_solicitacao = sol.id_solicitacao and id_tipo_movimentacao = 21
+    select max(id_movimentacao) 
+    from sigasr.sr_movimentacao 
+    where id_solicitacao = sol.id_solicitacao 
+    and id_tipo_movimentacao = 21
+    and id_mov_canceladora is null
   )
 );
 update sigasr.sr_solicitacao sol set dnm_prioridade_tecnica = prioridade where dnm_prioridade_tecnica is null;

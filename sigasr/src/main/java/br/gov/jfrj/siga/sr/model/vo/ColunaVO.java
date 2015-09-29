@@ -7,6 +7,7 @@ public class ColunaVO {
 	private Long largura;
 	private boolean exibirPorDefault;
 	private boolean ocultavel;
+	private boolean ordenavel;
 
 	public ColunaVO(String titulo, String nome) {
 		super();
@@ -14,6 +15,7 @@ public class ColunaVO {
 		this.setNome(nome);
 		this.setExibirPorDefault(true);
 		this.setOcultavel(true);
+		this.setOrdenavel(true);
 	}
 
 	public ColunaVO(String titulo, String nome, String classe) {
@@ -77,6 +79,15 @@ public class ColunaVO {
 
 	public ColunaVO setOcultavel(boolean alteravel) {
 		this.ocultavel = alteravel;
+		return this;
+	}
+	
+	public boolean isOrdenavel() {
+		return ordenavel;
+	}
+
+	public ColunaVO setOrdenavel(boolean ordenavel) {
+		this.ordenavel = ordenavel;
 		return this;
 	}
 

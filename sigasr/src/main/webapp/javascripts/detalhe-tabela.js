@@ -169,6 +169,8 @@ function SigaTable (tableSelector) {
 	
 	this.criar = function() {
 		this.dataTable = this.table.dataTable(this.dataTableConfig);
+		if (this.dataTable.fnSettings()._iDisplayStart > 0)
+			this.dataTable.fnPageChange('first');
 		return this;
 	}
 	

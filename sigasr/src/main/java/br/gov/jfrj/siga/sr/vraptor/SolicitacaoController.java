@@ -829,9 +829,9 @@ public class SolicitacaoController extends SrController {
     			p.setPrioridade(pNova.getPrioridade());
     			p.setNaoReposicionarAutomatico(pNova.getNaoReposicionarAutomatico());
     			p.save();
-    		}
+    		} else em().detach(p);
     	}
-        exibirLista(id);
+        //exibirLista(id);
         result.use(Results.http()).setStatusCode(200);
     }
 

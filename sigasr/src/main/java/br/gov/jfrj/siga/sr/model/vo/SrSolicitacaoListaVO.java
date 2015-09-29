@@ -70,7 +70,7 @@ public class SrSolicitacaoListaVO {
 				LARGURA_COLUNA_PRIORIDADE);
 		ColunaVO botaoExpandir = new ColunaVO(SrViewUtil.botaoExpandir(),
 				"botaoExpandir",
-				"hide-sort-arrow bt-expandir-tabela gt-celula-nowrap details-control");
+				"bt-expandir-tabela gt-celula-nowrap details-control").setOrdenavel(false);
 		ColunaVO codigo = new ColunaVO("Código", "codigo",
 				"gt-celula-nowrap numero-solicitacao solicitacao-codigo",LARGURA_COLUNA_CODIGO);
 		ColunaVO teor = new ColunaVO("Teor", "descrSolicitacao",
@@ -91,7 +91,7 @@ public class SrSolicitacaoListaVO {
 				"prioridadeTecnica",
 				"gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO);
 		ColunaVO situacao = new ColunaVO("Situação", "situacao",
-				"gt-celula-nowrap solicitacao-dados").setExibirPorDefault(false);
+				"gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO).setExibirPorDefault(false);
 		ColunaVO atendente = new ColunaVO("Atendente", "atendente",
 				"gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO).setExibirPorDefault(false);
 		ColunaVO lotaAtendente = new ColunaVO("Lot. Atendente", "lotaAtendente",
@@ -101,7 +101,7 @@ public class SrSolicitacaoListaVO {
 				"gt-celula-nowrap solicitacao-dados").setExibirPorDefault(false);
 		ColunaVO dtUltMov = new ColunaVO("Data Últ. Movim.",
 				"dtUltimaMovimentacao",
-				"gt-celula-nowrap solicitacao-dados").setExibirPorDefault(false);
+				"gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO).setExibirPorDefault(false);
 		ColunaVO botaoRemoverPriorizar = new ColunaVO(
 				"",
 				"botaoRemoverPriorizar",

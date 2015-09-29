@@ -39,7 +39,8 @@ function TabelaDinamica (tableSelector, modoExibicao) {
 							"sName" : coluna.nome,
 							"sClass" : coluna.classe,
 							"bVisible" : coluna.exibirPorDefault,
-							"sWidth" : coluna.largura
+							"sWidth" : coluna.largura,
+							"bSortable": coluna.ordenavel
 						};
 					 
 					objetoTabela.estrutura.push(estruturaColuna);

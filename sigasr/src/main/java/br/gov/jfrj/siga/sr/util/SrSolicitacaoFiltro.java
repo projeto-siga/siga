@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -74,6 +75,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	private SrAcaoSelecao acaoSel;
 	private SrAcordoSelecao acordoSel;
 	private SrItemConfiguracaoSelecao itemConfiguracaoSel;
+	
+	private static List<Long> MARCADORES_ESTADO = Arrays.asList(new Long[]{9L, 42L, 43L, 44L, 45L, 61L});
 	
 	public enum SentidoOrdenacao{
 		ASC, DESC;
@@ -163,7 +166,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		else if (orderBy.equals("codigo"))
 			query.append(" sol.codigo ");
 		else if (orderBy.equals("descrSolicitacao"))
-			query.append(" cast(descrSolicitacao as varchar2(100)) ");
+			query.append(" sol.itemConfiguracao.tituloItemConfiguracao ");
 		else if (orderBy.equals("solicitante"))
 			query.append(" sol.solicitante ");
 		else if (orderBy.equals("lotaSolicitante"))
@@ -209,8 +212,25 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	private void montarBusca(StringBuilder query) throws Exception {
 
-		query.append(" from SrSolicitacao sol inner join sol.meuMarcaSet situacao left join sol.dnmUltimaMovimentacao ultMov");
+		// Edson: O join com duas marcas é necessário porque, quando se busca pelo marcador "Como cadastrante", por exemplo,
+		// o que deve ser exibido na coluna Situação é "Em andamento", não "Como cadastrante" 
+		String situacaoFiltro = "";
+		if (getSituacao() != null && getSituacao().getIdMarcador() != null
+				&& getSituacao().getIdMarcador() > 0){
+			if (MARCADORES_ESTADO.contains(getSituacao().getIdMarcador()))
+				situacaoFiltro = "situacao";
+			else situacaoFiltro = "situacaoAux";
+		}
+		
+		query.append(" from SrSolicitacao sol inner join sol.meuMarcaSet situacao ");
+		
+		if (situacaoFiltro.equals("situacaoAux"))
+			query.append(" inner join sol.meuMarcaSet situacaoAux ");
+		
+		query.append(" left join sol.dnmUltimaMovimentacao ultMov ");
+		
 		query.append(idListaPrioridade != null && idListaPrioridade > 0 ? " inner join sol.meuPrioridadeSolicitacaoSet l " : "");
+		
 		query.append(" where sol.hisDtFim is null ");
 
 		if (Filtros.deveAdicionar(getCadastrante()))
@@ -255,11 +275,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (getDescrSolicitacao() != null
 				&& !"".equals(getDescrSolicitacao().trim())) {
 			for (String s : getDescrSolicitacao().split(" ")) {
-				query.append(" and ( lower(sol.descrSolicitacao) like '%"
+				query.append(" and lower(sol.descrSolicitacao) like '%"
 						+ s.toLowerCase() + "%' ");
-				query.append(" or sol in (select mov.solicitacao from SrMovimentacao mov");
-				query.append(" where lower(mov.descrMovimentacao) like '%"
-						+ s.toLowerCase() + "%' )) ");
 			}
 		}
 
@@ -287,23 +304,32 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (Filtros.deveAdicionar(getAcordo()))
 			query.append(" and sol.acordos.hisIdIni = " + getAcordo().getHisIdIni() + " ");
 
-		if (getSituacao() != null && getSituacao().getIdMarcador() != null
-				&& getSituacao().getIdMarcador() > 0)
-			query.append(" and situacao.cpMarcador.idMarcador = "
-					+ getSituacao().getIdMarcador());
-		else query.append(" and situacao.cpMarcador.idMarcador in (42, 43, 44, 45, 61) ");
+		if (situacaoFiltro.equals("situacao"))
+			query.append(" and situacao.cpMarcador.idMarcador = " + getSituacao().getIdMarcador());
+		else query.append(" and situacao.cpMarcador.idMarcador in (9, 42, 43, 44, 45, 61) ");
+		
 		query.append(" and (situacao.dtIniMarca is null or "
 					+ "situacao.dtIniMarca < sysdate) ");
 		query.append(" and (situacao.dtFimMarca is null or "
 					+ "situacao.dtFimMarca > sysdate) ");
-
-		if (Filtros.deveAdicionar(getAtendente()))
-			query.append("and situacao.dpPessoaIni.idPessoa = "
+		
+		if (situacaoFiltro.equals("situacaoAux")){
+			query.append(" and situacaoAux.cpMarcador.idMarcador = "
+					+ getSituacao().getIdMarcador());
+			query.append(" and (situacaoAux.dtIniMarca is null or "
+					+ "situacaoAux.dtIniMarca < sysdate) ");
+			query.append(" and (situacaoAux.dtFimMarca is null or "
+					+ "situacaoAux.dtFimMarca > sysdate) ");
+		}
+		
+		if (Filtros.deveAdicionar(getAtendente())){
+			query.append("and " + situacaoFiltro + ".dpPessoaIni.idPessoa = "
 					+ getAtendente().getIdInicial());
-		else if (Filtros.deveAdicionar(getLotaAtendente())) {
-				query.append("and situacao.dpLotacaoIni.idLotacao = "
+		} else if (Filtros.deveAdicionar(getLotaAtendente())) {
+				query.append("and " + situacaoFiltro + ".dpLotacaoIni.idLotacao = "
 						+ getLotaAtendente().getIdInicial());
 		}
+
 		if (isNaoDesignados())
 			query.append(" and situacao.dpPessoaIni is null ");
 

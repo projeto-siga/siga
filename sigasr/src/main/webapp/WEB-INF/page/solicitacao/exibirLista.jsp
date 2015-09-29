@@ -118,15 +118,14 @@
     			if (solicitacao){
     				prioridades += "listaPrioridadeSolicitacao["+index+"].naoReposicionarAutomatico="+solicitacao.naoReposicionarAutomaticoNaLista+"&";
     				prioridades += "listaPrioridadeSolicitacao["+index+"].numPosicao="+solicitacao.posicaoNaLista+"&";
-    				prioridades += "listaPrioridadeSolicitacao["+index+"].prioridade="+solicitacao.prioridadeNaLista+"&";
+   					prioridades += "listaPrioridadeSolicitacao["+index+"].prioridade="+ (solicitacao.prioridadeNaLista ? solicitacao.prioridadeNaLista : "") +"&";
     				prioridades += "listaPrioridadeSolicitacao["+index+"].idPrioridadeSolicitacao="+solicitacao.idPrioridadeSolicitacao+"&";
-    				prioridades += "listaPrioridadeSolicitacao["+index+"].lista.id="+idLista+"&";
-    				prioridades += "listaPrioridadeSolicitacao["+index+"].solicitacao.id="+solicitacao.idSolicitacao+"&";
+    				//prioridades += "listaPrioridadeSolicitacao["+index+"].lista.id="+idLista+"&";
+    				//prioridades += "listaPrioridadeSolicitacao["+index+"].solicitacao.id="+solicitacao.idSolicitacao+"&";
     				
     			}
 	 	    });
 	 	    if (prioridades.length > 0) {
-		 	    window.location.href=
 	 	    	jQuery.blockUI(objBlock);
 	 	    	$.ajax({
 		 	    	type: "POST",

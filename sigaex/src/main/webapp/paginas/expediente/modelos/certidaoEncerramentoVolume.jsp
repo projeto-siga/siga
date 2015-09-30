@@ -3,7 +3,6 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <mod:modelo>
 <%--  Suprimi a entrevista pois o  número do processo será preenchido automaticamente, não será necessário o campo processo.
 	<mod:entrevista>

@@ -1272,7 +1272,7 @@ public class ExMovimentacaoController extends ExController {
 				.getBL()
 				.encerrarVolume(getCadastrante(), getLotaTitular(), builder.getMob(), mov.getDtMov(), mov.getSubscritor(), mov.getTitular(),
 						mov.getNmFuncaoSubscritor(), false);
-		ExDocumentoController.redirecionarParaExibir(result, mov.getExDocumento().getSigla());
+		ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getExDocumento().getSigla());
 	}
 
 	@Get("/app/expediente/mov/anotar")

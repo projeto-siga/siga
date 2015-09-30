@@ -59,7 +59,7 @@ public class SrSolicitacaoVO {
 					+ "\">" + sol.getCodigo() + "</a>");
 
 		this.setDescrSolicitacao("<b>"
-				+ (sol.getItemConfiguracao() != null ? sol.getItemConfiguracao().getTituloItemConfiguracao() : "Item não informado")
+				+ (sol.getDnmItemConfiguracao() != null ? sol.getDnmItemConfiguracao().getTituloItemConfiguracao() : "Item não informado")
 				+ ":</b>&nbsp;" + SrViewUtil.selecionado(sol.getDescricao(), sol.getDescricao()));
 
 		String nomeCadastranteAbreviado = sol.getCadastrante() != null ? sol
@@ -86,11 +86,11 @@ public class SrSolicitacaoVO {
 				.getPrioridade() : null);
 		this.setNaoReposicionarAutomaticoNaLista(prioridadeSolicitacao != null ? prioridadeSolicitacao
 				.getNaoReposicionarAutomatico() : false);
-		this.setPrioridadeTecnica(sol.getPrioridadeTecnicaString());
+		this.setPrioridadeTecnica(sol.getDnmPrioridadeTecnicaString());
 		
 		if (prioridadeSolicitacao != null)
 			this.setCssClass("PRIORIDADE-" + prioridadeSolicitacao.getPrioridade());
-		else this.setCssClass("PRIORIDADE-" + sol.getPrioridadeTecnica());
+		else this.setCssClass("PRIORIDADE-" + sol.getDnmPrioridadeTecnica());
 
 		this.setSituacao(m.getCpMarcador().getDescrMarcador());
 

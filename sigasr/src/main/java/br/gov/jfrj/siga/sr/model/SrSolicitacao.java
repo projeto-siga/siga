@@ -551,6 +551,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public String getPrioridadeTecnicaString(){
         return getPrioridadeTecnica() == null ? "" : getPrioridadeTecnica().getDescPrioridade();
     }
+    
+    public String getDnmPrioridadeTecnicaString(){
+        return getDnmPrioridadeTecnica() == null ? "" : getDnmPrioridadeTecnica().getDescPrioridade();
+    }
 
     public String getAtributosString() {
         StringBuilder s = new StringBuilder();
@@ -2780,16 +2784,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
                     terminarPendencia(cadastrante, lotaCadastrante, titular, lotaTitular, "", iniP.getIdMovimentacao());
         }
     }
-    
-    public SrItemConfiguracao getItemAtual() {
-    	return getDnmItemConfiguracao();
-    }
-
-    public SrAcao getAcaoAtual() {
-        return getDnmAcao();
-    }
 	
-	public SrItemConfiguracao getItemAtualRelatorio() {
+	public SrItemConfiguracao getItemAtual() {
 		List<SrItemConfiguracao> historicoItem = getHistoricoItem();
 		if (historicoItem.isEmpty()) {
 			return null;
@@ -2798,7 +2794,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return historicoItem.get(size - 1);
 	}
 
-	public SrAcao getAcaoAtualRelatorio() {
+	public SrAcao getAcaoAtual() {
 		List<SrAcao> historicoAcao = getHistoricoAcao();
 		if (historicoAcao.isEmpty()) {
 			return null;
@@ -3158,7 +3154,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 								mov.getTipoMov().getNome(), mov.getLotaAtendente());
 					else 
 						atendimento = new SrAtendimento(this, mov.getDtIniMov(), mov.getAtendente(), 
-								getItemAtualRelatorio().toString(), getAcaoAtualRelatorio().toString(), 
+								getItemAtual().toString(), getAcaoAtual().toString(), 
 								mov.getTipoMov().getNome(), null);	
 				}
 			}
@@ -3238,7 +3234,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		atendimento = new SrAtendimento(this, dataFinalUltimaFilha, dataFinalPai, 
 				getTempoEfetivoAtendimento(dataFinalUltimaFilha, dataFinalPai), lotacaoAtendente, null, getAtendente(), 
-				tipoAtendimento, getItemAtualRelatorio().toString(), getAcaoAtualRelatorio().toString());
+				tipoAtendimento, getItemAtual().toString(), getAcaoAtual().toString());
 		atendimento.definirFaixa(lotacaoAtendente.getOrgaoUsuario());
 		return atendimento;
 	}

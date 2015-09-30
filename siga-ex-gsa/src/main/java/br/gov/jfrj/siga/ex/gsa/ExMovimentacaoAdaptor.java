@@ -135,21 +135,21 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 	private void addMetadataForMov(ExDocumento doc, ExMovimentacao mov,
 			Response resp) {
 		if (doc.getDnmExNivelAcesso() != null)
-			resp.addMetadata("Nível de Acesso", doc.getDnmExNivelAcesso()
+			resp.addMetadata("acesso", doc.getDnmExNivelAcesso()
 					.getNmNivelAcesso());
 		if (mov.getDtMovYYYYMMDD() != null)
-			resp.addMetadata("Data", mov.getDtMovYYYYMMDD());
+			resp.addMetadata("data", mov.getDtMovYYYYMMDD());
 		if (mov.getLotaSubscritor() != null)
-			resp.addMetadata("Lotação do Subscritor", mov.getLotaSubscritor()
+			resp.addMetadata("subscritor_lotacao", mov.getLotaSubscritor()
 					.getSiglaLotacao());
 		if (mov.getSubscritor() != null)
-			resp.addMetadata("Subscritor", mov.getSubscritor().getNomePessoa());
+			resp.addMetadata("subscritor", mov.getSubscritor().getNomePessoa());
 
 		if (mov.getLotaCadastrante() != null)
-			resp.addMetadata("Lotação do Cadastrante", mov.getLotaCadastrante()
+			resp.addMetadata("cadastrante_lotacao", mov.getLotaCadastrante()
 					.getSiglaLotacao());
 		if (mov.getCadastrante() != null)
-			resp.addMetadata("Cadastrante", mov.getCadastrante()
+			resp.addMetadata("cadastrante", mov.getCadastrante()
 					.getNomePessoa());
 	}
 

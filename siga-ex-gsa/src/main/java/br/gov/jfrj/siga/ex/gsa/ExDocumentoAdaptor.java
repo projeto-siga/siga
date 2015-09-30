@@ -142,20 +142,20 @@ public class ExDocumentoAdaptor extends ExAdaptor {
 
 	private void addMetadataForDoc(ExDocumento doc, Response resp) {
 		if (doc.getExTipoDocumento() != null) {
-			resp.addMetadata("Origem", doc.getExTipoDocumento().getSigla());
+			resp.addMetadata("origem", doc.getExTipoDocumento().getSigla());
 		}
 		if (doc.getExFormaDocumento() != null)
-			resp.addMetadata("Espécie", doc.getExFormaDocumento()
+			resp.addMetadata("especie", doc.getExFormaDocumento()
 					.getDescricao());
 		if (doc.getExModelo() != null)
-			resp.addMetadata("Modelo", doc.getExModelo().getNmMod());
+			resp.addMetadata("modelo", doc.getExModelo().getNmMod());
 		if (doc.getDescrDocumento() != null)
-			resp.addMetadata("Descrição", doc.getDescrDocumento());
+			resp.addMetadata("descricao", doc.getDescrDocumento());
 		if (doc.getDnmExNivelAcesso() != null)
-			resp.addMetadata("Nível de Acesso", doc.getDnmExNivelAcesso()
+			resp.addMetadata("acesso", doc.getDnmExNivelAcesso()
 					.getNmNivelAcesso());
 		if (doc.getDtDocYYYYMMDD() != null)
-			resp.addMetadata("Data", doc.getDtDocYYYYMMDD());
+			resp.addMetadata("data", doc.getDtDocYYYYMMDD());
 
 		ExClassificacao cAtual = doc.getExClassificacaoAtual();
 		if (cAtual == null && doc.getExClassificacao() != null)
@@ -170,24 +170,24 @@ public class ExDocumentoAdaptor extends ExAdaptor {
 					c.setSigla(sigla);
 					ExClassificacao cPai = ExDao.getInstance()
 							.consultarPorSigla(c);
-					resp.addMetadata("Classificação " + MascaraUtil.getInstance().calcularNivel(c.getCodificacao()),
+					resp.addMetadata("classificacao_" + MascaraUtil.getInstance().calcularNivel(c.getCodificacao()),
 							cPai.getDescrClassificacao());
 				}
 			}
-			resp.addMetadata("Classificação " + MascaraUtil.getInstance().calcularNivel(cAtual.getCodificacao()), cAtual.getDescricao());
+			resp.addMetadata("classificacao_" + MascaraUtil.getInstance().calcularNivel(cAtual.getCodificacao()), cAtual.getDescricao());
 		}
 
 		if (doc.getLotaSubscritor() != null)
-			resp.addMetadata("Lotação do Subscritor", doc.getLotaSubscritor()
+			resp.addMetadata("subscritor_lotacao", doc.getLotaSubscritor()
 					.getSiglaLotacao());
 		if (doc.getSubscritor() != null)
-			resp.addMetadata("Subscritor", doc.getSubscritor().getNomePessoa());
+			resp.addMetadata("subscritor", doc.getSubscritor().getNomePessoa());
 
 		if (doc.getLotaCadastrante() != null)
-			resp.addMetadata("Lotação do Cadastrante", doc.getLotaCadastrante()
+			resp.addMetadata("cadastrante_lotacao", doc.getLotaCadastrante()
 					.getSiglaLotacao());
 		if (doc.getCadastrante() != null)
-			resp.addMetadata("Cadastrante", doc.getCadastrante()
+			resp.addMetadata("cadastrante", doc.getCadastrante()
 					.getNomePessoa());
 
 		Map<String, String> map = doc.getResumo();

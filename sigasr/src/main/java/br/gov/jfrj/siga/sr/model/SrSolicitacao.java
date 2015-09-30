@@ -1750,6 +1750,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             a.setDpPessoaIni(b.getDpPessoaIni());
             a.setDtFimMarca(b.getDtFimMarca());
             a.setDtIniMarca(b.getDtIniMarca());
+            a.setSolicitacao(b.getSolicitacao());
             a.save();
         }
     }

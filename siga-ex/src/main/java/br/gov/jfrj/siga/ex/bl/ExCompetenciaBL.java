@@ -2461,6 +2461,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if(mob.isSobrestado())
 			return false;
 		
+		if(mob.isVolumeEncerrado())
+			return false;
+		
 		if(mob.isJuntado())
 			return false;
 		

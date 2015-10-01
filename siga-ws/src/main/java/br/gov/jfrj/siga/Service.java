@@ -18,17 +18,25 @@
  ******************************************************************************/
 package br.gov.jfrj.siga;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
 
+import org.codehaus.jackson.JsonProcessingException;
+
+import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.gc.service.GcService;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.wf.service.WfService;
+
+import com.google.gson.Gson;
+import com.mashape.unirest.http.ObjectMapper;
+import com.mashape.unirest.http.Unirest;
 
 public abstract class Service {
 
@@ -39,6 +47,29 @@ public abstract class Service {
 	static CdService cd = null;
 	static GiService gi = null;
 	static GcService gc = null;
+	static BlucService bluc = null;
+
+	static {
+		Unirest.setObjectMapper(new ObjectMapper() {
+			private Gson gson = new Gson();
+
+			public <T> T readValue(String value, Class<T> valueType) {
+				try {
+					return gson.fromJson(value, valueType);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			public String writeValue(Object value) {
+				try {
+					return gson.toJson(value);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+		});
+	}
 
 	/*
 	 * Externalização das informacoes dos servicos
@@ -47,36 +78,36 @@ public abstract class Service {
 	public static WfService getWfService() {
 		if (wf == null)
 			wf = getService(WfService.class,
-					System.getProperty( "wfservice.endpoint" ),
-					System.getProperty( "wfservice.qname" ),
-					System.getProperty( "wfservice.servicename" ));
+					System.getProperty("wfservice.endpoint"),
+					System.getProperty("wfservice.qname"),
+					System.getProperty("wfservice.servicename"));
 		return wf;
 	}
 
 	public static ExService getExService() {
 		if (ex == null)
-			ex = getService(ExService.class, 
-					System.getProperty( "exservice.endpoint" ),
-					System.getProperty( "exservice.qname" ),
-					System.getProperty( "exservice.servicename" ));
+			ex = getService(ExService.class,
+					System.getProperty("exservice.endpoint"),
+					System.getProperty("exservice.qname"),
+					System.getProperty("exservice.servicename"));
 		return ex;
 	}
 
 	public static CdService getCdService() {
 		if (cd == null)
 			cd = getService(CdService.class,
-					System.getProperty( "cdservice.endpoint" ),
-					System.getProperty( "cdservice.qname" ),
-					System.getProperty( "cdservice.servicename" ));
+					System.getProperty("cdservice.endpoint"),
+					System.getProperty("cdservice.qname"),
+					System.getProperty("cdservice.servicename"));
 		return cd;
 	}
 
 	public static GiService getGiService() {
 		if (gi == null)
 			gi = getService(GiService.class,
-					System.getProperty( "giservice.endpoint" ),
-					System.getProperty( "giservice.qname" ),
-					System.getProperty( "giservice.servicename" ));
+					System.getProperty("giservice.endpoint"),
+					System.getProperty("giservice.qname"),
+					System.getProperty("giservice.servicename"));
 		return gi;
 	}
 
@@ -88,7 +119,13 @@ public abstract class Service {
 					System.getProperty("gcservice.servicename"));
 		return gc;
 	}
-	
+
+	public static BlucService getBlucService() {
+		if (bluc == null)
+			bluc = new BlucService(System.getProperty("blucservice.endpoint"));
+		return bluc;
+	}
+
 	@SuppressWarnings("unchecked")
 	private static <E extends Remote> E getService(Class<E> remoteClass,
 			String wsdl, String qname, String serviceName) {
@@ -177,7 +214,6 @@ public abstract class Service {
 		if (Service.isError(ba))
 			throw new Exception(retrieveError(ba));
 	}
-
 
 	// public static WfService getWfService() {
 	// return getService(WfService.class, "wf");

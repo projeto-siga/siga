@@ -24,6 +24,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
 import java.security.MessageDigest;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.EntityManager;
@@ -39,6 +40,9 @@ import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.bluc.service.BlucService;
+import br.gov.jfrj.siga.bluc.service.HashRequest;
+import br.gov.jfrj.siga.bluc.service.HashResponse;
 import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -73,6 +77,7 @@ public class ExArquivoController extends ExController {
 			final String contextpath = getRequest().getContextPath();
 			final boolean pacoteAssinavel = (certificadoB64 != null);
 			final boolean fB64 = getRequest().getHeader("Accept") != null && getRequest().getHeader("Accept").startsWith("text/vnd.siga.b64encoded");
+			final boolean fJSON = getRequest().getHeader("Accept") != null && getRequest().getHeader("Accept").startsWith("application/json");
 			final boolean isPdf = arquivo.endsWith(".pdf");
 			final boolean isHtml = arquivo.endsWith(".html");
 			boolean estampar = !semmarcas;
@@ -119,10 +124,29 @@ public class ExArquivoController extends ExController {
 					throw new Exception("PDF inválido!");
 				}
 				if (pacoteAssinavel) {
-					CdService client = Service.getCdService();
 					final Date dt = dao().consultarDataEHoraDoServidor();
 					getResponse().setHeader("Atributo-Assinavel-Data-Hora", Long.toString(dt.getTime()));
-					byte[] sa = client.produzPacoteAssinavel(certificado, certificado, ab, true, dt);
+
+					// Chamar o BluC para criar o pacote assinavel
+					//
+					BlucService bluc = Service.getBlucService();
+					if (!bluc.test())
+						throw new Exception("BluC não está disponível.");
+					HashRequest hashreq = new HashRequest();
+					hashreq.setCertificate(certificadoB64);
+					hashreq.setCrl("true");
+					hashreq.setPolicy("AD-RB");
+					hashreq.setSha1(bluc.bytearray2b64(bluc.calcSha1(ab)));
+					hashreq.setSha256(bluc.bytearray2b64(bluc.calcSha256(ab)));
+					hashreq.setTime(bluc.date2string(dt));
+					HashResponse hashresp = bluc.hash(hashreq);
+					if (hashresp.getError() != null)
+						throw new Exception("BluC não conseguiu produzir o pacote assinável. " + hashresp.getError());
+					byte[] sa = Base64.decode(hashresp.getHash());
+					
+//					CdService client = Service.getCdService();
+//					byte[] sa = client.produzPacoteAssinavel(certificado, certificado, ab, true, dt);
+					
 					return new InputStreamDownload(makeByteArrayInputStream(sa, fB64), APPLICATION_OCTET_STREAM, arquivo);
 				}
 				if (hash != null) {

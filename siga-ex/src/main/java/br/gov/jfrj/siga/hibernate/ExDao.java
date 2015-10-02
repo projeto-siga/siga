@@ -296,12 +296,12 @@ public class ExDao extends CpDao {
 
 		if (flt.getDtDoc() != null) {
 			query.setString("dtDoc",
-					new SimpleDateFormat("dd/MM/yyyy").format(flt.getDtDoc()));
+					new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(flt.getDtDoc()));
 		}
 
 
 		if (flt.getDtDocFinal() != null) {
-			query.setString("dtDocFinal", new SimpleDateFormat("dd/MM/yyyy")
+			query.setString("dtDocFinal", new SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
 			.format(flt.getDtDocFinal()));
 		}
 

@@ -118,13 +118,13 @@ public class MontadorQuery implements IMontadorQuery {
 		if (flt.getDtDoc() != null) {
 			sbf.append(" and doc.dtDoc >= to_date(");
 			sbf.append(":dtDoc");
-			sbf.append(", 'dd/mm/yyyy')");
+			sbf.append(", 'dd/mm/yyyy HH24:MI:SS')");
 		}
 
 		if (flt.getDtDocFinal() != null) {
 			sbf.append(" and doc.dtDoc <= to_date(");
 			sbf.append(":dtDocFinal");
-			sbf.append(", 'dd/mm/yyyy')");
+			sbf.append(", 'dd/mm/yyyy HH24:MI:SS')");
 		}
 
 		if (flt.getNumAntigoDoc() != null

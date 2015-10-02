@@ -522,7 +522,7 @@ public class ExMobilVO extends ExVO {
 						.podeEncerrarVolume(titular, lotaTitular, mob),
 				"Confirma o encerramento do volume?", null, null, null, "once");
 
-		addAcao("cancel", "Cancelar Via", "/expediente/mov",
+		addAcao("cancel", "Cancelar Via", "/app/expediente/mov",
 				"cancelarMovimentacao", Ex.getInstance().getComp()
 						.podeCancelarVia(titular, lotaTitular, mob),
 				"Confirma o cancelamento da via?", null, null, null, "once");

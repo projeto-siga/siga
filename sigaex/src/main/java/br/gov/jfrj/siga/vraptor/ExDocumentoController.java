@@ -316,7 +316,7 @@ public class ExDocumentoController extends ExController {
 
 		result.forwardTo(this).edita(exDocumentoDTOPreench, null, vars,
 				exDocumentoDTO.getMobilPaiSel(),
-				exDocumentoDTO.isCriandoAnexo());
+				exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getDespachando());
 	}
 
 	@Get("app/expediente/doc/criar_via")
@@ -371,7 +371,7 @@ public class ExDocumentoController extends ExController {
 			InvocationTargetException, IOException {
 		result.forwardTo(this).edita(exDocumentoDTO, null, vars,
 				exDocumentoDTO.getMobilPaiSel(),
-				exDocumentoDTO.isCriandoAnexo());
+				exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getDespachando());
 		return exDocumentoDTO;
 	}
 
@@ -379,7 +379,7 @@ public class ExDocumentoController extends ExController {
 	@Get("app/expediente/doc/editar")
 	public ExDocumentoDTO edita(ExDocumentoDTO exDocumentoDTO,
 			final String sigla, String[] vars,
-			final ExMobilSelecao mobilPaiSel, final Boolean criandoAnexo)
+			final ExMobilSelecao mobilPaiSel, final Boolean criandoAnexo, final Boolean despachando)
 			throws IOException, IllegalAccessException,
 			InvocationTargetException {
 		assertAcesso("");
@@ -391,6 +391,8 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO = new ExDocumentoDTO();
 			exDocumentoDTO.setCriandoAnexo(criandoAnexo == null ? false
 					: criandoAnexo);
+			exDocumentoDTO.setDespachando(despachando == null ? false
+					: despachando);
 
 			if (mobilPaiSel != null) {
 				exDocumentoDTO.setMobilPaiSel(mobilPaiSel);
@@ -746,7 +748,7 @@ public class ExDocumentoController extends ExController {
 		exDocumentoDTO.setPreenchimento(0L);
 		result.forwardTo(this).edita(exDocumentoDTO, null, vars,
 				exDocumentoDTO.getMobilPaiSel(),
-				exDocumentoDTO.isCriandoAnexo());
+				exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getDespachando());
 	}
 
 	private void assertAcesso(final ExDocumentoDTO exDocumentoDTO)
@@ -1190,7 +1192,7 @@ public class ExDocumentoController extends ExController {
 			if (!validar()) {
 				edita(exDocumentoDTO, null, vars,
 						exDocumentoDTO.getMobilPaiSel(),
-						exDocumentoDTO.isCriandoAnexo());
+						exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getDespachando());
 				getPar().put("alerta", new String[] { "Sim" });
 				exDocumentoDTO.setAlerta("Sim");
 

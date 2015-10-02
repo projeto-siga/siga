@@ -477,7 +477,7 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao(
 				"link_add",
 				"Criar Subprocesso",
-				"/expediente/doc",
+				"/app/expediente/doc",
 				"editar",
 				Ex.getInstance().getComp()
 						.podeCriarSubprocesso(titular, lotaTitular, mob), null,

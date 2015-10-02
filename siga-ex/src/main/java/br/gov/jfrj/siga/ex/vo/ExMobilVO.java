@@ -527,7 +527,7 @@ public class ExMobilVO extends ExVO {
 						.podeCancelarVia(titular, lotaTitular, mob),
 				"Confirma o cancelamento da via?", null, null, null, "once");
 
-		addAcao("brick", "Autuar", "/expediente/doc", "editar", Ex
+		addAcao("brick", "Autuar", "/app/expediente/doc", "editar", Ex
 				.getInstance().getComp().podeAutuar(titular, lotaTitular, mob),
 				null, "idMobilAutuado=" + mob.getId() + "&autuando=true", null,
 				null, null);

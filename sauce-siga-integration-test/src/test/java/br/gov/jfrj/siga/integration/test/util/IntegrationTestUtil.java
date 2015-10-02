@@ -54,6 +54,18 @@ public class IntegrationTestUtil {
 		return we;
 	}
 	
+	// Método adicionado com o time parametrizado 
+	public WebElement getWebElement(WebDriver driver, By option, int tempoEspera) {
+		WebElement we = null; 
+		try {
+			we = new WebDriverWait(driver, tempoEspera).until(ExpectedConditions.presenceOfElementLocated(option));	
+		} catch (TimeoutException e) {
+			e.printStackTrace();
+		}
+		return we;
+	}
+	// 
+	
 	public Boolean isDescricaoPaginaVisivel(WebDriver driver, String descricaoPagina) {
 		WebElement we = null; 
 		try {

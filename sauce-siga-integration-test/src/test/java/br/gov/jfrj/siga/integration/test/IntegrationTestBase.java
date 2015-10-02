@@ -61,7 +61,7 @@ public class IntegrationTestBase implements SauceOnDemandSessionIdProvider, Sauc
 	private String USUARIO_SAUCELAB = "sigadoc";
 	private String ACCESSKEY_SAUCELAB = "6b7f5b5c-0a1e-4c59-b9b5-e3dba4a198d8";
 	public SauceOnDemandAuthentication authentication;
-
+    //
 	public IntegrationTestBase() throws FileNotFoundException, IOException {
 		this.baseURL = System.getProperty("baseURL");
 		util = new IntegrationTestUtil();
@@ -70,7 +70,7 @@ public class IntegrationTestBase implements SauceOnDemandSessionIdProvider, Sauc
 		propDocumentos.setProperty("siglaSubscritor", System.getProperty("userSiga"));
 	}
 	
-	// Classe necessária para o saucelabs
+	// Método necessário para o saucelabs
 	@BeforeClass
 	@Parameters({"Operating_System", "Browser_Name", "Browser_Version"})
 	public void iniciaWebDriver(@Optional() String operatingSystem, @Optional() String browserName, @Optional() String browserVersion) throws MalformedURLException { 
@@ -82,14 +82,15 @@ public class IntegrationTestBase implements SauceOnDemandSessionIdProvider, Sauc
 	    System.out.println("Dados: " + operatingSystem + " - " + browserName + " - " + browserVersion );
 	    capabilities.setCapability("platform", Platform.valueOf(operatingSystem));
 	    //capabilities.setCapability("screen-resolution", "1680x1050");
-	    capabilities.setCapability("idleTimeout", 1000);
-	    capabilities.setCapability("name", "teste SIGA-DOC selenium-testng-saucelab");
+	    //capabilities.setCapability("idleTimeout", 1000);
+	    capabilities.setCapability("name", (System.getProperty("JOB_NAME") != null ? System.getProperty("JOB_NAME") + " - " : "") + getClass().getSimpleName());
+	    capabilities.setCapability("build", System.getProperty("BUILD_NUMBER"));
 	    this.driver = new RemoteWebDriver(
 	           new URL("http://" + USUARIO_SAUCELAB + ":" + ACCESSKEY_SAUCELAB + "@ondemand.saucelabs.com:80/wd/hub"),
 	           capabilities);
 		// Fim do bloco necessário ao acesso ao saucelabs
 	}   
-	// Fim d classe necessária para o saucelabs
+	// Fim do método necessário para o saucelabs
 	
 	public PrincipalPage efetuaLogin() throws Exception {
 		try {					    			
@@ -231,10 +232,11 @@ public class IntegrationTestBase implements SauceOnDemandSessionIdProvider, Sauc
 	//Necessário ao saucelabs. Atualiza o saucelabs dashboard com fail ou pass em função da variável isTestSuccesful. É utilizado o sauce Rest API
 	@AfterClass(alwaysRun = true)
 	public void tearDown() {		
+		System.out.println("Executando Tear Down!");
 		SauceREST sauceREST = new SauceREST(USUARIO_SAUCELAB, ACCESSKEY_SAUCELAB);
 		Map<String, Object> updates = new HashMap<String, Object>();
-		updates.put("name", (System.getenv("JOB_NAME") != null ? System.getenv("JOB_NAME") + " - " : "") + getClass().getSimpleName());
-		updates.put("build", System.getenv("BUILD_NUMBER"));
+		//updates.put("name", (System.getenv("JOB_NAME") != null ? System.getenv("JOB_NAME") + " - " : "") + getClass().getSimpleName());
+		//updates.put("build", System.getenv("BUILD_NUMBER"));
 		if(isTestSuccesful) {
 			updates.put("passed", true);
 		} else {

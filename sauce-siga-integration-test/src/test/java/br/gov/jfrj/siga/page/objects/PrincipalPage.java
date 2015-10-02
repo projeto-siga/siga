@@ -17,8 +17,8 @@ public class PrincipalPage {
 
 	protected WebDriver driver;
 	
-	//@FindBy(css="a.gt-btn-small.gt-btn-right") versão jboss 5
-	@FindBy(partialLinkText="Novo Documento")
+	@FindBy(css="a.gt-btn-small.gt-btn-right") 
+	//@FindBy(partialLinkText="Novo Documento")
 	private WebElement botaoNovoDocumentoEx;
 	
 	@FindBy(id="buscar_genericoSel_sigla")
@@ -37,7 +37,13 @@ public class PrincipalPage {
 			webElement.click();
 		}
 		
-		if(util.getWebElement(driver, By.cssSelector("a.gt-btn-small.gt-btn-right")) == null) {
+		// O método getwebElement foi modificado para aceitar o tempo de espera parametrizado visto 
+		// que todos os comandos foram definidos com 30 segundos. Isto ocorre porque na primeira vez 
+		// que se acessa a página principal, logo depois que o app.server é criado, existe uma demora 
+		// adicional devido ao hibernate e isto pode gerar um tempo superior a 30s para aparecer o botão Novo Documento
+		if(util.getWebElement(driver, By.cssSelector("a.gt-btn-small.gt-btn-right"), 70) == null) {
+		//if(util.getWebElement(driver, By.cssSelector("a.gt-btn-small.gt-btn-right")) == null) {
+		  	System.out.println("==> Botão Novo Documento não encontrado na página principal");
 			throw new IllegalStateException("Esta não é a página principal!");
 		}
 	}

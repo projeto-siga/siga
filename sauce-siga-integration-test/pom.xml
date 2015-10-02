@@ -55,11 +55,10 @@
 						<artifactId>docker-maven-plugin</artifactId>
 						<version>0.11.5</version>
 								<configuration>
-									<!-- <dockerHost>https://${server.ip}:2376</dockerHost> --> 
-									<!-- Para windows o comando acima, para linux o comando abaixo -->
-									<dockerHost>http://${server.ip}:2375</dockerHost>  
+									<dockerHost>${docker_ACCESS}</dockerHost>  
+									<!-- String de acesso via windows boot2docker: https://${server.ip}:2376-->
+									<!-- String de acesso via Linux: http://${server.ip}:2375-->
 									<!-- SEM TLS: -->
-									<!-- <dockerHost>http://${server.ip}:2375</dockerHost> -->
 									<!-- <certPath>C:\Users\${user.name}\.boot2docker\certs\boot2docker-vm</certPath> -->
 									<autoPull>true</autoPull>
 									<images>
@@ -171,7 +170,7 @@
 									<goal>stop</goal>
 								</goals>
 							</execution>														
-						<!-- 	<execution>
+						 	<execution>
 								<id>remove</id>
 								<configuration>
 									<removeAll>true</removeAll>
@@ -181,7 +180,7 @@
 								<goals>
 									<goal>remove</goal>
 								</goals>
-							</execution>	-->																				
+							</execution>																					
 						</executions>
 					</plugin>
 				</plugins>

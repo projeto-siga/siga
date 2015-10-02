@@ -47,7 +47,7 @@
 									id="idTpConfiguracao" headerValue="[Indefinido]" headerKey="0"
 									listValue="dscTpConfiguracao" theme="simple" /> <b>Órgão</b> 
 								<siga:select
-									name="idOrgaoUsu" list="orgaosUsu" listKey="idOrgaoUsu"
+									name="idOrgaoUsu" id="idOrgaoUsu" list="orgaosUsu" listKey="idOrgaoUsu"
 									listValue="nmOrgaoUsu" theme="simple" headerValue="[Todos]"
 									headerKey="0" /></td>
 					</tr>

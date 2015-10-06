@@ -45,7 +45,7 @@ public class Corporativo extends SigaApplication {
 					&& (!mp.containsKey(p.pessoa_id) || p.lotacao_tipo_papel.equals("Principal"))
 					&& (p.pessoa_situacao.equals(1)
 							|| p.pessoa_situacao.equals(2) || p.pessoa_situacao
-								.equals(31)))
+								.equals(31) || p.pessoa_situacao.equals(12)))
 				mp.put(p.pessoa_id, p);
 
 			Lotacao x = d.getLotacao();

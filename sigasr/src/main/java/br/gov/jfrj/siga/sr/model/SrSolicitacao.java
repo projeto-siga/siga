@@ -1231,7 +1231,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public boolean podeFecharAutomatico() {
-        return isFechadoAutomaticamente() && isAtivo() && isAFechar();
+        return isFechadoAutomaticamente() && isEmAndamento() && isAFechar();
     }
     
     @SuppressWarnings("unchecked")

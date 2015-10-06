@@ -29,7 +29,7 @@ public class LoginPage {
 		
 		util = new IntegrationTestUtil();
 		if(util.getWebElement(driver, By.xpath("//b[contains(., 'Bem-vindo ao SIGA.')]")) == null) {
-			System.out.println("555 ===> Página de login do Siga não encontrada");
+			System.out.println("===> Página de login do Siga não encontrada");
 			throw new IllegalStateException("Esta não é a página de Login!");
 		}
 	}

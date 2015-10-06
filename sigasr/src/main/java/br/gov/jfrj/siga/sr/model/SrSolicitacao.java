@@ -1230,9 +1230,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     }
 
-    public boolean podeFecharPaiAutomatico() {
-        return isFilha() && getSolicitacaoPai().getSolicitacaoAtual().isFechadoAutomaticamente() && 
-        		getSolicitacaoPai().isAtivo() && getSolicitacaoPai().isAFechar();
+    public boolean podeFecharAutomatico() {
+        return isFechadoAutomaticamente() && isAtivo() && isAFechar();
     }
     
     @SuppressWarnings("unchecked")
@@ -1690,8 +1689,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             }
 
             movimentacao.desfazer(cadastrante, lotaCadastrante, titular, lotaTitular);
-            if(podeDeixarPaiPendente)
-            	getSolicitacaoPai().deixarPendenteAguardandoFilha(cadastrante, lotaCadastrante, titular, lotaTitular, this);
+            if (podeDeixarPaiPendente) 
+            	getSolicitacaoPai().deixarPendenteAguardandoFilha(getCadastrante(), getLotaCadastrante(), 
+            			getTitular(), getSolicitacaoPai().getLotaAtendente(), this);       
         }
     }
 
@@ -2183,12 +2183,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
         removerDasListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
 
-        if (isFilha())
-        	getSolicitacaoPai().terminarPendenciaAguardandoFilha(cadastrante, lotaCadastrante, titular, lotaTitular);
-        
-        if (podeFecharPaiAutomatico())
-            getSolicitacaoPai().fechar(cadastrante, lotaCadastrante, titular, lotaTitular, "Solicita\u00E7\u00E3o fechada automaticamente");
-
+        if (isFilha()) {
+        	DpLotacao lotaAtendente = getSolicitacaoPai().getLotaAtendente(); 
+        	getSolicitacaoPai().terminarPendenciaAguardandoFilha(getCadastrante(), getLotaCadastrante(), getTitular(), lotaAtendente);
+        	if (getSolicitacaoPai().podeFecharAutomatico())
+        		getSolicitacaoPai().fechar(getCadastrante(), getLotaCadastrante(), getTitular(), lotaAtendente, 
+        				"Solicitação fechada automaticamente");
+        }      
         /*
          * if (temPesquisaSatisfacao()) enviarPesquisa();
          */
@@ -2227,7 +2228,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	throw new AplicacaoException("Operação não permitida: A Lotação atendente (" + lotacaoAtendente.getSiglaCompleta() +
                 ") foi extinta. Necessário abrir nova solicitação. Crie um vínculo dessa solicitação com a nova, através do recurso Vincular");
         
-    	if(isFilha()) {
+    	if (isFilha()) {
             if (getSolicitacaoPai().isAtivo()) 
             	podeDeixarPaiPendente = true;
         	else
@@ -2242,8 +2243,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);    	
         
         reInserirListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
-        if(podeDeixarPaiPendente)
-        	getSolicitacaoPai().deixarPendenteAguardandoFilha(cadastrante, lotaCadastrante, titular, lotaTitular, this);
+        if (podeDeixarPaiPendente) 
+        	getSolicitacaoPai().deixarPendenteAguardandoFilha(getCadastrante(), getLotaCadastrante(), 
+        			getTitular(), getSolicitacaoPai().getLotaAtendente(), this);       
     }
 
     private void reInserirListasDePrioridade(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
@@ -2328,10 +2330,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	movimentacao.setDescrMovimentacao("Cancelando a solicitação");
         movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
         removerDasListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
-        if (isFilha())
-        	getSolicitacaoPai().terminarPendenciaAguardandoFilha(cadastrante, lotaCadastrante, titular, lotaTitular);
-        if (podeFecharPaiAutomatico())
-            getSolicitacaoPai().fechar(cadastrante, lotaCadastrante, titular, lotaTitular, "Solicitação fechada automaticamente");
+        if (isFilha()) {
+        	DpLotacao lotaAtendente = getSolicitacaoPai().getLotaAtendente(); 
+        	getSolicitacaoPai().terminarPendenciaAguardandoFilha(getCadastrante(), getLotaCadastrante(), getTitular(), lotaAtendente);
+        	if (getSolicitacaoPai().podeFecharAutomatico())
+        		getSolicitacaoPai().fechar(getCadastrante(), getLotaCadastrante(), getTitular(), lotaAtendente, 
+        				"Solicitação fechada automaticamente");
+        }   
     }
 
     public void juntar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrSolicitacao solRecebeJuntada, String justificativa) throws Exception {

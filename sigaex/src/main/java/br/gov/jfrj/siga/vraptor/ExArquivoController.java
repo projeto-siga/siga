@@ -24,7 +24,6 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
 import java.security.MessageDigest;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.EntityManager;
@@ -43,7 +42,6 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.HashRequest;
 import br.gov.jfrj.siga.bluc.service.HashResponse;
-import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;

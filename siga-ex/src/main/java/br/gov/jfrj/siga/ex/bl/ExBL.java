@@ -85,7 +85,6 @@ import br.gov.jfrj.siga.bluc.service.EnvelopeRequest;
 import br.gov.jfrj.siga.bluc.service.EnvelopeResponse;
 import br.gov.jfrj.siga.bluc.service.ValidateRequest;
 import br.gov.jfrj.siga.bluc.service.ValidateResponse;
-import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -154,6 +153,8 @@ import com.google.gson.JsonSerializer;
 
 public class ExBL extends CpBL {
 	private final String SHA1 = "1.3.14.3.2.26";
+	
+	public final static String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
 
 	private final boolean BUSCAR_CARIMBO_DE_TEMPO = false;
 	private final boolean VALIDAR_LCR = false;
@@ -2314,7 +2315,7 @@ public class ExBL extends CpBL {
 			// mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
 			mov.setConteudoBlobMov2(cms);
 			// } else {
-			mov.setConteudoTpMov(CdService.MIME_TYPE_PKCS7);
+			mov.setConteudoTpMov(MIME_TYPE_PKCS7);
 			// mov.setConteudoBlobMov2(pkcs7);
 			// }
 
@@ -2890,7 +2891,7 @@ public class ExBL extends CpBL {
 			// mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
 			mov.setConteudoBlobMov2(cms);
 			// } else {
-			mov.setConteudoTpMov(CdService.MIME_TYPE_PKCS7);
+			mov.setConteudoTpMov(MIME_TYPE_PKCS7);
 			// mov.setConteudoBlobMov2(pkcs7);
 			// }
 

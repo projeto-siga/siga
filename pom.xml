@@ -12,7 +12,6 @@
 		<module>siga-base</module>
 		<module>siga-ws</module>
 		<module>siga-rel</module>
-		<module>siga-cd-base</module>
 		<module>siga-cp</module>
 		<module>siga-sinc-lib</module>
 		<module>siga-cp-sinc</module>
@@ -29,13 +28,8 @@
 		<module>siga-ex-gsa</module>
 		<module>sigagc</module>
 		<module>sigasr</module>
-		<module>siga-cd</module>
-		<module>sigacd</module>
  		<module>sigapp</module>
 		<!--<module>sigari</module>
- 		<module>sigacd</module>
- 		<module>siga-cd</module>
- 		<module>siga-cd-aut</module>
  		<module>siga-cp-sinc</module> 
  		<module>siga-dump</module> -->
  		<module>siga-integration-test</module>
@@ -262,11 +256,6 @@
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
-				<artifactId>siga-cd-base</artifactId>
-				<version>${siga.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>siga</groupId>
 				<artifactId>siga-vraptor-module</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
@@ -288,11 +277,6 @@
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>sigacd</artifactId>
-				<version>${siga.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>siga</groupId>
-				<artifactId>siga-cd</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>

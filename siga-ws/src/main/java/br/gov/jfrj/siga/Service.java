@@ -18,17 +18,13 @@
  ******************************************************************************/
 package br.gov.jfrj.siga;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
 
-import org.codehaus.jackson.JsonProcessingException;
-
 import br.gov.jfrj.siga.bluc.service.BlucService;
-import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.gc.service.GcService;
 import br.gov.jfrj.siga.gi.service.GiService;
@@ -44,7 +40,6 @@ public abstract class Service {
 
 	static WfService wf = null;
 	static ExService ex = null;
-	static CdService cd = null;
 	static GiService gi = null;
 	static GcService gc = null;
 	static BlucService bluc = null;
@@ -91,15 +86,6 @@ public abstract class Service {
 					System.getProperty("exservice.qname"),
 					System.getProperty("exservice.servicename"));
 		return ex;
-	}
-
-	public static CdService getCdService() {
-		if (cd == null)
-			cd = getService(CdService.class,
-					System.getProperty("cdservice.endpoint"),
-					System.getProperty("cdservice.qname"),
-					System.getProperty("cdservice.servicename"));
-		return cd;
 	}
 
 	public static GiService getGiService() {

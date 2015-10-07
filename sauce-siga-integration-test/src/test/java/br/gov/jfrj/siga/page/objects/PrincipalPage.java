@@ -41,7 +41,7 @@ public class PrincipalPage {
 		// que todos os comandos foram definidos com 30 segundos. Isto ocorre porque na primeira vez 
 		// que se acessa a página principal, logo depois que o app.server é criado, existe uma demora 
 		// adicional devido ao hibernate e isto pode gerar um tempo superior a 30s para aparecer o botão Novo Documento
-		if(util.getWebElement(driver, By.cssSelector("a.gt-btn-small.gt-btn-right"), 70) == null) {
+		if(util.getWebElementParametrizado(driver, By.cssSelector("a.gt-btn-small.gt-btn-right"), 70) == null) {
 		//if(util.getWebElement(driver, By.cssSelector("a.gt-btn-small.gt-btn-right")) == null) {
 		  	System.out.println("==> Botão Novo Documento não encontrado na página principal");
 			throw new IllegalStateException("Esta não é a página principal!");

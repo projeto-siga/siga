@@ -55,7 +55,7 @@ public class IntegrationTestUtil {
 	}
 	
 	// Método adicionado com o time parametrizado 
-	public WebElement getWebElement(WebDriver driver, By option, int tempoEspera) {
+	public WebElement getWebElementParametrizado(WebDriver driver, By option, int tempoEspera) {
 		WebElement we = null; 
 		try {
 			we = new WebDriverWait(driver, tempoEspera).until(ExpectedConditions.presenceOfElementLocated(option));	

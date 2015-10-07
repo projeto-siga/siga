@@ -53,10 +53,6 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
 import org.apache.axis.encoding.Base64;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Criteria;
@@ -84,6 +80,11 @@ import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.util.SetUtils;
+import br.gov.jfrj.siga.bluc.service.BlucService;
+import br.gov.jfrj.siga.bluc.service.EnvelopeRequest;
+import br.gov.jfrj.siga.bluc.service.EnvelopeResponse;
+import br.gov.jfrj.siga.bluc.service.ValidateRequest;
+import br.gov.jfrj.siga.bluc.service.ValidateResponse;
 import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -2148,53 +2149,52 @@ public class ExBL extends CpBL {
 		try {
 			final byte[] data = doc.getConteudoBlobPdf();
 
-			CdService client = Service.getCdService();
-
 			String s;
-
+			
+			BlucService bluc = Service.getBlucService();
+			if (!bluc.test())
+				throw new Exception("BluC não está disponível.");
+			
 			if (certificado != null) {
-				cms = client.validarECompletarPacoteAssinavel(certificado,
-						data, pkcs7, true, (dtMov != null) ? dtMov : dao()
-								.consultarDataEHoraDoServidor());
-			} else {
-				// s = client.validarAssinatura(pkcs7, data, dao().dt(),
-				// VALIDAR_LCR);
-				// Service.throwExceptionIfError(s);
+				// Chamar o BluC para criar o pacote assinavel
 				//
-				// if (BUSCAR_CARIMBO_DE_TEMPO) {
-				cms = client.validarECompletarAssinatura(pkcs7, data, true,
-						dtMov);
+				EnvelopeRequest envelopereq = new EnvelopeRequest();
+				envelopereq.setCertificate(bluc.bytearray2b64(certificado));
+				envelopereq.setCrl("true");
+				envelopereq.setPolicy("AD-RB");
+				envelopereq.setSignature(bluc.bytearray2b64(pkcs7));
+				envelopereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(data)));
+				envelopereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(data)));
+				envelopereq.setTime(bluc.date2string((dtMov != null) ? dtMov : dao()
+						.consultarDataEHoraDoServidor()));
+				EnvelopeResponse enveloperesp = bluc.envelope(envelopereq);
+				if (enveloperesp.getError() != null)
+					throw new Exception("BluC não conseguiu produzir o envelope AD-RB. " + enveloperesp.getError());
+				cms = Base64.decode(enveloperesp.getEnvelope());
+			} else {
+				cms = pkcs7;
 			}
-			sNome = client
-					.validarAssinatura(cms, data, dao().dt(), VALIDAR_LCR);
-
-			// cms = client
-			// .converterPkcs7EmCMSComCertificadosLCRsECarimboDeTempo(pkcs7);
-			// Service.throwExceptionIfError(cms);
+			
+			// Chamar o BluC para validar a assinatura
 			//
-			// sNome = client.validarAssinaturaCMS(
-			// MessageDigest.getInstance("SHA1").digest(data), SHA1,
-			// cms, dao().dt());
+			ValidateRequest validatereq = new ValidateRequest();
+			validatereq.setEnvelope(bluc.bytearray2b64(cms));
+			validatereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(data)));
+			validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(data)));
+			validatereq.setTime(bluc.date2string(dtMov));
+			validatereq.setCrl("true");
+			ValidateResponse validateresp = bluc.validate(validatereq );
+			if (validateresp.getError() != null)
+				throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getError());
+			
+			sNome = validateresp.getCn();
+
 			Service.throwExceptionIfError(sNome);
 
-			String sCPF = client.recuperarCPF(cms);
+			String sCPF = validateresp.getCertdetails().get("cpf0");
 			Service.throwExceptionIfError(sCPF);
 
 			lCPF = Long.valueOf(sCPF);
-			// } else {
-			// sNome = s;
-			// String sCPF = client.recuperarCPF(pkcs7);
-			// Service.throwExceptionIfError(sCPF);
-			// lCPF = Long.valueOf(sCPF);
-			// }
-
-			// writeB64File("c:/trabalhos/java/cd_teste_doc.b64", data);
-			// writeB64File("c:/trabalhos/java/cd_teste_hash.b64",
-			// MessageDigest
-			// .getInstance("SHA1").digest(data));
-			// writeB64File("c:/trabalhos/java/cd_teste_pkcs7.b64", pkcs7);
-			// writeB64File("c:/trabalhos/java/cd_teste_cms.b64", cms);
-
 		} catch (final Exception e) {
 			throw new AplicacaoException("Erro na assinatura de um documento: "
 					+ e.getMessage() == null ? "" : e.getMessage(), 0, e);
@@ -2750,24 +2750,32 @@ public class ExBL extends CpBL {
 		try {
 			final byte[] data = movAlvo.getConteudoBlobpdf();
 
-			CdService client = Service.getCdService();
-
 			String s;
-
+			
+			BlucService bluc = Service.getBlucService();
+			if (!bluc.test())
+				throw new Exception("BluC não está disponível.");
+			
 			if (certificado != null) {
-				cms = client.validarECompletarPacoteAssinavel(certificado,
-						data, pkcs7, true, (dtMov != null) ? dtMov : dao()
-								.consultarDataEHoraDoServidor());
-			} else {
-				// s = client.validarAssinatura(pkcs7, data, dao().dt(),
-				// VALIDAR_LCR);
-				// Service.throwExceptionIfError(s);
+				// Chamar o BluC para criar o pacote assinavel
 				//
-				// if (BUSCAR_CARIMBO_DE_TEMPO) {
-				cms = client.validarECompletarAssinatura(pkcs7, data, true,
-						dtMov);
+				EnvelopeRequest envelopereq = new EnvelopeRequest();
+				envelopereq.setCertificate(bluc.bytearray2b64(certificado));
+				envelopereq.setCrl("true");
+				envelopereq.setPolicy("AD-RB");
+				envelopereq.setSignature(bluc.bytearray2b64(pkcs7));
+				envelopereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(data)));
+				envelopereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(data)));
+				envelopereq.setTime(bluc.date2string((dtMov != null) ? dtMov : dao()
+						.consultarDataEHoraDoServidor()));
+				EnvelopeResponse enveloperesp = bluc.envelope(envelopereq);
+				if (enveloperesp.getError() != null)
+					throw new Exception("BluC não conseguiu produzir o envelope AD-RB. " + enveloperesp.getError());
+				cms = Base64.decode(enveloperesp.getEnvelope());
+			} else {
+				cms = pkcs7;
 			}
-
+			
 			if (cms == null)
 				throw new Exception("Assinatura inválida!");
 
@@ -2775,12 +2783,22 @@ public class ExBL extends CpBL {
 				throw new Exception(
 						"Conteúdo inválido na validação da assinatura!");
 
-			sNome = client
-					.validarAssinatura(cms, data, dao().dt(), VALIDAR_LCR);
-
+			// Chamar o BluC para validar a assinatura
+			//
+			ValidateRequest validatereq = new ValidateRequest();
+			validatereq.setEnvelope(bluc.bytearray2b64(cms));
+			validatereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(data)));
+			validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(data)));
+			validatereq.setTime(bluc.date2string(dao().dt()));
+			validatereq.setCrl("true");
+			ValidateResponse validateresp = bluc.validate(validatereq );
+			if (validateresp.getError() != null)
+				throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getError());
+			
+			sNome = validateresp.getCn();
 			Service.throwExceptionIfError(sNome);
 
-			String sCPF = client.recuperarCPF(cms);
+			String sCPF = validateresp.getCertdetails().get("cpf0");
 			Service.throwExceptionIfError(sCPF);
 
 			lCPF = Long.valueOf(sCPF);
@@ -6419,16 +6437,30 @@ public class ExBL extends CpBL {
 			String mimeType, Date dtAssinatura) throws Exception {
 		String sNome;
 		Long lCPF;
+		
+		BlucService bluc = Service.getBlucService();
+		if (!bluc.test())
+			throw new Exception("BluC não está disponível.");
+		
+		// Chamar o BluC para validar a assinatura
+		//
+		ValidateRequest validatereq = new ValidateRequest();
+		validatereq.setEnvelope(bluc.bytearray2b64(assinatura));
+		validatereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(conteudo)));
+		validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(conteudo)));
+		validatereq.setTime(bluc.date2string(dtAssinatura));
+		validatereq.setCrl("true");
+		ValidateResponse validateresp = bluc.validate(validatereq );
+		if (validateresp.getError() != null)
+			throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getError());
+		
+		sNome = validateresp.getCn();
 
-		// try {
-		CdService client = Service.getCdService();
-
-		sNome = client.validarAssinatura(assinatura, conteudo, dtAssinatura,
-				VALIDAR_LCR);
 		Service.throwExceptionIfError(sNome);
 
-		String sCPF = client.recuperarCPF(assinatura);
+		String sCPF = validateresp.getCertdetails().get("cpf0");
 		Service.throwExceptionIfError(sCPF);
+
 		lCPF = Long.valueOf(sCPF);
 
 		return sNome;

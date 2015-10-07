@@ -133,7 +133,7 @@ public class BlucService {
 		return javax.xml.bind.DatatypeConverter.printDateTime(cal);
 	}
 
-	public String bytearray2b64(byte[] ab) {
+	public static String bytearray2b64(byte[] ab) {
 		return Base64.encodeBase64String(ab);
 	}
 

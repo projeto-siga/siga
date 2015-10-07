@@ -761,12 +761,7 @@ public class Documento {
 				completo);
 
 		if (!completo && !estampar && ans.size() == 1) {
-			if (certificado != null) {
-				CdService cdService = Service.getCdService();
-				return cdService.produzPacoteAssinavel(certificado, null, ans
-						.get(0).getArquivo().getPdf(), true, ExDao
-						.getInstance().getServerDateTime());
-			} else if (hash != null) {
+			if (hash != null) {
 				// Calcula o hash do documento
 				String alg = hash;
 				MessageDigest md = MessageDigest.getInstance(alg);

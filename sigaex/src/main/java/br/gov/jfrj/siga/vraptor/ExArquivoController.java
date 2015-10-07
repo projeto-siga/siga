@@ -144,9 +144,6 @@ public class ExArquivoController extends ExController {
 						throw new Exception("BluC não conseguiu produzir o pacote assinável. " + hashresp.getError());
 					byte[] sa = Base64.decode(hashresp.getHash());
 					
-//					CdService client = Service.getCdService();
-//					byte[] sa = client.produzPacoteAssinavel(certificado, certificado, ab, true, dt);
-					
 					return new InputStreamDownload(makeByteArrayInputStream(sa, fB64), APPLICATION_OCTET_STREAM, arquivo);
 				}
 				if (hash != null) {

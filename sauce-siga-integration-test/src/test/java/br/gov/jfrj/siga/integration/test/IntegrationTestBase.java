@@ -88,7 +88,11 @@ public class IntegrationTestBase implements SauceOnDemandSessionIdProvider, Sauc
 	    this.driver = new RemoteWebDriver(
 	           new URL("http://" + USUARIO_SAUCELAB + ":" + ACCESSKEY_SAUCELAB + "@ondemand.saucelabs.com:80/wd/hub"),
 	           capabilities);
-		// Fim do bloco necessário ao acesso ao saucelabs
+		// printando o seesionId para integração jenkis e saucelabs
+	    String message = String.format("SauceOnDemandSessionID=%1$s job-name=%2$s",
+	    	    (((RemoteWebDriver) driver).getSessionId()).toString(), System.getProperty("JOB_NAME"));
+	    	    System.out.println(message);
+	    // Fim do bloco necessário ao acesso ao saucelabs
 	}   
 	// Fim do método necessário para o saucelabs
 	

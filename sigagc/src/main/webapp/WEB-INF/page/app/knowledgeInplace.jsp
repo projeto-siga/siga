@@ -17,7 +17,7 @@
 	</c:when>
 	<c:otherwise>
 		<c:if test="${podeCriar}">
-			<c:set var="url" scope="request">${linkTo[AppController].editar}?classificacao=${classificacao}&inftitulo=${f:urlEncode(titulo)}&origem=${referer}</c:set>
+			<c:set var="url" scope="request">${linkTo[AppController].editar}?classificacao=${classificacao}&inftitulo=${titulo}&origem=${referer}</c:set>
 			<a style="float: right;" title="Registrar um novo conhecimento"
 				href="${url}" ${popup?'target="_blank"':''}> <img
 				src="/siga/css/famfamfam/icons/add.png">

@@ -201,12 +201,6 @@
 		</dependency>
 		<dependency>
 			<groupId>siga</groupId>
-			<artifactId>sigacd</artifactId>
-			<type>war</type>
-			<version>${siga.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>siga</groupId>
 			<artifactId>sigaex</artifactId>
 			<type>war</type>
 			<version>${siga.version}</version>

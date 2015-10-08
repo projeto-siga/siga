@@ -276,11 +276,6 @@
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
-				<artifactId>sigacd</artifactId>
-				<version>${siga.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>siga</groupId>
 				<artifactId>siga-wf</artifactId>
 				<version>${siga.version}</version>
 			</dependency>

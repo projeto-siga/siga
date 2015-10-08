@@ -451,7 +451,7 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 
 	@Override
 	public void salvarComHistorico() throws Exception {
-		if (getNivel() > 1 && getPai() == null) {
+		if (getNivel() > 1) {
 			setPai(getPaiPorSigla());
 		}
 		super.salvarComHistorico();

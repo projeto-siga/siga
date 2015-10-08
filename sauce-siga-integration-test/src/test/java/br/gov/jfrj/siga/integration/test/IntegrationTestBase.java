@@ -90,7 +90,7 @@ public class IntegrationTestBase implements SauceOnDemandSessionIdProvider, Sauc
 	           capabilities);
 		// printando o seesionId para integração jenkis e saucelabs
 	    String message = String.format("SauceOnDemandSessionID=%1$s job-name=%2$s",
-	    	    (((RemoteWebDriver) driver).getSessionId()).toString(), System.getProperty("JOB_NAME"));
+	    	    (((RemoteWebDriver) driver).getSessionId()).toString(), System.getProperty("JOB_NAME") + " - " + getClass().getSimpleName());
 	    	    System.out.println(message);
 	    // Fim do bloco necessário ao acesso ao saucelabs
 	}   

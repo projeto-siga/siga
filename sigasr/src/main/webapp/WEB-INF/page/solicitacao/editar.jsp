@@ -184,7 +184,7 @@
 			params = '';
 			for (i = 0; i < frm.length; i++){
 				if (frm[i].name && frm[i].value)
-					params = params + frm[i].name + '=' + encodeURIComponent(frm[i].value) + '&';
+					params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
 			}
 			var url = '${linkTo[SolicitacaoController].exibirConhecimentosRelacionados}?' + params;
 			Siga.ajax(url, null, "GET", function(response){		

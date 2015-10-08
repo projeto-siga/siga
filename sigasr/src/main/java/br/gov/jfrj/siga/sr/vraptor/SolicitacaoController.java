@@ -860,4 +860,5 @@ public class SolicitacaoController extends SrController {
         List contagens = query.getResultList();
         result.include("contagens", contagens);
     }
+    
 }

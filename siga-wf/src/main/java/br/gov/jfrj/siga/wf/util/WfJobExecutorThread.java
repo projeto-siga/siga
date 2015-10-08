@@ -104,6 +104,7 @@ public class WfJobExecutorThread extends JobExecutorThread {
 			ee.excecao();
 			throw new ServletException(e);
 		} finally {
+			((org.hibernate.proxy.HibernateProxy)job.getProcessInstance()).getHibernateLazyInitializer().getSession().connection().close();
 			ee.finalmente();
 		}
 	}

@@ -16,7 +16,7 @@ function carregarAtributos(){
     
     for (i = 0; i < frm.length; i++){
         if (frm[i].name && frm[i].value)
-            params = params + frm[i].name + '=' + escape(frm[i].value) + '&';
+            params = params + frm[i].name + '=' + encodeURIComponent(frm[i].value) + '&';
     }
 
     var url = '${linkTo[SolicitacaoController].exibirAtributos}?' + params;
@@ -85,7 +85,7 @@ function carregarLotacaoDaAcao(){
     </div>
     <!-- CONHECIMENTOS RELACIONADOS -->
     <script type="text/javascript">
-    var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=&titulo=${solicitacao.itemConfiguracao.tituloItemConfiguracao}${solicitacao.itemConfiguracao.gcTagAbertura}";
+    var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=&titulo=${f:urlEncode(solicitacao.itemConfiguracao.tituloItemConfiguracao)}${solicitacao.itemConfiguracao.gcTagAbertura}";
     Siga.ajax(url, null, "GET", function(response){
         $("#gc-ancora-item").html(response);
     });

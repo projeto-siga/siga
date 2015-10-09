@@ -261,18 +261,18 @@
 								<c:choose>
 									<c:when test='${exDocumentoDTO.tipoDestinatario == 1}'>
 										<input type="hidden" name="campos" value="destinatarioSel.id" />
-										<siga:selecao propriedade="destinatario" inputName="exDocumentoDTO.destinatario" tema="simple" reler="sim" modulo="siga" />
+										<siga:selecao propriedade="destinatario" inputName="exDocumentoDTO.destinatario" tema="simple" idAjax="destinatario" reler="ajax" modulo="siga" />
 										<!--  idAjax="destinatario"  -->										    
 									</c:when>
 									<c:when test='${exDocumentoDTO.tipoDestinatario == 2}'>
 										<input type="hidden" name="campos" value="lotacaoDestinatarioSel.id" />
-										<siga:selecao propriedade="lotacaoDestinatario" inputName="exDocumentoDTO.lotacaoDestinatario" tema="simple" reler="sim" modulo="siga" />
+										<siga:selecao propriedade="lotacaoDestinatario" inputName="exDocumentoDTO.lotacaoDestinatario" tema="simple" idAjax="destinatario2" reler="ajax" modulo="siga" />
 										</td>			
 										<!--  idAjax="destinatario" -->				   
 									</c:when>
 									<c:when test='${exDocumentoDTO.tipoDestinatario == 3}'>
 										<input type="hidden" name="campos" value="orgaoExternoDestinatarioSel.id" />
-										<siga:selecao propriedade="orgaoExternoDestinatario" inputName="exDocumentoDTO.orgaoExternoDestinatario" tema="simple" reler="sim" modulo="siga" />
+										<siga:selecao propriedade="orgaoExternoDestinatario" inputName="exDocumentoDTO.orgaoExternoDestinatario" tema="simple" idAjax="destinatario3" reler="ajax" modulo="siga" />
 										<!--  idAjax="destinatario" -->
 										<br>
 										<input type="text" name="exDocumentoDTO.nmOrgaoExterno" size="120" maxLength="256" value="${exDocumentoDTO.nmOrgaoExterno}"/>
@@ -378,7 +378,7 @@
 						<td colspan="3">
 						    <input type="hidden" name="campos" value="classificacaoSel.id" />
 							<siga:span id="classificacao" depende="forma;modelo">
-							<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"  inputName="exDocumentoDTO.classificacao" urlAcao="buscar" urlSelecionar="selecionar" tema="simple" />
+							<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"  inputName="exDocumentoDTO.classificacao" urlAcao="buscar" urlSelecionar="selecionar" idAjax="classificacao" reler="ajax" tema="simple" />
 							<!--  idAjax="classificacao" -->
 						</siga:span></td>
 					</tr>

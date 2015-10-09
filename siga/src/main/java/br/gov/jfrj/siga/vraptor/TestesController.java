@@ -132,7 +132,7 @@ public class TestesController extends SigaController {
 			}
 			else {
 				if (copiaSigla.startsWith("SR"))
-					uRLExibir = "/sigasr/app/solicitacao/exibir/" + response[1];
+					uRLExibir = "/sigasr/app/solicitacao/exibir/" + response[2];
 				else if (copiaSigla.startsWith("MTP")
 						|| copiaSigla.startsWith("STP")
 						|| copiaSigla.startsWith("RTP"))

@@ -51,7 +51,7 @@
 				${solicitacao.getMarcadoresEmHtml(titular, lotaTitular)}
 				<c:if test="${solicitacao.solicitacaoPrincipal != null}"> -
                 <a style="text-decoration: none"
-						href="${linkTo[SolicitacaoController].exibir[solicitacao.solicitacaoPrincipal.idSolicitacao]}">
+						href="${linkTo[SolicitacaoController].exibir[solicitacao.solicitacaoPrincipal.siglaCompacta]}">
 						${solicitacao.solicitacaoPrincipal.codigo} </a>
 				</c:if>
 			</h3>
@@ -175,7 +175,7 @@
 											<td>
 											     <c:if test="${movimentacao.solicitacao.filha}">
 												     <a style="color: #365b6d;" 
-												        href="${linkTo[SolicitacaoController].exibir[movimentacao.solicitacao.idSolicitacao]}" 
+												        href="${linkTo[SolicitacaoController].exibir[movimentacao.solicitacao.siglaCompacta]}" 
 												        style="text-decoration: none">
 														${movimentacao.solicitacao.numSequenciaString} </a>
 											     </c:if>
@@ -338,7 +338,7 @@
 					<p>
 						<c:forEach items="${vinculadas}" var="vinculada">
 							<a
-								href="${linkTo[SolicitacaoController].exibir[vinculada.idSolicitacao]}">
+								href="${linkTo[SolicitacaoController].exibir[vinculada.siglaCompacta]}">
 								${vinculada.codigo} </a>
 							<br />
 						</c:forEach>
@@ -380,7 +380,7 @@
 	                <h3>Solicita&ccedil;&otilde;es juntadas</h3>
 	                <p>
 	                    <c:forEach items="${juntadas}" var="juntada">
-	                        <a href="${linkTo[SolicitacaoController].exibir[juntada.idSolicitacao]}">
+	                        <a href="${linkTo[SolicitacaoController].exibir[juntada.siglaCompacta]}">
 	                        ${juntada.codigo} </a> <br/> 
 	                    </c:forEach>
 	                </p>
@@ -631,7 +631,7 @@
 		var ocultas = ($("#ocultas").val() != null ? $("#ocultas").val()
 				: false);
 
-		location.href = "${linkTo[SolicitacaoController].exibir[solicitacao.idSolicitacao]}?todoOContexto="
+		location.href = "${linkTo[SolicitacaoController].exibir[solicitacao.siglaCompacta]}?todoOContexto="
 				+ todoOContexto + "&ocultas=" + ocultas;
 	}
 

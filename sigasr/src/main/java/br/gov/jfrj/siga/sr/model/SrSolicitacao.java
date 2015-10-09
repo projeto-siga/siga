@@ -365,6 +365,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public String getSigla() {
         return getCodigo();
     }
+    
+    public String getSiglaCompacta() {
+		return getSigla().replace("-", "").replace("/", "");
+	}
 
     @Override
     public void setSigla(String sigla) {
@@ -2869,8 +2873,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         return lotaTitular;
     }
 
-    public void setLotaTitular(DpLotacao lotaTitular) {
+    public SrSolicitacao setLotaTitular(DpLotacao lotaTitular) {
         this.lotaTitular = lotaTitular;
+        return this;
     }
 
     public SrConfiguracao getDesignacao() {

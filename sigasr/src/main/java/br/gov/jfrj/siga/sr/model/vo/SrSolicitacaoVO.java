@@ -55,7 +55,7 @@ public class SrSolicitacaoVO {
 					+ "&#039;,&#039;" + codigo + "&#039;);window.close()\">"
 					+ sol.getCodigo() + "</a>");
 		else
-			setCodigo("<a href=\"/sigasr/app/solicitacao/exibir/" + sol.getId()
+			setCodigo("<a href=\"/sigasr/app/solicitacao/exibir/" + sol.getSiglaCompacta()
 					+ "\">" + sol.getCodigo() + "</a>");
 
 		this.setDescrSolicitacao("<b>"

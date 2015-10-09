@@ -166,7 +166,7 @@ public class PrincipalController extends SigaController {
 		else {
 			if (copiaSigla.startsWith("SR"))
 //					if (copiaSigla.matches("^[SR|sr].*[0-9]+$"))
-					uRLExibir = "/sigasr/app/solicitacao/exibir/" + response[1];
+					uRLExibir = "/sigasr/app/solicitacao/exibir/" + response[2];
 			//alterado formato da sigla de requisições, missões e serviços
 			//else if (copiaSigla.startsWith("MTP")
 			//		|| copiaSigla.startsWith("STP")

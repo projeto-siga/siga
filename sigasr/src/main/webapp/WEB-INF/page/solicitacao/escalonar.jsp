@@ -99,7 +99,7 @@
 				<input type="hidden" name="id" id="id" value="${solicitacao.idSolicitacao}">
 				<input type="hidden" name="solicitante" value="${solicitacao.solicitante}">
 				<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
-				<a href="${linkTo[SolicitacaoController].exibir[solicitacao.idSolicitacao]}" class="gt-btn-medium gt-btn-left">Voltar</a>
+				<a href="${linkTo[SolicitacaoController].exibir[solicitacao.siglaCompacta]}" class="gt-btn-medium gt-btn-left">Voltar</a>
 			</div>
 		</form>
 	</div>

@@ -129,7 +129,7 @@ public class Correio {
 		try {
 			pathBuilder
 				.pathToRedirectTo(SolicitacaoController.class)
-				.exibir(solicitacao.getId(), Boolean.TRUE, Boolean.TRUE);
+				.exibir(solicitacao.getSiglaCompacta(), Boolean.TRUE, Boolean.TRUE);
 			
 			return pathBuilder.getFullPath();
 		} catch (Exception e) {

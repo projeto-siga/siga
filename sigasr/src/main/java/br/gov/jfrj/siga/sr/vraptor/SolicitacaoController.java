@@ -297,7 +297,7 @@ public class SolicitacaoController extends SrController {
         	return;
         }
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        result.redirectTo(SolicitacaoController.class).exibir(solicitacao.getId(), todoOContexto(), ocultas());
+        result.redirectTo(SolicitacaoController.class).exibir(solicitacao.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
     private boolean validarFormEditar(SrSolicitacao solicitacao) throws Exception {
@@ -338,19 +338,19 @@ public class SolicitacaoController extends SrController {
          return Boolean.parseBoolean(getRequest().getParameter("ocultas"));
     }
     
-    @Path("/exibir/{id}/{todoOContexto}/{ocultas}")
-    public void exibirComParametros(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
-        result.forwardTo(this).exibir(id, todoOContexto, ocultas);
+    @Path("/exibir/{sigla}/{todoOContexto}/{ocultas}")
+    public void exibirComParametros(String sigla, Boolean todoOContexto, Boolean ocultas) throws Exception {
+        result.forwardTo(this).exibir(sigla, todoOContexto, ocultas);
     }
 
-    @Path("/exibir/{id}")
-    public void exibir(Long id, Boolean todoOContexto, Boolean ocultas) throws Exception {
-        SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
-        if (solicitacao == null)
-            throw new AplicacaoException("Solicita\u00e7\u00e3o n\u00e3o encontrada");
-        else
-            solicitacao = solicitacao.getSolicitacaoAtual();
-
+    @Path("/exibir/{sigla}")
+    public void exibir(String sigla, Boolean todoOContexto, Boolean ocultas) throws Exception {
+        
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    		
+    	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
+    	
         if (solicitacao == null)
             throw new AplicacaoException("Esta solicita\u00e7\u00e3o foi exclu\u00edda");
 
@@ -360,8 +360,7 @@ public class SolicitacaoController extends SrController {
 
         if (todoOContexto == null)
             todoOContexto = solicitacao.isParteDeArvore();
-        // Edson: foi solicitado que funcionasse do modo abaixo. Eh o melhor modo??
-        // todoOContexto = solicitacao.solicitacaoPai == null ? true : false;
+        
         if (ocultas == null)
             ocultas = false;
 
@@ -504,7 +503,7 @@ public class SolicitacaoController extends SrController {
         return listaAtributosAdicao;
     }
 
-	@Path({ "/editar", "/editar/{id}", "/exibir/editar" })
+	@Path({ "/editar", "/editar/{id}"})
     public void editar(Long id) throws Exception {
         SrSolicitacao solicitacao;
 
@@ -574,7 +573,7 @@ public class SolicitacaoController extends SrController {
         return solicitacao;
     }
 
-    @Path("/exibir/incluirEmLista")
+    @Path("/incluirEmLista")
     public void incluirEmLista(Long id) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         solicitacao = solicitacao.getSolicitacaoAtual();
@@ -584,7 +583,7 @@ public class SolicitacaoController extends SrController {
         result.include("prioridades", prioridades);
     }
 
-    @Path("/exibir/incluirEmListaGravar")
+    @Path("/incluirEmListaGravar")
     public void incluirEmListaGravar(Long idSolicitacao, Long idLista, SrPrioridade prioridade, boolean naoReposicionarAutomatico) throws Exception {
         if (idLista == null) {
             throw new AplicacaoException("Selecione a lista para inclus\u00e3o da solicita\u00e7\u00e3o");
@@ -592,17 +591,17 @@ public class SolicitacaoController extends SrController {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(idSolicitacao);
         SrLista lista = SrLista.AR.findById(idLista);
         solicitacao.incluirEmLista(lista, getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), prioridade, naoReposicionarAutomatico);
-        result.redirectTo(this).exibir(idSolicitacao, todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(solicitacao.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("/exibir/fechar")
+    @Path("/fechar")
     public void fechar(Long id, String motivo) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.fechar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), motivo);
-        result.redirectTo(this).exibir(sol.getIdSolicitacao(), todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("/exibir/responderPesquisa")
+    @Path("/erPesquisa")
     public void responderPesquisa(Long id) throws Exception {
         /*
          * SrSolicitacao sol = SrSolicitacao.findById(id); SrPesquisa pesquisa = sol.getPesquisaDesignada(); if (pesquisa == null) throw new
@@ -616,7 +615,7 @@ public class SolicitacaoController extends SrController {
     public void responderPesquisaGravar(Long id, Map<Long, String> respostaMap) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.responderPesquisa(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), respostaMap);
-        result.redirectTo(this).exibir(id, todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
     @Path("/baixar/{idArquivo}")
@@ -626,7 +625,7 @@ public class SolicitacaoController extends SrController {
         return new InputStreamDownload(inputStream, "text/plain", arq.getNomeArquivo());
     }
 
-    @Path("/exibir/escalonar")
+    @Path("/escalonar")
     public void escalonar(Long id) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         solicitacao.setTitular(getTitular());
@@ -685,7 +684,7 @@ public class SolicitacaoController extends SrController {
             if (idAtendenteNaoDesignado != null)
                 filha.setAtendenteNaoDesignado(atendenteNaoDesignado);
             filha.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-            result.redirectTo(this).exibir(filha.getIdSolicitacao(), todoOContexto(), ocultas());
+            result.redirectTo(this).exibir(filha.getSiglaCompacta(), todoOContexto(), ocultas());
         } else {
             SrMovimentacao mov = new SrMovimentacao(solicitacao);
             mov.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO));
@@ -706,7 +705,7 @@ public class SolicitacaoController extends SrController {
             solicitacao.setDnmAcao(mov.getAcao());
             solicitacao.save();
             
-            result.redirectTo(this).exibir(solicitacao.getIdSolicitacao(), todoOContexto(), ocultas());
+            result.redirectTo(this).exibir(solicitacao.getSiglaCompacta(), todoOContexto(), ocultas());
         }
     }
 
@@ -724,90 +723,93 @@ public class SolicitacaoController extends SrController {
         result.include(ACOES_E_ATENDENTES, acoesEAtendentes);
     }
 
-    @Path("/exibir/vincular")
+    @Path("/vincular")
     public void vincular(Long idSolicitacaoAVincular, SrSolicitacao solRecebeVinculo, String justificativa) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(idSolicitacaoAVincular);
         sol.vincular(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solRecebeVinculo, justificativa);
-        result.redirectTo(this).exibir(idSolicitacaoAVincular, todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("/exibir/juntar")
+    @Path("/juntar")
     public void juntar(Long idSolicitacaoAJuntar, SrSolicitacao solRecebeJuntada, String justificativa) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(idSolicitacaoAJuntar);
         sol.juntar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solRecebeJuntada, justificativa);
-        result.redirectTo(this).exibir(idSolicitacaoAJuntar, todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("/exibir/desentranhar")
+    @Path("/desentranhar")
     public void desentranhar(Long id, String justificativa) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.desentranhar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), justificativa);
-        result.redirectTo(this).exibir(id, todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("/exibir/cancelar")
+    @Path("/cancelar")
     public void cancelar(Long id) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.cancelar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        result.redirectTo(this).exibir(id, todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("/exibir/reabrir")
+    @Path("/reabrir")
     public void reabrir(Long id) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.reabrir(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        result.redirectTo(this).exibir(id, todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("/exibir/deixarPendente")
+    @Path("/deixarPendente")
     public void deixarPendente(Long id, SrTipoMotivoPendencia motivo, String calendario, String horario, String detalheMotivo) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.deixarPendente(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), motivo, calendario, horario, detalheMotivo);
-        result.redirectTo(this).exibir(id, todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("/exibir/excluir")
+    @Path("/excluir")
     public void excluir(Long id) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.excluir();
         result.redirectTo(this).editar(null);
     }
 
-    @Path("/exibir/anexarArquivo")
+    @Path("/anexarArquivo")
     public void anexarArquivo(SrMovimentacao movimentacao) throws Exception {
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        result.redirectTo(this).exibir(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(movimentacao.getSolicitacao().getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("/exibir/termoAtendimento")
+    @Path("/termoAtendimento")
     public void termoAtendimento(Long id) throws Exception {
         SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
         result.include(SOLICITACAO, solicitacao);
     }
 
-    @Path("/exibir/desfazerUltimaMovimentacao")
+    @Path("/desfazerUltimaMovimentacao")
     public void desfazerUltimaMovimentacao(Long id) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.desfazerUltimaMovimentacao(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        result.redirectTo(this).exibir(id, todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("/exibir/alterarPrioridade")
+    @Path("/alterarPrioridade")
     public void alterarPrioridade(Long id, SrPrioridade prioridade) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.alterarPrioridade(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), prioridade);
-        result.redirectTo(this).exibir(id, todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("/exibir/terminarPendencia")
+    @Path("/terminarPendencia")
     public void terminarPendencia(Long id, String descricao, Long idMovimentacao) throws Exception {
         SrSolicitacao sol = SrSolicitacao.AR.findById(id);
         sol.terminarPendencia(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), descricao, idMovimentacao);
-        result.redirectTo(this).exibir(id, todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("/exibir/darAndamento")
+    @Path("/darAndamento")
     public void darAndamento(SrMovimentacao movimentacao) throws Exception {
+    	if (movimentacao == null || movimentacao.getDescrMovimentacao() == null || movimentacao.getDescrMovimentacao().trim().equals("") 
+    			&& movimentacao.getAtendente() == null)
+    		throw new AplicacaoException("Não foram informados dados para o andamento");
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
         if (movimentacao.getDescrMovimentacao() == null || movimentacao.getDescrMovimentacao().trim().equals("") && movimentacao.isTrocaDePessoaAtendente()){
         	if (movimentacao.getAtendente() != null)
@@ -815,10 +817,10 @@ public class SolicitacaoController extends SrController {
         	else movimentacao.setDescrMovimentacao("Retirando atribuição");
         }
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        result.redirectTo(this).exibir(movimentacao.getSolicitacao().getIdSolicitacao(), todoOContexto(), ocultas());
+        result.redirectTo(this).exibir(movimentacao.getSolicitacao().getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
-    @Path("/exibir/priorizarLista")
+    @Path("/priorizarLista")
     public void priorizarLista(List<SrPrioridadeSolicitacao> listaPrioridadeSolicitacao, Long id) throws Exception {
     	for (SrPrioridadeSolicitacao pNova : listaPrioridadeSolicitacao){
     		SrPrioridadeSolicitacao p = SrPrioridadeSolicitacao.AR.findById(pNova.getId());

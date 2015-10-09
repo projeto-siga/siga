@@ -4901,45 +4901,48 @@ public class ExBL extends CpBL {
 							"não é permitido fazer despacho. Verifique se a via ou processo não estáarquivado(a) e se não possui despachos pendentes de assinatura.");
 
 				if (fTranferencia) {
+					
+					if(!m.isApensadoAVolumeDoMesmoProcesso()) {
 
-					if (lotaResponsavel.isFechada())
-						throw new AplicacaoException(
-								"não é permitido transferir documento para lotação fechada");
-
-					if (forcarTransferencia) {
-						if (!getComp().podeSerTransferido(m))
+						if (lotaResponsavel.isFechada())
 							throw new AplicacaoException(
-									"Transferência não pode ser realizada ("
-											+ m.getSigla() + " ID_MOBIL: "
-											+ m.getId() + ")");
-					} else {
-						if (!getComp().podeTransferir(cadastrante,
-								lotaCadastrante, m))
+									"não é permitido transferir documento para lotação fechada");
+	
+						if (forcarTransferencia) {
+							if (!getComp().podeSerTransferido(m))
+								throw new AplicacaoException(
+										"Transferência não pode ser realizada ("
+												+ m.getSigla() + " ID_MOBIL: "
+												+ m.getId() + ")");
+						} else {
+							if (!getComp().podeTransferir(cadastrante,
+									lotaCadastrante, m))
+								throw new AplicacaoException(
+										"Transferência não permitida ("
+												+ m.getSigla() + " ID_MOBIL: "
+												+ m.getId() + ")");
+						}
+						if (!m.getExDocumento().isAssinado()
+								&& !lotaResponsavel.equivale(m.getExDocumento()
+										.getLotaTitular())
+								&& !getComp().podeReceberDocumentoSemAssinatura(
+										responsavel, lotaResponsavel, m))
 							throw new AplicacaoException(
-									"Transferência não permitida ("
-											+ m.getSigla() + " ID_MOBIL: "
-											+ m.getId() + ")");
+									"não é permitido fazer transferência em documento que ainda não foi assinado");
+	
+						if (m.doc().isEletronico()) {
+							if (m.temAnexosNaoAssinados()
+									|| m.temDespachosNaoAssinados())
+								throw new AplicacaoException(
+										"não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
+						}
+	
+						if (m.getExDocumento().isEletronico()
+								&& !m.getExDocumento().jaTransferido()
+								&& !m.getExDocumento().isAssinado())
+							throw new AplicacaoException(
+									"não é permitido fazer transferência em documento que ainda não foi assinado por todos os subscritores.");
 					}
-					if (!m.getExDocumento().isAssinado()
-							&& !lotaResponsavel.equivale(m.getExDocumento()
-									.getLotaTitular())
-							&& !getComp().podeReceberDocumentoSemAssinatura(
-									responsavel, lotaResponsavel, m))
-						throw new AplicacaoException(
-								"não é permitido fazer transferência em documento que ainda não foi assinado");
-
-					if (m.doc().isEletronico()) {
-						if (m.temAnexosNaoAssinados()
-								|| m.temDespachosNaoAssinados())
-							throw new AplicacaoException(
-									"não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
-					}
-
-					if (m.getExDocumento().isEletronico()
-							&& !m.getExDocumento().jaTransferido()
-							&& !m.getExDocumento().isAssinado())
-						throw new AplicacaoException(
-								"não é permitido fazer transferência em documento que ainda não foi assinado por todos os subscritores.");
 
 				}
 

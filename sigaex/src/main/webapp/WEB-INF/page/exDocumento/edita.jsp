@@ -27,6 +27,7 @@
 			<form id="frm" name="frm" theme="simple" method="post" enctype="multipart/form-data">
 				<input type="hidden" id="idTamanhoMaximoDescricao" name="exDocumentoDTO.tamanhoMaximoDescricao" value="${exDocumentoDTO.tamanhoMaximoDescricao}" />
 				<input type="hidden" id="alterouModelo" name="alterouModelo" />
+				<input type="hidden" id="clickSelect" name="clickSelect" />
 				<input type="hidden" name="postback" value="1" />
 				<input type="hidden" id="sigla" name="exDocumentoDTO.sigla" value="${exDocumentoDTO.sigla}" />
 				<input type="hidden" name="exDocumentoDTO.nomePreenchimento" value="" />
@@ -69,7 +70,8 @@
 						<td width="10%">Origem:</td>
 						<td width="10%">
 						
-							<select  name="exDocumentoDTO.idTpDoc" onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();" style="${estiloTipo}">
+							<select  name="exDocumentoDTO.idTpDoc" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
+							onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)" style="${estiloTipo}">
 								<c:forEach items="${exDocumentoDTO.tiposDocumento}" var="item">
 									<option value="${item.idTpDoc}" ${item.idTpDoc == exDocumentoDTO.idTpDoc ? 'selected' : ''}>
 										${item.descrTipoDocumento}
@@ -464,6 +466,53 @@
 <script src="/siga/javascript/jquery.dependent-selects.js"></script>
 
 <script type="text/javascript">
+
+function presskeySelect(event, id, parameter) {
+    if (event.type == 'keypress') {
+        if(event.keyCode == '13'){
+        	sbmt(parameter);
+        }
+    } 
+}
+function mouseSelect(event, id, parameter) {	
+	if (event.type == 'change') {
+        var click = document.getElementById('clickSelect').value;
+        if(click){
+			sbmt(parameter);
+        }
+    }
+}
+
+function sbmt(id) {
+	var frm = document.getElementById('frm');
+	
+	//Dispara a função onSave() do editor, caso exista
+    if (typeof(onSave) == "function"){
+    	onSave();
+    } 
+	
+	if (id != null || IsRunningAjaxRequest()) {
+		frm.action='<ww:property value="%{url}"/>';
+		ReplaceInnerHTMLFromAjaxResponse('<ww:property value="%{url}"/>', frm, id);
+	} else {
+		frm.submit();
+	}
+	return;
+	
+	if (typeof(frm.submitsave) == "undefined")
+		frm.submitsave = frm.submit;
+	frm.action='<ww:property value="%{url}"/>';
+                    
+	if (id == null || typeof(id) == 'undefined' || IsRunningAjaxRequest()) {
+		window.customOnsubmit = function() {return true;};
+		frm.onsubmit = null;
+		frm.submit = frm.submitsave;
+		frm.submit();
+	} else {
+		ReplaceInnerHTMLFromAjaxResponse('<ww:property value="%{url}"/>', frm, id);
+	}
+}
+
 $(document).ready(function() {$('.dependent').dependentSelects({
 	  separator: ': ', // String: The separator used to define the nesting in the option field's text
 	  placeholderOption: false,

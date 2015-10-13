@@ -2856,9 +2856,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     
     private void terminarPendenciaPorMotivo(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, 
     		DpLotacao lotaTitular, SrTipoMotivoPendencia motivoDaPendencia) throws Exception {
-        for (SrMovimentacao iniP : getPendenciasEmAberto()) {
-            if (iniP.getMotivoPendencia().equals(motivoDaPendencia))
-                    terminarPendencia(cadastrante, lotaCadastrante, titular, lotaTitular, "", iniP.getIdMovimentacao());
+        for (SrPendencia iniP : getPendenciasEmAberto()) {
+            if (iniP.getMotivo().equals(motivoDaPendencia))
+                    terminarPendencia(cadastrante, lotaCadastrante, titular, lotaTitular, "", iniP.getId());
         }
     }
 	

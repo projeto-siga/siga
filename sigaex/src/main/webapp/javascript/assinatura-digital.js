@@ -91,6 +91,25 @@ var providerLocalhostREST = {
 
 	testar : function() {
 		try {
+			var ret = "OK";
+				$.ajax({
+					type : "GET",
+					url : "http://localhost:8612/test",
+					dataType: 'json',
+					accepts : {
+						text : "application/json"
+					},
+					success : function(data, textStatus, XMLHttpRequest) {
+						if (data.errormsg != null)
+							throw data.errormsg;
+					},
+					error : function(jqXHR, textStatus, errorThrown) {
+						throw textStatus + ": " + errorThrown;
+					},
+					async : false,
+					cache : false
+				});
+
 			console.log("IttruREST: OK!");
 			return true;
 		} catch (err) {

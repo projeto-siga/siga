@@ -373,47 +373,45 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     @Override
     public void setSigla(String sigla) {
         String siglaUpper = sigla.trim().toUpperCase();
-        Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
-        for (Object ou : CpOrgaoUsuario.AR.all().fetch()) {
-            CpOrgaoUsuario cpOu = (CpOrgaoUsuario) ou;
-            mapAcronimo.put(cpOu.getAcronimoOrgaoUsu(), cpOu);
+        final Matcher mTMP = Pattern.compile("^TMPSR([0-9]{1,5})$").matcher(siglaUpper);
+        if (mTMP.find())
+        	setId(Long.valueOf(mTMP.group(1)));
+        else {
+        	Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
+        	for (Object ou : CpOrgaoUsuario.AR.all().fetch()) {
+        		CpOrgaoUsuario cpOu = (CpOrgaoUsuario) ou;
+        		mapAcronimo.put(cpOu.getAcronimoOrgaoUsu(), cpOu);
+        	}
+        	StringBuilder acronimos = new StringBuilder();
+        	for (String s : mapAcronimo.keySet()) {
+        		acronimos.append("|" + s);
+        	}
+        	final Pattern p = Pattern.compile("^([A-Za-z0-9]{2}" + acronimos.toString() + ")?-?SR{1}-?(?:([0-9]{4})/?)??([0-9]{1,5})(?:[.]{1}([0-9]{1,3}))?$");
+        	final Matcher m = p.matcher(siglaUpper);
+        	if (m.find()) {
+        		if (m.group(1) != null) {
+        			try {
+        				CpOrgaoUsuario orgao = new CpOrgaoUsuario();
+        				orgao.setSiglaOrgaoUsu(m.group(1));
+        				orgao = (CpOrgaoUsuario) AR.em().createQuery("from CpOrgaoUsuario where acronimoOrgaoUsu = '" + m.group(1) + "'").getSingleResult();
+        				this.setOrgaoUsuario(orgao);
+        			} catch (final Exception ce) {
+
+        			}
+        		}
+        		if (m.group(2) != null) {
+        			Calendar c1 = Calendar.getInstance();
+        			c1.set(Calendar.YEAR, Integer.valueOf(m.group(2)));
+        			c1.set(Calendar.DAY_OF_YEAR, 1);
+        			this.setDtReg(c1.getTime());
+        		} else
+        			this.setDtReg(new Date());
+        		if (m.group(3) != null)
+        			setNumSolicitacao(Long.valueOf(m.group(3)));
+        		if (m.group(4) != null)
+        			setNumSequencia(Long.valueOf(m.group(4)));
+        	}
         }
-        StringBuilder acronimos = new StringBuilder();
-        for (String s : mapAcronimo.keySet()) {
-            acronimos.append("|" + s);
-        }
-        final Pattern p = Pattern.compile("^([A-Za-z0-9]{2}" + acronimos.toString() + ")?-?SR{1}-?(?:([0-9]{4})/?)??([0-9]{1,5})(?:[.]{1}([0-9]{1,3}))?$");
-        final Matcher m = p.matcher(siglaUpper);
-
-        if (m.find()) {
-
-            if (m.group(1) != null) {
-                try {
-                    CpOrgaoUsuario orgao = new CpOrgaoUsuario();
-                    orgao.setSiglaOrgaoUsu(m.group(1));
-                    orgao = (CpOrgaoUsuario) AR.em().createQuery("from CpOrgaoUsuario where acronimoOrgaoUsu = '" + m.group(1) + "'").getSingleResult();
-                    this.setOrgaoUsuario(orgao);
-                } catch (final Exception ce) {
-
-                }
-            }
-
-            if (m.group(2) != null) {
-                Calendar c1 = Calendar.getInstance();
-                c1.set(Calendar.YEAR, Integer.valueOf(m.group(2)));
-                c1.set(Calendar.DAY_OF_YEAR, 1);
-                this.setDtReg(c1.getTime());
-            } else
-                this.setDtReg(new Date());
-
-            if (m.group(3) != null)
-                setNumSolicitacao(Long.valueOf(m.group(3)));
-
-            if (m.group(4) != null)
-                setNumSequencia(Long.valueOf(m.group(4)));
-
-        }
-
     }
 
     @Override
@@ -454,27 +452,31 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     @Override
     public SrSelecionavel selecionar(String sigla) throws Exception {
         setSigla(sigla);
-        if (getOrgaoUsuario() == null && getLotaTitular() != null)
-            setOrgaoUsuario(getLotaTitular().getOrgaoUsuario());
+        String query = "";
+        if (getId() != null)
+        	query = "from SrSolicitacao where idSolicitacao = " + getId();
+        else {
+        	if (getOrgaoUsuario() == null && getLotaTitular() != null)
+        		setOrgaoUsuario(getLotaTitular().getOrgaoUsuario());
 
-        String query = "from SrSolicitacao where hisDtFim is null ";
+        	query = "from SrSolicitacao where hisDtFim is null ";
 
-        if (getOrgaoUsuario() != null) {
-            query += " and orgaoUsuario.idOrgaoUsu = " + getOrgaoUsuario().getIdOrgaoUsu();
+        	if (getOrgaoUsuario() != null) {
+        		query += " and orgaoUsuario.idOrgaoUsu = " + getOrgaoUsuario().getIdOrgaoUsu();
+        	}
+        	if (getDtReg() != null) {
+        		Calendar c1 = Calendar.getInstance();
+        		c1.setTime(getDtReg());
+        		int year = c1.get(Calendar.YEAR);
+        		query += " and dtReg between to_date('01/01/" + year + " 00:01', 'dd/mm/yyyy HH24:mi') and to_date('31/12/" + year + " 23:59','dd/mm/yyyy HH24:mi')";
+        	}
+        	if (getNumSolicitacao() != null)
+        		query += " and numSolicitacao = " + getNumSolicitacao();
+        	if (getNumSequencia() == null)
+        		query += " and numSequencia is null";
+        	else
+        		query += " and numSequencia = " + getNumSequencia();
         }
-        if (getDtReg() != null) {
-            Calendar c1 = Calendar.getInstance();
-            c1.setTime(getDtReg());
-            int year = c1.get(Calendar.YEAR);
-            query += " and dtReg between to_date('01/01/" + year + " 00:01', 'dd/mm/yyyy HH24:mi') and to_date('31/12/" + year + " 23:59','dd/mm/yyyy HH24:mi')";
-        }
-        if (getNumSolicitacao() != null)
-            query += " and numSolicitacao = " + getNumSolicitacao();
-        if (getNumSequencia() == null)
-            query += " and numSequencia is null";
-        else
-            query += " and numSequencia = " + getNumSequencia();
-
         return (SrSolicitacao) AR.em().createQuery(query).getSingleResult();
     }
 

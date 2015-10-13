@@ -47,12 +47,14 @@ import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacaoMap;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracaoBL;
+import br.gov.jfrj.siga.sr.model.SrEtapaSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrFormaAcompanhamento;
 import br.gov.jfrj.siga.sr.model.SrGravidade;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrMeioComunicacao;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
+import br.gov.jfrj.siga.sr.model.SrPendencia;
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.model.SrPrioridadeSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
@@ -381,12 +383,26 @@ public class SolicitacaoController extends SrController {
             ocultas = false;
 
         Set<SrMovimentacao> movs = solicitacao.getMovimentacaoSet(ocultas, null, false, todoOContexto, !ocultas, false);
-
+        Set<SrArquivo> arqs = solicitacao.getArquivosAnexos(todoOContexto);
+        Set<SrLista> listas = solicitacao.getListasAssociadas(todoOContexto);
+        List<SrPendencia> pendencias = solicitacao.getPendenciasEmAberto(todoOContexto);
+        Set<SrEtapaSolicitacao> etapasCronometro = solicitacao.getEtapas(getLotaTitular(), todoOContexto);
+        Set<SrEtapaSolicitacao> etapas = solicitacao.getEtapas(todoOContexto);
+        Set<SrSolicitacao> vinculadas = solicitacao.getSolicitacoesVinculadas(todoOContexto);
+        Set<SrSolicitacao> juntadas = solicitacao.getSolicitacoesJuntadas(todoOContexto);
+        
         result.include(SOLICITACAO, solicitacao);
         result.include("movimentacao", movimentacao);
+        result.include("movs", movs);
+        result.include("arqs", arqs);
+        result.include("listas", listas);
+        result.include("pendencias", pendencias);
+        result.include("etapas", etapas);
+        result.include("etapasCronometro", etapasCronometro);
+        result.include("vinculadas", vinculadas);
+        result.include("juntadas", juntadas);
         result.include("todoOContexto", todoOContexto);
         result.include("ocultas", ocultas);
-        result.include("movs", movs);
         result.include("atendentes", atendentes);
         result.include("motivosPendencia",SrTipoMotivoPendencia.values());
         result.include(PRIORIDADE_LIST, SrPrioridade.values());

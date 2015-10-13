@@ -61,7 +61,7 @@ public class SrSolicitacaoVO {
 					+ "\">" + sol.getCodigo() + "</a>");
 
 		this.setDescrSolicitacao("<b>"
-				+ (sol.getDnmItemConfiguracao() != null ? sol.getDnmItemConfiguracao().getTituloItemConfiguracao() : "Item não informado")
+				+ (sol.getDnmItemConfiguracao() != null ? sol.getDnmItemConfiguracao().getDescricao() : "Item Não Informado")
 				+ ":</b>&nbsp;" + SrViewUtil.selecionado(sol.getDescricao(), sol.getDescricao()));
 
 		String nomeCadastranteAbreviado = sol.getCadastrante() != null ? sol

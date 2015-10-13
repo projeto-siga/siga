@@ -61,9 +61,9 @@
 			<sigasr:linkSr acoes="${solicitacao.operacoes(titular, lotaTitular)}" />
 			<div class="gt-content-box" style="padding: 10px">
 				<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
-					<sigasr:descricaoItem itemConfiguracao="${solicitacao.itemAtual}" />
+					${solicitacao.itemAtual}
 					-
-					<sigasr:descricaoAcao acao="${solicitacao.acaoAtual}" />
+					${solicitacao.acaoAtual}
 				</p>
 				<p id="descrSolicitacao" style="font-size: 9pt;">${solicitacao.descricao}</p>
 				<script language="javascript">
@@ -134,8 +134,9 @@
 					</div>
 				</form>
 			</div>
+			<c:set var="exibirEtapas" value="${solicitacao.jaFoiAtendidaPor(titular, lotaTitular, true) || exibirMenuAdministrar}" />
 			<p style="padding-top: 30px; font-weight: bold; color: #365b6d;">
-				<c:if test="${solicitacao.estaSendoAtendidaPor(titular, lotaTitular) || exibirMenuAdministrar}">
+				<c:if test="${exibirEtapas}">
 					<input type="radio" name="exibirEtapas" value="false" id="radioMovs" onclick="exibirMovs();" />&nbsp;Movimenta&ccedil;&otilde;es&nbsp;
 					<input type="radio" name="exibirEtapas" value="true" id="radioEtapas" onclick="exibirEtapas();" />&nbsp;Atendimentos&nbsp;&nbsp;
 				</c:if>
@@ -239,6 +240,7 @@
 					</tbody>
 				</table>
 			</div>
+			<c:if test="${exibirEtapas}">
 			<div class="gt-content-box" id="etapas">
 				<script>
 					function clica(obj, force){
@@ -265,6 +267,9 @@
 						<tr>
 							<th><a href="" onclick="clica(this); return false;" style="text-decoration: none;" id="sinal">+</a></th>
 							<th>Etapa</th>
+							<c:if test="${todoOContexto}">
+								<th>Solicita&ccedil;&atilde;o</th>
+							</c:if>
 							<th>Equipe</th>
 							<th>Início</th>
 							<th>Fim</th>
@@ -274,13 +279,22 @@
 					</thead>
 
 					<tbody>
-						<c:set var="etapas" value="${solicitacao.etapas}" />
 						<c:choose>
 							<c:when test="${not empty etapas}">
 								<c:forEach items="${etapas}" var="etapa">
 									<tr>
 										<td><a href="" onclick="clica(this); return false;" style="text-decoration: none;" id="sinal${etapa.id}">+</a></td>
 										<td>${etapa.descricao}</td>
+										<c:if test="${todoOContexto}">
+											<td>
+											     <c:if test="${etapa.solicitacao.filha}">
+												     <a style="color: #365b6d;" 
+												        href="${linkTo[SolicitacaoController].exibir[etapa.solicitacao.siglaCompacta]}" 
+												        style="text-decoration: none">
+														${etapa.solicitacao.numSequenciaString} </a>
+											     </c:if>
+											</td>
+										</c:if>
 										<td>${not empty etapa.lotaResponsavel ? etapa.lotaResponsavel : ''}</td>
 										<td>${etapa.inicioString}</td>
 										<td>${etapa.fimString}</td>
@@ -295,7 +309,7 @@
 										<c:set var="haDetalhes" value="false" />
 										<td></td>
 										<td></td>
-										<td colspan="5">
+										<td colspan="6">
 											<c:if test="${not empty etapa.paramAcordo}">
 												<c:set var="haDetalhes" value="true" />
 												<p><b>Acordo:</b> ${etapa.paramAcordo.acordo.nomeAcordo}</p>
@@ -346,6 +360,7 @@
 				}
 				$("#radioMovs").trigger("click");
 			</script>
+			</c:if>
 		</div>
 
 		<jsp:include page="exibirCronometro.jsp"></jsp:include>
@@ -384,37 +399,11 @@
 					${solicitacao.cadastrante.descricaoIniciaisMaiusculas},
 					${solicitacao.lotaTitular.siglaLotacao}
 				</p>
-				<c:if test="${solicitacao.isEscalonada()}">
-					<c:set var="itemEscalonar"
-						value="${solicitacao.getItemAtual().toString()}" />
-					<c:set var="acaoEscalonar"
-						value="${solicitacao.getAcaoAtual().toString()}" />
-				</c:if>
 				<p>
-					<span class="historico-label">Item de Configura&ccedil;&atilde;o:</span>
-				<div class="historico-item-container hidden">
-					<button type="button" class="button-historico"
-						title="Clique para abrir/fechar o histórico">+</button>
-
-					<ul class="lista-historico historico-item">
-						<c:forEach items="${solicitacao.historicoItem}" var="item">
-							<li><span>${item.sigla} - ${item.descricao}</span></li>
-						</c:forEach>
-					</ul>
-				</div>
+					<b>Item de Configura&ccedil;&atilde;o:</b> ${solicitacao.descrItemAtualCompleta}
 				</p>
 				<p>
-					<span class="historico-label">A&ccedil;&atilde;o:</span>
-				<div class="historico-acao-container hidden">
-					<button type="button" class="button-historico"
-						title="Clique para abrir/fechar o histórico">+</button>
-
-					<ul class="lista-historico historico-acao">
-						<c:forEach items="${solicitacao.historicoAcao}" var="acao">
-							<li><span>${acao.siglaAcao} - ${acao.descricao}</span></li>
-						</c:forEach>
-					</ul>
-				</div>
+					<b>A&ccedil;&atilde;o:</b> ${solicitacao.descrAcaoAtualCompleta}
 				</p>
 				<p>
 					<b>Prioridade:</b> <span style="">${solicitacao.prioridade.descPrioridade}</span>
@@ -438,7 +427,6 @@
 			</div>
 		</div>
 
-		<c:set var="vinculadas"	value="${solicitacao.solicitacoesVinculadas}" />
 		<c:if test="${vinculadas != null && !vinculadas.isEmpty()}">
 			<div class="gt-sidebar">
 				<div class="gt-sidebar-content">
@@ -465,23 +453,20 @@
 				</div>
 			</div>
 		</c:if>
-		<c:if test="${solicitacao.temArquivosAnexos()}">
+		<c:if test="${not empty arqs}">
 			<div class="gt-sidebar">
 				<div class="gt-sidebar-content">
 					<h3>Arquivos Anexos</h3>
 					<p>
-						<sigasr:arquivo arquivo="${solicitacao.arquivoAnexoNaCriacao}" />
-						<br />
-						<c:forEach items="${solicitacao.movimentacoesAnexacao}" var="anexacao">
-							<sigasr:arquivo arquivo="${anexacao.arquivo}" /> 
-							&nbsp;-&nbsp;${anexacao.descrMovimentacao}<br />
+						<c:forEach items="${arqs}" var="anexacao">
+							<siga:arquivo arquivo="${anexacao}" /> 
+							<br />
                     	</c:forEach>
                 	</p>
 	            </div>
 	        </div>
 	    </c:if>
-	
-	    <c:set var="juntadas" value="${solicitacao.solicitacoesJuntadas}"/>
+
 	    <c:if test="${juntadas != null && !juntadas.isEmpty()}">
 	        <div class="gt-sidebar">
 	            <div class="gt-sidebar-content">
@@ -495,21 +480,19 @@
 	            </div>
 	        </div>
 	    </c:if>
-	    <c:if test="${solicitacao.emLista}">
+	    <c:if test="${not empty listas}">
 	        <div class="gt-sidebar">
 	            <div class="gt-sidebar-content">
 	                <h3>Listas de Prioridade</h3>
-	                    <ul>
-	                    <c:forEach items="${solicitacao.listasAssociadas}" var="listas">
-	                        <li>
+	                    <c:forEach items="${listas}" var="listas">
+	                        <p>
 	                            &nbsp; <input type="hidden" name="idlista"
 	                            value="${listas.idLista}"> <a
 	                            style="color: #365b6d; text-decoration: none"
 	                            href="${linkTo[SolicitacaoController].exibirLista[listas.idLista]}">
 	                                ${listas.listaAtual.nomeLista} </a>
-	                        </li>
+	                        </p>
 	                    </c:forEach>
-	                    </ul>
 	            </div>
 	        </div>
 	    </c:if>
@@ -737,75 +720,4 @@
 		modal : true,
 		resizable : false
 	});
-
-	var MostradorHistorico = function(container, emptyMessage) {
-		var url = container.find('ul'), intermediarios = url
-				.find('li span:not(:first):not(:last)'), button = container
-				.find('button'), me = this, TAMANHO_MAXIMO_DESCRICAO = 50;
-
-		button.bind('click', function() {
-			me.toogleItens();
-		});
-
-		this.toogleItens = function() {
-			intermediarios.toggleClass('hidden');
-			if (intermediarios.hasClass('hidden'))
-				button.html('+');
-			else {
-				button.html('-');
-			}
-		}
-
-		this.init = function() {
-			this.adicionarMensagemSeVazio();
-			this.verificarIntermediarios();
-			this.formatarDescricoes();
-			this.formatarLabel();
-			container.removeClass('hidden');
-		}
-
-		this.verificarIntermediarios = function() {
-			if (intermediarios.size() > 0) {
-				this.toogleItens();
-			} else {
-				button.remove();
-			}
-		}
-
-		this.formatarDescricoes = function() {
-			url.find('li span').each(function() {
-				var me = $(this), html = me.html();
-
-				if (html.length > TAMANHO_MAXIMO_DESCRICAO) {
-					me.attr('title', html);
-					me.css('cursor', 'default');
-					me.html(html.substr(0, TAMANHO_MAXIMO_DESCRICAO) + "...");
-				}
-			});
-			url.find('li span:last').css('text-decoration', 'none');
-		}
-
-		this.adicionarMensagemSeVazio = function() {
-			var lis = url.find('li');
-			if (lis.size() == 0) {
-				url.append('<li><span>' + emptyMessage + '</li></span>')
-			}
-		}
-
-		this.formatarLabel = function() {
-			if (container.find('ul li span').size() == 1) {
-				container.prev('p').find('.historico-label').css('float',
-						'left');
-				container.find('ul li').addClass('unico');
-			} else if (container.find('ul li span').size() > 2) {
-				container.find('.lista-historico').css('margin-top', '-20px');
-			}
-		}
-	}
-
-	new MostradorHistorico($('.historico-item-container'), "Item não informado")
-			.init();
-
-	new MostradorHistorico($('.historico-acao-container'), "Ação não informada")
-			.init();
 </script>

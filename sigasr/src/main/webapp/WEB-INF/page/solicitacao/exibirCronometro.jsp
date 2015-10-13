@@ -5,14 +5,13 @@
       display:none;
     }
 </style>
-<c:set var="etapas" value="${solicitacao.getEtapas(lotaTitular)}" />
-<c:if test="${not empty etapas}">
-<c:forEach var="etapa" items="${etapas}">
+<c:if test="${not empty etapasCronometro}">
+<c:forEach var="etapa" items="${etapasCronometro}">
 <div class="gt-sidebar">
 	<div class="gt-sidebar-content cronometro ${etapa.ativo ? 'ligado' : 'desligado'}">
 		<h3>
 			<img src="/siga/css/famfamfam/icons/clock.png" width="15px;"
-				style="vertical-align: bottom;">&nbsp;${etapa.descricaoComLotaResponsavel}
+				style="vertical-align: bottom;">&nbsp;${etapa.descricaoCompleta}
 		</h3>
 		<c:if test="${not empty etapa.inicio}">
 		    <p><b>In&iacute;cio: </b>${etapa.inicioString}</p>

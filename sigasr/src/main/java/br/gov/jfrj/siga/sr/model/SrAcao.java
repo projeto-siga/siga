@@ -104,6 +104,10 @@ public class SrAcao extends HistoricoSuporte implements SrSelecionavel, Comparab
 	public String getDescricao() {
 		return tituloAcao;
 	}
+	
+	public String getDescricaoCompleta(){
+		return siglaAcao + " - " + tituloAcao;
+	}
 
 	public void setDescricao(String descricao) {
 		this.tituloAcao = descricao;

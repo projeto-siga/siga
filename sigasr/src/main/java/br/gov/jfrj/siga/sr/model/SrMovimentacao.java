@@ -221,17 +221,6 @@ public class SrMovimentacao extends Objeto {
     public boolean isCanceladoOuCancelador() {
         return isCancelada() || getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO;
     }
-
-    public boolean isInicioAtendimento(){
-    	return  getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO
-					|| getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
-					|| getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA;
-    }
-    
-    public boolean isFimAtendimento(){
-    	return  getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO
-					|| getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO;
-    }
     
     public SrMovimentacao getAnterior() {
         return getAnteriorPorTipo(null);
@@ -419,7 +408,8 @@ public class SrMovimentacao extends Objeto {
 
         if (getTipoMov() == null)
             setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
-        else if (isInicioAtendimento())
+        else if (SrTipoMovimentacao.TIPOS_MOV_INI_ATENDIMENTO.contains(getTipoMov().getId())
+				|| SrTipoMovimentacao.TIPOS_MOV_ATUALIZACAO_ATENDIMENTO.contains(getTipoMov().getId()))
         	atualizarAcordos();
     }
     
@@ -442,7 +432,7 @@ public class SrMovimentacao extends Objeto {
         	if (conf.getAcordo() != null && conf.getAcordo().getId() != null) {
         		SrAcordo acordoAtual = SrAcordo.AR.findById(conf.getAcordo().getIdAcordo()).getAcordoAtual();
         		if (acordoAtual != null && acordoAtual.getHisDtFim() == null && !getAcordos().contains(acordoAtual) 
-        			&& acordoAtual.contemParametro(SrParametro.ATENDIMENTO))
+        			&& acordoAtual.contemParametro(SrParametro.ATENDIMENTO, SrParametro.ATENDIMENTO_GERAL))
         			getAcordos().add(acordoAtual);
         	}
         }

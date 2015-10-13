@@ -3,17 +3,6 @@ package br.gov.jfrj.siga.sr.util;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 
 public class SrViewUtil {
-
-	/**
-	 * Retorna uma String formatada para renderizar as informações do componente 
-	 * #{descricaoItem}.
-	 */
-	public static String descricaoItem(SrItemConfiguracao itemConfiguracao) {
-		if (itemConfiguracao != null)
-			return itemConfiguracao.getTituloItemConfiguracao();
-		else
-			return new String("Item não informado");
-	}
 	
 	/**
 	 * Retorna uma String formatada para renderizar as informações do componente 

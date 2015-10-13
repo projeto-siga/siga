@@ -9,7 +9,7 @@ import java.util.TreeSet;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.DpLotacao;
 
-public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParametroAcordoSolicitacao {
+public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParametroAcordoSolicitacao, Comparable<SrEtapaSolicitacao> {
 
 	//Edson: esta propriedade deveria estar em SrParametroAcordoSolicitacao
 	private List<SrParametroAcordo> paramsAcordo; 
@@ -25,6 +25,8 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 	private SrAcao acao;
 
 	private SrParametro parametro;
+	
+	private SrSolicitacao solicitacao;
 	
 	public SrEtapaSolicitacao(SrParametro etapa) {
 		this.parametro = etapa;
@@ -65,8 +67,13 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 		return new SrValor(getDecorridoEmSegundos(), CpUnidadeMedida.SEGUNDO);
 	}
 	
-	public String getDescricaoComLotaResponsavel(){
-		return getDescricao() + (lotaResponsavel != null ? " ("+ lotaResponsavel.getSiglaCompleta() +")" : "");
+	public String getDescricaoCompleta(){
+		String descr = getDescricao();
+		if (lotaResponsavel != null)
+			descr += " " + lotaResponsavel.getSiglaCompleta();
+		if (getSolicitacao().isFilha())
+			descr += " (" + getSolicitacao().getNumSequenciaString() + ")";
+		return descr;
 	}
 	
 	@Override
@@ -176,6 +183,22 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 
 	public void setAcao(SrAcao acao) {
 		this.acao = acao;
+	}
+
+	@Override
+	public int compareTo(SrEtapaSolicitacao o) {
+		int porData = getInicio().compareTo(o.getInicio()) * -1;
+		if (porData != 0)
+			return porData;
+		return getParametro().compareTo(o.getParametro());
+	}
+
+	public SrSolicitacao getSolicitacao() {
+		return solicitacao;
+	}
+
+	public void setSolicitacao(SrSolicitacao solicitacao) {
+		this.solicitacao = solicitacao;
 	}
 
 }

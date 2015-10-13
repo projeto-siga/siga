@@ -293,7 +293,7 @@ public class SolicitacaoController extends SrController {
     	
         if (!solicitacao.isRascunho() && !validarFormEditar(solicitacao)) {
         	incluirListasEdicaoSolicitacao(solicitacao);
-            validator.onErrorUsePageOf(SolicitacaoController.class).editar(solicitacao.getId());
+            validator.onErrorUsePageOf(SolicitacaoController.class).editar(solicitacao.getSiglaCompacta());
         	return;
         }
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
@@ -503,11 +503,11 @@ public class SolicitacaoController extends SrController {
         return listaAtributosAdicao;
     }
 
-	@Path({ "/editar", "/editar/{id}"})
-    public void editar(Long id) throws Exception {
+	@Path({ "/editar", "/editar/{sigla}"})
+    public void editar(String sigla) throws Exception {
         SrSolicitacao solicitacao;
 
-        if (id == null) {
+        if (sigla == null) {
             solicitacao = new SrSolicitacao();
             solicitacao.setSolicitante(getTitular());
             solicitacao.setLotaCadastrante(getLotaCadastrante());
@@ -515,7 +515,7 @@ public class SolicitacaoController extends SrController {
             solicitacao.setLotaTitular(getLotaTitular());
             solicitacao.deduzirLocalRamalEMeioContato();
         } else
-            solicitacao = SrSolicitacao.AR.findById(id);
+        	solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         
         //Edson: por causa do detach no ObjetoObjectInstantiator:
     	if (solicitacao.getSolicitacaoInicial() != null)
@@ -558,8 +558,10 @@ public class SolicitacaoController extends SrController {
 	}
 
     @Path("/retirarDeLista")
-    public void retirarDeLista(Long idSolicitacao, Long idLista) throws Exception {
-        SrSolicitacao solicitacao = SrSolicitacao.AR.findById(idSolicitacao);
+    public void retirarDeLista(String sigla, Long idLista) throws Exception {
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         SrLista lista = SrLista.AR.findById(idLista);
         solicitacao.retirarDeLista(lista, getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(this).exibirLista(idLista);
@@ -574,8 +576,10 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/incluirEmLista")
-    public void incluirEmLista(Long id) throws Exception {
-        SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
+    public void incluirEmLista(String sigla) throws Exception {
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         solicitacao = solicitacao.getSolicitacaoAtual();
         List<SrPrioridade> prioridades = SrPrioridade.getValoresEmOrdem();
 
@@ -584,25 +588,31 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/incluirEmListaGravar")
-    public void incluirEmListaGravar(Long idSolicitacao, Long idLista, SrPrioridade prioridade, boolean naoReposicionarAutomatico) throws Exception {
+    public void incluirEmListaGravar(String sigla, Long idLista, SrPrioridade prioridade, boolean naoReposicionarAutomatico) throws Exception {
         if (idLista == null) {
             throw new AplicacaoException("Selecione a lista para inclus\u00e3o da solicita\u00e7\u00e3o");
         }
-        SrSolicitacao solicitacao = SrSolicitacao.AR.findById(idSolicitacao);
+        if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    		
+    	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         SrLista lista = SrLista.AR.findById(idLista);
         solicitacao.incluirEmLista(lista, getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), prioridade, naoReposicionarAutomatico);
         result.redirectTo(this).exibir(solicitacao.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
     @Path("/fechar")
-    public void fechar(Long id, String motivo) throws Exception {
-        SrSolicitacao sol = SrSolicitacao.AR.findById(id);
+    public void fechar(String sigla, String motivo) throws Exception {
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    		
+    	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         sol.fechar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), motivo);
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
     @Path("/erPesquisa")
-    public void responderPesquisa(Long id) throws Exception {
+    public void responderPesquisa(String sigla) throws Exception {
         /*
          * SrSolicitacao sol = SrSolicitacao.findById(id); SrPesquisa pesquisa = sol.getPesquisaDesignada(); if (pesquisa == null) throw new
          * Exception("NÃ£o foi encontrada nenhuma pesquisa designada para esta solicitaÃ§Ã£o."); pesquisa = SrPesquisa.findById(pesquisa.idPesquisa); pesquisa = pesquisa.getPesquisaAtual(); render(id,
@@ -612,8 +622,11 @@ public class SolicitacaoController extends SrController {
 
 
     @Path("/responderPesquisaGravar")
-    public void responderPesquisaGravar(Long id, Map<Long, String> respostaMap) throws Exception {
-        SrSolicitacao sol = SrSolicitacao.AR.findById(id);
+    public void responderPesquisaGravar(String sigla, Map<Long, String> respostaMap) throws Exception {
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    		
+    	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         sol.responderPesquisa(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), respostaMap);
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
@@ -626,8 +639,10 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/escalonar")
-    public void escalonar(Long id) throws Exception {
-        SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
+    public void escalonar(String sigla) throws Exception {
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         solicitacao.setTitular(getTitular());
         solicitacao.setLotaTitular(getLotaTitular());
         solicitacao = solicitacao.getSolicitacaoAtual();
@@ -654,11 +669,14 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/escalonarGravar")
-    public void escalonarGravar(Long id, SrItemConfiguracao itemConfiguracao, SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, Long idDesignacao, SrTipoMotivoEscalonamento motivo, String descricao,
+    public void escalonarGravar(String sigla, SrItemConfiguracao itemConfiguracao, SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, Long idDesignacao, SrTipoMotivoEscalonamento motivo, String descricao,
             Boolean criaFilha, Boolean fechadoAuto) throws Exception {
         if (itemConfiguracao == null || itemConfiguracao.getId() == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
             throw new AplicacaoException("Opera\u00e7\u00e3o n\u00e3o permitida. Necessario informar um item de configura\u00e7\u00e3o e uma a\u00e7\u00e3o.");
-        SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
+        if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    		
+    	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
 
         DpLotacao atendenteNaoDesignado = null;
         DpLotacao atendente = null;
@@ -710,8 +728,10 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/exibirAcaoEscalonar")
-    public void exibirAcaoEscalonar(Long id, Long itemConfiguracao) throws Exception {
-        SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
+    public void exibirAcaoEscalonar(String sigla, Long itemConfiguracao) throws Exception {
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         solicitacao.setTitular(getTitular());
         solicitacao.setLotaTitular(getLotaTitular());
         Map<SrAcao, List<SrTarefa>> acoesEAtendentes = new HashMap<SrAcao, List<SrTarefa>>();
@@ -724,50 +744,66 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/vincular")
-    public void vincular(Long idSolicitacaoAVincular, SrSolicitacao solRecebeVinculo, String justificativa) throws Exception {
-        SrSolicitacao sol = SrSolicitacao.AR.findById(idSolicitacaoAVincular);
+    public void vincular(String sigla, SrSolicitacao solRecebeVinculo, String justificativa) throws Exception {
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         sol.vincular(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solRecebeVinculo, justificativa);
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
     @Path("/juntar")
-    public void juntar(Long idSolicitacaoAJuntar, SrSolicitacao solRecebeJuntada, String justificativa) throws Exception {
-        SrSolicitacao sol = SrSolicitacao.AR.findById(idSolicitacaoAJuntar);
+    public void juntar(String sigla, SrSolicitacao solRecebeJuntada, String justificativa) throws Exception {
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         sol.juntar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solRecebeJuntada, justificativa);
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
     @Path("/desentranhar")
-    public void desentranhar(Long id, String justificativa) throws Exception {
-        SrSolicitacao sol = SrSolicitacao.AR.findById(id);
+    public void desentranhar(String sigla, String justificativa) throws Exception {
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         sol.desentranhar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), justificativa);
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
     @Path("/cancelar")
-    public void cancelar(Long id) throws Exception {
-        SrSolicitacao sol = SrSolicitacao.AR.findById(id);
+    public void cancelar(String sigla) throws Exception {
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    		
+    	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         sol.cancelar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
     @Path("/reabrir")
-    public void reabrir(Long id) throws Exception {
-        SrSolicitacao sol = SrSolicitacao.AR.findById(id);
+    public void reabrir(String sigla) throws Exception {
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         sol.reabrir(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
     @Path("/deixarPendente")
-    public void deixarPendente(Long id, SrTipoMotivoPendencia motivo, String calendario, String horario, String detalheMotivo) throws Exception {
-        SrSolicitacao sol = SrSolicitacao.AR.findById(id);
+    public void deixarPendente(String sigla, SrTipoMotivoPendencia motivo, String calendario, String horario, String detalheMotivo) throws Exception {
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         sol.deixarPendente(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), motivo, calendario, horario, detalheMotivo);
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
     @Path("/excluir")
-    public void excluir(Long id) throws Exception {
-        SrSolicitacao sol = SrSolicitacao.AR.findById(id);
+    public void excluir(String sigla) throws Exception {
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    		
+    	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         sol.excluir();
         result.redirectTo(this).editar(null);
     }
@@ -779,28 +815,38 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/termoAtendimento")
-    public void termoAtendimento(Long id) throws Exception {
-        SrSolicitacao solicitacao = SrSolicitacao.AR.findById(id);
+    public void termoAtendimento(String sigla) throws Exception {
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    		
+    	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         result.include(SOLICITACAO, solicitacao);
     }
 
     @Path("/desfazerUltimaMovimentacao")
-    public void desfazerUltimaMovimentacao(Long id) throws Exception {
-        SrSolicitacao sol = SrSolicitacao.AR.findById(id);
+    public void desfazerUltimaMovimentacao(String sigla) throws Exception {
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    		
+    	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         sol.desfazerUltimaMovimentacao(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
     @Path("/alterarPrioridade")
-    public void alterarPrioridade(Long id, SrPrioridade prioridade) throws Exception {
-        SrSolicitacao sol = SrSolicitacao.AR.findById(id);
+    public void alterarPrioridade(String sigla, SrPrioridade prioridade) throws Exception {
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         sol.alterarPrioridade(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), prioridade);
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
 
     @Path("/terminarPendencia")
-    public void terminarPendencia(Long id, String descricao, Long idMovimentacao) throws Exception {
-        SrSolicitacao sol = SrSolicitacao.AR.findById(id);
+    public void terminarPendencia(String sigla, String descricao, Long idMovimentacao) throws Exception {
+    	if (sigla == null || sigla.trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         sol.terminarPendencia(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), descricao, idMovimentacao);
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }

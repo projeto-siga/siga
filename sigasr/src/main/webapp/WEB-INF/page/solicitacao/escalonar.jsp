@@ -24,8 +24,8 @@
 		
 		function carregarAcao() {
 			var inputIdItem = $("#formulario_solicitacaoitemConfiguracao_id").val();
-			var inputIdSolicitacao = document.getElementById('id');
-			var params = 'id=' + inputIdSolicitacao.value
+			var inputIdSolicitacao = document.getElementById('sigla');
+			var params = 'sigla=' + inputIdSolicitacao.value
 					+ '&itemConfiguracao=' + inputIdItem;
 			
 			$("#itemConfiguracao").val(inputIdItem);
@@ -96,7 +96,7 @@
 					listValue="descrTipoMotivoEscalonamento" listKey="descrTipoMotivoEscalonamento" style="width: auto;"/>
 			</div>
 			<div class="gt-form-row">
-				<input type="hidden" name="id" id="id" value="${solicitacao.idSolicitacao}">
+				<input type="hidden" name="sigla" id="sigla" value="${solicitacao.siglaCompacta}">
 				<input type="hidden" name="solicitante" value="${solicitacao.solicitante}">
 				<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
 				<a href="${linkTo[SolicitacaoController].exibir[solicitacao.siglaCompacta]}" class="gt-btn-medium gt-btn-left">Voltar</a>

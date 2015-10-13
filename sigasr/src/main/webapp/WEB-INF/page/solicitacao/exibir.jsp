@@ -446,20 +446,20 @@
                 <label>Motivo</label>
                 <textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
             </div>
-            <input type="hidden" name="id" value="${solicitacao.idSolicitacao}" /> <input
+            <input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> <input
                 type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
         </form>
     </siga:modal>
     
-    <siga:modal nome="incluirEmLista" titulo="Definir Lista" url="${linkTo[SolicitacaoController].incluirEmLista}?id=${solicitacao.idSolicitacao}" />
+    <siga:modal nome="incluirEmLista" titulo="Definir Lista" url="${linkTo[SolicitacaoController].incluirEmLista}?sigla=${solicitacao.siglaCompacta}" />
     
-    <siga:modal nome="escalonar" titulo="Escalonar Solicitação" url="${linkTo[SolicitacaoController].escalonar}?id=${solicitacao.idSolicitacao}" />
+    <siga:modal nome="escalonar" titulo="Escalonar Solicitação" url="${linkTo[SolicitacaoController].escalonar}?sigla=${solicitacao.siglaCompacta}" />
 
     <siga:modal nome="juntar" titulo="Juntar">
         <form action="${linkTo[SolicitacaoController].juntar}" method="post" enctype="multipart/form-data" id="formGravarJuncao">
             <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
             <input type="hidden" name="ocultas" value="${ocultas}" />
-            <input type="hidden" name="idSolicitacaoAJuntar" value="${solicitacao.idSolicitacao}"> 
+            <input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}"> 
             <div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
                 <label>Solicita&ccedil;&atilde;o</label> <br />
                 <siga:selecao2 propriedade="solRecebeJuntada" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Juncao');"
@@ -480,7 +480,7 @@
         <form action="${linkTo[SolicitacaoController].vincular}" method="post" enctype="multipart/form-data" id="formGravarVinculo">
             <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
             <input type="hidden" name="ocultas" value="${ocultas}" />
-            <input type="hidden" name="idSolicitacaoAVincular" value="${solicitacao.idSolicitacao}"> 
+            <input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}"> 
             <div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
                 <label>Solicita&ccedil;&atilde;o</label> <br />
                 <siga:selecao2 propriedade="solRecebeVinculo" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Vinculo');"
@@ -500,7 +500,7 @@
 
     <siga:modal nome="associarLista" titulo="Definir Lista" url="associarLista.jsp" />
 
-    <siga:modal nome="responderPesquisa" titulo="Responder Pesquisa" url="responderPesquisa?id=${solicitacao.id}" />
+    <siga:modal nome="responderPesquisa" titulo="Responder Pesquisa" url="responderPesquisa?sigla=${solicitacao.siglaCompacta}" />
 
     <siga:modal nome="deixarPendente" titulo="Pendência">
             <div class="gt-content-box gt-form clearfix">
@@ -525,7 +525,7 @@
                         <textarea name="detalheMotivo" cols="50" rows="4"> </textarea>
                     </div>
                     <div class="gt-form-row">
-                        <input type="hidden" name="id" value="${solicitacao.id}" /> <input
+                        <input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> <input
                             type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
                     </div>
                 </form>
@@ -543,7 +543,7 @@
 							style="width:235px"  />
  				</div>
                 <div class="gt-form-row">
-                	<input type="hidden" name="id" value="${solicitacao.id}" /> 
+                	<input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> 
                 	<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
                 </div>
             </form>
@@ -556,7 +556,7 @@
                 <textarea style="width: 100%" name="justificativa" cols="50" rows="4"> </textarea>
             </div>
             <input type="hidden" name="completo" value="${completo}" /> <input
-                type="hidden" name="id" value="${solicitacao.id}" /> <input
+                type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> <input
                 type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
         </form>
     </siga:modal>   
@@ -571,7 +571,7 @@
             <input
                 type="hidden" name="idMovimentacao" id="movimentacaoId" value="" /><input
                 type="hidden" name="motivo" id="motivoId" value="" /><input
-                type="hidden" name="id" value="${solicitacao.id}" /> <input
+                type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> <input
                 type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
         </form>
     </siga:modal>    

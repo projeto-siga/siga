@@ -1431,7 +1431,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				// Edson: serÃ¯Â¿Â½ que essas coisas poderiam estar dentro do
 				// SrOperacao?
 				if (!e.isModal())
-					e.setUrl(e.getUrl() + "?id="+idSolicitacao + e.getParamsFormatted());
+					e.setUrl("../" + e.getUrl() + "?sigla="+getSiglaCompacta() + e.getParamsFormatted());
 				if (!e.isPode())
 					return false;
 				return super.add(e);

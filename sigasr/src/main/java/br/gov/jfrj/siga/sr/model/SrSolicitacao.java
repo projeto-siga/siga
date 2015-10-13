@@ -3289,24 +3289,25 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return listaDeIntervalos;
 	}
 	
-	public SrValor getTempoEfetivoAtendimento(Date dataInicio, Date dataFinal) {
+	public SrValor getTempoEfetivoAtendimento(Date dataInicio, Date dataFinal, DpLotacao lotaAtendente) {
 		List<Interval> listaTrechosDeAtendimentos = getTrechosSemPendencia(dataInicio, dataFinal);
+		int[] horario = Util.getHorarioDeTrabalho(lotaAtendente);
 		SrValor tempoAtendimentoLiquido = null;
 		Long tempoAtendimentoParcial = 0L;
 		
 		if (listaTrechosDeAtendimentos.size() > 0) {
 			for (Interval intervaloAtendimento : listaTrechosDeAtendimentos) {
-				tempoAtendimentoParcial += getTempoAtendimento(intervaloAtendimento);
+				tempoAtendimentoParcial += getTempoAtendimento(intervaloAtendimento, horario[0], horario[1]);
 			}
 			tempoAtendimentoLiquido = new SrValor(tempoAtendimentoParcial, CpUnidadeMedida.SEGUNDO);
 		}
 		return tempoAtendimentoLiquido;	
 	}
 	
-	public Long getTempoAtendimento(Interval intervaloAtendimento) {	
+	public Long getTempoAtendimento(Interval intervaloAtendimento, int horaInicio, int horaTermino) {	
 		DateTime inicio = intervaloAtendimento.getStart();
 		DateTime fim = intervaloAtendimento.getEnd();
-		Interval intervaloDeTrabalho = Util.getIntervaloDeTempo(8, 20, intervaloAtendimento.getStart());
+		Interval intervaloDeTrabalho = Util.getIntervaloDeTempo(horaInicio, horaTermino, intervaloAtendimento.getStart());
 		Long tempoAtendimento = 0L;
 		
 		try {
@@ -3327,7 +3328,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						tempoAtendimento = intervaloDeTrabalho.toDuration().getStandardSeconds();
 				}
 				//tratando o "final do atendimento"
-				intervaloDeTrabalho = Util.getIntervaloDeTempo(8, 20, fim);
+				intervaloDeTrabalho = Util.getIntervaloDeTempo(horaInicio, horaTermino, fim);
 				if (fim.isAfter(intervaloDeTrabalho.getStart()))
 					tempoAtendimento += Seconds.secondsBetween(intervaloDeTrabalho.getStart(), fim)
 												.getSeconds();		
@@ -3335,7 +3336,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				DateTime diaDepoisInicio = inicio.plusDays(1);
 				while (diaDepoisInicio.toLocalDate().isBefore(fim.toLocalDate())) {
 					if (Util.isDiaUtil(diaDepoisInicio))
-						tempoAtendimento += Util.getIntervaloDeTempo(8, 20, diaDepoisInicio).toDuration()
+						tempoAtendimento += Util.getIntervaloDeTempo(horaInicio, horaTermino, diaDepoisInicio).toDuration()
 													.getStandardSeconds();
 					diaDepoisInicio = diaDepoisInicio.plusDays(1);
 				}

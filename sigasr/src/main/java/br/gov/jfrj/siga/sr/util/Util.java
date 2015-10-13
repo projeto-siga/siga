@@ -10,6 +10,8 @@ import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
+import br.gov.jfrj.siga.dp.DpLotacao;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -64,4 +66,13 @@ public class Util {
 				new LocalDate(dia).toDateTime(new LocalTime(horaFim, 0)));
 	}
 	
+	public static int[] getHorarioDeTrabalho(DpLotacao lotaAtendente) {
+		if (lotaAtendente.getIdInicial() == 20937 || //central 2r
+				lotaAtendente.getIdInicial() == 19753)  //help desk
+			return new int[] {8,20}; 
+		else if (lotaAtendente.getSigla().contains("STI-SL")) //suporte local
+			return new int[] {10,19};
+		else	//demais lotacoes
+			return new int[] {11,19};
+	}
 }

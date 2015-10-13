@@ -84,6 +84,83 @@ function AssinarDocumentos(copia, politica) {
 }
 
 //
+//Provider: Localhost REST
+//
+var providerLocalhostREST = {
+	nome : 'Localhost REST',
+
+	testar : function() {
+		try {
+			console.log("IttruREST: OK!");
+			return true;
+		} catch (err) {
+			console.log("IttruREST:" + err.message);
+		}
+		return false;
+	},
+
+	inicializar : function() {
+		var ret = "OK";
+		try {
+			$.ajax({
+				type : "GET",
+				url : "http://localhost:8612/cert",
+				dataType: 'json',
+				accepts : {
+					text : "application/json"
+				},
+				success : function(data, textStatus, XMLHttpRequest) {
+					if (data.errormsg != null)
+						ret = data.errormsg;
+					else
+						gCertificadoB64 = data.certificate;
+				},
+				error : function(jqXHR, textStatus, errorThrown) {
+					ret = textStatus + ": " + errorThrown;
+				},
+				async : false,
+				cache : false
+			});
+
+		} catch (Err) {
+			return Err.description;
+		}
+		return ret;
+	},
+
+	assinar : function(conteudo) {
+		var ret = {};
+		try {
+			$.ajax({
+				url : "http://localhost:8612/sign",
+				dataType:'json',
+				type : "POST",
+				data : {policy: (gPolitica ? "AD-RB" : "PKCS7"), payload: conteudo, certificate: gCertificadoB64},
+				async : false,
+				success : function(data, textStatus, XMLHttpRequest) {
+					ret.assinaturaB64 = data.sign;
+					ret.assinante = data.cn;
+					var re = /CN=([^,]+),/gi;
+					var m;
+					if ((m = re.exec(ret.assinante)) != null) {
+						ret.assinante = m[1];
+					}
+					ret.status = "OK"
+				},
+				error : function(jqXHR, textStatus, errorThrown) {
+					ret.status = textStatus + ": " + errorThrown;
+				},
+			});
+		} catch (err) {
+			Erro(err);
+			ret.status = err.message;
+		}
+		return ret;
+	}
+}
+
+
+//
 // Provider: Ittru ActiveX
 //
 var providerIttruAx = {
@@ -497,7 +574,7 @@ function Conteudo(url) {
 	return "Não foi possível obter o conteúdo do documento a ser assinado.";
 }
 
-var providers = [ providerIttruAx, providerIttruCAPI, providerIttruP11 ];
+var providers = [ providerLocalhostREST, providerIttruAx, providerIttruCAPI, providerIttruP11 ];
 
 //
 // Processamento de assinaturas em lote, com progress bar

@@ -10,7 +10,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
-@Table(name = "DADOS_RH", schema = "SIGASR")
+@Table(name = "DADOS_RH", schema = "SIGARH")
 public class DadosRH  extends Objeto {
     
     public static final ActiveRecord<DadosRH> AR = new ActiveRecord<>(DadosRH.class);

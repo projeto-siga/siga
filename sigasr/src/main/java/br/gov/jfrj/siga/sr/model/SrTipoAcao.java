@@ -20,6 +20,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -310,9 +311,12 @@ public class SrTipoAcao extends HistoricoSuporte implements SrSelecionavel, Comp
 
     @Override
     public void salvarComHistorico() throws Exception {
-        if (getNivel() > 1) {
-            pai = getPaiPorSigla();
-        }
+    	if (getNivel() > 1) {
+			SrTipoAcao pai = getPaiPorSigla();
+			if (pai == null)
+				throw new AplicacaoException("Ainda não há categoria para o tipo a ser criado.");
+			setPai(pai);
+		}
         super.salvarComHistorico();
     }
 

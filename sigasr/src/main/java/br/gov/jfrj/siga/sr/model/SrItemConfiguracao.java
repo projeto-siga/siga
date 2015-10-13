@@ -33,6 +33,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -452,7 +453,10 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	@Override
 	public void salvarComHistorico() throws Exception {
 		if (getNivel() > 1) {
-			setPai(getPaiPorSigla());
+			SrItemConfiguracao pai = getPaiPorSigla();
+			if (pai == null)
+				throw new AplicacaoException("Ainda não há categoria para o item a ser criado.");
+			setPai(pai);
 		}
 		super.salvarComHistorico();
 

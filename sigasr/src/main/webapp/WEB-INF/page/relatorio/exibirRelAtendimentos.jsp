@@ -10,6 +10,7 @@
 <script type="text/javascript">
 	$(document).ready(function(){			
 		$.removeCookie('fileDownloadToken');
+		$('#lista_lotacao, #expressao').hide();
 	});
 	var fileDownloadCheckTimer;
 	var token;
@@ -39,6 +40,21 @@
 		$.removeCookie('fileDownloadToken'); 
 		$.unblockUI();
 	}
+	function verificarSelecao(selecao) {
+		var tipoSelecao = selecao.value;
+		if (tipoSelecao == 'lotacao') {
+			$('#lotacao').show();
+			$('#lista_lotacao, #expressao').hide();
+		}
+		else if (tipoSelecao == 'lista_lotacao') {
+			$('#lista_lotacao').show();
+			$('#lotacao, #expressao').hide();
+		}
+		else {
+			$('#expressao').show();
+			$('#lotacao, #lista_lotacao').hide();
+		}
+	}
 </script>
 
 <div class="gt-bd clearfix">
@@ -51,12 +67,21 @@
                 	<td align="center" valign="top" colspan="4">Dados do Relatório</td>
                 </tr>
                 <tr> 
-                	<td> Lotação Atendente</td>
-                	<td> <siga:selecao2 tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga"/> </td>		
+                	<td style="width: 20%;"> Lotação Atendente</td>
+                	<td style="width: 80%;"> 
+                		<select name="tipo" onchange="verificarSelecao(this);" style="float:left; margin-right:10px;">
+                			<option value="lotacao">Lotação</option>
+                			<option value="lista_lotacao">Lista de Lotações</option>
+                			<option value="expressao">Expressão</option>
+                		</select>
+                		<div id="lotacao"> <siga:selecao2 tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga"/> </div>	
+                		<div id="lista_lotacao"> <input type="text" size="100" name=listaLotacoes value="" /> </div>	
+                		<div id="expressao"> <input type="text" size="25" name=siglaLotacao value="" /> </div>	
+					</td> 
 	    		</tr>
 				<tr>
-					<td>Data inicial e final</td>
-					<td>
+					<td style="width: 20%;">Data inicial e final</td>
+					<td style="width: 80%;">
 						<input type="text" name="dtIni" value="" maxlength="10"
 							onblur="javascript:verifica_data(this,true);" theme="simple"/> a
 						<input type="text" name="dtFim" value="" maxlength="10" 

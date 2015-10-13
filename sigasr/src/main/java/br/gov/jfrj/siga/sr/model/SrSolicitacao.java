@@ -3154,7 +3154,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				if (mov.isInicioAtendimento()) {
 					atendimento.setDataInicio(mov.getDtIniMov());
 					atendimento.setTempoAtendimento(getTempoEfetivoAtendimento(atendimento.getDataInicio(),
-							atendimento.getDataFinal()));
+							atendimento.getDataFinal(), mov.getLotaAtendente()));
 					atendimento.setLotacaoAtendente(mov.getLotaAtendente());
 					atendimento.definirFaixa(mov.getLotaAtendente().getOrgaoUsuario());
 									
@@ -3201,8 +3201,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				if (mov.getTipoMov().getId() == TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO) {
 					if (dataFinalFilha != null && mov.getDtIniMov().compareTo(dataFinalFilha) == 1) {
 						atendimento = new SrAtendimento(this, dataFinalFilha,  mov.getDtIniMov(), 
-							getTempoEfetivoAtendimento(dataFinalFilha, mov.getDtIniMov()), lotacaoAtendente, 
-							mov.getLotaAtendente(), mov.getTitular(), "Escalonamento com sol. filha", 
+							getTempoEfetivoAtendimento(dataFinalFilha, mov.getDtIniMov(), lotacaoAtendente), 
+							lotacaoAtendente, mov.getLotaAtendente(), mov.getTitular(), "Escalonamento com sol. filha", 
 							this.getItemConfiguracao().toString(), this.getAcao().toString());					
 						atendimento.definirFaixa(lotacaoAtendente.getOrgaoUsuario());
 						listaAtendimentos.add(atendimento);
@@ -3216,8 +3216,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						if (mov.getSolicitacao().equals(this)) {
 							dtInicio = getDtInicioAtendimento();
 							atendimento = new SrAtendimento(this, dtInicio,  dtFinal, 
-								getTempoEfetivoAtendimento(dtInicio, dtFinal), lotacaoAtendente, 
-								lotacaoDestino, pessoaAtendente, "Escalonamento com sol. filha", 
+								getTempoEfetivoAtendimento(dtInicio, dtFinal, lotacaoAtendente), 
+								lotacaoAtendente, lotacaoDestino, pessoaAtendente, "Escalonamento com sol. filha", 
 								this.getItemConfiguracao().toString(), this.getAcao().toString());		
 							atendimento.definirFaixa(lotacaoAtendente.getOrgaoUsuario());
 							listaAtendimentos.add(atendimento);
@@ -3246,8 +3246,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			tipoAtendimento = "A Fechar";
 		}
 		atendimento = new SrAtendimento(this, dataFinalUltimaFilha, dataFinalPai, 
-				getTempoEfetivoAtendimento(dataFinalUltimaFilha, dataFinalPai), lotacaoAtendente, null, getAtendente(), 
-				tipoAtendimento, getItemAtual().toString(), getAcaoAtual().toString());
+				getTempoEfetivoAtendimento(dataFinalUltimaFilha, dataFinalPai, lotacaoAtendente), 
+				lotacaoAtendente, null, getAtendente(), tipoAtendimento, getItemAtual().toString(), getAcaoAtual().toString());
 		atendimento.definirFaixa(lotacaoAtendente.getOrgaoUsuario());
 		return atendimento;
 	}

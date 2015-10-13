@@ -48,18 +48,24 @@ public class RelatorioController extends SrController {
 	
 	@AssertAcesso(REL_RELATORIOS)
 	@Path("/atendimentos/gerar")
-	public Download gerarRelAtendimentos(DpLotacao lotacao, String dtIni, 
-			String dtFim, String downloadToken) throws Exception {
-		DpLotacao lotaAtendente = DpLotacao.AR.findById(lotacao.getId());
+	public Download gerarRelAtendimentos(DpLotacao lotacao, String listaLotacoes, String siglaLotacao, 
+			String dtIni, String dtFim, String downloadToken, String tipo) throws Exception {
+		DpLotacao lotaAtendente = null;
+		if (lotacao != null)
+			lotaAtendente = DpLotacao.AR.findById(lotacao.getId());
+
 		String nomeArquivoExportado = "relAtendimentos_" 
-						+  new SimpleDateFormat("ddMMyy_HHmm").format(new Date()) 
-						+ "_" + lotaAtendente.getSigla() + ".xlsx";
+					+ new SimpleDateFormat("ddMMyy_HHmm").format(new Date()) + "_" 
+					+ (lotaAtendente != null ? lotaAtendente.getSigla() : "lista-lotacoes") + ".xlsx";
 		
 		Map<String, Object> parametros = new HashMap<String, Object>();
 		parametros.put("dtIni", dtIni);
 		parametros.put("dtFim", dtFim);
-		parametros.put("idlotaAtendenteIni", lotaAtendente.getIdLotacaoIni());
-		parametros.put("secaoUsuario", lotaAtendente.getOrgaoUsuario().getDescricaoMaiusculas());
+		parametros.put("idlotaAtendenteIni", lotaAtendente != null ? lotaAtendente.getIdLotacaoIni() : 0L);
+		parametros.put("listaLotacoes", listaLotacoes);
+		parametros.put("siglaLotacao", siglaLotacao);
+		parametros.put("tipo", tipo);
+		parametros.put("secaoUsuario", getTitular().getOrgaoUsuario().getDescricaoMaiusculas());
 		parametros.put(JRParameter.IS_IGNORE_PAGINATION, true);
 		
 		SrRelAtendimento rel = new SrRelAtendimento(parametros);

@@ -3235,7 +3235,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public SrAtendimento getFimAtendimentoSolicitacaoPai(Date dataFinalUltimaFilha) {
 		SrAtendimento atendimento = null;
 		String tipoAtendimento = null;
-		Date dataFinalPai = null ; 
+		Date dataInicioPai = null;
+		Date dataFinalPai = null; 
 		DpLotacao lotacaoAtendente = getLotaAtendente();
 		if (isFechado()) {
 			dataFinalPai = getDtEfetivoFechamento();
@@ -3245,8 +3246,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			dataFinalPai = new Date();	
 			tipoAtendimento = "A Fechar";
 		}
-		atendimento = new SrAtendimento(this, dataFinalUltimaFilha, dataFinalPai, 
-				getTempoEfetivoAtendimento(dataFinalUltimaFilha, dataFinalPai, lotacaoAtendente), 
+		SrMovimentacao movReabertura = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA);
+		if(movReabertura != null && movReabertura.getDtIniMov().after(dataFinalUltimaFilha))
+			dataInicioPai = movReabertura.getDtIniMov();
+		else
+			dataInicioPai = dataFinalUltimaFilha;
+		
+		atendimento = new SrAtendimento(this, dataInicioPai, dataFinalPai, 
+				getTempoEfetivoAtendimento(dataInicioPai, dataFinalPai, lotacaoAtendente), 
 				lotacaoAtendente, null, getAtendente(), tipoAtendimento, getItemAtual().toString(), getAcaoAtual().toString());
 		atendimento.definirFaixa(lotacaoAtendente.getOrgaoUsuario());
 		return atendimento;

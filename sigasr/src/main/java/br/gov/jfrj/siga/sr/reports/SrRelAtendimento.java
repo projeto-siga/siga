@@ -30,17 +30,15 @@ public class SrRelAtendimento extends RelatorioTemplate {
 
 	public SrRelAtendimento(Map parametros) throws DJBuilderException {
 		super(parametros);
-		if (parametros.get("idlotaAtendenteIni") == null && parametros.get("siglaLotacao") == null
+		if ((Long) parametros.get("idlotaAtendenteIni") == 0L && parametros.get("siglaLotacao") == null
 				&& parametros.get("listaLotacoes") == null ) {
 			throw new DJBuilderException("Parâmetro Lotação não informado!");
 		}
-		if (parametros.get("dtIni").equals("")) {
-			throw new DJBuilderException(
-					"Parâmetro data inicial não informado!");
+		if (parametros.get("dtIni") == null || parametros.get("dtIni").equals("")) {
+			throw new DJBuilderException("Parâmetro data inicial não informado!");
 		}
-		if (parametros.get("dtFim").equals("")) {
-			throw new DJBuilderException(
-					"Parâmetro data final não informado!");
+		if (parametros.get("dtFim") == null || parametros.get("dtFim").equals("")) {
+			throw new DJBuilderException("Parâmetro data final não informado!");
 		}
 }
 
@@ -76,17 +74,15 @@ public class SrRelAtendimento extends RelatorioTemplate {
 		List<Long> idsIniciais = new ArrayList<Long>();
 		int quantRegistros = 1; int tamanhoLista = 0;
 		Long  idlotaAtendenteIni = (Long) parametros.get("idlotaAtendenteIni");
-		String listaLotacoes = (String) parametros.get("listaLotacoes");
-		String siglaLotacao = (String) parametros.get("siglaLotacao");	
 		String tipo = (String) parametros.get("tipo");
 		
 		try {
 			if (tipo.equals("lotacao")) 
 				idsIniciais.add(idlotaAtendenteIni);
 			else if (tipo.equals("lista_lotacao")) 
-				idsIniciais = listarLotacoesPorSigla(listaLotacoes);
+				idsIniciais = listarLotacoesPorSigla();
 			else if (tipo.equals("expressao"))
-				idsIniciais = listarLotacoesPorExpressao(siglaLotacao);
+				idsIniciais = listarLotacoesPorExpressao();
 
 			lista = consultarAtendimentoPorLotacao(idsIniciais);
 			for (SrSolicitacao sol : lista) {
@@ -152,22 +148,28 @@ public class SrRelAtendimento extends RelatorioTemplate {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<Long> listarLotacoesPorSigla(String listaLotacoes) {
+	private List<Long> listarLotacoesPorSigla() {
+		String listaLotacoes = (String) parametros.get("listaLotacoes");
 		String[] siglas = listaLotacoes.trim().toUpperCase().split(";");
-		Query query = DpLotacao.AR.em().createQuery("select lot.idLotacaoIni from DpLotacao lot where "
-				+ "dataFimLotacao = null and siglaLotacao in :siglasLotacao");
+		
+		Query query = DpLotacao.AR.em().createQuery("select idLotacaoIni from DpLotacao where "
+				+ "dataFimLotacao = null and siglaLotacao in :siglasLotacao and orgaoUsuario.idOrgaoUsu = :idOrgao");
 		query.setParameter("siglasLotacao", Arrays.asList(siglas));
+		query.setParameter("idOrgao", (Long) parametros.get("idOrgao"));
 		return query.getResultList();
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<Long> listarLotacoesPorExpressao(String siglaLotacoes) {
-		String sigla = null;
-		if(siglaLotacoes.trim().indexOf('*') >= 0)
-			sigla = siglaLotacoes.trim().toUpperCase().replace('*', '%');
-		Query query = DpLotacao.AR.em().createQuery("select lot.idLotacaoIni from DpLotacao lot where "
-				+ "dataFimLotacao = null and siglaLotacao like :sigla");
-		query.setParameter("sigla", sigla);
+	private List<Long> listarLotacoesPorExpressao() {
+		String siglaModificada = null;
+		String sigla = (String) parametros.get("siglaLotacao");
+		if(sigla.indexOf('*') >= 0)
+			siglaModificada = sigla.trim().toUpperCase().replace('*', '%');
+		
+		Query query = DpLotacao.AR.em().createQuery("select idLotacaoIni from DpLotacao where "
+				+ "dataFimLotacao = null and siglaLotacao like :sigla and orgaoUsuario.idOrgaoUsu = :idOrgao");
+		query.setParameter("sigla", siglaModificada);
+		query.setParameter("idOrgao", (Long) parametros.get("idOrgao"));
 		return query.getResultList();
 		
 	}

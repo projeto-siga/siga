@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
@@ -20,8 +21,10 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
 import br.gov.jfrj.siga.sr.reports.SrRelAtendimento;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
@@ -41,15 +44,18 @@ public class RelatorioController extends SrController {
 
 	private static final String APPLICATION_EXCEL = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
+	@SuppressWarnings("unchecked")
 	@AssertAcesso(REL_RELATORIOS)
 	@Path("/atendimentos")
 	public void exibirRelAtendimentos() {
+		List<CpOrgaoUsuario> orgaos = CpOrgaoUsuario.AR.all().fetch();
+		result.include("orgaos", orgaos);
 	}
 	
 	@AssertAcesso(REL_RELATORIOS)
 	@Path("/atendimentos/gerar")
 	public Download gerarRelAtendimentos(DpLotacao lotacao, String listaLotacoes, String siglaLotacao, 
-			String dtIni, String dtFim, String downloadToken, String tipo) throws Exception {
+			Long idOrgaoUsu, String dtIni, String dtFim, String downloadToken, String tipo) throws Exception {
 		DpLotacao lotaAtendente = null;
 		if (lotacao != null)
 			lotaAtendente = DpLotacao.AR.findById(lotacao.getId());
@@ -64,6 +70,7 @@ public class RelatorioController extends SrController {
 		parametros.put("idlotaAtendenteIni", lotaAtendente != null ? lotaAtendente.getIdLotacaoIni() : 0L);
 		parametros.put("listaLotacoes", listaLotacoes);
 		parametros.put("siglaLotacao", siglaLotacao);
+		parametros.put("idOrgao", idOrgaoUsu);
 		parametros.put("tipo", tipo);
 		parametros.put("secaoUsuario", getTitular().getOrgaoUsuario().getDescricaoMaiusculas());
 		parametros.put(JRParameter.IS_IGNORE_PAGINATION, true);

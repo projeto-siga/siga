@@ -105,24 +105,32 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor,
 	@Override
 	public void getModifiedDocIds(DocIdPusher pusher) throws IOException,
 			InterruptedException {
-		Date dt = ExDao.getInstance().dt();
-		pushDocIds(pusher, this.dateLastUpdated);
-		this.dateLastUpdated = dt;
+		try {
+			Date dt = ExDao.getInstance().dt();
+			pushDocIds(pusher, this.dateLastUpdated);
+			this.dateLastUpdated = dt;
+		} finally {
+			ExDao.freeInstance();
+		}
 	}
 
 	private void pushDocIds(DocIdPusher pusher, Date date)
 			throws InterruptedException {
-		BufferingPusher outstream = new BufferingPusher(pusher);
-		ExDao dao = ExDao.getInstance();
-		Query q = dao.getSessao().createQuery(getIdsHql());
-		q.setDate("dt", date);
-		q.setMaxResults(2000);
-		Iterator i = q.iterate();
-		while (i.hasNext()) {
-			DocId id = new DocId("" + i.next());
-			outstream.add(id);
+		try {
+			BufferingPusher outstream = new BufferingPusher(pusher);
+			ExDao dao = ExDao.getInstance();
+			Query q = dao.getSessao().createQuery(getIdsHql());
+			q.setDate("dt", date);
+			q.setMaxResults(2000);
+			Iterator i = q.iterate();
+			while (i.hasNext()) {
+				DocId id = new DocId("" + i.next());
+				outstream.add(id);
+			}
+			outstream.forcePush();
+		} finally {
+			ExDao.freeInstance();
 		}
-		outstream.forcePush();
 	}
 
 	public abstract String getIdsHql();

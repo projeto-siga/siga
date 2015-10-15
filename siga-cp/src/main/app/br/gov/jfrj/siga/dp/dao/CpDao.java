@@ -95,6 +95,7 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
+import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
@@ -1563,6 +1564,8 @@ public class CpDao extends ModeloDao {
 	}
 
 	public <T> T gravar(final T entidade) {
+		if (entidade instanceof CarimboDeTempo)
+			((CarimboDeTempo)entidade).setHisDtAlt(this.dt());
 		getSessao().saveOrUpdate(entidade);
 		invalidarCache(entidade);
 		return entidade;

@@ -74,7 +74,7 @@ public class ExDocumentoAdaptor extends ExAdaptor {
 
 	@Override
 	public String getIdsHql() {
-		return "select doc.idDoc from ExDocumento doc where doc.dtFinalizacao != null and doc.dtFinalizacao > :dt order by doc.idDoc desc";
+		return "select doc.idDoc from ExDocumento doc where doc.dtFinalizacao != null and doc.dtAltDoc != null and doc.dtAltDoc > :dt order by doc.idDoc desc";
 	}
 
 	/** Gives the bytes of a document referenced with id. */

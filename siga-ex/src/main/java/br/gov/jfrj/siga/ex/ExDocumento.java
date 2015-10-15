@@ -27,9 +27,7 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -44,7 +42,6 @@ import java.util.TreeSet;
 
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
 import org.apache.xerces.impl.dv.util.Base64;
-import org.hibernate.Hibernate;
 import org.hibernate.annotations.Entity;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
@@ -72,6 +69,7 @@ import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 import br.gov.jfrj.siga.ex.util.TipoMobilComparatorInverso;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 /**
@@ -80,7 +78,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
  */
 @Entity
 @Indexed
-public class ExDocumento extends AbstractExDocumento implements Serializable {
+public class ExDocumento extends AbstractExDocumento implements Serializable, CarimboDeTempo {
 
 	/**
          * 
@@ -2690,5 +2688,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		} catch (Exception e) {
 			return "";
 		} 
+	}
+
+	@Override
+	public Date getHisDtAlt() {
+		return getDtAltDoc();
+	}
+
+	@Override
+	public void setHisDtAlt(Date hisDtAlt) {
+		setDtAltDoc(hisDtAlt);
 	}
 }

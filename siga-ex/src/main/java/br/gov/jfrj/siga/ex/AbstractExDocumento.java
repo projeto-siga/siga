@@ -94,6 +94,9 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@Column(name = "DT_REG_DOC")
 	private java.util.Date dtRegDoc;
 
+	@Column(name = "DT_ALT_DOC")
+	private java.util.Date dtAltDoc;
+
 	@Column(name = "NM_ARQ_DOC")
 	private java.lang.String nmArqDoc;
 
@@ -875,5 +878,13 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setDnmExNivelAcesso(ExNivelAcesso dnmExNivelAcesso) {
 		this.dnmExNivelAcesso = dnmExNivelAcesso;
+	}
+
+	public java.util.Date getDtAltDoc() {
+		return dtAltDoc;
+	}
+
+	public void setDtAltDoc(java.util.Date dtAltDoc) {
+		this.dtAltDoc = dtAltDoc;
 	}
 }

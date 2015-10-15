@@ -84,7 +84,7 @@ function AssinarDocumentos(copia, politica) {
 }
 
 //
-//Provider: Localhost REST
+// Provider: Localhost REST
 //
 var providerLocalhostREST = {
 	nome : 'Localhost REST',
@@ -92,23 +92,23 @@ var providerLocalhostREST = {
 	testar : function() {
 		try {
 			var ret = "OK";
-				$.ajax({
-					type : "GET",
-					url : "http://localhost:8612/test",
-					dataType: 'json',
-					accepts : {
-						text : "application/json"
-					},
-					success : function(data, textStatus, XMLHttpRequest) {
-						if (data.errormsg != null)
-							throw data.errormsg;
-					},
-					error : function(jqXHR, textStatus, errorThrown) {
-						throw textStatus + ": " + errorThrown;
-					},
-					async : false,
-					cache : false
-				});
+			$.ajax({
+				type : "GET",
+				url : "http://localhost:8612/test",
+				dataType : 'json',
+				accepts : {
+					text : "application/json"
+				},
+				success : function(data, textStatus, XMLHttpRequest) {
+					if (data.errormsg != null)
+						throw data.errormsg;
+				},
+				error : function(jqXHR, textStatus, errorThrown) {
+					throw textStatus + ": " + errorThrown;
+				},
+				async : false,
+				cache : false
+			});
 
 			console.log("IttruREST: OK!");
 			return true;
@@ -124,7 +124,7 @@ var providerLocalhostREST = {
 			$.ajax({
 				type : "GET",
 				url : "http://localhost:8612/cert",
-				dataType: 'json',
+				dataType : 'json',
 				accepts : {
 					text : "application/json"
 				},
@@ -149,12 +149,19 @@ var providerLocalhostREST = {
 
 	assinar : function(conteudo) {
 		var ret = {};
+		var signreq = {
+			policy : (gPolitica ? "AD-RB" : "PKCS7"),
+			payload : conteudo,
+			certificate : gCertificadoB64
+		};
 		try {
 			$.ajax({
 				url : "http://localhost:8612/sign",
-				dataType:'json',
+				dataType : 'json',
+				contentType : "application/json",
 				type : "POST",
-				data : {policy: (gPolitica ? "AD-RB" : "PKCS7"), payload: conteudo, certificate: gCertificadoB64},
+				data : JSON.stringify(signreq),
+				processData: false,
 				async : false,
 				success : function(data, textStatus, XMLHttpRequest) {
 					ret.assinaturaB64 = data.sign;
@@ -177,7 +184,6 @@ var providerLocalhostREST = {
 		return ret;
 	}
 }
-
 
 //
 // Provider: Ittru ActiveX
@@ -386,7 +392,8 @@ var providerIttruP11 = {
 											.keyup(
 													function(event) {
 														if (event.keyCode == 13) {
-															$('.ui-dialog-buttonpane button:eq(0)')
+															$(
+																	'.ui-dialog-buttonpane button:eq(0)')
 																	.click();
 														}
 													});
@@ -425,7 +432,10 @@ var providerIttruP11 = {
 				var html = '<br /><label>Selecione o certificado que deseja usar:</label><br />';
 				for (var i = 0; i < json.length; i++) {
 					html += "<input type=\"radio\" name=\"cert_alias\" value=\""
-							+ json[i].alias + "\"" + (i==0?"checked":"") + "> " + json[i].subject + "<br>";
+							+ json[i].alias
+							+ "\""
+							+ (i == 0 ? "checked" : "")
+							+ "> " + json[i].subject + "<br>";
 				}
 				$("#certChoice").html(html);
 
@@ -593,7 +603,8 @@ function Conteudo(url) {
 	return "Não foi possível obter o conteúdo do documento a ser assinado.";
 }
 
-var providers = [ providerLocalhostREST, providerIttruAx, providerIttruCAPI, providerIttruP11 ];
+var providers = [ providerLocalhostREST, providerIttruAx, providerIttruCAPI,
+		providerIttruP11 ];
 
 //
 // Processamento de assinaturas em lote, com progress bar

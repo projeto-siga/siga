@@ -57,6 +57,14 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 	public String c3poMaxStatements  ( ) throws Exception {
 		return this.obterPropriedade("c3p0.max_statements");
 	}
+	public String cacheUseSecondLevelCache  ( ) throws Exception {
+		String s = this.obterPropriedade("cache.use_second_level_cache");
+		return s == null ? "true" : s;
+	}
+	public String cacheUseQueryCache  ( ) throws Exception {
+		String s = this.obterPropriedade("cache.use_query_cache");
+		return s == null ? "true" : s;
+	}
 	@Override
 	public String getPrefixoModulo() {
 		return "siga.cp";

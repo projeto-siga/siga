@@ -1,7 +1,6 @@
 package br.gov.jfrj.siga.sr.model;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,7 +38,7 @@ import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
-import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
+import br.gov.jfrj.siga.sr.util.SrViewUtil;
 
 @Entity
 @Table(name = "SR_MOVIMENTACAO", schema = "SIGASR")
@@ -247,21 +246,14 @@ public class SrMovimentacao extends Objeto {
     }
 
     public String getDtIniString() {
-        SigaPlayCalendar cal = new SigaPlayCalendar();
-        cal.setTime(getDtIniMov());
-        return "<span style=\"display: none\">" + new SimpleDateFormat("yyyyMMdd").format(dtIniMov)
-                + "</span>" + cal.getTempoTranscorridoString(false);
+        return SrViewUtil.toStr(getDtIniMov());
     }
 
-    public String getDtIniMovDDMMYYHHMM() {
-        if (getDtIniMov() != null) {
-            final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm");
-            return df.format(getDtIniMov());
-        }
-        return "";
+    public String getDtIniMovDDMMYYYYHHMM() {
+        return SrViewUtil.toDDMMYYYYHHMM(getDtIniMov());
     }
 
-    public String getDtAgendaDDMMYYHHMM() {
+    public String getDtAgendaDDMMYYYYHHMM() {
         if (getDtAgenda() != null) {
             DateTime dateTime = new DateTime(getDtAgenda());
             return dateTime.toString("dd/MM/yyyy HH:mm");
@@ -274,15 +266,6 @@ public class SrMovimentacao extends Objeto {
             return getAtendente().getSigla() + " (" + getLotaAtendente().getSigla() + ")";
         else
             return getLotaAtendente().getSigla();
-    }
-
-    public String getDtIniMovDDMMYYYYHHMM() {
-        if (getDtIniMov() != null) {
-            final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-            return df.format(getDtIniMov());
-        }
-        return "";
-
     }
 
     public String getCadastranteString() {
@@ -660,6 +643,10 @@ public class SrMovimentacao extends Objeto {
     
     public SrPrioridade getPrioridade() {
         return prioridade;
+    }
+    
+    public String getPrioridadeString(){
+        return prioridade == null ? "" : prioridade.getDescPrioridade();
     }
 
     public void setPrioridade(SrPrioridade prioridade) {

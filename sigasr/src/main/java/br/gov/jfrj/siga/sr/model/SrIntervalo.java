@@ -1,7 +1,8 @@
 package br.gov.jfrj.siga.sr.model;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import br.gov.jfrj.siga.sr.util.SrViewUtil;
 
 public abstract class SrIntervalo {
 
@@ -43,11 +44,11 @@ public abstract class SrIntervalo {
 	}
 	
 	public String getInicioString() {
-		return toStr(getInicio());
+		return SrViewUtil.toDDMMYYYYHHMMSS(getInicio());
 	}
 
 	public String getFimString() {
-		return toStr(getFim());
+		return SrViewUtil.toDDMMYYYYHHMM(getFim());
 	}
 
 	public boolean isInfinita() {
@@ -84,11 +85,6 @@ public abstract class SrIntervalo {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
-	}
-	
-	public String toStr(Date dt) {
-		return dt != null ? new SimpleDateFormat("dd/MM/yyyy HH:mm").format(dt)
-				: "";
 	}
 	
 	public Long segundos(Long millis){

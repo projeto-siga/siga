@@ -1,11 +1,11 @@
 package br.gov.jfrj.siga.sr.model;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.sr.util.SrViewUtil;
 
 
 public class SrAtendimento implements Comparable<SrAtendimento> {
@@ -115,19 +115,11 @@ public class SrAtendimento implements Comparable<SrAtendimento> {
 	}
 
 	public String getDataInicioDDMMYYYYHHMMSS() {
-		if (dataInicio != null) {
-			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			return df.format(dataInicio);
-		}
-		return "";
+		return SrViewUtil.toDDMMYYYYHHMMSS(dataInicio);
 	}
 	
 	public String getDataFinalDDMMYYYYHHMMSS() {
-		if (dataFinal != null) {
-			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			return df.format(dataFinal);
-		}
-		return "";
+		return SrViewUtil.toDDMMYYYYHHMMSS(dataFinal);
 	}
 	
 	public enum SrFaixa {		

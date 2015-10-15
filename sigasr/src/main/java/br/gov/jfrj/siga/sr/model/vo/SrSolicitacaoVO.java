@@ -1,6 +1,5 @@
 package br.gov.jfrj.siga.sr.model.vo;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -56,7 +55,7 @@ public class SrSolicitacaoVO {
 
 		this.setDtReg(sol.getSolicitacaoInicial().getDtRegString());
 		
-		this.setPrazo(prazo != null ? new SimpleDateFormat("dd/MM/yyyy HH:mm").format(prazo) : "");
+		this.setPrazo(prazo != null ? SrViewUtil.toDDMMYYYYHHMM(prazo) : "");
 		
 		if (isPopup)
 			setCodigo("<a href=\"javascript:opener.retorna_" + propriedade
@@ -68,7 +67,8 @@ public class SrSolicitacaoVO {
 					+ "\">" + sol.getCodigo() + "</a>");
 
 		this.setDescrSolicitacao("<b>"
-				+ (sol.getDnmItemConfiguracao() != null ? sol.getDnmItemConfiguracao().getDescricao() : "Item Não Informado")
+				+ (ultMov != null ? ultMov.getItemConfiguracao().getDescricao() : 
+					sol.getItemConfiguracao() != null ? sol.getItemConfiguracao() : "Item Não Informado")
 				+ ":</b>&nbsp;" + SrViewUtil.selecionado(sol.getDescricao(), sol.getDescricao()));
 
 		String nomeCadastranteAbreviado = sol.getCadastrante() != null ? sol
@@ -95,11 +95,11 @@ public class SrSolicitacaoVO {
 				.getPrioridade() : null);
 		this.setNaoReposicionarAutomaticoNaLista(prioridadeSolicitacao != null ? prioridadeSolicitacao
 				.getNaoReposicionarAutomatico() : false);
-		this.setPrioridadeTecnica(sol.getDnmPrioridadeTecnicaString());
+		this.setPrioridadeTecnica(ultMov != null ? ultMov.getPrioridadeString() : sol.getPrioridadeString());
 		
 		if (prioridadeSolicitacao != null)
 			this.setCssClass("PRIORIDADE-" + prioridadeSolicitacao.getPrioridade());
-		else this.setCssClass("PRIORIDADE-" + sol.getDnmPrioridadeTecnica());
+		else this.setCssClass("PRIORIDADE-" + (ultMov != null ? ultMov.getPrioridade() : sol.getPrioridade()));
 
 		this.setSituacao(m.getCpMarcador().getDescrMarcador());
 

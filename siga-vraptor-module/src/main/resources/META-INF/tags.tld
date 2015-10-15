@@ -19,14 +19,6 @@
 		<path>/META-INF/tags/dataCalendar.tag</path>
 	</tag-file>
 	<tag-file>
-		<name>desativarReativar</name>
-		<path>/META-INF/tags/desativarReativar.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>designacao</name>
-		<path>/META-INF/tags/designacao.tag</path>
-	</tag-file>
-	<tag-file>
 		<name>div</name>
 		<path>/META-INF/tags/div.tag</path>
 

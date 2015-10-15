@@ -679,11 +679,12 @@ public class SolicitacaoController extends SrController {
     		
     	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         
-        if (criaFilha){
+        if (criaFilha) {
         	SrSolicitacao filha = solicitacao.escalonarCriandoFilha(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 
         			itemConfiguracao, acao, designacao, atendenteNaoDesignado, fechadoAuto, descricao);
         	result.redirectTo(this).exibir(filha.getSiglaCompacta(), todoOContexto(), ocultas());
-        } else {
+        } 
+        else {
         	solicitacao.escalonarPorMovimentacao(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 
         			itemConfiguracao, acao, designacao, atendenteNaoDesignado, motivo, descricao, atendente);
         	result.redirectTo(this).exibir(solicitacao.getSiglaCompacta(), todoOContexto(), ocultas());

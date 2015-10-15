@@ -1,12 +1,10 @@
 package br.gov.jfrj.siga.sr.model;
 
-import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_AVALIACAO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_DESENTRANHAMENTO;
-import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA;
@@ -17,7 +15,6 @@ import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_VIN
 import static org.joda.time.format.DateTimeFormat.forPattern;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -83,6 +80,7 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.vo.ListaInclusaoAutomatica;
 import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
 import br.gov.jfrj.siga.sr.notifiers.Destinatario;
+import br.gov.jfrj.siga.sr.util.SrViewUtil;
 import br.gov.jfrj.siga.sr.util.Util;
 import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
 
@@ -162,10 +160,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     @ManyToOne
     @JoinColumn(name = "ID_ITEM_CONFIGURACAO")
     private SrItemConfiguracao itemConfiguracao;
-    
-    @ManyToOne
-    @JoinColumn(name = "DNM_ID_ITEM_CONFIGURACAO")
-    private SrItemConfiguracao dnmItemConfiguracao;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ID_ARQUIVO")
@@ -176,8 +170,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     private SrAcao acao;
     
     @ManyToOne
-    @JoinColumn(name = "DNM_ID_ACAO")
-    private SrAcao dnmAcao;
+    @JoinColumn(name = "DNM_ID_ULT_MOV")
+    private SrMovimentacao dnmUltimaMovimentacao;
 
     @Lob
     @Column(name = "DESCR_SOLICITACAO", length = 8192)
@@ -188,10 +182,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     @Enumerated
     private SrPrioridade prioridade;
-    
-    @Enumerated
-    @Column(name="DNM_PRIORIDADE_TECNICA")
-    private SrPrioridade dnmPrioridadeTecnica;
 
     @Column(name = "DT_REG")
     @Temporal(TemporalType.TIMESTAMP)
@@ -533,15 +523,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public SrPrioridade getPrioridadeTecnica(){
-       return getDnmPrioridadeTecnica();
-    }
-
-    public String getPrioridadeTecnicaString(){
-        return getPrioridadeTecnica() == null ? "" : getPrioridadeTecnica().getDescPrioridade();
-    }
-    
-    public String getDnmPrioridadeTecnicaString(){
-        return getDnmPrioridadeTecnica() == null ? "" : getDnmPrioridadeTecnica().getDescPrioridade();
+    	SrMovimentacao ultMov = getUltimaMovimentacao();
+		return ultMov != null ? ultMov.getPrioridade() : getPrioridade();
     }
 
     public String getAtributosString() {
@@ -568,35 +551,19 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public String getDtRegDDMMYYYYHHMM() {
-        if (getDtReg() != null) {
-            final SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY_HH_MM);
-            return df.format(getDtReg());
-        }
-        return "";
+        return SrViewUtil.toDDMMYYYYHHMM(getDtReg());
     }
 
     public String getDtRegDDMMYYYY() {
-        if (getDtReg() != null) {
-            final SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY);
-            return df.format(getDtReg());
-        }
-        return "";
+        return SrViewUtil.toDDMMYYYY(getDtReg());
     }
 
     public String getDtRegHHMM() {
-        if (getDtReg() != null) {
-            final SimpleDateFormat df = new SimpleDateFormat(HH_MM);
-            return df.format(getDtReg());
-        }
-        return "";
+        return SrViewUtil.toHHMM(getDtReg());
     }
     
 	public String getHisDtIniDDMMYYYYHHMM() {
-		if (getHisDtIni() != null) {
-			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-			return df.format(getHisDtIni());
-		}
-		return "";
+		return SrViewUtil.toDDMMYYYYHHMM(getHisDtIni());
 	}
 
     public Long getProximoNumero() {
@@ -607,9 +574,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public String getAnoEmissao() {
-        if (getDtReg() == null)
-            return null;
-        return new SimpleDateFormat("yyyy").format(getDtReg());
+        return SrViewUtil.toYYYY(getDtReg());
     }
 
     public String getNumSequenciaString() {
@@ -1657,12 +1622,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
         if (getGravidade() == null)
             setGravidade(SrGravidade.SEM_GRAVIDADE);
-        
+
         setPrioridade(getGravidadesDisponiveisEPrioridades().get(getGravidade()));
-        
-        setDnmPrioridadeTecnica(getPrioridade());
-        setDnmItemConfiguracao(getItemConfiguracao());
-        setDnmAcao(getAcao());
     }
 
     public void desfazerUltimaMovimentacao(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
@@ -1690,18 +1651,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
                     this.save();
                 }
                 
-                if (movimentacao.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_ESCALONAMENTO){
-                	SrMovimentacao anterior = movimentacao.getAnteriorPorTipo(TIPO_MOVIMENTACAO_ESCALONAMENTO);
-                	setDnmItemConfiguracao(anterior != null ? anterior.getItemConfiguracao() : this.getItemConfiguracao());
-                	setDnmAcao(anterior != null ? anterior.getAcao() : this.getAcao());
-                	this.save();
-                }
-                
-                if (movimentacao.getTipoMov().getIdTipoMov() == TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE){
-                	SrMovimentacao anterior = movimentacao.getAnteriorPorTipo(TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE);
-                	setDnmPrioridadeTecnica(anterior != null ? anterior.getPrioridade() : this.getPrioridade());
-                	this.save();
-                }
             }
 
             movimentacao.desfazer(cadastrante, lotaCadastrante, titular, lotaTitular);
@@ -2315,9 +2264,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         		+ "; Ação: " + mov.getAcao().getTituloAcao()
                 + "; Atendente: " + mov.getLotaAtendente().getSigla());
         mov.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        
-        setDnmItemConfiguracao(mov.getItemConfiguracao());
-        setDnmAcao(mov.getAcao());
         save();
     }
         
@@ -2431,7 +2377,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         if (detalheMotivo != null && !"".equals(detalheMotivo.trim()))
             movimentacao.setDescrMovimentacao(movimentacao.getDescrMovimentacao() + " | " + detalheMotivo);
         if (movimentacao.getDtAgenda() != null)
-            movimentacao.setDescrMovimentacao(movimentacao.getDescrMovimentacao() + " | Fim previsto: " + movimentacao.getDtAgendaDDMMYYHHMM());
+            movimentacao.setDescrMovimentacao(movimentacao.getDescrMovimentacao() + " | Fim previsto: " + movimentacao.getDtAgendaDDMMYYYYHHMM());
         movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
     }
 
@@ -2443,7 +2389,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         movimentacao.setDescrMovimentacao("Prioridade tecnica: " + prioridade.getDescPrioridade());
         movimentacao.setPrioridade(prioridade);
         movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
-        setDnmPrioridadeTecnica(movimentacao.getPrioridade());
         save();
     }
 
@@ -2461,7 +2406,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         movFinalizada.setMovFinalizadora(movimentacao);
 
         movimentacao.setDescrMovimentacao(descricao != null ? descricao : "");
-        movimentacao.setDescrMovimentacao(movimentacao.getDescrMovimentacao() + " | Terminando pendencia iniciada em " + movFinalizada.getDtIniMovDDMMYYHHMM());
+        movimentacao.setDescrMovimentacao(movimentacao.getDescrMovimentacao() + " | Terminando pendencia iniciada em " + movFinalizada.getDtIniMovDDMMYYYYHHMM());
         movimentacao = movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
         movFinalizada.save();
     }
@@ -2556,36 +2501,19 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
     
     public String getDtOrigemDDMMYYYYHHMM() {
-        if (getDtOrigem() != null) {
-            final SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY_HH_MM);
-            return df.format(getDtOrigem());
-        }
-        return "";
+        return SrViewUtil.toDDMMYYYYHHMM(getDtOrigem());
     }
 
     public String getDtOrigemHHMM() {
-        if (getDtOrigem() != null) {
-            final SimpleDateFormat df = new SimpleDateFormat(HH_MM);
-            return df.format(getDtOrigem());
-        }
-        return "";
+        return SrViewUtil.toHHMM(getDtOrigem());
     }
 
     public String getDtOrigemDDMMYYYY() {
-        if (getDtOrigem() != null) {
-            final SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY);
-            return df.format(getDtOrigem());
-        }
-        return "";
+        return SrViewUtil.toDDMMYYYY(getDtOrigem());
     }
 
     public String getDtOrigemString() {
-        if (getDtOrigem() != null) {
-            SigaPlayCalendar cal = new SigaPlayCalendar();
-            cal.setTime(getDtOrigem());
-            return cal.getTempoTranscorridoString(false);
-        }
-        return "";
+       return SrViewUtil.toStr(getDtOrigem());
     }
 
     public void setDtOrigemString(String stringDtMeioContato) {
@@ -2595,20 +2523,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public String getDtIniEdicaoDDMMYYYYHHMMSS() {
-        if (getDtIniEdicao() != null) {
-            final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            return df.format(getDtIniEdicao());
-        }
-        return "";
+        return SrViewUtil.toDDMMYYYYHHMMSS(getDtIniEdicao());
     }
 
     public void setDtIniEdicaoDDMMYYYYHHMMSS(String string) {
-        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        try {
-            this.setDtIniEdicao(df.parse(string));
-        } catch (Exception e) {
-
-        }
+        setDtIniEdicao(SrViewUtil.fromDDMMYYYYHHMMSS(string));
     }
 
     public Date getDtInicioPrimeiraEdicao() {
@@ -3453,30 +3372,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return tempoAtendimento;
 	}*/
-
-	public SrItemConfiguracao getDnmItemConfiguracao() {
-		return dnmItemConfiguracao;
-	}
-	
-	public void setDnmItemConfiguracao(SrItemConfiguracao dnmItemConfiguracao) {
-		this.dnmItemConfiguracao = dnmItemConfiguracao;
-	}
-	
-	public SrAcao getDnmAcao() {
-		return dnmAcao;
-	}
-	
-	public void setDnmAcao(SrAcao dnmAcao) {
-		this.dnmAcao = dnmAcao;
-	}
-	
-	public SrPrioridade getDnmPrioridadeTecnica() {
-		return dnmPrioridadeTecnica;
-	}
-	
-	public void setDnmPrioridadeTecnica(SrPrioridade dnmPrioridadeTecnica) {
-		this.dnmPrioridadeTecnica = dnmPrioridadeTecnica;
-	}
 	
 	@Override
 	public String toString() {

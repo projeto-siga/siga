@@ -8,6 +8,7 @@ import java.util.TreeSet;
 
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.sr.util.SrViewUtil;
 
 public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParametroAcordoSolicitacao, Comparable<SrEtapaSolicitacao> {
 
@@ -134,7 +135,7 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 	}
 	
 	public String getFimPrevistoString() {
-		return toStr(getFimPrevisto());
+		return SrViewUtil.toDDMMYYYYHHMMSS(getFimPrevisto());
 	}
 
 	public List<? extends SrIntervaloCorrente> getIntervalosCorrentes() {

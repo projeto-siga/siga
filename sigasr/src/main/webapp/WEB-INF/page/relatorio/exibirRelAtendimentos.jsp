@@ -20,7 +20,7 @@
                 <tr> 
                 	<td style="width: 20%;"> Lotação Atendente</td>
                 	<td style="width: 80%;"> 
-                		<select name="tipo" id="tipo" onchange="javascript: selecionarTipoLotacao(this);definirPlaceHolder(this);" 
+                		<select name="tipo" id="tipo" onchange="javascript: selecionarTipoLotacao(this);limparTagSelecao();definirPlaceHolder(this);" 
                 			style="float:left; margin-right:10px;">
                 			<option value="lotacao">Lotação</option>
                 			<option value="lista_lotacao">Lista de Lotações</option>
@@ -114,7 +114,7 @@
 			$('#lotacao, #lista_lotacao').hide();
 		}
 	}
-	//-- inicio: essas funcoes existem porque IE9+ nao aceita o atributo placeholder
+	//-- inicio: essas funcoes existem porque IE9+ nao aceitam o atributo placeholder
 	function definirPlaceHolder(selecao) {
 		var tipo = selecao.value;
 		if (tipo != "lotacao") {
@@ -139,6 +139,14 @@
 			$("#" + tipo + " > input").attr("value", window[tipo + '_placeHolder']).css({"color": "#999"});
 	}
 	//-- fim
+	// limpa campos do componente de busca - tag selecao da lotacao
+	function limparTagSelecao() {
+		$("#formulario_lotacao_id").val('');
+		$("#formulario_lotacao_descricao").val('');
+		$("#formulario_lotacao_sigla").val('');
+		$("#lotacaoSpan").html('');
+	}
+
 </script>
 
 </siga:pagina>

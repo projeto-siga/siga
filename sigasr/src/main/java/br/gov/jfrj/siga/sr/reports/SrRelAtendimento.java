@@ -22,6 +22,7 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.sr.model.SrAtendimento;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
@@ -45,18 +46,18 @@ public class SrRelAtendimento extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, ColumnBuilderException {
 		
-		this.setTitle("Relatorio de Atendimentos");
-		this.addColuna("Solicitacao", 25, RelatorioRapido.ESQUERDA, false);
+		this.setTitle("Relatório de Atendimentos");
+		this.addColuna("Solicitação", 25, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Data de Abertura", 20, RelatorioRapido.CENTRO, false);
 		this.addColuna("Equipe Atendente", 15, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Pessoa Atendente", 18, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Data de Inicio Atendimento", 20, RelatorioRapido.CENTRO, false);
+		this.addColuna("Data de Início Atendimento", 20, RelatorioRapido.CENTRO, false);
 		this.addColuna("Data de Fim Atendimento", 20, RelatorioRapido.CENTRO, false);
 		this.addColuna("Tipo de Atendimento", 28, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Proximo Atendente", 15, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Item Configuracao", 50, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Acao", 50, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Solicitacao Fechada?", 15, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Próximo Atendente", 15, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Item de Configuração", 50, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Ação", 50, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Solicitação Fechada?", 15, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Tempo de Atendimento", 26, RelatorioRapido.DIREITA, false);
 		this.addColuna("Faixa", 18, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Totalizador (%)", 14, RelatorioRapido.DIREITA, false, Number.class);

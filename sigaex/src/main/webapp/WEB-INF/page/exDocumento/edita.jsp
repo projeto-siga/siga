@@ -1,3 +1,4 @@
+
 <%@ page language="java" contentType="text/html; charset=UTF-8"buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
@@ -251,7 +252,10 @@
 						<input type="hidden" name="campos" value="tipoDestinatario" />
 						<td colspan="3">
 							
-							<select  name="exDocumentoDTO.tipoDestinatario" onchange="javascript:sbmt();">
+							<!-- <select  name="exDocumentoDTO.tipoDestinatario" onchange="javascript:sbmt();">  -->
+							
+							<select  name="exDocumentoDTO.tipoDestinatario" onkeypress="presskeySelect(event, this, 'tipoDestinatario')" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
+							onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, 'tipoDestinatario')">
 								<c:forEach items="${exDocumentoDTO.listaTipoDest}" var="item">
 									<option value="${item.key}" ${item.key == exDocumentoDTO.tipoDestinatario ? 'selected' : ''}>
 										${item.value}
@@ -262,7 +266,7 @@
 							<siga:span id="destinatario" depende="tipoDestinatario">
 								<c:choose>
 									<c:when test='${exDocumentoDTO.tipoDestinatario == 1}'>
-										<input type="hidden" name="campos" value="destinatarioSel.id" />
+										<input type="hidden" name="campos" value="destinatario" />
 										<siga:selecao propriedade="destinatario" inputName="exDocumentoDTO.destinatario" tema="simple" idAjax="destinatario" reler="ajax" modulo="siga" />
 										<!--  idAjax="destinatario"  -->										    
 									</c:when>
@@ -297,7 +301,8 @@
 						<tr style="display: ${(exDocumentoDTO.formasDoc).size() != 1 ? 'visible' : 'none'};">
 							<td>Espécie:</td>
 							<td colspan="3">
-								<select  name="exDocumentoDTO.idFormaDoc" onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();" style="${estiloTipo}">
+								<select  name="exDocumentoDTO.idFormaDoc" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
+								onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)" style="${estiloTipo}">
 									<c:forEach items="${exDocumentoDTO.formasDoc}" var="item">
 										<option value="${item.idFormaDoc}" ${item.idFormaDoc == exDocumentoDTO.idFormaDoc ? 'selected' : ''}>
 											${item.descrFormaDoc}
@@ -316,7 +321,7 @@
 									<td colspan="3">
 										<siga:div id="modelo" depende="forma">
 											<%-- onchange="document.getElementById('alterouModelo').value='true';sbmt();" --%>
-											<select name="exDocumentoDTO.idMod" style="${estiloTipo}" class="dependent">
+											<select name="exDocumentoDTO.idMod" style="${estiloTipo}" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';" onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)">
 												<c:forEach items="${exDocumentoDTO.modelos}" var="item">
 													<option value="${item.idMod}" ${item.idMod == exDocumentoDTO.idMod ? 'selected' : ''}>
 														${item.nmMod}
@@ -380,7 +385,7 @@
 						<td colspan="3">
 						    <input type="hidden" name="campos" value="classificacaoSel.id" />
 							<siga:span id="classificacao" depende="forma;modelo">
-							<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"  inputName="exDocumentoDTO.classificacao" urlAcao="buscar" urlSelecionar="selecionar" idAjax="classificacao" reler="ajax" tema="simple" />
+							<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"  inputName="exDocumentoDTO.classificacao" urlAcao="buscar" urlSelecionar="selecionar" tema="simple" />
 							<!--  idAjax="classificacao" -->
 						</siga:span></td>
 					</tr>
@@ -466,7 +471,6 @@
 <script src="/siga/javascript/jquery.dependent-selects.js"></script>
 
 <script type="text/javascript">
-
 function presskeySelect(event, id, parameter) {
     if (event.type == 'keypress') {
         if(event.keyCode == '13'){
@@ -481,36 +485,6 @@ function mouseSelect(event, id, parameter) {
 			sbmt(parameter);
         }
     }
-}
-
-function sbmt(id) {
-	var frm = document.getElementById('frm');
-	
-	//Dispara a função onSave() do editor, caso exista
-    if (typeof(onSave) == "function"){
-    	onSave();
-    } 
-	
-	if (id != null || IsRunningAjaxRequest()) {
-		frm.action='<ww:property value="%{url}"/>';
-		ReplaceInnerHTMLFromAjaxResponse('<ww:property value="%{url}"/>', frm, id);
-	} else {
-		frm.submit();
-	}
-	return;
-	
-	if (typeof(frm.submitsave) == "undefined")
-		frm.submitsave = frm.submit;
-	frm.action='<ww:property value="%{url}"/>';
-                    
-	if (id == null || typeof(id) == 'undefined' || IsRunningAjaxRequest()) {
-		window.customOnsubmit = function() {return true;};
-		frm.onsubmit = null;
-		frm.submit = frm.submitsave;
-		frm.submit();
-	} else {
-		ReplaceInnerHTMLFromAjaxResponse('<ww:property value="%{url}"/>', frm, id);
-	}
 }
 
 $(document).ready(function() {$('.dependent').dependentSelects({

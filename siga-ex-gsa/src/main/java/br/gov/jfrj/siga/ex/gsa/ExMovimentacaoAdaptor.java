@@ -71,7 +71,7 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 
 	@Override
 	public String getIdsHql() {
-		return "select mov.idMov from ExMovimentacao mov where mov.exTipoMovimentacao.idTpMov in (2, 5, 6, 7, 8, 18) and (:dt is null or mov.exMobil.exDocumento.dtFinalizacao > :dt or mov.dtIniMov > :dt) order by mov.idMov desc";
+		return "select mov.idMov from ExMovimentacao mov where mov.exTipoMovimentacao.idTpMov in (2, 5, 6, 7, 8, 18) and mov.exMobil.exDocumento.dtFinalizacao != null and (:dt is null or mov.exMobil.exDocumento.dtAltDoc > :dt or mov.dtIniMov > :dt) order by mov.idMov desc";
 	}
 
 	/** Gives the bytes of a document referenced with id. */

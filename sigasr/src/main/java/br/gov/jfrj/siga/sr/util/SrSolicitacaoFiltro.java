@@ -80,7 +80,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		StringBuilder query = new StringBuilder("");
 		// Edson: foi necessario separar em subquery porque o Oracle nao aceita
 		// distinct em coluna CLOB em query contendo join
-		query.append("select sol, situacao, ultMov");
+		query.append("select sol, situacao, ultMov, marcaPrazo.dtIniMarca as prazo ");
 		query.append(idListaPrioridade > 0 ? ", l " : " "); 
 				
 		incluirJoinsEWheres(query);
@@ -116,6 +116,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" ultMov.dtIniMov ");
 		else if (orderBy.equals("ultimaMovimentacao"))
 			query.append(" ultMov.descrMovimentacao ");
+		else if (orderBy.equals("prazo"))
+			query.append(" marcaPrazo.dtIniMarca ");
 		else {
 			query.append(" sol.idSolicitacao ");
 		}
@@ -146,6 +148,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" inner join sol.meuMarcaSet situacaoAux ");
 		
 		query.append(" left join sol.meuMovimentacaoSet ultMov ");
+		
+		query.append(" left join sol.meuMarcaSet marcaPrazo ");
 		
 		query.append(idListaPrioridade != null && idListaPrioridade > 0 ? " inner join sol.meuPrioridadeSolicitacaoSet l " : "");
 		

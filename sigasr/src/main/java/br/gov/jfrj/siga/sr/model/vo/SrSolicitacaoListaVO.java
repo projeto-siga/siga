@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.sr.model.vo;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -12,8 +13,8 @@ import br.gov.jfrj.siga.sr.model.SrPrioridadeSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.util.JsonUtil;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
-import br.gov.jfrj.siga.sr.util.SrViewUtil;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro.SentidoOrdenacao;
+import br.gov.jfrj.siga.sr.util.SrViewUtil;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -102,6 +103,9 @@ public class SrSolicitacaoListaVO {
 		ColunaVO dtUltMov = new ColunaVO("Data Últ. Movim.",
 				"dtUltimaMovimentacao",
 				"gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO).setExibirPorDefault(false);
+		ColunaVO prazo = new ColunaVO("Prazo",
+				"prazo",
+				"gt-celula-nowrap solicitacao-dados", LARGURA_COLUNA_CODIGO).setExibirPorDefault(false);
 		ColunaVO botaoRemoverPriorizar = new ColunaVO(
 				"",
 				"botaoRemoverPriorizar",
@@ -124,6 +128,7 @@ public class SrSolicitacaoListaVO {
 		colunas.add(lotaCad);
 		colunas.add(prioridade);
 		colunas.add(prioridadeTecnica);
+		colunas.add(prazo);
 		colunas.add(situacao);
 		colunas.add(atendente);
 		colunas.add(lotaAtendente);
@@ -168,15 +173,16 @@ public class SrSolicitacaoListaVO {
 				SrSolicitacao sol = (SrSolicitacao) o[0];
 				SrMarca m = (SrMarca) o[1];
 				SrMovimentacao mov = (SrMovimentacao) o[2];
+				Date dt = (Date) o[3];
 				SrPrioridadeSolicitacao p = null;
 				try{
-					p = (SrPrioridadeSolicitacao) o[3];
+					p = (SrPrioridadeSolicitacao) o[4];
 				} catch(ArrayIndexOutOfBoundsException aioobe){
 					//
 				}
 
 				getData().add(
-						new SrSolicitacaoVO(sol, m, mov, lista, p,
+						new SrSolicitacaoVO(sol, m, mov, dt, lista, p,
 								lotaTitular, cadastrante, propriedade, isPopup,
 								isPodeRemover(), isPodePriorizar()));
 			}

@@ -1866,12 +1866,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
                 acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_COMO_CADASTRANTE, null, null, getCadastrante(), getLotaCadastrante());
                 acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_COMO_SOLICITANTE, null, null, getSolicitante(), getLotaSolicitante());
 
-                Date prazo = getDtPrazoAtendimentoPrevisto();
+                Date prazo = null;
+                SrEtapaSolicitacao atendimentoGeral = getAtendimentoGeral();
+                SrEtapaSolicitacao atendimentoAtual = (SrEtapaSolicitacao)atendimentoGeral.getIntervaloCorrendoNaData(new Date());
+                prazo = atendimentoGeral.getFimPrevisto();
+                if (prazo == null)
+                	prazo = atendimentoAtual.getFimPrevisto();
                 if (prazo != null)
-                    acrescentarMarca(set, 
-                    		CpMarcador.MARCADOR_SOLICITACAO_FORA_DO_PRAZO,
-                    		prazo, null, movMarca.getAtendente(),
-                    		movMarca.getLotaAtendente());
+                    acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_FORA_DO_PRAZO,
+                    	prazo, null, movMarca.getAtendente(), movMarca.getLotaAtendente());
+                
             }
            
             if (marcador == CpMarcador.MARCADOR_SOLICITACAO_FECHADO
@@ -2800,40 +2804,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     		if (par.getParametro().equals(p))
     			l.add(par);
     	return l;
-    }
-    
-    public Date getDtPrazoCadastramentoPrevisto(){
-    	return getCadastro().getFimPrevisto();
-    }
-    
-    public Date getDtPrazoAtendimentoPrevisto(){
-    	return getAtendimentoGeral().getFimPrevisto();
-    }
-
-    public String getDtPrazoCadastramentoPrevistoDDMMYYYYHHMM(){
-        Date dt = getDtPrazoCadastramentoPrevisto();
-        if (dt != null) {
-                final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-                return "<span style=\"display: none\">" + new SimpleDateFormat("yyyyMMdd").format(dt)
-                                + "</span>" + df.format(dt);
-        }
-        return "";
-    }
-    
-    public String getDtPrazoAtendimentoPrevistoDDMMYYYYHHMM(){
-        Date dt = getDtPrazoAtendimentoPrevisto();
-        if (dt != null) {
-                final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-                return "<span style=\"display: none\">" + new SimpleDateFormat("yyyyMMdd").format(dt)
-                                + "</span>" + df.format(dt);
-        }
-        return "";
-    }
-    
-    public String getDtPrazoDDMMYYYYHHMM(){
-    	if (jaFoiDesignada())
-    		return getDtPrazoAtendimentoPrevistoDDMMYYYYHHMM();
-    	else return getDtPrazoCadastramentoPrevistoDDMMYYYYHHMM();
     }
     
     @Override

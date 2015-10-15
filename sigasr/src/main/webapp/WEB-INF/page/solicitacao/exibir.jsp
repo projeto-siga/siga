@@ -61,9 +61,9 @@
 			<sigasr:linkSr acoes="${solicitacao.operacoes(titular, lotaTitular)}" />
 			<div class="gt-content-box" style="padding: 10px">
 				<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
-					${solicitacao.itemAtual}
+					${solicitacao.descrItemAtual}
 					-
-					${solicitacao.acaoAtual}
+					${solicitacao.descrAcaoAtual}
 				</p>
 				<p id="descrSolicitacao" style="font-size: 9pt;">${solicitacao.descricao}</p>
 				<script language="javascript">
@@ -399,6 +399,7 @@
 					${solicitacao.cadastrante.descricaoIniciaisMaiusculas},
 					${solicitacao.lotaTitular.siglaLotacao}
 				</p>
+				<p><b>Cadastrado em:</b> ${solicitacao.dtRegDDMMYYYYHHMM}</p>
 				<p>
 					<b>Item de Configura&ccedil;&atilde;o:</b> ${solicitacao.descrItemAtualCompleta}
 				</p>

@@ -59,7 +59,7 @@
 				</table>
 			</div>
 			</c:if> 
-			<c:if test="${not empty listaMaisVisitados}">
+			<c:if test="${empty listaMaisVisitados}">
 				<h6 style="background:#d8d8c0;padding:3px 10px;">Nenhum conhecimento visitado.</h6>
 			</c:if>
 			<br />

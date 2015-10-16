@@ -4276,7 +4276,7 @@ public class ExBL extends CpBL {
 			cancelarMovimentacoesReferencia(cadastrante, lotaCadastrante, doc);
 
 			ExDocumento novoDoc = duplicarDocumento(cadastrante,
-					lotaCadastrante, doc);
+					lotaCadastrante, doc, true);
 
 			cancelarMovimentacoes(cadastrante, lotaCadastrante, doc);
 
@@ -4297,7 +4297,7 @@ public class ExBL extends CpBL {
 			iniciarAlteracao();
 
 			ExDocumento novoDoc = duplicarDocumento(cadastrante,
-					lotaCadastrante, doc);
+					lotaCadastrante, doc, false);
 
 			concluirAlteracao(novoDoc);
 			return novoDoc;
@@ -4309,7 +4309,7 @@ public class ExBL extends CpBL {
 	}
 
 	private ExDocumento duplicarDocumento(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc, final boolean refazendo) throws Exception {
 		ExDocumento novoDoc = new ExDocumento();
 
 		novoDoc.setConteudoBlobDoc(doc.getConteudoBlobDoc());
@@ -4357,7 +4357,12 @@ public class ExBL extends CpBL {
 		novoDoc.setObsOrgao(doc.getObsOrgao());
 		novoDoc.setOrgaoExterno(doc.getOrgaoExterno());
 		novoDoc.setOrgaoExternoDestinatario(doc.getOrgaoExternoDestinatario());
-		novoDoc.setExMobilPai(null);
+		
+		if(refazendo)
+			novoDoc.setExMobilPai(doc.getExMobilPai());
+		else
+			novoDoc.setExMobilPai(null);
+		
 		novoDoc.setOrgaoUsuario(cadastrante.getOrgaoUsuario());
 
 		if (doc.getTitular() != null && !doc.getTitular().isFechada())

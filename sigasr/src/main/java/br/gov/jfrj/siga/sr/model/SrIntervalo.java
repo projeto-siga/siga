@@ -51,7 +51,7 @@ public abstract class SrIntervalo {
 		return SrViewUtil.toDDMMYYYYHHMM(getFim());
 	}
 
-	public boolean isInfinita() {
+	public boolean isInfinito() {
 		return fim == null;
 	}
 

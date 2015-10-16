@@ -171,7 +171,7 @@
 									<tr <c:if test="${movimentacao.canceladoOuCancelador}"> class="disabled" </c:if>>
 										<c:choose>
 											<c:when test="${ocultas}">
-												<td>${movimentacao.dtIniMovDDMMYYHHMM}</td>
+												<td>${movimentacao.dtIniMovDDMMYYYYHHMM}</td>
 											</c:when>
 											<c:otherwise>
 												<td>${movimentacao.dtIniString}</td>

@@ -107,8 +107,6 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 		SrIntervaloCorrente i = null;
 		while (it.hasNext()) {
 			i = it.next();
-			if (i.isFuturo())
-				break;
 			Date dt = i.getDataContandoDoInicio(millisAdiante);
 			if (dt != null)
 				return dt;

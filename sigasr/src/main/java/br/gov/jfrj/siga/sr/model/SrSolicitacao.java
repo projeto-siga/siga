@@ -88,9 +88,6 @@ import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
 @Table(name = "SR_SOLICITACAO", schema = "SIGASR")
 public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     private static final String MODAL_TRUE = "modal=true";
-    private static final String HH_MM = "HH:mm";
-    private static final String DD_MM_YYYY = "dd/MM/yyyy";
-    private static final String DD_MM_YYYY_HH_MM = "dd/MM/yyyy HH:mm";
     private static final String OPERACAO_NAO_PERMITIDA = "Opera\u00E7\u00E3o n\u00E3o permitida";
     
     private static final long serialVersionUID = 1L;
@@ -743,14 +740,18 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	return getPendencias(true, false);
     }
     
-    private List<SrIntervaloEmAtendimento> getTrechosNaoPendentes(){
+    private List<SrIntervaloEmAtendimento> getTrechosNaoPendentes(SrTipoMotivoPendencia... pendenciasADesconsiderar){
     	List<SrIntervaloEmAtendimento> is = new ArrayList<SrIntervaloEmAtendimento>();
-
+    	List<SrTipoMotivoPendencia> listaPendenciasADesconsiderar = 
+    			pendenciasADesconsiderar != null ? Arrays.asList(pendenciasADesconsiderar) : new ArrayList<SrTipoMotivoPendencia>();
+    	
     	Date iniEmAtendmto = getDtIniEdicao();
     	for (SrPendencia p : getPendenciasIncluindoTerminadas()) {
+    		if (listaPendenciasADesconsiderar.contains(p.getMotivo()))
+    			continue;
     		if (p.comecouDepoisDe(iniEmAtendmto))
     			is.add(new SrIntervaloEmAtendimento(iniEmAtendmto, p.getInicio(), "Período de atendimento"));
-    		if (p.isInfinita())
+    		if (p.isInfinito())
     			return is;
     		iniEmAtendmto = p.getFim();
     	}
@@ -758,10 +759,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	return is;
     }
     
-    private List<SrIntervaloEmAtendimento> getTrechosNaoPendentesPorEtapa(SrEtapaSolicitacao e){
+    private List<SrIntervaloEmAtendimento> getTrechosNaoPendentesPorEtapa(SrEtapaSolicitacao e, SrTipoMotivoPendencia... pendenciasADesconsiderar){
     	Date dtIni = e.getInicio(), dtFim = e.getFim();
     	List<SrIntervaloEmAtendimento> is = new ArrayList<SrIntervaloEmAtendimento>();
-    	for (SrIntervaloEmAtendimento i : getTrechosNaoPendentes()) {
+    	for (SrIntervaloEmAtendimento i : getTrechosNaoPendentes(pendenciasADesconsiderar)) {
     		if (i.terminouAntesDe(dtIni))
     			continue;
     		if (i.comecouDepoisDe(dtFim))
@@ -769,7 +770,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     		SrIntervaloEmAtendimento newI = new SrIntervaloEmAtendimento(i.getInicio(), i.getFim(), i.getDescricao());
     		if (i.comecouAntesDe(dtIni))
     			newI.setInicio(dtIni);
-    		if (i.isInfinita() || i.terminouDepoisDe(dtFim))
+    		if (i.isInfinito() || i.terminouDepoisDe(dtFim))
     			newI.setFim(dtFim);
     		is.add(newI);
     	}
@@ -980,7 +981,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     
     public boolean isPendenteSemPrevisao(){
     	for (SrPendencia p : getPendenciasEmAberto())
-    		if (p.isInfinita())
+    		if (p.isInfinito())
     			return true;
     	return false;
     }
@@ -1817,10 +1818,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
                 Date prazo = null;
                 SrEtapaSolicitacao atendimentoGeral = getAtendimentoGeral();
-                SrEtapaSolicitacao atendimentoAtual = (SrEtapaSolicitacao)atendimentoGeral.getIntervaloCorrendoNaData(new Date());
                 prazo = atendimentoGeral.getFimPrevisto();
-                if (prazo == null)
-                	prazo = atendimentoAtual.getFimPrevisto();
+                if (prazo == null){
+                	SrEtapaSolicitacao atendimentoAtual = getAtendimentoAtivo();
+                	if (atendimentoAtual != null)
+                		prazo = atendimentoAtual.getFimPrevisto();
+                }
                 if (prazo != null)
                     acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_FORA_DO_PRAZO,
                     	prazo, null, movMarca.getAtendente(), movMarca.getLotaAtendente());
@@ -2352,25 +2355,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         }*/
     }
 
-    public void deixarPendente(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrTipoMotivoPendencia motivo, String calendario, String horario,
-            String detalheMotivo) throws Exception {
+    public void deixarPendente(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrTipoMotivoPendencia motivo, String detalheMotivo, Date dtAgenda) throws Exception {
         if (!podeDeixarPendente(titular, lotaTitular))
             throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
         SrMovimentacao movimentacao = new SrMovimentacao(this);
-
-        if (calendario != null && !"".equals(calendario)) {
-            DateTime dateTime = null;
-            if (horario != null && !"".equals(horario)) {
-                DateTimeFormatter formatter = DateTimeFormat.forPattern(DD_MM_YYYY_HH_MM);
-                dateTime = new DateTime(formatter.parseDateTime(calendario + " " + horario));
-            } else {
-                DateTimeFormatter formatter = DateTimeFormat.forPattern(DD_MM_YYYY);
-                dateTime = new DateTime(formatter.parseDateTime(calendario));
-            }
-            if (dateTime != null)
-                movimentacao.setDtAgenda(dateTime.toDate());
-        }
-
+        movimentacao.setDtAgenda(dtAgenda);
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA));
         movimentacao.setMotivoPendencia(motivo);
         movimentacao.setDescrMovimentacao(motivo.getDescrTipoMotivoPendencia());
@@ -2517,9 +2506,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public void setDtOrigemString(String stringDtMeioContato) {
-        DateTimeFormatter formatter = forPattern(DD_MM_YYYY_HH_MM);
-        if (stringDtMeioContato != null && !stringDtMeioContato.isEmpty() && stringDtMeioContato.contains("/") && stringDtMeioContato.contains(":"))
-            this.setDtOrigem(new DateTime(formatter.parseDateTime(stringDtMeioContato)).toDate());
+        setDtOrigem(SrViewUtil.fromDDMMYYYYHHMM(stringDtMeioContato));
     }
 
     public String getDtIniEdicaoDDMMYYYYHHMMSS() {
@@ -2588,12 +2575,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             if (SrTipoMovimentacao.TIPOS_MOV_INI_ATENDIMENTO.contains(mov.getTipoMov().getId()) 
             		|| SrTipoMovimentacao.TIPOS_MOV_ATUALIZACAO_ATENDIMENTO.contains(mov.getTipoMov().getId()))
             	g.setParamsAcordo(mov.getParametrosAcordoOrdenados(g.getParametro()));
-    	g.setIntervalosCorrentes(getAtendimentos());
+    	g.setIntervalosCorrentes(getAtendimentos(SrTipoMotivoPendencia.ATENDIMENTO_NA_FILHA));
     	g.setSolicitacao(this);
     	return g;
     }
     
-    public SrEtapaSolicitacao getAtendimento(SrMovimentacao movIni, SrMovimentacao movMeio, SrMovimentacao movFim){
+    public SrEtapaSolicitacao getAtendimento(SrMovimentacao movIni, SrMovimentacao movMeio, SrMovimentacao movFim, SrTipoMotivoPendencia... pendenciasADesconsiderar){
     	if (movMeio == null)
     		movMeio = movIni;
     	SrEtapaSolicitacao a = new SrEtapaSolicitacao(SrParametro.ATENDIMENTO);
@@ -2602,7 +2589,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	a.setLotaResponsavel(movIni.getLotaAtendente());
     	a.setParamsAcordo(movMeio.getParametrosAcordoOrdenados(a.getParametro()));
     	//DefinicaoHorario  h = getDefinicioarHorarioPorPessoalELota()
-    	a.setIntervalosCorrentes(getTrechosNaoPendentesPorEtapa(a));
+    	a.setIntervalosCorrentes(getTrechosNaoPendentesPorEtapa(a, pendenciasADesconsiderar));
     	a.setPrioridade(movMeio.getPrioridade());
     	a.setItem(movMeio.getItemConfiguracao());
     	a.setAcao(movMeio.getAcao());
@@ -2644,12 +2631,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     		Set<SrEtapaSolicitacao> etapas = new TreeSet<SrEtapaSolicitacao>();
     		if (jaFoiDesignada()){
     			SrEtapaSolicitacao geral = s.getAtendimentoGeral();
-    			List<SrEtapaSolicitacao> atendmtos = (List<SrEtapaSolicitacao>)geral.getIntervalosCorrentes();
+    			List<SrEtapaSolicitacao> atendmtos = s.getAtendimentos();
     			if (lota == null)
     				etapas.addAll(atendmtos);
     			else {
     				for (SrEtapaSolicitacao a : atendmtos)
-    					if (a.isAtivo() && a.getLotaResponsavel().equivale(lota)){
+    					if (a.isInfinito() && a.getLotaResponsavel().equivale(lota)){
     						etapas.add(a);
     						break;
     					}
@@ -2659,7 +2646,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     		}
     		if (!s.isFilha()){
     			SrEtapaSolicitacao cadastro = s.getCadastro();
-    			if (lota == null || (cadastro.isAtivo() && cadastro.getLotaResponsavel().equivale(lota)))
+    			if (lota == null || (cadastro.isInfinito() && cadastro.getLotaResponsavel().equivale(lota)))
     				etapas.add(cadastro);
     		}
     		etapasContexto.addAll(etapas);
@@ -2667,7 +2654,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	return etapasContexto;
     }
     
-	public List<SrEtapaSolicitacao> getAtendimentos() {
+	public List<SrEtapaSolicitacao> getAtendimentos(SrTipoMotivoPendencia... pendenciasADesconsiderar) {
 		List<SrEtapaSolicitacao> atendimentos = new ArrayList<SrEtapaSolicitacao>();
 		SrMovimentacao movIni = null, movAtualizacao = null;
 		for (SrMovimentacao mov : getMovimentacaoSetOrdemCrescente()) {
@@ -2679,7 +2666,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			if (!isInicio && !isFim && !isAtualizacao)
 				continue;
 			if (movIni != null && (isInicio || isFim)) {
-				atendimentos.add(getAtendimento(movIni, movAtualizacao, mov));
+				atendimentos.add(getAtendimento(movIni, movAtualizacao, mov, pendenciasADesconsiderar));
 				movIni = null;
 				movAtualizacao = null;
 			}
@@ -2689,8 +2676,16 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				movAtualizacao = mov;
 		}
 		if (movIni != null)
-			atendimentos.add(getAtendimento(movIni, movAtualizacao, null));
+			atendimentos.add(getAtendimento(movIni, movAtualizacao, null, pendenciasADesconsiderar));
 		return atendimentos;
+	}
+	
+	public SrEtapaSolicitacao getAtendimentoAtivo(){
+		for (SrEtapaSolicitacao a : getAtendimentos()){
+			if (a.isAtivo())
+				return a;
+		}
+		return null;
 	}
 
     public boolean isAcordosSatisfeitos() {
@@ -2809,9 +2804,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     private void deixarPendenteAguardandoFilha(DpPessoa cadastrante, DpLotacao lotaCadastrante, 
     		DpPessoa titular, DpLotacao lotaTitular, SrSolicitacao filha) throws Exception {
-        if (!temOutrasFilhasAbertas(filha)) 
+        if (!temOutrasFilhasAbertas(filha)){ 
         	deixarPendente(cadastrante, lotaCadastrante, titular, lotaTitular,
-                    SrTipoMotivoPendencia.ATENDIMENTO_NA_FILHA, null, null, "");
+                    SrTipoMotivoPendencia.ATENDIMENTO_NA_FILHA, "", null);
+        }
     }
     
     private void terminarPendenciaAguardandoFilha(DpPessoa cadastrante, DpLotacao lotaCadastrante, 

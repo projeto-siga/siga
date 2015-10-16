@@ -32,7 +32,7 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 	@Override
 	public Date getDataContandoDoInicio(Long millisAdiante) {
 		//Edson: chamar o mecanismo acima para fazer previsões
-		if (isInfinita() || millisAdiante <= getDecorridoMillis())
+		if (isInfinito() || millisAdiante <= getDecorridoMillis())
 			return new Date(getInicio().getTime() + millisAdiante);
 		return null;
 	}

@@ -359,6 +359,9 @@ public class SrMovimentacao extends Objeto {
 
         if (ultimaMovDoContexto == null) {
             setNumSequencia(1L);
+            setItemConfiguracao(solicitacao.getItemConfiguracao());
+            setAcao(solicitacao.getAcao());
+            setPrioridade(solicitacao.getPrioridade());
         } else {
             SrMovimentacao anterior = getSolicitacao().getUltimaMovimentacao();
 

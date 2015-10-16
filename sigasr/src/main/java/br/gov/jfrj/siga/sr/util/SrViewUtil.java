@@ -68,8 +68,16 @@ public class SrViewUtil {
 		return dt != null ? new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(dt) : "";
 	}
 	
-	public static Date fromDDMMYYYYHHMMSS(String dt){
-		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	public static String toStr(Date dt){
+		if (dt == null)
+			return "";
+		SigaPlayCalendar cal = new SigaPlayCalendar();
+        cal.setTime(dt);
+        return cal.getTempoTranscorridoString(false);
+	}
+	
+	public static Date fromDDMMYYYYHHMM(String dt){
+		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         try {
             return(df.parse(dt));
         } catch (Exception e) {
@@ -77,11 +85,12 @@ public class SrViewUtil {
         }
 	}
 	
-	public static String toStr(Date dt){
-		if (dt == null)
-			return "";
-		SigaPlayCalendar cal = new SigaPlayCalendar();
-        cal.setTime(dt);
-        return cal.getTempoTranscorridoString(false);
+	public static Date fromDDMMYYYYHHMMSS(String dt){
+		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        try {
+            return(df.parse(dt));
+        } catch (Exception e) {
+        	return null;
+        }
 	}
 }

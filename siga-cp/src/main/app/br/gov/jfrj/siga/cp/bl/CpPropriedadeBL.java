@@ -65,6 +65,9 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 		String s = this.obterPropriedade("cache.use_query_cache");
 		return s == null ? "true" : s;
 	}
+	public String gsaUrl  ( ) throws Exception {
+		return this.obterPropriedade("gsa.url");
+	}
 	@Override
 	public String getPrefixoModulo() {
 		return "siga.cp";

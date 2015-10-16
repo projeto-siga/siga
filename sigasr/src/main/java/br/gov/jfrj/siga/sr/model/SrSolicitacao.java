@@ -3319,7 +3319,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		
 		try {
 			if (Util.isMesmoDia(intervaloAtendimento.getStart(), intervaloAtendimento.getEnd())) {
-				if(!intervaloAtendimento.getStart().isBefore(intervaloDeTrabalho.getStart())) 
+				if(intervaloAtendimento.getEnd().isBefore(intervaloDeTrabalho.getStart()))
+					tempoAtendimento = 0L;
+				else if(!intervaloAtendimento.getStart().isBefore(intervaloDeTrabalho.getStart())) 
 					tempoAtendimento = intervaloAtendimento.toDuration().getStandardSeconds();
 				else
 					tempoAtendimento = (long) Seconds.secondsBetween(intervaloDeTrabalho.getStart(), 

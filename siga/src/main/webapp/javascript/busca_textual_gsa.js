@@ -777,17 +777,36 @@ $(document).on('ready', function(){
 		//*** Envia para função RenderInit para processar o resultado;
 		//*** @params = parametros a serem enviados
 		//***  
-		ajaxGetGSA:function(params){
-			$.get(gsa.settings.proxy,params,function(data,status,xhr){
-				var json = {};
-				if(status = "success"){
-					data = data.replace(/\\/g,'\\\\');
-					data = data.replace(/\s+/g,' ');
-					//data = decodeURI(data);
-					json = JSON.parse(data);
-				}
-				gsa.RenderInit(json);
-			},"text");
+		ajaxGetGSA : function(params) {
+			var self = this;
+			$
+					.get(
+							gsa.settings.proxy,
+							params,
+							function(data, status, xhr) {
+								if (status = "success") {
+									var json = {};
+									data = data.replace(/\\/g,
+											'\\\\');
+									data = data.replace(/\s+/g,
+											' ');
+									// data = decodeURI(data);
+									try {
+										json = JSON.parse(data);
+										gsa.RenderInit(json);
+									} catch (err) {
+										console.log(err);
+										console
+												.log("Erro ao realizar a conversão para JSON");
+										self.div_loader
+												.hidePleaseWait();
+									}
+								} else {
+									self.div_loader
+											.hidePleaseWait();
+								}
+
+							}, "text");
 		},
 		// Função para formatar data
 		replaceDataResult:function(string){

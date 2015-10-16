@@ -36,7 +36,7 @@ public class BuscaTextualController extends SigaController {
 	public void buscarNoGSA() throws Exception {
 		final SigaHTTP http = new SigaHTTP();
 		String url = Cp.getInstance().getProp().gsaUrl();
-		url += request.getQueryString();
+		url += "?" + request.getQueryString();
 		String response = http.get(url, getRequest(), null);
 		result.use(Results.http())
 				.addHeader("Content-Type", "application/json").body(response)

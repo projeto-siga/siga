@@ -3,8 +3,6 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-<c:set var="propriedadeClean"
-	value="${fn:replace(param.propriedade,'.','')}" />
 
 <siga:pagina titulo="Busca Textual" popup="false">
 

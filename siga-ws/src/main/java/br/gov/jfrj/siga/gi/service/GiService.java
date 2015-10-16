@@ -30,6 +30,9 @@ public interface GiService extends Remote {
 	public String login(String matricula, String senha);
 
     @WebMethod
+	public String dadosUsuario(String matricula);
+
+    @WebMethod
 	public String acessos(String matricula, String lotacao);
 
     @WebMethod

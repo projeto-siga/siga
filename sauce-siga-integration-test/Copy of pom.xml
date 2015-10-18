@@ -7,7 +7,9 @@
 		<groupId>projeto-siga</groupId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
+
 	<modelVersion>4.0.0</modelVersion>
+
 	<artifactId>sauce-siga-integration-test</artifactId>
 	<build>
 		<plugins>
@@ -21,7 +23,11 @@
 					<suiteXmlFiles>
 						<suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
 					</suiteXmlFiles>
- 				</configuration>
+ 	<!--  				<environmentVariables>
+						<BUILD_NUMBER>${env.BUILD_NUMBER}</BUILD_NUMBER>
+						<JOB_NAME>${env.JOB_NAME}</JOB_NAME>
+					</environmentVariables>  -->
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -31,57 +37,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-				<version>3.3</version>
-				<configuration>
-					<reportPlugins>
-						<!--FINDBUGS-->
-						<plugin>
-							<groupId>org.codehaus.mojo</groupId>
-							<artifactId>findbugs-maven-plugin</artifactId>
-							<version>3.0.0</version>
-							<configuration>
-								<effort>Max</effort>
-								<xmlOutput>true</xmlOutput>
-							</configuration>
-						</plugin>
-						<!--CHECKSTYLE-->
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-checkstyle-plugin</artifactId>
-							<version>2.16</version>
-							<configuration>
-								<configLocation>
-									<configLocation>src/config/sun_checks.xml</configLocation><!-- default -->
-									<!-- <configLocation>config/maven_checks.xml</configLocation> -->
-									<!-- <configLocation>config/turbine_checks.xml</configLocation> -->
-									<!-- <configLocation>config/avalon_checks.xml</configLocation> -->
-								</configLocation>
-							</configuration>
-						</plugin>
-						<!--PMD -->
-					</reportPlugins>
-				</configuration>
-				
-			</plugin>	
-			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-							<goals>
-								<goal>jar</goal>
-							</goals>
-					</execution>
-				</executions>
-			</plugin>
-			
 		</plugins>
 	</build>
 
@@ -282,17 +237,10 @@
 				<artifactId>maven-jxr-plugin</artifactId>
 				<version>2.3</version>
 			</plugin>
-			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
 				<version>2.17</version>
-			</plugin>
-			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.8</version>
 			</plugin>
 		</plugins>
 	</reporting>

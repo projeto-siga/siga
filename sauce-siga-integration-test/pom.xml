@@ -59,7 +59,7 @@
 									<configLocation>src/config/maven_checks.xml</configLocation> 
 									<!-- <configLocation>config/turbine_checks.xml</configLocation> -->
 									<!-- <configLocation>config/avalon_checks.xml</configLocation> -->
-								
+								    <headerLocation>src/config/LICENSE.txt</headerLocation>
 							</configuration>
 						</plugin>
 						<!--PMD -->

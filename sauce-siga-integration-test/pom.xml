@@ -54,12 +54,12 @@
 							<artifactId>maven-checkstyle-plugin</artifactId>
 							<version>2.16</version>
 							<configuration>
-								<configLocation>
+								
 									<configLocation>src/config/sun_checks.xml</configLocation><!-- default -->
 									<!-- <configLocation>config/maven_checks.xml</configLocation> -->
 									<!-- <configLocation>config/turbine_checks.xml</configLocation> -->
 									<!-- <configLocation>config/avalon_checks.xml</configLocation> -->
-								</configLocation>
+								
 							</configuration>
 						</plugin>
 						<!--PMD -->

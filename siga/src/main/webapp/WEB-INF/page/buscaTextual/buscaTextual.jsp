@@ -11,18 +11,16 @@
 	</script>
 
 	<div class="container">
-		<header id="topo" class="row">
-			<div class="col-md-7">
-				<form name="headerSearch" class="form-inline pull-right topoForm">
-					<div class="form-group">
-						<input type="text" class="form-control" name="q"
-							placeholder="Pesquisa Siga">
-					</div>
-					<button type="submit" class="btn btn-default">Pesquisar</button>
-				</form>
-			</div>
-
-		</header>
+		 <header id="topo" class="row">
+            <div class="col-md-7 topo">
+                <form name="headerSearch" class="form-inline pull-right topoForm">
+                    <div class="form-group">
+                        <input type="text" class="form-control typeahead" name="q" placeholder="Pesquisa Siga">
+                    </div>
+                    <button type="submit" class="btn btn-default">Pesquisar</button>
+                </form>
+            </div>
+        </header>
 		<div class="row">
 			<div role="main" class="col-md-9 col-md-push-3">
 				<div id="main"></div>
@@ -43,8 +41,9 @@
 
 	</div>
 
-	<script data-require="bootstrap@3.3.5" data-semver="3.3.5"
-		src="/siga/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/siga/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/siga/bootstrap/js/typeahead.bundle.min.js"></script>
+		
 	<script src="/siga/javascript/busca_textual_gsa.js"></script>
 	</body>
 

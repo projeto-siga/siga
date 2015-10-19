@@ -2,7 +2,7 @@ $(document).on('ready', function(){
 
 	var gsa = {
 		settings: {
-			path: "http://187.32.80.105/",
+			path: "http://172.16.1.105/",// TRF2 ip 172.16.1.105
 			proxy: "/siga/app/buscargsa",
 			params:{
 				site: "siga",
@@ -777,36 +777,28 @@ $(document).on('ready', function(){
 		//*** Envia para função RenderInit para processar o resultado;
 		//*** @params = parametros a serem enviados
 		//***  
-		ajaxGetGSA : function(params) {
+		ajaxGetGSA:function(params){
 			var self = this;
-			$
-					.get(
-							gsa.settings.proxy,
-							params,
-							function(data, status, xhr) {
-								if (status = "success") {
-									var json = {};
-									data = data.replace(/\\/g,
-											'\\\\');
-									data = data.replace(/\s+/g,
-											' ');
-									// data = decodeURI(data);
-									try {
-										json = JSON.parse(data);
-										gsa.RenderInit(json);
-									} catch (err) {
-										console.log(err);
-										console
-												.log("Erro ao realizar a conversão para JSON");
-										self.div_loader
-												.hidePleaseWait();
-									}
-								} else {
-									self.div_loader
-											.hidePleaseWait();
-								}
-
-							}, "text");
+			$.get(gsa.settings.proxy,params,function(data,status,xhr){
+				if(status = "success"){
+					var json = {};
+					data = data.replace(/\\/g,'\\\\');
+					data = data.replace(/\s+/g,' ');
+					//data = decodeURI(data);
+					try {
+					    json = JSON.parse(data);
+					    gsa.RenderInit(json);
+					}
+					catch(err) {
+						console.log(err);
+						console.log("Erro ao realizar a conversão para JSON");
+					    self.div_loader.hidePleaseWait();
+					}
+				}else{
+					self.div_loader.hidePleaseWait();
+				}
+				
+			},"text");
 		},
 		// Função para formatar data
 		replaceDataResult:function(string){
@@ -923,14 +915,52 @@ $(document).on('ready', function(){
     			
     		$(targerForm).append(html.join(''));
     	},
+    	autocomplete:function(target){
+    		//https://twitter.github.io/typeahead.js/examples/
+    		//https://www.google.com/support/enterprise/static/gsa/docs/admin/74/gsa_doc_set/xml_reference/query_suggestion.html#1079937
+    		params = {
+    			type: "suggest",
+    			max_matches: 10,
+    			site: gsa.settings.params.site,
+    			client: gsa.settings.params.client,
+    			token:"%QUERY"
+    		}
+
+    		var url = [];
+			for(var x in params){
+				url.push(x+"="+params[x]);
+			}
+
+			var suggest = new Bloodhound({
+			  	datumTokenizer: Bloodhound.tokenizers.whitespace,
+				queryTokenizer: Bloodhound.tokenizers.whitespace,
+			  	//prefetch: '../data/films/post_1960.json',
+			  	remote: {
+			    	url: gsa.settings.proxy+"?"+url.join("&"),
+			    	wildcard: '%QUERY'
+			  	}
+			});
+
+			$(target).typeahead(null, {
+			 	name: 'Suggest',
+			  	display: '',
+			  	source: suggest
+			});
+    		
+
+    	},
     	//Função inicial responsavel por setar funções de verificação e processamento JS;
     	load:function(targerForm){
     		document.onload = this.hash_url_load();
     		this.writeInputParamsForm(targerForm);
+    		this.autocomplete(".typeahead");
     	}
 	}
 
 
 	// Acionando a função do GSA passando a classe do formulário do topo
  	gsa.load('.topoForm');	
+
+	
+
 });

@@ -387,6 +387,14 @@ public class SigaLibsEL {
 		Object output = TemplateRuntime.execute(template, vars);
 		return output;
 	}
+	
+	public static String pluralize(Integer count, String singular, String plural) {
+		if(count <= 1){
+			return singular;
+		}
+		else
+			return plural;
+	}
 
 //	@SuppressWarnings({ "rawtypes", "unchecked" })
 //	public static Object evaluate(String expression, Object root) throws Exception {

@@ -96,4 +96,9 @@
   <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
   <function-signature>java.lang.Object evaluate( java.lang.String, java.lang.Object)</function-signature>
  </function>
+  <function>
+  <name>pluralize</name>
+  <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
+  <function-signature>java.lang.String pluralize(java.lang.Integer, java.lang.String, java.lang.String)</function-signature>
+ </function>
 </taglib>

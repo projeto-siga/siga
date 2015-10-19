@@ -1291,5 +1291,5 @@ public class AppController extends GcController {
 				getTitular(), getLotaTitular());
 		movimentacoes(sigla);
 	}
-
+	
 }

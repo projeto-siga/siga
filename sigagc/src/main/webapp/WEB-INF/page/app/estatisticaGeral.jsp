@@ -172,7 +172,7 @@
 			if (selecao.column == 2){
 				var mesAno = data.getValue(selecao.row,0).split("/");
 				var numeroMes = converteMes(mesAno[0]);
-				location.href = "${linkTo[AppController].listar}?filtro.situacao=" + "36" +
+				location.href = "${linkTo[AppController].listar}?filtro.situacao.idMarcador=" + "36" +
 								"&filtro.dtIni=" + encodeURIComponent(primeiroDiaMes(mesAno[1],numeroMes)) + 
 								"&filtro.dtFim=" + encodeURIComponent(ultimoDiaMes(mesAno[1],numeroMes)) +
 								"&filtro.pesquisa=true&estatistica=" + data.getValue(selecao.row,selecao.column);

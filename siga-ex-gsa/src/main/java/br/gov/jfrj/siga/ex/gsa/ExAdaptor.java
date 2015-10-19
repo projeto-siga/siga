@@ -138,4 +138,11 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor,
 	public abstract String getFeedName();
 
 	public abstract int getServerPortIncrement();
+
+	public void addMetadata(Response resp, String title, String value) {
+		if (value == null)
+			return;
+		value = value.trim();
+		resp.addMetadata(title, value);
+	}
 }

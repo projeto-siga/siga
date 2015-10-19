@@ -58,7 +58,7 @@
 				                <!-- Produces XML report -->
 				                <xmlOutput>true</xmlOutput>
 				                <!-- Configures the directory in which the XML report is created -->
-				                <findbugsXmlOutputDirectory>target/site/findbugs</findbugsXmlOutputDirectory>
+				                <findbugsXmlOutputDirectory>target/findbugs</findbugsXmlOutputDirectory>
 				            </configuration>
 						</plugin>
 						<!--CHECKSTYLE-->

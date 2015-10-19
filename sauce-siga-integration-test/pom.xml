@@ -42,7 +42,7 @@
 						<plugin>
 							<groupId>org.codehaus.mojo</groupId>
 							<artifactId>findbugs-maven-plugin</artifactId>
-							<version>3.0.0</version>
+							<version>3.0.2</version>
 							<configuration>
 								<effort>Max</effort>
 								<xmlOutput>true</xmlOutput>
@@ -54,34 +54,49 @@
 							<artifactId>maven-checkstyle-plugin</artifactId>
 							<version>2.16</version>
 							<configuration>
-								
+								    <!-- O default do plugin é o sun_checks.xml Se quiser outro deve-se
+								    baixar e coloca-lo em /src/config e aponta-lo aqui-->
 									<!-- <configLocation>src/config/sun_checks.xml</configLocation> -->
 									<!-- <configLocation>src/config/maven_checks.xml</configLocation> --> 
-									<!-- <configLocation>config/turbine_checks.xml</configLocation> -->
-									<!-- <configLocation>config/avalon_checks.xml</configLocation> -->
+									<!-- <configLocation>src/config/turbine_checks.xml</configLocation> -->
+									<!-- <configLocation>src/config/avalon_checks.xml</configLocation> -->
 								    <headerLocation>src/config/LICENSE.txt</headerLocation>
 							</configuration>
 						</plugin>
 						<!--PMD -->
+						<!-- JavaDoc -->
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-javadoc-plugin</artifactId>
+							<version>2.8</version>
+							<executions>
+								<execution>
+									<id>attach-javadocs</id>
+										<goals>
+											<goal>jar</goal>
+										</goals>
+								</execution>
+							</executions>
+						</plugin>
+						<!-- JXR -->
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-jxr-plugin</artifactId>
+							<version>2.3</version>
+						</plugin>
+						<!-- Surefire -->
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-surefire-report-plugin</artifactId>
+							<version>2.17</version>
+						</plugin>
+						
 					</reportPlugins>
 				</configuration>
 				
 			</plugin>	
 			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-							<goals>
-								<goal>jar</goal>
-							</goals>
-					</execution>
-				</executions>
-			</plugin>
-			
+					
 		</plugins>
 	</build>
 
@@ -277,23 +292,7 @@
 
 	<reporting>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<version>2.3</version>
-			</plugin>
 			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>2.17</version>
-			</plugin>
-			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.8</version>
-			</plugin>
 		</plugins>
 	</reporting>
 

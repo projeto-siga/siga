@@ -886,11 +886,12 @@ public class SolicitacaoController extends SrController {
     @Get
 	@Post
     @Path("/selecionar")
-    public void selecionar(String sigla) throws Exception {
+    public void selecionar(String sigla, boolean retornarCompacta) throws Exception {
         SrSolicitacao sel = new SrSolicitacao();
         sel.setLotaTitular(getLotaTitular());
         sel = (SrSolicitacao) sel.selecionar(sigla);
 
+        result.include("retornarCompacta", retornarCompacta);
         if (sel != null) {
         	result.forwardTo(SelecaoController.class).ajaxRetorno(sel);
         }

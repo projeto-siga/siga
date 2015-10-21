@@ -2,9 +2,12 @@ package br.gov.jfrj.siga.sr.model;
 
 public enum SrTipoMotivoPendencia {
 
-    AGUARDANDO_PRIORIZACAO(1, "Aguardando priorização", false), AGUARDANDO_RECURSO_EXTERNO(2, "Aguardando recurso externo", false), USUARIO_INDISPONIVEL(3, "Usuário indisponível", false), AGUARDANDO_RESPOSTA(
-            4, "Aguardando resposta do usuário", false),
-            ATENDIMENTO_NA_FILHA(5, "Aguardando conclusão de solicitação filha", false);
+    AGUARDANDO_PRIORIZACAO(1, "Aguardando priorização", false), 
+    AGUARDANDO_RECURSO_EXTERNO(2, "Aguardando recurso externo", false), 
+    USUARIO_INDISPONIVEL(3, "Usuário indisponível", false), 
+    AGUARDANDO_RESPOSTA(4, "Aguardando resposta do usuário", false),
+    ATENDIMENTO_NA_FILHA(5, "Aguardando conclusão de solicitação filha", false),
+    ATENDIMENTO_AGENDADO(6, "Atendimento Agendado", false);
 
     private int nivelTipoMotivoPendencia;
 

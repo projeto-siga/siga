@@ -293,7 +293,7 @@ public class SolicitacaoController extends SrController {
     	
         if (!solicitacao.isRascunho() && !validarFormEditar(solicitacao)) {
         	incluirListasEdicaoSolicitacao(solicitacao);
-            validator.onErrorUsePageOf(SolicitacaoController.class).editar(solicitacao.getSiglaCompacta());
+            validator.onErrorUsePageOf(SolicitacaoController.class).editar(solicitacao.getSiglaCompacta(), null, null, null);
         	return;
         }
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
@@ -504,7 +504,7 @@ public class SolicitacaoController extends SrController {
     }
 
 	@Path({ "/editar", "/editar/{sigla}"})
-    public void editar(String sigla) throws Exception {
+    public void editar(String sigla, String item, String acao, String descricao) throws Exception {
         SrSolicitacao solicitacao;
 
         if (sigla == null) {
@@ -516,6 +516,18 @@ public class SolicitacaoController extends SrController {
             solicitacao.deduzirLocalRamalEMeioContato();
         } else
         	solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
+        
+        if (item != null && !item.equals("")){
+        	solicitacao.setItemConfiguracao((SrItemConfiguracao)SrItemConfiguracao.AR.find("bySiglaItemConfiguracaoAndHisDtFimIsNull", item).first());
+        	if (!solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao()))
+        		solicitacao.setItemConfiguracao(null);
+        } 
+        
+        if (acao != null && !acao.equals(""))
+        	solicitacao.setAcao((SrAcao)SrAcao.AR.find("bySiglaAcaoAndHisDtFimIsNull", acao).first());
+        
+        if (descricao != null && !descricao.equals(""))
+        	solicitacao.setDescricao(descricao);
         
         //Edson: por causa do detach no ObjetoObjectInstantiator:
     	if (solicitacao.getSolicitacaoInicial() != null)
@@ -805,7 +817,7 @@ public class SolicitacaoController extends SrController {
     		
     	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         sol.excluir();
-        result.redirectTo(this).editar(null);
+        result.redirectTo(this).editar(null, null, null, null);
     }
 
     @Path("/anexarArquivo")

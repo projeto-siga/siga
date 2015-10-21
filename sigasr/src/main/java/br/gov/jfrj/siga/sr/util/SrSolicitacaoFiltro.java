@@ -227,11 +227,13 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (situacaoFiltro.equals("situacaoAux"))
 			query.append(" inner join sol.meuMarcaSet situacaoAux ");
 		
-		query.append(" left join sol.dnmUltimaMovimentacao ultMov ");
+		query.append(" left join sol.meuMovimentacaoSet ultMov ");
 		
 		query.append(idListaPrioridade != null && idListaPrioridade > 0 ? " inner join sol.meuPrioridadeSolicitacaoSet l " : "");
 		
 		query.append(" where sol.hisDtFim is null ");
+		
+		query.append(" and not exists (from SrMovimentacao mov where solicitacao = sol and dtIniMov > ultMov.dtIniMov) ");
 
 		if (Filtros.deveAdicionar(getCadastrante()))
 			query.append(" and sol.cadastrante.idPessoaIni = "

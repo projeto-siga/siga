@@ -186,10 +186,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     @ManyToOne
     @JoinColumn(name = "DNM_ID_ACAO")
     private SrAcao dnmAcao;
-    
-    @ManyToOne
-    @JoinColumn(name = "DNM_ID_ULT_MOV")
-    private SrMovimentacao dnmUltimaMovimentacao;
 
     @Lob
     @Column(name = "DESCR_SOLICITACAO", length = 8192)
@@ -3379,13 +3375,5 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public void setDnmPrioridadeTecnica(SrPrioridade dnmPrioridadeTecnica) {
 		this.dnmPrioridadeTecnica = dnmPrioridadeTecnica;
-	}
-
-	public SrMovimentacao getDnmUltimaMovimentacao() {
-		return dnmUltimaMovimentacao;
-	}
-
-	public void setDnmUltimaMovimentacao(SrMovimentacao dnmUltimaMovimentacao) {
-		this.dnmUltimaMovimentacao = dnmUltimaMovimentacao;
 	}
 }

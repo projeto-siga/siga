@@ -306,9 +306,6 @@ public class SrMovimentacao extends Objeto {
 
         getSolicitacao().atualizarMarcas();
         
-        getSolicitacao().setDnmUltimaMovimentacao(this);
-        getSolicitacao().save();
-
         //notificaï¿½ï¿½o usuï¿½rio
         if (getSolicitacao().getMovimentacaoSetComCancelados().size() > 1
                 && getTipoMov().getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO

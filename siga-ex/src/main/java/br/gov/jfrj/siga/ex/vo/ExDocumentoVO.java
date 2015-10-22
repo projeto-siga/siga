@@ -451,6 +451,10 @@ public class ExDocumentoVO extends ExVO {
 				"vincularPapel", Ex.getInstance().getComp()
 						.podeFazerVinculacaoPapel(titular, lotaTitular, mob));
 
+		vo.addAcao("folder_user", "Definir Marcador", "/app/expediente/mov",
+				"marcar", Ex.getInstance().getComp()
+						.podeMarcar(titular, lotaTitular, mob));
+
 		vo.addAcao(
 				"cd",
 				"Download do Conteúdo",

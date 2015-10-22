@@ -8,6 +8,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -45,6 +46,7 @@ public final class ExMovimentacaoBuilder {
 	private DpPessoaSelecao titularSel;
 	private DpPessoaSelecao subscritorSel;
 	private Long idPapel;
+	private Long idMarcador;
 	private String contentType;
 	private String fileName;
 
@@ -81,6 +83,10 @@ public final class ExMovimentacaoBuilder {
 
 		if (idPapel != null) {
 			mov.setExPapel(dao.consultar(idPapel, ExPapel.class, false));
+		}
+
+		if (idMarcador != null) {
+			mov.setMarcador(dao.consultar(idMarcador, CpMarcador.class, false));
 		}
 
 		if (idTpDespacho != null) {
@@ -289,6 +295,10 @@ public final class ExMovimentacaoBuilder {
 		return idPapel;
 	}
 
+	public Long getIdMarcador() {
+		return idMarcador;
+	}
+
 	public String getContentType() {
 		return contentType;
 	}
@@ -409,6 +419,11 @@ public final class ExMovimentacaoBuilder {
 
 	public ExMovimentacaoBuilder setIdPapel(Long idPapel) {
 		this.idPapel = idPapel;
+		return this;
+	}
+
+	public ExMovimentacaoBuilder setIdMarcador(Long idMarcador) {
+		this.idMarcador = idMarcador;
 		return this;
 	}
 

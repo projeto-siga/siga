@@ -53,10 +53,6 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
 import org.apache.axis.encoding.Base64;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Criteria;
@@ -682,6 +678,9 @@ public class ExBL extends CpBL {
 		ExMovimentacao ultMovNaoCanc = mob.getUltimaMovimentacaoNaoCancelada();
 
 		Boolean isDocumentoSemEfeito = mob.doc().isSemEfeito();
+		
+		Set<CpMarcador> setMarcadoresAdicionais = new HashSet<>();
+
 
 		if (mob.isGeral()) {
 			if (!mob.doc().isFinalizado()) {
@@ -801,12 +800,16 @@ public class ExBL extends CpBL {
 										m = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
 									else
 										m = CpMarcador.MARCADOR_REVISAR;
-									
-									if(mob.getDoc().getExTipoDocumento().getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO) {
+
+									if (mob.getDoc().getExTipoDocumento()
+											.getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO) {
 										for (ExMovimentacao assinatura : mob
-												.getDoc().getTodasAsAssinaturas()) {
-											if (assinatura.getSubscritor()
-													.equivale(mov.getSubscritor())) {
+												.getDoc()
+												.getTodasAsAssinaturas()) {
+											if (assinatura
+													.getSubscritor()
+													.equivale(
+															mov.getSubscritor())) {
 												m = null;
 												break;
 											}
@@ -851,7 +854,9 @@ public class ExBL extends CpBL {
 										mov.getDtIniMov(), mov.getSubscritor(),
 										mov.getLotaSubscritor());
 							}
-						}
+						} 
+
+
 					}
 					if (dtDocColaborativo != null && !fDocColaborativoPendencia) {
 						acrescentarMarca(
@@ -882,7 +887,7 @@ public class ExBL extends CpBL {
 		if (mob.doc().getMobilGeral().isPendenteDeColaboracao()) {
 			return set;
 		}
-		
+
 		if (!isDocumentoSemEfeito) {
 
 			boolean apensadoAVolumeDoMesmoProcesso = mob
@@ -916,7 +921,12 @@ public class ExBL extends CpBL {
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
 						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA) {
 					m = CpMarcador.MARCADOR_TRANSFERIDO_A_ORGAO_EXTERNO;
-					//Adicionado para atender solicição da Eloisa do CJF (CJF-SR-2015/00271), mas será retirado momentaneamente até correção da loop infinito que está ocorrendo no método atualizar_marcas, para os casos em que um doc. tem uma via juntada a um doc. B e o documento B. tem uma via juntada ao doc. A 
+					// Adicionado para atender solicição da Eloisa do CJF
+					// (CJF-SR-2015/00271), mas será retirado momentaneamente
+					// até correção da loop infinito que está ocorrendo no
+					// método atualizar_marcas, para os casos em que um doc. tem
+					// uma via juntada a um doc. B e o documento B. tem uma via
+					// juntada ao doc. A
 					if (mob.temDocumentosJuntados()) {
 						atualizaMarcasDocumentosJuntados(mob);
 					}
@@ -999,7 +1009,7 @@ public class ExBL extends CpBL {
 							CpMarcador.MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA,
 							dt, mov.getSubscritor(), null);
 				}
-
+				
 				if (m != mAnterior) {
 					dt = mov.getDtIniMov();
 					mAnterior = m;
@@ -1007,6 +1017,22 @@ public class ExBL extends CpBL {
 			}
 
 			calcularMarcadoresTransferencia(mob, set, dt);
+			
+			if (m == CpMarcador.MARCADOR_EM_ANDAMENTO) {
+				ExMobil geral = mob.doc().getMobilGeral();
+				if (geral.getExMovimentacaoSet() != null) {
+					for (ExMovimentacao mov : geral.getExMovimentacaoSet()) {
+						if (mov.isCancelada())
+							continue;
+						Long t = mov.getIdTpMov();
+						if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO)
+							acrescentarMarca(set, mob, mov.getMarcador()
+									.getIdMarcador(), dt,
+									ultMovNaoCanc.getResp(),
+									ultMovNaoCanc.getLotaResp());
+					}
+				}
+			}
 
 			if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {
 				if (!mob.getDoc().isAssinadoSubscritor())
@@ -1014,7 +1040,7 @@ public class ExBL extends CpBL {
 							CpMarcador.MARCADOR_COMO_SUBSCRITOR, dt, mob
 									.getExDocumento().getSubscritor(), null);
 			}
-
+			
 			if (m == CpMarcador.MARCADOR_CAIXA_DE_ENTRADA) {
 				if (!mob.doc().isEletronico()) {
 					m = CpMarcador.MARCADOR_A_RECEBER;
@@ -2644,7 +2670,8 @@ public class ExBL extends CpBL {
 	}
 
 	public void atualizarMovimentacoesDePartes(final ExDocumento doc,
-			DpPessoa cadastrante, DpLotacao lotaCadastrante, Date dt) throws Exception {
+			DpPessoa cadastrante, DpLotacao lotaCadastrante, Date dt)
+			throws Exception {
 		ExPartes partes = processarDadosDasPartes(doc);
 		partes.calcular();
 		ExMobil mob = doc.getMobilGeral();
@@ -3301,6 +3328,14 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException(
 						"não é possível cancelar definição de perfil");
 
+		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarVinculacaoMarca(titular, lotaTitular, mob,
+							movCancelar))
+				throw new AplicacaoException(
+						"não é possível cancelar definição de marca");
+
 		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA) {
 			if (!Ex.getInstance()
 					.getComp()
@@ -3952,7 +3987,7 @@ public class ExBL extends CpBL {
 					+ ". Terminou processar: "
 					+ (System.currentTimeMillis() - tempoIni));
 			tempoIni = System.currentTimeMillis();
-			
+
 			if (doc.getConteudoBlobDoc() != null)
 				doc.setConteudoTpDoc("application/zip");
 
@@ -3975,7 +4010,8 @@ public class ExBL extends CpBL {
 				obterMetodoPorString(funcao, doc);
 			}
 
-			atualizarMovimentacoesDePartes(doc, cadastrante, lotaCadastrante, dt);
+			atualizarMovimentacoesDePartes(doc, cadastrante, lotaCadastrante,
+					dt);
 
 			String s = processarComandosEmTag(doc, "gravacao");
 
@@ -4481,7 +4517,8 @@ public class ExBL extends CpBL {
 	}
 
 	private ExDocumento duplicarDocumento(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc, final boolean refazendo) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc,
+			final boolean refazendo) throws Exception {
 		ExDocumento novoDoc = new ExDocumento();
 
 		novoDoc.setConteudoBlobDoc(doc.getConteudoBlobDoc());
@@ -4546,12 +4583,12 @@ public class ExBL extends CpBL {
 		novoDoc.setObsOrgao(doc.getObsOrgao());
 		novoDoc.setOrgaoExterno(doc.getOrgaoExterno());
 		novoDoc.setOrgaoExternoDestinatario(doc.getOrgaoExternoDestinatario());
-		
-		if(refazendo)
+
+		if (refazendo)
 			novoDoc.setExMobilPai(doc.getExMobilPai());
 		else
 			novoDoc.setExMobilPai(null);
-		
+
 		novoDoc.setOrgaoUsuario(cadastrante.getOrgaoUsuario());
 
 		if (doc.getTitular() != null && !doc.getTitular().isFechada())
@@ -4923,13 +4960,13 @@ public class ExBL extends CpBL {
 							"não é permitido fazer despacho. Verifique se a via ou processo não estáarquivado(a) e se não possui despachos pendentes de assinatura.");
 
 				if (fTranferencia) {
-					
-					if(!m.isApensadoAVolumeDoMesmoProcesso()) {
+
+					if (!m.isApensadoAVolumeDoMesmoProcesso()) {
 
 						if (lotaResponsavel.isFechada())
 							throw new AplicacaoException(
 									"não é permitido transferir documento para lotação fechada");
-	
+
 						if (forcarTransferencia) {
 							if (!getComp().podeSerTransferido(m))
 								throw new AplicacaoException(
@@ -4947,18 +4984,19 @@ public class ExBL extends CpBL {
 						if (!m.getExDocumento().isAssinado()
 								&& !lotaResponsavel.equivale(m.getExDocumento()
 										.getLotaTitular())
-								&& !getComp().podeReceberDocumentoSemAssinatura(
-										responsavel, lotaResponsavel, m))
+								&& !getComp()
+										.podeReceberDocumentoSemAssinatura(
+												responsavel, lotaResponsavel, m))
 							throw new AplicacaoException(
 									"não é permitido fazer transferência em documento que ainda não foi assinado");
-	
+
 						if (m.doc().isEletronico()) {
 							if (m.temAnexosNaoAssinados()
 									|| m.temDespachosNaoAssinados())
 								throw new AplicacaoException(
 										"não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
 						}
-	
+
 						if (m.getExDocumento().isEletronico()
 								&& !m.getExDocumento().jaTransferido()
 								&& !m.getExDocumento().isAssinado())
@@ -5216,6 +5254,64 @@ public class ExBL extends CpBL {
 
 	}
 
+	public void vincularMarcador(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExMobil mob,
+			final Date dtMov, DpLotacao lotaResponsavel,
+			final DpPessoa responsavel, final DpPessoa subscritor,
+			final DpPessoa titular, final String descrMov,
+			String nmFuncaoSubscritor, CpMarcador marcador, boolean ativo)
+			throws Exception {
+
+		if (descrMov == null) {
+			if (responsavel == null && lotaResponsavel == null)
+				if (dtMov == null)
+					throw new AplicacaoException(
+							"não foram informados dados para a marcação");
+		}
+		if (marcador == null)
+			throw new AplicacaoException("não foi informado o marcador");
+		
+		final ExMobil geral = mob.doc().getMobilGeral();
+
+		if (ativo) {
+			try {
+				iniciarAlteracao();
+
+				final ExMovimentacao mov = criarNovaMovimentacao(
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO,
+						cadastrante, lotaCadastrante, geral, dtMov, responsavel,
+						lotaResponsavel, titular, null, dtMov);
+
+				mov.setNmFuncaoSubscritor(nmFuncaoSubscritor);
+				mov.setDescrMov(descrMov);
+				mov.setMarcador(marcador);
+
+				gravarMovimentacao(mov);
+				concluirAlteracao(mov.getExDocumento());
+			} catch (final Exception e) {
+				cancelarAlteracao();
+				throw new AplicacaoException("Erro ao fazer marcação.", 0, e);
+			}
+		} else {
+			Set<CpMarcador> set = new HashSet<CpMarcador>();
+			ExMovimentacao movCancelar = null;
+			if (geral.getExMovimentacaoSet() != null) {
+				for (ExMovimentacao mov : geral.getExMovimentacaoSet()) {
+					if (mov.getExTipoMovimentacao().getId()
+							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO)
+							&& !mov.isCancelada()
+							&& mov.getMarcador().getIdMarcador()
+									.equals(marcador.getIdMarcador())) {
+						movCancelar = mov;
+					}
+				}
+				cancelar(cadastrante, lotaCadastrante, mob, movCancelar,
+						dao().dt(), titular, titular, null);
+			}
+		}
+
+	}
+
 	public void redefinirNivelAcesso(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, DpLotacao lotaResponsavel,
@@ -5317,7 +5413,8 @@ public class ExBL extends CpBL {
 	public void processar(final ExDocumento doc, final boolean gravar,
 			final boolean transacao, String realPath) {
 		// Não existe processamento de modelo para documento capturado
-		if (doc.getExTipoDocumento().getId().equals(ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)) 
+		if (doc.getExTipoDocumento().getId()
+				.equals(ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO))
 			return;
 
 		try {
@@ -5375,9 +5472,10 @@ public class ExBL extends CpBL {
 							.getInstance();
 					ConversorHtml conversor = fabricaConvHtml.getConversor(
 							getConf(), doc, strHtml);
-					
+
 					try {
-						pdf = Documento.generatePdf(strHtml, conversor, realPath);
+						pdf = Documento.generatePdf(strHtml, conversor,
+								realPath);
 					} catch (Exception e) {
 						throw new AplicacaoException(
 								"Erro na geração do PDF. Por favor, verifique se existem recursos de formatação não suportados. Para eliminar toda a formatação do texto clique em voltar e depois, no editor, clique no botõo de 'Selecionar Tudo' e depois no botão de 'Remover Formatação'.",
@@ -6573,7 +6671,7 @@ public class ExBL extends CpBL {
 
 			mov.setDescrMov(motivo);
 			gravarMovimentacao(mov);
-			
+
 			String funcao = doc.getForm().get("acaoExcluir");
 			if (funcao != null) {
 				obterMetodoPorString(funcao, doc);
@@ -7219,17 +7317,18 @@ public class ExBL extends CpBL {
 
 		return jsonOutput;
 	}
-	
-	public List<ExAssinavelDoc> obterAssinaveis(DpPessoa titular, DpLotacao lotaTitular) {
+
+	public List<ExAssinavelDoc> obterAssinaveis(DpPessoa titular,
+			DpLotacao lotaTitular) {
 		List<ExAssinavelDoc> assinaveis = new ArrayList<ExAssinavelDoc>();
 		Map<Long, ExAssinavelDoc> map = new HashMap<>();
-		
+
 		// Acrescenta documentos
 		//
 		for (final ExDocumento doc : dao().listarDocPendenteAssinatura(titular)) {
-			if (!doc.isFinalizado()) 
+			if (!doc.isFinalizado())
 				continue;
-			ExAssinavelDoc 	ass = map.get(doc.getIdDoc());
+			ExAssinavelDoc ass = map.get(doc.getIdDoc());
 			if (ass == null) {
 				ass = new ExAssinavelDoc();
 				ass.setDoc(doc);
@@ -7237,17 +7336,22 @@ public class ExBL extends CpBL {
 				assinaveis.add(ass);
 			}
 			ass.setPodeAssinar(true);
-			ass.setPodeSenha(Ex.getInstance().getComp().podeAssinarComSenha(titular, lotaTitular, doc.getMobilGeral()));
+			ass.setPodeSenha(Ex
+					.getInstance()
+					.getComp()
+					.podeAssinarComSenha(titular, lotaTitular,
+							doc.getMobilGeral()));
 		}
-		
+
 		// Acrescenta despachos
 		//
-		for (final ExMovimentacao mov : dao().listarDespachoPendenteAssinatura(titular)) {
-			if (mov.isAssinada() || mov.isCancelada())  
+		for (final ExMovimentacao mov : dao().listarDespachoPendenteAssinatura(
+				titular)) {
+			if (mov.isAssinada() || mov.isCancelada())
 				continue;
-			
+
 			ExDocumento doc = mov.getExDocumento();
-			ExAssinavelDoc 	ass = map.get(doc.getIdDoc());
+			ExAssinavelDoc ass = map.get(doc.getIdDoc());
 			if (ass == null) {
 				ass = new ExAssinavelDoc();
 				ass.setDoc(doc);
@@ -7256,27 +7360,36 @@ public class ExBL extends CpBL {
 			}
 			ExAssinavelMov assmov = new ExAssinavelMov();
 			assmov.setMov(mov);
-			assmov.setPodeSenha(Ex.getInstance().getComp().podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov));
+			assmov.setPodeSenha(Ex.getInstance().getComp()
+					.podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov));
 			ass.getMovs().add(assmov);
 		}
-		
+
 		// Acrescenta anexos
 		//
 		for (final ExAssinavelDoc assdoc : assinaveis) {
 			for (ExMobil mob : assdoc.getDoc().getExMobilSet()) {
 				for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
-					if (mov.isAssinada() || mov.isCancelada() || !mov.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO))  
+					if (mov.isAssinada()
+							|| mov.isCancelada()
+							|| !mov.getExTipoMovimentacao()
+									.getId()
+									.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO))
 						continue;
 					ExDocumento doc = mov.getExDocumento();
 					ExAssinavelMov assmov = new ExAssinavelMov();
 					assmov.setMov(mov);
-					assmov.setPodeSenha(Ex.getInstance().getComp().podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov));
+					assmov.setPodeSenha(Ex
+							.getInstance()
+							.getComp()
+							.podeAssinarMovimentacaoComSenha(titular,
+									lotaTitular, mov));
 					assmov.setPodeAutenticar(true);
 					assdoc.getMovs().add(assmov);
 				}
 			}
 		}
-		
+
 		return assinaveis;
 	}
 }

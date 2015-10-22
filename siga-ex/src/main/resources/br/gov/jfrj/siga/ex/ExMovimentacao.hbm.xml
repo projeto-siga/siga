@@ -84,6 +84,8 @@
                         not-null="false" />
                 <many-to-one name="exPapel" column="ID_PAPEL" class="br.gov.jfrj.siga.ex.ExPapel"
                         not-null="false" />
+                <many-to-one name="marcador" column="ID_MARCADOR" class="br.gov.jfrj.siga.dp.CpMarcador"
+                        not-null="false" />
                 <set name="exMovimentacaoReferenciadoraSet" order-by="DT_INI_MOV desc"
                         inverse="true">
                         <key column="ID_MOV_REF" />

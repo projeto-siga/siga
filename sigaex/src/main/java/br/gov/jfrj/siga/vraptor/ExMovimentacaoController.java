@@ -2,7 +2,6 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -47,6 +46,8 @@ import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -1447,6 +1448,72 @@ public class ExMovimentacaoController extends ExController {
 						mov.getTitular(), mov.getDescrMov(), mov.getNmFuncaoSubscritor(), mov.getExPapel());
 
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+	}
+
+	@Get("/app/expediente/mov/marcar")
+	public void aMarcar(final String sigla) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		buscarDocumento(builder);
+
+		if (!Ex.getInstance().getComp().podeMarcar(getTitular(), getLotaTitular(), builder.getMob())) 
+			throw new AplicacaoException("Não é possível fazer marcação");
+
+		result.include("sigla", sigla);
+		result.include("mob", builder.getMob());
+		result.include("listaMarcadores", this.getListaMarcadoresGerais());
+		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(builder.getMob().getDoc().getMobilGeral()));
+	}
+
+	private Set<CpMarcador> getListaMarcadoresAtivos(ExMobil mob) {
+		Set<CpMarcador> set = new HashSet<CpMarcador>();
+		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
+			if (mov.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO) && !mov.isCancelada()) {
+				set.add(mov.getMarcador());
+			}
+		}
+		return set;
+	}
+
+	private Object getListaMarcadoresGerais() {
+		return dao().listarCpMarcadoresGerais();
+	}
+
+	@Post("/app/expediente/mov/marcar_gravar")
+	public void aMarcarGravar(final String sigla, final Long idMarcador,
+			final Boolean ativo) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+		buscarDocumento(builder);
+
+		if (!Ex.getInstance().getComp()
+				.podeMarcar(getTitular(), getLotaTitular(), builder.getMob()))
+			throw new AplicacaoException("Não é possível fazer marcação");
+
+		if (idMarcador == null)
+			throw new AplicacaoException("Marcador deve ser informado.");
+
+		CpMarcador m = dao().consultar(idMarcador, CpMarcador.class, false);
+
+		Set<CpMarcador> lMarcadoresAtivos = this
+				.getListaMarcadoresAtivos(builder.getMob().getDoc().getMobilGeral());
+
+		boolean atual = lMarcadoresAtivos.contains(m);
+
+		if (ativo != atual) {
+			final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+					.novaInstancia();
+			movimentacaoBuilder.setIdMarcador(idMarcador);
+			final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+			Ex.getInstance()
+					.getBL()
+					.vincularMarcador(getCadastrante(), getLotaTitular(),
+							builder.getMob(), mov.getDtMov(),
+							mov.getLotaResp(), mov.getResp(),
+							mov.getSubscritor(), mov.getTitular(),
+							mov.getDescrMov(), mov.getNmFuncaoSubscritor(),
+							mov.getMarcador(), ativo);
+		}
+		resultOK();
 	}
 
 	@Get("app/expediente/mov/transferir_lote")

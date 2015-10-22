@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.HttpResult;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Paginador;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -294,6 +295,10 @@ public class SigaController {
 	protected int redirectToHome() {
 		result.redirectTo("/../siga/app/principal");
 		return 0;
+	}
+
+	protected void resultOK() {
+		result.use(Results.http()).body("OK").setStatusCode(200);
 	}
 
 	protected void setMensagem(String mensagem) {

@@ -68,11 +68,12 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
-
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -2009,6 +2010,11 @@ public class ExDao extends CpDao {
 
 	public List<ExPapel> listarExPapeis() {
 		return findByCriteria(ExPapel.class);
+	}
+
+	public List<CpMarcador> listarCpMarcadoresGerais() {
+		CpTipoMarcador marcador = consultar(CpTipoMarcador.TIPO_MARCADOR_GERAL, CpTipoMarcador.class, false);
+		return findByCriteria(CpMarcador.class, Restrictions.eq("cpTipoMarcador", marcador));
 	}
 
 	public List<ExTpDocPublicacao> listarExTiposDocPublicacao() {

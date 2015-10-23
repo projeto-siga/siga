@@ -24,6 +24,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.SortedSet;
@@ -80,13 +81,13 @@ public class AcessoController extends GiControllerSupport {
 						  ,DpPessoaSelecao pessoaSel
 						  ,DpLotacaoSelecao lotacaoSel
 						  ,CpPerfilSelecao perfilSel
-						  ,Long idOrgaoUsuSel)throws Exception {
+						  ,Long idOrgaoUsuSel, String servicoPai)throws Exception {
 		
 		this.pessoaSel = pessoaSel != null ? pessoaSel: this.pessoaSel;
 		this.lotacaoSel = lotacaoSel != null ? lotacaoSel: this.lotacaoSel;
 		this.perfilSel = perfilSel != null ? perfilSel: this.perfilSel;		
 		
-		listar(idAbrangencia, pessoaSel, lotacaoSel, perfilSel, idOrgaoUsuSel);
+		listar(idAbrangencia, pessoaSel, lotacaoSel, perfilSel, idOrgaoUsuSel,servicoPai);
 		
 		result.include("idAbrangencia", this.idAbrangencia);
 		
@@ -110,8 +111,12 @@ public class AcessoController extends GiControllerSupport {
 					  ,DpPessoaSelecao pessoaSel
 					  ,DpLotacaoSelecao lotacaoSel
 					  ,CpPerfilSelecao perfilSel
-					  ,Long idOrgaoUsuSel) throws Exception {
-		assertAcesso("PERMISSAO:Gerenciar permissões");
+					  ,Long idOrgaoUsuSel, String servicoPai) throws Exception {
+		if (servicoPai == null) {
+			assertAcesso("PERMISSAO:Gerenciar permissões");
+		} else {
+			assertAcesso("PERMISSAOPORSERVICO:Gerenciar permissões de um serviço");
+		}
 		if (idAbrangencia == 0) {
 			this.idAbrangencia = 1;
 			this.idOrgaoUsuSel = getLotaTitular().getOrgaoUsuario().getId();
@@ -132,7 +137,14 @@ public class AcessoController extends GiControllerSupport {
 			this.nomeOrgaoUsuSel = orgao.getDescricao();				
 				
 		if (perfil != null || pessoa != null || lotacao != null || orgao != null) {
-			List<CpServico> l = dao().listarServicos();
+			List<CpServico> l = null;
+			
+			if (servicoPai == null) {
+				l = dao().listarServicos();
+			} else {
+				CpServico c  = dao().consultarCpServicoPorChave(servicoPai);
+				l = dao().listarServicosPorPai(c);
+			}
 
 			HashMap<CpServico, ConfiguracaoAcesso> achm = new HashMap<CpServico, ConfiguracaoAcesso>();
 			for (CpServico srv : l) {
@@ -146,7 +158,13 @@ public class AcessoController extends GiControllerSupport {
 			for (ConfiguracaoAcesso ac : achm.values()) {
 				if (ac.getServico().getCpServicoPai() == null) {
 					acs.add(ac);
-				} else {
+				}  else if (acs.size() == 0 && ac.getServico().getSiglaServico().toString() == servicoPai.toString() && servicoPai != null) 
+				   {
+					acs.add(ac);
+				   }
+					else 
+					{
+
 					achm.get(ac.getServico().getCpServicoPai()).getSubitens()
 							.add(ac);
 				}
@@ -287,7 +305,7 @@ public class AcessoController extends GiControllerSupport {
 							+ ac.getPessoa().getSigla()
 							+ "\">" + ac.getPessoa().getSigla() + "</a>");
 		
-		sb.append("</li>");
+		sb.append("</li>"); 
 	}
 
 	private void acrescentarHTMLOld(Collection<ConfiguracaoAcesso> l,StringBuilder sb) {

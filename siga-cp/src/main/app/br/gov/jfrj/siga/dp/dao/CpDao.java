@@ -53,6 +53,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.DefaultNamingStrategy;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
@@ -1916,6 +1917,12 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public List<CpServico> listarServicos() {
 		return findByCriteria(CpServico.class);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpServico> listarServicosPorPai(CpServico servicoPai) {
+		return findByCriteria(CpServico.class,Property
+				.forName("cpServicoPai").eq(servicoPai) );
 	}
 
 	@SuppressWarnings("unchecked")

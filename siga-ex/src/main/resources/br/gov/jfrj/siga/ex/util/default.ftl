@@ -1,85 +1,3 @@
-[#macro parte id titulo depende="" responsavel="" bloquear=true esconder=false]
-    [#if !esconder]
-      [#if gerar_partes!false]
-        [#if root[id]??]
-          [#local preenchido = root[id]/]
-        [#else]
-          [#local preenchido = false/]
-        [/#if]
-        [#local body][#nested/][/#local]
-        [#local hash = false/]
-          <parte id="${id}" titulo="${titulo}" preenchido="${(preenchido == "Sim")?string("1","0")}" responsavel="${responsavel}" [#if .vars["parte_mensagem_" + id]??] mensagem="${.vars["parte_mensagem_" + id]!default}" [/#if]>
-          [#if depende!=""]
-            [#list depende?split(";") as dependencia]
-              <depende id="${dependencia}" hash="hash"/>
-            [/#list]
-          [/#if]
-        </parte>
-      [#else]
-        [#local idDiv = "parte_div_" + id /] 
-        [@div id=idDiv depende=depende suprimirIndependente=true]
-          <input type="hidden" id="parte_dependentes_${id}" class="parte_dependentes" value="${id}:${depende}:${bloquear?c}:${responsavel}"/>
-          [@oculto var="parte_mensagem_${id}" /]
-          
-          <table class="parte" width="100%">
-            <tr class="header">
-              <td>${titulo}
-                <span style="float: right"><input type="button" value="Solicitar Alteração" onclick="parte_solicitar_alteracao('${id}', '${titular}', '${lotaTitular}');"/> [@checkbox titulo="Preenchimento Concluído" var=id reler=true idAjax=id id="parte_chk_"+id onclique="parte_atualizar('${titular}', '${lotaTitular}');" /]</span>
-                <span style="float: right; padding-right: 2em;">Responsável: ${responsavel}</span>
-              </td>
-            </tr>
-            <tr>
-              <td>
-              	<div id="parte_div_mensagem_${id}" class="gt-error"></div>
-				<fieldset id="parte_fieldset_${id}">[#nested]</fieldset></td>
-            </tr>
-          </table>
-          [#local titular = .vars['sigla_titular']!""]
-          [#local lotaTitular = .vars['sigla_lota_titular']!""]
-            <script type="text/javascript">
-                $(document).ready(function(){parte_atualizar('${titular}', '${lotaTitular}')});
-            </script>
-        [/@div]
-      [/#if]
-    [#else]
-        [#nested]
-    [/#if]
-[/#macro]
-
-[#-- Assinatura de Parte de Documento Colaborativo --]
-[#macro assinaturaParte doc parte formatarOrgao=false]
-  [#attempt]
-    [#assign mov = func.parteUltimaMovimentacao(doc, parte) /]
-  [#recover]
-    [#return]
-  [/#attempt]
-  <p style="font-family: Arial; font-size: 11pt; text-align: center">
-    ${(mov.subscritor.descricao)!}<br />
-  
-  [#if mov.nmFuncao??]
-    ${mov.nmFuncao} 
-  [#elseif mov.titular?? && doc.titular?? && mov.titular.idPessoa == doc.titular.idPessoa && doc.nmFuncao??]
-    ${doc.nmFuncao} 
-  [#elseif mov.subscritor?? && doc.subscritor?? && mov.subscritor.idPessoa == doc.subscritor.idPessoa && doc.nmFuncao??]
-    ${doc.nmFuncao} 
-  [#elseif (mov.titular.funcaoConfianca.nomeFuncao)??]
-    ${mov.titular.funcaoConfianca.nomeFuncao} ${(mov.titular.idPessoa != mov.subscritor.idPessoa)?string('EM EXERCÍCIO', '')} 
-  [#elseif (mov.subscritor.funcaoConfianca.nomeFuncao)??]
-    ${mov.subscritor.funcaoConfianca.nomeFuncao} 
-  [#else]
-    ${(mov.subscritor.cargo.nomeCargo)!}
-  [/#if]
-  <br />
-   
-  [#if mov.nmLotacao??]
-    ${mov.nmLotacao} 
-  [#else]
-    ${(mov.titular.lotacao.nomeLotacao)!}
-  [/#if]
-  </p>
-[/#macro]
-
-
 [#function par parameter]
     [#if param[parameter]??]
         [#return param[parameter]]
@@ -89,135 +7,6 @@
     [#assign inlineTemplate = ["[#assign default_${var} = true/]", "assignInlineTemplate"]?interpret /]
     [@inlineTemplate/]
 [/#function]
-[#macro entrevista acaoGravar="" acaoExcluir="" acaoCancelar="" acaoFinalizar=""]
-    [#if gerar_entrevista!false || gerar_formulario!false || gerar_partes!false]
-        [#if acaoGravar!=""]
-            <input type="hidden" name="acaoGravar" id="acaoGravar" value="${acaoGravar}" />
-	    <input type="hidden" name="vars" value="acaoGravar" />
-        [/#if]
-        [#if acaoExcluir!=""]
-            <input type="hidden" name="acaoExcluir" id="acaoExcluir" value="${acaoExcluir}" />
-	    <input type="hidden" name="vars" value="acaoExcluir" />
-        [/#if]
-        [#if acaoCancelar!=""]
-            <input type="hidden" name="acaoCancelar" id="acaoCancelar" value="${acaoCancelar}" />
-	    <input type="hidden" name="vars" value="acaoCancelar" />
-        [/#if]
-        [#if acaoFinalizar!=""]
-            <input type="hidden" name="acaoFinalizar" id="acaoFinalizar" value="${acaoFinalizar}" />
-	    <input type="hidden" name="vars" value="acaoFinalizar" />
-        [/#if]
-        [#nested]
-    [/#if]
-[/#macro]
-[#macro documento formato="A4" orientacao="retrato" margemEsquerda="3cm" margemDireita="2cm" margemSuperior="1cm" margemInferior="2cm"]
-    [#if !gerar_entrevista!false || gerar_finalizacao!false || gerar_assinatura!false]
-        <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-            <head>
-                <style type="text/css">
-                    @page {
-                        margin-left: ${margemEsquerda};
-                        margin-right: ${margemDireita};
-                        margin-top: ${margemSuperior};
-                        margin-bottom: ${margemInferior};
-                    }
-                </style>
-            </head>
-            <body>
-                [#nested]
-            </body>
-        </html>
-    [/#if]
-[/#macro]
-[#macro descricao]
-   [#if gerar_descricao!false]
-    <!-- descricao -->
-      [#nested]
-    <!-- /descricao -->
-   [/#if]
-[/#macro]
-[#macro finalizacao]
-    [#if gerar_finalizacao!false]
-        [#nested]
-    [/#if]
-[/#macro]
-[#macro assinatura]
-    [#if gerar_assinatura!false]
-        [#nested]
-    [/#if]
-[/#macro]
-[#macro resumo visivel=false]
-  [#assign visivel = visivel /]
-  [#if gerar_resumo!false]
-    <!-- resumo -->
-      [#nested]
-    <!-- /resumo -->
-  [/#if]
-[/#macro]
-[#macro topico descricao valor]
-  [#if visivel!false]
-    <li>${descricao}=${valor}</li>
-  [/#if]
-  <!-- topico -->
-    <input type="hidden" name="${descricao}" value="${valor}"/>
-  <!-- /topico -->
-[/#macro]
-
-
-
-
-
-[#macro moeda var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default="" somenteLeitura=false]
-    [#if reler == 'ajax']
-        [#local jreler = " onblur=\"javascript: sbmt('" + idAjax + "');\""]
-    [/#if]
-
-    [#if reler == 'sim']
-        [#local jreler = " onblur=\"javascript: sbmt();\""]
-    [/#if]
-
-    [#if relertab == 'sim']
-        [#local jrelertab = " onblur=\"javascript: sbmt();\""]
-    [/#if]
-
-    [#if largura?string != ""]
-        [#local jlargura = " size=\"" + largura + "\""]
-    [/#if]
-
-    [#if maxcaracteres != ""]
-        [#local jmaxcaracteres = " maxlength=\"" + maxcaracteres + "\""]
-    [/#if]
-
-    [#local v = .vars[var]!""]
-    [#if v == ""]
-        [#local v = default/]
-    [/#if]
-
-    <input type="hidden" name="vars" value="${var}" />
-
-    [#if (alerta!"Não") = 'Sim' && v = ""]
-    [#list obrigatorios?split(",") as campo]
-         [#if campo == var]
-         [#local vermelho = "color:red"]
-             [/#if]
-        [/#list]
-    [/#if]
-    [#if obrigatorio == 'Sim']
-    [#local negrito = "font-weight:bold"]
-    <input type="hidden" name="obrigatorios" value="${var}" />
-    [/#if]
-
-    [#if titulo != ""]
-    <span style="${negrito!""};${vermelho!""}">${titulo}:</span>
-    [/#if]
-    
-    [#if !gerar_formulario!false]
-    <input onkeypress="return formataReais(this, '.' , ',', event)"
-    type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""}/>
-    [#else]
-    <span class="valor">${v}</span>
-    [/#if]
-[/#macro]
 
 [#function formatarCPF fmtCPF_param]
 [#-- Início do comentário
@@ -230,7 +19,7 @@ Esta função obtém uma string contendo o CPF a ser formatado e o devolve forma
 com a seguinte apresentação: 999.999.999-99  
 
 
-Pré-condições:ext
+Pré-condições:
 A string passada como CPF pode conter quaisquer caracteres numéricos e não numéricos, visto que a função irá colher somente os dígitos numéricos. 
 Se a quantidade de dígitos numéricos for menor que 11 isto indica que possivelmente não foram passados os zeros a esquerda e neste caso, 
 a função introduzirá a quantidade necessária de zeros a esquerda.
@@ -307,37 +96,718 @@ Fim comentário --]
 [#assign fmtCPF_retorno = fmtCPF_novo?substring(0, 3) + "." + fmtCPF_novo?substring(3, 6) + "." + fmtCPF_novo?substring(6, 9) + "-" + fmtCPF_novo?substring(9, 11) /]
 [#return fmtCPF_retorno]
 [/#function]
-[#macro numeroDJE]
-    <!-- INICIO NUMERO -->
-        [#nested/]
-    <!-- FIM NUMERO -->
+
+
+[#function validarCPF vldCPF_cpfrecebido] 
+[#--
+Aplicação: Função para validar um CPF 
+Versão:    1.0
+Acrônimo:  vldCPF_
+Autor:     Ruben
+Data:      13/03/2012
+Descrição:
+A validação do CPF se dá pelo confronto dos dígitos verificadores passado a função e calculados. O cálculo baseia-se em aplicar o módulo 11 nos primeiros 9 dígitos do CPF, obtendo-se assim o primeiro dígito verificador. Depois aplica-se o módulo 11 novamente nos primeiros 9 dígitos e no primeiro dígito verificador.
+O site http://br.answers.yahoo.com/question/index?qid=20060829190814AAHOqY6 possui uma descrição detalhada de como o algoritmo deve funcionar.
+
+Condições de erro:
+Se a string for nula ou o dígito verificador calculado não bater com o fornecido a funnçõa retornará False.
+
+Pré-condições:
+O CPF deve estar no formato xxx.xxx.xxx-xx 
+ 
+Parâmetros recebidos:                                                        
++--------------+---------+--------+----------+-----------------------------------
+| Parâmetro    |Tipo/Tam | Obrig. | Default  | Descrição
++--------------+---------+--------+----------+-----------------------------------
+|vldCPF_param  | String  |  Sim   |          |  O CPF a ser validado no formato
+|              |         |        |          |  xxx.xxx.xxx-xx   
++--------------+---------+--------+----------+-----------------------------------
+
+Parâmetros retornados:                                                        
++--------------+---------+--------+----------+-----------------------------------
+| Parâmetro    |Tipo/Tam | Obrig. | Default  | Descrição
++--------------+---------+--------+----------+-----------------------------------
+|              | Boolean |  Sim   |          |  True ? CPF OK
+|              |         |        |          |  False ? CPF inválido   
++--------------+---------+--------+----------+-----------------------------------
+
+Chamada da function: 
+A chamada nas aplicações poderá ser algo tipo:
+  
+  [#assign testeCPF = validarCPF(CPFaservalidado)/]
+  [#if !testeCPF]
+      Tratar o erro, pois o CPF fornecido é inválido
+  [/#if]      
+
+Variáveis:
+vldCPF_cpfrecebido   O CPF passado a função ***** Não podemos alterar o parãmetro passado
+vldCPF_cpf           Cópia do CPF passado a função para que possamos trabalhar nele
+vldCPF_d1            Conterá a soma dos dígitos para o primeiro dígito verificador 
+vldCPF_d2            Conterá a soma dos dígitos para o segundo dígito verificador
+vldCPF_digito1       Conterá o primeiro dígito verificador
+vldCPF_digito2       Conterá o segundo dígito verificador
+vldCPF_resto         Utilizado para obter o reswto da divisão
+vldCPF_digitoCPF     Conterá cada caracter lido do CPF passado a função 
+vldCPF_tam           Conterá o tamanho da string do CPF passado sem formatação (. e -)
+vldCPF_ndigverific   Conterá os dígitos verificadores passados a função 
+vldCPF_ndigresult    Conterá os dígitos verificadores calculados (vldCPF_digito1 + 
+                     vldCPF_digito2)
+
+                                                                                              Fim comentário --]
+
+[#if !vldCPF_cpfrecebido??] 
+      [#return false]   
+[/#if]  
+
+[#assign vldCPF_d1 = 0/]
+[#assign vldCPF_d2 = 0/]
+[#assign vldCPF_digito1 = 0/]
+[#assign vldCPF_digito2 = 0/]
+[#assign vldCPF_resto = 0/]
+[#assign vldCPF_digitoCPF = ""/]
+[#assign vldCPF_ndigverific = ""/]
+[#assign vldCPF_ndigresult = ""/]
+
+[#-- Não podemos trabalhar em cima do vldCPF_cpfrecebido pois gera resultados estranhos, por isso é feito uma cópia dele para a variável vldCPF_cpf  --]
+[#assign vldCPF_cpf = ""/]
+[#assign vldCPF_cpf = vldCPF_cpfrecebido/]
+
+[#-- Retirar . e ? do CPF                                                                                     --]
+[#assign vldCPF_cpf = vldCPF_cpf?replace(".", "") /]
+[#assign vldCPF_cpf = vldCPF_cpf?replace("-", "") /]
+
+
+[#assign vldCPF_tam = vldCPF_cpf?length - 2/]
+[#--Lógica                                                                                                     --]
+[#list 1..vldCPF_tam  as vldCPF_ncount]
+   
+[#assign vldCPF_digitoCPF =  vldCPF_cpf?substring(vldCPF_ncount - 1, vldCPF_ncount)/]
+
+[#--multiplique a ultima casa por 2 a seguinte por 3 a seguinte por 4 e assim por diante                       --]
+
+   [#assign vldCPF_d1 = vldCPF_d1 + (11 - vldCPF_ncount) * vldCPF_digitoCPF?number /]
+
+[#-- para o segundo digito repita o procedimento incluindo o primeiro digito calculado no passo anterior       --]
+
+   [#assign vldCPF_d2 = vldCPF_d2 + (12 - vldCPF_ncount) * vldCPF_digitoCPF?number /]
+[/#list]  
+
+[#-- Primeiro resto da divisão por 11                                                                          --] 
+
+[#assign vldCPF_resto = (vldCPF_d1 % 11) /]
+
+[#--Se o resultado for 0 ou 1 o digito é 0 caso contrário o digito é 11 menos o resultado anterior             --] 
+
+[#if vldCPF_resto < 2]
+ [#assign vldCPF_digito1 = 0/]
+[#else]
+  [#assign vldCPF_digito1 = 11 - vldCPF_resto /]
+[/#if]  
+
+[#-- parte que ficou faltando para o segundo digito verificador                                                --]
+[#assign vldCPF_d2 =  vldCPF_d2 + (2 * vldCPF_digito1)/]
+
+[#-- Segundo resto da divisão por 11                                                                           --]
+[#assign vldCPF_resto = (vldCPF_d2 % 11) /]
+
+[#--Se o resultado for 0 ou 1 o digito é 0 caso contrário o digito é 11 menos o resultado anterior             --] 
+
+[#if vldCPF_resto < 2]
+ [#assign vldCPF_digito2 = 0/]
+[#else]
+  [#assign vldCPF_digito2 = 11 - vldCPF_resto /]
+[/#if]  
+
+[#-- Digito verificador do CPF que está sendo validado                                                         --]
+[#assign vldCPF_ndigverific = vldCPF_cpf?substring(vldCPF_cpf?length - 2, vldCPF_cpf?length)/]
+
+[#-- Concatenando o primeiro resto com o segundo                                                               --] 
+[#assign vldCPF_ndigresult = vldCPF_digito1?string + vldCPF_digito2?string /]
+
+[#-- comparar o digito verificador do cpf com o primeiro resto + o segundo resto                               --]
+[#if vldCPF_ndigverific == vldCPF_ndigresult]
+  [#return true]
+[#else]
+  [#return false]
+[/#if]  
+
+[/#function]  
+
+
+[#function fmtvldCPF fmtvldCPF_param]
+[#-- Início do comentário
+Aplicação: Função para formatar e validar um CPF
+Acrônimo: fmtvldCPF_
+Autor:    Ruben
+Data:     13/03/2012
+Descrição:
+Esta função obtém uma string contendo o CPF a ser formatado e validado e o devolve formatado
+com a seguinte apresentação: 999.999.999-99  
+
+Pré-condições:
+A string passada como CPF pode conter quaisquer caracteres numéricos e não numéricos, visto que a função irá colher somente os dígitos numéricos. 
+Se a quantidade de dígitos numéricos for menor que 11 isto indica que possivelmente não foram passados os zeros a esquerda e neste caso, 
+a função introduzirá a quantidade necessária de zeros a esquerda.
+Exemplos
+String passada             String considerada        String retornada      
+4751084679                 47510846749               475.108.467-49
+475.108.467/49             47510846749               475.108.467-49
+510846749                  00510846748               005.108.467-49 
+475xpto108bb46749          47510846749               475.108.467-49
+
+Condições de erro:
+Se a string for: nula ou maior que 11 ou menor que 3 dígitos numéricos, 
+será retornado ?E1? pela função, indicando que o CPF passado não pode ser formatado.
+Se o dígito verificador calculado não bater com dígito passado será retornado ?E2? pela função, indicando que o CPF é inválido.
+
+Parâmetros recebidos:                                                       
++----------------+-----------+-------------+----------+-------------------------------------------------
+|  Parâmetro     | Tipo/Tam  | Obrigatório | Default  | Descrição
++----------------+-----------+-------------+----------+-------------------------------------------------
+|fmtvldCPF_param | String    |  Sim        |          |  O CPF a ser formatado e validado
++----------------+-----------+-------------+----------+-------------------------------------------------
+Parâmetros devolvidos:
++----------------+-----------+-------------+----------+-------------------------------------------------
+| Parâmetro      | Tipo/Tam  | Obrigatório | Default  | Descrição
++----------------+-----------+-------------+----------+-------------------------------------------------
+|                | String    |  Sim        |          |  O CPF formatado ou os seguintes tipos de erro:
+|                |           |             |          |  E1 - O CPF passado não pode ser formatado
+|                |           |             |          |  E2 - O CPF passado é inválido
++--------------+---------+--------+----------+----------------------------------------------------------
+
+Chamada da function:
+A chamada nas aplicações poderá ser algo tipo:
+
+   [#assign antigoCPF = "47510846749"/]
+   [#assign novoCPF = fmtvldCPF(antigoCPF)/]
+   [#if novoCPF == "E1"]
+      Tratar o erro, pois o CPF fornecido está inconsistente e não pode ser formatado
+	[#elseif novoCPF == "E2"]
+      Tratar o erro, pois o CPF fornecido é inválido, ou seja, possui dígitos verificadores inválidos 
+	[#else]
+      Utilizar o novoCPF	
+   [/#if]     
+ 
+ Fim comentário --]
+
+[#if !fmtvldCPF_param??]
+ [#return "E1"]
+[/#if]  
+ 
+[#assign fmtvldCPF_cpfrecebido = fmtvldCPF_param /]
+[#assign fmtvldCPF_formatado = formatarCPF(fmtvldCPF_cpfrecebido)/]
+[#if fmtvldCPF_formatado == "erro"]
+     [#return "E1"]
+[/#if] 
+
+[#assign fmtvldCPF_validado = validarCPF(fmtvldCPF_formatado)/]
+[#if !fmtvldCPF_validado]
+     [#return "E2"]
+[/#if]    
+
+[#return fmtvldCPF_formatado]
+
+[/#function]
+
+[#macro dumpall]
+[#local dump_var = "variável local criada para não gerar erro na rotina de listar as variáveis locais"/]
+
+[#--
+D D     U     U       M        M        P P    
+D  D    U     U      M  M     M M       P  P    
+D   D   U     U     M    M   M   M      P P     
+D  D    U     U    M      M M     M     P      
+D D     UUUUUUU   M        M       M    P       
+
+
+
+DATA MODEL                               AMBIENTE DE EXECUÇÃO
+
+root                                     +-------------+
+  + Func                                 | Global      |
+  |                                      +-------------+
+  + Exbl
+  |                                      +-------------+
+  + Doc                                  | Main        |
+  |                                      |             |  
+  + Outra variáveis                      | +---------+ | 
+                                         | | Local   | |
+                                         | +---------+ |
+                                         +-------------+
+
+  
+--]
+
+   Cada template roda no NAMESPACE default chamado Main, onde constam as variáveis definidas via diretiva Assign [@br/]
+   Nas macros e functions sao permitidas  a criação de variáveis locais via diretiva Local [@br/]
+   As variáveis definidas via diretiva Global podem ser utilizadas em todo o ambiente do freemarker [@br/]
+   O DATA MODEL e o Hash Root são idênticos [@br/]
+
+[@separador/]
+=================================== VARIÁVEIS DO DATA MODEL ============================================================ 
+[@separador/]
+[#list .data_model?keys as chave]
+  [#assign key = chave! /]
+  [#assign item = .data_model[key]! /]
+  [@vertipo/]   [@br/]
+[/#list]
+
+[@separador/]
+
+================================== VARIÁVEIS DO TEMPLATE SENDO EXECUTADO (NAMESPACE MAIN)=================================  
+[@separador/]
+[#list .main?keys as chave]
+  [#assign key = chave! /]
+  [#assign item = .main[key]! /]
+  [@vertipo/]   [@br/]
+[/#list]
+[@separador/]
+
+================================== VARIÁVEIS DO HASH ROOT (Idêntica do DATA_MODEL) ========================================  
+[@separador/]
+[#list root?keys as chave]
+  [#assign key = chave! /]
+  [#assign item = root[key]! /]
+  [@vertipo/]   [@br/]
+[/#list]
+[@separador/]
+
+================================== VARIÁVEIS DO HASH (DA CLASSE) FUNC  =====================================================  
+[@separador/]
+[#list func?keys as chave]
+  [#assign key = chave! /]
+  [#assign item = func[key]! /]
+  [@vertipo/]   [@br/]
+[/#list]
+[@separador/]
+
+================================== VARIÁVEIS DO HASH (DA CLASSE) EXBL  =====================================================  
+[@separador/]
+[#list exbl?keys as chave]
+  [#assign key = chave! /]
+  [#assign item = exbl[key]! /]
+  [@vertipo/]   [@br/]
+[/#list]
+[@separador/]
+
+================================== VARIÁVEIS DO HASH (DA CLASSE) DOC  =====================================================  
+[@separador/]
+[#list doc?keys as chave]
+  [#assign key = chave! /]
+  [#assign item = '?? (method)' /]
+  [@vertipo/]   [@br/]
+[/#list]
+[@separador/]
+
+================================== VARIÁVEIS DEFINIDAS COMO LOCAL  ==========================================================  
+[@separador/]
+[#list .locals?keys as chave]
+  [#assign key = chave! /]
+  [#assign item = (.locals[key])! /]
+  [@vertipo/]   [@br/]
+[/#list]
+
 [/#macro]
 
-[#macro mioloDJE]
-    <!-- INICIO MIOLO -->
-        [#nested/]
-    <!-- FIM MIOLO -->
+[#macro vertipo]
+[#if item?is_method]
+   ${key} = ?? (method)
+[#elseif item?is_enumerable]
+   ${key} = ??  (enumerável)
+[#elseif item?is_hash_ex]
+   ${key} = ?? (hash)
+[#elseif item?is_number]
+   ${key} = ${item}
+[#elseif item?is_string]
+   ${key} = "${item}"
+[#elseif item?is_boolean]
+   ${key} = ${item?string}
+[#elseif item?is_date]
+   ${key} = ${item?string("yyyy-MM-dd HH:mm:ss zzzz")}
+[#elseif item?is_transform]
+   ${key} = ?? (transform)
+[#elseif item?is_macro]
+   ${key} = ?? (macro)
+[#elseif item?is_hash]
+   ${key} = ?? (hash)
+[#elseif item?is_node]
+   ${key} = ?? (node)
+[#else]
+   ${key} = ?? (tipo desconhecido)
+[/#if]
 [/#macro]
 
 
-[#macro inicioMioloDJE]
-    <!-- INICIO MIOLO -->
+[#macro dump]
+[#-- Início do comentário
+Aplicação: Realiza um dump das variáveis do data-model
+Autor    : Ruben
+Data     : 13/08/2012
+Descrição: É o dump simplificado da macro @dumpall 
+--]
+[#list .data_model?keys as chave]
+   [#assign key = chave! /]
+   [#assign item = .data_model[key]! /]
+   [#if item?is_number]
+     ${key} = ${item}
+   [#elseif item?is_string]
+     ${key} = "${item}"
+   [#elseif item?is_boolean]
+     ${key} = ${item?string}
+   [#elseif item?is_date]
+     ${key} = ${item?string("yyyy-MM-dd HH:mm:ss zzzz")}
+   [/#if]
+[/#list] 
 [/#macro]
-
-[#macro fimMioloDJE]
-    <!-- FIM MIOLO -->
-[/#macro]
-
-
-[#macro tituloDJE]
-    <!-- INICIO TITULO 
-        [#nested/]
-    FIM TITULO -->
-[/#macro]
-
 
 [#macro br]
     <br>
+[/#macro]
+
+[#macro atualizaoculto var valor="" default="1"]
+[#-- Início do comentário
+Aplicação: Atualiza o valor de um campo oculto criado pela macro @oculto
+Autor:    Ruben
+Data:     13/05/2012
+Descrição: Rcebe o nome da variável e o valor que se deseja modificar, sendo "1" o default
+--]
+[#local v = (valor != "")?string(valor,.vars[var]!default) /]
+<script type="text/javascript">
+document.getElementById("${var}").value="${v}";
+</script>
+[/#macro]
+
+
+[#macro atualizacampo varantigo varnovo]
+[#-- Início do comentário
+Aplicação: Atualiza o valor de um campo via DOM
+Autor:    Ruben
+Data:     13/05/2012
+Descrição: Recebe o nome da variável que deve ser modificada e a variável com conteúdo novo
+--]
+<script type="text/javascript">
+document.getElementsByName("${varantigo}")[0].value="${varnovo}";
+</script>
+[/#macro]
+
+
+[#macro msgid idspan texto vermelho=false]
+[#-- 
+Aplicação: Cria um campo de mensagem com id para que se possa mudar o seu atributo dinamicamente
+Autor:    Ruben
+Data:     13/05/2012
+Descrição: Recebe o id e o texto da mensagem para que se possa alterar o style.diplay para "none" ou "inline"
+--]
+<span id="idspan" style="[#if vermelho]color=#ff0000[/#if]"> ${texto!""}</span>
+[/#macro]
+
+[#macro memooculto var titulo colunas linhas reler=false obrigatorio=false default=""]
+[#-- Início do comentário
+Aplicação: Campo memo (textarea) oculto
+Autor:    Ruben
+Data:     13/08/2012
+Descrição: Cria um campo memo (textarea) oculto
+--]
+[#if reler == true]
+[#local jreler = " onchange=\"javascript: sbmt();\""]
+[/#if]
+[#local v = .vars[var]!default]
+<input type="hidden" name="vars" value="${var}" />
+[#if (alerta!"Não") = 'Sim' && v = ""]
+    [#list obrigatorios?split(",") as campo]
+[#if campo == var]
+[#local vermelho = "color:red"]
+[/#if]
+[/#list]
+[/#if]
+[#if obrigatorio]
+[#local negrito = "font-weight:bold"]
+<input type="hidden" name="obrigatorios" value="${var}" />
+[/#if]
+<div style="padding-top:5px;">
+[#if !gerar_formulario!false]
+<textarea cols="${colunas}" rows="${linhas}" style="display: none" name="${var}" ${jreler!""}>${v}</textarea>
+[#else]
+<span class="valor">${v}</span>
+[/#if]
+</div>
+[/#macro]
+
+[#macro dumpvarantes]
+[#-- Início do comentário
+Aplicação: Realiza um dump antes da execução do template
+Autor    : Ruben
+Data     : 13/08/2012
+Descrição: Esta macro é utilizada pelo Integrador
+--]
+[#assign datahoje = doc.getData()?substring(0,10)/]
+[#assign horahoje = doc.getData()?substring(11,19)/]
+[#assign fm_logDump]
+================================================================================== 
+DUMP INÍCIO	 do DATA-MODEL / Variáveis do Template  ${datahoje} às ${horahoje}
+==================================================================================
+-
+---------------------------------
+LISTAGEM DO DATA-MODEL
+--------------------------------
+LINHA  VARIÁVEL / CONTEÚDO
+------       ------------------------------------------------
+[#assign fm_i = 1/]
+[#list .data_model?keys as chave]
+   [#assign key = chave! /]
+   [#assign item = .data_model[key]! /]
+  [#if key != "template" && key != "fm_dumpAntesFm" && key != "fm_dumpDepoisFm" && key!= "fm_aplicacao" && key != "fm_divcarregar" && key != "fm_exibirinicial" && key != "fm_conteudo"]
+   [#if item?is_number]
+     ${fm_i?string("00000")} ${key} = ${item}  
+     [#assign fm_i = fm_i + 1 /] 
+   [#elseif item?is_string]
+     ${fm_i?string("00000")}  ${key} = "${item}"  
+     [#assign fm_i = fm_i + 1 /]  
+   [#elseif item?is_boolean]
+     ${fm_i?string("00000")}  ${key} = ${item?string}
+     [#assign fm_i = fm_i + 1 /]  
+   [#elseif item?is_date]
+     ${fm_i?string("00000")}  ${key} = ${item?string("yyyy-MM-dd HH:mm:ss zzzz")} 
+     [#assign fm_i = fm_i + 1 /]  
+   [/#if]
+  [/#if] 
+[/#list]
+-
+-
+---------------------------------------------
+LISTAGEM DAS VARIÁVEIS DO TEMPLATE
+--------------------------------------------
+LINHA  VARIÁVEL / CONTEÚDO
+------      ------------------------------------------------
+[#assign fm_i = 1/]
+[#list .main?keys as chave]
+  [#assign key = chave! /]
+  [#assign item = .main[key]! /]
+  [#if key != "fm_logDump" && key != "fm_dumpAntesFm"]
+   [#if item?is_number]
+     ${fm_i?string("00000")} ${key} = ${item}  
+     [#assign fm_i = fm_i + 1 /] 
+   [#elseif item?is_string]
+     ${fm_i?string("00000")}  ${key} = "${item}"  
+     [#assign fm_i = fm_i + 1 /]  
+   [#elseif item?is_boolean]
+     ${fm_i?string("00000")}  ${key} = ${item?string}
+     [#assign fm_i = fm_i + 1 /]  
+   [#elseif item?is_date]
+     ${fm_i?string("00000")}  ${key} = ${item?string("yyyy-MM-dd HH:mm:ss zzzz")} 
+     [#assign fm_i = fm_i + 1 /]  
+   [/#if]
+  [/#if] 
+[/#list]
+
+[/#assign]
+[@oculto var="fm_dumpAntesFm" valor="${fm_logDump?html}"/]
+[@grupo titulo="DUMP"]
+<input id="fm_verdumpantes" type=button onClick="fm_verDumpFm(1);" value='Início da execução'>
+<span>    </span>
+<input id="fm_verdumpdepois" type=button onClick="fm_verDumpFm(2);" value='Fim da execução'>
+[@separador/]
+[/@grupo]
+
+<script type="text/javascript" language="javascript">
+function fm_verDumpFm(tipoDump)
+{
+try 
+{
+if (tipoDump == 1)
+{
+newwinantes.close();
+} // do if
+if (tipoDump == 2)
+{
+newwindepois.close();
+} 
+} // do try  
+catch(err) 
+{
+} 
+if (tipoDump == 1)
+{
+meuString = document.getElementById("fm_dumpAntesFm").value;
+meuArray = meuString.split('\n');
+newwinantes = window.open('minhapagantes.htm','DATAINICIO','height=160,width=800,status=yes,toolbar=yes,scrollbars=yes,menubar=yes,location=yes');
+for (i=0; i<meuArray.length; i++)
+  {
+  newwinantes.document.write(meuArray[i]);
+  newwinantes.document.write('<br>');  
+  }
+} // do if tipoDump = 1
+ 
+if (tipoDump == 2)
+{
+meuString = document.getElementById("fm_dumpDepoisFm").value;
+meuArray = meuString.split('\n');   
+newwindepois = window.open('minhapagdepois.htm','DATAFIM','height=160,width=800,status=yes,toolbar=yes,scrollbars=yes,menubar=yes,location=yes');
+for (i=0; i<meuArray.length; i++)
+  {
+  newwindepois.document.write(meuArray[i]);
+  newwindepois.document.write('<br>');  
+  }
+} // do if tipoDump = 2
+} //da function
+</script>
+[/#macro]
+
+
+[#macro dumpvardepois]
+[#-- Início do comentário
+Aplicação: Realiza um dump depois da execução do template
+Autor    : Ruben
+Data     : 13/08/2012
+Descrição: Esta macro é utilizada pelo Integrador
+--]
+[#assign datahoje = doc.getData()?substring(0,10)/]
+[#assign horahoje = doc.getData()?substring(11,19)/]
+[#assign fm_logDump]
+========================================================================== 
+DUMP FIM do DATA-MODEL / Variáveis do Template  ${datahoje} às ${horahoje}
+==========================================================================
+-
+----------------------
+LISTAGEM DO DATA-MODEL
+----------------------
+LINHA  VARIÁVEL / CONTEÚDO
+------ ------------------------------------------------
+[#assign fm_i = 1/]
+[#list .data_model?keys as chave]
+   [#assign key = chave! /]
+   [#assign item = .data_model[key]! /]
+  [#if key != "template" && key != "fm_dumpAntesFm" && key != "fm_dumpDepoisFm" && key!= "fm_aplicacao" && key != "fm_divcarregar" && key != "fm_exibirinicial" && key != "fm_conteudo"]
+   [#if item?is_number]
+     ${fm_i?string("00000")} ${key} = ${item}  
+     [#assign fm_i = fm_i + 1 /] 
+   [#elseif item?is_string]
+     ${fm_i?string("00000")}  ${key} = "${item}"  
+     [#assign fm_i = fm_i + 1 /]  
+   [#elseif item?is_boolean]
+     ${fm_i?string("00000")}  ${key} = ${item?string}
+     [#assign fm_i = fm_i + 1 /]  
+   [#elseif item?is_date]
+     ${fm_i?string("00000")}  ${key} = ${item?string("yyyy-MM-dd HH:mm:ss zzzz")} 
+     [#assign fm_i = fm_i + 1 /]  
+   [/#if]
+  [/#if] 
+[/#list]
+-
+-
+------------------------------------------ 
+LISTAGEM DAS VARIÁVEIS DO TEMPLATE
+------------------------------------------
+LINHA  VARIÁVEL / CONTEÚDO
+------      ------------------------------------------------
+[#assign fm_i = 1/]
+[#list .main?keys as chave]
+  [#assign key = chave! /]
+  [#assign item = .main[key]! /]
+  [#if key != "fm_logDump" && key != "fm_dumpAntesFm"]
+   [#if item?is_number]
+     ${fm_i?string("00000")} ${key} = ${item}  
+     [#assign fm_i = fm_i + 1 /] 
+   [#elseif item?is_string]
+     ${fm_i?string("00000")}  ${key} = "${item}"  
+     [#assign fm_i = fm_i + 1 /]  
+   [#elseif item?is_boolean]
+     ${fm_i?string("00000")}  ${key} = ${item?string}
+     [#assign fm_i = fm_i + 1 /]  
+   [#elseif item?is_date]
+     ${fm_i?string("00000")}  ${key} = ${item?string("yyyy-MM-dd HH:mm:ss zzzz")} 
+     [#assign fm_i = fm_i + 1 /]  
+   [/#if]
+  [/#if] 
+[/#list]
+
+[/#assign]
+[@oculto var="fm_dumpDepoisFm" valor="${fm_logDump?html}"/]
+[/#macro]
+
+
+
+[#macro entrevista acaoGravar="" acaoExcluir="" acaoCancelar="" acaoFinalizar=""]
+    [#if gerar_entrevista!false || gerar_formulario!false]
+        [#if acaoGravar!=""]
+            <input type="hidden" name="acaoGravar" id="acaoGravar" value="${acaoGravar}" />
+	    <input type="hidden" name="vars" value="acaoGravar" />
+        [/#if]
+        [#if acaoExcluir!=""]
+            <input type="hidden" name="acaoExcluir" id="acaoExcluir" value="${acaoExcluir}" />
+	    <input type="hidden" name="vars" value="acaoExcluir" />
+        [/#if]
+        [#if acaoCancelar!=""]
+            <input type="hidden" name="acaoCancelar" id="acaoCancelar" value="${acaoCancelar}" />
+	    <input type="hidden" name="vars" value="acaoCancelar" />
+        [/#if]
+        [#if acaoFinalizar!=""]
+            <input type="hidden" name="acaoFinalizar" id="acaoFinalizar" value="${acaoFinalizar}" />
+	    <input type="hidden" name="vars" value="acaoFinalizar" />
+        [/#if]
+        [#nested]
+    [/#if]
+[/#macro]
+[#macro documento formato="A4" orientacao="retrato" margemEsquerda="3cm" margemDireita="2cm" margemSuperior="1cm" margemInferior="2cm"]
+    [#if !gerar_entrevista!false || gerar_finalizacao!false || gerar_assinatura!false]
+        <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+            <head>
+                <style type="text/css">
+                    @page {
+                        margin-left: ${margemEsquerda};
+                        margin-right: ${margemDireita};
+                        margin-top: ${margemSuperior};
+                        margin-bottom: ${margemInferior};
+                    }
+                </style>
+            </head>
+            <body>
+                [#nested]
+            </body>
+        </html>
+    [/#if]
+[/#macro]
+
+[#macro gravacao]
+    [#if gerar_gravacao!false]
+        [#nested]
+    [/#if]
+[/#macro]
+
+[#macro finalizacao]
+    [#if gerar_finalizacao!false]
+        [#nested]
+    [/#if]
+[/#macro]
+
+[#macro assinatura]
+    [#if gerar_assinatura!false]
+        [#nested]
+    [/#if]
+[/#macro]
+
+[#macro pre_assinatura]
+    [#if gerar_pre_assinatura!false]
+        [#nested]
+    [/#if]
+[/#macro]
+
+[#macro resumo visivel=false]
+  [#assign visivel = visivel /]
+  [#if gerar_resumo!false]
+    <!-- resumo -->
+      [#nested]
+    <!-- /resumo -->
+  [/#if]
+[/#macro]
+
+[#macro topico descricao valor]
+  [#if visivel!false]
+    <li>${descricao}=${valor}</li>
+  [/#if]
+  <!-- topico -->
+    <input type="hidden" name="${descricao}" value="${valor}"/>
+  <!-- /topico -->
 [/#macro]
 
 [#macro grupo titulo="" largura=0 depende="" esconder=false]
@@ -365,7 +835,7 @@ Fim comentário --]
         </table>
         [#if largura != 0]
             </td>
-            [#if grupoLarguraTotal ]= 100>
+            [#if (grupoLarguraTotal >= 100)]
                 </td>
                 </table>
                 [#assign grupoLarguraTotal = 0/]
@@ -384,6 +854,7 @@ Fim comentário --]
     [#nested]
     [/#if]
 [/#macro]
+
 [#macro texto var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default=""]
     [#if reler == 'ajax']
         [#local jreler = " onchange=\"javascript: sbmt('" + idAjax + "');\""]
@@ -412,8 +883,8 @@ Fim comentário --]
 
     <input type="hidden" name="vars" value="${var}" />
 
-    [#if alerta!"" == 'Sim' && v==""]
-    [#list paramValues.obrigatorios as campo]
+    [#if (alerta!"Não") = 'Sim' && v = ""]
+    [#list obrigatorios?split(",") as campo]
          [#if campo == var]
          [#local vermelho = "color:red"]
              [/#if]
@@ -435,6 +906,7 @@ Fim comentário --]
     <span class="valor">${v}</span>
     [/#if]
 [/#macro]
+
 [#macro oculto var valor="" default=""]
     [#local v = (valor != "")?string(valor,.vars[var]!default) /]
     <input type="hidden" name="vars" value="${var}" />
@@ -442,7 +914,8 @@ Fim comentário --]
         <input type="hidden" id="${var}" name="${var}" value="${v}"/>
     [/#if]
 [/#macro]
-[#macro checkbox var titulo="" default="Nao" idAjax="" reler=false onclique="" obrigatorio=false id=""]
+
+[#macro checkbox var titulo="" default="Nao" idAjax="" reler=false onclique="" obrigatorio=false]
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');\""]
     [#elseif reler == true]
@@ -460,8 +933,8 @@ Fim comentário --]
     <input type="hidden" name="vars" value="${var}" />
     <input type="hidden" id="${var}" name="${var}" value="${v}" />
 
-    [#if alerta!"" == 'Sim' && v == ""]
-    [#list paramValues.obrigatorios as campo]
+    [#if (alerta!"Não") = 'Sim' && v = ""]
+    [#list obrigatorios?split(",") as campo]
          [#if campo == var]
          [#local vermelho = "color:red"]
              [/#if]
@@ -474,14 +947,15 @@ Fim comentário --]
     [/#if]
 
     [#if !gerar_formulario!false]
-        <input id="${id}" type="checkbox" name="${var}_chk" value="Sim"
+    <input type="checkbox" name="${var}_chk" value="Sim"
                [#if v=='Sim']checked[/#if] 
-               onclick="javascript: if (this.checked) document.getElementById('${var}').value = 'Sim'; else document.getElementById('${var}').value = 'Nao'; ${onclique!""}; ${jreler!""}" /> <label for="${id}" style="${negrito!""};${vermelho!""}">${titulo!""}</label>
+               onclick="javascript: if (this.checked) document.getElementById('${var}').value = 'Sim'; else document.getElementById('${var}').value = 'Nao'; ${onclique!""}; ${jreler!""}" /> <span style="${negrito!""};${vermelho!""}">${titulo!""}</span>
 
     [#else]
     <span class="valor">${v}</span>
     [/#if]
 [/#macro]
+
 [#macro radio titulo var reler=false idAjax="" default="Não" valor="Sim" onclique=""]
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');"]
@@ -511,7 +985,8 @@ Fim comentário --]
     <span class="valor">${v}</span>
     [/#if]
 [/#macro]
-[#macro editor var titulo semBotaoSalvar=false]
+
+[#macro editor_antigo var titulo="" default=""]
     [#if .vars[var]??]
         [#local v = .vars[var]/]
     [#else]
@@ -520,22 +995,95 @@ Fim comentário --]
     [#if v != ""]
         [#local v = exbl.canonicalizarHtml(v, false, true, false, true)/]
     [#else]
-        [#local v = '<p style="TEXT-INDENT: 2cm" align="justify"] </p>'/>
+        [#local v = '<p style="text-indent:2cm; text-align: justify">&nbsp;</p>'/]
     [/#if]
-    <div>
+
+        <div>
         [#if titulo != ""]
-            <b>${titulo}</b>
+                        <b>${titulo}</b>
         [/#if]
-        [#if !formulario!false]
+
+        [#if !gerar_formulario!false]
+
             <input type="hidden" name="vars" value="${var}" />
-            <script type="text/javascript">FCKeditorAPI = null;__FCKeditorNS = null;</script>   
+            <input type="hidden" id="desconsiderarExtensao" name="desconsiderarExtensao" value="${desconsiderarExtensao!'false'}" />
+
+                        [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
+                           && (!((desconsiderarExtensao == 'true')!false)) )]
+[#else]
+<textarea id="${var}" name="${var}">${default!}${v?html}</textarea>
+[/#if]
             <table class="entrevista" width="100%">
                 <tr>
                     <td></td>
                     <td colspan="3">
-                        <input type="hidden" id="${var}" name="${var}" value="${v?html}">
-                        <input type="hidden" id="${var}___Config" value="Default[#if semBotaoSalvar]SemSave[/#if]">
-                        <iframe id="${var}___Frame" src="/fckeditor/editor/fckeditor.html?InstanceName=${var}" width="100%" height="300" frameborder="no" scrolling="no" FCK="true"></iframe>
+
+                        
+                         
+                        [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
+                           && (!((desconsiderarExtensao == 'true')!false)) )]
+                             <input type="hidden" id="${var}" name="${var}" value="${v?html}">
+                            [@extensaoEditor nomeExtensao=var conteudoExtensao=v/]
+                        [#else]
+                            
+                            <script type="text/javascript">
+
+CKEDITOR.config.scayt_autoStartup = true;
+CKEDITOR.config.scayt_sLang = 'pt_BR';
+CKEDITOR.config.height = '400';
+CKEDITOR.config.stylesSet = 'siga_ckeditor_styles';
+
+
+
+CKEDITOR.stylesSet.add('siga_ckeditor_styles',[
+                                               {
+                                                   name:'Título',
+                                                   element:'h1',
+                                                   styles:{
+                                                           'text-align':'justify',
+                                                           'text-indent':'2cm'
+                                                                   }
+                                               },
+                                               {
+                                                   name:'Subtítulo',
+                                                   element:'h2',
+                                                   styles:{
+                                                           'text-align':'justify',
+                                                           'text-indent':'2cm'
+                                                                   }
+                                               },
+                                               {
+                                                   name:'Com recuo',
+                                                   element:'p',
+                                                   styles:{
+                                                           'text-align':'justify',
+                                                           'text-indent':'2cm'
+                                                                   }
+                                               }]);
+        CKEDITOR.config.toolbar = 'SigaToolbar';
+ 
+        CKEDITOR.config.toolbar_SigaToolbar =
+        [
+                { name: 'styles', items : [ 'Styles' ] },
+                { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
+                { name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','Scayt' ] },
+                '/',
+                { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','-','RemoveFormat' ] },
+                { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','JustifyLeft','JustifyCenter','JustifyBlock','JustifyRight' ] },
+                { name: 'insert', items : [ 'Table','-','SpecialChar','-','PageBreak' ] },
+                { name: 'document', items : [ 'Source' ] }
+        ];
+
+window.onload = function(){
+CKEDITOR.replace( '${var}',
+        {
+                toolbar : 'SigaToolbar'
+        });
+}
+                            </script>
+                            
+                        [/#if]
+
                     </td>
                 </tr>
             </table>
@@ -545,40 +1093,230 @@ Fim comentário --]
     </div>
 [/#macro]
 
+[#macro editor var titulo="" default=""]
+    [#if .vars[var]??]
+        [#local v = .vars[var]/]
+    [#else]
+        [#local v = ""/]
+    [/#if]
+    [#if v != ""]
+        [#local v = exbl.canonicalizarHtml(v, false, true, false, true)/]
+    [#else]
+        [#local v = '<p style="text-indent:2cm; text-align: justify">&nbsp;</p>'/]
+    [/#if]
+
+        <div>
+        [#if titulo != ""]
+                        <b>${titulo}</b>
+        [/#if]
+
+        [#if !gerar_formulario!false]
+
+            <input type="hidden" name="vars" value="${var}" />
+            <input type="hidden" id="desconsiderarExtensao" name="desconsiderarExtensao" value="${desconsiderarExtensao!'false'}" />
+
+                        [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
+                           && (!((desconsiderarExtensao == 'true')!false)) )]
+[#else]
+<textarea id="${var}" name="${var}" class="editor"> ${default!}${v?html}</textarea>
+[/#if]
+            <table class="entrevista" width="100%">
+                <tr>
+                    <td></td>
+                    <td colspan="3">
+
+                        
+                         
+                        [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
+                           && (!((desconsiderarExtensao == 'true')!false)) )]
+                             <input type="hidden" id="${var}" name="${var}" value="${v?html}">
+                            [@extensaoEditor nomeExtensao=var conteudoExtensao=v/]
+                        [#else]
+                            
+                            <script type="text/javascript">
+
+CKEDITOR.config.scayt_autoStartup = true;
+CKEDITOR.config.scayt_sLang = 'pt_BR';
+
+CKEDITOR.config.stylesSet = 'siga_ckeditor_styles';
+
+
+
+CKEDITOR.stylesSet.add('siga_ckeditor_styles',[
+                                               {
+                                            	   name:'Título',
+                                            	   element:'h1',
+                                            	   styles:{
+                                            		   'text-align':'justify',
+                                            		   'text-indent':'2cm'
+                                            			   }
+                                               },
+                                               {
+                                            	   name:'Subtítulo',
+                                            	   element:'h2',
+                                            	   styles:{
+                                            		   'text-align':'justify',
+                                            		   'text-indent':'2cm'
+                                            			   }
+                                               },
+                                               {
+                                            	   name:'Com recuo',
+                                            	   element:'p',
+                                            	   styles:{
+                                            		   'text-align':'justify',
+                                            		   'text-indent':'2cm'
+                                            			   }
+                                               }]);
+	CKEDITOR.config.toolbar = 'SigaToolbar';
+ 
+	CKEDITOR.config.toolbar_SigaToolbar =
+	[
+		{ name: 'styles', items : [ 'Styles' ] },
+		{ name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
+		{ name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','Scayt' ] },
+		'/',
+		{ name: 'basicstyles', items : [ 'Bold','Italic','Subscript','Underline','Strike','-','RemoveFormat' ] },
+		{ name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','JustifyLeft','JustifyCenter','JustifyBlock','JustifyRight' ] },
+		{ name: 'insert', items : [ 'Table','-','SpecialChar','-','PageBreak' ] },
+		{ name: 'document', items : [ 'Source' ] }
+	];
+
+window.onload = function(){
+     $( "textarea.editor" ).each(function( index ) {
+        CKEDITOR.replace( this,
+	{
+	   toolbar : 'SigaToolbar'
+	});
+     });
+}
+
+                            </script>
+                            
+                        [/#if]
+
+                    </td>
+                </tr>
+            </table>
+        [#else]
+            <br>${v}<br><br>
+        [/#if]
+    </div>
+[/#macro]
+
+
+[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" pontuacao=":"]
+    [#local l=opcoes?split(";")]
+    [#if .vars[var]??]
+        [#local v = .vars[var]/]
+    [#else]
+        [#local v = l?first/]
+                [#assign inlineTemplate = ["[#assign ${var} = v/]", "assignInlineTemplate"]?interpret /]
+                [@inlineTemplate/]
+        [/#if]
+    
+        ${titulo!""}[#if titulo != ""]${pontuacao!""}[/#if]
+
+    [#if !gerar_formulario!false]
+        <input type="hidden" name="vars" value="${var}" />
+        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}">
+                    [#list l as opcao]
+                        <option[#if v == opcao] selected[/#if] value="${opcao}">${opcao}</option><br/>
+            [/#list]
+        </select>
+    [#else]
+        <span class="valor">${v}</span>
+    [/#if]
+[/#macro]
+
+[#macro memo var titulo colunas linhas reler=false obrigatorio=false default=""]
+        [#if reler == true]
+                [#local jreler = " onchange=\"javascript: sbmt();\""]
+        [/#if]
+
+        [#local v = .vars[var]!default]
+
+        <input type="hidden" name="vars" value="${var}" />
+
+        [#if (alerta!"Não") = 'Sim' && v = ""]
+    [#list obrigatorios?split(",") as campo]
+                    [#if campo == var]
+                        [#local vermelho = "color:red"]
+                        [/#if]
+                [/#list]
+        [/#if]
+
+        [#if obrigatorio]
+            [#local negrito = "font-weight:bold"]
+            <input type="hidden" name="obrigatorios" value="${var}" />
+        [/#if]
+
+        <div style="padding-top:5px;">
+                [#if titulo != ""] 
+                        <span style="${negrito!""};${vermelho!""}">${titulo}:<br/></span>
+                [/#if]
+
+                [#if !gerar_formulario!false]
+                    <textarea cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""} style="width:100%;">${v}</textarea>
+                [#else]
+                    <span class="valor">${v}</span>
+                [/#if]
+        </div>
+[/#macro]
+
 [#macro XStandard nome="" conteudo=""]
         <script type="text/javascript" language="Javascript1.1">
 
         var insertingTable = false;
      
-        function onSave() {
-            document.getElementById('${nome}').EscapeUnicode = false;
-        document.getElementById('${nome}').value = document.getElementById('xstandard').value;
+        /*function onSave() {
+            var xstandard = document.getElementById('xstandard');
+            if (xstandard && xstandard.readyState == 4){
+                xstandard.value = xstandard.value.replace(/class=\"indent-first\"/g, 'style=\"text-indent: 2cm; text-align:justify;\"');
+                xstandard.value = xstandard.value.replace(/class=\"underline\"/g, 'style=\"text-decoration: underline\"');
+                xstandard.value = xstandard.value.replace(/class=\"justify\"/g, 'style=\"text-align:justify;\"');
+                document.getElementById('${nome}').EscapeUnicode = false;
+                document.getElementById('${nome}').value = xstandard.value;
             }
+        }*/
+        function onSave() {
+            var xstandard = document.getElementById('xstandard');
+            var inputHidden = document.getElementById('${nome}');
+            if (xstandard && xstandard.readyState == 4){
+                inputHidden.EscapeUnicode = false;
+                inputHidden.value = xstandard.value;
+                inputHidden.value = inputHidden.value.replace(/class=\"indent-first\"/g, 'style=\"text-indent: 2cm; text-align:justify;\"');
+                inputHidden.value = inputHidden.value.replace(/class=\"underline\"/g, 'style=\"text-decoration: underline\"');
+                inputHidden.value = inputHidden.value.replace(/class=\"justify\"/g, 'style=\"text-align:justify;\"');
+            }
+        }
     
         function xsDialogPropertiesActivated(id, qpath, element, attributes, metadata) {
         if (qpath == '' && element == 'table'){
             document.getElementById('xstandard').SetDialogProperties("<attributes><attr><name>summary</name><value>Tabela</value></attr><attr><name>bordercolor</name><value>#000000</value></attr><attr><name>style</name><value>border-width:1px;border-style:solid;border-collapse:collapse</value></attr></attributes>", false, false);
             }
         }
-    
+
+        setTimeout("verificaSeCarregou()",2000);
+        function verificaSeCarregou()
+        {
+          var xstandard = document.getElementById('xstandard');
+          if (!xstandard || xstandard.readyState != 4){
+              document.getElementById('desconsiderarExtensao').value='true';
+              document.getElementById('${nome}').value = 
+                  document.getElementById('xstandard_temp').innerHTML;
+              sbmt();
+            }
+        }
+  
         </script>
 
-        <input type="hidden" id="${nome}" name="${nome}" />
+        <div id="xstandard_temp" style="display:none">
+        ${conteudo}
+        </div>
 
         <object classid="clsid:0EED7206-1661-11D7-84A3-00606744831D"
-        codebase="/sigaex/XStandard/XStandard.cab#Version=3,0,0,0"
-        type="application/x-xstandard" id="xstandard" width="800" height="400">
-
-        <!-- 
-        <param name="License" value="%AppPath%\XStandard\license.txt" />
-        <param name="CSS" value="%AppPath%\XStandard\format.css" />
-        <param name="Styles" value="%AppPath%\XStandard\styles.xml" />
-         <param name="SpellCheckerLangFilter"
-            value="da,de,en-ca,en-us,en-gb,es,fr,it,nl,no,pt,sv" />
-         <param name="ToolbarWysiwyg"
-            value="ordered-list,unordered-list,definition-list,,draw-layout-table,draw-data-table,image,separator,hyperlink,attachment,directory,spellchecker,,wysiwyg,source,preview,screen-reader,help" />            
-             -->
-
+        codebase="http://${serverAndPort}/siga-ext-editor/XStandard/XStandard.cab#Version=3,0,0,0"
+        type="application/x-xstandard" id="xstandard" width="100%" height="400">
         <param nams="ImageLibraryURL"
         value="http://soap.xstandard.com/imagelibrary.aspx" />
         <param name="AttachmentLibraryURL"
@@ -591,21 +1329,19 @@ Fim comentário --]
         value="http://soap.xstandard.com/subdocument.aspx" />
         <param name="EscapeUnicode" value="false" />
 
-            <!--<c:set var="conteudo">
-        <c:out value="${conteudo}" escapeXml="true" />
-        </c:set>-->
-        <param name="Value" value="${conteudo}" />
+         
+        <param name="Value" value="${conteudo?html}" />
 
         <param name="SpellCheckerLangFilter" value="pt" />
         <param name="SpellCheckerLang" value="pt" />
-            <param name="License" value="&{abs('/sigaex/XStandard/license.txt')};" />
-            <param name="CSS" value="/sigaex/XStandard/format.css" />
-        <param name="Styles" value="/sigaex/XStandard/styles-pt.xml" />
-        <param name="Buttons" value="/sigaex/XStandard/buttons-pt.xml" />
-        <param name="Icons" value="/sigaex/XStandard/icons.xml" />
+        <param name="License" value="http://${serverAndPort}/siga-ext-editor/XStandard/license.txt" />
+        <param name="CSS" value="http://${serverAndPort}/siga-ext-editor/XStandard/format.css" />
+        <param name="Styles" value="http://${serverAndPort}/siga-ext-editor/XStandard/styles-pt.xml" />
+        <param name="Buttons" value="http://${serverAndPort}/siga-ext-editor/XStandard/buttons-pt.xml" />
+        <param name="Icons" value="http://${serverAndPort}/siga-ext-editor/XStandard/icons.xml" />
         <!-- Ver como coloca português -->
         <param name="Lang" value="pt" />
-        <param name="Localization" value="/sigaex/XStandard/localization-pt.xml" />
+        <param name="Localization" value="http://${serverAndPort}/siga-ext-editor/XStandard/localization-pt.xml" />
         <param name="EnablePasteMarkup" value="yes" />
         <param name="ToolbarWysiwyg"
         value="cut,copy,paste,undo,redo,find-replace,,strong,em,underline,,align-left,align-center,align-right,justify,,undo-blockquote,blockquote,,undo-indent-first,indent-first,,ordered-list,unordered-list,,draw-data-table,,separator,pagebreak,,spellchecker,,source,,help" />
@@ -636,74 +1372,116 @@ Fim comentário --]
         --> 
         </object>
 [/#macro]
-[#macro selecao var titulo opcoes reler=false idAjax="" onclick=""]
-    [#local l=opcoes?split(";")]
-    [#if .vars[var]??]
-        [#local v = .vars[var]/]
-    [#else]
-        [#local v = l?first/]
-                [#assign inlineTemplate = ["[#assign ${var} = v/]", "assignInlineTemplate"]?interpret /]
-                [@inlineTemplate/]
-        [/#if]
-    
-        ${titulo!""}[#if titulo != ""]:[/#if]
-
-    [#if !gerar_formulario!false]
-        <input type="hidden" name="vars" value="${var}" />
-        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}">
-                    [#list l as opcao]
-                        <option[#if v == opcao] selected[/#if] value="${opcao}">${opcao}</option><br/>
-            [/#list]
-        </select>
-    [#else]
-        <span class="valor">${v}</span>
+[#macro formulario texto fecho="" tamanhoLetra="Normal" _tipo="FORMULÁRIO"]
+[#--
+  Aplicação: Formatar documento para o tipo Formulário
+  Autor:     André
+  Data:      29/03/2012
+--]
+    [#if tamanhoLetra! == "Normal"]
+        [#assign tl = "11pt" /]
+    [#elseif tamanhoLetra! == "Pequeno"]
+        [#assign tl = "9pt" /]
+    [#elseif tamanhoLetra! == "Grande"]
+        [#assign tl = "13pt" /]
+    [#else]     
+        [#assign tl = "11pt"]
     [/#if]
+
+        [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false]
+        <span style="font-size: ${tl}"> ${texto!} </span>
+                <p style="align: justify; TEXT-INDENT: 2cm">${fecho}</p>
+        [/@estiloBrasaoCentralizado]
 [/#macro]
-[#macro memo var titulo colunas linhas reler=false obrigatorio=false default=""]
-        [#if reler == true]
-                [#local jreler = " onchange=\"javascript: sbmt();\""]
-        [/#if]
 
-        [#local v = .vars[var]!default]
+[#macro assentamento_funcional texto fecho="" tamanhoLetra="Normal" _tipo="ASSENTAMENTO FUNCIONAL"]
+[#--
+  Aplicação: Formatar documento para o tipo Assentamento Funcional
+  Autor:     André
+  Data:      20/03/2012
+--]
+    [#if tamanhoLetra! == "Normal"]
+        [#assign tl = "11pt" /]
+    [#elseif tamanhoLetra! == "Pequeno"]
+        [#assign tl = "9pt" /]
+    [#elseif tamanhoLetra! == "Grande"]
+        [#assign tl = "13pt" /]
+    [#else]     
+        [#assign tl = "11pt"]
+    [/#if]
 
-        <input type="hidden" name="vars" value="${var}" />
-
-        [#if alerta!"" == 'Sim' && v==""]
-            [#list paramValues.obrigatorios as campo]
-                    [#if campo == var]
-                        [#local vermelho = "color:red"]
-                        [/#if]
-                [/#list]
-        [/#if]
-
-        [#if obrigatorio]
-            [#local negrito = "font-weight:bold"]
-            <input type="hidden" name="obrigatorios" value="${var}" />
-        [/#if]
-
-        <div style="padding-top:5px;">
-                [#if titulo != ""] 
-                        <span style="${negrito!""};${vermelho!""}">${titulo}:<br/></span>
-                [/#if]
-
-                [#if !gerar_formulario!false]
-                    <textarea cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""}>${v}</textarea>
-                [#else]
-                    <span class="valor">${v}</span>
-                [/#if]
-        </div>
+        [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false]
+        <span style="font-size: ${tl}"> ${texto!} </span>
+                <p style="align: justify; TEXT-INDENT: 2cm">${fecho}</p>
+        [/@estiloBrasaoCentralizado]
 [/#macro]
+
+[#macro requerimento texto fecho="" tamanhoLetra="Normal" _tipo=""]
+[#--
+  Aplicação: Formatar documento para o tipo Formulário
+  Autor:     André
+  Data:      29/05/2012
+--]
+    [#if tamanhoLetra! == "Normal"]
+        [#assign tl = "11pt" /]
+    [#elseif tamanhoLetra! == "Pequeno"]
+        [#assign tl = "9pt" /]
+    [#elseif tamanhoLetra! == "Grande"]
+        [#assign tl = "13pt" /]
+    [#else]     
+        [#assign tl = "11pt"]
+    [/#if]
+
+        [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false dataAntesDaAssinatura=true]
+        <span style="font-size: ${tl}"> ${texto!} </span>
+                <p style="align: justify; TEXT-INDENT: 2cm">${fecho}</p>
+        [/@estiloBrasaoCentralizado]
+[/#macro]
+
+[#macro requerimento2 texto _tipo="REQUERIMENTO"]
+[#--
+  Aplicação: Formatar documento para o tipo Requerimento
+  Autor:     Priscila
+  Data:      30/05/2012
+--]
+<span style="align: justify; font-family: Arial; font-size: 15pt; font-weight: bold;">
+${enderecamentoDiretorDeRH}<br/>
+</span>
+${texto}<br/><br/>
+<span style="align: right; TEXT-INDENT: 2cm">Nestes termos,<br/>
+Pede deferimento.</span><br/><br/><br/>
+[#if mov??]
+[@assinaturaMovCentro formatarOrgao=formatarOrgao/]
+[#else]
+[@assinaturaCentro formatarOrgao=formatarOrgao/]
+[/#if]
+[@primeiroRodape]
+[@rodapeClassificacaoDocumental/]
+[/@primeiroRodape]
+[/#macro]
+
 [#macro mensagem texto titulo="" vermelho=false]
     <span style="[#if vermelho]color=#ff0000[/#if]">[#if titulo?? && titulo!=""]<b>${titulo}</b>: [/#if]${texto!""}</span>
 [/#macro]
+
+[#macro mensagem2 texto titulo="" cor="black"]
+<span style="color:${cor}"> [#if titulo?? && titulo!=""]<b>${titulo}</b>:[/#if] <b>${texto}</b></span>
+[/#macro]
+
+
+[#-- macro obrigatorios texto="Os campos em negrito são de preenchimento obrigatório" titulo="Atenção" vermelho=false]
+<span style="[#if vermelho]color=#ff0000[/#if]">[#if titulo?? && titulo!=""]<b>${titulo}</b>: [/#if]${texto!""}</span>
+[/#macro --]
+
 [#macro separador]
     <hr color="#FFFFFF"/>
 [/#macro]
-[#macro caixaSelecao titulo var tipo="" idInicial="" siglaInicial="" descricaoInicial="" modulo="" desativar=false buscar=true ocultarDescricao=false reler=false idAjax="" default="" alerta=false obrigatorio=false relertab="" paramList="" grande=false]
+
+[#macro caixaSelecao titulo var tipo="" idInicial="" siglaInicial="" descricaoInicial="" modulo="" desativar=false buscar=true ocultarDescricao=false reler=false idAjax="" default="" obrigatorio=false relertab="" paramList="" grande=false]
     [#local larguraPopup = 600 /]
     [#local alturaPopup =400 /]
     [#local tipoSel = "_" + tipo /]
-    [#local acaoBusca = (modulo=="")?string("/siga/app/","/"+modulo+"/") + tipo /]
+        [#local acaoBusca = (modulo=="")?string("/siga/","/"+modulo+"/") + tipo /]
     
         [#if paramList != ""]
             [#list paramList?split(";") as parametro]
@@ -741,7 +1519,7 @@ Fim comentário --]
      
     self.newwindow_${var} = '';
     self.popitup_${var}${tipoSel} = function(sigla) {
-              var url = '${acaoBusca}/buscar?propriedade=${var}${tipoSel}&sigla='+encodeURI(sigla)+'${selecaoParams!}';
+                 var url = '${acaoBusca}/buscar.action?propriedade=${var}${tipoSel}&sigla='+encodeURI(sigla)+'${selecaoParams!}';
         
         if (!newwindow_${var}.closed && newwindow_${var}.location) {
             newwindow_${var}.location.href = url;
@@ -785,22 +1563,19 @@ Fim comentário --]
         if (sigla == '') {
             return retorna_${var}${tipoSel}('', '', '');
         }
-          var url = '${acaoBusca}/selecionar?var=${var}${tipoSel}&sigla='+encodeURI(sigla)+'${selecaoParams!}';
+        var url = '${acaoBusca}/selecionar.action?var=${var}${tipoSel}&sigla='+encodeURI(sigla)+'${selecaoParams!}';
         url = url + '&sigla=' + sigla;
-        Siga.ajax(url, null, "GET", function(response){		
-			resposta_ajax_${var}${tipoSel}(response);
-		});	
-        //PassAjaxResponseToFunction(url, 'resposta_ajax_${var}${tipoSel}', false);
+        PassAjaxResponseToFunction(url, 'resposta_ajax_${var}${tipoSel}', false);
     }
     
     </script>
     
-    <input type="hidden" name="${var}${tipoSel}Sel.id" />
+    <input type="hidden" name="${var}${tipoSel}Sel.id" value="${.vars[var+tipoSel+"Sel.id"]!}" />
     <input type="hidden" name="${var}${tipoSel}Sel.descricao" />
     <input type="hidden" name="${var}${tipoSel}Sel.buscar" />
     <input type="hidden" name="req${var}${tipoSel}Sel" />
     <input type="hidden" name="alterouSel" value="" id="alterouSel" />
-    <input type="text" name="${var}${tipoSel}Sel.sigla" onkeypress="return handleEnter(this, event)"
+    <input type="text" name="${var}${tipoSel}Sel.sigla" value="${.vars[var+tipoSel+"Sel.sigla"]!}" onkeypress="return handleEnter(this, event)"
         onblur="javascript: ajax_${var}${tipoSel}();" size="25" ${desativar?string('disabled="true"','')} />
     [#if buscar]
         <input type="button" id="${var}${tipoSel}SelButton" value="..."
@@ -820,7 +1595,8 @@ Fim comentário --]
         [/#if]
     </script>
 [/#macro]
-[#macro selecionavel titulo var tipo reler=false idAjax="" default="" alerta=false obrigatorio=false relertab="" paramList=""]
+
+[#macro selecionavel titulo var tipo reler=false idAjax="" default="" obrigatorio=false relertab="" paramList="" modulo=""]
     [#assign tipoSel = "_" + tipo /]
 
     [#assign varName = var + tipoSel + "Sel.id" /]
@@ -835,55 +1611,74 @@ Fim comentário --]
     [#local vDescricao = .vars[varName]!default]
     <input type="hidden" name="vars" value="${varName}" />
 
-    [#if alerta && vId==""]
-    [#list paramValues.obrigatorios as campo]
-         [#if campo == var]
+    [#if (alerta!"Não") = 'Sim' && vId == ""]
+    [#list obrigatorios?split(",") as campo]
+         [#if campo == varName]
          [#local vermelho = "color:red"]
              [/#if]
         [/#list]
     [/#if]
-
     [#if obrigatorio]
     [#local negrito = "font-weight:bold"]
-    <input type="hidden" name="obrigatorios" value="${var}" />
+    <input type="hidden" name="obrigatorios" value="${varName}" />
     [/#if]
 
     [#if titulo?? && titulo != ""]<span style="${negrito!};${vermelho!}">${titulo}:</span>[/#if]
 
     [#if !gerar_formulario!false]
-        [@caixaSelecao titulo=titulo var=var tipo=tipo reler=reler idAjax=idAjax relertab=relertab paramList=paramList /]
+        [@caixaSelecao titulo=titulo var=var tipo=tipo reler=reler idAjax=idAjax relertab=relertab paramList=paramList modulo=modulo /]
     [#else]
     <span class="valor">[#if vSigla??]${vSigla} - [/#if]${vDescricao}</span>
     [/#if]
 [/#macro]
+
 [#macro pessoa titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
     [#if buscarFechadas]
         [@assign paramList = "buscarFechadas=true" /]
     [/#if]
     [@selecionavel tipo="pessoa" titulo=titulo var=var reler=reler idAjax=idAjax relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
 [/#macro]
+
+[#macro cosignatario titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
+    [#if buscarFechadas]
+        [@assign paramList = "buscarFechadas=true" /]
+    [/#if]
+    [@selecionavel tipo="cosignatario" titulo=titulo var=var reler=reler idAjax=idAjax relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
+[/#macro]
+
 [#macro funcao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
     [@selecionavel tipo="funcao" titulo=titulo var=var reler=reler relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
 [/#macro]
+
 [#macro lotacao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
     [@selecionavel tipo="lotacao" titulo=titulo var=var reler=reler relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
 [/#macro]
-[#macro data titulo var reler=false idAjax="" default="" alerta=false obrigatorio=false]
+
+[#macro data titulo var reler=false idAjax="" default="" obrigatorio=false]
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');\""]
     [#elseif reler == true]
             [#local jreler = " sbmt();\""]
     [/#if]
 
-    [#local v = .vars[var]!default]
+    [#local v = (.vars[var]!"")?string /]
+    [#if v == ""]
+        [#if default?is_date]
+            [#local v = default?string("dd/MM/yyyy") /]
+        [#else]
+            [#local v = default /]
+        [/#if]
+    [/#if]
 
-[#if alerta!"" == 'Sim' && v==""]
-    [#list paramValues.obrigatorios as campo]
+
+    [#if (alerta!"Não") = 'Sim' && v==""]
+    [#list obrigatorios?split(",") as campo]
          [#if campo == var]
          [#local vermelho = "color:red"]
              [/#if]
         [/#list]
     [/#if]
+
 
     [#if obrigatorio]
     [#local negrito = "font-weight:bold"]
@@ -891,78 +1686,108 @@ Fim comentário --]
     [/#if]
 
     [#if titulo?? && titulo != ""]<span style="${negrito!};${vermelho!}">${titulo}</span>[/#if]
-
     [#if !gerar_formulario!false]
         <input type="hidden" name="vars" value="${var}" />
-        <input type="text" name="${var}" value="${v}" size="10" maxlength="10" onblur="javascript:verifica_data(this[#if alerta], 'Sim'[/#if]);${jreler!}" />
+<input type="text" name="${var}" value="${v}" size="10" maxlength="10" onmousedown="$('.campoData').datepicker($.datepicker.regional['pt-BR']);" onblur="javascript:verifica_data(this[#if !obrigatorio], 'Sim'[/#if]);${jreler!}" class="campoData" />
     [#else]
     <span class="valor">${v}</span>
     [/#if]
 [/#macro]
+
 [#macro letra tamanho]
     [#local body][#nested/][/#local]
     <span style="font-size:${tamanho}">
         ${func.fixFontSize(body,tamanho)}
     </span>
 [/#macro]
+
 [#macro fixcrlf var=""]
     ${(var?replace("\r\f", "<br/>"))?replace("\n", "<br/>")} 
 [/#macro]
+
 [#macro primeiroCabecalho]
     <!-- INICIO PRIMEIRO CABECALHO
         [#nested/]
     FIM PRIMEIRO CABECALHO -->
 [/#macro]
+
 [#macro cabecalho]
     <!-- INICIO CABECALHO
         [#nested/]
     FIM CABECALHO -->
 [/#macro]
+
 [#macro primeiroRodape]
     <!-- INICIO PRIMEIRO RODAPE
         [#nested/]
     FIM PRIMEIRO RODAPE -->
 [/#macro]
+
 [#macro rodape]
     <!-- INICIO RODAPE
         [#nested/]
     FIM RODAPE -->
 [/#macro]
+
 [#macro aberturaBIE]
     <!-- INICIO ABERTURA -->
         [#nested/]
     <!-- FIM ABERTURA -->
 [/#macro]
+
 [#macro corpoBIE]
     <!-- INICIO CORPO -->
         [#nested/]
     <!-- FIM CORPO -->
 [/#macro]
+
 [#macro fechoBIE]
     <!-- INICIO FECHO -->
         [#nested/]
     <!-- FIM FECHO -->
 [/#macro]
+
 [#macro assinaturaBIE]
     <!-- INICIO ASSINATURA -->
         [#nested/]
     <!-- FIM ASSINATURA -->
 [/#macro]
+
 [#macro numeroDJE]
     <!-- INICIO NUMERO -->
         [#nested/]
     <!-- FIM NUMERO -->
 [/#macro]
+
 [#macro mioloDJE]
     <!-- INICIO MIOLO -->
         [#nested/]
     <!-- FIM MIOLO -->
 [/#macro]
+
+[#macro inicioMioloDJE]
+    <!-- INICIO MIOLO -->
+[/#macro]
+
+[#macro fimMioloDJE]
+    <!-- FIM MIOLO -->
+[/#macro]
+
 [#macro tituloDJE]
     <!-- INICIO TITULO 
         [#nested/]
     FIM TITULO -->
 [/#macro]
+
+[#macro inicioSubscritor]
+    <!-- INICIO SUBSCRITOR [#nested/] -->
+[/#macro]
+
+
+[#macro fimSubscritor]
+    <!-- FIM SUBSCRITOR [#nested/] -->
+[/#macro]
+
 [#macro cabecalhoCentralizadoPrimeiraPagina]
 <table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
     cellspacing="0" bgcolor="#FFFFFF">
@@ -997,6 +1822,7 @@ Fim comentário --]
     </tr>
 </table>
 [/#macro]
+
 [#macro cabecalhoCentralizado]
 <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
     <tr bgcolor="#FFFFFF">
@@ -1027,6 +1853,7 @@ Fim comentário --]
     </tr>
 </table>
 [/#macro]
+
 [#macro cabecalhoEsquerdaPrimeiraPagina]
 <table width="100%" align="left" border="0">
     <tr>
@@ -1059,6 +1886,7 @@ Fim comentário --]
     </tr>
 </table>
 [/#macro]
+
 [#macro cabecalhoEsquerda]
 <table width="100%" border="0" bgcolor="#FFFFFF">
     <tr bgcolor="#FFFFFF">
@@ -1090,29 +1918,31 @@ Fim comentário --]
     </tr>
 </table>
 [/#macro]
+
 [#macro rodapeClassificacaoDocumental somenteTR=false]
 [#if !somenteTR]
 <table align="left" width="100%" bgcolor="#FFFFFF">
 [/#if]
-    <tr>
-        <td width="70%"></td>
-        <td width="30%">
-        <table align="right" width="100%" border="1" cellspacing="1"
-            bgcolor="#000000">
-            <tr>
-                <td align="center" width="60%"
-                    style="font-family:Arial;font-size:8pt;text-decoration:italic;"
-                    bgcolor="#FFFFFF">Classif. documental</td>
-                <td align="center" width="40%"
-                    style="font-family:Arial;font-size:8pt;" bgcolor="#FFFFFF">${(doc.exClassificacao.sigla)!}</td>
-            </tr>
-        </table>
-        </td>
-    </tr>
+<tr>
+<td width="70%" ></td>
+<td width="30%" >
+<table align="right" width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" bgcolor="#000000">
+<tr>
+<td align="center" width="60%" style="border-collapse: collapse; border-color: black; font-family:Arial; font-size:8pt;" bgcolor="#FFFFFF">
+ <i>Classif. documental</i>
+</td>
+<td align="center" width="40%" style="border-collapse: collapse; border-color: black; font-family:Arial;font-size:8pt;" bgcolor="#FFFFFF">
+    ${(doc.exClassificacao.sigla)!}
+</td>
+</tr>
+</table>
+</td>
+</tr>
 [#if !somenteTR]
 </table>
 [/#if]
 [/#macro]
+
 [#macro rodapeNumeracaoADireita]
 <table width="100%" border="0" cellpadding="0" bgcolor="#FFFFFF">
     <tr>
@@ -1120,6 +1950,7 @@ Fim comentário --]
     </tr>
 </table>
 [/#macro]
+
 [#macro rodapeNumeracaoCentralizada]
 <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
     <tr>
@@ -1127,9 +1958,15 @@ Fim comentário --]
     </tr>
 </table>
 [/#macro]
-[#macro assinaturaCentro formatarOrgao=false]
-[@assinaturaBIE]
+
+[#macro assinaturaCentro formatarOrgao=false incluirAssinaturaBIE=true]
+[#if incluirAssinaturaBIE == true]
+   <!-- INICIO ASSINATURA -->
+[/#if]
 <p style="font-family: Arial; font-size: 11pt;" align="center">
+    [#if (doc.subscritor)??]
+       [@inicioSubscritor]${(doc.subscritor.idPessoa)!}[/@inicioSubscritor]
+    [/#if]
     [#if (doc.nmSubscritor)??]
         ${doc.nmSubscritor}
     [#else]
@@ -1160,10 +1997,14 @@ Fim comentário --]
                 ${(doc.titular.lotacao.nomeLotacao)!}
             [/#if]
         [/#if]
+        [#if (doc.subscritor)??]
+            [@fimSubscritor]${(doc.subscritor.idPessoa)}[/@fimSubscritor]
+        [/#if]
         
                 [#if (doc.mobilGeral.exMovimentacaoSet)??]
         [#list doc.mobilGeral.exMovimentacaoSet as mov]
                     [#if (mov.exTipoMovimentacao.idTpMov)! == 24]
+                        [@inicioSubscritor]${(mov.subscritor.idPessoa)}[/@inicioSubscritor]
                         <br/><br/><br/>
                         [#if mov.nmSubscritor??]
                             ${mov.nmSubscritor}
@@ -1189,6 +2030,7 @@ Fim comentário --]
                                 ${mov.titular.lotacao.nomeLotacao}
                             [/#if]
                         [/#if]
+                        [@fimSubscritor]${(mov.subscritor.idPessoa)}[/@fimSubscritor]
             [/#if]
         [/#list]
             [/#if]
@@ -1197,8 +2039,11 @@ Fim comentário --]
         <br/>${textoFinal}
     [/#if]
 </p>
-[/@assinaturaBIE]
+[#if incluirAssinaturaBIE == true]
+   <!-- FIM ASSINATURA -->
+[/#if]
 [/#macro]
+
 [#macro assinaturaMovCentro formatarOrgao=false]
 <!-- INICIO ASSINATURA -->
 <p style="font-family: Arial; font-size: 11pt;" align="center">
@@ -1236,7 +2081,8 @@ Fim comentário --]
 </p>
 <!-- FIM ASSINATURA -->
 [/#macro]
-[#macro estiloBrasaoAEsquerda tipo tamanhoLetra="11pt" obs=""]
+
+[#macro estiloBrasaoAEsquerda tipo exibeData=true tamanhoLetra="11pt" obs="" omitirCodigo=false]
     [@primeiroCabecalho]
     <table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
     [@cabecalhoEsquerdaPrimeiraPagina/]
@@ -1245,11 +2091,18 @@ Fim comentário --]
             <td width="100%">
                 <table width="100%">
                     <tr>
-                                                <td align="right"><p style="font-family:Arial;font-weight:bold;font-size:11pt;">${tipo} N&ordm; ${(doc.codigo)!}</p></td>
+                       <td align="right">
+                         [#if !omitirCodigo]                           
+                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;">${tipo} N&ordm; ${(doc.codigo)!}</p>
+                         [/#if]
+                       </td>
                     </tr>
+                    
+                    [#if exibeData]
                     <tr>
                         <td align="right">[@letra tamanho="11pt"]<p>${(doc.dtExtenso)!}</p>[/@letra]</td>
-                    </tr>
+                    </tr>                    
+                    [/#if]
                 </table>
             </td>
         </tr>
@@ -1278,61 +2131,139 @@ Fim comentário --]
     [@rodapeNumeracaoADireita/]
     [/@rodape]
 [/#macro]
-[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt" formatarOrgao=true numeracaoCentralizada=false dataAntesDaAssinatura=false]
-    [@primeiroCabecalho]
+
+
+[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt" formatarOrgao=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true]
+    [@primeiroCabecalho]${topoPrimeiraPagina!}
     [@cabecalhoCentralizadoPrimeiraPagina/]
     [/@primeiroCabecalho]
-
     [@cabecalho]
     [@cabecalhoCentralizado/]
     [/@cabecalho]
-
-    [@letra tamanho=tamanhoLetra]
-            [#if !numeracaoCentralizada]
-            <table style="float:none; clear:both;" width="100%" border="0" bgcolor="#FFFFFF">
-                <tr>
-                                <td align="left"><p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE]${tipo} N&ordm; ${(doc.codigo)!}[/@numeroDJE]</p></td>
-                </tr>
-                        [#if !dataAntesDaAssinatura]
-                <tr>
+    [@letra tamanhoLetra]
+        [#if !numeracaoCentralizada]
+              <table style="float:none; clear:both;" width="100%" border="0" bgcolor="#FFFFFF">
+              <tr>
+              <td align="left">
+              [#if !omitirCodigo]
+                    <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE]${tipo}[#if tipo != ""] N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
+              [/#if]
+              </td>
+              </tr>
+              [#if !dataAntesDaAssinatura && !omitirData]
+                    <tr>
                     <td align="right">[@letra tamanho="11pt"]<p>[#if mov??]${mov.dtExtenso!}[#else]${doc.dtExtenso!}[/#if]</p>[/@letra]</td>
-                </tr>
-                        [/#if]
-            </table>
-            [#else]
-            <table style="float:none; clear:both;" width="100%" border="0" bgcolor="#FFFFFF">
-                <tr>
-                            <td align="center">
-                                <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>
-                                 [@numeroDJE]${tipo} N&ordm; ${(doc.codigo)!}[/@numeroDJE]
-                                [#if !dataAntesDaAssinatura && doc?? && doc.dtD??]
-                                    de ${doc.dtD} de ${doc.dtMMMM} de ${doc.dtYYYY}</p>
-                                [/#if]
-                            </td>
-                </tr>
-            </table>
-            [/#if]
-            [@tituloDJE]
-		${(doc.codigo)!}
-            [/@tituloDJE]
+                    </tr>
+              [/#if]
+              </table>
+        [#else]
+              <table style="float:none; clear:both;" width="100%" border="0" bgcolor="#FFFFFF">
+              <tr>
+              <td align="center">
+                  <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>
+                  [@numeroDJE] [#if tipo != ""] ${tipo} N&ordm; ${(doc.codigo)!}[/#if] [/@numeroDJE]
+                  [#if !dataAntesDaAssinatura && doc?? && doc.dtD??] de ${doc.dtD} de ${doc.dtMMMM} de ${doc.dtYYYY}[/#if]</p>
+              </td>
+              </tr>
+              </table>
+        [/#if]
+        [@tituloDJE]
+            <p style="font-family:Arial;font-weight:bold;font-size:11pt;">[#if tipo != ""] ${tipo}[/#if] ${(doc.codigo)!}</p>
+        [/@tituloDJE]
+        [#if incluirMioloDJE]
+            [@mioloDJE]
             [#nested]
             [#if dataAntesDaAssinatura]<p style="text-align:center">[#if mov??]${mov.dtExtenso!}[#else]${doc.dtExtenso!}[/#if]</p>[/#if]
-        <p>&nbsp;</p>
+            <p>&nbsp;</p>
             [#if mov??]
-            [@assinaturaMovCentro formatarOrgao=formatarOrgao/]
+                [@assinaturaMovCentro formatarOrgao=formatarOrgao/]
             [#else]
-            [@assinaturaCentro formatarOrgao=formatarOrgao/]
+                [@assinaturaCentro formatarOrgao=formatarOrgao incluirAssinaturaBIE=incluirAssinaturaBIE/]
             [/#if]
-    [/@letra]
+            [/@mioloDJE]
+        [#else]
+            [#nested]
+            [#if dataAntesDaAssinatura]<p style="text-align:center">[#if mov??]${mov.dtExtenso!}[#else]${doc.dtExtenso!}[/#if]</p>[/#if]
+            <p>&nbsp;</p>
+            [#if mov??]
+                [@assinaturaMovCentro formatarOrgao=formatarOrgao/]
+            [#else]
+                [@assinaturaCentro formatarOrgao=formatarOrgao incluirAssinaturaBIE=incluirAssinaturaBIE/]
+            [/#if]
+        [/#if]  
+   [/@letra]
 
-    [@primeiroRodape]
-    [@rodapeClassificacaoDocumental/]
-    [/@primeiroRodape]
-
-    [@rodape]
-    [@rodapeNumeracaoADireita/]
-    [/@rodape]
+   [@primeiroRodape]
+   [@rodapeClassificacaoDocumental/]
+   [/@primeiroRodape]
+   [@rodape]
+   [@rodapeNumeracaoADireita/]
+   [/@rodape]
 [/#macro]
+
+[#macro processo]
+    [#assign _topoPrimeiraPagina]
+		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td>
+					<table border="0" align="center" bgcolor="#ffffff" width="100%">
+						<tr>
+							<td width="20%" bgcolor="#787878"></td>
+							<td width="60%" align="center" style=" font: bold; font-size: 14pt"><b>PROCESSO&nbsp;ADMINISTRATIVO</b></td>
+							<td width="20%" bgcolor="#787878"></td>
+						</tr>
+					</table>
+				</td>
+			<tr>
+			<tr bgcolor="#FFFFFF">
+				<td cellpadding="5">
+					&nbsp;
+				</td>
+			</tr>
+		</table>
+    [/#assign]
+[@estiloBrasaoCentralizado tipo='EOF' tamanhoLetra='14pt' formatarOrgao=true omitirCodigo=true omitirData=true topoPrimeiraPagina=_topoPrimeiraPagina]
+  
+	<br />
+<table align="center" width="60%" border="1" cellspacing="1" bgcolor="#000000">
+	<tr>
+		<td width="30%" bgcolor="#FFFFFF" align="center"><br />
+		<b>Processo N&ordm;</b><br />
+		<br /></td>
+	</tr>
+	<tr>
+		<td bgcolor="#FFFFFF" align="center"><br />
+		${(doc.codigo)!}</td>
+	</tr>
+</table>
+  
+<br />
+<br />
+<table align="center" width="50%" border="1" cellspacing="1"
+	bgcolor="#000000">
+	<tr>
+		<td bgcolor="#FFFFFF" align="center"><br />
+		<b>Data de abertura</b><br />
+		<br /></td>
+		<td bgcolor="#FFFFFF" align="center">${(doc.dtDocDDMMYYYY)!}</td>
+	</tr>
+</table>
+<br />
+<br />
+
+<table align="center" width="85%" border="1" cellspacing="1"
+	bgcolor="#000000">
+	<tr>
+		<td bgcolor="#FFFFFF" align="center"><b>OBJETO</b></td>
+	</tr>
+	<tr>
+		<td bgcolor="#FFFFFF" align="center"><br />
+		${(doc.descrDocumento)!}<br /></td>
+	</tr>
+</table>
+[/@estiloBrasaoCentralizado]
+[/#macro]
+
 [#macro memorando texto fecho="Atenciosamente," tamanhoLetra="Normal" _tipo="MEMORANDO"]
     [#if tamanhoLetra! == "Normal"]
         [#assign tl = "11pt" /]
@@ -1353,6 +2284,59 @@ Fim comentário --]
                 <p style="align: justify; TEXT-INDENT: 2cm">${fecho}</p>
         [/@estiloBrasaoCentralizado]
 [/#macro]
+
+
+[#macro provimento texto="" abertura="" tamanhoLetra="Normal" _tipo="PROVIMENTO" ementa="" titulo="" subtitulo=""]
+
+    [#-- Versão modificada da macro portaria --]
+
+    [#if tamanhoLetra! == "Normal"]
+        [#assign tl = "11pt" /]
+    [#elseif tamanhoLetra! == "Pequeno"]
+        [#assign tl = "9pt" /]
+    [#elseif tamanhoLetra! == "Grande"]
+       [#assign tl = "13pt" /]
+    [#else]
+       [#assign tl = "11pt"]
+    [/#if]
+    [@br/]
+    [@estiloBrasaoCentralizadoTrf tipo=_tipo tamanhoLetra=tl formatarOrgao=true numeracaoCentralizada=true]
+      [@inicioMioloDJE]
+      [/@inicioMioloDJE] 
+       [#if ementa != ""]
+	    <table style="float:none;" width="100%" border="0" cellpadding="2" cellspacing="0" bgcolor="#FFFFFF">
+	        <tr>
+	        <td align="left" width="50%"></td>
+	        <td align="left" width="50%" style="font-family: Arial; font-size: ${tl};"><br/><p align="justify">${ementa!}</p></td>
+	        </tr>
+	    </table>
+	    [@br/][@br/]
+	[/#if]
+	<div style="font-family: Arial; font-size: ${tl};">
+	[#if abertura != ""]
+	    [@br/][@br/]
+	    [@aberturaBIE] 
+	        ${abertura!}
+	    [/@aberturaBIE]
+	[/#if]
+	[@corpoBIE]
+	    [#if titulo != ""][@br/]<center><b>${titulo}</b></center>[@br/][/#if]
+	    [#if subtitulo != ""]<center><b>${subtitulo}</b></center>[@br/][/#if]
+	    [@br/]${texto}
+	[/@corpoBIE]
+	<p style="font-family: Arial; font-size: ${tl}; font-weight: bold;" align="center">
+	[@fechoBIE]
+	   [@br/]
+	   [#if _tipo != "ORDEM DE SERVIÇO"]
+		  PUBLIQUE-SE. REGISTRE-SE. 
+	   [/#if]
+	   CUMPRA-SE.
+	[/@fechoBIE]
+	</p>
+	</div>
+      [/@estiloBrasaoCentralizadoTrf]
+[/#macro]
+
 [#macro portaria texto abertura="" tamanhoLetra="Normal" _tipo="PORTARIA" dispoe_sobre=""]
     [#if tamanhoLetra! == "Normal"]
         [#assign tl = "11pt" /]
@@ -1363,15 +2347,15 @@ Fim comentário --]
     [#else]     
         [#assign tl = "11pt"]
     [/#if]
-    [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false numeracaoCentralizada=true]
-        [@mioloDJE]
+    [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false numeracaoCentralizada=true incluirMioloDJE=true]
             [#if dispoe_sobre != ""]     
               <table style="float:none;" width="100%" border="0" cellpadding="2" cellspacing="0" bgcolor="#FFFFFF">
                   <tr>
                       <td align="left" width="50%"></td>
-                    <td align="left" width="50%" style="font-family: Arial; font-size: ${tl};"><br/>Dispõe sobre ${dispoe_sobre!}</td>
+                    <td align="left" width="50%" style="text-align: justify; font-family: Arial; font-size: ${tl};"><br/>Dispõe sobre ${dispoe_sobre!}</td>
                   </tr>
               </table>
+            <br/>
             [/#if]
             
             <div style="font-family: Arial; font-size: ${tl};">
@@ -1389,12 +2373,13 @@ Fim comentário --]
                 [/@fechoBIE]
                 </center></span></p>
             </div>            
-        [/@mioloDJE]
      [/@estiloBrasaoCentralizado]
 [/#macro]
+
 [#macro quebraPagina]
 <div style="PAGE-BREAK-AFTER: always"/>
 [/#macro]
+
 [#macro oficio _texto="" _tipo_autoridade="" _genero="" _vocativo="" _enderecamento_dest="" _nome_dest="" 
     _cargo_dest="" _orgao_dest="" _endereco_dest="" _fecho="" _tamanho_letra="" _autoridade={} _tipo="OFÍCIO"]
     [#if _autoridade?size > 0]
@@ -1481,7 +2466,7 @@ Fim comentário --]
                     [/#if]
                     [#if !tratamento?? || (especificarEnderecamento?? && especificarEnderecamento == 'Sim')]
                         [@grupo]
-                            [@texto titulo="Forma de endereçamento" var="enderecamento_dest" largura="45" default="${(tratamento.formaDeEnderecamento)!}"/]
+                            [@texto titulo="Forma de endereçamento" var="enderecamento_dest" largura="45" /]
                         [/@grupo]
                     [#else]
                         [@oculto var="enderecamento_dest" valor="${(tratamento.formaDeEnderecamento)!}" /]
@@ -1563,11 +2548,11 @@ Fim comentário --]
     [/@entrevista]
 
     [@documento margemDireita="3cm"]
-        [#if param.tamanhoLetra! == "Normal"]
+        [#if tamanhoLetra! == "Normal"]
             [#assign tl = "11pt" /]
-        [#elseif param.tamanhoLetra! == "Pequeno"]
+        [#elseif tamanhoLetra! == "Pequeno"]
             [#assign tl = "9pt" /]
-        [#elseif param.tamanhoLetra! == "Grande"]
+        [#elseif tamanhoLetra! == "Grande"]
             [#assign tl = "13pt" /]
         [#else]     
             [#assign tl = "11pt"]
@@ -1604,9 +2589,9 @@ Fim comentário --]
                 <p>&nbsp;</p>
                 [@corpoBIE]
                     [#if vocativo??]
-                        <p align="left" style="TEXT-INDENT: 2cm">${vocativo!},</p>
+                        <p align="left" style="font-size: ${tl}; TEXT-INDENT: 2cm">${vocativo!},</p>
                     [/#if]
-                    ${texto_oficio!}
+                    [@letra tamanho=tl]${texto_oficio!}[/@letra]
                 [/@corpoBIE]
                 [#if fecho??]<p style="font-size: ${tl}; TEXT-INDENT: 2cm">[@fechoBIE]${fecho!}${virgula!}[/@fechoBIE][/#if]</p>
                 </div>
@@ -1614,8 +2599,63 @@ Fim comentário --]
         [/@estiloBrasaoCentralizado]
     [/@documento]
 [/#macro]
-[#macro identificacao pessoa funcao="" nivelHierarquicoMaximoDaLotacao="" obs="" negrito="nao"]
-    [#if pessoa?? && pessoa != ""] 		
+
+
+
+[#macro moeda var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default=""]
+    [#if reler == 'ajax']
+        [#local jreler = " onblur=\"javascript: sbmt('" + idAjax + "');\""]
+    [/#if]
+
+    [#if reler == 'sim']
+        [#local jreler = " onblur=\"javascript: sbmt();\""]
+    [/#if]
+
+    [#if relertab == 'sim']
+        [#local jrelertab = " onblur=\"javascript: sbmt();\""]
+    [/#if]
+
+    [#if largura?string != ""]
+        [#local jlargura = " size=\"" + largura + "\""]
+    [/#if]
+
+    [#if maxcaracteres != ""]
+        [#local jmaxcaracteres = " maxlength=\"" + maxcaracteres + "\""]
+    [/#if]
+
+    [#local v = .vars[var]!""]
+    [#if v == ""]
+        [#local v = default/]
+    [/#if]
+
+    <input type="hidden" name="vars" value="${var}" />
+
+    [#if (alerta!"Não") = 'Sim' && v = ""]
+    [#list obrigatorios?split(",") as campo]
+         [#if campo == var]
+         [#local vermelho = "color:red"]
+             [/#if]
+        [/#list]
+    [/#if]
+
+    [#if obrigatorio == 'Sim']
+    [#local negrito = "font-weight:bold"]
+    <input type="hidden" name="obrigatorios" value="${var}" />
+    [/#if]
+
+    [#if titulo != ""]
+    <span style="${negrito!""};${vermelho!""}">${titulo}:</span>
+    [/#if]
+    
+    [#if !gerar_formulario!false]
+    <input onkeypress="return formataReais(this, '.' , ',', event)"
+    type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""}/>
+    [#else]
+    <span class="valor">${v}</span>
+    [/#if]
+[/#macro]
+[#macro identificacao pessoa="" funcao="" nivelHierarquicoMaximoDaLotacao="" obs="" negrito="nao"]
+    [#if pessoa?? && pessoa.sigla != ""]
         [#if negrito == "nao"]
 	    ${pessoa.descricao}, 
         [#else]
@@ -1642,6 +2682,7 @@ Fim comentário --]
 	[/#if]
     [/#if]
 [/#macro]
+
 [#assign _presidente = {
     "genero":"M", 
     "vocativo":"Excelentíssimo Senhor", 
@@ -1650,7 +2691,7 @@ Fim comentário --]
     "nome":"<DEFINIR_NOME>", 
     "cargo":"<DEFINIR_CARGO>",
     "orgao":"<DEFINIR_ORGAO>",
-    "endereco":"Avenida Almirante Barroso, 78 / 13º andar - Centro - Rio de Janeiro/RJ - CEP: 20031-004"} /]
+    "endereco":"<DEFINIR_ENDERECO>"} /] 
 [#assign _secretario_geral = {
     "genero":"F", 
     "vocativo":"Senhora", 
@@ -1659,23 +2700,909 @@ Fim comentário --]
     "nome":"<DEFINIR_NOME>", 
     "cargo":"<DEFINIR_CARGO>",
     "orgao":"<DEFINIR_ORGAO>",
-    "endereco":"Avenida Almirante Barroso, 78  - Centro - Rio de Janeiro/RJ - CEP: 20031-004"} /]
+    "endereco":"<DEFINIR_ENDERECO>"} /]
 [#assign _secretario_rh = {
     "genero":"F", 
     "vocativo":"Senhora", 
     "vocativo_carta":"Sra. Diretora da Subsecretaria de Gestão de Pessoas", 
     "enderecamento":"Sra. Dra.", 
-    "nome":"<DEFINIR_NOME>", 
+    "nome":"REGINA HELENA MOREIRA FARIA", 
     "cargo":"<DEFINIR_CARGO>",
     "orgao":"<DEFINIR_ORGAO>",
-    "endereco":"Avenida Almirante Barroso, 78  - Centro - Rio de Janeiro/RJ - CEP: 20031-004"} /]
+    "endereco":"<DEFINIR_ENDERECO>"} /]
 [#assign enderecamentoPresidente = "Exmo. Sr. Juiz Federal - Diretor de Foro" /]
 [#assign enderecamentoDiretorGeral = "Ilmo(a). Sr(a). Diretor(a)-Geral" /]
 [#assign enderecamentoDiretorDeRH = "Ilma. Sra. Diretora da Subsecretaria de Gestão de Pessoas" /]
+
 [#macro dadosComplementares][/#macro]
-[#macro extensaoBuscaTextual][/#macro]
-[#macro extensaoEditor nomeExtensao conteudoExtensao]
-   [@editor titulo="" var=nomeExtensao /]
+
+
+[#macro extensaoBuscaTextual]
+<tr>
+    <td class="tdLabel">
+                <label class="label" for="fullText">Conteudo:</label>
+        </td>
+    <td>
+                <input type="text" id="fullText" value="${valFullText}" size="80" name="fullText">
+        </td>
+</tr>
 [/#macro]
-[#macro extensaoAssinador][/#macro]
-[#macro complementoHEAD][/#macro]
+
+
+[#macro extensaoEditor nomeExtensao="" conteudoExtensao=""]
+          [#if nomeExtensao == ""]
+                  [#local nomeExtensao = nomeExtensaoJsp!"" /]
+          [/#if]
+          [#if conteudoExtensao == ""]
+                  [#local conteudoExtensao = conteudoExtensaoJsp!"" /]
+          [/#if]
+          [@XStandard nome=nomeExtensao conteudo=conteudoExtensao /]
+[/#macro]
+
+
+[#assign ext_assinatura_com_politica = false /] 
+[#assign ext_assinatura_config_remoto = true /]
+
+[#macro extensaoAssinador]    
+
+       [#if lote == 'true']
+          [#assign emLote = "em Lote" /]  
+       [#else]
+          [#assign emLote = "(Java)" /]
+       [/#if]
+
+       [#if botao == 'ambos']
+          <input type="button" name="cmdConfCopia" id="cmdConfCopia" onClick="javascript: incluiApplet(true,false)" value="Autenticar ${emLote!""}" class="gt-btn-large gt-btn-left">
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false,false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">       
+       [#else]
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">
+       [/#if]
+       [#if !ext_assinatura_config_remoto]
+        <input type="button" name="cmdConfigurar" id="cmdConfigurar" onClick="javascript: incluiApplet(false,true)" value="Configurar Assinador" class="gt-btn-large gt-btn-left">
+       [/#if]
+
+
+
+        <div id="applet"></div>
+        
+        <script type="text/javascript">                
+
+
+		function checkAppletStarted(configurar) {
+                  
+                  var started = false;
+                  if (document.applets['oApplet']) {
+			try {
+				started = document.applets['oApplet'].isStarted();
+			} catch (err) {}
+                  }
+		
+                  if (!started){
+			window.setTimeout("checkAppletStarted()", 1000);
+                  }else{
+                    if (configurar) {
+			document.applets['oApplet'].showConfiguration();
+                    } else {
+                    	document.applets['oApplet'].markAllDocuments();
+                    	document.applets['oApplet'].signAndSendMarkedDocuments();
+                    }
+                  }
+
+		} 
+
+		function incluiApplet(copia,configurar){
+
+                  
+                  var urlbase= "${request_scheme}://${request_serverName}:${request_localPort}" ;
+                  var codebase= urlbase + "/siga-ext-assinatura/applet";
+                  var code= "br/com/esec/signapplet/DefaultSignApplet.class";  
+                  var nextURL= "${nextURL}";
+                  var urlPath= "${urlPath}";
+                  var arquivos = "";
+                  var action= "${jspServer}";
+                  
+                   var urlHash;
+                  if (${ext_assinatura_com_politica?string('true','false')})
+                    urlHash = "&semmarcas=1";
+                  else
+                    urlHash = "&semmarcas=1&hash=SHA1";
+                  
+                  if (copia)
+                      action= "${jspServer}" + "?copia=" + copia; 
+                  
+   
+                  
+                  if (${lote!""} == true) {
+                  
+                      if($("input[name^='chk']:checked").length == 0){
+                           alert('Nenhum arquivo selecionado');
+                      }else{    
+                                            
+                           jQuery("input[name^='chk']:checked").each(function(index) {
+                                arquivos = arquivos + '<param name="Arquivo.'+index+'" value="'+
+                                           $('input[name="pdf'+this.name+'"]').val()+'"><param name="url.'+
+                                           index+'" value="'+ urlbase + urlPath  +
+                                           $('input[name="url'+this.name+'"]').val()+urlHash+'"/>'});
+		      }
+                   }else{                  
+                      arquivos = '<param name="Arquivo.0" value="'+
+                                       $('input[name^="pdfchk"]').val()+'"><param name="url.0" value="'+  urlbase + 
+                                  urlPath + $('input[name^="urlchk"]').val()+urlHash+'"/>';
+                   }  
+                  
+                  var parametrosPolitica;
+                  if (${ext_assinatura_com_politica?string('true','false')}) {
+                       parametrosPolitica = 
+                         ' <param name="addCertificatePath" value="true"/>'
+                         + ' <param name="policyAlias" value="ad-rb" />'
+                         + ' <param name="policyAliasField" value="POLICY" />'
+                         + ' <param name="certificateField" value="CERTIFICATE" />'
+                         + ' <param name="policyListURL" value="${request_scheme}://${request_serverName}:${request_localPort}/siga-ext-assinatura/selecionarPolitica" />'
+                         + ' <param name="hashAlgorithmField" value="HASH_ALGORITHM" />'
+                         + ' <param name="envelopeType" value="cades" />'
+                  } else {
+                       parametrosPolitica = 
+                           ' <param name="digestAlgorithm" value="SHA1"/>'
+                         + ' <param name="signingAlgorithm" value="SHA1withRSA"/>';
+                  }
+
+                  var parametrosConfig;
+                  if (${ext_assinatura_config_remoto?string('true','false')}) {
+                       parametrosConfig = 
+                           ' <param name="config.type" value="remote"/>'
+                         + ' <param name="config.field" value="sdk-web-config.properties"/>'
+                         + ' <param name="config.download" value="'+codebase+'/sdk-web-config.properties"/>';
+                  } else {
+                       parametrosConfig = 
+                           ' <param name="config.type" value="local"/>';
+                  }
+                  var strApplet='<applet id="oApplet" codebase="'+codebase+'" code="'+code+'" archive="sdk-web.jar-1-12-0-0" width="1" height="1">'  
+                  + ' <param name="cache_archive" value="sdk-web-1-12-0-0.jar"/>'
+                  + ' <param name="cache_version" value="1.12.0.0"/>'
+                       
+                  // var strApplet = ' <applet id="oApplet" type="application/x-java-applet;version=1.6" codebase="'+codebase+'" code="'+code+'" archive="sdk-web.jar" width="1" height="1" pluginspage="http://java.com/download/" scriptable="false">'
+                  //       + ' <param name="cache_archive" value="sdk-web.jar"/>'
+                  //       + ' <param name="cache_option" value="Plugin">'
+                  //       + ' <param name="cache_version" value="1.12.0.0"/>'
+                       
+                           + ' <param name="sdk-base-version" value="1.12.0.0"/>'
+                           + ' <param name="userid" value="sdk-web"/>'
+                           + ' <param name="mode" value="1"/>'
+                           + ' <param name="autoCommit" value="true" />'
+                           + ' <param name="signFunction" value="true" />'
+                           + ' <param name="encryptFunction" value="false" />'
+                       
+                           + ' <param name="checkLibs" value="true"/>' 
+                           + ' <param name="encodedFileCount" value="QTYDATA"/>'
+                           + ' <param name="encodedFileId" value="IDDATA"/>'
+                           + ' <param name="encodedFileParam" value="ENCDATA"/>'
+                           + ' <param name="jspServer" value="'+action+'"/>'
+                           + ' <param name="nextURL" value="${nextURL}"/>'
+              
+                           + ' <param name="allowAddFiles" value="false"/>'
+                           + ' <param name="allowViewFiles" value="true"/>'
+                           + ' <param name="viewGui" value="false"/>'
+              
+                           + ' <param name="detachedSignature" value="true"/>'
+
+                           + ' <param name="useHashOnly" value="true"/>'
+                       
+                           + parametrosConfig
+                           + parametrosPolitica
+
+                           + ' <param name="colCount" value="1"/>'
+                           + ' <param name="colName.0" value="Arquivo" />'
+                           + ' <param name="colAlias.0" value="#arquivo" />'+arquivos+'</applet>';
+
+                  
+ 
+                     try {
+			jQuery('#applet').html(strApplet);
+		     } catch (err) {}    
+
+                     checkAppletStarted(configurar);
+             }
+        </script>
+[/#macro]
+
+[#macro extensaoAssinador_apagar_depois_de_01_2014]    
+
+       [#if lote == 'true']
+          [#assign emLote = "em Lote" /]  
+       [#else]
+          [#assign emLote = "(Java)" /]
+       [/#if]
+
+       [#if botao == 'ambos']
+          <input type="button" name="cmdConfCopia" id="cmdConfCopia" onClick="javascript: incluiApplet(true,false)" value="Conferir Cópia ${emLote!""}" class="gt-btn-large gt-btn-left">
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false,false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">       
+       [#else]
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">
+       [/#if]
+       [#if !ext_assinatura_config_remoto]
+        <input type="button" name="cmdConfigurar" id="cmdConfigurar" onClick="javascript: incluiApplet(false,true)" value="Configurar Assinador" class="gt-btn-large gt-btn-left">
+       [/#if]
+
+
+
+        <div id="applet"></div>
+        
+        <script type="text/javascript">                
+
+
+		function checkAppletStarted(configurar) {
+                  
+                  var started = false;
+                  if (document.applets['oApplet']) {
+			try {
+				started = document.applets['oApplet'].isStarted();
+			} catch (err) {}
+                  }
+		
+                  if (!started){
+			window.setTimeout("checkAppletStarted()", 1000);
+                  }else{
+                    if (configurar) {
+			document.applets['oApplet'].showConfiguration();
+                    } else {
+                    	document.applets['oApplet'].markAllDocuments();
+                    	document.applets['oApplet'].signAndSendMarkedDocuments();
+                    }
+                  }
+
+		} 
+
+		function incluiApplet(copia,configurar){
+
+                  
+                  var urlbase= "${request_scheme}://${request_serverName}:${request_localPort}" ;
+                  var codebase= urlbase + "/siga-ext-assinatura/applet";
+                  var code= "br/com/esec/signapplet/DefaultSignApplet.class";  
+                  var nextURL= "${nextURL}";
+                  var urlPath= "${urlPath}";
+                  var arquivos = "";
+                  var action= "${jspServer}";
+                  
+                  var urlHash;
+                  if (${ext_assinatura_com_politica?string('true','false')})
+                    urlHash = "/semmarcas/hash/";
+                  else
+                    urlHash = "/semmarcas/hashSHA1/";
+                  
+                  if (copia)
+                      action= "${jspServer}" + "?copia=" + copia; 
+                  
+   
+                  
+                  if (${lote!""} == true) {
+                  
+                      if($("input[name^='chk']:checked").length == 0){
+                           alert('Nenhum arquivo selecionado');
+                      }else{    
+                                            
+                           jQuery("input[name^='chk']:checked").each(function(index) {
+                                arquivos = arquivos + '<param name="Arquivo.'+index+'" value="'+
+                                           $('input[name="pdf'+this.name+'"]').val()+'"><param name="url.'+
+                                           index+'" value="'+ urlbase + urlPath + urlHash +
+                                           $('input[name="url'+this.name+'"]').val()+'"/>'});
+		      }
+                   }else{                  
+                      arquivos = '<param name="Arquivo.0" value="'+
+                                       $('input[name^="pdfchk"]').val()+'"><param name="url.0" value="'+  urlbase + 
+                                  urlPath + urlHash + $('input[name^="urlchk"]').val()+'"/>';
+                   }  
+                  
+                  var parametrosPolitica;
+                  if (${ext_assinatura_com_politica?string('true','false')}) {
+                       parametrosPolitica = 
+                         ' <param name="addCertificatePath" value="true"/>'
+                         + ' <param name="policyAlias" value="ad-rb" />'
+                         + ' <param name="policyAliasField" value="POLICY" />'
+                         + ' <param name="certificateField" value="CERTIFICATE" />'
+                         + ' <param name="policyListURL" value="${request_scheme}://${request_serverName}:${request_localPort}/siga-ext-assinatura/selecionarPolitica" />'
+                         + ' <param name="hashAlgorithmField" value="HASH_ALGORITHM" />'
+                         + ' <param name="envelopeType" value="cades" />'
+                  } else {
+                       parametrosPolitica = 
+                           ' <param name="digestAlgorithm" value="SHA1"/>'
+                         + ' <param name="signingAlgorithm" value="SHA1withRSA"/>';
+                  }
+
+                  var parametrosConfig;
+                  if (${ext_assinatura_config_remoto?string('true','false')}) {
+                       parametrosConfig = 
+                           ' <param name="config.type" value="remote"/>'
+                         + ' <param name="config.field" value="sdk-web-config.properties"/>'
+                         + ' <param name="config.download" value="'+codebase+'/sdk-web-config.properties"/>';
+                  } else {
+                       parametrosConfig = 
+                           ' <param name="config.type" value="local"/>';
+                  }
+                  var strApplet=
+                       ' <object id="oApplet"  type="application/x-java-applet;version=1.6"' 
+                           + ' width="1" height="1" pluginspage="http://java.com/download/"'
+                           + ' scriptable="false">'
+                           + ' <param name="codebase" value="'+codebase+'"/>'
+                           + ' <param name="code" value="'+code+'"/>'
+                           + ' <param name="archive" value="sdk-web-1-12-0-3.jar"/>'
+                      
+                           + ' <param name="sdk-base-version" value="1.12.0.3"/>'
+                           + ' <param name="userid" value="sdk-web"/>'
+                           + ' <param name="mode" value="1"/>'
+                           + ' <param name="autoCommit" value="true" />'
+                           + ' <param name="signFunction" value="true" />'
+                           + ' <param name="encryptFunction" value="false" />'
+                       
+                           + ' <param name="checkLibs" value="true"/>'
+                           + ' <param name="encodedFileCount" value="QTYDATA"/>'
+                           + ' <param name="encodedFileId" value="IDDATA"/>'
+                           + ' <param name="encodedFileParam" value="ENCDATA"/>'
+                           + ' <param name="jspServer" value="'+action+'"/>'
+                           + ' <param name="nextURL" value="${nextURL}"/>'
+             
+                           + ' <param name="allowAddFiles" value="false"/>'
+                           + ' <param name="allowViewFiles" value="true"/>'
+                           + ' <param name="viewGui" value="false"/>'
+             
+                           + ' <param name="detachedSignature" value="true"/>'
+
+                           + ' <param name="useHashOnly" value="true"/>'
+                       
+                           + parametrosConfig
+                           + parametrosPolitica
+
+                           + ' <param name="colCount" value="1"/>'
+                           + ' <param name="colName.0" value="Arquivo" />'
+                      + ' <param name="colAlias.0" value="#arquivo" />'+arquivos+'</object>';
+                  
+ 
+                     try {
+			jQuery('#applet').html(strApplet);
+		     } catch (err) {}    
+
+                     checkAppletStarted(configurar);
+             }
+        </script>
+[/#macro]
+
+
+[#macro extensaoAssinador2_apagar_depois_de_01_2014]    
+       [#if lote == 'true']
+          [#assign emLote = "em Lote" /]  
+       [#else]
+          [#assign emLote = "(Java)" /]
+       [/#if]
+
+       [#if botao == 'ambos']
+          <input type="button" name="cmdConfCopia" id="cmdConfCopia" onClick="javascript: incluiApplet(true,false)" value="Conferir Cópia ${emLote!""}" class="gt-btn-large gt-btn-left">
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false,false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">       
+       [#else]
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">
+       [/#if]
+       [#if !ext_assinatura_config_remoto]
+        <input type="button" name="cmdConfigurar" id="cmdConfigurar" onClick="javascript: incluiApplet(false,true)" value="Configurar Assinador" class="gt-btn-large gt-btn-left">
+       [/#if]
+
+
+
+        <div id="applet"></div>
+        
+        <script type="text/javascript">                
+
+
+		function checkAppletStarted(configurar) {
+                  
+                  var started = false;
+                  if (document.applets['oApplet']) {
+			try {
+				started = document.applets['oApplet'].isStarted();
+			} catch (err) {}
+                  }
+		
+                  if (!started){
+			window.setTimeout("checkAppletStarted()", 1000);
+                  }else{
+                    if (configurar) {
+			document.applets['oApplet'].showConfiguration();
+                    } else {
+                    	document.applets['oApplet'].markAllDocuments();
+                    	document.applets['oApplet'].signAndSendMarkedDocuments();
+                    }
+                  }
+
+		} 
+
+		function incluiApplet(copia,configurar){
+
+                  
+                  var urlbase= "${request_scheme}://${request_serverName}:${request_localPort}" ;
+                  var codebase= urlbase + "/siga-ext-assinatura/applet";
+                  var code= "br/com/esec/signapplet/DefaultSignApplet.class";  
+                  var nextURL= "${nextURL}";
+                  var urlPath= "${urlPath}";
+                  var arquivos = "";
+                  var action= "${jspServer}";
+                  
+                  var urlHash = '';
+                  //if (${ext_assinatura_com_politica?string('true','false')})
+                  //  urlHash = "/semmarcas/hash/";
+                  //else
+                  //  urlHash = "/semmarcas/hashSHA1/";
+                  
+                  if (copia)
+                      action= "${jspServer}" + "?copia=" + copia; 
+                  
+   
+                  
+                  if (${lote!""} == true) {
+                  
+                      if($("input[name^='chk']:checked").length == 0){
+                           alert('Nenhum arquivo selecionado');
+                      }else{    
+                                            
+                           jQuery("input[name^='chk']:checked").each(function(index) {
+                                arquivos = arquivos + '<param name="Arquivo.'+index+'" value="'+
+                                           $('input[name="pdf'+this.name+'"]').val()+'"><param name="url.'+
+                                           index+'" value="'+ urlbase + urlPath + urlHash +
+                                           $('input[name="url'+this.name+'"]').val()+'"/>'});
+		      }
+                   }else{                  
+                      arquivos = '<param name="Arquivo.0" value="'+
+                                       $('input[name^="pdfchk"]').val()+'"><param name="url.0" value="'+  urlbase + 
+                                  urlPath + urlHash + $('input[name^="urlchk"]').val()+'?semmarcas=1"/>';
+                   }  
+                 
+                  var parametrosPolitica;
+                  if (${ext_assinatura_com_politica?string('true','false')}) {
+                       parametrosPolitica = 
+                         ' <param name="addCertificatePath" value="true"/>'
+                         + ' <param name="policyAlias" value="ad-rb" />'
+                         + ' <param name="policyAliasField" value="POLICY" />'
+                         + ' <param name="certificateField" value="CERTIFICATE" />'
+                         + ' <param name="policyListURL" value="${request_scheme}://${request_serverName}:${request_localPort}/siga-ext-assinatura/selecionarPolitica" />'
+                         + ' <param name="hashAlgorithmField" value="HASH_ALGORITHM" />'
+                         + ' <param name="envelopeType" value="cades" />'
+                  } else {
+                       parametrosPolitica = 
+                           ' <param name="digestAlgorithm" value="SHA1"/>'
+                         + ' <param name="signingAlgorithm" value="SHA1withRSA"/>';
+                  }
+
+                  var parametrosConfig;
+                  if (${ext_assinatura_config_remoto?string('true','false')}) {
+                       parametrosConfig = 
+                           ' <param name="config.type" value="remote"/>'
+                         + ' <param name="config.field" value="sdk-web-config.properties"/>'
+                         + ' <param name="config.download" value="'+codebase+'/sdk-web-config.properties"/>';
+                  } else {
+                       parametrosConfig = 
+                           ' <param name="config.type" value="local"/>';
+                  }
+                  var strApplet='<applet id="oApplet" codebase="'+codebase+'" code="'+code+'" archive="sdk-web.jar-1-12-0-0" width="1" height="1">'  
+                  + ' <param name="cache_archive" value="sdk-web-1-12-0-0.jar"/>'
+                  + ' <param name="cache_version" value="1.12.0.0"/>'
+                       
+                  // var strApplet = ' <applet id="oApplet" type="application/x-java-applet;version=1.6" codebase="'+codebase+'" code="'+code+'" archive="sdk-web.jar" width="1" height="1" pluginspage="http://java.com/download/" scriptable="false">'
+                  //       + ' <param name="cache_archive" value="sdk-web.jar"/>'
+                  //       + ' <param name="cache_option" value="Plugin">'
+                  //       + ' <param name="cache_version" value="1.12.0.0"/>'
+                       
+                           + ' <param name="sdk-base-version" value="1.12.0.0"/>'
+                           + ' <param name="userid" value="sdk-web"/>'
+                           + ' <param name="mode" value="1"/>'
+                           + ' <param name="autoCommit" value="true" />'
+                           + ' <param name="signFunction" value="true" />'
+                           + ' <param name="encryptFunction" value="false" />'
+                       
+                           + ' <param name="checkLibs" value="true"/>' 
+                           + ' <param name="encodedFileCount" value="QTYDATA"/>'
+                           + ' <param name="encodedFileId" value="IDDATA"/>'
+                           + ' <param name="encodedFileParam" value="ENCDATA"/>'
+                           + ' <param name="jspServer" value="'+action+'"/>'
+                           + ' <param name="nextURL" value="${nextURL}"/>'
+              
+                           + ' <param name="allowAddFiles" value="false"/>'
+                           + ' <param name="allowViewFiles" value="true"/>'
+                           + ' <param name="viewGui" value="false"/>'
+              
+                           + ' <param name="detachedSignature" value="true"/>'
+
+                           + ' <param name="useHashOnly" value="true"/>'
+                       
+                           + parametrosConfig
+                           + parametrosPolitica
+
+                           + ' <param name="colCount" value="1"/>'
+                           + ' <param name="colName.0" value="Arquivo" />'
+                           + ' <param name="colAlias.0" value="#arquivo" />'+arquivos+'</applet>';
+
+                  
+ 
+                     try {
+			jQuery('#applet').html(strApplet);
+		     } catch (err) {}    
+
+                     checkAppletStarted(configurar);
+             }
+        </script>
+[/#macro]
+
+[#macro complementoHEAD]
+<!-- Google Analytics -->
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setDomainName', 'none']);
+  _gaq.push(['_setAccount', 'UA-36509025-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+[/#macro]
+
+[#macro requerimentoTrf texto fecho="" tamanhoLetra="Normal" _tipo="" vocat=""]
+
+    [#if tamanhoLetra! == "Normal"]
+        [#assign tl = "11pt" /]
+    [#elseif tamanhoLetra! == "Pequeno"]
+        [#assign tl = "9pt" /]
+    [#elseif tamanhoLetra! == "Grande"]
+        [#assign tl = "13pt" /]
+    [#else]     
+        [#assign tl = "11pt" /]
+    [/#if]
+
+[@estiloBrasaoCentralizadoTrf tipo=_tipo tamanhoLetra=tl formatarOrgao=true dataAntesDaAssinatura=true]
+    [@br/]
+    <center><b><p>${vocat!}</p></b></center>
+    <span style="font-size: tl"> ${texto!}</span>
+    <p style="align: justify; TEXT-INDENT: 0cm">${fecho}</p>
+[/@estiloBrasaoCentralizadoTrf]
+
+[/#macro]
+
+[#macro cabecalhoCentralizadoPrimeiraPaginaTrf tipo=""]
+<table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
+    cellspacing="0" bgcolor="#FFFFFF">
+    <tr bgcolor="#FFFFFF">
+        <td width="100%">
+        <table width="100%" border="0" cellpadding="2">
+            [#if tipo == "PORTARIA EMARF"]
+            <tr>
+                <td width="100%" align="center" valign="bottom"><img src="contextpath/imagens/brasaoemarf.jpg" width="65" height="65" /></td>
+            </tr>
+            [#else]
+            <tr>
+                <td width="100%" align="center" valign="bottom"><img src="contextpath/imagens/brasao2.png" width="65" height="65" /></td>
+            </tr>
+            
+            <tr>
+                <td width="100%" align="center">
+                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">PODER JUDICIÁRIO</p>
+                </td>
+            </tr>
+            <tr>
+                <td width="100%" align="center">
+                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">JUSTIÇA FEDERAL</p>
+                </td>
+            </tr>
+            
+            <tr>
+                <td width="100%" align="center">
+                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
+                [#if mov??]
+                    ${(mov.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+                [#else]
+                    ${(doc.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+                [/#if]</p>
+                </td>
+            </tr>
+            [/#if]
+        </table>
+        </td>
+    </tr>
+</table>
+[/#macro]
+
+[#macro estiloBrasaoCentralizadoTrf tipo tamanhoLetra="11pt" formatarOrgao=true numeracaoCentralizada=false dataAntesDaAssinatura=false omitirCodigo=false omitirData=false topoPrimeiraPagina='']
+    [@primeiroCabecalho]${topoPrimeiraPagina!}
+    [@cabecalhoCentralizadoPrimeiraPaginaTrf tipo/]
+    [/@primeiroCabecalho]
+    [@cabecalho]
+    [@cabecalhoCentralizado/]
+    [/@cabecalho]
+    [@letra tamanhoLetra]
+        [#if !numeracaoCentralizada]
+              <table style="float:none; clear:both;" width="100%" border="0" bgcolor="#FFFFFF">
+              <tr>
+              <td align="left">
+              [#if !omitirCodigo]
+                <p style="font-family:Arial;align:center;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE][#if tipo != ""] ${tipo} N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
+              [/#if]
+              </td>
+              </tr>
+              [#if !dataAntesDaAssinatura && !omitirData]
+                    <tr>
+                    <td align="right">[@letra tamanho="11pt"]<p>[#if mov??]${mov.dtExtenso!}[#else]${doc.dtExtenso!}[/#if]</p>[/@letra]</td>
+                    </tr>
+              [/#if]
+              </table>
+        [#else]
+              <table style="float:none; clear:both;" width="100%" border="0" bgcolor="#FFFFFF">
+              <tr>
+              <td align="center">
+                  <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>
+                  [@numeroDJE] [#if tipo != ""] ${tipo} N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]
+                  [#if !dataAntesDaAssinatura && doc?? && doc.dtD??] de ${doc.dtD!} de ${doc.dtMMMM!} de ${doc.dtYYYY!}[/#if]</p>
+              </td>
+              </tr>
+              </table>
+        [/#if]
+
+        [@tituloDJE]
+            <center>${tipo!} ${(doc.codigo)!} de ${doc.dtD!} de ${doc.dtMMMM!} de ${doc.dtYYYY!}</center>
+        [/@tituloDJE]        
+        [#nested]
+        [#if dataAntesDaAssinatura]<p style="text-align:center">[#if mov??]${mov.dtExtenso!}[#else]${doc.dtExtenso!}[/#if]</p>[/#if]
+        <p>&nbsp;</p>
+        [#if mov??]
+              [@assinaturaMovCentro formatarOrgao=formatarOrgao/]
+        [#else]
+              [@assinaturaCentro formatarOrgao=formatarOrgao/]
+        [/#if]
+        [@fimMioloDJE]
+        [/@fimMioloDJE]
+
+   [/@letra]
+
+   [@primeiroRodape]
+   [@rodapeClassificacaoDocumental/]
+   [/@primeiroRodape]
+   [@rodape]
+   [@rodapeNumeracaoADireita/]
+   [/@rodape]
+[/#macro]
+
+[#macro numero var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default=""]
+    [#if reler == 'ajax']
+        [#local jreler = " onblur=\"javascript: sbmt('" + idAjax + "');\""]
+    [/#if]
+
+    [#if reler == 'sim']
+        [#local jreler = " onblur=\"javascript: sbmt();\""]
+    [/#if]
+
+    [#if relertab == 'sim']
+        [#local jrelertab = " onblur=\"javascript: sbmt();\""]
+    [/#if]
+
+    [#if largura?string != ""]
+        [#local jlargura = " size=\"" + largura + "\""]
+    [/#if]
+
+    [#if maxcaracteres != ""]
+        [#local jmaxcaracteres = " maxlength=\"" + maxcaracteres + "\""]
+    [/#if]
+
+    [#local v = .vars[var]!""]
+    [#if v == ""]
+        [#local v = default/]
+    [/#if]
+
+    <input type="hidden" name="vars" value="${var}" />
+
+    [#if (alerta!"Não") = 'Sim' && v = ""]
+    [#list obrigatorios?split(",") as campo]
+         [#if campo == var]
+         [#local vermelho = "color:red"]
+             [/#if]
+        [/#list]
+    [/#if]
+
+    [#if obrigatorio == 'Sim']
+    [#local negrito = "font-weight:bold"]
+    <input type="hidden" name="obrigatorios" value="${var}" />
+    [/#if]
+
+    [#if titulo != ""]
+    <span style="${negrito!""};${vermelho!""}">${titulo}:</span>
+    [/#if]
+    
+    [#if !gerar_formulario!false]
+    <input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }" 
+ type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""}/>
+    [#else]
+    <span class="valor">${v}</span>
+    [/#if]
+[/#macro]
+
+
+
+[#macro horaMinuto titulo var reler=false idAjax="" default="" alerta=false obrigatorio=false]
+    [#if reler == true && idAjax != ""]
+            [#local jreler = " sbmt('" + idAjax + "');\""]
+    [#elseif reler == true]
+            [#local jreler = " sbmt();\""]
+    [/#if]
+
+    [#local v = .vars[var]!default]
+
+    [#if obrigatorio]
+		[#local negrito = "font-weight:bold"]
+		<input type="hidden" name="obrigatorios" value="${var}" />
+    [/#if]
+
+    [#if titulo?? && titulo != ""]<span style="${negrito!};${vermelho!}">${titulo}</span>[/#if]
+
+    [#if !gerar_formulario!false]
+        <input type="hidden" name="vars" value="${var}" />
+		<input type="text" name="${var}" value="${v}" size="6" maxlength="5" onblur="javascript:verifica_hora(this, 'Sim');${jreler!}" />
+    [#else]
+		<span class="valor">${v}</span>
+    [/#if]
+[/#macro]
+
+[#macro webservice var url timeout cache=""]
+  [#if cache?has_content]
+    <input type="hidden" name="vars" value="${cache}" />
+  [/#if]
+  [#if cache?has_content && .vars[cache]??]
+    [#local str=.vars[cache] /]
+    <input type="hidden" name="${cache}" value="${str}">
+  [#else]
+    [#local payload][#nested][/#local]
+    [#local str=func.webservice(url,payload,timeout) /]
+    <input type="hidden" name="${cache}" value="${str?url('UTF-8')}">
+  [/#if]
+  [#if str?has_content]
+     [#local retornoSource="[#assign " + var + "=func.parseXML(str) /]"/]
+  [#else]
+     [#local retornoSource="[#assign " + var + "=str /]"/]
+  [/#if]
+  [#local retornoTemplate = retornoSource?interpret]
+  [@retornoTemplate /] 
+[/#macro]
+
+[#macro descricao]
+   [#if gerar_descricao!false]
+    <!-- descricao -->
+      [#nested]
+    <!-- /descricao -->
+   [/#if]
+[/#macro]
+
+[#macro classificacao codigo]
+   <input type="hidden" name="vars" value="codigoClassificacao" />
+   <input type="hidden" id="codigoClassificacao" name="codigoClassificacao" value="${codigo}" />
+[/#macro]
+
+[#macro solicitacao tamanhoLetra="Normal" _tipo="FORMULÁRIO" assunto=""]
+    [#if tamanhoLetra! == "Normal"]
+        [#assign tl = "11pt" /]
+    [#elseif tamanhoLetra! == "Pequeno"]
+        [#assign tl = "9pt" /]
+    [#elseif tamanhoLetra! == "Grande"]
+        [#assign tl = "13pt" /]
+    [#else]     
+        [#assign tl = "11pt"]
+    [/#if]
+    [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=false numeracaoCentralizada=false incluirMioloDJE=false]
+              <table style="float:none;" width="100%" border="0" cellpadding="2" cellspacing="0" bgcolor="#FFFFFF">
+                  <tr>
+                     <td align="left" style="text-align: justify; font-family: Arial; font-size: ${tl};"><br/>Assunto: ${assunto}</td>
+                  </tr>
+              </table>
+            <br/>
+            [#nested] 
+     [/@estiloBrasaoCentralizado]
+[/#macro]
+
+[#macro pessoaLotacao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
+[@selecaoX2 titulo=titulo var=var opcoes="Matrícula;Orgão Integrado" reler=true idAjax=idAjax/]   
+    [#if buscarFechadas]
+        [@assign paramList = "buscarFechadas=true" /]
+    [/#if]
+[@grupoX2 depende=idAjax]
+  [#if .vars[var] == "Orgão Integrado"]  
+[@selecionavel tipo="lotacao" titulo="" var=var reler=reler idAjax=idAjax+"1" relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
+  [#else]
+[@selecionavel tipo="pessoa" titulo="" var=var reler=reler idAjax=idAjax+"2" relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
+  [/#if]
+[/@grupoX2]
+[/#macro]
+
+
+[#macro divX2 id="" depende="" suprimirIndependente=false] [#-- macro utilizada na macro pessoaLotacao --]
+    [#if suprimirIndependente || depende != ""]
+        <div style="float: left" [#if id != ""] id="${id}"[/#if][#if depende != ""] depende=";${depende};"[/#if]>[#if id != ""]<!--ajax:${id}-->[/#if][#nested][#if id != ""]<!--/ajax:${id}-->[/#if]</div>
+    [/#if]
+[/#macro]
+
+[#macro grupoX2 titulo="" largura=0 depende="" esconder=false]  [#-- macro utilizada na macro pessoaLotacao --]
+    [#if !esconder]
+    [#local id = (depende=="")?string("", "div" + depende)] 
+    [@divX2 id=id depende=depende suprimirIndependente=true]
+        [#if largura != 0]
+            [#if !grupoLarguraTotal??]
+                [#assign grupoLarguraTotal = 0/]
+        <table width="100%">
+        <tr>
+            [/#if]
+            [#assign grupoLarguraTotal = grupoLarguraTotal + largura/]
+        <td width="${largura}%" valign="top">
+        [/#if]
+        <table class="entrevista" width="100%">
+            [#if titulo != ""]
+                <tr class="header">
+                    <td>${titulo}</td>
+                </tr>
+            [/#if]
+            <tr>
+                <td>[#nested]</td>
+            </tr>
+        </table>
+        [#if largura != 0]
+            </td>
+            [#if (grupoLarguraTotal >= 100)]
+                </td>
+                </table>
+                [#assign grupoLarguraTotal = 0/]
+            [/#if]
+        [/#if]
+    [/@divX2]
+    [#else]
+        [#nested]
+    [/#if]
+[/#macro]
+
+[#macro selecaoX2 var titulo opcoes reler=false idAjax="" onclick=""]  [#-- macro utilizada na macro pessoaLotacao --]
+    [#local l=opcoes?split(";")]
+    [#if .vars[var]??]
+        [#local v = .vars[var]/]
+    [#else]
+        [#local v = l?first/]
+                [#assign inlineTemplate = ["[#assign ${var} = v/]", "assignInlineTemplate"]?interpret /]
+                [@inlineTemplate/]
+        [/#if]
+    
+<div style="float:left">    ${titulo!""}[#if titulo != ""]:[/#if]
+
+    [#if !gerar_formulario!false]
+        <input type="hidden" name="vars" value="${var}" />
+        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}">
+                    [#list l as opcao]
+                        <option[#if v == opcao] selected[/#if] value="${opcao}">${opcao}</option><br/>
+            [/#list]
+        </select>
+    [#else]
+        <span class="valor">${v}</span>
+    [/#if]
+</div>
+[/#macro]
+
+[#function acerto orgao=""]
+  [#if orgao == ""]
+     [#return "sem lotação" /]
+  [#elseif func.contains(orgao,"NÚCLEO") || (func.contains(orgao,"GABINETE") && !func.contains(orgao,"RECURSAL")) || func.contains(orgao,"COMIT") || func.contains(orgao,"CENTRO") || 
+           func.contains(orgao,"JUIZADO ESP") || func.contains(orgao,"MAGISTRADO") || func.contains(orgao,"SERVIDORES") || func.contains(orgao,"SETOR")]
+     [#return "no" /]
+  [#else]
+     [#return "na" /]
+  [/#if]
+[/#function]
+
+[#function quadroLotacao mat=""]
+    [#if mat == ""]
+         [#return "Lotação Indeterminada" /]
+    [#elseif func.contains(mat,"T2")]
+         [#return "T2" /]
+    [#elseif func.contains(mat,"RJ")]
+         [#return "RJ" /]
+    [#else]
+         [#return "ES" /]
+    [/#if]
+[/#function]

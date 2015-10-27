@@ -2587,6 +2587,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	a.setInicio(movIni.getDtIniMov());
     	a.setFim(movFim != null ? movFim.getDtIniMov() : null);
     	a.setLotaResponsavel(movIni.getLotaAtendente());
+    	a.setPessoaResponsavel(movFim != null ? movFim.getTitular() : null);
     	a.setParamsAcordo(movMeio.getParametrosAcordoOrdenados(a.getParametro()));
     	//DefinicaoHorario  h = getDefinicioarHorarioPorPessoalELota()
     	a.setIntervalosCorrentes(getTrechosNaoPendentesPorEtapa(a, pendenciasADesconsiderar));
@@ -2594,6 +2595,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	a.setItem(movMeio.getItemConfiguracao());
     	a.setAcao(movMeio.getAcao());
     	a.setSolicitacao(this);
+    	a.setTipoMov(movFim != null ? movFim.getTipoMov() : null);
+    	a.setFaixa(movIni.getLotaAtendente().getOrgaoUsuario());
     	return a;
     }
   

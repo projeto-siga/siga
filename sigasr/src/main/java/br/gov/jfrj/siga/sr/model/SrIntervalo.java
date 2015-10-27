@@ -48,7 +48,7 @@ public abstract class SrIntervalo {
 	}
 
 	public String getFimString() {
-		return SrViewUtil.toDDMMYYYYHHMM(getFim());
+		return SrViewUtil.toDDMMYYYYHHMMSS(getFim());
 	}
 
 	public boolean isInfinito() {
@@ -89,6 +89,10 @@ public abstract class SrIntervalo {
 	
 	public Long segundos(Long millis){
 		return millis != null ? millis / 1000 : null;
+	}
+	
+	public float horas(Long segundos){
+		return segundos != null ? segundos / 3600f : null;
 	}
 
 	public Date getFimOuAgora() {

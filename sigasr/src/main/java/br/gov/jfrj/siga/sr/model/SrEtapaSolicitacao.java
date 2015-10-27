@@ -3,11 +3,14 @@ package br.gov.jfrj.siga.sr.model;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import java.util.TreeSet;
 
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.sr.util.SrViewUtil;
 
 public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParametroAcordoSolicitacao, Comparable<SrEtapaSolicitacao> {
@@ -19,6 +22,8 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 	
 	private DpLotacao lotaResponsavel;
 	
+	private DpPessoa pessoaResponsavel;
+	
 	private SrPrioridade prioridade;
 	
 	private SrItemConfiguracao item;
@@ -28,6 +33,11 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 	private SrParametro parametro;
 	
 	private SrSolicitacao solicitacao;
+	
+	private SrTipoMovimentacao tipoMov;
+
+	private SrFaixa faixa;	
+	
 	
 	public SrEtapaSolicitacao(SrParametro etapa) {
 		this.parametro = etapa;
@@ -200,4 +210,50 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 		this.solicitacao = solicitacao;
 	}
 
+	public DpPessoa getPessoaResponsavel() {
+		return pessoaResponsavel;
+	}
+
+	public void setPessoaResponsavel(DpPessoa pessoaResponsavel) {
+		this.pessoaResponsavel = pessoaResponsavel;
+	}
+
+	public SrTipoMovimentacao getTipoMov() {
+		return tipoMov;
+	}
+
+	public void setTipoMov(SrTipoMovimentacao tipoMov) {
+		this.tipoMov = tipoMov;
+	}
+	
+	public SrFaixa getFaixa() {
+		return faixa;
+	}
+
+	public void setFaixa(SrFaixa faixa) {
+		this.faixa = faixa;
+	}
+	
+	public void setFaixa(CpOrgaoUsuario orgaoAtendente) {
+		List<SrFaixa> faixas = getFaixasPorOrgao(orgaoAtendente);
+		ListIterator<SrFaixa> it = faixas.listIterator();
+		float limiteInferior = 0f; 
+		SrFaixa faixaAtual = null;
+		while (it.hasNext()) {
+			if (it.hasPrevious()) 
+				limiteInferior = faixas.get(it.previousIndex()).getLimiteSuperior();
+			faixaAtual = it.next();
+			if (estaEntre(getDecorridoEmHoras(), limiteInferior, faixaAtual.getLimiteSuperior())) {
+				setFaixa(faixaAtual);
+				break;
+			}
+		}
+	}
+	
+	public List<SrFaixa> getFaixasPorOrgao(CpOrgaoUsuario orgao) {
+		if (orgao.getAcronimoOrgaoUsu().equals("JFRJ"))
+			return SrFaixa.FAIXAS_JFRJ;
+		else
+			return SrFaixa.FAIXAS_TRF2;
+	}
 }

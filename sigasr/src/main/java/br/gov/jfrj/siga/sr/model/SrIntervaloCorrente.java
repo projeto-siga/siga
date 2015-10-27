@@ -24,6 +24,15 @@ public abstract class SrIntervaloCorrente extends SrIntervalo {
 		return segundos(getDecorridoMillis());
 	}
 	
+	public float getDecorridoEmHoras() {
+		return horas(segundos(getDecorridoMillis()));
+	}
+	
 	public abstract Date getDataContandoDoInicio(Long millisAdiante);
 	
+	public boolean estaEntre(float tempo, float tempoIni, float tempoFim) {
+		if (tempo == 0f)
+			return true;
+		return tempo > tempoIni && tempo <= tempoFim;
+	}
 }

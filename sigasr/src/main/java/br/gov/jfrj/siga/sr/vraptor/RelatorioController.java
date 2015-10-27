@@ -67,7 +67,7 @@ public class RelatorioController extends SrController {
 		Map<String, Object> parametros = new HashMap<String, Object>();
 		parametros.put("dtIni", dtIni);
 		parametros.put("dtFim", dtFim);
-		parametros.put("idlotaAtendenteIni", lotaAtendente != null ? lotaAtendente.getIdLotacaoIni() : 0L);
+		parametros.put("lotaAtendente", lotaAtendente);
 		parametros.put("listaLotacoes", listaLotacoes);
 		parametros.put("siglaLotacao", siglaLotacao);
 		parametros.put("idOrgao", idOrgaoUsu);

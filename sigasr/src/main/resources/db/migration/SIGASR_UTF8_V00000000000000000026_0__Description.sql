@@ -43,3 +43,8 @@ update sigasr.sr_solicitacao sol set dnm_id_item_configuracao = id_item_configur
 update sigasr.sr_solicitacao sol set dnm_id_acao = id_acao where dnm_id_acao is null;
 update sigasr.sr_solicitacao set id_lota_titular = id_lota_cadastrante where id_lota_titular is null;
 commit;
+
+-------------------------------------------------
+
+update sigasr.sr_tipo_movimentacao set nome_tipo_movimentacao = 'Reclassificação' where id_tipo_movimentacao = 23;
+commit;

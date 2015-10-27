@@ -62,9 +62,9 @@
 		</div>
 	</div>
 	
-	<siga:modal nome="equipe" titulo="Cadastrar Equipe">
+	<sigasr:modal nome="equipe" titulo="Cadastrar Equipe">
 		<div id="divEditarEquipeForm"><jsp:include page="editar.jsp"></jsp:include></div>
-	</siga:modal>
+	</sigasr:modal>
 </siga:pagina>
 
 <script type="text/javascript">

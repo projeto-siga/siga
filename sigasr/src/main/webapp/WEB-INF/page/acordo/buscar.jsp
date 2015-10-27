@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
-
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <head><title>Acordos</title></head>
 
@@ -54,7 +54,7 @@
                         <td >${acordo.nomeAcordo}</td>
                         <td>${acordo.descrAcordo}</td>
                         <td class="acoes">
-                            <siga:desativarReativar id="acordo.id" 
+                            <sigasr:desativarReativar id="acordo.id" 
                                                     onDesativar="acordoService.desativar" 
                                                     onReativar="acordoService.reativar" 
                                                     isAtivo="${acordo.isAtivo()}"/>
@@ -72,9 +72,9 @@
     </div>
 </div>
 
-<siga:modal nome="editarAcordo" titulo="Editar Acordo">
+<sigasr:modal nome="editarAcordo" titulo="Editar Acordo">
     <div id="divEditarAcordo"><jsp:include page="editar.jsp"></jsp:include></div>
-</siga:modal>
+</sigasr:modal>
 
 <script>
     var acordoTable,

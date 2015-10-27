@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
-
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <div class="gt-form gt-content-box">
 	<form id="atributoForm" action="#" enctype="multipart/form-data">
@@ -51,12 +51,12 @@
 		</div>
 	</form>
 	
-	<siga:configuracaoAssociacao orgaos="${orgaos}"
+	<sigasr:configuracaoAssociacao orgaos="${orgaos}"
 								 locais="${locais}"
 								 itemConfiguracaoSet="${itemConfiguracaoSet}"
 								 acoesSet="${acoesSet}"
 								 modoExibicao='atributo'
-								 urlGravar="${linkTo[AssociacaoController].gravarAssociacao}"></siga:configuracaoAssociacao>
+								 urlGravar="${linkTo[AssociacaoController].gravarAssociacao}"></sigasr:configuracaoAssociacao>
 		
 	<div class="gt-form-row" style="padding-top: 10px;">
 		<input type="button" value="Gravar" class="gt-btn-medium gt-btn-left" onclick="atributoService.gravar()"/>

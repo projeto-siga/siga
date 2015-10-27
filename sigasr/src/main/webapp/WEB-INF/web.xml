@@ -9,6 +9,17 @@
 	</welcome-file-list>
 	
 	<jsp-config>
+		<taglib>
+			<taglib-uri>http://localhost/sigasrtags</taglib-uri>
+			<taglib-location>/WEB-INF/tags/sigasr.tld</taglib-location>
+		</taglib>
+		<jsp-property-group>
+			<description>Property group for common configuration for all the JSP's</description>
+			<url-pattern>*.jsp</url-pattern>
+			<url-pattern>*.html</url-pattern>
+			<el-ignored>false</el-ignored>
+			<page-encoding>UTF-8</page-encoding>
+		</jsp-property-group>
 		<jsp-property-group>
 			<description>Property group for common configuration for all the JSP's</description>
 			<url-pattern>*.jsp</url-pattern>
@@ -54,26 +65,6 @@
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
-
-	<!--  
-	<jsp-config>
-		<taglib>
-			<taglib-uri>http://localhost/customtag</taglib-uri>
-			<taglib-location>/WEB-INF/tags/tags.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>http://localhost/functiontag</taglib-uri>
-			<taglib-location>/WEB-INF/tags/func.tld</taglib-location>
-		</taglib>
-		<jsp-property-group>
-			<description>Property group for common configuration for all the JSP's</description>
-			<url-pattern>*.jsp</url-pattern>
-			<el-ignored>false</el-ignored>
-			<page-encoding>UTF-8</page-encoding>
-		</jsp-property-group>
-	</jsp-config>
-	-->
-	
 	
 	<security-constraint>
 		<web-resource-collection>

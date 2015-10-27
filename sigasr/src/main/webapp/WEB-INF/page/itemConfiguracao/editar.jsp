@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <style>
 .inline {
@@ -251,7 +252,7 @@
 </div>
 
 <div id="designacaoComponent">
-	<siga:designacao modoExibicao="item" designacoes="designacoesItem" orgaos="orgaos" locais="locais"
+	<sigasr:designacao modoExibicao="item" designacoes="designacoesItem" orgaos="orgaos" locais="locais"
  		unidadesMedida="unidadesMedida" pesquisaSatisfacao="pesquisaSatisfacao" listasPrioridade="listasPrioridade" />
 </div>
 

@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
 	<div>
@@ -149,7 +150,7 @@
 	</div>
 </div>
 
-<siga:modal nome="associacao" titulo="Cadastrar Associa&ccedil;&atilde;o">
+<sigasr:modal nome="associacao" titulo="Cadastrar Associa&ccedil;&atilde;o">
 	<div class="gt-form gt-content-box" style="width: 800px !important; max-width: 800px !important;">
 		<input id="idConfiguracao" type="hidden" name="idConfiguracao">
 		<input type="hidden" name="associacao">
@@ -203,7 +204,7 @@
 		    </select>
 		</div>
 
-		<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></siga:configuracaoItemAcao>
+		<sigasr:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></sigasr:configuracaoItemAcao>
 								 
 		<div class="gt-form-row">
 			<a href="javascript: gravarAssociacao()" class="gt-btn-medium gt-btn-left">Gravar</a>
@@ -226,7 +227,7 @@
 			</tr>
 		</table>
 	</div>
-</siga:modal>
+</sigasr:modal>
 
 <script type="text/javascript">
 	function getUrlDesativarReativar(desativados) {

@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <siga:pagina titulo="${lista.nomeLista}">
 	<jsp:include page="../main.jsp"></jsp:include>
@@ -25,7 +26,7 @@
 					</a>
 				</c:if>
 			</p>
-			<siga:solicitacao solicitacaoListaVO="solicitacaoListaVO" filtro="filtro" modoExibicao="lista"></siga:solicitacao>
+			<sigasr:solicitacao solicitacaoListaVO="solicitacaoListaVO" filtro="filtro" modoExibicao="lista"></sigasr:solicitacao>
 		</div>
 		
 		<!-- /content box -->
@@ -38,12 +39,12 @@
 		</div>
 	</div>
 	
-	<siga:modal nome="editarLista" titulo="Editar Lista">
+	<sigasr:modal nome="editarLista" titulo="Editar Lista">
 		<div id="divEditarLista"><jsp:include page="editarLista.jsp"></jsp:include></div>		
-	</siga:modal>
+	</sigasr:modal>
 	
 	<!-- modal de posicao -->	
-	<siga:modal nome="posicao" titulo="Posição de Solicitação na Lista">
+	<sigasr:modal nome="posicao" titulo="Posição de Solicitação na Lista">
 		<div class="gt-form gt-content-box" style="width: 280px; height: 100px;">
 			<form id="posicaoForm">
 				<input id="idPrioridadePosicao" type="hidden" name="idSolicitacao" />
@@ -60,10 +61,10 @@
 				</div>
 			</form>
 		</div>	
-	</siga:modal>
+	</sigasr:modal>
 	
 	<!-- modal de prioridade -->
-	<siga:modal nome="prioridade" titulo="Alterar Prioridade">
+	<sigasr:modal nome="prioridade" titulo="Alterar Prioridade">
 		<div class="gt-form gt-content-box">
 			<form id="prioridadeForm">
 				<input id="idPrioridadePrior" type="hidden" name="idSolicitacao" />
@@ -99,7 +100,7 @@
 			<input type="hidden" name="filtro.idListaPrioridade" value="${filtro.idListaPrioridade}" />
 			<input type="hidden" name="telaDeListas" value="true" />
 		</form>
-	</siga:modal>	
+	</sigasr:modal>	
 	
 </siga:pagina>
 

@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <siga:pagina titulo="Pesquisar Solicitações">
 
@@ -15,7 +16,7 @@
 	    <h2>Pesquisa de Solicita&ccedil;&otilde;es</h2>
 	     <%--<c:choose>
 	       <c:when test="${not empty solicitacaoListaVO.getItens()}"> --%>
-	           <siga:solicitacao solicitacaoListaVO="solicitacaoListaVO" filtro="filtro" modoExibicao="solicitacao" />
+	           <sigasr:solicitacao solicitacaoListaVO="solicitacaoListaVO" filtro="filtro" modoExibicao="solicitacao" />
 	        <%--</c:when>
 	        <c:when test="${filtro.pesquisar}">
 	            <div align="center" style="font-size: 14px; color: #365b6d; font-weight: bold">Nenhum item foi encontrado.</div>

@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <style>
 	#sortable ul {
@@ -53,12 +54,12 @@
 		</div>
 	</form>
 
-	<siga:configuracaoAssociacao orgaos="${orgaos}"
+	<sigasr:configuracaoAssociacao orgaos="${orgaos}"
 								 locais="${locais}"
 								 itemConfiguracaoSet="${itemConfiguracaoSet}"
 								 acoesSet="${acoesSet}"
 								 modoExibicao='pesquisa'
-								 urlGravar="${linkTo[AssociacaoController].gravarAssociacaoPesquisa}"></siga:configuracaoAssociacao>
+								 urlGravar="${linkTo[AssociacaoController].gravarAssociacaoPesquisa}"></sigasr:configuracaoAssociacao>
 
 	<div class="gt-form-row">
 		<input type="button" value="Gravar" onclick="pesquisaService.gravar()" class="gt-btn-medium gt-btn-left" />
@@ -67,7 +68,7 @@
 	</div>
 </div>
 
-<siga:modal nome="pergunta" titulo="Incluir Pergunta">
+<sigasr:modal nome="pergunta" titulo="Incluir Pergunta">
 	<div id="dialog">
 		<div class="gt-content">
 			<div class="gt-form gt-content-box">
@@ -93,7 +94,7 @@
 			</div>
 		</div>
 	</div>
-</siga:modal>
+</sigasr:modal>
 
 <script type="text/javascript">
 	var pesquisaFormValidator, perguntaFormValidator = null;

@@ -37,7 +37,7 @@
 			<a href="${linkTo[SolicitacaoController].exibir[solicitacao.siglaCompacta]}" class="gt-btn-medium gt-btn-left">Voltar</a>
 		</div>
 		
-		<siga:modal nome="selecionarPrioridade" titulo="Selecionar Prioridade">
+		<sigasr:modal nome="selecionarPrioridade" titulo="Selecionar Prioridade">
 			<div class="gt-form gt-content-box">
 				<div class="gt-form-row gt-width-66">
 					<label>Prioridade <span>*</span></label> 
@@ -59,7 +59,7 @@
 					<input type="button" class="gt-btn-medium gt-btn-left" value="Cancelar" onclick="listaService.fecharModalPrioridade()"/>
 				</div>
 			</div>
-		</siga:modal>
+		</sigasr:modal>
 	</form>
 	
 	<script>

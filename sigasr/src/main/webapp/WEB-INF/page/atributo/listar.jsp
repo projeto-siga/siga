@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
-
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <siga:pagina titulo="Atributos">
 	
@@ -80,10 +80,10 @@
 								<td>${att.codigoAtributo}</td>
 								<td>${att.tipoAtributo.descrTipoAtributo}</td>
 								<td class="acoes">
-									<siga:desativarReativar id="${att.idAtributo}"
+									<sigasr:desativarReativar id="${att.idAtributo}"
 															onReativar="atributoService.reativar"
 															onDesativar="atributoService.desativar"
-															isAtivo="${att.isAtivo()}"></siga:desativarReativar>
+															isAtivo="${att.isAtivo()}"></sigasr:desativarReativar>
 								</td>
 								<td style="display: none;">
 									${att.toJson()}
@@ -100,9 +100,9 @@
 		</div>
 	</div>
 	
-	<siga:modal nome="editarAtributo" titulo="Cadastrar Atributo" largura="820">
+	<sigasr:modal nome="editarAtributo" titulo="Cadastrar Atributo" largura="820">
 		<div id="divEditarAtributoForm"><jsp:include page="editar.jsp"></jsp:include></div>
-	</siga:modal>
+	</sigasr:modal>
 	
 </siga:pagina>
 

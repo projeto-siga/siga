@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <siga:pagina titulo="Pesquisa de Satisfação">
 
@@ -46,7 +47,7 @@
 								<td>${pesquisa.nomePesquisa}</td>
 								<td>${pesquisa.descrPesquisa}</td>
 								<td class="acoes">
-									<siga:desativarReativar id="${pesquisa.idPesquisa}" onReativar="pesquisaService.reativar" onDesativar="pesquisaService.desativar" isAtivo="${pesquisa.isAtivo()}"></siga:desativarReativar>
+									<sigasr:desativarReativar id="${pesquisa.idPesquisa}" onReativar="pesquisaService.reativar" onDesativar="pesquisaService.desativar" isAtivo="${pesquisa.isAtivo()}"></sigasr:desativarReativar>
 								</td>
 							</tr>
 						</c:forEach>
@@ -59,11 +60,11 @@
 			</div>
 		</div>
 	</div>
-	<siga:modal nome="pesquisa" titulo="Cadastrar Pesquisa">
+	<sigasr:modal nome="pesquisa" titulo="Cadastrar Pesquisa">
 		<div id="divEditarPesquisaForm">
 			<jsp:include page="editar.jsp" />
 		</div>
-	</siga:modal>
+	</sigasr:modal>
 </siga:pagina>
 
 <script>

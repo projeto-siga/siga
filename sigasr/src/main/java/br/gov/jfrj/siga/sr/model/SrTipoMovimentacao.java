@@ -62,7 +62,7 @@ public class SrTipoMovimentacao extends Objeto {
 
     // final static public long TIPO_MOVIMENTACAO_RASCUNHO = 22;
 
-    // final static public long TIPO_MOVIMENTACAO_EXCLUSAO = 23;
+    final static public long TIPO_MOVIMENTACAO_RECLASSIFICACAO = 23;
 
     public static final long TIPO_MOVIMENTACAO_ESCALONAMENTO = 24;
 

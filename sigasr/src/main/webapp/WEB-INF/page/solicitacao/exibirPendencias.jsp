@@ -1,5 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <c:if test="${solicitacao.isPendente()}">
 	<c:set var="podeTerminar" value="${solicitacao.podeTerminarPendencia(titular, lotaTitular)}" />
 	<div class="gt-sidebar">

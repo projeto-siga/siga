@@ -670,7 +670,7 @@ public class SrMovimentacao extends Objeto {
 	public List<String> getEmailsNotificacaoReplanejamento() {
 		SrSolicitacao solicitacao = getSolicitacao().getSolicitacaoAtual();
 		List<String> recipients = new ArrayList<String>();
-		for (SrGestorItem gestor : solicitacao.getItemConfiguracao().getGestorSet()) {
+		for (SrGestorItem gestor : solicitacao.getItemAtual().getGestorSet()) {
 			DpPessoa pessoaGestorAtual = gestor.getDpPessoa().getPessoaAtual();
 			if (pessoaGestorAtual != null && pessoaGestorAtual.getDataFim() == null)
 				if (pessoaGestorAtual.getEmailPessoa() != null)

@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <siga:pagina titulo="Designação de Solicitações">
 
@@ -92,7 +93,7 @@
 								<td>${item.descrItemConfiguracao}</td>
 								<td>${item.descricaoSimilaridade}</td>
 								<td class="acoes">
-									<siga:desativarReativar id="${item.idItemConfiguracao}" onReativar="itemConfiguracaoService.reativar" onDesativar="itemConfiguracaoService.desativar" isAtivo="${item.isAtivo()}"></siga:desativarReativar>
+									<sigasr:desativarReativar id="${item.idItemConfiguracao}" onReativar="itemConfiguracaoService.reativar" onDesativar="itemConfiguracaoService.desativar" isAtivo="${item.isAtivo()}"></sigasr:desativarReativar>
 								</td>
 								<td style="display: none;">${item.srItemConfiguracaoJson}</td>
 							</tr>
@@ -108,9 +109,9 @@
 	</div>
 </siga:pagina>
 
-<siga:modal nome="editarItem" titulo="Editar Item">
+<sigasr:modal nome="editarItem" titulo="Editar Item">
 	<div id="divEditarItem"><jsp:include page="editar.jsp"></jsp:include></div>
-</siga:modal>
+</sigasr:modal>
 
 
 <script type="text/javascript">

@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <siga:pagina titulo="${solicitacao.codigo}">
 	<jsp:include page="../main.jsp"></jsp:include>
@@ -56,12 +57,12 @@
 				</c:if>
 			</h3>
 
-			<siga:linkSr acoes="${solicitacao.operacoes(titular, lotaTitular)}" />
+			<sigasr:linkSr acoes="${solicitacao.operacoes(titular, lotaTitular)}" />
 			<div class="gt-content-box" style="padding: 10px">
 				<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
-					<siga:descricaoItem itemConfiguracao="${solicitacao.itemAtual}" />
+					<sigasr:descricaoItem itemConfiguracao="${solicitacao.itemAtual}" />
 					-
-					<siga:descricaoAcao acao="${solicitacao.acaoAtual}" />
+					<sigasr:descricaoAcao acao="${solicitacao.acaoAtual}" />
 				</p>
 				<p id="descrSolicitacao" style="font-size: 9pt;">${solicitacao.descricao}</p>
 				<script language="javascript">
@@ -202,7 +203,7 @@
 										    <span id="descrMovimentacaoTexto${movimentacao.idMovimentacao}">${movimentacao.descrMovimentacao}</span>
 											<c:if test="${movimentacao.arquivo != null}">
 												&nbsp;|&nbsp;
-                                        		<siga:arquivo arquivo="${movimentacao.arquivo}" />
+                                        		<sigasr:arquivo arquivo="${movimentacao.arquivo}" />
 											</c:if>
 											<c:if test="${movimentacao.tipoMov.idTipoMov == 16}">
 												<c:forEach items="${movimentacao.respostaSet}" var="resposta">
@@ -351,7 +352,7 @@
 				<div class="gt-sidebar-content">
 					<h3>Contexto</h3>
 					<p>
-						<siga:listaArvore solicitacao="${solicitacao.paiDaArvore}"
+						<sigasr:listaArvore solicitacao="${solicitacao.paiDaArvore}"
 							visualizando="${solicitacao}" />
 					</p>
 				</div>
@@ -362,10 +363,10 @@
 				<div class="gt-sidebar-content">
 					<h3>Arquivos Anexos</h3>
 					<p>
-						<siga:arquivo arquivo="${solicitacao.arquivoAnexoNaCriacao}" />
+						<sigasr:arquivo arquivo="${solicitacao.arquivoAnexoNaCriacao}" />
 						<br />
 						<c:forEach items="${solicitacao.movimentacoesAnexacao}" var="anexacao">
-							<siga:arquivo arquivo="${anexacao.arquivo}" /> 
+							<sigasr:arquivo arquivo="${anexacao.arquivo}" /> 
 							&nbsp;-&nbsp;${anexacao.descrMovimentacao}<br />
                     	</c:forEach>
                 	</p>
@@ -414,7 +415,7 @@
 	        <jsp:include page="exibirConhecimentosRelacionados.jsp"></jsp:include>
 	    </div>
     
-    <siga:modal nome="anexarArquivo" titulo="Anexar Arquivo">
+    <sigasr:modal nome="anexarArquivo" titulo="Anexar Arquivo">
         <div class="gt-content-box gt-form">
             <form action="${linkTo[SolicitacaoController].anexarArquivo}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">               
                 <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
@@ -437,25 +438,16 @@
                 </div>
             </form>
         </div>
-    </siga:modal> 
-    <siga:modal nome="fechar" titulo="Fechar">
-        <form action="${linkTo[SolicitacaoController].fechar}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
-            <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
-            <input type="hidden" name="ocultas" value="${ocultas}" />
-            <div style="display: inline" class="gt-form-row gt-width-66">
-                <label>Motivo</label>
-                <textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
-            </div>
-            <input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> <input
-                type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
-        </form>
-    </siga:modal>
+    </sigasr:modal> 
+    <sigasr:modal nome="fechar" titulo="Fechar" url="${linkTo[SolicitacaoController].fechar}?sigla=${solicitacao.siglaCompacta}" />
     
-    <siga:modal nome="incluirEmLista" titulo="Definir Lista" url="${linkTo[SolicitacaoController].incluirEmLista}?sigla=${solicitacao.siglaCompacta}" />
+    <sigasr:modal nome="incluirEmLista" titulo="Definir Lista" url="${linkTo[SolicitacaoController].incluirEmLista}?sigla=${solicitacao.siglaCompacta}" />
     
-    <siga:modal nome="escalonar" titulo="Escalonar Solicitação" url="${linkTo[SolicitacaoController].escalonar}?sigla=${solicitacao.siglaCompacta}" />
+    <sigasr:modal nome="escalonar" titulo="Escalonar Solicitação" url="${linkTo[SolicitacaoController].escalonar}?sigla=${solicitacao.siglaCompacta}" />
 
-    <siga:modal nome="juntar" titulo="Juntar">
+	<sigasr:modal nome="reclassificar" titulo="Reclassificar" url="${linkTo[SolicitacaoController].reclassificar}?sigla=${solicitacao.siglaCompacta}" />
+
+    <sigasr:modal nome="juntar" titulo="Juntar">
         <form action="${linkTo[SolicitacaoController].juntar}" method="post" enctype="multipart/form-data" id="formGravarJuncao">
             <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
             <input type="hidden" name="ocultas" value="${ocultas}" />
@@ -475,8 +467,8 @@
                 <input type="button" onclick="gravarAssociacao('Juncao');" value="Gravar" class="gt-btn-medium gt-btn-left" />
             </div>
         </form>
-    </siga:modal>
-    <siga:modal nome="vincular" titulo="Vincular">
+    </sigasr:modal>
+    <sigasr:modal nome="vincular" titulo="Vincular">
         <form action="${linkTo[SolicitacaoController].vincular}" method="post" enctype="multipart/form-data" id="formGravarVinculo">
             <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
             <input type="hidden" name="ocultas" value="${ocultas}" />
@@ -496,13 +488,13 @@
                 <input type="button" onclick="gravarAssociacao('Vinculo');" value="Gravar" class="gt-btn-medium gt-btn-left" />
             </div>
         </form>
-    </siga:modal>
+    </sigasr:modal>
 
-    <siga:modal nome="associarLista" titulo="Definir Lista" url="associarLista.jsp" />
+    <sigasr:modal nome="associarLista" titulo="Definir Lista" url="associarLista.jsp" />
 
-    <siga:modal nome="responderPesquisa" titulo="Responder Pesquisa" url="responderPesquisa?sigla=${solicitacao.siglaCompacta}" />
+    <sigasr:modal nome="responderPesquisa" titulo="Responder Pesquisa" url="responderPesquisa?sigla=${solicitacao.siglaCompacta}" />
 
-    <siga:modal nome="deixarPendente" titulo="Pendência">
+    <sigasr:modal nome="deixarPendente" titulo="Pendência">
             <div class="gt-content-box gt-form clearfix">
                 <form action="${linkTo[SolicitacaoController].deixarPendente}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
                     <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
@@ -530,8 +522,8 @@
                     </div>
                 </form>
             </div>
-    </siga:modal> 
-    <siga:modal nome="alterarPrioridade" titulo="Alterar Prioridade">
+    </sigasr:modal> 
+    <sigasr:modal nome="alterarPrioridade" titulo="Alterar Prioridade">
         <div class="gt-form gt-content-box">
             <form action="${linkTo[SolicitacaoController].alterarPrioridade}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
                 <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
@@ -548,8 +540,8 @@
                 </div>
             </form>
         </div>
-    </siga:modal>
-    <siga:modal nome="desentranhar" titulo="Desentranhar">
+    </sigasr:modal>
+    <sigasr:modal nome="desentranhar" titulo="Desentranhar">
         <form action="${linkTo[SolicitacaoController].desentranhar}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
             <div style="display: inline" class="gt-form-row gt-width-66">
                 <label>Justificativa</label>
@@ -559,8 +551,8 @@
                 type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> <input
                 type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
         </form>
-    </siga:modal>   
-    <siga:modal nome="terminarPendenciaModal" titulo="Terminar Pendência">
+    </sigasr:modal>   
+    <sigasr:modal nome="terminarPendenciaModal" titulo="Terminar Pendência">
         <form action="${linkTo[SolicitacaoController].terminarPendencia}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">
             <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
             <input type="hidden" name="ocultas" value="${ocultas}" />
@@ -574,7 +566,7 @@
                 type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> <input
                 type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
         </form>
-    </siga:modal>    
+    </sigasr:modal>    
 </siga:pagina>
 
 <script language="javascript">

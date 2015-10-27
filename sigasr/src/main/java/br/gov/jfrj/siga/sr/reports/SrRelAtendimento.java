@@ -93,9 +93,8 @@ public class SrRelAtendimento extends RelatorioTemplate {
 				etapas.addAll(sol.getEtapas());
 			//filtrando as etapas 	
 			for (SrEtapaSolicitacao e : etapas) {
-				if (e.getLotaResponsavel().equals(lotaAtendente) && 
-						(e.getParametro().equals(SrParametro.ATENDIMENTO) ||
-								e.getParametro().equals(SrParametro.PRIMEIRO_ATENDIMENTO))) 
+				if (e.getParametro().equals(SrParametro.ATENDIMENTO) &&
+						idsIniciais.contains(e.getLotaResponsavel().getIdInicial())) 
 					etapasOrdenadas.add(e);
 			}
 			//adicionando os registros do relatório
@@ -168,7 +167,7 @@ public class SrRelAtendimento extends RelatorioTemplate {
 				+ "inner join sol.meuMovimentacaoSet mov inner join sol.meuMarcaSet marca "
 				+ "where marca.cpMarcador.idMarcador <> 45 and sol.hisDtIni between :dataIni and :dataFim "
 					+ "and (mov.tipoMov = 1 or mov.tipoMov = 7 or mov.tipoMov = 24) "
-					+ "and mov.lotaAtendente.idLotacaoIni in :idsLotaAtendenteIni)");
+					+ "and mov.lotaAtendente.idLotacaoIni in (:idsLotaAtendenteIni))");
 
 		Date dtIni = formatter.parse((String) parametros.get("dtIni") + " 00:00:00");
 		query.setParameter("dataIni", dtIni, TemporalType.TIMESTAMP);

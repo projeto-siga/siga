@@ -5,7 +5,7 @@
 	<br>
 	<div class="ui-accordion-header"  style="position:absolute;left:1%;">
 		<h3>
-			SJRJ/STI/CSIS - vs.: SigaPP 2015.1.0
+			SJRJ/STI/CSIS - vs.: SigaPP 2015.1.1
 		</h3>
 		<h5>
 			tscsis@jfrj.jus.br

@@ -34,7 +34,7 @@
 		</li>
 		<li><a href="${linkTo[AgendamentoController].imprime}">Imprime os meus</a>
 		</li>
-		<li><a href="${linkTo[AgendamentoController].salaLista}">Imprime os meus de uma sala</a>
+		<li><a href="${linkTo[AgendamentoController].salaLista}">Imprime os agendamentos de uma sala</a>
 		</li>
 	</ul>
  </li>

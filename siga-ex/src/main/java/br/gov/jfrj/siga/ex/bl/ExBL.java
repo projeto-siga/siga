@@ -4490,8 +4490,25 @@ public class ExBL extends CpBL {
 
 		if (doc.getDestinatario() != null && !doc.getDestinatario().isFechada())
 			novoDoc.setDestinatario(doc.getDestinatario().getPessoaAtual());
+		
+		
+		final Long idSit = Ex
+				.getInstance()
+				.getConf()
+				.buscaSituacao(doc.getExModelo(),
+						doc.getExTipoDocumento(),
+						cadastrante, lotaCadastrante,
+						CpTipoConfiguracao.TIPO_CONFIG_ELETRONICO)
+				.getIdSitConfiguracao();
 
-		novoDoc.setFgEletronico(doc.getFgEletronico());
+		if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO) {
+			novoDoc.setFgEletronico("S");
+		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_PROIBIDO) {
+			novoDoc.setFgEletronico("N");
+		} else {
+			novoDoc.setFgEletronico(doc.getFgEletronico());
+		} 
+		
 		novoDoc.setExNivelAcesso(doc.getExNivelAcesso());
 
 		ExClassificacao classAtual = doc.getExClassificacaoAtual();

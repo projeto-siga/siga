@@ -37,6 +37,8 @@ public class BuscaTextualController extends SigaController {
 		final SigaHTTP http = new SigaHTTP();
 		String url = Cp.getInstance().getProp().gsaUrl();
 		url += "?" + request.getQueryString();
+		if (url.contains("type=suggest"))
+			url = url.replace("search", "suggest");
 		String response = http.get(url, getRequest(), null);
 		result.use(Results.http())
 				.addHeader("Content-Type", "application/json").body(response)

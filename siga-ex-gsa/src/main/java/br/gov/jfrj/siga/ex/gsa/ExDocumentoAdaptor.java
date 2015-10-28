@@ -98,7 +98,7 @@ public class ExDocumentoAdaptor extends ExAdaptor {
 
 			addMetadataForDoc(doc, resp);
 			addAclForDoc(doc, resp);
-			// resp.setCrawlOnce(true);
+			resp.setCrawlOnce(true);
 			resp.setLastModified(doc.getDtFinalizacao());
 			try {
 				resp.setDisplayUrl(new URI(permalink + doc.getCodigoCompacto()));

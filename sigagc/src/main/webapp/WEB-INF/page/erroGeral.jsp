@@ -49,7 +49,7 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 			<div class="gt-content clearfix">
 
 				<div id="caption" class="gt-error-page-hd">
-					<h2>Não Foi Possível Completar a Operação</h2>
+					<h2>Não Foi Possível Completar a Operação (${pageContext.getRequest().serverName})</h2>
 				</div>
 
 				<div class="gt-content-box">

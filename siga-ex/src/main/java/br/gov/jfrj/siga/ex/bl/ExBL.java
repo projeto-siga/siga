@@ -1151,7 +1151,7 @@ public class ExBL extends CpBL {
 		while (it.hasNext()) {
 			ExMovimentacao transferencia = (ExMovimentacao) it.next();
 
-			if (mov.getLotaCadastrante() == transferencia.getLotaResp()
+			if (mov.getLotaCadastrante().equivale(transferencia.getLotaResp())
 					&& transferencia.getData().after(mov.getData())) {
 				movRetorno = transferencia;
 				break;

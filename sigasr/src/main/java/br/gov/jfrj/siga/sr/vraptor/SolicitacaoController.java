@@ -53,6 +53,7 @@ import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.model.SrPrioridadeSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
+import br.gov.jfrj.siga.sr.model.SrTipoMotivoFechamento;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao.SrTarefa;
 import br.gov.jfrj.siga.sr.model.SrTendencia;
 import br.gov.jfrj.siga.sr.model.SrTipoMotivoEscalonamento;
@@ -567,15 +568,16 @@ public class SolicitacaoController extends SrController {
     @Path("/fechar")
     public void fechar(String sigla, SrItemConfiguracao itemConfiguracao) throws Exception {
     	reclassificar(sigla, itemConfiguracao);        
+    	result.include("motivosFechamento",SrTipoMotivoFechamento.values());
     }
     
     @Path("/fecharGravar")
-    public void fecharGravar(String sigla, SrItemConfiguracao itemConfiguracao, SrAcao acao, String motivo) throws Exception {
+    public void fecharGravar(String sigla, SrItemConfiguracao itemConfiguracao, SrAcao acao, String motivo, SrTipoMotivoFechamento tpMotivo) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
     		
     	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
-        sol.fechar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), itemConfiguracao, acao, motivo);
+        sol.fechar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), itemConfiguracao, acao, motivo, tpMotivo);
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
     

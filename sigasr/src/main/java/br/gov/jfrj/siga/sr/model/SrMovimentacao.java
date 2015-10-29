@@ -127,6 +127,9 @@ public class SrMovimentacao extends Objeto {
 
     @Enumerated
     private SrTipoMotivoPendencia motivoPendencia;
+    
+    @Enumerated
+    private SrTipoMotivoFechamento motivoFechamento;
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "ID_MOV_FINALIZADORA")
@@ -667,6 +670,14 @@ public class SrMovimentacao extends Objeto {
         this.motivoEscalonamento = motivoEscalonamento;
     }
     
+	public SrTipoMotivoFechamento getMotivoFechamento() {
+		return motivoFechamento;
+	}
+
+	public void setMotivoFechamento(SrTipoMotivoFechamento motivoFechamento) {
+		this.motivoFechamento = motivoFechamento;
+	}
+
 	public List<String> getEmailsNotificacaoReplanejamento() {
 		SrSolicitacao solicitacao = getSolicitacao().getSolicitacaoAtual();
 		List<String> recipients = new ArrayList<String>();

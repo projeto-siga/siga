@@ -48,3 +48,9 @@ commit;
 
 update sigasr.sr_tipo_movimentacao set nome_tipo_movimentacao = 'Reclassificação' where id_tipo_movimentacao = 23;
 commit;
+
+-------------------------------------------------
+
+ALTER TABLE SR_MOVIMENTACAO 
+ADD (MOTIVOFECHAMENTO NUMBER(10, 0));
+

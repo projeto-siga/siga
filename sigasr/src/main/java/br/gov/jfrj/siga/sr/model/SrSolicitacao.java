@@ -1518,7 +1518,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         if (!isRascunho() && !jaFoiDesignada()) {
 
             if (isFecharAoAbrir())
-                fechar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular(), getMotivoFechamentoAbertura());
+                fechar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular(), 
+                		getMotivoFechamentoAbertura(), SrTipoMotivoFechamento.ATENDIMENTO_CONCLUÍDO);
             else
                 iniciarAtendimento(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular());
 
@@ -2175,12 +2176,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
     }
     
-    private void fechar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String motivo) throws Exception {
-    	fechar(cadastrante, lotaCadastrante, titular, lotaTitular, getItemAtual(), getAcaoAtual(), motivo);
+    private void fechar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String motivo, SrTipoMotivoFechamento tpMotivo) throws Exception {
+    	fechar(cadastrante, lotaCadastrante, titular, lotaTitular, getItemAtual(), getAcaoAtual(), motivo, tpMotivo);
     }
 
     public void fechar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, 
-    		SrItemConfiguracao itemConfiguracao, SrAcao acao, String motivo) throws Exception {
+    		SrItemConfiguracao itemConfiguracao, SrAcao acao, String motivo, SrTipoMotivoFechamento tpMotivo) throws Exception {
         if (isPai() && !isAFechar())
             throw new AplicacaoException("Operação não permitida. Necessário fechar toda solicitação " + 
             			"filha criada a partir dessa que deseja fechar.");
@@ -2194,15 +2195,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         SrMovimentacao mov = new SrMovimentacao(this);
         mov.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_FECHAMENTO));
         mov.setItemConfiguracao(itemConfiguracao);
+        mov.setMotivoFechamento(tpMotivo);
         mov.setAcao(acao);
         
-        String descr = "";
-        if (motivo != null && !motivo.equals(""))
-        	descr += motivo;
+        String descr = " Motivo: " + mov.getMotivoFechamento().getDescrTipoMotivoFechamento() + "; ";
+        descr += (motivo != null && !motivo.equals("") ? motivo : "Fechando a solicitação");  
+        
         if (!itemConfiguracao.equivale(getItemAtual()) || !acao.equivale(getAcaoAtual()))
         	descr += " Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() + "; Ação: " + mov.getAcao().getTituloAcao() + ". ";
-        if (descr.equals(""))
-        	descr = "Fechando a solicitação";
         mov.setDescrMovimentacao(descr);
         
         mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
@@ -2214,7 +2214,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	getSolicitacaoPai().terminarPendenciaAguardandoFilha(getCadastrante(), getLotaCadastrante(), getTitular(), lotaAtendente);
         	if (getSolicitacaoPai().podeFecharAutomatico())
         		getSolicitacaoPai().fechar(getCadastrante(), getLotaCadastrante(), getTitular(), lotaAtendente, 
-        				"Solicitação fechada automaticamente");
+        				"Solicitação fechada automaticamente", tpMotivo);
         }      
         /*
          * if (temPesquisaSatisfacao()) enviarPesquisa();
@@ -2380,7 +2380,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	getSolicitacaoPai().terminarPendenciaAguardandoFilha(getCadastrante(), getLotaCadastrante(), getTitular(), lotaAtendente);
         	if (getSolicitacaoPai().podeFecharAutomatico())
         		getSolicitacaoPai().fechar(getCadastrante(), getLotaCadastrante(), getTitular(), lotaAtendente, 
-        				"Solicitação fechada automaticamente");
+        				"Solicitação fechada automaticamente", SrTipoMotivoFechamento.ATENDIMENTO_NEGADO);
         }   
     }
 

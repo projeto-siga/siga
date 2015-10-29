@@ -29,8 +29,13 @@ function validarFechamento() {
 	<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 	<input type="hidden" name="ocultas" value="${ocultas}" />
 	<input type="hidden" name="sigla" id="sigla" value="${siglaCompacta}" />
-	<div style="display: inline" class="gt-form-row gt-width-66">
+	<div class="gt-form-row gt-width-66">
 		<label>Motivo</label>
+			<siga:select name="tpMotivo" id="tpMotivo" list="motivosFechamento"
+			listValue="descrTipoMotivoFechamento" theme="simple" isEnum="true"/>
+	</div>
+	<div style="display: inline" class="gt-form-row gt-width-66">
+		<label>Detalhes</label>
 		<textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
     </div><br/>
 	<div class="gt-form-row">

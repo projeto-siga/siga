@@ -5,7 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <c:set var="titulo" scope="request">Acesso não autorizado</c:set>
-<c:import context="/siga" url="/paginas/cabecalho.jsp" />
+<c:import context="/siga" url="/WEB-INF/page/principal/cabecalho.jsp" />
 
 <center>
 <table width="729" border="1" cellspacing="0" cellpadding="0"
@@ -22,4 +22,4 @@
 
 </table>
 </center>
-<c:import context="/siga" url="/paginas/rodape.jsp" />
+<c:import context="/siga" url="/WEB-INF/page/principal/rodape.jsp" />

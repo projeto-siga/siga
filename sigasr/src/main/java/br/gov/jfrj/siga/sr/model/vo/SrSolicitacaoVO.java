@@ -19,6 +19,7 @@ public class SrSolicitacaoVO {
 	private String botaoExpandir = "+";
 	private String botaoRemoverPriorizar = "";
 	private Long idSolicitacao;
+	private String siglaSolicitacao = "";
 	private Long idPrioridadeSolicitacao;
 
 	// Edson: colunas ordenáveis:
@@ -46,6 +47,7 @@ public class SrSolicitacaoVO {
 			boolean podeRemover, boolean podePriorizar)
 			throws Exception {
 		this.setIdSolicitacao(sol.getId());
+		this.setSiglaSolicitacao(sol.getSiglaCompacta());
 		this.setIdPrioridadeSolicitacao(prioridadeSolicitacao != null ? prioridadeSolicitacao.getIdPrioridadeSolicitacao() : null);
 
 		this.setDtReg(sol.getSolicitacaoInicial().getDtRegString());
@@ -111,7 +113,7 @@ public class SrSolicitacaoVO {
 		
 		if (podeRemover)
 			this.botaoRemover = SrViewUtil.botaoRemoverSolicitacao(
-					this.getIdSolicitacao(), lista.getIdLista());
+					this.getSiglaSolicitacao(), lista.getIdLista());
 
 		if (podePriorizar)
 			this.botaoPriorizar = SrViewUtil.botaoPriorizarSolicitacao();
@@ -312,6 +314,14 @@ public class SrSolicitacaoVO {
 
 	public void setIdPrioridadeSolicitacao(Long idPrioridadeSolicitacao) {
 		this.idPrioridadeSolicitacao = idPrioridadeSolicitacao;
+	}
+
+	public String getSiglaSolicitacao() {
+		return siglaSolicitacao;
+	}
+
+	public void setSiglaSolicitacao(String siglaSolicitacao) {
+		this.siglaSolicitacao = siglaSolicitacao;
 	}
 
 }

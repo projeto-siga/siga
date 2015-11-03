@@ -9,6 +9,10 @@ html.fisico {
 	background-color: #f1e9c6 !important;
 }
 
+body.fisico {
+	background-color: #f1e9c6 !important;
+}
+
 tr.fisicoeven td {
 /*
 	background-color: #f1e9c6 !important;

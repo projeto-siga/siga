@@ -53,6 +53,7 @@
 	
 <c:if test="${not docVO.digital}">
 	<script type="text/javascript">
+		$("body").addClass("fisico");
 		$("html").addClass("fisico");
 		$("#outputTramitacao").addClass("fisico");
 	</script>

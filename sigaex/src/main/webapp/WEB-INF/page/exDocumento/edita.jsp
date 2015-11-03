@@ -106,7 +106,7 @@
 										${exDocumentoDTO.eletronicoString}
 										<c:if test="${exDocumentoDTO.eletronico == 2}">
 											<script type="text/javascript">
-												$("html").addClass("fisico");
+											$("html").addClass("fisico");$("body").addClass("fisico");
 											</script>
 										</c:if>
 									</c:when>
@@ -127,10 +127,13 @@
 									    
 										<script type="text/javascript">
 											function setFisico() {
-												if ($('input[name=exDocumentoDTO\\.eletronico]:checked').val() == 2)
-													$('html').addClass('fisico'); 
-												else 
-													$('html').removeClass('fisico');
+												if ($('input[name=exDocumentoDTO\\.eletronico]:checked').val() == 2) {
+													$("html").addClass("fisico");
+													$('body').addClass('fisico'); 
+												} else {
+													$('html').removeClass('fisico'); 
+													$('body').removeClass('fisico');
+												}
 											}; 
 											setFisico();
 										</script>									

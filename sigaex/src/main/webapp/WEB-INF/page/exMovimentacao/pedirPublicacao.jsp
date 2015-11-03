@@ -10,7 +10,7 @@
 <siga:pagina titulo="Movimentação">
 
 <c:if test="${not doc.eletronico}">
-	<script type="text/javascript">$("html").addClass("fisico");</script>
+	<script type="text/javascript">$("html").addClass("fisico");$("body").addClass("fisico");</script>
 </c:if>
 
 <script type="text/javascript">

@@ -13,6 +13,7 @@
 	<c:if test="${not mob.doc.eletronico}">
 		<script type="text/javascript">
 			$("html").addClass("fisico");
+			$("body").addClass("fisico");
 		</script>
 	</c:if>
 <%-- 	<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}"> --%>

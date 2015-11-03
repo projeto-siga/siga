@@ -40,16 +40,21 @@ public class Ex extends
 		if (!isInstantiated()) {
 			synchronized (Cp.class) {
 				if (!isInstantiated()) {
+					ExConfiguracaoBL confBL = new ExConfiguracaoBL();
+					ExConfiguracaoComparator comparator = new ExConfiguracaoComparator();
+					ExCompetenciaBL compBL = new ExCompetenciaBL();
+					ExPropriedadeBL propBL = new ExPropriedadeBL();
+					ExBL exBL = new ExBL();
+					
 					Ex instance = new Ex();
 					setInstance(instance);
-					instance.setConf(new ExConfiguracaoBL());
-					instance.getConf().setComparator(
-							new ExConfiguracaoComparator());
-					instance.setComp(new ExCompetenciaBL());
+					instance.setConf(confBL);
+					instance.getConf().setComparator(comparator);
+					instance.setComp(compBL);
 					instance.getComp().setConfiguracaoBL(instance.getConf());
-					instance.setBL(new ExBL());
+					instance.setBL(exBL);
 					instance.getBL().setComp(instance.getComp());
-					instance.setProp(new ExPropriedadeBL());
+					instance.setProp(propBL);
 				}
 			}
 		}

@@ -456,14 +456,24 @@ public class SolicitacaoController extends SrController {
 				solicitacao.setLotaCadastrante(getLotaCadastrante());
 				solicitacao.setTitular(getTitular());
 				solicitacao.setLotaTitular(getLotaTitular());
+				
+				if (item != null && !item.equals("")){
+		        	solicitacao.setItemConfiguracao((SrItemConfiguracao)SrItemConfiguracao.AR.find("bySiglaItemConfiguracaoAndHisDtFimIsNull", item).first());
+		        	if (!solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao()))
+		        		solicitacao.setItemConfiguracao(null);
+		        } 
+		        if (acao != null && !acao.equals(""))
+		        	solicitacao.setAcao((SrAcao)SrAcao.AR.find("bySiglaAcaoAndHisDtFimIsNull", acao).first());
+		        if (descricao != null && !descricao.equals(""))
+		        	solicitacao.setDescricao(descricao);
 			}
 			
+			//Edson: O deduzir(), o setItem(), o setAcao() e o asociarPrioridade() deveriam ser chamados dentro da própria solicitação pois é responsabilidade 
+			//da própria classe atualizar os seus atributos para manter consistência após a entrada de um dado. 
 			solicitacao.deduzirLocalRamalEMeioContato();
-			
 			if (solicitacao.getItemConfiguracao() != null && !solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao())){
 				solicitacao.setItemConfiguracao(null);
 			}
-			
 			if (solicitacao.getAcao() != null){
 				boolean containsAcao = false;
 				for (List<SrTarefa> tarefas : solicitacao.getAcoesEAtendentes().values())
@@ -541,6 +551,7 @@ public class SolicitacaoController extends SrController {
         solicitacao.setLotaTitular(getLotaTitular());
         if (itemConfiguracao != null)
         	solicitacao.setItemConfiguracao(itemConfiguracao);
+        else solicitacao.setItemConfiguracao(solicitacao.getItemAtual());
         
         //Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados
         em().detach(solicitacao);
@@ -618,6 +629,7 @@ public class SolicitacaoController extends SrController {
         solicitacao.setLotaTitular(getLotaTitular());
         if (itemConfiguracao != null)
         	solicitacao.setItemConfiguracao(itemConfiguracao);
+        else solicitacao.setItemConfiguracao(solicitacao.getItemAtual());
         
         //Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados
         em().detach(solicitacao);
@@ -654,61 +666,23 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("/escalonarGravar")
-    public void escalonarGravar(String sigla, SrItemConfiguracao itemConfiguracao, SrAcao acao, Long idAtendente, Long idAtendenteNaoDesignado, Long idDesignacao, SrTipoMotivoEscalonamento motivo, String descricao,
+    public void escalonarGravar(String sigla, SrItemConfiguracao itemConfiguracao, SrAcao acao, DpLotacao atendente, DpLotacao atendenteNaoDesignado, 
+    		SrConfiguracao designacao, SrTipoMotivoEscalonamento motivo, String descricao,
             Boolean criaFilha, Boolean fechadoAuto) throws Exception {
-        if (itemConfiguracao == null || itemConfiguracao.getId() == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
-            throw new AplicacaoException("Opera\u00e7\u00e3o n\u00e3o permitida. Necessario informar um item de configura\u00e7\u00e3o e uma a\u00e7\u00e3o.");
+        
         if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
     		
     	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
-
-        DpLotacao atendenteNaoDesignado = null;
-        DpLotacao atendente = null;
-        if (idAtendente != null)
-            atendente = ContextoPersistencia.em().find(DpLotacao.class, idAtendente);
-        if (idAtendenteNaoDesignado != null)
-            atendenteNaoDesignado = ContextoPersistencia.em().find(DpLotacao.class, idAtendenteNaoDesignado);
-
-        if (criaFilha) {
-            if (fechadoAuto != null) {
-                solicitacao.setFechadoAutomaticamente(fechadoAuto);
-                solicitacao.save();
-            }
-            SrSolicitacao filha = null;
-            if (solicitacao.isFilha())
-                filha = solicitacao.getSolicitacaoPai().criarFilhaSemSalvar();
-            else
-                filha = solicitacao.criarFilhaSemSalvar();
-            filha.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao.getId()));
-            filha.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
-            filha.setDesignacao(SrConfiguracao.AR.findById(idDesignacao));
-            //filha.setDescrSolicitacao(descricao);
-            if (idAtendenteNaoDesignado != null)
-                filha.setAtendenteNaoDesignado(atendenteNaoDesignado);
-            filha.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-            result.redirectTo(this).exibir(filha.getSiglaCompacta(), todoOContexto(), ocultas());
+        
+        if (criaFilha){
+        	SrSolicitacao filha = solicitacao.escalonarCriandoFilha(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 
+        			itemConfiguracao, acao, designacao, atendenteNaoDesignado, fechadoAuto, descricao);
+        	result.redirectTo(this).exibir(filha.getSiglaCompacta(), todoOContexto(), ocultas());
         } else {
-            SrMovimentacao mov = new SrMovimentacao(solicitacao);
-            mov.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO));
-            mov.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao.getId()));
-            mov.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
-            mov.setLotaAtendente(atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente);
-            // Edson: isso abaixo talvez pudesse valer pra todas as movimentacoes e ficar la no
-            // mov.checarCampos()
-            if (solicitacao.getAtendente() != null && !mov.getLotaAtendente().equivale(solicitacao.getLotaAtendente()))
-                mov.setAtendente(null);
-            mov.setMotivoEscalonamento(motivo);
-            mov.setDesignacao(SrConfiguracao.AR.findById(idDesignacao));
-            mov.setDescrMovimentacao(descricao + " Motivo: " + mov.getMotivoEscalonamento().getDescrTipoMotivoEscalonamento() + "; Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() + "; Ação: " + mov.getAcao().getTituloAcao()
-                    + "; Atendente: " + mov.getLotaAtendente().getSigla());
-            mov.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-            
-            solicitacao.setDnmItemConfiguracao(mov.getItemConfiguracao());
-            solicitacao.setDnmAcao(mov.getAcao());
-            solicitacao.save();
-            
-            result.redirectTo(this).exibir(solicitacao.getSiglaCompacta(), todoOContexto(), ocultas());
+        	solicitacao.escalonarPorMovimentacao(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 
+        			itemConfiguracao, acao, designacao, atendenteNaoDesignado, motivo, descricao, atendente);
+        	result.redirectTo(this).exibir(solicitacao.getSiglaCompacta(), todoOContexto(), ocultas());
         }
     }
 

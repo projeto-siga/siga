@@ -1385,15 +1385,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
         List<SrTarefa> acoesEAtendentes = getAcoesDisponiveisComAtendente();
         if (acoesEAtendentes != null && this.getItemConfiguracao() != null) {
-
-        	// DB1: Adicionado verificaÃÂ§ÃÂ£o pois ao editar uma solicitaÃÂ§ÃÂ£o, estava resetando a aÃÂ§ÃÂ£o
-        	// jÃÂ¡ selecionada pelo usuÃÂ¡rio mesmo que a ediÃÂ§ÃÂ£o fosse cancelada.
-            if (this.getAcao() == null) {
-            	if (acoesEAtendentes.size() == 1)
-            		this.setAcao(acoesEAtendentes.get(0).acao);
-                else
-                    this.setAcao(null);
-            }
+        	
+        	if (this.getAcao() == null) {
+        		   if (acoesEAtendentes.size() == 1)
+        		           this.setAcao(acoesEAtendentes.get(0).acao);
+        		    else
+        		        this.setAcao(null);
+        	}
 
 			for (SrTarefa t : acoesEAtendentes) {
 				 // TODO:[refatoracao] - Estava inserindo null na lista.
@@ -1639,10 +1637,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
         if (getTendencia() == null)
             setTendencia(SrTendencia.PIORA_MEDIO_PRAZO);
-
-        // sÃÂ³ valida o atendente caso nÃÂ£o seja rascunho
+        
         if (!isRascunho() && getDesignacao() == null)
-            throw new AplicacaoException("N\u00E3o foi encontrado nenhum atendente designado " + "para esta solicita\u00E7\u00E3o. Sugest\u00E3o: alterar item de " + "configura\u00E7\u00E3o e/ou a\u00E7\u00E3o");
+            throw new AplicacaoException("Não foi encontrado nenhum atendente designado " + "para esta solicitação. Sugestão: alterar item de " + "configuração e/ou ação");
 
         if (isFilha()) {
             if (getDescrSolicitacao() != null && (getDescrSolicitacao().equals(getSolicitacaoPai().getDescrSolicitacao()) || getDescrSolicitacao().trim().isEmpty()))
@@ -2172,7 +2169,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             mov.setLotaAtendente(getDesignacao().getAtendente());
         else
             mov.setLotaAtendente(getAtendenteNaoDesignado());
-        mov.setDescrMovimentacao("Iniciando o atendimento");
+        if (isFilha() && getDescrSolicitacao() != null && !getDescrSolicitacao().equals("") 
+        		&& !getDescrSolicitacao().equals(getSolicitacaoPai().getDescrSolicitacao())){
+        	//Edson: isto é estranho. Ver outra forma de definir a descrição do início do atendimento
+        	mov.setDescrMovimentacao(getDescrSolicitacao());
+        	setDescrSolicitacao(null);
+        } else mov.setDescrMovimentacao("Iniciando o atendimento");
         mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
     }
     
@@ -2221,6 +2223,65 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
          */
     }
     
+    public SrSolicitacao escalonarCriandoFilha(DpPessoa cadastrante, DpLotacao lotacao, DpPessoa titular, DpLotacao lotaTitular,
+    		SrItemConfiguracao itemConfiguracao, SrAcao acao, SrConfiguracao designacao, DpLotacao atendenteNaoDesignado,
+    		Boolean fechadoAuto, String descricao) throws Exception{
+
+    	if (itemConfiguracao == null || itemConfiguracao.getId() == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
+    		throw new AplicacaoException("Operação não permitida. Necessário informar um item de configuração e uma ação.");
+
+    	if (fechadoAuto != null) {
+    		setFechadoAutomaticamente(fechadoAuto);
+    		save();
+    	}
+    	SrSolicitacao filha = null;
+    	if (isFilha())
+    		filha = getSolicitacaoPai().criarFilhaSemSalvar();
+    	else
+    		filha = criarFilhaSemSalvar();
+    	filha.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao.getId()));
+    	filha.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
+    	filha.setDesignacao(designacao);
+    	filha.setDescrSolicitacao(descricao);
+    	if (atendenteNaoDesignado != null)
+    		filha.setAtendenteNaoDesignado(atendenteNaoDesignado);
+    	filha.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
+    	return filha;
+    }
+    
+    public void escalonarPorMovimentacao(DpPessoa cadastrante, DpLotacao lotacao, DpPessoa titular, DpLotacao lotaTitular,
+    		SrItemConfiguracao itemConfiguracao, SrAcao acao, SrConfiguracao designacao, DpLotacao atendenteNaoDesignado,
+    		SrTipoMotivoEscalonamento motivo, String descricao, DpLotacao atendente) throws Exception{
+    	
+    	if (itemConfiguracao == null || itemConfiguracao.getId() == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
+            throw new AplicacaoException("Operação não permitida. Necessário informar um item de configuração e uma ação.");
+    	
+    	if (designacao == null)
+            throw new AplicacaoException("Não foi encontrado nenhum atendente designado. Sugestão: alterar item de " + "configuração e/ou ação");
+    	
+    	SrMovimentacao mov = new SrMovimentacao(this);
+        mov.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO));
+        mov.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao.getId()));
+        mov.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
+        mov.setLotaAtendente(atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente);
+        // Edson: isso abaixo talvez pudesse valer pra todas as movimentacoes e ficar la no
+        // mov.checarCampos()
+        if (getAtendente() != null && !mov.getLotaAtendente().equivale(getLotaAtendente()))
+            mov.setAtendente(null);
+        mov.setMotivoEscalonamento(motivo);
+        mov.setDesignacao(designacao);
+        mov.setDescrMovimentacao((descricao != null && !descricao.equals("") ? descricao : "")
+        		+ " Motivo: " + mov.getMotivoEscalonamento().getDescrTipoMotivoEscalonamento() 
+        		+ "; Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() 
+        		+ "; Ação: " + mov.getAcao().getTituloAcao()
+                + "; Atendente: " + mov.getLotaAtendente().getSigla());
+        mov.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
+        
+        setDnmItemConfiguracao(mov.getItemConfiguracao());
+        setDnmAcao(mov.getAcao());
+        save();
+    }
+        
     public void reclassificar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrItemConfiguracao item, SrAcao acao) throws Exception {
         
         if (!podeReclassificar(cadastrante, lotaTitular))

@@ -202,7 +202,7 @@
 							tema="simple"
 							modulo="siga"
 							reler="ajax"
-							onchange="//notificarCampoMudou('#formulario_solicitacaosolicitante_id', 'Solicitante', 'solicitante')" />
+							onchange="validarCadastranteSolicitante();/*notificarCampoMudou('#formulario_solicitacaosolicitante_id', 'Solicitante', 'solicitante')*/" />
 						<span style="margin-left: 10px;" id="spanInterlocutor">
 							<siga:checkbox name="mostrarInterlocutor" value="false" />Interlocutor
 						</span>
@@ -276,7 +276,7 @@
 							<input type="hidden" name="solicitacao.dtOrigemString" id="stringDtMeioContato" value="${solicitacao.dtOrigemDDMMYYYYHHMM}" />
 						</div>
 						<script>
-							//validarCadastranteSolicitante();
+							validarCadastranteSolicitante();
 						</script>
 					</div>
 

@@ -114,8 +114,8 @@
 						
 								<label>Atendente</label>
 								<span id="atendentePadrao" style="display:block;"></span>
-								<input type="hidden" id="idDesignacao" name="idDesignacao" value="" />
-								<input type="hidden" name="idAtendente" id="idAtendente" value="" />
+								<input type="hidden" id="idDesignacao" name="designacao.id" value="" />
+								<input type="hidden" name="atendente.id" id="idAtendente" value="" />
 								<script>carregarLotacaoDaAcao();</script>
 							</div>
 						</c:if>
@@ -125,13 +125,12 @@
 				<a href="javascript: modalAbrir('lotacaoAtendente')" class="gt-btn-medium" style="margin: 5px 0 0 -3px;">
 					Alterar atendente
 				</a>
-				<input type="hidden" name="idAtendenteNaoDesignado" id="atendenteNaoDesignado" value="" />
+				<input type="hidden" name="atendenteNaoDesignado.id" id="atendenteNaoDesignado" value="" />
 				<br/>
 				<div class="gt-form-row">
 					<label>Descri&ccedil;&atilde;o</label>
-					<textarea name="descricao" cols="85" rows="7"></textarea>
+					<textarea name="descricao" cols="85" rows="4"></textarea>
 				</div>
-				<br/><br/>
 			<div id="outrasInformacoesDaFilha" class="gt-form-row">
 				<c:if test="${!isPai && empty solicitacaoPai}">
 					<siga:checkbox name="fechadoAuto" onchange="onchangeCheckCriaFilha()" value="${isFechadoAutomaticamente}" />

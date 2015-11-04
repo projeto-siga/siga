@@ -24,7 +24,6 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.sr.model.SrAtendimento;
 import br.gov.jfrj.siga.sr.model.SrEtapaSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrEtapaSolicitacaoComparator;
 import br.gov.jfrj.siga.sr.model.SrParametro;
@@ -174,7 +173,7 @@ public class SrRelAtendimento extends RelatorioTemplate {
 		Date dtFim = formatter.parse((String) parametros.get("dtFim") + " 23:59:59");
 		query.setParameter("dataFim", dtFim, TemporalType.TIMESTAMP);
 		query.setParameter("idsLotaAtendenteIni", ids);
-
+			
 		return query.getResultList();
 	}
 	

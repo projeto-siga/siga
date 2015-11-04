@@ -2,6 +2,9 @@ package br.gov.jfrj.siga.sr.model;
 
 import java.util.Date;
 
+import br.gov.jfrj.siga.sr.util.SrDataUtil;
+import br.gov.jfrj.siga.sr.util.SrViewUtil;
+
 public abstract class SrIntervaloCorrente extends SrIntervalo {
 
 	public SrIntervaloCorrente(){
@@ -18,6 +21,14 @@ public abstract class SrIntervaloCorrente extends SrIntervalo {
 		return isAtivo(new Date());
 	}
 	
+	public boolean isDiaUtil(Date data) {
+		return !SrDataUtil.isFinalDeSemana(data) && !SrDataUtil.isFeriado(data);
+	}
+		
+	public boolean isMesmoDia(Date data, Date oData) {
+		return SrViewUtil.toDDMMYYYY(data).equals(SrViewUtil.toDDMMYYYY(oData));
+	} 
+	
 	public abstract boolean isAtivo(Date dt);
 	
 	public Long getDecorridoEmSegundos(){
@@ -25,12 +36,13 @@ public abstract class SrIntervaloCorrente extends SrIntervalo {
 	}
 	
 	public float getDecorridoEmHoras() {
-		return horas(segundos(getDecorridoMillis()));
+		return horas(getDecorridoEmSegundos());
 	}
 	
 	public abstract Date getDataContandoDoInicio(Long millisAdiante);
 	
-	public boolean estaEntre(float tempo, float tempoIni, float tempoFim) {
+	public boolean estaEntre(float tempoIni, float tempoFim) {
+		float tempo = getDecorridoEmHoras();
 		if (tempo == 0f)
 			return true;
 		return tempo > tempoIni && tempo <= tempoFim;

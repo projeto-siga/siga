@@ -243,7 +243,7 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 			if (it.hasPrevious()) 
 				limiteInferior = faixas.get(it.previousIndex()).getLimiteSuperior();
 			faixaAtual = it.next();
-			if (estaEntre(getDecorridoEmHoras(), limiteInferior, faixaAtual.getLimiteSuperior())) {
+			if (estaEntre(limiteInferior, faixaAtual.getLimiteSuperior())) {
 				setFaixa(faixaAtual);
 				break;
 			}

@@ -374,7 +374,7 @@
 								</c:if>
 								
 								<c:set var="acoesEAtendentes" value="${solicitacao.acoesEAtendentes}" />
-								<c:if test="${not empty solicitacao.itemConfiguracao && not empty acoesEAtendentes}" > 
+								<c:if test="${not empty acoesEAtendentes}" > 
 									<div class="gt-form-row gt-width-66" style="margin-top: 10px;">
 										<label>A&ccedil;&atilde;o</label>   
 										<select name="solicitacao.acao.id" id="selectAcao" onchange="carregarLotacaoDaAcao();sbmt('solicitacao.acao');/*notificarCampoMudou('#selectAcao', 'A&ccedil;&atilde;o', 'solicitacao.acao');*/">

@@ -1342,7 +1342,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public List<SrTarefa> getAcoesDisponiveisComAtendente() throws Exception {
 
-        if (getSolicitante() == null || getItemConfiguracao() == null)
+        if (getSolicitante() == null)
             return null;
 
         List<SrTarefa> listaFinal = new ArrayList<SrTarefa>();
@@ -1384,7 +1384,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         });
 
         List<SrTarefa> acoesEAtendentes = getAcoesDisponiveisComAtendente();
-        if (acoesEAtendentes != null && this.getItemConfiguracao() != null) {
+        if (acoesEAtendentes != null) {
         	
         	if (this.getAcao() == null) {
         		   if (acoesEAtendentes.size() == 1)

@@ -3,11 +3,12 @@ package br.gov.jfrj.siga.sr.vraptor;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -53,10 +54,10 @@ import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.model.SrPrioridadeSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
-import br.gov.jfrj.siga.sr.model.SrTipoMotivoFechamento;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao.SrTarefa;
 import br.gov.jfrj.siga.sr.model.SrTendencia;
 import br.gov.jfrj.siga.sr.model.SrTipoMotivoEscalonamento;
+import br.gov.jfrj.siga.sr.model.SrTipoMotivoFechamento;
 import br.gov.jfrj.siga.sr.model.SrTipoMotivoPendencia;
 import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrTipoPermissaoLista;
@@ -69,6 +70,8 @@ import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 import com.google.gson.Gson;
+
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 @Resource
 @Path("app/solicitacao")
@@ -579,7 +582,16 @@ public class SolicitacaoController extends SrController {
     @Path("/fechar")
     public void fechar(String sigla, SrItemConfiguracao itemConfiguracao) throws Exception {
     	reclassificar(sigla, itemConfiguracao);        
-    	result.include("motivosFechamento",SrTipoMotivoFechamento.values());
+    	Set<SrTipoMotivoFechamento> motivos = new TreeSet<SrTipoMotivoFechamento>(new Comparator<SrTipoMotivoFechamento>(){
+			@Override
+			public int compare(SrTipoMotivoFechamento o1,
+					SrTipoMotivoFechamento o2) {
+				int id1 = o1.getidTipoMotivoFechamento(), id2 = o2.getidTipoMotivoFechamento();
+				return id1 > id2 ? +1 : id1 < id2 ? -1 : 0;
+			}
+    	});
+    	motivos.addAll(Arrays.asList(SrTipoMotivoFechamento.values()));
+    	result.include("motivosFechamento", motivos);
     }
     
     @Path("/fecharGravar")

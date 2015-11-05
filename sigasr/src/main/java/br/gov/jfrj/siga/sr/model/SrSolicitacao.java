@@ -166,10 +166,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     @JoinColumn(name = "ID_ACAO")
     private SrAcao acao;
     
-    @ManyToOne
-    @JoinColumn(name = "DNM_ID_ULT_MOV")
-    private SrMovimentacao dnmUltimaMovimentacao;
-
     @Lob
     @Column(name = "DESCR_SOLICITACAO", length = 8192)
     private String descrSolicitacao;
@@ -1825,9 +1821,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
                 	if (atendimentoAtual != null)
                 		prazo = atendimentoAtual.getFimPrevisto();
                 }
-                if (prazo != null)
+                if (prazo != null){
                     acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_FORA_DO_PRAZO,
                     	prazo, null, movMarca.getAtendente(), movMarca.getLotaAtendente());
+                    if (isFilha() && !movMarca.getLotaAtendente().equivale(getSolicitacaoPai().getLotaAtendente()))
+                    	acrescentarMarca(set, CpMarcador.MARCADOR_SOLICITACAO_FORA_DO_PRAZO,
+                            prazo, null, getSolicitacaoPai().getAtendente(), getSolicitacaoPai().getLotaAtendente());
+                }
                 
             }
            
@@ -3156,15 +3156,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public void refresh() {
 	    ContextoPersistencia.em().refresh(this);
 	}
-		
-	public SrMovimentacao getDnmUltimaMovimentacao() {
-		return dnmUltimaMovimentacao;
-	}
-
-	public void setDnmUltimaMovimentacao(SrMovimentacao dnmUltimaMovimentacao) {
-		this.dnmUltimaMovimentacao = dnmUltimaMovimentacao;
-	}
-	
+			
 	@Override
 	public String toString() {
 		return getCodigo();

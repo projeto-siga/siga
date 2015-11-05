@@ -149,11 +149,13 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		
 		query.append(" left join sol.meuMovimentacaoSet ultMov ");
 		
-		query.append(" left join sol.meuMarcaSet marcaPrazo ");
+		query.append(" left join sol.meuMarcaSet marcaPrazo with marcaPrazo.cpMarcador.idMarcador = 65 ");
 		
 		query.append(idListaPrioridade != null && idListaPrioridade > 0 ? " inner join sol.meuPrioridadeSolicitacaoSet l " : "");
 		
 		query.append(" where sol.hisDtFim is null ");
+		
+		query.append(" and (marcaPrazo.dpLotacaoIni is null or marcaPrazo.dpLotacaoIni = situacao.dpLotacaoIni) ");
 		
 		query.append(" and not exists (from SrMovimentacao mov where solicitacao = sol and dtIniMov > ultMov.dtIniMov) ");
 
@@ -188,7 +190,6 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	}
 	
 	private void incluirWheresBasicos(StringBuilder query){
-		
 		if (Filtros.deveAdicionar(getCadastrante()))
 			query.append(" and sol.cadastrante.idPessoaIni = "
 					+ getCadastrante().getIdInicial());
@@ -260,6 +261,35 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (Filtros.deveAdicionar(getAcordo()))
 			query.append(" and sol.acordos.hisIdIni = " + getAcordo().getHisIdIni() + " ");
 
+<<<<<<< HEAD
+=======
+		if (situacaoFiltro.equals("situacao"))
+			query.append(" and situacao.cpMarcador.idMarcador = " + getSituacao().getIdMarcador());
+		else query.append(" and situacao.cpMarcador.idMarcador in (9, 42, 43, 44, 45, 61) ");
+		
+		query.append(" and (situacao.dtIniMarca is null or "
+					+ "situacao.dtIniMarca < sysdate) ");
+		query.append(" and (situacao.dtFimMarca is null or "
+					+ "situacao.dtFimMarca > sysdate) ");
+		
+		if (situacaoFiltro.equals("situacaoAux")){
+			query.append(" and situacaoAux.cpMarcador.idMarcador = "
+					+ getSituacao().getIdMarcador());
+			query.append(" and (situacaoAux.dtIniMarca is null or "
+					+ "situacaoAux.dtIniMarca < sysdate) ");
+			query.append(" and (situacaoAux.dtFimMarca is null or "
+					+ "situacaoAux.dtFimMarca > sysdate) ");
+		}
+		
+		if (Filtros.deveAdicionar(getAtendente())){
+			query.append("and " + situacaoFiltro + ".dpPessoaIni.idPessoa = "
+					+ getAtendente().getIdInicial());
+		} else if (Filtros.deveAdicionar(getLotaAtendente())) {
+				query.append("and " + situacaoFiltro + ".dpLotacaoIni.idLotacao = "
+						+ getLotaAtendente().getIdInicial());
+		}
+
+>>>>>>> Siga-Sr: atribuindo marca Fora do Prazo ao atendente da solicitação principal
 		if (isNaoDesignados())
 			query.append(" and situacao.dpPessoaIni is null ");
 

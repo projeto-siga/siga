@@ -470,7 +470,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	if (getNumSolicitacao() != null)
         		query += " and numSolicitacao = " + getNumSolicitacao();
         	if (getNumSequencia() == null)
-        		query += " and numSequencia is null";
+        		query += " and (numSequencia is null or numSequencia = 0)";
         	else
         		query += " and numSequencia = " + getNumSequencia();
         }

@@ -3,11 +3,12 @@ package br.gov.jfrj.siga.sr.model;
 public enum SrTipoMotivoFechamento {
 
 	ATENDIMENTO_CONCLUÍDO(1, "Atendimento Concluído"),
-	ERRO_CLASSIFICACAO(1, "Erro de classificação"), 
-	DADOS_INCORRETOS(3, "Dados insuficientes ou incorretos"),
-	SOLUCAO_ALTERNATIVA(4, "Solução alternativa apresentada"),
-	ATENDIMENTO_NEGADO(5, "Atendimento não será efetuado"),
-	ATENDIMENTO_EM_OUTRA_SOLICITACAO(6, "Atendimento sendo efetuado em outra solicitação");
+	ERRO_CLASSIFICACAO(3, "Erro de classificação"), 
+	DADOS_INCORRETOS(4, "Dados insuficientes ou incorretos"),
+	SOLUCAO_ALTERNATIVA(5, "Solução alternativa apresentada"),
+	ATENDIMENTO_NEGADO(6, "Atendimento não será efetuado"),
+	ATENDIMENTO_EM_OUTRA_SOLICITACAO(7, "Atendimento efetuado em outra solicitação"),
+	ATENDIMENTO_CONCLUIDO_PARCIALMENTE(2, "Concluído parcialmente (pendente de solução por outra Equipe)");
 
     private int idTipoMotivoFechamento;
 

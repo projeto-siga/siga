@@ -3,7 +3,7 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
-<siga:pagina titulo="Página de Login" desabilitarbusca="sim"
+<siga:pagina titulo="Página de Login" desabilitarbusca="sim" desabilitarmenu="sim"
 	incluirJs="/siga/javascript/jquery.placeholder.js">
 
 	<script type="text/javascript">

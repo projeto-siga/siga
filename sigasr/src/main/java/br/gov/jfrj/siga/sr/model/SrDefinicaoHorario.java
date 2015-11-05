@@ -1,5 +1,8 @@
 package br.gov.jfrj.siga.sr.model;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public enum SrDefinicaoHorario{
 	HORARIO_PADRAO(1, 11, 19, "Horário Padrão"), HORARIO_CENTRAL(2, 8, 20, "Horário da Central de Serviços"),
 	HORARIO_SUPORTE_LOCAL(3, 10, 19, "Horário do Suporte Local");
@@ -48,4 +51,19 @@ public enum SrDefinicaoHorario{
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}		
+	
+	public boolean terminaAntesDe(int tempo) {
+		return horaFinal <= tempo;
+	}
+	
+	public boolean comecaDepoisDe(int tempo) {
+		return horaInicial > tempo;
+	}
+	
+	public boolean abrange(Date dt) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(dt);
+		int h = c.get(Calendar.HOUR_OF_DAY);
+		return !terminaAntesDe(h) && !comecaDepoisDe(h);
+	}
 }

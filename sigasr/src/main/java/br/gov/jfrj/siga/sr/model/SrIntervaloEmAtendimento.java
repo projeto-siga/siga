@@ -1,10 +1,10 @@
 package br.gov.jfrj.siga.sr.model;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.sr.util.SrDataUtil;
-import br.gov.jfrj.siga.sr.util.SrViewUtil;
 
 public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 
@@ -70,9 +70,8 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 		
 	@Override
 	public boolean isAtivo(Date dt) {
-		// TODO Auto-generated method stub
 		//return true;
-		return super.isDiaUtil(dt);
+		return super.isDiaUtil(dt) && getHorario().abrange(dt);
 	}
 	
 	public boolean isDiaUtil() {

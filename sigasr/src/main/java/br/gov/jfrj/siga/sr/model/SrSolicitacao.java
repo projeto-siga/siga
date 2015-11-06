@@ -2169,12 +2169,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             mov.setLotaAtendente(getDesignacao().getAtendente());
         else
             mov.setLotaAtendente(getAtendenteNaoDesignado());
+        
+        if (mov.getLotaAtendente().equivale(getLotaTitular()))
+        	mov.setAtendente(getTitular());
+        
         if (isFilha() && getDescrSolicitacao() != null && !getDescrSolicitacao().equals("") 
         		&& !getDescrSolicitacao().equals(getSolicitacaoPai().getDescrSolicitacao())){
         	//Edson: isto é estranho. Ver outra forma de definir a descrição do início do atendimento
         	mov.setDescrMovimentacao(getDescrSolicitacao());
         	setDescrSolicitacao(null);
         } else mov.setDescrMovimentacao("Iniciando o atendimento");
+        
         mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
     }
     

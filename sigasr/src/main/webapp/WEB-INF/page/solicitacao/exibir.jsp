@@ -108,7 +108,7 @@
 										<c:if test="${substitutos.size() >= 1}">
 											<optgroup label="Substitutos">
 												<c:forEach items="${substitutos}" var="pessoaSubst">
-													<option value="${pessoaSubst.substituto.pessoaAtual.idPessoa}">${pessoaSubst.substituto.pessoaAtual.descricaoIniciaisMaiusculas}</option>
+													<option value="${pessoaSubst.substituto.pessoaAtual.idPessoa}" ${movimentacao.atendente.idInicial.equals(pessoaSubst.substituto.idInicial) ? 'selected' : ''}>${pessoaSubst.substituto.pessoaAtual.descricaoIniciaisMaiusculas}</option>
 												</c:forEach>
 											</optgroup>
 										</c:if>

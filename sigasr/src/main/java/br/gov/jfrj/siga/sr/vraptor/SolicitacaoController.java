@@ -386,9 +386,6 @@ public class SolicitacaoController extends SrController {
 
         result.include(SOLICITACAO, solicitacao);
         result.include("movimentacao", movimentacao);
-        if (movimentacao.getAtendente() != null) {
-            result.include("idPessoa",movimentacao.getAtendente().getId());
-        }
         result.include("todoOContexto", todoOContexto);
         result.include("ocultas", ocultas);
         result.include("movs", movs);
@@ -808,8 +805,8 @@ public class SolicitacaoController extends SrController {
 
     @Path("/darAndamento")
     public void darAndamento(SrMovimentacao movimentacao) throws Exception {
-    	if (movimentacao == null || movimentacao.getDescrMovimentacao() == null || movimentacao.getDescrMovimentacao().trim().equals("") 
-    			&& movimentacao.getAtendente() == null)
+    	if (movimentacao == null || ((movimentacao.getDescrMovimentacao() == null || movimentacao.getDescrMovimentacao().trim().equals("")) 
+    			&& movimentacao.getAtendente() == null))
     		throw new AplicacaoException("Não foram informados dados para o andamento");
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
         if (movimentacao.getDescrMovimentacao() == null || movimentacao.getDescrMovimentacao().trim().equals("") && movimentacao.isTrocaDePessoaAtendente()){

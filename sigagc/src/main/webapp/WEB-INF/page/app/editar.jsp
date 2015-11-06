@@ -284,7 +284,7 @@
 				.replace(
 						'conteudo',
 						{
-							filebrowserUploadUrl : '${linkTo[AppController].gravarArquivo}?origem=editar',
+							filebrowserUploadUrl : '${linkTo[AppController].gravarArquivo}?origem=editar'+'&informacao='+'${informacao}',
 							toolbar : [
 									{
 										name : 'clipboard',

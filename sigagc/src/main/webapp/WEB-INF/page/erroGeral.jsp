@@ -86,10 +86,13 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 						</tr>
 					</table>
 				</div>
-				<div style="padding-top:10px;">
-				<input type="button" id="show_stack" value="Mais detalhes"
-					class="gt-btn-large gt-btn-right"
-					onclick="javascript: document.getElementById('caption').setAttribute('class',''); document.getElementById('stack').style.display=''; document.getElementById('show_stack').style.display='none';" />
+				<div style="padding-top:10px;float: right;">
+					<table>
+						<tr>
+							<td><input type="button" value="Voltar" class="gt-btn-medium gt-btn-left"  onclick="javascript:history.back();" /></td>
+							<td><input type="button" id="show_stack" value="Mais detalhes" class="gt-btn-large gt-btn-right" onclick="javascript: document.getElementById('caption').setAttribute('class',''); document.getElementById('stack').style.display=''; document.getElementById('show_stack').style.display='none';" /></td>
+						</tr>
+					</table>
 				</div>
 			</div>
 		</div>

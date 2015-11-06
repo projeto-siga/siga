@@ -32,7 +32,7 @@
 </c:catch>
 
 <c:catch var="catchException">
-	<siga:pagina titulo="Erro Geral" desabilitarbusca="sim" desabilitarmenu="sim">
+	<siga:pagina titulo="Erro Geral" desabilitarbusca="sim" desabilitarmenu="sim" desabilitarComplementoHEAD="sim">
 	<!--
 	Unless this text is here, if your page is less than 513 bytes, Internet Explorer will display it's "Friendly HTTP Error Message",
 	and your custom error will never be displayed.  This text is just used as filler.

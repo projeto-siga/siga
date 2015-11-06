@@ -36,7 +36,7 @@
 	</c:if>
 </c:catch>
 <c:catch var="catchException">
-	<siga:pagina titulo="Erro Geral">
+	<siga:pagina titulo="Erro Geral" desabilitarbusca="sim" desabilitarmenu="sim" desabilitarComplementoHEAD="sim">
 
 		<jsp:include page="main.jsp"></jsp:include>
 		

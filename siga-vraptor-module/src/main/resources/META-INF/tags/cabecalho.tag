@@ -15,6 +15,7 @@
 <%@ attribute name="desabilitarmenu"%>
 <%@ attribute name="incluirJs"%>
 <%@ attribute name="compatibilidade"%>
+<%@ attribute name="desabilitarComplementoHEAD"%>
 
 <c:if test="${not empty titulo}">
 	<c:set var="titulo" scope="request" value="${titulo}" />
@@ -117,8 +118,10 @@ ${meta}
 	});
 </script>
 <c:catch>
-	<c:if test="${not empty titular}">
-		${f:getComplementoHead(cadastrante.orgaoUsuario)}
+	<c:if test="${desabilitarComplementoHEAD != 'sim'}">
+		<c:if test="${not empty titular}">
+			${f:getComplementoHead(cadastrante.orgaoUsuario)}
+		</c:if>
 	</c:if>
 </c:catch>
 </head>

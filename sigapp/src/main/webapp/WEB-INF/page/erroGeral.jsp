@@ -5,7 +5,7 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <c:catch var="catchException">
-	<siga:pagina titulo="Erro Geral" desabilitarbusca="sim">
+	<siga:pagina titulo="Erro Geral" desabilitarbusca="sim" desabilitarmenu="sim" desabilitarComplementoHEAD="sim">
 		<div class="gt-bd clearfix" id="divPrincipal" style="margin-top: 200px">
 		<div class="gt-content clearfix">
 			<h2>N&atilde;o Foi Poss&iacute;vel Completar a Opera&ccedil;&atilde;o</h2>

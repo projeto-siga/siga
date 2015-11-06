@@ -68,11 +68,6 @@
 				} 
 			}); 
 	
-			if($('#formulario_solicitacaointerlocutor_id').val() != "") {
-				$('#checkmostrarInterlocutor').prop('checked', true);	
-				$('#interlocutor').show();		
-			}
-	
 			$('#checkRascunho').change(function() {
 				if(this.checked) {
 					$('#checkRascunho').prop('value', 'true');
@@ -83,33 +78,12 @@
 	
 			//carregarFiltrosAoIniciar();
 	
-			// DB1: Sobrescreve o mÃ©todo onchange para que faÃ§a o tratamento das informaÃ§Ãµes 
-			// do campo vinculado ao evento
-			jQuery("#checkmostrarInterlocutor")[0].onchange = function(event) {
-				changemostrarInterlocutor();
-				showInterlocutor(this.checked, 'interlocutor');
-			};
 			//inicializa valores default para serem usados na function valorInputMudou()
 			item_default = $("#formulario_solicitacaoitemConfiguracao_id").val();
 		});
 
 		function postbackURL(){
 			return '${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize();
-		}
-	
-		function showInterlocutor(checked, divName){
-			var div = document.getElementById(divName);
-			if (div) {
-				if (checked)
-					div.style.display = 'block';
-				else {
-					div.style.display = 'none';
-					jQuery("#formulario_solicitacaointerlocutor_id").val("");
-					jQuery("#formulario_solicitacaointerlocutor_descricao").val("");
-					jQuery("#formulario_solicitacaointerlocutor_sigla").val("");
-					jQuery("#solicitacaointerlocutorSpan").html("");
-				}
-			}
 		}
 	
 		// param_1: id do input que deseja verificar se mudou do valor default
@@ -129,14 +103,12 @@
 			var siglaSolicitante = $('#formulario_solicitacaosolicitante_sigla')[0].value;
 	
 			if (siglaCadastrante == siglaSolicitante) {
-				$('#spanInterlocutor')[0].style.display='none';
-				$('#checkmostrarInterlocutor')[0].checked=false;
-				$('#checkmostrarInterlocutor')[0].onchange();
+				$('#interlocutor')[0].style.display='none';
 				$('#meioComunicacaoEDataOrigem')[0].style.display='none';
 			}
 			else {
-				$('#spanInterlocutor')[0].style.display='inline';
-				$('#meioComunicacaoEDataOrigem')[0].style.display='inline';
+				$('#interlocutor')[0].style.display='inline-block';
+				$('#meioComunicacaoEDataOrigem')[0].style.display='inline-block';
 			}
 			
 			toggleDataOrigem();
@@ -191,15 +163,13 @@
 						</div>
 					</c:if>
 					
-					<div class="gt-form-row box-wrapper">
-						<div class="gt-form-row gt-width-66">
-							<label>Cadastrante</label> ${cadastrante.nomePessoa} <input
+					<div class="gt-form-row gt-width-99">
+						<label>Cadastrante</label> ${cadastrante.nomePessoa} <input
 								type="hidden" id="siglaCadastrante" name="solicitacao.cadastrante.sigla"
 								value="${cadastrante.sigla}" />
 								<input type="hidden" id="idCadastrante" name="solicitacao.cadastrante.id" value="${cadastrante.idPessoa}" />
 								<input type="hidden" name="solicitacao.lotaTitular.id" value="${lotaTitular != null ? lotaTitular.idLotacao:''}" />
 								<input type="hidden" name="solicitacao.titular.id" value="${titular!= null ? titular.idPessoa:''}" />
-						</div>
 					</div>	 
 		
 					<div class="gt-form-row gt-width-99">
@@ -210,14 +180,10 @@
 							modulo="siga"
 							reler="ajax"
 							onchange="toggleInterlocutorMeioComunicacaoEDataOrigem();/*notificarCampoMudou('#formulario_solicitacaosolicitante_id', 'Solicitante', 'solicitante')*/" />
-						<span style="margin-left: 10px;" id="spanInterlocutor">
-							<siga:checkbox name="mostrarInterlocutor" value="false" />Interlocutor
-						</span>
 						<siga:error name="solicitacao.solicitante"/>
 					</div>
-					<div class="gt-form-row gt-width-66" id="interlocutor"
-						style="display: none;">
-						<label>Interlocutor</label> 
+					<div class="gt-form-row gt-width-99" id="interlocutor" style="display: none;">
+						<label>Interlocutor (Opcional)</label> 
 						<siga:selecao2 tipo="pessoa"
 							propriedade="solicitacao.interlocutor" 
 							tema="simple"
@@ -226,6 +192,10 @@
 					
 					<div id="divLocalRamalEMeioContato" depende="solicitacao.solicitante">
 						<script>
+
+							//Edson: talvez fosse possível fazer de um modo melhor, mas assim é mais prático
+							$("#solicitacaosolicitanteSpan").html('${solicitacao.solicitante.descricaoCompleta}');
+
 							$("#calendarioComunicacao").datepicker({
 					        	showOn: "button",
 					        	buttonImage: "/siga/css/famfamfam/icons/calendar.png",
@@ -236,7 +206,7 @@
 							$("#horarioComunicacao").mask("99:99");
 						</script>
 						<c:if test="${locaisDisponiveis.size() > 1}">
-							<div class="gt-form-row gt-width-66">
+							<div class="gt-form-row gt-width-99">
 								<label>Local</label>
 								<select name="solicitacao.local.id" id="local" onchange="sbmt('solicitacao.local')">
         						<c:forEach items="${locaisDisponiveis.keySet()}" var="orgao">

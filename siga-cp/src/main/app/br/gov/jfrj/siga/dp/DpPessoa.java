@@ -158,6 +158,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	public String getDescricao() {
 		return getNomePessoa();
 	}
+	
+	public String getDescricaoCompleta() {
+		return getNomePessoa() + ", " + getFuncaoString().toUpperCase() + ", " + getLotacao().getSiglaCompleta();
+	}
 
 	public String getDescricaoIniciaisMaiusculas() {
 		return Texto.maiusculasEMinusculas(getDescricao());

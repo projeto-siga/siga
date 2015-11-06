@@ -74,8 +74,8 @@ public class SrSolicitacaoVO {
 				.getSiglaCompleta(), sol.getLotaTitular().getNomeLotacao()));
 
 		String nomeSolicitanteAbreviado = sol.getSolicitante() != null ? sol.getSolicitante().getNomeAbreviado() : "";
-		String nomeSolicitante = sol.getSolicitante() != null ? sol.getSolicitante().getNomePessoa() : "";
-		this.setSolicitante(SrViewUtil.selecionado(nomeSolicitanteAbreviado,nomeSolicitante));
+		String nomeSolicitante = sol.getSolicitante() != null ? sol.getSolicitante().getDescricaoCompleta() : "";
+		this.setSolicitante(SrViewUtil.selecionado(nomeSolicitanteAbreviado, nomeSolicitante));
 		
 		String siglaLotaSolicitante = sol.getLotaSolicitante() != null ? sol.getLotaSolicitante().getSiglaCompleta() : "";
 		String nomeLotaSolicitante = sol.getLotaSolicitante() != null ? sol.getLotaSolicitante().getNomeLotacao() : "";

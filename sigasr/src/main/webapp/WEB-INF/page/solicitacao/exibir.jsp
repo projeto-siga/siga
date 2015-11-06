@@ -244,6 +244,7 @@
 				<p>
 					<b>Solicitante:</b>
 					${solicitacao.solicitante.descricaoIniciaisMaiusculas},
+					${solicitacao.solicitante.funcaoString},
 					${solicitacao.lotaSolicitante.siglaLotacao},
                     ${solicitacao.local.nomeComplexo}
 				</p>

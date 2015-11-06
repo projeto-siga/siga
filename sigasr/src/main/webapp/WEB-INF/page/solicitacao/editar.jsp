@@ -123,9 +123,8 @@
 			return false;
 		}
 		
-		// Valida se o cadastrante Ã© o solicitante, e neste caso irÃ¡ ocultar
-		// alguns campos na tela
-		function validarCadastranteSolicitante() {
+		
+		function toggleInterlocutorMeioComunicacaoEDataOrigem() {
 			var siglaCadastrante = $('#siglaCadastrante').val();
 			var siglaSolicitante = $('#formulario_solicitacaosolicitante_sigla')[0].value;
 	
@@ -133,12 +132,20 @@
 				$('#spanInterlocutor')[0].style.display='none';
 				$('#checkmostrarInterlocutor')[0].checked=false;
 				$('#checkmostrarInterlocutor')[0].onchange();
-				$('#meioComunicacao')[0].style.display='none';
+				$('#meioComunicacaoEDataOrigem')[0].style.display='none';
 			}
 			else {
 				$('#spanInterlocutor')[0].style.display='inline';
-				$('#meioComunicacao')[0].style.display='inline';
+				$('#meioComunicacaoEDataOrigem')[0].style.display='inline';
 			}
+			
+			toggleDataOrigem();
+		}
+
+		function toggleDataOrigem(){
+			if ($("#meioComunicacao").val() == 'EMAIL')
+				$('#dataOrigem')[0].style.display='inline-block';
+			else $('#dataOrigem')[0].style.display='none';
 		}
 		
 	</script>
@@ -202,7 +209,7 @@
 							tema="simple"
 							modulo="siga"
 							reler="ajax"
-							onchange="validarCadastranteSolicitante();/*notificarCampoMudou('#formulario_solicitacaosolicitante_id', 'Solicitante', 'solicitante')*/" />
+							onchange="toggleInterlocutorMeioComunicacaoEDataOrigem();/*notificarCampoMudou('#formulario_solicitacaosolicitante_id', 'Solicitante', 'solicitante')*/" />
 						<span style="margin-left: 10px;" id="spanInterlocutor">
 							<siga:checkbox name="mostrarInterlocutor" value="false" />Interlocutor
 						</span>
@@ -248,7 +255,7 @@
 							<input type="text" name="solicitacao.telPrincipal" id="telPrincipal" value="${solicitacao.telPrincipal}" maxlength="255" />
 						</div>
 
-						<div id="meioComunicacao">
+						<div id="meioComunicacaoEDataOrigem">
 							<div class="gt-form-row gt-width-66">
 								<label>Origem da Demanda</label>
 							
@@ -258,16 +265,17 @@
                      				listValue="descrMeioComunicacao" 
                      				listKey="idTipoContato"
                      				value="${solicitacao.meioComunicacao}"
-                     				isEnum="true"/>
+                     				isEnum="true"
+                     				onchange="toggleDataOrigem();" />
 							</div>
-							<div class="gt-form-row box-wrapper">
-								<div class="box box-left gt-width-25" style="margin-left: 15px;">
+							<div id="dataOrigem" class="gt-form-row gt-width-66" style="margin-left: 15px;">
+								<div >
 									<label>Contato inicial</label> 
 									<label>Data</label> 
 									<input type="text" name="calendario" id="calendarioComunicacao" value="${solicitacao.dtOrigemDDMMYYYY}" /> 
 									<siga:error name="calendario"/>
 								</div>
-								<div class="box gt-width-33" style="padding-top: 21px;">
+								<div style="padding-top: 5px;">
 									<label>Hora</label> 
 		    						<input type="text" name="horario" id="horarioComunicacao" value="${solicitacao.dtOrigemHHMM}" />
 		    						<siga:error name="horario"/>
@@ -276,7 +284,7 @@
 							<input type="hidden" name="solicitacao.dtOrigemString" id="stringDtMeioContato" value="${solicitacao.dtOrigemDDMMYYYYHHMM}" />
 						</div>
 						<script>
-							validarCadastranteSolicitante();
+						toggleInterlocutorMeioComunicacaoEDataOrigem();
 						</script>
 					</div>
 
@@ -672,7 +680,7 @@
 							div = divFiltro.find("div[identificadorFiltro='" + optionVl + "']");
 							div.remove();
 						}
-						validarCadastranteSolicitante();
+						toggleInterlocutorMeioComunicacaoEDataOrigem();
 						if(!existeFiltroSelecionavel()) {
 							$('#solicitacoesRelacionadas').hide(300);
 						} else {

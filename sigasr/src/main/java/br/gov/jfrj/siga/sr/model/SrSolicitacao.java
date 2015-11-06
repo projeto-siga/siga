@@ -451,7 +451,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         setSigla(sigla);
         String query = "";
         if (getId() != null)
-        	query = "from SrSolicitacao where idSolicitacao = " + getId();
+        	query = "from SrSolicitacao where hisDtFim is null and hisIdIni = " + getId();
         else {
         	if (getOrgaoUsuario() == null && getLotaTitular() != null)
         		setOrgaoUsuario(getLotaTitular().getOrgaoUsuario());
@@ -1492,7 +1492,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     @Override
     public void salvarComHistorico() throws Exception {
 
-        checarEPreencherCampos();
+        checarEPreencherCampos(); 
                    
         // Edson: Ver por que isto está sendo necessário. Sem isso, após o salvar(),
         // ocorre LazyIniException ao tentar acessar esses meuMovimentacaoSet's

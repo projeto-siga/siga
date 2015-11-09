@@ -196,12 +196,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     private SrGravidade gravidade;
 
     @Enumerated
-    private SrTendencia tendencia;
-
-    @Enumerated
-    private SrUrgencia urgencia;
-
-    @Enumerated
     private SrPrioridade prioridade;
     
     @Enumerated
@@ -572,40 +566,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public void setArquivo(UploadedFile file) {
     	this.arquivo = SrArquivo.newInstance(file);
     }
-
-    public int getGUT() {
-        return getGravidade().getNivelGravidade() * getUrgencia().getNivelUrgencia() * getTendencia().getNivelTendencia();
-    }
-
-    public String getGUTString() {
-        return getGravidade().getDescrGravidade() + " " + getUrgencia().getDescrUrgencia() + " " + getTendencia().getDescrTendencia();
-    }
-
-    public String getGUTPercent() {
-        return (int) ((getGUT() / 125.0) * 100) + "%";
-    }
-
-    public void associarPrioridadePeloGUT() {
-        /*int valorGUT = getGUT();
-        if (Util.isbetween(1, 24, valorGUT))
-            setPrioridade(SrPrioridade.PLANEJADO);
-        else if (Util.isbetween(25, 49, valorGUT))
-            setPrioridade(SrPrioridade.BAIXO);
-        else if (Util.isbetween(50, 74, valorGUT))
-            setPrioridade(SrPrioridade.MEDIO);
-        else if (Util.isbetween(75, 99, valorGUT))
-            setPrioridade(SrPrioridade.ALTO);
-        else if (Util.isbetween(100, 125, valorGUT))
-            setPrioridade(SrPrioridade.IMEDIATO);*/
-    	if (gravidade == SrGravidade.SEM_GRAVIDADE)
-            prioridade = SrPrioridade.BAIXO;
-    	else if (gravidade == SrGravidade.NORMAL)
-            prioridade = SrPrioridade.MEDIO;
-    	else if (gravidade == SrGravidade.GRAVE)
-            prioridade = SrPrioridade.ALTO;
-    	else if (gravidade == SrGravidade.MUITO_GRAVE)
-    		prioridade = SrPrioridade.IMEDIATO;
-    	
+    
+    public Map<SrGravidade, SrPrioridade> getGravidadesDisponiveisEPrioridades(){
+    	Map<SrGravidade, SrPrioridade> m = new LinkedHashMap<SrGravidade, SrPrioridade>();
+    	m.put(SrGravidade.SEM_GRAVIDADE, SrPrioridade.BAIXO);
+    	m.put(SrGravidade.NORMAL, SrPrioridade.MEDIO);
+    	m.put(SrGravidade.GRAVE, SrPrioridade.ALTO);
+    	m.put(SrGravidade.MUITO_GRAVE, SrPrioridade.IMEDIATO);
+    	return m;
     }
 
     public String getDtRegDDMMYYYYHHMM() {
@@ -1073,7 +1041,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         return false;
     }
 
-    public SrSolicitacao getSolicitacaoPrincipal() {
+    public SrSolicitacao getSolicitacaoPrincipalJuntada() {
         for (SrMovimentacao mov : getMovimentacaoSet()) {
             if (mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_DESENTRANHAMENTO)
                 return null;
@@ -1492,7 +1460,34 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     @Override
     public void salvarComHistorico() throws Exception {
 
-        checarEPreencherCampos(); 
+       	completarPreenchimento();
+        
+       	if (getArquivo() != null) {
+            double lenght = (double) getArquivo().getBlob().length / 1024 / 1024;
+            if (lenght > 2)
+                throw new AplicacaoException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) \u00E9 maior que o m\u00E1ximo permitido (2MB)");
+        }
+        
+        if (!isRascunho() && getDesignacao() == null)
+            throw new AplicacaoException("Não foi encontrado nenhum atendente designado " + "para esta solicitação. Sugestão: alterar item de " + "configuração e/ou ação");
+        
+        if (isFilha()) {
+            if (getDescrSolicitacao() != null && (getDescrSolicitacao().equals(getSolicitacaoPai().getDescrSolicitacao()) || getDescrSolicitacao().trim().isEmpty()))
+                setDescrSolicitacao(null);
+
+            if (this.meuAtributoSolicitacaoSet != null)
+                this.meuAtributoSolicitacaoSet = null;
+        }
+        
+        setDtReg(new Date());
+        
+        if (getNumSolicitacao() == null && !isRascunho() && !isFilha()) {
+            // DB1: Verifica se Ã¯Â¿Â½ uma Solicita\u00E7Ã£o Filha, pois caso seja nÃ£o
+            // deve atualizar o nÃ¯Â¿Â½mero da solicitaÃ§Ã£o, caso contrÃ¯Â¿Â½rio nÃ£o
+            // funcionarÃ¯Â¿Â½ o filtro por cÃ¯Â¿Â½digo para essa filha
+            setNumSolicitacao(getProximoNumero());
+            atualizarCodigo();
+        }
                    
         // Edson: Ver por que isto está sendo necessário. Sem isso, após o salvar(),
         // ocorre LazyIniException ao tentar acessar esses meuMovimentacaoSet's
@@ -1584,19 +1579,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         }
     }
 
-    private void checarEPreencherCampos() throws Exception {
+    public void completarPreenchimento() throws Exception {
 
         if (getCadastrante() == null)
             throw new AplicacaoException("Cadastrante n\u00E3o pode ser nulo");
-
-        if (getDtReg() == null)
-            setDtReg(new Date());
-
-        if (getArquivo() != null) {
-            double lenght = (double) getArquivo().getBlob().length / 1024 / 1024;
-            if (lenght > 2)
-                throw new AplicacaoException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) \u00E9 maior que o m\u00E1ximo permitido (2MB)");
-        }
+        
+        if (getDtIniEdicao() == null)
+            setDtIniEdicao(new Date());
 
         if (getLotaCadastrante() == null || getLotaCadastrante().getId() == null)
             setLotaCadastrante(getCadastrante().getLotacao());
@@ -1608,48 +1597,29 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             setLotaTitular(getTitular().getLotacao());
 
         if (getSolicitante() == null || getSolicitante().getId() == null)
-            setSolicitante(getCadastrante());
+            setSolicitante(getTitular());
 
         if (getLotaSolicitante() == null || getLotaSolicitante().getId() == null)
             setLotaSolicitante(getSolicitante().getLotacao());
 
-        if (getSolicitante().equivale(getCadastrante())) {
-            setDtOrigem(null);
+        if (getSolicitante().equivale(getCadastrante())) 
             setMeioComunicacao(null);
-        }
+        else if (getMeioComunicacao() == null)
+    		setMeioComunicacao(SrMeioComunicacao.TELEFONE);
+        
+        if (getDtOrigem() == null)
+            setDtOrigem(new Date());
 
         if (getOrgaoUsuario() == null || getOrgaoUsuario().getId() == null)
             setOrgaoUsuario(getLotaSolicitante().getOrgaoUsuario());
-
-        if (getNumSolicitacao() == null && !isRascunho() && !isFilha()) {
-            // DB1: Verifica se Ã¯Â¿Â½ uma Solicita\u00E7Ã£o Filha, pois caso seja nÃ£o
-            // deve atualizar o nÃ¯Â¿Â½mero da solicitaÃ§Ã£o, caso contrÃ¯Â¿Â½rio nÃ£o
-            // funcionarÃ¯Â¿Â½ o filtro por cÃ¯Â¿Â½digo para essa filha
-            setNumSolicitacao(getProximoNumero());
-            atualizarCodigo();
-        }
+        
+        if (getFormaAcompanhamento() == null)
+        	setFormaAcompanhamento(SrFormaAcompanhamento.ABERTURA_ANDAMENTO);
 
         if (getGravidade() == null)
-            setGravidade(SrGravidade.NORMAL);
-
-        if (getUrgencia() == null)
-            setUrgencia(SrUrgencia.NORMAL);
-
-        if (getTendencia() == null)
-            setTendencia(SrTendencia.PIORA_MEDIO_PRAZO);
+            setGravidade(SrGravidade.SEM_GRAVIDADE);
         
-        if (!isRascunho() && getDesignacao() == null)
-            throw new AplicacaoException("Não foi encontrado nenhum atendente designado " + "para esta solicitação. Sugestão: alterar item de " + "configuração e/ou ação");
-
-        if (isFilha()) {
-            if (getDescrSolicitacao() != null && (getDescrSolicitacao().equals(getSolicitacaoPai().getDescrSolicitacao()) || getDescrSolicitacao().trim().isEmpty()))
-                setDescrSolicitacao(null);
-
-            if (this.meuAtributoSolicitacaoSet != null)
-                this.meuAtributoSolicitacaoSet = null;
-        }
-
-        atualizarAcordos();
+        setPrioridade(getGravidadesDisponiveisEPrioridades().get(getGravidade()));
         
         setDnmPrioridadeTecnica(getPrioridade());
         setDnmItemConfiguracao(getItemConfiguracao());
@@ -3077,28 +3047,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         this.descrSolicitacao = descrSolicitacao;
     }
 
-    public SrTendencia getTendencia() {
-        return tendencia;
-    }
-
-    public void setTendencia(SrTendencia tendencia) {
-        this.tendencia = tendencia;
-    }
-
     public SrGravidade getGravidade() {
         return gravidade;
     }
 
     public void setGravidade(SrGravidade gravidade) {
         this.gravidade = gravidade;
-    }
-
-    public SrUrgencia getUrgencia() {
-        return urgencia;
-    }
-
-    public void setUrgencia(SrUrgencia urgencia) {
-        this.urgencia = urgencia;
     }
 
     public Date getDtReg() {

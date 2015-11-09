@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.SALVAR_SOLICITACAO_AO_ABRIR;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -55,13 +57,11 @@ import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.model.SrPrioridadeSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao.SrTarefa;
-import br.gov.jfrj.siga.sr.model.SrTendencia;
 import br.gov.jfrj.siga.sr.model.SrTipoMotivoEscalonamento;
 import br.gov.jfrj.siga.sr.model.SrTipoMotivoFechamento;
 import br.gov.jfrj.siga.sr.model.SrTipoMotivoPendencia;
 import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrTipoPermissaoLista;
-import br.gov.jfrj.siga.sr.model.SrUrgencia;
 import br.gov.jfrj.siga.sr.model.vo.SrListaVO;
 import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoListaVO;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
@@ -308,10 +308,8 @@ public class SolicitacaoController extends SrController {
     	result.include(SOLICITACAO, solicitacao);
         result.include("locais", ContextoPersistencia.em().createQuery("from CpComplexo").getResultList());
         result.include("formaAcompanhamentoList", SrFormaAcompanhamento.values());
-        result.include("gravidadeList", SrGravidade.values());
+        result.include("gravidadeList", solicitacao.getGravidadesDisponiveisEPrioridades());
         result.include("tipoMotivoEscalonamentoList", SrTipoMotivoEscalonamento.values());
-        result.include("urgenciaList", SrUrgencia.values());
-        result.include("tendenciaList", SrTendencia.values());
         result.include(PRIORIDADE_LIST, SrPrioridade.values());
         result.include("locaisDisponiveis", solicitacao.getLocaisDisponiveis());
         result.include("meiosComunicadaoList", SrMeioComunicacao.values());
@@ -443,21 +441,15 @@ public class SolicitacaoController extends SrController {
 	@Path({ "/editar", "/editar/{sigla}"})
     public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao) throws Exception {
 
+		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.
 		if (sigla != null){
 			solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
+			//Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados
+	        em().detach(solicitacao);
 		} else {
-			if (solicitacao != null){
-				//Edson: por causa do detach no ObjetoObjectInstantiator:
-				if (solicitacao.getSolicitacaoInicial() != null)
-					solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
-			} else {
+			if (solicitacao == null){
 				solicitacao = new SrSolicitacao();
-				solicitacao.setSolicitante(getTitular());
-				solicitacao.setLotaCadastrante(getLotaCadastrante());
-				solicitacao.setTitular(getTitular());
-				solicitacao.setLotaTitular(getLotaTitular());
-				
-				if (item != null && !item.equals("")){
+		        if (item != null && !item.equals("")){
 		        	solicitacao.setItemConfiguracao((SrItemConfiguracao)SrItemConfiguracao.AR.find("bySiglaItemConfiguracaoAndHisDtFimIsNull", item).first());
 		        	if (!solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao()))
 		        		solicitacao.setItemConfiguracao(null);
@@ -466,8 +458,19 @@ public class SolicitacaoController extends SrController {
 		        	solicitacao.setAcao((SrAcao)SrAcao.AR.find("bySiglaAcaoAndHisDtFimIsNull", acao).first());
 		        if (descricao != null && !descricao.equals(""))
 		        	solicitacao.setDescricao(descricao);
+		        try{
+		        	so.assertAcesso(SALVAR_SOLICITACAO_AO_ABRIR);
+		        	solicitacao.setRascunho(true);
+		        	solicitacao.salvar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular());
+		        	solicitacao.setRascunho(false);
+		        	//Edson: para evitar que o JPA tente salvar a solicitação por causa dos próximos set's chamados
+			        em().detach(solicitacao);
+		        } catch(AplicacaoException ae){
+		        	solicitacao.setCadastrante(getCadastrante());
+		        	solicitacao.completarPreenchimento();
+		        }
 			}
-			
+						
 			//Edson: O deduzir(), o setItem(), o setAcao() e o asociarPrioridade() deveriam ser chamados dentro da própria solicitação pois é responsabilidade 
 			//da própria classe atualizar os seus atributos para manter consistência após a entrada de um dado. 
 			solicitacao.deduzirLocalRamalEMeioContato();
@@ -483,18 +486,16 @@ public class SolicitacaoController extends SrController {
 				if (!containsAcao)
 					solicitacao.setAcao(null);
 			}
-			
-			solicitacao.associarPrioridadePeloGUT();
 		} 
-        	        
-        if (solicitacao.getDtOrigem() == null)
-            solicitacao.setDtOrigem(new Date());
-        if (solicitacao.getDtIniEdicao() == null)
-            solicitacao.setDtIniEdicao(new Date());
-        
+		
+		//Edson: por causa do detach no ObjetoObjectInstantiator:
+		if (solicitacao.getSolicitacaoInicial() != null)
+			solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
+        	                
         solicitacao.atualizarAcordos();
         
         incluirListasEdicaoSolicitacao(solicitacao);
+        
     }
 	
     @Path("/retirarDeLista")
@@ -505,14 +506,6 @@ public class SolicitacaoController extends SrController {
         SrLista lista = SrLista.AR.findById(idLista);
         solicitacao.retirarDeLista(lista, getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(this).exibirLista(idLista);
-    }
-
-    private SrSolicitacao criarSolicitacaoComSolicitante() {
-        SrSolicitacao solicitacao = new SrSolicitacao();
-        solicitacao.setCadastrante(getCadastrante());
-        solicitacao.setSolicitante(getTitular());
-
-        return solicitacao;
     }
 
     @Path("/incluirEmLista")
@@ -757,7 +750,7 @@ public class SolicitacaoController extends SrController {
     		
     	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         sol.excluir();
-        result.redirectTo(this).editar(null, null, null, null, null);
+        result.redirectTo("/../siga/");
     }
 
     @Path("/anexarArquivo")

@@ -1,7 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@page import="br.gov.jfrj.siga.sr.model.SrPrioridade"%>
-<%@page import="br.gov.jfrj.siga.sr.model.SrTendencia"%>
-<%@page import="br.gov.jfrj.siga.sr.model.SrUrgencia"%>
 <%@page import="br.gov.jfrj.siga.sr.model.SrGravidade"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
@@ -13,14 +11,6 @@
 
 <c:set var="sem_gravidade">
     <%=SrGravidade.SEM_GRAVIDADE.name()%>
-</c:set>
-
-<c:set var="urgencia_normal">
-    <%=SrUrgencia.NORMAL.name()%>
-</c:set>
-
-<c:set var="tendencia_piora">
-    <%=SrTendencia.PIORA_MEDIO_PRAZO.name()%>
 </c:set>
 
 <c:set var="prioridade_baixo">
@@ -527,25 +517,18 @@
 						<div class="barra-subtitulo header" align="center" valign="top">
 							Prioridade</div>
 					</div>
-					<div class="gt-form-row box-wrapper">
-						<div class="gt-form-row gt-width-33">
+					<div class="gt-form-row gt-width-33">
 							<label>Gravidade</label> 
-							<select name="solicitacao.gravidade" id="gravidade" onchange="sbmt('solicitacao.gravidade');" style="width:235px">
-								<c:forEach items="${gravidadeList}" var="gravidade">
-									<c:if test="${gravidade != 'EXTREMAMENTE_GRAVE'}">
-										<option value="${gravidade}">${gravidade.descrGravidade}</option>
-									</c:if>
+							<select name="solicitacao.gravidade" id="gravidade" style="width:235px" onchange="$('#prioridade').html($('#gravidade option:selected').attr('prioridade'))">
+								<c:forEach items="${gravidadeList.keySet()}" var="gravidade">
+									<c:set var="prioridade" value="${gravidadeList.get(gravidade)}" />
+										<option value="${gravidade}" prioridade="${prioridade.descPrioridade}" ${solicitacao.gravidade == gravidade ? 'selected' : ''}>${gravidade.descrGravidade}</option>
 								</c:forEach>
 							</select>
-						</div>
 					</div>
-					<div id="divPrioridade" class="gt-form-row gt-width-66" depende="solicitacao.gravidade">
+					<div class="gt-form-row gt-width-66" >
 						<label style="float: left">Prioridade: &nbsp;</label>
-						<span>${solicitacao.prioridade != null ? solicitacao.prioridade.descPrioridade: prioridade_desc}</span>
-						
-						<siga:select name="solicitacao.prioridade" id="prioridade" list="prioridadeList" listValue="descPrioridade" listKey="idPrioridade" isEnum="true"
-							value="${solicitacao.prioridade != null ? solicitacao.prioridade: prioridade_baixo}" style="width:235px;border:none;display:none;"/>
-							<br />
+						<span id="prioridade">${solicitacao.prioridade.descPrioridade}</span>
 					</div>
 		
 		
@@ -581,8 +564,10 @@
 					</c:choose>
 					<div class="gt-form-row">
 						<input type="submit" value="Gravar"
-							class="gt-btn-medium gt-btn-left" id="gravar" /> <a
-							href="${linkTo[SolicitacaoController].buscar}" class="gt-btn-medium gt-btn-left">Cancelar</a>
+							class="gt-btn-medium gt-btn-left" id="gravar" /> 
+						<c:if test="${not empty solicitacao.id}">
+						<a href="${linkTo[SolicitacaoController].excluir}?sigla=${solicitacao.siglaCompacta}" class="gt-btn-alternate-medium gt-btn-left">Descartar</a>
+						</c:if>
 					</div>
 				</form>
 			</div>

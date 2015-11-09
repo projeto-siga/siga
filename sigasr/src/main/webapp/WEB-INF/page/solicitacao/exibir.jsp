@@ -50,10 +50,10 @@
 			<p></p>
 			<h3>
 				${solicitacao.getMarcadoresEmHtml(titular, lotaTitular)}
-				<c:if test="${solicitacao.solicitacaoPrincipal != null}"> -
+				<c:if test="${solicitacao.solicitacaoPrincipalJuntada != null}"> -
                 <a style="text-decoration: none"
-						href="${linkTo[SolicitacaoController].exibir[solicitacao.solicitacaoPrincipal.siglaCompacta]}">
-						${solicitacao.solicitacaoPrincipal.codigo} </a>
+						href="${linkTo[SolicitacaoController].exibir[solicitacao.solicitacaoPrincipalJuntada.siglaCompacta]}">
+						${solicitacao.solicitacaoPrincipalJuntada.codigo} </a>
 				</c:if>
 			</h3>
 
@@ -258,14 +258,8 @@
 					<p>
 						<b>Contato Inicial:</b> ${solicitacao.dtOrigemString}
 						<c:if test="${solicitacao.meioComunicacao != null}">
-                        , por ${solicitacao.meioComunicacao.descrMeioComunicacao}
+                        por ${solicitacao.meioComunicacao.descrMeioComunicacao}
                     </c:if>
-					</p>
-				</c:if>
-				<c:if test="${solicitacao.meioComunicacao != null}">
-					<p>
-						<b>Origem da Demanda:</b>
-						${solicitacao.meioComunicacao.descrMeioComunicacao}
 					</p>
 				</c:if>
 				<c:if test="${solicitacao.telPrincipal != null}">

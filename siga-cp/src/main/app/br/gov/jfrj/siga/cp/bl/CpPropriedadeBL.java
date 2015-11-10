@@ -59,11 +59,11 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 	}
 	public String cacheUseSecondLevelCache  ( ) throws Exception {
 		String s = this.obterPropriedade("cache.use_second_level_cache");
-		return s == null ? "true" : s;
+		return s == null ? "false" : s;
 	}
 	public String cacheUseQueryCache  ( ) throws Exception {
 		String s = this.obterPropriedade("cache.use_query_cache");
-		return s == null ? "true" : s;
+		return s == null ? "false" : s;
 	}
 	public String gsaUrl  ( ) throws Exception {
 		return this.obterPropriedade("gsa.url");

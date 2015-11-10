@@ -212,7 +212,7 @@ public abstract class ModeloPropriedade {
 	 * @param valor - novo valor da propriedade
 	 * @throws Exception
 	 */
-	public void setPropriedade(String nome, String valor) throws Exception{
+	protected void setPropriedade(String nome, String valor) throws Exception{
 		carregarPropriedades();
 		propriedades.setProperty(nome, valor);
 	}

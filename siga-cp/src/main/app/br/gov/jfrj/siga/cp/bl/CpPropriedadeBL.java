@@ -72,4 +72,10 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 	public String getPrefixoModulo() {
 		return "siga.cp";
 	}
+	public void setCacheUseSecondLevelCache(Boolean b) throws Exception {
+		this.setPropriedade("cache.use_second_level_cache",b.toString());
+	}
+	public void setCacheUseQueryCache(Boolean b) throws Exception {
+		this.setPropriedade("cache.use_query_cache",b.toString());
+	}
 }

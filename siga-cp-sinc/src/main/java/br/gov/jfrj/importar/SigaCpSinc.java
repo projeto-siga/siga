@@ -47,6 +47,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpPapel;
 import br.gov.jfrj.siga.cp.CpTipoPapel;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -450,6 +451,9 @@ public class SigaCpSinc {
 
 	public void run() throws Exception, NamingException,
 			AplicacaoException {
+		
+		desativarCacheDeSegundoNivel();
+		
 		Configuration cfg;
 		if (servidor.equals("prod"))
 			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.PRODUCAO);
@@ -461,7 +465,8 @@ public class SigaCpSinc {
 			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
 		else
 			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
-
+		
+		
 		HibernateUtil.configurarHibernate(cfg);
 
 		verificarOrigemDeDados();
@@ -480,6 +485,11 @@ public class SigaCpSinc {
 
 		log(" ---- Fim do Processamento --- ");
 		logEnd();
+	}
+
+	private void desativarCacheDeSegundoNivel() throws Exception {
+		Cp.getInstance().getProp().setCacheUseSecondLevelCache(false);
+		Cp.getInstance().getProp().setCacheUseQueryCache(false);
 	}
 
 	private void verificarOrigemDeDados() throws AplicacaoException {

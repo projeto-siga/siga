@@ -7,8 +7,6 @@
 
 <jsp:include page="../main.jsp"></jsp:include>
 
-<%--<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>--%>
 <script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
 
 <div class="gt-bd clearfix">
@@ -25,7 +23,6 @@
 	    
 	    <div class="gt-content-box gt-for-table" style="margin-top: 15px;">
 	        <form id="frm" action="${linkTo[SolicitacaoController].buscar}" method="get" onsubmit="javascript: return block();" >
-	            <%--<input type="hidden" name="filtro.pesquisar" value="true" /> --%>
 	            <input type="hidden" name="propriedade" value="${propriedade}" />
 	            <input type="hidden" name="popup" value="${popup}" />
 	            <table class="gt-form-table">
@@ -35,18 +32,16 @@
 	                    <tr>
 	                        <td>Situa&ccedil;&atilde;o</td>
 	                        <td>
-	                           <siga:select name="filtro.situacao.idMarcador" 
+	                           <siga:select name="filtro.situacao.id" 
 	                                        list="marcadores"
 	                                        listKey="idMarcador"
 	                                        listValue="descrMarcador"
-	                                        headerKey="0"
+	                                        headerKey=""
 	                                        headerValue="Todas"
 	                                        value="${filtro.situacao.idMarcador}"
 	                                        theme="simple"/> 
                                 com
-                                <input type="hidden" name="filtro.atendenteSel" value="" />
-                                <input type="hidden" name="filtro.lotaAtendenteSel" value="" />
-                                <siga:pessoaLotaSelecao2 propriedadePessoa="filtro.atendenteSel" propriedadeLotacao="filtro.lotaAtendenteSel"/>
+                                <siga:pessoaLotaSelecao2 propriedadePessoa="filtro.atendente" propriedadeLotacao="filtro.lotaAtendente"/>
 	                            <div id="chkNaoDesignados" class="gt-form-row gt-width-66" style="padding-top: 6pt;">
 	                                <label> 
 	                                   <siga:checkbox nameInput="filtro.naoDesignados" name="filtro.naoDesignados" value="${filtro.naoDesignados}"/> 
@@ -54,24 +49,20 @@
 	                                </label>
 	                            </div>
 	                            <script language="javascript">
-	                                $("#chkNaoDesignados").appendTo("#spanLotacaofiltrolotaAtendenteSel");
+	                                $("#chkNaoDesignados").appendTo("#spanLotacaofiltrolotaAtendente");
 	                            </script>
 	                        </td>
 	                    </tr>
 	                    <tr>
 	                        <td>Cadastrante</td>
 	                        <td>
-	                           <input type="hidden" name="filtro.cadastranteSel" value="" />
-	                           <input type="hidden" name="filtro.lotaTitularSel" value="" />
-	                           <siga:pessoaLotaSelecao2 propriedadePessoa="filtro.cadastranteSel" propriedadeLotacao="filtro.lotaTitularSel"/>
+	                           <siga:pessoaLotaSelecao2 propriedadePessoa="filtro.cadastrante" propriedadeLotacao="filtro.lotaTitular"/>
 	                        </td>
 	                    </tr>
 	                    <tr>
 	                        <td>Solicitante</td>
 	                        <td>
-	                           <input type="hidden" name="filtro.solicitanteSel" value="" />
-                               <input type="hidden" name="filtro.lotaSolicitanteSel" value="" />
-	                           <siga:pessoaLotaSelecao2 propriedadePessoa="filtro.solicitanteSel" propriedadeLotacao="filtro.lotaSolicitanteSel"/>
+	                           <siga:pessoaLotaSelecao2 propriedadePessoa="filtro.solicitante" propriedadeLotacao="filtro.lotaSolicitante"/>
 	                        </td>
 	                    </tr>
 	                    <tr>
@@ -84,15 +75,13 @@
 	                    <tr>
 	                        <td>Item</td>
 	                        <td>
-	                           <input type="hidden" name="filtro.itemConfiguracaoSel" value="" />
-	                           <siga:selecao2 tamanho="grande" propriedade="filtro.itemConfiguracaoSel" tipo="itemConfiguracao" tema="simple" modulo="sigasr"/>
+	                           <siga:selecao2 tamanho="grande" propriedade="filtro.itemConfiguracao" tipo="itemConfiguracao" tema="simple" modulo="sigasr"/>
 	                        </td>
 	                    </tr>
 	                    <tr>
 	                        <td>A&ccedil;&atilde;o</td>
 	                        <td>
-	                           <input type="hidden" name="filtro.acaoSel" value="" />
-	                           <siga:selecao2 tamanho="grande" propriedade="filtro.acaoSel" tipo="acao" tema="simple" modulo="sigasr"/>
+	                           <siga:selecao2 tamanho="grande" propriedade="filtro.acao" tipo="acao" tema="simple" modulo="sigasr"/>
 	                        </td>
 	                    </tr>
 	                    <tr>
@@ -128,8 +117,7 @@
 	                    <tr>
 	                        <td>Acordo</td>
 	                        <td>
-	                           <input type="hidden" name="filtro.acordoSel" value="" />
-	                           <siga:selecao2 tamanho="grande" propriedade="filtro.acordoSel" tipo="acordo" tema="simple" modulo="sigasr" paramList="popup=true;"/>
+	                           <siga:selecao2 tamanho="grande" propriedade="filtro.acordo" tipo="acordo" tema="simple" modulo="sigasr" paramList="popup=true;"/>
 	                        </td>
 	                    </tr>   
 	                    <tr>

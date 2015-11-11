@@ -297,7 +297,7 @@ public class SolicitacaoController extends SrController {
     	
         if (!solicitacao.isRascunho() && !validarFormEditar(solicitacao)) {
         	incluirListasEdicaoSolicitacao(solicitacao);
-            validator.onErrorUsePageOf(SolicitacaoController.class).editar(solicitacao.getSiglaCompacta(), null, null, null, null);
+            validator.onErrorUsePageOf(SolicitacaoController.class).editar(solicitacao.getSiglaCompacta(), null, null, null, null, null);
         	return;
         }
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
@@ -392,28 +392,17 @@ public class SolicitacaoController extends SrController {
         result.include(PRIORIDADE_LIST, SrPrioridade.values());
     }
 
-    /*@Path("/listarSolicitacoesRelacionadas")
-    public void listarSolicitacoesRelacionadas(SrSolicitacaoFiltro solicitacao, List<SrAtributoSolicitacaoMap> atributoSolicitacaoMap) throws Exception {
-
-        //solicitacao.setAtributoSolicitacaoMap(atributoSolicitacaoMap);
-        List<Object[]> solicitacoesRelacionadas = solicitacao.buscarSimplificado();
-
-        result.include("solicitacoesRelacionadas", solicitacoesRelacionadas);
-    }*/
-
     @SuppressWarnings("unchecked")
     @Path("/buscar")
     public void buscar(SrSolicitacaoFiltro filtro, String propriedade, boolean popup, boolean telaDeListas) throws Exception {
         
         if (filtro != null && filtro.isPesquisar()){
-        	filtro.carregarSelecao();
         	SrSolicitacaoListaVO solicitacaoListaVO = new SrSolicitacaoListaVO(filtro, telaDeListas, propriedade, popup, getLotaTitular(), getCadastrante());
         	result.use(Results.json()).withoutRoot().from(solicitacaoListaVO).excludeAll().include("recordsFiltered").include("data").serialize();
         } else {
         	if (filtro == null){
         		filtro = new SrSolicitacaoFiltro();
         	}
-        	filtro.carregarSelecao();
         	result.include("solicitacaoListaVO", new SrSolicitacaoListaVO(filtro, false, propriedade, popup, getLotaTitular(), getCadastrante()));
         	result.include("tipos", new String[] { "Pessoa", "Lota\u00e7\u00e3o" });
         	result.include("marcadores", ContextoPersistencia.em().createQuery("select distinct cpMarcador from SrMarca").getResultList());
@@ -425,21 +414,8 @@ public class SolicitacaoController extends SrController {
         }
     }
 
-    public List<SrAtributo> atributosDisponiveisAdicaoConsulta(SrSolicitacaoFiltro filtro) throws Exception {
-        List<SrAtributo> listaAtributosAdicao = new ArrayList<SrAtributo>();
-        List<SrAtributoSolicitacaoMap> atributoMap = filtro.getAtributoSolicitacaoMap();
-
-        for (SrAtributo srAtributo : SrAtributo.listarParaSolicitacao(Boolean.FALSE)) {
-        	SrAtributoSolicitacaoMap atrib = new SrAtributoSolicitacaoMap(srAtributo.getIdAtributo(),srAtributo.getDescrAtributo());
-            if (!atributoMap.contains(atrib)) {
-                listaAtributosAdicao.add(srAtributo);
-            }
-        }
-        return listaAtributosAdicao;
-    }
-
 	@Path({ "/editar", "/editar/{sigla}"})
-    public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao) throws Exception {
+    public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao, SrSolicitacaoFiltro filtro) throws Exception {
 
 		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.
 		if (sigla != null){
@@ -493,6 +469,16 @@ public class SolicitacaoController extends SrController {
 			solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
         	                
         solicitacao.atualizarAcordos();
+        
+        //Edson: trecho das solicitações relacionadas
+        if (filtro == null){
+        	filtro = new SrSolicitacaoFiltro();
+        	filtro.setSolicitante(solicitacao.getSolicitante());
+        	filtro.setItemConfiguracao(solicitacao.getItemConfiguracao());
+        	filtro.setAcao(solicitacao.getAcao());
+        }
+        result.include("solicitacoesRelacionadas", filtro.buscarSimplificado());
+        result.include("filtro", filtro);
         
         incluirListasEdicaoSolicitacao(solicitacao);
         

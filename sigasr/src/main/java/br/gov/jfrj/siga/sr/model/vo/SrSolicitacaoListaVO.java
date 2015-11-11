@@ -160,7 +160,7 @@ public class SrSolicitacaoListaVO {
 		
 		//Edson: busca os dados
 		if (filtro.isRazoavelmentePreenchido() && filtro.isPesquisar()) {
-			setRecordsFiltered(filtro.consultarQuantidade());
+			setRecordsFiltered(filtro.buscarQuantidade());
 			List<Object[]> solicitacoes = filtro.buscarPorFiltro();
 
 			for (Object[] o : solicitacoes) {

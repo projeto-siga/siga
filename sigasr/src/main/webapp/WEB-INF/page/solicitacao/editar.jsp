@@ -66,14 +66,25 @@
 				$('#checkRascunho').prop('value', 'false');
 			});
 	
-			//carregarFiltrosAoIniciar();
-	
 			//inicializa valores default para serem usados na function valorInputMudou()
 			item_default = $("#formulario_solicitacaoitemConfiguracao_id").val();
 		});
 
 		function postbackURL(){
-			return '${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize();
+			var url = '${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize();
+
+			//Edson: verifica se há algum campo no formulário para o qual não existe checkbox no quadro de 
+			//solicitações relacionadas ou então existe e está marcado e envia na url. Verifique no comentário 
+			//de listarSolicitacoesRelacionadas.jsp o motivo pelo qual esta verificação tem de ser feita aqui:
+			var camposFiltraveis = ['solicitante', 'itemConfiguracao', 'acao'];
+			for (var i = 0; i < camposFiltraveis.length; i++){
+				var campo = $(" #formSolicitacao [name='solicitacao."+camposFiltraveis[i]+".id']");
+				var filtro = $(" #formRelacionadas [name='filtro."+camposFiltraveis[i]+".id']");
+				if (campo.val() && (!filtro.length || filtro.is(":checked")))
+					url += '&' + 'filtro.'+camposFiltraveis[i]+'.id=' + campo.val();
+			}
+
+			return url;
 		}
 	
 		// param_1: id do input que deseja verificar se mudou do valor default
@@ -169,7 +180,7 @@
 							tema="simple"
 							modulo="siga"
 							reler="ajax"
-							onchange="toggleInterlocutorMeioComunicacaoEDataOrigem();/*notificarCampoMudou('#formulario_solicitacaosolicitante_id', 'Solicitante', 'solicitante')*/" />
+							onchange="toggleInterlocutorMeioComunicacaoEDataOrigem();" />
 						<siga:error name="solicitacao.solicitante"/>
 					</div>
 					<div class="gt-form-row gt-width-99" id="interlocutor" style="display: none;">
@@ -264,14 +275,9 @@
 					<div id="divItem" depende="solicitacao.solicitante;solicitacao.local">
 						<c:if test="${not empty solicitacao.solicitante}">
 							<script>
-							
-							$(document).ready(function() {
-								//notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao');
-							});
 							function dispararFuncoesOnBlurItem() {
 								if (valorInputMudou('formulario_solicitacaoitemConfiguracao_id', 'item')) {
 									sbmt("solicitacao.itemConfiguracao");
-									//notificarCampoMudou('#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao');
 								}	
 							}
 							
@@ -279,7 +285,6 @@
 							
 							<div class="gt-form-row gt-width-66" >
 								<label>Produto, Servi&ccedil;o ou Sistema relacionado à Solicita&ccedil;&atilde;o</label>
-							<%--     <input type="hidden" name="solicitacao.acao" value="${solicitacao.acao.idAcao}" id="idAcaoTeste"> --%>
 								<siga:selecao2 propriedade="solicitacao.itemConfiguracao" 
 											tipo="itemConfiguracao" 
 											tema="simple" 
@@ -293,7 +298,6 @@
 							<div id="divAcao" depende="solicitacao.itemConfiguracao">
 								<script>
 								$(document).ready(function() {
-									//notificarCampoMudou('#selectAcao', 'Ação', 'solicitacao.acao');
 									removeSelectedDuplicado();
 								});
 								
@@ -345,7 +349,7 @@
 								<c:if test="${not empty acoesEAtendentes}" > 
 									<div class="gt-form-row gt-width-66" style="margin-top: 10px;">
 										<label>A&ccedil;&atilde;o</label>   
-										<select name="solicitacao.acao.id" id="selectAcao" onchange="carregarLotacaoDaAcao();sbmt('solicitacao.acao');/*notificarCampoMudou('#selectAcao', 'A&ccedil;&atilde;o', 'solicitacao.acao');*/">
+										<select name="solicitacao.acao.id" id="selectAcao" onchange="carregarLotacaoDaAcao();sbmt('solicitacao.acao');">
 											<option value=""></option>
 											<c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
 												<optgroup label="${cat.tituloAcao}">
@@ -364,11 +368,6 @@
 											<c:forEach items="${acoesEAtendentes.get(cat)}" var="t">
 												<span class="idDesignacao-${t.acao.idAcao}" style="display:none;">${t.conf.idConfiguracao}</span>
 												<span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.siglaCompleta} - ${t.conf.atendente.descricao}</span>
-												
-												<%--<c:if test="${cat_isFirst && cat_isLast && t_isFirst && t_isLast}">
-												<c:set var="lotacaoDesignada" value="${t.conf.atendente.siglaCompleta + ' - ' + t.conf.atendente.descricao}"/>
-												<c:set var="idDesignacao" value="${t.conf.idConfiguracao}"/>
-												</c:if> --%>
 											</c:forEach>
 										</c:forEach>
 										<label id="labelAtendentePadrao" style="display: none">Atendente</label>
@@ -381,26 +380,6 @@
 								
 								<div id="divAtributos" depende="solicitacao.acao">
 									<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
-									
-									<script type="text/javascript">
-										
-										// Codigo para atualizacao dos filtros na tela
-										/*removerFiltrosSemCampo();
-										carregarFiltrosAtributos();
-										carregarSolRelacionadas();
-									    /*$("#atributos").find('input,select').each(function() {
-									        var me = $(this);
-									        if(me.val()) {
-									            var label = $.trim(me.prev('label').html()),
-									                innerHTML = label + ' - ' + me.val(),
-									                divFiltro = $('#filtro'),
-									                selector = "." + me.attr('class'),
-									                optionVl = me.attr('name');
-									            
-									            addFiltro(divFiltro, selector, innerHTML, optionVl)
-									        }
-									    });*/
-									</script>
 									
 									<c:if test="${not empty solicitacao.itemConfiguracao && not empty solicitacao.acao && podeUtilizarServicoSigaGC}">
 										<div style="display: inline-block" >
@@ -428,43 +407,37 @@
 												<c:if test="${atributo.tipoAtributo != null}">
 													<c:if test="${atributo.tipoAtributo.name() == 'TEXTO'}">
 														<input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
-														<input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" class="${atributo.idAtributo}"
-															onchange="//notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" size="70" maxlength="255" />
+														<input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" class="${atributo.idAtributo}" size="70" maxlength="255" />
 														<siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo"/>
 													</c:if>
 													<c:if test="${atributo.tipoAtributo.name() == 'TEXT_AREA'}">
 													
 														<input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
-														<textarea cols="85" rows="10" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" class="${atributo.idAtributo}"
-															onchange="//notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" maxlength="255">${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}</textarea>
+														<textarea cols="85" rows="10" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" class="${atributo.idAtributo}" maxlength="255">${solicitacao.atributoSolicitacaoMap[atributo.idAtributo]}</textarea>
 														<siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
 													</c:if>
 													<c:if test="${atributo.tipoAtributo.name() == 'DATA'}">
 														<input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
 														<siga:dataCalendar nome="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" id="calendarioAtributo${atributo.idAtributo}"
-															value="${atributoSolicitacaoMap[loop.index].valorAtributo}" onchange="//notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');"
-															cssClass="${atributo.idAtributo}"/>
+															value="${atributoSolicitacaoMap[loop.index].valorAtributo}" cssClass="${atributo.idAtributo}"/>
 														<siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
 													</c:if>
 													<c:if test="${atributo.tipoAtributo.name() == 'NUM_INTEIRO'}">
 														<input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
 														<input type="text" class="${atributo.idAtributo}"
 															onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
-															onchange="//notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');"
 															name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" maxlength="9"/>
 														<siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
 													</c:if>
 													<c:if test="${atributo.tipoAtributo.name() == 'NUM_DECIMAL'}">
 														<input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
 														<input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" 
-															id="numDecimal" pattern="^\d*(\,\d{2}$)?" title="Somente número e com duas casas decimais EX: 222,22" class="${atributo.idAtributo}"
-															onchange="//notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" maxlength="9"/>
+															id="numDecimal" pattern="^\d*(\,\d{2}$)?" title="Somente número e com duas casas decimais EX: 222,22" class="${atributo.idAtributo}" maxlength="9"/>
 														<siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
 													</c:if>
 													<c:if test="${atributo.tipoAtributo.name() == 'HORA'}">
 														<input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
-														<input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" id="horarioAtributo${atributo.idAtributo}" class="${atributo.idAtributo}"
-															onchange="//notificarCampoAtributoMudou('.${atributo.idAtributo}', '${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');" />
+														<input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" id="horarioAtributo${atributo.idAtributo}" class="${atributo.idAtributo}" />
 														<siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" />
 														<span style="color: red; display: none;" id="erroHoraAtributo${atributo.idAtributo}">Hor&aacute;rio inv&aacute;lido</span>
 														<script>
@@ -484,8 +457,7 @@
 													</c:if>
 													<c:if test="${atributo.tipoAtributo.name() == 'VL_PRE_DEFINIDO'}" >
 														<input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
-														<select name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" class="${atributo.idAtributo}"
-															onchange="//notificarCampoAtributoMudou('.${atributo.idAtributo}','${atributo.nomeAtributo}', 'solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo');"} >
+														<select name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[loop.index].valorAtributo}" class="${atributo.idAtributo}" >
 															<c:forEach items="${atributo.preDefinidoSet}" var="valorAtributoSolicitacao">
 																<option value="${valorAtributoSolicitacao}" <c:if test="${atributoSolicitacaoMap[loop.index].valorAtributo == valorAtributoSolicitacao}">selected</c:if> >
 																	${valorAtributoSolicitacao}
@@ -576,283 +548,12 @@
  		<jsp:include page="exibirCronometro.jsp"/>
 		<jsp:include page="exibirPendencias.jsp"/>
 		
-		<%--
-		<div class="gt-sidebar">
-			<div class="gt-sidebar-content" id="solicitacoesRelacionadas">
-				<script>
-					// funÃ§Ãµes usadas para solicitaÃ§Ãµes relacionadas
-					function addFiltro(divFiltro, campoRef, optionHtml, optionVl) {
-						/**
-						* Se o valor foi preenchido e se existe label
-						*/
-						if($(campoRef).val() != "" && $(campoRef).val() != undefined && optionHtml) {
-							var divFiltroExistente = $("div[identificadorFiltro='" + optionVl + "']");
-							/**
-							* Se jah existe uma div para esse filtro, apenas atualiza a checkbox
-							*/
-							if(divFiltroExistente.size() > 0) {
-								var span = divFiltroExistente.find('span'),
-									checkbox = divFiltroExistente.find(':checkbox')
-								span.html($.trim(optionHtml));
-								
-								checkbox.attr('checked', true);
-							}
-							/** 
-							* Caso nao exista a div, entao cria uma nova checkbox
-							*/
-							else {
-								var div = $('<div style="clear:both">');
-								div.attr('identificadorFiltro', optionVl);
-								
-								var input = $('<input class="filtro-sol-relacionadas" type="checkbox">');
-								input.attr('name', optionVl);
-								input.bind('change', carregarSolRelacionadas);
-								input.attr('checked', true);
-								input.attr('disabled', $('#bodySolRelacionadas').attr('requesting'));
-				
-								var label = $('<span style="margin-left:5px">');
-								label.html($.trim(optionHtml));
-							
-								div.append(input);
-								div.append(label);
-								
-								divFiltro.append(div);
-							}	
-							return true;
-						}
-						return false;
-					}
-				
-					function existeFiltroSelecionavel() {
-						return $("#filtro .filtro-sol-relacionadas").size() > 0;
-					}
-					
-					function notificarCampoMudou(campoRef, tipoCampo, optionVl) {
-						var label = descricaoFiltroSolRelacionadas(campoRef, tipoCampo),
-							divFiltro = $('#filtro');
-						
-						if(!addFiltro(divFiltro, campoRef, label, optionVl)) {
-							div = divFiltro.find("div[identificadorFiltro='" + optionVl + "']");
-							div.remove();
-						}
-						toggleInterlocutorMeioComunicacaoEDataOrigem();
-						if(!existeFiltroSelecionavel()) {
-							$('#solicitacoesRelacionadas').hide(300);
-						} else {
-							$('#solicitacoesRelacionadas').show(300);
-						}
-					}
-				
-					// Recebe notificacao de alteracao em campo que eh atributo
-					function notificarCampoAtributoMudou(campoRef, tipoCampo, optionVl, teste) {
-						var label = $.trim($(campoRef).prev('label').html());
-				
-						notificarCampoMudou(campoRef, label, optionVl);
-						carregarSolRelacionadas();
-					}
-					
-					function descricaoFiltroSolRelacionadas(campoRef, tipoCampo) {
-						var campo = $(campoRef);
-				
-						if(campo.size() > 0) {
-							// Se o filtro eh uma select, entao pega o valor selecionado na select
-							if(campo[0].tagName == 'SELECT') {
-								return tipoCampo + ' - ' + $.trim(campo.find('option:selected').html());
-							}
-							else {
-								// Se o campo for um componente de selecao, entao pega o valor selecionado (estara em um span gerado pelo componente)
-								var span = $(campoRef + 'Span');
-								if(span.size() > 0) {
-									return tipoCampo + ' - ' + span.html();
-								} 
-								// Senao, pega o valor do campo
-								else {
-									return tipoCampo + ' - ' + campo.val();
-								}
-							}
-						}
-						return null;
-					}
-					
-					function carregarSolRelacionadas() {
-						var filtrosSelecionados = $('#filtro input:checked');
-						
-						if(filtrosSelecionados.size() > 0) {
-							if(existeFiltroSelecionavel()) {
-								var params = construirParametrosDoFiltro($('#formSolicitacao'));
-								iniciarCarregarSolicitacoesRelacionadas();
-								//jQuery.blockUI(objBlock);
-								
-								var url = '';
-								Siga.ajax(url, null, "GET", function(response){
-									carregouSolicitacoesRelacionadas(response);
-								});				
-							}
-						}
-						// Senao, apenas mostra informacao
-						else {
-							$('#bodySolRelacionadas').html("<tr><td colspan='2' style='text-align: center;''>Selecione um filtro para realizar a pesquisa</td></tr>");
-						}
-					}
-				
-					function construirParametrosDoFiltro(frm) {
-						var authField = frm.find('input:nth(0)');
-						var params = authField.attr('name') + '=' + encodeURI(authField.val()) + '&';
-				
-						// Preenche a string que representa os parametros da requisicao
-						$('#filtro input:checked').each(function() {
-							var input = frm.find("[name='" +  $(this).attr('name') + "']");
-							params = params + input.attr('name') + '=' + input.val() + '&'
-						});
-						
-						params = params + 'apenasFechados' + '=' + $('#apenasFechados').val();
-						return params;
-					}
-						
-					function carregouSolicitacoesRelacionadas(response, param){
-						if($('#filtro input.filtro-sol-relacionadas:checked').size() > 0) {
-							$('#bodySolRelacionadas').html(response);
-						}
-						$('#filtro input').attr('disabled', false);
-						$('#bodySolRelacionadas').attr('requesting', false);
-						//jQuery.unblockUI();
-					}
-				
-					function iniciarCarregarSolicitacoesRelacionadas() {
-						$('#filtro input').attr('disabled', true);
-						$('#bodySolRelacionadas').html("<tr><td colspan='2' style='text-align: center;''>Por favor aguarde. Carregando... </td></tr>");
-						$('#bodySolRelacionadas').attr('requesting', true);
-					}
-				
-					function carregarFiltrosAoIniciar() {
-						var divFiltro = $('#filtro');
-						
-						addFiltroAoIniciar(divFiltro, '#formulario_solicitacaosolicitante_id', 'Solicitante', 'solicitacao.solicitante');
-						addFiltroAoIniciar(divFiltro, '#solicitacaoitemConfiguracao', 'Item', 'solicitacao.itemConfiguracao');
-						addFiltroAoIniciar(divFiltro, '#selectAcao', 'A&ccedil;&atilde;o', 'solicitacao.acao');
-				
-						carregarFiltrosAtributos();
-						
-						if(existeFiltroSelecionavel()) {
-							carregarSolRelacionadas();
-						} else {
-							$('#solicitacoesRelacionadas').hide();
-						}
-					}
-				
-					function carregarFiltrosAtributos() {
-						var atributos = $('#atributos').find('div'),
-							atrClass, atrHtml, atrName;
-						
-						for(j=0; j < atributos.length; j++) {
-							var divAtributo = atributos[j], 
-								inputAtributo = atributos[j].children[1],
-								labelAtributo = divAtributo.firstElementChild;
-							
-							if (inputAtributo != undefined) {
-								atrClass = '.' + inputAtributo.className.split(' ')[0];
-								atrHtml = labelAtributo.innerHTML + ' - ' + inputAtributo.value;
-								atrName = inputAtributo.name;
-				
-								// Se for select, busca pelo atributo selecionado
-								if (inputAtributo.tagName == 'SELECT') {
-									atrHtml = atrHtml + ' - ' + $.trim($(inputAtributo).find('option:selected').html());
-								}
-								addFiltro($('#filtro'), atrClass, atrHtml, atrName);
-							}
-						}
-					}
-					
-				
-					function removerFiltrosSemCampo() {
-						var existeSelecionado = false;
-						
-						$('#filtro :checkbox').each(function() {
-							var me = $(this),
-								name = me.attr('name'),
-								input = $("form [name='" + name + "']");
-							
-							// Se o campo foi limpo, tira ele da lista de filtros
-							if(input.size() == 0 || input.val() == '' || input.val() == undefined) {
-								me.parent('div').remove();
-				
-								if(!existeSelecionado) {
-									existeSelecionado = me.is(':checked');
-								}
-							}
-						});
-					}
-				
-					function addFiltroAoIniciar(divFiltro, campoRef, optionHtml, optionVl) {
-						var label = descricaoFiltroSolRelacionadas(campoRef, optionHtml);
-						addFiltro(divFiltro, campoRef, label, optionVl, true);
-					}
-				
-					function exibirSolicitacao(idSolicitacao) {
-						var params = 'id=' + idSolicitacao;
-						window.open('${linkTo[SolicitacaoController].exibir}?' + params, "_blank");
-					}
-					
-					function verMais(){
-						/*frm = document.getElementById('formSolicitacao');
-						comboVl = $('#filtro').val();
-						params = '';
-						params = params + frm[0].name+ '=' + encodeURI(frm[0].value) + '&';
-						params = params + 'filtro.pesquisar=true&';
-						
-						if(comboVl == 'solicitacao.lotaSolicitante'){
-							params = params + 'carregarLotaSolicitante=true&';
-							comboVl = 'solicitacao.solicitante';			
-						}
-						for (i = 1; i < frm.length; i++){
-							if(frm[i].name == comboVl)
-								if (frm[i].name && frm[i].value){
-									params = params + frm[i].name + '=' + encodeURI(frm[i].value);
-									break;
-								}
-						} */
-						var params = construirParametrosDoFiltro($('#formSolicitacao')) + '&filtro.pesquisar=true&';
-						// Replace All
-						while(params.indexOf('solicitacao') >= 0) {
-							params = params.replace("solicitacao", "filtro");
-						}
-						window.open('${linkTo[SolicitacaoController].buscar}?'+ params,"_blank");
-					}
-				</script>
-				<h3>Solicita&ccedil;&otilde;es relacionadas <a href="#" onclick="verMais()">[Ver Mais]</a></h3>
-				<div class="gt-content-box gt-form">
-					<label>Filtro</label>
-	
-					<div id="filtro">
-						<span><siga:checkbox name="apenasFechados"
-						value="apenasFechados"/> Apenas Fechados</span>
-					</div>
-	
-					<div class="gt-content-box "
-						style="margin: 10px -16px -6px -16px; border-radius: 0 0 5px 5px !important;">
-						<table border="0" width="100%" class="gt-table">
-							<colgroup>
-								<col width="35%" />
-								<col width="65%" />
-							</colgroup>
-							<thead>
-								<tr>
-									<th>C&oacute;digo</th>
-									<th>Teor</th>
-								</tr>
-							</thead>
-							<tbody id="bodySolRelacionadas">
-							<jsp:include page="listarSolicitacoesRelacionadas.html"/>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-		--%>
-		
 		<div id="divConhecimentosRelacionados" depende="solicitacao.local;solicitacao.solicitante;solicitacao.acao;solicitacao.itemConfiguracao">
 			<jsp:include page="exibirConhecimentosRelacionados.jsp"/>
+		</div>
+		
+		<div id="divSolicitacoesRelacionadas" depende="solicitacao.local;solicitacao.solicitante;solicitacao.acao;solicitacao.itemConfiguracao">
+			<jsp:include page="listarSolicitacoesRelacionadas.jsp"/>
 		</div>
 	</div>
 </siga:pagina>

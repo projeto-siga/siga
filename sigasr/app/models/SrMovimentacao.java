@@ -288,14 +288,14 @@ public class SrMovimentacao extends GenericModel {
 		solicitacao.refresh();
 
 		solicitacao.atualizarMarcas();
-		//notificação usuário
+		//notificaï¿½ï¿½o usuï¿½rio
 		if (solicitacao.getMovimentacaoSetComCancelados().size() > 1
 				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
 				&& solicitacao.formaAcompanhamento != SrFormaAcompanhamento.ABERTURA
 				&& !(solicitacao.formaAcompanhamento == SrFormaAcompanhamento.ABERTURA_FECHAMENTO
 				&& tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO && tipoMov.idTipoMov != SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_POS_ATENDIMENTO))
 			notificar();
-		//notificação atendente
+		//notificaï¿½ï¿½o atendente
 		notificarAtendente();
 		return this;
 	}
@@ -310,6 +310,9 @@ public class SrMovimentacao extends GenericModel {
 		SrMovimentacao ultimaValida = getAnterior();
 		movCanceladora.atendente = ultimaValida.atendente;
 		movCanceladora.lotaAtendente = ultimaValida.lotaAtendente;
+		movCanceladora.itemConfiguracao = ultimaValida.itemConfiguracao;
+        movCanceladora.acao = ultimaValida.acao;
+        movCanceladora.prioridade = ultimaValida.prioridade;
 		movCanceladora.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
 		
 		this.movCanceladora = movCanceladora;
@@ -356,11 +359,32 @@ public class SrMovimentacao extends GenericModel {
 		
 		if (ultimaMovDoContexto == null) {
 			numSequencia = 1L;
+			itemConfiguracao = solicitacao.itemConfiguracao;
+            acao = solicitacao.acao;
+            prioridade = solicitacao.getPrioridade();
 		} else {
 			SrMovimentacao anterior = solicitacao.getUltimaMovimentacao();
 
 			if (lotaAtendente == null) {
 				lotaAtendente = anterior.lotaAtendente;
+			}
+			
+			if (itemConfiguracao == null) {
+				if (anterior != null && anterior.itemConfiguracao != null)
+					itemConfiguracao = anterior.itemConfiguracao;
+				else itemConfiguracao = solicitacao.getItemAtual();
+			}
+	            
+			if (acao == null) {
+				if (anterior != null && anterior.acao != null)
+					acao = anterior.acao;
+				else acao = solicitacao.getAcaoAtual();
+			}
+	            
+			if (prioridade == null){
+				if (anterior != null && anterior.prioridade != null)
+					prioridade = anterior.prioridade;
+				else prioridade = solicitacao.getPrioridadeTecnica();
 			}
 
 			if (numSequencia == null)

@@ -12,7 +12,7 @@
 	O servidor verifica se o filtro está chegando nulo (por ser o primeiro request) e força o preenchimento
 	completo do filtro (marca todas as checks) conforme os valores da solicitação. Quando o filtro *não* chega lá nulo, é
 	porque é um postback. Nesse caso, se há algum campo não preenchido no filtro, o servidor entende que é porque o 
-	usuário desmarcou a check. Então, caso este JSP esteja sendo usado numa página que alimente novos campos na própria solicitação,
+	usuário desmarcou a check. Então, caso este JSP esteja sendo included por uma página que alimente novos campos na solicitação,
 	a página terá a responsabilidade de verificar se já havia uma checkbox para filtrar por esse campo e, se não, forçá-la
 	como default true. O servidor não poderá fazer isso (verificar se uma check não existia e marcá-la default como true) porque, 
 	como dito, se um campo do filtro chega lá vazio, é entendido que o usuário desmarcou de propósito, não que a check não existia --%>
@@ -71,8 +71,9 @@
 	</table>
 	<script>
 		$("#resultados span").each(function (){
-			if (this.innerHTML.length > 200)
-				this.innerHTML = this.innerHTML.substring(0, this.innerHTML.indexOf('', 200)+1) + '...';
+			if (this.innerHTML.length > 150){
+				this.innerHTML = this.innerHTML.substring(0, 150) + '...';
+			}
 		});
 	</script>
 </div>

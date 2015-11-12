@@ -74,8 +74,8 @@
 			var url = '${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize();
 
 			//Edson: verifica se há algum campo no formulário para o qual não existe checkbox no quadro de 
-			//solicitações relacionadas ou então existe e está marcado e envia na url. Verifique no comentário 
-			//de listarSolicitacoesRelacionadas.jsp o motivo pelo qual esta verificação tem de ser feita aqui:
+			//solicitações relacionadas (!.length), ou então existe *e* está marcado, e envia na url como true. Veja no 
+			//comentário de listarSolicitacoesRelacionadas.jsp o motivo pelo qual esta verificação tem de ser feita aqui:
 			var camposFiltraveis = ['solicitante', 'itemConfiguracao', 'acao'];
 			for (var i = 0; i < camposFiltraveis.length; i++){
 				var campo = $(" #formSolicitacao [name='solicitacao."+camposFiltraveis[i]+".id']");

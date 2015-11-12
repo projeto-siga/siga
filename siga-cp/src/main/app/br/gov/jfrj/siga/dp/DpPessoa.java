@@ -199,9 +199,8 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 
 	public String getFuncaoString() {
-		if (getFuncaoConfianca() != null)
-			return getFuncaoConfianca().getNomeFuncao();
-		return getCargo().getNomeCargo();
+		return getFuncaoConfianca() != null ? getFuncaoConfianca().getNomeFuncao() : 
+			getCargo() != null ? getCargo().getNomeCargo() : "";
 	}
 
 	public String getPadraoReferenciaInvertido() {

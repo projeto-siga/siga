@@ -142,95 +142,97 @@ public class WfTaskVO {
 					.getTask().getTaskController().getVariableAccesses();
 
 			for (VariableAccess va : variableAccesses) {
-				String access = va.getAccess().toString();
-				if (access.contains("value=")) {
-					Pattern pattern = Pattern.compile("value\\=(\\{[^}]+\\})");
-					Matcher matcher = pattern.matcher(access);
-					if (matcher.find()) {
-						String expression = matcher.group(1);
-						Object resultado = JbpmExpressionEvaluator.evaluate(
-								"#" + expression,
-								new ExecutionContext(taskInstance.getToken()));
-						taskInstance.getContextInstance().setVariableLocally(
-								va.getMappedName(), resultado,
-								taskInstance.getToken());
+				if (va.getAccess() !=null){
+					String access = va.getAccess().toString();
+					if (access.contains("value=")) {
+						Pattern pattern = Pattern.compile("value\\=(\\{[^}]+\\})");
+						Matcher matcher = pattern.matcher(access);
+						if (matcher.find()) {
+							String expression = matcher.group(1);
+							Object resultado = JbpmExpressionEvaluator.evaluate(
+									"#" + expression,
+									new ExecutionContext(taskInstance.getToken()));
+							taskInstance.getContextInstance().setVariableLocally(
+									va.getMappedName(), resultado,
+									taskInstance.getToken());
+						}
 					}
-				}
-
-				WfVariableAccessVO wfva = new WfVariableAccessVO(va);
-				if (wfva.getMappedName().startsWith("doc_")) {
-					String documento = (String) taskInstance
-							.getContextInstance().getVariable(
-									wfva.getMappedName());
-					if (documento != null) {
-						if (siglaDoc == null || !documento.startsWith(siglaDoc)) {
-							this.variableList.add(wfva);
-						} else {
-							if (wfva != null)
+	
+					WfVariableAccessVO wfva = new WfVariableAccessVO(va);
+					if (wfva.getMappedName().startsWith("doc_")) {
+						String documento = (String) taskInstance
+								.getContextInstance().getVariable(
+										wfva.getMappedName());
+						if (documento != null) {
+							if (siglaDoc == null || !documento.startsWith(siglaDoc)) {
 								this.variableList.add(wfva);
-							setMsgAviso("");
-							if (!access.contains(DISABLE_DOC_FORWARD)) {
-								// if (!service.isAtendente(value, siglaTitular)) {
-								String respEX = service.getAtendente(documento,
-										siglaTitular);
-								DpLotacao lotEX = new PessoaLotacaoParser(respEX)
-										.getLotacaoOuLotacaoPrincipalDaPessoa();
-								// if (lotEX != null &&
-								// !lotaTitular.equivale(lotEX))
-								// wfva.setRespEX(lotEX.getSigla());
-	
-								DpLotacao lotWF = new PessoaLotacaoParser(respWF)
-										.getLotacaoOuLotacaoPrincipalDaPessoa();
-								// if (lotWF != null &&
-								// !lotaTitular.equivale(lotWF))
-								// wfva.setRespWF(lotWF.getSigla());
-	
-								// if (wfva.isAviso())
-								// }
-	
-								boolean podeMovimentar = service.podeMovimentar(
-										documento, siglaTitular);
-								boolean estaComTarefa = titular
-										.equivale(new PessoaLotacaoParser(respWF)
-												.getPessoa());
-								respEX = service.getAtendente(documento,
-										siglaTitular);
-								lotEX = new PessoaLotacaoParser(respEX)
-										.getLotacaoOuLotacaoPrincipalDaPessoa();
-	
-								if (podeMovimentar && !estaComTarefa) {
-									if (lotWF == null || !lotWF.equivale(lotEX)) {
-										setMsgAviso("Esta tarefa só poderá prosseguir quando o documento "
-												+ documento
-												+ " for transferido para "
-												+ (lotWF == null ? "Nula" : lotWF.getSigla()) + ".");
+							} else {
+								if (wfva != null)
+									this.variableList.add(wfva);
+								setMsgAviso("");
+								if (!access.contains(DISABLE_DOC_FORWARD)) {
+									// if (!service.isAtendente(value, siglaTitular)) {
+									String respEX = service.getAtendente(documento,
+											siglaTitular);
+									DpLotacao lotEX = new PessoaLotacaoParser(respEX)
+											.getLotacaoOuLotacaoPrincipalDaPessoa();
+									// if (lotEX != null &&
+									// !lotaTitular.equivale(lotEX))
+									// wfva.setRespEX(lotEX.getSigla());
+		
+									DpLotacao lotWF = new PessoaLotacaoParser(respWF)
+											.getLotacaoOuLotacaoPrincipalDaPessoa();
+									// if (lotWF != null &&
+									// !lotaTitular.equivale(lotWF))
+									// wfva.setRespWF(lotWF.getSigla());
+		
+									// if (wfva.isAviso())
+									// }
+		
+									boolean podeMovimentar = service.podeMovimentar(
+											documento, siglaTitular);
+									boolean estaComTarefa = titular
+											.equivale(new PessoaLotacaoParser(respWF)
+													.getPessoa());
+									respEX = service.getAtendente(documento,
+											siglaTitular);
+									lotEX = new PessoaLotacaoParser(respEX)
+											.getLotacaoOuLotacaoPrincipalDaPessoa();
+		
+									if (podeMovimentar && !estaComTarefa) {
+										if (lotWF == null || !lotWF.equivale(lotEX)) {
+											setMsgAviso("Esta tarefa só poderá prosseguir quando o documento "
+													+ documento
+													+ " for transferido para "
+													+ (lotWF == null ? "Nula" : lotWF.getSigla()) + ".");
+										}
 									}
-								}
-								if (!podeMovimentar && estaComTarefa) {
-									setMsgAviso("Esta tarefa só poderá prosseguir quando o documento "
-											+ documento
-											+ ", que está com "
-											+ lotEX.getSigla() + ", for devolvido.");
-								}
-								if (!podeMovimentar && !estaComTarefa) {
-									if (lotWF != null && !lotWF.equivale(lotEX)) {
+									if (!podeMovimentar && estaComTarefa) {
 										setMsgAviso("Esta tarefa só poderá prosseguir quando o documento "
 												+ documento
 												+ ", que está com "
-												+ lotEX.getSigla()
-												+ ", for transferido para "
-												+ lotWF.getSigla() + ".");
+												+ lotEX.getSigla() + ", for devolvido.");
 									}
+									if (!podeMovimentar && !estaComTarefa) {
+										if (lotWF != null && !lotWF.equivale(lotEX)) {
+											setMsgAviso("Esta tarefa só poderá prosseguir quando o documento "
+													+ documento
+													+ ", que está com "
+													+ lotEX.getSigla()
+													+ ", for transferido para "
+													+ lotWF.getSigla() + ".");
+										}
+									}
+		
 								}
-	
 							}
+						} else {
+							this.variableList.add(wfva);
 						}
 					} else {
 						this.variableList.add(wfva);
 					}
-				} else {
-					this.variableList.add(wfva);
-				}
+			}
 			}
 		}
 		if (taskInstance.getAvailableTransitions() != null) {

@@ -18,11 +18,15 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.base;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.mail.Authenticator;
@@ -40,6 +44,8 @@ import javax.mail.internet.MimeMultipart;
 import org.bouncycastle.util.encoders.Base64;
 
 public class Correio {
+	
+	private static Logger logger = Logger.getLogger("br.gov.jfrj.siga.ex.email");
 
 	public static void enviar(final String destinatario, final String assunto,
 			final String conteudo) throws Exception {
@@ -54,6 +60,7 @@ public class Correio {
 			final String[] destinatarios, final String assunto,
 			final String conteudo, final String conteudoHTML) throws Exception {
 
+		
 		List<String> listaServidoresEmail = SigaBaseProperties
 				.getListaServidoresEmail();
 
@@ -186,6 +193,13 @@ public class Correio {
 			msg.saveChanges(); // don't forget this
 			tr.sendMessage(msg, msg.getAllRecipients());
 			tr.close();
+
+			logger.log(Level.INFO,"Email enviado para " + Arrays.asList(destinatarios).toString() + "[" + assunto + "]");
+			logger.log(Level.FINE, "Detalhes do e-mail enviado:"
+						+ "\nAssunto: " + assunto
+						+ "\nDe: " + remetente
+						+ "\nPara: " + Arrays.asList(destinatarios).toString()
+						+ "\nTexto: " + (conteudoHTML == null?conteudo:conteudoHTML));
 
 		} catch (final Exception e) {
 			throw e;

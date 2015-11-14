@@ -47,7 +47,7 @@
         <plugin.checkstyle.version>2.8</plugin.checkstyle.version>
         <plugin.javadoc.version>2.8.1</plugin.javadoc.version>
         <plugin.pmd-plugin.version>2.7.1</plugin.pmd-plugin.version>
-        <plugin.site.version>3.0</plugin.site.version>
+        <plugin.site.version>3.3</plugin.site.version>
         <plugin.wagon-ssh.version>2.2</plugin.wagon-ssh.version>
         <plugin.cobertura-maven.version>2.5.1</plugin.cobertura-maven.version>
         <maven-checkstyle-plugin.configLocation>/sauce-siga-integration-test/src/config/checkstyle.xml</maven-checkstyle-plugin.configLocation>

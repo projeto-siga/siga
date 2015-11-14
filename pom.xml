@@ -223,7 +223,7 @@
                     <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
                     <!--<minimumTokens>100</minimumTokens>-->
                     <rulesets>
-                        <ruleset>${maven-pmd-plugin.configLocation}</ruleset>
+                        <!-- <ruleset>${maven-pmd-plugin.configLocation}</ruleset>  -->
                     </rulesets>
                     <failOnViolation>false</failOnViolation>
                 </configuration>

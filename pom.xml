@@ -253,7 +253,7 @@
 				<version>${plugin.findbugs-maven.version}</version>
 				<inherited>true</inherited>
 				<configuration>
-					<!-- <failOnError>${findbugs.failOnError}</failOnError> -->
+					<failOnError>false</failOnError> 
 					<skip>${findbugs.skip}</skip>
 					<!-- <trace>${findbugs.trace}</trace> -->
 				</configuration>

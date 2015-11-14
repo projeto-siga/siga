@@ -51,7 +51,7 @@
         <plugin.wagon-ssh.version>2.2</plugin.wagon-ssh.version>
         <plugin.cobertura-maven.version>2.5.1</plugin.cobertura-maven.version>
         <maven-checkstyle-plugin.configLocation>/sauce-siga-integration-test/src/config/checkstyle.xml</maven-checkstyle-plugin.configLocation>
-        <maven-pmd-plugin.configLocation>/sauce-siga-integration-test/src/config/pmd.xml</maven-pmd-plugin.configLocation>
+        <maven-pmd-plugin.configLocation>https://github.com/mike-ensor/multi-module-site-doc-project/blob/master/code-analysis/pmd.xml</maven-pmd-plugin.configLocation>
         <checkstyle.skip>false</checkstyle.skip>
         <cobertura.skip>false</cobertura.skip>
         <findbugs.skip>false</findbugs.skip>
@@ -85,11 +85,11 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${plugin.javadoc.version}</version>
                 </plugin>
-                <plugin>
+                <!-- <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>cobertura-maven-plugin</artifactId>
                     <version>${plugin.cobertura-maven.version}</version>
-                </plugin>
+                </plugin> -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
@@ -141,7 +141,7 @@
                             <artifactId>maven-checkstyle-plugin</artifactId>
                             <configuration>
                                 <skip>${checkstyle.skip}</skip>
-                                <configLocation>${maven-checkstyle-plugin.configLocation}</configLocation>
+                                <!-- <configLocation>${maven-checkstyle-plugin.configLocation}</configLocation> -->
                                 <failsOnError>false</failsOnError>
                                 <enableRulesSummary>true</enableRulesSummary>
                                 <includeTestSourceDirectory>true</includeTestSourceDirectory>
@@ -169,13 +169,13 @@
                                 <failOnError>false</failOnError>
                             </configuration>
                         </plugin>
-                        <plugin>
+                        <!-- <plugin>
                             <groupId>org.codehaus.mojo</groupId>
                             <artifactId>cobertura-maven-plugin</artifactId>
                             <configuration>
                                 <skip>${cobertura.skip}</skip>
                             </configuration>
-                        </plugin>
+                        </plugin>  -->
                         <plugin>
                             <groupId>org.codehaus.mojo</groupId>
                             <artifactId>findbugs-maven-plugin</artifactId>
@@ -199,59 +199,7 @@
 	<!-- Adicionado  FIM Configurando os relatórios ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||  -->
 
 	<!-- Adicionado Configurando a fase para rodar os plugins de Relatórios |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
-			<plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <configuration>
-                    <skip>${cobertura.skip}</skip>
-                    <maxmem>1024m</maxmem>
-                    <formats>
-                        <format>html</format>
-                        <format>xml</format>
-                    </formats>
-                    <check>
-                        <haltOnFailure>false</haltOnFailure>
-                        <!-- Per-class thresholds -->
-                        <lineRate>70</lineRate>
-                        <branchRate>70</branchRate>
-                        <!-- POSSIBLE RESTRICTIONS FOR COVERAGE -->
-                        <!-- Project-wide thresholds -->
-                        <!--<totalLineRate>90</totalLineRate>-->
-                        <!--<totalBranchRate>90</totalBranchRate>-->
-                        <!--<regexes>-->
-                        <!--<regex>-->
-                        <!--<pattern>cc.ensor.maven.service.model.*</pattern>-->
-                        <!--<branchRate>0</branchRate>-->
-                        <!--<lineRate>0</lineRate>-->
-                        <!--</regex>-->
-                        <!--</regexes>-->
-                    </check>
-                    <instrumentation>
-                        <includes>
-                            <include>**/*.class</include>
-                        </includes>
-                        <excludes>
-                            <exclude>**/model/*.class</exclude>
-                        </excludes>
-                    </instrumentation>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>clean</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>package</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+			
 
             
 

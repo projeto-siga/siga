@@ -42,11 +42,276 @@
     <properties>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <siga.version>${project.version}</siga.version>
+		<!-- Adicionado para relatórios estáticos |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+		<!-- Plugin versions -->
+        <plugin.checkstyle.version>2.8</plugin.checkstyle.version>
+        <plugin.javadoc.version>2.8.1</plugin.javadoc.version>
+        <plugin.pmd-plugin.version>2.7.1</plugin.pmd-plugin.version>
+        <plugin.site.version>3.0</plugin.site.version>
+        <plugin.wagon-ssh.version>2.2</plugin.wagon-ssh.version>
+        <plugin.cobertura-maven.version>2.5.1</plugin.cobertura-maven.version>
+        <maven-checkstyle-plugin.configLocation>/sauce-siga-integration-test/src/config/checkstyle.xml</maven-checkstyle-plugin.configLocation>
+        <maven-pmd-plugin.configLocation>/sauce-siga-integration-test/src/config/pmd.xml</maven-pmd-plugin.configLocation>
+        <checkstyle.skip>false</checkstyle.skip>
+        <cobertura.skip>false</cobertura.skip>
+        <findbugs.skip>false</findbugs.skip>
+        <javadocs.skip>false</javadocs.skip>
+        <pmd.skip>false</pmd.skip>
+		<!-- Adicionado para relatórios estáticos -->
     </properties>
 	
     <build>
-        <finalName>${project.artifactId}</finalName>
+		<finalName>${project.artifactId}</finalName>
+	<!--Adicionado para relatórios estáticos  Definindo os plugins de relatórios |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+		<pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${plugin.checkstyle.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>${plugin.pmd-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${plugin.javadoc.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>cobertura-maven-plugin</artifactId>
+                    <version>${plugin.cobertura-maven.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>2.4.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+	<!-- Adicionado Fim Definindo os plugins de relatórios |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+        
         <plugins>
+	<!-- Adicionado Configurando os Relatórios |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+			<plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>${plugin.site.version}</version>
+                <dependencies>
+                    <dependency><!-- add support for ssh/scp -->
+                        <groupId>org.apache.maven.wagon</groupId>
+                        <artifactId>wagon-ssh</artifactId>
+                        <version>${plugin.wagon-ssh.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <attach>true</attach>
+                    <reportPlugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-project-info-reports-plugin</artifactId>
+                            <configuration>
+                                <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+                                <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                            </configuration>
+                            <!-- simpler configuration without reportSets available for usual cases -->
+                            <!-- distribution-management, index, dependencies, help, issue-tracking, plugins, cim,
+                            license, dependency-management, mailing-list, project-team, dependency-convergence,
+                            scm, plugin-management, modules, summary -->
+                            <reports>
+                                <report>summary</report>
+                                <report>project-team</report>
+                                <report>dependencies</report>
+                                <report>issue-tracking</report>
+                                <report>scm</report>
+                                <report>modules</report>
+                                <report>plugins</report>
+                            </reports>
+                        </plugin>
+                        
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-checkstyle-plugin</artifactId>
+                            <configuration>
+                                <skip>${checkstyle.skip}</skip>
+                                <configLocation>${maven-checkstyle-plugin.configLocation}</configLocation>
+                                <failsOnError>false</failsOnError>
+                                <enableRulesSummary>true</enableRulesSummary>
+                                <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-pmd-plugin</artifactId>
+                            <configuration>
+                                <skip>${pmd.skip}</skip>
+                                <targetJdk>${maven.compiler.source}</targetJdk>
+                                <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+                                <!--<minimumTokens>100</minimumTokens>-->
+                                <rulesets>
+                                    <ruleset>${maven-pmd-plugin.configLocation}</ruleset>
+                                </rulesets>
+                                <failOnViolation>false</failOnViolation>
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <configuration>
+                                <skip>${javadocs.skip}</skip>
+                                <failOnError>false</failOnError>
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>cobertura-maven-plugin</artifactId>
+                            <configuration>
+                                <skip>${cobertura.skip}</skip>
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>findbugs-maven-plugin</artifactId>
+                            <configuration>
+                                <skip>${findbugs.skip}</skip>
+                                <xmlOutput>true</xmlOutput>
+                            </configuration>
+                        </plugin>
+                        
+                    </reportPlugins>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-descriptor</id>
+                        <goals>
+                            <goal>attach-descriptor</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+	<!-- Adicionado  FIM Configurando os relatórios ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||  -->
+
+	<!-- Adicionado Configurando a fase para rodar os plugins de Relatórios |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+			<plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <configuration>
+                    <skip>${cobertura.skip}</skip>
+                    <maxmem>1024m</maxmem>
+                    <formats>
+                        <format>html</format>
+                        <format>xml</format>
+                    </formats>
+                    <check>
+                        <haltOnFailure>false</haltOnFailure>
+                        <!-- Per-class thresholds -->
+                        <lineRate>70</lineRate>
+                        <branchRate>70</branchRate>
+                        <!-- POSSIBLE RESTRICTIONS FOR COVERAGE -->
+                        <!-- Project-wide thresholds -->
+                        <!--<totalLineRate>90</totalLineRate>-->
+                        <!--<totalBranchRate>90</totalBranchRate>-->
+                        <!--<regexes>-->
+                        <!--<regex>-->
+                        <!--<pattern>cc.ensor.maven.service.model.*</pattern>-->
+                        <!--<branchRate>0</branchRate>-->
+                        <!--<lineRate>0</lineRate>-->
+                        <!--</regex>-->
+                        <!--</regexes>-->
+                    </check>
+                    <instrumentation>
+                        <includes>
+                            <include>**/*.class</include>
+                        </includes>
+                        <excludes>
+                            <exclude>**/model/*.class</exclude>
+                        </excludes>
+                    </instrumentation>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <!-- Do not fail on any JavaDocs error -->
+                    <failOnError>false</failOnError>
+                    <skip>${javadocs.skip}</skip>
+                </configuration>
+            </plugin>
+
+                       
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <skip>${pmd.skip}</skip>
+                    <targetJdk>${maven.compiler.source}</targetJdk>
+                    <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+                    <!--<minimumTokens>100</minimumTokens>-->
+                    <rulesets>
+                        <ruleset>${maven-pmd-plugin.configLocation}</ruleset>
+                    </rulesets>
+                    <failOnViolation>false</failOnViolation>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                            <goal>cpd-check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <skip>${checkstyle.skip}</skip>
+                    <configLocation>${maven-checkstyle-plugin.configLocation}</configLocation>
+                    <failsOnError>false</failsOnError>
+                    <enableRulesSummary>true</enableRulesSummary>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>run-checkstyle</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>checkstyle</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+    <!-- FIM  Adicionado Configurando a fase para rodar os plugins de Relatórios |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->	
+	
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

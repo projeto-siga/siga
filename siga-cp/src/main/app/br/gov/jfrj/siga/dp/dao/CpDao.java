@@ -264,7 +264,10 @@ public class CpDao extends ModeloDao {
 
 		// Forca a carga de algums campos para garantir o lazy load.
 		CpServico srv = (CpServico) l.get(0).getImplementation();
-		Object o1 = srv.getCpServicoPai().getDescricao();
+		
+		if (srv.getCpServicoPai() != null) {
+			Object o1 = srv.getCpServicoPai().getDescricao();
+		}
 		Object o2 = srv.getCpTipoServico().getDscTpServico();
 
 		cache.put(new Element(chave, srv));
@@ -1639,11 +1642,11 @@ public class CpDao extends ModeloDao {
 
 		cfg.setProperty("hibernate.cache.region.factory_class", "org.jboss.as.jpa.hibernate4.infinispan.InfinispanRegionFactory");
 
-		cfg.setProperty("hibernate.cache.use_second_level_cache", "true");
+		cfg.setProperty("hibernate.cache.use_second_level_cache", Cp.getInstance().getProp().cacheUseSecondLevelCache());
 		cfg.setProperty("hibernate.cache.infinispan.cachemanager","java:jboss/infinispan/container/hibernate");
 		cfg.setProperty("hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup");
 
-		cfg.setProperty("hibernate.cache.use_query_cache", "true");
+		cfg.setProperty("hibernate.cache.use_query_cache",  Cp.getInstance().getProp().cacheUseQueryCache());
 		cfg.setProperty("hibernate.cache.use_minimal_puts", "false");
 		cfg.setProperty("hibernate.max_fetch_depth", "3");
 		cfg.setProperty("hibernate.default_batch_fetch_size", "1000");
@@ -1921,8 +1924,7 @@ public class CpDao extends ModeloDao {
 	
 	@SuppressWarnings("unchecked")
 	public List<CpServico> listarServicosPorPai(CpServico servicoPai) {
-		return findByCriteria(CpServico.class,Property
-				.forName("cpServicoPai").eq(servicoPai) );
+		return findByCriteria(CpServico.class,Property.forName("cpServicoPai").eq(servicoPai));
 	}
 
 	@SuppressWarnings("unchecked")

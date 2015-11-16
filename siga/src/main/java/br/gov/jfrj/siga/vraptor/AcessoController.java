@@ -24,7 +24,6 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.SortedSet;
@@ -142,8 +141,12 @@ public class AcessoController extends GiControllerSupport {
 			if (servicoPai == null) {
 				l = dao().listarServicos();
 			} else {
-				CpServico c  = dao().consultarCpServicoPorChave(servicoPai);
-				l = dao().listarServicosPorPai(c);
+				l = new ArrayList<CpServico>(); 
+				CpServico cpServicoPai = dao().consultarCpServicoPorChave(servicoPai);
+
+				if (cpServicoPai != null) {	
+					l = listarServicosPorPai(cpServicoPai);
+				}
 			}
 
 			HashMap<CpServico, ConfiguracaoAcesso> achm = new HashMap<CpServico, ConfiguracaoAcesso>();
@@ -158,15 +161,17 @@ public class AcessoController extends GiControllerSupport {
 			for (ConfiguracaoAcesso ac : achm.values()) {
 				if (ac.getServico().getCpServicoPai() == null) {
 					acs.add(ac);
-				}  else if (acs.size() == 0 && ac.getServico().getSiglaServico().toString() == servicoPai.toString() && servicoPai != null) 
-				   {
+				}  else if (acs.size() == 0 && servicoPai != null && ac.getServico().getSiglaServico().toString() == servicoPai.toString())  {  
 					acs.add(ac);
-				   }
-					else 
-					{
-
-					achm.get(ac.getServico().getCpServicoPai()).getSubitens()
-							.add(ac);
+				}
+				else 
+				{
+					if (achm.get(ac.getServico().getCpServicoPai()) != null) {
+						achm.get(ac.getServico().getCpServicoPai()).getSubitens().add(ac);
+					}
+					else {
+						acs.add(ac);
+					}
 				}
 			}
 
@@ -175,6 +180,28 @@ public class AcessoController extends GiControllerSupport {
 		}
 	}
 	
+	private List<CpServico> listarServicosPorPai(CpServico cpServicoPai) {
+		List<CpServico> lista = new ArrayList<CpServico>(); 
+		lista = dao().listarServicosPorPai(cpServicoPai);
+		int contador = 0;
+		lista.add(cpServicoPai);
+		
+		while (contador < lista.size()) {
+		    CpServico item = lista.get(contador);
+		    
+			if (item != cpServicoPai) {
+				List<CpServico> subitens = dao().listarServicosPorPai(item);
+				if (subitens.size() > 0) {
+					lista.addAll(subitens);
+				}
+			}
+			
+			contador++;
+		}
+		
+		return lista;
+	}
+
 	@Get("/app/gi/acesso/gravar")
 	public void gravar(Long idServico
 			          ,Long idSituacao

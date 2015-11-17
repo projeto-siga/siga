@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,7 +37,9 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
@@ -104,7 +107,6 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
-import br.gov.jfrj.siga.hibernate.ext.MontadorQuery;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.Aguarde;
@@ -126,11 +128,21 @@ public class ExDao extends CpDao {
 	}
 
 	public ExDao() {
+		IMontadorQuery montadorDefault = null;
 		try {
-			montadorQuery = (IMontadorQuery) Class.forName(SigaExProperties.getMontadorQuery()).newInstance();
-			montadorQuery.setMontadorPrincipal(new MontadorQuery());
+			Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources("/");
+			ArrayList<URL> list = Collections.list(resources);
+
+			URL[] classpath = new URL[list.size()];
+			list.toArray(classpath);
+			
+			ClassLoaderRecarregavel classloaderRec = new ClassLoaderRecarregavel(classpath);
+			
+			montadorDefault = (IMontadorQuery) classloaderRec.loadClass("br.gov.jfrj.siga.hibernate.ext.MontadorQuery").newInstance();
+			montadorQuery = (IMontadorQuery) Class.forName(SigaExProperties.getMontadorQuery(),true,classloaderRec).newInstance();
+			montadorQuery.setMontadorPrincipal(montadorDefault);
 		} catch (Exception e) {
-			montadorQuery = new MontadorQuery();
+			montadorQuery = montadorDefault;
 		}
 	}
 

@@ -15,6 +15,7 @@
 <%@ attribute name="desabilitarmenu"%>
 <%@ attribute name="incluirJs"%>
 <%@ attribute name="compatibilidade"%>
+<%@ attribute name="desabilitarComplementoHEAD"%>
 
 <c:if test="${not empty titulo}">
 	<c:set var="titulo" scope="request" value="${titulo}" />
@@ -64,6 +65,8 @@
 ${meta}
 
 <c:set var="path" scope="request">${pageContext.request.contextPath}</c:set>
+
+<link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.css" type="text/css" media="screen, projection"/>
 
 <link rel="stylesheet" href="/siga/css/ecoblue/css/reset-fonts.css" type="text/css" media="screen, projection">
 <link rel="stylesheet" href="/siga/css/ecoblue/css/gt-styles.css" type="text/css" media="screen, projection">
@@ -115,8 +118,10 @@ ${meta}
 	});
 </script>
 <c:catch>
-	<c:if test="${not empty titular}">
-		${f:getComplementoHead(cadastrante.orgaoUsuario)}
+	<c:if test="${desabilitarComplementoHEAD != 'sim'}">
+		<c:if test="${not empty titular}">
+			${f:getComplementoHead(cadastrante.orgaoUsuario)}
+		</c:if>
 	</c:if>
 </c:catch>
 </head>
@@ -204,7 +209,7 @@ ${meta}
 							<!-- search -->
 							<c:if test="${desabilitarbusca != 'sim'}">
 								<div class="gt-search">
-									<div class="gt-search-inner" onclick="">
+									<div class="gt-search-inner" onclick="" style="-webkit-box-sizing: content-box; box-sizing: content-box;">
 										<siga:selecao propriedade="buscar"
 											tipo="generico" tema="simple" ocultardescricao="sim"
 											buscar="nao" siglaInicial="Buscar" modulo="siga" urlAcao="buscar" urlSelecionar="selecionar"/>

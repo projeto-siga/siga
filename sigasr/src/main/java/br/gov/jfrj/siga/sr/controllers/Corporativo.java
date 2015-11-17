@@ -52,7 +52,7 @@ public class Corporativo extends SrController {
 					&& (!mp.containsKey(p.getPessoa_id()) || p.getLotacao_tipo_papel().equals("Principal"))
 					&& (p.getPessoa_situacao().equals(1)
 							|| p.getPessoa_situacao().equals(2) || p.getPessoa_situacao()
-								.equals(31)))
+								.equals(31) || p.getPessoa_situacao().equals(12)))
 				mp.put(p.getPessoa_id(), p);
 
 			Lotacao x = d.getLotacao();

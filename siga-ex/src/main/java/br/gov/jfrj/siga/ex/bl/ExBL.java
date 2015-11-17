@@ -1151,7 +1151,7 @@ public class ExBL extends CpBL {
 		while (it.hasNext()) {
 			ExMovimentacao transferencia = (ExMovimentacao) it.next();
 
-			if (mov.getLotaCadastrante() == transferencia.getLotaResp()
+			if (mov.getLotaCadastrante().equivale(transferencia.getLotaResp())
 					&& transferencia.getData().after(mov.getData())) {
 				movRetorno = transferencia;
 				break;
@@ -4448,7 +4448,7 @@ public class ExBL extends CpBL {
 			cancelarMovimentacoesReferencia(cadastrante, lotaCadastrante, doc);
 
 			ExDocumento novoDoc = duplicarDocumento(cadastrante,
-					lotaCadastrante, doc);
+					lotaCadastrante, doc, true);
 
 			cancelarMovimentacoes(cadastrante, lotaCadastrante, doc);
 
@@ -4469,7 +4469,7 @@ public class ExBL extends CpBL {
 			iniciarAlteracao();
 
 			ExDocumento novoDoc = duplicarDocumento(cadastrante,
-					lotaCadastrante, doc);
+					lotaCadastrante, doc, false);
 
 			concluirAlteracao(novoDoc);
 			return novoDoc;
@@ -4481,7 +4481,7 @@ public class ExBL extends CpBL {
 	}
 
 	private ExDocumento duplicarDocumento(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc, final boolean refazendo) throws Exception {
 		ExDocumento novoDoc = new ExDocumento();
 
 		novoDoc.setConteudoBlobDoc(doc.getConteudoBlobDoc());
@@ -4490,8 +4490,25 @@ public class ExBL extends CpBL {
 
 		if (doc.getDestinatario() != null && !doc.getDestinatario().isFechada())
 			novoDoc.setDestinatario(doc.getDestinatario().getPessoaAtual());
+		
+		
+		final Long idSit = Ex
+				.getInstance()
+				.getConf()
+				.buscaSituacao(doc.getExModelo(),
+						doc.getExTipoDocumento(),
+						cadastrante, lotaCadastrante,
+						CpTipoConfiguracao.TIPO_CONFIG_ELETRONICO)
+				.getIdSitConfiguracao();
 
-		novoDoc.setFgEletronico(doc.getFgEletronico());
+		if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO) {
+			novoDoc.setFgEletronico("S");
+		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_PROIBIDO) {
+			novoDoc.setFgEletronico("N");
+		} else {
+			novoDoc.setFgEletronico(doc.getFgEletronico());
+		} 
+		
 		novoDoc.setExNivelAcesso(doc.getExNivelAcesso());
 
 		ExClassificacao classAtual = doc.getExClassificacaoAtual();
@@ -4529,7 +4546,12 @@ public class ExBL extends CpBL {
 		novoDoc.setObsOrgao(doc.getObsOrgao());
 		novoDoc.setOrgaoExterno(doc.getOrgaoExterno());
 		novoDoc.setOrgaoExternoDestinatario(doc.getOrgaoExternoDestinatario());
-		novoDoc.setExMobilPai(null);
+		
+		if(refazendo)
+			novoDoc.setExMobilPai(doc.getExMobilPai());
+		else
+			novoDoc.setExMobilPai(null);
+		
 		novoDoc.setOrgaoUsuario(cadastrante.getOrgaoUsuario());
 
 		if (doc.getTitular() != null && !doc.getTitular().isFechada())
@@ -4901,45 +4923,48 @@ public class ExBL extends CpBL {
 							"não é permitido fazer despacho. Verifique se a via ou processo não estáarquivado(a) e se não possui despachos pendentes de assinatura.");
 
 				if (fTranferencia) {
+					
+					if(!m.isApensadoAVolumeDoMesmoProcesso()) {
 
-					if (lotaResponsavel.isFechada())
-						throw new AplicacaoException(
-								"não é permitido transferir documento para lotação fechada");
-
-					if (forcarTransferencia) {
-						if (!getComp().podeSerTransferido(m))
+						if (lotaResponsavel.isFechada())
 							throw new AplicacaoException(
-									"Transferência não pode ser realizada ("
-											+ m.getSigla() + " ID_MOBIL: "
-											+ m.getId() + ")");
-					} else {
-						if (!getComp().podeTransferir(cadastrante,
-								lotaCadastrante, m))
+									"não é permitido transferir documento para lotação fechada");
+	
+						if (forcarTransferencia) {
+							if (!getComp().podeSerTransferido(m))
+								throw new AplicacaoException(
+										"Transferência não pode ser realizada ("
+												+ m.getSigla() + " ID_MOBIL: "
+												+ m.getId() + ")");
+						} else {
+							if (!getComp().podeTransferir(cadastrante,
+									lotaCadastrante, m))
+								throw new AplicacaoException(
+										"Transferência não permitida ("
+												+ m.getSigla() + " ID_MOBIL: "
+												+ m.getId() + ")");
+						}
+						if (!m.getExDocumento().isAssinado()
+								&& !lotaResponsavel.equivale(m.getExDocumento()
+										.getLotaTitular())
+								&& !getComp().podeReceberDocumentoSemAssinatura(
+										responsavel, lotaResponsavel, m))
 							throw new AplicacaoException(
-									"Transferência não permitida ("
-											+ m.getSigla() + " ID_MOBIL: "
-											+ m.getId() + ")");
+									"não é permitido fazer transferência em documento que ainda não foi assinado");
+	
+						if (m.doc().isEletronico()) {
+							if (m.temAnexosNaoAssinados()
+									|| m.temDespachosNaoAssinados())
+								throw new AplicacaoException(
+										"não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
+						}
+	
+						if (m.getExDocumento().isEletronico()
+								&& !m.getExDocumento().jaTransferido()
+								&& !m.getExDocumento().isAssinado())
+							throw new AplicacaoException(
+									"não é permitido fazer transferência em documento que ainda não foi assinado por todos os subscritores.");
 					}
-					if (!m.getExDocumento().isAssinado()
-							&& !lotaResponsavel.equivale(m.getExDocumento()
-									.getLotaTitular())
-							&& !getComp().podeReceberDocumentoSemAssinatura(
-									responsavel, lotaResponsavel, m))
-						throw new AplicacaoException(
-								"não é permitido fazer transferência em documento que ainda não foi assinado");
-
-					if (m.doc().isEletronico()) {
-						if (m.temAnexosNaoAssinados()
-								|| m.temDespachosNaoAssinados())
-							throw new AplicacaoException(
-									"não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
-					}
-
-					if (m.getExDocumento().isEletronico()
-							&& !m.getExDocumento().jaTransferido()
-							&& !m.getExDocumento().isAssinado())
-						throw new AplicacaoException(
-								"não é permitido fazer transferência em documento que ainda não foi assinado por todos os subscritores.");
 
 				}
 

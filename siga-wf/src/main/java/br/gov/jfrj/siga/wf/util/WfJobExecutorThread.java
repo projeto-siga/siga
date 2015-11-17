@@ -64,19 +64,20 @@ public class WfJobExecutorThread extends JobExecutorThread {
 	 * @throws Exception
 	 */
 	@Override
-	protected void executeJob(Job job) throws Exception {
+	protected void executeJob(Job j) throws Exception {
 		WfExecutionEnvironment ee = new WfExecutionEnvironment();
+		JbpmContext jbpmContext = null;
 		try {
 			Wf.setInstance(null);
 			ee.antes(null);
-			WfDao.getInstance().getSessao().merge(job);
+			WfDao.getInstance().getSessao().merge(j);
 
-			JbpmContext jbpmContext = WfContextBuilder.getJbpmContext()
+			jbpmContext = WfContextBuilder.getJbpmContext()
 					.getJbpmContext();
 
 			try {
 				JobSession jobSession = jbpmContext.getJobSession();
-
+				Job job = jobSession.getJob(j.getId());
 				// register process instance for automatic save
 				// https://jira.jboss.org/browse/JBPM-1015
 				ProcessInstance processInstance = job.getProcessInstance();
@@ -90,7 +91,7 @@ public class WfJobExecutorThread extends JobExecutorThread {
 
 				if (log.isDebugEnabled())
 					log.debug("executing " + job);
-				if (job.execute(jbpmContext))
+					job.execute(jbpmContext);
 					jobSession.deleteJob(job);
 			} catch (Exception e) {
 				jbpmContext.setRollbackOnly();
@@ -102,8 +103,12 @@ public class WfJobExecutorThread extends JobExecutorThread {
 			ee.depois();
 		} catch (Exception e) {
 			ee.excecao();
+			if (!jbpmContext.isClosed()){
+				jbpmContext.close();
+			}
 			throw new ServletException(e);
 		} finally {
+			((org.hibernate.proxy.HibernateProxy)j.getProcessInstance()).getHibernateLazyInitializer().getSession().connection().close();
 			ee.finalmente();
 		}
 	}

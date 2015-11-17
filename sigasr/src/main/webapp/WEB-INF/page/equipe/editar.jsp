@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
-
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <style>
 	.inline {
@@ -122,7 +122,7 @@
 			</form>
 			
 			<div class="gt-form-row">
-				<siga:designacao modoExibicao="equipe" designacoes="${designacoes}" mostrarDesativados="mostrarDesativado"
+				<sigasr:designacao modoExibicao="equipe" designacoes="${designacoes}" mostrarDesativados="mostrarDesativado"
 					unidadesMedida="${unidadesMedida}" orgaos="${orgaos}" locais="${locais}" 
 					pesquisaSatisfacao="${pesquisaSatisfacao}" listasPrioridade="${listasPrioridade}" /> 
 			</div>
@@ -133,7 +133,7 @@
 			</div>
 		</div>
 		
-<siga:modal nome="excecaoHorario" titulo="Adicionar Exceção de Horário">
+<sigasr:modal nome="excecaoHorario" titulo="Adicionar Exceção de Horário">
 	<div id="dialogExcecaoHorario">
 		<div class="gt-content">
 			<form id="excecaoHorarioForm" method="get" action="" enctype="multipart/form-data">
@@ -183,7 +183,7 @@
 			</form>
 		</div>
 	</div>
-</siga:modal>
+</sigasr:modal>
 
 
 <script type="text/javascript">

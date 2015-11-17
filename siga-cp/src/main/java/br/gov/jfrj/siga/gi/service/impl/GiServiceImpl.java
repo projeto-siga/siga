@@ -80,6 +80,23 @@ public class GiServiceImpl implements GiService {
 		return resultado;
 	}
 
+    @Override
+	public String dadosUsuario(String matricula) {
+		String resultado = "";
+		try {
+			CpDao dao = CpDao.getInstance();
+
+			CpIdentidade id = null;
+			id = dao.consultaIdentidadeCadastrante(matricula, true);
+			if (id != null) {
+				resultado = parseLoginResult(id);
+			}
+		} catch (AplicacaoException e) {
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
 	private String parseLoginResult(CpIdentidade id) {
 		JSONObject pessoa = new JSONObject();
 		JSONObject lotacao = new JSONObject();

@@ -1,5 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <c:set var="cron" value="${solicitacao.cronometro}" />
 

@@ -19,6 +19,7 @@ public class SrSolicitacaoVO {
 	private String botaoExpandir = "+";
 	private String botaoRemoverPriorizar = "";
 	private Long idSolicitacao;
+	private String siglaSolicitacao = "";
 	private Long idPrioridadeSolicitacao;
 
 	// Edson: colunas ordenáveis:
@@ -46,6 +47,7 @@ public class SrSolicitacaoVO {
 			boolean podeRemover, boolean podePriorizar)
 			throws Exception {
 		this.setIdSolicitacao(sol.getId());
+		this.setSiglaSolicitacao(sol.getSiglaCompacta());
 		this.setIdPrioridadeSolicitacao(prioridadeSolicitacao != null ? prioridadeSolicitacao.getIdPrioridadeSolicitacao() : null);
 
 		this.setDtReg(sol.getSolicitacaoInicial().getDtRegString());
@@ -55,7 +57,7 @@ public class SrSolicitacaoVO {
 					+ "&#039;,&#039;" + codigo + "&#039;);window.close()\">"
 					+ sol.getCodigo() + "</a>");
 		else
-			setCodigo("<a href=\"/sigasr/app/solicitacao/exibir/" + sol.getId()
+			setCodigo("<a href=\"/sigasr/app/solicitacao/exibir/" + sol.getSiglaCompacta()
 					+ "\">" + sol.getCodigo() + "</a>");
 
 		this.setDescrSolicitacao("<b>"
@@ -72,8 +74,8 @@ public class SrSolicitacaoVO {
 				.getSiglaCompleta(), sol.getLotaTitular().getNomeLotacao()));
 
 		String nomeSolicitanteAbreviado = sol.getSolicitante() != null ? sol.getSolicitante().getNomeAbreviado() : "";
-		String nomeSolicitante = sol.getSolicitante() != null ? sol.getSolicitante().getNomePessoa() : "";
-		this.setSolicitante(SrViewUtil.selecionado(nomeSolicitanteAbreviado,nomeSolicitante));
+		String nomeSolicitante = sol.getSolicitante() != null ? sol.getSolicitante().getDescricaoCompleta() : "";
+		this.setSolicitante(SrViewUtil.selecionado(nomeSolicitanteAbreviado, nomeSolicitante));
 		
 		String siglaLotaSolicitante = sol.getLotaSolicitante() != null ? sol.getLotaSolicitante().getSiglaCompleta() : "";
 		String nomeLotaSolicitante = sol.getLotaSolicitante() != null ? sol.getLotaSolicitante().getNomeLotacao() : "";
@@ -111,7 +113,7 @@ public class SrSolicitacaoVO {
 		
 		if (podeRemover)
 			this.botaoRemover = SrViewUtil.botaoRemoverSolicitacao(
-					this.getIdSolicitacao(), lista.getIdLista());
+					this.getSiglaSolicitacao(), lista.getIdLista());
 
 		if (podePriorizar)
 			this.botaoPriorizar = SrViewUtil.botaoPriorizarSolicitacao();
@@ -312,6 +314,14 @@ public class SrSolicitacaoVO {
 
 	public void setIdPrioridadeSolicitacao(Long idPrioridadeSolicitacao) {
 		this.idPrioridadeSolicitacao = idPrioridadeSolicitacao;
+	}
+
+	public String getSiglaSolicitacao() {
+		return siglaSolicitacao;
+	}
+
+	public void setSiglaSolicitacao(String siglaSolicitacao) {
+		this.siglaSolicitacao = siglaSolicitacao;
 	}
 
 }

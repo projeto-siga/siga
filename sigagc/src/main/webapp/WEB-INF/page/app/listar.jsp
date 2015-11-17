@@ -113,9 +113,9 @@
 			<c:if test="${count > 0}">
 				<br />
 				<h6 style="background: #d8d8c0; padding: 3px 10px;">${count}
-					Conhecimento${count.pluralize()} fo${count.pluralize('i','ram')}
-					Cancelado${count.pluralize()}, por isso não
-					const${count.pluralize('a','am')} no resultado acima.</h6>
+					Conhecimento${f:pluralize(count, '', 's')} fo${f:pluralize(count, 'i','ram')}
+					Cancelado${f:pluralize(count, '', 's')}, por isso não
+					const${f:pluralize(count, 'a','am')} no resultado acima.</h6>
 			</c:if>
 			<c:set var="count" value="${0}" />
 			<!-- </table></div> -->

@@ -53,6 +53,7 @@
 	
 <c:if test="${not docVO.digital}">
 	<script type="text/javascript">
+		$("body").addClass("fisico");
 		$("html").addClass("fisico");
 		$("#outputTramitacao").addClass("fisico");
 	</script>
@@ -724,7 +725,7 @@
 				function updateContainerRelacaoDocs() {
 					var smallwidth = $('#outputRelacaoDocs').width();
 					var smallsvg = $('#outputRelacaoDocs :first-child').first();
-					var smallviewbox = document.getElementById('outputTramitacao').firstElementChild.getAttribute('viewBox');
+					var smallviewbox = document.getElementById('outputRelacaoDocs').firstElementChild.getAttribute('viewBox');
 
 					if (typeof smallviewbox != 'undefined') {
 						var a = smallviewbox.split(' ');
@@ -853,7 +854,7 @@
 		function updateContainerTramitacao() {
 		    var smallwidth = $('#outputTramitacao').width(); 
 	    	var smallsvg = $('#outputTramitacao :first-child').first(); 
-	    	var smallviewbox = smallsvg.attr('viewBox');
+	    	var smallviewbox = document.getElementById('outputTramitacao').firstElementChild.getAttribute('viewBox');
 		      
 	    	if(typeof smallviewbox != 'undefined') {
 			    var a = smallviewbox.split(' ');  

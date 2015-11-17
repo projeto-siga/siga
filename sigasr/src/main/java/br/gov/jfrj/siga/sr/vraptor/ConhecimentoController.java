@@ -41,4 +41,9 @@ public class ConhecimentoController extends SrController {
 		}
 	}
 	
+	 public void listarClassificacoes(){
+			result.include("acoes", SrAcao.listar(false));
+			result.include("itens", SrItemConfiguracao.listar(false));
+		}
+	
 }

@@ -15,32 +15,8 @@
 		<path>/META-INF/tags/checkbox.tag</path>
 	</tag-file>
 	<tag-file>
-		<name>configuracaoAssociacao</name>
-		<path>/META-INF/tags/configuracaoAssociacao.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>configuracaoItemAcao</name>
-		<path>/META-INF/tags/configuracaoItemAcao.tag</path>
-	</tag-file>
-	<tag-file>
 		<name>dataCalendar</name>
 		<path>/META-INF/tags/dataCalendar.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>desativarReativar</name>
-		<path>/META-INF/tags/desativarReativar.tag</path>
-	</tag-file>
-	<tag-file>
-    	<name>descricaoAcao</name>
-    	<path>/META-INF/tags/descricaoAcao.tag</path>
-    </tag-file>
-    <tag-file>
-    	<name>descricaoItem</name>
-    	<path>/META-INF/tags/descricaoItem.tag</path>
-    </tag-file>
-	<tag-file>
-		<name>designacao</name>
-		<path>/META-INF/tags/designacao.tag</path>
 	</tag-file>
 	<tag-file>
 		<name>div</name>
@@ -72,20 +48,8 @@
 		<path>/META-INF/tags/links.tag</path>
 	</tag-file>
 	<tag-file>
-		<name>linkSr</name>
-		<path>/META-INF/tags/linkSr.tag</path>
-	</tag-file>
-	<tag-file>
-    	<name>listaArvore</name>
-    	<path>/META-INF/tags/listaArvore.tag</path>
-    </tag-file>
-	<tag-file>
 		<name>menuprincipal</name>
 		<path>/META-INF/tags/menuprincipal.tag</path>
-	</tag-file>
-	<tag-file>
-		<name>modal</name>
-		<path>/META-INF/tags/modal.tag</path>
 	</tag-file>
 	<tag-file>
 		<name>monobotao</name>
@@ -116,10 +80,6 @@
 		<path>/META-INF/tags/pessoaLotaSelecao2.tag</path>
 	</tag-file>
 	<tag-file>
-    	<name>quadroSolicitacao</name>
-    	<path>/META-INF/tags/quadroSolicitacao.tag</path>
-    </tag-file>
-	<tag-file>
 		<name>rodape</name>
 		<path>/META-INF/tags/rodape.tag</path>
 	</tag-file>
@@ -140,15 +100,7 @@
 		<path>/META-INF/tags/select.tag</path>
 	</tag-file>
 	<tag-file>
-        <name>solicitacao</name>
-        <path>/META-INF/tags/solicitacao.tag</path>
-    </tag-file>
-	<tag-file>
 		<name>span</name>
 		<path>/META-INF/tags/span.tag</path>
 	</tag-file>
-	<tag-file>
-        <name>arquivo</name>
-        <path>/META-INF/tags/arquivo.tag</path>
-    </tag-file>
 </taglib>

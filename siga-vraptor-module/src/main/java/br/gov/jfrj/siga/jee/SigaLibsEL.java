@@ -378,7 +378,7 @@ public class SigaLibsEL {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Object evaluate(String expression, Object root) {
 		expression = expression.replace(".", ".?");
-		expression = expression.replaceFirst("^([a-z0-9]+)(?:$|(?:\\.|\\[)?.*$)", "isdef $1 ? $0 : null");
+		expression = expression.replaceFirst("^([a-zA-Z0-9]+)(?:$|(?:\\.|\\[)?.*$)", "isdef $1 ? $0 : null");
 		CompiledTemplate template = TemplateCompiler
 				.compileTemplate("${" + expression + "}");
 		Map vars = new HashMap();
@@ -386,6 +386,14 @@ public class SigaLibsEL {
 
 		Object output = TemplateRuntime.execute(template, vars);
 		return output;
+	}
+	
+	public static String pluralize(Integer count, String singular, String plural) {
+		if(count <= 1){
+			return singular;
+		}
+		else
+			return plural;
 	}
 
 //	@SuppressWarnings({ "rawtypes", "unchecked" })

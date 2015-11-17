@@ -76,80 +76,84 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 
 	/** Gives the bytes of a document referenced with id. */
 	public void getDocContent(Request req, Response resp) throws IOException {
-		ExDao dao = ExDao.getInstance();
-
-		DocId id = req.getDocId();
-		long primaryKey;
 		try {
-			primaryKey = Long.parseLong(id.getUniqueId());
-		} catch (NumberFormatException nfe) {
-			resp.respondNotFound();
-			return;
+			ExDao dao = ExDao.getInstance();
+
+			DocId id = req.getDocId();
+			long primaryKey;
+			try {
+				primaryKey = Long.parseLong(id.getUniqueId());
+			} catch (NumberFormatException nfe) {
+				resp.respondNotFound();
+				return;
+			}
+			ExMovimentacao mov = ExDao.getInstance().consultar(primaryKey,
+					ExMovimentacao.class, false);
+
+			if (mov == null || mov.isCancelado()) {
+				resp.respondNotFound();
+				return;
+			}
+
+			ExDocumento doc = mov.getExDocumento();
+
+			if (doc == null || doc.isCancelado()) {
+				resp.respondNotFound();
+				return;
+			}
+
+			Date dt = doc.getDtFinalizacao();
+			if (dt == null || dt.before(mov.getDtIniMov()))
+				dt = mov.getDtIniMov();
+
+			addMetadataForMov(doc, mov, resp);
+			ExDocumentoAdaptor.addAclForDoc(doc, resp);
+			// resp.setCrawlOnce(true);
+			resp.setLastModified(dt);
+			try {
+				resp.setDisplayUrl(new URI(permalink + doc.getCodigoCompacto()
+						+ "/" + mov.getIdMov()));
+			} catch (URISyntaxException e) {
+				throw new RuntimeException(e);
+			}
+
+			String html = mov.getHtml();
+			if (html != null) {
+				resp.setContentType("text/html");
+				resp.getOutputStream().write(html.getBytes());
+				return;
+			}
+
+			byte pdf[] = mov.getPdf();
+			if (pdf != null) {
+				resp.setContentType("application/pdf");
+				resp.getOutputStream().write(pdf);
+				return;
+			}
+			log.fine("no content from mov: " + mov.toString());
+		} finally {
+			ExDao.freeInstance();
 		}
-		ExMovimentacao mov = ExDao.getInstance().consultar(primaryKey,
-				ExMovimentacao.class, false);
-
-		if (mov == null || mov.isCancelado()) {
-			resp.respondNotFound();
-			return;
-		}
-
-		ExDocumento doc = mov.getExDocumento();
-
-		if (doc == null || doc.isCancelado()) {
-			resp.respondNotFound();
-			return;
-		}
-
-		Date dt = doc.getDtFinalizacao();
-		if (dt == null || dt.before(mov.getDtIniMov()))
-			dt = mov.getDtIniMov();
-
-		addMetadataForMov(doc, mov, resp);
-		ExDocumentoAdaptor.addAclForDoc(doc, resp);
-		// resp.setCrawlOnce(true);
-		resp.setLastModified(dt);
-		try {
-			resp.setDisplayUrl(new URI(permalink + doc.getCodigoCompacto()
-					+ "/" + mov.getIdMov()));
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-
-		String html = mov.getHtml();
-		if (html != null) {
-			resp.setContentType("text/html");
-			resp.getOutputStream().write(html.getBytes());
-			return;
-		}
-
-		byte pdf[] = mov.getPdf();
-		if (pdf != null) {
-			resp.setContentType("application/pdf");
-			resp.getOutputStream().write(pdf);
-			return;
-		}
-		log.fine("no content from mov: " + mov.toString());
 	}
 
 	private void addMetadataForMov(ExDocumento doc, ExMovimentacao mov,
 			Response resp) {
 		if (doc.getDnmExNivelAcesso() != null)
-			resp.addMetadata("acesso", doc.getDnmExNivelAcesso()
+			addMetadata(resp, "acesso", doc.getDnmExNivelAcesso()
 					.getNmNivelAcesso());
 		if (mov.getDtMovYYYYMMDD() != null)
-			resp.addMetadata("data", mov.getDtMovYYYYMMDD());
+			addMetadata(resp, "data", mov.getDtMovYYYYMMDD());
 		if (mov.getLotaSubscritor() != null)
-			resp.addMetadata("subscritor_lotacao", mov.getLotaSubscritor()
+			addMetadata(resp, "subscritor_lotacao", mov.getLotaSubscritor()
 					.getSiglaLotacao());
 		if (mov.getSubscritor() != null)
-			resp.addMetadata("subscritor", mov.getSubscritor().getNomePessoa());
+			addMetadata(resp, "subscritor", mov.getSubscritor().getNomePessoa());
 
 		if (mov.getLotaCadastrante() != null)
-			resp.addMetadata("cadastrante_lotacao", mov.getLotaCadastrante()
+			addMetadata(resp, "cadastrante_lotacao", mov.getLotaCadastrante()
 					.getSiglaLotacao());
 		if (mov.getCadastrante() != null)
-			resp.addMetadata("cadastrante", mov.getCadastrante()
+			addMetadata(resp, "cadastrante", mov.getCadastrante()
 					.getNomePessoa());
 	}
 

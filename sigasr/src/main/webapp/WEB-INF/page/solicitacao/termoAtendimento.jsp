@@ -1,5 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <html>
 <style type="text/css"> </style>
 <script type="text/javascript">
@@ -85,12 +84,12 @@ function printpage()
 			Item de Configura&ccedil;&atilde;o:&nbsp;
 			</font>
 			<font style="font-size: 11pt;">
-			${solicitacao.itemConfiguracao.siglaItemConfiguracao} - ${solicitacao.itemConfiguracao.descricao}
+			${solicitacao.itemAtual.siglaItemConfiguracao} - ${solicitacao.itemAtual.descricao}
 			</font>
 			</p>
 			<p>
 			<b>A&ccedil;&atilde;o:</b>
-			${solicitacao.acao.siglaAcao} - ${solicitacao.acao.descricao}
+			${solicitacao.acaoAtual.siglaAcao} - ${solicitacao.acaoAtual.descricao}
 			</p>
 		</div>
 		

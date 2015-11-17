@@ -8,7 +8,7 @@
 <siga:pagina titulo="Redefinição de Nível de Acesso">
 
 	<c:if test="${not mob.doc.eletronico}">
-		<script type="text/javascript">$("html").addClass("fisico");</script>
+		<script type="text/javascript">$("html").addClass("fisico");$("body").addClass("fisico");</script>
 	</c:if>
 
 	<div class="gt-bd clearfix">

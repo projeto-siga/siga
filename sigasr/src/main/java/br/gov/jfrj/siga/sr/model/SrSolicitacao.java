@@ -13,6 +13,7 @@ import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INI
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA;
+import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_RECLASSIFICACAO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO;
 import static org.joda.time.format.DateTimeFormat.forPattern;
 
@@ -186,10 +187,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     @ManyToOne
     @JoinColumn(name = "DNM_ID_ACAO")
     private SrAcao dnmAcao;
-    
-    @ManyToOne
-    @JoinColumn(name = "DNM_ID_ULT_MOV")
-    private SrMovimentacao dnmUltimaMovimentacao;
 
     @Lob
     @Column(name = "DESCR_SOLICITACAO", length = 8192)
@@ -197,12 +194,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     @Enumerated
     private SrGravidade gravidade;
-
-    @Enumerated
-    private SrTendencia tendencia;
-
-    @Enumerated
-    private SrUrgencia urgencia;
 
     @Enumerated
     private SrPrioridade prioridade;
@@ -365,51 +356,53 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public String getSigla() {
         return getCodigo();
     }
+    
+    public String getSiglaCompacta() {
+    	return getSigla() != null ? getSigla().replace("-", "").replace("/", "") : "";
+	}
 
     @Override
     public void setSigla(String sigla) {
         String siglaUpper = sigla.trim().toUpperCase();
-        Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
-        for (Object ou : CpOrgaoUsuario.AR.all().fetch()) {
-            CpOrgaoUsuario cpOu = (CpOrgaoUsuario) ou;
-            mapAcronimo.put(cpOu.getAcronimoOrgaoUsu(), cpOu);
+        final Matcher mTMP = Pattern.compile("^TMPSR([0-9]{1,5})$").matcher(siglaUpper);
+        if (mTMP.find())
+        	setId(Long.valueOf(mTMP.group(1)));
+        else {
+        	Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
+        	for (Object ou : CpOrgaoUsuario.AR.all().fetch()) {
+        		CpOrgaoUsuario cpOu = (CpOrgaoUsuario) ou;
+        		mapAcronimo.put(cpOu.getAcronimoOrgaoUsu(), cpOu);
+        	}
+        	StringBuilder acronimos = new StringBuilder();
+        	for (String s : mapAcronimo.keySet()) {
+        		acronimos.append("|" + s);
+        	}
+        	final Pattern p = Pattern.compile("^([A-Za-z0-9]{2}" + acronimos.toString() + ")?-?SR{1}-?(?:([0-9]{4})/?)??([0-9]{1,5})(?:[.]{1}([0-9]{1,3}))?$");
+        	final Matcher m = p.matcher(siglaUpper);
+        	if (m.find()) {
+        		if (m.group(1) != null) {
+        			try {
+        				CpOrgaoUsuario orgao = new CpOrgaoUsuario();
+        				orgao.setSiglaOrgaoUsu(m.group(1));
+        				orgao = (CpOrgaoUsuario) AR.em().createQuery("from CpOrgaoUsuario where acronimoOrgaoUsu = '" + m.group(1) + "'").getSingleResult();
+        				this.setOrgaoUsuario(orgao);
+        			} catch (final Exception ce) {
+
+        			}
+        		}
+        		if (m.group(2) != null) {
+        			Calendar c1 = Calendar.getInstance();
+        			c1.set(Calendar.YEAR, Integer.valueOf(m.group(2)));
+        			c1.set(Calendar.DAY_OF_YEAR, 1);
+        			this.setDtReg(c1.getTime());
+        		} else
+        			this.setDtReg(new Date());
+        		if (m.group(3) != null)
+        			setNumSolicitacao(Long.valueOf(m.group(3)));
+        		if (m.group(4) != null)
+        			setNumSequencia(Long.valueOf(m.group(4)));
+        	}
         }
-        StringBuilder acronimos = new StringBuilder();
-        for (String s : mapAcronimo.keySet()) {
-            acronimos.append("|" + s);
-        }
-        final Pattern p = Pattern.compile("^([A-Za-z0-9]{2}" + acronimos.toString() + ")?-?SR{1}-?(?:([0-9]{4})/?)??([0-9]{1,5})(?:[.]{1}([0-9]{1,3}))?$");
-        final Matcher m = p.matcher(siglaUpper);
-
-        if (m.find()) {
-
-            if (m.group(1) != null) {
-                try {
-                    CpOrgaoUsuario orgao = new CpOrgaoUsuario();
-                    orgao.setSiglaOrgaoUsu(m.group(1));
-                    orgao = (CpOrgaoUsuario) AR.em().createQuery("from CpOrgaoUsuario where acronimoOrgaoUsu = '" + m.group(1) + "'").getSingleResult();
-                    this.setOrgaoUsuario(orgao);
-                } catch (final Exception ce) {
-
-                }
-            }
-
-            if (m.group(2) != null) {
-                Calendar c1 = Calendar.getInstance();
-                c1.set(Calendar.YEAR, Integer.valueOf(m.group(2)));
-                c1.set(Calendar.DAY_OF_YEAR, 1);
-                this.setDtReg(c1.getTime());
-            } else
-                this.setDtReg(new Date());
-
-            if (m.group(3) != null)
-                setNumSolicitacao(Long.valueOf(m.group(3)));
-
-            if (m.group(4) != null)
-                setNumSequencia(Long.valueOf(m.group(4)));
-
-        }
-
     }
 
     @Override
@@ -450,27 +443,31 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     @Override
     public SrSelecionavel selecionar(String sigla) throws Exception {
         setSigla(sigla);
-        if (getOrgaoUsuario() == null && getLotaTitular() != null)
-            setOrgaoUsuario(getLotaTitular().getOrgaoUsuario());
+        String query = "";
+        if (getId() != null)
+        	query = "from SrSolicitacao where hisDtFim is null and hisIdIni = " + getId();
+        else {
+        	if (getOrgaoUsuario() == null && getLotaTitular() != null)
+        		setOrgaoUsuario(getLotaTitular().getOrgaoUsuario());
 
-        String query = "from SrSolicitacao where hisDtFim is null ";
+        	query = "from SrSolicitacao where hisDtFim is null ";
 
-        if (getOrgaoUsuario() != null) {
-            query += " and orgaoUsuario.idOrgaoUsu = " + getOrgaoUsuario().getIdOrgaoUsu();
+        	if (getOrgaoUsuario() != null) {
+        		query += " and orgaoUsuario.idOrgaoUsu = " + getOrgaoUsuario().getIdOrgaoUsu();
+        	}
+        	if (getDtReg() != null) {
+        		Calendar c1 = Calendar.getInstance();
+        		c1.setTime(getDtReg());
+        		int year = c1.get(Calendar.YEAR);
+        		query += " and dtReg between to_date('01/01/" + year + " 00:01', 'dd/mm/yyyy HH24:mi') and to_date('31/12/" + year + " 23:59','dd/mm/yyyy HH24:mi')";
+        	}
+        	if (getNumSolicitacao() != null)
+        		query += " and numSolicitacao = " + getNumSolicitacao();
+        	if (getNumSequencia() == null)
+        		query += " and (numSequencia is null or numSequencia = 0)";
+        	else
+        		query += " and numSequencia = " + getNumSequencia();
         }
-        if (getDtReg() != null) {
-            Calendar c1 = Calendar.getInstance();
-            c1.setTime(getDtReg());
-            int year = c1.get(Calendar.YEAR);
-            query += " and dtReg between to_date('01/01/" + year + " 00:01', 'dd/mm/yyyy HH24:mi') and to_date('31/12/" + year + " 23:59','dd/mm/yyyy HH24:mi')";
-        }
-        if (getNumSolicitacao() != null)
-            query += " and numSolicitacao = " + getNumSolicitacao();
-        if (getNumSequencia() == null)
-            query += " and numSequencia is null";
-        else
-            query += " and numSequencia = " + getNumSequencia();
-
         return (SrSolicitacao) AR.em().createQuery(query).getSingleResult();
     }
 
@@ -569,40 +566,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public void setArquivo(UploadedFile file) {
     	this.arquivo = SrArquivo.newInstance(file);
     }
-
-    public int getGUT() {
-        return getGravidade().getNivelGravidade() * getUrgencia().getNivelUrgencia() * getTendencia().getNivelTendencia();
-    }
-
-    public String getGUTString() {
-        return getGravidade().getDescrGravidade() + " " + getUrgencia().getDescrUrgencia() + " " + getTendencia().getDescrTendencia();
-    }
-
-    public String getGUTPercent() {
-        return (int) ((getGUT() / 125.0) * 100) + "%";
-    }
-
-    public void associarPrioridadePeloGUT() {
-        /*int valorGUT = getGUT();
-        if (Util.isbetween(1, 24, valorGUT))
-            setPrioridade(SrPrioridade.PLANEJADO);
-        else if (Util.isbetween(25, 49, valorGUT))
-            setPrioridade(SrPrioridade.BAIXO);
-        else if (Util.isbetween(50, 74, valorGUT))
-            setPrioridade(SrPrioridade.MEDIO);
-        else if (Util.isbetween(75, 99, valorGUT))
-            setPrioridade(SrPrioridade.ALTO);
-        else if (Util.isbetween(100, 125, valorGUT))
-            setPrioridade(SrPrioridade.IMEDIATO);*/
-    	if (gravidade == SrGravidade.SEM_GRAVIDADE)
-            prioridade = SrPrioridade.BAIXO;
-    	else if (gravidade == SrGravidade.NORMAL)
-            prioridade = SrPrioridade.MEDIO;
-    	else if (gravidade == SrGravidade.GRAVE)
-            prioridade = SrPrioridade.ALTO;
-    	else if (gravidade == SrGravidade.MUITO_GRAVE)
-    		prioridade = SrPrioridade.IMEDIATO;
-    	
+    
+    public Map<SrGravidade, SrPrioridade> getGravidadesDisponiveisEPrioridades(){
+    	Map<SrGravidade, SrPrioridade> m = new LinkedHashMap<SrGravidade, SrPrioridade>();
+    	m.put(SrGravidade.SEM_GRAVIDADE, SrPrioridade.BAIXO);
+    	m.put(SrGravidade.NORMAL, SrPrioridade.MEDIO);
+    	m.put(SrGravidade.GRAVE, SrPrioridade.ALTO);
+    	m.put(SrGravidade.MUITO_GRAVE, SrPrioridade.IMEDIATO);
+    	return m;
     }
 
     public String getDtRegDDMMYYYYHHMM() {
@@ -747,7 +718,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public Set<SrMovimentacao> getMovimentacaoSet(boolean considerarCanceladas, Long tipoMov, boolean ordemCrescente, boolean todoOContexto, boolean apenasPrincipais, boolean inversoJPA) {
 
         List<Long> tiposPrincipais = Arrays.asList(TIPO_MOVIMENTACAO_ANDAMENTO, TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO, TIPO_MOVIMENTACAO_FECHAMENTO, TIPO_MOVIMENTACAO_AVALIACAO,
-                TIPO_MOVIMENTACAO_ESCALONAMENTO);
+                TIPO_MOVIMENTACAO_ESCALONAMENTO, TIPO_MOVIMENTACAO_RECLASSIFICACAO);
 
         return getMovimentacaoSet(considerarCanceladas, tipoMov, ordemCrescente, todoOContexto, apenasPrincipais, inversoJPA, tiposPrincipais);
     }
@@ -1070,7 +1041,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         return false;
     }
 
-    public SrSolicitacao getSolicitacaoPrincipal() {
+    public SrSolicitacao getSolicitacaoPrincipalJuntada() {
         for (SrMovimentacao mov : getMovimentacaoSet()) {
             if (mov.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_DESENTRANHAMENTO)
                 return null;
@@ -1173,6 +1144,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public boolean podeFechar(DpPessoa pess, DpLotacao lota) {
         return estaCom(pess, lota) && (isEmAndamento());
     }
+    
+    public boolean podeReclassificar(DpPessoa pess, DpLotacao lota) {
+        return estaCom(pess, lota) && !isRascunho();
+    }
 
     public boolean podeExcluir(DpPessoa pess, DpLotacao lota) {
         return foiCadastradaPor(pess, lota) && isRascunho();
@@ -1230,9 +1205,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     }
 
-    public boolean podeFecharPaiAutomatico() {
-        return isFilha() && getSolicitacaoPai().getSolicitacaoAtual().isFechadoAutomaticamente() && 
-        		getSolicitacaoPai().isAtivo() && getSolicitacaoPai().isAFechar();
+    public boolean podeFecharAutomatico() {
+        return isFechadoAutomaticamente() && isEmAndamento() && isAFechar();
     }
     
     @SuppressWarnings("unchecked")
@@ -1336,7 +1310,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public List<SrTarefa> getAcoesDisponiveisComAtendente() throws Exception {
 
-        if (getSolicitante() == null || getItemConfiguracao() == null)
+        if (getSolicitante() == null)
             return null;
 
         List<SrTarefa> listaFinal = new ArrayList<SrTarefa>();
@@ -1378,16 +1352,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         });
 
         List<SrTarefa> acoesEAtendentes = getAcoesDisponiveisComAtendente();
-        if (acoesEAtendentes != null && this.getItemConfiguracao() != null) {
-
-        	// DB1: Adicionado verificaÃÂ§ÃÂ£o pois ao editar uma solicitaÃÂ§ÃÂ£o, estava resetando a aÃÂ§ÃÂ£o
-        	// jÃÂ¡ selecionada pelo usuÃÂ¡rio mesmo que a ediÃÂ§ÃÂ£o fosse cancelada.
-            if (this.getAcao() == null) {
-            	if (acoesEAtendentes.size() == 1)
-            		this.setAcao(acoesEAtendentes.get(0).acao);
-                else
-                    this.setAcao(null);
-            }
+        if (acoesEAtendentes != null) {
+        	
+        	if (this.getAcao() == null) {
+        		   if (acoesEAtendentes.size() == 1)
+        		           this.setAcao(acoesEAtendentes.get(0).acao);
+        		    else
+        		        this.setAcao(null);
+        	}
 
 			for (SrTarefa t : acoesEAtendentes) {
 				 // TODO:[refatoracao] - Estava inserindo null na lista.
@@ -1426,7 +1398,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				// Edson: serÃ¯Â¿Â½ que essas coisas poderiam estar dentro do
 				// SrOperacao?
 				if (!e.isModal())
-					e.setUrl(e.getUrl() + "?id="+idSolicitacao + e.getParamsFormatted());
+					e.setUrl("../" + e.getUrl() + "?sigla="+getSiglaCompacta() + e.getParamsFormatted());
 				if (!e.isPode())
 					return false;
 				return super.add(e);
@@ -1446,6 +1418,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         operacoes.add(new SrOperacao("text_list_numbers", "Incluir em Lista", podeIncluirEmLista(pess, lota), "incluirEmLista", MODAL_TRUE));
 
         operacoes.add(new SrOperacao("lock", "Fechar", podeFechar(pess, lota), "fechar", MODAL_TRUE));
+        
+        //operacoes.add(new SrOperacao("tag_blue_edit", "Reclassificar", podeReclassificar(pess, lota), "reclassificar", MODAL_TRUE));
 
         /*
          * operacoes.add(new SrOperacao("script_edit", "Responder Pesquisa", podeResponderPesquisa(pess, lota), "responderPesquisa", MODAL_TRUE));
@@ -1486,7 +1460,34 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     @Override
     public void salvarComHistorico() throws Exception {
 
-        checarEPreencherCampos();
+       	completarPreenchimento();
+        
+       	if (getArquivo() != null) {
+            double lenght = (double) getArquivo().getBlob().length / 1024 / 1024;
+            if (lenght > 2)
+                throw new AplicacaoException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) \u00E9 maior que o m\u00E1ximo permitido (2MB)");
+        }
+        
+        if (!isRascunho() && getDesignacao() == null)
+            throw new AplicacaoException("Não foi encontrado nenhum atendente designado " + "para esta solicitação. Sugestão: alterar item de " + "configuração e/ou ação");
+        
+        if (isFilha()) {
+            if (getDescrSolicitacao() != null && (getDescrSolicitacao().equals(getSolicitacaoPai().getDescrSolicitacao()) || getDescrSolicitacao().trim().isEmpty()))
+                setDescrSolicitacao(null);
+
+            if (this.meuAtributoSolicitacaoSet != null)
+                this.meuAtributoSolicitacaoSet = null;
+        }
+        
+        setDtReg(new Date());
+        
+        if (getNumSolicitacao() == null && !isRascunho() && !isFilha()) {
+            // DB1: Verifica se Ã¯Â¿Â½ uma Solicita\u00E7Ã£o Filha, pois caso seja nÃ£o
+            // deve atualizar o nÃ¯Â¿Â½mero da solicitaÃ§Ã£o, caso contrÃ¯Â¿Â½rio nÃ£o
+            // funcionarÃ¯Â¿Â½ o filtro por cÃ¯Â¿Â½digo para essa filha
+            setNumSolicitacao(getProximoNumero());
+            atualizarCodigo();
+        }
                    
         // Edson: Ver por que isto está sendo necessário. Sem isso, após o salvar(),
         // ocorre LazyIniException ao tentar acessar esses meuMovimentacaoSet's
@@ -1510,7 +1511,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         if (!isRascunho() && !jaFoiDesignada()) {
 
             if (isFecharAoAbrir())
-                fechar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular(), getMotivoFechamentoAbertura());
+                fechar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular(), 
+                		getMotivoFechamentoAbertura(), SrTipoMotivoFechamento.ATENDIMENTO_CONCLUÍDO);
             else
                 iniciarAtendimento(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular());
 
@@ -1577,19 +1579,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         }
     }
 
-    private void checarEPreencherCampos() throws Exception {
+    public void completarPreenchimento() throws Exception {
 
         if (getCadastrante() == null)
             throw new AplicacaoException("Cadastrante n\u00E3o pode ser nulo");
-
-        if (getDtReg() == null)
-            setDtReg(new Date());
-
-        if (getArquivo() != null) {
-            double lenght = (double) getArquivo().getBlob().length / 1024 / 1024;
-            if (lenght > 2)
-                throw new AplicacaoException("O tamanho do arquivo (" + new DecimalFormat("#.00").format(lenght) + "MB) \u00E9 maior que o m\u00E1ximo permitido (2MB)");
-        }
+        
+        if (getDtIniEdicao() == null)
+            setDtIniEdicao(new Date());
 
         if (getLotaCadastrante() == null || getLotaCadastrante().getId() == null)
             setLotaCadastrante(getCadastrante().getLotacao());
@@ -1601,49 +1597,29 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             setLotaTitular(getTitular().getLotacao());
 
         if (getSolicitante() == null || getSolicitante().getId() == null)
-            setSolicitante(getCadastrante());
+            setSolicitante(getTitular());
 
         if (getLotaSolicitante() == null || getLotaSolicitante().getId() == null)
             setLotaSolicitante(getSolicitante().getLotacao());
 
-        if (getSolicitante().equivale(getCadastrante())) {
-            setDtOrigem(null);
+        if (getSolicitante().equivale(getCadastrante())) 
             setMeioComunicacao(null);
-        }
+        else if (getMeioComunicacao() == null)
+    		setMeioComunicacao(SrMeioComunicacao.TELEFONE);
+        
+        if (getDtOrigem() == null)
+            setDtOrigem(new Date());
 
         if (getOrgaoUsuario() == null || getOrgaoUsuario().getId() == null)
             setOrgaoUsuario(getLotaSolicitante().getOrgaoUsuario());
-
-        if (getNumSolicitacao() == null && !isRascunho() && !isFilha()) {
-            // DB1: Verifica se Ã¯Â¿Â½ uma Solicita\u00E7Ã£o Filha, pois caso seja nÃ£o
-            // deve atualizar o nÃ¯Â¿Â½mero da solicitaÃ§Ã£o, caso contrÃ¯Â¿Â½rio nÃ£o
-            // funcionarÃ¯Â¿Â½ o filtro por cÃ¯Â¿Â½digo para essa filha
-            setNumSolicitacao(getProximoNumero());
-            atualizarCodigo();
-        }
+        
+        if (getFormaAcompanhamento() == null)
+        	setFormaAcompanhamento(SrFormaAcompanhamento.ABERTURA_ANDAMENTO);
 
         if (getGravidade() == null)
-            setGravidade(SrGravidade.NORMAL);
-
-        if (getUrgencia() == null)
-            setUrgencia(SrUrgencia.NORMAL);
-
-        if (getTendencia() == null)
-            setTendencia(SrTendencia.PIORA_MEDIO_PRAZO);
-
-        // sÃÂ³ valida o atendente caso nÃÂ£o seja rascunho
-        if (!isRascunho() && getDesignacao() == null)
-            throw new AplicacaoException("N\u00E3o foi encontrado nenhum atendente designado " + "para esta solicita\u00E7\u00E3o. Sugest\u00E3o: alterar item de " + "configura\u00E7\u00E3o e/ou a\u00E7\u00E3o");
-
-        if (isFilha()) {
-            if (getDescrSolicitacao() != null && (getDescrSolicitacao().equals(getSolicitacaoPai().getDescrSolicitacao()) || getDescrSolicitacao().trim().isEmpty()))
-                setDescrSolicitacao(null);
-
-            if (this.meuAtributoSolicitacaoSet != null)
-                this.meuAtributoSolicitacaoSet = null;
-        }
-
-        atualizarAcordos();
+            setGravidade(SrGravidade.SEM_GRAVIDADE);
+        
+        setPrioridade(getGravidadesDisponiveisEPrioridades().get(getGravidade()));
         
         setDnmPrioridadeTecnica(getPrioridade());
         setDnmItemConfiguracao(getItemConfiguracao());
@@ -1690,8 +1666,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             }
 
             movimentacao.desfazer(cadastrante, lotaCadastrante, titular, lotaTitular);
-            if(podeDeixarPaiPendente)
-            	getSolicitacaoPai().deixarPendenteAguardandoFilha(cadastrante, lotaCadastrante, titular, lotaTitular, this);
+            if (podeDeixarPaiPendente) 
+            	getSolicitacaoPai().deixarPendenteAguardandoFilha(getCadastrante(), getLotaCadastrante(), 
+            			getTitular(), getSolicitacaoPai().getLotaAtendente(), this);       
         }
     }
 
@@ -1996,7 +1973,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         filtro.setLotacao(lotaTitular);
         filtro.setPrioridade(getPrioridade());
         filtro.setItemConfiguracaoFiltro(getItemConfiguracao());
-        filtro.setAcaoFiltro(getAcao());
+        filtro.setAcaoFiltro(getAcaoAtual());
         filtro.setCpTipoConfiguracao(ContextoPersistencia.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA));
 
         List<ListaInclusaoAutomatica> listaFinal = new ArrayList<ListaInclusaoAutomatica>();
@@ -2162,37 +2139,142 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             mov.setLotaAtendente(getDesignacao().getAtendente());
         else
             mov.setLotaAtendente(getAtendenteNaoDesignado());
-        mov.setDescrMovimentacao("Iniciando o atendimento");
+        
+        if (mov.getLotaAtendente().equivale(getLotaTitular()))
+        	mov.setAtendente(getTitular());
+        
+        if (isFilha() && getDescrSolicitacao() != null && !getDescrSolicitacao().equals("") 
+        		&& !getDescrSolicitacao().equals(getSolicitacaoPai().getDescrSolicitacao())){
+        	//Edson: isto é estranho. Ver outra forma de definir a descrição do início do atendimento
+        	mov.setDescrMovimentacao(getDescrSolicitacao());
+        	setDescrSolicitacao(null);
+        } else mov.setDescrMovimentacao("Iniciando o atendimento");
+        
         mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
     }
+    
+    private void fechar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String motivo, SrTipoMotivoFechamento tpMotivo) throws Exception {
+    	fechar(cadastrante, lotaCadastrante, titular, lotaTitular, getItemAtual(), getAcaoAtual(), motivo, tpMotivo);
+    }
 
-    public void fechar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String motivo) throws Exception {
+    public void fechar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, 
+    		SrItemConfiguracao itemConfiguracao, SrAcao acao, String motivo, SrTipoMotivoFechamento tpMotivo) throws Exception {
         if (isPai() && !isAFechar())
             throw new AplicacaoException("Operação não permitida. Necessário fechar toda solicitação " + 
             			"filha criada a partir dessa que deseja fechar.");
 
         if ((cadastrante != null) && !podeFechar(cadastrante, lotaTitular))
             throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
+        
+        if (itemConfiguracao == null || itemConfiguracao.getId() == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
+            throw new AplicacaoException("Operação não permitida. Necessario informar um item de configuração e uma ação.");
 
         SrMovimentacao mov = new SrMovimentacao(this);
         mov.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_FECHAMENTO));
-        mov.setDescrMovimentacao(motivo);
-        if (mov.getDescrMovimentacao() == null || mov.getDescrMovimentacao().trim().equals(""))
-        	mov.setDescrMovimentacao("Fechando a solicitação");
+        mov.setItemConfiguracao(itemConfiguracao);
+        mov.setMotivoFechamento(tpMotivo);
+        mov.setAcao(acao);
+        
+        String descr = " Motivo: " + mov.getMotivoFechamento().getDescrTipoMotivoFechamento() + "; ";
+        descr += (motivo != null && !motivo.equals("") ? motivo : "Fechando a solicitação");  
+        
+        if (!itemConfiguracao.equivale(getItemAtual()) || !acao.equivale(getAcaoAtual()))
+        	descr += " Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() + "; Ação: " + mov.getAcao().getTituloAcao() + ". ";
+        mov.setDescrMovimentacao(descr);
+        
         mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
 
         removerDasListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
 
-        if (isFilha())
-        	getSolicitacaoPai().terminarPendenciaAguardandoFilha(cadastrante, lotaCadastrante, titular, lotaTitular);
-        
-        if (podeFecharPaiAutomatico())
-            getSolicitacaoPai().fechar(cadastrante, lotaCadastrante, titular, lotaTitular, "Solicita\u00E7\u00E3o fechada automaticamente");
-
+        if (isFilha()) {
+        	DpLotacao lotaAtendente = getSolicitacaoPai().getLotaAtendente(); 
+        	getSolicitacaoPai().terminarPendenciaAguardandoFilha(getCadastrante(), getLotaCadastrante(), getTitular(), lotaAtendente);
+        	if (getSolicitacaoPai().podeFecharAutomatico())
+        		getSolicitacaoPai().fechar(getCadastrante(), getLotaCadastrante(), getTitular(), lotaAtendente, 
+        				"Solicitação fechada automaticamente", tpMotivo);
+        }      
         /*
          * if (temPesquisaSatisfacao()) enviarPesquisa();
          */
     }
+    
+    public SrSolicitacao escalonarCriandoFilha(DpPessoa cadastrante, DpLotacao lotacao, DpPessoa titular, DpLotacao lotaTitular,
+    		SrItemConfiguracao itemConfiguracao, SrAcao acao, SrConfiguracao designacao, DpLotacao atendenteNaoDesignado,
+    		Boolean fechadoAuto, String descricao) throws Exception{
+
+    	if (itemConfiguracao == null || itemConfiguracao.getId() == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
+    		throw new AplicacaoException("Operação não permitida. Necessário informar um item de configuração e uma ação.");
+
+    	if (fechadoAuto != null) {
+    		setFechadoAutomaticamente(fechadoAuto);
+    		save();
+    	}
+    	SrSolicitacao filha = null;
+    	if (isFilha())
+    		filha = getSolicitacaoPai().criarFilhaSemSalvar();
+    	else
+    		filha = criarFilhaSemSalvar();
+    	filha.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao.getId()));
+    	filha.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
+    	filha.setDesignacao(designacao);
+    	filha.setDescrSolicitacao(descricao);
+    	if (atendenteNaoDesignado != null)
+    		filha.setAtendenteNaoDesignado(atendenteNaoDesignado);
+    	filha.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
+    	return filha;
+    }
+    
+    public void escalonarPorMovimentacao(DpPessoa cadastrante, DpLotacao lotacao, DpPessoa titular, DpLotacao lotaTitular,
+    		SrItemConfiguracao itemConfiguracao, SrAcao acao, SrConfiguracao designacao, DpLotacao atendenteNaoDesignado,
+    		SrTipoMotivoEscalonamento motivo, String descricao, DpLotacao atendente) throws Exception{
+    	
+    	if (itemConfiguracao == null || itemConfiguracao.getId() == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
+            throw new AplicacaoException("Operação não permitida. Necessário informar um item de configuração e uma ação.");
+    	
+    	if (designacao == null)
+            throw new AplicacaoException("Não foi encontrado nenhum atendente designado. Sugestão: alterar item de " + "configuração e/ou ação");
+    	
+    	SrMovimentacao mov = new SrMovimentacao(this);
+        mov.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO));
+        mov.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao.getId()));
+        mov.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
+        mov.setLotaAtendente(atendenteNaoDesignado != null ? atendenteNaoDesignado : atendente);
+        // Edson: isso abaixo talvez pudesse valer pra todas as movimentacoes e ficar la no
+        // mov.checarCampos()
+        if (getAtendente() != null && !mov.getLotaAtendente().equivale(getLotaAtendente()))
+            mov.setAtendente(null);
+        mov.setMotivoEscalonamento(motivo);
+        mov.setDesignacao(designacao);
+        mov.setDescrMovimentacao((descricao != null && !descricao.equals("") ? descricao : "")
+        		+ " Motivo: " + mov.getMotivoEscalonamento().getDescrTipoMotivoEscalonamento() 
+        		+ "; Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() 
+        		+ "; Ação: " + mov.getAcao().getTituloAcao()
+                + "; Atendente: " + mov.getLotaAtendente().getSigla());
+        mov.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
+        
+        setDnmItemConfiguracao(mov.getItemConfiguracao());
+        setDnmAcao(mov.getAcao());
+        save();
+    }
+        
+    public void reclassificar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrItemConfiguracao item, SrAcao acao) throws Exception {
+        
+        if (!podeReclassificar(cadastrante, lotaTitular))
+            throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
+        
+        if (item == null || item.getId() == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
+            throw new AplicacaoException("Operação não permitida. Necessario informar um item de configuração e uma ação.");
+
+        SrMovimentacao mov = new SrMovimentacao(this);
+        mov.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_RECLASSIFICACAO));
+        mov.setItemConfiguracao(item);
+        mov.setAcao(acao);
+        mov.setDescrMovimentacao("Reclassificando. Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() 
+        		+ "; Ação: " + mov.getAcao().getTituloAcao());
+        
+        mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
+    }
+
 
     public void enviarPesquisa() throws Exception {
     	CorreioHolder
@@ -2227,7 +2309,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	throw new AplicacaoException("Operação não permitida: A Lotação atendente (" + lotacaoAtendente.getSiglaCompleta() +
                 ") foi extinta. Necessário abrir nova solicitação. Crie um vínculo dessa solicitação com a nova, através do recurso Vincular");
         
-    	if(isFilha()) {
+    	if (isFilha()) {
             if (getSolicitacaoPai().isAtivo()) 
             	podeDeixarPaiPendente = true;
         	else
@@ -2242,8 +2324,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);    	
         
         reInserirListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
-        if(podeDeixarPaiPendente)
-        	getSolicitacaoPai().deixarPendenteAguardandoFilha(cadastrante, lotaCadastrante, titular, lotaTitular, this);
+        if (podeDeixarPaiPendente) 
+        	getSolicitacaoPai().deixarPendenteAguardandoFilha(getCadastrante(), getLotaCadastrante(), 
+        			getTitular(), getSolicitacaoPai().getLotaAtendente(), this);       
     }
 
     private void reInserirListasDePrioridade(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
@@ -2328,10 +2411,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	movimentacao.setDescrMovimentacao("Cancelando a solicitação");
         movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
         removerDasListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
-        if (isFilha())
-        	getSolicitacaoPai().terminarPendenciaAguardandoFilha(cadastrante, lotaCadastrante, titular, lotaTitular);
-        if (podeFecharPaiAutomatico())
-            getSolicitacaoPai().fechar(cadastrante, lotaCadastrante, titular, lotaTitular, "Solicitação fechada automaticamente");
+        if (isFilha()) {
+        	DpLotacao lotaAtendente = getSolicitacaoPai().getLotaAtendente(); 
+        	getSolicitacaoPai().terminarPendenciaAguardandoFilha(getCadastrante(), getLotaCadastrante(), getTitular(), lotaAtendente);
+        	if (getSolicitacaoPai().podeFecharAutomatico())
+        		getSolicitacaoPai().fechar(getCadastrante(), getLotaCadastrante(), getTitular(), lotaAtendente, 
+        				"Solicitação fechada automaticamente", SrTipoMotivoFechamento.ATENDIMENTO_NEGADO);
+        }   
     }
 
     public void juntar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrSolicitacao solRecebeJuntada, String justificativa) throws Exception {
@@ -2380,8 +2466,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public String getGcTags() {
         String s = "tags=@servico";
-        if (getAcao() != null)
-            s += getAcao().getGcTags();
+        if (getAcaoAtual() != null)
+            s += getAcaoAtual().getGcTags();
         if (getItemConfiguracao() != null)
             s += getItemConfiguracao().getGcTags();
         return s;
@@ -2391,15 +2477,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         String s = "";
 		if (getItemConfiguracao() != null)
 			s += getItemConfiguracao().getGcTagAncora();
-        if (getAcao() != null)
-            s += getAcao().getGcTagAncora();
+        if (getAcaoAtual() != null)
+            s += getAcaoAtual().getGcTagAncora();
         return s;
     }
 
     public String getGcTituloAbertura() {
         String s = "";
-        if (getAcao() != null)
-            s += getAcao().getTituloAcao();
+        if (getAcaoAtual() != null)
+            s += getAcaoAtual().getTituloAcao();
         if (getItemConfiguracao() != null)
             s += " - " + getItemConfiguracao().getTituloItemConfiguracao();
         return s;
@@ -2723,7 +2809,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         List<SrItemConfiguracao> historicoItens = listarHistoricoItemInicial();
         SrItemConfiguracao anterior = getItemConfiguracao();
 
-        for (SrMovimentacao movimentacao : getMovimentacaoSetOrdemCrescentePorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO)) {
+        for (SrMovimentacao movimentacao : getMovimentacaoSetOrdemCrescente()) {
             if (movimentacao.getItemConfiguracao() != null && anterior != null && !movimentacao.getItemConfiguracao().equivale(anterior)) {
                 historicoItens.add(movimentacao.getItemConfiguracao());
                 anterior = movimentacao.getItemConfiguracao();
@@ -2735,7 +2821,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public List<SrAcao> getHistoricoAcao() {
         List<SrAcao> historicoAcoes = listaHistoricoAcaoInicial();
         SrAcao acaoAnterior = getAcao();
-        for (SrMovimentacao movimentacao : getMovimentacaoSetOrdemCrescentePorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO)) {
+        for (SrMovimentacao movimentacao : getMovimentacaoSetOrdemCrescente()) {
             if (movimentacao.getAcao() != null && acaoAnterior != null && !movimentacao.getAcao().equivale(acaoAnterior)) {
                 historicoAcoes.add(movimentacao.getAcao());
                 acaoAnterior = movimentacao.getAcao();
@@ -2864,8 +2950,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         return lotaTitular;
     }
 
-    public void setLotaTitular(DpLotacao lotaTitular) {
+    public SrSolicitacao setLotaTitular(DpLotacao lotaTitular) {
         this.lotaTitular = lotaTitular;
+        return this;
     }
 
     public SrConfiguracao getDesignacao() {
@@ -2960,28 +3047,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         this.descrSolicitacao = descrSolicitacao;
     }
 
-    public SrTendencia getTendencia() {
-        return tendencia;
-    }
-
-    public void setTendencia(SrTendencia tendencia) {
-        this.tendencia = tendencia;
-    }
-
     public SrGravidade getGravidade() {
         return gravidade;
     }
 
     public void setGravidade(SrGravidade gravidade) {
         this.gravidade = gravidade;
-    }
-
-    public SrUrgencia getUrgencia() {
-        return urgencia;
-    }
-
-    public void setUrgencia(SrUrgencia urgencia) {
-        this.urgencia = urgencia;
     }
 
     public Date getDtReg() {
@@ -3142,7 +3213,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				if (mov.isInicioAtendimento()) {
 					atendimento.setDataInicio(mov.getDtIniMov());
 					atendimento.setTempoAtendimento(getTempoEfetivoAtendimento(atendimento.getDataInicio(),
-							atendimento.getDataFinal()));
+							atendimento.getDataFinal(), mov.getLotaAtendente()));
 					atendimento.setLotacaoAtendente(mov.getLotaAtendente());
 					atendimento.definirFaixa(mov.getLotaAtendente().getOrgaoUsuario());
 									
@@ -3189,8 +3260,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				if (mov.getTipoMov().getId() == TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO) {
 					if (dataFinalFilha != null && mov.getDtIniMov().compareTo(dataFinalFilha) == 1) {
 						atendimento = new SrAtendimento(this, dataFinalFilha,  mov.getDtIniMov(), 
-							getTempoEfetivoAtendimento(dataFinalFilha, mov.getDtIniMov()), lotacaoAtendente, 
-							mov.getLotaAtendente(), mov.getTitular(), "Escalonamento com sol. filha", 
+							getTempoEfetivoAtendimento(dataFinalFilha, mov.getDtIniMov(), lotacaoAtendente), 
+							lotacaoAtendente, mov.getLotaAtendente(), mov.getTitular(), "Escalonamento com sol. filha", 
 							this.getItemConfiguracao().toString(), this.getAcao().toString());					
 						atendimento.definirFaixa(lotacaoAtendente.getOrgaoUsuario());
 						listaAtendimentos.add(atendimento);
@@ -3204,8 +3275,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						if (mov.getSolicitacao().equals(this)) {
 							dtInicio = getDtInicioAtendimento();
 							atendimento = new SrAtendimento(this, dtInicio,  dtFinal, 
-								getTempoEfetivoAtendimento(dtInicio, dtFinal), lotacaoAtendente, 
-								lotacaoDestino, pessoaAtendente, "Escalonamento com sol. filha", 
+								getTempoEfetivoAtendimento(dtInicio, dtFinal, lotacaoAtendente), 
+								lotacaoAtendente, lotacaoDestino, pessoaAtendente, "Escalonamento com sol. filha", 
 								this.getItemConfiguracao().toString(), this.getAcao().toString());		
 							atendimento.definirFaixa(lotacaoAtendente.getOrgaoUsuario());
 							listaAtendimentos.add(atendimento);
@@ -3223,7 +3294,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	public SrAtendimento getFimAtendimentoSolicitacaoPai(Date dataFinalUltimaFilha) {
 		SrAtendimento atendimento = null;
 		String tipoAtendimento = null;
-		Date dataFinalPai = null ; 
+		Date dataInicioPai = null;
+		Date dataFinalPai = null; 
 		DpLotacao lotacaoAtendente = getLotaAtendente();
 		if (isFechado()) {
 			dataFinalPai = getDtEfetivoFechamento();
@@ -3233,9 +3305,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			dataFinalPai = new Date();	
 			tipoAtendimento = "A Fechar";
 		}
-		atendimento = new SrAtendimento(this, dataFinalUltimaFilha, dataFinalPai, 
-				getTempoEfetivoAtendimento(dataFinalUltimaFilha, dataFinalPai), lotacaoAtendente, null, getAtendente(), 
-				tipoAtendimento, getItemAtual().toString(), getAcaoAtual().toString());
+		SrMovimentacao movReabertura = getUltimaMovimentacaoPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA);
+		if(movReabertura != null && movReabertura.getDtIniMov().after(dataFinalUltimaFilha))
+			dataInicioPai = movReabertura.getDtIniMov();
+		else
+			dataInicioPai = dataFinalUltimaFilha;
+		
+		atendimento = new SrAtendimento(this, dataInicioPai, dataFinalPai, 
+				getTempoEfetivoAtendimento(dataInicioPai, dataFinalPai, lotacaoAtendente), 
+				lotacaoAtendente, null, getAtendente(), tipoAtendimento, getItemAtual().toString(), getAcaoAtual().toString());
 		atendimento.definirFaixa(lotacaoAtendente.getOrgaoUsuario());
 		return atendimento;
 	}
@@ -3277,29 +3355,32 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return listaDeIntervalos;
 	}
 	
-	public SrValor getTempoEfetivoAtendimento(Date dataInicio, Date dataFinal) {
+	public SrValor getTempoEfetivoAtendimento(Date dataInicio, Date dataFinal, DpLotacao lotaAtendente) {
 		List<Interval> listaTrechosDeAtendimentos = getTrechosSemPendencia(dataInicio, dataFinal);
+		int[] horario = Util.getHorarioDeTrabalho(lotaAtendente);
 		SrValor tempoAtendimentoLiquido = null;
 		Long tempoAtendimentoParcial = 0L;
 		
 		if (listaTrechosDeAtendimentos.size() > 0) {
 			for (Interval intervaloAtendimento : listaTrechosDeAtendimentos) {
-				tempoAtendimentoParcial += getTempoAtendimento(intervaloAtendimento);
+				tempoAtendimentoParcial += getTempoAtendimento(intervaloAtendimento, horario[0], horario[1]);
 			}
 			tempoAtendimentoLiquido = new SrValor(tempoAtendimentoParcial, CpUnidadeMedida.SEGUNDO);
 		}
 		return tempoAtendimentoLiquido;	
 	}
 	
-	public Long getTempoAtendimento(Interval intervaloAtendimento) {	
+	public Long getTempoAtendimento(Interval intervaloAtendimento, int horaInicio, int horaTermino) {	
 		DateTime inicio = intervaloAtendimento.getStart();
 		DateTime fim = intervaloAtendimento.getEnd();
-		Interval intervaloDeTrabalho = Util.getIntervaloDeTempo(8, 20, intervaloAtendimento.getStart());
+		Interval intervaloDeTrabalho = Util.getIntervaloDeTempo(horaInicio, horaTermino, intervaloAtendimento.getStart());
 		Long tempoAtendimento = 0L;
 		
 		try {
 			if (Util.isMesmoDia(intervaloAtendimento.getStart(), intervaloAtendimento.getEnd())) {
-				if(!intervaloAtendimento.getStart().isBefore(intervaloDeTrabalho.getStart())) 
+				if(intervaloAtendimento.getEnd().isBefore(intervaloDeTrabalho.getStart()))
+					tempoAtendimento = 0L;
+				else if(!intervaloAtendimento.getStart().isBefore(intervaloDeTrabalho.getStart())) 
 					tempoAtendimento = intervaloAtendimento.toDuration().getStandardSeconds();
 				else
 					tempoAtendimento = (long) Seconds.secondsBetween(intervaloDeTrabalho.getStart(), 
@@ -3315,7 +3396,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 						tempoAtendimento = intervaloDeTrabalho.toDuration().getStandardSeconds();
 				}
 				//tratando o "final do atendimento"
-				intervaloDeTrabalho = Util.getIntervaloDeTempo(8, 20, fim);
+				intervaloDeTrabalho = Util.getIntervaloDeTempo(horaInicio, horaTermino, fim);
 				if (fim.isAfter(intervaloDeTrabalho.getStart()))
 					tempoAtendimento += Seconds.secondsBetween(intervaloDeTrabalho.getStart(), fim)
 												.getSeconds();		
@@ -3323,7 +3404,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 				DateTime diaDepoisInicio = inicio.plusDays(1);
 				while (diaDepoisInicio.toLocalDate().isBefore(fim.toLocalDate())) {
 					if (Util.isDiaUtil(diaDepoisInicio))
-						tempoAtendimento += Util.getIntervaloDeTempo(8, 20, diaDepoisInicio).toDuration()
+						tempoAtendimento += Util.getIntervaloDeTempo(horaInicio, horaTermino, diaDepoisInicio).toDuration()
 													.getStandardSeconds();
 					diaDepoisInicio = diaDepoisInicio.plusDays(1);
 				}
@@ -3357,13 +3438,5 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
 	public void setDnmPrioridadeTecnica(SrPrioridade dnmPrioridadeTecnica) {
 		this.dnmPrioridadeTecnica = dnmPrioridadeTecnica;
-	}
-
-	public SrMovimentacao getDnmUltimaMovimentacao() {
-		return dnmUltimaMovimentacao;
-	}
-
-	public void setDnmUltimaMovimentacao(SrMovimentacao dnmUltimaMovimentacao) {
-		this.dnmUltimaMovimentacao = dnmUltimaMovimentacao;
 	}
 }

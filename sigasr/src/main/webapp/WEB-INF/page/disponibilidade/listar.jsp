@@ -77,7 +77,7 @@ td .orgao:first-child {
 	</div>
 
 	<!-- modal de cadastro -->
-	<siga:modal nome="disponibilidadeItem" titulo="Disponibilidade do item">
+	<sigasr:modal nome="disponibilidadeItem" titulo="Disponibilidade do item">
 		<div class="gt-form gt-content-box">
 			<form id="disponibilidadeForm">
 				<input type="hidden" name="idDisponibilidade">
@@ -128,7 +128,7 @@ td .orgao:first-child {
 				</div>
 			</form>
 		</div>
-	</siga:modal>
+	</sigasr:modal>
 </siga:pagina>
 <script>
 	var opts = {

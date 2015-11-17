@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
 <script src="/sigasr/javascripts/jquery.validate.min.js"></script>
@@ -175,7 +176,7 @@
 	</form>
 </div>
 
-<siga:modal nome="controleAcesso" titulo="Cadastrar Permissão">
+<sigasr:modal nome="controleAcesso" titulo="Cadastrar Permissão">
 	<form id="formControleAcesso" enctype="multipart/form-data">
 		<div class="gt-form gt-content-box" id="modal-permissao">
 			<div>
@@ -282,10 +283,10 @@
 			</div>
 		</div>
 	</form>
-</siga:modal>
+</sigasr:modal>
 
 <%-- 
-<siga:modal nome="configuracao_inclusao_automatica"
+<sigasr:modal nome="configuracao_inclusao_automatica"
 	titulo="Configura&ccedil;&atilde;o para inclus&atilde;o autom&aacute;tica">
 	<form id="formConfiguracaoInclusaoAutomatica">
 		<div class="gt-form gt-content-box"
@@ -334,7 +335,7 @@
 			    </select>
 			</div>
 
-			<siga:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></siga:configuracaoItemAcao>
+			<sigasr:configuracaoItemAcao itemConfiguracaoSet="${itemConfiguracaoSet}" acoesSet="${acoesSet}"></sigasr:configuracaoItemAcao>
 
 			<div class="gt-form-row">
 				<a href="javascript: configuracaoInclusaoAutomaticaService.gravar()"
@@ -344,7 +345,7 @@
 			</div>
 		</div>
 	</form>
-</siga:modal>
+</sigasr:modal>
 --%>
 
 <script language="javascript"> 

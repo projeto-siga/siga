@@ -1,11 +1,13 @@
-<!-- <li><a href="#">Forum</a> -->
-<!-- 	<ul> -->
-<!-- 		</li> -->
-<!-- 		<li><a href="@{foruns_listar()}">Listar foruns</a> -->
-<!-- 		</li> -->
-<!-- 	</ul> -->
-<!--  </li> -->
+ <!--  <li><a href="#">Forum</a> 
+ 	<ul> 
+ 		</li>
+ 		<li><a href="@{foruns_listar()}">Listar foruns</a>
+ 		</li>
+ 	</ul> 
+ </li>
+ -->
 
+ <!--  
  <li><a href="#">Sala</a>
 	<ul>
 		<li><a href="${linkTo[SalaController].incluir}">Incluir sala</a>
@@ -14,6 +16,7 @@
 		</li>
 	</ul>
  </li>
+ -->
  <li><a href="${linkTo[AgendamentoController].incluirAjax}">Agendar</a>
 	<ul>
 	</ul>
@@ -31,7 +34,7 @@
 		</li>
 		<li><a href="${linkTo[AgendamentoController].imprime}">Imprime os meus</a>
 		</li>
-		<li><a href="${linkTo[AgendamentoController].salaLista}">Imprime os meus de uma sala</a>
+		<li><a href="${linkTo[AgendamentoController].salaLista}">Imprime os agendamentos de uma sala</a>
 		</li>
 	</ul>
  </li>

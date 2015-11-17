@@ -8,7 +8,7 @@
 <siga:pagina titulo="Arquivamento Intermediário">
 
 <c:if test="${not mob.doc.eletronico}">
-	<script type="text/javascript">$("html").addClass("fisico");</script>
+	<script type="text/javascript">$("html").addClass("fisico");$("body").addClass("fisico");</script>
 </c:if>
 
 <script type="text/javascript" language="Javascript1.1">

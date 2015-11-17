@@ -5,14 +5,14 @@
 	<br>
 	<div class="ui-accordion-header"  style="position:absolute;left:1%;">
 		<h3>
-			SJRJ/STI/CSIS - vs.: SigaPP 2015.0.2
+			SJRJ/STI/CSIS - vs.: SigaPP 2015.1.1
 		</h3>
 		<h5>
 			tscsis@jfrj.jus.br
 			<br>
 			ramal:9091
 		</h5>
-		<h6>TECNOLOGIAS: Java, Javascript, Play, Ajax, Hibernate, Oracle, HTML, DHTML, Groovy, Kepler.</h6>
+		<h6>TECNOLOGIAS: Java, Javascript, vRaptor, Ajax, Hibernate, Oracle, HTML, DHTML, Groovy, Kepler.</h6>
 		<br><br>
 		<a class="ui-state-hover" style="position:absolute;left:5%;" href="/sigapp/">Voltar</a>
 	</div>

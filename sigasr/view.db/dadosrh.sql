@@ -1,5 +1,4 @@
-CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PESSOA_NOME", "PESSOA_SEXO", "PESSOA_DATA_NASCIMENTO", "PESSOA_RUA", "PESSOA_BAIRRO", "PESSOA_CIDADE", "PESSOA_UF", "PESSOA_CEP", "PESSOA_MATRICULA", "PESSOA_DATA_INICIO_EXERCICIO", "PESSOA_ATO_NOMEACAO", "PESSOA_DATA_NOMEACAO", "PESSOA_DT_PUBL_NOMEACAO", "PESSOA_DATA_POSSE", "PESSOA_PADRAO_REFERENCIA", "PESSOA_SITUACAO", "PESSOA_RG", "PESSOA_RG_ORGAO", "PESSOA_RG_UF", "PESSOA_DATA_EXPEDICAO_RG", "PESSOA_ESTADO_CIVIL", "PESSOA_SIGLA", "PESSOA_EMAIL", "PESSOA_GRAU_DE_INSTRUCAO", "PESSOA_TP_SANGUINEO", "PESSOA_NATURALIDADE", "PESSOA_NACIONALIDADE", "TIPO_RH", "CARGO_ID", "CARGO_NOME", "CARGO_SIGLA", "FUNCAO_ID", "FUNCAO_NOME", "FUNCAO_SIGLA", "LOTACAO_ID", "LOTACAO_NOME", "LOTACAO_SIGLA", "LOTACAO_ID_PAI", "LOTACAO_TIPO", "LOTACAO_TIPO_PAPEL", "PAPEL_ID")
-                                  AS
+CREATE  OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PESSOA_NOME", "PESSOA_SEXO", "PESSOA_DATA_NASCIMENTO", "PESSOA_RUA", "PESSOA_BAIRRO", "PESSOA_CIDADE", "PESSOA_UF", "PESSOA_CEP", "PESSOA_MATRICULA", "PESSOA_DATA_INICIO_EXERCICIO", "PESSOA_ATO_NOMEACAO", "PESSOA_DATA_NOMEACAO", "PESSOA_DT_PUBL_NOMEACAO", "PESSOA_DATA_POSSE", "PESSOA_PADRAO_REFERENCIA", "PESSOA_SITUACAO", "PESSOA_RG", "PESSOA_RG_ORGAO", "PESSOA_RG_UF", "PESSOA_DATA_EXPEDICAO_RG", "PESSOA_ESTADO_CIVIL", "PESSOA_SIGLA", "PESSOA_EMAIL", "PESSOA_GRAU_DE_INSTRUCAO", "PESSOA_TP_SANGUINEO", "PESSOA_NATURALIDADE", "PESSOA_NACIONALIDADE", "TIPO_RH", "CARGO_ID", "CARGO_NOME", "CARGO_SIGLA", "FUNCAO_ID", "FUNCAO_NOME", "FUNCAO_SIGLA", "LOTACAO_ID", "LOTACAO_NOME", "LOTACAO_SIGLA", "LOTACAO_ID_PAI", "LOTACAO_TIPO", "LOTACAO_TIPO_PAPEL", "PAPEL_ID") AS 
   SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
     PF.CPF                        AS PESSOA_CPF,
     PF.NM_PESSOA                  AS PESSOA_NOME,
@@ -58,8 +57,8 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
       WHEN 'JUIZADO ESPECIAL'
       THEN 'Unidade Judicial'
       ELSE 'Unidade da Administração'
-    END AS LOTACAO_TIPO,
-    'Principal'   AS LOTACAO_TIPO_PAPEL,
+    END               AS LOTACAO_TIPO,
+    'Principal'       AS LOTACAO_TIPO_PAPEL,
     LO.ID_LOT_LOTACAO AS ID_PAPEL
   FROM SIGARH.CAD_PESSOA_FISICA PF
   INNER JOIN SIGARH.CAD_RECURSO_HUMANO RH
@@ -96,6 +95,7 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
   LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO_SERVIDOR CPS
   ON CPS.ID_CAD_SERVIDOR   =RH.ID_CAD_RECURSO_HUMANO
   AND CPS.DT_FIM_VIGENCIA IS NULL
+  AND CPS.DT_EXCLUSAO IS NULL
   LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO CP
   ON CP.ID_CAD_CLASSE_PADRAO=CPS.ID_CAD_CLASSE_PADRAO
   LEFT OUTER JOIN SIGARH.CAD_CLASSE C
@@ -109,7 +109,7 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
   AND PF.ID_CAD_TP_SANGUINEO  = TPS.ID_CAD_TP_SANGUINEO
   AND PF.ID_CAD_NACIONALIDADE = NAC.ID_CAD_NACIONALIDADE
   UNION
-    SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
+  SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
     PF.CPF                        AS PESSOA_CPF,
     PF.NM_PESSOA                  AS PESSOA_NOME,
     PF.SEXO                       AS PESSOA_SEXO,
@@ -128,15 +128,15 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
     TP.ATO_NOMEACAO                     AS PESSOA_ATO_NOMEACAO,
     TP.DT_NOMEACAO                      AS PESSOA_DATA_NOMEACAO,
     TP.DT_PUBL_ATO_NOMEACAO             AS PESSOA_DT_PUBL_NOMEACAO,
-    TP.DT_POSSE                         AS PESSOA_DATA_POSSE,   CASE
+    TP.DT_POSSE                         AS PESSOA_DATA_POSSE,
+    CASE
       WHEN C.SG_CLASSE IS NOT NULL
       THEN C.SG_CLASSE
         || '-'
         || P.SG_PADRAO
       ELSE ''
-   END
-   AS PESSOA_PADRAO_REFERENCIA ,
-   TP.ID_SITUACAO_FUNCIONAL                                                                                                                                                                                                                     AS PESSOA_SITUACAO ,
+    END                                                                                                                                                                                                                                          AS PESSOA_PADRAO_REFERENCIA ,
+    TP.ID_SITUACAO_FUNCIONAL                                                                                                                                                                                                                     AS PESSOA_SITUACAO ,
     PF.NUM_RG                                                                                                                                                                                                                                    AS PESSOA_RG,
     PF.ORG_EXPEDIDOR                                                                                                                                                                                                                             AS PESSOA_RG_ORGAO,
     PF.UF_EXPEDIDOR_RG                                                                                                                                                                                                                           AS PESSOA_RG_UF,
@@ -159,9 +159,9 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
     U.NM_UNIDADE                                                                                                                                                                                                                                 AS LOTACAO_NOME,
     U.SG_UNIDADE                                                                                                                                                                                                                                 AS LOTACAO_SIGLA,
     U_PAI.ID_LOT_UNIDADE                                                                                                                                                                                                                         AS LOTACAO_ID_PAI,
-   'Unidade da Administração'      AS LOTACAO_TIPO,
-   'Funcional' AS LOTACAO_TIPO_PAPEL,
-    LAF.ID_LOT_LOTACAO AS ID_PAPEL
+    'Unidade da Administração'                                                                                                                                                                                                                   AS LOTACAO_TIPO,
+    'Funcional'                                                                                                                                                                                                                                  AS LOTACAO_TIPO_PAPEL,
+    LAF.ID_LOT_LOTACAO                                                                                                                                                                                                                           AS ID_PAPEL
   FROM SIGARH.CAD_PESSOA_FISICA PF
   INNER JOIN SIGARH.CAD_RECURSO_HUMANO RH
   ON RH.ID_CAD_PESSOA_FISICA=PF.ID_CAD_PESSOA_FISICA
@@ -198,6 +198,7 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
   LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO_SERVIDOR CPS
   ON CPS.ID_CAD_SERVIDOR   =RH.ID_CAD_RECURSO_HUMANO
   AND CPS.DT_FIM_VIGENCIA IS NULL
+  AND CPS.DT_EXCLUSAO IS NULL
   LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO CP
   ON CP.ID_CAD_CLASSE_PADRAO=CPS.ID_CAD_CLASSE_PADRAO
   LEFT OUTER JOIN SIGARH.CAD_CLASSE C
@@ -270,8 +271,8 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
       WHEN 'JUIZADO ESPECIAL'
       THEN 'Unidade Judicial'
       ELSE 'Unidade da Administração'
-    END AS LOTACAO_TIPO,
-    'Principal'   AS LOTACAO_TIPO_PAPEL,
+    END               AS LOTACAO_TIPO,
+    'Principal'       AS LOTACAO_TIPO_PAPEL,
     LO.ID_LOT_LOTACAO AS ID_PAPEL
   FROM SIGARH.CAD_PESSOA_FISICA PF
   INNER JOIN SIGARH.CAD_RECURSO_HUMANO RH
@@ -308,6 +309,7 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
   LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO_SERVIDOR CPS
   ON CPS.ID_CAD_SERVIDOR   =RH.ID_CAD_RECURSO_HUMANO
   AND CPS.DT_FIM_VIGENCIA IS NULL
+  AND CPS.DT_EXCLUSAO IS NULL
   LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO CP
   ON CP.ID_CAD_CLASSE_PADRAO=CPS.ID_CAD_CLASSE_PADRAO
   LEFT OUTER JOIN SIGARH.CAD_CLASSE C
@@ -370,7 +372,7 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
     U.NM_UNIDADE                                                                                                                                                                                                                                 AS LOTACAO_NOME,
     U.SG_UNIDADE                                                                                                                                                                                                                                 AS LOTACAO_SIGLA,
     U_PAI.ID_LOT_UNIDADE                                                                                                                                                                                                                         AS LOTACAO_ID_PAI,
-   CASE TC.NM_TIPO_CATEGORIA
+    CASE TC.NM_TIPO_CATEGORIA
       WHEN 'TURMA'
       THEN 'Unidade Judicial'
       WHEN 'VARA'
@@ -378,8 +380,8 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
       WHEN 'JUIZADO ESPECIAL'
       THEN 'Unidade Judicial'
       ELSE 'Unidade da Administração'
-    END AS LOTACAO_TIPO,
-    'Principal'   AS LOTACAO_TIPO_PAPEL,
+    END               AS LOTACAO_TIPO,
+    'Principal'       AS LOTACAO_TIPO_PAPEL,
     LO.ID_LOT_LOTACAO AS ID_PAPEL
   FROM SIGARH.CAD_PESSOA_FISICA PF
   INNER JOIN SIGARH.CAD_RECURSO_HUMANO RH
@@ -416,6 +418,7 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
   LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO_SERVIDOR CPS
   ON CPS.ID_CAD_SERVIDOR   =RH.ID_CAD_RECURSO_HUMANO
   AND CPS.DT_FIM_VIGENCIA IS NULL
+  AND CPS.DT_EXCLUSAO IS NULL
   LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO CP
   ON CP.ID_CAD_CLASSE_PADRAO=CPS.ID_CAD_CLASSE_PADRAO
   LEFT OUTER JOIN SIGARH.CAD_CLASSE C
@@ -478,7 +481,7 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
     U.NM_UNIDADE                                                                                                                                                                                                                                 AS LOTACAO_NOME,
     U.SG_UNIDADE                                                                                                                                                                                                                                 AS LOTACAO_SIGLA,
     U_PAI.ID_LOT_UNIDADE                                                                                                                                                                                                                         AS LOTACAO_ID_PAI,
-   CASE TC.NM_TIPO_CATEGORIA
+    CASE TC.NM_TIPO_CATEGORIA
       WHEN 'TURMA'
       THEN 'Unidade Judicial'
       WHEN 'VARA'
@@ -486,8 +489,8 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
       WHEN 'JUIZADO ESPECIAL'
       THEN 'Unidade Judicial'
       ELSE 'Unidade da Administração'
-    END AS LOTACAO_TIPO,
-    'Principal'   AS LOTACAO_TIPO_PAPEL,
+    END               AS LOTACAO_TIPO,
+    'Principal'       AS LOTACAO_TIPO_PAPEL,
     LO.ID_LOT_LOTACAO AS ID_PAPEL
   FROM SIGARH.CAD_PESSOA_FISICA PF
   INNER JOIN SIGARH.CAD_RECURSO_HUMANO RH
@@ -524,6 +527,7 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
   LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO_SERVIDOR CPS
   ON CPS.ID_CAD_SERVIDOR   =RH.ID_CAD_RECURSO_HUMANO
   AND CPS.DT_FIM_VIGENCIA IS NULL
+  AND CPS.DT_EXCLUSAO IS NULL
   LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO CP
   ON CP.ID_CAD_CLASSE_PADRAO=CPS.ID_CAD_CLASSE_PADRAO
   LEFT OUTER JOIN SIGARH.CAD_CLASSE C
@@ -535,7 +539,7 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
   WHERE RH.ID_CAD_ORGAO = 1
   AND U.ID_CAD_ORGAO    = 1
   UNION
-  --ESTAGIÁRIO
+  --ESTAGIARIO
   SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
     PF.CPF                        AS PESSOA_CPF,
     PF.NM_PESSOA                  AS PESSOA_NOME,
@@ -594,8 +598,8 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
       WHEN 'JUIZADO ESPECIAL'
       THEN 'Unidade Judicial'
       ELSE 'Unidade da Administração'
-    END AS LOTACAO_TIPO,
-    'Principal'   AS LOTACAO_TIPO_PAPEL,
+    END               AS LOTACAO_TIPO,
+    'Principal'       AS LOTACAO_TIPO_PAPEL,
     LO.ID_LOT_LOTACAO AS ID_PAPEL
   FROM SIGARH.CAD_PESSOA_FISICA PF
   INNER JOIN SIGARH.CAD_RECURSO_HUMANO RH
@@ -632,6 +636,7 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
   LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO_SERVIDOR CPS
   ON CPS.ID_CAD_SERVIDOR   =RH.ID_CAD_RECURSO_HUMANO
   AND CPS.DT_FIM_VIGENCIA IS NULL
+  AND CPS.DT_EXCLUSAO IS NULL
   LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO CP
   ON CP.ID_CAD_CLASSE_PADRAO=CPS.ID_CAD_CLASSE_PADRAO
   LEFT OUTER JOIN SIGARH.CAD_CLASSE C
@@ -668,7 +673,7 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
     PF.DT_EXPEDIDOR                 AS PESSOA_DATA_EXPEDICAO_RG,
     PF.ID_CAD_ESTADO_CIVIL          AS PESSOA_ESTADO_CIVIL,
     CRE.SG_RECURSO_EXTERNO          AS PESSOA_SIGLA,
-    PF.EMAIL_PESSOAL                AS PESSOA_EMAIL,
+    DECODE (PF.EMAIL_PESSOAL,NULL,PF.EMAIL_PESSOAL2,'',PF.EMAIL_PESSOAL2,PF.EMAIL_PESSOAL) AS PESSOA_EMAIL,
     NULL                            AS PESSOA_GRAU_DE_INSTRUCAO,
     TPS.NM_TP_SANGUINEO             AS PESSOA_TP_SANGUINEO,
     NULL                            AS PESSOA_NATURALIDADE,
@@ -684,9 +689,9 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
     U.NM_UNIDADE                    AS LOTACAO_NOME,
     U.SG_UNIDADE                    AS LOTACAO_SIGLA,
     U_PAI.ID_LOT_UNIDADE            AS LOTACAO_ID_PAI,
-    'Agrupamento Operacional'      AS LOTACAO_TIPO,
+    'Agrupamento Operacional'       AS LOTACAO_TIPO,
     'Funcional'                     AS LOTACAO_TIPO_PAPEL,
-    LAF.ID_LOT_LOTACAO AS ID_PAPEL
+    LAF.ID_LOT_LOTACAO              AS ID_PAPEL
   FROM SIGARH.CAD_PESSOA_FISICA PF
   INNER JOIN SIGARH.CAD_RECURSO_EXTERNO CRE
   ON CRE.ID_CAD_PESSOA_FISICA=PF.ID_CAD_PESSOA_FISICA
@@ -774,8 +779,8 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
       WHEN 'JUIZADO ESPECIAL'
       THEN 'Unidade Judicial'
       ELSE 'Unidade da Administração'
-    END AS LOTACAO_TIPO,
-    'Principal'   AS LOTACAO_TIPO_PAPEL,
+    END               AS LOTACAO_TIPO,
+    'Principal'       AS LOTACAO_TIPO_PAPEL,
     LO.ID_LOT_LOTACAO AS ID_PAPEL
   FROM SIGARH.CAD_PESSOA_FISICA PF
   INNER JOIN SIGARH.CAD_RECURSO_HUMANO RH
@@ -813,6 +818,7 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
   LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO_SERVIDOR CPS
   ON CPS.ID_CAD_SERVIDOR   =RH.ID_CAD_RECURSO_HUMANO
   AND CPS.DT_FIM_VIGENCIA IS NULL
+  AND CPS.DT_EXCLUSAO IS NULL
   LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO CP
   ON CP.ID_CAD_CLASSE_PADRAO=CPS.ID_CAD_CLASSE_PADRAO
   LEFT OUTER JOIN SIGARH.CAD_CLASSE C
@@ -883,8 +889,8 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
       WHEN 'JUIZADO ESPECIAL'
       THEN 'Unidade Judicial'
       ELSE 'Unidade da Administração'
-    END AS LOTACAO_TIPO,
-    'Principal'   AS LOTACAO_TIPO_PAPEL,
+    END               AS LOTACAO_TIPO,
+    'Principal'       AS LOTACAO_TIPO_PAPEL,
     LO.ID_LOT_LOTACAO AS ID_PAPEL
   FROM SIGARH.CAD_PESSOA_FISICA PF
   INNER JOIN SIGARH.CAD_RECURSO_HUMANO RH
@@ -921,6 +927,7 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
   LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO_SERVIDOR CPS
   ON CPS.ID_CAD_SERVIDOR   =RH.ID_CAD_RECURSO_HUMANO
   AND CPS.DT_FIM_VIGENCIA IS NULL
+  AND CPS.DT_EXCLUSAO IS NULL
   LEFT OUTER JOIN SIGARH.CAD_CLASSE_PADRAO CP
   ON CP.ID_CAD_CLASSE_PADRAO=CPS.ID_CAD_CLASSE_PADRAO
   LEFT OUTER JOIN SIGARH.CAD_CLASSE C
@@ -1032,9 +1039,9 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
       WHEN 'JUIZADO ESPECIAL'
       THEN 'Unidade Judicial'
       ELSE 'Unidade da Administração'
-    END AS LOTACAO_TIPO,
-    'Principal'   AS LOTACAO_TIPO_PAPEL,
-    NULL AS ID_PAPEL
+    END         AS LOTACAO_TIPO,
+    'Principal' AS LOTACAO_TIPO_PAPEL,
+    NULL        AS ID_PAPEL
   FROM SIGARH.LOT_UNIDADE U
   INNER JOIN SIGARH.LOT_ORGANIZACIONAL O
   ON O.ID_LOT_UNIDADE=U.ID_LOT_UNIDADE
@@ -1047,3 +1054,10 @@ CREATE OR REPLACE FORCE VIEW "SIGARH"."DADOS_RH" ("PESSOA_ID", "PESSOA_CPF", "PE
   ON U_PAI.ID_LOT_UNIDADE =HH.LOT_UNIDADE_SUPERIOR
   WHERE U.ID_CAD_ORGAO    = 1
   ORDER BY PESSOA_MATRICULA;
+-- new object type path: SCHEMA_EXPORT/VIEW/GRANT/OWNER_GRANT/OBJECT_GRANT
+GRANT SELECT ON "SIGARH"."DADOS_RH" TO "SIGASR_CON";
+GRANT SELECT ON "SIGARH"."DADOS_RH" TO "SIGARH_SELECT";
+GRANT SELECT ON "SIGARH"."DADOS_RH" TO "SIGATP_CON";
+GRANT SELECT ON "SIGARH"."DADOS_RH" TO "SIGASR";
+GRANT SELECT ON "SIGARH"."DADOS_RH" TO "SIGASR_SELECT";
+GRANT SELECT ON "SIGARH"."DADOS_RH" TO "SIGASR_READ_CON" WITH GRANT OPTION;

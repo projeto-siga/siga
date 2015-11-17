@@ -36,7 +36,7 @@
 	</c:if>
 </c:catch>
 <c:catch var="catchException">
-	<siga:pagina titulo="Erro Geral">
+	<siga:pagina titulo="Erro Geral" desabilitarbusca="sim" desabilitarmenu="sim" desabilitarComplementoHEAD="sim">
 
 		<jsp:include page="main.jsp"></jsp:include>
 		
@@ -45,7 +45,7 @@
 			<div class="gt-content clearfix">
 
 				<div id="caption" class="gt-error-page-hd">
-					<h2>Não Foi Possível Completar a Operação</h2>
+					<h2>Não Foi Possível Completar a Operação (${pageContext.getRequest().serverName})</h2>
 						 <%-- <c:forEach items="${requestScope}" var='p'>
 							<ul>
             				<li>Parameter Name: <c:out value='${p.key}'/></li>
@@ -88,10 +88,13 @@
 						</tr>
 					</table>
 				</div>
-				<div style="padding-top:10px;">
-				<input type="button" id="show_stack" value="Mais detalhes"
-					class="gt-btn-large gt-btn-right"
-					onclick="javascript: document.getElementById('caption').setAttribute('class',''); document.getElementById('stack').style.display=''; document.getElementById('show_stack').style.display='none';" />
+				<div style="padding-top:10px;float: right;">
+					<table>
+						<tr>
+							<td><input type="button" value="Voltar" class="gt-btn-medium gt-btn-left"  onclick="javascript:history.back();" /></td>
+							<td><input type="button" id="show_stack" value="Mais detalhes" class="gt-btn-large gt-btn-right" onclick="javascript: document.getElementById('caption').setAttribute('class',''); document.getElementById('stack').style.display=''; document.getElementById('show_stack').style.display='none';" /></td>
+						</tr>
+					</table>
 				</div>
 			</div>
 		</div>

@@ -31,6 +31,7 @@ public class SrThreadFilter extends ThreadFilter {
 			throw new ServletException(e);
 		} finally {
 			ContextoPersistencia.setEntityManager(null);
+			HibernateUtil.fechaSessaoSeEstiverAberta();
 			CpDao.freeInstance();
 		}
 	}

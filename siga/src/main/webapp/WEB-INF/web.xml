@@ -145,6 +145,10 @@
 	<!-- Libera acesso aos seguintes diretorios -->
 	<security-constraint>
 		<web-resource-collection>
+			<web-resource-name>bootstrap</web-resource-name>
+			<url-pattern>/bootstrap/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
 			<web-resource-name>css</web-resource-name>
 			<url-pattern>/css/*</url-pattern>
 		</web-resource-collection>

@@ -19,6 +19,6 @@ public class PrincipalController  extends SrController{
 	@Path("/app/principal")
 	public void principal() throws Exception {
 		//Principal
-		result.redirectTo(SolicitacaoController.class).editar(null);
+		result.redirectTo(SolicitacaoController.class).buscar(null, null, false, false);
 	}
 }

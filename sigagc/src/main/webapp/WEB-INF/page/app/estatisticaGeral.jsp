@@ -59,7 +59,7 @@
 				</table>
 			</div>
 			</c:if> 
-			<c:if test="${not empty listaMaisVisitados}">
+			<c:if test="${empty listaMaisVisitados}">
 				<h6 style="background:#d8d8c0;padding:3px 10px;">Nenhum conhecimento visitado.</h6>
 			</c:if>
 			<br />
@@ -172,7 +172,7 @@
 			if (selecao.column == 2){
 				var mesAno = data.getValue(selecao.row,0).split("/");
 				var numeroMes = converteMes(mesAno[0]);
-				location.href = "${linkTo[AppController].listar}?filtro.situacao=" + "36" +
+				location.href = "${linkTo[AppController].listar}?filtro.situacao.idMarcador=" + "36" +
 								"&filtro.dtIni=" + encodeURIComponent(primeiroDiaMes(mesAno[1],numeroMes)) + 
 								"&filtro.dtFim=" + encodeURIComponent(ultimoDiaMes(mesAno[1],numeroMes)) +
 								"&filtro.pesquisa=true&estatistica=" + data.getValue(selecao.row,selecao.column);

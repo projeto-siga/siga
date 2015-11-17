@@ -14,6 +14,7 @@
 <c:if test="${not docVO.digital}">
 	<script type="text/javascript">
 		$("html").addClass("fisico");
+		$("body").addClass("fisico");
 	</script>
 </c:if>
 <div class="gt-bd" style="padding-bottom: 0px;">

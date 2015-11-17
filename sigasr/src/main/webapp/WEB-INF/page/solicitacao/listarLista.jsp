@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <siga:pagina titulo="Listas">
 	
@@ -48,7 +49,7 @@
 
 							<td class="acoes"> 
 								<c:if test="${item.podeEditar(lotaTitular, titular)}">	
-									<siga:desativarReativar id="${item.idLista}" onReativar="listaService.reativar" onDesativar="listaService.desativar" isAtivo="${item.isAtivo()}"></siga:desativarReativar>
+									<sigasr:desativarReativar id="${item.idLista}" onReativar="listaService.reativar" onDesativar="listaService.desativar" isAtivo="${item.isAtivo()}"></sigasr:desativarReativar>
 									<a onclick="javascript:editarLista(event, $(this).parent().parent().data('json'))"> 
 										<img src="/siga/css/famfamfam/icons/pencil.png" style="margin-right: 5px;">
 									</a>
@@ -83,9 +84,9 @@
 </div>
 </div>
 	
-<siga:modal nome="editarLista" titulo="Cadastrar Acordo">
+<sigasr:modal nome="editarLista" titulo="Cadastrar Acordo">
 	<div id="divEditarLista"><jsp:include page="editarLista.jsp"></jsp:include></div>
-</siga:modal>
+</sigasr:modal>
 
 </siga:pagina>
 

@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <siga:pagina titulo="Acordos">
 
@@ -51,7 +52,7 @@
 									<td >${acordo.nomeAcordo}</td>
 									<td>${acordo.descrAcordo}</td>
 									<td class="acoes">
-										<siga:desativarReativar id="${acordo.idAcordo}" onReativar="acordoService.reativar" onDesativar="acordoService.desativar" isAtivo="${acordo.isAtivo()}"></siga:desativarReativar>
+										<sigasr:desativarReativar id="${acordo.idAcordo}" onReativar="acordoService.reativar" onDesativar="acordoService.desativar" isAtivo="${acordo.isAtivo()}"></sigasr:desativarReativar>
 									</td>
 							</tr>
 						</c:forEach>
@@ -68,9 +69,9 @@
 	
 	<br /><br /><br />
 	
-	<siga:modal nome="acordo" titulo="Cadastrar Acordo">
+	<sigasr:modal nome="acordo" titulo="Cadastrar Acordo">
 		<div id="divEditarAcordoForm"><jsp:include page="editar.jsp"></jsp:include></div>
-	</siga:modal>
+	</sigasr:modal>
 </siga:pagina>
 
 <script>

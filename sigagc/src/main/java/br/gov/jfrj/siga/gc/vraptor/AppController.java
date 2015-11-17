@@ -173,16 +173,16 @@ public class AppController extends GcController {
 	}
 
 	public void knowledgeInplace(Long id, String[] tags, String msgvazio,
-			String urlvazio, String titulo, boolean popup, String estiloBusca,
+			String urlvazio, String titulo, boolean testarAcesso, boolean popup, String estiloBusca,
 			Boolean podeCriar) throws Exception {
-		renderKnowledge(id, tags, "inplace", msgvazio, urlvazio, titulo, false,
+		renderKnowledge(id, tags, "inplace", msgvazio, urlvazio, titulo, testarAcesso,
 				popup, estiloBusca, podeCriar);
 	}
 
 	public void knowledgeSidebar(Long id, String[] tags, String msgvazio,
-			String urlvazio, String titulo, boolean popup, String estiloBusca,
+			String urlvazio, String titulo, boolean testarAcesso, boolean popup, String estiloBusca,
 			Boolean podeCriar) throws Exception {
-		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo, false,
+		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo, testarAcesso,
 				popup, estiloBusca, podeCriar);
 	}
 
@@ -235,7 +235,7 @@ public class AppController extends GcController {
 				continue;
 
 			// o[3] = URLEncoder.encode(info.getSigla(), "UTF-8");
-			o[3] = info.getSigla();
+			o[3] = info.getSiglaCompacta();
 			if (o[2] != null && o[2] instanceof byte[]) {
 				String s = new String((byte[]) o[2], Charset.forName("utf-8"));
 				s = bl.ellipsize(s, 100);
@@ -1291,5 +1291,5 @@ public class AppController extends GcController {
 				getTitular(), getLotaTitular());
 		movimentacoes(sigla);
 	}
-
+	
 }

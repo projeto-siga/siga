@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.sr.interceptor;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 
 import org.hibernate.Session;
 
@@ -23,13 +24,9 @@ import br.gov.jfrj.siga.vraptor.ParameterOptionalLoaderInterceptor;
 		ParameterOptionalLoaderInterceptor.class })
 public class ContextInterceptor implements Interceptor {
 
-	private final static ThreadLocal<EntityManager> emByThread = new ThreadLocal<EntityManager>();
-
-	private final static ThreadLocal<Result> resultByThread = new ThreadLocal<Result>();
-
 	public ContextInterceptor(EntityManager em, Result result) throws Exception{
 		ContextoPersistencia.setEntityManager(em);
-		resultByThread.set(result);
+		EntityTransaction t = em.getTransaction();
 		CpDao.freeInstance();
 		CpDao.getInstance((Session) em.getDelegate(), ((Session) em
 				.getDelegate()).getSessionFactory().openStatelessSession());
@@ -39,14 +36,6 @@ public class ContextInterceptor implements Interceptor {
 		HibernateUtil.configurarHibernate((Session)em.getDelegate());
 		
 		Sr.getInstance().getConf().limparCacheSeNecessario();
-	}
-
-	static public EntityManager em() {
-		return emByThread.get();
-	}
-
-	static public Result result() {
-		return resultByThread.get();
 	}
 
 	@Override

@@ -40,15 +40,20 @@ public class Cp<TConf extends CpConfiguracaoBL, TComp extends CpCompetenciaBL, T
 		if (instance == null) {
 			synchronized (Cp.class) {
 				if (instance == null) {
+					CpConfiguracaoBL confBL = new CpConfiguracaoBL();
+					CpConfiguracaoComparator comparator = new CpConfiguracaoComparator();
+					CpCompetenciaBL compBL = new CpCompetenciaBL();
+					CpBL cpBL = new CpBL();
+					CpPropriedadeBL propBL = new CpPropriedadeBL();
+					
 					instance = new Cp();
-					instance.setConf(new CpConfiguracaoBL());
-					instance.getConf().setComparator(
-							new CpConfiguracaoComparator());
-					instance.setComp(new CpCompetenciaBL());
+					instance.setConf(confBL);
+					instance.getConf().setComparator(comparator);
+					instance.setComp(compBL);
 					instance.getComp().setConfiguracaoBL(instance.getConf());
-					instance.setBL(new CpBL());
+					instance.setBL(cpBL);
 					instance.getBL().setComp(instance.getComp());
-					instance.setProp(new CpPropriedadeBL());
+					instance.setProp(propBL);
 				}
 			}
 		}

@@ -63,7 +63,6 @@ public class PrincipalController extends SigaController {
 			if (matricula != null) {
 				pes = daoPes(matricula);
 				lot = pes.getLotacao();
-//				testes = "/testes";
 				incluirMatricula = "&matricula=" + matricula;
 			} else {
 				incluirMatricula = "&matricula=" + getTitular().getSiglaCompleta();
@@ -71,11 +70,20 @@ public class PrincipalController extends SigaController {
 
 			final GenericoSelecao sel = buscarGenericoPorSigla(sigla, pes, lot,
 					incluirMatricula);
-
+			
+			if (sel.getId() == null) {
+				if (Cp.getInstance().getProp().gsaUrl() != null) {
+					sel.setId(-1L);
+					sel.setSigla(sigla);
+					sel.setDescricao("/siga/app/busca?q=" + sigla);
+				} else {
+					throw new Exception("Elemento não encontrado");
+				}
+			}
+			
 			result.include("sel", sel);
 			result.include("request", getRequest());
 			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
-
 		} catch (Exception e) {
 			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
 		}
@@ -117,7 +125,7 @@ public class PrincipalController extends SigaController {
 			if (pes == null || lot == null || Cp.getInstance()
 					.getConf()
 					.podeUtilizarServicoPorConfiguracao(pes, lot, "SIGA;SR"))
-				URLSelecionar = urlBase + "/sigasr" + testes+ "/app/solicitacao/selecionar?sigla=" + sigla + incluirMatricula;
+				URLSelecionar = urlBase + "/sigasr" + testes+ "/app/solicitacao/selecionar?retornarCompacta=true&sigla=" + sigla + incluirMatricula;
 		}
 		//alterado formato da sigla de requisições, missões e serviços
 		//else if (copiaSigla.startsWith("MTP")
@@ -140,9 +148,13 @@ public class PrincipalController extends SigaController {
 					+ "/sigaex" + (testes.length() > 0 ? testes : "/app/expediente") + "/selecionar?sigla=" + sigla+ incluirMatricula;
 
 		final SigaHTTP http = new SigaHTTP();
-		String[] response = http.get(URLSelecionar, getRequest(), null).split(";");
+		String[] response = null;
+		try {
+			response = http.get(URLSelecionar, getRequest(), null).split(";");
+		} catch (Exception e) {
+		}
 
-		if (response.length == 1 && Integer.valueOf(response[0]) == 0) {
+		if (response == null || (response.length == 1 && Integer.valueOf(response[0]) == 0)) {
 			//verificar se após a retirada dos prefixos referente 
 			//ao orgão (sigla_orgao_usu = RJ ou acronimo_orgao_usu = JFRJ) e não achar resultado com as opções anteriores 
 			//a string copiaSigla somente possui números
@@ -156,7 +168,12 @@ public class PrincipalController extends SigaController {
 					+ "/siga/app"+ (testes.length() > 0 ? testes : "/lotacao")+ "/selecionar?sigla=" + sigla+ incluirMatricula;
 			}
 			
-			response = http.get(URLSelecionar, getRequest(), null).split(";");
+			try {
+				response = http.get(URLSelecionar, getRequest(), null).split(";");
+			} catch (Exception e) {
+			}	
+			if (response == null || (response.length == 1 && Integer.valueOf(response[0]) == 0))
+				return sel;
 			
 			if (copiaSigla.matches("(^[0-9]+$)")) 
 				uRLExibir = "/siga/app/pessoa/exibir?sigla="+ response[2];
@@ -166,7 +183,7 @@ public class PrincipalController extends SigaController {
 		else {
 			if (copiaSigla.startsWith("SR"))
 //					if (copiaSigla.matches("^[SR|sr].*[0-9]+$"))
-					uRLExibir = "/sigasr/app/solicitacao/exibir/" + response[1];
+					uRLExibir = "/sigasr/app/solicitacao/exibir/" + response[2];
 			//alterado formato da sigla de requisições, missões e serviços
 			//else if (copiaSigla.startsWith("MTP")
 			//		|| copiaSigla.startsWith("STP")

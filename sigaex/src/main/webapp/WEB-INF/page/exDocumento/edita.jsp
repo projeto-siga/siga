@@ -1,3 +1,4 @@
+
 <%@ page language="java" contentType="text/html; charset=UTF-8"buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
@@ -27,6 +28,7 @@
 			<form id="frm" name="frm" theme="simple" method="post" enctype="multipart/form-data">
 				<input type="hidden" id="idTamanhoMaximoDescricao" name="exDocumentoDTO.tamanhoMaximoDescricao" value="${exDocumentoDTO.tamanhoMaximoDescricao}" />
 				<input type="hidden" id="alterouModelo" name="alterouModelo" />
+				<input type="hidden" id="clickSelect" name="clickSelect" />
 				<input type="hidden" name="postback" value="1" />
 				<input type="hidden" id="sigla" name="exDocumentoDTO.sigla" value="${exDocumentoDTO.sigla}" />
 				<input type="hidden" name="exDocumentoDTO.nomePreenchimento" value="" />
@@ -69,7 +71,8 @@
 						<td width="10%">Origem:</td>
 						<td width="10%">
 						
-							<select  name="exDocumentoDTO.idTpDoc" onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();" style="${estiloTipo}">
+							<select  name="exDocumentoDTO.idTpDoc" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
+							onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)" style="${estiloTipo}">
 								<c:forEach items="${exDocumentoDTO.tiposDocumento}" var="item">
 									<option value="${item.idTpDoc}" ${item.idTpDoc == exDocumentoDTO.idTpDoc ? 'selected' : ''}>
 										${item.descrTipoDocumento}
@@ -103,7 +106,7 @@
 										${exDocumentoDTO.eletronicoString}
 										<c:if test="${exDocumentoDTO.eletronico == 2}">
 											<script type="text/javascript">
-												$("html").addClass("fisico");
+											$("html").addClass("fisico");$("body").addClass("fisico");
 											</script>
 										</c:if>
 									</c:when>
@@ -124,10 +127,13 @@
 									    
 										<script type="text/javascript">
 											function setFisico() {
-												if ($('input[name=exDocumentoDTO\\.eletronico]:checked').val() == 2)
-													$('html').addClass('fisico'); 
-												else 
-													$('html').removeClass('fisico');
+												if ($('input[name=exDocumentoDTO\\.eletronico]:checked').val() == 2) {
+													$("html").addClass("fisico");
+													$('body').addClass('fisico'); 
+												} else {
+													$('html').removeClass('fisico'); 
+													$('body').removeClass('fisico');
+												}
 											}; 
 											setFisico();
 										</script>									
@@ -249,7 +255,10 @@
 						<input type="hidden" name="campos" value="tipoDestinatario" />
 						<td colspan="3">
 							
-							<select  name="exDocumentoDTO.tipoDestinatario" onchange="javascript:sbmt();">
+							<!-- <select  name="exDocumentoDTO.tipoDestinatario" onchange="javascript:sbmt();">  -->
+							
+							<select  name="exDocumentoDTO.tipoDestinatario" onkeypress="presskeySelect(event, this, 'tipoDestinatario')" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
+							onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, 'tipoDestinatario')">
 								<c:forEach items="${exDocumentoDTO.listaTipoDest}" var="item">
 									<option value="${item.key}" ${item.key == exDocumentoDTO.tipoDestinatario ? 'selected' : ''}>
 										${item.value}
@@ -260,19 +269,19 @@
 							<siga:span id="destinatario" depende="tipoDestinatario">
 								<c:choose>
 									<c:when test='${exDocumentoDTO.tipoDestinatario == 1}'>
-										<input type="hidden" name="campos" value="destinatarioSel.id" />
-										<siga:selecao propriedade="destinatario" inputName="exDocumentoDTO.destinatario" tema="simple" reler="sim" modulo="siga" />
+										<input type="hidden" name="campos" value="destinatario" />
+										<siga:selecao propriedade="destinatario" inputName="exDocumentoDTO.destinatario" tema="simple" idAjax="destinatario" reler="ajax" modulo="siga" />
 										<!--  idAjax="destinatario"  -->										    
 									</c:when>
 									<c:when test='${exDocumentoDTO.tipoDestinatario == 2}'>
 										<input type="hidden" name="campos" value="lotacaoDestinatarioSel.id" />
-										<siga:selecao propriedade="lotacaoDestinatario" inputName="exDocumentoDTO.lotacaoDestinatario" tema="simple" reler="sim" modulo="siga" />
+										<siga:selecao propriedade="lotacaoDestinatario" inputName="exDocumentoDTO.lotacaoDestinatario" tema="simple" idAjax="destinatario2" reler="ajax" modulo="siga" />
 										</td>			
 										<!--  idAjax="destinatario" -->				   
 									</c:when>
 									<c:when test='${exDocumentoDTO.tipoDestinatario == 3}'>
 										<input type="hidden" name="campos" value="orgaoExternoDestinatarioSel.id" />
-										<siga:selecao propriedade="orgaoExternoDestinatario" inputName="exDocumentoDTO.orgaoExternoDestinatario" tema="simple" reler="sim" modulo="siga" />
+										<siga:selecao propriedade="orgaoExternoDestinatario" inputName="exDocumentoDTO.orgaoExternoDestinatario" tema="simple" idAjax="destinatario3" reler="ajax" modulo="siga" />
 										<!--  idAjax="destinatario" -->
 										<br>
 										<input type="text" name="exDocumentoDTO.nmOrgaoExterno" size="120" maxLength="256" value="${exDocumentoDTO.nmOrgaoExterno}"/>
@@ -295,7 +304,8 @@
 						<tr style="display: ${(exDocumentoDTO.formasDoc).size() != 1 ? 'visible' : 'none'};">
 							<td>Espécie:</td>
 							<td colspan="3">
-								<select  name="exDocumentoDTO.idFormaDoc" onchange="javascript:document.getElementById('alterouModelo').value='true';sbmt();" style="${estiloTipo}">
+								<select  name="exDocumentoDTO.idFormaDoc" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
+								onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)" style="${estiloTipo}">
 									<c:forEach items="${exDocumentoDTO.formasDoc}" var="item">
 										<option value="${item.idFormaDoc}" ${item.idFormaDoc == exDocumentoDTO.idFormaDoc ? 'selected' : ''}>
 											${item.descrFormaDoc}
@@ -314,7 +324,7 @@
 									<td colspan="3">
 										<siga:div id="modelo" depende="forma">
 											<%-- onchange="document.getElementById('alterouModelo').value='true';sbmt();" --%>
-											<select name="exDocumentoDTO.idMod" style="${estiloTipo}" class="dependent">
+											<select name="exDocumentoDTO.idMod" style="${estiloTipo}" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';" onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)">
 												<c:forEach items="${exDocumentoDTO.modelos}" var="item">
 													<option value="${item.idMod}" ${item.idMod == exDocumentoDTO.idMod ? 'selected' : ''}>
 														${item.nmMod}
@@ -464,6 +474,22 @@
 <script src="/siga/javascript/jquery.dependent-selects.js"></script>
 
 <script type="text/javascript">
+function presskeySelect(event, id, parameter) {
+    if (event.type == 'keypress') {
+        if(event.keyCode == '13'){
+        	sbmt(parameter);
+        }
+    } 
+}
+function mouseSelect(event, id, parameter) {	
+	if (event.type == 'change') {
+        var click = document.getElementById('clickSelect').value;
+        if(click){
+			sbmt(parameter);
+        }
+    }
+}
+
 $(document).ready(function() {$('.dependent').dependentSelects({
 	  separator: ': ', // String: The separator used to define the nesting in the option field's text
 	  placeholderOption: false,

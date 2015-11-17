@@ -15,6 +15,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.view.Results;
@@ -30,6 +32,8 @@ import br.gov.jfrj.siga.sr.model.DadosRH.Pessoa;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
+@Resource
+@Path("app/corporativo")
 public class CorporativoController extends SrController {
 
 		public CorporativoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em,  SrValidator srValidator, Validator validator) {

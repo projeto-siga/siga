@@ -12,15 +12,14 @@
 </style>
 
 <script>
+	
 	function queryDesativarReativar(id0, mostrarDesativados0) {
 		return jQuery.param({
 			id : id0,
 			mostrarDesativados : mostrarDesativados0
 		});
 	}
-</script>
 
-<script>
 	var requesting=false;
 	
 	function block(){
@@ -33,6 +32,25 @@
 	function unblock(){
 		requesting = false;
 	}
+
+	function sbmt(id) {
+		jQuery.blockUI(objBlock);
+		if (typeof postbackURL == 'function')
+			Siga.ajax(postbackURL(), null, "GET", function(response){		
+	    		sbmtResponse(response, id);
+			});	
+	}
+	
+	function sbmtResponse(response, id) {
+		$("div[depende*='"+id+"']").each(function() {
+			var responseHtml = $(response).find("#"+this.id).html();
+			$(this).html(responseHtml);
+			$(responseHtml).find("script").each(function(){
+				eval($(this).text());
+			});
+		});	
+		jQuery.unblockUI();
+	}
 </script>
 
 <script src="/sigasr/javascripts/jquery-1.11.1.min.js"></script>
@@ -41,8 +59,8 @@
 <script src="/sigasr/javascripts/jquery.blockUI.js"></script>
 <script src="/sigasr/javascripts/jquery-config.js"></script>
 
-<siga:modal nome="server_error" titulo="Erro interno no servidor">
+<sigasr:modal nome="server_error" titulo="Erro interno no servidor">
 	<div id="erroInterno">
 		<div id="responseText"></div>
 	</div>
-</siga:modal>
+</sigasr:modal>

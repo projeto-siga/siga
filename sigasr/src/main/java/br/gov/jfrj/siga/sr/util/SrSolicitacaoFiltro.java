@@ -5,26 +5,21 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
-import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
-import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.sr.model.SrAcaoSelecao;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
-import br.gov.jfrj.siga.sr.model.SrAcordoSelecao;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
-import br.gov.jfrj.siga.sr.model.SrItemConfiguracaoSelecao;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
-import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoVO;
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class SrSolicitacaoFiltro extends SrSolicitacao {
 
@@ -51,10 +46,6 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	private boolean naoDesignados;
 
-	private boolean apenasFechados;
-
-	private Long idNovoAtributo;
-
 	private Long start;
 
 	private Long length;
@@ -62,19 +53,6 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	private String orderBy;
 	
 	private SentidoOrdenacao sentidoOrdenacao = SentidoOrdenacao.DESC;
-
-	private DpPessoaSelecao atendenteSel;
-	private DpLotacaoSelecao lotaAtendenteSel;
-
-	private DpPessoaSelecao cadastranteSel;
-	private DpLotacaoSelecao lotaTitularSel;
-
-	private DpPessoaSelecao solicitanteSel;
-	private DpLotacaoSelecao lotaSolicitanteSel;
-
-	private SrAcaoSelecao acaoSel;
-	private SrAcordoSelecao acordoSel;
-	private SrItemConfiguracaoSelecao itemConfiguracaoSel;
 	
 	private static List<Long> MARCADORES_ESTADO = Arrays.asList(new Long[]{9L, 42L, 43L, 44L, 45L, 61L});
 	
@@ -86,65 +64,12 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		super();
 	}	
 
-	public void carregarSelecao() {
-		if (atendenteSel != null) {
-			this.setAtendente(atendenteSel.buscarObjeto());
-			atendenteSel.carregarDadosParaView(this.getAtendente());
-		}
-
-		if (lotaAtendenteSel != null) {
-			this.setLotaAtendente(lotaAtendenteSel.buscarObjeto());
-			lotaAtendenteSel.carregarDadosParaView(this.getLotaAtendente());
-		}
-
-		if (cadastranteSel != null) {
-			this.setCadastrante(cadastranteSel.buscarObjeto());
-			cadastranteSel.carregarDadosParaView(this.getCadastrante());
-		}
-
-		if (lotaTitularSel != null) {
-			this.setLotaTitular(lotaTitularSel.buscarObjeto());
-			this.lotaTitularSel.carregarDadosParaView(this
-					.getLotaTitular());
-		}
-
-		if (solicitanteSel != null) {
-			this.setSolicitante(solicitanteSel.buscarObjeto());
-			solicitanteSel.carregarDadosParaView(this.getSolicitante());
-		}
-
-		if (lotaSolicitanteSel != null) {
-			this.setLotaSolicitante(lotaSolicitanteSel.buscarObjeto());
-			lotaSolicitanteSel.carregarDadosParaView(this.getLotaSolicitante());
-		}
-
-		if (acaoSel != null) {
-			this.setAcao(acaoSel.getObjeto());
-			acaoSel.carregarDadosParaView(this.getAcao());
-		}
-
-		if (acordoSel != null) {
-			this.setAcordo(acordoSel.buscarObjeto());
-			acordoSel.carregarDadosParaView(this.getAcordo());
-		}
-
-		if (situacao != null && situacao.getIdMarcador() != null) {
-			this.setSituacao(CpMarcador.AR.findById(situacao.getIdMarcador()));
-		}
-
-		if (itemConfiguracaoSel != null) {
-			this.setItemConfiguracao(getItemConfiguracaoSel().buscarObjeto());
-			itemConfiguracaoSel.carregarDadosParaView(this
-					.getItemConfiguracao());
-		}
-	}
-
 	@SuppressWarnings("unchecked")
-	public Long consultarQuantidade() throws Exception {
+	public Long buscarQuantidade() throws Exception {
 		// Edson: foi necessario separar em subquery porque o Oracle nao aceita
 		// distinct em coluna CLOB em query contendo join
 		StringBuilder query = new StringBuilder("select count(*) ");
-		montarBusca(query);
+		incluirJoinsEWheres(query);
 		return (Long) ContextoPersistencia.em().createQuery(query.toString())
 				.getSingleResult();
 	}
@@ -158,7 +83,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		query.append("select sol, situacao, ultMov");
 		query.append(idListaPrioridade > 0 ? ", l " : " "); 
 				
-		montarBusca(query);
+		incluirJoinsEWheres(query);
 		
 		query.append(" order by ");
 		if (orderBy.equals("dtReg"))
@@ -202,15 +127,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			jq.setMaxResults(getLength().intValue());
 		return jq.getResultList();
 	}
-	
-	@SuppressWarnings("unchecked")
-	public List<Object[]> buscarSimplificado() throws Exception {
-		StringBuilder query = new StringBuilder("select sol.idSolicitacao, sol.descrSolicitacao, sol.codigo, item.tituloItemConfiguracao" + " from SrSolicitacao sol inner join sol.itemConfiguracao as item ");
-		montarBusca(query);
-		return ContextoPersistencia.em().createQuery(query.toString()).setMaxResults(10).getResultList();
-	}
 
-	private void montarBusca(StringBuilder query) throws Exception {
+	private void incluirJoinsEWheres(StringBuilder query) throws Exception {
 
 		// Edson: O join com duas marcas é necessário porque, quando se busca pelo marcador "Como cadastrante", por exemplo,
 		// o que deve ser exibido na coluna Situação é "Em andamento", não "Como cadastrante" 
@@ -227,12 +145,46 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (situacaoFiltro.equals("situacaoAux"))
 			query.append(" inner join sol.meuMarcaSet situacaoAux ");
 		
-		query.append(" left join sol.dnmUltimaMovimentacao ultMov ");
+		query.append(" left join sol.meuMovimentacaoSet ultMov ");
 		
 		query.append(idListaPrioridade != null && idListaPrioridade > 0 ? " inner join sol.meuPrioridadeSolicitacaoSet l " : "");
 		
 		query.append(" where sol.hisDtFim is null ");
+		
+		query.append(" and not exists (from SrMovimentacao mov where solicitacao = sol and dtIniMov > ultMov.dtIniMov) ");
 
+		incluirWheresBasicos(query);
+		
+		if (situacaoFiltro.equals("situacao"))
+			query.append(" and situacao.cpMarcador.idMarcador = " + getSituacao().getIdMarcador());
+		else query.append(" and situacao.cpMarcador.idMarcador in (9, 42, 43, 44, 45, 61) ");
+		
+		query.append(" and (situacao.dtIniMarca is null or "
+					+ "situacao.dtIniMarca < sysdate) ");
+		query.append(" and (situacao.dtFimMarca is null or "
+					+ "situacao.dtFimMarca > sysdate) ");
+		
+		if (situacaoFiltro.equals("situacaoAux")){
+			query.append(" and situacaoAux.cpMarcador.idMarcador = "
+					+ getSituacao().getIdMarcador());
+			query.append(" and (situacaoAux.dtIniMarca is null or "
+					+ "situacaoAux.dtIniMarca < sysdate) ");
+			query.append(" and (situacaoAux.dtFimMarca is null or "
+					+ "situacaoAux.dtFimMarca > sysdate) ");
+		}
+		
+		if (Filtros.deveAdicionar(getAtendente())){
+			query.append("and " + situacaoFiltro + ".dpPessoaIni.idPessoa = "
+					+ getAtendente().getIdInicial());
+		} else if (Filtros.deveAdicionar(getLotaAtendente())) {
+				query.append("and " + situacaoFiltro + ".dpLotacaoIni.idLotacao = "
+						+ getLotaAtendente().getIdInicial());
+		}
+
+	}
+	
+	private void incluirWheresBasicos(StringBuilder query){
+		
 		if (Filtros.deveAdicionar(getCadastrante()))
 			query.append(" and sol.cadastrante.idPessoaIni = "
 					+ getCadastrante().getIdInicial());
@@ -304,130 +256,49 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (Filtros.deveAdicionar(getAcordo()))
 			query.append(" and sol.acordos.hisIdIni = " + getAcordo().getHisIdIni() + " ");
 
-		if (situacaoFiltro.equals("situacao"))
-			query.append(" and situacao.cpMarcador.idMarcador = " + getSituacao().getIdMarcador());
-		else query.append(" and situacao.cpMarcador.idMarcador in (9, 42, 43, 44, 45, 61) ");
-		
-		query.append(" and (situacao.dtIniMarca is null or "
-					+ "situacao.dtIniMarca < sysdate) ");
-		query.append(" and (situacao.dtFimMarca is null or "
-					+ "situacao.dtFimMarca > sysdate) ");
-		
-		if (situacaoFiltro.equals("situacaoAux")){
-			query.append(" and situacaoAux.cpMarcador.idMarcador = "
-					+ getSituacao().getIdMarcador());
-			query.append(" and (situacaoAux.dtIniMarca is null or "
-					+ "situacaoAux.dtIniMarca < sysdate) ");
-			query.append(" and (situacaoAux.dtFimMarca is null or "
-					+ "situacaoAux.dtFimMarca > sysdate) ");
-		}
-		
-		if (Filtros.deveAdicionar(getAtendente())){
-			query.append("and " + situacaoFiltro + ".dpPessoaIni.idPessoa = "
-					+ getAtendente().getIdInicial());
-		} else if (Filtros.deveAdicionar(getLotaAtendente())) {
-				query.append("and " + situacaoFiltro + ".dpLotacaoIni.idLotacao = "
-						+ getLotaAtendente().getIdInicial());
-		}
-
 		if (isNaoDesignados())
 			query.append(" and situacao.dpPessoaIni is null ");
 
-		montarQueryAtributos(query);
-	}
+		//montarQueryAtributos(query);
 
-	private void montarQueryAtributos(StringBuilder query) {
-		Boolean existeFiltroPreenchido = Boolean.FALSE; // Indica se foi
-														// preenchido algum dos
-														// atributos informados
-														// na requisicao
-
-		StringBuilder subqueryAtributo = new StringBuilder();
-		if (meuAtributoSolicitacaoSet != null
-				&& !meuAtributoSolicitacaoSet.isEmpty()) {
-			subqueryAtributo.append(" and (");
-
-			for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
-				if (att.getValorAtributoSolicitacao() != null
-						&& !att.getValorAtributoSolicitacao().trim().isEmpty()) {
-					subqueryAtributo.append("(");
-					subqueryAtributo.append(" att.atributo.idAtributo = "
-							+ att.getAtributo().getIdAtributo());
-					subqueryAtributo
-							.append(" and att.valorAtributoSolicitacao = '"
-									+ att.getValorAtributoSolicitacao() + "' ");
-
-					subqueryAtributo.append(")");
-					subqueryAtributo.append(AND);
-
-					existeFiltroPreenchido = Boolean.TRUE;
-				}
-			}
-			subqueryAtributo
-					.setLength(subqueryAtributo.length() - AND.length()); // remove
-																			// o
-																			// ultimo
-																			// AND
-			subqueryAtributo.append(" )");
-		}
-		if (existeFiltroPreenchido) {
-			subqueryAtributo
-					.insert(0,
-							" and exists (from SrAtributoSolicitacao att where att.solicitacao.solicitacaoInicial = sol.solicitacaoInicial ");
-			subqueryAtributo.append(" )");
-			query.append(subqueryAtributo);
-		}
-	}
-
-	public List<SrAtributo> getTiposAtributosConsulta() {
-		List<SrAtributo> tiposAtributosConsulta = new ArrayList<SrAtributo>();
-
-		if (meuAtributoSolicitacaoSet != null) {
-			for (SrAtributoSolicitacao srAtributo : meuAtributoSolicitacaoSet) {
-				tiposAtributosConsulta.add(srAtributo.getAtributo());
-			}
-		}
-		return tiposAtributosConsulta;
-	}
-
-	public List<SrAtributo> itensDisponiveis(
-			List<SrAtributo> atributosDisponiveis, SrAtributo atributo) {
-		List<SrAtributo> arrayList = new ArrayList<SrAtributo>(
-				atributosDisponiveis);
-		arrayList.add(atributo);
-
-		Collections.sort(arrayList, new Comparator<SrAtributo>() {
-			@Override
-			public int compare(SrAtributo s0, SrAtributo s1) {
-				if (s0.getNomeAtributo() == null
-						&& s1.getNomeAtributo() == null) {
-					return 0;
-				} else if (s0.getNomeAtributo() == null) {
-					return 1;
-				} else if (s1.getNomeAtributo() == null) {
-					return -1;
-				}
-				return s0.getNomeAtributo().compareTo(s1.getNomeAtributo());
-			}
-		});
-		return arrayList;
+		
 	}
 
 	public boolean isRazoavelmentePreenchido() {
-		return situacao != null
-				|| cadastranteSel != null
-				|| solicitanteSel != null
-				|| atendenteSel != null
-				|| lotaAtendenteSel != null
-				|| acordoSel != null
-				|| dtIni != null
-				|| dtFim != null
-				|| itemConfiguracaoSel != null
-				|| acaoSel != null
-				|| acordoSel != null
-				|| (idListaPrioridade != null && idListaPrioridade >= 0)
+		return getSituacao() != null
+				|| getCadastrante() != null
+				|| getSolicitante() != null
+				|| getAtendente() != null
+				|| getLotaAtendente() != null
+				|| getAcordo() != null
+				|| getDtIni() != null
+				|| getDtFim() != null
+				|| getItemConfiguracao() != null
+				|| getAcao() != null
+				|| getAcordo() != null
+				|| (getIdListaPrioridade() != null && getIdListaPrioridade() >= 0)
 				|| (getDescrSolicitacao() != null && !getDescrSolicitacao()
 						.trim().equals("")) || getPrioridade() != null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> buscarSimplificado() throws Exception {
+		StringBuilder query = new StringBuilder("select sol.hisIdIni, "
+				+ " case when sol.descrSolicitacao is null then pai.descrSolicitacao else sol.descrSolicitacao end, "
+				+ " sol.dtReg "
+				+ " from SrSolicitacao sol left join sol.solicitacaoPai pai"
+				+ " where sol.rascunho = false and sol.hisDtFim is null ");
+		incluirWheresBasicos(query);
+		query.append(" order by sol.dtReg desc");
+		List<Object[]> results = ContextoPersistencia.em().createQuery(query.toString()).setMaxResults(10).getResultList();
+		
+		//Edson: ver um jeito melhor de formatar essas datas
+		for (Object[] o : results){
+			Date dtReg = (Date)o[2];
+			o[2] = new SimpleDateFormat("dd/MM/yyyy").format(dtReg);
+		}
+		
+		return results;
 	}
 
 	public boolean isPesquisar() {
@@ -519,96 +390,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	public void setNaoDesignados(boolean naoDesignados) {
 		this.naoDesignados = naoDesignados;
 	}
-
-	public boolean isApenasFechados() {
-		return apenasFechados;
-	}
-
-	public void setApenasFechados(boolean apenasFechados) {
-		this.apenasFechados = apenasFechados;
-	}
-
-	public Long getIdNovoAtributo() {
-		return idNovoAtributo;
-	}
-
-	public void setIdNovoAtributo(Long idNovoAtributo) {
-		this.idNovoAtributo = idNovoAtributo;
-	}
-
-	public DpPessoaSelecao getAtendenteSel() {
-		return atendenteSel;
-	}
-
-	public void setAtendenteSel(DpPessoaSelecao atendenteSel) {
-		this.atendenteSel = atendenteSel;
-	}
-
-	public DpLotacaoSelecao getLotaAtendenteSel() {
-		return lotaAtendenteSel;
-	}
-
-	public void setLotaAtendenteSel(DpLotacaoSelecao lotaAtendenteSel) {
-		this.lotaAtendenteSel = lotaAtendenteSel;
-	}
-
-	public DpPessoaSelecao getCadastranteSel() {
-		return cadastranteSel;
-	}
-
-	public void setCadastranteSel(DpPessoaSelecao cadastranteSel) {
-		this.cadastranteSel = cadastranteSel;
-	}
-
-	public DpLotacaoSelecao getLotaTitularSel() {
-		return lotaTitularSel;
-	}
-
-	public void setLotaTitularSel(DpLotacaoSelecao lotacadastranteSel) {
-		this.lotaTitularSel = lotacadastranteSel;
-	}
-
-	public DpPessoaSelecao getSolicitanteSel() {
-		return solicitanteSel;
-	}
-
-	public void setSolicitanteSel(DpPessoaSelecao solicitanteSel) {
-		this.solicitanteSel = solicitanteSel;
-	}
-
-	public DpLotacaoSelecao getLotaSolicitanteSel() {
-		return lotaSolicitanteSel;
-	}
-
-	public void setLotaSolicitanteSel(DpLotacaoSelecao lotaSolicitanteSel) {
-		this.lotaSolicitanteSel = lotaSolicitanteSel;
-	}
-
-	public SrAcaoSelecao getAcaoSel() {
-		return acaoSel;
-	}
-
-	public void setAcaoSel(SrAcaoSelecao acaoSel) {
-		this.acaoSel = acaoSel;
-	}
-
-	public SrAcordoSelecao getAcordoSel() {
-		return acordoSel;
-	}
-
-	public void setAcordoSel(SrAcordoSelecao acordoSel) {
-		this.acordoSel = acordoSel;
-	}
-
-	public SrItemConfiguracaoSelecao getItemConfiguracaoSel() {
-		return itemConfiguracaoSel;
-	}
-
-	public void setItemConfiguracaoSel(
-			SrItemConfiguracaoSelecao itemConfiguracaoSel) {
-		this.itemConfiguracaoSel = itemConfiguracaoSel;
-	}
-
+	
 	public Long getStart() {
 		return start;
 	}

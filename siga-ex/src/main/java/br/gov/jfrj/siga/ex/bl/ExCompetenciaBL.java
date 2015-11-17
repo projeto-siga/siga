@@ -1088,6 +1088,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeAssinar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		
+		if(mob.doc().isCancelado())
+			return false;
+		
 		if (mob.getDoc().isEletronico() && mob.getDoc().isAssinado())
 			return false;
 

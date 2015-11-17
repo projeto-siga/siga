@@ -127,6 +127,9 @@ public class SrMovimentacao extends Objeto {
 
     @Enumerated
     private SrTipoMotivoPendencia motivoPendencia;
+    
+    @Enumerated
+    private SrTipoMotivoFechamento motivoFechamento;
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "ID_MOV_FINALIZADORA")
@@ -306,9 +309,6 @@ public class SrMovimentacao extends Objeto {
 
         getSolicitacao().atualizarMarcas();
         
-        getSolicitacao().setDnmUltimaMovimentacao(this);
-        getSolicitacao().save();
-
         //notificaï¿½ï¿½o usuï¿½rio
         if (getSolicitacao().getMovimentacaoSetComCancelados().size() > 1
                 && getTipoMov().getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
@@ -670,10 +670,18 @@ public class SrMovimentacao extends Objeto {
         this.motivoEscalonamento = motivoEscalonamento;
     }
     
+	public SrTipoMotivoFechamento getMotivoFechamento() {
+		return motivoFechamento;
+	}
+
+	public void setMotivoFechamento(SrTipoMotivoFechamento motivoFechamento) {
+		this.motivoFechamento = motivoFechamento;
+	}
+
 	public List<String> getEmailsNotificacaoReplanejamento() {
 		SrSolicitacao solicitacao = getSolicitacao().getSolicitacaoAtual();
 		List<String> recipients = new ArrayList<String>();
-		for (SrGestorItem gestor : solicitacao.getItemConfiguracao().getGestorSet()) {
+		for (SrGestorItem gestor : solicitacao.getItemAtual().getGestorSet()) {
 			DpPessoa pessoaGestorAtual = gestor.getDpPessoa().getPessoaAtual();
 			if (pessoaGestorAtual != null && pessoaGestorAtual.getDataFim() == null)
 				if (pessoaGestorAtual.getEmailPessoa() != null)

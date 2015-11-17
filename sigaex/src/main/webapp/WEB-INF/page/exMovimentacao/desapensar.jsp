@@ -16,7 +16,7 @@ function sbmt() {
 <siga:pagina titulo="Movimentação">
 
 <c:if test="${not mob.doc.eletronico}">
-	<script type="text/javascript">$("html").addClass("fisico");</script>
+	<script type="text/javascript">$("html").addClass("fisico");$("fisico").addClass("fisico");</script>
 </c:if>
 
 	<div class="gt-bd clearfix">

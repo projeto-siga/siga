@@ -18,8 +18,12 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.util;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jbpm.context.def.VariableAccess;
 import org.jbpm.graph.exe.ExecutionContext;
@@ -40,6 +44,7 @@ public class WfMail extends Mail {
 	private Long tiId;
 	private List<VariableAccess> docAccessVariables;
 	private Map docVariables;
+	Logger logger = Logger.getLogger("br.gov.jfrj.siga.wf.email");
 
 	private static final long serialVersionUID = -1530708539893196841L;
 
@@ -49,6 +54,13 @@ public class WfMail extends Mail {
 	 */
 	@Override
 	public String getText() {
+		if (Wf.getInstance().getProp().getMailLinkTarefa() == null){
+			logger.log(Level.WARNING,"A propriedade mail.link.tarefa não está definida! Os e-mails enviados para o usuário não conterão o link correto para a tarefa");
+		}
+		if (Wf.getInstance().getProp().getMailLinkTarefa() == null){
+			logger.log(Level.WARNING,"A propriedade mail.link.documento não está definida! Os e-mails enviados para o usuário não conterão o link correto para o documento");
+		}
+		
 		String rodape = "\n\n----------\n";
 		if (tiId != null) {
 			rodape += "Link para a tarefa no SIGA-WF: " + Wf.getInstance().getProp().getMailLinkTarefa()
@@ -106,7 +118,14 @@ public class WfMail extends Mail {
 		// logá-los no System.out.
 //		super.getBccRecipients().add("xxx@xxx.com.br");
 		super.send();
-		// System.out.println(this.toString());
+
+		logger.log(Level.INFO,"Email enviado para " + super.getRecipients() + "[" + super.getSubject() + "]");
+		logger.log(Level.FINE,"Detalhes do e-mail enviado:"
+					+ "\nAssunto: " + getSubject()
+					+ "\nDe: " + getFromAddress()
+					+ "\nPara: " + getRecipients()
+					+ "\nTexto: " + getText());
+
 	}
 
 }

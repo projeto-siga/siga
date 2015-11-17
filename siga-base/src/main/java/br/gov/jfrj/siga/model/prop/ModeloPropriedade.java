@@ -205,5 +205,16 @@ public abstract class ModeloPropriedade {
 		}
 		return hashFinal;
 	}
+	
+	/**
+	 * Sobrescreve o valor de uma propriedade que foi carregada anteriormente. Se a propriedade não existir, cria a propriedade com o valor indicado.
+	 * @param nome - nome da propriedade
+	 * @param valor - novo valor da propriedade
+	 * @throws Exception
+	 */
+	protected void setPropriedade(String nome, String valor) throws Exception{
+		carregarPropriedades();
+		propriedades.setProperty(nome, valor);
+	}
 
 }

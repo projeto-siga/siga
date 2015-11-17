@@ -1,7 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 <div class="gt-content-box gt-for-table" style="margin-top: 15px;">
-	<form id="formSelecionarLista" action="${linkTo[SolicitacaoController].incluirEmListaGravar}?idSolicitaca=${solicitacao.idSolicitacao}
+	<form id="formSelecionarLista" action="${linkTo[SolicitacaoController].incluirEmListaGravar}?sigla=${solicitacao.siglaCompacta}
 		${lista != null ? '&idLista='+lista.idLista : ''}" onsubmit="javascript: return block();" enctype="multipart/form-data">
 		<input type="hidden" name="prioridade" />
 		<input type="hidden" name="naoReposicionarAutomatico"/>
@@ -32,12 +33,12 @@
 		</div>	
 		
 		<div class="gt-table-button gt-width-66">
-			<input type="hidden" name="idSolicitacao" value="${solicitacao.idSolicitacao}">
+			<input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}">
 			<input type="button" value="Selecionar Lista" class="gt-btn-medium gt-btn-left" onclick="listaService.incluirEmLista()"/>
-			<a href="${linkTo[SolicitacaoController].exibir[solicitacao.idSolicitacao]}" class="gt-btn-medium gt-btn-left">Voltar</a>
+			<a href="${linkTo[SolicitacaoController].exibir[solicitacao.siglaCompacta]}" class="gt-btn-medium gt-btn-left">Voltar</a>
 		</div>
 		
-		<siga:modal nome="selecionarPrioridade" titulo="Selecionar Prioridade">
+		<sigasr:modal nome="selecionarPrioridade" titulo="Selecionar Prioridade">
 			<div class="gt-form gt-content-box">
 				<div class="gt-form-row gt-width-66">
 					<label>Prioridade <span>*</span></label> 
@@ -59,7 +60,7 @@
 					<input type="button" class="gt-btn-medium gt-btn-left" value="Cancelar" onclick="listaService.fecharModalPrioridade()"/>
 				</div>
 			</div>
-		</siga:modal>
+		</sigasr:modal>
 	</form>
 	
 	<script>

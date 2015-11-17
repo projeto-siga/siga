@@ -15,10 +15,10 @@
 		var resumido = j.hasClass("resumido");
 		j.find(".descrValor").html((resumido && valor < 0 ? '-' : '') + toString(valor, resumido));
 		if (valor > 0){
-			j.find(".label").html('Restante: ');
+			j.find(".label-cron").html('Restante: ');
 	   		j.css('color', 'black');
 		} else {
-			j.find(".label").html('Atraso: ')
+			j.find(".label-cron").html('Atraso: ')
 			j.css('color', 'red');
 		}
 		if (j.hasClass("ligado")){

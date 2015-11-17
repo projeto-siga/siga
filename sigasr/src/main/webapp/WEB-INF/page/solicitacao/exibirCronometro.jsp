@@ -27,7 +27,7 @@
 		<c:set var="restante" value="${etapa.restanteEmSegundos}" />
 		<c:choose>
 			<c:when test="${not empty restante}">
-				<p><span class="crono restante ${etapa.ativo ? 'ligado' : 'desligado'}"><b><span class="label"></span></b><span class="descrValor"></span><span class="valor">${restante}</span></span></p>
+				<p><span class="crono restante ${etapa.ativo ? 'ligado' : 'desligado'}"><b><span class="label-cron"></span></b><span class="descrValor"></span><span class="valor">${restante}</span></span></p>
 			</c:when>
 			<c:otherwise>
 				<p><span class="crono decorrido ${etapa.ativo ? 'ligado' : 'desligado'}"><b>Decorrido:</b> <span class="descrValor"></span><span class="valor">${etapa.decorridoEmSegundos}</span></span></p>

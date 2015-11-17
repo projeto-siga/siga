@@ -103,7 +103,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		else if (orderBy.equals("prioridade"))
 			query.append(" sol.prioridade ");
 		else if (orderBy.equals("prioridadeTecnica"))
-			query.append(" sol.dnmPrioridadeTecnica ");
+			//query.append(" sol.dnmPrioridadeTecnica ");
+			query.append(" ultMov.prioridade ");
 		else if (orderBy.equals("posicaoNaLista"))
 			query.append(" l.numPosicao ");
 		else if (orderBy.equals("situacao"))
@@ -134,12 +135,12 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 		// Edson: O join com duas marcas é necessário porque, quando se busca pelo marcador "Como cadastrante", por exemplo,
 		// o que deve ser exibido na coluna Situação é "Em andamento", não "Como cadastrante" 
-		String situacaoFiltro = "";
+		String situacaoFiltro = "situacaoAux";
 		if (getSituacao() != null && getSituacao().getIdMarcador() != null
 				&& getSituacao().getIdMarcador() > 0){
 			if (MARCADORES_ESTADO.contains(getSituacao().getIdMarcador()))
 				situacaoFiltro = "situacao";
-			else situacaoFiltro = "situacaoAux";
+			//else situacaoFiltro = "situacaoAux";
 		}
 		
 		query.append(" from SrSolicitacao sol inner join sol.meuMarcaSet situacao ");
@@ -170,8 +171,9 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		query.append(" and (situacao.dtFimMarca is null or "
 					+ "situacao.dtFimMarca > sysdate) ");
 		
-		if (situacaoFiltro.equals("situacaoAux")){
-			query.append(" and situacaoAux.cpMarcador.idMarcador = "
+		if (situacaoFiltro.equals("situacaoAux")) {
+			if (getSituacao() != null)
+				query.append(" and situacaoAux.cpMarcador.idMarcador = "
 					+ getSituacao().getIdMarcador());
 			query.append(" and (situacaoAux.dtIniMarca is null or "
 					+ "situacaoAux.dtIniMarca < sysdate) ");
@@ -204,18 +206,20 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 					+ getLotaSolicitante().getIdInicial());
 		
 		if (Filtros.deveAdicionar(getItemConfiguracao())){
-			query.append(" and sol.dnmItemConfiguracao.hisIdIni = "
-					+ getItemConfiguracao().getItemInicial()
-							.getIdItemConfiguracao());
+			query.append(" and (case when ultMov.idMovimentacao is not null then "
+					+ "ultMov.itemConfiguracao.hisIdIni else sol.itemConfiguracao.hisIdIni end) = "
+					+ getItemConfiguracao().getItemInicial().getIdItemConfiguracao());
 		}
 		if (Filtros.deveAdicionar(getAcao())){
-			query.append(" and sol.dnmAcao.hisIdIni = "
+			query.append(" and ((case when ultMov.idMovimentacao is not null then "
+					+ "ultMov.acao.hisIdIni else sol.acao.hisIdIni end)) = "
 					+ getAcao().getAcaoInicial().getIdAcao());
 		}
 		
 		if (getPrioridade() != null && getPrioridade().getIdPrioridade() > 0L){
-			query.append(" and (sol.dnmPrioridadeTecnica <= " + getPrioridade().ordinal());
-			query.append(" or sol.prioridade <= " + getPrioridade().ordinal() + ") ");
+			query.append(" and ((case when ultMov.idMovimentacao is not null then "
+					+ "ultMov.prioridade else sol.prioridade end)) = "
+					+  getPrioridade().ordinal());
 		}
 
 		if (getIdListaPrioridade() != null
@@ -292,6 +296,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 				+ " case when sol.descrSolicitacao is null then pai.descrSolicitacao else sol.descrSolicitacao end, "
 				+ " sol.dtReg "
 				+ " from SrSolicitacao sol left join sol.solicitacaoPai pai"
+				+ " left join sol.meuMovimentacaoSet ultMov "
 				+ " where sol.rascunho = false and sol.hisDtFim is null ");
 		incluirWheresBasicos(query);
 		query.append(" order by sol.dtReg desc");

@@ -577,8 +577,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public List<SrSolicitacao> getHistoricoSolicitacao() {
-        if (getSolicitacaoInicial() != null)
+    	//por causa do detach no ObjetoObjectInstantiator:
+    	if (getSolicitacaoInicial() != null) {
+    		setSolicitacaoInicial(SrSolicitacao.AR.findById(getSolicitacaoInicial().getId()));
             return getSolicitacaoInicial().getMeuSolicitacaoHistoricoSet();
+        }
         return null;
     }
 
@@ -2262,6 +2265,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             mov.setAtendente(null);
         mov.setMotivoEscalonamento(motivo);
         mov.setDesignacao(designacao);
+        //por causa do detach no ObjetoObjectInstantiator:
+      	if (mov.getLotaAtendente().getLotacaoInicial() != null)
+      		mov.getLotaAtendente().setLotacaoInicial(DpLotacao.AR.findById(mov.getLotaAtendente().getLotacaoInicial().getId()));
         mov.setDescrMovimentacao((descricao != null && !descricao.equals("") ? descricao : "")
         		+ " Motivo: " + mov.getMotivoEscalonamento().getDescrTipoMotivoEscalonamento() 
         		+ "; Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() 

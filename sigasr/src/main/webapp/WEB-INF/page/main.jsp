@@ -49,6 +49,7 @@
 				eval($(this).text());
 			});
 		});	
+		$("div[depende*='"+id+"']").show();
 		jQuery.unblockUI();
 	}
 </script>

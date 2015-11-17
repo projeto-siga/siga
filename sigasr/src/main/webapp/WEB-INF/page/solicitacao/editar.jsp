@@ -66,7 +66,8 @@
 				}
 				$('#checkRascunho').prop('value', 'false');
 			});
-	
+			$('#divAcao').hide();
+			$('#divAtributos').hide();
 			//inicializa valores default para serem usados na function valorInputMudou()
 			item_default = $("#formulario_solicitacaoitemConfiguracao_id").val();
 		});
@@ -279,6 +280,7 @@
 							function dispararFuncoesOnBlurItem() {
 								if (valorInputMudou('formulario_solicitacaoitemConfiguracao_id', 'item')) {
 									sbmt("solicitacao.itemConfiguracao");
+									removeSelectedDuplicado();
 								}	
 							}
 							
@@ -297,11 +299,7 @@
 							</div>
 							
 							<div id="divAcao" depende="solicitacao.itemConfiguracao">
-								<script>
-								$(document).ready(function() {
-									removeSelectedDuplicado();
-								});
-								
+								<script>						
 								function removeSelectedDuplicado() {
 									//solucao de contorno temporaria para op??es no select com mesmo value.
 									var primeiro = $("#selectAcao option:eq(0)");

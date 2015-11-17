@@ -332,7 +332,7 @@ public class AcessoController extends GiControllerSupport {
 							+ ac.getPessoa().getSigla()
 							+ "\">" + ac.getPessoa().getSigla() + "</a>");
 		
-		sb.append("</li>"); 
+		sb.append("</li>");
 	}
 
 	private void acrescentarHTMLOld(Collection<ConfiguracaoAcesso> l,StringBuilder sb) {

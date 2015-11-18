@@ -46,10 +46,8 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
  * Example command line:
  * <p>
  *
- * /java/bin/java \ -cp
- * adaptor-withlib.jar:adaptor-examples.jar:mysql-5.1.10.jar \
- * br.gov.jfrj.siga.ex.gsa.ExMovimentacaoAdaptor \ -Dgsa.hostname=myGSA
- * -Dservidor=desenv \ -Djournal.reducedMem=true
+ * java \ -jar siga-ex-gsa.one-jar
+ * -Dgsa.hostname=myGSA -Dservidor=desenv \ -Djournal.reducedMem=true
  */
 public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor,
 		PollingIncrementalLister {

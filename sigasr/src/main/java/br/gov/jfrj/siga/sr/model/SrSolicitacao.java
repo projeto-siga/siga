@@ -2555,11 +2555,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public SrEtapaSolicitacao getCadastro(){
     	SrEtapaSolicitacao c = new SrEtapaSolicitacao(SrParametro.CADASTRO);
     	c.setInicio(getDtInicioPrimeiraEdicao());
-    	if (isFechado())
-			c.setFim(getDtEfetivoFechamento());
-		else if (isCancelado())
-			c.setFim(getDtCancelamento());
-		else if (jaFoiDesignada())
+    	if (jaFoiDesignada())
 			c.setFim(getDtInicioAtendimento());
 		c.setLotaResponsavel(getLotaCadastrante());
 		c.setParamsAcordo(getParametrosAcordoOrdenados(c.getParametro()));

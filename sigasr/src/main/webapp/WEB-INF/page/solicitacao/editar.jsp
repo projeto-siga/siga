@@ -66,8 +66,6 @@
 				}
 				$('#checkRascunho').prop('value', 'false');
 			});
-			$('#divAcao').hide();
-			$('#divAtributos').hide();
 			//inicializa valores default para serem usados na function valorInputMudou()
 			item_default = $("#formulario_solicitacaoitemConfiguracao_id").val();
 		});

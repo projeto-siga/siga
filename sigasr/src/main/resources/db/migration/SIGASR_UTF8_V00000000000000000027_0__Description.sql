@@ -21,38 +21,18 @@ alter table SR_MOVIMENTACAO_ACORDO
   references SR_ACORDO (ID_ACORDO);
 
   
---Fazer com que cada movimentação tenha um item de configuração, 
---buscando sempre da anterior ou da solicitação
-update sigasr.sr_movimentacao mov set id_item_configuracao = (
-  select id_item_configuracao 
-  from sigasr.sr_movimentacao movAnterior
-  where dt_ini_mov = (
-    select max(dt_ini_mov)
-    from sigasr.sr_movimentacao
-    where id_solicitacao = mov.id_solicitacao
-    and dt_ini_mov < mov.dt_ini_mov
-    and id_item_configuracao is not null
-  )
-) where id_item_configuracao is null;
-
-update sigasr.sr_movimentacao mov set id_item_configuracao = (
-  select id_item_configuracao
-  from sigasr.sr_solicitacao
-  where id_solicitacao = mov.id_solicitacao
-) where id_item_configuracao is null;
-
-
+----------Atualizando base pra ter o id_item e id_acao em cada movimentação-----------------------------
 
 --Fazer com que cada movimentação tenha uma ação, 
 --buscando sempre da anterior ou da solicitação
 update sigasr.sr_movimentacao mov set id_acao = (
   select id_acao 
   from sigasr.sr_movimentacao movAnterior
-  where dt_ini_mov = (
-    select max(dt_ini_mov)
+  where id_movimentacao = (
+    select max(id_movimentacao)
     from sigasr.sr_movimentacao
     where id_solicitacao = mov.id_solicitacao
-    and dt_ini_mov < mov.dt_ini_mov
+    and id_movimentacao < mov.id_movimentacao
     and id_acao is not null
   )
 ) where id_acao is null;
@@ -69,11 +49,11 @@ update sigasr.sr_movimentacao mov set id_acao = (
 update sigasr.sr_movimentacao mov set prioridade = (
   select prioridade 
   from sigasr.sr_movimentacao movAnterior
-  where dt_ini_mov = (
-    select max(dt_ini_mov)
+  where id_movimentacao = (
+    select max(id_movimentacao)
     from sigasr.sr_movimentacao
     where id_solicitacao = mov.id_solicitacao
-    and dt_ini_mov < mov.dt_ini_mov
+    and id_movimentacao < mov.id_movimentacao
     and prioridade is not null
   )
 ) where prioridade is null;
@@ -83,3 +63,4 @@ update sigasr.sr_movimentacao mov set prioridade = (
   from sigasr.sr_solicitacao
   where id_solicitacao = mov.id_solicitacao
 ) where prioridade is null;
+commit;

@@ -373,19 +373,19 @@ public class SrMovimentacao extends Objeto {
             if (getItemConfiguracao() == null) {
             	if (anterior != null && anterior.getItemConfiguracao() != null)
             		setItemConfiguracao(anterior.getItemConfiguracao());
-            	else setItemConfiguracao(solicitacao.getItemConfiguracao());
+            	else setItemConfiguracao(solicitacao.getItemAtual());
             }
             
             if (getAcao() == null) {
             	if (anterior != null && anterior.getAcao() != null)
             		setAcao(anterior.getAcao());
-            	else setAcao(solicitacao.getAcao());
+            	else setAcao(solicitacao.getAcaoAtual());
             }
             
             if (getPrioridade() == null){
             	if (anterior != null && anterior.getPrioridade() != null)
             		setPrioridade(anterior.getPrioridade());
-            	else setPrioridade(solicitacao.getPrioridade());
+            	else setPrioridade(solicitacao.getPrioridadeTecnica());
             }
 
             if (getNumSequencia() == null)

@@ -67,7 +67,7 @@ public class SrSolicitacaoVO {
 					+ "\">" + sol.getCodigo() + "</a>");
 
 		this.setDescrSolicitacao("<b>"
-				+ (ultMov != null ? ultMov.getItemConfiguracao().getDescricao() : 
+				+ (ultMov != null && ultMov.getItemConfiguracao() != null ? ultMov.getItemConfiguracao().getDescricao() : 
 					sol.getItemConfiguracao() != null ? sol.getItemConfiguracao() : "Item Não Informado")
 				+ ":</b>&nbsp;" + SrViewUtil.selecionado(sol.getDescricao(), sol.getDescricao()));
 

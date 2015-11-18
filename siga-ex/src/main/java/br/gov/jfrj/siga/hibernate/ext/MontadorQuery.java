@@ -18,19 +18,12 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.hibernate.ext;
 
-import java.text.SimpleDateFormat;
-
-import org.hibernate.Query;
-
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class MontadorQuery implements IMontadorQuery {
 
-	public String montaQueryConsultaporFiltro(final IExMobilDaoFiltro flt,
-			DpPessoa titular, DpLotacao lotaTitular, boolean apenasCount) {
+	public String montaQueryConsultaporFiltro(final IExMobilDaoFiltro flt, boolean apenasCount) {
 
 		StringBuffer sbf = new StringBuffer();
 

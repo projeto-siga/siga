@@ -128,22 +128,11 @@ public class ExDao extends CpDao {
 	}
 
 	public ExDao() {
-		IMontadorQuery montadorDefault = null;
-		try {
-			Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources("/");
-			ArrayList<URL> list = Collections.list(resources);
-
-			URL[] classpath = new URL[list.size()];
-			list.toArray(classpath);
-			
-			ClassLoaderRecarregavel classloaderRec = new ClassLoaderRecarregavel(classpath);
-			
-			montadorDefault = (IMontadorQuery) classloaderRec.loadClass("br.gov.jfrj.siga.hibernate.ext.MontadorQuery").newInstance();
-			montadorQuery = (IMontadorQuery) Class.forName(SigaExProperties.getMontadorQuery(),true,classloaderRec).newInstance();
-			montadorQuery.setMontadorPrincipal(montadorDefault);
-		} catch (Exception e) {
-			montadorQuery = montadorDefault;
-		}
+		CarregadorPlugin carregador = new CarregadorPlugin();
+		
+		montadorQuery = carregador.getMontadorQueryImpl();
+		montadorQuery.setMontadorPrincipal(carregador.getMontadorQueryDefault());
+		
 	}
 
 	public void reindexarVarios(List<ExDocumento> docs, boolean apenasExcluir) throws Exception {
@@ -382,7 +371,7 @@ public class ExDao extends CpDao {
 			final int offset, final int itemPagina, DpPessoa titular,
 			DpLotacao lotaTitular) {
 		long tempoIni = System.nanoTime();
-		Query query = getSessao().createQuery(montadorQuery.montaQueryConsultaporFiltro(flt, titular, lotaTitular, false));
+		Query query = getSessao().createQuery(montadorQuery.montaQueryConsultaporFiltro(flt, false));
 		preencherParametros(flt, query);
 
 		if (offset > 0) {
@@ -400,8 +389,7 @@ public class ExDao extends CpDao {
 	public Integer consultarQuantidadePorFiltroOtimizado(
 			final ExMobilDaoFiltro flt, DpPessoa titular, DpLotacao lotaTitular) {
 		long tempoIni = System.nanoTime();
-		String s = montadorQuery.montaQueryConsultaporFiltro(flt, titular,
-				lotaTitular, true);
+		String s = montadorQuery.montaQueryConsultaporFiltro(flt, true);
 		Query query = getSessao().createQuery(s);
 
 

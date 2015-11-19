@@ -25,7 +25,7 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 	}
 	@Override
 	public Long getDecorridoMillis() {
-		Date dtAtual = getDtComHorarioInicio(getInicio());
+		Date dtAtual = getInicio();
 		Date dtFim = getFimOuAgora();
 		Long decorrido = 0l;
 		SrIntervaloEmAtendimento it = new SrIntervaloEmAtendimento(dtAtual, getDtComHorarioFim(dtAtual), null);

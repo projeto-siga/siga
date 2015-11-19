@@ -85,3 +85,7 @@ update sigasr.sr_movimentacao mov set prioridade = (
   where id_solicitacao = mov.id_solicitacao
 ) where prioridade is null;
 commit;
+
+ALTER TABLE SIGASR.SR_SOLICITACAO ADD DNM_TEMPO_DECORRIDO_CADASTRO NUMBER;
+ALTER TABLE SIGASR.SR_MOVIMENTACAO ADD DNM_TEMPO_DECORRIDO_ATENDMTO NUMBER;
+COMMIT;

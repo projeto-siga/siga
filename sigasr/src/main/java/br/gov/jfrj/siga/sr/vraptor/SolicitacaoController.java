@@ -443,6 +443,8 @@ public class SolicitacaoController extends SrController {
 		if (sigla != null){
 			solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
 			//Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados
+			if (solicitacao.getAcordos() != null)
+				solicitacao.getAcordos().size();
 	        em().detach(solicitacao);
 		} else {
 			if (solicitacao == null){
@@ -492,8 +494,6 @@ public class SolicitacaoController extends SrController {
 		//Edson: por causa do detach:
 		if (solicitacao.getSolicitacaoInicial() != null)
 			solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
-        	                
-        solicitacao.atualizarAcordos();
         
         result.include("etapasCronometro", solicitacao.getEtapas(getLotaTitular(), false));
         

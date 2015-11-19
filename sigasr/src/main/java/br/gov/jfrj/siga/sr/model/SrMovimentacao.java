@@ -154,6 +154,9 @@ public class SrMovimentacao extends Objeto {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "SR_MOVIMENTACAO_ACORDO", schema = "SIGASR", joinColumns = { @JoinColumn(name = "ID_MOVIMENTACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_ACORDO") })
     private List<SrAcordo> acordos;
+    
+    @Column(name = "DNM_TEMPO_DECORRIDO_ATENDMTO")
+    private Long dnmTempoDecorridoAtendimento;
 
     @Enumerated
     private SrTipoMotivoEscalonamento motivoEscalonamento;
@@ -397,6 +400,10 @@ public class SrMovimentacao extends Objeto {
         else if (SrTipoMovimentacao.TIPOS_MOV_INI_ATENDIMENTO.contains(getTipoMov().getId())
 				|| SrTipoMovimentacao.TIPOS_MOV_ATUALIZACAO_ATENDIMENTO.contains(getTipoMov().getId()))
         	atualizarAcordos();
+        
+        SrEtapaSolicitacao ultimoAtendimento = solicitacao.getUltimoAtendimento();
+        if (ultimoAtendimento != null)
+        	setDnmTempoDecorridoAtendimento(ultimoAtendimento.getDecorridoEmSegundos());
     }
     
     public void atualizarAcordos() throws Exception {
@@ -791,6 +798,14 @@ public class SrMovimentacao extends Objeto {
 		return recipients;
 	}
 	
+	public Long getDnmTempoDecorridoAtendimento() {
+		return dnmTempoDecorridoAtendimento;
+	}
+
+	public void setDnmTempoDecorridoAtendimento(Long dnmTempoDecorridoAtendimento) {
+		this.dnmTempoDecorridoAtendimento = dnmTempoDecorridoAtendimento;
+	}
+
 	public void carregarSolicitacao() {
 	    if (this.getSolicitacao() != null && this.getSolicitacao().getId() != null) {
 	        this.setSolicitacao(SrSolicitacao.AR.findById(this.getSolicitacao().getId()));

@@ -248,6 +248,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     @Column(name = "FECHADO_AUTOMATICAMENTE")
     @Type(type = "yes_no")
     private Boolean fechadoAutomaticamente;
+    
+    @Column(name="DNM_TEMPO_DECORRIDO_CADASTRO")
+    private Long dnmTempoDecorridoCadastro;
 
     public SrSolicitacao() {
 
@@ -1495,6 +1498,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             // funcionarÃ¯Â¿Â½ o filtro por cÃ¯Â¿Â½digo para essa filha
             setNumSolicitacao(getProximoNumero());
             atualizarCodigo();
+            setTempoDecorridoCadastro(getCadastro().getDecorridoEmSegundos());
         }
                    
         // Edson: Ver por que isto está sendo necessário. Sem isso, após o salvar(),
@@ -1624,6 +1628,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             setGravidade(SrGravidade.SEM_GRAVIDADE);
 
         setPrioridade(getGravidadesDisponiveisEPrioridades().get(getGravidade()));
+        
+        atualizarAcordos();
     }
 
     public void desfazerUltimaMovimentacao(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
@@ -2698,6 +2704,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		}
 		return null;
 	}
+	
+	public SrEtapaSolicitacao getUltimoAtendimento(){
+		SrEtapaSolicitacao atual = null;
+		for (SrEtapaSolicitacao a : getAtendimentos())
+			atual = a;
+		return atual;
+	}
 
     public boolean isAcordosSatisfeitos() {
         for (SrEtapaSolicitacao etapa : getEtapas()) {
@@ -2718,8 +2731,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public Set<SrParametroAcordo> getParametrosAcordoOrdenados(){
     	Set<SrParametroAcordo> set = new TreeSet<SrParametroAcordo>(
 			new SrParametroAcordoComparator());
-    	for (SrAcordo a : getAcordos())
-    		set.addAll(a.getParametroAcordoSet());
+    	if (getAcordos() != null)
+    		for (SrAcordo a : getAcordos())
+    			set.addAll(a.getParametroAcordoSet());
     	return set;
     }
     
@@ -3091,7 +3105,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         this.numSequencia = numSequencia;
     }
 
-    public SrSolicitacao getSolicitacaoInicial() {
+    public Long getTempoDecorridoCadastro() {
+		return dnmTempoDecorridoCadastro;
+	}
+
+	public void setTempoDecorridoCadastro(Long tempoDecorridoCadastro) {
+		this.dnmTempoDecorridoCadastro = tempoDecorridoCadastro;
+	}
+
+	public SrSolicitacao getSolicitacaoInicial() {
         return solicitacaoInicial;
     }
 

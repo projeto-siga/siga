@@ -133,15 +133,13 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	private void incluirJoinsEWheres(StringBuilder query) throws Exception {
 
-		// Edson: O join com duas marcas é necessário porque, quando se busca pelo marcador "Como cadastrante", por exemplo,
-		// o que deve ser exibido na coluna Situação é "Em andamento", não "Como cadastrante" 
-		String situacaoFiltro = "situacaoAux";
+		// Edson: A variável situacaoFiltro indica a marca pela qual será feita a busca por pessoa e lotação, pois há casos em que mais 
+		// de uma marca está em questão. Por exemplo, quando se busca pelo marcador "Como cadastrante", o que deve ser exibido na coluna 
+		//Situação é "Em andamento" (situacao), não "Como cadastrante" (situacaoAux). Porém, a busca deverá ser feita pela marca "Como cadastrante"
+		String situacaoFiltro = "situacao";
 		if (getSituacao() != null && getSituacao().getIdMarcador() != null
-				&& getSituacao().getIdMarcador() > 0){
-			if (MARCADORES_ESTADO.contains(getSituacao().getIdMarcador()))
-				situacaoFiltro = "situacao";
-			//else situacaoFiltro = "situacaoAux";
-		}
+				&& getSituacao().getIdMarcador() > 0 && !MARCADORES_ESTADO.contains(getSituacao().getIdMarcador()))
+			situacaoFiltro = "situacaoAux";
 		
 		query.append(" from SrSolicitacao sol inner join sol.meuMarcaSet situacao ");
 		
@@ -162,9 +160,11 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 		incluirWheresBasicos(query);
 		
-		if (situacaoFiltro.equals("situacao"))
-			query.append(" and situacao.cpMarcador.idMarcador = " + getSituacao().getIdMarcador());
-		else query.append(" and situacao.cpMarcador.idMarcador in (9, 42, 43, 44, 45, 61) ");
+		if (situacaoFiltro.equals("situacaoAux") || getSituacao() == null)
+			//Edson: Juntado, Em andamento, fechado, pendente, cancelado em elaboração: marcas que não se repetem numa solicitação
+			query.append(" and situacao.cpMarcador.idMarcador in (9, 42, 43, 44, 45, 61) ");
+		else 
+			query.append(" and situacao.cpMarcador.idMarcador = " + getSituacao().getIdMarcador()); 
 		
 		query.append(" and (situacao.dtIniMarca is null or "
 					+ "situacao.dtIniMarca < sysdate) ");
@@ -192,9 +192,9 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	}
 	
 	private void incluirWheresBasicos(StringBuilder query){
-		if (Filtros.deveAdicionar(getCadastrante()))
+		if (Filtros.deveAdicionar(getTitular()))
 			query.append(" and sol.cadastrante.idPessoaIni = "
-					+ getCadastrante().getIdInicial());
+					+ getTitular().getIdInicial());
 		if (Filtros.deveAdicionar(getLotaTitular()))
 			query.append(" and sol.lotaTitular.idLotacaoIni = "
 					+ getLotaTitular().getIdInicial());
@@ -275,7 +275,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	public boolean isRazoavelmentePreenchido() {
 		return getSituacao() != null
-				|| getCadastrante() != null
+				|| getTitular() != null
 				|| getSolicitante() != null
 				|| getAtendente() != null
 				|| getLotaAtendente() != null

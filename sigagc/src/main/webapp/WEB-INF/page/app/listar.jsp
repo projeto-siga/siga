@@ -205,14 +205,12 @@
 										tipo="tag" tema="simple" /></td>
 							</tr>
 							<tr>
-								<td class="tdLabel"><label for="descrDocumento"
-									class="label">Título:</label></td>
+								<td>Título:</td>
 								<td><input type="text" name="filtro.titulo" size="80"
 									value="${filtro.titulo}" id="titulo"></td>
 							</tr>
 							<tr>
-								<td class="tdLabel"><label class="label" for="fullText">Conteúdo:</label>
-								</td>
+								<td>Conteúdo:</td>
 								<td><input type="text" id="conteudo"
 									value="${filtro.conteudo}" size="80" name="filtro.conteudo"></td>
 							</tr>

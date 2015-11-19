@@ -2254,6 +2254,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	if (designacao == null)
             throw new AplicacaoException("Não foi encontrado nenhum atendente designado. Sugestão: alterar item de " + "configuração e/ou ação");
     	
+    	if (!this.isEmAndamento())
+    		throw new AplicacaoException("Operação não permitida. A solicitação não está 'Em Andamento'");
     	SrMovimentacao mov = new SrMovimentacao(this);
         mov.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO));
         mov.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao.getId()));

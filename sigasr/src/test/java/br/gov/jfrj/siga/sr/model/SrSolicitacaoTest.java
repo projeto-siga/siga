@@ -1,23 +1,26 @@
 package br.gov.jfrj.siga.sr.model;
 
-import static org.junit.Assert.*;
-
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 
-import junit.framework.TestCase;
-
-import org.hibernate.Session;
-import org.junit.Test;
-
-import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.sr.util.TestUtil;
+import junit.framework.TestCase;
 
 public class SrSolicitacaoTest extends TestCase{
 
-	
+private EntityManager em;
 
+	public void testarCadastroBasico() throws Exception {
+		/*TestUtil.design();
+		SrAcordo SLA = TestUtil.SLA();
+		
+		SrSolicitacao s = new SrSolicitacao();
+		s.setCadastrante(TestUtil.funcionarioMenor());
+		s.setItemConfiguracao(TestUtil.sigadoc());
+		s.setAcao(TestUtil.acaoCriarSoft());
+		s.salvarComHistorico();
+		
+		assertTrue(s.getAcordos().contains(SLA));	*/	
+	}
+	
+	
 }

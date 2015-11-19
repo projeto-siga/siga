@@ -45,28 +45,55 @@ $(document).on('ready', function(){
 					listhtml.push(htmlFirstLine);
 					
 					for (var i = 0; i < RES.R.length; i++) {
+						var MT = {};
+						if( Object.keys(RES.R[i].MT).length > 0) {
+							MT = RES.R[i].MT;
+
+							var t = [];
+							
+							t.push(MT.modelo?MT.modelo:"");
+							t.push(MT.data?MT.data.replace(/(\d{4})-(\d{2})-(\d{2})/,"$3/$2/$1"):"");
+							t.push(RES.R[i].T);
+							t.push(MT.subscritor?MT.subscritor:"");
+							t.push(MT.subscritor?MT.subscritor_lotacao:"");
+
+							MT.desc_titulo = t.join(" ");
+						}
+						else{
+							MT.desc_titulo = RES.R[i].T;
+						}
+						
 
 						var rowHtml ='<div class="panel panel-default">';
 						// Titulo
-						rowHtml += '<div class="panel-heading text-left"><a href="'+RES.R[i].U+'">'+RES.R[i].T+'</a></div>';
+						rowHtml += '<div class="panel-heading gsa-title"> <div class="row">';
+						rowHtml += '<div class="col-md-10"><a class="" href="'+RES.R[i].U+'">'+MT.desc_titulo+'</a></div>';
+						//link cache
+						rowHtml += '<div class="col-md-2"><a class="pull-right" target="_blank" href="'+self.cacheLink(RES.R[i],json.GSP.PARAM, gsa.settings.path)+'">'+RES.R[i].HAS.C.SZ+' Cache</a></div>';
+						rowHtml += '</div></div>';
 
 						//snippet
 						rowHtml += '<div class="panel-body text-left">';
 						rowHtml += '<span>'+RES.R[i].S+'</span>';
 
 						// Metadados
-						rowHtml += '<p><ul>';
-						if( Object.keys(RES.R[i].MT).length > 0) {
-							for (var x in RES.R[i].MT) {
-								rowHtml += '<li><b>'+ x +': </b>'+ RES.R[i].MT[x] +'</li>';
+						if(Object.keys(RES.R[i].MT).length > 0){
+							rowHtml += '<p/><p>';
+							//rowHtml += '<li><b>'+ Descrição +': </b>'+ MT.descricao +'</li>';
+							if( Object.keys(RES.R[i].MT).length > 0) {
+								for (var x in RES.R[i].MT) {
+									if(/descricao/.test(x)){
+										rowHtml += '<b>Descrição: </b>'+ RES.R[i].MT[x];
+									}
+								}
 							}
+							rowHtml += '</p>';
 						}
-						rowHtml += '</ul></p>';
 
 						//link cache
-						rowHtml += '<p>'+ RES.R[i].U + ' - ' + RES.R[i].HAS.C.SZ + ' - ' + RES.R[i].CRAWLDATE + ' - ';
-						rowHtml += '<a target="_blank" href="'+self.cacheLink(RES.R[i],json.GSP.PARAM, gsa.settings.path)+'"> Cache</a>';
-						rowHtml += '</p>';
+						// rowHtml += '<p>'+ RES.R[i].U + ' - ' + RES.R[i].HAS.C.SZ + ' - ' + RES.R[i].CRAWLDATE + ' - ';
+						// rowHtml += '<a target="_blank" href="'+self.cacheLink(RES.R[i],json.GSP.PARAM, gsa.settings.path)+'"> Cache</a>';
+						// rowHtml += '</p>';
 
 						rowHtml += '</div></div>'
 

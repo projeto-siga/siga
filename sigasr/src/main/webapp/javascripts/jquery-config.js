@@ -19,7 +19,7 @@ $.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     }
 	
-	if(originalOptions.blockUI == undefined || originalOptions.blockUI == true) {
+	if(/*originalOptions.blockUI == undefined || */originalOptions.blockUI == true) {
 		jQuery.blockUI(objBlock);
 
 		jqXHR.complete(function() {

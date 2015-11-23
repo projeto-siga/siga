@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	
+
 	<parent>
 		<artifactId>siga-doc</artifactId>
 		<groupId>siga</groupId>
@@ -11,37 +11,80 @@
 
 	<artifactId>siga-ex-gsa</artifactId>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>br.gov.jfrj.siga.ex.gsa.ExDocumentoAdaptor</mainClass>
-							<mainClass>br.gov.jfrj.siga.ex.gsa.ExMovimentacaoAdaptor</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.dstovall</groupId>
-				<artifactId>onejar-maven-plugin</artifactId>
-				<executions>
-					<execution>
+
+	<profiles>
+		<profile>
+			<id>mov</id>
+			<build>
+				<finalName>sigaMovimentacaoAdaptor_${version}</finalName>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
 						<configuration>
-							<!-- Optional, default is false -->
-							<attachToBuild>true</attachToBuild>
+
+							<archive>
+								<manifest>
+									<mainClass>br.gov.jfrj.siga.ex.gsa.ExMovimentacaoAdaptor</mainClass>
+								</manifest>
+							</archive>
 						</configuration>
-						<goals>
-							<goal>one-jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+					</plugin>
+					<plugin>
+						<groupId>org.dstovall</groupId>
+						<artifactId>onejar-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<configuration>
+									<!-- Optional, default is false -->
+									<attachToBuild>true</attachToBuild>
+								</configuration>
+								<goals>
+									<goal>one-jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>doc</id>
+			<build>
+				<finalName>sigaDocumentoAdaptor_${version}</finalName>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<configuration>
+							<archive>
+								<manifest>
+									<mainClass>br.gov.jfrj.siga.ex.gsa.ExDocumentoAdaptor</mainClass>
+								</manifest>
+							</archive>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.dstovall</groupId>
+						<artifactId>onejar-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<configuration>
+									<!-- Optional, default is false -->
+									<attachToBuild>true</attachToBuild>
+								</configuration>
+								<goals>
+									<goal>one-jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+
 
 	<dependencies>
 		<dependency>
@@ -49,15 +92,15 @@
 			<artifactId>siga-ex</artifactId>
 			<version>${siga.version}</version>
 			<scope>compile</scope>
-		</dependency> 
+		</dependency>
 		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-ext</artifactId>
 			<version>${siga.version}</version>
 			<scope>compile</scope>
-		</dependency>		
+		</dependency>
 		<dependency>
-			<groupId>com.google.enterprise</groupId>   
+			<groupId>com.google.enterprise</groupId>
 			<artifactId>adaptor</artifactId>
 			<version>4.1.0</version>
 		</dependency>

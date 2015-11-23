@@ -95,8 +95,41 @@ function validar(silencioso) {
 		return false;
 	}
 
-	return true;
+	// Impede a gravação de um documento que possui campos obrigatorios quando
+	// esses não forem informados
+	var frm = document.getElementById('frm');
+	var obrigatorios = frm.elements["obrigatorios"];
+	if (typeof (obrigatorios) != "undefined") {
+		if (typeof (obrigatorios.length) != "number") {
+			obrigatorios = [ obrigatorios ];
+		}
+		var s = "";
+		for (var i = 0; i < obrigatorios.length; i++) {
+			var elm = frm.elements[obrigatorios[i].value];
+			var obr = elm.value;
+			if (obr == null || obr == "" || !obr || /^\s*$/.test(obr)) {
+				aviso("Parâmetro obrigatório não foi informado: "
+						+ obrigatorios[i].value);
+				elm.focus();
+				return false;
+			}
+		}
+	}
 
+	// Impede que um documento capturado seja gravado sem que seja informado o
+	// arquivo PDF
+	var origem = document.getElementsByName('exDocumentoDTO.idTpDoc')[0].value;
+	if (origem == 4) {
+		var arquivo = document.getElementsByName('arquivo')[0];
+		if (arquivo.value == "") {
+			aviso(
+					'Documento capturado não pode ser gravado sem que seja informado o nome do arquivo PDF',
+					silencioso);
+			arquivo.focus();
+			return false;
+		}
+	}
+	return true;
 }
 
 function aviso(msg, silencioso) {
@@ -295,12 +328,12 @@ function parte_atualizar(titular, lotaTitular) {
 			mensagem : $('#parte_mensagem_' + id).val(),
 			checked : $('#parte_chk_' + id).is(":checked"),
 			locked : false, // modificações proibidas pois está marcado como já
-							// preenchido
+			// preenchido
 			disabled : false, // disabilitado porque depende de algum que
-								// ainda não foi preenchido ou não é da alçada
-								// do responsável
+			// ainda não foi preenchido ou não é da alçada
+			// do responsável
 			blocked : false, // bloqueado por haver um dependente que força o
-								// bloquei dos predecessores
+			// bloquei dos predecessores
 			active : false
 		};
 		// console.log('checked: ' + id + ' - ' + partes[id].checked);
@@ -313,7 +346,9 @@ function parte_atualizar(titular, lotaTitular) {
 		// verifica o responsavel
 		if (partes[p].resp.indexOf(';' + titular + ';') == -1
 				&& partes[p].resp.indexOf(';' + lotaTitular + ';') == -1) {
-			console.log(id + " desabilitado por ser outro responsável (" + partes[p].resp + ")" + " titular: " + titular + " lotaTitular: " + lotaTitular);
+			console.log(id + " desabilitado por ser outro responsável ("
+					+ partes[p].resp + ")" + " titular: " + titular
+					+ " lotaTitular: " + lotaTitular);
 			partes[p].disabled = true;
 		}
 		if (!partes[p].disabled && partes[p].checked) {
@@ -342,7 +377,7 @@ function parte_atualizar(titular, lotaTitular) {
 		//
 		if (partes[p].block && partes[p].checked)
 			parte_bloquear(partes, p, false);
-		
+
 		// remover mensagem
 		if (partes[p].checked)
 			partes[p].mensagem = "";
@@ -351,12 +386,16 @@ function parte_atualizar(titular, lotaTitular) {
 	for (id in partes) {
 		$('#parte_chk_' + id).prop('checked', partes[id].checked);
 		$('#' + id).val(partes[id].checked ? 'Sim' : 'Nao');
-		if (partes[id].locked || partes[id].disabled || partes[id].blocked) 
+		if (partes[id].locked || partes[id].disabled || partes[id].blocked)
 			$('#parte_fieldset_' + id).attr('disabled', true);
 		else
 			$('#parte_fieldset_' + id).removeAttr('disabled');
-		console.log("*** " + id + ": locked(" + partes[id].locked +") disabled(" + partes[id].disabled + ") blocked(" +  partes[id].blocked+ ") fieldset(" + partes[id].locked || partes[id].disabled || partes[id].blocked + ")");
-		$('#parte_chk_' + id).prop('disabled', partes[id].disabled || partes[id].blocked);
+		console.log("*** " + id + ": locked(" + partes[id].locked
+				+ ") disabled(" + partes[id].disabled + ") blocked("
+				+ partes[id].blocked + ") fieldset(" + partes[id].locked
+				|| partes[id].disabled || partes[id].blocked + ")");
+		$('#parte_chk_' + id).prop('disabled',
+				partes[id].disabled || partes[id].blocked);
 		$('#parte_mensagem_' + id).val(partes[id].mensagem);
 		$('#parte_div_mensagem_' + id).html(partes[id].mensagem);
 	}
@@ -379,32 +418,35 @@ function parte_solicitar_alteracao(id, titular, lotaTitular) {
 	// </form>
 	this.dialogo = $(
 			'<div id="dialog-sa" title="Solicitar Alteração"><form id=\"form-solicitar-alteracao\"><fieldset><label>Motivo<br/><input type=\"text\" id=\"motivo\" class=\"text ui-widget-content ui-corner-all\" style="width:100%"/></label></form></div>')
-			.dialog({
-				title : "Solicitar Alteração",
-				width : '30%',
-				height : 'auto',
-				resizable : false,
-				autoOpen : true,
-				position : {
-					my : "center top+50%",
-					at : "center top",
-					of : window
-				},
-				modal : true,
-				closeText : "hide",
-				buttons : {
-					"Prosseguir" : function() {
-						$(this).dialog("close");
-						$('#parte_chk_' + id).prop('checked', false);
-						$('#parte_mensagem_' + id).val($('#motivo').val());
-						$('#parte_div_mensagem_' + id).html($('#motivo').val());
-						parte_atualizar(titular, lotaTitular);
-						$(this).dialog('destroy');
-					},
-					"Cancelar" : function() {
-						$(this).dialog("close");
-						$(this).dialog('destroy');
-					}
-				}
-			});
+			.dialog(
+					{
+						title : "Solicitar Alteração",
+						width : '30%',
+						height : 'auto',
+						resizable : false,
+						autoOpen : true,
+						position : {
+							my : "center top+50%",
+							at : "center top",
+							of : window
+						},
+						modal : true,
+						closeText : "hide",
+						buttons : {
+							"Prosseguir" : function() {
+								$(this).dialog("close");
+								$('#parte_chk_' + id).prop('checked', false);
+								$('#parte_mensagem_' + id).val(
+										$('#motivo').val());
+								$('#parte_div_mensagem_' + id).html(
+										$('#motivo').val());
+								parte_atualizar(titular, lotaTitular);
+								$(this).dialog('destroy');
+							},
+							"Cancelar" : function() {
+								$(this).dialog("close");
+								$(this).dialog('destroy');
+							}
+						}
+					});
 }

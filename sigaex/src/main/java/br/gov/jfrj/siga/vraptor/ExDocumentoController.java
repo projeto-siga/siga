@@ -1190,28 +1190,14 @@ public class ExDocumentoController extends ExController {
 			}
 
 			long tempoIni = System.currentTimeMillis();
-
+			
+			setPar(getRequest().getParameterMap());
 			if (!validar()) {
-				edita(exDocumentoDTO, null, vars,
-						exDocumentoDTO.getMobilPaiSel(),
-						exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando());
 				getPar().put("alerta", new String[] { "Sim" });
 				exDocumentoDTO.setAlerta("Sim");
-
-				String url = null;
-				if (exDocumentoDTO.getMobilPaiSel().getSigla() != null) {
-					url = MessageFormat.format(
-							"editar?mobilPaiSel.sigla={0}&criandoAnexo={1}",
-							exDocumentoDTO.getMobilPaiSel().getSigla(),
-							exDocumentoDTO.isCriandoAnexo());
-				} else {
-					url = MessageFormat.format(
-							"editar?sigla={0}&criandoAnexo={1}",
-							exDocumentoDTO.getSigla(),
-							exDocumentoDTO.isCriandoAnexo());
-				}
-
-				result.redirectTo(url);
+				result.forwardTo(this).edita(exDocumentoDTO, null, vars,
+						exDocumentoDTO.getMobilPaiSel(),
+						exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando());
 				return;
 			}
 

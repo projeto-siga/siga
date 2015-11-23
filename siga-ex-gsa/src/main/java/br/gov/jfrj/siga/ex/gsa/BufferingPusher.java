@@ -31,7 +31,7 @@ import com.google.enterprise.adaptor.DocIdPusher;
 public class BufferingPusher {
 	DocIdPusher wrapped;
 	ArrayList<DocId> saved;
-	private int maxIdsPerFeedFile = 10000;
+	private int maxIdsPerFeedFile = 5000;
 	private static final Logger log = Logger.getLogger(BufferingPusher.class.getName());
 
 	BufferingPusher(DocIdPusher underlying) {

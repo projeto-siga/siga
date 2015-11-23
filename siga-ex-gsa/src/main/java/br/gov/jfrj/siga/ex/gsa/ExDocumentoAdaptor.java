@@ -28,6 +28,7 @@ import java.util.Map;
 import com.google.enterprise.adaptor.AbstractAdaptor;
 import com.google.enterprise.adaptor.Acl;
 import com.google.enterprise.adaptor.Config;
+import com.google.enterprise.adaptor.ConfigUtils;
 import com.google.enterprise.adaptor.DocId;
 import com.google.enterprise.adaptor.GroupPrincipal;
 import com.google.enterprise.adaptor.Request;
@@ -51,36 +52,29 @@ import br.gov.jfrj.siga.hibernate.ExDao;
  */
 public class ExDocumentoAdaptor extends ExAdaptor {
 
+	public ExDocumentoAdaptor(){
+		loadSigaAllProperties();
+	}
+
 	@Override
 	public void initConfig(Config config){
-		super.initConfig(config);
 		String feedName = adaptorProperties.getProperty("siga.doc.feed.name");
 		String port = adaptorProperties.getProperty("siga.doc.server.port");
 		String dashboardPort = adaptorProperties.getProperty("siga.doc.server.dashboardPort");
 		if(feedName != null){
-			config.overrideKey("feed.name", feedName);
+			ConfigUtils.setValue("feed.name", feedName, config);
 		}
-		if(feedName != port){
-			config.overrideKey("server.port", port);
+		if(port != null){
+			ConfigUtils.setValue("server.port", port, config);
 		}
-		if(feedName != port){
-			config.overrideKey("server.dashboardPort", dashboardPort);
+		if(dashboardPort != null){
+			ConfigUtils.setValue("server.dashboardPort", dashboardPort, config);
 		}
 	}
-	
+
 	@Override
 	public String getIdsHql() {
 		return "select doc.idDoc from ExDocumento doc where doc.dtFinalizacao != null and doc.dtFinalizacao > :dt order by doc.idDoc desc";
-	}
-
-	@Override
-	public String getFeedName() {
-		return "siga-documentos";
-	}
-
-	@Override
-	public int getServerPortIncrement() {
-		return 0;
 	}
 
 	/** Gives the bytes of a document referenced with id. */
@@ -179,32 +173,35 @@ public class ExDocumentoAdaptor extends ExAdaptor {
 					c.setSigla(sigla);
 					ExClassificacao cPai = ExDao.getInstance()
 							.consultarPorSigla(c);
-					addMetadata(resp, 
-							"classificacao_"
-									+ MascaraUtil.getInstance().calcularNivel(
-											c.getCodificacao()),
-							cPai.getDescrClassificacao());
+					if(cPai != null){
+						addMetadata(resp, 
+								"classificacao_"
+										+ MascaraUtil.getInstance().calcularNivel(
+												c.getCodificacao()),
+										cPai.getDescrClassificacao());
+					}
 				}
 			}
+			
+			
 			addMetadata(resp, 
-					"classificacao_"
-							+ MascaraUtil.getInstance().calcularNivel(
-									cAtual.getCodificacao()),
-					cAtual.getDescricao());
+					"classificacao_" + MascaraUtil.getInstance().calcularNivel(
+									cAtual.getCodificacao()),cAtual.getDescricao());
 		}
 
-		if (doc.getLotaSubscritor() != null)
-			addMetadata(resp, "subscritor_lotacao", doc.getLotaSubscritor()
-					.getSiglaLotacao());
-		if (doc.getSubscritor() != null)
+		if (doc.getLotaSubscritor() != null){
+			addMetadata(resp, "subscritor_lotacao", doc.getLotaSubscritor().getSiglaLotacao());
+		}
+		if (doc.getSubscritor() != null){
 			addMetadata(resp, "subscritor", doc.getSubscritor().getNomePessoa());
-
-		if (doc.getLotaCadastrante() != null)
-			addMetadata(resp, "cadastrante_lotacao", doc.getLotaCadastrante()
-					.getSiglaLotacao());
-		if (doc.getCadastrante() != null)
-			addMetadata(resp, "cadastrante", doc.getCadastrante()
-					.getNomePessoa());
+		}	
+		if (doc.getLotaCadastrante() != null){
+			addMetadata(resp, "cadastrante_lotacao", doc.getLotaCadastrante().getSiglaLotacao());
+		}
+		if (doc.getCadastrante() != null){
+			addMetadata(resp, "cadastrante", doc.getCadastrante().getNomePessoa());
+		}
+			
 
 		Map<String, String> map = doc.getResumo();
 		if (map != null)
@@ -212,7 +209,7 @@ public class ExDocumentoAdaptor extends ExAdaptor {
 				addMetadata(resp, s, map.get(s));
 			}
 	}
-	
+
 
 	public static void main(String[] args) {
 		AbstractAdaptor.main(new ExDocumentoAdaptor(), args);

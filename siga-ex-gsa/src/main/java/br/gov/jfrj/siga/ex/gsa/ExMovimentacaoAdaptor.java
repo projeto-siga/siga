@@ -18,7 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.gsa;
 
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,6 +25,7 @@ import java.util.Date;
 
 import com.google.enterprise.adaptor.AbstractAdaptor;
 import com.google.enterprise.adaptor.Config;
+import com.google.enterprise.adaptor.ConfigUtils;
 import com.google.enterprise.adaptor.DocId;
 import com.google.enterprise.adaptor.Request;
 import com.google.enterprise.adaptor.Response;
@@ -46,21 +46,24 @@ import br.gov.jfrj.siga.hibernate.ExDao;
  * -Dservidor=desenv \ -Djournal.reducedMem=true
  */
 public class ExMovimentacaoAdaptor extends ExAdaptor {
+	
+	public ExMovimentacaoAdaptor(){
+		loadSigaAllProperties();
+	}
 
 	@Override
 	public void initConfig(Config config){
-		super.initConfig(config);
 		String feedName = adaptorProperties.getProperty("siga.mov.feed.name");
 		String port = adaptorProperties.getProperty("siga.mov.server.port");
 		String dashboardPort = adaptorProperties.getProperty("siga.mov.server.dashboardPort");
 		if(feedName != null){
-			config.overrideKey("feed.name", feedName);
+			ConfigUtils.setValue("feed.name", feedName, config);
 		}
-		if(feedName != port){
-			config.overrideKey("server.port", port);
+		if(port != null){
+			ConfigUtils.setValue("server.port", port, config);
 		}
-		if(feedName != port){
-			config.overrideKey("server.dashboardPort", dashboardPort);
+		if(dashboardPort != null){
+			ConfigUtils.setValue("server.dashboardPort", dashboardPort, config);
 		}
 	}
 
@@ -69,15 +72,6 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 		return "select mov.idMov from ExMovimentacao mov where mov.exTipoMovimentacao.idTpMov in (2, 5, 6, 7, 8, 18) and (:dt is null or mov.exMobil.exDocumento.dtFinalizacao > :dt or mov.dtIniMov > :dt) order by mov.idMov desc";
 	}
 
-	@Override
-	public String getFeedName() {
-		return "siga-doc-movimentacoes";
-	}
-
-	@Override
-	public int getServerPortIncrement() {
-		return 0;
-	}
 
 	/** Gives the bytes of a document referenced with id. */
 	public void getDocContent(Request req, Response resp) throws IOException {

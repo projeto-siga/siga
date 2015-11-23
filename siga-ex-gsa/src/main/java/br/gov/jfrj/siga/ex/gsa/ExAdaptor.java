@@ -35,7 +35,6 @@ import org.hibernate.cfg.Configuration;
 import com.google.enterprise.adaptor.AbstractAdaptor;
 import com.google.enterprise.adaptor.Adaptor;
 import com.google.enterprise.adaptor.AdaptorContext;
-import com.google.enterprise.adaptor.Config;
 import com.google.enterprise.adaptor.DocId;
 import com.google.enterprise.adaptor.DocIdPusher;
 import com.google.enterprise.adaptor.PollingIncrementalLister;
@@ -61,12 +60,6 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor, Poll
 	protected String permalink;
 	protected Properties adaptorProperties;
 	static final String DEFAULT_CONFIG_FILE = "adaptor-config.properties";
-
-
-	@Override
-	public void initConfig(Config config){
-		loadSigaAllProperties();
-	}
 
 	@Override
 	public void init(AdaptorContext context) throws Exception {
@@ -131,11 +124,7 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor, Poll
 	}
 
 	public abstract String getIdsHql();
-
-	public abstract String getFeedName();
-
-	public abstract int getServerPortIncrement();
-
+	
 	public void addMetadata(Response resp, String title, String value) {
 		if (value == null)
 			return;
@@ -143,7 +132,7 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor, Poll
 		resp.addMetadata(title, value);
 	}
 
-	private void loadSigaAllProperties(){
+	protected void loadSigaAllProperties(){
 		if(null == adaptorProperties){
 			InputStream propStream = null;
 			try {

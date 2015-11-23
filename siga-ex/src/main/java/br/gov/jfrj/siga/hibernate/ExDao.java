@@ -121,17 +121,11 @@ public class ExDao extends CpDao {
 
 	private static final Logger log = Logger.getLogger(ExDao.class);
 
-	IMontadorQuery montadorQuery = null;
-
 	public static ExDao getInstance() {
 		return ModeloDao.getInstance(ExDao.class);
 	}
 
 	public ExDao() {
-		CarregadorPlugin carregador = new CarregadorPlugin();
-		
-		montadorQuery = carregador.getMontadorQueryImpl();
-		montadorQuery.setMontadorPrincipal(carregador.getMontadorQueryDefault());
 		
 	}
 
@@ -370,6 +364,9 @@ public class ExDao extends CpDao {
 	public List consultarPorFiltroOtimizado(final ExMobilDaoFiltro flt,
 			final int offset, final int itemPagina, DpPessoa titular,
 			DpLotacao lotaTitular) {
+		
+		IMontadorQuery montadorQuery = carregarPlugin();
+
 		long tempoIni = System.nanoTime();
 		Query query = getSessao().createQuery(montadorQuery.montaQueryConsultaporFiltro(flt, false));
 		preencherParametros(flt, query);
@@ -386,9 +383,17 @@ public class ExDao extends CpDao {
 		return l;
 	}
 
+	private IMontadorQuery carregarPlugin() {
+		CarregadorPlugin carregador = new CarregadorPlugin();
+		IMontadorQuery montadorQuery = carregador.getMontadorQueryImpl();
+		montadorQuery.setMontadorPrincipal(carregador.getMontadorQueryDefault());
+		return montadorQuery;
+	}
+
 	public Integer consultarQuantidadePorFiltroOtimizado(
 			final ExMobilDaoFiltro flt, DpPessoa titular, DpLotacao lotaTitular) {
 		long tempoIni = System.nanoTime();
+		IMontadorQuery montadorQuery = carregarPlugin();
 		String s = montadorQuery.montaQueryConsultaporFiltro(flt, true);
 		Query query = getSessao().createQuery(s);
 

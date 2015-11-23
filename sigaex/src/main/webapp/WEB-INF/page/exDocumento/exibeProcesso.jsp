@@ -174,7 +174,7 @@
 								</c:forEach>
 							</c:if> <a
 							title="${fn:substring(tooltipResumo,0,fn:length(tooltipResumo)-4)}"
-							href="javascript:exibir('${arqNumerado.referenciaHtml}','${arqNumerado.referenciaPDF}','')">${arqNumerado.nome}</a>
+							href="javascript:exibir('${arqNumerado.referenciaHtml}','${arqNumerado.referenciaPDF}','')">${arqNumerado.nomeOuDescricao}</a>
 							<c:set var="tooltipResumo" value="" /></td>
 						<td align="center">${arqNumerado.arquivo.lotacao.sigla}</td>
 						<td align="center">${arqNumerado.paginaInicial}</td>

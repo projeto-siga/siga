@@ -32,8 +32,7 @@ public class BufferingPusher {
 	DocIdPusher wrapped;
 	ArrayList<DocId> saved;
 	private int maxIdsPerFeedFile = 10000;
-	private static final Logger log = Logger.getLogger(BufferingPusher.class
-			.getName());
+	private static final Logger log = Logger.getLogger(BufferingPusher.class.getName());
 
 	BufferingPusher(DocIdPusher underlying) {
 		wrapped = underlying;
@@ -49,7 +48,7 @@ public class BufferingPusher {
 
 	void forcePush() throws InterruptedException {
 		wrapped.pushDocIds(saved);
-		log.fine("sent " + saved.size() + " doc ids to pusher");
+		log.info("sent " + saved.size() + " doc ids to pusher");
 		saved.clear();
 	}
 

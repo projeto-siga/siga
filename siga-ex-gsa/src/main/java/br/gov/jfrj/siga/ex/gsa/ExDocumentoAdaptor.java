@@ -27,6 +27,7 @@ import java.util.Map;
 
 import com.google.enterprise.adaptor.AbstractAdaptor;
 import com.google.enterprise.adaptor.Acl;
+import com.google.enterprise.adaptor.Config;
 import com.google.enterprise.adaptor.DocId;
 import com.google.enterprise.adaptor.GroupPrincipal;
 import com.google.enterprise.adaptor.Request;
@@ -50,6 +51,23 @@ import br.gov.jfrj.siga.hibernate.ExDao;
  */
 public class ExDocumentoAdaptor extends ExAdaptor {
 
+	@Override
+	public void initConfig(Config config){
+		super.initConfig(config);
+		String feedName = adaptorProperties.getProperty("siga.doc.feed.name");
+		String port = adaptorProperties.getProperty("siga.doc.server.port");
+		String dashboardPort = adaptorProperties.getProperty("siga.doc.server.dashboardPort");
+		if(feedName != null){
+			config.overrideKey("feed.name", feedName);
+		}
+		if(feedName != port){
+			config.overrideKey("server.port", port);
+		}
+		if(feedName != port){
+			config.overrideKey("server.dashboardPort", dashboardPort);
+		}
+	}
+	
 	@Override
 	public String getIdsHql() {
 		return "select doc.idDoc from ExDocumento doc where doc.dtFinalizacao != null and doc.dtFinalizacao > :dt order by doc.idDoc desc";
@@ -194,6 +212,7 @@ public class ExDocumentoAdaptor extends ExAdaptor {
 				addMetadata(resp, s, map.get(s));
 			}
 	}
+	
 
 	public static void main(String[] args) {
 		AbstractAdaptor.main(new ExDocumentoAdaptor(), args);

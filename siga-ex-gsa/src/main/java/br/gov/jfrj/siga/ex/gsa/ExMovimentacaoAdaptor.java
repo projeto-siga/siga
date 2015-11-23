@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.util.Date;
 
 import com.google.enterprise.adaptor.AbstractAdaptor;
+import com.google.enterprise.adaptor.Config;
 import com.google.enterprise.adaptor.DocId;
 import com.google.enterprise.adaptor.Request;
 import com.google.enterprise.adaptor.Response;
@@ -47,6 +48,23 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 public class ExMovimentacaoAdaptor extends ExAdaptor {
 
 	@Override
+	public void initConfig(Config config){
+		super.initConfig(config);
+		String feedName = adaptorProperties.getProperty("siga.mov.feed.name");
+		String port = adaptorProperties.getProperty("siga.mov.server.port");
+		String dashboardPort = adaptorProperties.getProperty("siga.mov.server.dashboardPort");
+		if(feedName != null){
+			config.overrideKey("feed.name", feedName);
+		}
+		if(feedName != port){
+			config.overrideKey("server.port", port);
+		}
+		if(feedName != port){
+			config.overrideKey("server.dashboardPort", dashboardPort);
+		}
+	}
+
+	@Override
 	public String getIdsHql() {
 		return "select mov.idMov from ExMovimentacao mov where mov.exTipoMovimentacao.idTpMov in (2, 5, 6, 7, 8, 18) and (:dt is null or mov.exMobil.exDocumento.dtFinalizacao > :dt or mov.dtIniMov > :dt) order by mov.idMov desc";
 	}
@@ -58,7 +76,7 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 
 	@Override
 	public int getServerPortIncrement() {
-		return 1;
+		return 0;
 	}
 
 	/** Gives the bytes of a document referenced with id. */
@@ -97,7 +115,7 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 			resp.setLastModified(dt);
 			try {
 				resp.setDisplayUrl(new URI(permalink + doc.getCodigoCompacto()
-						+ "/" + mov.getIdMov()));
+				+ "/" + mov.getIdMov()));
 			} catch (URISyntaxException e) {
 				throw new RuntimeException(e);
 			}

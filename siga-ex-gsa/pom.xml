@@ -1,5 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<parent>
 		<artifactId>siga-doc</artifactId>
 		<groupId>siga</groupId>
@@ -45,18 +46,19 @@
 		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-ex</artifactId>
-			<version>1.2-SNAPSHOT</version>
+			<version>${siga.version}</version>
+			<scope>compile</scope>
 		</dependency> 
-
+		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>siga-ext</artifactId>
+			<version>${siga.version}</version>
+			<scope>compile</scope>
+		</dependency>		
 		<dependency>
 			<groupId>com.google.enterprise</groupId>   
 			<artifactId>adaptor</artifactId>
 			<version>4.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>siga</groupId>
-			<artifactId>siga-ext</artifactId>
-			<version>1.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

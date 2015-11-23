@@ -20,6 +20,7 @@
 					<archive>
 						<manifest>
 							<mainClass>br.gov.jfrj.siga.ex.gsa.ExDocumentoAdaptor</mainClass>
+							<mainClass>br.gov.jfrj.siga.ex.gsa.ExMovimentacaoAdaptor</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

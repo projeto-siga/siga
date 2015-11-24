@@ -21,6 +21,9 @@
 		<property name="conteudoTpBlob" column="CONTEUDO_TP_BLOB"
 			type="string" />
 			
+		<property name="nmDiretorio" column="NM_DIRETORIO" type="string" />
+		<property name="uuid" column="UUID" type="string" />
+			
 		<!-- Campos padronizados para armazenar dados históricos -->
 		<property name="hisIdIni" column="HIS_ID_INI" type="java.lang.Long" />
 		<property name="hisDtIni" column="HIS_DT_INI" type="java.util.Date" />

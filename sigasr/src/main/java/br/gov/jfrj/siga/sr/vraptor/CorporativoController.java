@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
+import java.io.ByteArrayOutputStream;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -19,9 +26,9 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
-import br.com.caelum.vraptor.view.Results;
+import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
+import br.com.caelum.vraptor.interceptor.download.Download;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.sr.SrCorreio;
 import br.gov.jfrj.siga.sr.model.DadosRH;
 import br.gov.jfrj.siga.sr.model.DadosRH.Cargo;
 import br.gov.jfrj.siga.sr.model.DadosRH.Funcao;
@@ -40,7 +47,7 @@ public class CorporativoController extends SrController {
 			super(request, result, dao, so, em, srValidator);
 		}
 	
-	public void dadosrh() throws ParserConfigurationException {
+	public Download dadosrh() throws ParserConfigurationException {
 		Map<Long, Cargo> mc = new TreeMap<Long, Cargo>();
 		Map<Long, Lotacao> ml = new TreeMap<Long, Lotacao>();
 		Map<Long, Funcao> mf = new TreeMap<Long, Funcao>();
@@ -173,7 +180,30 @@ public class CorporativoController extends SrController {
 			}
 		}
 
-		result.use(Results.xml()).from(doc);
+		ByteArrayOutputStream baos = converterParaXML(doc);
+		
+		
+		return new ByteArrayDownload(baos.toByteArray(), "application/xml", "dadosrh.xml");
+	}
+
+	private ByteArrayOutputStream converterParaXML(Document doc) {
+		DOMSource xmlSource = new DOMSource(doc);
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		StreamResult resultXML =  new StreamResult(baos);
+		try {
+			TransformerFactory.newInstance().newTransformer().transform(xmlSource, resultXML);
+		} catch (TransformerConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerFactoryConfigurationError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return baos;
 	}
 
 	private  void setAttr(Element e, String name, Object value) {

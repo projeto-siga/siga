@@ -498,8 +498,11 @@ public class SolicitacaoController extends SrController {
         	filtro.setItemConfiguracao(solicitacao.getItemConfiguracao());
         	filtro.setAcao(solicitacao.getAcao());
         }
+        Set<SrEtapaSolicitacao> etapasCronometro = solicitacao.getEtapas(getLotaTitular(), false);
+        
         result.include("solicitacoesRelacionadas", filtro.buscarSimplificado());
         result.include("filtro", filtro);
+        result.include("etapasCronometro", etapasCronometro);
         
         incluirListasEdicaoSolicitacao(solicitacao);
         

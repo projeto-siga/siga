@@ -1,50 +1,38 @@
+/*******************************************************************************
+ * Copyright (c) 2006 - 2015 SJRJ.
+ * 
+ *     This file is part of SIGA.
+ * 
+ *     SIGA is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ * 
+ *     SIGA is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
 package br.gov.jfrj.siga.ex.gsa;
-
-//Copyright 2011 Google Inc. All Rights Reserved.
-//
-//Licensed under the Apache License, Version 2.0 (the "License");
-//you may not use this file except in compliance with the License.
-//You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-//Unless required by applicable law or agreed to in writing, software
-//distributed under the License is distributed on an "AS IS" BASIS,
-//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//See the License for the specific language governing permissions and
-//limitations under the License.
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
 
-import org.hibernate.Query;
-import org.hibernate.cfg.Configuration;
+import com.google.enterprise.adaptor.AbstractAdaptor;
+import com.google.enterprise.adaptor.Config;
+import com.google.enterprise.adaptor.ConfigUtils;
+import com.google.enterprise.adaptor.DocId;
+import com.google.enterprise.adaptor.Request;
+import com.google.enterprise.adaptor.Response;
 
-import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
-
-import com.google.enterprise.adaptor.AbstractAdaptor;
-import com.google.enterprise.adaptor.Acl;
-import com.google.enterprise.adaptor.Adaptor;
-import com.google.enterprise.adaptor.AdaptorContext;
-import com.google.enterprise.adaptor.Config;
-import com.google.enterprise.adaptor.DocId;
-import com.google.enterprise.adaptor.DocIdPusher;
-import com.google.enterprise.adaptor.GroupPrincipal;
-import com.google.enterprise.adaptor.PollingIncrementalLister;
-import com.google.enterprise.adaptor.Request;
-import com.google.enterprise.adaptor.Response;
 
 /**
  * Adaptador Google Search Appliance para movimentações do SIGA-DOC.
@@ -58,27 +46,36 @@ import com.google.enterprise.adaptor.Response;
  * -Dservidor=desenv \ -Djournal.reducedMem=true
  */
 public class ExMovimentacaoAdaptor extends ExAdaptor {
+	
+	public ExMovimentacaoAdaptor(){
+		loadSigaAllProperties();
+	}
+
+	@Override
+	public void initConfig(Config config){
+		String feedName = adaptorProperties.getProperty("siga.mov.feed.name");
+		String port = adaptorProperties.getProperty("siga.mov.server.port");
+		String dashboardPort = adaptorProperties.getProperty("siga.mov.server.dashboardPort");
+		if(feedName != null){
+			ConfigUtils.setValue("feed.name", feedName, config);
+		}
+		if(port != null){
+			ConfigUtils.setValue("server.port", port, config);
+		}
+		if(dashboardPort != null){
+			ConfigUtils.setValue("server.dashboardPort", dashboardPort, config);
+		}
+	}
 
 	@Override
 	public String getIdsHql() {
 		return "select mov.idMov from ExMovimentacao mov where mov.exTipoMovimentacao.idTpMov in (2, 5, 6, 7, 8, 18) and (:dt is null or mov.exMobil.exDocumento.dtFinalizacao > :dt or mov.dtIniMov > :dt) order by mov.idMov desc";
 	}
 
-	@Override
-	public String getFeedName() {
-		return "siga-doc-movimentacoes";
-	}
-
-	@Override
-	public int getServerPortIncrement() {
-		return 1;
-	}
 
 	/** Gives the bytes of a document referenced with id. */
 	public void getDocContent(Request req, Response resp) throws IOException {
 		try {
-			ExDao dao = ExDao.getInstance();
-
 			DocId id = req.getDocId();
 			long primaryKey;
 			try {
@@ -112,7 +109,7 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 			resp.setLastModified(dt);
 			try {
 				resp.setDisplayUrl(new URI(permalink + doc.getCodigoCompacto()
-						+ "/" + mov.getIdMov()));
+				+ "/" + mov.getIdMov()));
 			} catch (URISyntaxException e) {
 				throw new RuntimeException(e);
 			}

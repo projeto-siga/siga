@@ -1,50 +1,48 @@
+/*******************************************************************************
+ * Copyright (c) 2006 - 2015 SJRJ.
+ * 
+ *     This file is part of SIGA.
+ * 
+ *     SIGA is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ * 
+ *     SIGA is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
 package br.gov.jfrj.siga.ex.gsa;
 
-//Copyright 2011 Google Inc. All Rights Reserved.
-//
-//Licensed under the Apache License, Version 2.0 (the "License");
-//you may not use this file except in compliance with the License.
-//You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-//Unless required by applicable law or agreed to in writing, software
-//distributed under the License is distributed on an "AS IS" BASIS,
-//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//See the License for the specific language governing permissions and
-//limitations under the License.
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import org.hibernate.Query;
 import org.hibernate.cfg.Configuration;
 
-import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
-import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExMovimentacao;
-import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
-
 import com.google.enterprise.adaptor.AbstractAdaptor;
-import com.google.enterprise.adaptor.Acl;
 import com.google.enterprise.adaptor.Adaptor;
 import com.google.enterprise.adaptor.AdaptorContext;
-import com.google.enterprise.adaptor.Config;
 import com.google.enterprise.adaptor.DocId;
 import com.google.enterprise.adaptor.DocIdPusher;
-import com.google.enterprise.adaptor.GroupPrincipal;
 import com.google.enterprise.adaptor.PollingIncrementalLister;
-import com.google.enterprise.adaptor.Request;
 import com.google.enterprise.adaptor.Response;
+
+import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
+import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 /**
  * Adaptador Google Search Appliance para movimentações do SIGA-DOC.
@@ -52,59 +50,50 @@ import com.google.enterprise.adaptor.Response;
  * Example command line:
  * <p>
  *
- * /java/bin/java \ -cp
- * adaptor-withlib.jar:adaptor-examples.jar:mysql-5.1.10.jar \
- * br.gov.jfrj.siga.ex.gsa.ExMovimentacaoAdaptor \ -Dgsa.hostname=myGSA
- * -Dservidor=desenv \ -Djournal.reducedMem=true
+ * java \ -jar siga-ex-gsa.one-jar
+ * -Dgsa.hostname=myGSA -Dservidor=desenv \ -Djournal.reducedMem=true
  */
-public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor,
-		PollingIncrementalLister {
-	protected static final Logger log = Logger.getLogger(ExAdaptor.class
-			.getName());
+public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor, PollingIncrementalLister {
+	protected static final Logger log = Logger.getLogger(ExAdaptor.class.getName());
 	protected Charset encoding = Charset.forName("UTF-8");
-
 	protected Date dateLastUpdated;
 	protected String permalink;
-
-	@Override
-	public void initConfig(Config config) {
-		config.overrideKey("feed.name", getFeedName());
-		String serverPort = "6677";
-		String serverDashboardPort = "5677";
-		config.overrideKey("server.port", Integer.toString((Integer
-				.parseInt(serverPort) + getServerPortIncrement())));
-		config.overrideKey("server.dashboardPort", Integer.toString((Integer
-				.parseInt(serverDashboardPort) + getServerPortIncrement())));
-	}
+	protected Properties adaptorProperties;
+	static final String DEFAULT_CONFIG_FILE = "adaptor-config.properties";
 
 	@Override
 	public void init(AdaptorContext context) throws Exception {
 		Configuration cfg;
 		String servidor = context.getConfig().getValue("servidor");
 		permalink = context.getConfig().getValue("url.permalink");
-		if (servidor.equals("prod"))
+		if (servidor.equals("prod")){
 			cfg = ExDao.criarHibernateCfg(CpAmbienteEnumBL.PRODUCAO);
-		else if (servidor.equals("homolo"))
+		}			
+		else if (servidor.equals("homolo")){
 			cfg = ExDao.criarHibernateCfg(CpAmbienteEnumBL.HOMOLOGACAO);
-		else if (servidor.equals("treina"))
+		}			
+		else if (servidor.equals("treina")){
 			cfg = ExDao.criarHibernateCfg(CpAmbienteEnumBL.TREINAMENTO);
-		else
+		}			
+		else{
 			cfg = ExDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
-
+		}
 		HibernateUtil.configurarHibernate(cfg);
 		context.setPollingIncrementalLister(this);
 	}
 
-	/** Get all doc ids from database. */
+	/** 
+	 * Get all doc ids from database. 
+	 **/
 	public void getDocIds(DocIdPusher pusher) throws IOException,
-			InterruptedException {
+	InterruptedException {
 		this.dateLastUpdated = ExDao.getInstance().dt();
 		pushDocIds(pusher, new Date(0L));
 	}
 
 	@Override
 	public void getModifiedDocIds(DocIdPusher pusher) throws IOException,
-			InterruptedException {
+	InterruptedException {
 		try {
 			Date dt = ExDao.getInstance().dt();
 			pushDocIds(pusher, this.dateLastUpdated);
@@ -121,7 +110,8 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor,
 			ExDao dao = ExDao.getInstance();
 			Query q = dao.getSessao().createQuery(getIdsHql());
 			q.setDate("dt", date);
-			q.setMaxResults(2000);
+			//q.setMaxResults(500000);// propriedade pode ser utilizada em desenvolvimento para limitar o numero de registros.
+			@SuppressWarnings("rawtypes")
 			Iterator i = q.iterate();
 			while (i.hasNext()) {
 				DocId id = new DocId("" + i.next());
@@ -134,15 +124,37 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor,
 	}
 
 	public abstract String getIdsHql();
-
-	public abstract String getFeedName();
-
-	public abstract int getServerPortIncrement();
-
+	
 	public void addMetadata(Response resp, String title, String value) {
 		if (value == null)
 			return;
 		value = value.trim();
 		resp.addMetadata(title, value);
 	}
+
+	protected void loadSigaAllProperties(){
+		if(null == adaptorProperties){
+			InputStream propStream = null;
+			try {
+				propStream = new FileInputStream(new File(DEFAULT_CONFIG_FILE));
+				this.adaptorProperties = new Properties();
+				this.adaptorProperties.load(propStream);
+			} catch (FileNotFoundException e) {
+				log.warning("Arquivo de propriedades "+DEFAULT_CONFIG_FILE+"não encontrado!");
+				log.warning("Propriedades do adaptor do Siga não serão carregadas.");
+			} catch (IOException e) {
+				log.warning("Não foi possível carregar as propriedades do arquivo "+DEFAULT_CONFIG_FILE);
+				log.warning("Propriedades do adaptor do Siga não serão carregadas.");
+			}finally {
+				if(propStream != null){
+					try {
+						propStream.close();
+					} catch (IOException e) {
+						log.severe("Erro ao finalizar Stream!");
+					}
+				}
+			}
+		}
+	}
+
 }

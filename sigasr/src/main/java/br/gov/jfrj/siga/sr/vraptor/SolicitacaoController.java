@@ -557,6 +557,8 @@ public class SolicitacaoController extends SrController {
         em().detach(solicitacao);
     	if (solicitacao.getSolicitacaoInicial() != null)
     		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
+    	
+    	//SrAcao.AR.find(" hisDtFim is null order by siglaAcao ").fetch();
         
         result.include("itemConfiguracao", solicitacao.getItemAtual());
         result.include("acao", solicitacao.getAcaoAtual());

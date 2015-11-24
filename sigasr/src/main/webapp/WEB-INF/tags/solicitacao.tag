@@ -105,7 +105,7 @@
 				"url":  "${linkTo[SolicitacaoController].buscar}",
 				"type": "POST",
 				"beforeSend": function () {
-					jQuery.noConflict().blockUI();
+					jQuery.noConflict().blockUI(objBlock);
 				    },
 				"complete": function () {
 					jQuery.noConflict().unblockUI();

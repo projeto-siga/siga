@@ -155,8 +155,6 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		query.append(" where sol.hisDtFim is null ");
 		
 		query.append(" and (marcaPrazo.dpLotacaoIni is null or marcaPrazo.dpLotacaoIni = situacao.dpLotacaoIni) ");
-		
-		query.append(" and not exists (from SrMovimentacao mov where solicitacao = sol and dtIniMov > ultMov.dtIniMov) ");
 
 		incluirWheresBasicos(query);
 		
@@ -192,6 +190,9 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	}
 	
 	private void incluirWheresBasicos(StringBuilder query){
+		
+		query.append(" and not exists (from SrMovimentacao mov where solicitacao = sol and idMovimentacao > ultMov.idMovimentacao) ");
+		
 		if (Filtros.deveAdicionar(getTitular()))
 			query.append(" and sol.cadastrante.idPessoaIni = "
 					+ getTitular().getIdInicial());
@@ -300,7 +301,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 				+ " where sol.rascunho = false and sol.hisDtFim is null ");
 		incluirWheresBasicos(query);
 		query.append(" order by sol.dtReg desc");
-		List<Object[]> results = ContextoPersistencia.em().createQuery(query.toString()).setMaxResults(10).getResultList();
+		List<Object[]> results = ContextoPersistencia.em().createQuery(query.toString()).setMaxResults(8).getResultList();
 		
 		//Edson: ver um jeito melhor de formatar essas datas
 		for (Object[] o : results){

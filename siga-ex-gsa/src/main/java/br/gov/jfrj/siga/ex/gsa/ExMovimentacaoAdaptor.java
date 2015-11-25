@@ -32,6 +32,7 @@ import com.google.enterprise.adaptor.Response;
 
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 /**
@@ -137,7 +138,14 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 			Response resp) {
 		addMetadata(resp, "codigo", doc.getCodigo() + ":" + mov.getIdMov());
 		if (doc.getExTipoDocumento() != null) {
-			addMetadata(resp, "origem", doc.getExTipoDocumento().getSigla());
+			addMetadata(
+					resp,
+					"origem",
+					mov.getExTipoMovimentacao()
+							.getId()
+							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO) ? "Anexo"
+							: "Despacho Curto");
+
 		}
 		if (doc.getDnmExNivelAcesso() != null)
 			addMetadata(resp, "acesso", doc.getDnmExNivelAcesso()

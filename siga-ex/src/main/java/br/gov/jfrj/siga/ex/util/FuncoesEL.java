@@ -129,7 +129,7 @@ public class FuncoesEL {
 
 	public static Boolean podeRemeterPorConfiguracao(DpPessoa titular,
 			DpLotacao lotaTitular) throws Exception {
-		if (lotaTitular == null)
+		if (lotaTitular == null && titular == null)
 			return false;
 		return Ex
 				.getInstance()
@@ -144,7 +144,7 @@ public class FuncoesEL {
 
 	public static Boolean podeArquivarPermanentePorConfiguracao(
 			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
-		if (lotaTitular == null)
+		if (lotaTitular == null && titular == null)
 			return false;
 		return Ex
 				.getInstance()
@@ -159,7 +159,7 @@ public class FuncoesEL {
 
 	public static Boolean podeArquivarIntermediarioPorConfiguracao(
 			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
-		if (lotaTitular == null)
+		if (lotaTitular == null && titular == null)
 			return false;
 		return Ex
 				.getInstance()
@@ -174,7 +174,7 @@ public class FuncoesEL {
 
 	public static Boolean podeDefinirPublicadoresPorConfiguracao(
 			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
-		if (lotaTitular == null)
+		if (lotaTitular == null && titular == null)
 			return false;
 		return Ex
 				.getInstance()

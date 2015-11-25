@@ -6671,6 +6671,9 @@ public class ExBL extends CpBL {
 
 			mov.setDescrMov(motivo);
 			gravarMovimentacao(mov);
+			
+			// A gravação deve ser chamada apenas para atualizar a timestamp
+			dao().gravar(doc);
 
 			String funcao = doc.getForm().get("acaoExcluir");
 			if (funcao != null) {

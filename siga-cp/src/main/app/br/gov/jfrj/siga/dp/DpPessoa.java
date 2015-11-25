@@ -154,17 +154,31 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		// return iniciais(getNomePessoa());
 		return getSigla();
 	}
+	
+	public String getFuncaoString() {
+		return getFuncaoConfianca() != null ? getFuncaoConfianca().getNomeFuncao() : 
+			getCargo() != null ? getCargo().getNomeCargo() : "";
+	}
+	
+	public String getFuncaoStringIniciaisMaiusculas(){
+		return getFuncaoConfianca() != null ? getFuncaoConfianca().getDescricaoIniciaisMaiusculas() : 
+			getCargo() != null ? getCargo().getDescricaoIniciaisMaiusculas() : "";
+	}
 
 	public String getDescricao() {
 		return getNomePessoa();
 	}
 	
+	public String getDescricaoIniciaisMaiusculas() {
+		return Texto.maiusculasEMinusculas(getDescricao());
+	}
+	
 	public String getDescricaoCompleta() {
 		return getNomePessoa() + ", " + getFuncaoString().toUpperCase() + ", " + getLotacao().getSiglaCompleta();
 	}
-
-	public String getDescricaoIniciaisMaiusculas() {
-		return Texto.maiusculasEMinusculas(getDescricao());
+	
+	public String getDescricaoCompletaIniciaisMaiusculas() {
+		return getDescricaoIniciaisMaiusculas() + ", " + getFuncaoStringIniciaisMaiusculas() + ", " + getLotacao().getSiglaCompleta();
 	}
 
 	public void setSigla(String sigla) {
@@ -196,11 +210,6 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 
 	public Long getIdInicial() {
 		return getIdPessoaIni();
-	}
-
-	public String getFuncaoString() {
-		return getFuncaoConfianca() != null ? getFuncaoConfianca().getNomeFuncao() : 
-			getCargo() != null ? getCargo().getNomeCargo() : "";
 	}
 
 	public String getPadraoReferenciaInvertido() {

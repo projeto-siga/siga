@@ -464,6 +464,9 @@ public class SolicitacaoController extends SrController {
 			        em().detach(solicitacao);
 		        } catch(AplicacaoException ae){
 		        	solicitacao.setCadastrante(getCadastrante());
+		        	solicitacao.setLotaCadastrante(getLotaCadastrante());
+		        	solicitacao.setTitular(getTitular());
+		        	solicitacao.setLotaTitular(getLotaTitular());
 		        	solicitacao.completarPreenchimento();
 		        }
 			}

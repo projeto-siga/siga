@@ -2559,7 +2559,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	c.setInicio(getDtInicioPrimeiraEdicao());
     	if (jaFoiDesignada())
 			c.setFim(getDtInicioAtendimento());
-		c.setLotaResponsavel(getLotaCadastrante());
+		c.setLotaResponsavel(getLotaTitular());
 		c.setParamsAcordo(getParametrosAcordoOrdenados(c.getParametro()));
     	c.setIntervalosCorrentes(getTrechosNaoPendentesPorEtapa(c));
     	c.setPrioridade(getPrioridade());

@@ -896,7 +896,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
         if (getSolicitacaoInicial() != null) {
             for (SrSolicitacao sol : getHistoricoSolicitacao()) {
-                if (sol.getMeuSolicitacaoFilhaSet() != null)
+                if (sol.getMeuSolicitacaoFilhaSet() != null && sol.getMeuSolicitacaoFilhaSet().size() > 0)
                     for (SrSolicitacao filha : sol.getMeuSolicitacaoFilhaSet())
                         if (filha.getHisDtFim() == null)
                             listaCompleta.add(filha);

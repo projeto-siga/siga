@@ -485,7 +485,7 @@ public class SolicitacaoController extends SrController {
 			}
 		} 
 		
-		//Edson: por causa do detach no ObjetoObjectInstantiator:
+		//Edson: por causa do detach:
 		if (solicitacao.getSolicitacaoInicial() != null)
 			solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
         	                
@@ -557,8 +557,6 @@ public class SolicitacaoController extends SrController {
         em().detach(solicitacao);
     	if (solicitacao.getSolicitacaoInicial() != null)
     		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
-    	
-    	//SrAcao.AR.find(" hisDtFim is null order by siglaAcao ").fetch();
         
         result.include("itemConfiguracao", solicitacao.getItemAtual());
         result.include("acao", solicitacao.getAcaoAtual());
@@ -641,11 +639,17 @@ public class SolicitacaoController extends SrController {
         if (itemConfiguracao != null)
         	solicitacao.setItemConfiguracao(itemConfiguracao);
         else solicitacao.setItemConfiguracao(solicitacao.getItemAtual());
+
+        ///Edson: por causa do detach:        
+        solicitacao.getSolicitacaoFilhaSet();
         
         //Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados
         em().detach(solicitacao);
-    	if (solicitacao.getSolicitacaoInicial() != null)
+        
+        //Edson: por causa do detach:
+    	if (solicitacao.getSolicitacaoInicial() != null){
     		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
+    	}
     	
     	CpConfiguracao filtro = new CpConfiguracao();
         filtro.setDpPessoa(getTitular());

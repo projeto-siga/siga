@@ -54,7 +54,7 @@ function validarFechamento() {
 						<c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
 							<optgroup  label="${cat.tituloAcao}">
 								<c:forEach items="${acoesEAtendentes.get(cat)}" var="tarefa">
-									<option value="${tarefa.acao.idAcao}"> ${tarefa.acao.tituloAcao}</option>
+									<option value="${tarefa.acao.idAcao}" ${acao.idAcao.equals(tarefa.acao.idAcao) ? 'selected' : ''}> ${tarefa.acao.tituloAcao}</option>
 								</c:forEach>					 
 							</optgroup>
 						</c:forEach>

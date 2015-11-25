@@ -1104,13 +1104,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     		solsAConsiderar.add(this);
     	Set<SrArquivo> arqs = new TreeSet<SrArquivo>();
     	for (SrSolicitacao s : solsAConsiderar){
+    		String numSequencia = s.isFilha() ? " (" + s.getNumSequenciaString() + ")" : "";
     		if (s.getArquivo() != null)
-    			arqs.add(getArquivo());
-    		for (SrMovimentacao mov : s.getMovimentacaoSetPorTipo(TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO)){
-    			SrArquivo a = mov.getArquivo();
-    			a.setDescricaoComplementar(mov.getDescrMovimentacao());
-    			arqs.add(a);
-    		}
+    			arqs.add(s.getArquivo().setDescricaoComplementar(numSequencia));
+    		for (SrMovimentacao mov : s.getMovimentacaoSetPorTipo(TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO))
+    			arqs.add(mov.getArquivo().setDescricaoComplementar(mov.getDescrMovimentacao() + numSequencia));
     	}
     	return arqs;
     }

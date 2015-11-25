@@ -1,7 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <c:if test="${not empty pendencias}">
-	<div class="gt-sidebar">
 		<div class="gt-sidebar-content">
 			<h3>Pend&ecirc;ncias</h3>
 			<c:forEach items="${pendencias}" var="pendencia">
@@ -16,5 +15,4 @@
 				</p>
 			</c:forEach>
 		</div>
-	</div>
 </c:if>	 

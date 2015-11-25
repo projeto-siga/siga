@@ -54,5 +54,10 @@ public class SrPendencia extends SrIntervalo {
 	public void setSol(SrSolicitacao sol) {
 		this.sol = sol;
 	}
+	
+	@Override
+	public String getDescricao() {
+		return super.getDescricao() + (sol.isFilha() ? " (" + sol.getNumSequenciaString() + ")" : "");
+	}
 
 }

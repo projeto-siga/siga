@@ -119,8 +119,9 @@ public class SrArquivo extends Objeto implements Comparable<SrArquivo>{
 		return descricaoComplementar;
 	}
 
-	public void setDescricaoComplementar(String descricaoComplementar) {
+	public SrArquivo setDescricaoComplementar(String descricaoComplementar) {
 		this.descricaoComplementar = descricaoComplementar;
+		return this;
 	}
 
 	@Override

@@ -46,7 +46,7 @@
 	</style>
 
 	<div class="gt-bd gt-cols clearfix" style="padding-bottom: 0px;">
-		<div class="gt-content clearfix">
+		<div class="gt-content">
 			<h2>${solicitacao.codigo}</h2>
 			<p></p>
 			<h3>
@@ -363,9 +363,10 @@
 			</c:if>
 		</div>
 
-		<jsp:include page="exibirCronometro.jsp"></jsp:include>
-		<jsp:include page="exibirPendencias.jsp"></jsp:include>
 		<div class="gt-sidebar">
+			<jsp:include page="exibirCronometro.jsp"></jsp:include>
+			<jsp:include page="exibirPendencias.jsp"></jsp:include>
+		
 			<div class="gt-sidebar-content">
 				<h3>Solicita&ccedil;&atilde;o</h3>
 				<p>
@@ -424,10 +425,8 @@
 					</p>
 				</c:if>
 			</div>
-		</div>
 
 		<c:if test="${vinculadas != null && !vinculadas.isEmpty()}">
-			<div class="gt-sidebar">
 				<div class="gt-sidebar-content">
 					<h3>Veja Tamb&eacute;m</h3>
 					<p>
@@ -439,10 +438,8 @@
 						</c:forEach>
 					</p>
 				</div>
-			</div>
 		</c:if>
 		<c:if test="${solicitacao.parteDeArvore}">
-			<div class="gt-sidebar">
 				<div class="gt-sidebar-content">
 					<h3>Contexto</h3>
 					<p>
@@ -450,10 +447,8 @@
 							visualizando="${solicitacao}" />
 					</p>
 				</div>
-			</div>
 		</c:if>
 		<c:if test="${not empty arqs}">
-			<div class="gt-sidebar">
 				<div class="gt-sidebar-content">
 					<h3>Arquivos Anexos</h3>
 					<p>
@@ -463,11 +458,9 @@
                     	</c:forEach>
                 	</p>
 	            </div>
-	        </div>
 	    </c:if>
 
 	    <c:if test="${juntadas != null && !juntadas.isEmpty()}">
-	        <div class="gt-sidebar">
 	            <div class="gt-sidebar-content">
 	                <h3>Solicita&ccedil;&otilde;es juntadas</h3>
 	                <p>
@@ -477,45 +470,42 @@
 	                    </c:forEach>
 	                </p>
 	            </div>
-	        </div>
 	    </c:if>
 	    <c:if test="${not empty listas}">
-	        <div class="gt-sidebar">
 	            <div class="gt-sidebar-content">
 	                <h3>Listas de Prioridade</h3>
 	                    <c:forEach items="${listas}" var="listas">
 	                        <p>
 	                            &nbsp; <input type="hidden" name="idlista"
-	                            value="${listas.idLista}"> <a
+	                            value="${listas.idLista}" /> <a
 	                            style="color: #365b6d; text-decoration: none"
 	                            href="${linkTo[SolicitacaoController].exibirLista[listas.idLista]}">
 	                                ${listas.listaAtual.nomeLista} </a>
 	                        </p>
 	                    </c:forEach>
 	            </div>
-	        </div>
 	    </c:if>
   
 	    <div id="divConhecimentosRelacionados">
 	        <jsp:include page="exibirConhecimentosRelacionados.jsp"></jsp:include>
 	    </div>
-    
+    </div>
+    </div>
     <sigasr:modal nome="anexarArquivo" titulo="Anexar Arquivo">
         <div class="gt-content-box gt-form">
             <form action="${linkTo[SolicitacaoController].anexarArquivo}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">               
                 <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
                 <input type="hidden" name="ocultas" value="${ocultas}" />
                 <input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
-                    value="${solicitacao.idSolicitacao}"> <input
-                    type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12">
+                    value="${solicitacao.idSolicitacao}" /> <input
+                    type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12" />
                 <div class="gt-form-row">
-                    <label>Arquivo</label> <input type="file" name="movimentacao.arquivo">
+                    <label>Arquivo</label> <input type="file" name="movimentacao.arquivo" />
                 </div>
                 <div style="display: inline" class="gt-form-row gt-width-66">
                     <label>Descri&ccedil;&atilde;o</label>
                     <textarea style="width: 100%" name="movimentacao.descrMovimentacao"
-                        id="descrSolicitacao" cols="70" rows="4"
-                        value="${movimentacao.descrMovimentacao}"></textarea>
+                        id="descrSolicitacao" cols="70" rows="4"></textarea>
                 </div>
                 <div class="gt-form-row">
                     <input type="submit" value="Gravar"
@@ -536,7 +526,7 @@
         <form action="${linkTo[SolicitacaoController].juntar}" method="post" enctype="multipart/form-data" id="formGravarJuncao">
             <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
             <input type="hidden" name="ocultas" value="${ocultas}" />
-            <input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}"> 
+            <input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> 
             <div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
                 <label>Solicita&ccedil;&atilde;o</label> <br />
                 <siga:selecao2 propriedade="solRecebeJuntada" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Juncao');"
@@ -557,7 +547,7 @@
         <form action="${linkTo[SolicitacaoController].vincular}" method="post" enctype="multipart/form-data" id="formGravarVinculo">
             <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
             <input type="hidden" name="ocultas" value="${ocultas}" />
-            <input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}"> 
+            <input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> 
             <div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
                 <label>Solicita&ccedil;&atilde;o</label> <br />
                 <siga:selecao2 propriedade="solRecebeVinculo" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Vinculo');"
@@ -590,7 +580,7 @@
                     </div>
                     <div class="gt-form-row gt-width-66">
                         <label>Hor&aacute;rio de T&eacute;rmino</label>
-                        <input type="text" name="horario" id="horario">
+                        <input type="text" name="horario" id="horario" />
                     </div>
                     <div class="gt-form-row gt-width-66">
                         <label>Motivo</label>

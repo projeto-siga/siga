@@ -7,7 +7,7 @@
 </style>
 <c:if test="${not empty etapasCronometro}">
 <c:forEach var="etapa" items="${etapasCronometro}">
-<div class="gt-sidebar">
+
 	<div class="gt-sidebar-content cronometro ${etapa.ativo ? 'ligado' : 'desligado'}">
 		<h3>
 			<img src="/siga/css/famfamfam/icons/clock.png" width="15px;"
@@ -34,6 +34,6 @@
 			</c:otherwise>
 		</c:choose>
 	</div>
-</div>
+
 </c:forEach>
 </c:if>

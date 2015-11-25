@@ -105,10 +105,10 @@
 				"url":  "${linkTo[SolicitacaoController].buscar}",
 				"type": "POST",
 				"beforeSend": function () {
-					jQuery.noConflict().blockUI(objBlock);
+					jQuery.blockUI(objBlock);
 				    },
 				"complete": function () {
-					jQuery.noConflict().unblockUI();
+					jQuery.unblockUI();
 				    },
 				"data": function (d) {
 					$("#frm").find("input").each(function(){

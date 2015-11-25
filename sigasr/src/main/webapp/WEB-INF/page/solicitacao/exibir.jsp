@@ -476,7 +476,7 @@
 	                <h3>Listas de Prioridade</h3>
 	                    <c:forEach items="${listas}" var="listas">
 	                        <p>
-	                            &nbsp; <input type="hidden" name="idlista"
+	                            <input type="hidden" name="idlista"
 	                            value="${listas.idLista}" /> <a
 	                            style="color: #365b6d; text-decoration: none"
 	                            href="${linkTo[SolicitacaoController].exibirLista[listas.idLista]}">

@@ -15,9 +15,9 @@ var objBlock = { css: {
 
 $.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
 	//adicionar a header "X-Requested-With" que pela convenção é uma requisição ajax.
-	options.beforeSend = function (xhr) { 
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    }
+	//options.beforeSend = function (xhr) { 
+    //    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    //}
 	
 	if(/*originalOptions.blockUI == undefined || */originalOptions.blockUI == true) {
 		jQuery.blockUI(objBlock);

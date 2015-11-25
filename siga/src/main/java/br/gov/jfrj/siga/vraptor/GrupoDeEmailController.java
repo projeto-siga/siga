@@ -65,7 +65,7 @@ public class GrupoDeEmailController extends GrupoController {
 				|| conf.podeGerirGrupo(
 						getTitular(),
 						getLotaTitular(),
-						getIdCpGrupo(),
+						idCpGrupo,
 						Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))) {
 			
 			super.aEditar(idCpGrupo);
@@ -73,7 +73,7 @@ public class GrupoDeEmailController extends GrupoController {
 			result.include("idCpTipoGrupo", getIdTipoGrupo());
 			result.include("cpTipoGrupo", getCpTipoGrupo());
 			// Dados do Grupo Perfil
-			result.include("idCpGrupo", getIdCpGrupo());
+			result.include("idCpGrupo", idCpGrupo);
 			result.include("siglaGrupo", getSiglaGrupo());
 			result.include("dscGrupo", getDscGrupo());
 			result.include("grupoPaiSel", getGrupoPaiSel());
@@ -116,7 +116,7 @@ public class GrupoDeEmailController extends GrupoController {
 				|| conf.podeGerirGrupo(
 						getTitular(),
 						getLotaTitular(),
-						getIdCpGrupo(),
+						idCpGrupo,
 						Long.valueOf(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO))) {
 			
 			Long novoIdGrupo = super.aGravar(idCpGrupo, 

@@ -145,6 +145,7 @@ public class ExDocumentoAdaptor extends ExAdaptor {
 	}
 
 	private void addMetadataForDoc(ExDocumento doc, Response resp) {
+		addMetadata(resp, "codigo", doc.getCodigo());
 		if (doc.getExTipoDocumento() != null) {
 			addMetadata(resp, "origem", doc.getExTipoDocumento().getSigla());
 		}

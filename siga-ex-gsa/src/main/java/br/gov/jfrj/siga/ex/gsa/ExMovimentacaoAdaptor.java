@@ -46,23 +46,24 @@ import br.gov.jfrj.siga.hibernate.ExDao;
  * -Dservidor=desenv \ -Djournal.reducedMem=true
  */
 public class ExMovimentacaoAdaptor extends ExAdaptor {
-	
-	public ExMovimentacaoAdaptor(){
+
+	public ExMovimentacaoAdaptor() {
 		loadSigaAllProperties();
 	}
 
 	@Override
-	public void initConfig(Config config){
+	public void initConfig(Config config) {
 		String feedName = adaptorProperties.getProperty("siga.mov.feed.name");
 		String port = adaptorProperties.getProperty("siga.mov.server.port");
-		String dashboardPort = adaptorProperties.getProperty("siga.mov.server.dashboardPort");
-		if(feedName != null){
+		String dashboardPort = adaptorProperties
+				.getProperty("siga.mov.server.dashboardPort");
+		if (feedName != null) {
 			ConfigUtils.setValue("feed.name", feedName, config);
 		}
-		if(port != null){
+		if (port != null) {
 			ConfigUtils.setValue("server.port", port, config);
 		}
-		if(dashboardPort != null){
+		if (dashboardPort != null) {
 			ConfigUtils.setValue("server.dashboardPort", dashboardPort, config);
 		}
 	}
@@ -71,7 +72,6 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 	public String getIdsHql() {
 		return "select mov.idMov from ExMovimentacao mov where mov.exTipoMovimentacao.idTpMov in (2, 5, 6, 7, 8, 18) and (:dt is null or mov.exMobil.exDocumento.dtFinalizacao > :dt or mov.dtIniMov > :dt) order by mov.idMov desc";
 	}
-
 
 	/** Gives the bytes of a document referenced with id. */
 	public void getDocContent(Request req, Response resp) throws IOException {
@@ -109,7 +109,7 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 			resp.setLastModified(dt);
 			try {
 				resp.setDisplayUrl(new URI(permalink + doc.getCodigoCompacto()
-				+ "/" + mov.getIdMov()));
+						+ "/" + mov.getIdMov()));
 			} catch (URISyntaxException e) {
 				throw new RuntimeException(e);
 			}
@@ -135,6 +135,10 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 
 	private void addMetadataForMov(ExDocumento doc, ExMovimentacao mov,
 			Response resp) {
+		addMetadata(resp, "codigo", doc.getCodigo() + ":" + mov.getIdMov());
+		if (doc.getExTipoDocumento() != null) {
+			addMetadata(resp, "origem", doc.getExTipoDocumento().getSigla());
+		}
 		if (doc.getDnmExNivelAcesso() != null)
 			addMetadata(resp, "acesso", doc.getDnmExNivelAcesso()
 					.getNmNivelAcesso());

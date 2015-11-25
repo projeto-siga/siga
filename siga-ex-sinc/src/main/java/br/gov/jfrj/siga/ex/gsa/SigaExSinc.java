@@ -47,21 +47,12 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpPapel;
-import br.gov.jfrj.siga.cp.CpTipoPapel;
-import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.CpTipoLotacao;
-import br.gov.jfrj.siga.dp.CpTipoPessoa;
-import br.gov.jfrj.siga.dp.DpCargo;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
+import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.sinc.lib.Item;
@@ -361,14 +352,8 @@ public class SigaExSinc {
 
 			for (Item opr : list) {
 				log(opr.getDescricao());
-
-				if (opr.getNovo() != null && opr.getNovo() instanceof DpLotacao)
-					if (opr.getAntigo() != null)
-						opr.getAntigo().semelhante(opr.getNovo(), 0);
 				sinc.gravar(opr, o, true);
-
 				manterHistoricoSeNecessario(opr);
-
 			}
 			if (modoLog) {
 				log("");
@@ -446,8 +431,8 @@ public class SigaExSinc {
 	}
 
 	private void desativarCacheDeSegundoNivel() throws Exception {
-		Cp.getInstance().getProp().setCacheUseSecondLevelCache(false);
-		Cp.getInstance().getProp().setCacheUseQueryCache(false);
+		Ex.getInstance().getProp().setCacheUseSecondLevelCache(false);
+		Ex.getInstance().getProp().setCacheUseQueryCache(false);
 	}
 
 	private void logComDestaque(String msg) {
@@ -617,26 +602,26 @@ public class SigaExSinc {
 	 */
 	private void manterHistoricoSeNecessario(Item opr) {
 		// ExModelo
-		if (opr.getNovo() != null && opr.getNovo() instanceof ExModelo) {
-			DpPessoa pesNova = (DpPessoa) opr.getNovo();
-			if (opr.getOperacao().equals(Operacao.incluir)) {
-				List<DpPessoa> historicoPessoa = CpDao.getInstance()
-						.consultarPorMatriculaEOrgao(pesNova.getMatricula(),
-								pesNova.getOrgaoUsuario().getId(), true, true);
-				log("*****************************" + pesNova.getMatricula());
-				if (historicoPessoa.size() > 0) {
-					DpPessoa pesAnterior = historicoPessoa.get(0);
-					if (pesAnterior != null
-							&& !pesAnterior.getIdInicial().equals(
-									pesNova.getIdInicial())) {
-						pesNova.setIdInicial(pesAnterior.getIdInicial());
-						log("AVISO (PESSOA): ID_INICIAL reconectada ("
-								+ pesNova.getSigla() + ")");
-					}
-
-				}
-			}
-
-		}
+		// if (opr.getNovo() != null && opr.getNovo() instanceof ExModelo) {
+		// DpPessoa pesNova = (DpPessoa) opr.getNovo();
+		// if (opr.getOperacao().equals(Operacao.incluir)) {
+		// List<DpPessoa> historicoPessoa = ExDao.getInstance()
+		// .consultarPorMatriculaEOrgao(pesNova.getMatricula(),
+		// pesNova.getOrgaoUsuario().getId(), true, true);
+		// log("*****************************" + pesNova.getMatricula());
+		// if (historicoPessoa.size() > 0) {
+		// DpPessoa pesAnterior = historicoPessoa.get(0);
+		// if (pesAnterior != null
+		// && !pesAnterior.getIdInicial().equals(
+		// pesNova.getIdInicial())) {
+		// pesNova.setIdInicial(pesAnterior.getIdInicial());
+		// log("AVISO (PESSOA): ID_INICIAL reconectada ("
+		// + pesNova.getSigla() + ")");
+		// }
+		//
+		// }
+		// }
+		//
+		// }
 	}
 }

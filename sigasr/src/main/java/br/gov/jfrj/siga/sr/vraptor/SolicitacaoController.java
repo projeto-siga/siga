@@ -553,17 +553,18 @@ public class SolicitacaoController extends SrController {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
     	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
+    	//Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados:
+        em().detach(solicitacao);
+        solicitacao.getSolicitacaoFilhaSet();
+        //Edson: por algum motivo, está sendo necessário dar o detach na solicitacaoPai, se não, o JPA entende que o arquivo 
+        //foi alterado e precisa ser salvo, o que dá erro pois o arquivo também é detached:
+        em().detach(solicitacao.getSolicitacaoPai());
     	
     	solicitacao.setTitular(getTitular());
         solicitacao.setLotaTitular(getLotaTitular());
         if (itemConfiguracao != null)
         	solicitacao.setItemConfiguracao(itemConfiguracao);
         else solicitacao.setItemConfiguracao(solicitacao.getItemAtual());
-        
-        //Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados
-        em().detach(solicitacao);
-    	if (solicitacao.getSolicitacaoInicial() != null)
-    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
         
         result.include("itemConfiguracao", solicitacao.getItemAtual());
         result.include("acao", solicitacao.getAcaoAtual());
@@ -640,6 +641,12 @@ public class SolicitacaoController extends SrController {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
     	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
+    	//Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados:
+        em().detach(solicitacao);
+        solicitacao.getSolicitacaoFilhaSet();
+        //Edson: por algum motivo, está sendo necessário dar o detach na solicitacaoPai, se não, o JPA entende que o arquivo 
+        //foi alterado e precisa ser salvo, o que dá erro pois o arquivo também é detached:
+        em().detach(solicitacao.getSolicitacaoPai());
     	
     	solicitacao.setTitular(getTitular());
         solicitacao.setLotaTitular(getLotaTitular());
@@ -647,17 +654,6 @@ public class SolicitacaoController extends SrController {
         	solicitacao.setItemConfiguracao(itemConfiguracao);
         else solicitacao.setItemConfiguracao(solicitacao.getItemAtual());
 
-        ///Edson: por causa do detach:        
-        solicitacao.getSolicitacaoFilhaSet();
-        
-        //Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados
-        em().detach(solicitacao);
-        
-        //Edson: por causa do detach:
-    	if (solicitacao.getSolicitacaoInicial() != null){
-    		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
-    	}
-    	
     	CpConfiguracao filtro = new CpConfiguracao();
         filtro.setDpPessoa(getTitular());
         filtro.setLotacao(getLotaTitular());

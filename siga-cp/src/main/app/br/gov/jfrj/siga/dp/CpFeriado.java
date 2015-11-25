@@ -35,7 +35,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
@@ -43,6 +43,8 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpFeriado extends AbstractCpFeriado implements Serializable,
 		Selecionavel {
+	
+	public static final ActiveRecord<CpFeriado> AR = new ActiveRecord<>(CpFeriado.class);
 
 	public String getDescricao() {
 		return getDscFeriado();

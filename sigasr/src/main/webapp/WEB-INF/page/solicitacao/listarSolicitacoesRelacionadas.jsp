@@ -1,7 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<div class="gt-sidebar">
 <div class="gt-sidebar-content">
 
 <h3>Solicita&ccedil;&otilde;es Relacionadas</h3>
@@ -76,7 +75,6 @@
 			}
 		});
 	</script>
-</div>
 </div>
 </div>
 

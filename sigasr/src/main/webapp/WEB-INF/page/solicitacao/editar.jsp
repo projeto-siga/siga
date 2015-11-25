@@ -542,6 +542,7 @@
 			</div>
 		</div>
 		
+		<div class="gt-sidebar">
  		<jsp:include page="exibirCronometro.jsp"/>
 		<jsp:include page="exibirPendencias.jsp"/>
 		
@@ -551,6 +552,7 @@
 		
 		<div id="divSolicitacoesRelacionadas" depende="solicitacao.local;solicitacao.solicitante;solicitacao.acao;solicitacao.itemConfiguracao">
 			<jsp:include page="listarSolicitacoesRelacionadas.jsp"/>
+		</div>
 		</div>
 	</div>
 </siga:pagina>

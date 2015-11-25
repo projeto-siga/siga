@@ -411,6 +411,7 @@ public class SolicitacaoController extends SrController {
         result.include("atendentes", atendentes);
         result.include("motivosPendencia",SrTipoMotivoPendencia.values());
         result.include(PRIORIDADE_LIST, SrPrioridade.values());
+        result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
     }
 
     @SuppressWarnings("unchecked")

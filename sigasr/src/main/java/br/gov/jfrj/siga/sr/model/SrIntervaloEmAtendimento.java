@@ -39,8 +39,8 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 					it.setFim(it.getInicio());				
 				decorrido += it.getDecorrido();
 			}
-			dtAtual = SrDataUtil.addDia(dtAtual, 1);
-			it.setInicio(getDtComHorarioInicio(dtAtual));
+			it.setInicio(getDtComHorarioInicio(SrDataUtil.addDia(dtAtual, 1)));
+			dtAtual = it.getInicio();
 			it.setFim(getDtComHorarioFim(dtAtual));
 		}
 		return decorrido;

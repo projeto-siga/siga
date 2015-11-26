@@ -2187,7 +2187,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         if (itemConfiguracao == null || itemConfiguracao.getId() == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
             throw new AplicacaoException("Operação não permitida. Necessário informar um item de configuração e uma ação.");
 
-        if (acao.getTituloAcao().toLowerCase().contains("1º nível")) 
+        if (!isPai() && acao.getTituloAcao().toLowerCase().contains("1º nível")) 
         	throw new AplicacaoException("Operação não permitida. Necessário reclassificar a solicitação. Selecione uma 'ação' " +
         				"relacionada ao atendimento realizado.");
         

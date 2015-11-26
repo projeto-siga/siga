@@ -880,6 +880,10 @@ $(document).on('ready', function(){
 				var split = url[i].split('=');
 				object[split[0]] = url[i].replace(split[0]+"=","");
 			};
+    		for(var x in gsa.settings.params){
+    			if (!object.hasOwnProperty(x))
+    				object[x] = gsa.settings.params[x];
+    		}
 			return object;
 		},
 		// Função para montar modal de carregamento.

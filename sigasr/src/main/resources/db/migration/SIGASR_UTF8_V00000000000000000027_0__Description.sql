@@ -23,6 +23,27 @@ alter table SR_MOVIMENTACAO_ACORDO
   
 ----------Atualizando base pra ter o id_item e id_acao em cada movimentação-----------------------------
 
+--Fazer com que cada movimentação tenha um item, 
+--buscando sempre da anterior ou da solicitação
+update sigasr.sr_movimentacao mov set id_item_configuracao = (
+  select id_item_configuracao 
+  from sigasr.sr_movimentacao movAnterior
+  where id_movimentacao = (
+    select max(id_movimentacao)
+    from sigasr.sr_movimentacao
+    where id_solicitacao = mov.id_solicitacao
+    and id_movimentacao < mov.id_movimentacao
+    and id_item_configuracao is not null
+  )
+) where id_item_configuracao is null;
+
+update sigasr.sr_movimentacao mov set id_item_configuracao = (
+  select id_item_configuracao
+  from sigasr.sr_solicitacao
+  where id_solicitacao = mov.id_solicitacao
+) where id_item_configuracao is null;
+  
+  
 --Fazer com que cada movimentação tenha uma ação, 
 --buscando sempre da anterior ou da solicitação
 update sigasr.sr_movimentacao mov set id_acao = (

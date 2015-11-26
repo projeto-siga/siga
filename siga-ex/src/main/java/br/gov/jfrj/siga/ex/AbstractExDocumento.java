@@ -94,7 +94,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@Column(name = "DT_REG_DOC")
 	private java.util.Date dtRegDoc;
 
-	@Column(name = "DT_ALT_DOC")
+	@Column(name = "HIS_DT_ALT")
 	private java.util.Date dtAltDoc;
 
 	@Column(name = "NM_ARQ_DOC")

@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.sr.util;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -12,11 +13,15 @@ public class SrDataUtil {
 	private static List<CpFeriado> listaFeriados;
 
 	public static List<CpFeriado> getListaFeriados() {
-		if (listaFeriados == null || listaFeriados.size() == 0) {
-			CpDao dao = CpDao.getInstance();
-			listaFeriados = dao.listarFeriados();
-			for (CpFeriado f : listaFeriados)
-				f.getCpOcorrenciaFeriadoSet().size();
+		if (listaFeriados == null) {
+			try{
+				CpDao dao = CpDao.getInstance();
+				listaFeriados = dao.listarFeriados();
+				for (CpFeriado f : listaFeriados)
+					f.getCpOcorrenciaFeriadoSet().size();
+			} catch(Exception e){
+				listaFeriados = new ArrayList<CpFeriado>();
+			}
 		}
 		return listaFeriados;
 	}
@@ -36,7 +41,7 @@ public class SrDataUtil {
 		for (CpFeriado f : getListaFeriados())
 			if (f.abrange(data))
 				return true;
-		return false;
+		return false; 
 	}
 	
 	public static Date addDia(Date data, int i) {

@@ -108,9 +108,13 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 	@Override
 	public boolean isAtivo(Date dt) {
 		SrIntervaloCorrente a = getIntervaloCorrendoNaData(dt);
-		return a != null ? a.isAtivo() : false;
+		return a != null ? (isCadastro() || a.isAtivo()) : false;
 	}
 
+	public boolean isCadastro() {
+		return getParametro().equals(SrParametro.CADASTRO);
+	} 
+	
 	@Override
 	public Date getDataContandoDoInicio(Long millisAdiante) {
 		Iterator<? extends SrIntervaloCorrente> it = intervalosCorrentes.iterator();

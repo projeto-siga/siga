@@ -26,7 +26,7 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 	@Override
 	public Long getDecorridoMillis() {
 		Date dtAtual = getInicio();
-		Date dtFim = getFimOuAgora();
+		Date dtFim = isAtivo() ? getFimOuAgora() : getFimOuDtComHorarioFim();
 		Long decorrido = 0l;
 		SrIntervaloEmAtendimento it = new SrIntervaloEmAtendimento(dtAtual, getDtComHorarioFim(dtAtual), null);
 		while (dtAtual.before(dtFim)) {
@@ -66,6 +66,10 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 	
 	public Date getDtComHorarioInicio(Date d) {
 		return SrDataUtil.getDataComHorario(d, getHorario().getHoraInicial(), 0, 0, 0);
+	}
+	
+	public Date getFimOuDtComHorarioFim() {
+		return getFim() != null ? getFim() : getDtComHorarioFim(new Date());
 	}
 		
 	@Override

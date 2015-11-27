@@ -53,7 +53,7 @@
         <plugin.cobertura-maven.version>2.5.1</plugin.cobertura-maven.version>
 		<plugin.findbugs-maven.version>2.4.0</plugin.findbugs-maven.version>
         <maven-checkstyle-plugin.configLocation>/sauce-siga-integration-test/src/config/checkstyle.xml</maven-checkstyle-plugin.configLocation>
-        <maven-pmd-plugin.configLocation>/sauce-siga-integration-test/src/config/pmd.xml</maven-pmd-plugin.configLocation>
+        <maven-pmd-plugin.configLocation>../sauce-siga-integration-test/src/config/pmd.xml</maven-pmd-plugin.configLocation>
         <checkstyle.skip>false</checkstyle.skip>
         <cobertura.skip>false</cobertura.skip>
         <findbugs.skip>false</findbugs.skip>

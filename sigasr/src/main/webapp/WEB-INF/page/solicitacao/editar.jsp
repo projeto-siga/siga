@@ -71,20 +71,7 @@
 		});
 
 		function postbackURL(){
-			var url = '${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize();
-
-			//Edson: verifica se há algum campo no formulário para o qual não existe checkbox no quadro de 
-			//solicitações relacionadas (!.length), ou então existe *e* está marcado, e envia na url como true. Veja no 
-			//comentário de listarSolicitacoesRelacionadas.jsp o motivo pelo qual esta verificação tem de ser feita aqui:
-			var camposFiltraveis = ['solicitante', 'itemConfiguracao', 'acao'];
-			for (var i = 0; i < camposFiltraveis.length; i++){
-				var campo = $(" #formSolicitacao [name='solicitacao."+camposFiltraveis[i]+".id']");
-				var filtro = $(" #formRelacionadas [name='filtro."+camposFiltraveis[i]+".id']");
-				if (campo.val() && (!filtro.length || filtro.is(":checked")))
-					url += '&' + 'filtro.'+camposFiltraveis[i]+'.id=' + campo.val();
-			}
-
-			return url;
+			return '${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize();
 		}
 	
 		// param_1: id do input que deseja verificar se mudou do valor default
@@ -551,7 +538,24 @@
 		</div>
 		
 		<div id="divSolicitacoesRelacionadas" depende="solicitacao.local;solicitacao.solicitante;solicitacao.acao;solicitacao.itemConfiguracao">
-			<jsp:include page="listarSolicitacoesRelacionadas.jsp"/>
+			<div id="divInternaSolicitacoesRelacionadas"></div>
+			<script type="text/javascript">
+				function carregar(){
+					//Edson: verifica se há algum campo no formulário para o qual não existe checkbox no quadro de 
+					//solicitações relacionadas (!.length), ou então existe *e* está marcado, e envia na url como true. Veja no 
+					//comentário de listarSolicitacoesRelacionadas.jsp o motivo pelo qual esta verificação tem de ser feita aqui:
+					var camposFiltraveis = ['solicitante', 'itemConfiguracao', 'acao'];
+					var url = '${linkTo[SolicitacaoController].listarSolicitacoesRelacionadas}?'+$('#formSolicitacao').serialize();
+					for (var i = 0; i < camposFiltraveis.length; i++){
+						var campo = $(" #formSolicitacao [name='solicitacao."+camposFiltraveis[i]+".id']");
+						var filtro = $(" #formRelacionadas [name='filtro."+camposFiltraveis[i]+".id']");
+						if (campo.val() && (!filtro.length || filtro.is(":checked")))
+							url += '&' + 'filtro.'+camposFiltraveis[i]+'.id=' + campo.val();
+					}
+					SetInnerHTMLFromAjaxResponse(url,"divInternaSolicitacoesRelacionadas");
+				}
+				carregar();
+			</script>
 		</div>
 		</div>
 	</div>

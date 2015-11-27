@@ -91,7 +91,8 @@ public class SrTipoMovimentacao extends Objeto {
 	public static List<Long> TIPOS_MOV_ATUALIZACAO_ATENDIMENTO = Arrays
 			.asList(new Long[] {
 					SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO,
-					SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE });
+					SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE,
+					SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO});
 	
 	public static List<Long> TIPOS_MOV_PRINCIPAIS = Arrays.asList(
 			TIPO_MOVIMENTACAO_ANDAMENTO, TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO,

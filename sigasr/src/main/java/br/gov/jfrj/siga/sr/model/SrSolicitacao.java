@@ -1108,7 +1108,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     		if (s.getArquivo() != null)
     			arqs.add(s.getArquivo().setDescricaoComplementar(numSequencia));
     		for (SrMovimentacao mov : s.getMovimentacaoSetPorTipo(TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO))
-    			arqs.add(mov.getArquivo().setDescricaoComplementar(mov.getDescrMovimentacao() + numSequencia));
+    			arqs.add(mov.getArquivo().setDescricaoComplementar(mov.getDescrMovimentacao() != null ? mov.getDescrMovimentacao(): "" + numSequencia));
     	}
     	return arqs;
     }
@@ -2675,6 +2675,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					&& !isInicio;
 			if (!isInicio && !isFim && !isAtualizacao)
 				continue;
+			if (isAtualizacao)
+				movAtualizacao = mov;
 			if (movIni != null && (isInicio || isFim)) {
 				atendimentos.add(getAtendimento(movIni, movAtualizacao, mov, pendenciasADesconsiderar));
 				movIni = null;
@@ -2682,8 +2684,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			}
 			if (isInicio)
 				movIni = mov;
-			else if (isAtualizacao)
-				movAtualizacao = mov;
 		}
 		if (movIni != null)
 			atendimentos.add(getAtendimento(movIni, movAtualizacao, null, pendenciasADesconsiderar));

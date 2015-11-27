@@ -33,15 +33,17 @@
 		requesting = false;
 	}
 
-	function sbmt(id) {
-		jQuery.blockUI(objBlock);
-		if (typeof postbackURL == 'function')
-			Siga.ajax(postbackURL(), null, "GET", function(response){		
-	    		sbmtResponse(response, id);
-			});	
+	function sbmt(id, URL, preventBlocking) {
+		if (!preventBlocking)
+			jQuery.blockUI(objBlock);
+		if (!URL && typeof postbackURL == 'function')
+			URL = postbackURL();
+		Siga.ajax(URL, null, "GET", function(response){		
+	    	sbmtResponse(response, id, preventBlocking);
+		});	
 	}
 	
-	function sbmtResponse(response, id) {
+	function sbmtResponse(response, id, preventBlocking) {
 		$("div[depende*='"+id+"']").each(function() {
 			var responseHtml = $(response).find("#"+this.id).html();
 			$(this).html(responseHtml);
@@ -49,7 +51,8 @@
 				eval($(this).text());
 			});
 		});	
-		jQuery.unblockUI();
+		if (!preventBlocking)
+			jQuery.unblockUI();
 	}
 </script>
 

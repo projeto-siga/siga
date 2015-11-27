@@ -304,7 +304,7 @@ public class SolicitacaoController extends SrController {
     	
         if (!solicitacao.isRascunho() && !validarFormEditar(solicitacao)) {
         	incluirListasEdicaoSolicitacao(solicitacao);
-            validator.onErrorUsePageOf(SolicitacaoController.class).editar(solicitacao.getSiglaCompacta(), null, null, null, null, null);
+            validator.onErrorUsePageOf(SolicitacaoController.class).editar(solicitacao.getSiglaCompacta(), null, null, null, null);
         	return;
         }
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
@@ -437,7 +437,7 @@ public class SolicitacaoController extends SrController {
     }
 
 	@Path({ "/editar", "/editar/{sigla}"})
-    public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao, SrSolicitacaoFiltro filtro) throws Exception {
+    public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao) throws Exception {
 
 		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.
 		if (sigla != null){
@@ -495,22 +495,23 @@ public class SolicitacaoController extends SrController {
         	                
         solicitacao.atualizarAcordos();
         
-        //Edson: trecho das solicitações relacionadas
-        if (filtro == null){
+        result.include("etapasCronometro", solicitacao.getEtapas(getLotaTitular(), false));
+        
+        incluirListasEdicaoSolicitacao(solicitacao);
+        
+    }
+	
+	public void listarSolicitacoesRelacionadas(SrSolicitacao solicitacao, SrSolicitacaoFiltro filtro) throws Exception{
+        if (filtro == null && solicitacao != null){
         	filtro = new SrSolicitacaoFiltro();
         	filtro.setSolicitante(solicitacao.getSolicitante());
         	filtro.setItemConfiguracao(solicitacao.getItemConfiguracao());
         	filtro.setAcao(solicitacao.getAcao());
         }
-        Set<SrEtapaSolicitacao> etapasCronometro = solicitacao.getEtapas(getLotaTitular(), false);
-        
         result.include("solicitacoesRelacionadas", filtro.buscarSimplificado());
         result.include("filtro", filtro);
-        result.include("etapasCronometro", etapasCronometro);
-        
-        incluirListasEdicaoSolicitacao(solicitacao);
-        
-    }
+        result.include(SOLICITACAO, solicitacao);
+	}
 	
     @Path("/retirarDeLista")
     public void retirarDeLista(String sigla, Long idLista) throws Exception {
@@ -558,7 +559,8 @@ public class SolicitacaoController extends SrController {
         solicitacao.getSolicitacaoFilhaSet();
         //Edson: por algum motivo, está sendo necessário dar o detach na solicitacaoPai, se não, o JPA entende que o arquivo 
         //foi alterado e precisa ser salvo, o que dá erro pois o arquivo também é detached:
-        em().detach(solicitacao.getSolicitacaoPai());
+        if (solicitacao.isFilha())
+        	em().detach(solicitacao.getSolicitacaoPai());
     	
     	solicitacao.setTitular(getTitular());
         solicitacao.setLotaTitular(getLotaTitular());
@@ -646,7 +648,8 @@ public class SolicitacaoController extends SrController {
         solicitacao.getSolicitacaoFilhaSet();
         //Edson: por algum motivo, está sendo necessário dar o detach na solicitacaoPai, se não, o JPA entende que o arquivo 
         //foi alterado e precisa ser salvo, o que dá erro pois o arquivo também é detached:
-        em().detach(solicitacao.getSolicitacaoPai());
+        if (solicitacao.isFilha())
+        	em().detach(solicitacao.getSolicitacaoPai());
     	
     	solicitacao.setTitular(getTitular());
         solicitacao.setLotaTitular(getLotaTitular());

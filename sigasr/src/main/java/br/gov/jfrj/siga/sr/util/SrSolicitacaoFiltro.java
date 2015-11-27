@@ -3,8 +3,6 @@ package br.gov.jfrj.siga.sr.util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -15,8 +13,6 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
-import br.gov.jfrj.siga.sr.model.SrAtributo;
-import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -81,7 +77,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		// Edson: foi necessario separar em subquery porque o Oracle nao aceita
 		// distinct em coluna CLOB em query contendo join
 		query.append("select sol, situacao, ultMov, marcaPrazo.dtIniMarca as prazo ");
-		query.append(idListaPrioridade > 0 ? ", l " : " "); 
+		query.append(idListaPrioridade != null && idListaPrioridade > 0 ? ", l " : " "); 
 				
 		incluirJoinsEWheres(query);
 		
@@ -207,13 +203,11 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 					+ getLotaSolicitante().getIdInicial());
 		
 		if (Filtros.deveAdicionar(getItemConfiguracao())){
-			query.append(" and (case when ultMov.idMovimentacao is not null then "
-					+ "ultMov.itemConfiguracao.hisIdIni else sol.itemConfiguracao.hisIdIni end) = "
+			query.append(" and ultMov.itemConfiguracao.hisIdIni = "
 					+ getItemConfiguracao().getItemInicial().getIdItemConfiguracao());
 		}
 		if (Filtros.deveAdicionar(getAcao())){
-			query.append(" and ((case when ultMov.idMovimentacao is not null then "
-					+ "ultMov.acao.hisIdIni else sol.acao.hisIdIni end)) = "
+			query.append(" and ultMov.acao.hisIdIni = "
 					+ getAcao().getAcaoInicial().getIdAcao());
 		}
 		
@@ -292,7 +286,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Object[]> buscarSimplificado() throws Exception {
+	public List<SrSolicitacaoSimplificada> buscarSimplificado() throws Exception {
 		StringBuilder query = new StringBuilder("select sol.hisIdIni, "
 				+ " case when sol.descrSolicitacao is null then pai.descrSolicitacao else sol.descrSolicitacao end, "
 				+ " sol.dtReg "
@@ -300,16 +294,12 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 				+ " left join sol.meuMovimentacaoSet ultMov "
 				+ " where sol.rascunho = false and sol.hisDtFim is null ");
 		incluirWheresBasicos(query);
-		query.append(" order by sol.dtReg desc");
+		query.append(" order by sol.idSolicitacao desc ");
 		List<Object[]> results = ContextoPersistencia.em().createQuery(query.toString()).setMaxResults(8).getResultList();
-		
-		//Edson: ver um jeito melhor de formatar essas datas
-		for (Object[] o : results){
-			Date dtReg = (Date)o[2];
-			o[2] = new SimpleDateFormat("dd/MM/yyyy").format(dtReg);
-		}
-		
-		return results;
+		List<SrSolicitacaoSimplificada> sols = new ArrayList<SrSolicitacaoSimplificada>();
+		for (Object[] o : results)
+			sols.add(new SrSolicitacaoSimplificada((Long)o[0], (String)o[1], (Date)o[2]));
+		return sols;
 	}
 
 	public boolean isPesquisar() {

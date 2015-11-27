@@ -16,21 +16,20 @@
 	como default true. O servidor não poderá fazer isso (verificar se uma check não existia e marcá-la default como true) porque, 
 	como dito, se um campo do filtro chega lá vazio, é entendido que o usuário desmarcou de propósito, não que a check não existia --%>
 	<input type="hidden" name="filtro.pesquisar" value="false" />
-	
 	<label>Buscar por</label>
 	<c:if test="${not empty solicitacao.solicitante}">
 		<input type="checkbox" name="filtro.solicitante.id"
-			onchange="sbmt('formRelacionadas')"
+			onchange="sbmt('formRelacionadas', '${linkTo[SolicitacaoController].listarSolicitacoesRelacionadas}?'+$('#formRelacionadas').serialize(), true)"
 			value="${solicitacao.solicitante.idPessoa}" ${not empty filtro.solicitante ? 'checked' : ''}/> <b>Solicitante:</b> ${solicitacao.solicitante.nomeAbreviado}<br/>
 	</c:if>
 	<c:if test="${not empty solicitacao.itemConfiguracao}">
 		<input type="checkbox" name="filtro.itemConfiguracao.id"
-			onchange="sbmt('formRelacionadas')"
+			onchange="sbmt('formRelacionadas', '${linkTo[SolicitacaoController].listarSolicitacoesRelacionadas}?'+$('#formRelacionadas').serialize(), true)"
 			value="${solicitacao.itemConfiguracao.id}" ${not empty filtro.itemConfiguracao ? 'checked' : ''} /> <b>Item:</b> ${solicitacao.itemConfiguracao.tituloItemConfiguracao}<br/>
 	</c:if>
 	<c:if test="${not empty solicitacao.acao}">
 		<input type="checkbox" name="filtro.acao.id"
-			onchange="sbmt('formRelacionadas')"
+			onchange="sbmt('formRelacionadas', '${linkTo[SolicitacaoController].listarSolicitacoesRelacionadas}?'+$('#formRelacionadas').serialize(), true)"
 			value="${solicitacao.acao.id}" ${not empty filtro.acao ? 'checked' : '' } /> <b>Ação:</b> ${solicitacao.acao.tituloAcao}<br/>
 	</c:if>
 	</form>
@@ -51,12 +50,12 @@
 						</tr>
 					</thead>
 					<c:forEach items="${solicitacoesRelacionadas}" var="sol">
-						<tr style="cursor: pointer" onclick="window.open('${linkTo[SolicitacaoController].exibir}TMPSR${sol[0]}');" target="new">
+						<tr style="cursor: pointer" onclick="window.open('${linkTo[SolicitacaoController].exibir}TMPSR${sol.id}');" target="new">
 							<td>
-								${sol[2]}
+								${sol.dtRegDDMMYYYY}
 							</td> 
 							<td>
-								<siga:selecionado sigla="${sol[1]}" descricao="${sol[1]}"/>
+								<siga:selecionado sigla="${sol.descricao}" descricao="${sol.descricao}"/>
 							</td> 
 						</tr>
 					</c:forEach>
@@ -68,7 +67,7 @@
 			<tr><td colspan="2"><a href="" onclick="window.open('${linkTo[SolicitacaoController].buscar}?'+$('#formRelacionadas').serialize());return false;">Ver Mais</a></td></tr>		
 		</tbody>
 	</table>
-	<script>
+	<script type="text/javascript">
 		$("#resultados span").each(function (){
 			if (this.innerHTML.length > 150){
 				this.innerHTML = this.innerHTML.substring(0, 150) + '...';

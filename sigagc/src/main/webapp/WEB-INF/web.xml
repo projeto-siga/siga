@@ -4,11 +4,6 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 	<display-name>sigagc</display-name>
 
-	<welcome-file-list>
-		<welcome-file>/WEB-INF/index.jsp</welcome-file>
-	</welcome-file-list>
-
-
 	<jsp-config>
 		<taglib>
 			<taglib-uri>http://localhost/customtag</taglib-uri>
@@ -28,7 +23,7 @@
 	</jsp-config>
 
 	<welcome-file-list>
-		<welcome-file>app/inbox</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 
 	<filter>

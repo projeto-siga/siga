@@ -791,7 +791,7 @@ public class ExDocumentoController extends ExController {
 			if (mob.isArquivado())
 				jaArquivado = true;	
 		
-		if (mob.doc().isFinalizado()) {
+		if (mob.doc().isFinalizado() && mob.getUltimaMovimentacaoNaoCancelada()!= null) {
 			dest = mob.getUltimaMovimentacaoNaoCancelada().getResp().getPessoaAtual(); 
 			lotaDest = mob.getUltimaMovimentacaoNaoCancelada().getLotaResp().getLotacaoAtual();	
 		} else {

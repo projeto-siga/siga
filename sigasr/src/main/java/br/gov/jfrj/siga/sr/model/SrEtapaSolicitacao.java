@@ -108,7 +108,7 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 	@Override
 	public boolean isAtivo(Date dt) {
 		SrIntervaloCorrente a = getIntervaloCorrendoNaData(dt);
-		return a != null ? (isCadastro() || a.isAtivo()) : false;
+		return a != null ? a.isAtivo() : false;
 	}
 
 	public boolean isCadastro() {

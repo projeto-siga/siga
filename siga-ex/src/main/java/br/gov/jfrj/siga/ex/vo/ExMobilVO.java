@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.jboss.logging.Logger;
+
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -36,6 +38,7 @@ import br.gov.jfrj.siga.ex.bl.ExParte;
 
 public class ExMobilVO extends ExVO {
 
+	Logger log = Logger.getLogger(ExMobilVO.class.getCanonicalName());
 	ExMobil mob;
 	String sigla;
 	List<ExMobilVO> apensos = new ArrayList<ExMobilVO>();
@@ -118,7 +121,7 @@ public class ExMobilVO extends ExVO {
 				continue;
 			apensos.add(new ExMobilVO(m, titular, lotaTitular, false));
 		}
-		System.out.println(mob.getExDocumento().getCodigoString()
+		log.debug(mob.getExDocumento().getCodigoString()
 				+ ": aExibir - mobil " + mob.getNumSequencia()
 				+ " - adicao apensos: "
 				+ (System.currentTimeMillis() - tempoIni));
@@ -143,15 +146,14 @@ public class ExMobilVO extends ExVO {
 			expedientesFilhosNaoJuntados.add(new ExDocumentoVO(doc, null,
 					titular, lotaTitular, false, false));
 
-		System.out.println(mob.getExDocumento().getCodigoString()
+		log.debug(mob.getExDocumento().getCodigoString()
 				+ ": aExibir - mobil " + mob.getNumSequencia()
 				+ " - adicao filhos: "
 				+ (System.currentTimeMillis() - tempoIni));
 
 		tempoIni = System.currentTimeMillis();
 		addAcoes(mob, titular, lotaTitular);
-		System.out
-				.println(mob.getExDocumento().getCodigoString()
+		log.debug(mob.getExDocumento().getCodigoString()
 						+ ": aExibir - mobil " + mob.getNumSequencia()
 						+ " - adicao acoes: "
 						+ (System.currentTimeMillis() - tempoIni));
@@ -309,7 +311,7 @@ public class ExMobilVO extends ExVO {
 			span--;
 		}
 
-		System.out.println(mob.getExDocumento().getCodigoString()
+		log.debug(mob.getExDocumento().getCodigoString()
 				+ ": aExibir - mobil " + mob.getNumSequencia()
 				+ " - adicao movs: " + (System.currentTimeMillis() - tempoIni));
 

@@ -1108,7 +1108,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     		if (s.getArquivo() != null)
     			arqs.add(s.getArquivo().setDescricaoComplementar(numSequencia));
     		for (SrMovimentacao mov : s.getMovimentacaoSetPorTipo(TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO))
-    			arqs.add(mov.getArquivo().setDescricaoComplementar(mov.getDescrMovimentacao() != null ? mov.getDescrMovimentacao(): "" + numSequencia));
+    			arqs.add(mov.getArquivo().setDescricaoComplementar((mov.getDescrMovimentacao() != null ? mov.getDescrMovimentacao(): "") + numSequencia));
     	}
     	return arqs;
     }

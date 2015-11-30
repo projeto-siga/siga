@@ -191,7 +191,7 @@ public class ProcessadorReferencias {
 						+ acronimos
 						+ "|"
 						+ siglas
-						+ ")-([A-Za-z]{3})-(?:([0-9]{4}))/([0-9]{5})(\\.[0-9]{1,3})?(?:((?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|((?:-?V[0-9]{1,2})))?");
+						+ ")-([A-Za-z]{3})-(?:([0-9]{4}))/([0-9]{5,})(\\.[0-9]{1,3})?(?:((?:-?V[0-9]{1,2}))|((?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2})))?");
 
 		StringBuffer sb = new StringBuffer();
 		final Matcher m1 = p1.matcher(sHtml);

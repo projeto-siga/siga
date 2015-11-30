@@ -29,13 +29,13 @@
 					<version>r938</version>
 				</dependency>
 
-				<dependency>
-					<groupId>${project.groupId}</groupId>
+				<!-- <dependency>
+					 <groupId>${project.groupId}</groupId>
                     <artifactId>siga-play-module</artifactId>
 					<version>${project.version}</version>
 					<classifier>module-min</classifier>
-					<type>zip</type>
-                </dependency>
+					<type>zip</type> 
+                </dependency>   -->
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>siga-play-module</artifactId>

@@ -18,13 +18,13 @@
 
                  <!-- Especifico do sigari (extrair depois)-->
 		 
-		<dependency>
+	    	<!-- <dependency>
 					<groupId>${project.groupId}</groupId>
                     <artifactId>siga-play-module</artifactId>
 					<version>${project.version}</version>
 					<classifier>module-min</classifier>
 					<type>zip</type>
-                </dependency>
+                </dependency>  -->
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>

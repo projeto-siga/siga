@@ -21,6 +21,10 @@
 		<session-timeout>60</session-timeout>
 	</session-config>
 
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Area restrita</web-resource-name>

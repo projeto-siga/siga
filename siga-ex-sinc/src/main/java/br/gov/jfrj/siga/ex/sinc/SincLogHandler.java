@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.gsa;
+package br.gov.jfrj.siga.ex.sinc;
 
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;

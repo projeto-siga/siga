@@ -248,9 +248,11 @@ public class ExModeloController extends ExSelecionavelController {
 			os.close();
 
 			String filename = Texto.slugify(
-					(m.getNmDiretorio() != null ? m.getNmDiretorio().replace(
-							"/", SUBDIRETORIO)
-							+ SUBDIRETORIO : "")
+					"modelos"
+							+ SUBDIRETORIO
+							+ (m.getNmDiretorio() != null ? m.getNmDiretorio()
+									.replace("/", SUBDIRETORIO) + SUBDIRETORIO
+									: "")
 							+ (m.getExFormaDocumento() != null
 									&& m.getExFormaDocumento()
 											.getDescrFormaDoc() != null ? m

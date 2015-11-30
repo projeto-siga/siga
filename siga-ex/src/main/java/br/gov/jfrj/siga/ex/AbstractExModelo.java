@@ -21,9 +21,14 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.sql.Blob;
+import java.util.Arrays;
+
+import org.apache.commons.codec.binary.Hex;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
+import br.gov.jfrj.siga.model.Assemelhavel;
 
 /**
  * A class that represents a row in the EX_MODELO table. You can customize the
@@ -289,19 +294,38 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		this.uuid = uuid;
 	}
 
-	public boolean semelhante(Object obj) {
+	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
-			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		AbstractExModelo other = (AbstractExModelo) obj;
 		if (conteudoBlobMod == null) {
 			if (other.conteudoBlobMod != null)
 				return false;
-		} else if (!conteudoBlobMod.equals(other.conteudoBlobMod))
-			return false;
+		} else {
+			if (other.getConteudoBlobMod() == null)
+				return false;
+			byte[] abthis = br.gov.jfrj.siga.cp.util.Blob
+					.toByteArray(getConteudoBlobMod());
+			byte[] abother = br.gov.jfrj.siga.cp.util.Blob.toByteArray(other
+					.getConteudoBlobMod());
+			try {
+				String sthis = new String(abthis, "UTF-8");
+				String sother = new String(abother, "UTF-8");
+
+				sthis = sthis.replace("\r\n", "\n");
+				sother = sother.replace("\r\n", "\n");
+
+				if (!sthis.equals(sother)) {
+					System.out.println(Hex.encodeHexString(abthis));
+					System.out.println(Hex.encodeHexString(abother));
+					return false;
+				}
+			} catch (UnsupportedEncodingException e) {
+				throw new RuntimeException(e);
+			}
+		}
 		if (conteudoTpBlob == null) {
 			if (other.conteudoTpBlob != null)
 				return false;
@@ -349,4 +373,5 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 			return false;
 		return true;
 	}
+
 }

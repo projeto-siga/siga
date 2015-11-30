@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.gsa;
+package br.gov.jfrj.siga.ex.sinc;
 
 /*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
@@ -47,6 +47,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
@@ -56,7 +57,6 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.sinc.lib.Item;
-import br.gov.jfrj.siga.sinc.lib.Item.Operacao;
 import br.gov.jfrj.siga.sinc.lib.OperadorComHistorico;
 import br.gov.jfrj.siga.sinc.lib.Sincronizador;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
@@ -197,6 +197,20 @@ public class SigaExSinc {
 		logEnd();
 	}
 
+	public void listf(String directoryName, List<File> files) {
+		File directory = new File(directoryName);
+
+		// get all the files from a directory
+		File[] fList = directory.listFiles();
+		for (File file : fList) {
+			if (file.isFile()) {
+				files.add(file);
+			} else if (file.isDirectory()) {
+				listf(file.getAbsolutePath(), files);
+			}
+		}
+	}
+
 	public void sincronizarModelos() {
 		long inicio = System.currentTimeMillis();
 
@@ -206,22 +220,28 @@ public class SigaExSinc {
 
 			log("Importando: XML");
 			List<String> diretorios = ImportarXmlProperties.getDiretorios();
-			for (String diretorio : diretorios) {
-				File path = new File(diretorio);
-				String[] nomes = path.list();
-				for (String nome : nomes) {
-					if (!nome.endsWith(".xml"))
+			for (String diretoriobase : diretorios) {
+				String diretorio = diretoriobase + "/modelos";
+				List<File> files = new ArrayList<>();
+				listf(diretorio, files);
+				for (File file : files) {
+					if (!file.getName().endsWith(".xml"))
 						continue;
 
-					File file = new File(diretorio + "/" + nome);
-
 					try (FileInputStream fis = new FileInputStream(file)) {
-						System.out.println(nome
-								+ " Total file size to read (in bytes) : "
-								+ fis.available());
-						importarXml(fis);
-					} catch (IOException e) {
-						e.printStackTrace();
+						// System.out.println(file.getName()
+						// + " Total file size to read (in bytes) : "
+						// + fis.available());
+						ExModelo mod = importarXml(fis);
+						String nmDiretorio = CalcularDiretorio(diretorio,
+								file.getPath(), mod.getSubdiretorio());
+						mod.setNmDiretorio(nmDiretorio);
+
+						setNovo.add(mod);
+					} catch (Exception e) {
+						throw new Exception(
+								"Não foi possível importar o XML de '"
+										+ file.getName() + "'.", e);
 					}
 				}
 			}
@@ -240,9 +260,35 @@ public class SigaExSinc {
 				+ " min)");
 	}
 
-	public void importarXml(InputStream in) throws Exception {
+	protected static String CalcularDiretorio(String dir, String filepath,
+			String xmlpath) {
+		String s = filepath;
+		// Remover o nome do arquivo
+		//
+		s = s.substring(0, s.lastIndexOf("/"));
+
+		// Não considerar os primeiros diretórios
+		// decorrentes do path indicado no disco
+		if (s.startsWith(dir))
+			s = s.substring(dir.length());
+		// Não considerar os últimos subdiretórios
+		// decorrentes da espécie e dos separadores no nome
+		// do modelo
+		if (xmlpath != null && s.endsWith(xmlpath))
+			s = s.substring(0, s.length() - xmlpath.length());
+		if ("/".equals(s))
+			return null;
+		if (s.startsWith("/"))
+			s = s.substring(1);
+		if (s.endsWith("/"))
+			s = s.substring(0, s.length() - 1);
+		if ("".equals(s))
+			return null;
+		return s;
+	}
+
+	public ExModelo importarXml(InputStream in) throws Exception {
 		XmlPullParser parser = new KXmlParser();
-		boolean fDocumentoCompleto = false;
 
 		try {
 			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
@@ -251,12 +297,8 @@ public class SigaExSinc {
 			while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
 				if (parser.getEventType() == XmlPullParser.START_TAG) {
 					if (parser.getName().equals("modelo")) {
-						setNovo.add(importarXmlModelo(parser));
+						return importarXmlModelo(parser);
 					}
-				}
-				if (parser.getEventType() == XmlPullParser.END_TAG
-						&& parser.getName().equals("modelo")) {
-					fDocumentoCompleto = true;
 				}
 				parser.nextToken();
 			}
@@ -267,11 +309,7 @@ public class SigaExSinc {
 		} catch (IOException e) {
 			throw e;
 		}
-		if (!fDocumentoCompleto) {
-			throw new Exception(
-					"XML arquivo não estava completo! Nenhuma alteração foi realizada na base.");
-		}
-
+		throw new Exception("XML inválido.");
 	}
 
 	private ExModelo importarXmlModelo(XmlPullParser parser) throws Exception {
@@ -280,39 +318,65 @@ public class SigaExSinc {
 		try {
 			modelo.setIdExterna(parseStr(parser, "uuid"));
 			ExFormaDocumento forma = obterEspeciePelaDescricao(parseStr(parser,
-					"especie").trim());
+					"especie"));
 			ExClassificacao classificacao = obterClassificacaoPelaSigla(parseStr(
-					parser, "classificacao").trim());
+					parser, "classificacao"));
 			ExClassificacao classCriacaoVia = obterClassificacaoPelaSigla(parseStr(
-					parser, "classCriacaoVia").trim());
+					parser, "classCriacaoVia"));
 			ExNivelAcesso nivel = obterNivelAcessoPelaSigla(parseStr(parser,
-					"nivel").trim());
+					"nivel"));
 
 			modelo.setNmMod(parseStr(parser, "nome"));
 			modelo.setDescMod(parseStr(parser, "descricao"));
+			modelo.setExFormaDocumento(forma);
 			modelo.setExClassificacao(classificacao);
 			modelo.setExClassCriacaoVia(classCriacaoVia);
 			modelo.setExNivelAcesso(nivel);
 			modelo.setNmArqMod(parseStr(parser, "arquivo"));
 			modelo.setConteudoTpBlob(parseStr(parser, "tipo"));
-			modelo.setConteudoTpBlob(parseStr(parser, "tipo"));
-			modelo.setNmDiretorio(parseStr(parser, "tipo"));
+			modelo.setNmDiretorio(parseStr(parser, "diretorio"));
+
+			int token = parser.nextToken();
+			while (true) {
+				if (parser.getEventType() == XmlPullParser.END_TAG
+						&& parser.getName().equals("modelo")) {
+					return modelo;
+				}
+				if (token == XmlPullParser.CDSECT) {
+					String cdata = parser.getText();
+					cdata = cdata.replace("\r\n", "\n");
+					modelo.setConteudoBlobMod2(cdata.getBytes("UTF-8"));
+				}
+				token = parser.nextToken();
+			}
 		} catch (Exception e) {
 			throw e;
 		}
-		return modelo;
 	}
 
 	protected ExFormaDocumento obterEspeciePelaDescricao(String s) {
-		return mapEspecies.get(s);
+		if (s == null)
+			return null;
+		ExFormaDocumento especie = mapEspecies.get(s);
+		return especie;
 	}
 
-	protected ExClassificacao obterClassificacaoPelaSigla(String s) {
-		return mapClassificacoes.get(s);
+	protected ExClassificacao obterClassificacaoPelaSigla(String s)
+			throws Exception {
+		if (s == null)
+			return null;
+		ExClassificacao classificacao = mapClassificacoes.get(s);
+		// if (classificacao == null)
+		// throw new Exception("Não foi possível localizar a classificação: '"
+		// + s + "'");
+		return classificacao;
 	}
 
 	protected ExNivelAcesso obterNivelAcessoPelaSigla(String s) {
-		return mapNiveisDeAcesso.get(s);
+		if (s == null)
+			return null;
+		ExNivelAcesso nivel = mapNiveisDeAcesso.get(s);
+		return nivel;
 	}
 
 	@SuppressWarnings("static-access")
@@ -327,14 +391,14 @@ public class SigaExSinc {
 
 			// verifica se as pessoas possuem lotação
 
-			for (Sincronizavel item : setNovo) {
-				if (item instanceof ExModelo) {
-					ExModelo p = ((ExModelo) item);
-					if (p.getExFormaDocumento() == null) {
-						log("Modelo sem espécie! " + p.getNmMod());
-					}
-				}
-			}
+			// for (Sincronizavel item : setNovo) {
+			// if (item instanceof ExModelo) {
+			// ExModelo p = ((ExModelo) item);
+			// if (p.getExFormaDocumento() == null) {
+			// log("Modelo sem espécie! " + p.getNmMod());
+			// }
+			// }
+			// }
 			list = sinc.getOperacoes(dt);
 		} catch (Exception e) {
 			log("Transação abortada por erro: " + e.getMessage());
@@ -460,7 +524,7 @@ public class SigaExSinc {
 
 		for (ExClassificacao classificacao : ExDao.getInstance().listarAtivos(
 				ExClassificacao.class, null))
-			mapClassificacoes.put(classificacao.getDescricao(), classificacao);
+			mapClassificacoes.put(classificacao.getSigla(), classificacao);
 
 		for (ExNivelAcesso nivel : ExDao.getInstance().listarTodos(
 				ExNivelAcesso.class, null))

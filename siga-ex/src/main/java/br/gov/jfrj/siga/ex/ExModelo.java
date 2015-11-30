@@ -24,6 +24,7 @@ package br.gov.jfrj.siga.ex;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
@@ -72,10 +73,6 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel {
 
 	public void setId(Long id) {
 		setIdMod(id);
-	}
-
-	public boolean semelhante(Assemelhavel obj, int profundidade) {
-		return false;
 	}
 
 	public boolean isFechado() {
@@ -164,5 +161,25 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel {
 	@Override
 	public String getDescricaoExterna() {
 		return getNmMod();
+	}
+
+	private static final String SUBDIRETORIO = "-subdiretorio-";
+
+	public String getSubdiretorioENome() {
+		return Texto
+				.slugify(
+						(getExFormaDocumento() != null
+								&& getExFormaDocumento().getDescrFormaDoc() != null ? getExFormaDocumento()
+								.getDescrFormaDoc() + SUBDIRETORIO
+								: "")
+								+ getNmMod().replace(": ", SUBDIRETORIO), true,
+						false).replace(SUBDIRETORIO, "/");
+	}
+
+	public String getSubdiretorio() {
+		String filename = getSubdiretorioENome();
+		if (filename.contains("/"))
+			return filename.substring(0, filename.lastIndexOf("/"));
+		return null;
 	}
 }

@@ -7,9 +7,7 @@
 		<groupId>projeto-siga</groupId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-
 	<modelVersion>4.0.0</modelVersion>
-
 	<artifactId>sauce-siga-integration-test</artifactId>
 	<build>
 		<plugins>
@@ -23,11 +21,7 @@
 					<suiteXmlFiles>
 						<suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
 					</suiteXmlFiles>
- 	<!--  				<environmentVariables>
-						<BUILD_NUMBER>${env.BUILD_NUMBER}</BUILD_NUMBER>
-						<JOB_NAME>${env.JOB_NAME}</JOB_NAME>
-					</environmentVariables>  -->
-				</configuration>
+ 				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -37,6 +31,29 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+	        
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<reportPlugins>
+						<!-- JXR -->
+						<!-- <plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-jxr-plugin</artifactId>
+							<version>2.3</version>
+						</plugin> -->
+						<!-- Surefire -->
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-surefire-report-plugin</artifactId>
+							<version>2.17</version>
+						</plugin>
+					</reportPlugins>
+				</configuration>
+			</plugin>	
 		</plugins>
 	</build>
 
@@ -232,16 +249,7 @@
 
 	<reporting>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<version>2.3</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>2.17</version>
-			</plugin>
+			
 		</plugins>
 	</reporting>
 

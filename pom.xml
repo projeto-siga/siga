@@ -29,11 +29,11 @@
         <module>siga-autenticidade</module>
         <module>siga-cd-aut</module>
         <module>siga-cp-sinc</module>
-        <module>siga-play-module</module>
+        <!--  <module>siga-play-module</module>
         <module>sigasr</module>
         <module>sigagc</module>
 		<module>sigapp</module>
-        <module>sigari</module>
+        <module>sigari</module> -->
         <!-- <module>siga-assinador</module> -->
         <module>siga-dump</module>
   </modules>

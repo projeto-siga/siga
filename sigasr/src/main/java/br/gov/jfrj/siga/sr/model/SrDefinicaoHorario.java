@@ -60,10 +60,14 @@ public enum SrDefinicaoHorario{
 		return horaInicial > tempo;
 	}
 	
+	public boolean abrange(int tempo) {
+		return !terminaAntesDe(tempo) && !comecaDepoisDe(tempo);
+	}
+	
 	public boolean abrange(Date dt) {
 		Calendar c = Calendar.getInstance();
 		c.setTime(dt);
 		int h = c.get(Calendar.HOUR_OF_DAY);
-		return !terminaAntesDe(h) && !comecaDepoisDe(h);
+		return abrange(h);
 	}
 }

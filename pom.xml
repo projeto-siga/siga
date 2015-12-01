@@ -228,7 +228,14 @@
 								<goal>jar</goal>
 							</goals>
 					</execution>
-				</executions> 
+					<execution>
+			             <id>aggregate</id>
+			               <phase>site</phase>
+			                 <goals>
+			                   <goal>aggregate</goal>
+			                 </goals>
+			         </execution>
+				  </executions> 
 			</plugin>
             
 			<plugin>

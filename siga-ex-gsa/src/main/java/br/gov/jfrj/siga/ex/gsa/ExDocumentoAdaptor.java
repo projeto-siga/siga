@@ -22,8 +22,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.enterprise.adaptor.AbstractAdaptor;
 import com.google.enterprise.adaptor.Acl;
@@ -34,8 +37,11 @@ import com.google.enterprise.adaptor.GroupPrincipal;
 import com.google.enterprise.adaptor.Request;
 import com.google.enterprise.adaptor.Response;
 
+import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.bl.ExAcesso;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
@@ -52,22 +58,23 @@ import br.gov.jfrj.siga.hibernate.ExDao;
  */
 public class ExDocumentoAdaptor extends ExAdaptor {
 
-	public ExDocumentoAdaptor(){
+	public ExDocumentoAdaptor() {
 		loadSigaAllProperties();
 	}
 
 	@Override
-	public void initConfig(Config config){
+	public void initConfig(Config config) {
 		String feedName = adaptorProperties.getProperty("siga.doc.feed.name");
 		String port = adaptorProperties.getProperty("siga.doc.server.port");
-		String dashboardPort = adaptorProperties.getProperty("siga.doc.server.dashboardPort");
-		if(feedName != null){
+		String dashboardPort = adaptorProperties
+				.getProperty("siga.doc.server.dashboardPort");
+		if (feedName != null) {
 			ConfigUtils.setValue("feed.name", feedName, config);
 		}
-		if(port != null){
+		if (port != null) {
 			ConfigUtils.setValue("server.port", port, config);
 		}
-		if(dashboardPort != null){
+		if (dashboardPort != null) {
 			ConfigUtils.setValue("server.dashboardPort", dashboardPort, config);
 		}
 	}
@@ -127,14 +134,20 @@ public class ExDocumentoAdaptor extends ExAdaptor {
 
 	protected static void addAclForDoc(ExDocumento doc, Response resp) {
 		String sAcessos = doc.getDnmAcesso();
-		if ("PUBLICO".equals(sAcessos))
-			return;
-
 		List<GroupPrincipal> groups = new ArrayList<>();
+
 		if (sAcessos == null) {
-			log.fine("acessos is null for");
-			return;
+			Date dt = ExDao.getInstance().dt();
+			ExAcesso acesso = new ExAcesso();
+			sAcessos = acesso.getAcessosString(doc, dt);
+			if (sAcessos == null || sAcessos.trim().length() == 0)
+				throw new RuntimeException(
+						"Não foi possível calcular os acesos de "
+								+ doc.getSigla());
 		}
+
+		if (ExAcesso.ACESSO_PUBLICO.equals(sAcessos))
+			return;
 		for (String s : sAcessos.split(",")) {
 			groups.add(new GroupPrincipal(s));
 		}
@@ -174,35 +187,41 @@ public class ExDocumentoAdaptor extends ExAdaptor {
 					c.setSigla(sigla);
 					ExClassificacao cPai = ExDao.getInstance()
 							.consultarPorSigla(c);
-					if(cPai != null){
-						addMetadata(resp, 
+					if (cPai != null) {
+						addMetadata(
+								resp,
 								"classificacao_"
-										+ MascaraUtil.getInstance().calcularNivel(
-												c.getCodificacao()),
-										cPai.getDescrClassificacao());
+										+ MascaraUtil.getInstance()
+												.calcularNivel(
+														c.getCodificacao()),
+								cPai.getDescrClassificacao());
 					}
 				}
 			}
-			
-			
-			addMetadata(resp, 
-					"classificacao_" + MascaraUtil.getInstance().calcularNivel(
-									cAtual.getCodificacao()),cAtual.getDescricao());
+
+			addMetadata(
+					resp,
+					"classificacao_"
+							+ MascaraUtil.getInstance().calcularNivel(
+									cAtual.getCodificacao()),
+					cAtual.getDescricao());
 		}
 
-		if (doc.getLotaSubscritor() != null){
-			addMetadata(resp, "subscritor_lotacao", doc.getLotaSubscritor().getSiglaLotacao());
+		if (doc.getLotaSubscritor() != null) {
+			addMetadata(resp, "subscritor_lotacao", doc.getLotaSubscritor()
+					.getSiglaLotacao());
 		}
-		if (doc.getSubscritor() != null){
+		if (doc.getSubscritor() != null) {
 			addMetadata(resp, "subscritor", doc.getSubscritor().getNomePessoa());
-		}	
-		if (doc.getLotaCadastrante() != null){
-			addMetadata(resp, "cadastrante_lotacao", doc.getLotaCadastrante().getSiglaLotacao());
 		}
-		if (doc.getCadastrante() != null){
-			addMetadata(resp, "cadastrante", doc.getCadastrante().getNomePessoa());
+		if (doc.getLotaCadastrante() != null) {
+			addMetadata(resp, "cadastrante_lotacao", doc.getLotaCadastrante()
+					.getSiglaLotacao());
 		}
-			
+		if (doc.getCadastrante() != null) {
+			addMetadata(resp, "cadastrante", doc.getCadastrante()
+					.getNomePessoa());
+		}
 
 		Map<String, String> map = doc.getResumo();
 		if (map != null)
@@ -210,7 +229,6 @@ public class ExDocumentoAdaptor extends ExAdaptor {
 				addMetadata(resp, s, map.get(s));
 			}
 	}
-
 
 	public static void main(String[] args) {
 		AbstractAdaptor.main(new ExDocumentoAdaptor(), args);

@@ -2,7 +2,6 @@ $(document).on('ready', function(){
 
 	var gsa = {
 		settings: {
-			path: "http://172.16.1.105/",// TRF2 ip 172.16.1.105
 			proxy: "/siga/app/buscargsa",
 			params:{
 				site: "siga",
@@ -71,7 +70,7 @@ $(document).on('ready', function(){
 						rowHtml += '<div class="panel-heading gsa-title"> <div class="row">';
 						rowHtml += '<div class="col-md-10"><a class="gsa-permalink" href="'+RES.R[i].U+'">'+MT.desc_titulo+'</a></div>';
 						//link cache
-						rowHtml += '<div class="col-md-2"><a class="gsa-cache pull-right" target="_blank" href="'+self.cacheLink(RES.R[i],json.GSP.PARAM, gsa.settings.path)+'">'+RES.R[i].HAS.C.SZ+' Cache</a></div>';
+						rowHtml += '<div class="col-md-2"><a class="gsa-cache pull-right" target="_blank" href="'+self.cacheLink(RES.R[i],json.GSP.PARAM, gsa.settings.proxy)+'">'+RES.R[i].HAS.C.SZ+' Cache</a></div>';
 						rowHtml += '</div></div>';
 
 						//snippet
@@ -270,7 +269,7 @@ $(document).on('ready', function(){
 				}
 
 			   	var url = gsaPath;
-			   	url += 'search?q=cache:';
+			   	url += '?q=cache:';
 			   	url += docid;
 			   	url += ":";
 			   	url += docid;

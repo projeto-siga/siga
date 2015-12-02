@@ -223,7 +223,7 @@ public class CpDao extends ModeloDao {
 			cache = manager.getCache(cRegion);
 			CacheConfiguration config;
 			config = cache.getCacheConfiguration();
-			config.setEternal(true);
+			config.setEternal(false);
 			config.setMaxElementsInMemory(10000);
 			config.setOverflowToDisk(false);
 			config.setMaxElementsOnDisk(0);
@@ -1764,7 +1764,7 @@ public class CpDao extends ModeloDao {
 			manager.addCache(CACHE_CORPORATIVO);
 			cache = manager.getCache(CACHE_CORPORATIVO);
 			config = cache.getCacheConfiguration();
-			config.setEternal(true);
+			config.setEternal(false);
 			config.setTimeToIdleSeconds(0);
 			config.setTimeToLiveSeconds(0);
 			config.setMaxElementsInMemory(10000);

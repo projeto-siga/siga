@@ -752,7 +752,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     			is.add(new SrIntervaloEmAtendimento(iniEmAtendmto, p.getInicio(), "Período de atendimento"));
     		if (p.isInfinito())
     			return is;
-    		iniEmAtendmto = p.getFim();
+    		if (p.getFim().after(iniEmAtendmto))
+    			iniEmAtendmto = p.getFim();
     	}
     	is.add(new SrIntervaloEmAtendimento(iniEmAtendmto, null, "Período de atendimento"));
     	return is;

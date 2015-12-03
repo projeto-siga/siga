@@ -22,7 +22,7 @@
  *  To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-package br.gov.jfrj.siga.util;
+package br.gov.jfrj.siga.ex.sinc;
 
 import java.util.List;
 
@@ -53,7 +53,7 @@ public class ImportarXmlProperties extends SigaBaseProperties {
 
 	@Override
 	public String getPrefixoModulo() {
-		return "siga.cp.sinc.xml";
+		return "siga.ex.sinc";
 	}
 
 	private static SigaBaseProperties instance = new ImportarXmlProperties();
@@ -69,7 +69,7 @@ public class ImportarXmlProperties extends SigaBaseProperties {
 
 	public static List<String> getDiretorios() throws AplicacaoException {
 		try {
-			return instance.obterPropriedadeLista("diretorios");
+			return instance.obterPropriedadeLista("modelo.diretorio");
 		} catch (Exception e) {
 			throw new AplicacaoException(
 					"Não foi possível encontrar servidores de e-mail no arquivo siga.properties. Ex: servidor.smtp.0 = nome_servidor_email");

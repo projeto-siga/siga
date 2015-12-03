@@ -28,7 +28,7 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 		Date dtAtual = getInicio();
 		Date dtFim = isAtivo() ? getFimOuAgora() : getFimOuDtComHorarioFim();
 		Long decorrido = 0l;
-		SrIntervaloEmAtendimento it = new SrIntervaloEmAtendimento(dtAtual, getDtComHorarioFim(dtAtual), null);
+		SrIntervaloEmAtendimento it = new SrIntervaloEmAtendimento(getDtComHorarioInicio(dtAtual), getDtComHorarioFim(dtAtual), null);
 		while (dtAtual.before(dtFim)) {
 			if (it.isDiaUtil() && !it.terminouAntesDe(dtAtual)) {
 				if (it.abrange(getInicio()))
@@ -48,7 +48,7 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 
 	public Long getDecorrido() { 
 		if (isFuturo())
-			return null;
+			return 0l;
 		return getFimOuAgora().getTime() - getInicio().getTime();
 	}
 

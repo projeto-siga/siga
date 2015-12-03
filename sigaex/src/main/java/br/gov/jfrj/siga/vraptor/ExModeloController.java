@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -41,6 +42,7 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 @Resource
 public class ExModeloController extends ExSelecionavelController {
 
+	private static final String SUBDIRETORIO = "-subdiretorio-";
 	private static final String VERIFICADOR_ACESSO = "MOD:Gerenciar modelos";
 	private static final String UTF8 = "utf-8";
 	private static final Logger LOGGER = Logger
@@ -110,7 +112,8 @@ public class ExModeloController extends ExSelecionavelController {
 			result.include("conteudo", conteudo);
 			result.include("descricao", modelo.getDescMod());
 			result.include("arquivo", modelo.getNmArqMod());
-
+			result.include("uuid", modelo.getUuid());
+			result.include("diretorio", modelo.getNmDiretorio());
 		}
 	}
 
@@ -120,7 +123,8 @@ public class ExModeloController extends ExSelecionavelController {
 			final ExClassificacaoSelecao classificacaoSel,
 			final ExClassificacaoSelecao classificacaoCriacaoViasSel,
 			final String descricao, final Integer forma, final Long nivel,
-			final String arquivo, final Integer postback) throws Exception {
+			final String arquivo, final String diretorio, final String uuid,
+			final Integer postback) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 		ExModelo modelo = buscarModelo(id);
 		if (postback != null) {
@@ -131,6 +135,8 @@ public class ExModeloController extends ExSelecionavelController {
 			modelo.setConteudoTpBlob(tipoModelo);
 			modelo.setDescMod(descricao);
 			modelo.setNmArqMod(arquivo);
+			modelo.setNmDiretorio(diretorio);
+			modelo.setUuid(uuid);
 			if (conteudo != null && conteudo.trim().length() > 0) {
 				modelo.setConteudoBlobMod2(conteudo.getBytes(UTF8));
 			}
@@ -189,7 +195,7 @@ public class ExModeloController extends ExSelecionavelController {
 			serializer.startDocument(null, null);
 			serializer.startTag(null, "modelo");
 			if (m.getExFormaDocumento() != null) {
-				serializer.attribute(null, "forma", m.getExFormaDocumento()
+				serializer.attribute(null, "especie", m.getExFormaDocumento()
 						.getDescricao());
 			}
 			if (m.getNmMod() != null) {
@@ -216,6 +222,17 @@ public class ExModeloController extends ExSelecionavelController {
 			if (m.getConteudoTpBlob() != null) {
 				serializer.attribute(null, "tipo", m.getConteudoTpBlob());
 			}
+			if (m.getUuid() == null) {
+				m.setUuid(UUID.randomUUID().toString());
+				dao().gravar(m);
+			}
+			if (m.getUuid() != null) {
+				serializer.attribute(null, "uuid", m.getUuid());
+			}
+			if (m.getNmDiretorio() != null) {
+				serializer.attribute(null, "diretorio", m.getNmDiretorio());
+			}
+
 			final byte[] template = m.getConteudoBlobMod2();
 			if (template != null) {
 				serializer.flush();
@@ -231,8 +248,18 @@ public class ExModeloController extends ExSelecionavelController {
 			os.close();
 
 			String filename = Texto.slugify(
-					m.getNmMod().replace(": ", "-subdiretorio-"), true, false)
-					.replace("-subdiretorio-", "/");
+					"modelos"
+							+ SUBDIRETORIO
+							+ (m.getNmDiretorio() != null ? m.getNmDiretorio()
+									.replace("/", SUBDIRETORIO) + SUBDIRETORIO
+									: "")
+							+ (m.getExFormaDocumento() != null
+									&& m.getExFormaDocumento()
+											.getDescrFormaDoc() != null ? m
+									.getExFormaDocumento().getDescrFormaDoc()
+									+ SUBDIRETORIO : "")
+							+ m.getNmMod().replace(": ", SUBDIRETORIO), true,
+					false).replace(SUBDIRETORIO, "/");
 			if (mapNomes.containsKey(filename))
 				mapNomes.put(filename, mapNomes.get(filename) + 1);
 			else

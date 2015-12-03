@@ -595,3 +595,16 @@ header#topo {
 nav#gsa-pagination {
 	min-height: 100px;
 }
+
+.gsa-permalink, .gsa-permalink:link, .gsa-permalink:hover, .gsa-permalink:active {
+	font-weight: bold;
+	color: inherit;
+    text-decoration: none;
+    
+}
+
+.gsa-cache, .gsa-cache:link, .gsa-cache:hover, .gsa-cache:active {
+	color: inherit;
+    text-decoration: none;
+    
+}

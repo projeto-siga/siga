@@ -22,16 +22,19 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 
 /**
  * A class that represents a row in the 'EX_MODELO' table. This class may be
  * customized as it is never re-generated after being created.
  */
-public class ExModelo extends AbstractExModelo {
+public class ExModelo extends AbstractExModelo implements Sincronizavel {
 	private byte[] cacheConteudoBlobMod;
 
 	/**
@@ -52,7 +55,8 @@ public class ExModelo extends AbstractExModelo {
 	/* Add customized code below */
 	public void setConteudoBlobMod2(final byte[] blob) {
 		if (blob != null)
-			setConteudoBlobMod(HibernateUtil.getSessao().getLobHelper().createBlob(blob));
+			setConteudoBlobMod(HibernateUtil.getSessao().getLobHelper()
+					.createBlob(blob));
 		cacheConteudoBlobMod = blob;
 	}
 
@@ -71,22 +75,17 @@ public class ExModelo extends AbstractExModelo {
 		setIdMod(id);
 	}
 
-	public boolean semelhante(Assemelhavel obj, int profundidade) {
-		return false;
-	}
-	
 	public boolean isFechado() {
-		if(getModeloAtual() == null)
+		if (getModeloAtual() == null)
 			return true;
-		
+
 		return false;
 	}
-	
-	
+
 	public ExModelo getModeloAtual() {
 		return ExDao.getInstance().consultarModeloAtual(this);
-	}	
-	
+	}
+
 	public boolean isDescricaoAutomatica() {
 		try {
 			if ("template/freemarker".equals(getConteudoTpBlob())
@@ -98,14 +97,89 @@ public class ExModelo extends AbstractExModelo {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
+
 		return false;
 	}
 
 	public boolean isClassificacaoAutomatica() {
-		if(getExClassificacao() != null)
+		if (getExClassificacao() != null)
 			return true;
-		
+
 		return false;
+	}
+
+	@Override
+	public String getIdExterna() {
+		return getUuid();
+	}
+
+	@Override
+	public void setIdExterna(String idExterna) {
+		setUuid(idExterna);
+	}
+
+	@Override
+	public void setIdInicial(Long idInicial) {
+		setHisIdIni(idInicial);
+	}
+
+	@Override
+	public Date getDataInicio() {
+		return getHisDtIni();
+	}
+
+	@Override
+	public void setDataInicio(Date dataInicio) {
+		setHisDtIni(dataInicio);
+	}
+
+	@Override
+	public Date getDataFim() {
+		return getHisDtFim();
+	}
+
+	@Override
+	public void setDataFim(Date dataFim) {
+		setHisDtFim(dataFim);
+	}
+
+	@Override
+	public String getLoteDeImportacao() {
+		return null;
+	}
+
+	@Override
+	public void setLoteDeImportacao(String loteDeImportacao) {
+
+	}
+
+	@Override
+	public int getNivelDeDependencia() {
+		return 0;
+	}
+
+	@Override
+	public String getDescricaoExterna() {
+		return getNmMod();
+	}
+
+	private static final String SUBDIRETORIO = "-subdiretorio-";
+
+	public String getSubdiretorioENome() {
+		return Texto
+				.slugify(
+						(getExFormaDocumento() != null
+								&& getExFormaDocumento().getDescrFormaDoc() != null ? getExFormaDocumento()
+								.getDescrFormaDoc() + SUBDIRETORIO
+								: "")
+								+ getNmMod().replace(": ", SUBDIRETORIO), true,
+						false).replace(SUBDIRETORIO, "/");
+	}
+
+	public String getSubdiretorio() {
+		String filename = getSubdiretorioENome();
+		if (filename.contains("/"))
+			return filename.substring(0, filename.lastIndexOf("/"));
+		return null;
 	}
 }

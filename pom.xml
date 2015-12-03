@@ -27,6 +27,7 @@
 		<module>siga-ext</module>
 		<module>siga-ex</module>
 		<module>siga-ex-gsa</module>
+		<module>siga-ex-sinc</module>
 		<module>sigagc</module>
 		<module>sigasr</module>
 		<module>siga-cd</module>

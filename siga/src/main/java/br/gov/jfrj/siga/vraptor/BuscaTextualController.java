@@ -39,11 +39,13 @@ public class BuscaTextualController extends SigaController {
 		url += "?" + request.getQueryString();
 		if (url.contains("type=suggest"))
 			url = url.replace("search", "suggest");
+		String contentType = "application/json";
+		if (url.contains("q=cache:"))
+			contentType = "text/html";
 		String response = http.get(url, getRequest(), null);
 		result.use(Results.http())
-				.addHeader("Content-Type", "application/json").body(response)
+				.addHeader("Content-Type", contentType).body(response)
 				.setStatusCode(200);
-		;
 	}
 
 }

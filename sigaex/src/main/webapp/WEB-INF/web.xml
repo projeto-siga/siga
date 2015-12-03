@@ -255,6 +255,10 @@
 		<role-name>superusuario</role-name>
 	</security-role>
 
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
 	<error-page>
 		<exception-type>java.lang.Throwable</exception-type>
 		<location>/WEB-INF/page/erroGeral.jsp</location>

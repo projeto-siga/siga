@@ -1411,6 +1411,16 @@ public class CpDao extends ModeloDao {
 
 	}
 
+	public <T> List<T> listarTodos(Class<T> clazz, String orderBy) {
+		Criteria c = getSessao().createCriteria(clazz);
+
+		if (orderBy != null) {
+			c.addOrder(Order.asc(orderBy));
+		}
+
+		return c.list();
+	}
+
 	public <T> T consultarAtivoPorIdInicial(Class<T> clazz, Long hisIdIni) {
 		Criteria c = getSessao().createCriteria(clazz);
 

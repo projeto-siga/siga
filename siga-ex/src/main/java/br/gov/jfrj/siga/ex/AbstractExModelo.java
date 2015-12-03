@@ -21,15 +21,21 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.sql.Blob;
+import java.util.Arrays;
+
+import org.apache.commons.codec.binary.Hex;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
+import br.gov.jfrj.siga.model.Assemelhavel;
 
 /**
  * A class that represents a row in the EX_MODELO table. You can customize the
  * behavior of this class by editing the class, {@link ExModelo()}.
  */
-public abstract class AbstractExModelo extends HistoricoAuditavelSuporte implements Serializable {
+public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
+		implements Serializable {
 	/** The value of the simple conteudoBlobMod property. */
 	private Blob conteudoBlobMod;
 
@@ -62,6 +68,10 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte impleme
 
 	/** The value of the simple nomeModelo property. */
 	private java.lang.String nmMod;
+
+	private java.lang.String nmDiretorio;
+
+	private java.lang.String uuid;
 
 	// private Set classificacaoSet;
 
@@ -138,8 +148,8 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte impleme
 	}
 
 	/*    *//**
-			 * @return Retorna o atributo tipologiaSet.
-			 */
+	 * @return Retorna o atributo tipologiaSet.
+	 */
 	/*
 	 * public Set getClassificacaoSet() { return classificacaoSet; }
 	 */
@@ -158,9 +168,9 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte impleme
 	}
 
 	/*    *//**
-			 * @param classificacaoSet
-			 *            Atribui a classificacaoSet o valor.
-			 */
+	 * @param classificacaoSet
+	 *            Atribui a classificacaoSet o valor.
+	 */
 	/*
 	 * public void setClassificacaoSet(Set classificacaoSet) {
 	 * this.classificacaoSet = classificacaoSet; }
@@ -267,4 +277,101 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte impleme
 	public void setExNivelAcesso(ExNivelAcesso exNivelAcesso) {
 		this.exNivelAcesso = exNivelAcesso;
 	}
+
+	public java.lang.String getNmDiretorio() {
+		return nmDiretorio;
+	}
+
+	public void setNmDiretorio(java.lang.String nmDiretorio) {
+		this.nmDiretorio = nmDiretorio;
+	}
+
+	public java.lang.String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(java.lang.String uuid) {
+		this.uuid = uuid;
+	}
+
+	public boolean semelhante(Assemelhavel obj, int profundidade) {
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		AbstractExModelo other = (AbstractExModelo) obj;
+		if (conteudoBlobMod == null) {
+			if (other.conteudoBlobMod != null)
+				return false;
+		} else {
+			if (other.getConteudoBlobMod() == null)
+				return false;
+			byte[] abthis = br.gov.jfrj.siga.cp.util.Blob
+					.toByteArray(getConteudoBlobMod());
+			byte[] abother = br.gov.jfrj.siga.cp.util.Blob.toByteArray(other
+					.getConteudoBlobMod());
+			try {
+				String sthis = new String(abthis, "UTF-8");
+				String sother = new String(abother, "UTF-8");
+
+				sthis = sthis.replace("\r\n", "\n");
+				sother = sother.replace("\r\n", "\n");
+
+				if (!sthis.equals(sother)) {
+					System.out.println(Hex.encodeHexString(abthis));
+					System.out.println(Hex.encodeHexString(abother));
+					return false;
+				}
+			} catch (UnsupportedEncodingException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		if (conteudoTpBlob == null) {
+			if (other.conteudoTpBlob != null)
+				return false;
+		} else if (!conteudoTpBlob.equals(other.conteudoTpBlob))
+			return false;
+		if (descMod == null) {
+			if (other.descMod != null)
+				return false;
+		} else if (!descMod.equals(other.descMod))
+			return false;
+		if (exClassCriacaoVia == null) {
+			if (other.exClassCriacaoVia != null)
+				return false;
+		} else if (!exClassCriacaoVia.equals(other.exClassCriacaoVia))
+			return false;
+		if (exClassificacao == null) {
+			if (other.exClassificacao != null)
+				return false;
+		} else if (!exClassificacao.equals(other.exClassificacao))
+			return false;
+		if (exFormaDocumento == null) {
+			if (other.exFormaDocumento != null)
+				return false;
+		} else if (!exFormaDocumento.equals(other.exFormaDocumento))
+			return false;
+		if (exNivelAcesso == null) {
+			if (other.exNivelAcesso != null)
+				return false;
+		} else if (!exNivelAcesso.equals(other.exNivelAcesso))
+			return false;
+		if (nmArqMod == null) {
+			if (other.nmArqMod != null)
+				return false;
+		} else if (!nmArqMod.equals(other.nmArqMod))
+			return false;
+		if (nmDiretorio == null) {
+			if (other.nmDiretorio != null)
+				return false;
+		} else if (!nmDiretorio.equals(other.nmDiretorio))
+			return false;
+		if (nmMod == null) {
+			if (other.nmMod != null)
+				return false;
+		} else if (!nmMod.equals(other.nmMod))
+			return false;
+		return true;
+	}
+
 }

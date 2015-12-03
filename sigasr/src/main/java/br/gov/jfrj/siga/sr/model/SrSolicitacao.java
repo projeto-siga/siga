@@ -1430,7 +1430,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
         operacoes.add(new SrOperacao("lock", "Fechar", podeFechar(pess, lota), "fechar", MODAL_TRUE));
         
-        //operacoes.add(new SrOperacao("tag_blue_edit", "Reclassificar", podeReclassificar(pess, lota), "reclassificar", MODAL_TRUE));
+        operacoes.add(new SrOperacao("tag_blue_edit", "Reclassificar", podeReclassificar(pess, lota), "reclassificar", MODAL_TRUE));
 
         /*
          * operacoes.add(new SrOperacao("script_edit", "Responder Pesquisa", podeResponderPesquisa(pess, lota), "responderPesquisa", MODAL_TRUE));

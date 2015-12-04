@@ -135,7 +135,7 @@ public class SrAcordo extends HistoricoSuporte implements Selecionavel {
 
 	public SrAtributoAcordo getAtributo(SrAtributo att) {
 		for (SrAtributoAcordo pa : atributoAcordoSet)
-			if (pa.atributo.equals(att))
+			if (pa.atributo != null && pa.atributo.equals(att))
 				return pa;
 		return null;
 	}

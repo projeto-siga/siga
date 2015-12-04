@@ -57,11 +57,13 @@
 	<filter-mapping>
         <filter-name>SrFilter</filter-name>
         <url-pattern>/app/*</url-pattern>
+        <url-pattern>/solicitacao/*</url-pattern>
     </filter-mapping>
 	
 	<filter-mapping>
 		<filter-name>vraptor</filter-name>
 		<url-pattern>/app/*</url-pattern>
+		<url-pattern>/solicitacao/*</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>

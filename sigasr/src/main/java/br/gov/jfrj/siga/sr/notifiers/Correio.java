@@ -11,6 +11,7 @@ import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
+import br.gov.jfrj.siga.sr.vraptor.CompatibilidadeController;
 import br.gov.jfrj.siga.sr.vraptor.SolicitacaoController;
 import freemarker.template.TemplateException;
 
@@ -128,10 +129,10 @@ public class Correio {
 	private String link(SrSolicitacao solicitacao) {
 		try {
 			pathBuilder
-				.pathToRedirectTo(SolicitacaoController.class)
-				.exibir(solicitacao.getSiglaCompacta(), Boolean.TRUE, Boolean.TRUE);
-			
-			return pathBuilder.getFullPath();
+			.pathToRedirectTo(CompatibilidadeController.class)
+			.exibir(null);
+		
+			return pathBuilder.getFullPath() + "?id=" + solicitacao.getId();
 		} catch (Exception e) {
 			throw novaCorreioException("Erro ao processar link na geracao de email", e);
 		}

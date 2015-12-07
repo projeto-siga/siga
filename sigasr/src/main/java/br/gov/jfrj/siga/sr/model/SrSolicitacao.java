@@ -2189,11 +2189,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
     
     private void fechar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String motivo, SrTipoMotivoFechamento tpMotivo) throws Exception {
-    	fechar(cadastrante, lotaCadastrante, titular, lotaTitular, getItemAtual(), getAcaoAtual(), motivo, tpMotivo);
+    	fechar(cadastrante, lotaCadastrante, titular, lotaTitular, getItemAtual(), getAcaoAtual(), motivo, tpMotivo, null);
     }
 
     public void fechar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, 
-    		SrItemConfiguracao itemConfiguracao, SrAcao acao, String motivo, SrTipoMotivoFechamento tpMotivo) throws Exception {
+    		SrItemConfiguracao itemConfiguracao, SrAcao acao, String motivo, SrTipoMotivoFechamento tpMotivo, String conhecimento) throws Exception {
         if (isPai() && !isAFechar())
             throw new AplicacaoException("Operação não permitida. Necessário fechar toda solicitação " + 
             			"filha criada a partir dessa que deseja fechar.");
@@ -2213,12 +2213,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         mov.setItemConfiguracao(itemConfiguracao);
         mov.setMotivoFechamento(tpMotivo);
         mov.setAcao(acao);
+        mov.setConhecimento(conhecimento);
         
         String descr = " Motivo: " + mov.getMotivoFechamento().getDescrTipoMotivoFechamento() + "; ";
         descr += (motivo != null && !motivo.equals("") ? motivo : "Fechando a solicitação");  
         
         if (!itemConfiguracao.equivale(getItemAtual()) || !acao.equivale(getAcaoAtual()))
-        	descr += " Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() + "; Ação: " + mov.getAcao().getTituloAcao() + ". ";
+        	descr += " Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() + "; Ação: " + mov.getAcao().getTituloAcao() + "; ";
+        
+       	if (conhecimento != null && !conhecimento.trim().equals(""))
+       		descr += " Conhecimento: " + conhecimento;
+        
         mov.setDescrMovimentacao(descr);
         
         mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);

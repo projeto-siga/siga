@@ -476,9 +476,23 @@ public class AppController extends GcController {
 		result.include("evolucao", evolucao);
 	}
 
-	public void listar(GcInformacaoFiltro filtro, int estatistica)
+	@Path({"/app/listar", "/app/informacao/buscar"})
+	public void listar(GcInformacaoFiltro filtro, int estatistica, boolean popup, String propriedade, String sigla)
 			throws Exception {
 		List<GcInformacao> lista;
+		
+		if (sigla != null){
+			//Edson: se a sigla for na verdade um texto, seta como título
+			try{
+				GcInformacao.findBySigla(sigla);
+			} catch(NumberFormatException nfe){
+				filtro.setTitulo(sigla);
+				filtro.pesquisa = true;
+			} catch(AplicacaoException ae){
+				
+			}
+		}
+		
 		if (filtro.pesquisa)
 			lista = filtro.buscar();
 		else
@@ -510,6 +524,8 @@ public class AppController extends GcController {
 		result.include("tiposinformacao", tiposinformacao);
 		result.include("anos", anos);
 		result.include("estatistica", estatistica);
+		result.include("propriedade", propriedade);
+    	result.include("popup", popup);
 	}
 
 	public void navegar() {
@@ -716,6 +732,26 @@ public class AppController extends GcController {
 					"Restrição de Acesso ("
 							+ informacao.edicao.nome
 							+ ") : O usuário não tem permissão para editar o conhecimento solicitado.");
+	}
+	
+	@Get
+	@Post
+    @Path("/app/informacao/selecionar")
+    public void selecionar(String sigla) throws Exception {
+		GcInformacao sel = null;
+		try{
+			sel = GcInformacao.findBySigla(sigla, getLotaTitular().getOrgaoUsuario());
+		} catch(AplicacaoException e){
+			sel = GcInformacao.findByTitulo(sigla);
+		}
+		if (sel != null)
+			result.use(Results.http()).body("1;" + sel.getId() + ";" + sel.getSigla() + ";" + sel.getArq().getTitulo());
+		else
+			result.use(Results.http()).body("0;");
+    }
+	
+	public void selecaoInplace() throws Exception {
+		int a = 0;
 	}
 
 	@Path({ "/app/exibir/{sigla}", "/app/exibir" })

@@ -2,8 +2,10 @@ package br.gov.jfrj.siga.gc.model;
 
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -639,6 +641,11 @@ public class GcInformacao extends Objeto {
 		}
 		return s;
 	}
+	
+	public static GcInformacao findBySigla(String sigla)
+			throws NumberFormatException, Exception {
+		return findBySigla(sigla, null);
+	}
 
 	/**
 	 * Identifica uma informação através do seu código (JFRJ-GC-2013/00002 ou
@@ -647,11 +654,6 @@ public class GcInformacao extends Objeto {
 	 * @throws Exception
 	 * @throws NumberFormatException
 	 **/
-	public static GcInformacao findBySigla(String sigla)
-			throws NumberFormatException, Exception {
-		return findBySigla(sigla, null);
-	}
-
 	public static GcInformacao findBySigla(String sigla, CpOrgaoUsuario ouDefault)
 			throws NumberFormatException, Exception {
 		sigla = sigla.trim().toUpperCase();
@@ -700,6 +702,19 @@ public class GcInformacao extends Objeto {
 							+ sigla + ". Favor verificá-lo.");
 		} else
 			return info;
+	}
+	
+	public static GcInformacao findByTitulo(String titulo) throws Exception {
+		try{
+			String[] palavras = titulo.toUpperCase().split(" ");
+			String query = "hisDtFim is null and visualizacao = " + GcAcesso.ACESSO_PUBLICO;
+			for (String palavra : palavras)
+				query += " and upper(arq.titulo) like '%" + palavra + "%' ";
+			List<GcInformacao> results = GcInformacao.AR.find(query).fetch();
+			return results.size() == 1 ? results.get(0) : null;
+		} catch(Exception e){
+			return null;
+		}
 	}
 
 	public Set<GcTag> getTags() {

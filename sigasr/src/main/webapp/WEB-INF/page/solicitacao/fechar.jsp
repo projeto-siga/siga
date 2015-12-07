@@ -24,11 +24,12 @@ function validarFechamento() {
 </script>
 <div class="gt-content-box gt-form">
 <form action="${linkTo[SolicitacaoController].fecharGravar}" method="post" 
-	onsubmit="if (!validarFechamento()) return false; jQuery.blockUI(objBlock);" 
+	onsubmit="if (!validarFechamento()) return false; $('#conhecimento').val($('#formulario_informacao_sigla').val()); jQuery.blockUI(objBlock);" 
 	enctype="multipart/form-data">
 	<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 	<input type="hidden" name="ocultas" value="${ocultas}" />
 	<input type="hidden" name="sigla" id="sigla" value="${siglaCompacta}" />
+	<input type="hidden" name="conhecimento" id="conhecimento" value="" />
 	<div class="gt-form-row gt-width-66">
 		<label>Motivo</label>
 			<siga:select name="tpMotivo" id="tpMotivo" list="motivosFechamento"
@@ -64,6 +65,13 @@ function validarFechamento() {
 			</c:if>
 		</div>
 		</div> 
+	<div class="gt-form-row">
+		<label>Conhecimento usado na solução</label>
+		<div class="gt-sidebar-content" id="selecaoConhecimento"></div>
+		<script type="text/javascript">
+				SetInnerHTMLFromAjaxResponse("/../sigagc/app/selecaoInplace", document.getElementById('selecaoConhecimento'));
+		</script>
+	</div>
 	<div class="gt-form-row">
 		<input type="submit" value="Gravar" class="gt-btn-medium gt-btn-left" />
 	</div>

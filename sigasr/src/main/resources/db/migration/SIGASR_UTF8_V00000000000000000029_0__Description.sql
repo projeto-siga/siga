@@ -25,3 +25,5 @@ select id_solicitacao, dt_reg, descr_codigo from sigasr.sr_solicitacao sol where
 --Gerar constraint
 ALTER TABLE SIGASR.SR_SOLICITACAO ADD CONSTRAINT UNIQUE_SOL_NUM_IDX UNIQUE (DESCR_CODIGO, HIS_DT_FIM);
 commit;
+
+alter table sigasr.sr_movimentacao add (CONHECIMENTO VARCHAR2(10));

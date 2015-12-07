@@ -111,6 +111,7 @@ public class PrincipalController extends SigaController {
 			mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
 			mapAcronimo.put(ou.getSiglaOrgaoUsu(), ou);
 		}
+		
 		String acronimos = "";
 		for (String s : mapAcronimo.keySet()) {
 			if (acronimos.length() > 0)

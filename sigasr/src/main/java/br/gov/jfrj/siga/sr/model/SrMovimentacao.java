@@ -151,6 +151,9 @@ public class SrMovimentacao extends Objeto {
     @JoinColumn(name = "ID_ACAO")
     private SrAcao acao;
     
+    @Column(name = "CONHECIMENTO")
+    private String conhecimento;
+    
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "SR_MOVIMENTACAO_ACORDO", schema = "SIGASR", joinColumns = { @JoinColumn(name = "ID_MOVIMENTACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_ACORDO") })
     private List<SrAcordo> acordos;
@@ -810,5 +813,13 @@ public class SrMovimentacao extends Objeto {
 	    if (this.getSolicitacao() != null && this.getSolicitacao().getId() != null) {
 	        this.setSolicitacao(SrSolicitacao.AR.findById(this.getSolicitacao().getId()));
 	    }
+	}
+
+	public String getConhecimento() {
+		return conhecimento;
+	}
+
+	public void setConhecimento(String conhecimento) {
+		this.conhecimento = conhecimento;
 	}
 }

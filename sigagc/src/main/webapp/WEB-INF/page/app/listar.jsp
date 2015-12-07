@@ -57,8 +57,16 @@
 								<c:set var="k" value="${1}" />
 								<c:forEach items="${lista}" var="i">
 									<tr class="even">
-										<td style="width: 12% !important;"><a
-											href="${linkTo[AppController].exibir[i.siglaCompacta]}">${i.sigla}</a></td>
+										<td style="width: 12% !important;">
+											<c:choose>
+												<c:when test="${popup}">
+													<a href="javascript:opener.retorna_${propriedade}('${i.id}', '${i.sigla}', '${i.arq.titulo}');window.close();">${i.sigla}</a>
+												</c:when>
+												<c:otherwise>
+													<a href="${linkTo[AppController].exibir[i.siglaCompacta]}">${i.sigla}</a>
+												</c:otherwise>
+											</c:choose>
+										</td>
 										<td style="width: 10% !important;">${i.dtIniString}</td>
 										<td style="width: 6% !important;"><span
 											title="${i.lotacao.descricao}">${i.lotacao.sigla}</span></td>
@@ -122,17 +130,16 @@
 			<br>
 			<div class="gt-content-box gt-for-table">
 
-				<form id="listar" name="listar"
-					onsubmit="javascript: return limpaCampos()" method="GET"
+				<form id="listar" name="listar" method="GET"
 					class="form100">
 					<input type="hidden" name="filtro.pesquisa" value="true" />
+					<input type="hidden" name="popup" value="${popup}" />
+					<input type="hidden" name="propriedade" value="${propriedade}" />
 					<table class="gt-form-table">
 						<colgroup>
 							<col style="width: 11em;">
 							<col>
 						</colgroup>
-						<input type="hidden" name="popup" value="">
-						<input type="hidden" name="propriedade" value="">
 						<input type="hidden" name="postback" value="1" id="postback">
 						<input type="hidden" name="apenasRefresh" value="0"
 							id="apenasRefresh">

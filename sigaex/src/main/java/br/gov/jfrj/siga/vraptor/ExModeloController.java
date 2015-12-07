@@ -248,18 +248,13 @@ public class ExModeloController extends ExSelecionavelController {
 			os.close();
 
 			String filename = Texto.slugify(
-					"modelos"
-							+ SUBDIRETORIO
-							+ (m.getNmDiretorio() != null ? m.getNmDiretorio()
-									.replace("/", SUBDIRETORIO) + SUBDIRETORIO
-									: "")
-							+ (m.getExFormaDocumento() != null
-									&& m.getExFormaDocumento()
-											.getDescrFormaDoc() != null ? m
-									.getExFormaDocumento().getDescrFormaDoc()
-									+ SUBDIRETORIO : "")
-							+ m.getNmMod().replace(": ", SUBDIRETORIO), true,
-					false).replace(SUBDIRETORIO, "/");
+					(m.getNmDiretorio() != null ? m.getNmDiretorio().replace(
+							"/", SUBDIRETORIO)
+							+ SUBDIRETORIO : ""), true, false).replace(
+					SUBDIRETORIO, "/");
+			if (filename.length() > 0)
+				filename += "/";
+			filename += m.getSubdiretorioENome();
 			if (mapNomes.containsKey(filename))
 				mapNomes.put(filename, mapNomes.get(filename) + 1);
 			else
@@ -267,7 +262,7 @@ public class ExModeloController extends ExSelecionavelController {
 
 			ZipEntry entry = new ZipEntry(filename
 					+ (mapNomes.get(filename) == 0 ? "" : " ("
-							+ mapNomes.get(filename) + ")") + ".xml");
+							+ mapNomes.get(filename) + ")") + ".mod.xml");
 			zos.putNextEntry(entry);
 			zos.write(arq);
 			zos.closeEntry();

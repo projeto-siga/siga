@@ -274,8 +274,8 @@ public class SigaExSinc {
 		// Não considerar os últimos subdiretórios
 		// decorrentes da espécie e dos separadores no nome
 		// do modelo
-		if (xmlpath != null && s.endsWith(xmlpath))
-			s = s.substring(0, s.length() - xmlpath.length());
+		if (s.contains("/especie-"))
+			s = s.substring(0, s.indexOf("/especie-"));
 		if ("/".equals(s))
 			return null;
 		if (s.startsWith("/"))

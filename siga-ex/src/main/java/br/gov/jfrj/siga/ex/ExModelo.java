@@ -169,8 +169,9 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel {
 		return Texto
 				.slugify(
 						(getExFormaDocumento() != null
-								&& getExFormaDocumento().getDescrFormaDoc() != null ? getExFormaDocumento()
-								.getDescrFormaDoc() + SUBDIRETORIO
+								&& getExFormaDocumento().getDescrFormaDoc() != null ? "especie-"
+								+ getExFormaDocumento().getDescrFormaDoc()
+								+ SUBDIRETORIO
 								: "")
 								+ getNmMod().replace(": ", SUBDIRETORIO), true,
 						false).replace(SUBDIRETORIO, "/");

@@ -10,8 +10,8 @@ public class ExModeloCalcularDiretorio {
 	@Test
 	public void testSoEspecie() {
 		assertNull(SigaExSinc.CalcularDiretorio(
-				"/Users/x/siga-ex-sinc/modelos",
-				"/Users/x/siga-ex-sinc/modelos/anexo/anexo.xml", "anexo"));
+				"/Users/x/siga-ex-sinc",
+				"/Users/x/siga-ex-sinc/especie-anexo/anexo.xml", "anexo"));
 	}
 
 	@Test
@@ -20,8 +20,8 @@ public class ExModeloCalcularDiretorio {
 				"modelos-basicos",
 				SigaExSinc
 						.CalcularDiretorio(
-								"/Users/x/siga-ex-sinc/modelos",
-								"/Users/x/siga-ex-sinc/modelos/modelos-basicos/anexo/anexo.xml",
+								"/Users/x/siga-ex-sinc",
+								"/Users/x/siga-ex-sinc/modelos-basicos/especie-anexo/anexo.xml",
 								"anexo"));
 	}
 
@@ -31,9 +31,9 @@ public class ExModeloCalcularDiretorio {
 				"modelos-basicos",
 				SigaExSinc
 						.CalcularDiretorio(
-								"/Users/x/siga-ex-sinc/modelos",
-								"/Users/x/siga-ex-sinc/modelos/modelos-basicos/formulario/sgp/ferias/ferias.xml",
-								"formulario/sgp/ferias"));
+								"/Users/x/siga-ex-sinc",
+								"/Users/x/siga-ex-sinc/modelos-basicos/especie-formulario/sgp/ferias/ferias.xml",
+								"especie-formulario/sgp/ferias"));
 	}
 
 	@Test
@@ -42,9 +42,9 @@ public class ExModeloCalcularDiretorio {
 				"modelos-basicos/rh",
 				SigaExSinc
 						.CalcularDiretorio(
-								"/Users/x/siga-ex-sinc/modelos",
-								"/Users/x/siga-ex-sinc/modelos/modelos-basicos/rh/formulario/sgp/ferias/ferias.xml",
-								"formulario/sgp/ferias"));
+								"/Users/x/siga-ex-sinc",
+								"/Users/x/siga-ex-sinc/modelos-basicos/rh/especie-formulario/sgp/ferias/ferias.xml",
+								"especie-formulario/sgp/ferias"));
 	}
 
 }

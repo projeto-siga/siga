@@ -27,6 +27,7 @@ import com.google.enterprise.adaptor.AbstractAdaptor;
 import com.google.enterprise.adaptor.Config;
 import com.google.enterprise.adaptor.ConfigUtils;
 import com.google.enterprise.adaptor.DocId;
+import com.google.enterprise.adaptor.DocIdPusher;
 import com.google.enterprise.adaptor.Request;
 import com.google.enterprise.adaptor.Response;
 
@@ -52,6 +53,21 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 		loadSigaAllProperties();
 	}
 
+	@Override
+	public void getModifiedDocIds(DocIdPusher pusher) throws IOException,
+	InterruptedException {
+		String path = "mov_last_modified" ;
+		Date dt = null;
+		try {
+			dt = ExDao.getInstance().dt();
+			getLastModified(dt, path);
+			super.pushDocIds(pusher, this.dateLastUpdated);
+		} finally {
+			saveLastModified(dt, path);
+			ExDao.freeInstance();
+		}
+	}
+	
 	@Override
 	public void initConfig(Config config) {
 		String feedName = adaptorProperties.getProperty("siga.mov.feed.name");
@@ -79,23 +95,31 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 		try {
 			DocId id = req.getDocId();
 			long primaryKey;
+			log.info("retrieving id "+ id.getUniqueId());
 			try {
 				primaryKey = Long.parseLong(id.getUniqueId());
 			} catch (NumberFormatException nfe) {
+				log.severe("Erro ao converter valor da ID");
 				resp.respondNotFound();
 				return;
 			}
-			ExMovimentacao mov = ExDao.getInstance().consultar(primaryKey,
-					ExMovimentacao.class, false);
-
+			log.fine("obtendo movimentação ...");
+			ExMovimentacao mov = ExDao.getInstance().consultar(primaryKey, ExMovimentacao.class, false);
+			log.fine("movimentação obtida.");	
 			if (mov == null || mov.isCancelado()) {
+				if(mov != null){
+					log.warning("Movimentação foi cancelada!");
+				}
 				resp.respondNotFound();
 				return;
 			}
-
+			
 			ExDocumento doc = mov.getExDocumento();
 
 			if (doc == null || doc.isCancelado()) {
+				if(mov != null){
+					log.warning("Movimentação foi cancelada!");
+				}
 				resp.respondNotFound();
 				return;
 			}
@@ -103,20 +127,25 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 			Date dt = doc.getDtFinalizacao();
 			if (dt == null || dt.before(mov.getDtIniMov()))
 				dt = mov.getDtIniMov();
-
+			
+			log.fine("adicionando metadados ...");
 			addMetadataForMov(doc, mov, resp);
+			log.fine("metadados adicionados.");
+			log.fine("verificando ACLs ..");
 			ExDocumentoAdaptor.addAclForDoc(doc, resp);
-			// resp.setCrawlOnce(true);
+			log.fine("");
 			resp.setLastModified(dt);
 			try {
 				resp.setDisplayUrl(new URI(permalink + doc.getCodigoCompacto()
 						+ "/" + mov.getIdMov()));
 			} catch (URISyntaxException e) {
+				log.severe("Erro ao formar a URL de exibição do documento!");
 				throw new RuntimeException(e);
 			}
 
 			String html = mov.getHtml();
 			if (html != null) {
+				log.fine("documento é HTML" );
 				resp.setContentType("text/html");
 				resp.getOutputStream().write(html.getBytes());
 				return;
@@ -124,6 +153,7 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 
 			byte pdf[] = mov.getPdf();
 			if (pdf != null) {
+				log.fine("documento é PDF" );
 				resp.setContentType("application/pdf");
 				resp.getOutputStream().write(pdf);
 				return;

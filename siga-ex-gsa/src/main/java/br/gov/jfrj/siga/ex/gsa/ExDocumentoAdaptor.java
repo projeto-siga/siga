@@ -23,24 +23,21 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.enterprise.adaptor.AbstractAdaptor;
 import com.google.enterprise.adaptor.Acl;
 import com.google.enterprise.adaptor.Config;
 import com.google.enterprise.adaptor.ConfigUtils;
 import com.google.enterprise.adaptor.DocId;
+import com.google.enterprise.adaptor.DocIdPusher;
 import com.google.enterprise.adaptor.GroupPrincipal;
 import com.google.enterprise.adaptor.Request;
 import com.google.enterprise.adaptor.Response;
 
-import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.bl.ExAcesso;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -60,6 +57,21 @@ public class ExDocumentoAdaptor extends ExAdaptor {
 
 	public ExDocumentoAdaptor() {
 		loadSigaAllProperties();
+	}
+	
+	@Override
+	public void getModifiedDocIds(DocIdPusher pusher) throws IOException,
+	InterruptedException {
+		String path = "doc_last_modified" ;
+		Date dt = null;
+		try {
+			dt = ExDao.getInstance().dt();
+			getLastModified(dt, path);
+			super.pushDocIds(pusher, this.dateLastUpdated);
+		} finally {
+			saveLastModified(dt, path);
+			ExDao.freeInstance();
+		}
 	}
 
 	@Override

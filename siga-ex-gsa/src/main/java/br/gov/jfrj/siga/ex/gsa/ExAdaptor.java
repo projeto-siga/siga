@@ -18,12 +18,16 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.gsa;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Properties;
@@ -90,27 +94,14 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor, Poll
 		this.dateLastUpdated = ExDao.getInstance().dt();
 		pushDocIds(pusher, new Date(0L));
 	}
-
-	@Override
-	public void getModifiedDocIds(DocIdPusher pusher) throws IOException,
-	InterruptedException {
-		try {
-			Date dt = ExDao.getInstance().dt();
-			pushDocIds(pusher, this.dateLastUpdated);
-			this.dateLastUpdated = dt;
-		} finally {
-			ExDao.freeInstance();
-		}
-	}
-
-	private void pushDocIds(DocIdPusher pusher, Date date)
+	
+	protected void pushDocIds(DocIdPusher pusher, Date date)
 			throws InterruptedException {
 		try {
 			BufferingPusher outstream = new BufferingPusher(pusher);
 			ExDao dao = ExDao.getInstance();
 			Query q = dao.getSessao().createQuery(getIdsHql());
 			q.setDate("dt", date);
-			//q.setMaxResults(500000);// propriedade pode ser utilizada em desenvolvimento para limitar o numero de registros.
 			@SuppressWarnings("rawtypes")
 			Iterator i = q.iterate();
 			while (i.hasNext()) {
@@ -154,6 +145,73 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor, Poll
 					}
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Obtém a data da última execução, caso o arquivo ou a data não
+	 * existam, salva a data informada por parâmetro e a define como 
+	 * a data da última execução.
+	 * @param lastModified
+	 * @param path
+	 */
+	protected void getLastModified(Date lastModified,String path){
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		File lastModifiedFile = new File(path);
+		if(lastModifiedFile.exists()){
+			try (BufferedReader br = new BufferedReader(new FileReader(lastModifiedFile))) {
+			    String line;
+			    while ((line = br.readLine()) != null) {
+			       this.dateLastUpdated = dateFormat.parse(line);
+			       log.fine("A data da última  atualização é "+line);
+			       break;
+			    }
+			}catch(Exception e){
+				log.severe("Erro ao obter a data das ultimas alterações!");
+			}
+		}else{
+			String dateToSave = dateFormat.format(lastModified);
+			try {
+				FileOutputStream output = new FileOutputStream(lastModifiedFile);
+				output.write(dateToSave.getBytes());
+				output.flush();
+				output.close();
+			} catch (FileNotFoundException e) {
+				log.severe("Erro salvando arquivo no disco!");
+				log.info("verifique suas permissões e configurações");
+			} catch (IOException e) {
+				log.severe("Erro ao escrever no arquivo!");
+				log.severe("Erro: " + e.getMessage() );
+			}
+			this.dateLastUpdated = lastModified;
+			log.fine("A data da última  atualização é "+dateToSave);
+		}
+		
+	}
+	
+	/**
+	 * Salva data no arquivo informado
+	 * @param lastModified
+	 * @param path
+	 */
+	protected void saveLastModified(Date lastModified,String path){
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		File lastModifiedFile = new File(path);
+		if(lastModifiedFile.exists()){
+			lastModifiedFile.delete();
+		}
+		String dateToSave = dateFormat.format(lastModified);
+		try {
+			FileOutputStream output = new FileOutputStream(lastModifiedFile);
+			output.write(dateToSave.getBytes());
+			output.flush();
+			output.close();
+		} catch (FileNotFoundException e) {
+			log.severe("Erro salvando arquivo no disco!");
+			log.info("verifique suas permissões e configurações");
+		} catch (IOException e) {
+			log.severe("Erro ao escrever no arquivo!");
+			log.severe("Erro: " + e.getMessage() );
 		}
 	}
 

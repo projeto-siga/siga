@@ -65,17 +65,20 @@ public class GcInformacaoAdaptor extends AbstractAdaptor implements Adaptor {
 	protected Date dateLastUpdated;
 	protected String permalink;
 	protected Properties adaptorProperties;
+	private String jdbcConnection;
+	private String jdbcUser;
+	private String jdbcPassword;
 	static final String DEFAULT_CONFIG_FILE = "adaptor-config.properties";
 
 	public Connection getConnection() throws SQLException {
 
 		Connection conn = null;
 		Properties connectionProps = new Properties();
-		connectionProps.put("user", "sigagc");
-		connectionProps.put("password", "sigagc");
+		connectionProps.put("user", jdbcUser);
+		connectionProps.put("password", jdbcPassword);
 
 		conn = DriverManager.getConnection(
-				"jdbc:oracle:thin://192.168.59.103:49161/xe", connectionProps);
+				jdbcConnection, connectionProps);
 		System.out.println("Connected to database");
 		return conn;
 	}
@@ -125,8 +128,10 @@ public class GcInformacaoAdaptor extends AbstractAdaptor implements Adaptor {
 		Configuration cfg;
 		String servidor = context.getConfig().getValue("servidor");
 		permalink = context.getConfig().getValue("url.permalink");
-
-		// context.setPollingIncrementalLister(this);
+		
+		jdbcConnection = context.getConfig().getValue("jdbc.connection");
+		jdbcUser = context.getConfig().getValue("jdbc.user");
+		jdbcPassword = context.getConfig().getValue("jdbc.password");
 	}
 
 	/**

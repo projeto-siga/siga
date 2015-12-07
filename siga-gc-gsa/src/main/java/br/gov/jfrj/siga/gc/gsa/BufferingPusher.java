@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.ex.gsa;
+package br.gov.jfrj.siga.gc.gsa;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;

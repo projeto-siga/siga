@@ -210,6 +210,15 @@ public class SrMovimentacao extends Objeto {
             }
         return map;
     }
+    
+    public boolean isEntreAsPrincipais(){
+    	if (SrTipoMovimentacao.TIPOS_MOV_PRINCIPAIS.contains(getTipoMov().getIdTipoMov()))
+    		return true;
+    	if (getTipoMov().getId().equals(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA) 
+    			&& !getMotivoPendencia().equals(SrTipoMotivoPendencia.ATENDIMENTO_NA_FILHA) && !isFinalizadaOuExpirada())
+    		return true;
+    	return false;
+    }
 
     public boolean isCancelada() {
         return getMovCanceladora() != null;

@@ -702,7 +702,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
                                 continue;
                             if (tipoMov != null && movimentacao.getTipoMov().getIdTipoMov() != tipoMov)
                                 continue;
-                            if (apenasPrincipais && !SrTipoMovimentacao.TIPOS_MOV_PRINCIPAIS.contains(movimentacao.getTipoMov().getIdTipoMov()))
+                            if (apenasPrincipais && !movimentacao.isEntreAsPrincipais())
                                 continue;
 
                             listaCompleta.add(movimentacao);

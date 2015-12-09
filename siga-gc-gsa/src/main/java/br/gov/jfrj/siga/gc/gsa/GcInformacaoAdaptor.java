@@ -201,9 +201,9 @@ public class GcInformacaoAdaptor extends AbstractAdaptor implements Adaptor {
 		PreparedStatement stmt = null;
 		String query = "select ACRONIMO_ORGAO_USU, ANO, NUMERO, NOME_TIPO_INFORMACAO, TITULO, NOME_ACESSO, HIS_DT_INI, CONTEUDO_TIPO, CONTEUDO, "
 				+ "(select nome_pessoa from corporativo.dp_pessoa pes where pes.id_pessoa = inf.id_pessoa_titular) SUBSCRITOR, "
-				+ "(select nome_lotacao from corporativo.dp_lotacao lot where lot.id_lotacao = inf.id_lotacao_titular) SUBSCRITOR_LOTACAO, "
+				+ "(select sigla_lotacao from corporativo.dp_lotacao lot where lot.id_lotacao = inf.id_lotacao_titular) SUBSCRITOR_LOTACAO, "
 				+ "(select nome_pessoa from corporativo.dp_pessoa pes, corporativo.cp_identidade idn where idn.id_pessoa = pes.id_pessoa and idn.id_identidade = inf.his_idc_ini) CADASTRANTE, "
-				+ "(select nome_lotacao from corporativo.dp_lotacao lot, corporativo.dp_pessoa pes, corporativo.cp_identidade idn where lot.id_lotacao = pes.id_lotacao and idn.id_pessoa = pes.id_pessoa and idn.id_identidade = inf.his_idc_ini) CADASTRANTE_LOTACAO "
+				+ "(select sigla_lotacao from corporativo.dp_lotacao lot, corporativo.dp_pessoa pes, corporativo.cp_identidade idn where lot.id_lotacao = pes.id_lotacao and idn.id_pessoa = pes.id_pessoa and idn.id_identidade = inf.his_idc_ini) CADASTRANTE_LOTACAO "
 				+ "from gc_informacao inf, gc_arquivo arq, corporativo.cp_orgao_usuario ou, gc_tipo_informacao tp, gc_acesso ac  "
 				+ "where inf.id_arquivo = arq.id_conteudo and inf.id_orgao_usuario = ou.id_orgao_usu and inf.id_tipo_informacao = tp.id_tipo_informacao and inf.id_acesso = ac.id_acesso and numero is not null and ac.id_acesso = 1 "
 				+ "and inf.id_informacao = ?";

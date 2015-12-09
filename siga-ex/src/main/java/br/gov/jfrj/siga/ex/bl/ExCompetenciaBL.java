@@ -1167,7 +1167,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				ExTipoMovimentacao.class, false);
 
 		return getConf().podePorConfiguracao(null, null, null, null, mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), null,
-				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 	
@@ -1229,7 +1229,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				ExTipoMovimentacao.class, false);
 
 		return getConf().podePorConfiguracao(null, null, null, null, mov.getExMobil().getExDocumento().getExFormaDocumento(), mov.getExMobil().getExDocumento().getExModelo(), null,
-				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 	
@@ -1249,7 +1249,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				ExTipoMovimentacao.class, false);
 
 		return getConf().podePorConfiguracao(null, null, null, null, mob.getExDocumento().getExFormaDocumento(), mob.getExDocumento().getExModelo(), null,
-				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 	
@@ -1275,7 +1275,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				ExTipoMovimentacao.class, false);
 
 		return getConf().podePorConfiguracao(null, null, null, null, mov.getExMobil().getExDocumento().getExFormaDocumento(), mov.getExMobil().getExDocumento().getExModelo(), null,
-				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}	
 	
@@ -1298,7 +1298,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				ExTipoMovimentacao.class, false);
 
 		return getConf().podePorConfiguracao(null, null, null, null, mob.getExDocumento().getExFormaDocumento(), mob.getExDocumento().getExModelo(), null,
-				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}	
 	public boolean podeSerSubscritor(final ExDocumento doc) throws Exception {

@@ -4951,7 +4951,7 @@ public class ExBL extends CpBL {
 						continue;
 					else
 						throw new AplicacaoException(
-								"não é permitido fazer despacho em volume que esta encerrado");
+								"não é permitido fazer despacho em volume que esta encerrado ID_MOBIL:" + m.getId());
 
 				if (fDespacho
 						&& !getComp().podeDespachar(cadastrante,

@@ -84,6 +84,13 @@ function sbmt() {
 				<td><siga:selecao propriedade="lotacao" tema="simple" modulo="siga"/></td>
 			</tr>
 			<tr>
+				<td>Tipo lotação</td>
+				<td><siga:select name="idTpLotacao" list="listaTiposLotacao"
+					theme="simple" listKey="idTpLotacao" listValue="dscTpLotacao"
+					headerValue="[Indefinido]" headerKey="0" value="${idTpLotacao}"/></td>
+			</tr>
+			
+			<tr>
 				<td>Cargo</td>
 				<td><siga:selecao propriedade="cargo" tema="simple" modulo="siga"/></td>
 			</tr>			

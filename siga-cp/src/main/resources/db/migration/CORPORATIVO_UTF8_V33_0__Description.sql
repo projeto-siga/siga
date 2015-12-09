@@ -11,4 +11,7 @@ insert into corporativo.cp_complexo (id_complexo, nome_complexo, id_localidade, 
 insert into corporativo.cp_complexo (id_complexo, nome_complexo, id_localidade, id_orgao_usu) values (36, 'Linhares',	27, 2);
 insert into corporativo.cp_complexo (id_complexo, nome_complexo, id_localidade, id_orgao_usu) values (37, 'Cachoeiro de Itapemirim', 3,	2);
 
+-- Incluindo marcadores gerails para documentos
+insert into cp_marcador values(69, 'Necessita Providência', 1, null);
+
 commit;

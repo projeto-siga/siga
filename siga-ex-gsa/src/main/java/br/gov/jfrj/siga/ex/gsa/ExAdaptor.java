@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.gsa;
 
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,6 +38,10 @@ import java.util.logging.Logger;
 import org.hibernate.Query;
 import org.hibernate.cfg.Configuration;
 
+import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
+import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.dao.HibernateUtil;
+
 import com.google.enterprise.adaptor.AbstractAdaptor;
 import com.google.enterprise.adaptor.Adaptor;
 import com.google.enterprise.adaptor.AdaptorContext;
@@ -43,10 +49,6 @@ import com.google.enterprise.adaptor.DocId;
 import com.google.enterprise.adaptor.DocIdPusher;
 import com.google.enterprise.adaptor.PollingIncrementalLister;
 import com.google.enterprise.adaptor.Response;
-
-import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
-import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 /**
  * Adaptador Google Search Appliance para movimentações do SIGA-DOC.
@@ -120,6 +122,7 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor, Poll
 		if (value == null)
 			return;
 		value = value.trim();
+		value = escapeHtml(value);
 		resp.addMetadata(title, value);
 	}
 

@@ -166,6 +166,7 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 
 	private void addMetadataForMov(ExDocumento doc, ExMovimentacao mov,
 			Response resp) {
+		addMetadata(resp, "orgao", doc.getOrgaoUsuario().getAcronimoOrgaoUsu());
 		addMetadata(resp, "codigo", doc.getCodigo() + ":" + mov.getIdMov());
 		if (doc.getExTipoDocumento() != null) {
 			addMetadata(

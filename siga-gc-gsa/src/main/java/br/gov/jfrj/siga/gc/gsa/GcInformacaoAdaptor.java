@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.gc.gsa;
 
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -77,8 +79,7 @@ public class GcInformacaoAdaptor extends AbstractAdaptor implements Adaptor {
 		connectionProps.put("user", jdbcUser);
 		connectionProps.put("password", jdbcPassword);
 
-		conn = DriverManager.getConnection(
-				jdbcConnection, connectionProps);
+		conn = DriverManager.getConnection(jdbcConnection, connectionProps);
 		System.out.println("Connected to database");
 		return conn;
 	}
@@ -128,7 +129,7 @@ public class GcInformacaoAdaptor extends AbstractAdaptor implements Adaptor {
 		Configuration cfg;
 		String servidor = context.getConfig().getValue("servidor");
 		permalink = context.getConfig().getValue("url.permalink");
-		
+
 		jdbcConnection = context.getConfig().getValue("jdbc.connection");
 		jdbcUser = context.getConfig().getValue("jdbc.user");
 		jdbcPassword = context.getConfig().getValue("jdbc.password");
@@ -182,13 +183,14 @@ public class GcInformacaoAdaptor extends AbstractAdaptor implements Adaptor {
 		if (value == null)
 			return;
 		value = value.trim();
+		value = escapeHtml(value);
 		resp.addMetadata(title, value);
 	}
 
 	/** Gives the bytes of a document referenced with id. */
 	public void getDocContent(Request req, Response resp) throws IOException {
 		DocId id = req.getDocId();
-		log.fine("obtendo id = "+ id);
+		log.fine("obtendo id = " + id);
 		long primaryKey;
 		try {
 			primaryKey = Long.parseLong(id.getUniqueId());
@@ -219,6 +221,7 @@ public class GcInformacaoAdaptor extends AbstractAdaptor implements Adaptor {
 
 			// Add Metadata
 			//
+			addMetadata(resp, "orgao", rs.getString("ACRONIMO_ORGAO_USU"));
 			String codigo = rs.getString("ACRONIMO_ORGAO_USU") + "-GC-"
 					+ rs.getInt("ANO") + "/"
 					+ Long.toString(rs.getLong("NUMERO") + 100000).substring(1);

@@ -154,7 +154,7 @@ public class GcInformacaoAdaptor extends AbstractAdaptor implements Adaptor {
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
-				DocId id = new DocId("" + rs.getLong("id_informacao"));
+				DocId id = new DocId("" + rs.getLong("ID_INFORMACAO"));
 				outstream.add(id);
 			}
 			outstream.forcePush();
@@ -188,6 +188,7 @@ public class GcInformacaoAdaptor extends AbstractAdaptor implements Adaptor {
 	/** Gives the bytes of a document referenced with id. */
 	public void getDocContent(Request req, Response resp) throws IOException {
 		DocId id = req.getDocId();
+		log.fine("obtendo id = "+ id);
 		long primaryKey;
 		try {
 			primaryKey = Long.parseLong(id.getUniqueId());
@@ -210,7 +211,7 @@ public class GcInformacaoAdaptor extends AbstractAdaptor implements Adaptor {
 			conn = getConnection();
 			stmt = conn.prepareStatement(query);
 			stmt.setLong(1, primaryKey);
-			ResultSet rs = stmt.executeQuery(query);
+			ResultSet rs = stmt.executeQuery();
 			if (!rs.next()) {
 				resp.respondNotFound();
 				return;
@@ -223,7 +224,7 @@ public class GcInformacaoAdaptor extends AbstractAdaptor implements Adaptor {
 					+ Long.toString(rs.getLong("NUMERO") + 100000).substring(1);
 			addMetadata(resp, "codigo", codigo);
 			addMetadata(resp, "origem", "Conhecimento");
-			addMetadata(resp, "especie", rs.getString("NOME_TIPO_INFORMCAO"));
+			addMetadata(resp, "especie", rs.getString("NOME_TIPO_INFORMACAO"));
 			addMetadata(resp, "descricao", rs.getString("TITULO"));
 			addMetadata(resp, "acesso", rs.getString("NOME_ACESSO"));
 			addMetadata(resp, "data", getDtYYYYMMDD(rs.getDate("HIS_DT_INI")));
@@ -258,7 +259,7 @@ public class GcInformacaoAdaptor extends AbstractAdaptor implements Adaptor {
 
 			// Add Conteudo
 			//
-			if ("text/html".equals(rs.getLong("CONTEUDO_TIPO"))) {
+			if ("text/html".equals(rs.getString("CONTEUDO_TIPO"))) {
 				String html = new String(rs.getBytes("CONTEUDO"), "UTF-8");
 				if (html != null) {
 					resp.setContentType("text/html");

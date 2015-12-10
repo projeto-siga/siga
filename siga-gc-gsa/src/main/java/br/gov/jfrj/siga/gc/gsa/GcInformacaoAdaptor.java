@@ -31,23 +31,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
 import org.hibernate.cfg.Configuration;
 
 import com.google.enterprise.adaptor.AbstractAdaptor;
-import com.google.enterprise.adaptor.Acl;
 import com.google.enterprise.adaptor.Adaptor;
 import com.google.enterprise.adaptor.AdaptorContext;
+import com.google.enterprise.adaptor.Config;
+import com.google.enterprise.adaptor.ConfigUtils;
 import com.google.enterprise.adaptor.DocId;
 import com.google.enterprise.adaptor.DocIdPusher;
-import com.google.enterprise.adaptor.GroupPrincipal;
-import com.google.enterprise.adaptor.PollingIncrementalLister;
 import com.google.enterprise.adaptor.Request;
 import com.google.enterprise.adaptor.Response;
 
@@ -124,6 +120,18 @@ public class GcInformacaoAdaptor extends AbstractAdaptor implements Adaptor {
 		return currentDate;
 	}
 
+	@Override
+	public void initConfig(Config config) {
+		loadPropertyFromSysEnv(config, "jdbc.connection");
+		loadPropertyFromSysEnv(config, "jdbc.user");
+		loadPropertyFromSysEnv(config, "jdbc.password");
+	}
+
+	private void loadPropertyFromSysEnv(Config config, String name) {
+		if (System.getProperty(name) != null)
+			ConfigUtils.setValue(name, System.getProperty(name), config);
+	}
+	
 	@Override
 	public void init(AdaptorContext context) throws Exception {
 		Configuration cfg;

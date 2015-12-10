@@ -22,11 +22,7 @@
 				<div id="main"></div>
 			</div>
 			<nav class="col-md-3 col-md-pull-9">
-				<h3>Filtros</h3>
-
 				<div id="gsa-dynamic-navigation"></div>
-
-
 			</nav>
 		</div>
 	</div>

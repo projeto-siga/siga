@@ -587,6 +587,7 @@ header#topo {
 
 .gsa-info{
 	border-bottom: 0px solid black;
+    margin-bottom: 5px;
 }
 #gsa-no-results li {
 	text-decoration: none;

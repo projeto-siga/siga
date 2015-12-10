@@ -371,7 +371,10 @@
 				<h3>Solicita&ccedil;&atilde;o</h3>
 				<p>
 					<b>Solicitante:</b>
-					${solicitacao.solicitante.descricaoCompletaIniciaisMaiusculas},
+					${solicitacao.solicitante.descricaoIniciaisMaiusculas},
+					${solicitacao.solicitante.siglaCompleta},
+					${solicitacao.solicitante.funcaoStringIniciaisMaiusculas},
+					${solicitacao.solicitante.lotacao.siglaCompleta},
                     ${solicitacao.local.nomeComplexo}
 				</p>
 				<c:if test="${solicitacao.interlocutor != null}">

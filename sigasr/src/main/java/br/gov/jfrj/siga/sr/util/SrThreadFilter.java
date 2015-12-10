@@ -8,6 +8,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Session;
 import org.jboss.logging.Logger;
@@ -20,7 +21,7 @@ import br.gov.jfrj.siga.sr.model.Sr;
 
 public class SrThreadFilter extends ThreadFilter {
 
-	private static final Logger log = Logger.getLogger(SrThreadFilter.class);
+	private static final Logger log = Logger.getLogger("br.gov.jfrj.siga.sr");
 
 	public void doFilter(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain)
@@ -28,6 +29,19 @@ public class SrThreadFilter extends ThreadFilter {
 		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
+			
+			StringBuffer caminho = new StringBuffer();
+			String parametros = "";
+			if (request instanceof HttpServletRequest){
+				HttpServletRequest httpReq = (HttpServletRequest)request;
+				caminho = httpReq.getRequestURL();
+				parametros = httpReq.getQueryString()==null?"":"?" + httpReq.getQueryString();
+				caminho.append(parametros);
+			}
+			log.info("Ocorreu um erro durante a execução da operação: "+ e.getMessage() 
+					+ "\ncaminho: " + caminho.toString());
+
+			
 			throw new ServletException(e);
 		} finally {
 			ContextoPersistencia.setEntityManager(null);

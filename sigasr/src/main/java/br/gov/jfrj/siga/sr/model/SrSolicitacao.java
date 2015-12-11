@@ -2244,7 +2244,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	filha.setDescrSolicitacao(descricao);
     	if (atendenteNaoDesignado != null)
     		filha.setAtendenteNaoDesignado(atendenteNaoDesignado);
-    	filha.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
+    	filha.salvar(cadastrante, lotacao, titular, lotaTitular);
     	return filha;
     }
     
@@ -2279,7 +2279,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         		+ "; Item: " + mov.getItemConfiguracao().getTituloItemConfiguracao() 
         		+ "; Ação: " + mov.getAcao().getTituloAcao()
                 + "; Atendente: " + mov.getLotaAtendente().getSigla());
-        mov.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
+        mov.salvar(cadastrante, lotacao, titular, lotaTitular);
         save();
     }
         

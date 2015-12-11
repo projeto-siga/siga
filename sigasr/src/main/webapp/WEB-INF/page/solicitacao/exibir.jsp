@@ -190,8 +190,8 @@
 										</c:if>
 										<td>${movimentacao.tipoMov.nome}</td>
 										<td><siga:selecionado
-												sigla="${movimentacao.lotaCadastrante.siglaLotacao}"
-												descricao="${movimentacao.lotaCadastrante.nomeLotacao}"></siga:selecionado>
+												sigla="${movimentacao.lotaTitular.siglaLotacao}"
+												descricao="${movimentacao.lotaTitular.nomeLotacao}"></siga:selecionado>
 										</td>
 										<td><siga:selecionado
 												sigla="${movimentacao.cadastrante.nomeAbreviado}"

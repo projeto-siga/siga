@@ -449,15 +449,6 @@ public class SolicitacaoController extends SrController {
 		} else {
 			if (solicitacao == null){
 				solicitacao = new SrSolicitacao();
-		        if (item != null && !item.equals("")){
-		        	solicitacao.setItemConfiguracao((SrItemConfiguracao)SrItemConfiguracao.AR.find("bySiglaItemConfiguracaoAndHisDtFimIsNull", item).first());
-		        	if (!solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao()))
-		        		solicitacao.setItemConfiguracao(null);
-		        } 
-		        if (acao != null && !acao.equals(""))
-		        	solicitacao.setAcao((SrAcao)SrAcao.AR.find("bySiglaAcaoAndHisDtFimIsNull", acao).first());
-		        if (descricao != null && !descricao.equals(""))
-		        	solicitacao.setDescricao(descricao);
 		        try{
 		        	so.assertAcesso(SALVAR_SOLICITACAO_AO_ABRIR);
 		        	solicitacao.setRascunho(true);
@@ -472,6 +463,12 @@ public class SolicitacaoController extends SrController {
 		        	solicitacao.setLotaTitular(getLotaTitular());
 		        	solicitacao.completarPreenchimento();
 		        }
+		        if (item != null && !item.equals(""))
+		        	solicitacao.setItemConfiguracao((SrItemConfiguracao)SrItemConfiguracao.AR.find("bySiglaItemConfiguracaoAndHisDtFimIsNull", item).first());
+		        if (acao != null && !acao.equals(""))
+		        	solicitacao.setAcao((SrAcao)SrAcao.AR.find("bySiglaAcaoAndHisDtFimIsNull", acao).first());
+		        if (descricao != null && !descricao.equals(""))
+		        	solicitacao.setDescricao(descricao);
 			}
 						
 			//Edson: O deduzir(), o setItem(), o setAcao() e o asociarPrioridade() deveriam ser chamados dentro da própria solicitação pois é responsabilidade 

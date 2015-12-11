@@ -155,7 +155,7 @@ public class GcInformacaoAdaptor extends AbstractAdaptor implements Adaptor {
 			throws InterruptedException {
 		Connection conn = null;
 		Statement stmt = null;
-		String query = "select id_informacao from gc_informacao where numero is not null and his_dt_fim is null";
+		String query = "select id_informacao from sigagc.gc_informacao where numero is not null and his_dt_fim is null";
 		try {
 			BufferingPusher outstream = new BufferingPusher(pusher);
 
@@ -214,7 +214,7 @@ public class GcInformacaoAdaptor extends AbstractAdaptor implements Adaptor {
 				+ "(select sigla_lotacao from corporativo.dp_lotacao lot where lot.id_lotacao = inf.id_lotacao_titular) SUBSCRITOR_LOTACAO, "
 				+ "(select nome_pessoa from corporativo.dp_pessoa pes, corporativo.cp_identidade idn where idn.id_pessoa = pes.id_pessoa and idn.id_identidade = inf.his_idc_ini) CADASTRANTE, "
 				+ "(select sigla_lotacao from corporativo.dp_lotacao lot, corporativo.dp_pessoa pes, corporativo.cp_identidade idn where lot.id_lotacao = pes.id_lotacao and idn.id_pessoa = pes.id_pessoa and idn.id_identidade = inf.his_idc_ini) CADASTRANTE_LOTACAO "
-				+ "from gc_informacao inf, gc_arquivo arq, corporativo.cp_orgao_usuario ou, gc_tipo_informacao tp, gc_acesso ac  "
+				+ "from sigagc.gc_informacao inf, sigagc.gc_arquivo arq, corporativo.cp_orgao_usuario ou, sigagc.gc_tipo_informacao tp, sigagc.gc_acesso ac  "
 				+ "where inf.id_arquivo = arq.id_conteudo and inf.id_orgao_usuario = ou.id_orgao_usu and inf.id_tipo_informacao = tp.id_tipo_informacao and inf.id_acesso = ac.id_acesso and numero is not null and ac.id_acesso = 1 "
 				+ "and inf.id_informacao = ?";
 		try {

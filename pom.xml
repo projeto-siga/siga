@@ -194,6 +194,7 @@
                             <artifactId>findbugs-maven-plugin</artifactId>
                             <configuration>
                                 <skip>${findbugs.skip}</skip>
+                                <fork>false</fork>
                                 <xmlOutput>true</xmlOutput>
                             </configuration>
                         </plugin>
@@ -258,11 +259,10 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>${plugin.findbugs-maven.version}</version>
-				<inherited>true</inherited>
 				<configuration>
 					<failOnError>false</failOnError> 
 					<skip>${findbugs.skip}</skip>
+					<fork>false</fork>
 					<!-- <trace>${findbugs.trace}</trace> -->
 				</configuration>
 				<executions>
@@ -272,7 +272,7 @@
 							<goal>check</goal>
 						</goals>
 					</execution>
-					<execution>
+					<!-- <execution>
 						<id>findbugs-test-compile</id>
 						<phase>test</phase>
 						<goals>
@@ -280,8 +280,9 @@
 						</goals>
 						<configuration>
 							<skip>true</skip>
+							<fork>false</fork>
 						</configuration>
-					</execution>
+					</execution> -->
 				</executions>
 			</plugin>	
 			

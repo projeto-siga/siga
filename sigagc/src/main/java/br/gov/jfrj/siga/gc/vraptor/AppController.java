@@ -711,7 +711,7 @@ public class AppController extends GcController {
 							+ ") : O usuário não tem permissão para editar o conhecimento solicitado.");
 	}
 
-	@Path("/app/exibir/{sigla}")
+	@Path({"/app/exibir/{sigla}", "/app/exibir"})
 	public void exibir(String sigla, String mensagem, boolean historico,
 			boolean movimentacoes) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);

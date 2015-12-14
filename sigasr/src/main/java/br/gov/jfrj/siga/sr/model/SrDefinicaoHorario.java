@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public enum SrDefinicaoHorario{
-	HORARIO_PADRAO(1, 11, 19, "Horário Padrão"), HORARIO_CENTRAL(2, 8, 20, "Horário da Central de Serviços"),
+	HORARIO_PADRAO(1, 11, 19, "Horário Padrão"), HORARIO_CENTRAL(2, 9, 21, "Horário da Central de Serviços"),
 	HORARIO_SUPORTE_LOCAL(3, 10, 19, "Horário do Suporte Local");
 	
 	private int idHorario;

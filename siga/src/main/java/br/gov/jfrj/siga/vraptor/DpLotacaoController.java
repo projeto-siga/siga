@@ -102,7 +102,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 
 	@Get 
 	@Post
-	@Path({"app/lotacao/selecionar","/lotacao/selecionar.action"})
+	@Path({"/public/app/lotacao/selecionar","app/lotacao/selecionar","/lotacao/selecionar.action"})
 	public String selecionar(String sigla) {
 		String resultado = super.aSelecionar(sigla);
 		if (getSel() != null) {

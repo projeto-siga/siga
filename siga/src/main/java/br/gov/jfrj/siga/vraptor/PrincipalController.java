@@ -54,7 +54,7 @@ public class PrincipalController extends SigaController {
 		result.redirectTo(urlBase + "/sigaex/app/expediente/mov/exibir?id=" + parte);
 	}
 	
-	@Get("app/generico/selecionar")
+	@Get("public/app/generico/selecionar")
 	public void selecionar(final String sigla, final String matricula) {
 		try {
 			DpPessoa pes = getTitular();
@@ -145,7 +145,7 @@ public class PrincipalController extends SigaController {
 		}
 		else
 			URLSelecionar = urlBase 
-					+ "/sigaex" + (testes.length() > 0 ? testes : "/app/expediente") + "/selecionar?sigla=" + sigla+ incluirMatricula;
+					+ "/sigaex" + (testes.length() > 0 ? testes : "/public/app/expediente") + "/selecionar?sigla=" + sigla+ incluirMatricula;
 
 		final SigaHTTP http = new SigaHTTP();
 		String[] response = null;
@@ -182,19 +182,15 @@ public class PrincipalController extends SigaController {
 		}
 		else {
 			if (copiaSigla.startsWith("SR"))
-//					if (copiaSigla.matches("^[SR|sr].*[0-9]+$"))
-					uRLExibir = "/sigasr/app/solicitacao/exibir/" + response[2];
-			//alterado formato da sigla de requisições, missões e serviços
-			//else if (copiaSigla.startsWith("MTP")
-			//		|| copiaSigla.startsWith("STP")
-			//		|| copiaSigla.startsWith("RTP"))
-			else if (copiaSigla.startsWith("TP") &&
-					(copiaSigla.endsWith("M") ||
-					 copiaSigla.endsWith("S") ||
-					 copiaSigla.endsWith("R")))
+				uRLExibir = "/sigasr/app/solicitacao/exibir/"
+						+ response[2];
+			else if (copiaSigla.startsWith("TP")
+					&& (copiaSigla.endsWith("M") || copiaSigla.endsWith("S") || copiaSigla
+							.endsWith("R")))
 				uRLExibir = "/sigatp/app/documento/exibir?sigla=" + response[2];
 			else
-				uRLExibir = "/sigaex/app/expediente/doc/exibir?sigla="+ response[2];
+				uRLExibir = "/sigaex/app/expediente/doc/exibir?sigla="
+						+ response[2];
 		}
 		
 		sel.setId(Long.valueOf(response[1]));

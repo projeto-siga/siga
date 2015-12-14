@@ -71,6 +71,7 @@
         <url-pattern>/anexo/*</url-pattern>
         <url-pattern>/servicos/*</url-pattern>
         <url-pattern>/app/*</url-pattern>
+        <url-pattern>/public/app/*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>
@@ -84,7 +85,13 @@
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
-    <filter-mapping>
+		<filter-mapping>
+		<filter-name>vraptor</filter-name>
+		<url-pattern>/public/app/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
 		<filter-name>vraptor</filter-name>
 		<url-pattern>*.action</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
@@ -217,6 +224,10 @@
 		<web-resource-collection>
 			<web-resource-name>staticJavascript</web-resource-name>
 			<url-pattern>/staticJavascript.jf</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>Recursos Publicos</web-resource-name>
+			<url-pattern>/public/*</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
 

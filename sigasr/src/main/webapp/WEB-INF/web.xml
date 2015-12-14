@@ -99,6 +99,7 @@
 			<url-pattern>/public/*</url-pattern>
 			<url-pattern>/rest/*</url-pattern>
 			<url-pattern>/app/corporativo/*</url-pattern>
+			<url-pattern>/app/solicitacao/selecionar</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
 	

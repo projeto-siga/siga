@@ -212,7 +212,7 @@ ${meta}
 									<div class="gt-search-inner" onclick="" style="-webkit-box-sizing: content-box; box-sizing: content-box;">
 										<siga:selecao propriedade="buscar"
 											tipo="generico" tema="simple" ocultardescricao="sim"
-											buscar="nao" siglaInicial="Buscar" modulo="siga" urlAcao="buscar" urlSelecionar="selecionar"/>
+											buscar="nao" siglaInicial="Buscar" modulo="siga/public" urlAcao="buscar" urlSelecionar="selecionar" matricula="${titular.siglaCompleta}"/>
 											<script type="text/javascript">
 											
 											var lis = document

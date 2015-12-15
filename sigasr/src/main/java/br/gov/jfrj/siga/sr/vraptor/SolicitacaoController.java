@@ -26,6 +26,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
+import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.validator.ValidationMessage;
@@ -631,8 +632,7 @@ public class SolicitacaoController extends SrController {
     @Path("/baixar/{idArquivo}")
     public Download baixar(Long idArquivo) throws Exception {
         SrArquivo arq = SrArquivo.AR.findById(idArquivo);
-        final InputStream inputStream = new ByteArrayInputStream(arq.getBlob());
-        return new InputStreamDownload(inputStream, "text/plain", arq.getNomeArquivo());
+        return new ByteArrayDownload(arq.getBlob(), arq.getMime(), arq.getNomeArquivo(), false);
     }
 
     @Path("/escalonar")

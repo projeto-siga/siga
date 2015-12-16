@@ -41,11 +41,15 @@
 		modulo="siga" desativar="${desativar}" />
 </span>
 
+<c:if test="${not empty propriedadeEmail}">
+	<c:set var="inputNameEmail" value="${propriedadeEmail}" />
+</c:if>
 <span style="display: none;" id="spanEmail${propriedadeEmailClean}">
-	<input type='text' name='${propriedadeEmail}' size="70"
+	<input type='text' name='${inputNameEmail}' size="70"
 	id="formulario_${propriedadeEmailClean}" /> Obs.: Ao informar
 	v&aacute;rios, separar por espa&ccedil;o.
 </span>
+
 
 <script language="javascript">
 	var select = document

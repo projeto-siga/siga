@@ -33,6 +33,12 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	private CpMarcador situacao;
 
 	private DpPessoa atendente;
+	
+	//Edson: os dois atributos abaixo não deveriam existir. Eles foram inclusos devido a um erro em que às vezes o 
+	//VRaptor confundia "filtro.cadastrante" com o atributo "cadastrante" da sessão, preenchendo automaticamente
+	//esse campo no filtro e impedindo a busca
+	private DpPessoa cadastranteBusca;
+	private DpLotacao lotaCadastranteBusca;
 
 	private SrAcordo acordo;
 
@@ -189,12 +195,12 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		
 		query.append(" and not exists (from SrMovimentacao mov where solicitacao = sol and idMovimentacao > ultMov.idMovimentacao) ");
 		
-		if (Filtros.deveAdicionar(getTitular()))
+		if (Filtros.deveAdicionar(getCadastranteBusca()))
 			query.append(" and sol.cadastrante.idPessoaIni = "
-					+ getTitular().getIdInicial());
-		if (Filtros.deveAdicionar(getLotaTitular()))
+					+ getCadastranteBusca().getIdInicial());
+		if (Filtros.deveAdicionar(getLotaCadastranteBusca()))
 			query.append(" and sol.lotaTitular.idLotacaoIni = "
-					+ getLotaTitular().getIdInicial());
+					+ getLotaCadastranteBusca().getIdInicial());
 		if (Filtros.deveAdicionar(getSolicitante()))
 			query.append(" and sol.solicitante.idPessoaIni = "
 					+ getSolicitante().getIdInicial());
@@ -270,7 +276,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	public boolean isRazoavelmentePreenchido() {
 		return getSituacao() != null
-				|| getTitular() != null
+				|| getCadastranteBusca() != null
+				|| getLotaCadastranteBusca() != null
 				|| getSolicitante() != null
 				|| getAtendente() != null
 				|| getLotaAtendente() != null
@@ -349,6 +356,22 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	public SentidoOrdenacao getSentidoOrdenacao() {
 		return sentidoOrdenacao;
+	}
+
+	public DpPessoa getCadastranteBusca() {
+		return cadastranteBusca;
+	}
+
+	public void setCadastranteBusca(DpPessoa cadastranteBusca) {
+		this.cadastranteBusca = cadastranteBusca;
+	}
+
+	public DpLotacao getLotaCadastranteBusca() {
+		return lotaCadastranteBusca;
+	}
+
+	public void setLotaCadastranteBusca(DpLotacao lotaCadastranteBusca) {
+		this.lotaCadastranteBusca = lotaCadastranteBusca;
 	}
 
 	public void setSentidoOrdenacao(SentidoOrdenacao sentido) {

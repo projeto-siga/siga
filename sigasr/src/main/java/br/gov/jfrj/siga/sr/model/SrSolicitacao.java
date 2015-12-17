@@ -2826,7 +2826,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     		DpPessoa titular, DpLotacao lotaTitular, SrSolicitacao filha) throws Exception {
         if (!temOutrasFilhasAbertas(filha)){ 
         	deixarPendente(cadastrante, lotaCadastrante, titular, lotaTitular,
-                    SrTipoMotivoPendencia.ATENDIMENTO_NA_FILHA, "", null);
+                    SrTipoMotivoPendencia.ATENDIMENTO_NA_FILHA, "Movimentação realizada automaticamente", null);
         }
     }
     

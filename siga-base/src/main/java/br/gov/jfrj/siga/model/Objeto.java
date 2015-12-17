@@ -170,6 +170,9 @@ public class Objeto extends ObjetoBase{
 	}
 
 	public Object _key() {
+		if (em() == null){
+			return null;
+		}
 		try {
 		Session session = (Session) (em().getDelegate());
 		ClassMetadata meta = session.getSessionFactory().getClassMetadata(

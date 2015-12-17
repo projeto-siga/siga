@@ -642,13 +642,15 @@ public class SolicitacaoController extends SrController {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
     	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
-    	//Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados:
-        em().detach(solicitacao);
-        solicitacao.getSolicitacaoFilhaSet();
-        //Edson: por algum motivo, está sendo necessário dar o detach na solicitacaoPai, se não, o JPA entende que o arquivo 
+    	
+    	//Edson: por algum motivo, está sendo necessário dar o detach na solicitacaoPai, se não, o JPA entende que o arquivo 
         //foi alterado e precisa ser salvo, o que dá erro pois o arquivo também é detached:
         if (solicitacao.isFilha())
-        	em().detach(solicitacao.getSolicitacaoPai());
+        	for (SrSolicitacao sol : solicitacao.getPaiDaArvore().getSolicitacaoFilhaSetRecursivo())
+        		em().detach(sol);
+    	
+    	//Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados:
+        em().detach(solicitacao);
     	
     	solicitacao.setTitular(getTitular());
         solicitacao.setLotaTitular(getLotaTitular());

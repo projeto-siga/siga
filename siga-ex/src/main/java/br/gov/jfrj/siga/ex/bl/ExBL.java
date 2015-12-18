@@ -1655,11 +1655,6 @@ public class ExBL extends CpBL {
 					.gerarXMLPublicacao(mov, tipoMateria, lotPublicacao,
 							descrPublicacao));
 
-			// Verifica se o documento possui documentos filhos do tipo Anexo
-			if (mob.getExDocumentoFilhoSet() != null) {
-
-			}
-
 			if (tipoMateria.equals("A"))
 				mov.setNmArqMov("ADM.zip");
 			else
@@ -6035,7 +6030,7 @@ public class ExBL extends CpBL {
 		for (ExMobil mob : doc.getExMobilSet()) {
 			for (ExDocumento docFilho : mob.getExDocumentoFilhoSet()) {
 				// Verifica se docFilho é do tipo anexo
-				if (docFilho.getExFormaDocumento().getIdFormaDoc() == 55) {
+				if (docFilho.getExFormaDocumento().getIdFormaDoc() == 60) {
 					if (!docFilho.isCancelado() && !docFilho.isAssinado())
 						return false;
 				}

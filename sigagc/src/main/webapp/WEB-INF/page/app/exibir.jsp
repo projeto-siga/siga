@@ -41,17 +41,17 @@
 				<p>
 					<b>Órgão Usuário:</b> ${informacao.ou.acronimoOrgaoUsu}
 				</p>
-				<c:if test="${not emptyinformacao.grupo}">
-				<p>
-					<b>Grupo:</b> ${informacao.grupo.siglaGrupo} - ${informacao.grupo.dscGrupo}
-				</p>
-				</c:if>				
 				<p>
 					<b>Visualização:</b> ${informacao.visualizacao.nome}
 				</p>
 				<p>
 					<b>Edição:</b> ${informacao.edicao.nome}
 				</p>
+				<c:if test="${not empty informacao.grupo}">
+				<p>
+					<b>Grupo:</b> ${informacao.grupo.siglaGrupo} - ${informacao.grupo.dscGrupo}
+				</p>
+				</c:if>	
 				<p>
 					<b>Autor:</b> ${informacao.autor.descricaoIniciaisMaiusculas} -
 					${informacao.autor.sigla}

@@ -62,8 +62,8 @@
 					<div class="gt-form-row gt-width-100" id="informacaoGrupo"
 						style="display: none">
 						<label>Grupo</label>
-						<div class="gt-left-col gt-width-25" style="padding-left: 2em">
-							<siga:selecao2 propriedade="informacao.grupo" modulo="siga"
+						<div class="gt-left-col gt-width-100">
+							<siga:selecao2 propriedade="grupo" modulo="siga"
 								tipo="gi/perfil" tema="simple" />
 						</div>
 					</div>

@@ -30,7 +30,9 @@ import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -696,6 +698,7 @@ public class AppController extends GcController {
 			}
 
 			result.include("informacao", informacao);
+			result.include("grupo", informacao.getGrupo());
 			result.include("tiposInformacao", tiposInformacao);
 			result.include("acessos", acessos);
 			result.include("inftitulo", inftitulo);
@@ -912,7 +915,7 @@ public class AppController extends GcController {
 
 	public void gravar(@LoadOptional GcInformacao informacao, String inftitulo,
 			String conteudo, String classificacao, String origem,
-			GcTipoInformacao tipo, GcAcesso visualizacao, GcAcesso edicao)
+			GcTipoInformacao tipo, GcAcesso visualizacao, GcAcesso edicao, CpPerfil grupo)
 			throws Exception {
 		// DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
 		DpPessoa pessoa = getTitular();
@@ -930,9 +933,6 @@ public class AppController extends GcController {
 			else if (pessoa != null)
 				informacao.ou = pessoa.getOrgaoUsuario();
 		}
-		if (informacao.getGrupo() != null
-				&& informacao.getGrupo().getId() == null)
-			informacao.setGrupo(null);
 
 		informacao.tipo = tipo;
 		informacao.edicao = edicao;
@@ -943,10 +943,12 @@ public class AppController extends GcController {
 			classificacao = bl.findHashTag(conteudo, classificacao,
 					CONTROLE_HASH_TAG);
 
-		if ((informacao.edicao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO || informacao.visualizacao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO)
-				&& informacao.getGrupo() == null)
+		if (informacao.edicao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO || informacao.visualizacao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO){
+			if (grupo == null || grupo.getId() == null)
 			throw new Exception(
 					"Para acesso do tipo 'Grupo', e necessário informar um grupo para restrição.");
+			informacao.setGrupo(grupo);
+		} else informacao.setGrupo(null);
 
 		if (informacao.id != 0)
 			bl.movimentar(informacao,

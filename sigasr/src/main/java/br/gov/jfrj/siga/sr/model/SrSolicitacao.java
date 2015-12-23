@@ -2479,15 +2479,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         String s = "tags=@servico";
         if (getAcaoAtual() != null)
             s += getAcaoAtual().getGcTags();
-        if (getItemConfiguracao() != null)
-            s += getItemConfiguracao().getGcTags();
+        if (getItemAtual() != null)
+            s += getItemAtual().getGcTags();
         return s;
     }
 
     public String getGcTagAbertura() {
         String s = "";
-		if (getItemConfiguracao() != null)
-			s += getItemConfiguracao().getGcTagAncora();
+		if (getItemAtual() != null)
+			s += getItemAtual().getGcTagAncora();
         if (getAcaoAtual() != null)
             s += getAcaoAtual().getGcTagAncora();
         return s;

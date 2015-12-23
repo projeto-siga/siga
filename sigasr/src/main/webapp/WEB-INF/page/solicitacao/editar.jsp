@@ -322,7 +322,7 @@
 									</div>
 									<!-- CONHECIMENTOS RELACIONADOS -->
 									<script type="text/javascript">
-									var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=&titulo=${f:urlEncode(solicitacao.itemConfiguracao.tituloItemConfiguracao)}${solicitacao.itemConfiguracao.gcTagAbertura}";
+									var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=empty&titulo=${f:urlEncode(solicitacao.itemConfiguracao.tituloItemConfiguracao)}${solicitacao.itemConfiguracao.gcTagAbertura}";
 									Siga.ajax(url, null, "GET", function(response){
 										$("#gc-ancora-item").html(response);
 									});
@@ -370,7 +370,7 @@
 											<div id="gc-ancora-item-acao"></div>
 										</div>
 										<script type="text/javascript">
-										var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=&titulo=${f:urlEncode(solicitacao.gcTituloAbertura)}${solicitacao.gcTagAbertura}";
+										var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=empty&titulo=${f:urlEncode(solicitacao.gcTituloAbertura)}${solicitacao.gcTagAbertura}";
 											Siga.ajax(url, null, "GET", function(response){
 												document.getElementById('gc-ancora-item-acao').innerHTML = response;
 											});

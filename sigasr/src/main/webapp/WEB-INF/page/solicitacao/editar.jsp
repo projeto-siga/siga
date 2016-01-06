@@ -182,7 +182,7 @@
 						<script>
 
 							//Edson: talvez fosse possível fazer de um modo melhor, mas assim é mais prático
-							$("#solicitacaosolicitanteSpan").html('${solicitacao.solicitante.descricaoCompleta}');
+							$("#solicitacaosolicitanteSpan").html("${solicitacao.solicitante.descricaoCompleta}");
 
 							$("#calendarioComunicacao").datepicker({
 					        	showOn: "button",

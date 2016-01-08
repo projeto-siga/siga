@@ -432,11 +432,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	if (getOrgaoUsuario() != null) {
         		query += " and orgaoUsuario.idOrgaoUsu = " + getOrgaoUsuario().getIdOrgaoUsu();
         	}
-        	if (getDtReg() != null) {
+        	// Rafaela: alterado para hisDtIni pq o setSigla seta uma dtReg baseada no ano do codigo da solicitacao e causa um erro ao exibir a sol.
+        	if (getHisDtIni() != null) {
         		Calendar c1 = Calendar.getInstance();
-        		c1.setTime(getDtReg());
+        		c1.setTime(getHisDtIni());
         		int year = c1.get(Calendar.YEAR);
-        		query += " and dtReg between to_date('01/01/" + year + " 00:01', 'dd/mm/yyyy HH24:mi') and to_date('31/12/" + year + " 23:59','dd/mm/yyyy HH24:mi')";
+        		query += " and hisDtIni between to_date('01/01/" + year + " 00:01', 'dd/mm/yyyy HH24:mi') and to_date('31/12/" + year + " 23:59','dd/mm/yyyy HH24:mi')";
         	}
         	if (getNumSolicitacao() != null)
         		query += " and numSolicitacao = " + getNumSolicitacao();

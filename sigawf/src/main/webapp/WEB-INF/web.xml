@@ -58,31 +58,17 @@
 	</filter-mapping>
 
 	<filter>
-		<filter-name>ResponseHeaderFilterNoCache</filter-name>
-		<filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
-		<init-param>
-			<param-name>Cache-Control</param-name>
-			<param-value>no-cache</param-value>
-		</init-param>
-	</filter>
-
-	<filter>
 		<filter-name>ResponseHeaderFilter</filter-name>
 		<filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
 		<init-param>
 			<param-name>Cache-Control</param-name>
-			<param-value>max-age=3600</param-value>
+			<param-value>public, max-age=3600</param-value>
 		</init-param>
 	</filter>
 
 	<filter-mapping>
-		<filter-name>ResponseHeaderFilterNoCache</filter-name>
-		<url-pattern>/app/*</url-pattern>
-	</filter-mapping>
-
-	<filter-mapping>
 		<filter-name>ResponseHeaderFilter</filter-name>
-		<url-pattern>/imagens/*</url-pattern>
+		<url-pattern>/js/*</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>

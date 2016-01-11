@@ -68,6 +68,21 @@
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 	
+	<filter>
+        <filter-name>ResponseHeaderFilter</filter-name>
+        <filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
+        <init-param>
+            <param-name>Cache-Control</param-name>
+            <param-value>public, max-age=3600</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>ResponseHeaderFilter</filter-name>
+        <url-pattern>/images/*</url-pattern>
+        <url-pattern>/javascripts/*</url-pattern>
+        <url-pattern>/stylesheets/*</url-pattern>
+    </filter-mapping>
+	
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Paginas do Sistema</web-resource-name>

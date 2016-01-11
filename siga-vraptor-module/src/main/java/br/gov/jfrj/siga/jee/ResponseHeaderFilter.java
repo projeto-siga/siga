@@ -18,8 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.jee;
 
-
 import java.io.IOException;
+import java.util.Date;
 import java.util.Enumeration;
 
 import javax.servlet.Filter;
@@ -33,9 +33,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.logging.Logger;
 
 public class ResponseHeaderFilter implements Filter {
-	
+
 	FilterConfig fc;
-	private static final Logger log = Logger.getLogger( ResponseHeaderFilter.class );
+	private static final Logger log = Logger
+			.getLogger(ResponseHeaderFilter.class);
 
 	public void doFilter(ServletRequest req, ServletResponse res,
 			FilterChain chain) throws IOException, ServletException {
@@ -43,16 +44,21 @@ public class ResponseHeaderFilter implements Filter {
 		// set the provided HTTP response parameters
 		for (Enumeration e = fc.getInitParameterNames(); e.hasMoreElements();) {
 			String headerName = (String) e.nextElement();
-			response.addHeader(headerName, fc.getInitParameter(headerName));
+			String initParameter = fc.getInitParameter(headerName);
+			response.addHeader(headerName, initParameter);
+			if (initParameter.contains("3600")) {
+				Date dt = new Date();
+				response.addDateHeader("Expires", dt.getTime() + 3600000);
+			}
 		}
 		// pass the request/response on
 		try {
 			chain.doFilter(req, response);
 		} catch (Throwable ex) {
-			log.error( ex.getMessage(), ex );
+			log.error(ex.getMessage(), ex);
 			ex.printStackTrace();
 		}
-		
+
 	}
 
 	public void init(FilterConfig filterConfig) {

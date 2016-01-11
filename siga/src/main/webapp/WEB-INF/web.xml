@@ -49,7 +49,7 @@
 		<filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
 		<init-param>
 			<param-name>Cache-Control</param-name>
-			<param-value>max-age=3600</param-value>
+			<param-value>public, max-age=3600</param-value>
 		</init-param>
 	</filter>
 
@@ -84,6 +84,21 @@
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 
+
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<url-pattern>/bootstrap/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<url-pattern>/css/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<url-pattern>/javascript/*</url-pattern>
+	</filter-mapping>
 
 	<filter-mapping>
 		<filter-name>ResponseHeaderFilter</filter-name>

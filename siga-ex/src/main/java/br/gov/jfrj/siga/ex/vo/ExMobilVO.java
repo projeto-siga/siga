@@ -352,6 +352,13 @@ public class ExMobilVO extends ExVO {
 									mob), null,
 					"criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(), null,
 					null, null);
+			
+			if (mob.temAnexos()) {
+				addAcao("script_key", "Assinar Anexos " + (mob.isVia() ? "da Via" : "do Volume"),
+						"/app/expediente/mov", "anexar", true, null,
+						"assinandoAnexosGeral=true&sigla=" + getSigla(), null,
+						null, null);
+			}
 		}
 		addAcao("link_break", "Desentranhar", "/app/expediente/mov",
 				"cancelar_juntada", Ex.getInstance().getComp()

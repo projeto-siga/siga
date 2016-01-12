@@ -409,8 +409,11 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			// }
 			if (numero != null)
 				getExDocumento().setNumExpediente(Long.parseLong(numero));
-			if (sonumero != null)
+			if (sonumero != null) {
 				getExDocumento().setNumExpediente(Long.parseLong(sonumero));
+				getExDocumento().setAnoEmissao((long) new Date().getYear());
+
+			}
 
 			// Numero de sequencia do documento filho
 			//

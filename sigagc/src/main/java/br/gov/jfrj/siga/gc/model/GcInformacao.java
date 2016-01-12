@@ -649,20 +649,28 @@ public class GcInformacao extends Objeto {
 	 **/
 	public static GcInformacao findBySigla(String sigla)
 			throws NumberFormatException, Exception {
+		return findBySigla(sigla, null);
+	}
+
+	public static GcInformacao findBySigla(String sigla, CpOrgaoUsuario ouDefault)
+			throws NumberFormatException, Exception {
 		sigla = sigla.trim().toUpperCase();
 
 		Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
 		for (CpOrgaoUsuario ou : CpDao.getInstance().listarOrgaosUsuarios()) {
 			mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
+			mapAcronimo.put(ou.getSiglaOrgaoUsu(), ou);
 		}
 		String acronimos = "";
 		for (String s : mapAcronimo.keySet()) {
-			acronimos += "|" + s;
+			if (acronimos.length() > 0)
+				acronimos += "|";
+			acronimos += s;
 		}
 
 		final Pattern p2 = Pattern.compile("^TMPGC-?([0-9]{1,7})");
-		final Pattern p1 = Pattern.compile("^([A-Za-z0-9]{2}" + acronimos
-				+ ")?-?(GC)?-?(?:([0-9]{4})/?)??([0-9]{1,5})$");
+		final Pattern p1 = Pattern.compile("^(" + acronimos
+				+ ")?-?(GC)?-?(?:(20[0-9]{2})/?)??([0-9]{1,5})$");
 		final Matcher m2 = p2.matcher(sigla);
 		final Matcher m1 = p1.matcher(sigla);
 
@@ -673,10 +681,16 @@ public class GcInformacao extends Objeto {
 		}
 
 		if (m1.find()) {
+			String ano = m1.group(3);
+			String numero = m1.group(4);
+			String orgao = m1.group(1);
+			if (orgao == null && ouDefault != null)
+				orgao = ouDefault.getAcronimoOrgaoUsu();
+			
 			info = GcInformacao.AR.find(
 					"ano = ? and numero = ? and ou.acronimoOrgaoUsu = ?",
-					(Integer) Integer.parseInt(m1.group(3)),
-					(Integer) Integer.parseInt(m1.group(4)), m1.group(1))
+					(Integer) Integer.parseInt(ano),
+					(Integer) Integer.parseInt(numero), orgao)
 					.first();
 
 		}

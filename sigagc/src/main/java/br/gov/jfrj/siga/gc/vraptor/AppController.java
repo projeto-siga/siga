@@ -22,7 +22,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
@@ -1212,6 +1214,41 @@ public class AppController extends GcController {
 		result.include("sel", sel);
 		// render("@siga-play-module.selecionar", sel);
 	}
+	
+    @Path("/public/app/selecionar")
+    public void selecionarPublico(String sigla, boolean retornarCompacta, String matricula) throws Exception {
+    	try {
+    		CpOrgaoUsuario ouDefault = null;
+    		if (matricula != null) {
+    			DpPessoa pes = dao().getPessoaFromSigla(matricula);
+    			if (pes != null)
+    				ouDefault = pes.getOrgaoUsuario();
+    			
+    		}
+    		GcInformacao inf = GcInformacao.findBySigla(sigla, ouDefault);
+        
+	        if (inf != null) {
+	        	result.use(Results.http()).body("1;" + inf.getId() + ";" + inf.getSigla() + ";" + getRequest().getScheme() + "://"
+	    				+ getRequest().getServerName() + ":"
+	    				+ getRequest().getServerPort() + "/sigagc/app/exibir/" + inf.getSiglaCompacta());
+	        	return;
+	        }
+    	} catch (Exception ex) {
+    		
+    	}
+    	result.use(Results.http()).body("0");
+    }
+
+    @Path("/app/selecionar")
+    public void selecionar(String sigla, boolean retornarCompacta) throws Exception {
+        GcInformacao inf = GcInformacao.findBySigla(sigla);
+        
+        if (inf != null) {
+        	result.use(Results.http()).body("1;" + inf.getId() + ";" + inf.getSigla() + ";" + inf.getArq().getTitulo());
+        } else {
+        	result.use(Results.http()).body("0");
+        }
+    }
 
 	@Path("/app/tag/buscar")
 	public void buscarTag(String sigla, GcTag filtro) {

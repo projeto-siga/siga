@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -87,7 +88,17 @@ public class ExGadgetController extends ExController {
 
 	@Get("/app/testes/gadgetTest")
 	public void test(final String matricula, final Integer idTpFormaDoc) throws Exception {
+		if (matricula == null) {
+			result.use(Results.http()).body("ERRO: É necessário especificar o parâmetro 'matricula'.").setStatusCode(400);
+			return;
+		}
+			
 		final DpPessoa pes = daoPes(matricula);
+		
+		if (pes == null) {
+			result.use(Results.http()).body("ERRO: Não foi localizada a pesso referenciada pelo parâmetro 'matricula'.").setStatusCode(400);
+			return;
+		}
 		
 		final Integer id = (idTpFormaDoc == null || idTpFormaDoc == 0 ? 1 : idTpFormaDoc);
 

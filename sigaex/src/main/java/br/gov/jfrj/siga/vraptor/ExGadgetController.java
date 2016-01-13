@@ -96,7 +96,7 @@ public class ExGadgetController extends ExController {
 		final DpPessoa pes = daoPes(matricula);
 		
 		if (pes == null) {
-			result.use(Results.http()).body("ERRO: Não foi localizada a pesso referenciada pelo parâmetro 'matricula'.").setStatusCode(400);
+			result.use(Results.http()).body("ERRO: Não foi localizada a pessoa referenciada pelo parâmetro 'matricula'.").setStatusCode(400);
 			return;
 		}
 		

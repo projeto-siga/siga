@@ -138,7 +138,7 @@ public class ExDocumentoController extends ExController {
 				.novaInstancia().setSigla(sigla);
 		final ExDocumento doc = buscarDocumento(builder, false);
 
-		Ex.getInstance().getBL().processar(doc, true, false, null);
+		Ex.getInstance().getBL().processar(doc, true, false);
 
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
@@ -1152,12 +1152,11 @@ public class ExDocumentoController extends ExController {
 		}
 
 		try {
-			final String realPath = getContext().getRealPath("");
 			exDocumentoDto.setMsg(Ex
 					.getInstance()
 					.getBL()
 					.finalizar(getCadastrante(), getLotaTitular(),
-							exDocumentoDto.getDoc(), realPath));
+							exDocumentoDto.getDoc()));
 
 			if (exDocumentoDto.getDoc().getForm() != null) {
 				if (exDocumentoDto.getDoc().getForm().get("acaoFinalizar") != null
@@ -1316,16 +1315,15 @@ public class ExDocumentoController extends ExController {
 				if (d.getContarNumeroDePaginas() == null || d.getArquivoComStamp() == null) {
 					throw new AplicacaoException(MessageFormat.format("O arquivo {0} está corrompido. Favor gera-lo novamente antes de anexar.", arquivo.getFileName()));
 				}
-			} 
+			}
 			
-			final String realPath = getContext().getRealPath("");
 			exBL.gravar(getCadastrante(), getLotaTitular(),
-					exDocumentoDTO.getDoc(), realPath);
+					exDocumentoDTO.getDoc());
 			
 			if (!exDocumentoDTO.getDoc().isFinalizado()
 					&& exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)
 				exBL.finalizar(getCadastrante(), getLotaTitular(),
-						exDocumentoDTO.getDoc(), realPath);
+						exDocumentoDTO.getDoc());
 
 			lerEntrevista(exDocumentoDTO);
 
@@ -1459,9 +1457,8 @@ public class ExDocumentoController extends ExController {
 					ExModelo.class, false));
 		}
 
-		final String realPath = getContext().getRealPath("");
 		Ex.getInstance().getBL()
-				.processar(exDocumentoDTO.getDoc(), false, false, realPath);
+				.processar(exDocumentoDTO.getDoc(), false, false);
 
 		exDocumentoDTO.setPdfStreamResult(new ByteArrayInputStream(
 				exDocumentoDTO.getDoc().getConteudoBlobPdf()));
@@ -2351,5 +2348,5 @@ public class ExDocumentoController extends ExController {
 				.corrigirArquivamentosEmVolume(idPrimeiroDoc, idUltimoDoc,
 						efetivarDoc);
 	}
-
+	
 }

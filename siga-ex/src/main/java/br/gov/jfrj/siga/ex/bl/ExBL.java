@@ -2057,7 +2057,7 @@ public class ExBL extends CpBL {
 						&& doc.getExMobilPai().isVolumeEncerrado()) {
 					doc.setExMobilPai(doc.getExMobilPai().doc()
 							.getUltimoVolume());
-					gravar(cadastrante, lotaCadastrante, doc, null);
+					gravar(cadastrante, lotaCadastrante, doc);
 				}
 				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc,
 						mov.getDtMov(), cadastrante, cadastrante, mov);
@@ -2354,7 +2354,7 @@ public class ExBL extends CpBL {
 						&& doc.getExMobilPai().isVolumeEncerrado()) {
 					doc.setExMobilPai(doc.getExMobilPai().doc()
 							.getUltimoVolume());
-					gravar(cadastrante, lotaCadastrante, doc, null);
+					gravar(cadastrante, lotaCadastrante, doc);
 				}
 				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov,
 						cadastrante, cadastrante, mov);
@@ -3529,7 +3529,7 @@ public class ExBL extends CpBL {
 					&& ((mob.doc().isFisico() && !mob.doc().isFinalizado()) || (mob
 							.doc().isEletronico() && !mob.doc()
 							.possuiAlgumaAssinatura())))
-				processar(mob.getExDocumento(), true, false, null);
+				processar(mob.getExDocumento(), true, false);
 			concluirAlteracao(mov.getExDocumento());
 
 		} catch (final Exception e) {
@@ -3541,7 +3541,7 @@ public class ExBL extends CpBL {
 
 	@SuppressWarnings("unchecked")
 	public String finalizar(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc, String realPath)
+			final DpLotacao lotaCadastrante, ExDocumento doc)
 			throws Exception {
 
 		if (doc.isFinalizado())
@@ -3623,7 +3623,7 @@ public class ExBL extends CpBL {
 				}
 			}
 
-			processar(doc, false, false, realPath);
+			processar(doc, false, false);
 
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
 			dao().gravar(doc);
@@ -3900,7 +3900,7 @@ public class ExBL extends CpBL {
 	}
 
 	public ExDocumento gravar(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc, String realPath)
+			final DpLotacao lotaCadastrante, ExDocumento doc)
 			throws Exception {
 
 		// Verifica se o documento possui documento pai e se o usuário possui
@@ -3969,7 +3969,7 @@ public class ExBL extends CpBL {
 			// a estrutura try catch abaixo foi colocada de modo a impedir que
 			// os erros na formatação impeçam a gravação do documento
 			try {
-				processar(doc, false, false, realPath);
+				processar(doc, false, false);
 			} catch (Throwable t) {
 				System.out.println("gravação doc " + doc.getCodigo() + ", "
 						+ new Date().toString() + " - erro na formatação - "
@@ -4015,7 +4015,7 @@ public class ExBL extends CpBL {
 			// Finaliza o documento automaticamente se ele for coloborativo
 			if (!primeiraGravacao && doc.isColaborativo() && !doc.isFisico()
 					&& !doc.isFinalizado()) {
-				finalizar(cadastrante, lotaCadastrante, doc, realPath);
+				finalizar(cadastrante, lotaCadastrante, doc);
 			}
 
 			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
@@ -4360,7 +4360,7 @@ public class ExBL extends CpBL {
 			mov.setNmFuncaoSubscritor(funcaoCosignatario);
 
 			gravarMovimentacao(mov);
-			processar(doc, true, false, null);
+			processar(doc, true, false);
 			concluirAlteracao(doc);
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -4605,7 +4605,7 @@ public class ExBL extends CpBL {
 		novoDoc.setExMobilSet(new TreeSet<ExMobil>());
 		novoDoc.getExMobilSet().add(mob);
 
-		novoDoc = gravar(cadastrante, lotaCadastrante, novoDoc, null);
+		novoDoc = gravar(cadastrante, lotaCadastrante, novoDoc);
 
 		// mob = dao().gravar(mob);
 
@@ -4643,7 +4643,7 @@ public class ExBL extends CpBL {
 		// deve ser gravado novamente pois isso faria com que ele fosse
 		// automaticamente finalizado, o que não é desejavel na duplicação.
 		if (!doc.isColaborativo())
-			novoDoc = gravar(cadastrante, lotaCadastrante, novoDoc, null);
+			novoDoc = gravar(cadastrante, lotaCadastrante, novoDoc);
 
 		return novoDoc;
 	}
@@ -5406,7 +5406,7 @@ public class ExBL extends CpBL {
 	}
 
 	public void processar(final ExDocumento doc, final boolean gravar,
-			final boolean transacao, String realPath) {
+			final boolean transacao) {
 		// Não existe processamento de modelo para documento capturado
 		if (doc.getExTipoDocumento().getId()
 				.equals(ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO))
@@ -5469,8 +5469,7 @@ public class ExBL extends CpBL {
 							getConf(), doc, strHtml);
 
 					try {
-						pdf = Documento.generatePdf(strHtml, conversor,
-								realPath);
+						pdf = Documento.generatePdf(strHtml, conversor);
 					} catch (Exception e) {
 						throw new AplicacaoException(
 								"Erro na geração do PDF. Por favor, verifique se existem recursos de formatação não suportados. Para eliminar toda a formatação do texto clique em voltar e depois, no editor, clique no botõo de 'Selecionar Tudo' e depois no botão de 'Remover Formatação'.",

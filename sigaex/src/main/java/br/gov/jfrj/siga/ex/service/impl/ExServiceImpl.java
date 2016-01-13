@@ -50,9 +50,11 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
@@ -652,13 +654,11 @@ public class ExServiceImpl implements ExService {
 			ServletContext servletContext =
 				    (ServletContext) context.getMessageContext().get(MessageContext.SERVLET_CONTEXT);
 			
-			String realPath = servletContext.getRealPath("");
-    		
     		doc = Ex.getInstance()
-			       .getBL().gravar(cadastrante, cadastrante.getLotacao(), doc, realPath);
+			       .getBL().gravar(cadastrante, cadastrante.getLotacao(), doc);
     		
     		if(finalizar)
-    			Ex.getInstance().getBL().finalizar(cadastrante, cadastrante.getLotacao(), doc, realPath);
+    			Ex.getInstance().getBL().finalizar(cadastrante, cadastrante.getLotacao(), doc);
 
     		return doc.getSigla();
 		} catch (Exception e) {

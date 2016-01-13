@@ -53,7 +53,9 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -889,34 +891,15 @@ public class Documento {
 
 	public static byte[] generatePdf(String sHtml) throws Exception {
 		return generatePdf(sHtml, AbstractConversorHTMLFactory.getInstance()
-				.getConversorPadrao(), null);
+				.getConversorPadrao());
 	}
 
-	public static byte[] generatePdf(String sHtml, ConversorHtml parser, String realPath)
+	public static byte[] generatePdf(String sHtml, ConversorHtml parser)
 			throws Exception {
-		// System.out.println(System.currentTimeMillis() + " - INI
-		// generatePdf");
-
 		sHtml = (new ProcessadorHtml()).canonicalizarHtml(sHtml, true, false,
 				true, false, true);
 
-		// log.info("Processamento: terminou canonicalizar");
-
-		/*
-		 * bruno.lacerda@avantiprima.com.br - 01/08/2012 correcao para carregar
-		 * a imagem do brasao independente do protocolo
-		 */
-		// HttpServletRequest req = ServletActionContext.getRequest();
-		// sHtml = sHtml.replace("contextpath", "http://" + req.getServerName()+
-		// ":" + req.getServerPort() + req.getContextPath());
-		if(realPath == null)
-//			sHtml = sHtml.replace("contextpath", ServletActionContext
-//				.getServletContext().getRealPath(""));
-			; //Nato: Precisamos testar uma solução para fazer essa substituição sem precisar da dependência do webwork.
-		else
-			sHtml = sHtml.replace("contextpath", realPath);
-
-		// log.info("Processamento: prestes a entrar no nheengatu");
+		sHtml = sHtml.replace("contextpath", realPath());
 
 		return parser.converter(sHtml, ConversorHtml.PDF);
 
@@ -1355,5 +1338,16 @@ public class Documento {
 		sHtml = sHtml.replace("contextpath", contextpath);
 		return sHtml;
 	}
+	
+	public static String realPath() {
+		RequestInfo ri = CurrentRequest.get();
+		
+		final String realPath = ri.getRequest().getScheme() + "://"
+				+ ri.getRequest().getServerName() + ":"
+				+ ri.getRequest().getServerPort() + ri.getRequest().getContextPath();
+		return realPath;
+	}
+
+
 
 }

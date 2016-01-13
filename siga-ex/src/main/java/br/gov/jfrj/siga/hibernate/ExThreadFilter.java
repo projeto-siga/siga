@@ -26,18 +26,29 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.logging.Logger;
+import org.w3c.dom.svg.GetSVGDocument;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.auditoria.filter.ThreadFilter;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class ExThreadFilter extends ThreadFilter {
 
 	private static final Logger log = Logger.getLogger("br.gov.jfrj.siga.ex");
+	
+	private FilterConfig config;
+
+	@Override
+	public void init(FilterConfig config) {
+	    this.config = config;
+	}
 
 	/**
 	 * Pega a sessão.
@@ -70,6 +81,8 @@ public class ExThreadFilter extends ThreadFilter {
 	private void executaFiltro(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain)
 			throws Exception, AplicacaoException {
+
+		CurrentRequest.set(new RequestInfo(config.getServletContext(), (HttpServletRequest)request, (HttpServletResponse)response));
 
 		// HibernateUtil.getSessao();
 		ModeloDao.freeInstance();
@@ -129,9 +142,4 @@ public class ExThreadFilter extends ThreadFilter {
 	public void destroy() {
 	}
 
-	/**
-	 * Executa ao inciar o filtro.
-	 */
-	public void init(FilterConfig arg0) throws ServletException {
-	}
 }

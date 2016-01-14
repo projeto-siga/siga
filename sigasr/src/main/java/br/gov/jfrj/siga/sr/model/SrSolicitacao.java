@@ -341,7 +341,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     @Override
     public void setSigla(String sigla) {
         String siglaUpper = sigla.trim().toUpperCase();
-        final Matcher mTMP = Pattern.compile("^TMPSR([0-9]{1,5})$").matcher(siglaUpper);
+        final Matcher mTMP = Pattern.compile("^TMPSR-?([0-9]{1,5})$").matcher(siglaUpper);
         if (mTMP.find())
         	setId(Long.valueOf(mTMP.group(1)));
         else {
@@ -354,7 +354,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	for (String s : mapAcronimo.keySet()) {
         		acronimos.append("|" + s);
         	}
-        	final Pattern p = Pattern.compile("^([A-Za-z0-9]{2}" + acronimos.toString() + ")?-?SR{1}-?(?:([0-9]{4})/?)??([0-9]{1,5})(?:[.]{1}([0-9]{1,3}))?$");
+        	final Pattern p = Pattern.compile("^(" + acronimos.toString() + ")?-?SR{1}-?(?:([0-9]{4})/?)??([0-9]{1,5})(?:[.]{1}([0-9]{1,3}))?$");
         	final Matcher m = p.matcher(siglaUpper);
         	if (m.find()) {
         		if (m.group(1) != null) {
@@ -432,12 +432,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	if (getOrgaoUsuario() != null) {
         		query += " and orgaoUsuario.idOrgaoUsu = " + getOrgaoUsuario().getIdOrgaoUsu();
         	}
-        	// Rafaela: alterado para hisDtIni pq o setSigla seta uma dtReg baseada no ano do codigo da solicitacao e causa um erro ao exibir a sol.
-        	if (getHisDtIni() != null) {
+        	
+        	if (getDtReg() != null) {
         		Calendar c1 = Calendar.getInstance();
-        		c1.setTime(getHisDtIni());
+        		c1.setTime(getDtReg());
         		int year = c1.get(Calendar.YEAR);
-        		query += " and hisDtIni between to_date('01/01/" + year + " 00:01', 'dd/mm/yyyy HH24:mi') and to_date('31/12/" + year + " 23:59','dd/mm/yyyy HH24:mi')";
+        		query += " and " + (getNumSequencia() != null ? "solicitacaoPai.dtReg" : "dtReg") + " between to_date('01/01/" + year + " 00:01', 'dd/mm/yyyy HH24:mi') and to_date('31/12/" + year + " 23:59','dd/mm/yyyy HH24:mi')";
         	}
         	if (getNumSolicitacao() != null)
         		query += " and numSolicitacao = " + getNumSolicitacao();

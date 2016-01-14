@@ -116,9 +116,9 @@ public class PrincipalController extends SigaController {
 		}
 
 		final Pattern p1 = Pattern
-				.compile("^(?<orgao>[A-Za-z][A-Za-z0-9]"
+				.compile("^(?<orgao>"
 						+ acronimos
-						+ ")?-?(?:(?<especie>[A-Za-z]{3})|(?<modulo>SR|GC|TMPGC|TP))-?([0-9][0-9A-Za-z\\.-/]*)$");
+						+ ")?-?(?:(?<especie>[A-Za-z]{3})|(?<modulo>SR|TMPSR|GC|TMPGC|TP))-?([0-9][0-9A-Za-z\\.-/]*)$");
 		final Matcher m1 = p1.matcher(sigla);
 
 		final GenericoSelecao sel = new GenericoSelecao();
@@ -144,10 +144,10 @@ public class PrincipalController extends SigaController {
 			} else if (modulo != null) {
 				switch (modulo) {
 				case "SR": // Solicitacoes
+				case "TMPSR":
 					lurls.add(urlBase
-							+ "/sigasr/app/solicitacao/selecionar?retornarCompacta=true&sigla="
-							+ sigla + incluirMatricula
-							+ ";/sigasr/app/solicitacao/exibir/");
+							+ "/sigasr/public/app/solicitacao/selecionar?sigla="
+							+ sigla + incluirMatricula);
 					break;
 				case "GC": // Conhecimentos
 				case "TMPGC":

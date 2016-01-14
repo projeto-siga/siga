@@ -343,7 +343,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 
 		final Pattern p2 = Pattern.compile("^TMP-?([0-9]{1,7})");
 		final Pattern p1 = Pattern
-				.compile("^(?<orgao>[A-Za-z0-9]{2}"
+				.compile("^(?<orgao>"
 						+ acronimos
 						+ ")?-?(?<especie>[A-Za-z]{3})?-?(?:(?:(?<ano>20[0-9]{2})/?)(?<numero>[0-9]{1,5})(?<subnumero>\\.?[0-9]{2})??|(?<sonumero>[0-9]{1,5}))(?:(?<via>(?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|(?<volume>(?:-?V[0-9]{1,2})))?$");
 		final Matcher m2 = p2.matcher(sigla);

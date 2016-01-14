@@ -357,7 +357,11 @@ public class SubstituicaoController extends SigaController {
 				dpSub.setDtFimRegistro(new Date());
 				dpSub = dao().gravar(dpSub);
 				dao().commitTransacao();
-				result.use(Results.referer()).redirect();				
+				String referer = getRequest().getHeader("Referer");
+				if (referer != null)
+					result.redirectTo(referer);
+				else
+					result.redirectTo(PrincipalController.class).principal();
 			} else
 				throw new AplicacaoException("Usuário não tem permissão para excluir esta substituição");	
 		} else

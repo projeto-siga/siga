@@ -112,7 +112,11 @@ public class CpConfiguracaoBL {
 
 		List<CpConfiguracao> results = (List<CpConfiguracao>) dao()
 				.consultarConfiguracoesAtivas();
+		
+		long inicioLazy = System.currentTimeMillis();
 		evitarLazy(results);
+		long fimLazy = System.currentTimeMillis();
+
 
 		hashListas.clear();
 		for (CpConfiguracao cfg : results) {
@@ -131,11 +135,13 @@ public class CpConfiguracaoBL {
 			throw new RuntimeException(
 					"Ocorreu um erro na inicialização do cache.");
 		cacheInicializado = true;
+		
+		long fim = System.currentTimeMillis();
 
 		Logger.getLogger("siga.conf.cache").info(
 				"Cache de configurações inicializado via "
 						+ this.getClass().getSimpleName() + " em "
-						+ (System.currentTimeMillis() - inicio) + "ms");
+						+ (fim - inicio) + "ms, select: " + (inicioLazy - inicio) + "ms, lazy: " + (fimLazy - inicioLazy) + "ms, tree: " + (fim - fimLazy) + "ms");
 	}
 
 	public HashMap<Long, TreeSet<CpConfiguracao>> getHashListas() {

@@ -64,7 +64,7 @@ public class ExProcessadorModelo implements ProcessadorModelo {
 		w.flush();
 		String s = bout.toString();
 
-		System.out.println(System.currentTimeMillis() + " - FIM processarModelo");
+//		System.out.println(System.currentTimeMillis() + " - FIM processarModelo");
 		return s;
 	}
 

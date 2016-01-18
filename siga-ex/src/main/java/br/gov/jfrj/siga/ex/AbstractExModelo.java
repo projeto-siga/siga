@@ -318,8 +318,8 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 				sother = sother.replace("\r\n", "\n");
 
 				if (!sthis.equals(sother)) {
-					System.out.println(Hex.encodeHexString(abthis));
-					System.out.println(Hex.encodeHexString(abother));
+//					System.out.println(Hex.encodeHexString(abthis));
+//					System.out.println(Hex.encodeHexString(abother));
 					return false;
 				}
 			} catch (UnsupportedEncodingException e) {

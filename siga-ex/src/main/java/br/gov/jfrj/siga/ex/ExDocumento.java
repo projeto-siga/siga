@@ -2520,7 +2520,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	 * @return o id do ExNivelAcesso quando o ExNivelAcesso não for nulo.
 	 */
 	public Long getIdExNivelAcesso() {
-		log.info("Obtendo IdExNivelAcesso...");
+//		log.info("Obtendo IdExNivelAcesso...");
 		Long idExNivelAcesso = null;
 		String nivelAcesso = this.getNivelAcesso();
 		if (nivelAcesso != null) {

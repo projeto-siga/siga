@@ -203,9 +203,9 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 					exClassNovo.setObs(exClassificacao.getObs());
 					Ex.getInstance().getBL().alterarExClassificacao(exClassNovo, exClassAntiga,dao().consultarDataEHoraDoServidor(),
 							getIdentidadeCadastrante());
-					System.out.println(exClassNovo);
-					System.out.println(exClassAntiga);
-					System.out.println(exClassificacao);
+//					System.out.println(exClassNovo);
+//					System.out.println(exClassAntiga);
+//					System.out.println(exClassificacao);
 				}
 	
 			}

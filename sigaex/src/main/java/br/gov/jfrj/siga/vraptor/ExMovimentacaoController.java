@@ -1246,7 +1246,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post
 	@Path("/app/expediente/mov/fechar_popup")
 	public void fecharPopup() {
-		System.out.println("popup fechado.");
+//		System.out.println("popup fechado.");
 	}
 
 	@Get("/app/expediente/mov/transferido")
@@ -1635,8 +1635,8 @@ public class ExMovimentacaoController extends ExController {
 			for (Iterator<Entry<ExMobil, AplicacaoException>> it = MapMensagens.entrySet().iterator(); it.hasNext();) {
 				Entry<ExMobil, AplicacaoException> excep = it.next();
 				final Object[] ao = { excep.getKey(), excep.getValue().getMessage() };
-				System.out.println("Falha: " + excep.getKey().doc().getSigla());
-				System.out.println("Mensagem de erro: " + excep.getValue().getMessage());
+//				System.out.println("Falha: " + excep.getKey().doc().getSigla());
+//				System.out.println("Mensagem de erro: " + excep.getValue().getMessage());
 				al.add(ao);
 				throw new AplicacaoException(excep.getValue().getMessage());
 			}
@@ -1646,9 +1646,9 @@ public class ExMovimentacaoController extends ExController {
 			ExMobil mob = it.next();
 			if (!(MapMensagens.containsKey(mob))) {
 				MobilSucesso.add(mob);
-				System.out.println("Mobil Geral: " + mob.doc().getMobilGeral().isGeral());
+//				System.out.println("Mobil Geral: " + mob.doc().getMobilGeral().isGeral());
 				final Object[] ao = { mob.doc(), mob.getUltimaMovimentacaoNaoCancelada() };
-				System.out.println("Sucesso sigla: " + mob.doc().getSigla());
+//				System.out.println("Sucesso sigla: " + mob.doc().getSigla());
 				check.add(ao);
 			}
 		}

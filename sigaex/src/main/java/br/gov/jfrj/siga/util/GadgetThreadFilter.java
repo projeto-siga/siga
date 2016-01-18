@@ -51,7 +51,7 @@ public class GadgetThreadFilter implements Filter {
 				requisicoes++;
 				chain.doFilter(request, response);
 				requisicoes--;
-				System.out.println("Acabou gadget::: Sobram " + requisicoes +" requests");
+//				System.out.println("Acabou gadget::: Sobram " + requisicoes +" requests");
 			} else {
 				PrintWriter out = response.getWriter();
 				out.write("TRYAGAIN###" + httpRequest.getRequestURI());

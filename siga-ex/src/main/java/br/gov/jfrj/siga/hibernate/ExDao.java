@@ -379,7 +379,7 @@ public class ExDao extends CpDao {
 		}
 		List l = query.list();
 		long tempoTotal = System.nanoTime() - tempoIni;
-		System.out.println("consultarPorFiltroOtimizado: " + tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l);
+//		System.out.println("consultarPorFiltroOtimizado: " + tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l);
 		return l;
 	}
 
@@ -403,8 +403,8 @@ public class ExDao extends CpDao {
 
 		Long l = (Long) query.uniqueResult();
 		long tempoTotal = System.nanoTime() - tempoIni;
-		System.out.println("consultarQuantidadePorFiltroOtimizado: "
-				+ tempoTotal / 1000000 + " ms -> " + s + ", resultado: " + l);
+//		System.out.println("consultarQuantidadePorFiltroOtimizado: "
+//				+ tempoTotal / 1000000 + " ms -> " + s + ", resultado: " + l);
 		return l.intValue();
 	}
 
@@ -448,8 +448,8 @@ public class ExDao extends CpDao {
 		long tempoIni = System.nanoTime();
 		Long l = (Long) query.uniqueResult();
 		long tempoTotal = System.nanoTime() - tempoIni;
-		System.out.println("consultarQuantidadePorFiltro: " + tempoTotal
-				/ 1000000 + ", resultado: " + l);
+//		System.out.println("consultarQuantidadePorFiltro: " + tempoTotal
+//				/ 1000000 + ", resultado: " + l);
 		return l.intValue();
 	}
 
@@ -606,21 +606,21 @@ public class ExDao extends CpDao {
 										ExDocumento.class).getResultSize() == 0)) {
 
 					if (irIndexando) {
-						System.out.println("listarNaoIndexados - indexando "
-								+ doc.getCodigo());
+//						System.out.println("listarNaoIndexados - indexando "
+//								+ doc.getCodigo());
 						indexar(doc);
 					} else {
-						System.out.println("listarNaoIndexados - nao indexar "
-								+ doc.getCodigo());
+//						System.out.println("listarNaoIndexados - nao indexar "
+//								+ doc.getCodigo());
 					}
 				}
 			}
-			System.out.println("listarNaoIndexados - " + firstResult+ " varridos");
+//			System.out.println("listarNaoIndexados - " + firstResult+ " varridos");
 			getSessao().clear();
 		} while (list.size() > 0);
-		System.out.println("listarNaoIndexados - FIM    "
-				+ (System.currentTimeMillis() - tempoIni) / 3600000
-				+ " minutos");
+//		System.out.println("listarNaoIndexados - FIM    "
+//				+ (System.currentTimeMillis() - tempoIni) / 3600000
+//				+ " minutos");
 	}
 
 	public void indexarFila(String path) throws Exception {
@@ -659,7 +659,7 @@ public class ExDao extends CpDao {
 
 	public void indexarTudo(Aguarde aguarde) throws Exception {
 
-		System.out.println("Indexando documentos...");
+//		System.out.println("Indexando documentos...");
 		long inicio = new Date().getTime();
 
 		try {
@@ -706,14 +706,14 @@ public class ExDao extends CpDao {
 			tx.commit();
 			fullTextSession.clear();
 			getSessao().clear();
-			System.out.print(String.valueOf(index)
-					+ " documentos jï¿½ indexados. --  -- ");
+//			System.out.print(String.valueOf(index)
+//					+ " documentos jï¿½ indexados. --  -- ");
 		} while (list.size() > 0);
 		//System.gc();
 
 		// fullTextSession.close();
-		System.out.println("Duraï¿½ï¿½o da indexaï¿½ï¿½o de documentos: "
-				+ (new Date().getTime() - inicio));
+//		System.out.println("Duraï¿½ï¿½o da indexaï¿½ï¿½o de documentos: "
+//				+ (new Date().getTime() - inicio));
 
 		if (aguarde != null)
 			aguarde.setMensagem(String.valueOf(index));
@@ -722,7 +722,7 @@ public class ExDao extends CpDao {
 
 	public void indexarUltimas(int desde) throws Exception {
 
-		System.out.println("Indexando documentos...");
+//		System.out.println("Indexando documentos...");
 		long inicio = new Date().getTime();
 
 		Calendar cal = Calendar.getInstance();
@@ -746,7 +746,7 @@ public class ExDao extends CpDao {
 		List<ExDocumento> list = crit.list();
 		Transaction tx = fullTextSession.beginTransaction();
 		for (ExDocumento doc : list) {
-			System.out.println(" . " + doc.getIdDoc());
+//			System.out.println(" . " + doc.getIdDoc());
 			fullTextSession.purge(ExDocumento.class, doc);
 			if (doc.isIndexavel())
 				fullTextSession.index(doc);
@@ -757,8 +757,8 @@ public class ExDao extends CpDao {
 		//System.gc();
 
 		// fullTextSession.close();
-		System.out.println("Duraï¿½ï¿½o da indexaï¿½ï¿½o de documentos: "
-				+ (new Date().getTime() - inicio));
+//		System.out.println("Duraï¿½ï¿½o da indexaï¿½ï¿½o de documentos: "
+//				+ (new Date().getTime() - inicio));
 
 	}
 

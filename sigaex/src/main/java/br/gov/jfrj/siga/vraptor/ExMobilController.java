@@ -107,7 +107,7 @@ public class ExMobilController extends
 
 	@Get("app/expediente/doc/finalizou_rotina")
 	public void aFinalizouRotina() {
-		System.out.println("Finalizou rotina");
+//		System.out.println("Finalizou rotina");
 	}
 
 	@Get("app/expediente/buscar")
@@ -151,8 +151,8 @@ public class ExMobilController extends
 			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
 					getTitular(), getLotaTitular()));
 
-			System.out.println("Consulta dos por filtro: "
-					+ (System.currentTimeMillis() - tempoIni));
+//			System.out.println("Consulta dos por filtro: "
+//					+ (System.currentTimeMillis() - tempoIni));
 
 			setItens(dao().consultarPorFiltroOtimizado(flt,
 					builder.getOffset(), getItemPagina(), getTitular(),
@@ -253,8 +253,8 @@ public class ExMobilController extends
 			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
 					getTitular(), getLotaTitular()));
 
-			System.out.println("Consulta dos por filtro: "
-					+ (System.currentTimeMillis() - tempoIni));
+//			System.out.println("Consulta dos por filtro: "
+//					+ (System.currentTimeMillis() - tempoIni));
 			setItens(dao().consultarPorFiltroOtimizado(flt,
 					builder.getOffset(), getItemPagina(), getTitular(),
 					getLotaTitular()));

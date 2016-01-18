@@ -583,8 +583,8 @@ public class ExDocumentoController extends ExController {
 					final String as[] = new String[] { exDocumentoDTO
 							.getParamsEntrevista().get(p) };
 					parFreeMarker.put(p, as);
-					System.out.println("*** " + p + ", "
-							+ exDocumentoDTO.getParamsEntrevista().get(p));
+//					System.out.println("*** " + p + ", "
+//							+ exDocumentoDTO.getParamsEntrevista().get(p));
 				}
 			}
 		}
@@ -600,8 +600,8 @@ public class ExDocumentoController extends ExController {
 		for (String p : exDocumentoDTO.getParamsEntrevista().keySet()) {
 			result.include(p, exDocumentoDTO.getParamsEntrevista().get(p));
 			l.add(p);
-			System.out.println("*** " + p + ", "
-					+ exDocumentoDTO.getParamsEntrevista().get(p));
+//			System.out.println("*** " + p + ", "
+//					+ exDocumentoDTO.getParamsEntrevista().get(p));
 		}
 		result.include("vars", l);
 
@@ -1228,11 +1228,11 @@ public class ExDocumentoController extends ExController {
 				throw new AplicacaoException("Operação não permitida");
 			}
 
-			System.out.println("monitorando gravacao IDDoc "
-					+ exDocumentoDTO.getDoc().getIdDoc() + ", PESSOA "
-					+ exDocumentoDTO.getDoc().getCadastrante().getIdPessoa()
-					+ ". Terminou verificacao de config PodeCriarModelo: "
-					+ (System.currentTimeMillis() - tempoIni));
+//			System.out.println("monitorando gravacao IDDoc "
+//					+ exDocumentoDTO.getDoc().getIdDoc() + ", PESSOA "
+//					+ exDocumentoDTO.getDoc().getCadastrante().getIdPessoa()
+//					+ ". Terminou verificacao de config PodeCriarModelo: "
+//					+ (System.currentTimeMillis() - tempoIni));
 
 			tempoIni = System.currentTimeMillis();
 
@@ -1912,7 +1912,7 @@ public class ExDocumentoController extends ExController {
 						}
 					} catch (final UnsupportedEncodingException e) {
 					}
-					System.out.println(s);
+//					System.out.println(s);
 				}
 			}
 		}

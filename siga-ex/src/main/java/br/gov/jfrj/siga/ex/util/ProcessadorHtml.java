@@ -234,6 +234,9 @@ public class ProcessadorHtml {
 		tidy.setSpaces(0);
 		tidy.setTidyMark(false);
 		tidy.setIndentContent(!fRemoverEspacos);
+		
+		tidy.setQuiet(true);
+		tidy.setErrout(null);
 
 		s = s.replace("\r\n", "*newline*");
 		s = s.replace("\n", "*newline*");

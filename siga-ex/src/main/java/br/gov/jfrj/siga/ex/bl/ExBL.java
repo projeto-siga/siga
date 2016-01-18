@@ -2658,7 +2658,7 @@ public class ExBL extends CpBL {
 				break;
 			String p = s.substring(start, end + 8);
 			ps += p;
-			System.out.println(p);
+//			System.out.println(p);
 		}
 		ExPartes partes = ExPartes.unmarshall("<partes>" + ps + "</partes>");
 		return partes;
@@ -3977,10 +3977,10 @@ public class ExBL extends CpBL {
 				t.printStackTrace();
 			}
 
-			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
-					+ ", PESSOA " + doc.getCadastrante().getIdPessoa()
-					+ ". Terminou processar: "
-					+ (System.currentTimeMillis() - tempoIni));
+//			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
+//					+ ", PESSOA " + doc.getCadastrante().getIdPessoa()
+//					+ ". Terminou processar: "
+//					+ (System.currentTimeMillis() - tempoIni));
 			tempoIni = System.currentTimeMillis();
 
 			if (doc.getConteudoBlobDoc() != null)
@@ -4018,10 +4018,10 @@ public class ExBL extends CpBL {
 				finalizar(cadastrante, lotaCadastrante, doc);
 			}
 
-			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
-					+ ", PESSOA " + doc.getCadastrante().getIdPessoa()
-					+ ". Terminou commit gravacao: "
-					+ (System.currentTimeMillis() - tempoIni));
+//			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
+//					+ ", PESSOA " + doc.getCadastrante().getIdPessoa()
+//					+ ". Terminou commit gravacao: "
+//					+ (System.currentTimeMillis() - tempoIni));
 			tempoIni = System.currentTimeMillis();
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -7225,8 +7225,8 @@ public class ExBL extends CpBL {
 			}
 		}
 		if (clazz.getSuperclass().getSuperclass() != null) {
-			System.out.println("*** Classe: " + clazz.getName() + " - "
-					+ clazz.getSuperclass().getName());
+//			System.out.println("*** Classe: " + clazz.getName() + " - "
+//					+ clazz.getSuperclass().getName());
 			getImplementationDeep(o, clazz.getSuperclass(), set);
 		}
 		return o;

@@ -236,7 +236,7 @@ public class ProcessadorHtml {
 		tidy.setIndentContent(!fRemoverEspacos);
 		
 		tidy.setQuiet(true);
-		tidy.setErrout(null);
+		//tidy.setErrout(null); // Nato: isso precisou ser removido pois estava fazendo o tidy retornar "" na canonicalização
 
 		s = s.replace("\r\n", "*newline*");
 		s = s.replace("\n", "*newline*");

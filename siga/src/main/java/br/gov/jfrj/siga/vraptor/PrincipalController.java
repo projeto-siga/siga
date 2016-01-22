@@ -109,6 +109,7 @@ public class PrincipalController extends SigaController {
 		Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
 		for (CpOrgaoUsuario ou : CpDao.getInstance().listarOrgaosUsuarios()) {
 			mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
+			mapAcronimo.put(ou.getSiglaOrgaoUsu(), ou);
 		}
 		String acronimos = "";
 		for (String s : mapAcronimo.keySet()) {

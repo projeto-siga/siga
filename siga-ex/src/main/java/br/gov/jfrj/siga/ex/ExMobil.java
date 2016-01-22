@@ -335,6 +335,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
 		for (CpOrgaoUsuario ou : ExDao.getInstance().listarOrgaosUsuarios()) {
 			mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
+			mapAcronimo.put(ou.getSiglaOrgaoUsu(), ou);
 		}
 		String acronimos = "";
 		for (String s : mapAcronimo.keySet()) {

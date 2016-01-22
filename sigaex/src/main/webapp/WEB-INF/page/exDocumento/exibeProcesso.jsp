@@ -146,7 +146,7 @@
 <div id="main" class="gt-bd gt-cols-2 clearfix"
 	style="padding-top: 0px; margin-top: 0px;">
 
-	<div id="sidebar" class="gt-sidebar">
+	<div id="sidebar" class="gt-sidebar" style="width: 48% !important;">
 		<div class="gt-content-box gt-for-table">
 
 			<table class="gt-table"
@@ -222,7 +222,7 @@
 		</div>
 	</div>
 
-	<div class="gt-content">
+	<div class="gt-content" style="width: 48% !important;">
 
 		<div id="paipainel"
 			style="margin: 0px; padding: 0px; border: 0px; clear: both;">
@@ -246,6 +246,8 @@
 
 </div>
 </div>
+	<script src="/siga/bootstrap/js/bootstrap.min.js"></script>
+
 <siga:rodape />
 
 <script>

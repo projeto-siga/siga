@@ -441,10 +441,11 @@ public class ExBL extends CpBL {
 	public void marcar(ExDocumento doc) {
 		ExDao.iniciarTransacao();
 		atualizarMarcas(doc);
-		for (ExMovimentacao m : doc.getExMovimentacaoSet()) {
-			m.setNumPaginas(m.getContarNumeroDePaginas());
-			dao().gravar(m);
-		}
+		// Nato: será que precisamos contar o número de páginas cada vez que trocamos as marcas? Essa é uma operação custosa! Desabilitei para ver se temos alguma reclamação.
+//		for (ExMovimentacao m : doc.getExMovimentacaoSet()) {
+//			m.setNumPaginas(m.getContarNumeroDePaginas());
+//			dao().gravar(m);
+//		}
 		ExDao.commitTransacao();
 	}
 

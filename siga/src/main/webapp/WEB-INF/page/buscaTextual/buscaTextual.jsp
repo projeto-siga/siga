@@ -18,12 +18,12 @@
             </div>
         </header>
 		<div class="row">
-			<div role="main" class="col-md-9 col-md-push-3">
-				<div id="main"></div>
-			</div>
-			<nav class="col-md-3 col-md-pull-9">
+			<nav class="col-md-3">
 				<div id="gsa-dynamic-navigation"></div>
 			</nav>
+			<div role="main" class="col-md-9">
+				<div id="main"></div>
+			</div>
 		</div>
 	</div>
 

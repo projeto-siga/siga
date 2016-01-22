@@ -213,7 +213,7 @@
 				<c:if test="${!empty possuiResumo}">
 					<tr>
 						<td colspan="3" style="padding-left: 5pt;"><a
-							href="javascript:exibirNoIFrame('${pageContext.request.contextPath}/app/expediente/doc/exibirResumoProcesso?sigla=${mob.sigla} }')">RESUMO</a>
+							href="javascript:exibirNoIFrame('${pageContext.request.contextPath}/app/expediente/doc/exibirResumoProcesso?sigla=${mob.sigla}')">RESUMO</a>
 						</td>
 					</tr>
 				</c:if>

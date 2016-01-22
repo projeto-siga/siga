@@ -82,6 +82,24 @@ public abstract class ExArquivo extends Objeto {
 		}
 	}
 
+	/**
+	 * Retorna o número de bytes no PDF.
+	 * 
+	 * @return número de bytes no PDF.
+	 * 
+	 */
+	public int getNumBytes() {
+		try {
+			byte[] abPdf = null;
+			abPdf = getPdf();
+			if (abPdf == null)
+				return 0;
+			return abPdf.length;
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+	
 	public abstract Date getData();
 
 	public abstract String getHtml();

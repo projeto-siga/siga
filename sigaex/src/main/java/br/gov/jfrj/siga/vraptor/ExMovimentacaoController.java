@@ -157,13 +157,15 @@ public class ExMovimentacaoController extends ExController {
 		if (arquivo.getFile() == null) {
 			throw new AplicacaoException("O arquivo a ser anexado não foi selecionado!");
 		}
-
+		
+		Integer numBytes = 0;
 		try {
 			final byte[] baArquivo = toByteArray(arquivo);
 			if (baArquivo == null) {
 				throw new AplicacaoException("Arquivo vazio não pode ser anexado.");
 			}
-			if (baArquivo.length > 10 * 1024 * 1024) {
+			numBytes = baArquivo.length;
+			if (numBytes > 10 * 1024 * 1024) {
 				throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 10MB.");
 			}
 			mov.setConteudoBlobMov2(baArquivo);
@@ -171,9 +173,15 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException("Falha ao manipular aquivo", 1, ex);
 		}
 
-		if (mov.getContarNumeroDePaginas() == null || mov.getArquivoComStamp() == null) {
+		Integer numPaginas = mov.getContarNumeroDePaginas();
+		if (numPaginas == null || mov.getArquivoComStamp() == null) {
 			throw new AplicacaoException(MessageFormat.format("O arquivo {0} está corrompido. Favor gera-lo novamente antes de anexar.", arquivo.getFileName()));
 		}
+		
+		if (numPaginas != null && numBytes != null &&  (numBytes/numPaginas > (1 * 1024 * 1024))) {
+			throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 1MB por página.");
+		}
+		
 		if (mob.isVolumeEncerrado()) {
 			throw new AplicacaoException("Não é possível anexar arquivo em volume encerrado.");
 		}

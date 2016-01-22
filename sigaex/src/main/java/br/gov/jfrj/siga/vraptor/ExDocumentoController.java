@@ -1299,12 +1299,14 @@ public class ExDocumentoController extends ExController {
 					throw new AplicacaoException("O arquivo a ser anexado não foi selecionado!");
 				}
 	
+				Integer numBytes = null;
 				try {
 					final byte[] baArquivo = toByteArray(arquivo);
 					if (baArquivo == null) {
 						throw new AplicacaoException("Arquivo vazio não pode ser anexado.");
 					}
-					if (baArquivo.length > 10 * 1024 * 1024) {
+					numBytes = baArquivo.length;
+					if (numBytes > 10 * 1024 * 1024) {
 						throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 10MB.");
 					}
 					d.setConteudoBlobPdf(baArquivo);
@@ -1312,8 +1314,13 @@ public class ExDocumentoController extends ExController {
 					throw new AplicacaoException("Falha ao manipular aquivo", 1, e);
 				}
 	
-				if (d.getContarNumeroDePaginas() == null || d.getArquivoComStamp() == null) {
+				Integer numPaginas = d.getContarNumeroDePaginas();
+				if (numPaginas == null || d.getArquivoComStamp() == null) {
 					throw new AplicacaoException(MessageFormat.format("O arquivo {0} está corrompido. Favor gera-lo novamente antes de anexar.", arquivo.getFileName()));
+				}
+				
+				if (numPaginas != null && numBytes != null &&  (numBytes/numPaginas > (1 * 1024 * 1024))) {
+					throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 1MB por página.");
 				}
 			}
 			

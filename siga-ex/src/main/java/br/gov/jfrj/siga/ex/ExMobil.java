@@ -346,7 +346,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		final Pattern p1 = Pattern
 				.compile("^(?<orgao>"
 						+ acronimos
-						+ ")?-?(?<especie>[A-Za-z]{3})?-?(?:(?:(?<ano>20[0-9]{2})/?)(?<numero>[0-9]{1,5})(?<subnumero>\\.?[0-9]{2})??|(?<sonumero>[0-9]{1,5}))(?:(?<via>(?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|(?<volume>(?:-?V[0-9]{1,2})))?$");
+						+ ")?-?(?<especie>[A-Za-z]{3})?-?(?:(?:(?<ano>20[0-9]{2})/?)(?<numero>[0-9]{1,5})(?<subnumero>\\.?[0-9]{2})??|(?<sonumero>[0-9]{1,5}))(?:(?<via>(?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|(?:-?V(?<volume>[0-9]{1,2})))?$");
 		final Matcher m2 = p2.matcher(sigla);
 		final Matcher m1 = p1.matcher(sigla);
 
@@ -468,12 +468,6 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			} else {
 				if (volume != null) {
 					String vsNumVolume = volume.toUpperCase();
-					if (vsNumVolume.contains("-"))
-						vsNumVolume = vsNumVolume.substring(vsNumVolume
-								.indexOf("-") + 1);
-					if (vsNumVolume.contains("V"))
-						vsNumVolume = vsNumVolume.substring(vsNumVolume
-								.indexOf("V") + 1);
 					Integer vshNumVolume = new Integer(vsNumVolume);
 					setExTipoMobil(ExDao.getInstance()
 							.consultar(ExTipoMobil.TIPO_MOBIL_VOLUME,

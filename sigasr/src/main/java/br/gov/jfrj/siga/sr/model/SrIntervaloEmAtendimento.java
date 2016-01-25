@@ -98,7 +98,8 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 		if (lotaAtendente.getIdInicial() == 20937 || //central 2r
 				lotaAtendente.getIdInicial() == 19753)  //help desk
 			setHorario(SrDefinicaoHorario.HORARIO_CENTRAL); 
-		else if (lotaAtendente.getSigla().contains("STI-SL")) //suporte local
+		else if (lotaAtendente.getSigla().contains("STI-SL")
+				|| lotaAtendente.getSigla().contains("NTI-SL")) //suporte local
 			setHorario(SrDefinicaoHorario.HORARIO_SUPORTE_LOCAL);
 		else	//demais lotacoes
 			setHorario(SrDefinicaoHorario.HORARIO_PADRAO);

@@ -119,7 +119,7 @@ public class PrincipalController extends SigaController {
 		final Pattern p1 = Pattern
 				.compile("^(?<orgao>"
 						+ acronimos
-						+ ")?-?(?:(?<especie>[A-Za-z]{3})|(?<modulo>SR|TMPSR|GC|TMPGC|TP))-?([0-9][0-9A-Za-z\\.-/]*)$");
+						+ ")?-?(?:(?<especie>[A-Za-z]{3})|(?<modulo>SR|TMPSR|GC|TMPGC|TP))-?([0-9][0-9A-Za-z\\.\\-/]*)$");
 		final Matcher m1 = p1.matcher(sigla);
 
 		final GenericoSelecao sel = new GenericoSelecao();

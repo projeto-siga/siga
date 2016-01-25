@@ -566,7 +566,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public Long getProximoNumero() {
         if (getOrgaoUsuario() == null)
             return 0L;
-        Long num = AR.find("select max(numSolicitacao)+1 from SrSolicitacao where orgaoUsuario.idOrgaoUsu = " + getOrgaoUsuario().getIdOrgaoUsu()).first();
+        Long num = AR.find("select max(numSolicitacao)+1 from SrSolicitacao where numSolicitacao < 90000 and orgaoUsuario.idOrgaoUsu = " + getOrgaoUsuario().getIdOrgaoUsu()).first();
         return (num != null) ? num : 1;
     }
 

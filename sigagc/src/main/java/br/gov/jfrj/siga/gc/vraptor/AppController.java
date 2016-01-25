@@ -177,17 +177,19 @@ public class AppController extends GcController {
 	}
 
 	public void knowledgeInplace(Long id, String[] tags, String msgvazio,
-			String urlvazio, String titulo, boolean testarAcesso, boolean popup, String estiloBusca,
-			Boolean podeCriar) throws Exception {
-		renderKnowledge(id, tags, "inplace", msgvazio, urlvazio, titulo, testarAcesso,
-				popup, estiloBusca, podeCriar);
+			String urlvazio, String titulo, boolean testarAcesso,
+			boolean popup, String estiloBusca, Boolean podeCriar)
+			throws Exception {
+		renderKnowledge(id, tags, "inplace", msgvazio, urlvazio, titulo,
+				testarAcesso, popup, estiloBusca, podeCriar);
 	}
 
 	public void knowledgeSidebar(Long id, String[] tags, String msgvazio,
-			String urlvazio, String titulo, boolean testarAcesso, boolean popup, String estiloBusca,
-			Boolean podeCriar) throws Exception {
-		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo, testarAcesso,
-				popup, estiloBusca, podeCriar);
+			String urlvazio, String titulo, boolean testarAcesso,
+			boolean popup, String estiloBusca, Boolean podeCriar)
+			throws Exception {
+		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo,
+				testarAcesso, popup, estiloBusca, podeCriar);
 	}
 
 	private void renderKnowledge(Long id, String[] tags, String estilo,
@@ -716,7 +718,7 @@ public class AppController extends GcController {
 							+ ") : O usuário não tem permissão para editar o conhecimento solicitado.");
 	}
 
-	@Path({"/app/exibir/{sigla}", "/app/exibir"})
+	@Path({ "/app/exibir/{sigla}", "/app/exibir" })
 	public void exibir(String sigla, String mensagem, boolean historico,
 			boolean movimentacoes) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);
@@ -917,8 +919,8 @@ public class AppController extends GcController {
 
 	public void gravar(@LoadOptional GcInformacao informacao, String inftitulo,
 			String conteudo, String classificacao, String origem,
-			GcTipoInformacao tipo, GcAcesso visualizacao, GcAcesso edicao, CpPerfil grupo)
-			throws Exception {
+			GcTipoInformacao tipo, GcAcesso visualizacao, GcAcesso edicao,
+			CpPerfil grupo) throws Exception {
 		// DpPessoa pessoa = (DpPessoa) renderArgs.get("cadastrante");
 		DpPessoa pessoa = getTitular();
 		DpLotacao lotacao = getLotaTitular();
@@ -945,12 +947,14 @@ public class AppController extends GcController {
 			classificacao = bl.findHashTag(conteudo, classificacao,
 					CONTROLE_HASH_TAG);
 
-		if (informacao.edicao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO || informacao.visualizacao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO){
+		if (informacao.edicao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO
+				|| informacao.visualizacao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO) {
 			if (grupo == null || grupo.getId() == null)
-			throw new Exception(
-					"Para acesso do tipo 'Grupo', e necessário informar um grupo para restrição.");
+				throw new Exception(
+						"Para acesso do tipo 'Grupo', e necessário informar um grupo para restrição.");
 			informacao.setGrupo(grupo);
-		} else informacao.setGrupo(null);
+		} else
+			informacao.setGrupo(null);
 
 		if (informacao.id != 0)
 			bl.movimentar(informacao,
@@ -1214,41 +1218,46 @@ public class AppController extends GcController {
 		result.include("sel", sel);
 		// render("@siga-play-module.selecionar", sel);
 	}
-	
-    @Path("/public/app/selecionar")
-    public void selecionarPublico(String sigla, boolean retornarCompacta, String matricula) throws Exception {
-    	try {
-    		CpOrgaoUsuario ouDefault = null;
-    		if (matricula != null) {
-    			DpPessoa pes = dao().getPessoaFromSigla(matricula);
-    			if (pes != null)
-    				ouDefault = pes.getOrgaoUsuario();
-    			
-    		}
-    		GcInformacao inf = GcInformacao.findBySigla(sigla, ouDefault);
-        
-	        if (inf != null) {
-	        	result.use(Results.http()).body("1;" + inf.getId() + ";" + inf.getSigla() + ";" + getRequest().getScheme() + "://"
-	    				+ getRequest().getServerName() + ":"
-	    				+ getRequest().getServerPort() + "/sigagc/app/exibir/" + inf.getSiglaCompacta());
-	        	return;
-	        }
-    	} catch (Exception ex) {
-    		
-    	}
-    	result.use(Results.http()).body("0");
-    }
 
-    @Path("/app/selecionar")
-    public void selecionar(String sigla, boolean retornarCompacta) throws Exception {
-        GcInformacao inf = GcInformacao.findBySigla(sigla);
-        
-        if (inf != null) {
-        	result.use(Results.http()).body("1;" + inf.getId() + ";" + inf.getSigla() + ";" + inf.getArq().getTitulo());
-        } else {
-        	result.use(Results.http()).body("0");
-        }
-    }
+	@Path("/public/app/selecionar")
+	public void selecionarPublico(String sigla, boolean retornarCompacta,
+			String matricula) throws Exception {
+		try {
+			CpOrgaoUsuario ouDefault = null;
+			if (matricula != null) {
+				DpPessoa pes = dao().getPessoaFromSigla(matricula);
+				if (pes != null)
+					ouDefault = pes.getOrgaoUsuario();
+
+			}
+			GcInformacao inf = GcInformacao.findBySigla(sigla, ouDefault);
+
+			if (inf != null) {
+				result.use(Results.http()).body(
+						"1;" + inf.getId() + ";" + inf.getSigla() + ";"
+								+ "/sigagc/app/exibir/"
+								+ inf.getSiglaCompacta());
+				return;
+			}
+		} catch (Exception ex) {
+
+		}
+		result.use(Results.http()).body("0");
+	}
+
+	@Path("/app/selecionar")
+	public void selecionar(String sigla, boolean retornarCompacta)
+			throws Exception {
+		GcInformacao inf = GcInformacao.findBySigla(sigla);
+
+		if (inf != null) {
+			result.use(Results.http()).body(
+					"1;" + inf.getId() + ";" + inf.getSigla() + ";"
+							+ inf.getArq().getTitulo());
+		} else {
+			result.use(Results.http()).body("0");
+		}
+	}
 
 	@Path("/app/tag/buscar")
 	public void buscarTag(String sigla, GcTag filtro) {
@@ -1330,5 +1339,5 @@ public class AppController extends GcController {
 				getTitular(), getLotaTitular());
 		movimentacoes(sigla);
 	}
-	
+
 }

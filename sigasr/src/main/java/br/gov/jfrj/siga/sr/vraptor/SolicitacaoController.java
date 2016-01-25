@@ -859,9 +859,7 @@ public class SolicitacaoController extends SrController {
     		sol = (SrSolicitacao) sol.selecionar(sigla);
         
 	        if (sol != null) {
-	        	result.use(Results.http()).body("1;" + sol.getId() + ";" + sol.getSigla() + ";" + getRequest().getScheme() + "://"
-	    				+ getRequest().getServerName() + ":"
-	    				+ getRequest().getServerPort() + "/sigasr/app/solicitacao/exibir/" + sol.getSiglaCompacta());
+	        	result.use(Results.http()).body("1;" + sol.getId() + ";" + sol.getSigla() + ";" + "/sigasr/app/solicitacao/exibir/" + sol.getSiglaCompacta());
 	        	return;
 	        }
     	} catch (Exception ex) {

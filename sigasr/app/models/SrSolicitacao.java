@@ -620,7 +620,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		if (orgaoUsuario == null)
 			return 0L;
 		Long num = find(
-				"select max(numSolicitacao)+1 from SrSolicitacao where orgaoUsuario.idOrgaoUsu = "
+				"select max(numSolicitacao)+1 from SrSolicitacao where numSolicitacao < 90000 and orgaoUsuario.idOrgaoUsu = "
 						+ orgaoUsuario.getIdOrgaoUsu()).first();
 		return (num != null) ? num : 1;
 	}

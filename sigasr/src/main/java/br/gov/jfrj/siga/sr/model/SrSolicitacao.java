@@ -349,6 +349,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	for (Object ou : CpOrgaoUsuario.AR.all().fetch()) {
         		CpOrgaoUsuario cpOu = (CpOrgaoUsuario) ou;
         		mapAcronimo.put(cpOu.getAcronimoOrgaoUsu(), cpOu);
+        		mapAcronimo.put(cpOu.getSiglaOrgaoUsu(), cpOu);
         	}
         	StringBuilder acronimos = new StringBuilder();
         	for (String s : mapAcronimo.keySet()) {
@@ -361,7 +362,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         			try {
         				CpOrgaoUsuario orgao = new CpOrgaoUsuario();
         				orgao.setSiglaOrgaoUsu(m.group(1));
-        				orgao = (CpOrgaoUsuario) AR.em().createQuery("from CpOrgaoUsuario where acronimoOrgaoUsu = '" + m.group(1) + "'").getSingleResult();
+        				orgao = CpOrgaoUsuario.AR.find("acronimoOrgaoUsu = ? or siglaOrgaoUsu = ?", m.group(1), m.group(1)).first();
         				this.setOrgaoUsuario(orgao);
         			} catch (final Exception ce) {
 
@@ -426,6 +427,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         else {
         	if (getOrgaoUsuario() == null && getLotaTitular() != null)
         		setOrgaoUsuario(getLotaTitular().getOrgaoUsuario());
+        	
+        	if (getDtReg() == null && getNumSequencia() == null) {
+        		throw new AplicacaoException("Não é possível selecionar sem que seja informado o número de sequência ou a data do registro.");
+        	}
 
         	query = "from SrSolicitacao where hisDtFim is null ";
 

@@ -1,4 +1,6 @@
-package br.gov.jfrj.ldap;
+package br.jfrj.gov.siga.ldap.cli;
+
+import br.gov.jfrj.ldap.LdapDaoImpl;
 
 public class LdapConnect {
 	

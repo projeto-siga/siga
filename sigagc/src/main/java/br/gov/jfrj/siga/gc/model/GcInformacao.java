@@ -688,11 +688,10 @@ public class GcInformacao extends Objeto {
 				orgao = ouDefault.getAcronimoOrgaoUsu();
 			
 			info = GcInformacao.AR.find(
-					"ano = ? and numero = ? and ou.acronimoOrgaoUsu = ?",
+					"ano = ? and numero = ? and (ou.acronimoOrgaoUsu = ? or ou.siglaOrgaoUsu = ?)",
 					(Integer) Integer.parseInt(ano),
-					(Integer) Integer.parseInt(numero), orgao)
+					(Integer) Integer.parseInt(numero), orgao, orgao)
 					.first();
-
 		}
 
 		if (info == null) {

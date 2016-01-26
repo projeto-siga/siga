@@ -280,9 +280,6 @@ ${meta}
 													if (fid.value == null
 															|| fid.value == "") {
 														fld.onblur();
-													} else {
-														window.alert("1");
-														window.location.href = '${request.scheme}://${request.serverName}:${request.serverPort}/sigaex/app/expediente/doc/exibir?sigla='+ fld.value;
 													}
 													return false;
 												} else {

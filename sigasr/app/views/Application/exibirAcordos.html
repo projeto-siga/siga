@@ -7,7 +7,7 @@
 					<b>${acordo.acordoAtual.nomeAcordo}</b>
 					<ul>
 					#{list items:acordo.acordoAtual.atributoAcordoSet, as:'att'}
-					<li>${att.atributo.nomeAtributo} ${att.operador.nome} ${att.valor} ${att.unidadeMedida.plural}: 
+					<li>${att.atributo?.nomeAtributo} ${att.operador.nome} ${att.valor} ${att.unidadeMedida.plural}: 
 						#{if solicitacao.isAtributoAcordoSatisfeito(att)}
 							<span style="color: green">Ok</span>
 						#{/if}

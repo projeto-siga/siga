@@ -19,7 +19,7 @@
 								 style:'max-width: 300px;' }
 							#{list items:filtro.itensDisponiveis(atributosDisponiveisAdicao, atributo), as: 'atributoDisponivel' }
 								#{option atributoDisponivel.idAtributo}
-									${atributoDisponivel.nomeAtributo}
+									${atributoDisponivel?.nomeAtributo}
 								#{/option}
 							#{/list}
 						#{/select}
@@ -106,7 +106,7 @@
 							#{option ""}#{/option}
 							#{list items:atributosDisponiveisAdicao, as: 'atributoDisponivel' }
 								#{option atributoDisponivel.idAtributo}
-									${atributoDisponivel.nomeAtributo}
+									${atributoDisponivel?.nomeAtributo}
 								#{/option}
 							#{/list}
 						#{/select}

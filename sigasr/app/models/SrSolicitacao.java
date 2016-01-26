@@ -2758,6 +2758,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 			return false;
 		} catch (IllegalAccessException iae) {
 			return false;
+		} catch (NullPointerException npe) {
+			return false;
 		}
 	}
 

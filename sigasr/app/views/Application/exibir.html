@@ -86,7 +86,7 @@ function postback(){
 			#{list items:solicitacao.atributoSolicitacaoSet, as:'att'} #{if
 			att.valorAtributoSolicitacao}
 			<p style="font-size: 9pt; padding: 0px">
-				<b>${att.atributo.nomeAtributo}:</b> ${att.valorAtributoSolicitacao}
+				<b>${att.atributo?.nomeAtributo}:</b> ${att.valorAtributoSolicitacao}
 			</p>
 			#{/if} #{/list}
 		</div>

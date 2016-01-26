@@ -116,7 +116,7 @@
 				<div class="gt-form-row">
 					<label>Par&acirc;metro</label> #{select name:'parametro',
 					id:'parametro'} #{list items:parametros, as:'parametro'} #{option
-					parametro.idAtributo} ${parametro.nomeAtributo} #{/option} #{/list}
+					parametro.idAtributo} ${parametro?.nomeAtributo} #{/option} #{/list}
 					#{/select}
 				</div>
 				<div class="gt-form-row">

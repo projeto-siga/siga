@@ -77,7 +77,6 @@ public class StyleSheet {
 						.substring(css.indexOf('{') + 1, css.length() - 1)));
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
 		}
 	}
 

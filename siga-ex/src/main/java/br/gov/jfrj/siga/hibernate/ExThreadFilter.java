@@ -113,8 +113,10 @@ public class ExThreadFilter extends ThreadFilter {
 				parametros = httpReq.getQueryString()==null?"":"?" + httpReq.getQueryString();
 				caminho.append(parametros);
 			}
-			log.info("Ocorreu um erro durante a execução da operação: "+ e.getMessage() 
-					+ "\ncaminho: " + caminho.toString());
+			
+			if (!((e instanceof AplicacaoException) || (e.getCause() instanceof AplicacaoException)))
+				log.info("Ocorreu um erro durante a execução da operação: "+ e.getMessage() 
+						+ "\ncaminho: " + caminho.toString());
 
 			throw e;
 		}

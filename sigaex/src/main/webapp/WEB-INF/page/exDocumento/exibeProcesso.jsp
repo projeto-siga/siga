@@ -146,25 +146,34 @@
 <div id="main" class="gt-bd clearfix"
 	style="padding-top: 0px; margin-top: 0px;">
 
+	<c:set var="paginacao" value="${not empty arqsNum[0].paginaInicial}" />
+
 	<div id="sidebar" class="gt-left-col">
 		<div class="gt-content-box gt-for-table">
 
-			<table class="gt-table"
-				style="table-layout: fixed; word-wrap: break-word">
-				<COL width="55%" />
+			<table class="gt-table">
+<!-- 				<COL width="55%" />
 				<COL width="30%" />
 				<COL width="15%" />
+				 -->
 
 				<c:set var="arqsNum" value="${mob.arquivosNumerados}" />
 
 				<tr class="${exibedoc}">
+					<td align="center"></td>
 					<td align="center">Documentos do Dossiê</td>
 					<td align="center">Lotação</td>
-					<td align="center">Pág.</td>
+					<c:if test="${paginacao}">
+						<td align="center">Pág.</td>
+					</c:if>
 				</tr>
+				
 
 				<c:forEach var="arqNumerado" items="${arqsNum}">
 					<tr>
+						<td><a target="_blank"
+							title="${fn:substring(tooltipResumo,0,fn:length(tooltipResumo)-4)}"
+							href="/sigaex/app/arquivo/exibir?arquivo=${arqNumerado.referenciaPDF}"><img src="/siga/css/famfamfam/icons/page_white_acrobat.png"></a></td>
 						<td style="padding-left: ${arqNumerado.nivel * 5 + 5}pt"><c:if
 								test="${!empty arqNumerado.arquivo.resumo}">
 								<c:forEach var="itemResumo"
@@ -177,7 +186,9 @@
 							href="javascript:exibir('${arqNumerado.referenciaHtml}','${arqNumerado.referenciaPDF}','')">${arqNumerado.nomeOuDescricao}</a>
 							<c:set var="tooltipResumo" value="" /></td>
 						<td align="center">${arqNumerado.arquivo.lotacao.sigla}</td>
-						<td align="center">${arqNumerado.paginaInicial}</td>
+						<c:if test="${paginacao}">
+							<td align="center">${arqNumerado.paginaInicial}</td>
+						</c:if>
 					</tr>
 					<c:if test="${!empty arqNumerado.arquivo.resumo}">
 						<c:set var="possuiResumo" value="sim" />
@@ -201,20 +212,26 @@
 					%>
 
 				</c:forEach>
-				<tr>
+				<tr><td><a target="_blank" href="/sigaex/app/arquivo/exibir?arquivo=${arqsNum[0].referenciaPDFCompleto}"><img src="/siga/css/famfamfam/icons/page_white_acrobat.png"></a></td>
 					<td style="padding-left: 5pt;"><a
-						href="javascript:exibir('${arqsNum[0].referenciaHtml}&completo=1','${arqsNum[0].referenciaPDF}&completo=1','')">COMPLETO</a>
+						href="javascript:exibir('${arqsNum[0].referenciaHtmlCompleto}','${arqsNum[0].referenciaPDFCompleto}','')">COMPLETO</a>
 					</td>
 					<td align="center" style="padding-left: 5pt;"></td>
-					<td align="center" style="padding-left: 5pt;">
-						${arqsNum[fn:length(arqsNum)-1].paginaFinal}</td>
+					<c:if test="${paginacao}">
+						<td align="center" style="padding-left: 5pt;">
+							${arqsNum[fn:length(arqsNum)-1].paginaFinal}</td>
+					</c:if>
 				</tr>
 
 				<c:if test="${!empty possuiResumo}">
 					<tr>
-						<td colspan="3" style="padding-left: 5pt;"><a
+						<td></td>
+						<td colspan="2" style="padding-left: 5pt;"><a
 							href="javascript:exibirNoIFrame('${pageContext.request.contextPath}/app/expediente/doc/exibirResumoProcesso?sigla=${mob.sigla}')">RESUMO</a>
 						</td>
+						<c:if test="${paginacao}">
+							<td></td>
+						</c:if>
 					</tr>
 				</c:if>
 
@@ -252,8 +269,8 @@
 
 <script>
 	var path = '/sigaex/app/arquivo/exibir?arquivo=';
-	var htmlAtual = '${arqsNum[0].referenciaHtml}&completo=1';
-	var pdfAtual = '${arqsNum[0].referenciaPDF}&completo=1';
+	var htmlAtual = '${arqsNum[0].referenciaHtmlCompleto}';
+	var pdfAtual = '${arqsNum[0].referenciaPDFCompleto}';
 
 	function fixlinks(refHTML, refPDF) {
 		document.getElementById('pdflink').href = path + refPDF;

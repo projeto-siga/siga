@@ -122,10 +122,20 @@ public class ExArquivoNumerado implements Comparable {
 		return getReferencia() + ".pdf";
 	}
 
+	public String getReferenciaPDFCompleto() {
+		if (!getArquivo().isPdf())
+			return null;
+		return getReferencia() + ".pdf&completo=1";
+	}
+
 	public String getReferenciaHtml() {
-//		if (getArquivo().getHtml() == null)
-//			return null;
+		if (getArquivo().getHtml() == null)
+			return null;
 		return getReferencia() + ".html";
+	}
+	
+	public String getReferenciaHtmlCompleto() {
+		return getReferencia() + ".html&completo=1";
 	}
 
 	public ExMobil getMobil() {

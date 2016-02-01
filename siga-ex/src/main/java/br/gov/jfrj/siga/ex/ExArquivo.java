@@ -234,9 +234,17 @@ public abstract class ExArquivo extends Objeto {
 	 * 
 	 */
 	public String getReferenciaHtml() {
-//		if (getHtml() == null)
-//			return null;
+		if (getHtml() == null)
+			return null;
 		return getReferencia() + ".html";
+	}
+
+	/**
+	 * Retorna a referência do objeto mais o extensão ".html" e um outro parâmetro de queryString para indicar o arquivo completo.
+	 * 
+	 */
+	public String getReferenciaHtmlCompleto() {
+		return getReferencia() + ".html&completo=1";
 	}
 
 	/**
@@ -247,6 +255,12 @@ public abstract class ExArquivo extends Objeto {
 		if (getNumPaginas() == null || getNumPaginas() == 0)
 			return null;
 		return getReferencia() + ".pdf";
+	};
+	
+	public String getReferenciaPDFCompleto() {
+		if (getNumPaginas() == null || getNumPaginas() == 0)
+			return null;
+		return getReferencia() + ".pdf&completo=1";
 	};
 	
 	/**

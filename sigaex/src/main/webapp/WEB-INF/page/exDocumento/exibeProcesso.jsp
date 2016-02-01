@@ -59,15 +59,15 @@
 	}
 
 	function telaCheia(b) {
-		var divMain = document.getElementById('main');
+		var divMain = document.getElementById('right-col');
 		var divSidebar = document.getElementById('sidebar');
 		if (b) {
-			divMain.setAttribute("class", "gt-bd clearfix");
-			divMain.className = "gt-bd clearfix";
+			divMain.setAttribute("class", "");
+			divMain.className = "";
 			divSidebar.style.display = "none";
 		} else {
-			divMain.setAttribute("class", "gt-bd gt-cols-2 clearfix");
-			divMain.className = "gt-bd gt-cols-2 clearfix";
+			divMain.setAttribute("class", "gt-right-col");
+			divMain.className = "gt-right-col";
 			divSidebar.style.display = "block";
 		}
 		resize();
@@ -143,10 +143,10 @@
 	</div>
 </div>
 
-<div id="main" class="gt-bd gt-cols-2 clearfix"
+<div id="main" class="gt-bd clearfix"
 	style="padding-top: 0px; margin-top: 0px;">
 
-	<div id="sidebar" class="gt-sidebar" style="width: 48% !important;">
+	<div id="sidebar" class="gt-left-col">
 		<div class="gt-content-box gt-for-table">
 
 			<table class="gt-table"
@@ -222,7 +222,7 @@
 		</div>
 	</div>
 
-	<div class="gt-content" style="width: 48% !important;">
+	<div id="right-col" class="gt-right-col">
 
 		<div id="paipainel"
 			style="margin: 0px; padding: 0px; border: 0px; clear: both;">

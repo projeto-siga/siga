@@ -18,7 +18,7 @@
 	</listener>
 
 	<session-config>
-		<session-timeout>60</session-timeout>
+		<session-timeout>150</session-timeout>
 	</session-config>
 
 	<welcome-file-list>

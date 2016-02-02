@@ -3,6 +3,10 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
 	<display-name>SIGA - Gestão Documental</display-name>
+	
+	<session-config>
+		<session-timeout>120</session-timeout>
+	</session-config>
 		
 	<context-param>
 	    <param-name>br.com.caelum.vraptor.provider</param-name>

@@ -203,7 +203,7 @@ public class ExMovimentacaoController extends ExController {
 			}
 		}
 
-		// Nato: Precisei usar o cÃ³digo abaixo para adaptar o charset do
+		// Nato: Precisei usar o código abaixo para adaptar o charset do
 		// nome do arquivo
 		try {
 			final byte[] ab = mov.getNmArqMov().getBytes();
@@ -220,6 +220,11 @@ public class ExMovimentacaoController extends ExController {
 							mov.getLotaTitular(), mov.getConteudoBlobMov2(), mov.getConteudoTpMov(), movimentacaoBuilder.getDescrMov(), pendencias);
 		} catch (UnsupportedEncodingException ex) {
 			LOGGER.error(ex.getMessage(), ex);
+		}
+		
+		if (mob.isVolumeEncerrado()) {
+			result.redirectTo(MessageFormat.format("/app/expediente/doc/exibir?sigla={0}&msg=N%26uacute;mero m%26aacute;ximo de p%26aacute;ginas atingido. Volume fechado automaticamente.", sigla));
+			return;
 		}
 
 		result.redirectTo(MessageFormat.format("anexar?sigla={0}", sigla));

@@ -364,6 +364,10 @@ function AssinarDocumentos(Copia, oElm){
 						DadosDoPost = "id=" + aNome[1] + "&" + DadosDoPost;
 					}
 
+					if (gRet.assinante == null || gRet.assinante == 'undefined'){
+						return "O assinante não foi definido";
+					}
+
 					Status = GravarAssinatura(oUrlPost.value, DadosDoPost);
 					return Status;
 				});

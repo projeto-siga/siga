@@ -279,6 +279,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 				|| getCadastranteBusca() != null
 				|| getLotaCadastranteBusca() != null
 				|| getSolicitante() != null
+				|| getLotaSolicitante() != null
 				|| getAtendente() != null
 				|| getLotaAtendente() != null
 				|| getAcordo() != null

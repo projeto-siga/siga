@@ -1115,8 +1115,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	Set<SrArquivo> arqs = new TreeSet<SrArquivo>();
     	for (SrSolicitacao s : solsAConsiderar){
     		String numSequencia = s.isFilha() ? " (" + s.getNumSequenciaString() + ")" : "";
-    		if (s.getArquivo() != null)
-    			arqs.add(s.getArquivo().setDescricaoComplementar(numSequencia));
+    		if (s.getArquivoAnexoNaCriacao() != null)
+    			arqs.add(s.getArquivoAnexoNaCriacao().setDescricaoComplementar(numSequencia));
     		for (SrMovimentacao mov : s.getMovimentacaoSetPorTipo(TIPO_MOVIMENTACAO_ANEXACAO_ARQUIVO))
     			arqs.add(mov.getArquivo().setDescricaoComplementar((mov.getDescrMovimentacao() != null ? mov.getDescrMovimentacao(): "") + numSequencia));
     	}
@@ -2851,6 +2851,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         }
     }
 	
+	public SrArquivo getArquivoAnexoNaCriacao() {
+		if (getSolicitacaoInicial() != null)
+			for (SrSolicitacao sol : getHistoricoSolicitacao())
+				if (sol.getArquivo() != null)
+					return sol.getArquivo();
+		return null;
+	}
+    
 	public SrItemConfiguracao getItemAtual() {
 		SrMovimentacao ultMov = getUltimaMovimentacao();
 		return ultMov != null ? ultMov.getItemConfiguracao() : getItemConfiguracao();

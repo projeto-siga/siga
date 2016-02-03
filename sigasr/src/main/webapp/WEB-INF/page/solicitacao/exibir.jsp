@@ -453,7 +453,7 @@
 					<h3>Arquivos Anexos</h3>
 					<p>
 						<c:forEach items="${arqs}" var="anexacao">
-							<sigasr:arquivo arquivo="${anexacao}" /> 
+							<sigasr:arquivo arquivo="${anexacao}" descricao="sim"/> 
 							<br />
                     	</c:forEach>
                 	</p>

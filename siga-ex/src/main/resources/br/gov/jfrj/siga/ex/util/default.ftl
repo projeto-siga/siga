@@ -1688,7 +1688,7 @@ Pede deferimento.</span><br/><br/><br/>
     [#if titulo?? && titulo != ""]<span style="${negrito!};${vermelho!}">${titulo}</span>[/#if]
     [#if !gerar_formulario!false]
         <input type="hidden" name="vars" value="${var}" />
-<input type="text" name="${var}" value="${v}" size="10" maxlength="10" onmousedown="$('.campoData').datepicker($.datepicker.regional['pt-BR']);" onblur="javascript:verifica_data(this[#if !obrigatorio], 'Sim'[/#if]);${jreler!}" class="campoData" />
+<input type="text" name="${var}" value="${v}" size="10" maxlength="10" onmousedown="$('.campoData').datepicker($.datepicker.regional['pt-BR']);" onchange="javascript:verifica_data(this, true);${jreler!}" class="campoData" />
     [#else]
     <span class="valor">${v}</span>
     [/#if]

@@ -3,13 +3,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-
-<c:set var="req" value="${pageContext.request}" />
-<c:set var="url">${req.requestURL}</c:set>
-<c:set var="uri" value="${req.requestURI}" />
-<c:set var="baseURL" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
-
 
 <c:set var="titulo" scope="request">Acesso não autorizado</c:set>
 <c:import context="/siga" url="/WEB-INF/page/principal/cabecalho.jsp" />

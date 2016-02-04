@@ -150,15 +150,15 @@
 		</init-param>
 	</servlet>
 
-	<!-- Standard Action Servlet Configuration -->
-	<servlet>
-		<servlet-name>dwr</servlet-name>
-		<servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>ExService</servlet-name>
-		<servlet-class>br.gov.jfrj.siga.ex.service.impl.ExServiceImpl</servlet-class>
-	</servlet>
+    <!-- Standard Action Servlet Configuration -->
+    <servlet>
+        <servlet-name>dwr</servlet-name>
+        <servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ExService</servlet-name>
+        <servlet-class>br.gov.jfrj.siga.ex.service.impl.ExServiceImpl</servlet-class>
+    </servlet>
 
 	<servlet-mapping>
 		<servlet-name>AudioCaptcha</servlet-name>
@@ -198,10 +198,6 @@
 			<url-pattern>/arquivos/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>autenticar</web-resource-name>
-			<url-pattern>/autenticar.action</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
 			<web-resource-name>imagens</web-resource-name>
 			<url-pattern>/imagens/*</url-pattern>
 		</web-resource-collection>
@@ -213,14 +209,14 @@
 			<web-resource-name>freemarker</web-resource-name>
 			<url-pattern>/freemarker/*</url-pattern>
 		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>servicos</web-resource-name>
-			<url-pattern>/servicos/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>externo</web-resource-name>
-			<url-pattern>/externo/*</url-pattern>
-		</web-resource-collection>
+        <web-resource-collection>
+            <web-resource-name>servicos</web-resource-name>
+            <url-pattern>/servicos/*</url-pattern>
+        </web-resource-collection>
+        <web-resource-collection>
+            <web-resource-name>externo</web-resource-name>
+            <url-pattern>/externo/*</url-pattern>
+        </web-resource-collection>        
 		<web-resource-collection>
 			<web-resource-name>appexterno</web-resource-name>
 			<url-pattern>/app/externo/*</url-pattern>

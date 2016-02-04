@@ -164,13 +164,6 @@ public class CdServiceImpl implements CdService {
 				.getAssinaturaDigital()
 				.validarECompletarPacoteAssinavel(certificado, documento,
 						assinatura, politica, dtAssinatura);
-	}
-
-	private void assertAssinatura(byte[] assinatura) {
-		if (assinatura==null){
-			throw new AplicacaoException("A assinatura não foi enviada para validação! Principais motivos: 1) o usuário cancelou "
-					+ "a operação de assinatura; 2) o usuário impediu que o navegador acessasse o certificado.");
-		}
 	};
 	
 	private void assertAssinatura(byte[] assinatura) {

@@ -856,7 +856,6 @@ public class AssinaturaDigital {
 			final X509ChainValidator cadeia = new X509ChainValidator(
 					cadeiaTotal, /* trustedAnchors */new HashSet(
 							FachadaDeCertificadosAC.getTrustAnchors()), null);
-			
 			cadeia.checkCRL(verificarLCRs);
 			cadeia.validateChain(dtAssinatura);
 

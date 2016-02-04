@@ -6,11 +6,6 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-
-<siga:pagina titulo="Assinatura de Despacho em Lote"
-						 onLoad="javascript: TestarAssinaturaDigital()"
-						 incluirJs="sigaex/javascript/assinatura.js">
 
 <siga:pagina titulo="Assinatura de Despacho em Lote" onLoad="javascript: TestarAssinaturaDigital()" compatibilidade="IE=EmulateIE9">
 	<script type="text/javascript" language="Javascript1.1">
@@ -29,7 +24,7 @@
 		src="<c:url value="/staticJavascript.action"/>"></script>
 
 	<script type="text/javascript" language="Javascript1.1">
-
+		
 	function checkUncheckAll(theElement) {
 		var theForm = theElement.form, z = 0;
 		for(z=0; z<theForm.length;z++) {
@@ -39,19 +34,19 @@
 			}
 		}
 	}
-
+	
 	function displaySel(chk, el) {
 		document.getElementById('div_' + el).style.display=chk.checked ? '' : 'none';
-		if (chk.checked == -2)
+		if (chk.checked == -2) 
 			document.getElementById(el).focus();
 	}
-
-	function displayTxt(sel, el) {
+	
+	function displayTxt(sel, el) {					
 		document.getElementById('div_' + el).style.display=sel.value == -1 ? '' : 'none';
 		document.getElementById(el).focus();
 	}
-
-
+	
+	
 </script>
 
 	<div  class="gt-bd clearfix">
@@ -83,14 +78,14 @@
 					<input type="hidden" id="urlbase" name="urlbase" value="${urlBase}" />   		    
 		
 					<c:set var="botao" value=""/>
-				    <c:set var="lote" value="true"/>
-				</div>
+				    <c:set var="lote" value="true"/>	
+				</div>			
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
 					<c:import url="/javascript/inc_assina_js.jsp" />
 						<div id="capicom-div">
 							<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar em Lote</a>
-						</div>
+						</div> 
 					<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
 					<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://drive.google.com/file/d/0B_WTuFAmL6ZERGhIczRBS0ZMaVE/view"><u>aqui</u></a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
 				<script type="text/javascript">
@@ -102,44 +97,44 @@
 						 document.getElementById("ie-missing").style.display = "block";
 					}
 				 </script>
-
+		    
 				</c:if>
 			
 				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">		    
 			   		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,pageContext.request.scheme,pageContext.request.serverName,pageContext.request.serverPort,urlPath,jspServer,nextURL,botao,lote)}	
 	         	</c:if>
-
+	         	
 	         	<c:if test="${(not empty movimentacoesQuePodemSerAssinadasComSenha)}">
-	         		<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar com Senha</a>
+	         		<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar com Senha</a>  
 	         	</c:if>
-	        </td>
+	        </td> 				
 			</tr>
-		</table>
-		</div>
+		</table>	
+		</div>			
 		<br />
-		<c:if test="${(not empty itens)}">
-		    <h2>Despachos pendentes de assinatura: Como Subscritor</h2>
+		<c:if test="${(not empty itens)}">			
+		    <h2>Despachos pendentes de assinatura: Como Subscritor</h2>			
 			<div  class="gt-content-box gt-for-table">
-		    <table class="gt-table">
+		    <table class="gt-table">			    
 			    <tr>
 			        <th width="3%"></th>
 			        <th width="3%"></th>
-			        <th width="17%" align="left">Número</th>
-			        <th  width="5%"></th>
-			        <th width="15%" colspan="2" align="left">Cadastrante</th>
-			        <th width="15%"></th>	 <th width="49%"></th>
+			        <th width="17%" align="left">Número</th>	
+			        <th  width="5%"></th>		       	        
+			        <th width="15%" colspan="2" align="left">Cadastrante</th>	
+			        <th width="15%"></th>	 <th width="49%"></th>			       
 			    </tr>
 			    <tr>
 			    	<th width="3%"></th>
 			        <th width="3%" align="right"><input type="checkbox" name="checkall"
-			    					onclick="checkUncheckAll(this)" /></th>
-			     	<th width="13%"></th>
+			    					onclick="checkUncheckAll(this)" /></th>	
+			     	<th width="13%"></th>													
 			        <th width="7%" align="left">Data</th>
 			        <th width="8%" align="left">Lotação</th>
-			        <th width="7%" align="left">Pessoa</th>
+			        <th width="7%" align="left">Pessoa</th>			        
 			        <th width="18%" align="left">Tipo</th>
-			        <th width="40%" align="left">Descrição</th>
-			    </tr>
+			        <th width="40%" align="left">Descrição</th>				 
+			    </tr>	   		   
 			    <c:forEach var="mov" items="${itens}">
 			       <%--  <c:set var="x" scope="request">chk_${mov.exMobil.id}</c:set> --%>
 			        <c:set var="x" scope="request">chk_${mov.idMov}</c:set>
@@ -156,16 +151,16 @@
 			       		<td width="3%"align="center">
         		           <c:if test="${podeAssinarComSenha}">
 								<img src="/siga/css/famfamfam/icons/keyboard.png" alt="Permite assinatura com senha" title="Permite assinatura com senha" />
-						   </c:if>
+						   </c:if> 
 				        </td>
 				        <td width="3%"align="center"><input type="checkbox" name="${x}"
-				           value="true" ${x_checked} class="${classAssinarComSenha}" /></td>
+				           value="true" ${x_checked} class="${classAssinarComSenha}" /></td>		       
      			        <td width="17%"align="left">
 				            <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mov.exMobil.sigla}">${mov.exMobil.codigo}</a>
 			            </td>
 			            <td width="7%" align="left">${mov.dtRegMovDDMMYY}</td>
 			            <td width="8%" align="left">${mov.lotaCadastrante.sigla}</td>
-			            <td width="7%" align="left">${mov.cadastrante.sigla}</td>
+			            <td width="7%" align="left">${mov.cadastrante.sigla}</td>			            
 			            <td width="18%" align="left">${mov.exTipoMovimentacao.sigla}</td>
 			            <td width="40%"align="left">${mov.obs}</td> 	            				    
 			        </tr>			         		         
@@ -190,12 +185,12 @@
     			</fieldset>
   			</form>
 		</div>
-
+		
 		<div id="dialog-message" title="Basic dialog">
  				<p id="mensagemAssinaSenha"></p>
 		</div>
 
-		 <script>
+		 <script> 
 		    dialog = $("#dialog-form").dialog({
 		      autoOpen: false,
 		      height: 210,
@@ -208,7 +203,7 @@
 		          }
 		      },
 		      close: function() {
-
+		        
 		      }
 		    });
 
@@ -219,7 +214,7 @@
 		    dialogM = $("#dialog-message").dialog({
 		        autoOpen: false,
 		    });
-
+		
 		    function assinarComSenha() {
 		      var n = $("input.nao-pode-assinar-senha:checked").length;
 

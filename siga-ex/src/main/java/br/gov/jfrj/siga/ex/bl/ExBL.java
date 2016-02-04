@@ -1033,7 +1033,6 @@ public class ExBL extends CpBL {
 									ultMovNaoCanc.getLotaResp());
 					}
 				}
-
 			}
 
 			if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {

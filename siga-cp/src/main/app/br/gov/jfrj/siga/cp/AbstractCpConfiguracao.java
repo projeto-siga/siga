@@ -227,14 +227,6 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	public void setIdConfiguracao(final Long idConfiguracao) {
 		this.idConfiguracao = idConfiguracao;
 	}
-	
-	public String getDescrConfiguracao() {
-		return descrConfiguracao;
-	}
-
-	public void setDescrConfiguracao(String descrConfiguracao) {
-		this.descrConfiguracao = descrConfiguracao;
-	}
 
 	public String getDescrConfiguracao() {
 		return descrConfiguracao;

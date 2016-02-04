@@ -15,8 +15,6 @@
 			if (tmp.match(re) || tmp.match(ret2)) {
 				nomeusuario.value = tmp.toUpperCase();
 			}
-
-			salvarUsuario(nomeusuario.value);
 		}
 	</script>
 

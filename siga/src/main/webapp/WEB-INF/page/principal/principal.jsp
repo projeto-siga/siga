@@ -85,20 +85,6 @@
 							</script> -->
 						</c:if>
 						<br />
-						<c:if
-							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:Módulo de Transportes')}">
-							<h2 class="gt-table-head">Transportes</h2>
-							<!-- content box -->
-							<div id='rightbottom3'>
-                                <jsp:include page="loading.jsp" />
-							</div>
-							<!-- script type="text/javascript">
-								SetInnerHTMLFromAjaxResponse(
-								"/sigatp/gadget",
-								document.getElementById('rightbottom3'));
-							</script> -->
-						</c:if>
-						<br />
 					</div>
 				</div>
 			</div>

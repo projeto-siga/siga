@@ -97,8 +97,6 @@
 					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:Módulo de Transportes')}">
                     	<li><a href="/sigatp/">Transportes</a>
                     </li>
-					
-					
                 </c:if>
                 
                 	<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SE:Módulo de Servicos Externos')}">

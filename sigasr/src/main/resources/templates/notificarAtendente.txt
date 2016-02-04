@@ -1,18 +1,17 @@
-Informamos que a solicitação ${movimentacao.solicitacao?.codigo} 
-recebeu a seguinte movimentação em ${movimentacao.dtIniMovDDMMYYYYHHMM}:
+Informamos que a solicitação ${sol.codigo} recebeu a seguinte movimentacao em ${movimentacao.dtIniMovDDMMYYYYHHMM}:
 
-Tipo de movimentação: ${movimentacao.tipoMov.nome}
-Atendente: #{if movimentacao.atendente} movimentacao.atendente.descricaoIniciaisMaiusculas.raw(), #{/if}
-			${movimentacao.lotaCadastrante?.siglaLotacao}
-Solicitante: ${sol.solicitante?.descricaoIniciaisMaiusculas.raw()}, ${sol.lotaSolicitante?.siglaLotacao}
-${sol.descrSolicitacao}
-
-#{if movimentacao.tipoMov.idTipoMov == models.SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO}
-	#{if sol.atendente != null}
-		#{set descricao : sol.atendente?.descricaoIniciaisMaiusculas.raw() /}
-	#{/if}
-	#{else}#{set descricao : sol.lotaAtendente?.descricao.raw() /} #{/else}	
-	Este email foi enviado porque ${descricao} é atendente atual da solicitação ${sol.codigo}, 
-	que gerou a solicitação acima através da ação Escalonar.  	
+	Tipo: ${movimentacao.tipoMov.nome}
+	${movimentacao.descrMovimentacao}
+	Por ${movimentacao.cadastrante?.descricaoIniciaisMaiusculas} (${movimentacao.lotaCadastrante?.siglaLotacao})
+	
+#{if sol.solicitacaoPai.atendente != null}
+	#{set descricao : sol.solicitacaoPai?.atendente?.descricaoIniciaisMaiusculas.raw() /}
 #{/if}
-Para acessar a solicitação, clique @@{Application.exibir(movimentacao.solicitacao?.solicitacaoAtual?.idSolicitacao)} aqui.
+#{else}
+	#{set descricao : sol.solicitacaoPai?.lotaAtendente?.descricao.raw() /} 
+#{/else}	
+Este email foi enviado porque ${descricao} é atendente atual da solicitação ${sol.solicitacaoPai.codigo}, 
+que gerou a solicitação acima através da ação Escalonar. 
+
+Para acessar a solicitação, acesse @@{Application.exibir(sol.idSolicitacao)}.
+	

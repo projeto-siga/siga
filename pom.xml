@@ -503,8 +503,8 @@
 				<version>0.7.3</version>
 			</dependency>
 
-			<!-- <dependency> <groupId>org.zefer.pd4ml</groupId> <artifactId>pd4ml</artifactId>
-				<version>3.2.3fx5</version> </dependency> <dependency> <groupId>org.zefer.pd4ml</groupId>
+			<!-- <dependency> <groupId>org.zefer.pd4ml</groupId> <artifactId>pd4ml</artifactId> 
+				<version>3.2.3fx5</version> </dependency> <dependency> <groupId>org.zefer.pd4ml</groupId> 
 				<artifactId>pd4ml-taglib</artifactId> <version>3.2.3fx5</version> </dependency> -->
 
 			<dependency>
@@ -525,7 +525,7 @@
 					<exclusion>
 						<groupId>bouncycastle</groupId>
 						<artifactId>bcprov-jdk14</artifactId>
-					</exclusion>
+					</exclusion>					
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -545,7 +545,7 @@
 			</dependency>
 			<dependency>
 				<groupId>nl.captcha</groupId>
-				<artifactId>simplecaptcha</artifactId>
+				<artifactId>simpleCaptcha</artifactId>
 				<version>1.2.1</version>
 			</dependency>
 			<dependency>
@@ -743,7 +743,7 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+	
 		<dependency>
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
@@ -769,7 +769,7 @@
 			<artifactId>bcpkix-jdk15on</artifactId>
 		</dependency>
 
-
+			
 
 		<!-- Picketlink -->
 		<dependency>

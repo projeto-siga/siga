@@ -17,7 +17,6 @@
 			class="CpServico" />
 		<many-to-one name="cpTipoServico" column="ID_TP_SERVICO"
 			class="CpTipoServico" />
-		<property name="labelServico" column="LABEL_SERVICO" type="java.lang.String" />	
 	</class>
 
 	<query name="consultarPorSiglaCpServico">

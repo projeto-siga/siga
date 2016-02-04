@@ -28,7 +28,7 @@
 		src="<c:url value="/staticJavascript.action"/>"></script>
 
 	<script type="text/javascript" language="Javascript1.1">
-
+		
 	function checkUncheckAll(theElement) {
 		var theForm = theElement.form, z = 0;
 		for(z=0; z<theForm.length;z++) {
@@ -38,19 +38,19 @@
 			}
 		}
 	}
-
+	
 	function displaySel(chk, el) {
 		document.getElementById('div_' + el).style.display=chk.checked ? '' : 'none';
-		if (chk.checked == -2)
+		if (chk.checked == -2) 
 			document.getElementById(el).focus();
 	}
-
-	function displayTxt(sel, el) {
+	
+	function displayTxt(sel, el) {					
 		document.getElementById('div_' + el).style.display=sel.value == -1 ? '' : 'none';
 		document.getElementById(el).focus();
 	}
-
-
+	
+	
 </script>
 
 	<div  class="gt-bd clearfix">
@@ -109,43 +109,43 @@
 						 document.getElementById("ie-missing").style.display = "block";
 					}
 				 </script>
-
+		    
 				</c:if>
-
-				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-			   		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}
+			
+				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">		    
+			   		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}	
 	         	</c:if>
 	         	<c:if test="${(not empty documentosQuePodemSerAssinadosComSenha)}">
-	         		<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar com Senha</a>
+	         		<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar com Senha</a>  
 	         	</c:if>
-	        </td>
+	        </td> 				
 			</tr>
-		</table>
-		</div>
+		</table>	
+		</div>			
 		<br />
-		<c:if test="${(not empty itensSolicitados)}">
-		    <h2>Documentos pendentes de assinatura: Como Subscritor</h2>
+		<c:if test="${(not empty itensSolicitados)}">			
+		    <h2>Documentos pendentes de assinatura: Como Subscritor</h2>			
 			<div  class="gt-content-box gt-for-table">
-		    <table class="gt-table">
+		    <table class="gt-table">			    
 			    <tr>
 			        <th width="3%"></th>
 			        <th width="3%"></th>
-			        <th width="13%" align="left">Número</th>
-			        <th  width="5%"></th>
-			        <th width="15%" colspan="2" align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cadastrante</th>
-			        <th width="15%"></th>	 <th width="49%"></th>
+			        <th width="13%" align="left">Número</th>	
+			        <th  width="5%"></th>		       	        
+			        <th width="15%" colspan="2" align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cadastrante</th>	
+			        <th width="15%"></th>	 <th width="49%"></th>			       
 			    </tr>
 			    <tr>
 			        <th width="3%"></th>
 			        <th width="3%" align="right"><input type="checkbox" name="checkall"
-			    					onclick="checkUncheckAll(this)" /></th>
-			     	<th width="13%"></th>
+			    					onclick="checkUncheckAll(this)" /></th>	
+			     	<th width="13%"></th>													
 			        <th width="5%" align="center">Data</th>
 			        <th width="10%" align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lotacao</th>
-			        <th width="5%" align="left">Pessoa</th>
+			        <th width="5%" align="left">Pessoa</th>			        
 			        <th width="15%" align="left">Tipo</th>
-			        <th width="49%" align="left">Descrição</th>
-			    </tr>
+			        <th width="49%" align="left">Descrição</th>				 
+			    </tr>	   		   
 			    <c:forEach var="doc" items="${itensSolicitados}">
 			        <c:set var="x" scope="request">chk_${doc.idDoc}</c:set>
 				    <c:remove var="x_checked" scope="request" />
@@ -161,7 +161,7 @@
 				        <td width="3%"align="center">
         		           <c:if test="${podeAssinarComSenha}">
 								<img src="/siga/css/famfamfam/icons/keyboard.png" alt="Permite assinatura com senha" title="Permite assinatura com senha" />
-						   </c:if>
+						   </c:if> 
 				        </td>
 				        <td width="3%"align="center">
 				           <input type="checkbox" name="${x}"
@@ -172,7 +172,7 @@
 			            </td>
 			            <td width="5%" align="center">${doc.dtDocDDMMYY}</td>
 			            <td width="10%" align="center">${doc.lotaCadastrante.siglaLotacao}</td>
-			            <td width="5%" align="left">${doc.cadastrante.sigla}</td>
+			            <td width="5%" align="left">${doc.cadastrante.sigla}</td>			            
 			            <td width="15%" align="left">${doc.descrFormaDoc}</td>
 			            <td width="49%"align="left">${doc.descrDocumento}</td>			            				    
 			        </tr>			         		         
@@ -198,12 +198,12 @@
     			</fieldset>
   			</form>
 		</div>
-
+		
 		<div id="dialog-message" title="Basic dialog">
  				<p id="mensagemAssinaSenha"></p>
 		</div>
 
-		 <script>
+		 <script> 
 		    dialog = $("#dialog-form").dialog({
 		      autoOpen: false,
 		      height: 210,
@@ -216,7 +216,7 @@
 		          }
 		      },
 		      close: function() {
-
+		        
 		      }
 		    });
 
@@ -227,7 +227,7 @@
 		    dialogM = $("#dialog-message").dialog({
 		        autoOpen: false,
 		    });
-
+		
 		    function assinarComSenha() {
 		      var n = $("input.nao-pode-assinar-senha:checked").length;
 

@@ -395,10 +395,10 @@ function visualizarImpressao(via) {
 	<c:if test="${not autenticando}">
 		<c:set var="podeAssinarMovimentacaoComSenha" value="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}" />
 		<c:set var="podeConferirCopiaMovimentacaoComSenha" value="${f:podeConferirCopiaMovimentacaoComSenha(titular,lotaTitular,mov)}" />
-
+		
 		<c:if test="${podeAssinarMovimentacaoComSenha || podeConferirCopiaMovimentacaoComSenha}">
 			<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar/Conferir com Senha</a>
-
+	        		
 			<div id="dialog-form" title="Assinar com Senha">
 	 			<form id="form-assinarSenha" method="post" action="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" >
 	 				<input type="hidden" id="id" name="id" value="${mov.idMov}" />
@@ -411,8 +411,8 @@ function visualizarImpressao(via) {
 	    			</fieldset>
 	  			</form>
 			</div>
-
-			 <script>
+	
+			 <script> 
 			    dialog = $("#dialog-form").dialog({
 			      autoOpen: false,
 			      height: 210,
@@ -422,19 +422,19 @@ function visualizarImpressao(via) {
 			      buttons: {
 			    	  <c:if test="${podeAssinarMovimentacaoComSenha}">
 			          	"Assinar": assinarGravar,
-			          </c:if>
+			          </c:if>	
 			    	  <c:if test="${podeConferirCopiaMovimentacaoComSenha}">
 				          "Autenticar": conferirCopiaGravar,
-			          </c:if>
+			          </c:if>	
 			          "Cancelar": function() {
 			            dialog.dialog( "close" );
 			          }
 			      },
 			      close: function() {
-
+			        
 			      }
 			    });
-
+			
 			    function assinarComSenha() {
 			       window.scrollTo(0, 0);
 			       dialog.dialog( "open" ).dialog('widget').position({
@@ -443,11 +443,11 @@ function visualizarImpressao(via) {
 			           collision: "fit"
 			         });
 			    }
-
+	
 			    function assinarGravar() {
 			    	AssinarDocumentosSenha('false', this);
 				}
-
+	
 			    function conferirCopiaGravar() {
 			    	AssinarDocumentosSenha('true', this);
 				}

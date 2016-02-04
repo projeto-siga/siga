@@ -4,11 +4,11 @@
 	<diskStore path="java.io.tmpdir" />
 
 	<!-- Required element -->
-	<defaultCache diskPersistent="false" maxElementsInMemory="2000" eternal="false" timeToIdleSeconds="3600" timeToLiveSeconds="36000" overflowToDisk="false" />
-	<cache diskPersistent="false" name="br.gov.jfrj.siga.ex.ExClassificacao" maxElementsInMemory="1050" eternal="false" overflowToDisk="false" />
-	<cache diskPersistent="false" name="br.gov.jfrj.siga.dp.CpOrgaoUsuario" eternal="false" maxElementsInMemory="10" overflowToDisk="false"></cache>
-	<cache diskPersistent="false" name="br.gov.jfrj.siga.acesso.Usuario" eternal="false" maxElementsInMemory="100" timeToLiveSeconds="3600" overflowToDisk="false"></cache>
-	<cache diskPersistent="false" name="query.UsuarioCadastrante" eternal="false" maxElementsInMemory="100" timeToLiveSeconds="3600" overflowToDisk="false"></cache>
-	<cache diskPersistent="false" name="query.DpLotacao" eternal="false" maxElementsInMemory="1000" timeToLiveSeconds="3600" overflowToDisk="false"></cache>
-	<cache diskPersistent="false" name="query.ExNivelAcesso" eternal="false" maxElementsInMemory="100" timeToLiveSeconds="3600" overflowToDisk="false"></cache>
+	<defaultCache maxElementsInMemory="2000" eternal="false" timeToIdleSeconds="3600" timeToLiveSeconds="36000" overflowToDisk="false" />
+	<cache name="br.gov.jfrj.siga.ex.ExClassificacao" maxElementsInMemory="1050" eternal="false" overflowToDisk="false" />
+	<cache name="br.gov.jfrj.siga.dp.CpOrgaoUsuario" eternal="false" maxElementsInMemory="10" overflowToDisk="false"></cache>
+	<cache name="br.gov.jfrj.siga.acesso.Usuario" eternal="false" maxElementsInMemory="100" timeToLiveSeconds="3600" overflowToDisk="false"></cache>
+	<cache name="query.UsuarioCadastrante" eternal="false" maxElementsInMemory="100" timeToLiveSeconds="3600" overflowToDisk="false"></cache>
+	<cache name="query.DpLotacao" eternal="false" maxElementsInMemory="1000" timeToLiveSeconds="3600" overflowToDisk="false"></cache>
+	<cache name="query.ExNivelAcesso" eternal="false" maxElementsInMemory="100" timeToLiveSeconds="3600" overflowToDisk="false"></cache>
 </ehcache>

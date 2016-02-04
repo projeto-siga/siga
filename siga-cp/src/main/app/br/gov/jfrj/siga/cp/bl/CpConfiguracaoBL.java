@@ -341,9 +341,9 @@ public class CpConfiguracaoBL {
 		for (CpConfiguracao cpConfiguracao : lista) {
 			if ((!cpConfiguracao.ativaNaData(dtEvn))
 					|| (cpConfiguracao.getCpSituacaoConfiguracao() != null && cpConfiguracao
-					.getCpSituacaoConfiguracao()
-					.getIdSitConfiguracao()
-					.equals(CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR))
+							.getCpSituacaoConfiguracao()
+							.getIdSitConfiguracao()
+							.equals(CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR))
 					|| !atendeExigencias(cpConfiguracaoFiltro,
 							atributosDesconsiderados, cpConfiguracao, perfis))
 				continue;
@@ -389,7 +389,7 @@ public class CpConfiguracaoBL {
 
 				if (cfg.getOrgaoUsuario() != null
 						&& !cfg.getLotacao().getOrgaoUsuario()
-						.equivale(lotacao.getOrgaoUsuario()))
+								.equivale(lotacao.getOrgaoUsuario()))
 					continue;
 
 				if (g instanceof CpPerfil && cfg.getDscFormula() != null) {
@@ -431,7 +431,7 @@ public class CpConfiguracaoBL {
 	public CpSituacaoConfiguracao buscaSituacao(
 			CpConfiguracao cpConfiguracaoFiltro,
 			int atributoDesconsideradoFiltro[], TreeSet<CpConfiguracao> lista)
-					throws Exception {
+			throws Exception {
 		CpConfiguracao cfg = buscaConfiguracao(cpConfiguracaoFiltro,
 				atributoDesconsideradoFiltro, null);
 		if (cfg != null) {
@@ -452,15 +452,15 @@ public class CpConfiguracaoBL {
 			SortedSet<CpPerfil> perfis) {
 		if (cfg.getCpServico() != null
 				&& ((cfgFiltro.getCpServico() != null
-				&& !cfgFiltro.getCpServico().equivale(
-						cfg.getCpServico()) || ((cfgFiltro
-								.getCpServico() == null) && !atributosDesconsiderados
-								.contains(SERVICO)))))
+						&& !cfgFiltro.getCpServico().equivale(
+								cfg.getCpServico()) || ((cfgFiltro
+						.getCpServico() == null) && !atributosDesconsiderados
+						.contains(SERVICO)))))
 			return false;
 
 		if (cfg.getCpGrupo() != null
 				&& (cfgFiltro.getCpGrupo() != null
-				&& !cfg.getCpGrupo().equivale(cfgFiltro.getCpGrupo()) || ((cfgFiltro
+						&& !cfg.getCpGrupo().equivale(cfgFiltro.getCpGrupo()) || ((cfgFiltro
 						.getCpGrupo() == null) && !atributosDesconsiderados
 						.contains(GRUPO))
 						&& (perfis != null && !perfisContemGrupo(cfg, perfis))))
@@ -468,15 +468,15 @@ public class CpConfiguracaoBL {
 
 		if (cfg.getCpIdentidade() != null
 				&& ((cfgFiltro.getCpIdentidade() != null
-				&& !cfg.getCpIdentidade().equivale(
-						cfgFiltro.getCpIdentidade()) || ((cfgFiltro
-								.getCpIdentidade() == null) && !atributosDesconsiderados
-								.contains(IDENTIDADE)))))
+						&& !cfg.getCpIdentidade().equivale(
+								cfgFiltro.getCpIdentidade()) || ((cfgFiltro
+						.getCpIdentidade() == null) && !atributosDesconsiderados
+						.contains(IDENTIDADE)))))
 			return false;
 
 		if (cfg.getDpPessoa() != null
 				&& ((cfgFiltro.getDpPessoa() != null
-				&& !cfg.getDpPessoa().equivale(cfgFiltro.getDpPessoa()) || ((cfgFiltro
+						&& !cfg.getDpPessoa().equivale(cfgFiltro.getDpPessoa()) || ((cfgFiltro
 						.getDpPessoa() == null) && !atributosDesconsiderados
 						.contains(PESSOA)))))
 			return false;
@@ -484,37 +484,37 @@ public class CpConfiguracaoBL {
 
 		if (cfg.getLotacao() != null
 				&& ((cfgFiltro.getLotacao() != null
-				&& !cfg.getLotacao().equivale(cfgFiltro.getLotacao()) || ((cfgFiltro
+						&& !cfg.getLotacao().equivale(cfgFiltro.getLotacao()) || ((cfgFiltro
 						.getLotacao() == null) && !atributosDesconsiderados
 						.contains(LOTACAO)))))
 			return false;
 
 		if (cfg.getComplexo() != null
 				&& ((cfgFiltro.getComplexo() != null
-				&& !cfg.getComplexo().equals(cfgFiltro.getComplexo()) || ((cfgFiltro
+						&& !cfg.getComplexo().equals(cfgFiltro.getComplexo()) || ((cfgFiltro
 						.getComplexo() == null) && !atributosDesconsiderados
 						.contains(COMPLEXO)))))
 			return false;
 
 		if (cfg.getFuncaoConfianca() != null
 				&& ((cfgFiltro.getFuncaoConfianca() != null && !cfg
-				.getFuncaoConfianca().getIdFuncao()
-				.equals(cfgFiltro.getFuncaoConfianca().getIdFuncao())) || ((cfgFiltro
+						.getFuncaoConfianca().getIdFuncao()
+						.equals(cfgFiltro.getFuncaoConfianca().getIdFuncao())) || ((cfgFiltro
 						.getFuncaoConfianca() == null) && !atributosDesconsiderados
 						.contains(FUNCAO))))
 			return false;
 
 		if (cfg.getOrgaoUsuario() != null
 				&& ((cfgFiltro.getOrgaoUsuario() != null && !cfg
-				.getOrgaoUsuario().getIdOrgaoUsu()
-				.equals(cfgFiltro.getOrgaoUsuario().getIdOrgaoUsu())) || ((cfgFiltro
+						.getOrgaoUsuario().getIdOrgaoUsu()
+						.equals(cfgFiltro.getOrgaoUsuario().getIdOrgaoUsu())) || ((cfgFiltro
 						.getOrgaoUsuario() == null) && !atributosDesconsiderados
 						.contains(ORGAO))))
 			return false;
 
 		if (cfg.getCargo() != null
 				&& ((cfgFiltro.getCargo() != null && !cfg.getCargo()
-				.getIdCargo().equals(cfgFiltro.getCargo().getIdCargo())) || ((cfgFiltro
+						.getIdCargo().equals(cfgFiltro.getCargo().getIdCargo())) || ((cfgFiltro
 						.getCargo() == null) && !atributosDesconsiderados
 						.contains(CARGO))))
 			return false;
@@ -529,8 +529,8 @@ public class CpConfiguracaoBL {
 
 		if (cfg.getOrgaoObjeto() != null
 				&& ((cfgFiltro.getOrgaoObjeto() != null && !cfg
-				.getOrgaoObjeto().getIdOrgaoUsu()
-				.equals(cfgFiltro.getOrgaoObjeto().getIdOrgaoUsu())) || ((cfgFiltro
+						.getOrgaoObjeto().getIdOrgaoUsu()
+						.equals(cfgFiltro.getOrgaoObjeto().getIdOrgaoUsu())) || ((cfgFiltro
 						.getOrgaoObjeto() == null) && !atributosDesconsiderados
 						.contains(ORGAO))))
 			return false;
@@ -690,7 +690,7 @@ public class CpConfiguracaoBL {
 						.getLotacao());
 			if (cpConfiguracao.getCargo() == null)
 				cpConfiguracao
-				.setCargo(cpConfiguracao.getDpPessoa().getCargo());
+						.setCargo(cpConfiguracao.getDpPessoa().getCargo());
 			if (cpConfiguracao.getFuncaoConfianca() == null)
 				cpConfiguracao.setFuncaoConfianca(cpConfiguracao.getDpPessoa()
 						.getFuncaoConfianca());
@@ -812,7 +812,7 @@ public class CpConfiguracaoBL {
 					if (c.getHisAtivo() == 1
 							&& pesAtual.getDataFim() == null
 							&& c.getLotacao().getIdInicial()
-							.equals(lot.getIdInicial())) {
+									.equals(lot.getIdInicial())) {
 						resultado.add(pesAtual);
 					}
 				}
@@ -840,7 +840,7 @@ public class CpConfiguracaoBL {
 				if (c.getHisAtivo() == 1
 						&& lotacaoAtual.getDataFim() == null
 						&& c.getDpPessoa().getIdInicial()
-						.equals(pes.getIdInicial())) {
+								.equals(pes.getIdInicial())) {
 					resultado.add(lotacaoAtual);
 				}
 			}

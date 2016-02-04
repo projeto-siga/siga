@@ -62,7 +62,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 	public DpSubstituicao() {
 		super();
 	}
-
+	
 	public String getDtFimSubstDDMMYY() {
 		if (getDtFimSubst() != null) {
 			final SimpleDateFormat df = new SimpleDateFormat(
@@ -71,7 +71,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 		}
 		return "";
 	}
-
+	
 	public String getDtIniSubstDDMMYY() {
 		if (getDtIniSubst() != null) {
 			final SimpleDateFormat df = new SimpleDateFormat(
@@ -80,7 +80,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 		}
 		return "";
 	}
-
+	
 	public boolean isEmVoga(){
 		Calendar dtFim = Calendar.getInstance();
 		Calendar dtIni = Calendar.getInstance();
@@ -98,7 +98,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 		}
 		return true;
 	}
-
+	
 	public boolean isFutura(){		
 		Calendar dtIni = Calendar.getInstance();
 		Calendar now = Calendar.getInstance();
@@ -110,7 +110,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 		}		
 		return false;
 	}
-
+	
 	public boolean isTerminada(){
 		if (getDtFimSubst()==null)
 			return false;

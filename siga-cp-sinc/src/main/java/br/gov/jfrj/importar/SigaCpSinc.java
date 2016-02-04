@@ -39,8 +39,6 @@ import java.util.logging.Logger;
 
 import javax.naming.NamingException;
 
-import net.sf.ehcache.CacheManager;
-
 import org.hibernate.cfg.Configuration;
 import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;
@@ -1011,9 +1009,6 @@ public class SigaCpSinc {
 			lotacao.setLotacaoPai(o);
 		}
 		String tipoLotacao = parseStr(parser, "tipoLotacao");
-		if (tipoLotacao == null){
-			tipoLotacao = parseStr(parser, "tipo");
-		}
 		if (tipoLotacao != null && !isNumerico(tipoLotacao)) {
 			CpTipoLotacao o = obterTipoLotacaoPorDescricao(tipoLotacao);
 			lotacao.setCpTipoLotacao(o);

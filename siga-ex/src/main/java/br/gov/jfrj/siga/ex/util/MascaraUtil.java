@@ -12,8 +12,6 @@ import org.mvel2.MVEL;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 
-import com.uwyn.rife.continuations.util.StringUtils;
-
 public class MascaraUtil {
 
 	private static String MASK_IN;

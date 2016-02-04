@@ -313,7 +313,7 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 	private String getSQLConsultarDocumentosFinalizadosNoPeriodo() {
 		return "select pd.name_ pd_name,stringvalue_,p.start_ p_start,p.end_ p_end,t.name_ t_name,t.create_ t_create,t.end_ t_end "
 			+ "from (select id_, stringvalue_, processinstance_ from sigawf.jbpm_variableinstance "
-			+ "where name_ like 'doc_document')v ,(select id_,start_,end_, processdefinition_ "
+			+ "where (stringvalue_ like '%RJ-SEC%' or stringvalue_ like '%RJ-EOF%') and name_ like 'doc_document')v ,(select id_,start_,end_, processdefinition_ "
 			+ "from sigawf.jbpm_processinstance where end_ is not null )p, "
 			+ "(select name_,procinst_,create_, end_ from sigawf.jbpm_taskinstance)t, "
 			+ "(select name_ , id_ from sigawf.jbpm_processdefinition)pd "
@@ -326,7 +326,7 @@ public class RelTempoDocDetalhado extends RelatorioTemplate {
 	private String getSQLConsultarDocumentosFinalizadosEAbertosNoPeriodo() {
 		return "select pd.name_ pd_name,stringvalue_,p.start_ p_start,p.end_ p_end,t.name_ t_name,t.create_ t_create,t.end_ t_end "
 		+ "from (select id_, stringvalue_, processinstance_ from sigawf.jbpm_variableinstance "
-		+ "where name_ like 'doc_document')v ,(select id_,start_,end_, processdefinition_ "
+		+ "where (stringvalue_ like '%RJ-SEC%' or stringvalue_ like '%RJ-EOF%') and name_ like 'doc_document')v ,(select id_,start_,end_, processdefinition_ "
 		+ "from sigawf.jbpm_processinstance) p, "
 		+ "(select name_,procinst_,create_, end_ from sigawf.jbpm_taskinstance)t, "
 		+ "(select name_ , id_ from sigawf.jbpm_processdefinition)pd "

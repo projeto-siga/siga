@@ -40,8 +40,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.persistence.Entity;
-
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.annotations.Entity;
@@ -420,7 +418,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		if (ab == null)
 			return null;
 		try {
-			return new String(ab, "ISO-8859-1");
+//			return new String(ab, "ISO-8859-1"); teste da karina
+			return new String(ab, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			return new String(ab);
 		}

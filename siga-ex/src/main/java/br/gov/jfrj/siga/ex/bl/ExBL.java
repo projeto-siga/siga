@@ -3396,13 +3396,17 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
 			Integer numVia) {
 		try {
+			int numSequencia = numVia == null ? (int) dao()
+					.obterProximoNumeroVia(doc) : numVia;
+			if (numSequencia > 21)
+				throw new AplicacaoException("Não é permitido criar mais de 21 vias, a última via permitida é a 'Z'.");
+			
 			iniciarAlteracao();
 
 			ExMobil mob = new ExMobil();
 			mob.setExTipoMobil(dao().consultar(ExTipoMobil.TIPO_MOBIL_VIA,
 					ExTipoMobil.class, false));
-			mob.setNumSequencia(numVia == null ? (int) dao()
-					.obterProximoNumeroVia(doc) : numVia);
+			mob.setNumSequencia(numSequencia);
 			mob.setExDocumento(doc);
 			doc.getExMobilSet().add(mob);
 			mob = dao().gravar(mob);

@@ -1,4 +1,4 @@
-package br.jfrj.gov.siga.ldap.debugger;
+package br.jfrj.gov.siga.ldap.cli;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

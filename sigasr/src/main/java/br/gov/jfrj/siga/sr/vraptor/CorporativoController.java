@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.sr.vraptor;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class CorporativoController extends SrController {
 			super(request, result, dao, so, em, srValidator);
 		}
 	
-	public Download dadosrh() throws ParserConfigurationException {
+	public Download dadosrh() throws ParserConfigurationException, IOException {
 		Map<Long, Cargo> mc = new TreeMap<Long, Cargo>();
 		Map<Long, Lotacao> ml = new TreeMap<Long, Lotacao>();
 		Map<Long, Funcao> mf = new TreeMap<Long, Funcao>();

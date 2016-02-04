@@ -32,7 +32,7 @@ import org.jbpm.graph.def.ProcessDefinition;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
 /**
- * Servlet que desenha o gr·fico do processo.
+ * Servlet que desenha o gr√°fico do processo.
  * 
  * @author kpf
  * 
@@ -57,9 +57,9 @@ public class ProcessImageServlet extends HttpServlet {
 			Long taskId = Long.parseLong(request.getParameter("tkId"));
 			
 		}
-		OutputStream out = response.getOutputStream();
-		out.write(bytes);
-		out.flush();
+		try (OutputStream out = response.getOutputStream()) {
+			out.write(bytes);
+			out.flush();
+		}
 	}
-
 }

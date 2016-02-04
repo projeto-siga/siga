@@ -11,7 +11,7 @@
 			<mod:pessoa titulo="Servidor" var="servidor" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:funcao titulo="FunÁ„o" var="funcao" />
+			<mod:funcao titulo="Fun√ß√£o" var="funcao" />
 		</mod:grupo>
 	</mod:entrevista>
 	<mod:documento>
@@ -42,7 +42,7 @@
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
 						<td align="left" width="40%">
-						<p style="font-family:Arial;font-size:11pt;font-weight:bold;">SOLICITA«√O
+						<p style="font-family:Arial;font-size:11pt;font-weight:bold;">SOLICITA√á√ÉO
 						N&ordm; ${doc.codigo}</p>
 						</td>
 						<td align="right" width="60%">
@@ -58,10 +58,10 @@
 		<br>
 		<c:import url="/paginas/expediente/modelos/inc_tit_juizfedDirForoSolicit.jsp" />
 
-		<p style="TEXT-INDENT: 2cm" align="justify">Solicito a <b>nomeaÁ„o/designaÁ„o</b>
+		<p style="TEXT-INDENT: 2cm" align="justify">Solicito a <b>nomea√ß√£o/designa√ß√£o</b>
 		do(a) servidor(a)<mod:identificacao pessoa="${requestScope['servidor_pessoaSel.id']}" nivelHierarquicoMaximoDaLotacao="4" negrito="sim" /> para exercer o(a)
-		cargo em comiss„o/funÁ„o comissionada de ${requestScope['funcao_funcaoSel.descricao']},
-		a partir da publicaÁ„o da respectiva portaria.
+		cargo em comiss√£o/fun√ß√£o comissionada de ${requestScope['funcao_funcaoSel.descricao']},
+		a partir da publica√ß√£o da respectiva portaria.
 		</p>
 		<br>
 		<br>

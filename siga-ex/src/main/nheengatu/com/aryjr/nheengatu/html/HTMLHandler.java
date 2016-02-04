@@ -195,7 +195,7 @@ public class HTMLHandler extends DefaultHandler {
  * message ***
  * 
  * Revision 1.3 2006/07/05 16:00:51 nts Refatorando para melhorar qualidade do
- * código
+ * cÃ³digo
  * 
  * Revision 1.2 2006/04/11 19:43:51 tah *** empty log message *** Revision 1.1
  * 2006/04/03 21:30:45 tah Utilizando o nheengatu Revision 1.3 2006/01/01

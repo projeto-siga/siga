@@ -83,7 +83,7 @@ public class CpBL {
 		} catch (Exception e) {
 			dao().rollbackTransacao();
 			throw new AplicacaoException(
-					"N„o foi possÌvel cancelar a identidade.", 9, e);
+					"N√£o foi poss√≠vel cancelar a identidade.", 9, e);
 		}
 	}
 
@@ -107,13 +107,13 @@ public class CpBL {
 		} catch (Exception e) {
 			dao().rollbackTransacao();
 			throw new AplicacaoException(
-					"N„o foi possÌvel cancelar a identidade.", 9, e);
+					"N√£o foi poss√≠vel cancelar a identidade.", 9, e);
 		}
 	}
 
 	public void bloquearIdentidade(CpIdentidade ident,
 			CpIdentidade identidadeCadastrante, boolean fBloquear)
-			throws AplicacaoException {
+			throws Exception {
 		CpTipoConfiguracao tpConf = dao().consultar(
 				CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN,
 				CpTipoConfiguracao.class, false);
@@ -149,66 +149,64 @@ public class CpBL {
 		}
 		dao().gravarComHistorico(conf, identidadeCadastrante);
 		dao().commitTransacao();
-		try {
-			comp.getConfiguracaoBL().limparCache(tpConf);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		comp.getConfiguracaoBL().limparCacheSeNecessario();
 	}
 
 	public void bloquearPessoa(DpPessoa pes,
 			CpIdentidade identidadeCadastrante, boolean fBloquear)
-			throws AplicacaoException {
-		CpTipoConfiguracao tpConf = dao().consultar(
-				CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN,
-				CpTipoConfiguracao.class, false);
-		Date dt = dao().consultarDataEHoraDoServidor();
-
-		CpConfiguracao confOld = null;
-		try {
-			CpConfiguracao confFiltro = new CpConfiguracao();
-			confFiltro.setDpPessoa(pes);
-			confFiltro.setCpTipoConfiguracao(tpConf);
-			confOld = comp.getConfiguracaoBL().buscaConfiguracao(confFiltro,
-					new int[] { 0 }, null);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		CpConfiguracao conf = new CpConfiguracao();
-		conf.setDpPessoa(pes);
-		conf.setCpSituacaoConfiguracao(dao()
-				.consultar(
-						fBloquear ? CpSituacaoConfiguracao.SITUACAO_NAO_PODE
-								: CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR,
-						CpSituacaoConfiguracao.class, false));
-		conf.setCpTipoConfiguracao(tpConf);
-		conf.setHisDtIni(dt);
-
-		dao().iniciarTransacao();
-		if (confOld != null) {
-			confOld.setHisDtFim(dt);
-			dao().gravarComHistorico(confOld, identidadeCadastrante);
-		}
-		dao().gravarComHistorico(conf, identidadeCadastrante);
-		dao().commitTransacao();
-
-		for (CpIdentidade ident : dao().consultaIdentidades(pes)) {
-			if (fBloquear && ident.isBloqueada() == false)
-				bloquearIdentidade(ident, identidadeCadastrante, true);
-		}
+			throws Exception {
 
 		try {
-			comp.getConfiguracaoBL().limparCache(tpConf);
+			dao().iniciarTransacao();
+
+			CpTipoConfiguracao tpConf = dao().consultar(
+					CpTipoConfiguracao.TIPO_CONFIG_FAZER_LOGIN,
+					CpTipoConfiguracao.class, false);
+			Date dt = dao().consultarDataEHoraDoServidor();
+
+			CpConfiguracao confOld = null;
+			try {
+				CpConfiguracao confFiltro = new CpConfiguracao();
+				confFiltro.setDpPessoa(pes);
+				confFiltro.setCpTipoConfiguracao(tpConf);
+				confOld = comp.getConfiguracaoBL().buscaConfiguracao(
+						confFiltro, new int[] { 0 }, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			CpConfiguracao conf = new CpConfiguracao();
+			conf.setDpPessoa(pes);
+			conf.setCpSituacaoConfiguracao(dao()
+					.consultar(
+							fBloquear ? CpSituacaoConfiguracao.SITUACAO_NAO_PODE
+									: CpSituacaoConfiguracao.SITUACAO_IGNORAR_CONFIGURACAO_ANTERIOR,
+							CpSituacaoConfiguracao.class, false));
+			conf.setCpTipoConfiguracao(tpConf);
+			conf.setHisDtIni(dt);
+
+			if (confOld != null) {
+				confOld.setHisDtFim(dt);
+				dao().gravarComHistorico(confOld, identidadeCadastrante);
+			}
+			dao().gravarComHistorico(conf, identidadeCadastrante);
+
+			for (CpIdentidade ident : dao().consultaIdentidades(pes)) {
+				if (fBloquear && ident.isBloqueada() == false)
+					bloquearIdentidade(ident, identidadeCadastrante, true);
+			}
+			comp.getConfiguracaoBL().limparCacheSeNecessario();
+			dao().commitTransacao();
 		} catch (Exception e) {
-			e.printStackTrace();
+			dao().rollbackTransacao();
+			throw e;
 		}
 	}
 
 	public void configurarAcesso(CpPerfil perfil, CpOrgaoUsuario orgao,
 			DpLotacao lotacao, DpPessoa pes, CpServico servico,
 			CpSituacaoConfiguracao situacao, CpTipoConfiguracao tpConf,
-			CpIdentidade identidadeCadastrante) throws AplicacaoException {
+			CpIdentidade identidadeCadastrante) throws Exception {
 		Date dt = dao().consultarDataEHoraDoServidor();
 
 		CpConfiguracao confOld = null;
@@ -246,11 +244,7 @@ public class CpBL {
 		dao().gravarComHistorico(conf, identidadeCadastrante);
 		dao().commitTransacao();
 
-		try {
-			comp.getConfiguracaoBL().limparCache(tpConf);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		comp.getConfiguracaoBL().limparCacheSeNecessario();
 	}
 
 	/**
@@ -260,8 +254,8 @@ public class CpBL {
 	 * @param cpf
 	 * @param idCadastrante
 	 * @param senhaGerada
-	 *            - Usado para retornar a senha gerada. … um array para que o
-	 *            valor seja passado como referÍncia e o mÈtodo que o chama
+	 *            - Usado para retornar a senha gerada. √â um array para que o
+	 *            valor seja passado como refer√™ncia e o m√©todo que o chama
 	 *            tenha a oportunidade de conhecer a senha)
 	 * @return
 	 * @throws AplicacaoException
@@ -298,11 +292,6 @@ public class CpBL {
 							novaSenha.getBytes(), "MD5");
 					idNova.setDscSenhaIdentidade(hashNova);
 
-					BASE64Encoder encoderBase64 = new BASE64Encoder();
-					String chave = encoderBase64.encode(id.getDpPessoa()
-							.getIdInicial().toString().getBytes());
-					String senhaCripto = encoderBase64.encode(Criptografia
-							.criptografar(novaSenha, chave));
 					idNova.setDscSenhaIdentidadeCripto(null);
 					idNova.setDscSenhaIdentidadeCriptoSinc(null);
 
@@ -311,7 +300,7 @@ public class CpBL {
 					dao().commitTransacao();
 					Correio.enviar(
 							pessoa.getEmailPessoaAtual(),
-							"AlteraÁ„o de senha ",
+							"Altera√ß√£o de senha ",
 							"\n"
 									+ idNova.getDpPessoa().getNomePessoa()
 									+ "\nMatricula: "
@@ -319,27 +308,27 @@ public class CpBL {
 									+ "\n"
 									+ "\nSua senha foi alterada para: "
 									+ novaSenha
-									+ "\n\n AtenÁ„o: esta È uma "
-									+ "mensagem autom·tica. Por favor, n„o responda. ");
+									+ "\n\n Aten√ß√£o: esta √© uma "
+									+ "mensagem autom√°tica. Por favor, n√£o responda. ");
 
 					return idNova;
 				} catch (final Exception e) {
 					dao().rollbackTransacao();
 					throw new AplicacaoException(
-							"Ocorreu um erro durante a gravaÁ„o", 0, e);
+							"Ocorreu um erro durante a grava√ß√£o", 0, e);
 				}
 			} else {
 				throw new AplicacaoException(
-						"Este usu·rio n„o est· cadastrado no sistema");
+						"Este usu√°rio n√£o est√° cadastrado no sistema");
 			}
 
 		} else {
-			if(pessoa == null) {
+			if (pessoa == null) {
 				throw new AplicacaoException(
-						"N„o foi encontrado usu·rio com matrÌcula e cpf informados.");
+						"N√£o foi encontrado usu√°rio com matr√≠cula e cpf informados.");
 			} else if (pessoa.getEmailPessoaAtual() == null) {
 				throw new AplicacaoException(
-						"Este usu·rio n„o possui e-mail cadastrado");
+						"Este usu√°rio n√£o possui e-mail cadastrado");
 			} else {
 				throw new AplicacaoException("Dados Incorretos!");
 			}
@@ -394,29 +383,29 @@ public class CpBL {
 						dao().gravarComHistorico(idNova, idCadastrante);
 						Correio.enviar(
 								pessoa.getEmailPessoaAtual(),
-								"Novo Usu·rio",
-								"Seu login È: "
+								"Novo Usu√°rio",
+								"Seu login √©: "
 										+ matricula
-										+ "\n e sua senha È "
+										+ "\n e sua senha √© "
 										+ novaSenha
-										+ "\n\n AtenÁ„o: esta È uma "
-										+ "mensagem autom·tica. Por favor n„o responda ");
+										+ "\n\n Aten√ß√£o: esta √© uma "
+										+ "mensagem autom√°tica. Por favor n√£o responda ");
 						dao().commitTransacao();
 						return idNova;
 					} catch (final Exception e) {
 						dao().rollbackTransacao();
 						throw new AplicacaoException(
-								"Ocorreu um erro durante a gravaÁ„o no banco de dados ou no envio do email",
+								"Ocorreu um erro durante a grava√ß√£o no banco de dados ou no envio do email",
 								0, e);
 					}
 				} else {
 					throw new AplicacaoException(
-							"Este usu·rio n„o possui e-mail cadastrado");
+							"Este usu√°rio n√£o possui e-mail cadastrado");
 				}
 
 			} else {
 				throw new AplicacaoException(
-						"Usu·rio j· est· cadastrado no sistema");
+						"Usu√°rio j√° est√° cadastrado no sistema");
 			}
 
 		} else {
@@ -430,22 +419,22 @@ public class CpBL {
 			CpIdentidade idCadastrante) throws NoSuchAlgorithmException,
 			AplicacaoException {
 		if (senhaAtual == null || senhaAtual.trim().length() == 0) {
-			throw new AplicacaoException("Senha atual n„o confere");
+			throw new AplicacaoException("Senha atual n√£o confere");
 		}
 		final String hashAtual = GeraMessageDigest.executaHash(
 				senhaAtual.getBytes(), "MD5");
 
 		final CpIdentidade id = dao().consultaIdentidadeCadastrante(
 				nomeUsuario, true);
-		// se o usu·rio n„o existir
+		// se o usu√°rio n√£o existir
 		if (id == null)
-			throw new AplicacaoException("O usu·rio n„o est· cadastrado.");
+			throw new AplicacaoException("O usu√°rio n√£o est√° cadastrado.");
 
 		boolean podeTrocar = id.getDscSenhaIdentidade().equals(hashAtual);
 
 		if (!podeTrocar) {
 			// tenta o modo administrador...
-			String servico = "SIGA: Sistema Integrado de Gest„o Administrativa;GI: MÛdulo de Gest„o de Identidade;DEF_SENHA: Definir Senha";
+			String servico = "SIGA: Sistema Integrado de Gest√£o Administrativa;GI: M√≥dulo de Gest√£o de Identidade;DEF_SENHA: Definir Senha";
 			try {
 				if (Cp.getInstance()
 						.getConf()
@@ -457,15 +446,15 @@ public class CpBL {
 					if (hashAtual.equals(idCadastrante.getDscSenhaIdentidade())) {
 						podeTrocar = true;
 					} else {
-						throw new AplicacaoException("Senha atual n„o confere");
+						throw new AplicacaoException("Senha atual n√£o confere");
 					}
 
 					try {
 						Correio.enviar(
 								id.getDpPessoa().getEmailPessoaAtual(),
 								"Troca de Senha",
-								"O Administrador do sistema alterou a senha do seguinte usu·rio, para efetuar "
-										+ "uma manutenÁ„o no sistema: "
+								"O Administrador do sistema alterou a senha do seguinte usu√°rio, para efetuar "
+										+ "uma manuten√ß√£o no sistema: "
 										+ "\n"
 										+ "\n - Nome: "
 										+ id.getDpPessoa().getNomePessoa()
@@ -474,12 +463,12 @@ public class CpBL {
 										+ "\n - Senha: "
 										+ senhaNova
 										+ "\n\n Antes de utiliza-lo novamente, altere a sua senha "
-										+ "ou solicite uma nova atravÈs da opÁ„o 'esqueci minha senha'"
-										+ "\n\n AtenÁ„o: esta È uma "
-										+ "mensagem autom·tica. Por favor, n„o responda.");
+										+ "ou solicite uma nova atrav√©s da op√ß√£o 'esqueci minha senha'"
+										+ "\n\n Aten√ß√£o: esta √© uma "
+										+ "mensagem autom√°tica. Por favor, n√£o responda.");
 					} catch (Exception e) {
 						System.out
-								.println("Erro: N„o foi possÌvel enviar e-mail para o usu·rio informando que o administrador do sistema alterou sua senha."
+								.println("Erro: N√£o foi poss√≠vel enviar e-mail para o usu√°rio informando que o administrador do sistema alterou sua senha."
 										+ "\n"
 										+ "\n - Nome: "
 										+ id.getDpPessoa().getNomePessoa()
@@ -503,11 +492,11 @@ public class CpBL {
 						senhaNova.getBytes(), "MD5");
 				idNova.setDscSenhaIdentidade(hashNova);
 
-				BASE64Encoder encoderBase64 = new BASE64Encoder();
-				String chave = encoderBase64.encode(id.getDpPessoa()
-						.getIdInicial().toString().getBytes());
-				String senhaCripto = encoderBase64.encode(Criptografia
-						.criptografar(senhaNova, chave));
+//				BASE64Encoder encoderBase64 = new BASE64Encoder();
+//				String chave = encoderBase64.encode(id.getDpPessoa()
+//						.getIdInicial().toString().getBytes());
+//				String senhaCripto = encoderBase64.encode(Criptografia
+//						.criptografar(senhaNova, chave));
 				idNova.setDscSenhaIdentidadeCripto(null);
 				idNova.setDscSenhaIdentidadeCriptoSinc(null);
 
@@ -518,11 +507,11 @@ public class CpBL {
 			} catch (final Exception e) {
 				dao().rollbackTransacao();
 				throw new AplicacaoException(
-						"Ocorreu um erro durante a gravaÁ„o", 0, e);
+						"Ocorreu um erro durante a grava√ß√£o", 0, e);
 			}
 		} else {
 			throw new AplicacaoException(
-					"Senha Atual n„o confere e/ou Senha nova diferente de confirmaÁ„o");
+					"Senha Atual n√£o confere e/ou Senha nova diferente de confirma√ß√£o");
 		}
 	}
 
@@ -535,14 +524,14 @@ public class CpBL {
 			final DpPessoa pesAux1 = dao().consultarPorCpfMatricula(
 					Long.parseLong(cpf1), matAux1);
 			if (pesAux1 == null) {
-				throw new AplicacaoException("Auxiliar 1 inv·lido!");
+				throw new AplicacaoException("Auxiliar 1 inv√°lido!");
 			}
 
 			final long matAux2 = Long.parseLong(auxiliar2.substring(2));
 			final DpPessoa pesAux2 = dao().consultarPorCpfMatricula(
 					Long.parseLong(cpf2), matAux2);
 			if (pesAux2 == null) {
-				throw new AplicacaoException("Auxiliar 2 inv·lido!");
+				throw new AplicacaoException("Auxiliar 2 inv√°lido!");
 			}
 
 			final long longmatricula = Long.parseLong(matricula.substring(2));
@@ -550,7 +539,7 @@ public class CpBL {
 					Long.parseLong(cpf), longmatricula);
 			if (pessoa == null) {
 				throw new AplicacaoException(
-						"A pessoa que ter· a senha definida inv·lida!");
+						"A pessoa que ter√° a senha definida inv√°lida!");
 			}
 
 			CpIdentidade cpIdAux1 = null;
@@ -587,7 +576,7 @@ public class CpBL {
 			;
 			if (!cpIdAux1.getDscSenhaIdentidade().equals(hashSenha1)
 					|| !cpIdAux2.getDscSenhaIdentidade().equals(hashSenha2)) {
-				throw new AplicacaoException("As senhas n„o conferem!");
+				throw new AplicacaoException("As senhas n√£o conferem!");
 			}
 
 			List<DpPessoa> auxiliares = new ArrayList<DpPessoa>();
@@ -600,7 +589,7 @@ public class CpBL {
 
 			if (!pessoasMesmaLotacaoOuSuperior(pessoa, auxiliares)) {
 				throw new AplicacaoException(
-						"Os auxiliares devem ser da mesma lotaÁ„o do usu·rio que ter· a senha trocada!\n TambÈm È permitido que pessoas da lotaÁ„o imediatamente superior na hiearquia sejam auxiliares.");
+						"Os auxiliares devem ser da mesma lota√ß√£o do usu√°rio que ter√° a senha trocada!\n Tamb√©m √© permitido que pessoas da lota√ß√£o imediatamente superior na hiearquia sejam auxiliares.");
 			}
 
 		} catch (Exception e) {
@@ -612,7 +601,7 @@ public class CpBL {
 
 	private boolean isAuxAdministradores(DpPessoa aux1, DpPessoa aux2) {
 
-		String servico = "SIGA: Sistema Integrado de Gest„o Administrativa;GI: MÛdulo de Gest„o de Identidade;DEF_SENHA: Definir Senha";
+		String servico = "SIGA: Sistema Integrado de Gest√£o Administrativa;GI: M√≥dulo de Gest√£o de Identidade;DEF_SENHA: Definir Senha";
 		try {
 
 			return Cp
@@ -632,7 +621,7 @@ public class CpBL {
 	}
 
 	/**
-	 * Verifica se as pessoas s„o da mesma lotaÁ„o ou da lotaÁ„o imadiatamente
+	 * Verifica se as pessoas s√£o da mesma lota√ß√£o ou da lota√ß√£o imadiatamente
 	 * superior da pessoa-alvo
 	 * 
 	 * @return
@@ -659,9 +648,9 @@ public class CpBL {
 
 		final CpIdentidade id = dao().consultaIdentidadeCadastrante(
 				nomeUsuario, true);
-		// se o usu·rio n„o existir
+		// se o usu√°rio n√£o existir
 		if (id == null)
-			throw new AplicacaoException("O usu·rio n„o est· cadastrado.");
+			throw new AplicacaoException("O usu√°rio n√£o est√° cadastrado.");
 
 		if (senhaNova.equals(senhaConfirma)) {
 			try {
@@ -674,11 +663,6 @@ public class CpBL {
 						senhaNova.getBytes(), "MD5");
 				idNova.setDscSenhaIdentidade(hashNova);
 
-				BASE64Encoder encoderBase64 = new BASE64Encoder();
-				String chave = encoderBase64.encode(id.getDpPessoa()
-						.getIdInicial().toString().getBytes());
-				String senhaCripto = encoderBase64.encode(Criptografia
-						.criptografar(senhaNova, chave));
 				idNova.setDscSenhaIdentidadeCripto(null);
 				idNova.setDscSenhaIdentidadeCriptoSinc(null);
 
@@ -687,7 +671,7 @@ public class CpBL {
 				dao().commitTransacao();
 				Correio.enviar(
 						id.getDpPessoa().getEmailPessoaAtual(),
-						"AlteraÁ„o de senha ",
+						"Altera√ß√£o de senha ",
 						"\n"
 								+ idNova.getDpPessoa().getNomePessoa()
 								+ "\nMatricula: "
@@ -695,20 +679,20 @@ public class CpBL {
 								+ "\n"
 								+ "\nSua senha foi alterada para: "
 								+ senhaNova
-								+ ".\n\n As seguintes pessoas participaram da alteraÁ„o da senha: "
+								+ ".\n\n As seguintes pessoas participaram da altera√ß√£o da senha: "
 								+ auxiliar1
 								+ " e "
 								+ auxiliar2
-								+ ".\n\n AtenÁ„o: esta È uma "
-								+ "mensagem autom·tica. Por favor, n„o responda. ");
+								+ ".\n\n Aten√ß√£o: esta √© uma "
+								+ "mensagem autom√°tica. Por favor, n√£o responda. ");
 				return idNova;
 			} catch (final Exception e) {
 				dao().rollbackTransacao();
 				throw new AplicacaoException(
-						"Ocorreu um erro durante a gravaÁ„o", 0, e);
+						"Ocorreu um erro durante a grava√ß√£o", 0, e);
 			}
 		} else {
-			throw new AplicacaoException("Senha nova diferente de confirmaÁ„o");
+			throw new AplicacaoException("Senha nova diferente de confirma√ß√£o");
 		}
 	}
 
@@ -733,7 +717,7 @@ public class CpBL {
 			return modSaved;
 		} catch (Exception e) {
 			dao().rollbackTransacao();
-			throw new AplicacaoException("N„o foi possÌvel alterar o modelo.",
+			throw new AplicacaoException("N√£o foi poss√≠vel alterar o modelo.",
 					9, e);
 		}
 	}
@@ -746,6 +730,5 @@ public class CpBL {
 			throws AplicacaoException {
 		throw new AplicacaoException(message, 0, cause);
 	}
-
 
 }

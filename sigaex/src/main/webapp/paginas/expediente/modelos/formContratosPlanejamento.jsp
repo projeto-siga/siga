@@ -10,9 +10,9 @@
 			style="visibility: hidden; position: absolute; left: 0px; top: 0px; width: 50%; height: 50%; text-align: left; z-index: 1000;">
 		<div
 			style="width: 600px; margin: 100px auto; background-color: #fff; border: 1px solid #000; padding: 15px; text-align: center;">
-		<p align=justify>Justificar a necessidade da contrataÁ„o:
-		objetivos, problema a ser resolvido, benefÌcios da contrataÁ„o,
-		quantitativo estimado e par‚metros tÈcnicos utilizados para o total
+		<p align=justify>Justificar a necessidade da contrata√ß√£o:
+		objetivos, problema a ser resolvido, benef√≠cios da contrata√ß√£o,
+		quantitativo estimado e par√¢metros t√©cnicos utilizados para o total
 		pretendido.</p>
 		</div>
 		</div>
@@ -20,47 +20,47 @@
 			style="visibility: hidden; position: absolute; left: 0px; top: 0px; width: 50%; height: 50%; text-align: left; z-index: 1000;">
 		<div
 			style="width: 600px; margin: 100px auto; background-color: #fff; border: 1px solid #000; padding: 15px; text-align: center;">
-		<p align=justify>Verificar, com outras ·reas pertinentes, se h·
-		viabilidade tÈcnica para a aquisiÁ„o do objeto. Ex: infra-estrutura,
-		elÈtrica, peso, compatibilidade etc. Obs: caso a outra ·rea n„o sÛ
-		afirme a viabilidade tÈcnica, mas tambÈm esteja diretamente envolvida
-		na contrataÁ„o, preencha o item 5.</p>
+		<p align=justify>Verificar, com outras √°reas pertinentes, se h√°
+		viabilidade t√©cnica para a aquisi√ß√£o do objeto. Ex: infra-estrutura,
+		el√©trica, peso, compatibilidade etc. Obs: caso a outra √°rea n√£o s√≥
+		afirme a viabilidade t√©cnica, mas tamb√©m esteja diretamente envolvida
+		na contrata√ß√£o, preencha o item 5.</p>
 		</div>
 		</div>
 		<div id="jusDiv"
 			style="visibility: hidden; position: absolute; left: 0px; top: 0px; width: 50%; height: 50%; text-align: left; z-index: 1000;">
 		<div
 			style="width: 600px; margin: 100px auto; background-color: #fff; border: 1px solid #000; padding: 15px; text-align: center;">
-		<p align=justify>ServiÁo contÌnuo È aquele essencial ‡
-		AdministraÁ„o P˙blica, habitual em raz„o da sua prÛpria destinaÁ„o,
-		n„o podendo sofrer interrupÁ„o de continuidade, sob pena de causar
-		graves prejuÌzos ao interesse p˙blico.</p>
+		<p align=justify>Servi√ßo cont√≠nuo √© aquele essencial √†
+		Administra√ß√£o P√∫blica, habitual em raz√£o da sua pr√≥pria destina√ß√£o,
+		n√£o podendo sofrer interrup√ß√£o de continuidade, sob pena de causar
+		graves preju√≠zos ao interesse p√∫blico.</p>
 		</div>
 		</div>
 		<div id="lotDiv"
 			style="visibility: hidden; position: absolute; left: 0px; top: 0px; width: 50%; height: 50%; text-align: left; z-index: 1000;">
 		<div
 			style="width: 600px; margin: 100px auto; background-color: #fff; border: 1px solid #000; padding: 15px; text-align: center;">
-		<p align=justify>Lote È qualquer remessa composta por v·rias
+		<p align=justify>Lote √© qualquer remessa composta por v√°rias
 		unidades de um mesmo item. A regra geral estabelecida pela lei de
-		licitaÁıes È que o objeto a ser licitado deve ser divisÌvel em tantas
-		partes quanto possÌvel, de forma a ampliar a participaÁ„o do maior
-		n˙mero de licitantes. PorÈm em casos justificados, poder· ser feita
-		licitaÁ„o com itens agregados em lotes. Neste momento, deve ser
-		verificada e justificada a formaÁ„o de lotes por razıes de ordens
-		tÈcnica. ApÛs a cotaÁ„o, pode ser necess·ria a an·lise de formaÁ„o de
-		lotes para que a contrataÁ„o de lotes para que a contrataÁ„otorne-se
-		que a contrataÁ„o torna-se econocmicamente vi·vel.</p>
+		licita√ß√µes √© que o objeto a ser licitado deve ser divis√≠vel em tantas
+		partes quanto poss√≠vel, de forma a ampliar a participa√ß√£o do maior
+		n√∫mero de licitantes. Por√©m em casos justificados, poder√° ser feita
+		licita√ß√£o com itens agregados em lotes. Neste momento, deve ser
+		verificada e justificada a forma√ß√£o de lotes por raz√µes de ordens
+		t√©cnica. Ap√≥s a cota√ß√£o, pode ser necess√°ria a an√°lise de forma√ß√£o de
+		lotes para que a contrata√ß√£o de lotes para que a contrata√ß√£otorne-se
+		que a contrata√ß√£o torna-se econocmicamente vi√°vel.</p>
 		</div>
 		</div>
 		<div id="conDiv"
 			style="visibility: hidden; position: absolute; left: 0px; top: 0px; width: 50%; height: 50%; text-align: left; z-index: 1000;">
 		<div
 			style="width: 600px; margin: 100px auto; background-color: #fff; border: 1px solid #000; padding: 15px; text-align: center;">
-		<p align=justify>Verificar, junto aos Ûrg„os contratantes, se
-		houve alguma restriÁ„o na licitaÁ„o (impugnaÁ„o e recursos) e o
-		sucesso da execuÁ„o do contrato. Anexar, se possÌvel, os documentos da
-		contrataÁ„o.</p>
+		<p align=justify>Verificar, junto aos √≥rg√£os contratantes, se
+		houve alguma restri√ß√£o na licita√ß√£o (impugna√ß√£o e recursos) e o
+		sucesso da execu√ß√£o do contrato. Anexar, se poss√≠vel, os documentos da
+		contrata√ß√£o.</p>
 		</div>
 		</div>
 		<div id="relDiv"
@@ -68,27 +68,27 @@
 		<div
 			style="width: 600px; margin: 100px auto; background-color: #fff; border: 1px solid #000; padding: 15px; text-align: center;">
 		<p align=justify>Deve ser revisto o processo anterior de
-		contrataÁ„o de mesmo objeto, analisando as dificuldades enfrentadas,
+		contrata√ß√£o de mesmo objeto, analisando as dificuldades enfrentadas,
 		discutindo-as, se for o caso, com o gerente do contrato anterior e
-		outros setores envolvidos, para sanear equÌvocos no tempo referÍncia.</p>
+		outros setores envolvidos, para sanear equ√≠vocos no tempo refer√™ncia.</p>
 		</div>
 		</div>
 
 		<mod:grupo
-			titulo="1. IdentificaÁ„o da(s) unidade(s)/Servidor(es) respons·vel(is):">
+			titulo="1. Identifica√ß√£o da(s) unidade(s)/Servidor(es) respons√°vel(is):">
 			<mod:grupo>
-				<mod:lotacao titulo="Subsecretaria/N˙cleo" var="subNucleo"
+				<mod:lotacao titulo="Subsecretaria/N√∫cleo" var="subNucleo"
 					obrigatorio="Sim" />
 			</mod:grupo>				
 			<mod:grupo>
 				<mod:selecao var="numFiscais"
-					titulo="N˙mero de Fiscais TÈcnicos/Suplentes" reler="ajax"
+					titulo="N√∫mero de Fiscais T√©cnicos/Suplentes" reler="ajax"
 					idAjax="numFiscaisAjax" opcoes="1;2;3;4;5;6;7;8;9;10" />
 			</mod:grupo>
 			<mod:grupo depende="numFiscaisAjax">					
 				<c:forEach var="i" begin="1" end="${numFiscais}">
 					<mod:grupo>						
-						${i})&nbsp;&nbsp;<mod:pessoa titulo="Fiscal TÈcnico" var="fisTecnico${i}" obrigatorio="Sim" />						
+						${i})&nbsp;&nbsp;<mod:pessoa titulo="Fiscal T√©cnico" var="fisTecnico${i}" obrigatorio="Sim" />						
 					</mod:grupo>
 					<mod:grupo>
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<mod:pessoa titulo="Suplente" var="suplente${i}" obrigatorio="Sim" />
@@ -96,7 +96,7 @@
 				</c:forEach>
 			</mod:grupo>
 			<mod:grupo>					
-				<mod:memo titulo="Comiss„o de Recebimento (caso haja)"
+				<mod:memo titulo="Comiss√£o de Recebimento (caso haja)"
 					var="comRecebimento" colunas="80" linhas="2" />
 			</mod:grupo>
 		</mod:grupo>
@@ -118,7 +118,7 @@
 					</tr>
 				</table>
 
-				<mod:memo titulo="DescriÁ„o da necessidade/quantitativo"
+				<mod:memo titulo="Descri√ß√£o da necessidade/quantitativo"
 					var="desNecQuantitativo" colunas="80" linhas="2" obrigatorio="Sim" />
 
 				<table>
@@ -133,7 +133,7 @@
 					</tr>
 				</table>
 
-				<mod:memo titulo="Viabilidade tÈcnica" var="viaTecnica" colunas="80"
+				<mod:memo titulo="Viabilidade t√©cnica" var="viaTecnica" colunas="80"
 					linhas="2" obrigatorio="Sim" />
 			</mod:grupo>
 		</mod:grupo>
@@ -141,14 +141,14 @@
 		<hr>
 
 		<mod:grupo>
-			<mod:grupo titulo="3. IdentificaÁ„o da contrataÁ„o:">
+			<mod:grupo titulo="3. Identifica√ß√£o da contrata√ß√£o:">
 				<mod:grupo>
 					<mod:grupo largura="10">
 						<mod:radio titulo="Material" var="identificacao" valor="1"
 							reler="ajax" idAjax="identAjax" marcado="Sim" />
 					</mod:grupo>
 					<mod:grupo largura="90">
-						<mod:radio titulo="ServiÁo" var="identificacao" valor="2"
+						<mod:radio titulo="Servi√ßo" var="identificacao" valor="2"
 							reler="ajax" idAjax="identAjax" />
 					</mod:grupo>
 				</mod:grupo>
@@ -161,9 +161,9 @@
 				</c:if>
 				<mod:grupo depende="identAjax">
 					<c:if test="${valIdentContrat == 1}">
-						<mod:grupo titulo="H· necessidade tÈcnica de indicaÁ„o de marca?">
+						<mod:grupo titulo="H√° necessidade t√©cnica de indica√ß√£o de marca?">
 							<mod:grupo>
-								<mod:radio titulo="N„o." var="indicMarca" valor="1"
+								<mod:radio titulo="N√£o." var="indicMarca" valor="1"
 									marcado="Sim" reler="ajax" idAjax="indicMarcaAjax" />
 							</mod:grupo>
 							<mod:grupo largura="7">
@@ -185,14 +185,14 @@
 						</mod:grupo>
 					</c:if>
 					<c:if test="${valIdentContrat == 2}">
-						<mod:grupo titulo="Haver· alocaÁ„o de m„o de obra?">
+						<mod:grupo titulo="Haver√° aloca√ß√£o de m√£o de obra?">
 							<mod:grupo>
-								<mod:radio titulo="N„o." var="servico" valor="1" marcado="Sim" />
+								<mod:radio titulo="N√£o." var="servico" valor="1" marcado="Sim" />
 							</mod:grupo>
 							<mod:grupo>
 								<mod:radio
-									titulo="Sim. Houve estudo prÈvio sobre a possibilidade de execuÁ„o do serviÁo sem
-									a presenÁa permanente (jornada fixa) <br/>da m„o-de-obra nas dependÍncias da SJRJ."
+									titulo="Sim. Houve estudo pr√©vio sobre a possibilidade de execu√ß√£o do servi√ßo sem
+									a presen√ßa permanente (jornada fixa) <br/>da m√£o-de-obra nas depend√™ncias da SJRJ."
 									var="servico" valor="2" />
 							</mod:grupo>
 						</mod:grupo>
@@ -201,15 +201,15 @@
 
 				<mod:grupo titulo="Tipo de Entrega:">
 					<mod:grupo>
-						<mod:radio titulo="PrestaÁ„o ˙nica." var="tipEntrega" valor="1"
+						<mod:radio titulo="Presta√ß√£o √∫nica." var="tipEntrega" valor="1"
 							reler="ajax" marcado="Sim" idAjax="tipEntregaAjax" />
 					</mod:grupo>
 					<mod:grupo>
-						<mod:radio titulo="PrestaÁ„o parcelada." var="tipEntrega"
+						<mod:radio titulo="Presta√ß√£o parcelada." var="tipEntrega"
 							valor="2" reler="ajax" idAjax="tipEntregaAjax" />
 					</mod:grupo>
 					<mod:grupo>
-						<mod:radio titulo="PrestaÁ„o continuada. " var="tipEntrega"
+						<mod:radio titulo="Presta√ß√£o continuada. " var="tipEntrega"
 							valor="3" reler="ajax" idAjax="tipEntregaAjax" />
 					</mod:grupo>
 					<c:set var="valTipEntrega" value="${tipEntrega}" />
@@ -237,11 +237,11 @@
 					</mod:grupo>
 				</mod:grupo>
 				<mod:grupo>
-					<b>A contrataÁ„o ser· por Registro de PreÁo? (consultar <a
-						href="http://intranet/documentos/grupo_97/rp_comentario_checklist_planej.pdf" target="_blank"><u>PrÛs
+					<b>A contrata√ß√£o ser√° por Registro de Pre√ßo? (consultar <a
+						href="http://intranet/documentos/grupo_97/rp_comentario_checklist_planej.pdf" target="_blank"><u>Pr√≥s
 					e Contras do RP</u></a>):</b>
 					<mod:grupo largura="100">
-						<mod:radio titulo="N„o." var="contratacao" valor="1" marcado="Sim"
+						<mod:radio titulo="N√£o." var="contratacao" valor="1" marcado="Sim"
 							reler="ajax" idAjax="contratacaoAjax" />
 					</mod:grupo>
 					<mod:grupo largura="7">
@@ -271,8 +271,8 @@
 								onmouseout="document.getElementById('lotDiv').style.visibility = 'hidden'">
 							<img src="<c:url value='/imagens/interrogation.jpg'/>" width=20
 								height=20 /></span></td>
-							<td><b>H· necessidade de formaÁ„o de lote por motivos
-							tÈcnicos?</b></td>
+							<td><b>H√° necessidade de forma√ß√£o de lote por motivos
+							t√©cnicos?</b></td>
 						</tr>
 					</table>
 
@@ -294,7 +294,7 @@
 					</mod:grupo>
 					<mod:grupo>
 						<mod:radio
-							titulo="N„o. A formaÁ„o de lotes em raz„o de valores deve ser avaliada apÛs a cotaÁ„o."
+							titulo="N√£o. A forma√ß√£o de lotes em raz√£o de valores deve ser avaliada ap√≥s a cota√ß√£o."
 							var="necFormacao" valor="2" marcado="Sim" reler="ajax"
 							idAjax="idFormacaoAjax" />
 					</mod:grupo>
@@ -304,14 +304,14 @@
 
 		<hr>
 
-		<mod:grupo titulo="4. VinculaÁ„o estratÈgica:">
+		<mod:grupo titulo="4. Vincula√ß√£o estrat√©gica:">
 			<mod:grupo>
-				<b>A contrataÁ„o est· vinculada a algum <a
+				<b>A contrata√ß√£o est√° vinculada a algum <a
 					href="http://intranet/documentos/grupo_113/Acompanhamento_de_Projetos_e_Acoes_%20Bienio%202011_2012.mht" target="_blank"> <u>Projeto
-				EstratÈgico Anual da SJRJ</u></a>?</b>
+				Estrat√©gico Anual da SJRJ</u></a>?</b>
 				<mod:grupo>
 					<mod:grupo>
-						<mod:radio titulo="N„o." var="vinculacao" valor="1" marcado="Sim"
+						<mod:radio titulo="N√£o." var="vinculacao" valor="1" marcado="Sim"
 							reler="ajax" idAjax="idVinculacaoAjax" />
 					</mod:grupo>
 					<mod:grupo largura="7">
@@ -335,32 +335,32 @@
 			<mod:grupo>
 				<b>A partir do <a
 					href="http://intranet/documentos/grupo_97/mapa_estrategico.pdf" target="_blank">
-				<u>Mapa EstratÈgico da JustiÁa Federal</u></a> elaborado pelo CJF,
-				identifique <u>um ou mais</u> objetivos estratÈgicos aos quais a
-				contrataÁ„o est· vinculada:</b>
+				<u>Mapa Estrat√©gico da Justi√ßa Federal</u></a> elaborado pelo CJF,
+				identifique <u>um ou mais</u> objetivos estrat√©gicos aos quais a
+				contrata√ß√£o est√° vinculada:</b>
 			</mod:grupo>
 
 			<mod:oculto var="obj1"
-				valor="1. agilizar os tr‚mites judiciais e administrativos;" />
+				valor="1. agilizar os tr√¢mites judiciais e administrativos;" />
 			<mod:oculto var="obj2"
-				valor="2. otimizar a gest„o dos custos operacionais;" />
+				valor="2. otimizar a gest√£o dos custos operacionais;" />
 			<mod:oculto var="obj3" valor="3. otimizar os processos de trabalho;" />
 			<mod:oculto var="obj4"
-				valor="4. facilitar o acesso ‡ JustiÁa Federal da 2™ Regi„o;" />
+				valor="4. facilitar o acesso √† Justi√ßa Federal da 2¬™ Regi√£o;" />
 			<mod:oculto var="obj5"
-				valor="5. promover a efetividade no cumprimento das decisıes;" />
+				valor="5. promover a efetividade no cumprimento das decis√µes;" />
 			<mod:oculto var="obj6" valor="6. promover a cidadania;" />
 			<mod:oculto var="obj7"
 				valor="7. incentivar e promover a responsabilidade ambiental;" />
 			<mod:oculto var="obj8"
-				valor="8. garantir o alinhamento estratÈgico e a integraÁ„o da 
-					JustiÁa Federal da 2™ Regi„o;" />
+				valor="8. garantir o alinhamento estrat√©gico e a integra√ß√£o da 
+					Justi√ßa Federal da 2¬™ Regi√£o;" />
 			<mod:oculto var="obj9"
-				valor="9. fortalecer as relaÁıes da JustiÁa Federal da 2™ Regi„o
-					com outros Ûrg„os e instituiÁıes;" />
+				valor="9. fortalecer as rela√ß√µes da Justi√ßa Federal da 2¬™ Regi√£o
+					com outros √≥rg√£os e institui√ß√µes;" />
 			<mod:oculto var="obj10"
-				valor="10. fortalecer a imagem e aperfeiÁoar a comunicaÁ„o 
-					da JustiÁa Federal da 2™ Regi„o;" />
+				valor="10. fortalecer a imagem e aperfei√ßoar a comunica√ß√£o 
+					da Justi√ßa Federal da 2¬™ Regi√£o;" />
 			<mod:oculto var="obj11"
 				valor="11. desenvolver conhecimentos, habilidades e atitudes 
 					dos magistrados e servidores com foco em resultados;" />
@@ -368,14 +368,14 @@
 				valor="12. fortalecer o clima organizacional e o bem estar dos magistrados 
 					e servidores;" />
 			<mod:oculto var="obj13"
-				valor="13. garantir a infraestrutura suficiente ‡ execuÁ„o das 
+				valor="13. garantir a infraestrutura suficiente √† execu√ß√£o das 
 					atividades administrativas e judiciais;" />
 			<mod:oculto var="obj14"
 				valor="14. garantir o acesso e funcionamento de sistemas 
-					essenciais de tecnologia de informaÁ„o;" />
+					essenciais de tecnologia de informa√ß√£o;" />
 			<mod:oculto var="obj15"
-				valor="15. assegurar recursos orÁament·rios e priorizar sua execuÁ„o 
-					na estratÈgia." />
+				valor="15. assegurar recursos or√ßament√°rios e priorizar sua execu√ß√£o 
+					na estrat√©gia." />
 
 			<table cellpadding="4" width="100%" border="0">
 				<tr>
@@ -418,10 +418,10 @@
 
 		<mod:grupo>
 			<mod:grupo
-				titulo="5. IdentificaÁ„o e observaÁıes de unidades envolvidas na contrataÁ„o:">
+				titulo="5. Identifica√ß√£o e observa√ß√µes de unidades envolvidas na contrata√ß√£o:">
 				<mod:grupo>
 					<mod:selecao var="numSubsecretarias"
-						titulo="N˙mero de Subsecretaria(s)" reler="ajax"
+						titulo="N√∫mero de Subsecretaria(s)" reler="ajax"
 						idAjax="numSubsecretariasAjax" opcoes="0;1;2;3;4;5" />
 				</mod:grupo>
 
@@ -429,7 +429,7 @@
 					<c:if test="${numSubsecretarias != 0}">
 						<mod:grupo titulo="Subsecretaria:" largura="26">
 						</mod:grupo>
-						<mod:grupo titulo="AtuaÁ„o/ObservaÁıes:" largura="74">
+						<mod:grupo titulo="Atua√ß√£o/Observa√ß√µes:" largura="74">
 						</mod:grupo>					
 						<c:forEach var="i" begin="1" end="${numSubsecretarias}">
 							<mod:grupo titulo="" largura="25">
@@ -449,9 +449,9 @@
 		<hr>
 
 		<mod:grupo
-			titulo="6. H· outras possibilidades de alcance do objetivo almejado?">
+			titulo="6. H√° outras possibilidades de alcance do objetivo almejado?">
 			<mod:grupo>
-				<mod:radio titulo="N„o." var="posObjetivo" valor="1" marcado="Sim"
+				<mod:radio titulo="N√£o." var="posObjetivo" valor="1" marcado="Sim"
 					reler="ajax" idAjax="idposObjetivoAjax" />
 			</mod:grupo>
 			<mod:grupo>
@@ -465,7 +465,7 @@
 			<mod:grupo depende="idposObjetivoAjax">
 				<c:if test="${valposObjetivo == 2}">
 					<mod:memo
-						titulo="(Justificar, analisando a relaÁ„o custo x benefÌcio)"
+						titulo="(Justificar, analisando a rela√ß√£o custo x benef√≠cio)"
 						var="jusObjetivo" colunas="79" linhas="2" obrigatorio="Sim" />
 				</c:if>
 			</mod:grupo>
@@ -481,25 +481,25 @@
 				</mod:grupo>
 				<mod:grupo largura="85">
 					<mod:texto
-						titulo="Fonte de Recursos (convÍnios/orÁamento vigente/crÈdito a ser 
+						titulo="Fonte de Recursos (conv√™nios/or√ßamento vigente/cr√©dito a ser 
 					solicitado/outros)"
 						var="fonRecursos" largura="82" maxcaracteres="82" />
 				</mod:grupo>
 
 				<br />
 
-				<b>Integra a programaÁ„o orÁament·ria do exercÌcio?</b>
+				<b>Integra a programa√ß√£o or√ßament√°ria do exerc√≠cio?</b>
 				<mod:grupo largura="100">
 					<mod:radio titulo="Sim." var="intProOrcamentaria" valor="1"
 						marcado="Sim" reler="ajax" idAjax="intProOrcamentariaAjax" />
 				</mod:grupo>
 				<mod:grupo largura="100">
-					<mod:radio titulo="Sim. (com alteraÁ„o do valor original)"
+					<mod:radio titulo="Sim. (com altera√ß√£o do valor original)"
 						var="intProOrcamentaria" valor="2" reler="ajax"
 						idAjax="intProOrcamentariaAjax" />
 				</mod:grupo>
 				<mod:grupo largura="100">
-					<mod:radio titulo="N„o." var="intProOrcamentaria" valor="3"
+					<mod:radio titulo="N√£o." var="intProOrcamentaria" valor="3"
 						reler="ajax" idAjax="intProOrcamentariaAjax" />
 				</mod:grupo>
 				<c:set var="valIntProOrcamentaria" value="${intProOrcamentaria}" />
@@ -509,8 +509,8 @@
 				</c:if>
 				<mod:grupo depende="intProOrcamentariaAjax">
 					<c:if test="${valIntProOrcamentaria == 3}">
-						<b>Neste caso, h· possibilidade de compensaÁ„o com outro item
-						da programaÁ„o autorizada (cota orÁament·ria)?</b>
+						<b>Neste caso, h√° possibilidade de compensa√ß√£o com outro item
+						da programa√ß√£o autorizada (cota or√ßament√°ria)?</b>
 						<mod:grupo largura="7">
 							<mod:radio titulo="Sim." var="intProOrc" valor="1" reler="ajax"
 								idAjax="intProOrcAjax" />
@@ -529,7 +529,7 @@
 							</mod:grupo>
 						</mod:grupo>
 						<mod:grupo>
-							<mod:radio titulo="N„o." var="intProOrc" valor="2" marcado="Sim"
+							<mod:radio titulo="N√£o." var="intProOrc" valor="2" marcado="Sim"
 								reler="ajax" idAjax="intProOrcAjax" />
 						</mod:grupo>
 					</c:if>
@@ -541,16 +541,16 @@
 
 		<mod:grupo>
 			<mod:grupo
-				titulo="8. Custos adicionais/decorrentes da contrataÁ„o (caso a utilizaÁ„o/consumo 
-				do objeto gere outra contrataÁ„o):">
+				titulo="8. Custos adicionais/decorrentes da contrata√ß√£o (caso a utiliza√ß√£o/consumo 
+				do objeto gere outra contrata√ß√£o):">
 				<mod:grupo>
 					<mod:selecao var="numCusAdicionais"
-						titulo="N˙mero de Custo(s) Adicional(is)" reler="ajax"
+						titulo="N√∫mero de Custo(s) Adicional(is)" reler="ajax"
 						idAjax="numCusAdicionaisAjax" opcoes="0;1;2;3;4;5" />
 				</mod:grupo>
 				<mod:grupo depende="numCusAdicionaisAjax">
 					<c:if test="${numCusAdicionais != 0}">
-						<mod:grupo titulo="ContrataÁ„o/AquisiÁ„o:" largura="68">
+						<mod:grupo titulo="Contrata√ß√£o/Aquisi√ß√£o:" largura="68">
 						</mod:grupo>
 						<mod:grupo titulo="Valor estimado:" largura="32">
 						</mod:grupo>					
@@ -582,22 +582,22 @@
 							onmouseout="document.getElementById('conDiv').style.visibility = 'hidden'">
 						<img src="<c:url value='/imagens/interrogation.jpg'/>" width=20
 							height=20 /></span></td>
-						<td><b>9. ContrataÁıes semelhantes em outros Ûrg„os
-						(preferencialmente no Poder Judici·rio Federal):</b></td>
+						<td><b>9. Contrata√ß√µes semelhantes em outros √≥rg√£os
+						(preferencialmente no Poder Judici√°rio Federal):</b></td>
 					</tr>
 				</table>
 				<mod:grupo>
 					<mod:selecao var="numContratacao"
-						titulo="N˙mero de ContrataÁ„o(ıes)" reler="ajax"
+						titulo="N√∫mero de Contrata√ß√£o(√µes)" reler="ajax"
 						idAjax="numContratacaoAjax" opcoes="0;1;2;3;4;5" />
 				</mod:grupo>
 				<mod:grupo depende="numContratacaoAjax">
 					<c:if test="${numContratacao != 0}">
-						<mod:grupo titulo="”rg„o:" largura="55">
+						<mod:grupo titulo="√ìrg√£o:" largura="55">
 						</mod:grupo>
 						<mod:grupo titulo="Valor contratado:" largura="20">
 						</mod:grupo>
-						<mod:grupo titulo="ExercÌcio:" largura="25">
+						<mod:grupo titulo="Exerc√≠cio:" largura="25">
 						</mod:grupo>					
 						<c:forEach var="i" begin="1" end="${numContratacao}">
 							<mod:grupo titulo="" largura="55">
@@ -614,7 +614,7 @@
 							</mod:grupo>
 						</c:forEach>	
 						<mod:grupo>	
-							<b>ObservaÁ„o(ıes):</b>
+							<b>Observa√ß√£o(√µes):</b>
 							<mod:memo titulo="" var="observacao" colunas="79" linhas="2" />
 						</mod:grupo>					
 					</c:if>
@@ -626,9 +626,9 @@
 
 		<mod:grupo>
 			<mod:grupo
-				titulo="10. Fatores que podem colocar em risco* a contrataÁ„o:">
+				titulo="10. Fatores que podem colocar em risco* a contrata√ß√£o:">
 				<mod:grupo>
-					<mod:selecao var="numFator" titulo="N˙mero de Fator(es)"
+					<mod:selecao var="numFator" titulo="N√∫mero de Fator(es)"
 						reler="ajax" idAjax="numFatorAjax" opcoes="0;1;2;3;4;5" />
 				</mod:grupo>
 				<mod:grupo depende="numFatorAjax">
@@ -638,9 +638,9 @@
 								<td width="43%" align="left"><br>
 								<b>Risco:</b></td>
 								<td width="43%" align="left"><br>
-								<b>Resposta (aÁ„o para evitar ou diminuir ocorrÍncia do
+								<b>Resposta (a√ß√£o para evitar ou diminuir ocorr√™ncia do
 								risco):</b></td>
-								<td width="14%" align="left"><b>U.O. respons·vel<br />
+								<td width="14%" align="left"><b>U.O. respons√°vel<br />
 								pela resposta:</b></td>
 							</tr>
 						</table>
@@ -657,7 +657,7 @@
 							</c:forEach>
 						</table>
 											
-						*Risco È um evento incerto que, se ocorrer, impacta em pelo menos um dos objetos do projeto.
+						*Risco √© um evento incerto que, se ocorrer, impacta em pelo menos um dos objetos do projeto.
 					</c:if>
 				</mod:grupo>
 			</mod:grupo>
@@ -675,15 +675,15 @@
 						onmouseout="document.getElementById('relDiv').style.visibility = 'hidden'">
 						<img src="<c:url value='/imagens/interrogation.jpg'/>" width=20
 						height=20 /></span></td>
-					<td><b>11. RelaÁ„o com contrataÁıes anteriores:</b></td>
+					<td><b>11. Rela√ß√£o com contrata√ß√µes anteriores:</b></td>
 				</tr>
 			</table>
 			<mod:grupo largura="60">
-				<mod:texto titulo="ContrataÁ„o anterior/Processo Administrativo"
+				<mod:texto titulo="Contrata√ß√£o anterior/Processo Administrativo"
 					var="conAntProAdm" largura="74" maxcaracteres="74" />
 			</mod:grupo>
 			<mod:grupo largura="40">
-				<mod:texto titulo="VigÍncia - Valor atual" var="vigValAtual"
+				<mod:texto titulo="Vig√™ncia - Valor atual" var="vigValAtual"
 					largura="30" maxcaracteres="30" />
 			</mod:grupo>
 			<mod:grupo>
@@ -696,14 +696,14 @@
 
 
 		<mod:grupo>
-			<mod:memo titulo="<b>12. LegislaÁ„o especÌfica pertinente</b>"
+			<mod:memo titulo="<b>12. Legisla√ß√£o espec√≠fica pertinente</b>"
 				var="legEspPertinente" colunas="80" linhas="2" />
 		</mod:grupo>
 
 		<hr>
 
 		<mod:grupo>
-			<mod:memo titulo="<b>13. InformaÁıes complementares</b>"
+			<mod:memo titulo="<b>13. Informa√ß√µes complementares</b>"
 				var="infComplementar" colunas="80" linhas="2" />
 		</mod:grupo>
 	</mod:entrevista>
@@ -744,7 +744,7 @@
 		<table width="100%" border="0" align="center">
 			<tr>
 				<td><b>CHECK LIST DE</b><br />
-				<b>PLANEJAMENTO DA CONTRATA«√O</b><br />
+				<b>PLANEJAMENTO DA CONTRATA√á√ÉO</b><br />
 				</td>
 			</tr>
 		</table>
@@ -754,8 +754,8 @@
 		<table cellpadding="4" width="100%" border="0">
 			<tr>
 				<td>
-				<p style="font-family: Arial; font-size: 10pt;">1. IdentificaÁ„o
-				da(s) unidade(s)/Servidor(es)respons·vel(is):</p>
+				<p style="font-family: Arial; font-size: 10pt;">1. Identifica√ß√£o
+				da(s) unidade(s)/Servidor(es)respons√°vel(is):</p>
 				</td>
 			</tr>
 		</table>
@@ -763,7 +763,7 @@
 		<table cellpadding="4" width="100%" border="1">
 			<tr>
 				<td>
-				<p style="font-family: Arial; font-size: 10pt;"><b>Subsecretaria/N˙cleo:&nbsp;&nbsp;&nbsp;</b></p>
+				<p style="font-family: Arial; font-size: 10pt;"><b>Subsecretaria/N√∫cleo:&nbsp;&nbsp;&nbsp;</b></p>
 				<p style="font-family: Arial; font-size: 10pt;">${requestScope['subNucleo_lotacaoSel.sigla']}&nbsp;-&nbsp;${requestScope['subNucleo_lotacaoSel.descricao']}</p>
 				</td>
 			</tr>
@@ -771,7 +771,7 @@
 			<c:forEach var="i" begin="1" end="${numFiscais}">
 			<tr>
 				<td>
-				<p style="font-family: Arial; font-size: 10pt;">${i})&nbsp;<b>Fiscal TÈcnico:&nbsp;&nbsp;&nbsp;</b></p>
+				<p style="font-family: Arial; font-size: 10pt;">${i})&nbsp;<b>Fiscal T√©cnico:&nbsp;&nbsp;&nbsp;</b></p>
 				<p style="font-family: Arial; font-size: 8pt;">${requestScope[f:concat(f:concat('fisTecnico',i),'_pessoaSel.descricao')]}</p>	<br>			
 				<p style="font-family: Arial; font-size: 10pt;"><b>&nbsp;&nbsp;&nbsp;&nbsp;Suplente:&nbsp;&nbsp;&nbsp;</b></p>			
 				<p style="font-family: Arial; font-size: 8pt;">${requestScope[f:concat(f:concat('suplente',i),'_pessoaSel.descricao')]}</p>
@@ -783,7 +783,7 @@
 			<c:if test="${not empty comRecebimento}">
 				<tr>
 					<td>
-					<p style="font-family: Arial; font-size: 10pt;"><b>Comiss„o
+					<p style="font-family: Arial; font-size: 10pt;"><b>Comiss√£o
 					de Recebimento (caso haja):&nbsp;&nbsp;&nbsp;</b></p>
 					<p style="font-family: Arial; font-size: 8pt;">${comRecebimento}</p>
 					</td>
@@ -806,7 +806,7 @@
 			<ww:if test="${not empty desNecQuantitativo}">
 				<tr>
 					<td>
-					<p style="font-family: Arial; font-size: 10pt;"><b>DescriÁ„o
+					<p style="font-family: Arial; font-size: 10pt;"><b>Descri√ß√£o
 					da necessidade/quantitativo:</b></p>
 					</td>
 				</tr>
@@ -819,13 +819,13 @@
 			<ww:else>
 				<tr>
 					<td>
-					<p style="font-family: Arial; font-size: 10pt;"><b>DescriÁ„o
+					<p style="font-family: Arial; font-size: 10pt;"><b>Descri√ß√£o
 					da necessidade/quantitativo:</b></p>
 					</td>
 				</tr>
 				<tr>
 					<td align="left" width="70%">
-					<p style="font-family: Arial; font-size: 8pt;">N„o h·
+					<p style="font-family: Arial; font-size: 8pt;">N√£o h√°
 					necessidade/quantitativo.</p>
 					</td>
 				</tr>
@@ -834,7 +834,7 @@
 				<tr>
 					<td>
 					<p style="font-family: Arial; font-size: 10pt;"><b>Viabilidade
-					tÈcnica:&nbsp;&nbsp;&nbsp;</b></p>
+					t√©cnica:&nbsp;&nbsp;&nbsp;</b></p>
 					</td>
 				</tr>
 				<tr>
@@ -847,13 +847,13 @@
 				<tr>
 					<td>
 					<p style="font-family: Arial; font-size: 10pt;"><b>Viabilidade
-					tÈcnica:&nbsp;&nbsp;&nbsp;</b></p>
+					t√©cnica:&nbsp;&nbsp;&nbsp;</b></p>
 					</td>
 				</tr>
 				<tr>
 					<td align="left" width="70%">
-					<p style="font-family: Arial; font-size: 8pt;">N„o h·
-					viabilidade tÈcnica.</p>
+					<p style="font-family: Arial; font-size: 8pt;">N√£o h√°
+					viabilidade t√©cnica.</p>
 					</td>
 				</tr>
 			</ww:else>
@@ -864,12 +864,12 @@
 		<table cellpadding="4" width="100%" border="0">
 			<tr>
 				<td>
-				<p style="font-family: Arial; font-size: 10pt;">3. IdentificaÁ„o
-				da contrataÁ„o:&nbsp;</p>
+				<p style="font-family: Arial; font-size: 10pt;">3. Identifica√ß√£o
+				da contrata√ß√£o:&nbsp;</p>
 				<ww:if test="${identificacao == '1'}">
 					<p style="font-family: Arial; font-size: 10pt;"><b>Material</b></p>
 				</ww:if> <ww:else>
-					<p style="font-family: Arial; font-size: 10pt;"><b>ServiÁo</b></p>
+					<p style="font-family: Arial; font-size: 10pt;"><b>Servi√ßo</b></p>
 				</ww:else></td>
 			</tr>
 		</table>
@@ -878,14 +878,14 @@
 			<table cellpadding="4" width="100%" border="1">
 				<tr>
 					<td>
-					<p style="font-family: Arial; font-size: 10pt;"><b>H·
-					necessidade tÈcnica de indicaÁ„o de marca?</b></p>
+					<p style="font-family: Arial; font-size: 10pt;"><b>H√°
+					necessidade t√©cnica de indica√ß√£o de marca?</b></p>
 					</td>
 				</tr>
 				<ww:if test="${indicMarca == '1'}">
 					<tr>
 						<td>
-						<p style="font-family: Arial; font-size: 8pt;">N„o.</p>
+						<p style="font-family: Arial; font-size: 8pt;">N√£o.</p>
 						</td>
 					</tr>
 				</ww:if>
@@ -902,14 +902,14 @@
 			<table cellpadding="4" width="100%" border="1">
 				<tr>
 					<td>
-					<p style="font-family: Arial; font-size: 10pt;"><b>Haver·
-					alocaÁ„o de m„o-de-obra?</b></p>
+					<p style="font-family: Arial; font-size: 10pt;"><b>Haver√°
+					aloca√ß√£o de m√£o-de-obra?</b></p>
 					</td>
 				</tr>
 				<ww:if test="${servico == '1'}">
 					<tr>
 						<td>
-						<p style="font-family: Arial; font-size: 8pt;">N„o.</p>
+						<p style="font-family: Arial; font-size: 8pt;">N√£o.</p>
 						</td>
 					</tr>
 				</ww:if>
@@ -917,8 +917,8 @@
 					<tr>
 						<td>
 						<p style="font-family: Arial; font-size: 8pt;">Sim,<b>houve
-						estudo prÈvio sobre a possibilidade de execuÁ„o do serviÁo sem a
-						presenÁa permanente (jornada fixa) da m„o-de-obra nas dependÍncias
+						estudo pr√©vio sobre a possibilidade de execu√ß√£o do servi√ßo sem a
+						presen√ßa permanente (jornada fixa) da m√£o-de-obra nas depend√™ncias
 						da SJRJ.<b></p>
 						</td>
 					</tr>
@@ -937,15 +937,15 @@
 				<c:when test="${tipEntrega == '1'}">
 					<tr>
 						<td>
-						<p style="font-family: Arial; font-size: 8pt;">PrestaÁ„o
-						˙nica.</p>
+						<p style="font-family: Arial; font-size: 8pt;">Presta√ß√£o
+						√∫nica.</p>
 						</td>
 					</tr>
 				</c:when>
 				<c:when test="${tipEntrega == '2'}">
 					<tr>
 						<td>
-						<p style="font-family: Arial; font-size: 8pt;">PrestaÁ„o
+						<p style="font-family: Arial; font-size: 8pt;">Presta√ß√£o
 						parcelada.</p>
 						</td>
 					</tr>
@@ -954,7 +954,7 @@
 				<c:when test="${tipEntrega == '3'}">
 					<tr>
 						<td>
-						<p style="font-family: Arial; font-size: 8pt;">PrestaÁ„o
+						<p style="font-family: Arial; font-size: 8pt;">Presta√ß√£o
 						continuada.&nbsp;${jusTipEntrega}</p>
 						</td>
 					</tr>
@@ -967,14 +967,14 @@
 			<tr>
 				<td>
 				<p style="font-family: Arial; font-size: 10pt;"><b>A
-				contrataÁ„o ser· por Registro de PreÁo? (Consultar PrÛs e Contras do
+				contrata√ß√£o ser√° por Registro de Pre√ßo? (Consultar Pr√≥s e Contras do
 				RP):</b></p>
 				</td>
 			</tr>
 			<ww:if test="${contratacao == '1'}">
 				<tr>
 					<td>
-					<p style="font-family: Arial; font-size: 8pt;">N„o.</p>
+					<p style="font-family: Arial; font-size: 8pt;">N√£o.</p>
 					</td>
 				</tr>
 			</ww:if>
@@ -988,8 +988,8 @@
 			</ww:else>
 			<tr>
 				<td>
-				<p style="font-family: Arial; font-size: 10pt;"><b>H·
-				necessidade de formaÁ„o de lote por motivos tÈcnicos?</b></p>
+				<p style="font-family: Arial; font-size: 10pt;"><b>H√°
+				necessidade de forma√ß√£o de lote por motivos t√©cnicos?</b></p>
 				</td>
 			</tr>
 			<ww:if test="${necFormacao == '1'}">
@@ -1003,8 +1003,8 @@
 			<ww:else>
 				<tr>
 					<td>
-					<p style="font-family: Arial; font-size: 8pt;">N„o. A formaÁ„o
-					de lotes em raz„o de valores deve ser avaliada apÛs a cotaÁ„o.</p>
+					<p style="font-family: Arial; font-size: 8pt;">N√£o. A forma√ß√£o
+					de lotes em raz√£o de valores deve ser avaliada ap√≥s a cota√ß√£o.</p>
 					</td>
 				</tr>
 			</ww:else>
@@ -1014,8 +1014,8 @@
 		<table cellpadding="4" width="100%" border="0">
 			<tr>
 				<td>
-				<p style="font-family: Arial; font-size: 10pt;">4. VinculaÁ„o
-				estratÈgica:</p>
+				<p style="font-family: Arial; font-size: 10pt;">4. Vincula√ß√£o
+				estrat√©gica:</p>
 				</td>
 			</tr>
 		</table>
@@ -1024,28 +1024,28 @@
 			<tr>
 				<td align="center">
 				<p style="font-family: Arial; font-size: 10pt;"><b>Projeto
-				EstratÈgico da SJRJ</b></p>
+				Estrat√©gico da SJRJ</b></p>
 				</td>
 				<td align="center">
 				<p style="font-family: Arial; font-size: 10pt;"><b>Mapa
-				EstratÈgico da JustiÁa Federal</b></p>
+				Estrat√©gico da Justi√ßa Federal</b></p>
 				</td>
 			</tr>
 			<tr>
 				<td>
 				<p style="font-family: Arial; font-size: 9pt;"><b>A
-				contrataÁ„o est· vinculada a algum Projeto EstratÈgico Anual da
+				contrata√ß√£o est√° vinculada a algum Projeto Estrat√©gico Anual da
 				SJRJ?</b></p>
 				<br>
 				<ww:if test="${vinculacao == '1'}">
-					<p style="font-family: Arial; font-size: 8pt;">N„o.</p>
+					<p style="font-family: Arial; font-size: 8pt;">N√£o.</p>
 				</ww:if> <ww:else>
 					<p style="font-family: Arial; font-size: 8pt;">Sim.&nbsp;${identVincProj}</p>
 				</ww:else></td>
 				<td>
 				<p style="font-family: Arial; font-size: 9pt;"><b>Objetivo(s)
-				estratÈgico(s) ao(s) qual(is) a contrataÁ„o est· vinculada, a partir
-				do Mapa EstratÈgico da JustiÁa Federal elaborado pelo CJF:</b></p>
+				estrat√©gico(s) ao(s) qual(is) a contrata√ß√£o est√° vinculada, a partir
+				do Mapa Estrat√©gico da Justi√ßa Federal elaborado pelo CJF:</b></p>
 				<br>
 				<c:forEach var="i" begin="1" end="15">
 					<c:if test="${requestScope[f:concat('objetivo',i)] == 'Sim'}">
@@ -1064,8 +1064,8 @@
 		<table cellpadding="4" width="100%" border="0">
 			<tr>
 				<td colspan="3">
-				<p style="font-family: Arial; font-size: 10pt;">5. IdentificaÁ„o
-				e observaÁıes de unidades envolvidas na contrataÁ„o:</p>
+				<p style="font-family: Arial; font-size: 10pt;">5. Identifica√ß√£o
+				e observa√ß√µes de unidades envolvidas na contrata√ß√£o:</p>
 				</td>
 			</tr>
 		</table>
@@ -1077,7 +1077,7 @@
 					<p style="font-family: Arial; font-size: 10pt;"><b>Subsecretaria</b></p>
 					</td>
 					<td align="center" width="235%">
-					<p style="font-family: Arial; font-size: 10pt;"><b>AtuaÁ„o/ObservaÁıes</b></p>
+					<p style="font-family: Arial; font-size: 10pt;"><b>Atua√ß√£o/Observa√ß√µes</b></p>
 					</td>
 				</tr>
 			</table>
@@ -1101,8 +1101,8 @@
 			<table cellpadding="4" width="100%" border="1">
 				<tr>
 					<td align="left" width="70%">
-					<p style="font-family: Arial; font-size: 8pt;">N„o h·
-					Subsecretarias e observaÁıes.</p>
+					<p style="font-family: Arial; font-size: 8pt;">N√£o h√°
+					Subsecretarias e observa√ß√µes.</p>
 					</td>
 				</tr>
 			</table>
@@ -1113,7 +1113,7 @@
 		<table cellpadding="4" width="100%" border="0">
 			<tr>
 				<td colspan="3">
-				<p style="font-family: Arial; font-size: 10pt;">6. H· outras
+				<p style="font-family: Arial; font-size: 10pt;">6. H√° outras
 				possibilidades de alcance do objetivo almejado?</p>
 				</td>
 			</tr>
@@ -1123,7 +1123,7 @@
 			<ww:if test="${posObjetivo == '1'}">
 				<tr>
 					<td>
-					<p style="font-family: Arial; font-size: 8pt;">N„o.</p>
+					<p style="font-family: Arial; font-size: 8pt;">N√£o.</p>
 					</td>
 				</tr>
 			</ww:if>
@@ -1157,7 +1157,7 @@
 				<td width="235">
 				<p style="font-family: Arial; font-size: 10pt;"><b>Fonte de
 				Recursos<br />
-				(convÍnios/orÁamento vigente/crÈdito a ser solicitado/outros)</b></p>
+				(conv√™nios/or√ßamento vigente/cr√©dito a ser solicitado/outros)</b></p>
 				</td>
 			</tr>
 			<tr>
@@ -1171,7 +1171,7 @@
 			<tr>
 				<td colspan="2">
 				<p style="font-family: Arial; font-size: 10pt;"><b>Integra a
-				programaÁ„o orÁament·ria do exercÌcio?</b></p>
+				programa√ß√£o or√ßament√°ria do exerc√≠cio?</b></p>
 				</td>
 			</tr>
 			<c:choose>
@@ -1186,21 +1186,21 @@
 					<tr>
 						<td colspan="2">
 						<p style="font-family: Arial; font-size: 8pt;">Sim. (com
-						alteraÁ„o do valor original).</p>
+						altera√ß√£o do valor original).</p>
 						</td>
 					</tr>
 				</c:when>
 				<c:when test="${intProOrcamentaria == '3'}">
 					<tr>
 						<td colspan="2">
-						<p style="font-family: Arial; font-size: 8pt;">N„o.</p>
+						<p style="font-family: Arial; font-size: 8pt;">N√£o.</p>
 						</td>
 					</tr>
 					<tr>
 						<td colspan="2">
 						<p style="font-family: Arial; font-size: 10pt;"><b>Neste
-						caso, h· possibilidade de compensaÁ„o com outro item da
-						programaÁ„o autorizada (cota orÁament·ria)?</b></p>
+						caso, h√° possibilidade de compensa√ß√£o com outro item da
+						programa√ß√£o autorizada (cota or√ßament√°ria)?</b></p>
 						</td>
 					</tr>
 					<ww:if test="${intProOrc == '1'}">
@@ -1214,7 +1214,7 @@
 					<ww:else>
 						<tr>
 							<td colspan="2">
-							<p style="font-family: Arial; font-size: 8pt;">N„o.</p>
+							<p style="font-family: Arial; font-size: 8pt;">N√£o.</p>
 							</td>
 						</tr>
 					</ww:else>
@@ -1228,8 +1228,8 @@
 			<tr>
 				<td>
 				<p style="font-family: Arial; font-size: 10pt;">8. Custos
-				adicionais/decorrentes da contrataÁ„o (caso a utilizaÁ„o/consumo do
-				objeto gere outra contrataÁ„o):</p>
+				adicionais/decorrentes da contrata√ß√£o (caso a utiliza√ß√£o/consumo do
+				objeto gere outra contrata√ß√£o):</p>
 				</td>
 			</tr>
 		</table>
@@ -1238,7 +1238,7 @@
 			<table cellpadding="4" width="100%" border="1">
 				<tr>
 					<td align="center" width="230">
-					<p style="font-family: Arial; font-size: 10pt;"><b>ContrataÁ„o/AquisiÁ„o</b></p>
+					<p style="font-family: Arial; font-size: 10pt;"><b>Contrata√ß√£o/Aquisi√ß√£o</b></p>
 					</td>
 					<td align="center" width="70">
 					<p style="font-family: Arial; font-size: 10pt;"><b>Valor
@@ -1266,7 +1266,7 @@
 			<table cellpadding="4" width="100%" border="1">
 				<tr>
 					<td align="left" width="70%">
-					<p style="font-family: Arial; font-size: 8pt;">N„o h· custos
+					<p style="font-family: Arial; font-size: 8pt;">N√£o h√° custos
 					adicionais.</p>
 					</td>
 				</tr>
@@ -1279,8 +1279,8 @@
 		<table cellpadding="4" width="100%" border="0">
 			<tr>
 				<td>
-				<p style="font-family: Arial; font-size: 10pt;">9. ContrataÁıes
-				semelhantes em outros Ûrg„os (preferencialmente no Poder Judici·rio
+				<p style="font-family: Arial; font-size: 10pt;">9. Contrata√ß√µes
+				semelhantes em outros √≥rg√£os (preferencialmente no Poder Judici√°rio
 				Federal):</p>
 				</td>
 			</tr>
@@ -1289,14 +1289,14 @@
 			<table cellpadding="4" width="100%" border="1">
 				<tr>
 					<td align="center" width="170">
-					<p style="font-family: Arial; font-size: 10pt;"><b>”rg„o</b></p>
+					<p style="font-family: Arial; font-size: 10pt;"><b>√ìrg√£o</b></p>
 					</td>
 					<td align="center" width="65">
 					<p style="font-family: Arial; font-size: 10pt;"><b>Valor
 					contratado</b></p>
 					</td>
 					<td align="center" width="65">
-					<p style="font-family: Arial; font-size: 10pt;"><b>ExercÌcio</b></p>
+					<p style="font-family: Arial; font-size: 10pt;"><b>Exerc√≠cio</b></p>
 					</td>
 				</tr>
 			</table>
@@ -1321,7 +1321,7 @@
 			<table cellpadding="4" width="100%" border="1">
 				<tr>
 					<td colspan="3">
-					<p style="font-family: Arial; font-size: 10pt;"><b>ObservaÁ„o(ıes):</b>&nbsp;</p>
+					<p style="font-family: Arial; font-size: 10pt;"><b>Observa√ß√£o(√µes):</b>&nbsp;</p>
 					<p style="font-family: Arial; font-size: 8pt;">${observacao}</p>
 					</td>
 			</table>
@@ -1330,8 +1330,8 @@
 			<table cellpadding="4" width="100%" border="1">
 				<tr>
 					<td align="left" width="70%">
-					<p style="font-family: Arial; font-size: 8pt;">N„o h·
-					contrataÁıes semelhantes.</p>
+					<p style="font-family: Arial; font-size: 8pt;">N√£o h√°
+					contrata√ß√µes semelhantes.</p>
 					</td>
 				</tr>
 			</table>
@@ -1343,7 +1343,7 @@
 			<tr>
 				<td>
 				<p style="font-family: Arial; font-size: 10pt;">10. Fatores que
-				podem colocar em risco a contrataÁ„o:</p>
+				podem colocar em risco a contrata√ß√£o:</p>
 				</td>
 			</tr>
 		</table>
@@ -1355,11 +1355,11 @@
 					</td>
 					<td align="left" width="43%">
 					<p style="font-family: Arial; font-size: 8pt;"><b>Resposta
-					(aÁ„o para evitar ou diminuir ocorrÍncia do risco)</b></p>
+					(a√ß√£o para evitar ou diminuir ocorr√™ncia do risco)</b></p>
 					</td>
 					<td align="center" width="14%">
 					<p style="font-family: Arial; font-size: 8pt;"><b>U.O.
-					respons·vel<br />
+					respons√°vel<br />
 					pela resposta</b></p>
 					</td>
 				</tr>
@@ -1386,7 +1386,7 @@
 			<table cellpadding="4" width="100%" border="1">
 				<tr>
 					<td colspan="3">
-					<p style="font-family: Arial; font-size: 10pt;"><b>*</b>Risco È
+					<p style="font-family: Arial; font-size: 10pt;"><b>*</b>Risco √©
 					um evento que, se ocorrer, impacta em pelo menos um dos objetivos
 					do projeto.</p>
 					</td>
@@ -1397,7 +1397,7 @@
 			<table cellpadding="4" width="100%" border="1">
 				<tr>
 					<td align="left" width="70%">
-					<p style="font-family: Arial; font-size: 8pt;">N„o h· fatores
+					<p style="font-family: Arial; font-size: 8pt;">N√£o h√° fatores
 					de risco.</p>
 					</td>
 				</tr>
@@ -1408,14 +1408,14 @@
 
 		<table cellpadding="4" width="100%" border="0">
 			<tr>
-				<td colspan="2"><p style="font-family: Arial; font-size: 10pt;">11. RelaÁ„o com contrataÁıes anteriores:</p></td>
+				<td colspan="2"><p style="font-family: Arial; font-size: 10pt;">11. Rela√ß√£o com contrata√ß√µes anteriores:</p></td>
 			</tr>
 		</table>
 		<table cellpadding="4" width="100%" border="1">
 			<ww:if test="${not empty conAntProAdm || not empty vigValAtual}">
 				<tr>
-					<td align="left" width="220"><p style="font-family: Arial; font-size: 10pt;"><b>ContrataÁ„o anterior/Processo Administrativo</b></p></td>
-					<td align="center" width="80"><p style="font-family: Arial; font-size: 10pt;"><b>VigÍncia - Valor atual</b></p></td>
+					<td align="left" width="220"><p style="font-family: Arial; font-size: 10pt;"><b>Contrata√ß√£o anterior/Processo Administrativo</b></p></td>
+					<td align="center" width="80"><p style="font-family: Arial; font-size: 10pt;"><b>Vig√™ncia - Valor atual</b></p></td>
 				</tr>
 				<tr>
 					<td><p style="font-family: Arial; font-size: 8pt;">${conAntProAdm}</p></td>
@@ -1424,7 +1424,7 @@
 			</ww:if>
 			<ww:else>
 				<tr>
-					<td colspan="2" align="left" width="70%"><p style="font-family: Arial; font-size: 8pt;">N„o houve contrataÁıes anteriores.</p></td>
+					<td colspan="2" align="left" width="70%"><p style="font-family: Arial; font-size: 8pt;">N√£o houve contrata√ß√µes anteriores.</p></td>
 				</tr>
 			</ww:else>
 			
@@ -1444,7 +1444,7 @@
 
 		<table cellpadding="4" width="100%" border="0">
 			<tr>
-				<td><p style="font-family: Arial; font-size: 10pt;">12. LegislaÁ„o especÌfica pertinente:</p></td>
+				<td><p style="font-family: Arial; font-size: 10pt;">12. Legisla√ß√£o espec√≠fica pertinente:</p></td>
 			</tr>
 		</table>
 		<table cellpadding="4" width="100%" border="1">
@@ -1455,7 +1455,7 @@
 			</ww:if>
 			<ww:else>
 				<tr>
-					<td align="left" width="70%"><p style="font-family: Arial; font-size: 8pt;">N„o h· legislaÁ„o pertinente.</p></td>
+					<td align="left" width="70%"><p style="font-family: Arial; font-size: 8pt;">N√£o h√° legisla√ß√£o pertinente.</p></td>
 				</tr>
 			</ww:else>			
 		</table>
@@ -1464,7 +1464,7 @@
 
 		<table cellpadding="4" width="100%" border="0">
 			<tr>
-				<td><p style="font-family: Arial; font-size: 10pt;">13. InformaÁıes complementares:</p></td>
+				<td><p style="font-family: Arial; font-size: 10pt;">13. Informa√ß√µes complementares:</p></td>
 			</tr>
 		</table>	
 		<table cellpadding="4" width="100%" border="1">
@@ -1475,7 +1475,7 @@
 			</ww:if>
 			<ww:else>
 				<tr>
-					<td align="left" width="70%"><p style="font-family: Arial; font-size: 8pt;">N„o h· informaÁıes complementares.</p></td>
+					<td align="left" width="70%"><p style="font-family: Arial; font-size: 8pt;">N√£o h√° informa√ß√µes complementares.</p></td>
 				</tr>
 			</ww:else>			
 		</table>

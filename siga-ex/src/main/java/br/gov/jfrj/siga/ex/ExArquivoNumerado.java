@@ -93,6 +93,16 @@ public class ExArquivoNumerado implements Comparable {
 		}
 		return null;
 	};
+	
+	public String getNomeOuDescricao() {
+		if (getArquivo() instanceof ExDocumento) {
+			ExDocumento doc = (ExDocumento) getArquivo();
+			if (doc.getExTipoDocumento().getId() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)
+				return doc.getDescrDocumento();
+		}
+		return getNome();
+	};
+
 
 	public String getReferencia() {
 		if (getArquivo() instanceof ExDocumento) {
@@ -112,10 +122,20 @@ public class ExArquivoNumerado implements Comparable {
 		return getReferencia() + ".pdf";
 	}
 
+	public String getReferenciaPDFCompleto() {
+		if (!getArquivo().isPdf())
+			return null;
+		return getReferencia() + ".pdf&completo=1";
+	}
+
 	public String getReferenciaHtml() {
 		if (getArquivo().getHtml() == null)
 			return null;
 		return getReferencia() + ".html";
+	}
+	
+	public String getReferenciaHtmlCompleto() {
+		return getReferencia() + ".html&completo=1";
 	}
 
 	public ExMobil getMobil() {

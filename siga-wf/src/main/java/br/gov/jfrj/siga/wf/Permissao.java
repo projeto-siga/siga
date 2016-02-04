@@ -22,40 +22,40 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 /**
- * Esta classe representa uma permiss„o para instaciaÁ„o de procedimentos e È utilizada na view configurarInstanciacao.jsp 
+ * Esta classe representa uma permiss√£o para instacia√ß√£o de procedimentos e √© utilizada na view configurarInstanciacao.jsp 
  * 
  * @author kpf
  * 
  */
 public class Permissao {
     private String procedimento;
-    private Long Id;
+    private Long id;
     private DpPessoa pessoa;
     private DpLotacao lotacao;
     private Integer tipoResponsavel;
     
     /**
-     * Retorna o tipo de respons·vel que pode instanciar um procedimento.
-     * @return 0 - INDEFINIDO (sem definiÁ„o de permiss„o)
-     * 1 - MATRICULA (permiss„o para uma pessoa)
-     * 2 - LOTACAO (permiss„o para uma lotaÁ„o inteira, ou seja, todos da lotaÁ„o)
+     * Retorna o tipo de respons√°vel que pode instanciar um procedimento.
+     * @return 0 - INDEFINIDO (sem defini√ß√£o de permiss√£o)
+     * 1 - MATRICULA (permiss√£o para uma pessoa)
+     * 2 - LOTACAO (permiss√£o para uma lota√ß√£o inteira, ou seja, todos da lota√ß√£o)
      */
 	public Integer getTipoResponsavel() {
 		return tipoResponsavel;
 	}
 	
     /**
-     * Informa o tipo de respons·vel que pode instanciar um procedimento.
-     * @return 0 - INDEFINIDO (sem definiÁ„o de permiss„o)
-     * 1 - MATRICULA (permiss„o para uma pessoa)
-     * 2 - LOTACAO (permiss„o para uma lotaÁ„o inteira, ou seja, todos da lotaÁ„o)
+     * Informa o tipo de respons√°vel que pode instanciar um procedimento.
+     * @return 0 - INDEFINIDO (sem defini√ß√£o de permiss√£o)
+     * 1 - MATRICULA (permiss√£o para uma pessoa)
+     * 2 - LOTACAO (permiss√£o para uma lota√ß√£o inteira, ou seja, todos da lota√ß√£o)
      */
 	public void setTipoResponsavel(Integer tipoResponsavel) {
 		this.tipoResponsavel = tipoResponsavel;
 	}
 	
 	/**
-	 * Retorna o procedimento referente ‡ permiss„o.
+	 * Retorna o procedimento referente √† permiss√£o.
 	 * 
 	 * @return
 	 */
@@ -64,7 +64,7 @@ public class Permissao {
 	}
 	
 	/**
-	 * Informa o procedimento referente ‡ permiss„o.
+	 * Informa o procedimento referente √† permiss√£o.
 	 *  
 	 */
 	public void setProcedimento(String procedimento) {
@@ -72,7 +72,7 @@ public class Permissao {
 	}
 	
 	/**
-	 * Retorna a pessoa referente ‡ permiss„o.
+	 * Retorna a pessoa referente √† permiss√£o.
 	 * @return
 	 */
 	public DpPessoa getPessoa() {
@@ -80,7 +80,7 @@ public class Permissao {
 	}
 	
 	/**
-	 * Informa  a pessoa referente ‡ permiss„o.
+	 * Informa  a pessoa referente √† permiss√£o.
 	 * @param pessoa
 	 */
 	public void setPessoa(DpPessoa pessoa) {
@@ -88,7 +88,7 @@ public class Permissao {
 	}
 	
 	/**
-	 *  Retorna a lotaÁ„o referente ‡ permiss„o.
+	 *  Retorna a lota√ß√£o referente √† permiss√£o.
 	 * @return
 	 */
 	public DpLotacao getLotacao() {
@@ -96,7 +96,7 @@ public class Permissao {
 	}
 	
 	/**
-	 * Informa a lotaÁ„o referente ‡ permiss„o.
+	 * Informa a lota√ß√£o referente √† permiss√£o.
 	 * @param lotacao
 	 */
 	public void setLotacao(DpLotacao lotacao) {
@@ -104,19 +104,19 @@ public class Permissao {
 	}
 
 	/**
-	 * Retorna o id da permiss„o.
+	 * Retorna o id da permiss√£o.
 	 * @return
 	 */
 	public Long getId() {
-		return Id;
+		return this.id;
 	}
 	
 	/**
-	 * Informa o id da permiss„o.
+	 * Informa o id da permiss√£o.
 	 * @param id
 	 */
 	public void setId(Long id) {
-		Id = id;
+		this.id = id;
 	}
 
 }

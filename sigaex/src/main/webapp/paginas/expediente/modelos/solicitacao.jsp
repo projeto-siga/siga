@@ -7,7 +7,7 @@
 	<mod:entrevista>
 
 	<c:if test="${empty esconderTexto}">		
-		<mod:grupo titulo="Texto a ser inserido no corpo da solicitação">
+		<mod:grupo titulo="Texto a ser inserido no corpo da solicitaÃ§Ã£o">
 			<mod:grupo>
 				<mod:editor titulo="" var="texto_solicitacao" />
 			</mod:grupo>
@@ -47,7 +47,7 @@
 		</table>
 		FIM PRIMEIRO CABECALHO -->
 		<!-- INICIO CORPO -->
-		<p align="right"><b><!-- INICIO NUMERO -->SOLICITAÇÃO Nº ${doc.codigo}<!-- FIM NUMERO --></b><br/>${doc.dtExtenso}
+		<p align="right"><b><!-- INICIO NUMERO -->SOLICITAÃ‡ÃƒO NÂº ${doc.codigo}<!-- FIM NUMERO --></b><br/>${doc.dtExtenso}
 		</p>
 					<h1 algin="center">Exmo(a). Sr(a). Juiz(a) Federal - Diretor do Foro</h1>
 					

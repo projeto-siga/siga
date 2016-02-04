@@ -22,7 +22,7 @@ import org.jbpm.JbpmConfiguration;
 import org.jbpm.job.executor.JobExecutor;
 
 /**
- * Classe que representa o executor de jobs do JBPM. Esta classe é definida em
+ * Classe que representa o executor de jobs do JBPM. Esta classe Ã© definida em
  * siga-wf/src/jbpm.cfg.xml.
  * 
  * @author kpf
@@ -31,7 +31,7 @@ import org.jbpm.job.executor.JobExecutor;
 public class WfJobExecutor extends JobExecutor {
 
 	/**
-	 * Cria uma thread para a execução de job.
+	 * Cria uma thread para a execuÃ§Ã£o de job.
 	 */
 	@Override
 	protected Thread createThread(String threadName) {

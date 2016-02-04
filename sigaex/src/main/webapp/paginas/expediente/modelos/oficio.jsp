@@ -11,13 +11,13 @@
 			<mod:grupo>
 				<mod:grupo>
 					<mod:selecao titulo="Tipo de Autoridade" var="tipoAutoridade"
-						opcoes="[Nenhum];Auditor da Justiça Militar;Bispo e Arcebispo;Cardeal;Chefe de Gabinete Civil;Chefe de Gabinete Militar da Presidência da República;Consultor-Geral da República;Corregedor do Tribunal Regional Federal;Dirigente administrativo e Procurador;Embaixador;Governador de Estado e do Distrito Federal;Juiz Federal;Juiz em geral;Membro do Congresso Nacional;Membro do Supremo Tribunal Federal;Membro do Tribunal Superior;Membro do Tribunal de Contas da União;Membro do Tribunal Regional Federal;Membro do Tribunal de Justiça;Membro da Assembléia Legislativa;Ministro de Estado;Monsenhor, Cônego;Prefeito;Presidente da República;Presidente do Supremo Tribunal Federal;Presidente do Tribunal Superior;Presidente do Tribunal Regional Federal;Presidente do Tribunal de Justiça;Presidente da Assembléia Legislativa;Presidente do Tribunal de Contas da União;Procurador-Geral da República;Procurador-Geral junto ao Tribunal;Secretário de Estado do Governo Estadual;Reitor de Universidade;Vice-Presidente da República;Oficial General das Forças Armadas;[Outros]"
+						opcoes="[Nenhum];Auditor da JustiÃ§a Militar;Bispo e Arcebispo;Cardeal;Chefe de Gabinete Civil;Chefe de Gabinete Militar da PresidÃªncia da RepÃºblica;Consultor-Geral da RepÃºblica;Corregedor do Tribunal Regional Federal;Dirigente administrativo e Procurador;Embaixador;Governador de Estado e do Distrito Federal;Juiz Federal;Juiz em geral;Membro do Congresso Nacional;Membro do Supremo Tribunal Federal;Membro do Tribunal Superior;Membro do Tribunal de Contas da UniÃ£o;Membro do Tribunal Regional Federal;Membro do Tribunal de JustiÃ§a;Membro da AssemblÃ©ia Legislativa;Ministro de Estado;Monsenhor, CÃ´nego;Prefeito;Presidente da RepÃºblica;Presidente do Supremo Tribunal Federal;Presidente do Tribunal Superior;Presidente do Tribunal Regional Federal;Presidente do Tribunal de JustiÃ§a;Presidente da AssemblÃ©ia Legislativa;Presidente do Tribunal de Contas da UniÃ£o;Procurador-Geral da RepÃºblica;Procurador-Geral junto ao Tribunal;SecretÃ¡rio de Estado do Governo Estadual;Reitor de Universidade;Vice-Presidente da RepÃºblica;Oficial General das ForÃ§as Armadas;[Outros]"
 						reler="sim" />
 
 					<c:choose>
 						<c:when
 							test="${f:verificaGenero(requestScope['tipoAutoridade'])=='F'}">
-							<mod:selecao titulo="Gênero da Autoridade" var="genero"
+							<mod:selecao titulo="GÃªnero da Autoridade" var="genero"
 								opcoes="M;F" reler="sim" />
 						</c:when>
 						<c:otherwise>
@@ -58,7 +58,7 @@
 
 
 
-				<mod:grupo titulo="Texto a ser inserido no corpo do ofício">
+				<mod:grupo titulo="Texto a ser inserido no corpo do ofÃ­cio">
 					<mod:grupo>
 						<mod:editor titulo="" var="texto_oficio" />
 					</mod:grupo>
@@ -69,13 +69,13 @@
 				</mod:grupo>
 			</mod:grupo>
 
-			<mod:grupo titulo="Dados do destinatário">
+			<mod:grupo titulo="Dados do destinatÃ¡rio">
 
 				<!-- Tratamento -->
 				<c:if test="${not empty tratamento}">
 					<mod:grupo>
 						<mod:caixaverif
-							titulo="Especificar manualmente a forma de endereçamento"
+							titulo="Especificar manualmente a forma de endereÃ§amento"
 							var="especificarEnderecamento" reler="sim" />
 					</mod:grupo>
 				</c:if>
@@ -83,7 +83,7 @@
 					<c:when
 						test="${especificarEnderecamento == 'Sim' or empty tratamento}">
 						<mod:grupo>
-							<mod:texto titulo="Forma de endereçamento"
+							<mod:texto titulo="Forma de endereÃ§amento"
 								var="enderecamento_dest" largura="45" />
 						</mod:grupo>
 					</c:when>
@@ -97,7 +97,7 @@
 				<c:if test="${not empty doc.destinatario.descricao}">
 					<mod:grupo>
 						<mod:caixaverif
-							titulo="Especificar manualmente o nome do destinatário"
+							titulo="Especificar manualmente o nome do destinatÃ¡rio"
 							var="especificarNome" reler="sim" />
 					</mod:grupo>
 				</c:if>
@@ -117,7 +117,7 @@
 				<c:if test="${not empty doc.destinatario.cargo.nomeCargo}">
 					<mod:grupo>
 						<mod:caixaverif
-							titulo="Especificar manualmente o cargo do destinatário"
+							titulo="Especificar manualmente o cargo do destinatÃ¡rio"
 							var="especificarCargo" reler="sim" />
 					</mod:grupo>
 				</c:if>
@@ -134,7 +134,7 @@
 					</c:otherwise>
 				</c:choose>
 
-				<!-- Órgão -->
+				<!-- Ã“rgÃ£o -->
 				<c:choose>
 					<c:when test="${not empty doc.lotaDestinatario.descricao}">
 						<c:set var="orgaoAux" value="${doc.lotaDestinatario.descricao}" />
@@ -147,14 +147,14 @@
 				<c:if test="${not empty orgaoAux}">
 					<mod:grupo>
 						<mod:caixaverif
-							titulo="Especificar manualmente o órgão do destinatário"
+							titulo="Especificar manualmente o Ã³rgÃ£o do destinatÃ¡rio"
 							var="especificarOrgao" reler="sim" />
 					</mod:grupo>
 				</c:if>
 				<c:choose>
 					<c:when test="${especificarOrgao == 'Sim' or empty orgaoAux}">
 						<mod:grupo>
-							<mod:texto titulo="Órgão" var="orgao_dest" largura="60" />
+							<mod:texto titulo="Ã“rgÃ£o" var="orgao_dest" largura="60" />
 						</mod:grupo>
 					</c:when>
 					<c:otherwise>
@@ -165,7 +165,7 @@
 			</mod:grupo>
 
 			<mod:grupo>
-				<mod:memo titulo="Endereço" var="endereco_dest" linhas="4"
+				<mod:memo titulo="EndereÃ§o" var="endereco_dest" linhas="4"
 					colunas="60" />
 			</mod:grupo>
 			<mod:selecao titulo="Tamanho da letra" var="tamanhoLetra"

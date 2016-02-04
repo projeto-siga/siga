@@ -1,5 +1,4 @@
 <%@ tag body-content="scriptless"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>

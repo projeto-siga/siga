@@ -14,7 +14,7 @@
 				<mod:texto titulo="Vocativo" var="vocativo" largura="30" />
 			</mod:grupo>
 		</mod:grupo>
-		<mod:grupo titulo="Texto a ser inserido no corpo da informação">
+		<mod:grupo titulo="Texto a ser inserido no corpo da informaÃ§Ã£o">
 			<mod:grupo>
 				<mod:editor titulo="" var="texto_informacao" />
 			</mod:grupo>

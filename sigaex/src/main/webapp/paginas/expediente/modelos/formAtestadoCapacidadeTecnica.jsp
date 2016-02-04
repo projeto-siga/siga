@@ -15,15 +15,15 @@
 				<mod:texto titulo="Nome" var="nomeEmpresa" largura="60" />
 			</mod:grupo>
 			<mod:grupo largura="55">
-				<mod:texto titulo="CNPJ/MF nº" var="cnpj" largura="16" />
+				<mod:texto titulo="CNPJ/MF nÂº" var="cnpj" largura="16" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Endereço" var="enderecoEmpresa" largura="70" />
+				<mod:texto titulo="EndereÃ§o" var="enderecoEmpresa" largura="70" />
 			</mod:grupo>
 		</mod:grupo>
-		<mod:grupo titulo="Dados da Contratação">			
+		<mod:grupo titulo="Dados da ContrataÃ§Ã£o">			
  			<mod:grupo>
-				<mod:caixaverif titulo="Executou os serviços"
+				<mod:caixaverif titulo="Executou os serviÃ§os"
 							var="servicos" reler="ajax" idAjax="servicosAjax" />
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;				
 				<mod:caixaverif titulo="Forneceu os materiais"
@@ -35,17 +35,17 @@
 			</mod:grupo>
 			<mod:grupo>
 				<mod:grupo largura="40">
-					<mod:texto titulo="Ata de Registro de Preços (se couber)" var="ata"
+					<mod:texto titulo="Ata de Registro de PreÃ§os (se couber)" var="ata"
 					largura="10" />
 				</mod:grupo>	
 				<mod:grupo largura="60">
-					<mod:texto titulo="Número do Contrato/Nota de Empenho"
+					<mod:texto titulo="NÃºmero do Contrato/Nota de Empenho"
 					var="contrato" largura="10" />
 				</mod:grupo>	
 			</mod:grupo>
 			<mod:grupo>
 				<mod:grupo largura="40">
-					<mod:data titulo="Data de Vigência" var="dataIni" />
+					<mod:data titulo="Data de VigÃªncia" var="dataIni" />
 					<mod:data titulo="a" var="dataFim" />
 				</mod:grupo>				
 					<mod:grupo largura="60">
@@ -54,7 +54,7 @@
 			</mod:grupo>
 			<mod:grupo>	
 				<mod:grupo largura="40">
-					<mod:data titulo="Data de Recebimento Provisório"
+					<mod:data titulo="Data de Recebimento ProvisÃ³rio"
 						var="dataProvisorio" />
 				</mod:grupo>
 				<mod:grupo largura="60">
@@ -64,12 +64,12 @@
 			</mod:grupo>
 			<mod:grupo depende="servicosAjax">
 				<c:if test="${servicos == 'Sim'}">
-					<mod:texto titulo="Local da prestação dos serviços" var="local"
+					<mod:texto titulo="Local da prestaÃ§Ã£o dos serviÃ§os" var="local"
 						largura="50" />
 				</c:if>			
 			</mod:grupo>
 			<mod:grupo>
-				<mod:selecao titulo="Profissionais responsáveis técnicos (se couber)"
+				<mod:selecao titulo="Profissionais responsÃ¡veis tÃ©cnicos (se couber)"
 					var="numProfissionais" opcoes="0;1;2;3" reler="ajax" idAjax="profissionaisAjax"/>
 			</mod:grupo>
 			<mod:grupo depende="profissionaisAjax">
@@ -82,21 +82,21 @@
 				</c:if>
 			</mod:grupo>			
 		</mod:grupo>
-		<mod:grupo titulo="Descrição da Contratação">
-			<mod:selecao titulo="Número de itens a serem incluídos"
+		<mod:grupo titulo="DescriÃ§Ã£o da ContrataÃ§Ã£o">
+			<mod:selecao titulo="NÃºmero de itens a serem incluÃ­dos"
 				var="numItens" opcoes="0;1;2;3;4;5;6;7;8;9;10" reler="ajax" idAjax="numItensAjax" />
 			<mod:grupo depende="numItensAjax">
 				<c:if test="${numItens != 0}">						
 					<c:forEach var="i" begin="1" end="${numItens}">
 						<mod:grupo>
 							<b>${i})</b>
-							<mod:texto titulo="Especificação" var="especificacao${i}" largura="40" />
+							<mod:texto titulo="EspecificaÃ§Ã£o" var="especificacao${i}" largura="40" />
 							<mod:texto titulo="Unidade" var="unidade${i}" />
 							<mod:texto titulo="Quantidade" var="quantidade${i}" largura="4" />
 						</mod:grupo> 
 						<mod:grupo>
 							&nbsp;&nbsp;&nbsp;
-							<mod:selecao titulo="Número de subitens a serem incluídos"
+							<mod:selecao titulo="NÃºmero de subitens a serem incluÃ­dos"
 							var="numSubItens${i}" opcoes="0;1;2;3;4;5;6;7;8;9;10"
 							reler="ajax" idAjax="numSubItensAjax${i}" />
 						</mod:grupo>	
@@ -106,14 +106,14 @@
 									 <mod:grupo>
 									 	&nbsp;&nbsp;&nbsp;
 										<b>${i}.${j})</b>
-										<mod:texto titulo="Especificação" var="especificacao${i}${j}"
+										<mod:texto titulo="EspecificaÃ§Ã£o" var="especificacao${i}${j}"
 											largura="40" />
 										<mod:texto titulo="Unidade" var="unidade${i}${j}" />
 										<mod:texto titulo="Quantidade" var="quantidade${i}${j}" largura="4" />
 									</mod:grupo> 
 									<mod:grupo>
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<mod:selecao titulo="Número de sub subitens a serem incluídos"
+										<mod:selecao titulo="NÃºmero de sub subitens a serem incluÃ­dos"
 											var="numSubItens${i}${j}" opcoes="0;1;2;3;4;5;6;7;8;9;10"
 											reler="ajax" idAjax="numSubItensAjax${i}${j}" />
 										<mod:grupo depende="numSubItensAjax${i}${j}">
@@ -122,7 +122,7 @@
 													<mod:grupo>
 														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 														<b>${i}.${j}.${k})</b>
-														<mod:texto titulo="Especificação"
+														<mod:texto titulo="EspecificaÃ§Ã£o"
 															var="especificacao${i}${j}${k}" largura="40" />
 														<mod:texto titulo="Unidade" var="unidade${i}${j}${k}" />
 														<mod:texto titulo="Quantidade" var="quantidade${i}${j}${k}" largura="4" />
@@ -180,13 +180,13 @@
 
 		<p>Ref. Processo : ${numProcesso}</p>
 		
-		<p style="text-align: center; font: bold;"><b>ATESTADO DE CAPACIDADE TÉCNICA </b></p>
+		<p style="text-align: center; font: bold;"><b>ATESTADO DE CAPACIDADE TÃ‰CNICA </b></p>
 		
-		<p style="text-align: justify;">JUSTIÇA FEDERAL DE 1º GRAU NO RIO DE JANEIRO, estabelecida na Av. Rio Branco, 243 - Anexo I - Centro - Rio de Janeiro - RJ, 
-		inscrita no CNPJ/MF sob o nº 05.424.540/0001-16, ATESTA, para os devidos fins de direito, que a empresa 
-		${nomeEmpresa}, estabelecida na ${enderecoEmpresa}, inscrita no CNPJ/MF sob o nº ${cnpj},
+		<p style="text-align: justify;">JUSTIÃ‡A FEDERAL DE 1Âº GRAU NO RIO DE JANEIRO, estabelecida na Av. Rio Branco, 243 - Anexo I - Centro - Rio de Janeiro - RJ, 
+		inscrita no CNPJ/MF sob o nÂº 05.424.540/0001-16, ATESTA, para os devidos fins de direito, que a empresa 
+		${nomeEmpresa}, estabelecida na ${enderecoEmpresa}, inscrita no CNPJ/MF sob o nÂº ${cnpj},
 		<ww:if test="${servicos == 'Sim'}">
-			executou os serviços
+			executou os serviÃ§os
 			<c:if test="${materiais == 'Sim'}">
 				e forneceu os materiais 
 			</c:if>	
@@ -203,35 +203,35 @@
 		<table border="1" width="100%" align="left" cellpadding="5">
 			<ww:if test="${not empty ata}">	
 				<tr bgcolor="#999999">
-						<td colspan="3"><b>DADOS DA CONTRATAÇÃO</b></td>
+						<td colspan="3"><b>DADOS DA CONTRATAÃ‡ÃƒO</b></td>
 				</tr>
 				<tr>
 					<td colspan="3" cels>Objeto: ${objeto} </td>
 				</tr>			
 				<tr>		
-					<td> Ata de Registro de preços: ${ata} </td> 													 
+					<td> Ata de Registro de preÃ§os: ${ata} </td> 													 
 					<td> Contrato/Nota de Empenho: ${contrato} </td>
-					<td> Vigência: ${dataIni} à ${dataFim} </td>				
+					<td> VigÃªncia: ${dataIni} Ã  ${dataFim} </td>				
 				</tr>				
 				<tr>
-					<td>Data do Recebimento Provisório: ${dataProvisorio} </td>
+					<td>Data do Recebimento ProvisÃ³rio: ${dataProvisorio} </td>
 					<td>Data do Recebimento Definitivo: ${dataDefinitivo} </td>
 					<td>Valor do Contrato:  ${valContrato} </td>
 				</tr>
 			</ww:if>				
 			<ww:else>
 				<tr bgcolor="#999999">
-						<td colspan="3"><b>DADOS DA CONTRATAÇÃO</b></td>
+						<td colspan="3"><b>DADOS DA CONTRATAÃ‡ÃƒO</b></td>
 				</tr>
 				<tr>
 					<td colspan="3">Objeto: ${objeto} </td>
 				</tr>			
 				<tr>																	 
 					<td colspan="2"> Contrato/Nota de Empenho: ${contrato} </td>
-					<td> Vigência: ${dataIni} à ${dataFim} </td>				
+					<td> VigÃªncia: ${dataIni} Ã  ${dataFim} </td>				
 				</tr>				
 				<tr>
-					<td width="30%">Data do Recebimento Provisório: ${dataProvisorio} </td>
+					<td width="30%">Data do Recebimento ProvisÃ³rio: ${dataProvisorio} </td>
 					<td width="30%">Data do Recebimento Definitivo: ${dataDefinitivo} </td>
 					<td width="40%">Valor do Contrato:  ${valContrato} </td>
 				</tr>				
@@ -240,14 +240,14 @@
 		<c:if test="${servicos == 'Sim'}">
 			<table border="1" width="100%" align="left" cellpadding="5">	
 				<tr>
-					<td>Local da prestação dos serviços: ${local} </td>
+					<td>Local da prestaÃ§Ã£o dos serviÃ§os: ${local} </td>
 				</tr>	
 			</table>			
 		</c:if>			
 		<c:if test="${numProfissionais != 0}">
 			<table border="1" width="100%" align="left" cellpadding="5">	
 				<tr>
-					<td> Profissionais responsáveis técnicos: <br>
+					<td> Profissionais responsÃ¡veis tÃ©cnicos: <br>
 						<c:forEach var="i" begin="1" end="${numProfissionais}">
 							${requestScope[f:concat('profissional',i)]} <br>
 						</c:forEach>
@@ -260,7 +260,7 @@
 		<br>		
 		<table border="1" width="100%" cellpadding="5">
 			<tr bgcolor="#999999">
-				<td colspan="4"><b>DESCRIÇÃO DA CONTRATAÇÃO </b></td>
+				<td colspan="4"><b>DESCRIÃ‡ÃƒO DA CONTRATAÃ‡ÃƒO </b></td>
 			</tr>
 			<tr>
 				<td width="10%" align="left"><b>Item</b></td>

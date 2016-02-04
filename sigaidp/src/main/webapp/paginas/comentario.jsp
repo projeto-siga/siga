@@ -1,42 +1,42 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"%>
+<%@ page language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <h2 class="gt-table-head">
 	<b>Bem-vindo ao SIGA.</b>
 </h2>
 
-<h3 class="gt-table-head">Veja abaixo as ˙ltimas novidades:</h3>
+<h3 class="gt-table-head">Veja abaixo as √∫ltimas novidades:</h3>
 
-<h4>Novos MÛdulos</h4>
-<p>O SIGA agora est· integrado com os mÛdulos do Siga SGP. 
-Foram integrados: Cadastro, BenefÌcios, AQ e LotaÁıes (fase final de testes). 
-Podem ser acessados pelo menu, na seguinte opÁ„o: MÛdulos / Pessoas. 
-Os mÛdulos estar„o disponÌveis de acordo com as permissıes dos usu·rios logados. Em breve, mais novidades.</p>
+<h4>Novos M√≥dulos</h4>
+<p>O SIGA agora est√° integrado com os m√≥dulos do Siga SGP. 
+Foram integrados: Cadastro, Benef√≠cios, AQ e Lota√ß√µes (fase final de testes). 
+Podem ser acessados pelo menu, na seguinte op√ß√£o: M√≥dulos / Pessoas. 
+Os m√≥dulos estar√£o dispon√≠veis de acordo com as permiss√µes dos usu√°rios logados. Em breve, mais novidades.</p>
 	
 <h4>Novo Design</h4>
 <p>O SIGA apresenta, agora, um design muito mais simples e moderno.
-	AlÈm das mudanÁas estÈticas, tambÈm foram simplificadas algumas p·ginas
-	e operaÁıes, o que beneficia principalmente as pessoas que utilizam
+	Al√©m das mudan√ßas est√©ticas, tamb√©m foram simplificadas algumas p√°ginas
+	e opera√ß√µes, o que beneficia principalmente as pessoas que utilizam
 	muito o sistema.</p>
 
 <h4>Modelos Padronizados</h4>
-<p>Est· sendo realizada uma padronizaÁ„o dos modelos de expedientes
-	usados pelo CJF e pelos TRF's da 2™ e 3™ Regi„o. Alguns modelos, como o
-	de ofÌcio, j· est„o com um novo layout no Siga-Doc.</p>
+<p>Est√° sendo realizada uma padroniza√ß√£o dos modelos de expedientes
+	usados pelo CJF e pelos TRF's da 2¬™ e 3¬™ Regi√£o. Alguns modelos, como o
+	de of√≠cio, j√° est√£o com um novo layout no Siga-Doc.</p>
 
 <h4>Novo Editor de Textos</h4>
 <p>
 	Siga-Doc possui um novo editor de textos, com mais recursos e menos
-	problemas de formataÁ„o. Inicialmente, ele est· disponÌvel apenas em
-	alguns modelos. Gradualmente, o antigo editor ser· substituÌdo. <a
-		href="/siga/arquivos/AjudaEditorTextosSigaDoc.pdf"><b>Veja instruÁıes</b> </a> sobre
+	problemas de formata√ß√£o. Inicialmente, ele est√° dispon√≠vel apenas em
+	alguns modelos. Gradualmente, o antigo editor ser√° substitu√≠do. <a
+		href="/siga/arquivos/AjudaEditorTextosSigaDoc.pdf"><b>Veja instru√ß√µes</b> </a> sobre
 	o uso do editor.
 </p>
 
 <h4>Busca Textual Integrada</h4>
-<p>A busca de documentos por conte˙do agora pode ser feita na
-	prÛpria tela de pesquisa por filtros, por meio do campo Conte˙do.</p>
+<p>A busca de documentos por conte√∫do agora pode ser feita na
+	pr√≥pria tela de pesquisa por filtros, por meio do campo Conte√∫do.</p>
 
 <c:if test="${param['completo'] eq 'true'}">
 
@@ -45,199 +45,199 @@ Os mÛdulos estar„o disponÌveis de acordo com as permissıes dos usu·rios logados.
 		Agora a assinatura digital pode ser feita por meio de um recurso
 		desenvolvido pela Certisign. Basta clicar em <b>Assinar com
 			assinador da Certisign</b>, na tela de assinatura. A tecnologia
-		facilitar·, principalmente, o uso do Siga-Doc com certificado digital
-		em outros Ûrg„os.
+		facilitar√°, principalmente, o uso do Siga-Doc com certificado digital
+		em outros √≥rg√£os.
 	</p>
 
 
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
-			align="justify"> <b>Quadro de SolicitaÁıes</b><br> Assim
-				como o mÛdulo Documentos, o novo mÛdulo ServiÁos tambÈm exibe um
-				resumo na p·gina inicial, dentro do <i>Quadro de SolicitaÁıes</i>.</font>
+			align="justify"> <b>Quadro de Solicita√ß√µes</b><br> Assim
+				como o m√≥dulo Documentos, o novo m√≥dulo Servi√ßos tamb√©m exibe um
+				resumo na p√°gina inicial, dentro do <i>Quadro de Solicita√ß√µes</i>.</font>
 		</td>
 	</tr>
 
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
-			align="justify"> <b>PCTT - nova vers„o</b><br> Est·
-				disponÌvel para uso no sistema a nova tabela de classificaÁ„o. O
-				formato do cÛdigo da classificaÁ„o mudou para NN.NN.NN.NN. A maioria
-				das classificaÁıes possui apenas uma via.</font></td>
+			align="justify"> <b>PCTT - nova vers√£o</b><br> Est√°
+				dispon√≠vel para uso no sistema a nova tabela de classifica√ß√£o. O
+				formato do c√≥digo da classifica√ß√£o mudou para NN.NN.NN.NN. A maioria
+				das classifica√ß√µes possui apenas uma via.</font></td>
 	</tr>
 
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
-			align="justify"> <b>MudanÁa na exibiÁ„o do status</b><br>
-				Na tela de visualizaÁ„o de documentos, o estado em que uma via se
-				encontra agora È exibido mais acima, ao lado do n˙mero da via. <a
+			align="justify"> <b>Mudan√ßa na exibi√ß√£o do status</b><br>
+				Na tela de visualiza√ß√£o de documentos, o estado em que uma via se
+				encontra agora √© exibido mais acima, ao lado do n√∫mero da via. <a
 				style="font-weight: bold" href="/siga/arquivos/exibeEstado.htm" target="new">Veja
-					a diferenÁa na imagem</a>.</font></td>
+					a diferen√ßa na imagem</a>.</font></td>
 	</tr>
 
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
-			align="justify"> <b>Consulta a documentos</b><br> Agora È
-				possÌvel consultar documentos atravÈs do estado, incluindo <i>Transferido</i>
-				e <i>Como Subscritor</i>. Basta selecionar a situaÁ„o desejada na
-				lista e, ao lado, a pessoa ou lotaÁ„o a quem o estado se refere. <a
+			align="justify"> <b>Consulta a documentos</b><br> Agora √©
+				poss√≠vel consultar documentos atrav√©s do estado, incluindo <i>Transferido</i>
+				e <i>Como Subscritor</i>. Basta selecionar a situa√ß√£o desejada na
+				lista e, ao lado, a pessoa ou lota√ß√£o a quem o estado se refere. <a
 				style="font-weight: bold" href="/siga/arquivos/novaListaJsp.JPG" target="new">Veja
 					a imagem</a>.</font></td>
 	</tr>
 
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
-			align="justify"> <b>NotificaÁ„o de documentos a receber</b><br>
-				… possÌvel, por meio de chamado, especificar para quais endereÁos de
-				e-mail o sistema dever· enviar notificaÁ„o de transferÍncia de
-				documento eletrÙnico para uma determinada lotaÁ„o.</font></td>
+			align="justify"> <b>Notifica√ß√£o de documentos a receber</b><br>
+				√â poss√≠vel, por meio de chamado, especificar para quais endere√ßos de
+				e-mail o sistema dever√° enviar notifica√ß√£o de transfer√™ncia de
+				documento eletr√¥nico para uma determinada lota√ß√£o.</font></td>
 	</tr>
 
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
-			align="justify"> <b>Documentos EletrÙnicos</b><br> Agora
+			align="justify"> <b>Documentos Eletr√¥nicos</b><br> Agora
 				todos os expedientes podem ser gerados e movimentados de forma
-				totalmente digital, n„o necessitando ser impressos. Para gerar um
-				documento eletrÙnico, marque a opÁ„o 'Digital', na parte superior da
-				tela de ediÁ„o do expediente.</font></td>
+				totalmente digital, n√£o necessitando ser impressos. Para gerar um
+				documento eletr√¥nico, marque a op√ß√£o 'Digital', na parte superior da
+				tela de edi√ß√£o do expediente.</font></td>
 	</tr>
 
 
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
 			align="justify"> <b>Pesquisa por Documentos Sigilosos</b><br>
-				A busca textual abrange os documentos com nÌvel de acesso restrito.
-				Para incluÌ-los na pesquisa, marque a opÁ„o localizada abaixo do
+				A busca textual abrange os documentos com n√≠vel de acesso restrito.
+				Para inclu√≠-los na pesquisa, marque a op√ß√£o localizada abaixo do
 				campo de busca.</font></td>
 	</tr>
 
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
-			align="justify"> <b>Visualizar DossiÍ</b><br> O recurso
-				Visualizar DossiÍ permite navegar mais facilmente pelos despachos,
+			align="justify"> <b>Visualizar Dossi√™</b><br> O recurso
+				Visualizar Dossi√™ permite navegar mais facilmente pelos despachos,
 				documentos filhos e anexos de um expediente, bem como visualizar ou
-				imprimir seus conte˙dos como um ˙nico documento.</font></td>
+				imprimir seus conte√∫dos como um √∫nico documento.</font></td>
 	</tr>
 
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
-			align="justify"> <b>MudanÁas na nomenclatura</b><br>
-				Seguem os nomes antigos e seus equivalentes apÛs a alteraÁ„o na
+			align="justify"> <b>Mudan√ßas na nomenclatura</b><br>
+				Seguem os nomes antigos e seus equivalentes ap√≥s a altera√ß√£o na
 				nomenclatura:
 				<ul>
 					<li>Em andamento: Aguardando Andamento</li>
-					<li>Em Tr‚nsito: Transferido</li>
+					<li>Em Tr√¢nsito: Transferido</li>
 					<li>Arquivado Corrente: Arquivo Corrente</li>
-					<li>Cancelar MovimentaÁ„o: Desfazer + <i>Nome da AÁ„o</i></li>
+					<li>Cancelar Movimenta√ß√£o: Desfazer + <i>Nome da A√ß√£o</i></li>
 				</ul> </font></td>
 	</tr>
 
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
 			align="justify"> <b>Caixa "Ir para o documento"</b><br> O
-				campo de busca por cÛdigo de expediente agora est· disponÌvel tambÈm
-				nas p·ginas de listagem e de exibiÁ„o de documentos.</font></td>
+				campo de busca por c√≥digo de expediente agora est√° dispon√≠vel tamb√©m
+				nas p√°ginas de listagem e de exibi√ß√£o de documentos.</font></td>
 	</tr>
 
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
 			align="justify"> <b>Despacho Longo Diferente</b><br> Ao
-				fazer um despacho longo, o usu·rio vÍ a tela para ediÁ„o do despacho
-				como documento filho, um expediente ‡ parte. Quando este È
-				finalizado e assinado, ocorre uma juntada autom·tica ao pai.</font></td>
+				fazer um despacho longo, o usu√°rio v√™ a tela para edi√ß√£o do despacho
+				como documento filho, um expediente √† parte. Quando este √©
+				finalizado e assinado, ocorre uma juntada autom√°tica ao pai.</font></td>
 	</tr>
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
-			align="justify"> <b>SubstituiÁ„o Mais F·cil</b><br> Para
-				mudar de perfil, basta passar o mouse sobre o seu nome, no rodapÈ, e
-				selecionar a pessoa ou lotaÁ„o desejada.</font></td>
+			align="justify"> <b>Substitui√ß√£o Mais F√°cil</b><br> Para
+				mudar de perfil, basta passar o mouse sobre o seu nome, no rodap√©, e
+				selecionar a pessoa ou lota√ß√£o desejada.</font></td>
 	</tr>
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
-			align="justify"> <b>Salvamento Autom·tico</b><br> Os
-				documentos s„o agora salvos automaticamente, a cada dois minutos.
-				Foi incluÌdo tambÈm o bot„o 'Salvar' na barra de ferramentas do
+			align="justify"> <b>Salvamento Autom√°tico</b><br> Os
+				documentos s√£o agora salvos automaticamente, a cada dois minutos.
+				Foi inclu√≠do tamb√©m o bot√£o 'Salvar' na barra de ferramentas do
 				editor de textos.</font></td>
 	</tr>
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
 			align="justify"> <b>Consulta Por Intervalo de Datas</b><br>
-				A busca por documentos pode agora ser feita n„o sÛ por uma data
+				A busca por documentos pode agora ser feita n√£o s√≥ por uma data
 				fixa, mas tambem por intervalo de datas.</font></td>
 	</tr>
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
-			align="justify"> <b>Arquivamento em Lote</b><br> Est·
-				disponÌvel o recurso que permite fazer o arquivamento corrente
-				simult‚neo de v·rios expedientes.</font></td>
+			align="justify"> <b>Arquivamento em Lote</b><br> Est√°
+				dispon√≠vel o recurso que permite fazer o arquivamento corrente
+				simult√¢neo de v√°rios expedientes.</font></td>
 	</tr>
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
-			align="justify"> <b>Dedicada aos Subscritores</b><br> H·
-				uma nova informaÁ„o na tabela de contagem de expedientes da p·gina
-				inicial. A linha "Como Subscritor" d· acesso a todos os documentos
-				que necessitam ser assinados por quem est· operando o sistema.</font></td>
+			align="justify"> <b>Dedicada aos Subscritores</b><br> H√°
+				uma nova informa√ß√£o na tabela de contagem de expedientes da p√°gina
+				inicial. A linha "Como Subscritor" d√° acesso a todos os documentos
+				que necessitam ser assinados por quem est√° operando o sistema.</font></td>
 	</tr>
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
-			align="justify"> <b>Incrementada a Busca Por ClassificaÁ„o</b><br>
+			align="justify"> <b>Incrementada a Busca Por Classifica√ß√£o</b><br>
 				Agora todas as colunas da <a
 				href="http://intranet/conteudos/gestao_documental/gestao_documental.asp"
-				style="color: blue">Tabela de Temporalidade</a> s„o mostradas na
-				busca por classificaÁ„o do SIGA-EX.</font></td>
+				style="color: blue">Tabela de Temporalidade</a> s√£o mostradas na
+				busca por classifica√ß√£o do SIGA-EX.</font></td>
 	</tr>
 
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
 			align="justify"> <b>Pesquisa de Expedientes por
-					Cadastrante</b><br> Foi adicionado o campo "Cadastrante" ‡ tela de
+					Cadastrante</b><br> Foi adicionado o campo "Cadastrante" √† tela de
 				busca por expedientes. Assim, pode-se listar os documentos feitos
-				por uma pessoa ou lotaÁ„o.</font></td>
+				por uma pessoa ou lota√ß√£o.</font></td>
 	</tr>
 
 
 
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
-			align="justify"> <b>RelaÁ„o de Paternidade Entre
-					Documentos</b><br> Est· disponÌvel a opÁ„o "Criar Documento
-				Filho", ˙til principalmente para facilitar a geraÁ„o de resposta a
-				um expediente. Quando assinado, um documento filho È automaticamente
-				juntado ao pai. … possivel tambÈm, na criaÁ„o de um expediente,
+			align="justify"> <b>Rela√ß√£o de Paternidade Entre
+					Documentos</b><br> Est√° dispon√≠vel a op√ß√£o "Criar Documento
+				Filho", √∫til principalmente para facilitar a gera√ß√£o de resposta a
+				um expediente. Quando assinado, um documento filho √© automaticamente
+				juntado ao pai. √â possivel tamb√©m, na cria√ß√£o de um expediente,
 				definir qual o seu documento pai.</font></td>
 	</tr>
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
-			align="justify"> <b>Novos Links na P·gina Inicial</b><br>
-				A ‡rea lateral esquerda da p·gina principal foi reformulada, e est„o
-				disponÌveis links para a tabela de temporalidade, para a apostila do
+			align="justify"> <b>Novos Links na P√°gina Inicial</b><br>
+				A √†rea lateral esquerda da p√°gina principal foi reformulada, e est√£o
+				dispon√≠veis links para a tabela de temporalidade, para a apostila do
 				SIGA-EX, entre outros.</font></td>
 	</tr>
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
 			align="justify"> <b>Expedientes Mais Protegidos</b><br>
-				Os documentos sÛ se tornam visÌveis ‡s lotaÁıes n„o atendentes
+				Os documentos s√≥ se tornam vis√≠veis √†s lota√ß√µes n√£o atendentes
 				depois de assinados.</font></td>
 	</tr>
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
-			align="justify"> <b>Assinar … Necess·rio</b><br> Para
-				transferir um documento, agora È preciso antes assin·-lo, a n„o ser
-				que a lotaÁ„o ‡ qual se envia expresse, por chamado, aceitar
-				documentos n„o assinados.</font></td>
+			align="justify"> <b>Assinar √â Necess√°rio</b><br> Para
+				transferir um documento, agora √© preciso antes assin√°-lo, a n√£o ser
+				que a lota√ß√£o √† qual se envia expresse, por chamado, aceitar
+				documentos n√£o assinados.</font></td>
 	</tr>
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
 			align="justify"> <b>Documentos Digitais</b><br> Cerca de
-				um quinto dos documentos criados hoje s„o totalmente digitais, e o
-				n˙mero tende a aumentar. Leia o <a href="/siga/arquvios/roteiro_eletronicos.pdf"
+				um quinto dos documentos criados hoje s√£o totalmente digitais, e o
+				n√∫mero tende a aumentar. Leia o <a href="/siga/arquvios/roteiro_eletronicos.pdf"
 				style="color: blue">roteiro para assinatura digital</a>.</font></td>
 	</tr>
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7"><font size='2'
 			align="justify"> <b>Pesquisa Textual Mais Completa</b><br>
-				Agora a busca textual abrange tambÈm os despachos, os anexos e as
-				anotaÁıes.</font></td>
+				Agora a busca textual abrange tamb√©m os despachos, os anexos e as
+				anota√ß√µes.</font></td>
 	</tr>
 
 	<tr>
@@ -253,15 +253,15 @@ Os mÛdulos estar„o disponÌveis de acordo com as permissıes dos usu·rios logados.
 		<td
 			style="border-top: 1px dotted #CCCCCC; padding-top: 7; padding-bottom: 7"><font
 			size='2' align="justify"> <b>Menus</b><br> Agora o SIGA
-				possui um sistema de menus hier·rquicos, permitindo assim uma
-				navegaÁ„o mais f·cil e ·gil.</font></td>
+				possui um sistema de menus hier√°rquicos, permitindo assim uma
+				navega√ß√£o mais f√°cil e √°gil.</font></td>
 	</tr>
 
 
 	<tr>
 		<td
 			style="border-top: 1px dotted #CCCCCC; padding-top: 7; padding-bottom: 7"><font
-			size='2' align="justify"> <b>AlteraÁ„o na Nomeclatura dos
+			size='2' align="justify"> <b>Altera√ß√£o na Nomeclatura dos
 					Tipos de Documentos</b><br> Os tipos de documento "Interno" e
 				"Interno Antigo" passam a se chamar respectivamente: "Interno
 				Produzido" e "Interno Importado".</font></td>
@@ -269,17 +269,17 @@ Os mÛdulos estar„o disponÌveis de acordo com as permissıes dos usu·rios logados.
 	<tr>
 		<td
 			style="border-top: 1px dotted #CCCCCC; padding-top: 7; padding-bottom: 7"><font
-			size='2' align="justify"><b>Formul·rios EletrÙnicos</b> <br>
-				Os formul·rios de SubstituiÁ„o, DesignaÁ„o e Dispensa, RemoÁ„o e
-				Permuta j· podem ser utilizados eletronicamente.</font></td>
+			size='2' align="justify"><b>Formul√°rios Eletr√¥nicos</b> <br>
+				Os formul√°rios de Substitui√ß√£o, Designa√ß√£o e Dispensa, Remo√ß√£o e
+				Permuta j√° podem ser utilizados eletronicamente.</font></td>
 	</tr>
 	<tr>
 		<td
 			style="border-top: 1px dotted #CCCCCC; padding-top: 7; padding-bottom: 7"><font
-			size='2' align="justify"><b>Novos Formul·rios</b> <br>
-				Foram criados novos formul·rios de: <u>Boletim de FrequÍncia</u>,
-				Parcelamento de DÈbito, Termo de Compromisso e Recebimento do Crach·
-				de IdentificaÁ„o Funcional e DeclaraÁ„o de Bens.</font></td>
+			size='2' align="justify"><b>Novos Formul√°rios</b> <br>
+				Foram criados novos formul√°rios de: <u>Boletim de Frequ√™ncia</u>,
+				Parcelamento de D√©bito, Termo de Compromisso e Recebimento do Crach√°
+				de Identifica√ß√£o Funcional e Declara√ß√£o de Bens.</font></td>
 	</tr>
 
 </c:if>

@@ -29,9 +29,9 @@ import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 
 /**
- * Classe de Exemplo para criação de um Relatório Builder.
+ * Classe de Exemplo para criaÃ§Ã£o de um RelatÃ³rio Builder.
  * 
- * Relatório personalizado de formulário do SIGA-EX criado por herança
+ * RelatÃ³rio personalizado de formulÃ¡rio do SIGA-EX criado por heranÃ§a
  * do AbstractRelatorioBaseBuilder. 
  */
 public class RelatorioFormularioBuilder extends AbstractRelatorioBaseBuilder {
@@ -49,7 +49,7 @@ public class RelatorioFormularioBuilder extends AbstractRelatorioBaseBuilder {
 		
 		try {
 		
-			this.setTitle("SIGA-DOC - Relação de Formulários");
+			this.setTitle("SIGA-DOC - RelaÃ§Ã£o de FormulÃ¡rios");
 			
 			AbstractColumn colForma = ColumnBuilder.getInstance()
 				.setTitle("Forma")

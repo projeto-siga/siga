@@ -10,7 +10,7 @@
 
 		<mod:grupo>
 			<mod:selecao var="contadorDePessoas"
-				titulo="Quantidade de Magistrados, servidores e estagi·rios"
+				titulo="Quantidade de Magistrados, servidores e estagi√°rios"
 				opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;33;34;35;36;37;38;39;40"
 				reler="sim" idAjax="contDependAjax" />
 			<mod:grupo depende="contDependAjax">
@@ -28,7 +28,7 @@
 						<mod:texto var="telefone${i}" largura="12" maxcaracteres="12"
 							obrigatorio="Sim" titulo="Telefone" />
 						<mod:data titulo="Data agendada com a CEF" var="dataAgendada${i}"
-							obrigatorio="N„o" />
+							obrigatorio="N√£o" />
 					</mod:grupo>
 					<mod:grupo>
 						<mod:memo var="justificativa${i}" colunas="50" linhas="5"  
@@ -37,14 +37,14 @@
 					<hr style="color: #FFFFFF;" />
 				</c:forEach>
 			</mod:grupo>
-			<mod:mensagem titulo="<b>ObservaÁıes:</b>" texto="" vermelho="Sim"></mod:mensagem>
+			<mod:mensagem titulo="<b>Observa√ß√µes:</b>" texto="" vermelho="Sim"></mod:mensagem>
 			<br />
 			<mod:mensagem titulo=""
-				texto="1. Preencha o destinat·rio com <b>SG-SEI</b> e, apÛs finalizar, transfira para a <b>SG-SEI</b>;"
+				texto="1. Preencha o destinat√°rio com <b>SG-SEI</b> e, ap√≥s finalizar, transfira para a <b>SG-SEI</b>;"
 				vermelho="Sim"></mod:mensagem>
 			<br />
 			<mod:mensagem titulo=""
-				texto="2. O campo 'Data agendada com a CEF' È opcional."
+				texto="2. O campo 'Data agendada com a CEF' √© opcional."
 				vermelho="Sim"></mod:mensagem>
 		</mod:grupo>
 
@@ -93,8 +93,8 @@
 
 		<br />
 		<p style="text-align: left; text-indent: 2cm">Solicito a
-		revogaÁ„o e a emiss„o de Certificados Digitais Cert-JUS Institucional aos
-		juÌzes, servidores e estagi·rios da listagem anexa.</p>
+		revoga√ß√£o e a emiss√£o de Certificados Digitais Cert-JUS Institucional aos
+		ju√≠zes, servidores e estagi√°rios da listagem anexa.</p>
 		<p style="text-align: left; text-indent: 2cm">Atenciosamente,</p>
 		<br />
 		<br />
@@ -130,11 +130,11 @@
 					<tr>
 						<td width="50%" align="left" colspan="1">Nome:
 						${pes.descricao}</td>
-						<td width="50%" align="left" colspan="1">MatrÌcula:
+						<td width="50%" align="left" colspan="1">Matr√≠cula:
 						RJ${pes.matricula}</td>
 					</tr>
 					<tr>
-						<td width="50%" align="left" colspan="1">LotaÁ„o:
+						<td width="50%" align="left" colspan="1">Lota√ß√£o:
 						${pes.lotacao.descricao}</td>
 						<td width="50%" align="left" colspan="1">E-mail: ${e}@jfrj.jus.br</td>
 					</tr>

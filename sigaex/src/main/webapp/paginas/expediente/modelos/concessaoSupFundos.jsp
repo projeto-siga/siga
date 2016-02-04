@@ -7,12 +7,12 @@
 	<mod:entrevista>
 		<mod:grupo>
 				<mod:selecao titulo="Quantidade de suprimentos a informar:" opcoes="1;2;3;4;5;6;7;8;9;10" var="quantSuprim" reler="ajax"  idAjax="quantSuprimAjax" />
-				<mod:selecao titulo="MÍs de ReferÍncia:" var="mesReferencia" opcoes="Janeiro;Fevereiro;MarÁo;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro" />
+				<mod:selecao titulo="M√™s de Refer√™ncia:" var="mesReferencia" opcoes="Janeiro;Fevereiro;Mar√ßo;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro" />
 				<mod:texto titulo="Ano:" var="anoReferencia" largura="4" />
 		</mod:grupo>
 			<mod:grupo depende="quantSuprimAjax">
 				<c:forEach var="i" begin="1" end="${quantSuprim}">
-					<mod:texto titulo="N˙mero do Processo:" var="numproc${i}" largura="6" />	
+					<mod:texto titulo="N√∫mero do Processo:" var="numproc${i}" largura="6" />	
 						<mod:grupo>
 							<mod:pessoa titulo="Nome" var="servidor${i}" />
 						</mod:grupo>
@@ -70,8 +70,8 @@
 		</c:choose> <br>
 		PARA: ${doc.destinatarioString}</p>
 	
-		<p align="center"> SOLICITA«√O DE PUBLICA«√O BOLETIM INTERNO<br/>
-		Concess„o de Suprimento de Fundos
+		<p align="center"> SOLICITA√á√ÉO DE PUBLICA√á√ÉO BOLETIM INTERNO<br/>
+		Concess√£o de Suprimento de Fundos
 		</p>
 		<!-- INICIO CORPO -->
 		<p><span style="font-weight: bold">SUPRIMENTO DE FUNDOS - ${mesReferencia} de ${anoReferencia}</span></p>
@@ -80,8 +80,8 @@
 			<tr>
 				<td bgcolor="#FFFFFF" width="10%" align="center"><b>N&ordm;<br/>Processo</b></td>
 				<td bgcolor="#FFFFFF" width="26%" align="center"><b>Nome</b></td>
-				<td bgcolor="#FFFFFF" width="22%" align="center"><b>Cargo/FunÁ„o</b></td>
-				<td bgcolor="#FFFFFF" width="11%" align="center"><b>LotaÁ„o</b></td>
+				<td bgcolor="#FFFFFF" width="22%" align="center"><b>Cargo/Fun√ß√£o</b></td>
+				<td bgcolor="#FFFFFF" width="11%" align="center"><b>Lota√ß√£o</b></td>
 				<td bgcolor="#FFFFFF" width="14%" align="center"><b>Data do Empenho</b></td>
 				<td bgcolor="#FFFFFF" width="13%" align="center"><b>Valor(R$)</b></td>
 				<td bgcolor="#FFFFFF" width="7%" align="center"><b>Tipo</b></td>		
@@ -91,7 +91,7 @@
 			<tr>
 					<td bgcolor="#FFFFFF" width="10%" align="center">${requestScope[f:concat('numproc',i)]}</td>
 					<td bgcolor="#FFFFFF" width="26%" align="center">${requestScope[f:concat(f:concat('servidor',i),'_pessoaSel.descricao')]}</td>
-					<td bgcolor="#FFFFFF" width="22%" align="center">${f:cargoPessoa(requestScope[f:concat(f:concat('servidor',i),'_pessoaSel.id')])}<c:set var="funcao" value="${f:pessoa(requestScope[f:concat(f:concat('servidor',i),'_pessoaSel.id')]).funcaoConfianca.descricao}"/><c:choose><c:when test="${not empty funcao}"> - ${funcao}</c:when><c:otherwise> - SEM FUN«√O COMISSIONADA</c:otherwise></c:choose></td>
+					<td bgcolor="#FFFFFF" width="22%" align="center">${f:cargoPessoa(requestScope[f:concat(f:concat('servidor',i),'_pessoaSel.id')])}<c:set var="funcao" value="${f:pessoa(requestScope[f:concat(f:concat('servidor',i),'_pessoaSel.id')]).funcaoConfianca.descricao}"/><c:choose><c:when test="${not empty funcao}"> - ${funcao}</c:when><c:otherwise> - SEM FUN√á√ÉO COMISSIONADA</c:otherwise></c:choose></td>
 					<td bgcolor="#FFFFFF" width="11%" align="center">${f:pessoa(requestScope[f:concat(f:concat('servidor',i),'_pessoaSel.id')]).lotacao.sigla}</td>
 					<td bgcolor="#FFFFFF" width="14%" align="center">${requestScope[f:concat('dataEmpenho',i)]}</td>
 					<td bgcolor="#FFFFFF" width="13%" align="center">${requestScope[f:concat('valorEmpenho',i)]}</td>
@@ -99,8 +99,8 @@
 			</tr>
 		</c:forEach>
 		</table>
-		<p><b>D - despesas mi˙das, de pronto pagamento</b><br/>
-		<b>L - gÍnero alimentÌcios</b>
+		<p><b>D - despesas mi√∫das, de pronto pagamento</b><br/>
+		<b>L - g√™nero aliment√≠cios</b>
 		<!-- FIM CORPO -->
 		</p>
 		<br>

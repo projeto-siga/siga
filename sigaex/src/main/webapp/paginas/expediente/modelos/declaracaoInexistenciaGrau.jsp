@@ -4,13 +4,13 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<!-- Alterei este formul·rio para que sirva tanto para declarar que tem grau parentesco, como para declarar que n„o tem grau de parentesco.Rj13939 -->
+<!-- Alterei este formul√°rio para que sirva tanto para declarar que tem grau parentesco, como para declarar que n√£o tem grau de parentesco.Rj13939 -->
 
 <mod:modelo>
 	<mod:entrevista>
 		<mod:grupo>
-			<mod:selecao titulo="VÌnculo" var="vinculo"
-				opcoes="Servidor;Requisitado com cargo;Requisitado sem cargo; Sem vÌnculo com a administraÁ„o"
+			<mod:selecao titulo="V√≠nculo" var="vinculo"
+				opcoes="Servidor;Requisitado com cargo;Requisitado sem cargo; Sem v√≠nculo com a administra√ß√£o"
 				reler="ajax" idAjax="vinculoajax" />
 		</mod:grupo>
 		<mod:grupo depende="vinculoajax">
@@ -22,20 +22,20 @@
 				</mod:grupo>
 
 				<mod:grupo>
-					<mod:texto titulo="FunÁ„o comissionada/Cargo em Comiss„o"
+					<mod:texto titulo="Fun√ß√£o comissionada/Cargo em Comiss√£o"
 						var="funcao_cargo" largura="50" />
 				</mod:grupo>
 			</c:if>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="LotaÁ„o" var="lotacao" />
+			<mod:texto titulo="Lota√ß√£o" var="lotacao" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:selecao titulo="Possui Parentesco" var="parentesco"
-				opcoes="N„o;Sim;Sim, mas n„o infringi nenhum dos dispositivos da ResoluÁ„o n∫ 07/2005 - CNJ" reler="ajax" idAjax="parentescoajax" />
+				opcoes="N√£o;Sim;Sim, mas n√£o infringi nenhum dos dispositivos da Resolu√ß√£o n¬∫ 07/2005 - CNJ" reler="ajax" idAjax="parentescoajax" />
 		</mod:grupo>
 		<mod:grupo depende="parentescoajax">
-			<c:if test="${parentesco != 'N„o'}">
+			<c:if test="${parentesco != 'N√£o'}">
 				<mod:grupo>
 					<mod:selecao titulo="Quantidade de parentes" var="nr_parentes"
 						opcoes="1;2;3;" reler="ajax" idAjax="nr_parentesajax" />
@@ -50,14 +50,14 @@
 						<mod:grupo>
 							<mod:texto titulo="&nbsp;&nbsp;&nbsp; Grau de parentesco"
 								var="grau${i}" largura="20" />
-							<mod:texto titulo="&nbsp;&nbsp;&nbsp; ”rg„o" var="orgao${i}"
+							<mod:texto titulo="&nbsp;&nbsp;&nbsp; √ìrg√£o" var="orgao${i}"
 								largura="40" />
 						</mod:grupo>
 						<mod:grupo>
-							<mod:texto titulo="&nbsp;&nbsp;&nbsp; Cargo em Comiss„o/FunÁao de confianÁa" var="cargo${i}"
+							<mod:texto titulo="&nbsp;&nbsp;&nbsp; Cargo em Comiss√£o/Fun√ßao de confian√ßa" var="cargo${i}"
 								largura="40" />
 							<mod:data
-								titulo="&nbsp;&nbsp;&nbsp Data de ingresso no cargo em comiss„o/funÁ„o de confianÁa"
+								titulo="&nbsp;&nbsp;&nbsp Data de ingresso no cargo em comiss√£o/fun√ß√£o de confian√ßa"
 								var="dataingresso${i}" />
 						</mod:grupo>
 						<br>
@@ -107,41 +107,41 @@
 		FIM CABECALHO -->
 
 		<mod:letra tamanho="${tl}">
-			<!-- Esta vari·vel "corpoTexto" tem a finalidade de evitar duplicidade no cÛdigo -->
+			<!-- Esta vari√°vel "corpoTexto" tem a finalidade de evitar duplicidade no c√≥digo -->
 			<c:set var="corpoTextoParte1"
-				value="relaÁ„o familiar ou de parentesco que "></c:set>
+				value="rela√ß√£o familiar ou de parentesco que "></c:set>
 			<c:set var="corpoTextoParte2"
-				value="importe pr·tica vedada pela
-						S˙mula Vinculante N∫ 13 de 29 de agosto de 2008 do Supremo Tribunal
-						Federal combinado com a ResoluÁ„o N∫ 07/2005 do Conselho Nacional de
-						JustiÁa (CNJ)."></c:set>
+				value="importe pr√°tica vedada pela
+						S√∫mula Vinculante N¬∫ 13 de 29 de agosto de 2008 do Supremo Tribunal
+						Federal combinado com a Resolu√ß√£o N¬∫ 07/2005 do Conselho Nacional de
+						Justi√ßa (CNJ)."></c:set>
 			
 			<c:set var="corpoTexto"
 				value="${corpoTextoParte1}${corpoTextoParte2}"></c:set>
 
-			<!-- Estes ifs s„o para omitir  vÌrgulas e espaÁos no texto, dependendo dos campos que forem preenchidos -->
+			<!-- Estes ifs s√£o para omitir  v√≠rgulas e espa√ßos no texto, dependendo dos campos que forem preenchidos -->
 
 			<c:if test="${ not empty funcao_cargo and not empty cargo_espec}">
 				<p style="TEXT-INDENT: 2cm" align="justify">
 				${doc.subscritor.descricao}, ${cargo_espec}, ${funcao_cargo},
-				matrÌcula n∫ ${doc.subscritor.matricula}, lotado(a) no(a) ${lotacao}, <b>DECLARA</b>
+				matr√≠cula n¬∫ ${doc.subscritor.matricula}, lotado(a) no(a) ${lotacao}, <b>DECLARA</b>
 				que
 			</c:if>
 			<c:if test="${ empty funcao_cargo and not empty cargo_espec}">
 				<p style="TEXT-INDENT: 2cm" align="justify">
-				${doc.subscritor.descricao}, ${cargo_espec}, matrÌcula n∫
+				${doc.subscritor.descricao}, ${cargo_espec}, matr√≠cula n¬∫
 				${doc.subscritor.matricula}, lotado(a)  no(a) ${lotacao}, <b>DECLARA</b>
 				que
 			</c:if>
 			<c:if test="${empty funcao_cargo and empty cargo_espec}">
 				<p style="TEXT-INDENT: 2cm" align="justify">
-				${doc.subscritor.descricao}, matrÌcula n∫
+				${doc.subscritor.descricao}, matr√≠cula n¬∫
 				${doc.subscritor.matricula}, lotado(a)  no(a) ${lotacao}, <b>DECLARA</b>
 				que
 			</c:if>
 			<c:if test="${ empty cargo_espec and not empty funcao_cargo}">
 				<p style="TEXT-INDENT: 2cm" align="justify">
-				${doc.subscritor.descricao}, ${funcao_cargo}, matrÌcula n∫
+				${doc.subscritor.descricao}, ${funcao_cargo}, matr√≠cula n¬∫
 				${doc.subscritor.matricula}, lotado(a)  no(a) ${lotacao}, <b>DECLARA</b>
 				que
 			</c:if>
@@ -151,18 +151,18 @@
 					<b>tem</b>
 					${corpoTexto}		
 				</c:when>
-				<c:when test="${parentesco eq 'N„o'}">
-					<b>n„o tem</b>
+				<c:when test="${parentesco eq 'N√£o'}">
+					<b>n√£o tem</b>
 					${corpoTexto}
 				</c:when>
 				<c:otherwise>
 					<b>tem</b>
 					${corpoTextoParte1}
-					<b>N√O</b>
+					<b>N√ÉO</b>
 					${corpoTextoParte2}
 				</c:otherwise>
 			</c:choose>
-		<c:if test="${parentesco ne 'N„o'}">
+		<c:if test="${parentesco ne 'N√£o'}">
 			<c:forEach var="i" begin="1" end="${nr_parentes}">
 				<p>
 					Nome do Parente: <b>${requestScope[f:concat('parente',i)]}</b>.
@@ -171,32 +171,32 @@
 					Grau de parentesco: <b>${requestScope[f:concat('grau',i)]}</b>.
 				</p>
 				<p>
-					”rg„o: <b>${requestScope[f:concat('orgao',i)]}</b>.
+					√ìrg√£o: <b>${requestScope[f:concat('orgao',i)]}</b>.
 				</p>
 				<p>
-					Cargo em Comiss„o/FunÁao de confianÁa: <b>${requestScope[f:concat('cargo',i)]}</b>.
+					Cargo em Comiss√£o/Fun√ßao de confian√ßa: <b>${requestScope[f:concat('cargo',i)]}</b>.
 				</p>
 				<p>
-					Data de ingresso no cargo em comiss„o/funÁ„o de confianÁa: <b>${requestScope[f:concat('dataingresso',i)]}</b>.
+					Data de ingresso no cargo em comiss√£o/fun√ß√£o de confian√ßa: <b>${requestScope[f:concat('dataingresso',i)]}</b>.
 				</p>
 				<br>
 			</c:forEach>
 		</c:if>
 
 		<p style="TEXT-INDENT: 2cm" align="justify">Declara, por fim, que
-			dever· comunicar ‡ Subsecretaria de Gest„o de Pessoas, de imediato, a
-			ocorrÍncia de fatos que possam alterar a situaÁ„o objeto desta
-			declaraÁ„o.</p>
+			dever√° comunicar √† Subsecretaria de Gest√£o de Pessoas, de imediato, a
+			ocorr√™ncia de fatos que possam alterar a situa√ß√£o objeto desta
+			declara√ß√£o.</p>
 
 			<p style="TEXT-INDENT: 2cm" align="justify">Responsabiliza-se
-			pela exatid„o e veracidade das informaÁıes declaradas, ciente de que,
-			se falsa a declaraÁ„o, ficar· sujeito(a) ‡s penas da lei (art. 299, do
+			pela exatid√£o e veracidade das informa√ß√µes declaradas, ciente de que,
+			se falsa a declara√ß√£o, ficar√° sujeito(a) √†s penas da lei (art. 299, do
 			CP).</p>
 
 			<p align="center">${doc.dtExtenso}</p>
 			<br />
 			<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" />
-			<p align="center">MatrÌcula: ${doc.subscritor.matricula}</p>
+			<p align="center">Matr√≠cula: ${doc.subscritor.matricula}</p>
 		</mod:letra>
 
 		<!-- INICIO PRIMEIRO RODAPE

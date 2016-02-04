@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 
 import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.ex.service.ExService;
+import br.gov.jfrj.siga.gc.service.GcService;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.wf.service.WfService;
 
@@ -37,48 +38,60 @@ public abstract class Service {
 	static ExService ex = null;
 	static CdService cd = null;
 	static GiService gi = null;
+	static GcService gc = null;
 
-	/* Externalização das informacoes dos servicos
+	/*
+	 * ExternalizaÃ§Ã£o das informacoes dos servicos
 	 * bruno.lacerda@avantiprima.com.br
 	 */
 	public static WfService getWfService() {
 		if (wf == null)
 			wf = getService(WfService.class,
-					SigaWsProperties.getString( "wfservice.endpoint" ),
-					SigaWsProperties.getString( "wfservice.qname" ),
-					SigaWsProperties.getString( "wfservice.servicename" ));
+					System.getProperty( "wfservice.endpoint" ),
+					System.getProperty( "wfservice.qname" ),
+					System.getProperty( "wfservice.servicename" ));
 		return wf;
 	}
-	
+
 	public static ExService getExService() {
 		if (ex == null)
 			ex = getService(ExService.class, 
-					SigaWsProperties.getString( "exservice.endpoint" ),
-					SigaWsProperties.getString( "exservice.qname" ),
-					SigaWsProperties.getString( "exservice.servicename" ));
+					System.getProperty( "exservice.endpoint" ),
+					System.getProperty( "exservice.qname" ),
+					System.getProperty( "exservice.servicename" ));
 		return ex;
 	}
 
 	public static CdService getCdService() {
 		if (cd == null)
 			cd = getService(CdService.class,
-					SigaWsProperties.getString( "cdservice.endpoint" ),
-					SigaWsProperties.getString( "cdservice.qname" ),
-					SigaWsProperties.getString( "cdservice.servicename" ));
+					System.getProperty( "cdservice.endpoint" ),
+					System.getProperty( "cdservice.qname" ),
+					System.getProperty( "cdservice.servicename" ));
 		return cd;
 	}
-	
+
 	public static GiService getGiService() {
 		if (gi == null)
 			gi = getService(GiService.class,
-					SigaWsProperties.getString( "giservice.endpoint" ),
-					SigaWsProperties.getString( "giservice.qname" ),
-					SigaWsProperties.getString( "giservice.servicename" ));
+					System.getProperty( "giservice.endpoint" ),
+					System.getProperty( "giservice.qname" ),
+					System.getProperty( "giservice.servicename" ));
 		return gi;
 	}
 
+	public static GcService getGcService() {
+		if (gc == null)
+			gc = getService(GcService.class,
+					System.getProperty("gcservice.endpoint"),
+					System.getProperty("gcservice.qname"),
+					System.getProperty("gcservice.servicename"));
+		return gc;
+	}
+	
 	@SuppressWarnings("unchecked")
-	private static <E extends Remote> E getService(Class<E> remoteClass, String wsdl, String qname, String serviceName) {
+	private static <E extends Remote> E getService(Class<E> remoteClass,
+			String wsdl, String qname, String serviceName) {
 		URL wsdlURL;
 		try {
 			wsdlURL = new URL(wsdl);
@@ -87,29 +100,30 @@ public abstract class Service {
 		}
 
 		QName SERVICE_NAME = new QName(qname, serviceName);
-		javax.xml.ws.Service service = javax.xml.ws.Service.create(wsdlURL, SERVICE_NAME);
+		javax.xml.ws.Service service = javax.xml.ws.Service.create(wsdlURL,
+				SERVICE_NAME);
 		E e = service.getPort(remoteClass);
-		
-//		Client client = ClientProxy.getClient(e);
-		
-//		client.getInInterceptors().add(new LoggingInInterceptor());
-//	    client.getOutInterceptors().add(new LoggingOutInterceptor()); 
-		
-//		HTTPConduit http = (HTTPConduit) client.getConduit();
 
-//		http.getClient().setProxyServerType(ProxyServerType.HTTP); 
-//		http.getClient().setProxyServer("127.0.0.1"); 
-//		http.getClient().setProxyServerPort(8087);
-		
-//		HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
-//		httpClientPolicy.setConnectionTimeout(36000);
-//		httpClientPolicy.setAllowChunking(false);
-//		httpClientPolicy.setReceiveTimeout(32000);
-//		httpClientPolicy.setProxyServerType(ProxyServerType.SOCKS); 
-//		httpClientPolicy.setProxyServer("127.0.0.1"); 
-//		httpClientPolicy.setProxyServerPort(8085);
-//		http.setClient(httpClientPolicy);
-		
+		// Client client = ClientProxy.getClient(e);
+
+		// client.getInInterceptors().add(new LoggingInInterceptor());
+		// client.getOutInterceptors().add(new LoggingOutInterceptor());
+
+		// HTTPConduit http = (HTTPConduit) client.getConduit();
+
+		// http.getClient().setProxyServerType(ProxyServerType.HTTP);
+		// http.getClient().setProxyServer("127.0.0.1");
+		// http.getClient().setProxyServerPort(8087);
+
+		// HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
+		// httpClientPolicy.setConnectionTimeout(36000);
+		// httpClientPolicy.setAllowChunking(false);
+		// httpClientPolicy.setReceiveTimeout(32000);
+		// httpClientPolicy.setProxyServerType(ProxyServerType.SOCKS);
+		// httpClientPolicy.setProxyServer("127.0.0.1");
+		// httpClientPolicy.setProxyServerPort(8085);
+		// http.setClient(httpClientPolicy);
+
 		return e;
 	}
 
@@ -163,6 +177,7 @@ public abstract class Service {
 		if (Service.isError(ba))
 			throw new Exception(retrieveError(ba));
 	}
+
 
 	// public static WfService getWfService() {
 	// return getService(WfService.class, "wf");

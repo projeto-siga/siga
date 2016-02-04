@@ -59,7 +59,7 @@ import org.jbpm.taskmgmt.exe.TaskInstance;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
 /**
- * Classe que define a tag de exibição do gráfico do process definition através da tag wfImage.
+ * Classe que define a tag de exibiÃ§Ã£o do grÃ¡fico do process definition atravÃ©s da tag wfImage.
  * @author kpf
  *
  */
@@ -120,7 +120,7 @@ public class ProcessImageTag extends TagSupport
 	}
 
 	/**
-	 * Lê as informações referentes ao gráfico da definição do processo.
+	 * LÃª as informaÃ§Ãµes referentes ao grÃ¡fico da definiÃ§Ã£o do processo.
 	 */
 	private void retrieveByteArrays ()
 	{
@@ -225,7 +225,7 @@ public class ProcessImageTag extends TagSupport
 	}
 
 	/**
-	 * Extrai os limites da caixa para que seja desenhada a marcação à sua volta.
+	 * Extrai os limites da caixa para que seja desenhada a marcaÃ§Ã£o Ã  sua volta.
 	 * @param root
 	 * @return
 	 */
@@ -243,7 +243,7 @@ public class ProcessImageTag extends TagSupport
 	}
 
 	/**
-	 * Extrai os limites da caixa para que seja desenhada a marcação à sua volta.
+	 * Extrai os limites da caixa para que seja desenhada a marcaÃ§Ã£o Ã  sua volta.
 	 * @param root
 	 * @param token
 	 * @return
@@ -269,7 +269,7 @@ public class ProcessImageTag extends TagSupport
 	}
 
 	/**
-	 * Extrai as dimensões da imagem.
+	 * Extrai as dimensÃµes da imagem.
 	 * @param root
 	 * @return
 	 */

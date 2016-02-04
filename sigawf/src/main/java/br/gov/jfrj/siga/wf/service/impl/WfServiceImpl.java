@@ -18,15 +18,11 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.service.impl;
 
-import br.gov.jfrj.siga.Service;
-import br.gov.jfrj.siga.ex.service.ExService;
-import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
-import br.gov.jfrj.siga.wf.bl.Wf;
-import br.gov.jfrj.siga.wf.bl.WfBL;
-import br.gov.jfrj.siga.wf.dao.WfDao;
-import br.gov.jfrj.siga.wf.service.WfService;
-import br.gov.jfrj.siga.wf.util.WfContextBuilder;
-import br.gov.jfrj.siga.wf.webwork.action.WfTaskAction;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jws.WebService;
+
 import org.hibernate.Query;
 import org.jbpm.JbpmContext;
 import org.jbpm.context.def.VariableAccess;
@@ -37,14 +33,20 @@ import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
-import javax.jws.WebService;
-import java.util.ArrayList;
-import java.util.List;
+import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.ex.service.ExService;
+import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
+import br.gov.jfrj.siga.wf.bl.Wf;
+import br.gov.jfrj.siga.wf.bl.WfBL;
+import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.service.WfService;
+import br.gov.jfrj.siga.wf.util.WfContextBuilder;
+import br.gov.jfrj.siga.wf.vraptor.WfUtil;
 
 /**
  * Classe que representa o webservice do workflow. O SIGA-DOC faz a chamada
- * remota dos mÈtodos dessa classe para atualizar o workflow automaticamente,
- * baseando-se nas operaÁıes sobre documentos.
+ * remota dos m√©todos dessa classe para atualizar o workflow automaticamente,
+ * baseando-se nas opera√ß√µes sobre documentos.
  * 
  * @author kpf
  * 
@@ -63,17 +65,19 @@ public class WfServiceImpl implements WfService {
 	}
 
 	/**
-	 * Atualiza o workflow de um documento. Este mÈtodo pesquisa todas as
-	 * vari·veis que comeÁam com "doc_" em todas as inst‚ncias de tarefas.
-	 * Quando encontra a vari·vel, passa a sigla do documento para o execution
-	 * execution context e executa a aÁ„o da tarefa.
+	 * Atualiza o workflow de um documento. Este m√©todo pesquisa todas as
+	 * vari√°veis que come√ßam com "doc_" em todas as inst√¢ncias de tarefas.
+	 * Quando encontra a vari√°vel, passa a sigla do documento para o execution
+	 * execution context e executa a a√ß√£o da tarefa.
 	 */
 	public Boolean atualizarWorkflowsDeDocumento(String codigoDocumento)
 			throws Exception {
 		try {
 			Boolean b = false;
-			GraphSession graph = WfContextBuilder.getJbpmContext().getGraphSession();
-			JbpmContext ctx = WfContextBuilder.getJbpmContext().getJbpmContext();
+			GraphSession graph = WfContextBuilder.getJbpmContext()
+					.getGraphSession();
+			JbpmContext ctx = WfContextBuilder.getJbpmContext()
+					.getJbpmContext();
 			// List<TaskInstance> tis = ctx.getTaskList();
 
 			Query q = WfDao
@@ -122,7 +126,7 @@ public class WfServiceImpl implements WfService {
 	}
 
 	/**
-	 * Executa aÁıes na tarefa baseando-se nos serviÁos externos associados ‡
+	 * Executa a√ß√µes na tarefa baseando-se nos servi√ßos externos associados √†
 	 * tarefa.
 	 * 
 	 * @param codigoDocumento
@@ -157,7 +161,7 @@ public class WfServiceImpl implements WfService {
 					.findLatestProcessDefinition(nomeProcesso);
 			if (pd == null)
 				throw new RuntimeException(
-						"N„o foi encontrado um ProcessDefinition com o nome '"
+						"N√£o foi encontrado um ProcessDefinition com o nome '"
 								+ nomeProcesso + "'");
 			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
 					siglaCadastrante);
@@ -173,7 +177,7 @@ public class WfServiceImpl implements WfService {
 							titularParser.getPessoa(),
 							titularParser.getLotacao(), keys, values, false);
 
-			WfTaskAction.transferirDocumentosVinculados(pi, siglaTitular);
+			WfUtil.transferirDocumentosVinculados(pi, siglaTitular);
 			return true;
 		} catch (Exception e) {
 			if (!isHideStackTrace())
@@ -195,12 +199,13 @@ public class WfServiceImpl implements WfService {
 			// List<TaskInstance> tis = ctx.getTaskList();
 
 			// Get latest processInstance that references a certain document
-//			Query qpi = WfDao
-//					.getInstance()
-//					.getSessao()
-//					.createQuery(
-//							"select max(vi.processInstance) from org.jbpm.context.exe.variableinstance.StringInstance as vi, vi.processInstance pi"
-//									+ " where pi.end is null and vi.name like 'doc_%' and vi.value = :codigoDocumento");
+			// Query qpi = WfDao
+			// .getInstance()
+			// .getSessao()
+			// .createQuery(
+			// "select max(vi.processInstance) from org.jbpm.context.exe.variableinstance.StringInstance as vi, vi.processInstance pi"
+			// +
+			// " where pi.end is null and vi.name like 'doc_%' and vi.value = :codigoDocumento");
 			Query qpi = WfDao
 					.getInstance()
 					.getSessao()

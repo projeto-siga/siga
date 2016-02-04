@@ -270,9 +270,9 @@ public class GraphicsState {
  * 
  * $Log: GraphicsState.java,v $
  * Revision 1.3  2009/07/30 14:43:36  kpf
- * Mudança de pacote: itext v.1.4 para itext v 2.1.5.
+ * MudanÃ§aa de pacote: itext v.1.4 para itext v 2.1.5.
  *
- * Alterações para suportar a nova  versão do text 2.1.5
+ * AlteraÃ§Ãµes para suportar a nova  versÃ£o do text 2.1.5
  *
  * Revision 1.2  2008/09/09 15:18:06  eeh
  * *** empty log message ***
@@ -286,7 +286,7 @@ public class GraphicsState {
  * Revision 1.6 2006/07/18 16:22:42 tah *** empty log message ***
  * 
  * Revision 1.5 2006/07/05 16:00:44 nts Refatorando para melhorar qualidade do
- * código
+ * cÃ³digo
  * 
  * Revision 1.4 2006/05/23 19:35:06 tah *** empty log message ***
  * 

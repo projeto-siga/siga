@@ -3,25 +3,25 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-MANUTEN«√O VANTAGENS PESSOAIS  -->
+MANUTEN√á√ÉO VANTAGENS PESSOAIS  -->
 
 <mod:modelo>
 	<mod:entrevista>
-		<mod:grupo titulo="DETALHES DO FUNCION¡RIO">
+		<mod:grupo titulo="DETALHES DO FUNCION√ÅRIO">
 				<mod:texto titulo="Classe" var="classe"/>
-				<mod:texto titulo="Padr„o" var="padrao" />
+				<mod:texto titulo="Padr√£o" var="padrao" />
 		</mod:grupo>
 		
-		<mod:grupo titulo="DETALHES DA MANUTEN«√O DAS VANTAGENS PESSOAIS">
+		<mod:grupo titulo="DETALHES DA MANUTEN√á√ÉO DAS VANTAGENS PESSOAIS">
 		
 		    <mod:texto largura="60" titulo="Cargo" var="cargoServ"/>
 		    
-			<mod:grupo titulo="REALIZAR A MANUTEN«√O EM:"></mod:grupo>
-				<mod:caixaverif titulo="Adicional por tempo de serviÁo?" var="adicionalTempoServiÁo" reler="N„o"/>
+			<mod:grupo titulo="REALIZAR A MANUTEN√á√ÉO EM:"></mod:grupo>
+				<mod:caixaverif titulo="Adicional por tempo de servi√ßo?" var="adicionalTempoServi√ßo" reler="N√£o"/>
 			<mod:grupo></mod:grupo>		
-				<mod:caixaverif titulo="Dependentes(deduÁ„o do IRPF)na fonte?" var="manutencaoDependentes" reler="N„o"/>
+				<mod:caixaverif titulo="Dependentes(dedu√ß√£o do IRPF)na fonte?" var="manutencaoDependentes" reler="N√£o"/>
 			<mod:grupo></mod:grupo>							
-				<mod:caixaverif titulo="DÈcimos/Quintos incorporados?" var="decimosQuintos" reler="N„o" />
+				<mod:caixaverif titulo="D√©cimos/Quintos incorporados?" var="decimosQuintos" reler="N√£o" />
 			<mod:grupo></mod:grupo>							
 			<mod:memo colunas="50" linhas="3" titulo="Outra a relatar" var="outros"/>
 				
@@ -38,27 +38,27 @@ MANUTEN«√O VANTAGENS PESSOAIS  -->
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
 	${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, 
-		classe ${requestScope.classe} e padr„o ${requestScope.padrao}, 
+		classe ${requestScope.classe} e padr√£o ${requestScope.padrao}, 
 		lotado(a) no(a)${subscritor.lotacao.descricao}, 
-		vem respeitosamente requerer a Vossa ExcelÍncia, em raz„o de mudanÁa nesta 
-		SeÁ„o Judici·ria, a manutenÁ„o das seguintes vantagens pessoais vinculadas 
-		ao cargo de ${cargoServ}, e matrÌcula ${doc.subscritor.sigla}.
+		vem respeitosamente requerer a Vossa Excel√™ncia, em raz√£o de mudan√ßa nesta 
+		Se√ß√£o Judici√°ria, a manuten√ß√£o das seguintes vantagens pessoais vinculadas 
+		ao cargo de ${cargoServ}, e matr√≠cula ${doc.subscritor.sigla}.
 		</p>
 		
 		
 		<B>
-			<c:if test="${adicionalTempoServiÁo== 'Sim'}">
-			    Adiconal por Tempo de ServiÁo;
+			<c:if test="${adicionalTempoServi√ßo== 'Sim'}">
+			    Adiconal por Tempo de Servi√ßo;
 			    <br>	
 			</c:if>
 			
 			<c:if test="${manutencaoDependentes== 'Sim'}">
-			    ManutenÁ„o de dependentes para fins de deduÁ„o no Imposto de Renda na fonte;
+			    Manuten√ß√£o de dependentes para fins de dedu√ß√£o no Imposto de Renda na fonte;
 			    <br>		
 			</c:if>
 			
 			<c:if test="${decimosQuintos== 'Sim'}">
-			    DÈcimos/Quintos incorporados; 
+			    D√©cimos/Quintos incorporados; 
 			    <br>
 			</c:if>	
 		</B>

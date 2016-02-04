@@ -18,7 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp.grupo;
 /**
- *  Configuração de grupo para um email
+ *  ConfiguraÃ§Ã£o de grupo para um email
  */
 
 public class ConfiguracaoGrupoEmail extends ConfiguracaoGrupo {

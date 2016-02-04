@@ -29,9 +29,9 @@
 		<mod:letra tamanho="${tl}">
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerdaPrimeiraPagina.jsp" />
 		
-		<h3>INSCRI«√O NO PLANO DE ASSIST NCIA PR…-ESCOLAR (PAPE)</h3>
+		<h3>INSCRI√á√ÉO NO PLANO DE ASSIST√äNCIA PR√â-ESCOLAR (PAPE)</h3>
 
-		<h4><p><b>1 - DADOS DO MAGISTRADO/SERVIDOR BENEFICI¡RIO</b><p/></h4>
+		<h4><p><b>1 - DADOS DO MAGISTRADO/SERVIDOR BENEFICI√ÅRIO</b><p/></h4>
 		<c:import url="/paginas/expediente/modelos/subscritor.jsp" />
 		
 		<h4><p><b>2 - DEPENDENTES</b><p/></h4>
@@ -51,54 +51,54 @@
 			</c:forEach>
 		</table>
 
-		<h4><p><b>3 - DECLARA«√O</b></p></h4>
-		<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro estar ciente dos termos da ResoluÁ„o CJF n&ordm; 588, de 29/11/2007, que dispıe sobre o AuxÌlio PrÈ-Escolar, e de que o respectivo reembolso ser· realizado em 
+		<h4><p><b>3 - DECLARA√á√ÉO</b></p></h4>
+		<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro estar ciente dos termos da Resolu√ß√£o CJF n&ordm; 588, de 29/11/2007, que disp√µe sobre o Aux√≠lio Pr√©-Escolar, e de que o respectivo reembolso ser√° realizado em 
 		Folha de Pagamento, conforme apresentado abaixo:</p>
 		<p style="MARGIN-LEFT: 2cm">
-			- O auxÌlio prÈ-escolar ser· devido a partir do mÍs em que for feita a inscriÁ„o do dependente, n„o sendo pagos valores relativos a meses anteriores;<br/>
-			- O auxÌlio prÈ-escolar ser· pago a cada crianÁa na faixa et·ria compreendida desde o nascimento atÈ o mÍs de completar 6 anos de idade inclusive; ou quando ingressar no ensino fundamental;<br/>
-			- O benefici·rio È respons·vel por comunicar a administraÁ„o qualquer situaÁ„o que cause perda do benefÌcio, pelas hipÛteses do art. 14 da referida ResoluÁ„o;<br/>
-			- Declaro, ainda, que o menor(es) acima relacionado(s) n„o est·(„o) cadastrado(s) como dependente(s), deste benefÌcio, ou programa similar em outro Ûrg„o ou entidade da AdministraÁ„o P˙blica direta ou indireta.
+			- O aux√≠lio pr√©-escolar ser√° devido a partir do m√™s em que for feita a inscri√ß√£o do dependente, n√£o sendo pagos valores relativos a meses anteriores;<br/>
+			- O aux√≠lio pr√©-escolar ser√° pago a cada crian√ßa na faixa et√°ria compreendida desde o nascimento at√© o m√™s de completar 6 anos de idade inclusive; ou quando ingressar no ensino fundamental;<br/>
+			- O benefici√°rio √© respons√°vel por comunicar a administra√ß√£o qualquer situa√ß√£o que cause perda do benef√≠cio, pelas hip√≥teses do art. 14 da referida Resolu√ß√£o;<br/>
+			- Declaro, ainda, que o menor(es) acima relacionado(s) n√£o est√°(√£o) cadastrado(s) como dependente(s), deste benef√≠cio, ou programa similar em outro √≥rg√£o ou entidade da Administra√ß√£o P√∫blica direta ou indireta.
 		</p>
 		<p>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro, ainda, que preencho os requisitos previstos pelo art. 5&deg; da ResoluÁ„o n&ordm; 588, de 29/11/2007.
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Declaro, ainda, que preencho os requisitos previstos pelo art. 5&deg; da Resolu√ß√£o n&ordm; 588, de 29/11/2007.
 		</p>
 		<p align="center">${doc.dtExtenso}</p>
 		<p align="center">
 		Assinatura:_______________________________________________________________
 		</p>
 
-		<h4><p><b>DOCUMENTA«√O NECESS¡RIA</b></h4><br/>
+		<h4><p><b>DOCUMENTA√á√ÉO NECESS√ÅRIA</b></h4><br/>
 		
 		<table width="100%" border="1" cellpadding="2" cellspacing="1"
 			bgcolor="#000000">
 			<tr>
 				<td bgcolor="#FFFFFF" width="25%"><p>DEPENDENTES</p></td>
-				<td bgcolor="#FFFFFF" width="75%"><p>DOCUMENTA«√O</p></td>
+				<td bgcolor="#FFFFFF" width="75%"><p>DOCUMENTA√á√ÉO</p></td>
 			</tr>
 			<tr>
 				<td bgcolor="#FFFFFF" width="25%"><p align="center">Filho</p></td>
-				<td bgcolor="#FFFFFF" width="75%"><p>- CÛpia da certid„o de nascimento;<br>
-				- Laudo mÈdico (no caso de dependente portador de necessidade especial com mais de 6 anos).</p></td>
+				<td bgcolor="#FFFFFF" width="75%"><p>- C√≥pia da certid√£o de nascimento;<br>
+				- Laudo m√©dico (no caso de dependente portador de necessidade especial com mais de 6 anos).</p></td>
 			</tr>
 			<tr>
 				<td bgcolor="#FFFFFF" width="25%"><p align="center">Enteado</p></td>
-				<td bgcolor="#FFFFFF" width="75%"><p>- CÛpia da certid„o de nascimento;<br>
-				- CÛpia da certid„o de casamento do benefici·rio ou escritura declaratÛria, quando companheiro(a);<br>
-				- DeclaraÁ„o subscrita pelo servidor de que o menor est· sob sua responsabilidade e È seu dependente econÙmico.</p></td>
+				<td bgcolor="#FFFFFF" width="75%"><p>- C√≥pia da certid√£o de nascimento;<br>
+				- C√≥pia da certid√£o de casamento do benefici√°rio ou escritura declarat√≥ria, quando companheiro(a);<br>
+				- Declara√ß√£o subscrita pelo servidor de que o menor est√° sob sua responsabilidade e √© seu dependente econ√¥mico.</p></td>
 			</tr>
 			<tr>
 				<td bgcolor="#FFFFFF" width="25%"><p align="center">Menor sob guarda ou tutelado</p></td>
-				<td bgcolor="#FFFFFF" width="75%"><p>- CÛpia da certid„o de nascimento;<br>
+				<td bgcolor="#FFFFFF" width="75%"><p>- C√≥pia da certid√£o de nascimento;<br>
 				- Termo de Guarda ou Tutela;<br>
-				- ComprovaÁ„o da condiÁ„o de menor sob guarda/responsabilidade do benefici·rio, mediante autorizaÁ„o judicial.</p></td>
+				- Comprova√ß√£o da condi√ß√£o de menor sob guarda/responsabilidade do benefici√°rio, mediante autoriza√ß√£o judicial.</p></td>
 			</tr>
 		</table>
-		<p style="font-family: arial; MARGIN-LEFT: 1cm">Tratando-se de dependentes excepcionais ser· considerada, como limite para o atendimento,
-				 a idade mental correspondente a 6 (seis) anos de idade, comprovada mediante laudo mÈdico, homologado pela ·rea competente
-				 do ”rg„o.</p>
-		<p style="font-family: arial; MARGIN-LEFT: 1cm">Servidores requisitados ou cedidos ou que exerÁam mais de um cargo, devem apresentar declaraÁ„o fornecida
-		 pelo outro Ûrg„o de que n„o usufruem benefÌcio semelhante, informando o valor da remuneraÁ„o percebida naquele Ûrg„o.</p>
+		<p style="font-family: arial; MARGIN-LEFT: 1cm">Tratando-se de dependentes excepcionais ser√° considerada, como limite para o atendimento,
+				 a idade mental correspondente a 6 (seis) anos de idade, comprovada mediante laudo m√©dico, homologado pela √°rea competente
+				 do √ìrg√£o.</p>
+		<p style="font-family: arial; MARGIN-LEFT: 1cm">Servidores requisitados ou cedidos ou que exer√ßam mais de um cargo, devem apresentar declara√ß√£o fornecida
+		 pelo outro √≥rg√£o de que n√£o usufruem benef√≠cio semelhante, informando o valor da remunera√ß√£o percebida naquele √≥rg√£o.</p>
 		
 		</mod:letra>
 		</body>

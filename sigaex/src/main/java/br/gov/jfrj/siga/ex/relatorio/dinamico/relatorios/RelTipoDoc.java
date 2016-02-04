@@ -5,9 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -26,6 +28,7 @@ import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 public class RelTipoDoc extends RelatorioTemplate {
@@ -34,23 +37,23 @@ public class RelTipoDoc extends RelatorioTemplate {
 		super(parametros);
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
-					"Par�metro secaoUsuario n�o informado!");
+					"Parâmetro secaoUsuario não informado!");
 		}
 		if (parametros.get("lotacaoTitular") == null) {
-			throw new DJBuilderException("Par�metro lota��o n�o informado!");
+			throw new DJBuilderException("Parâmetro lotação não informado!");
 		}
 		/*
 		 * if (parametros.get("orgao") == null) { throw new
-		 * DJBuilderException("Par�metro �rg�o n�o informado!"); }
+		 * DJBuilderException("Parâmetro órgão não informado!"); }
 		 */
 		if (parametros.get("dataInicial") == null) {
-			throw new DJBuilderException("Par�metro dataInicial n�o informado!");
+			throw new DJBuilderException("Parâmetro dataInicial não informado!");
 		}
 		if (parametros.get("dataFinal") == null) {
-			throw new DJBuilderException("Par�metro dataFinal n�o informado!");
+			throw new DJBuilderException("Parâmetro dataFinal não informado!");
 		}
 		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Par�metro link_siga n�o informado!");
+			throw new DJBuilderException("Parâmetro link_siga não informado!");
 		}
 	}
 
@@ -58,7 +61,7 @@ public class RelTipoDoc extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
-		this.setTitle("Rela��o de Documentos Criados");
+		this.setTitle("Relação de Documentos Criados");
 		this.addColuna("Tipo de Documento", 35, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Forma do Documento", 40, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Total", 25, RelatorioRapido.CENTRO, false);
@@ -82,12 +85,22 @@ public class RelTipoDoc extends RelatorioTemplate {
 						+ "from ExMovimentacao mov inner join mov.exMobil mob "
 						+ "inner join mob.exDocumento doc "
 						+ "where mov.dtIniMov between :dtini and :dtfim "
-						+ "and mov.lotaResp.idLotacao = :id "
+						+ "and mov.lotaResp.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :id) "
+						+ "and mov.exTipoMovimentacao.idTpMov =  1 "
 						+ "group by doc.exFormaDocumento.exTipoFormaDoc.descTipoFormaDoc, "
 						+ "doc.exFormaDocumento.descrFormaDoc");
 		
+		// Obtém a lotação com o id passado...
+		Query qrySetor = HibernateUtil.getSessao().createQuery(
+				"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
+					
+		Set<DpLotacao> lotacaoSet = new HashSet<DpLotacao>();
+		DpLotacao lotacao = (DpLotacao)qrySetor.list().get(0);
+		lotacaoSet.add(lotacao);
+		
+		
 		query.setParameter("id",
-				Long.valueOf((String) parametros.get("lotacao")));
+				lotacao.getIdInicial());
 		/*
 		 * Long orgaoUsu = Long.valueOf((String) parametros.get("orgao"));
 		 * query.setLong("orgaoUsu", orgaoUsu);
@@ -97,8 +110,6 @@ public class RelTipoDoc extends RelatorioTemplate {
 		Date dtfim = formatter.parse((String) parametros.get("dataFinal"));
 		query.setDate("dtfim", dtfim);
 
-		SortedSet<String> set = new TreeSet<String>();
-		SortedSet<String> lista = new TreeSet<String>();
 		Map<String, Long> map = new TreeMap<String, Long>();
 
 		Iterator it = query.list().iterator();
@@ -107,17 +118,12 @@ public class RelTipoDoc extends RelatorioTemplate {
 			String tipodoc = (String) obj[0];
 			String formadoc = (String) obj[1];
 			Long total = Long.valueOf(obj[2].toString());
-			set.add(tipodoc);
-			lista.add(formadoc);
 			map.put(chave(tipodoc, formadoc), total);
+			d.add(tipodoc);
+			d.add(formadoc);
+			acrescentarColuna(d, map, tipodoc, formadoc);
 		}
-		for (String s : set) {
-			for (String lis : lista) {
-				d.add(s);
-				d.add(lis);
-				acrescentarColuna(d, map, s, lis);
-			}
-		}
+		
 		return d;
 	}
 

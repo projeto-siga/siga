@@ -11,8 +11,8 @@
 <c:set var="baseURL" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
 
 
-<c:set var="titulo" scope="request">Acesso n„o autorizado</c:set>
-<c:import url="${baseURL}/siga/paginas/cabecalho.jsp" />
+<c:set var="titulo" scope="request">Acesso n√£o autorizado</c:set>
+<c:import context="/siga" url="/WEB-INF/page/principal/cabecalho.jsp" />
 
 <center>
 <table width="729" border="1" cellspacing="0" cellpadding="0"
@@ -29,4 +29,4 @@
 
 </table>
 </center>
-<c:import url="${baseURL}/siga/paginas/rodape.jsp" />
+<c:import context="/siga" url="/WEB-INF/page/principal/rodape.jsp" />

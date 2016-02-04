@@ -28,7 +28,7 @@ import java.util.Hashtable;
 import java.util.Properties;
 
 /**
- * Classe utilit·ria para a carga das propriedades
+ * Classe utilit√°ria para a carga das propriedades
  * 
  * @author aym
  * 
@@ -53,7 +53,7 @@ public class CarregadorDeModeloPropriedade {
 		Properties geral = new Properties();
 		Class cls = obj.getClass();
 		String clsNme = cls.getName();
-		// retorna propriedades da cache, se tem l·
+		// retorna propriedades da cache, se tem l√°
 		Properties prpCache = cache.get(clsNme);
 		if (prpCache != null)
 			return prpCache;
@@ -67,12 +67,12 @@ public class CarregadorDeModeloPropriedade {
 					geral.put(k, prp.get(k));
 				}
 			}
-			// verifica a superclasse se È classe PropriedadesGerais (abstrata)
+			// verifica a superclasse se √© classe PropriedadesGerais (abstrata)
 			/*
 			 * if (cls.getSuperclass().getName().equals(NOME_GERENTE_RAIZ))
 			 * break;
 			 */
-			// verifica se a classe È abstrata
+			// verifica se a classe √© abstrata
 			if (Modifier.isAbstract(cls.getSuperclass().getModifiers()))
 				break;
 			cls = cls.getSuperclass();
@@ -82,7 +82,7 @@ public class CarregadorDeModeloPropriedade {
 	}
 
 	/**
-	 * retorna as propriedades para o par‚metro obj (Objeto ou classe)
+	 * retorna as propriedades para o par√¢metro obj (Objeto ou classe)
 	 * 
 	 * @param obj
 	 *            uma instancia ou [nome-da-classe].class
@@ -117,7 +117,7 @@ public class CarregadorDeModeloPropriedade {
 		}
 
 		// tenta carregar carregar propriedades registradas por um servidor de
-		// aplicaÁıes, por exemplo.
+		// aplica√ß√µes, por exemplo.
 		try {
 			return carregarPropriedadesDoSistema();
 		} catch (Exception e) {
@@ -125,15 +125,15 @@ public class CarregadorDeModeloPropriedade {
 		}
 
 		throw new Exception(
-				"N„o existem propriedades definidas! Para resolver esse problema: \n 1) Coloque um arquivo "
+				"N√£o existem propriedades definidas! Para resolver esse problema: \n 1) Coloque um arquivo "
 						+ NOME_ARQ_PROPS
-						+ " no mesmo pacote da classe que estende ModeloPropriedade \n 2) Defina uma vari·vel -D"
+						+ " no mesmo pacote da classe que estende ModeloPropriedade \n 2) Defina uma vari√°vel -D"
 						+ NOME_ARQ_PROPS
-						+ ".file=CAMINHO_COMPLETO_DO_ARQUIVO na inicializaÁ„o do programa \n 3) Coloque um arquivo "
+						+ ".file=CAMINHO_COMPLETO_DO_ARQUIVO na inicializa√ß√£o do programa \n 3) Coloque um arquivo "
 						+ NOME_ARQ_PROPS
-						+ " no mesmo diretÛrio do aplicativo \n 4) Se for uma aplicaÁ„o web, coloque o arquivo "
+						+ " no mesmo diret√≥rio do aplicativo \n 4) Se for uma aplica√ß√£o web, coloque o arquivo "
 						+ NOME_ARQ_PROPS
-						+ " no diretÛrio de configuraÁ„o do servidor de aplicaÁ„o e configure-o para ler tal arquivo");
+						+ " no diret√≥rio de configura√ß√£o do servidor de aplica√ß√£o e configure-o para ler tal arquivo");
 
 	}
 
@@ -142,14 +142,14 @@ public class CarregadorDeModeloPropriedade {
 		if (p.containsKey("siga.properties.versao")) {
 			return System.getProperties();
 		} else {
-			throw new Exception("Propriedades inv·lidas!");
+			throw new Exception("Propriedades inv√°lidas!");
 		}
 	}
 
 	/**
-	 * Tenta carregar as propriedades em um arquivo localizado em um diretÛrio
-	 * especÌfico. Ess forma È ideal para compartilhar arquivos de propriedades
-	 * entre mÛdulos web e n„o-web, mantendo-os em um arquivo ˙nico.
+	 * Tenta carregar as propriedades em um arquivo localizado em um diret√≥rio
+	 * espec√≠fico. Ess forma √© ideal para compartilhar arquivos de propriedades
+	 * entre m√≥dulos web e n√£o-web, mantendo-os em um arquivo √∫nico.
 	 * 
 	 * @param caminhoArquivo
 	 * @return
@@ -167,8 +167,8 @@ public class CarregadorDeModeloPropriedade {
 
 	/**
 	 * Tenta carregar as propriedades em um arquivo que esteja no mesmo pacote
-	 * da classe. Essa forma È ideal para o desenvolvedor que queira definir uma
-	 * propriedade que sÛ pode ser modificada por desenvolcedores.
+	 * da classe. Essa forma √© ideal para o desenvolvedor que queira definir uma
+	 * propriedade que s√≥ pode ser modificada por desenvolcedores.
 	 * 
 	 * @param nme
 	 * @return
@@ -185,11 +185,11 @@ public class CarregadorDeModeloPropriedade {
 	}
 
 	/**
-	 * ObtÈm o nome (caminho completo) da classe do objeto par‚metro.
+	 * Obt√©m o nome (caminho completo) da classe do objeto par√¢metro.
 	 * 
 	 * @param obj
 	 *            deve ser uma instancia ou [nome-da-classe].class
-	 * @return o nome (caminho completo) da classe do objeto par‚metro.
+	 * @return o nome (caminho completo) da classe do objeto par√¢metro.
 	 */
 	@SuppressWarnings("unchecked")
 	private static String getClassNameOf(Object obj) {

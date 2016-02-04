@@ -1,6 +1,6 @@
 <mail-templates>
 
-  <variable name="BaseTaskListURL" value="http://localhost:8080/sigawf/task.action?tiId=" />
+  <variable name="BaseTaskListURL" value="http://localhost:8080/sigawf/app/task?tiId=" />
 
   <mail-template name='task-assign'>
     <actors>#{taskInstance.actorId}</actors>

@@ -10,20 +10,20 @@
 <mod:modelo urlBase="/paginas/expediente/modelos/portaria.jsp">
 	<mod:entrevista>
 		<mod:grupo>
-			<mod:texto titulo="N∫ da solicitaÁ„o" var="solicitacao" largura="35" />
+			<mod:texto titulo="N¬∫ da solicita√ß√£o" var="solicitacao" largura="35" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Nome do respons·vel" var="responsavel"
+			<mod:texto titulo="Nome do respons√°vel" var="responsavel"
 				largura="40" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:pessoa titulo="Servidor" var="servidor" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="ObservaÁıes sobre o servidor" var="servidorObs" />
+			<mod:texto titulo="Observa√ß√µes sobre o servidor" var="servidorObs" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:lotacao titulo="PrÛxima lotaÁ„o" var="lotacao" />
+			<mod:lotacao titulo="Pr√≥xima lota√ß√£o" var="lotacao" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:data titulo="A partir de" var="dataInicio" />
@@ -32,8 +32,8 @@
 	<mod:documento>
 		<mod:valor var="texto_portaria">
 			<!-- INICIO ABERTURA --><p style="TEXT-INDENT: 2cm" align="justify"><b>O JUIZ FEDERAL
-			- DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI«OS AUXILIARES DA
-			JUSTI«A FEDERAL DE 1&ordm; GRAU - <c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE«√O JUDICI¡RIA DO RIO DE JANEIRO</c:otherwise></c:choose></b>, no uso de suas atribuiÁıes legais, e tendo em vista o
+			- DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI√áOS AUXILIARES DA
+			JUSTI√áA FEDERAL DE 1&ordm; GRAU - <c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO</c:otherwise></c:choose></b>, no uso de suas atribui√ß√µes legais, e tendo em vista o
 			disposto no(a) ${solicitacao}, do(a) ${responsavel},
 			</p>
 

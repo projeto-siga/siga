@@ -43,8 +43,9 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpLocalidade extends AbstractCpLocalidade implements Serializable,
 		Selecionavel {
-	
-	public static List<String> MUNICIPIOS = obterMunicipios();
+
+	private static List<String> municipios = null;
+
 	@SuppressWarnings("unchecked")
 	private static List<String> obterMunicipios() {
 		try {
@@ -54,16 +55,16 @@ public class CpLocalidade extends AbstractCpLocalidade implements Serializable,
 			return new ArrayList();
 		}
 	}
+
 	/*
-	static {
-		String[] municipiosArray ={"Angra dos Reis", "Barra do Piraí", "Cachoeiro do Itapemirim", "Campos",
-				"Duque de Caxias", "Itaboraí", "Itaperuna", "Macaé", "Magé",
-				"Niterói", "Nova Friburgo", "Nova Iguaçu", "Petrópolis", "Resende",
-				"Rio de Janeiro", "São Gonçalo", "São João de Meriti",
-				"São Mateus", "São Pedro da Aldeia", "Teresópolis", "Três Rios",
-				"Vitória", "Volta Redonda" }; 
-		MUNICIPIOS = Arrays.asList(municipiosArray);
-	} */
+	 * static { String[] municipiosArray ={"Angra dos Reis", "Barra do PiraÃ­",
+	 * "Cachoeiro do Itapemirim", "Campos", "Duque de Caxias", "ItaboraÃ­",
+	 * "Itaperuna", "MacaÃ©", "MagÃ©", "NiterÃ³i", "Nova Friburgo", "Nova IguaÃ§u",
+	 * "PetrÃ³polis", "Resende", "Rio de Janeiro", "SÃ£o GonÃ§alo",
+	 * "SÃ£o JoÃ£o de Meriti", "SÃ£o Mateus", "SÃ£o Pedro da Aldeia", "TeresÃ³polis",
+	 * "TrÃªs Rios", "VitÃ³ria", "Volta Redonda" }; MUNICIPIOS =
+	 * Arrays.asList(municipiosArray); }
+	 */
 
 	public String getDescricao() {
 		return getNmLocalidade();
@@ -80,6 +81,16 @@ public class CpLocalidade extends AbstractCpLocalidade implements Serializable,
 	public void setSigla(String sigla) {
 		setNmLocalidade(sigla);
 
+	}
+
+	public static List<String> getMunicipios() {
+		if (municipios == null)
+			municipios = obterMunicipios();
+		return municipios;
+	}
+
+	public static void setMunicipios(List<String> municipios) {
+		CpLocalidade.municipios = municipios;
 	}
 
 }

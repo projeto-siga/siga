@@ -10,7 +10,7 @@
 			<mod:grupo>
 				<mod:pessoa titulo="Nome" var="nome" buscarFechadas="true"/>
 			</mod:grupo>
-				<mod:caixaverif titulo="Nome n„o relacionado acima?" var="nomeConstatado" reler="ajax" idAjax="nomeConstatadoAjax"/>
+				<mod:caixaverif titulo="Nome n√£o relacionado acima?" var="nomeConstatado" reler="ajax" idAjax="nomeConstatadoAjax"/>
 				<mod:grupo depende="nomeConstatadoAjax">
 					<c:if test="${nomeConstatado == 'Sim'}">
 						<mod:texto titulo="Nome" var="nomeCedido" largura="60" />
@@ -20,8 +20,8 @@
 					</c:if>
 				</mod:grupo>
 				
-				<mod:grupo titulo="PerÌodo">
-					<mod:data titulo="InÌcio" var="periodoInicio"/>
+				<mod:grupo titulo="Per√≠odo">
+					<mod:data titulo="In√≠cio" var="periodoInicio"/>
 					<mod:data titulo="Fim" var="periodoFim"/>
 				</mod:grupo>
 			
@@ -49,7 +49,7 @@
 					<br/>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
-							<td align="center" width="100%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">CERTID√O DE TEMPO DE CONTRIBUI«√O</p></td>
+							<td align="center" width="100%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">CERTID√ÉO DE TEMPO DE CONTRIBUI√á√ÉO</p></td>
 						</tr>
 					</table>
 				</td>
@@ -79,7 +79,7 @@
 		 </c:choose>
 		 </p>
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-			PERÕODO:
+			PER√çODO:
 			<c:if test="${not empty periodoInicio || not empty periodoFim}">
 			<b>${periodoInicio} a ${periodoFim}</b>
 			</c:if>

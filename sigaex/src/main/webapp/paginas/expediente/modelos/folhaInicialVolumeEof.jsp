@@ -42,7 +42,7 @@
 		       <td width="45%">
 		          <table width="100%" align="right" cellpadding="0" cellspacing="1" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse">
 		             <tr> 
-			           <td   width="60%"  align="center" valign="middle" style="border-collapse: collapse; border-color: black; font-size: 9pt"><br/><b>Processo Nº</b><br/><br/></td>
+			           <td   width="60%"  align="center" valign="middle" style="border-collapse: collapse; border-color: black; font-size: 9pt"><br/><b>Processo NÂº</b><br/><br/></td>
 			           <td   width="20%"  align="center"  style="border-collapse: collapse; border-color: black; font-size: 9pt"><br/><b>Ap.</b><br/><br/></td>
 			           <td   width="20%"  align="center" style="border-collapse: collapse; border-color: black; font-size: 9pt"><br/><b>Vol.</b><br/><br/></td>
 		             </tr>
@@ -60,7 +60,7 @@
 		    <tr> 
 			   <td width="15%" align="left" style="font-size: 10" style="border-collapse: collapse; border-color: black;" rowspan="2" ><b>&nbsp CONTRATADA</b><br/></td>
 			   <td width="67%" style="border-collapse: collapse; border-color: black;" rowspan="2">&nbsp</td>
-			   <td width="12%" style="font-size: 8pt; border-collapse: collapse; border-color: black;" align="center" valign="middle">% de Retenção<br/>de Tributos<br/>Federais</td>
+			   <td width="12%" style="font-size: 8pt; border-collapse: collapse; border-color: black;" align="center" valign="middle">% de RetenÃ§Ã£o<br/>de Tributos<br/>Federais</td>
 			   <td width="8%"  align="center" style="border-collapse: collapse; border-color: black;">Fls.</td>
 			</tr>
 			<tr>
@@ -88,7 +88,7 @@
 		      <c:otherwise>
 		      </c:otherwise>
 		   </c:choose>
-				<p align="center" style="font-size: 9pt">Certifico que, nesta data, iniciei o volume ${mob.numSequencia} do processo em epígrafe.</p>
+				<p align="center" style="font-size: 9pt">Certifico que, nesta data, iniciei o volume ${mob.numSequencia} do processo em epÃ­grafe.</p>
 				<p align="center" style="font-size: 9pt">${doc.dtExtenso}</p>
 				<br/>
 				<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp"/>

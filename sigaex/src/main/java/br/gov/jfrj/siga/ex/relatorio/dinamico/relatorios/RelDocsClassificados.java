@@ -47,10 +47,10 @@ public class RelDocsClassificados extends RelatorioTemplate {
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
-		this.setTitle("Relação de Documentos Classificados");
+		this.setTitle("RelaÃ§Ã£o de Documentos Classificados");
 		this.addColuna("Documento", 20, RelatorioRapido.CENTRO,
 				false, false);
-		this.addColuna("Classificação", 80, RelatorioRapido.ESQUERDA,
+		this.addColuna("ClassificaÃ§Ã£o", 80, RelatorioRapido.ESQUERDA,
 				false, false);
 
 		return this;
@@ -71,7 +71,7 @@ public class RelDocsClassificados extends RelatorioTemplate {
 		
 		for (ExDocumento d : listaDocs) {
 			dados.add(d.getCodigo()); //num doc
-			dados.add(d.getExClassificacaoAtual().getDescricaoCompleta()); //Descrição
+			dados.add(d.getExClassificacaoAtual().getDescricaoCompleta()); //DescriÃ§Ã£o
 			
 		}
 		

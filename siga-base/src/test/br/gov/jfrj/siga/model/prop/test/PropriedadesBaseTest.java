@@ -43,7 +43,7 @@ public class PropriedadesBaseTest extends TestCase {
 		assertEquals("zeroNoUm",(String) arr1[0]);
 		assertEquals("umNoUm",(String) arr1[1]);
 		assertEquals("doisNoUm",(String) arr1[2]);
-		assertEquals("trêsNoUm",(String) arr1[3]); 
+		assertEquals("trÃªsNoUm",(String) arr1[3]); 
 		//
 		Propriedades2 prp2 = new Propriedades2();
 		assertEquals("prop1",prp2.obterPropriedade("soTemNaUm"));
@@ -57,7 +57,7 @@ public class PropriedadesBaseTest extends TestCase {
 		assertEquals("zeroNoUm",(String) arr2[0]);
 		assertEquals("umNoUm",(String) arr2[1]);
 		assertEquals("doisNoDois",(String) arr2[2]);
-		assertEquals("trêsNoDois",(String) arr2[3]); 
+		assertEquals("trÃªsNoDois",(String) arr2[3]); 
 		//
 		Propriedades3 prp3 = new Propriedades3();
 		assertEquals("prop1",prp3.obterPropriedade("soTemNaUm"));
@@ -72,8 +72,8 @@ public class PropriedadesBaseTest extends TestCase {
 		assertEquals("zeroNoUm",(String) arr3[0]);
 		assertEquals("umNoUm",(String) arr3[1]);
 		assertEquals("doisNoDois",(String) arr3[2]);
-		assertEquals("trêsNoTrês",(String) arr3[3]);
-		assertEquals("quatroNoTrês",(String) arr3[4]);
+		assertEquals("trÃªsNoTrÃªs",(String) arr3[3]);
+		assertEquals("quatroNoTrÃªs",(String) arr3[4]);
 		prp3.setPrefixo("aaaa");
 		System.out.println("->" + prp3.getPrefixo());
 	}

@@ -40,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -52,6 +53,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.axis.encoding.Base64;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Criteria;
 import org.hibernate.ObjectNotFoundException;
@@ -144,7 +146,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.apache.axis.encoding.Base64;
 
 public class ExBL extends CpBL {
 	private final String SHA1 = "1.3.14.3.2.26";
@@ -158,7 +159,7 @@ public class ExBL extends CpBL {
 	private ProcessadorModelo processadorModeloFreemarker = new ProcessadorModeloFreemarker();
 
 	private final static Logger log = Logger.getLogger(ExBL.class);
-	
+
 	public ThreadLocal<SortedSet<ExMobil>> getThreadAlteracaoParcial() {
 		return threadAlteracaoParcial;
 	}
@@ -232,7 +233,7 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	// Executa algoritmo de comparaÁ„o entre dois sets e
+	// Executa algoritmo de compara√ß√£o entre dois sets e
 	// preenche as listas: inserir, excluir e atualizar.
 	// \
 	private void encaixar(SortedSet<ExMarca> setA, SortedSet<ExMarca> setB,
@@ -339,11 +340,11 @@ public class ExBL extends CpBL {
 			dao().gravar(a);
 		}
 	}
-	
-	private void atualizaMarcasDocumentosJuntados(ExMobil mob){
+
+	private void atualizaMarcasDocumentosJuntados(ExMobil mob) {
 		Set<ExMobil> mobilJuntados = mob.getJuntados();
 		Iterator itJuntados = mobilJuntados.iterator();
-		while(itJuntados.hasNext()){
+		while (itJuntados.hasNext()) {
 			ExMobil mobilJuntado = (ExMobil) itJuntados.next();
 			atualizarMarcas(false, mobilJuntado);
 		}
@@ -362,8 +363,9 @@ public class ExBL extends CpBL {
 		set.add(mar);
 	}
 
-	private void acrescentarMarcaTransferencia(SortedSet<ExMarca> set, ExMobil mob,
-			Long idMarcador, Date dtIni, Date dtFim, DpPessoa pess, DpLotacao lota) {
+	private void acrescentarMarcaTransferencia(SortedSet<ExMarca> set,
+			ExMobil mob, Long idMarcador, Date dtIni, Date dtFim,
+			DpPessoa pess, DpLotacao lota) {
 		ExMarca mar = new ExMarca();
 		mar.setExMobil(mob);
 		mar.setCpMarcador(dao().consultar(idMarcador, CpMarcador.class, false));
@@ -426,7 +428,7 @@ public class ExBL extends CpBL {
 									mov.getDtIniMov(), null, pess, false);
 				// if (index % 10 == 0){
 				dao().getSessao().clear();
-				//System.gc();
+				// System.gc();
 				// }
 			} catch (Throwable e) {
 				e.printStackTrace();
@@ -436,19 +438,20 @@ public class ExBL extends CpBL {
 				+ (System.currentTimeMillis() - ini) + " ms");
 	}
 
-	public void marcar(ExDocumento doc) throws Exception {
+	public void marcar(ExDocumento doc) {
 		ExDao.iniciarTransacao();
 		atualizarMarcas(doc);
-		for (ExMovimentacao m : doc.getExMovimentacaoSet()) {
-			m.setNumPaginas(m.getContarNumeroDePaginas());
-			dao().gravar(m);
-		}
+		// Nato: ser√° que precisamos contar o n√∫mero de p√°ginas cada vez que trocamos as marcas? Essa √© uma opera√ß√£o custosa! Desabilitei para ver se temos alguma reclama√ß√£o.
+//		for (ExMovimentacao m : doc.getExMovimentacaoSet()) {
+//			m.setNumPaginas(m.getContarNumeroDePaginas());
+//			dao().gravar(m);
+//		}
 		ExDao.commitTransacao();
 	}
 
 	/**
-	 * MÈtodo criado para contar o n˙mero de p·ginas de um documento que foi
-	 * criado antes da funÁ„o que grava um documento com o total de p·ginas.
+	 * M√©todo criado para contar o n√∫mero de p√°ginas de um documento que foi
+	 * criado antes da fun√ß√£o que grava um documento com o total de p√°ginas.
 	 * 
 	 * @param doc
 	 * @return
@@ -463,7 +466,7 @@ public class ExBL extends CpBL {
 			ExDao.commitTransacao();
 		} catch (Throwable e) {
 			System.out
-					.println("Erro ao contar o n˙mero de p·ginas do documento."
+					.println("Erro ao contar o n√∫mero de p√°ginas do documento."
 							+ doc);
 			e.printStackTrace();
 		}
@@ -472,8 +475,8 @@ public class ExBL extends CpBL {
 	}
 
 	/**
-	 * MÈtodo criado para contar o n˙mero de p·ginas de uma movimentacao que foi
-	 * criada antes da funÁ„o que grava uma movimentacao com o total de p·ginas.
+	 * M√©todo criado para contar o n√©mero de p√°ginas de uma movimentacao que foi
+	 * criada antes da fun√ß√£o que grava uma movimentacao com o total de p√°ginas.
 	 * 
 	 * @param doc
 	 * @return
@@ -488,7 +491,7 @@ public class ExBL extends CpBL {
 			ExDao.commitTransacao();
 		} catch (Throwable e) {
 			System.out
-					.println("Erro ao contar o n˙mero de p·ginas da movimentaÁ„o."
+					.println("Erro ao contar o n√∫mero de p√°ginas da movimenta√ß√£o."
 							+ mov);
 			e.printStackTrace();
 		}
@@ -496,7 +499,7 @@ public class ExBL extends CpBL {
 		return numeroDePaginas;
 	}
 
-	public void numerarTudo(int aPartirDe) throws Exception {
+	public void numerarTudo(int aPartirDe) {
 		List<ExDocumento> list = new ArrayList<ExDocumento>();
 
 		final Criteria countCrit = dao().getSessao()
@@ -515,7 +518,7 @@ public class ExBL extends CpBL {
 
 		do {
 			long inicio = System.currentTimeMillis();
-			//System.gc();
+			// System.gc();
 			iniciarAlteracao();
 			crit.setFirstResult(index);
 			list = crit.list();
@@ -530,8 +533,8 @@ public class ExBL extends CpBL {
 					System.out.println("Erro ao marcar o doc " + doc);
 					e.printStackTrace();
 				}
-				if (index % 50 == 0){
-//					System.gc();
+				if (index % 50 == 0) {
+					// System.gc();
 				}
 				System.out.print(doc.getIdDoc() + " ok - ");
 			}
@@ -546,10 +549,10 @@ public class ExBL extends CpBL {
 					+ " numerados de " + totalDocs);
 		} while (list.size() > 0);
 
-		//System.gc();
+		// System.gc();
 	}
 
-	public void marcarTudo() throws Exception {
+	public void marcarTudo() {
 		marcarTudo(0, 0, true, false, new PrintWriter(System.out));
 	}
 
@@ -558,7 +561,7 @@ public class ExBL extends CpBL {
 	}
 
 	public void marcarTudo(int primeiro, int ultimo, boolean efetivar,
-			boolean apenasTemporalidade, PrintWriter out) throws Exception {
+			boolean apenasTemporalidade, PrintWriter out) {
 
 		List<ExDocumento> list = new ArrayList<ExDocumento>();
 
@@ -651,7 +654,7 @@ public class ExBL extends CpBL {
 			}
 			if (efetivar) {
 				ExDao.commitTransacao();
-				//System.gc();
+				// System.gc();
 			}
 			dao().getSessao().clear();
 		} while (list.size() > 0);
@@ -661,11 +664,11 @@ public class ExBL extends CpBL {
 		out.println(" - Fim");
 		out.println("-----------------------------------------------");
 
-		//System.gc();
+		// System.gc();
 	}
 
 	/**
-	 * Calcula quais as marcas cada mobil ter· com base nas movimentaÁıes que
+	 * Calcula quais as marcas cada mobil ter√° com base nas movimenta√ß√µes que
 	 * foram feitas no documento.
 	 * 
 	 * @param mob
@@ -676,6 +679,9 @@ public class ExBL extends CpBL {
 		ExMovimentacao ultMovNaoCanc = mob.getUltimaMovimentacaoNaoCancelada();
 
 		Boolean isDocumentoSemEfeito = mob.doc().isSemEfeito();
+		
+		Set<CpMarcador> setMarcadoresAdicionais = new HashSet<>();
+
 
 		if (mob.isGeral()) {
 			if (!mob.doc().isFinalizado()) {
@@ -707,16 +713,20 @@ public class ExBL extends CpBL {
 				} else {
 
 					Long mDje = null;
-					ExMovimentacao movDje = null;					
+					ExMovimentacao movDje = null;
+
+					boolean fDocColaborativoPendencia = false;
+					Date dtDocColaborativo = null;
+
 					for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 						if (mov.isCancelada())
 							continue;
 						Long m = null;
 						Long t = mov.getIdTpMov();
 						if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO) {
-							acrescentarMarca(set, mob, CpMarcador.MARCADOR_PENDENTE_DE_ANEXACAO,
-									mov.getDtIniMov(),
-									mov.getCadastrante(),
+							acrescentarMarca(set, mob,
+									CpMarcador.MARCADOR_PENDENTE_DE_ANEXACAO,
+									mov.getDtIniMov(), mov.getCadastrante(),
 									mov.getLotaCadastrante());
 						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
 							DpLotacao lotaPerfil = null;
@@ -729,15 +739,20 @@ public class ExBL extends CpBL {
 								break;
 							}
 							if (m != null && !mob.doc().isEliminado()
-									&& !mob.doc().isArquivadoPermanente()) {								
-								if (mov.getSubscritor() != null) /* perfil foi cadastrado para a pessoa */
+									&& !mob.doc().isArquivadoPermanente()) {
+								if (mov.getSubscritor() != null) /*
+																 * perfil foi
+																 * cadastrado
+																 * para a pessoa
+																 */
 									lotaPerfil = null;
 								else
 									lotaPerfil = mov.getLotaSubscritor();
 								acrescentarMarca(set, mob, m,
-										mov.getDtIniMov(), mov.getSubscritor(), lotaPerfil);
+										mov.getDtIniMov(), mov.getSubscritor(),
+										lotaPerfil);
 							}
-								
+
 						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO) {
 							mDje = CpMarcador.MARCADOR_PUBLICACAO_SOLICITADA;
 							movDje = mov;
@@ -752,17 +767,19 @@ public class ExBL extends CpBL {
 								&& !mob.doc().jaTransferido()) {
 							m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
 							/*
-							 * n„o È possÌvel usar ExMovimentacao.isAssinada()
-							 * pois n„o h· tempo habil no BD de efetivar a
+							 * n√£o √© poss√≠vel usar ExMovimentacao.isAssinada()
+							 * pois n√£o h√° tempo habil no BD de efetivar a
 							 * inclusao de movimentacao de assinatura de
-							 * movimentÁ„o Edson: Por que n„o?
+							 * moviment√ß√£o Edson: Por que n√£o?
 							 */
 							for (ExMovimentacao movAss : mob
 									.getExMovimentacaoSet()) {
 								if ((movAss.getExTipoMovimentacao()
-										.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || movAss
-										.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO || movAss
-										.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA || movAss
+										.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
+										|| movAss.getExTipoMovimentacao()
+												.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
+										|| movAss.getExTipoMovimentacao()
+												.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA || movAss
 										.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
 										&& movAss.getExMovimentacaoRef()
 												.getIdMov() == mov.getIdMov()) {
@@ -784,13 +801,22 @@ public class ExBL extends CpBL {
 										m = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
 									else
 										m = CpMarcador.MARCADOR_REVISAR;
-									for (ExMovimentacao assinatura : mob
-											.getDoc().getTodasAsAssinaturas()) {
-										if (assinatura.getSubscritor()
-												.equivale(mov.getSubscritor())) {
-											m = null;
-											break;
+
+									if (mob.getDoc().getExTipoDocumento()
+											.getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO) {
+										for (ExMovimentacao assinatura : mob
+												.getDoc()
+												.getTodasAsAssinaturas()) {
+											if (assinatura
+													.getSubscritor()
+													.equivale(
+															mov.getSubscritor())) {
+												m = null;
+												break;
+											}
 										}
+									} else {
+										m = null;
 									}
 								}
 								if (m != null)
@@ -800,17 +826,46 @@ public class ExBL extends CpBL {
 							}
 						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA) {
 							boolean jaAutenticado = false;
-							for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
-								if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO || 
-										movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO) {
+							for (ExMovimentacao movAss : mob
+									.getExMovimentacaoSet()) {
+								if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
+										|| movAss.getExTipoMovimentacao()
+												.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO) {
 									jaAutenticado = true;
 									break;
 								}
-							}	
-							
-							if(!jaAutenticado)
-								acrescentarMarca(set, mob, CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA, mov.getDtIniMov(), mov.getSubscritor(), null);
-						}
+							}
+
+							if (!jaAutenticado)
+								acrescentarMarca(
+										set,
+										mob,
+										CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA,
+										mov.getDtIniMov(), mov.getSubscritor(),
+										null);
+						} else if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO) {
+							dtDocColaborativo = mov.getDtIniMov();
+							ExParte parte = ExParte.create(mov.getDescrMov());
+							if (parte.isAtivo() && !parte.isPreenchido()) {
+								fDocColaborativoPendencia = true;
+								acrescentarMarca(
+										set,
+										mob,
+										CpMarcador.MARCADOR_PENDENTE_DE_COLABORACAO,
+										mov.getDtIniMov(), mov.getSubscritor(),
+										mov.getLotaSubscritor());
+							}
+						} 
+
+
+					}
+					if (dtDocColaborativo != null && !fDocColaborativoPendencia) {
+						acrescentarMarca(
+								set,
+								mob,
+								CpMarcador.MARCADOR_FINALIZAR_DOCUMENTO_COLABORATIVO,
+								dtDocColaborativo, mob.doc().getCadastrante(),
+								mob.doc().getLotaCadastrante());
 					}
 					if (mDje != null && !mob.doc().isEliminado()) {
 						acrescentarMarca(set, mob, mDje, movDje.getDtIniMov(),
@@ -830,27 +885,24 @@ public class ExBL extends CpBL {
 			return set;
 		}
 
+		if (mob.doc().getMobilGeral().isPendenteDeColaboracao()) {
+			return set;
+		}
+
 		if (!isDocumentoSemEfeito) {
 
 			boolean apensadoAVolumeDoMesmoProcesso = mob
 					.isApensadoAVolumeDoMesmoProcesso();
 
 			long m = CpMarcador.MARCADOR_CANCELADO;
-			long m_aDevolverFora = CpMarcador.MARCADOR_A_DEVOLVER_FORA_DO_PRAZO;
-			long m_aDevolver = CpMarcador.MARCADOR_A_DEVOLVER;
-			long m_aguardando = CpMarcador.MARCADOR_AGUARDANDO;
-			long m_aguardandoFora = CpMarcador.MARCADOR_AGUARDANDO_DEVOLUCAO_FORA_DO_PRAZO;
 			long mAnterior = m;
 			Date dt = null;
-			//ExMovimentacao movT = new ExMovimentacao();		
-			Set<ExMovimentacao> movT = new TreeSet<ExMovimentacao>();
-			//contemDataRetorno = false;
-			
+
 			for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 				if (mov.isCancelada())
 					continue;
 				Long t = mov.getIdTpMov();
-				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO) 
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO)
 					m = CpMarcador.MARCADOR_PENDENTE_DE_ANEXACAO;
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO)
 					m = CpMarcador.MARCADOR_PUBLICACAO_SOLICITADA;
@@ -868,18 +920,22 @@ public class ExBL extends CpBL {
 						&& apensadoAVolumeDoMesmoProcesso)
 					m = CpMarcador.MARCADOR_APENSADO;
 				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
-						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA){
+						|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA) {
 					m = CpMarcador.MARCADOR_TRANSFERIDO_A_ORGAO_EXTERNO;
-					
-					if(mob.temDocumentosJuntados()){
+					// Adicionado para atender solici√ß√£o da Eloisa do CJF
+					// (CJF-SR-2015/00271), mas ser√° retirado momentaneamente
+					// at√© corre√ß√£o da loop infinito que est√° ocorrendo no
+					// m√©todo atualizar_marcas, para os casos em que um doc. tem
+					// uma via juntada a um doc. B e o documento B. tem uma via
+					// juntada ao doc. A
+					if (mob.temDocumentosJuntados()) {
 						atualizaMarcasDocumentosJuntados(mob);
 					}
 				}
 				if ((t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA || t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA)
-						&& !apensadoAVolumeDoMesmoProcesso){
+						&& !apensadoAVolumeDoMesmoProcesso) {
 					m = CpMarcador.MARCADOR_CAIXA_DE_ENTRADA;
-					
-					if(mob.temDocumentosJuntados()){
+					if (mob.temDocumentosJuntados()) {
 						atualizaMarcasDocumentosJuntados(mob);
 					}
 				}
@@ -887,8 +943,8 @@ public class ExBL extends CpBL {
 						&& mob.doc().isEletronico()) {
 					m = CpMarcador.MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA;
 					for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
-						if ((movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO ||
-								movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA)
+						if ((movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || movAss
+								.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA)
 								&& movAss.getExMovimentacaoRef().getIdMov() == mov
 										.getIdMov()) {
 							m = mAnterior;
@@ -909,8 +965,7 @@ public class ExBL extends CpBL {
 
 						if (!apensadoAVolumeDoMesmoProcesso) {
 							m = CpMarcador.MARCADOR_EM_ANDAMENTO;
-						}
-						else
+						} else
 							m = CpMarcador.MARCADOR_APENSADO;
 
 					} else if (mob.isApensado()) {
@@ -923,14 +978,14 @@ public class ExBL extends CpBL {
 						&& mob.doc().isEletronico()) {
 					m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
 					/*
-					 * n„o È possÌvel usar ExMovimentacao.isAssinada() pois n„o
-					 * h· tempo habil no BD de efetivar a inclusao de
-					 * movimentacao de assinatura de movimentÁ„o
+					 * nÔø£o Ôø© possÔø≠vel usar ExMovimentacao.isAssinada() pois nÔø£o
+					 * hÔø° tempo habil no BD de efetivar a inclusao de
+					 * movimentacao de assinatura de movimentÔøßÔø£o
 					 */
 					for (ExMovimentacao movAss : mob.getExMovimentacaoSet()) {
-						if ((movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO || movAss
-								.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO || movAss
-								.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA || movAss
+						if ((movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
+								|| movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
+								|| movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA || movAss
 								.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
 								&& movAss.getExMovimentacaoRef().getIdMov() == mov
 										.getIdMov()) {
@@ -939,13 +994,21 @@ public class ExBL extends CpBL {
 						}
 					}
 				}
-				
-				if(t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA) {
-					acrescentarMarca(set, mob, CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA, dt, mov.getSubscritor(), null);
+
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA) {
+					acrescentarMarca(
+							set,
+							mob,
+							CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA,
+							dt, mov.getSubscritor(), null);
 				}
 
-				if(t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA) {
-						acrescentarMarca(set, mob, CpMarcador.MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA, dt, mov.getSubscritor(), null);
+				if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA) {
+					acrescentarMarca(
+							set,
+							mob,
+							CpMarcador.MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA,
+							dt, mov.getSubscritor(), null);
 				}
 				
 				if (m != mAnterior) {
@@ -953,73 +1016,33 @@ public class ExBL extends CpBL {
 					mAnterior = m;
 				}
 			}
-						
-			List<ExMovimentacao> transferenciasMobil = mob.getMovimentacoesPorTipo(3);
-			transferenciasMobil.removeAll(mob.getMovimentacoesCanceladas());
-			Set<ExMovimentacao> transferenciasRetornoMobil = new TreeSet<ExMovimentacao>();
-			
-			Iterator it =  transferenciasMobil.iterator();
-			
-			while(it.hasNext()){			
-				ExMovimentacao elemento = (ExMovimentacao) it.next();
-				if(elemento.getDtFimMov() != null){
-					transferenciasRetornoMobil.add(elemento);
-				}
-			}
-						
-			Iterator itr = transferenciasRetornoMobil.iterator();
-			while (itr.hasNext()) {
-				ExMovimentacao element = (ExMovimentacao) itr.next();
-				ExMobil mobil = element.getExMobil();
-				
-				if (element.getExMobil().isJuntado()){
-					mobil = element.getExMobil().getMobilPrincipal();
-				}
-				
-				if (element.getLotaCadastrante() != null
-						&& !transferenciasRetornoMobil.isEmpty()
-						&& !contemRetornoTransferencia(element, mobil)) {
-					
-					Date dtMarca = element.getDtFimMov();
-					dtMarca.setHours(23);
-					dtMarca.setMinutes(59);
-					dtMarca.setSeconds(59);
-					
-					acrescentarMarcaTransferencia(set, mob, m_aguardando, dt,
-							dtMarca, element.getCadastrante(),
-							element.getLotaCadastrante()); // acrescenta a
-															// marca
-															// "Aguardando DevoluÁ„o"
 
-					acrescentarMarcaTransferencia(set, mob, m_aDevolver, dt,
-							dtMarca, element.getResp(),
-							element.getLotaResp());// acrescenta a marca
-													// "A Devolver"
-
-					acrescentarMarcaTransferencia(set, mob, m_aguardandoFora,
-							dtMarca, null,
-							element.getCadastrante(),
-							element.getLotaCadastrante()); // acrescenta a
-															// marca
-															// "Aguardando DevoluÁ„o (Fora do Prazo)"
-					
-					acrescentarMarcaTransferencia(set, mob, m_aDevolverFora,
-							dtMarca, null, element.getResp(),
-							element.getLotaResp());// acrescenta
-													// a
-													// marca
-													// "A Devolver (Fora do Prazo)"
+			calcularMarcadoresTransferencia(mob, set, dt);
+			
+			if (m == CpMarcador.MARCADOR_EM_ANDAMENTO) {
+				ExMobil geral = mob.doc().getMobilGeral();
+				if (geral.getExMovimentacaoSet() != null) {
+					for (ExMovimentacao mov : geral.getExMovimentacaoSet()) {
+						if (mov.isCancelada())
+							continue;
+						Long t = mov.getIdTpMov();
+						if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO)
+							acrescentarMarca(set, mob, mov.getMarcador()
+									.getIdMarcador(), dt,
+									ultMovNaoCanc.getResp(),
+									ultMovNaoCanc.getLotaResp());
+					}
 				}
 
 			}
-			
+
 			if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {
 				if (!mob.getDoc().isAssinadoSubscritor())
 					acrescentarMarca(set, mob,
 							CpMarcador.MARCADOR_COMO_SUBSCRITOR, dt, mob
 									.getExDocumento().getSubscritor(), null);
 			}
-
+			
 			if (m == CpMarcador.MARCADOR_CAIXA_DE_ENTRADA) {
 				if (!mob.doc().isEletronico()) {
 					m = CpMarcador.MARCADOR_A_RECEBER;
@@ -1064,7 +1087,7 @@ public class ExBL extends CpBL {
 					acrescentarMarca(set, mob, m, dt, null, null);
 			} else {
 				// Edson: Os marcadores "Arq Corrente" e
-				// "Aguardando andamento" s„o mutuamente exclusivos
+				// "Aguardando andamento" sÔø£o mutuamente exclusivos
 				if (m != CpMarcador.MARCADOR_EM_ANDAMENTO
 						|| !(mob.isArquivado() || mob.doc().getMobilGeral()
 								.isArquivado()))
@@ -1075,42 +1098,98 @@ public class ExBL extends CpBL {
 		}
 		return set;
 	}
-	
-	/**
-	 * Localiza a movimentaÁ„o de transferÍncia de retorno (correspondente)  
-	 * @param mov
-	 * @param mob
-	 * @return - true se h· uma movimentaÁ„o de retorno que corresponde ‡ movimentaÁ„o de transferÍncia.
-	 */
-	public boolean contemRetornoTransferencia(ExMovimentacao mov, ExMobil mob) {
-		boolean contains = false;
-		Iterator it;
-				List<ExMovimentacao> listaTransf = mob.getMovimentacoesPorTipo(3);
-				listaTransf.removeAll(mob.getMovimentacoesCanceladas());
-				it = listaTransf.iterator();
 
-				while (it.hasNext()) {
+	public void calcularMarcadoresTransferencia(ExMobil mob,
+			SortedSet<ExMarca> set, Date dt) {
+		long m_aDevolverFora = CpMarcador.MARCADOR_A_DEVOLVER_FORA_DO_PRAZO;
+		long m_aDevolver = CpMarcador.MARCADOR_A_DEVOLVER;
+		long m_aguardando = CpMarcador.MARCADOR_AGUARDANDO;
+		long m_aguardandoFora = CpMarcador.MARCADOR_AGUARDANDO_DEVOLUCAO_FORA_DO_PRAZO;
 
-					ExMovimentacao element = (ExMovimentacao) it.next();
-					if(ExTipoMovimentacao.hasTransferencia(element.getIdTpMov()) == ExTipoMovimentacao.hasTransferencia(mov.getIdTpMov()))
-						if (mov != null){
-							if (element.getIdMov() != mov.getIdMov()
-									&& ExTipoMovimentacao.hasTransferencia(element.getIdTpMov())
-									&& ExTipoMovimentacao.hasTransferencia(mov.getIdTpMov())
-									&& mov.getLotaCadastrante() == element.getLotaResp()
-									) {
-								contains = !contains;
-								mov.setDtFimMov(null);
-								break;
-							}
-						}
-				}
-		
-		return contains;
+		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3);
+		transferencias.removeAll(mob.getMovimentacoesCanceladas());
+		Set<ExMovimentacao> transferenciasComData = new TreeSet<ExMovimentacao>();
+
+		Iterator it = transferencias.iterator();
+		while (it.hasNext()) {
+			ExMovimentacao elemento = (ExMovimentacao) it.next();
+			if (elemento.getDtFimMov() != null) {
+				transferenciasComData.add(elemento);
+			}
+		}
+
+		Iterator itr = transferenciasComData.iterator();
+		while (itr.hasNext()) {
+			ExMovimentacao transfComData = (ExMovimentacao) itr.next();
+
+			ExMobil mobil = transfComData.getExMobil();
+
+			if (transfComData.getExMobil().isJuntado()) {
+				mobil = transfComData.getExMobil().getMobilPrincipal();
+			}
+
+			ExMovimentacao movRetorno = contemTransferenciaRetorno(
+					transfComData, mobil);
+
+			if (movRetorno != null) {
+				transferencias.remove(movRetorno);
+			} else {
+				Date dtMarca = transfComData.getDtFimMov();
+				dtMarca.setHours(23);
+				dtMarca.setMinutes(59);
+				dtMarca.setSeconds(59);
+
+				acrescentarMarcaTransferencia(set, mob, m_aguardando, dt,
+						dtMarca, transfComData.getCadastrante(),
+						transfComData.getLotaCadastrante()); // acrescenta a
+				// marca
+				// "Aguardando Devolu√ß√£o"
+
+				acrescentarMarcaTransferencia(set, mob, m_aDevolver, dt,
+						dtMarca, transfComData.getResp(),
+						transfComData.getLotaResp());// acrescenta
+				// a
+				// marca
+				// "A Devolver"
+
+				acrescentarMarcaTransferencia(set, mob, m_aguardandoFora,
+						dtMarca, null, transfComData.getCadastrante(),
+						transfComData.getLotaCadastrante()); // acrescenta a
+				// marca
+				// "Aguardando Devolu√ß√£o (Fora do Prazo)"
+
+				acrescentarMarcaTransferencia(set, mob, m_aDevolverFora,
+						dtMarca, null, transfComData.getResp(),
+						transfComData.getLotaResp());// acrescenta
+				// a
+				// marca
+				// "A Devolver (Fora do Prazo)"
+			}
+
+		}
 	}
-	
+
+	public ExMovimentacao contemTransferenciaRetorno(ExMovimentacao mov,
+			ExMobil mob) {
+		ExMovimentacao movRetorno = null;
+		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3);
+		transferencias.removeAll(mob.getMovimentacoesCanceladas());
+
+		Iterator it = transferencias.iterator();
+		while (it.hasNext()) {
+			ExMovimentacao transferencia = (ExMovimentacao) it.next();
+
+			if (mov.getLotaCadastrante().equivale(transferencia.getLotaResp())
+					&& transferencia.getData().after(mov.getData())) {
+				movRetorno = transferencia;
+				break;
+			}
+		}
+		return movRetorno;
+	}
+
 	/**
-	 * Calcula quais as marcas cada mobil ter· com base nas movimentaÁıes que
+	 * Calcula quais as marcas cada mobil ter√° com base nas movimenta√ß√µes que
 	 * foram feitas no documento.
 	 * 
 	 * @param mob
@@ -1223,7 +1302,7 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException(
 						"O documento "
 								+ doc.getCodigo()
-								+ " possui documentos filhos do tipo anexo que n„o est„o assinados. ");
+								+ " possui documentos filhos do tipo anexo que n√£o est√£o assinados. ");
 
 			iniciarAlteracao();
 
@@ -1244,7 +1323,7 @@ public class ExBL extends CpBL {
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException(
-					"Erro ao agendar publicaÁ„o no boletim.", 0, e);
+					"Erro ao agendar publica√ß√£o no boletim.", 0, e);
 		}
 	}
 
@@ -1271,7 +1350,7 @@ public class ExBL extends CpBL {
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException(
-					"Erro ao atestar publicaÁ„o no boletim.", 0, e);
+					"Erro ao atestar publica√ß√£o no boletim.", 0, e);
 		}
 	}
 
@@ -1311,9 +1390,8 @@ public class ExBL extends CpBL {
 								+ FuncoesEL.getDataDDMMYYYY(dtPubl) + "</p> ");
 
 				sbHtml.append("<p>Documento: " + doc.getCodigo() + "</p> ");
-				sbHtml.append("<p>DescriÁ„o: " + doc.getDescrDocumento()
+				sbHtml.append("<p>Descri√ß√£o: " + doc.getDescrDocumento()
 						+ "</p> ");
-
 
 				if (mensagemTeste != null)
 					sbHtml.append("<p><b>" + mensagemTeste + "</b></p>");
@@ -1340,7 +1418,7 @@ public class ExBL extends CpBL {
 			}
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao notificar publicaÁ„o.", 0, e);
+			throw new AplicacaoException("Erro ao notificar publica√ß√£o.", 0, e);
 		}
 	}
 
@@ -1354,27 +1432,27 @@ public class ExBL extends CpBL {
 
 		try {
 			// Verifica se o documento possui anexos alterantivos e se estes
-			// anexos est„o assinado
+			// anexos est√£o assinado
 			if (!anexosAlternativosEstaoAssinados(mob.getExDocumento()))
 				throw new AplicacaoException(
 						"O documento "
 								+ mob.getExDocumento().getCodigo()
-								+ " possui documentos filhos do tipo anexo que n„o est„o assinados. ");
+								+ " possui documentos filhos do tipo anexo que n√£o est√£o assinados. ");
 
 			iniciarAlteracao();
 
 			DatasPublicacaoDJE DJE = new DatasPublicacaoDJE(dtDispPublicacao);
-			// Esse teste È feito para validar a data de disponibilizaÁ„o e
-			// pegar a data de publicaÁ„o correta.
-			// Pois se a data de disponibilizaÁ„o for sexta o sistema coloca a
-			// data de publicaÁ„o para segunda.
+			// Esse teste √© feito para validar a data de disponibiliza√ß√£o e
+			// pegar a data de publica√ß√£o correta.
+			// Pois se a data de disponibiliza√ß√£o for sexta o sistema coloca a
+			// data de publica√ß√£o para segunda.
 			String sMensagem = DJE.validarDataDeDisponibilizacao(true);
 			if (sMensagem != null)
 				throw new AplicacaoException(sMensagem);
 
 			if (DJE.sao17Horas())
 				throw new AplicacaoException(
-						"Excedido Hor·rio de SolicitaÁ„o. Tente novamente amanh„ ou defina a disponibilizaÁ„o para um dia depois do escolhido");
+						"Excedido Hor√°rio de Solicita√ß√£o. Tente novamente amanh√£ ou defina a disponibiliza√ß√£o para um dia depois do escolhido");
 
 			final ExMovimentacao mov = criarNovaMovimentacao(
 					ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO,
@@ -1382,9 +1460,8 @@ public class ExBL extends CpBL {
 					titular, lotaTitular, null);
 
 			mov.setDtDispPublicacao(dtDispPublicacao);
-			mov.setDescrMov("PublicaÁ„o prevista para "
-					+ new SimpleDateFormat("dd/MM/yy").format(DJE
-							.getDataPublicacao()));
+			mov.setDescrMov("Disponibiliza√ß√£o prevista para "
+					+ new SimpleDateFormat("dd/MM/yy").format(dtDispPublicacao));
 			mov.setCadernoPublicacaoDje(tipoMateria);
 
 			mov.setConteudoBlobXML("boletimadm", PublicacaoDJEBL
@@ -1393,23 +1470,23 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 
-			// Verifica se est· na base de teste
+			// Verifica se est√° na base de teste
 			String mensagemTeste = null;
 			if (!SigaExProperties.isAmbienteProducao())
 				mensagemTeste = SigaExProperties.getString("email.baseTeste");
 
 			StringBuffer sb = new StringBuffer(
-					"Foi feita uma solicitaÁ„o de remessa do documento "
+					"Foi feita uma solicita√ß√£o de remessa do documento "
 							+ mob.getExDocumento().getCodigo()
-							+ " para publicaÁ„o no DJE.\n ");
+							+ " para publica√ß√£o no DJE.\n ");
 
 			if (mensagemTeste != null)
 				sb.append("\n " + mensagemTeste + "\n");
 
 			StringBuffer sbHtml = new StringBuffer(
-					"<html><body><p>Foi feita uma solicitaÁ„o de remessa do documento "
+					"<html><body><p>Foi feita uma solicita√ß√£o de remessa do documento "
 							+ mob.getExDocumento().getCodigo()
-							+ " para publicaÁ„o no DJE.</p> ");
+							+ " para publica√ß√£o no DJE.</p> ");
 
 			if (mensagemTeste != null)
 				sbHtml.append("<p><b>" + mensagemTeste + "</b></p>");
@@ -1453,14 +1530,14 @@ public class ExBL extends CpBL {
 					SigaBaseProperties
 							.getString("servidor.smtp.usuario.remetente"),
 					emailsAtendentes.toArray(new String[emailsAtendentes.size()]),
-					"Nova solicitaÁ„o de publicaÁ„o DJE ("
+					"Nova solicita√ß√£o de publica√ß√£o DJE ("
 							+ mov.getLotaCadastrante().getSiglaLotacao() + ") ",
 					sb.toString(), sbHtml.toString());
 
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao agendar publicaÁ„o.", 0, e);
+			throw new AplicacaoException("Erro ao agendar publica√ß√£o.", 0, e);
 		}
 	}
 
@@ -1477,7 +1554,7 @@ public class ExBL extends CpBL {
 
 			mov.setPagPublicacao(pagPublicacao);
 
-			mov.setDescrMov("Documento disponibilizado no Di·rio");
+			mov.setDescrMov("Documento disponibilizado no Di√°rio");
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
@@ -1489,22 +1566,22 @@ public class ExBL extends CpBL {
 							.getString("email.baseTeste");
 
 				StringBuffer sb = new StringBuffer(
-						"Documento disponibilizado no Di·rio "
+						"Documento disponibilizado no Di√°rio "
 								+ mob.getExDocumento().getCodigo());
 
 				if (mensagemTeste != null)
 					sb.append("\n " + mensagemTeste + "\n");
 
 				StringBuffer sbHtml = new StringBuffer(
-						"<html><body><p>Documento disponibilizado no Di·rio.</p> ");
+						"<html><body><p>Documento disponibilizado no Di√°rio.</p> ");
 
 				sbHtml.append("<p>Documento: "
 						+ mob.getExDocumento().getCodigo() + "</p> ");
-				sbHtml.append("<p>DescriÁ„o: "
+				sbHtml.append("<p>Descri√ß√£o: "
 						+ mob.getExDocumento().getDescrDocumento() + "</p> ");
 				sbHtml.append("<p>Data: " + FuncoesEL.getDataDDMMYYYY(dtMov)
 						+ "</p> ");
-				sbHtml.append("<p>P·gina: " + pagPublicacao + "</p> ");
+				sbHtml.append("<p>P√°gina: " + pagPublicacao + "</p> ");
 
 				if (mensagemTeste != null)
 					sbHtml.append("<p><b>" + mensagemTeste + "</b></p>");
@@ -1522,7 +1599,7 @@ public class ExBL extends CpBL {
 					Correio.enviar(SigaBaseProperties
 							.getString("servidor.smtp.usuario.remetente"),
 							emailsAtendentes,
-							"Documento disponibilizado no Di·rio "
+							"Documento disponibilizado no Di√°rio "
 									+ mob.getExDocumento().getCodigo(), sb
 									.toString(), sbHtml.toString());
 				}
@@ -1533,7 +1610,7 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao registrar disponibilizaÁ„o.",
+			throw new AplicacaoException("Erro ao registrar disponibiliza√ß√£o.",
 					0, e);
 		}
 	}
@@ -1549,12 +1626,12 @@ public class ExBL extends CpBL {
 		try {
 
 			// Verifica se o documento possui anexos alterantivos e se estes
-			// anexos est„o assinado
+			// anexos est√£o assinados
 			if (!anexosAlternativosEstaoAssinados(mob.getExDocumento()))
 				throw new AplicacaoException(
 						"O documento "
 								+ mob.getExDocumento().getCodigo()
-								+ " possui documentos filhos do tipo anexo que n„o est„o assinados. ");
+								+ " possui documentos filhos do tipo anexo que n√£o est√£o assinados. ");
 
 			iniciarAlteracao();
 
@@ -1580,11 +1657,6 @@ public class ExBL extends CpBL {
 					.gerarXMLPublicacao(mov, tipoMateria, lotPublicacao,
 							descrPublicacao));
 
-			// Verifica se o documento possui documentos filhos do tipo Anexo
-			if (mob.getExDocumentoFilhoSet() != null) {
-
-			}
-
 			if (tipoMateria.equals("A"))
 				mov.setNmArqMov("ADM.zip");
 			else
@@ -1593,16 +1665,14 @@ public class ExBL extends CpBL {
 			try {
 				PublicacaoDJEBL.primeiroEnvio(mov);
 			} catch (Throwable t) {
-				throw new Exception(t.getMessage() + " -- "
-						+ t.getCause().getMessage());
+				throw new Exception(t.getMessage());
 			}
 
 			// mov.setNumTRFPublicacao(numTRF);
 			DatasPublicacaoDJE DJE = new DatasPublicacaoDJE(dtDispPublicacao);
 			DJE.validarDataDeDisponibilizacao(true);
-			mov.setDescrMov("PublicaÁ„o prevista para "
-					+ new SimpleDateFormat("dd/MM/yy").format(DJE
-							.getDataPublicacao()));
+			mov.setDescrMov("Disponibiliza√ß√£o prevista para "
+					+ new SimpleDateFormat("dd/MM/yy").format(dtDispPublicacao));
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
@@ -1616,8 +1686,8 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor, final String nmArqMov,
 			final DpPessoa titular, final DpLotacao lotaTitular,
-			final byte[] conteudo, final String tipoConteudo, String motivo, Set<ExMovimentacao> pendenciasResolvidas)
-			throws AplicacaoException {
+			final byte[] conteudo, final String tipoConteudo, String motivo,
+			Set<ExMovimentacao> pendenciasResolvidas) throws AplicacaoException {
 
 		final ExMovimentacao mov;
 
@@ -1635,15 +1705,15 @@ public class ExBL extends CpBL {
 			mov.setDescrMov(motivo);
 
 			gravarMovimentacao(mov);
-			
-			// Cancelar pendencias de anexaÁ„o
+
+			// Cancelar pendencias de anexa√ß√£o
 			if (pendenciasResolvidas != null) {
 				for (ExMovimentacao m : pendenciasResolvidas) {
-					m.setExMovimentacaoCanceladora(mov); 
+					m.setExMovimentacaoCanceladora(mov);
 					gravarMovimentacao(m);
 				}
 			}
-			
+
 			concluirAlteracao(mov.getExDocumento());
 
 		} catch (final Exception e) {
@@ -1674,7 +1744,7 @@ public class ExBL extends CpBL {
 						.getLotaResp();
 
 				if (lotaBase != null && !lotaVerif.equivale(lotaBase))
-					foraDaLota += (foraDaLota.length() < 2 ? " Os seguintes volumes encontram-se em lotaÁ„o diferente de "
+					foraDaLota += (foraDaLota.length() < 2 ? " Os seguintes volumes encontram-se em lota√ß√£o diferente de "
 							+ lotaBase.getSigla() + ": "
 							: ", ")
 							+ mobVerif.getSigla();
@@ -1688,7 +1758,7 @@ public class ExBL extends CpBL {
 							+ mobVerif.getSigla();
 
 				if (mobVerif.isEmTransito())
-					emTransito += (emTransito.length() < 2 ? " Os seguintes volumes encontram-se em tr‚nsito: "
+					emTransito += (emTransito.length() < 2 ? " Os seguintes volumes encontram-se em tr√¢nsito: "
 							: ", ")
 							+ mobVerif.getSigla();
 
@@ -1697,52 +1767,56 @@ public class ExBL extends CpBL {
 					apensados += (apensados.length() < 2 ? " Os seguintes volumes encontram-se apensados a outro processo: "
 							: ", ")
 							+ mobVerif.getSigla();
-				
-				for (ExMobil apenso : mobVerif.getApensos()){
+
+				for (ExMobil apenso : mobVerif.getApensos()) {
 					if (!apenso.doc().equals(mobVerif.doc()))
 						comApensos += (comApensos.length() < 2 ? " Os seguintes volumes possuem volumes de outros processos apensados: "
 								: ", ")
-								+ apenso.getSigla() + " apensado a " + mobVerif.getSigla();
+								+ apenso.getSigla()
+								+ " apensado a "
+								+ mobVerif.getSigla();
 				}
 			}
 
-			msgFinal += foraDaLota + sobrestados + emTransito + apensados + comApensos;
+			msgFinal += foraDaLota + sobrestados + emTransito + apensados
+					+ comApensos;
 			if (msgFinal.length() > 2)
 				throw new AplicacaoException(
-						"N„o foi possÌvel movimentar o processo." + msgFinal);
+						"n√£o foi poss√≠vel movimentar o processo." + msgFinal);
 
 		} else if (mob.isApensado() || mob.temApensos())
 			throw new AplicacaoException(
-					"N„o foi possÌvel movimentar a via porque ela encontra-se apensada ou possui apensos.");
+					"n√£o foi poss√≠vel movimentar a via porque ela encontra-se apensada ou possui apensos.");
 	}
-	
-	
+
 	public void arquivarCorrenteAutomatico(DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, ExMobil mob) throws Exception {
-			
-	    arquivarCorrente(cadastrante, lotaCadastrante, mob, null, null, null, true);
-	    try {
-	    	ExDao.iniciarTransacao();
-	    	for (ExMarca marc : mob.getExMarcaSet()) {
-		    	if (!marc.getCpMarcador().getIdMarcador().equals(CpMarcador.MARCADOR_ARQUIVADO_CORRENTE)) {
-		    		dao().excluir(marc);
-		    	}
-		    } 
-	    	ExDao.commitTransacao();
-	    } catch (final AplicacaoException e) {
+
+		arquivarCorrente(cadastrante, lotaCadastrante, mob, null, null, null,
+				true);
+		try {
+			ExDao.iniciarTransacao();
+			for (ExMarca marc : mob.getExMarcaSet()) {
+				if (!marc.getCpMarcador().getIdMarcador()
+						.equals(CpMarcador.MARCADOR_ARQUIVADO_CORRENTE)) {
+					dao().excluir(marc);
+				}
+			}
+			ExDao.commitTransacao();
+		} catch (final AplicacaoException e) {
 			ExDao.rollbackTransacao();
 			throw e;
 		} catch (final Exception e) {
 			ExDao.rollbackTransacao();
-			throw new AplicacaoException("Ocorreu um Erro durante a OperaÁ„o",
+			throw new AplicacaoException("Ocorreu um Erro durante a Opera√ß√£o",
 					0, e);
-		}	    
-	    
-	}	
+		}
+
+	}
 
 	public void arquivarCorrente(DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, ExMobil mob, Date dtMov,
-			Date dtMovIni, DpPessoa subscritor, boolean automatico) throws Exception {
+			Date dtMovIni, DpPessoa subscritor, boolean automatico) {
 
 		permitirOuNaoMovimentarDestinacao(mob);
 
@@ -1764,10 +1838,10 @@ public class ExBL extends CpBL {
 					mov.setResp(ultMovNanCanc.getResp());
 				}
 			}
-			
+
 			if (automatico)
-				mov.setDescrMov("Arquivamento autom·tico.");
-			
+				mov.setDescrMov("Arquivamento autom√°tico.");
+
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
@@ -1855,7 +1929,7 @@ public class ExBL extends CpBL {
 		for (ExMobil m : set) {
 			if (!m.getExDocumento().isFinalizado())
 				throw new AplicacaoException(
-						"N„o È possÌvel sobrestar um documento n„o finalizado");
+						"n√£o √© poss√≠vel sobrestar um documento n√£o finalizado");
 		}
 
 		Date dt = dtMovIni != null ? dtMovIni : dao().dt();
@@ -1887,19 +1961,19 @@ public class ExBL extends CpBL {
 
 		if (!fAvaliacao && !fReclassif)
 			throw new AplicacaoException(
-					"N„o foram informados dados para a reclassificaÁ„o ou avaliaÁ„o");
+					"n√£o foram informados dados para a reclassifica√ß√£o ou avalia√ß√£o");
 
 		if (fReclassif && (motivo == null || motivo.trim().equals("")))
 			throw new AplicacaoException(
-					"… necess·rio informar o motivo da reclassificaÁ„o");
+					"√â necess√°rio informar o motivo da reclassifica√ß√£o");
 
 		if (fReclassif)
 			for (ExMobil m : mob.getArvoreMobilesParaAnaliseDestinacao())
 				if (m.isEmEditalEliminacao())
 					throw new AplicacaoException(
-							"N„o È possÌvel reclassificar porque "
+							"n√£o √© poss√≠vel reclassificar porque "
 									+ m.getSigla()
-									+ " encontra-se em edital de eliminaÁ„o. ApÛs a eliminaÁ„o, esta operaÁ„o estar· novamente disponÌvel.");
+									+ " encontra-se em edital de elimina√ß√£o. Ap√≥s a elimina√ß√£o, esta opera√ß√£o estar√° novamente dispon√≠vel.");
 
 		Date dt = dtMov != null ? dtMov : dao().dt();
 
@@ -1922,7 +1996,7 @@ public class ExBL extends CpBL {
 
 			if (fReclassif) {
 				mov.setExClassificacao(novaClassif);
-				mov.setDescrMov("ClassificaÁ„o documental alterada para "
+				mov.setDescrMov("Classifica√ß√£o documental alterada para "
 						+ novaClassif.getDescricaoSimples() + " | Motivo: "
 						+ motivo);
 			} else
@@ -1942,13 +2016,13 @@ public class ExBL extends CpBL {
 		}
 
 	}
-	
+
 	public void simularAssinaturaDocumento(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, final ExDocumento doc){
-		
+			final DpLotacao lotaCadastrante, final ExDocumento doc) {
+
 		if (doc.isCancelado())
 			throw new AplicacaoException(
-					"N„o È possÌvel assinar um documento cancelado.");
+					"n√£o √© poss√≠vel assinar um documento cancelado.");
 
 		boolean fPreviamenteAssinado = doc.isAssinado();
 
@@ -1961,24 +2035,23 @@ public class ExBL extends CpBL {
 				throw new Error(e);
 			}
 		}
-		
+
 		try {
 			iniciarAlteracao();
 
 			final ExMovimentacao mov = criarNovaMovimentacao(
 					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO,
-					cadastrante, lotaCadastrante, doc.getMobilGeral(), new Date(),
-					doc.getSubscritor(), null, null, null, null);
+					cadastrante, lotaCadastrante, doc.getMobilGeral(),
+					new Date(), doc.getSubscritor(), null, null, null, null);
 
-			
 			mov.setDescrMov(doc.getSubscritor().getNomePessoa());
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
 
 			// Verifica se o documento possui documento pai e faz a juntada
-			// autom·tica. Caso o pai seja um volume de um processo, primeiro
-			// verifica se o volume est· encerrado, se estiver procura o ˙ltimo
+			// autom√°tica. Caso o pai seja um volume de um processo, primeiro
+			// verifica se o volume est√° encerrado, se estiver procura o √∫ltimo
 			// volume para juntar.
 
 			if (doc.getExMobilPai() != null) {
@@ -1986,10 +2059,10 @@ public class ExBL extends CpBL {
 						&& doc.getExMobilPai().isVolumeEncerrado()) {
 					doc.setExMobilPai(doc.getExMobilPai().doc()
 							.getUltimoVolume());
-					gravar(cadastrante, lotaCadastrante, doc, null);
+					gravar(cadastrante, lotaCadastrante, doc);
 				}
-				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, mov.getDtMov(),
-						cadastrante, cadastrante, mov);
+				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc,
+						mov.getDtMov(), cadastrante, cadastrante, mov);
 			}
 
 			if (doc.getExMobilAutuado() != null) {
@@ -2006,75 +2079,81 @@ public class ExBL extends CpBL {
 
 			if (e.getMessage().contains("junta"))
 				throw new AplicacaoException(
-						"O documento foi assinado com sucesso mas n„o foi possÌvel juntar este documento ao documento pai. O erro da juntada foi - "
+						"O documento foi assinado com sucesso mas n√£o foi poss√≠vel juntar este documento ao documento pai. O erro da juntada foi - "
 								+ e.getMessage(), 0, e);
 
 			throw new AplicacaoException("Erro ao assinar documento.", 0, e);
 		}
 
 	}
-	
+
 	public void simularAssinaturaMovimentacao(DpPessoa cadastrante,
 			DpLotacao lotaCadastrante, ExMovimentacao movAlvo,
 			final Date dtMov, long tpMovAssinatura) throws AplicacaoException {
 
 		if (movAlvo == null) {
 			throw new AplicacaoException(
-					"N„o È possÌvel assinar uma movimentaÁ„o cancelada.");
+					"n√£o √© poss√≠vel assinar uma movimenta√ß√£o cancelada.");
 		}
 
 		if (movAlvo.isCancelada()) {
 			throw new AplicacaoException(
-					"N„o È possÌvel assinar uma movimentaÁ„o cancelada.");
+					"n√£o √© poss√≠vel assinar uma movimenta√ß√£o cancelada.");
 		}
 
-		try{
+		try {
 			final ExMovimentacao mov = criarNovaMovimentacao(tpMovAssinatura,
-						cadastrante, lotaCadastrante, movAlvo.getExMobil(), null,
-						null, null, null, null, null);
-			
+					cadastrante, lotaCadastrante, movAlvo.getExMobil(), null,
+					null, null, null, null, null);
+
 			mov.setExMovimentacaoRef(movAlvo);
-			
-			mov.setSubscritor(movAlvo.getSubscritor() != null ? movAlvo.getSubscritor() : movAlvo.getCadastrante());
-			mov.setDescrMov(movAlvo.getSubscritor().getNomePessoa());
-			
+
+			mov.setSubscritor(movAlvo.getSubscritor() != null ? movAlvo
+					.getSubscritor() : movAlvo.getCadastrante());
+			mov.setDescrMov(movAlvo.getSubscritor() != null ? movAlvo
+					.getSubscritor().getNomePessoa() : movAlvo.getDescrMov());
+
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final AplicacaoException e) {
 			cancelarAlteracao();
 			throw e;
 		} catch (final Exception e) {
-			log.error("Erro ao assinar movimentaÁ„o.", e);
+			log.error("Erro ao assinar movimenta√ß√£o.", e);
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao assinar movimentaÁ„o.", 0, e);
+			throw new AplicacaoException("Erro ao assinar movimenta√ß√£o.", 0, e);
 		}
 
 	}
-	
+
 	public String criarDocTeste() throws Exception {
-		//MÈtodo utilizado para testar criaÁ„o de documentos por webService
-		/*ExService client = Service.getExService();
-		String s;
-		
-		s = client.criarDocumento("RJ13989", "RJ13989", "CEF", "AgÍncia Av. Rio Branco, 326", "Interno Produzido", "Formul·rio", "Formul·rio de SolicitaÁ„o de Deslocamento", null, null,
-				true, "Limitado entre pessoas", "alteracao=N%E3o&solicitacaoDentroDoPrazo=Sim&razoesDoDeslocamento=Cursos%2C+Semin%E1rios%2C+Simp%F3sios%2C+Debates%2C+F%F3runs+e+afins&internacional=N%E3o&uf=AC&cidadeCacheAC=%253C%253Fxml%2520version%253D%25221.0%2522%2520encoding%253D%2522utf-8%2522%253F%253E%253Csoap%253AEnvelope%2520xmlns%253Asoap%253D%2522http%253A%252F%252Fschemas.xmlsoap.org%252Fsoap%252Fenvelope%252F%2522%2520xmlns%253Axsi%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema-instance%2522%2520xmlns%253Axsd%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema%2522%253E%253Csoap%253ABody%253E%253CRETORNA_CIDADES_ESTADOResponse%2520xmlns%253D%2522http%253A%252F%252Ftempuri.org%252F%2522%253E%253CRETORNA_CIDADES_ESTADOResult%253E%253Cxs%253Aschema%2520id%253D%2522NewDataSet%2522%2520xmlns%253D%2522%2522%2520xmlns%253Axs%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema%2522%2520xmlns%253Amsdata%253D%2522urn%253Aschemas-microsoft-com%253Axml-msdata%2522%253E%253Cxs%253Aelement%2520name%253D%2522NewDataSet%2522%2520msdata%253AIsDataSet%253D%2522true%2522%2520msdata%253AUseCurrentLocale%253D%2522true%2522%253E%253Cxs%253AcomplexType%253E%253Cxs%253Achoice%2520minOccurs%253D%25220%2522%2520maxOccurs%253D%2522unbounded%2522%253E%253Cxs%253Aelement%2520name%253D%2522CIDADES%2522%253E%253Cxs%253AcomplexType%253E%253Cxs%253Asequence%253E%253Cxs%253Aelement%2520name%253D%2522CODCID%2522%2520type%253D%2522xs%253Aint%2522%2520minOccurs%253D%25220%2522%2520%252F%253E%253Cxs%253Aelement%2520name%253D%2522NOMCID%2522%2520type%253D%2522xs%253Astring%2522%2520minOccurs%253D%25220%2522%2520%252F%253E%253Cxs%253Aelement%2520name%253D%2522ESTCID%2522%2520type%253D%2522xs%253Astring%2522%2520minOccurs%253D%25220%2522%2520%252F%253E%253Cxs%253Aelement%2520name%253D%2522DDDCID%2522%2520type%253D%2522xs%253Astring%2522%2520minOccurs%253D%25220%2522%2520%252F%253E%253Cxs%253Aelement%2520name%253D%2522CEPCID%2522%2520type%253D%2522xs%253Astring%2522%2520minOccurs%253D%25220%2522%2520%252F%253E%253C%252Fxs%253Asequence%253E%253C%252Fxs%253AcomplexType%253E%253C%252Fxs%253Aelement%253E%253C%252Fxs%253Achoice%253E%253C%252Fxs%253AcomplexType%253E%253C%252Fxs%253Aelement%253E%253C%252Fxs%253Aschema%253E%253Cdiffgr%253Adiffgram%2520xmlns%253Amsdata%253D%2522urn%253Aschemas-microsoft-com%253Axml-msdata%2522%2520xmlns%253Adiffgr%253D%2522urn%253Aschemas-microsoft-com%253Axml-diffgram-v1%2522%253E%253CNewDataSet%2520xmlns%253D%2522%2522%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES1%2522%2520msdata%253ArowOrder%253D%25220%2522%253E%253CCODCID%253E43%253C%252FCODCID%253E%253CNOMCID%253EACRELANDIA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69945000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES2%2522%2520msdata%253ArowOrder%253D%25221%2522%253E%253CCODCID%253E711%253C%252FCODCID%253E%253CNOMCID%253EASSIS%2520BRASIL%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69935000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES3%2522%2520msdata%253ArowOrder%253D%25222%2522%253E%253CCODCID%253E1397%253C%252FCODCID%253E%253CNOMCID%253EBRASILEIA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69932000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES4%2522%2520msdata%253ArowOrder%253D%25223%2522%253E%253CCODCID%253E1463%253C%252FCODCID%253E%253CNOMCID%253EBUJARI%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69923000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES5%2522%2520msdata%253ArowOrder%253D%25224%2522%253E%253CCODCID%253E1970%253C%252FCODCID%253E%253CNOMCID%253ECAPIXABA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69922000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES6%2522%2520msdata%253ArowOrder%253D%25225%2522%253E%253CCODCID%253E2714%253C%252FCODCID%253E%253CNOMCID%253ECRUZEIRO%2520DO%2520SUL%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69980000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES7%2522%2520msdata%253ArowOrder%253D%25226%2522%253E%253CCODCID%253E3062%253C%252FCODCID%253E%253CNOMCID%253EEPITACIOLANDIA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69934000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES8%2522%2520msdata%253ArowOrder%253D%25227%2522%253E%253CCODCID%253E3223%253C%252FCODCID%253E%253CNOMCID%253EFEIJO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69960000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES9%2522%2520msdata%253ArowOrder%253D%25228%2522%253E%253CCODCID%253E4659%253C%252FCODCID%253E%253CNOMCID%253EJORDAO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69975000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES10%2522%2520msdata%253ArowOrder%253D%25229%2522%253E%253CCODCID%253E5157%253C%252FCODCID%253E%253CNOMCID%253EMANCIO%2520LIMA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69990000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES11%2522%2520msdata%253ArowOrder%253D%252210%2522%253E%253CCODCID%253E5188%253C%252FCODCID%253E%253CNOMCID%253EMANOEL%2520URBANO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69950000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES12%2522%2520msdata%253ArowOrder%253D%252211%2522%253E%253CCODCID%253E5263%253C%252FCODCID%253E%253CNOMCID%253EMARECHAL%2520THAUMATURGO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69983000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES13%2522%2520msdata%253ArowOrder%253D%252212%2522%253E%253CCODCID%253E6870%253C%252FCODCID%253E%253CNOMCID%253EPLACIDO%2520DE%2520CASTRO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69928000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES14%2522%2520msdata%253ArowOrder%253D%252213%2522%253E%253CCODCID%253E7006%253C%252FCODCID%253E%253CNOMCID%253EPORTO%2520ACRE%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69921000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES15%2522%2520msdata%253ArowOrder%253D%252214%2522%253E%253CCODCID%253E7065%253C%252FCODCID%253E%253CNOMCID%253EPORTO%2520WALTER%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69982000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES16%2522%2520msdata%253ArowOrder%253D%252215%2522%253E%253CCODCID%253E7435%253C%252FCODCID%253E%253CNOMCID%253ERIO%2520BRANCO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%2520%252F%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES17%2522%2520msdata%253ArowOrder%253D%252216%2522%253E%253CCODCID%253E7562%253C%252FCODCID%253E%253CNOMCID%253ERODRIGUES%2520ALVES%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69985000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES18%2522%2520msdata%253ArowOrder%253D%252217%2522%253E%253CCODCID%253E7913%253C%252FCODCID%253E%253CNOMCID%253ESANTA%2520ROSA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69955000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES19%2522%2520msdata%253ArowOrder%253D%252218%2522%253E%253CCODCID%253E8871%253C%252FCODCID%253E%253CNOMCID%253ESENA%2520MADUREIRA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69940000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES20%2522%2520msdata%253ArowOrder%253D%252219%2522%253E%253CCODCID%253E8880%253C%252FCODCID%253E%253CNOMCID%253ESENADOR%2520GUIOMARD%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69925000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES21%2522%2520msdata%253ArowOrder%253D%252220%2522%253E%253CCODCID%253E9263%253C%252FCODCID%253E%253CNOMCID%253ETARAUACA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CDDDCID%253E68%253C%252FDDDCID%253E%253CCEPCID%253E69970000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES22%2522%2520msdata%253ArowOrder%253D%252221%2522%253E%253CCODCID%253E9960%253C%252FCODCID%253E%253CNOMCID%253EXAPURI%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69930000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253C%252FNewDataSet%253E%253C%252Fdiffgr%253Adiffgram%253E%253C%252FRETORNA_CIDADES_ESTADOResult%253E%253C%252FRETORNA_CIDADES_ESTADOResponse%253E%253C%252Fsoap%253ABody%253E%253C%252Fsoap%253AEnvelope%253E&cidade=ACRELANDIA&diaUnico=N%E3o&numDePeriodos=1&dataIniPeriodo1=&dataFimPeriodo1=&proposto=CJF&numDePropostos=2&propostos1_pessoaSel.id=262253&propostos1_pessoaSel.sigla=RJ14054&propostos1_pessoaSel.descricao=ADRIANA+GRASSI+MARTINS+RIBEIRO+DE+ALMEIDA&ramal1=&solicitacaoComo1=Escolha&precisaAutorizacao1=Nao&propostos2_pessoaSel.id=279603&propostos2_pessoaSel.sigla=RJ13989&propostos2_pessoaSel.descricao=ANDRE+LUIS+SOUSA+DA+SILVA&ramal2=&solicitacaoComo2=Escolha&precisaAutorizacao2=Nao&contadorDePropostos=2&nomeDoEvento=&entidadePromotora=CEJ&cargaHoraria=1h&areaDeConhecimento=Escolha&abrangencia=Sim&foraDaRegiaoMetropolitana=Sim&idaDiaAnterior1=Nao&voltaDiaSubsequente1=Nao&diarias=Sim&agecccache14054=%253C%253Fxml%2520version%253D%25221.0%2522%2520encoding%253D%2522utf-8%2522%253F%253E%253Csoap%253AEnvelope%2520xmlns%253Asoap%253D%2522http%253A%252F%252Fschemas.xmlsoap.org%252Fsoap%252Fenvelope%252F%2522%2520xmlns%253Axsi%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema-instance%2522%2520xmlns%253Axsd%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema%2522%253E%253Csoap%253ABody%253E%253CConsultaDadosBancariosResponse%2520xmlns%253D%2522http%253A%252F%252Ftempuri.org%252F%2522%253E%253CConsultaDadosBancariosResult%253E%253CMatricula%253E14054%253C%252FMatricula%253E%253CNome%253EADRIANA%2520GRASSI%2520MARTINS%2520RIBEIRO%2520DE%2520ALMEIDA%253C%252FNome%253E%253CEmpresa%253E2%253C%252FEmpresa%253E%253CBanco%253E1%253C%252FBanco%253E%253CAgencia%253E24767%253C%252FAgencia%253E%253CContaCorrente%253E351725%253C%252FContaCorrente%253E%253C%252FConsultaDadosBancariosResult%253E%253C%252FConsultaDadosBancariosResponse%253E%253C%252Fsoap%253ABody%253E%253C%252Fsoap%253AEnvelope%253E&banco1=1&agencia1=24767&contaCorrente1=175994&agecccache13989=%253C%253Fxml%2520version%253D%25221.0%2522%2520encoding%253D%2522utf-8%2522%253F%253E%253Csoap%253AEnvelope%2520xmlns%253Asoap%253D%2522http%253A%252F%252Fschemas.xmlsoap.org%252Fsoap%252Fenvelope%252F%2522%2520xmlns%253Axsi%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema-instance%2522%2520xmlns%253Axsd%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema%2522%253E%253Csoap%253ABody%253E%253CConsultaDadosBancariosResponse%2520xmlns%253D%2522http%253A%252F%252Ftempuri.org%252F%2522%253E%253CConsultaDadosBancariosResult%253E%253CMatricula%253E13989%253C%252FMatricula%253E%253CNome%253EANDRE%2520LUIS%2520SOUSA%2520DA%2520SILVA%253C%252FNome%253E%253CEmpresa%253E2%253C%252FEmpresa%253E%253CBanco%253E1%253C%252FBanco%253E%253CAgencia%253E24767%253C%252FAgencia%253E%253CContaCorrente%253E175994%253C%252FContaCorrente%253E%253C%252FConsultaDadosBancariosResult%253E%253C%252FConsultaDadosBancariosResponse%253E%253C%252Fsoap%253ABody%253E%253C%252Fsoap%253AEnvelope%253E&banco2=1&agencia2=24767&contaCorrente2=175994&passagemAerea=Nao&usoDeCarroOficial=Nao", 
-				null, false);
-		
-		return s;*/
-		
+		// M√©todo utilizado para testar cria√ß√£o de documentos por webService
+		/*
+		 * ExService client = Service.getExService(); String s;
+		 * 
+		 * s = client.criarDocumento("RJ13989", "RJ13989", "CEF",
+		 * "Ag√™ncia Av. Rio Branco, 326", "Interno Produzido", "Formul√°rio",
+		 * "Formul√°rio de Solicita√ß√£o de Deslocamento", null, null, true,
+		 * "Limitado entre pessoas",
+		 * "alteracao=N%E3o&solicitacaoDentroDoPrazo=Sim&razoesDoDeslocamento=Cursos%2C+Semin%E1rios%2C+Simp%F3sios%2C+Debates%2C+F%F3runs+e+afins&internacional=N%E3o&uf=AC&cidadeCacheAC=%253C%253Fxml%2520version%253D%25221.0%2522%2520encoding%253D%2522utf-8%2522%253F%253E%253Csoap%253AEnvelope%2520xmlns%253Asoap%253D%2522http%253A%252F%252Fschemas.xmlsoap.org%252Fsoap%252Fenvelope%252F%2522%2520xmlns%253Axsi%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema-instance%2522%2520xmlns%253Axsd%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema%2522%253E%253Csoap%253ABody%253E%253CRETORNA_CIDADES_ESTADOResponse%2520xmlns%253D%2522http%253A%252F%252Ftempuri.org%252F%2522%253E%253CRETORNA_CIDADES_ESTADOResult%253E%253Cxs%253Aschema%2520id%253D%2522NewDataSet%2522%2520xmlns%253D%2522%2522%2520xmlns%253Axs%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema%2522%2520xmlns%253Amsdata%253D%2522urn%253Aschemas-microsoft-com%253Axml-msdata%2522%253E%253Cxs%253Aelement%2520name%253D%2522NewDataSet%2522%2520msdata%253AIsDataSet%253D%2522true%2522%2520msdata%253AUseCurrentLocale%253D%2522true%2522%253E%253Cxs%253AcomplexType%253E%253Cxs%253Achoice%2520minOccurs%253D%25220%2522%2520maxOccurs%253D%2522unbounded%2522%253E%253Cxs%253Aelement%2520name%253D%2522CIDADES%2522%253E%253Cxs%253AcomplexType%253E%253Cxs%253Asequence%253E%253Cxs%253Aelement%2520name%253D%2522CODCID%2522%2520type%253D%2522xs%253Aint%2522%2520minOccurs%253D%25220%2522%2520%252F%253E%253Cxs%253Aelement%2520name%253D%2522NOMCID%2522%2520type%253D%2522xs%253Astring%2522%2520minOccurs%253D%25220%2522%2520%252F%253E%253Cxs%253Aelement%2520name%253D%2522ESTCID%2522%2520type%253D%2522xs%253Astring%2522%2520minOccurs%253D%25220%2522%2520%252F%253E%253Cxs%253Aelement%2520name%253D%2522DDDCID%2522%2520type%253D%2522xs%253Astring%2522%2520minOccurs%253D%25220%2522%2520%252F%253E%253Cxs%253Aelement%2520name%253D%2522CEPCID%2522%2520type%253D%2522xs%253Astring%2522%2520minOccurs%253D%25220%2522%2520%252F%253E%253C%252Fxs%253Asequence%253E%253C%252Fxs%253AcomplexType%253E%253C%252Fxs%253Aelement%253E%253C%252Fxs%253Achoice%253E%253C%252Fxs%253AcomplexType%253E%253C%252Fxs%253Aelement%253E%253C%252Fxs%253Aschema%253E%253Cdiffgr%253Adiffgram%2520xmlns%253Amsdata%253D%2522urn%253Aschemas-microsoft-com%253Axml-msdata%2522%2520xmlns%253Adiffgr%253D%2522urn%253Aschemas-microsoft-com%253Axml-diffgram-v1%2522%253E%253CNewDataSet%2520xmlns%253D%2522%2522%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES1%2522%2520msdata%253ArowOrder%253D%25220%2522%253E%253CCODCID%253E43%253C%252FCODCID%253E%253CNOMCID%253EACRELANDIA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69945000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES2%2522%2520msdata%253ArowOrder%253D%25221%2522%253E%253CCODCID%253E711%253C%252FCODCID%253E%253CNOMCID%253EASSIS%2520BRASIL%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69935000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES3%2522%2520msdata%253ArowOrder%253D%25222%2522%253E%253CCODCID%253E1397%253C%252FCODCID%253E%253CNOMCID%253EBRASILEIA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69932000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES4%2522%2520msdata%253ArowOrder%253D%25223%2522%253E%253CCODCID%253E1463%253C%252FCODCID%253E%253CNOMCID%253EBUJARI%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69923000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES5%2522%2520msdata%253ArowOrder%253D%25224%2522%253E%253CCODCID%253E1970%253C%252FCODCID%253E%253CNOMCID%253ECAPIXABA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69922000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES6%2522%2520msdata%253ArowOrder%253D%25225%2522%253E%253CCODCID%253E2714%253C%252FCODCID%253E%253CNOMCID%253ECRUZEIRO%2520DO%2520SUL%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69980000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES7%2522%2520msdata%253ArowOrder%253D%25226%2522%253E%253CCODCID%253E3062%253C%252FCODCID%253E%253CNOMCID%253EEPITACIOLANDIA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69934000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES8%2522%2520msdata%253ArowOrder%253D%25227%2522%253E%253CCODCID%253E3223%253C%252FCODCID%253E%253CNOMCID%253EFEIJO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69960000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES9%2522%2520msdata%253ArowOrder%253D%25228%2522%253E%253CCODCID%253E4659%253C%252FCODCID%253E%253CNOMCID%253EJORDAO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69975000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES10%2522%2520msdata%253ArowOrder%253D%25229%2522%253E%253CCODCID%253E5157%253C%252FCODCID%253E%253CNOMCID%253EMANCIO%2520LIMA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69990000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES11%2522%2520msdata%253ArowOrder%253D%252210%2522%253E%253CCODCID%253E5188%253C%252FCODCID%253E%253CNOMCID%253EMANOEL%2520URBANO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69950000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES12%2522%2520msdata%253ArowOrder%253D%252211%2522%253E%253CCODCID%253E5263%253C%252FCODCID%253E%253CNOMCID%253EMARECHAL%2520THAUMATURGO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69983000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES13%2522%2520msdata%253ArowOrder%253D%252212%2522%253E%253CCODCID%253E6870%253C%252FCODCID%253E%253CNOMCID%253EPLACIDO%2520DE%2520CASTRO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69928000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES14%2522%2520msdata%253ArowOrder%253D%252213%2522%253E%253CCODCID%253E7006%253C%252FCODCID%253E%253CNOMCID%253EPORTO%2520ACRE%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69921000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES15%2522%2520msdata%253ArowOrder%253D%252214%2522%253E%253CCODCID%253E7065%253C%252FCODCID%253E%253CNOMCID%253EPORTO%2520WALTER%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69982000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES16%2522%2520msdata%253ArowOrder%253D%252215%2522%253E%253CCODCID%253E7435%253C%252FCODCID%253E%253CNOMCID%253ERIO%2520BRANCO%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%2520%252F%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES17%2522%2520msdata%253ArowOrder%253D%252216%2522%253E%253CCODCID%253E7562%253C%252FCODCID%253E%253CNOMCID%253ERODRIGUES%2520ALVES%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69985000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES18%2522%2520msdata%253ArowOrder%253D%252217%2522%253E%253CCODCID%253E7913%253C%252FCODCID%253E%253CNOMCID%253ESANTA%2520ROSA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69955000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES19%2522%2520msdata%253ArowOrder%253D%252218%2522%253E%253CCODCID%253E8871%253C%252FCODCID%253E%253CNOMCID%253ESENA%2520MADUREIRA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69940000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES20%2522%2520msdata%253ArowOrder%253D%252219%2522%253E%253CCODCID%253E8880%253C%252FCODCID%253E%253CNOMCID%253ESENADOR%2520GUIOMARD%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69925000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES21%2522%2520msdata%253ArowOrder%253D%252220%2522%253E%253CCODCID%253E9263%253C%252FCODCID%253E%253CNOMCID%253ETARAUACA%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CDDDCID%253E68%253C%252FDDDCID%253E%253CCEPCID%253E69970000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253CCIDADES%2520diffgr%253Aid%253D%2522CIDADES22%2522%2520msdata%253ArowOrder%253D%252221%2522%253E%253CCODCID%253E9960%253C%252FCODCID%253E%253CNOMCID%253EXAPURI%253C%252FNOMCID%253E%253CESTCID%253EAC%253C%252FESTCID%253E%253CCEPCID%253E69930000%253C%252FCEPCID%253E%253C%252FCIDADES%253E%253C%252FNewDataSet%253E%253C%252Fdiffgr%253Adiffgram%253E%253C%252FRETORNA_CIDADES_ESTADOResult%253E%253C%252FRETORNA_CIDADES_ESTADOResponse%253E%253C%252Fsoap%253ABody%253E%253C%252Fsoap%253AEnvelope%253E&cidade=ACRELANDIA&diaUnico=N%E3o&numDePeriodos=1&dataIniPeriodo1=&dataFimPeriodo1=&proposto=CJF&numDePropostos=2&propostos1_pessoaSel.id=262253&propostos1_pessoaSel.sigla=RJ14054&propostos1_pessoaSel.descricao=ADRIANA+GRASSI+MARTINS+RIBEIRO+DE+ALMEIDA&ramal1=&solicitacaoComo1=Escolha&precisaAutorizacao1=Nao&propostos2_pessoaSel.id=279603&propostos2_pessoaSel.sigla=RJ13989&propostos2_pessoaSel.descricao=ANDRE+LUIS+SOUSA+DA+SILVA&ramal2=&solicitacaoComo2=Escolha&precisaAutorizacao2=Nao&contadorDePropostos=2&nomeDoEvento=&entidadePromotora=CEJ&cargaHoraria=1h&areaDeConhecimento=Escolha&abrangencia=Sim&foraDaRegiaoMetropolitana=Sim&idaDiaAnterior1=Nao&voltaDiaSubsequente1=Nao&diarias=Sim&agecccache14054=%253C%253Fxml%2520version%253D%25221.0%2522%2520encoding%253D%2522utf-8%2522%253F%253E%253Csoap%253AEnvelope%2520xmlns%253Asoap%253D%2522http%253A%252F%252Fschemas.xmlsoap.org%252Fsoap%252Fenvelope%252F%2522%2520xmlns%253Axsi%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema-instance%2522%2520xmlns%253Axsd%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema%2522%253E%253Csoap%253ABody%253E%253CConsultaDadosBancariosResponse%2520xmlns%253D%2522http%253A%252F%252Ftempuri.org%252F%2522%253E%253CConsultaDadosBancariosResult%253E%253CMatricula%253E14054%253C%252FMatricula%253E%253CNome%253EADRIANA%2520GRASSI%2520MARTINS%2520RIBEIRO%2520DE%2520ALMEIDA%253C%252FNome%253E%253CEmpresa%253E2%253C%252FEmpresa%253E%253CBanco%253E1%253C%252FBanco%253E%253CAgencia%253E24767%253C%252FAgencia%253E%253CContaCorrente%253E351725%253C%252FContaCorrente%253E%253C%252FConsultaDadosBancariosResult%253E%253C%252FConsultaDadosBancariosResponse%253E%253C%252Fsoap%253ABody%253E%253C%252Fsoap%253AEnvelope%253E&banco1=1&agencia1=24767&contaCorrente1=175994&agecccache13989=%253C%253Fxml%2520version%253D%25221.0%2522%2520encoding%253D%2522utf-8%2522%253F%253E%253Csoap%253AEnvelope%2520xmlns%253Asoap%253D%2522http%253A%252F%252Fschemas.xmlsoap.org%252Fsoap%252Fenvelope%252F%2522%2520xmlns%253Axsi%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema-instance%2522%2520xmlns%253Axsd%253D%2522http%253A%252F%252Fwww.w3.org%252F2001%252FXMLSchema%2522%253E%253Csoap%253ABody%253E%253CConsultaDadosBancariosResponse%2520xmlns%253D%2522http%253A%252F%252Ftempuri.org%252F%2522%253E%253CConsultaDadosBancariosResult%253E%253CMatricula%253E13989%253C%252FMatricula%253E%253CNome%253EANDRE%2520LUIS%2520SOUSA%2520DA%2520SILVA%253C%252FNome%253E%253CEmpresa%253E2%253C%252FEmpresa%253E%253CBanco%253E1%253C%252FBanco%253E%253CAgencia%253E24767%253C%252FAgencia%253E%253CContaCorrente%253E175994%253C%252FContaCorrente%253E%253C%252FConsultaDadosBancariosResult%253E%253C%252FConsultaDadosBancariosResponse%253E%253C%252Fsoap%253ABody%253E%253C%252Fsoap%253AEnvelope%253E&banco2=1&agencia2=24767&contaCorrente2=175994&passagemAerea=Nao&usoDeCarroOficial=Nao"
+		 * , null, false);
+		 * 
+		 * return s;
+		 */
+
 		return null;
 	}
 
 	public String assinarDocumento(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
-			final Date dtMov, final byte[] pkcs7, final byte[] certificado, long tpMovAssinatura)
-			throws AplicacaoException {
+			final Date dtMov, final byte[] pkcs7, final byte[] certificado,
+			long tpMovAssinatura) throws AplicacaoException {
 		String sNome;
 		Long lCPF = null;
 
 		if (doc.isCancelado())
 			throw new AplicacaoException(
-					"N„o È possÌvel assinar um documento cancelado.");
+					"n√£o √© poss√≠vel assinar um documento cancelado.");
 
 		boolean fPreviamenteAssinado = doc.isAssinado();
 
@@ -2140,9 +2219,8 @@ public class ExBL extends CpBL {
 			// writeB64File("c:/trabalhos/java/cd_teste_cms.b64", cms);
 
 		} catch (final Exception e) {
-			throw new AplicacaoException("Erro na assinatura de um documento: " + 
-					e.getMessage()==null?"":e.getMessage(),
-					0, e);
+			throw new AplicacaoException("Erro na assinatura de um documento: "
+					+ e.getMessage() == null ? "" : e.getMessage(), 0, e);
 		}
 
 		boolean fValido = false;
@@ -2154,15 +2232,15 @@ public class ExBL extends CpBL {
 		try {
 			if (sNome == null)
 				throw new AplicacaoException(
-						"N„o foi possÌvel acessar o nome do assinante");
+						"n√£o foi poss√≠vel acessar o nome do assinante");
 			String sMatricula = sNome.split(":")[1];
 			lMatricula = Long.valueOf(sMatricula);
 		} catch (final Exception e) {
 			// throw new AplicacaoException(
-			// "N„o foi possÌvel obter a matrÌcula do assinante", 0, e);
+			// "n√£o foi poss√≠vel obter a matr√≠cula do assinante", 0, e);
 		}
 
-		// Verifica se a matrÌcula confere com o subscritor titular ou com um
+		// Verifica se a matr√≠cula confere com o subscritor titular ou com um
 		// cossignatario
 		try {
 			if (lMatricula != null) {
@@ -2189,8 +2267,13 @@ public class ExBL extends CpBL {
 							continue;
 						}
 					}
-				
-				if(!fValido && tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO && Ex.getInstance().getComp().podeAutenticarDocumento(cadastrante, lotaCadastrante, doc) ) {
+
+				if (!fValido
+						&& tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
+						&& Ex.getInstance()
+								.getComp()
+								.podeAutenticarDocumento(cadastrante,
+										lotaCadastrante, doc)) {
 					fValido = true;
 				}
 			}
@@ -2216,21 +2299,26 @@ public class ExBL extends CpBL {
 							continue;
 						}
 					}
-				
-				if(!fValido && tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO && Ex.getInstance().getComp().podeAutenticarDocumento(cadastrante, lotaCadastrante, doc) ) {
+
+				if (!fValido
+						&& tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
+						&& Ex.getInstance()
+								.getComp()
+								.podeAutenticarDocumento(cadastrante,
+										lotaCadastrante, doc)) {
 					fValido = true;
 				}
 			}
 
 			if (lMatricula == null && lCPF == null)
 				throw new AplicacaoException(
-						"N„o foi possÌvel recuperar nem a matrÌcula nem o CPF do assinante");
+						"n√£o foi poss√≠vel recuperar nem a matr√≠cula nem o CPF do assinante");
 			if (fValido == false)
 				throw new AplicacaoException(
-						"Assinante n„o È subscritor nem cossignatario");
+						"Assinante n√£o √© subscritor nem cossignatario");
 		} catch (final Exception e) {
 			throw new AplicacaoException(
-					"SÛ È permitida a assinatura digital do subscritor e dos cossignat·rios do documento",
+					"S√≥ √© permitida a assinatura digital do subscritor e dos cossignat√°rios do documento",
 					0, e);
 		}
 
@@ -2241,8 +2329,7 @@ public class ExBL extends CpBL {
 			if (usuarioDoToken != null && usuarioDoToken.equivale(cadastrante))
 				usuarioDoToken = cadastrante;
 
-			final ExMovimentacao mov = criarNovaMovimentacao(
-					tpMovAssinatura,
+			final ExMovimentacao mov = criarNovaMovimentacao(tpMovAssinatura,
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
 					usuarioDoToken, null, null, null, null);
 
@@ -2260,8 +2347,8 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExDocumento());
 
 			// Verifica se o documento possui documento pai e faz a juntada
-			// autom·tica. Caso o pai seja um volume de um processo, primeiro
-			// verifica se o volume est· encerrado, se estiver procura o ˙ltimo
+			// autom√°tica. Caso o pai seja um volume de um processo, primeiro
+			// verifica se o volume est√° encerrado, se estiver procura o √∫ltimo
 			// volume para juntar.
 
 			if (doc.getExMobilPai() != null) {
@@ -2269,7 +2356,7 @@ public class ExBL extends CpBL {
 						&& doc.getExMobilPai().isVolumeEncerrado()) {
 					doc.setExMobilPai(doc.getExMobilPai().doc()
 							.getUltimoVolume());
-					gravar(cadastrante, lotaCadastrante, doc, null);
+					gravar(cadastrante, lotaCadastrante, doc);
 				}
 				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov,
 						cadastrante, cadastrante, mov);
@@ -2289,7 +2376,7 @@ public class ExBL extends CpBL {
 
 			if (e.getMessage().contains("junta"))
 				throw new AplicacaoException(
-						"O documento foi assinado com sucesso mas n„o foi possÌvel juntar este documento ao documento pai. O erro da juntada foi - "
+						"O documento foi assinado com sucesso mas n√£o foi poss√≠vel juntar este documento ao documento pai. O erro da juntada foi - "
 								+ e.getMessage(), 0, e);
 
 			throw new AplicacaoException("Erro ao assinar documento.", 0, e);
@@ -2302,53 +2389,54 @@ public class ExBL extends CpBL {
 
 	public String assinarDocumentoComSenha(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
-			final Date dtMov, final String matriculaSubscritor, final String senhaSubscritor, final DpPessoa titular)
+			final Date dtMov, final String matriculaSubscritor,
+			final String senhaSubscritor, final DpPessoa titular)
 			throws Exception {
-		
+
 		DpPessoa subscritor = null;
 		boolean fValido = false;
-		
+
 		if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
 			throw new AplicacaoException(
-					"MatrÌcula do Subscritor n„o foi informada.");
+					"Matr√≠cula do Subscritor n√£o foi informada.");
 
 		if (senhaSubscritor == null || senhaSubscritor.isEmpty())
 			throw new AplicacaoException(
-					"Senha do Subscritor n„o foi informada.");
+					"Senha do Subscritor n√£o foi informada.");
 
 		final String hashAtual = GeraMessageDigest.executaHash(
 				senhaSubscritor.getBytes(), "MD5");
 
 		final CpIdentidade id = dao().consultaIdentidadeCadastrante(
 				matriculaSubscritor, true);
-		// se o usu·rio n„o existir
+		// se o usu√°rio n√£o existir
 		if (id == null)
-			throw new AplicacaoException("O usu·rio n„o est· cadastrado.");
-		
+			throw new AplicacaoException("O usu√°rio n√£o est√° cadastrado.");
+
 		subscritor = id.getDpPessoa().getPessoaAtual();
 
 		boolean senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
-		
+
 		if (!senhaValida) {
-			throw new AplicacaoException("Senha do subscritor inv·lida.");
+			throw new AplicacaoException("Senha do subscritor inv√°lida.");
 		}
-		
-		
+
 		boolean fPreviamenteAssinado = doc.isAssinado();
 
 		if (!doc.isFinalizado())
 			throw new AplicacaoException(
-					"N„o È possÌvel registrar assinatura de um documento n„o finalizado");
+					"n√£o √© poss√≠vel registrar assinatura de um documento n√£o finalizado");
 
 		if (doc.isCancelado())
 			throw new AplicacaoException(
-					"N„o È possÌvel assinar um documento cancelado.");
-		
-		if (!getComp().podeAssinarComSenha(subscritor, subscritor.getLotacao(), doc.getMobilGeral()))
-			throw new AplicacaoException("Usu·rio n„o tem permiss„o de assinar documento com senha.");
-		
-		
-		// Verifica se a matrÌcula confere com o subscritor titular ou com um
+					"n√£o √© poss√≠vel assinar um documento cancelado.");
+
+		if (!getComp().podeAssinarComSenha(subscritor, subscritor.getLotacao(),
+				doc.getMobilGeral()))
+			throw new AplicacaoException(
+					"Usu√°rio n√£o tem permiss√£o de assinar documento com senha.");
+
+		// Verifica se a matr√≠cula confere com o subscritor titular ou com um
 		// cossignatario
 		try {
 			if (subscritor != null) {
@@ -2374,13 +2462,12 @@ public class ExBL extends CpBL {
 
 			if (fValido == false)
 				throw new AplicacaoException(
-						"Assinante n„o È subscritor nem cossignatario");
+						"Assinante n√£o √© subscritor nem cossignatario");
 		} catch (final Exception e) {
 			throw new AplicacaoException(
-					"SÛ È permitida a assinatura digital do subscritor e dos cossignat·rios do documento",
+					"S√≥ √© permitida a assinatura digital do subscritor e dos cossignat√°rios do documento",
 					0, e);
 		}
-		
 
 		String s = null;
 		try {
@@ -2390,14 +2477,15 @@ public class ExBL extends CpBL {
 					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
 					subscritor, null, null, null, null);
-			
-			mov.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla());
+
+			mov.setDescrMov(subscritor.getNomePessoa() + ":"
+					+ subscritor.getSigla());
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(doc);
 
 			// Verifica se o documento possui documento pai e faz a juntada
-			// autom·tica.
+			// autom√°tica.
 			if (doc.getExMobilPai() != null) {
 				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov,
 						subscritor, titular, mov);
@@ -2414,121 +2502,124 @@ public class ExBL extends CpBL {
 		return s;
 
 	}
-	
+
 	public void assinarMovimentacaoComSenha(DpPessoa cadastrante,
 			DpLotacao lotaCadastrante, ExMovimentacao movAlvo,
-			final Date dtMov, final String matriculaSubscritor, final String senhaSubscritor,
-			long tpMovAssinatura) throws Exception {
-		
-        DpPessoa subscritor = null;
-    	boolean fValido = false;
-    	
-        if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
+			final Date dtMov, final String matriculaSubscritor,
+			final String senhaSubscritor, long tpMovAssinatura)
+			throws Exception {
+
+		DpPessoa subscritor = null;
+		boolean fValido = false;
+
+		if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
 			throw new AplicacaoException(
-					"MatrÌcula do Subscritor n„o foi informada.");
+					"Matr√≠cula do Subscritor n√£o foi informada.");
 
 		if (senhaSubscritor == null || senhaSubscritor.isEmpty())
 			throw new AplicacaoException(
-					"Senha do Subscritor n„o foi informada.");
-        
+					"Senha do Subscritor n√£o foi informada.");
+
 		final String hashAtual = GeraMessageDigest.executaHash(
 				senhaSubscritor.getBytes(), "MD5");
 
 		final CpIdentidade id = dao().consultaIdentidadeCadastrante(
 				matriculaSubscritor, true);
-		// se o usu·rio n„o existir
+		// se o usu√°rio n√£o existir
 		if (id == null)
-			throw new AplicacaoException("O usu·rio n„o est· cadastrado.");
-		
+			throw new AplicacaoException("O usu√°rio n√£o est√° cadastrado.");
+
 		subscritor = id.getDpPessoa().getPessoaAtual();
 
 		boolean senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
-		
+
 		if (!senhaValida) {
-			throw new AplicacaoException("Senha do subscritor inv·lida.");
-		}		
-		
+			throw new AplicacaoException("Senha do subscritor inv√°lida.");
+		}
+
 		if (movAlvo != null) {
 			log.info("Assinando movimentacao: " + movAlvo.toString()
-					+ " Id da movimentaÁ„o: " + movAlvo.getIdMov());
+					+ " Id da movimenta√ß√£o: " + movAlvo.getIdMov());
 		} else {
 			log.warn("A movimentacao a ser assinada nao pode ser nula");
 			throw new AplicacaoException(
-					"N„o È possÌvel assinar uma movimentaÁ„o cancelada.");
+					"n√£o √© poss√≠vel assinar uma movimenta√ß√£o cancelada.");
 		}
 
 		if (movAlvo.isCancelada()) {
-			log.warn("A movimentacao a ser assinada est· cancelada");
+			log.warn("A movimentacao a ser assinada est√° cancelada");
 			throw new AplicacaoException(
-					"N„o È possÌvel assinar uma movimentaÁ„o cancelada.");
+					"n√£o √© poss√≠vel assinar uma movimenta√ß√£o cancelada.");
 		}
-		
-		
-		if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA &&
-				!getComp().podeConferirCopiaMovimentacaoComSenha(cadastrante, lotaCadastrante, movAlvo))
-			throw new AplicacaoException("Usu·rio n„o tem permiss„o de autenticar documento com senha.");
-		
-		if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA &&
-				!getComp().podeAssinarMovimentacaoComSenha(cadastrante, lotaCadastrante, movAlvo))
-			throw new AplicacaoException("Usu·rio n„o tem permiss„o de assinar com senha.");
 
-		
-		// Verifica se a matrÌcula confere com o subscritor do Despacho ou
+		if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA
+				&& !getComp().podeConferirCopiaMovimentacaoComSenha(
+						cadastrante, lotaCadastrante, movAlvo))
+			throw new AplicacaoException(
+					"Usu√°rio n√£o tem permiss√£o de autenticar documento com senha.");
+
+		if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA
+				&& !getComp().podeAssinarMovimentacaoComSenha(cadastrante,
+						lotaCadastrante, movAlvo))
+			throw new AplicacaoException(
+					"Usu√°rio n√£o tem permiss√£o de assinar com senha.");
+
+		// Verifica se a matr√≠cula confere com o subscritor do Despacho ou
 		// do
 		// desentranhamento
 		try {
-		
+
 			if (movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
-				|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-				|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
-				|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
+					|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
+					|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
+					|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
 
 				fValido = movAlvo.getSubscritor() != null
-							&& subscritor.equivale(movAlvo.getSubscritor());
-	
+						&& subscritor.equivale(movAlvo.getSubscritor());
+
 				if (fValido == false
 						&& movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
-					log.warn("Assinante n„o È subscritor do desentranhamento");
+					log.warn("Assinante n√£o √© subscritor do desentranhamento");
 					throw new AplicacaoException(
-						"Assinante n„o È subscritor do desentranhamento");
+							"Assinante n√£o √© subscritor do desentranhamento");
 				}
 
 				if (fValido == false) {
-					log.warn("Assinante n„o È subscritor do despacho");
+					log.warn("Assinante n√£o √© subscritor do despacho");
 					throw new AplicacaoException(
-							"Assinante n„o È subscritor do despacho");
+							"Assinante n√£o √© subscritor do despacho");
 				}
 			}
-	
-			log.info("Iniciando alteraÁ„o da movimentaÁ„o "
-				+ movAlvo.toString() + " Id da movimentaÁ„o: "
-				+ movAlvo.getIdMov());
-			
+
+			log.info("Iniciando altera√ß√£o da movimenta√ß√£o "
+					+ movAlvo.toString() + " Id da movimenta√ß√£o: "
+					+ movAlvo.getIdMov());
+
 			iniciarAlteracao();
 
 			// Nato: isso esta errado. Deveriamos estar recebendo o cadastrante
-			//e sua lotacao.
+			// e sua lotacao.
 			final ExMovimentacao mov = criarNovaMovimentacao(tpMovAssinatura,
-				cadastrante, lotaCadastrante, movAlvo.getExMobil(), null,
-				null, null, null, null, null);
+					cadastrante, lotaCadastrante, movAlvo.getExMobil(), null,
+					null, null, null, null, null);
 
-			mov.setDescrMov(subscritor.getNomePessoa() +  ":" + subscritor.getSigla());
+			mov.setDescrMov(subscritor.getNomePessoa() + ":"
+					+ subscritor.getSigla());
 
 			mov.setExMovimentacaoRef(movAlvo);
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
-			
+
 		} catch (final AplicacaoException e) {
 			cancelarAlteracao();
 			throw e;
 		} catch (final Exception e) {
-			log.error("Erro ao assinar movimentaÁ„o.", e);
+			log.error("Erro ao assinar movimenta√ß√£o.", e);
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao assinar movimentaÁ„o.", 0, e);
+			throw new AplicacaoException("Erro ao assinar movimenta√ß√£o.", 0, e);
 		}
 	}
-	
 
 	/**
 	 * @param doc
@@ -2555,6 +2646,81 @@ public class ExBL extends CpBL {
 		return s;
 	}
 
+	public ExPartes processarDadosDasPartes(final ExDocumento doc)
+			throws Exception {
+		String s = processarModelo(doc, null, "partes", null, null);
+		List<ExParte> l = new ArrayList<>();
+
+		int start = 0, end = 0;
+		String ps = "";
+		for (;;) {
+			start = s.indexOf("<parte", end);
+			end = s.indexOf("</parte>", start);
+			if (start == -1 || end == -1)
+				break;
+			String p = s.substring(start, end + 8);
+			ps += p;
+//			System.out.println(p);
+		}
+		ExPartes partes = ExPartes.unmarshall("<partes>" + ps + "</partes>");
+		return partes;
+	}
+
+	public void atualizarMovimentacoesDePartes(final ExDocumento doc,
+			DpPessoa cadastrante, DpLotacao lotaCadastrante, Date dt)
+			throws Exception {
+		ExPartes partes = processarDadosDasPartes(doc);
+		partes.calcular();
+		ExMobil mob = doc.getMobilGeral();
+
+		// Inicializar as listas de movimenta√ß√µes de controle de colabora√ß√£o
+		List<ExMovimentacao> movs = new ArrayList<>();
+		if (mob.getExMovimentacaoSet() == null)
+			mob.setExMovimentacaoSet(new TreeSet<ExMovimentacao>());
+		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
+			if (mov.isCancelada())
+				continue;
+			if (mov.getIdTpMov()
+					.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO))
+				movs.add(mov);
+		}
+
+		for (ExParte parte : partes.getPartes()) {
+			String atual = parte.getDescricaoMov();
+			// Localiza a parte
+			ExMovimentacao encontrada = null;
+			for (ExMovimentacao mov : movs) {
+				if (!parte.isMesmaId(mov.getDescrMov()))
+					continue;
+				encontrada = mov;
+				break;
+			}
+			if (encontrada != null && atual.equals(encontrada.getDescrMov())) {
+				movs.remove(encontrada);
+			} else {
+				ExMovimentacao m = criarNovaMovimentacao(
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO,
+						cadastrante, lotaCadastrante, mob, null, null, null,
+						null, null, dt);
+				m.setDescrMov(parte.getDescricaoMov());
+
+				if (encontrada != null) {
+					// mob.getExMovimentacaoSet().remove(encontrada);
+					gravarMovimentacaoCancelamento(m, encontrada);
+					// dao().excluir(encontrada);
+				} else {
+					gravarMovimentacao(m);
+				}
+			}
+		}
+
+		// Remove movimenta√ß√µes referentes a partes inativas
+		// for (ExMovimentacao mov : movs) {
+		// mob.getExMovimentacaoSet().remove(mov);
+		// dao().excluir(mov);
+		// }
+	}
+
 	/**
 	 * @param sFileName
 	 * @param data
@@ -2563,9 +2729,9 @@ public class ExBL extends CpBL {
 	 */
 	private void writeB64File(String sFileName, final byte[] data)
 			throws FileNotFoundException, IOException {
-		FileOutputStream fout2 = new FileOutputStream(sFileName);
-		fout2.write(Base64.encode(data).getBytes());
-		fout2.close();
+		try (FileOutputStream fout2 = new FileOutputStream(sFileName)) {
+			fout2.write(Base64.encode(data).getBytes());
+		}
 	}
 
 	public void alimentaFilaIndexacao(ExDocumento doc, boolean reindexar) {
@@ -2588,17 +2754,17 @@ public class ExBL extends CpBL {
 
 		if (movAlvo != null) {
 			log.info("Assinando movimentacao: " + movAlvo.toString()
-					+ " Id da movimentaÁ„o: " + movAlvo.getIdMov());
+					+ " Id da movimenta√ß√£o: " + movAlvo.getIdMov());
 		} else {
 			log.warn("A movimentacao a ser assinada nao pode ser nula");
 			throw new AplicacaoException(
-					"N„o È possÌvel assinar uma movimentaÁ„o cancelada.");
+					"n√£o √© poss√≠vel assinar uma movimenta√ß√£o cancelada.");
 		}
 
 		if (movAlvo.isCancelada()) {
-			log.warn("A movimentacao a ser assinada est· cancelada");
+			log.warn("A movimentacao a ser assinada est√° cancelada");
 			throw new AplicacaoException(
-					"N„o È possÌvel assinar uma movimentaÁ„o cancelada.");
+					"n√£o √© poss√≠vel assinar uma movimenta√ß√£o cancelada.");
 		}
 
 		String sNome;
@@ -2627,11 +2793,12 @@ public class ExBL extends CpBL {
 			}
 
 			if (cms == null)
-				throw new Exception("Assinatura inv·lida!");
-				
+				throw new Exception("Assinatura inv√°lida!");
+
 			if (data == null)
-				throw new Exception("Conte˙do inv·lido na validaÁ„o da assinatura!");
-				
+				throw new Exception(
+						"Conte√∫do inv√°lido na valida√ß√£o da assinatura!");
+
 			sNome = client
 					.validarAssinatura(cms, data, dao().dt(), VALIDAR_LCR);
 
@@ -2648,21 +2815,22 @@ public class ExBL extends CpBL {
 			try {
 				if (sNome == null)
 					throw new AplicacaoException(
-							"N„o foi possÌvel acessar o nome do assinante");
+							"n√£o foi poss√≠vel acessar o nome do assinante");
 				String sMatricula = sNome.split(":")[1];
 				lMatricula = Long.valueOf(sMatricula.replace("-", ""));
 			} catch (final Exception e) {
 				// throw new AplicacaoException(
-				// "N„o foi possÌvel obter a matrÌcula do assinante", 0, e);
+				// "n√£o foi poss√≠vel obter a matr√≠cula do assinante", 0, e);
 			}
 
-			// Verifica se a matrÌcula confere com o subscritor do Despacho ou
+			// Verifica se a matr√≠cula confere com o subscritor do Despacho ou
 			// do
 			// desentranhamento no caso de assinatura de despacho
-			if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO && (movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
-					|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-					|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
-					|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA)) {
+			if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
+					&& (movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
+							|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
+							|| movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA || movAlvo
+							.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA)) {
 
 				try {
 					if (lMatricula != null) {
@@ -2678,41 +2846,41 @@ public class ExBL extends CpBL {
 					}
 
 					if (lMatricula == null && lCPF == null) {
-						log.warn("N„o foi possÌvel recuperar nem a matrÌcula nem o CPF do assinante");
+						log.warn("n√£o foi poss√≠vel recuperar nem a matr√≠cula nem o CPF do assinante");
 						throw new AplicacaoException(
-								"N„o foi possÌvel recuperar nem a matrÌcula nem o CPF do assinante");
+								"n√£o foi poss√≠vel recuperar nem a matr√≠cula nem o CPF do assinante");
 					}
 
 					if (fValido == false
 							&& movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
-						log.warn("Assinante n„o È subscritor do desentranhamento");
+						log.warn("Assinante n√£o √© subscritor do desentranhamento");
 						throw new AplicacaoException(
-								"Assinante n„o È subscritor do desentranhamento");
+								"Assinante n√£o √© subscritor do desentranhamento");
 					}
 
 					if (fValido == false) {
-						log.warn("Assinante n„o È subscritor do despacho");
+						log.warn("Assinante n√£o √© subscritor do despacho");
 						throw new AplicacaoException(
-								"Assinante n„o È subscritor do despacho");
+								"Assinante n√£o √© subscritor do despacho");
 					}
 
 				} catch (final Exception e) {
 					if (fValido == false
 							&& movAlvo.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
-						log.warn("SÛ È permitida a assinatura digital do subscritor do desentranhamento");
+						log.warn("S√≥ √© permitida a assinatura digital do subscritor do desentranhamento");
 						throw new AplicacaoException(
-								"SÛ È permitida a assinatura digital do subscritor do desentranhamento",
+								"S√≥ √© permitida a assinatura digital do subscritor do desentranhamento",
 								0, e);
 					}
-					log.warn("SÛ È permitida a assinatura digital do subscritor do despacho");
+					log.warn("S√≥ √© permitida a assinatura digital do subscritor do despacho");
 					throw new AplicacaoException(
-							"SÛ È permitida a assinatura digital do subscritor do despacho",
+							"S√≥ √© permitida a assinatura digital do subscritor do despacho",
 							0, e);
 				}
 			}
 
-			log.info("Iniciando alteraÁ„o da movimentaÁ„o "
-					+ movAlvo.toString() + " Id da movimentaÁ„o: "
+			log.info("Iniciando altera√ß√£o da movimenta√ß√£o "
+					+ movAlvo.toString() + " Id da movimenta√ß√£o: "
 					+ movAlvo.getIdMov());
 			iniciarAlteracao();
 
@@ -2740,9 +2908,9 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw e;
 		} catch (final Exception e) {
-			log.error("Erro ao assinar movimentaÁ„o.", e);
+			log.error("Erro ao assinar movimenta√ß√£o.", e);
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao assinar movimentaÁ„o.", 0, e);
+			throw new AplicacaoException("Erro ao assinar movimenta√ß√£o.", 0, e);
 		}
 
 	}
@@ -2765,7 +2933,7 @@ public class ExBL extends CpBL {
 
 			mov.setDescrMov("Disponibilizado na internet em "
 					+ new SimpleDateFormat("dd/MM/yy").format(dtDispPublicacao)
-					+ ", na p·gina " + pagPublicacao);
+					+ ", na p√°gina " + pagPublicacao);
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
@@ -2792,7 +2960,7 @@ public class ExBL extends CpBL {
 
 	private void cancelarMovimentacoes(DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
-		// Cancelar todas as criaÁıes
+		// Cancelar todas as cria√ß√µes
 		//
 		for (ExMobil mob : doc.getExMobilSet()) {
 			while (true) {
@@ -2853,7 +3021,7 @@ public class ExBL extends CpBL {
 
 				if (mobPai.isArquivado())
 					throw new AplicacaoException(
-							"N„o È possÌvel fazer o desentranhamento porque o documento ao qual este est· juntado encontra-se arquivado.");
+							"n√£o √© poss√≠vel fazer o desentranhamento porque o documento ao qual este est√° juntado encontra-se arquivado.");
 
 				final ExMovimentacao ultMovPai = mobPai.getUltimaMovimentacao();
 
@@ -2886,11 +3054,11 @@ public class ExBL extends CpBL {
 	}
 
 	/**
-	 * Calcula o n˙mero original de p·ginas do documento que est· sendo
+	 * Calcula o n√∫mero original de p√°ginas do documento que est√° sendo
 	 * desentranhado, com base em um vetor de arquivos numerados. Depois, inclui
-	 * essa informaÁ„o no contexto do processador html para gerar a certid„o.
-	 * TambÈm armazena o n˙mero original de p·ginas em campo especÌfico da
-	 * movimentaÁ„o de cancelamento ou desentranhamento.
+	 * essa informa√ß√£o no contexto do processador html para gerar a certid√£o.
+	 * Tamb√©m armazena o n√∫mero original de p√°ginas em campo espec√≠fico da
+	 * movimenta√ß√£o de cancelamento ou desentranhamento.
 	 * 
 	 * @param mov
 	 * @param mob
@@ -2907,7 +3075,7 @@ public class ExBL extends CpBL {
 			UnsupportedEncodingException, Exception {
 		if (ans == null || ans.size() == 0)
 			throw new AplicacaoException(
-					"N„o foi possÌvel obter a numeraÁ„o ˙nica autom·tica das p·ginas da movimentaÁ„o a ser cancelada.");
+					"n√£o foi poss√≠vel obter a numera√ß√£o √∫nica autom√°tica das p√°ginas da movimenta√ß√£o a ser cancelada.");
 
 		Integer paginaInicial = ans.get(0).getPaginaInicial();
 		Integer paginaFinal = ans.get(ans.size() - 1).getPaginaFinal();
@@ -2946,8 +3114,8 @@ public class ExBL extends CpBL {
 	}
 
 	/**
-	 * Retorna o conte˙do de um Map<String,String> na forma de um array de bytes
-	 * formatado de acordo com os padrıes de Url Encoded Form e utilizando
+	 * Retorna o conte√∫do de um Map<String,String> na forma de um array de bytes
+	 * formatado de acordo com os padr√µes de Url Encoded Form e utilizando
 	 * iso-8859-1 como charset.
 	 * 
 	 * @param map
@@ -2957,17 +3125,18 @@ public class ExBL extends CpBL {
 	 */
 	public static byte[] urlEncodedFormFromMap(Map<String, String> map)
 			throws IOException, UnsupportedEncodingException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		for (String sKey : map.keySet()) {
-			if (baos.size() != 0)
-				baos.write("&".getBytes("iso-8859-1"));
-			baos.write(sKey.getBytes("iso-8859-1"));
-			baos.write('=');
-			baos.write(URLEncoder.encode(map.get(sKey), "iso-8859-1")
-					.getBytes());
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			for (String sKey : map.keySet()) {
+				if (baos.size() != 0)
+					baos.write("&".getBytes("iso-8859-1"));
+				baos.write(sKey.getBytes("iso-8859-1"));
+				baos.write('=');
+				baos.write(URLEncoder.encode(map.get(sKey), "iso-8859-1")
+						.getBytes());
+			}
+			byte[] baForm = baos.toByteArray();
+			return baForm;
 		}
-		byte[] baForm = baos.toByteArray();
-		return baForm;
 	}
 
 	/**
@@ -2991,8 +3160,7 @@ public class ExBL extends CpBL {
 	}
 
 	public void cancelarMovimentacao(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, final ExMobil mob)
-			throws Exception {
+			final DpLotacao lotaCadastrante, final ExMobil mob) {
 		try {
 			boolean indexar = false;
 			SortedSet<ExMobil> set = null;
@@ -3031,15 +3199,15 @@ public class ExBL extends CpBL {
 						.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM) {
 					cancelarPedidoBI(m.doc());
 				}
-				
+
 				final ExMovimentacao ultMov = m.getUltimaMovimentacao();
 				final ExMovimentacao ultMovNaoCancelada = m
 						.getUltimaMovimentacaoNaoCancelada(movACancelar);
 
 				/*
-				 * O correto seria a vari·vel abaixo guardar a movimentaÁ„o
-				 * anterior ‡ movimentaÁ„o acima. N„o necessariamente ser· a
-				 * pen˙ltima.
+				 * O correto seria a vari√≠vel abaixo guardar a movimenta√ß√£o
+				 * anterior √© movimenta√ß√£o acima. n√£o necessariamente ser√° a
+				 * pen√∫ltima.
 				 */
 				final ExMovimentacao penultMovNaoCancelada = m
 						.getPenultimaMovimentacaoNaoCancelada();
@@ -3053,7 +3221,7 @@ public class ExBL extends CpBL {
 
 				mov.setExMovimentacaoRef(ultMovNaoCancelada);
 				mov.setExNivelAcesso(ultMovNaoCancelada.getExNivelAcesso());
-				
+
 				if (ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO)
 					PublicacaoDJEBL.cancelarRemessaPublicacao(mov);
 
@@ -3102,8 +3270,7 @@ public class ExBL extends CpBL {
 
 				gravarMovimentacaoCancelamento(mov, ultMovNaoCancelada);
 
-				if (ultMovNaoCancelada.getExTipoMovimentacao()
-						.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO) {
+				if (ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO) {
 					atualizarDnmAnotacao(m);
 				}
 
@@ -3127,7 +3294,7 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao cancelar movimentaÁ„o.", 0, e);
+			throw new AplicacaoException("Erro ao cancelar movimenta√ß√£o.", 0, e);
 			// throw e;
 		}
 	}
@@ -3140,16 +3307,16 @@ public class ExBL extends CpBL {
 		if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO) {
 			if (!getComp().podeCancelarAnexo(titular, lotaTitular, mob,
 					movCancelar))
-				throw new AplicacaoException("N„o È possÌvel cancelar anexo");
+				throw new AplicacaoException("n√£o √© poss√≠vel cancelar anexo");
 		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO) {
 			if (!getComp().podeAtenderPedidoPublicacao(titular, lotaTitular,
 					mob))
 				throw new AplicacaoException(
-						"Usu·rio n„o tem permiss„o de cancelar pedido de publicaÁ„o no DJE.");
+						"Usu√°rio n√£o tem permiss√£o de cancelar pedido de publica√ß√£o no DJE.");
 		} else if (ExTipoMovimentacao.hasDespacho(movCancelar.getIdTpMov())) {
 			if (!getComp().podeCancelarDespacho(titular, lotaTitular, mob,
 					movCancelar))
-				throw new AplicacaoException("N„o È possÌvel cancelar anexo");
+				throw new AplicacaoException("n√£o √© poss√≠vel cancelar anexo");
 
 		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
 			if (!Ex.getInstance()
@@ -3157,7 +3324,15 @@ public class ExBL extends CpBL {
 					.podeCancelarVinculacaoPapel(titular, lotaTitular, mob,
 							movCancelar))
 				throw new AplicacaoException(
-						"N„o È possÌvel cancelar definiÁ„o de perfil");
+						"n√£o √© poss√≠vel cancelar defini√ß√£o de perfil");
+
+		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarVinculacaoMarca(titular, lotaTitular, mob,
+							movCancelar))
+				throw new AplicacaoException(
+						"n√£o √© poss√≠vel cancelar defini√ß√£o de marca");
 
 		} else if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA) {
 			if (!Ex.getInstance()
@@ -3165,13 +3340,13 @@ public class ExBL extends CpBL {
 					.podeCancelarVinculacaoDocumento(titular, lotaTitular, mob,
 							movCancelar))
 				throw new AplicacaoException(
-						"N„o È possÌvel cancelar vinculaÁ„o de documento");
+						"n√£o √© poss√≠vel cancelar vincula√ß√£o de documento");
 
 		} else if (movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM
 				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO) {
 			if (!getComp().podeCancelar(titular, lotaTitular, mob, movCancelar))
 				throw new AplicacaoException(
-						"N„o È permitido cancelar esta movimentaÁ„o.");
+						"n√£o √© permitido cancelar esta movimenta√ß√£o.");
 		}
 
 		try {
@@ -3192,8 +3367,8 @@ public class ExBL extends CpBL {
 				armazenarCertidaoDeDesentranhamento(mov, mob, ans, textoMotivo);
 				// if (ans.size() != 1)
 				// throw new AplicacaoException(
-				// "N„o foi possÌvel obter a numeraÁ„o ˙nica autom·tica das
-				// p·ginas da movimentaÁ„o a ser cancelada.");
+				// "n√£o foi poss√≠vel obter a numera√ß√£o √∫nica autom√°tica das
+				// p√°ginas da movimenta√ß√£o a ser cancelada.");
 				//
 				// criarCertidaoDeDesentranhamento(mov, mob, ans.get(0)
 				// .getPaginaInicial(), ans.get(0).getPaginaFinal());
@@ -3208,29 +3383,32 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao cancelar movimentaÁ„o.", 0, e);
+			throw new AplicacaoException("Erro ao cancelar movimenta√ß√£o.", 0, e);
 			// throw e;
 		}
 	}
 
 	public void criarVia(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, final ExDocumento doc)
-			throws Exception {
+			final DpLotacao lotaCadastrante, final ExDocumento doc) {
 		criarVia(cadastrante, lotaCadastrante, doc, null);
 		return;
 	}
 
 	public void criarVia(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
-			Integer numVia) throws Exception {
+			Integer numVia) {
 		try {
+			int numSequencia = numVia == null ? (int) dao()
+					.obterProximoNumeroVia(doc) : numVia;
+			if (numSequencia > 21)
+				throw new AplicacaoException("N√£o √© permitido criar mais de 21 vias, a √∫ltima via permitida √© a 'Z'.");
+			
 			iniciarAlteracao();
 
 			ExMobil mob = new ExMobil();
 			mob.setExTipoMobil(dao().consultar(ExTipoMobil.TIPO_MOBIL_VIA,
 					ExTipoMobil.class, false));
-			mob.setNumSequencia(numVia == null ? (int) dao()
-					.obterProximoNumeroVia(doc) : numVia);
+			mob.setNumSequencia(numSequencia);
 			mob.setExDocumento(doc);
 			doc.getExMobilSet().add(mob);
 			mob = dao().gravar(mob);
@@ -3260,7 +3438,7 @@ public class ExBL extends CpBL {
 		for (ExMobil m : set) {
 			if (!m.isArquivado())
 				throw new AplicacaoException(
-						"N„o È possÌvel desarquivar um documento n„o arquivado");
+						"n√£o √© poss√≠vel desarquivar um documento n√£o arquivado");
 		}
 
 		Date dt = dao().dt();
@@ -3291,7 +3469,7 @@ public class ExBL extends CpBL {
 		for (ExMobil m : set) {
 			if (!m.isArquivadoIntermediario())
 				throw new AplicacaoException(
-						"N„o È possÌvel retirar do arquivo intermedi·rio um documento que n„o esteja arquivado");
+						"n√£o √© poss√≠vel retirar do arquivo intermedi√°rio um documento que n√£o esteja arquivado");
 		}
 
 		Date dt = dao().dt();
@@ -3309,7 +3487,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(null);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao desarquivar intermedi·rio.",
+			throw new AplicacaoException("Erro ao desarquivar intermedi√°rio.",
 					0, e);
 		}
 	}
@@ -3322,7 +3500,7 @@ public class ExBL extends CpBL {
 		for (ExMobil m : set) {
 			if (!m.isSobrestado())
 				throw new AplicacaoException(
-						"N„o È possÌvel desobrestar um documento que n„o esteja sobrestado");
+						"n√£o √© poss√≠vel desobrestar um documento que n√£o esteja sobrestado");
 		}
 
 		Date dt = dao().dt();
@@ -3345,8 +3523,7 @@ public class ExBL extends CpBL {
 	}
 
 	public void excluirMovimentacao(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExMobil mob, Long idMov)
-			throws AplicacaoException {
+			final DpLotacao lotaCadastrante, ExMobil mob, Long idMov) {
 		try {
 			iniciarAlteracao();
 
@@ -3355,49 +3532,56 @@ public class ExBL extends CpBL {
 			// ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO
 			// movDao.excluir(mov);
 			excluirMovimentacao(mov);
-			if(!mob.doc().isAssinado() &&
-					((mob.doc().isFisico() && !mob.doc().isFinalizado())
-					|| (mob.doc().isEletronico() && !mob.doc().possuiAlgumaAssinatura())))
-				processar(mob.getExDocumento(), true, false, null);
+			if (!mob.doc().isAssinado()
+					&& ((mob.doc().isFisico() && !mob.doc().isFinalizado()) || (mob
+							.doc().isEletronico() && !mob.doc()
+							.possuiAlgumaAssinatura())))
+				processar(mob.getExDocumento(), true, false);
 			concluirAlteracao(mov.getExDocumento());
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao excluir movimentaÁ„o.", 0, e);
+			throw new AplicacaoException("Erro ao excluir movimenta√ß√£o.", 0, e);
 		}
 		alimentaFilaIndexacao(mob.getExDocumento(), true);
 	}
 
 	@SuppressWarnings("unchecked")
 	public String finalizar(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc, String realPath) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc)
+			throws Exception {
 
 		if (doc.isFinalizado())
-			throw new AplicacaoException("Documento j· est· finalizado.");
+			throw new AplicacaoException("Documento j√° est√° finalizado.");
 
 		if (!doc.getExClassificacao().isAtivo())
-			throw new AplicacaoException("ClassificaÁ„o documental encerrada. Selecione outra na tela de ediÁ„o.");
-	
+			throw new AplicacaoException(
+					"Classifica√ß√£o documental encerrada. Selecione outra na tela de edi√ß√£o.");
+
 		if (doc.getExModelo() != null && doc.getExModelo().isFechado()) {
-			throw new AplicacaoException("Este modelo n„o est· mais em uso. Selecione outro na tela de ediÁ„o");
+			throw new AplicacaoException(
+					"Este modelo n√£o est√° mais em uso. Selecione outro na tela de edi√ß√£o");
 		}
-		
-		if(doc.getExModelo() != null  && !doc.getExModelo().isAtivo()) {
-			throw new AplicacaoException("Este modelo foi alterado. Edite-o para atualiz·-lo");	
+
+		if (doc.getExModelo() != null && !doc.getExModelo().isAtivo()) {
+			throw new AplicacaoException(
+					"Este modelo foi alterado. Edite-o para atualiz√°-lo");
 		}
-		
-		if(!doc.isEletronico() 
-				&& doc.isProcesso() 
-				&& doc.getExMobilPai() != null && doc.getExMobilPai().getExDocumento().isProcesso()
+
+		if (!doc.isEletronico() && doc.isProcesso()
+				&& doc.getExMobilPai() != null
+				&& doc.getExMobilPai().getExDocumento().isProcesso()
 				&& doc.getExMobilPai().getExDocumento().isEletronico())
 			throw new AplicacaoException(
-					"N„o È possÌvel criar Subprocesso fÌsico de processo eletrÙnico.");
-		
-		if(!getComp().podeSerSubscritor(doc))
-			throw new AplicacaoException("O usu·rio n„o pode ser subscritor do documento");
-		
-		if(doc.isProcesso() && doc.getMobilGeral().temAnexos())
-			throw new AplicacaoException("Processos n„o podem possuir anexos antes da finalizaÁ„o. Exclua todos os anexos para poder finalizar. Os anexos poder„o ser incluÌdos no primeiro volume apÛs a finalizaÁ„o.");
+					"n√£o √© poss√≠vel criar Subprocesso f√≠sico de processo eletr√¥nico.");
+
+		if (!getComp().podeSerSubscritor(doc))
+			throw new AplicacaoException(
+					"O usu√°rio n√£o pode ser subscritor do documento");
+
+		if (doc.isProcesso() && doc.getMobilGeral().temAnexos())
+			throw new AplicacaoException(
+					"Processos n√£o podem possuir anexos antes da finaliza√ß√£o. Exclua todos os anexos para poder finalizar. Os anexos poder√£o ser inclu√≠dos no primeiro volume ap√≥s a finaliza√ß√£o.");
 
 		Set<ExVia> setVias = doc.getSetVias();
 
@@ -3414,7 +3598,7 @@ public class ExBL extends CpBL {
 
 				if (c.before(dtDocCalendar))
 					throw new Exception(
-							"N„o È permitido criar documento com data futura");
+							"n√£o √© permitido criar documento com data futura");
 			}
 
 			// Pega a data sem horas, minutos e segundos...
@@ -3441,12 +3625,12 @@ public class ExBL extends CpBL {
 						doc.setNumSequencia(n);
 					} else {
 						throw new AplicacaoException(
-								"Documento filho n„o pode ser criado nessas condiÁıes.");
+								"Documento filho n√£o pode ser criado nessas condi√ß√µes.");
 					}
 				}
 			}
 
-			processar(doc, false, false, realPath);
+			processar(doc, false, false);
 
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
 			dao().gravar(doc);
@@ -3487,19 +3671,19 @@ public class ExBL extends CpBL {
 		Long num = dao().obterProximoNumero(doc, doc.getAnoEmissao());
 
 		if (num == null) {
-			// Verifica se reiniciar a numeraÁ„o ou continua com a numeraÁ„o
+			// Verifica se reiniciar a numera√ß√£o ou continua com a numera√ß√£o
 			// anterior
 			if (getComp().podeReiniciarNumeracao(doc)) {
 				num = 1L;
 			} else {
-				// ObtÈm o prÛximo n˙mero considerando os anos anteriores atÈ
+				// Obt√©m o pr√≥ximo n√∫mero considerando os anos anteriores at√©
 				// 2006
 				Long anoEmissao = doc.getAnoEmissao();
 				while (num == null && anoEmissao > 2005) {
 					anoEmissao = anoEmissao - 1;
 					num = dao().obterProximoNumero(doc, anoEmissao);
 				}
-				// Se continuar null È porque nunca foi criado documento para
+				// Se continuar null √© porque nunca foi criado documento para
 				// este formato.
 				if (num == null)
 					num = 1L;
@@ -3556,7 +3740,7 @@ public class ExBL extends CpBL {
 	public void criarWorkflow(final DpPessoa cadastrante, DpPessoa titular,
 			final DpLotacao lotaTitular, ExDocumento doc, String nomeProcesso)
 			throws Exception {
-		{ // Utiliza o serviÁo WebService do SigaWf
+		{ // Utiliza o servi√ßo WebService do SigaWf
 			WfService client = Service.getWfService();
 			ArrayList<String> keys = new ArrayList<String>();
 			ArrayList<String> values = new ArrayList<String>();
@@ -3600,8 +3784,8 @@ public class ExBL extends CpBL {
 		atualizarWorkFlow(doc);
 	}
 
-	public static String descricaoSePuderAcessar(ExDocumento doc, DpPessoa titular,
-			DpLotacao lotaTitular) {
+	public static String descricaoSePuderAcessar(ExDocumento doc,
+			DpPessoa titular, DpLotacao lotaTitular) {
 		if (mostraDescricaoConfidencial(doc, titular, lotaTitular))
 			return "CONFIDENCIAL";
 		else
@@ -3615,7 +3799,7 @@ public class ExBL extends CpBL {
 		else
 			return doc.getDescrDocumento();
 	}
-	
+
 	public String descricaoConfidencialDoDocumento(ExMobil mob,
 			DpPessoa titular, DpLotacao lotaTitular) {
 
@@ -3664,11 +3848,15 @@ public class ExBL extends CpBL {
 			return true;
 		return false;
 	}
-	
-	public static boolean mostraDescricaoConfidencial(ExDocumento doc, DpPessoa titular,
-			DpLotacao lotaTitular) {
+
+	public static boolean mostraDescricaoConfidencial(ExDocumento doc,
+			DpPessoa titular, DpLotacao lotaTitular) {
 		try {
-			return !Ex.getInstance().getComp().podeAcessarDocumento(titular, lotaTitular, doc.getMobilGeral());
+			return !Ex
+					.getInstance()
+					.getComp()
+					.podeAcessarDocumento(titular, lotaTitular,
+							doc.getMobilGeral());
 		} catch (Exception e) {
 			return true;
 		}
@@ -3688,7 +3876,8 @@ public class ExBL extends CpBL {
 		return false;
 	}
 
-	public static String anotacaoConfidencial(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
+	public static String anotacaoConfidencial(ExMobil mob, DpPessoa titular,
+			DpLotacao lotaTitular) {
 		if (mostraDescricaoConfidencial(mob.doc(), titular, lotaTitular))
 			return "CONFIDENCIAL";
 		String s = mob.getDnmUltimaAnotacao();
@@ -3708,7 +3897,8 @@ public class ExBL extends CpBL {
 					.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO))
 				s = mov.getDescrMov();
 		}
-		//Nato: precisei gravar um espaco pois estava desconsiderando a string vazia e gravando nulo.
+		// Nato: precisei gravar um espaco pois estava desconsiderando a string
+		// vazia e gravando nulo.
 		if (s == null || s.length() == 0)
 			s = " ";
 		mob.setDnmUltimaAnotacao(s);
@@ -3717,10 +3907,11 @@ public class ExBL extends CpBL {
 	}
 
 	public ExDocumento gravar(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc, String realPath) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc)
+			throws Exception {
 
-		// Verifica se o documento possui documento pai e se o usu·rio possui
-		// permissıes de criar documento filho
+		// Verifica se o documento possui documento pai e se o usu√°rio possui
+		// permiss√µes de criar documento filho
 		/*
 		 * if (doc.getExMobilPai() != null &&
 		 * doc.getExMobilPai().getExDocumento().getIdDoc() != null) if
@@ -3728,14 +3919,16 @@ public class ExBL extends CpBL {
 		 * doc.isProcesso()) { if
 		 * (!ExCompetenciaBL.podeCriarSubprocesso(cadastrante, lotaCadastrante,
 		 * doc.getExMobilPai())) throw new AplicacaoException(
-		 * "N„o foi possÌvel criar Subprocesso do documento selecionado."); }
+		 * "n√£o foi poss√≠vel criar Subprocesso do documento selecionado."); }
 		 * else { if (!ExCompetenciaBL.podeCriarDocFilho(cadastrante,
 		 * lotaCadastrante, doc.getExMobilPai())) throw new AplicacaoException(
-		 * "N„o È permitido criar documento filho do documento pai selecionado, pois este est· inacessÌvel ao usu·rio."
+		 * "n√£o √© permitido criar documento filho do documento pai selecionado, pois este est√° inacess√≠vel ao usu√°rio."
 		 * ); }
 		 */
 
 		try {
+			Date dt = dao().dt();
+
 			// System.out.println(System.currentTimeMillis() + " - INI gravar");
 			iniciarAlteracao();
 
@@ -3746,26 +3939,33 @@ public class ExBL extends CpBL {
 				if (doc.getLotaCadastrante() == null)
 					doc.setLotaCadastrante(doc.getCadastrante().getLotacao());
 			}
-			if (doc.getDtRegDoc() == null)
-				doc.setDtRegDoc(dao().dt());
+			if (doc.getDtRegDoc() == null) {
+				doc.setDtRegDoc(dt);
+			}
 
-			// Nato: para obter o numero do TMP na primeira gravaÁ„o
-			if (doc.getIdDoc() == null)
+			// Nato: para obter o numero do TMP na primeira grava√ß√£o
+			boolean primeiraGravacao = false;
+			if (doc.getIdDoc() == null) {
 				doc = ExDao.getInstance().gravar(doc);
-			
-			if(doc.getExModelo().isDescricaoAutomatica()) 
+				primeiraGravacao = true;
+			}
+
+			if (doc.getExModelo().isDescricaoAutomatica())
 				doc.setDescrDocumento(processarComandosEmTag(doc, "descricao"));
-				
-			if(doc.getDescrDocumento() == null || doc.getDescrDocumento().isEmpty())
+
+			if (doc.getDescrDocumento() == null
+					|| doc.getDescrDocumento().isEmpty())
 				throw new AplicacaoException(
-						"A descriÁ„o do documento n„o pode ser vazia.");
+						"A descri√ß√£o do documento n√£o pode ser vazia.");
 
 			long tempoIni = System.currentTimeMillis();
 
-			// Remover eventuais pendencias de anexos que foram inseridar por modelos anteriores e que n„o s„o necess·rias no motelo atual.
+			// Remover eventuais pendencias de anexos que foram inseridar por
+			// modelos anteriores e que n√£o s√£o necess√°rias no motelo atual.
 			if (!doc.isFinalizado()) {
 				while (true) {
-					ExMovimentacao mov = doc.getMobilGeral().anexoPendente(null, false);
+					ExMovimentacao mov = doc.getMobilGeral().anexoPendente(
+							null, false);
 					if (mov == null)
 						break;
 					doc.getMobilGeral().getExMovimentacaoSet().remove(mov);
@@ -3774,20 +3974,20 @@ public class ExBL extends CpBL {
 			}
 
 			// a estrutura try catch abaixo foi colocada de modo a impedir que
-			// os erros na formataÁ„o impeÁam a gravaÁ„o do documento
+			// os erros na formata√ß√£o impe√ßam a grava√ß√£o do documento
 			try {
-				processar(doc, false, false, realPath);
+				processar(doc, false, false);
 			} catch (Throwable t) {
-				System.out.println("gravaÁ„o doc " + doc.getCodigo() + ", "
-						+ new Date().toString() + " - erro na formataÁ„o - "
+				System.out.println("grava√ß√£o doc " + doc.getCodigo() + ", "
+						+ new Date().toString() + " - erro na formata√ß√£o - "
 						+ t.getMessage());
 				t.printStackTrace();
 			}
 
-			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
-					+ ", PESSOA " + doc.getCadastrante().getIdPessoa()
-					+ ". Terminou processar: "
-					+ (System.currentTimeMillis() - tempoIni));
+//			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
+//					+ ", PESSOA " + doc.getCadastrante().getIdPessoa()
+//					+ ". Terminou processar: "
+//					+ (System.currentTimeMillis() - tempoIni));
 			tempoIni = System.currentTimeMillis();
 
 			if (doc.getConteudoBlobDoc() != null)
@@ -3811,15 +4011,24 @@ public class ExBL extends CpBL {
 			if (funcao != null) {
 				obterMetodoPorString(funcao, doc);
 			}
-			
+
+			atualizarMovimentacoesDePartes(doc, cadastrante, lotaCadastrante,
+					dt);
+
 			String s = processarComandosEmTag(doc, "gravacao");
 
 			concluirAlteracao(doc);
 
-			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
-					+ ", PESSOA " + doc.getCadastrante().getIdPessoa()
-					+ ". Terminou commit gravacao: "
-					+ (System.currentTimeMillis() - tempoIni));
+			// Finaliza o documento automaticamente se ele for coloborativo
+			if (!primeiraGravacao && doc.isColaborativo() && !doc.isFisico()
+					&& !doc.isFinalizado()) {
+				finalizar(cadastrante, lotaCadastrante, doc);
+			}
+
+//			System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
+//					+ ", PESSOA " + doc.getCadastrante().getIdPessoa()
+//					+ ". Terminou commit gravacao: "
+//					+ (System.currentTimeMillis() - tempoIni));
 			tempoIni = System.currentTimeMillis();
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -3829,7 +4038,7 @@ public class ExBL extends CpBL {
 			if (t != null && t instanceof AplicacaoException)
 				throw (AplicacaoException) t;
 			else
-				throw new AplicacaoException("Erro na gravaÁ„o", 0, e);
+				throw new AplicacaoException("Erro na grava√ß√£o", 0, e);
 		}
 		try {
 
@@ -3885,14 +4094,14 @@ public class ExBL extends CpBL {
 			doc.setConteudoBlobResumo(resumo.getBytes());
 		}
 	}
-	
+
 	public ExNivelAcesso atualizarDnmNivelAcesso(ExDocumento doc) {
-		log.debug("[getExNivelAcesso] - Obtendo nÌvel de acesso atual do documento...");
+		log.debug("[getExNivelAcesso] - Obtendo n√≠vel de acesso atual do documento...");
 		ExNivelAcesso nivel = null;
 		if (doc.getMobilGeral() != null
-		                && doc.getMobilGeral().getUltimaMovimentacaoNaoCancelada() != null)
-		        nivel = doc.getMobilGeral().getUltimaMovimentacaoNaoCancelada()
-		                        .getExNivelAcesso();
+				&& doc.getMobilGeral().getUltimaMovimentacaoNaoCancelada() != null)
+			nivel = doc.getMobilGeral().getUltimaMovimentacaoNaoCancelada()
+					.getExNivelAcesso();
 		if (nivel == null)
 			nivel = doc.getExNivelAcessoDoDocumento();
 		doc.setDnmExNivelAcesso(nivel);
@@ -3905,7 +4114,8 @@ public class ExBL extends CpBL {
 		ExAcesso acesso = new ExAcesso();
 		Set docsAlterados = new HashSet<Long>();
 
-		// Se houve alteraÁ„o, propagar para os documentos juntados em cada mobil
+		// Se houve altera√ß√£o, propagar para os documentos juntados em cada
+		// mobil
 		//
 		for (ExMobil mob : doc.getExMobilSet()) {
 			int pularInferiores = 0;
@@ -3915,10 +4125,10 @@ public class ExBL extends CpBL {
 						continue;
 					else
 						pularInferiores = 0;
-					ExDocumento d = (ExDocumento)(an.getArquivo());
-//					if (dt.equals(d.getDnmDtAcesso()))
-//						continue;
-					
+					ExDocumento d = (ExDocumento) (an.getArquivo());
+					// if (dt.equals(d.getDnmDtAcesso()))
+					// continue;
+
 					String sAcessoAntigo = d.getDnmAcesso();
 					String sAcessoNovo = acesso.getAcessosString(d, dt);
 					if (!sAcessoNovo.equals(sAcessoAntigo)) {
@@ -3926,12 +4136,12 @@ public class ExBL extends CpBL {
 						d.setDnmAcesso(sAcessoNovo);
 						d.setDnmDtAcesso(dt);
 						ExDao.getInstance().gravar(d);
-					} 
+					}
 					if (!docsAlterados.contains(d.getIdDoc())) {
 						pularInferiores = an.getNivel();
 					}
 				}
-				
+
 			}
 		}
 	}
@@ -3948,7 +4158,7 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro na gravaÁ„o", 0, e);
+			throw new AplicacaoException("Erro na grava√ß√£o", 0, e);
 
 		}
 
@@ -3965,7 +4175,7 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro na gravaÁ„o", 0, e);
+			throw new AplicacaoException("Erro na grava√ß√£o", 0, e);
 
 		}
 
@@ -4024,16 +4234,18 @@ public class ExBL extends CpBL {
 		Notificador.notificarDestinariosEmail(mov,
 				Notificador.TIPO_NOTIFICACAO_CANCELAMENTO);
 	}
-	
-	public void excluirDocumentoAutomatico(final ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) 
-			throws Exception{
+
+	public void excluirDocumentoAutomatico(final ExDocumento doc,
+			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
 		excluirDocumento(doc, titular, lotaTitular, true);
 	}
-	
-	
-	public void excluirDocumento(final ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular, 
-			boolean automatico) /* somente documentos tempor·rios */
-			throws Exception {
+
+	public void excluirDocumento(final ExDocumento doc, DpPessoa titular,
+			DpLotacao lotaTitular, boolean automatico) /*
+														 * somente documentos
+														 * tempor√°rios
+														 */
+	throws Exception {
 		try {
 			ExDao.iniciarTransacao();
 
@@ -4041,20 +4253,21 @@ public class ExBL extends CpBL {
 				final Date d = doc.getDtRegDoc();
 			} catch (final ObjectNotFoundException e) {
 				throw new AplicacaoException(
-						"Documento j· foi excluÌdo anteriormente", 1, e);
+						"Documento j√° foi exclu√≠do anteriormente", 1, e);
 			}
 
 			if (doc.isFinalizado())
 
 				throw new AplicacaoException(
-						"Documento j· foi finalizado e n„o pode ser excluÌdo",
+						"Documento j√° foi finalizado e n√£o pode ser exclu√≠do",
 						2);
 			for (ExMobil m : doc.getExMobilSet()) {
 				Set set = m.getExMovimentacaoSet();
-				
-				if (!automatico && !Ex.getInstance().getComp()
-						.podeExcluir(titular, lotaTitular, m))
-					throw new AplicacaoException("N„o È possÌvel excluir");
+
+				if (!automatico
+						&& !Ex.getInstance().getComp()
+								.podeExcluir(titular, lotaTitular, m))
+					throw new AplicacaoException("n√£o √© poss√≠vel excluir");
 
 				if (set.size() > 0) {
 					final Object[] aMovimentacao = set.toArray();
@@ -4074,8 +4287,7 @@ public class ExBL extends CpBL {
 						final ExMovimentacao movimentacao = (ExMovimentacao) aMovimentacao[i];
 						Ex.getInstance()
 								.getBL()
-								.excluirMovimentacao(titular,
-										lotaTitular,
+								.excluirMovimentacao(titular, lotaTitular,
 										movimentacao.getExMobil(),
 										movimentacao.getIdMov());
 					}
@@ -4097,12 +4309,11 @@ public class ExBL extends CpBL {
 			throw e;
 		} catch (final Exception e) {
 			ExDao.rollbackTransacao();
-			throw new AplicacaoException("Ocorreu um Erro durante a OperaÁ„o",
+			throw new AplicacaoException("Ocorreu um Erro durante a Opera√ß√£o",
 					0, e);
 		}
 
 	}
-	
 
 	public void excluirMovimentacao(final ExMovimentacao mov)
 			throws AplicacaoException, SQLException {
@@ -4126,9 +4337,8 @@ public class ExBL extends CpBL {
 				m.setExMovimentacaoCanceladora(null);
 			}
 		}
-		
-		if (mov.getExTipoMovimentacao()
-				.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO) {
+
+		if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO) {
 			atualizarDnmAnotacao(mov.getExMobil());
 		}
 
@@ -4143,7 +4353,7 @@ public class ExBL extends CpBL {
 
 		try {
 			if (subscritor == null) {
-				throw new AplicacaoException("Cossignat·rio n„o foi informado");
+				throw new AplicacaoException("Cossignat√°rio n√£o foi informado");
 			}
 
 			iniciarAlteracao();
@@ -4157,11 +4367,11 @@ public class ExBL extends CpBL {
 			mov.setNmFuncaoSubscritor(funcaoCosignatario);
 
 			gravarMovimentacao(mov);
-			processar(doc, true, false, null);
+			processar(doc, true, false);
 			concluirAlteracao(doc);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao incluir Cossignat·rio.", 0, e);
+			throw new AplicacaoException("Erro ao incluir Cossignat√°rio.", 0, e);
 		}
 	}
 
@@ -4169,13 +4379,13 @@ public class ExBL extends CpBL {
 			final DpPessoa docTitular, final DpLotacao lotaCadastrante,
 			final String idDocExterno, final ExMobil mob, final ExMobil mobPai,
 			final Date dtMov, final DpPessoa subscritor,
-			final DpPessoa titular, final String idDocEscolha) throws Exception {
+			final DpPessoa titular, final String idDocEscolha) {
 
 		if (idDocEscolha.equals("1")) {
 
 			if (mobPai == null)
 				throw new AplicacaoException(
-						"N„o foi selecionado um documento para a juntada");
+						"n√£o foi selecionado um documento para a juntada");
 
 			if (mob.getExDocumento().getIdDoc()
 					.equals(mobPai.getExDocumento().getIdDoc())
@@ -4183,41 +4393,41 @@ public class ExBL extends CpBL {
 					&& mob.getExTipoMobil().getIdTipoMobil()
 							.equals(mobPai.getExTipoMobil().getIdTipoMobil()))
 				throw new AplicacaoException(
-						"N„o È possÌvel juntar um documento a ele mesmo");
+						"n√£o √© poss√≠vel juntar um documento a ele mesmo");
 
 			if (!mobPai.getExDocumento().isFinalizado())
 				throw new AplicacaoException(
-						"N„o È possÌvel juntar a um documento n„o finalizado");
+						"n√£o √© poss√≠vel juntar a um documento n√£o finalizado");
 
 			if (mobPai.isGeral())
 				throw new AplicacaoException(
-						"… necess·rio informar a via ‡ qual ser· feita a juntada");
+						"√â necess√°rio informar a via √© qual ser√° feita a juntada");
 
 			if (mob.doc().isEletronico()) {
 				if (mob.temAnexosNaoAssinados()
 						|| mob.temDespachosNaoAssinados())
 					throw new AplicacaoException(
-							"N„o È possÌvel juntar documento com anexo/despacho pendente de assinatura ou conferÍncia");
+							"n√£o √© poss√≠vel juntar documento com anexo/despacho pendente de assinatura ou confer√™ncia");
 			}
 
 			if (!mob.getDoc().isEletronico() && mobPai.getDoc().isEletronico())
 				throw new AplicacaoException(
-						"N„o È possÌvel juntar um documento fÌsico a um documento eletrÙnico.");
+						"n√£o √© poss√≠vel juntar um documento f√≠sico a um documento eletr√¥nico.");
 
 			if (mobPai.isSobrestado())
 				throw new AplicacaoException(
-						"N„o È possÌvel juntar um documento a um volume sobrestado.");
+						"n√£o √© poss√≠vel juntar um documento a um volume sobrestado.");
 
-			// Verifica se o documeto pai j· est· apensado a este documento
+			// Verifica se o documeto pai j√° est√°apensado a este documento
 			for (ExMobil apenso : mob.getApensos()) {
 				if (apenso.getId() == mobPai.getId())
 					throw new AplicacaoException(
-							"N„o È possÌvel juntar um documento a um documento que est· apensado a ele.");
+							"n√£o √© poss√≠vel juntar um documento a um documento que est√°apensado a ele.");
 			}
 
 			if (!getComp().podeSerJuntado(docTitular, lotaCadastrante, mobPai))
 				throw new AplicacaoException(
-						"A via n„o pode ser juntada ao documento porque ele est· em tr‚nsito, arquivado, juntado, cancelado, arquivado, pendente de assinatura ou encontra-se em outra lotaÁ„o");
+						"A via n√£o pode ser juntada ao documento porque ele est√°em tr√¢nsito, arquivado, juntado, cancelado, arquivado, pendente de assinatura ou encontra-se em outra lota√ß√£o");
 		}
 
 		final ExMovimentacao mov;
@@ -4231,7 +4441,7 @@ public class ExBL extends CpBL {
 			} else if (idDocEscolha.equals("2")) {
 				idTpMov = ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO;
 			} else
-				throw new AplicacaoException("OpÁ„o inv·lida.");
+				throw new AplicacaoException("Op√ß√£o inv√°lida.");
 
 			mov = criarNovaMovimentacao(idTpMov, cadastrante, lotaCadastrante,
 					mob, dtMov, subscritor, null, titular, null, null);
@@ -4244,11 +4454,11 @@ public class ExBL extends CpBL {
 			} else if (idDocEscolha.equals("2")) {
 				mov.setDescrMov(idDocExterno);
 			} else
-				throw new AplicacaoException("OpÁ„o inv·lida.");
+				throw new AplicacaoException("Op√ß√£o inv√°lida.");
 
 			if (idDocEscolha.equals("1") || idDocEscolha.equals("2")) {
 			} else
-				throw new AplicacaoException("OpÁ„o inv·lida.");
+				throw new AplicacaoException("Op√ß√£o inv√°lida.");
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
@@ -4267,9 +4477,9 @@ public class ExBL extends CpBL {
 	}
 
 	public ExDocumento refazer(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc) {
 
-		// As alteraÁıes devem ser feitas em cancelardocumento.
+		// As altera√ß√µes devem ser feitas em cancelardocumento.
 		try {
 			iniciarAlteracao();
 
@@ -4291,7 +4501,7 @@ public class ExBL extends CpBL {
 
 	// Nato: removi: HttpServletRequest request
 	public ExDocumento duplicar(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc) {
 
 		try {
 			iniciarAlteracao();
@@ -4309,7 +4519,8 @@ public class ExBL extends CpBL {
 	}
 
 	private ExDocumento duplicarDocumento(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc, final boolean refazendo) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc,
+			final boolean refazendo) throws Exception {
 		ExDocumento novoDoc = new ExDocumento();
 
 		novoDoc.setConteudoBlobDoc(doc.getConteudoBlobDoc());
@@ -4318,8 +4529,25 @@ public class ExBL extends CpBL {
 
 		if (doc.getDestinatario() != null && !doc.getDestinatario().isFechada())
 			novoDoc.setDestinatario(doc.getDestinatario().getPessoaAtual());
+		
+		
+		final Long idSit = Ex
+				.getInstance()
+				.getConf()
+				.buscaSituacao(doc.getExModelo(),
+						doc.getExTipoDocumento(),
+						cadastrante, lotaCadastrante,
+						CpTipoConfiguracao.TIPO_CONFIG_ELETRONICO)
+				.getIdSitConfiguracao();
 
-		novoDoc.setFgEletronico(doc.getFgEletronico());
+		if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO) {
+			novoDoc.setFgEletronico("S");
+		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_PROIBIDO) {
+			novoDoc.setFgEletronico("N");
+		} else {
+			novoDoc.setFgEletronico(doc.getFgEletronico());
+		} 
+		
 		novoDoc.setExNivelAcesso(doc.getExNivelAcesso());
 
 		ExClassificacao classAtual = doc.getExClassificacaoAtual();
@@ -4333,7 +4561,7 @@ public class ExBL extends CpBL {
 			novoDoc.setExModelo(doc.getExModelo().getModeloAtual());
 		else
 			throw new AplicacaoException(
-					"N„o foi possÌvel duplicar o documento pois este modelo n„o est· mais em uso.");
+					"n√£o foi poss√≠vel duplicar o documento pois este modelo n√£o est√°mais em uso.");
 
 		novoDoc.setExTipoDocumento(doc.getExTipoDocumento());
 
@@ -4357,12 +4585,12 @@ public class ExBL extends CpBL {
 		novoDoc.setObsOrgao(doc.getObsOrgao());
 		novoDoc.setOrgaoExterno(doc.getOrgaoExterno());
 		novoDoc.setOrgaoExternoDestinatario(doc.getOrgaoExternoDestinatario());
-		
-		if(refazendo)
+
+		if (refazendo)
 			novoDoc.setExMobilPai(doc.getExMobilPai());
 		else
 			novoDoc.setExMobilPai(null);
-		
+
 		novoDoc.setOrgaoUsuario(cadastrante.getOrgaoUsuario());
 
 		if (doc.getTitular() != null && !doc.getTitular().isFechada())
@@ -4384,7 +4612,7 @@ public class ExBL extends CpBL {
 		novoDoc.setExMobilSet(new TreeSet<ExMobil>());
 		novoDoc.getExMobilSet().add(mob);
 
-		novoDoc = gravar(cadastrante, lotaCadastrante, novoDoc, null);
+		novoDoc = gravar(cadastrante, lotaCadastrante, novoDoc);
 
 		// mob = dao().gravar(mob);
 
@@ -4416,10 +4644,13 @@ public class ExBL extends CpBL {
 			}
 		}
 
-		// … necess·rio gravar novamente pois uma movimentaÁ„o de inclus„o
-		// de cossignat·rio pode ter sido introduzida, gerando a necessidade
-		// de refazer o HTML e o PDF.
-		novoDoc = gravar(cadastrante, lotaCadastrante, novoDoc, null);
+		// √© necess√°rio gravar novamente pois uma movimenta√ß√£o de inclus√£o
+		// de cossignat√°rio pode ter sido introduzida, gerando a necessidade
+		// de refazer o HTML e o PDF. Quando o documento √© colaborativo, n√£o
+		// deve ser gravado novamente pois isso faria com que ele fosse
+		// automaticamente finalizado, o que n√£o √© desejavel na duplica√ß√£o.
+		if (!doc.isColaborativo())
+			novoDoc = gravar(cadastrante, lotaCadastrante, novoDoc);
 
 		return novoDoc;
 	}
@@ -4553,7 +4784,7 @@ public class ExBL extends CpBL {
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException(
-					"Erro ao reverter indicaÁ„o para guarda permenente.", 0, e);
+					"Erro ao reverter indica√ß√£o para guarda permenente.", 0, e);
 		}
 	}
 
@@ -4564,7 +4795,7 @@ public class ExBL extends CpBL {
 
 		if (mobRef == null)
 			throw new AplicacaoException(
-					"N„o foi selecionado um documento para o vinculo");
+					"n√£o foi selecionado um documento para o vinculo");
 
 		if (mob.getExDocumento().getIdDoc()
 				.equals(mobRef.getExDocumento().getIdDoc())
@@ -4572,11 +4803,11 @@ public class ExBL extends CpBL {
 				&& mob.getExTipoMobil().getIdTipoMobil()
 						.equals(mobRef.getExTipoMobil().getIdTipoMobil()))
 			throw new AplicacaoException(
-					"N„o È possÌvel vincular um documento a ele mesmo");
+					"n√£o √© poss√≠vel vincular um documento a ele mesmo");
 
 		if (!mobRef.getExDocumento().isFinalizado())
 			throw new AplicacaoException(
-					"N„o È possÌvel vincular-se a um documento n„o finalizado");
+					"n√£o √© poss√≠vel vincular-se a um documento n√£o finalizado");
 
 		try {
 			iniciarAlteracao();
@@ -4587,7 +4818,7 @@ public class ExBL extends CpBL {
 					titular, null, null);
 
 			mov.setExMobilRef(mobRef);
-			mov.setDescrMov("VÌnculo: documento "
+			mov.setDescrMov("V√≠nculo: documento "
 					+ mov.getExMobilRef().getCodigo().toString());
 
 			gravarMovimentacao(mov);
@@ -4606,7 +4837,7 @@ public class ExBL extends CpBL {
 
 		if (!doc.isFinalizado())
 			throw new AplicacaoException(
-					"N„o È possÌvel registrar assinatura de um documento n„o finalizado");
+					"n√£o √© poss√≠vel registrar assinatura de um documento n√£o finalizado");
 
 		String s = null;
 		try {
@@ -4621,7 +4852,7 @@ public class ExBL extends CpBL {
 			concluirAlteracao(doc);
 
 			// Verifica se o documento possui documento pai e faz a juntada
-			// autom·tica.
+			// autom√°tica.
 			if (doc.getExMobilPai() != null) {
 				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov,
 						subscritor, titular, mov);
@@ -4637,23 +4868,19 @@ public class ExBL extends CpBL {
 		alimentaFilaIndexacao(doc, true);
 		return s;
 	}
-	
+
 	public void transferirAutomatico(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, DpPessoa resp, DpLotacao lotaResp, ExMobil mob) throws Exception {
-			
-		transferir(null, null,
-				cadastrante, lotaCadastrante, mob,
-				null, null,
-				null, lotaResp,
-				resp, null,
-				null, null, null, null, false,
+			final DpLotacao lotaCadastrante, DpPessoa resp, DpLotacao lotaResp,
+			ExMobil mob) throws Exception {
+
+		transferir(null, null, cadastrante, lotaCadastrante, mob, null, null,
+				null, lotaResp, resp, null, null, null, null, null, false,
 				null, null, null, false, true);
-	}	
-	
+	}
 
 	/**
-	 * Transfere um documento de um local para outro. Esse mÈtodo trata tanto da
-	 * movimentaÁ„o "Despacho com transferÍncia" como "TransferÍncia".
+	 * Transfere um documento de um local para outro. Esse m√©todo trata tanto da
+	 * movimenta√ß√£o "Despacho com transfer√™ncia" como "Transfer√™ncia".
 	 * 
 	 * @param orgaoExterno
 	 * @param obsOrgao
@@ -4681,14 +4908,14 @@ public class ExBL extends CpBL {
 
 	public void transferir(final CpOrgao orgaoExterno, final String obsOrgao,
 			final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
-			final ExMobil mob, final Date dtMov, final Date dtMovIni, final Date dtFimMov,
-			DpLotacao lotaResponsavel, final DpPessoa responsavel,
-			final DpLotacao lotaDestinoFinal, final DpPessoa destinoFinal,
-			final DpPessoa subscritor, final DpPessoa titular,
-			final ExTipoDespacho tpDespacho, final boolean fInterno,
-			final String descrMov, final String conteudo,
-			String nmFuncaoSubscritor, boolean forcarTransferencia, boolean automatico) throws AplicacaoException, Exception {
-
+			final ExMobil mob, final Date dtMov, final Date dtMovIni,
+			final Date dtFimMov, DpLotacao lotaResponsavel,
+			final DpPessoa responsavel, final DpLotacao lotaDestinoFinal,
+			final DpPessoa destinoFinal, final DpPessoa subscritor,
+			final DpPessoa titular, final ExTipoDespacho tpDespacho,
+			final boolean fInterno, final String descrMov,
+			final String conteudo, String nmFuncaoSubscritor,
+			boolean forcarTransferencia, boolean automatico) {
 
 		boolean fDespacho = tpDespacho != null || descrMov != null
 				|| conteudo != null;
@@ -4699,75 +4926,85 @@ public class ExBL extends CpBL {
 
 		Date dtUltReceb = null;
 
-		//Edson: apagar isto? A verificaÁ„o j· È feita no for abaixo...
+		// Edson: apagar isto? A verifica√ß√£o j√° √© feita no for abaixo...
 		if (fDespacho && mob.isVolumeApensadoAoProximo())
 			throw new AplicacaoException(
-					"N„o È possÌvel fazer despacho em um documento que faÁa parte de um apenso");
-		
-		if(!automatico) {
+					"n√£o √© poss√≠vel fazer despacho em um documento que fa√ßa parte de um apenso");
+
+		if (!automatico) {
 
 			if (fTranferencia && mob.doc().isEletronico()) {
 				if (mob.doc().getMobilGeral().temAnexosNaoAssinados()
 						|| mob.doc().getMobilGeral().temDespachosNaoAssinados())
-						throw new AplicacaoException(
-								"N„o È permitido fazer transferÍncia em documento com anexo/despacho pendente de assinatura ou conferÍncia");
+					throw new AplicacaoException(
+							"n√£o √© permitido fazer transfer√™ncia em documento com anexo/despacho pendente de assinatura ou confer√™ncia");
 
 			}
 
 			for (ExMobil m : set) {
-			
-				if (!m.equals(mob)
-						&& fDespacho && fTranferencia) {
+
+				if (!m.equals(mob) && fDespacho && fTranferencia) {
 					throw new AplicacaoException(
-							"N„o È permitido fazer despacho com transferÍncia em um documento que faÁa parte de um apenso. FaÁa primeiro o despacho e depois transfira o documento.");
+							"n√£o √© permitido fazer despacho com transfer√™ncia em um documento que fa√ßa parte de um apenso. fa√ßa primeiro o despacho e depois transfira o documento.");
 				}
-			
+
 				if (fDespacho && m.isVolumeEncerrado())
 					if (m.isApensadoAVolumeDoMesmoProcesso())
 						continue;
 					else
 						throw new AplicacaoException(
-								"N„o È permitido fazer despacho em volume que esta encerrado");
+								"n√£o √© permitido fazer despacho em volume que esta encerrado ID_MOBIL:" + m.getId());
 
-				if (fDespacho	
-						&& !getComp()
-						.podeDespachar(cadastrante, lotaCadastrante, m))
+				if (fDespacho
+						&& !getComp().podeDespachar(cadastrante,
+								lotaCadastrante, m))
 					throw new AplicacaoException(
-							"N„o È permitido fazer despacho. Verifique se a via ou processo n„o est· arquivado(a) e se n„o possui despachos pendentes de assinatura.");
+							"n√£o √© permitido fazer despacho. Verifique se a via ou processo n√£o est√°arquivado(a) e se n√£o possui despachos pendentes de assinatura.");
 
 				if (fTranferencia) {
-					
-					if (lotaResponsavel.isFechada())
-						throw new AplicacaoException(
-								"N„o È permitido transferir documento para lotaÁ„o fechada");
 
-					if (forcarTransferencia) {
-						if (!getComp().podeSerTransferido(m))
-							throw new AplicacaoException("TransferÍncia n„o pode ser realizada (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
-					} else {
-						if (!getComp().podeTransferir(cadastrante, lotaCadastrante, m)) 
-							throw new AplicacaoException("TransferÍncia n„o permitida (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")");
-					}
-					if (!m.getExDocumento().isAssinado()
-							&& !lotaResponsavel.equivale(m.getExDocumento()
-									.getLotaTitular())
-									&& !getComp().podeReceberDocumentoSemAssinatura(
-											responsavel, lotaResponsavel, m))
-						throw new AplicacaoException(
-								"N„o È permitido fazer transferÍncia em documento que ainda n„o foi assinado");
+					if (!m.isApensadoAVolumeDoMesmoProcesso()) {
 
-					if (m.doc().isEletronico()) {
-						if (m.temAnexosNaoAssinados()
-								|| m.temDespachosNaoAssinados())
+						if (lotaResponsavel.isFechada())
 							throw new AplicacaoException(
-									"N„o È permitido fazer transferÍncia em documento com anexo/despacho pendente de assinatura ou conferÍncia");
-					}
+									"n√£o √© permitido transferir documento para lota√ß√£o fechada");
 
-					if (m.getExDocumento().isEletronico()
-							&& !m.getExDocumento().jaTransferido()
-							&& !m.getExDocumento().isAssinado())
-						throw new AplicacaoException(
-								"N„o È permitido fazer transferÍncia em documento que ainda n„o foi assinado por todos os subscritores.");
+						if (forcarTransferencia) {
+							if (!getComp().podeSerTransferido(m))
+								throw new AplicacaoException(
+										"Transfer√™ncia n√£o pode ser realizada ("
+												+ m.getSigla() + " ID_MOBIL: "
+												+ m.getId() + ")");
+						} else {
+							if (!getComp().podeTransferir(cadastrante,
+									lotaCadastrante, m))
+								throw new AplicacaoException(
+										"Transfer√™ncia n√£o permitida ("
+												+ m.getSigla() + " ID_MOBIL: "
+												+ m.getId() + ")");
+						}
+						if (!m.getExDocumento().isAssinado()
+								&& !lotaResponsavel.equivale(m.getExDocumento()
+										.getLotaTitular())
+								&& !getComp()
+										.podeReceberDocumentoSemAssinatura(
+												responsavel, lotaResponsavel, m))
+							throw new AplicacaoException(
+									"n√£o √© permitido fazer transfer√™ncia em documento que ainda n√£o foi assinado");
+
+						if (m.doc().isEletronico()) {
+							if (m.temAnexosNaoAssinados()
+									|| m.temDespachosNaoAssinados())
+								throw new AplicacaoException(
+										"n√£o √© permitido fazer transfer√™ncia em documento com anexo/despacho pendente de assinatura ou confer√™ncia");
+						}
+
+						if (m.getExDocumento().isEletronico()
+								&& !m.getExDocumento().jaTransferido()
+								&& !m.getExDocumento().isAssinado())
+							throw new AplicacaoException(
+									"n√£o √© permitido fazer transfer√™ncia em documento que ainda n√£o foi assinado por todos os subscritores.");
+					}
 
 				}
 
@@ -4775,8 +5012,8 @@ public class ExBL extends CpBL {
 					if (responsavel == null && lotaResponsavel == null)
 						if (orgaoExterno == null && obsOrgao == null)
 							throw new AplicacaoException(
-									"N„o foram informados dados para o despacho/transferÍncia");
-				}			
+									"n√£o foram informados dados para o despacho/transfer√™ncia");
+				}
 			}
 		}
 
@@ -4814,8 +5051,8 @@ public class ExBL extends CpBL {
 						idTpMov = ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA;
 				}
 
-				// se n„o for apensado, pode.
-				// se for apenas tranferÍncia, pode.
+				// se n√£o for apensado, pode.
+				// se for apenas tranfer√™ncia, pode.
 				if (m.equals(mob)
 						|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
 						|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) {
@@ -4823,8 +5060,9 @@ public class ExBL extends CpBL {
 					final ExTipoMovimentacao tpmov = dao().consultar(idTpMov,
 							ExTipoMovimentacao.class, false);
 
-					mov = criarNovaMovimentacaoTransferencia(tpmov.getIdTpMov(),
-							cadastrante, lotaCadastrante, m, dtMov, dtFimMov,
+					mov = criarNovaMovimentacaoTransferencia(
+							tpmov.getIdTpMov(), cadastrante, lotaCadastrante,
+							m, dtMov, dtFimMov,
 							(subscritor == null && fDespacho) ? cadastrante
 									: subscritor, null, titular, null, dt);
 
@@ -4846,7 +5084,7 @@ public class ExBL extends CpBL {
 						if (responsavel != null)
 							lotaResponsavel = responsavel.getLotacao();
 					}
-					
+
 					mov.setLotaTitular(mov.getLotaSubscritor());
 					mov.setDestinoFinal(destinoFinal);
 					mov.setLotaDestinoFinal(lotaDestinoFinal);
@@ -4867,12 +5105,13 @@ public class ExBL extends CpBL {
 						} else {
 							cont = tpDespacho.getDescTpDespacho();
 						}
-						ByteArrayOutputStream baos = new ByteArrayOutputStream();
-						baos.write("conteudo".getBytes("iso-8859-1"));
-						baos.write('=');
-						baos.write(URLEncoder.encode(cont, "iso-8859-1")
-								.getBytes());
-						mov.setConteudoBlobForm(baos.toByteArray());
+						try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+							baos.write("conteudo".getBytes("iso-8859-1"));
+							baos.write('=');
+							baos.write(URLEncoder.encode(cont, "iso-8859-1")
+									.getBytes());
+							mov.setConteudoBlobForm(baos.toByteArray());
+						}
 
 						// Gravar o Html //Nato
 						final String strHtml = processarModelo(mov,
@@ -4886,8 +5125,8 @@ public class ExBL extends CpBL {
 						mov.setConteudoTpMov("application/zip");
 					}
 					if (automatico)
-						mov.setDescrMov("TransferÍncia autom·tica.");
-					
+						mov.setDescrMov("Transfer√™ncia autom√°tica.");
+
 					gravarMovimentacao(mov);
 					concluirAlteracaoParcial(m);
 				}
@@ -4931,7 +5170,8 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao registrar acesso reservado.", 0, e);
+			throw new AplicacaoException("Erro ao registrar acesso reservado.",
+					0, e);
 		}
 	}
 
@@ -4947,7 +5187,7 @@ public class ExBL extends CpBL {
 			if (responsavel == null && lotaResponsavel == null)
 				if (dtMov == null)
 					throw new AplicacaoException(
-							"N„o foram informados dados para a anotaÁ„o");
+							"n√£o foram informados dados para a anota√ß√£o");
 		}
 
 		try {
@@ -4963,13 +5203,13 @@ public class ExBL extends CpBL {
 			mov.setDescrMov(descrMov);
 
 			gravarMovimentacao(mov);
-			
+
 			atualizarDnmAnotacao(mov.getExMobil());
-			
+
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao fazer anotaÁ„o.", 0, e);
+			throw new AplicacaoException("Erro ao fazer anota√ß√£o.", 0, e);
 		}
 
 		alimentaFilaIndexacao(mob.getExDocumento(), true);
@@ -4988,11 +5228,11 @@ public class ExBL extends CpBL {
 			if (responsavel == null && lotaResponsavel == null)
 				if (dtMov == null)
 					throw new AplicacaoException(
-							"N„o foram informados dados para a vinculaÁ„o de papel");
+							"n√£o foram informados dados para a vincula√ß√£o de papel");
 		}
 		if (papel == null)
 			throw new AplicacaoException(
-					"N„o foi informado o papel para a vinculaÁ„o de papel");
+					"n√£o foi informado o papel para a vincula√ß√£o de papel");
 
 		try {
 			// criarWorkflow(cadastrante, lotaCadastrante, doc, "Exoneracao");
@@ -5011,8 +5251,66 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao fazer vinculaÁ„o de papel.",
+			throw new AplicacaoException("Erro ao fazer vincula√ß√£o de papel.",
 					0, e);
+		}
+
+	}
+
+	public void vincularMarcador(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExMobil mob,
+			final Date dtMov, DpLotacao lotaResponsavel,
+			final DpPessoa responsavel, final DpPessoa subscritor,
+			final DpPessoa titular, final String descrMov,
+			String nmFuncaoSubscritor, CpMarcador marcador, boolean ativo)
+			throws Exception {
+
+		if (descrMov == null) {
+			if (responsavel == null && lotaResponsavel == null)
+				if (dtMov == null)
+					throw new AplicacaoException(
+							"n√£o foram informados dados para a marca√ß√£o");
+		}
+		if (marcador == null)
+			throw new AplicacaoException("n√£o foi informado o marcador");
+		
+		final ExMobil geral = mob.doc().getMobilGeral();
+
+		if (ativo) {
+			try {
+				iniciarAlteracao();
+
+				final ExMovimentacao mov = criarNovaMovimentacao(
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO,
+						cadastrante, lotaCadastrante, geral, dtMov, responsavel,
+						lotaResponsavel, titular, null, dtMov);
+
+				mov.setNmFuncaoSubscritor(nmFuncaoSubscritor);
+				mov.setDescrMov(descrMov);
+				mov.setMarcador(marcador);
+
+				gravarMovimentacao(mov);
+				concluirAlteracao(mov.getExDocumento());
+			} catch (final Exception e) {
+				cancelarAlteracao();
+				throw new AplicacaoException("Erro ao fazer marca√ß√£o.", 0, e);
+			}
+		} else {
+			Set<CpMarcador> set = new HashSet<CpMarcador>();
+			ExMovimentacao movCancelar = null;
+			if (geral.getExMovimentacaoSet() != null) {
+				for (ExMovimentacao mov : geral.getExMovimentacaoSet()) {
+					if (mov.getExTipoMovimentacao().getId()
+							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO)
+							&& !mov.isCancelada()
+							&& mov.getMarcador().getIdMarcador()
+									.equals(marcador.getIdMarcador())) {
+						movCancelar = mov;
+					}
+				}
+				cancelar(cadastrante, lotaCadastrante, mob, movCancelar,
+						dao().dt(), titular, titular, null);
+			}
 		}
 
 	}
@@ -5026,13 +5324,13 @@ public class ExBL extends CpBL {
 
 		if (nivelAcesso == null) {
 			throw new AplicacaoException(
-					"N„o foram informados dados para a redefiniÁ„o do nÌvel de acesso");
+					"n√£o foram informados dados para a redefini√ß√£o do n√≠vel de acesso");
 		}
 
 		if (nivelAcesso.getIdNivelAcesso().equals(
 				doc.getExNivelAcesso().getIdNivelAcesso()))
 			throw new AplicacaoException(
-					"NÌvel de acesso selecionado È igual ao atual");
+					"N√≠vel de acesso selecionado √© igual ao atual");
 
 		try {
 			iniciarAlteracao();
@@ -5043,7 +5341,7 @@ public class ExBL extends CpBL {
 					subscritor, null, titular, null, dtMov);
 
 			mov.setNmFuncaoSubscritor(nmFuncaoSubscritor);
-			mov.setDescrMov("NÌvel de acesso do documento alterado de "
+			mov.setDescrMov("N√≠vel de acesso do documento alterado de "
 					+ doc.getExNivelAcesso().getNmNivelAcesso() + " para "
 					+ nivelAcesso.getNmNivelAcesso());
 
@@ -5055,22 +5353,23 @@ public class ExBL extends CpBL {
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException(
-					"Erro ao tentar redefinir nÌvel de acesso", 0, e);
+					"Erro ao tentar redefinir n√≠vel de acesso", 0, e);
 		}
 		alimentaFilaIndexacao(doc, true);
 	}
-	
+
 	public void exigirAnexo(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, final ExMobil mob, final String descrMov) throws AplicacaoException {
-		
+			final DpLotacao lotaCadastrante, final ExMobil mob,
+			final String descrMov) throws AplicacaoException {
+
 		if (mob.doc().getIdDoc() == null)
 			return;
 
 		if (descrMov == null) {
 			throw new AplicacaoException(
-					"N„o foram informados dados para a exigÍncia de anexaÁ„o");
+					"n√£o foram informados dados para a exig√™ncia de anexa√ß√£o");
 		}
-		
+
 		boolean fGravarMov = false;
 		try {
 			String as[] = descrMov.split(";");
@@ -5082,24 +5381,24 @@ public class ExBL extends CpBL {
 					iniciarAlteracao();
 					fGravarMov = true;
 				}
-	
+
 				final ExMovimentacao mov = criarNovaMovimentacao(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO, cadastrante,
-						lotaCadastrante, mob, null, null, null, null,
-						null, null);
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO,
+						cadastrante, lotaCadastrante, mob, null, null, null,
+						null, null, null);
 				mov.setDescrMov(s);
 				gravarMovimentacao(mov);
 			}
-			if (fGravarMov) 
+			if (fGravarMov)
 				concluirAlteracao(mob.getExDocumento());
 		} catch (final Exception e) {
-			if (fGravarMov) 
+			if (fGravarMov)
 				cancelarAlteracao();
-			throw new AplicacaoException("Erro ao exigir anexaÁ„o.", 0, e);
+			throw new AplicacaoException("Erro ao exigir anexa√ß√£o.", 0, e);
 		}
 	}
 
-	/* Daqui para frente n„o s„o movimentacoes, mas sim funcoes auxiliares */
+	/* Daqui para frente n√£o s√£o movimentacoes, mas sim funcoes auxiliares */
 
 	public String canonicalizarHtml(String s, boolean fRemoverEspacos,
 			boolean fRemoverTagsDesconhecidos, boolean fIso8859,
@@ -5115,12 +5414,17 @@ public class ExBL extends CpBL {
 	}
 
 	public void processar(final ExDocumento doc, final boolean gravar,
-			final boolean transacao, String realPath) throws Exception {
+			final boolean transacao) {
+		// N√£o existe processamento de modelo para documento capturado
+		if (doc.getExTipoDocumento().getId()
+				.equals(ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO))
+			return;
+
 		try {
 			if (doc != null
 					&& (doc.isAssinado() || doc.isAssinadoDigitalmente()))
 				throw new AplicacaoException(
-						"O documento n„o pode ser reprocessado, pois j· est· assinado");
+						"O documento n√£o pode ser reprocessado, pois j√° est√°assinado");
 
 			if ((doc.getExModelo() != null && ("template/freemarker".equals(doc
 					.getExModelo().getConteudoTpBlob()) || doc.getExModelo()
@@ -5165,20 +5469,22 @@ public class ExBL extends CpBL {
 
 				doc.setConteudoBlobHtmlString(strHtml);
 
-				final byte pdf[];
-				AbstractConversorHTMLFactory fabricaConvHtml = AbstractConversorHTMLFactory
-						.getInstance();
-				ConversorHtml conversor = fabricaConvHtml.getConversor(
-						getConf(), doc, strHtml);
+				if (strHtml != null && strHtml.trim().length() > 0) {
+					final byte pdf[];
+					AbstractConversorHTMLFactory fabricaConvHtml = AbstractConversorHTMLFactory
+							.getInstance();
+					ConversorHtml conversor = fabricaConvHtml.getConversor(
+							getConf(), doc, strHtml);
 
-				try {
-					pdf = Documento.generatePdf(strHtml, conversor, realPath);
-				} catch (Exception e) {
-					throw new AplicacaoException(
-							"Erro na geraÁ„o do PDF. Por favor, verifique se existem recursos de formataÁ„o n„o suportados. Para eliminar toda a formataÁ„o do texto clique em voltar e depois, no editor, clique no bot„o de 'Selecionar Tudo' e depois no bot„o de 'Remover FormataÁao'.",
-							0, e);
+					try {
+						pdf = Documento.generatePdf(strHtml, conversor);
+					} catch (Exception e) {
+						throw new AplicacaoException(
+								"Erro na gera√ß√£o do PDF. Por favor, verifique se existem recursos de formata√ß√£o n√£o suportados. Para eliminar toda a formata√ß√£o do texto clique em voltar e depois, no editor, clique no bot√µo de 'Selecionar Tudo' e depois no bot√£o de 'Remover Formata√ß√£o'.",
+								0, e);
+					}
+					doc.setConteudoBlobPdf(pdf);
 				}
-				doc.setConteudoBlobPdf(pdf);
 
 				if (gravar) {
 					doc.setNumPaginas(doc.getContarNumeroDePaginas());
@@ -5197,7 +5503,7 @@ public class ExBL extends CpBL {
 			if (gravar && transacao) {
 				cancelarAlteracao();
 			}
-			throw new AplicacaoException("Erro na gravaÁ„o", 0, e);
+			throw new AplicacaoException("Erro na grava√ß√£o", 0, e);
 		}
 	}
 
@@ -5279,7 +5585,7 @@ public class ExBL extends CpBL {
 				}
 				// attrs.put("nmArqMod", "despacho_mov.jsp");
 				ExModelo m = dao().consultarExModelo(null,
-						"Despacho Autom·tico");
+						"Despacho Autom√°tico");
 				attrs.put("nmMod", m.getNmMod());
 				attrs.put("template", new String(m.getConteudoBlobMod2(),
 						"utf-8"));
@@ -5386,7 +5692,7 @@ public class ExBL extends CpBL {
 			mov.setLotaSubscritor(mov.getSubscritor().getLotacao());
 		} else {
 			if (idtpmov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
-				mov.setSubscritor(null); /* o perfil(respons·vel) È uma lotaÁ„o */
+				mov.setSubscritor(null); /* o perfil(respons√≠vel) √© uma lota√ß√£o */
 				mov.setLotaSubscritor(lotaSubscritor);
 			} else {
 				mov.setSubscritor(cadastrante);
@@ -5408,8 +5714,8 @@ public class ExBL extends CpBL {
 		else
 			mov.setDtMov(dt);
 
-		// A data de inÌcio da movimentaÁ„o sempre ser· a data do servidor, n„o
-		// a data que o usu·rio digitou
+		// A data de in√≠cio da movimenta√ß√£o sempre ser√° a data do servidor, n√£o
+		// a data que o usu√°rio digitou
 		mov.setDtIniMov(dao().dt());
 		mov.setExMobil(mob);
 		mov.setExTipoMovimentacao(tpmov);
@@ -5441,12 +5747,13 @@ public class ExBL extends CpBL {
 		return mov;
 	}
 
-	private ExMovimentacao criarNovaMovimentacaoTransferencia(final long idtpmov,
-			final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
-			final ExMobil mob, final Date dtMov, final Date dtFimMov, final DpPessoa subscritor,
+	private ExMovimentacao criarNovaMovimentacaoTransferencia(
+			final long idtpmov, final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExMobil mob,
+			final Date dtMov, final Date dtFimMov, final DpPessoa subscritor,
 			final DpLotacao lotaSubscritor, final DpPessoa titular,
 			final DpLotacao lotaTitular, final Date dtOrNull)
-					throws AplicacaoException {
+			throws AplicacaoException {
 		final ExMovimentacao mov;
 		mov = new ExMovimentacao();
 
@@ -5464,7 +5771,7 @@ public class ExBL extends CpBL {
 			mov.setLotaSubscritor(mov.getSubscritor().getLotacao());
 		} else {
 			if (idtpmov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
-				mov.setSubscritor(null); /* o perfil(respons·vel) È uma lotaÁ„o */
+				mov.setSubscritor(null); /* o perfil(respons√≠vel) √© uma lota√ß√£o */
 				mov.setLotaSubscritor(lotaSubscritor);
 			} else {
 				mov.setSubscritor(cadastrante);
@@ -5491,8 +5798,8 @@ public class ExBL extends CpBL {
 		else
 			mov.setDtFimMov(dtFimMov);
 
-		// A data de inÌcio da movimentaÁ„o sempre ser· a data do servidor, n„o
-		// a data que o usu·rio digitou
+		// A data de in√≠cio da movimenta√ß√£o sempre ser√° a data do servidor, n√£o
+		// a data que o usu√°rio digitou
 		mov.setDtIniMov(dao().dt());
 		mov.setExMobil(mob);
 		mov.setExTipoMovimentacao(tpmov);
@@ -5576,7 +5883,7 @@ public class ExBL extends CpBL {
 			set.clear();
 	}
 
-	// Esse mÈtodo deve ser chamado sempre que houver alteracao no documento.
+	// Esse m√©todo deve ser chamado sempre que houver alteracao no documento.
 	public void atualizarWorkflow(ExDocumento doc, ExMovimentacao mov)
 			throws AplicacaoException {
 
@@ -5591,7 +5898,7 @@ public class ExBL extends CpBL {
 				}
 			}
 		} catch (NullPointerException nulpointer) {
-			System.err.println("N„o existe Contexto no ambiente");
+			System.err.println("n√£o existe Contexto no ambiente");
 		} catch (RuntimeException e) {
 		}
 	}
@@ -5641,7 +5948,7 @@ public class ExBL extends CpBL {
 
 	/**
 	 * Obtem a lista de formas de documentos a partir dos modelos selecionados e
-	 * das restriÁıes de tipo (interno, externo) e de tipo da forma (expediente,
+	 * das restri√ß√µes de tipo (interno, externo) e de tipo da forma (expediente,
 	 * processo)
 	 * 
 	 * @param modelos
@@ -5652,12 +5959,10 @@ public class ExBL extends CpBL {
 	 */
 	public SortedSet<ExFormaDocumento> obterFormasDocumento(
 			List<ExModelo> modelos, ExTipoDocumento tipoDoc,
-			ExTipoFormaDoc tipoForma)
-
-	throws Exception {
+			ExTipoFormaDoc tipoForma) {
 		SortedSet<ExFormaDocumento> formasSet = new TreeSet<ExFormaDocumento>();
 		SortedSet<ExFormaDocumento> formasFinal = new TreeSet<ExFormaDocumento>();
-		// Por enquanto, os par‚metros tipoForma e tipoDoc n„o podem ser
+		// Por enquanto, os par√¢metros tipoForma e tipoDoc n√£o podem ser
 		// preenchidos simultaneamente. Melhorar isso.
 		if (tipoDoc != null && tipoForma != null) {
 			formasSet.addAll(SetUtils.intersection(
@@ -5683,8 +5988,7 @@ public class ExBL extends CpBL {
 
 	public List<ExModelo> obterListaModelos(ExFormaDocumento forma,
 			boolean despachando, String headerValue, boolean protegido,
-			DpPessoa titular, DpLotacao lotaTitular, boolean autuando)
-			throws Exception {
+			DpPessoa titular, DpLotacao lotaTitular, boolean autuando) {
 		ArrayList<ExModelo> modeloSetFinal = new ArrayList<ExModelo>();
 		ArrayList<ExModelo> provSet;
 		if (forma != null)
@@ -5729,11 +6033,11 @@ public class ExBL extends CpBL {
 
 	private boolean anexosAlternativosEstaoAssinados(ExDocumento doc) {
 		// Verifica se o documento possui anexos alterantivos e se estes anexos
-		// est„o assinado
+		// est√£o assinado
 		for (ExMobil mob : doc.getExMobilSet()) {
 			for (ExDocumento docFilho : mob.getExDocumentoFilhoSet()) {
-				// Verifica se docFilho È do tipo anexo
-				if (docFilho.getExFormaDocumento().getIdFormaDoc() == 55) {
+				// Verifica se docFilho √© do tipo anexo
+				if (docFilho.getExFormaDocumento().getIdFormaDoc() == 60) {
 					if (!docFilho.isCancelado() && !docFilho.isAssinado())
 						return false;
 				}
@@ -5771,7 +6075,7 @@ public class ExBL extends CpBL {
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException(
-					"Erro ao incluir em edital de eliminaÁ„o.", 0, e);
+					"Erro ao incluir em edital de elimina√ß√£o.", 0, e);
 		}
 
 	}
@@ -5798,7 +6102,7 @@ public class ExBL extends CpBL {
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException(
-					"Erro ao retirar do edital de eliminaÁ„o.", 0, e);
+					"Erro ao retirar do edital de elimina√ß√£o.", 0, e);
 		}
 
 	}
@@ -5822,7 +6126,7 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException(
 						"O documento "
 								+ docPubl.getCodigo()
-								+ " j· foi publicado em outro boletim. Retire esse documento da lista de documentos a publicar e entre em contato com a equipe de suporte do siga-doc.");
+								+ " j√° foi publicado em outro boletim. Retire esse documento da lista de documentos a publicar e entre em contato com a equipe de suporte do siga-doc.");
 
 			boletim = exDao.consultarBoletimPorDocumento(docPubl);
 			boletim.setBoletim(doc);
@@ -5878,22 +6182,22 @@ public class ExBL extends CpBL {
 			ExBoletimDoc boletim = exDao.consultarBoletimPorDocumento(exDoc);
 			if (boletim == null) {
 				throw new AplicacaoException(
-						"Foi cancelada a solicitaÁ„o de pedido de publicaÁ„o do documento "
+						"Foi cancelada a solicita√ß√£o de pedido de publica√ß√£o do documento "
 								+ exDoc.getCodigo()
-								+ ". Por favor queira retorna ‡ tela de ediÁ„o de documento para uma nova conferÍncia.");
+								+ ". Por favor queira retorna √© tela de edi√ß√£o de documento para uma nova confer√™ncia.");
 			} else if (boletim.getBoletim() == null) {
 				throw new AplicacaoException(
 						"O documento "
 								+ exDoc.getCodigo()
 								+ " foi retirado da lista de documentos deste boletim"
-								+ ". Por favor queira retorna ‡ tela de ediÁ„o de documento para uma nova conferÍncia.");
+								+ ". Por favor queira retorna √© tela de edi√ß√£o de documento para uma nova confer√™ncia.");
 			} else if (boletim.getBoletim() != doc) {
 				throw new AplicacaoException(
 						"O documento "
 								+ exDoc.getCodigo()
-								+ " j· consta da lista de documentos do boletim "
+								+ " j√° consta da lista de documentos do boletim "
 								+ boletim.getBoletim().getCodigo()
-								+ ". Por favor queira retorna ‡ tela de ediÁ„o de documento para uma nova conferÍncia.");
+								+ ". Por favor queira retorna √© tela de edi√ß√£o de documento para uma nova confer√™ncia.");
 
 			}
 		}
@@ -5934,7 +6238,7 @@ public class ExBL extends CpBL {
 		Matcher m = p.matcher(num);
 
 		if (!m.matches())
-			throw new AplicacaoException("N˙mero inv·lido");
+			throw new AplicacaoException("N√∫mero inv√°lido");
 
 		Long idDoc = Long.parseLong(m.group(1));
 
@@ -5942,13 +6246,13 @@ public class ExBL extends CpBL {
 				ExDocumento.class, false);
 
 		if (doc == null)
-			throw new AplicacaoException("Documento n„o encontrado");
+			throw new AplicacaoException("Documento n√£o encontrado");
 
 		// Testa se o documento existe na base
 		try {
 			doc.getDescrCurta();
 		} catch (ObjectNotFoundException e) {
-			throw new AplicacaoException("Documento n„o encontrado", 0, e);
+			throw new AplicacaoException("Documento n√£o encontrado", 0, e);
 		}
 
 		/*
@@ -5965,11 +6269,11 @@ public class ExBL extends CpBL {
 		} else {
 			for (ExMovimentacao mov : doc.getExMovimentacaoSet())
 				if (Math.abs((doc.getDescrCurta() + mov.getIdMov()).hashCode() % 10000) == hash
-				|| Math.abs((doc.getDescrCurta() + mov.getIdMov() + "AssinaturaExterna")
-						.hashCode() % 10000) == hash)
-					move = mov; 
+						|| Math.abs((doc.getDescrCurta() + mov.getIdMov() + "AssinaturaExterna")
+								.hashCode() % 10000) == hash)
+					move = mov;
 			if (move == null)
-				throw new AplicacaoException("N˙mero inv·lido");
+				throw new AplicacaoException("N√∫mero inv√°lido");
 
 			return move;
 		}
@@ -5999,11 +6303,11 @@ public class ExBL extends CpBL {
 	public void apensarDocumento(final DpPessoa cadastrante,
 			final DpPessoa docTitular, final DpLotacao lotaCadastrante,
 			final ExMobil mob, final ExMobil mobMestre, final Date dtMov,
-			final DpPessoa subscritor, final DpPessoa titular) throws Exception {
+			final DpPessoa subscritor, final DpPessoa titular) {
 
 		if (mobMestre == null)
 			throw new AplicacaoException(
-					"N„o foi selecionado um documento para a apensaÁ„o");
+					"n√£o foi selecionado um documento para a apensa√ß√£o");
 
 		if (mob.getExDocumento().getIdDoc()
 				.equals(mobMestre.getExDocumento().getIdDoc())
@@ -6011,70 +6315,70 @@ public class ExBL extends CpBL {
 				&& mob.getExTipoMobil().getIdTipoMobil()
 						.equals(mobMestre.getExTipoMobil().getIdTipoMobil()))
 			throw new AplicacaoException(
-					"N„o È possÌvel apensar um documento a ele mesmo");
+					"n√£o √© poss√≠vel apensar um documento a ele mesmo");
 
 		if (!mobMestre.getExDocumento().isFinalizado())
 			throw new AplicacaoException(
-					"N„o È possÌvel apensar a um documento n„o finalizado");
+					"n√£o √© poss√≠vel apensar a um documento n√£o finalizado");
 
 		if (!mobMestre.doc().isAssinado())
 			throw new AplicacaoException(
-					"N„o È possÌvel apensar a um documento n„o finalizado");
+					"n√£o √© poss√≠vel apensar a um documento n√£o finalizado");
 
 		if (mobMestre.isGeral())
-			throw new Exception(
-					"[E necess·rio definir a via ou volume do documento ao qual se quer apensar");
+			throw new AplicacaoException(
+					"[E necess√°rio definir a via ou volume do documento ao qual se quer apensar");
 
 		if (!mobMestre.doc().isAssinado())
 			throw new AplicacaoException(
-					"N„o È possÌvel apensar a um documento n„o finalizado");
+					"n√£o √© poss√≠vel apensar a um documento n√£o finalizado");
 
 		if (mobMestre.isArquivado())
 			throw new AplicacaoException(
-					"N„o È possÌvel apensar a um documento arquivado");
+					"n√£o √© poss√≠vel apensar a um documento arquivado");
 
 		if (mobMestre.isSobrestado())
 			throw new AplicacaoException(
-					"N„o È possÌvel apensar a um documento Sobrestado");
+					"n√£o √© poss√≠vel apensar a um documento Sobrestado");
 
 		if (mobMestre.isJuntado())
 			throw new AplicacaoException(
-					"N„o È possÌvel apensar a um documento juntado");
+					"n√£o √© poss√≠vel apensar a um documento juntado");
 
 		if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, mobMestre)
 				|| !mob.estaNaMesmaLotacao(mobMestre))
 			throw new AplicacaoException(
-					"N„o È possÌvel apensar a um documento que esteja em outra lotaÁ„o");
+					"n√£o √© poss√≠vel apensar a um documento que esteja em outra lota√ß√£o");
 
 		if (mobMestre.isEmTransito())
 			throw new AplicacaoException(
-					"N„o È possÌvel apensar a um documento em tr‚nsito");
+					"n√£o √© poss√≠vel apensar a um documento em tr√¢nsito");
 
 		if (mobMestre.isCancelada())
 			throw new AplicacaoException(
-					"N„o È possÌvel apensar a um documento cancelado");
+					"n√£o √© poss√≠vel apensar a um documento cancelado");
 
 		if (!mob.isVolumeEncerrado() && mobMestre.isVolumeEncerrado())
 			throw new AplicacaoException(
-					"N„o È possÌvel apensar um volume aberto a um volume encerrado");
+					"n√£o √© poss√≠vel apensar um volume aberto a um volume encerrado");
 
 		for (ExMobil apenso : mobMestre.getMobilETodosOsApensos(false)) {
 			if (apenso.getIdMobil() == mob.getIdMobil()) {
 				throw new AplicacaoException(
-						"N„o È possÌvel apensar ao documento "
+						"n√£o √© poss√≠vel apensar ao documento "
 								+ mobMestre.getSigla()
-								+ ", pois este j· est· apensado ao documento "
+								+ ", pois este j√° est√°apensado ao documento "
 								+ mob.getSigla());
 			}
 		}
 
 		if (!getComp().podeApensar(docTitular, lotaCadastrante, mob))
 			throw new AplicacaoException(
-					"A apensaÁ„o do documento n„o ser realizada porque ele est· "
+					"A apensa√ß√£o do documento n√£o ser realizada porque ele est√°"
 							+ "em transito, "
 							+ "em transito externo, "
 							+ "cancelado ou "
-							+ "em local diferente da lotaÁ„o em que se encontra o documento ao qual se quer apensar");
+							+ "em local diferente da lota√ß√£o em que se encontra o documento ao qual se quer apensar");
 
 		try {
 			iniciarAlteracao();
@@ -6098,11 +6402,11 @@ public class ExBL extends CpBL {
 	}
 
 	/**
-	 * ApÛs desapensar o mobil, copiamos do grande mestre o respons·vel e sua
-	 * lotaÁ„o para o mobil em quest„o, de modo que nem todas as movimentaÁıes
+	 * Ap√≥s desapensar o mobil, copiamos do grande mestre o respons√≠vel e sua
+	 * lota√ß√£o para o mobil em quest√£o, de modo que nem todas as movimenta√ß√µes
 	 * do grande mestre tenham que ser copiadas para todos os mobiles. Em
-	 * especial, a transferÍncia e o recebimento sÛ ser· copiado quando n„o se
-	 * tratar de volume processual apensado ao prÛximo.
+	 * especial, a transfer√™ncia e o recebimento s√≥ ser√° copiado quando n√£o se
+	 * tratar de volume processual apensado ao pr√≥ximo.
 	 * 
 	 * @param cadastrante
 	 * @param lotaCadastrante
@@ -6119,7 +6423,7 @@ public class ExBL extends CpBL {
 
 		if (!mob.isApensado())
 			throw new AplicacaoException(
-					"ImpossÌvel desapensar documento que n„o est· apensado.");
+					"Imposs√≠vel desapensar documento que n√£o est√° apensado.");
 
 		try {
 			iniciarAlteracao();
@@ -6159,7 +6463,7 @@ public class ExBL extends CpBL {
 
 		if (mob.doc().isEletronico()) {
 			dao().getSessao().refresh(mob);
-			// Verifica se È Processo e conta o n˙mero de p·ginas para verificar
+			// Verifica se √© Processo e conta o n√∫mero de p√°ginas para verificar
 			// se tem que encerrar o volume
 			if (mob.doc().isProcesso()) {
 				if (mob.getTotalDePaginasSemAnexosDoMobilGeral() >= 200) {
@@ -6171,7 +6475,7 @@ public class ExBL extends CpBL {
 	}
 
 	/**
-	 * Encerra um volume e insere uma certid„o de encerramento de volume, que
+	 * Encerra um volume e insere uma certid√£o de encerramento de volume, que
 	 * deve ser produzida, tanto em html quanto em pdf.
 	 * 
 	 * @param cadastrante
@@ -6188,19 +6492,19 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor,
 			final DpPessoa titular, String nmFuncaoSubscritor,
-			boolean automatico) throws AplicacaoException, Exception {
+			boolean automatico) {
 
 		if (mob.isVolumeEncerrado())
 			throw new AplicacaoException(
-					"N„o È permitido encerrar um volume j· encerrado");
+					"n√£o √© permitido encerrar um volume j√° encerrado");
 
 		if (!mob.isVolume())
 			throw new AplicacaoException(
-					"Esta operaÁ„o somente pode ser realizada em volumes.");
+					"Esta opera√ß√£o somente pode ser realizada em volumes.");
 
 		// if (responsavel == null && lotaResponsavel == null)
 		// throw new AplicacaoException(
-		// "N„o foram informados dados para o despacho/transferÍncia");
+		// "n√£o foram informados dados para o despacho/transfer√™ncia");
 
 		try {
 			iniciarAlteracao();
@@ -6257,7 +6561,7 @@ public class ExBL extends CpBL {
 		// sNome = AssinaturaDigital.verificarAssinatura(movAlvo
 		// .getConteudoBlobpdf(), assinatura, null);
 		// } catch (final Exception e) {
-		// throw new AplicacaoException("Erro na validaÁ„o da assinatura. "
+		// throw new AplicacaoException("Erro na valida√ß√£o da assinatura. "
 		// + e.getMessage(), 0, e);
 		// }
 	}
@@ -6266,15 +6570,15 @@ public class ExBL extends CpBL {
 			CpIdentidade identidadeCadastrante) throws AplicacaoException {
 		if (modNovo.getExFormaDocumento() == null)
 			throw new AplicacaoException(
-					"N„o È possÌvel salvar um modelo sem informar a forma do documento.");
+					"n√£o √© poss√≠vel salvar um modelo sem informar a forma do documento.");
 		if (modNovo.getNmMod() == null
 				|| modNovo.getNmMod().trim().length() == 0)
 			throw new AplicacaoException(
-					"N„o È possÌvel salvar um modelo sem informar o nome.");
+					"n√£o √© poss√≠vel salvar um modelo sem informar o nome.");
 		if (modNovo.getDescMod() == null
 				|| modNovo.getDescMod().trim().length() == 0)
 			throw new AplicacaoException(
-					"N„o È possÌvel salvar um modelo sem informar a descriÁ„o.");
+					"n√£o √© poss√≠vel salvar um modelo sem informar a descri√ß√£o.");
 		try {
 			ExDao.iniciarTransacao();
 			dao().gravarComHistorico(modNovo, modAntigo, dt,
@@ -6285,24 +6589,25 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao salvar um modelo.", 0, e);
 		}
 	}
-	
+
 	public void gravarForma(ExFormaDocumento forma) throws AplicacaoException {
-		if (forma.getDescrFormaDoc() == null || forma.getDescrFormaDoc().isEmpty())
+		if (forma.getDescrFormaDoc() == null
+				|| forma.getDescrFormaDoc().isEmpty())
 			throw new AplicacaoException(
-					"N„o È possÌvel salvar um tipo sem informar a descriÁ„o.");
+					"n√£o √© poss√≠vel salvar um tipo sem informar a descri√ß√£o.");
 		if (forma.getExTipoFormaDoc() == null)
 			throw new AplicacaoException(
-					"N„o È possÌvel salvar um tipo sem informar se È processo ou expediente.");
+					"n√£o √© poss√≠vel salvar um tipo sem informar se √© processo ou expediente.");
 		if (!forma.isSiglaValida())
 			throw new AplicacaoException(
-					"Sigla inv·lida. A sigla deve ser formada por 3 letras.");
-		
+					"Sigla inv√°lida. A sigla deve ser formada por 3 letras.");
+
 		ExFormaDocumento formaConsulta = dao().consultarPorSigla(forma);
-		if((forma.getIdFormaDoc() == null && formaConsulta != null) ||
-				(forma.getIdFormaDoc() != null && formaConsulta != null && !formaConsulta.getIdFormaDoc().equals(forma.getIdFormaDoc())))
-			throw new AplicacaoException(
-					"Esta sigla j· est· sendo utilizada.");
-		
+		if ((forma.getIdFormaDoc() == null && formaConsulta != null)
+				|| (forma.getIdFormaDoc() != null && formaConsulta != null && !formaConsulta
+						.getIdFormaDoc().equals(forma.getIdFormaDoc())))
+			throw new AplicacaoException("Esta sigla j√° est√°sendo utilizada.");
+
 		try {
 			ExDao.iniciarTransacao();
 			dao().gravar(forma);
@@ -6311,10 +6616,10 @@ public class ExBL extends CpBL {
 			ExDao.rollbackTransacao();
 			throw new AplicacaoException("Erro ao salvar um tipo.", 0, e);
 		}
-	}	
+	}
 
 	public void DesfazerCancelamentoDocumento(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc) {
 
 		try {
 			SortedSet<ExMobil> set = doc.getExMobilSet();
@@ -6368,6 +6673,14 @@ public class ExBL extends CpBL {
 
 			mov.setDescrMov(motivo);
 			gravarMovimentacao(mov);
+			
+			// A grava√ß√£o deve ser chamada apenas para atualizar a timestamp
+			dao().gravar(doc);
+
+			String funcao = doc.getForm().get("acaoExcluir");
+			if (funcao != null) {
+				obterMetodoPorString(funcao, doc);
+			}
 
 			concluirAlteracao(doc);
 		} catch (final Exception e) {
@@ -6416,7 +6729,7 @@ public class ExBL extends CpBL {
 				modNovo.setExClassificacao(exClassNovo);
 
 				dao().gravarComHistorico(modNovo, modAntigo, dt,
-					    identidadeCadastrante);
+						identidadeCadastrante);
 				if (exClassNovo.getExModeloSet() == null) {
 					exClassNovo.setExModeloSet(new HashSet<ExModelo>());
 				}
@@ -6444,7 +6757,7 @@ public class ExBL extends CpBL {
 
 		} catch (Exception e) {
 			throw new AplicacaoException(
-					"N„o foi possÌvel fazer cÛpia dos modelos!");
+					"n√£o foi poss√≠vel fazer c√≥pia dos modelos!");
 		}
 	}
 
@@ -6471,7 +6784,7 @@ public class ExBL extends CpBL {
 			}
 		} catch (Exception e) {
 			throw new AplicacaoException(
-					"N„o foi possÌvel fazer cÛpia das vias!");
+					"n√£o foi poss√≠vel fazer c√≥pia das vias!");
 		}
 	}
 
@@ -6489,13 +6802,13 @@ public class ExBL extends CpBL {
 				&& m.calcularNivel(exClassDest.getCodificacao()) > m
 						.calcularNivel(exClassOrigem.getCodificacao())) {
 			throw new AplicacaoException(
-					"O nÌvel do destino È maior do que o nÌvel da origem! Os filhos n„o caber„o na hierarquia da classificaÁ„o documental!");
+					"O n√≠vel do destino √© maior do que o n√≠vel da origem! Os filhos n√£o caber√£o na hierarquia da classifica√ß√£o documental!");
 		}
 
 		ExClassificacao classExistente = dao().consultarPorSigla(exClassDest);
 		if (classExistente != null) {
 			throw new AplicacaoException(
-					"A classificaÁ„o destino j· existe! <br/><br/>"
+					"A classifica√ß√£o destino j√° existe! <br/><br/>"
 							+ classExistente.getCodificacao());
 		}
 
@@ -6529,10 +6842,10 @@ public class ExBL extends CpBL {
 			exClassCopia.setId(null);
 			exClassCopia.setHisDtFim(null);
 			exClassCopia.setHisDtIni(null);
-			exClassCopia.setAtivo();
-			
+			exClassCopia.updateAtivo();
+
 			// objeto collection deve ser diferente (mas com mesmos elementos),
-			// sen„o ocorre exception
+			// sen√£o ocorre exception
 			// HibernateException:Found shared references to a collection
 			Set<ExVia> setExVia = new HashSet<ExVia>();
 			exClassCopia.setExViaSet(setExVia);
@@ -6576,13 +6889,13 @@ public class ExBL extends CpBL {
 
 				if (exClassNovo.getDescricao().equalsIgnoreCase(
 						exClassConflito.getDescricao())) {
-					// se conflito n„o causado por movimentacao onde a prÛpria
-					// classificacao È o conflito
+					// se conflito n√£o causado por movimentacao onde a pr√≥pria
+					// classificacao √© o conflito
 					if (exClassAntigo == null
 							|| !exClassConflito.getCodificacao().equals(
 									exClassAntigo.getCodificacao())) {
 						throw new AplicacaoException(
-								"Termo da classificaÁ„o em conflito! <br/><br/>"
+								"Termo da classifica√ß√£o em conflito! <br/><br/>"
 										+ exClassConflito
 												.getDescricaoCompleta());
 					}
@@ -6611,9 +6924,9 @@ public class ExBL extends CpBL {
 			exTempCopia.setId(null);
 			exTempCopia.setHisDtFim(null);
 			exTempCopia.setHisDtIni(null);
-			exTempCopia.setAtivo();
+			exTempCopia.updateAtivo();
 			// objeto collection deve ser diferente (mas com mesmos elementos),
-			// sen„o ocorre exception
+			// sen√£o ocorre exception
 			// HibernateException:Found shared references to a collection
 			Set<ExVia> setExViaArqCorr = new HashSet<ExVia>();
 			Set<ExVia> setExViaArqInterm = new HashSet<ExVia>();
@@ -6636,7 +6949,7 @@ public class ExBL extends CpBL {
 		dao().gravarComHistorico(exTempNovo, exTempAntiga, dt,
 				identidadeCadastrante);
 
-		// copiar ReferÍncias arq corrente
+		// copiar Refer√™ncias arq corrente
 		try {
 			for (ExVia viaAntiga : exTempAntiga.getExViaArqCorrenteSet()) {
 				ExVia viaNova = new ExVia();
@@ -6655,10 +6968,10 @@ public class ExBL extends CpBL {
 			}
 		} catch (Exception e) {
 			throw new AplicacaoException(
-					"N„o foi possÌvel fazer cÛpia das vias em arquivo corrente!");
+					"n√£o foi poss√≠vel fazer c√≥pia das vias em arquivo corrente!");
 		}
 
-		// copiar ReferÍncias arq intermedi·rio
+		// copiar Refer√™ncias arq intermedi√°rio
 		try {
 			for (ExVia viaAntiga : exTempAntiga.getExViaArqIntermediarioSet()) {
 				ExVia viaNova = new ExVia();
@@ -6678,7 +6991,7 @@ public class ExBL extends CpBL {
 			}
 		} catch (Exception e) {
 			throw new AplicacaoException(
-					"N„o foi possÌvel fazer cÛpia das vias em arquivo intermedi·rio!");
+					"n√£o foi poss√≠vel fazer c√≥pia das vias em arquivo intermedi√°rio!");
 		}
 
 	}
@@ -6693,7 +7006,7 @@ public class ExBL extends CpBL {
 			exModCopia.setId(null);
 			exModCopia.setHisDtFim(null);
 			exModCopia.setHisDtIni(null);
-			exModCopia.setAtivo();
+			exModCopia.updateAtivo();
 
 		} catch (Exception e) {
 			throw new AplicacaoException(
@@ -6721,12 +7034,12 @@ public class ExBL extends CpBL {
 				sb.append(m.getId());
 				sb.append(") ");
 				sb.append(m.getNmMod());
-				sb.append(" (CriaÁ„o de via)");
+				sb.append(" (Cria√ß√£o de via)");
 				sb.append("<br/>");
 			}
 
 			throw new AplicacaoException(
-					"N„o È possÌvel excluir a classificaÁ„o documental, pois est· associada ao(s) seguinte(s) modelo(s):<br/><br/>"
+					"n√£o √© poss√≠vel excluir a classifica√ß√£o documental, pois est√°associada ao(s) seguinte(s) modelo(s):<br/><br/>"
 							+ sb.toString());
 		}
 
@@ -6734,9 +7047,9 @@ public class ExBL extends CpBL {
 		 * AVISO:
 		 * 
 		 * 
-		 * O cÛdigo abaixo foi comentado para permitir a atualizaÁ„o da tabela
-		 * de classificaÁ„o documental enquanto a funcionalidade de
-		 * reclassificaÁ„o de documentos nıa est· disponÌvel.
+		 * O c√≥digo abaixo foi comentado para permitir a atualiza√ß√£o da tabela
+		 * de classifica√ß√£o documental enquanto a funcionalidade de
+		 * reclassifica√ß√£o de documentos n√£o est√°dispon√≠vel.
 		 */
 
 		/*
@@ -6747,7 +7060,7 @@ public class ExBL extends CpBL {
 		 * 0) { StringBuffer sb = new StringBuffer();
 		 * 
 		 * throw new AplicacaoException(
-		 * "N„o È possÌvel excluir a classificaÁ„o documental, pois j· foi associada a documento(s)."
+		 * "N√°o √© poss√≠vel excluir a classifica√ß√£o documental, pois j√° foi associada a documento(s)."
 		 * + sb.toString()); }
 		 */
 
@@ -6920,8 +7233,8 @@ public class ExBL extends CpBL {
 			}
 		}
 		if (clazz.getSuperclass().getSuperclass() != null) {
-			System.out.println("*** Classe: " + clazz.getName() + " - "
-					+ clazz.getSuperclass().getName());
+//			System.out.println("*** Classe: " + clazz.getName() + " - "
+//					+ clazz.getSuperclass().getName());
 			getImplementationDeep(o, clazz.getSuperclass(), set);
 		}
 		return o;
@@ -7004,11 +7317,84 @@ public class ExBL extends CpBL {
 
 		String jsonOutput = gson.toJson(mob);
 
-		// Importante para que as alteraÁıes do "prune" n„o sejam salvas no BD.
+		// Importante para que as altera√ß√µes do "prune" n√£o sejam salvas no BD.
 		dao().getSessao().clear();
 
 		return jsonOutput;
 	}
 
+	public List<ExAssinavelDoc> obterAssinaveis(DpPessoa titular,
+			DpLotacao lotaTitular) {
+		List<ExAssinavelDoc> assinaveis = new ArrayList<ExAssinavelDoc>();
+		Map<Long, ExAssinavelDoc> map = new HashMap<>();
 
+		// Acrescenta documentos
+		//
+		for (final ExDocumento doc : dao().listarDocPendenteAssinatura(titular)) {
+			if (!doc.isFinalizado())
+				continue;
+			ExAssinavelDoc ass = map.get(doc.getIdDoc());
+			if (ass == null) {
+				ass = new ExAssinavelDoc();
+				ass.setDoc(doc);
+				map.put(doc.getIdDoc(), ass);
+				assinaveis.add(ass);
+			}
+			ass.setPodeAssinar(true);
+			ass.setPodeSenha(Ex
+					.getInstance()
+					.getComp()
+					.podeAssinarComSenha(titular, lotaTitular,
+							doc.getMobilGeral()));
+		}
+
+		// Acrescenta despachos
+		//
+		for (final ExMovimentacao mov : dao().listarDespachoPendenteAssinatura(
+				titular)) {
+			if (mov.isAssinada() || mov.isCancelada())
+				continue;
+
+			ExDocumento doc = mov.getExDocumento();
+			ExAssinavelDoc ass = map.get(doc.getIdDoc());
+			if (ass == null) {
+				ass = new ExAssinavelDoc();
+				ass.setDoc(doc);
+				map.put(doc.getIdDoc(), ass);
+				assinaveis.add(ass);
+			}
+			ExAssinavelMov assmov = new ExAssinavelMov();
+			assmov.setMov(mov);
+			assmov.setPodeSenha(Ex.getInstance().getComp()
+					.podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov));
+			ass.getMovs().add(assmov);
+		}
+
+		// Acrescenta anexos
+		//
+		for (final ExAssinavelDoc assdoc : assinaveis) {
+			for (ExMobil mob : assdoc.getDoc().getExMobilSet()) {
+				for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
+					if (mov.isAssinada()
+							|| mov.isCancelada()
+							|| !mov.getExTipoMovimentacao()
+									.getId()
+									.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO))
+						continue;
+					ExDocumento doc = mov.getExDocumento();
+					ExAssinavelMov assmov = new ExAssinavelMov();
+					assmov.setMov(mov);
+					assmov.setPodeSenha(Ex
+							.getInstance()
+							.getComp()
+							.podeAssinarMovimentacaoComSenha(titular,
+									lotaTitular, mov));
+					assmov.setPodeAutenticar(true);
+					assdoc.getMovs().add(assmov);
+				}
+			}
+		}
+
+		return assinaveis;
+	}
 }

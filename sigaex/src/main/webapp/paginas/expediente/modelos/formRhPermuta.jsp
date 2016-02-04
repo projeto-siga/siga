@@ -41,7 +41,7 @@
 					<br>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
-							<td align="left" width="40%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">SOLICITAÇÃO N&ordm; ${doc.codigo}</p></td>
+							<td align="left" width="40%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">SOLICITAÃ‡ÃƒO N&ordm; ${doc.codigo}</p></td>
 							<td align="right" width="60%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">${doc.dtExtenso}</p></td>
 						</tr>
 					</table>
@@ -54,8 +54,8 @@
 		<c:import 
 			url="/paginas/expediente/modelos/inc_tit_juizfedDirForoSolicit.jsp" />
 	
-		<p style="TEXT-INDENT: 2cm" align="justify">Solicito as providências necessárias para que seja realizada
-		a <b>remoção por permuta </b> entre os(as) servidores(as) <mod:identificacao pessoa="${requestScope['servidor1_pessoaSel.id']}" nivelHierarquicoMaximoDaLotacao="4" negrito="sim" />
+		<p style="TEXT-INDENT: 2cm" align="justify">Solicito as providÃªncias necessÃ¡rias para que seja realizada
+		a <b>remoÃ§Ã£o por permuta </b> entre os(as) servidores(as) <mod:identificacao pessoa="${requestScope['servidor1_pessoaSel.id']}" nivelHierarquicoMaximoDaLotacao="4" negrito="sim" />
 		e <mod:identificacao pessoa="${requestScope['servidor2_pessoaSel.id']}" nivelHierarquicoMaximoDaLotacao="4" negrito="sim" />
 		a partir de ${dataInicio}.
 		</p>

@@ -11,10 +11,10 @@
 	<mod:entrevista>
 		<mod:grupo titulo="Dados referenciais">
 			<mod:grupo>
-				<mod:selecao titulo="Tipo" var="tipo_mandado" opcoes="Intimação;Citação;Penhora"/>  
+				<mod:selecao titulo="Tipo" var="tipo_mandado" opcoes="IntimaÃ§Ã£o;CitaÃ§Ã£o;Penhora"/>  
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Referência" var="referencia" largura="40" />
+				<mod:texto titulo="ReferÃªncia" var="referencia" largura="40" />
 			</mod:grupo>
 			<mod:grupo >
 				<mod:texto titulo="Vocativo" var="vocativo" largura="20" />Ex.: O doutor; A doutora.
@@ -23,7 +23,7 @@
 				<mod:pessoa titulo="Autoridade" var="autoridade" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Função" var="funcao" largura="45"/>
+				<mod:texto titulo="FunÃ§Ã£o" var="funcao" largura="45"/>
 			</mod:grupo>
 		    <mod:grupo titulo="Texto a ser inserido no corpo do Mandado">
 			    <mod:grupo>

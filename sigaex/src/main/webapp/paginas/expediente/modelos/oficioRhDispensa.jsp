@@ -14,7 +14,7 @@
 			<mod:pessoa titulo="Servidor" var="servidor" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:funcao titulo="Função" var="funcao" />
+			<mod:funcao titulo="FunÃ§Ã£o" var="funcao" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:data titulo="A partir de" var="dataInicio" />
@@ -23,9 +23,9 @@
 	<mod:documento>
 		<mod:valor var="texto_oficio">
 			<p style="TEXT-INDENT: 2cm" align="justify">Solicito a Vossa
-			Excelência a <b>dispensa</b> do(a) servidor(a) <mod:identificacao
+			ExcelÃªncia a <b>dispensa</b> do(a) servidor(a) <mod:identificacao
 				pessoa="${requestScope['servidor_pessoaSel.id']}" /> do(a) cargo em
-			comissão/função comissionada de <b>${f:pessoa(requestScope['servidor_pessoaSel.id']).funcaoConfianca.descricao}</b>,
+			comissÃ£o/funÃ§Ã£o comissionada de <b>${f:pessoa(requestScope['servidor_pessoaSel.id']).funcaoConfianca.descricao}</b>,
 			a partir de <b>${dataInicio}</b>.</p>
 		</mod:valor>
 	</mod:documento>

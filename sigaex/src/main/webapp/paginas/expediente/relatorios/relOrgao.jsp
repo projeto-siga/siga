@@ -14,18 +14,18 @@ function sbmt() {
 	frmRelExpedientes.submit();	
 }
 </script>
-<c:set var="titulo_pagina" scope="request">Despachos e Transferências</c:set>
+<c:set var="titulo_pagina" scope="request">Despachos e TransferÃªncias</c:set>
 <ww:hidden name="secaoUsuario"
 	value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 <tr>
-<td>Órgão:</td>
+<td>Ã“rgÃ£o:</td>
 		<td><ww:select name="orgaoUsu" list="orgaosUsu"
 		listKey="idOrgaoUsu" listValue="nmOrgaoUsu" theme="simple"
 		headerKey="0" headerValue="" />
 	</td>
 
 <tr>
-	<td width="15%">Lotação:</td>
+	<td width="15%">LotaÃ§Ã£o:</td>
 	<td><siga:selecao propriedade="lotacaoDestinatario" tema="simple" modulo="siga"/></td>
 </tr>
 

@@ -33,7 +33,7 @@ import br.gov.jfrj.siga.wf.bl.TaskInstanceComparator;
 import br.gov.jfrj.siga.wf.bl.Wf;
 
 /**
- * Classe que contém diversas funcões úteis que podem ser utilizadas nos
+ * Classe que contÃ©m diversas funcÃµes Ãºteis que podem ser utilizadas nos
  * arquivos jsp.
  * 
  * @author kpf
@@ -44,7 +44,7 @@ public class FuncoesEL {
 	static TaskInstanceComparator tic = new TaskInstanceComparator();
 
 	/**
-	 * Retorna as transições disponíveis em ordem alfabética.
+	 * Retorna as transiÃ§Ãµes disponÃ­veis em ordem alfabÃ©tica.
 	 * 
 	 * @param taskInstance
 	 * @return
@@ -74,7 +74,7 @@ public class FuncoesEL {
 	}
 
 	/**
-	 * Retorna a lista de tarefas em ordem decrescente de criação.
+	 * Retorna a lista de tarefas em ordem decrescente de criaÃ§Ã£o.
 	 * 
 	 * @return
 	 */
@@ -101,7 +101,7 @@ public class FuncoesEL {
 	}
 
 	/**
-	 * Retorna a lista de tarefas em ordem decrescente de criação.
+	 * Retorna a lista de tarefas em ordem decrescente de criaÃ§Ã£o.
 	 * 
 	 * @return
 	 */

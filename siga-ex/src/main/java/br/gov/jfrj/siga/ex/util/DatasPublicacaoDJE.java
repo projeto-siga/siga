@@ -38,19 +38,19 @@ public class DatasPublicacaoDJE {
 	private CpFeriado feriadoPublicacao;
 	private CpFeriado feriadoDisponibilizacao;
 
-	// Necessário para verificação do dia da semana
+	// NecessÃ¡rio para verificaÃ§Ã£o do dia da semana
 	private Calendar calPublicacao;
 
-	// Necessário para verificação do dia da semana
+	// NecessÃ¡rio para verificaÃ§Ã£o do dia da semana
 	private Calendar calDisponibilizacao;
 
-	// Necessário para verificação do horário limite
+	// NecessÃ¡rio para verificaÃ§Ã£o do horÃ¡rio limite
 	private Calendar calHoje;
 
 	public DatasPublicacaoDJE(Date dataDisponib) throws AplicacaoException {
 		if (dataDisponib == null)
 			throw new AplicacaoException(
-					"Não foi informada uma data de disponibilização para cálculos");
+					"NÃ£o foi informada uma data de disponibilizaÃ§Ã£o para cÃ¡lculos");
 		setDataDisponibilizacao(dataDisponib);
 	}
 
@@ -58,35 +58,35 @@ public class DatasPublicacaoDJE {
 			throws AplicacaoException {
 		if (getDataDisponibilizacao() == null)
 			throw new AplicacaoException(
-					"Não foi informada uma data de disponibilização para cálculos");
-		
+					"NÃ£o foi informada uma data de disponibilizaÃ§Ã£o para cÃ¡lculos");
+
 		Date proximaDataDisponivel = null;
-				
-		if(!(sao17Horas() && apenasSolicitacao))
+		
+		if(!(foraDoHorarioDe11as17horas() && apenasSolicitacao))
 			proximaDataDisponivel = consultarProximaDataDisponivel();
 		
 		if(proximaDataDisponivel != null && getDataDisponibilizacao().before(proximaDataDisponivel)) {
 			SimpleDateFormat formatBra = new SimpleDateFormat("dd/MM/yyyy");  
-			return "Data de disponibilização inferior a próxima data disponível. Próxima data para disponibilização é " + formatBra.format(proximaDataDisponivel) + ".";
+			return "Data de disponibilizaÃ§Ã£o inferior a prÃ³xima data disponÃ­vel. PrÃ³xima data para disponibilizaÃ§Ã£o ï¿© " + formatBra.format(proximaDataDisponivel) + ".";
 		}
 		
 		if(proximaDataDisponivel == null || getDataDisponibilizacao().after(proximaDataDisponivel)) {
 		
 			if (isDisponibilizacaoDMais30())
-				return "Data de disponibilização está além do limite: mais de 31 dias a partir de hoje";
-			else if (sao17Horas() && apenasSolicitacao)
-				return "Data de disponibilização não permitida: Excedido Horário de Solicitação (17 Horas). Defina a disponibilização com mais de 2 dias a partir de hoje";
+				return "Data de disponibilizaÃ§Ã£o estÃ¡ alÃ©m do limite: mais de 31 dias a partir de hoje";
+			else if (foraDoHorarioDe11as17horas() && apenasSolicitacao)
+				return "Data de disponibilizaÃ§Ã£o nÃ£o permitida: Excedido HorÃ¡rio de SolicitaÃ§Ã£o (17 Horas). Defina a disponibilizaÃ§Ã£o com mais de 2 dias a partir de hoje";
 			else if (isDisponibilizacaoAntesDeDMais2())
-				return "Data de disponibilização não permitida: menos de 2 dias a partir de hoje";
+				return "Data de disponibilizaÃ§Ã£o nÃ£o permitida: menos de 2 dias a partir de hoje";
 			else if (isDisponibilizacaoDomingo())
-				return "Data de disponibilização é domingo";
+				return "Data de disponibilizaÃ§Ã£o Ã© domingo";
 			else if (isDisponibilizacaoSabado())
-				return "Data de disponibilização é sábado";
+				return "Data de disponibilizaÃ§Ã£o Ã© sÃ¡bado";
 			else if (isDisponibilizacaoFeriado())
-				return "Data de disponibilização é feriado: "
+				return "Data de disponibilizaÃ§Ã£o ï¿© feriado: "
 						+ getFeriadoDisponibilizacao().getDscFeriado();
 		}
-	
+
 		while (true) {
 			if (isPublicacaoDomingo() || isPublicacaoSabado()
 					|| isPublicacaoFeriado())
@@ -202,7 +202,12 @@ public class DatasPublicacaoDJE {
 		int hora = getCalHoje().get(Calendar.HOUR_OF_DAY);
 		return (hora >= 17 && getDifHojeDisponib() <= 2);
 	}
-
+	
+	public boolean foraDoHorarioDe11as17horas() {
+		int hora = getCalHoje().get(Calendar.HOUR_OF_DAY);
+		return ((hora < 11 || hora >= 17) && getDifHojeDisponib() <= 2);
+	}
+	
 	public Date getDataDisponibilizacao() {
 		return dataDisponibilizacao;
 	}
@@ -234,7 +239,7 @@ public class DatasPublicacaoDJE {
 			
 			diferencaEmMilisegundos = getDataDisponibilizacao().getTime() - getHojeMeiaNoite().getTime();
 			
-			//Início de Horário de Verão.
+			//InÃ­cio de HorÃ¡rio de VerÃ£o.
 			if(diferencaEmMilisegundos == 342000000L)
 				diferencaEmMilisegundos += 3600000L; 
 			
@@ -312,8 +317,8 @@ public class DatasPublicacaoDJE {
 		if (calDisponibilizacao == null) {
 			GregorianCalendar provCal = new GregorianCalendar();
 			provCal.setTime(getDataDisponibilizacao());
-			// Elimina o risco de erro na contagem por causa do início do
-			// horário de verão:
+			// Elimina o risco de erro na contagem por causa do inÃ­cio do
+			// horÃ¡rio de verÃ£o:
 			provCal.add(Calendar.HOUR_OF_DAY, 3);
 			setCalDisponibilizacao(provCal);
 		}

@@ -45,7 +45,7 @@ import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
 /**
- * Implementa a linguagem de designaÁ„o de atores para realizar as tarefas,
+ * Implementa a linguagem de designa√ß√£o de atores para realizar as tarefas,
  * baseado no componente de controle de identidade presente no siga-cp.
  * 
  * <pre>
@@ -71,8 +71,8 @@ public class WfExpressionAssignmentHandler {
 	protected DpResponsavel entity = null;
 
 	/**
-	 * Designa uma pessoa ou lotaÁ„o a uma tarefa ou raia (assignable). A pessoa
-	 * ou lotaÁ„o È o resultado de uma express„o.
+	 * Designa uma pessoa ou lota√ß√£o a uma tarefa ou raia (assignable). A pessoa
+	 * ou lota√ß√£o √© o resultado de uma express√£o.
 	 * 
 	 * @param expression
 	 * @param assignable
@@ -115,7 +115,7 @@ public class WfExpressionAssignmentHandler {
 	}
 
 	/**
-	 * Resolve o primeiro termo da express„o.
+	 * Resolve o primeiro termo da express√£o.
 	 * 
 	 * @param term
 	 * @return
@@ -196,7 +196,7 @@ public class WfExpressionAssignmentHandler {
 	}
 
 	/**
-	 * Verifica se uma pessoa È chefe.
+	 * Verifica se uma pessoa √© chefe.
 	 * 
 	 * @param pes
 	 * @return
@@ -222,7 +222,7 @@ public class WfExpressionAssignmentHandler {
 	}
 
 	/**
-	 * Resolve o prÛximo termo da express„o.
+	 * Resolve o pr√≥ximo termo da express√£o.
 	 * 
 	 * @param term
 	 * @return
@@ -313,7 +313,7 @@ public class WfExpressionAssignmentHandler {
 	}
 
 	/**
-	 * Retorna a vari·vel do contexto de execuÁ„o, caso exista.
+	 * Retorna a vari√°vel do contexto de execu√ß√£o, caso exista.
 	 * 
 	 * @param variableName
 	 * @return
@@ -325,7 +325,7 @@ public class WfExpressionAssignmentHandler {
 	}
 
 	/**
-	 * Retorna a vari·vel do contexto de execuÁ„o, caso exista.
+	 * Retorna a vari√°vel do contexto de execu√ß√£o, caso exista.
 	 * 
 	 * @param variableName
 	 * @return
@@ -339,10 +339,10 @@ public class WfExpressionAssignmentHandler {
 	}
 
 	/**
-	 * Retorna a lotaÁ„o referente ao nome passado como par‚metro.
+	 * Retorna a lota√ß√£o referente ao nome passado como par√¢metro.
 	 * 
 	 * @param groupName
-	 *            - nome da lotaÁ„o
+	 *            - nome da lota√ß√£o
 	 * @return
 	 */
 	protected DpResponsavel getGroupByName(String groupName) {
@@ -360,10 +360,10 @@ public class WfExpressionAssignmentHandler {
 	}
 
 	/**
-	 * Retorna a pessoa referente ao nome passado como par‚metro.
+	 * Retorna a pessoa referente ao nome passado como par√¢metro.
 	 * 
 	 * @param userName
-	 *            - Nome do usu·rio
+	 *            - Nome do usu√°rio
 	 * @return
 	 */
 	protected DpResponsavel getUserByName(String userName) {
@@ -381,13 +381,13 @@ public class WfExpressionAssignmentHandler {
 	}
 
 	/**
-	 * Retorna a pessoa referente a funÁ„o passada como par‚metro, se o usu·rio
-	 * n„o for encontrado na lotaÁ„o, escala para a lotaÁ„o superior e assim por
-	 * diante atÈ encontrar um usu·rio que possua a funÁ„o especificada. Utiliza
-	 * uma express„o regular para fazer o match do nome da funÁ„o.
+	 * Retorna a pessoa referente a fun√ß√£o passada como par√¢metro, se o usu√°rio
+	 * n√£o for encontrado na lota√ß√£o, escala para a lota√ß√£o superior e assim por
+	 * diante at√© encontrar um usu√°rio que possua a fun√ß√£o especificada. Utiliza
+	 * uma express√£o regular para fazer o match do nome da fun√ß√£o.
 	 * 
 	 * @param userName
-	 *            - Nome do usu·rio
+	 *            - Nome do usu√°rio
 	 * @return
 	 */
 	protected DpResponsavel getUserByFunctionName(String regex) {
@@ -417,13 +417,13 @@ public class WfExpressionAssignmentHandler {
 	}
 
 	/**
-	 * Retorna a pessoa referente a funÁ„o passada como par‚metro, se o usu·rio
-	 * n„o for encontrado na lotaÁ„o, escala para a lotaÁ„o superior e assim por
-	 * diante atÈ encontrar um usu·rio que possua a funÁ„o especificada. Utiliza
-	 * uma express„o regular para fazer o match do nome da funÁ„o.
+	 * Retorna a pessoa referente a fun√ß√£o passada como par√¢metro, se o usu√°rio
+	 * n√£o for encontrado na lota√ß√£o, escala para a lota√ß√£o superior e assim por
+	 * diante at√© encontrar um usu√°rio que possua a fun√ß√£o especificada. Utiliza
+	 * uma express√£o regular para fazer o match do nome da fun√ß√£o.
 	 * 
 	 * @param userName
-	 *            - Nome do usu·rio
+	 *            - Nome do usu√°rio
 	 * @return
 	 */
 	protected DpResponsavel getUserByCategoryName(String regex) {

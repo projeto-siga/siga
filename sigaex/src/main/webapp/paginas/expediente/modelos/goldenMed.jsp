@@ -12,8 +12,8 @@
 		</mod:grupo>
 		<mod:data var="data" titulo="Elencado a partir de"/>
 		<mod:grupo>	
-			<mod:texto var="identificacaoServidor" titulo="IdentificaÁ„o do servidor"/>
-			<mod:selecao reler="ajax" idAjax="solicitacaoAjax" opcoes="[Selecione];ades„o;exclus„o" var="solicitacao" titulo="Solicito a:"/>
+			<mod:texto var="identificacaoServidor" titulo="Identifica√ß√£o do servidor"/>
+			<mod:selecao reler="ajax" idAjax="solicitacaoAjax" opcoes="[Selecione];ades√£o;exclus√£o" var="solicitacao" titulo="Solicito a:"/>
 		</mod:grupo>
 		<mod:grupo depende="solicitacaoAjax">
 		<c:choose>
@@ -62,16 +62,16 @@
 	</table>
 	<table width="100%" border="1" cellpadding="3">
 		<tr>
-			<td><p align="justify">IdentificaÁ„o do titular:&nbsp;&nbsp;${identificacaoServidor}</p><br/>
-				<p align="justify">Matricula:&nbsp;&nbsp;${requestScope['servidor_pessoaSel.sigla']}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LotaÁ„o: ${pes.lotacao.descricao}</p><br/>
+			<td><p align="justify">Identifica√ß√£o do titular:&nbsp;&nbsp;${identificacaoServidor}</p><br/>
+				<p align="justify">Matricula:&nbsp;&nbsp;${requestScope['servidor_pessoaSel.sigla']}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lota√ß√£o: ${pes.lotacao.descricao}</p><br/>
 			</td>			
 		</tr>		
 	</table>
 	<table width="100%" border="1" cellpadding="3">
 		<tr>
 			<td align="center" width="20%"><br><b>Solicito a</b><br/><br/></td>
-			<td width="20%"><c:choose><c:when test="${solicitacao=='ades„o'}">[x] ades„o<br><br>[&nbsp;&nbsp;] exclus„o</c:when><c:when test="${solicitacao=='exclus„o'}">[&nbsp;&nbsp;] ades„o<br><br>[x] exclus„o</c:when><c:otherwise>[&nbsp;&nbsp;] ades„o<br><br>[&nbsp;&nbsp;] exclus„o</c:otherwise></c:choose></td>
-			<td>&nbsp;&nbsp;dos benefici·rios abaixo elencados na <b>Golden Med</b> a partir de ${data} </td>
+			<td width="20%"><c:choose><c:when test="${solicitacao=='ades√£o'}">[x] ades√£o<br><br>[&nbsp;&nbsp;] exclus√£o</c:when><c:when test="${solicitacao=='exclus√£o'}">[&nbsp;&nbsp;] ades√£o<br><br>[x] exclus√£o</c:when><c:otherwise>[&nbsp;&nbsp;] ades√£o<br><br>[&nbsp;&nbsp;] exclus√£o</c:otherwise></c:choose></td>
+			<td>&nbsp;&nbsp;dos benefici√°rios abaixo elencados na <b>Golden Med</b> a partir de ${data} </td>
 		</tr>		
 	</table>
 	<table width="100%" border="1" cellpadding="3">
@@ -90,10 +90,10 @@
 		<tr>
 			<td>
 				<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- No Golden Med n„o h· cobranÁa proporcional a perÌodo(pro rata), <b>nem movimentaÁ„o retroativa</b> sendo a vingÍncia SEMPRE EM DIA PRIMEIRO.<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Agregados, Dependentes EcÙnomicos e Benefici·rios Designados descontam antecipado.<br> 
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Caso o titular solicite a sua exclus„o do Golden Med e deseje incluir dependentes, dever· elenca-los no campo acima.<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- N„o ser· possÌvel solicitar a inclus„o de qualquer dependente (dependentes diretos, agregados, pais dependentes econÙmicos e benefici·rios designados), sem que o titular esteja cadastrado no benefÌcio. 
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- No Golden Med n√£o h√° cobran√ßa proporcional a per√≠odo(pro rata), <b>nem movimenta√ß√£o retroativa</b> sendo a ving√™ncia SEMPRE EM DIA PRIMEIRO.<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Agregados, Dependentes Ec√¥nomicos e Benefici√°rios Designados descontam antecipado.<br> 
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Caso o titular solicite a sua exclus√£o do Golden Med e deseje incluir dependentes, dever√° elenca-los no campo acima.<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- N√£o ser√° poss√≠vel solicitar a inclus√£o de qualquer dependente (dependentes diretos, agregados, pais dependentes econ√¥micos e benefici√°rios designados), sem que o titular esteja cadastrado no benef√≠cio. 
 				<br><br>
 			</td>
 		</tr>
@@ -102,7 +102,7 @@
 		<tr>
 			<td>
 				<br>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tenho ciÍncia de que deverei entregar este requerimento ‡ <b>SEBENS/SRH atÈ o dia 20</b>, para que o inÌcio da vingÍncia(da inclus„o ou da exclus„o) seja da data acima solicitada.
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tenho ci√™ncia de que deverei entregar este requerimento √† <b>SEBENS/SRH at√© o dia 20</b>, para que o in√≠cio da ving√™ncia(da inclus√£o ou da exclus√£o) seja da data acima solicitada.
 				<br><br>
 			</td>
 		</tr>

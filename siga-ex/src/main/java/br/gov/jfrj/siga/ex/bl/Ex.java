@@ -21,7 +21,7 @@ package br.gov.jfrj.siga.ex.bl;
 import br.gov.jfrj.siga.cp.bl.Cp;
 
 /**
- * Classe que fornece uma inst‚ncia do workflow.
+ * Classe que fornece uma inst√¢ncia do workflow.
  * 
  * @author kpf
  * 
@@ -30,26 +30,31 @@ public class Ex extends
 		Cp<ExConfiguracaoBL, ExCompetenciaBL, ExBL, ExPropriedadeBL> {
 
 	/**
-	 * Retorna uma inst‚ncia do sistema de workflow. AtravÈs dessa inst‚ncia È
-	 * possÌvel acessar a lÛgica de negÛcio, competÍncias e configuraÁıes do
+	 * Retorna uma inst√¢ncia do sistema de workflow. Atrav√©s dessa inst√¢ncia √©
+	 * poss√≠vel acessar a l√≥gica de neg√≥cio, compet√™ncias e configura√ß√µes do
 	 * sistema de workflow.
 	 * 
-	 * @return Inst‚ncia de workflow
+	 * @return Inst√¢ncia de workflow
 	 */
 	public static Ex getInstance() {
 		if (!isInstantiated()) {
 			synchronized (Cp.class) {
 				if (!isInstantiated()) {
+					ExConfiguracaoBL confBL = new ExConfiguracaoBL();
+					ExConfiguracaoComparator comparator = new ExConfiguracaoComparator();
+					ExCompetenciaBL compBL = new ExCompetenciaBL();
+					ExPropriedadeBL propBL = new ExPropriedadeBL();
+					ExBL exBL = new ExBL();
+					
 					Ex instance = new Ex();
 					setInstance(instance);
-					instance.setConf(new ExConfiguracaoBL());
-					instance.getConf().setComparator(
-							new ExConfiguracaoComparator());
-					instance.setComp(new ExCompetenciaBL());
+					instance.setConf(confBL);
+					instance.getConf().setComparator(comparator);
+					instance.setComp(compBL);
 					instance.getComp().setConfiguracaoBL(instance.getConf());
-					instance.setBL(new ExBL());
+					instance.setBL(exBL);
 					instance.getBL().setComp(instance.getComp());
-					instance.setProp(new ExPropriedadeBL());
+					instance.setProp(propBL);
 				}
 			}
 		}

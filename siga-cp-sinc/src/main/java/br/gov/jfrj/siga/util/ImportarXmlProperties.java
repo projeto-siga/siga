@@ -24,38 +24,40 @@
  */
 package br.gov.jfrj.siga.util;
 
+import java.util.List;
+
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 
 public class ImportarXmlProperties extends SigaBaseProperties {
 	/*
 	 * 
-	 *  Antes a classe se chamava Mensagens (foi renomeada - refactor)
-	 *  
-	 *  AtenÁ„o: foi renomeada antes do cÛdigo abaixo ser comentado
-	 *  
+	 * Antes a classe se chamava Mensagens (foi renomeada - refactor)
+	 * 
+	 * Aten√ß√£o: foi renomeada antes do c√≥digo abaixo ser comentado
 	 */
-	/*private static final String BUNDLE_NAME = "application";
-
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(ImportarXmlProperties.BUNDLE_NAME);
-
-	public static String getString(final String key) {
-
-		try {
-			return ImportarXmlProperties.RESOURCE_BUNDLE.getString(key);
-		} catch (final MissingResourceException e) {
-			return '!' + key + '!';
-		}
-	}
-	*/
+	/*
+	 * private static final String BUNDLE_NAME = "application";
+	 * 
+	 * private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+	 * .getBundle(ImportarXmlProperties.BUNDLE_NAME);
+	 * 
+	 * public static String getString(final String key) {
+	 * 
+	 * try { return ImportarXmlProperties.RESOURCE_BUNDLE.getString(key); }
+	 * catch (final MissingResourceException e) { return '!' + key + '!'; } }
+	 */
 	private ImportarXmlProperties() {
 		// construtor privado
 	}
+
 	@Override
 	public String getPrefixoModulo() {
 		return "siga.cp.sinc.xml";
 	}
+
 	private static SigaBaseProperties instance = new ImportarXmlProperties();
+
 	public static String getString(final String key) {
 		try {
 			return instance.obterPropriedade(key);
@@ -64,4 +66,14 @@ public class ImportarXmlProperties extends SigaBaseProperties {
 			return "";
 		}
 	}
+
+	public static List<String> getDiretorios() throws AplicacaoException {
+		try {
+			return instance.obterPropriedadeLista("diretorios");
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"N√£o foi poss√≠vel encontrar servidores de e-mail no arquivo siga.properties. Ex: servidor.smtp.0 = nome_servidor_email");
+		}
+	}
+
 }

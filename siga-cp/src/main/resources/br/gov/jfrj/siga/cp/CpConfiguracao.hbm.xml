@@ -132,6 +132,12 @@
 			and hisDtFim is null
 		]]>
 	</query>
+	<query name="consultarCpConfiguracoesAtivas">
+		<![CDATA[
+			from CpConfiguracao cpcfg
+			where hisDtFim is null
+		]]>
+	</query>
 	
 
 </hibernate-mapping>

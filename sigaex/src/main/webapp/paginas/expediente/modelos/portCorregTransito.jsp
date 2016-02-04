@@ -14,15 +14,15 @@
 			</mod:grupo>
 
 			<mod:grupo>
-				<mod:selecao titulo="Dr" var="gen"  opcoes="masc;fem" reler="não" />
-				<mod:selecao titulo="Juiz Federal" var="titulo" opcoes="Titular;Substituto" reler="não"/>
+				<mod:selecao titulo="Dr" var="gen"  opcoes="masc;fem" reler="nÃ£o" />
+				<mod:selecao titulo="Juiz Federal" var="titulo" opcoes="Titular;Substituto" reler="nÃ£o"/>
 			</mod:grupo>
 			<mod:grupo>
-				<mod:selecao titulo="em virtude" var="mot"  opcoes="remoção;promoção"/>
-				<mod:selecao titulo="Juiz Federal" var="titulo2" opcoes="Titular;Substituto" reler="não"/>
+				<mod:selecao titulo="em virtude" var="mot"  opcoes="remoÃ§Ã£o;promoÃ§Ã£o"/>
+				<mod:selecao titulo="Juiz Federal" var="titulo2" opcoes="Titular;Substituto" reler="nÃ£o"/>
 			</mod:grupo>	
 			<mod:grupo>
-				<mod:texto titulo="nova lotação" var="lotacao" largura="55"/>
+				<mod:texto titulo="nova lotaÃ§Ã£o" var="lotacao" largura="55"/>
 			</mod:grupo>
 			<mod:grupo>
 				<mod:pessoa titulo="Nome" var="pessoa" />
@@ -40,9 +40,9 @@
 				<body>
 					<c:set var="pessoa_resp" value ="${f:pessoa(requestScope['pessoa_pessoaSel.id'])}" />
 					<p style="TEXT-INDENT: 2cm" align="justify">
-						O Excelentíssimo Dr. ${doc.subscritor.descricao}, Corregedor-Regional da Justiça 
-						Federal da 2ª Região, no uso de suas atribuições legais e conforme a competência
-						estabelecida pelo art. 4º da Resolução nº30/TRF/2006, ${dec},
+						O ExcelentÃ­ssimo Dr. ${doc.subscritor.descricao}, Corregedor-Regional da JustiÃ§a 
+						Federal da 2Âª RegiÃ£o, no uso de suas atribuiÃ§Ãµes legais e conforme a competÃªncia
+						estabelecida pelo art. 4Âº da ResoluÃ§Ã£o nÂº30/TRF/2006, ${dec},
 						<br><br>
 						RESOLVE:
 						<br/><br/><br/>
@@ -51,8 +51,8 @@
 							<c:when test="${gen=='fem'}">a MM. Juiza Federal</c:when>
 							<c:otherwise>ao MM.Juiz Federal</c:otherwise>
 						</c:choose>
-						${pessoa_resp.nomePessoa}, ${dias} dias de trânsito, a contar de ${dt}, inclusive
-						nos termos do art. 3º §§ 1º e 2º da Resolução nº 30/TRF/2006, em virtude da sua ${mot}
+						${pessoa_resp.nomePessoa}, ${dias} dias de trÃ¢nsito, a contar de ${dt}, inclusive
+						nos termos do art. 3Âº Â§Â§ 1Âº e 2Âº da ResoluÃ§Ã£o nÂº 30/TRF/2006, em virtude da sua ${mot}
 						de
 						<c:choose>
 							<c:when test="${gen=='fem'}">Juiza </c:when>

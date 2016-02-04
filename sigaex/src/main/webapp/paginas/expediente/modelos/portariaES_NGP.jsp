@@ -59,7 +59,7 @@
 
 			<p>&nbsp;</p>
 			<!-- INICIO MIOLO -->
-			<p style="TEXT-INDENT: 2cm" align="justify"><b>O DIRETOR DO NÚCLEO DE GESTÃO DE PESSOAS</b>, usando da competência subdelegada 
+			<p style="TEXT-INDENT: 2cm" align="justify"><b>O DIRETOR DO NÃšCLEO DE GESTÃƒO DE PESSOAS</b>, usando da competÃªncia subdelegada 
 			pela Portaria 168, de 15/07/2005, da Diretora da Secretaria Geral,</p>
 			<p style="TEXT-INDENT: 2cm" align="justify"><b>RESOLVE:</b></p>
 			

@@ -18,7 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp.bl;
 
-// TODO: _LAGS - eliminar (deixar a String livre) - Ver com Renato o CpDao.criarHibernateCfg(String) j· existe para a passagem de datasource 
+// TODO: _LAGS - eliminar (deixar a String livre) - Ver com Renato o CpDao.criarHibernateCfg(String) j√° existe para a passagem de datasource 
 public enum CpAmbienteEnumBL {
 	PRODUCAO("prod"), HOMOLOGACAO("homolo"), TREINAMENTO("treina"), DESENVOLVIMENTO(
 			"desenv");

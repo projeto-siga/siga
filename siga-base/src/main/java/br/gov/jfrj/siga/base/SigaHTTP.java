@@ -48,8 +48,8 @@ import org.picketlink.common.util.StringUtil;
  * @author Rodrigo Ramalho
  * 	       hodrigohamalho@gmail.com
  *
- * Essa classe dever· ser usada para requests entre mÛdulos do SIGA. Se fizer um GET direto
- * o request ser· processado como feito por um usu·rio anÙnimo e retornar· um form de autenticaÁ„o.
+ * Essa classe dever√° ser usada para requests entre m√≥dulos do SIGA. Se fizer um GET direto
+ * o request ser√° processado como feito por um usu√°rio an√¥nimo e retornar√° um form de autentica√ß√£o.
  */
 public class SigaHTTP {
 
@@ -91,13 +91,13 @@ public class SigaHTTP {
 		try{
 			// Efetua o request para o Service Provider (modulo)
 			// Atribui o html retornado e pega o header do Response
-			// Se a aplicaÁao ja efetuou a autenticaÁ„o entre o modulo da URL o conteudo sera trago nesse primeiro GET
-			// Caso contrario passara pelo processo de autenticaÁ„o (if abaixo)
+			// Se a aplica√ß√£o ja efetuou a autentica√ß√£o entre o modulo da URL o conteudo sera trago nesse primeiro GET
+			// Caso contrario passara pelo processo de autentica√ß√£o (if abaixo)
 			HttpResponse response = exec.execute(Request.Get(URL).addHeader(COOKIE, currentCookie)).returnResponse();
 			html = handleResponse(html, response);
 			currentCookie = extractSetCookie(currentCookie, response);
 
-			// Verifica se retornou o form de autenticaÁ„o do picketlink
+			// Verifica se retornou o form de autentica√ß√£o do picketlink
 			if (html.contains(HTTP_POST_BINDING_REQUEST)){
 				if (StringUtil.isNullOrEmpty(idpCookie)){
 				  return "";
@@ -121,7 +121,7 @@ public class SigaHTTP {
 
 				if (html.contains(SAMLResponse)){
 					// Extrai o valor do SAMLResponse
-					// Caso o SAMLResponse n„o esteja disponÌvel aqui, È porque o JSESSIONID utilizado n„o foi o do IDP.
+					// Caso o SAMLResponse nÔø£o esteja dispon√≠vel aqui, Ôø© porque o JSESSIONID utilizado n√£o foi o do IDP.
 					String SAMLResponseValue = getAttributeValueFromHtml(html, SAMLResponse);
 					String spURL = getAttributeActionFromHtml(html);
 					if (!spURL.contains("http"))
@@ -191,11 +191,11 @@ public class SigaHTTP {
 	}
 
 	public boolean isErrorPage(String html) {
-		return html.contains("<title>") && html.contains("N„o Foi PossÌvel Completar a OperaÁ„o");
+		return html.contains("<title>") && html.contains("N√£o Foi Poss√≠vel Completar a Opera√ß√£o");
 	}
 
 	public boolean isAuthPage(String html) {
-		return html.contains("Senha") && html.contains("MatrÌcula");
+		return html.contains("Senha") && html.contains("Matr√≠cula");
 	}
 
 	public boolean isIDPPage(String html) {
@@ -313,10 +313,11 @@ public class SigaHTTP {
 				conn.setRequestMethod("POST");
 				// Send post request
 				conn.setDoOutput(true);
-				OutputStream os = conn.getOutputStream();
-				os.write(ab);
-				os.flush();
-				os.close();
+				try (OutputStream os = conn.getOutputStream()) {
+					os.write(ab);
+					os.flush();
+					os.close();
+				}
 			}
 
 			//StringWriter writer = new StringWriter();
@@ -325,7 +326,7 @@ public class SigaHTTP {
 			return IOUtils.toString(conn.getInputStream(), "UTF-8");
 
 		} catch (IOException ioe) {
-			throw new AplicacaoException("N„o foi possÌvel abrir conex„o", 1, ioe);
+			throw new AplicacaoException("N√£o foi poss√≠vel abrir conex√£o", 1, ioe);
 		}
 
 	}

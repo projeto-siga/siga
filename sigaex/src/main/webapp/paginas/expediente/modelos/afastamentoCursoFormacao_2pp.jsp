@@ -3,35 +3,35 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-REQUERIMENTO PARA AFASTAMENTO PARA CURSO DE FORMA«√O -->
+REQUERIMENTO PARA AFASTAMENTO PARA CURSO DE FORMA√á√ÉO -->
 
 <c:set var="esconderTexto" value="sim" scope="request" />
 <c:set var="para" value="diretorForo" scope="request" />
 <mod:modelo urlBase="/paginas/expediente/modelos/requerimento_rh.jsp">
 	<mod:entrevista>		
-		<mod:grupo titulo="DETALHES SOBRE O CURSO DE FORMA«√O">
+		<mod:grupo titulo="DETALHES SOBRE O CURSO DE FORMA√á√ÉO">
 		</mod:grupo>
 		<mod:grupo></mod:grupo>
-		<mod:texto titulo="Org„o Provedor do Cargo" var="orgao"/>
+		<mod:texto titulo="Org√£o Provedor do Cargo" var="orgao"/>
 		<mod:grupo></mod:grupo>
 		<mod:texto titulo="Cargo concorrido" var="cargoConcorrido"/>
 		<mod:grupo></mod:grupo>
-		<mod:data titulo="Data de inÌcio" var="dataInicio"/>
+		<mod:data titulo="Data de in√≠cio" var="dataInicio"/>
 		<mod:grupo>
-		<mod:data titulo="Data de tÈrmino" var="dataTermino"/>
+		<mod:data titulo="Data de t√©rmino" var="dataTermino"/>
 		</mod:grupo>
 		
-		<mod:grupo titulo="DETALHES SOBRE VENCIMENTOS DESTA SE«√O JUDICI¡RIA">
+		<mod:grupo titulo="DETALHES SOBRE VENCIMENTOS DESTA SE√á√ÉO JUDICI√ÅRIA">
 		</mod:grupo>
 	   <mod:grupo>
 		   <mod:selecao titulo="O Funcionario <FONT COLOR=red><b>percebe</b></FONT> 
-			   os vencimentos e vantagens referentes ao cargo efetivo desta SeÁ„o 
-			   Judici·ria?<br>
-			   <FONT COLOR=blue><b>N„o fazendo jus ao auxÌlio financeiro a ser pago 
-			   por aquela InstituiÁ„o, bem como ao pagamento de <BR>auxÌlio-transporte
-			   e a remuneraÁ„o da funÁ„o comissionada ou do cargo em comiss„o que<BR>
-			   eventualmente ocupe nesta SeÁ„o Judici·ria.</FONT></b>"			
-		   var="vencimentosCargo" opcoes="Percebe;N„o percebe" />
+			   os vencimentos e vantagens referentes ao cargo efetivo desta Se√ß√£o 
+			   Judici√°ria?<br>
+			   <FONT COLOR=blue><b>N√£o fazendo jus ao aux√≠lio financeiro a ser pago 
+			   por aquela Institui√ß√£o, bem como ao pagamento de <BR>aux√≠lio-transporte
+			   e a remunera√ß√£o da fun√ß√£o comissionada ou do cargo em comiss√£o que<BR>
+			   eventualmente ocupe nesta Se√ß√£o Judici√°ria.</FONT></b>"			
+		   var="vencimentosCargo" opcoes="Percebe;N√£o percebe" />
 		</mod:grupo>	   
 	</mod:entrevista>	
 	<mod:documento>		 
@@ -42,44 +42,44 @@ REQUERIMENTO PARA AFASTAMENTO PARA CURSO DE FORMA«√O -->
 		${doc.subscritor.funcaoConfianca.nomeFuncao},</c:if> lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, 
 		 
 		 
-		vem requerer a Vossa ExcelÍncia, nos termos do 
-		ß 4∫ do art. 20 da Lei n.∫ 8.112/90, introduzido pela  Lei n.∫ 
-		9.527/97, c/c art. 14 da Lei n.∫ 9.624/98, e ResoluÁ„o n.∫ 5/2008
-		do Conselho da JustiÁa Federal, <b>AFASTAMENTO PARA PARTICIPAR DE 
-		CURSO DE FORMA«√O</b>, correspondente ‡ etapa do Processo Seletivo do  
-		Concurso P˙blico para o cargo de ${cargoConcorrido}
-		a ser realizado pelo(a) ${orgao}, no perÌodo de ${dataInicio} atÈ ${dataTermino}.
+		vem requerer a Vossa Excel√™ncia, nos termos do 
+		¬ß 4¬∫ do art. 20 da Lei n.¬∫ 8.112/90, introduzido pela  Lei n.¬∫ 
+		9.527/97, c/c art. 14 da Lei n.¬∫ 9.624/98, e Resolu√ß√£o n.¬∫ 5/2008
+		do Conselho da Justi√ßa Federal, <b>AFASTAMENTO PARA PARTICIPAR DE 
+		CURSO DE FORMA√á√ÉO</b>, correspondente √† etapa do Processo Seletivo do  
+		Concurso P√∫blico para o cargo de ${cargoConcorrido}
+		a ser realizado pelo(a) ${orgao}, no per√≠odo de ${dataInicio} at√© ${dataTermino}.
 		</p>
 		 
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		Para tanto, faz a opÁ„o de:
+		Para tanto, faz a op√ß√£o de:
 		</p>
 		<c:if test="${vencimentosCargo == 'Percebe'}">
 				<p style="TEXT-INDENT: 2cm" align="justify">	
 			    <b>Perceber os vencimentos </b>e vantagens referentes 
-			    ao cargo efetivo desta <c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas},</c:when><c:otherwise>SE«√O JUDICI¡RIA DO RIO DE JANEIRO,</c:otherwise></c:choose> <b>n„o 
-			    fazendo jus </b>ao auxÌlio financeiro a ser pago por 
-			    aquela InstituiÁ„o, bem como ao pagamento
-			    de <i>auxÌlio-transporte</i> e a remuneraÁ„o da
-			    <i>funÁ„o comissionada </i>ou do <i>cargo em comiss„o</i>
-			    que eventualmente ocupe nesta <c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE«√O JUDICI¡RIA DO RIO DE JANEIRO</c:otherwise></c:choose>.
+			    ao cargo efetivo desta <c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas},</c:when><c:otherwise>SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO,</c:otherwise></c:choose> <b>n√£o 
+			    fazendo jus </b>ao aux√≠lio financeiro a ser pago por 
+			    aquela Institui√ß√£o, bem como ao pagamento
+			    de <i>aux√≠lio-transporte</i> e a remunera√ß√£o da
+			    <i>fun√ß√£o comissionada </i>ou do <i>cargo em comiss√£o</i>
+			    que eventualmente ocupe nesta <c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO</c:otherwise></c:choose>.
 			    </p>
 		</c:if>
-		<c:if test="${vencimentosCargo == 'N„o percebe'}">
+		<c:if test="${vencimentosCargo == 'N√£o percebe'}">
 			   <p style="TEXT-INDENT: 2cm" align="justify">	
-			   <b>N„o Perceber os vencimentos</b> e vantagens referentes ao cargo
-			   efetivo desta <c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas},</c:when><c:otherwise>SE«√O JUDICI¡RIA DO RIO DE JANEIRO,</c:otherwise></c:choose> <b>fazendo jus</b> ao auxÌlio 
-			   financeiro a ser pago por aquela InstituiÁ„o.
+			   <b>N√£o Perceber os vencimentos</b> e vantagens referentes ao cargo
+			   efetivo desta <c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas},</c:when><c:otherwise>SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO,</c:otherwise></c:choose> <b>fazendo jus</b> ao aux√≠lio 
+			   financeiro a ser pago por aquela Institui√ß√£o.
 			   </p>
 		</c:if>
 		 
 
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			Declara, ainda, estar ciente de que o afastamento 
-			para participar de curso de formaÁ„o ter· um <b>perÌodo 
-			definido</b>, que <b>coincidir· com a duraÁ„o do supracitado 
-			curso</b>, findo o qual <b>dever· retornar 
-			ao exercÌcio do cargo</b> na <c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE«√O JUDICI¡RIA DO RIO DE JANEIRO</c:otherwise></c:choose>. 
+			para participar de curso de forma√ß√£o ter√° um <b>per√≠odo 
+			definido</b>, que <b>coincidir√° com a dura√ß√£o do supracitado 
+			curso</b>, findo o qual <b>dever√° retornar 
+			ao exerc√≠cio do cargo</b> na <c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO</c:otherwise></c:choose>. 
 			</p> 
 			
 	</mod:valor>	
@@ -105,23 +105,23 @@ REQUERIMENTO PARA AFASTAMENTO PARA CURSO DE FORMA«√O -->
 		 <c:if test="${vencimentosCargo == 'Percebe'}">
 				 <p style="TEXT-INDENT: 2cm" align="justify">
 				 <b>
-				 Apresentar, ao tÈrmino do curso, documento emitido 
-				 pelo Ûrg„o promotor do evento que n„o percebeu o referido auxÌlio.
+				 Apresentar, ao t√©rmino do curso, documento emitido 
+				 pelo √≥rg√£o promotor do evento que n√£o percebeu o referido aux√≠lio.
 				 </b>
 				 </p> 
 		 </c:if>
 		 
-		<c:if test="${vencimentosCargo == 'N„o percebe'}">
+		<c:if test="${vencimentosCargo == 'N√£o percebe'}">
 				 <p style="TEXT-INDENT: 2cm" align="justify">
 				 <b>
-				 Apresentar comprovante de recolhimento de contribuiÁ„o
-				 para a PrevidÍncia Social do Servidor P˙blico, objetivando
-				 o cÙmputo do tempo para fins de aposentadoria e disponibilidade.
+				 Apresentar comprovante de recolhimento de contribui√ß√£o
+				 para a Previd√™ncia Social do Servidor P√∫blico, objetivando
+				 o c√¥mputo do tempo para fins de aposentadoria e disponibilidade.
 				 </b>
 				 </p>	 	
 	 	</c:if>
 	 	<p style="TEXT-INDENT: 2cm" align="justify">
-	 	<b>Declara estar ciente de que tais documentos devem ser apresentados, impreterivelmente, atÈ o pedido de vac‚ncia.</b>
+	 	<b>Declara estar ciente de que tais documentos devem ser apresentados, impreterivelmente, at√© o pedido de vac√¢ncia.</b>
 	 	</p>
 	 	
 	 	<p style="TEXT-INDENT: 0cm" align="center">${doc.dtExtenso}</p>

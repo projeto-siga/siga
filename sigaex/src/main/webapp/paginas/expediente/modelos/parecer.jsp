@@ -49,11 +49,11 @@
 						<tr>
 							<td align="left"><p style="font-family:Arial;font-size:11pt;font-weight:bold;"></br>
 							<c:choose>
-								<c:when test="${doc.exModelo.nmMod == 'Parecer Médico'}">
-									PARECER MÉDICO N&ordm; ${doc.codigo}</p></td>
+								<c:when test="${doc.exModelo.nmMod == 'Parecer MÃ©dico'}">
+									PARECER MÃ‰DICO N&ordm; ${doc.codigo}</p></td>
 								</c:when>
-								<c:when test="${doc.exModelo.nmMod == 'Parecer Psicológico'}">
-									PARECER PSICOLÓGICO N&ordm; ${doc.codigo}</p></td>
+								<c:when test="${doc.exModelo.nmMod == 'Parecer PsicolÃ³gico'}">
+									PARECER PSICOLÃ“GICO N&ordm; ${doc.codigo}</p></td>
 								</c:when>
 								<c:when test="${doc.exModelo.nmMod == 'Parecer'}">
 									PARECER N&ordm; ${doc.codigo}</p></td>

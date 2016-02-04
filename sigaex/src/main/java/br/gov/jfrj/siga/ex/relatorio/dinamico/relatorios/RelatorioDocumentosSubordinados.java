@@ -53,14 +53,14 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 		super(parametros);
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
-					"Par‚metro secaoUsuario n„o informado!");
+					"Par√¢metro secaoUsuario n√£o informado!");
 		}
 		if (parametros.get("lotacao") == null) {
 			throw new DJBuilderException(
-					"Par‚metro lotaÁ„o n„o informado!");
+					"Par√¢metro lota√ß√£o n√£o informado!");
 		}
 		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Par‚metro link_siga n„o informado!");
+			throw new DJBuilderException("Par√¢metro link_siga n√£o informado!");
 		}
 
 	}
@@ -69,19 +69,19 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
-		this.setTitle("RelatÛrio de Documentos em Setores Subordinados");
+		this.setTitle("Relat√≥rio de Documentos em Setores Subordinados");
 		this.addColuna("Setor", 0, RelatorioRapido.ESQUERDA, true);
 		this.addColuna("Documento", 30, RelatorioRapido.ESQUERDA,  true, true);
-		this.addColuna("DescriÁ„o", 50, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Respons·vel", 45, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("SituaÁ„o", 40, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Descri√ß√£o", 50, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Respons√°vel", 45, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Situa√ß√£o", 40, RelatorioRapido.ESQUERDA, false);
 		return this;
 
 	}
 	
 	public Collection processarDados() throws Exception {
 
-		// ObtÈm uma formaDoc a partir da sigla passada e monta trecho da query
+		// Obt√©m uma formaDoc a partir da sigla passada e monta trecho da query
 		// para a forma
 		Query qryTipoForma = HibernateUtil.getSessao().createQuery(
 				"from ExTipoFormaDoc tf where " + "tf.descTipoFormaDoc = '"
@@ -97,7 +97,7 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 						+ tipoFormaDoc.getIdTipoFormaDoc();
 
 			
-		// ObtÈm a lotaÁ„o com o id passado...
+		// Obt√©m a lota√ß√£o com o id passado...
 		Query qrySetor = HibernateUtil.getSessao().createQuery(
 				"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
 			
@@ -107,7 +107,7 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 		
 	
 
-		// ... e monta trecho da query para as lotaÁıes
+		// ... e monta trecho da query para as lota√ß√µes
 		String listaLotacoes = "";
 		Set<DpLotacao> todasLotas;
 		if (parametros.get("incluirSubordinados") != null)
@@ -120,14 +120,14 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 			listaLotacoes += lot.getIdInicial().toString();
 		}
 
-		// Monta trecho da query para ocultar seletivamente a descriÁ„o do
+		// Monta trecho da query para ocultar seletivamente a descri√ß√£o do
 		// documento
 		String trechoQryDescrDocumento = "(case when ("
 				+ "	nivel.idNivelAcesso <> 1 "
 				+ "	and nivel.idNivelAcesso <> 6"
 				+ ") then 'CONFIDENCIAL' else doc.descrDocumento end)";
 
-		// Monta trecho da query para retornar o cÛdigo do documento
+		// Monta trecho da query para retornar o c√≥digo do documento
 		/*String trechoQryCodigoDoc = " orgao.siglaOrgaoUsu "
 				+ "|| '-' || " + "forma.siglaFormaDoc "
 				+ "|| '-' || " + "doc.anoEmissao " + "|| '/' || "
@@ -240,7 +240,7 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 
 	public Collection processarDadosAnterior() throws Exception {
 
-		// ObtÈm uma formaDoc a partir da sigla passada e monta trecho da query
+		// Obt√©m uma formaDoc a partir da sigla passada e monta trecho da query
 		// para a forma
 		Query qryTipoForma = HibernateUtil.getSessao().createQuery(
 				"from ExTipoFormaDoc tf where " + "tf.descTipoFormaDoc = '"
@@ -256,7 +256,7 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 						+ tipoFormaDoc.getIdTipoFormaDoc();
 
 			
-		// ObtÈm a lotaÁ„o com o id passado...
+		// Obt√©m a lota√ß√£o com o id passado...
 		Query qrySetor = HibernateUtil.getSessao().createQuery(
 				"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
 			
@@ -266,7 +266,7 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 		
 	
 
-		// ... e monta trecho da query para as lotaÁıes
+		// ... e monta trecho da query para as lota√ß√µes
 		String listaLotacoes = "";
 		Set<DpLotacao> todasLotas;
 		if (parametros.get("incluirSubordinados") != null)
@@ -279,14 +279,14 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 			listaLotacoes += lot.getIdInicial().toString();
 		}
 
-		// Monta trecho da query para ocultar seletivamente a descriÁ„o do
+		// Monta trecho da query para ocultar seletivamente a descri√ß√£o do
 		// documento
 		String trechoQryDescrDocumento = "(case when ("
 				+ "	nivel.idNivelAcesso <> 1 "
 				+ "	and nivel.idNivelAcesso <> 6"
 				+ ") then 'CONFIDENCIAL' else doc.descrDocumento end)";
 
-		// Monta trecho da query para retornar o cÛdigo do documento
+		// Monta trecho da query para retornar o c√≥digo do documento
 		String trechoQryCodigoDoc = " orgao.siglaOrgaoUsu "
 				+ "|| '-' || " + "forma.siglaFormaDoc "
 				+ "|| '-' || " + "doc.anoEmissao " + "|| '/' || "
@@ -480,7 +480,7 @@ public class RelatorioDocumentosSubordinados extends RelatorioTemplate {
 				d.add(resp);
 				d.add(mc.getCpMarcador().getDescrMarcador());
 				indice++;
-				System.out.println(indice);
+//				System.out.println(indice);
 			}
 
 			/*

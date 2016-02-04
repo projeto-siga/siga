@@ -100,14 +100,14 @@ public class TesteImpressao {
 		cell.setPropertyValue("align", "center");
 		cell.setPropertyValue("rowspan", "2");
 		row.addTag(cell);
-		cell = new Tag("td", "Período");
+		cell = new Tag("td", "PerÃ­odo");
 		cell.setPropertyValue("align", "center");
 		cell.setPropertyValue("colspan", "2");
 		row.addTag(cell);
 		table.addTag(row);
 		row = new Tag("tr");
 		row.setPropertyValue("bgcolor", "#FFFFFF");
-		cell = new Tag("td", "Início");
+		cell = new Tag("td", "InÃ­cio");
 		cell.setPropertyValue("align", "center");
 		row.addTag(cell);
 		cell = new Tag("td", "Fim");
@@ -116,7 +116,7 @@ public class TesteImpressao {
 		table.addTag(row);
 		row = new Tag("tr");
 		row.setPropertyValue("bgcolor", "#FFFFFF");
-		cell = new Tag("td", "FASE LITORÂNEA");
+		cell = new Tag("td", "FASE LITORÃ‚NEA");
 		cell.setPropertyValue("align", "center");
 		row.addTag(cell);
 		cell = new Tag("td", "1500");
@@ -140,7 +140,7 @@ public class TesteImpressao {
 		table.addTag(row);
 		row = new Tag("tr");
 		row.setPropertyValue("bgcolor", "#FFFFFF");
-		cell = new Tag("td", "FASE AMAZÔNICA");
+		cell = new Tag("td", "FASE AMAZÃ”NICA");
 		cell.setPropertyValue("align", "center");
 		row.addTag(cell);
 		cell = new Tag("td", "1616");
@@ -172,10 +172,10 @@ public class TesteImpressao {
  * *** empty log message ***
  *
  * Revision 1.4  2007/07/19 21:18:16  nts
- * Inserindo comentários
+ * Inserindo comentÃ¡rios
  *
  * Revision 1.3  2006/07/05 16:00:48  nts
- * Refatorando para melhorar qualidade do código
+ * Refatorando para melhorar qualidade do cÃ³digo
  *
  * Revision 1.2  2006/04/11 19:43:47  tah
  * *** empty log message ***

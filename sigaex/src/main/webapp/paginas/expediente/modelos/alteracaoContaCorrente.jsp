@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-REQUERIMENTO PARA ALTERAÇÃO DE CONTA CORRENTE  -->
+REQUERIMENTO PARA ALTERAÃ‡ÃƒO DE CONTA CORRENTE  -->
 
 
 <c:set var="esconderTexto" value="sim" scope="request" />
@@ -13,13 +13,13 @@ REQUERIMENTO PARA ALTERAÇÃO DE CONTA CORRENTE  -->
 		<mod:texto largura="44" titulo="Nome do Banco a Creditar" var="banco" />
 	</mod:grupo>
 	<mod:grupo>	
-		<mod:texto titulo="Nº da Agência" var="agencia"/> (com dígito verificador)
+		<mod:texto titulo="NÂº da AgÃªncia" var="agencia"/> (com dÃ­gito verificador)
 	</mod:grupo>
 	<mod:grupo>	
-		<mod:texto titulo="Nome da Agência" var="nomeAgencia"/>
+		<mod:texto titulo="Nome da AgÃªncia" var="nomeAgencia"/>
 	</mod:grupo>
 	<mod:grupo>
-		<mod:texto titulo="Nº da C/C" var="contacorrente" /> (com dígito verificador)
+		<mod:texto titulo="NÂº da C/C" var="contacorrente" /> (com dÃ­gito verificador)
 	</mod:grupo>
 	
 	</mod:entrevista>	
@@ -30,8 +30,8 @@ REQUERIMENTO PARA ALTERAÇÃO DE CONTA CORRENTE  -->
 			Eu, ${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, 
 				${doc.subscritor.padraoReferenciaInvertido},
 				lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem respeitosamente, requerer a Vossa Senhoria, que meus vencimentos sejam creditados
-			no Banco ${banco}, da Agencia nº ${agencia} , nome da Agência: ${nomeAgencia}
-			e c/c nº ${contacorrente}</b>.
+			no Banco ${banco}, da Agencia nÂº ${agencia} , nome da AgÃªncia: ${nomeAgencia}
+			e c/c nÂº ${contacorrente}</b>.
 			</p>	
 		</mod:valor>
 	

@@ -6,14 +6,14 @@
 
 <!-- 
 Este modelo trata da Dispensa do Servidor
-Ultima atualizaÁ„o 12/03/2007
+Ultima atualiza√ß√£o 12/03/2007
  -->
 
 <mod:modelo>
 	<mod:entrevista>
 		<mod:grupo titulo="DETALHES DA DISPENSA">
 			<mod:grupo>
-				<mod:funcao titulo="FunÁ„o" var="funcaoComissionada" />
+				<mod:funcao titulo="Fun√ß√£o" var="funcaoComissionada" />
 			</mod:grupo>
 			<mod:grupo>
 				<mod:data titulo="Data Dispensa" var="dataDispensa" />
@@ -53,16 +53,16 @@ Ultima atualizaÁ„o 12/03/2007
 		<br>
 
 		<!-- INICIO ABERTURA --><p style="TEXT-INDENT: 2cm" align="justify">O JUIZ FEDERAL -
-		DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI«OS AUXILIARES DA
-		JUSTI«A FEDERAL DE 1∫ GRAU - SE«AO JUDICI¡RIA DO RIO DE JANEIRO, no uso
-		de suas atribuiÁoes legais e, ${textoPortaria}, RESOLVE:</p><!-- FIM ABERTURA -->
+		DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI√áOS AUXILIARES DA
+		JUSTI√áA FEDERAL DE 1¬∫ GRAU - SE√áAO JUDICI√ÅRIA DO RIO DE JANEIRO, no uso
+		de suas atribui√ßoes legais e, ${textoPortaria}, RESOLVE:</p><!-- FIM ABERTURA -->
 		<br>
 		<br>
 		
 		<p style="MARGIN-LEFT: 2cm" align="justify">DISPENSAR o(a)
 		servidor(a) <b>${doc.subscritor.descricao}</b>, <b>${doc.subscritor.cargo.nomeCargo}</b>,
-		<b>${doc.subscritor.padraoReferenciaInvertido}</b>, matrÌcula n&ordm; <b>${doc.subscritor.sigla}</b>,
-		da funÁ„o comissionada de <b>${requestScope['funcaoComissionada_funcaoSel.descricao']}</b>, da <b>${doc.subscritor.lotacao.descricao}</b>,
+		<b>${doc.subscritor.padraoReferenciaInvertido}</b>, matr√≠cula n&ordm; <b>${doc.subscritor.sigla}</b>,
+		da fun√ß√£o comissionada de <b>${requestScope['funcaoComissionada_funcaoSel.descricao']}</b>, da <b>${doc.subscritor.lotacao.descricao}</b>,
 		a partir de <b>${dataDispensa}</b>.</p>
 		<br>
 		<br>

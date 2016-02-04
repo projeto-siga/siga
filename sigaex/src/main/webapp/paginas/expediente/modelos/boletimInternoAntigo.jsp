@@ -14,13 +14,13 @@
 			<mod:texto titulo="Nome do Diretor do Foro" var="nmDiretorForo" valor="Dr. Alexandre Libonati de Abreu" largura="40"/>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Nome do Diretor da SG" var="nmDiretorRH" valor="PatrÌcia Reis Longhi" largura="40" />
+			<mod:texto titulo="Nome do Diretor da SG" var="nmDiretorRH" valor="Patr√≠cia Reis Longhi" largura="40" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Setores Respons·veis" var="setoresResponsaveis" valor="DIRFO: NAGB / SGP: SEPRF, SEBEN, SECAD, SELEG, SELOT, SESAU / SOF / SG" largura="90"/>
+			<mod:texto titulo="Setores Respons√°veis" var="setoresResponsaveis" valor="DIRFO: NAGB / SGP: SEPRF, SEBEN, SECAD, SELEG, SELOT, SESAU / SOF / SG" largura="90"/>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="GeraÁ„o e impress„o" var="geraImpress" valor="SID/CIPE" largura="90"/>
+			<mod:texto titulo="Gera√ß√£o e impress√£o" var="geraImpress" valor="SID/CIPE" largura="90"/>
 		</mod:grupo>
 		
 		<mod:grupo titulo="Documentos a Publicar">
@@ -88,7 +88,7 @@
 						${doc.codigo}
 					</td>
 					<td align="right" width="50%">
-						PublicaÁ„o Di·ria - Data: ${doc.dtDocDDMMYYYY}
+						Publica√ß√£o Di√°ria - Data: ${doc.dtDocDDMMYYYY}
 					</td>	
 				</tr>
 			</table>

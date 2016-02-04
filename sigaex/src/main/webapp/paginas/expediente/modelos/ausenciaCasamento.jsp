@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-REQUERIMENTO PARA AUSÊNCIA AO SERVIÇO EM RAZÃO DE CASAMENTO -->
+REQUERIMENTO PARA AUSÃŠNCIA AO SERVIÃ‡O EM RAZÃƒO DE CASAMENTO -->
 
 
 <c:set var="esconderTexto" value="sim" scope="request" />
@@ -15,7 +15,7 @@ REQUERIMENTO PARA AUSÊNCIA AO SERVIÇO EM RAZÃO DE CASAMENTO -->
 			<BR>${doc.subscritor.descricao},<c:if test="${not empty doc.subscritor.cargo.nomeCargo}">
 			${doc.subscritor.cargo.nomeCargo},</c:if> 
 			${doc.subscritor.padraoReferenciaInvertido}, vem requerer a Vossa Senhoria 
-			<B>AUSÊNCIA AO SERVIÇO EM RAZÃO DE CASAMENTO</B> com base na alínea a,
+			<B>AUSÃŠNCIA AO SERVIÃ‡O EM RAZÃƒO DE CASAMENTO</B> com base na alÃ­nea a,
 			inciso III, art. 97 da Lei 8.112/90.
 			</p>
 			

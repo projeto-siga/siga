@@ -3,20 +3,20 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-Inscrição de 2º via de crachá -->
+InscriÃ§Ã£o de 2Âº via de crachÃ¡ -->
 
 <mod:modelo>
 
 	<mod:entrevista>
 			
 		<mod:grupo titulo="crachas">
-			<mod:selecao titulo="Nº de crachas a incluir"
+			<mod:selecao titulo="NÂº de crachas a incluir"
 				var="crachas" opcoes="1;2;3;4;5;6;7;8;9;10" reler="sim" />
 			<c:forEach var="i" begin="1" end="${crachas}">
 				<mod:grupo>
 					<mod:texto titulo="${i}) Nome" largura="20" var="nome${i}" />
 					<mod:texto titulo="${i}) Matricula" largura="20" var="matricula${i}" />
-					<mod:texto titulo="${i}) Lotação" largura="20" var="lotacao${i}" />
+					<mod:texto titulo="${i}) LotaÃ§Ã£o" largura="20" var="lotacao${i}" />
 					<mod:data titulo="Data" var="data${i}" />
 				</mod:grupo>
 			</c:forEach>
@@ -28,29 +28,29 @@ Inscrição de 2º via de crachá -->
 	<mod:documento>
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerdaPrimeiraPagina.jsp"/>		
 
-		<h1>Termo de compromisso de recebimento de segunda via do crachá</h1>
+		<h1>Termo de compromisso de recebimento de segunda via do crachÃ¡</h1>
 		<body>	
 		
 				
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		Recebi nesta data o crahá de identificação no âmbito da <b>JUSTIÇA FEDERAL DE 1º INSTÂNCIA - Seção Judiciária 
+		Recebi nesta data o crahÃ¡ de identificaÃ§Ã£o no Ã¢mbito da <b>JUSTIÃ‡A FEDERAL DE 1Âº INSTÃ‚NCIA - SeÃ§Ã£o JudiciÃ¡ria 
 		do Estado do Rio de janeiro<b>, e me comprometo em caso de perda, roubo ou furto a comunicar, <b>incontinente<b>
-		á subsecretaria de Gestão de Pessoas, bem como, em caso de desligamento, devolve-lo áquela Subsecretaria-Seção 
-		de Avaliação de Desempenho.
+		Ã¡ subsecretaria de GestÃ£o de Pessoas, bem como, em caso de desligamento, devolve-lo Ã¡quela Subsecretaria-SeÃ§Ã£o 
+		de AvaliaÃ§Ã£o de Desempenho.
 		</p>		
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		Declaro, outrossim que, em caso de pedido de 2º via do mesmo, deverei efetuar o pagamento, diretamente na Subsecretaria
-		de Planejamento, Orçamento e Finanças, do valor para sua confecção.
+		Declaro, outrossim que, em caso de pedido de 2Âº via do mesmo, deverei efetuar o pagamento, diretamente na Subsecretaria
+		de Planejamento, OrÃ§amento e FinanÃ§as, do valor para sua confecÃ§Ã£o.
 		</p>
-		<h2>Observação:</h2>
-		1- Executam-se do pagamento acima descrito os casos de roubo, furto e inutilização acidental do cracha, quando não se caracterizar
-		, neste último caso, negligência do estagiário.<br>
-		2- Nessas situações, deverá ser anexada à solicitação de segunda via uma declaração firmada pelo requerente com 
+		<h2>ObservaÃ§Ã£o:</h2>
+		1- Executam-se do pagamento acima descrito os casos de roubo, furto e inutilizaÃ§Ã£o acidental do cracha, quando nÃ£o se caracterizar
+		, neste Ãºltimo caso, negligÃªncia do estagiÃ¡rio.<br>
+		2- Nessas situaÃ§Ãµes, deverÃ¡ ser anexada Ã  solicitaÃ§Ã£o de segunda via uma declaraÃ§Ã£o firmada pelo requerente com 
 		o relato do ocorrido.<br>
-		3- Tambem se excetua o caso de mudança de nome do requerente, que deverá apresentar, com a solicitação, cópia 
-		autênticada de documento comprobatório.<br> 
+		3- Tambem se excetua o caso de mudanÃ§a de nome do requerente, que deverÃ¡ apresentar, com a solicitaÃ§Ã£o, cÃ³pia 
+		autÃªnticada de documento comprobatÃ³rio.<br> 
 		<table width="100%" border="0" cellpadding="1">
-		<tr><td>Matrícula</td><td>Nome</td><td>Lotação</td><td>Data</td><td>Assinatura</td></tr>
+		<tr><td>MatrÃ­cula</td><td>Nome</td><td>LotaÃ§Ã£o</td><td>Data</td><td>Assinatura</td></tr>
 		</table> 
         
        <table width="100%" border="0" cellpadding="1">

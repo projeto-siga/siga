@@ -7,10 +7,10 @@
 
 <mod:modelo>
 	<mod:entrevista>
-	<mod:grupo titulo="1 - Dados do benefici·rio">
+	<mod:grupo titulo="1 - Dados do benefici√°rio">
 			<mod:pessoa var="nome" titulo="Nome"/>
 		<mod:grupo>
-			<mod:lotacao var="lotacao" titulo="LotaÁ„o"/>
+			<mod:lotacao var="lotacao" titulo="Lota√ß√£o"/>
 		</mod:grupo>
 		<mod:grupo>
 			<mod:texto var="ramal" titulo="Ramal" largura="5"/>
@@ -18,14 +18,14 @@
 	</mod:grupo>
 	<mod:grupo titulo="2 - Dados do profissional referenciado">
 			<mod:texto var="nomemed" titulo="Nome" largura="50"/> 
-			<mod:selecao titulo="Tipo de espÈcialidade" var="psi" opcoes="Psiquiatra;Psicoterapeuta" />
+			<mod:selecao titulo="Tipo de esp√©cialidade" var="psi" opcoes="Psiquiatra;Psicoterapeuta" />
 		<mod:grupo>
 			<mod:texto var="crmcrp" titulo="CRM / CRP" largura="10"/>
 			<mod:texto var="cpf" titulo="CPF" largura="15"/>
 		</mod:grupo>
 		
 		<mod:grupo>
-			<mod:texto var="endereco" titulo="EndereÁo" largura="50"/>
+			<mod:texto var="endereco" titulo="Endere√ßo" largura="50"/>
 		</mod:grupo>
 		<mod:grupo>
 			<mod:texto var="telefone" titulo="Telefone" largura="13"/>
@@ -56,7 +56,7 @@
 					<br/>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
-							<td align="center" width="100%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">INCLUS√O NO PROGRAMA DE APOIO ¿ PSIQUIATRIA E PSICOLOGIA (PAPSI)</p></td>
+							<td align="center" width="100%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">INCLUS√ÉO NO PROGRAMA DE APOIO √Ä PSIQUIATRIA E PSICOLOGIA (PAPSI)</p></td>
 						</tr>
 					</table>
 				</td>
@@ -66,13 +66,13 @@
 			<table width="100%" border="1" cellpadding="2" cellspacing="1" bgcolor="#000000">
 				<tr>
 					<td bgcolor="#FFFFFF" width="100%">
-					1- DADOS DO BENEFICI¡RIO</td>
+					1- DADOS DO BENEFICI√ÅRIO</td>
 				</tr>
 			</table>
 			<table width="100%" border="1" cellpadding="2" cellspacing="1" bgcolor="#000000">
 				<tr>
 					<td bgcolor="#FFFFFF" width="60%">Nome: ${requestScope['nome_pessoaSel.descricao']}</td> 
-					<td bgcolor="#FFFFFF" width="40%">MatrÌcula: ${requestScope['nome_pessoaSel.sigla']}</td>
+					<td bgcolor="#FFFFFF" width="40%">Matr√≠cula: ${requestScope['nome_pessoaSel.sigla']}</td>
 				</tr>
 			</table>
 			<table width="100%" border="1" cellpadding="2" cellspacing="1" bgcolor="#000000">
@@ -82,23 +82,23 @@
 			</table>
 			<table width="100%" border="1" cellpadding="2" cellspacing="1" bgcolor="#000000">
 				<tr>
-					<td bgcolor="#FFFFFF" width="60%">LotaÁ„o: ${requestScope['lotacao_lotacaoSel.descricao']}</td>
+					<td bgcolor="#FFFFFF" width="60%">Lota√ß√£o: ${requestScope['lotacao_lotacaoSel.descricao']}</td>
 					<td bgcolor="#FFFFFF" width="40%">Ramal: ${ramal }</td>
 				</tr>
 			</table>
 	 		<table width="100%" border="1" cellpadding="2" cellspacing="1" bgcolor="#000000">
 				<tr>
-					<td bgcolor="#FFFFFF" width="100%">2 - DECLARA«√O DO SERVIDOR<br></td>
+					<td bgcolor="#FFFFFF" width="100%">2 - DECLARA√á√ÉO DO SERVIDOR<br></td>
 				</tr>
 				<tr>
-					<td bgcolor="#FFFFFF" width="100%" align="justify"><br><font size='0.1'>a) Declaro estar ciente dos</font> termos da IN--23-09, de 19/10/2004, que dispıe sobre o programa de Apoio ‡ Psiquiatria e Psicologia, oferecido pelo Tribunal Regional Federal da 2™ Regi„o e SeÁıes Judici·rias Jurisdicionadas, a fim de possibilitar um tratamento adequado ‡s necessidades dos servidores<br><br>
-																	   b) Declaro ter ciÍncia de que o reembolso ser· parcial, podendo ser acumulado com reembolso do Plano de Sa˙de Externo, e que o valor reembolsado ser· fixado pela presidÍncia do Tribunal, equivalente , no m·ximo a 50% (cinq¸nta por cento) do respectivo valor de consulta/sess„o, sempre condicionada a existÍncia de dotaÁ„o orÁament·ria  para o Tribunal e SeÁıes Judici·rias.<br><br>
-					                                                   c) Declaro ter ciÍncia, para fins de ressarcimento, que deverei obter do profissional referenciado o recibo mensal de pagamento das consultas, emitido em nome do servidor, no qual dever· constar: <b><u>Nome completo do profissional, seu n˙mero de CPF, n˙mero de inscriÁ„o no CRM ou CRP(conforme o caso), numero de sessıes realizadas no mÍs, (com as respectivas datas em que foram realizadas) e valor total do recibo</u></b>.<br><br>
-					                                                   d) Tenho ciÍncia que deverei apresentar a cÛpia do recibo na SeÁ„o de BenefÌcios, atÈ o 5∫ dia do mÍs subseq¸ente ao da realizaÁ„o das consultas/sessıes, mediante apresentaÁ„o do original para fins de conferÍncia pelo Setor.<br><br>
-					                                                   e) Tenho ciÍcia que, em caso de fÈrias, licenÁas ou afastamentos autorizados, terei o prazo de atÈ 30 dias, apÛs o retorno, para a entrega do recibo e que na hipÛtese de entrega do recibo fora do prazo estabelecido, deverei submeter o pedido ‡ AdministraÁ„o, mediante justificativa por escrito e manifestaÁ„o do ServiÁo MÈdico ou PsicolÛgico.<br><br>
-					                                                   f) Declaro ter ciÍncia de que a duraÁ„o do benefÌcio ser· estipulada em dois anos; findo os quais o ServiÁo MÈdico/PsicolÛgico  podera prorrog·-lo, no m·ximo, mais 2 (dois) anos.<br><br>
-					                                                   g) Declaro, ainda, ter ciÍncia de que ao n„o apresentar os recibos na SEBEN/SRH, no perÌodo de 2 meses, e n„o tenha interrompido o meu tratamento, apresentarei uma justificativa por escrito, para a CAMS/SRH, esclarecendo os motivos, pois a partir do terceiro mÍs consecutivo serei, automaticamente, excluÌdo do Programa por desistÍncia.<br><br>
-					                                                   h) Declaro ter ciÍncia de que terei o prazo de 15 dias, a partir da data do encaminhamento, para realizar minha primeira consulta psiqui·trica/sess„o de psicoterapia.<br>                                                 
+					<td bgcolor="#FFFFFF" width="100%" align="justify"><br><font size='0.1'>a) Declaro estar ciente dos</font> termos da IN--23-09, de 19/10/2004, que disp√µe sobre o programa de Apoio √† Psiquiatria e Psicologia, oferecido pelo Tribunal Regional Federal da 2¬™ Regi√£o e Se√ß√µes Judici√°rias Jurisdicionadas, a fim de possibilitar um tratamento adequado √†s necessidades dos servidores<br><br>
+																	   b) Declaro ter ci√™ncia de que o reembolso ser√° parcial, podendo ser acumulado com reembolso do Plano de Sa√∫de Externo, e que o valor reembolsado ser√° fixado pela presid√™ncia do Tribunal, equivalente , no m√°ximo a 50% (cinq√ºnta por cento) do respectivo valor de consulta/sess√£o, sempre condicionada a exist√™ncia de dota√ß√£o or√ßament√°ria  para o Tribunal e Se√ß√µes Judici√°rias.<br><br>
+					                                                   c) Declaro ter ci√™ncia, para fins de ressarcimento, que deverei obter do profissional referenciado o recibo mensal de pagamento das consultas, emitido em nome do servidor, no qual dever√° constar: <b><u>Nome completo do profissional, seu n√∫mero de CPF, n√∫mero de inscri√ß√£o no CRM ou CRP(conforme o caso), numero de sess√µes realizadas no m√™s, (com as respectivas datas em que foram realizadas) e valor total do recibo</u></b>.<br><br>
+					                                                   d) Tenho ci√™ncia que deverei apresentar a c√≥pia do recibo na Se√ß√£o de Benef√≠cios, at√© o 5¬∫ dia do m√™s subseq√ºente ao da realiza√ß√£o das consultas/sess√µes, mediante apresenta√ß√£o do original para fins de confer√™ncia pelo Setor.<br><br>
+					                                                   e) Tenho ci√™cia que, em caso de f√©rias, licen√ßas ou afastamentos autorizados, terei o prazo de at√© 30 dias, ap√≥s o retorno, para a entrega do recibo e que na hip√≥tese de entrega do recibo fora do prazo estabelecido, deverei submeter o pedido √† Administra√ß√£o, mediante justificativa por escrito e manifesta√ß√£o do Servi√ßo M√©dico ou Psicol√≥gico.<br><br>
+					                                                   f) Declaro ter ci√™ncia de que a dura√ß√£o do benef√≠cio ser√° estipulada em dois anos; findo os quais o Servi√ßo M√©dico/Psicol√≥gico  podera prorrog√°-lo, no m√°ximo, mais 2 (dois) anos.<br><br>
+					                                                   g) Declaro, ainda, ter ci√™ncia de que ao n√£o apresentar os recibos na SEBEN/SRH, no per√≠odo de 2 meses, e n√£o tenha interrompido o meu tratamento, apresentarei uma justificativa por escrito, para a CAMS/SRH, esclarecendo os motivos, pois a partir do terceiro m√™s consecutivo serei, automaticamente, exclu√≠do do Programa por desist√™ncia.<br><br>
+					                                                   h) Declaro ter ci√™ncia de que terei o prazo de 15 dias, a partir da data do encaminhamento, para realizar minha primeira consulta psiqui√°trica/sess√£o de psicoterapia.<br>                                                 
          																																																																				
          			</td>
          			</tr>
@@ -128,7 +128,7 @@
 				</table>
 				<table width="100%" border="1" cellpadding="2" cellspacing="1" bgcolor="#000000">
 				<tr>
-					<td bgcolor="#FFFFFF" width="100%">EndereÁo: ${endereco}</td>			
+					<td bgcolor="#FFFFFF" width="100%">Endere√ßo: ${endereco}</td>			
 				</tr>
 				<tr>
 					<td bgcolor="#FFFFFF" width="100%">Telefone: ${telefone}</td>			
@@ -141,7 +141,7 @@
 			</table>
 			<table width="100%" border="1" cellpadding="8" cellspacing="1" bgcolor="#000000">
 				<tr>
-					<td bgcolor="#FFFFFF" width="100%"  align="justify">O servidor _________________________________________________ est· autorizado a fazer inscriÁ„o no benefÌcio PAPSI.</td>
+					<td bgcolor="#FFFFFF" width="100%"  align="justify">O servidor _________________________________________________ est√° autorizado a fazer inscri√ß√£o no benef√≠cio PAPSI.</td>
 				</tr>
 			</table>
 			
@@ -150,15 +150,15 @@
 					<td align="right">
 					${doc.dtExtenso}<br><br>
 					______________________________________<br>
-									(Assinatura Psiquiatra/PsicÛlogo)<br><br>
+									(Assinatura Psiquiatra/Psic√≥logo)<br><br>
 					<table width="40%" align="left">		
 						<tr>
-							<td>5 - SE«√O DE BENEFÕCIOS</td>
+							<td>5 - SE√á√ÉO DE BENEF√çCIOS</td>
 						</tr>
 						<tr>
 							<td>
 							<br/>
-								IncluÌdo por:__________em:____/____/____ 
+								Inclu√≠do por:__________em:____/____/____ 
 							</td>												
 						</tr>
 					</table>

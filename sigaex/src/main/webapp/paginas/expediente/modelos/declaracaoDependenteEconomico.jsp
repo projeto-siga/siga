@@ -54,15 +54,15 @@ DECLARACAO DE DEPENDENTE ECONOMICO-->
 		
 		<mod:letra tamanho="${tl}">
 			<p style="TEXT-INDENT: 2cm" align="justify">
-			Declaro, a fim de fazer prova junto ao Plano de Saúde, 
-			que ${dependente} permanece na condição de solteiro(a), estudante e vive sob minha dependência econômica.
+			Declaro, a fim de fazer prova junto ao Plano de SaÃºde, 
+			que ${dependente} permanece na condiÃ§Ã£o de solteiro(a), estudante e vive sob minha dependÃªncia econÃ´mica.
 			</p>
 			<br/><br/><br/>
 		
 		<p align="center">${doc.dtExtenso}</p>
 		<br/>
 		<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" />
-		<p align="center">Matrícula: RJ${doc.subscritor.matricula}</p>
+		<p align="center">MatrÃ­cula: RJ${doc.subscritor.matricula}</p>
 		</mod:letra>
 		
 			<!-- INICIO PRIMEIRO RODAPE

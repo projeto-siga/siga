@@ -1,8 +1,8 @@
 
 
-<%-- Este arquivo referia-se ao formulário Folha Incicial de Volume dos processos administrativos de Execução
-Orçamentária Financeira (EOF). Este formulário foi desmembrado em quatro novos modelos. Criei o
-arquivo folhaInicialVolumeEof.jsp , que contém os novos quatro modelos. --%>
+<%-- Este arquivo referia-se ao formulÃ¡rio Folha Incicial de Volume dos processos administrativos de ExecuÃ§Ã£o
+OrÃ§amentÃ¡ria Financeira (EOF). Este formulÃ¡rio foi desmembrado em quatro novos modelos. Criei o
+arquivo folhaInicialVolumeEof.jsp , que contÃ©m os novos quatro modelos. --%>
 
 
 
@@ -80,7 +80,7 @@ arquivo folhaInicialVolumeEof.jsp , que contém os novos quatro modelos. --%>
 		       <td>
 		          <table border="1" width=100% bordercolor="#000000" bgcolor="#000000" align="right">
 		             <tr> 
-			           <td  border="0"  width=60% bgcolor="#FFFFFF"  align="center"><b>Processo Nº</b><br/><br/></td>
+			           <td  border="0"  width=60% bgcolor="#FFFFFF"  align="center"><b>Processo NÂº</b><br/><br/></td>
 			           <td  border="0"  width=20% bgcolor="#FFFFFF"  align="center"><b>Ap.</b></td>
 			           <td  border="0"  width=20% bgcolor="#FFFFFF"  align="center"><b>Vol.</b></td>
 		             </tr>
@@ -110,10 +110,10 @@ arquivo folhaInicialVolumeEof.jsp , que contém os novos quatro modelos. --%>
 			             <td border="0"  bgcolor="#FFFFFF" width=5%  align="center">NE</td>
 			             <td border="0"  bgcolor="#FFFFFF" width=10% align="center">Data</td>
 			             <td border="0"  bgcolor="#FFFFFF" width=10% align="center">Valor(R$)</td>
-			             <td border="0"  bgcolor="#FFFFFF" width=10% align="center">% Retenção</td>
-			             <td border="0"  bgcolor="#FFFFFF" width=10% align="center">CND Válida até</td>
+			             <td border="0"  bgcolor="#FFFFFF" width=10% align="center">% RetenÃ§Ã£o</td>
+			             <td border="0"  bgcolor="#FFFFFF" width=10% align="center">CND VÃ¡lida atÃ©</td>
 			             <td border="0"  bgcolor="#FFFFFF" width=5%  align="center">Fls.</td>
-			             <td border="0"  bgcolor="#FFFFFF" width=10% align="center">FGTS Válida até</td>
+			             <td border="0"  bgcolor="#FFFFFF" width=10% align="center">FGTS VÃ¡lida atÃ©</td>
 			             <td border="0"  bgcolor="#FFFFFF" width=5%  align="center">Fls.</td>
 			          </tr>
 			           <c:forEach var="x" begin="0" end="4"> 
@@ -127,8 +127,8 @@ arquivo folhaInicialVolumeEof.jsp , que contém os novos quatro modelos. --%>
 			           </c:forEach>  
 			       
 			           <tr>
-			             <td border="0"  bgcolor="#FFFFFF"   align="center">ATA Nº</td>
-			             <td border="0"  bgcolor="#FFFFFF"   align="center" >Vigência</td>
+			             <td border="0"  bgcolor="#FFFFFF"   align="center">ATA NÂº</td>
+			             <td border="0"  bgcolor="#FFFFFF"   align="center" >VigÃªncia</td>
 			             <td border="0"  bgcolor="#FFFFFF"   align="center" >Contrato Fls.</td>
 			             <td border="0"  bgcolor="#FFFFFF"   align="center">Public. Fls.</td>
 			             <td border="0"  bgcolor="#FFFFFF"   align="center" >Garantia Fls.</td>
@@ -146,8 +146,8 @@ arquivo folhaInicialVolumeEof.jsp , que contém os novos quatro modelos. --%>
 			              </tr>
 			           </c:forEach>
 			           <tr>
-			             <td border="0"  bgcolor="#FFFFFF"  width=5% height="20" align="center">Termo aditivo Nº</td>
-			             <td border="0"  bgcolor="#FFFFFF"  width=10% height="20" align="center">Vigência</td>
+			             <td border="0"  bgcolor="#FFFFFF"  width=5% height="20" align="center">Termo aditivo NÂº</td>
+			             <td border="0"  bgcolor="#FFFFFF"  width=10% height="20" align="center">VigÃªncia</td>
 			             <td border="0"  bgcolor="#FFFFFF"  height="20" align="center">Contrato Fls.</td>
 			             <td border="0"  bgcolor="#FFFFFF"  height="20" align="center">Public. Fls.</td>
 			             <td border="0"  bgcolor="#FFFFFF"  height="20" align="center">Garantia Fls.</td>
@@ -171,7 +171,7 @@ arquivo folhaInicialVolumeEof.jsp , que contém os novos quatro modelos. --%>
 			             <td border="0"  bgcolor="#FFFFFF"  >&nbsp</td>
 			             <td border="0"  bgcolor="#FFFFFF"  >&nbsp</td>
 			             <td border="0"  bgcolor="#FFFFFF"  >&nbsp</td>
-			             <td border="0"  bgcolor="#FFFFFF"  align="center" style=" font-size: 7pt"><b>Exclusividade<b/><br/><b>Válida até<b/></td>
+			             <td border="0"  bgcolor="#FFFFFF"  align="center" style=" font-size: 7pt"><b>Exclusividade<b/><br/><b>VÃ¡lida atÃ©<b/></td>
 			             <td border="0"  bgcolor="#FFFFFF"  align="center">Fls.</td>
 			             <td border="0"  bgcolor="#FFFFFF"  align="center" style=" font-size: 7pt"><b>Doc. Representante<b/></td>
 			             <td border="0"  bgcolor="#FFFFFF"  align="center">Fls.</td>
@@ -185,7 +185,7 @@ arquivo folhaInicialVolumeEof.jsp , que contém os novos quatro modelos. --%>
 			           </c:forEach>
 			       </table>
 			 
-				<p style="TEXT-INDENT: 2cm">Certifico que, nesta data, iniciei o volume ${mob.numSequencia} do processo em epígrafe.</p>
+				<p style="TEXT-INDENT: 2cm">Certifico que, nesta data, iniciei o volume ${mob.numSequencia} do processo em epÃ­grafe.</p>
 				<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp"/>
 				
 				<!-- INICIO PRIMEIRO RODAPE

@@ -2,7 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <p align="left" /><font size='3'><b>Bem-vindo ao SIGA.</b></font></p>
-<p><font size='3' align="justify">Veja abaixo as ˙ltimas
+<p><font size='3' align="justify">Veja abaixo as √∫ltimas
 novidades.</font></p>
 
 <table>
@@ -11,20 +11,20 @@ novidades.</font></p>
 			<img src="/sigaex/imagens/info.jpg" /></td>
 			<td style="padding-top: 7; padding-bottom: 7">
 			<font size='2' align="justify"> <b>Dedicada aos Subscritores</b><br>
-		H· uma nova informaÁ„o na tabela de contagem de expedientes da p·gina
-		inicial. A linha "Como Subscritor" d· acesso a todos os documentos que
-		necessitam ser assinados por quem est· operando o sistema.</font></td>
+		H√° uma nova informa√ß√£o na tabela de contagem de expedientes da p√°gina
+		inicial. A linha "Como Subscritor" d√° acesso a todos os documentos que
+		necessitam ser assinados por quem est√° operando o sistema.</font></td>
 	</tr>
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7" width="8%" align="center">
 		<img src="/sigaex/imagens/search.jpg" /></td>
 		<td style="padding-top: 7; padding-bottom: 7">
 		<font size='2'
-			align="justify"> <b>Incrementada a Busca Por ClassificaÁ„o</b><br>
+			align="justify"> <b>Incrementada a Busca Por Classifica√ß√£o</b><br>
 		Agora todas as colunas da <a
 			href="http://intranet/conteudos/gestao_documental/gestao_documental.asp"
-			style="color: blue">Tabela de Temporalidade</a> s„o mostradas na
-		busca por classificaÁ„o do SIGA-EX.</font></td>
+			style="color: blue">Tabela de Temporalidade</a> s√£o mostradas na
+		busca por classifica√ß√£o do SIGA-EX.</font></td>
 	</tr>
 	
 	<tr>
@@ -34,28 +34,28 @@ novidades.</font></p>
 		<font size='2'
 			align="justify"> <b>Pesquisa de Expedientes por
 		Cadastrante</b><br>
-		Foi adicionado o campo "Cadastrante" ‡ tela de busca por expedientes.
-		Assim, pode-se listar os documentos feitos por uma pessoa ou lotaÁ„o.</font></td>
+		Foi adicionado o campo "Cadastrante" √† tela de busca por expedientes.
+		Assim, pode-se listar os documentos feitos por uma pessoa ou lota√ß√£o.</font></td>
 	</tr>
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7" width="8%" align="center">
 		<img src="/sigaex/imagens/applications.jpg" /></td>
 		<td style="padding-top: 7; padding-bottom: 7">
 		<font size='2'
-			align="justify"> <b>RelaÁ„o de Paternidade Entre
+			align="justify"> <b>Rela√ß√£o de Paternidade Entre
 		Documentos</b><br>
-		Est· disponÌvel a opÁ„o "Criar Documento Filho", ˙til principalmente
-		para facilitar a geraÁ„o de resposta a um expediente. Quando assinado,
-		um documento filho È automaticamente juntado ao pai. … possivel
-		tambÈm, na criaÁ„o de um expediente, definir qual o seu documento pai.</font></td>
+		Est√° dispon√≠vel a op√ß√£o "Criar Documento Filho", √∫til principalmente
+		para facilitar a gera√ß√£o de resposta a um expediente. Quando assinado,
+		um documento filho √© automaticamente juntado ao pai. √â possivel
+		tamb√©m, na cria√ß√£o de um expediente, definir qual o seu documento pai.</font></td>
 	</tr>
 	<tr>
 		<td style="padding-top: 7; padding-bottom: 7" width="8%" align="center">
 		<img src="/sigaex/imagens/info.jpg" /></td>
 		<td style="padding-top: 7; padding-bottom: 7">
-		<font size='2' align="justify"> <b>Novos Links na P·gina Inicial</b><br>
-		A ‡rea lateral esquerda da p·gina principal foi reformulada, e est„o
-		disponÌveis links para a tabela de temporalidade, para a apostila do
+		<font size='2' align="justify"> <b>Novos Links na P√°gina Inicial</b><br>
+		A √†rea lateral esquerda da p√°gina principal foi reformulada, e est√£o
+		dispon√≠veis links para a tabela de temporalidade, para a apostila do
 		SIGA-EX, entre outros.</font></td>
 	</tr>
 
@@ -65,25 +65,25 @@ novidades.</font></p>
 			<img src="/sigaex/imagens/application_lock.jpg" /></td>
 			<td style="padding-top: 7; padding-bottom: 7"><font size='2'
 				align="justify"> <b>Expedientes Mais Protegidos</b><br>
-			Os documentos sÛ se tornam visÌveis ‡s lotaÁıes n„o atendentes depois
+			Os documentos s√≥ se tornam vis√≠veis √†s lota√ß√µes n√£o atendentes depois
 			de assinados.</font></td>
 		</tr>
 		<tr>
 			<td style="padding-top: 7; padding-bottom: 7" width="8%" align="center">
 			<img src="/sigaex/imagens/application_edit.jpg" /></td>
 			<td style="padding-top: 7; padding-bottom: 7"><font size='2'
-				align="justify"> <b>Assinar … Necess·rio</b><br>
-			Para transferir um documento, agora È preciso antes assin·-lo, a n„o
-			ser que a lotaÁ„o ‡ qual se envia expresse, por chamado, aceitar
-			documentos n„o assinados.</font></td>
+				align="justify"> <b>Assinar √â Necess√°rio</b><br>
+			Para transferir um documento, agora √© preciso antes assin√°-lo, a n√£o
+			ser que a lota√ß√£o √† qual se envia expresse, por chamado, aceitar
+			documentos n√£o assinados.</font></td>
 		</tr>
 		<tr>
 			<td style="padding-top: 7; padding-bottom: 7" width="8%" align="center">
 			<img src="/sigaex/imagens/application.jpg" /></td>
 			<td style="padding-top: 7; padding-bottom: 7"><font size='2'
 				align="justify"> <b>Documentos Digitais</b><br>
-			Cerca de um quinto dos documentos criados hoje s„o totalmente
-			digitais, e o n˙mero tende a aumentar. Leia o <a
+			Cerca de um quinto dos documentos criados hoje s√£o totalmente
+			digitais, e o n√∫mero tende a aumentar. Leia o <a
 				href="/siga/arquivos/roteiro_eletronicos.pdf" style="color: blue">roteiro para
 			assinatura digital</a>.</font></td>
 		</tr>
@@ -92,8 +92,8 @@ novidades.</font></p>
 			<img src="/sigaex/imagens/page_search.jpg" /></td>
 			<td style="padding-top: 7; padding-bottom: 7"><font size='2'
 				align="justify"> <b>Pesquisa Textual Mais Completa</b><br>
-			Agora a busca textual abrange tambÈm os despachos, os anexos e as
-			anotaÁıes.</font></td>
+			Agora a busca textual abrange tamb√©m os despachos, os anexos e as
+			anota√ß√µes.</font></td>
 		</tr>
 
 		<tr>
@@ -113,8 +113,8 @@ novidades.</font></p>
 			<td
 				style="padding-top: 7; padding-bottom: 7"><font
 				size='2' align="justify"> <b>Menus</b><br>
-			Agora o SIGA possui um sistema de menus hier·rquicos, permitindo
-			assim uma navegaÁ„o mais f·cil e ·gil.</font></td>
+			Agora o SIGA possui um sistema de menus hier√°rquicos, permitindo
+			assim uma navega√ß√£o mais f√°cil e √°gil.</font></td>
 		</tr>
 
 
@@ -123,7 +123,7 @@ novidades.</font></p>
 			<img src="/sigaex/imagens/info.jpg" /></td>
 			<td
 				style="padding-top: 7; padding-bottom: 7"><font
-				size='2' align="justify"> <b>AlteraÁ„o na Nomeclatura dos
+				size='2' align="justify"> <b>Altera√ß√£o na Nomeclatura dos
 			Tipos de Documentos</b><br>
 			Os tipos de documento "Interno" e "Interno Antigo" passam a se chamar
 			respectivamente: "Interno Produzido" e "Interno Importado".</font></td>
@@ -133,19 +133,19 @@ novidades.</font></p>
 			<img src="/sigaex/imagens/format-justify-left.jpg" height="45" width="43"/></td>
 			<td
 				style="padding-top: 7; padding-bottom: 7"><font
-				size='2' align="justify"><b>Formul·rios EletrÙnicos</b> <br>
-			Os formul·rios de SubstituiÁ„o, DesignaÁ„o e Dispensa, RemoÁ„o e
-			Permuta j· podem ser utilizados eletronicamente.</font></td>
+				size='2' align="justify"><b>Formul√°rios Eletr√¥nicos</b> <br>
+			Os formul√°rios de Substitui√ß√£o, Designa√ß√£o e Dispensa, Remo√ß√£o e
+			Permuta j√° podem ser utilizados eletronicamente.</font></td>
 		</tr>
 		<tr>
 			<td style="padding-top: 7; padding-bottom: 7" width="8%" align="center">
 			<img src="/sigaex/imagens/format-justify-left.jpg" height="45" width="43"/></td>
 			<td
 				style="padding-top: 7; padding-bottom: 7"><font
-				size='2' align="justify"><b>Novos Formul·rios</b> <br>
-			Foram criados novos formul·rios de: <u>Boletim de FrequÍncia</u>,
-			Parcelamento de DÈbito, Termo de Compromisso e Recebimento do Crach·
-			de IdentificaÁ„o Funcional e DeclaraÁ„o de Bens.</font></td>
+				size='2' align="justify"><b>Novos Formul√°rios</b> <br>
+			Foram criados novos formul√°rios de: <u>Boletim de Frequ√™ncia</u>,
+			Parcelamento de D√©bito, Termo de Compromisso e Recebimento do Crach√°
+			de Identifica√ß√£o Funcional e Declara√ß√£o de Bens.</font></td>
 		</tr>
 
 	</c:if>

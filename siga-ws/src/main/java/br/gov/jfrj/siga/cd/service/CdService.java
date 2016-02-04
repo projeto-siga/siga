@@ -44,7 +44,7 @@ public interface CdService extends Remote {
 	 *            PKCS7 encoded contendo a assinatura e o certificado do
 	 *            assinante
 	 * @param fVerificarLCRs
-	 *            Faz o download das listas e verifica se os certificados est„o
+	 *            Faz o download das listas e verifica se os certificados est√£o
 	 *            revogados
 	 * @return Retorna Common Name (CN) do assinate se tudo ocorrer
 	 *         corretamente. Caso haja algum erro, retorna "ERRO: ", seguido da

@@ -52,7 +52,7 @@ public class WfJbpmContext {
 	}
 
 	/**
-	 * Retorna a sess„o do grafo.
+	 * Retorna a sess√£o do grafo.
 	 * @return
 	 */
 	public GraphSession getGraphSession() {

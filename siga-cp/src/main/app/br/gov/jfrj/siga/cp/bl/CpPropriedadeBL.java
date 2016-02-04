@@ -31,7 +31,7 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 		return this.obterPropriedadeLista("siga.cp.municipio");
 	}
 	/*
-	 *  Propriedades de conex„o
+	 *  Propriedades de conex√£o
 	 */
 	public String urlConexao() throws Exception {
 		return this.obterPropriedade("hibernate.connection.url");
@@ -57,8 +57,25 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 	public String c3poMaxStatements  ( ) throws Exception {
 		return this.obterPropriedade("c3p0.max_statements");
 	}
+	public String cacheUseSecondLevelCache  ( ) throws Exception {
+		String s = this.obterPropriedade("cache.use_second_level_cache");
+		return s == null ? "true" : s;
+	}
+	public String cacheUseQueryCache  ( ) throws Exception {
+		String s = this.obterPropriedade("cache.use_query_cache");
+		return s == null ? "true" : s;
+	}
+	public String gsaUrl  ( ) throws Exception {
+		return this.obterPropriedade("gsa.url");
+	}
 	@Override
 	public String getPrefixoModulo() {
 		return "siga.cp";
+	}
+	public void setCacheUseSecondLevelCache(Boolean b) throws Exception {
+		this.setPropriedade("cache.use_second_level_cache",b.toString());
+	}
+	public void setCacheUseQueryCache(Boolean b) throws Exception {
+		this.setPropriedade("cache.use_query_cache",b.toString());
 	}
 }

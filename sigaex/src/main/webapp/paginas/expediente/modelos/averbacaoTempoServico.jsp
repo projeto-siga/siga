@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-REQUERIMENTO PARA AVERBA«√O DE TEMPO DE SERVI«O -->
+REQUERIMENTO PARA AVERBA√á√ÉO DE TEMPO DE SERVI√áO -->
 
 
 
@@ -14,8 +14,8 @@ REQUERIMENTO PARA AVERBA«√O DE TEMPO DE SERVI«O -->
 		<mod:valor var="texto_requerimento">	
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, 
-			lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Senhoria <B>AVERBA«√O DE TEMPO DE 
-			SERVI«O/CONTRIBUI«√O</B>, conforme certid„o em anexo.
+			lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Senhoria <B>AVERBA√á√ÉO DE TEMPO DE 
+			SERVI√áO/CONTRIBUI√á√ÉO</B>, conforme certid√£o em anexo.
 			</p>
 		</mod:valor>	
 </mod:documento>

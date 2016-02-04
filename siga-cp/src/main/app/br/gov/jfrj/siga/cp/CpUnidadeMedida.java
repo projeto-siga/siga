@@ -1,9 +1,12 @@
 package br.gov.jfrj.siga.cp;
 
-import java.util.Calendar;
-
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.ActiveRecord;
+
+
 
 @Entity
 @Table(name = "CP_UNIDADE_MEDIDA", schema = "CORPORATIVO")
@@ -21,10 +24,19 @@ public class CpUnidadeMedida extends AbstractCpUnidadeMedida {
 	
 	final static public int SEGUNDO = 6;
 	
+	public static final ActiveRecord<CpUnidadeMedida> AR = new ActiveRecord<>(CpUnidadeMedida.class);
+	
 	public String getPlural(){
 		if (getDescricao().endsWith("s"))
 			return getDescricao() + "es";
 		return getDescricao() + "s";
+	}
+	
+	public void setId(Long id) {
+		setIdUnidadeMedida(id);
+	}
+	public Long getId() {
+		return getIdUnidadeMedida();
 	}
 
 }

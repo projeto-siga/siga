@@ -9,9 +9,9 @@
 		<c:if test="${empty texto_portaria}">
 		<c:set var="texto_portaria" scope="request">
 			<!-- INICIO ABERTURA --><p style="TEXT-INDENT: 2cm" align="justify"><b>O JUIZ FEDERAL
-			- DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI«OS AUXILIARES DA
-			JUSTI«A FEDERAL DE 1&ordm; GRAU - SE«√O JUDICI¡RIA DO RIO
-			DE JANEIRO</b>, no uso de suas atribuiÁıes legais, </p>
+			- DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI√áOS AUXILIARES DA
+			JUSTI√áA FEDERAL DE 1&ordm; GRAU - SE√á√ÉO JUDICI√ÅRIA DO RIO
+			DE JANEIRO</b>, no uso de suas atribui√ß√µes legais, </p>
 
 			<p style="TEXT-INDENT: 2cm" align="justify"><b>RESOLVE:</b></p><!-- FIM ABERTURA -->
 			

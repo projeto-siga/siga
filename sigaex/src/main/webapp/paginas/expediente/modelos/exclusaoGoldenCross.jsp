@@ -21,7 +21,7 @@
 		</mod:grupo>
 	</mod:grupo>	
 	<mod:grupo titulo="Titular" />
-		<mod:selecao var="situacaoTitular" titulo="Exclus&atilde;o do Titular ?" opcoes="Não;Sim" reler="ajax" idAjax="situacaoTitularAjax" />
+		<mod:selecao var="situacaoTitular" titulo="Exclus&atilde;o do Titular ?" opcoes="NÃ£o;Sim" reler="ajax" idAjax="situacaoTitularAjax" />
 			<mod:grupo depende="situacaoTitularAjax">
 				<c:if test="${situacaoTitular=='Sim'}">
 					<mod:grupo>
@@ -40,7 +40,7 @@
 							<mod:texto titulo="Dependente ${i}:" var="nomedep${i}" largura="60"/>
 						</mod:grupo>
 						<mod:grupo largura="40">
-							<mod:selecao titulo="Tipo Dependente:" var="tipodep${i}" opcoes="[Selecione];Filho menor de 18 anos;Filho entre 18 e 24 anos;Enteado;Menor sob guarda;Filho maior inválido;Outros" reler="ajax" idAjax="tipoDepAjax${i}" />
+							<mod:selecao titulo="Tipo Dependente:" var="tipodep${i}" opcoes="[Selecione];Filho menor de 18 anos;Filho entre 18 e 24 anos;Enteado;Menor sob guarda;Filho maior invÃ¡lido;Outros" reler="ajax" idAjax="tipoDepAjax${i}" />
 					       		<mod:grupo depende="tipoDepAjax${i}">	
 					       			<c:if test="${requestScope[f:concat('tipodep',i)] eq 'Outros'}">
 						         		<mod:texto var="outroTexto${i}" titulo="Outros:" largura="40" />
@@ -58,7 +58,7 @@
 							<mod:texto titulo="Agregado ${j}:" var="nomeagr${j}" largura="60" />
 						</mod:grupo>
 						<mod:grupo largura="40">
-							<mod:selecao titulo="Tipo de agregado:" var="tipoagr${j}" opcoes="[Selecione];Pai;Mãe;Outros" reler="ajax" idAjax="tipoagrAjax${j}"/>
+							<mod:selecao titulo="Tipo de agregado:" var="tipoagr${j}" opcoes="[Selecione];Pai;MÃ£e;Outros" reler="ajax" idAjax="tipoagrAjax${j}"/>
 							<mod:grupo depende="tipoagrAjax${j}">
 						 		<c:if test="${requestScope[f:concat('tipoagr',j)] eq 'Outros'}">
 						        	 <mod:texto var="outroTextoagr${j}" titulo="Outros:" largura="40" />
@@ -121,7 +121,7 @@
 	
 			<table width="100%" border="1" cellpadding="3">
 				<tr><td align="center" colspan="2">DEPENDENTES DIRETOS</td></tr>
-				<tr><td>Cônjuge/Companheiro(a): ${conjcomp }</td></tr>
+				<tr><td>CÃ´njuge/Companheiro(a): ${conjcomp }</td></tr>
 			</table>
 			<c:forEach var="i" begin="1" end="${quantidadeDependentes}">
 					<table width="100%" border="1" cellpadding="3">
@@ -164,7 +164,7 @@
 	<br/>
 		<table width="100%" border="1" cellpadding="3">
 			<tr>
-				<td align="justify"> Estou ciente de que a <u>exclusão do titular implica também a exclusão de todos os dependentes</u>, sejam eles dependentes diretos, agregados ou dependentes econômicos. Comprometo-me ainda a devolver as carteiras &agrave; SEBEN/SRH <u>em at&eacute; 3 dias após a data de vigência da exclusão</u>.</td>
+				<td align="justify"> Estou ciente de que a <u>exclusÃ£o do titular implica tambÃ©m a exclusÃ£o de todos os dependentes</u>, sejam eles dependentes diretos, agregados ou dependentes econÃ´micos. Comprometo-me ainda a devolver as carteiras &agrave; SEBEN/SRH <u>em at&eacute; 3 dias apÃ³s a data de vigÃªncia da exclusÃ£o</u>.</td>
 			</tr>
 		</table>
 	<br/>
@@ -175,7 +175,7 @@
 	
 	   	<table width="100%" border="1" cellpadding="3">
 	   		<tr>
-	   			<td align="justify">Caso o beneficiário a ser excluído pertença ao Golden Med, e a exclusão do plano de saúde não seja para dia 1&ordm;, a cessação de cobrança Golden Med, relativa a este beneficiário, somente ocorrerá a partir do dia 1&ordm; do mês subseqüente &agrave; data de exclusão do plano, por não haver cobrança <i>pro rata</i> no Golden Med.</td>
+	   			<td align="justify">Caso o beneficiÃ¡rio a ser excluÃ­do pertenÃ§a ao Golden Med, e a exclusÃ£o do plano de saÃºde nÃ£o seja para dia 1&ordm;, a cessaÃ§Ã£o de cobranÃ§a Golden Med, relativa a este beneficiÃ¡rio, somente ocorrerÃ¡ a partir do dia 1&ordm; do mÃªs subseqÃ¼ente &agrave; data de exclusÃ£o do plano, por nÃ£o haver cobranÃ§a <i>pro rata</i> no Golden Med.</td>
 	   		</tr>
 	   	</table>
 	<br/>

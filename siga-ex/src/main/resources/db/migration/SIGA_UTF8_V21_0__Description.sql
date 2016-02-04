@@ -1,14 +1,14 @@
---Atualiza a trigger de proteção do siga-doc
---Usuário SIGA_SEC_POLICY
+--Atualiza a trigger de proteÃ§Ã£o do siga-doc
+--UsuÃ¡rio SIGA_SEC_POLICY
 Create user SIGA_SEC_POLICY identified by SIGA_SEC_POLICY ;
---PRIVILÉGIOS de SISTEMA
+--PRIVILÃ‰GIOS de SISTEMA
 Grant ALTER ANY TRIGGER to SIGA_SEC_POLICY;	
 Grant ALTER SESSION to SIGA_SEC_POLICY;	
 Grant CREATE ANY TRIGGER to SIGA_SEC_POLICY;	
 Grant CREATE SESSION to SIGA_SEC_POLICY;	
 Grant CREATE TRIGGER to SIGA_SEC_POLICY;	
 Grant DROP ANY TRIGGER to SIGA_SEC_POLICY;	
---PRIVILÉGIOS de OBJETO
+--PRIVILÃ‰GIOS de OBJETO
 Grant SELECT	ON	SIGA.EX_DOCUMENTO to SIGA_SEC_POLICY;	
 Grant SELECT	ON	SIGA.EX_MOBIL to SIGA_SEC_POLICY;	
 Grant SELECT	ON	SIGA.EX_MOVIMENTACAO to SIGA_SEC_POLICY;
@@ -21,14 +21,14 @@ Before Update or Delete on SIGA.EX_DOCUMENTO
 For Each Row
 WHEN (Old.dt_fechamento is not null)
 DECLARE 
-  PRAGMA AUTONOMOUS_TRANSACTION; -- Trigger em transação autônoma.
+  PRAGMA AUTONOMOUS_TRANSACTION; -- Trigger em transaÃ§Ã£o autÃ´noma.
   QTD_DOC_VAR  number(10,0):= 0;
          
 begin
         if updating then
             if  :Old.dt_fechamento <> :New.dt_fechamento 
                then
-                 raise_application_error( -20101,'Não é permitido alterar uma DATA de FECHAMENTO já existente' );
+                 raise_application_error( -20101,'NÃ£o Ã© permitido alterar uma DATA de FECHAMENTO jÃ¡ existente' );
              end if;
 
              if :Old.fg_eletronico = 'N' then
@@ -82,10 +82,10 @@ begin
                       :old.DT_DOC_ORIGINAL <> :New.DT_DOC_ORIGINAL OR
                       :old.ID_MOB_AUTUADO <> :New.ID_MOB_AUTUADO 
                   then
-                    raise_application_error( -20101,'Não é permitido alterar: não eletrônico com data de fechamento e com conteúdo.' );
+                    raise_application_error( -20101,'NÃ£o Ã© permitido alterar: nÃ£o eletrÃ´nico com data de fechamento e com conteÃºdo.' );
                   end if;
                 else
-                    raise_application_error( -20101,'Não é permitido alterar: não eletrônico com data de fechamento e com conteúdo.' );
+                    raise_application_error( -20101,'NÃ£o Ã© permitido alterar: nÃ£o eletrÃ´nico com data de fechamento e com conteÃºdo.' );
                 end if;
              elsif :Old.fg_eletronico = 'S' then
                     select count(*) into QTD_DOC_VAR 
@@ -152,12 +152,12 @@ begin
                           :old.DT_DOC_ORIGINAL <> :New.DT_DOC_ORIGINAL OR
                           :old.ID_MOB_AUTUADO <> :New.ID_MOB_AUTUADO 
                         then       
-                          raise_application_error( -20101,'Não é permitido alterar: eletrônico, com conteúdo, tipo mov. 11 e sem mov. canceladora.' );
+                          raise_application_error( -20101,'NÃ£o Ã© permitido alterar: eletrÃ´nico, com conteÃºdo, tipo mov. 11 e sem mov. canceladora.' );
                         end if;
                    end if;
              end if;
         elsif deleting then
-             raise_application_error( -20101,'Não é permitido excluir: data de fechamento existente.' );
+             raise_application_error( -20101,'NÃ£o Ã© permitido excluir: data de fechamento existente.' );
         end if;
 end;
 	

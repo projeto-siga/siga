@@ -16,7 +16,7 @@
 		<mod:grupo>
 			<mod:pessoa titulo="Titular" var="titular" />
 		</mod:grupo>
-		<mod:grupo titulo="Período Solicitado">
+		<mod:grupo titulo="PerÃ­odo Solicitado">
 			<mod:data titulo="De" var="dataInicio" />
 			<mod:data titulo="a" var="dataFim" />
 		</mod:grupo>
@@ -27,7 +27,7 @@
 	<mod:documento>
 		<mod:valor var="texto_oficio">
 			<p style="TEXT-INDENT: 2cm" align="justify">Solicito a Vossa
-			Excelência as providências necessárias para que o(a) servidor(a)
+			ExcelÃªncia as providÃªncias necessÃ¡rias para que o(a) servidor(a)
 			<mod:identificacao pessoa="${requestScope['substituto_pessoaSel.id']}"/>
 			<b>substitua</b> o(a) servidor(a) 
 			<mod:identificacao pessoa="${requestScope['titular_pessoaSel.id']}" funcao="sim" />
@@ -37,7 +37,7 @@
 					no dia <b>${dataInicio}</b>,
 				</c:when>
 				<c:otherwise>
-					no período de <b>${dataInicio}</b> a <b>${dataFim}</b>,
+					no perÃ­odo de <b>${dataInicio}</b> a <b>${dataFim}</b>,
 				</c:otherwise>
 			</c:choose>
 				por motivo de <b>${motivo}</b>.</p>

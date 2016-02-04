@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-CONCESSÃO DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE 
+CONCESSÃƒO DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE 
 - PEDIDO -->
 
 
@@ -15,7 +15,7 @@ CONCESSÃO DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE
 	<mod:texto  var="nomedep" titulo="Dependente "  />
 	</mod:grupo>
 	<mod:selecao titulo="Parentesco" var="parente"
-					opcoes="companheiro(a);enteado(a);dependente economico;beneficiário designado" />
+					opcoes="companheiro(a);enteado(a);dependente economico;beneficiÃ¡rio designado" />
 	</mod:entrevista>
 	<mod:documento>
 	<c:if test="${empty tamanhoLetra or tamanhoLetra=='Normal'}">
@@ -42,7 +42,7 @@ CONCESSÃO DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE
 		<center><c:import url="/paginas/expediente/modelos/inc_tit_presidenteTrf.jsp" /></center>
 		<p style="TEXT-INDENT: 3cm" align="justify">
 		Eu, ${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.sigla}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao},
-		venho por meio deste solicitar a VExa., s.m.j. o deferimento do pedido de inclusão de <b>${nomedep}</b> como meu/minha dependente no Plano de Saúde da Justiça Federal, na qualidae de ${parente}
+		venho por meio deste solicitar a VExa., s.m.j. o deferimento do pedido de inclusÃ£o de <b>${nomedep}</b> como meu/minha dependente no Plano de SaÃºde da JustiÃ§a Federal, na qualidae de ${parente}
 		</p>
 		<br>
 		<br>

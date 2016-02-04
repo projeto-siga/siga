@@ -11,17 +11,17 @@ FORMULARIO PARA INSCRICAO NO AUXILIO SAUDE-->
 		</br>
 		<mod:grupo>
 			<mod:grupo>
-				<mod:pessoa titulo="Matrícula" var="matricula" reler="sim"
+				<mod:pessoa titulo="MatrÃ­cula" var="matricula" reler="sim"
 					buscarFechadas="true" />
 			</mod:grupo>
 			<mod:grupo>
 				<mod:texto titulo="Ramal" var="ramal" largura="10" />
-				<mod:texto titulo="Plano de saúde a qual está vinculado" var="plano"
+				<mod:texto titulo="Plano de saÃºde a qual estÃ¡ vinculado" var="plano"
 					largura="30" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:selecao titulo="Data de vigência" var="mes"
-					opcoes="Janeiro;Fevereiro;Março;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro" />
+				<mod:selecao titulo="Data de vigÃªncia" var="mes"
+					opcoes="Janeiro;Fevereiro;MarÃ§o;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro" />
 			</mod:grupo>
 			</br>
 		</mod:grupo>
@@ -29,12 +29,12 @@ FORMULARIO PARA INSCRICAO NO AUXILIO SAUDE-->
 
 		<mod:selecao titulo="Total de dependentes" var="totalDePessoal"
 			opcoes="1;2;3;4;5;6;7;8;9;10" reler="sim" />
-		<mod:grupo titulo="Relação de Dependentes">
+		<mod:grupo titulo="RelaÃ§Ã£o de Dependentes">
 
 
 			<mod:grupo>
 				<mod:selecao titulo="Todos os dependentes pertencem ao mesmo plano?"
-					var="pertence" opcoes="Sim;Não" reler="sim" />
+					var="pertence" opcoes="Sim;NÃ£o" reler="sim" />
 			</mod:grupo>
 			<br />
 			<c:forEach var="i" begin="1" end="${totalDePessoal}">
@@ -44,21 +44,21 @@ FORMULARIO PARA INSCRICAO NO AUXILIO SAUDE-->
 				</mod:grupo>
 				<mod:grupo>
 				<mod:selecao titulo="Parentesco" var="parentesco${i}" 
-					opcoes="Cônjuge;Filhos menores de 21 anos;Filhos entre 21 e 24 anos;Filho maior, inválido;Companheiro(a);Enteado(a) - Filho de Cônjuge, menor de 21 anos;Enteado(a) - Filho de Cônjuge, entre 21 e 24 anos;Enteado(a) - Filho de Cônjuge, maior inválido;Enteado(a) - Filho de Companheiro, menor de 21 anos;Enteado(a) - Filho de Companheiro, entre 21 e 24 anos;Enteado(a) - Filho de Companheiro, maior inválido;Menor sob guarda ou tutela" />
+					opcoes="CÃ´njuge;Filhos menores de 21 anos;Filhos entre 21 e 24 anos;Filho maior, invÃ¡lido;Companheiro(a);Enteado(a) - Filho de CÃ´njuge, menor de 21 anos;Enteado(a) - Filho de CÃ´njuge, entre 21 e 24 anos;Enteado(a) - Filho de CÃ´njuge, maior invÃ¡lido;Enteado(a) - Filho de Companheiro, menor de 21 anos;Enteado(a) - Filho de Companheiro, entre 21 e 24 anos;Enteado(a) - Filho de Companheiro, maior invÃ¡lido;Menor sob guarda ou tutela" />
 			</mod:grupo>
 						<mod:grupo>	
 					<mod:texto titulo="Estado civil" var="estado${i}" largura="19" />
 				</mod:grupo>
 				<mod:grupo>
-					<mod:texto titulo="Nº de identidade" var="identidade${i}"
+					<mod:texto titulo="NÂº de identidade" var="identidade${i}"
 						largura="15" />
-					<mod:texto titulo="Órgão expedidor" var="orgao${i}" largura="15" />
-					<mod:data titulo="Data de Expedição" var="data_expedicao${i}" />
+					<mod:texto titulo="Ã“rgÃ£o expedidor" var="orgao${i}" largura="15" />
+					<mod:data titulo="Data de ExpediÃ§Ã£o" var="data_expedicao${i}" />
 				</mod:grupo>
 				<mod:grupo>
-					<c:if test="${pertence == 'Não'}">
+					<c:if test="${pertence == 'NÃ£o'}">
 						<mod:grupo>
-							<mod:texto titulo="Plano de Saúde" var="planoDep${i}"
+							<mod:texto titulo="Plano de SaÃºde" var="planoDep${i}"
 								largura="15" />
 						</mod:grupo>
 					</c:if>
@@ -104,8 +104,8 @@ FORMULARIO PARA INSCRICAO NO AUXILIO SAUDE-->
 		<table width="100%" height="90px" border="1" cellpadding="2"
 			cellspacing="1" bgcolor="#000000">
 			<tr>
-				<td bgcolor="#FFFFFF" height="30px" align="center"><b>RELAÇÃO
-				DE BENEFICIÁRIOS</b></td>
+				<td bgcolor="#FFFFFF" height="30px" align="center"><b>RELAÃ‡ÃƒO
+				DE BENEFICIÃRIOS</b></td>
 			</tr>
 		</table>
 		<table width="100%" border="1" cellpadding="2" cellspacing="1"
@@ -116,7 +116,7 @@ FORMULARIO PARA INSCRICAO NO AUXILIO SAUDE-->
 					<td width="65%" bgcolor="#FFFFFF" colspan="2" align="center"><b>Nome</b></td>
 					<td width="15%" bgcolor="#FFFFFF" align="center"><b>Parentesco</b></td>
 					<td width="20%" bgcolor="#FFFFFF" colspan="2" align="center"><b>Plano
-					de Saúde</b></td>
+					de SaÃºde</b></td>
 
 				</tr>
 
@@ -124,7 +124,7 @@ FORMULARIO PARA INSCRICAO NO AUXILIO SAUDE-->
 					<td width="65%" bgcolor="#FFFFFF" colspan="2" align="center">${requestScope[f:concat('nome',i)]}</td>
 					<td width="15%" bgcolor="#FFFFFF" align="center">${requestScope[f:concat('parentesco',i)]}</td>
 
-					<c:if test="${pertence == 'Não'}">
+					<c:if test="${pertence == 'NÃ£o'}">
 						<td width="20%" bgcolor="#FFFFFF" colspan="2" align="center">${requestScope[f:concat('planoDep',i)]}</td>
 					</c:if>
 					<c:if test="${pertence == 'Sim'}">
@@ -134,12 +134,12 @@ FORMULARIO PARA INSCRICAO NO AUXILIO SAUDE-->
 
 
 				<tr>
-					<td width="30%" bgcolor="#FFFFFF" align="center"><b>Nº de
+					<td width="30%" bgcolor="#FFFFFF" align="center"><b>NÂº de
 					identidade</b></td>
-					<td width="20%" bgcolor="#FFFFFF" align="center"><b>Órgão
+					<td width="20%" bgcolor="#FFFFFF" align="center"><b>Ã“rgÃ£o
 					expedidor</b></td>
 					<td width="15%" bgcolor="#FFFFFF" align="center"><b>Data
-					expedição</b></td>
+					expediÃ§Ã£o</b></td>
 					<td width="15%" bgcolor="#FFFFFF" align="center"><b>Data
 					nascimento</b></td>
 					<td width="20%" bgcolor="#FFFFFF" align="center"><b>Estado
@@ -164,7 +164,7 @@ FORMULARIO PARA INSCRICAO NO AUXILIO SAUDE-->
 					
 				<tr>
 				<td width="100%" colspan="5" bgcolor="#FFFFFF">
-				* Declaro, a fim de fazer prova junto ao plano de saúde, que ${requestScope[f:concat('nome',i)]} permanece na condição de solteiro(a), estudante e vive sob minha dependência econômica.
+				* Declaro, a fim de fazer prova junto ao plano de saÃºde, que ${requestScope[f:concat('nome',i)]} permanece na condiÃ§Ã£o de solteiro(a), estudante e vive sob minha dependÃªncia econÃ´mica.
 				</td>
 				</tr>
 							</c:if>
@@ -175,33 +175,33 @@ FORMULARIO PARA INSCRICAO NO AUXILIO SAUDE-->
 			pessoa="${requestScope['matricula_pessoaSel.id']}" negrito="sim"
 			nivelHierarquicoMaximoDaLotacao="4" /> CPF:
 		${f:pessoa(requestScope['matricula_pessoaSel.id']).cpfPessoa}, ramal
-		${ramal}, vinculado ao plano de saúde ${plano}, declaro estar ciente
-		dos termos da Resolução nº 587, que regulamenta à assistência à saúde
-		prevista no art. 230 da Lei nº 8.112, de 1990, com a redação dada pela
-		Lei nº 11.032, de 2006, e de que o respectivo reembolso será realizado
+		${ramal}, vinculado ao plano de saÃºde ${plano}, declaro estar ciente
+		dos termos da ResoluÃ§Ã£o nÂº 587, que regulamenta Ã  assistÃªncia Ã  saÃºde
+		prevista no art. 230 da Lei nÂº 8.112, de 1990, com a redaÃ§Ã£o dada pela
+		Lei nÂº 11.032, de 2006, e de que o respectivo reembolso serÃ¡ realizado
 		em Folha de Pagamento, conforme apresentado abaixo: <br />
 		<br />
-		Data de Vigência: ${mes} <br />
+		Data de VigÃªncia: ${mes} <br />
 		<br />
-		&bull;O beneficiário receberá o valor integral da mensalidade do Plano
-		de Saúde externo, quando este for igual ou inferior ao limite máximo
+		&bull;O beneficiÃ¡rio receberÃ¡ o valor integral da mensalidade do Plano
+		de SaÃºde externo, quando este for igual ou inferior ao limite mÃ¡ximo
 		de reembolso; <br /><br />
 
-		&bull;Quando o valor da mensalidade cobrada exceder o limite máximo do
-		reembolso, o beneficiário receberá o valor deste limite; <br /><br />
-		&bull;Declaro, ainda, que o(s) beneficiário(s) acima relacionado(s)
-		não recebe(m) auxílio semelhante e nem participa(m) de outro programa
-		de assistência à saúde, custeado pelos cofres públicos, ainda que em
+		&bull;Quando o valor da mensalidade cobrada exceder o limite mÃ¡ximo do
+		reembolso, o beneficiÃ¡rio receberÃ¡ o valor deste limite; <br /><br />
+		&bull;Declaro, ainda, que o(s) beneficiÃ¡rio(s) acima relacionado(s)
+		nÃ£o recebe(m) auxÃ­lio semelhante e nem participa(m) de outro programa
+		de assistÃªncia Ã  saÃºde, custeado pelos cofres pÃºblicos, ainda que em
 		parte.</p>
 
-		<b>OBSERVAÇÃO<b />
-		<p align="justify">&bull; A inscrição de dependentes somente
-		poderá ser feita se o servidor for inscrito como titular no referido
-		benefício e somente ele poderá efetivá-la.</p>
+		<b>OBSERVAÃ‡ÃƒO<b />
+		<p align="justify">&bull; A inscriÃ§Ã£o de dependentes somente
+		poderÃ¡ ser feita se o servidor for inscrito como titular no referido
+		benefÃ­cio e somente ele poderÃ¡ efetivÃ¡-la.</p>
 
-		<p align="justify"><b>Esclarecimentos quanto à documentação a
-		ser encaminhada serão prestados após a regulamentaçãopelo TRF - 2ª
-		Região.<b /></p>
+		<p align="justify"><b>Esclarecimentos quanto Ã  documentaÃ§Ã£o a
+		ser encaminhada serÃ£o prestados apÃ³s a regulamentaÃ§Ã£opelo TRF - 2Âª
+		RegiÃ£o.<b /></p>
 		<br />
 		<p align="center">${doc.dtExtenso}</p>
 		<c:import

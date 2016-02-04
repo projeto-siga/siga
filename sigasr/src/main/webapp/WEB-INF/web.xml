@@ -1,0 +1,127 @@
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+	
+	<display-name>SIGA - Serviços</display-name>
+	
+	<session-config>
+		<session-timeout>120</session-timeout>
+	</session-config>
+
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	
+	<jsp-config>
+		<taglib>
+			<taglib-uri>http://localhost/sigasrtags</taglib-uri>
+			<taglib-location>/WEB-INF/tags/sigasr.tld</taglib-location>
+		</taglib>
+		<jsp-property-group>
+			<description>Property group for common configuration for all the JSP's</description>
+			<url-pattern>*.jsp</url-pattern>
+			<url-pattern>*.html</url-pattern>
+			<el-ignored>false</el-ignored>
+			<page-encoding>UTF-8</page-encoding>
+		</jsp-property-group>
+		<jsp-property-group>
+			<description>Property group for common configuration for all the JSP's</description>
+			<url-pattern>*.jsp</url-pattern>
+			<url-pattern>*.html</url-pattern>
+			<el-ignored>false</el-ignored>
+			<page-encoding>UTF-8</page-encoding>
+		</jsp-property-group>
+	</jsp-config>
+
+	<context-param>
+	    <param-name>br.com.caelum.vraptor.provider</param-name>
+	    <param-value>br.com.caelum.vraptor.ioc.guice.GuiceProvider</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>br.com.caelum.vraptor.encoding</param-name>
+		<param-value>UTF-8</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>br.com.caelum.vraptor.packages</param-name>
+		<param-value>br.gov.jfrj.siga.vraptor, br.gov.jfrj.siga.feature.entity.instantiator.vraptor</param-value>
+	</context-param>
+	
+	<filter>
+        <filter-name>SrFilter</filter-name>
+        <filter-class>br.gov.jfrj.siga.sr.util.SrThreadFilter</filter-class>
+    </filter>
+
+	<filter>
+		<filter-name>vraptor</filter-name>
+		<filter-class>br.com.caelum.vraptor.VRaptor</filter-class>
+	</filter>
+	
+	<filter-mapping>
+        <filter-name>SrFilter</filter-name>
+        <url-pattern>/app/*</url-pattern>
+        <url-pattern>/solicitacao/*</url-pattern>
+    </filter-mapping>
+	
+	<filter-mapping>
+		<filter-name>vraptor</filter-name>
+		<url-pattern>/app/*</url-pattern>
+		<url-pattern>/solicitacao/*</url-pattern>
+		<url-pattern>/public/app/solicitacao/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+	
+	<filter>
+        <filter-name>ResponseHeaderFilter</filter-name>
+        <filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
+        <init-param>
+            <param-name>Cache-Control</param-name>
+            <param-value>public, max-age=3600</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>ResponseHeaderFilter</filter-name>
+        <url-pattern>/images/*</url-pattern>
+        <url-pattern>/javascripts/*</url-pattern>
+        <url-pattern>/stylesheets/*</url-pattern>
+    </filter-mapping>
+	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Paginas do Sistema</web-resource-name>
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>sigausuario</role-name>
+		</auth-constraint>
+	</security-constraint>
+	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Recursos Publicos</web-resource-name>
+			<url-pattern>/public/*</url-pattern>
+			<url-pattern>/rest/*</url-pattern>
+			<url-pattern>/app/corporativo/*</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
+	
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<realm-name>SigaSr</realm-name>
+		<form-login-config>
+			<form-login-page>/paginas/login.jsp</form-login-page>
+			<form-error-page>/paginas/loginInvalido.jsp</form-error-page>
+		</form-login-config>
+	</login-config>
+	
+	<security-role>
+		<role-name>sigausuario</role-name>
+	</security-role>
+	
+	<error-page>
+		
+		<location>/WEB-INF/page/erroGeral.jsp</location>
+	</error-page>
+</web-app>

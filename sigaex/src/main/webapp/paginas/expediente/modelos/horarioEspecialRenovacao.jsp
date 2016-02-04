@@ -3,8 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-CONCESS√O DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE 
-- RENOVA«√O -->
+CONCESS√ÉO DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE 
+- RENOVA√á√ÉO -->
 
 <c:set var="esconderTexto" value="sim" scope="request" />
 <c:set var="para" value="diretoraRH" scope="request" />
@@ -12,14 +12,14 @@ CONCESS√O DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE
 	<mod:entrevista>
 		
 		<font color="blue"><b>
-		<mod:grupo titulo="DETALHES DO HOR¡RIO"></mod:grupo>
+		<mod:grupo titulo="DETALHES DO HOR√ÅRIO"></mod:grupo>
 		</font></b>	
-		<mod:selecao titulo="Quais alteraÁıes far·?"
-				var="opcaoHorario" opcoes="manutenÁ„o do hor·rio anterior
-				;alteraÁ„o do hor·rio anterior para" reler="sim" />
+		<mod:selecao titulo="Quais altera√ß√µes far√°?"
+				var="opcaoHorario" opcoes="manuten√ß√£o do hor√°rio anterior
+				;altera√ß√£o do hor√°rio anterior para" reler="sim" />
 			
 				
-		<c:if test="${opcaoHorario == 'alteraÁ„o do hor·rio anterior para'}">
+		<c:if test="${opcaoHorario == 'altera√ß√£o do hor√°rio anterior para'}">
 					<mod:memo colunas="65" linhas="2" 
 					titulo="DETALHES DA PROPOSTA DE HORARIO" var="ComentarAlteracaoHorario"/>
         </c:if>
@@ -33,18 +33,18 @@ CONCESS√O DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, 
 		 lotado(a) no(a)${doc.subscritor.lotacao.descricao},
 	
-		vem requerer a Vossa Senhoria, <B> RENOVA«√O DO HOR¡RIO ESPECIAL AO SERVIDOR 
-		ESTUDANTE</B>, apresentando, para tanto, declaraÁ„o de freq¸Íncia regular no 
-		perÌodo anterior, expedida pela InstituiÁ„o de Ensino, em atendimento ao 
-		disposto nos art. 8∫, I, e 9∫ da ResoluÁ„o n.∫ 5/2008, do Conselho 
-		da JustiÁa Federal.
+		vem requerer a Vossa Senhoria, <B> RENOVA√á√ÉO DO HOR√ÅRIO ESPECIAL AO SERVIDOR 
+		ESTUDANTE</B>, apresentando, para tanto, declara√ß√£o de freq√º√™ncia regular no 
+		per√≠odo anterior, expedida pela Institui√ß√£o de Ensino, em atendimento ao 
+		disposto nos art. 8¬∫, I, e 9¬∫ da Resolu√ß√£o n.¬∫ 5/2008, do Conselho 
+		da Justi√ßa Federal.
 		</p>
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		Outrossim, conforme documentaÁ„o comprobatÛria de matrÌcula atual e do 
-		hor·rio das respectivas aulas, encaminhada atravÈs do titular da Unidade, 
+		Outrossim, conforme documenta√ß√£o comprobat√≥ria de matr√≠cula atual e do 
+		hor√°rio das respectivas aulas, encaminhada atrav√©s do titular da Unidade, 
 		solicita a 
 		<c:choose>
-	    <c:when test="${opcaoHorario == 'alteraÁ„o do hor·rio anterior para'}">	
+	    <c:when test="${opcaoHorario == 'altera√ß√£o do hor√°rio anterior para'}">	
 			${opcaoHorario} ${ComentarAlteracaoHorario}.
         </c:when>
         <c:otherwise>
@@ -61,7 +61,7 @@ CONCESS√O DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE
 			____________________________________________________________
 			</p>
 			<p align="center">
-			Assinatura e MatrÌcula do Superior Hier·rquico
+			Assinatura e Matr√≠cula do Superior Hier√°rquico
 			</p>
 		</mod:valor>	
 

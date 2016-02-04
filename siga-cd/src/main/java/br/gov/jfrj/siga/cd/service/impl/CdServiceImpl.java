@@ -29,9 +29,9 @@ import br.gov.jfrj.siga.cd.Cd;
 import br.gov.jfrj.siga.cd.service.CdService;
 
 /**
- * Est� classe implementa os m�todos de valida��o e convers�o de assinaturas
- * digitais. O acesso � esta classe � realizado via web-services, com interfaces
- * definidas no m�dulo siga-ws, conforme o padr�o adotados para o SIGA.
+ * EstÃ¡ classe implementa os mÃ©todos de validaÃ§Ã£o e conversÃ£o de assinaturas
+ * digitais. O acesso Ã  esta classe Ã© realizado via web-services, com interfaces
+ * definidas no mÃ³dulo siga-ws, conforme o padrÃ£o adotados para o SIGA.
  * 
  * @author tah
  * 
@@ -96,7 +96,7 @@ public class CdServiceImpl implements CdService {
 	 * public String validarAssinatura(String mimeType, byte[] digest, String
 	 * digestAlgorithm, byte[] assinatura, Date dtAssinatura, boolean
 	 * verificarLCRs) throws Exception { if (mimeType == null) return
-	 * Service.ERRO + "Mime Type n�o pode ser nulo";
+	 * Service.ERRO + "Mime Type nÃ£o pode ser nulo";
 	 * 
 	 * if (mimeType.equals(CdService.MIME_TYPE_PKCS7)) return
 	 * validarAssinaturaPKCS7(digest, digestAlgorithm, assinatura, dtAssinatura,
@@ -105,7 +105,7 @@ public class CdServiceImpl implements CdService {
 	 * if (mimeType.equals(CdService.MIME_TYPE_CMS)) return
 	 * validarAssinaturaCMS(digest, digestAlgorithm, assinatura, dtAssinatura);
 	 * 
-	 * return Service.ERRO + "Mime Type '" + mimeType + "' inv�lido"; }
+	 * return Service.ERRO + "Mime Type '" + mimeType + "' invÃ¡lido"; }
 	 * 
 	 * public byte[] converterPkcs7EmCMSComCertificadosLCRsECarimboDeTempo(
 	 * byte[] pkcs7) { try { return AssinaturaDigital
@@ -170,6 +170,13 @@ public class CdServiceImpl implements CdService {
 		if (assinatura==null){
 			throw new AplicacaoException("A assinatura n�o foi enviada para valida��o! Principais motivos: 1) o usu�rio cancelou "
 					+ "a opera��o de assinatura; 2) o usu�rio impediu que o navegador acessasse o certificado.");
+		}
+	};
+	
+	private void assertAssinatura(byte[] assinatura) {
+		if (assinatura==null){
+			throw new AplicacaoException("A assinatura nÃ£o foi enviada para validaÃ§Ã£o! Principais motivos: 1) o usuÃ¡rio cancelou "
+					+ "a operaÃ§Ã£o de assinatura; 2) o usuÃ¡rio impediu que o navegador acessasse o certificado.");
 		}
 	};
 

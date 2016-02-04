@@ -25,13 +25,13 @@ import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
 
 /**
- * Classe abstrata que representa uma f·brica (criador) de conversores HTML para
+ * Classe abstrata que representa uma f√°brica (criador) de conversores HTML para
  * PDF.<br/>
- * Esta classe serve como ponto de extens„o, permitindo a substituiÁ„o de
- * tecnologias de convers„o de forma isolada do resto do cÛdigo. <br/>
+ * Esta classe serve como ponto de extens√£o, permitindo a substitui√ß√£o de
+ * tecnologias de convers√£o de forma isolada do resto do c√≥digo. <br/>
  * <br/>
  * 
- * Para criar uma nova extens„o:<br/>
+ * Para criar uma nova extens√£o:<br/>
  * <ol>
  * <li>Crie uma classe que estenda AbstractConversorHTMLFactory;</li>
  * <li>Configure arquivo siga.properties com a nova classe criada <br/>
@@ -39,10 +39,10 @@ import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
  * <br/>
  * conversor.html.factory =
  * br.gov.jfrj.siga.ex.ext.ConversorHTMLFactoryMinhaFabrica</li>
- * <li>Sobrescreva os mÈtodos abstratos</li>
+ * <li>Sobrescreva os m√©todos abstratos</li>
  * </ol>
  * <br/>
- * O SIGA j· fornece uma implementaÁ„o de f·brica padr„o chamada
+ * O SIGA j√° fornece uma implementa√ß√£o de f√°brica padr√£o chamada
  * br.gov.jfrj.siga.ex.ext.ConversorHTMLFactoryOpenSource
  * 
  * 
@@ -85,7 +85,7 @@ public abstract class AbstractConversorHTMLFactory {
 	}
 
 	/**
-	 * Retorna um conversor baseado na configuraÁ„o, documento ou texto a ser
+	 * Retorna um conversor baseado na configura√ß√£o, documento ou texto a ser
 	 * convertido.
 	 * 
 	 * @param conf
@@ -98,7 +98,7 @@ public abstract class AbstractConversorHTMLFactory {
 			ExDocumento doc, String strHtml) throws Exception;
 
 	/**
-	 * Retorna um conversor especÌfico
+	 * Retorna um conversor espec√≠fico
 	 * 
 	 * @param conversor
 	 *            - identifcador do conversor
@@ -108,7 +108,7 @@ public abstract class AbstractConversorHTMLFactory {
 	public abstract ConversorHtml getConversor(int conversor) throws Exception;
 
 	/**
-	 * Retorna o conversor padr„o.
+	 * Retorna o conversor padr√£o.
 	 * 
 	 * @return
 	 * @throws Exception
@@ -116,7 +116,7 @@ public abstract class AbstractConversorHTMLFactory {
 	public abstract ConversorHtml getConversorPadrao() throws Exception;
 
 	/**
-	 * Retorna a extens„o do conversor HTML definido na propriedade "conversor.html.ext" do arquivo siga.properties
+	 * Retorna a extens√£o do conversor HTML definido na propriedade "conversor.html.ext" do arquivo siga.properties
 	 * @return
 	 * @throws AplicacaoException
 	 */

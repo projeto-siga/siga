@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.swing.text.MaskFormatter;
 
 import org.xml.sax.InputSource;
@@ -65,15 +64,16 @@ import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExDependencia;
+import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInterno;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoCJF;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoES;
 import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoTRF2;
 import br.gov.jfrj.siga.ex.bl.BIE.NodoMenor;
+import br.gov.jfrj.siga.ex.util.ExGraph.Nodo;
+import br.gov.jfrj.siga.ex.util.ExGraph.Transicao;
 import br.gov.jfrj.siga.hibernate.ExDao;
-
-import com.opensymphony.webwork.WebWorkStatics;
-
 import freemarker.ext.dom.NodeModel;
 
 public class FuncoesEL {
@@ -96,7 +96,6 @@ public class FuncoesEL {
 				return true;
 		return false;
 
-
 	}
 
 	public static Boolean extraiCamposDescrAutomatica(final String s) {
@@ -110,7 +109,6 @@ public class FuncoesEL {
 
 	}
 
-
 	public static HierarquizadorBoletimInternoTRF2 obterHierarquizadorBIETRF2(
 			CpOrgaoUsuario orgao, ExDocumento d) {
 		return new HierarquizadorBoletimInternoTRF2(orgao, Ex.getInstance()
@@ -123,17 +121,15 @@ public class FuncoesEL {
 				.getBL().obterDocumentosBoletim(d));
 	}
 
-
 	public static HierarquizadorBoletimInternoCJF obterHierarquizadorBIECJF(
 			CpOrgaoUsuario orgao, ExDocumento d) {
 		return new HierarquizadorBoletimInternoCJF(orgao, Ex.getInstance()
 				.getBL().obterDocumentosBoletim(d));
 	}
 
-
 	public static Boolean podeRemeterPorConfiguracao(DpPessoa titular,
 			DpLotacao lotaTitular) throws Exception {
-		if (lotaTitular == null)
+		if (lotaTitular == null && titular == null)
 			return false;
 		return Ex
 				.getInstance()
@@ -148,7 +144,7 @@ public class FuncoesEL {
 
 	public static Boolean podeArquivarPermanentePorConfiguracao(
 			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
-		if (lotaTitular == null)
+		if (lotaTitular == null && titular == null)
 			return false;
 		return Ex
 				.getInstance()
@@ -160,10 +156,10 @@ public class FuncoesEL {
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 
 	}
-	
+
 	public static Boolean podeArquivarIntermediarioPorConfiguracao(
 			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
-		if (lotaTitular == null)
+		if (lotaTitular == null && titular == null)
 			return false;
 		return Ex
 				.getInstance()
@@ -178,7 +174,7 @@ public class FuncoesEL {
 
 	public static Boolean podeDefinirPublicadoresPorConfiguracao(
 			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
-		if (lotaTitular == null)
+		if (lotaTitular == null && titular == null)
 			return false;
 		return Ex
 				.getInstance()
@@ -189,7 +185,7 @@ public class FuncoesEL {
 	}
 
 	public static String reaisPorExtenso(final String s) {
-		if (s == null)
+		if (s == null || s.trim().length() == 0)
 			return null;
 		String temp = s;
 		temp = temp.replaceAll("\\.", "");
@@ -241,7 +237,6 @@ public class FuncoesEL {
 
 		return dao().consultar(id, DpLotacao.class, false);
 	}
-
 
 	public static CpOrgao orgao(Long id) throws AplicacaoException {
 		if (id == null || id == 0)
@@ -404,33 +399,29 @@ public class FuncoesEL {
 	}
 
 	/*
-	public static List<Object[]> gerarEntrevistaEditalEliminacao(
-			ExDocumento edital) {
-		return ExEditalEliminacao.gerarEntrevista(edital);
-	}
+	 * public static List<Object[]> gerarEntrevistaEditalEliminacao( ExDocumento
+	 * edital) { return ExEditalEliminacao.gerarEntrevista(edital); }
+	 * 
+	 * public static List<ExMobil> obterInclusosNoEditalComBaseNaEntrevista(
+	 * ExDocumento edital) { return ExEditalEliminacao
+	 * .obterInclusosNoEditalComBaseNaEntrevista(edital); }
+	 * 
+	 * public static List<Object[]> obterInclusosNoEdital(Long idMobilEdital) {
+	 * ExMobil edital = dao().consultar(idMobilEdital, ExMobil.class, false);
+	 * return ExEditalEliminacao.obterInclusosNoEdital(edital.getExDocumento());
+	 * }
+	 * 
+	 * public static void eliminarInclusosNoTermo(ExDocumento termo, DpPessoa
+	 * cadastrante, DpLotacao lotaCadastrante) {
+	 * ExTermoEliminacao.eliminarInclusosNoTermo(termo, cadastrante,
+	 * lotaCadastrante); }
+	 */
 
-	public static List<ExMobil> obterInclusosNoEditalComBaseNaEntrevista(
-			ExDocumento edital) {
-		return ExEditalEliminacao
-				.obterInclusosNoEditalComBaseNaEntrevista(edital);
-	}
-
-	public static List<Object[]> obterInclusosNoEdital(Long idMobilEdital) {
-		ExMobil edital = dao().consultar(idMobilEdital, ExMobil.class, false);
-		return ExEditalEliminacao.obterInclusosNoEdital(edital.getExDocumento());
-	}
-
-	public static void eliminarInclusosNoTermo(ExDocumento termo,
-			DpPessoa cadastrante, DpLotacao lotaCadastrante) {
-		ExTermoEliminacao.eliminarInclusosNoTermo(termo, cadastrante,
-				lotaCadastrante);
-	}*/
-	
-	public static ExEditalEliminacao editalEliminacao(ExDocumento doc){
+	public static ExEditalEliminacao editalEliminacao(ExDocumento doc) {
 		return new ExEditalEliminacao(doc);
 	}
-	
-	public static ExTermoEliminacao termoEliminacao(ExDocumento doc){
+
+	public static ExTermoEliminacao termoEliminacao(ExDocumento doc) {
 		return new ExTermoEliminacao(doc);
 	}
 
@@ -720,12 +711,14 @@ public class FuncoesEL {
 			DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaCadastrante,
 			DpLotacao lotaTitular) throws Exception {
 
-		// Nato: Nesse caso, o titular � considerado o subscritor do documento.
-		// N�o sei se isso � 100% correto, mas acho que � uma abordagem bastante
-		// razo�vel.
+		// Nato: Nesse caso, o titular ï¿½ considerado o subscritor do
+		// documento.
+		// Nï¿½o sei se isso ï¿½ 100% correto, mas acho que ï¿½ uma abordagem
+		// bastante
+		// razoï¿½vel.
 		// Markenson: Conversando com o Renato, alteramos o titular para o
 		// titular do sistema
-		// e n�o do documento.
+		// e nï¿½o do documento.
 		Ex.getInstance()
 				.getBL()
 				.criarWorkflow(cadastrante,
@@ -816,7 +809,7 @@ public class FuncoesEL {
 	 */
 	public static String formatarCPF(String cpf) {
 
-		// Se CPF j� vem formatado, devolve cpf
+		// Se CPF jï¿½ vem formatado, devolve cpf
 		Pattern p = Pattern
 				.compile("[0-9]{2,3}?\\.[0-9]{3}?\\.[0-9]{3}?\\-[0-9]{2}?");
 		Matcher m = p.matcher(cpf);
@@ -825,15 +818,15 @@ public class FuncoesEL {
 			return cpf;
 		}
 
-		// O texto � truncado para 11 caracteres caso seja maior
+		// O texto ï¿½ truncado para 11 caracteres caso seja maior
 		if (cpf.length() > 11) {
 			cpf = cpf.substring(0, 11);
 		}
 
-		// Determina o n�mero de zeros � esquerda
+		// Determina o nï¿½mero de zeros ï¿½ esquerda
 		int numZerosAEsquerda = 11 - cpf.length();
 
-		// aplica os zeros � esquerda
+		// aplica os zeros ï¿½ esquerda
 		for (int i = 0; i < numZerosAEsquerda; i++) {
 			cpf = "0" + cpf;
 		}
@@ -847,24 +840,25 @@ public class FuncoesEL {
 
 		return termo1 + "." + termo2 + "." + termo3 + "-" + termo4;
 	}
-	
+
 	/**
 	 * Aplica o formato de CNP. Ex: 1234567891012 para 12.345.678/9101-23
 	 * 
 	 * @param cnpj
 	 *            - CNPJ formatado.
 	 * @return
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
-	public static String formatarCNPJ(String cnpj) throws ParseException  {
-		if(cnpj != null) {
-			cnpj = cnpj.replaceAll("\\.", "").replaceAll("\\/", "").replaceAll("\\-", "");
-			
-			MaskFormatter mf = new MaskFormatter("##.###.###/####-##");  
-		    mf.setValueContainsLiteralCharacters(false);  
-		    return mf.valueToString(cnpj);
+	public static String formatarCNPJ(String cnpj) throws ParseException {
+		if (cnpj != null) {
+			cnpj = cnpj.replaceAll("\\.", "").replaceAll("\\/", "")
+					.replaceAll("\\-", "");
+
+			MaskFormatter mf = new MaskFormatter("##.###.###/####-##");
+			mf.setValueContainsLiteralCharacters(false);
+			return mf.valueToString(cnpj);
 		}
-		
+
 		return "";
 	}
 
@@ -888,13 +882,13 @@ public class FuncoesEL {
 			nivel = "Auxiliar";
 
 		if (nivel.indexOf('I') > 0)
-			nivel = "Intermedi�rio";
+			nivel = "Intermediário";
 
 		if (nivel.indexOf('S') > 0)
 			nivel = "Superior";
 
-		return "N�vel " + nivel + ", Classe " + aux + classe + aux
-				+ ", Padr�o " + aux + padrao + aux;
+		return "Nível " + nivel + ", Classe " + aux + classe + aux
+				+ ", Padrão " + aux + padrao + aux;
 	}
 
 	public static String buscarLotacaoPorSigla(String sigla, Long idOrgaoUsu)
@@ -910,7 +904,7 @@ public class FuncoesEL {
 		final DpLotacao lotRetorno = CpDao.getInstance().consultarPorSigla(
 				lotacao);
 
-		return lotRetorno==null?"":lotRetorno.getDescricao();
+		return lotRetorno == null ? "" : lotRetorno.getDescricao();
 	}
 
 	public static String obterExtensaoBuscaTextual(CpOrgaoUsuario orgao,
@@ -935,9 +929,6 @@ public class FuncoesEL {
 		return p.processarModelo(orgao, attrs, null);
 	}
 
-
-
-
 	public static String obterExtensaoAssinador(CpOrgaoUsuario orgao,
 			String requestScheme, String requestServerName,
 
@@ -948,14 +939,12 @@ public class FuncoesEL {
 		String chaveUrl = null;
 		String urlStr = null;
 
-
 		attrs.put("code_base_path",
 				SigaExProperties.getAssinaturaCodebasePath());
 		attrs.put("messages_url_path",
 				SigaExProperties.getAssinaturaMessagesURLPath());
 		attrs.put("policy_url_path",
 				SigaExProperties.getAssinaturaPorlicyUrlPath());
-
 
 		attrs.put("request_scheme", requestScheme);
 		attrs.put("request_serverName", requestServerName);
@@ -970,14 +959,13 @@ public class FuncoesEL {
 		return p.processarModelo(orgao, attrs, null);
 	}
 
-
 	public static boolean contemTagHTML(String parametro) {
 		return parametro.split("\\<.*\\>").length > 1;
 	}
-	
+
 	/**
 	 * Retorna a data no formato dd/mm/aaaa, por exemplo, 01/02/2010.
-	*/
+	 */
 	public static String getDataDDMMYYYY(Date data) {
 		if (data != null) {
 			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
@@ -985,16 +973,19 @@ public class FuncoesEL {
 		}
 		return "";
 	}
-	
+
 	public static List<ExTpDocPublicacao> listaPublicacao(Long idMod) {
 		ExModelo mod = dao().consultar(idMod, ExModelo.class, false);
 		return PublicacaoDJEBL.obterListaTiposMaterias(mod.getHisIdIni());
 	}
-	
-	public static CalculoPCD calculoPCD(String cargo, String funcao, DpPessoa beneficiario, String dataInicio, String dataFim, 
-			Boolean solicitaAuxTransporte, Boolean carroOficial, Integer pernoite, Float descontoSalario, Float valorConcedido, Boolean executorMandado ) {
+
+	public static CalculoPCD calculoPCD(String cargo, String funcao,
+			DpPessoa beneficiario, String dataInicio, String dataFim,
+			Boolean solicitaAuxTransporte, Boolean carroOficial,
+			Integer pernoite, Float descontoSalario, Float valorConcedido,
+			Boolean executorMandado) {
 		CalculoPCD calculo = new CalculoPCD();
-		
+
 		calculo.setCargo(cargo);
 		calculo.setFuncao(funcao);
 		calculo.setBeneficiario(beneficiario);
@@ -1006,31 +997,34 @@ public class FuncoesEL {
 		calculo.setDescontoSalario(descontoSalario);
 		calculo.setValorConcedido(valorConcedido);
 		calculo.setExecutorMandado(executorMandado);
-		
-		
+
 		return calculo;
 	}
-	
-	public static List<ExDocumento> listaDocsAPublicarBoletim(CpOrgaoUsuario orgaoUsuario) {
-		final List<ExDocumento> l = dao().consultarPorModeloParaPublicar(orgaoUsuario);
-		return l;
-	}	
-	
-	
-	public static List<ExDocumento> listaDocsAPublicarBoletimPorDocumento(ExDocumento doc) {
-        if (doc.getIdDoc() != null) {
-                        final List<ExDocumento> l = dao().consultarPorBoletimParaPublicar(doc);
-                        return l;
-        }
 
-        return null;
+	public static List<ExDocumento> listaDocsAPublicarBoletim(
+			CpOrgaoUsuario orgaoUsuario) {
+		final List<ExDocumento> l = dao().consultarPorModeloParaPublicar(
+				orgaoUsuario);
+		return l;
 	}
-	
+
+	public static List<ExDocumento> listaDocsAPublicarBoletimPorDocumento(
+			ExDocumento doc) {
+		if (doc.getIdDoc() != null) {
+			final List<ExDocumento> l = dao().consultarPorBoletimParaPublicar(
+					doc);
+			return l;
+		}
+
+		return null;
+	}
+
 	public static String webservice(String url, String corpo, Integer timeout) {
 		try {
-			HashMap<String,String> headers = new HashMap<String, String>();
+			HashMap<String, String> headers = new HashMap<String, String>();
 			headers.put("Content-Type", "text/xml;charset=UTF-8");
-			//String s = ConexaoHTTP.get(url, headers, timeout, corpo); //Reescrito para utilizar o SigaTTP
+			// String s = ConexaoHTTP.get(url, headers, timeout, corpo);
+			// //Reescrito para utilizar o SigaTTP
 			SigaHTTP sigaHTTP = new SigaHTTP();
 			String s = sigaHTTP.getNaWeb(url, headers, timeout, corpo);
 			return s;
@@ -1038,56 +1032,74 @@ public class FuncoesEL {
 			return "";
 		}
 	}
-	
-	public static NodeModel parseXML(String xml) throws Exception  {
+
+	public static NodeModel parseXML(String xml) throws Exception {
 		xml = URLDecoder.decode(xml, "UTF-8");
 		// Remover todos os namespaces
 		xml = xml.replaceAll("(</?)[a-z]+:", "$1");
-		xml = xml.replaceAll("( xmlns(:[a-z]+)?=\"[^\"]+\")","");
-		xml = xml.replaceAll(" ([a-z]+:)([a-zA-Z]+=\"[^\"]+\")"," $2");
-		InputSource inputSource = new InputSource( new StringReader( xml ) );
+		xml = xml.replaceAll("( xmlns(:[a-z]+)?=\"[^\"]+\")", "");
+		xml = xml.replaceAll(" ([a-z]+:)([a-zA-Z]+=\"[^\"]+\")", " $2");
+		InputSource inputSource = new InputSource(new StringReader(xml));
 		return freemarker.ext.dom.NodeModel.parse(inputSource);
 	}
-	
-	public static Boolean podeAssinarComSenha(
-			DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) throws Exception {
-		return Ex
-				.getInstance()
-				.getComp().podeAssinarComSenha(titular, lotaTitular, mob);
+
+	public static Boolean podeAssinarComSenha(DpPessoa titular,
+			DpLotacao lotaTitular, ExMobil mob) throws Exception {
+		return Ex.getInstance().getComp()
+				.podeAssinarComSenha(titular, lotaTitular, mob);
 	}
-	
-	public static Boolean podeAssinarMovimentacaoComSenha(
-			DpPessoa titular, DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
-		return Ex
-				.getInstance()
-				.getComp().podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov);
+
+	public static Boolean podeAssinarMovimentacaoComSenha(DpPessoa titular,
+			DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
+		return Ex.getInstance().getComp()
+				.podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov);
 	}
-	
+
 	public static Boolean podeConferirCopiaMovimentacaoComSenha(
-			DpPessoa titular, DpLotacao lotaTitular, ExMovimentacao mov) throws Exception {
+			DpPessoa titular, DpLotacao lotaTitular, ExMovimentacao mov)
+			throws Exception {
 		return Ex
 				.getInstance()
-				.getComp().podeConferirCopiaMovimentacaoComSenha(titular, lotaTitular, mov);
+				.getComp()
+				.podeConferirCopiaMovimentacaoComSenha(titular, lotaTitular,
+						mov);
 	}
-	
-	public static Boolean podeAssinarMovimentacaoComSenha(
-			DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) throws Exception {
-		return Ex
-				.getInstance()
-				.getComp().podeAssinarMovimentacaoComSenha(titular, lotaTitular, mob);
+
+	public static Boolean podeAssinarMovimentacaoComSenha(DpPessoa titular,
+			DpLotacao lotaTitular, ExMobil mob) throws Exception {
+		return Ex.getInstance().getComp()
+				.podeAssinarMovimentacaoComSenha(titular, lotaTitular, mob);
 	}
-	
+
 	public static Boolean podeConferirCopiaMovimentacaoComSenha(
-			DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) throws Exception {
+			DpPessoa titular, DpLotacao lotaTitular, ExMobil mob)
+			throws Exception {
 		return Ex
 				.getInstance()
-				.getComp().podeConferirCopiaMovimentacaoComSenha(titular, lotaTitular, mob);
+				.getComp()
+				.podeConferirCopiaMovimentacaoComSenha(titular, lotaTitular,
+						mob);
 	}
-	
-	public static Boolean podeAutenticarDocumento(
-			DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc) throws Exception {
-		return Ex
-				.getInstance()
-				.getComp().podeAutenticarDocumento(titular, lotaTitular, doc);
-	}	
+
+	public static Boolean podeAutenticarDocumento(DpPessoa titular,
+			DpLotacao lotaTitular, ExDocumento doc) throws Exception {
+		return Ex.getInstance().getComp()
+				.podeAutenticarDocumento(titular, lotaTitular, doc);
+	}
+
+	public static ExMovimentacao parteUltimaMovimentacao(ExDocumento doc,
+			String idParte) throws Exception {
+		for (ExMovimentacao mov : doc.getMobilGeral().getExMovimentacaoSet()) {
+			if (mov.isCancelada()
+					|| !mov.getExTipoMovimentacao()
+							.getIdTpMov()
+							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO))
+				continue;
+
+			ExParte parte = ExParte.create(mov.getDescrMov());
+			if (parte.getId().equals(idParte))
+				return mov;
+		}
+		return null;
+	}
 }

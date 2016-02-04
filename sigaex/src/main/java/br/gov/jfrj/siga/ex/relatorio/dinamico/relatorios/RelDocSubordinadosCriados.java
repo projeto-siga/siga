@@ -65,10 +65,10 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 		super(parametros);
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
-					"Parâmetro secaoUsuario não informado!");
+					"ParÃ¢metro secaoUsuario nÃ£o informado!");
 		}
 		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Parâmetro link_siga não informado!");
+			throw new DJBuilderException("ParÃ¢metro link_siga nÃ£o informado!");
 		}
 
 	}
@@ -77,22 +77,22 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
-		this.setTitle("Relatório de Movimentação de Documentos em Setores Subordinados");
+		this.setTitle("RelatÃ³rio de MovimentaÃ§Ã£o de Documentos em Setores Subordinados");
 		this.addColuna("Setor", 0, RelatorioRapido.ESQUERDA, true);
 		this.addColuna("Documento", 25, RelatorioRapido.CENTRO, false);
-		this.addColuna("Criação", 15, RelatorioRapido.CENTRO, false);
-		this.addColuna("Lotação", 20, RelatorioRapido.CENTRO, false);
-		this.addColuna("Situação", 20, RelatorioRapido.CENTRO, false);
-		this.addColuna("Lotação Atual", 15, RelatorioRapido.CENTRO, false);
-		this.addColuna("Última Anotação", 20, RelatorioRapido.CENTRO, false);
-		this.addColuna("Descrição", 25, RelatorioRapido.CENTRO, false);
+		this.addColuna("CriaÃ§Ã£o", 15, RelatorioRapido.CENTRO, false);
+		this.addColuna("LotaÃ§Ã£o", 20, RelatorioRapido.CENTRO, false);
+		this.addColuna("SituaÃ§Ã£o", 20, RelatorioRapido.CENTRO, false);
+		this.addColuna("LotaÃ§Ã£o Atual", 15, RelatorioRapido.CENTRO, false);
+		this.addColuna("Ãšltima AnotaÃ§Ã£o", 20, RelatorioRapido.CENTRO, false);
+		this.addColuna("DescriÃ§Ã£o", 25, RelatorioRapido.CENTRO, false);
 		return this;
 
 	}
 	
 	public Collection processarDados() throws Exception {
 
-		// Obtém uma formaDoc a partir da sigla passada e monta trecho da query
+		// ObtÃ©m uma formaDoc a partir da sigla passada e monta trecho da query
 		// para a forma
 		Query qryTipoForma = HibernateUtil.getSessao().createQuery(
 				"from ExTipoFormaDoc tf where " + "tf.descTipoFormaDoc = '"
@@ -108,7 +108,7 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 						+ tipoFormaDoc.getIdTipoFormaDoc();
 
 			
-		// Obtém a lotação com o id passado...
+		// ObtÃ©m a lotaÃ§Ã£o com o id passado...
 		Query qrySetor = HibernateUtil.getSessao().createQuery(
 				"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
 			
@@ -118,7 +118,7 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 		
 	
 
-		// ... e monta trecho da query para as lotações
+		// ... e monta trecho da query para as lotaÃ§Ãµes
 		String listaLotacoes = "";
 		Set<DpLotacao> todasLotas;
 		if (parametros.get("incluirSubordinados") != null)
@@ -131,14 +131,14 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 			listaLotacoes += lot.getIdInicial().toString();
 		}
 
-		// Monta trecho da query para ocultar seletivamente a descrição do
+		// Monta trecho da query para ocultar seletivamente a descriÃ§Ã£o do
 		// documento
 		String trechoQryDescrDocumento = "(case when ("
 				+ "	nivel.idNivelAcesso <> 1 "
 				+ "	and nivel.idNivelAcesso <> 6"
 				+ ") then 'CONFIDENCIAL' else doc.descrDocumento end)";
 
-		// Monta trecho da query para retornar o código do documento
+		// Monta trecho da query para retornar o cÃ³digo do documento
 		/*String trechoQryCodigoDoc = " orgao.siglaOrgaoUsu "
 				+ "|| '-' || " + "forma.siglaFormaDoc "
 				+ "|| '-' || " + "doc.anoEmissao " + "|| '/' || "
@@ -247,7 +247,7 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 			
 			listaFinal.add(nomeLotacao);
 			listaFinal.add(codigoMobil);
-			//testar se a criação foi cancelada
+			//testar se a criaÃ§Ã£o foi cancelada
 			//if (mob.getUltimaMovimentacao(1).isCancelada() == false)
 			listaFinal.add(mob.getUltimaMovimentacao(1).getDtMovDDMMYY().toString());
 			listaFinal.add(mob.getUltimaMovimentacao(1).getLotaCadastrante().getSiglaLotacao().toString());
@@ -271,7 +271,7 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 
 	public Collection processarDadosAnterior() throws Exception {
 
-		// Obtém uma formaDoc a partir da sigla passada e monta trecho da query
+		// ObtÃ©m uma formaDoc a partir da sigla passada e monta trecho da query
 		// para a forma
 		Query qryTipoForma = HibernateUtil.getSessao().createQuery(
 				"from ExTipoFormaDoc tf where " + "tf.descTipoFormaDoc = '"
@@ -287,7 +287,7 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 						+ tipoFormaDoc.getIdTipoFormaDoc();
 
 			
-		// Obtém a lotação com o id passado...
+		// ObtÃ©m a lotaÃ§Ã£o com o id passado...
 		Query qrySetor = HibernateUtil.getSessao().createQuery(
 				"from DpLotacao lot where lot.idLotacao = " + parametros.get("lotacao"));
 			
@@ -297,7 +297,7 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 		
 	
 
-		// ... e monta trecho da query para as lotações
+		// ... e monta trecho da query para as lotaÃ§Ãµes
 		String listaLotacoes = "";
 		Set<DpLotacao> todasLotas;
 		if (parametros.get("incluirSubordinados") != null)
@@ -310,14 +310,14 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 			listaLotacoes += lot.getIdInicial().toString();
 		}
 
-		// Monta trecho da query para ocultar seletivamente a descrição do
+		// Monta trecho da query para ocultar seletivamente a descriÃ§Ã£o do
 		// documento
 		String trechoQryDescrDocumento = "(case when ("
 				+ "	nivel.idNivelAcesso <> 1 "
 				+ "	and nivel.idNivelAcesso <> 6"
 				+ ") then 'CONFIDENCIAL' else doc.descrDocumento end)";
 
-		// Monta trecho da query para retornar o código do documento
+		// Monta trecho da query para retornar o cÃ³digo do documento
 		String trechoQryCodigoDoc = " orgao.siglaOrgaoUsu "
 				+ "|| '-' || " + "forma.siglaFormaDoc "
 				+ "|| '-' || " + "doc.anoEmissao " + "|| '/' || "
@@ -515,7 +515,7 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 				d.add(resp);
 				d.add(mc.getCpMarcador().getDescrMarcador());
 				indice++;
-				System.out.println(indice);
+//				System.out.println(indice);
 			}
 
 			/*

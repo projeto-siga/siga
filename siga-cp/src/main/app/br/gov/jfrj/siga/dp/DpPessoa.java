@@ -27,9 +27,9 @@ package br.gov.jfrj.siga.dp;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Date;
 import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -38,9 +38,11 @@ import java.util.regex.Pattern;
 import javax.persistence.ColumnResult;
 import javax.persistence.Entity;
 import javax.persistence.NamedNativeQuery;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -49,6 +51,7 @@ import org.hibernate.annotations.Formula;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -60,18 +63,23 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Entity
 @SqlResultSetMapping(name = "scalar", columns = @ColumnResult(name = "dt"))
 @NamedNativeQuery(name = "consultarDataEHoraDoServidor", query = "SELECT sysdate dt FROM dual", resultSetMapping = "scalar")
-@NamedQuery(name = "consultarPorIdInicialDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni and pes.dataFimPessoa = null")
+@NamedQueries({ @NamedQuery(name = "consultarPorIdInicialDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni and pes.dataFimPessoa = null"),
+@NamedQuery(name = "consultarPorSiglaDpPessoa", query = "select pes from DpPessoa pes where pes.matricula = :matricula and pes.sesbPessoa = :sesb and pes.dataFimPessoa = null")})
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpPessoa extends AbstractDpPessoa implements Serializable,
-		Selecionavel, Historico, Sincronizavel, Comparable {
+		Selecionavel, Historico, Sincronizavel, Comparable, DpConvertableEntity {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5743631829922578717L;
+	public static final ActiveRecord<DpPessoa> AR = new ActiveRecord<>(DpPessoa.class);
 
 	@Formula(value = "REMOVE_ACENTO(NOME_PESSOA)")
 	@Desconsiderar
 	private String nomePessoaAI;
+	
+	@Transient
+	private Long idSitConfiguracaoConfManual;
 
 	public DpPessoa() {
 
@@ -148,16 +156,37 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		// return iniciais(getNomePessoa());
 		return getSigla();
 	}
+	
+	public String getFuncaoString() {
+		return getFuncaoConfianca() != null ? getFuncaoConfianca().getNomeFuncao() : 
+			getCargo() != null ? getCargo().getNomeCargo() : "";
+	}
+	
+	public String getFuncaoStringIniciaisMaiusculas(){
+		return getFuncaoConfianca() != null ? getFuncaoConfianca().getDescricaoIniciaisMaiusculas() : 
+			getCargo() != null ? getCargo().getDescricaoIniciaisMaiusculas() : "";
+	}
 
 	public String getDescricao() {
 		return getNomePessoa();
 	}
-
+	
 	public String getDescricaoIniciaisMaiusculas() {
 		return Texto.maiusculasEMinusculas(getDescricao());
 	}
+	
+	public String getDescricaoCompleta() {
+		return getNomePessoa() + ", " + getFuncaoString().toUpperCase() + ", " + getLotacao().getSiglaCompleta();
+	}
+	
+	public String getDescricaoCompletaIniciaisMaiusculas() {
+		return getDescricaoIniciaisMaiusculas() + ", " + getFuncaoStringIniciaisMaiusculas() + ", " + getLotacao().getSiglaCompleta();
+	}
 
-	public void setSigla(final String sigla) {
+	public void setSigla(String sigla) {
+	    if (sigla == null) {
+	        sigla = "";
+	    }
 		final Pattern p1 = Pattern.compile("^([A-Za-z][A-Za-z0-9])([0-9]+)");
 		final Matcher m = p1.matcher(sigla);
 		if (m.find()) {
@@ -175,7 +204,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 
 	public boolean equivale(Object other) {
-		if (other == null)
+		if (other == null || ((DpPessoa) other).getId() == null || this.getId() == null)
 			return false;
 		return this.getIdInicial().longValue() == ((DpPessoa) other)
 				.getIdInicial().longValue();
@@ -185,16 +214,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		return getIdPessoaIni();
 	}
 
-	public String getFuncaoString() {
-		if (getFuncaoConfianca() != null)
-			return getFuncaoConfianca().getNomeFuncao();
-		return getCargo().getNomeCargo();
-	}
-
 	public String getPadraoReferenciaInvertido() {
 		if (getPadraoReferencia() != null && !getPadraoReferencia().equals("")) {
-			//Caso o padrão de referência não esteja no formado utilizado pela SJRJ.
-			//Retorna o padrão cadastrado no BD sem inverter.
+			//Caso o padrÃ£o de referÃªncia nÃ£o esteja no formado utilizado pela SJRJ.
+			//Retorna o padrÃ£o cadastrado no BD sem inverter.
 			try {
 				String partes[] = getPadraoReferencia().split("-");
 				String partesConcat = partes[1] + "-" + partes[0];
@@ -213,7 +236,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		return getSigla();
 	}
 
-	// Métodos necessários para ser "Sincronizavel"
+	// Metodos necessarios para ser "Sincronizavel"
 	//
 	public Date getDataFim() {
 		return getDataFimPessoa();
@@ -267,7 +290,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 
 	//
-	// Funções utilizadas nas fórmulas de inclusão em grupos de email.
+	// Funcoes utilizadas nas formulas de inclusao em grupos de email.
 	//
 
 	public boolean tipoLotacaoSiglaIgual(String s) {
@@ -492,10 +515,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
 	
     /**
-     * Retorna a data de início da pessoa no formato dd/mm/aa HH:MI:SS,
+     * Retorna a data de inicio da pessoa no formato dd/mm/aa HH:MI:SS,
      * por exemplo, 01/02/10 14:10:00.
      * 
-     * @return Data de início da pessoa no formato dd/mm/aa HH:MI:SS, por
+     * @return Data de inicio da pessoa no formato dd/mm/aa HH:MI:SS, por
      *         exemplo, 01/02/10 14:10:00.
      * 
      */
@@ -512,7 +535,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
      * Retorna a data de fim da pessoa no formato dd/mm/aa HH:MI:SS,
      * por exemplo, 01/02/10 14:10:00.
      * 
-     * @return Data de início da fim no formato dd/mm/aa HH:MI:SS, por
+     * @return Data de fim da pessoa no formato dd/mm/aa HH:MI:SS, por
      *         exemplo, 01/02/10 14:10:00.
      * 
      */
@@ -537,16 +560,16 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	}
     
    /**
-    * Método que filtra o pessoaPosteriores para que apareça somente o histórico com informações corporativas, comparando 
-    * uma linha da lista com a próxima para verificar se ocorreu alguma alteração de lotação, função ou padrão.
-    * @return lista com histórico referentes as seguintes informações: lotações, função e padrão.
+    * Metodo que filtra o pessoaPosteriores para que apareca somente o historico com informacoes corporativas, comparando 
+    * uma linha da lista com a proxima para verificar se ocorreu alguma alteracao de lotacao, funcao ou padrao.
+    * @return lista com historico referentes as seguintes informacoes: lotacoes, funcao e padrao.
     */
     public List<DpPessoa> getHistoricoInfoCorporativas() {
-    	//transforma um treeSet (pessoaPosteriores) em um list para que se possa percorrer a lista do fim para o começo 
+    	//transforma um treeSet (pessoaPosteriores) em um list para que se possa percorrer a lista do fim para o comeco 
     	List<DpPessoa> listaPessoaPosterioresA = new ArrayList<DpPessoa>(getPessoaInicial().getPessoasPosteriores());
     	List<DpPessoa> listaPessoaPosterioresB = listaPessoaPosterioresA;
     	List<DpPessoa> listaHistoricoPessoa = new ArrayList<DpPessoa>();
-    	//define que o iterator começa pelo fim da lista 
+    	//define que o iterator comeca pelo fim da lista 
     	ListIterator<DpPessoa> itPessoaPosteriorA = listaPessoaPosterioresA.listIterator(listaPessoaPosterioresA.size());
     	ListIterator<DpPessoa> itPessoaPosteriorB = listaPessoaPosterioresB.listIterator(listaPessoaPosterioresB.size());
     	DpPessoa pessoaPost = null;
@@ -559,17 +582,17 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
     	while (itPessoaPosteriorB.hasPrevious() ) {
 			pessoaPost = itPessoaPosteriorA.previous();
 			pessoaHist = itPessoaPosteriorB.previous();
-			//verifica se a lotação da lista listaPessoaPosterioresA é a mesma que da lista listaPessoaPosterioresB, 
-			//que está um registro a frente (linha seguinte)
-			//somente adiciona na lista listaHistoricoPessoa,que será retornada pelo método, caso as lotações sejam diferentes
+			//verifica se a lotacao da lista listaPessoaPosterioresA e a mesma que da lista listaPessoaPosterioresB, 
+			//que esta um registro a frente (linha seguinte)
+			//somente adiciona na lista listaHistoricoPessoa,que sera retornada pelo metodo, caso as lotacoes sejam diferentes
 			if(!pessoaHist.getLotacao().getSigla().equals(pessoaPost.getLotacao().getSigla())) 
 				listaHistoricoPessoa.add(pessoaHist);
-			//verifica se o padrão de referência da lista listaPessoaPosterioresA é o mesma que da lista listaPessoaPosterioresB
+			//verifica se o padrao de referencia da lista listaPessoaPosterioresA e o mesmo que da lista listaPessoaPosterioresB
 			else if((pessoaHist.getPadraoReferencia() == null ^ pessoaPost.getPadraoReferencia() == null) || 
 						((pessoaHist.getPadraoReferencia() != null && pessoaPost.getPadraoReferencia() != null) &&
 								!pessoaHist.getPadraoReferencia().equals(pessoaPost.getPadraoReferencia())) ) 
 				listaHistoricoPessoa.add(pessoaHist);	
-			//verifica se a função de confiança da lista listaPessoaPosterioresA é a mesma que da lista listaPessoaPosterioresB
+			//verifica se a funcao de confianca da lista listaPessoaPosterioresA e a mesma que da lista listaPessoaPosterioresB
 			else if((pessoaHist.getFuncaoConfianca() == null ^ pessoaPost.getFuncaoConfianca() == null) || 
 						((pessoaHist.getFuncaoConfianca() != null && pessoaPost.getFuncaoConfianca() != null) &&
 								!pessoaHist.getFuncaoConfianca().getNomeFuncao().equals(pessoaPost.getFuncaoConfianca().getNomeFuncao())) ) 
@@ -577,6 +600,14 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
     	}
     	Collections.reverse(listaHistoricoPessoa);
     	return listaHistoricoPessoa;
-    } 
+    }
+    
+    public Long getIdSitConfiguracaoConfManual() {
+		return idSitConfiguracaoConfManual;
+	}
+    
+    public void setIdSitConfiguracaoConfManual(Long idSitConfiguracaoConfManual) {
+		this.idSitConfiguracaoConfManual = idSitConfiguracaoConfManual;
+	}
 
 }

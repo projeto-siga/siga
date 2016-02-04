@@ -14,8 +14,8 @@ public class CORSValve extends ValveBase{
 	@Override
 	public void invoke(Request request, Response response) throws IOException,ServletException {
 		//int porta = request.getServerPort();
-		// Esse 363 È o n˙mero da diferenÁa da porta https pra http ex: 8443 - 8080
-		// Com isso se a aplicaÁ„o estiver em uma porta diferente da padr„o n„o precisa modificar esse mÈtodo.
+		// Esse 363 √© o n√∫mero da diferen√ßa da porta https pra http ex: 8443 - 8080
+		// Com isso se a aplica√ß√£o estiver em uma porta diferente da padr√£o n√£o precisa modificar esse m√©todo.
 		//porta = porta - 363;
 		String url = System.getProperty("sigaidp.crossdomain.url");
 		response.addHeader("Access-Control-Allow-Origin", url);

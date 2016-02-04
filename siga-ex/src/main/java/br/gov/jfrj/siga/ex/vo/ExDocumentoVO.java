@@ -36,6 +36,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.util.ExGraphColaboracao;
 import br.gov.jfrj.siga.ex.util.ExGraphRelacaoDocs;
 import br.gov.jfrj.siga.ex.util.ExGraphTramitacao;
 import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
@@ -77,11 +78,11 @@ public class ExDocumentoVO extends ExVO {
 	String lotaCadastranteString;
 	ExGraphTramitacao dotTramitacao;
 	ExGraphRelacaoDocs dotRelacaoDocs;
+	ExGraphColaboracao dotColaboracao;
 	private List<Object> listaDeAcessos;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa titular,
-			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo)
-			throws Exception {
+			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo) {
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
 		this.doc = doc;
@@ -143,11 +144,11 @@ public class ExDocumentoVO extends ExVO {
 
 		if (doc.isEletronico()) {
 			this.classe = "header_eletronico";
-			this.fisicoOuEletronico = "Documento EletrÙnico";
+			this.fisicoOuEletronico = "Documento Eletr√¥nico";
 			this.fDigital = true;
 		} else {
 			this.classe = "header";
-			this.fisicoOuEletronico = "Documento FÌsico";
+			this.fisicoOuEletronico = "Documento F√≠sico";
 			this.fDigital = false;
 		}
 
@@ -219,7 +220,7 @@ public class ExDocumentoVO extends ExVO {
 		return listaDeAcessos;
 	}
 
-	public ExDocumentoVO(ExDocumento doc) throws Exception {
+	public ExDocumentoVO(ExDocumento doc) {
 		this.doc = doc;
 		this.sigla = doc.getSigla();
 		this.nomeCompleto = doc.getNomeCompleto();
@@ -227,11 +228,11 @@ public class ExDocumentoVO extends ExVO {
 		this.descrDocumento = doc.getDescrDocumento();
 		if (doc.isEletronico()) {
 			this.classe = "header_eletronico";
-			this.fisicoOuEletronico = "Documento EletrÙnico";
+			this.fisicoOuEletronico = "Documento Eletr√¥nico";
 			this.fDigital = true;
 		} else {
 			this.classe = "header";
-			this.fisicoOuEletronico = "Documento FÌsico";
+			this.fisicoOuEletronico = "Documento F√≠sico";
 			this.fDigital = false;
 		}
 	}
@@ -296,7 +297,7 @@ public class ExDocumentoVO extends ExVO {
 
 		for (ExMobilVO mobVO : mobs) {
 
-			// Limpa as MovimentaÁıes
+			// Limpa as Movimenta√ß√µes
 			List<ExMovimentacaoVO> movimentacoesFinais = new ArrayList<ExMovimentacaoVO>();
 			List<ExMovimentacao> juntadasRevertidas = new ArrayList<ExMovimentacao>();
 
@@ -305,7 +306,7 @@ public class ExDocumentoVO extends ExVO {
 					if (exMovVO.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
 						juntadasRevertidas.add(exMovVO.getMov()
 								.getExMovimentacaoRef());
-						// Edson: se n„o gerou peÁa, nem mostra o
+						// Edson: se n√£o gerou pe√ßa, nem mostra o
 						// desentranhamento
 						if (exMovVO.getMov().getConteudoBlobMov() == null)
 							continue;
@@ -352,14 +353,15 @@ public class ExDocumentoVO extends ExVO {
 			mobs.remove(mobilGeral);
 		}
 
-		// Edson: mostra lista de vias/volumes sÛ se n˙mero de
-		// vias/volumes alÈm do geral for > que 1 ou se o mÛbil
-		// tiver informaÁıes que n„o aparecem no topo da tela
+		// Edson: mostra lista de vias/volumes s√≥ se n√∫mero de
+		// vias/volumes al√©m do geral for > que 1 ou se o m√≥bil
+		// tiver informa√ß√µes que n√£o aparecem no topo da tela
 		if (doc.getExMobilSet().size() > 2 || mob.temMarcaNaoAtiva())
 			outrosMobsLabel = doc.isProcesso() ? "Volumes" : "Vias";
 
 		this.dotTramitacao = new ExGraphTramitacao(mob);
 		this.dotRelacaoDocs = new ExGraphRelacaoDocs(mob, titular);
+		this.dotColaboracao = new ExGraphColaboracao(doc);
 
 	}
 
@@ -370,7 +372,7 @@ public class ExDocumentoVO extends ExVO {
 	 * @throws Exception
 	 */
 	private void addAcoes(ExDocumento doc, DpPessoa titular,
-			DpLotacao lotaTitular, boolean exibirAntigo) throws Exception {
+			DpLotacao lotaTitular, boolean exibirAntigo) {
 		ExVO vo = this;
 		for (ExMobilVO mobvo : mobs) {
 			if (mobvo.getMob().isGeral())
@@ -379,14 +381,18 @@ public class ExDocumentoVO extends ExVO {
 
 		ExMobil mob = doc.getMobilGeral();
 
-		vo.addAcao("folder_magnify", "Visualizar DossiÍ", "/expediente/doc",
-				"exibirProcesso", Ex.getInstance().getComp()
+		vo.addAcao(
+				"folder_magnify",
+				"Visualizar Dossi√™",
+				"/app/expediente/doc",
+				"exibirProcesso",
+				Ex.getInstance().getComp()
 						.podeVisualizarImpressao(titular, lotaTitular, mob));
 
 		vo.addAcao(
 				"printer",
-				"Visualizar Impress„o",
-				"/arquivo",
+				"Visualizar Impress√£o",
+				"/app/arquivo",
 				"exibir",
 				Ex.getInstance().getComp()
 						.podeVisualizarImpressao(titular, lotaTitular, mob),
@@ -396,63 +402,68 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao(
 				"lock",
 				"Finalizar",
-				"/expediente/doc",
+				"/app/expediente/doc",
 
 				"finalizar",
 				Ex.getInstance().getComp()
 						.podeFinalizar(titular, lotaTitular, mob),
-				"Confirma a finalizaÁ„o do documento?", null, null, null,
+				"Confirma a finaliza√ß√£o do documento?", null, null, null,
 				"once");
 
 		// addAcao("Finalizar e Assinar", "/expediente/mov",
 		// "finalizar_assinar",
 		// podeFinalizarAssinar(titular, lotaTitular, mob),
-		// "Confirma a finalizaÁ„o do documento?", null, null, null);
+		// "Confirma a finaliza√ß√£o do documento?", null, null, null);
 
-		vo.addAcao("pencil", "Editar", "/expediente/doc", "editar", Ex
+		vo.addAcao("pencil", "Editar", "/app/expediente/doc", "editar", Ex
 				.getInstance().getComp().podeEditar(titular, lotaTitular, mob));
 
 		vo.addAcao(
 				"delete",
 				"Excluir",
-				"/expediente/doc",
+				"/app/expediente/doc",
 				"excluir",
 				Ex.getInstance().getComp()
 						.podeExcluir(titular, lotaTitular, mob),
-				"Confirma a exclus„o do documento?", null, null, null, "once");
+				"Confirma a exclus√£o do documento?", null, null, null, "once");
 
-		vo.addAcao("user_add", "Incluir Cossignat·rio", "/expediente/mov",
+		vo.addAcao("user_add", "Incluir Cossignat√°rio", "/app/expediente/mov",
 				"incluir_cosignatario", Ex.getInstance().getComp()
-						.podeIncluirCosignatario(titular, lotaTitular, mob));
+						.podeIncluirCosignatario(titular, lotaTitular, mob),
+				null, "sigla=" + doc.getSigla(), null, null, null);
 
 		vo.addAcao(
 				"attach",
 				"Anexar Arquivo",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"anexar",
 				Ex.getInstance().getComp()
 						.podeAnexarArquivo(titular, lotaTitular, mob));
 		vo.addAcao(
 				"tag_yellow",
-				"Fazer AnotaÁ„o",
-				"/expediente/mov",
+				"Fazer Anota√ß√£o",
+				"/app/expediente/mov",
 				"anotar",
 				Ex.getInstance().getComp()
 						.podeFazerAnotacao(titular, lotaTitular, mob));
 
-		vo.addAcao("folder_user", "Definir Perfil", "/expediente/mov",
+		vo.addAcao("folder_user", "Definir Perfil", "/app/expediente/mov",
 				"vincularPapel", Ex.getInstance().getComp()
 						.podeFazerVinculacaoPapel(titular, lotaTitular, mob));
 
+		vo.addAcao("folder_user", "Definir Marcador", "/app/expediente/mov",
+				"marcar", Ex.getInstance().getComp()
+						.podeMarcar(titular, lotaTitular, mob));
+
 		vo.addAcao(
 				"cd",
-				"Download do Conte˙do",
+				"Download do Conte√∫do",
 				"/expediente/doc",
 				"anexo",
 				Ex.getInstance().getComp()
 						.podeDownloadConteudo(titular, lotaTitular, mob));
 
-		vo.addAcao("add", "Criar Via", "/expediente/doc", "criarVia", Ex
+		vo.addAcao("add", "Criar Via", "/app/expediente/doc", "criar_via", Ex
 				.getInstance().getComp()
 				.podeCriarVia(titular, lotaTitular, mob), null, null, null,
 				null, "once");
@@ -460,8 +471,8 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao(
 				"add",
 				"Abrir Novo Volume",
-				"/expediente/doc",
-				"criarVolume",
+				"/app/expediente/doc",
+				"criar_volume",
 				Ex.getInstance().getComp()
 						.podeCriarVolume(titular, lotaTitular, mob),
 				"Confirma a abertura de um novo volume?", null, null, null,
@@ -470,7 +481,7 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao(
 				"link_add",
 				"Criar Subprocesso",
-				"/expediente/doc",
+				"/app/expediente/doc",
 				"editar",
 				Ex.getInstance().getComp()
 						.podeCriarSubprocesso(titular, lotaTitular, mob), null,
@@ -481,7 +492,7 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao(
 				"script_edit",
 				"Registrar Assinatura Manual",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"registrar_assinatura",
 				Ex.getInstance().getComp()
 						.podeRegistrarAssinatura(titular, lotaTitular, mob));
@@ -489,29 +500,34 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao(
 				"script_key",
 				"Assinar",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"assinar",
 				Ex.getInstance().getComp()
 						.podeAssinar(titular, lotaTitular, mob));
-		
+
 		vo.addAcao(
 				"script_key",
 				"Autenticar",
-				"/expediente/mov",
+				"/app/expediente/mov",
 				"autenticar_documento",
-				Ex.getInstance().getComp()
-				.podeAutenticarDocumento(titular, lotaTitular, mob.doc()));
-		
+				Ex.getInstance()
+						.getComp()
+						.podeAutenticarDocumento(titular, lotaTitular,
+								mob.doc()));
+
 		if (doc.isFinalizado() && doc.getNumExpediente() != null) {
 			// documentos finalizados
-			if (mob.temAnexos())
-				vo.addAcao("script_key", "Assinar Anexos", "/expediente/mov",
-						"assinar_anexos_geral", true);
+			if (mob.temAnexos()) {
+				vo.addAcao("script_key", "Assinar Anexos Gerais",
+						"/app/expediente/mov", "anexar", true, null,
+						"assinandoAnexosGeral=true&sigla=" + getSigla(), null,
+						null, null);
+			}
 
 			vo.addAcao(
 					"link_add",
 					"Criar Anexo",
-					"/expediente/doc",
+					"/app/expediente/doc",
 					"editar",
 					Ex.getInstance()
 							.getComp()
@@ -521,14 +537,18 @@ public class ExDocumentoVO extends ExVO {
 					null, null);
 		}
 
-		vo.addAcao("shield", "Redefinir NÌvel de Acesso", "/expediente/mov",
-				"redefinir_nivel_acesso", Ex.getInstance().getComp()
+		vo.addAcao(
+				"shield",
+				"Redefinir N√≠vel de Acesso",
+				"/app/expediente/mov",
+				"redefinir_nivel_acesso",
+				Ex.getInstance().getComp()
 						.podeRedefinirNivelAcesso(titular, lotaTitular, mob));
 
 		vo.addAcao(
 				"book_add",
-				"Solicitar PublicaÁ„o no Boletim",
-				"/expediente/mov",
+				"Solicitar Publica√ß√£o no Boletim",
+				"/app/expediente/mov",
 				"boletim_agendar",
 				Ex.getInstance()
 						.getComp()
@@ -537,8 +557,8 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"book_link",
-				"Registrar PublicaÁ„o do BIE",
-				"/expediente/mov",
+				"Registrar Publica√ß√£o do BIE",
+				"/app/expediente/mov",
 				"boletim_publicar",
 				Ex.getInstance()
 						.getComp()
@@ -549,29 +569,28 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao(
 				"error_go",
 				"Refazer",
-				"/expediente/doc",
-
+				"/app/expediente/doc",
 				"refazer",
 				Ex.getInstance().getComp()
 						.podeRefazer(titular, lotaTitular, mob),
-				"Esse documento ser· cancelado e seus dados ser„o copiados para um novo expediente em elaboraÁ„o. Prosseguir?",
+				"Esse documento ser√° cancelado e seus dados ser√£o copiados para um novo expediente em elabora√ß√£o. Prosseguir?",
 				null, null, null, "once");
 
 		vo.addAcao(
 				"arrow_divide",
 				"Duplicar",
-				"/expediente/doc",
+				"/app/expediente/doc",
 				"duplicar",
 				Ex.getInstance().getComp()
 						.podeDuplicar(titular, lotaTitular, mob),
-				"Esta operaÁ„o criar· um expediente com os mesmos dados do atual. Prosseguir?",
+				"Esta opera√ß√£o criar√° um expediente com os mesmos dados do atual. Prosseguir?",
 				null, null, null, "once");
 
 		// test="${exibirCompleto != true}" />
 		vo.addAcao(
 				"eye",
-				"Exibir InformaÁıes Completas",
-				"/expediente/doc",
+				"Exibir Informa√ß√µes Completas",
+				"/app/expediente/doc",
 				"exibirAntigo",
 				Ex.getInstance()
 						.getComp()
@@ -581,8 +600,8 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"eye",
-				"Exibir InformaÁıes Completas",
-				"/expediente/doc",
+				"Exibir Informa√ß√µes Completas",
+				"/app/expediente/doc",
 				"exibirAntigo",
 				Ex.getInstance()
 						.getComp()
@@ -593,17 +612,17 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"report_link",
-				"Agendar PublicaÁ„o no DJE",
-				"/expediente/mov",
+				"Agendar Publica√ß√£o no DJE",
+				"/app/expediente/mov",
 				"agendar_publicacao",
 				Ex.getInstance().getComp()
 						.podeAgendarPublicacao(titular, lotaTitular, mob));
 
 		vo.addAcao(
 				"report_add",
-				"Solicitar PublicaÁ„o no DJE",
-				"/expediente/mov",
-				"pedir_publicacao",
+				"Solicitar Publica√ß√£o no DJE",
+				"/app/expediente/mov",
+				"pedirPublicacao",
 				Ex.getInstance().getComp()
 						.podePedirPublicacao(titular, lotaTitular, mob));
 
@@ -611,28 +630,28 @@ public class ExDocumentoVO extends ExVO {
 		vo.addAcao(
 				"arrow_undo",
 				"Desfazer Cancelamento",
-				"/expediente/doc",
+				"/app/expediente/doc",
 				"desfazerCancelamentoDocumento",
 				Ex.getInstance()
 						.getComp()
 						.podeDesfazerCancelamentoDocumento(titular,
 								lotaTitular, mob),
-				"Esta operaÁ„o anular· o cancelamento do documento e tornar· o documento novamente edit·vel. Prosseguir?",
+				"Esta opera√ß√£o anular√° o cancelamento do documento e tornar√° o documento novamente edit√°vel. Prosseguir?",
 				null, null, null, "once");
 
 		vo.addAcao(
 				"delete",
 				"Cancelar Documento",
-				"/expediente/doc",
+				"/app/expediente/doc",
 				"tornarDocumentoSemEfeito",
 				Ex.getInstance()
 						.getComp()
 						.podeTornarDocumentoSemEfeito(titular, lotaTitular, mob),
-				"Esta operaÁ„o tornar· esse documento sem efeito. Prosseguir?",
+				"Esta opera√ß√£o tornar√° esse documento sem efeito. Prosseguir?",
 				null, null, null, "once");
 	}
 
-	public void addDadosComplementares() throws Exception {
+	public void addDadosComplementares() {
 		ProcessadorModeloFreemarker p = new ProcessadorModeloFreemarker();
 		Map attrs = new HashMap();
 		attrs.put("nmMod", "macro dadosComplementares");
@@ -793,6 +812,10 @@ public class ExDocumentoVO extends ExVO {
 		return dotRelacaoDocs;
 	}
 
+	public ExGraphColaboracao getDotColaboracao() {
+		return dotColaboracao;
+	}
+
 	public List<ExDocumentoVO> getDocumentosPublicados() {
 		return documentosPublicados;
 	}
@@ -808,7 +831,7 @@ public class ExDocumentoVO extends ExVO {
 	public void setMarcasPorMobil(Map<ExMobil, Set<ExMarca>> marcasPorMobil) {
 		this.marcasPorMobil = marcasPorMobil;
 	}
-	
+
 	public Map<ExMovimentacao, Boolean> getCossignatarios() {
 		return cossignatarios;
 	}

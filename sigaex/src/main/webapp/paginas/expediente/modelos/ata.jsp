@@ -35,7 +35,7 @@
 			
 			</mod:grupo>
 			<mod:grupo>
-				<mod:selecao titulo="Tipo de Ata" var="tipoAta" opcoes="Aquisição com Contrato;Aquisição sem Contrato;Fornecimento e Instalação" reler="nao" />
+				<mod:selecao titulo="Tipo de Ata" var="tipoAta" opcoes="AquisiÃ§Ã£o com Contrato;AquisiÃ§Ã£o sem Contrato;Fornecimento e InstalaÃ§Ã£o" reler="nao" />
 			</mod:grupo>
 			<mod:grupo>
 				<mod:memo titulo="Texto Complementar..." var="texto" colunas="60" linhas="3" />
@@ -43,11 +43,11 @@
 			
 			<!-- 
 			  <c:choose>
-			<c:when test="${tipoContrato == 'Material Consumo Entrega Parcelada' || 'Aquisição em Geral'}">
+			<c:when test="${tipoContrato == 'Material Consumo Entrega Parcelada' || 'AquisiÃ§Ã£o em Geral'}">
 				<mod:oculto var="variavel" valor="FORNECIMENTO DE" />
 			</c:when>
 				<c:otherwise>
-					<mod:oculto var="variavel" valor="PRESTAÇÃO DE SERVIÇOS DE" />
+					<mod:oculto var="variavel" valor="PRESTAÃ‡ÃƒO DE SERVIÃ‡OS DE" />
 				</c:otherwise>
 			</c:choose>
 			-->
@@ -56,15 +56,15 @@
 			<mod:grupo>
 				<mod:monetario verificaNum="sim" titulo="Documento Identidade" largura="12"
 					maxcaracteres="9" var="identJuiz" />
-				<mod:texto titulo="Orgão Emissor" largura="5" var="orgaoEmissorJuiz" />
+				<mod:texto titulo="OrgÃ£o Emissor" largura="5" var="orgaoEmissorJuiz" />
 				<mod:monetario verificaNum="sim" titulo="CPF" largura="15" maxcaracteres="11"
 					var="cpfJuiz" />
 				
 			</mod:grupo>
 		</mod:grupo>
 			
-			<mod:grupo titulo="Pregão">
-				<mod:monetario titulo="Nº" var="numeroPregao"
+			<mod:grupo titulo="PregÃ£o">
+				<mod:monetario titulo="NÂº" var="numeroPregao"
 					maxcaracteres="6" largura="10" verificaNum="sim" />
 			
 				<mod:monetario titulo="Ano" var="anoPregao" largura="6"
@@ -110,7 +110,7 @@
 				<table width="100%">				
 					<tr>
 					   <td>
-				        	<u><font size="2">Processo nº of ${ano}/${numeroProcesso}-EOF - ${forma} nº
+				        	<u><font size="2">Processo nÂº of ${ano}/${numeroProcesso}-EOF - ${forma} nÂº
 								<c:if test="${forma == 'ATA' }">
 									${doc.codigo}/${ano}
 								</c:if>
@@ -121,14 +121,14 @@
 									${doc.codigo}/${ano}
 								</c:if>
 								-  
-								<c:if test="${tipoAta == 'Aquisição sem Contrato' }">
-									AQUISIÇÂO DE
+								<c:if test="${tipoAta == 'AquisiÃ§Ã£o sem Contrato' }">
+									AQUISIÃ‡Ã‚O DE
 								</c:if>
-								<c:if test="${tipoAta == 'Aquisição com Contrato' }">
+								<c:if test="${tipoAta == 'AquisiÃ§Ã£o com Contrato' }">
 									FORNECIMENTO DE	
 								</c:if>
-								<c:if test="${tipoAta == 'Fornecimento e Instalação' }">
-									FORNECIMENTO E INSTALAÇÃO DE
+								<c:if test="${tipoAta == 'Fornecimento e InstalaÃ§Ã£o' }">
+									FORNECIMENTO E INSTALAÃ‡ÃƒO DE
 								</c:if>: ${objeto}</font></u>                              
 					   </td>
 					</tr>
@@ -143,7 +143,7 @@
 		 
 		 <tr>
 		   <td>
-             <u><font size="2">Processo nº of ${ano}/${numeroProcesso} -EOF - ${forma} nº 
+             <u><font size="2">Processo nÂº of ${ano}/${numeroProcesso} -EOF - ${forma} nÂº 
              <c:if test="${forma == 'ATA' }">
 			${doc.codigo}/${ano}
 			</c:if>
@@ -154,14 +154,14 @@
 			${doc.codigo}/${ano}
 			</c:if>
              -
-            <c:if test="${tipoAta == 'Aquisição sem Contrato'}">
-				AQUISIÇÂO DE
+            <c:if test="${tipoAta == 'AquisiÃ§Ã£o sem Contrato'}">
+				AQUISIÃ‡Ã‚O DE
 			</c:if>
-			<c:if test="${tipoAta == 'Aquisição com Contrato'}">
+			<c:if test="${tipoAta == 'AquisiÃ§Ã£o com Contrato'}">
 				FORNECIMENTO DE	
 			</c:if>
-			<c:if test="${tipoAta == 'Fornecimento e Instalação'}">
-				FORNECIMENTO E INSTALAÇÃO DE
+			<c:if test="${tipoAta == 'Fornecimento e InstalaÃ§Ã£o'}">
+				FORNECIMENTO E INSTALAÃ‡ÃƒO DE
 			</c:if>: ${objeto}</font></u>                              
 		   <br><br>
 		   </td>
@@ -171,27 +171,27 @@
 		<mod:letra tamanho="${tl}">
 		<br>
 		<c:if test="${forma == 'ATA' }">
-			<p align="center"><b> ATA DE REGISTRO DE PREÇO N.º&nbsp; ${doc.codigo}/${ano} </b></p>
+			<p align="center"><b> ATA DE REGISTRO DE PREÃ‡O N.Âº&nbsp; ${doc.codigo}/${ano} </b></p>
 		</c:if>
 		<c:if test="${forma == 'ADITIVO' }">
-			<p align="center"><b>ADITIVO DE ATA DE REGISTRO DE PREÇO N.º&nbsp; ${numeroAtaAditivo}/${numeroAtaOrigem}/${ano} </b></p>
+			<p align="center"><b>ADITIVO DE ATA DE REGISTRO DE PREÃ‡O N.Âº&nbsp; ${numeroAtaAditivo}/${numeroAtaOrigem}/${ano} </b></p>
 		</c:if>
 		<c:if test="${forma == 'MINUTA' }">
-			<p align="center"><b>MINUTA DE ATA DE REGISTRO DE PREÇO N.º&nbsp; ${doc.codigo}/${ano} </b></p>
+			<p align="center"><b>MINUTA DE ATA DE REGISTRO DE PREÃ‡O N.Âº&nbsp; ${doc.codigo}/${ano} </b></p>
 		</c:if>
-		<p align="center"><b>PROCESSO Nº OF&nbsp; ${ano}/${numeroProcesso} -
+		<p align="center"><b>PROCESSO NÂº OF&nbsp; ${ano}/${numeroProcesso} -
 		EOF</b></p>
 
-		<p style="TEXT-INDENT: 2cm" align="justify">A justiça Federal de
+		<p style="TEXT-INDENT: 2cm" align="justify">A justiÃ§a Federal de
 		1&deg; Grau no Rio de Janeiro, com sede na Av.Rio Branco, 243 - Anexo
 		I - 14&deg; andar, Centro/RJ, inscrita no C.N.P.J. sob o n&deg;
 		05.424.540./0001-16, neste ato representada pelo Dr. <b>${doc.subscritor.descricao}</b>,
 		 Juiz Federal - Diretor do Foro, Identidade n&deg; <b>${identJuiz
 		}</b> - <b>${orgaoEmissorJuiz }</b>, CPF: <b>${cpfJuiz }</b> doravante
-		denominada JUSTIÇA FEDERAL, resolve, em face das propostas apresentadas 
-		no <b>Pregão nº ${numeroPregao}/${anoPregao}, REGISTRAR O PREÇO<b> da 
-		empresa classificada em primeiro lugar para o objeto da licitação e 
-		igualmente daquelas que manifestaram interesse em se manifestar tambem pelo menor preço
+		denominada JUSTIÃ‡A FEDERAL, resolve, em face das propostas apresentadas 
+		no <b>PregÃ£o nÂº ${numeroPregao}/${anoPregao}, REGISTRAR O PREÃ‡O<b> da 
+		empresa classificada em primeiro lugar para o objeto da licitaÃ§Ã£o e 
+		igualmente daquelas que manifestaram interesse em se manifestar tambem pelo menor preÃ§o
 		doravante denominadas fornecedoras, ${texto }</p>
 		<br>
 		<span style="font-size:${tl};">

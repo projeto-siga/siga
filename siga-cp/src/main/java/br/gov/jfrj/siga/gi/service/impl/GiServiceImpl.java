@@ -42,9 +42,9 @@ import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.gi.service.GiService;
 
 /**
- * Esta classe implementa os mÈtodos de gest„o de identidade O acesso ‡ esta
- * classe È realizado via web-services, com interfaces definidas no mÛdulo
- * siga-ws, conforme o padr„o adotados para o SIGA.
+ * Esta classe implementa os m√©todos de gest√£o de identidade O acesso √† esta
+ * classe √© realizado via web-services, com interfaces definidas no m√≥dulo
+ * siga-ws, conforme o padr√£o adotados para o SIGA.
  * 
  * @author tah
  * 
@@ -75,6 +75,23 @@ public class GiServiceImpl implements GiService {
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+    @Override
+	public String dadosUsuario(String matricula) {
+		String resultado = "";
+		try {
+			CpDao dao = CpDao.getInstance();
+
+			CpIdentidade id = null;
+			id = dao.consultaIdentidadeCadastrante(matricula, true);
+			if (id != null) {
+				resultado = parseLoginResult(id);
+			}
+		} catch (AplicacaoException e) {
 			e.printStackTrace();
 		}
 		return resultado;

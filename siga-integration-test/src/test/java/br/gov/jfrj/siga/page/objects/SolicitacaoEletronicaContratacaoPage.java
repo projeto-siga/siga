@@ -19,7 +19,7 @@ public class SolicitacaoEletronicaContratacaoPage extends EditaDocumentoPage {
 	
 	public void criaSolicitacaoEletronicaContratacao(Properties propDocumentos) {
 		preencheOrigem(propDocumentos.getProperty("internoProduzido"));
-		selectTipoDocumento("SolicitaÁ„o EletrÙnica de ContrataÁ„o", By.xpath("//td[text() = 'A SEC est· na ProgramaÁ„o Anual?']"));
+		selectTipoDocumento("Solicita√ß√£o Eletr√¥nica de Contrata√ß√£o", By.xpath("//td[text() = 'A SEC est√° na Programa√ß√£o Anual?']"));
 		preencheDocumentoInterno(propDocumentos, Boolean.TRUE, Boolean.FALSE);
 		programacaoAnual.get(0).click();
 		botaoOk.click();

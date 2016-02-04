@@ -21,13 +21,14 @@ package br.gov.jfrj.relatorio.dinamico;
 import net.sf.jasperreports.engine.JRHyperlink;
 import net.sf.jasperreports.engine.design.JRDesignExpression;
 import net.sf.jasperreports.engine.design.JRDesignTextField;
+import net.sf.jasperreports.engine.type.HyperlinkTypeEnum;
 import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
 import ar.com.fdvs.dj.domain.entities.DJGroup;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 import ar.com.fdvs.dj.domain.entities.columns.SimpleColumn;
 /**
- * Possibilita a definiÁ„o de hyperlinks nos relatÛrios din‚micos.<br/ >
- * A definiÁ„o do layout È feita no mÈtodo getRelatorio() da classe AbstractRelatorioBaseBuilder.
+ * Possibilita a defini√ß√£o de hyperlinks nos relat√≥rios din√¢micos.<br/ >
+ * A defini√ß√£o do layout √© feita no m√©todo getRelatorio() da classe AbstractRelatorioBaseBuilder.
  * 
  * @author kpf
  *
@@ -54,7 +55,7 @@ public class LayoutRelatorioDinamico extends ClassicLayoutManager {
 						dsnExpLink.setValueClassName(String.class.getName());
 						dsnExpLink.addFieldChunk(link);
 
-						textfield.setHyperlinkType(JRHyperlink.HYPERLINK_TYPE_REFERENCE);
+						textfield.setHyperlinkType(HyperlinkTypeEnum.REFERENCE);
 						textfield.setHyperlinkTooltipExpression(dsnExpLink);
 						textfield.setHyperlinkReferenceExpression(dsnExpLink);
 					}

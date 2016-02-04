@@ -364,6 +364,10 @@ function AssinarDocumentos(Copia, oElm){
 						DadosDoPost = "id=" + aNome[1] + "&" + DadosDoPost;
 					}
 
+					if (gRet.assinante == null || gRet.assinante == 'undefined'){
+						return "O assinante não foi definido";
+					}
+
 					Status = GravarAssinatura(oUrlPost.value, DadosDoPost);
 					return Status;
 				});
@@ -488,6 +492,10 @@ function GravarAssinatura(url, datatosend) {
 			Texto = Conteudo.substr(Inicio, Fim - Inicio);
 			return Texto;
 		}
+		if (Conteudo.indexOf("ERRO -", 0) === 0) {
+			Texto = Conteudo.substring(7);
+			return Texto;
+		}
 	}
 	return "OK";
 }
@@ -506,6 +514,10 @@ function GravarAssinaturaSenha(url, datatosend) {
 					Inicio = Conteudo.indexOf("<h3>") + 4;
 					Fim = Conteudo.indexOf("</h3>",Inicio);
 					retorno = Conteudo.substr(Inicio, Fim - Inicio);
+					return retorno;
+				}
+				if (Conteudo.indexOf("ERRO -", 0) === 0) {
+					retorno = Conteudo.substring(7);
 					return retorno;
 				}
 			}}

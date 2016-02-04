@@ -34,6 +34,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
@@ -44,7 +45,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Table(name = "DP_FUNCAO_CONFIANCA", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpFuncaoConfianca extends AbstractDpFuncaoConfianca implements
-		Serializable, Selecionavel, Sincronizavel {
+		Serializable, Selecionavel, Sincronizavel, DpConvertableEntity {
 
 	/**
 	 * 
@@ -93,6 +94,10 @@ public class DpFuncaoConfianca extends AbstractDpFuncaoConfianca implements
 	public String getIniciais() {
 		return iniciais(getNomeFuncao());
 	}
+	
+	public String getDescricaoIniciaisMaiusculas() {
+		return Texto.maiusculasEMinusculas(getDescricao());
+	}
 
 	public Long getId() {
 		return Long.valueOf(getIdFuncao());
@@ -118,7 +123,7 @@ public class DpFuncaoConfianca extends AbstractDpFuncaoConfianca implements
 		this.nmFuncaoConfiancaAI = nmFuncaoConfiancaAI;
 	}
 
-	// Métodos necessários para ser "Sincronizavel"
+	// Metodos necessarios para ser "Sincronizavel"
 	//
 	public Date getDataFim() {
 		return getDataFimFuncao();

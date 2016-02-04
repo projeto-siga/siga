@@ -509,27 +509,26 @@ public class SMTPTransport extends Transport {
 				 * bytesPerLine, which should be sufficiently large!
 				 */
 				try {
-					ByteArrayOutputStream bos = new ByteArrayOutputStream();
-					OutputStream b64os = new BASE64EncoderStream(bos,
-							Integer.MAX_VALUE);
-
-					if (resp == 334) {
-						// obtain b64 encoded bytes
-						b64os.write(ASCIIUtility.getBytes(user));
-						b64os.flush(); // complete the encoding
-
-						// send username
-						resp = simpleCommand(bos.toByteArray());
-						bos.reset(); // reset buffer
-					}
-					if (resp == 334) {
-						// obtain b64 encoded bytes
-						b64os.write(ASCIIUtility.getBytes(passwd));
-						b64os.flush(); // complete the encoding
-
-						// send passwd
-						resp = simpleCommand(bos.toByteArray());
-						bos.reset(); // reset buffer
+					try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+							OutputStream b64os = new BASE64EncoderStream(bos, Integer.MAX_VALUE)) {
+						if (resp == 334) {
+							// obtain b64 encoded bytes
+							b64os.write(ASCIIUtility.getBytes(user));
+							b64os.flush(); // complete the encoding
+	
+							// send username
+							resp = simpleCommand(bos.toByteArray());
+							bos.reset(); // reset buffer
+						}
+						if (resp == 334) {
+							// obtain b64 encoded bytes
+							b64os.write(ASCIIUtility.getBytes(passwd));
+							b64os.flush(); // complete the encoding
+	
+							// send passwd
+							resp = simpleCommand(bos.toByteArray());
+							bos.reset(); // reset buffer
+						}
 					}
 				} catch (IOException ex) { // should never happen, ignore
 				} finally {
@@ -541,10 +540,9 @@ public class SMTPTransport extends Transport {
 			} else if (supportsAuthentication("PLAIN")) {
 				// XXX - could use "initial response" capability
 				int resp = simpleCommand("AUTH PLAIN");
-				try {
-					ByteArrayOutputStream bos = new ByteArrayOutputStream();
-					OutputStream b64os = new BASE64EncoderStream(bos,
-							Integer.MAX_VALUE);
+				try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+						OutputStream b64os = new BASE64EncoderStream(bos,
+								Integer.MAX_VALUE)) {
 					if (resp == 334) {
 						// send "<NUL>user<NUL>passwd"
 						// XXX - we don't send an authorization identity

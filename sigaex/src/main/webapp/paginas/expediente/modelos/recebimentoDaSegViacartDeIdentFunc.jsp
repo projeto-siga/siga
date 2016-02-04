@@ -5,18 +5,18 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-Recebimento da Segunda via de crachá de indentificação funcional 
-Ultima atualização 14/03/2007
+Recebimento da Segunda via de crachÃ¡ de indentificaÃ§Ã£o funcional 
+Ultima atualizaÃ§Ã£o 14/03/2007
 -->
 
 <mod:modelo>
 
 	<mod:entrevista>
 		
-		<mod:grupo titulo="DADOS CADASTRAIS PARA CONFECÇÃO DA CARTEIRA FUNCIONAL" >
+		<mod:grupo titulo="DADOS CADASTRAIS PARA CONFECÃ‡ÃƒO DA CARTEIRA FUNCIONAL" >
 		<mod:grupo>
 			<mod:texto titulo="Estado Civil" var="estadoCivil" largura="20" />
-			<mod:texto titulo="Tipo Sanguínio/Fator RH" var="sangFatorRh" largura="5" />
+			<mod:texto titulo="Tipo SanguÃ­nio/Fator RH" var="sangFatorRh" largura="5" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:texto titulo="Ramal" var="ramal" largura="3" />
@@ -29,14 +29,14 @@ Ultima atualização 14/03/2007
 		<mod:grupo>
 			<mod:numero titulo="Documento Identidade" largura="12"
 					maxcaracteres="9" var="identidade" />
-			<mod:texto titulo="Orgão Emissor" var="orgaoEmissor" largura="8" />
-			<mod:data titulo="Data Expedição" var="dataExpedicao" />
+			<mod:texto titulo="OrgÃ£o Emissor" var="orgaoEmissor" largura="8" />
+			<mod:data titulo="Data ExpediÃ§Ã£o" var="dataExpedicao" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:texto titulo="Nome do Pai" var="nomePai" largura="60" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Nome da Mãe" var="nomeMae" largura="60" />
+			<mod:texto titulo="Nome da MÃ£e" var="nomeMae" largura="60" />
 		</mod:grupo>
 			<mod:memo colunas="70" linhas="3" titulo="Motivo" var="motivo" />	
 		</mod:grupo> 
@@ -52,13 +52,13 @@ Ultima atualização 14/03/2007
 		<c:import url="/paginas/expediente/modelos/inc_tit_juizfedDirForo.jsp" />
 			
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Excelência a expedição da 2&ordm; via carteira funcional pelo 
+		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa ExcelÃªncia a expediÃ§Ã£o da 2&ordm; via carteira funcional pelo 
 		seguinte motivo: ${motivo }
 		</p>	
 		
 		<br>
 		<p style="TEXT-INDENT: 1.5cm" align="center">
-		<u><b> DADOS CADASTRAIS PARA CONFECÇÃO DA CARTEIRA FUNCIONAL </b></u>
+		<u><b> DADOS CADASTRAIS PARA CONFECÃ‡ÃƒO DA CARTEIRA FUNCIONAL </b></u>
 		</p>
 		
 		<br>
@@ -69,7 +69,7 @@ Ultima atualização 14/03/2007
 				<td bgcolor="#FFFFFF">${doc.subscritor.descricao}</td>
 			</tr>
 			<tr>
-				<td bgcolor="#FFFFFF" width="28%">Matrícula:</td>
+				<td bgcolor="#FFFFFF" width="28%">MatrÃ­cula:</td>
 				<td bgcolor="#FFFFFF">${doc.subscritor.sigla}</td>
 			</tr>
 			<tr>
@@ -81,7 +81,7 @@ Ultima atualização 14/03/2007
 				<td bgcolor="#FFFFFF">${doc.subscritor.cargo.nomeCargo}</td>
 			</tr>
 			<tr>	
-				<td bgcolor="#FFFFFF" width="28%">Lotação:</td>
+				<td bgcolor="#FFFFFF" width="28%">LotaÃ§Ã£o:</td>
 				<td bgcolor="#FFFFFF">${doc.subscritor.lotacao.descricao}</td>
 			</tr>
 			<tr>
@@ -89,11 +89,11 @@ Ultima atualização 14/03/2007
 				<td bgcolor="#FFFFFF">${doc.subscritor.cpfPessoa}</td>
 			</tr>
 			<tr>
-				<td bgcolor="#FFFFFF" width="28%">Identidade/órgão:</td>
+				<td bgcolor="#FFFFFF" width="28%">Identidade/Ã³rgÃ£o:</td>
 				<td bgcolor="#FFFFFF">${identidade} ${orgaoEmissor }</td>
 			</tr>
 			<tr>
-				<td bgcolor="#FFFFFF" width="28%">Emissão da Identidade:</td>
+				<td bgcolor="#FFFFFF" width="28%">EmissÃ£o da Identidade:</td>
 				<td bgcolor="#FFFFFF">${dataExpedicao }</td>
 			</tr>
 			<tr>
@@ -101,7 +101,7 @@ Ultima atualização 14/03/2007
 				<td bgcolor="#FFFFFF">${nomePai }</td>
 			</tr>
 			<tr>
-				<td bgcolor="#FFFFFF" width="28%">Nome da Mãe:</td>
+				<td bgcolor="#FFFFFF" width="28%">Nome da MÃ£e:</td>
 				<td bgcolor="#FFFFFF">${nomeMae }</td>
 			</tr>
 			<tr>

@@ -5,13 +5,25 @@
 	version="2.5">
 	<display-name>Siga Identity Provider</display-name>
 	<description>Este projeto e o centralizador do processo de autenticacao do siga</description>
+
+	<jsp-config>
+		<jsp-property-group>
+			<url-pattern>*.jsp</url-pattern>
+			<page-encoding>UTF-8</page-encoding>
+		</jsp-property-group>
+	</jsp-config>
+	
 	<listener>
 		<listener-class>org.picketlink.identity.federation.web.listeners.IDPHttpSessionListener</listener-class>
 	</listener>
 
 	<session-config>
-		<session-timeout>60</session-timeout>
+		<session-timeout>150</session-timeout>
 	</session-config>
+
+	<welcome-file-list>
+		<welcome-file>/hosted/index.jsp</welcome-file>
+	</welcome-file-list>
 
 	<security-constraint>
 		<web-resource-collection>
@@ -58,4 +70,5 @@
 		<servlet-name>IDPServlet</servlet-name>
 		<url-pattern>/IDPServlet</url-pattern>
 	</servlet-mapping>
+	
 </web-app>

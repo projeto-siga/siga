@@ -25,21 +25,33 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.logging.Logger;
+import org.w3c.dom.svg.GetSVGDocument;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.auditoria.filter.ThreadFilter;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class ExThreadFilter extends ThreadFilter {
 
-	private static final Logger log = Logger.getLogger(ExThreadFilter.class);
+	private static final Logger log = Logger.getLogger("br.gov.jfrj.siga.ex");
+	
+	private FilterConfig config;
+
+	@Override
+	public void init(FilterConfig config) {
+	    this.config = config;
+	}
 
 	/**
-	 * Pega a sess„o.
+	 * Pega a sess√£o.
 	 */
 	public void doFilter(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain)
@@ -70,6 +82,8 @@ public class ExThreadFilter extends ThreadFilter {
 			final ServletResponse response, final FilterChain chain)
 			throws Exception, AplicacaoException {
 
+		CurrentRequest.set(new RequestInfo(config.getServletContext(), (HttpServletRequest)request, (HttpServletResponse)response));
+
 		// HibernateUtil.getSessao();
 		ModeloDao.freeInstance();
 		ExDao.getInstance();
@@ -77,7 +91,7 @@ public class ExThreadFilter extends ThreadFilter {
 
 		// Novo
 		if (!ExDao.getInstance().sessaoEstahAberta())
-			throw new AplicacaoException("Erro: sess„o do Hibernate est· fechada.");
+			throw new AplicacaoException("Erro: sess√£o do Hibernate est√° fechada.");
 
 		ExDao.iniciarTransacao();
 		doFiltro(request, response, chain);
@@ -91,7 +105,19 @@ public class ExThreadFilter extends ThreadFilter {
 		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
-			log.info("Ocorreu um erro durante a execuÁ„o da operaÁ„o: "+ e.getMessage());
+			StringBuffer caminho = new StringBuffer();
+			String parametros = "";
+			if (request instanceof HttpServletRequest){
+				HttpServletRequest httpReq = (HttpServletRequest)request;
+				caminho = httpReq.getRequestURL();
+				parametros = httpReq.getQueryString()==null?"":"?" + httpReq.getQueryString();
+				caminho.append(parametros);
+			}
+			
+			if (!((e instanceof AplicacaoException) || (e.getCause() instanceof AplicacaoException)))
+				log.info("Ocorreu um erro durante a execu√ß√£o da opera√ß√£o: "+ e.getMessage() 
+						+ "\ncaminho: " + caminho.toString());
+
 			throw e;
 		}
 	}
@@ -100,7 +126,7 @@ public class ExThreadFilter extends ThreadFilter {
 		try {
 			HibernateUtil.fechaSessaoSeEstiverAberta();
 		} catch (Exception ex) {
-			log.error("Ocorreu um erro ao fechar uma sess„o do Hibernate", ex);
+			log.error("Ocorreu um erro ao fechar uma sess√£o do Hibernate", ex);
 		}
 	}
 
@@ -118,9 +144,4 @@ public class ExThreadFilter extends ThreadFilter {
 	public void destroy() {
 	}
 
-	/**
-	 * Executa ao inciar o filtro.
-	 */
-	public void init(FilterConfig arg0) throws ServletException {
-	}
 }

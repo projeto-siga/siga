@@ -11,41 +11,41 @@
 	<mod:entrevista>
  		<br><br>
  		
- 		    <mod:grupo titulo="Alteração de Ato - Escala de Plantão">
+ 		    <mod:grupo titulo="AlteraÃ§Ã£o de Ato - Escala de PlantÃ£o">
 			   <mod:grupo>
-			       <mod:texto titulo="Ato nº" var="numact" largura="5"/>
+			       <mod:texto titulo="Ato nÂº" var="numact" largura="5"/>
 		        
 			       <mod:data titulo="Datado de" var="dtato" />
 		        
-				   <mod:selecao titulo="Exercício" var="exerc"  opcoes="2011;2012;2013;2014;2015;2016;2017;2018;2019;2020" reler="sim" />
+				   <mod:selecao titulo="ExercÃ­cio" var="exerc"  opcoes="2011;2012;2013;2014;2015;2016;2017;2018;2019;2020" reler="sim" />
 				</mod:grupo>
 				<br>
 				<mod:grupo>
-				   <mod:data titulo="Data de publicação no DJE 2ª Região" var="dtpub" />
+				   <mod:data titulo="Data de publicaÃ§Ã£o no DJE 2Âª RegiÃ£o" var="dtpub" />
 				   
 				   <mod:texto titulo="Fls." var="folha" largura="5"/>
 				</mod:grupo>
 				<br>
 			</mod:grupo>	
 				<mod:selecao var="contAlts"
-				titulo="Quantidade de Alterações"
+				titulo="Quantidade de AlteraÃ§Ãµes"
 				opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28"
 				reler="sim"  /><br/><br>
 		    <mod:grupo depende="contDependAjax">
 		        <c:forEach var="i" begin="1" end="${contAlts}">
-					<mod:grupo titulo="Alteração nº ${i}">
+					<mod:grupo titulo="AlteraÃ§Ã£o nÂº ${i}">
 					
 					   <mod:grupo>
-					      <mod:selecao titulo="Plantonista" var="opdj${i}"  opcoes="Juiz Federal Convocado;Juíza Federal Convocada;Desembargador Federal;Desembargadora Federal" reler="não" />
+					      <mod:selecao titulo="Plantonista" var="opdj${i}"  opcoes="Juiz Federal Convocado;JuÃ­za Federal Convocada;Desembargador Federal;Desembargadora Federal" reler="nÃ£o" />
 					      <mod:pessoa titulo="Nome" var="titular${i}" />
 			           </mod:grupo>
 			                 
 			           <mod:grupo>
 			              <mod:data titulo="Data 1" var="dt1${i}" obrigatorio="Sim" />
-			              <mod:selecao titulo="Dia Único" var="dun${i}"  opcoes="Sim;Não" reler="sim" />
-			              <c:if test="${requestScope[(f:concat('dun',i))] == 'Não'}">
+			              <mod:selecao titulo="Dia Ãšnico" var="dun${i}"  opcoes="Sim;NÃ£o" reler="sim" />
+			              <c:if test="${requestScope[(f:concat('dun',i))] == 'NÃ£o'}">
 			                 <mod:data titulo="Data 2" var="dt2${i}" obrigatorio="Sim" />
-	                         <mod:selecao titulo="Inclui os dias entre as datas " var="inclui${i}"  opcoes="Sim;Não" reler="sim" />	
+	                         <mod:selecao titulo="Inclui os dias entre as datas " var="inclui${i}"  opcoes="Sim;NÃ£o" reler="sim" />	
 			              </c:if>
 			           </mod:grupo>
 			              
@@ -64,10 +64,10 @@
 			<br/>
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			<b><c:choose><c:when test="${doc.subscritor.sexo == 'M'}">O PRESIDENTE</c:when><c:otherwise>A PRESIDENTE</c:otherwise></c:choose> 
-			DO TRIBUNAL REGIONAL FEDERAL DA 2ª REGIÃO</b>, no uso de suas atribuições, <b>RESOLVE</b>:<br><br>
-			<b>ALTERAR</b> o Ato nº 
-			${numact}, de ${dtato}, publicado no Diário da Justiça Eletrônico da 2ª Região, no dia ${dtpub}, às fls. ${folha}, que trata da escala de 
-			plantão dos Exmos. Magistrados deste Tribunal, para o exercício de ${exerc}, relativa aos sábados, domingos e feriados, na forma abaixo:</p>
+			DO TRIBUNAL REGIONAL FEDERAL DA 2Âª REGIÃƒO</b>, no uso de suas atribuiÃ§Ãµes, <b>RESOLVE</b>:<br><br>
+			<b>ALTERAR</b> o Ato nÂº 
+			${numact}, de ${dtato}, publicado no DiÃ¡rio da JustiÃ§a EletrÃ´nico da 2Âª RegiÃ£o, no dia ${dtpub}, Ã s fls. ${folha}, que trata da escala de 
+			plantÃ£o dos Exmos. Magistrados deste Tribunal, para o exercÃ­cio de ${exerc}, relativa aos sÃ¡bados, domingos e feriados, na forma abaixo:</p>
 			<p align="left">
 			
 			<c:forEach var="i" begin="1" end="${contAlts}">

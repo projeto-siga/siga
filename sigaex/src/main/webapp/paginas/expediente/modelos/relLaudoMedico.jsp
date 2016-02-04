@@ -9,10 +9,10 @@
 	<mod:entrevista>
 		<mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Forma de tratamento do destinatário" var="forTratamento" largura="25" />
+				<mod:texto titulo="Forma de tratamento do destinatÃ¡rio" var="forTratamento" largura="25" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Cargo do destinatário" var="carDestinatario"
+				<mod:texto titulo="Cargo do destinatÃ¡rio" var="carDestinatario"
 					largura="60" />
 			</mod:grupo>
 			<mod:grupo titulo="Texto a ser inserido no corpo da carta">
@@ -51,7 +51,7 @@
 					<br/>
 					<table width="100%" border="2" cellpadding="0" cellspacing="0">
 						<tr>
-							<td align="center" width="100%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">RELATÓRIO ${doc.codigo}</p></td>
+							<td align="center" width="100%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">RELATÃ“RIO ${doc.codigo}</p></td>
 						</tr>
 					</table>
 				</td>
@@ -66,7 +66,7 @@
 		<br> <br>
 		<table width="100%" border="2" cellpadding="0" cellspacing="0">
 			<tr>
-		    	<td align="center" width="100%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">LAUDO MÉDICO</p></td>
+		    	<td align="center" width="100%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">LAUDO MÃ‰DICO</p></td>
 			</tr>
 		</table>
 		<mod:letra tamanho="${tl}">

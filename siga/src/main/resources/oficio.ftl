@@ -2,9 +2,9 @@
 	[#if !esconderDest!false]
 		[@grupo]
 			[@grupo]
-				[@selecao titulo="Tipo de Autoridade" var="tipoAutoridade" opcoes="[Nenhum];Auditor da JustiÁa Militar;Bispo e Arcebispo;Cardeal;Chefe de Gabinete Civil;Chefe de Gabinete Militar da PresidÍncia da Rep˙blica;Consultor-Geral da Rep˙blica;Corregedor do Tribunal Regional Federal;Dirigente administrativo e Procurador;Embaixador;Governador de Estado e do Distrito Federal;Juiz Federal;Juiz em geral;Membro do Congresso Nacional;Membro do Supremo Tribunal Federal;Membro do Tribunal Superior;Membro do Tribunal de Contas da Uni„o;Membro do Tribunal Regional Federal;Membro do Tribunal de JustiÁa;Membro da AssemblÈia Legislativa;Ministro de Estado;Monsenhor, CÙnego;Prefeito;Presidente da Rep˙blica;Presidente do Supremo Tribunal Federal;Presidente do Tribunal Superior;Presidente do Tribunal Regional Federal;Presidente do Tribunal de JustiÁa;Presidente da AssemblÈia Legislativa;Presidente do Tribunal de Contas da Uni„o;Procurador-Geral da Rep˙blica;Procurador-Geral junto ao Tribunal;Secret·rio de Estado do Governo Estadual;Reitor de Universidade;Vice-Presidente da Rep˙blica;Oficial General das ForÁas Armadas;[Outros]" reler="sim" /]
+				[@selecao titulo="Tipo de Autoridade" var="tipoAutoridade" opcoes="[Nenhum];Auditor da Justi√ßa Militar;Bispo e Arcebispo;Cardeal;Chefe de Gabinete Civil;Chefe de Gabinete Militar da Presid√™ncia da Rep√∫blica;Consultor-Geral da Rep√∫blica;Corregedor do Tribunal Regional Federal;Dirigente administrativo e Procurador;Embaixador;Governador de Estado e do Distrito Federal;Juiz Federal;Juiz em geral;Membro do Congresso Nacional;Membro do Supremo Tribunal Federal;Membro do Tribunal Superior;Membro do Tribunal de Contas da Uni√£o;Membro do Tribunal Regional Federal;Membro do Tribunal de Justi√ßa;Membro da Assembl√©ia Legislativa;Ministro de Estado;Monsenhor, C√¥nego;Prefeito;Presidente da Rep√∫blica;Presidente do Supremo Tribunal Federal;Presidente do Tribunal Superior;Presidente do Tribunal Regional Federal;Presidente do Tribunal de Justi√ßa;Presidente da Assembl√©ia Legislativa;Presidente do Tribunal de Contas da Uni√£o;Procurador-Geral da Rep√∫blica;Procurador-Geral junto ao Tribunal;Secret√°rio de Estado do Governo Estadual;Reitor de Universidade;Vice-Presidente da Rep√∫blica;Oficial General das For√ßas Armadas;[Outros]" reler="sim" /]
 					[#if func.verificaGenero(tipoAutoridade)=='F']
-						[@selecao titulo="GÍnero da Autoridade" var="genero" opcoes="M;F" reler="sim" /]
+						[@selecao titulo="G√™nero da Autoridade" var="genero" opcoes="M;F" reler="sim" /]
 					[#else]
 						[#assign genero = func.verificaGenero(tipoAutoridade) /]
 					[/#if]
@@ -17,7 +17,7 @@
                         [/@grupo]
 			[#if tratamento??]
                                 [@grupo]
-                                        [@selecao titulo="Especificar manualmente o vocativo" var="especificarVocativo" opcoes="N„o/Sim" reler="sim" /]
+                                        [@selecao titulo="Especificar manualmente o vocativo" var="especificarVocativo" opcoes="N√£o/Sim" reler="sim" /]
                                 [/@grupo]
                       	[/#if]
 			[#if !tratamento?? || especificarVocativo == 'Sim']
@@ -28,7 +28,7 @@
                                 [@oculto var="vocativo" valor="${tratamento.vocativo}" /]
                         [/#if]
                 [/@grupo]
-		[@grupo titulo="Texto a ser inserido no corpo do ofÌcio"]
+		[@grupo titulo="Texto a ser inserido no corpo do of√≠cio"]
 			[@grupo]
 				[@editor titulo="" var="texto_oficio" /]
 			[/@grupo]
@@ -37,16 +37,16 @@
                         [@texto titulo="Fecho (de acordo com o vocativo)" var="fecho" largura="50" /]
                 [/@grupo]
 
-			[@grupo titulo="Dados do destinat·rio"]
+			[@grupo titulo="Dados do destinat√°rio"]
                                 <!-- Tratamento -->
 				[#if tratamento??]
 					[@grupo]
-                                                [@caixaverif titulo="Especificar manualmente a forma de endereÁamento" var="especificarEnderecamento" reler="sim" /]
+                                                [@caixaverif titulo="Especificar manualmente a forma de endere√ßamento" var="especificarEnderecamento" reler="sim" /]
 					[/@grupo]
                                 [/#if]
 				[#if !tratamento?? || especificarEnderecamento == 'Sim']
 					[@grupo]
-                                                [@texto titulo="Forma de endereÁamento"	var="enderecamento_dest" largura="45" /]
+                                                [@texto titulo="Forma de endere√ßamento"	var="enderecamento_dest" largura="45" /]
 					[/@grupo]
                                 [#else]
 					[@oculto var="enderecamento_dest" valor="${tratamento.formaDeEnderecamento}" /]
@@ -55,7 +55,7 @@
 				<!-- Nome -->
 				[#if (doc.destinatario.descricao)??]
 					[@grupo]
-                                                [@caixaverif titulo="Especificar manualmente o nome do destinat·rio" var="especificarNome" reler="sim" /]
+                                                [@caixaverif titulo="Especificar manualmente o nome do destinat√°rio" var="especificarNome" reler="sim" /]
 					[/@grupo]
                                 [/#if]
 				[#if !(doc.destinatario.descricao)?? || especificarNome == 'Sim']
@@ -69,7 +69,7 @@
 				<!-- Cargo -->
 				[#if (doc.destinatario.cargo.nomeCargo)??]
 					[@grupo]
-                                                [@caixaverif titulo="Especificar manualmente o cargo do destinat·rio" var="especificarCargo" reler="sim" /]
+                                                [@caixaverif titulo="Especificar manualmente o cargo do destinat√°rio" var="especificarCargo" reler="sim" /]
 					[/@grupo]
                                 [/#if]
 				[#if !(doc.destinatario.cargo.nomeCargo)?? || especificarCargo == 'Sim']
@@ -80,7 +80,7 @@
 					[@oculto var="cargo_dest" valor="${doc.destinatario.cargo.nomeCargo}" /]
                                 [/#if]				
 
-				<!-- ”rg„o -->
+				<!-- √ìrg√£o -->
 				[#if (doc.lotaDestinatario.descricao)??]
         		                [#assign orgaoAux = doc.lotaDestinatario.descricao /]
                                 [#else]
@@ -92,18 +92,18 @@
 
 				[#if orgaoAux??]
 					[@grupo]
-                                                [@caixaverif titulo="Especificar manualmente o Ûrg„o do destinat·rio" var="especificarOrgao" reler="sim" /]
+                                                [@caixaverif titulo="Especificar manualmente o √≥rg√£o do destinat√°rio" var="especificarOrgao" reler="sim" /]
 					[/@grupo]
                                 [/#if]
 				[#if !orgaoAux?? || especificarOrgao == 'Sim']
 					[@grupo]
-                                                [@texto titulo="”rg„o" var="orgao_dest" largura="60" /]
+                                                [@texto titulo="√ìrg√£o" var="orgao_dest" largura="60" /]
 					[/@grupo]
                                 [#else]
 					[@oculto var="orgao_dest" valor="${orgaoAux}" /]
                                 [/#if]	
 
-                                [@memo titulo="EndereÁo" var="endereco_dest" linhas="4"	colunas="60" /]
+                                [@memo titulo="Endere√ßo" var="endereco_dest" linhas="4"	colunas="60" /]
 			[/@grupo]
 		[@selecao titulo="Tamanho da letra" var="tamanhoLetra" opcoes="Normal;Pequeno;Grande" /]
 	[/#if]
@@ -126,7 +126,7 @@
 
         [#assign rpp][@rodapeDestinatario tl=tl/][/#assign]
         
-        [@estiloBrasaoCentralizado tipo="OFÕCIO" tamanhoLetra=tl formatarOrgao=true rodapePrimeiraPagina=rpp]
+        [@estiloBrasaoCentralizado tipo="OF√çCIO" tamanhoLetra=tl formatarOrgao=true rodapePrimeiraPagina=rpp]
 		<div style="font-family: Arial; font-size: 10pt;">
 		<p>&nbsp;</p>
 		[#if !vocativo??]

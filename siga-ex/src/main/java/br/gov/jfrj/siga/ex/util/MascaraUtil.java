@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.mvel2.MVEL;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -45,7 +46,7 @@ public class MascaraUtil {
 	}
 	
 	/**
-	 * Retorna Express„o regular com formato em que a classificaÁ„o documental deve estar de acordo 
+	 * Retorna Express√£o regular com formato em que a classifica√ß√£o documental deve estar de acordo 
 	 * @return - regex da classificacao documental
 	 */
 	public String getMascaraEntrada(){
@@ -53,16 +54,16 @@ public class MascaraUtil {
 	}
 	
 	/**
-	 * Retorna o formato da m·scara a ser produzida na saÌda (vide Formatter.java)
-	 * @return - m·scara de saÌda
+	 * Retorna o formato da m√°scara a ser produzida na sa√≠da (vide Formatter.java)
+	 * @return - m√°scara de sa√≠da
 	 */
 	public String getMascaraSaida() {
 		return MASK_OUT;
 	} 
 	
 	/**
-	 * Retorna o formato da m·scara a ser produzida para exibiÁ„o (vide Formatter.java)
-	 * @return - m·scara de exibiÁ„o
+	 * Retorna o formato da m√°scara a ser produzida para exibi√ß√£o (vide Formatter.java)
+	 * @return - m√°scara de exibi√ß√£o
 	 */
 	public String getMascaraExibicao() {
 		return MASK_SHOW;
@@ -83,8 +84,8 @@ public class MascaraUtil {
 	
 	/**
 	 * Formata um texto que esteja de acordo com a mascara de entrada 
-	 * @param texto - texto a ser formatado como codificacao de classificaÁ„o documental
-	 * @return - codificacao formatado de acordo com mascaraSaida. <br/> Retorna null em caso de problemas com entrada ou saÌda.
+	 * @param texto - texto a ser formatado como codificacao de classifica√ß√£o documental
+	 * @return - codificacao formatado de acordo com mascaraSaida. <br/> Retorna null em caso de problemas com entrada ou sa√≠da.
 	 */
 	public String formatar(String texto){
 		final String mascara = getMascaraSaida();
@@ -92,9 +93,9 @@ public class MascaraUtil {
 	}
 
 	/**
-	 * Formata um texto que esteja de acordo com a mascara de exibiÁ„o 
-	 * @param texto - texto a ser formatado como codificacao de classificaÁ„o documental
-	 * @return - codificacao formatado de acordo com mascaraExibicao. <br/> Retorna null em caso de problemas com entrada ou saÌda.
+	 * Formata um texto que esteja de acordo com a mascara de exibi√ß√£o 
+	 * @param texto - texto a ser formatado como codificacao de classifica√ß√£o documental
+	 * @return - codificacao formatado de acordo com mascaraExibicao. <br/> Retorna null em caso de problemas com entrada ou sa√≠da.
 	 */
 	public String formatarParaExibicao(String texto){
 		String mascara = getMascaraExibicao();
@@ -105,9 +106,9 @@ public class MascaraUtil {
 	
 	/**
 	 * Formata um texto que esteja de acordo com a mascara informada 
-	 * @param texto - texto a ser formatado como codificacao de classificaÁ„o documental
-	 * @param mascara - string representando a m·scara a ser utilizada. Se a m·scara comeÁar com "(", ent„o ser· considerada uma express„o MVEL, caso o contr·rio, ser· utilizada em uma chamada ao Formatter.
-	 * @return - codificacao formatado de acordo com a m·scara. <br/> Retorna null em caso de problemas com entrada ou saÌda.
+	 * @param texto - texto a ser formatado como codificacao de classifica√ß√£o documental
+	 * @param mascara - string representando a m√°scara a ser utilizada. Se a m√°scara come√ßar com "(", ent√£o ser√° considerada uma express√£o MVEL, caso o contr√°rio, ser√° utilizada em uma chamada ao Formatter.
+	 * @return - codificacao formatado de acordo com a m√°scara. <br/> Retorna null em caso de problemas com entrada ou sa√≠da.
 	 */
 	private String formatar(String texto, final String mascara) {
 		if (getMascaraEntrada()==null || mascara== null || texto == null){
@@ -136,12 +137,12 @@ public class MascaraUtil {
 
 					String eval = (String)MVEL.eval(mascara, vars);
 					if (eval == null) {
-						throw new AplicacaoException("Problema na express„o: "
+						throw new AplicacaoException("Problema na express√£o: "
 								+ mascara);
 					}
 					return eval;
 				} catch (Exception e) {
-					throw new AplicacaoException("Problema na express„o: "
+					throw new AplicacaoException("Problema na express√£o: "
 							+ mascara);
 				}
 			}			
@@ -154,9 +155,9 @@ public class MascaraUtil {
 	}
 	
 	/**
-	 * Produz a m·scara para consultar m nÌvel de classificacao documental
-	 * @param nivel - NÌvel na hierarquia desejado. Baseado em um (1)
-	 * @return - M·scara para consultar o nÌvel (Ex: nÌvel 2: "__.__.00.00")
+	 * Produz a m√°scara para consultar m n√≠vel de classificacao documental
+	 * @param nivel - N√≠vel na hierarquia desejado. Baseado em um (1)
+	 * @return - M√°scara para consultar o n√≠vel (Ex: n√≠vel 2: "__.__.00.00")
 	 */
 	public String getMscTodosDoNivel(int nivel) {
 		String txt = formatar("");
@@ -206,19 +207,19 @@ public class MascaraUtil {
 	}
 
 	/**
-	 * Retorna a m·scara no maior nÌvel possÌvel.
-	 * @return - M·scara do maior nÌvel possÌvel Ex:__.__.__.__
+	 * Retorna a m√°scara no maior n√≠vel poss√≠vel.
+	 * @return - M√°scara do maior n√≠vel poss√≠vel Ex:__.__.__.__
 	 */
 	public String getMscTodosDoMaiorNivel(){
 		return getMscTodosDoNivel(-1);
 	}
 
 	/**
-	 * Produz a m·scara correspondente para obter os filhos da classificacao.
+	 * Produz a m√°scara correspondente para obter os filhos da classificacao.
 	 * @param texto - Valor da Classificacao Documental
-	 * @param nivelInicial - NÌvel na hierarquia desejado. Baseado em um (1)
-	 * @param niveisAbaixo - boolean que indica se deve ser calculados os nÌveis inferiores ao nÌvel inicial
-	 * @return - M·scara para consultar os filhos (Ex1: <br/>nÌvel 2: "11.__.00.00" <br/>Ex2: nÌvel 2 com niveis abaixo: "11.__.__.__" )
+	 * @param nivelInicial - N√≠vel na hierarquia desejado. Baseado em um (1)
+	 * @param niveisAbaixo - boolean que indica se deve ser calculados os n√≠veis inferiores ao n√≠vel inicial
+	 * @return - M√°scara para consultar os filhos (Ex1: <br/>n√≠vel 2: "11.__.00.00" <br/>Ex2: n√≠vel 2 com niveis abaixo: "11.__.__.__" )
 	 */
 	public String getMscFilho(String texto, int nivelInicial, boolean niveisAbaixo) {
 		String txt = formatar(texto);
@@ -256,7 +257,7 @@ public class MascaraUtil {
 	}
 	
 	/**
-	 * Retorna o campo correspondente ao nÌvel indicado
+	 * Retorna o campo correspondente ao n√≠vel indicado
 	 * @param nivel - Nivel desejado. Baseado em 1.
 	 * @param texto - texto com a classificacao documental
 	 * @return
@@ -290,7 +291,7 @@ public class MascaraUtil {
 	}
 
 	/**
-	 * Calcula qual È o nÌvel inicial em que se deve procurar os filhos. A lÛgica È pegar o primeiro grupo com zero (0)
+	 * Calcula qual √© o n√≠vel inicial em que se deve procurar os filhos. A l√≥gica √© pegar o primeiro grupo com zero (0)
 	 * @param codificacao - codificacao da classificacao documental
 	 * @return
 	 */
@@ -349,12 +350,12 @@ public class MascaraUtil {
 	}
 
 	/**
-	 * Substitui um valor pela m·scara correspondente
-	 * @param s - String a ter o valor substituÌdo. A string deve estar no formato da m·scara definida em getMascaraentrada().<br/>
+	 * Substitui um valor pela m√°scara correspondente
+	 * @param s - String a ter o valor substitu√≠do. A string deve estar no formato da m√°scara definida em getMascaraentrada().<br/>
 	 * 			  Ex:01.02.03.04
-	 * @param mask - M·scara que ser· aplicada ao valor. A string ser compatÌvel com o formato da m·scara definida em getMascaraentrada().<br/> 
+	 * @param mask - M√°scara que ser√° aplicada ao valor. A string ser compat√≠vel com o formato da m√°scara definida em getMascaraentrada().<br/> 
 	 * 				ex: 05.06.__.__
-	 * @return O valor da entrada alterado de acordo com a m·scara. Retorna null, em caso de erros de formataÁ„o ou m·scaras incompatÌveis.  
+	 * @return O valor da entrada alterado de acordo com a m√°scara. Retorna null, em caso de erros de formata√ß√£o ou m√°scaras incompat√≠veis.  
 	 */
 	public String substituir(String valor, String masklike) {
 		if (valor==null || masklike==null ||valor.length()!=masklike.length()){
@@ -388,12 +389,12 @@ public class MascaraUtil {
 	}
 	
 	/**
-	 * Retorna a quantidade de nÌveis da mascara definida. Por exemplo:
-	 * "00.00.00.00" retorna 4. "11-2222", retorna 2 nÌveis; Foram inseridos
-	 * v·rios caractÈres "1" para tentar cobrir o caso das m·scareas de tamanho
-	 * vari·vel.
+	 * Retorna a quantidade de n√≠veis da mascara definida. Por exemplo:
+	 * "00.00.00.00" retorna 4. "11-2222", retorna 2 n√≠veis; Foram inseridos
+	 * v√°rios caract√©res "1" para tentar cobrir o caso das m√°scareas de tamanho
+	 * vari√°vel.
 	 * 
-	 * @return - n˙mero de nÌveis da m·scara;
+	 * @return - n√∫mero de n√≠veis da m√°scara;
 	 */
 	public int getTotalDeNiveisDaMascara(){
 		Pattern pe = Pattern.compile(getMascaraEntrada());

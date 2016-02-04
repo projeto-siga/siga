@@ -25,7 +25,7 @@ public class MascaraClassificacaoTest extends TestCase {
 	public void testFormatar(){
 		MascaraUtil m = MascaraUtil.getInstance();
 		
-		/*TESTE DE FORMATA«√O*/
+		/*TESTE DE FORMATA√á√ÉO*/
 		m.setMascaraEntrada(MASK_IN_1);
 		m.setMascaraSaida(MASK_OUT_1);
 		assertNull(m.formatar(null));
@@ -165,7 +165,7 @@ public class MascaraClassificacaoTest extends TestCase {
 
 	public void testBuscaDeFilhos() {
 		MascaraUtil m = MascaraUtil.getInstance();
-		/*TESTE M¡SCARA DE BUSCA DE FILHOS*/ 
+		/*TESTE M√ÅSCARA DE BUSCA DE FILHOS*/ 
 		m.setMascaraEntrada(MASK_IN_1);
 		m.setMascaraSaida(MASK_OUT_1);
 		assertNull(m.getMscFilho(null,0,false));
@@ -190,7 +190,7 @@ public class MascaraClassificacaoTest extends TestCase {
 		assertEquals(m.getMscFilho("100.000",5,false),"100.0_0");
 		assertEquals(m.getMscFilho("100.000",6,false),"100.00_");
 
-		// TESTE M¡SCARA DE BUSCA DE FILHOS E DESCENDENTES
+		// TESTE M√ÅSCARA DE BUSCA DE FILHOS E DESCENDENTES
 		m.setMascaraEntrada(MASK_IN_1);
 		m.setMascaraSaida(MASK_OUT_1);
 		assertEquals(m.getMscFilho("11",2,true),"11.__.__.__");
@@ -213,7 +213,7 @@ public class MascaraClassificacaoTest extends TestCase {
 		assertEquals(m.getMscFilho("12345",6,true),"123.45_");
 		assertEquals(m.getMscFilho("123456",7,true),"123.456");
 		
-		// TESTE M¡SCARA DE BUSCA DE FILHOS E DESCENDENTES COM DEDU«√O DE NÕVEL INCIAL
+		// TESTE M√ÅSCARA DE BUSCA DE FILHOS E DESCENDENTES COM DEDU√á√ÉO DE N√çVEL INCIAL
 		m.setMascaraEntrada(MASK_IN_1);
 		m.setMascaraSaida(MASK_OUT_1);
 		assertEquals(m.getMscFilho("11223344A",true),"11.22.33.44");
@@ -369,7 +369,7 @@ public class MascaraClassificacaoTest extends TestCase {
 	
 	public void testBuscaPorNivel(){
 		MascaraUtil m = MascaraUtil.getInstance();
-		/*TESTE M¡SCARA DE BUSCA TODOS DE UM DETERMINADO NÕVEL*/
+		/*TESTE M√ÅSCARA DE BUSCA TODOS DE UM DETERMINADO N√çVEL*/
 		m.setMascaraEntrada(MASK_IN_1);
 		m.setMascaraSaida(MASK_OUT_1);
 		assertEquals(m.getMscTodosDoNivel(0),"__.__.__.__");
@@ -460,7 +460,7 @@ public class MascaraClassificacaoTest extends TestCase {
 		assertEquals("789.126",m.substituir("123.456","789.12_"));
 		assertEquals("789.123",m.substituir("123.456","789.123"));
 		
-		//m·scaras e valores inv·lidos
+		//m√°scaras e valores inv√°lidos
 		assertNull(m.substituir("01.02.03.04","__,__,__,__"));
 		assertNull(m.substituir("01.02.03.04","__.__.__"));
 		assertNull(m.substituir("01.02.03.04","abcde012345"));

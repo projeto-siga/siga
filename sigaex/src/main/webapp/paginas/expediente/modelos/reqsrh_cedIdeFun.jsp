@@ -10,34 +10,34 @@
 <mod:modelo>
 	<mod:entrevista>
 			<br/>
-				<span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI«√O COM NOME COMPLETO E ASSUNTO</b></span><br>
-	        	<span style="color:red"> <b>ESTE DOCUMENTO DEVER¡ SER ENVIADO ¿ SRH</b></span>	
+				<span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI√á√ÉO COM NOME COMPLETO E ASSUNTO</b></span><br>
+	        	<span style="color:red"> <b>ESTE DOCUMENTO DEVER√Å SER ENVIADO √Ä SRH</b></span>	
 			<br><br>
 			<mod:grupo titulo=" ">	
 		        <mod:grupo>
 				    <mod:selecao var="ilustrissimo"
 				    titulo="VOCATIVO"
-			    	opcoes="ILUSTRÕSSIMA SENHORA DIRETORA;ILUSTRÕSSIMO SENHOR DIRETOR"		
+			    	opcoes="ILUSTR√çSSIMA SENHORA DIRETORA;ILUSTR√çSSIMO SENHOR DIRETOR"		
 			    	reler="sim" />
 		        </mod:grupo>
 		    </mod:grupo>
 		    <br>	
 			<mod:grupo titulo=""> 
 		        	<mod:texto titulo="RAMAL DO REQUERENTE" var="ramal"/></mod> <br><br>
-		        <mod:selecao titulo="Acerto Gramatical da LotaÁ„o" var="acgr"  opcoes="no;na" reler="sim" />
+		        <mod:selecao titulo="Acerto Gramatical da Lota√ß√£o" var="acgr"  opcoes="no;na" reler="sim" />
 			</mod:grupo>
 			<br/>
 			<mod:grupo titulo=""> 
-		        	<mod:texto titulo="MOTIVO DA SOLICITA«√O" var="motiv" largura="60"/></mod> <br/>
+		        	<mod:texto titulo="MOTIVO DA SOLICITA√á√ÉO" var="motiv" largura="60"/></mod> <br/>
 			</mod:grupo>
 			<br/>
 		    <mod:grupo titulo="Documentos em anexo, nos termos da IN-23-08:"> 
-		        <mod:radio titulo="Certid„o de Casamento" var="periodo" marcado="Sim" valor="1" reler="sim" />
-		        <mod:radio titulo="Certid„o de averbaÁ„o de separaÁ„o ou divÛrcio" var="periodo" valor="2" reler="sim" />
-	            <mod:radio titulo="PublicaÁ„o em jornal de grande circulaÁ„o e cÛpia do registro de ocorrÍncia policial (caso de extravio, perda, furto ou roubo)" var="periodo" valor="3" reler="sim" />
+		        <mod:radio titulo="Certid√£o de Casamento" var="periodo" marcado="Sim" valor="1" reler="sim" />
+		        <mod:radio titulo="Certid√£o de averba√ß√£o de separa√ß√£o ou div√≥rcio" var="periodo" valor="2" reler="sim" />
+	            <mod:radio titulo="Publica√ß√£o em jornal de grande circula√ß√£o e c√≥pia do registro de ocorr√™ncia policial (caso de extravio, perda, furto ou roubo)" var="periodo" valor="3" reler="sim" />
 		    </mod:grupo>
 		    	    
-		    <mod:radio titulo="<b>01(uma) foto 3x4 (obrigatÛrio)</b>" marcado="Sim" reler="nao" />
+		    <mod:radio titulo="<b>01(uma) foto 3x4 (obrigat√≥rio)</b>" marcado="Sim" reler="nao" />
 		    							
 		    <br><br> 
 		    					  
@@ -69,7 +69,7 @@
 				<td width="100%">
 					<table width="100%">
 						<tr><br><br>
-						<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:11pt;">SOLICITA«√O DE 2™ VIA DE C…DULA DE IDENTIDADE</p></td>
+						<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:11pt;">SOLICITA√á√ÉO DE 2¬™ VIA DE C√âDULA DE IDENTIDADE</p></td>
 						</tr>
 					</table>
 				</td>
@@ -89,9 +89,9 @@
 			<p style="text-align: justify;font-size:10pt"> <center><b> ${ilustrissimo} DA SECRETARIA DE RECURSOS HUMANOS</b></center></p>
 			
 			<p style="font-family:Arial;font-size:10pt">	
-			${doc.subscritor.descricao}, matrÌcula ${doc.subscritor.matricula}, ${doc.subscritor.cargo.nomeCargo}, ${opt},
-			do Quadro de Pessoal do Tribunal Regional Federal da 2™ Regi„o, ${lotc} ${acgr} ${doc.subscritor.lotacao.descricao}, 
-			ramal ${ramal}, vem requerer a 2™ via da <b>Carteira Funcional</b> em virtude de ${motiv}.<br/>
+			${doc.subscritor.descricao}, matr√≠cula ${doc.subscritor.matricula}, ${doc.subscritor.cargo.nomeCargo}, ${opt},
+			do Quadro de Pessoal do Tribunal Regional Federal da 2¬™ Regi√£o, ${lotc} ${acgr} ${doc.subscritor.lotacao.descricao}, 
+			ramal ${ramal}, vem requerer a 2¬™ via da <b>Carteira Funcional</b> em virtude de ${motiv}.<br/>
 						
 			
 			<br />
@@ -100,11 +100,11 @@
 			 
 			Seguem anexos os seguintes documentos : <br><br>
 			
-			<c:if test="${ periodo == 1}">&nbsp;[X] Certid„o de Casamento.<br></c:if>
+			<c:if test="${ periodo == 1}">&nbsp;[X] Certid√£o de Casamento.<br></c:if>
 			
-			<c:if test="${ periodo == 2}">&nbsp;[X] Certid„o de averbaÁ„o de separaÁ„o ou divÛrcio.<br></c:if>
+			<c:if test="${ periodo == 2}">&nbsp;[X] Certid√£o de averba√ß√£o de separa√ß√£o ou div√≥rcio.<br></c:if>
 			
-			<c:if test="${ periodo == 3}">&nbsp;[X] PublicaÁ„o em jornal de grande circulaÁ„o e cÛpia do registro de ocorrÍncia policial.<br></c:if>
+			<c:if test="${ periodo == 3}">&nbsp;[X] Publica√ß√£o em jornal de grande circula√ß√£o e c√≥pia do registro de ocorr√™ncia policial.<br></c:if>
 			&nbsp;[X] 01(uma) foto 3x4.
 			    <br>	
 			</p>

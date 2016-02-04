@@ -52,16 +52,16 @@ import ar.com.fdvs.dj.domain.entities.columns.PropertyColumn;
 import ar.com.fdvs.dj.domain.entities.columns.SimpleColumn;
 
 /**
- * Permite a geraÁ„o r·pida de relatÛrios. Basta o cliente desta classe seguir
+ * Permite a gera√ß√£o r√°pida de relat√≥rios. Basta o cliente desta classe seguir
  * os seguintes passos:<BR>
  * 1) Instanciar esta classe<BR>
- * 2) Adicionar colunas com o mÈtodo .addColuna()<BR>
- * 3) Injetar os dados no relatÛrio com o mÈtodo .setDados()<BR>
- * 4) Executar o mÈtodo .getRelatorio() e passar o seu retorno para um viewer
+ * 2) Adicionar colunas com o m√©todo .addColuna()<BR>
+ * 3) Injetar os dados no relat√≥rio com o m√©todo .setDados()<BR>
+ * 4) Executar o m√©todo .getRelatorio() e passar o seu retorno para um viewer
  * (Ex: JasperViewer.viewReport ou JasperExportManager.exportReportToPdfStream)
  * <BR>
  * <BR>
- * Os dados para este tipo de ralatÛrio devem ser Set ou List.
+ * Os dados para este tipo de ralat√≥rio devem ser Set ou List.
  * 
  * Use a classe RelatorioTemple para agilizar/padronizar o procedimento acima.
  */
@@ -96,14 +96,14 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 	}
 
 	/**
-	 * Adiciona uma coluna ao relatÛrio.
+	 * Adiciona uma coluna ao relat√≥rio.
 	 * 
 	 * @param titulo
-	 *            TÌtulo que aparece na coluna.
+	 *            T√≠tulo que aparece na coluna.
 	 * @param tamanho
 	 *            Tamanho da coluna na linha. Apesar de aceitar qualquer valor
 	 *            inteiro, use entre 1 e 100 para se basear em porcentagem.<BR>
-	 *            Se a coluna for agrupada o tamanho È sempre 100, n„o
+	 *            Se a coluna for agrupada o tamanho √© sempre 100, n√£o
 	 *            importando o valor colocado.
 	 * @param alinhamento
 	 *            Alinhamento dos dados da coluna. Pode ser:<BR>
@@ -114,7 +114,7 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 	 */
 	public Coluna addColuna(String titulo, int tamanho, int alinhamento,
 			boolean isAgrupado) {
-		// ESTE M…TODO DEVE SER APERFEI«OADO. A PORCENTAGEM DA LARGURA N√O EST¡
+		// ESTE M√âTODO DEVE SER APERFEI√áOADO. A PORCENTAGEM DA LARGURA N√ÉO EST√Å
 		// DE ACORDO COM O TAMANHO DA TELA
 		Coluna c = criarColuna( titulo, tamanho, alinhamento, isAgrupado);
 		colunas.add(c);
@@ -238,11 +238,11 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 		}
 		if (colunaTotal != null){
 			addGlobalFooterVariable(colunaTotalJasper, DJCalculation.SUM);
-			setGrandTotalLegend("Total de SolicitaÁıes:");
+			setGrandTotalLegend("Total de Solicita√ß√µes:");
 		}
 		if (colunaPercTotal != null){
 			addGlobalFooterVariable(colunaPercTotalJasper, DJCalculation.SUM);
-			//setGrandTotalLegend("Total de SolicitaÁıes:");
+			//setGrandTotalLegend("Total de Solicita√ß√µes:");
 		}
 	}
 
@@ -279,17 +279,17 @@ public class RelatorioRapido extends AbstractRelatorioBaseBuilder {
 			ds = new JRMapCollectionDataSource(colecaoDados);
 		} catch (ClassCastException e) {
 			throw new Exception(
-					"****Os dados do relatÛrio r·pido devem ser Strings!");
+					"****Os dados do relat√≥rio r√°pido devem ser Strings!");
 		} catch (ArrayIndexOutOfBoundsException e) {
 			throw new Exception(
-					"****O n˙mero de colunas nos dados n„o est· de acordo com o layout definido!\n"
-							+ "Se vocÍ est· usando hyperlink no relatÛrio, n„o se esqueÁa de colocar os dois dados: TÕTULO e ENDERE«O do link!");
+					"****O n√∫mero de colunas nos dados n√£o est√° de acordo com o layout definido!\n"
+							+ "Se voc√™ est√° usando hyperlink no relat√≥rio, n√£o se esque√ßa de colocar os dois dados: T√çTULO e ENDERE√áO do link!");
 		}
 	}
 
 //	public void setDados(Query dados) throws Exception {
 //		throw new Exception(
-//				"MÈtodo desativado para relatÛrio r·pido! Use setDados(Set<String> dados)");
+//				"M√©todo desativado para relat√≥rio r√°pido! Use setDados(Set<String> dados)");
 //	}
 
 }

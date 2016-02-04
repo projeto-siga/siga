@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-CONCESS√O DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE 
+CONCESS√ÉO DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE 
 - PEDIDO -->
 
 <c:set var="esconderTexto" value="sim" scope="request" />
@@ -15,9 +15,9 @@ CONCESS√O DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE
 	<mod:documento>
 		<%--<mod:valor var="texto_requerimento">	
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Senhoria <B>HOR¡RIO ESPECIAL AO SERVIDOR ESTUDANTE</B>, conforme o art. 98 e ß 1∫ da Lei n.∫ 8.112/90, com a redaÁ„o dada pela 
-		Lei n.∫ 9.527/97 e ResoluÁ„o n.∫ 5/2008 do Conselho da JustiÁa 
-		Federal, em face da incompatibilidade entre o hor·rio escolar e o da SJRJ, de 
+		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Senhoria <B>HOR√ÅRIO ESPECIAL AO SERVIDOR ESTUDANTE</B>, conforme o art. 98 e ¬ß 1¬∫ da Lei n.¬∫ 8.112/90, com a reda√ß√£o dada pela 
+		Lei n.¬∫ 9.527/97 e Resolu√ß√£o n.¬∫ 5/2008 do Conselho da Justi√ßa 
+		Federal, em face da incompatibilidade entre o hor√°rio escolar e o da SJRJ, de 
 		acordo com a proposta abaixo:
 		</p>
 		${detalhesProposta}
@@ -25,9 +25,9 @@ CONCESS√O DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE
 		<mod:valor var="texto_requerimento2">
 			<c:import url="/paginas/expediente/modelos/inc_tit_SraDiretoraSubsecretariaRH.jsp" />
 			<p style="TEXT-INDENT: 2cm" align="justify">
-			${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Senhoria <B>HOR¡RIO ESPECIAL AO SERVIDOR ESTUDANTE</B>, conforme o art. 98 e ß 1∫ da Lei n.∫ 8.112/90, com a redaÁ„o dada pela 
-			Lei n.∫ 9.527/97 e ResoluÁ„o n.∫ 5/2008 do Conselho da JustiÁa 
-			Federal, face ‡ incompatibilidade entre o hor·rio escolar e o da SJRJ, de 
+			${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Senhoria <B>HOR√ÅRIO ESPECIAL AO SERVIDOR ESTUDANTE</B>, conforme o art. 98 e ¬ß 1¬∫ da Lei n.¬∫ 8.112/90, com a reda√ß√£o dada pela 
+			Lei n.¬∫ 9.527/97 e Resolu√ß√£o n.¬∫ 5/2008 do Conselho da Justi√ßa 
+			Federal, face √† incompatibilidade entre o hor√°rio escolar e o da SJRJ, de 
 			acordo com a proposta abaixo:
 			</p>
 			${detalhesProposta}
@@ -40,15 +40,15 @@ CONCESS√O DE HORARIO ESPECIAL AO SERVIDOR PUBLICO ESTUDANTE
 				<b>Anexar:</b>
 				<ul>
 				<li><i>
-					DocumentaÁ„o comprobatÛria de matrÌcula no estabelecimento de 
-					ensino e do hor·rio das respectivas aulas, encaminhada atravÈs 
+					Documenta√ß√£o comprobat√≥ria de matr√≠cula no estabelecimento de 
+					ensino e do hor√°rio das respectivas aulas, encaminhada atrav√©s 
 					do titular da unidade.
 				</i></li>
 				<li><i>
-					DeclaraÁ„o do servidor, comprometendo-se a apresentar, atÈ o 30∫ (trigÈsimo) dia apÛs o inÌcio de cada semestre, ou ano letivo, conforme o caso, documento comprobatÛrio de freq¸Íncia regular no perÌodo anterior, bem como solicitar o cancelamento do hor·rio especial, quando cessarem os motivos 
-					que ensejaram a sua concess„o, sob pena de cancelamento, 
-					atendendo ao disposto nos <b>art. 8∫, I e 9∫ da ResoluÁ„o 
-					n.∫ 5/2008</b> - CJF.
+					Declara√ß√£o do servidor, comprometendo-se a apresentar, at√© o 30¬∫ (trig√©simo) dia ap√≥s o in√≠cio de cada semestre, ou ano letivo, conforme o caso, documento comprobat√≥rio de freq√º√™ncia regular no per√≠odo anterior, bem como solicitar o cancelamento do hor√°rio especial, quando cessarem os motivos 
+					que ensejaram a sua concess√£o, sob pena de cancelamento, 
+					atendendo ao disposto nos <b>art. 8¬∫, I e 9¬∫ da Resolu√ß√£o 
+					n.¬∫ 5/2008</b> - CJF.
 				</i></li>
 				</ul>
 			</font>

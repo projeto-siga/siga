@@ -14,74 +14,74 @@ var newwin = null;
 
 
 		<c:set var="conteudo1">
-Art. 18.  O servidor que deva ter exercício em outro município em razão de ter sido removido, redistribuído, requisitado, cedido ou posto em exercício provisório terá, no mínimo, dez e, no máximo, trinta dias de prazo, contados da publicação do ato, para a retomada do efetivo desempenho das atribuições do cargo, incluído nesse prazo o tempo necessário para o deslocamento para a nova sede. (Redação dada pela Lei nº 9.527, de 10.12.97)
+Art. 18.  O servidor que deva ter exercÃ­cio em outro municÃ­pio em razÃ£o de ter sido removido, redistribuÃ­do, requisitado, cedido ou posto em exercÃ­cio provisÃ³rio terÃ¡, no mÃ­nimo, dez e, no mÃ¡ximo, trinta dias de prazo, contados da publicaÃ§Ã£o do ato, para a retomada do efetivo desempenho das atribuiÃ§Ãµes do cargo, incluÃ­do nesse prazo o tempo necessÃ¡rio para o deslocamento para a nova sede. (RedaÃ§Ã£o dada pela Lei nÂº 9.527, de 10.12.97)
 		</c:set>
 		<c:set var="conteudo2">
-§ 1o  Na hipótese de o servidor encontrar-se em licença ou afastado legalmente, o prazo a que se refere este artigo será contado a partir do término do impedimento. (Parágrafo renumerado e alterado pela Lei nº 9.527, de 10.12.97)
+Â§ 1o  Na hipÃ³tese de o servidor encontrar-se em licenÃ§a ou afastado legalmente, o prazo a que se refere este artigo serÃ¡ contado a partir do tÃ©rmino do impedimento. (ParÃ¡grafo renumerado e alterado pela Lei nÂº 9.527, de 10.12.97)
 			
 		</c:set>
 		<c:set var="conteudo3">
-§ 2o  É facultado ao servidor declinar dos prazos estabelecidos no caput.  (Incluído pela Lei nº 9.527, de 10.12.97)
+Â§ 2o  Ã‰ facultado ao servidor declinar dos prazos estabelecidos no caput.  (IncluÃ­do pela Lei nÂº 9.527, de 10.12.97)
 			
 		</c:set>
 		<c:set var="conteudo4">
-Art. 102.  Além das ausências ao serviço previstas no art. 97, são considerados como de efetivo exercício os afastamentos em virtude de:
+Art. 102.  AlÃ©m das ausÃªncias ao serviÃ§o previstas no art. 97, sÃ£o considerados como de efetivo exercÃ­cio os afastamentos em virtude de:
 			
 		</c:set>
 		<c:set var="conteudo5">
-I - férias;
+I - fÃ©rias;
 			
 		</c:set>
 		<c:set var="conteudo6">
-II - exercício de cargo em comissão ou equivalente, em órgão ou entidade dos Poderes da União, dos Estados, Municípios e Distrito Federal;
+II - exercÃ­cio de cargo em comissÃ£o ou equivalente, em Ã³rgÃ£o ou entidade dos Poderes da UniÃ£o, dos Estados, MunicÃ­pios e Distrito Federal;
 			
 		</c:set>
 		<c:set var="conteudo7">
-III - exercício de cargo ou função de governo ou administração, em qualquer parte do território nacional, por nomeação do Presidente da República; 
+III - exercÃ­cio de cargo ou funÃ§Ã£o de governo ou administraÃ§Ã£o, em qualquer parte do territÃ³rio nacional, por nomeaÃ§Ã£o do Presidente da RepÃºblica; 
 			
 		</c:set>
 		<c:set var="conteudo8">
-IV - participação em programa de treinamento regularmente instituído ou em programa de pós-graduação stricto sensu no País, conforme dispuser o regulamento; (Redação dada pela Lei nº 11.907, de 2009)
+IV - participaÃ§Ã£o em programa de treinamento regularmente instituÃ­do ou em programa de pÃ³s-graduaÃ§Ã£o stricto sensu no PaÃ­s, conforme dispuser o regulamento; (RedaÃ§Ã£o dada pela Lei nÂº 11.907, de 2009)
 			
 		</c:set>
 		<c:set var="conteudo9">
-V - desempenho de mandato eletivo federal, estadual, municipal ou do Distrito Federal, exceto para promoção por merecimento;
+V - desempenho de mandato eletivo federal, estadual, municipal ou do Distrito Federal, exceto para promoÃ§Ã£o por merecimento;
 			
 		</c:set>
 		<c:set var="conteudo10">
-VI - júri e outros serviços obrigatórios por lei; 
+VI - jÃºri e outros serviÃ§os obrigatÃ³rios por lei; 
 			
 		</c:set>
 		<c:set var="conteudo11">
-VII - missão ou estudo no exterior, quando autorizado o afastamento, conforme dispuser o regulamento; (Redação dada pela Lei nº 9.527, de 10.12.97)
+VII - missÃ£o ou estudo no exterior, quando autorizado o afastamento, conforme dispuser o regulamento; (RedaÃ§Ã£o dada pela Lei nÂº 9.527, de 10.12.97)
 			
 		</c:set>
 		<c:set var="conteudo12">
-VIII - licença:
+VIII - licenÃ§a:
 			
 		</c:set>
 		<c:set var="conteudo13">
-a) à gestante, à adotante e à paternidade; 
+a) Ã  gestante, Ã  adotante e Ã  paternidade; 
 			
 		</c:set>
 		<c:set var="conteudo14">
-b) para tratamento da própria saúde, até o limite de vinte e quatro meses, cumulativo ao longo do tempo de serviço público prestado à União, em cargo de provimento efetivo; (Redação dada pela Lei nº 9.527, de 10.12.97)
+b) para tratamento da prÃ³pria saÃºde, atÃ© o limite de vinte e quatro meses, cumulativo ao longo do tempo de serviÃ§o pÃºblico prestado Ã  UniÃ£o, em cargo de provimento efetivo; (RedaÃ§Ã£o dada pela Lei nÂº 9.527, de 10.12.97)
 			
 		</c:set>
 		<c:set var="conteudo15">
-c) para o desempenho de mandato classista ou participação de gerência ou administração em sociedade cooperativa constituída por servidores para prestar serviços a seus membros, exceto para efeito de promoção por merecimento; (Redação dada pela Lei nº 11.094, de 2005)
+c) para o desempenho de mandato classista ou participaÃ§Ã£o de gerÃªncia ou administraÃ§Ã£o em sociedade cooperativa constituÃ­da por servidores para prestar serviÃ§os a seus membros, exceto para efeito de promoÃ§Ã£o por merecimento; (RedaÃ§Ã£o dada pela Lei nÂº 11.094, de 2005)
 			
 		</c:set>
 		<c:set var="conteudo16">
-d) por motivo de acidente em serviço ou doença profissional; 
+d) por motivo de acidente em serviÃ§o ou doenÃ§a profissional; 
 			
 		</c:set>
 		<c:set var="conteudo17">
-e) para capacitação, conforme dispuser o regulamento; (Redação dada pela Lei nº 9.527, de 10.12.97)
+e) para capacitaÃ§Ã£o, conforme dispuser o regulamento; (RedaÃ§Ã£o dada pela Lei nÂº 9.527, de 10.12.97)
 			
 		</c:set>
 		<c:set var="conteudo18">
-f) por convocação para o serviço militar;
+f) por convocaÃ§Ã£o para o serviÃ§o militar;
 			
 		</c:set>
 		<c:set var="conteudo19">
@@ -89,90 +89,90 @@ IX - deslocamento para a nova sede de que trata o art. 18;
 			
 		</c:set>
 		<c:set var="conteudo20">
-X - participação em competição desportiva nacional ou convocação para integrar representação desportiva nacional, no País ou no exterior, conforme disposto em lei específica;
+X - participaÃ§Ã£o em competiÃ§Ã£o desportiva nacional ou convocaÃ§Ã£o para integrar representaÃ§Ã£o desportiva nacional, no PaÃ­s ou no exterior, conforme disposto em lei especÃ­fica;
 			
 		</c:set>
 		<c:set var="conteudo21">
-XI - afastamento para servir em organismo internacional de que o Brasil participe ou com o qual coopere. (Incluído pela Lei nº 9.527, de 10.12.97)
+XI - afastamento para servir em organismo internacional de que o Brasil participe ou com o qual coopere. (IncluÃ­do pela Lei nÂº 9.527, de 10.12.97)
 			
 		</c:set>
 		<c:set var="conteudo22">
-Art. 44. Considera-se período de trânsito, para os fins desta Resolução, o prazo concedido ao servidor que deva ter exercício funcional em outra localidade por motivo de remoção, redistribuição, cessão ou exercício provisório, desde que implique mudança de residência.
+Art. 44. Considera-se perÃ­odo de trÃ¢nsito, para os fins desta ResoluÃ§Ã£o, o prazo concedido ao servidor que deva ter exercÃ­cio funcional em outra localidade por motivo de remoÃ§Ã£o, redistribuiÃ§Ã£o, cessÃ£o ou exercÃ­cio provisÃ³rio, desde que implique mudanÃ§a de residÃªncia.
 			
 		</c:set>
 		<c:set var="conteudo23">
-Parágrafo único. O afastamento de que trata este artigo é considerado como de efetivo exercício, fazendo jus o servidor durante esse período à remuneração do cargo efetivo.
+ParÃ¡grafo Ãºnico. O afastamento de que trata este artigo Ã© considerado como de efetivo exercÃ­cio, fazendo jus o servidor durante esse perÃ­odo Ã  remuneraÃ§Ã£o do cargo efetivo.
 			
 		</c:set>
 		<c:set var="conteudo24">
-Art. 45. O período de trânsito será de, no mínimo, dez e, no máximo, trinta dias, contados da publicação do ato de remoção, redistribuição, cessão ou exercício provisório.
+Art. 45. O perÃ­odo de trÃ¢nsito serÃ¡ de, no mÃ­nimo, dez e, no mÃ¡ximo, trinta dias, contados da publicaÃ§Ã£o do ato de remoÃ§Ã£o, redistribuiÃ§Ã£o, cessÃ£o ou exercÃ­cio provisÃ³rio.
 			
 		</c:set>
 		<c:set var="conteudo25">
-&sect; 1&ordm; No caso de retorno do servidor, o prazo de que trata este artigo será contado:
+&sect; 1&ordm; No caso de retorno do servidor, o prazo de que trata este artigo serÃ¡ contado:
 			
 		</c:set>
 		<c:set var="conteudo26">
-I - na hipótese de cessão, da publicação do ato de exoneração do cargo em comissão ou de dispensa da função comissionada ocupado no órgão cessionário;
+I - na hipÃ³tese de cessÃ£o, da publicaÃ§Ã£o do ato de exoneraÃ§Ã£o do cargo em comissÃ£o ou de dispensa da funÃ§Ã£o comissionada ocupado no Ã³rgÃ£o cessionÃ¡rio;
 			
 		</c:set>
 		<c:set var="conteudo27">
-II - na hipótese de exercício provisório, da publicação do ato que determinar o retorno.
+II - na hipÃ³tese de exercÃ­cio provisÃ³rio, da publicaÃ§Ã£o do ato que determinar o retorno.
 			
 		</c:set>
 		<c:set var="conteudo28">
-&sect; 2&ordm; Na hipótese de o servidor encontrar-se em licença ou afastado legalmente, o período de trânsito será contado a partir do término do impedimento.
+&sect; 2&ordm; Na hipÃ³tese de o servidor encontrar-se em licenÃ§a ou afastado legalmente, o perÃ­odo de trÃ¢nsito serÃ¡ contado a partir do tÃ©rmino do impedimento.
 			
 		</c:set>
 		<c:set var="conteudo29">
-&sect; 3&ordm; As licenças e afastamentos legais ocorridos durante o trânsito não suspendem o seu transcurso, podendo ser concedidos pelo tempo que sobejar.
+&sect; 3&ordm; As licenÃ§as e afastamentos legais ocorridos durante o trÃ¢nsito nÃ£o suspendem o seu transcurso, podendo ser concedidos pelo tempo que sobejar.
 			
 		</c:set>
 		<c:set var="conteudo30">
-&sect; 4&ordm; Ao servidor é facultado desistir, total ou parcialmente, do período de trânsito.
+&sect; 4&ordm; Ao servidor Ã© facultado desistir, total ou parcialmente, do perÃ­odo de trÃ¢nsito.
 			
 		</c:set>
 		<c:set var="conteudo31">
-Art. 46. A concessão do período de trânsito caberá ao órgão competente para emissão do ato de cessão, remoção, exercício provisório e redistribuição.
+Art. 46. A concessÃ£o do perÃ­odo de trÃ¢nsito caberÃ¡ ao Ã³rgÃ£o competente para emissÃ£o do ato de cessÃ£o, remoÃ§Ã£o, exercÃ­cio provisÃ³rio e redistribuiÃ§Ã£o.
 			
 		</c:set>
 		<c:set var="conteudo32">
-&sect; 1&ordm; Caberá ao órgão de origem o pagamento da remuneração do seu cargo efetivo durante o período de trânsito.
+&sect; 1&ordm; CaberÃ¡ ao Ã³rgÃ£o de origem o pagamento da remuneraÃ§Ã£o do seu cargo efetivo durante o perÃ­odo de trÃ¢nsito.
 			
 		</c:set>
 		<c:set var="conteudo33">
-&sect; 2&ordm; O período de trânsito deverá ser concedido juntamente com o ato de movimentação, mediante requerimento do servidor.
+&sect; 2&ordm; O perÃ­odo de trÃ¢nsito deverÃ¡ ser concedido juntamente com o ato de movimentaÃ§Ã£o, mediante requerimento do servidor.
 			
 		</c:set>
 
 		<mod:grupo>
-			<mod:texto titulo="Lotação de origem" var="lotOrigem" largura="50"
+			<mod:texto titulo="LotaÃ§Ã£o de origem" var="lotOrigem" largura="50"
 				obrigatorio="Sim" />
 			<br />
-			<mod:texto titulo="Lotação de destino" var="lotDestino" largura="50"
+			<mod:texto titulo="LotaÃ§Ã£o de destino" var="lotDestino" largura="50"
 				obrigatorio="Sim" />
 			<br />
 			<mod:texto titulo="E-mail" var="email" largura="50" obrigatorio="Sim" />
 			<br />
-			<mod:texto titulo="Número total dos dias de trânsito pretendidos"
+			<mod:texto titulo="NÃºmero total dos dias de trÃ¢nsito pretendidos"
 				var="dias" largura="5" obrigatorio="Sim" />
 			<br />
-			<mod:texto titulo="Período do trânsito" var="periodo" largura="30"
+			<mod:texto titulo="PerÃ­odo do trÃ¢nsito" var="periodo" largura="30"
 				obrigatorio="Sim" />
 			<br />
 			<c:set var="textoCiencia">
 Estou ciente:
 			<b><br />
-				- dos termos da Lei nº 8.112/90 <span
+				- dos termos da Lei nÂº 8.112/90 <span
 					onmouseover="this.style.cursor='hand';"
 					onclick="javascript: if (newwin!=null) newwin.close(); newwin = window.open('',null,'height=450,width=550,status=no,toolbar=no,menubar=no,location=no,scrollbars=yes'); newwin.document.write('${conteudo1}<br /><br />'); newwin.document.write('${conteudo2}<br /><br />');newwin.document.write('${conteudo3}<br /><br />');newwin.document.write('${conteudo4}<br /><br />');newwin.document.write('${conteudo5}<br /><br />');newwin.document.write('${conteudo6}<br /><br />');newwin.document.write('${conteudo7}<br /><br />');newwin.document.write('${conteudo8}<br /><br />');newwin.document.write('${conteudo9}<br /><br />');newwin.document.write('${conteudo10}<br /><br />');newwin.document.write('${conteudo11}<br /><br />');newwin.document.write('${conteudo12}<br /><br />');newwin.document.write('${conteudo13}<br /><br />');newwin.document.write('${conteudo14}<br /><br />');newwin.document.write('${conteudo15}<br /><br />');newwin.document.write('${conteudo16}<br /><br />');newwin.document.write('${conteudo17}<br /><br />');newwin.document.write('${conteudo18}<br /><br />');newwin.document.write('${conteudo19}<br /><br />');newwin.document.write('${conteudo20}<br /><br />');newwin.document.write('${conteudo21}<br /><br />');"><u>artigos
 				18 e 102</u></span> c/c os <span onmouseover="this.style.cursor='hand';"
 					onclick="javascript: if (newwin!=null) newwin.close(); newwin = window.open('teste',null,'height=450,width=550,status=no,toolbar=no,menubar=no,location=no,scrollbars=yes'); newwin.document.write('${conteudo22}<br /><br />');newwin.document.write('${conteudo23}<br /><br />');newwin.document.write('${conteudo24}<br /><br />');newwin.document.write('${conteudo25}<br /><br />');newwin.document.write('${conteudo26}<br /><br />');newwin.document.write('${conteudo27}<br /><br />');newwin.document.write('${conteudo28}<br /><br />');newwin.document.write('${conteudo29}<br /><br />');newwin.document.write('${conteudo30}<br /><br />');newwin.document.write('${conteudo31}<br /><br />');newwin.document.write('${conteudo32}<br /><br />');newwin.document.write('${conteudo33}<br /><br />');"><u>artigos
-				44, 45 e 46</u></span> da Resolução nº 03, de 10/3/2008 do Conselho da Justiça
+				44, 45 e 46</u></span> da ResoluÃ§Ã£o nÂº 03, de 10/3/2008 do Conselho da JustiÃ§a
 				Federal. <br />
-				- de que a concessão de trânsito implica mudança de residência e,
-				assim, compromete-se a atualizar o endereço na Seção de Cadastro
-				(SECAD), até o término do trânsito. </b>
+				- de que a concessÃ£o de trÃ¢nsito implica mudanÃ§a de residÃªncia e,
+				assim, compromete-se a atualizar o endereÃ§o na SeÃ§Ã£o de Cadastro
+				(SECAD), atÃ© o tÃ©rmino do trÃ¢nsito. </b>
 			</c:set>
 			<br />
 			<mod:caixaverif titulo="${textoCiencia}" var="ciente"
@@ -226,17 +226,17 @@ Estou ciente:
 		<mod:valor var="texto_requerimento">
 
 			<p style="TEXT-INDENT: 2cm" align="justify">
-			${doc.subscritor.descricao}, matrícula nº ${doc.subscritor.sigla},
+			${doc.subscritor.descricao}, matrÃ­cula nÂº ${doc.subscritor.sigla},
 			${doc.subscritor.cargo.nomeCargo}, lotado(a) no(a)
 			${f:removeAcentoMaiusculas(lotOrigem)}, e-mail: ${email}, vem
-			requerer a Vossa Excelência concessão de ${dias} dias de trânsito, no
-			período de ${periodo}, tendo em vista remoção para
-			${f:removeAcentoMaiusculas(lotDestino)}, nos termos da Lei Nº
-			8.112/90 c/c artigos 44, 45 e 46 da Resolução Nº 03/2008-CJF. <br />
+			requerer a Vossa ExcelÃªncia concessÃ£o de ${dias} dias de trÃ¢nsito, no
+			perÃ­odo de ${periodo}, tendo em vista remoÃ§Ã£o para
+			${f:removeAcentoMaiusculas(lotDestino)}, nos termos da Lei NÂº
+			8.112/90 c/c artigos 44, 45 e 46 da ResoluÃ§Ã£o NÂº 03/2008-CJF. <br />
 			<br />
-			Declara estar ciente de que a concessão de trânsito implica mudança de
-			residência e, assim, compromete-se a atualizar o endereço na Seção de
-			Cadastro (SECAD), até o término do trânsito.</p>
+			Declara estar ciente de que a concessÃ£o de trÃ¢nsito implica mudanÃ§a de
+			residÃªncia e, assim, compromete-se a atualizar o endereÃ§o na SeÃ§Ã£o de
+			Cadastro (SECAD), atÃ© o tÃ©rmino do trÃ¢nsito.</p>
 		</mod:valor>
 
 

@@ -20,27 +20,27 @@
 		
 		<mod:grupo titulo="Juiz Federal Convocado">
 			<mod:grupo>
-				<mod:selecao titulo="Sexo" var="gen1"  opcoes="M;F" reler="não" />
-				<mod:selecao titulo="Juiz Federal" reler="não"/>
-				<mod:selecao titulo="Com prejuízo" var="prej2"  opcoes="sim;não" reler="não" />
+				<mod:selecao titulo="Sexo" var="gen1"  opcoes="M;F" reler="nÃ£o" />
+				<mod:selecao titulo="Juiz Federal" reler="nÃ£o"/>
+				<mod:selecao titulo="Com prejuÃ­zo" var="prej2"  opcoes="sim;nÃ£o" reler="nÃ£o" />
 			</mod:grupo>
 			<mod:grupo>
 				<mod:pessoa titulo="Nome" var="convocado" />
 			</mod:grupo>	
 		</mod:grupo>
 		
-		<mod:grupo titulo="Desembargador Federal Substituído">
+		<mod:grupo titulo="Desembargador Federal SubstituÃ­do">
 			<mod:grupo>
-				<mod:selecao titulo="Sexo" var="gen2"  opcoes="M;F" reler="não" />
-				<mod:selecao titulo="Desembargador Federal" reler="não"/>
-				<mod:selecao titulo="em virtude" var="motiv" opcoes="de licença médica;das férias regulamentares" reler="não"/>
+				<mod:selecao titulo="Sexo" var="gen2"  opcoes="M;F" reler="nÃ£o" />
+				<mod:selecao titulo="Desembargador Federal" reler="nÃ£o"/>
+				<mod:selecao titulo="em virtude" var="motiv" opcoes="de licenÃ§a mÃ©dica;das fÃ©rias regulamentares" reler="nÃ£o"/>
 			</mod:grupo>
 			<mod:grupo>
 				<mod:pessoa titulo="Nome" var="titular" />
 			</mod:grupo>
 		</mod:grupo>
 		
-		<mod:grupo titulo="Período de Convocação">
+		<mod:grupo titulo="PerÃ­odo de ConvocaÃ§Ã£o">
 			<mod:data titulo="De" var="dtini" />
 			<mod:data titulo="a" var="dtfin" />
 		</mod:grupo>
@@ -54,21 +54,21 @@
 		<mod:valor var="texto_ato">
 			<br/><br/>
 			<p style="TEXT-INDENT: 2cm" align="justify">
-			${presid} DO TRIBUNAL REGIONAL FEDERAL DA 2ª REGIÃO, no uso de suas atribuições, RESOLVE:
+			${presid} DO TRIBUNAL REGIONAL FEDERAL DA 2Âª REGIÃƒO, no uso de suas atribuiÃ§Ãµes, RESOLVE:
 			
 			CONVOCAR
 			<c:choose>
 					<c:when test="${ gen1 == 'M'}">
-						o Excelentíssimo Juiz Federal
+						o ExcelentÃ­ssimo Juiz Federal
 					</c:when>
 					<c:otherwise>
-					    a Excelentíssima Juíza Federal
+					    a ExcelentÃ­ssima JuÃ­za Federal
 					</c:otherwise>
 			</c:choose>	
 			da
 			${pessoa_convoc.lotacao.descricao},
 			<c:choose>
-				<c:when test="${genero2 == 'F'}">Drª.</c:when>
+				<c:when test="${genero2 == 'F'}">DrÂª.</c:when>
 				<c:otherwise>Dr.</c:otherwise>
 			</c:choose>	
 			${ pessoa_convoc.nomePessoa}, para, 
@@ -78,14 +78,14 @@
 				<c:otherwise>sem</c:otherwise>
 			</c:choose>
 			
-			prejuizo de sua jurisdição, compor o quorum deste Tribunal, no período de ${dtini} a ${dtfin}, 
+			prejuizo de sua jurisdiÃ§Ã£o, compor o quorum deste Tribunal, no perÃ­odo de ${dtini} a ${dtfin}, 
 			em virtude ${motiv} 
 			<c:choose>
-				<c:when test="${gen2 == 'F'}">da Excelentíssima Desembargadora Federal </c:when>
-				<c:otherwise>da Excelentíssimo Desembargador Federal </c:otherwise>
+				<c:when test="${gen2 == 'F'}">da ExcelentÃ­ssima Desembargadora Federal </c:when>
+				<c:otherwise>da ExcelentÃ­ssimo Desembargador Federal </c:otherwise>
 			</c:choose>	
-			${ pessoa_titular.nomePessoa}, nos termos do artigo 48, inciso I, do Regimento Interno desta Corte c/c artigo 1º, inciso I, da Resolução nº 51/2009, do 
-			Conselho da Justiça Federal. 
+			${ pessoa_titular.nomePessoa}, nos termos do artigo 48, inciso I, do Regimento Interno desta Corte c/c artigo 1Âº, inciso I, da ResoluÃ§Ã£o nÂº 51/2009, do 
+			Conselho da JustiÃ§a Federal. 
 			
 			
 			<p align="center">PUBLIQUE-SE. REGISTRE-SE. CUMPRA-SE</p>

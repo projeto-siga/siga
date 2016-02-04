@@ -55,7 +55,7 @@ public class CellWidths extends ArrayList {
  * *** empty log message ***
  *
  * Revision 1.3  2006/07/05 16:00:47  nts
- * Refatorando para melhorar qualidade do código
+ * Refatorando para melhorar qualidade do cÃ³digo
  *
  * Revision 1.2  2006/04/11 19:43:46  tah
  * *** empty log message ***

@@ -18,8 +18,12 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.util;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jbpm.context.def.VariableAccess;
 import org.jbpm.graph.exe.ExecutionContext;
@@ -29,7 +33,7 @@ import org.jbpm.taskmgmt.def.TaskController;
 import br.gov.jfrj.siga.wf.bl.Wf;
 
 /**
- * Classe que representa o serviÁo de e-mail. Esta classe È definida em
+ * Classe que representa o servi√ßo de e-mail. Esta classe √© definida em
  * siga-wf/src/jbpm.cfg.xml.
  * 
  * @author kpf
@@ -40,15 +44,23 @@ public class WfMail extends Mail {
 	private Long tiId;
 	private List<VariableAccess> docAccessVariables;
 	private Map docVariables;
+	Logger logger = Logger.getLogger("br.gov.jfrj.siga.wf.email");
 
 	private static final long serialVersionUID = -1530708539893196841L;
 
 	/**
-	 * Retorna o texto do e-mail. Esse mÈtodo inclui automaticamente rodapÈ com
-	 * informaÁıes da tarefa correspondente ao e-mail.
+	 * Retorna o texto do e-mail. Esse m√©todo inclui automaticamente rodap√© com
+	 * informa√ß√µes da tarefa correspondente ao e-mail.
 	 */
 	@Override
 	public String getText() {
+		if (Wf.getInstance().getProp().getMailLinkTarefa() == null){
+			logger.log(Level.WARNING,"A propriedade mail.link.tarefa n√£o est√° definida! Os e-mails enviados para o usu√°rio n√£o conter√£o o link correto para a tarefa");
+		}
+		if (Wf.getInstance().getProp().getMailLinkTarefa() == null){
+			logger.log(Level.WARNING,"A propriedade mail.link.documento n√£o est√° definida! Os e-mails enviados para o usu√°rio n√£o conter√£o o link correto para o documento");
+		}
+		
 		String rodape = "\n\n----------\n";
 		if (tiId != null) {
 			rodape += "Link para a tarefa no SIGA-WF: " + Wf.getInstance().getProp().getMailLinkTarefa()
@@ -75,8 +87,8 @@ public class WfMail extends Mail {
 
 
 	/**
-	 * Ao iniciar a manipulaÁ„o do e-mail, esse mÈtodo captura as informaÁıes
-	 * sobre os documentos do SIGA-DOC que se referem ‡ tarefa que enviou o
+	 * Ao iniciar a manipula√ß√£o do e-mail, esse m√©todo captura as informa√ß√µes
+	 * sobre os documentos do SIGA-DOC que se referem √† tarefa que enviou o
 	 * e-mail.
 	 */
 	@Override
@@ -103,10 +115,17 @@ public class WfMail extends Mail {
 	@Override
 	public void send() {
 		// Para debugar o workflow, o ideal e desabilitar os emails e apenas
-		// log·-los no System.out.
+		// log√°-los no System.out.
 //		super.getBccRecipients().add("xxx@xxx.com.br");
 		super.send();
-		// System.out.println(this.toString());
+
+		logger.log(Level.INFO,"Email enviado para " + super.getRecipients() + "[" + super.getSubject() + "]");
+		logger.log(Level.FINE,"Detalhes do e-mail enviado:"
+					+ "\nAssunto: " + getSubject()
+					+ "\nDe: " + getFromAddress()
+					+ "\nPara: " + getRecipients()
+					+ "\nTexto: " + getText());
+
 	}
 
 }

@@ -40,12 +40,12 @@ import org.bouncycastle.x509.extension.X509ExtensionUtil;
 public class CertificadoUtil {
 	
 	/**
-	 * Interpreta um dado do tipo otherName. Obs. O JDK 5.0 n„o tem classes que
-	 * lidem com um dado do tipo OtherName. … necess·rio usar o BouncyCastle.
+	 * Interpreta um dado do tipo otherName. Obs. O JDK 5.0 n√£o tem classes que
+	 * lidem com um dado do tipo OtherName. √â necess√°rio usar o BouncyCastle.
 	 * 
 	 * @param encoded
 	 *            O dado em ASN.1.
-	 * @return Um par contendo o OID e o conte˙do.
+	 * @return Um par contendo o OID e o conte√∫do.
 	 */
 	public static Pair<ASN1ObjectIdentifier, String> getOtherName(DLSequence sequence)
 			throws IOException {
@@ -68,7 +68,7 @@ public class CertificadoUtil {
 	}
 
 	/**
-	 * Recupera as propriedades ICP/Brasil-Pessoa FÌsica (email e CPF)
+	 * Recupera as propriedades ICP/Brasil-Pessoa F√≠sica (email e CPF)
 	 * 
 	 * @param cert
 	 * @return
@@ -100,14 +100,14 @@ public class CertificadoUtil {
 //			@SuppressWarnings("unused")
 //			int pos;
 //
-//			// O primeiro elemento È um Integer com o valor 0 = otherName, 1
+//			// O primeiro elemento √© um Integer com o valor 0 = otherName, 1
 //			// =
 //			// rfc822name etc.
-//			// O segundo valor È um byte array ou uma String. Veja o javadoc
+//			// O segundo valor √© um byte array ou uma String. Veja o javadoc
 //			// de
 //			// getSubjectAlternativeNames.
 //			switch (((Number) subjectAlternativeName.get(0)).intValue()) {
-//			case 0: // OtherName - contÈm CPF, CNPJ etc.
+//			case 0: // OtherName - cont√©m CPF, CNPJ etc.
 //				// o OID fica em otherName.first
 //				Collection collection = X509ExtensionUtil.getSubjectAlternativeNames(cert);
 //				otherName = getOtherName((byte[]) subjectAlternativeName.get(1));
@@ -137,18 +137,18 @@ public class CertificadoUtil {
 			String sCPF = props.getProperty("2.16.76.1.3.1").substring(8, 19);
 
 			@SuppressWarnings("unused")
-			long lCPF = Long.valueOf(sCPF); // usado apenas para verificar se È numÈrico
+			long lCPF = Long.valueOf(sCPF); // usado apenas para verificar se √© num√©rico
 			if (!isCPF(sCPF) ) {
-				throw new Exception("O CPF encontrado n„o È v·lido!");
+				throw new Exception("O CPF encontrado n√£o √© v√°lido!");
 			}
 			return sCPF;
 		} catch (Exception e) {
-			throw new Exception("N„o foi possÌvel obter o CPF :"
+			throw new Exception("N√£o foi poss√≠vel obter o CPF :"
 					+ e.getMessage());
 		}
 	}
 	/**
-	 * Verifica se o modo de autenticaÁ„o do request È por certificado  
+	 * Verifica se o modo de autentica√ß√£o do request √© por certificado  
 	 * @param request
 	 * @return boolean
 	 */
@@ -178,18 +178,18 @@ public class CertificadoUtil {
 				}
 			}
 			throw new Exception(
-					"CPF n„o encontrado na cadeia de certificados fornecida!");
+					"CPF n√£o encontrado na cadeia de certificados fornecida!");
 		} else {
 			if ("https".equals(request.getScheme())) {
 				throw new Exception(
-						"Este È um request HTTPS, mas nenhum certificado de cliente est· disponÌvel!");
+						"Este √© um request HTTPS, mas nenhum certificado de cliente est√° dispon√≠vel!");
 			} else {
-				throw new Exception("Esta n„o È uma requisiÁ„o HTTPS!");
+				throw new Exception("Esta n√£o √© uma requisi√ß√£o HTTPS!");
 			}
 		}
 	}
 	/**
-	 * Verifica se o par‚metro È um CPF v·lido
+	 * Verifica se o par√¢metro √© um CPF v√°lido
 	 * 
 	 * @param cpf
 	 * @return
@@ -205,7 +205,7 @@ public class CertificadoUtil {
 	}
 
 	/**
-	 * C·lculo de dÌgito verificador auxiliar do c·lculo de CPF
+	 * C√°lculo de d√≠gito verificador auxiliar do c√°lculo de CPF
 	 * 
 	 * @param str
 	 * @param pesos

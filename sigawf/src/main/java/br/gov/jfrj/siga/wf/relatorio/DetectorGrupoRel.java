@@ -1,7 +1,7 @@
 package br.gov.jfrj.siga.wf.relatorio;
 
 /**
- * Classe respons·vel por separar em grupos as linhas especificadas
+ * Classe respons√°vel por separar em grupos as linhas especificadas
  * @author kpf
  *
  */

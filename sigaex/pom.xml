@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>siga-doc</artifactId>
 		<groupId>siga</groupId>
-		<version>1.1</version>
+		<version>1.2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>sigaex</artifactId>
@@ -14,6 +14,57 @@
 
 	<build>
 		<plugins>
+			<!-- vraptor static scan -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.javassist</groupId>
+						<artifactId>javassist</artifactId>
+						<version>3.15.0-GA</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>static-scanning</id>
+						<phase>package</phase>
+						<configuration>
+							<target>
+								<echo message="Starting static scanning process..." />
+								<path id="build.classpath">
+									<fileset
+										dir="${project.build.directory}/${project.build.finalName}/WEB-INF/lib"
+										includes="*.jar" />
+									<fileset dir="${project.build.directory}/../../lib/static_scan_vraptor/" includes="*.jar" />
+								</path>
+								<java classpathref="build.classpath"
+									classname="br.com.caelum.vraptor.scan.VRaptorStaticScanning"
+									fork="true">
+									<arg
+										value="${project.build.directory}/${project.build.finalName}/WEB-INF/web.xml" />
+									<classpath refid="build.classpath" />
+									<classpath
+										path="${project.build.directory}/${project.build.finalName}/WEB-INF/classes" />
+								</java>
+								<war destfile="${project.build.directory}/${project.build.finalName}.war"
+									webxml="${project.build.directory}/${project.build.finalName}/WEB-INF/web.xml">
+									<fileset
+										dir="${project.build.directory}/${project.build.finalName}" />
+								</war>
+								<echo message="Static scanning process finished!" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- end vraptor static scan -->
+
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -77,7 +128,30 @@
 			<groupId>org.directwebremoting</groupId>
 			<artifactId>dwr</artifactId>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>siga-cp</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>bcmail-jdk14</artifactId>
+					<groupId>bouncycastle</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>net.sf.jasperreports</groupId>
+					<artifactId>jasperreports</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>bcprov-jdk14</artifactId>
+					<groupId>bouncycastle</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+		</dependency>
+		
 		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-cp</artifactId>
@@ -101,10 +175,6 @@
 			<groupId>org.jboss.spec.javax.servlet</groupId>
 			<artifactId>jboss-servlet-api_2.5_spec</artifactId>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>jasperreports</groupId>
-			<artifactId>jasperreports</artifactId>
 		</dependency>
 
 		<dependency>
@@ -147,15 +217,17 @@
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 		</dependency>
+		
+		<dependency>
+	<groupId>com.googlecode.log4jdbc</groupId>
+	<artifactId>log4jdbc</artifactId>
+	<version>1.2</version>
+</dependency>
 
 		<!-- SIGA -->
 		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-base</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>siga</groupId>
-			<artifactId>siga-libs</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>siga</groupId>
@@ -166,12 +238,22 @@
 			<artifactId>siga-ext</artifactId>
 		</dependency>
 
-		<!-- Teste -->
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>15.0</version>
-			<scope>test</scope>
+			<groupId>siga</groupId>
+			<artifactId>siga-vraptor-module</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>br.com.caelum.vraptor</groupId>
+			<artifactId>vraptor-jpa</artifactId>
+			<version>1.0.2</version>
+			<exclusions>
+				<exclusion>  <!-- declare the exclusion here -->
+					<groupId>org.eclipse.persistence</groupId>
+					<artifactId>javax.persistence</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 	</dependencies>
 </project>

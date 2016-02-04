@@ -8,12 +8,12 @@
 			<tr>
 				<td width="100%" align="left">
 				<p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">PODER
-				JUDICI¡RIO</p>
+				JUDICI√ÅRIO</p>
 				</td>
 			</tr>
 			<tr>
 				<td width="100%" align="left">
-				<p style="font-family: Arial; font-size: 10pt; font-weight: bold;">JUSTI«A
+				<p style="font-family: Arial; font-size: 10pt; font-weight: bold;">JUSTI√áA
 				FEDERAL</p>
 				</td>
 			</tr>

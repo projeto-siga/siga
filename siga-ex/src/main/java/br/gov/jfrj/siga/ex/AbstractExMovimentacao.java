@@ -20,15 +20,16 @@
  */
 package br.gov.jfrj.siga.ex;
 
+import java.io.Serializable;
 import java.sql.Blob;
 import java.util.Date;
+
+import org.hibernate.search.annotations.DocumentId;
+
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-
-import java.io.Serializable;
-
-import org.hibernate.search.annotations.DocumentId;
 
 /**
  * A class that represents a row in the EX_MOVIMENTACAO table. You can customize
@@ -125,6 +126,8 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 	private Integer numPaginasOri;
 	
 	private ExPapel exPapel;
+
+	private CpMarcador marcador;
 
 	public void setNumPaginasOri(Integer numPaginasOri) {
 		this.numPaginasOri = numPaginasOri;
@@ -442,5 +445,13 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 
 	public void setExPapel(ExPapel exPapel) {
 		this.exPapel = exPapel;
+	}
+
+	public CpMarcador getMarcador() {
+		return marcador;
+	}
+
+	public void setMarcador(CpMarcador marcador) {
+		this.marcador = marcador;
 	}
 }

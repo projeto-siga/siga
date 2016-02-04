@@ -14,20 +14,20 @@ ABONO DE PERMANENCIA -->
 <c:set var="apenasNome" value="Sim" scope="request" />
 <mod:modelo urlBase="/paginas/expediente/modelos/requerimento_rh.jsp">
 	
-	<mod:oculto var="tipo1" valor="com base no art. 3∫, ß 2∫, e art. 7∫ da Emenda Constitucional n∫ 41,  publicada em 31/12/2003, combinado com o art. 8∫, incisos I e II, ß 1∫, inciso I, alÌneas a e b, e inciso II, da Emenda Constitucional n∫ 20/98" />
-	<mod:oculto var="tipo2" valor="com base no art. 40, ß 1∫, inciso III, alÌnea b,  com a redaÁ„o dada pela Emenda Constitucional n∫ 41/2003" />
-	<mod:oculto var="tipo3" valor="a 100% (cem por cento) da mÈdia contributiva, com base no art. 40, ß 1∫, inciso III, alÌnea a, com a redaÁ„o dada pela Emenda Constitucional n∫ 41/2003" />
-	<mod:oculto var="tipo4" valor="ao valor da mÈdia contributiva, aplicando-se o fator redutor para cada ano antecipado em relaÁ„o ‡ idade, com base no art. 2∫ da Emenda Constitucional n∫ 41/2003" />
-	<mod:oculto var="tipo5" valor="com base no art. 3∫, ß 2∫, e art. 7∫ da Emenda Constitucional n∫ 41,  publicada  em 31/12/2003, combinado com o art. 40, inciso III, alÌnea a, da ConstituiÁ„o Federal, com a redaÁ„o original" />
-	<mod:oculto var="tipo6" valor="com base no art. 3∫, ß 2∫, e art. 7∫ da Emenda Constitucional n∫ 41,  publicada em 31/12/2003, combinado com o art. 40, ß 1∫, inciso III, alÌnea a, com a redaÁ„o dada pela Emenda Constitucional n∫ 20/98"  />
-	<mod:oculto var="tipo7" valor="com base no art. 3∫, ß 2∫, e art. 7∫ da Emenda Constitucional n∫ 41, publicada em 31/12/2003, combinado com o art. 40, ß 1∫, inciso III, alÌnea b, da ConstituiÁ„o Federal,  com a redaÁ„o dada pela Emenda Constitucional n∫ 20/98" />
- 	<mod:oculto var="tipo8" valor="com base no art. 3∫, ß 2∫, e art. 7∫ da Emenda Constitucional n∫ 41, publicada  em 31/12/2003, combinado com  o art. 8∫, incisos I, II e III, alÌneas a e b, da Emenda Constitucional n∫ 20/98" />
-	<mod:oculto var="tipo9" valor="com base no art. 6∫ da Emenda Constitucional n∫ 41/2003" />
-	<mod:oculto var="tipo10" valor="com base no art. 3∫ da Emenda Constitucional n∫ 47/2005" />
+	<mod:oculto var="tipo1" valor="com base no art. 3¬∫, ¬ß 2¬∫, e art. 7¬∫ da Emenda Constitucional n¬∫ 41,  publicada em 31/12/2003, combinado com o art. 8¬∫, incisos I e II, ¬ß 1¬∫, inciso I, al√≠neas a e b, e inciso II, da Emenda Constitucional n¬∫ 20/98" />
+	<mod:oculto var="tipo2" valor="com base no art. 40, ¬ß 1¬∫, inciso III, al√≠nea b,  com a reda√ß√£o dada pela Emenda Constitucional n¬∫ 41/2003" />
+	<mod:oculto var="tipo3" valor="a 100% (cem por cento) da m√©dia contributiva, com base no art. 40, ¬ß 1¬∫, inciso III, al√≠nea a, com a reda√ß√£o dada pela Emenda Constitucional n¬∫ 41/2003" />
+	<mod:oculto var="tipo4" valor="ao valor da m√©dia contributiva, aplicando-se o fator redutor para cada ano antecipado em rela√ß√£o √† idade, com base no art. 2¬∫ da Emenda Constitucional n¬∫ 41/2003" />
+	<mod:oculto var="tipo5" valor="com base no art. 3¬∫, ¬ß 2¬∫, e art. 7¬∫ da Emenda Constitucional n¬∫ 41,  publicada  em 31/12/2003, combinado com o art. 40, inciso III, al√≠nea a, da Constitui√ß√£o Federal, com a reda√ß√£o original" />
+	<mod:oculto var="tipo6" valor="com base no art. 3¬∫, ¬ß 2¬∫, e art. 7¬∫ da Emenda Constitucional n¬∫ 41,  publicada em 31/12/2003, combinado com o art. 40, ¬ß 1¬∫, inciso III, al√≠nea a, com a reda√ß√£o dada pela Emenda Constitucional n¬∫ 20/98"  />
+	<mod:oculto var="tipo7" valor="com base no art. 3¬∫, ¬ß 2¬∫, e art. 7¬∫ da Emenda Constitucional n¬∫ 41, publicada em 31/12/2003, combinado com o art. 40, ¬ß 1¬∫, inciso III, al√≠nea b, da Constitui√ß√£o Federal,  com a reda√ß√£o dada pela Emenda Constitucional n¬∫ 20/98" />
+ 	<mod:oculto var="tipo8" valor="com base no art. 3¬∫, ¬ß 2¬∫, e art. 7¬∫ da Emenda Constitucional n¬∫ 41, publicada  em 31/12/2003, combinado com  o art. 8¬∫, incisos I, II e III, al√≠neas a e b, da Emenda Constitucional n¬∫ 20/98" />
+	<mod:oculto var="tipo9" valor="com base no art. 6¬∫ da Emenda Constitucional n¬∫ 41/2003" />
+	<mod:oculto var="tipo10" valor="com base no art. 3¬∫ da Emenda Constitucional n¬∫ 47/2005" />
 	
 	<mod:entrevista>
 	
-		<mod:grupo titulo="DETALHES DO FUNCION¡RIO">
+		<mod:grupo titulo="DETALHES DO FUNCION√ÅRIO">
 			<mod:texto titulo="Ramal" var="ramal"/>
 		</mod:grupo>
 		<mod:grupo titulo="CONTATOS">
@@ -43,8 +43,8 @@ ABONO DE PERMANENCIA -->
 		<mod:texto titulo="Telefone" largura="13" var="telefone" />
 		<mod:texto titulo="Email" largura="40" var="email" />
 		</mod:grupo>
-		<mod:grupo titulo="OP«√O DE APOSENTADORIA CONFORME A BASE LEGAL">
-		<b>Aposentadoria volunt·ria com proventos proporcionais</b>
+		<mod:grupo titulo="OP√á√ÉO DE APOSENTADORIA CONFORME A BASE LEGAL">
+		<b>Aposentadoria volunt√°ria com proventos proporcionais</b>
 		<br/>
 		<table width="60%">
 		<tr>
@@ -55,7 +55,7 @@ ABONO DE PERMANENCIA -->
 		</td>
 		</tr>
 		</table>
-		<b>Aposentadoria volunt·ria com proventos correspondentes</b>
+		<b>Aposentadoria volunt√°ria com proventos correspondentes</b>
 		<br/>
 		<table width="60%">
 		<tr>
@@ -65,7 +65,7 @@ ABONO DE PERMANENCIA -->
 		</td>
 		</tr>
 		</table>
-		<b>Aposentadoria volunt·ria com proventos integrais</b>
+		<b>Aposentadoria volunt√°ria com proventos integrais</b>
 		<br/>	
 		<table width="60%">
 		<tr>
@@ -85,42 +85,42 @@ ABONO DE PERMANENCIA -->
 	
 		<mod:valor var="texto_requerimento"><p style="TEXT-INDENT: 2cm" align="justify">		
 		<br />${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, 
-		do Quadro de Pessoal Permanente da JustiÁa Federal de Primeiro Grau no Rio de Janeiro, 
+		do Quadro de Pessoal Permanente da Justi√ßa Federal de Primeiro Grau no Rio de Janeiro, 
 		lotado(a) no(a) ${doc.subscritor.lotacao.descricao }, 
-		ramal ${ramal}, residente na ${logradouro}, ${bairro}, ${cidade}/${estado}, CEP ${cep}, telefone n∫ ${telefone}, email ${email},
-		vem requerer a Vossa Senhoria que se digne remeter seu requerimento de concess„o de aposentadoria ao EgrÈgio 
-		Tribunal Regional Federal da 2™ Regi„o.
+		ramal ${ramal}, residente na ${logradouro}, ${bairro}, ${cidade}/${estado}, CEP ${cep}, telefone n¬∫ ${telefone}, email ${email},
+		vem requerer a Vossa Senhoria que se digne remeter seu requerimento de concess√£o de aposentadoria ao Egr√©gio 
+		Tribunal Regional Federal da 2¬™ Regi√£o.
 		</p>
 		
 		</mod:valor>
 		<mod:valor var="texto_requerimento2">
 			<%--<c:set var="semEspacos" value="Sim" scope="request" />--%>
-			<h3 align="center">EXCELENTÕSSIMO SENHOR PRESIDENTE DO TRIBUNAL REGIONAL FEDERAL DA 2™ REGI√O</H3>
+			<h3 align="center">EXCELENT√çSSIMO SENHOR PRESIDENTE DO TRIBUNAL REGIONAL FEDERAL DA 2¬™ REGI√ÉO</H3>
 			
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			
 			<c:if test="${tipoProventos < 3 || tipoProventos == 7}">
 		<br>${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido},
-		do Quadro de Pessoal Permanente da JustiÁa Federal de Primeiro Grau no Rio de Janeiro,
+		do Quadro de Pessoal Permanente da Justi√ßa Federal de Primeiro Grau no Rio de Janeiro,
 		lotado(a) no(a) ${doc.subscritor.lotacao.descricao }, 
-		ramal ${ramal}, residente na ${logradouro}, ${bairro}, ${cidade}/${estado}, CEP ${cep}, telefone n∫ ${telefone}, email ${email},
-		vem requerer a Vossa ExcelÍncia a concess„o de aposentadoria volunt·ria com proventos proporcionais, ${requestScope[f:concat('tipo',tipoProventos)]}.
+		ramal ${ramal}, residente na ${logradouro}, ${bairro}, ${cidade}/${estado}, CEP ${cep}, telefone n¬∫ ${telefone}, email ${email},
+		vem requerer a Vossa Excel√™ncia a concess√£o de aposentadoria volunt√°ria com proventos proporcionais, ${requestScope[f:concat('tipo',tipoProventos)]}.
 		    </c:if>
 		
 			<c:if test="${tipoProventos == 3 || tipoProventos == 4}">
 		<br>${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido},
-		do Quadro de Pessoal Permanente da JustiÁa Federal de Primeiro Grau no Rio de Janeiro,
+		do Quadro de Pessoal Permanente da Justi√ßa Federal de Primeiro Grau no Rio de Janeiro,
 		lotado(a) no(a) ${doc.subscritor.lotacao.descricao }, 
-		ramal ${ramal}, residente na ${logradouro}, ${bairro}, ${cidade}/${estado}, CEP ${cep}, telefone n∫ ${telefone}, email ${email},
-		vem requerer a Vossa ExcelÍncia a concess„o de aposentadoria volunt·ria com proventos correspondentes, ${requestScope[f:concat('tipo',tipoProventos)]}.
+		ramal ${ramal}, residente na ${logradouro}, ${bairro}, ${cidade}/${estado}, CEP ${cep}, telefone n¬∫ ${telefone}, email ${email},
+		vem requerer a Vossa Excel√™ncia a concess√£o de aposentadoria volunt√°ria com proventos correspondentes, ${requestScope[f:concat('tipo',tipoProventos)]}.
 		    </c:if>
 		
 			<c:if test="${tipoProventos == 5 || tipoProventos == 6 || tipoProventos == 8 || tipoProventos == 9 || tipoProventos == 10}">	
 		<br>${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido},
-		do Quadro de Pessoal Permanente da JustiÁa Federal de Primeiro Grau no Rio de Janeiro,
+		do Quadro de Pessoal Permanente da Justi√ßa Federal de Primeiro Grau no Rio de Janeiro,
 		lotado(a) no(a) ${doc.subscritor.lotacao.descricao }, 
-		ramal ${ramal}, residente na ${logradouro}, ${bairro}, ${cidade}/${estado}, CEP ${cep}, telefone n∫ ${telefone}, email ${email},
-		vem requerer a Vossa ExcelÍncia a concess„o de aposentadoria volunt·ria com proventos integrais, ${requestScope[f:concat('tipo',tipoProventos)]}.
+		ramal ${ramal}, residente na ${logradouro}, ${bairro}, ${cidade}/${estado}, CEP ${cep}, telefone n¬∫ ${telefone}, email ${email},
+		vem requerer a Vossa Excel√™ncia a concess√£o de aposentadoria volunt√°ria com proventos integrais, ${requestScope[f:concat('tipo',tipoProventos)]}.
 		    </c:if>
 		    	
 		</p>

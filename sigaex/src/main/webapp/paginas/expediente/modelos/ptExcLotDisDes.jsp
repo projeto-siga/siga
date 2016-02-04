@@ -13,33 +13,33 @@
 	        <mod:grupo>
 				<mod:pessoa titulo="<b>Nome do Servidor</b>" var="serv" />
 			    <br><br>
-			    <mod:selecao titulo="<b>¡rea</b>" var="area"  opcoes="Administrativa;Apoio Especializado;Judici·ria" reler="sim" />
+			    <mod:selecao titulo="<b>√Årea</b>" var="area"  opcoes="Administrativa;Apoio Especializado;Judici√°ria" reler="sim" />
 			</mod:grupo>
 			<br>
 			<mod:grupo>
-			    <mod:selecao titulo="<b>NÌvel</b>" var="niv" opcoes="NA;NI;NS" reler="sim" />
+			    <mod:selecao titulo="<b>N√≠vel</b>" var="niv" opcoes="NA;NI;NS" reler="sim" />
 				<mod:selecao titulo="<b>Classe</b>" var="classe" opcoes="A;B;C" reler="sim" />
-				<mod:selecao titulo="<b>Padr„o</b>" var="padr" opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15" reler="sim" />
-				<mod:selecao titulo="<b>Quadro de Pessoal</b>" var="quadr" opcoes="SeÁ„o Judici·ria do Estado do EspÌrito Santo;SeÁ„o Judici·ria do Estado do Rio de Janeiro;TRF 2™ Regi„o" reler="sim" />
+				<mod:selecao titulo="<b>Padr√£o</b>" var="padr" opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15" reler="sim" />
+				<mod:selecao titulo="<b>Quadro de Pessoal</b>" var="quadr" opcoes="Se√ß√£o Judici√°ria do Estado do Esp√≠rito Santo;Se√ß√£o Judici√°ria do Estado do Rio de Janeiro;TRF 2¬™ Regi√£o" reler="sim" />
 			</mod:grupo>
 			<br>
-			<c:if test="${quadr != 'TRF 2™ Regi„o'}">
-			    <mod:selecao titulo="<b>¿ disposiÁ„o do TRF</b>" var="dispo" opcoes="Sim;N„o" reler="sim" />
+			<c:if test="${quadr != 'TRF 2¬™ Regi√£o'}">
+			    <mod:selecao titulo="<b>√Ä disposi√ß√£o do TRF</b>" var="dispo" opcoes="Sim;N√£o" reler="sim" />
 			    <br><br>
 			</c:if>
-			<mod:grupo titulo="FunÁ„o Comissionada Dispensada & Exclus„o de LotaÁ„o">
+			<mod:grupo titulo="Fun√ß√£o Comissionada Dispensada & Exclus√£o de Lota√ß√£o">
 			    <mod:grupo>
 			      <mod:selecao titulo="Assistente" var="assist"  opcoes="I;II;III;IV;V" reler="sim" />
 		          <mod:selecao titulo="Acerto Gramatical" var="acgr"  opcoes="do;da" reler="sim" />
-		          <mod:texto titulo="LotaÁ„o" var="lotp" largura="55"/>
+		          <mod:texto titulo="Lota√ß√£o" var="lotp" largura="55"/>
 			    </mod:grupo>
 		    </mod:grupo>
 		    <br>
-		    <mod:grupo titulo="FunÁ„o Comissionada Designada & Nova LotaÁ„o">
+		    <mod:grupo titulo="Fun√ß√£o Comissionada Designada & Nova Lota√ß√£o">
 			    <mod:grupo>
 			      <mod:selecao titulo="Assistente" var="assistg"  opcoes="I;II;III;IV;V" reler="sim" />
 		          <mod:selecao titulo="Acerto Gramatical" var="acgra"  opcoes="no;na" reler="sim" />
-		          <mod:texto titulo="LotaÁ„o" var="lotg" largura="55"/>
+		          <mod:texto titulo="Lota√ß√£o" var="lotg" largura="55"/>
 		          <mod:data titulo="Data Inical" var="dtini" />
 			    </mod:grupo>
 		    </mod:grupo>
@@ -102,16 +102,16 @@
 			<br/>
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			<b><c:choose><c:when test="${doc.subscritor.sexo == 'M'}">O PRESIDENTE</c:when><c:otherwise>A PRESIDENTE</c:otherwise></c:choose> 
-			DO TRIBUNAL REGIONAL FEDERAL DA 2™ REGI√O</b>, no uso de suas atribuiÁıes, <b>RESOLVE</b>:<br><br>
-			I - <b>EXCLUIR</b> ${servd} ${servidor.nomePessoa}, ${servidor.cargo.nomeCargo}, ¡rea ${area}, NÌvel 
+			DO TRIBUNAL REGIONAL FEDERAL DA 2¬™ REGI√ÉO</b>, no uso de suas atribui√ß√µes, <b>RESOLVE</b>:<br><br>
+			I - <b>EXCLUIR</b> ${servd} ${servidor.nomePessoa}, ${servidor.cargo.nomeCargo}, √Årea ${area}, N√≠vel 
 			<c:choose><c:when test="${niv == 'NA'}">Auxiliar</c:when></c:choose>
-			<c:choose><c:when test="${niv == 'NI'}">Intermedi·rio</c:when></c:choose>
-			<c:choose><c:when test="${niv == 'NS'}">Superior</c:when></c:choose>, Classe ${classe}, Padr„o ${padr},
-			do Quadro de Pessoal <c:choose><c:when test="${quadr == 'TRF 2™ Regi„o'}"> do </c:when><c:otherwise> da </c:otherwise></c:choose>  
-			${quadr}, <c:choose><c:when test="${dispo == 'Sim'}">, ora ‡ disposiÁ„o deste Tribunal,</c:when></c:choose>  da lotaÁ„o ${acgr} ${lotp} e <b>LOT¡-${desig}</b> ${acgra} ${lotg}, a partir de ${dtini}.
+			<c:choose><c:when test="${niv == 'NI'}">Intermedi√°rio</c:when></c:choose>
+			<c:choose><c:when test="${niv == 'NS'}">Superior</c:when></c:choose>, Classe ${classe}, Padr√£o ${padr},
+			do Quadro de Pessoal <c:choose><c:when test="${quadr == 'TRF 2¬™ Regi√£o'}"> do </c:when><c:otherwise> da </c:otherwise></c:choose>  
+			${quadr}, <c:choose><c:when test="${dispo == 'Sim'}">, ora √† disposi√ß√£o deste Tribunal,</c:when></c:choose>  da lota√ß√£o ${acgr} ${lotp} e <b>LOT√Å-${desig}</b> ${acgra} ${lotg}, a partir de ${dtini}.
 			<br><br>
-			II - <b>DISPENSAR</b> ${refr} da funÁ„o comissionada de Assistente ${assist}, FC-${fdisp}, ${acgr} ${lotp}, e 
-			<b>DESIGN¡-${desig}</b> para exercer a funÁ„o comissionada de Assistente ${assistg}, FC-${fdesig}, ${acgrav} ${lotg}, em vaga decorrente da dispensa de
+			II - <b>DISPENSAR</b> ${refr} da fun√ß√£o comissionada de Assistente ${assist}, FC-${fdisp}, ${acgr} ${lotp}, e 
+			<b>DESIGN√Å-${desig}</b> para exercer a fun√ß√£o comissionada de Assistente ${assistg}, FC-${fdesig}, ${acgrav} ${lotg}, em vaga decorrente da dispensa de
 			${servdisp.nomePessoa}.
 		</mod:valor>  	
 		</mod:documento>

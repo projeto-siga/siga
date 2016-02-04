@@ -21,7 +21,7 @@ package br.gov.jfrj.siga.wf.bl;
 import br.gov.jfrj.siga.cp.bl.Cp;
 
 /**
- * Classe que fornece uma instância do workflow.
+ * Classe que fornece uma instÃ¢ncia do workflow.
  * 
  * @author kpf
  * 
@@ -30,11 +30,11 @@ public class Wf extends
 		Cp<WfConfiguracaoBL, WfCompetenciaBL, WfBL, WfPropriedadeBL> {
 
 	/**
-	 * Retorna uma instância do sistema de workflow. Através dessa instância é
-	 * possível acessar a lógica de negócio, competências e configurações do
+	 * Retorna uma instÃ¢ncia do sistema de workflow. AtravÃ©s dessa instÃ¢ncia Ã©
+	 * possÃ­vel acessar a lÃ³gica de negÃ³cio, competÃªncias e configuraÃ§Ãµes do
 	 * sistema de workflow.
 	 * 
-	 * @return Instância de workflow
+	 * @return InstÃ¢ncia de workflow
 	 */
 	public static Wf getInstance() {
 		if (!isInstantiated()) {

@@ -43,8 +43,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 /**
- * RelatÛrio indicando todas as pessoas que tem acesso aos sistemas/mÛdulos e
- * quais s„o os niveis de acesso
+ * Relat√≥rio indicando todas as pessoas que tem acesso aos sistemas/m√≥dulos e
+ * quais s√£o os niveis de acesso
  * 
  * @author aym
  * 
@@ -58,15 +58,15 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 	public AcessoServicoRelatorio(Map parametros) throws DJBuilderException {
 		super(parametros);
 		if (parametros.get("idServico") == null) {
-			throw new DJBuilderException("Par‚metro idServico n„o informado!");
+			throw new DJBuilderException("Par√¢metro idServico n√£o informado!");
 		}
 		if (parametros.get("situacoesSelecionadas") == null) {
 			throw new DJBuilderException(
-					"Par‚metro situacoesSelecionadas n„o informado!");
+					"Par√¢metro situacoesSelecionadas n√£o informado!");
 		}
 		if (parametros.get("idOrgaoUsuario") == null) {
 			throw new DJBuilderException(
-					"Par‚metro idOrgaoUsuario n„o informado!");
+					"Par√¢metro idOrgaoUsuario n√£o informado!");
 		}
 
 		try {
@@ -75,7 +75,7 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 			setCpServico(dao()
 					.consultar(t_lngIdServico, CpServico.class, false));
 		} catch (Exception e) {
-			throw new DJBuilderException("Par‚metro idServico inv·lido!");
+			throw new DJBuilderException("Par√¢metro idServico inv√°lido!");
 		}
 		try {
 			ArrayList<CpSituacaoConfiguracao> cpSituacoes = new ArrayList<CpSituacaoConfiguracao>();
@@ -88,7 +88,7 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 			}
 			setCpSituacoesConfiguracao(cpSituacoes);
 		} catch (Exception e) {
-			throw new DJBuilderException("SituaÁıes inv·lidas ! erro:"
+			throw new DJBuilderException("Situa√ß√µes inv√°lidas ! erro:"
 					+ e.getMessage());
 		}
 		try {
@@ -103,7 +103,7 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 				setCpOrgaosUsuario(cpOrgs);
 			}
 		} catch (Exception e) {
-			throw new DJBuilderException("Orgao Usuario inv·lido ! erro:"
+			throw new DJBuilderException("Orgao Usuario inv√°lido ! erro:"
 					+ e.getMessage());
 		}
 
@@ -116,9 +116,9 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 		this.setTitle("Acesso - " + getDescricaoTipoConfiguracao() + " - "
 				+ "(" + cpServico.getSiglaServico() + ") "
 				+ cpServico.getDscServico());
-		this.addColuna("SituaÁ„o", 20, RelatorioRapido.ESQUERDA, true, false);
+		this.addColuna("Situa√ß√£o", 20, RelatorioRapido.ESQUERDA, true, false);
 		this.addColuna("Pessoa", 60, RelatorioRapido.ESQUERDA, false, false);
-		this.addColuna("LotaÁ„o", 20, RelatorioRapido.ESQUERDA, false, false);
+		this.addColuna("Lota√ß√£o", 20, RelatorioRapido.ESQUERDA, false, false);
 		this.addColuna("Desde", 12, RelatorioRapido.ESQUERDA, false, false);
 		this.addColuna("Origem", 20, RelatorioRapido.ESQUERDA, false, false);
 		this.addColuna("Cadastrante", 18, RelatorioRapido.ESQUERDA, false,
@@ -127,7 +127,7 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 	}
 
 	/**
-	 * Processa as configuraÁıes
+	 * Processa as configura√ß√µes
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -208,7 +208,7 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 	 * Ordena o ArraList de ConfiguracaoAcesso
 	 * 
 	 * @param arl
-	 *            ArrayList com as configuraÁıes a rodenar
+	 *            ArrayList com as configura√ß√µes a rodenar
 	 */
 	@SuppressWarnings("unchecked")
 	private void ordenarConfiguracoes(ArrayList<AlteracaoDireitosItem> arl) {
@@ -250,12 +250,12 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 	}
 
 	/**
-	 * Preenche os dados com as informaÁıes da configuraÁ„o j· formatados
+	 * Preenche os dados com as informa√ß√µes da configura√ß√£o j√° formatados
 	 * 
 	 * @param cfga
-	 *            - ConfiguraÁ„o acesso
+	 *            - Configura√ß√£o acesso
 	 * @param dados
-	 *            - coleÁ„o de linhas do relatÛrio
+	 *            - cole√ß√£o de linhas do relat√≥rio
 	 */
 	private void processarItem(AlteracaoDireitosItem cfga, List<String> dados) {
 		try {
@@ -297,7 +297,7 @@ public class AcessoServicoRelatorio extends RelatorioTemplate {
 	}
 
 	/**
-	 * @param configuraÁ„o
+	 * @param configura√ß√£o
 	 *            acesso
 	 * @return Uma String representativa da origem
 	 */

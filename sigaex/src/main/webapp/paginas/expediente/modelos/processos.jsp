@@ -9,7 +9,7 @@
 		<mod:grupo depende="quantProcessosAjax">
 		<c:forEach var="i" begin="1" end="${quantProcessos}">
 		<mod:selecao titulo="Processos a informar" opcoes="1;2;3;4;5;6;7;8;9;10" var="quantProcessosInformar${i}" reler="ajax"  idAjax="quantProcessosInfAjax${i}" />
-		<mod:selecao titulo="Tipo de Processo" var="tipoProcesso${i}" opcoes="Adicional de Insalubridade;Ajuda de Custo;Anuênio;Ausência ao Serviço em Razão de Casamento;Ausência ao Serviço em Razão de Falecimento em Família;Ausência ao Serviço para Doação de Sangue;Auxílio Natalidade;Averbação Tempo de Serviço/Contribuição;Concessão de Licença-Prêmio por Assiduidade;Consignação de Aluguel em Folha de Pagamento;Exclusão de Dependentes para Dedução IR na Fonte;Fruição de Licença Prêmio por Assiduidade;Horário Especial;Horário Especial ao Servidor Estudante;Inclusão de Dependente para Dedução IR na Fonte;Incorporação de Décimos;Licença Maternidade;Licença Paternidade;Quintos;Outros" reler="ajax" idAjax="tipoProcAjax${i}" />
+		<mod:selecao titulo="Tipo de Processo" var="tipoProcesso${i}" opcoes="Adicional de Insalubridade;Ajuda de Custo;AnuÃªnio;AusÃªncia ao ServiÃ§o em RazÃ£o de Casamento;AusÃªncia ao ServiÃ§o em RazÃ£o de Falecimento em FamÃ­lia;AusÃªncia ao ServiÃ§o para DoaÃ§Ã£o de Sangue;AuxÃ­lio Natalidade;AverbaÃ§Ã£o Tempo de ServiÃ§o/ContribuiÃ§Ã£o;ConcessÃ£o de LicenÃ§a-PrÃªmio por Assiduidade;ConsignaÃ§Ã£o de Aluguel em Folha de Pagamento;ExclusÃ£o de Dependentes para DeduÃ§Ã£o IR na Fonte;FruiÃ§Ã£o de LicenÃ§a PrÃªmio por Assiduidade;HorÃ¡rio Especial;HorÃ¡rio Especial ao Servidor Estudante;InclusÃ£o de Dependente para DeduÃ§Ã£o IR na Fonte;IncorporaÃ§Ã£o de DÃ©cimos;LicenÃ§a Maternidade;LicenÃ§a Paternidade;Quintos;Outros" reler="ajax" idAjax="tipoProcAjax${i}" />
 			<mod:grupo depende="tipoProcAjax${i}">
 				<c:if test="${requestScope[f:concat('tipoProcesso',i)] eq 'Outros'}">
 					<mod:texto titulo="Outros:" var="outros${i}" largura="130" maxcaracteres="120" />
@@ -18,7 +18,7 @@
 		<mod:grupo depende="quantProcessosInfAjax${i}">
 			<c:forEach var="j" begin="1" end="${requestScope[f:concat(f:concat('quantProcessosInformar',i),j)]}">
 				<mod:grupo>
-					<mod:texto titulo="Número do Processo:" var="numproc${i}${j}" largura="6" />	
+					<mod:texto titulo="NÃºmero do Processo:" var="numproc${i}${j}" largura="6" />	
 				</mod:grupo>	
 				<mod:grupo>
 					<mod:pessoa titulo="Nome" var="servidor${i}${j}" />
@@ -77,7 +77,7 @@
 		</c:choose> <br>
 		PARA: ${doc.destinatarioString}</p>
 	
-		<p align="center"><B>SOLICITAÇÃO DE PUBLICAÇÃO BOLETIM INTERNO</B><br/>Processos</p>
+		<p align="center"><B>SOLICITAÃ‡ÃƒO DE PUBLICAÃ‡ÃƒO BOLETIM INTERNO</B><br/>Processos</p>
 		<c:forEach var="i" begin="1" end="${quantProcessos}">
 		<!-- INICIO CORPO -->
 		<p><c:choose>
@@ -93,7 +93,7 @@
 		<c:forEach var="j" begin="1" end="${requestScope[f:concat(f:concat('quantProcessosInformar',i),j)]}">
 		<br/>
 		<!-- INICIO CORPO -->
-		<p><span style="font-weight: bold">Número do Processo:</span> ${requestScope[f:concat(f:concat('numproc',i),j)]}</p>
+		<p><span style="font-weight: bold">NÃºmero do Processo:</span> ${requestScope[f:concat(f:concat('numproc',i),j)]}</p>
 		<p><span style="font-weight: bold">Nome:</span> ${requestScope[f:concat(f:concat(f:concat('servidor',i),j),'_pessoaSel.descricao')]}</p>
 		<p><span style="font-weight: bold">Despacho:</span> ${requestScope[f:concat(f:concat('despacho',i),j)]}</p>
 		<!-- FIM CORPO -->	

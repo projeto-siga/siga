@@ -2,7 +2,6 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 <mod:modelo>
 	<mod:entrevista>
@@ -12,7 +11,7 @@
 		<mod:grupo>
 			<mod:grupo titulo="1. DADOS DO SERVIDOR">
 				<mod:grupo>
-					<mod:pessoa titulo="Matrícula" obrigatorio="Sim" var="matServidor" reler="sim" />
+					<mod:pessoa titulo="MatrÃ­cula" obrigatorio="Sim" var="matServidor" reler="sim" />
 				</mod:grupo>
 				<mod:grupo>
 					<c:if test="${not empty requestScope['matServidor_pessoaSel.id']}">
@@ -27,44 +26,44 @@
 				<mod:grupo largura="79">
 					<mod:data titulo="Data Inicial de Afastamento" obrigatorio="Sim" var="datIniAfastamento" />
 				</mod:grupo>
-				<mod:memo titulo="Histórico" obrigatorio="Sim" var="historico" colunas="80" linhas="2" />
+				<mod:memo titulo="HistÃ³rico" obrigatorio="Sim" var="historico" colunas="80" linhas="2" />
 			</mod:grupo>
 		</mod:grupo>
 
-		<!------------------------ 2 - AVALIAÇÃO ------------------------>
+		<!------------------------ 2 - AVALIAÃ‡ÃƒO ------------------------>
 
 		<hr>
 
 		<mod:grupo>
-			<mod:grupo titulo="2. AVALIAÇÃO">
+			<mod:grupo titulo="2. AVALIAÃ‡ÃƒO">
 
-				<mod:grupo titulo="Cabe readaptação?">
+				<mod:grupo titulo="Cabe readaptaÃ§Ã£o?">
 					<mod:grupo largura="7">
 						<mod:radio titulo="Sim" var="readaptacao" valor="1" marcado="Sim"/>
 					</mod:grupo>
 					<mod:grupo largura="93">
-						<mod:radio titulo="Não" var="readaptacao" valor="2"/>
+						<mod:radio titulo="NÃ£o" var="readaptacao" valor="2"/>
 					</mod:grupo>
 				</mod:grupo>
 
-				<mod:grupo titulo="O(A) servidor(a) encontra-se inválido(a) permanentemente nos termos
-					do art. 186, inciso I, da Lei nº 8.112/90?">
+				<mod:grupo titulo="O(A) servidor(a) encontra-se invÃ¡lido(a) permanentemente nos termos
+					do art. 186, inciso I, da Lei nÂº 8.112/90?">
 					<mod:grupo largura="7">
 						<mod:radio titulo="Sim" var="invalido" valor="1" marcado="Sim"/>
 					</mod:grupo>
 					<mod:grupo largura="93">
-						<mod:radio titulo="Não" var="invalido" valor="2"/>
+						<mod:radio titulo="NÃ£o" var="invalido" valor="2"/>
 					</mod:grupo>
 				</mod:grupo>
 				
-				<mod:grupo titulo="Enquadra-se a doença dentre aquelas 
-					específicas no art. 186, §1º da Lei 8.112/90?">
+				<mod:grupo titulo="Enquadra-se a doenÃ§a dentre aquelas 
+					especÃ­ficas no art. 186, Â§1Âº da Lei 8.112/90?">
 					<mod:grupo largura="7">
 						<mod:radio titulo="Sim" var="doeEspecifica" valor="1"
 							reler="ajax" idAjax="doeEspecificaAjax"/>
 					</mod:grupo>
 					<mod:grupo largura="93">
-						<mod:radio titulo="Não" var="doeEspecifica" valor="2"
+						<mod:radio titulo="NÃ£o" var="doeEspecifica" valor="2"
 							reler="ajax" idAjax="doeEspecificaAjax" marcado="Sim"/>
 					</mod:grupo>
 					<c:set var="valDoeEspecifica" value="${doeEspecifica}"/>
@@ -74,20 +73,20 @@
 					<mod:grupo depende="doeEspecificaAjax">
 						<c:if test="${valDoeEspecifica == '1'}">					
 							<mod:grupo largura="50">
-								<mod:texto titulo="<b>Especificar o nome da doença</b>" obrigatorio="Sim" var="nomDoeEspecifica" largura="60" maxcaracteres="60"/>
+								<mod:texto titulo="<b>Especificar o nome da doenÃ§a</b>" obrigatorio="Sim" var="nomDoeEspecifica" largura="60" maxcaracteres="60"/>
 							</mod:grupo>
 							<mod:grupo largura="50"></mod:grupo>
 						</c:if>
 					</mod:grupo>
 				</mod:grupo>
 				
-				<mod:grupo titulo="Enquadra-se a doença como acidente em serviço?">
+				<mod:grupo titulo="Enquadra-se a doenÃ§a como acidente em serviÃ§o?">
 					<mod:grupo largura="7">
 						<mod:radio titulo="Sim" var="doeAcidente" valor="1"
 							reler="ajax" idAjax="doeAcidenteAjax"/>
 					</mod:grupo>
 					<mod:grupo largura="93">
-						<mod:radio titulo="Não" var="doeAcidente" valor="2"
+						<mod:radio titulo="NÃ£o" var="doeAcidente" valor="2"
 							reler="ajax" idAjax="doeAcidenteAjax" marcado="Sim"/>
 					</mod:grupo>
 					<c:set var="valDoeAcidente" value="${doeAcidente}"/>
@@ -98,22 +97,22 @@
 					<mod:grupo depende="doeAcidenteAjax">
 						<c:if test="${valDoeAcidente == '1'}">					
 							<mod:grupo largura="50">
-									<mod:texto titulo="<b>Especificar o nome da doença</b>" obrigatorio="Sim" var="nomDoeAcidente" largura="60" maxcaracteres="60"/>
+									<mod:texto titulo="<b>Especificar o nome da doenÃ§a</b>" obrigatorio="Sim" var="nomDoeAcidente" largura="60" maxcaracteres="60"/>
 							</mod:grupo>
 							<mod:grupo largura="50">
-									<mod:texto titulo="<b>Informar o nº do PA que reconheceu a situação</b>" obrigatorio="Sim" var="numPAAcidente" largura="42" maxcaracteres="42"/>
+									<mod:texto titulo="<b>Informar o nÂº do PA que reconheceu a situaÃ§Ã£o</b>" obrigatorio="Sim" var="numPAAcidente" largura="42" maxcaracteres="42"/>
 							</mod:grupo>
 						</c:if>
 					</mod:grupo>
 				</mod:grupo>
 
-				<mod:grupo titulo="Enquadra-se a doença como moléstia profissional?">
+				<mod:grupo titulo="Enquadra-se a doenÃ§a como molÃ©stia profissional?">
 					<mod:grupo largura="7">
 						<mod:radio titulo="Sim" var="doeMolestia" valor="1"
 							reler="ajax" idAjax="doeMolestiaAjax"/>
 					</mod:grupo>
 					<mod:grupo largura="93">
-						<mod:radio titulo="Não" var="doeMolestia" valor="2"
+						<mod:radio titulo="NÃ£o" var="doeMolestia" valor="2"
 							reler="ajax" idAjax="doeMolestiaAjax" marcado="Sim"/>
 					</mod:grupo>
 					<c:set var="valDoeMolestia" value="${doeMolestia}"/>
@@ -124,52 +123,52 @@
 					<mod:grupo depende="doeMolestiaAjax">
 						<c:if test="${valDoeMolestia == '1'}">					
 							<mod:grupo  largura="50">
-									<mod:texto titulo="<b>Especificar o nome da doença</b>" obrigatorio="Sim" var="nomDoeMolestia" largura="60" maxcaracteres="60"/>
+									<mod:texto titulo="<b>Especificar o nome da doenÃ§a</b>" obrigatorio="Sim" var="nomDoeMolestia" largura="60" maxcaracteres="60"/>
 							</mod:grupo>
 							<mod:grupo  largura="50">
-									<mod:texto titulo="<b>Informar	o nº do PA que reconheceu a situação</b>" obrigatorio="Sim" var="numPAMolestia" largura="42" maxcaracteres="42"/>
+									<mod:texto titulo="<b>Informar	o nÂº do PA que reconheceu a situaÃ§Ã£o</b>" obrigatorio="Sim" var="numPAMolestia" largura="42" maxcaracteres="42"/>
 							</mod:grupo>
 						</c:if>
 					</mod:grupo>
 				</mod:grupo>
 
-				<mod:grupo titulo="Caso constatada alienação mental no exame, 
+				<mod:grupo titulo="Caso constatada alienaÃ§Ã£o mental no exame, 
 					sugere curatela para o recebimento de proventos?">
 					<mod:grupo largura="7">
 						<mod:radio titulo="Sim" var="aliMental" valor="1" marcado="Sim"/>
 					</mod:grupo>
 					<mod:grupo largura="93">
-						<mod:radio titulo="Não" var="aliMental" valor="2"/>
+						<mod:radio titulo="NÃ£o" var="aliMental" valor="2"/>
 					</mod:grupo>
 				</mod:grupo>
 
 				<mod:grupo titulo="Foi constatada, no exame"/>
-					<mod:caixaverif titulo="doença para fins de isenção 
-						de imposto de renda, nos termos da Lei nº 7.713/1988, com a redação atual,
-						art. 30 da Lei nº 9.250/1995 e IN nº 15/2001/SRF?"
+					<mod:caixaverif titulo="doenÃ§a para fins de isenÃ§Ã£o 
+						de imposto de renda, nos termos da Lei nÂº 7.713/1988, com a redaÃ§Ã£o atual,
+						art. 30 da Lei nÂº 9.250/1995 e IN nÂº 15/2001/SRF?"
 						var="doeInsencaoIR" />
 				</mod:grupo>
 					
 				<mod:grupo titulo="Foi constatada, no exame"/>
-					<mod:caixaverif titulo="doença considerada incapacitante 
-						nos termos do art. 40, §21 (desconto para o plano de seguridade do
-						servidor público - PSS), da Constituição Federal?"
+					<mod:caixaverif titulo="doenÃ§a considerada incapacitante 
+						nos termos do art. 40, Â§21 (desconto para o plano de seguridade do
+						servidor pÃºblico - PSS), da ConstituiÃ§Ã£o Federal?"
 						var="doeIncapacitante" />
 				</mod:grupo>
 
-		<!------------------------ 3 - REAVALIAÇÃO ------------------------> 
+		<!------------------------ 3 - REAVALIAÃ‡ÃƒO ------------------------> 
 
 		<hr>
 
 		<mod:grupo>
-			<mod:grupo titulo="3. REAVALIAÇÃO">
-				<mod:grupo titulo="Cabe reavaliação?">
+			<mod:grupo titulo="3. REAVALIAÃ‡ÃƒO">
+				<mod:grupo titulo="Cabe reavaliaÃ§Ã£o?">
 					<mod:grupo largura="7">
 						<mod:radio titulo="Sim" var="reavaliacao" valor="1"
 							reler="ajax" idAjax="reavaliacaoAjax"/>
 					</mod:grupo>
 					<mod:grupo largura="93">
-						<mod:radio titulo="Não" var="reavaliacao" valor="2" marcado="Sim" 
+						<mod:radio titulo="NÃ£o" var="reavaliacao" valor="2" marcado="Sim" 
 							reler="ajax" idAjax="reavaliacaoAjax"/>
 					</mod:grupo>
 				</mod:grupo>
@@ -182,9 +181,9 @@
 								<mod:grupo>
 										<mod:texto titulo="<b>Especificar a finalidade</b>" obrigatorio="Sim" var="nomFinalidade" largura="106" maxcaracteres="106"/>
 								</mod:grupo>
-								<mod:grupo titulo="Período para reavaliar:">
+								<mod:grupo titulo="PerÃ­odo para reavaliar:">
 									<mod:data titulo="De" obrigatorio="Sim" var="nomFinalidadeI"/>
-									<mod:data titulo="Até" obrigatorio="Sim" var="nomFinalidadeF"/>
+									<mod:data titulo="AtÃ©" obrigatorio="Sim" var="nomFinalidadeF"/>
 								</mod:grupo>
 							</c:if>
 						</mod:grupo>
@@ -227,7 +226,7 @@
 		<br />
 		<table width="100%" border="0" cellpadding="0">
 			<tr>
-				<td align="center"><b>ATA MÉDICO PERICIAL DE APOSENTADORIA</b></td>
+				<td align="center"><b>ATA MÃ‰DICO PERICIAL DE APOSENTADORIA</b></td>
 			</tr>			
 		</table>
 		<br/>
@@ -245,7 +244,7 @@
 				</td>
 				<td colspan="2">
 					<p style="font-family: Arial; font-size: 8pt;">
-						<b>Matrícula:</b>&nbsp;&nbsp;&nbsp;
+						<b>MatrÃ­cula:</b>&nbsp;&nbsp;&nbsp;
 						${requestScope['matServidor_pessoaSel.sigla']}
 					</p>
 				</td>
@@ -275,7 +274,7 @@
 			<tr>
 				<td colspan="8">
 					<p style="font-family: Arial; font-size: 8pt;">
-						<b>Histórico:</b>&nbsp;&nbsp;&nbsp; 
+						<b>HistÃ³rico:</b>&nbsp;&nbsp;&nbsp; 
 						${historico}
 					</p>
 				</td>
@@ -286,112 +285,127 @@
 		
 		<table cellpadding="4" width="100%" border="1">
 			<tr>
-				<td><b>2 - AVALIAÇÃO</b></td>
+				<td><b>2 - AVALIAÃ‡ÃƒO</b></td>
 			</tr>
 			<tr>
 				<td>
 					<p style="font-family: Arial; font-size: 8pt;">
-						<b>Cabe readaptação?</b>&nbsp;&nbsp;&nbsp;
-						<ww:if test="${readaptacao == '2'}">
-							Não.
-						</ww:if>
-						<ww:else>
-							Sim.
-						</ww:else>
-						
+						<b>Cabe readaptaÃ§Ã£o?</b>&nbsp;&nbsp;&nbsp;
+						<c:choose> 
+  							<c:when test="${readaptacao == '2'}">
+    							NÃ£o.
+  							</c:when>
+  							<c:otherwise>
+    							Sim.
+  							</c:otherwise>
+						</c:choose>
 					</p>
 				</td>
 			</tr>
 			<tr>
 				<td>
 					<p style="font-family: Arial; font-size: 8pt;">
-						<b>O(A) servidor(a) encontra-se inválido(a) permanentemente nos termos do art. 186, inciso I, da Lei nº 8.112/90?</b>&nbsp;&nbsp;&nbsp; 
-						<ww:if test="${invalido == '2'}">
-							Não.
-						</ww:if>
-						<ww:else>
-							Sim.
-						</ww:else>
+						<b>O(A) servidor(a) encontra-se invÃ¡lido(a) permanentemente nos termos do art. 186, inciso I, da Lei nÂº 8.112/90?</b>&nbsp;&nbsp;&nbsp; 
+						<c:choose> 
+  							<c:when test="${invalido == '2'}">
+    							NÃ£o.
+  							</c:when>
+  							<c:otherwise>
+    							Sim.
+  							</c:otherwise>
+						</c:choose>
 					</p>
 				</td>
 			</tr>
 			<tr>
 				<td>
 					<p style="font-family: Arial; font-size: 8pt;">
-						<b>Enquadra-se a doença dentre aquelas específicas no art. 186, §1º da Lei 8.112/90?</b>&nbsp;&nbsp;&nbsp; 
-						<ww:if test="${doeEspecifica == '2'}">
-							Não.
-						</ww:if>
-						<ww:else>
-							Sim.<br/>
-							<b>Nome da doença:</b>&nbsp;&nbsp;&nbsp;${nomDoeEspecifica}
-						</ww:else>
+						<b>Enquadra-se a doenÃ§a dentre aquelas especÃ­ficas no art. 186, Â§1Âº da Lei 8.112/90?</b>&nbsp;&nbsp;&nbsp;
+						<c:choose> 
+  							<c:when test="${doeEspecifica == '2'}">
+    							NÃ£o.
+  							</c:when>
+  							<c:otherwise>
+								Sim.<br/>
+								<b>Nome da doenÃ§a:</b>&nbsp;&nbsp;&nbsp;${nomDoeEspecifica}
+  							</c:otherwise>
+						</c:choose>
 					</p>
 				</td>
 			</tr>
 			<tr>
 				<td>
 					<p style="font-family: Arial; font-size: 8pt;">
-						<b>Enquadra-se a doença como acidente em serviço?</b>&nbsp;&nbsp;&nbsp; 
-						<ww:if test="${doeAcidente == '2'}">
-							Não.
-						</ww:if>
-						<ww:else>
-							Sim.<br/>
-							<b>Nome da doença:</b>&nbsp;&nbsp;&nbsp;${nomDoeAcidente}&nbsp;&nbsp;&nbsp;<b>Nº do PA:</b>&nbsp;&nbsp;&nbsp;${numPAAcidente}
-						</ww:else>
+						<b>Enquadra-se a doenÃ§a como acidente em serviÃ§o?</b>&nbsp;&nbsp;&nbsp; 
+						<c:choose> 
+  							<c:when test="${doeAcidente == '2'}">
+    							NÃ£o.
+  							</c:when>
+  							<c:otherwise>
+								Sim.<br/>
+								<b>Nome da doenÃ§a:</b>&nbsp;&nbsp;&nbsp;${nomDoeAcidente}&nbsp;&nbsp;&nbsp;<b>NÂº do PA:</b>&nbsp;&nbsp;&nbsp;${numPAAcidente}
+  							</c:otherwise>
+						</c:choose>
 					</p>
 				</td>
 			</tr>
 			<tr>
 				<td>
 					<p style="font-family: Arial; font-size: 8pt;">
-						<b>Enquadra-se a doença como moléstia profissional?</b>&nbsp;&nbsp;&nbsp;
-						<ww:if test="${doeMolestia == '2'}">
-							Não.
-						</ww:if>
-						<ww:else>
-							Sim.<br/>
-							<b>Nome da doença:</b>&nbsp;&nbsp;&nbsp;${nomDoeMolestia}&nbsp;&nbsp;&nbsp;<b>Nº do PA:</b>&nbsp;&nbsp;&nbsp;${numPAMolestia}
-						</ww:else>
+						<b>Enquadra-se a doenÃ§a como molÃ©stia profissional?</b>&nbsp;&nbsp;&nbsp;
+						<c:choose> 
+  							<c:when test="${doeMolestia == '2'}">
+    							NÃ£o.
+  							</c:when>
+  							<c:otherwise>
+								Sim.<br/>
+								<b>Nome da doenÃ§a:</b>&nbsp;&nbsp;&nbsp;${nomDoeMolestia}&nbsp;&nbsp;&nbsp;<b>NÂº do PA:</b>&nbsp;&nbsp;&nbsp;${numPAMolestia}
+  							</c:otherwise>
+						</c:choose>
 					</p>
 				</td>
 			</tr>
 			<tr>
 				<td>
 					<p style="font-family: Arial; font-size: 8pt;">
-						<b>Caso constatada alienação mental no exame, sugere curatela para o recebimento de proventos?</b>&nbsp;&nbsp;&nbsp; 
-						<ww:if test="${aliMental == '2'}">
-							Não.
-						</ww:if>
-						<ww:else>
-							Sim.
-						</ww:else>
+						<b>Caso constatada alienaÃ§Ã£o mental no exame, sugere curatela para o recebimento de proventos?</b>&nbsp;&nbsp;&nbsp; 
+						<c:choose> 
+  							<c:when test="${aliMental == '2'}">
+    							NÃ£o.
+  							</c:when>
+  							<c:otherwise>
+								Sim.
+  							</c:otherwise>
+						</c:choose>
 					</p>
 				</td>
 			</tr>
 			<tr>
 				<td>
 					<p style="font-family: Arial; font-size: 8pt;">
-						<b>Foi constatada, no exame, doença para fins de isenção no imposto de renda, nos termos da Lei nº 7.713/1988, com a redação atual, art. 30 da Lei nº 9.250/1995 e IN nº 15/2001/SRF?:</b>&nbsp;&nbsp;&nbsp; 
-						<ww:if test="${doeInsencaoIR == 'Nao'}">
-							Não.
-						</ww:if>
-						<ww:else>
-							Sim.
-						</ww:else>
+						<b>Foi constatada, no exame, doenÃ§a para fins de isenÃ§Ã£o no imposto de renda, nos termos da Lei nÂº 7.713/1988, com a redaÃ§Ã£o atual, art. 30 da Lei nÂº 9.250/1995 e IN nÂº 15/2001/SRF?:</b>&nbsp;&nbsp;&nbsp; 
+						<c:choose> 
+  							<c:when test="${doeInsencaoIR == 'Nao'}">
+    							NÃ£o.
+  							</c:when>
+  							<c:otherwise>
+								Sim.
+  							</c:otherwise>
+						</c:choose>
 					</p>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<p style="font-family: Arial; font-size: 8pt;"><b>Foi constatada, no exame, doença considerada incapacitante nos termos do art. 40, §21 (desconto para o plano de seguridade do servidor público - PSS), da Constituição Federal?</b>&nbsp;&nbsp;&nbsp; 
-						<ww:if test="${doeIncapacitante == 'Nao'}">
-							Não.
-						</ww:if>
-						<ww:else>
-							Sim.
-						</ww:else>
+					<p style="font-family: Arial; font-size: 8pt;"><b>Foi constatada, no exame, doenÃ§a considerada incapacitante nos termos do art. 40, Â§21 (desconto para o plano de seguridade do servidor pÃºblico - PSS), da ConstituiÃ§Ã£o Federal?</b>&nbsp;&nbsp;&nbsp; 
+						<c:choose> 
+  							<c:when test="${doeIncapacitante == 'Nao'}">
+    							NÃ£o.
+  							</c:when>
+  							<c:otherwise>
+								Sim.
+  							</c:otherwise>
+						</c:choose>
 					</p>
 				</td>
 			</tr>
@@ -401,33 +415,35 @@
 
 		<table cellpadding="4" width="100%" border="1" >
 			<tr>
-				<td><b>3 - REAVALIAÇÃO</b></td>
+				<td><b>3 - REAVALIAÃ‡ÃƒO</b></td>
 			</tr>
-				<ww:if test="${reavaliacao == '2'}">				
-					<tr>
-						<td>
-							<p style="font-family: Arial; font-size: 8pt;">
-								<b>Cabe reavaliação?</b>&nbsp;&nbsp;&nbsp;Não.
-							</p>
-						</td>
-					</tr>
-				</ww:if>
-				<ww:else>
-					<tr>
-						<td>
-							<p style="font-family: Arial; font-size: 8pt;">
-								<b>Cabe reavaliação?</b>&nbsp;&nbsp;&nbsp;Sim.&nbsp;&nbsp;&nbsp;<b>Finalidade:</b>&nbsp;&nbsp;&nbsp;${nomFinalidade}
-							</p>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<p style="font-family: Arial; font-size: 8pt;">
-								<b>Período</b>&nbsp;&nbsp;&nbsp;<b>De:</b>&nbsp;&nbsp;&nbsp;${nomFinalidadeI}&nbsp;&nbsp;&nbsp;<b>Até:</b>&nbsp;&nbsp;&nbsp;${nomFinalidadeF}
-							</p>
-						</td>
-					</tr>				
-				</ww:else>
+				<c:choose> 
+  					<c:when test="${reavaliacao == '2'}">
+						<tr>
+							<td>
+								<p style="font-family: Arial; font-size: 8pt;">
+									<b>Cabe reavaliaÃ§Ã£o?</b>&nbsp;&nbsp;&nbsp;NÃ£o.
+								</p>
+							</td>
+						</tr>
+  					</c:when>
+  					<c:otherwise>
+						<tr>
+							<td>
+								<p style="font-family: Arial; font-size: 8pt;">
+									<b>Cabe reavaliaÃ§Ã£o?</b>&nbsp;&nbsp;&nbsp;Sim.&nbsp;&nbsp;&nbsp;<b>Finalidade:</b>&nbsp;&nbsp;&nbsp;${nomFinalidade}
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p style="font-family: Arial; font-size: 8pt;">
+									<b>PerÃ­odo</b>&nbsp;&nbsp;&nbsp;<b>De:</b>&nbsp;&nbsp;&nbsp;${nomFinalidadeI}&nbsp;&nbsp;&nbsp;<b>AtÃ©:</b>&nbsp;&nbsp;&nbsp;${nomFinalidadeF}
+								</p>
+							</td>
+						</tr>				
+  					</c:otherwise>
+				</c:choose>
 		</table>
 	
 	 

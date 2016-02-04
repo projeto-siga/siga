@@ -48,7 +48,7 @@ public class SigaHTTPTest {
 	String HTML_INITIAL_PAGE = 
 			"html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>"+
 					"<head>"+
-					"<title>SIGA - Justiça Federal</title>"+
+					"<title>SIGA - JustiÃ§a Federal</title>"+
 					"<meta http-equiv='X-UA-Compatible' content='IE=EmulateIE9'/>"+
 					"<META HTTP-EQUIV='Expires' CONTENT='0'>"+
 					"<META HTTP-EQUIV='Pragma' CONTENT='no-cache'>"+
@@ -102,7 +102,7 @@ public class SigaHTTPTest {
 					"						<!-- utility box -->"+
 					"						<!-- / utility box -->"+
 					"						<!-- logo -->"+
-					"						<a href='/siga' title='Página inicial' class='link-sem-estilo'>"+
+					"						<a href='/siga' title='PÃ¡gina inicial' class='link-sem-estilo'>"+
 					"							<div class='gt-logo' style='padding: 0;'>"+
 					"								<img style='margin-top: 3px; margin-bottom: -13px;'"+
 					"									src='/siga/imagens/logo.png'>"+
@@ -130,21 +130,21 @@ public class SigaHTTPTest {
 					"								<ul id='navmenu-h'>"+
 					"<li><a id='menu_siga' class='' href='#'>SIGA</a>"+
 					"	<ul>"+
-					"		<li><a href='/siga/principal.action'>Página Inicial</a>"+
+					"		<li><a href='/siga/principal.action'>PÃ¡gina Inicial</a>"+
 					"		</li>"+
-					"			<li><a href='#'>Módulos</a>"+
+					"			<li><a href='#'>MÃ³dulos</a>"+
 					"				<ul>"+
 					"					<!-- <li><a href='/sigatr/'>Treinamento</a>"+
 					"					</li> -->"+
-					"					<!-- <li><a href='/SigaServicos/'>Serviços</a>"+
+					"					<!-- <li><a href='/SigaServicos/'>ServiÃ§os</a>"+
 					"					</li> -->"+
 					"				</ul>"+
 					"			</li>"+
-					"			<li><a href='#'>Administração</a>"+
+					"			<li><a href='#'>AdministraÃ§Ã£o</a>"+
 					"				<ul>"+
 					"					<li><a href='/siga/usuario/trocar_senha.action'>Trocar senha</a>"+
 					"					</li>"+
-					"						<li><a href='/siga/substituicao/listar.action'>Gerenciar possíveis substitutos</a>"+
+					"						<li><a href='/siga/substituicao/listar.action'>Gerenciar possÃ­veis substitutos</a>"+
 					"						</li>"+
 					"				</ul>"+
 					"			</li>"+
@@ -157,7 +157,7 @@ public class SigaHTTPTest {
 					"	</ul>"+
 					"</li>"+
 					"<!-- insert menu -->"+
-					"<!-- Não existe nenhum menu especial para a aplicação principal -->"+
+					"<!-- NÃ£o existe nenhum menu especial para a aplicaÃ§Ã£o principal -->"+
 					"								</ul>"+
 					"							</div>"+
 					"							<!-- / navigation -->"+
@@ -174,7 +174,7 @@ public class SigaHTTPTest {
 					"	<div id='carregando'"+
 					"		style='position: absolute; top: 0px; right: 0px; background-color: red; font-weight: bold; padding: 4px; color: white; display: none'>Carregando...</div>"+
 					"	<script type='text/javascript'>"+
-					"		/*  converte para maiúscula a sigla do estado  */"+
+					"		/*  converte para maiÃºscula a sigla do estado  */"+
 					"		function converteUsuario(nomeusuario) {"+
 					"			tmp = nomeusuario.value;"+
 					"			if (tmp.match(re) || tmp.match(ret2)) {"+
@@ -189,48 +189,48 @@ public class SigaHTTPTest {
 					"<h2 class='gt-table-head'>"+
 					"	<b>Bem-vindo ao SIGA.</b>"+
 					"</h2>"+
-					"<h3 class='gt-table-head'>Veja abaixo as últimas novidades:</h3>"+
-					"<h4>Novos Módulos</h4>"+
-					"<p>O SIGA agora está integrado com os módulos do Siga SGP. "+
-					"Foram integrados: Cadastro, Benefícios, AQ e Lotações (fase final de testes). "+
-					"Podem ser acessados pelo menu, na seguinte opção: Módulos / Pessoas. "+
-					"Os módulos estarão disponíveis de acordo com as permissões dos usuários logados. Em breve, mais novidades.</p>"+
+					"<h3 class='gt-table-head'>Veja abaixo as Ãºltimas novidades:</h3>"+
+					"<h4>Novos MÃ³dulos</h4>"+
+					"<p>O SIGA agora estÃ¡ integrado com os mÃ³dulos do Siga SGP. "+
+					"Foram integrados: Cadastro, BenefÃ­cios, AQ e LotaÃ§Ãµes (fase final de testes). "+
+					"Podem ser acessados pelo menu, na seguinte opÃ§Ã£o: MÃ³dulos / Pessoas. "+
+					"Os mÃ³dulos estarÃ£o disponÃ­veis de acordo com as permissÃµes dos usuÃ¡rios logados. Em breve, mais novidades.</p>"+
 					"<h4>Novo Design</h4>"+
 					"<p>O SIGA apresenta, agora, um design muito mais simples e moderno."+
-					"	Além das mudanças estéticas, também foram simplificadas algumas páginas"+
-					"	e operações, o que beneficia principalmente as pessoas que utilizam"+
+					"	AlÃ©m das mudanÃ§as estÃ©ticas, tambÃ©m foram simplificadas algumas pÃ¡ginas"+
+					"	e operaÃ§Ãµes, o que beneficia principalmente as pessoas que utilizam"+
 					"	muito o sistema.</p>"+
 					"<h4>Modelos Padronizados</h4>"+
-					"<p>Está sendo realizada uma padronização dos modelos de expedientes"+
-					"	usados pelo CJF e pelos TRF's da 2ª e 3ª Região. Alguns modelos, como o"+
-					"	de ofício, já estão com um novo layout no Siga-Doc.</p>"+
+					"<p>EstÃ¡ sendo realizada uma padronizaÃ§Ã£o dos modelos de expedientes"+
+					"	usados pelo CJF e pelos TRF's da 2Âª e 3Âª RegiÃ£o. Alguns modelos, como o"+
+					"	de ofÃ­cio, jÃ¡ estÃ£o com um novo layout no Siga-Doc.</p>"+
 					"<h4>Novo Editor de Textos</h4>"+
 					"<p>"+
 					"	Siga-Doc possui um novo editor de textos, com mais recursos e menos"+
-					"	problemas de formatação. Inicialmente, ele está disponível apenas em"+
-					"	alguns modelos. Gradualmente, o antigo editor será substituído. <a"+
-					"		href='/siga/arquivos/AjudaEditorTextosSigaDoc.pdf'><b>Veja instruções</b> </a> sobre"+
+					"	problemas de formataÃ§Ã£o. Inicialmente, ele estÃ¡ disponÃ­vel apenas em"+
+					"	alguns modelos. Gradualmente, o antigo editor serÃ¡ substituÃ­do. <a"+
+					"		href='/siga/arquivos/AjudaEditorTextosSigaDoc.pdf'><b>Veja instruÃ§Ãµes</b> </a> sobre"+
 					"	o uso do editor."+
 					"</p>"+
 					"<h4>Busca Textual Integrada</h4>"+
-					"<p>A busca de documentos por conteúdo agora pode ser feita na"+
-					"	própria tela de pesquisa por filtros, por meio do campo Conteúdo.</p>"+
+					"<p>A busca de documentos por conteÃºdo agora pode ser feita na"+
+					"	prÃ³pria tela de pesquisa por filtros, por meio do campo ConteÃºdo.</p>"+
 					"</font>"+
 					"</table>"+
-					"			<h4>Versão:  </h4>"+
+					"			<h4>VersÃ£o:  </h4>"+
 					"		</div>"+
 					"		<!-- / main content -->"+
 					"		<!-- sidebar -->"+
 					"		<div class='gt-sidebar'>"+
 					"			<!-- login form head -->"+
-					"			<div class='gt-mylogin-hd'>Identificação</div>"+
+					"			<div class='gt-mylogin-hd'>IdentificaÃ§Ã£o</div>"+
 					"			<!-- login box -->"+
 					"			<div class='gt-mylogin-box'>"+
 					"				<!-- login form -->"+
 					"				<form method='post' action='j_security_check' enctype='application/x-www-form-urlencoded' class='gt-form'>"+
 					"					<!-- form row -->"+
 					"					<div class='gt-form-row'>"+
-					"						<label class='gt-label'>Matrícula</label> "+
+					"						<label class='gt-label'>MatrÃ­cula</label> "+
 					"						<input id='j_username' type='text' name='j_username' placeholder='XX99999'"+
 					"							onblur='javascript:converteUsuario(this)' class='gt-form-text'>"+
 					"					</div>"+
@@ -247,7 +247,7 @@ public class SigaHTTPTest {
 					"					</div>"+
 					"					<!-- /form row -->"+
 					"					<p class='gt-forgot-password'>"+
-					"						<a href='/siga/usuario/incluir_usuario.action'>Sou um novo usuário</a>"+
+					"						<a href='/siga/usuario/incluir_usuario.action'>Sou um novo usuÃ¡rio</a>"+
 					"					</p>"+
 					"					<p class='gt-forgot-password'>"+
 					"						<a href='/siga/usuario/esqueci_senha.action'>Esqueci minha senha</a>"+
@@ -258,7 +258,7 @@ public class SigaHTTPTest {
 					"			<!-- /login box -->"+
 					"			<!-- Sidebar Navigation -->"+
 					"			<div class='gt-sidebar-nav gt-sidebar-nav-blue'>"+
-					"				<h3>Links Úteis</h3>"+
+					"				<h3>Links Ãšteis</h3>"+
 					"				<ul>"+
 					"					<li><a href='/siga/arquivos/apostila_sigaex.pdf'>Apostila SIGA-Doc</a></li>"+
 					"					<li><a href='/siga/arquivos/apostila_sigawf.pdf'>Apostila SIGA-Workflow</a></li>"+

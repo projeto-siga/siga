@@ -2,7 +2,6 @@
 <%@tag import="com.ckeditor.CKEditorTag"%>
 <%@tag import="com.ckeditor.CKEditorConfig"%>
 <%@ tag body-content="empty"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://ckeditor.com" prefix="FCK"%>
@@ -55,7 +54,7 @@
 					<c:if test="${empty v}">
 							<c:set var="v" value='<p style="TEXT-INDENT: 2cm" align="justify"></p>'/>
 					</c:if>
-					<textarea cols="100" id="xxxeditorxxx" name="xxxeditorxxx" rows="20">${v}</textarea>
+					<textarea cols="100" id="xxxeditorxxx" name="xxxeditorxxx" rows="20" class="editor">${v}</textarea>
 					
 					
 					 <script type="text/javascript">
@@ -107,15 +106,13 @@ CKEDITOR.stylesSet.add('siga_ckeditor_styles',[
 	];
 
 window.onload = function(){
-
-	CKEDITOR.replace( '${var}',
-			{
-				toolbar : 'SigaToolbar'
-			});
-
-	
-}
-                            </script>
+	$( "textarea.editor" ).each(function( index ) {
+    	CKEDITOR.replace( this,
+		{
+		   toolbar : 'SigaToolbar'
+		});
+    });	
+}                            </script>
                             
                             
 					<!-- <FCK:replace replace="xxxeditorxxx" basePath="/ckeditor/ckeditor" config="${ckconfig}"></FCK:replace> -->

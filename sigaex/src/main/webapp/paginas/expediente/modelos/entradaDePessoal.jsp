@@ -4,18 +4,18 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <mod:modelo>
 	<mod:entrevista>
-		<mod:grupo titulo="PerÌodo">
+		<mod:grupo titulo="Per√≠odo">
 			<mod:obrigatorios />
 			<br />
 			<br />
 			<mod:selecao var="qtdeDias"
-				titulo="Selecione a quantidade de dias intercalados e/ou perÌodos"
+				titulo="Selecione a quantidade de dias intercalados e/ou per√≠odos"
 				opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;33;34;35;36;37;38;39;40"
 				reler="sim" idAjax="quantDependAjax" />
 			<mod:grupo depende="quantDependAjax"
-				titulo="<font color='red'>AtenÁ„o:</font> <font color='blue'>Para dias intercalados, preencha apenas o campo Data InÌcio</font>">
+				titulo="<font color='red'>Aten√ß√£o:</font> <font color='blue'>Para dias intercalados, preencha apenas o campo Data In√≠cio</font>">
 				<c:forEach var="i" begin="1" end="${qtdeDias}">
-					<mod:data titulo="Data InÌcio" var="data_ini${i}" obrigatorio="Sim"
+					<mod:data titulo="Data In√≠cio" var="data_ini${i}" obrigatorio="Sim"
 						reler="sim" />
 					<mod:data titulo="Data Fim" var="data_fim${i}" alerta="Nao"
 						reler="sim" />
@@ -34,31 +34,31 @@
 						<c:otherwise></c:otherwise>
 					</c:choose>
 					
-					<mod:hora titulo="Hora InÌcio" var="hora_ini${i}" alerta="Nao"/>
+					<mod:hora titulo="Hora In√≠cio" var="hora_ini${i}" alerta="Nao"/>
 					<mod:hora titulo="Fim" var="hora_fim${i}" alerta="Nao"/>
 					<br />
 				</c:forEach>
 			</mod:grupo>
-			<mod:texto titulo="ObservaÁ„o" var="obs" largura="60" />
+			<mod:texto titulo="Observa√ß√£o" var="obs" largura="60" />
 		</mod:grupo>
-		<mod:grupo titulo="Local de realizaÁ„o">
+		<mod:grupo titulo="Local de realiza√ß√£o">
 			<mod:selecao titulo="Total de locais" var="totalDeLocais"
 				opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20"
 				reler="sim" />
 			<br />
 			<c:forEach var="i" begin="1" end="${totalDeLocais}">
 				<mod:grupo>
-					<mod:selecao titulo="Local de realizaÁ„o" var="local${i}"
-						opcoes="Angra dos Reis;Av Almirante Barroso;Av Rio Branco;Av Venezuela;Barra do PiraÌ;Campos;Duque de Caxias;ItaboraÌ;Itaperuna;MacaÈ;MagÈ;NiterÛi;Nova Friburgo;Nova IguaÁu;PetrÛpolis;Resende;Rua Equador;S„o CristÛv„o;S„o GonÁalo;S„o Jo„o de Meriti;S„o Pedro d'Aldeia;TeresÛpolis;TrÍs Rios;Volta Redonda"
-						reler="n„o" />
+					<mod:selecao titulo="Local de realiza√ß√£o" var="local${i}"
+						opcoes="Angra dos Reis;Av Almirante Barroso;Av Rio Branco;Av Venezuela;Barra do Pira√≠;Campos;Duque de Caxias;Itabora√≠;Itaperuna;Maca√©;Mag√©;Niter√≥i;Nova Friburgo;Nova Igua√ßu;Petr√≥polis;Resende;Rua Equador;S√£o Crist√≥v√£o;S√£o Gon√ßalo;S√£o Jo√£o de Meriti;S√£o Pedro d'Aldeia;Teres√≥polis;Tr√™s Rios;Volta Redonda"
+						reler="n√£o" />
 				</mod:grupo>
 				<br />
 			</c:forEach>
 		</mod:grupo>
-		<mod:grupo titulo="ServiÁo">
-			<mod:memo titulo="DescriÁ„o" var="desc" colunas="80" />
+		<mod:grupo titulo="Servi√ßo">
+			<mod:memo titulo="Descri√ß√£o" var="desc" colunas="80" />
 		</mod:grupo>
-		<mod:grupo titulo="RelaÁ„o de pessoal">
+		<mod:grupo titulo="Rela√ß√£o de pessoal">
 			<mod:texto titulo="Nome da empresa" var="empresa" largura="60" />
 			<br />
 			<br />
@@ -69,7 +69,7 @@
 			<br />
 			<c:forEach var="i" begin="1" end="${totalDePessoal}">
 				<mod:grupo>
-					<mod:texto titulo="Nome do funcion·rio" var="funcionario${i}"
+					<mod:texto titulo="Nome do funcion√°rio" var="funcionario${i}"
 						largura="60" />
 				</mod:grupo>
 				<mod:grupo>
@@ -112,7 +112,7 @@
 		<table width="100%" border="1" cellpadding="2" cellspacing="1"
 			bgcolor="#000000">
 			<tr>
-				<td bgcolor="#FFFFFF"><b>1 - PERÕODO</b></td>
+				<td bgcolor="#FFFFFF"><b>1 - PER√çODO</b></td>
 			</tr>
 			<c:forEach var="i" begin="1" end="${qtdeDias}">
 
@@ -129,12 +129,12 @@
 							de ${requestScope[f:concat('data_ini',i)]} a
 							${requestScope[f:concat('data_fim',i)]} 
 						</c:otherwise>
-					</c:choose> - <b>Hor·rio:</b> de ${requestScope[f:concat('hora_ini',i)]} ‡s
+					</c:choose> - <b>Hor√°rio:</b> de ${requestScope[f:concat('hora_ini',i)]} √†s
 					${requestScope[f:concat('hora_fim',i)]}</td>
 				</tr>
 			</c:forEach>
 			<tr>
-				<td bgcolor="#FFFFFF"><b>ObservaÁ„o:&nbsp;</b><c:if
+				<td bgcolor="#FFFFFF"><b>Observa√ß√£o:&nbsp;</b><c:if
 					test="${not empty obs}">
 					${obs}</c:if></td>
 			</tr>
@@ -145,7 +145,7 @@
 		<table width="100%" border="1" cellpadding="2" cellspacing="1"
 			bgcolor="#000000">
 			<tr>
-				<td bgcolor="#FFFFFF"><b>2 - LOCAL DE REALIZA«√O DO SERVI«O</b></td>
+				<td bgcolor="#FFFFFF"><b>2 - LOCAL DE REALIZA√á√ÉO DO SERVI√áO</b></td>
 			</tr>
 			<c:forEach var="i" begin="1" end="${totalDeLocais}">
 				<tr>
@@ -161,13 +161,13 @@
 		<table width="100%" border="1" cellpadding="2" cellspacing="1"
 			bgcolor="#000000">
 			<tr>
-				<td bgcolor="#FFFFFF"><b>3 - DESCRI«√O DO SERVI«O</b></td>
+				<td bgcolor="#FFFFFF"><b>3 - DESCRI√á√ÉO DO SERVI√áO</b></td>
 			</tr>
 			<tr>
 				<td bgcolor="#FFFFFF">
 				<p><c:choose>
 					<c:when test="${not empty desc}">${desc}</c:when>
-					<c:otherwise>N„o foi informado.</c:otherwise>
+					<c:otherwise>N√£o foi informado.</c:otherwise>
 				</c:choose></p>
 				</td>
 			</tr>
@@ -178,7 +178,7 @@
 		<table width="100%" border="1" cellpadding="2"
 			cellspacing="1" bgcolor="#000000">
 			<tr>
-				<td bgcolor="#FFFFFF" ><b>4 - RELA«√O DE
+				<td bgcolor="#FFFFFF" ><b>4 - RELA√á√ÉO DE
 				PESSOAL</b></td>
 			</tr>
 			<tr>
@@ -189,7 +189,7 @@
 			bgcolor="#000000">
 			<tr>
 				<td width="40%" bgcolor="#FFFFFF" align="center"><b>Nome do
-				funcion·rio</b></td>
+				funcion√°rio</b></td>
 				<td width="20%" bgcolor="#FFFFFF" align="center"><b>RG</b></td>
 			</tr>
 			<c:forEach var="i" begin="1" end="${totalDePessoal}">

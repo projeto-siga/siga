@@ -13,8 +13,8 @@ public abstract class SigaAuditor {
 	
 	public SigaAuditor( Configuration cfg ) {
 		if ( cfg == null ) {
-			log.error( "N„o foi possÌvel instanciar o auditor" );
-			throw new IllegalArgumentException("Hibernate Configuration n„o pode ser nulo.");
+			log.error( "N√£o foi poss√≠vel instanciar o auditor" );
+			throw new IllegalArgumentException("Hibernate Configuration n√£o pode ser nulo.");
 		}
 		this.cfg = cfg;
 	}
@@ -22,8 +22,8 @@ public abstract class SigaAuditor {
 	public static SigaAuditor configuraAuditoria( SigaAuditor auditor ) {
 		
 		if ( auditor == null ) {
-			log.error("A configuraÁ„o da auditoria È inv·lida");
-			throw new IllegalStateException("O SigaAuditor È nulo");
+			log.error("A configura√ß√£o da auditoria √© inv√°lida");
+			throw new IllegalStateException("O SigaAuditor √© nulo");
 		}
 		
 		// bruno.lacerda@avantiprima.com.br
@@ -56,8 +56,8 @@ public abstract class SigaAuditor {
 	public static int getTempoLimite(String tempoLimiteLogListenerPropertyName) {
 		String strTempoLimite = System.getProperty( tempoLimiteLogListenerPropertyName );
 		if ( !StringUtils.isNumeric( strTempoLimite ) ) {
-			log.error( "O valor da propriedade que define o tempo limite para logar nos listeners È inv·lida" );
-			throw new IllegalStateException( "O valor da propriedade que define o tempo limite para logar nos listeners È inv·lida" );
+			log.error( "O valor da propriedade que define o tempo limite para logar nos listeners √© inv√°lida" );
+			throw new IllegalStateException( "O valor da propriedade que define o tempo limite para logar nos listeners √© inv√°lida" );
 		}
 		return Integer.parseInt( strTempoLimite );
 	}
@@ -69,12 +69,12 @@ public abstract class SigaAuditor {
 			if ( SigaLogCategoryEnum.valueOf( categoriaDeLog.toUpperCase() ) != null ) {
 				return SigaLogCategoryEnum.valueOf( categoriaDeLog.toUpperCase() ).getValue();
 			} else {
-				log.error( "O valor da propriedade que define a categoria de log para logar nos listeners ou interceptor È inv·lida" );
-				throw new IllegalStateException( "O valor da propriedade que define a categoria de log para logar nos listeners ou interceptor È inv·lida" );
+				log.error( "O valor da propriedade que define a categoria de log para logar nos listeners ou interceptor √© inv√°lida" );
+				throw new IllegalStateException( "O valor da propriedade que define a categoria de log para logar nos listeners ou interceptor √© inv√°lida" );
 			}
 		} else {
-			log.error( "O valor da propriedade que define a categoria de log para logar nos listeners È nula" );
-			throw new IllegalStateException( "O valor da propriedade que define a categoria de log para logar nos listeners È nula" );
+			log.error( "O valor da propriedade que define a categoria de log para logar nos listeners √© nula" );
+			throw new IllegalStateException( "O valor da propriedade que define a categoria de log para logar nos listeners √© nula" );
 		}
 	}
 	

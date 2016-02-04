@@ -14,7 +14,7 @@
 			<mod:pessoa titulo="Servidor" var="servidor" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:lotacao titulo="Próxima lotação" var="lotacao" />
+			<mod:lotacao titulo="PrÃ³xima lotaÃ§Ã£o" var="lotacao" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:data titulo="A partir de" var="dataInicio" />
@@ -23,7 +23,7 @@
 	<mod:documento>
 		<mod:valor var="texto_oficio">
 			<p style="TEXT-INDENT: 2cm" align="justify">Solicito a Vossa
-			Excelência a <b>remoção</b> do(a) servidor(a)
+			ExcelÃªncia a <b>remoÃ§Ã£o</b> do(a) servidor(a)
 			<mod:identificacao pessoa="${requestScope['servidor_pessoaSel.id']}" />
 			para a <b>${requestScope['lotacao_lotacaoSel.descricao']}</b>,
 			a partir de <b>${dataInicio}</b>.</p>

@@ -30,8 +30,8 @@ import org.jbpm.taskmgmt.exe.TaskInstance;
 public class WfProsseguirCondicionalActionHandler implements ActionHandler {
 
 	/**
-	 * Faz um 'sinal' na transição de saída que estiver habilitada. Caso não
-	 * exista nenhuma condição de saída com 'condition' == true, permanece na
+	 * Faz um 'sinal' na transiÃ§Ã£o de saÃ­da que estiver habilitada. Caso nÃ£o
+	 * exista nenhuma condiÃ§Ã£o de saÃ­da com 'condition' == true, permanece na
 	 * mesma tarefa.
 	 * 
 	 * @param executionContext

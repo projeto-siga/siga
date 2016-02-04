@@ -25,7 +25,7 @@ package br.gov.jfrj.siga.base;
 
 
 /**
- * @author SEANS Classe padrão para tratamenteo de erros nos Sistemas
+ * @author SEANS Classe padrÃ£o para tratamenteo de erros nos Sistemas
  * 
  */
 public class AplicacaoException extends RuntimeException {
@@ -37,7 +37,7 @@ public class AplicacaoException extends RuntimeException {
 	private int codigoErro;
 
 	/**
-	 * Construtor padrão para a Classe
+	 * Construtor padrÃ£o para a Classe
 	 * 
 	 */
 	public AplicacaoException() {
@@ -49,7 +49,7 @@ public class AplicacaoException extends RuntimeException {
 	 * Construtor da Classe que atribui uma mensagem
 	 * 
 	 * @param message -
-	 *            Descrição do motivo da exceção
+	 *            DescriÃ§Ã£o do motivo da exceÃ§Ã£o
 	 */
 	public AplicacaoException(final String message) {
 		this(message, 0);
@@ -58,12 +58,12 @@ public class AplicacaoException extends RuntimeException {
 
 	/**
 	 * 
-	 * Construtor da Classe que atribui uma mensagem e código de Identificação
+	 * Construtor da Classe que atribui uma mensagem e cÃ³digo de IdentificaÃ§Ã£o
 	 * 
 	 * @param message -
-	 *            Descrição do motivo da exceção
+	 *            DescriÃ§Ã£o do motivo da exceÃ§Ã£o
 	 * @param codigo -
-	 *            Código de identificação da exceção para
+	 *            CÃ³digo de identificaÃ§Ã£o da exceÃ§Ã£o para
 	 */
 	public AplicacaoException(final String message, final int codigo) {
 		this(message, codigo, null);
@@ -71,15 +71,15 @@ public class AplicacaoException extends RuntimeException {
 
 	/**
 	 * 
-	 * Construtor da Classe que atribui uma mensagem, um código de Identificação
-	 * e uma causa para a exceção
+	 * Construtor da Classe que atribui uma mensagem, um cÃ³digo de IdentificaÃ§Ã£o
+	 * e uma causa para a exceÃ§Ã£o
 	 * 
 	 * @param message -
-	 *            Descrição do motivo da exceção
+	 *            DescriÃ§Ã£o do motivo da exceÃ§Ã£o
 	 * @param codigo -
-	 *            Código de identificação da exceção para
+	 *            CÃ³digo de identificaÃ§Ã£o da exceÃ§Ã£o para
 	 * @param causa -
-	 *            Objeto da classe Throwable que gerou esta exceção
+	 *            Objeto da classe Throwable que gerou esta exceÃ§Ã£o
 	 */
 	public AplicacaoException(final String message, final int codigo, final Throwable causa) {
 		super(message, causa);

@@ -17,11 +17,11 @@
 			<br>
 			<mod:selecao titulo="<b>Acerto Gramatical</b>" var="acgra"
 				opcoes="do;da" reler="sim" />
-			<mod:lotacao titulo="<b> Lotação de Origem</b>" var="lota" />
+			<mod:lotacao titulo="<b> LotaÃ§Ã£o de Origem</b>" var="lota" />
 			<br><br>
 		</mod:grupo>	
 		<mod:grupo>
-			<mod:data titulo="<b>Data de Vigência</b>" var="datfin" />
+			<mod:data titulo="<b>Data de VigÃªncia</b>" var="datfin" />
 		</mod:grupo>
 		<br>
 	</mod:entrevista>
@@ -38,18 +38,18 @@
 			<p style="TEXT-INDENT: 2cm" align="justify"><b><c:choose>
 				<c:when test="${doc.subscritor.sexo == 'M'}">O PRESIDENTE</c:when>
 				<c:otherwise>A PRESIDENTE</c:otherwise>
-			</c:choose> DO TRIBUNAL REGIONAL FEDERAL DA 2ª REGIÃO</b>, no uso de suas
-			atribuições, <b>RESOLVE</b>:<br>
+			</c:choose> DO TRIBUNAL REGIONAL FEDERAL DA 2Âª REGIÃƒO</b>, no uso de suas
+			atribuiÃ§Ãµes, <b>RESOLVE</b>:<br>
 			<br>
 			<br>
-			<b>CESSAR</b>, a partir de ${datfin} , a convocação <c:choose>
+			<b>CESSAR</b>, a partir de ${datfin} , a convocaÃ§Ã£o <c:choose>
 				<c:when test="${federal.sexo == 'M'}">
 					<c:set var="el" value="do Juiz Federal"></c:set>
 					<c:set var="tit" value="Dr">
 					</c:set>
 				</c:when>
 				<c:otherwise>
-					<c:set var="el" value="da Juíza Federal"></c:set>
+					<c:set var="el" value="da JuÃ­za Federal"></c:set>
 					<c:set var="tit" value="Dra"></c:set>
 				</c:otherwise>
 			</c:choose> ${el} ${acgra} ${lotc} - ${federal.orgaoUsuario.nmOrgaoUsu}, ${tit} ${federal.nomePessoa}</b>. <br>

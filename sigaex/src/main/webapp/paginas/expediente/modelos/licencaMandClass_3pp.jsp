@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-LICENÇA PARA DEEMPENHO DE MANDATO CLASSISTA -->
+LICENÃ‡A PARA DEEMPENHO DE MANDATO CLASSISTA -->
 
 
 <c:set var="esconderTexto" value="sim" scope="request" />
@@ -15,9 +15,9 @@ LICENÇA PARA DEEMPENHO DE MANDATO CLASSISTA -->
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a)
-		${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Excelência que se digne encaminhar 
-		o requerimento de <B>LICENÇA PARA DESEMPENHO DE MANDATO CLASSISTA</B>, em anexo, 
-		ao E. Tribunal Regional Federal da 2ª Região.
+		${doc.subscritor.lotacao.descricao}, vem requerer a Vossa ExcelÃªncia que se digne encaminhar 
+		o requerimento de <B>LICENÃ‡A PARA DESEMPENHO DE MANDATO CLASSISTA</B>, em anexo, 
+		ao E. Tribunal Regional Federal da 2Âª RegiÃ£o.
 		</p>
 		</mod:valor>
 		<mod:valor var="texto_requerimento2">
@@ -25,8 +25,8 @@ LICENÇA PARA DEEMPENHO DE MANDATO CLASSISTA -->
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a)
-		${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Excelência, nos termos do art. 92 da Lei n.º 8.112/90, 
-		c/c a redação dada pela Lei n.º 9.527/97, <B>LICENÇA PARA DESEMPENHO DE MANDATO 
+		${doc.subscritor.lotacao.descricao}, vem requerer a Vossa ExcelÃªncia, nos termos do art. 92 da Lei n.Âº 8.112/90, 
+		c/c a redaÃ§Ã£o dada pela Lei n.Âº 9.527/97, <B>LICENÃ‡A PARA DESEMPENHO DE MANDATO 
 		CLASSISTA</B>.
 		</p>
 		
@@ -43,25 +43,25 @@ LICENÇA PARA DEEMPENHO DE MANDATO CLASSISTA -->
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		<I>
-		Declaro estar ciente de que o § 2º do art. 183 da Lei n.º 8.112/90, 
-		acrescentado pela Lei n.º 10.667/2003, prevê que o servidor afastado ou 
-		licenciado do cargo efetivo, sem direito à remuneração, inclusive para servir 
+		Declaro estar ciente de que o Â§ 2Âº do art. 183 da Lei n.Âº 8.112/90, 
+		acrescentado pela Lei n.Âº 10.667/2003, prevÃª que o servidor afastado ou 
+		licenciado do cargo efetivo, sem direito Ã  remuneraÃ§Ã£o, inclusive para servir 
 		em organismo oficial internacional do qual o Brasil seja membro efetivo ou com o 
-		qual coopere, ainda que contribua para regime de previdência social no exterior, 
-		terá suspenso o seu vínculo com o regime do Plano de Seguridade Social do Servidor 
-		Público enquanto durar o afastamento ou a licença, não lhe assistindo, neste 
-		período, os benefícios do mencionado regime de previdência.
+		qual coopere, ainda que contribua para regime de previdÃªncia social no exterior, 
+		terÃ¡ suspenso o seu vÃ­nculo com o regime do Plano de Seguridade Social do Servidor 
+		PÃºblico enquanto durar o afastamento ou a licenÃ§a, nÃ£o lhe assistindo, neste 
+		perÃ­odo, os benefÃ­cios do mencionado regime de previdÃªncia.
 		</i>
 		</p>
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		<i>		
-		Declaro, ainda, estar ciente de que o § 3º do referido artigo, também acrescentado 
-		pela Lei n.º 10.667/2003, assegura ao servidor, na situação acima descrita, 
-		a manutenção da vinculação ao regime do Plano de Seguridade Social do Servidor 
-		Público, mediante o recolhimento mensal da respectiva contribuição, no mesmo 
-		percentual devido pelos servidores em atividade, incidente sobre a remuneração 
-		total do cargo a que faz jus no exercício de suas atribuições, computando-se, 
+		Declaro, ainda, estar ciente de que o Â§ 3Âº do referido artigo, tambÃ©m acrescentado 
+		pela Lei n.Âº 10.667/2003, assegura ao servidor, na situaÃ§Ã£o acima descrita, 
+		a manutenÃ§Ã£o da vinculaÃ§Ã£o ao regime do Plano de Seguridade Social do Servidor 
+		PÃºblico, mediante o recolhimento mensal da respectiva contribuiÃ§Ã£o, no mesmo 
+		percentual devido pelos servidores em atividade, incidente sobre a remuneraÃ§Ã£o 
+		total do cargo a que faz jus no exercÃ­cio de suas atribuiÃ§Ãµes, computando-se, 
 		para esse efeito, inclusive, as vantagens pessoais.
 		</I>
 		</p>		

@@ -22,16 +22,16 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 
 /**
- * Fábrica para a geração de uma Configuração de grupo
+ * FÃ¡brica para a geraÃ§Ã£o de uma ConfiguraÃ§Ã£o de grupo
  */
 public class ConfiguracaoGrupoFabrica {
 	/**
-	 * Cria uma configuração de grupo (ConfiguracaoGrupo)
+	 * Cria uma configuraÃ§Ã£o de grupo (ConfiguracaoGrupo)
 	 * 
 	 * @param p_enmTipo
-	 *            TipoConfiguracaoGrupoEnum O tipo de configuração de grupo que
-	 *            deseja criar. @ return ConfiguracaoGrupo uma nova instância de
-	 *            configuração de grupo
+	 *            TipoConfiguracaoGrupoEnum O tipo de configuraÃ§Ã£o de grupo que
+	 *            deseja criar. @ return ConfiguracaoGrupo uma nova instÃ¢ncia de
+	 *            configuraÃ§Ã£o de grupo
 	 * @throws Exception
 	 */
 	public ConfiguracaoGrupo getInstance(TipoConfiguracaoGrupoEnum p_enmTipo)
@@ -50,18 +50,18 @@ public class ConfiguracaoGrupoFabrica {
 			return new ConfiguracaoGrupoFuncao();
 		} else {
 			throw new AplicacaoException(
-					"Parâmetro TipoConfiguracaoGrupoEmailEnum."
-							+ p_enmTipo.getDescricao() + " não tratado !");
+					"ParÃ¢metro TipoConfiguracaoGrupoEmailEnum."
+							+ p_enmTipo.getDescricao() + " nÃ£o tratado !");
 		}
 	}
 
 	/**
-	 * Cria uma configuração de grupo (ConfiguracaoGrupo)
+	 * Cria uma configuraÃ§Ã£o de grupo (ConfiguracaoGrupo)
 	 * 
 	 * @param p_enmTipo
-	 *            TipoConfiguracaoGrupoEnum O tipo de configuração de grupo que
-	 *            deseja criar. @ return ConfiguracaoGrupo uma nova instância de
-	 *            configuração de grupo
+	 *            TipoConfiguracaoGrupoEnum O tipo de configuraÃ§Ã£o de grupo que
+	 *            deseja criar. @ return ConfiguracaoGrupo uma nova instÃ¢ncia de
+	 *            configuraÃ§Ã£o de grupo
 	 * @throws Exception
 	 */
 	public ConfiguracaoGrupo getInstance(CpConfiguracao p_cpcConfiguracao)
@@ -89,7 +89,7 @@ public class ConfiguracaoGrupoFabrica {
 			t_cgpConfiguracao = new ConfiguracaoGrupoFuncao();
 		}
 		if (t_cgpConfiguracao == null) {
-			throw new Exception("CpConfiguracao incompatível.");
+			throw new Exception("CpConfiguracao incompatÃ­vel.");
 		}
 		t_cgpConfiguracao.setCpConfiguracao(p_cpcConfiguracao);
 		t_cgpConfiguracao.atualizarDeCpConfiguracao();

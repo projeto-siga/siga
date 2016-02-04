@@ -9,25 +9,25 @@
 	    <br>
 	    <mod:grupo
 	        titulo="Elementos essenciais da Nota de Auditoria"><br>
-	        <mod:lotacao titulo="<b>Divis„o / Secretaria</b>" var="divsec" />
-	        <mod:lotacao titulo="<b>SeÁ„o</b>" var="secao" />
+	        <mod:lotacao titulo="<b>Divis√£o / Secretaria</b>" var="divsec" />
+	        <mod:lotacao titulo="<b>Se√ß√£o</b>" var="secao" />
 	    </mod:grupo>
 	    <br><br>
 		<mod:grupo>
 				<mod:selecao var="uniges"
 				titulo="<b>Unidade Gestora Auditada</b>"
-				opcoes="TRIBUNAL REGIONAL FEDERAL DA 2™ REGI√O - UG 090028;SE«√O JUDICI¡RIA DO ESTADO DO RIO DE JANEIRO - UG 090016;SE«√O JUDICI¡RIA DO ESTADO DO ESPÕRITO SANTO - UG 090014"	
+				opcoes="TRIBUNAL REGIONAL FEDERAL DA 2¬™ REGI√ÉO - UG 090028;SE√á√ÉO JUDICI√ÅRIA DO ESTADO DO RIO DE JANEIRO - UG 090016;SE√á√ÉO JUDICI√ÅRIA DO ESTADO DO ESP√çRITO SANTO - UG 090014"	
 				reler="sim" />
 		</mod:grupo>
 	  	
 	  	<mod:grupo
 	  	        titulo=""><br>
-				<mod:lotacao titulo="<b>Setor Respons·vel</b>" var="secres" />
+				<mod:lotacao titulo="<b>Setor Respons√°vel</b>" var="secres" />
 		</mod:grupo>
 		 <br><hr style="color: #FFFFFF;" /><br>
 		<mod:grupo>
 		    <c:if test="${empty esconderTexto}">
-			    <mod:grupo titulo="<b>Texto da Nota de Auditoria (ConstataÁ„o, Fato, ConsequÍncia, RecomendaÁ„o)</b>">
+			    <mod:grupo titulo="<b>Texto da Nota de Auditoria (Constata√ß√£o, Fato, Consequ√™ncia, Recomenda√ß√£o)</b>">
 			    	<mod:grupo>
 					    <mod:editor titulo="" var="texto_audit" />
 				    </mod:grupo>
@@ -108,7 +108,7 @@
   				   <td colspan="2" style="font-size:9" align="justify" ><b>UNIDADE GESTORA AUDITADA : ${uniges}</b></td>
   			   </tr>
   			   <tr>
-  				   <td colspan="2" style="font-size:9" align="justify" ><b>SETOR RESPONS¡VEL : ${setresp} - ${setrespsigla}</b></td>
+  				   <td colspan="2" style="font-size:9" align="justify" ><b>SETOR RESPONS√ÅVEL : ${setresp} - ${setrespsigla}</b></td>
   			   </tr>
   		</table>
 		</td>

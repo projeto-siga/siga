@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.4"
+	xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+	<display-name>sigagc</display-name>
+
+	<jsp-config>
+		<taglib>
+			<taglib-uri>http://localhost/customtag</taglib-uri>
+			<taglib-location>/WEB-INF/tags/tags.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>http://localhost/functiontag</taglib-uri>
+			<taglib-location>/WEB-INF/tags/func.tld</taglib-location>
+		</taglib>
+		<jsp-property-group>
+			<description>Property group for common configuration for all the JSP's</description>
+			<url-pattern>*.jsp</url-pattern>
+			<url-pattern>*.html</url-pattern>
+			<el-ignored>false</el-ignored>
+			<page-encoding>UTF-8</page-encoding>
+		</jsp-property-group>
+	</jsp-config>
+
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<filter>
+		<filter-name>GcFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.gc.util.GcThreadFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>GcFilter</filter-name>
+		<url-pattern>/servicos/*</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>vraptor</filter-name>
+		<filter-class>br.com.caelum.vraptor.VRaptor</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>vraptor</filter-name>
+		<url-pattern>/app/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>vraptor</filter-name>
+		<url-pattern>/public/app/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+
+    <filter>
+        <filter-name>ResponseHeaderFilter</filter-name>
+        <filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
+        <init-param>
+            <param-name>Cache-Control</param-name>
+            <param-value>public, max-age=3600</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>ResponseHeaderFilter</filter-name>
+        <url-pattern>/public/*</url-pattern>
+    </filter-mapping>
+
+	<!-- Inicio de WebServer -->
+	<context-param>
+		<param-name>br.com.caelum.vraptor.provider</param-name>
+		<param-value>br.com.caelum.vraptor.ioc.guice.GuiceProvider</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>br.com.caelum.vraptor.encoding</param-name>
+		<param-value>UTF-8</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>br.com.caelum.vraptor.packages</param-name>
+		<param-value>  
+        	br.gov.jfrj.siga.vraptor,
+        	br.com.caelum.vraptor.util.jpa
+   		</param-value>
+	</context-param>
+
+	<session-config>
+		<session-timeout>120</session-timeout>
+	</session-config>
+
+	<servlet>
+		<servlet-name>GcService</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.gc.service.impl.GcServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>GcService</servlet-name>
+		<url-pattern>/servicos/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>GcService</servlet-name>
+		<url-pattern>/servicos/GcService</url-pattern>
+	</servlet-mapping>
+
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Paginas do Sistema</web-resource-name>
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>sigausuario</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Recursos Publicos</web-resource-name>
+			<url-pattern>/public/*</url-pattern>
+			<url-pattern>/rest/*</url-pattern>
+			<url-pattern>/servicos/*</url-pattern>
+
+		</web-resource-collection>
+	</security-constraint>
+
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<realm-name>SigaWF</realm-name>
+		<form-login-config>
+			<form-login-page>/paginas/login.jsp</form-login-page>
+			<form-error-page>/paginas/loginInvalido.jsp</form-error-page>
+		</form-login-config>
+	</login-config>
+
+	<security-role>
+		<role-name>sigausuario</role-name>
+	</security-role>
+
+	<error-page>
+		
+		<location>/WEB-INF/page/erroGeral.jsp</location>
+	</error-page>
+</web-app>

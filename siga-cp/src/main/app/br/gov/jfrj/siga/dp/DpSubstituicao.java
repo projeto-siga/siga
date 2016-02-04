@@ -37,6 +37,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+
+
 @Entity
 @Table(name = "DP_SUBSTITUICAO", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
@@ -52,8 +54,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 			" dps.titular.idPessoa in (select pes.idPessoa from DpPessoa as pes where pes.idPessoaIni = :idTitularIni)) "+
 			" and dps.dtFimRegistro = null "+
 			" order by dps.dtIniSubst, dps.dtFimSubst ")
-})
-public class DpSubstituicao extends AbstractDpSubstituicao implements Serializable{
+})public class DpSubstituicao extends AbstractDpSubstituicao implements Serializable{
 
 	/**
 	 * 

@@ -10,26 +10,26 @@
 						<h1 align="center">${texto_destinatario}</h1>
 					</c:when>
 					<c:when test="${para eq 'sepag'}">
-						<h1>Ilma. Sra. Secret·ria de Recursos Humanos</h1>
+						<h1>Ilma. Sra. Secret√°ria de Recursos Humanos</h1>
 					</c:when>
 					<c:when
 						test="${para eq 'diretorForo' || (not empty doc.lotaDestinatario and f:lotacaoPorNivelMaximo(doc.lotaDestinatario,4).sigla == 'DIRFO')}">
-						<h1 align="center">Exmo. Sr. Ministro Presidente do Conselho da JustiÁa Federal</h1>
+						<h1 align="center">Exmo. Sr. Ministro Presidente do Conselho da Justi√ßa Federal</h1>
 					</c:when>
 					<c:when test="${para eq 'diretoraRH'}">
-						<h1 align="center">Ilma. Sra. Secret·ria de Recursos Humanos</h1>
+						<h1 align="center">Ilma. Sra. Secret√°ria de Recursos Humanos</h1>
 					</c:when>
 					<c:when test="${para eq 'diretoraGeral'}">
-						<h1 align="center">Ilma. Sra. Secret·ria Geral</h1>
+						<h1 align="center">Ilma. Sra. Secret√°ria Geral</h1>
 					</c:when>
 					<c:when test="${para eq 'diretor'}">
-						<h1 align="center">Ilmo(a). Sr(a). Secret·rio(a)</h1>
+						<h1 align="center">Ilmo(a). Sr(a). Secret√°rio(a)</h1>
 					</c:when>
 					<c:when test="${para eq 'sinap'}">
-						<h1 align="center">Ilma. Sra. Secret·ria de Recursos Humanos</h1>
+						<h1 align="center">Ilma. Sra. Secret√°ria de Recursos Humanos</h1>
 					</c:when>
 					<c:when test="${para eq 'presidenteTRF'}">
-						<h3 align="center">Exmo. Sr. Ministro Presidente do Conselho da JustiÁa Federal</H3>
+						<h3 align="center">Exmo. Sr. Ministro Presidente do Conselho da Justi√ßa Federal</H3>
 					</c:when>
 					<c:when test="${not empty doc.lotaDestinatario}">
 						<h1>SENHOR(A) SUPERVISOR(A) DA ${doc.lotaDestinatario.nomeMaiusculas}</h1>
@@ -46,7 +46,7 @@
 						<h1 align="center">${texto_destinatario}</h1>
 					</c:when>
 					<c:when test="${para eq 'sepag'}">
-						<h1>SENHOR(A) SUPERVISOR(A) DA SE«√O DE FOLHA DE PAGAMENTO</h1>
+						<h1>SENHOR(A) SUPERVISOR(A) DA SE√á√ÉO DE FOLHA DE PAGAMENTO</h1>
 					</c:when>
 					<c:when
 						test="${para eq 'diretorForo' || (not empty doc.lotaDestinatario and f:lotacaoPorNivelMaximo(doc.lotaDestinatario,4).sigla == 'DIRFO')}">
@@ -54,7 +54,7 @@
 					</c:when>
 					<c:when test="${para eq 'diretoraRH'}">
 						<h1 align="center">Ilma. Sra. Diretora da Subsecretaria de
-						Gest„o de Pessoas</h1>
+						Gest√£o de Pessoas</h1>
 					</c:when>
 					<c:when test="${para eq 'diretoraGeral'}">
 						<h1 align="center">Ilma. Sra. Diretora da Secretaria Geral</h1>
@@ -63,10 +63,10 @@
 						<h1 align="center">Ilmo(a). Sr(a). Diretor(a) de Secretaria/Subsecretaria</h1>
 					</c:when>
 					<c:when test="${para eq 'sinap'}">
-						<h1 align="center">Ilma. Sra. Supervisora da SeÁ„o de Inativos e Pensionistas</h1>
+						<h1 align="center">Ilma. Sra. Supervisora da Se√ß√£o de Inativos e Pensionistas</h1>
 					</c:when>
 					<c:when test="${para eq 'presidenteTRF'}">
-						<h3 align="center">EXCELENTÕSSIMO SENHOR PRESIDENTE DO TRIBUNAL REGIONAL FEDERAL DA 2™ REGI√O</H3>
+						<h3 align="center">EXCELENT√çSSIMO SENHOR PRESIDENTE DO TRIBUNAL REGIONAL FEDERAL DA 2¬™ REGI√ÉO</H3>
 					</c:when>
 					<c:when test="${not empty doc.lotaDestinatario}">
 						<h1>SENHOR(A) SUPERVISOR(A) DA ${doc.lotaDestinatario.nomeMaiusculas}</h1>

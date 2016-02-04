@@ -1,9 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
-
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 	<display-name>sigawf</display-name>
-
+	
+	<session-config>
+		<session-timeout>120</session-timeout>
+	</session-config>
+	
 	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
 	<!--distributable/ -->
 
@@ -16,75 +20,65 @@
 			<taglib-uri>http://localhost/customtag</taglib-uri>
 			<taglib-location>/WEB-INF/tags/tags.tld</taglib-location>
 		</taglib>
-
 		<taglib>
 			<taglib-uri>http://localhost/functiontag</taglib-uri>
 			<taglib-location>/WEB-INF/tags/func.tld</taglib-location>
 		</taglib>
+		<jsp-property-group>
+			<description>Property group for common configuration for all the JSP's</description>
+			<url-pattern>*.jsp</url-pattern>
+			<url-pattern>*.html</url-pattern>
+			<el-ignored>false</el-ignored>
+			<page-encoding>UTF-8</page-encoding>
+		</jsp-property-group>
 	</jsp-config>
 
-	<listener>
-		<listener-class>br.gov.jfrj.siga.libs.util.MenuServletContextListener</listener-class>
-	</listener>
 
-	<listener>
-		<listener-class>br.gov.jfrj.siga.libs.util.BouncyCastleServletContextListener</listener-class>
-	</listener>
 
 	<welcome-file-list>
-		<welcome-file>inbox.action</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 
 	<filter>
-		<filter-name>WorkFlowFilter</filter-name>
+		<filter-name>vraptor</filter-name>
+		<filter-class>br.com.caelum.vraptor.VRaptor</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>vraptor</filter-name>
+		<url-pattern>/app/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>vraptor</filter-name>
+		<url-pattern>/public/app/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>WfFilter</filter-name>
 		<filter-class>br.gov.jfrj.siga.wf.util.WfThreadFilter</filter-class>
 	</filter>
-
-	<!-- Inicio de WebWork -->
-	<filter>
-		<filter-name>WebWork</filter-name>
-		<filter-class>com.opensymphony.webwork.dispatcher.FilterDispatcher</filter-class>
-	</filter>
-
-	<filter>
-		<filter-name>ResponseHeaderFilterNoCache</filter-name>
-		<filter-class>br.gov.jfrj.siga.libs.util.ResponseHeaderFilter</filter-class>
-		<init-param>
-			<param-name>Cache-Control</param-name>
-			<param-value>no-cache</param-value>
-		</init-param>
-	</filter>
-
-	<filter>
-		<filter-name>ResponseHeaderFilter</filter-name>
-		<filter-class>br.gov.jfrj.siga.libs.util.ResponseHeaderFilter</filter-class>
-		<init-param>
-			<param-name>Cache-Control</param-name>
-			<param-value>max-age=3600</param-value>
-		</init-param>
-	</filter>
-
 	<filter-mapping>
-		<filter-name>WorkFlowFilter</filter-name>
-		<url-pattern>*.action</url-pattern>
-		<url-pattern>/loadPhoto</url-pattern>
-		<url-pattern>/upload</url-pattern>
+		<filter-name>WfFilter</filter-name>
 		<url-pattern>/servicos/*</url-pattern>
+		<url-pattern>/upload</url-pattern>
 	</filter-mapping>
 
-	<filter-mapping>
-		<filter-name>WebWork</filter-name>
-		<url-pattern>*.action</url-pattern>
-	</filter-mapping>
-
-	<filter-mapping>
-		<filter-name>ResponseHeaderFilterNoCache</filter-name>
-		<url-pattern>*.action</url-pattern>
-	</filter-mapping>
+	<filter>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
+		<init-param>
+			<param-name>Cache-Control</param-name>
+			<param-value>public, max-age=3600</param-value>
+		</init-param>
+	</filter>
 
 	<filter-mapping>
 		<filter-name>ResponseHeaderFilter</filter-name>
-		<url-pattern>/imagens/*</url-pattern>
+		<url-pattern>/js/*</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>
@@ -92,40 +86,50 @@
 		<url-pattern>/recursos/*</url-pattern>
 	</filter-mapping>
 
-	<filter-mapping>
-		<filter-name>ResponseHeaderFilter</filter-name>
-		<url-pattern>/sigalibs/*</url-pattern>
-	</filter-mapping>
-
 	<!-- Inicio de WorkFlow -->
+	<servlet>
+		<servlet-name>WfService</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.wf.service.impl.WfServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>WfService</servlet-name>
+		<url-pattern>/servicos/*</url-pattern>
+	</servlet-mapping>
+
 	<servlet>
 		<servlet-name>UploadServlet</servlet-name>
 		<servlet-class>br.gov.jfrj.siga.wf.servlet.UploadServlet</servlet-class>
 	</servlet>
-
-	<servlet>
-		<servlet-name>loadPhoto</servlet-name>
-		<servlet-class>br.gov.jfrj.siga.wf.servlet.SingleImageServlet</servlet-class>
-	</servlet>
-    <servlet>
-        <servlet-name>WfService</servlet-name>
-        <servlet-class>br.gov.jfrj.siga.wf.service.impl.WfServiceImpl</servlet-class>
-    </servlet>
 
 	<servlet-mapping>
 		<servlet-name>UploadServlet</servlet-name>
 		<url-pattern>/upload</url-pattern>
 	</servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>loadPhoto</servlet-name>
-		<url-pattern>/loadPhoto</url-pattern>
-	</servlet-mapping>
+	<!-- Inicio de WebServer -->
+	<context-param>
+		<param-name>br.com.caelum.vraptor.provider</param-name>
+		<param-value>br.com.caelum.vraptor.ioc.guice.GuiceProvider</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>br.com.caelum.vraptor.encoding</param-name>
+		<param-value>UTF-8</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>br.com.caelum.vraptor.packages</param-name>
+		<param-value>  
+        	br.gov.jfrj.siga.vraptor,
+        	br.com.caelum.vraptor.util.jpa  
+   		</param-value>
+	</context-param>
 
 	<servlet-mapping>
-        <servlet-name>WfService</servlet-name>
-        <url-pattern>/servicos/WfService</url-pattern>
-    </servlet-mapping>
+		<servlet-name>WfService</servlet-name>
+		<url-pattern>/servicos/WfService</url-pattern>
+	</servlet-mapping>
 
 	<security-constraint>
 		<web-resource-collection>
@@ -172,14 +176,18 @@
 			<web-resource-name>servicos</web-resource-name>
 			<url-pattern>/servicos/*</url-pattern>
 		</web-resource-collection>
-    <web-resource-collection>
-      <web-resource-name>testes</web-resource-name>
-      <url-pattern>/testes/*</url-pattern>
-    </web-resource-collection>
-    <web-resource-collection>
-      <web-resource-name>upload</web-resource-name>
-      <url-pattern>/upload</url-pattern>
-    </web-resource-collection>
+	    <web-resource-collection>
+	      <web-resource-name>testes</web-resource-name>
+	      <url-pattern>/testes/*</url-pattern>
+	    </web-resource-collection>
+	    <web-resource-collection>
+	      <web-resource-name>upload</web-resource-name>
+	      <url-pattern>/upload</url-pattern>
+	    </web-resource-collection>
+   		<web-resource-collection>
+			<web-resource-name>Recursos Publicos</web-resource-name>
+			<url-pattern>/public/*</url-pattern>
+		</web-resource-collection>
 	</security-constraint>
 
 
@@ -192,26 +200,21 @@
 		</form-login-config>
 	</login-config>
 
-    <security-role>
-        <role-name>sigausuario</role-name>
-    </security-role>
-    <security-role>
-        <role-name>sigaadministrador</role-name>
-    </security-role>
-    <security-role>
-        <role-name>sigadesenvolvimento</role-name>
-    </security-role>
-    <security-role>
-        <role-name>superusuario</role-name>
-    </security-role>
+	<security-role>
+		<role-name>sigausuario</role-name>
+	</security-role>
+	<security-role>
+		<role-name>sigaadministrador</role-name>
+	</security-role>
+	<security-role>
+		<role-name>sigadesenvolvimento</role-name>
+	</security-role>
+	<security-role>
+		<role-name>superusuario</role-name>
+	</security-role>
 
 	<error-page>
-		<error-code>403</error-code>
-		<location>/sigalibs/erro403.jsp</location>
+		
+		<location>/WEB-INF/page/erroGeral.jsp</location>
 	</error-page>
-	<error-page>
-		<exception-type>java.lang.Throwable</exception-type>
-		<location>/sigalibs/erroGeral.jsp</location>
-	</error-page>
-
 </web-app>

@@ -7,14 +7,14 @@
 <mod:modelo>
 	<mod:entrevista>		
 		<mod:grupo>
-			<mod:caixaverif titulo="Entrevista no ParlatÛrio"
+			<mod:caixaverif titulo="Entrevista no Parlat√≥rio"
 							var="parlatorio" reler="ajax" idAjax="parlatorioAjax" />
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;				
-			<mod:caixaverif titulo="Entrega de Material a RÈu Preso"
+			<mod:caixaverif titulo="Entrega de Material a R√©u Preso"
 							var="material" reler="ajax" idAjax="materialAjax" />				
 		</mod:grupo>
 		<mod:grupo> 
-			<mod:lotacao titulo="AutorizaÁ„o: Juiz/Juiza Federal da" var="vara" />
+			<mod:lotacao titulo="Autoriza√ß√£o: Juiz/Juiza Federal da" var="vara" />
 		</mod:grupo>	
 		<mod:grupo>
 			<mod:texto titulo="Nome do(a) Custodiado(a)" var="custodiado" largura="60"/>			
@@ -25,12 +25,12 @@
 		<mod:grupo depende="parlatorioAjax">		
 			<c:if test="${parlatorio == 'Sim'}">
 			    <hr color="#FFFFFF" />				
-				<mod:grupo titulo="Dados do campo Entrevista no ParlatÛrio">
+				<mod:grupo titulo="Dados do campo Entrevista no Parlat√≥rio">
 					<mod:grupo>					
-						<mod:selecao var="numAdvogados" titulo="N˙mero de advogados(as)" reler="ajax"
+						<mod:selecao var="numAdvogados" titulo="N√∫mero de advogados(as)" reler="ajax"
 								idAjax="numAdvogadosAjax" opcoes="0;1;2;3;4;5;6" />
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						<mod:selecao var="numParentes" titulo="N˙mero de parentes" reler="ajax"
+						<mod:selecao var="numParentes" titulo="N√∫mero de parentes" reler="ajax"
 								idAjax="numParentesAjax" opcoes="0;1;2;3;4;5;6" />				
 					</mod:grupo>	
 					<mod:grupo depende="numAdvogadosAjax">
@@ -54,11 +54,11 @@
 			<c:if test="${material =='Sim'}">
 				<hr color="#FFFFFF" />					
 				<mod:grupo titulo="Dados do campo Material a ser Entregue">
-					<mod:memo titulo="RelaÁ„o do Material" var="descMat" colunas="63" />
+					<mod:memo titulo="Rela√ß√£o do Material" var="descMat" colunas="63" />
 				</mod:grupo>				
 				<mod:grupo>				
 					<mod:texto titulo="Nome do(a) Advogado(a)" var="advogadoMat" largura="60"/>
-					<b><mod:mensagem texto="Obs: Caso haja Entrevista no ParlatÛrio n„o preencher este campo"
+					<b><mod:mensagem texto="Obs: Caso haja Entrevista no Parlat√≥rio n√£o preencher este campo"
 					vermelho="Nao"></mod:mensagem>	
 				</mod:grupo>							
 			</c:if>			
@@ -88,7 +88,7 @@
 						<tr><br /><br /><br /></tr>
 						<tr>
 							<td align="right"><font style="font-family:Arial;font-size:11pt;font-weight:bold;">
-							SOLICITA«√O N&ordm; ${doc.codigo}</font></td>
+							SOLICITA√á√ÉO N&ordm; ${doc.codigo}</font></td>
 						</tr>	
 						<tr>
 							<td align="right"><font style="font-family:Arial;font-size:11pt;font-weight:bold;">
@@ -106,16 +106,16 @@
 		
 		<br />
 		
-		<p style="text-align: center;font: bold;"> <b>AUTORIZA«√O PARA&nbsp; </b> 	
+		<p style="text-align: center;font: bold;"> <b>AUTORIZA√á√ÉO PARA&nbsp; </b> 	
 			<ww:if test="${parlatorio == 'Sim'}">
-					<b>ENTREVISTA NO PARLAT”RIO&nbsp;</b>
+					<b>ENTREVISTA NO PARLAT√ìRIO&nbsp;</b>
 					<c:if test="${material == 'Sim'}">
-						<b>E ENTREGA DE MATERIAL A R…U PRESO</b>
+						<b>E ENTREGA DE MATERIAL A R√âU PRESO</b>
 					</c:if>
 			</ww:if>
 			<ww:else>			
 				<c:if test="${material == 'Sim'}">
-					<b>ENTREGA DE MATERIAL A R…U PRESO</b>					
+					<b>ENTREGA DE MATERIAL A R√âU PRESO</b>					
 				</c:if>				 
 			</ww:else>			
 			
@@ -124,16 +124,16 @@
 		<br/>		
 		<table  border="1" width="100%" align="left">
 			<tr bgcolor="#999999">
-				<td><b>AUTORIZA«√O PELO JUÕZO COMPETENTE</b> <br /></td>
+				<td><b>AUTORIZA√á√ÉO PELO JU√çZO COMPETENTE</b> <br /></td>
 			</tr>
 			<tr>
 				<td ><br/>
 				<p style="text-align: justify; text-indent: 2cm;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				De ordem do(a) MM. JuÌz/JuÌza Federal da ${f:lotacao(requestScope['vara_lotacaoSel.id']).descricao}, fica autorizada, em ${data}, a				  					
+				De ordem do(a) MM. Ju√≠z/Ju√≠za Federal da ${f:lotacao(requestScope['vara_lotacaoSel.id']).descricao}, fica autorizada, em ${data}, a				  					
 				<ww:if test="${parlatorio == 'Sim'}">
-					Entrevista no ParlatÛrio 
+					Entrevista no Parlat√≥rio 
 					<ww:if test="${material == 'Sim'}">
-						e a Entrega de Material ao(‡)
+						e a Entrega de Material ao(√†)
 					</ww:if>
 					<ww:else>
 						do 
@@ -141,13 +141,13 @@
 				</ww:if>					
 				<ww:else>
 					<c:if test="${material == 'Sim'}">
-							Entrega de Material ao(‡) 
+							Entrega de Material ao(√†) 
 					</c:if>								
 				</ww:else>
 				custodiado(a) abaixo identificado(a)
 				<ww:if test="${parlatorio == 'Sim'}">
-					, que dever· ser conduzido(a) por Agente 
-					da escolta e acompanhado(a) por um Agente de SeguranÁa Judici·ria da SJRJ.
+					, que dever√° ser conduzido(a) por Agente 
+					da escolta e acompanhado(a) por um Agente de Seguran√ßa Judici√°ria da SJRJ.
 				</ww:if>
 				<ww:else>
 					.
@@ -173,7 +173,7 @@
 			<tr bgcolor="#999999">			
 				<td bgcolor="#999999">
 					<ww:if test="${parlatorio == 'Sim'}">
-						<b>ENTREVISTA NO PARLAT”RIO</b>
+						<b>ENTREVISTA NO PARLAT√ìRIO</b>
 						<tr>
 							<td><br>
 								<c:forEach var="i" begin="1" end="${numAdvogados}">
@@ -191,7 +191,7 @@
 									<b>MATERIAL A SER ENTREGUE</b> </td>
 							</tr>	
 							<tr>
-								<td><br/>RelaÁ„o do material: <br/>
+								<td><br/>Rela√ß√£o do material: <br/>
 									${descMat}<br/><br/></td>
 								
 							</tr>
@@ -201,7 +201,7 @@
 						<c:if test="${material == 'Sim'}">
 							<b>MATERIAL A SER ENTREGUE</b>
 							<tr>
-								<td><br/>RelaÁ„o do material: <br/>
+								<td><br/>Rela√ß√£o do material: <br/>
 									${descMat}<br/><br/></td>
 								
 							</tr>
@@ -220,7 +220,7 @@
 							<td width="60%" align="right" valign="bottom">
 							<br/>
 								________________________________________________ 	
-								Assinatura e matrÌcula do Diretor de Secretaria&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br/> <br/>							
+								Assinatura e matr√≠cula do Diretor de Secretaria&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br/> <br/>							
 							</td>
 						</tr>					
 					</table>
@@ -244,7 +244,7 @@
 								<img src="contextpath/imagens/quadrado.gif">
 							</td>
 							<td width="95%" align="left" valign="top"> <br/>
-							Material vistoriado e entregue ao rÈu preso, na carceragem, por Agente de SeguranÁa Judici·ria da SJRJ.
+							Material vistoriado e entregue ao r√©u preso, na carceragem, por Agente de Seguran√ßa Judici√°ria da SJRJ.
 							</td>
 						</tr>
 						<tr>
@@ -252,7 +252,7 @@
 								<img src="contextpath/imagens/quadrado.gif">
 							</td>
 							<td width="95%" align="left" valign="top"> <br/>
-							Material vistoriado e retido. DescriÁ„o e justificativa: ___________________________________________
+							Material vistoriado e retido. Descri√ß√£o e justificativa: ___________________________________________
 							_____________________________________________________________________________________
 							_____________________________________________________________________________________	
 							_____________________________________________________________________________________
@@ -273,7 +273,7 @@
 							<td width="60%" align="right">
 							<br/>
 								_____________________________________________________ 	
-								Assinatura e matrÌcula do Agente de SeguranÁa Judici·ria&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <br/> <br/>							
+								Assinatura e matr√≠cula do Agente de Seguran√ßa Judici√°ria&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <br/> <br/>							
 							</td>
 						</tr>	
 						<tr>

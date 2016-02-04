@@ -5,13 +5,13 @@
 	<mod:entrevista>
 		<mod:grupo>
 			<mod:grupo>
-				<mod:lotacao titulo="LotaÁ„o" var="lotacao" reler="sim" />
+				<mod:lotacao titulo="Lota√ß√£o" var="lotacao" reler="sim" />
 			</mod:grupo>
 
 			<input type="hidden" id="atualizandoCaixaVerif"
 				name="atualizandoCaixaVerif" />
 			<mod:caixaverif var="subLotacoes" reler="sim" marcado="Sim"
-				titulo="Incluir SublotaÁıes"
+				titulo="Incluir Sublota√ß√µes"
 				onclique="javascript:document.getElementById('atualizandoCaixaVerif').value=1;" />
 			<c:if test="${requestScope['subLotacoes'] eq 'Sim'}">
 				<c:set var="testarSubLotacoes" value="true" />
@@ -22,7 +22,7 @@
 
 		</mod:grupo>
 
-		<%-- O bloco abaixo carrega do BD as pessoas de um lotaÁ„o, apenas quando a lotaÁ„o muda --%>
+		<%-- O bloco abaixo carrega do BD as pessoas de um lota√ß√£o, apenas quando a lota√ß√£o muda --%>
 		<mod:ler var="siglaLotacaoAnterior" />
 		<c:choose>
 			<c:when
@@ -53,7 +53,7 @@
 		</c:choose>
 		<c:if test="${(not empty requestScope['lotacao_lotacaoSel.id'])}">
 			<mod:grupo>
-				<mod:mensagem titulo="AtenÁ„o"
+				<mod:mensagem titulo="Aten√ß√£o"
 					texto="Selecione somente os servidores que necessitam de certificado digital da Certisign." vermelho="Sim" />
 			</mod:grupo>
 			<br/>
@@ -62,7 +62,7 @@
 				<tr>
 					<td width="05%" align="center"></td>
 					<td width="40%" align="left"><b>Nome</b></td>
-					<td width="10%" align="center"><b>MatrÌcula</b></td>
+					<td width="10%" align="center"><b>Matr√≠cula</b></td>
 					<td width="45%" align="left"><b>Cargo</b></td>
 				</tr>
 			</table>
@@ -86,18 +86,18 @@
 			<br />
 			<%--	<c:if test="${not empty requestScope['lotacao_lotacaoSel.sigla']}"> --%>
 			<mod:grupo>
-				<mod:mensagem titulo="Total de pessoas por LotaÁ„o :" />
+				<mod:mensagem titulo="Total de pessoas por Lota√ß√£o :" />
 				<b>${contadorDePessoas}</b>
 			</mod:grupo>
 		</c:if>
 		<mod:grupo>
 			<mod:selecao titulo="Deseja incluir mais servidores?"
-				var="servIncluidos" opcoes="N„o;Sim" reler="ajax" idAjax="servIncl" />
+				var="servIncluidos" opcoes="N√£o;Sim" reler="ajax" idAjax="servIncl" />
 		</mod:grupo>
 		<mod:grupo depende="servIncl">
 			<c:if test="${servIncluidos eq 'Sim'}">
 				<mod:grupo>
-					<mod:selecao titulo="N∫ de Servidor(es) Incluido(s) "
+					<mod:selecao titulo="N¬∫ de Servidor(es) Incluido(s) "
 						var="numServIncluidos"
 						opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30"
 						reler="ajax" idAjax="numServIncl" />
@@ -157,7 +157,7 @@
 		</table>
 
 		<br />
-		<p style="text-align: left; text-indent: 2cm">Solicito a emiss„o
+		<p style="text-align: left; text-indent: 2cm">Solicito a emiss√£o
 		de Certificado(s) Digital(is) da CertiSign ao(s) servidor(es) da
 		listagem anexa.</p>
 		<br />
@@ -190,7 +190,7 @@
 				cellspacing="1" bgcolor="#000000">
 				<tr>
 					<td width="46%" align="left"><b>Nome</b></td>
-					<td width="13%" align="center"><b>MatrÌcula</b></td>
+					<td width="13%" align="center"><b>Matr√≠cula</b></td>
 					<td width="42%" align="left"><b>Cargo</b></td>
 				</tr>
 			</table>

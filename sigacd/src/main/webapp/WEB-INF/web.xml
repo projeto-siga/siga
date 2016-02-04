@@ -6,14 +6,24 @@
 	<!-- chamadas são públicas: não necessárias as entradas de login-config para certificado -->
 
 	<display-name>sigacd</display-name>
-
-
+	
+	<jsp-config>
+		<jsp-property-group>
+			<url-pattern>*.jsp</url-pattern>
+			<page-encoding>UTF-8</page-encoding>
+		</jsp-property-group>
+	</jsp-config>
+	
 	<servlet>
 		<display-name>testes</display-name>
 		<servlet-name>testes</servlet-name>
 		<servlet-class>br.gov.jfrj.siga.cd.servlet.CdTestesServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+	<servlet-mapping>
+		<servlet-name>testes</servlet-name>
+		<url-pattern>/app/testes/*</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
       <servlet-name>CDService</servlet-name>

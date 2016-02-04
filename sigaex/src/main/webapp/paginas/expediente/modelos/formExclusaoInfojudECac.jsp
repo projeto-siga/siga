@@ -21,8 +21,8 @@
 				largura="30" obrigatorio="Sim" />@jfrj.jus.br
 		</mod:grupo>
 		<mod:mensagem titulo="OBS"
-			texto="O subscritor do formul·rio de exclus„o deve ser o prÛprio magistrado. Caso o magistrado 
-		j· tenha sido removido, o formul·rio de solicitaÁ„o de exclus„o poder· ter como subscritor 
+			texto="O subscritor do formul√°rio de exclus√£o deve ser o pr√≥prio magistrado. Caso o magistrado 
+		j√° tenha sido removido, o formul√°rio de solicita√ß√£o de exclus√£o poder√° ter como subscritor 
 		o Diretor de Secretaria."
 			vermelho="Sim" />
 
@@ -66,7 +66,7 @@
 <br/>SECRETARIA DA RECEITA FEDERAL	
 </td>
 						</tr>
-						<tr><td><p align="right"><b>Formul·rio N&ordm; ${doc.codigo}</b></p><br/></td></tr>
+						<tr><td><p align="right"><b>Formul√°rio N&ordm; ${doc.codigo}</b></p><br/></td></tr>
 					</table>
 				</td>
 			</tr>
@@ -85,13 +85,13 @@
 
 			<table bgcolor="#000000" border="1" cellpadding="5" width="450" align="center">
 				<tr>
-					<td bgcolor="#FFFFFF" colspan="2" align="left"><b> 1.1 - SOLICITA«√O DE
-					EXCLUS√O DE MAGISTRADO </b></td>
+					<td bgcolor="#FFFFFF" colspan="2" align="left"><b> 1.1 - SOLICITA√á√ÉO DE
+					EXCLUS√ÉO DE MAGISTRADO </b></td>
 				</tr>
 
 				<tr>
-					<td bgcolor="#FFFFFF" colspan="2" align="left"><b>1.1 - IDENTIFICA«√O DO
-					USU¡RIO </b></td>
+					<td bgcolor="#FFFFFF" colspan="2" align="left"><b>1.1 - IDENTIFICA√á√ÉO DO
+					USU√ÅRIO </b></td>
 				</tr>
 				<tr>
 					<td bgcolor="#FFFFFF" width="500"><b>NOME COMPLETO</b><br />

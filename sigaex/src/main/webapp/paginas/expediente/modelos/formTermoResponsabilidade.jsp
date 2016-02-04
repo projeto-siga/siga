@@ -7,8 +7,8 @@
 
 		<br />
 		<mod:mensagem titulo="OBS" texto="O cadastramento de servidores no sistema INFOJUD-e-CAC 
-		deve ser feito pelo próprio magistrado. O Termo de Responsabilidade de servidor deve ser arquivado 
-		na própria vara, para controle dos acessos concedidos." vermelho="Sim" />
+		deve ser feito pelo prÃ³prio magistrado. O Termo de Responsabilidade de servidor deve ser arquivado 
+		na prÃ³pria vara, para controle dos acessos concedidos." vermelho="Sim" />
 		<br /><br />
 		
 	</mod:entrevista>
@@ -54,7 +54,7 @@
 						</tr>
 						<tr>
 							<td align="right">
-								<p><b>Formulário N&ordm; ${doc.codigo}</b></p><br/>
+								<p><b>FormulÃ¡rio N&ordm; ${doc.codigo}</b></p><br/>
 							</td>
 						</tr>
 					</table>
@@ -70,13 +70,13 @@
 		<br />
 		
 		<mod:letra tamanho="${tl}">
-			<p align="justify" style="line-height: 150%">Eu, ${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, lotado no(a) ${doc.subscritor.lotacao.descricao}, matrícula nº RJ${doc.subscritor.matricula},
-			cadastrado no CPF/MF sob o nº ${f:formatarCPF(doc.subscritor.cpfPessoa)} comprometo-me a manter sigilo sobre os dados cadastrais a que tenha acesso ou
-			conhecimento, em razão do Convênio INFOJUD, celebrado entre a Secretaria de Receita Federal (SRF) e o Tribunal Regional Federal da 2ª Região, em 18/12/2006,
-			visando simplificar e agilizar o atendimento de requisição de informação protegida por sigilo fiscal. Do mesmo modo, estou ciente do que preceitua o Decreto
-			N. 4.553 de 27/12/2002 (salvaguarda de dados, informações, documentos e materiais sigilosos). Comprometo-me a utilizar os dados a que tiver acesso exclusivamente
-			dentro das atribuições de minha responsabilidade.<br />
-			E por estar de acordo com o presente Termo, assino-o na presença das testemunhas abaixo nomeadas.
+			<p align="justify" style="line-height: 150%">Eu, ${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, lotado no(a) ${doc.subscritor.lotacao.descricao}, matrÃ­cula nÂº RJ${doc.subscritor.matricula},
+			cadastrado no CPF/MF sob o nÂº ${f:formatarCPF(doc.subscritor.cpfPessoa)} comprometo-me a manter sigilo sobre os dados cadastrais a que tenha acesso ou
+			conhecimento, em razÃ£o do ConvÃªnio INFOJUD, celebrado entre a Secretaria de Receita Federal (SRF) e o Tribunal Regional Federal da 2Âª RegiÃ£o, em 18/12/2006,
+			visando simplificar e agilizar o atendimento de requisiÃ§Ã£o de informaÃ§Ã£o protegida por sigilo fiscal. Do mesmo modo, estou ciente do que preceitua o Decreto
+			N. 4.553 de 27/12/2002 (salvaguarda de dados, informaÃ§Ãµes, documentos e materiais sigilosos). Comprometo-me a utilizar os dados a que tiver acesso exclusivamente
+			dentro das atribuiÃ§Ãµes de minha responsabilidade.<br />
+			E por estar de acordo com o presente Termo, assino-o na presenÃ§a das testemunhas abaixo nomeadas.
 			</p>
 			<br /><br /><br />
 

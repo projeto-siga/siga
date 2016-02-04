@@ -8,14 +8,14 @@
 <mod:modelo>
 	<mod:entrevista> 
 	         <br>
-	         <span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI«√O COM NOME COMPLETO E ASSUNTO</b></span><br>
-		     <span style="color:red"> <b>ESTE DOCUMENTO DEVER¡ SER ENVIADO ¿ SRH</b></span>	
+	         <span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI√á√ÉO COM NOME COMPLETO E ASSUNTO</b></span><br>
+		     <span style="color:red"> <b>ESTE DOCUMENTO DEVER√Å SER ENVIADO √Ä SRH</b></span>	
 	         <br><br>
 	         <mod:grupo titulo=""> 
 		         <mod:grupo>
 			     	<mod:selecao var="ilustrissimo"
 				    titulo="VOCATIVO"
-				    opcoes="ILUSTRÕSSIMA SENHORA DIRETORA;ILUSTRÕSSIMO SENHOR DIRETOR"	
+				    opcoes="ILUSTR√çSSIMA SENHORA DIRETORA;ILUSTR√çSSIMO SENHOR DIRETOR"	
 			        reler="sim" />
 		         </mod:grupo>
                  <br>
@@ -23,7 +23,7 @@
 		
 	         <mod:grupo>
 		        <mod:texto titulo="RAMAL DO REQUERENTE" var="ramal"/></mod> <br><br>
-		        <mod:selecao titulo="Acerto Gramatical da LotaÁ„o" var="acgr"  opcoes="no;na" reler="sim" />
+		        <mod:selecao titulo="Acerto Gramatical da Lota√ß√£o" var="acgr"  opcoes="no;na" reler="sim" />
 	         </mod:grupo>
 
 		     <hr style="color: #FFFFFF;" />
@@ -69,11 +69,11 @@
              </mod:grupo>   
         
 		     <mod:grupo>
-		            <mod:texto titulo="InstituiÁ„o Promotora" var="instituto" largura="45"/>
+		            <mod:texto titulo="Institui√ß√£o Promotora" var="instituto" largura="45"/>
 		     </mod:grupo>
 		
 	         <mod:grupo>
-		            <mod:texto titulo="Local de RealizaÁ„o" var="local" largura="36"/>
+		            <mod:texto titulo="Local de Realiza√ß√£o" var="local" largura="36"/>
 		     </mod:grupo>
 		
 		
@@ -85,7 +85,7 @@
 		     </mo:grupo>
 		
 		     <mod:grupo>
-		        <mod:texto titulo="Carga Hor·ria" var="cargahora"largura="10"/>
+		        <mod:texto titulo="Carga Hor√°ria" var="cargahora"largura="10"/>
 	         </mod:grupo>
 		
 		     <mod:grupo>
@@ -93,14 +93,14 @@
 		     </mod:grupo>
 		
 		     <mod:grupo>
-		    	<mod:caixaverif titulo="Benefici·rio de Bolsa de Estudo" 
+		    	<mod:caixaverif titulo="Benefici√°rio de Bolsa de Estudo" 
 				var="bolsaestu" reler="sim" />
 		     </mod:grupo>
 	</mod:grupo>
 	          <hr style="color: #FFFFFF;" />    
 	
 	          	          
-	         <mod:grupo titulo="PerÌodo de LicenÁa:">
+	         <mod:grupo titulo="Per√≠odo de Licen√ßa:">
 				<mod:radio titulo="Integral" var="periodo" valor="1" reler="sim" />
 				<mod:radio titulo="Parcelado" var="periodo" valor="2" reler="sim" />
 	
@@ -110,7 +110,7 @@
 	            </c:if>
 	
 	   		    <c:if test="${valorperiodo == 1}">   
-	  				<mod:grupo titulo=" PerÌodo de LicenÁa">
+	  				<mod:grupo titulo=" Per√≠odo de Licen√ßa">
 		               <mod:data titulo="De" var="datinicio" obrigatorio="sim"/>
 		               <mod:data titulo="a" var="datfim" obrigatorio="sim"/>
 	                </mod:grupo>   
@@ -124,12 +124,12 @@
 				       opcoes="2;3"
 			           reler="sim"  /><br/>
 		               <br>
-	            	   <mod:grupo titulo=" PerÌodos de LicenÁa"> </mod:grupo>   
+	            	   <mod:grupo titulo=" Per√≠odos de Licen√ßa"> </mod:grupo>   
 	                   <mod:grupo depende="contDependAjax">
 	                   
 		                   <c:if test="${valorperiodo == 2}">
 		                   	    <c:forEach var="i" begin="1" end="${contadorinterv}">
-				     	             <mod:grupo titulo=" PerÌodo n∫ ${i}">
+				     	             <mod:grupo titulo=" Per√≠odo n¬∫ ${i}">
 		                                 <mod:data titulo="De" var="datinicio${i}" obrigatorio="sim"/>
 		            	                 <mod:data titulo="a" var="datfim${i}" obrigatorio="sim"/>
 	                                 </mod:grupo>   
@@ -146,28 +146,28 @@
 	
 	<mod:grupo titulo="Documentos Anexados">
 		<mod:grupo>
-				<mod:caixaverif titulo="DeclaraÁ„o de matrÌcula" 
+				<mod:caixaverif titulo="Declara√ß√£o de matr√≠cula" 
 				var="dclmatr" reler="sim" />
 		</mod:grupo>
 		<mod:grupo>
-				<mod:caixaverif titulo="Contrato com a instituiÁ„o" 
+				<mod:caixaverif titulo="Contrato com a institui√ß√£o" 
 				var="ctrinst" reler="sim" />
 		</mod:grupo>
 		<mod:grupo>
-				<mod:caixaverif titulo="Recibo de pagamento de matrÌcula" 
+				<mod:caixaverif titulo="Recibo de pagamento de matr√≠cula" 
 				var="recpag" reler="sim" />
 		</mod:grupo>
 		<mod:grupo>
-				<mod:caixaverif titulo="DeclaraÁ„o de aluno regular" 
+				<mod:caixaverif titulo="Declara√ß√£o de aluno regular" 
 				var="declalu" reler="sim" />
 		</mod:grupo>
 		<mod:grupo>
-				<mod:caixaverif titulo="Conte˙do program·tico expedido pela instituiÁ„o promotora, 
-				contendo a carga hor·ria e o perÌodo de realizaÁ„o do curso" 
+				<mod:caixaverif titulo="Conte√∫do program√°tico expedido pela institui√ß√£o promotora, 
+				contendo a carga hor√°ria e o per√≠odo de realiza√ß√£o do curso" 
 				var="contprogram" reler="sim" />
 		</mod:grupo>
 		<mod:grupo>
-				<mod:caixaverif titulo="Folder da instituiÁ„o" var="folderinst" reler="sim" />
+				<mod:caixaverif titulo="Folder da institui√ß√£o" var="folderinst" reler="sim" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:caixaverif titulo="Outros" var="outros" reler="sim" />
@@ -189,8 +189,8 @@
 		
 		<br>
 		<br>
-		<span style="color:red"> <b>ANU NCIA DA CHEFIA IMEDIATA:</b></span><br>
-		<span style="color:red"> <b>Declaro estar de acordo com a solicitaÁ„o do servidor e informo n„o haver outro servidor <br>em gozo de licenÁa para capacitaÁ„o no mesmo perÌodo pleiteado neste requerimento.</b></span>
+		<span style="color:red"> <b>ANU√äNCIA DA CHEFIA IMEDIATA:</b></span><br>
+		<span style="color:red"> <b>Declaro estar de acordo com a solicita√ß√£o do servidor e informo n√£o haver outro servidor <br>em gozo de licen√ßa para capacita√ß√£o no mesmo per√≠odo pleiteado neste requerimento.</b></span>
 	</mod:grupo> 
 	</mod:entrevista>
 	
@@ -220,7 +220,7 @@
 				<td width="100%">
 					<table width="100%">
 						<tr>
-						<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:10pt;">LICEN«A PARA CAPACITA«√O</p></td>
+						<td align="center"><p style="font-family:Arial;font-weight:bold;font-size:10pt;">LICEN√áA PARA CAPACITA√á√ÉO</p></td>
 						</tr>
 					</table>
 				</td>
@@ -235,21 +235,21 @@
 				
 		
 		<c:set var="lotc" value="lotado"></c:set>
-		<c:set var="benef1" value="Benefici·rio"></c:set>
-		<c:set var="benef2" value="benefici·rio"></c:set>		
+		<c:set var="benef1" value="Benefici√°rio"></c:set>
+		<c:set var="benef2" value="benefici√°rio"></c:set>		
 		<c:if test="${doc.subscritor.sexo == 'F'}">
 			<c:set var="lotc" value="lotada"></c:set>
-			<c:set var="benef1" value="Benefici·ria"></c:set>
-			<c:set var="benef2" value="benefici·ria"></c:set>
+			<c:set var="benef1" value="Benefici√°ria"></c:set>
+			<c:set var="benef2" value="benefici√°ria"></c:set>
 		</c:if>
         <c:set var="opt" value="${f:classNivPadr(doc.subscritor.padraoReferencia)}"/>
 		<p style="text-align: center;font-weight:bold;font-size:8pt;"><center><b> ${ilustrissimo} DA SECRETARIA DE RECURSOS HUMANOS</b></center></p>
 		
 		<p style="font-family:Arial;font-size:10pt">				
-		${doc.subscritor.descricao}, matrÌcula ${doc.subscritor.matricula}, ${doc.subscritor.cargo.nomeCargo}, ${opt},
-		do Quadro de Pessoal do Tribunal Regional Federal da 2™ Regi„o, ${lotc} ${acgr} ${doc.subscritor.lotacao.descricao}, 
-		ramal ${ramal}, requer, nos termos do art.87, da Lei n∫ 8.112/90, regulamentado pela ResoluÁ„o n∫. 05, de 10/03/2008, do Conselho da JustiÁa Federal e ResoluÁ„o n∫. 22/2008, de 03/10/2008, deste 
-		Tribunal, licenÁa para capacitaÁ„o para participar do 
+		${doc.subscritor.descricao}, matr√≠cula ${doc.subscritor.matricula}, ${doc.subscritor.cargo.nomeCargo}, ${opt},
+		do Quadro de Pessoal do Tribunal Regional Federal da 2¬™ Regi√£o, ${lotc} ${acgr} ${doc.subscritor.lotacao.descricao}, 
+		ramal ${ramal}, requer, nos termos do art.87, da Lei n¬∫ 8.112/90, regulamentado pela Resolu√ß√£o n¬∫. 05, de 10/03/2008, do Conselho da Justi√ßa Federal e Resolu√ß√£o n¬∫. 22/2008, de 03/10/2008, deste 
+		Tribunal, licen√ßa para capacita√ß√£o para participar do 
 		<c:choose>
 					<c:when test="${tipo == 1}">&nbsp;curso&nbsp;</c:when>
 					<c:otherwise>&nbsp;evento&nbsp;</c:otherwise>
@@ -264,28 +264,28 @@
 		    </c:choose>
 		    
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;${curso} <br>
-			PerÌodo &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;${datiniciocur} a ${datfimcur}
-			&nbsp;&nbsp;&nbsp;___________&nbsp;&nbsp;&nbsp;&nbsp;Carga Hor·ria:&nbsp;&nbsp;&nbsp;${cargahora}<br>
-			InstituiÁ„o Promotora &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;${instituto} <br> <!-- &nbsp;&nbsp;&nbsp;___________&nbsp;&nbsp;&nbsp;&nbsp;Local de RealizaÁ„o&nbsp;&nbsp;  :&nbsp;&nbsp;&nbsp;${local} <br> <br> -->
-	     	Local de RealizaÁ„o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  :&nbsp;&nbsp;&nbsp;${local} <br>
+			Per√≠odo &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;${datiniciocur} a ${datfimcur}
+			&nbsp;&nbsp;&nbsp;___________&nbsp;&nbsp;&nbsp;&nbsp;Carga Hor√°ria:&nbsp;&nbsp;&nbsp;${cargahora}<br>
+			Institui√ß√£o Promotora &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;${instituto} <br> <!-- &nbsp;&nbsp;&nbsp;___________&nbsp;&nbsp;&nbsp;&nbsp;Local de Realiza√ß√£o&nbsp;&nbsp;  :&nbsp;&nbsp;&nbsp;${local} <br> <br> -->
+	     	Local de Realiza√ß√£o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  :&nbsp;&nbsp;&nbsp;${local} <br>
 			Cidade &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;${city}
 			&nbsp;&nbsp;&nbsp;______&nbsp;&nbsp;&nbsp;&nbsp;UF:&nbsp;${uf}
 			&nbsp;&nbsp;&nbsp;______&nbsp;&nbsp;&nbsp;&nbsp;Telefone:&nbsp;&nbsp;&nbsp;${telefone}<br>
-			Justificativa para participaÁ„o :&nbsp;&nbsp;&nbsp;${justif}<br>
+			Justificativa para participa√ß√£o :&nbsp;&nbsp;&nbsp;${justif}<br>
             [X]
             <c:choose>
 					<c:when test="${bolsaestu == 'Sim'}">&nbsp;${benef1} de Bolsa de Estudo</c:when>
-					<c:otherwise>&nbsp;N„o ${benef2} de Bolsa de Estudo</c:otherwise>
+					<c:otherwise>&nbsp;N√£o ${benef2} de Bolsa de Estudo</c:otherwise>
 		    </c:choose>
 		    
 		    <br><br>	
 		
 		    <c:if test="${periodo == 1}">
-			<b>PerÌodo de LicenÁa:</b> ${datinicio} a ${datfim}<br>
+			<b>Per√≠odo de Licen√ßa:</b> ${datinicio} a ${datfim}<br>
 		    </c:if>
 		    		    
 			<c:if test="${periodo == 2}">
-			<b>PerÌodos de LicenÁa:</b>
+			<b>Per√≠odos de Licen√ßa:</b>
 			<c:forEach var="i" begin="1" end="${contadorinterv}">
 			<c:set var="dt1" value="${requestScope[(f:concat('datinicio',i))]}" />
 	 		<c:set var="dt2" value="${requestScope[(f:concat('datfim',i))]}" />
@@ -295,34 +295,34 @@
 			</p>
 			<p style="font-family:Arial;font-size:9pt">
 			<b>Documentos Anexados:</b><br>
-		    <c:if test="${ dclmatr == 'Sim'}">[X] DeclaraÁ„o de matrÌcula.</c:if>
-			<c:if test="${ dclmatr == 'Nao'}">[&nbsp;&nbsp;] DeclaraÁ„o de matrÌcula.</c:if>
+		    <c:if test="${ dclmatr == 'Sim'}">[X] Declara√ß√£o de matr√≠cula.</c:if>
+			<c:if test="${ dclmatr == 'Nao'}">[&nbsp;&nbsp;] Declara√ß√£o de matr√≠cula.</c:if>
 			<br>	
-			<c:if test="${ ctrinst == 'Sim'}">[X] Contrato com a instituiÁ„o.</c:if>
-			<c:if test="${ ctrinst == 'Nao'}">[&nbsp;&nbsp;] Contrato com a instituiÁ„o.</c:if>
+			<c:if test="${ ctrinst == 'Sim'}">[X] Contrato com a institui√ß√£o.</c:if>
+			<c:if test="${ ctrinst == 'Nao'}">[&nbsp;&nbsp;] Contrato com a institui√ß√£o.</c:if>
 		    <br>	
-			<c:if test="${ recpag == 'Sim'}">[X] Recibo de pagamento de matrÌcula.</c:if>
-			<c:if test="${ recpag == 'Nao'}">[&nbsp;&nbsp;] Recibo de pagamento de matrÌcula.</c:if>
+			<c:if test="${ recpag == 'Sim'}">[X] Recibo de pagamento de matr√≠cula.</c:if>
+			<c:if test="${ recpag == 'Nao'}">[&nbsp;&nbsp;] Recibo de pagamento de matr√≠cula.</c:if>
 			<br>	
-			<c:if test="${ declalu == 'Sim'}">[X] DeclaraÁ„o de aluno regular.</c:if>
-			<c:if test="${ declalu == 'Nao'}">[&nbsp;&nbsp;] DeclaraÁ„o de aluno regular.</c:if>
+			<c:if test="${ declalu == 'Sim'}">[X] Declara√ß√£o de aluno regular.</c:if>
+			<c:if test="${ declalu == 'Nao'}">[&nbsp;&nbsp;] Declara√ß√£o de aluno regular.</c:if>
 			<br>
-			<c:if test="${ contprogram == 'Sim'}">[X] Conte˙do program·tico expedido pela instituiÁ„o promotora, contendo carga hor·ria e perÌodo de realizaÁ„o do curso.</c:if>
-			<c:if test="${ contprogram == 'Nao'}">[&nbsp;&nbsp;] Conte˙do program·tico expedido pela instituiÁ„o promotora, contendo carga hor·ria e perÌodo de realizaÁ„o do curso.</c:if>
+			<c:if test="${ contprogram == 'Sim'}">[X] Conte√∫do program√°tico expedido pela institui√ß√£o promotora, contendo carga hor√°ria e per√≠odo de realiza√ß√£o do curso.</c:if>
+			<c:if test="${ contprogram == 'Nao'}">[&nbsp;&nbsp;] Conte√∫do program√°tico expedido pela institui√ß√£o promotora, contendo carga hor√°ria e per√≠odo de realiza√ß√£o do curso.</c:if>
 			<br>
-			<c:if test="${ folderinst == 'Sim'}">[X] Folder da instituiÁ„o.</c:if>
-			<c:if test="${ folderinst == 'Nao'}">[&nbsp;&nbsp;] Folder da instituiÁ„o.</c:if>
+			<c:if test="${ folderinst == 'Sim'}">[X] Folder da institui√ß√£o.</c:if>
+			<c:if test="${ folderinst == 'Nao'}">[&nbsp;&nbsp;] Folder da institui√ß√£o.</c:if>
 			<br>
 			<c:if test="${ outros == 'Sim'}">[X] ${outrostext}</c:if><br>
 			</p>
 		    
 		    <p style="font-family:Arial;font-size:8pt">
-			Declaro que todas as informaÁıes aqui prestadas s„o verdadeiras e que tenho conhecimento do inteiro teor das ResoluÁıes n∫ 05/CJF, de 03/10/2008 e n∫ 22/2008, de 03/10/2008, deste Tribunal.
-			Declaro, ainda, estar ciente que, ao final da licenÁa para capacitaÁ„o ora requerida, deverei apresentar, no prazo m·ximo de 30 (trinta) dias, o(s) seguintes documentos:
+			Declaro que todas as informa√ß√µes aqui prestadas s√£o verdadeiras e que tenho conhecimento do inteiro teor das Resolu√ß√µes n¬∫ 05/CJF, de 03/10/2008 e n¬∫ 22/2008, de 03/10/2008, deste Tribunal.
+			Declaro, ainda, estar ciente que, ao final da licen√ßa para capacita√ß√£o ora requerida, deverei apresentar, no prazo m√°ximo de 30 (trinta) dias, o(s) seguintes documentos:
 			<br>
-			a) - No caso de afastamento para participaÁ„o de curso: comprovante de frequÍncia no curso ou certificado de conclus„o, conforme previsto na ResoluÁ„o n∫ 05/2008 - CJF. 
-			<br>b) - Na hipÛtese de licenÁa para conclus„o de curso de especializaÁ„o, mestrado ou doutorado: relatÛrio semanal das atividades desenvolvidas, devidamente endossado pelo orientador ou
-			coordenador do respectivo curso; certificado de conclus„o e cÛpia da monografia/dissertaÁ„o, conforme disposto nas ResoluÁıes n∫ 05/2008-CJE e n∫ 22/2008-TRF2.
+			a) - No caso de afastamento para participa√ß√£o de curso: comprovante de frequ√™ncia no curso ou certificado de conclus√£o, conforme previsto na Resolu√ß√£o n¬∫ 05/2008 - CJF. 
+			<br>b) - Na hip√≥tese de licen√ßa para conclus√£o de curso de especializa√ß√£o, mestrado ou doutorado: relat√≥rio semanal das atividades desenvolvidas, devidamente endossado pelo orientador ou
+			coordenador do respectivo curso; certificado de conclus√£o e c√≥pia da monografia/disserta√ß√£o, conforme disposto nas Resolu√ß√µes n¬∫ 05/2008-CJE e n¬∫ 22/2008-TRF2.
 			</p>
 					
 		<!-- INICIO FECHO -->

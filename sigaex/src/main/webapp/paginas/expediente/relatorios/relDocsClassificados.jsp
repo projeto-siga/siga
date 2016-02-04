@@ -21,16 +21,16 @@
 
 	<!-- mascara.js -->
 
-<c:set var="titulo_pagina" scope="request">RelatÛrio de ClassificaÁ„o Documental</c:set>
+<c:set var="titulo_pagina" scope="request">Relat√≥rio de Classifica√ß√£o Documental</c:set>
 <c:set var="secaoUsuario" scope="request">"${lotaTitular.orgaoUsuario.descricaoMaiusculas}"</c:set>
 
 
 <tr>
-	<td width="30%">LotaÁ„o:</td>
+	<td width="30%">Lota√ß√£o:</td>
 	<td><siga:selecao propriedade="lotacaoDestinatario" tema="simple" modulo="siga"/></td>
 </tr>
 <tr>
-	<td>Sub·rvore da ClassificaÁ„o documental (opcional):</td>
+	<td>Sub√°rvore da Classifica√ß√£o documental (opcional):</td>
 	<td><input type="text" id="codificacao" name="codificacao" onblur="javascript:aplicarMascara(this)"/></td>
 </tr>
 

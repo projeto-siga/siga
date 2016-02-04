@@ -1111,8 +1111,8 @@ public enum CertificadoACEnum {
 	}
 
 	/**
-	 * obtÈm o certificado como TrustAnchor (Certificado auto assinado
-	 * confi·vel)
+	 * obt√©m o certificado como TrustAnchor (Certificado auto assinado
+	 * confi√°vel)
 	 * 
 	 * @return
 	 */
@@ -1128,7 +1128,7 @@ public enum CertificadoACEnum {
 	}
 
 	/**
-	 * obtÈm o certificado como X509Certificate
+	 * obt√©m o certificado como X509Certificate
 	 * 
 	 * @return
 	 */

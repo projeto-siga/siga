@@ -7,7 +7,7 @@
 	<mod:entrevista>
 		<c:if test="${empty esconderTexto}">
 			<mod:grupo
-				titulo="Texto a ser inserido no corpo do Ato da Presidência">
+				titulo="Texto a ser inserido no corpo do Ato da PresidÃªncia">
 				<mod:grupo>
 					<mod:editor titulo="" var="texto_ato" />
 				</mod:grupo>

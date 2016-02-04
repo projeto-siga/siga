@@ -2,33 +2,32 @@
 <%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 <mod:modelo>
 	<mod:entrevista>		
 		<mod:grupo>
-			<mod:pessoa titulo="Titular do BenefÌcio" var="titular" />
+			<mod:pessoa titulo="Titular do Benef√≠cio" var="titular" />
 		</mod:grupo>
 		<mod:grupo>
-		<mod:selecao titulo="MÍs" var="mes" 
-			opcoes="Janeiro;Fevereiro;MarÁo;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro"/>
+		<mod:selecao titulo="M√™s" var="mes" 
+			opcoes="Janeiro;Fevereiro;Mar√ßo;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro"/>
 		&nbsp;<b><mod:mensagem
-				texto="O envio dos recibos (do titular e/ou dependentes) dever· ser feito, necessariamente,
-				no mesmo formul·rio."
+				texto="O envio dos recibos (do titular e/ou dependentes) dever√° ser feito, necessariamente,
+				no mesmo formul√°rio."
 				vermelho="Nao"></mod:mensagem> </b>						
 		</mod:grupo>	
 		<mod:grupo>
 			<mod:selecao titulo="Encaminhar recibo(s) de dependentes" 	var="dependentes"
-			  opcoes="N„o;Sim"
+			  opcoes="N√£o;Sim"
 			  reler="ajax" idAjax="dependentesAjax" />		
 		</mod:grupo>
 		<mod:grupo depende="dependentesAjax">			
 			<c:if test="${dependentes == 'Sim'}">
 				<b><mod:mensagem
-						texto="Confira se o comprovante de pagamento contÈm os valores discriminados por dependente."
+						texto="Confira se o comprovante de pagamento cont√©m os valores discriminados por dependente."
 						vermelho="Nao"></mod:mensagem> </b>
 				<mod:grupo>		
-					<mod:selecao titulo="N˙mero de dependentes"  var="numDependentes"
+					<mod:selecao titulo="N√∫mero de dependentes"  var="numDependentes"
 			  			opcoes="1;2;3;4;5;6;7;8;9;10"  reler="ajax" idAjax="numDepAjax" />
 			  	</mod:grupo>	
 			  	<mod:grupo depende="numDepAjax">	
@@ -41,8 +40,8 @@
 			</c:if>			
 		</mod:grupo>
 		<b><mod:mensagem
-				texto="Obs: Antes de finalizar o documento digitar o seguinte texto no campo DescriÁ„o: 
-				AuxÌlio Sa˙de + (mÍs escolhido) + (nome e matrÌcula do titular do benefÌcio)"
+				texto="Obs: Antes de finalizar o documento digitar o seguinte texto no campo Descri√ß√£o: 
+				Aux√≠lio Sa√∫de + (m√™s escolhido) + (nome e matr√≠cula do titular do benef√≠cio)"
 				vermelho="Nao"></mod:mensagem> </b>	
 		
 	</mod:entrevista>
@@ -92,38 +91,40 @@
 		         </td>		         		           
 		         <td width="57%" align="center">		         		  
 		         	<p align="right" style=" font: bold; font-size: 10pt">		         	
-		          	<b>ENCAMINHAMENTO MENSAL DE RECIBO PARA <br> CR…DITO DO AUXÕLIO-SA⁄DE</b></p>		          		          	 	
+		          	<b>ENCAMINHAMENTO MENSAL DE RECIBO PARA <br> CR√âDITO DO AUX√çLIO-SA√öDE</b></p>		          		          	 	
 		         </td>         		
 	          </tr>
            </table>
 		
 
 		
-		&nbsp;<br/> <%-- SoluÁ„o by Edson --%>
+		&nbsp;<br/> <%-- Solu√ß√£o by Edson --%>
 		<br/><br/>
-		<b>Titular do BenefÌcio:</b>  ${requestScope['titular_pessoaSel.descricao']}<br/>
-		<b>MatrÌcula:</b>  ${f:pessoa(requestScope['titular_pessoaSel.id']).matricula} <br/>
-		<b>MÍs de competÍncia:</b>&nbsp;${mes} 
+		<b>Titular do Benef√≠cio:</b>  ${requestScope['titular_pessoaSel.descricao']}<br/>
+		<b>Matr√≠cula:</b>  ${f:pessoa(requestScope['titular_pessoaSel.id']).matricula} <br/>
+		<b>M√™s de compet√™ncia:</b>&nbsp;${mes} 
 				
 		<c:if test="${dependentes == 'Sim'}">
 			<table width="80%"  border="0" cellspacing="0" align="left">				
 					<c:forEach var="i" begin="1" end="${numDependentes}">
 						<tr>
-							<ww:if test="${i == 1}">
-								<td width="17"><b>Dependentes:</b></td>
-								<td width="63" align="left"> ${requestScope[f:concat('nomeDep',i)]}</td>
-							</ww:if>							
-							<ww:else>
-								<td width="17"></td>
-								<td width="63" align="left"> ${requestScope[f:concat('nomeDep',i)]}</td>
-							</ww:else>	
+							<c:choose>									
+								<c:when test="${i == 1}">
+									<td width="17"><b>Dependentes:</b></td>
+									<td width="63" align="left"> ${requestScope[f:concat('nomeDep',i)]}</td>
+								</c:when>
+								<c:otherwise>										
+									<td width="17"></td>
+									<td width="63" align="left"> ${requestScope[f:concat('nomeDep',i)]}</td>
+								</c:otherwise>	
+							</c:choose>							
 						</tr>				
 					</c:forEach>				
 			</table>			
 		</c:if>		
 		<br/><br><br/><br>
-		Encaminho, em anexo, o(s) recibo(s) de pagamento referente(s) ao plano de sa˙de 
-		com o objetivo de assegurar a regular percepÁ„o do benefÌcio AuxÌlio-Sa˙de para o Titular e/ou 
+		Encaminho, em anexo, o(s) recibo(s) de pagamento referente(s) ao plano de sa√∫de 
+		com o objetivo de assegurar a regular percep√ß√£o do benef√≠cio Aux√≠lio-Sa√∫de para o Titular e/ou 
 		para o(s) dependente(s).
 		<br><br/><br><br/><br>
 		

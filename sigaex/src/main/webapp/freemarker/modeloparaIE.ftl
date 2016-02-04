@@ -1,14 +1,14 @@
-<!-- Não apagar as próximas quatro linhas.Elas serão retiradas automaticamente pelo Integrador O IE exige que o bloco de código esteja entre as tags ,pre. e </pre>-->
+<!-- NÃ£o apagar as prÃ³ximas quatro linhas.Elas serÃ£o retiradas automaticamente pelo Integrador O IE exige que o bloco de cÃ³digo esteja entre as tags ,pre. e </pre>-->
 <META HTTP-EQUIV='Pragma' CONTENT="no-cache">
 <META HTTP-EQUIV="Expires" CONTENT="-1">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
 <pre>
-[#--     Documentação               --]
+[#--     DocumentaÃ§Ã£o               --]
 [#--
- Descrição da aplicação: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ DescriÃ§Ã£o da aplicaÃ§Ã£o: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
  Autor                 : xxxxxxxxxxxxxxxxxxxxxxxxxxxx
- Data da Modificação   : xx/xx/xxxx
- Versão                : 1.00.00
+ Data da ModificaÃ§Ã£o   : xx/xx/xxxx
+ VersÃ£o                : 1.00.00
 --]
 [#-- Bloco Entrevista --]
 [@entrevista]

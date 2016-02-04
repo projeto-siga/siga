@@ -32,6 +32,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
 
+
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -102,6 +103,10 @@ public class CpOrgao extends AbstractCpOrgao implements Serializable,
 
 	public String getDescricao() {
 		return getNmOrgao();
+	}
+	
+	public String getRegistroAtivo(){
+		return this.getAtivo();
 	}
 
 	public String getNmOrgaoAI() {

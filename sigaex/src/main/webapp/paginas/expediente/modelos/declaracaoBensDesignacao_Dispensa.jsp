@@ -8,33 +8,33 @@
 <mod:modelo>
 	<mod:entrevista>
 
-		<mod:selecao titulo="Selecione o motivo da declaraÁ„o" var="motivo"
-			opcoes="Selecione;ExoneraÁ„o/Dispensa;NomeaÁ„o/DesignaÁ„o"
+		<mod:selecao titulo="Selecione o motivo da declara√ß√£o" var="motivo"
+			opcoes="Selecione;Exonera√ß√£o/Dispensa;Nomea√ß√£o/Designa√ß√£o"
 			reler="sim" />
 		<br />
 
 		<c:choose>
-			<c:when test="${motivo == 'ExoneraÁ„o/Dispensa'}">
+			<c:when test="${motivo == 'Exonera√ß√£o/Dispensa'}">
 				<br />
-				<mod:texto titulo="Cargo em comiss„o/funÁ„o comissionada de"
+				<mod:texto titulo="Cargo em comiss√£o/fun√ß√£o comissionada de"
 					var="cargoFuncao" largura="40" obrigatorio="Sim" maxcaracteres="50" />
 				<br />
 				<mod:data titulo="a partir de" var="data" obrigatorio="Sim" />
 				<br />
 				<mod:lotacao
-					titulo="LotaÁ„o onde exerceu o cargo em comiss„o/funÁ„o comissionada"
+					titulo="Lota√ß√£o onde exerceu o cargo em comiss√£o/fun√ß√£o comissionada"
 					var="lotacao"></mod:lotacao>
 				<br />
 			</c:when>
-			<c:when test="${motivo == 'NomeaÁ„o/DesignaÁ„o'}">
+			<c:when test="${motivo == 'Nomea√ß√£o/Designa√ß√£o'}">
 				<br />
-				<mod:texto titulo="Cargo em comiss„o/funÁ„o comissionada de"
+				<mod:texto titulo="Cargo em comiss√£o/fun√ß√£o comissionada de"
 					var="cargoFuncao" largura="50" obrigatorio="Sim" maxcaracteres="50" />
 				<br />
 				<mod:data titulo="a partir de" var="data" obrigatorio="Sim" />
 				<br />
 				<mod:lotacao
-					titulo="LotaÁ„o onde exercer· o cargo em comiss„o/funÁ„o comissionada"
+					titulo="Lota√ß√£o onde exercer√° o cargo em comiss√£o/fun√ß√£o comissionada"
 					var="lotacao"></mod:lotacao>
 				<br />
 			</c:when>
@@ -43,17 +43,17 @@
 
 
 		<c:if test="${motivo ne 'Selecione'}">
-			<mod:radio titulo="Declaro n„o possuir bens." var="tipoFormulario"
+			<mod:radio titulo="Declaro n√£o possuir bens." var="tipoFormulario"
 				valor="1" reler="sim" marcado="Sim" />
 			<mod:radio titulo="Declaro que possuo os seguintes bens:"
-				var="tipoFormulario" reler="sim" valor="2" gerarHidden="N„o" />
+				var="tipoFormulario" reler="sim" valor="2" gerarHidden="N√£o" />
 			<c:set var="valorTipoDeForm" value="${tipoFormulario}" />
 			<c:if test="${empty valorTipoDeForm}">
 				<c:set var="valorTipoDeForm" value="${param['tipoFormulario']}" />
 			</c:if>
 
 			<c:if test="${valorTipoDeForm == 2}">
-				<mod:texto titulo="DeclaraÁ„o de bens atualizada" var="bens"
+				<mod:texto titulo="Declara√ß√£o de bens atualizada" var="bens"
 					largura="40" maxcaracteres="100" obrigatorio="Sim" />
 			</c:if>
 
@@ -110,24 +110,24 @@
 		<mod:letra tamanho="${tl}">
 
 			<p style="TEXT-INDENT: 2cm" align="justify">
-			${doc.subscritor.descricao}, matrÌcula n∫ ${doc.subscritor.sigla},
+			${doc.subscritor.descricao}, matr√≠cula n¬∫ ${doc.subscritor.sigla},
 			${doc.subscritor.cargo.nomeCargo}, lotado(a) no(a)
 			${requestScope['lotacao_lotacaoSel.descricao']}, tendo em vista a <c:choose>
-				<c:when test="${motivo == 'NomeaÁ„o/DesignaÁ„o'}">
-			nomeaÁ„o/designaÁ„o 
+				<c:when test="${motivo == 'Nomea√ß√£o/Designa√ß√£o'}">
+			nomea√ß√£o/designa√ß√£o 
 			</c:when>
-				<c:when test="${motivo == 'ExoneraÁ„o/Dispensa'}">
-			exoneraÁ„o/dispensa  
+				<c:when test="${motivo == 'Exonera√ß√£o/Dispensa'}">
+			exonera√ß√£o/dispensa  
 			</c:when>
 				<c:otherwise>
 				</c:otherwise>
-			</c:choose>do(a) cargo em comiss„o/funÁ„o comissionada de ${cargoFuncao}, a
+			</c:choose>do(a) cargo em comiss√£o/fun√ß√£o comissionada de ${cargoFuncao}, a
 			partir de ${data}, declara que <c:choose>
 				<c:when test="${not empty bens}">
 				possui os seguintes bens: ${bens}.
 				</c:when>
 				<c:otherwise>
-				n„o possui bens.
+				n√£o possui bens.
 				</c:otherwise>
 			</c:choose> <c:if test="${not empty fonte}">
 			Declara, ainda, que tem como atual/atuais fonte(s) de renda:

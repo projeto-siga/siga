@@ -21,7 +21,7 @@ import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 /**
- * RelatÛrio indicando todas as permissıes de um determinado usu·rio
+ * Relat√≥rio indicando todas as permiss√µes de um determinado usu√°rio
  * @author aym
  *
  */
@@ -30,13 +30,13 @@ public class PermissaoUsuarioRelatorio extends RelatorioTemplate{
 	public PermissaoUsuarioRelatorio(Map parametros) throws DJBuilderException {
 		super(parametros);
 		if (parametros.get("idPessoa") == null){
-			throw new DJBuilderException("Par‚metro idPessoa n„o informado!");
+			throw new DJBuilderException("Par√¢metro idPessoa n√£o informado!");
 		}
 		try {
 			Long t_lngIdPessoa = Long.parseLong((String) parametros.get("idPessoa"));
 			setDpPessoa(dao().consultar(t_lngIdPessoa, DpPessoa.class, false));
 		} catch (Exception e) {
-			throw new DJBuilderException("Par‚metro idPessoa inv·lido!");
+			throw new DJBuilderException("Par√¢metro idPessoa inv√°lido!");
 		}
 		this.setPageSizeAndOrientation( Page.Page_A4_Landscape());
 	}
@@ -44,22 +44,22 @@ public class PermissaoUsuarioRelatorio extends RelatorioTemplate{
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException {
 		this.setTemplateFile(null);
-		this.setTitle("Permiss„o de " 
+		this.setTitle("Permiss√£o de " 
 				        + getDescricaoTipoConfiguracao() 
 						+ ": (" 
 						+ dpPessoa.getSesbPessoa() +  dpPessoa.getMatricula()
 						+ ") " 
 						+ dpPessoa.getNomePessoa()  
 						); 
-		this.addColuna("ServiÁo",58,RelatorioRapido.ESQUERDA,false, false);
-		this.addColuna("SituaÁ„o",10,RelatorioRapido.ESQUERDA,false, false);
+		this.addColuna("Servi√ßo",58,RelatorioRapido.ESQUERDA,false, false);
+		this.addColuna("Situa√ß√£o",10,RelatorioRapido.ESQUERDA,false, false);
 		this.addColuna("Origem", 10,RelatorioRapido.ESQUERDA,false, false);
 		this.addColuna("Desde", 12,RelatorioRapido.ESQUERDA,false, false);  
 		this.addColuna("Cadastrante", 10,RelatorioRapido.ESQUERDA,false, false);
 		return this;
 	}
 	/**
-	 * Processa as configuraÁıes ativas para os v·rios ids da pessoa 
+	 * Processa as configura√ß√µes ativas para os v√°rios ids da pessoa 
 	 * (mesmo id inicial que a pessoa selecionada)
 	 */
 	@SuppressWarnings("unchecked")
@@ -94,9 +94,9 @@ public class PermissaoUsuarioRelatorio extends RelatorioTemplate{
 		return dados;
 	}
 	/**
-	 * Varre a ·rvore de configuraÁıes (ConfiguracaoAcesso) - organizada  
-	 * @param cfga - ConfiguraÁ„o acesso
-	 * @param dados - coleÁ„o de linhas do relatÛrio
+	 * Varre a √°rvore de configura√ß√µes (ConfiguracaoAcesso) - organizada  
+	 * @param cfga - Configura√ß√£o acesso
+	 * @param dados - cole√ß√£o de linhas do relat√≥rio
 	 */
 	private void varrerConfiguracao (ConfiguracaoAcesso cfga, List<String> dados ) {
 		processarConfiguracaoAcesso(cfga, dados);
@@ -105,9 +105,9 @@ public class PermissaoUsuarioRelatorio extends RelatorioTemplate{
 		}
 	}
 	/**
-	 * Preenche os dados com as informaÁıes da configuraÁ„o j· formatados
-	 * @param cfga - ConfiguraÁ„o acesso
-	 * @param dados - coleÁ„o de linhas do relatÛrio
+	 * Preenche os dados com as informa√ß√µes da configura√ß√£o j√° formatados
+	 * @param cfga - Configura√ß√£o acesso
+	 * @param dados - cole√ß√£o de linhas do relat√≥rio
 	 */
 	private void processarConfiguracaoAcesso(ConfiguracaoAcesso cfga, List<String> dados ) {
 		try {dados.add(printSeparadorNivel(cfga.getServico().getNivelHierarquico() ) + printServico(cfga.getServico()));}  catch (Exception e) { dados.add("");}
@@ -125,8 +125,8 @@ public class PermissaoUsuarioRelatorio extends RelatorioTemplate{
 	}
 	/**
 	 * 
-	 * @param nivel o nÌvel do serviÁo
-	 * @return uma string para a indentaÁ„o da descriÁ„o do serviÁo
+	 * @param nivel o n√≠vel do servi√ßo
+	 * @return uma string para a indenta√ß√£o da descri√ß√£o do servi√ßo
 	 */
 	private String printSeparadorNivel(int nivel) {
 		StringBuffer str = new StringBuffer();
@@ -140,7 +140,7 @@ public class PermissaoUsuarioRelatorio extends RelatorioTemplate{
 		return str.toString();
 	}
 	/**
-	 *  @param	configuraÁ„o acesso
+	 *  @param	configura√ß√£o acesso
 	 *  @return Uma String representativa da origem
 	 */
 	private String printOrigem(ConfiguracaoAcesso cfga) {

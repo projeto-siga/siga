@@ -203,8 +203,8 @@ public abstract class SincronizavelSuporte extends Objeto implements
 						} else if (o1 instanceof Date) {
 							if (!o1.equals(o2)) {
 								// Nato: Esse "if" corrige um problema que
-								// ocorre na meia noite de um dia de mudanÁa
-								// para o hor·rio de ver„o.
+								// ocorre na meia noite de um dia de mudan√ßa
+								// para o hor√°rio de ver√£o.
 								if (((Date) o2).getTimezoneOffset()
 										- ((Date) o1).getTimezoneOffset() != 60
 										|| (((Date) o1).getTime() - ((Date) o2)
@@ -214,7 +214,7 @@ public abstract class SincronizavelSuporte extends Objeto implements
 						} else if (o1 instanceof String) {
 							// Nato: Esse "if" corrige um problema que
 							// ocorre quando existe um campo no banco de dados
-							// que È do tipo CHAR, em vez de VARCHAR2.
+							// que √© do tipo CHAR, em vez de VARCHAR2.
 							if (!((String) o1).trim().equals(
 									((String) o2).trim())) {
 								return false;
@@ -276,12 +276,12 @@ public abstract class SincronizavelSuporte extends Objeto implements
 		while (o2 != null || o1 != null) {
 			if ((o2 == null)
 					|| (o1 != null && ((Comparable) o2).compareTo(o1) > 0)) {
-				// O novo n„o existe entre os antigos, portanto deve ser
+				// O novo n√£o existe entre os antigos, portanto deve ser
 				// incluido
 				return false;
 			} else if (o1 == null
 					|| (o2 != null && ((Comparable) o1).compareTo(o2) > 0)) {
-				// O corp n„o existe no xml
+				// O corp n√£o existe no xml
 				return false;
 			} else {
 				if (o2 == null) {

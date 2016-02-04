@@ -18,19 +18,19 @@
 		</mod:grupo>
 		
 		<mod:grupo>
-			<mod:texto titulo="Vice-Presidente" var="nmVicePresidente" valor="Desembargador Federal RaldÍnio Bonifacio Costa" largura="90" />
+			<mod:texto titulo="Vice-Presidente" var="nmVicePresidente" valor="Desembargador Federal Rald√™nio Bonifacio Costa" largura="90" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Corregedor Regional" var="nmCorregedorRegional" valor="Desembargador Federal AndrÈ Fontes" largura="90" />
+			<mod:texto titulo="Corregedor Regional" var="nmCorregedorRegional" valor="Desembargador Federal Andr√© Fontes" largura="90" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:texto titulo="Diretor Geral" var="diretorGeral" valor="Jaderson Correa dos Passos" largura="90"/>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="CoordenaÁ„o de ProduÁ„o" var="coordenacaoDeProducao" valor="Secretaria de DocumentaÁ„o e DisseminaÁ„o da InformaÁ„o (SED)" largura="90"/>
+			<mod:texto titulo="Coordena√ß√£o de Produ√ß√£o" var="coordenacaoDeProducao" valor="Secretaria de Documenta√ß√£o e Dissemina√ß√£o da Informa√ß√£o (SED)" largura="90"/>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="DiagramaÁ„o e Impress„o" var="diagramacaoEImpressao" valor="Coordenadoria de ProduÁ„o Gr·fica e Editorial (CPGRAF)" largura="90"/>
+			<mod:texto titulo="Diagrama√ß√£o e Impress√£o" var="diagramacaoEImpressao" valor="Coordenadoria de Produ√ß√£o Gr√°fica e Editorial (CPGRAF)" largura="90"/>
 		</mod:grupo>
 		
                 -->
@@ -120,7 +120,7 @@
 						${doc.codigo}
 					</td>
 					<td align="right" width="50%">
-						PublicaÁ„o Di·ria - Data: ${doc.dtDocDDMMYYYY}
+						Publica√ß√£o Di√°ria - Data: ${doc.dtDocDDMMYYYY}
 					</td>	
 				</tr>
 			</table>
@@ -133,7 +133,7 @@
 		<br />
 		<br />
 		<!-- INICIO CABECALHO
-			<table width="100%" bgcolor="#FFFFFF">  <!-- segunda p·gina em diante  -->
+			<table width="100%" bgcolor="#FFFFFF">  <!-- segunda p√°gina em diante  -->
 				<tr>
 					<td valign="bottom" align="center" style="border-width: 0px 0px 1px 0px; border-style: solid; padding-top: 3px">
 						<span style="font-size:11px">${doc.codigo} de ${doc.dtDocDDMMYY}</span>

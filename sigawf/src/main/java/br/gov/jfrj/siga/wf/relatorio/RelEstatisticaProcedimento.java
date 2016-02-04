@@ -43,7 +43,7 @@ import br.gov.jfrj.siga.wf.SigaWfProperties;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
 /**
- * Classe que representa o relatÛrio estatÌstico de procedimento.
+ * Classe que representa o relat√≥rio estat√≠stico de procedimento.
  * 
  * @author kpf
  * 
@@ -53,39 +53,39 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 	private Double percentualMediaTruncada = 5.0;
 
 	/**
-	 * Construtor que define os par‚metros que s„o obrigatÛrios para a
-	 * construÁ„o do relatÛrio.
+	 * Construtor que define os par√¢metros que s√£o obrigat√≥rios para a
+	 * constru√ß√£o do relat√≥rio.
 	 * 
 	 * @param parametros -
-	 *            Mapa contendo os par‚metros necess·rios para a construÁ„o do
-	 *            relatÛrio. As Keys do Map s„o: secaoUsuario - Informa a seÁ„o
-	 *            judici·ria a ser impressa no cabeÁalho do relatÛrio;
+	 *            Mapa contendo os par√¢metros necess√°rios para a constru√ß√£o do
+	 *            relat√≥rio. As Keys do Map s√£o: secaoUsuario - Informa a se√ß√£o
+	 *            judici√°ria a ser impressa no cabe√ßalho do relat√≥rio;
 	 *            nomeProcedimento - Nome do procedimento ao qual se refere o
-	 *            relatÛrio; dataInicial e dataFinal - datas que definem o
-	 *            perÌodo em que os procedimentos foram encerrados.
+	 *            relat√≥rio; dataInicial e dataFinal - datas que definem o
+	 *            per√≠odo em que os procedimentos foram encerrados.
 	 * @throws DJBuilderException
 	 */
 	public RelEstatisticaProcedimento(Map parametros) throws DJBuilderException {
 		super(parametros);
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
-					"Par‚metro secaoUsuario n„o informado!");
+					"Par√¢metro secaoUsuario n√£o informado!");
 		}
 		if (parametros.get("nomeProcedimento") == null) {
 			throw new DJBuilderException(
-					"Par‚metro nomeProcedimento n„o informado!");
+					"Par√¢metro nomeProcedimento n√£o informado!");
 		}
 		if (parametros.get("dataInicialDe") == null) {
-			throw new DJBuilderException("Par‚metro dataInicialDe n„o informado!");
+			throw new DJBuilderException("Par√¢metro dataInicialDe n√£o informado!");
 		}
 		if (parametros.get("dataInicialAte") == null) {
-			throw new DJBuilderException("Par‚metro dataInicialAte n„o informado!");
+			throw new DJBuilderException("Par√¢metro dataInicialAte n√£o informado!");
 		}
 		if (parametros.get("dataFinalDe") == null) {
-			throw new DJBuilderException("Par‚metro dataFinalDe n„o informado!");
+			throw new DJBuilderException("Par√¢metro dataFinalDe n√£o informado!");
 		}
 		if (parametros.get("dataFinalAte") == null) {
-			throw new DJBuilderException("Par‚metro dataFinalAte n„o informado!");
+			throw new DJBuilderException("Par√¢metro dataFinalAte n√£o informado!");
 		}
 		if (parametros.get("percentualMediaTruncada") != null) {
 			Double minMediaTruncada = null;
@@ -97,47 +97,47 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 				maxMediaTruncada = SigaWfProperties.getRelEstatGeraisMaxMediaTrunc();
 				
 			}catch (Exception e) {
-				throw new AplicacaoException("N„o foi possÌvel determinar a mÈdia truncada!");
+				throw new AplicacaoException("N√£o foi poss√≠vel determinar a m√©dia truncada!");
 			}
 
 			if (percentualMediaTruncada < minMediaTruncada || percentualMediaTruncada > maxMediaTruncada){
-				throw new AplicacaoException("A mÈdia truncada deve ser entre " + minMediaTruncada + " e " + maxMediaTruncada);
+				throw new AplicacaoException("A m√©dia truncada deve ser entre " + minMediaTruncada + " e " + maxMediaTruncada);
 			}
 			
 		}else{
-			throw new AplicacaoException("Informe o percentual da mÈdia truncada!");
+			throw new AplicacaoException("Informe o percentual da m√©dia truncada!");
 		}
 
 	}
 
 	/**
-	 * Configura o layout do relatÛrio.
+	 * Configura o layout do relat√≥rio.
 	 */
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 
 		this.setTitle(parametros.get("nomeProcedimento") + " [iniciado(s) de "
-				+ parametros.get("dataInicialDe") + " atÈ " + parametros.get("dataInicialAte") + ", finalizado(s) de " 
-				+ parametros.get("dataFinalDe") + " atÈ " + parametros.get("dataFinalAte") + "]");
+				+ parametros.get("dataInicialDe") + " at√© " + parametros.get("dataInicialAte") + ", finalizado(s) de " 
+				+ parametros.get("dataFinalDe") + " at√© " + parametros.get("dataFinalAte") + "]");
 		this.addColuna("Procedimento/Tarefa", 35, RelatorioRapido.CENTRO, false);
-		this.addColuna("ConcluÌdos", 15, RelatorioRapido.CENTRO, false);
-		this.addColuna("MÌn", 15, RelatorioRapido.CENTRO, false);
+		this.addColuna("Conclu√≠dos", 15, RelatorioRapido.CENTRO, false);
+		this.addColuna("M√≠n", 15, RelatorioRapido.CENTRO, false);
 		this.addColuna("Max", 15, RelatorioRapido.CENTRO, false);
-		this.addColuna("MÈd", 15, RelatorioRapido.CENTRO, false);
-		this.addColuna("MÈd Truncada " + percentualMediaTruncada.toString().replace(".", ",") + "%", 15, RelatorioRapido.CENTRO, false);
+		this.addColuna("M√©d", 15, RelatorioRapido.CENTRO, false);
+		this.addColuna("M√©d Truncada " + percentualMediaTruncada.toString().replace(".", ",") + "%", 15, RelatorioRapido.CENTRO, false);
 
 		return this;
 	}
 
 	/**
-	 * Pesquisa os dados no banco de dados, realiza os c·lculos estatÌsticos e
-	 * monta uma collection com os dados que ser„o apresentados no relatÛrio.
+	 * Pesquisa os dados no banco de dados, realiza os c√°lculos estat√≠sticos e
+	 * monta uma collection com os dados que ser√£o apresentados no relat√≥rio.
 	 */
 	@Override
 	public Collection processarDados() {
 
-		//inicializaÁ„o das vari·veis
+		//inicializa√ß√£o das vari√°veis
 		String procedimento = (String) parametros.get("nomeProcedimento");
 
 		Date dataInicialDe = getDataDe("dataInicialDe");
@@ -232,7 +232,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		}
 
 
-		// EstatÌsticas Processos
+		// Estat√≠sticas Processos
 		Estatistica e = new Estatistica();
 		ArrayList<Long> duracoesPI =new ArrayList<Long>(mapaAmostraPI.values()); 
 		e.setArray(duracoesPI);
@@ -243,7 +243,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		Double medTrunc = e.getMediaAritmeticaTruncada(percentualMediaTruncada);
 		medTruncPI = medTrunc.longValue();
 
-		// EstatÌsticas tarefas
+		// Estat√≠sticas tarefas
 		for (String tarefa : mapaAmostra.keySet()) {
 			ArrayList<Long> lista = mapaAmostra.get(tarefa);
 			e.setArray(lista);
@@ -255,7 +255,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 
 		}
 
-		// informaÁıes das tarefas
+		// informa√ß√µes das tarefas
 		String[] tarefasOrdenadas = getTarefasOrdenadas(mapaMedia);
 
 		// insere dados do processo
@@ -309,7 +309,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 	}
 
 	/**
-	 * Retorna a lista de tarefas por ordem de mÈdia.
+	 * Retorna a lista de tarefas por ordem de m√©dia.
 	 * 
 	 * @param mapaMedia
 	 * @return
@@ -348,9 +348,9 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 		return resultado;
 	}
 	/**
-	 * Retorna um objeto Date com a data passada como parÍmetro. ATEN«√O: Este
-	 * mÈtodo pode ser reescrito com um DateFormat em um refactoring posterior.
-	 * A data È definida como hh:mm:ss = 00:00:00
+	 * Retorna um objeto Date com a data passada como par√™metro. ATEN√á√ÉO: Este
+	 * m√©todo pode ser reescrito com um DateFormat em um refactoring posterior.
+	 * A data √© definida como hh:mm:ss = 00:00:00
 	 * @param data
 	 * @return
 	 */
@@ -366,9 +366,9 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 	}
 	
 	/**
-	 * Retorna um objeto Date com a data passada como parÍmetro. ATEN«√O: Este
-	 * mÈtodo pode ser reescrito com um DateFormat em um refactoring posterior.
-	 * A data È definida como hh:mm:ss = 23:59:59
+	 * Retorna um objeto Date com a data passada como par√™metro. ATEN√á√ÉO: Este
+	 * m√©todo pode ser reescrito com um DateFormat em um refactoring posterior.
+	 * A data √© definida como hh:mm:ss = 23:59:59
 	 * @param data
 	 * @return
 	 */
@@ -384,7 +384,7 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 	}
 
 	/**
-	 * Retorna quanto tempo uma tarefa demou para ser concluÌda. O resultado È
+	 * Retorna quanto tempo uma tarefa demou para ser conclu√≠da. O resultado √©
 	 * em milissegundos.
 	 * 
 	 * @param ti
@@ -405,8 +405,8 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 	}
 
 	/**
-	 * Retorna quanto tempo um processo demorou para ser concluÌdo. O resultado
-	 * È em milissegundos.
+	 * Retorna quanto tempo um processo demorou para ser conclu√≠do. O resultado
+	 * √© em milissegundos.
 	 * 
 	 * @param pi
 	 * @return
@@ -426,8 +426,8 @@ public class RelEstatisticaProcedimento extends RelatorioTemplate {
 	}
 
 	/**
-	 * Utilizado para realizar testes no relatÛrio. ATEN«√O; Uma classe de teste
-	 * (JUnit) deve ser criada para substituir este mÈtodo.
+	 * Utilizado para realizar testes no relat√≥rio. ATEN√á√ÉO; Uma classe de teste
+	 * (JUnit) deve ser criada para substituir este m√©todo.
 	 * 
 	 * @param args
 	 */

@@ -50,36 +50,36 @@ public class UsuarioAutenticado {
 		if (idCertEncontrada == null) {
 			CpIdentidade idCertNova;
 			try {
-				// cria uma nova identidade para o caso de não existir para o
+				// cria uma nova identidade para o caso de nÃ£o existir para o
 				// certificado.
 				DpPessoa pessoa = CpDao.getInstance().getPessoaPorPrincipal(
 						principal);
 				if (pessoa == null)
-					throw new AplicacaoException("Pessoa não identificada para a matrícula '"+ principal + "'.");
+					throw new AplicacaoException("Pessoa nÃ£o identificada para a matrÃ­cula '"+ principal + "'.");
 				CpTipoIdentidade tpId = CpDao.getInstance().consultar(
 						CpTipoIdentidade.CERTIFICADO, CpTipoIdentidade.class, false);
 				if (tpId == null)
-					throw new AplicacaoException("Tipo de identidade não encontrado para o id '"+ CpTipoIdentidade.CERTIFICADO + "'.");
+					throw new AplicacaoException("Tipo de identidade nÃ£o encontrado para o id '"+ CpTipoIdentidade.CERTIFICADO + "'.");
 				idCertNova = new CpIdentidade();
 				idCertNova.setDpPessoa(pessoa);
 				idCertNova.setCpTipoIdentidade(tpId);
 				idCertNova.setCpOrgaoUsuario(pessoa.getOrgaoUsuario());
 				idCertNova.setNmLoginIdentidade(principal);
-				idCertNova.setAtivo();
+				idCertNova.updateAtivo();
 				idCertNova.setIdIdentidade(null);
 				Date dt = dao().consultarDataEHoraDoServidor();
 				idCertNova.setDtCriacaoIdentidade(dt);
 				idCertNova.setDscSenhaIdentidade(null);
 				idCertNova.setDscSenhaIdentidadeCripto(null);
 				idCertNova.setDscSenhaIdentidadeCriptoSinc(null);
-				// TODO: verificar o porquê da não gravação da identidade
+				// TODO: verificar o porquÃ¯Â¿Â½ da nÃ¯Â¿Â½o gravaÃ¯Â¿Â½Ã¯Â¿Â½o da identidade
 				dao().iniciarTransacao();
 				// dao().gravar(idCertNova);
 				dao().gravarComHistorico(idCertNova, null, dt, null);
 				dao().commitTransacao();
 			} catch (Exception e) {
 				throw new AplicacaoException(
-						"Não foi possível criar uma identidade para o certificado.");
+						"NÃ£o foi possÃ­vel criar uma identidade para o certificado.");
 			}
 			carregarUsuario(idCertNova, ioc);
 		} else {
@@ -93,25 +93,16 @@ public class UsuarioAutenticado {
 			throws AplicacaoException, SQLException {
 		Date dt = dao().consultarDataEHoraDoServidor();
 		if (!id.ativaNaData(dt)) {
-			throw new AplicacaoException("O acesso não será permitido porque identidade está inativa desde '"+ id.getDtExpiracaoDDMMYYYY() + "'.");
+			throw new AplicacaoException("O acesso nÃ£o serÃ¡ permitido porque identidade estÃ¡ inativa desde '"+ id.getDtExpiracaoDDMMYYYY() + "'.");
 		}
 		if (id.isBloqueada()) {
-			throw new AplicacaoException("O acesso não será permitido porque esta identidade está bloqueada.");
+			throw new AplicacaoException("O acesso nÃ£o serÃ¡ permitido porque esta identidade estÃ¡ bloqueada.");
 		}
 
 		ioc.setIdentidadeCadastrante(id);
 		ioc.setCadastrante(id.getPessoaAtual());
 
 		CpPersonalizacao per = dao().consultarPersonalizacao(ioc.getCadastrante());
-
-		// // Verifica se o usuário está simulando alguém.
-		// if (per != null && per.getUsuarioSimulando() != null) {
-		// principal = per.getUsuarioSimulando().getNmUsuario();
-		// usu = dao().consultaUsuarioCadastranteAtivo(principal);
-		// ioc.setCadastrante(usu.getPessoa());
-		//
-		// per = dao().consultarPersonalizacao(ioc.getCadastrante());
-		// }
 
 		if ((per != null)
 				&& ((per.getPesSubstituindo() != null) || (per
@@ -169,7 +160,7 @@ public class UsuarioAutenticado {
 		carregarUsuario(id, ioc);
 		/*
 		 * if (id.isBloqueada()) { throw new AplicacaoException(
-		 * "O acesso não será permitido porque esta identidade está bloqueada."
+		 * "O acesso nÃ¯Â¿Â½o serÃ¯Â¿Â½ permitido porque esta identidade estÃ¯Â¿Â½ bloqueada."
 		 * ); }
 		 * 
 		 * ioc.setIdentidadeCadastrante(id);
@@ -178,7 +169,7 @@ public class UsuarioAutenticado {
 		 * CpPersonalizacao per = dao().consultarPersonalizacao(
 		 * ioc.getCadastrante());
 		 * 
-		 * // // Verifica se o usuário está simulando alguém. // if (per != null
+		 * // // Verifica se o usuÃ¯Â¿Â½rio estÃ¯Â¿Â½ simulando alguÃ¯Â¿Â½m. // if (per != null
 		 * && per.getUsuarioSimulando() != null) { // principal =
 		 * per.getUsuarioSimulando().getNmUsuario(); // usu =
 		 * dao().consultaUsuarioCadastranteAtivo(principal); //
@@ -220,7 +211,7 @@ public class UsuarioAutenticado {
 	}
 
 	/**
-	 * Carrega usuário autenticado a partir do request
+	 * Carrega usuÃ¡rio autenticado a partir do request
 	 * 
 	 * @param principal
 	 * @param ioc
@@ -243,7 +234,7 @@ public class UsuarioAutenticado {
 	}
 
 	/**
-	 * Verifica se o tipo de autenticação é por certificado
+	 * Verifica se o tipo de autenticaÃ§Ã£o Ã© por certificado
 	 * 
 	 * @param request
 	 * @return
@@ -253,10 +244,10 @@ public class UsuarioAutenticado {
 	}
 
 	/**
-	 * * Obtém o sesb+matricula (login) a partir do request que contém um
+	 * * ObtÃ©m o sesb+matricula (login) a partir do request que contÃ©m um
 	 * certificado a ser usado como principal
 	 * 
-	 * @return o Sesb concatendo com a matrícula para um usuário com certificado
+	 * @return o Sesb concatendo com a matrÃ­cula para um usuÃ¡rio com certificado
 	 * @param request
 	 * @throws Exception
 	 */

@@ -15,13 +15,13 @@
 			<br>
 			<mod:grupo>
 				<mod:selecao titulo="<b>Classe</b>" var="classe"  opcoes=" ;A;B;C" reler="sim" />
-				<mod:selecao titulo="<b>Nível</b>" var="nivel"  opcoes=" ;NA;NI;NS" reler="sim" />
-				<mod:selecao titulo="<b>Padrão</b>" var="padr"  opcoes=" ;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15" reler="sim" />
+				<mod:selecao titulo="<b>NÃ­vel</b>" var="nivel"  opcoes=" ;NA;NI;NS" reler="sim" />
+				<mod:selecao titulo="<b>PadrÃ£o</b>" var="padr"  opcoes=" ;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15" reler="sim" />
 	    	</mod:grupo>
 	   <br><br>
 		
 		<mod:grupo>
-			<mod:data titulo="<b>Data de Início da Vacância</b>" var="dtvac" />
+			<mod:data titulo="<b>Data de InÃ­cio da VacÃ¢ncia</b>" var="dtvac" />
 		</mod:grupo>
 		<br><br>
 		<mod:grupo>
@@ -42,15 +42,15 @@
 			<br/>
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			<c:choose><c:when test="${doc.subscritor.sexo == 'M'}">O PRESIDENTE</c:when><c:otherwise>A PRESIDENTE</c:otherwise></c:choose> 
-			DO TRIBUNAL REGIONAL FEDERAL DA 2ª REGIÃO, no uso de suas atribuições, e considerando o que consta nos autos do Processo Administrativo 
-			nº <c:choose><c:when test="${tipproc == 'Outro'}">${proc}</c:when><c:otherwise>${proc}-${tipproc}</c:otherwise></c:choose>, RESOLVE:<br><br>
+			DO TRIBUNAL REGIONAL FEDERAL DA 2Âª REGIÃƒO, no uso de suas atribuiÃ§Ãµes, e considerando o que consta nos autos do Processo Administrativo 
+			nÂº <c:choose><c:when test="${tipproc == 'Outro'}">${proc}</c:when><c:otherwise>${proc}-${tipproc}</c:otherwise></c:choose>, RESOLVE:<br><br>
 			DECLARAR VAGO,  
 			a partir de ${dtvac} o cargo de ${f:maiusculasEMinusculas(tit.cargo.nomeCargo)}, 
-			<c:choose><c:when test="${opt != '1'}">${opt}</c:when><c:otherwise>Classe "${classe}", Nivel "${nivel}", Padrão "${padr}"</c:otherwise></c:choose>,
+			<c:choose><c:when test="${opt != '1'}">${opt}</c:when><c:otherwise>Classe "${classe}", Nivel "${nivel}", PadrÃ£o "${padr}"</c:otherwise></c:choose>,
 			  do Quadro de Pessoal deste Tribunal,
 			ocupado <c:choose><c:when test="${tit.sexo == 'M'}">pelo servidor </c:when><c:otherwise>pela servidora </c:otherwise></c:choose>
-		${tit.nomePessoa}, em virtude de posse em outro cargo público federal inacumulável, com base no artigo 33, inciso VIII, da Lei nº 
-		8.112/90 c/c a Resolução nº 03/2008, do Conselho da Justiça Federal.
+		${tit.nomePessoa}, em virtude de posse em outro cargo pÃºblico federal inacumulÃ¡vel, com base no artigo 33, inciso VIII, da Lei nÂº 
+		8.112/90 c/c a ResoluÃ§Ã£o nÂº 03/2008, do Conselho da JustiÃ§a Federal.
 	    
 		</mod:valor>  	
 		</mod:documento>

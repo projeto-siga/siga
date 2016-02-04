@@ -191,14 +191,14 @@ public class ProcessadorReferencias {
 						+ acronimos
 						+ "|"
 						+ siglas
-						+ ")-([A-Za-z]{3})-(?:([0-9]{4}))/([0-9]{5})(\\.[0-9]{1,3})?(?:((?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|((?:-?V[0-9]{1,2})))?");
+						+ ")-([A-Za-z]{3})-(?:([0-9]{4}))/([0-9]{5,})(\\.[0-9]{1,3})?(?:((?:-?V[0-9]{1,2}))|((?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2})))?");
 
 		StringBuffer sb = new StringBuffer();
 		final Matcher m1 = p1.matcher(sHtml);
 		while (m1.find()) {
 			if (setIgnorar == null || !setIgnorar.contains(m1.group(0)))
 				m1.appendReplacement(sb,
-						"<a href=\"/sigaex/expediente/doc/exibir.action?sigla=$0\">$0</a>");
+						"<a href=\"/sigaex/app/expediente/doc/exibir?sigla=$0\">$0</a>");
 		}
 		m1.appendTail(sb);
 		sHtml = sb.toString();
@@ -208,7 +208,7 @@ public class ProcessadorReferencias {
 		while (m2.find()) {
 			if (setIgnorar == null || !setIgnorar.contains(m2.group(0)))
 				m2.appendReplacement(sb,
-						"<a href=\"/sigaex/expediente/doc/exibir.action?sigla=$0\">$0</a>");
+						"<a href=\"/sigaex/app/expediente/doc/exibir?sigla=$0\">$0</a>");
 		}
 		m2.appendTail(sb);
 
@@ -216,9 +216,8 @@ public class ProcessadorReferencias {
 		return sHtml;
 	}
 
-	public String marcarReferencias(final String sHtml) throws Exception {
-		final ByteArrayOutputStream os = new ByteArrayOutputStream();
-		try {
+	public String marcarReferencias(final String sHtml) {
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
 
 			parser.setInput(new StringReader(sHtml));

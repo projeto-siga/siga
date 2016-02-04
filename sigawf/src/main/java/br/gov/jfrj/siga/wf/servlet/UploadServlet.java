@@ -59,9 +59,9 @@ import org.jbpm.taskmgmt.def.Task;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
 /**
- * Servlet que recebe um arquivo de definiÁ„o de processo (Process Definition) e
- * armazena-o no banco de dados. A definiÁ„o de processo recebida passa a ser a
- * definiÁ„o vigente.
+ * Servlet que recebe um arquivo de defini√ß√£o de processo (Process Definition) e
+ * armazena-o no banco de dados. A defini√ß√£o de processo recebida passa a ser a
+ * defini√ß√£o vigente.
  * 
  * @author kpf
  * 
@@ -71,8 +71,8 @@ public class UploadServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Realiza o tratatemento do request. Verifica se o arquivo enviado È uma
-	 * definiÁ„o de processo v·lida e realiza o seu deploy.
+	 * Realiza o tratatemento do request. Verifica se o arquivo enviado √© uma
+	 * defini√ß√£o de processo v√°lida e realiza o seu deploy.
 	 */
 	public void service(HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
@@ -98,7 +98,7 @@ public class UploadServlet extends HttpServlet {
 	}
 
 	/**
-	 * Verifica se o arquivo enviado È um process definition. Se for, realiza o
+	 * Verifica se o arquivo enviado √© um process definition. Se for, realiza o
 	 * seu deploy.
 	 * 
 	 * @param request
@@ -111,7 +111,7 @@ public class UploadServlet extends HttpServlet {
 		}
 		try {
 			// Nato: Modo novo, mas que esta voltando uma lista vazia pois o
-			// webwork est· interceptando o request e lendo o arquivo
+			// webwork est√° interceptando o request e lendo o arquivo
 			DiskFileItemFactory factory = new DiskFileItemFactory();
 			// Configure the factory here, if desired.
 			ServletFileUpload upload = new ServletFileUpload(factory);
@@ -147,7 +147,7 @@ public class UploadServlet extends HttpServlet {
 	}
 
 	/**
-	 * Coloca as informaÁıes do arquivo da definiÁ„o do processo no banco de
+	 * Coloca as informa√ß√µes do arquivo da defini√ß√£o do processo no banco de
 	 * dados.
 	 * 
 	 * @param fileItem

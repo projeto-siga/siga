@@ -25,7 +25,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
-@Table(name = "CP_TIPO_GRUPO", schema="CORPORATIVO")
+@Table(name = "CP_TIPO_GRUPO", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpTipoGrupo extends AbstractCpTipoGrupo {
 	public static final int TIPO_GRUPO_PERFIL_DE_ACESSO = 1;

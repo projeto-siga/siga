@@ -12,9 +12,9 @@
 							<td align="center" width="100%"
 									style="font-family:Arial;font-size:8pt;" bgcolor="#FFFFFF">
 							Publicada no Boletim Interno "online" de<br/>
-						____/____/____, nos termos do art 15, § 4º, da Lei nº <br/>
+						____/____/____, nos termos do art 15, Â§ 4Âº, da Lei nÂº <br/>
 						9527 de 10/12/97, publicada no D.O.U. de 11/12/97 <br/>
-						c/c com o art 9º da resolução nº 3/2008-CJF.<br><br>
+						c/c com o art 9Âº da resoluÃ§Ã£o nÂº 3/2008-CJF.<br><br>
 						__________________________________<br/>
 						<sub>Assinatura</sub>
 							</td>

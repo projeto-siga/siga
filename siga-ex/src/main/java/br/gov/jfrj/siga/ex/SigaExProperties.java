@@ -110,11 +110,12 @@ public class SigaExProperties extends ModeloPropriedade {
 	public static String getExClassificacaoMascaraExibicao() {
 		return getString("classificacao.mascara.exibicao");
 	}
+	
 	public static List<String> getExClassificacaoNomesNiveis() throws AplicacaoException{
 		try {
 			return instance.obterPropriedadeLista("siga.ex.classificacao.mascara.nomeNivel");
 		} catch (Exception e) {
-			throw new AplicacaoException("N„o foi possÌvel encontrar os nomes dos nÌveis da classificaÁ„o documental no arquivo siga.properties. Ex: siga.ex.classificacao.mascara.nomeNivel.0 = Assunto");
+			throw new AplicacaoException("N√£o foi poss√≠vel encontrar os nomes dos n√≠veis da classifica√ß√£o documental no arquivo siga.properties. Ex: siga.ex.classificacao.mascara.nomeNivel.0 = Assunto");
 		}
 	}
 	
@@ -164,7 +165,7 @@ public class SigaExProperties extends ModeloPropriedade {
 	public static Long getIdModInternoImportado() throws Exception{
 		String s = getStringComAmbiente("modelos.interno_importado");
 		if (s == null)
-			throw new Exception("Propriedade para o identificador do modelo Interno Importado n„o encontrada");
+			throw new Exception("Propriedade para o identificador do modelo Interno Importado n√£o encontrada");
 		try{
 			return Long.valueOf(s);
 		} catch (NumberFormatException nfe){
@@ -175,7 +176,7 @@ public class SigaExProperties extends ModeloPropriedade {
 	public static Long getIdModPA() throws Exception{
 		String s = getStringComAmbiente("modelos.processo_administrativo");
 		if (s == null)
-			throw new Exception("Propriedade para o identificador do modelo Processo Administrativo n„o encontrada");
+			throw new Exception("Propriedade para o identificador do modelo Processo Administrativo n√£o encontrada");
 		try{
 			return Long.valueOf(s);
 		} catch (NumberFormatException nfe){
@@ -185,17 +186,17 @@ public class SigaExProperties extends ModeloPropriedade {
 
 	public static Long getAnoInicioAcronimoNoCodigoDoDocumento() throws Exception{
 		String s = getString("siga.ex.anoInicioAcronimoNoCodigoDoDocumento");
-		if (s == null)
+		if (s == null || s.trim().length() == 0)
 			return 9999L;
 		try{
 			return Long.valueOf(s);
 		} catch (NumberFormatException nfe){
-			throw new Exception("Erro ao obter propriedade para o ano inicial para a utilizaÁ„o do acrÙnimo no cÛdigo do documento");
+			throw new Exception("Erro ao obter propriedade para o ano inicial para a utiliza√ß√£o do acr√¥nimo no c√≥digo do documento");
 		}
 	}
 
 	/**
-	 * Retorna a m·scara da classificaÁ„o a ser utilizadas em caixas de texto DURANTE a digitaÁ„o do valor
+	 * Retorna a m√°scara da classifica√ß√£o a ser utilizadas em caixas de texto DURANTE a digita√ß√£o do valor
 	 *
 	 * a - Represents an alpha character (A-Z,a-z)
 	 * 9 - Represents a numeric character (0-9)
@@ -227,7 +228,7 @@ public class SigaExProperties extends ModeloPropriedade {
 		try{
 			return (Date)formatter.parse(s);
 		} catch (NumberFormatException nfe){
-			throw new Exception("Erro ao obter propriedade para o data inicial de obrigaÁ„o de assinatura de anexos e despachos em documentos eletrÙnicos");
+			throw new Exception("Erro ao obter propriedade para o data inicial de obriga√ß√£o de assinatura de anexos e despachos em documentos eletr√¥nicos");
 		}
 	}
 

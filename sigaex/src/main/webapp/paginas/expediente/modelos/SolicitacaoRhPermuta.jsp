@@ -20,8 +20,8 @@
 	</mod:entrevista>
 	<mod:documento>
 			
-		<mod:valor var="texto_solicitacao"><p style="TEXT-INDENT: 2cm" align="justify">Solicito as providências necessárias para que seja realizada
-			a <b>remoção por permuta </b> entre os(as) servidores(as) <mod:identificacao pessoa="${requestScope['servidor1_pessoaSel.id']}" negrito="sim" nivelHierarquicoMaximoDaLotacao="4"/>
+		<mod:valor var="texto_solicitacao"><p style="TEXT-INDENT: 2cm" align="justify">Solicito as providÃªncias necessÃ¡rias para que seja realizada
+			a <b>remoÃ§Ã£o por permuta </b> entre os(as) servidores(as) <mod:identificacao pessoa="${requestScope['servidor1_pessoaSel.id']}" negrito="sim" nivelHierarquicoMaximoDaLotacao="4"/>
 			e <mod:identificacao pessoa="${requestScope['servidor2_pessoaSel.id']}" nivelHierarquicoMaximoDaLotacao="4" />
 			a partir de <b>${dataInicio}</b>.
 		</p>

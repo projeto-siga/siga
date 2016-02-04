@@ -55,9 +55,9 @@ public class IntegrationTestBase {
 			driver.quit();
 		}
 	}
-	
+
 	public void efetuaLogout() {
-		try {			
+		try {
 			IntegrationTestUtil util = new IntegrationTestUtil();
 			WebElement linkSair = util.getWebElement(driver, By.linkText("sair"));
 			new WebDriverWait(driver, 30).until(ExpectedConditions.elementToBeClickable(linkSair));
@@ -69,128 +69,128 @@ public class IntegrationTestBase {
 			driver.quit();
 		}
 	}
-	
+
 	public void assinarAnexo(String codigoDocumento) {
 		// Clicar em "Assinar/Autenticar"
 		operacoesDocumentoPage.clicarLinkAssinarCopia();
-		
-		// Garantir que a String "Link para assinatura externa" apareça na tela - Assinar anexo
+
+		// Garantir que a String "Link para assinatura externa" apareÃ§a na tela - Assinar anexo
 		AssinaturaAnexoPage assinaturaAnexoPage = PageFactory.initElements(driver, AssinaturaAnexoPage.class);
 		assinaturaAnexoPage.assinarCopia(baseURL, codigoDocumento);
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[4][contains(., 'Assinado por')]")), "O texto 'Assinado por' não foi encontrado!");
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[4][contains(., 'Assinado por')]")), "O texto 'Assinado por' nÃ£o foi encontrado!");
 	}
-	
+
 	public void autuar(Boolean isDigital, String modeloDocumento){
 		operacoesDocumentoPage.clicarLinkAutuar();
 		ProcessoAssuntosAdministrativosPage processoAssuntosAdministrativosPage = PageFactory.initElements(driver, ProcessoAssuntosAdministrativosPage.class);
 		processoAssuntosAdministrativosPage.criaProcesso(propDocumentos, isDigital, modeloDocumento);
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//b[contains(., 'Processo Nº')]")), "Texto 'Processo Nº' não foi encontrado!");		
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//b[contains(., 'Processo NÂº')]")), "Texto 'Processo NÂº' nÃ£o foi encontrado!");
 	}
-	
+
 	public void finalizarProcesso() {
 		operacoesDocumentoPage.clicarLinkFinalizar();
-		
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + 
-		 "[contains(text(), '1º Volume - Pendente de Assinatura, Como Subscritor')]|//div[h3 = 'Volumes']/ul/li[contains(., 'Pendente de Assinatura') and contains(., 'Como Subscritor')]")), "Texto '1º Volume - Pendente de Assinatura, Como Subscritor' não foi encontrado!");		
+
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO +
+		 "[contains(text(), '1Âº Volume - Pendente de Assinatura, Como Subscritor')]|//div[h3 = 'Volumes']/ul/li[contains(., 'Pendente de Assinatura') and contains(., 'Como Subscritor')]")), "Texto '1Âº Volume - Pendente de Assinatura, Como Subscritor' nÃ£o foi encontrado!");
 	}
-	
+
 	public void finalizarDocumento() {
-		operacoesDocumentoPage.clicarLinkFinalizar();		
-	
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + 
-				 "[contains(text(), 'Pendente de Assinatura, Como Subscritor')]|//div[h3 = 'Vias']/ul/li[contains(., 'Pendente de Assinatura') and contains(., 'Como Subscritor')]")), "Texto Pendente de Assinatura, Como Subscritor não foi encontrado!");		
+		operacoesDocumentoPage.clicarLinkFinalizar();
+
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO +
+				 "[contains(text(), 'Pendente de Assinatura, Como Subscritor')]|//div[h3 = 'Vias']/ul/li[contains(., 'Pendente de Assinatura') and contains(., 'Como Subscritor')]")), "Texto Pendente de Assinatura, Como Subscritor nÃ£o foi encontrado!");
 	}
-	
-	public void validaDesentranhamento(String codigoProcesso) {		
-		// Clicar em Exibir Informações completas
+
+	public void validaDesentranhamento(String codigoProcesso) {
+		// Clicar em Exibir InformaÃ§Ãµes completas
 		operacoesDocumentoPage.clicarLinkExibirInformacoesCompletas();
-		
+
 		// Acessar novamente o processo, pelo link existente na linha do evento de juntada
 		WebElement desentranhamentoDocumento = util.getWebElement(driver, By.xpath("//tr[contains(@class, 'desentranhamento ')]"));
-		Assert.assertNotNull(desentranhamentoDocumento, "Evento de desentranhamento não encontrado!");
+		Assert.assertNotNull(desentranhamentoDocumento, "Evento de desentranhamento nÃ£o encontrado!");
 		WebElement linkProcessoDesentranhado = util.getWebElement(driver, desentranhamentoDocumento, By.partialLinkText(codigoProcesso));
 		linkProcessoDesentranhado.click();
-		
-		// Clicar em Exibir informações completas
+
+		// Clicar em Exibir informaÃ§Ãµes completas
 		operacoesDocumentoPage.clicarLinkExibirInformacoesCompletas();
-		
-		// Garantir que o texto "Desentranhamento" apareça na tela
+
+		// Garantir que o texto "Desentranhamento" apareÃ§a na tela
 		WebElement desentranhamentoProcesso = util.getWebElement(driver, By.xpath("//tr[contains(@class, 'desentranhamento ')]"));
-		Assert.assertNotNull(desentranhamentoProcesso, "Evento de desentranhamento não encontrado!");	
+		Assert.assertNotNull(desentranhamentoProcesso, "Evento de desentranhamento nÃ£o encontrado!");
 	}
-	
+
 	public void cancelarAnexo() {
-		// Clicar em "Cancelar" (link no <tr> do evento de anexação)
+		// Clicar em "Cancelar" (link no <tr> do evento de anexaÃ§Ã£o)
 		operacoesDocumentoPage.clicarLinkCancelarAnexo();
-		
-		// Informar um motivo qualquer e um subscritor qualquer, diferente do usuário de teste
+
+		// Informar um motivo qualquer e um subscritor qualquer, diferente do usuÃ¡rio de teste
 		CancelamentoMovimentacaoPage cancelamentoMovimentacaoPage = PageFactory.initElements(driver, CancelamentoMovimentacaoPage.class);
 		cancelamentoMovimentacaoPage.cancelarMovimentacao(propDocumentos);
-		
-		// Garantir que o nome do anexo não apareça mais na tela
+
+		// Garantir que o nome do anexo nÃ£o apareÃ§a mais na tela
 		String nomeArquivo = propDocumentos.getProperty("arquivoAnexo");
-		Assert.assertTrue(util.isElementInvisible(driver, By.linkText(nomeArquivo.toLowerCase())), "Nome do arquivo continua visível na tela!");
-		
-		// Clicar "Visualizar Dossiê"
+		Assert.assertTrue(util.isElementInvisible(driver, By.linkText(nomeArquivo.toLowerCase())), "Nome do arquivo continua visÃ­vel na tela!");
+
+		// Clicar "Visualizar DossiÃª"
 		operacoesDocumentoPage.clicarLinkVisualizarDossie();
-		
-		// Garantir que o nome do anexo não apareça mais na tela
-		Assert.assertTrue(util.isElementInvisible(driver, By.linkText(nomeArquivo.substring(0, nomeArquivo.indexOf(".")).toLowerCase())), 
-				"Nome do anexo continua visível na visualização de dossiê!");
+
+		// Garantir que o nome do anexo nÃ£o apareÃ§a mais na tela
+		Assert.assertTrue(util.isElementInvisible(driver, By.linkText(nomeArquivo.substring(0, nomeArquivo.indexOf(".")).toLowerCase())),
+				"Nome do anexo continua visÃ­vel na visualizaÃ§Ã£o de dossiÃª!");
 	}
-	
+
 	public void encerrarVolume() {
 		// Clicar em "Encerrar Volume"
 		operacoesDocumentoPage.clicarLinkEncerrarVolume();
-		
-		// Garantir que o texto "Encerramento de Volume" apareça na tela. 
+
+		// Garantir que o texto "Encerramento de Volume" apareÃ§a na tela.
 		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//td[3][contains(text(),'Encerramento de Volume')]")));
-		
+
 		// Clicar em "Despachar/Transferir"
 		operacoesDocumentoPage.clicarLinkDespacharTransferir();
-		
-		// Selecionar um despacho qualquer - Clicar "OK" - Garantir que o texto "Não é permitido" apareça na tela - Fechar a popup
+
+		// Selecionar um despacho qualquer - Clicar "OK" - Garantir que o texto "NÃ£o Ã© permitido" apareÃ§a na tela - Fechar a popup
 		TransferenciaPage transferenciaPage = PageFactory.initElements(driver, TransferenciaPage.class);
-		Assert.assertFalse(transferenciaPage.despacharVolumeEncerrado(propDocumentos), "O despacho de volume encerrado foi permitido!");			
+		Assert.assertFalse(transferenciaPage.despacharVolumeEncerrado(propDocumentos), "O despacho de volume encerrado foi permitido!");
 	}
-	
+
 	public void anexarArquivo(String nomeArquivo) {
 		// Clicar no link "Anexar Arquivo"
 		operacoesDocumentoPage.clicarLinkAnexarArquivo();
-		util.getWebElement(driver, By.xpath("//h2[contains(text(), 'Anexação de Arquivo')]"));
+		util.getWebElement(driver, By.xpath("//h2[contains(text(), 'AnexaÃ§Ã£o de Arquivo')]"));
 		// Clicar "OK" - Selecionar um arquivo qualquer - Clicar "OK"
 		AnexoPage anexoPage = PageFactory.initElements(driver, AnexoPage.class);
 		anexoPage.anexarArquivo(propDocumentos);
-		
-		// Garantir que o nome do arquivo selecionado apareça na tela
-		Assert.assertNotNull(util.getWebElement(driver, By.linkText(nomeArquivo.toLowerCase())), "Nome do arquivo selecionado não encontrado na tela!");
-		
+
+		// Garantir que o nome do arquivo selecionado apareÃ§a na tela
+		Assert.assertNotNull(util.getWebElement(driver, By.linkText(nomeArquivo.toLowerCase())), "Nome do arquivo selecionado nÃ£o encontrado na tela!");
+
 		// Clicar em voltar
 		anexoPage.clicarBotaovoltar();
 	}
-	
+
 	public void registrarAssinaturaManual() {
 		operacoesDocumentoPage.clicarLinkRegistrarAssinaturaManual();
 		RegistraAssinaturaManualPage registraAssinaturaManualPage = PageFactory.initElements(driver, RegistraAssinaturaManualPage.class);
 		registraAssinaturaManualPage.registarAssinaturaManual();
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), 'Aguardando Andamento')]|//div[h3 = 'Volumes' or h3 = 'Vias']/ul/li[contains(., 'Aguardando Andamento')]")), "Texto 'Aguardando Andamento' não encontrado!");				
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), 'Aguardando Andamento')]|//div[h3 = 'Volumes' or h3 = 'Vias']/ul/li[contains(., 'Aguardando Andamento')]")), "Texto 'Aguardando Andamento' nÃ£o encontrado!");
 	}
-	
+
 	public void assinarDigitalmente(String codigoDocumento, String textoBuscado) {
 		// Clicar em Assinar Digitalmente
 		operacoesDocumentoPage.clicarLinkAssinarDigitalmente();
-		
-		// Garantir que a descrição do documento apareça na tela (é a seção OBJETO, da capa do processo)
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//p[contains(., '" + textoBuscado + "')]")), "Texto '" + textoBuscado + " ' não encontrado!");
-			
-		// usar o link /sigaex/expediente/mov/simular_assinatura?sigla=<código do documento> para gerar uma movimentação de assinatura digital
+
+		// Garantir que a descriÃ§Ã£o do documento apareÃ§a na tela (Ã© a seÃ§Ã£o OBJETO, da capa do processo)
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath("//p[contains(., '" + textoBuscado + "')]")), "Texto '" + textoBuscado + " ' nÃ£o encontrado!");
+
+		// usar o link /sigaex/app/expediente/mov/simular_assinatura?sigla=<cÃ³digo do documento> para gerar uma movimentaÃ§Ã£o de assinatura digital
 		AssinaturaDigitalPage assinaturaDigitalPage = PageFactory.initElements(driver, AssinaturaDigitalPage.class);
 		assinaturaDigitalPage.registrarAssinaturaDigital(baseURL, codigoDocumento);
-		
-		// Garantir que "Aguardando Andamento" apareça na tela
-		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), 'Aguardando Andamento')]|//div[h3 = 'Volumes' or h3 = 'Vias']/ul/li[contains(., 'Aguardando Andamento')]")), "Texto 'Aguardando Andamento' não encontrado!");					
-	}		
-	
+
+		// Garantir que "Aguardando Andamento" apareÃ§a na tela
+		Assert.assertNotNull(util.getWebElement(driver, By.xpath(OperacoesDocumentoPage.XPATH_STATUS_DOCUMENTO + "[contains(text(), 'Aguardando Andamento')]|//div[h3 = 'Volumes' or h3 = 'Vias']/ul/li[contains(., 'Aguardando Andamento')]")), "Texto 'Aguardando Andamento' nÃ£o encontrado!");
+	}
+
 	@AfterClass(alwaysRun = true)
 	public void tearDown() {
 		driver.quit();

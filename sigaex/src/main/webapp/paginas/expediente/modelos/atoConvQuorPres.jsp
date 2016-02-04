@@ -14,20 +14,20 @@
 				<mod:pessoa titulo="Nome" var="substituto" />
 		    </mod:grupo>
 		    <mod:grupo>
-				<mod:selecao titulo="Com prejuízo" var="preju"  opcoes="sim;nao" reler="nao" />
+				<mod:selecao titulo="Com prejuÃ­zo" var="preju"  opcoes="sim;nao" reler="nao" />
 			</mod:grupo>
 		</mod:grupo>
 		<br><br>
-		<mod:grupo titulo="Desembargador Federal Substituído:">
+		<mod:grupo titulo="Desembargador Federal SubstituÃ­do:">
 			<mod:grupo>
 				<mod:pessoa titulo="Nome" var="titular" />
 	    	</mod:grupo>
 	    	<mod:grupo>
-				<mod:selecao titulo="Motivo" var="motiv" opcoes="licença médica;férias regulamentares" reler="nao"/>
+				<mod:selecao titulo="Motivo" var="motiv" opcoes="licenÃ§a mÃ©dica;fÃ©rias regulamentares" reler="nao"/>
 			</mod:grupo>   
 		</mod:grupo>
 		<br><br>
-		<mod:grupo titulo="Período de Convocação:">
+		<mod:grupo titulo="PerÃ­odo de ConvocaÃ§Ã£o:">
 			<mod:data titulo="De" var="dtini" />
 			<mod:data titulo="a" var="dtfin" />
 		</mod:grupo>
@@ -47,20 +47,20 @@
 					</c:when>
 					<c:otherwise>
 					    A PRESIDENTE
-					</c:otherwise></c:choose> DO TRIBUNAL REGIONAL FEDERAL DA 2ª REGIÃO, no uso de suas atribuições, RESOLVE:<br><br>
+					</c:otherwise></c:choose> DO TRIBUNAL REGIONAL FEDERAL DA 2Âª REGIÃƒO, no uso de suas atribuiÃ§Ãµes, RESOLVE:<br><br>
 			CONVOCAR 
 		<c:choose>
 			<c:when test="${pessoa_subst.sexo == 'M'}">
-						o Excelentíssimo Juiz Federal
+						o ExcelentÃ­ssimo Juiz Federal
 					</c:when>
 					<c:otherwise>
-					    a Excelentíssima Juíza Federal
+					    a ExcelentÃ­ssima JuÃ­za Federal
 					</c:otherwise></c:choose>
 		da
     	${pessoa_subst.lotacao.descricao}, 
 			<c:choose>
 				<c:when test="${pessoa_subst.sexo == 'M'}">Dr.</c:when>
-				<c:otherwise>Drª.</c:otherwise>
+				<c:otherwise>DrÂª.</c:otherwise>
 			</c:choose>	
     	${ pessoa_subst.nomePessoa}, para, 
 			
@@ -69,14 +69,14 @@
 				<c:otherwise>sem</c:otherwise>
 			</c:choose>
 			
-			prejuizo de sua jurisdição, compor o quorum deste Tribunal, no período de ${dtini} a ${dtfin}, 
+			prejuizo de sua jurisdiÃ§Ã£o, compor o quorum deste Tribunal, no perÃ­odo de ${dtini} a ${dtfin}, 
 			em virtude de ${motiv} 
 			<c:choose>
-				<c:when test="${pessoa_titular.sexo == 'M'}">do Excelentíssimo Desembargador Federal </c:when>
-				<c:otherwise>da Excelentíssima Desembargadora Federal </c:otherwise>
+				<c:when test="${pessoa_titular.sexo == 'M'}">do ExcelentÃ­ssimo Desembargador Federal </c:when>
+				<c:otherwise>da ExcelentÃ­ssima Desembargadora Federal </c:otherwise>
 			</c:choose>	
-    		${ pessoa_titular.nomePessoa} , nos termos do artigo 48, inciso I, do Regimento Interno desta Corte c/c artigo 1º, inciso I, da Resolução nº 51/2009, do 
-			Conselho da Justiça Federal. 
+    		${ pessoa_titular.nomePessoa} , nos termos do artigo 48, inciso I, do Regimento Interno desta Corte c/c artigo 1Âº, inciso I, da ResoluÃ§Ã£o nÂº 51/2009, do 
+			Conselho da JustiÃ§a Federal. 
 		</mod:valor>
 		</mod:documento>
 </mod:modelo>

@@ -18,19 +18,12 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.hibernate.ext;
 
-import java.text.SimpleDateFormat;
-
-import org.hibernate.Query;
-
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class MontadorQuery implements IMontadorQuery {
 
-	public String montaQueryConsultaporFiltro(final IExMobilDaoFiltro flt,
-			DpPessoa titular, DpLotacao lotaTitular, boolean apenasCount) {
+	public String montaQueryConsultaporFiltro(final IExMobilDaoFiltro flt, boolean apenasCount) {
 
 		StringBuffer sbf = new StringBuffer();
 
@@ -118,13 +111,13 @@ public class MontadorQuery implements IMontadorQuery {
 		if (flt.getDtDoc() != null) {
 			sbf.append(" and doc.dtDoc >= to_date(");
 			sbf.append(":dtDoc");
-			sbf.append(", 'dd/mm/yyyy')");
+			sbf.append(", 'dd/mm/yyyy HH24:MI:SS')");
 		}
 
 		if (flt.getDtDocFinal() != null) {
 			sbf.append(" and doc.dtDoc <= to_date(");
 			sbf.append(":dtDocFinal");
-			sbf.append(", 'dd/mm/yyyy')");
+			sbf.append(", 'dd/mm/yyyy HH24:MI:SS')");
 		}
 
 		if (flt.getNumAntigoDoc() != null
@@ -201,7 +194,7 @@ public class MontadorQuery implements IMontadorQuery {
 	}
 
 	public void setMontadorPrincipal(IMontadorQuery montadorQueryPrincipal) {
-		// Este médodo não faz nada. É utilizado apenas para a extensão da busca
+		// Este mÃ©dodo nÃ£o faz nada. Ã‰ utilizado apenas para a extensÃ£o da busca
 		// textual do SIGA.
 	}
 }

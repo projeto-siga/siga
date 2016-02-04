@@ -35,13 +35,16 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
-@Table(name = "CP_FERIADO", schema="CORPORATIVO")
+@Table(name = "CP_FERIADO", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpFeriado extends AbstractCpFeriado implements Serializable,
 		Selecionavel {
+	
+	public static final ActiveRecord<CpFeriado> AR = new ActiveRecord<>(CpFeriado.class);
 
 	public String getDescricao() {
 		return getDscFeriado();
@@ -102,7 +105,7 @@ public class CpFeriado extends AbstractCpFeriado implements Serializable,
 	 * 
 	 * if (calInicio.get(Calendar.YEAR) == calFim.get(Calendar.YEAR)) return
 	 * comparaSemAno(calParam, calInicio) <= 0 && comparaSemAno(calParam,
-	 * calFim) >= 0; // ExceÁ„o(else): recesso else return
+	 * calFim) >= 0; // Exce√ß√£o(else): recesso else return
 	 * comparaSemAno(calParam, calInicio) <= 0 || comparaSemAno(calParam,
 	 * calFim) >= 0; }
 	 * 

@@ -9,14 +9,14 @@
 	<mod:entrevista>
 
 		<mod:grupo titulo="Lote de Documentos Digitalizados">	
-			<mod:lotacao titulo="Lotação" var="lotacao" reler="sim" />		
+			<mod:lotacao titulo="LotaÃ§Ã£o" var="lotacao" reler="sim" />		
 		</mod:grupo>
 
 
 		<mod:grupo>
 			
 			<mod:selecao titulo="Tipo de Documento"
-			var="tipoPeticao" opcoes="Petição Inicial;Petição Intercorrente;Expediente;Outros" />
+			var="tipoPeticao" opcoes="PetiÃ§Ã£o Inicial;PetiÃ§Ã£o Intercorrente;Expediente;Outros" />
 			<mod:selecao var="quantidadeProcessos"
 				titulo="Quantidade de processos"
 				opcoes="0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;33;34;35;36;37;38;39;40"
@@ -89,9 +89,9 @@
 			<table width="100%" cellpadding="3" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse">
 				<tr>
 					<td width="15%" align="center" colspan="1" style="border-collapse: collapse; border-color: black;">ITEM</td>
-					<td width="35%" align="center" colspan="1" style="border-collapse: collapse; border-color: black;">Nº PROCESSO</td>
+					<td width="35%" align="center" colspan="1" style="border-collapse: collapse; border-color: black;">NÂº PROCESSO</td>
 					<td width="15%" align="center" colspan="1" style="border-collapse: collapse; border-color: black;">ITEM</td>
-					<td width="35%" align="center" colspan="1" style="border-collapse: collapse; border-color: black;">Nº PROCESSO</td>
+					<td width="35%" align="center" colspan="1" style="border-collapse: collapse; border-color: black;">NÂº PROCESSO</td>
 				</tr> 
 			</table>
 			

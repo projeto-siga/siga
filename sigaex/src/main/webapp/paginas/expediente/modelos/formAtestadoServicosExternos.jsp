@@ -8,8 +8,8 @@
 			<mod:lotacao titulo="Unidade Organizacional" var="lotacao"/>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:selecao titulo="Mês de competência" var="mes"
-				opcoes="Janeiro;Fevereiro;Março;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro" />
+			<mod:selecao titulo="MÃªs de competÃªncia" var="mes"
+				opcoes="Janeiro;Fevereiro;MarÃ§o;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro" />
 		</mod:grupo>
 
 		<mod:grupo titulo="Dados dos Analistas">
@@ -18,13 +18,13 @@
 			<br/>
 			<c:forEach var="i" begin="1" end="${totalAnalistas}">
 				<mod:grupo>
-					<mod:pessoa titulo="Matrícula" var="analista${i}"/>
+					<mod:pessoa titulo="MatrÃ­cula" var="analista${i}"/>
 				</mod:grupo>
 				<mod:grupo>
 					<mod:texto titulo="Quantidade de dias" var="qtd${i}" largura="5" />
 				</mod:grupo>
 				<mod:grupo>
-					<mod:memo titulo="OBSERVAÇÕES (licenças, plantões e outros)" var="obs${i}" colunas="80" linhas="3"/>
+					<mod:memo titulo="OBSERVAÃ‡Ã•ES (licenÃ§as, plantÃµes e outros)" var="obs${i}" colunas="80" linhas="3"/>
 				</mod:grupo>
 				<br />
 			</c:forEach>	
@@ -54,7 +54,7 @@
 				<br/><br/>
 					<table width="100%">
 						<tr>
-							<td align="center"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">ATESTADO DE SERVIÇOS EXTERNOS <br /><br />N&ordm; ${doc.codigo}</p></td>
+							<td align="center"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">ATESTADO DE SERVIÃ‡OS EXTERNOS <br /><br />N&ordm; ${doc.codigo}</p></td>
 						</tr>
 					</table>
 				</td>

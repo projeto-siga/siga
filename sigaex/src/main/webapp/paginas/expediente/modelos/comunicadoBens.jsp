@@ -11,20 +11,20 @@
 	<mod:entrevista>
 		<br>
 		<mod:grupo>
-			<mod:pessoa titulo="<b>Nome do Destinatário</b>" var="nom" />
+			<mod:pessoa titulo="<b>Nome do DestinatÃ¡rio</b>" var="nom" />
 			<br>
 			<br>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:selecao titulo="<b>Acerto Gramatical da Lotação</b>" var="act"
+			<mod:selecao titulo="<b>Acerto Gramatical da LotaÃ§Ã£o</b>" var="act"
 				opcoes="da;do;de" reler="sim" />
 			<mod:lotacao titulo="<b>Setor</b>" var="set" />
 		</mod:grupo>
 		<br></br>
 		<mod:grupo>
-			<mod:texto titulo="<b>Portaria nº</b>" var="port" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<mod:texto titulo="<b>Portaria nÂº</b>" var="port" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <mod:texto titulo="<b>Ano</b>" var="ano" largura="5" />
-			<mod:texto titulo="<b>Circular nº</b>" var="circular" />
+			<mod:texto titulo="<b>Circular nÂº</b>" var="circular" />
 			<br>
 			<br>
 		</mod:grupo>
@@ -33,9 +33,9 @@
 		<br>
 		<mod:grupo depende="contDependAjax">
 			<c:forEach var="i" begin="1" end="${contitem}">
-				<mod:grupo titulo="Item nº ${i}">
-					<mod:texto titulo="<b>Nº do Patrimônio</b>" var="patri${i}" />
-					<mod:texto titulo="<b>Descrição do Bem</b>" var="des${i}"
+				<mod:grupo titulo="Item nÂº ${i}">
+					<mod:texto titulo="<b>NÂº do PatrimÃ´nio</b>" var="patri${i}" />
+					<mod:texto titulo="<b>DescriÃ§Ã£o do Bem</b>" var="des${i}"
 						largura="60" />
 				</mod:grupo>
 			</c:forEach>
@@ -92,20 +92,20 @@
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<c:choose>
 			<c:when test="${doc.subscritor.sexo == 'M'}">O Presidente</c:when>
 			<c:otherwise>A Presidente</c:otherwise>
-		</c:choose>&nbsp;da Comissão de Inventário Físico Anual de
-		Patrimônio/Exercício&nbsp;${ano}, instituída pela Portaria
-		nº&nbsp;${port} e com base na Circular Nº&nbsp;${circular},
+		</c:choose>&nbsp;da ComissÃ£o de InventÃ¡rio FÃ­sico Anual de
+		PatrimÃ´nio/ExercÃ­cio&nbsp;${ano}, instituÃ­da pela Portaria
+		nÂº&nbsp;${port} e com base na Circular NÂº&nbsp;${circular},
 		comunica expressamente&nbsp;<c:choose>
 			<c:when test="${pessoa_nome.sexo=='M'}">ao Sr</c:when>
-			<c:otherwise>à Srª</c:otherwise>
+			<c:otherwise>Ã  SrÂª</c:otherwise>
 		</c:choose>&nbsp;${f:maiusculasEMinusculas(pessoa_nome.nomePessoa)},&nbsp;${act}&nbsp;${f:maiusculasEMinusculas(lotac)},
 		que apresente&nbsp; <c:choose>
 			<c:when test="${contitem=='1'}">o bem</c:when>
 			<c:otherwise>os bens</c:otherwise>
-		</c:choose> abaixo no prazo de 05 (cinco) dias úteis a contar da presente data.<br>
+		</c:choose> abaixo no prazo de 05 (cinco) dias Ãºteis a contar da presente data.<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vale ressaltar
-		que a não-observância do indicado no parágrafo anterior poderá ensejar
-		a abertura de sindicância, na forma dos artigos 143 a 146 da Lei nº
+		que a nÃ£o-observÃ¢ncia do indicado no parÃ¡grafo anterior poderÃ¡ ensejar
+		a abertura de sindicÃ¢ncia, na forma dos artigos 143 a 146 da Lei nÂº
 		8.112/90, de 11/12/1990.<br>
 		<br>
 
@@ -114,9 +114,9 @@
 			bgcolor="#000000">
 			<tr>
 				<td width="5%" bgcolor="#FFFFFF" align="center"><b>Item</b></td>
-				<td width="25%" bgcolor="#FFFFFF" align="center"><b>Nº de
-				Patrimônio</b></td>
-				<td width="70%" bgcolor="#FFFFFF" align="center"><b>Descrição
+				<td width="25%" bgcolor="#FFFFFF" align="center"><b>NÂº de
+				PatrimÃ´nio</b></td>
+				<td width="70%" bgcolor="#FFFFFF" align="center"><b>DescriÃ§Ã£o
 				do Bem</b></td>
 			</tr>
 		</table>

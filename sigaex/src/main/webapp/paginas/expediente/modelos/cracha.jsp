@@ -53,7 +53,7 @@
 					<br/>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
-							<td align="center" width="100%">REQUERIMENTO DE CRACH¡ ${doc.codigo}</td>
+							<td align="center" width="100%">REQUERIMENTO DE CRACH√Å ${doc.codigo}</td>
 						</tr>
 					</table>
 				</td>
@@ -64,7 +64,7 @@
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		Servidor: <b>${requestScope['servidor_pessoaSel.descricao']}</b>
 		<br/>
-		MatrÌcula: <b>${requestScope['servidor_pessoaSel.sigla']}</b>
+		Matr√≠cula: <b>${requestScope['servidor_pessoaSel.sigla']}</b>
 		<br/>
 		Nome Abreviado: <b>${nomeAbreviado }</b>
 		<br/>
@@ -72,11 +72,11 @@
 		</p>
 		<c:if test="${not empty motivo}">
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		Venho requerer a Vossa Senhoria a 2&ordf; via do crach· de identidade funcional pelo seguinte motivo:<br/>
+		Venho requerer a Vossa Senhoria a 2&ordf; via do crach√° de identidade funcional pelo seguinte motivo:<br/>
 		<c:choose>
-		<c:when test="${motivo eq 'Selecione'}"><b>N„o informado/selecionado</b></c:when>
+		<c:when test="${motivo eq 'Selecione'}"><b>N√£o informado/selecionado</b></c:when>
 		<c:when test="${motivo eq 'Outro' and not empty outroMotivo}">${outroMotivo}</c:when>
-		<c:when test="${motivo eq 'Outro' and empty outroMotivo}">N„o informado/selecionado</c:when>
+		<c:when test="${motivo eq 'Outro' and empty outroMotivo}">N√£o informado/selecionado</c:when>
 		<c:otherwise>${motivo}</c:otherwise>
 		</c:choose>
 		
@@ -92,9 +92,9 @@
 		
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		Declaro ainda estar ciente de que a SeÁ„o de Cadastro analisar· a presente solicitaÁ„o e encaminhar· ‡ consideraÁ„o
-		superior se n„o entender cabÌvel de receber isenÁ„o de pagamento, hipÛtese na qual efetuarei o pagamento diretamente
-		na Subsecretaria de OrÁamento e FinanÁas por meio de GRU (no valor expresso na p·gina da SECAD na INTRANET), nos termos
+		Declaro ainda estar ciente de que a Se√ß√£o de Cadastro analisar√° a presente solicita√ß√£o e encaminhar√° √† considera√ß√£o
+		superior se n√£o entender cab√≠vel de receber isen√ß√£o de pagamento, hip√≥tese na qual efetuarei o pagamento diretamente
+		na Subsecretaria de Or√ßamento e Finan√ßas por meio de GRU (no valor expresso na p√°gina da SECAD na INTRANET), nos termos
 		da Portaria n&ordm; 05/2006-GDF.
 		</p>
 		</mod:valor>

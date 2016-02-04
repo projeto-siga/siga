@@ -27,6 +27,8 @@ package br.gov.jfrj.siga.hibernate;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -35,7 +37,9 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
@@ -70,7 +74,9 @@ import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -101,7 +107,6 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
-import br.gov.jfrj.siga.hibernate.ext.MontadorQuery;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.Aguarde;
@@ -116,19 +121,12 @@ public class ExDao extends CpDao {
 
 	private static final Logger log = Logger.getLogger(ExDao.class);
 
-	IMontadorQuery montadorQuery = null;
-
 	public static ExDao getInstance() {
 		return ModeloDao.getInstance(ExDao.class);
 	}
 
 	public ExDao() {
-		try {
-			montadorQuery = (IMontadorQuery) Class.forName(SigaExProperties.getMontadorQuery()).newInstance();
-			montadorQuery.setMontadorPrincipal(new MontadorQuery());
-		} catch (Exception e) {
-			montadorQuery = new MontadorQuery();
-		}
+		
 	}
 
 	public void reindexarVarios(List<ExDocumento> docs, boolean apenasExcluir) throws Exception {
@@ -294,12 +292,12 @@ public class ExDao extends CpDao {
 
 		if (flt.getDtDoc() != null) {
 			query.setString("dtDoc",
-					new SimpleDateFormat("dd/MM/yyyy").format(flt.getDtDoc()));
+					new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(flt.getDtDoc()));
 		}
 
 
 		if (flt.getDtDocFinal() != null) {
-			query.setString("dtDocFinal", new SimpleDateFormat("dd/MM/yyyy")
+			query.setString("dtDocFinal", new SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
 			.format(flt.getDtDocFinal()));
 		}
 
@@ -366,8 +364,11 @@ public class ExDao extends CpDao {
 	public List consultarPorFiltroOtimizado(final ExMobilDaoFiltro flt,
 			final int offset, final int itemPagina, DpPessoa titular,
 			DpLotacao lotaTitular) {
+		
+		IMontadorQuery montadorQuery = carregarPlugin();
+
 		long tempoIni = System.nanoTime();
-		Query query = getSessao().createQuery(montadorQuery.montaQueryConsultaporFiltro(flt, titular, lotaTitular, false));
+		Query query = getSessao().createQuery(montadorQuery.montaQueryConsultaporFiltro(flt, false));
 		preencherParametros(flt, query);
 
 		if (offset > 0) {
@@ -378,15 +379,22 @@ public class ExDao extends CpDao {
 		}
 		List l = query.list();
 		long tempoTotal = System.nanoTime() - tempoIni;
-		System.out.println("consultarPorFiltroOtimizado: " + tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l);
+//		System.out.println("consultarPorFiltroOtimizado: " + tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l);
 		return l;
+	}
+
+	private IMontadorQuery carregarPlugin() {
+		CarregadorPlugin carregador = new CarregadorPlugin();
+		IMontadorQuery montadorQuery = carregador.getMontadorQueryImpl();
+		montadorQuery.setMontadorPrincipal(carregador.getMontadorQueryDefault());
+		return montadorQuery;
 	}
 
 	public Integer consultarQuantidadePorFiltroOtimizado(
 			final ExMobilDaoFiltro flt, DpPessoa titular, DpLotacao lotaTitular) {
 		long tempoIni = System.nanoTime();
-		String s = montadorQuery.montaQueryConsultaporFiltro(flt, titular,
-				lotaTitular, true);
+		IMontadorQuery montadorQuery = carregarPlugin();
+		String s = montadorQuery.montaQueryConsultaporFiltro(flt, true);
 		Query query = getSessao().createQuery(s);
 
 
@@ -395,8 +403,8 @@ public class ExDao extends CpDao {
 
 		Long l = (Long) query.uniqueResult();
 		long tempoTotal = System.nanoTime() - tempoIni;
-		System.out.println("consultarQuantidadePorFiltroOtimizado: "
-				+ tempoTotal / 1000000 + " ms -> " + s + ", resultado: " + l);
+//		System.out.println("consultarQuantidadePorFiltroOtimizado: "
+//				+ tempoTotal / 1000000 + " ms -> " + s + ", resultado: " + l);
 		return l.intValue();
 	}
 
@@ -440,8 +448,8 @@ public class ExDao extends CpDao {
 		long tempoIni = System.nanoTime();
 		Long l = (Long) query.uniqueResult();
 		long tempoTotal = System.nanoTime() - tempoIni;
-		System.out.println("consultarQuantidadePorFiltro: " + tempoTotal
-				/ 1000000 + ", resultado: " + l);
+//		System.out.println("consultarQuantidadePorFiltro: " + tempoTotal
+//				/ 1000000 + ", resultado: " + l);
 		return l.intValue();
 	}
 
@@ -534,8 +542,8 @@ public class ExDao extends CpDao {
 	public Object[] consultarPorTexto(String query, int offset, int itemPagina)
 			throws Exception {
 
-		// Substitui n espa�os brancos seguidos de letra ou n�mero por " +"
-		// As duas linhas abaixo poder�o ser substitu�das por uma
+		// Substitui n espaï¿½os brancos seguidos de letra ou nï¿½mero por " +"
+		// As duas linhas abaixo poderï¿½o ser substituï¿½das por uma
 		// query = "+"+query.replaceAll("(\\s+)", " +");
 		// query = query.replaceAll("\\+\\-", "-");
 
@@ -598,21 +606,21 @@ public class ExDao extends CpDao {
 										ExDocumento.class).getResultSize() == 0)) {
 
 					if (irIndexando) {
-						System.out.println("listarNaoIndexados - indexando "
-								+ doc.getCodigo());
+//						System.out.println("listarNaoIndexados - indexando "
+//								+ doc.getCodigo());
 						indexar(doc);
 					} else {
-						System.out.println("listarNaoIndexados - nao indexar "
-								+ doc.getCodigo());
+//						System.out.println("listarNaoIndexados - nao indexar "
+//								+ doc.getCodigo());
 					}
 				}
 			}
-			System.out.println("listarNaoIndexados - " + firstResult+ " varridos");
+//			System.out.println("listarNaoIndexados - " + firstResult+ " varridos");
 			getSessao().clear();
 		} while (list.size() > 0);
-		System.out.println("listarNaoIndexados - FIM    "
-				+ (System.currentTimeMillis() - tempoIni) / 3600000
-				+ " minutos");
+//		System.out.println("listarNaoIndexados - FIM    "
+//				+ (System.currentTimeMillis() - tempoIni) / 3600000
+//				+ " minutos");
 	}
 
 	public void indexarFila(String path) throws Exception {
@@ -651,7 +659,7 @@ public class ExDao extends CpDao {
 
 	public void indexarTudo(Aguarde aguarde) throws Exception {
 
-		System.out.println("Indexando documentos...");
+//		System.out.println("Indexando documentos...");
 		long inicio = new Date().getTime();
 
 		try {
@@ -663,7 +671,7 @@ public class ExDao extends CpDao {
 			fullTextSession.clear();
 			getSessao().clear();
 		} catch (Throwable t) {
-			// N�o havia documentos a excluir
+			// Nï¿½o havia documentos a excluir
 		}
 
 		final Criteria crit = getSessao().createCriteria(ExDocumento.class);
@@ -685,7 +693,7 @@ public class ExDao extends CpDao {
 				index++;
 				// if (aguarde != null)
 				// aguarde.setMensagem(String.valueOf(index)
-				// + " documentos j� indexados.");
+				// + " documentos jï¿½ indexados.");
 				if (doc.isIndexavel())
 					fullTextSession.index(doc);
 
@@ -698,14 +706,14 @@ public class ExDao extends CpDao {
 			tx.commit();
 			fullTextSession.clear();
 			getSessao().clear();
-			System.out.print(String.valueOf(index)
-					+ " documentos j� indexados. --  -- ");
+//			System.out.print(String.valueOf(index)
+//					+ " documentos jï¿½ indexados. --  -- ");
 		} while (list.size() > 0);
 		//System.gc();
 
 		// fullTextSession.close();
-		System.out.println("Dura��o da indexa��o de documentos: "
-				+ (new Date().getTime() - inicio));
+//		System.out.println("Duraï¿½ï¿½o da indexaï¿½ï¿½o de documentos: "
+//				+ (new Date().getTime() - inicio));
 
 		if (aguarde != null)
 			aguarde.setMensagem(String.valueOf(index));
@@ -714,7 +722,7 @@ public class ExDao extends CpDao {
 
 	public void indexarUltimas(int desde) throws Exception {
 
-		System.out.println("Indexando documentos...");
+//		System.out.println("Indexando documentos...");
 		long inicio = new Date().getTime();
 
 		Calendar cal = Calendar.getInstance();
@@ -738,7 +746,7 @@ public class ExDao extends CpDao {
 		List<ExDocumento> list = crit.list();
 		Transaction tx = fullTextSession.beginTransaction();
 		for (ExDocumento doc : list) {
-			System.out.println(" . " + doc.getIdDoc());
+//			System.out.println(" . " + doc.getIdDoc());
 			fullTextSession.purge(ExDocumento.class, doc);
 			if (doc.isIndexavel())
 				fullTextSession.index(doc);
@@ -749,8 +757,8 @@ public class ExDao extends CpDao {
 		//System.gc();
 
 		// fullTextSession.close();
-		System.out.println("Dura��o da indexa��o de documentos: "
-				+ (new Date().getTime() - inicio));
+//		System.out.println("Duraï¿½ï¿½o da indexaï¿½ï¿½o de documentos: "
+//				+ (new Date().getTime() - inicio));
 
 	}
 
@@ -829,7 +837,7 @@ public class ExDao extends CpDao {
 			fullTextSession.purge(ExDocumento.class, entidade.getIdDoc());
 			tx.commit();
 		} catch (Throwable t) {
-			// N�o havia aquela movimenta��o no �ndice
+			// Nï¿½o havia aquela movimentaï¿½ï¿½o no ï¿½ndice
 		}
 	}
 
@@ -874,7 +882,7 @@ public class ExDao extends CpDao {
 					+ " GROUP BY EST.ID_ESTADO_DOC, EST.DESC_ESTADO_DOC,  EST.ORDEM_ESTADO_DOC "
 					+ " "
 					+ " UNION "
-					+ " SELECT -1 ID, 'Em Tr�nsito' DESCR, 3, COUNT(1) C1, 0 C2 "
+					+ " SELECT -1 ID, 'Em Trï¿½nsito' DESCR, 3, COUNT(1) C1, 0 C2 "
 					+ " FROM EX_ESTADO_DOC EST, DP_PESSOA_SIN PES, EX_MOVIMENTACAO MOVR "
 					+ " WHERE "
 					+ " ID_PESSOA_INICIAL = ? "
@@ -887,7 +895,7 @@ public class ExDao extends CpDao {
 					+ " GROUP BY EST.ID_ESTADO_DOC, EST.DESC_ESTADO_DOC,  EST.ORDEM_ESTADO_DOC "
 					+ " "
 					+ " UNION "
-					+ " SELECT -3 ID, 'Em Tr�nsito Eletr�nico' DESCR, 4, COUNT(1) C1, 0 C2 "
+					+ " SELECT -3 ID, 'Em Trï¿½nsito Eletrï¿½nico' DESCR, 4, COUNT(1) C1, 0 C2 "
 					+ " FROM EX_ESTADO_DOC EST, DP_PESSOA_SIN PES, EX_MOVIMENTACAO MOVR, EX_DOCUMENTO DOC "
 					+ " WHERE "
 					+ " ID_PESSOA_INICIAL = ? "
@@ -940,7 +948,7 @@ public class ExDao extends CpDao {
 					+ " GROUP BY EST.ID_ESTADO_DOC, EST.DESC_ESTADO_DOC,  EST.ORDEM_ESTADO_DOC "
 					+ " "
 					+ " UNION "
-					+ " SELECT -1 ID, 'Em Tr�nsito' DESCR, 3, 0 C1, COUNT(1) C2 "
+					+ " SELECT -1 ID, 'Em Trï¿½nsito' DESCR, 3, 0 C1, COUNT(1) C2 "
 					+ " FROM EX_ESTADO_DOC EST, DP_LOTACAO_SIN LOT, EX_MOVIMENTACAO MOVR "
 					+ " WHERE "
 					+ " ID_LOTACAO_INI = ? "
@@ -953,7 +961,7 @@ public class ExDao extends CpDao {
 					+ " GROUP BY EST.ID_ESTADO_DOC, EST.DESC_ESTADO_DOC,  EST.ORDEM_ESTADO_DOC "
 					+ " "
 					+ " UNION "
-					+ " SELECT -3 ID, 'Em Tr�nsito Eletr�nico' DESCR, 4, 0 C1, COUNT(1) C2 "
+					+ " SELECT -3 ID, 'Em Trï¿½nsito Eletrï¿½nico' DESCR, 4, 0 C1, COUNT(1) C2 "
 					+ " FROM EX_ESTADO_DOC EST, DP_LOTACAO_SIN LOT, EX_MOVIMENTACAO MOVR, EX_DOCUMENTO DOC "
 					+ " WHERE "
 					+ " ID_LOTACAO_INI = ? "
@@ -1026,7 +1034,7 @@ public class ExDao extends CpDao {
 
 	/**
 	 * Le da tabela o campo do tipo BLOB e converte para um array de bytes.
-	 * m�todo n�o usa as facilidade do HIBERNATE em virtude da ausencia de
+	 * mï¿½todo nï¿½o usa as facilidade do HIBERNATE em virtude da ausencia de
 	 * suporte para estes campos.
 	 */
 	// public ExModelo consultarConteudoBlob(final ExModelo modelo)
@@ -1067,12 +1075,12 @@ public class ExDao extends CpDao {
 
 	/**
 	 * Grava na tabela Ex_Modelo o conteudo do array de byte como um blob. O
-	 * m�todo n�o usa as facilidade do HIBERNATE em virtude da ausencia de
+	 * mï¿½todo nï¿½o usa as facilidade do HIBERNATE em virtude da ausencia de
 	 * suporte para estes campos.
 	 * 
 	 * @param modelo
 	 *            - O objeto da Classe contendo um array de bytes para gravar.
-	 * @return O objeto ap�s a grava��o
+	 * @return O objeto apï¿½s a gravaï¿½ï¿½o
 	 * @throws SQLException
 	 * @throws AplicacaoException
 	 */
@@ -1091,7 +1099,7 @@ public class ExDao extends CpDao {
 	// final int i = psBlob.executeUpdate();
 	// if (i < 1)
 	// throw new AplicacaoException(
-	// "Ocorreu ao inserir Blob em Documento " + "que n�o existe");
+	// "Ocorreu ao inserir Blob em Documento " + "que nï¿½o existe");
 	// psBlob.close();
 	// psBlob = conn.prepareStatement(cmd.toString());
 	// psBlob.setLong(1, modelo.getIdMod());
@@ -1152,10 +1160,8 @@ public class ExDao extends CpDao {
 					final ResultSet rset = psBlob.executeQuery();
 					boolean b = rset.next();
 					final Blob blob = rset.getBlob("PREENCHIMENTO_BLOB");
-					final OutputStream blobOutputStream = blob.setBinaryStream(0);
-					try {
+					try (OutputStream blobOutputStream = blob.setBinaryStream(0)) {
 						blobOutputStream.write(exPreenchimento.getPreenchimentoBA());
-						blobOutputStream.close();
 					} catch (final IOException e) {
 						throw new AplicacaoException(
 								"Ocorreu um erro ao inserir o blob", 0, e);
@@ -1248,10 +1254,8 @@ public class ExDao extends CpDao {
 				final ResultSet rset = psBlob.executeQuery();
 				boolean b = rset.next();
 				final Blob blob = rset.getBlob("PREENCHIMENTO_BLOB");
-				final OutputStream blobOutputStream = blob.setBinaryStream(0);
-				try {
+				try (OutputStream blobOutputStream = blob.setBinaryStream(0)) {
 					blobOutputStream.write(exPreenchimento.getPreenchimentoBA());
-					blobOutputStream.close();
 				} catch (final IOException e) {
 					throw new AplicacaoException("Ocorreu um erro ao inserir o blob",
 							0, e);
@@ -1274,7 +1278,7 @@ public class ExDao extends CpDao {
 
 		StringBuffer sbf = new StringBuffer();
 
-		sbf.append("select * from siga.ex_configuracao ex inner join corporativo.cp_configuracao cp on ex.id_configuracao_ex = cp.id_configuracao ");
+		sbf.append("select * from siga.ex_configuracao ex inner join " + "CORPORATIVO" + ".cp_configuracao cp on ex.id_configuracao_ex = cp.id_configuracao ");
 
 		sbf.append("" + "where 1 = 1");
 
@@ -1315,16 +1319,16 @@ public class ExDao extends CpDao {
 		if (orgao != null && orgao.getId() != null && orgao.getId() != 0) {
 			sbf.append(" and (cp.id_orgao_usu = ");
 			sbf.append(orgao.getId());
-			sbf.append(" or cp.id_lotacao in (select id_lotacao from corporativo.dp_lotacao lot where lot.id_orgao_usu= ");
+			sbf.append(" or cp.id_lotacao in (select id_lotacao from " + "CORPORATIVO" + ".dp_lotacao lot where lot.id_orgao_usu= ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
-			sbf.append(" or cp.id_pessoa in (select id_pessoa from corporativo.dp_pessoa pes where pes.id_orgao_usu = ");
+			sbf.append(" or cp.id_pessoa in (select id_pessoa from " + "CORPORATIVO" + ".dp_pessoa pes where pes.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
-			sbf.append(" or cp.id_cargo in (select id_cargo from corporativo.dp_cargo cr where cr.id_orgao_usu = ");
+			sbf.append(" or cp.id_cargo in (select id_cargo from " + "CORPORATIVO" + ".dp_cargo cr where cr.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
-			sbf.append(" or cp.id_funcao_confianca in (select id_funcao_confianca from corporativo.dp_funcao_confianca fc where fc.id_orgao_usu = ");
+			sbf.append(" or cp.id_funcao_confianca in (select id_funcao_confianca from " + "CORPORATIVO" + ".dp_funcao_confianca fc where fc.id_orgao_usu = ");
 			sbf.append(orgao.getId());
 			sbf.append(")");
 			sbf.append(" or (cp.id_orgao_usu is null and cp.id_lotacao is null and cp.id_pessoa is null and cp.id_cargo is null and cp.id_funcao_confianca is null");
@@ -1413,20 +1417,38 @@ public class ExDao extends CpDao {
 
 	public int consultarQuantidade(final ExClassificacaoDaoFiltro flt) {
 		String descrClassificacao = "";
+
+		MascaraUtil m = MascaraUtil.getInstance();
+
 		if (flt.getDescricao() != null) {
-			descrClassificacao = flt.getDescricao();
+			String d = flt.getDescricao();
+			if (d.length() > 0 && m.isCodificacao(d)) {
+				descrClassificacao = m.formatar(d);
+			} else {
+				descrClassificacao = d;
+			}
 		}
 
 		final Query query = getSessao().getNamedQuery(
 				"consultarQuantidadeExClassificacao");
 
+		if (flt.getSigla() == null || flt.getSigla().equals("")) {
+			query.setString("mascara", MascaraUtil.getInstance()
+					.getMscTodosDoMaiorNivel());
+		} else {
+			query.setString(
+					"mascara",
+					MascaraUtil.getInstance().getMscFilho(
+							flt.getSigla().toString(), true));
+		}
+
 		query.setString("descrClassificacao", descrClassificacao.toUpperCase()
 				.replace(' ', '%'));
-		query.setString("mascara", MascaraUtil.getInstance()
-				.getMscTodosDoMaiorNivel());
+		query.setString("descrClassificacaoSemAcento", Texto
+				.removeAcentoMaiusculas(descrClassificacao).replace(' ', '%'));
 
 		final int l = ((Long) query.uniqueResult()).intValue();
-		return l;
+		return l;		
 	}
 
 	public ExClassificacao consultarPorSigla(final ExClassificacao o) {
@@ -1485,7 +1507,7 @@ public class ExDao extends CpDao {
 
 			return (ExTpDocPublicacao) query.list().get(0);
 		} catch (final Throwable t) {
-			// engolindo a exce��o. Melhorar isso.
+			// engolindo a exceï¿½ï¿½o. Melhorar isso.
 			return null;
 		}
 	}
@@ -1644,9 +1666,9 @@ public class ExDao extends CpDao {
 	public List<ExMovimentacao> consultarMovimentacoes(DpPessoa pes, Date dt) {
 
 		if (pes == null || dt == null) {
-			log.error("[consultarMovimentacoes] - Os dados recebidos para realizar a consulta de movimenta��es n�o podem ser nulos.");
+			log.error("[consultarMovimentacoes] - Os dados recebidos para realizar a consulta de movimentaï¿½ï¿½es nï¿½o podem ser nulos.");
 			throw new IllegalStateException(
-					"A pessoa e/ou a data informada para a realiza��o da consulta � nula.");
+					"A pessoa e/ou a data informada para a realizaï¿½ï¿½o da consulta ï¿½ nula.");
 		}
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -1663,22 +1685,27 @@ public class ExDao extends CpDao {
 		return null;
 	}
 
-	public List<ExModelo> listarTodosModelosOrdenarPorNome(String script)
-			throws Exception {
+	public List<ExModelo> listarTodosModelosOrdenarPorNome(String script) {
 		final Query q = getSessao()
 				.createQuery(
 						"select m from ExModelo m left join m.exFormaDocumento as f where m.hisAtivo = 1"
 								+ "order by f.descrFormaDoc, m.nmMod");
-		List<ExModelo> l = new ArrayList<ExModelo>();
-		for (ExModelo mod : (List<ExModelo>) q.list())
+		List<ExModelo> l = new ArrayList<ExModelo>();		
+		for (ExModelo mod : (List<ExModelo>) q.list()) {
 			if (script != null && script.trim().length() != 0) {
-				if ("template/freemarker".equals(mod.getConteudoTpBlob())
-						&& mod.getConteudoBlobMod2() != null
-						&& (new String(mod.getConteudoBlobMod2(), "utf-8"))
-						.contains(script))
-					l.add(mod);
+				if(mod.getConteudoBlobMod2() != null) {
+					String conteudo;
+					try {
+						conteudo = new String(mod.getConteudoBlobMod2(), "utf-8");
+					} catch (UnsupportedEncodingException e) {
+						conteudo = new String(mod.getConteudoBlobMod2());
+					}
+					if ("template/freemarker".equals(mod.getConteudoTpBlob())&& (conteudo.contains(script)))
+						l.add(mod);
+				}
 			} else
 				l.add(mod);
+		}
 		return l;
 	}
 
@@ -1984,6 +2011,11 @@ public class ExDao extends CpDao {
 
 	public List<ExPapel> listarExPapeis() {
 		return findByCriteria(ExPapel.class);
+	}
+
+	public List<CpMarcador> listarCpMarcadoresGerais() {
+		CpTipoMarcador marcador = consultar(CpTipoMarcador.TIPO_MARCADOR_GERAL, CpTipoMarcador.class, false);
+		return findByCriteria(CpMarcador.class, Restrictions.eq("cpTipoMarcador", marcador));
 	}
 
 	public List<ExTpDocPublicacao> listarExTiposDocPublicacao() {

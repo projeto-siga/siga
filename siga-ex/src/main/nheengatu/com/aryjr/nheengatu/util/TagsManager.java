@@ -251,7 +251,7 @@ public class TagsManager {
  * *** empty log message ***
  *
  * Revision 1.5  2006/07/05 16:00:44  nts
- * Refatorando para melhorar qualidade do código
+ * Refatorando para melhorar qualidade do cÃ³digo
  *
  * Revision 1.4  2006/05/23 19:35:06  tah
  * *** empty log message ***

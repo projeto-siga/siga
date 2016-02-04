@@ -35,14 +35,17 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.xml.bind.JAXBException;
 
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.util.CronologiaComparator;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+
 import org.jboss.logging.Logger;
 
 @Entity
@@ -58,9 +61,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	private static final Logger log = Logger.getLogger(ExMobil.class);
 
 	/**
-	 * Retorna A penúltima movimentação não cancelada de um Mobil.
+	 * Retorna A penÃºltima movimentaÃ§Ã£o nÃ£o cancelada de um Mobil.
 	 * 
-	 * @return Penúltima movimentação não cancelada de um Mobil.
+	 * @return PenÃºltima movimentaÃ§Ã£o nÃ£o cancelada de um Mobil.
 	 * 
 	 */
 	public ExMovimentacao getPenultimaMovimentacaoNaoCancelada() {
@@ -85,13 +88,13 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna as movimentações de um Mobil de acordo com um tipo específico de
-	 * movimentação.
+	 * Retorna as movimentaÃ§Ãµes de um Mobil de acordo com um tipo especÃ­fico de
+	 * movimentaÃ§Ã£o.
 	 * 
 	 * @param tpMov
 	 * 
-	 * @return Lista de movimentações de um Mobil de acordo com um tipo
-	 *         específico de movimentação.
+	 * @return Lista de movimentaÃ§Ãµes de um Mobil de acordo com um tipo
+	 *         especÃ­fico de movimentaÃ§Ã£o.
 	 * 
 	 */
 	public List<ExMovimentacao> getMovimentacoesPorTipo(long tpMov) {
@@ -108,15 +111,15 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se um Mobil é do tipo Geral.
+	 * Verifica se um Mobil Ã© do tipo Geral.
 	 * 
-	 * @return Verdadeiro se um Mobil for do tipo Geral e Falso caso contrário.
+	 * @return Verdadeiro se um Mobil for do tipo Geral e Falso caso contrÃ¡rio.
 	 * 
 	 */
 	public boolean isGeral() {
 		/*
 		 * bruno.lacerda@avantiprima.com.br - 30/07/2012 Verifica se
-		 * getExTipoMobil() é diferente de nulo antes de chamar o método
+		 * getExTipoMobil() Ã© diferente de nulo antes de chamar o mÃ©todo
 		 * getIdTipoMobil() do objeto
 		 */
 		// return getExTipoMobil().getIdTipoMobil() ==
@@ -126,15 +129,15 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se um Mobil é do tipo Via.
+	 * Verifica se um Mobil Ã© do tipo Via.
 	 * 
-	 * @return Verdadeiro se um Mobil for do tipo Via e Falso caso contrário.
+	 * @return Verdadeiro se um Mobil for do tipo Via e Falso caso contrÃ¡rio.
 	 * 
 	 */
 	public boolean isVia() {
 		/*
 		 * bruno.lacerda@avantiprima.com.br - 30/07/2012 Verifica se
-		 * getExTipoMobil() é diferente de nulo antes de chamar o método
+		 * getExTipoMobil() Ã© diferente de nulo antes de chamar o mÃ©todo
 		 * getIdTipoMobil() do objeto
 		 */
 		// return getExTipoMobil().getIdTipoMobil() ==
@@ -144,15 +147,15 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se um Mobil é do tipo Volume.
+	 * Verifica se um Mobil Ã© do tipo Volume.
 	 * 
-	 * @return Verdadeiro se um Mobil for do tipo Volume e Falso caso contrário.
+	 * @return Verdadeiro se um Mobil for do tipo Volume e Falso caso contrÃ¡rio.
 	 * 
 	 */
 	public boolean isVolume() {
 		/*
 		 * bruno.lacerda@avantiprima.com.br - 30/07/2012 Verifica se
-		 * getExTipoMobil() é diferente de nulo antes de chamar o método
+		 * getExTipoMobil() Ã© diferente de nulo antes de chamar o mÃ©todo
 		 * getIdTipoMobil() do objeto
 		 */
 		// return getExTipoMobil().getIdTipoMobil() ==
@@ -162,7 +165,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se um Mobil é do tipo Geral de um doc do tipo Processo.
+	 * Verifica se um Mobil Ã© do tipo Geral de um doc do tipo Processo.
 	 * 
 	 * @return Verdadeiro ou Falso.
 	 * 
@@ -172,7 +175,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se um Mobil é do tipo Geral de um doc do tipo Expediente.
+	 * Verifica se um Mobil Ã© do tipo Geral de um doc do tipo Expediente.
 	 * 
 	 * @return Verdadeiro ou Falso.
 	 * 
@@ -182,15 +185,15 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se um Mobil está Cancelado.
+	 * Verifica se um Mobil estÃ¡ Cancelado.
 	 * 
-	 * @return Verdadeiro se um Mobil está Cancelado e Falso caso contrário.
+	 * @return Verdadeiro se um Mobil estÃ¡ Cancelado e Falso caso contrÃ¡rio.
 	 * 
 	 */
 	public boolean isCancelada() {
 		/*
 		 * bruno.lacerda@avantiprima.com.br - 30/07/2012 Verifica se
-		 * getExTipoMobil() é diferente de nulo antes de chamar o método
+		 * getExTipoMobil() Ã© diferente de nulo antes de chamar o mÃ©todo
 		 * getIdTipoMobil() do objeto
 		 */
 		// return (getExTipoMobil().getIdTipoMobil() ==
@@ -203,10 +206,10 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a descrição do documento relacionado ao Mobil como um link em
+	 * Retorna a descriÃ§Ã£o do documento relacionado ao Mobil como um link em
 	 * html.
 	 * 
-	 * @return A descrição do documento relacionado ao Mobil como um link em
+	 * @return A descriÃ§Ã£o do documento relacionado ao Mobil como um link em
 	 *         html.
 	 * 
 	 */
@@ -218,7 +221,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		final String winProp = "'width=" + popW + ",height=" + popH
 				+ ",left='+" + winleft + "+',top='+" + winUp
 				+ "+',scrollbars=yes,resizable'";
-		String s = "<a href=\"javascript:void(0)\" onclick=\"window.open('/sigaex/expediente/doc/exibir.action?popup=true&idmob="
+		String s = "<a href=\"javascript:void(0)\" onclick=\"window.open('/sigaex/app/expediente/doc/exibir?popup=true&idmob="
 				+ getIdMobil();
 
 		String descricaoCurta = null;
@@ -229,12 +232,12 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 				descricaoCurta = exDocumento.getDescrCurta();
 			} catch (Exception e) {
 				log.warn(
-						"[getDescricao] - Não foi possível recuperar a descrição curta do Documento. Retornando descrição em branco.",
+						"[getDescricao] - NÃ£o foi possÃ­vel recuperar a descriÃ§Ã£o curta do Documento. Retornando descriÃ§Ã£o em branco.",
 						e);
 				descricaoCurta = "";
 			}
 		} else {
-			log.warn("[getDescricao] - O Documento informado é nulo.");
+			log.warn("[getDescricao] - O Documento informado Ã© nulo.");
 		}
 
 		if (descricaoCurta == null) {
@@ -247,9 +250,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a sigla mais a descrição do documento relacionado ao Mobil.
+	 * Retorna a sigla mais a descriÃ§Ã£o do documento relacionado ao Mobil.
 	 * 
-	 * @return A sigla mais a descrição do documento relacionado ao Mobil.
+	 * @return A sigla mais a descriÃ§Ã£o do documento relacionado ao Mobil.
 	 * 
 	 */
 	public String getSiglaEDescricaoCompleta() {
@@ -258,11 +261,11 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a descrição do tipo de documento mais o código do documento e a
-	 * descrição do documento.
+	 * Retorna a descriÃ§Ã£o do tipo de documento mais o cÃ³digo do documento e a
+	 * descriÃ§Ã£o do documento.
 	 * 
-	 * @return A descrição do tipo de documento mais o código do documento e a
-	 *         descrição do documento.
+	 * @return A descriÃ§Ã£o do tipo de documento mais o cÃ³digo do documento e a
+	 *         descriÃ§Ã£o do documento.
 	 * 
 	 */
 	public String getNomeCompleto() {
@@ -274,20 +277,20 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna o número de sequência, a descrição de tipo de mobil mais a
-	 * descrição do tipo de destinação.
+	 * Retorna o nÃºmero de sequÃªncia, a descriÃ§Ã£o de tipo de mobil mais a
+	 * descriÃ§Ã£o do tipo de destinaÃ§Ã£o.
 	 * 
-	 * @return O número de sequência, a descrição de tipo de mobil mais a
-	 *         descrição do tipo de destinação.
+	 * @return O nÃºmero de sequÃªncia, a descriÃ§Ã£o de tipo de mobil mais a
+	 *         descriÃ§Ã£o do tipo de destinaÃ§Ã£o.
 	 */
 	public String getDescricaoCompleta() {
 		return getDescricaoCompleta(true);
 	}
 
 	/**
-	 * Retorna o número de sequência e a descrição de tipo de mobil
+	 * Retorna o nÃºmero de sequÃªncia e a descriÃ§Ã£o de tipo de mobil
 	 * 
-	 * @return O número de sequência, a descrição de tipo de mobil
+	 * @return O nÃºmero de sequÃªncia, a descriÃ§Ã£o de tipo de mobil
 	 */
 	public String getDescricaoCompletaSemDestinacao() {
 		return getDescricaoCompleta(false);
@@ -332,6 +335,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
 		for (CpOrgaoUsuario ou : ExDao.getInstance().listarOrgaosUsuarios()) {
 			mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
+			mapAcronimo.put(ou.getSiglaOrgaoUsu(), ou);
 		}
 		String acronimos = "";
 		for (String s : mapAcronimo.keySet()) {
@@ -340,9 +344,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 
 		final Pattern p2 = Pattern.compile("^TMP-?([0-9]{1,7})");
 		final Pattern p1 = Pattern
-				.compile("^([A-Za-z0-9]{2}"
+				.compile("^(?<orgao>"
 						+ acronimos
-						+ ")?-?([A-Za-z]{3})?-?(?:([0-9]{4})/?)??([0-9]{1,5})(\\.?[0-9]{1,3})?(?:((?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|((?:-?V[0-9]{1,2})))?$");
+						+ ")?-?(?<especie>[A-Za-z]{3})?-?(?:(?:(?<ano>20[0-9]{2})/?)(?<numero>[0-9]{1,5})(?<subnumero>\\.?[0-9]{2})??|(?<sonumero>[0-9]{1,5}))(?:(?<via>(?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|(?:-?V(?<volume>[0-9]{1,2})))?$");
 		final Matcher m2 = p2.matcher(sigla);
 		final Matcher m1 = p1.matcher(sigla);
 
@@ -358,15 +362,23 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 
 		if (m1.find()) {
-
-			if (m1.group(1) != null) {
+			String orgao = m1.group("orgao");
+			String especie = m1.group("especie");
+			String ano = m1.group("ano");
+			String numero = m1.group("numero");
+			String subnumero = m1.group("subnumero");
+			String sonumero = m1.group("sonumero");
+			String via = m1.group("via");
+			String volume = m1.group("volume");
+			
+			if (orgao != null) {
 				try {
-					if (mapAcronimo.containsKey(m1.group(1))) {
+					if (mapAcronimo.containsKey(orgao)) {
 						getExDocumento().setOrgaoUsuario(
-								mapAcronimo.get(m1.group(1)));
+								mapAcronimo.get(orgao));
 					} else {
 						CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
-						orgaoUsuario.setSiglaOrgaoUsu(m1.group(1));
+						orgaoUsuario.setSiglaOrgaoUsu(orgao);
 
 						orgaoUsuario = ExDao.getInstance().consultarPorSigla(
 								orgaoUsuario);
@@ -378,10 +390,10 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 				}
 			}
 
-			if (m1.group(2) != null) {
+			if (especie != null) {
 				try {
 					ExFormaDocumento formaDoc = new ExFormaDocumento();
-					formaDoc.setSiglaFormaDoc(m1.group(2));
+					formaDoc.setSiglaFormaDoc(especie);
 					formaDoc = ExDao.getInstance().consultarPorSigla(formaDoc);
 					if (formaDoc != null)
 						getExDocumento().setExFormaDocumento(formaDoc);
@@ -390,33 +402,37 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 				}
 			}
 
-			if (m1.group(3) != null)
-				getExDocumento().setAnoEmissao(Long.parseLong(m1.group(3)));
+			if (ano != null)
+				getExDocumento().setAnoEmissao(Long.parseLong(ano));
 			// else {
 			// Date dt = new Date();
 			// getExDocumento().setAnoEmissao((long) dt.getYear());
 			// }
-			if (m1.group(4) != null)
-				getExDocumento().setNumExpediente(Long.parseLong(m1.group(4)));
+			if (numero != null)
+				getExDocumento().setNumExpediente(Long.parseLong(numero));
+			if (sonumero != null) {
+				getExDocumento().setNumExpediente(Long.parseLong(sonumero));
+				getExDocumento().setAnoEmissao((long) new Date().getYear() + 1900);
+
+			}
 
 			// Numero de sequencia do documento filho
 			//
-			if (m1.group(5) != null) {
-				String vsNumSubdocumento = m1.group(5).toUpperCase();
+			if (subnumero != null) {
+				String vsNumSubdocumento = subnumero.toUpperCase();
 				if (vsNumSubdocumento.contains("."))
 					vsNumSubdocumento = vsNumSubdocumento
 							.substring(vsNumSubdocumento.indexOf(".") + 1);
 				Integer vshNumSubdocumento = new Integer(vsNumSubdocumento);
 				if (vshNumSubdocumento != 0) {
-					String siglaPai = (m1.group(1) == null ? (getExDocumento()
+					String siglaPai = (orgao == null ? (getExDocumento()
 							.getOrgaoUsuario() != null ? getExDocumento()
-							.getOrgaoUsuario().getAcronimoOrgaoUsu() : "") : m1
-							.group(1))
-							+ (m1.group(2) == null ? "" : m1.group(2))
-							+ (m1.group(3) == null ? "" : m1.group(3))
-							+ ((m1.group(3) != null && m1.group(4) != null) ? "/"
+							.getOrgaoUsuario().getAcronimoOrgaoUsu() : "") : orgao)
+							+ (especie == null ? "" : especie)
+							+ (ano == null ? "" : ano)
+							+ ((ano != null && numero != null) ? "/"
 									: "")
-							+ (m1.group(4) == null ? "" : m1.group(4));
+							+ (numero == null ? "" : numero);
 					ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
 					flt.setSigla(siglaPai);
 					ExMobil mobPai = null;
@@ -433,8 +449,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 
 			// Numero da via
 			//
-			if (m1.group(6) != null) {
-				String vsNumVia = m1.group(6).toUpperCase();
+			if (via != null) {
+				String vsNumVia = via.toUpperCase();
 				if (vsNumVia.contains("-"))
 					vsNumVia = vsNumVia.substring(vsNumVia.indexOf("-") + 1);
 				Integer vshNumVia;
@@ -449,30 +465,26 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 							false));
 				}
 				setNumSequencia(vshNumVia);
-			} else if (m1.group(7) != null) {
-				String vsNumVolume = m1.group(7).toUpperCase();
-				if (vsNumVolume.contains("-"))
-					vsNumVolume = vsNumVolume.substring(vsNumVolume
-							.indexOf("-") + 1);
-				if (vsNumVolume.contains("V"))
-					vsNumVolume = vsNumVolume.substring(vsNumVolume
-							.indexOf("V") + 1);
-				Integer vshNumVolume = new Integer(vsNumVolume);
-				setExTipoMobil(ExDao.getInstance()
-						.consultar(ExTipoMobil.TIPO_MOBIL_VOLUME,
-								ExTipoMobil.class, false));
-				setNumSequencia(vshNumVolume);
 			} else {
-				setExTipoMobil(ExDao.getInstance().consultar(
-						ExTipoMobil.TIPO_MOBIL_GERAL, ExTipoMobil.class, false));
+				if (volume != null) {
+					String vsNumVolume = volume.toUpperCase();
+					Integer vshNumVolume = new Integer(vsNumVolume);
+					setExTipoMobil(ExDao.getInstance()
+							.consultar(ExTipoMobil.TIPO_MOBIL_VOLUME,
+									ExTipoMobil.class, false));
+					setNumSequencia(vshNumVolume);
+				} else {
+					setExTipoMobil(ExDao.getInstance().consultar(
+							ExTipoMobil.TIPO_MOBIL_GERAL, ExTipoMobil.class, false));
+				}
 			}
 		}
 	}
 
 	/**
-	 * Retorna o código do documento mais o número da via ou do volume.
+	 * Retorna o cÃ³digo do documento mais o nÃºmero da via ou do volume.
 	 * 
-	 * @return O código do documento mais o número da via ou do volume.
+	 * @return O cÃ³digo do documento mais o nÃºmero da via ou do volume.
 	 */
 	public String getSigla() {
 		if (getExDocumento() == null)
@@ -482,17 +494,18 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		if ((isVia() || isVolume())
 				&& (getNumSequencia() == null || getNumSequencia() == 0))
 			throw new Error(
-					"Via e Volume devem possuir número válido de sequencia.");
+					"Via e Volume devem possuir nÃºmero vÃ¡lido de sequencia.");
 		String terminacao = getTerminacaoSigla();
-		return getExDocumento().getSigla() + (terminacao.equals("") ? "" : "-") + getTerminacaoSigla();
+		return getExDocumento().getSigla() + (terminacao.equals("") ? "" : "-")
+				+ getTerminacaoSigla();
 	}
-	
+
 	/**
-	 * Retorna o código do documento resumido mais o número da via ou do volume.
+	 * Retorna o cÃ³digo do documento resumido mais o nÃºmero da via ou do volume.
 	 * 
-	 * @return O código do documento resumido mais o número da via ou do volume.
+	 * @return O cÃ³digo do documento resumido mais o nÃºmero da via ou do volume.
 	 */
-	public String getSiglaResumida(CpOrgaoUsuario orgao, ExDocumento docRef){
+	public String getSiglaResumida(CpOrgaoUsuario orgao, ExDocumento docRef) {
 		if (getExDocumento() == null)
 			return null;
 		if (getExTipoMobil() == null)
@@ -500,16 +513,18 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		if ((isVia() || isVolume())
 				&& (getNumSequencia() == null || getNumSequencia() == 0))
 			throw new Error(
-					"Via e Volume devem possuir número válido de sequencia.");
+					"Via e Volume devem possuir nÃºmero vÃ¡lido de sequencia.");
 		String codigoDoc = getExDocumento().getCodigoResumido(orgao, docRef);
 		String terminacao = getTerminacaoSigla();
-		return codigoDoc + (terminacao.equals("") || codigoDoc.equals("") ? "" : "-") + getTerminacaoSigla();
+		return codigoDoc
+				+ (terminacao.equals("") || codigoDoc.equals("") ? "" : "-")
+				+ getTerminacaoSigla();
 	}
 
 	/**
-	 * Retorna o código do documento mais o número da via ou do volume.
+	 * Retorna o cÃ³digo do documento mais o nÃºmero da via ou do volume.
 	 * 
-	 * @return O código do documento mais o número da via ou do volume.
+	 * @return O cÃ³digo do documento mais o nÃºmero da via ou do volume.
 	 */
 	public static String getSigla(String codigoDocumento, Integer numSequencia,
 			Long idTipoMobil) {
@@ -521,11 +536,11 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		if ((idTipoMobil == ExTipoMobil.TIPO_MOBIL_VIA || idTipoMobil == ExTipoMobil.TIPO_MOBIL_VOLUME)
 				&& (numSequencia == null || numSequencia == 0))
 			throw new Error(
-					"Via e Volume devem possuir número válido de sequencia.");
+					"Via e Volume devem possuir nÃºmero vÃ¡lido de sequencia.");
 		if (idTipoMobil == ExTipoMobil.TIPO_MOBIL_VIA) {
 			final String alfabeto = "ABCDEFGHIJLMNOPQRSTUZ";
 
-			// as vias vão até a letra 'U', se passar disso, assume letra 'Z'
+			// as vias vÃ£o atÃ© a letra 'U', se passar disso, assume letra 'Z'
 			if (numSequencia <= 20) {
 				final String vsNumVia = alfabeto.substring(numSequencia - 1,
 						numSequencia);
@@ -551,7 +566,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 */
 
 	/**
-	 * Se esse documento estiver juntado, retorna o pai Senão, retorna null
+	 * Se esse documento estiver juntado, retorna o pai SenÃ£o, retorna null
 	 * 
 	 */
 	public ExMobil getMobilPrincipal() {
@@ -599,7 +614,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 * 
 	 * 
 	 * 
-	 * Retorna se o móbil recebeu alguma movimentação do tipo informado que não
+	 * Retorna se o mÃ³bil recebeu alguma movimentaÃ§Ã£o do tipo informado que nÃ£o
 	 * tenha sido cancelada.
 	 * 
 	 * @param tpMov
@@ -611,9 +626,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna se o móbil recebeu alguma movimentação do tipo informado que não
-	 * tenha sido cancelada e também não tenha sido revertida pela movimentação
-	 * de reversão do tipo informado.
+	 * Retorna se o mÃ³bil recebeu alguma movimentaÃ§Ã£o do tipo informado que nÃ£o
+	 * tenha sido cancelada e tambÃ©m nÃ£o tenha sido revertida pela movimentaÃ§Ã£o
+	 * de reversÃ£o do tipo informado.
 	 * 
 	 * @param tpMov
 	 * @param tpMovReversao
@@ -625,9 +640,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 
 	/**
 	 * 
-	 * Retorna se um móbil mob recebeu alguma movimentação do tipo informado que
-	 * não tenha sido cancelada e também não tenha sido revertida pela
-	 * movimentação de reversão do tipo informado.
+	 * Retorna se um mÃ³bil mob recebeu alguma movimentaÃ§Ã£o do tipo informado que
+	 * nÃ£o tenha sido cancelada e tambÃ©m nÃ£o tenha sido revertida pela
+	 * movimentaÃ§Ã£o de reversÃ£o do tipo informado.
 	 * 
 	 * @param tpMov
 	 * @param tpMovReversao
@@ -640,9 +655,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna se o móbil recebeu alguma movimentação de um dos tipos informados
-	 * que não tenha sido cancelada e também não tenha sido revertida pela
-	 * movimentação de reversão do tipo informado.
+	 * Retorna se o mÃ³bil recebeu alguma movimentaÃ§Ã£o de um dos tipos informados
+	 * que nÃ£o tenha sido cancelada e tambÃ©m nÃ£o tenha sido revertida pela
+	 * movimentaÃ§Ã£o de reversÃ£o do tipo informado.
 	 * 
 	 * @param tpMovs
 	 * @param tpMovReversao
@@ -653,9 +668,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna se um móbil mob recebeu alguma movimentação de um dos tipos
-	 * informados que não tenha sido cancelada e também não tenha sido revertida
-	 * pela movimentação de reversão do tipo informado.
+	 * Retorna se um mÃ³bil mob recebeu alguma movimentaÃ§Ã£o de um dos tipos
+	 * informados que nÃ£o tenha sido cancelada e tambÃ©m nÃ£o tenha sido revertida
+	 * pela movimentaÃ§Ã£o de reversÃ£o do tipo informado.
 	 * 
 	 * @param tpMovs
 	 * @param tpMovReversao
@@ -667,7 +682,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a última movimentação não cancelada que o móbil recebeu.
+	 * Retorna a Ãºltima movimentaÃ§Ã£o nÃ£o cancelada que o mÃ³bil recebeu.
 	 * 
 	 * @return
 	 */
@@ -676,8 +691,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a última movimentação não cancelada de um tipo específico que o
-	 * móbil recebeu.
+	 * Retorna a Ãºltima movimentaÃ§Ã£o nÃ£o cancelada de um tipo especÃ­fico que o
+	 * mÃ³bil recebeu.
 	 * 
 	 * @param tpMov
 	 * @return
@@ -687,9 +702,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a última movimentação não cancelada de um tipo específico que o
-	 * móbil recebeu e que não tenha sido revertida pela movimentação de
-	 * reversão do tipo especificado.
+	 * Retorna a Ãºltima movimentaÃ§Ã£o nÃ£o cancelada de um tipo especÃ­fico que o
+	 * mÃ³bil recebeu e que nÃ£o tenha sido revertida pela movimentaÃ§Ã£o de
+	 * reversÃ£o do tipo especificado.
 	 * 
 	 * @param tpMov
 	 * @param tpMovReversao
@@ -702,8 +717,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a última movimentação não cancelada que o móbil recebeu, com base
-	 * nas informações constantes na movimentação informada como parâmetro.
+	 * Retorna a Ãºltima movimentaÃ§Ã£o nÃ£o cancelada que o mÃ³bil recebeu, com base
+	 * nas informaÃ§Ãµes constantes na movimentaÃ§Ã£o informada como parÃ¢metro.
 	 * 
 	 * @param movParam
 	 * @return
@@ -716,9 +731,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna A última movimentação de um Mobil.
+	 * Retorna A Ãºltima movimentaÃ§Ã£o de um Mobil.
 	 * 
-	 * @return Última movimentação de um Mobil.
+	 * @return Ãšltima movimentaÃ§Ã£o de um Mobil.
 	 * 
 	 */
 	public ExMovimentacao getUltimaMovimentacao() {
@@ -726,7 +741,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a última movimentação de um tipo específico que o móbil recebeu.
+	 * Retorna a Ãºltima movimentaÃ§Ã£o de um tipo especÃ­fico que o mÃ³bil recebeu.
 	 * 
 	 * @param tpMov
 	 * @return
@@ -737,9 +752,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a última movimentação (cancelada ou não, conforme o parâmetro
-	 * permitirCancelada) que o móbil mob recebeu e que seja de um dos tpMovs
-	 * informados, que não tenha sido revertida por uma movimentação do
+	 * Retorna a Ãºltima movimentaÃ§Ã£o (cancelada ou nÃ£o, conforme o parÃ¢metro
+	 * permitirCancelada) que o mÃ³bil mob recebeu e que seja de um dos tpMovs
+	 * informados, que nÃ£o tenha sido revertida por uma movimentaÃ§Ã£o do
 	 * tpMovReversao e que tenha ocorrido na data dt
 	 * 
 	 * @param tpMovs
@@ -788,7 +803,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se o mobil está arquivado corrente
+	 * Verifica se o mobil estÃ¡ arquivado corrente
 	 */
 	public boolean isArquivadoCorrente() {
 		return sofreuMov(
@@ -798,7 +813,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se o mobil está arquivado permanente
+	 * Verifica se o mobil estÃ¡ arquivado permanente
 	 */
 	public boolean isArquivadoPermanente() {
 		return sofreuMov(
@@ -808,7 +823,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se o mobil está arquivado intermediário
+	 * Verifica se o mobil estÃ¡ arquivado intermediÃ¡rio
 	 */
 	public boolean isArquivadoIntermediario() {
 		return sofreuMov(
@@ -820,7 +835,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se o mobil está em arquivo, seja corrente, intermediário ou
+	 * Verifica se o mobil estÃ¡ em arquivo, seja corrente, intermediÃ¡rio ou
 	 * permanente
 	 */
 	public boolean isArquivado() {
@@ -829,7 +844,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se o mobil está sobrestado
+	 * Verifica se o mobil estÃ¡ sobrestado
 	 */
 	public boolean isSobrestado() {
 		return sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR,
@@ -837,12 +852,12 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se um Mobil está em trânsito. Um Mobil está em trânsito quando
-	 * ele possui movimentações não canceladas dos tipos: TRANSFERENCIA,
+	 * Verifica se um Mobil estÃ¡ em trÃ¢nsito. Um Mobil estÃ¡ em trÃ¢nsito quando
+	 * ele possui movimentaÃ§Ãµes nÃ£o canceladas dos tipos: TRANSFERENCIA,
 	 * DESPACHO_TRANSFERENCIA, DESPACHO_TRANSFERENCIA_EXTERNA ou
-	 * TRANSFERENCIA_EXTERNA e não possuem movimentação de recebimento.
+	 * TRANSFERENCIA_EXTERNA e nÃ£o possuem movimentaÃ§Ã£o de recebimento.
 	 * 
-	 * @return Verdadeiro se o Mobil está em trânsito e Falso caso contrário.
+	 * @return Verdadeiro se o Mobil estÃ¡ em trÃ¢nsito e Falso caso contrÃ¡rio.
 	 * 
 	 */
 	public boolean isEmTransito() {
@@ -859,8 +874,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se um Mobil recebeu movimentação de inclusão em edital de
-	 * eliminação, não revertida pela de retirada de edital de eliminação.
+	 * Verifica se um Mobil recebeu movimentaÃ§Ã£o de inclusÃ£o em edital de
+	 * eliminaÃ§Ã£o, nÃ£o revertida pela de retirada de edital de eliminaÃ§Ã£o.
 	 * 
 	 * @return Verdadeiro ou Falso
 	 */
@@ -873,26 +888,26 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna se o móbil sofreu movimentação de eliminação.
+	 * Retorna se o mÃ³bil sofreu movimentaÃ§Ã£o de eliminaÃ§Ã£o.
 	 * 
 	 * @return
 	 */
 	public boolean isEliminado() {
 
-		//Edson: prejudicando performance, devido aos lugares em que é chamado
-		//Ver jeito melhor de verificar se está eliminado
+		// Edson: prejudicando performance, devido aos lugares em que Ã© chamado
+		// Ver jeito melhor de verificar se estÃ¡ eliminado
 		return false;
 		/*
-		if (isGeral() && doc().isExpediente())
-			return doc().isEliminado();
-
-		return sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO, 0,
-				getMobilParaMovimentarDestinacao());*/
+		 * if (isGeral() && doc().isExpediente()) return doc().isEliminado();
+		 * 
+		 * return sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO, 0,
+		 * getMobilParaMovimentarDestinacao());
+		 */
 	}
 
 	/**
-	 * Verifica se um Mobil recebeu movimentação de indicação para guarda
-	 * permanente. Se o móbil for um volume, considera o geral do processo.
+	 * Verifica se um Mobil recebeu movimentaÃ§Ã£o de indicaÃ§Ã£o para guarda
+	 * permanente. Se o mÃ³bil for um volume, considera o geral do processo.
 	 * 
 	 * @return Verdadeiro ou Falso
 	 */
@@ -904,13 +919,13 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se um Mobil está em trânsito interno. Um Mobil está em trânsito
-	 * interno quando ele possui movimentações não canceladas dos tipos:
-	 * TRANSFERENCIA ou DESPACHO_TRANSFERENCIA e não possuem movimentação de
+	 * Verifica se um Mobil estÃ¡ em trÃ¢nsito interno. Um Mobil estÃ¡ em trÃ¢nsito
+	 * interno quando ele possui movimentaÃ§Ãµes nÃ£o canceladas dos tipos:
+	 * TRANSFERENCIA ou DESPACHO_TRANSFERENCIA e nÃ£o possuem movimentaÃ§Ã£o de
 	 * recebimento.
 	 * 
-	 * @return Verdadeiro se o Mobil está em trânsito interno e Falso caso
-	 *         contrário.
+	 * @return Verdadeiro se o Mobil estÃ¡ em trÃ¢nsito interno e Falso caso
+	 *         contrÃ¡rio.
 	 * 
 	 */
 	public boolean isEmTransitoInterno() {
@@ -924,13 +939,13 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se um Mobil está em trânsito externo. Um Mobil está em trânsito
-	 * externo quando ele possui movimentações não canceladas dos tipos:
-	 * DESPACHO_TRANSFERENCIA_EXTERNA ou TRANSFERENCIA_EXTERNA e não possuem
-	 * movimentação de recebimento.
+	 * Verifica se um Mobil estÃ¡ em trÃ¢nsito externo. Um Mobil estÃ¡ em trÃ¢nsito
+	 * externo quando ele possui movimentaÃ§Ãµes nÃ£o canceladas dos tipos:
+	 * DESPACHO_TRANSFERENCIA_EXTERNA ou TRANSFERENCIA_EXTERNA e nÃ£o possuem
+	 * movimentaÃ§Ã£o de recebimento.
 	 * 
-	 * @return Verdadeiro se o Mobil está em trânsito externo e Falso caso
-	 *         contrário.
+	 * @return Verdadeiro se o Mobil estÃ¡ em trÃ¢nsito externo e Falso caso
+	 *         contrÃ¡rio.
 	 * 
 	 */
 	public boolean isEmTransitoExterno() {
@@ -946,12 +961,12 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se um Mobil está juntado a outro. Um Mobil está em juntado a
-	 * outro quando ele possui movimentações não canceladas dos tipos: JUNTADA
-	 * ou JUNTADA_EXTERNO e não possuem movimentação de cancelamento de juntada.
+	 * Verifica se um Mobil estÃ¡ juntado a outro. Um Mobil estÃ¡ em juntado a
+	 * outro quando ele possui movimentaÃ§Ãµes nÃ£o canceladas dos tipos: JUNTADA
+	 * ou JUNTADA_EXTERNO e nÃ£o possuem movimentaÃ§Ã£o de cancelamento de juntada.
 	 * 
-	 * @return Verdadeiro se o Mobil está juntado a outro e Falso caso
-	 *         contrário.
+	 * @return Verdadeiro se o Mobil estÃ¡ juntado a outro e Falso caso
+	 *         contrÃ¡rio.
 	 * 
 	 */
 	public boolean isJuntado() {
@@ -968,14 +983,26 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		return sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO);
 	}
 
+	public boolean isPendenteDeColaboracao() {
+		for (ExMovimentacao mov : getExMovimentacaoSet()) {
+			if (mov.isCancelada())
+				continue;
+			if (mov.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO) 
+				continue;
+			if (ExParte.create(mov.getDescrMov()).isPendente())
+				return true;
+		}
+		return false;
+	}
+
 	/**
-	 * Verifica se um Mobil está juntado a outro mobil do tipo interno. Um Mobil
-	 * está em juntado a outro mobil do tipo interno quando ele possui
-	 * movimentaçao não cancelada do tipo: JUNTADA e não possue movimentação de
+	 * Verifica se um Mobil estÃ¡ juntado a outro mobil do tipo interno. Um Mobil
+	 * estÃ¡ em juntado a outro mobil do tipo interno quando ele possui
+	 * movimentaÃ§ao nÃ£o cancelada do tipo: JUNTADA e nÃ£o possue movimentaÃ§Ã£o de
 	 * cancelamento de juntada.
 	 * 
-	 * @return Verdadeiro se o Mobil está juntado a outro mobil do tipo interno
-	 *         e Falso caso contrário.
+	 * @return Verdadeiro se o Mobil estÃ¡ juntado a outro mobil do tipo interno
+	 *         e Falso caso contrÃ¡rio.
 	 * 
 	 */
 	public boolean isJuntadoInterno() {
@@ -987,13 +1014,13 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se um Mobil está juntado a outro mobil do tipo externo. Um Mobil
-	 * está em juntado a outro mobil do tipo externo quando ele possui
-	 * movimentaçao não cancelada do tipo: JUNTADA_EXTERNO e não possue
-	 * movimentação de cancelamento de juntada.
+	 * Verifica se um Mobil estÃ¡ juntado a outro mobil do tipo externo. Um Mobil
+	 * estÃ¡ em juntado a outro mobil do tipo externo quando ele possui
+	 * movimentaÃ§ao nÃ£o cancelada do tipo: JUNTADA_EXTERNO e nÃ£o possue
+	 * movimentaÃ§Ã£o de cancelamento de juntada.
 	 * 
-	 * @return Verdadeiro se o Mobil está juntado a outro mobil do tipo externo
-	 *         e Falso caso contrário.
+	 * @return Verdadeiro se o Mobil estÃ¡ juntado a outro mobil do tipo externo
+	 *         e Falso caso contrÃ¡rio.
 	 * 
 	 */
 	public boolean isJuntadoExterno() {
@@ -1005,12 +1032,12 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se um Mobil está apensado a outro mobil. Um Mobil está apensado
-	 * a outro mobil quando ele possui movimentaçao do tipo: APENSACAO e não
-	 * possue movimentação de desapensação
+	 * Verifica se um Mobil estÃ¡ apensado a outro mobil. Um Mobil estÃ¡ apensado
+	 * a outro mobil quando ele possui movimentaÃ§ao do tipo: APENSACAO e nÃ£o
+	 * possue movimentaÃ§Ã£o de desapensaÃ§Ã£o
 	 * 
-	 * @return Verdadeiro se o Mobil está apensado a outro mobil e Falso caso
-	 *         contrário.
+	 * @return Verdadeiro se o Mobil estÃ¡ apensado a outro mobil e Falso caso
+	 *         contrÃ¡rio.
 	 * 
 	 */
 	public boolean isApensado() {
@@ -1065,9 +1092,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a descrição da última movimentação não cancelada.
+	 * Retorna a descriÃ§Ã£o da Ãºltima movimentaÃ§Ã£o nÃ£o cancelada.
 	 * 
-	 * @return Descrição da última movimentação não cancelada.
+	 * @return DescriÃ§Ã£o da Ãºltima movimentaÃ§Ã£o nÃ£o cancelada.
 	 * 
 	 */
 	public String getDescricaoUltimaMovimentacaoNaoCancelada() {
@@ -1116,9 +1143,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a descrição dos marcadores relacionado ao Mobil atual.
+	 * Retorna a descriÃ§Ã£o dos marcadores relacionado ao Mobil atual.
 	 * 
-	 * @return Descrição dos marcadores relacionado ao Mobil atual.
+	 * @return DescriÃ§Ã£o dos marcadores relacionado ao Mobil atual.
 	 * 
 	 */
 	public String getMarcadores() {
@@ -1134,11 +1161,11 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a descrição completa (descrição, lotação, pessoa e datas de
-	 * início e fim) dos marcadores relacionados ao Mobil atual, incluindo os
-	 * não ativos no momento.
+	 * Retorna a descriÃ§Ã£o completa (descriÃ§Ã£o, lotaÃ§Ã£o, pessoa e datas de
+	 * inÃ­cio e fim) dos marcadores relacionados ao Mobil atual, incluindo os
+	 * nÃ£o ativos no momento.
 	 * 
-	 * @return Descrição dos marcadores relacionado ao Mobil atual.
+	 * @return DescriÃ§Ã£o dos marcadores relacionado ao Mobil atual.
 	 * 
 	 */
 	public String getMarcadoresDescrCompleta(boolean apenasTemporalidade) {
@@ -1169,7 +1196,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		return marcas.toString();
 
 	}
-	
+
 	/**
 	 * Retorna o Mobil Mestre relacionado ao Mobil atual.
 	 * 
@@ -1190,10 +1217,10 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Se o mobil em questão for o grande mestre de uma cadeia de apensação, ele
+	 * Se o mobil em questÃ£o for o grande mestre de uma cadeia de apensaÃ§Ã£o, ele
 	 * deve retornar "this".
 	 * 
-	 * @return Retorna o mestre de último nivel, ou seja, o mestre de todos os
+	 * @return Retorna o mestre de Ãºltimo nivel, ou seja, o mestre de todos os
 	 *         mestres dessa apensacao.
 	 */
 	public ExMobil getGrandeMestre() {
@@ -1214,8 +1241,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 
 	/**
 	 * 
-	 * @return Retorna todos os apensos desse mobil para baixo. Não inclui o
-	 *         próprio mobil que está sendo chamado.
+	 * @return Retorna todos os apensos desse mobil para baixo. NÃ£o inclui o
+	 *         prÃ³prio mobil que estÃ¡ sendo chamado.
 	 */
 	public SortedSet<ExMobil> getApensos() {
 		return getApensos(false, false);
@@ -1255,8 +1282,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna, num Set, os móbiles que tenham sido juntados a este móbil, de
-	 * modo recursivo ou não, conforme parâmetro.
+	 * Retorna, num Set, os mÃ³biles que tenham sido juntados a este mÃ³bil, de
+	 * modo recursivo ou nÃ£o, conforme parÃ¢metro.
 	 * 
 	 * @param recursivo
 	 * @return
@@ -1282,9 +1309,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 
 	}
-	
+
 	/**
-	 * Retorna, num Set, os móbiles que tenham sido referenciados a este móbil
+	 * Retorna, num Set, os mÃ³biles que tenham sido referenciados a este mÃ³bil
 	 * ou vice-versa.
 	 * 
 	 * @param recursivo
@@ -1294,7 +1321,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		Set<ExMobil> set = new LinkedHashSet<ExMobil>();
 		for (ExMovimentacao mov : getCronologiaSet())
 			if (!mov.isCancelada()) {
-				if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA){
+				if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFERENCIA) {
 					set.add(mov.getExMobilRef());
 					set.add(mov.getExMobil());
 				}
@@ -1306,7 +1333,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna os móbiles que tenham sido juntados a este móbil, sem
+	 * Retorna os mÃ³biles que tenham sido juntados a este mÃ³bil, sem
 	 * recursividade.
 	 * 
 	 * @return
@@ -1316,8 +1343,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna todos os móbiles, de modo recursivo, que tenham sido juntados a
-	 * este móbil.
+	 * Retorna todos os mÃ³biles, de modo recursivo, que tenham sido juntados a
+	 * este mÃ³bil.
 	 * 
 	 * @return
 	 */
@@ -1326,7 +1353,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna um Set contendo este móbil e todos os que foram juntados a ele,
+	 * Retorna um Set contendo este mÃ³bil e todos os que foram juntados a ele,
 	 * de modo recursivo.
 	 * 
 	 * @return
@@ -1373,10 +1400,10 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se um volume está encerrado. Um volume está encerrado se ele
-	 * possui movimentação não cancelada do tipo ENCERRAMENTO DE VOLUME.
+	 * Verifica se um volume estÃ¡ encerrado. Um volume estÃ¡ encerrado se ele
+	 * possui movimentaÃ§Ã£o nÃ£o cancelada do tipo ENCERRAMENTO DE VOLUME.
 	 * 
-	 * @return Verdadeiro se o volume está encerrado e Falso caso contrário.
+	 * @return Verdadeiro se o volume estÃ¡ encerrado e Falso caso contrÃ¡rio.
 	 * 
 	 */
 	public boolean isVolumeEncerrado() {
@@ -1384,11 +1411,11 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se um Mobil do tipo Volume está Apensado ao próximo Mobil. Para
-	 * saber o próximo Mobil é utilizado o número de sequência do Mobil.
+	 * Verifica se um Mobil do tipo Volume estÃ¡ Apensado ao prÃ³ximo Mobil. Para
+	 * saber o prÃ³ximo Mobil Ã© utilizado o nÃºmero de sequÃªncia do Mobil.
 	 * 
-	 * @return Verdadeiro se o Mobil estiver apensado ao próximo volume e Falso
-	 *         caso contrário.
+	 * @return Verdadeiro se o Mobil estiver apensado ao prÃ³ximo volume e Falso
+	 *         caso contrÃ¡rio.
 	 * 
 	 */
 	public boolean isVolumeApensadoAoProximo() {
@@ -1406,10 +1433,10 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a lista de movimentações de anexação não assinadas
+	 * Retorna a lista de movimentaÃ§Ãµes de anexaÃ§Ã£o nÃ£o assinadas
 	 * 
-	 * @return Verdadeiro se o Mobil possui anexos não assinados e False caso
-	 *         contrário.
+	 * @return Verdadeiro se o Mobil possui anexos nÃ£o assinados e False caso
+	 *         contrÃ¡rio.
 	 * 
 	 */
 	public List<ExMovimentacao> getAnexosNaoAssinados() {
@@ -1441,12 +1468,12 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		return naoAssinados;
 	}
-	
+
 	/**
-	 * Retorna a lista de movimentações de pendência anexação
+	 * Retorna a lista de movimentaÃ§Ãµes de pendÃªncia anexaÃ§Ã£o
 	 * 
-	 * @return Verdadeiro se o Mobil possui pendência de anexos e False caso
-	 *         contrário.
+	 * @return Verdadeiro se o Mobil possui pendÃªncia de anexos e False caso
+	 *         contrÃ¡rio.
 	 * 
 	 */
 	public List<ExMovimentacao> getPendenciasDeAnexacao() {
@@ -1454,18 +1481,40 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		List<ExMovimentacao> pendenciasDeAnexacao = new ArrayList<ExMovimentacao>();
 
 		for (ExMovimentacao mov : this.getExMovimentacaoSet()) {
-			if (!mov.isCancelada() && mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO)
+			if (!mov.isCancelada()
+					&& mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO)
 				pendenciasDeAnexacao.add(mov);
 		}
 
 		return pendenciasDeAnexacao;
 	}
-	
+
 	/**
-	 * Verifica se um Mobil possui Pendências de Anexação
+	 * Retorna a lista de movimentaÃ§Ãµes de pendÃªncia de colaboraÃ§Ã£o
 	 * 
-	 * @return Verdadeiro se o Mobil possui pendências de anexos e False caso
-	 *         contrário.
+	 */
+	public List<ExMovimentacao> getPendenciasDeColaboracao() {
+
+		List<ExMovimentacao> pendencias = new ArrayList<ExMovimentacao>();
+
+		for (ExMovimentacao mov : this.getExMovimentacaoSet()) {
+			if (!mov.isCancelada()
+					&& mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO) {
+				ExParte parte = ExParte.create(mov.getDescrMov());
+				if (parte.isAtivo() && !parte.isPreenchido()) {
+					pendencias.add(mov);
+				}
+			}
+		}
+
+		return pendencias;
+	}
+
+	/**
+	 * Verifica se um Mobil possui PendÃªncias de AnexaÃ§Ã£o
+	 * 
+	 * @return Verdadeiro se o Mobil possui pendÃªncias de anexos e False caso
+	 *         contrÃ¡rio.
 	 * 
 	 */
 	public boolean temPendenciasDeAnexacao() {
@@ -1475,8 +1524,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	/**
 	 * Verifica se um Mobil possui Anexos Pendentes de Assinatura
 	 * 
-	 * @return Verdadeiro se o Mobil possui anexos não assinados e False caso
-	 *         contrário.
+	 * @return Verdadeiro se o Mobil possui anexos nÃ£o assinados e False caso
+	 *         contrÃ¡rio.
 	 * 
 	 */
 	public boolean temAnexosNaoAssinados() {
@@ -1484,10 +1533,10 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a lista de despachos não assinados
+	 * Retorna a lista de despachos nÃ£o assinados
 	 * 
-	 * @return Verdadeiro se o Mobil possui anexos não assinados e False caso
-	 *         contrário.
+	 * @return Verdadeiro se o Mobil possui anexos nÃ£o assinados e False caso
+	 *         contrÃ¡rio.
 	 * 
 	 */
 	public List<ExMovimentacao> getDespachosNaoAssinados() {
@@ -1524,8 +1573,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	/**
 	 * Verifica se um Mobil possui Anexos Pendentes de Assinatura
 	 * 
-	 * @return Verdadeiro se o Mobil possui anexos não assinados e False caso
-	 *         contrário.
+	 * @return Verdadeiro se o Mobil possui anexos nÃ£o assinados e False caso
+	 *         contrÃ¡rio.
 	 * 
 	 */
 	public boolean temDespachosNaoAssinados() {
@@ -1533,18 +1582,18 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a lista de expedientes filhos não juntados
+	 * Retorna a lista de expedientes filhos nÃ£o juntados
 	 * 
-	 * @return Verdadeiro se o Mobil possui anexos não assinados e False caso
-	 *         contrário.
+	 * @return Verdadeiro se o Mobil possui anexos nÃ£o assinados e False caso
+	 *         contrÃ¡rio.
 	 * 
 	 */
 	public List<ExDocumento> getDocsFilhosNaoJuntados() {
 		Set<ExMobil> todosOsMeusJuntados = getJuntados();
 		List<ExDocumento> meusFilhosNaoJuntados = new ArrayList<ExDocumento>();
 		for (ExDocumento docFilho : getExDocumentoFilhoSet()) {
-			if (!docFilho.isExpediente() || docFilho.isCancelado() 
-				|| docFilho.isArquivado() || docFilho.isSemEfeito())
+			if (!docFilho.isExpediente() || docFilho.isCancelado()
+					|| docFilho.isArquivado() || docFilho.isSemEfeito())
 				continue;
 			boolean juntado = false;
 			for (ExMobil mobFilho : docFilho.getExMobilSet()) {
@@ -1558,10 +1607,10 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se um Mobil possui documentos filhos não juntados
+	 * Verifica se um Mobil possui documentos filhos nÃ£o juntados
 	 * 
-	 * @return Verdadeiro se o Mobil possui anexos não assinados e False caso
-	 *         contrário.
+	 * @return Verdadeiro se o Mobil possui anexos nÃ£o assinados e False caso
+	 *         contrÃ¡rio.
 	 * 
 	 */
 	public boolean temDocsFilhosNaoJuntados() {
@@ -1572,13 +1621,13 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 * Verifica se um Mobil possui arquivos anexados
 	 * 
 	 * @return Verdadeiro se o Mobil possui arquivos anexados e False caso
-	 *         contrário.
+	 *         contrÃ¡rio.
 	 * 
 	 */
 	public boolean temAnexos() {
 		boolean b = false;
 		for (ExMovimentacao movAss : this.getExMovimentacaoSet()) {
-			if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO){
+			if (movAss.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO) {
 				b = true;
 				break;
 			}
@@ -1600,7 +1649,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna se o móbil possui algum apensado a si.
+	 * Retorna se o mÃ³bil possui algum apensado a si.
 	 * 
 	 * @return
 	 */
@@ -1609,11 +1658,11 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Verifica se um Mobil do tipo Volume está Apensado a outro Mobil do mesmo
+	 * Verifica se um Mobil do tipo Volume estÃ¡ Apensado a outro Mobil do mesmo
 	 * Processo.
 	 * 
 	 * @return Verdadeiro se o Mobil estiver apensado a outro volume do mesmo
-	 *         processo e Falso caso contrário.
+	 *         processo e Falso caso contrÃ¡rio.
 	 * 
 	 */
 	public boolean isApensadoAVolumeDoMesmoProcesso() {
@@ -1629,9 +1678,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna o último documento que é filho do Mobil atual.
+	 * Retorna o Ãºltimo documento que Ã© filho do Mobil atual.
 	 * 
-	 * @return Último documento que é filho do Mobil atual.
+	 * @return Ãšltimo documento que Ã© filho do Mobil atual.
 	 * 
 	 */
 	public int getNumUltimoSubdocumento() {
@@ -1647,13 +1696,13 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna um documento filho do Mobil atual de acordo com o número de
-	 * sequência informado.
+	 * Retorna um documento filho do Mobil atual de acordo com o nÃºmero de
+	 * sequÃªncia informado.
 	 * 
 	 * @param numSubdocumento
 	 * 
-	 * @return Documento filho do Mobil atual de acordo com o número de
-	 *         sequência informado.
+	 * @return Documento filho do Mobil atual de acordo com o nÃºmero de
+	 *         sequÃªncia informado.
 	 * 
 	 */
 	public ExDocumento getSubdocumento(int numSubdocumento) {
@@ -1738,9 +1787,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna as movimentações de um Mobil que estão canceladas.
+	 * Retorna as movimentaÃ§Ãµes de um Mobil que estÃ£o canceladas.
 	 * 
-	 * @return Lista de movimentações de um Mobil que estão canceladas.
+	 * @return Lista de movimentaÃ§Ãµes de um Mobil que estÃ£o canceladas.
 	 * 
 	 */
 	public List<ExMovimentacao> getMovimentacoesCanceladas() {
@@ -1788,13 +1837,13 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 				finalSet.add(m);
 		return finalSet;
 	}
-	
-	public boolean temMarcaNaoAtiva(){
+
+	public boolean temMarcaNaoAtiva() {
 		Date dt = new Date();
 		for (ExMarca m : getExMarcaSet())
 			if ((m.getDtIniMarca() != null && m.getDtIniMarca().after(dt))
-					|| (m.getDtFimMarca() != null && m.getDtFimMarca()
-							.before(dt)))
+					|| (m.getDtFimMarca() != null && m.getDtFimMarca().before(
+							dt)))
 				return true;
 		return false;
 	}
@@ -1817,7 +1866,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna o tempo de permanência deste móbil no arquivo corrente conforme o
+	 * Retorna o tempo de permanÃªncia deste mÃ³bil no arquivo corrente conforme o
 	 * PCTT.
 	 * 
 	 * @return
@@ -1828,8 +1877,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna o tempo de permanência deste móbil no arquivo corrente conforme o
-	 * PCTT, considerando as temporalidades de todos os outros móbiles da árvore
+	 * Retorna o tempo de permanÃªncia deste mÃ³bil no arquivo corrente conforme o
+	 * PCTT, considerando as temporalidades de todos os outros mÃ³biles da Ã¡rvore
 	 * de juntados, predominando a maior delas.
 	 * 
 	 * @return
@@ -1847,9 +1896,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna se o móbil tem atrelado um tempo de permanência no arquivo
-	 * corrente, mesmo que ele não seja fixo e mensurável. Essa avaliação
-	 * considera todos os móbiles juntados.
+	 * Retorna se o mÃ³bil tem atrelado um tempo de permanÃªncia no arquivo
+	 * corrente, mesmo que ele nÃ£o seja fixo e mensurÃ¡vel. Essa avaliaÃ§Ã£o
+	 * considera todos os mÃ³biles juntados.
 	 * 
 	 * @return
 	 */
@@ -1858,7 +1907,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna o tempo de permanência deste móbil no arquivo intermediário
+	 * Retorna o tempo de permanÃªncia deste mÃ³bil no arquivo intermediÃ¡rio
 	 * conforme o PCTT.
 	 * 
 	 * @return
@@ -1869,9 +1918,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna o tempo de permanência deste móbil no arquivo intermediário
+	 * Retorna o tempo de permanÃªncia deste mÃ³bil no arquivo intermediÃ¡rio
 	 * conforme o PCTT, considerando as temporalidades de todos os outros
-	 * móbiles da árvore de juntados, predominando a maior delas.
+	 * mÃ³biles da Ã¡rvore de juntados, predominando a maior delas.
 	 * 
 	 * @return
 	 */
@@ -1889,9 +1938,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna se o móbil tem atrelado um tempo de permanência no arquivo
-	 * intermediário, mesmo que ele não seja fixo e mensurável. Essa avaliação
-	 * considera todos os móbiles juntados.
+	 * Retorna se o mÃ³bil tem atrelado um tempo de permanÃªncia no arquivo
+	 * intermediÃ¡rio, mesmo que ele nÃ£o seja fixo e mensurÃ¡vel. Essa avaliaÃ§Ã£o
+	 * considera todos os mÃ³biles juntados.
 	 * 
 	 * @return
 	 */
@@ -1904,7 +1953,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a referência do objeto mais o extensão ".html".
+	 * Retorna a referÃªncia do objeto mais o extensÃ£o ".html".
 	 * 
 	 */
 	public String getReferenciaHtml() {
@@ -1912,7 +1961,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a referência do objeto mais o extensão ".pdf".
+	 * Retorna a referÃªncia do objeto mais o extensÃ£o ".pdf".
 	 * 
 	 */
 	public String getReferenciaPDF() {
@@ -1920,7 +1969,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	};
 
 	/**
-	 * Retorna a referência do objeto mais o extensão ".rtf".
+	 * Retorna a referÃªncia do objeto mais o extensÃ£o ".rtf".
 	 * 
 	 */
 	public String getReferenciaRTF() {
@@ -1928,7 +1977,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	};
 
 	/**
-	 * Verifica se o mobil está na mesma lotação de outro
+	 * Verifica se o mobil estÃ¡ na mesma lotaÃ§Ã£o de outro
 	 * 
 	 */
 	public boolean estaNaMesmaLotacao(ExMobil outroMobil) {
@@ -1941,7 +1990,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a destinação final deste móbil conforme o PCTT.
+	 * Retorna a destinaÃ§Ã£o final deste mÃ³bil conforme o PCTT.
 	 * 
 	 * @return
 	 */
@@ -1951,9 +2000,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a destinação final deste móbil conforme o PCTT, considerando a
-	 * destinação de todos os outros móbiles da árvore de juntados, predominando
-	 * a guarda permanente sobre a eliminação.
+	 * Retorna a destinaÃ§Ã£o final deste mÃ³bil conforme o PCTT, considerando a
+	 * destinaÃ§Ã£o de todos os outros mÃ³biles da Ã¡rvore de juntados, predominando
+	 * a guarda permanente sobre a eliminaÃ§Ã£o.
 	 * 
 	 * @return
 	 */
@@ -1973,8 +2022,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna se a destinação final do móbil é guarda permanente. Essa
-	 * avaliação considera todos os móbiles juntados e a existência de indicação
+	 * Retorna se a destinaÃ§Ã£o final do mÃ³bil Ã© guarda permanente. Essa
+	 * avaliaÃ§Ã£o considera todos os mÃ³biles juntados e a existÃªncia de indicaÃ§Ã£o
 	 * para guarda permanente.
 	 * 
 	 * @return
@@ -1987,8 +2036,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna se a destinação final do móbil é eliminação. Essa avaliação
-	 * considera todos os móbiles juntados e a existência de indicação para
+	 * Retorna se a destinaÃ§Ã£o final do mÃ³bil Ã© eliminaÃ§Ã£o. Essa avaliaÃ§Ã£o
+	 * considera todos os mÃ³biles juntados e a existÃªncia de indicaÃ§Ã£o para
 	 * guarda permanente.
 	 * 
 	 * @return
@@ -2001,8 +2050,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna a via da tabela de classificaçã correspondente a este móbil. Caso
-	 * seja móbil de processo, a via será sempre a de número 1.
+	 * Retorna a via da tabela de classificaÃ§Ã£ correspondente a este mÃ³bil. Caso
+	 * seja mÃ³bil de processo, a via serÃ¡ sempre a de nÃºmero 1.
 	 * 
 	 * @return
 	 */
@@ -2019,12 +2068,12 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna o móbil que representa este para fins de movimentação de
-	 * destinação, ou seja, o móbil que, representando este, recebe as
-	 * movimentações de destinação (arquivamento, inclusão em edital, etc). Se
-	 * este móbil for uma via, ela mesma é retornada. Se for volume ou geral de
-	 * processo, o geral é retornado. Geral de expediente retorna nulo, pois não
-	 * sofre movimentação de destinação nem é representado por outro móbil.
+	 * Retorna o mÃ³bil que representa este para fins de movimentaÃ§Ã£o de
+	 * destinaÃ§Ã£o, ou seja, o mÃ³bil que, representando este, recebe as
+	 * movimentaÃ§Ãµes de destinaÃ§Ã£o (arquivamento, inclusÃ£o em edital, etc). Se
+	 * este mÃ³bil for uma via, ela mesma Ã© retornada. Se for volume ou geral de
+	 * processo, o geral Ã© retornado. Geral de expediente retorna nulo, pois nÃ£o
+	 * sofre movimentaÃ§Ã£o de destinaÃ§Ã£o nem Ã© representado por outro mÃ³bil.
 	 * 
 	 * @return
 	 */
@@ -2037,11 +2086,11 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna os móbiles <b>do documento deste móbil</b> que deverão ser
-	 * percorridos para se concluir a temporalidade e a destinação deste móbil.
-	 * Se este móbil for geral (seja de expediente ou de processo) ou volume,
-	 * todos os móbiles do documento serão retornados. Se for uma via de
-	 * expediente, apenas ela será retornada.
+	 * Retorna os mÃ³biles <b>do documento deste mÃ³bil</b> que deverÃ£o ser
+	 * percorridos para se concluir a temporalidade e a destinaÃ§Ã£o deste mÃ³bil.
+	 * Se este mÃ³bil for geral (seja de expediente ou de processo) ou volume,
+	 * todos os mÃ³biles do documento serÃ£o retornados. Se for uma via de
+	 * expediente, apenas ela serÃ¡ retornada.
 	 * 
 	 * @return
 	 */
@@ -2055,9 +2104,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	/**
-	 * Retorna, numa lista, o conjunto de móbiles que formam uma unidade para
-	 * fins de destinação. Essa lista faz varreduras horizontais (móbiles do
-	 * documento) e verticais (relações de juntada entre móbiles).
+	 * Retorna, numa lista, o conjunto de mÃ³biles que formam uma unidade para
+	 * fins de destinaÃ§Ã£o. Essa lista faz varreduras horizontais (mÃ³biles do
+	 * documento) e verticais (relaÃ§Ãµes de juntada entre mÃ³biles).
 	 * 
 	 * @return
 	 */
@@ -2077,10 +2126,10 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		if (isVia()) {
 			final String alfabeto = "ABCDEFGHIJLMNOPQRSTUZ";
 
-			// as vias vão até a letra 'U', se passar disso, assume letra 'Z'
+			// as vias vÃ£o atÃ© a letra 'U', se passar disso, assume letra 'Z'
 			if (getNumSequencia() <= 20) {
-				return alfabeto.substring(
-						getNumSequencia() - 1, getNumSequencia());
+				return alfabeto.substring(getNumSequencia() - 1,
+						getNumSequencia());
 			} else {
 				return "Z";
 			}
@@ -2091,6 +2140,6 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		} else {
 			return "";
 		}
-		//return getSigla().substring(getSigla().lastIndexOf("-")+1);
+		// return getSigla().substring(getSigla().lastIndexOf("-")+1);
 	}
 }

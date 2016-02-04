@@ -51,6 +51,7 @@
 	<int name="jbpm.byte.block.size" value="1024" singleton="true" />
 	
 	<string name="jbpm.mail.smtp.host" 	  value="mail.corp.jfrj.gov.br" />
+	<int name="jbpm.mail.smtp.port" 	  value="25" />
 	<string name='jbpm.mail.class.name'   value='br.gov.jfrj.siga.wf.util.WfMail' />
 	<string name="jbpm.mail.from.address" value="siga-wf@jfrj.jus.br" />
 
@@ -86,6 +87,10 @@
 		<!-- 1 minute -->
 		<field name="lockBufferTime">
 			<int value="5000" />
+		</field>
+		<!-- 1 minute -->
+		<field name="retryInterval">
+			<int value="6000" />
 		</field>
 		<!-- 5 seconds -->
 	</bean>

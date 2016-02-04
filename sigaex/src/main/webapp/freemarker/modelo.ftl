@@ -1,13 +1,13 @@
-<!-- Não apagar as próximas três linhas.Elas serão retiradas automaticamente pelo Integrador -->
+<!-- NÃ£o apagar as prÃ³ximas trÃªs linhas.Elas serÃ£o retiradas automaticamente pelo Integrador -->
 <META HTTP-EQUIV='Pragma' CONTENT="no-cache">
 <META HTTP-EQUIV="Expires" CONTENT="-1">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
-[#--     Documentação               --]
+[#--     DocumentaÃ§Ã£o               --]
 [#--
- Descrição da aplicação: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ DescriÃ§Ã£o da aplicaÃ§Ã£o: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
  Autor                 : xxxxxxxxxxxxxxxxxxxxxxxxxxxx
- Data da Modificação   : xx/xx/xxxx
- Versão                : 1.00.00
+ Data da ModificaÃ§Ã£o   : xx/xx/xxxx
+ VersÃ£o                : 1.00.00
 --]
 [#-- Bloco Entrevista --]
 [@entrevista]

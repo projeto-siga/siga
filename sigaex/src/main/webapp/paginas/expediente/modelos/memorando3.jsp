@@ -96,11 +96,11 @@
 <%-- 	
 	<mod:finalizacao>
 		{Memorando Finalizado!}
-		<c:set var="f" value="${f:criarWorkflow('Teste de Integração', doc)}" />
+		<c:set var="f" value="${f:criarWorkflow('Teste de IntegraÃ§Ã£o', doc)}" />
 	</mod:finalizacao>
 	<mod:assinatura>
 		{Memorando Assinado!}
-		<c:set var="f" value="${f:criarWorkflow('Teste de Integração', doc)}" />
+		<c:set var="f" value="${f:criarWorkflow('Teste de IntegraÃ§Ã£o', doc)}" />
 	</mod:assinatura>
 --%>
 </mod:modelo>

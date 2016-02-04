@@ -12,19 +12,19 @@
 			<mod:pessoa titulo="Servidor" var="servidor" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:lotacao titulo="Próxima lotação" var="lotacao" />
+			<mod:lotacao titulo="PrÃ³xima lotaÃ§Ã£o" var="lotacao" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:data titulo="A partir de" var="dataInicio" />
 		</mod:grupo>
 		<mod:grupo>
-			<b> <mod:mensagem titulo="Atenção"
-				texto="preencha o destinatário com SELOT e, após finalizar, transfira para a SELOT." />
+			<b> <mod:mensagem titulo="AtenÃ§Ã£o"
+				texto="preencha o destinatÃ¡rio com SELOT e, apÃ³s finalizar, transfira para a SELOT." />
 			</b>
 		</mod:grupo>
 	</mod:entrevista>
 	<mod:documento>
-		<mod:valor var="texto_memorando"><p style="TEXT-INDENT: 2cm" align="justify">Solicito a <b>remoção</b>
+		<mod:valor var="texto_memorando"><p style="TEXT-INDENT: 2cm" align="justify">Solicito a <b>remoÃ§Ã£o</b>
 			do(a) servidor(a)<mod:identificacao pessoa="${requestScope['servidor_pessoaSel.id']}" negrito="sim" nivelHierarquicoMaximoDaLotacao="4" />
 			para a <b>${f:lotacao(requestScope['lotacao_lotacaoSel.id']).descricao}</b>,
 			a partir de <b>${dataInicio}</b>.</p>

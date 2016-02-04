@@ -7,29 +7,29 @@
 <c:set var="esconderTexto" value="sim" scope="request" />
 <mod:modelo urlBase="/paginas/expediente/modelos/solicitacao.jsp">
 	<mod:entrevista>
-		<mod:grupo titulo="DADOS DO ESTAGI¡RIO">
+		<mod:grupo titulo="DADOS DO ESTAGI√ÅRIO">
 			<mod:grupo>
 				<mod:texto titulo="Nome" var="nomeEstagiario" largura="60" />
 				<mod:data titulo="A partir de" var="data" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:lotacao titulo="LotaÁ„o" var="lotacaoEstagiario" />
+				<mod:lotacao titulo="Lota√ß√£o" var="lotacaoEstagiario" />
 			</mod:grupo>
 		</mod:grupo>
 	</mod:entrevista>
 
 	<mod:documento>
 
-	<mod:valor var="texto_solicitacao">	<p style="TEXT-INDENT: 2cm" align="justify">Solicito a <b>EMISS√O</b> do crach· de identificaÁ„o
-		do estagi·rio <b>${nomeEstagiario}</b>, lotado neste(a) <b>${requestScope['lotacaoEstagiario_lotacaoSel.descricao']}</b>
-		a partir de <b>${data}</b>, e para tanto anexa ao presente a seguinte documentaÁ„o:
+	<mod:valor var="texto_solicitacao">	<p style="TEXT-INDENT: 2cm" align="justify">Solicito a <b>EMISS√ÉO</b> do crach√° de identifica√ß√£o
+		do estagi√°rio <b>${nomeEstagiario}</b>, lotado neste(a) <b>${requestScope['lotacaoEstagiario_lotacaoSel.descricao']}</b>
+		a partir de <b>${data}</b>, e para tanto anexa ao presente a seguinte documenta√ß√£o:
 		</p>
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		<ul>
 				<li>01 foto 3 X 4;</li>
-				<li>Formul·rio de cadastramento devidamente preenchido e assinado;</li>
-				<li>Documento da EMARF(ofÌcio) ou da DICRE/SRH(encaminhamento)
-				que apresenta o estagi·rio.</li>
+				<li>Formul√°rio de cadastramento devidamente preenchido e assinado;</li>
+				<li>Documento da EMARF(of√≠cio) ou da DICRE/SRH(encaminhamento)
+				que apresenta o estagi√°rio.</li>
 		</ul>
 		</p>
 		

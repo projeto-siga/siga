@@ -14,8 +14,8 @@ import org.picketlink.identity.federation.core.interfaces.AttributeManager;
  * @author Rodrigo Ramalho
  * 	       hodrigohamalho@gmail.com
  * 
- * Esse handler È chamado assim que um usu·rio se autentica. … uma maneira de passar
- * par‚metros para os SPs. Nesse caso ser· passado o sessionID do IDP para manipulaÁ„o
+ * Esse handler √© chamado assim que um usu√°rio se autentica. √â uma maneira de passar
+ * par√¢metros para os SPs. Nesse caso ser√° passado o sessionID do IDP para manipula√ß√£o
  * de requests entre os SPs.
  */
 public class SAMLAttributeManager implements AttributeManager {
@@ -24,8 +24,8 @@ public class SAMLAttributeManager implements AttributeManager {
 	private final String REQUEST = "javax.servlet.http.HttpServletRequest";
 
 	/**
-	 * Tudo que for colocado neste mapa que È retornado ser· colocado na sess„o e pode ser
-	 * recuperado atravÈs do mÈtodo session.getAttribute("SESSION_ATTRIBUTE_MAP")
+	 * Tudo que for colocado neste mapa que √© retornado ser√° colocado na sess√£o e pode ser
+	 * recuperado atrav√©s do m√©todo session.getAttribute("SESSION_ATTRIBUTE_MAP")
 	 */
 	@Override
 	public Map<String, Object> getAttributes(Principal userPrincipal, List<String> attributeKeys) {

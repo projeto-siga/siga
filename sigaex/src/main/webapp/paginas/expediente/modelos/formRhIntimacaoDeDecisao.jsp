@@ -9,19 +9,19 @@
 		</br>
 		<mod:grupo>
 			<mod:grupo>
-				<mod:selecao titulo="Tipo de Intimação" var="tipoDeIntimacao" 
-					opcoes="No ambiente de trabalho;Afastado do serviço" reler='sim'/>
+				<mod:selecao titulo="Tipo de IntimaÃ§Ã£o" var="tipoDeIntimacao" 
+					opcoes="No ambiente de trabalho;Afastado do serviÃ§o" reler='sim'/>
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Processo Administrativo Nº" var="numProcesso" largura="20" />
+				<mod:texto titulo="Processo Administrativo NÂº" var="numProcesso" largura="20" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:pessoa titulo="Matrícula do Servidor/Juiz Federal" var="matricula" reler="sim"
+				<mod:pessoa titulo="MatrÃ­cula do Servidor/Juiz Federal" var="matricula" reler="sim"
 					buscarFechadas="true" />
 			</mod:grupo>
 			<mod:grupo>
-				<c:if test="${tipoDeIntimacao == 'Afastado do serviço'}">
-					<mod:texto titulo="Endereço Residencial" var="endereco" largura="50" />
+				<c:if test="${tipoDeIntimacao == 'Afastado do serviÃ§o'}">
+					<mod:texto titulo="EndereÃ§o Residencial" var="endereco" largura="50" />
 				</c:if>
 			</mod:grupo>
 			</br>
@@ -39,16 +39,16 @@
 				<br/><br/>
 					<table width="100%" border="0" >
 						<tr>
-							<td align="left"><p style="font-family:Arial;font-size:11pt;font-weight:bold;" >SUBSECRETARIA DE GESTÃO DE PESSOAS (SGP)</p></td>
+							<td align="left"><p style="font-family:Arial;font-size:11pt;font-weight:bold;" >SUBSECRETARIA DE GESTÃƒO DE PESSOAS (SGP)</p></td>
 						</tr>
 						<tr>
-							<td align="left"><p style="font-family:Arial;font-size:11pt;font-weight:bold;" >Av.Rio Branco 243 - Anexo I - 9º andar - Cep: 22240-009</p></td>
+							<td align="left"><p style="font-family:Arial;font-size:11pt;font-weight:bold;" >Av.Rio Branco 243 - Anexo I - 9Âº andar - Cep: 22240-009</p></td>
 						</tr>
 						<tr>
 							<td align="center">
 								<br/>
 								<br/>
-								<p style="font-family:Arial;font-size:11pt;font-weight:bold;" >INTIMAÇÃO DA DECISÃO</p>
+								<p style="font-family:Arial;font-size:11pt;font-weight:bold;" >INTIMAÃ‡ÃƒO DA DECISÃƒO</p>
 							</td>
 						</tr>
 				<tr><td></td>
@@ -68,28 +68,28 @@
 		FIM CABECALHO -->
 		<br />
 		
-			PROCESSO ADMINISTRATIVO Nº: ${numProcesso}
+			PROCESSO ADMINISTRATIVO NÂº: ${numProcesso}
 			<br/>
-			<b>INTIMAÇÃO DE</b> ${f:pessoa(requestScope['matricula_pessoaSel.id']).nomePessoa}
-			<c:if test="${tipoDeIntimacao == 'Afastado do serviço'}">
+			<b>INTIMAÃ‡ÃƒO DE</b> ${f:pessoa(requestScope['matricula_pessoaSel.id']).nomePessoa}
+			<c:if test="${tipoDeIntimacao == 'Afastado do serviÃ§o'}">
 				<br/>
-				<b>ENDEREÇO RESIDENCIAL:</b> ${endereco}
+				<b>ENDEREÃ‡O RESIDENCIAL:</b> ${endereco}
 			</c:if>
 		
 		<p style="TEXT-INDENT: 2cm" align="justify">
-			Tendo em vista o disposto nos arts. 6º, parágrafo único, e 7º da Resolução nº 68 de 27/07/2009 do 
-			Conselho de Justiça Federal (CJF), INTIMO V.Exa. para, querendo, interpor RECURSO, nos autos do 
-			Processo Administrativo em epígrafe, que versa sobre a devolução de valores indevidamente pagos, 
-			no prazo máximo de 15 (quinze) dias, a contar do recebimento desta.
+			Tendo em vista o disposto nos arts. 6Âº, parÃ¡grafo Ãºnico, e 7Âº da ResoluÃ§Ã£o nÂº 68 de 27/07/2009 do 
+			Conselho de JustiÃ§a Federal (CJF), INTIMO V.Exa. para, querendo, interpor RECURSO, nos autos do 
+			Processo Administrativo em epÃ­grafe, que versa sobre a devoluÃ§Ã£o de valores indevidamente pagos, 
+			no prazo mÃ¡ximo de 15 (quinze) dias, a contar do recebimento desta.
 		</p>
 		<p style="TEXT-INDENT: 2cm" align="justify">
-			Esta Intimação assinada deverá ser devolvida, com urgência, a esta Unidade, que, após o prazo 
-			acima previsto, prosseguirá com a tramitação do processo, independentemente de sua manifestação.
+			Esta IntimaÃ§Ã£o assinada deverÃ¡ ser devolvida, com urgÃªncia, a esta Unidade, que, apÃ³s o prazo 
+			acima previsto, prosseguirÃ¡ com a tramitaÃ§Ã£o do processo, independentemente de sua manifestaÃ§Ã£o.
 		</p>
 		<br />
 		<br />
 		<p style="TEXT-INDENT: 2cm" align="justify">
-			EXPEDIDO no Município do Rio de Janeiro, em	${doc.dtExtensoSemLocalidade}, pela Subsecretaria de Gestão de Pessoas.
+			EXPEDIDO no MunicÃ­pio do Rio de Janeiro, em	${doc.dtExtensoSemLocalidade}, pela Subsecretaria de GestÃ£o de Pessoas.
 		</p>
 		<br />
 		<c:import

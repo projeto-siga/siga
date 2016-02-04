@@ -9,26 +9,26 @@
 				<mod:grupo>
 					<mod:lotacao titulo="Unidade Gestora" var="lotacao"/>
 				</mod:grupo>
-				<mod:texto titulo="N∫ Processo" var="numProcesso" largura="10" />
-				<mod:selecao titulo="N∫ de Contratos a informar" var="numContratos" opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20" reler="ajax" idAjax="numContratoAjax" />
+				<mod:texto titulo="N¬∫ Processo" var="numProcesso" largura="10" />
+				<mod:selecao titulo="N¬∫ de Contratos a informar" var="numContratos" opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20" reler="ajax" idAjax="numContratoAjax" />
 			<hr>
 			<mod:grupo depende="numContratoAjax">
 				<c:forEach var="i" begin="1" end="${numContratos}">
-						<mod:texto titulo="N∫ do Contrato" var="numCont${i}" largura="10" />
+						<mod:texto titulo="N¬∫ do Contrato" var="numCont${i}" largura="10" />
 					<mod:grupo>
 						<mod:texto titulo="Nome da Empresa" var="nomeEmpresa${i}" largura="55" />
 					</mod:grupo>
 					<mod:grupo>
-						<mod:texto titulo="DescriÁ„o Contrato" var="descContrato${i}" largura="50" />
+						<mod:texto titulo="Descri√ß√£o Contrato" var="descContrato${i}" largura="50" />
 					</mod:grupo>				
 					<mod:grupo>
-						<mod:texto titulo="PerÌodo de referÍncia" var="mes${i}" largura="50"/>
+						<mod:texto titulo="Per√≠odo de refer√™ncia" var="mes${i}" largura="50"/>
 					</mod:grupo>
 					<mod:grupo>
-						<mod:selecao titulo="Informo que os serviÁos foram prestados" var="fatura${i}" opcoes="conforme discriminados nos termos do contrato em referÍncia;com as seguintes ressalvas;com qualidade e eficiÍncia" reler="sim"/>
+						<mod:selecao titulo="Informo que os servi√ßos foram prestados" var="fatura${i}" opcoes="conforme discriminados nos termos do contrato em refer√™ncia;com as seguintes ressalvas;com qualidade e efici√™ncia" reler="sim"/>
 							<mod:grupo>
 								<c:if test="${requestScope[f:concat('fatura',i)] == 'com as seguintes ressalvas'}">
-								<mod:grupo titulo="DescriÁ„o das ressalvas">
+								<mod:grupo titulo="Descri√ß√£o das ressalvas">
 									<mod:grupo>
 										<mod:editor titulo="" var="descRessalvas${i}" />
 									</mod:grupo>
@@ -37,38 +37,38 @@
 							</mod:grupo>
 					</mod:grupo>
 					
-				<mod:selecao titulo="Õndice de Freq¸Íncia" var="frequencia" opcoes="Integral;Parcial;N„o se aplica" reler="ajax" idAjax="frequenciaAjax" />
+				<mod:selecao titulo="√çndice de Freq√º√™ncia" var="frequencia" opcoes="Integral;Parcial;N√£o se aplica" reler="ajax" idAjax="frequenciaAjax" />
 				<mod:grupo depende="frequenciaAjax">
 				<c:if test="${frequencia eq 'Parcial'}">
-					<mod:selecao titulo="InformaÁ„o Simplificada" opcoes="Sim;N„o" var="infoSimplif" reler="ajax" idAjax="infoSimplifAjax" /> 
+					<mod:selecao titulo="Informa√ß√£o Simplificada" opcoes="Sim;N√£o" var="infoSimplif" reler="ajax" idAjax="infoSimplifAjax" /> 
 						<mod:grupo depende="infoSimplifAjax">
 							<c:choose>
 								<c:when test="${infoSimplif eq 'Sim'}">
 									<mod:grupo>
-										<mod:numero titulo="N∫ de faltas sem reposiÁ„o" var="numFaltas" largura="10" />
+										<mod:numero titulo="N¬∫ de faltas sem reposi√ß√£o" var="numFaltas" largura="10" />
 									</mod:grupo>
 									<mod:grupo>
-										<mod:numero titulo="Quantidade de minutos em atrasos sem reposiÁ„o" var="quantMinutos" largura="10" />
+										<mod:numero titulo="Quantidade de minutos em atrasos sem reposi√ß√£o" var="quantMinutos" largura="10" />
 									</mod:grupo>	
 								</c:when>
 								<c:otherwise>
 									<mod:grupo>
-										<mod:selecao titulo="Informe a quantidade de funcion·rio(s) com freq¸Íncia parcial" var="faltas" opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30" reler="ajax" idAjax="faltasAjax"/>
+										<mod:selecao titulo="Informe a quantidade de funcion√°rio(s) com freq√º√™ncia parcial" var="faltas" opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30" reler="ajax" idAjax="faltasAjax"/>
 									</mod:grupo>
 									<mod:grupo depende="faltasAjax">
 										<c:forEach var="i" begin="1" end="${faltas}">
 											<mod:grupo>
 												<mod:texto titulo="Nome" var="nomeFuncionario${i}" largura="50" />
-												<mod:selecao titulo="Selecione uma opÁ„o" var="reposicao${i}" opcoes="[Nenhum];Com reposiÁ„o;Sem reposiÁ„o" reler="ajaxReposicao${i}" />
+												<mod:selecao titulo="Selecione uma op√ß√£o" var="reposicao${i}" opcoes="[Nenhum];Com reposi√ß√£o;Sem reposi√ß√£o" reler="ajaxReposicao${i}" />
 											</mod:grupo>
 											<mod:grupo>
-												<mod:selecao titulo="Tipo(s) Diferente(s) de AusÍncia(s)" var="ausencia${i}" opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20" reler="ajax" idAjax="ajaxAusencia${i}" />
+												<mod:selecao titulo="Tipo(s) Diferente(s) de Aus√™ncia(s)" var="ausencia${i}" opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20" reler="ajax" idAjax="ajaxAusencia${i}" />
 											</mod:grupo>
 											<mod:grupo depende="ajaxAusencia${i}">
 												<c:forEach var="j" begin="1" end="${requestScope[f:concat('ausencia',i)]}">
 													<mod:grupo>
 														<mod:data titulo=" ${j}) De" var="de${j}${i}" />
-														<mod:data titulo="AtÈ" var="ate${j}${i}" />
+														<mod:data titulo="At√©" var="ate${j}${i}" />
 														<mod:texto titulo="Motivo" var="motivo${j}${i}" largura="50" />
 													</mod:grupo>
 												</c:forEach>
@@ -83,7 +83,7 @@
 					
 					
 					<mod:grupo>
-						<mod:memo titulo="InformaÁıes adicionais" var="infor${i}" linhas="5" colunas="60" />
+						<mod:memo titulo="Informa√ß√µes adicionais" var="infor${i}" linhas="5" colunas="60" />
 					</mod:grupo>
 					<hr>
 				</c:forEach>
@@ -128,32 +128,32 @@
 		
 		<mod:letra tamanho="${tl}">
 
-		<mod:letra tamanho="${tl}"><p align="center"> CONTRATOS: RELAT”RIO - FORMUL¡RIO INFORMA«√O SOBRE PRESTA«√O DE SERVI«OS </p></mod:letra><br><br>
+		<mod:letra tamanho="${tl}"><p align="center"> CONTRATOS: RELAT√ìRIO - FORMUL√ÅRIO INFORMA√á√ÉO SOBRE PRESTA√á√ÉO DE SERVI√áOS </p></mod:letra><br><br>
 		
 		 <p style="TEXT-INDENT: 2cm" align="justify">
 		 Unidade Gestora: <b>${requestScope['lotacao_lotacaoSel.descricao']}</b>
 		 </p>			
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 N∫ Processo: <b>${numProcesso}</b>
+		 N¬∫ Processo: <b>${numProcesso}</b>
 		 </p>
 		 <hr>
 		 <c:forEach var="i" begin="1" end="${numContratos}">
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 N∫ do Contrato: <b>${requestScope[f:concat('numCont',i)]}</b>
+		 N¬∫ do Contrato: <b>${requestScope[f:concat('numCont',i)]}</b>
 		 </p>
 		 <p style="TEXT-INDENT: 2cm" align="justify">
 		 Nome da Empresa: <b>${requestScope[f:concat('nomeEmpresa',i)]}</b>
 		 </p>
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 DescriÁ„o Contrato: <b>${requestScope[f:concat('descContrato',i)]}</b>
+		 Descri√ß√£o Contrato: <b>${requestScope[f:concat('descContrato',i)]}</b>
 		 </p>
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 PerÌodo de Ref. <b>${requestScope[f:concat('mes',i)]}</b>
+		 Per√≠odo de Ref. <b>${requestScope[f:concat('mes',i)]}</b>
 		 </p>
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 Informo que os serviÁos foram prestados
-		 <c:if test="${requestScope[f:concat('fatura',i)] == 'conforme discriminados nos termos do contrato em referÍncia'}">
-		 	conforme discriminados nos termos do contrato em referÍncia
+		 Informo que os servi√ßos foram prestados
+		 <c:if test="${requestScope[f:concat('fatura',i)] == 'conforme discriminados nos termos do contrato em refer√™ncia'}">
+		 	conforme discriminados nos termos do contrato em refer√™ncia
 		 </c:if>
 		 <c:if test="${requestScope[f:concat('fatura',i)] == 'com as seguintes ressalvas'}">
 			com as seguintes ressalvas: 
@@ -161,28 +161,28 @@
 		 <b>${requestScope[f:concat('descRessalvas',i)]}</b>
 		 </span>
 		 </c:if>
-		 <c:if test="${requestScope[f:concat('fatura',i)] == 'com qualidade e eficiÍncia'}">
-		 	com qualidade e eficiÍncia.
+		 <c:if test="${requestScope[f:concat('fatura',i)] == 'com qualidade e efici√™ncia'}">
+		 	com qualidade e efici√™ncia.
 		 </c:if>
 		 
 		 <c:if test="${infoSimplif eq 'Sim'}">
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 N∫ de faltas sem reposiÁ„o: <b>${numFaltas}</b>
+		 N¬∫ de faltas sem reposi√ß√£o: <b>${numFaltas}</b>
 		 </p>
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 Quantidade de minutos em atrasos sem reposiÁ„o: <b>${quantMinutos}</b>
+		 Quantidade de minutos em atrasos sem reposi√ß√£o: <b>${quantMinutos}</b>
 		 </p>
 		 </c:if>
 
 		 <c:if test="${frequencia =='Integral'}">
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 Informo que o(s) funcion·rio(s) tiveram freq¸Íncia integral durante o mÍs.
+		 Informo que o(s) funcion√°rio(s) tiveram freq√º√™ncia integral durante o m√™s.
 		 </p>
 		 </c:if>
 		
 		 <c:if test="${(frequencia =='Parcial') and (faltas >= 1)}">
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 Informo que o(s) funcion·rio(s) abaixo tiveram freq¸Íncia parcial, conforme discriminado abaixo, tendo os demais freq¸Íncia integral:
+		 Informo que o(s) funcion√°rio(s) abaixo tiveram freq√º√™ncia parcial, conforme discriminado abaixo, tendo os demais freq√º√™ncia integral:
 		 </p>
 		 <br>
 		 
@@ -191,7 +191,7 @@
 			<tr>
 				<td bgcolor="#FFFFFF" width="40%" align="center"><b>Nome</b></td>
 				<td bgcolor="#FFFFFF" width="40%" align="center"><b>Data/Motivo</b></td>
-				<td bgcolor="#FFFFFF" width="20%" align="center"><b>ObservaÁ„o</b></td>
+				<td bgcolor="#FFFFFF" width="20%" align="center"><b>Observa√ß√£o</b></td>
 			</tr>
 			<c:forEach var="i" begin="1" end="${faltas}">
 				<tr>
@@ -213,7 +213,7 @@
 		 
 		 <c:if test="${not empty requestScope[f:concat('infor',i)]}">
 	 		 <p style="TEXT-INDENT: 2cm" align="justify">
-			 	InformaÁıes adicionais: ${requestScope[f:concat('infor',i)]}
+			 	Informa√ß√µes adicionais: ${requestScope[f:concat('infor',i)]}
 			 </p>
 		 </c:if>
 		 <hr>

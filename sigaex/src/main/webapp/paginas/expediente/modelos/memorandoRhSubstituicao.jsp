@@ -11,7 +11,7 @@
 	<mod:entrevista>
 		<mod:grupo>
 			<mod:selecao var="qtdServidores"
-			titulo="Quantidade de substituiÁıes" reler="ajax"
+			titulo="Quantidade de substitui√ß√µes" reler="ajax"
 			idAjax="qtdServidoresAjax" opcoes="1;2;3;4;5;6;7;8;9;10" />
 		</mod:grupo>	
 		<mod:grupo depende="qtdServidoresAjax">
@@ -22,18 +22,18 @@
 				<mod:grupo>
 					<mod:pessoa titulo="Titular" var="titular${i}" />
 				</mod:grupo>
-				<mod:grupo titulo="PerÌodo Solicitado">
+				<mod:grupo titulo="Per√≠odo Solicitado">
 					<mod:data titulo="De" var="dataInicio${i}" />
 					<mod:data titulo="a" var="dataFim${i}" />
 				</mod:grupo>
 				<mod:grupo>
 					<mod:selecao reler="ajax" idAjax="motivoAjax${i}"
 						titulo="Por motivo de" var="motivo${i}"
-						opcoes="[SELECIONE];AUS NCIA EM RAZ√O DE FALECIMENTO DE FAMILIAR;AUS NCIA AO SERVI«O POR MOTIVO DE CASAMENTO;AFASTAMENTO AUTORIZADO PARA DOA«√O DE SANGUE;COMPENSA«√O DOS DIAS TRABALHADOS NAS ELEI«’ES;LICEN«A PR MIO;F…RIAS REGULAMENTARES;LICEN«A PARA TRATAMENTO DA PR”PRIA SA⁄DE;LICEN«A ¿ GESTANTE;LICEN«A ¿ GESTANTE (PRORROGA«√O - 60 DIAS);PROGRAMA DE DESENVOLVIMENTO GERENCIAL (PDG);PARTICIPA«√O EM A«’ES DE CAPACITA«√O;LICEN«A PARA CAPACITA«√O;LICEN«A POR MOTIVO DE DOEN«A EM PESSOA DA FAMILIA;LICEN«A PATERNIDADE;LICEN«A ADOTANTE;TITULAR SUBSTITUI OUTRO;OUTROS" />
+						opcoes="[SELECIONE];AUS√äNCIA EM RAZ√ÉO DE FALECIMENTO DE FAMILIAR;AUS√äNCIA AO SERVI√áO POR MOTIVO DE CASAMENTO;AFASTAMENTO AUTORIZADO PARA DOA√á√ÉO DE SANGUE;COMPENSA√á√ÉO DOS DIAS TRABALHADOS NAS ELEI√á√ïES;LICEN√áA PR√äMIO;F√âRIAS REGULAMENTARES;LICEN√áA PARA TRATAMENTO DA PR√ìPRIA SA√öDE;LICEN√áA √Ä GESTANTE;LICEN√áA √Ä GESTANTE (PRORROGA√á√ÉO - 60 DIAS);PROGRAMA DE DESENVOLVIMENTO GERENCIAL (PDG);PARTICIPA√á√ÉO EM A√á√ïES DE CAPACITA√á√ÉO;LICEN√áA PARA CAPACITA√á√ÉO;LICEN√áA POR MOTIVO DE DOEN√áA EM PESSOA DA FAMILIA;LICEN√áA PATERNIDADE;LICEN√áA ADOTANTE;TITULAR SUBSTITUI OUTRO;OUTROS" />
 				</mod:grupo>
 				<mod:grupo depende="motivoAjax${i}">
 					<c:if test="${requestScope[f:concat('motivo',i)] == 'OUTROS'}">
-						<mod:texto var="outrosMotivos${i}" titulo="DescriÁ„o do motivo"
+						<mod:texto var="outrosMotivos${i}" titulo="Descri√ß√£o do motivo"
 							largura="60" />
 					</c:if>
 				</mod:grupo>
@@ -43,11 +43,11 @@
 		</mod:grupo>
 		<mod:grupo>
 			<mod:selecao titulo="Documento feito de ordem de Magistrado?"
-				var="autoridade" opcoes="N√O;SIM" reler="ajax"
+				var="autoridade" opcoes="N√ÉO;SIM" reler="ajax"
 				idAjax="autoridadeAjax" />
 			<mod:grupo depende="autoridadeAjax">
 				<c:if test="${autoridade eq 'SIM'}">
-					<mod:pessoa titulo="MatrÌcula da Autoridade competente"
+					<mod:pessoa titulo="Matr√≠cula da Autoridade competente"
 						var="autoridade" />
 					<mod:grupo>
 						<mod:radio marcado="Sim" titulo="Titular" var="botao"
@@ -59,8 +59,8 @@
 			</mod:grupo>
 		</mod:grupo>
 		<mod:grupo>
-			<b> <mod:mensagem titulo="AtenÁ„o"
-				texto="preencha o destinat·rio com SELOT e, apÛs finalizar, transfira para a SELOT." />
+			<b> <mod:mensagem titulo="Aten√ß√£o"
+				texto="preencha o destinat√°rio com SELOT e, ap√≥s finalizar, transfira para a SELOT." />
 			</b>
 		</mod:grupo>
 	</mod:entrevista>
@@ -72,11 +72,11 @@
 					Juiz(a) Federal ${requestScope['botao']} do(a) <b>${f:lotacaoPessoa(requestScope['autoridade_pessoaSel.id'])}</b>,
 					Dr(a). <b>${requestScope['autoridade_pessoaSel.descricao']}</b>,
 					indico 
-				</c:if> <c:if test="${autoridade eq 'N√O'}">
+				</c:if> <c:if test="${autoridade eq 'N√ÉO'}">
 				Indico
 				</c:if> o(s) servidor(es) abaixo relacionado(s) para substituir(em) o(s)
-			titular(es) do(s) respectivo(s) cargo(s) em comiss„o/funÁ„o(ıes)
-			comissionada(s), pelo(s) motivo(s) e no(s) perÌodo(s) discriminados:
+			titular(es) do(s) respectivo(s) cargo(s) em comiss√£o/fun√ß√£o(√µes)
+			comissionada(s), pelo(s) motivo(s) e no(s) per√≠odo(s) discriminados:
 			</p>
 			<br/> 
 			
@@ -95,7 +95,7 @@
 					</tr>
 					<tr>
 						<td style="font-size: 11pt;" bgcolor="#FFFFFF" width="50%"
-							align="left" colspan="1">MATRÕCULA: ${substituto.matricula}</td>
+							align="left" colspan="1">MATR√çCULA: ${substituto.matricula}</td>
 					</tr>
 					<tr>
 						<td style="font-size: 11pt;" bgcolor="#FFFFFF" width="50%"
@@ -103,22 +103,22 @@
 					</tr>
 					<tr>
 					<td style="font-size: 11pt;" bgcolor="#FFFFFF" width="50%"
-							align="left" colspan="1">MATRÕCULA: ${titular.matricula}</td>
+							align="left" colspan="1">MATR√çCULA: ${titular.matricula}</td>
 					</tr> 
 
 					<tr>
 						<td style="font-size: 11pt;" bgcolor="#FFFFFF" width="50%"
-							align="left" colspan="1">LOTA«√O:
+							align="left" colspan="1">LOTA√á√ÉO:
 						${f:removeAcentoMaiusculas(titular.lotacao.descricao) }</td>
 					</tr>
 					<tr>
 						<td style="font-size: 11pt;" bgcolor="#FFFFFF" width="50%"
-							align="left" colspan="1">FUN«√O COMISSIONADA:
+							align="left" colspan="1">FUN√á√ÉO COMISSIONADA:
 						<b>${titular.funcaoConfianca.descricao}</b></td>
 					</tr>
 					<tr>
 						<td style="font-size: 11pt;" bgcolor="#FFFFFF" width="50%"
-							align="left" colspan="1">PERÕODO:
+							align="left" colspan="1">PER√çODO:
 						${requestScope[f:concat('dataInicio',i)]} a
 						${requestScope[f:concat('dataFim',i)]}</td>
 					</tr>

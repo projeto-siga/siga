@@ -24,6 +24,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.logging.Logger;
 
@@ -36,14 +37,14 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class HibernateThreadFilter extends ThreadFilter {
 
-	private static final Logger log = Logger.getLogger(HibernateThreadFilter.class);
+	private static final Logger log = Logger.getLogger("br.gov.jfrj.siga.hibernate");
 
 	// static {
 	// try {
 	// HibernateUtil.configurarHibernate("/br/gov/jfrj/siga/hibernate/hibernate.cfg.xml");
 	// } catch (final Throwable ex) {
 	// // Make sure you log the exception, as it might be swallowed
-	// log.error("N„o foi possÌvel configurar o hibernate.", ex);
+	// log.error("N√£o foi poss√≠vel configurar o hibernate.", ex);
 	// throw new ExceptionInInitializerError(ex);
 	// }
 	// }
@@ -99,7 +100,7 @@ public class HibernateThreadFilter extends ThreadFilter {
 //						fConfigured = true;
 //					} catch (final Throwable ex) {
 //						// Make sure you log the exception, as it might be swallowed
-//						log.error("N„o foi possÌvel configurar o hibernate. ",
+//						log.error("N√£o foi poss√≠vel configurar o hibernate. ",
 //								ex);
 //						// ex.printStackTrace();
 //						throw new ExceptionInInitializerError(ex);
@@ -120,7 +121,7 @@ public class HibernateThreadFilter extends ThreadFilter {
 
 		if (!CpDao.getInstance().sessaoEstahAberta())
 			throw new AplicacaoException(
-					"Erro: sess„o do Hibernate est· fechada.");
+					"Erro: sess√£o do Hibernate est√° fechada.");
 
 		CpDao.iniciarTransacao();
 		doFiltro(request, response, chain);
@@ -134,8 +135,16 @@ public class HibernateThreadFilter extends ThreadFilter {
 		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
-			log.info("Ocorreu um erro durante a execuÁ„o da operaÁ„o: "
-					+ e.getMessage());
+			StringBuffer caminho = new StringBuffer();
+			String parametros = "";
+			if (request instanceof HttpServletRequest){
+				HttpServletRequest httpReq = (HttpServletRequest)request;
+				caminho = httpReq.getRequestURL();
+				parametros = httpReq.getQueryString()==null?"":"?" + httpReq.getQueryString();
+				caminho.append(parametros);
+			}
+			log.info("Ocorreu um erro durante a execu√ß√£o da opera√ß√£o: "+ e.getMessage() 
+					+ "\ncaminho: " + caminho.toString());
 			throw e;
 		}
 	}
@@ -144,7 +153,7 @@ public class HibernateThreadFilter extends ThreadFilter {
 		try {
 			HibernateUtil.fechaSessaoSeEstiverAberta();
 		} catch (Exception ex) {
-			log.error("Ocorreu um erro ao fechar uma sess„o do Hibernate", ex);
+			log.error("Ocorreu um erro ao fechar uma sess√£o do Hibernate", ex);
 			// ex.printStackTrace();
 		}
 	}

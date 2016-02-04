@@ -9,7 +9,7 @@
 		<mod:grupo titulo="Dados do Documento de Origem">
 			<mod:grupo>
 				<mod:texto titulo="Tipo de documento" var="tipoDeDocumento" largura="20" />
-				<mod:texto titulo="Número" var="numero" largura="20" />
+				<mod:texto titulo="NÃºmero" var="numero" largura="20" />
 			</mod:grupo>
 			<mod:grupo>
 			<mod:texto titulo="Assunto" var="assunto" largura="100" />
@@ -21,7 +21,7 @@
 			<mod:texto titulo="Data do julgamento" var="dataJulgamento" largura="30" />
 			</mod:grupo>
 		</mod:grupo>
-		<mod:grupo titulo="Texto a ser inserido no corpo da certidão">
+		<mod:grupo titulo="Texto a ser inserido no corpo da certidÃ£o">
 			<mod:grupo>
 				<mod:editor titulo="" var="texto" />
 			</mod:grupo>
@@ -59,12 +59,12 @@
 				<br/><br/>
 			FIM CABECALHO -->
 		<br/>
-		<p align="center" style="font-family:Arial;font-size:11pt;font-weight: bold;">CERTIDÃO N&ordm; ${doc.codigo}</p>
+		<p align="center" style="font-family:Arial;font-size:11pt;font-weight: bold;">CERTIDÃƒO N&ordm; ${doc.codigo}</p>
 		<mod:letra tamanho="${tl}">		
 		<br />
 		<br />
 		<c:if test="${not empty tipoDeDocumento}">
-		<p align="left">${tipoDeDocumento}&nbsp nº&nbsp ${numero}</p>
+		<p align="left">${tipoDeDocumento}&nbsp nÂº&nbsp ${numero}</p>
 		</c:if>
 		<c:if test="${not empty assunto}">
 		<p align="left">ASSUNTO:&nbsp ${assunto}</p>

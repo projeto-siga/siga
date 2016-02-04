@@ -39,8 +39,8 @@ import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
 /**
- * Classe utilizada para designar um respons·vel para uma raia ou tarefa. Esta
- * classe È definida em siga-wf/src/jbpm.cfg.xml.
+ * Classe utilizada para designar um respons√°vel para uma raia ou tarefa. Esta
+ * classe √© definida em siga-wf/src/jbpm.cfg.xml.
  * 
  * @author kpf
  * 
@@ -50,10 +50,10 @@ public class WfAssignmentHandler implements AssignmentHandler {
 	private static final long serialVersionUID = -5731439604710820114L;
 
 	/**
-	 * Designa um respons·vel.
+	 * Designa um respons√°vel.
 	 * 
 	 * @param assignable - raia ou tarefa 
-	 * @param ctx - Contexto de execuÁ„o. ContÈm as informaÁıes do processo, token, etc.
+	 * @param ctx - Contexto de execu√ß√£o. Cont√©m as informa√ß√µes do processo, token, etc.
 	 */
 	public void assign(Assignable assignable, ExecutionContext ctx)
 			throws Exception {
@@ -136,7 +136,7 @@ public class WfAssignmentHandler implements AssignmentHandler {
 
 		if (cfg == null) {
 			throw new AplicacaoException(
-					"N„o foi possÌvel localizar uma configuraÁ„o para designar o respons·vel.");
+					"N√£o foi poss√≠vel localizar uma configura√ß√£o para designar o respons√°vel.");
 		}
 
 		if (cfg.getAtor() != null) {

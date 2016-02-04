@@ -1,7 +1,6 @@
--------------------------------------------
---	SCRIPT:INCLUSAO DO TIPO AGRUPAMENTO
--------------------------------------------
-Insert into CORPORATIVO.CP_TIPO_LOTACAO (ID_TP_LOTACAO,SIGLA_TP_LOTACAO,DESC_TP_LOTACAO,ID_TP_LOTACAO_PAI) values (200,'AGR','Agrupamento',null);
-Insert into CORPORATIVO.CP_TIPO_LOTACAO (ID_TP_LOTACAO,SIGLA_TP_LOTACAO,DESC_TP_LOTACAO,ID_TP_LOTACAO_PAI) values (201,'AGFM','Agrupamento Formal',200);
-Insert into CORPORATIVO.CP_TIPO_LOTACAO (ID_TP_LOTACAO,SIGLA_TP_LOTACAO,DESC_TP_LOTACAO,ID_TP_LOTACAO_PAI) values (202,'AGOP','Agrupamento Operacional',200);
-Insert into CORPORATIVO.CP_TIPO_LOTACAO (ID_TP_LOTACAO,SIGLA_TP_LOTACAO,DESC_TP_LOTACAO,ID_TP_LOTACAO_PAI) values (203,'AGFC','Agrupamento Funcional',200);
+-- Incluindo marcadores gerails para documentos
+ALTER SESSION SET CURRENT_SCHEMA = CORPORATIVO;
+
+insert into cp_marcador values(1000, 'Urgente', 2, null);
+insert into cp_marcador values(1001, 'Idoso', 2, null);
+insert into cp_marcador values(1002, 'Retenção de INSS', 2, null);

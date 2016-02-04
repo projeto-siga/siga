@@ -7,7 +7,7 @@
 	<mod:entrevista>
 		<c:if test="${empty esconderTexto}">
 			<mod:grupo
-				titulo="Texto a ser inserido no corpo da Resolução da Presidência">
+				titulo="Texto a ser inserido no corpo da ResoluÃ§Ã£o da PresidÃªncia">
 				<mod:grupo>
 					<mod:editor titulo="" var="texto_res" />
 				</mod:grupo>
@@ -67,7 +67,7 @@
 				<br/><br/>
 					<table width="100%" border="0" >
 						<tr>
-							<td align="center"><p style="font-family:Arial;font-size:11pt;font-weight:bold;" >RESOLUÇÃO N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</p></td>
+							<td align="center"><p style="font-family:Arial;font-size:11pt;font-weight:bold;" >RESOLUÃ‡ÃƒO N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</p></td>
 						</tr>
 					</table>
 				</td>
@@ -75,17 +75,17 @@
 		</table>
 		FIM PRIMEIRO CABECALHO -->
 
-                <!-- <p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">RESOLUÇÃO N&ordm; ${doc.codigo}</span> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p> -->
+                <!-- <p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">RESOLUÃ‡ÃƒO N&ordm; ${doc.codigo}</span> DE ${doc.dtExtensoMaiusculasSemLocalidade}</p> -->
 
 		<p align="center" style="font-family:Arial;font-size:11pt;">
 
                  <!-- INICIO TITULO 
 			<mod:letra tamanho="${tl}">
-				<p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">RESOLUÇÃO N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span></p>
+				<p align="center" style="font-family:Arial;font-size:11pt;"><span style="font-weight: bold;">RESOLUÃ‡ÃƒO N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span></p>
 			</mod:letra>
 		      FIM TITULO -->
 
-		<!-- INICIO NUMERO <span style="font-weight: bold;">RESOLUÇÃO N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span> FIM NUMERO --></p>	
+		<!-- INICIO NUMERO <span style="font-weight: bold;">RESOLUÃ‡ÃƒO N&ordm; ${doc.codigo} DE ${doc.dtExtensoMaiusculasSemLocalidade}</span> FIM NUMERO --></p>	
 
 		<!-- INICIO CABECALHO
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerda.jsp" />

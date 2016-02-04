@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>siga</groupId>
 	<artifactId>siga-doc</artifactId>
 	<packaging>pom</packaging>
-	<version>1.1</version>
+	<version>1.2-SNAPSHOT</version>
 
-	<modules>
-		<module>siga-integration-test</module>
+	<modules>		
 		<module>siga-base</module>
 		<module>siga-ws</module>
 		<module>siga-rel</module>
 		<module>siga-cd-base</module>
 		<module>siga-cp</module>
 		<module>siga-sinc-lib</module>
-		<module>siga-libs</module>
+		<module>siga-cp-sinc</module>
 		<module>siga-ldap</module>
+		<module>siga-vraptor-module</module>
+		<module>siga-dump</module>
 		<module>siga</module>
 		<module>sigaidp</module>
 		<module>sigawf</module>
@@ -25,29 +25,33 @@
 		<module>sigaex</module>
 		<module>siga-ext</module>
 		<module>siga-ex</module>
-		<module>siga-play-module</module>
+		<module>siga-ex-gsa</module>
+		<module>siga-ex-sinc</module>
+		<module>siga-gc-gsa</module>
 		<module>sigagc</module>
- 		<module>sigasr</module>
+		<module>sigasr</module>
+		<module>siga-cd</module>
+		<module>sigacd</module>
  		<module>sigapp</module>
+		<!--<module>sigari</module>
  		<module>sigacd</module>
  		<module>siga-cd</module>
- 		<module>siga-infinispan</module>
-
- 		<!--
  		<module>siga-cd-aut</module>
- 		-->
- 		<module>siga-cp-sinc</module>
- 		<module>siga-dump</module>
-	</modules>
+ 		<module>siga-cp-sinc</module> 
+ 		<module>siga-dump</module> -->
+ 		<module>siga-integration-test</module>
+    	<module>siga-ldap-cli</module>
+  </modules>
 
 
 	<properties>
- 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-		<siga.version>${project.version}</siga.version>
+ 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
+ 		<siga.version>${project.version}</siga.version>
 		<picketlink.version>2.6.0.Final</picketlink.version>
 		<hibernate.version>4.2.0.Final</hibernate.version>
 		<version.jboss.bom.eap>6.2.0-redhat-1</version.jboss.bom.eap>
 		<spring.version>4.0.6.RELEASE</spring.version>
+		<siga.versao>develop</siga.versao>
 	</properties>
 
 	<build>
@@ -67,7 +71,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.16</version>
 				<configuration>
-					<skipTests>true</skipTests>
+					<skipTests>false</skipTests>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -109,13 +113,13 @@
 										${line.separator}
 										${line.separator}
 									</message>
-									<regex>(develop|(release-|hotfix-)?\d{1,}\.\d{1,}\.\d{1,}(\.\d{1,})?)</regex>
+									<regex>(develop|(release-|hotfix-)?\d{1,}\.\d{1,}\.\d{1,}(\.\d{1,})?)(-alfa|-beta|-teste)?(-\d.*)?</regex>
 									<regexMessage>
 										${line.separator}
 										${line.separator}
 	FORMATO INVALIDO DO PARAMETRO siga.versao.
 										${line.separator}
-	Exemplos: 3.10.0, 3.11.1.5, release-1.0.0, hotfix-1.2.3.4, develop
+	Exemplos: 3.10.0, 3.11.1.5, release-1.0.0, hotfix-1.2.3.4, develop, 4.5.0-beta										
 										${line.separator}
 										${line.separator}
 									</regexMessage>
@@ -126,10 +130,17 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+	
 		</plugins>
 	</build>
 
 	<repositories>
+		<repository>
+			<id>github</id>
+			<url>https://raw.githubusercontent.com/projeto-siga/siga-repo/master/repo</url>
+		</repository>
+
 		<repository>
 			<id>JBoss Thirdparty Releases</id>
 			<url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
@@ -154,12 +165,11 @@
 			<id>simplecaptcha</id>
 			<url>http://maven.nfms4redd.org/</url>
 		</repository>
-
+		<!-- repositorio adicionado para o dynamic jasper -->
 		<repository>
-			<id>github</id>
-			<url>https://github.com/projeto-siga/siga-repo/tree/master/repo</url>
-		</repository>
-
+	    	<id>fdvsolution.public</id>
+	    	<url>http://nexus.fdvs.com.ar/content/groups/public/</url>
+	    </repository>
 	</repositories>
 
 	<dependencyManagement>
@@ -214,7 +224,7 @@
 						<groupId>org.bouncycastle</groupId>
 						<artifactId>bcpkix-jdk15on</artifactId>
 					</exclusion>
-					<exclusion>
+					<!--<exclusion>
 						<groupId>commons-digester</groupId>
 						<artifactId>commons-digester</artifactId>
 					</exclusion>
@@ -225,7 +235,7 @@
 					<exclusion>
 						<groupId>jfree</groupId>
 						<artifactId>jcommon</artifactId>
-					</exclusion>
+					</exclusion>-->
 					<exclusion>
 						<groupId>jfree</groupId>
 						<artifactId>jfreechart</artifactId>
@@ -234,10 +244,10 @@
 						<groupId>eclipse</groupId>
 						<artifactId>jdtcore</artifactId>
 					</exclusion>
-					<exclusion>
-						<groupId>jasperreports</groupId>
+					<!--<exclusion>
+						<groupId>net.sf.jasperreports</groupId>
 						<artifactId>jasperreports</artifactId>
-					</exclusion>
+					</exclusion>-->
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -259,7 +269,7 @@
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
-				<artifactId>siga-libs</artifactId>
+				<artifactId>siga-vraptor-module</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>
@@ -341,7 +351,13 @@
 				<artifactId>commons-beanutils</artifactId>
 				<version>1.9.2</version>
 			</dependency>
-
+			
+			<dependency>
+				<groupId>commons-collections</groupId>
+				<artifactId>commons-collections</artifactId>
+				<version>3.2.1</version>
+			</dependency>
+			
 			<dependency>
 				<groupId>javax.mail</groupId>
 				<artifactId>mail</artifactId>
@@ -383,9 +399,9 @@
 			</dependency>
 
 			<dependency>
-				<groupId>jasperreports</groupId>
+				<groupId>net.sf.jasperreports</groupId>
 				<artifactId>jasperreports</artifactId>
-				<version>3.5.1</version>
+				<version>5.2.0</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.bouncycastle</groupId>
@@ -394,19 +410,30 @@
 					<exclusion>
 						<groupId>org.bouncycastle</groupId>
 						<artifactId>bcprov-jdk14</artifactId>
-					</exclusion>
+					</exclusion>	
+	              	<exclusion>
+		              	<groupId>eclipse</groupId>
+		               	<artifactId>*</artifactId>
+		            </exclusion>
+            		<exclusion>
+						<groupId>commons-collections</groupId>
+						<artifactId>commons-collections</artifactId>
+					</exclusion>					
 				</exclusions>
 			</dependency>
-			<dependency>
-				<groupId>net.sf.jasperreports</groupId>
-				<artifactId>jasperreports</artifactId>
-				<version>5.1.0</version>
-			</dependency>
+
 			<dependency>
 				<groupId>ar.com.fdvs</groupId>
 				<artifactId>DynamicJasper</artifactId>
-				<version>3.0.6</version>
+				<version>5.0.0</version>
 			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi</artifactId>
+				<version>3.12</version>
+			</dependency>
+			
 			<dependency>
 				<groupId>net.sf.ehcache</groupId>
 				<artifactId>ehcache</artifactId>
@@ -532,7 +559,8 @@
 				<artifactId>dwr</artifactId>
 				<version>2.0.10</version>
 			</dependency>
-            <dependency>
+			
+			<dependency>
                 <groupId>org.mvel</groupId>
                 <artifactId>mvel2</artifactId>
                 <version>2.1.3.Final</version>
@@ -683,7 +711,7 @@
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
+			<artifactId>hibernate-validator</artifactId>			
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -692,6 +720,12 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>				
+		</dependency>
+
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-search</artifactId>
@@ -757,5 +791,17 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
+	
+	<reporting>
+	    <plugins>
+	      <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-javadoc-plugin</artifactId>
+	        <version>2.10.3</version>
+	        <configuration>
+	        </configuration>
+	      </plugin>
+	    </plugins>
+	</reporting>
 
 </project>

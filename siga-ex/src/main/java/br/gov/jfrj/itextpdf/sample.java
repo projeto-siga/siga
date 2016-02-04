@@ -23,16 +23,16 @@ import com.swetake.util.Qrcode;
 import java.awt.*;
 
 /**
- * QRcode¥¯¥é¥¹¥é¥¤¥Ö¥é¥êÍÑsample
+ * QRcodeÂ¥Â¯Â¥Ã©Â¥Â¹Â¥Ã©Â¥Â¤Â¥Ã–Â¥Ã©Â¥ÃªÃÃ‘sample
  * 
- * Âè°ì°ú¿ô¤ò¥Ç¡¼¥¿¤È¤·¤¿QRcode¤ò ¥Æ¥­¥¹¥È¤Ç½ĞÎÏ¤·¤Ş¤¹
+ * Ã‚Ã¨Â°Ã¬Â°ÃºÂ¿Ã´Â¤Ã²Â¥Ã‡Â¡Â¼Â¥Â¿Â¤ÃˆÂ¤Â·Â¤Â¿QRcodeÂ¤Ã² Â¥Ã†Â¥Â­Â¥Â¹Â¥ÃˆÂ¤Ã‡Â½ÃÃÃÂ¤Â·Â¤ÃÂ¤Â¹
  */
 class Sample {
 	public static void main(String[] args) {
 
 		Qrcode x = new Qrcode();
-		x.setQrcodeErrorCorrect('M'); // ¥¨¥é¡¼ÄûÀµ¥ì¥Ù¥ëM
-		x.setQrcodeEncodeMode('A'); // http://itrc.jju.edu.cn/nexus-2.0.6/content/repositories/thirdparty/8bit byte ¥â¡¼¥É
+		x.setQrcodeErrorCorrect('M'); // Â¥Â¨Â¥Ã©Â¡Â¼Ã„Ã»Ã€ÂµÂ¥Ã¬Â¥Ã™Â¥Ã«M
+		x.setQrcodeEncodeMode('A'); // http://itrc.jju.edu.cn/nexus-2.0.6/content/repositories/thirdparty/8bit byte Â¥Ã¢Â¡Â¼Â¥Ã‰
 		boolean[][] matrix = x.calQrcode(args[0].getBytes());
 
 		for (int i = 0; i < matrix.length; i++) {

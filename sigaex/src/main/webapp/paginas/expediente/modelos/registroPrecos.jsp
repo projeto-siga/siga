@@ -33,14 +33,14 @@
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerda.jsp" />
 		FIM CABECALHO -->
 		<br>
-		<p style="font-size:10" align="center">REGISTRO DE PREวOS</p>
+		<p style="font-size:10" align="center">REGISTRO DE PREรOS</p>
 		<br>
 		<table width="100%" border="1" bordercolor="#000000"  bgcolor="#000000">
 			<tr align="center">
 				<td rowspan="2" bgcolor="#FFFFFF">Item</td>
 				<td rowspan="2" width="15%" bgcolor="#FFFFFF">Material</td>
 				<td rowspan="2" bgcolor="#FFFFFF">Contratada</td>
-				<td rowspan="2" bgcolor="#FFFFFF">Contabiliza<br>aditamento?(SIM<br>OU NรO)</td>
+				<td rowspan="2" bgcolor="#FFFFFF">Contabiliza<br>aditamento?(SIM<br>OU NรO)</td>
 				<td colspan="2" bgcolor="#FFFFFF">Quantidade</td>
 				<td rowspan="2" bgcolor="#FFFFFF">Total do RP</td>
 				<td colspan="9" width="40%" bgcolor="#FFFFFF">PEDIDOS</td>
@@ -49,15 +49,15 @@
 			<tr align="center">
 				<td bgcolor="#FFFFFF">Inicial</td>
 				<td bgcolor="#FFFFFF">25%</td>
-				<td bgcolor="#FFFFFF">1บ</td>
-				<td bgcolor="#FFFFFF">2บ</td>
-				<td bgcolor="#FFFFFF">3บ</td>
-				<td bgcolor="#FFFFFF">4บ</td>
-				<td bgcolor="#FFFFFF">5บ</td>
-				<td bgcolor="#FFFFFF">6บ</td>
-				<td bgcolor="#FFFFFF">7บ</td>
-				<td bgcolor="#FFFFFF">8บ</td>
-				<td bgcolor="#FFFFFF">9บ</td>	
+				<td bgcolor="#FFFFFF">1ยบ</td>
+				<td bgcolor="#FFFFFF">2ยบ</td>
+				<td bgcolor="#FFFFFF">3ยบ</td>
+				<td bgcolor="#FFFFFF">4ยบ</td>
+				<td bgcolor="#FFFFFF">5ยบ</td>
+				<td bgcolor="#FFFFFF">6ยบ</td>
+				<td bgcolor="#FFFFFF">7ยบ</td>
+				<td bgcolor="#FFFFFF">8ยบ</td>
+				<td bgcolor="#FFFFFF">9ยบ</td>	
 			</tr>
 			<c:forEach var="x" begin="0" end="20">
 				<tr>

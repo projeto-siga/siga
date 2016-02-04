@@ -1,5 +1,4 @@
-<%@ tag body-content="scriptless"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
+<%@ tag body-content="scriptless" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!-- FIX -->
 <jsp:doBody var="fixdocumenthtml" scope="request" />

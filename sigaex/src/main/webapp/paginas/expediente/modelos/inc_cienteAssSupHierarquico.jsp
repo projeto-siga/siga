@@ -11,5 +11,5 @@
 		<b>____________________________________________________________</b>
 		</p>
 		<p style="TEXT-INDENT: 2cm" align="left">
-		<b>Assinatura e MatrÌcula do Superior Hier·rquico</b>
+		<b>Assinatura e Matr√≠cula do Superior Hier√°rquico</b>
 		</p>

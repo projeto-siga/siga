@@ -95,10 +95,12 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
+import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+
 
 public class CpDao extends ModeloDao {
 
@@ -221,7 +223,7 @@ public class CpDao extends ModeloDao {
 			cache = manager.getCache(cRegion);
 			CacheConfiguration config;
 			config = cache.getCacheConfiguration();
-			config.setEternal(true);
+			config.setEternal(false);
 			config.setMaxElementsInMemory(10000);
 			config.setOverflowToDisk(false);
 			config.setMaxElementsOnDisk(0);
@@ -446,7 +448,7 @@ public class CpDao extends ModeloDao {
 	public DpCargo consultarPorSigla(final DpCargo o) {
 		final Query query = getSessao().getNamedQuery(
 				"consultarPorSiglaDpCargo");
-		query.setLong("idCargoIni", o.getIdCargoIni());
+		query.setString("siglaCargo", o.getSiglaCargo());
 
 		final List<DpCargo> l = query.list();
 		if (l.size() != 1)
@@ -457,6 +459,7 @@ public class CpDao extends ModeloDao {
 	public Selecionavel consultarPorSigla(final DpCargoDaoFiltro flt) {
 		final DpCargo o = new DpCargo();
 		o.setSigla(flt.getSigla());
+		o.setIdCargoIni(flt.getIdCargoIni());
 		return consultarPorSigla(o);
 	}
 
@@ -766,8 +769,14 @@ public class CpDao extends ModeloDao {
 
 	public int consultarQuantidade(final CpGrupoDaoFiltro o) {
 		try {
-			final Query query = getSessao().getNamedQuery(
-					"consultarQuantidadeCpGrupoPorCpTipoGrupoId");
+			final Query query;
+			if (o.getNome() != null){
+				query = getSessao().getNamedQuery("consultarQuantidadeCpGrupoPorCpTipoGrupoIdENome");
+				query.setString("siglaGrupo", o.getNome());
+			}else{
+				query = getSessao().getNamedQuery("consultarQuantidadeCpGrupoPorCpTipoGrupoId");
+			}
+				
 			if (o.getIdTpGrupo() != null) {
 				query.setLong("idTpGrupo", o.getIdTpGrupo());
 			} else {
@@ -784,8 +793,13 @@ public class CpDao extends ModeloDao {
 	public List<CpGrupo> consultarPorFiltro(final CpGrupoDaoFiltro o,
 			final int offset, final int itemPagina) {
 		try {
-			final Query query = getSessao().getNamedQuery(
-					"consultarCpGrupoPorCpTipoGrupoId");
+			final Query query;
+			if (o.getNome() != null){
+				query = getSessao().getNamedQuery("consultarCpGrupoPorCpTipoGrupoIdENome");
+				query.setString("siglaGrupo", o.getNome());
+			}else{
+				query = getSessao().getNamedQuery("consultarCpGrupoPorCpTipoGrupoId");
+			}
 			if (offset > 0) {
 				query.setFirstResult(offset);
 			}
@@ -1087,8 +1101,9 @@ public class CpDao extends ModeloDao {
 					.getIdPessoaIni());
 			query.setLong("idLotaSubstitutoIni", exemplo.getLotaSubstituto()
 					.getIdLotacaoIni());
-			// query.setCacheable(true);
-			// query.setCacheRegion(CACHE_QUERY_SUBSTITUICAO);
+			// Reativado pois esse query é executado a cada chamada, inclusive as ajax.
+			query.setCacheable(true);
+			query.setCacheRegion(CACHE_QUERY_SUBSTITUICAO);
 			return query.list();
 		} catch (final IllegalArgumentException e) {
 			throw e;
@@ -1307,7 +1322,8 @@ public class CpDao extends ModeloDao {
 
 	public Date consultarDataUltimaAtualizacao() throws AplicacaoException {
 	//	Query sql = (Query) getSessao().getNamedQuery("consultarDataUltimaAtualizacao");
-		Query sql = (Query) HibernateUtil.getSessionFactory().openStatelessSession().getNamedQuery("consultarDataUltimaAtualizacao");
+		StatelessSession statelessSession = HibernateUtil.getSessionFactory().openStatelessSession();
+		Query sql = (Query) statelessSession.getNamedQuery("consultarDataUltimaAtualizacao");
 		
 		sql.setCacheable(false);
 		List result = sql.list();
@@ -1317,6 +1333,7 @@ public class CpDao extends ModeloDao {
 
 		Date dtIni = (Date) ((Object[]) (result.get(0)))[0];
 		Date dtFim = (Date) ((Object[]) (result.get(0)))[1];
+		statelessSession.close();
 		return DateUtils.max(dtIni, dtFim);
 	}
 
@@ -1343,7 +1360,12 @@ public class CpDao extends ModeloDao {
 		query.setCacheable(false);
 
 		return query.list();
+	}
 
+	public List<CpConfiguracao> consultarConfiguracoesAtivas() {
+		Query query = getSessao().getNamedQuery("consultarCpConfiguracoesAtivas");
+		query.setCacheable(false);
+		return query.list();
 	}
 
 
@@ -1387,6 +1409,16 @@ public class CpDao extends ModeloDao {
 
 		return c.list();
 
+	}
+
+	public <T> List<T> listarTodos(Class<T> clazz, String orderBy) {
+		Criteria c = getSessao().createCriteria(clazz);
+
+		if (orderBy != null) {
+			c.addOrder(Order.asc(orderBy));
+		}
+
+		return c.list();
 	}
 
 	public <T> T consultarAtivoPorIdInicial(Class<T> clazz, Long hisIdIni) {
@@ -1542,6 +1574,8 @@ public class CpDao extends ModeloDao {
 	}
 
 	public <T> T gravar(final T entidade) {
+		if (entidade instanceof CarimboDeTempo)
+			((CarimboDeTempo)entidade).setHisDtAlt(this.dt());
 		getSessao().saveOrUpdate(entidade);
 		invalidarCache(entidade);
 		return entidade;
@@ -1615,13 +1649,13 @@ public class CpDao extends ModeloDao {
 		cfg.setProperty("hibernate.current_session_context_class", "thread");
 		cfg.setProperty("hibernate.query.substitutions", "true 1, false 0");
 
-		//cfg.setProperty("hibernate.cache.region.factory_class", "org.jboss.as.jpa.hibernate4.infinispan.InfinispanRegionFactory");
+		cfg.setProperty("hibernate.cache.region.factory_class", "org.jboss.as.jpa.hibernate4.infinispan.InfinispanRegionFactory");
 
-		cfg.setProperty("hibernate.cache.use_second_level_cache", "false");
-//		cfg.setProperty("hibernate.cache.infinispan.cachemanager","java:jboss/infinispan/container/hibernate");
+		cfg.setProperty("hibernate.cache.use_second_level_cache", Cp.getInstance().getProp().cacheUseSecondLevelCache());
+		cfg.setProperty("hibernate.cache.infinispan.cachemanager","java:jboss/infinispan/container/hibernate");
 		cfg.setProperty("hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup");
 
-		cfg.setProperty("hibernate.cache.use_query_cache", "false");
+		cfg.setProperty("hibernate.cache.use_query_cache",  Cp.getInstance().getProp().cacheUseQueryCache());
 		cfg.setProperty("hibernate.cache.use_minimal_puts", "false");
 		cfg.setProperty("hibernate.max_fetch_depth", "3");
 		cfg.setProperty("hibernate.default_batch_fetch_size", "1000");
@@ -1630,7 +1664,7 @@ public class CpDao extends ModeloDao {
 
 		// descomentar para inpecionar o SQL
 		// cfg.setProperty("hibernate.show_sql", "true");
-		// cfg.setProperty("hibernate.format_sql", "true");
+		// cfg.setProperty("hibernate.format_sql", "false");
 		// cfg.setProperty("hibernate.use_sql_comments", "true");
 		// Disable second-level cache.
 		// <property
@@ -1730,7 +1764,9 @@ public class CpDao extends ModeloDao {
 			manager.addCache(CACHE_CORPORATIVO);
 			cache = manager.getCache(CACHE_CORPORATIVO);
 			config = cache.getCacheConfiguration();
-			config.setEternal(true);
+			config.setEternal(false);
+			config.setTimeToIdleSeconds(0);
+			config.setTimeToLiveSeconds(0);
 			config.setMaxElementsInMemory(10000);
 			config.setOverflowToDisk(false);
 			config.setMaxElementsOnDisk(0);
@@ -1852,6 +1888,19 @@ public class CpDao extends ModeloDao {
 			} else
 				l.add(mod);
 		return l;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public CpModelo consultarPorIdInicialCpModelo(final Long idInicial) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarPorIdInicialCpModelo");
+		query.setLong("idIni", idInicial);
+
+		query.setCacheable(false);
+		final List<CpModelo> l = query.list();
+		if (l.size() != 1)
+			return null;
+		return l.get(0);
 	}
 
 	public CpServico consultarPorSiglaCpServico(String siglaServico) {

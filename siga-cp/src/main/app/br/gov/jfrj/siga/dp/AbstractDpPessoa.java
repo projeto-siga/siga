@@ -26,7 +26,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -105,7 +104,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	private String grauInstrucao;
 	@Column(name = "ID_PROVIMENTO")
 	private Integer idProvimento;
-	@Column(name = "NACIONALIDADE_PESSOA", columnDefinition="CHAR(60)")
+	@Column(name = "NACIONALIDADE_PESSOA", length = 60)
 	private String nacionalidade;
 	@Column(name = "NATURALIDADE_PESSOA")
 	private String naturalidade;
@@ -134,7 +133,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	@Temporal(TemporalType.DATE)
 	@Column(name = "RG_DATA_EXPEDICAO_PESSOA")
 	private Date dataExpedicaoIdentidade;
-	@Column(name = "RG_UF_PESSOA", columnDefinition="CHAR(255)")
+	@Column(name = "RG_UF_PESSOA", length = 255)
 	private String ufIdentidade;
 	@Column(name = "ID_ESTADO_CIVIL")
 	private Integer idEstadoCivil;
@@ -639,7 +638,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	}
 
 	/**
-	 * Define o nome de exibição (apelido ou nome com pronome de tratamento, por
+	 * Define o nome de exibiÃ§Ã£o (apelido ou nome com pronome de tratamento, por
 	 * exemplo)
 	 * 
 	 * @param nomeExibicao
@@ -649,7 +648,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	}
 
 	/**
-	 * Retorna o nome de exibição (apelido ou nome com pronome de tratamento,
+	 * Retorna o nome de exibiÃ§Ã£o (apelido ou nome com pronome de tratamento,
 	 * por exemplo)
 	 * 
 	 * @return

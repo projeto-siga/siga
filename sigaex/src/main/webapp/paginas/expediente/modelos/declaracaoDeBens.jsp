@@ -8,8 +8,8 @@
 <mod:modelo>
 	<mod:entrevista>
 		<mod:grupo>
-			<mod:selecao titulo="Tipo de declaraÁ„o" var="tipoDeDeclaracao"
-				opcoes="DESIGNA«√O;DISPENSA" reler="sim" />
+			<mod:selecao titulo="Tipo de declara√ß√£o" var="tipoDeDeclaracao"
+				opcoes="DESIGNA√á√ÉO;DISPENSA" reler="sim" />
 		</mod:grupo>
 		
 		<c:if test="${tipoDeDeclaracao=='DISPENSA'}">
@@ -18,36 +18,36 @@
 					<mod:pessoa titulo="Nome" var="servidor" />
 				</mod:grupo>
 				<mod:grupo>
-					<mod:funcao titulo="FunÁ„o Dispensada" 
+					<mod:funcao titulo="Fun√ß√£o Dispensada" 
 						var="funcaoDispensada" />
 				</mod:grupo>	
 			</mod:grupo>
 			
 		</c:if>
-		<c:if test="${tipoDeDeclaracao=='DESIGNA«√O'}">
+		<c:if test="${tipoDeDeclaracao=='DESIGNA√á√ÉO'}">
 			<mod:grupo>
 				<mod:pessoa titulo="Nome" var="servidor" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:funcao titulo="FunÁ„o Designada" 
+				<mod:funcao titulo="Fun√ß√£o Designada" 
 						var="funcaoDesignada" />
 			</mod:grupo>
 		</c:if>
 	 
 		<mod:grupo titulo="Marque os itens que devem ser declarados">
 			<mod:grupo>
-				<mod:caixaverif titulo="Bens mÛveis" var="bensMoveis" reler="sim" />
+				<mod:caixaverif titulo="Bens m√≥veis" var="bensMoveis" reler="sim" />
 				<c:if test="${bensMoveis=='Sim'}">					
 						<mod:selecao titulo="Quantidade" var="quantidadeBensMoveis"
 									opcoes="1;2;3;4;5;6;7;8;9;10"
 									reler="sim" />
 						<c:forEach var="i" begin="1" end="${quantidadeBensMoveis}">
 							<mod:grupo>
-								<mod:grupo titulo="Bens MÛveis ${i}">
+								<mod:grupo titulo="Bens M√≥veis ${i}">
 									<mod:monetario titulo="Valor" largura="12" maxcaracteres="10" var="valorBensMoveis${i}" formataNum="sim" extensoNum="sim"	reler="sim" />
 								</mod:grupo>
 								<mod:grupo>
-									<mod:texto titulo="DescriÁ„o"  var="descricaoBensMoveis${i}" largura="30"/>
+									<mod:texto titulo="Descri√ß√£o"  var="descricaoBensMoveis${i}" largura="30"/>
 								</mod:grupo>
 								
 							</mod:grupo>
@@ -56,18 +56,18 @@
 			</mod:grupo>
 				
 			<mod:grupo>
-				<mod:caixaverif titulo="Bens imÛveis" var="bensImoveis" reler="sim" />
+				<mod:caixaverif titulo="Bens im√≥veis" var="bensImoveis" reler="sim" />
 				<c:if test="${bensImoveis=='Sim'}">
 					<mod:selecao titulo="Quantidade" var="quantidadeBensImoveis"
 									opcoes="1;2;3;4;5;6;7;8;9;10"
 									reler="sim" />
 						<c:forEach var="i" begin="1" end="${quantidadeBensImoveis}">
 							<mod:grupo>
-								<mod:grupo titulo="Bens ImÛveis ${i}">
+								<mod:grupo titulo="Bens Im√≥veis ${i}">
 									<mod:monetario titulo="Valor" largura="12" maxcaracteres="10" var="valorBensImoveis${i}" formataNum="sim" extensoNum="sim"	reler="sim" />
 								</mod:grupo>
 								<mod:grupo>
-									<mod:texto titulo="DescriÁ„o"  var="descricaoBensImoveis${i}" largura="30"/>
+									<mod:texto titulo="Descri√ß√£o"  var="descricaoBensImoveis${i}" largura="30"/>
 								</mod:grupo>	
 							</mod:grupo>
 						</c:forEach>
@@ -85,7 +85,7 @@
 									<mod:monetario titulo="Valor" largura="12" maxcaracteres="10" var="valorSomoventes${i}" formataNum="sim" extensoNum="sim"	reler="sim" />
 								</mod:grupo>
 								<mod:grupo>
-									<mod:texto titulo="DescriÁ„o" var="descricaoSomoventes${i}" largura="30"/>
+									<mod:texto titulo="Descri√ß√£o" var="descricaoSomoventes${i}" largura="30"/>
 								</mod:grupo>	
 							</mod:grupo>
 						</c:forEach>
@@ -93,19 +93,19 @@
 			</mod:grupo>
 			<mod:grupo>
 				<mod:caixaverif
-					titulo="Dinheiros ou aplicaÁıes financeiras no pais ou no exterior"
+					titulo="Dinheiros ou aplica√ß√µes financeiras no pais ou no exterior"
 					var="dinheiroAplicacoes" reler="sim" />
 				<c:if test="${dinheiroAplicacoes=='Sim'}">
 					<mod:selecao titulo="Quantidade" var="quantidadeDinheiroAplicacoes"
 									opcoes="1;2;3;4;5;6;7;8;9;10"
 									reler="sim" />
 						<c:forEach var="i" begin="1" end="${quantidadeDinheiroAplicacoes}">
-							<mod:grupo titulo="Dinheiros ou aplicaÁıes ${i}">
+							<mod:grupo titulo="Dinheiros ou aplica√ß√µes ${i}">
 								<mod:grupo>
 									<mod:monetario titulo="Valor" largura="12" maxcaracteres="10" var="valorDinheiroAplicacoes${i}" formataNum="sim" extensoNum="sim"	reler="sim" />
 								</mod:grupo>
 								<mod:grupo>
-									<mod:texto titulo="DescriÁ„o" var="descricaoDinheiroAplicacoes${i}" largura="30"/>
+									<mod:texto titulo="Descri√ß√£o" var="descricaoDinheiroAplicacoes${i}" largura="30"/>
 								</mod:grupo>	
 							</mod:grupo>
 						</c:forEach>
@@ -124,7 +124,7 @@
 									<mod:monetario titulo="Valor" largura="12" maxcaracteres="10" var="valorBensExterior${i}" formataNum="sim" extensoNum="sim"	reler="sim" />
 								</mod:grupo>
 								<mod:grupo>
-									<mod:texto titulo="DescriÁ„o" var="descricaoBensExterior${i}" largura="30"/>
+									<mod:texto titulo="Descri√ß√£o" var="descricaoBensExterior${i}" largura="30"/>
 								</mod:grupo>	
 							</mod:grupo>
 						</c:forEach>
@@ -132,18 +132,18 @@
 			</mod:grupo>
 			
 			<mod:grupo>
-				<mod:caixaverif titulo="TÌtulos" var="titulos" reler="sim" />
+				<mod:caixaverif titulo="T√≠tulos" var="titulos" reler="sim" />
 				<c:if test="${titulos=='Sim'}">
 					<mod:selecao titulo="Quantidade" var="quantidadeTitulos"
 									opcoes="1;2;3;4;5;6;7;8;9;10"
 									reler="sim" />
 						<c:forEach var="i" begin="1" end="${quantidadeTitulos}">
-							<mod:grupo titulo="TÌtulos ${i}">
+							<mod:grupo titulo="T√≠tulos ${i}">
 								<mod:grupo>
 									<mod:monetario titulo="Valor" largura="12" maxcaracteres="10" var="valorTitulos${i}" formataNum="sim" extensoNum="sim"	reler="sim" />
 								</mod:grupo>
 								<mod:grupo>
-									<mod:texto titulo="DescriÁ„o" var="descricaoTitulos${i}" largura="30"/>
+									<mod:texto titulo="Descri√ß√£o" var="descricaoTitulos${i}" largura="30"/>
 								</mod:grupo>	
 							</mod:grupo>
 						</c:forEach>
@@ -161,14 +161,14 @@
 									<mod:monetario titulo="Valor" largura="12" maxcaracteres="10" var="valorRenda${i}" formataNum="sim" extensoNum="sim"	reler="sim" />
 								</mod:grupo>
 								<mod:grupo>
-									<mod:texto titulo="DescriÁ„o" var="descricaoRenda${i}" largura="30"/>
+									<mod:texto titulo="Descri√ß√£o" var="descricaoRenda${i}" largura="30"/>
 								</mod:grupo>
 							</mod:grupo>
 						</c:forEach>
 				</c:if>
 			</mod:grupo>
 			<mod:grupo>
-				<mod:caixaverif titulo="variaÁ„o Patrimonial"
+				<mod:caixaverif titulo="varia√ß√£o Patrimonial"
 					var="variacaoPatrimonial" reler="sim" />
 				<c:if test="${variacaoPatrimonial=='Sim'}">
 					<mod:grupo>
@@ -189,56 +189,56 @@
 				</c:if>
 			</mod:grupo>
 			
-			<mod:grupo titulo="Direito sobre veÌculos">
+			<mod:grupo titulo="Direito sobre ve√≠culos">
 				<mod:grupo>
-					<mod:caixaverif titulo="AutomÛveis" var="automoveis" reler="sim" />
+					<mod:caixaverif titulo="Autom√≥veis" var="automoveis" reler="sim" />
 					<c:if test="${automoveis=='Sim'}">
 						<mod:selecao titulo="Quantidade" var="quantidadeAutomoveis"
 									opcoes="1;2;3;4;5;6;7;8;9;10"
 									reler="sim" />
 						<c:forEach var="i" begin="1" end="${quantidadeAutomoveis}">
-							<mod:grupo titulo="AutomÛveis ${i}">
+							<mod:grupo titulo="Autom√≥veis ${i}">
 								<mod:grupo>
 									<mod:monetario titulo="Valor" largura="12" maxcaracteres="10" var="valorAutomoveis${i}" formataNum="sim" extensoNum="sim"	reler="sim" />
 								</mod:grupo>
 								<mod:grupo>
-									<mod:texto titulo="DescriÁ„o" var="descricaoAutomoveis${i}" largura="30"/>
+									<mod:texto titulo="Descri√ß√£o" var="descricaoAutomoveis${i}" largura="30"/>
 								</mod:grupo>
 							</mod:grupo>
 						</c:forEach>
 					</c:if>
 				</mod:grupo>
 				<mod:grupo>
-					<mod:caixaverif titulo="EmbarcaÁıes" var="embarcacoes" reler="sim" />
+					<mod:caixaverif titulo="Embarca√ß√µes" var="embarcacoes" reler="sim" />
 					<c:if test="${embarcacoes=='Sim'}">
 						<mod:selecao titulo="Quantidade" var="quantidadeEmbarcacoes"
 									opcoes="1;2;3;4;5;6;7;8;9;10"
 									reler="sim" />
 						<c:forEach var="i" begin="1" end="${quantidadeEmbarcacoes}">
-							<mod:grupo titulo="EmbarcaÁıes ${i}">
+							<mod:grupo titulo="Embarca√ß√µes ${i}">
 								<mod:grupo>
 									<mod:monetario titulo="Valor" largura="12" maxcaracteres="10" var="valorEmbarcacoes${i}" formataNum="sim" extensoNum="sim"	reler="sim" />
 								</mod:grupo>
 								<mod:grupo>
-									<mod:texto titulo="DescriÁ„o" var="descricaoEmbarcacoes${i}" largura="30"/>
+									<mod:texto titulo="Descri√ß√£o" var="descricaoEmbarcacoes${i}" largura="30"/>
 								</mod:grupo>							
 							</mod:grupo>
 						</c:forEach>
 					</c:if>
 				</mod:grupo>
 				<mod:grupo>
-					<mod:caixaverif titulo="Aeron·veis" var="aeronaveis" reler="sim" />
+					<mod:caixaverif titulo="Aeron√°veis" var="aeronaveis" reler="sim" />
 					<c:if test="${aeronaveis=='Sim'}">
 						<mod:selecao titulo="Quantidade" var="quantidadeAeronaveis"
 									opcoes="1;2;3;4;5;6;7;8;9;10"
 									reler="sim" />
 						<c:forEach var="i" begin="1" end="${quantidadeAeronaveis}">
-							<mod:grupo titulo="Aeron·veis ${i}">
+							<mod:grupo titulo="Aeron√°veis ${i}">
 								<mod:grupo>
 									<mod:monetario titulo="Valor" largura="12" maxcaracteres="10" var="valorAeronaveis${i}" formataNum="sim" extensoNum="sim"	reler="sim" />
 								</mod:grupo>
 								<mod:grupo>
-									<mod:texto titulo="DescriÁ„o" var="descricaoAeronaveis${i}" largura="30"/>
+									<mod:texto titulo="Descri√ß√£o" var="descricaoAeronaveis${i}" largura="30"/>
 								</mod:grupo>							
 							</mod:grupo>
 						</c:forEach>
@@ -267,7 +267,7 @@
 		<c:import url="/paginas/expediente/modelos/inc_tit_juizfedDirForo.jsp" />
 		<br>
 		<br>
-		<h2 align="center"><u><strong>DECLARA«√O DE BENS E
+		<h2 align="center"><u><strong>DECLARA√á√ÉO DE BENS E
 		VALORES</strong></u></h2>
 		<h2 align="center"><u><strong>${tipoDeDeclaracao }</strong></u></h2>
 		
@@ -280,29 +280,29 @@
 			<c:if test="${tipoDePosse=='CARGO COMISSIONADO'}">
 			<b>${requestScope['nomeComissionado_pessoaSel.id']}</b> em virtude de posse do cargo comissionado de <b>${requestScope['funcaoComissionada_funcaoSel.descricao']}</b>
 		</c:if> 
-		<c:if test="${tipoDeDeclaracao=='DESIGNA«√O'}">
-			<mod:identificacao pessoa="${requestScope['servidor_pessoaSel.id']}" /> em virtude de designaÁ„o para a 
-			funÁ„o de <b>${requestScope['funcaoDesignada_funcaoSel.descricao']}</b></c:if>
+		<c:if test="${tipoDeDeclaracao=='DESIGNA√á√ÉO'}">
+			<mod:identificacao pessoa="${requestScope['servidor_pessoaSel.id']}" /> em virtude de designa√ß√£o para a 
+			fun√ß√£o de <b>${requestScope['funcaoDesignada_funcaoSel.descricao']}</b></c:if>
 		<c:if test="${tipoDeDeclaracao=='DISPENSA'}">
 			<mod:identificacao pessoa="${requestScope['servidor_pessoaSel.id']}" /> em virtude de dispensa das atividades de ${requestScope['funcaoDispensada_funcaoSel.descricao']}</c:if>, declaro, para fins do disposto nos arts. 1&ordm;, inciso VII, e
 		2&ordm; da Lei n&ordm; 8.730/93, c/c art. 11, XI, da Resol.
 		284/CJF/2002,
-		que exerce/exerceu nesta SeÁ„o Judici·ria, conforme Portaria n&ordm;,
-		de(perguntar ao usuario), <b>publicada</b> no Boletim Interno em, que possui em (data de inÌcio da designaÁ„o <b>ou</b>
-		dispensa da referida funÁ„o) os <b>bens</b> abaixo discriminados, seguidos dos respectivos <b>valores</b>:
+		que exerce/exerceu nesta Se√ß√£o Judici√°ria, conforme Portaria n&ordm;,
+		de(perguntar ao usuario), <b>publicada</b> no Boletim Interno em, que possui em (data de in√≠cio da designa√ß√£o <b>ou</b>
+		dispensa da referida fun√ß√£o) os <b>bens</b> abaixo discriminados, seguidos dos respectivos <b>valores</b>:
 		</p>
 		<br>
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		<ul>
 			<c:if test="${bensMoveis=='Sim'}">
-				<b>Bens MÛveis:</b>
+				<b>Bens M√≥veis:</b>
 				<c:forEach var="i" begin="1" end="${quantidadeBensMoveis}">
 					<li>${requestScope[f:concat('descricaoBensMoveis',i)]} - ${requestScope[f:concat('valorBensMoveis',i)]} <b>(${requestScope[f:concat(f:concat('valorBensMoveis',i),'vrextenso')]})</b></li><br><br>
 				</c:forEach>
 			</c:if>
 			
 			<c:if test="${bensImoveis=='Sim'}">
-				<b>Bens ImÛveis:</b>
+				<b>Bens Im√≥veis:</b>
 				<c:forEach var="i" begin="1" end="${quantidadeBensImoveis}">
 					<li>${requestScope[f:concat('descricaoBensImoveis',i)]} - ${requestScope[f:concat('valorBensImoveis',i)]} <b>(${requestScope[f:concat(f:concat('valorBensImoveis',i),'vrextenso')]})</b></li><br><br>
 				</c:forEach>
@@ -316,7 +316,7 @@
 			</c:if>
 			
 			<c:if test="${dinheiroAplicacoes=='Sim'}">
-				<b>Dinheiro ou aplicaÁıes financeiras:</b>
+				<b>Dinheiro ou aplica√ß√µes financeiras:</b>
 				<c:forEach var="i" begin="1" end="${quantidadeDinheiroAplicacoes}">
 					<li>${requestScope[f:concat('descricaoDinheiroAplicacoes',i)]} - ${requestScope[f:concat('valorDinheiroAplicacoes',i)]} <b>(${requestScope[f:concat(f:concat('valorDinheiroAplicacoes',i),'vrextenso')]})</b></li><br><br>
 				</c:forEach>
@@ -332,33 +332,33 @@
 			
 			
 			<c:if test="${titulos=='Sim'}">
-				<b>TÌtulos:</b>
+				<b>T√≠tulos:</b>
 				<c:forEach var="i" begin="1" end="${quantidadeTitulos}">
 					<li>${requestScope[f:concat('descricaoTitulos',i)]} - ${requestScope[f:concat('valorTitulos',i)]} <b>(${requestScope[f:concat(f:concat('valorTitulos',i),'vrextenso')]})</b></li><br><br>
 				</c:forEach>
 				
 			</c:if>
 			<c:if test="${automoveis=='Sim'}">
-				<b>AutomÛveis:</b>
+				<b>Autom√≥veis:</b>
 				<c:forEach var="i" begin="1" end="${quantidadeAutomoveis}">
 					<li>${requestScope[f:concat('descricaoAutomoveis',i)]} - ${requestScope[f:concat('valorAutomoveis',i)]} <b>(${requestScope[f:concat(f:concat('valorAutomoveis',i),'vrextenso')]})</b></li><br><br>
 				</c:forEach>
 				
 			</c:if>
 			<c:if test="${embarcacoes=='Sim'}">
-				<b>EmbarcaÁıes:</b>
+				<b>Embarca√ß√µes:</b>
 				<c:forEach var="i" begin="1" end="${quantidadeEmbarcacoes}">
 					<li>${requestScope[f:concat('descricaoEmbarcacoes',i)]} - ${requestScope[f:concat('valorEmbarcacoes',i)]} <b>(${requestScope[f:concat(f:concat('valorEmbarcacoes',i),'vrextenso')]})</b></li><br><br>
 				</c:forEach>
 			</c:if>
 			<c:if test="${aeronaveis=='Sim'}">
-				<b>Aeron·vies:</b>
+				<b>Aeron√°vies:</b>
 				<c:forEach var="i" begin="1" end="${quantidadeAeronaveis}">
 					<li>${requestScope[f:concat('descricaoAeronaveis',i)]} - ${requestScope[f:concat('valorAeronaveis',i)]} <b>(${requestScope[f:concat(f:concat('valorAeronaveis',i),'vrextenso')]})</b></li><br><br>
 				</c:forEach>
 			</c:if>
 			<c:if test="${variacaoPatrimonial=='Sim'}">
-				<li>v·riaÁ„o Patrimonial
+				<li>v√°ria√ß√£o Patrimonial
 				<c:if test="${valorPatrimonialAnterior == valorPatrimonialAtual }">
 					<b>${valorPatrimonialAtual} (${valorPatrimonialAtualvrextenso})</b>
 				</c:if>

@@ -7,13 +7,13 @@
 	<mod:entrevista>
 		<mod:grupo titulo="Dados referenciais">
 			<mod:grupo>
-				<mod:texto titulo="Referência" var="referencia" largura="30" />
+				<mod:texto titulo="ReferÃªncia" var="referencia" largura="30" />
 			</mod:grupo>
 			<mod:grupo>
 				<mod:texto titulo="Vocativo" var="vocativo" largura="30" />
 			</mod:grupo>
 		</mod:grupo>
-		<mod:grupo titulo="Texto a ser inserido no corpo da exposição de motivos">
+		<mod:grupo titulo="Texto a ser inserido no corpo da exposiÃ§Ã£o de motivos">
 			<mod:grupo>
 				<mod:editor titulo="" var="texto_exposicao_motivos" />
 			</mod:grupo>

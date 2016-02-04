@@ -105,14 +105,14 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 	public HistoricoUsuarioRelatorio(Map parametros) throws DJBuilderException {
 		super(parametros);
 		if (parametros.get("idPessoa") == null) {
-			throw new DJBuilderException("Par‚metro idPessoa n„o informado!");
+			throw new DJBuilderException("Par√¢metro idPessoa n√£o informado!");
 		}
 		try {
 			Long t_lngIdPessoa = Long.parseLong((String) parametros
 					.get("idPessoa"));
 			setDpPessoa(dao().consultar(t_lngIdPessoa, DpPessoa.class, false));
 		} catch (Exception e) {
-			throw new DJBuilderException("Par‚metro idPessoa inv·lido!");
+			throw new DJBuilderException("Par√¢metro idPessoa inv√°lido!");
 		}
 		setPessoasDoUsuario(obterPessoasDoUsuario());
 		@SuppressWarnings("unused")
@@ -123,12 +123,12 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException {
 		this.setTemplateFile(null);
-		this.setTitle("HistÛrico de Usu·rio: " + "(" + dpPessoa.getSesbPessoa()
+		this.setTitle("Hist√≥rico de Usu√°rio: " + "(" + dpPessoa.getSesbPessoa()
 				+ dpPessoa.getMatricula() + ") " + dpPessoa.getNomePessoa());
-		this.addColuna("LotaÁ„o", 0, RelatorioRapido.ESQUERDA, true, false);
+		this.addColuna("Lota√ß√£o", 0, RelatorioRapido.ESQUERDA, true, false);
 		this.addColuna("Desde", 12, RelatorioRapido.ESQUERDA, false, false);
-		this.addColuna("ServiÁo", 40, RelatorioRapido.ESQUERDA, false, false);
-		this.addColuna("SituaÁ„o", 15, RelatorioRapido.ESQUERDA, false, false);
+		this.addColuna("Servi√ßo", 40, RelatorioRapido.ESQUERDA, false, false);
+		this.addColuna("Situa√ß√£o", 15, RelatorioRapido.ESQUERDA, false, false);
 		this.addColuna("Origem", 13, RelatorioRapido.ESQUERDA, false, false);
 		this.addColuna("Cadastrante", 20, RelatorioRapido.ESQUERDA, false,
 				false);
@@ -136,12 +136,12 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 	}
 
 	/**
-	 * Preenche os dados com as informaÁıes da configuraÁ„o j· formatados
+	 * Preenche os dados com as informa√ß√µes da configura√ß√£o j√° formatados
 	 * 
 	 * @param cfga
-	 *            - ConfiguraÁ„o acesso
+	 *            - Configura√ß√£o acesso
 	 * @param dados
-	 *            - coleÁ„o de linhas do relatÛrio
+	 *            - cole√ß√£o de linhas do relat√≥rio
 	 */
 
 	private void processarItem(Item itm, List<String> dados, Date dt) {
@@ -233,14 +233,22 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 		ArrayList<Date> arlDatas = new ArrayList<Date>();
 		for (CpConfiguracao conf : confs) {
 
-			if (conf.getCpTipoConfiguracao().getIdTpConfiguracao().equals(
-					CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO)
-					|| conf.getCpTipoConfiguracao().getIdTpConfiguracao()
-							.equals(CpTipoConfiguracao.TIPO_CONFIG_PERTENCER)) {
-				arlDatas.add(conf.getHisDtIni());
-				if (conf.getHisDtFim() != null) {
-					arlDatas.add(conf.getHisDtFim());
+			if (conf.getCpTipoConfiguracao() != null){
+				if (conf.getCpTipoConfiguracao().getIdTpConfiguracao().equals(
+						CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO)
+						|| conf.getCpTipoConfiguracao().getIdTpConfiguracao()
+								.equals(CpTipoConfiguracao.TIPO_CONFIG_PERTENCER)) {
+				
+					if (conf.getHisDtIni() != null) {
+						arlDatas.add(conf.getHisDtIni());
+					}
+					
+					if (conf.getHisDtFim() != null) {
+						arlDatas.add(conf.getHisDtFim());
+					}
+					
 				}
+			
 			}
 		}
 		return arlDatas;
@@ -256,7 +264,7 @@ public class HistoricoUsuarioRelatorio extends RelatorioTemplate {
 	}
 
 	/**
-	 * Processa as configuraÁıes ativas ou n„o para os v·rios ids da pessoa
+	 * Processa as configura√ß√µes ativas ou n√£o para os v√°rios ids da pessoa
 	 * (mesmo id inicial que a pessoa selecionada)
 	 */
 

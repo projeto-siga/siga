@@ -38,7 +38,7 @@ public class Nheengatu implements ConversorHtml {
 
 	public byte[] converter(String sHtml, byte output) throws Exception {
 		// TODO Auto-generated method stub
-		try{
+		try (ByteArrayOutputStream bo = new ByteArrayOutputStream()) {
 		parser.parse(new ByteArrayInputStream(sHtml.getBytes("utf-8")),
 				extract(sHtml, "<!-- INICIO PRIMEIRO CABECALHO",
 						"FIM PRIMEIRO CABECALHO -->"), extract(sHtml,
@@ -52,22 +52,20 @@ public class Nheengatu implements ConversorHtml {
 		final PDFDocument pdf = parser.getPdf();
 		// pdf.generateFile(response.getOutputStream());
 
-		final ByteArrayOutputStream bo = new ByteArrayOutputStream();
-		
-		System.out.println("Processamento: terminou nheengatu extract cabecalhos");
+//		System.out.println("Processamento: terminou nheengatu extract cabecalhos");
 		
 		pdf.generateFile(bo);
 
-		System.out.println("Processamento: terminou nheengatu generate file");
+//		System.out.println("Processamento: terminou nheengatu generate file");
 		
 		// System.out.println(System.currentTimeMillis() + " - FIM
 		// generatePdf");
 		return bo.toByteArray();
 		} catch(Throwable t){
-			System.out.println("Processamento: stacktrace nheengatu.converter");
-			System.out.println("mensagem::::" + t.getMessage());
-			System.out.println("causa::::" + t.getCause());
-			t.printStackTrace();
+//			System.out.println("Processamento: stacktrace nheengatu.converter");
+//			System.out.println("mensagem::::" + t.getMessage());
+//			System.out.println("causa::::" + t.getCause());
+//			t.printStackTrace();
 			throw new Exception(t);
 		}
 	}

@@ -61,8 +61,7 @@ public class StyleSheet {
 	}
 
 	public void processCSSFile(InputStream isCSS) {
-		try {
-			final BufferedReader reader = new BufferedReader(new InputStreamReader(isCSS));
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(isCSS))) {
 			final CSSOMParser parser = new CSSOMParser();
 			final InputSource is = new InputSource(reader);
 
@@ -77,7 +76,6 @@ public class StyleSheet {
 						.substring(css.indexOf('{') + 1, css.length() - 1)));
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -104,7 +102,7 @@ public class StyleSheet {
  * *** empty log message ***
  *
  * Revision 1.3  2006/07/05 16:00:47  nts
- * Refatorando para melhorar qualidade do código
+ * Refatorando para melhorar qualidade do cÃ³digo
  *
  * Revision 1.2  2006/04/11 19:43:46  tah
  * *** empty log message ***

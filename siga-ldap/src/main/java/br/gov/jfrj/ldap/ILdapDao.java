@@ -70,7 +70,7 @@ public interface ILdapDao {
 			throws AplicacaoException;
 
 	/**
-	 * Define se uma conta est· ativa
+	 * Define se uma conta est√° ativa
 	 * 
 	 * @param dnUsuario
 	 * @throws AplicacaoException
@@ -79,7 +79,7 @@ public interface ILdapDao {
 			throws AplicacaoException;
 
 	/**
-	 * Define se uma conta est· n„o est· ativa
+	 * Define se uma conta est√° n√£o est√° ativa
 	 * 
 	 * @param dnUsuario
 	 * @throws AplicacaoException
@@ -88,7 +88,7 @@ public interface ILdapDao {
 			throws AplicacaoException;
 
 	/**
-	 * Verifica se um objeto existe em algum objeto da ·rvore LDAP
+	 * Verifica se um objeto existe em algum objeto da √°rvore LDAP
 	 * 
 	 * @param cn
 	 *            - Common Name do objeto a ser encontrado
@@ -97,7 +97,7 @@ public interface ILdapDao {
 	public abstract boolean existe(String cn);
 
 	/**
-	 * Muda a localizaÁ„o de um objeto na ·rvore LDAP
+	 * Muda a localiza√ß√£o de um objeto na √°rvore LDAP
 	 * 
 	 * @param dn
 	 * @param novoDN
@@ -105,7 +105,7 @@ public interface ILdapDao {
 	public abstract void mover(String dn, String novoDN) throws AplicacaoException;
 
 	/**
-	 * Verifica se È um grupo de seguranÁa.
+	 * Verifica se √© um grupo de seguran√ßa.
 	 * Ref:http://msdn.microsoft.com/en-us/library/ms675935(VS.85).aspx
 	 * 
 	 * @param dn
@@ -115,7 +115,7 @@ public interface ILdapDao {
 	public abstract boolean isGrupoSeguranca(String dn);
 
 	/**
-	 * Verifica se È um grupo de distribuiÁ„o.
+	 * Verifica se √© um grupo de distribui√ß√£o.
 	 * Ref:http://msdn.microsoft.com/en-us/library/ms675935(VS.85).aspx
 	 * 
 	 * @param dn
@@ -156,24 +156,24 @@ public interface ILdapDao {
 	public abstract LdapContext getContexto();
 
 	/**
-	 * Verifica se um usuario pode se autenticar na ·rvore LDAP. Esse mÈtodo È
-	 * mais simples que o conectarComSSL() e conectarSemSSL() e tem o propÛsito
-	 * apenas de confirmar se o usu·rio/senha est„o corretos. Este mÈtodo n„o
-	 * possibilita o uso de ssl, n„o retorna o contexto LDAP para o usu·rio
-	 * manipular e n„o permite informar o DN para autenticaÁ„o. Se for essa a
-	 * sua necessidade, use o mÈtodo conectarComSSL() ou conectarSemSSL().
+	 * Verifica se um usuario pode se autenticar na √°rvore LDAP. Esse m√©todo √©
+	 * mais simples que o conectarComSSL() e conectarSemSSL() e tem o prop√≥sito
+	 * apenas de confirmar se o usu√°rio/senha est√£o corretos. Este m√©todo n√£o
+	 * possibilita o uso de ssl, n√£o retorna o contexto LDAP para o usu√°rio
+	 * manipular e n√£o permite informar o DN para autentica√ß√£o. Se for essa a
+	 * sua necessidade, use o m√©todo conectarComSSL() ou conectarSemSSL().
 	 * 
 	 * @param usuario
-	 *            - nome do usu·rio a se logar, na JFRJ È a sigla da pessoa (ex:
+	 *            - nome do usu√°rio a se logar, na JFRJ √© a sigla da pessoa (ex:
 	 *            kpf)
 	 * @param dominio
-	 *            - domÌnio do AD
+	 *            - dom√≠nio do AD
 	 * @param senha
-	 *            - senha do usu·rio
+	 *            - senha do usu√°rio
 	 * @param servidor
-	 *            - servidor de autenticaÁ„o
+	 *            - servidor de autentica√ß√£o
 	 * @param porta
-	 *            - porta do servidor de autenticaÁ„o (padr„o: 389)
+	 *            - porta do servidor de autentica√ß√£o (padr√£o: 389)
 	 * @return true - se o login foi bem sucedido. <br/>
 	 *         false - em caso de falha.
 	 */
@@ -181,9 +181,9 @@ public interface ILdapDao {
 			String senha, String servidor, String porta);
 
 	/**
-	 * Altera a senha de um usu·rio. … necess·rio informar a senha antiga.
+	 * Altera a senha de um usu√°rio. √â necess√°rio informar a senha antiga.
 	 * 
-	 * Alterar a senha È uma operaÁ„o de mudanÁa do ldap que deleta a senha
+	 * Alterar a senha √© uma opera√ß√£o de mudan√ßa do ldap que deleta a senha
 	 * antiga e adiciona a nova senha. http://support.microsoft.com/kb/269190
 	 * 
 	 * 

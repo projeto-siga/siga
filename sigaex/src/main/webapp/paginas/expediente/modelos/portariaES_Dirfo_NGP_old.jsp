@@ -60,7 +60,7 @@
 			<p>&nbsp;</p>
 			<!-- INICIO MIOLO -->
 			<p style="TEXT-INDENT: 2cm" align="justify"><b>O JUIZ FEDERAL - DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS 
-			SERVI«OS AUXILIARES DA JUSTI«A FEDERAL DE 1∫ GRAU - SE«√O JUDICI¡RIA DO ESPÕRITO SANTO</b>, no uso de suas atribuiÁıes legais,</p>
+			SERVI√áOS AUXILIARES DA JUSTI√áA FEDERAL DE 1¬∫ GRAU - SE√á√ÉO JUDICI√ÅRIA DO ESP√çRITO SANTO</b>, no uso de suas atribui√ß√µes legais,</p>
 			<p style="TEXT-INDENT: 2cm" align="justify"><b>RESOLVE:</b></p>
 			
 			<!-- INICIO CORPO --><p><span style="font-size:${tl};">${texto_portaria}</span><p/><!-- FIM CORPO -->

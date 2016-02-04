@@ -1,6 +1,5 @@
 package br.gov.jfrj.siga.wf.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,7 +25,6 @@ public class WfGraphFactory {
 
 	public String gerarDOT(final String sXML, final String currentNode,
 			final Map<String, String> map) throws Exception {
-		final ByteArrayOutputStream os = new ByteArrayOutputStream();
 		final StringBuilder sbTransition = new StringBuilder();
 		// final StringBuilder sbStart = new StringBuilder();
 		// final StringBuilder sbEnd = new StringBuilder();
@@ -39,9 +37,6 @@ public class WfGraphFactory {
 			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
 
 			parser.setInput(new StringReader(sXML));
-
-			// serializer.setOutput(os);
-			// serializer.setOutput(os, "utf-8");
 
 			String current = null;
 
@@ -107,7 +102,6 @@ public class WfGraphFactory {
 				parser.nextToken();
 			}
 
-			// final String s = new String(os.toByteArray(), "utf-8");
 			String s = sbTransition.toString();
 			return s;
 		} catch (final Exception ex) {
@@ -134,7 +128,7 @@ public class WfGraphFactory {
 		sb.append(">]");
 		if (current.equals(currentNode))
 			sb.append("[color=\"red\"]");
-		// "Início"[shape="oval"][label=<<font>Início</font><br/><font
+		// "InÃ­cio"[shape="oval"][label=<<font>InÃ­cio</font><br/><font
 		// point-size="9" color="gray">OI!</font>>];
 		sb.append(";");
 	}
@@ -157,8 +151,7 @@ public class WfGraphFactory {
 	}
 
 	public static String readFileDel(String filePath) throws IOException {
-		DataInputStream dis = new DataInputStream(new FileInputStream(filePath));
-		try {
+		try (DataInputStream dis = new DataInputStream(new FileInputStream(filePath))) {
 			long len = new File(filePath).length();
 			if (len > Integer.MAX_VALUE)
 				throw new IOException("File " + filePath + " too large, was "
@@ -166,8 +159,6 @@ public class WfGraphFactory {
 			byte[] bytes = new byte[(int) len];
 			dis.readFully(bytes);
 			return new String(bytes, "UTF-8");
-		} finally {
-			dis.close();
 		}
 	}
 
@@ -184,7 +175,7 @@ public class WfGraphFactory {
 	public static void main(String[] args) throws Exception {
 		String sXML = readFile("C:/Trabalhos/Java/siga-wf-pd/src/main/jpdl/AutorizacaoAusencia/processdefinition.xml");
 		WfGraphFactory graph = new WfGraphFactory();
-		String sDOT = graph.gerarDOT(sXML, "Início", null);
+		String sDOT = graph.gerarDOT(sXML, "InÃ­cio", null);
 		String sURL = graph.gerarURL(sDOT);
 		return;
 	}

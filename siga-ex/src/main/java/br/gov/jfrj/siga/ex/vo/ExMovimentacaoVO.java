@@ -87,7 +87,7 @@ public class ExMovimentacaoVO extends ExVO {
 	}
 
 	public ExMovimentacaoVO(ExMobilVO mobVO, ExMovimentacao mov,
-			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
+			DpPessoa titular, DpLotacao lotaTitular) {
 		this.mov = mov;
 		this.mobVO = mobVO;
 		originadaAqui = (this.mov.getExMobil().getId().equals(getMobVO().mob
@@ -119,7 +119,8 @@ public class ExMovimentacaoVO extends ExVO {
 
 		calcularClasse(mov);
 
-		desabilitada = mov.getExMovimentacaoCanceladora() != null
+		desabilitada = mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().isCancelada() 
+				|| mov.getExMovimentacaoCanceladora() != null
 				|| mov.getIdTpMov().equals(
 						TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
 
@@ -132,13 +133,13 @@ public class ExMovimentacaoVO extends ExVO {
 	 * @throws Exception
 	 */
 	private void addAcoes(ExMovimentacao mov, DpPessoa titular,
-			DpLotacao lotaTitular) throws Exception {
+			DpLotacao lotaTitular) {
 		if (complemento == null)
 			complemento = "";
 
 		if (idTpMov == TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO) {
 			descricao = "";
-			addAcao(null, "Verificar", "/expediente/mov", "assinar_verificar",
+			addAcao(null, "Verificar", "/app/expediente/mov", "assinar_verificar",
 					true, null, "&ajax=true&id=" + mov.getIdMov().toString(),
 					null, null, null);
 		}
@@ -151,7 +152,7 @@ public class ExMovimentacaoVO extends ExVO {
 			descricao = mov.getObs();
 			addAcao(null,
 					"Excluir",
-					"/expediente/mov",
+					"/app/expediente/mov",
 					"excluir",
 					Ex.getInstance()
 							.getComp()
@@ -162,7 +163,7 @@ public class ExMovimentacaoVO extends ExVO {
 		if (idTpMov == TIPO_MOVIMENTACAO_VINCULACAO_PAPEL) {
 			addAcao(null,
 					"Cancelar",
-					"/expediente/mov",
+					"/app/expediente/mov",
 					"cancelar",
 					Ex.getInstance()
 							.getComp()
@@ -173,7 +174,7 @@ public class ExMovimentacaoVO extends ExVO {
 		if (idTpMov == TIPO_MOVIMENTACAO_REFERENCIA) {
 			addAcao(null,
 					"Cancelar",
-					"/expediente/mov",
+					"/app/expediente/mov",
 					"cancelar",
 					Ex.getInstance()
 							.getComp()
@@ -188,14 +189,14 @@ public class ExMovimentacaoVO extends ExVO {
 			// nome do arquivo.
 			// <c:url var='anexo' value='/anexo/${mov.idMov}/${mov.nmArqMov}' />
 			// tipo="${mov.conteudoTpMov}" />
-			addAcao(null, mov.getNmArqMov(), "/arquivo",
+			addAcao(null, mov.getNmArqMov(), "/app/arquivo",
 					"exibir", mov.getNmArqMov() != null, null,
 					"&popup=true&arquivo=" + mov.getReferenciaPDF(), null, null, null);
 
 			if (idTpMov == TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO) {
 				addAcao(null,
 						"Excluir",
-						"/expediente/mov",
+						"/app/expediente/mov",
 						"excluir",
 						Ex.getInstance()
 								.getComp()
@@ -208,7 +209,7 @@ public class ExMovimentacaoVO extends ExVO {
 						&& !mov.mob().isEmTransito()) {
 					addAcao(null,
 							"Excluir",
-							"/expediente/mov",
+							"/app/expediente/mov",
 							"excluir",
 							Ex.getInstance()
 									.getComp()
@@ -216,23 +217,23 @@ public class ExMovimentacaoVO extends ExVO {
 											mov.mob(), mov));
 					addAcao(null,
 							"Cancelar",
-							"/expediente/mov",
+							"/app/expediente/mov",
 							"cancelar",
 							Ex.getInstance()
 									.getComp()
 									.podeCancelarAnexo(titular, lotaTitular,
 											mov.mob(), mov));
-					addAcao(null, "Assinar/Autenticar", "/expediente/mov",
+					addAcao(null, "Assinar/Autenticar", "/app/expediente/mov",
 							"exibir", true, null, "&popup=true", null, null, null);
 					
 					addAcao(
 							"script_key",
 							"Autenticar",
-							"/expediente/mov",
+							"/app/expediente/mov",
 							"autenticar_mov",
 							Ex.getInstance().getComp()
 									.podeAutenticarMovimentacao(titular, lotaTitular, mov),
-							null, "&popup=true", null, null, null);
+							null, "&popup=true&autenticando=true", null, null, null);
 				}
 			}
 
@@ -240,7 +241,7 @@ public class ExMovimentacaoVO extends ExVO {
 				if (!mov.mob().doc().isSemEfeito())
 					addAcao(null,
 							"Cancelar",
-							"/expediente/mov",
+							"/app/expediente/mov",
 							"cancelar",
 							Ex.getInstance()
 									.getComp()
@@ -265,7 +266,7 @@ public class ExMovimentacaoVO extends ExVO {
 						addAcao(
 								"printer",
 								"Ver",
-								"/arquivo",
+								"/app/arquivo",
 								"exibir",
 								Ex.getInstance().getComp()
 										.podeVisualizarImpressao(titular, lotaTitular, mov.mob()),
@@ -274,14 +275,14 @@ public class ExMovimentacaoVO extends ExVO {
 						addAcao(
 								"script_key",
 								"Autenticar",
-								"/expediente/mov",
+								"/app/expediente/mov",
 								"autenticar_mov",
 								Ex.getInstance().getComp()
 										.podeAutenticarMovimentacao(titular, lotaTitular, mov),
-								null, "&popup=true", null, null, null);
+								null, "&popup=true&autenticando=true", null, null, null);
 
 					} else if(!(mov.isAssinada() && mov.mob().isEmTransito())) {
-						addAcao(null, "Ver/Assinar", "/expediente/mov", "exibir",
+						addAcao(null, "Ver/Assinar", "/app/expediente/mov", "exibir",
 								true, null, "&popup=true", null, null, null);
 					}
 			}
@@ -325,11 +326,11 @@ public class ExMovimentacaoVO extends ExVO {
 					String mensagemPos = null;
 					
 					if(!mov.getExMobilRef().getExDocumento().getDescrDocumento().equals(mov.getExMobil().getExDocumento().getDescrDocumento()))
-						mensagemPos = " Descrição: " +  mov.getExMobilRef().getExDocumento().getDescrDocumento();
+						mensagemPos = " DescriÃ§Ã£o: " +  mov.getExMobilRef().getExDocumento().getDescrDocumento();
 					
 					
 					addAcao(null, mov.getExMobilRef().getSigla(),
-							"/expediente/doc", "exibir", true, null, "sigla="
+							"/app/expediente/doc", "exibir", true, null, "sigla="
 									+ mov.getExMobilRef().getSigla(),
 							"Juntado ao documento: ", mensagemPos, null);
 				} else {
@@ -340,11 +341,11 @@ public class ExMovimentacaoVO extends ExVO {
 				String mensagemPos = null;
 				
 				if(!mov.getExMobil().getExDocumento().getDescrDocumento().equals(mov.getExMobilRef().getExDocumento().getDescrDocumento()))
-					mensagemPos = " Descrição: " + mov.getExDocumento().getDescrDocumento();
+					mensagemPos = " DescriÃ§Ã£o: " + mov.getExDocumento().getDescrDocumento();
 				
 				
 				
-				addAcao(null, mov.getExMobil().getSigla(), "/expediente/doc",
+				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc",
 						"exibir", true, null, "sigla="
 								+ mov.getExMobil().getSigla(),
 						"Documento juntado: ", mensagemPos, null);
@@ -359,11 +360,11 @@ public class ExMovimentacaoVO extends ExVO {
 					String mensagemPos = null;
 					
 					if(!mov.getExMobilRef().getExDocumento().getDescrDocumento().equals(mov.getExMobil().getExDocumento().getDescrDocumento()))
-						mensagemPos = " Descrição: " +  mov.getExMobilRef().getExDocumento().getDescrDocumento();
+						mensagemPos = " DescriÃ§Ã£o: " +  mov.getExMobilRef().getExDocumento().getDescrDocumento();
 					
 					
 					addAcao(null, mov.getExMobilRef().getSigla(),
-							"/expediente/doc", "exibir", true, null, "sigla="
+							"/app/expediente/doc", "exibir", true, null, "sigla="
 									+ mov.getExMobilRef().getSigla(),
 							"Desentranhado do documento: ", mensagemPos, null);
 				} else {
@@ -374,11 +375,11 @@ public class ExMovimentacaoVO extends ExVO {
 				String mensagemPos = null;
 				
 				if(!mov.getExMobil().getExDocumento().getDescrDocumento().equals(mov.getExMobilRef().getExDocumento().getDescrDocumento()))
-					mensagemPos = " Descrição: " + mov.getExDocumento().getDescrDocumento();
+					mensagemPos = " DescriÃ§Ã£o: " + mov.getExDocumento().getDescrDocumento();
 				
 				
 				
-				addAcao(null, mov.getExMobil().getSigla(), "/expediente/doc",
+				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc",
 						"exibir", true, null, "sigla="
 								+ mov.getExMobil().getSigla(),
 						"Documento desentranhado: ", mensagemPos, null);
@@ -389,11 +390,11 @@ public class ExMovimentacaoVO extends ExVO {
 			descricao = null;
 			if (originadaAqui) {
 				addAcao(null, mov.getExMobilRef().getSigla(),
-						"/expediente/doc", "exibir", true, null, "sigla="
+						"/app/expediente/doc", "exibir", true, null, "sigla="
 								+ mov.getExMobilRef().getSigla(),
 						"Apensado ao documento: ", null, null);
 			} else {
-				addAcao(null, mov.getExMobil().getSigla(), "/expediente/doc",
+				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc",
 						"exibir", true, null, "sigla="
 								+ mov.getExMobil().getSigla(),
 						"Documento apensado: ", null, null);
@@ -404,11 +405,11 @@ public class ExMovimentacaoVO extends ExVO {
 			descricao = null;
 			if (originadaAqui) {
 				addAcao(null, mov.getExMobilRef().getSigla(),
-						"/expediente/doc", "exibir", true, null, "sigla="
+						"/app/expediente/doc", "exibir", true, null, "sigla="
 								+ mov.getExMobilRef().getSigla(),
 						"Desapensado do documento: ", null, null);
 			} else {
-				addAcao(null, mov.getExMobil().getSigla(), "/expediente/doc",
+				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc",
 						"exibir", true, null, "sigla="
 								+ mov.getExMobil().getSigla(),
 						"Documento desapensado: ", null, null);
@@ -416,7 +417,7 @@ public class ExMovimentacaoVO extends ExVO {
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_NOTIFICACAO_PUBL_BI) {
-			addAcao(null, mov.getExMobilRef().getSigla(), "/expediente/doc",
+			addAcao(null, mov.getExMobilRef().getSigla(), "/app/expediente/doc",
 					"exibir", true, null, "sigla="
 							+ mov.getExMobilRef().getSigla(),
 					"Publicado no Boletim Interno: ",
@@ -427,14 +428,14 @@ public class ExMovimentacaoVO extends ExVO {
 			descricao = null;
 			if (originadaAqui) {
 				addAcao(null, mov.getExMobilRef().getSigla(),
-						"/expediente/doc", "exibir", true, null, "sigla="
+						"/app/expediente/doc", "exibir", true, null, "sigla="
 								+ mov.getExMobilRef().getSigla(),
-						"Ver também: ",  " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento(), null);
+						"Ver tambÃ©m: ",  " DescriÃ§Ã£o: " + mov.getExMobilRef().getExDocumento().getDescrDocumento(), null);
 			} else {
-				addAcao(null, mov.getExMobil().getSigla(), "/expediente/doc",
+				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc",
 						"exibir", true, null, "sigla="
-								+ mov.getExMobil().getSigla(), "Ver também: ",
-								" Descrição: " + mov.getExDocumento().getDescrDocumento(), null);
+								+ mov.getExMobil().getSigla(), "Ver tambÃ©m: ",
+								" DescriÃ§Ã£o: " + mov.getExDocumento().getDescrDocumento(), null);
 			}
 		}
 		
@@ -442,11 +443,11 @@ public class ExMovimentacaoVO extends ExVO {
 			descricao = null;
 			if (originadaAqui) {
 				addAcao(null, mov.getExMobilRef().getSigla(),
-						"/expediente/doc", "exibir", true, null, "sigla="
+						"/app/expediente/doc", "exibir", true, null, "sigla="
 								+ mov.getExMobilRef().getSigla(),
 						"", null, null);
 			} else {
-				addAcao(null, mov.getExMobil().getSigla(), "/expediente/doc",
+				addAcao(null, mov.getExMobil().getSigla(), "/app/expediente/doc",
 						"exibir", true, null, "sigla="
 								+ mov.getExMobil().getSigla(), "",
 						null, null);
@@ -456,7 +457,7 @@ public class ExMovimentacaoVO extends ExVO {
 		if (idTpMov == TIPO_MOVIMENTACAO_ELIMINACAO){
 			descricao = null;
 			if (originadaAqui) {
-				//Não faz nada, pois o documento eliminado nunca é exibido
+				//NÃ£o faz nada, pois o documento eliminado nunca Ã© exibido
 			} else {
 				descricao = mov.getExMobil().getSigla();
 			}
@@ -466,7 +467,7 @@ public class ExMovimentacaoVO extends ExVO {
 				|| idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO
 				|| idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE) {
 			if (!mov.isCancelada())
-				addAcao(null, "Protocolo", "/expediente/mov", "protocolo_arq",
+				addAcao(null, "Protocolo", "/app/expediente/mov", "protocolo_arq",
 						true, null, "pessoa="
 								+ (mov.getCadastrante() == null ? "null" : mov
 										.getCadastrante().getSigla()) + "&dt="
@@ -482,10 +483,10 @@ public class ExMovimentacaoVO extends ExVO {
 				|| idTpMov == TIPO_MOVIMENTACAO_RECEBIMENTO_TRANSITORIO) {
 			String pre =  null;
 			if(mov.getDtFimMovDDMMYY() != ""){
-				pre = "Devolver até " + mov.getDtFimMovDDMMYY() + " | ";
+				pre = "Devolver atÃ© " + mov.getDtFimMovDDMMYY() + " | ";
 			}
 			if (!mov.isCancelada())
-				addAcao(null, "Protocolo", "/expediente/mov",
+				addAcao(null, "Protocolo", "/app/expediente/mov",
 						"protocolo_transf", true, null,
 						"pessoa="
 								+ (mov.getCadastrante() == null ? "null" : mov
@@ -495,8 +496,7 @@ public class ExMovimentacaoVO extends ExVO {
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO) {
-			addAcao(null, mov.getNmArqMov(), "/arquivo", "download.action",
-					mov.getNmArqMov() != null, null, "arquivo=" + mov.getReferenciaZIP(), null, null, null);
+			addAcao(null, mov.getNmArqMov(), "/app/arquivo", "download", mov.getNmArqMov() != null, null, "arquivo=" + mov.getReferenciaZIP(), null, null, null);
 		}
 
 		if (descricao != null && descricao.equals(mov.getObs())) {

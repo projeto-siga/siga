@@ -10,45 +10,45 @@
 					<mod:lotacao titulo="Unidade Gestora" var="lotacao"/>
 			</mod:grupo>
 			<mod:grupo>
-					<mod:texto titulo="N∫ Processo" var="numProcesso" largura="25" />
-					<mod:selecao titulo="MÍs de referÍncia" var="mes" opcoes="Jan;Fev;Mar;Abr;Maio;Jun;Jul;Ago;Set;Out;Nov;Dez" />
+					<mod:texto titulo="N¬∫ Processo" var="numProcesso" largura="25" />
+					<mod:selecao titulo="M√™s de refer√™ncia" var="mes" opcoes="Jan;Fev;Mar;Abr;Maio;Jun;Jul;Ago;Set;Out;Nov;Dez" />
 					<mod:monetario titulo="Ano" var="ano" maxcaracteres="4" verificaNum="sim" largura="6"  />
 			</mod:grupo>
 				<mod:grupo>
 					<mod:texto titulo="Nome da Empresa" var="descContrato" largura="50" />
 				</mod:grupo>	
-				<mod:selecao titulo="Õndice de Freq¸Íncia" var="frequencia" opcoes="Integral;Parcial" reler="ajax" idAjax="frequenciaAjax" />
+				<mod:selecao titulo="√çndice de Freq√º√™ncia" var="frequencia" opcoes="Integral;Parcial" reler="ajax" idAjax="frequenciaAjax" />
 				<mod:grupo depende="frequenciaAjax">
 				<c:if test="${frequencia eq 'Parcial'}">
-					<mod:selecao titulo="InformaÁ„o Simplificada" opcoes="Sim;N„o" var="infoSimplif" reler="ajax" idAjax="infoSimplifAjax" /> 
+					<mod:selecao titulo="Informa√ß√£o Simplificada" opcoes="Sim;N√£o" var="infoSimplif" reler="ajax" idAjax="infoSimplifAjax" /> 
 						<mod:grupo depende="infoSimplifAjax">
 						<c:choose>
 							<c:when test="${infoSimplif eq 'Sim'}">
 								<mod:grupo>
-									<mod:numero titulo="N∫ de faltas sem reposiÁ„o" var="numFaltas" largura="10" />
+									<mod:numero titulo="N¬∫ de faltas sem reposi√ß√£o" var="numFaltas" largura="10" />
 								</mod:grupo>
 								<mod:grupo>
-									<mod:numero titulo="Quantidade de minutos em atrasos sem reposiÁ„o" var="quantMinutos" largura="10" />
+									<mod:numero titulo="Quantidade de minutos em atrasos sem reposi√ß√£o" var="quantMinutos" largura="10" />
 								</mod:grupo>	
 							</c:when>
 							<c:otherwise>
 								<mod:grupo>
-										<mod:selecao titulo="Informe a quantidade de funcion·rio(s) com freq¸Íncia parcial" var="faltas" opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30" reler="ajax" idAjax="faltasAjax"/>
+										<mod:selecao titulo="Informe a quantidade de funcion√°rio(s) com freq√º√™ncia parcial" var="faltas" opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30" reler="ajax" idAjax="faltasAjax"/>
 								</mod:grupo>
 								<mod:grupo depende="faltasAjax">
 									<c:forEach var="i" begin="1" end="${faltas}">
 										<mod:grupo>
 											<mod:texto titulo="Nome" var="nomeFuncionario${i}" largura="50" />
-											<mod:selecao titulo="Selecione uma opÁ„o" var="reposicao${i}" opcoes="[Nenhum];Com reposiÁ„o;Sem reposiÁ„o" reler="ajaxReposicao${i}" />
+											<mod:selecao titulo="Selecione uma op√ß√£o" var="reposicao${i}" opcoes="[Nenhum];Com reposi√ß√£o;Sem reposi√ß√£o" reler="ajaxReposicao${i}" />
 										</mod:grupo>
 										<mod:grupo>
-											<mod:selecao titulo="Tipo(s) Diferente(s) de AusÍncia(s)" var="ausencia${i}" opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20" reler="ajax" idAjax="ajaxAusencia${i}" />
+											<mod:selecao titulo="Tipo(s) Diferente(s) de Aus√™ncia(s)" var="ausencia${i}" opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20" reler="ajax" idAjax="ajaxAusencia${i}" />
 										</mod:grupo>
 										<mod:grupo depende="ajaxAusencia${i}">
 											<c:forEach var="j" begin="1" end="${requestScope[f:concat('ausencia',i)]}">
 												<mod:grupo>
 													<mod:data titulo=" ${j}) De" var="de${j}${i}" />
-													<mod:data titulo="AtÈ" var="ate${j}${i}" />
+													<mod:data titulo="At√©" var="ate${j}${i}" />
 													<mod:texto titulo="Motivo" var="motivo${j}${i}" largura="50" />
 												</mod:grupo>
 											</c:forEach>
@@ -61,7 +61,7 @@
 				</c:if>
 				</mod:grupo>
 				<mod:grupo>
-				<mod:memo titulo="InformaÁıes Adicionais" var="info" colunas="80" linhas="3"/>
+				<mod:memo titulo="Informa√ß√µes Adicionais" var="info" colunas="80" linhas="3"/>
 				</mod:grupo>
 				
 	</mod:entrevista>
@@ -97,38 +97,38 @@
 		FIM PRIMEIRO CABECALHO -->
 
 		<br>
-		<h3 align="center"> CONTRATOS: RELAT”RIO - INFORMA«√O FREQ‹ NCIA FUNCION¡RIOS CONTRATADA </h3><br><br>
+		<h3 align="center"> CONTRATOS: RELAT√ìRIO - INFORMA√á√ÉO FREQ√ú√äNCIA FUNCION√ÅRIOS CONTRATADA </h3><br><br>
 		
 					
 		 <p style="TEXT-INDENT: 2cm" align="justify">
 		 Unidade Gestora: <b>${requestScope['lotacao_lotacaoSel.descricao']}</b>
 		 </p>			
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 N∫ Processo: <b>${numProcesso}</b>
+		 N¬∫ Processo: <b>${numProcesso}</b>
 		 </p>
 		 <p style="TEXT-INDENT: 2cm" align="justify">
 		 Nome da Empresa: <b>${descContrato}</b>
 		 </p>
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 MÍs de Ref. <b>${mes}</b>/<b>${ano}</b>
+		 M√™s de Ref. <b>${mes}</b>/<b>${ano}</b>
 		 </p>
 		 <c:if test="${infoSimplif eq 'Sim'}">
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 N∫ de faltas sem reposiÁ„o: <b>${numFaltas}</b>
+		 N¬∫ de faltas sem reposi√ß√£o: <b>${numFaltas}</b>
 		 </p>
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 Quantidade de minutos em atrasos sem reposiÁ„o: <b>${quantMinutos}</b>
+		 Quantidade de minutos em atrasos sem reposi√ß√£o: <b>${quantMinutos}</b>
 		 </p>
 		 </c:if>
 		 <c:if test="${frequencia =='Integral'}">
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 Informo que o(s) funcion·rio(s) tiveram freq¸Íncia integral durante o mÍs.
+		 Informo que o(s) funcion√°rio(s) tiveram freq√º√™ncia integral durante o m√™s.
 		 </p>
 		 </c:if>
 		
 		 <c:if test="${(frequencia =='Parcial') and (faltas >= 1)}">
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 Informo que o(s) funcion·rio(s) abaixo tiveram freq¸Íncia parcial, conforme discriminado abaixo, tendo os demais freq¸Íncia integral:
+		 Informo que o(s) funcion√°rio(s) abaixo tiveram freq√º√™ncia parcial, conforme discriminado abaixo, tendo os demais freq√º√™ncia integral:
 		 </p>
 		 <br>
 		 
@@ -137,7 +137,7 @@
 			<tr>
 				<td bgcolor="#FFFFFF" width="40%" align="center"><b>Nome</b></td>
 				<td bgcolor="#FFFFFF" width="40%" align="center"><b>Data/Motivo</b></td>
-				<td bgcolor="#FFFFFF" width="20%" align="center"><b>ObservaÁ„o</b></td>
+				<td bgcolor="#FFFFFF" width="20%" align="center"><b>Observa√ß√£o</b></td>
 			</tr>
 			<c:forEach var="i" begin="1" end="${faltas}">
 				<tr>
@@ -158,7 +158,7 @@
 		
 		  <c:if test="${not empty info}">
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 InformaÁıes Adicionais:
+		 Informa√ß√µes Adicionais:
 		 </p>
 		 <p style="TEXT-INDENT: 2cm" align="justify">
 		 <b>${info}</b>
@@ -166,7 +166,7 @@
 		 </c:if>
 		  <c:if test="${empty info}">
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 InformaÁıes Adicionais: <b>nada a informar.</b>
+		 Informa√ß√µes Adicionais: <b>nada a informar.</b>
 		 </p>
 		 </c:if>
 		<p style="TEXT-INDENT: 2cm" align="justify">

@@ -41,6 +41,7 @@ import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -52,12 +53,9 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Table(name = "DP_LOTACAO", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpLotacao extends AbstractDpLotacao implements Serializable,
-		Selecionavel, Historico, Sincronizavel,  Comparable  {
-
-	/**
-	 * 
-	 */
+		Selecionavel, Historico, Sincronizavel,  Comparable, DpConvertableEntity  {
 	private static final long serialVersionUID = 5628179687234082413L;
+	public static ActiveRecord<DpLotacao> AR = new ActiveRecord<>(DpLotacao.class);
 
 	@Formula(value = "REMOVE_ACENTO(NOME_LOTACAO)")
 	@Desconsiderar
@@ -85,11 +83,11 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		String s2 = "";
 		if (s.length >= 2) {
 			s2 = s[s.length - 1].toLowerCase();
-			if (CpLocalidade.MUNICIPIOS.contains(s2))
+			if (CpLocalidade.getMunicipios().contains(s2))
 				return s2;
 			// Fix:
 			s2 = s[s.length - 2] + " de " + s[s.length - 1];
-			if (CpLocalidade.MUNICIPIOS.contains(s2))
+			if (CpLocalidade.getMunicipios().contains(s2))
 				return s2;
 		}
 		return getOrgaoUsuario().getMunicipioOrgaoUsu();
@@ -149,6 +147,9 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	public void setSigla(String sigla) {
+	    if (sigla == null) {
+	        sigla = "";
+	    }
 		String siglasOrgaoUsu = "";
 		List<CpOrgaoUsuario> lou = CpDao.getInstance()
 				.listarOrgaosUsuarios();
@@ -180,7 +181,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	// que no futuro essa necessidade seja revista.
 	public String getSiglaAmpliada() {
 		if (getOrgaoUsuario().getIdOrgaoUsu() == 1L && isSubsecretaria())
-			return getSiglaLotacao() + " Direção";
+			return getSiglaLotacao() + " DireÃ§Ã£o";
 		return getSiglaLotacao();
 	}
 
@@ -194,7 +195,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 
 	public String getDescricaoAmpliada() {
 		if (getOrgaoUsuario().getIdOrgaoUsu() == 1L && isSubsecretaria())
-			return "Direção da " + getNomeLotacao();
+			return "DireÃ§Ã£o da " + getNomeLotacao();
 		return getNomeLotacao();
 	}
 
@@ -238,8 +239,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	public Long getIdInicial() {
-		// TODO Auto-generated method stub
-		return getIdLotacaoIni().longValue();
+		return getIdLotacaoIni();
 	}
 
 	public Boolean isSubsecretaria() {
@@ -265,7 +265,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		return lot;
 	}
 
-	// Métodos necessários para ser "Sincronizavel"
+	// Metodos necessarios para ser "Sincronizavel"
 	//
 	public Date getDataFim() {
 		return getDataFimLotacao();
@@ -335,7 +335,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	/**
-	 * Retorna a lotação atual no histórico desta lotação
+	 * Retorna a lotacao atual no historico desta lotacao
 	 * 
 	 * @return DpLotacao
 	 */
@@ -388,7 +388,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 
 	/**
 	 * 
-	 * @return o id do órgão do usuário
+	 * @return o id do orgao do usuario
 	 */
 	public Long getIdOrgaoUsuario() {
 		Long idOrgaoUsuario = null;
@@ -400,10 +400,10 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 	
 	 /**
-     * Retorna a data de início da lotação no formato dd/mm/aa HH:MI:SS,
+     * Retorna a data de inicio da lotacao no formato dd/mm/aa HH:MI:SS,
      * por exemplo, 01/02/10 14:10:00.
      * 
-     * @return Data de início da pessoa no formato dd/mm/aa HH:MI:SS, por
+     * @return Data de inicio da pessoa no formato dd/mm/aa HH:MI:SS, por
      *         exemplo, 01/02/10 14:10:00.
      * 
      */
@@ -417,10 +417,10 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
     }
 
     /**
-     * Retorna a data de fim da lotação no formato dd/mm/aa HH:MI:SS,
+     * Retorna a data de fim da lotacao no formato dd/mm/aa HH:MI:SS,
      * por exemplo, 01/02/10 14:10:00.
      * 
-     * @return Data de início da fim no formato dd/mm/aa HH:MI:SS, por
+     * @return Data de inicio da fim no formato dd/mm/aa HH:MI:SS, por
      *         exemplo, 01/02/10 14:10:00.
      * 
      */

@@ -10,10 +10,10 @@
 <mod:modelo urlBase="/paginas/expediente/modelos/portaria.jsp">
 	<mod:entrevista>
 		<mod:grupo>
-			<mod:texto titulo="N∫ da solicitaÁ„o" var="solicitacao" largura="20" />
+			<mod:texto titulo="N¬∫ da solicita√ß√£o" var="solicitacao" largura="20" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Nome do respons·vel" var="responsavel" largura="40" />
+			<mod:texto titulo="Nome do respons√°vel" var="responsavel" largura="40" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:pessoa titulo="Substituto" var="substituto" />
@@ -22,9 +22,9 @@
 			<mod:pessoa titulo="Titular" var="titular"/>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="ObservaÁıes sobre o servidor" var="servidorObs" />
+			<mod:texto titulo="Observa√ß√µes sobre o servidor" var="servidorObs" />
 		</mod:grupo>
-		<mod:grupo titulo="PerÌodo Solicitado">
+		<mod:grupo titulo="Per√≠odo Solicitado">
 			<mod:data titulo="De" var="dataInicio" />
 			<mod:data titulo="a" var="dataFim" />
 		</mod:grupo>
@@ -36,8 +36,8 @@
 	<mod:documento>
 		<mod:valor var="texto_portaria">
 			<!-- INICIO ABERTURA --><p style="TEXT-INDENT: 2cm" align="justify"><b>O JUIZ FEDERAL
-			- DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI«OS AUXILIARES DA
-			JUSTI«A FEDERAL DE 1&ordm; GRAU - <c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE«√O JUDICI¡RIA DO RIO DE JANEIRO</c:otherwise></c:choose></b>, no uso de suas atribuiÁıes legais, e tendo em vista o
+			- DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI√áOS AUXILIARES DA
+			JUSTI√áA FEDERAL DE 1&ordm; GRAU - <c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO</c:otherwise></c:choose></b>, no uso de suas atribui√ß√µes legais, e tendo em vista o
 			disposto no(a) ${solicitacao}, do(a) ${responsavel},
 			</p>
 
@@ -54,7 +54,7 @@
 					no dia ${dataInicio},
 				</c:when>
 				<c:otherwise>
-					no perÌodo de ${dataInicio} a ${dataFim},
+					no per√≠odo de ${dataInicio} a ${dataFim},
 				</c:otherwise>
 			</c:choose>
 			em virtude de ${motivo}.

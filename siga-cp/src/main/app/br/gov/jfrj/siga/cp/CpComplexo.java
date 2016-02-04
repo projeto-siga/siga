@@ -30,14 +30,19 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.model.ActiveRecord;
+
 @Entity
 @Table(name = "CP_COMPLEXO", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class CpComplexo extends AbstractCpComplexo {
+public class CpComplexo extends AbstractCpComplexo implements CpConvertableEntity {
+	
+	public static ActiveRecord<CpComplexo> AR = new ActiveRecord<>(CpComplexo.class);
 
 	@Override
 	public boolean equals(Object other) {
-		if (other == null)
+		if (other == null || ((CpComplexo) other).getIdComplexo() == null)
 			return false;
 		return this.getIdComplexo().longValue() == ((CpComplexo) other)
 				.getIdComplexo().longValue();

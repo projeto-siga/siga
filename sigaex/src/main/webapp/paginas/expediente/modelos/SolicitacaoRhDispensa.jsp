@@ -12,7 +12,7 @@
 			<mod:pessoa titulo="Servidor" var="servidor" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="FunÁ„o" var="funcao" />
+			<mod:texto titulo="Fun√ß√£o" var="funcao" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:data titulo="A partir de" var="dataInicio" />
@@ -22,7 +22,7 @@
 		
 		<mod:valor var="texto_solicitacao"><p style="TEXT-INDENT: 2cm" align="justify">Solicito a <b>dispensa</b>
 			do(a) servidor(a) <mod:identificacao
-				pessoa="${requestScope['servidor_pessoaSel.id']}" negrito="sim" nivelHierarquicoMaximoDaLotacao="4" /> da funÁ„o comissionada
+				pessoa="${requestScope['servidor_pessoaSel.id']}" negrito="sim" nivelHierarquicoMaximoDaLotacao="4" /> da fun√ß√£o comissionada
 				de <b>${funcao}</b>,
 			a partir de <b>${dataInicio}</b>.</p>
 		</mod:valor>		

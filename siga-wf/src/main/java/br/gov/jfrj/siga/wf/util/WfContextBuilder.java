@@ -19,6 +19,7 @@
 package br.gov.jfrj.siga.wf.util;
 
 import org.jbpm.JbpmConfiguration;
+import org.jbpm.persistence.JbpmPersistenceException;
 
 /**
  * Classe que representa um construtor de contexto do sistema de workflow.
@@ -32,21 +33,21 @@ public class WfContextBuilder {
 	private static JbpmConfiguration configuration = null;
 
 	/**
-	 * Retorna uma configuração do JBPM.
+	 * Retorna uma configuraÃ§Ã£o do JBPM.
 	 * 
 	 * @return
 	 */
 	public static JbpmConfiguration getConfiguration() {
 		return configuration;
 	}
-	
-	public static void setConfiguration(JbpmConfiguration config){
+
+	public static void setConfiguration(JbpmConfiguration config) {
 		if (configuration == null)
 			configuration = config;
 	}
 
 	/**
-	 * Cria uma nova configuração do JBPM.
+	 * Cria uma nova configuraÃ§Ã£o do JBPM.
 	 */
 	public static void createJbpmContext() {
 		if (localContext.get() == null)
@@ -70,6 +71,12 @@ public class WfContextBuilder {
 		WfJbpmContext context = getJbpmContext();
 		try {
 			context.getJbpmContext().close();
+		} catch (JbpmPersistenceException e) {
+			// Nato: swallow can't rollback exception
+			if (!"cannot honor rollback request under external transaction manager"
+					.equals(e.getMessage())) {
+				throw e;
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

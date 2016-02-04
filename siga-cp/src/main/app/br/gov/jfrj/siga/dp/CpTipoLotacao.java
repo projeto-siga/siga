@@ -24,8 +24,10 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+
+
 @Entity
-@Table(schema="CORPORATIVO", name="CP_TIPO_LOTACAO")
+@Table(schema = "CORPORATIVO", name="CP_TIPO_LOTACAO")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpTipoLotacao extends AbstractCpTipoLotacao {
 

@@ -60,32 +60,32 @@
 				<td width="65%" align="right" style="margin-right:4px; font-size: 10pt; border-width: 1px 0px 0px 0px; border-style: solid">
 					<c:choose>
 						<c:when test="${idOrgaoUsu == 1 || idOrgaoUsu == 2}">
-							${doc.codigo} - GeraÁ„o: <br/>
+							${doc.codigo} - Gera√ß√£o: <br/>
 							${requestScope['geraImpress']}<br/>
-							Setores respons·veis pelas informaÁıes:<br/>
+							Setores respons√°veis pelas informa√ß√µes:<br/>
 							${requestScope['setoresResponsaveis']}<br/>
-							PublicaÁ„o di·ria na intranet ${acronimoOrgaoUsu}<br/>
+							Publica√ß√£o di√°ria na intranet ${acronimoOrgaoUsu}<br/>
 							<br/>&nbsp;<br/>
-							 JustiÁa Federal - ${descricaoOrgaoUsu}<br/>
+							 Justi√ßa Federal - ${descricaoOrgaoUsu}<br/>
 						</c:when>
 						<c:otherwise>
 							DIRETOR GERAL: <br/>
 							${requestScope['diretorGeral']}<br/>
-							COORDENA«√O DE PRODU«√O:<br/>
+							COORDENA√á√ÉO DE PRODU√á√ÉO:<br/>
 							${requestScope['coordenacaoDeProducao']}<br/>
-							DIAGRAMA«√O E IMPRESS√O:<br/>
+							DIAGRAMA√á√ÉO E IMPRESS√ÉO:<br/>
 							${requestScope['diagramacaoEImpressao']}<br/>
 							PERIODICIDADE:<br/>
-							Di·ria
+							Di√°ria
 							<br/>&nbsp;<br/>
-							 Tribunal Regional Federal da 2™Regi„o<br/>
+							 Tribunal Regional Federal da 2¬™Regi√£o<br/>
 						</c:otherwise>
 					</c:choose>
 					<c:choose>
 						<c:when test="${idOrgaoUsu == 1}">Av. Almirante Barroso, 78 - Centro / RJ</c:when>
-						<c:when test="${idOrgaoUsu == 2}">Rua S„o Francisco, 52, Centro - VitÛria-ES</c:when>
+						<c:when test="${idOrgaoUsu == 2}">Rua S√£o Francisco, 52, Centro - Vit√≥ria-ES</c:when>
 						<c:when test="${idOrgaoUsu == 3}">
-							Rua Acre, n∫ 80, Centro - Rio de Janeiro/RJ<br/>
+							Rua Acre, n¬∫ 80, Centro - Rio de Janeiro/RJ<br/>
 							Cep. 20081-000 - Tel. (21) 3261-8000<br/>
 							wwww.trf2.jus.br
 						</c:when>

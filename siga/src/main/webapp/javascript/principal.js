@@ -3,17 +3,17 @@ Siga.principal = {
     modules: {
         sigaex: {
         	name: "sigaex",
-        	url: "/sigaex/expediente/doc/gadget.action?idTpFormaDoc=1&apenasQuadro=true",
+        	url: "/sigaex/app/expediente/gadget?idTpFormaDoc=1&apenasQuadro=true",
           viewId: "left"
         },
         sigawf: {
         	name: "sigawf",
-        	url: "/sigawf/inbox.action",
+        	url: "/sigawf/app/inbox",
           viewId: "right"
         },
         sigasr: {
         	name: "sigasr",
-        	url: "/sigasr/solicitacao/gadget",
+        	url: "/sigasr/app/solicitacao/gadget", 
           viewId: "rightbottom"
         },
         sigagc: {
@@ -23,12 +23,12 @@ Siga.principal = {
         },
         sigatp: {
         	name: "sigatp",
-        	url: "/sigatp/gadget",
+        	url: "/sigatp/app/gadget",
           viewId: "rightbottom3"
         },
         processos: {
         	name: "processos",
-        	url: "/sigaex/expediente/doc/gadget.action?idTpFormaDoc=2",
+        	url: "/sigaex/app/expediente/gadget?idTpFormaDoc=2",
           viewId: "leftbottom"
         }
     },

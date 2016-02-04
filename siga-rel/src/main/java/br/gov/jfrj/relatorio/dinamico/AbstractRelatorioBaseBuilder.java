@@ -47,11 +47,11 @@ import ar.com.fdvs.dj.domain.constants.VerticalAlign;
 
 
 /**
- * Base para a geraÁ„o de relatÛrio din‚micos.<BR>
- * Para criar um relatÛrio personalizado, extenda essa classe.<BR>
- * Para criar relatÛrios r·pidos use a classe RelatorioTemplate ou RelatorioRapido.<BR>
+ * Base para a gera√ß√£o de relat√≥rio din√¢micos.<BR>
+ * Para criar um relat√≥rio personalizado, extenda essa classe.<BR>
+ * Para criar relat√≥rios r√°pidos use a classe RelatorioTemplate ou RelatorioRapido.<BR>
  * <BR> 
- * Esta classe basicamente coloca o bras„o da JustiÁa e define os estilos b·sicos.
+ * Esta classe basicamente coloca o bras√£o da Justi√ßa e define os estilos b√°sicos.
  */
 
 public abstract class AbstractRelatorioBaseBuilder extends DynamicReportBuilder {
@@ -89,7 +89,7 @@ public abstract class AbstractRelatorioBaseBuilder extends DynamicReportBuilder 
 		estiloTituloColuna = new Style();
 		estiloTituloColuna.setName("estiloTituloColuna");
 		estiloTituloColuna.setFont(Font.ARIAL_MEDIUM_BOLD);
-		estiloTituloColuna.setBorderBottom(Border.PEN_1_POINT);
+		estiloTituloColuna.setBorderBottom(Border.PEN_1_POINT());
 		estiloTituloColuna.setBackgroundColor(Color.gray);
 		estiloTituloColuna.setTextColor(Color.white);
 		estiloTituloColuna.setHorizontalAlign(HorizontalAlign.CENTER);
@@ -101,13 +101,13 @@ public abstract class AbstractRelatorioBaseBuilder extends DynamicReportBuilder 
 		estiloColuna.setName("estiloColuna");
 		estiloColuna.setFont(Font.ARIAL_SMALL);
 		estiloColuna.setTextColor(Color.BLACK);
-		estiloColuna.setBorder(Border.THIN);
+		estiloColuna.setBorder(Border.THIN());
 		this.addStyle(estiloColuna);
 		
 		estiloTituloGrupo = new Style();
 		estiloTituloGrupo.setName("estiloTituloGrupo");
 		estiloTituloGrupo.setFont(new Font(12,"Arial",true));
-		estiloTituloGrupo.setBorderTop(Border.THIN);
+		estiloTituloGrupo.setBorderTop(Border.THIN());
 		estiloTituloGrupo.setBackgroundColor(Color.white);
 		estiloTituloGrupo.setTextColor(Color.black);
 		estiloTituloGrupo.setHorizontalAlign(HorizontalAlign.LEFT);
@@ -123,7 +123,7 @@ public abstract class AbstractRelatorioBaseBuilder extends DynamicReportBuilder 
 
 		AutoText dataCriacao = new AutoText(AutoText.AUTOTEXT_CUSTOM_MESSAGE,AutoText.POSITION_HEADER,HorizontalBandAlignment.RIGHT);
 		String textoDataCriacao = DateFormat.getDateInstance(DateFormat.SHORT, new Locale("pt","br")).format(new Date());
-		dataCriacao.setMessageKey("Emiss„o:" + textoDataCriacao);
+		dataCriacao.setMessageKey("Emiss√£o:" + textoDataCriacao);
 //		this.addAutoText(dataCriacao);
 		
         AutoText pagina = new AutoText(AutoText.AUTOTEXT_PAGE_X_OF_Y,AutoText.POSITION_FOOTER,HorizontalBandAlignment.CENTER);
@@ -134,12 +134,12 @@ public abstract class AbstractRelatorioBaseBuilder extends DynamicReportBuilder 
 	}
 	
 	/**
-	 * Configura os dados que ser„o exibidos no relatÛrio com Query.
+	 * Configura os dados que ser√£o exibidos no relat√≥rio com Query.
 	 * 
 	 *  @param dados
-	 *  Os beans da consulta s„o usados para preencher o relatÛrio.
-	 *  Para essa modalidade funcionar corretamente, È necess·rio que o 
-	 *  relatÛrio tenha seus campos com nomes idÍnticos aos mÈtodos de acesso do bean.
+	 *  Os beans da consulta s√£o usados para preencher o relat√≥rio.
+	 *  Para essa modalidade funcionar corretamente, √© necess√°rio que o 
+	 *  relat√≥rio tenha seus campos com nomes id√™nticos aos m√©todos de acesso do bean.
 	 *  Exemplo: Use setColumnProperty(nome,...) para um bean.getNome()
 	 *  
 	 */
@@ -150,22 +150,22 @@ public abstract class AbstractRelatorioBaseBuilder extends DynamicReportBuilder 
 	
 	public abstract void setDados(Collection dados) throws Exception;
 	/**
-	 *  Configura os dados que ser„o exibidos no relatÛrio com Collections
+	 *  Configura os dados que ser√£o exibidos no relat√≥rio com Collections
 	 *  de Maps.
 	 * @param dados
 	 * Cada item da collection deve ser um Map<String,String>, onde
-	 * o "key" È o nome do campo no relatÛrio e o "value" o seu conte˙do
+	 * o "key" √© o nome do campo no relat√≥rio e o "value" o seu conte√∫do
 	 * 
 	 * @throws Exception
 	 */
-	public void setDadosColecaoMap(Collection<Map<String,String>> dados) throws Exception{
+	public void setDadosColecaoMap(Collection<Map<String,?>> dados) throws Exception{
 		ds = new JRMapCollectionDataSource(dados);	
 	}
 	
 	/**
-	 * MÈtodo que retorna o relatÛrio no formato JasperPrint.<br/>
+	 * M√©todo que retorna o relat√≥rio no formato JasperPrint.<br/>
 	 * Pode ser usado para visualizar no JasperViewer (sem precisar tratar o PDF) durante a fase de 
-	 * contruÁ„o do relatÛrio.
+	 * contru√ß√£o do relat√≥rio.
 	 * 
 	 * Exemplo de uso:
 	 * JasperViewer.viewReport(relatorio.getRelatorio());

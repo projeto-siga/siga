@@ -57,7 +57,7 @@ public class WfDao extends CpDao {
 	public static final String CACHE_WF = "wf";
 
 	/**
-	 * Retorna uma instância do DAO.
+	 * Retorna uma instÃ¢ncia do DAO.
 	 * 
 	 * @return
 	 */
@@ -66,11 +66,11 @@ public class WfDao extends CpDao {
 	}
 
 	/**
-	 * Pesquisa as configurações que são semelhantes ao exemplo
+	 * Pesquisa as configuraÃ§Ãµes que sÃ£o semelhantes ao exemplo
 	 * 
 	 * @param exemplo
-	 *            Uma configuração de exemplo para a pesquisa.
-	 * @return Lista de configurações encontradas.
+	 *            Uma configuraÃ§Ã£o de exemplo para a pesquisa.
+	 * @return Lista de configuraÃ§Ãµes encontradas.
 	 */
 	public List<WfConfiguracao> consultar(final WfConfiguracao exemplo) {
 		Query query = getSessao().getNamedQuery("consultarWfConfiguracoes");

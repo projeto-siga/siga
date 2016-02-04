@@ -128,7 +128,7 @@ public class PublicacaoDJEBL {
 		Service service = new Service();
 		OperationDesc oper;
 
-		// operaÁ„o------------------------------------------------
+		// opera√ß√£o------------------------------------------------
 		oper = new OperationDesc();
 		oper.setName("GerarRespostaStatusPublicacoes");
 		oper.addParameter(new QName("http://tempuri.org/", "_enmAreaJudicial"),
@@ -186,7 +186,7 @@ public class PublicacaoDJEBL {
 		 * .encode(mov.getConteudoBlobMov2()) });
 		 */
 
-		log.info("DJE: prestes a chamarrrr serviÁo");
+		log.info("DJE: prestes a chamarrrr servi√ßo");
 		try {
 			AxisClientAlternativo cliente = new AxisClientAlternativo(SigaExProperties.getServidorDJE(), "RecebeDocumentos", true);
 
@@ -200,20 +200,21 @@ public class PublicacaoDJEBL {
 	}
 
 	public static void primeiroEnvio(ExMovimentacao mov) throws Exception {
-
-		String conteudoXML = enviarTRF(mov);
-
-		System.out.println("\n\n DJE envio " + mov.getExDocumento().getCodigo() + ", retorno: " + conteudoXML);
-
-		verificaRetornoErrosTRF(conteudoXML);
+		if(!SigaExProperties.getServidorDJE().isEmpty()) {
+			String conteudoXML = enviarTRF(mov);
+	
+			System.out.println("\n\n DJE envio " + mov.getExDocumento().getCodigo() + ", retorno: " + conteudoXML);
+	
+			verificaRetornoErrosTRF(conteudoXML);
+		}
 	}
 
 	/*
-	 * Rotina central para tratamento dos erros retornados pelo TRF atravÈs do
-	 * XML. Atualmente, as mensagens de erro s„o apenas associadas aos seus
-	 * respectivos cÛdigos de erro e n˙meros de expedientes, para formar uma
-	 * exceÁ„o ˙nica, mas a ÌdÈia È que aqui, quando necess·rio, seja tomada a
-	 * decis„o adequada a cada tipo de erro, de acordo com o seu cÛdigo
+	 * Rotina central para tratamento dos erros retornados pelo TRF atrav√©s do
+	 * XML. Atualmente, as mensagens de erro s√£o apenas associadas aos seus
+	 * respectivos c√≥digos de erro e n√∫meros de expedientes, para formar uma
+	 * exce√ß√£o √∫nica, mas a √≠d√©ia √© que aqui, quando necess√°rio, seja tomada a
+	 * decis√£o adequada a cada tipo de erro, de acordo com o seu c√≥digo
 	 */
 	public static void verificaRetornoErrosTRF(String xml) throws Exception {
 		StringReader st = new StringReader(xml);
@@ -229,20 +230,16 @@ public class PublicacaoDJEBL {
 		}
 
 		Element retornoPublicacao = dc.getRootElement();
-		String codErro = retornoPublicacao.getAttributeValue("CODRETORNO");
-		if (codErro == null)
-			codErro = retornoPublicacao.getChildTextTrim("CODIGO");
+		Element erro = retornoPublicacao.getChild("ERRO");
 
-		if (codErro != null && !codErro.equals("0")) {
-			String descricaoErro = retornoPublicacao
-					.getAttributeValue("DESCRICAO");
-			if (descricaoErro == null)
-				descricaoErro = retornoPublicacao.getChildText("DESCRICAO");
-			if (descricaoErro == null)
-				descricaoErro = retornoPublicacao.getValue();
-
+		if (erro != null) {
+			String codErro = erro
+					.getAttributeValue("CODERRO");
+			String descricaoErro = erro
+					.getAttributeValue("DESCRERRO");
+			
 			throw new AplicacaoException("TRF -> ERRO: " + codErro
-					+ " DESCRI«√O: " + descricaoErro);
+					+ " DESCRI√á√ÉO: " + descricaoErro);
 		}
 
 	}
@@ -289,89 +286,90 @@ public class PublicacaoDJEBL {
 
 		Map<String, String> docForm = movDoc.getForm();
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 
-		OutputFormat outputFormat = new OutputFormat("XML", "ISO-8859-1", false);
-		outputFormat.setIndent(0);
-		outputFormat.setIndenting(false);
-
-		XMLSerializer serializer = new XMLSerializer(baos, outputFormat);
-
-		ContentHandler handler = serializer.asContentHandler();
-		handler.startDocument();
-		handler.startElement("", "", "PUBLICACAODJE", null);
-
-		AttributesImpl attIdentificacao = new AttributesImpl();
-
-		attIdentificacao.addAttribute("", "", "TIPOARQ", "String", "A");
-
-		attIdentificacao.addAttribute("", "", "CADERNO", "String", tipoMateria);
-		
-		if(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu().equals("JFRJ"))
-			attIdentificacao.addAttribute("", "", "SECAO", "String", String.valueOf("SJRJ"));
-		else if(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu().equals("JFES"))
-			attIdentificacao.addAttribute("", "", "SECAO", "String", String.valueOf("SJES"));
-		else
-			attIdentificacao.addAttribute("", "", "SECAO", "String", String.valueOf(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu()));
-
-//		String auxStr = obterUnidadeDocumento(mov.getExDocumento());
-
-		attIdentificacao.addAttribute("", "", "UNIDADE", "String", lotPublicacao);
-
-		final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-
-		attIdentificacao.addAttribute("", "", "DATADISPONIBILIZACAO", "Date",df.format(mov.getDtDispPublicacao()));
-
-		long idMod = mov.getExDocumento().getExModelo().getHisIdIni();
-		if (idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR
-				|| idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R_LICITACAO_CONTRATOS
-				|| idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R)
-			attIdentificacao.addAttribute("", "", "TIPODOC", "Integer", docForm.get("idTipoMateria"));
-		else {
-			ExTpDocPublicacao tpDocPubl = ExDao.getInstance().consultarPorModelo(movDoc.getExModelo());
-			attIdentificacao.addAttribute("", "", "TIPODOC", "Integer", String.valueOf(tpDocPubl.getIdDocPublicacao().longValue()));
+			OutputFormat outputFormat = new OutputFormat("XML", "ISO-8859-1", false);
+			outputFormat.setIndent(0);
+			outputFormat.setIndenting(false);
+	
+			XMLSerializer serializer = new XMLSerializer(baos, outputFormat);
+	
+			ContentHandler handler = serializer.asContentHandler();
+			handler.startDocument();
+			handler.startElement("", "", "PUBLICACAODJE", null);
+	
+			AttributesImpl attIdentificacao = new AttributesImpl();
+	
+			attIdentificacao.addAttribute("", "", "TIPOARQ", "String", "A");
+	
+			attIdentificacao.addAttribute("", "", "CADERNO", "String", tipoMateria);
+			
+			if(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu().equals("JFRJ"))
+				attIdentificacao.addAttribute("", "", "SECAO", "String", String.valueOf("SJRJ"));
+			else if(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu().equals("JFES"))
+				attIdentificacao.addAttribute("", "", "SECAO", "String", String.valueOf("SJES"));
+			else
+				attIdentificacao.addAttribute("", "", "SECAO", "String", String.valueOf(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu()));
+	
+	//		String auxStr = obterUnidadeDocumento(mov.getExDocumento());
+	
+			attIdentificacao.addAttribute("", "", "UNIDADE", "String", lotPublicacao);
+	
+			final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+	
+			attIdentificacao.addAttribute("", "", "DATADISPONIBILIZACAO", "Date",df.format(mov.getDtDispPublicacao()));
+	
+			long idMod = mov.getExDocumento().getExModelo().getHisIdIni();
+			if (idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR
+					|| idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R_LICITACAO_CONTRATOS
+					|| idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R)
+				attIdentificacao.addAttribute("", "", "TIPODOC", "Integer", docForm.get("idTipoMateria"));
+			else {
+				ExTpDocPublicacao tpDocPubl = ExDao.getInstance().consultarPorModelo(movDoc.getExModelo());
+				
+				if(tpDocPubl != null)
+					attIdentificacao.addAttribute("", "", "TIPODOC", "Integer", String.valueOf(tpDocPubl.getIdDocPublicacao().longValue()));
+			}
+	
+			String sMatricula;
+			if (movDoc.getSubscritor() != null) {
+				sMatricula = obterSiglaAlternativa(movDoc.getSubscritor());
+			} else {
+				sMatricula = obterSiglaAlternativa(movDoc.getCadastrante());
+			}
+	
+			// Est√° sendo acrescentado um zero no final das matr√≠culas dos ju√≠zes do
+			// ES, pois a matr√≠cula deles s√≥ possem 4 digitos
+			// E o DJE no tribunal exigia 5 d√≠gitos. Em conversar com o Marcelo
+			// Santos, ele sugeriu que fosse feita esta altera√ß√£o, pois eles n√£o
+			// teria condi√ß√µes de realiz√°-la.
+			if (sMatricula.length() == 6)
+				sMatricula = sMatricula + "0";
+	
+			attIdentificacao.addAttribute("", "", "MATRICULAUSUARIO", "String",
+					String.valueOf(sMatricula));
+	
+			handler.startElement("", "", "IDENTIFICACAO", attIdentificacao);
+			handler.endElement("", "", "IDENTIFICACAO");
+	
+			AttributesImpl attsExpediente = new AttributesImpl();
+			attsExpediente.addAttribute("", "", "NUMEXPEDIENTE", "String", movDoc.getCodigo());
+	
+			if (docForm.containsKey("tituloMateria"))
+				attsExpediente.addAttribute("", "", "DESCREXPEDIENTE", "String",docForm.get("tituloMateria"));
+			else
+				attsExpediente.addAttribute("", "", "DESCREXPEDIENTE", "String",descrPublicacao);
+			handler.startElement("", "", "EXPEDIENTE", attsExpediente);
+			handler.endElement("", "", "EXPEDIENTE");
+			handler.endElement("", "", "PUBLICACAODJE");
+			handler.endDocument();
+	
+			byte[] retorno = baos.toByteArray();
+	
+			System.out.println("DJE envio " + mov.getExDocumento().getCodigo() + ", xml gerado: " + new String(retorno));
+	
+			return retorno;
 		}
-
-		String sMatricula;
-		if (movDoc.getSubscritor() != null) {
-			sMatricula = obterSiglaAlternativa(movDoc.getSubscritor());
-		} else {
-			sMatricula = obterSiglaAlternativa(movDoc.getCadastrante());
-		}
-
-		// Est· sendo acrescentado um zero no final das matrÌculas dos juÌzes do
-		// ES, pois a matrÌcula deles sÛ possem 4 digitos
-		// E o DJE no tribunal exigia 5 dÌgitos. Em conversar com o Marcelo
-		// Santos, ele sugeriu que fosse feita esta alteraÁ„o, pois eles n„o
-		// teria condiÁıes de realiz·-la.
-		if (sMatricula.length() == 6)
-			sMatricula = sMatricula + "0";
-
-		attIdentificacao.addAttribute("", "", "MATRICULAUSUARIO", "String",
-				String.valueOf(sMatricula));
-
-		handler.startElement("", "", "IDENTIFICACAO", attIdentificacao);
-		handler.endElement("", "", "IDENTIFICACAO");
-
-		AttributesImpl attsExpediente = new AttributesImpl();
-		attsExpediente.addAttribute("", "", "NUMEXPEDIENTE", "String", movDoc.getCodigo());
-
-		if (docForm.containsKey("tituloMateria"))
-			attsExpediente.addAttribute("", "", "DESCREXPEDIENTE", "String",docForm.get("tituloMateria"));
-		else
-			attsExpediente.addAttribute("", "", "DESCREXPEDIENTE", "String",descrPublicacao);
-		handler.startElement("", "", "EXPEDIENTE", attsExpediente);
-		handler.endElement("", "", "EXPEDIENTE");
-		handler.endElement("", "", "PUBLICACAODJE");
-		handler.endDocument();
-
-		byte[] retorno = baos.toByteArray();
-
-		System.out.println("DJE envio " + mov.getExDocumento().getCodigo() + ", xml gerado: " + new String(retorno));
-
-		baos.close();
-
-		return retorno;
 
 	}
 
@@ -481,11 +479,11 @@ public class PublicacaoDJEBL {
 
 		if (!datas.isDisponibilizacaoMaiorQueDMais1())
 			throw new AplicacaoException(
-					"N„o È possÌvel cancelar a remessa no dia da assinatura (data de disponibilizaÁ„o - 1)");
+					"N√£o √© poss√≠vel cancelar a remessa no dia da assinatura (data de disponibiliza√ß√£o - 1)");
 		Service service = new Service();
 		OperationDesc oper;
 
-		// operaÁ„o------------------------------------------------
+		// opera√ß√£o------------------------------------------------
 		oper = new OperationDesc();
 		oper.setName("ExcluirDocumento");
 		oper.addParameter(new QName("http://tempuri.org/", "_strNumero"),

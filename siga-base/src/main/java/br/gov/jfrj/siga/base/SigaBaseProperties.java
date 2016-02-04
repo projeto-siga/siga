@@ -93,7 +93,7 @@ public class SigaBaseProperties extends ModeloPropriedade {
 		try {
 			return instance.obterPropriedadeLista("servidor.smtp");
 		} catch (Exception e) {
-			throw new AplicacaoException("Não foi possível encontrar servidores de e-mail no arquivo siga.properties. Ex: servidor.smtp.0 = nome_servidor_email");
+			throw new AplicacaoException("NÃ£o foi possÃ­vel encontrar servidores de e-mail no arquivo siga.properties. Ex: servidor.smtp.0 = nome_servidor_email");
 		}
 	}
 

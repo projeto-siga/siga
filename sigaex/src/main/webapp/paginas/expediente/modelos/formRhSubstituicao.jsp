@@ -15,7 +15,7 @@
 		<mod:grupo>
 			<mod:pessoa titulo="Titular" var="titular" />
 		</mod:grupo>
-		<mod:grupo titulo="Período Solicitado">
+		<mod:grupo titulo="PerÃ­odo Solicitado">
 			<mod:data titulo="De" var="dataInicio" />
 			<mod:data titulo="a" var="dataFim" />
 		</mod:grupo>
@@ -47,7 +47,7 @@
 					<br>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
-							<td align="left" width="40%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">SOLICITAÇÃO N&ordm; ${doc.codigo}</p></td>
+							<td align="left" width="40%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">SOLICITAÃ‡ÃƒO N&ordm; ${doc.codigo}</p></td>
 							<td align="right" width="60%"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">${doc.dtExtenso}</p></td>
 						</tr>
 					</table>
@@ -61,7 +61,7 @@
 			<c:import url="/paginas/expediente/modelos/inc_tit_juizfedDirForoSolicit.jsp" />
 						
 	
-		<p style="TEXT-INDENT: 2cm" align="justify">Solicito as providências necessárias para que o(a) servidor(a) <mod:identificacao pessoa="${requestScope['substituto_pessoaSel.id']}" nivelHierarquicoMaximoDaLotacao="4" negrito="sim" />
+		<p style="TEXT-INDENT: 2cm" align="justify">Solicito as providÃªncias necessÃ¡rias para que o(a) servidor(a) <mod:identificacao pessoa="${requestScope['substituto_pessoaSel.id']}" nivelHierarquicoMaximoDaLotacao="4" negrito="sim" />
 		<b>substitua</b>
 		o(a) servidor(a) 
 		 <mod:identificacao pessoa="${requestScope['titular_pessoaSel.id']}" funcao="sim" nivelHierarquicoMaximoDaLotacao="4" negrito="sim" />
@@ -70,7 +70,7 @@
 				no dia ${dataInicio},
 			</c:when>
 				<c:otherwise>
-				no período de ${dataInicio} a ${dataFim},
+				no perÃ­odo de ${dataInicio} a ${dataFim},
 				</c:otherwise>
 		</c:choose>
 		por motivo de ${motivo}.

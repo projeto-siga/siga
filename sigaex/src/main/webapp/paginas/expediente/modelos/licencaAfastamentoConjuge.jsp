@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!-- este modelo trata de
-LICENÇA PARA AFASTAMENTO DO CONJUGUE
+LICENÃ‡A PARA AFASTAMENTO DO CONJUGUE
 < ESTE DOCUMENTO SE DIVIDE EM 3 PAGINAS >
 [OBS AO PROGRAMADOR: CRIAR DIGITO OU METODO P/ SALTAR PAGINA]  -->
 
@@ -13,39 +13,39 @@ LICENÇA PARA AFASTAMENTO DO CONJUGUE
 	<mod:documento>
 		<mod:valor var="texto_requerimento">
 			<p style="TEXT-INDENT: 2cm" align="justify">
-			${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Excelência que se digne encaminhar 
-			o requerimento de <b>LICENÇA POR MOTIVO DE AFASTAMENTO DO CÔNJUGE</b>, em anexo, ao E. Tribunal Regional Federal da 2ª Região.
+			${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa ExcelÃªncia que se digne encaminhar 
+			o requerimento de <b>LICENÃ‡A POR MOTIVO DE AFASTAMENTO DO CÃ”NJUGE</b>, em anexo, ao E. Tribunal Regional Federal da 2Âª RegiÃ£o.
 			</p>				
 		</mod:valor>
-<!-- [Aqui tem q pular página]  -->			
+<!-- [Aqui tem q pular pÃ¡gina]  -->			
 		<mod:valor var="texto_requerimento2">
 		<!-- <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br> -->
 			<c:import url="/paginas/expediente/modelos/inc_tit_presidTrf2aRegiao.jsp" />				
 			<p style="TEXT-INDENT: 2cm" align="justify">
-			${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Excelência, nos termos do art. 84 de Lei nº 8.112/90
-			regulamentado pela Resolução nº 5/2008 do Conselho da Justiça Federal, <b>LICENÇA POR MOTIVO DE AFASTAMENTO DO CÔNJUGE</b>.
+			${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa ExcelÃªncia, nos termos do art. 84 de Lei nÂº 8.112/90
+			regulamentado pela ResoluÃ§Ã£o nÂº 5/2008 do Conselho da JustiÃ§a Federal, <b>LICENÃ‡A POR MOTIVO DE AFASTAMENTO DO CÃ”NJUGE</b>.
 			</p>
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			Declaro estar ciente dos termos da norma citada, especialmente no que diz respeito ao seguinte:
 			</p>
 			<p style="TEXT-INDENT: 2cm" align="justify">
-			- que  a concessão será por prazo indeterminado, enquanto perdurar o vínculo
-			matrimonial ou a união estável, comprometenso-se a encaminhar ao órgão de origem,
-			anualmente, declaração que ateste o deslocamento e mautenção da situação mencionada
-			(art. 68, parágrafo 1º c/c art. 71, parágrafo 3º);
+			- que  a concessÃ£o serÃ¡ por prazo indeterminado, enquanto perdurar o vÃ­nculo
+			matrimonial ou a uniÃ£o estÃ¡vel, comprometenso-se a encaminhar ao Ã³rgÃ£o de origem,
+			anualmente, declaraÃ§Ã£o que ateste o deslocamento e mautenÃ§Ã£o da situaÃ§Ã£o mencionada
+			(art. 68, parÃ¡grafo 1Âº c/c art. 71, parÃ¡grafo 3Âº);
 			</p>
 			<p style="TEXT-INDENT: 2cm" align="justify">
-			- que o período de licença sem remuneração não será contado para nenhum efeito,
-			exeto para aposentadoria na hipótese do art. 72, suspendendo o estágio probatório,
-			a aquisição da estabilidade e a concessão de progressão ou promoção funcional (art. 69
-			e parágrafo único);
+			- que o perÃ­odo de licenÃ§a sem remuneraÃ§Ã£o nÃ£o serÃ¡ contado para nenhum efeito,
+			exeto para aposentadoria na hipÃ³tese do art. 72, suspendendo o estÃ¡gio probatÃ³rio,
+			a aquisiÃ§Ã£o da estabilidade e a concessÃ£o de progressÃ£o ou promoÃ§Ã£o funcional (art. 69
+			e parÃ¡grafo Ãºnico);
 			</p>
 			<p style="TEXT-INDENT: 2cm" align="justify">
-			- que será assegurada ao servidor licenciado a manutenção da vinculação ao regime do
-			Plano de Seguridade Social do Servidor Público, mediante o recolhimento mensal da
-			respectiva contribuição, no mesmo percentual devido pelos servidores em atividade,
-			incidente sobre a remuneração total do cargo a que faz jus no exercício de suas
-			atribuições, computando-se, para esse efeito, inclusive, as vantagens pessoais (art.
+			- que serÃ¡ assegurada ao servidor licenciado a manutenÃ§Ã£o da vinculaÃ§Ã£o ao regime do
+			Plano de Seguridade Social do Servidor PÃºblico, mediante o recolhimento mensal da
+			respectiva contribuiÃ§Ã£o, no mesmo percentual devido pelos servidores em atividade,
+			incidente sobre a remuneraÃ§Ã£o total do cargo a que faz jus no exercÃ­cio de suas
+			atribuiÃ§Ãµes, computando-se, para esse efeito, inclusive, as vantagens pessoais (art.
 			72).
 			</p>
 						

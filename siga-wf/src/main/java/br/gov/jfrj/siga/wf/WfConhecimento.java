@@ -24,7 +24,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 /**
- * Classe que representa o conhecimento a respeito da execução de uma tarefa do
+ * Classe que representa o conhecimento a respeito da execuÃ§Ã£o de uma tarefa do
  * sistema de workflow.
  * 
  * @author tah

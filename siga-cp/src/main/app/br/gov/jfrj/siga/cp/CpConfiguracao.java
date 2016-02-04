@@ -39,6 +39,7 @@ import javax.persistence.Transient;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
@@ -54,15 +55,18 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 				+ "cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"),
 		@NamedQuery(name = "consultarCpConfiguracoesPorTipo", query = " from "
 				+ "CpConfiguracao cpcfg where (cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"
-				+ "and hisDtFim is null")
-
+				+ "and hisDtFim is null"),
+		@NamedQuery(name = "consultarCpConfiguracoesAtivas", query = " from "
+				+ "CpConfiguracao cpcfg where hisDtFim is null")
 })
-public class CpConfiguracao extends AbstractCpConfiguracao {
+public class CpConfiguracao extends AbstractCpConfiguracao implements CpConvertableEntity {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3624557793773660738L;
+	
+	public static final ActiveRecord<CpConfiguracao> AR = new ActiveRecord<>(CpConfiguracao.class);
 
 	public CpConfiguracao() {
 	}
@@ -105,7 +109,7 @@ public class CpConfiguracao extends AbstractCpConfiguracao {
 
 	/**
 	 * 
-	 * @return retorna o objeto que é a origem da configuração
+	 * @return retorna o objeto que Ã© a origem da configuraÃ§Ã£o
 	 */
 	public Object getOrigem() {
 		if (getDpPessoa() != null) {
@@ -123,7 +127,7 @@ public class CpConfiguracao extends AbstractCpConfiguracao {
 
 	/**
 	 * 
-	 * @return retorna uma string representativa da origem para exibições curtas
+	 * @return retorna uma string representativa da origem para exibiÃ§Ãµes curtas
 	 */
 	public String printOrigemCurta() {
 		Object ori = getOrigem();
@@ -165,7 +169,7 @@ public class CpConfiguracao extends AbstractCpConfiguracao {
 	}
 
 	/**
-	 * Retorna a data de fim de vigência no formato dd/mm/aa HH:MM:SS, por
+	 * Retorna a data de fim de vigÃªncia no formato dd/mm/aa HH:MM:SS, por
 	 * exemplo, 01/02/10 17:52:23.
 	 */
 	public String getHisDtFimDDMMYY_HHMMSS() {
@@ -186,7 +190,7 @@ public class CpConfiguracao extends AbstractCpConfiguracao {
 	}
 	
 	/**
-	 * Retorna a configuração atual no histórico desta configuração
+	 * Retorna a configuraÃ§Ã£o atual no histÃ³rico desta configuraÃ§Ãµo
 	 * 
 	 * @return CpConfiguracao
 	 */
@@ -205,7 +209,7 @@ public class CpConfiguracao extends AbstractCpConfiguracao {
 		return  "id: " + getId()
 				+ " ,pessoa: " + (getDpPessoa()!=null?getDpPessoa().getNomePessoa():"")
 				+ " ,lotacao: " + (getLotacao()!=null?getLotacao().getSigla():"")
-				+ " ,situação: " + (getCpSituacaoConfiguracao()!=null?getCpSituacaoConfiguracao().getDscSitConfiguracao():"")
+				+ " ,situaÃ§Ã£o: " + (getCpSituacaoConfiguracao()!=null?getCpSituacaoConfiguracao().getDscSitConfiguracao():"")
 				+ " ,tipo conf: " + (getCpTipoConfiguracao().getDscTpConfiguracao());
 	}
 

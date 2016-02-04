@@ -4,5 +4,5 @@
 		
 <!-- ESSE MODELO DEFINE O TITULO DE INICIO DOS DOCUMENTOS -->		
 		
-		<b><H1 ALIGN="CENTER">DECLARA«√O</H1></b>
+		<b><H1 ALIGN="CENTER">DECLARA√á√ÉO</H1></b>
 		<c:import url="/paginas/expediente/modelos/inc_tit_espacos.jsp" />

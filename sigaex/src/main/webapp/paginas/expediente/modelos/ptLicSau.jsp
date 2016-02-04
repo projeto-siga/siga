@@ -21,10 +21,10 @@
 		       </mod:grupo>
 		       <br>
 		    </mod:grupo>
-		    <mod:grupo titulo="Período Concedido de Licença">
-		        <mod:texto titulo="Número de Dias" var="nume" largura="5"/>
-				<mod:texto titulo="Número de Dias por Extenso" var="diasext" largura="25"/>
-		        <mod:data titulo="Data de Início de Afastamento" var="dtin" />
+		    <mod:grupo titulo="PerÃ­odo Concedido de LicenÃ§a">
+		        <mod:texto titulo="NÃºmero de Dias" var="nume" largura="5"/>
+				<mod:texto titulo="NÃºmero de Dias por Extenso" var="diasext" largura="25"/>
+		        <mod:data titulo="Data de InÃ­cio de Afastamento" var="dtin" />
 			</mod:grupo>
 		    <br>
 	   <br><br>
@@ -35,18 +35,18 @@
 	<c:set var="federal" value ="${f:pessoa(requestScope['deslic_pessoaSel.id'])}" />
 	    <mod:valor var="texto_ptp">
 			<br/><br/>
-			<c:set var="licen" value="à Excelentíssima Desembargadora Federal" />
+			<c:set var="licen" value="Ã  ExcelentÃ­ssima Desembargadora Federal" />
 		    <c:if test="${federal.sexo == 'M'}">
-		        <c:set var="licen" value="ao Excelentíssimo Desembargador Federal" />
+		        <c:set var="licen" value="ao ExcelentÃ­ssimo Desembargador Federal" />
 		    </c:if>
 			<p style="TEXT-INDENT: 2cm" align="justify">
 			<b><c:choose><c:when test="${doc.subscritor.sexo == 'M'}">O PRESIDENTE</c:when><c:otherwise>A PRESIDENTE</c:otherwise></c:choose> 
-			DO TRIBUNAL REGIONAL FEDERAL DA 2ª REGIÃO</b>, no uso de suas atribuições, e considerando o que consta nos autos do Processo Administrativo 
-			nº <c:choose><c:when test="${tipproc == 'Outro'}">${proc}</c:when><c:otherwise>${proc}-${tipproc}</c:otherwise></c:choose>, <b>RESOLVE</b>:<br><br>
+			DO TRIBUNAL REGIONAL FEDERAL DA 2Âª REGIÃƒO</b>, no uso de suas atribuiÃ§Ãµes, e considerando o que consta nos autos do Processo Administrativo 
+			nÂº <c:choose><c:when test="${tipproc == 'Outro'}">${proc}</c:when><c:otherwise>${proc}-${tipproc}</c:otherwise></c:choose>, <b>RESOLVE</b>:<br><br>
 			<b>CONCEDER</b> <c:choose><c:when test="${nume == '1'}">um dia </c:when><c:otherwise>${nume} (${diasext}) dias </c:otherwise></c:choose> 
-			de licença para tratamento de saúde ${licen} <b>${federal.nomePessoa}</b>,<c:choose><c:when test="${nume == '1'}"> em ${dtin}</c:when><c:otherwise> no 
-			período de ${dtin} a ${f:calculaData(nume,requestScope['dtin'])}</c:otherwise></c:choose>, nos termos
-			do art. 9, inciso I, da Lei Complementar nº 35, de 14/03/1979, que dispõe sobre a Lei Orgânica da Magistratura Nacional.
+			de licenÃ§a para tratamento de saÃºde ${licen} <b>${federal.nomePessoa}</b>,<c:choose><c:when test="${nume == '1'}"> em ${dtin}</c:when><c:otherwise> no 
+			perÃ­odo de ${dtin} a ${f:calculaData(nume,requestScope['dtin'])}</c:otherwise></c:choose>, nos termos
+			do art. 9, inciso I, da Lei Complementar nÂº 35, de 14/03/1979, que dispÃµe sobre a Lei OrgÃ¢nica da Magistratura Nacional.
 			
 		</mod:valor>  	
 		</mod:documento>

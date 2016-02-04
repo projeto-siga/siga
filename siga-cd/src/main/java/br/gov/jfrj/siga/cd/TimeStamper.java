@@ -77,7 +77,7 @@ public class TimeStamper {
 			NoSuchAlgorithmException {
 		TimeStampRequestGenerator reqGen = new TimeStampRequestGenerator();
 		reqGen.setCertReq(true);
-		log.info("Criando requisiÁ„o para recuperar carimbo");
+		log.info("Criando requisi√ß√£o para recuperar carimbo");
 
 		MessageDigest md = MessageDigest.getInstance("SHA");
 		md.update(assinatura);
@@ -85,7 +85,7 @@ public class TimeStamper {
 
 		TimeStampRequest request = reqGen.generate(TSPAlgorithms.SHA1,
 				assinatura);
-		log.info("Enviando requisiÁ„o para " + SERVIDOR_CARIMBO);
+		log.info("Enviando requisi√ß√£o para " + SERVIDOR_CARIMBO);
 		TimeStampResponse response = sendRequest(request, SERVIDOR_CARIMBO);
 		response.validate(request);
 
@@ -139,13 +139,13 @@ public class TimeStamper {
 			datainputstream.close();
 			dataoutputstream.close();
 			socket.close();
-			throw new TSPException("Token inv·lido");
+			throw new TSPException("Token inv√°lido");
 		}
 
-		log.debug("Fechando streams de entrada e sa·da");
+		log.debug("Fechando streams de entrada e sa√°da");
 		datainputstream.close();
 		dataoutputstream.close();
-		log.info("Fechando conex„o socket");
+		log.info("Fechando conex√£o socket");
 		socket.close();
 
 		return tsptcpipresponse;
@@ -386,7 +386,7 @@ public class TimeStamper {
 			System.out.println("Certificate serial " + cert.getSerialNumber());
 		}
 
-		// Nato: validaÁ„o do carimbo de tempo est· desabilitada porque existe
+		// Nato: valida√ß√£o do carimbo de tempo est√° desabilitada porque existe
 		// um problema no certificado do STF
 		if (!fSTF)
 			tsToken.validate(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(certificate));

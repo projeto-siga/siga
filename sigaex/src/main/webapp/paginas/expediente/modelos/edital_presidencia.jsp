@@ -7,7 +7,7 @@
 	<mod:entrevista>
 		<c:if test="${empty esconderTexto}">
 			<mod:grupo
-				titulo="Texto a ser inserido no corpo do Edital da Presidência">
+				titulo="Texto a ser inserido no corpo do Edital da PresidÃªncia">
 				<mod:grupo>
 					<mod:editor titulo="" var="texto_edital" />
 				</mod:grupo>
@@ -15,12 +15,12 @@
 		</c:if>
 		<br></br>
 		<mod:grupo>
-			<mod:texto titulo="<b>Título do Edital</b>" var="tit_edital"
+			<mod:texto titulo="<b>TÃ­tulo do Edital</b>" var="tit_edital"
 				largura="60" />
 		</mod:grupo>
 		<br></br>
 		<mod:grupo>
-			<mod:texto titulo="<b>Sub-Título</b>" var="subtit_edital"
+			<mod:texto titulo="<b>Sub-TÃ­tulo</b>" var="subtit_edital"
 				largura="40" />
 		</mod:grupo>
 		<br></br>

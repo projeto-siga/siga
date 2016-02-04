@@ -21,6 +21,8 @@ package br.gov.jfrj.siga.wf.util;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jbpm.graph.def.Transition;
 import org.jbpm.graph.exe.ExecutionContext;
@@ -52,7 +54,7 @@ public class WfFunctionMapper implements FunctionMapper {
 			throws Exception {
 		if (codigoDocumento == null || codigoDocumento.length() == 0)
 			throw new AplicacaoException(
-					"CÛdigo do documento precisa ser informado quando È feita uma chamada para ex:isAssinado.");
+					"C√≥digo do documento precisa ser informado quando √© feita uma chamada para ex:isAssinado.");
 		Boolean b = Service.getExService().isAssinado(codigoDocumento, null);
 		return b;
 	}
@@ -61,7 +63,7 @@ public class WfFunctionMapper implements FunctionMapper {
 			throws Exception {
 		if (codigoDocumento == null || codigoDocumento.length() == 0)
 			throw new AplicacaoException(
-					"CÛdigo do documento precisa ser informado quando È feita uma chamada para ex:form.");
+					"C√≥digo do documento precisa ser informado quando √© feita uma chamada para ex:form.");
 		String s = Service.getExService().form(codigoDocumento, variavel);
 		return s;
 	}
@@ -89,11 +91,19 @@ public class WfFunctionMapper implements FunctionMapper {
 			if (ator == null)
 				return null;
 			lota = ator.getLotacao();
-		} else if (ti.getPooledActors().size() != 0) {
+		} else if (ti.getPooledActors() != null && ti.getPooledActors().size() != 0) {
 			String groupId = (String) ((PooledActor) (ti.getPooledActors()
 					.toArray()[0])).getActorId();
 			lota = WfDao.getInstance().getLotacaoFromSigla(groupId);
 		}
+		
+		if (lota == null){
+			String msg = "Nenhum ator est√° definido ou √© candidato a executar a taskInstance " + ti.getId();
+			Logger.getLogger("siga.wf.mail").log(Level.SEVERE,msg);
+			throw new AplicacaoException(msg);
+		}
+		
+
 		return lota.getSiglaCompleta();
 	}
 

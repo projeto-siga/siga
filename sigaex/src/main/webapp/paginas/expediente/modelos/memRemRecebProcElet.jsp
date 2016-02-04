@@ -8,10 +8,10 @@
 <mod:modelo urlBase="/paginas/expediente/modelos/memorando.jsp">
 	<mod:entrevista>
 		<mod:grupo>
-			<mod:radio titulo="Unidade/Assistente que <b>remeterá</b> processos eletrônicos." 
+			<mod:radio titulo="Unidade/Assistente que <b>remeterÃ¡</b> processos eletrÃ´nicos." 
 						var="escolha" 	valor="1" reler="sim"  marcado="Sim"/>
-			<mod:radio titulo="Unidade/Assistente que <b>receberá</b> processos eletrônicos." 
-						var="escolha" valor="2"  reler="sim" gerarHidden="Não"/>
+			<mod:radio titulo="Unidade/Assistente que <b>receberÃ¡</b> processos eletrÃ´nicos." 
+						var="escolha" valor="2"  reler="sim" gerarHidden="NÃ£o"/>
 		</mod:grupo>		
 		<c:set var="valorEscolha" value="${escolha}" />	
 		<c:if test="${empty valorEscolha}">			
@@ -19,7 +19,7 @@
 		</c:if>		
 		
 		<mod:grupo>
-			<mod:numero titulo="Ordem de Serviço" var="numODF" largura="5"/>
+			<mod:numero titulo="Ordem de ServiÃ§o" var="numODF" largura="5"/>
 			<mod:numero titulo="Ano" var="anoODF" largura="4" maxcaracteres="4"/>			
 		</mod:grupo>		
 		<c:choose>			
@@ -27,37 +27,37 @@
 				<mod:grupo>				
 					<mod:numero titulo="Quantidade de processos a serem remetidos" var="qtdProcessos" largura="10" />
 				</mod:grupo>
-				<mod:oculto var="titUnid" valor="Unidade/Assistente que elaborará os cálculos" />										 
+				<mod:oculto var="titUnid" valor="Unidade/Assistente que elaborarÃ¡ os cÃ¡lculos" />										 
 			</c:when>
 			<c:when test="${valorEscolha == '2'}">		
 				<mod:grupo>				
 					<mod:numero titulo="Quantidade de processos a serem recebidos e calculados" var="qtdProcessos" largura="10" />
 				</mod:grupo>
-				<mod:oculto var="titUnid" valor="Unidade/Assistente que remeterá os processos" />							 
+				<mod:oculto var="titUnid" valor="Unidade/Assistente que remeterÃ¡ os processos" />							 
 			</c:when>
 		</c:choose>
 		 
 		<mod:grupo>			   
 			<mod:selecao titulo="${titUnid}" var="unidade"
-						opcoes="Seção de Contadoria de Niterói;
-							Seção de Contadoria de São João de Meriti;
-							Seção de Contadoria de Volta Redonda;
-							Seção de Contadoria de São Gonçalo;
+						opcoes="SeÃ§Ã£o de Contadoria de NiterÃ³i;
+							SeÃ§Ã£o de Contadoria de SÃ£o JoÃ£o de Meriti;
+							SeÃ§Ã£o de Contadoria de Volta Redonda;
+							SeÃ§Ã£o de Contadoria de SÃ£o GonÃ§alo;
 							Assistente IV - Contadoria de Duque de Caxias;
-							Assistente IV - Contadoria de Nova Iguaçu;
+							Assistente IV - Contadoria de Nova IguaÃ§u;
 							Assistente IV - Contadoria de Campos;
 							Assistente IV - Contadoria de Nova Friburgo;
-							Assistente IV - Contadoria de Petrópolis;
+							Assistente IV - Contadoria de PetrÃ³polis;
 							Assistente IV - Contadoria de Resende;
 							Assistente III - Contadoria de Angra dos Reis;
-							Assistente III - Contadoria de Barra do Piraí;
-							Assistente III - Contadoria de Itaboraí;
+							Assistente III - Contadoria de Barra do PiraÃ­;
+							Assistente III - Contadoria de ItaboraÃ­;
 							Assistente III - Contadoria de Itaperuna;
-							Assistente III - Contadoria de Macaé;
-							Assistente III - Contadoria de Magé;
-							Assistente III - Contadoria de São Pedro D'Aldeia;
-							Assistente III - Contadoria de Teresópolis;
-							Assistente III - Contadoria de Três Rios;
+							Assistente III - Contadoria de MacaÃ©;
+							Assistente III - Contadoria de MagÃ©;
+							Assistente III - Contadoria de SÃ£o Pedro D'Aldeia;
+							Assistente III - Contadoria de TeresÃ³polis;
+							Assistente III - Contadoria de TrÃªs Rios;
 							SECEL - Sede;
 							SECLJ - Sede;
 							SECPC - Sede;
@@ -65,34 +65,34 @@
 							SECPV - Sede" />
 		</mod:grupo>
 		<mod:grupo>				
-				<mod:selecao titulo="Mês" var="mes" 
- 						opcoes="Janeiro;Fevereiro;Março;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro"/>
+				<mod:selecao titulo="MÃªs" var="mes" 
+ 						opcoes="Janeiro;Fevereiro;MarÃ§o;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro"/>
 							
 		</mod:grupo>		
 	</mod:entrevista>
 	<mod:documento>		
 	<mod:valor var="texto_memorando">
-	Ref.: Central de Cálculo Judicial - RJ-ODF-${anoODF}/${numODF}
+	Ref.: Central de CÃ¡lculo Judicial - RJ-ODF-${anoODF}/${numODF}
 	<br><br>		
 	<c:choose>			
 			<c:when test="${empty escolha or escolha == '1'}">
-				<p style="align:left;TEXT-INDENT:2cm">Comunico sobre a <b>remessa</b> de processos eletrônicos, 
-				conforme informações abaixo: </p>
-				<p style="align:left;TEXT-INDENT:2cm">a)	Unidade/Assistente destinatária(o): ${unidade}</p>
+				<p style="align:left;TEXT-INDENT:2cm">Comunico sobre a <b>remessa</b> de processos eletrÃ´nicos, 
+				conforme informaÃ§Ãµes abaixo: </p>
+				<p style="align:left;TEXT-INDENT:2cm">a)	Unidade/Assistente destinatÃ¡ria(o): ${unidade}</p>
 				<p style="align:left;TEXT-INDENT:2cm">b)	quantidade de processos: ${qtdProcessos}</p>
-				<p style="align:left;TEXT-INDENT:2cm">c)	mês de referência: ${mes}</p>
-				<p style="align:left;TEXT-INDENT:2cm">A remessa deverá ser feita <b>diretamente</b> à Unidade/Assistente destinatária(o), 
-				no prazo máximo de <b>5 dias a contar da data do recebimento deste memorando</b>.</p>		
+				<p style="align:left;TEXT-INDENT:2cm">c)	mÃªs de referÃªncia: ${mes}</p>
+				<p style="align:left;TEXT-INDENT:2cm">A remessa deverÃ¡ ser feita <b>diretamente</b> Ã  Unidade/Assistente destinatÃ¡ria(o), 
+				no prazo mÃ¡ximo de <b>5 dias a contar da data do recebimento deste memorando</b>.</p>		
 																 
 			</c:when>
 			<c:when test="${escolha == '2'}">	
-				<p style="align:left;TEXT-INDENT:2cm">Comunico sobre o <b>recebimento</b> de processos eletrônicos 
-				para a elaboração de cálculos, conforme informações abaixo: </p>
-				<p style="align:left;TEXT-INDENT:2cm">a)	Unidade/Assistente que remeterá os processos: ${unidade}</p>
+				<p style="align:left;TEXT-INDENT:2cm">Comunico sobre o <b>recebimento</b> de processos eletrÃ´nicos 
+				para a elaboraÃ§Ã£o de cÃ¡lculos, conforme informaÃ§Ãµes abaixo: </p>
+				<p style="align:left;TEXT-INDENT:2cm">a)	Unidade/Assistente que remeterÃ¡ os processos: ${unidade}</p>
 				<p style="align:left;TEXT-INDENT:2cm">b)	quantidade de processos: ${qtdProcessos}</p>
-				<p style="align:left;TEXT-INDENT:2cm">c)	mês de referência: ${mes}</p>
-				<p style="align:left;TEXT-INDENT:2cm">A devolução dos processos (com os cálculos elaborados) deverá 
-				ser feita <b>diretamente ao juízo de origem</b>, no prazo máximo de <b>30 dias a contar da data do 
+				<p style="align:left;TEXT-INDENT:2cm">c)	mÃªs de referÃªncia: ${mes}</p>
+				<p style="align:left;TEXT-INDENT:2cm">A devoluÃ§Ã£o dos processos (com os cÃ¡lculos elaborados) deverÃ¡ 
+				ser feita <b>diretamente ao juÃ­zo de origem</b>, no prazo mÃ¡ximo de <b>30 dias a contar da data do 
 				recebimento dos processos</b>.</p>								 
 			</c:when>
 		</c:choose>	

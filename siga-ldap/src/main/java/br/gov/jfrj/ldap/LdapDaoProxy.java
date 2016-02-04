@@ -63,7 +63,7 @@ public class LdapDaoProxy extends LdapDaoImpl {
 		if (!isSomenteLeitura()) {
 			super.ativarUsuario(dnUsuario);
 		} else {
-			log.info(MSG_LOG_SOMENTE_LEITURA + " Ativando usu·rio: "
+			log.info(MSG_LOG_SOMENTE_LEITURA + " Ativando usu√°rio: "
 					+ dnUsuario);
 		}
 	}
@@ -74,7 +74,7 @@ public class LdapDaoProxy extends LdapDaoImpl {
 		if (!isSomenteLeitura()) {
 			super.definirSenha(dnUsuario, senhaNova);
 		} else {
-			log.info(MSG_LOG_SOMENTE_LEITURA + " Definindo senha usu·rio: "
+			log.info(MSG_LOG_SOMENTE_LEITURA + " Definindo senha usu√°rio: "
 					+ dnUsuario);
 		}
 	}
@@ -84,7 +84,7 @@ public class LdapDaoProxy extends LdapDaoImpl {
 		if (!isSomenteLeitura()) {
 			super.desativarUsuario(dnUsuario);
 		} else {
-			log.info(MSG_LOG_SOMENTE_LEITURA + " Desativando usu·rio: "
+			log.info(MSG_LOG_SOMENTE_LEITURA + " Desativando usu√°rio: "
 					+ dnUsuario);
 		}
 	}

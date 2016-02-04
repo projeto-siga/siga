@@ -10,22 +10,22 @@
 <mod:modelo>
 	<mod:entrevista>
 		<br>
-		<span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI«√O COM NOME COMPLETO E ASSUNTO</b></span><br>
-		<span style="color:red"> <b>ESTE DOCUMENTO DEVER¡ SER ENVIADO ¿ SRH</b></span>
+		<span style="color:red"> <b>PREENCHER OBRIGATORIAMENTE O CAMPO DESCRI√á√ÉO COM NOME COMPLETO E ASSUNTO</b></span><br>
+		<span style="color:red"> <b>ESTE DOCUMENTO DEVER√Å SER ENVIADO √Ä SRH</b></span>
 		<br/><br/>
 	<mod:grupo titulo=" ">	
 		
 	  	 <mod:grupo>
 				<mod:selecao var="ilustrissimo"
 				titulo="VOCATIVO"
-				opcoes="ILUSTRÕSSIMA SENHORA DIRETORA;ILUSTRÕSSIMO SENHOR DIRETOR"	
+				opcoes="ILUSTR√çSSIMA SENHORA DIRETORA;ILUSTR√çSSIMO SENHOR DIRETOR"	
 				reler="sim" />
 		</mod:grupo>
 		<br>
 	</mod:grupo>
 		<mod:grupo titulo="DADOS DO REQUERENTE:"> 
 		        <mod:texto titulo="RAMAL DO REQUERENTE" var="ramal"/></mod> <br><br>
-		        <mod:selecao titulo="Acerto Gramatical da LotaÁ„o" var="acgr"  opcoes="no;na" reler="sim" />
+		        <mod:selecao titulo="Acerto Gramatical da Lota√ß√£o" var="acgr"  opcoes="no;na" reler="sim" />
 		</mod:grupo>
 		<hr style="color: #FFFFFF;" />
 		<mod:selecao var="contadorDeCurso"
@@ -35,19 +35,19 @@
 		<mod:grupo depende="contDependAjax">
 				<c:forEach var="i" begin="1" end="${contadorDeCurso}">
 					<mod:grupo>
-						<mod:texto titulo="Curso n∫ ${i}" var="nomecurso${i}" largura="30" 
+						<mod:texto titulo="Curso n¬∫ ${i}" var="nomecurso${i}" largura="30" 
 						maxcaracteres="50" obrigatorio="Sim"/>
 					</mod:grupo>
         <!-- 			<mod:grupo>
 						<mod:texto var="instituicao${i}" largura="30" maxcaracteres="50"
-							obrigatorio="Sim" titulo="InstituiÁ„o"/>
+							obrigatorio="Sim" titulo="Institui√ß√£o"/>
 						</mod:grupo>
 					<mod:grupo>
 						<mod:selecao var="ano${i}" titulo="Ano" 
 						opcoes=" ;2008;2009;2010;2011;2012;2013;2014;2015;2016;2017;2018;2019;2020"
 						reler="sim" idAjax="anoAjax"/>
 						<mod:texto titulo="Horas" var="hora${i}"
-							obrigatorio="N„o" />
+							obrigatorio="N√£o" />
 					</mod:grupo> -->
 					<hr style="color: #FFFFFF;" />
 				</c:forEach>
@@ -56,11 +56,11 @@
 		
 		<mod:grupo titulo="Finalidade(s):">	
 		     <mod:grupo>
-				<mod:caixaverif titulo="Concess„o de Adicional de QualificaÁ„o" var="concadicqual" reler="sim" />
+				<mod:caixaverif titulo="Concess√£o de Adicional de Qualifica√ß√£o" var="concadicqual" reler="sim" />
 		   	 </mod:grupo>
 		     
 		     <mod:grupo>
-				<mod:caixaverif titulo="Carga hor·ria para gerente, conforme previsto na Lei n∫ 11.416/2006" var="cargahorgerent"
+				<mod:caixaverif titulo="Carga hor√°ria para gerente, conforme previsto na Lei n¬∫ 11.416/2006" var="cargahorgerent"
 					reler="sim" />
 		     </mod:grupo>
 		   
@@ -72,15 +72,15 @@
 		
 	
 			
-			<!-- <b>DATA DE EXPEDI«√O:</b>
+			<!-- <b>DATA DE EXPEDI√á√ÉO:</b>
 				<mod:selecao var="dia"
 				titulo="DIA"
 				opcoes="01;02;03;04;05;06;07;08;09;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31"
 				reler="sim" idAjax="diaAjax" />
 				
 				<mod:selecao var="mes"
-				titulo="M S"
-				opcoes="Janeiro;Fevereiro;MarÁo;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro"
+				titulo="M√äS"
+				opcoes="Janeiro;Fevereiro;Mar√ßo;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro"
 				reler="sim" idAjax="mesAjax" />
 				
 				<mod:selecao var="ano"
@@ -135,12 +135,12 @@
 			<c:set var="lotc" value="lotada"></c:set>
 		</c:if>
 		 <c:set var="opt" value="${f:classNivPadr(doc.subscritor.padraoReferencia)}"/>
-         <c:set var="singul" value="seja averbada a conclus„o do seguinte curso"></c:set>
+         <c:set var="singul" value="seja averbada a conclus√£o do seguinte curso"></c:set>
          <c:set var="singcur" value="Curso Realizado:"></c:set>
          <c:set var="singdip" value="diploma / certificado"></c:set>
        
         <c:if test="${contadorDeCurso > '1'}">
-           <c:set var="singul" value="sejam averbadas as conclusıes dos seguintes cursos"></c:set>
+           <c:set var="singul" value="sejam averbadas as conclus√µes dos seguintes cursos"></c:set>
            <c:set var="singcur" value="Cursos Realizados:"></c:set>
            <c:set var="singdip" value="diplomas / certificados"></c:set>
         </c:if>
@@ -150,8 +150,8 @@
         </c:if>
 		<p style="text-align: center;font-weight:bold;font-size:11pt;"><br><b> ${ilustrissimo} DA SECRETARIA DE RECURSOS HUMANOS</b></center></p>
 			<br><br>		
-			${doc.subscritor.descricao}, matrÌcula ${doc.subscritor.matricula}, ${doc.subscritor.cargo.nomeCargo}, ${opt},
-			do Quadro de Pessoal do Tribunal Regional Federal da 2™ Regi„o, ${lotc} ${acgr} ${doc.subscritor.lotacao.descricao}, ramal ${ramal}, requer a V.S™ que ${singul} em seus assentamentos funcionais:<br/>
+			${doc.subscritor.descricao}, matr√≠cula ${doc.subscritor.matricula}, ${doc.subscritor.cargo.nomeCargo}, ${opt},
+			do Quadro de Pessoal do Tribunal Regional Federal da 2¬™ Regi√£o, ${lotc} ${acgr} ${doc.subscritor.lotacao.descricao}, ramal ${ramal}, requer a V.S¬™ que ${singul} em seus assentamentos funcionais:<br/>
 			 <br />
 			<b>${singcur}</b><br>
 					
@@ -171,12 +171,12 @@
 					<c:when test="${concadicqual == 'Sim'}">[X]</c:when>
 					<c:otherwise>[&nbsp;&nbsp;&nbsp;]</c:otherwise>
 		</c:choose>
-		 Concess„o de Adicional de QualificaÁ„o. <br>
+		 Concess√£o de Adicional de Qualifica√ß√£o. <br>
 		<c:choose>
 					<c:when test="${cargahorgerent == 'Sim'}">[X] </c:when>
 					<c:otherwise>[&nbsp;&nbsp;&nbsp;]</c:otherwise>
 		</c:choose>
-		Carga hor·ria para gerente, conforme previsto na Lei n∫. 11.416/2006.<br>	
+		Carga hor√°ria para gerente, conforme previsto na Lei n¬∫. 11.416/2006.<br>	
 		<c:choose>
 					<c:when test="${outros== 'Sim'}">[X] ${descricaoutros}</c:when>
 					<c:otherwise>[&nbsp;&nbsp;&nbsp;] Outros<c:set var="descricaoutros" value="empty"/></c:otherwise>

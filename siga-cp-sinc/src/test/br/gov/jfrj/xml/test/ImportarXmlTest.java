@@ -31,7 +31,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 public class ImportarXmlTest extends TestCase {
 	public static void testImportarXml() throws Exception {
-		// TODO: executar em homologação e produção : alter table
+		// TODO: executar em homologaÃ§Ã£o e produÃ§Ã£o : alter table
 		// corporativo.DP_PESSOA modify (SIGLA_PESSOA varchar2(20))
 		// IMPLANTACAO
 		// testImportarXml("implanta.xml");
@@ -88,7 +88,7 @@ public class ImportarXmlTest extends TestCase {
 			geraXml.importarXml(in);
 			geraXml.log("Importando: BD");
 			geraXml.importarTabela();
-			geraXml.log("Gravando alterações");
+			geraXml.log("Gravando alteraÃ§Ãµes");
 			geraXml.gravar(dt);
 
 		} catch (Exception e) {

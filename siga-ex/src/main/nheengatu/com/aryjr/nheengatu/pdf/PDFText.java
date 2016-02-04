@@ -81,9 +81,9 @@ public class PDFText {
  * 
  * $Log: PDFText.java,v $
  * Revision 1.2  2009/07/30 14:43:36  kpf
- * Mudança de pacote: itext v.1.4 para itext v 2.1.5.
+ * MudanÃ§aa de pacote: itext v.1.4 para itext v 2.1.5.
  *
- * Alterações para suportar a nova  versão do text 2.1.5
+ * AlteraÃ§Ãµes para suportar a nova  versÃ£o do text 2.1.5
  *
  * Revision 1.1  2007/12/26 15:57:41  tah
  * *** empty log message ***
@@ -95,7 +95,7 @@ public class PDFText {
  * *** empty log message ***
  *
  * Revision 1.6  2006/07/05 16:00:47  nts
- * Refatorando para melhorar qualidade do código
+ * Refatorando para melhorar qualidade do cÃ³digo
  *
  * Revision 1.5  2006/05/23 19:35:06  tah
  * *** empty log message ***

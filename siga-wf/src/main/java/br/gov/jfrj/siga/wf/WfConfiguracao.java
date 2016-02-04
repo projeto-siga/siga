@@ -25,7 +25,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
 /**
- * Classe que representa um configuraÁ„o do sistema de workflow.
+ * Classe que representa um configura√ß√£o do sistema de workflow.
  * @author kpf
  *
  */
@@ -38,7 +38,7 @@ public class WfConfiguracao extends CpConfiguracao {
 	private DpLotacao lotaAtor;
 
 	/**
-	 * Retorna a lotaÁ„o do ator.
+	 * Retorna a lota√ß√£o do ator.
 	 * @return
 	 */
 	public DpLotacao getLotaAtor() {
@@ -46,7 +46,7 @@ public class WfConfiguracao extends CpConfiguracao {
 	}
 
 	/**
-	 * Define a lotaÁ„o do ator.
+	 * Define a lota√ß√£o do ator.
 	 * @param lotaAtor
 	 */
 	public void setLotaAtor(DpLotacao lotaAtor) {
@@ -102,7 +102,7 @@ public class WfConfiguracao extends CpConfiguracao {
 	}
 
 	/**
-	 * Retorna a express„o.
+	 * Retorna a express√£o.
 	 * @return
 	 */
 	public String getExpressao() {
@@ -110,7 +110,7 @@ public class WfConfiguracao extends CpConfiguracao {
 	}
 
 	/**
-	 * Define a express„o.
+	 * Define a express√£o.
 	 * @param expressao
 	 */
 	public void setExpressao(String expressao) {

@@ -2,9 +2,7 @@
 
 <li><a href="#">Procedimentos</a>
 	<ul>
-		<ww:url id="url" action="resumo" namespace="/">
-		</ww:url>
-		<li><ww:a href="%{url}">Ativos</ww:a>
+		<li><a href="${linkTo[AppController].resumo}">Ativos</a>
 		</li>
 
 		<c:if
@@ -12,13 +10,7 @@
 			<li><a href="#">Iniciar</a>
 				<ul class="navmenu-large">
 					<c:forEach var="pd" items="${processDefinitions}">
-						<ww:url id="url" action="initializeProcess" namespace="/">
-							<ww:param name="orgao">${lotaTitular.orgaoUsuario.acronimoOrgaoUsu}</ww:param>
-							<ww:param name="procedimento">${pd.name}</ww:param>
-							<ww:param name="pdId">${pd.id}</ww:param>
-							<ww:param name="secaoUsuario">${lotaTitular.orgaoUsuario.descricaoMaiusculas}</ww:param>
-						</ww:url>
-						<li><ww:a href="%{url}">${pd.name}</ww:a>
+						<li><a href="${linkTo[AppController].initializeProcess[pd.id]}">${pd.name}</a>
 						</li>
 					</c:forEach>
 				</ul></li>
@@ -32,13 +24,7 @@
 					<li><a href="#">Configurar</a>
 						<ul class="navmenu-large">
 							<c:forEach var="pd" items="${processDefinitions}">
-								<ww:url id="url" action="configurar" namespace="/">
-									<ww:param name="orgao">${lotaTitular.orgaoUsuario.acronimoOrgaoUsu}</ww:param>
-									<ww:param name="procedimento">${pd.name}</ww:param>
-									<ww:param name="pdId">${pd.id}</ww:param>
-									<ww:param name="secaoUsuario">${lotaTitular.orgaoUsuario.descricaoMaiusculas}</ww:param>
-								</ww:url>
-								<li><ww:a href="%{url}">${pd.name}</ww:a>
+								<li><a href="${linkTo[ConfiguracaoController].pesquisar[lotaTitular.orgaoUsuario.acronimoOrgaoUsu][pd.name]}">${pd.name}</a>
 								</li>
 							</c:forEach>
 						</ul></li>
@@ -49,13 +35,18 @@
 					<li><a href="#">Designar Tarefas</a>
 						<ul class="navmenu-large">
 							<c:forEach var="pd" items="${processDefinitions}">
-								<ww:url id="url" action="pesquisarDesignacao" namespace="/">
-									<ww:param name="orgao">${lotaTitular.orgaoUsuario.acronimoOrgaoUsu}</ww:param>
-									<ww:param name="procedimento">${pd.name}</ww:param>
-									<ww:param name="pdId">${pd.id}</ww:param>
-									<ww:param name="secaoUsuario">${lotaTitular.orgaoUsuario.descricaoMaiusculas}</ww:param>
-								</ww:url>
-								<li><ww:a href="%{url}">${pd.name}</ww:a>
+								<li><a href="${linkTo[DesignacaoController].pesquisar[lotaTitular.orgaoUsuario.acronimoOrgaoUsu][pd.name]}">${pd.name}</a>
+								</li>
+							</c:forEach>
+						</ul></li>
+				</c:if>
+				
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;EDITAR:Editar procedimento')}">
+					<li><a href="#">Editar Procedimento</a>
+						<ul class="navmenu-large">
+							<c:forEach var="pd" items="${processDefinitions}">
+								<li><a href="${linkTo[EdicaoController].form[pd.name]}">${pd.name}</a>
 								</li>
 							</c:forEach>
 						</ul></li>
@@ -65,19 +56,14 @@
 	</c:if>
 </li>
 <c:if
-	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;MEDIR: Analisar métricas')}">
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF;MEDIR: Analisar mÃ©tricas')}">
 
-	<li><a href="#">Relatórios</a>
+	<li><a href="#">RelatÃ³rios</a>
 		<ul>
-			<li><a href="#">Apresentar Métricas</a>
+			<li><a href="#">Apresentar MÃ©tricas</a>
 				<ul class="navmenu-large">
 					<c:forEach var="pd" items="${processDefinitions}">
-						<ww:url id="url" action="medir" namespace="/">
-							<ww:param name="orgao">${lotaTitular.orgaoUsuario.idOrgaoUsu}</ww:param>
-							<ww:param name="procedimento">${pd.name}</ww:param>
-							<ww:param name="pdId">${pd.id}</ww:param>
-						</ww:url>
-						<li><ww:a href="%{url}">${pd.name}</ww:a>
+						<li><a href="${linkTo[MedicaoController].medir}?orgao=${lotaTitular.orgaoUsuario.acronimoOrgaoUsu}&procedimento=${pd.name}">${pd.name}</a>
 						</li>
 					</c:forEach>
 				</ul></li>

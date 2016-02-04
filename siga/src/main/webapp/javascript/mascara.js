@@ -1,13 +1,13 @@
 /*
- * mascara.js - utilitário para aplicar máscara a uma caixa de texto
+ * mascara.js - utilitÃ¡rio para aplicar mÃ¡scara a uma caixa de texto
  * 
-  Para utilizar este componente faça o seguinte:
+  Para utilizar este componente faÃ§a o seguinte:
   
-  1) Inclua o javascript na página
-  2) Defina os campos que terão máscara
-  3) Defina os hidden com valores da máscara
+  1) Inclua o javascript na pÃ¡gina
+  2) Defina os campos que terÃ£o mÃ¡scara
+  3) Defina os hidden com valores da mÃ¡scara
   4) Implemente a interface IUsaMascara na action
-  5) (Opcional)Se quiser que a máscara seja preenchida com zeros, coloque o seguinte "onblur" no input
+  5) (Opcional)Se quiser que a mÃ¡scara seja preenchida com zeros, coloque o seguinte "onblur" no input
    
   			<input type="text" onblur="javascript:aplicarMascara(this)" />
   			
@@ -28,7 +28,7 @@
 
 	<!-- mascara.js -->
 	
-	Implementação de IUsaMascara
+	ImplementaÃ§Ã£o de IUsaMascara
 	
 	public class XXX implements IUsaMascara {
 	
@@ -96,7 +96,7 @@ function aplicarMascara(input){
 		});
 
 
-		//carrega a máscara
+		//carrega a mÃ¡scara
 		$.getScript("/siga/javascript/jquery.maskedinput.min.js", function(){
 				jQuery(function($){
 					for(e in elementosComMascara){

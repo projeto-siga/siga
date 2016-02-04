@@ -26,6 +26,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @NamedQueries({
@@ -43,8 +44,10 @@ public class CpServico extends AbstractCpServico implements Selecionavel {
 	 * 
 	 */
 	public static final long serialVersionUID = 3624557793773660739L;
+	
+	public static ActiveRecord<CpServico> AR = new ActiveRecord<>(CpServico.class);
 
-	// SIGA e seus mÛdulos
+	// SIGA e seus m√≥dulos
 
 	public static final long SERVICO_SIGA = 1;
 	public static final long SERVICO_SIGA_EX = 2;
@@ -79,7 +82,7 @@ public class CpServico extends AbstractCpServico implements Selecionavel {
 	}
 
 	/**
-	 * @return retorna a sigla retirando a parte inicial pertencente ao seviÁo
+	 * @return retorna a sigla retirando a parte inicial pertencente ao sevi√ßo
 	 *         pai.
 	 * 
 	 */
@@ -100,7 +103,7 @@ public class CpServico extends AbstractCpServico implements Selecionavel {
 	}
 
 	/**
-	 * @return retorna o nÌvel hier·rquico do serviÁo
+	 * @return retorna o n√≠vel hier√°rquico do servi√ßo
 	 */
 	public int getNivelHierarquico() {
 		if (getCpServicoPai() == null) {

@@ -28,8 +28,8 @@ import java.util.ArrayList;
 public interface WfService extends Remote {
 
 	/**
-	 * MÈtodo que cria uma instancia da ultima vers„o de um workflow com o nome
-	 * 'nomeProcesso'. Essa inst‚ncia È da classe ProcessInstance, que È
+	 * M√©todo que cria uma instancia da ultima vers√£o de um workflow com o nome
+	 * 'nomeProcesso'. Essa inst√¢ncia √© da classe ProcessInstance, que √©
 	 * armazenado em seu contexto as variaveis mapeada no parametro
 	 * 'mapContextInicial'.
 	 * 
@@ -49,11 +49,11 @@ public interface WfService extends Remote {
 	 * Varre todas as instancias de todos os Workflows, procurando um tarefa que
 	 * contenha uma action e possua uma variavel de controle mapiada para uma
 	 * variavel de contexto iniciada por "doc_" e seja somente leitura. Se essa
-	 * variavel de controle comeÁar com o valor do parametro 'codigoDocumento',
-	 * È executado a action buscada.
+	 * variavel de controle come√ßar com o valor do parametro 'codigoDocumento',
+	 * √© executado a action buscada.
 	 * 
 	 * @param codigoDocumento
-	 *            Codigo do ducumento das actions que ser„o executadas.
+	 *            Codigo do ducumento das actions que ser√£o executadas.
 	 * @return Retorna Action.SUCCESS se tudo ocorrer corretamente.
 	 * @throws Exception
 	 */
@@ -65,8 +65,8 @@ public interface WfService extends Remote {
 	 * Varre todas as instancias de todos os Workflows, procurando um tarefa que
 	 * contenha uma action e possua uma variavel de controle mapiada para uma
 	 * variavel de contexto iniciada por "doc_" e seja somente leitura. Se essa
-	 * variavel de controle comeÁar com o valor do parametro 'codigoDocumento',
-	 * È recuperado o valor da vari·vel cujo nome foi passado como par‚metro.
+	 * variavel de controle come√ßar com o valor do parametro 'codigoDocumento',
+	 * √© recuperado o valor da vari√°vel cujo nome foi passado como par√¢metro.
 	 * 
 	 * @param codigoDocumento
 	 * @return

@@ -6,15 +6,15 @@
 
 <!-- 
 Este modelo trata da
-DesignaÁ„o de SubstituiÁ„o Eventual - Dirfo
-Ultima atualizaÁ„o 09/03/2007
+Designa√ß√£o de Substitui√ß√£o Eventual - Dirfo
+Ultima atualiza√ß√£o 09/03/2007
  -->
 
 <mod:modelo>
 	<mod:entrevista>
-		<mod:grupo titulo="DETALHES DA SUBSTITUI«√O">
+		<mod:grupo titulo="DETALHES DA SUBSTITUI√á√ÉO">
 			<mod:grupo>
-				<mod:data titulo="Data inÌcio" var="dataInicio" />
+				<mod:data titulo="Data in√≠cio" var="dataInicio" />
 				<mod:data titulo="Data fim" var="dataFim" />
 			</mod:grupo>
 		</mod:grupo>	
@@ -50,18 +50,18 @@ Ultima atualizaÁ„o 09/03/2007
 		<br>
 		
 		<!-- INICIO ABERTURA --><p style="TEXT-INDENT: 2 cm" align="justify">O JUIZ FEDERAL -
-		DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI«OS AUXILIARES DA
-		JUSTI«A FEDERAL DE 1∫ GRAU - SE«√O JUDICI¡RIA DO RIO DE JANEIRO, no
-		uso de suas atribuiÁıes legais e, <b>${textoPortaria }</b>, RESOLVE:</p><!-- FIM ABERTURA --><br>
+		DIRETOR DO FORO E CORREGEDOR PERMANENTE DOS SERVI√áOS AUXILIARES DA
+		JUSTI√áA FEDERAL DE 1¬∫ GRAU - SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO, no
+		uso de suas atribui√ß√µes legais e, <b>${textoPortaria }</b>, RESOLVE:</p><!-- FIM ABERTURA --><br>
 		<br>
 		<br>
 
 		<p style="MARGIN-LEFT: 2cm" align="justify">DESIGNAR o(a) servidor(a) <b>${doc.titular.descricao}</b>,
 		<b>${doc.titular.cargo.nomeCargo}</b>, <b>${doc.titular.lotacao.descricao}</b>,
-		<b>${doc.titular.padraoReferenciaInvertido}</b>, matrÌcula N&ordm; <b>${doc.titular.sigla}</b>,
+		<b>${doc.titular.padraoReferenciaInvertido}</b>, matr√≠cula N&ordm; <b>${doc.titular.sigla}</b>,
 		para atuar como substituto(a) eventual do Diretor de Secretaria
 		(CJ 03) da <b>${doc.subscritor.lotacao.nomeLotacao}</b>, em seus afastamentos, impedimentos legais ou
-		regulamentares e na vac‚ncia do cargo, no perÌodo de <b>${dataInicio }</b> a <b>${dataFim }</b>.</p> <br>
+		regulamentares e na vac√¢ncia do cargo, no per√≠odo de <b>${dataInicio }</b> a <b>${dataFim }</b>.</p> <br>
 		<br>
 		<p style="TEXT-INDENT: 2cm" align="center">CUMPRA-SE.
 		REGISTRE-SE. PUBLIQUE-SE</p>

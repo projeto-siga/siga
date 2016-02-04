@@ -7,7 +7,7 @@
 <mod:modelo>
 	<mod:entrevista>
 			<mod:grupo>
-				<mod:selecao titulo="MÍs de referÍncia" var="mes" opcoes="Jan;Fev;Mar;Abr;Maio;Jun;Jul;Ago;Set;Out;Nov;Dez" />
+				<mod:selecao titulo="M√™s de refer√™ncia" var="mes" opcoes="Jan;Fev;Mar;Abr;Maio;Jun;Jul;Ago;Set;Out;Nov;Dez" />
 				<mod:texto titulo="Quantidade de servidores" var="bilhetes" largura="3" reler="ajax" idAjax="bilhetesAjax" />
 			</mod:grupo>
 			<mod:grupo depende="bilhetesAjax">
@@ -57,7 +57,7 @@
 		</table>
 		FIM PRIMEIRO CABECALHO -->
 		
-		<p align="justify">APRESENTA«√O DE BILHETES DE ‘NIBUS INTERMUNICIPAIS AUXÕLIO-TRANSPORTE</p><br>
+		<p align="justify">APRESENTA√á√ÉO DE BILHETES DE √îNIBUS INTERMUNICIPAIS AUX√çLIO-TRANSPORTE</p><br>
 
 		<p>DE: <c:choose>
 			<c:when test="${not empty doc.nmLotacao}">
@@ -71,14 +71,14 @@
 			Senhor Supervisor,
 		 </p>
 		 <p style="TEXT-INDENT: 2cm" align="justify">
-		 	Encaminho, conforme determinaÁ„o do Ato Regulamentar n∫ 04, de 17/07/2000, do ExcelentÌssimo Senhor Juiz Federal - Diretor do Foro, o quadro
-		 	abaixo com os respectivos quantitativos de bilhetes intermunicipais utilizados pelo(s) respectivo(s) servidor(es) no mÍs de <b>${mes}</b>:
+		 	Encaminho, conforme determina√ß√£o do Ato Regulamentar n¬∫ 04, de 17/07/2000, do Excelent√≠ssimo Senhor Juiz Federal - Diretor do Foro, o quadro
+		 	abaixo com os respectivos quantitativos de bilhetes intermunicipais utilizados pelo(s) respectivo(s) servidor(es) no m√™s de <b>${mes}</b>:
 		 </p>
 		 <br>
 		 <c:forEach var="i" begin="1" end="${bilhetes}">
 		 	<table width="100%" border="1" cellpadding="2" cellspacing="1" bgcolor="#000000">
 				<tr>
-					<td bgcolor="#FFFFFF" width="30%">MatrÌcula: ${requestScope[f:concat(f:concat('servidor',i),'_pessoaSel.sigla')]}</td>
+					<td bgcolor="#FFFFFF" width="30%">Matr√≠cula: ${requestScope[f:concat(f:concat('servidor',i),'_pessoaSel.sigla')]}</td>
 					<td bgcolor="#FFFFFF" width="70%">Servidor: ${requestScope[f:concat(f:concat('servidor',i),'_pessoaSel.descricao')]}</td>
 														
 				</tr>
@@ -109,7 +109,7 @@
 		
 		<table width="100%" border="1" cellpadding="2" cellspacing="1">
 		<tr>
-			<td width="60"valign="top">PARA USO DA SE«√O DE BENEFÕCIOS<br>Recebido por:_______ em: __/__/__<br>Cadastrado por:______ em:__/__/__<br>Obs: _____________________________________________________<br>_________________________________________________________<br><br></td>
+			<td width="60"valign="top">PARA USO DA SE√á√ÉO DE BENEF√çCIOS<br>Recebido por:_______ em: __/__/__<br>Cadastrado por:______ em:__/__/__<br>Obs: _____________________________________________________<br>_________________________________________________________<br><br></td>
 		</tr>
 		</table>
 		

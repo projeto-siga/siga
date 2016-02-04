@@ -7,13 +7,13 @@
 	<mod:entrevista>
 		<br></br>
 		<mod:grupo>
-			<mod:texto var="ptsub" titulo="<b>Portaria de Subdelegação nº</b>" />
-			<mod:data titulo="<b>Data de Vigência</b>" var="datvig" />
+			<mod:texto var="ptsub" titulo="<b>Portaria de SubdelegaÃ§Ã£o nÂº</b>" />
+			<mod:data titulo="<b>Data de VigÃªncia</b>" var="datvig" />
 			<mod:texto var="proc_port" titulo="<b>Processo Administrativo</b>" />
 		</mod:grupo>
 		<br>
 		<mod:grupo>
-			<mod:caixaverif titulo="<b>Consideração Extra</b>" var="outros"
+			<mod:caixaverif titulo="<b>ConsideraÃ§Ã£o Extra</b>" var="outros"
 				marcado="Nao" reler="sim" />
 			<c:if test="${ outros == 'Sim'}">
 				<mod:texto titulo="Especificar" var="outrostext" largura="70" />
@@ -75,13 +75,13 @@
 			<p align="justify"><span style="TEXT-INDENT: 2cm; font-size:${tl};">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><c:choose>
 				<c:when test="${doc.subscritor.sexo == 'M'}">O DIRETOR</c:when>
 				<c:otherwise>A DIRETORA</c:otherwise>
-			</c:choose> DA SECRETARIA DE RECURSOS HUMANOS DO TRIBUNAL REGIONAL FEDERAL DA 2ª
-			REGIÃO</b>, conforme subdelegação de competência outorgada pela Portaria
-			nº ${ptsub}, de ${datvig}, da Secretaria Geral, <c:choose>
+			</c:choose> DA SECRETARIA DE RECURSOS HUMANOS DO TRIBUNAL REGIONAL FEDERAL DA 2Âª
+			REGIÃƒO</b>, conforme subdelegaÃ§Ã£o de competÃªncia outorgada pela Portaria
+			nÂº ${ptsub}, de ${datvig}, da Secretaria Geral, <c:choose>
 				<c:when test="${outros != 'Sim'}">e considerando o que
-			consta do Processo Administrativo nº ${proc_port}, </c:when>
+			consta do Processo Administrativo nÂº ${proc_port}, </c:when>
 				<c:otherwise>${outrostext} o que
-			consta do Processo Administrativo nº ${proc_port}, </c:otherwise>
+			consta do Processo Administrativo nÂº ${proc_port}, </c:otherwise>
 			</c:choose><b>RESOLVE</b>:<br>
 
 			${texto_portaria} </span></p>

@@ -7,9 +7,9 @@ FORMULARIO BANCO DE DADOS DA AMPLA-->
 
 <mod:modelo>
 	<mod:entrevista>
-		<mod:grupo titulo="Tipo de Formul·rio">	
-			<mod:radio titulo="Inclus„o" var="tipoFormulario" valor="1"  reler="sim" />
-			<mod:radio titulo="Exclus„o" var="tipoFormulario" valor="2" reler="sim" gerarHidden="N„o"/>
+		<mod:grupo titulo="Tipo de Formul√°rio">	
+			<mod:radio titulo="Inclus√£o" var="tipoFormulario" valor="1"  reler="sim" />
+			<mod:radio titulo="Exclus√£o" var="tipoFormulario" valor="2" reler="sim" gerarHidden="N√£o"/>
 		</mod:grupo>
 		
 		<c:set var="valorTipoDeForm" value="${tipoFormulario}" />
@@ -18,26 +18,26 @@ FORMULARIO BANCO DE DADOS DA AMPLA-->
 		</c:if>
 		
 		<c:if test="${valorTipoDeForm == 1}">
-		<mod:grupo titulo="IdentificaÁ„o do Usu·rio">
+		<mod:grupo titulo="Identifica√ß√£o do Usu√°rio">
 			<mod:texto titulo="E-mail Institucional" var="email" largura="50"/>
 		</mod:grupo>
 		</c:if>
 		
         <c:if test="${valorTipoDeForm == 2}">
-        <mod:grupo titulo="IdentificaÁ„o do Usu·rio">
-            <mod:pessoa titulo="MatrÌcula do Usu·rio" var="usuario"/> <br/>
+        <mod:grupo titulo="Identifica√ß√£o do Usu√°rio">
+            <mod:pessoa titulo="Matr√≠cula do Usu√°rio" var="usuario"/> <br/>
             <mod:texto titulo="E-mail Institucional" var="email" largura="50"/>
         </mod:grupo>
         </c:if>
         
         		
 		<mod:grupo>	
-			<mod:selecao titulo="Tipo de Usu·rio" opcoes="Magistrado;Servidor" var="tipoUsuario" reler="sim"/>
+			<mod:selecao titulo="Tipo de Usu√°rio" opcoes="Magistrado;Servidor" var="tipoUsuario" reler="sim"/>
 		</mod:grupo>
  
 		<c:if test="${valorTipoDeForm == 1 && tipoUsuario == 'Servidor'}">
 			</br>
-			<mod:grupo titulo="Cossignat·rio">
+			<mod:grupo titulo="Cossignat√°rio">
 				<mod:cosignatario titulo="Nome do Juiz autorizador" var="juiz" obrigatorio="Sim"/>  
 			</mod:grupo>
 		</c:if>
@@ -76,7 +76,7 @@ FORMULARIO BANCO DE DADOS DA AMPLA-->
 						</tr>
 						<tr>
 							<td align="right">
-								<p><b>Formul·rio N&ordm; ${doc.codigo}</b></p><br/>
+								<p><b>Formul√°rio N&ordm; ${doc.codigo}</b></p><br/>
 							</td>
 						</tr>
 					</table>
@@ -95,10 +95,10 @@ FORMULARIO BANCO DE DADOS DA AMPLA-->
   <tr>
     <td align="center"><b> 
     <c:if test="${tipoFormulario == 1}">
-    FORMUL¡RIO DE INCLUS√O DE USU¡RIO NO BANCO DE DADOS DA AMPLA
+    FORMUL√ÅRIO DE INCLUS√ÉO DE USU√ÅRIO NO BANCO DE DADOS DA AMPLA
     </c:if>
     <c:if test="${tipoFormulario == 2}">
-    FORMUL¡RIO DE EXCLUS√O DE USU¡RIO NO BANCO DE DADOS DA AMPLA
+    FORMUL√ÅRIO DE EXCLUS√ÉO DE USU√ÅRIO NO BANCO DE DADOS DA AMPLA
     </c:if>
  </b></td>
   </tr>
@@ -110,12 +110,12 @@ FORMULARIO BANCO DE DADOS DA AMPLA-->
 	<tr>
     <td colspan="2" align="left">
     <b>
-    1 - SOLICITA«√O DE 
+    1 - SOLICITA√á√ÉO DE 
       <c:if test="${tipoFormulario == 1}">
     CADASTRAMENTO DE 
      </c:if>
     <c:if test="${tipoFormulario == 2}">
-    EXCLUS√O DE 
+    EXCLUS√ÉO DE 
      </c:if>
      
     <c:if test="${tipoUsuario == 'Magistrado'}">
@@ -127,7 +127,7 @@ FORMULARIO BANCO DE DADOS DA AMPLA-->
     </b></td>
   </tr>
   <tr>
-    <td colspan="2" align="left"><b>1.1 - IDENTIFICA«√O DO USU¡RIO </b></td>
+    <td colspan="2" align="left"><b>1.1 - IDENTIFICA√á√ÉO DO USU√ÅRIO </b></td>
   </tr>
   <tr>
     <td width="500"><b>NOME COMPLETO:</b><br/>
@@ -160,10 +160,10 @@ FORMULARIO BANCO DE DADOS DA AMPLA-->
     <td colspan="2"><b>TERMO DE RESPONSABILIDADE</b>
     <br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     Comprometo-me a manter sigilo sobre os dados cadastrais a que tenha acesso ou conhecimento, 
-    por meio de canal de consulta de dados de clientes, via internet, em raz„o do ConvÍnio de CooperaÁ„o TÈcnica 
-    entre a JustiÁa Federal de Primeiro Grau no Rio de Janeiro e a AMPLA ENERGIA E SERVI«OS S.A, publicado 
-    no DOU N. 185 de 26/9/2006, e a utiliz·-los exclusivamente para instruÁ„o das aÁıes judiciais sob minha responsabilidade. 
-    Do mesmo modo, estou ciente do que preceitua o Decreto N. 4.553 de 27/12/2002 (salvaguarda de dados, informaÁıes, 
+    por meio de canal de consulta de dados de clientes, via internet, em raz√£o do Conv√™nio de Coopera√ß√£o T√©cnica 
+    entre a Justi√ßa Federal de Primeiro Grau no Rio de Janeiro e a AMPLA ENERGIA E SERVI√áOS S.A, publicado 
+    no DOU N. 185 de 26/9/2006, e a utiliz√°-los exclusivamente para instru√ß√£o das a√ß√µes judiciais sob minha responsabilidade. 
+    Do mesmo modo, estou ciente do que preceitua o Decreto N. 4.553 de 27/12/2002 (salvaguarda de dados, informa√ß√µes, 
     documentos e materiais sigilosos).</td>
   </tr>
   </c:if>
@@ -181,7 +181,7 @@ FORMULARIO BANCO DE DADOS DA AMPLA-->
 			<table border="1" cellpadding="2" width="900" align="center">
 			<tr>
 				<td colspan="2" align="center">
-				<b>2- AUTORIZA«√O PARA CADASTRAMENTO</b>
+				<b>2- AUTORIZA√á√ÉO PARA CADASTRAMENTO</b>
 				</td>
 			</tr>
 			<tr><td width="400">

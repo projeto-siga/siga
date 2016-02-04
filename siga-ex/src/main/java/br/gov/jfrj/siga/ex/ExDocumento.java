@@ -44,6 +44,7 @@ import javax.persistence.Entity;
 
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
 import org.apache.xerces.impl.dv.util.Base64;
+import org.hibernate.annotations.Entity;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
@@ -70,6 +71,7 @@ import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 import br.gov.jfrj.siga.ex.util.TipoMobilComparatorInverso;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 /**
@@ -78,7 +80,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
  */
 @Entity
 @Indexed
-public class ExDocumento extends AbstractExDocumento implements Serializable {
+public class ExDocumento extends AbstractExDocumento implements Serializable, CarimboDeTempo {
 
 	/**
          * 
@@ -431,7 +433,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 * 
 	 * @throws Exception
 	 */
-	public String getConteudoBlobHtmlStringComReferencias() throws Exception {
+	public String getConteudoBlobHtmlStringComReferencias() {
 		String sHtml = getConteudoBlobHtmlString();
 		ProcessadorReferencias pr = new ProcessadorReferencias();
 		pr.ignorar(getSigla());
@@ -491,7 +493,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 */
 	public java.lang.String getDescrCurta() {
 		if (getDescrDocumento() == null)
-			return "[sem descrição]";
+			return "[sem descriÃ§Ã£o]";
 		if (getDescrDocumento().length() > 40)
 			return getDescrDocumento().substring(0, 39) + "...";
 		else
@@ -523,7 +525,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 */
 	@Field(name = "nivelAcesso", store = Store.COMPRESS)
 	public String getNivelAcesso() {
-		log.debug("[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da criação do mesmo");
+		log.debug("[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da criaÃ§Ã£o do mesmo");
 		String nivel = null;
 		ExNivelAcesso nivelAcesso = getExNivelAcesso();
 
@@ -531,7 +533,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			nivel = nivelAcesso.getGrauNivelAcesso().toString();
 
 		} else {
-			log.warn("[getNivelAcesso] - O nÃ­vel de acesso ou o grau do nível de acesso do documento é nulo.");
+			log.warn("[getNivelAcesso] - O nÃ­vel de acesso ou o grau do nÃ­vel de acesso do documento Ã© nulo.");
 		}
 
 		return nivel;
@@ -617,6 +619,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	public String getDtDocDDMMYYYY() {
 		if (getDtDoc() != null) {
 			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+			return df.format(getDtDoc());
+		}
+		return "";
+	}
+
+	/**
+	 * Retorna a data do documento no formato dd/mm/aaaa, por exemplo,
+	 * 01/02/2010.
+	 */
+	public String getDtDocYYYYMMDD() {
+		if (getDtDoc() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 			return df.format(getDtDoc());
 		}
 		return "";
@@ -1242,6 +1256,21 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 
 	/**
+	 * Verifica se um documento possui controle de colaboraÃ§Ã£o.
+	 */
+	public boolean isColaborativo() {
+		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
+		
+		for (final ExMovimentacao mov : movs) {
+			if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO)
+					&& mov.getExMovimentacaoCanceladora() == null) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Verifica se um documento possui agendamento de publicaÃ§Ã£o no DJE. ()
 	 */
 	public boolean isPublicacaoAgendada() {
@@ -1378,7 +1407,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		if (getExFormaDocumento() == null)
 			return null;
 		return getExFormaDocumento().getDescrFormaDoc()
-				+ (isEletronico() ? "" : " (físico)");
+				+ (isEletronico() ? "" : " (fÃ­sico)");
 	}
 
 	/**
@@ -2460,7 +2489,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	public void setConteudoBlobHtmlString(final String s) throws Exception {
 		final String sHtml = (new ProcessadorHtml()).canonicalizarHtml(s,
 				false, true, false, false, false);
-		setConteudoBlob("doc.htm", sHtml.getBytes("ISO-8859-1"));
+		if (sHtml != null)
+			setConteudoBlob("doc.htm", sHtml.getBytes("ISO-8859-1"));
+		else
+			setConteudoBlob("doc.htm", null);
 	}
 
 	public void setConteudoBlobPdf(final byte[] conteudo) throws Exception {
@@ -2469,7 +2501,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 		// pdf nÃ£o serÃ¡ refeito.
 		if (isAssinado() || isAssinadoDigitalmente())
 			throw new AplicacaoException(
-					"O conteúdo não pode ser alterado pois o documento já está assinado");
+					"O conteÃºdo nÃ£o pode ser alterado pois o documento jÃ¡ estÃ¡ assinado");
 		setConteudoBlob("doc.pdf", conteudo);
 	}
 
@@ -2489,7 +2521,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	 * @return o id do ExNivelAcesso quando o ExNivelAcesso nÃ£o for nulo.
 	 */
 	public Long getIdExNivelAcesso() {
-		log.info("Obtendo IdExNivelAcesso...");
+//		log.info("Obtendo IdExNivelAcesso...");
 		Long idExNivelAcesso = null;
 		String nivelAcesso = this.getNivelAcesso();
 		if (nivelAcesso != null) {
@@ -2544,7 +2576,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			if (s.length() > 0)
 				s += ", ";
 			if (ExAcesso.ACESSO_PUBLICO.equals(o))
-				s += "Público";
+				s += "PÃºblico";
 			else if (o instanceof CpOrgaoUsuario)
 				s += ((CpOrgaoUsuario) o).getSigla();
 			else if (o instanceof DpLotacao)
@@ -2641,7 +2673,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 	}
 	
 	/**
-	 * Retorna o conteúdo entre dois textos.
+	 * Retorna o conteï¿ºdo entre dois textos.
 	 */
 	public String getConteudoEntreTextos(String textoInicial, String textoFinal) {
 		try {
@@ -2658,5 +2690,14 @@ public class ExDocumento extends AbstractExDocumento implements Serializable {
 			return "";
 		} 
 	}
-	
+
+	@Override
+	public Date getHisDtAlt() {
+		return getDtAltDoc();
+	}
+
+	@Override
+	public void setHisDtAlt(Date hisDtAlt) {
+		setDtAltDoc(hisDtAlt);
+	}
 }

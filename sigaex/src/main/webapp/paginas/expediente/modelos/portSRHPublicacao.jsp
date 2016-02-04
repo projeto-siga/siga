@@ -8,9 +8,9 @@
 	<mod:entrevista>
 	<c:if test="${empty texto_portaria}">
 		<c:set var="texto_portariaSRH"  scope="request">
-			<!-- INICIO ABERTURA --><p style="TEXT-INDENT: 2cm" align="justify"><b>A DIRETORA DA SUBSECRETARIA DE GEST√O DE PESSOAS
-			DA JUSTI«A FEDERAL DE 1&ordf; INST¬NCIA - SE«√O JUDICI¡RIA DO RIO
-			DE JANEIRO</b>, usando a competÍncia que lhe foi delegada pela Portaria n&ordm; 011 - GDF, de 26 de marÁo de 2003,
+			<!-- INICIO ABERTURA --><p style="TEXT-INDENT: 2cm" align="justify"><b>A DIRETORA DA SUBSECRETARIA DE GEST√ÉO DE PESSOAS
+			DA JUSTI√áA FEDERAL DE 1&ordf; INST√ÇNCIA - SE√á√ÉO JUDICI√ÅRIA DO RIO
+			DE JANEIRO</b>, usando a compet√™ncia que lhe foi delegada pela Portaria n&ordm; 011 - GDF, de 26 de mar√ßo de 2003,
 			</p>
 
 			<p style="TEXT-INDENT: 2cm" align="justify"><b>RESOLVE:</b></p><!-- FIM ABERTURA -->

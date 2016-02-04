@@ -38,16 +38,16 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 public class FachadaDeCertificadosAC {
 	/**
 	 * Monta e ordena uma cadeia de certificados juntamente com os certificados
-	 * conhecidos e ‚ncoras confi·veis
+	 * conhecidos e √¢ncoras confi√°veis
 	 * 
 	 * @param certs
-	 *            cadeia de certificados recebida para a ordenaÁ„o
+	 *            cadeia de certificados recebida para a ordena√ß√£o
 	 * @return
 	 * @throws Exception
 	 */
 	public static X509Certificate[] montarCadeiaOrdenadaECompleta(Collection<X509CertificateHolder> certs) throws Exception {
 		List<X509Certificate> certsList = new ArrayList<X509Certificate>();
-		// adiciona os certificados recebidos (par‚metro) ‡ lista de
+		// adiciona os certificados recebidos (par√¢metro) √† lista de
 		// certificados
 		for (X509CertificateHolder cert : certs) {
 //			final ByteArrayInputStream bais = new ByteArrayInputStream(cert
@@ -87,13 +87,13 @@ public class FachadaDeCertificadosAC {
 					break;
 				if (!fFound) {
 					throw new Exception(
-							"N„o foi possÌvel montar a cadeia completa de certificaÁ„o");
+							"N√£o foi poss√≠vel montar a cadeia completa de certifica√ß√£o");
 				}
 			}
 		} while (fContinue);
 
-		// APARENTEMENTE ISSO EST¡ CORRETO, NO ENTANTO, NO ACROBAT O CARIMBO N√O
-		// APARECE. DEVE SER PORQUE EST¡ DANDO ERRO DE VALIDA«√O POR FALTA DE UM
+		// APARENTEMENTE ISSO EST√Å CORRETO, NO ENTANTO, NO ACROBAT O CARIMBO N√ÉO
+		// APARECE. DEVE SER PORQUE EST√Å DANDO ERRO DE VALIDA√á√ÉO POR FALTA DE UM
 		// FLAG "CRICTICAL".
 
 		int cCerts = certsList.size();
@@ -112,7 +112,7 @@ public class FachadaDeCertificadosAC {
 		}
 		if (!hasTrustedAnchor)
 			throw new Exception(
-					"Cadeia de certificaÁ„o n„o est· relacionada com a raÌz da ICP-Brasil");
+					"Cadeia de certifica√ß√£o n√£o est√° relacionada com a ra√≠z da ICP-Brasil");
 
 		boolean fExit = false;
 		while (!fExit) {
@@ -129,7 +129,7 @@ public class FachadaDeCertificadosAC {
 
 		if (certsListSorted.size() != cCerts)
 			throw new Exception(
-					"Cadeia de certificaÁ„o n„o est· corretamente encadeada ou n„o est· relacionada com a raÌz da ICP-Brasil");
+					"Cadeia de certifica√ß√£o n√£o est√° corretamente encadeada ou n√£o est√° relacionada com a ra√≠z da ICP-Brasil");
 
 		// X509Certificate cadeiaTotal[];
 		final X509Certificate cadeiaTotal[] = new X509Certificate[certsListSorted

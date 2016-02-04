@@ -1,281 +1,219 @@
-<%@ taglib prefix="ww" uri="/webwork"%>
 <%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
+<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:MÃ³dulo de Documentos')}">
 <li><a href="#">Documentos</a>
 	<ul>
-		<li><ww:url id="url" action="editar" namespace="/expediente/doc" />
-			<ww:a href="%{url}">Novo</ww:a>
-		</li>
-		<li><ww:url id="url" action="listar" namespace="/expediente/doc">
-				<ww:param name="primeiraVez">sim</ww:param>
-			</ww:url> <ww:a href="%{url}">Pesquisar</ww:a>
+		<li><a href="/sigaex/app/expediente/doc/editar">Novo</a></li>
+		<li><a href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a>
 		</li>
 
-		<c:if test="${f:resource('siga.lucene.ativo')}">
-			<li><ww:url id="url" action="full_search"
-					namespace="/expediente/doc">
-				</ww:url> <ww:a href="%{url}">Pesquisar por texto</ww:a>
-			</li>
-		</c:if>
-
-		<li><ww:url id="url" action="transferir_lote"
-				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
-				texto="Transferir em lote" />
-		</li>
-		<li><ww:url id="url" action="receber_lote"
-				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
-				texto="Receber em lote" />
-		</li>
-		<li><ww:url id="url" action="anotar_lote"
-				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
-				texto="Anotar em lote" />
-		</li>
+		<li><siga:monolink
+				href="${pageContext.request.contextPath}/app/expediente/mov/transferir_lote"
+				texto="Transferir em lote" /></li>
+		<li><siga:monolink
+				href="${pageContext.request.contextPath}/app/expediente/mov/receber_lote"
+				texto="Receber em lote" /></li>
+		<li><siga:monolink
+				href="${pageContext.request.contextPath}/app/expediente/mov/anotar_lote"
+				texto="Anotar em lote" /></li>
+			<li><siga:monolink
+					href="${pageContext.request.contextPath}/app/expediente/mov/assinar_tudo"
+					texto="Assinar Documentos, Despachos e Anexos" /></li>
 		<c:catch>
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-				<li><ww:url id="url" action="assinar_lote"
-						namespace="/expediente/mov" /> <siga:monolink href="%{url}"
-						texto="Assinar em lote" />
-				</li>
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;EXT:ExtensÃ£o')}">
+				<li><siga:monolink
+						href="${pageContext.request.contextPath}/app/expediente/mov/assinar_lote"
+						texto="Assinar em lote" /></li>
 			</c:if>
 		</c:catch>
 		<c:catch>
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-				<li><ww:url id="url" action="assinar_despacho_lote"
-						namespace="/expediente/mov" /> <siga:monolink href="%{url}"
-						texto="Assinar Despacho em lote" />
-				</li>
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;ASS:Assinatura digital;EXT:ExtensÃ£o')}">
+				<li><siga:monolink
+						href="${pageContext.request.contextPath}/app/expediente/mov/assinar_despacho_lote"
+						texto="Assinar Despacho em lote" /></li>
 			</c:if>
 		</c:catch>
-		<li><ww:url id="url" action="arquivar_corrente_lote"
-				namespace="/expediente/mov" /> <siga:monolink href="%{url}"
-				texto="Arquivar em lote" />
-		</li>
+		<li><siga:monolink
+				href="${pageContext.request.contextPath}/app/expediente/mov/arquivar_corrente_lote"
+				texto="Arquivar em lote" /></li>
 		<c:catch>
 			<c:if
 				test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">
-				<li><ww:url id="url" action="arquivar_intermediario_lote"
-					namespace="/expediente/mov" /> <siga:monolink href="%{url}"
-					texto="Arquivar Intermediário em lote" />
-				</li>
+				<li><siga:monolink
+						href="${pageContext.request.contextPath}/app/expediente/mov/arquivar_intermediario_lote"
+						texto="Arquivar IntermediÃ¡rio em lote" /></li>
 			</c:if>
 		</c:catch>
 		<c:catch>
 			<c:if
 				test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">
-				<li><ww:url id="url" action="arquivar_permanente_lote"
-					namespace="/expediente/mov" /> <siga:monolink href="%{url}"
-					texto="Arquivar Permanente em lote" />
-				</li>
+				<li><siga:monolink
+						href="${pageContext.request.contextPath}/app/expediente/mov/arquivar_permanente_lote"
+						texto="Arquivar Permanente em lote" /></li>
 			</c:if>
 		</c:catch>
 		<c:catch>
 			<c:if
 				test="${f:testaCompetencia('atenderPedidoPublicacao',titular,lotaTitular,null)}">
-				<li><ww:url id="url" action="atender_pedido_publicacao"
-						namespace="/expediente/mov" /> <ww:a href="%{url}">Gerenciar Publicação DJE</ww:a>
-				</li>
+				<li><siga:monolink
+						href="${pageContext.request.contextPath}/app/expediente/mov/atender_pedido_publicacao"
+						texto="Gerenciar PublicaÃ§Ã£o DJE" /></li>
 			</c:if>
 		</c:catch>
-		<%--<c:catch>
-			<c:if
-				test="${f:testaCompetencia('definirPublicadoresPorConfiguracao',titular,lotaTitular,null)}">
-				<li><ww:url id="url" action="definir_publicadores"
-					namespace="/expediente/configuracao" /><ww:a href="%{url}">Definir Publicadores DJE</ww:a></li>
-			</c:if>
-		</c:catch>--%>
+
 		<c:catch>
 			<c:if
 				test="${f:testaCompetencia('gerenciarPublicacaoBoletimPorConfiguracao',titular,lotaTitular,null)}">
-				<li><ww:url id="url" action="gerenciar_publicacao_boletim"
-						namespace="/expediente/configuracao" /> <ww:a href="%{url}">Definir Publicadores Boletim</ww:a>
-				</li>
+				<li><a
+					href="${pageContext.request.contextPath}/app/expediente/configuracao/gerenciar_publicacao_boletim">Definir
+						Publicadores Boletim</a></li>
 			</c:if>
 		</c:catch>
-	</ul>
-</li>
+	</ul></li>
 
 <c:if
-	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas')}">
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;FE:Ferramentas')}">
 	<li><a href="#">Ferramentas</a>
 		<ul>
-		    <li><ww:url id="url" action="listar" namespace="/forma" /> <ww:a
-					href="%{url}">Cadastro de Formas</ww:a>
+			<li><siga:monolink
+					href="${pageContext.request.contextPath}/app/forma/listar"
+					texto="Cadastro de EspÃ©cies" /></li>
+			<li><a href="/sigaex/app/modelo/listar">Cadastro de modelos</a>
 			</li>
-			<li><ww:url id="url" action="listar" namespace="/modelo" /> <ww:a
-					href="%{url}">Cadastro de modelos</ww:a>
-			</li>
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;DESP:Tipos de despacho')}">
-				<li><ww:url id="url" action="listar"
-						namespace="/despacho/tipodespacho" /> <ww:a href="%{url}">Cadastro de tipos de despacho</ww:a>
-				</li>
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;FE:Ferramentas;DESP:Tipos de despacho')}">
+				<li><a href="/sigaex/app/despacho/tipodespacho/listar">Cadastro
+						de tipos de despacho</a></li>
 			</c:if>
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;CFG:Configurações')}">
-				<li><ww:url id="url" action="listar"
-						namespace="/expediente/configuracao" /> <ww:a href="%{url}">Cadastro de configurações</ww:a>
-				</li>
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;FE:Ferramentas;CFG:ConfiguraÃ§Ãµes')}">
+				<li><a href="/sigaex/app/expediente/configuracao/listar">Cadastro
+						de configuraÃ§Ãµes</a></li>
 			</c:if>
-			
+
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;EMAIL:Email de Notificação')}">
-				<li><ww:url id="url" action="listar"
-						namespace="/expediente/emailNotificacao" /> <ww:a href="%{url}">Cadastro de email de notificação</ww:a>
-				</li>
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;FE:Ferramentas;EMAIL:Email de NotificaÃ§Ã£o')}">
+				<li><a href="/sigaex/app/expediente/emailNotificacao/listar">Cadastro
+						de email de notificaÃ§Ã£o</a></li>
 			</c:if>
-			
+
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação')}">
-				<li><ww:url id="url" action="listar"
-						namespace="/expediente/classificacao" /> <ww:a href="%{url}">Classificação Documental</ww:a>
-				</li>
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;FE:Ferramentas;PC:Plano de ClassificaÃ§Ã£o')}">
+				<li><a href="/sigaex/app/expediente/classificacao/listar">ClassificaÃ§Ã£o
+						Documental</a></li>
 			</c:if>
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;TT:Tabela de Temporalidade')}">
-				<li><ww:url id="url" action="listar"
-						namespace="/expediente/temporalidade" /> <ww:a href="%{url}">Temporalidade Documental</ww:a>
-				</li>
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;FE:Ferramentas;TT:Tabela de Temporalidade')}">
+				<li><a
+					href="${pageContext.request.contextPath}/app/expediente/temporalidade/listar">Temporalidade
+						Documental</a></li>
 			</c:if>
-			
-		</ul>
-	</li>
+
+		</ul></li>
 </c:if>
 
 <c:if
-	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios')}">
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;REL:Gerar relatÃ³rios')}">
 
-	<li><a href="#">Relatórios</a>
+	<li><a href="#">RelatÃ³rios</a>
 		<ul id="relatorios" class="navmenu-large">
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;FORMS:Relação de formulários')}">
-				<li><ww:url id="url" action="relRelatorios"
-						namespace="/expediente/rel">
-						<ww:param name="nomeArquivoRel">relFormularios.jsp</ww:param>
-					</ww:url> <ww:a href="%{url}">Relação de formulários</ww:a>
-				</li>
-			</c:if>
-
-			<%-- Substituído pelo pelo "relConsultaDocEntreDatas"
-		<li><ww:url id="url" action="relRelatorios"
-				namespace="/expediente/rel">
-				<ww:param name="nomeArquivoRel">relExpedientes.jsp</ww:param>
-			</ww:url> <ww:a href="%{url}">Relatório de Expedientes</ww:a></li>  --%>
-
-
-			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;DATAS:Relação de documentos entre datas')}">
-				<li><ww:url id="url" action="relRelatorios"
-						namespace="/expediente/rel">
-						<ww:param name="nomeArquivoRel">relConsultaDocEntreDatas.jsp</ww:param>
-					</ww:url> <ww:a href="%{url}">Relação de documentos entre datas</ww:a>
-				</li>
-			</c:if>
-			<!-- 
-			<li><ww:url id="url" action="relRelatorios"
-				namespace="/expediente/rel">
-				<ww:param name="nomeArquivoRel">relModelos.jsp</ww:param>
-			</ww:url> <ww:a href="%{url}">Relatório de Modelos</ww:a></li>
-	-->
-			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;SUBORD:Relatório de documentos em setores subordinados')}">
-				<li><ww:url id="url" action="relRelatorios"
-						namespace="/expediente/rel">
-						<ww:param name="nomeArquivoRel">relDocumentosSubordinados.jsp</ww:param>
-					</ww:url> <ww:a href="%{url}">Relatório de Documentos em Setores Subordinados</ww:a>
-				</li>
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;REL:Gerar relatÃ³rios;FORMS:RelaÃ§Ã£o de formulÃ¡rios')}">
+				<li><a
+					href="${pageContext.request.contextPath}/app/expediente/rel/relRelatorios?nomeArquivoRel=relFormularios.jsp">
+						RelaÃ§Ã£o de formulÃ¡rios </a></li>
 			</c:if>
 
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;MVSUB:Relatório de movimentação de documentos em setores subordinados')}">
-				<li><ww:url id="url" action="relRelatorios"
-						namespace="/expediente/rel">
-						<ww:param name="nomeArquivoRel">relMovimentacaoDocSubordinados.jsp</ww:param>
-					</ww:url> <ww:a href="%{url}">Relatório de Movimentação de Documentos em Setores Subordinados</ww:a>
-				</li>
-			</c:if>
-			
-			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;RELMVP:Relatório de movimentações de processos')}">
-				<li><ww:url id="url" action="relRelatorios"
-						namespace="/expediente/rel">
-						<ww:param name="nomeArquivoRel">relMovProcesso.jsp</ww:param>
-					</ww:url> <ww:a href="%{url}">Relatório de Movimentações de Processos</ww:a>
-				</li>
-			</c:if>
-			
-			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;CRSUB:Relatório de documentos criados em setores subordinados')}">
-				<li><ww:url id="url" action="relRelatorios"
-						namespace="/expediente/rel">
-						<ww:param name="nomeArquivoRel">relCrDocSubordinados.jsp</ww:param>
-					</ww:url> <ww:a href="%{url}">Relatório de Criação de Documentos em Setores Subordinados</ww:a>
-				</li>
-			</c:if>
-			
-
-			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;MOVLOT:Relação de movimentações')}">
-				<li><ww:url id="url" action="relRelatorios"
-						namespace="/expediente/rel">
-						<ww:param name="nomeArquivoRel">relMovimentacao.jsp</ww:param>
-					</ww:url> <ww:a href="%{url}">Relatório de Movimentações</ww:a></li>
-			</c:if>
-			
-			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;MOVCAD:Relação de movimentações por cadastrante')}">
-				<li><ww:url id="url" action="relRelatorios"
-						namespace="/expediente/rel">
-						<ww:param name="nomeArquivoRel">relMovCad.jsp</ww:param>
-					</ww:url> <ww:a href="%{url}">Relatório de Movimentações por Cadastrante</ww:a></li>
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;REL:Gerar relatÃ³rios;DATAS:RelaÃ§Ã£o de documentos entre datas')}">
+				<li><a
+					href="${pageContext.request.contextPath}/app/expediente/rel/relRelatorios?nomeArquivoRel=relConsultaDocEntreDatas.jsp">
+						RelaÃ§Ã£o de documentos entre datas </a></li>
 			</c:if>
 
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;DSPEXP:Relação de despachos e transferências')}">
-				<li><ww:url id="url" action="relRelatorios"
-						namespace="/expediente/rel">
-						<ww:param name="nomeArquivoRel">relOrgao.jsp</ww:param>
-					</ww:url> <ww:a href="%{url}">Relatório de Despachos e Transferências</ww:a>
-				</li>
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;REL:Gerar relatÃ³rios;SUBORD:RelatÃ³rio de documentos em setores subordinados')}">
+				<li><a
+					href="${pageContext.request.contextPath}/app/expediente/rel/relRelatorios?nomeArquivoRel=relDocumentosSubordinados.jsp">
+						RelatÃ³rio de Documentos em Setores Subordinados </a></li>
 			</c:if>
 
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;DOCCRD:Relação de documentos criados')}">
-				<li><ww:url id="url" action="relRelatorios"
-						namespace="/expediente/rel">
-						<ww:param name="nomeArquivoRel">relTipoDoc.jsp</ww:param>
-					</ww:url> <ww:a href="%{url}">Relação de Documentos Criados</ww:a></li>
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;REL:Gerar relatÃ³rios;MVSUB:RelatÃ³rio de movimentaÃ§Ã£o de documentos em setores subordinados')}">
+				<li><a
+					href="${pageContext.request.contextPath}/app/expediente/rel/relRelatorios?nomeArquivoRel=relMovimentacaoDocSubordinados.jsp">
+						RelatÃ³rio de MovimentaÃ§Ã£o de Documentos em Setores Subordinados </a></li>
 			</c:if>
-			
-			
+
 			<c:if
-				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;CLSD:Classificação Documental')}">
-				<li><a href="#">Classificação Documental</a>
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;REL:Gerar relatÃ³rios;RELMVP:RelatÃ³rio de movimentaÃ§Ãµes de processos')}">
+				<li><a
+					href="${pageContext.request.contextPath}/app/expediente/rel/relRelatorios?nomeArquivoRel=relMovProcesso.jsp">
+						RelatÃ³rio de MovimentaÃ§Ãµes de Processos </a></li>
+			</c:if>
+
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;REL:Gerar relatÃ³rios;CRSUB:RelatÃ³rio de documentos criados em setores subordinados')}">
+				<li><a
+					href="${pageContext.request.contextPath}/app/expediente/rel/relRelatorios?nomeArquivoRel=relCrDocSubordinados.jsp">
+						RelatÃ³rio de CriaÃ§Ã£o de Documentos em Setores Subordinados </a></li>
+			</c:if>
+
+
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;REL:Gerar relatÃ³rios;MOVLOT:RelaÃ§Ã£o de movimentaÃ§Ãµes')}">
+				<li><a
+					href="${pageContext.request.contextPath}/app/expediente/rel/relRelatorios?nomeArquivoRel=relMovimentacao.jsp">
+						RelatÃ³rio de MovimentaÃ§Ãµes </a></li>
+			</c:if>
+
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;REL:Gerar relatÃ³rios;MOVCAD:RelaÃ§Ã£o de movimentaÃ§Ãµes por cadastrante')}">
+				<li><a
+					href="${pageContext.request.contextPath}/app/expediente/rel/relRelatorios?nomeArquivoRel=relMovCad.jsp">
+						RelatÃ³rio de MovimentaÃ§Ãµes por Cadastrante </a></li>
+			</c:if>
+
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;REL:Gerar relatÃ³rios;DSPEXP:RelaÃ§Ã£o de despachos e transferÃªncias')}">
+				<li><a
+					href="${pageContext.request.contextPath}/app/expediente/rel/relRelatorios?nomeArquivoRel=relOrgao.jsp">
+						RelatÃ³rio de Despachos e TransferÃªncias </a></li>
+			</c:if>
+
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;REL:Gerar relatÃ³rios;DOCCRD:RelaÃ§Ã£o de documentos criados')}">
+				<li><a
+					href="${pageContext.request.contextPath}/app/expediente/rel/relRelatorios?nomeArquivoRel=relTipoDoc.jsp">
+						RelaÃ§Ã£o de Documentos Criados </a></li>
+			</c:if>
+
+
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;REL:Gerar relatÃ³rios;CLSD:ClassificaÃ§Ã£o Documental')}">
+				<li><a href="#">ClassificaÃ§Ã£o Documental</a>
 					<ul>
 						<c:if
-							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;CLSD:Classificação Documental;CLASS:Relação de classificações')}">
-							<li><ww:url id="url" action="relRelatorios"
-									namespace="/expediente/rel">
-									<ww:param name="nomeArquivoRel">relClassificacao.jsp</ww:param>
-								</ww:url> <ww:a href="%{url}">Relação de Classificações</ww:a></li>
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;REL:Gerar relatÃ³rios;CLSD:ClassificaÃ§Ã£o Documental;CLASS:RelaÃ§Ã£o de classificaÃ§Ãµes')}">
+							<li><a
+								href="${pageContext.request.contextPath}/app/expediente/rel/relRelatorios?nomeArquivoRel=relClassificacao.jsp">
+									RelaÃ§Ã£o de ClassificaÃ§Ãµes </a></li>
 						</c:if>
-						
+
 						<c:if
-							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;CLSD:Classificação Documental;DOCS:Relação de documentos classificados')}">
-							<li><ww:url id="url" action="relRelatorios"
-									namespace="/expediente/rel">
-									<ww:param name="nomeArquivoRel">relDocsClassificados.jsp</ww:param>
-								</ww:url> <ww:a id="relclassificados" href="%{url}">Relação de Documentos Classificados</ww:a></li>
+							test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de GestÃ£o Administrativa;DOC:MÃ³dulo de Documentos;REL:Gerar relatÃ³rios;CLSD:ClassificaÃ§Ã£o Documental;DOCS:RelaÃ§Ã£o de documentos classificados')}">
+							<li><a id="relclassificados"
+								href="${pageContext.request.contextPath}/app/expediente/rel/relRelatorios?nomeArquivoRel=relDocsClassificados.jsp">
+									RelaÃ§Ã£o de Documentos Classificados </a></li>
 						</c:if>
-						
-					</ul>		
-				</li>
+
+					</ul></li>
 			</c:if>
-			
+
 
 		</ul></li>
 </c:if>

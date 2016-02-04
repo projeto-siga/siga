@@ -13,7 +13,12 @@ public class ExGraph {
 
 	protected class Nodo {
 
-		private String nome, shape, label, URL, tooltip;
+		private String nome, shape, label, URL, tooltip, color;
+
+		public String getNome() {
+			return nome;
+		}
+
 		private boolean destacar;
 
 		protected Nodo(String nome) {
@@ -32,6 +37,11 @@ public class ExGraph {
 
 		protected Nodo setDestacar(boolean destacar) {
 			this.destacar = destacar;
+			return this;
+		}
+
+		protected Nodo setCor(String cor) {
+			this.color = cor;
 			return this;
 		}
 
@@ -54,6 +64,8 @@ public class ExGraph {
 				toString += "[label=\"" + label + "\"]";
 			if (destacar)
 				toString += "[color=\"red\"]";
+			if (color != null)
+				toString += "[color=\"" + color + "\"]";
 			if (URL != null)
 				toString += "[URL=\"" + URL + "\" penwidth=2]";
 			if (tooltip != null)
@@ -67,6 +79,7 @@ public class ExGraph {
 
 		private String nodo1, nodo2, estilo, tooltip, label, color;
 		private boolean directed, aoContrario;
+		private boolean constraint = true;
 
 		protected Transicao(String nodo1, String nodo2) {
 			this.nodo1 = nodo1;
@@ -112,11 +125,24 @@ public class ExGraph {
 				toString += "[tooltip=\"" + tooltip + "\"]";
 			if (color != null)
 				toString += "[color=\"" + color + "\"]";
-			if (aoContrario)
+			if (!directed)
+				toString += "[dir=none]";
+			else if (aoContrario)
 				toString += "[dir=back]";
+			if (!constraint)
+				toString += "[constraint=false]";
 			if (label != null)
 				toString += "[label=\"" + label + "\"]";
 			return toString;
+		}
+
+		public boolean isConstraint() {
+			return constraint;
+		}
+
+		public Transicao setConstraint(boolean constraint) {
+			this.constraint = constraint;
+			return this;
 		}
 	}
 
@@ -131,15 +157,8 @@ public class ExGraph {
 		String toString = "";
 		for (Nodo nodo : nodos)
 			toString += "\n" + nodo + ";";
-		toString += " subgraph \"\" {";
 		for (Transicao t : trans)
-			if (t.directed)
 				toString += "\n" + t + ";";
-		toString += "} subgraph \"\" {edge [dir=none]";
-		for (Transicao t : trans)
-			if (!t.directed)
-				toString += "\n" + t + ";";
-		toString += "}";
 		return toString.replace("\n", " ").replace("\r", " ");
 	}
 
@@ -162,7 +181,7 @@ public class ExGraph {
 	public List<Nodo> getNodos() {
 		return this.nodos;
 	}
-	
+
 	public List<Transicao> getTransicoes() {
 		return this.trans;
 	}

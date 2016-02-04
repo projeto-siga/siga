@@ -8,16 +8,16 @@
 <mod:modelo>
 	<mod:entrevista>
 		<mod:grupo>
-			<mod:selecao titulo="Ano da Remoção" opcoes="2015;2016;2017;2018;2019"
+			<mod:selecao titulo="Ano da RemoÃ§Ã£o" opcoes="2015;2016;2017;2018;2019"
 			var="anoRemocao" />
 			&nbsp;&nbsp;&nbsp;
-			<mod:texto var="numEdital" titulo="Número do Edital"
+			<mod:texto var="numEdital" titulo="NÃºmero do Edital"
 			largura="22" obrigatorio="Sim"/>
 			&nbsp;&nbsp;&nbsp;
-			<mod:data  var="dataEdital" titulo="Data de publicação do Edital" obrigatorio="Sim"/>
+			<mod:data  var="dataEdital" titulo="Data de publicaÃ§Ã£o do Edital" obrigatorio="Sim"/>
 		</mod:grupo>
 		<mod:grupo>
-			<mod:selecao titulo="Área do cargo" opcoes="apoio especializado;administrativa;judiciária"
+			<mod:selecao titulo="Ãrea do cargo" opcoes="apoio especializado;administrativa;judiciÃ¡ria"
 			var="area" /> 
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<mod:texto obrigatorio="Sim" var="email" titulo="E-mail"
@@ -29,8 +29,8 @@
 		</mod:grupo>
 		<mod:grupo>	
 			<mod:mensagem vermelho="Sim"
-			texto="ATENÇÃO: Transferir para Subsecretaria de Gestão de Pessoas 
-			após finalização."></mod:mensagem>
+			texto="ATENÃ‡ÃƒO: Transferir para Subsecretaria de GestÃ£o de Pessoas 
+			apÃ³s finalizaÃ§Ã£o."></mod:mensagem>
 		</mod:grupo>
 
 	</mod:entrevista>
@@ -74,29 +74,29 @@ first-page-body {
 		<br />
 
 
-		<p align="justify" style="line-height: 150%">Excelentíssimo Senhor
+		<p align="justify" style="line-height: 150%">ExcelentÃ­ssimo Senhor
 		Diretor do Foro</p>
 
 
 		<p align="justify" style="line-height: 200%">Eu,
 		${doc.subscritor.descricao}, ocupante do cargo efetivo de ${doc.subscritor.cargo.nomeCargo},
-		área ${area}, do quadro pessoal da Seção Judiciária do Rio de Janeiro, matrícula nº
-		RJ${doc.subscritor.matricula}, venho requerer a V. Exa. a inscrição no
-		Concurso Nacional de Remoção ${anoRemocao},com base no art. 20 da Lei n. 11.416/2006 c/c a Lei n.
-8.112/1990, no Anexo IV da Portaria Conjunta n. 3, de 31 de maio de 2007, e no art. 27, § 3º,
-da Resolução n. 3, de 10 de março de 2008, do Conselho da Justiça Federal e declaro que
+		Ã¡rea ${area}, do quadro pessoal da SeÃ§Ã£o JudiciÃ¡ria do Rio de Janeiro, matrÃ­cula nÂº
+		RJ${doc.subscritor.matricula}, venho requerer a V. Exa. a inscriÃ§Ã£o no
+		Concurso Nacional de RemoÃ§Ã£o ${anoRemocao},com base no art. 20 da Lei n. 11.416/2006 c/c a Lei n.
+8.112/1990, no Anexo IV da Portaria Conjunta n. 3, de 31 de maio de 2007, e no art. 27, Â§ 3Âº,
+da ResoluÃ§Ã£o n. 3, de 10 de marÃ§o de 2008, do Conselho da JustiÃ§a Federal e declaro que
 concordo com os termos do EDITAL n. ${numEdital}, de ${dataEdital}.</p>
 		
 		<br />
 		<p>Nestes termos,</p>
-		<p>Peço deferimento.</p>
+		<p>PeÃ§o deferimento.</p>
 
 		<p align="center">${doc.dtExtenso}</p>
 		<br />
 
 		<c:import url="/paginas/expediente/modelos/inc_assinatura.jsp" />
 
-		<p>Informações adicionais:</p>
+		<p>InformaÃ§Ãµes adicionais:</p>
 		<p>CPF: ${f:formatarCPF(doc.subscritor.cpfPessoa)} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E-mail: ${email}</p>
 		<c:if test="${empty qtdFilhos}">
 			<c:set var="qtdFilhos" value="0" />
@@ -110,14 +110,14 @@ concordo com os termos do EDITAL n. ${numEdital}, de ${dataEdital}.</p>
 		<!-- INICIO RODAPE
 		<c:import url="/paginas/expediente/modelos/inc_rodapeNumeracaoADireita2.jsp" />
 		FIM RODAPE -->
-		<p align="center">Termo de ciência e concordância:</p>
-&nbsp;&nbsp;&nbsp;Afirmo que estou ciente do prazo para desistência previsto no edital e assumo a
-responsabilidade pela participação no certame.<br/>
-&nbsp;&nbsp;&nbsp;Afirmo que estou ciente que posso ser removido para qualquer das opções
+		<p align="center">Termo de ciÃªncia e concordÃ¢ncia:</p>
+&nbsp;&nbsp;&nbsp;Afirmo que estou ciente do prazo para desistÃªncia previsto no edital e assumo a
+responsabilidade pela participaÃ§Ã£o no certame.<br/>
+&nbsp;&nbsp;&nbsp;Afirmo que estou ciente que posso ser removido para qualquer das opÃ§Ãµes
 escolhidas e concordo com as regras previstas no edital do concurso Nacional de
-Remoção de ${anoRemocao}.<br/>
-&nbsp;&nbsp;&nbsp;Afirmo que estou ciente de que, se contemplado com a remoção, deverei cancelar as
-férias deferidas pelo órgão de origem para remarcá-las diretamente no órgão de
+RemoÃ§Ã£o de ${anoRemocao}.<br/>
+&nbsp;&nbsp;&nbsp;Afirmo que estou ciente de que, se contemplado com a remoÃ§Ã£o, deverei cancelar as
+fÃ©rias deferidas pelo Ã³rgÃ£o de origem para remarcÃ¡-las diretamente no Ã³rgÃ£o de
 destino.<br/>
 &nbsp;&nbsp;&nbsp;Concordo em receber e-mail dos candidatos inscritos no SINAR.
 		</body>

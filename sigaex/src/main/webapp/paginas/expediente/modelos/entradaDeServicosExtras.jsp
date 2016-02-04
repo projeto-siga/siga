@@ -4,20 +4,20 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <mod:modelo>
 	<mod:entrevista>
-		<mod:grupo titulo="PerÌodo">
+		<mod:grupo titulo="Per√≠odo">
 		<mod:grupo titulo="">
-			<mod:data titulo="Data: inÌcio" var="data_ini" />
+			<mod:data titulo="Data: in√≠cio" var="data_ini" />
 			<mod:data titulo="fim" var="data_fim" />
-			<mod:texto titulo=" - Hora: inÌcio" var="hora_ini" largura="5"
+			<mod:texto titulo=" - Hora: in√≠cio" var="hora_ini" largura="5"
 				maxcaracteres="5" />
 			<mod:texto titulo="fim" var="hora_fim" largura="5" maxcaracteres="5" />
 		</mod:grupo>
-			<mod:texto titulo="ObservaÁıes" var="obs" largura="60" />
+			<mod:texto titulo="Observa√ß√µes" var="obs" largura="60" />
 		</mod:grupo>
-		<mod:grupo titulo="ServiÁo">
-			<mod:texto titulo="Local de realizaÁ„o" var="local" largura="60" />
-			<mod:memo titulo="DescriÁ„o" var="desc" colunas="80" />
-			<mod:memo titulo="RelaÁ„o de pessoal" var="pessoal" colunas="80"
+		<mod:grupo titulo="Servi√ßo">
+			<mod:texto titulo="Local de realiza√ß√£o" var="local" largura="60" />
+			<mod:memo titulo="Descri√ß√£o" var="desc" colunas="80" />
+			<mod:memo titulo="Rela√ß√£o de pessoal" var="pessoal" colunas="80"
 				linhas="10" />
 		</mod:grupo>
 	</mod:entrevista>
@@ -42,7 +42,7 @@
 				<td width="100%">
 					<table width="100%">
 						<tr>
-							<td align="right"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">ENTRADA DE SERVI«OS EXTRAS N&ordm; ${doc.codigo}</p></td>
+							<td align="right"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">ENTRADA DE SERVI√áOS EXTRAS N&ordm; ${doc.codigo}</p></td>
 						</tr>
 						<tr>
 							<td align="right"><p>${doc.dtExtenso}</p></td>
@@ -57,18 +57,18 @@
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerda.jsp" />
 		FIM CABECALHO -->
 
-		<h3>1 - PERÕODO</h3>
+		<h3>1 - PER√çODO</h3>
 		<table width="100%" border="1" cellpadding="2" cellspacing="1"
 			bgcolor="#000000">
 			<tr>
-				<td bgcolor="#FFFFFF">Data: de ${data_ini} ‡ ${data_fim} -
-				Hora: de ${hora_ini} ‡ ${hora_fim}<c:if
+				<td bgcolor="#FFFFFF">Data: de ${data_ini} √† ${data_fim} -
+				Hora: de ${hora_ini} √† ${hora_fim}<c:if
 					test="${not empty obs}">
 					<br />Obs: ${obs}</c:if></td>
 			</tr>
 		</table>
 
-		<h3>2 - LOCAL DE REALIZA«√O DO SERVI«O</h3>
+		<h3>2 - LOCAL DE REALIZA√á√ÉO DO SERVI√áO</h3>
 		<table width="100%" border="1" cellpadding="2" cellspacing="1"
 			bgcolor="#000000">
 			<tr>
@@ -78,7 +78,7 @@
 			</tr>
 		</table>
 
-		<h3>3 - DESCRI«√O DO SERVI«O</h3>
+		<h3>3 - DESCRI√á√ÉO DO SERVI√áO</h3>
 		<table width="100%" border="1" cellpadding="2" cellspacing="1"
 			bgcolor="#000000">
 			<tr>
@@ -88,7 +88,7 @@
 			</tr>
 		</table>
 
-		<h3>4 - RELA«√O DE PESSOAL</h3>
+		<h3>4 - RELA√á√ÉO DE PESSOAL</h3>
 		<table width="100%" border="1" cellpadding="2" cellspacing="1"
 			bgcolor="#000000">
 			<tr>

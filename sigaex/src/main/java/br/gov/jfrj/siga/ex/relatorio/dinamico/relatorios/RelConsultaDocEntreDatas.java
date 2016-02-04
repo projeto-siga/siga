@@ -48,19 +48,19 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 		super(parametros);
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
-					"Parâmetro secaoUsuario não informado!");
+					"ParÃ¢metro secaoUsuario nÃ£o informado!");
 		}
 		if (parametros.get("lotacao") == null) {
-			throw new DJBuilderException("Parâmetro lotacao não informado!");
+			throw new DJBuilderException("ParÃ¢metro lotacao nÃ£o informado!");
 		}
 		if (parametros.get("dataInicial") == null) {
-			throw new DJBuilderException("Parâmetro dataInicial não informado!");
+			throw new DJBuilderException("ParÃ¢metro dataInicial nÃ£o informado!");
 		}
 		if (parametros.get("dataFinal") == null) {
-			throw new DJBuilderException("Parâmetro dataFinal não informado!");
+			throw new DJBuilderException("ParÃ¢metro dataFinal nÃ£o informado!");
 		}
 		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Parâmetro link_siga não informado!");
+			throw new DJBuilderException("ParÃ¢metro link_siga nÃ£o informado!");
 		}
 	}
 
@@ -68,12 +68,12 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 		// TODO Auto-generated method stub
-		this.setTitle("Relação de Documentos entre Datas");
-		this.addColuna("Código do Documento", 20, RelatorioRapido.ESQUERDA,
+		this.setTitle("RelaÃ§Ã£o de Documentos entre Datas");
+		this.addColuna("CÃ³digo do Documento", 20, RelatorioRapido.ESQUERDA,
 				 true, true);
-		this.addColuna("Descrição do documento", 100, RelatorioRapido.ESQUERDA,
+		this.addColuna("DescriÃ§Ã£o do documento", 100, RelatorioRapido.ESQUERDA,
 				false);
-		this.addColuna("Lotação do Cadastrante", 40, RelatorioRapido.ESQUERDA,
+		this.addColuna("LotaÃ§Ã£o do Cadastrante", 40, RelatorioRapido.ESQUERDA,
 				false);
 
 		return this;

@@ -28,7 +28,7 @@
 				<c:when test="${not empty doc.titular.funcaoConfianca.nomeFuncao}">
 				${doc.titular.funcaoConfianca.nomeFuncao}
 				<c:if test="${doc.titular.idPessoa != doc.subscritor.idPessoa}">
-					EM EXERCÕCIO
+					EM EXERC√çCIO
 				</c:if>
 				</c:when>
 				<c:when

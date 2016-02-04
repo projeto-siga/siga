@@ -82,25 +82,25 @@ public class CSVDocument extends com.aryjr.nheengatu.document.Document {
 	 * 
 	 */
 	public void generateFile(final OutputStream out) throws IOException {
-		final BufferedWriter output = new BufferedWriter(new OutputStreamWriter(out));
-		if (table != null && table.getName().equalsIgnoreCase("table")) {
-			if ((table.getFirstTag("thead") == null && table.getFirstTag("tbody") != null)
-					|| (table.getFirstTag("tbody") == null && table.getFirstTag("thead") != null)) {
-				output.write("Please, thead requires tbody and vice-versa.");
-			} else {
-				if (table.getFirstTag("thead") == null) {
-					// Only tr tags on table.
-					writeLines(table.tags(), output);
+		try (BufferedWriter output = new BufferedWriter(new OutputStreamWriter(out))) {
+			if (table != null && table.getName().equalsIgnoreCase("table")) {
+				if ((table.getFirstTag("thead") == null && table.getFirstTag("tbody") != null)
+						|| (table.getFirstTag("tbody") == null && table.getFirstTag("thead") != null)) {
+					output.write("Please, thead requires tbody and vice-versa.");
 				} else {
-					// Table with thead and tbody tag.
-					writeLines(table.getFirstTag("thead").tags(), output);
-					writeLines(table.getFirstTag("tbody").tags(), output);
+					if (table.getFirstTag("thead") == null) {
+						// Only tr tags on table.
+						writeLines(table.tags(), output);
+					} else {
+						// Table with thead and tbody tag.
+						writeLines(table.getFirstTag("thead").tags(), output);
+						writeLines(table.getFirstTag("tbody").tags(), output);
+					}
 				}
+			} else {
+				output.write("Only HTML tables can be converted to CSV files.");
 			}
-		} else {
-			output.write("Only HTML tables can be converted to CSV files.");
 		}
-		output.close();
 	}
 
 	/**
@@ -150,7 +150,7 @@ public class CSVDocument extends com.aryjr.nheengatu.document.Document {
  * *** empty log message ***
  *
  * Revision 1.3  2006/07/05 16:00:51  nts
- * Refatorando para melhorar qualidade do código
+ * Refatorando para melhorar qualidade do cÃ³digo
  *
  * Revision 1.2  2006/04/11 19:43:51  tah
  * *** empty log message ***

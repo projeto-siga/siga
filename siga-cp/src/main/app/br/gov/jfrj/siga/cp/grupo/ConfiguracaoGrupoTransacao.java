@@ -24,7 +24,7 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 /**
- * Fachada para obtenÁ„o das inst‚ncias de ConfiguracaoGrupoEmail via query
+ * Fachada para obten√ß√£o das inst√¢ncias de ConfiguracaoGrupoEmail via query
  */
 public class ConfiguracaoGrupoTransacao {
 	/**
@@ -32,7 +32,7 @@ public class ConfiguracaoGrupoTransacao {
 	 * ConfiguracaoGrupoEmail
 	 * 
 	 * @param ConfiguracaoAcesso
-	 *            p_cgeConfiguracao - A configuraÁ„o de grupo de email.
+	 *            p_cgeConfiguracao - A configura√ß√£o de grupo de email.
 	 * 
 	 * @throws Exception
 	 */
@@ -59,7 +59,7 @@ public class ConfiguracaoGrupoTransacao {
 	 * exclui a CpConfiguracao a partir da ConfiguracaoGrupoEmail
 	 * 
 	 * @param ConfiguracaoAcesso
-	 *            p_cgeConfiguracao - A configuraÁ„o de grupo de email.
+	 *            p_cgeConfiguracao - A configura√ß√£o de grupo de email.
 	 * 
 	 * @throws Exception
 	 */

@@ -20,24 +20,33 @@ package br.gov.jfrj.siga.wf.util;
 
 import java.lang.reflect.Field;
 
+import javax.servlet.ServletException;
+
+import org.apache.log4j.Logger;
+import org.hibernate.LockMode;
 import org.hibernate.Session;
-import org.jbpm.JbpmConfiguration;
+import org.jbpm.JbpmContext;
 import org.jbpm.db.GraphSession;
+import org.jbpm.db.JobSession;
+import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.job.Job;
-import org.jbpm.job.executor.JobExecutor;
 import org.jbpm.job.executor.JobExecutorThread;
+import org.jbpm.persistence.JbpmPersistenceException;
 
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
 /**
- * Classe que representa um thread de execu��o de job
+ * Classe que representa um thread de execuï¿½ï¿½o de job
  * 
  * @author kpf
  * 
  */
 public class WfJobExecutorThread extends JobExecutorThread {
+	private static final Logger log = Logger
+			.getLogger(WfJobExecutorThread.class);
 
 	/**
 	 * Construtor.
@@ -51,30 +60,56 @@ public class WfJobExecutorThread extends JobExecutorThread {
 
 	/**
 	 * Executa o job.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	@Override
-	protected void executeJob(Job job) throws Exception {
-		GraphSession s = WfContextBuilder.getJbpmContext().getGraphSession();
-		Session session;
+	protected void executeJob(Job j) throws Exception {
+		WfExecutionEnvironment ee = new WfExecutionEnvironment();
+		JbpmContext jbpmContext = null;
 		try {
-			Field fld = GraphSession.class.getDeclaredField("session");
-			fld.setAccessible(true);
-			session = (Session) fld.get(s);
-			HibernateUtil.setSessao(session);
+			Wf.setInstance(null);
+			ee.antes(null);
+			WfDao.getInstance().getSessao().merge(j);
+
+			jbpmContext = WfContextBuilder.getJbpmContext()
+					.getJbpmContext();
+
+			try {
+				JobSession jobSession = jbpmContext.getJobSession();
+				Job job = jobSession.getJob(j.getId());
+				// register process instance for automatic save
+				// https://jira.jboss.org/browse/JBPM-1015
+				ProcessInstance processInstance = job.getProcessInstance();
+				jbpmContext.addAutoSaveProcessInstance(processInstance);
+
+				// if job is exclusive, lock process instance
+				if (job.isExclusive()) {
+					jbpmContext.getGraphSession().lockProcessInstance(
+							processInstance);
+				}
+
+				if (log.isDebugEnabled())
+					log.debug("executing " + job);
+					job.execute(jbpmContext);
+					jobSession.deleteJob(job);
+			} catch (Exception e) {
+				jbpmContext.setRollbackOnly();
+				throw e;
+			} catch (Error e) {
+				jbpmContext.setRollbackOnly();
+				throw e;
+			}
+			ee.depois();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ee.excecao();
+			if (!jbpmContext.isClosed()){
+				jbpmContext.close();
+			}
+			throw new ServletException(e);
+		} finally {
+			((org.hibernate.proxy.HibernateProxy)j.getProcessInstance()).getHibernateLazyInitializer().getSession().connection().close();
+			ee.finalmente();
 		}
-
-		WfDao.getInstance();
-
-		super.executeJob(job);
-
-		WfContextBuilder.closeContext();
-
-		HibernateUtil.removeSessao();
-		ModeloDao.freeInstance();
 	}
-
 }

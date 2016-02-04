@@ -1,11 +1,10 @@
-<%@ tag body-content="empty"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
+<%@ tag body-content="empty" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ attribute name="assinante"%>
 <%@ attribute name="idmov"%>
-<ww:url id="url" action="assinar_verificar" namespace="/expediente/mov">
-	<ww:param name="id">${idmov}</ww:param>
-</ww:url>
+<c:url var="url" value="/app/expediente/mov/assinar_verificar">
+	<c:param name="id">${idmov}</c:param>
+</c:url>
 <span id="verificar_assinatura_${idmov}"> ${assinante} | <a
 	href="javascript: SetInnerHTMLFromAjaxResponse('${url}', 'verificar_assinatura_${idmov}');">Verificar</a>
 </span>

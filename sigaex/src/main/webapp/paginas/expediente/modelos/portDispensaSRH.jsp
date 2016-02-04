@@ -10,17 +10,17 @@
 <mod:modelo urlBase="/paginas/expediente/modelos/portaria.jsp?public=sim&tipo=SRH">
 	<mod:entrevista>
 		<mod:grupo>
-			<mod:texto titulo="N∫ da solicitaÁ„o" var="solicitacao" largura="35" />
+			<mod:texto titulo="N¬∫ da solicita√ß√£o" var="solicitacao" largura="35" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="Nome do respons·vel" var="responsavel"
+			<mod:texto titulo="Nome do respons√°vel" var="responsavel"
 				largura="40" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:pessoa titulo="Servidor" var="servidor" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:texto titulo="FunÁ„o" var="funcaoServidor" largura="40" />
+			<mod:texto titulo="Fun√ß√£o" var="funcaoServidor" largura="40" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:data titulo="A partir de" var="dataInicio" />
@@ -28,8 +28,8 @@
 	</mod:entrevista>
 	<mod:documento>
 		<mod:valor var="texto_portaria">
-			<!-- INICIO ABERTURA --><p style="TEXT-INDENT: 2cm" align="justify"><b>A DIRETORA DA SUBSECRETARIA DE GEST√O DE PESSOAS
-			DA JUSTI«A FEDERAL DE 1&ordf; INST¬NCIA - <c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE«√O JUDICI¡RIA DO RIO DE JANEIRO</c:otherwise></c:choose></b>, usando a competÍncia que lhe foi delegada pela Portaria n&ordm; 011 - GDF, de 26 de marÁo de 2003,
+			<!-- INICIO ABERTURA --><p style="TEXT-INDENT: 2cm" align="justify"><b>A DIRETORA DA SUBSECRETARIA DE GEST√ÉO DE PESSOAS
+			DA JUSTI√áA FEDERAL DE 1&ordf; INST√ÇNCIA - <c:choose><c:when test="${not empty doc.subscritor.descricao}">${doc.lotaTitular.orgaoUsuario.descricaoMaiusculas}</c:when><c:otherwise>SE√á√ÉO JUDICI√ÅRIA DO RIO DE JANEIRO</c:otherwise></c:choose></b>, usando a compet√™ncia que lhe foi delegada pela Portaria n&ordm; 011 - GDF, de 26 de mar√ßo de 2003,
 			e tendo em vista o disposto no(a) ${solicitacao}, do(a) ${responsavel},
 			</p>
 
@@ -39,7 +39,7 @@
 			servidor(a) <mod:identificacao
 				pessoa="${requestScope['servidor_pessoaSel.id']}"
 				nivelHierarquicoMaximoDaLotacao="4" obs="${servidorObs}" negrito="sim" /> da
-			funÁ„o comissionada de ${funcaoServidor}<c:choose><c:when test="${not empty dataInicio}">, a partir de ${dataInicio}.</c:when><c:otherwise>, a partir da publicaÁ„o desta portaria.</c:otherwise></c:choose>
+			fun√ß√£o comissionada de ${funcaoServidor}<c:choose><c:when test="${not empty dataInicio}">, a partir de ${dataInicio}.</c:when><c:otherwise>, a partir da publica√ß√£o desta portaria.</c:otherwise></c:choose>
 			</p><!-- FIM CORPO -->
 		</mod:valor>
 	</mod:documento>

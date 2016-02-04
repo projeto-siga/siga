@@ -38,25 +38,25 @@ public class RelMovProcesso extends RelatorioTemplate {
 		super(parametros);
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
-					"Par‚metro secaoUsuario n„o informado!");
+					"Par√¢metro secaoUsuario n√£o informado!");
 		}
 		if (parametros.get("lotacao") == null) {
-			throw new DJBuilderException("Par‚metro lotaÁ„o n„o informado!");
+			throw new DJBuilderException("Par√¢metro lota√ß√£o n√£o informado!");
 		}
 		//if (parametros.get("orgao") == null) {
-		//	throw new DJBuilderException("Par‚metro Ûrg„o n„o informado!");
+		//	throw new DJBuilderException("Par√¢metro √≥rg√£o n√£o informado!");
 		//}
 		if (parametros.get("processo") == null) {
-			throw new DJBuilderException("Par‚metro n˙mero do processo n„o informado!");
+			throw new DJBuilderException("Par√¢metro n√∫mero do processo n√£o informado!");
 		}
 		if (parametros.get("dataInicial") == null) {
-			throw new DJBuilderException("Par‚metro dataInicial n„o informado!");
+			throw new DJBuilderException("Par√¢metro dataInicial n√£o informado!");
 		}
 		if (parametros.get("dataFinal") == null) {
-			throw new DJBuilderException("Par‚metro dataFinal n„o informado!");
+			throw new DJBuilderException("Par√¢metro dataFinal n√£o informado!");
 		}
 		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Par‚metro link_siga n„o informado!");
+			throw new DJBuilderException("Par√¢metro link_siga n√£o informado!");
 		}
 	}
 
@@ -64,11 +64,11 @@ public class RelMovProcesso extends RelatorioTemplate {
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
 		
-		this.setTitle("RelatÛrio de MovimentaÁıes de Processos");
-		this.addColuna("LotaÁ„o", 10, RelatorioRapido.CENTRO, false);
+		this.setTitle("Relat√≥rio de Movimenta√ß√µes de Processos");
+		this.addColuna("Lota√ß√£o", 10, RelatorioRapido.CENTRO, false);
 		this.addColuna("Processo", 40, RelatorioRapido.CENTRO,
 				false);
-		this.addColuna("MovimentaÁıes", 50,
+		this.addColuna("Movimenta√ß√µes", 50,
 				RelatorioRapido.CENTRO, false);
 			return this;
 	}
@@ -93,7 +93,7 @@ public class RelMovProcesso extends RelatorioTemplate {
 
 		final Pattern p2 = Pattern.compile("^TMP-?([0-9]{1,7})");
 		final Pattern p1 = Pattern
-				.compile("^([A-Za-z0-9]{2}"
+				.compile("^("
 						+ acronimos
 						+ ")?-?([A-Za-z]{3})?-?(?:([0-9]{4})/?)??([0-9]{1,5})(\\.?[0-9]{1,3})?(?:((?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|((?:-?V[0-9]{1,2})))?$");
 		final Matcher m2 = p2.matcher(processo.trim().toUpperCase());

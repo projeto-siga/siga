@@ -116,7 +116,7 @@ public class AssinaturaDigital {
 		// final PKCS7SignedData signedData = new PKCS7SignedData(assinatura);
 		// signedData.update(conteudo, 0, conteudo.length); // Update checksum
 		// if (!signedData.verify())
-		// throw new AplicacaoException("Assinatura inv·lida");
+		// throw new AplicacaoException("Assinatura inv√°lida");
 		//
 		// final CertificateFactory cf =
 		// CertificateFactory.getInstance("X.509");
@@ -158,7 +158,7 @@ public class AssinaturaDigital {
 	//
 	// // checksum
 	// if (!signedData.verify())
-	// throw new AplicacaoException("Assinatura inv·lida");
+	// throw new AplicacaoException("Assinatura inv√°lida");
 	//
 	// final CertificateFactory cf = CertificateFactory.getInstance("X.509");
 	// final ArrayList<X509Certificate> certsList = new
@@ -194,7 +194,7 @@ public class AssinaturaDigital {
 	 * Collection<X509Certificate> certs) throws Exception { final
 	 * CertificateFactory cf = CertificateFactory.getInstance("X.509");
 	 * 
-	 * // Cria um objeto TrustAnchor indicando qual È o certificado root da //
+	 * // Cria um objeto TrustAnchor indicando qual √© o certificado root da //
 	 * cadeia // final X509Certificate x509Root; // final Set<TrustAnchor>
 	 * trustedAnchors = new HashSet<TrustAnchor>(); // { // final
 	 * ByteArrayInputStream bais = new ByteArrayInputStream( //
@@ -244,11 +244,11 @@ public class AssinaturaDigital {
 	 * knownCertsList) { if (issuer.equals(otherX509.getSubjectX500Principal()))
 	 * { certsList.add(otherX509); fFound = true; fContinue = true; break; } } }
 	 * if (fContinue) break; if (!fFound) { throw new AplicacaoException(
-	 * "N„o foi possÌvel montar a cadeia completa de certificaÁ„o"); } } } while
+	 * "N√£o foi poss√≠vel montar a cadeia completa de certifica√ß√£o"); } } } while
 	 * (fContinue);
 	 * 
-	 * // APARENTEMENTE ISSO EST¡ CORRETO, NO ENTANTO, NO ACROBAT O CARIMBO N√O
-	 * // APARECE. DEVE SER PORQUE EST¡ DANDO ERRO DE VALIDA«√O POR FALTA DE UM
+	 * // APARENTEMENTE ISSO EST√Å CORRETO, NO ENTANTO, NO ACROBAT O CARIMBO N√ÉO
+	 * // APARECE. DEVE SER PORQUE EST√Å DANDO ERRO DE VALIDA√á√ÉO POR FALTA DE UM
 	 * // FLAG "CRICTICAL".
 	 * 
 	 * int cCerts = certsList.size(); final ArrayList<X509Certificate>
@@ -259,7 +259,7 @@ public class AssinaturaDigital {
 	 * certsListSorted.add(trustedAnchor.getTrustedCert()); } } // if
 	 * (trustedAnchors.contains(x509)) } if (!hasTrustedAnchor) throw new
 	 * AplicacaoException(
-	 * "Cadeia de certificaÁ„o n„o est· relacionada com a raÌz da ICP-Brasil");
+	 * "Cadeia de certifica√ß√£o n√£o est√° relacionada com a ra√≠z da ICP-Brasil");
 	 * 
 	 * boolean fExit = false; while (!fExit) { fExit = true; for
 	 * (X509Certificate x509 : certsList) { if
@@ -269,7 +269,7 @@ public class AssinaturaDigital {
 	 * fExit = false; } } }
 	 * 
 	 * if (certsListSorted.size() != cCerts) throw new AplicacaoException(
-	 * "Cadeia de certificaÁ„o n„o est· corretamente encadeada ou n„o est· relacionada com a raÌz da ICP-Brasil"
+	 * "Cadeia de certifica√ß√£o n√£o est√° corretamente encadeada ou n√£o est√° relacionada com a ra√≠z da ICP-Brasil"
 	 * );
 	 * 
 	 * // X509Certificate cadeiaTotal[]; final X509Certificate cadeiaTotal[] =
@@ -278,17 +278,17 @@ public class AssinaturaDigital {
 	 */
 
 	/**
-	 * Interpreta um dado do tipo otherName. Obs. O JDK 5.0 n„o tem classes que
-	 * lidem com um dado do tipo OtherName. … necess·rio usar o BouncyCastle.
+	 * Interpreta um dado do tipo otherName. Obs. O JDK 5.0 n√£o tem classes que
+	 * lidem com um dado do tipo OtherName. √â necess√°rio usar o BouncyCastle.
 	 * 
 	 * @param encoded
 	 *            O dado em ASN.1.
-	 * @return Um par contendo o OID e o conte˙do.
+	 * @return Um par contendo o OID e o conte√∫do.
 	 */
 	/*
 	 * @SuppressWarnings("unchecked") private static Pair<DERObjectIdentifier,
 	 * String> getOtherName(byte[] encoded) throws IOException { // O JDK 5.0
-	 * n„o tem classes que lidem com um dado do tipo OtherName. // … necess·rio
+	 * n√£o tem classes que lidem com um dado do tipo OtherName. // √â necess√°rio
 	 * usar o BouncyCastle. ASN1InputStream inps = new ASN1InputStream(encoded);
 	 * DERSequence seq = null; DERObjectIdentifier oid = null; String conteudo =
 	 * ""; seq = (DERSequence) inps.readObject(); inps.close(); Enumeration en =
@@ -335,20 +335,20 @@ public class AssinaturaDigital {
 			X509Certificate cert = AssinaturaDigital.getX509Certificate(certHolder);
 
 			/*
-			 *  *** cÛdigo comentado movido para
+			 *  *** c√≥digo comentado movido para
 			 * Certificado.recuperarPropriedadesNomesAlteranativos(cert)*****
-			 * ATEN«√O: CÛdigo sempre retorna na primeira iteraÁ„o do for ?!!***
+			 * ATEN√á√ÉO: C√≥digo sempre retorna na primeira itera√ß√£o do for ?!!***
 			 * (LAGS) Properties props = new Properties(); for (List<?>
 			 * subjectAlternativeName : cert .getSubjectAlternativeNames()) {
 			 * String email; Pair<DERObjectIdentifier, String> otherName;
 			 * 
 			 * @SuppressWarnings("unused") int pos;
 			 * 
-			 * // O primeiro elemento È um Integer com o valor 0 = otherName, 1
-			 * // = // rfc822name etc. // O segundo valor È um byte array ou uma
+			 * // O primeiro elemento √© um Integer com o valor 0 = otherName, 1
+			 * // = // rfc822name etc. // O segundo valor √© um byte array ou uma
 			 * String. Veja o javadoc // de // getSubjectAlternativeNames.
 			 * switch (((Number) subjectAlternativeName.get(0)).intValue()) {
-			 * case 0: // OtherName - contÈm CPF, CNPJ etc. // o OID fica em
+			 * case 0: // OtherName - cont√©m CPF, CNPJ etc. // o OID fica em
 			 * otherName.first otherName = getOtherName((byte[])
 			 * subjectAlternativeName .get(1));
 			 * props.put(otherName.first.getId(), otherName.second); break; case
@@ -692,7 +692,7 @@ public class AssinaturaDigital {
 				firstSignerCert = cert;
 
 			if (!signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(cert)))
-				throw new Exception("Assinatura inv·lida!");
+				throw new Exception("Assinatura inv√°lida!");
 
 
 			System.out.println("\nSigner Info: \n");
@@ -800,14 +800,14 @@ public class AssinaturaDigital {
 		if (!Arrays.equals(tok.getTimeStampInfo().getMessageImprintDigest(),
 				MessageDigest.getInstance("SHA1").digest(si.getSignature()))) {
 			throw new Exception(
-					"Carimbo de tempo n„o confere com o resumo do documento");
+					"Carimbo de tempo n√£o confere com o resumo do documento");
 		}
 
 		try {
 			validarAssinaturaCMS(null, null, cmsTS.getEncoded(), tok
 					.getTimeStampInfo().getGenTime());
 		} catch (Exception e) {
-			throw new Exception("Carimbo de tempo inv·lido!", e);
+			throw new Exception("Carimbo de tempo inv√°lido!", e);
 		}
 
 		return nome;
@@ -845,12 +845,11 @@ public class AssinaturaDigital {
 			Iterator<X509CertificateHolder> certIt = certCollection.iterator();
 			X509CertificateHolder certHolder = certIt.next();
 			X509Certificate cert = AssinaturaDigital.getX509Certificate(certHolder);
-			
 			java.util.logging.Logger.getLogger("siga.cd").fine("Certificado a validar (verificar LCRs = " + verificarLCRs + ")");
 			java.util.logging.Logger.getLogger("siga.cd").fine(cert.toString());
 
 			if (!signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(certHolder)))
-				throw new Exception("Assinatura inv·lida!");
+				throw new Exception("Assinatura inv√°lida!");
 
 			X509Certificate[] cadeiaTotal = montarCadeiaOrdenadaECompleta(certCollection);
 
@@ -949,7 +948,7 @@ public class AssinaturaDigital {
 			return sCPF;
 		} catch (Exception e) {
 			throw new AplicacaoException(
-					"N„o foi possÌvel obter o CPF do assinante", 0, e);
+					"N√£o foi poss√≠vel obter o CPF do assinante", 0, e);
 		}
 	}
 	

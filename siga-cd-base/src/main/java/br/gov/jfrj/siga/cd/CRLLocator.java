@@ -42,9 +42,9 @@ import org.bouncycastle.jce.provider.X509CRLObject;
 /**
  * @author mparaiso
  * 
- * Classe respons·vel por buscar a CRL de um determinado Certificado. Esta CRL
- * pode ser obtida diretamente de um ponto de distribuiÁ„o de CRL, na Internet,
- * ou localmente. A busca da CRL È determinada pelo mÈtodo construtor usado.
+ * Classe respons√°vel por buscar a CRL de um determinado Certificado. Esta CRL
+ * pode ser obtida diretamente de um ponto de distribui√ß√£o de CRL, na Internet,
+ * ou localmente. A busca da CRL √© determinada pelo m√©todo construtor usado.
  * 
  */
 public class CRLLocator {
@@ -56,7 +56,7 @@ public class CRLLocator {
 	String uri;
 
 	/**
-	 * MÈtodo utilit·rio usado para fazer a leitura do InputStream de uma CRL
+	 * M√©todo utilit√°rio usado para fazer a leitura do InputStream de uma CRL
 	 * (Tanto de arquivo como da Web)
 	 * 
 	 * @param crl
@@ -79,8 +79,8 @@ public class CRLLocator {
 	}
 
 	/**
-	 * Este mÈtodo buscar· a CRL localmente. Para tanto, deve-se utilizar o
-	 * mÈtodo construtor CRLLocator(String uri), onde uri È o local onde a CRL
+	 * Este m√©todo buscar√° a CRL localmente. Para tanto, deve-se utilizar o
+	 * m√©todo construtor CRLLocator(String uri), onde uri √© o local onde a CRL
 	 * pode ser encontrada.
 	 * 
 	 * @throws IOException
@@ -94,11 +94,11 @@ public class CRLLocator {
 	}
 
 	/**
-	 * Quando a classe È instanciada usando CRLLocator(X509Certificate
-	 * certificate) a busca pela CRL È feita remotamente. O endereÁo do ponto de
-	 * distribuiÁ„o da CRL È retirado diretamente do certificado passado para o
-	 * construtor da classe. Para que seja possÌvel acessar a CRL remotamente È
-	 * necess·rio que conexıes ‡ Internet, via HTTP, sejam possÌveis.
+	 * Quando a classe √© instanciada usando CRLLocator(X509Certificate
+	 * certificate) a busca pela CRL √© feita remotamente. O endere√ßo do ponto de
+	 * distribui√ß√£o da CRL √© retirado diretamente do certificado passado para o
+	 * construtor da classe. Para que seja poss√≠vel acessar a CRL remotamente √©
+	 * necess√°rio que conex√µes √† Internet, via HTTP, sejam poss√≠veis.
 	 * 
 	 * @throws IOException
 	 * @throws IOException
@@ -144,11 +144,11 @@ public class CRLLocator {
 	}
 
 	/**
-	 * MÈtodo construtor que permite a busca de CRLs remotamente. A URL do ponto
-	 * de distribuiÁ„o de CRLs È retirada diretamente do certificado.
+	 * M√©todo construtor que permite a busca de CRLs remotamente. A URL do ponto
+	 * de distribui√ß√£o de CRLs √© retirada diretamente do certificado.
 	 * 
 	 * @param certificate
-	 *            Certificado X509 que est· sendo verificado.
+	 *            Certificado X509 que est√° sendo verificado.
 	 */
 	public CRLLocator(final X509Certificate certificate) {
 
@@ -174,11 +174,11 @@ public class CRLLocator {
 	}
 
 	/**
-	 * MÈtodo construtor que permite a busca de CRLs localmente. A CRL referente
-	 * ao certificado a ser verificado deve estar disponÌvel em disco.
+	 * M√©todo construtor que permite a busca de CRLs localmente. A CRL referente
+	 * ao certificado a ser verificado deve estar dispon√≠vel em disco.
 	 * 
 	 * @param uri
-	 *            Caminho completo para a CRL referente ao certificado que est·
+	 *            Caminho completo para a CRL referente ao certificado que est√°
 	 *            sendo verificado. Exemplo: 'C:\CRLs\Cert.crl'
 	 */
 	public CRLLocator(final String uri) {
@@ -187,8 +187,8 @@ public class CRLLocator {
 	}
 
 	/**
-	 * Uma vez carregada a CRL, tanto localmente como remotamente, È possÌvel
-	 * salv·-la em disco para uso posterior.
+	 * Uma vez carregada a CRL, tanto localmente como remotamente, √© poss√≠vel
+	 * salv√°-la em disco para uso posterior.
 	 * 
 	 * @param path
 	 *            Caminho completo para onde a CRL deve ser salva. Exemplo:
@@ -209,11 +209,11 @@ public class CRLLocator {
 
 	/**
 	 * Caso tenha sido usado o construtor CRLLocator(X509Certificate
-	 * certificate) È possÌvel recuperar o certificado que foi passado para
+	 * certificate) √© poss√≠vel recuperar o certificado que foi passado para
 	 * CRLLocator. Caso o contrutor CRLLocator(String uri) tenha sido usado,
-	 * ent„o È retornado null.
+	 * ent√£o √© retornado null.
 	 * 
-	 * @return o certificado X509 passado pelo mÈtodo construtor.
+	 * @return o certificado X509 passado pelo m√©todo construtor.
 	 */
 	public X509Certificate getX509Certificate() {
 
@@ -221,9 +221,9 @@ public class CRLLocator {
 	}
 
 	/**
-	 * Uma vez instanciado o objeto, È possÌvel fazer a busca da CRL referente
-	 * ao certificado a ser verificado. A CRL È retornada, independente do
-	 * construtor utilizado, desde que esteja disponÌvel.
+	 * Uma vez instanciado o objeto, √© poss√≠vel fazer a busca da CRL referente
+	 * ao certificado a ser verificado. A CRL √© retornada, independente do
+	 * construtor utilizado, desde que esteja dispon√≠vel.
 	 * 
 	 * @return um objeto X509CRLObject para uso posterior.
 	 * @throws CRLException
@@ -247,13 +247,13 @@ public class CRLLocator {
 		} catch (final MalformedURLException e) {
 
 			throw new InvalidCRLException(
-					"URL de acesso a CRL est· mal formada ou È inv·lida! ("
+					"URL de acesso a CRL est√° mal formada ou √© inv√°lida! ("
 							+ this.uri + ")", e);
 
 		} catch (final ProtocolException e) {
 
 			throw new InvalidCRLException(
-					"Falha ao setar o mÈtodo HTTP/GET para fazer o download da CRL! ("
+					"Falha ao setar o m√©todo HTTP/GET para fazer o download da CRL! ("
 							+ this.uri + ")", e);
 
 		} catch (final IOException e) {

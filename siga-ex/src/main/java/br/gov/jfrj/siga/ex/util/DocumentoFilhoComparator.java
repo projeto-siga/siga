@@ -15,6 +15,6 @@ public class DocumentoFilhoComparator implements Comparator<ExDocumento> {
 			return o1.getDtRegDoc().compareTo(o2.getDtRegDoc());
 		if (o1.getIdDoc() != null && o2.getIdDoc() != null)
 			return o1.getIdDoc().compareTo(o2.getIdDoc());
-		throw new Error("Não é possivel comparar documentos.");
+		throw new Error("NÃ£o Ã© possivel comparar documentos.");
 	}
 }

@@ -42,7 +42,7 @@ public class ExTipoDestinacao extends AbstractExTipoDestinacao implements
 	
 	public static final long TIPO_DESTINACAO_SETOR_COMPETENTE = 58;
 
-	// Edson: isto est· estranho. Ver soluÁao melhor.
+	// Edson: isto est√° estranho. Ver solu√ßao melhor.
 	public static ExTipoDestinacao guardaPermanente() {
 		return ExDao.getInstance().consultar(TIPO_DESTINACAO_GUARDA_PERMANENTE,
 				ExTipoDestinacao.class, false);

@@ -30,8 +30,9 @@ import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @MappedSuperclass
-public abstract class HistoricoSuporte extends Objeto implements Historico,
-		Assemelhavel {
+public abstract class HistoricoSuporte extends Objeto implements Historico, Assemelhavel {
+
+	private static final long serialVersionUID = 992555792295390723L;
 
 	@Column(name = "HIS_ID_INI")
 	@Desconsiderar
@@ -46,14 +47,14 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 	private Date hisDtFim;
 
 	@Transient
-	//@Column(name = "HIS_ATIVO")
+	// @Column(name = "HIS_ATIVO")
 	@Desconsiderar
 	private Integer hisAtivo;
 
 	/**
-	 * Atribui o hisAtivo j· que o mesmo È sempre calculado
+	 * Atribui o hisAtivo j√° que o mesmo √© sempre calculado
 	 */
-	public void setAtivo() {
+	public void updateAtivo() {
 		this.hisAtivo = this.hisDtFim == null ? 1 : 0;
 	}
 
@@ -74,17 +75,17 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 	}
 
 	public Date getHisDtFim() {
-		this.setAtivo();
+		this.updateAtivo();
 		return hisDtFim;
 	}
 
 	public void setHisDtFim(Date hisDtFim) {
 		this.hisDtFim = hisDtFim;
-		this.setAtivo();
+		this.updateAtivo();
 	}
 
 	public Integer getHisAtivo() {
-		this.setAtivo();
+		this.updateAtivo();
 		return hisAtivo;
 	}
 
@@ -93,11 +94,13 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 	}
 
 	public void setHisAtivo(Integer hisAtivo) {
-		this.setAtivo();
+		this.updateAtivo();
 		// this.hisAtivo = hisAtivo;
 	}
 
 	public boolean equivale(Object other) {
+		if (other == null)
+			return false;
 		return this.getHisIdIni().equals(((Historico) other).getIdInicial());
 	}
 
@@ -124,4 +127,27 @@ public abstract class HistoricoSuporte extends Objeto implements Historico,
 			return true;
 		return false;
 	}
+	
+	public void salvarComHistorico() throws Exception {
+		setHisDtIni(new Date());
+		setHisDtFim(null);
+		if (getId() == null) {
+			this.save();
+			setHisIdIni(getId());
+		} else {
+			em().detach(this);
+			HistoricoSuporte thisAntigo = em().find(this.getClass(), getId());
+			thisAntigo.finalizar();
+			setHisIdIni(((Historico) thisAntigo).getHisIdIni());
+			setId(null);
+		}
+		this.save();
+		//this.refresh();
+	}
+
+	public void finalizar() throws Exception {
+		setHisDtFim(new Date());
+		this.save();
+	}
+	
 }

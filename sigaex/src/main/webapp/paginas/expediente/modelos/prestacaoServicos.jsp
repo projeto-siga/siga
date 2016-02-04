@@ -9,22 +9,22 @@
 		<mod:grupo>
 			<mod:lotacao titulo="Unidade Gestora" var="lotacao" />
 		</mod:grupo>
-		<mod:texto titulo="N∫ Processo" var="numProcesso" largura="10" />
-		<mod:selecao titulo="N∫ de Faturas a informar" var="qtdFaturas"
+		<mod:texto titulo="N¬∫ Processo" var="numProcesso" largura="10" />
+		<mod:selecao titulo="N¬∫ de Faturas a informar" var="qtdFaturas"
 			opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20"
 			reler="ajax" idAjax="qtdFaturaAjax" />
 		<hr>
 		<mod:grupo depende="qtdFaturaAjax">
 			<c:forEach var="i" begin="1" end="${qtdFaturas}">
 				<mod:grupo>
-					<mod:texto titulo="N∫ da Fatura ou Nota de Empenho*" var="numFatura${i}" largura="15"
+					<mod:texto titulo="N¬∫ da Fatura ou Nota de Empenho*" var="numFatura${i}" largura="15"
 						maxcaracteres="15" />
 				</mod:grupo>
 				<mod:grupo>
-				*Quando o contrato tiver sido formalizado por Nota de Empenho, este campo deve ser preenchido apenas com o n˙mero da N.E.
+				*Quando o contrato tiver sido formalizado por Nota de Empenho, este campo deve ser preenchido apenas com o n√∫mero da N.E.
 				</mod:grupo>
 				<mod:grupo>
-					<mod:texto titulo="PerÌodo de referÍncia" var="mes${i}"
+					<mod:texto titulo="Per√≠odo de refer√™ncia" var="mes${i}"
 						largura="50" />
 				</mod:grupo>
 				<mod:grupo>
@@ -36,23 +36,23 @@
 						largura="55" />
 				</mod:grupo>
 				<mod:grupo>
-				<mod:texto titulo="DescriÁ„o Contrato" var="descContrato${i}"
+				<mod:texto titulo="Descri√ß√£o Contrato" var="descContrato${i}"
 						largura="50"/>
 				</mod:grupo>
 				<mod:grupo>
-				<mod:memo titulo="ObservaÁ„o" var="obs${i}" linhas="3" colunas="80" />
-	  <!-- <mod:texto titulo="ObservaÁ„o" var="obs${i}" largura="80"/> -->
+				<mod:memo titulo="Observa√ß√£o" var="obs${i}" linhas="3" colunas="80" />
+	  <!-- <mod:texto titulo="Observa√ß√£o" var="obs${i}" largura="80"/> -->
 		</mod:grupo>
 				
 				<mod:grupo>
-					<mod:selecao titulo="Atesto que os serviÁos foram prestados"
+					<mod:selecao titulo="Atesto que os servi√ßos foram prestados"
 						var="fatura${i}"
 						opcoes="conforme o contrato.;com as seguintes ressalvas"
 						reler="sim" />
 					<mod:grupo>
 						<c:if
 							test="${requestScope[f:concat('fatura',i)] == 'com as seguintes ressalvas'}">
-							<mod:grupo titulo="DescriÁ„o das ressalvas">
+							<mod:grupo titulo="Descri√ß√£o das ressalvas">
 								<mod:grupo>
 									<mod:editor titulo="" var="descRessalvas${i}" />
 								</mod:grupo>
@@ -70,9 +70,9 @@
 				opcoes="Normal;Pequeno;Grande" />
 		</mod:grupo>
 		<c:if
-			test="${(requestScope[f:concat('fatura',i)] == 'com as seguintes ressalvas') or (requestScope[f:concat('fatura',i)] == 'conforme discriminados na Fatura em referÍncia')}">
-			<b> <mod:mensagem titulo="AtenÁ„o"
-				texto="Antes de despachar este documento ao setor competente, anexe o arquivo referente ‡ fatura informada." />
+			test="${(requestScope[f:concat('fatura',i)] == 'com as seguintes ressalvas') or (requestScope[f:concat('fatura',i)] == 'conforme discriminados na Fatura em refer√™ncia')}">
+			<b> <mod:mensagem titulo="Aten√ß√£o"
+				texto="Antes de despachar este documento ao setor competente, anexe o arquivo referente √† fatura informada." />
 			</b>
 		</c:if>
 		
@@ -120,21 +120,21 @@
 		<mod:letra tamanho="${tl}">
 
 			<mod:letra tamanho="${tl}">
-				<p align="center">CONTRATOS - FORMUL¡RIO DE ATESTO DE SERVI«OS</p>
+				<p align="center">CONTRATOS - FORMUL√ÅRIO DE ATESTO DE SERVI√áOS</p>
 			</mod:letra>
 			<br>
 			<br>
 
 			<p  >Unidade Gestora: <b>${requestScope['lotacao_lotacaoSel.descricao']}</b>
 			</p>
-			<p  >N∫ Processo: <b>${numProcesso}</b>
+			<p  >N¬∫ Processo: <b>${numProcesso}</b>
 			</p>
 			<br>
 			<hr>
 			<c:forEach var="i" begin="1" end="${qtdFaturas}">
-				<p  >N∫ da Fatura: <b>${requestScope[f:concat('numFatura',i)]}</b>
+				<p  >N¬∫ da Fatura: <b>${requestScope[f:concat('numFatura',i)]}</b>
 				</p>
-				<p  >PerÌodo de Ref. <b>${requestScope[f:concat('mes',i)]}</b>
+				<p  >Per√≠odo de Ref. <b>${requestScope[f:concat('mes',i)]}</b>
 				</p>
 				<p  >Valor da Fatura: <b>${requestScope[f:concat('valorFatura',i)]}</b> &nbsp;&nbsp;
 				<b>(${requestScope[f:concat(f:concat('valorFatura',i),'vrextenso')]})</b>
@@ -142,14 +142,14 @@
 				
 				<p  >Nome da Empresa: <b>${requestScope[f:concat('nomeEmpresa',i)]}</b>
 				</p>
-				<p  >DescriÁ„o Contrato:
+				<p  >Descri√ß√£o Contrato:
 				<b>${requestScope[f:concat('descContrato',i)]}</b></p>
 				<c:if test="${not empty requestScope[f:concat ('obs',i)]}">
-					<p  >ObservaÁ„o:<b>
+					<p  >Observa√ß√£o:<b>
 					${requestScope[f:concat('obs',i)]}</b></p>
 				</c:if>
 				<p>Atesto que os
-				serviÁos foram prestados <c:if
+				servi√ßos foram prestados <c:if
 					test="${requestScope[f:concat('fatura',i)] == 'conforme o contrato.'}">
 		 	conforme o contrato.
 		 </c:if> <c:if

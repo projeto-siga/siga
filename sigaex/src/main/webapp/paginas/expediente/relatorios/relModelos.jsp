@@ -13,7 +13,7 @@ function sbmt() {
 }
 </script>
 
-<c:set var="titulo_pagina" scope="request">Relação de Modelos</c:set>
+<c:set var="titulo_pagina" scope="request">RelaÃ§Ã£o de Modelos</c:set>
 <c:set var="secaoUsuario" scope="request">"${lotaTitular.orgaoUsuario.descricaoMaiusculas}"</c:set>
 <h1>${titulo_pagina}</h1>
 <input type="hidden" name="secaoUsuario"

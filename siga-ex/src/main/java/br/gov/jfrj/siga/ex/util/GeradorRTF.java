@@ -68,7 +68,7 @@ public class GeradorRTF {
 			if (parser.getEventType() == XmlPullParser.TEXT)
 				element.add(parser.getText().toUpperCase());
 
-			// Insere um parágrafo
+			// Insere um parÃ¡grafo
 			if (parser.getEventType() == XmlPullParser.START_TAG)
 				if (parser.getName().toUpperCase().equals("P")
 						&& considerarPTags
@@ -156,101 +156,101 @@ public class GeradorRTF {
 		}
 	}
 
-	public void geraRTF2() throws Exception {
-		RtfWriter2.getInstance(document, new FileOutputStream(
-				"c:\\edson-teste2.rtf"));
-		document.open();
-		// MultiColumnText textoMultiColunas = new
-		// MultiColumnText(MultiColumnText.AUTOMATIC);
-		// textoMultiColunas.addRegularColumns(document.left(),
-		// document.right(), 2f, 2);
-		Paragraph paragrafoBase = new Paragraph("09090909");
-		// textoMultiColunas.addElement(paragrafoBase);
-		document.add(paragrafoBase);
-		document.close();
-	}
-
 	public byte[] geraRTFFOP(ExDocumento doc) throws Exception {
 		try {
 			html = doc.getConteudoBlobHtmlString();
 			String htmlDocPrincipal;
-			
+
 			String inicioNumero = "<!-- INICIO NUMERO -->";
 			String fimNumero = "<!-- FIM NUMERO -->";
-			if(!html.contains(inicioNumero)) {
+			if (!html.contains(inicioNumero)) {
 				inicioNumero = "<!-- INICIO NUMERO";
 				fimNumero = "FIM NUMERO -->";
 			}
-			
-			htmlDocPrincipal = html.substring(html.indexOf(inicioNumero) + inicioNumero.length(),
-					html.indexOf(fimNumero)) + "<br />";
-			
+
+			htmlDocPrincipal = html.substring(html.indexOf(inicioNumero)
+					+ inicioNumero.length(), html.indexOf(fimNumero))
+					+ "<br />";
+
 			String htmlTitulo = "";
 			String inicioTituloForm = "<!-- INICIO TITULO";
 			String fimTituloForm = "FIM TITULO -->";
-			
-			if(html.contains(inicioTituloForm))
-				htmlTitulo = html.substring(html.indexOf(inicioTituloForm) + inicioTituloForm.length(),
-					html.indexOf(fimTituloForm));
-			
+
+			if (html.contains(inicioTituloForm))
+				htmlTitulo = html.substring(html.indexOf(inicioTituloForm)
+						+ inicioTituloForm.length(),
+						html.indexOf(fimTituloForm));
+
 			String inicioMiolo = "<!-- INICIO MIOLO -->";
 			String fimMiolo = "<!-- FIM MIOLO -->";
-			html = htmlTitulo + html.substring(html.indexOf(inicioMiolo) + inicioMiolo.length(),
-					html.indexOf(fimMiolo));
-	
-			
+			html = htmlTitulo
+					+ html.substring(
+							html.indexOf(inicioMiolo) + inicioMiolo.length(),
+							html.indexOf(fimMiolo));
+
 			for (ExMobil mob : doc.getExMobilSet()) {
 				if (mob.getExDocumentoFilhoSet() != null) {
 					String inicioTitulo = "<!-- INICIO NUMERO -->";
 					String fimTitulo = "<!-- FIM NUMERO -->";
-				for (ExDocumento docFilho : mob.getExDocumentoFilhoSet()) {
-					//Verifica se docFilho é do tipo anexo
-					if(docFilho.getExFormaDocumento().getIdFormaDoc() == 60) {
-						String htmlFilho = docFilho.getConteudoBlobHtmlString();
-						html = html + htmlFilho.substring(htmlFilho.indexOf(inicioTitulo) + inicioTitulo.length(),
-								htmlFilho.indexOf(fimTitulo));
-						html = html + htmlFilho.substring(htmlFilho.indexOf(inicioMiolo) + inicioMiolo.length(),
-								htmlFilho.indexOf(fimMiolo));
+					for (ExDocumento docFilho : mob.getExDocumentoFilhoSet()) {
+						// Verifica se docFilho Ã© do tipo anexo
+						if (docFilho.getExFormaDocumento().getIdFormaDoc() == 60) {
+							String htmlFilho = docFilho
+									.getConteudoBlobHtmlString();
+							html = html
+									+ htmlFilho.substring(
+											htmlFilho.indexOf(inicioTitulo)
+													+ inicioTitulo.length(),
+											htmlFilho.indexOf(fimTitulo));
+							html = html
+									+ htmlFilho.substring(
+											htmlFilho.indexOf(inicioMiolo)
+													+ inicioMiolo.length(),
+											htmlFilho.indexOf(fimMiolo));
+						}
 					}
 				}
-				}
 			}
-	
+
 			html = (new ProcessadorHtml()).canonicalizarHtml(html, true, false,
 					true, true, false);
 			html = "<?xml version='1.0' encoding='utf-8' ?> <!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"> <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\"><body>"
 					+ html + "</body></html>";
-			
+
 			html = removerTabela(html);
-			
-			byte[] baHtml = html.getBytes();			
+
+			byte[] baHtml = html.getBytes();
 			if (baHtml.length > 1.0 * 1024 * 1024)
 				throw new AplicacaoException(
-						"O tamanho do arquivo a ser publicado é maior do que a capacidade suportada.");			
+						"O tamanho do arquivo a ser publicado Ã© maior do que a capacidade suportada.");
 			ConversorHtml conversor = new FOP("xhtml2foNovoSemStatic.xsl");
 			return conversor.converter(html, ConversorHtml.RTF);
 		} catch (Exception e) {
-			throw new AplicacaoException("Não foi possível ler o conteúdo do documento: " + e.getMessage());
+			throw new AplicacaoException(
+					"NÃ£o foi possÃ­vel ler o conteÃºdo do documento: "
+							+ e.getMessage());
 		}
 	}
 
 	private String removerTabela(String html) {
-		final String tags[] = { "<table", "</table", "<tr", "</tr", "<td", "</td", "<th", "</th", 
-								"<tbody", "</tbody", "<tfoot", "</tfoot", "<thead", "</thead", "<caption", "</caption"};
-		
+		final String tags[] = { "<table", "</table", "<tr", "</tr", "<td",
+				"</td", "<th", "</th", "<tbody", "</tbody", "<tfoot",
+				"</tfoot", "<thead", "</thead", "<caption", "</caption" };
+
 		for (String tag : tags) {
-			if(html.contains(tag)) {
+			if (html.contains(tag)) {
 				while (html.contains(tag)) {
 					int indiceInicial = html.indexOf(tag);
 					int indiceEncerramento = html.indexOf(">", indiceInicial);
-					
-					String textoParaRemover = html.substring(indiceInicial, indiceEncerramento + 1);
-					
+
+					String textoParaRemover = html.substring(indiceInicial,
+							indiceEncerramento + 1);
+
 					html = html.replaceAll(textoParaRemover, "");
 				}
 			}
 		}
-		
+
 		return html;
 	}
 
@@ -262,54 +262,53 @@ public class GeradorRTF {
 		html = html.replace("<!-- INICIO MIOLO -->", "<MIOLO>");
 		html = html.replace("<!-- FIM MIOLO -->", "</MIOLO>");
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			RtfWriter2.getInstance(document, baos);
+			document.open();
+			document.setMargins(29, 340, 29, 29);
+			parser.setInput(new StringReader(html));
 
-		RtfWriter2.getInstance(document, baos);
-		document.open();
-		document.setMargins(29, 340, 29, 29);
-		parser.setInput(new StringReader(html));
+			BaseFont arial = BaseFont.createFont(
+					"C:\\WINDOWS\\FONTS\\ARIAL.TTF", BaseFont.CP1252, true);
+			Font fonte = new Font(arial);
+			fonte.setSize(7);
+			Paragraph paragrafoBase = new Paragraph("", fonte);
 
-		BaseFont arial = BaseFont.createFont("C:\\WINDOWS\\FONTS\\ARIAL.TTF",
-				BaseFont.CP1252, true);
-		Font fonte = new Font(arial);
-		fonte.setSize(7);
-		Paragraph paragrafoBase = new Paragraph("", fonte);
+			paragrafoBase.add("\t"
+					+ doc.getOrgaoUsuario().getDescricaoMaiusculas());
+			paragrafoBase.add("\n\n");
+			paragrafoBase.add("\t"
+					+ doc.getExFormaDocumento().getDescricao().toUpperCase()
+					+ " " + doc.getCodigoString());
+			if (doc.getDtDocDDMMYY() != null
+					&& doc.getDtDocDDMMYY().length() > 0)
+				paragrafoBase.add(" DE " + doc.getDtDocDDMMYY());
+			paragrafoBase.add("\n\n");
 
-		paragrafoBase
-				.add("\t" + doc.getOrgaoUsuario().getDescricaoMaiusculas());
-		paragrafoBase.add("\n\n");
-		paragrafoBase.add("\t"
-				+ doc.getExFormaDocumento().getDescricao().toUpperCase() + " "
-				+ doc.getCodigoString());
-		if (doc.getDtDocDDMMYY() != null && doc.getDtDocDDMMYY().length() > 0)
-			paragrafoBase.add(" DE " + doc.getDtDocDDMMYY());
-		paragrafoBase.add("\n\n");
+			try {
 
-		try {
+				seekTag("MIOLO");
+				paragrafoBase = (Paragraph) percorreProximoBloco(paragrafoBase,
+						0, true);
 
-			seekTag("MIOLO");
-			paragrafoBase = (Paragraph) percorreProximoBloco(paragrafoBase, 0,
-					true);
+				document.add(paragrafoBase);
+			} catch (XmlPullParserException xppe) {
+				int a = 2;
+			} catch (IOException ioe) {
+				int a = 2;
+			} finally {
+				document.close();
+			}
 
-			document.add(paragrafoBase);
-		} catch (XmlPullParserException xppe) {
-			int a = 2;
-		} catch (IOException ioe) {
-			int a = 2;
-		} finally {
-			document.close();
+			/*
+			 * Pattern p1 = Pattern .compile("^.<!-- INICIO MIOLO -->.<!-- FIM
+			 * MIOLO -->."); final Matcher m = p1.matcher(html);
+			 */
+
+			byte[] retorno = baos.toByteArray();
+
+			return retorno;
 		}
-
-		/*
-		 * Pattern p1 = Pattern .compile("^.<!-- INICIO MIOLO -->.<!--
-		 * FIM MIOLO -->."); final Matcher m = p1.matcher(html);
-		 */
-
-		byte[] retorno = baos.toByteArray();
-
-		baos.close();
-
-		return retorno;
 
 	}
 

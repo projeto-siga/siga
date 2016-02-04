@@ -3,7 +3,6 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 <mod:modelo>
 	<%--<input type="hidden" name="isFormularioPublicacao" value="true" />
@@ -11,13 +10,16 @@
 	<mod:entrevista>
 		<mod:grupo titulo="Dados referenciais">
 			<mod:grupo>
-				<mod:mensagem titulo="Tipo de Matéria:" />
+				<mod:mensagem titulo="Tipo de MatÃ©ria:" />
 				<c:choose>
 					<c:when test="${param.entrevista == 1}">
-						<ww:select
-							onchange="javascript:document.getElementById('descrTipoMateria').value=this.options[this.selectedIndex].text;document.getElementById('idTipoMateria').value=this.options[this.selectedIndex].value"
-							name="tipoMateria" value="idTipoMateria" list="listaPublicacao"
-							listKey="idDocPublicacaoString" listValue="nmDocPublicacao" />
+						<select  name="tipoMateria" onchange="javascript:document.getElementById('descrTipoMateria').value=this.options[this.selectedIndex].text;document.getElementById('idTipoMateria').value=this.options[this.selectedIndex].value">
+							<c:forEach items="${f:listaPublicacao(exDocumentoDTO.modelo.idMod)}" var="item">
+								<option value="${item.idDocPublicacaoString}" ${item.idDocPublicacao == idTipoMateria ? 'selected' : ''}>
+									${item.nmDocPublicacao}
+								</option>  
+							</c:forEach>
+						</select>
 					</c:when>
 					<c:otherwise>
 						<span class="valor">${descrTipoMateria}</span>
@@ -38,13 +40,13 @@
 				<input type="hidden" name="vars" value="descrTipoMateria" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="Título da Matéria" var="tituloMateria"
+				<mod:texto titulo="TÃ­tulo da MatÃ©ria" var="tituloMateria"
 					largura="40" />
 			</mod:grupo>
-			<mod:caixaverif titulo="Matéria de Juiz Distribuidor"
+			<mod:caixaverif titulo="MatÃ©ria de Juiz Distribuidor"
 				var="juizDistribuidor" />
 		</mod:grupo>
-		<mod:grupo titulo="Texto a ser inserido no corpo da publicação">
+		<mod:grupo titulo="Texto a ser inserido no corpo da publicaÃ§Ã£o">
 			<mod:grupo>
 				<mod:editor titulo="" var="texto_publicacao" />
 			</mod:grupo>
@@ -88,15 +90,15 @@
 						</tr>
 						<tr><td>&nbsp;</td></tr>
 						<tr>
-							<td align="left"><mod:letra tamanho="${tl}"><p>Título: ${tituloMateria}</p></mod:letra></td>
+							<td align="left"><mod:letra tamanho="${tl}"><p>TÃ­tulo: ${tituloMateria}</p></mod:letra></td>
 						</tr>
 						<tr><td>&nbsp;</td></tr>
 						<tr>
-							<td align="left"><mod:letra tamanho="${tl}"><p>Tipo de Matéria: ${descrTipoMateria}</p></mod:letra></td>
+							<td align="left"><mod:letra tamanho="${tl}"><p>Tipo de MatÃ©ria: ${descrTipoMateria}</p></mod:letra></td>
 						</tr>
 						<tr><td>&nbsp;</td></tr>
 						<tr>
-							<td align="left"><mod:letra tamanho="${tl}"><p>Lotação de Origem: <c:if test="${not empty doc.lotaSubscritorEfetiva}">${doc.lotaSubscritorEfetiva.siglaLotacao}</c:if></p></mod:letra></td>
+							<td align="left"><mod:letra tamanho="${tl}"><p>LotaÃ§Ã£o de Origem: <c:if test="${not empty doc.lotaSubscritorEfetiva}">${doc.lotaSubscritorEfetiva.siglaLotacao}</c:if></p></mod:letra></td>
 						</tr>
 					</table>
 				</td>
@@ -108,7 +110,7 @@
 		<c:import url="/paginas/expediente/modelos/inc_cabecalhoEsquerda.jsp" />
 		FIM CABECALHO -->
 		
-		<!-- INICIO NUMERO <p style="font-family: Arial; font-size: 11pt; font-weight: bold;"align="left">Publicaçã N&ordm; ${doc.codigo}</p> FIM NUMERO -->
+		<!-- INICIO NUMERO <p style="font-family: Arial; font-size: 11pt; font-weight: bold;"align="left">PublicaÃ§Ã£ N&ordm; ${doc.codigo}</p> FIM NUMERO -->
 		<!-- INICIO TITULO 
 				<mod:letra tamanho="${tl}">
 					<p>${tituloMateria}</p>

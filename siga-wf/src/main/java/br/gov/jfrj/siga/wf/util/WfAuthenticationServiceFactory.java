@@ -22,7 +22,7 @@ import org.jbpm.security.authentication.DefaultAuthenticationServiceFactory;
 import org.jbpm.svc.Service;
 
 /**
- * Classe que representa uma f·brica de serviÁos de autenticaÁ„o.
+ * Classe que representa uma f√°brica de servi√ßos de autentica√ß√£o.
  * @author kpf
  *
  */
@@ -32,7 +32,7 @@ public class WfAuthenticationServiceFactory extends
 	WfAuthenticationService as = null;
 
 	/**
-	 * Fecha a f·brica.
+	 * Fecha a f√°brica.
 	 */
 	@Override
 	public void close() {
@@ -41,7 +41,7 @@ public class WfAuthenticationServiceFactory extends
 	}
 
 	/**
-	 * Retorna um serviÁo de autenticaÁ„o WfAuthenticationService.
+	 * Retorna um servi√ßo de autentica√ß√£o WfAuthenticationService.
 	 */
 	@Override
 	public Service openService() {

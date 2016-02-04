@@ -5,13 +5,13 @@
 	<mod:entrevista>
 		<mod:grupo>
 			<mod:grupo>
-				<mod:lotacao titulo="Lotação" var="lotacao" reler="sim" />
+				<mod:lotacao titulo="LotaÃ§Ã£o" var="lotacao" reler="sim" />
 			</mod:grupo>
 
 			<input type="hidden" id="atualizandoCaixaVerif"
 				name="atualizandoCaixaVerif" />
 			<mod:caixaverif var="subLotacoes" reler="sim" marcado="Sim"
-				titulo="Incluir Sublotações"
+				titulo="Incluir SublotaÃ§Ãµes"
 				onclique="javascript:document.getElementById('atualizandoCaixaVerif').value=1;" />
 			<c:if test="${requestScope['subLotacoes'] eq 'Sim'}">
 				<c:set var="testarSubLotacoes" value="true" />
@@ -22,7 +22,7 @@
 
 		</mod:grupo>
 
-		<%-- O bloco abaixo carrega do BD as pessoas de um lotação, apenas quando a lotação muda --%>
+		<%-- O bloco abaixo carrega do BD as pessoas de um lotaÃ§Ã£o, apenas quando a lotaÃ§Ã£o muda --%>
 		<mod:ler var="siglaLotacaoAnterior" />
 		<c:choose>
 			<c:when
@@ -55,7 +55,7 @@
 			<table border="0" cellspacing="0" width="90%">
 				<tr>
 					<td width="40%" align="left"><b>Nome</b></td>
-					<td width="10%" align="center"><b>Matrícula</b></td>
+					<td width="10%" align="center"><b>MatrÃ­cula</b></td>
 					<td width="35%" align="left"><b>Cargo</b></td>
 					<td width="15%" align="left"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Voucher</b></td>
 				</tr>
@@ -79,18 +79,18 @@
 			</table>
 			<br />
 			<mod:grupo>
-				<mod:mensagem titulo="Total de pessoas por Lotação :" />
+				<mod:mensagem titulo="Total de pessoas por LotaÃ§Ã£o :" />
 				<b>${contadorDePessoas}</b>
 			</mod:grupo>
 		</c:if>
 		<mod:grupo>
 			<mod:selecao titulo="Deseja incluir mais servidores?"
-				var="servIncluidos" opcoes="Não;Sim" reler="ajax" idAjax="servIncl" />
+				var="servIncluidos" opcoes="NÃ£o;Sim" reler="ajax" idAjax="servIncl" />
 		</mod:grupo>
 		<mod:grupo depende="servIncl">
 			<c:if test="${servIncluidos eq 'Sim'}">
 				<mod:grupo>
-					<mod:selecao titulo="Nº de Servidor(es) Incluido(s) "
+					<mod:selecao titulo="NÂº de Servidor(es) Incluido(s) "
 						var="numServIncluidos"
 						opcoes="1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30"
 						reler="ajax" idAjax="numServIncl" />
@@ -184,7 +184,7 @@
 				cellspacing="1" bgcolor="#000000">
 				<tr>
 					<td width="50%" align="left"><b>Nome</b></td>
-					<td width="15%" align="center"><b>Matrícula</b></td>
+					<td width="15%" align="center"><b>MatrÃ­cula</b></td>
 					<td width="25%" align="center"><b>Voucher</b></td>
 				</tr>
 			</table>

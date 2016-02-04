@@ -1,4 +1,4 @@
---AlteraÁıes estruturais
+--Altera√ß√µes estruturais
 /*
 create table EX_TIPO_MOBIL (
   ID_TIPO_MOBIL    number,
@@ -73,11 +73,11 @@ CREATE INDEX MOVIMENTACAO_LOTA_RESP_E_DATA  ON EX_MOVIMENTACAO (ID_LOTA_RESP, DT
 CREATE INDEX id_mov_ref_idx ON ex_movimentacao(id_mov_ref);
 
 
---InserÁ„o de dados
+--Inser√ß√£o de dados
 /*
 insert into EX_TIPO_MOBIL values(1, 'Geral');
 insert into EX_TIPO_MOBIL values(2, 'Via');
-insert into EX_TIPO_MOBIL values(3, 'CÛpia');
+insert into EX_TIPO_MOBIL values(3, 'C√≥pia');
 insert into EX_TIPO_MOBIL values(4, 'Volume');
 
 insert into EX_TIPO_FORMA_DOCUMENTO values(1, 'Expediente',0);
@@ -88,7 +88,7 @@ insert into EX_TIPO_FORMA_DOCUMENTO values(2, 'Processo Administrativo',1);
 
 --insert into EX_FORMA_DOCUMENTO(id_forma_doc, id_tipo_forma_doc, descr_forma_doc, sigla_forma_doc)  values (55, 2, 'Processo Administrativo','ADM');
 --insert into EX_FORMA_DOCUMENTO(id_forma_doc, id_tipo_forma_doc, descr_forma_doc, sigla_forma_doc)  values (56, 2, 'Processo de Pessoal','RHU');
---insert into EX_FORMA_DOCUMENTO(id_forma_doc, id_tipo_forma_doc, descr_forma_doc, sigla_forma_doc)  values (57, 2, 'Processo de ExecuÁ„o OrÁament·ria e Financeira','EOF');
+--insert into EX_FORMA_DOCUMENTO(id_forma_doc, id_tipo_forma_doc, descr_forma_doc, sigla_forma_doc)  values (57, 2, 'Processo de Execu√ß√£o Or√ßament√°ria e Financeira','EOF');
 --insert into EX_FORMA_DOCUMENTO(id_forma_doc, id_tipo_forma_doc, descr_forma_doc, sigla_forma_doc)  values (58, 2, 'Processo do Conselho Consultivo','CCO');
 /* inseri tipo Pauta */
 insert into SIGA.EX_FORMA_DOCUMENTO (ID_FORMA_DOC, DESCR_FORMA_DOC, SIGLA_FORMA_DOC, ID_TIPO_FORMA_DOC) values (63,'Pauta','PTA',1);
@@ -109,39 +109,39 @@ insert into EX_MODELO values(514, 'Processo Administrativo', null, null, null, '
 insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (536,'Pauta','pauta.jsp',63);
 /*inserindo parecer*/
 insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_CLASSIFICACAO, ID_FORMA_DOC) values (519,'Parecer','parecer.jsp',171,14);
-/*inserindo Carta de IntimaÁ„o*/
-insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (520,'Carta de intimaÁ„o','cartaIntimacao.jsp',11);
+/*inserindo Carta de Intima√ß√£o*/
+insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (520,'Carta de intima√ß√£o','cartaIntimacao.jsp',11);
 /*inserindo Mandado*/
 insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_CLASSIFICACAO, ID_FORMA_DOC) values (522,'Mandado','mandado.jsp',1368,44);
-/*inserindo SolicitaÁ„o de fornecimento registro de preÁos*/
-insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (543,'SolicitaÁ„o de fornecimento registro de preÁos','solicitacaoFornRegPrecos.jsp',13);
-/*inserindo Registro de preÁos */
-insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (544,'Registro de preÁos','registroPrecos.jsp',3);
-/*inserindo Certid„o de encerramendo de volume*/
-insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (545,'Certid„o de encerramendo de volume','certidaoEncerramentoVolume.jsp',15);
+/*inserindo Solicita√ß√£o de fornecimento registro de pre√ßos*/
+insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (543,'Solicita√ß√£o de fornecimento registro de pre√ßos','solicitacaoFornRegPrecos.jsp',13);
+/*inserindo Registro de pre√ßos */
+insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (544,'Registro de pre√ßos','registroPrecos.jsp',3);
+/*inserindo Certid√£o de encerramendo de volume*/
+insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (545,'Certid√£o de encerramendo de volume','certidaoEncerramentoVolume.jsp',15);
 /*inserindo Folha inicial de volume - EOF*/
 insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (546,'Folha inicial de volume - EOF','folhaInicialVolume.jsp',3);
 /*inserindo Atesto*/
 insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (547,'Atesto','atesto.jsp',3);
 /*inserindo Juntada */
 insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (528,'Juntada','juntada.jsp',3);
-/*inserindo Certid„o de desentranhamento*/
-insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (529,'Certid„o de desentranhamento','certidaoDesentranhamento.jsp',15 );
-/*inserindo Certid„o*/
-insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (532,'Certid„o','certidaoGeral.jsp',15 );
+/*inserindo Certid√£o de desentranhamento*/
+insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (529,'Certid√£o de desentranhamento','certidaoDesentranhamento.jsp',15 );
+/*inserindo Certid√£o*/
+insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (532,'Certid√£o','certidaoGeral.jsp',15 );
 /*inserindo Processo de Pessoal*/
 insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (533,'Processo de Pessoal','processoAdministrativo.jsp',56 );
-/*inserindo Processo de ExecuÁ„o OrÁament·ria Financeira*/
-insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (534,'Processo de ExecuÁ„o OrÁament·ria Financeira','processoAdministrativo.jsp',57 );
+/*inserindo Processo de Execu√ß√£o Or√ßament√°ria Financeira*/
+insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (534,'Processo de Execu√ß√£o Or√ßament√°ria Financeira','processoAdministrativo.jsp',57 );
 /*inserindo Processo do Conselho Consultivo*/
 insert into SIGA.EX_MODELO (ID_MOD, NM_MOD, NM_ARQ_MOD, ID_FORMA_DOC) values (535,'Processo do Conselho Consultivo','processoAdministrativo.jsp',58 );
 
-insert into EX_TIPO_MOVIMENTACAO values(41,'ApensaÁ„o');
-insert into EX_TIPO_MOVIMENTACAO values(42,'DesapensaÁ„o');
+insert into EX_TIPO_MOVIMENTACAO values(41,'Apensa√ß√£o');
+insert into EX_TIPO_MOVIMENTACAO values(42,'Desapensa√ß√£o');
 
 insert into EX_TIPO_MOVIMENTACAO values(43,'Encerramento');
 
-insert into SIGA.EX_TIPO_CONFIGURACAO (ID_TP_CONFIGURACAO, DSC_TP_CONFIGURACAO, ID_SIT_CONFIGURACAO) values (29, 'Cancelar MovimentaÁ„o', 2);
+insert into SIGA.EX_TIPO_CONFIGURACAO (ID_TP_CONFIGURACAO, DSC_TP_CONFIGURACAO, ID_SIT_CONFIGURACAO) values (29, 'Cancelar Movimenta√ß√£o', 2);
 insert into SIGA.EX_CONFIGURACAO (ID_CONFIGURACAO, ID_TP_MOV,  DT_INI_REG, ID_SIT_CONFIGURACAO, ID_TP_CONFIGURACAO) values ((select max(id_configuracao) + 1 from siga.ex_configuracao), 2, sysdate, 1, 29);
 
 insert into SIGA.EX_CONFIGURACAO (ID_CONFIGURACAO, ID_TP_MOV,  DT_INI_REG, ID_SIT_CONFIGURACAO, ID_TP_CONFIGURACAO) values ((select max(id_configuracao) + 1 from siga.ex_configuracao), 5, sysdate, 1, 29);
@@ -152,7 +152,7 @@ insert into SIGA.EX_CONFIGURACAO (ID_CONFIGURACAO, ID_MOD, ID_SIT_CONFIGURACAO, 
 insert into SIGA.EX_CONFIGURACAO (ID_CONFIGURACAO, ID_MOD, ID_SIT_CONFIGURACAO, ID_TP_CONFIGURACAO) values ((select max(id_configuracao) + 1 from siga.ex_configuracao),545,2,2);
 
 /*
- * Script que converte a base de dados prÈ_mobil para a vers„o com mobil
+ * Script que converte a base de dados pr√©_mobil para a vers√£o com mobil
  * 
  */
 
@@ -161,7 +161,7 @@ DROP SEQUENCE SEQ_LOG_CONVERSAO_MOBIL;
 CREATE TABLE LOG_CONVERSAO_MOBIL (ID_LOG INTEGER, TEXTO VARCHAR(100));
 CREATE SEQUENCE SEQ_LOG_CONVERSAO_MOBIL;
 
-/* PROCEDURE DESABILITADA POR TER PRIVIL…GIOS INSUFICIENTES */
+/* PROCEDURE DESABILITADA POR TER PRIVIL√âGIOS INSUFICIENTES */
 
 /*CREATE PROCEDURE LOGAR(TEXTO IN VARCHAR(100)) AUTHID CURRENT_USER IS
 
@@ -192,13 +192,13 @@ DECLARE
 
 BEGIN
 
-  /*LOG*/INSERT INTO LOG_CONVERSAO_MOBIL VALUES (SEQ_LOG_CONVERSAO_MOBIL.NEXTVAL,'---->INICIANDO CONVERS√O...');
+  /*LOG*/INSERT INTO LOG_CONVERSAO_MOBIL VALUES (SEQ_LOG_CONVERSAO_MOBIL.NEXTVAL,'---->INICIANDO CONVERS√ÉO...');
 
   FOR DOC IN QRY_DOC LOOP
     OPEN QRY_MOB_GERAL FOR SELECT ID_MOBIL FROM EX_MOBIL WHERE ID_TIPO_MOBIL=1 AND ID_DOC=DOC.ID_DOC;
     FETCH QRY_MOB_GERAL INTO QRY_MOB_GERAL_ID_MOBIL;
     IF QRY_MOB_GERAL%notfound THEN
-      /*CRIA MOBIL GERAL CASO N√O EXISTA*/
+      /*CRIA MOBIL GERAL CASO N√ÉO EXISTA*/
       INSERT INTO EX_MOBIL (ID_MOBIL,ID_DOC,ID_TIPO_MOBIL,NUM_SEQUENCIA) VALUES (EX_MOBIL_SEQ.NEXTVAL,DOC.ID_DOC,1, 1);
     END IF;
 
@@ -232,17 +232,17 @@ BEGIN
 
   END LOOP;
 
-  /*LOG*/INSERT INTO LOG_CONVERSAO_MOBIL VALUES (SEQ_LOG_CONVERSAO_MOBIL.NEXTVAL,'---->CONVERS√O FINALIZADA!');
+  /*LOG*/INSERT INTO LOG_CONVERSAO_MOBIL VALUES (SEQ_LOG_CONVERSAO_MOBIL.NEXTVAL,'---->CONVERS√ÉO FINALIZADA!');
   COMMIT;
 
-  /*LOG*/INSERT INTO LOG_CONVERSAO_MOBIL VALUES (SEQ_LOG_CONVERSAO_MOBIL.NEXTVAL,'---->ATUALIZANDO REFER NCIA DE ID_DOC_PAI, ID_DOC_REF, NUM_VA_DOC_PAI,NUM_VIA_DOC_REF!');
+  /*LOG*/INSERT INTO LOG_CONVERSAO_MOBIL VALUES (SEQ_LOG_CONVERSAO_MOBIL.NEXTVAL,'---->ATUALIZANDO REFER√äNCIA DE ID_DOC_PAI, ID_DOC_REF, NUM_VA_DOC_PAI,NUM_VIA_DOC_REF!');
 
 	UPDATE EX_MOVIMENTACAO MOV SET ID_MOB_REF=(SELECT ID_MOBIL FROM EX_MOBIL WHERE ID_DOC = MOV.ID_DOC_REF AND NUM_SEQUENCIA = MOV.NUM_VIA_DOC_REF AND ID_TIPO_MOBIL = 2);
 	UPDATE EX_MOVIMENTACAO MOV SET ID_MOB_REF=(SELECT ID_MOBIL FROM EX_MOBIL WHERE ID_DOC = MOV.ID_DOC_PAI AND NUM_SEQUENCIA = MOV.NUM_VIA_DOC_PAI AND ID_TIPO_MOBIL = 2) WHERE ID_MOB_REF IS NULL AND ID_TP_MOV=12;
 	UPDATE EX_MOVIMENTACAO MOV SET ID_MOB_REF=(SELECT ID_MOB_REF FROM EX_MOVIMENTACAO M WHERE M.ID_MOV = MOV.ID_MOV_REF) WHERE ID_MOB_REF IS NULL AND ID_TP_MOV=13;
-  --ATUALIZA REFER NCIA DE ID_DOC_PAI, ID_DOC_REF, NUM_VA_DOC_PAI,NUM_VIA_DOC_REF
+  --ATUALIZA REFER√äNCIA DE ID_DOC_PAI, ID_DOC_REF, NUM_VA_DOC_PAI,NUM_VIA_DOC_REF
   
-  /*LOG*/INSERT INTO LOG_CONVERSAO_MOBIL VALUES (SEQ_LOG_CONVERSAO_MOBIL.NEXTVAL,'---->ATUALIZA«√O DE REFER NCIA DE ID_DOC_PAI, ID_DOC_REF, NUM_VA_DOC_PAI,NUM_VIA_DOC_REF FINALIZADA!');
+  /*LOG*/INSERT INTO LOG_CONVERSAO_MOBIL VALUES (SEQ_LOG_CONVERSAO_MOBIL.NEXTVAL,'---->ATUALIZA√á√ÉO DE REFER√äNCIA DE ID_DOC_PAI, ID_DOC_REF, NUM_VA_DOC_PAI,NUM_VIA_DOC_REF FINALIZADA!');
   COMMIT;
   
   
@@ -250,13 +250,13 @@ BEGIN
 END;
 
 
---inclus„o das marcas no bd corporativo
+--inclus√£o das marcas no bd corporativo
 
 
--- A ser executado pelo usu·rio SIGA
+-- A ser executado pelo usu√°rio SIGA
 grant REFERENCES on EX_MOBIL to CORPORATIVO;
 
--- A ser executado pelo usu·rio CORPORATIVO
+-- A ser executado pelo usu√°rio CORPORATIVO
 
 create table CORPORATIVO.CP_TIPO_MARCADOR (
   ID_TP_MARCADOR    number,
@@ -277,12 +277,12 @@ grant SELECT on CP_MARCADOR to SIGA;
 
 insert into CP_TIPO_MARCADOR values(1, 'Sistema');
 insert into CP_TIPO_MARCADOR values(2, 'Geral');
-insert into CP_TIPO_MARCADOR values(3, 'LotaÁ„o e sublotaÁıes');
-insert into CP_TIPO_MARCADOR values(4, 'LotaÁ„o');
+insert into CP_TIPO_MARCADOR values(3, 'Lota√ß√£o e sublota√ß√µes');
+insert into CP_TIPO_MARCADOR values(4, 'Lota√ß√£o');
 insert into CP_TIPO_MARCADOR values(5, 'Pessoa');
 
 
-insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (1,	'Em ElaboraÁ„o', 1);
+insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (1,	'Em Elabora√ß√£o', 1);
 insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (2,	'Em Andamento', 1);
 insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (3,	'A Receber', 1);
 insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (4,	'Extraviado', 1);
@@ -292,18 +292,18 @@ insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR
 insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (8,	'Descartado', 1);
 insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (9,	'Juntado', 1);
 insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (10, 'Cancelado', 1);
-insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (11, 'Transferido para ”rg„o Externo', 1);
-insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (12, 'Arquivado Intermedi·rio', 1);
+insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (11, 'Transferido para √ìrg√£o Externo', 1);
+insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (12, 'Arquivado Intermedi√°rio', 1);
 insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (13, 'Arquivado Permanente', 1);
 insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (14, 'Caixa de Entrada', 1);
 insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (15, 'Pendente de Assinatura', 1);
 insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (16, 'Juntado a Documento Externo', 1);
-insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (18, 'Remetido para PublicaÁ„o', 1);
+insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (18, 'Remetido para Publica√ß√£o', 1);
 insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (20, 'Publicado', 1);
-insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (21, 'PublicaÁ„o solicitada', 1);
+insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (21, 'Publica√ß√£o solicitada', 1);
 insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (22, 'Disponibilizado', 1);
-insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (23, 'Em Tr‚nsito', 1);
-insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (24, 'Em Tr‚nsito EletrÙnico', 1);
+insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (23, 'Em Tr√¢nsito', 1);
+insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (24, 'Em Tr√¢nsito Eletr√¥nico', 1);
 insert into CORPORATIVO.CP_MARCADOR (ID_MARCADOR, DESCR_MARCADOR, ID_TP_MARCADOR) VALUES (25, 'Como Subscritor', 1);
 insert into CP_MARCADOR values(26 ,'Apensado',1);
 insert into CP_MARCADOR values(27 ,'Como Gestor',1);
@@ -349,9 +349,9 @@ grant UPDATE on CP_MARCA to SIGA;
 grant DELETE on CP_MARCA to SIGA;
 Grant select on CORPORATIVO.CP_MARCA_SEQ  to SIGA;
 
--- A ser executado pelo usu·rio SIGA
+-- A ser executado pelo usu√°rio SIGA
 
--- INCLUS√O DO PAPEL
+-- INCLUS√ÉO DO PAPEL
 
 CREATE TABLE EX_PAPEL (
   ID_PAPEL NUMBER,
@@ -365,7 +365,7 @@ ALTER TABLE EX_MOVIMENTACAO ADD FOREIGN KEY (ID_PAPEL) REFERENCES EX_PAPEL;
 INSERT INTO EX_PAPEL (ID_PAPEL,DESC_PAPEL) VALUES (1,'Gestor');
 INSERT INTO EX_PAPEL (ID_PAPEL,DESC_PAPEL) VALUES (2,'Interessado');
 
-INSERT INTO EX_TIPO_MOVIMENTACAO (ID_TP_MOV,DESCR_TIPO_MOVIMENTACAO) VALUES (44,'VinculaÁ„o de Papel');
+INSERT INTO EX_TIPO_MOVIMENTACAO (ID_TP_MOV,DESCR_TIPO_MOVIMENTACAO) VALUES (44,'Vincula√ß√£o de Papel');
 
 insert into SIGA.EX_CONFIGURACAO (ID_CONFIGURACAO, ID_TP_MOV,  DT_INI_REG, ID_SIT_CONFIGURACAO, ID_TP_CONFIGURACAO) values ((select max(id_configuracao) + 1 from siga.ex_configuracao), 44, sysdate, 1, 29);
 

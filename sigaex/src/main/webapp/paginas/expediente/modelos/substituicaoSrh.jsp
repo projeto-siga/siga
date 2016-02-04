@@ -11,38 +11,38 @@
 
 <mod:modelo>
 	<mod:entrevista>
-		<mod:grupo titulo="DETALHES DA SUBSTITUI«√O" />
+		<mod:grupo titulo="DETALHES DA SUBSTITUI√á√ÉO" />
 		<mod:selecao
-			titulo="Informe o n˙mero de Funcion·rios que constar„o na SubstituiÁ„o"
+			titulo="Informe o n√∫mero de Funcion√°rios que constar√£o na Substitui√ß√£o"
 			var="numeroFuncionarios" opcoes="1;2;3;4;5;6;7;8;9;10" reler="sim" />
 		<c:forEach var="m" begin="1" end="${numeroFuncionarios}">
-			<mod:grupo titulo="Dados do Funcion·rio Substituto ${m}">
+			<mod:grupo titulo="Dados do Funcion√°rio Substituto ${m}">
 				<mod:texto titulo="Nome" var="nomeServidor${m}" largura="62"
 					maxcaracteres="60" />
-				<mod:texto titulo="MatrÌcula" var="matriculaServidor${m}"
+				<mod:texto titulo="Matr√≠cula" var="matriculaServidor${m}"
 					largura="12" maxcaracteres="10" />
 			</mod:grupo>
-			<mod:grupo titulo="Dados do Funcion·rio Titular">
-				<mod:texto titulo="Titular do Cargo/FunÁ„o"
+			<mod:grupo titulo="Dados do Funcion√°rio Titular">
+				<mod:texto titulo="Titular do Cargo/Fun√ß√£o"
 					var="titularCargoServidor${m}" largura="65" maxcaracteres="60" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:texto titulo="LotaÁ„o" var="lotacaoServidor${m}" largura="45"
+				<mod:texto titulo="Lota√ß√£o" var="lotacaoServidor${m}" largura="45"
 					maxcaracteres="43" />
 				<mod:texto titulo="Cargo" var="cargoServidor${m}" largura="45"
 					maxcaracteres="43" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:data titulo="Data InÌcio substituiÁ„o" var="dataInicio${m}" />
+				<mod:data titulo="Data In√≠cio substitui√ß√£o" var="dataInicio${m}" />
 				<mod:data titulo="data Fim" var="dataFim${m}" />
 			</mod:grupo>
 			<mod:grupo>
-				<mod:memo titulo="Documento de IndicaÁ„o"
+				<mod:memo titulo="Documento de Indica√ß√£o"
 					var="documentoIndicacao${m}" linhas="4" colunas="60" />
 			</mod:grupo>
 		</c:forEach>
 		<mod:grupo>
-			<mod:memo titulo="Texto a ser inserido no corpo da DesignaÁ„o"
+			<mod:memo titulo="Texto a ser inserido no corpo da Designa√ß√£o"
 				var="texto_oficio" linhas="4" colunas="60" />
 		</mod:grupo>
 	</mod:entrevista>
@@ -68,25 +68,25 @@
 
 		<p>&nbsp;</p>
 		<!-- INICIO ABERTURA --><p style="TEXT-INDENT: 1.5cm" align="justify">A DIRETORA DA
-		SUBSECRETARIA DE GEST√O DE PESSOAS DA JUSTI«A FEDERAL - SE«√O
-		JUDICI¡RIA DO RIO DE JANEIRO, usando a competÍncia que lhe foi
-		delegada pela Portaria n∫ 011 - GDF, de 26 de marÁo de 2003,
+		SUBSECRETARIA DE GEST√ÉO DE PESSOAS DA JUSTI√áA FEDERAL - SE√á√ÉO
+		JUDICI√ÅRIA DO RIO DE JANEIRO, usando a compet√™ncia que lhe foi
+		delegada pela Portaria n¬∫ 011 - GDF, de 26 de mar√ßo de 2003,
 		${texto_oficio}, RESOLVE:<br><!-- FIM ABERTURA -->
 		<br>
 		<br>
-		DESIGNAR o(a) servidor(a) abaixo relacionados para substituÌrem seus<br>
-		respectivos titulares, em virtude de fÈrias regulamentares:<br>
+		DESIGNAR o(a) servidor(a) abaixo relacionados para substitu√≠rem seus<br>
+		respectivos titulares, em virtude de f√©rias regulamentares:<br>
 		<table width="100%" border="0" cellpadding="1">
 			<tr>
 				<td></td>
-				<td width="40%" align="center">Funcion·rio</td>
+				<td width="40%" align="center">Funcion√°rio</td>
 				<td width="60%" align="center">Dados Cadastrados</td>
 			</tr>
 		</table>
 		<table width="100%" border="0" cellpadding="1">
 			<c:forEach var="m" begin="1" end="${numeroFuncionarios}">
 				<tr>
-					<td width="40%">${m}∫ - Nome</td>
+					<td width="40%">${m}¬∫ - Nome</td>
 					<td width="60%">${requestScope[f:concat('nomeServidor',m)]}</td>
 				</tr>
 				<tr>
@@ -98,7 +98,7 @@
 					<td width="60%">${requestScope[f:concat('titularCargoServidor',m)]}</td>
 				</tr>
 				<tr>
-					<td width="40%">LotaÁ„o</td>
+					<td width="40%">Lota√ß√£o</td>
 					<td width="60%">${requestScope[f:concat('lotacaoServidor',m)]}</td>
 				</tr>
 				<tr>
@@ -106,12 +106,12 @@
 					<td width="60%">${requestScope[f:concat('cargoServidor',m)]}</td>
 				</tr>
 				<tr>
-					<td width="40%">PerÌodo</td>
-					<td width="60%">${requestScope[f:concat('dataInicio',m)]} atÈ
+					<td width="40%">Per√≠odo</td>
+					<td width="60%">${requestScope[f:concat('dataInicio',m)]} at√©
 					${requestScope[f:concat('dataFim',m)]}</td>
 				</tr>
 				<tr>
-					<td width="40%">Documento de IndicaÁ„o</td>
+					<td width="40%">Documento de Indica√ß√£o</td>
 					<td width="60%">${requestScope[f:concat('documentoIndicacao',m)]}</td>
 				</tr>
 			</c:forEach>
@@ -126,7 +126,7 @@
 		<br>
 
 		<p align="center">REGINA HELENA MOREIRA FARIA<br>
-		Diretora da Subsecretaria de Gest„o de Pessoas</p>
+		Diretora da Subsecretaria de Gest√£o de Pessoas</p>
 		<br>
 		<br>
 		<br>

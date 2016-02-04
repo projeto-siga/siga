@@ -40,7 +40,7 @@ public class HexadecimalColor {
 	 * @param corhexa
 	 *            Cor em hexadecimal no formato utilizado no HTML 4.0 (Ex:
 	 *            #FFFFFF ou FFFFFF).<br>
-	 *            Mais informações em <a
+	 *            Mais informaÃ§Ãµes em <a
 	 *            href="http://www.w3.org/TR/1998/REC-html40-19980424/sgml/loosedtd.html#Color"
 	 *            target="htmlspec">http://www.w3.org/TR/1998/REC-html40-19980424/sgml/loosedtd.html#Color</a>
 	 */
@@ -59,7 +59,7 @@ public class HexadecimalColor {
 	}
 
 	private static String hex(final int vd) {
-		// Retorna uma string em hexadecimal baseado em um número decimal com um
+		// Retorna uma string em hexadecimal baseado em um nÃºmero decimal com um
 		// formato adequado.
 		// Ex: FF
 		return (vd > 15 ? "" : "0") + Integer.toHexString(vd).toUpperCase();
@@ -73,7 +73,7 @@ public class HexadecimalColor {
  * *** empty log message ***
  *
  * Revision 1.3  2006/07/05 16:00:44  nts
- * Refatorando para melhorar qualidade do código
+ * Refatorando para melhorar qualidade do cÃ³digo
  *
  * Revision 1.2  2006/04/11 19:43:43  tah
  * *** empty log message ***

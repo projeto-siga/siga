@@ -155,7 +155,7 @@ public class HierarquizadorBoletimInterno {
 
 		ordemPorModelo = new HashMap<Long, Integer>();
 
-		NodoMaior nodoSede = new NodoMaior("SE«√O JUDICI¡RIA - SEDE");
+		NodoMaior nodoSede = new NodoMaior("SE√á√ÉO JUDICI√ÅRIA - SEDE");
 
 		nodoSede.getNodos().add(
 				new NodoMenor("PORTARIAS PGD", new DataComparator()));
@@ -163,7 +163,7 @@ public class HierarquizadorBoletimInterno {
 		ordemPorModelo.put(145L, 0);
 
 		nodoSede.getNodos().add(
-				new NodoMenor("ORDEM DE SERVI«O", new DataComparator()));
+				new NodoMenor("ORDEM DE SERVI√áO", new DataComparator()));
 
 		ordemPorModelo.put(76L, 1);
 		ordemPorModelo.put(148L, 1);
@@ -189,7 +189,7 @@ public class HierarquizadorBoletimInterno {
 		ordemPorModelo.put(85L, 4);
 
 		nodoSede.getNodos().add(
-				new NodoMenor("OFÕCIOS CIRCULARES", new DataComparator()));
+				new NodoMenor("OF√çCIOS CIRCULARES", new DataComparator()));
 
 
 		ordemPorModelo.put(84L, 5);
@@ -201,12 +201,12 @@ public class HierarquizadorBoletimInterno {
 		ordemPorModelo.put(233L, 6);
 
 		nodoSede.getNodos().add(
-				new NodoMenor("CONCESS√O DE DI¡RIAS", new DataComparator()));
+				new NodoMenor("CONCESS√ÉO DE DI√ÅRIAS", new DataComparator()));
 
 		ordemPorModelo.put(231L, 7);
 
 		nodoSede.getNodos().add(
-				new NodoMenor("TABELA DE CONCESS√O DE SUPRIMENTO DE FUNDOS",
+				new NodoMenor("TABELA DE CONCESS√ÉO DE SUPRIMENTO DE FUNDOS",
 						new DataComparator()));
 
 		ordemPorModelo.put(232L, 8);
@@ -223,22 +223,22 @@ public class HierarquizadorBoletimInterno {
 		nodosPrincipais.add(nodoSede);
 
 		NodoMaior nodoSubsecoes = new NodoMaior(
-				"PORTARIAS DAS SUBSE«’ES JUDICI¡RIAS",
+				"PORTARIAS DAS SUBSE√á√ïES JUDICI√ÅRIAS",
 				new DescricaoNodoComparator());
 		nodosPrincipais.add(nodoSubsecoes);
 	}
 
 	private void alocaDocumento(ExDocumento doc) {
 
-		// Se È matÈria do Rio...
+		// Se √© mat√©ria do Rio...
 		if ((doc.getExModelo().getHisIdIni() != 234 &&  doc.getLocalidadeString().trim().toLowerCase().equals(
 				"rio de janeiro")) ||
 				(doc.getExModelo().getHisIdIni() == 234 &&  !doc.getForm().containsKey("orgOrigem_lotacaoSel.descricao"))) {
 
-			// Se n„o existe subtÛpico no boletim pro modelo desse doc...
+			// Se n√£o existe subt√≥pico no boletim pro modelo desse doc...
 			if (!ordemPorModelo.containsKey(doc.getExModelo().getHisIdIni())) {
 
-				// Se È matÈria livre...
+				// Se √© mat√©ria livre...
 				if (doc.getExModelo().getHisIdIni() == 234) {
 					for (String chave : doc.getForm().keySet()) {
 						if (chave.contains("tipoMateria")) {
@@ -264,19 +264,19 @@ public class HierarquizadorBoletimInterno {
 						}
 					}
 
-					// Se n„o È matÈria livre...
+					// Se n√£o √© mat√©ria livre...
 				} else
 					nodosPrincipais.get(0).getNodos().get(11)
 							.getExDocumentoSet().add(doc);
 			}
 
-			// Se existe tÛpico pra esse modelo...
+			// Se existe t√≥pico pra esse modelo...
 			else
 				nodosPrincipais.get(0).getNodos().get(
 						ordemPorModelo.get(doc.getExModelo().getHisIdIni()))
 						.getExDocumentoSet().add(doc);
 
-			// Se È do interior...
+			// Se √© do interior...
 		} else {
 
 			if (!nodosPrincipais.get(1).contemNodo(

@@ -3,7 +3,6 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="ww" uri="/webwork"%>
 
 
 <mod:modelo>
@@ -23,10 +22,10 @@
 
 <c:if test="${tipo == 'Candidato'}">
 		<mod:grupo>
-			<mod:texto titulo="Cargo no qual dever· tomar posse" var="cargo" largura="30"/>
+			<mod:texto titulo="Cargo no qual dever√° tomar posse" var="cargo" largura="30"/>
 		</mod:grupo>
 				<mod:grupo>
-			<mod:texto titulo="¡rea referente ao cargo" var="area" largura="30" obrigatorio="Sim"/>
+			<mod:texto titulo="√Årea referente ao cargo" var="area" largura="30" obrigatorio="Sim"/>
 		</mod:grupo>
 				<mod:grupo>
 			<mod:data titulo="Data em que se exaure o prazo para a posse do(a) candidato(a)" var="data" obrigatorio="Sim"/>
@@ -59,15 +58,17 @@
 					<br/><br/>
 					<table width="100%" border="0" >
 						<tr>
-						<ww:if test="${tipo == 'Requisitado'}">
-							<td align="center"><mod:letra tamanho="${tl}"><p style="font-family:Arial;font-weight:bold" >GUIA PR&Eacute;-ADMISSIONAL/REQUISITADO</p></mod:letra></td>			   				
-						</ww:if>
-						<ww:else>
-			    			 <td align="center"><mod:letra tamanho="${tl}"><p style="font-family:Arial;font-weight:bold" >GUIA PR&Eacute;-ADMISSIONAL</p></mod:letra></td>	
-						</ww:else>								
+						<c:choose>									
+							<c:when test="${tipo == 'Requisitado'}">
+								<td align="center"><mod:letra tamanho="${tl}"><p style="font-family:Arial;font-weight:bold" >GUIA PR&Eacute;-ADMISSIONAL/REQUISITADO</p></mod:letra></td>			   				
+							</c:when>
+							<c:otherwise>										
+				    			 <td align="center"><mod:letra tamanho="${tl}"><p style="font-family:Arial;font-weight:bold" >GUIA PR&Eacute;-ADMISSIONAL</p></mod:letra></td>	
+							</c:otherwise>	
+						</c:choose>							
 						</tr>
 						<tr>
-						<td align="right"><br/><br/><br/><b>SOLICITA&Ccedil;&Atilde;O N∫ ${doc.codigo}</b>
+						<td align="right"><br/><br/><br/><b>SOLICITA&Ccedil;&Atilde;O N¬∫ ${doc.codigo}</b>
 						</td>
 						</tr>
 						<tr>
@@ -87,19 +88,19 @@
 		<mod:letra tamanho="${tl}">
 
 			<p style="TEXT-INDENT: 2cm" align="justify">
-			Sr.(a) Supervisor(a) da SeÁ„o de ServiÁos de Sa˙de<br/><br/>
+			Sr.(a) Supervisor(a) da Se√ß√£o de Servi√ßos de Sa√∫de<br/><br/>
 			
-			Solicito a V. S™ que ${nome}, do sexo ${sexo}, seja
-submetido(a) a Exame de Aptid„o FÌsica/Sanidade Mental para
+			Solicito a V. S¬™ que ${nome}, do sexo ${sexo}, seja
+submetido(a) a Exame de Aptid√£o F√≠sica/Sanidade Mental para
 
  <c:if	test="${tipo eq 'Candidato'}">
 
-efeito de posse no cargo de ${cargo}, ¡rea ${area}. Informo que o prazo para a posse se exaure em ${data}.
+efeito de posse no cargo de ${cargo}, √Årea ${area}. Informo que o prazo para a posse se exaure em ${data}.
 			
 			</c:if>
 			
 			 <c:if	test="${tipo eq 'Requisitado'}">
-			 o exercÌcio de funÁ„o comissionada/cargo em comiss„o.
+			 o exerc√≠cio de fun√ß√£o comissionada/cargo em comiss√£o.
 			 </c:if>
 			<br/><br/>
 			Atenciosamente,

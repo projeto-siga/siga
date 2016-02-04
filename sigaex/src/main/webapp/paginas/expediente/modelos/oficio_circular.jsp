@@ -5,9 +5,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <mod:modelo>
 	<mod:entrevista>
-		<mod:grupo titulo="Dados do destinatário">
+		<mod:grupo titulo="Dados do destinatÃ¡rio">
 			<mod:grupo>
-				<mod:texto titulo="Forma de endereçamento" var="enderecamento"
+				<mod:texto titulo="Forma de endereÃ§amento" var="enderecamento"
 					largura="30" />
 			</mod:grupo>
 			<mod:grupo>
@@ -22,7 +22,7 @@
 			<mod:grupo>
 				<mod:texto titulo="Vocativo" var="vocativo" largura="30" />
 			</mod:grupo>
-			<mod:grupo titulo="Texto a ser inserido no corpo do ofício">
+			<mod:grupo titulo="Texto a ser inserido no corpo do ofÃ­cio">
 				<mod:grupo>
 					<mod:editor titulo="" var="texto_oficio" />
 				</mod:grupo>

@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.logging.Logger;
 
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpPerfil;
@@ -32,6 +31,7 @@ import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -72,7 +72,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	public static int SERVICO = 14;
 
 	/**
-	 * Verifica se a configuraÁ„o È uma configuraÁ„o v·lida.
+	 * Verifica se a configura√ß√£o √© uma configura√ß√£o v√°lida.
 	 */
 	@Override
 	public boolean atendeExigencias(CpConfiguracao cfgFiltro,
@@ -213,19 +213,19 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 		return true;
 	}
 
-	public CpSituacaoConfiguracao buscaSituacao(ExConfiguracao exConfiguracao)
-			throws Exception {
-		CpConfiguracao cpConfiguracaoResult = buscaConfiguracao(exConfiguracao,
+	public CpSituacaoConfiguracao buscaSituacao(final ExConfiguracao exConfiguracao) {
+		final CpConfiguracao cpConfiguracaoResult = buscaConfiguracao(exConfiguracao,
 				new int[] { 0 }, ExDao.getInstance()
 						.consultarDataEHoraDoServidor());
-		if (cpConfiguracaoResult != null)
+		if (cpConfiguracaoResult != null) {
 			return cpConfiguracaoResult.getCpSituacaoConfiguracao();
-		else
+		} else {
 			return exConfiguracao.getCpTipoConfiguracao().getSituacaoDefault();
+		}
 	}
 
 	public CpSituacaoConfiguracao buscaSituacao(ExModelo mod, DpPessoa pess,
-			DpLotacao lota, long idTpConfig) throws Exception {
+			DpLotacao lota, long idTpConfig) {
 		ExConfiguracao exConfig = new ExConfiguracao();
 		exConfig.setDpPessoa(pess);
 		exConfig.setLotacao(lota);
@@ -235,9 +235,9 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 		return buscaSituacao(exConfig);
 
 	}
-	public CpSituacaoConfiguracao buscaSituacao(ExModelo mod, ExTipoDocumento tipo,DpPessoa pess,
-			DpLotacao lota, long idTpConfig) throws Exception {
-		ExConfiguracao exConfig = new ExConfiguracao();
+	public CpSituacaoConfiguracao buscaSituacao(final ExModelo mod, final ExTipoDocumento tipo, final DpPessoa pess,
+			final DpLotacao lota, final long idTpConfig) {
+		final ExConfiguracao exConfig = new ExConfiguracao();
 		exConfig.setDpPessoa(pess);
 		exConfig.setLotacao(lota);
 		exConfig.setExModelo(mod);
@@ -245,12 +245,11 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 		exConfig.setCpTipoConfiguracao(ExDao.getInstance().consultar(
 				idTpConfig, CpTipoConfiguracao.class, false));
 		return buscaSituacao(exConfig);
-
 	}
 
 	/**
 	 * 
-	 * MÈtodo com implementaÁ„o completa, chamado pelas outras sobrecargas
+	 * M√©todo com implementa√ß√£o completa, chamado pelas outras sobrecargas
 	 * 
 	 * @param exTpDoc
 	 * @param exFormaDoc
@@ -273,8 +272,8 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			ExModelo exMod, ExClassificacao exClassificacao, ExVia exVia,
 			ExTipoMovimentacao exTpMov, DpCargo cargo,
 			CpOrgaoUsuario cpOrgaoUsu, DpFuncaoConfianca dpFuncaoConfianca,
-			DpLotacao dpLotacao, DpPessoa dpPessoa, ExNivelAcesso nivelAcesso,
-			long idTpConf) throws Exception {
+			DpLotacao dpLotacao, DpPessoa dpPessoa, ExNivelAcesso nivelAcesso, CpTipoLotacao cpTpLotacao,
+			long idTpConf) {
 
 		
 		try {
@@ -286,6 +285,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			config.setDpPessoa(dpPessoa);
 			config.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
 					CpTipoConfiguracao.class, false));
+			config.setCpTipoLotacao(cpTpLotacao);
 
 			config.setCpServico(cpServico);
 			config.setExTipoFormaDoc(exTipoFormaDoc);
@@ -319,7 +319,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	/**
 	 * 
 	 * Usado para se verificar se uma pessoa pode realizar uma determinada
-	 * operaÁ„o no documento
+	 * opera√ß√£o no documento
 	 * 
 	 * @param dpPessoa
 	 * @param dpLotacao
@@ -327,16 +327,16 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			long idTpConf) throws Exception {
+			long idTpConf) {
 		return podePorConfiguracao(null, null, null, null, null, null, null,
-				null, null, null, null, null, dpLotacao, dpPessoa, null,
+				null, null, null, null, null, dpLotacao, dpPessoa, null,null,
 				idTpConf);
 
 	}
 
 	/**
 	 * 
-	 * Usado para se saber se uma pessoa pode fazer uma certa movimentaÁ„o
+	 * Usado para se saber se uma pessoa pode fazer uma certa movimenta√ß√£o
 	 * 
 	 * @param dpPessoa
 	 * @param dpLotacao
@@ -345,17 +345,17 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			long idTpMov, long idTpConf) throws Exception {
+			long idTpMov, long idTpConf) {
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov,
 				ExTipoMovimentacao.class, false);
 		return podePorConfiguracao(null, null, null, null, null, null, null,
-				null, exTpMov, null, null, null, dpLotacao, dpPessoa, null,
+				null, exTpMov, null, null, null, dpLotacao, dpPessoa, null,null,
 				idTpConf);
 	}
 	
 	/**
 	 * 
-	 * Usado para se saber se uma pessoa pode fazer uma certa movimentaÁ„o
+	 * Usado para se saber se uma pessoa pode fazer uma certa movimenta√ß√£o
 	 * 
 	 * @param dpPessoa
 	 * @param dpLotacao
@@ -368,22 +368,21 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov,
 				ExTipoMovimentacao.class, false);
 		return podePorConfiguracao(null, null, null, null, tipo, modelo, null,
-				null, exTpMov, cargo, null, funcaoConficanca, dpLotacao, dpPessoa, null,
+				null, exTpMov, cargo, null, funcaoConficanca, dpLotacao, dpPessoa, null,null,
 				idTpConf);
 	}	
 
 	public boolean podePorConfiguracao(ExModelo mod, long idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, null, null, null, null, mod, null,
-				null, null, null, null, null, null, null, null, idTpConf);
+				null, null, null, null, null, null, null, null, null,idTpConf);
 	}
 
-	public boolean podePorConfiguracao(ExModelo mod, long idTpMov, long idTpConf)
-			throws Exception {
+	public boolean podePorConfiguracao(ExModelo mod, long idTpMov, long idTpConf) {
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov,
 				ExTipoMovimentacao.class, false);
 		return podePorConfiguracao(null, null, null, null, null, mod, null,
-				null, exTpMov, null, null, null, null, null, null, idTpConf);
+				null, exTpMov, null, null, null, null, null, null, null,idTpConf);
 	}
 
 	/**
@@ -406,25 +405,46 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			ExNivelAcesso nivelAcesso, Long idTpConf) throws Exception {
 		return podePorConfiguracao(null, null, null, exTpDoc, exFormaDoc,
 				exMod, exClassif, null, null, null, null, null, lotacao,
-				dpPessoa, nivelAcesso, idTpConf);
+				dpPessoa, nivelAcesso, null,idTpConf);
 	}
+	
+	/**
+	 * 
+	 * @param dpPessoa
+	 * @param lotacao
+	 * @param exTpDoc
+	 * @param exFormaDoc
+	 * @param exMod
+	 * @param exClassif
+	 * @param nivelAcesso
+	 * @param idTpConf
+	 * @throws Exception
+	 */
+	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao lotacao,
+			ExTipoDocumento exTpDoc, ExFormaDocumento exFormaDoc,
+			ExModelo exMod, Long idTpConf) {
+		return podePorConfiguracao(null, null, null, exTpDoc, exFormaDoc,
+				exMod, null, null, null, null, null, null, lotacao,
+				dpPessoa, null, null,idTpConf);
+	}
+	
 	
 
 	/**
 	 * 
-	 * Usado para se saber se deve reiniciar a numeraÁ„o de um tipo de documento para um Ûrg„o
+	 * Usado para se saber se deve reiniciar a numera√ß√£o de um tipo de documento para um √≥rg√£o
 	 * 
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(CpOrgaoUsuario cpOrgaoUsu, ExFormaDocumento exFormaDoc, Long idTpConf) throws Exception {
 		return podePorConfiguracao(null, null, null, null, exFormaDoc, null, null, null,
-				null, null, cpOrgaoUsu, null, null, null, null, idTpConf); 
+				null, null, cpOrgaoUsu, null, null, null, null, null,idTpConf); 
 	}
 
 	/**
 	 * 
 	 * Usado para se saber se uma determinada pessoa pode criar um documento de
-	 * uma certa espÈcie
+	 * uma certa esp√©cie
 	 * 
 	 * @param dpPessoa
 	 * @param dpLotacao
@@ -433,15 +453,15 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			ExFormaDocumento forma, long idTpConf) throws Exception {
+			ExFormaDocumento forma, long idTpConf) {
 		return podePorConfiguracao(null, null, null, null, forma, null, null,
-				null, null, null, null, null, dpLotacao, dpPessoa, null,
+				null, null, null, null, null, dpLotacao, dpPessoa, null,null,
 				idTpConf);
 	}
 
 	/**
 	 * 
-	 * Usado para se verificar se um usu·rio pode criar um documento de um certo
+	 * Usado para se verificar se um usu√°rio pode criar um documento de um certo
 	 * modelo
 	 * 
 	 * @param dpPessoa
@@ -451,27 +471,27 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			ExModelo mod, long idTpConf) throws Exception {
+			ExModelo mod, long idTpConf) {
 		return podePorConfiguracao(null, null, null, null, null, mod, null,
-				null, null, null, null, null, dpLotacao, dpPessoa, null,
+				null, null, null, null, null, dpLotacao, dpPessoa, null,null,
 				idTpConf);
 	}
 
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, long idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, null, null, null, null, null, null,
-				null, null, null, null, null, null, dpPessoa, null, idTpConf);
+				null, null, null, null, null, null, dpPessoa, null, null,idTpConf);
 	}
 
 	public boolean podePorConfiguracao(DpLotacao dpLotacao, long idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, null, null, null, null, null, null,
-				null, null, null, null, null, dpLotacao, null, null, idTpConf);
+				null, null, null, null, null, dpLotacao, null, null, null,idTpConf);
 	}
 
 	// Pedro : Fim //
 	/**
-	 * Informa se um certo modelo pode sofrer uma certa movimentaÁ„o, por uma
+	 * Informa se um certo modelo pode sofrer uma certa movimenta√ß√£o, por uma
 	 * certa pessoa
 	 * 
 	 * @param dpPessoa
@@ -482,11 +502,11 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
-			ExModelo mod, long idTpMov, long idTpConf) throws Exception {
+			ExModelo mod, long idTpMov, long idTpConf) {
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov,
 				ExTipoMovimentacao.class, false);
 		return podePorConfiguracao(null, null, null, null, null, mod, null,
-				null, exTpMov, null, null, null, dpLotacao, dpPessoa, null,
+				null, exTpMov, null, null, null, dpLotacao, dpPessoa, null,null,
 				idTpConf);
 	}
 
@@ -494,7 +514,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			ExPapel exPapel, ExTipoMovimentacao exTpMov, long idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, exTipoFormaDoc, exPapel, null, null,
-				null, null, null, exTpMov, null, null, null, null, null, null,
+				null, null, null, exTpMov, null, null, null, null, null, null,null,
 				idTpConf);
 	}
 
@@ -503,7 +523,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			long idTpConf) throws Exception {
 		return podePorConfiguracao(null, exTipoFormaDoc, exPapel, null, null,
 				null, null, null, exTpMov, null, null, null, null, pessoa,
-				null, idTpConf);
+				null,null, idTpConf);
 	}
 	
 	public boolean podePorConfiguracao(ExTipoFormaDoc exTipoFormaDoc,
@@ -511,18 +531,18 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			long idTpConf) throws Exception {
 		return podePorConfiguracao(null, exTipoFormaDoc, exPapel, null, null,
 				null, null, null, exTpMov, null, null, null, lotacao, null,
-				null, idTpConf);
+				null,null, idTpConf);
 	}
 
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
 			CpServico cpServico, long idTpConf) throws Exception {
 		return podePorConfiguracao(cpServico, null, null, null, null, null,
-				null, null, null, null, null, null, dpLotacao, dpPessoa, null,
+				null, null, null, null, null, null, dpLotacao, dpPessoa, null,null,
 				idTpConf);
 	}
 
 	/**
-	 * Infere configuraÁıes Ûbvias. Por exemplo, se for informado o tipo de documento e sÛ existir uma forma de documento para este tipo, a forma ser· preenchida automaticamente.
+	 * Infere configura√ß√µes √≥bvias. Por exemplo, se for informado o tipo de documento e s√≥ existir uma forma de documento para este tipo, a forma ser√° preenchida automaticamente.
 	 * @param cpConfiguracao
 	 */
 	@Override
@@ -531,7 +551,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 		super.deduzFiltro(cpConfiguracao);
 
 		// *************************************************
-		// Ver regrinha pra habilitar e desabilitar esses if's aÌ, talvez
+		// Ver regrinha pra habilitar e desabilitar esses if's a√≠, talvez
 		// *************************************************
 
 		if (!(cpConfiguracao instanceof ExConfiguracao))
@@ -610,7 +630,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	
 	/**
 	 * 
-	 * Retorna uma lista de (ex)configuraÁıes vigentes de acordo com um certo tipo
+	 * Retorna uma lista de (ex)configura√ß√µes vigentes de acordo com um certo tipo
 	 * 
 	 * @param ExConfiguracao
 	 * 
@@ -630,10 +650,10 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	}
 	
 	/**
-	 * Varre as entidades definidas na configuraÁ„o para evitar que o hibernate
-	 * guarde versıes lazy delas.
+	 * Varre as entidades definidas na configura√ß√£o para evitar que o hibernate
+	 * guarde vers√µes lazy delas.
 	 * 
-	 * @param listaCfg - lista de configuraÁıes que podem ter objetos lazy
+	 * @param listaCfg - lista de configura√ß√µes que podem ter objetos lazy
 	 */
 	@Override
 	protected void evitarLazy(List<CpConfiguracao> listaCfg) {
@@ -660,6 +680,14 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 					cfg.getExTipoMovimentacao().getDescrTipoMovimentacao();
 				if (cfg.getExVia() != null)
 					cfg.getExVia().getObs();
+				
+				if (cfg.getExModelo() != null) {
+					cfg.getExModelo().getId();
+					
+					if (cfg.getExModelo().getExFormaDocumento() != null) {
+						cfg.getExModelo().getExFormaDocumento().getId();
+					}
+				}
 
 			}
 		}

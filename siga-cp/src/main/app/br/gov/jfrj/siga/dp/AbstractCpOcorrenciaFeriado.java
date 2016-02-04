@@ -35,11 +35,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 import br.gov.jfrj.siga.model.Objeto;
 
-//Essa anotaÁ„o È necess·ria por causa do mappedBy em CpFeriado que aponta pra c·
+//Essa anota√ß√£o √© necess√°ria por causa do mappedBy em CpFeriado que aponta pra c√°
 @MappedSuperclass
 public abstract class AbstractCpOcorrenciaFeriado extends Objeto implements Serializable {
 
@@ -102,24 +101,24 @@ public abstract class AbstractCpOcorrenciaFeriado extends Objeto implements Seri
 	}
 	
 	/**
-	 * Retorna a data de inÌcio formato dd/mm/aa ,
+	 * Retorna a data de in√≠cio formato dd/mm/aa ,
 	 * por exemplo, 01/02/10.
 	 * 
 	 * @return Data no formato dd/mm/aa, por
 	 *         exemplo, 01/02/10.
 	 * 
 	 */
-	public String getDtRegIniDDMMYY() {
+	public String getDtRegIniDDMMYYYY() {
 		if (getDtIniFeriado() != null) {
-			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 			return df.format(getDtIniFeriado());
 		}
 		return "";
 	}
 	
-	public String getDtRegFimDDMMYY() {
+	public String getDtRegFimDDMMYYYY() {
 		if (getDtFimFeriado() != null) {
-			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 			return df.format(getDtFimFeriado());
 		}
 		return "";

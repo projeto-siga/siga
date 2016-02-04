@@ -6,12 +6,12 @@
 
 <mod:modelo>
 	<mod:entrevista> 
-	<mod:grupo titulo="Período de Licença para Capacitação">
+	<mod:grupo titulo="PerÃ­odo de LicenÃ§a para CapacitaÃ§Ã£o">
 			<mod:data titulo="De" var="dataInicio" />
 			<mod:data titulo="a" var="dataFim" />
 		</mod:grupo>
 		    
-			<mod:selecao titulo="Participação em:" var="cursos" opcoes="Curso de Capacitação;Pesquisa e Levantamento de Dados" reler="ajax" idAjax="cursosAjax" />
+			<mod:selecao titulo="ParticipaÃ§Ã£o em:" var="cursos" opcoes="Curso de CapacitaÃ§Ã£o;Pesquisa e Levantamento de Dados" reler="ajax" idAjax="cursosAjax" />
 				<mod:grupo depende="cursosAjax">
 					<c:if test="${cursos eq 'Pesquisa e Levantamento de Dados'}">
 						<mod:texto titulo="Tema do curso:" var="temaCurso" largura="60" />
@@ -36,23 +36,23 @@
 		<c:import url="/paginas/expediente/modelos/inc_tit_juizfedDirForo.jsp" />
 		<p style="TEXT-INDENT: 2cm" align="justify">
 		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, vem requerer a Vossa Senhoria, nos termos do art.87, da Lei n&ordm; 8.112/90, com a
-		redação da Lei n&ordm; 9.527/97, c/c Resolução n&ordm; 5/2008, do Conselho da Justiça Federal, e Resolução n&ordm; 22/2008, do TRF da 2ª Região, <b>LICENÇA PARA CAPACITAÇÃO</b> a que faz jus, para fruição 
+		redaÃ§Ã£o da Lei n&ordm; 9.527/97, c/c ResoluÃ§Ã£o n&ordm; 5/2008, do Conselho da JustiÃ§a Federal, e ResoluÃ§Ã£o n&ordm; 22/2008, do TRF da 2Âª RegiÃ£o, <b>LICENÃ‡A PARA CAPACITAÃ‡ÃƒO</b> a que faz jus, para fruiÃ§Ã£o 
 		<c:choose>
 				<c:when test="${(dataInicio == dataFim) or (empty dataFim)}">
 					no dia <b>${dataInicio}</b>,
 				</c:when>
 					<c:otherwise>
-					no período de <b>${dataInicio}</b> a <b>${dataFim}</b>,
+					no perÃ­odo de <b>${dataInicio}</b> a <b>${dataFim}</b>,
 					</c:otherwise>
 			</c:choose>
 		
-		destinada à 
+		destinada Ã  
 			<c:choose>
-				<c:when test="${cursos eq 'Curso de Capacitação'}">
-					participação em Curso de Capacitação.
+				<c:when test="${cursos eq 'Curso de CapacitaÃ§Ã£o'}">
+					participaÃ§Ã£o em Curso de CapacitaÃ§Ã£o.
 				</c:when>
 				<c:otherwise>
-					pesquisa e levantamento de dados necessários à elaboração de trabalho para conclusão de curso de pós-graduação, cujo tema é: ${temaCurso}.				
+					pesquisa e levantamento de dados necessÃ¡rios Ã  elaboraÃ§Ã£o de trabalho para conclusÃ£o de curso de pÃ³s-graduaÃ§Ã£o, cujo tema Ã©: ${temaCurso}.				
 				</c:otherwise>
 			</c:choose>
 		</p>
@@ -69,8 +69,8 @@
 		<c:import url="/paginas/expediente/modelos/inc_quebra_pagina.jsp" />
 		<c:import url="/paginas/expediente/modelos/inc_tit_termoCompromisso.jsp" />
 		<p style="TEXT-INDENT: 2cm" align="justify">
-		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, firma o compromisso de apresentar relatório semanal das atividades desenvolvidas, 
-		devidamente endossado pelo orientador ou coordenador do respectivo curso, nos termos do art. 2º, da Resolução nº 22/2008, do TRF da 2ª Região, tendo em vista tratar-se de licença para capacitação com a finalidade de conclusão de curso de especialização, mestrado ou doutorado. 
+		${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao}, firma o compromisso de apresentar relatÃ³rio semanal das atividades desenvolvidas, 
+		devidamente endossado pelo orientador ou coordenador do respectivo curso, nos termos do art. 2Âº, da ResoluÃ§Ã£o nÂº 22/2008, do TRF da 2Âª RegiÃ£o, tendo em vista tratar-se de licenÃ§a para capacitaÃ§Ã£o com a finalidade de conclusÃ£o de curso de especializaÃ§Ã£o, mestrado ou doutorado. 
 		</p>
 		<br/>
 		<br/>
@@ -84,15 +84,15 @@
         <c:import url="/paginas/expediente/modelos/inc_tit_declaracao.jsp" />
 		<p style="TEXT-INDENT: 2cm" align="justify">
         
-        ${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao},declara, nos termos do § 7º do art. 23 da Resolução nº 5/2008, do CJF, estar ciente de que:</br>
+        ${doc.subscritor.descricao}, ${doc.subscritor.cargo.nomeCargo}, ${doc.subscritor.padraoReferenciaInvertido}, lotado(a) no(a) ${doc.subscritor.lotacao.descricao},declara, nos termos do Â§ 7Âº do art. 23 da ResoluÃ§Ã£o nÂº 5/2008, do CJF, estar ciente de que:</br>
         <br/>
-        1 -  Ao final da atividade deverá apresentar à Subsecretaria de Gestão de Pessoas, no prazo máximo de 30 dias, os seguintes documentos comprobatórios, conforme natureza da ação de capacitação: comprovante de frequência, participação e aproveitamento no evento objeto da licença, nas hipóteses de participação em evento com carga horária mínima de 12 horas; comprovante de entrega de monografia, dissertação, tese ou trabalho de conclusão de curso de graduação ou pós-graduação, bem como a entrega de cópia do trabalho final de curso, preferencialmente por meio eletrônico, à unidade de recursos humanos do órgão; comprovante de participação em atividade de orientação para elaboração de monografia, dissertação, tese ou trabalho de conclusão de curso de graduação ou pós-graduação; declaração de aprovação ou certificado de conclusão do curso; declaração de participação em processo seletivo para ingresso em curso de pós-graduação stricto sensu ou de obtenção de certificação de competências profissionais.<br>
-        <br/>
-        <br/>
-        2 -  Na hipótese de não participação integral no evento objeto da licença, deverá requerer, mediante justificativa pertinente, a interrupção da licença, com o retorno imediato ao trabalho. <br>
+        1 -  Ao final da atividade deverÃ¡ apresentar Ã  Subsecretaria de GestÃ£o de Pessoas, no prazo mÃ¡ximo de 30 dias, os seguintes documentos comprobatÃ³rios, conforme natureza da aÃ§Ã£o de capacitaÃ§Ã£o: comprovante de frequÃªncia, participaÃ§Ã£o e aproveitamento no evento objeto da licenÃ§a, nas hipÃ³teses de participaÃ§Ã£o em evento com carga horÃ¡ria mÃ­nima de 12 horas; comprovante de entrega de monografia, dissertaÃ§Ã£o, tese ou trabalho de conclusÃ£o de curso de graduaÃ§Ã£o ou pÃ³s-graduaÃ§Ã£o, bem como a entrega de cÃ³pia do trabalho final de curso, preferencialmente por meio eletrÃ´nico, Ã  unidade de recursos humanos do Ã³rgÃ£o; comprovante de participaÃ§Ã£o em atividade de orientaÃ§Ã£o para elaboraÃ§Ã£o de monografia, dissertaÃ§Ã£o, tese ou trabalho de conclusÃ£o de curso de graduaÃ§Ã£o ou pÃ³s-graduaÃ§Ã£o; declaraÃ§Ã£o de aprovaÃ§Ã£o ou certificado de conclusÃ£o do curso; declaraÃ§Ã£o de participaÃ§Ã£o em processo seletivo para ingresso em curso de pÃ³s-graduaÃ§Ã£o stricto sensu ou de obtenÃ§Ã£o de certificaÃ§Ã£o de competÃªncias profissionais.<br>
         <br/>
         <br/>
-       3 -  A ausência de comprovação de que trata o item 1 ou o não acatamento da justificativa de que trata o item 2 ensejará a cassação da licença com efeito retroativo, sendo computados como faltas ao serviço e descontados em folha de pagamento os dias referentes à licença cassada, garantidos o contraditório e a ampla defesa. Nos termos da legislação vigente, será instraurada sindicância para apuração de infração disciplinar.<br>
+        2 -  Na hipÃ³tese de nÃ£o participaÃ§Ã£o integral no evento objeto da licenÃ§a, deverÃ¡ requerer, mediante justificativa pertinente, a interrupÃ§Ã£o da licenÃ§a, com o retorno imediato ao trabalho. <br>
+        <br/>
+        <br/>
+       3 -  A ausÃªncia de comprovaÃ§Ã£o de que trata o item 1 ou o nÃ£o acatamento da justificativa de que trata o item 2 ensejarÃ¡ a cassaÃ§Ã£o da licenÃ§a com efeito retroativo, sendo computados como faltas ao serviÃ§o e descontados em folha de pagamento os dias referentes Ã  licenÃ§a cassada, garantidos o contraditÃ³rio e a ampla defesa. Nos termos da legislaÃ§Ã£o vigente, serÃ¡ instraurada sindicÃ¢ncia para apuraÃ§Ã£o de infraÃ§Ã£o disciplinar.<br>
       </p>
         <br/>
         <br/>

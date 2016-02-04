@@ -33,31 +33,31 @@ public class RelMovimentacao extends RelatorioTemplate {
 		super(parametros);
 		if (parametros.get("secaoUsuario") == null) {
 			throw new DJBuilderException(
-					"Parâmetro secaoUsuario não informado!");
+					"ParÃ¢metro secaoUsuario nÃ£o informado!");
 		}
 		if (parametros.get("lotacaoTitular") == null) {
-			throw new DJBuilderException("Parâmetro lotação não informado!");
+			throw new DJBuilderException("ParÃ¢metro lotaÃ§Ã£o nÃ£o informado!");
 		}
 		if (parametros.get("dataInicial") == null) {
-			throw new DJBuilderException("Parâmetro dataInicial não informado!");
+			throw new DJBuilderException("ParÃ¢metro dataInicial nÃ£o informado!");
 		}
 		if (parametros.get("dataFinal") == null) {
-			throw new DJBuilderException("Parâmetro dataFinal não informado!");
+			throw new DJBuilderException("ParÃ¢metro dataFinal nÃ£o informado!");
 		}
 		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Parâmetro link_siga não informado!");
+			throw new DJBuilderException("ParÃ¢metro link_siga nÃ£o informado!");
 		}
 	}
 
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
-		this.addAutoText("Período: " + parametros.get("dataInicial").toString() + " a " + parametros.get("dataFinal").toString(), AutoText.POSITION_HEADER,(byte) RelatorioRapido.ESQUERDA,200);
-		this.setTitle("Relatório de Movimentações");
+		this.addAutoText("PerÃ­odo: " + parametros.get("dataInicial").toString() + " a " + parametros.get("dataFinal").toString(), AutoText.POSITION_HEADER,(byte) RelatorioRapido.ESQUERDA,200);
+		this.setTitle("RelatÃ³rio de MovimentaÃ§Ãµes");
 		this.addColuna("Documento", 25, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Data de Movimento", 15, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Descrição", 15, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Responsável", 15, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("DescriÃ§Ã£o", 15, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("ResponsÃ¡vel", 15, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Cadastrante", 15, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Subscritor", 15, RelatorioRapido.ESQUERDA, false);
 		return this;
@@ -85,13 +85,13 @@ public class RelMovimentacao extends RelatorioTemplate {
 			query.setParameter("dtini",
 					formatter.parse((String) parametros.get("dataInicial")));
 		} catch (ParseException e) {
-			throw new AplicacaoException("Data Inicial inválida.", 0, e);
+			throw new AplicacaoException("Data Inicial invÃ¡lida.", 0, e);
 		}
 		try {
 			query.setParameter("dtfim",
 					formatter.parse((String) parametros.get("dataFinal")));
 		} catch (ParseException e) {
-			throw new AplicacaoException("Data Final inválida.", 0, e);
+			throw new AplicacaoException("Data Final invÃ¡lida.", 0, e);
 		}
 
 		Iterator it = query.list().iterator();

@@ -77,7 +77,7 @@ public class LdapDaoImpl implements ILdapDao {
 			try {
 				contexto.close();
 			} catch (NamingException e) {
-				log.info("O contexto n„o pode ser encerrado...");
+				log.info("O contexto n√£o pode ser encerrado...");
 			}
 			contexto = null;
 		}
@@ -86,8 +86,8 @@ public class LdapDaoImpl implements ILdapDao {
 		} catch (NamingException e) {
 			e.printStackTrace();
 			throw new AplicacaoException(
-					"N„o foi possÌvel criar o contexto LDAP!\n"
-							+ "Verifique se o certificado foi importado coma ferramenta keytool ou se o par‚metro ldap.keystore est· apontando para o arquivo cacerts correto (Exemplo: JDK_PATH/jre/lib/security/cacerts");
+					"N√£o foi poss√≠vel criar o contexto LDAP!\n"
+							+ "Verifique se o certificado foi importado coma ferramenta keytool ou se o par√¢metro ldap.keystore est√° apontando para o arquivo cacerts correto (Exemplo: JDK_PATH/jre/lib/security/cacerts");
 		}
 
 	}
@@ -109,7 +109,7 @@ public class LdapDaoImpl implements ILdapDao {
 			contexto.createSubcontext(dn, atributos);
 		} catch (NamingException e) {
 			e.printStackTrace();
-			throw new AplicacaoException("N„o foi possÌvel incluir o objeto "
+			throw new AplicacaoException("N√£o foi poss√≠vel incluir o objeto "
 					+ dn);
 		}
 	}
@@ -128,7 +128,7 @@ public class LdapDaoImpl implements ILdapDao {
 			contexto.destroySubcontext(dn);
 		} catch (NamingException e) {
 			e.printStackTrace();
-			throw new AplicacaoException("N„o foi possÌvel excluir o objeto "
+			throw new AplicacaoException("N√£o foi poss√≠vel excluir o objeto "
 					+ dn);
 		}
 	}
@@ -145,7 +145,7 @@ public class LdapDaoImpl implements ILdapDao {
 			} catch (NamingException e1) {
 				e1.printStackTrace();
 				throw new AplicacaoException(
-						"N„o foi possÌvel ler os prÛximos atributos!");
+						"N√£o foi poss√≠vel ler os pr√≥ximos atributos!");
 			}
 			if (attr.getID().equals("cn")
 					|| attr.getID().equals("distinguishedName")
@@ -158,7 +158,7 @@ public class LdapDaoImpl implements ILdapDao {
 				contexto.modifyAttributes(dn, member);
 			} catch (AttributeInUseException e) {
 				e.printStackTrace();
-				throw new AplicacaoException("O atributo j· existe!");
+				throw new AplicacaoException("O atributo j√° existe!");
 			} catch (NamingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -186,7 +186,7 @@ public class LdapDaoImpl implements ILdapDao {
 			}
 			e.printStackTrace();
 			throw new AplicacaoException(
-					"N„o foi possÌvel ler os atributos de " + dn);
+					"N√£o foi poss√≠vel ler os atributos de " + dn);
 		}
 
 		return attrs;
@@ -201,7 +201,7 @@ public class LdapDaoImpl implements ILdapDao {
 			unicodePwd = quotedPassword.getBytes("UTF-8");
 		} catch (UnsupportedEncodingException e1) {
 			throw new AplicacaoException(
-					"N„o foi possÌvel converter a senha para bytes em UTF-8");
+					"N√£o foi poss√≠vel converter a senha para bytes em UTF-8");
 		}
 		byte pwdArray[] = new byte[unicodePwd.length * 2];
 		for (int i = 0; i < unicodePwd.length; i++) {
@@ -217,7 +217,7 @@ public class LdapDaoImpl implements ILdapDao {
 		} catch (NamingException e) {
 			e.printStackTrace();
 			throw new AplicacaoException(
-					"N„o foi possÌvel alterar a senha do usu·rio "
+					"N√£o foi poss√≠vel alterar a senha do usu√°rio "
 							+ dnUsuario
 							+ " \nVerifique se a senha atende aos requisitos de complexidade impostos pelo servidor LDAP");
 		}
@@ -225,7 +225,7 @@ public class LdapDaoImpl implements ILdapDao {
 	}
 
 	/**
-	 * Define se uma conta est· ativa ou n„o.
+	 * Define se uma conta est√° ativa ou n√£o.
 	 * 
 	 * @param dnUsuario
 	 * @param ativo
@@ -238,7 +238,7 @@ public class LdapDaoImpl implements ILdapDao {
 			ats = contexto.getAttributes(dnUsuario);
 		} catch (NamingException e) {
 			throw new AplicacaoException(
-					"N„o foi possÌvel ler os atributos do usu·rio " + dnUsuario);
+					"N√£o foi poss√≠vel ler os atributos do usu√°rio " + dnUsuario);
 		}
 		ModificationItem member[] = new ModificationItem[1];
 		Attribute at = ats.get("useraccountcontrol");
@@ -253,11 +253,11 @@ public class LdapDaoImpl implements ILdapDao {
 			}
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
-			throw new AplicacaoException("Erro no formato numÈrico!");
+			throw new AplicacaoException("Erro no formato num√©rico!");
 		} catch (NamingException e) {
 			e.printStackTrace();
 			throw new AplicacaoException(
-					"N„o foi possÌvel ler um atributo do usu·rio!");
+					"N√£o foi poss√≠vel ler um atributo do usu√°rio!");
 		}
 
 		at.clear();
@@ -268,12 +268,12 @@ public class LdapDaoImpl implements ILdapDao {
 		} catch (NamingException e) {
 			e.printStackTrace();
 			throw new AplicacaoException(
-					"N„o foi possÌvel alterar o atributo de ativaÁ„o do usu·rio!");
+					"N√£o foi poss√≠vel alterar o atributo de ativa√ß√£o do usu√°rio!");
 		}
 	}
 
 	/**
-	 * Define se uma conta est· ativa
+	 * Define se uma conta est√° ativa
 	 * 
 	 * @param dnUsuario
 	 * @throws AplicacaoException
@@ -283,7 +283,7 @@ public class LdapDaoImpl implements ILdapDao {
 	}
 
 	/**
-	 * Define se uma conta est· n„o est· ativa
+	 * Define se uma conta est√° n√£o est√° ativa
 	 * 
 	 * @param dnUsuario
 	 * @throws AplicacaoException
@@ -293,7 +293,7 @@ public class LdapDaoImpl implements ILdapDao {
 	}
 
 	/**
-	 * Verifica se um objeto existe em algum objeto da ·rvore LDAP
+	 * Verifica se um objeto existe em algum objeto da √°rvore LDAP
 	 * 
 	 * @param cn
 	 *            - Common Name do objeto a ser encontrado
@@ -311,7 +311,7 @@ public class LdapDaoImpl implements ILdapDao {
 	}
 
 	/**
-	 * Muda a localizaÁ„o de um objeto na ·rvore LDAP
+	 * Muda a localiza√ß√£o de um objeto na √°rvore LDAP
 	 * 
 	 * @param dn
 	 * @param novoDN
@@ -321,7 +321,7 @@ public class LdapDaoImpl implements ILdapDao {
 		try {
 			this.contexto.rename(dn, novoDN);
 		} catch (NamingException e) {
-			throw new AplicacaoException("N„o foi possÌvel mover " + dn
+			throw new AplicacaoException("N√£o foi poss√≠vel mover " + dn
 					+ " para " + novoDN + "\n" + e.getMessage());
 		}
 	}
@@ -331,7 +331,7 @@ public class LdapDaoImpl implements ILdapDao {
 	// }
 
 	/**
-	 * Verifica se È um grupo de seguranÁa.
+	 * Verifica se √© um grupo de seguran√ßa.
 	 * Ref:http://msdn.microsoft.com/en-us/library/ms675935(VS.85).aspx
 	 * 
 	 * @param dn
@@ -350,7 +350,7 @@ public class LdapDaoImpl implements ILdapDao {
 	}
 
 	/**
-	 * Verifica se È um grupo de distribuiÁ„o.
+	 * Verifica se √© um grupo de distribui√ß√£o.
 	 * Ref:http://msdn.microsoft.com/en-us/library/ms675935(VS.85).aspx
 	 * 
 	 * @param dn
@@ -398,7 +398,7 @@ public class LdapDaoImpl implements ILdapDao {
 		try {
 			attrs = this.contexto.getAttributes(dn);
 		} catch (NamingException e) {
-			new AplicacaoException("N„o foi possÌvel ler os atributos de " + dn);
+			new AplicacaoException("N√£o foi poss√≠vel ler os atributos de " + dn);
 		}
 		return attrs;
 	}
@@ -412,7 +412,7 @@ public class LdapDaoImpl implements ILdapDao {
 			e.printStackTrace();
 		} catch (NamingException e) {
 			new AplicacaoException(
-					"N„o foi possÌvel identificar o tipo do grupo " + dn);
+					"N√£o foi poss√≠vel identificar o tipo do grupo " + dn);
 		}
 		return null;
 	}
@@ -460,7 +460,7 @@ public class LdapDaoImpl implements ILdapDao {
 		try {
 			this.contexto.modifyAttributes(dn, member);
 		} catch (NamingException e) {
-			throw new AplicacaoException("N„o foi possÌvel inserir o valor "
+			throw new AplicacaoException("N√£o foi poss√≠vel inserir o valor "
 					+ valorAtributo + " no atributo " + nomeAtributo
 					+ " do objeto " + dn + "!");
 		}
@@ -475,7 +475,7 @@ public class LdapDaoImpl implements ILdapDao {
 		try {
 			this.contexto.modifyAttributes(dn, member);
 		} catch (NamingException e) {
-			throw new AplicacaoException("N„o foi possÌvel remover o valor "
+			throw new AplicacaoException("N√£o foi poss√≠vel remover o valor "
 					+ valorAtributo + " no atributo " + nomeAtributo
 					+ " do objeto " + dn + "!");
 		}
@@ -487,7 +487,7 @@ public class LdapDaoImpl implements ILdapDao {
 		ModificationItem member[] = new ModificationItem[1];
 		Attribute at = ats.get(nomeAtributo);
 		if (at==null){
-			throw new AplicacaoException("Atributo [" + nomeAtributo + "] n„o existe para [+ " + dn + "]!");
+			throw new AplicacaoException("Atributo [" + nomeAtributo + "] n√£o existe para [+ " + dn + "]!");
 		}
 		at.clear();
 		at.add(valorAtributo);
@@ -496,7 +496,7 @@ public class LdapDaoImpl implements ILdapDao {
 			this.contexto.modifyAttributes(dn, member);
 		} catch (NamingException e) {
 			throw new AplicacaoException(
-					"N„o foi possÌvel substitur o valor atual do atributo "
+					"N√£o foi poss√≠vel substitur o valor atual do atributo "
 							+ nomeAtributo + " pelo valor " + valorAtributo
 							+ " do objeto " + dn);
 		}
@@ -512,24 +512,24 @@ public class LdapDaoImpl implements ILdapDao {
 	}
 
 	/**
-	 * Verifica se um usuario pode se autenticar na ·rvore LDAP. Esse mÈtodo È
-	 * mais simples que o conectarComSSL() e conectarSemSSL() e tem o propÛsito
-	 * apenas de confirmar se o usu·rio/senha est„o corretos. Este mÈtodo n„o
-	 * possibilita o uso de ssl, n„o retorna o contexto LDAP para o usu·rio
-	 * manipular e n„o permite informar o DN para autenticaÁ„o. Se for essa a
-	 * sua necessidade, use o mÈtodo conectarComSSL() ou conectarSemSSL().
+	 * Verifica se um usuario pode se autenticar na √°rvore LDAP. Esse m√©todo √©
+	 * mais simples que o conectarComSSL() e conectarSemSSL() e tem o prop√≥sito
+	 * apenas de confirmar se o usu√°rio/senha est√£o corretos. Este m√©todo n√£o
+	 * possibilita o uso de ssl, n√£o retorna o contexto LDAP para o usu√°rio
+	 * manipular e n√£o permite informar o DN para autentica√ß√£o. Se for essa a
+	 * sua necessidade, use o m√©todo conectarComSSL() ou conectarSemSSL().
 	 * 
 	 * @param usuario
-	 *            - nome do usu·rio a se logar, na JFRJ È a sigla da pessoa (ex:
+	 *            - nome do usu√°rio a se logar, na JFRJ √© a sigla da pessoa (ex:
 	 *            kpf)
 	 * @param dominio
-	 *            - domÌnio do AD
+	 *            - dom√≠nio do AD
 	 * @param senha
-	 *            - senha do usu·rio
+	 *            - senha do usu√°rio
 	 * @param servidor
-	 *            - servidor de autenticaÁ„o
+	 *            - servidor de autentica√ß√£o
 	 * @param porta
-	 *            - porta do servidor de autenticaÁ„o (padr„o: 389)
+	 *            - porta do servidor de autentica√ß√£o (padr√£o: 389)
 	 * @return true - se o login foi bem sucedido. <br/>
 	 *         false - em caso de falha.
 	 */
@@ -557,9 +557,9 @@ public class LdapDaoImpl implements ILdapDao {
 	}
 
 	/**
-	 * Altera a senha de um usu·rio. … necess·rio informar a senha antiga.
+	 * Altera a senha de um usu√°rio. √â necess√°rio informar a senha antiga.
 	 * 
-	 * Alterar a senha È uma operaÁ„o de mudanÁa do ldap que deleta a senha
+	 * Alterar a senha √© uma opera√ß√£o de mudan√ßa do ldap que deleta a senha
 	 * antiga e adiciona a nova senha. http://support.microsoft.com/kb/269190
 	 * 
 	 * 
@@ -580,7 +580,7 @@ public class LdapDaoImpl implements ILdapDao {
 				getDominioContexto(), senhaAntiga, getServidorContexto(), "389");
 
 		if (!senhaAntigaOK) {
-			throw new AplicacaoException("A senha antiga È inv·lida!");
+			throw new AplicacaoException("A senha antiga √© inv√°lida!");
 		}
 
 		ModificationItem[] mods = new ModificationItem[2];
@@ -594,7 +594,7 @@ public class LdapDaoImpl implements ILdapDao {
 			newUnicodePassword = newQuotedPassword.getBytes("UTF-16LE");
 		} catch (UnsupportedEncodingException e) {
 			new AplicacaoException(
-					"N„o foi possÌvel converter as senhas em bytes UTF-16LE!");
+					"N√£o foi poss√≠vel converter as senhas em bytes UTF-16LE!");
 		}
 
 		definirSenha(dnUsuario, senhaNova);
@@ -607,7 +607,7 @@ public class LdapDaoImpl implements ILdapDao {
 					.get("java.naming.provider.url").toString();
 		} catch (NamingException e) {
 			throw new AplicacaoException(
-					"N„o foi possÌvel determinar o servidor do contexto!");
+					"N√£o foi poss√≠vel determinar o servidor do contexto!");
 		}
 		return urlServidor.substring(urlServidor.lastIndexOf(":") + 1);
 	}
@@ -619,7 +619,7 @@ public class LdapDaoImpl implements ILdapDao {
 					.get("java.naming.provider.url").toString();
 		} catch (NamingException e) {
 			throw new AplicacaoException(
-					"N„o foi possÌvel determinar o servidor do contexto!");
+					"N√£o foi poss√≠vel determinar o servidor do contexto!");
 		}
 		return urlServidor.substring(urlServidor.lastIndexOf("/") + 1,
 				urlServidor.lastIndexOf(":"));
@@ -632,7 +632,7 @@ public class LdapDaoImpl implements ILdapDao {
 					.get("java.naming.security.principal").toString();
 		} catch (NamingException e) {
 			throw new AplicacaoException(
-					"N„o foi possÌvel determinar o domÌnio do contexto!");
+					"N√£o foi poss√≠vel determinar o dom√≠nio do contexto!");
 		}
 		return usuarioAutenticadoContexto.substring(usuarioAutenticadoContexto
 				.indexOf("@") + 1);
@@ -739,7 +739,7 @@ public class LdapDaoImpl implements ILdapDao {
 		try {
 			this.contexto.modifyAttributes(dn, member);
 		} catch (NamingException e) {
-			throw new AplicacaoException("N„o foi possÌvel excluir o atributo "
+			throw new AplicacaoException("N√£o foi poss√≠vel excluir o atributo "
 					+ nomeAtributo + " do objeto " + dn + "!");
 		}
 

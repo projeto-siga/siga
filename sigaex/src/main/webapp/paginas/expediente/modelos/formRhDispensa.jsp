@@ -11,7 +11,7 @@
 			<mod:pessoa titulo="Servidor" var="servidor" />
 		</mod:grupo>
 		<mod:grupo>
-			<mod:funcao titulo="FunÁ„o" var="funcao" />
+			<mod:funcao titulo="Fun√ß√£o" var="funcao" />
 		</mod:grupo>
 		<mod:grupo>
 			<mod:data titulo="A partir de" var="dataInicio" />
@@ -45,7 +45,7 @@
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
 						<td align="left" width="40%">
-						<p style="font-family:Arial;font-size:11pt;font-weight:bold;">SOLICITA«√O
+						<p style="font-family:Arial;font-size:11pt;font-weight:bold;">SOLICITA√á√ÉO
 						N&ordm; ${doc.codigo}</p>
 						</td>
 						<td align="right" width="60%">
@@ -64,7 +64,7 @@
 		<p style="TEXT-INDENT: 2cm" align="justify">Solicito a <b>dispensa</b>
 		do(a) servidor(a) <mod:identificacao
 			pessoa="${requestScope['servidor_pessoaSel.id']}" nivelHierarquicoMaximoDaLotacao="4" negrito="sim" /> do(a) cargo em
-		comiss„o/funÁ„o comissionada de ${requestScope['funcao_funcaoSel.descricao']}<c:choose><c:when test="${not empty dataInicio}">, a partir de ${dataInicio}.</c:when><c:otherwise>.</c:otherwise></c:choose>
+		comiss√£o/fun√ß√£o comissionada de ${requestScope['funcao_funcaoSel.descricao']}<c:choose><c:when test="${not empty dataInicio}">, a partir de ${dataInicio}.</c:when><c:otherwise>.</c:otherwise></c:choose>
 		</p>
 		<br>
 		<br>

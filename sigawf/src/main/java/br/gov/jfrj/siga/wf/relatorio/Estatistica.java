@@ -26,8 +26,8 @@ import java.util.Map;
 import br.gov.jfrj.siga.base.AplicacaoException;
 
 /**
- * Classe com utilit·rios estatÌsticos. Os c·lculos s„o realizados sobre os dados do array
- * fornecido no mÈtodo setArray().
+ * Classe com utilit√°rios estat√≠sticos. Os c√°lculos s√£o realizados sobre os dados do array
+ * fornecido no m√©todo setArray().
  * 
  * @author kpf
  * 
@@ -37,7 +37,7 @@ public class Estatistica {
 	private double array[];
 
 	/**
-	 * Calcula o coeficiente de VariaÁ„o de Pearson.
+	 * Calcula o coeficiente de Varia√ß√£o de Pearson.
 	 */
 	public double getPearson() {
 
@@ -46,7 +46,7 @@ public class Estatistica {
 	}
 
 	/**
-	 * Calcula a mÈdia aritmÈtica.
+	 * Calcula a m√©dia aritm√©tica.
 	 * 
 	 * @return
 	 */
@@ -63,7 +63,7 @@ public class Estatistica {
 	}
 	
 	/**
-	 * Calcula a mÈdia aritmÈtica desconsiderando um percentual dos maiores e menores elementos
+	 * Calcula a m√©dia aritm√©tica desconsiderando um percentual dos maiores e menores elementos
 	 * 
 	 * @return
 	 */
@@ -81,7 +81,7 @@ public class Estatistica {
 		if (de<=ate){
 			elementosConsiderados = Arrays.copyOfRange(array, de, ate);	
 		}else{
-			throw new AplicacaoException("N„o È possÌvel calcular a mÈdia truncada! Verifique se o percentual a ser descartado remove todos os elementos.");
+			throw new AplicacaoException("N√£o √© poss√≠vel calcular a m√©dia truncada! Verifique se o percentual a ser descartado remove todos os elementos.");
 		}
 		
 		
@@ -109,7 +109,7 @@ public class Estatistica {
 
 	/**
 	 * Calcula a soma dos elementos ao quadrado. Utilizado para calcular a
-	 * vari‚ncia.
+	 * vari√¢ncia.
 	 * 
 	 * @return
 	 */
@@ -126,7 +126,7 @@ public class Estatistica {
 	}
 
 	/**
-	 * Calcula a mÈdia aritmÈtica.
+	 * Calcula a m√©dia aritm√©tica.
 	 * 
 	 * @param array
 	 * @return
@@ -162,7 +162,7 @@ public class Estatistica {
 	}
 
 	/**
-	 * Ordena o array especificado em ordem ascendente numÈrica.
+	 * Ordena o array especificado em ordem ascendente num√©rica.
 	 */
 	public void ordenar() {
 
@@ -184,7 +184,7 @@ public class Estatistica {
 	}
 
 	/**
-	 * Pesquisa um elemento dentro do array. O Array n„o pode conter valores
+	 * Pesquisa um elemento dentro do array. O Array n√£o pode conter valores
 	 * duplicados.
 	 */
 	public int buscaPor(int value) {
@@ -194,7 +194,7 @@ public class Estatistica {
 	}
 
 	/**
-	 * Calcula a vari‚ncia Amostral
+	 * Calcula a vari√¢ncia Amostral
 	 */
 	public double getVariancia() {
 
@@ -211,7 +211,7 @@ public class Estatistica {
 	}
 
 	/**
-	 * Calcula o desvio padr„o amostral.
+	 * Calcula o desvio padr√£o amostral.
 	 * 
 	 * @return
 	 */
@@ -317,7 +317,7 @@ public class Estatistica {
 	}
 
 	/**
-	 * Informa o array com os dados a serem utilizados no c·lculo.
+	 * Informa o array com os dados a serem utilizados no c√°lculo.
 	 * @param array
 	 */
 	public void setArray(double[] array) {
@@ -327,7 +327,7 @@ public class Estatistica {
 	}
 
 	/**
-	 * Informa o mapa com os dados a serem utilizados no c·lculo. 
+	 * Informa o mapa com os dados a serem utilizados no c√°lculo. 
 	 * @param mapa
 	 */
 	public void setArray(Map<String, Long> mapa) {
@@ -343,7 +343,7 @@ public class Estatistica {
 	}
 
 	/**
-	 * Informa o ArrayList com os dados a serem utilizados no c·lculo.
+	 * Informa o ArrayList com os dados a serem utilizados no c√°lculo.
 	 * @param lista
 	 */
 	public void setArray(ArrayList<Long> lista) {

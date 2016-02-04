@@ -40,11 +40,11 @@ public class RelatorioModelos extends RelatorioTemplate {
 
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException {
-		this.setTitle("Relatório de Modelos");
+		this.setTitle("RelatÃ³rio de Modelos");
 		this.addColuna("Forma", 27, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Modelo", 50, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Class Documental", 15, RelatorioRapido.CENTRO, false);
-		this.addColuna("Class Criação", 15, RelatorioRapido.CENTRO, false);
+		this.addColuna("Class CriaÃ§Ã£o", 15, RelatorioRapido.CENTRO, false);
 		return this;
 	}
 

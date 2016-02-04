@@ -6,8 +6,8 @@
 
 <mod:modelo>
 	<mod:entrevista>
-			<mod:data titulo="Data de ExercÌcio" var="dataExercicio" />		
-		    <mod:data titulo="Data da VigÍncia da Exclus„o" var="dataVigenciaExclusao"/>
+			<mod:data titulo="Data de Exerc√≠cio" var="dataExercicio" />		
+		    <mod:data titulo="Data da Vig√™ncia da Exclus√£o" var="dataVigenciaExclusao"/>
 		    <mod:texto titulo="Ramal" var="ramal" maxcaracteres="5" largura="5" />
 	</mod:entrevista>
 	
@@ -25,42 +25,42 @@
 		</head>
 		<body>
 		
-		<h1 algin="center">Ilmo(a). Sr(a). Supervisor(a) da SeÁ„o de BenefÌcios</h1>
+		<h1 algin="center">Ilmo(a). Sr(a). Supervisor(a) da Se√ß√£o de Benef√≠cios</h1>
 		
 			 <p style="TEXT-INDENT: 2cm" align="justify">
 			 <br><br>
 			 	<table width="100%" border="1" cellpadding="3">
 					<tr>
-						<td bgcolor="#FFFFFF" width="100%" align="center"><b>DADOS DO BENEFICI¡RIO</b></td>
+						<td bgcolor="#FFFFFF" width="100%" align="center"><b>DADOS DO BENEFICI√ÅRIO</b></td>
 					</tr>
 				</table>
 			   	<table width="100%" border="1" cellpadding="3">
 					<tr>
 						<td bgcolor="#FFFFFF" width="50%">Nome: <b>${doc.subscritor.descricao}</b></td>
-						<td bgcolor="#FFFFFF" width="30%">MatrÌcula: <b>${doc.subscritor.sigla}</b></td>
+						<td bgcolor="#FFFFFF" width="30%">Matr√≠cula: <b>${doc.subscritor.sigla}</b></td>
 					</tr>
 				</table>
 				<table width="100%" border="1" cellpadding="3">
 					<tr>
-						<td bgcolor="#FFFFFF" width="30%">Data de ExercÌcio: <b>${dataExercicio}</b></td>
-						<td bgcolor="#FFFFFF" width="60%">LotaÁ„o: <b>${doc.subscritor.lotacao.descricao}</b></td>
+						<td bgcolor="#FFFFFF" width="30%">Data de Exerc√≠cio: <b>${dataExercicio}</b></td>
+						<td bgcolor="#FFFFFF" width="60%">Lota√ß√£o: <b>${doc.subscritor.lotacao.descricao}</b></td>
 						<td bgcolor="#FFFFFF" width="10%">Ramal: <b>${ramal}</b></td>
 					</tr>
 				</table>
 				<table width="100%" border="1" cellpadding="3">
 					<tr>
 						<td bgcolor="#FFFFFF" width="50%">Cargo: <b>${doc.subscritor.cargo.nomeCargo}</b></td>
-						<td bgcolor="#FFFFFF" width="50%">Classe/Padr„o: <b>${doc.subscritor.padraoReferenciaInvertido}</b></td>
+						<td bgcolor="#FFFFFF" width="50%">Classe/Padr√£o: <b>${doc.subscritor.padraoReferenciaInvertido}</b></td>
 					</tr>
 				</table>
 							 
 			 <p style="TEXT-INDENT: 2cm" align="justify">
-				 REQUEIRO A MINHA EXCLUS√O DO BENEFÕCIO A PARTIR DE <b>${dataVigenciaExclusao}</b>.
+				 REQUEIRO A MINHA EXCLUS√ÉO DO BENEF√çCIO A PARTIR DE <b>${dataVigenciaExclusao}</b>.
 			 </p>	
 			 <p style="TEXT-INDENT: 2cm" align="justify">
-				 Declaro ter conhecimento de que o benefÌcio de AuxÌlio-Transporte È pago antecipadamente, estando portanto
-				 <b>ciente de que deverei devolver qualquer valor que porventura j· tenha recebido referente a perÌodo porterior
-				 ‡ vigÍncia da exclus„o.
+				 Declaro ter conhecimento de que o benef√≠cio de Aux√≠lio-Transporte √© pago antecipadamente, estando portanto
+				 <b>ciente de que deverei devolver qualquer valor que porventura j√° tenha recebido referente a per√≠odo porterior
+				 √† vig√™ncia da exclus√£o.
 			 </p>
 			 <br>
 			 
@@ -74,7 +74,7 @@
 			 
 			 <table width="100%" border="1" cellpadding="2" cellspacing="1">
 				<tr>
-					<td width="60"valign="top">PARA USO DA SE«√O DE BENEFÕCIOS<br>Recebido por:_______ em: __/__/__<br>Cadastrado por:______ em:__/__/__<br>Obs: _____________________________________________________<br>_________________________________________________________<br><br></td>
+					<td width="60"valign="top">PARA USO DA SE√á√ÉO DE BENEF√çCIOS<br>Recebido por:_______ em: __/__/__<br>Cadastrado por:______ em:__/__/__<br>Obs: _____________________________________________________<br>_________________________________________________________<br><br></td>
 				</tr>
 			</table>
 		

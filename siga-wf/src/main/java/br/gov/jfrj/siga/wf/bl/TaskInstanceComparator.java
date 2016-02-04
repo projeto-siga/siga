@@ -25,10 +25,10 @@ import org.jbpm.taskmgmt.exe.TaskInstance;
 public class TaskInstanceComparator implements Comparator<TaskInstance> {
 
 	/**
-	 * Compara dois objetos TaskInstance. Retorna zero (0) se os objetos são
+	 * Compara dois objetos TaskInstance. Retorna zero (0) se os objetos sÃ£o
 	 * "iguais", retorna (1) se a PRIORIDADE ou ID do primeiro objeto (o1) for
-	 * maior doque o segundo objeto (o2). Retorna (-1), caso contrário. ESTE
-	 * CÓDIGO ESTÁ DUPLICADO EM WfDocumentoAction.java.
+	 * maior doque o segundo objeto (o2). Retorna (-1), caso contrÃ¡rio. ESTE
+	 * CÃ“DIGO ESTÃ DUPLICADO EM WfDocumentoAction.java.
 	 */
 	public int compare(TaskInstance o1, TaskInstance o2) {
 		if (o1.getPriority() > o2.getPriority())

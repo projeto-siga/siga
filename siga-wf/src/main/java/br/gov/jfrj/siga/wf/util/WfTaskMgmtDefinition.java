@@ -22,8 +22,8 @@ import org.jbpm.module.exe.ModuleInstance;
 import org.jbpm.taskmgmt.def.TaskMgmtDefinition;
 
 /**
- * Redefine um TaskMgmtDefinition. Atualmente n„o est· com as definiÁıes
- * personalizada, ou seja, est· com o comportamento padr„o do JBPM.
+ * Redefine um TaskMgmtDefinition. Atualmente n√£o est√° com as defini√ß√µes
+ * personalizada, ou seja, est√° com o comportamento padr√£o do JBPM.
  * 
  * @author kpf
  * 
@@ -31,7 +31,7 @@ import org.jbpm.taskmgmt.def.TaskMgmtDefinition;
 public class WfTaskMgmtDefinition extends TaskMgmtDefinition {
 
 	/**
-	 * Cria uma inst‚ncia do mÛdulo.
+	 * Cria uma inst√¢ncia do m√≥dulo.
 	 */
 	@Override
 	public ModuleInstance createInstance() {

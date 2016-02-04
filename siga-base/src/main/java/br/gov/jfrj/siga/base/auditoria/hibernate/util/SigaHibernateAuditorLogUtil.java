@@ -60,7 +60,7 @@ public class SigaHibernateAuditorLogUtil {
 				
 				tempoInicial = 0;
 			} else {
-				loga( categoriaDeLog, "O tempo limite estipulado de " + tempoLimiteParaLogarEmSegundos + " segundos n„o foi atingido." );
+				loga( categoriaDeLog, "O tempo limite estipulado de " + tempoLimiteParaLogarEmSegundos + " segundos n√£o foi atingido." );
 			}
 		}
 	}
@@ -120,7 +120,7 @@ public class SigaHibernateAuditorLogUtil {
 	}
 	
 	/**
-	 * MÈtodo criado somente para propÛsito de testes.
+	 * M√©todo criado somente para prop√≥sito de testes.
 	 * @return true caso o limite de tempo estipulado para logar tenha sido atingido.
 	 */
 	protected static Boolean auditou() {
@@ -128,14 +128,14 @@ public class SigaHibernateAuditorLogUtil {
 	}
 	
 	/**
-	 * MÈtodo criado somente para propÛsito de testes.
+	 * M√©todo criado somente para prop√≥sito de testes.
 	 */
 	protected static long getTempoInicial() {
 		return tempoInicial;
 	}
 
 	/**
-	 * MÈtodo criado somente para propÛsito de testes.
+	 * M√©todo criado somente para prop√≥sito de testes.
 	 */
 	protected static long getTempoFinal() {
 		return tempoFinal;

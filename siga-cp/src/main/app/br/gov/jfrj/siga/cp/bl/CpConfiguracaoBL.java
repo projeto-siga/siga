@@ -47,6 +47,7 @@ import br.gov.jfrj.siga.cp.CpTipoServico;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupo;
 import br.gov.jfrj.siga.cp.grupo.ConfiguracaoGrupoFabrica;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -66,7 +67,7 @@ public class CpConfiguracaoBL {
 
 	protected Comparator<CpConfiguracao> comparator = null;
 
-	protected static HashMap<Long, TreeSet<CpConfiguracao>> hashListas = new HashMap<Long, TreeSet<CpConfiguracao>>();
+	protected HashMap<Long, TreeSet<CpConfiguracao>> hashListas = new HashMap<Long, TreeSet<CpConfiguracao>>();
 
 	public static int PESSOA = 1;
 
@@ -104,43 +105,73 @@ public class CpConfiguracaoBL {
 		return new CpConfiguracao();
 	}
 
+	public synchronized void inicializarCacheSeNecessario() {
+		if (cacheInicializado)
+			return;
+		long inicio = System.currentTimeMillis();
+
+		List<CpConfiguracao> results = (List<CpConfiguracao>) dao()
+				.consultarConfiguracoesAtivas();
+		
+		long inicioLazy = System.currentTimeMillis();
+		evitarLazy(results);
+		long fimLazy = System.currentTimeMillis();
+
+
+		hashListas.clear();
+		for (CpConfiguracao cfg : results) {
+			if (cfg.getCpTipoConfiguracao() == null)
+				continue;
+			Long idTpConfiguracao = cfg.getCpTipoConfiguracao()
+					.getIdTpConfiguracao();
+			TreeSet<CpConfiguracao> tree = hashListas.get(idTpConfiguracao);
+			if (tree == null) {
+				tree = new TreeSet<CpConfiguracao>(comparator);
+				hashListas.put(idTpConfiguracao, tree);
+			}
+			tree.add(cfg);
+		}
+		if (hashListas.size() == 0 && results.size() > 0)
+			throw new RuntimeException(
+					"Ocorreu um erro na inicialização do cache.");
+		cacheInicializado = true;
+		
+		long fim = System.currentTimeMillis();
+
+		Logger.getLogger("siga.conf.cache").info(
+				"Cache de configurações inicializado via "
+						+ this.getClass().getSimpleName() + " em "
+						+ (fim - inicio) + "ms, select: " + (inicioLazy - inicio) + "ms, lazy: " + (fimLazy - inicioLazy) + "ms, tree: " + (fim - fimLazy) + "ms");
+	}
+
 	public HashMap<Long, TreeSet<CpConfiguracao>> getHashListas() {
-		if (!cacheInicializado){
-			inicializarCache();
+		if (!cacheInicializado) {
+			inicializarCacheSeNecessario();
 		}
 
 		return hashListas;
 	}
 
-	// public CpSituacaoConfiguracao buscaSituacao(T cpConfiguracao)
-	// throws Exception {
-	// T cpConfiguracaoResult = buscaConfiguracao(cpConfiguracao,
-	// new int[] { 0 });
-	// if (cpConfiguracaoResult != null)
-	// return cpConfiguracaoResult.getCpSituacaoConfiguracao();
-	// else
-	// return cpConfiguracao.getCpTipoConfiguracao().getSituacaoDefault();
-	// }
-
-	public TreeSet<CpConfiguracao> getListaPorTipo(Long idTipoConfig)
-			throws Exception {
+	public TreeSet<CpConfiguracao> getListaPorTipo(Long idTipoConfig) {
 		return getHashListas().get(idTipoConfig);
 	}
 
-	private void atualizarCache(Long idTipoConfig) {
-		if (!cacheInicializado){
-			inicializarCache();
+	private void atualizarCache() {
+		if (!cacheInicializado) {
+			inicializarCacheSeNecessario();
 			return;
 		}
 		Date dt = CpDao.getInstance().consultarDataUltimaAtualizacao();
 
-		if (dtUltimaAtualizacaoCache == null || dt.after(dtUltimaAtualizacaoCache)) {
-			procederAtualizacaoDeCache(idTipoConfig, dt);
+		if (dtUltimaAtualizacaoCache == null
+				|| dt.after(dtUltimaAtualizacaoCache)) {
+			procederAtualizacaoDeCache(dt);
 		}
 	}
 
-	private synchronized void procederAtualizacaoDeCache(Long idTipoConfig, Date dt) {
-		if (dtUltimaAtualizacaoCache != null && !dt.after(dtUltimaAtualizacaoCache)) 
+	private synchronized void procederAtualizacaoDeCache(Date dt) {
+		if (dtUltimaAtualizacaoCache != null
+				&& !dt.after(dtUltimaAtualizacaoCache))
 			return;
 
 		SessionFactory sfCpDao = CpDao.getInstance().getSessao()
@@ -148,48 +179,43 @@ public class CpConfiguracaoBL {
 
 		sfCpDao.evict(CpConfiguracao.class);
 
+		List<CpConfiguracao> alteracoes = dao().consultarConfiguracoesDesde(
+				dtUltimaAtualizacaoCache);
 
-		List<CpConfiguracao> alteracoes = dao().consultarConfiguracoesDesde(dtUltimaAtualizacaoCache);
-	
-		Logger.getLogger("siga.conf.cache").fine("Numero de alteracoes no cache: " + alteracoes.size());
-		if (alteracoes.size() > 0){
+		Logger.getLogger("siga.conf.cache").fine(
+				"Numero de alteracoes no cache: " + alteracoes.size());
+		if (alteracoes.size() > 0) {
 			evitarLazy(alteracoes);
-			inicializarCache(idTipoConfig);
 
 			for (CpConfiguracao cpConfiguracao : alteracoes) {
-				Long idTpConf = cpConfiguracao.getCpTipoConfiguracao().getIdTpConfiguracao();
-				inicializarCache(idTpConf);
-				if (cpConfiguracao.ativaNaData(dt)){
-					hashListas.get(idTpConf).add(cpConfiguracao); 
-				}else{
-					hashListas.get(idTpConf).remove(cpConfiguracao);
+				Long idTpConf = cpConfiguracao.getCpTipoConfiguracao()
+						.getIdTpConfiguracao();
+				TreeSet<CpConfiguracao> tree = hashListas.get(idTpConf);
+				if (tree == null) {
+					tree = new TreeSet<CpConfiguracao>(comparator);
+					hashListas.put(idTpConf, tree);
+				}
+				if (cpConfiguracao.ativaNaData(dt)) {
+					tree.add(cpConfiguracao);
+				} else {
+					tree.remove(cpConfiguracao);
 				}
 			}
 		}
 
 		dtUltimaAtualizacaoCache = dt;
 	}
-	
-	protected void inicializarCache(Long idTipoConfig) {
-		if (idTipoConfig!= null && hashListas.get(idTipoConfig) == null){
-			TreeSet<CpConfiguracao> tree = new TreeSet<CpConfiguracao>(comparator);
-			List<CpConfiguracao> results = (List<CpConfiguracao>) dao().consultarConfiguracoesPorTipo(idTipoConfig);
-			evitarLazy(results);
-			tree.addAll(results);
-			hashListas.put(idTipoConfig, tree);
-		}
-	}
 
 	/**
-	 * Varre as entidades definidas na configura��o para evitar que o hibernate
-	 * guarde vers�es lazy delas.
+	 * Varre as entidades definidas na configuração para evitar que o hibernate
+	 * guarde versões lazy delas.
 	 * 
 	 * @param listaCfg
-	 *            - lista de configura��es que podem ter objetos lazy
+	 *            - lista de configurações que podem ter objetos lazy
 	 */
 	protected void evitarLazy(List<CpConfiguracao> provResults) {
 		for (CpConfiguracao cfg : provResults) {
-			if (cfg.getCpSituacaoConfiguracao() != null){
+			if (cfg.getCpSituacaoConfiguracao() != null) {
 				cfg.getCpSituacaoConfiguracao().getDscSitConfiguracao();
 			}
 			if (cfg.getOrgaoUsuario() != null)
@@ -202,9 +228,9 @@ public class CpConfiguracaoBL {
 				cfg.getCargo().getDescricao();
 			if (cfg.getFuncaoConfianca() != null)
 				cfg.getFuncaoConfianca().getDescricao();
-			if (cfg.getDpPessoa() != null){
+			if (cfg.getDpPessoa() != null) {
 				cfg.getDpPessoa().getDescricao();
-				//				cfg.getDpPessoa().getPessoaAtual().getDescricao();
+				// cfg.getDpPessoa().getPessoaAtual().getDescricao();
 			}
 			if (cfg.getCpTipoConfiguracao() != null)
 				cfg.getCpTipoConfiguracao().getDscTpConfiguracao();
@@ -212,7 +238,7 @@ public class CpConfiguracaoBL {
 				cfg.getCpServico().getDescricao();
 			if (cfg.getCpIdentidade() != null)
 				cfg.getCpIdentidade().getNmLoginIdentidade();
-			if (cfg.getCpGrupo() != null)
+			if (cfg.getCpGrupo() != null && cfg.getCpGrupo().getId() != null)
 				cfg.getCpGrupo().getNivel();
 			if (cfg.getCpTipoLotacao() != null)
 				cfg.getCpTipoLotacao().getDscTpLotacao();
@@ -223,32 +249,33 @@ public class CpConfiguracaoBL {
 		}
 	}
 
-	public void limparCacheSeNecessario() throws Exception {
-		atualizarCache(null);
-	}
-
 	/**
-	 * Limpa o cache do hibernate. Como as configura��es s�o mantidas em cache
-	 * por motivo de performance, as altera��es precisam ser atualizadas para
+	 * Limpa o cache do hibernate. Como as configurações são mantidas em cache
+	 * por motivo de performance, as alterações precisam ser atualizadas para
 	 * que possam valer imediatamente.
 	 * 
 	 * @throws Exception
 	 */
-	public void limparCache(CpTipoConfiguracao cpTipoConfig) throws Exception {
-
-		atualizarCache(cpTipoConfig!=null?cpTipoConfig.getIdTpConfiguracao():null);
-
+	public void limparCacheSeNecessario() throws Exception {
+		atualizarCache();
 	}
+
+	// public void limparCache(CpTipoConfiguracao cpTipoConfig) throws Exception
+	// {
+	//
+	// atualizarCache(cpTipoConfig!=null?cpTipoConfig.getIdTpConfiguracao():null);
+	//
+	// }
 
 	/**
 	 * 
-	 * Obt�m a configura��o a partir de um filtro, como uma consulta comum a uma
-	 * entidade. O par�metro atributoDesconsideradoFiltro deve-se ao seguinte:
-	 * para se escolher a configura��o a ser retornada do bando, s�o
-	 * consideradas na base as configura��es que n�o possuam algum campo
-	 * preenchido que nulo no filtro, a n�o ser que esse atributo tenha sido
-	 * passado atrav�s desse par�metro. Se nenhuma lista de configura��es for
-	 * informada, busca todas as configura��es para o TipoDeConfiguracao
+	 * Obtém a configuração a partir de um filtro, como uma consulta comum a uma
+	 * entidade. O parâmetro atributoDesconsideradoFiltro deve-se ao seguinte:
+	 * para se escolher a configuração a ser retornada do bando, são
+	 * consideradas na base as configurações que não possuam algum campo
+	 * preenchido que nulo no filtro, a não ser que esse atributo tenha sido
+	 * passado através desse parãmetro. Se nenhuma lista de configurações for
+	 * informada, busca todas as configurações para o TipoDeConfiguracao
 	 * constante no filtro.
 	 * 
 	 * @param cpConfiguracaoFiltro
@@ -259,7 +286,7 @@ public class CpConfiguracaoBL {
 	 */
 	public CpConfiguracao buscaConfiguracao(
 			CpConfiguracao cpConfiguracaoFiltro,
-			int atributoDesconsideradoFiltro[], Date dtEvn) throws Exception {
+			int atributoDesconsideradoFiltro[], Date dtEvn) {
 		deduzFiltro(cpConfiguracaoFiltro);
 
 		Set<Integer> atributosDesconsiderados = new LinkedHashSet<Integer>();
@@ -268,17 +295,17 @@ public class CpConfiguracaoBL {
 		}
 
 		SortedSet<CpPerfil> perfis = null;
-		if (cpConfiguracaoFiltro.isBuscarPorPerfis() || (cpConfiguracaoFiltro.getCpTipoConfiguracao() != null
-				&& cpConfiguracaoFiltro
-				.getCpTipoConfiguracao()
-				.getIdTpConfiguracao()
-				.equals(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO))) {
+		if (cpConfiguracaoFiltro.isBuscarPorPerfis()
+				|| (cpConfiguracaoFiltro.getCpTipoConfiguracao() != null && cpConfiguracaoFiltro
+						.getCpTipoConfiguracao()
+						.getIdTpConfiguracao()
+						.equals(CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO))) {
 			perfis = consultarPerfisPorPessoaELotacao(
 					cpConfiguracaoFiltro.getDpPessoa(),
 					cpConfiguracaoFiltro.getLotacao(), dtEvn);
 
 			// Quando o filtro especifica um perfil, ou seja, estamos tentando
-			// avaliar as permiss�es de um determinado perfil, ele e todos os
+			// avaliar as permissões de um determinado perfil, ele e todos os
 			// seus pais devem ser inseridos na lista de perfis
 			if (cpConfiguracaoFiltro.getCpGrupo() != null) {
 				perfis = new TreeSet<CpPerfil>();
@@ -308,6 +335,8 @@ public class CpConfiguracaoBL {
 		// } catch (Exception e) {
 		// System.out.println(e.getStackTrace());
 		// }
+		if (lista == null)
+			return null;
 
 		for (CpConfiguracao cpConfiguracao : lista) {
 			if ((!cpConfiguracao.ativaNaData(dtEvn))
@@ -324,13 +353,13 @@ public class CpConfiguracaoBL {
 	}
 
 	public SortedSet<CpPerfil> consultarPerfisPorPessoaELotacao(
-			DpPessoa pessoa, DpLotacao lotacao, Date dtEvn) throws Exception {
+			DpPessoa pessoa, DpLotacao lotacao, Date dtEvn) {
 		if (pessoa == null && lotacao == null)
 			return null;
 		TreeSet<CpConfiguracao> lista = getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_PERTENCER);
 
 		SortedSet<CpPerfil> perfis = new TreeSet<CpPerfil>();
-		if (pessoa != null) {
+		if (lista != null && pessoa != null) {
 			for (CpConfiguracao cfg : lista) {
 				if (cfg.getCpGrupo() == null)
 					continue;
@@ -362,13 +391,15 @@ public class CpConfiguracaoBL {
 						&& !cfg.getLotacao().getOrgaoUsuario()
 						.equivale(lotacao.getOrgaoUsuario()))
 					continue;
-				if (g instanceof CpPerfil && cfg.getDscFormula()!=null){
-					Map<String,DpPessoa> pessoaMap = new HashMap<String, DpPessoa>();
+
+				if (g instanceof CpPerfil && cfg.getDscFormula() != null) {
+					Map<String, DpPessoa> pessoaMap = new HashMap<String, DpPessoa>();
 					pessoaMap.put("pessoa", pessoa);
-					if (!(Boolean) MVEL.eval(cfg.getDscFormula(),pessoaMap)){
+					if (!(Boolean) MVEL.eval(cfg.getDscFormula(), pessoaMap)) {
 						continue;
 					}
 				}
+
 				do {
 					perfis.add((CpPerfil) g);
 					g = ((CpPerfil) g).getCpGrupoPai();
@@ -384,13 +415,13 @@ public class CpConfiguracaoBL {
 
 	/**
 	 * 
-	 * Obt�m a situa��o a partir de um filtro, como uma consulta comum a uma
-	 * entidade. O par�metro atributoDesconsideradoFiltro deve-se ao seguinte:
-	 * para se escolher a situa��o a ser retornada, s�o consideradas na base as
-	 * configura��es que n�o possuam algum campo preenchido que nulo no filtro,
-	 * a n�o ser que esse atributo tenha sido passado atrav�s desse par�metro.
-	 * Caso nenhuma configura��o seja selecionada, a situa��o default do tipo de
-	 * configura��o ser� retornada.
+	 * Obtém a situação a partir de um filtro, como uma consulta comum a uma
+	 * entidade. O parâmetro atributoDesconsideradoFiltro deve-se ao seguinte:
+	 * para se escolher a situação a ser retornada, são consideradas na base as
+	 * configurações que não possuam algum campo preenchido que nulo no filtro,
+	 * a não ser que esse atributo tenha sido passado através desse parãmetro.
+	 * Caso nenhuma configuração seja selecionada, a situação default do tipo de
+	 * configuração será retornada.
 	 * 
 	 * @param cpConfiguracaoFiltro
 	 * @param atributoDesconsideradoFiltro
@@ -449,6 +480,7 @@ public class CpConfiguracaoBL {
 						.getDpPessoa() == null) && !atributosDesconsiderados
 						.contains(PESSOA)))))
 			return false;
+
 
 		if (cfg.getLotacao() != null
 				&& ((cfgFiltro.getLotacao() != null
@@ -511,7 +543,7 @@ public class CpConfiguracaoBL {
 	 * pertence
 	 * 
 	 * @param cfg
-	 *            - A configura��o a ser verificada
+	 *            - A configuração a ser verificada
 	 * @param perfis
 	 *            - os perfis da pessoa/lotacao
 	 * @return
@@ -529,7 +561,7 @@ public class CpConfiguracaoBL {
 
 	/**
 	 * 
-	 * M�todo com implementa��o completa, chamado pelas outras sobrecargas
+	 * Método com implementação completa, chamado pelas outras sobrecargas
 	 * 
 	 * @param cpTpDoc
 	 * @param cpFormaDoc
@@ -550,7 +582,7 @@ public class CpConfiguracaoBL {
 			DpLotacao dpLotacao, DpCargo cargo,
 			DpFuncaoConfianca dpFuncaoConfianca, DpPessoa dpPessoa,
 			CpServico cpServico, CpIdentidade cpIdentidade, CpGrupo cpGrupo,
-			long idTpConf) throws Exception {
+			CpTipoLotacao cpTpLotacao, long idTpConf) throws Exception {
 
 		CpConfiguracao cfgFiltro = createNewConfiguracao();
 
@@ -564,6 +596,8 @@ public class CpConfiguracaoBL {
 		cfgFiltro.setCpTipoLotacao(dpLotacao != null ? dpLotacao
 				.getCpTipoLotacao() : null);
 		cfgFiltro.setCpGrupo(cpGrupo);
+		cfgFiltro.setCpTipoLotacao(cpTpLotacao);
+		
 
 		cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
 				CpTipoConfiguracao.class, false));
@@ -572,6 +606,7 @@ public class CpConfiguracaoBL {
 				new int[] { 0 }, null);
 
 		CpSituacaoConfiguracao situacao;
+
 		if (cfg != null) {
 			situacao = cfg.getCpSituacaoConfiguracao();
 		} else {
@@ -587,7 +622,7 @@ public class CpConfiguracaoBL {
 	/**
 	 * 
 	 * Usado para se verificar se uma pessoa pode realizar uma determinada
-	 * opera��o no documento
+	 * operação no documento
 	 * 
 	 * @param dpPessoa
 	 * @param dpLotacao
@@ -597,44 +632,44 @@ public class CpConfiguracaoBL {
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
 			long idTpConf) throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, dpPessoa, null,
-				null, null, idTpConf);
+				null, null, null, idTpConf);
 
 	}
 
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
 			CpServico cpServico, long idTpConf) throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, dpPessoa,
-				cpServico, null, null, idTpConf);
+				cpServico, null, null, null, idTpConf);
 
 	}
 
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, long idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, null, null, null, dpPessoa, null,
-				null, null, idTpConf);
+				null, null, null, idTpConf);
 	}
 
 	public boolean podePorConfiguracao(DpLotacao dpLotacao, long idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, null, null,
-				null, null, idTpConf);
+				null, null, null, idTpConf);
 	}
 
 	public boolean podePorConfiguracao(CpIdentidade cpIdentidade, long idTpConf)
 			throws Exception {
 		return podePorConfiguracao(null, null, null, null, null, null,
-				cpIdentidade, null, idTpConf);
+				cpIdentidade, null, null, idTpConf);
 	}
 
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao,
 			CpGrupo cpGrupo, long idTpConf) throws Exception {
 		return podePorConfiguracao(null, dpLotacao, null, null, dpPessoa, null,
-				null, cpGrupo, idTpConf);
+				null, cpGrupo, null, idTpConf);
 	}
 
 	/**
-	 * Infere configura��es �bvias. Por exemplo, se for informada a pessoa, a
-	 * lota��o, �rg�o etc. j� ser�o preenchidos automaticamente.
+	 * Infere configurações óbvias. Por exemplo, se for informada a pessoa, a
+	 * lotação, órgão etc. já serão preenchidos automaticamente.
 	 * 
 	 * @param cpConfiguracao
 	 */
@@ -662,9 +697,11 @@ public class CpConfiguracaoBL {
 		}
 
 		if (cpConfiguracao.getLotacao() != null)
-			if (cpConfiguracao.getOrgaoUsuario() == null)
+			if (cpConfiguracao.getOrgaoUsuario() == null){
 				cpConfiguracao.setOrgaoUsuario(cpConfiguracao.getLotacao()
 						.getOrgaoUsuario());
+				cpConfiguracao.setCpTipoLotacao(cpConfiguracao.getLotacao().getCpTipoLotacao());
+			}
 	}
 
 	public void destroy() {
@@ -674,7 +711,8 @@ public class CpConfiguracaoBL {
 
 	@SuppressWarnings("static-access")
 	public Boolean podeUtilizarServicoPorConfiguracao(DpPessoa titular,
-			DpLotacao lotaTitular, String servicoPath) throws Exception {
+			DpLotacao lotaTitular, String servicoPath) {
+		
 		try {
 			if (titular == null || lotaTitular == null)
 				return false;
@@ -688,7 +726,7 @@ public class CpConfiguracaoBL {
 				// Constroi uma linha completa, tipo full path
 				for (String s : servicoPath.split(";")) {
 					String[] asParts = s.split(":"); // Separa a sigla da
-					// descri��o
+														// descrição
 					String sSigla = asParts[0];
 					srv = new CpServico();
 					srv.setSiglaServico(srvPai != null ? srvPai.getSigla()
@@ -746,13 +784,13 @@ public class CpConfiguracaoBL {
 				aCfgGrp.add(cfgGrp);
 			}
 		} catch (Exception e) {
-			throw new AplicacaoException("Erro obtendo configura��es", 0, e);
+			throw new AplicacaoException("Erro obtendo configurações", 0, e);
 		}
 		return aCfgGrp;
 	}
 
 	/**
-	 * Retorna as pessoas que podem acessar o grupos de seguran�a da lota��o
+	 * Retorna as pessoas que podem acessar o grupos de segurança da lotação
 	 * 
 	 * @param lot
 	 * @return
@@ -768,7 +806,8 @@ public class CpConfiguracaoBL {
 					.getListaPorTipo(
 							CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO);
 			for (CpConfiguracao c : configs) {
-				DpPessoa pesAtual = CpDao.getInstance().consultarPorIdInicial(c.getDpPessoa().getIdInicial());
+				DpPessoa pesAtual = CpDao.getInstance().consultarPorIdInicial(
+						c.getDpPessoa().getIdInicial());
 				if (c.getDpPessoa().equivale(pesAtual)) {
 					if (c.getHisAtivo() == 1
 							&& pesAtual.getDataFim() == null
@@ -859,25 +898,6 @@ public class CpConfiguracaoBL {
 		}
 
 		return false;
-	}
-
-	public synchronized void inicializarCache() {
-		if (!cacheInicializado){
-			Logger.getLogger("siga.conf.cache").info("Inicializando cache de configura��es via " + this.getClass().getSimpleName());
-			long inicio = System.currentTimeMillis();
-
-			List<CpTipoConfiguracao> tiposConfiguracao = CpDao.getInstance().listarTiposConfiguracao();
-			for (CpTipoConfiguracao cpTpConf : tiposConfiguracao) {
-				try{
-					inicializarCache(cpTpConf.getIdTpConfiguracao());
-				}catch(Exception e){
-					Logger.getLogger("siga.conf.cache").warning("N�o foi poss�vel inicializar o cache CP_TIPO_CONFIGURACAO [" + cpTpConf.getDscTpConfiguracao() + "] ID: [" + cpTpConf.getIdTpConfiguracao() + "]");
-				}
-			}
-			cacheInicializado = true;
-
-			Logger.getLogger("siga.conf.cache").info("Cache de configura��es inicializado em ms: " + (System.currentTimeMillis() - inicio));
-		}
 	}
 
 }

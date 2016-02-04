@@ -84,7 +84,7 @@ public class ExDaoTest extends TestCase {
 		// TODO Auto-generated method stub
 
 		try {
-			System.out.println("Data e hora da ultima atualização - "
+			System.out.println("Data e hora da ultima atualizaÃ§Ã£o - "
 					+ dao.consultarDataUltimaAtualizacao());
 
 			// ExModelo mod = dao.consultar(512L, ExModelo.class, false);
@@ -327,7 +327,7 @@ public class ExDaoTest extends TestCase {
 					break;
 			}
 		}
-		return "Erro em assinaturas de movimentações: " + cErr + " em " + cMov;
+		return "Erro em assinaturas de movimentaÃ§Ãµes: " + cErr + " em " + cMov;
 	}
 
 	private static String clean(String s) {

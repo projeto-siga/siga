@@ -67,8 +67,6 @@ public class Mumps {
 
 	public static String EnviaComando() {
 		Socket socket = null;
-		BufferedWriter out = null;
-		BufferedReader in = null;
 		try {
 			socket = new Socket("j50", 9718);
 		} catch (UnknownHostException e) {
@@ -78,16 +76,7 @@ public class Mumps {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		try {
-			out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-		} catch (IOException e) {
-		}
-		try {
-			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		} catch (IOException e) {
-		}
-
-		try {
+		try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())); BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 			String msg = "";
 
 			// strComando=strComando.replace(" ","%20");
@@ -114,10 +103,6 @@ public class Mumps {
 			}
 
 			// System.out.print(retorno);
-			in.close();
-			in = null;
-			out.close();
-			out = null;
 			socket.close();
 			socket = null;
 
@@ -125,13 +110,9 @@ public class Mumps {
 			return retorno;
 		} catch (MalformedURLException e) {
 			System.out.print(e.getMessage());
-			in = null;
-			out = null;
 			socket = null;
 		} catch (IOException e) {
 			System.out.print(e.getMessage());
-			in = null;
-			out = null;
 			socket = null;
 		}
 

@@ -1879,29 +1879,30 @@ public class ExDocumentoController extends ExController {
 				aFinal.add(str);
 			}
 		}
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		if (aFinal != null && aFinal.size() > 0) {
-			for (final String par : aFinal) {
-				String s = "exDocumentoDTO.".concat(par);
-				if (param(s) == null) {
-					s = par;
-				}
-				if (param(s) != null && !param(s).trim().equals("")
-						&& !s.trim().equals("exDocumentoDTO.preenchimento")
-						&& !param(s).matches("[0-9]{2}/[0-9]{2}/[0-9]{4}")) {
-					if (baos.size() > 0) {
-						baos.write('&');
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			if (aFinal != null && aFinal.size() > 0) {
+				for (final String par : aFinal) {
+					String s = "exDocumentoDTO.".concat(par);
+					if (param(s) == null) {
+						s = par;
 					}
-					baos.write(par.getBytes());
-					baos.write('=');
-
-					// Deveria estar gravando como UTF-8
-					baos.write(URLEncoder.encode(param(s), "iso-8859-1")
-							.getBytes());
+					if (param(s) != null && !param(s).trim().equals("")
+							&& !s.trim().equals("exDocumentoDTO.preenchimento")
+							&& !param(s).matches("[0-9]{2}/[0-9]{2}/[0-9]{4}")) {
+						if (baos.size() > 0) {
+							baos.write('&');
+						}
+						baos.write(par.getBytes());
+						baos.write('=');
+	
+						// Deveria estar gravando como UTF-8
+						baos.write(URLEncoder.encode(param(s), "iso-8859-1")
+								.getBytes());
+					}
 				}
 			}
+			return baos.toByteArray();
 		}
-		return baos.toByteArray();
 	}
 
 	private void lerEntrevista(final ExDocumentoDTO exDocumentoDTO) {
@@ -2110,45 +2111,45 @@ public class ExDocumentoController extends ExController {
 			exDocumentoDTO.getDoc().setExMobilPai(null);
 		}
 
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-		final String marcacoes[] = { "<!-- INICIO NUMERO -->",
-				"<!-- FIM NUMERO -->", "<!-- INICIO NUMERO", "FIM NUMERO -->",
-				"<!-- INICIO TITULO", "FIM TITULO -->",
-				"<!-- INICIO MIOLO -->", "<!-- FIM MIOLO -->",
-				"<!-- INICIO CORPO -->", "<!-- FIM CORPO -->",
-				"<!-- INICIO CORPO", "FIM CORPO -->",
-				"<!-- INICIO ASSINATURA -->", "<!-- FIM ASSINATURA -->",
-				"<!-- INICIO ABERTURA -->", "<!-- FIM ABERTURA -->",
-				"<!-- INICIO ABERTURA", "FIM ABERTURA -->",
-				"<!-- INICIO FECHO -->", "<!-- FIM FECHO -->" };
-
-		final String as[] = vars;
-		if (as != null && as.length > 0) {
-			for (final String s : as) {
-				if (baos.size() > 0)
-					baos.write('&');
-				baos.write(s.getBytes());
-				baos.write('=');
-				if (param(s) != null) {
-					String parametro = param(s);
-					for (final String m : marcacoes) {
-						if (parametro.contains(m))
-							parametro = parametro.replaceAll(m, "");
-					}
-					if (!FuncoesEL.contemTagHTML(parametro)) {
-						if (parametro.contains("\"")) {
-							parametro = parametro.replace("\"", "&quot;");
-							setParam(s, parametro);
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			final String marcacoes[] = { "<!-- INICIO NUMERO -->",
+					"<!-- FIM NUMERO -->", "<!-- INICIO NUMERO", "FIM NUMERO -->",
+					"<!-- INICIO TITULO", "FIM TITULO -->",
+					"<!-- INICIO MIOLO -->", "<!-- FIM MIOLO -->",
+					"<!-- INICIO CORPO -->", "<!-- FIM CORPO -->",
+					"<!-- INICIO CORPO", "FIM CORPO -->",
+					"<!-- INICIO ASSINATURA -->", "<!-- FIM ASSINATURA -->",
+					"<!-- INICIO ABERTURA -->", "<!-- FIM ABERTURA -->",
+					"<!-- INICIO ABERTURA", "FIM ABERTURA -->",
+					"<!-- INICIO FECHO -->", "<!-- FIM FECHO -->" };
+	
+			final String as[] = vars;
+			if (as != null && as.length > 0) {
+				for (final String s : as) {
+					if (baos.size() > 0)
+						baos.write('&');
+					baos.write(s.getBytes());
+					baos.write('=');
+					if (param(s) != null) {
+						String parametro = param(s);
+						for (final String m : marcacoes) {
+							if (parametro.contains(m))
+								parametro = parametro.replaceAll(m, "");
 						}
+						if (!FuncoesEL.contemTagHTML(parametro)) {
+							if (parametro.contains("\"")) {
+								parametro = parametro.replace("\"", "&quot;");
+								setParam(s, parametro);
+							}
+						}
+	
+						baos.write(URLEncoder.encode(parametro, "iso-8859-1")
+								.getBytes());
 					}
-
-					baos.write(URLEncoder.encode(parametro, "iso-8859-1")
-							.getBytes());
 				}
+				exDocumentoDTO.getDoc().setConteudoTpDoc("application/zip");
+				exDocumentoDTO.getDoc().setConteudoBlobForm(baos.toByteArray());
 			}
-			exDocumentoDTO.getDoc().setConteudoTpDoc("application/zip");
-			exDocumentoDTO.getDoc().setConteudoBlobForm(baos.toByteArray());
 		}
 	}
 

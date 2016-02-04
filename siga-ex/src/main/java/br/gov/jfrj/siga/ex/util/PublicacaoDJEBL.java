@@ -286,91 +286,90 @@ public class PublicacaoDJEBL {
 
 		Map<String, String> docForm = movDoc.getForm();
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 
-		OutputFormat outputFormat = new OutputFormat("XML", "ISO-8859-1", false);
-		outputFormat.setIndent(0);
-		outputFormat.setIndenting(false);
-
-		XMLSerializer serializer = new XMLSerializer(baos, outputFormat);
-
-		ContentHandler handler = serializer.asContentHandler();
-		handler.startDocument();
-		handler.startElement("", "", "PUBLICACAODJE", null);
-
-		AttributesImpl attIdentificacao = new AttributesImpl();
-
-		attIdentificacao.addAttribute("", "", "TIPOARQ", "String", "A");
-
-		attIdentificacao.addAttribute("", "", "CADERNO", "String", tipoMateria);
-		
-		if(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu().equals("JFRJ"))
-			attIdentificacao.addAttribute("", "", "SECAO", "String", String.valueOf("SJRJ"));
-		else if(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu().equals("JFES"))
-			attIdentificacao.addAttribute("", "", "SECAO", "String", String.valueOf("SJES"));
-		else
-			attIdentificacao.addAttribute("", "", "SECAO", "String", String.valueOf(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu()));
-
-//		String auxStr = obterUnidadeDocumento(mov.getExDocumento());
-
-		attIdentificacao.addAttribute("", "", "UNIDADE", "String", lotPublicacao);
-
-		final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-
-		attIdentificacao.addAttribute("", "", "DATADISPONIBILIZACAO", "Date",df.format(mov.getDtDispPublicacao()));
-
-		long idMod = mov.getExDocumento().getExModelo().getHisIdIni();
-		if (idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR
-				|| idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R_LICITACAO_CONTRATOS
-				|| idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R)
-			attIdentificacao.addAttribute("", "", "TIPODOC", "Integer", docForm.get("idTipoMateria"));
-		else {
-			ExTpDocPublicacao tpDocPubl = ExDao.getInstance().consultarPorModelo(movDoc.getExModelo());
+			OutputFormat outputFormat = new OutputFormat("XML", "ISO-8859-1", false);
+			outputFormat.setIndent(0);
+			outputFormat.setIndenting(false);
+	
+			XMLSerializer serializer = new XMLSerializer(baos, outputFormat);
+	
+			ContentHandler handler = serializer.asContentHandler();
+			handler.startDocument();
+			handler.startElement("", "", "PUBLICACAODJE", null);
+	
+			AttributesImpl attIdentificacao = new AttributesImpl();
+	
+			attIdentificacao.addAttribute("", "", "TIPOARQ", "String", "A");
+	
+			attIdentificacao.addAttribute("", "", "CADERNO", "String", tipoMateria);
 			
-			if(tpDocPubl != null)
-				attIdentificacao.addAttribute("", "", "TIPODOC", "Integer", String.valueOf(tpDocPubl.getIdDocPublicacao().longValue()));
+			if(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu().equals("JFRJ"))
+				attIdentificacao.addAttribute("", "", "SECAO", "String", String.valueOf("SJRJ"));
+			else if(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu().equals("JFES"))
+				attIdentificacao.addAttribute("", "", "SECAO", "String", String.valueOf("SJES"));
+			else
+				attIdentificacao.addAttribute("", "", "SECAO", "String", String.valueOf(movDoc.getOrgaoUsuario().getAcronimoOrgaoUsu()));
+	
+	//		String auxStr = obterUnidadeDocumento(mov.getExDocumento());
+	
+			attIdentificacao.addAttribute("", "", "UNIDADE", "String", lotPublicacao);
+	
+			final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+	
+			attIdentificacao.addAttribute("", "", "DATADISPONIBILIZACAO", "Date",df.format(mov.getDtDispPublicacao()));
+	
+			long idMod = mov.getExDocumento().getExModelo().getHisIdIni();
+			if (idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R_VARAS_JEFS_TR
+					|| idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R_LICITACAO_CONTRATOS
+					|| idMod == MODELO_FORMULARIO_PUBLICACAO_DJF2R)
+				attIdentificacao.addAttribute("", "", "TIPODOC", "Integer", docForm.get("idTipoMateria"));
+			else {
+				ExTpDocPublicacao tpDocPubl = ExDao.getInstance().consultarPorModelo(movDoc.getExModelo());
+				
+				if(tpDocPubl != null)
+					attIdentificacao.addAttribute("", "", "TIPODOC", "Integer", String.valueOf(tpDocPubl.getIdDocPublicacao().longValue()));
+			}
+	
+			String sMatricula;
+			if (movDoc.getSubscritor() != null) {
+				sMatricula = obterSiglaAlternativa(movDoc.getSubscritor());
+			} else {
+				sMatricula = obterSiglaAlternativa(movDoc.getCadastrante());
+			}
+	
+			// Está sendo acrescentado um zero no final das matrículas dos juízes do
+			// ES, pois a matrícula deles só possem 4 digitos
+			// E o DJE no tribunal exigia 5 dígitos. Em conversar com o Marcelo
+			// Santos, ele sugeriu que fosse feita esta alteração, pois eles não
+			// teria condições de realizá-la.
+			if (sMatricula.length() == 6)
+				sMatricula = sMatricula + "0";
+	
+			attIdentificacao.addAttribute("", "", "MATRICULAUSUARIO", "String",
+					String.valueOf(sMatricula));
+	
+			handler.startElement("", "", "IDENTIFICACAO", attIdentificacao);
+			handler.endElement("", "", "IDENTIFICACAO");
+	
+			AttributesImpl attsExpediente = new AttributesImpl();
+			attsExpediente.addAttribute("", "", "NUMEXPEDIENTE", "String", movDoc.getCodigo());
+	
+			if (docForm.containsKey("tituloMateria"))
+				attsExpediente.addAttribute("", "", "DESCREXPEDIENTE", "String",docForm.get("tituloMateria"));
+			else
+				attsExpediente.addAttribute("", "", "DESCREXPEDIENTE", "String",descrPublicacao);
+			handler.startElement("", "", "EXPEDIENTE", attsExpediente);
+			handler.endElement("", "", "EXPEDIENTE");
+			handler.endElement("", "", "PUBLICACAODJE");
+			handler.endDocument();
+	
+			byte[] retorno = baos.toByteArray();
+	
+			System.out.println("DJE envio " + mov.getExDocumento().getCodigo() + ", xml gerado: " + new String(retorno));
+	
+			return retorno;
 		}
-
-		String sMatricula;
-		if (movDoc.getSubscritor() != null) {
-			sMatricula = obterSiglaAlternativa(movDoc.getSubscritor());
-		} else {
-			sMatricula = obterSiglaAlternativa(movDoc.getCadastrante());
-		}
-
-		// Está sendo acrescentado um zero no final das matrículas dos juízes do
-		// ES, pois a matrícula deles só possem 4 digitos
-		// E o DJE no tribunal exigia 5 dígitos. Em conversar com o Marcelo
-		// Santos, ele sugeriu que fosse feita esta alteração, pois eles não
-		// teria condições de realizá-la.
-		if (sMatricula.length() == 6)
-			sMatricula = sMatricula + "0";
-
-		attIdentificacao.addAttribute("", "", "MATRICULAUSUARIO", "String",
-				String.valueOf(sMatricula));
-
-		handler.startElement("", "", "IDENTIFICACAO", attIdentificacao);
-		handler.endElement("", "", "IDENTIFICACAO");
-
-		AttributesImpl attsExpediente = new AttributesImpl();
-		attsExpediente.addAttribute("", "", "NUMEXPEDIENTE", "String", movDoc.getCodigo());
-
-		if (docForm.containsKey("tituloMateria"))
-			attsExpediente.addAttribute("", "", "DESCREXPEDIENTE", "String",docForm.get("tituloMateria"));
-		else
-			attsExpediente.addAttribute("", "", "DESCREXPEDIENTE", "String",descrPublicacao);
-		handler.startElement("", "", "EXPEDIENTE", attsExpediente);
-		handler.endElement("", "", "EXPEDIENTE");
-		handler.endElement("", "", "PUBLICACAODJE");
-		handler.endDocument();
-
-		byte[] retorno = baos.toByteArray();
-
-		System.out.println("DJE envio " + mov.getExDocumento().getCodigo() + ", xml gerado: " + new String(retorno));
-
-		baos.close();
-
-		return retorno;
 
 	}
 

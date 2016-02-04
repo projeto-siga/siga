@@ -21,18 +21,11 @@
  */
 package br.gov.jfrj.siga.ex;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.sql.Blob;
-import java.sql.SQLException;
-
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
-import org.hibernate.Hibernate;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 /**
  * A class that represents a row in the 'EX_TIPO_DESPACHO' table. This class may

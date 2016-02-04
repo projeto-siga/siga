@@ -2565,14 +2565,17 @@ public class ExMovimentacaoController extends ExController {
 	@Get("/app/expediente/mov/simular_anexacao")
 	public void aSimularAnexacao(final String sigla) throws IOException, DocumentException {
 		final Document document = new Document();
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PdfWriter.getInstance(document, baos);
-		document.open();
-		document.addTitle("PDF de teste");
-		final Paragraph preface = new Paragraph();
-		preface.add(new Paragraph("Este é um documento de teste"));
-		document.add(preface);
-		document.close();
+		byte abPDF[];
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			PdfWriter.getInstance(document, baos);
+			document.open();
+			document.addTitle("PDF de teste");
+			final Paragraph preface = new Paragraph();
+			preface.add(new Paragraph("Este é um documento de teste"));
+			document.add(preface);
+			document.close();
+			abPDF = baos.toByteArray();
+		}
 
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder, true);
@@ -2593,7 +2596,7 @@ public class ExMovimentacaoController extends ExController {
 		mov.setNmArqMov("teste.pdf");
 		mov.setConteudoTpMov("application/pdf");
 
-		mov.setConteudoBlobMov2(baos.toByteArray());
+		mov.setConteudoBlobMov2(abPDF);
 
 		if (mob.isVolumeEncerrado()) {
 			throw new AplicacaoException("Não é possível anexar arquivo em volume encerrado.");

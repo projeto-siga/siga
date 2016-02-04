@@ -70,46 +70,46 @@ public class EdicaoController extends WfController {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("Test String");
 
-		final ByteArrayOutputStream ba = new ByteArrayOutputStream();
-		final ZipOutputStream out = new ZipOutputStream(ba);
-		ZipEntry e = new ZipEntry("processdefinition.xml");
-		out.putNextEntry(e);
+		try (ByteArrayOutputStream ba = new ByteArrayOutputStream();
+				ZipOutputStream out = new ZipOutputStream(ba)) {
+			ZipEntry e = new ZipEntry("processdefinition.xml");
+			out.putNextEntry(e);
 
-		byte[] data = xml.getBytes();
-		out.write(data, 0, data.length);
-		out.closeEntry();
+			byte[] data = xml.getBytes();
+			out.write(data, 0, data.length);
+			out.closeEntry();
 
-		out.close();
+			ProcessDefinition processDefinition = ProcessDefinition
+					.parseParZipInputStream(new ZipInputStream(
+							new ByteArrayInputStream(ba.toByteArray())));
+			WfContextBuilder.getJbpmContext().getJbpmContext()
+					.deployProcessDefinition(processDefinition);
+			long id = processDefinition.getId();
 
-		ProcessDefinition processDefinition = ProcessDefinition
-				.parseParZipInputStream(new ZipInputStream(
-						new ByteArrayInputStream(ba.toByteArray())));
-		WfContextBuilder.getJbpmContext().getJbpmContext()
-				.deployProcessDefinition(processDefinition);
-		long id = processDefinition.getId();
+			String sReturn = "Deployed archive " + processDefinition.getName()
+					+ " successfully";
 
-		String sReturn = "Deployed archive " + processDefinition.getName()
-				+ " successfully";
+			Delegation d = new Delegation(
+					"br.gov.jfrj.siga.wf.util.WfAssignmentHandler");
 
-		Delegation d = new Delegation(
-				"br.gov.jfrj.siga.wf.util.WfAssignmentHandler");
+			for (Swimlane s : ((Collection<Swimlane>) processDefinition
+					.getTaskMgmtDefinition().getSwimlanes().values())) {
+				if (s.getTasks() != null)
+					for (Object t : s.getTasks()) {
+						System.out.println(((Task) t).toString());
+					}
+				if (s.getAssignmentDelegation() == null)
+					s.setAssignmentDelegation(d);
+			}
 
-		for (Swimlane s : ((Collection<Swimlane>) processDefinition
-				.getTaskMgmtDefinition().getSwimlanes().values())) {
-			if (s.getTasks() != null)
-				for (Object t : s.getTasks()) {
-					System.out.println(((Task) t).toString());
-				}
-			if (s.getAssignmentDelegation() == null)
-				s.setAssignmentDelegation(d);
+			for (Task t : ((Collection<Task>) processDefinition
+					.getTaskMgmtDefinition().getTasks().values())) {
+				if (t.getSwimlane() == null
+						&& t.getAssignmentDelegation() == null)
+					t.setAssignmentDelegation(d);
+			}
+
+			return sReturn;
 		}
-
-		for (Task t : ((Collection<Task>) processDefinition
-				.getTaskMgmtDefinition().getTasks().values())) {
-			if (t.getSwimlane() == null && t.getAssignmentDelegation() == null)
-				t.setAssignmentDelegation(d);
-		}
-
-		return sReturn;
 	}
 }

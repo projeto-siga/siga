@@ -55,17 +55,15 @@ public class ExProcessadorModelo implements ProcessadorModelo {
 		ServletContext context = CurrentRequest.get().getContext();
 		HttpServletResponse response = CurrentRequest.get().getResponse();
 		
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		Writer w = new OutputStreamWriter(bout);
-		SwallowingHttpServletResponse responseToRead = new SwallowingHttpServletResponse(response, w, "iso-8859-1");
-		
-		javax.servlet.RequestDispatcher dispatcher = context.getRequestDispatcher("/WEB-INF/page/exDocumento/processa_modelo.jsp");
-		dispatcher.include(rw, responseToRead);
-		w.flush();
-		String s = bout.toString();
-
-//		System.out.println(System.currentTimeMillis() + " - FIM processarModelo");
-		return s;
+		try (ByteArrayOutputStream bout = new ByteArrayOutputStream(); Writer w = new OutputStreamWriter(bout)) {
+			SwallowingHttpServletResponse responseToRead = new SwallowingHttpServletResponse(response, w, "iso-8859-1");
+			
+			javax.servlet.RequestDispatcher dispatcher = context.getRequestDispatcher("/WEB-INF/page/exDocumento/processa_modelo.jsp");
+			dispatcher.include(rw, responseToRead);
+			w.flush();
+			String s = bout.toString();
+			return s;
+		}
 	}
 
 	@SuppressWarnings("unchecked")

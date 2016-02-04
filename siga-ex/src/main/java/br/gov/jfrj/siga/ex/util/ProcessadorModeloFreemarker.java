@@ -96,12 +96,9 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		}
 		sTemplate += "\n" + (String) attrs.get("template") + "\n[/#compress]";
 
-		try {
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); Writer out = new OutputStreamWriter(baos)) {
 			Template temp = new Template((String) attrs.get("nmMod"),
 					new StringReader(sTemplate), cfg);
-
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			Writer out = new OutputStreamWriter(baos);
 			temp.process(root, out);
 			out.flush();
 			return baos.toString();

@@ -110,9 +110,8 @@ public class GcArquivo extends Objeto implements Serializable {
 	 * não modifica o original
 	 */
 	public GcArquivo duplicarConteudoInfo() {
-		try {
-			ByteArrayOutputStream saida = new ByteArrayOutputStream();
-			ObjectOutputStream objSaida = new ObjectOutputStream(saida);
+		try (ByteArrayOutputStream saida = new ByteArrayOutputStream();
+				ObjectOutputStream objSaida = new ObjectOutputStream(saida)) {
 			objSaida.writeObject(this);
 			objSaida.close();
 

@@ -645,11 +645,12 @@ public class ExServiceImpl implements ExService {
 			
 			if (conteudo == null)
 				conteudo = "";
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			baos.write(conteudo.getBytes());
+			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+				baos.write(conteudo.getBytes());
 			
-			doc.setConteudoTpDoc("application/zip");
-			doc.setConteudoBlobForm(baos.toByteArray());
+				doc.setConteudoTpDoc("application/zip");
+				doc.setConteudoBlobForm(baos.toByteArray());
+			}
 			
 			ServletContext servletContext =
 				    (ServletContext) context.getMessageContext().get(MessageContext.SERVLET_CONTEXT);

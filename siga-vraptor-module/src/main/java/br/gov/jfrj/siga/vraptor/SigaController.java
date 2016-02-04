@@ -66,18 +66,19 @@ public class SigaController {
 	protected String getUrlEncodedParameters()
 			throws UnsupportedEncodingException, IOException {
 		if (getPar() != null) {
-			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			for (final String key : getPar().keySet()) {
-				final String as[] = getPar().get(key);
-				for (final String val : as) {
-					if (baos.size() > 0)
-						baos.write('&');
-					baos.write(URLEncoder.encode(key, "utf-8").getBytes());
-					baos.write('=');
-					baos.write(URLEncoder.encode(val, "utf-8").getBytes());
+			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+				for (final String key : getPar().keySet()) {
+					final String as[] = getPar().get(key);
+					for (final String val : as) {
+						if (baos.size() > 0)
+							baos.write('&');
+						baos.write(URLEncoder.encode(key, "utf-8").getBytes());
+						baos.write('=');
+						baos.write(URLEncoder.encode(val, "utf-8").getBytes());
+					}
 				}
+				return new String(baos.toByteArray());
 			}
-			return new String(baos.toByteArray());
 		}
 		return null;
 	}

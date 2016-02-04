@@ -1160,10 +1160,8 @@ public class ExDao extends CpDao {
 					final ResultSet rset = psBlob.executeQuery();
 					boolean b = rset.next();
 					final Blob blob = rset.getBlob("PREENCHIMENTO_BLOB");
-					final OutputStream blobOutputStream = blob.setBinaryStream(0);
-					try {
+					try (OutputStream blobOutputStream = blob.setBinaryStream(0)) {
 						blobOutputStream.write(exPreenchimento.getPreenchimentoBA());
-						blobOutputStream.close();
 					} catch (final IOException e) {
 						throw new AplicacaoException(
 								"Ocorreu um erro ao inserir o blob", 0, e);
@@ -1256,10 +1254,8 @@ public class ExDao extends CpDao {
 				final ResultSet rset = psBlob.executeQuery();
 				boolean b = rset.next();
 				final Blob blob = rset.getBlob("PREENCHIMENTO_BLOB");
-				final OutputStream blobOutputStream = blob.setBinaryStream(0);
-				try {
+				try (OutputStream blobOutputStream = blob.setBinaryStream(0)) {
 					blobOutputStream.write(exPreenchimento.getPreenchimentoBA());
-					blobOutputStream.close();
 				} catch (final IOException e) {
 					throw new AplicacaoException("Ocorreu um erro ao inserir o blob",
 							0, e);

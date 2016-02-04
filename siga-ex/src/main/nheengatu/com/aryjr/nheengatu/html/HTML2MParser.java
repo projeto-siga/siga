@@ -77,8 +77,7 @@ public class HTML2MParser {
 		parser.setContentHandler(htmlHandler);
 		parser.setErrorHandler(htmlHandler);
 
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 			byte b[] = new byte[1024];
 			while (true) {
 				int i = is.read(b);

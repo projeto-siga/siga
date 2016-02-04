@@ -217,8 +217,7 @@ public class ProcessadorReferencias {
 	}
 
 	public String marcarReferencias(final String sHtml) {
-		final ByteArrayOutputStream os = new ByteArrayOutputStream();
-		try {
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
 
 			parser.setInput(new StringReader(sHtml));

@@ -180,10 +180,9 @@ public class CorporativoController extends SrController {
 			}
 		}
 
-		ByteArrayOutputStream baos = converterParaXML(doc);
-		
-		
-		return new ByteArrayDownload(baos.toByteArray(), "application/xml", "dadosrh.xml");
+		try (ByteArrayOutputStream baos = converterParaXML(doc)) {
+			return new ByteArrayDownload(baos.toByteArray(), "application/xml", "dadosrh.xml");
+		}
 	}
 
 	private ByteArrayOutputStream converterParaXML(Document doc) {

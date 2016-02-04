@@ -2728,9 +2728,9 @@ public class ExBL extends CpBL {
 	 */
 	private void writeB64File(String sFileName, final byte[] data)
 			throws FileNotFoundException, IOException {
-		FileOutputStream fout2 = new FileOutputStream(sFileName);
-		fout2.write(Base64.encode(data).getBytes());
-		fout2.close();
+		try (FileOutputStream fout2 = new FileOutputStream(sFileName)) {
+			fout2.write(Base64.encode(data).getBytes());
+		}
 	}
 
 	public void alimentaFilaIndexacao(ExDocumento doc, boolean reindexar) {
@@ -3124,17 +3124,18 @@ public class ExBL extends CpBL {
 	 */
 	public static byte[] urlEncodedFormFromMap(Map<String, String> map)
 			throws IOException, UnsupportedEncodingException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		for (String sKey : map.keySet()) {
-			if (baos.size() != 0)
-				baos.write("&".getBytes("iso-8859-1"));
-			baos.write(sKey.getBytes("iso-8859-1"));
-			baos.write('=');
-			baos.write(URLEncoder.encode(map.get(sKey), "iso-8859-1")
-					.getBytes());
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			for (String sKey : map.keySet()) {
+				if (baos.size() != 0)
+					baos.write("&".getBytes("iso-8859-1"));
+				baos.write(sKey.getBytes("iso-8859-1"));
+				baos.write('=');
+				baos.write(URLEncoder.encode(map.get(sKey), "iso-8859-1")
+						.getBytes());
+			}
+			byte[] baForm = baos.toByteArray();
+			return baForm;
 		}
-		byte[] baForm = baos.toByteArray();
-		return baForm;
 	}
 
 	/**
@@ -5103,12 +5104,13 @@ public class ExBL extends CpBL {
 						} else {
 							cont = tpDespacho.getDescTpDespacho();
 						}
-						ByteArrayOutputStream baos = new ByteArrayOutputStream();
-						baos.write("conteudo".getBytes("iso-8859-1"));
-						baos.write('=');
-						baos.write(URLEncoder.encode(cont, "iso-8859-1")
-								.getBytes());
-						mov.setConteudoBlobForm(baos.toByteArray());
+						try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+							baos.write("conteudo".getBytes("iso-8859-1"));
+							baos.write('=');
+							baos.write(URLEncoder.encode(cont, "iso-8859-1")
+									.getBytes());
+							mov.setConteudoBlobForm(baos.toByteArray());
+						}
 
 						// Gravar o Html //Nato
 						final String strHtml = processarModelo(mov,

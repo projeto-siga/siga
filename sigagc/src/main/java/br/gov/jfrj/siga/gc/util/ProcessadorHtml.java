@@ -267,12 +267,13 @@ public class ProcessadorHtml {
 		// else
 		// s = htmlc.getPrettyXmlAsString();
 
-		final ByteArrayOutputStream os = new ByteArrayOutputStream();
-		tidy.pprint(tidy.parseDOM(
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+			tidy.pprint(tidy.parseDOM(
 				new ByteArrayInputStream(s.getBytes("iso-8859-1")), null), os);
-		// tidy.parse(new ByteArrayInputStream(s.getBytes("iso-8859-1")), os);
-		os.flush();
-		s = new String(os.toByteArray(), "iso-8859-1");
+			// tidy.parse(new ByteArrayInputStream(s.getBytes("iso-8859-1")), os);
+			os.flush();
+			s = new String(os.toByteArray(), "iso-8859-1");
+		}
 
 		// if (fRemoverTagsDesconhecidos) {
 		// s = removerTagsDesconhecidosHtml(s);
@@ -468,12 +469,7 @@ public class ProcessadorHtml {
 	}
 
 	public String removerEspacosHtml(final String sHtml) throws Exception {
-		final ByteArrayOutputStream os = new ByteArrayOutputStream();
-		// final Writer os = new StringWriter();
-
-		// System.out.println(System.currentTimeMillis()
-		// + " - INI removerEspacosHtml");
-		try {
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 			fTrimLeft = true;
 
 			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
@@ -490,13 +486,9 @@ public class ProcessadorHtml {
 			writeToken(parser, serializer);
 			serializer.flush();
 			final String s = new String(os.toByteArray(), "utf-8");
-			// final String s = os.toString();
-			// System.out.println(System.currentTimeMillis()
-			// + " - FIM removerEspacosHtml");
 			return s;
 		} catch (final Exception ex) {
 			throw new Exception(ex);
-			// return sHtml;
 		}
 	}
 
@@ -620,12 +612,7 @@ public class ProcessadorHtml {
 
 	public String removerTagsDesconhecidosHtml(final String sHtml)
 			throws Exception {
-		final ByteArrayOutputStream os = new ByteArrayOutputStream();
-		// final Writer os = new StringWriter();
-
-		// System.out.println(System.currentTimeMillis()
-		// + " - INI removerTagsDesconhecidosHtml");
-		try {
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
 
 			parser.setInput(new StringReader(sHtml));
@@ -639,13 +626,9 @@ public class ProcessadorHtml {
 			writeTagsConhecidos(parser, serializer);
 			serializer.flush();
 			final String s = new String(os.toByteArray(), "utf-8");
-			// final String s = os.toString();
-			// System.out.println(System.currentTimeMillis()
-			// + " - FIM removerTagsDesconhecidosHtml");
 			return s;
 		} catch (final Exception ex) {
 			throw new Exception(ex);
-			// return sHtml;
 		}
 	}
 

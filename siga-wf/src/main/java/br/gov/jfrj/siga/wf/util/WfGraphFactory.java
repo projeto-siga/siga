@@ -1,6 +1,5 @@
 package br.gov.jfrj.siga.wf.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,7 +25,6 @@ public class WfGraphFactory {
 
 	public String gerarDOT(final String sXML, final String currentNode,
 			final Map<String, String> map) throws Exception {
-		final ByteArrayOutputStream os = new ByteArrayOutputStream();
 		final StringBuilder sbTransition = new StringBuilder();
 		// final StringBuilder sbStart = new StringBuilder();
 		// final StringBuilder sbEnd = new StringBuilder();
@@ -39,9 +37,6 @@ public class WfGraphFactory {
 			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
 
 			parser.setInput(new StringReader(sXML));
-
-			// serializer.setOutput(os);
-			// serializer.setOutput(os, "utf-8");
 
 			String current = null;
 
@@ -107,7 +102,6 @@ public class WfGraphFactory {
 				parser.nextToken();
 			}
 
-			// final String s = new String(os.toByteArray(), "utf-8");
 			String s = sbTransition.toString();
 			return s;
 		} catch (final Exception ex) {

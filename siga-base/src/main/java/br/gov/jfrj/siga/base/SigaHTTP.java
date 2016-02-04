@@ -313,10 +313,11 @@ public class SigaHTTP {
 				conn.setRequestMethod("POST");
 				// Send post request
 				conn.setDoOutput(true);
-				OutputStream os = conn.getOutputStream();
-				os.write(ab);
-				os.flush();
-				os.close();
+				try (OutputStream os = conn.getOutputStream()) {
+					os.write(ab);
+					os.flush();
+					os.close();
+				}
 			}
 
 			//StringWriter writer = new StringWriter();

@@ -181,99 +181,99 @@ public class ExModeloController extends ExSelecionavelController {
 	public Download exportar(HttpServletResponse response) throws Exception {
 		final String modelo = "modelo";
 		Map<String, Integer> mapNomes = new HashMap<>();
-
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
 		assertAcesso(VERIFICADOR_ACESSO);
-		ZipOutputStream zos = new ZipOutputStream(baos);
 
-		final List<ExModelo> l = dao().listarTodosModelosOrdenarPorNome(null);
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ZipOutputStream zos = new ZipOutputStream(baos)) {
 
-		for (final ExModelo m : l) {
-			final KXmlSerializer serializer = new KXmlSerializer();
-			final ByteArrayOutputStream os = new ByteArrayOutputStream();
-			serializer.setOutput(os, UTF8);
-			serializer.startDocument(null, null);
-			serializer.startTag(null, "modelo");
-			if (m.getExFormaDocumento() != null) {
-				serializer.attribute(null, "especie", m.getExFormaDocumento()
-						.getDescricao());
+			final List<ExModelo> l = dao().listarTodosModelosOrdenarPorNome(null);
+	
+			for (final ExModelo m : l) {
+				final KXmlSerializer serializer = new KXmlSerializer();
+				try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+					serializer.setOutput(os, UTF8);
+					serializer.startDocument(null, null);
+					serializer.startTag(null, "modelo");
+					if (m.getExFormaDocumento() != null) {
+						serializer.attribute(null, "especie", m.getExFormaDocumento()
+								.getDescricao());
+					}
+					if (m.getNmMod() != null) {
+						serializer.attribute(null, "nome", m.getNmMod());
+					}
+					if (m.getDescMod() != null) {
+						serializer.attribute(null, "descricao", m.getDescMod());
+					}
+					if (m.getExClassificacao() != null) {
+						serializer.attribute(null, "classificacao", m
+								.getExClassificacao().getSigla());
+					}
+					if (m.getExClassCriacaoVia() != null) {
+						serializer.attribute(null, "classCriacaoVia", m
+								.getExClassCriacaoVia().getSigla());
+					}
+					if (m.getExNivelAcesso() != null) {
+						serializer.attribute(null, "nivel", m.getExNivelAcesso()
+								.getNmNivelAcesso());
+					}
+					if (m.getNmArqMod() != null) {
+						serializer.attribute(null, "arquivo", m.getNmArqMod());
+					}
+					if (m.getConteudoTpBlob() != null) {
+						serializer.attribute(null, "tipo", m.getConteudoTpBlob());
+					}
+					if (m.getUuid() == null) {
+						m.setUuid(UUID.randomUUID().toString());
+						dao().gravar(m);
+					}
+					if (m.getUuid() != null) {
+						serializer.attribute(null, "uuid", m.getUuid());
+					}
+					if (m.getNmDiretorio() != null) {
+						serializer.attribute(null, "diretorio", m.getNmDiretorio());
+					}
+		
+					final byte[] template = m.getConteudoBlobMod2();
+					if (template != null) {
+						serializer.flush();
+						os.write('\n');
+						serializer.cdsect(new String(template, UTF8));
+						serializer.flush();
+						os.write('\n');
+					}
+					serializer.endTag(null, modelo);
+					serializer.endDocument();
+					serializer.flush();
+					byte[] arq = os.toByteArray();
+	
+					String filename = Texto.slugify(
+							(m.getNmDiretorio() != null ? m.getNmDiretorio().replace(
+									"/", SUBDIRETORIO)
+									+ SUBDIRETORIO : ""), true, false).replace(
+							SUBDIRETORIO, "/");
+					if (filename.length() > 0)
+						filename += "/";
+					filename += m.getSubdiretorioENome();
+					if (mapNomes.containsKey(filename))
+						mapNomes.put(filename, mapNomes.get(filename) + 1);
+					else
+						mapNomes.put(filename, 0);
+		
+					ZipEntry entry = new ZipEntry(filename
+							+ (mapNomes.get(filename) == 0 ? "" : " ("
+									+ mapNomes.get(filename) + ")") + ".mod.xml");
+					zos.putNextEntry(entry);
+					zos.write(arq);
+					zos.closeEntry();
+				}
 			}
-			if (m.getNmMod() != null) {
-				serializer.attribute(null, "nome", m.getNmMod());
-			}
-			if (m.getDescMod() != null) {
-				serializer.attribute(null, "descricao", m.getDescMod());
-			}
-			if (m.getExClassificacao() != null) {
-				serializer.attribute(null, "classificacao", m
-						.getExClassificacao().getSigla());
-			}
-			if (m.getExClassCriacaoVia() != null) {
-				serializer.attribute(null, "classCriacaoVia", m
-						.getExClassCriacaoVia().getSigla());
-			}
-			if (m.getExNivelAcesso() != null) {
-				serializer.attribute(null, "nivel", m.getExNivelAcesso()
-						.getNmNivelAcesso());
-			}
-			if (m.getNmArqMod() != null) {
-				serializer.attribute(null, "arquivo", m.getNmArqMod());
-			}
-			if (m.getConteudoTpBlob() != null) {
-				serializer.attribute(null, "tipo", m.getConteudoTpBlob());
-			}
-			if (m.getUuid() == null) {
-				m.setUuid(UUID.randomUUID().toString());
-				dao().gravar(m);
-			}
-			if (m.getUuid() != null) {
-				serializer.attribute(null, "uuid", m.getUuid());
-			}
-			if (m.getNmDiretorio() != null) {
-				serializer.attribute(null, "diretorio", m.getNmDiretorio());
-			}
-
-			final byte[] template = m.getConteudoBlobMod2();
-			if (template != null) {
-				serializer.flush();
-				os.write('\n');
-				serializer.cdsect(new String(template, UTF8));
-				serializer.flush();
-				os.write('\n');
-			}
-			serializer.endTag(null, modelo);
-			serializer.endDocument();
-			serializer.flush();
-			byte[] arq = os.toByteArray();
-			os.close();
-
-			String filename = Texto.slugify(
-					(m.getNmDiretorio() != null ? m.getNmDiretorio().replace(
-							"/", SUBDIRETORIO)
-							+ SUBDIRETORIO : ""), true, false).replace(
-					SUBDIRETORIO, "/");
-			if (filename.length() > 0)
-				filename += "/";
-			filename += m.getSubdiretorioENome();
-			if (mapNomes.containsKey(filename))
-				mapNomes.put(filename, mapNomes.get(filename) + 1);
-			else
-				mapNomes.put(filename, 0);
-
-			ZipEntry entry = new ZipEntry(filename
-					+ (mapNomes.get(filename) == 0 ? "" : " ("
-							+ mapNomes.get(filename) + ")") + ".mod.xml");
-			zos.putNextEntry(entry);
-			zos.write(arq);
-			zos.closeEntry();
+			zos.flush();
+			byte[] zipfile = baos.toByteArray();
+	
+			return new ByteArrayDownload(zipfile, "application/zip",
+					"siga-doc-modelos.zip", true);
 		}
-		zos.flush();
-		zos.close();
-		byte[] zipfile = baos.toByteArray();
-		baos.close();
-
-		return new ByteArrayDownload(zipfile, "application/zip",
-				"siga-doc-modelos.zip", true);
 	}
 
 	@Get("app/modelo/exportarxml")
@@ -282,11 +282,11 @@ public class ExModeloController extends ExSelecionavelController {
 		final String modeloGeral = "modelo-geral";
 		final String modelo = "modelo";
 
-		try {
-			assertAcesso(VERIFICADOR_ACESSO);
+		assertAcesso(VERIFICADOR_ACESSO);
+		
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 
 			final KXmlSerializer serializer = new KXmlSerializer();
-			final ByteArrayOutputStream os = new ByteArrayOutputStream();
 			serializer.setOutput(os, UTF8);
 			serializer.startDocument(null, null);
 

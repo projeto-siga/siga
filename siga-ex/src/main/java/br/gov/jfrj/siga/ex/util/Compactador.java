@@ -119,7 +119,7 @@ public class Compactador {
 					}
 					// Open the output file
 					final String outFilename = dirtemp + entry.getName();
-					final OutputStream out = new FileOutputStream(outFilename);
+					try (OutputStream out = new FileOutputStream(outFilename)) {
 					if (!arqEntrada.contains(entry.getName())) {
 						arqExist.add(outFilename);
 					}
@@ -129,8 +129,7 @@ public class Compactador {
 					while ((len = in.read(buf)) > 0) {
 						out.write(buf, 0, len);
 					}
-					out.close();
-				}
+					}				}
 				// Get the next entry
 				entry = in.getNextEntry();
 			}

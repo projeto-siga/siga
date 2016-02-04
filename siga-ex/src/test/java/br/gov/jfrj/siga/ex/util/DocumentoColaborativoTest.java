@@ -18,18 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import junit.framework.TestCase;
-
-import org.w3c.tidy.Configuration;
-import org.w3c.tidy.Tidy;
-
 import br.gov.jfrj.siga.ex.bl.ExParte;
 import br.gov.jfrj.siga.ex.bl.ExPartes;
 

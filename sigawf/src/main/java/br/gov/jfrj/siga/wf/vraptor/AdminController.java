@@ -96,34 +96,32 @@ public class AdminController extends WfController {
 		ProcessDefinition processDefinition = WfDao.getInstance().getProcessDefinition(pdId);
 		FileDefinition fileDefinition = processDefinition.getFileDefinition();
 		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ZipOutputStream zos = new ZipOutputStream(baos);
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ZipOutputStream zos = new ZipOutputStream(baos)) {
+			
+			byte[] arquivo = fileDefinition.getBytes(_proc_img);
+			ZipEntry entry = new ZipEntry(_proc_img);
+			entry.setSize(arquivo.length);
+			zos.putNextEntry(entry);
+			zos.write(arquivo);
+			zos.closeEntry();
+			
+			arquivo = fileDefinition.getBytes(_proc_def);
+			entry = new ZipEntry(_proc_def);
+			entry.setSize(arquivo.length);
+			zos.putNextEntry(entry);
+			zos.write(arquivo);
+			zos.closeEntry();
 		
-		byte[] arquivo = fileDefinition.getBytes(_proc_img);
-		ZipEntry entry = new ZipEntry(_proc_img);
-		entry.setSize(arquivo.length);
-		zos.putNextEntry(entry);
-		zos.write(arquivo);
-		zos.closeEntry();
-		
-		arquivo = fileDefinition.getBytes(_proc_def);
-		entry = new ZipEntry(_proc_def);
-		entry.setSize(arquivo.length);
-		zos.putNextEntry(entry);
-		zos.write(arquivo);
-		zos.closeEntry();
-	
-		arquivo = fileDefinition.getBytes(_gpd_xml);
-		entry = new ZipEntry(_gpd_xml);
-		entry.setSize(arquivo.length);
-		zos.putNextEntry(entry);
-		zos.write(arquivo);
-		zos.closeEntry();
-
-		zos.close();
-		
-		return new ByteArrayDownload(baos.toByteArray(), "applicatiion/zip", "process-definition-" + processDefinition.getName() + "-" + pdId + ".zip");
-
+			arquivo = fileDefinition.getBytes(_gpd_xml);
+			entry = new ZipEntry(_gpd_xml);
+			entry.setSize(arquivo.length);
+			zos.putNextEntry(entry);
+			zos.write(arquivo);
+			zos.closeEntry();
+			
+			return new ByteArrayDownload(baos.toByteArray(), "applicatiion/zip", "process-definition-" + processDefinition.getName() + "-" + pdId + ".zip");
+		}
 	}
 
 }

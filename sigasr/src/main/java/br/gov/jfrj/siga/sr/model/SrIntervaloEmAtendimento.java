@@ -95,13 +95,15 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 	}
 		
 	public void setHorario(DpLotacao lotaAtendente) {
-		if (lotaAtendente.getIdInicial() == 20937 || //central 2r
-				lotaAtendente.getIdInicial() == 19753)  //help desk
-			setHorario(SrDefinicaoHorario.HORARIO_CENTRAL); 
-		else if (lotaAtendente.getSigla().contains("STI-SL")
-				|| lotaAtendente.getSigla().contains("NTI-SL")) //suporte local
+		if (lotaAtendente.getIdInicial() == 20937) //central 2r
+			setHorario(SrDefinicaoHorario.HORARIO_CENTRAL);
+		else if (lotaAtendente.getIdInicial() == 19753) //help desk
+			setHorario(SrDefinicaoHorario.HORARIO_HELP_DESK);
+		else if (lotaAtendente.getSigla().startsWith("STI-SL")) //suporte local
 			setHorario(SrDefinicaoHorario.HORARIO_SUPORTE_LOCAL);
-		else	//demais lotacoes
+		else if (lotaAtendente.getSigla().startsWith("NTI-SL")) //suporte local ES
+			setHorario(SrDefinicaoHorario.HORARIO_SUPORTE_LOCAL_ES);
+		else 	//demais lotacoes
 			setHorario(SrDefinicaoHorario.HORARIO_PADRAO);
 	}
 }

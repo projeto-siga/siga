@@ -61,8 +61,7 @@ public class StyleSheet {
 	}
 
 	public void processCSSFile(InputStream isCSS) {
-		try {
-			final BufferedReader reader = new BufferedReader(new InputStreamReader(isCSS));
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(isCSS))) {
 			final CSSOMParser parser = new CSSOMParser();
 			final InputSource is = new InputSource(reader);
 

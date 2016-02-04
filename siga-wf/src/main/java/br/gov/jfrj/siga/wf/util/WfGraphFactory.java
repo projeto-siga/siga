@@ -151,8 +151,7 @@ public class WfGraphFactory {
 	}
 
 	public static String readFileDel(String filePath) throws IOException {
-		DataInputStream dis = new DataInputStream(new FileInputStream(filePath));
-		try {
+		try (DataInputStream dis = new DataInputStream(new FileInputStream(filePath))) {
 			long len = new File(filePath).length();
 			if (len > Integer.MAX_VALUE)
 				throw new IOException("File " + filePath + " too large, was "
@@ -160,8 +159,6 @@ public class WfGraphFactory {
 			byte[] bytes = new byte[(int) len];
 			dis.readFully(bytes);
 			return new String(bytes, "UTF-8");
-		} finally {
-			dis.close();
 		}
 	}
 

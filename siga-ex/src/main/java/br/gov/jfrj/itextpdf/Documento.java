@@ -1020,8 +1020,9 @@ public class Documento {
 								+ "\" width=\"50\" height=\"50\"/>";
 					}
 
-					HtmlParser.parse(doc,
-							new ByteArrayInputStream(blob.getBytes()));
+					try (ByteArrayInputStream bais = new ByteArrayInputStream(blob.getBytes())) {
+						HtmlParser.parse(doc, bais);
+					}
 				}
 
 				String blob = new String(exp.getConteudoBlobDoc2(),
@@ -1055,8 +1056,10 @@ public class Documento {
 								"");
 				blob = blob.replace("<title></title>", "");
 
-				HtmlParser
-						.parse(doc, new ByteArrayInputStream(blob.getBytes()));
+				try (ByteArrayInputStream bais = new ByteArrayInputStream(
+						blob.getBytes())) {
+					HtmlParser.parse(doc, bais);
+				}
 				// doc.close();
 
 				/*

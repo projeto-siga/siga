@@ -19,16 +19,14 @@ public class FreemarkerSimplesDefault {
 		} catch (Exception e1) {
 		}
 
-		InputStream stream = FreemarkerSimplesDefault.class.getClassLoader()
-				.getResourceAsStream("br/gov/jfrj/siga/jee/" + "default.ftl");
-		String template;
-		try {
+		;
+		try (InputStream stream = FreemarkerSimplesDefault.class.getClassLoader()
+				.getResourceAsStream("br/gov/jfrj/siga/jee/" + "default.ftl")) {
+			String template;
 			template = IOUtils.toString(stream, "UTF-8");
 			return template;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		} finally {
-			IOUtils.closeQuietly(stream);
 		}
 	}
 }

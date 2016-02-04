@@ -197,15 +197,16 @@ public class TestesController extends SigaController {
 		try {
 			String thisLine;
 			URL u = new URL(url);
-			DataInputStream theHTML = new DataInputStream(u.openStream());
-			boolean fHas = false;
-			while ((thisLine = theHTML.readLine()) != null) {
-				if (mustHave != null && thisLine.contains(mustHave))
-					fHas = true;
+			try (DataInputStream theHTML = new DataInputStream(u.openStream())) {
+				boolean fHas = false;
+				while ((thisLine = theHTML.readLine()) != null) {
+					if (mustHave != null && thisLine.contains(mustHave))
+						fHas = true;
+				}
+				if (mustHave != null && fHas)
+					return fHas;
+				return true;
 			}
-			if (mustHave != null && fHas)
-				return fHas;
-			return true;
 		} catch (Exception e) {
 			return false;
 		}

@@ -258,8 +258,9 @@ public class FreemarkerIndent {
 		tidy.setWraplen(0);
 		tidy.setWrapSection(false);
 
-		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-			tidy.parse(new ByteArrayInputStream(s.getBytes("iso-8859-1")), os);
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream();
+				ByteArrayInputStream bais = new ByteArrayInputStream(s.getBytes("iso-8859-1"))) {
+			tidy.parse(bais, os);
 			os.flush();
 			String sResult = new String(os.toByteArray(), "iso-8859-1");
 			return sResult;

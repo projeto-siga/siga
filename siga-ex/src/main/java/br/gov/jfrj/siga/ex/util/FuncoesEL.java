@@ -882,13 +882,13 @@ public class FuncoesEL {
 			nivel = "Auxiliar";
 
 		if (nivel.indexOf('I') > 0)
-			nivel = "Intermediï¿½rio";
+			nivel = "Intermediário";
 
 		if (nivel.indexOf('S') > 0)
 			nivel = "Superior";
 
-		return "Nï¿½vel " + nivel + ", Classe " + aux + classe + aux
-				+ ", Padrï¿½o " + aux + padrao + aux;
+		return "Nível " + nivel + ", Classe " + aux + classe + aux
+				+ ", Padrão " + aux + padrao + aux;
 	}
 
 	public static String buscarLotacaoPorSigla(String sigla, Long idOrgaoUsu)

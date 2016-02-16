@@ -324,7 +324,7 @@
 									<td>Modelo:</td>
 									<td colspan="3">
 										<siga:div id="modelo" depende="forma">
-											<select class="dependent" name="exDocumentoDTO.idMod" style="${estiloTipo}" onchange="document.getElementById('alterouModelo').value='true';"
+											<select class="dependent" name="exDocumentoDTO.idMod" style="${estiloTipo}" onchange="document.getElementById('alterouModelo').value='true';">
 											<%-- <select class="dependent" name="exDocumentoDTO.idMod" style="${estiloTipo}" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';" onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)"> --%>
 												<c:forEach items="${exDocumentoDTO.modelos}" var="item">
 													<option value="${item.idMod}" ${item.idMod == exDocumentoDTO.idMod ? 'selected' : ''}>

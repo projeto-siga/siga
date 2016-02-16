@@ -355,7 +355,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	for (String s : mapAcronimo.keySet()) {
         		acronimos.append("|" + s);
         	}
-        	final Pattern p = Pattern.compile("^(" + acronimos.toString() + ")?-?SR{1}-?(?:([0-9]{4})/?)??([0-9]{1,5})(?:[.]{1}([0-9]{1,3}))?$");
+        	final Pattern p = Pattern.compile("^(" + acronimos.toString() + ")?-?SR{1}-?(?:([0-9]{4})/?)??([0-9]{1,5})(?:[.]?([0-9]{1,3}))?$");
         	final Matcher m = p.matcher(siglaUpper);
         	if (m.find()) {
         		if (m.group(1) != null) {

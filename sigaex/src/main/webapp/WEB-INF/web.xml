@@ -226,10 +226,6 @@
 			<url-pattern>/autenticar.action</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>staticJavascript</web-resource-name>
-			<url-pattern>/staticJavascript.jf</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
 			<web-resource-name>Recursos Publicos</web-resource-name>
 			<url-pattern>/public/*</url-pattern>
 		</web-resource-collection>

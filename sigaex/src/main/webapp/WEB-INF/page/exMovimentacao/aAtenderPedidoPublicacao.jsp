@@ -10,9 +10,6 @@
 
 <siga:pagina titulo="Transferência em Lote">
 
-<script type="text/javascript" language="Javascript1.1"
-	src="<c:url value="/staticJavascript.action"/>"></script>
-
 <script type="text/javascript" language="Javascript1.1">
 	function sbmt(offset) {
 		frm.action = 'atender_pedido_publicacao';

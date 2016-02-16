@@ -9,10 +9,6 @@
 
 <siga:pagina titulo="Segunda Via de Protocolo">
 
-	<script type="text/javascript" language="Javascript1.1"
-		src="<c:url value="/staticJavascript.action"/>">
-	</script>
-
 	<script type="text/javascript" language="Javascript1.1">
 	<c:url var="url" value="/app/expediente/mov/via_protocolo"/>
 	function sbmt(offset) {

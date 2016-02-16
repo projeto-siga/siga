@@ -9,9 +9,6 @@
 
 <siga:pagina titulo="Protocolo de Transferência" popup="true">
 
-	<script type="text/javascript" language="Javascript1.1"
-		src="<c:url value="/staticJavascript.action"/>"></script>
-
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 

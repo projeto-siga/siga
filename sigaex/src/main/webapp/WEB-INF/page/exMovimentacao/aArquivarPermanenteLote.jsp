@@ -9,9 +9,6 @@
 
 <siga:pagina titulo="Arquivamento Permanente em Lote">
 
-	<script type="text/javascript" language="Javascript1.1"
-		src="<c:url value="/staticJavascript.action"/>"></script>
-
 	<script type="text/javascript" language="Javascript1.1">
 	function sbmt(offset) {
 		if (offset==null) {

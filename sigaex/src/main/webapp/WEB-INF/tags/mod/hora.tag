@@ -6,7 +6,6 @@
 <%@ attribute name="reler"%>
 <%@ attribute name="idAjax"%>
 <%@ attribute name="obrigatorio"%>
-<script type="text/javascript" language="Javascript1.1"	src="<c:url value="/staticJavascript.jf"/>"></script>
 
 <c:if test="${reler == 'sim'}">
 <c:set var="jreler"> onchange="javascript: sbmt();"</c:set>

@@ -20,9 +20,6 @@
 		}
 	</script>
 
-	<script type="text/javascript" language="Javascript1.1"
-		src="<c:url value="/staticJavascript.action"/>"></script>
-
 	<script type="text/javascript" language="Javascript1.1">
 
 	function checkUncheckAll(theElement) {

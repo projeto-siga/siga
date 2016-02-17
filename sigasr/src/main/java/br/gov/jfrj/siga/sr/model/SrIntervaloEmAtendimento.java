@@ -23,8 +23,8 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 	public SrIntervaloEmAtendimento(Date dtIni, Date dtFim, String descr) {
 		super(dtIni, dtFim, descr);
 	}
-	@Override
-	public Long getDecorridoMillis() {
+    @Override
+	public Long getDecorridoMillis(boolean isPrevisao) {
 		Date dtAtual = getInicio();
 		Date dtFim = isAtivo() ? getFimOuAgora() : getFimOuDtComHorarioFim();
 		Long decorrido = 0l;
@@ -37,7 +37,7 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 					it.setFim(dtFim);		
 				if (it.comecouDepoisDe(dtFim))
 					it.setFim(it.getInicio());				
-				decorrido += it.getDecorrido();
+				decorrido += it.getDecorrido(isPrevisao);
 			}
 			it.setInicio(getDtComHorarioInicio(SrDataUtil.addDia(dtAtual, 1)));
 			dtAtual = it.getInicio();
@@ -46,8 +46,8 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 		return decorrido;
 	}
 
-	public Long getDecorrido() { 
-		if (isFuturo())
+	public Long getDecorrido(boolean isPrevisao) { 
+		if (!isPrevisao && isMesmoDia(new Date()) && isFuturo())
 			return 0l;
 		return getFimOuAgora().getTime() - getInicio().getTime();
 	}
@@ -55,8 +55,23 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 	@Override
 	public Date getDataContandoDoInicio(Long millisAdiante) {
 		//Edson: chamar o mecanismo acima para fazer previsões
-		if (isInfinito() || millisAdiante <= getDecorridoMillis())
+/*		if (isInfinito() || millisAdiante <= getDecorridoMillis())
 			return new Date(getInicio().getTime() + millisAdiante);
+		return null;*/
+		if (isInfinito() || millisAdiante <= this.getDecorridoMillis(false)) {
+			Date dtPrevista, data = null; 
+			int somaDia = 0; Long millisPrevisto = 0l;
+			do {
+				dtPrevista = getDataFimPrevista(millisAdiante, somaDia);
+				millisPrevisto = getDecorridoMillisComDataPrevista(dtPrevista);
+				data = new Date(dtPrevista.getTime() + (millisAdiante - millisPrevisto));
+				if (data.before(dtPrevista))
+					somaDia -= 1;
+				else 
+					somaDia += 1;
+			} while(!isAtivo(data));
+			return data;
+		}
 		return null;
 	}
 	
@@ -93,7 +108,7 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 	public void setHorario(SrDefinicaoHorario horario) {
 		this.horario = horario;
 	}
-		
+	
 	public void setHorario(DpLotacao lotaAtendente) {
 		if (lotaAtendente.getIdInicial() == 20937) //central 2r
 			setHorario(SrDefinicaoHorario.HORARIO_CENTRAL);
@@ -105,5 +120,31 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 			setHorario(SrDefinicaoHorario.HORARIO_SUPORTE_LOCAL_ES);
 		else 	//demais lotacoes
 			setHorario(SrDefinicaoHorario.HORARIO_PADRAO);
+	}
+	
+	public Long getCargaHoraria() {
+		return (long) (getHorario().getHoraFinal() - getHorario().getHoraInicial()); 
+	}
+	
+	public Date getDataInicioParaPrevisao() {
+		if (isAtivo(getInicio()))
+			return getInicio();
+		if (getHorario().comecaDepoisDe(getInicio()))
+			return getDtComHorarioInicio(getInicio());
+		return getDtComHorarioInicio(SrDataUtil.addDia(getInicio(), 1));
+	}
+	
+	public Date getDataFimPrevista(Long millisAdiante, int somaDia) {
+		return calcularDataPrevista(getDataInicioParaPrevisao(), horas(segundos(millisAdiante)), somaDia);		
+	}
+	
+	public Date calcularDataPrevista(Date dt, float horasAdiante, int somaDia) {
+		return SrDataUtil.addDia(dt,  (int) Math.ceil((horasAdiante/getCargaHoraria())) + somaDia);
+	}
+		
+	public Long getDecorridoMillisComDataPrevista(Date dtPrevista) {
+		SrIntervaloEmAtendimento iPrevisto = new SrIntervaloEmAtendimento(getInicio(), dtPrevista, null);
+		iPrevisto.setHorario(getHorario());
+		return iPrevisto.getDecorridoMillis(true);
 	}
 }

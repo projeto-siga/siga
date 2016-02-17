@@ -1,12 +1,21 @@
 package br.gov.jfrj.siga.sr.util;
 
+import java.util.Calendar;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.StatelessSession;
 
+import br.gov.jfrj.siga.cp.CpServico;
+import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.CpTipoServico;
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoMarca;
@@ -24,20 +33,18 @@ import br.gov.jfrj.siga.sr.model.SrConfiguracaoBL;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrOperador;
 import br.gov.jfrj.siga.sr.model.SrParametroAcordo;
+import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
+import br.gov.jfrj.siga.sr.notifiers.CorreioFake;
+import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
 
 public class TestUtil {
 	
-	public static void setup(EntityManager em) throws Exception{
-		em = Persistence.createEntityManagerFactory("default")
+	public static void configurarEntityManager() throws Exception{
+		EntityManager em = Persistence.createEntityManagerFactory("default")
 				.createEntityManager();
 		ContextoPersistencia.setEntityManager(em);
 		
-		em.getTransaction().begin();
-		em.createNativeQuery("CREATE FUNCTION REMOVE_ACENTO(acentuado VARCHAR(50)) RETURNS VARCHAR(50)"
-				+ " PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA "
-				+ " EXTERNAL NAME 'br.gov.jfrj.siga.sr.util.TestUtil.removeAcento'").executeUpdate();
-				
 		CpDao.freeInstance();
 		CpDao.getInstance((Session) em.getDelegate(), ((Session) em
 				.getDelegate()).getSessionFactory().openStatelessSession());
@@ -45,13 +52,31 @@ public class TestUtil {
 		//Edson: não sei por que o HibernateUtil precisa de uma sessao. Os Dao's
 				//que chamam essa classe já têm o objeto sessão 
 		HibernateUtil.configurarHibernate((Session)em.getDelegate());
-		
-		criarDadosBasicos();
 	}
 	
-	public static void tearDown(EntityManager em){
-		em.getTransaction().commit();
+	public static void criarDadosBasicos(){
+		EntityManager em = ContextoPersistencia.em();
+		em.createNativeQuery("CREATE FUNCTION REMOVE_ACENTO(acentuado VARCHAR(50)) RETURNS VARCHAR(50)"
+				+ " PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA "
+				+ " EXTERNAL NAME 'br.gov.jfrj.siga.sr.util.TestUtil.removeAcento'").executeUpdate();
+
+		/*ContextoPersistencia.em().createNativeQuery("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.locks.waitTimeout', '5')").executeUpdate();
+		ContextoPersistencia.em().createNativeQuery("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.locks.monitor', 'true')").executeUpdate();
+		ContextoPersistencia.em().createNativeQuery("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.locks.deadlockTrace', 'true')").executeUpdate();*/
+			
+		tiposMov();
+		tiposConfig();
+		marcadores();
+		servicos();
+		
+		CorreioHolder.set(new CorreioFake(null, null));
+		
+		System.setProperty("siga.properties.versao", "0.0");
 	}
+	
+	/*public static void tearDown(){
+		ContextoPersistencia.em().createNativeQuery("DROP FUNCTION REMOVE_ACENTO").executeUpdate();
+	}*/
 	
 	public static void limparCacheConfiguracoes() throws Exception {
 		Sr.getInstance().getConf().limparCacheSeNecessario();
@@ -174,6 +199,39 @@ public class TestUtil {
 		return eeh;
 	}
 	
+	public static DpLotacao lotaSp() throws Exception {
+		DpLotacao lota = DpLotacao.AR.find("bySiglaLotacao", "LOTASP").first();
+		if (lota == null) {
+			lota = new DpLotacao();
+			lota.setSiglaLotacao("LOTASP");
+			lota.setOrgaoUsuario(sp());
+			lota.setLotacaoPai(null);
+			lota.setNomeLotacao("Lotação Única de São Paulo");
+			lota.save();
+			lota.setIdInicial(lota.getId());
+			lota.save();
+			lota.refresh();
+		}
+		return lota;
+	}
+	
+	public static DpPessoa funcionarioSp() throws Exception {
+		DpPessoa eeh = DpPessoa.AR.find("bySiglaPessoa", "FSP").first();
+		if (eeh == null) {
+			eeh = new DpPessoa();
+			eeh.setNomePessoa("Funcionário único de São Paulo");
+			eeh.setSiglaPessoa("FSP");
+			eeh.setEmailPessoa("fsp@sp.org");
+			eeh.setOrgaoUsuario(sp());
+			eeh.setLotacao(lotaSp());
+			eeh.save();
+			eeh.setIdInicial(eeh.getId());
+			eeh.save();
+			eeh.refresh();
+		}
+		return eeh;
+	}
+		
 	public static CpUnidadeMedida hora(){
 		CpUnidadeMedida h = CpUnidadeMedida.AR.findById(Long.valueOf(CpUnidadeMedida.HORA));
 		if (h == null) {
@@ -257,14 +315,68 @@ public class TestUtil {
 		return criar;
 	}
 	
-	public static void criarDadosBasicos() throws Exception {
-		tiposMov();
-		tiposConfig();
-		marcadores();
+	public static SrConfiguracao designacaoBasica() throws Exception{
+		SrConfiguracao design = SrConfiguracao.AR.find("byDescrConfiguracao", "1stDesign").first();
+		if (design == null) {
+			design = new SrConfiguracao();
+			design.setAtendente(lotaMenor());
+			design.setDescrConfiguracao("1stDesign");
+			design.salvarComoDesignacao();
+		}
+		return design;
+	}
+	
+	public static SrSolicitacao solicitacaoRj() throws Exception{
+		SrSolicitacao solRj = new SrSolicitacao();
+		solRj.setCadastrante(funcionarioMenor());
+		solRj.setItemConfiguracao(TestUtil.sigadoc());
+		solRj.setAcao(TestUtil.acaoCriarSoft());
+		solRj.setDesignacao(designacaoBasica());
+		solRj.salvarComHistorico();
+		return solRj;
+	}
+	
+	public static SrSolicitacao solicitacaoSpLastYear() throws Exception{
+		//Criar uma solicitação SP do ano passado
+		SrSolicitacao solSpLastYear = new SrSolicitacao();
+		solSpLastYear.setCadastrante(funcionarioSp());
+		solSpLastYear.setItemConfiguracao(TestUtil.sigadoc());
+		solSpLastYear.setAcao(TestUtil.acaoCriarSoft());
+		solSpLastYear.setDesignacao(designacaoBasica());
+		solSpLastYear.salvarComHistorico();
+		Calendar lastYear = Calendar.getInstance();
+		lastYear.setTime(solSpLastYear.getDtReg());
+		lastYear.add(Calendar.YEAR, -1);
+		solSpLastYear.setDtReg(lastYear.getTime());
+		solSpLastYear.setCodigo(solSpLastYear.getCodigo().replace(String.valueOf(Calendar.getInstance().get(Calendar.YEAR)), String.valueOf(lastYear.get(Calendar.YEAR))));
+		solSpLastYear.save();
+		return solSpLastYear;
+	}
+	
+	public static SrSolicitacao solicitacaoSp() throws Exception{
+		//Criar uma solicitação SP
+		SrSolicitacao solSp = new SrSolicitacao();
+		solSp.setCadastrante(funcionarioSp());
+		solSp.setItemConfiguracao(TestUtil.sigadoc());
+		solSp.setAcao(TestUtil.acaoCriarSoft());
+		solSp.setDesignacao(designacaoBasica());
+		solSp.salvarComHistorico();
+		return solSp;
+	}	
+	
+	public static void listLocks(){
+		List<Object[]> l = ((Query) HibernateUtil.getSessionFactory().openStatelessSession().createSQLQuery("SELECT * FROM SYSCS_DIAG.LOCK_TABLE")).list();
+		for (Object[] m : l){
+			for (Object n : m)
+				System.out.print(n + "\t\t\t");
+			System.out.println("");
+		}
 	}
 
 	private static void tiposMov() {
 		new SrTipoMovimentacao(1L, "Início do Atendimento").save();
+		//ContextoPersistencia.em().createQuery("from SrTipoMovimentacao cpcfg").getFirstResult();
+		//((Query) HibernateUtil.getSessionFactory().openStatelessSession().createQuery("from SrTipoMovimentacao cpcfg")).list();
 		new SrTipoMovimentacao(2L, "Andamento").save();
 		new SrTipoMovimentacao(7L, "Fechamento").save();
 		new SrTipoMovimentacao(8L, "Cancelamento da Solicitação").save();
@@ -286,6 +398,41 @@ public class TestUtil {
 		assoc.setIdTpConfiguracao(304L);
 		assoc.setDscTpConfiguracao("Abrangência de Acordo");
 		assoc.save();
+	}
+	
+	private static void servicos() {
+		
+		CpSituacaoConfiguracao naoPode = new CpSituacaoConfiguracao();
+		naoPode.setIdSitConfiguracao(2L);
+		naoPode.setDscSitConfiguracao("Não Pode");
+		naoPode.save();
+		
+		CpTipoServico ts = new CpTipoServico();
+		ts.setIdCpTpServico(2);
+		ts.setDscTpServico("Sistema");
+		ts.setSituacaoDefault(naoPode);
+		ts.save();
+
+		CpServico siga = new CpServico();
+		siga.setCpTipoServico(ts);
+		siga.setDscServico("Sistema Integrado de Gestão Administrativa");
+		siga.setSiglaServico("SIGA");
+		siga.save();
+		
+		CpServico sr = new CpServico();
+		sr.setCpServicoPai(siga);
+		sr.setCpTipoServico(ts);
+		sr.setDscServico("Módulo de Serviços");
+		sr.setSiglaServico("SIGA-SR");
+		sr.save();
+		
+		CpServico mailAtend = new CpServico();
+		mailAtend.setCpServicoPai(sr);
+		mailAtend.setCpTipoServico(ts);
+		mailAtend.setDscServico("Receber Notificação Atendente");
+		mailAtend.setSiglaServico("SIGA-SR-EMAILATEND");
+		mailAtend.save();
+
 	}
 
 	private static void marcadores() {
@@ -341,50 +488,34 @@ public class TestUtil {
 		m49.setDescrMarcador("Como Solicitante");
 		m49.setCpTipoMarcador(cptm);
 		m49.save();
+		
+		CpMarcador m53 = new CpMarcador();
+		m53.setIdMarcador(53L);
+		m53.setDescrMarcador("A Fechar");
+		m53.setCpTipoMarcador(cptm);
+		m53.save();
 
+		CpMarcador m61 = new CpMarcador();
+		m61.setIdMarcador(61L);
+		m61.setDescrMarcador("Em Elaboração");
+		m61.setCpTipoMarcador(cptm);
+		m61.save();
+		
+		CpMarcador m65 = new CpMarcador();
+		m65.setIdMarcador(65L);
+		m65.setDescrMarcador("Fora do Prazo");
+		m65.setCpTipoMarcador(cptm);
+		m65.save();
+		
+		CpMarcador m66 = new CpMarcador();
+		m66.setIdMarcador(66L);
+		m66.setDescrMarcador("Ativo");
+		m66.setCpTipoMarcador(cptm);
+		m66.save();
+		
 	}
 	
-	public static SrConfiguracao design() throws Exception {
-		SrConfiguracao design = SrConfiguracao.AR.find("byDescrConfiguracaoAndHisDtFimIsNull", "Designação Básica")
-				.first();
-		if (design == null) {
-			design = new SrConfiguracao();
-			design.setAtendente(lotaMenor());
-			design.setDescrConfiguracao("Designação Básica");
-			design.salvarComoDesignacao();
-			design.refresh();
-			limparCacheConfiguracoes();
-			
-		}
-		return design;
-	}
-	
-	public static SrAcordo SLA() throws Exception{
-		SrAcordo a = SrAcordo.AR.find("byNomeAcordoAndHisDtFimIsNull", "SLA")
-				.first();
-		if (a == null) {
-			a = new SrAcordo();
-			a.setNomeAcordo("SLA");
-
-			SrParametroAcordo p = new SrParametroAcordo();
-			p.setAcordo(a);
-			p.setOperador(SrOperador.MENOR_OU_IGUAL);
-			p.setValor(2L);
-			p.setUnidadeMedida(hora());
-
-			a.salvarComHistorico();
-
-			SrConfiguracao abrang = new SrConfiguracao();
-			abrang.setAcordo(a);
-			abrang.salvarComoAbrangenciaAcordo();
-			abrang.refresh();
-			limparCacheConfiguracoes();
-		}
-
-		return a;
-	}
-	
-	public static SrAcordo OLA() throws Exception{
+	/*public static SrAcordo OLA() throws Exception{
 		SrAcordo a = SrAcordo.AR.find("byNomeAcordoAndHisDtFimIsNull", "OLA")
 				.first();
 		if (a == null) {
@@ -407,7 +538,7 @@ public class TestUtil {
 		return a;
 	}
 
-	/*public static void prepararSessao() throws Exception {
+	public static void prepararSessao() throws Exception {
 		Session playSession = (Session) JPA.em().getDelegate();
 		CpDao.freeInstance();
 		CpDao.getInstance(playSession);
@@ -440,5 +571,16 @@ public class TestUtil {
 	public static String removeAcento(String acentuado){
 		return acentuado;
 	}
+	
+	public static void beginTransaction(){
+		ContextoPersistencia.em().getTransaction().begin();
+	}
 
+	public static void commit(){
+		ContextoPersistencia.em().getTransaction().commit();
+	}
+	
+	public static void reiniciarCacheConfiguracoes(){
+		Cp.getInstance().getConf().reiniciarCache();
+	}
 }

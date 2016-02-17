@@ -48,6 +48,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NoResultException;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -442,7 +443,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         		Calendar c1 = Calendar.getInstance();
         		c1.setTime(getDtReg());
         		int year = c1.get(Calendar.YEAR);
-        		query += " and " + (getNumSequencia() != null ? "solicitacaoPai.dtReg" : "dtReg") + " between to_date('01/01/" + year + " 00:01', 'dd/mm/yyyy HH24:mi') and to_date('31/12/" + year + " 23:59','dd/mm/yyyy HH24:mi')";
+        		query += " and year(" + (getNumSequencia() != null ? "solicitacaoPai.dtReg" : "dtReg") + ") = " + year;
         	}
         	if (getNumSolicitacao() != null)
         		query += " and numSolicitacao = " + getNumSolicitacao();
@@ -451,7 +452,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	else
         		query += " and numSequencia = " + getNumSequencia();
         }
-        return (SrSolicitacao) AR.em().createQuery(query).getSingleResult();
+        try{
+        	return (SrSolicitacao) AR.em().createQuery(query).getSingleResult();
+        } catch(NoResultException nre){
+        	return null;
+        }
     }
 
     @Override

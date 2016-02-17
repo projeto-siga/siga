@@ -104,6 +104,13 @@ public class CpConfiguracaoBL {
 	public CpConfiguracao createNewConfiguracao() {
 		return new CpConfiguracao();
 	}
+	
+	public void reiniciarCache(){
+		cacheInicializado = false;
+		dtUltimaAtualizacaoCache = null;
+		hashListas = new HashMap<Long, TreeSet<CpConfiguracao>>();
+		inicializarCacheSeNecessario();
+	}
 
 	public synchronized void inicializarCacheSeNecessario() {
 		if (cacheInicializado)

@@ -89,7 +89,7 @@
 			<property name="hibernate.connection.password" value="" />
 			<property name="hibernate.cache.use_second_level_cache"
 				value="false" />
-			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.show_sql" value="false" />
 		</properties>
 	</persistence-unit>
 </persistence>

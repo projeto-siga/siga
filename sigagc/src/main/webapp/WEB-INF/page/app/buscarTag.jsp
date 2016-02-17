@@ -14,7 +14,7 @@
 							<td align="center" valign="top" colspan="4">Dados do item</td>
 						</tr>
 						<tr>
-							<td width="25%">Tiítulo:</td>
+							<td width="25%">Título:</td>
 							<td><input type="text" name="filtro.titulo"
 								value="${filtro.titulo}" />
 							</td>

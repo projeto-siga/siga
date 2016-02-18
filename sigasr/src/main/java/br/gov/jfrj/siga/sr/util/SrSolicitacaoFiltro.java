@@ -188,6 +188,9 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 				query.append("and " + situacaoFiltro + ".dpLotacaoIni.idLotacao = "
 						+ getLotaAtendente().getIdInicial());
 		}
+		
+		if (isNaoDesignados())
+			query.append(" and " + situacaoFiltro + ".dpPessoaIni is null ");
 
 	}
 	
@@ -264,14 +267,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			}
 		
 		if (Filtros.deveAdicionar(getAcordo()))
-			query.append(" and sol.acordos.hisIdIni = " + getAcordo().getHisIdIni() + " ");
-
-		if (isNaoDesignados())
-			query.append(" and situacao.dpPessoaIni is null ");
-
-		//montarQueryAtributos(query);
-
-		
+			query.append(" and sol.acordos.hisIdIni = " + getAcordo().getHisIdIni() + " ");		
 	}
 
 	public boolean isRazoavelmentePreenchido() {

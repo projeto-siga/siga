@@ -165,7 +165,7 @@
 				location.href = "${linkTo[AppController].listar}?filtro.situacao.idMarcador=" + "36" +
 								"&filtro.dtIni=" + encodeURIComponent(primeiroDiaMes(mesAno[1],numeroMes)) + 
 								"&filtro.dtFim=" + encodeURIComponent(ultimoDiaMes(mesAno[1],numeroMes)) +
-								"&filtro.lotacao=" + ${lotacao.id} + 
+								"&filtro.lotacao.id=" + ${lotacao.id} + 
 								"&filtro.pesquisa=true&estatistica=" + data.getValue(selecao.row,selecao.column);
 			}
 			else

@@ -62,6 +62,12 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
  */
 public class CpConfiguracaoBL {
 
+	public static final long ID_USUARIO_ROOT = 1L;
+	public static final long MATRICULA_USUARIO_ROOT = 99999L;
+	public static final long CPF_ROOT = 11111111111L;
+	public static final long ID_ORGAO_ROOT = 9999999999L;
+	public static final String SIGLA_ORGAO_ROOT = "ZZ";
+
 	protected Date dtUltimaAtualizacaoCache = null;
 	protected boolean cacheInicializado = false;
 
@@ -584,6 +590,15 @@ public class CpConfiguracaoBL {
 			CpServico cpServico, CpIdentidade cpIdentidade, CpGrupo cpGrupo,
 			CpTipoLotacao cpTpLotacao, long idTpConf) throws Exception {
 
+		
+		if (isUsuarioRoot(dpPessoa)){
+			return true;
+		}
+		
+		if (cpIdentidade !=null && isUsuarioRoot(cpIdentidade.getDpPessoa())){
+			return true;
+		}
+		
 		CpConfiguracao cfgFiltro = createNewConfiguracao();
 
 		cfgFiltro.setCargo(cargo);
@@ -617,6 +632,17 @@ public class CpConfiguracaoBL {
 				&& situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
 			return true;
 		return false;
+	}
+
+	
+	protected boolean isUsuarioRoot(DpPessoa dpPessoa) {
+		return dpPessoa != null
+				&& dpPessoa.getIdInicial().equals(ID_USUARIO_ROOT)
+				&& dpPessoa.getMatricula().equals(MATRICULA_USUARIO_ROOT)
+				&& dpPessoa.getCpfPessoa().equals(CPF_ROOT)
+				&& dpPessoa.getDataFim() == null
+				&& dpPessoa.getOrgaoUsuario().getSigla().equals(SIGLA_ORGAO_ROOT)
+				&& dpPessoa.getOrgaoUsuario().getId().equals(ID_ORGAO_ROOT);
 	}
 
 	/**

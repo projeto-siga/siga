@@ -275,7 +275,10 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			DpLotacao dpLotacao, DpPessoa dpPessoa, ExNivelAcesso nivelAcesso, CpTipoLotacao cpTpLotacao,
 			long idTpConf) {
 
-		
+		if (isUsuarioRoot(dpPessoa)){
+			return true;
+		}
+
 		try {
 			ExConfiguracao config = new ExConfiguracao();
 			config.setCargo(cargo);

@@ -688,6 +688,8 @@ public class GcInformacao extends Objeto {
 			String orgao = m1.group(1);
 			if (orgao == null && ouDefault != null)
 				orgao = ouDefault.getAcronimoOrgaoUsu();
+			if (ano == null)
+				ano = String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
 			
 			info = GcInformacao.AR.find(
 					"ano = ? and numero = ? and (ou.acronimoOrgaoUsu = ? or ou.siglaOrgaoUsu = ?)",

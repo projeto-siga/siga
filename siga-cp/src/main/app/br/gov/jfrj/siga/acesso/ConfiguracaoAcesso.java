@@ -56,6 +56,9 @@ public class ConfiguracaoAcesso implements Comparable {
 
 	public int compareTo(Object o) {
 		CpServico srv = ((ConfiguracaoAcesso) o).getServico();
+		if (getServico().getDscServico() == null || srv.getDscServico() == null){
+			return -1;
+		}
 		int i = getServico().getDscServico().compareTo(srv.getDscServico());
 		if (i != 0)
 			return i;

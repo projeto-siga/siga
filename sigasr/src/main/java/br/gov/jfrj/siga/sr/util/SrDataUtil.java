@@ -57,6 +57,12 @@ public class SrDataUtil {
 		return c.get(Calendar.HOUR_OF_DAY);
 	}
 	
+	public static int getMinuto(Date data) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(data);
+		return c.get(Calendar.MINUTE);
+	}
+	
 	public static Date getDataComHorario(Date d, int h, int min, int s, int m) {
 		Calendar c = Calendar.getInstance();
 		c.setTime(d);

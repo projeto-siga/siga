@@ -55,20 +55,22 @@ public enum SrDefinicaoHorario{
 		this.descricao = descricao;
 	}		
 	
-	public boolean terminaAntesDe(int tempo) {
-		return horaFinal <= tempo;
+	public boolean terminaAntesDe(int hora, int minuto) {
+		if (horaFinal == hora)
+			return minuto > 0;
+		return horaFinal < hora;
 	}
 	
 	public boolean comecaDepoisDe(int tempo) {
 		return horaInicial > tempo;
 	}
 	
-	public boolean abrange(int tempo) {
-		return !terminaAntesDe(tempo) && !comecaDepoisDe(tempo);
+	public boolean abrange(int hora, int minuto) {
+		return !terminaAntesDe(hora, minuto) && !comecaDepoisDe(hora);
 	}
 	
 	public boolean terminaAntesDe(Date dt) {
-		return terminaAntesDe(SrDataUtil.getHora(dt));
+		return terminaAntesDe(SrDataUtil.getHora(dt), SrDataUtil.getMinuto(dt));
 	}
 	
 	public boolean comecaDepoisDe(Date dt) {
@@ -76,6 +78,6 @@ public enum SrDefinicaoHorario{
 	}
 	
 	public boolean abrange(Date dt) {
-		return abrange(SrDataUtil.getHora(dt));
+		return abrange(SrDataUtil.getHora(dt), SrDataUtil.getMinuto(dt));
 	}
 }

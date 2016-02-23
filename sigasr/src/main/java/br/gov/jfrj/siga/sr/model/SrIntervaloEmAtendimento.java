@@ -55,22 +55,16 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 	@Override
 	public Date getDataContandoDoInicio(Long millisAdiante) {
 		//Edson: chamar o mecanismo acima para fazer previsões
-/*		if (isInfinito() || millisAdiante <= getDecorridoMillis())
-			return new Date(getInicio().getTime() + millisAdiante);
-		return null;*/
 		if (isInfinito() || millisAdiante <= this.getDecorridoMillis(false)) {
-			Date dtPrevista, data = null; 
+			Date dtPrevista, dtFinal = null; 
 			int somaDia = 0; Long millisPrevisto = 0l;
 			do {
 				dtPrevista = getDataFimPrevista(millisAdiante, somaDia);
 				millisPrevisto = getDecorridoMillisComDataPrevista(dtPrevista);
-				data = new Date(dtPrevista.getTime() + (millisAdiante - millisPrevisto));
-				if (data.before(dtPrevista))
-					somaDia -= 1;
-				else 
-					somaDia += 1;
-			} while(!isAtivo(data));
-			return data;
+				dtFinal = new Date(dtPrevista.getTime() + (millisAdiante - millisPrevisto));
+				somaDia = ajustarData(dtFinal, dtPrevista, somaDia);
+			} while(!isAtivo(dtFinal));
+			return dtFinal;
 		}
 		return null;
 	}
@@ -146,5 +140,11 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 		SrIntervaloEmAtendimento iPrevisto = new SrIntervaloEmAtendimento(getInicio(), dtPrevista, null);
 		iPrevisto.setHorario(getHorario());
 		return iPrevisto.getDecorridoMillis(true);
+	}
+	
+	private int ajustarData(Date dt1, Date dt2, int ajuste) {
+		if (dt1.before(dt2))
+			return ajuste -= 1;
+		return ajuste += 1;
 	}
 }

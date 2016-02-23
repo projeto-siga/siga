@@ -34,7 +34,7 @@ public class PrincipalQuadrosController extends SigaController {
 	}
 	
 	@Get("app/principalQuadros/carregaModulo")
-	public void carregarModulos(String modulo) {
+	public void carregarModulos(String modulo) throws Exception {
 		if (modulo == null) {
 			throw new IllegalArgumentException("Modulo nao informado");
 		}
@@ -45,7 +45,7 @@ public class PrincipalQuadrosController extends SigaController {
 			.body(invocar(url));
 	}
 	
-	private String invocar(String url) {
+	private String invocar(String url) throws Exception {
 		String html = http.get(url, getRequest(), null);
 		
 		if (html.contains("HTTP Status 404")) {

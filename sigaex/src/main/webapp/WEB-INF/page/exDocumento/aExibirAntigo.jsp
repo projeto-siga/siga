@@ -34,6 +34,16 @@
 		</h2>
 		<c:set var="primeiroMobil" value="${true}" />
 		<c:forEach var="m" items="${docVO.mobs}" varStatus="loop">
+			<c:if test="${f:resource('isWorkflowEnabled')}">
+				<script type="text/javascript">
+					var url = "/sigawf/app/doc?sigla=${m.sigla}&ts=1${currentTimeMillis}";
+					Siga.ajax(url, null, "GET", function(response){		
+						var div = $(".wf_div${m.mob.codigoCompacto}:last"); 
+						$(div).html(response);
+					});		
+				</script>
+			</c:if>
+		
 			<c:if
 				test="${m.mob.geral or true or (((mob.geral or (mob.id == m.mob.id)) and (exibirCompleto or (m.mob.ultimaMovimentacaoNaoCancelada != null) ) ))}">
 				<h3 style="margin-top: 10px; margin-bottom: 0px;">
@@ -55,16 +65,12 @@
 				</c:if>
 
 				<c:if test="${f:resource('isWorkflowEnabled')}">
-					<c:if test="${ (primeiroMobil) and (docVO.tipoFormaDocumento == 'processo_administrativo')}">
-						<div id="${docVO.sigla}" depende=";wf;" />
-						</div>
-						<c:set var="primeiroMobil" value="${false}" />
-					</c:if>
-				
-					<c:if test="${(not m.mob.geral) or (docVO.tipoFormaDocumento != 'processo_administrativo')}">
-						<div id="${m.sigla}" depende=";wf;" />
+					<c:if test="${(not m.mob.geral)}">
+						<div id="${m.sigla}" depende=";wf;" class="wf_div${m.mob.codigoCompacto}" />
 						</div>
 					</c:if>
+					<!--ajax:${m.sigla}-${i}-->
+					<!--/ajax:${m.sigla}-${i}-->
 				
 				</c:if>
 				<c:set var="dtUlt" value="" />
@@ -449,9 +455,6 @@
 		</div>
 	</div>
 </div>
-<c:if test="${f:resource('isWorkflowEnabled')}">
-	<script type="text/javascript">ReplaceInnerHTMLFromAjaxResponse("/sigawf/app/doc?sigla=${doc.codigo}&ts=${currentTimeMillis}",null,"wf");</script>
-</c:if>
 <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GC')}">
 	<c:url var="url" value="/../sigagc/app/knowledge">
 		<c:param name="tags">

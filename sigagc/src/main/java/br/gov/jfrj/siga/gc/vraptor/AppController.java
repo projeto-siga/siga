@@ -733,23 +733,7 @@ public class AppController extends GcController {
 							+ informacao.edicao.nome
 							+ ") : O usuário não tem permissão para editar o conhecimento solicitado.");
 	}
-	
-	@Get
-	@Post
-    @Path("/app/informacao/selecionar")
-    public void selecionar(String sigla) throws Exception {
-		GcInformacao sel = null;
-		try{
-			sel = GcInformacao.findBySigla(sigla, getLotaTitular().getOrgaoUsuario());
-		} catch(Exception e){
-			sel = GcInformacao.findByTitulo(sigla);
-		}
-		if (sel != null)
-			result.use(Results.http()).body("1;" + sel.getId() + ";" + sel.getSigla() + ";" + sel.getArq().getTitulo());
-		else
-			result.use(Results.http()).body("0;");
-    }
-	
+		
 	public void selecaoInplace() throws Exception {
 		int a = 0;
 	}
@@ -1281,10 +1265,16 @@ public class AppController extends GcController {
 		result.use(Results.http()).body("0");
 	}
 
-	@Path("/app/selecionar")
+	@Path({"/app/selecionar", "/app/informacao/selecionar"})
 	public void selecionar(String sigla, boolean retornarCompacta)
 			throws Exception {
-		GcInformacao inf = GcInformacao.findBySigla(sigla);
+		GcInformacao inf;
+		
+		try{
+			inf = GcInformacao.findBySigla(sigla, getLotaTitular().getOrgaoUsuario());
+		} catch(Exception e){
+			inf = GcInformacao.findByTitulo(sigla);
+		}
 
 		if (inf != null) {
 			result.use(Results.http()).body(

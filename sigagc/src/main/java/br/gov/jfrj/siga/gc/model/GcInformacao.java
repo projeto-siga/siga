@@ -680,9 +680,7 @@ public class GcInformacao extends Objeto {
 
 		if (m2.find()) {
 			info = GcInformacao.AR.findById(Long.parseLong(m2.group(1)));
-		}
-
-		if (m1.find()) {
+		} else if (m1.find()) {
 			String ano = m1.group(3);
 			String numero = m1.group(4);
 			String orgao = m1.group(1);
@@ -696,7 +694,7 @@ public class GcInformacao extends Objeto {
 					(Integer) Integer.parseInt(ano),
 					(Integer) Integer.parseInt(numero), orgao, orgao)
 					.first();
-		}
+		} else throw new NumberFormatException("Formato de código inválido");
 
 		if (info == null) {
 			throw new AplicacaoException(

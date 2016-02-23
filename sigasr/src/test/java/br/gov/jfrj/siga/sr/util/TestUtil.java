@@ -513,6 +513,12 @@ public class TestUtil {
 		m66.setCpTipoMarcador(cptm);
 		m66.save();
 		
+		CpMarcador m69 = new CpMarcador();
+		m69.setIdMarcador(69L);
+		m69.setDescrMarcador("Necessita Providência");
+		m69.setCpTipoMarcador(cptm);
+		m69.save();
+		
 	}
 	
 	/*public static SrAcordo OLA() throws Exception{

@@ -1044,7 +1044,7 @@
 
 <c:if test="${f:resource('isWorkflowEnabled')}">
 	<script type="text/javascript">
-		var url = "/sigawf/app/doc?sigla=${docVO.doc.codigo}&ts=1${currentTimeMillis}";
+		var url = "/sigawf/app/doc?sigla=${docVO.mob.sigla}&ts=1${currentTimeMillis}";
 		Siga.ajax(url, null, "GET", function(response){		
 			var div = $(".wf_div:last"); 
 			$(div).html(response);

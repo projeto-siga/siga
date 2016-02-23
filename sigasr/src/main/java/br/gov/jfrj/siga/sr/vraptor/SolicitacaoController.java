@@ -848,15 +848,12 @@ public class SolicitacaoController extends SrController {
     @Path("public/app/solicitacao/selecionar")
     public void selecionarPublico(String sigla, String matricula) throws Exception {
     	try {
-    		CpOrgaoUsuario ouDefault = null;
+    		SrSolicitacao sol = new SrSolicitacao();
     		if (matricula != null) {
     			DpPessoa pes = dao().getPessoaFromSigla(matricula);
     			if (pes != null)
-    				ouDefault = pes.getOrgaoUsuario();
-    			
+    				sol.setLotaTitular(pes.getLotacao());
     		}
-    		SrSolicitacao sol = new SrSolicitacao();
-    		sol.setOrgaoUsuario(ouDefault);
     		sol = (SrSolicitacao) sol.selecionar(sigla);
         
 	        if (sol != null) {

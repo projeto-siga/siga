@@ -22,6 +22,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Resource
 public class BuscaTextualController extends SigaController {
 
+	private static final String IDP_JSESSIONID = "IDP-JSESSIONID";
 	private static final String GSA_SESSION_ID = "GSA_SESSION_ID";
 
 	public BuscaTextualController(HttpServletRequest request, Result result,
@@ -43,11 +44,6 @@ public class BuscaTextualController extends SigaController {
 		if (url.contains("type=suggest"))
 			url = url.replace("search", "suggest");
 		String contentType = "application/json";
-		// Essas linhas estavam no javascript e aparentemente corrigem algum
-		// problema na geracao de JSON do GSA. Se detectarmos problemas no
-		// JSON, podemos tentar habilita-las.
-		// result = result.replace(/\\/g,'\\\\');
-		// result = result.replace(/\s+/g,' ');
 
 		if (url.contains("q=cache:"))
 			contentType = "text/html";
@@ -56,16 +52,18 @@ public class BuscaTextualController extends SigaController {
 		if (gsaSession != null) {
 			BasicClientCookie cookie = new BasicClientCookie(GSA_SESSION_ID,
 					gsaSession);
-			// cookie.setPath("/");
 			URI uri = new URI(url);
-		    String domain = uri.getHost();
+			String domain = uri.getHost();
 			cookie.setDomain(domain);
-			// cookie.setSecure(false);
-			// cookie.setVersion(1);
 			cookieStore.addCookie(cookie);
 		}
-		String response = http.get(url, getRequest(), cookieStore);
+		final String idpDomain = request.getServerName();
+		final String idpSession = request.getHeader(IDP_JSESSIONID);
+		String response = http.get(url, cookieStore, idpDomain, idpSession);
+
+		// Corrige um problema no JSON do GSA
 		response = response.replace("\\", "\\\\");
+
 		HttpResult httpr = result.use(Results.http());
 		httpr.addHeader("Content-Type", contentType);
 		for (Cookie cookie : cookieStore.getCookies()) {

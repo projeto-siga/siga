@@ -104,7 +104,7 @@ public class TestesController extends SigaController {
 						+ incluirMatricula;
 
 			SigaHTTP http = new SigaHTTP();
-			String[] response = http.get(URLSelecionar, getRequest(), null).split(";");
+			String[] response = http.get(URLSelecionar).split(";");
 
 			if (response.length == 1 && Integer.valueOf(response[0]) == 0) {
 				//verificar se apos retirada dos prefixos referente 
@@ -123,7 +123,7 @@ public class TestesController extends SigaController {
 						+ "/selecionar.action?sigla=" + sigla
 						+ incluirMatricula;
 				}
-				response = http.get(URLSelecionar, getRequest(), null).split(";");
+				response = http.get(URLSelecionar).split(";");
 				
 				if (copiaSigla.matches("(^[0-9]+$)")) 
 					uRLExibir = "/siga/pessoa/exibir.action?sigla=" + response[2];

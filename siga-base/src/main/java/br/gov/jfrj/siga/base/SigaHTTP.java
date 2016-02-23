@@ -24,15 +24,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.KeyStore;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.http.HTTPException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.CookieStore;
@@ -68,35 +63,34 @@ import org.picketlink.common.util.StringUtil;
  */
 public class SigaHTTP {
 
-	private Header[] headers;
-	private final String COOKIE = "cookie";
 	private final String SAMLRequest = "SAMLRequest";
 	private final String SAMLResponse = "SAMLResponse";
-	private final String JSESSIONID_PREFIX = "JSESSIONID=";
-	private final String SET_COOKIE = "set-cookie";
 	private final String HTTP_POST_BINDING = "HTTP Post Binding";
-	private final String doubleQuotes = "\"";
-	private static final int MAX_RETRY = 3;
-	private int retryCount = 0;
-	private String idp;
 
 	/**
 	 * @param URL
-	 *            pode ser a url completa ou relativa.
-	 * @param request
-	 *            (se for modulo play, setar pra null)
-	 * @param cookieValue
-	 *            (necessario apenas nos modulos play)
+	 *            deve ser a url completa.
+	 * @param cookieStore
+	 *            Necessaria se desejar incluir cookies alem da session do idp
+	 * @param idpDomain
+	 *            dominio do idp, ex.: siga.jfrj.jus.br
+	 * @param idpSession
+	 *            valor do cookie JSESSIONID do idp
 	 */
-	public String get(String URL, HttpServletRequest request, CookieStore cookieStore)
-			throws Exception {
-		this.retryCount = 0;
-
-		String cValue = getIdp(request);
-
-		return handleAuthentication(URL, request, cookieStore, cValue);
+	public String get(String URL, CookieStore cookieStore, String idpDomain,
+			String idpSession) throws Exception {
+		return handleAuthentication(URL, cookieStore, idpDomain, idpSession);
 	}
 
+	public String get(String URL) throws Exception {
+		return get(URL, null, null, null);
+	}
+
+	/**
+	 * Esse é um cliente de HTTP que despreza o certificado e aceita qualquer
+	 * servidor. Precisamos implementar isso para conseguir conectar ao GSA, que
+	 * náo tinha certificado válido e exigia HTTPS para autenticar com o SAML.
+	 */
 	public HttpClient getNewHttpClient() {
 		try {
 			KeyStore trustStore = KeyStore.getInstance(KeyStore
@@ -124,19 +118,22 @@ public class SigaHTTP {
 		}
 	}
 
-	String handleAuthentication(String URL, HttpServletRequest request,
-			CookieStore cookieStore, String cValue) throws Exception {
+	String handleAuthentication(String URL, CookieStore cookieStore,
+			String idpDomain, String idpSession) throws Exception {
 		String html = "";
 
 		Executor exec = Executor.newInstance(getNewHttpClient());
 		if (cookieStore == null)
 			cookieStore = new BasicCookieStore();
-		BasicClientCookie cookie = new BasicClientCookie("JSESSIONID", cValue);
-		cookie.setPath("/sigaidp");
-		cookie.setDomain("sigat.jfrj.jus.br");
-		cookie.setSecure(false);
-		cookie.setVersion(1);
-		cookieStore.addCookie(cookie);
+		if (idpSession != null && idpDomain != null) {
+			BasicClientCookie cookie = new BasicClientCookie("JSESSIONID",
+					idpSession);
+			cookie.setPath("/sigaidp");
+			cookie.setDomain(idpDomain);
+			cookie.setSecure(false);
+			cookie.setVersion(1);
+			cookieStore.addCookie(cookie);
+		}
 		exec.cookieStore(cookieStore);
 
 		try {
@@ -149,12 +146,12 @@ public class SigaHTTP {
 			HttpResponse response = exec.execute(Request.Get(URL))
 					.returnResponse();
 			html = handleResponse(html, response);
-			//currentCookie = extractSetCookie(currentCookie, response);
+			// currentCookie = extractSetCookie(currentCookie, response);
 
 			// Verifica se retornou o form de autenticao do
 			// picketlink
 			if (html.contains(HTTP_POST_BINDING)) {
-				if (StringUtil.isNullOrEmpty(cValue)) {
+				if (StringUtil.isNullOrEmpty(idpSession)) {
 					return "";
 				}
 
@@ -165,8 +162,6 @@ public class SigaHTTP {
 							SAMLRequest);
 					// Atribui a URL do IDP (sigaidp)
 					String idpURL = getAttributeActionFromHtml(html);
-					if (!idpURL.contains("http"))
-						idpURL = completeURL(URL, idpURL);
 
 					// Faz um novo POST para o IDP com o SAMLRequest como
 					// parametro
@@ -190,18 +185,15 @@ public class SigaHTTP {
 				}
 
 				if (html.contains(SAMLResponse)) {
-					// Extrai o valor do SAMLResponse
-					// Caso o SAMLResponse nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¿ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o esteja
-					// disponÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel
-					// aqui,
-					// ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¿ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© porque
-					// o JSESSIONID utilizado nÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o foi o do IDP.
+					// Extrai o valor do SAMLResponse. Caso o SAMLResponse nao
+					// esteja disponivel aqui, eh porque o JSESSIONID utilizado
+					// nao representa uma session valida do do IDP.
 					String SAMLResponseValue = getAttributeValueFromHtml(html,
 							SAMLResponse);
 					String spURL = getAttributeActionFromHtml(html);
-					if (!spURL.contains("http"))
-						spURL = completeURL(URL, spURL);
 
+					// Precisei inserir totod esses headers porque o GSA
+					// reamente dava erro sem eles.
 					response = exec
 							.execute(
 									Request.Post(spURL)
@@ -221,6 +213,9 @@ public class SigaHTTP {
 															.build()))
 							.returnResponse();
 
+					// Esse redirect deveria ser automatico, mas o GSA manda um
+					// header de connectio: close, e isso aparentemente
+					// interrompe o redirecionamento automatico.
 					if (response.getStatusLine().getStatusCode() == 302)
 						response = exec.execute(
 								Request.Get(response.getFirstHeader("Location")
@@ -234,8 +229,6 @@ public class SigaHTTP {
 												.useExpectContinue()
 												.addHeader("Content-Type",
 														"application/x-www-form-urlencoded")
-												// .addHeader(COOKIE,
-												// currentCookie)
 												.bodyForm(
 														Form.form()
 																.add(SAMLResponse,
@@ -250,31 +243,7 @@ public class SigaHTTP {
 		} catch (IOException io) {
 		}
 
-		// tryAgain(URL, request, cookieValue, html);
-
 		return html;
-	}
-
-	private String completeURL(String URL, String idpURL) {
-		return URL.substring(0, StringUtils.ordinalIndexOf(URL, "/", 3))
-				+ idpURL;
-	}
-
-	private String extractSetCookie(String currentCookie, HttpResponse response) {
-		for (Header header : response.getAllHeaders()) {
-			if (header.getName().equals("Set-Cookie")) {
-				if (header.getValue().contains(";")) {
-					String headers[] = header.getValue().split(";");
-					for (String h : headers) {
-						if (h.contains(JSESSIONID_PREFIX)) {
-							currentCookie = h;
-							break;
-						}
-					}
-				}
-			}
-		}
-		return currentCookie;
 	}
 
 	private String handleResponse(String html, HttpResponse response)
@@ -299,40 +268,15 @@ public class SigaHTTP {
 
 	public boolean isErrorPage(String html) {
 		return html.contains("<title>")
-				&& html.contains("NÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o Foi PossÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel Completar a OperaÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o");
+				&& html.contains("vel Completar a Opera");
 	}
 
 	public boolean isAuthPage(String html) {
-		return html.contains("Senha")
-				&& html.contains("MatrÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­cula");
+		return html.contains("Senha") && html.contains("Apostila");
 	}
 
 	public boolean isIDPPage(String html) {
 		return html.contains("siga-modules") && html.contains("siga-box");
-	}
-
-	private String getCookie(HttpServletRequest request, String cookieValue) {
-		if (cookieValue == null || cookieValue.isEmpty()) {
-			return request.getSession().getId();
-		}
-		return cookieValue;
-	}
-
-	private String extractCookieFromHeader(String headerValue) {
-		return headerValue.substring(headerValue.indexOf("=") + 1,
-				headerValue.indexOf(";"));
-	}
-
-	private String getHeader(String headerName) throws ElementNotFoundException {
-
-		for (Header header : headers) {
-			if (header.getName().equalsIgnoreCase(headerName)) {
-				return header.getValue();
-			}
-		}
-
-		throw new ElementNotFoundException("Header " + headerName
-				+ " Not founded on headers variable");
 	}
 
 	private String getAttributeValueFromHtml(String htmlContent,
@@ -355,53 +299,6 @@ public class SigaHTTP {
 		return doc.select("form").attr("action");
 	}
 
-	@SuppressWarnings("unchecked")
-	public String getIdp(HttpServletRequest request) {
-		try {
-			final String idpSession = request.getHeader("IDP-JSESSIONID");
-			if (idpSession != null) {
-				idp = idpSession;
-				return idpSession;
-			}
-
-			if (StringUtil.isNullOrEmpty(idp)) {
-				String idpSessionID = "";
-				try {
-					Map<String, Object> map = (Map<String, Object>) request
-							.getSession().getAttribute("SESSION_ATTRIBUTE_MAP");
-					idpSessionID = (String) ((List<Object>) map
-							.get("IDPsessionID")).get(0);
-				} catch (NullPointerException npe) {
-					// relax.
-				}
-
-				if (StringUtil.isNotNull(idpSessionID)) {
-					idp = idpSessionID;
-				} else {
-					idp = tryGetIDPSessionIDFromRequest(request);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			idp = tryGetIDPSessionIDFromRequest(request);
-		}
-		return idp;
-	}
-
-	private String tryGetIDPSessionIDFromRequest(HttpServletRequest request) {
-		if (request != null && request.getAttribute("idp") != null) {
-			String idpFromRequest = (String) request.getAttribute("idp");
-			if (StringUtil.isNotNull(idpFromRequest))
-				return idpFromRequest;
-
-		}
-
-		return "";
-	}
-
-	public void setIdp(String idp) {
-		this.idp = idp;
-	}
 
 	public String getNaWeb(String URL, HashMap<String, String> header,
 			Integer timeout, String payload) throws AplicacaoException {

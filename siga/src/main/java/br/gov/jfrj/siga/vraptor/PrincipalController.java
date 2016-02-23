@@ -181,7 +181,7 @@ public class PrincipalController extends SigaController {
 												// de busca ";" a url destino
 			String[] response = null;
 			try {
-				response = http.get(aurls[0], getRequest(), null).split(";");
+				response = http.get(aurls[0]).split(";");
 			} catch (Exception e) {
 			}
 

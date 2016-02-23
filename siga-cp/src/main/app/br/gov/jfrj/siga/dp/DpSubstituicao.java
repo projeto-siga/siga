@@ -128,5 +128,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 			return true;
 		return false;
 	}	
+	
+	@Override
+	public String toString() {
+		return "DpSubstituicao(" + String.valueOf(getIdSubstituicao() + ")");
+	}
 
 }

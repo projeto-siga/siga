@@ -115,4 +115,9 @@ public class CpIdentidade extends AbstractCpIdentidade {
 	public boolean ativaNaData(Date dt) {
 		return super.ativoNaData(dt);
 	}
+	
+	@Override
+	public String toString() {
+		return "CpIdentidade(" + String.valueOf(getId()) + ")";
+	}
 }

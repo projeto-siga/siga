@@ -32,6 +32,7 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>GcFilter</filter-name>
+		<url-pattern>/app/*</url-pattern>
 		<url-pattern>/servicos/*</url-pattern>
 	</filter-mapping>
 

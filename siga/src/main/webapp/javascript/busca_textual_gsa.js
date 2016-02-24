@@ -13,7 +13,8 @@ $(document).on('ready', function(){
 				filter: 0,
 				output: "xml_no_dtd",
 				lr:"lang_pt",
-				sort: "D:L:d1"
+				sort: "D:L:d1",
+				access: "a"
 			}
 		},
 		RenderInit:function(json){

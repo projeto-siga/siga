@@ -50,4 +50,9 @@
         <name>solicitacao</name>
         <path>/WEB-INF/tags/solicitacao.tag</path>
     </tag-file>
+    <function>
+  		<name>replaceSiglas</name>
+  		<function-class>br.gov.jfrj.siga.sr.util.SrViewUtil</function-class>
+  		<function-signature>java.lang.String replaceSiglas(java.lang.String)</function-signature>
+ 	</function>
 </taglib>

@@ -114,8 +114,8 @@ public class SrSolicitacaoVO {
 						.getSiglaCompleta(), m.getDpLotacaoIni()
 						.getLotacaoAtual().getNomeLotacao()));
 
-		this.setUltimaMovimentacao(ultMov != null ? ultMov.getDescrMovimentacao()!= null ? 
-				SrViewUtil.selecionado(ultMov.getDescrMovimentacao(), ultMov.getDescrMovimentacao()) : "" : "");
+		this.setUltimaMovimentacao(ultMov != null ? ultMov.getDescricao()!= null ? 
+				SrViewUtil.selecionado(ultMov.getDescricao(), ultMov.getDescricao()) : "" : "");
 		this.setDtUltimaMovimentacao(ultMov != null ? ultMov.getDtIniString() : "");
 		
 		if (podeRemover)

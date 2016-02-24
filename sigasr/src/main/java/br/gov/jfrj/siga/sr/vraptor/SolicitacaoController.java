@@ -815,15 +815,7 @@ public class SolicitacaoController extends SrController {
 
     @Path("app/solicitacao/darAndamento")
     public void darAndamento(SrMovimentacao movimentacao) throws Exception {
-    	if (movimentacao == null || ((movimentacao.getDescrMovimentacao() == null || movimentacao.getDescrMovimentacao().trim().equals("")) 
-    			&& movimentacao.getAtendente() == null))
-    		throw new AplicacaoException("Não foram informados dados para o andamento");
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
-        if (movimentacao.getDescrMovimentacao() == null || movimentacao.getDescrMovimentacao().trim().equals("") && movimentacao.isTrocaDePessoaAtendente()){
-        	if (movimentacao.getAtendente() != null)
-        		movimentacao.setDescrMovimentacao("Atribuindo a " + movimentacao.getAtendente().getNomeAbreviado());
-        	else movimentacao.setDescrMovimentacao("Retirando atribuição");
-        }
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(this).exibir(movimentacao.getSolicitacao().getSiglaCompacta(), todoOContexto(), ocultas());
     }

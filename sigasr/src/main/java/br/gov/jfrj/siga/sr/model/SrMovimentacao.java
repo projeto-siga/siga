@@ -236,6 +236,38 @@ public class SrMovimentacao extends Objeto {
         return isCancelada() || getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO;
     }
     
+    public boolean isDescricaoAtomica(){
+    	if (getDescrMovimentacao() != null)
+    		switch (getTipoMov().getId().intValue()) {
+			case (int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA:
+				return !getDescrMovimentacao().contains("Juntando a ");
+			case (int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO:
+				return !getDescrMovimentacao().contains("Vinculando a ");
+			case (int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA:
+				return !getDescrMovimentacao().contains("Fim previsto: ")
+						&& !getDescrMovimentacao().contains(" | ");
+			case (int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE:
+				return !getDescrMovimentacao().contains("Prioridade Tecnica: ");
+			case (int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA:
+				return !getDescrMovimentacao().contains(" pendencia iniciada em ");
+			case (int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO:
+				return !getDescrMovimentacao().contains("Atendente: ");
+			case (int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO:
+				return !getDescrMovimentacao().contains("Atribuindo a ") 
+						&& !getDescrMovimentacao().contains("Retirando atribuição");
+			case ((int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO):
+				return !getDescrMovimentacao().contains("Motivo: ") 
+						&& !getDescrMovimentacao().contains("Item: ");
+			case ((int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_RECLASSIFICACAO):
+				return !getDescrMovimentacao().contains("Item: ");
+			}
+    	return true;
+    }
+    
+    public String getDescricao(){
+    	return getDescrMovimentacao();
+    }
+    
     public SrMovimentacao getAnterior() {
         return getAnteriorPorTipo(null);
     }
@@ -252,12 +284,12 @@ public class SrMovimentacao extends Objeto {
     }
     
     public boolean isTrocaDePessoaAtendente(){
+    	if (!getTipoMov().getId().equals(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO))
+    		return false;
     	SrMovimentacao anterior = getAnterior();
-    	return (anterior != null 
-    			&& getTipoMov().getId().equals(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO) 
-    			&& ((getAtendente() != null && anterior.getAtendente() == null) 
-    				|| (getAtendente() == null && anterior.getAtendente() != null) 
-    				|| (!anterior.getAtendente().equivale(this.getAtendente()))));
+    	if (getAtendente() == null)
+    		return anterior.getAtendente() != null;
+    	else return (anterior.getAtendente() == null || !anterior.getAtendente().equivale(this.getAtendente()));
     }
 
     public String getDtIniString() {
@@ -412,7 +444,7 @@ public class SrMovimentacao extends Objeto {
         else if (SrTipoMovimentacao.TIPOS_MOV_INI_ATENDIMENTO.contains(getTipoMov().getId())
 				|| SrTipoMovimentacao.TIPOS_MOV_ATUALIZACAO_ATENDIMENTO.contains(getTipoMov().getId()))
         	atualizarAcordos();
-        
+              
         SrEtapaSolicitacao ultimoAtendimento = solicitacao.getUltimoAtendimento();
         if (ultimoAtendimento != null)
         	setDnmTempoDecorridoAtendimento(ultimoAtendimento.getDecorridoEmSegundos());

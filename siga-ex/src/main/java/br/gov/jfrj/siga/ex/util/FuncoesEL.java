@@ -783,6 +783,8 @@ public class FuncoesEL {
 						.getBL()
 						.processarModelo((ExMovimentacao) docOuMov, acao,
 								params, null);
+		} catch (NullPointerException ex) {
+			return "NullPointerException";
 		} catch (Exception ex) {
 			return ex.getMessage();
 		}

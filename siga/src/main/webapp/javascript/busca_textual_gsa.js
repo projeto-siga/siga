@@ -813,11 +813,33 @@ $(document).on('ready', function(){
 		//***  
 		ajaxGetGSA:function(params){
 			var self = this;
-//			var idpSession = "";
-//			jQuery.ajax({
-//				 url: 'http://sigat.jfrj.jus.br/sigaidp/IDPServlet',
-//			       success: function (result) {
-//			            idpSession = result;
+			var idpSession = "";
+			jQuery.ajax({
+				 url: '/sigaidp/IDPServlet',
+			       success: function (result) {
+			            idpSession = result;
+			            gsaSession = gsa.getCookie("GSA_SESSION_ID");
+			            jQuery.ajax({
+			            	url: gsa.settings.proxy, 
+			            	data: params, 
+			            	//headers: {'IDP-JSESSIONID': idpSession},
+			            	headers: {'IDP-JSESSIONID':jQuery.trim(idpSession), 'IDP-DOMAIN': window.location.host, 'GSA_SESSION_ID': gsaSession},
+			            	success: function(json){
+							    gsa.RenderInit(json);
+								self.div_loader.hidePleaseWait();
+			            	},
+			            	error: function(){
+			            		self.div_loader.hidePleaseWait();
+			            	}
+			            	
+			            });
+			         
+			        }
+			 		
+			    });
+			
+//			var idpSession = "EqlMM5f81jZJ7AI568n0YTOy.classee:siga-auth-server01";
+//			
 //			            gsaSession = gsa.getCookie("GSA_SESSION_ID");
 //			            jQuery.ajax({
 //			            	url: gsa.settings.proxy, 
@@ -833,28 +855,6 @@ $(document).on('ready', function(){
 //			            	}
 //			            	
 //			            });
-//			         
-//			        }
-//			 		
-//			    });
-			
-			var idpSession = "EqlMM5f81jZJ7AI568n0YTOy.classee:siga-auth-server01";
-			
-			            gsaSession = gsa.getCookie("GSA_SESSION_ID");
-			            jQuery.ajax({
-			            	url: gsa.settings.proxy, 
-			            	data: params, 
-			            	//headers: {'IDP-JSESSIONID': idpSession},
-			            	headers: {'IDP-JSESSIONID':jQuery.trim(idpSession), 'GSA_SESSION_ID': gsaSession},
-			            	success: function(json){
-							    gsa.RenderInit(json);
-								self.div_loader.hidePleaseWait();
-			            	},
-			            	error: function(){
-			            		self.div_loader.hidePleaseWait();
-			            	}
-			            	
-			            });
 			         
 			       
 		},

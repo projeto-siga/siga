@@ -22,6 +22,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Resource
 public class BuscaTextualController extends SigaController {
 
+	private static final String IDP_DOMAIN = "IDP-DOMAIN";
 	private static final String IDP_JSESSIONID = "IDP-JSESSIONID";
 	private static final String GSA_SESSION_ID = "GSA_SESSION_ID";
 
@@ -57,7 +58,7 @@ public class BuscaTextualController extends SigaController {
 			cookie.setDomain(domain);
 			cookieStore.addCookie(cookie);
 		}
-		final String idpDomain = request.getServerName();
+		final String idpDomain = request.getHeader(IDP_DOMAIN);
 		final String idpSession = request.getHeader(IDP_JSESSIONID);
 		String response = http.get(url, cookieStore, idpDomain, idpSession);
 

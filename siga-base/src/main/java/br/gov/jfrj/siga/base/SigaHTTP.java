@@ -79,6 +79,8 @@ public class SigaHTTP {
 	 */
 	public String get(String URL, CookieStore cookieStore, String idpDomain,
 			String idpSession) throws Exception {
+		if (idpDomain != null && idpDomain.contains(":"))
+			idpDomain = idpDomain.split(":")[0];
 		return handleAuthentication(URL, cookieStore, idpDomain, idpSession);
 	}
 
@@ -298,7 +300,6 @@ public class SigaHTTP {
 		Document doc = Jsoup.parse(htmlContent);
 		return doc.select("form").attr("action");
 	}
-
 
 	public String getNaWeb(String URL, HashMap<String, String> header,
 			Integer timeout, String payload) throws AplicacaoException {

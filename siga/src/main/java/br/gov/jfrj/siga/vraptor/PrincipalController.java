@@ -112,16 +112,16 @@ public class PrincipalController extends SigaController {
 			mapAcronimo.put(ou.getSiglaOrgaoUsu(), ou);
 		}
 		
-		String acronimos = "";
+		StringBuilder acronimos = new StringBuilder();
 		for (String s : mapAcronimo.keySet()) {
 			if (acronimos.length() > 0)
-				acronimos += "|";
-			acronimos += s;
+				acronimos.append("|");
+			acronimos.append(s);
 		}
 
 		final Pattern p1 = Pattern
 				.compile("^(?<orgao>"
-						+ acronimos
+						+ acronimos.toString()
 						+ ")?-?(?:(?<especie>[A-Za-z]{3})|(?<modulo>SR|TMPSR|GC|TMPGC|TP))-?([0-9][0-9A-Za-z\\.\\-\\/]*)$");
 		final Matcher m1 = p1.matcher(sigla);
 

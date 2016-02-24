@@ -236,11 +236,11 @@ public class GcBL {
 			GcTag tag;
 			if (categoria == null)
 				tag = GcTag.AR.find(
-						"tipo.id = ? and categoria is null and titulo = ?",
+						"tipo.id = ?1 and categoria is null and titulo = ?2",
 						tipo, titulo).first();
 			else
 				tag = GcTag.AR.find(
-						"tipo.id = ? and categoria = ? and titulo = ?", tipo,
+						"tipo.id = ?1 and categoria = ?2 and titulo = ?3", tipo,
 						categoria, titulo).first();
 			if (tag == null && !fValidos) {
 				tag = new GcTag((GcTipoTag) GcTipoTag.AR.findById(tipo),

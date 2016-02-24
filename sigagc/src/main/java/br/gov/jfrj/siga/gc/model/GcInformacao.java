@@ -175,7 +175,7 @@ public class GcInformacao extends Objeto {
 	@PostLoad
 	private void onLoad() {
 		marcas = GcMarca.AR
-				.find("inf.id = ? and (dtFimMarca is null or dtFimMarca > sysdate) order by dtIniMarca, cpMarcador.descrMarcador",
+				.find("inf.id = ?1 and (dtFimMarca is null or dtFimMarca > sysdate) order by dtIniMarca, cpMarcador.descrMarcador",
 						this.id).fetch();
 		// marcas = GcMarca.find("id_tp_marca = 3 and inf.id = ?",
 		// this.id).fetch();
@@ -634,12 +634,11 @@ public class GcInformacao extends Objeto {
 	}
 
 	public String getGcTags() throws Exception {
-		String s = "";
+		StringBuilder s = new StringBuilder();
 		for (GcTag tag : tags) {
-			// s = "&tags=" + tag.toString();
-			s += "&tags=" + URLEncoder.encode(tag.toString(), "UTF-8");
+			s.append("&tags=" + URLEncoder.encode(tag.toString(), "UTF-8"));
 		}
-		return s;
+		return s.toString();
 	}
 	
 	public static GcInformacao findBySigla(String sigla)
@@ -663,15 +662,15 @@ public class GcInformacao extends Objeto {
 			mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
 			mapAcronimo.put(ou.getSiglaOrgaoUsu(), ou);
 		}
-		String acronimos = "";
+		StringBuilder acronimos = new StringBuilder();
 		for (String s : mapAcronimo.keySet()) {
 			if (acronimos.length() > 0)
-				acronimos += "|";
-			acronimos += s;
+				acronimos.append("|");
+			acronimos.append(s);
 		}
 
 		final Pattern p2 = Pattern.compile("^TMPGC-?([0-9]{1,7})");
-		final Pattern p1 = Pattern.compile("^(" + acronimos
+		final Pattern p1 = Pattern.compile("^(" + acronimos.toString()
 				+ ")?-?(GC)?-?(?:(20[0-9]{2})/?)??([0-9]{1,5})$");
 		final Matcher m2 = p2.matcher(sigla);
 		final Matcher m1 = p1.matcher(sigla);
@@ -690,7 +689,7 @@ public class GcInformacao extends Objeto {
 				ano = String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
 			
 			info = GcInformacao.AR.find(
-					"ano = ? and numero = ? and (ou.acronimoOrgaoUsu = ? or ou.siglaOrgaoUsu = ?)",
+					"ano = ?1 and numero = ?2 and (ou.acronimoOrgaoUsu = ?3 or ou.siglaOrgaoUsu = ?4)",
 					(Integer) Integer.parseInt(ano),
 					(Integer) Integer.parseInt(numero), orgao, orgao)
 					.first();
@@ -707,10 +706,13 @@ public class GcInformacao extends Objeto {
 	public static GcInformacao findByTitulo(String titulo) throws Exception {
 		try{
 			String[] palavras = titulo.toUpperCase().split(" ");
-			String query = "hisDtFim is null and visualizacao = " + GcAcesso.ACESSO_PUBLICO;
-			for (String palavra : palavras)
-				query += " and upper(arq.titulo) like '%" + palavra + "%' ";
-			List<GcInformacao> results = GcInformacao.AR.find(query).fetch();
+			StringBuilder query = new StringBuilder("hisDtFim is null and visualizacao = " + GcAcesso.ACESSO_PUBLICO);
+			for (String palavra : palavras){
+				query.append(" and upper(arq.titulo) like '%");
+				query.append(palavra);
+				query.append("%' ");
+			}
+			List<GcInformacao> results = GcInformacao.AR.find(query.toString()).fetch();
 			return results.size() == 1 ? results.get(0) : null;
 		} catch(Exception e){
 			return null;
@@ -807,12 +809,12 @@ public class GcInformacao extends Objeto {
 			return;
 		}
 
-		String s = "";
+		StringBuilder s = new StringBuilder();
 		for (GcTag tag : getTags()) {
 			if (s.length() > 0)
-				s += ", ";
-			s += tag.toString();
+				s.append(", ");
+			s.append(tag.toString());
 		}
-		arq.classificacao = s;
+		arq.classificacao = s.toString();
 	}
 }

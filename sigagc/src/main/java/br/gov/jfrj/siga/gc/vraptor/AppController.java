@@ -267,12 +267,12 @@ public class AppController extends GcController {
 
 		}
 
-		String classificacao = "";
+		StringBuilder classificacao = new StringBuilder();
 		if (tags != null && tags.length > 0) {
 			for (String s : tags) {
 				if (classificacao.length() > 0)
-					classificacao += ", ";
-				classificacao += s;
+					classificacao.append(", ");
+				classificacao.append(s);
 			}
 		}
 		// Necessário para criar um novo conhecimento a partir de um já
@@ -289,7 +289,7 @@ public class AppController extends GcController {
 			podeCriar = true;
 
 		result.include("conhecimentos", conhecimentos);
-		result.include("classificacao", classificacao);
+		result.include("classificacao", classificacao.toString());
 		result.include("msgvazio", msgvazio);
 		result.include("urlvazio", urlvazio);
 		result.include("titulo", titulo);

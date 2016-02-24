@@ -352,11 +352,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         		mapAcronimo.put(cpOu.getAcronimoOrgaoUsu(), cpOu);
         		mapAcronimo.put(cpOu.getSiglaOrgaoUsu(), cpOu);
         	}
-        	String acronimos = "";
+        	StringBuilder acronimos = new StringBuilder();
         	for (String s : mapAcronimo.keySet()) {
         		if (acronimos.length() > 0)
-        			acronimos += "|";
-        		acronimos += s;
+        			acronimos.append("|");
+        		acronimos.append(s);
         	}
         	final Pattern p = Pattern.compile("^(" + acronimos.toString() + ")?-?SR{1}-?(?:([0-9]{4})/?)??([0-9]{1,5})(?:[.]?([0-9]{1,3}))?$");
         	final Matcher m = p.matcher(siglaUpper);
@@ -365,7 +365,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         			try {
         				CpOrgaoUsuario orgao = new CpOrgaoUsuario();
         				orgao.setSiglaOrgaoUsu(m.group(1));
-        				orgao = CpOrgaoUsuario.AR.find("acronimoOrgaoUsu = ? or siglaOrgaoUsu = ?", m.group(1), m.group(1)).first();
+        				orgao = CpOrgaoUsuario.AR.find("acronimoOrgaoUsu = ?1 or siglaOrgaoUsu = ?2", m.group(1), m.group(1)).first();
         				this.setOrgaoUsuario(orgao);
         			} catch (final Exception ce) {
 
@@ -384,6 +384,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         			setNumSequencia(Long.valueOf(m.group(4)));
         	}
         }
+    }
+    
+    public String getDescricaoMax70(){
+    	String descr = getDescricao();
+    	return descr.length() > 100 ? (descr.substring(0, 70) + "...") : descr;
     }
 
     @Override

@@ -59,8 +59,8 @@ public class SrSolicitacaoVO {
 		
 		if (isPopup)
 			setCodigo("<a href=\"javascript:opener.retorna_" + propriedade
-					+ "(&#039;" + getIdSolicitacao() + "&#039;,&#039;" + codigo
-					+ "&#039;,&#039;" + codigo + "&#039;);window.close()\">"
+					+ "(&#039;" + getIdSolicitacao() + "&#039;,&#039;" + getSiglaSolicitacao()
+					+ "&#039;,&#039;" + sol.getDescricaoMax70() + "&#039;);window.close()\">"
 					+ sol.getCodigo() + "</a>");
 		else
 			setCodigo("<a href=\"/sigasr/app/solicitacao/exibir/" + sol.getSiglaCompacta()

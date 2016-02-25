@@ -147,7 +147,7 @@
 	                <!-- Produces XML report -->
 	                <xmlOutput>true</xmlOutput>
 	                <!-- Configures the directory in which the XML report is created -->
-	                <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>
+	                <!-- <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>  -->
 	                <failOnError>false</failOnError>
 	                <plugins>
 	                    <plugin>
@@ -841,6 +841,13 @@
 	        <configuration>
 	        </configuration>
 	      </plugin>
+	      
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+            <version>3.0.3</version>
+        </plugin>
+	      
 	    </plugins>
 	</reporting>
 

@@ -104,7 +104,7 @@
 										<td style="width: 65%;">${p[0]}</td>
 										<td style="width: 15%;">${p[2]}</td>
 										<td style="width: 20%; text-align: right;"><a
-											href="${linkTo[AppController].listar}?filtro.autor=${p[1]}&filtro.lotacao=${p[3]}&filtro.situacao=36&filtro.pesquisa=true">${p[4]}</a></td>
+											href="${linkTo[AppController].listar}?filtro.lotacao.id=${p[3]}&filtro.situacao.idMarcador=36&filtro.pesquisa=true">${p[4]}</a></td>
 									</tr>
 								</c:forEach>
 							</tbody>

@@ -287,6 +287,8 @@ public class SrMovimentacao extends Objeto {
     	if (!getTipoMov().getId().equals(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO))
     		return false;
     	SrMovimentacao anterior = getAnterior();
+    	if (anterior == null)
+    		return false;
     	if (getAtendente() == null)
     		return anterior.getAtendente() != null;
     	else return (anterior.getAtendente() == null || !anterior.getAtendente().equivale(this.getAtendente()));

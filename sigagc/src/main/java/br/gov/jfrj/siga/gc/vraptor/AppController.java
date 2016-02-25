@@ -507,7 +507,9 @@ public class AppController extends GcController {
 
 		List<GcTipoInformacao> tiposinformacao = GcTipoInformacao.AR.all()
 				.fetch();
-
+		DpLotacao lotacaoIni = DpLotacao.AR.findById(filtro.lotacao.getIdLotacaoIni());
+        filtro.getLotacao().getLotacaoInicial().setLotacoesPosteriores(lotacaoIni.getLotacoesPosteriores());
+        
 		List<SigaIdDescr> anos = new ArrayList<SigaIdDescr>();
 		int ano = bl.dt().getYear() + 1900;
 		for (int i = 0; i < 10; i++) {

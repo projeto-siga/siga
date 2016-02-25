@@ -1,6 +1,7 @@
 <jboss-web>
 	<security-domain>sp</security-domain>
 	<context-root>sigaex</context-root>
+	<disable-cross-context>false</disable-cross-context>
 	<valve>
 		<class-name>org.picketlink.identity.federation.bindings.tomcat.sp.ServiceProviderAuthenticator
 		</class-name>

@@ -22,32 +22,35 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.KeyStore;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 
+import javax.net.ssl.SSLContext;
 import javax.xml.ws.http.HTTPException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContextBuilder;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.cookie.BasicClientCookie;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.protocol.HTTP;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -93,31 +96,35 @@ public class SigaHTTP {
 	 * servidor. Precisamos implementar isso para conseguir conectar ao GSA, que
 	 * náo tinha certificado válido e exigia HTTPS para autenticar com o SAML.
 	 */
-	public HttpClient getNewHttpClient() {
-		try {
-			KeyStore trustStore = KeyStore.getInstance(KeyStore
-					.getDefaultType());
-			trustStore.load(null, null);
+	public HttpClient getNewHttpClient() throws KeyManagementException,
+			NoSuchAlgorithmException, KeyStoreException {
+		HttpClientBuilder b = HttpClientBuilder.create();
 
-			SigaSSLSocketFactory sf = new SigaSSLSocketFactory(trustStore);
-			sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+		SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null,
+				new TrustStrategy() {
+					public boolean isTrusted(X509Certificate[] arg0, String arg1)
+							throws CertificateException {
+						return true;
+					}
+				}).build();
+		b.setSslcontext(sslContext);
 
-			HttpParams params = new BasicHttpParams();
-			HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-			HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
+		X509HostnameVerifier hostnameVerifier = SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
 
-			SchemeRegistry registry = new SchemeRegistry();
-			registry.register(new Scheme("http", PlainSocketFactory
-					.getSocketFactory(), 80));
-			registry.register(new Scheme("https", sf, 443));
+		SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
+				sslContext, hostnameVerifier);
+		Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder
+				.<ConnectionSocketFactory> create()
+				.register("http",
+						PlainConnectionSocketFactory.getSocketFactory())
+				.register("https", sslSocketFactory).build();
 
-			ClientConnectionManager ccm = new ThreadSafeClientConnManager(
-					params, registry);
+		PoolingHttpClientConnectionManager connMgr = new PoolingHttpClientConnectionManager(
+				socketFactoryRegistry);
+		b.setConnectionManager(connMgr);
 
-			return new DefaultHttpClient(ccm, params);
-		} catch (Exception e) {
-			return new DefaultHttpClient();
-		}
+		HttpClient client = b.build();
+		return client;
 	}
 
 	String handleAuthentication(String URL, CookieStore cookieStore,

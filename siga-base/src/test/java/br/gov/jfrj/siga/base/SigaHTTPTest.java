@@ -25,9 +25,11 @@ public class SigaHTTPTest {
 	 */
 	public static void main(String[] args) throws Exception {
 		final SigaHTTP http = new SigaHTTP();
-		String url = "http://172.16.1.110/search?q=renato%2Bcrivano&site=siga&client=json&proxystylesheet=json&oe=UTF-8&ie=UTF-8&getfields=*&filter=0&output=xml_no_dtd&lr=lang_pt&sort=D%3AL%3Ad1&access=p";
-		//String url = "https://www.google.com";
-		String response = http.handleAuthentication(url, null, null, "EqlMM5f81jZJ7AI568n0YTOy.classee:siga-auth-server01");
+		String url = "http://172.16.1.110/search?q=renato%2Bcrivano&site=siga&client=json&proxystylesheet=json&oe=UTF-8&ie=UTF-8&getfields=*&filter=0&output=xml_no_dtd&lr=lang_pt&sort=D%3AL%3Ad1&access=a";
+		// String url = "https://www.google.com";
+		String response = http.handleAuthentication(url, null,
+				"siga.jfrj.jus.br", "tMQuyF4E5INF1shyGw3eQYsY.sigadoc");
+
 		System.out.println(response);
 	}
 }

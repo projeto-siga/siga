@@ -105,6 +105,9 @@ CodeMirror.defineMode("freemarker", function(config, parserConfig) {
 									<c:out value="${modelo.conteudoBlobString}" escapeXml="true"
 										default="" />
 								</c:if></textarea>
+							<c:if test="${empty modelo.cpOrgaoUsuario}">
+								<p align="right">Ctrl-I: Indentar, Crtl-S: Salvar</p>
+							</c:if>
 							<script>
 							var editor${i} = CodeMirror.fromTextArea(document.getElementById("conteudo${i}"), {mode: "freemarker", tabMode: "indent", lineNumbers: true, electricChars: false, smartIndent: false, viewportMargin: Infinity});
 						</script>

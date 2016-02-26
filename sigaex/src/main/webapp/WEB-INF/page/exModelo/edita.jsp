@@ -121,6 +121,7 @@
 											name="conteudo"><c:if test="${not empty conteudo}">
 														<c:out value="${conteudo}" default="" />
 													</c:if></textarea>
+													<p align="right">Ctrl-I: Indentar, Crtl-S: Salvar</p>
 									</siga:opcao>
 									<siga:opcao id="template-file/jsp" texto="JSP">
 									&nbsp;&nbsp;&nbsp;&nbsp;Nome do arquivo:

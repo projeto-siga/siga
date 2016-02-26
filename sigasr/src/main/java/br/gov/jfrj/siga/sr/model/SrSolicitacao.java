@@ -48,6 +48,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NoResultException;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -453,7 +454,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	else
         		query += " and numSequencia = " + getNumSequencia();
         }
-        return (SrSolicitacao) AR.em().createQuery(query).getSingleResult();
+        try{
+        	return (SrSolicitacao) AR.em().createQuery(query).getSingleResult();
+        } catch(NoResultException nre){
+        	throw new AplicacaoException("Não foi encontrada uma solicitação com o código " + sigla);
+        }
     }
 
     @Override

@@ -7,31 +7,6 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
 
-<link rel="stylesheet" href="/siga/codemirror/lib/codemirror.css">
-<script src="/siga/codemirror/lib/codemirror.js"></script> 
-<script src="/siga/codemirror/lib/overlay.js"></script> 
-<script src="/siga/codemirror/mode/xml/xml.js"></script> 
-<script src="/siga/codemirror/mode/javascript/javascript.js"></script> 
-<script src="/siga/codemirror/mode/css/css.js"></script> 
-<link rel="stylesheet" href="/siga/codemirror/theme/default.css">
-<script src="/siga/codemirror/mode/htmlmixed/htmlmixed.js"></script> 
-<!--<link rel="stylesheet" href="/siga/codemirror/css/docs.css"> -->
-
-<style type="text/css"> 
-  .CodeMirror {
-	border: 1px solid #eee;
-  }
-  .CodeMirror-scroll {
-	height: auto;
-	overflow-y: hidden;
-	overflow-x: auto;
-  }
-  .activeline {background: #f7f7f7 !important;}
-  .cm-freemarker-cmd {color: navy; font-bold: yes;}
-  .cm-freemarker-mac {color: darkmagenta; font-bold: yes;}
-  .cm-freemarker-exp {color: saddlebrown; font-bold: yes;}
-</style> 
-
 <siga:pagina titulo="Forma">
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">

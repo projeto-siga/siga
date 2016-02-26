@@ -6,24 +6,19 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%-- pageContext.setAttribute("sysdate", new java.util.Date()); --%>
 
-<link rel="stylesheet" href="/siga/codemirror/lib/codemirror.css">
-	<link rel="stylesheet" href="/siga/codemirror/theme/default.css">
-		<script src="/siga/codemirror/mode/htmlmixed/htmlmixed.js"></script>
-		<!--<link rel="stylesheet" href="/siga/codemirror/css/docs.css"> -->
+<link rel="stylesheet" href="/siga/codemirror/lib/codemirror.css" />
+<link rel="stylesheet" href="/siga/codemirror/theme/default.css" />
 
-		<style type="text/css">
+<style type="text/css">
 .CodeMirror {
+	width: 100%;
+	height: auto;
 	border: 1px solid #eee;
 }
 
-.activeline {
-	background: #f7f7f7 !important;
-}
-
-.CodeMirror-scroll {
-	height: auto;
-	overflow-y: hidden;
-	overflow-x: auto;
+.cm-freemarker-comment {
+	color: limegreen;
+	font-bold: yes;
 }
 
 .cm-freemarker-cmd {
@@ -42,7 +37,18 @@
 }
 </style>
 
-		<script>
+
+
+<siga:pagina titulo="Lista de Modelos">
+	<script src="/siga/codemirror/lib/codemirror.js"></script>
+	<script src="/siga/codemirror/lib/overlay.js"></script>
+	<script src="/siga/codemirror/mode/xml/xml.js"></script>
+	<script src="/siga/codemirror/mode/javascript/javascript.js"></script>
+	<script src="/siga/codemirror/mode/css/css.js"></script>
+	<script src="/siga/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+	<script type="text/javascript" src="/siga/javascript/jquery.blockUI.js"></script>
+
+	<script>
 function sbmt(id, action) {
 	var frm = document.getElementById(id);
 	frm.action=action;
@@ -76,85 +82,92 @@ CodeMirror.defineMode("freemarker", function(config, parserConfig) {
 });
 
 </script>
+	<div class="gt-bd clearfix">
+		<div class="gt-content">
+			<c:set var="i" value="${0}" />
+			<c:forEach var="modelo" items="${itens}">
+				<c:set var="i" value="${i+1}" />
+				<h3 class="gt-form-head">
+					<c:if test="${not empty modelo.cpOrgaoUsuario}">Orgão Usuário: ${modelo.cpOrgaoUsuario.descricao}</c:if>
+					<c:if test="${empty modelo.cpOrgaoUsuario}">Edição de Modelos: GERAL</c:if>
+				</h3>
+				<div class="gt-form gt-content-box">
+					<form id="editar_${i}" name="editar_${i}"
+						action="/siga/modelo/gravar" method="post">
+						<div class="gt-form-row">
+							<input type="hidden" name="id" value="${modelo.id}" /> <input
+								type="hidden" name="idOrgUsu"
+								value="${modelo.cpOrgaoUsuario.id}" />
 
-		<siga:pagina titulo="Lista de Modelos">
-			<script src="/siga/codemirror/lib/codemirror.js"></script>
-			<script src="/siga/codemirror/lib/overlay.js"></script>
-			<script src="/siga/codemirror/mode/xml/xml.js"></script>
-			<script src="/siga/codemirror/mode/javascript/javascript.js"></script>
-			<script src="/siga/codemirror/mode/css/css.js"></script>
-			<script type="text/javascript"
-				src="/siga/javascript/jquery.blockUI.js"></script>
-
-			<div class="gt-bd clearfix">
-				<div class="gt-content">
-					<c:set var="i" value="${0}" />
-					<c:forEach var="modelo" items="${itens}">
-						<c:set var="i" value="${i+1}" />
-						<h3 class="gt-form-head">
-							<c:if test="${not empty modelo.cpOrgaoUsuario}">Orgão Usuário: ${modelo.cpOrgaoUsuario.descricao}</c:if>
-							<c:if test="${empty modelo.cpOrgaoUsuario}">Edição de Modelos: GERAL</c:if>
-						</h3>
-						<div class="gt-form gt-content-box">
-							<form id="editar_${i}" name="editar_${i}"
-								action="/siga/modelo/gravar" method="post">
-								<div class="gt-form-row">
-									<input type="hidden" name="id" value="${modelo.id}" /> <input
-										type="hidden" name="idOrgUsu"
-										value="${modelo.cpOrgaoUsuario.id}" />
-
-									<textarea id="conteudo${i}" style="width: 100%;" cols="1"
-										rows="1" name="conteudo"><c:if
-											test="${not empty modelo.conteudoBlobString}"><c:out value="${modelo.conteudoBlobString}" escapeXml="true"
-												default="" /></c:if></textarea>
-									<script>
-							var editor${i} = CodeMirror.fromTextArea(document.getElementById("conteudo${i}"), {mode: "freemarker", tabMode: "indent", lineNumbers: true, electricChars: false, smartIndent: false,
-								onCursorActivity: function() {
-									editor${i}.setLineClass(hlLine, null);
-									hlLine = editor${i}.setLineClass(editor${i}.getCursor().line, "activeline");
-								}});
-							var hlLine = editor${i}.setLineClass(0, "activeline");
+							<textarea id="conteudo${i}" style="width: 100%;" cols="1"
+								rows="1" name="conteudo"><c:if
+									test="${not empty modelo.conteudoBlobString}">
+									<c:out value="${modelo.conteudoBlobString}" escapeXml="true"
+										default="" />
+								</c:if></textarea>
+							<script>
+							var editor${i} = CodeMirror.fromTextArea(document.getElementById("conteudo${i}"), {mode: "freemarker", tabMode: "indent", lineNumbers: true, electricChars: false, smartIndent: false, viewportMargin: Infinity});
 						</script>
-								</div>
-								<div class="gt-form-row">
-									<input name="salvar_conteudo" type="submit" id="but_gravar${i}"
-										value="Salvar"
-										onclick="javascript: this.form.action='/siga/app/modelo/gravar'; "
-										class="gt-btn-medium gt-btn-left" />
-								</div>
-							</form>
 						</div>
-					</c:forEach>
-
+						<div class="gt-form-row">
+							<input name="salvar_conteudo" type="submit" id="but_gravar${i}"
+								value="Salvar"
+								onclick="javascript: this.form.action='/siga/app/modelo/gravar'; "
+								class="gt-btn-medium gt-btn-left" />
+						</div>
+					</form>
 				</div>
-			</div>
+			</c:forEach>
 
-			<script>
-				$(document).ready(function () {
-					$(window)
-					.keydown(
-							function(e) {
-								if (!(String.fromCharCode(event.which).toLowerCase() == 's' && (event.ctrlKey || event.metaKey))
-										&& !(event.which == 19))
-									return true;
-								event.preventDefault();
-								editor1.save();
-								//		switch (e.keyCode) {
-								//		case 116: // f5
-								$.ajax({
-									type : "POST",
-									url : '/siga/app/modelo/gravar',
-									data : $("#editar_1").serialize(), // serializes the form's elements.
-									error : function(data) {
-										alert("Erro gravando as alterações!");
-									}
-								});
-				
-								return false; //"return false" will avoid further events
-								return; //using "return" other attached events will execute
-							});
-					$.blockUI.defaults.message = '<span style="font-size: 200%">Gravando modelo geral...</span>';
-					$(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
-				});
+		</div>
+	</div>
+
+	<script>
+		$(document).ready(function () {
+			$(window).keydown(function(e) {
+				if ((String.fromCharCode(event.which).toLowerCase() == 's' && (event.ctrlKey || event.metaKey)) || (event.which == 19)) {
+					event.preventDefault();
+					editor1.save();
+					//		switch (e.keyCode) {
+					//		case 116: // f5
+					$.ajax({
+						type : "POST",
+						url : '/siga/app/modelo/gravar',
+						data : $("#editar_1").serialize(), // serializes the form's elements.
+                        beforeSend: function() {
+                        	$.blockUI({message: '<span style="font-size: 200%">Gravando modelo geral...</span>'});
+	                    },
+	                    complete: function() {
+	                    	$.unblockUI();
+		                },
+						error : function(data) {
+							alert("Erro gravando as alterações!");
+						}
+					});
+					return false; //"return false" will avoid further events
+				} else if ((String.fromCharCode(event.which).toLowerCase() == 'i' && (event.ctrlKey || event.metaKey))) {
+                    event.preventDefault();
+                    editor1.save();
+                    $.ajax({
+                        type: "POST",
+                        url: '/siga/public/app/modelo/indentar',
+                        data: $("#editar_1").serialize(), // serializes the form's elements.
+                        beforeSend: function() {
+                        	$.blockUI({message: '<span style="font-size: 200%">Indentando modelo geral...</span>'});
+	                    },
+	                    complete: function() {
+	                    	$.unblockUI();
+		                },
+                        success: function(result){
+                        	editor1.setValue(result);
+                        },
+                        error: function(data) {
+                            alert("Erro indentando modelo!");
+                        }
+                    });
+					return false; //"return false" will avoid further events
+				}
+			});
+		});
 	</script>
-		</siga:pagina>
+</siga:pagina>

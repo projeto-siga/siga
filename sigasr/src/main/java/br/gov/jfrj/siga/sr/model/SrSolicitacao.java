@@ -1284,14 +1284,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public List<SrItemConfiguracao> getItensDisponiveis() throws Exception {
-        if (getSolicitante() == null)
-            return null;
-
-        List<SrItemConfiguracao> listaTodosItens = new ArrayList<SrItemConfiguracao>();
-        List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
+    	List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
+    	if (getSolicitante() == null)
+            return listaFinal;
 
         List<SrConfiguracao> listaPessoasAConsiderar = getFiltrosParaConsultarDesignacoes();
-        listaTodosItens = SrItemConfiguracao.listar(false);
+        List<SrItemConfiguracao> listaTodosItens = SrItemConfiguracao.listar(false);
 
         for (SrItemConfiguracao i : listaTodosItens) {
             if (!i.isEspecifico())
@@ -1331,10 +1329,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public List<SrTarefa> getAcoesDisponiveisComAtendente() throws Exception {
 
+    	 List<SrTarefa> listaFinal = new ArrayList<SrTarefa>();
         if (getSolicitante() == null)
-            return null;
+            return listaFinal;
 
-        List<SrTarefa> listaFinal = new ArrayList<SrTarefa>();
         Set<SrTarefa> setTerafa = new HashSet<SrTarefa>();
         List<SrConfiguracao> listaPessoasAConsiderar = getFiltrosParaConsultarDesignacoes();
         SrTarefa tarefa = null;

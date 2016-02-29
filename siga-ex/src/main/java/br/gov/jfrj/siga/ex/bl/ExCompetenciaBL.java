@@ -222,7 +222,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeAcessarReservado(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
-		switch (mob.doc().getExNivelAcesso().getGrauNivelAcesso().intValue()) {
+		switch (mob.doc().getExNivelAcessoAtual().getGrauNivelAcesso().intValue()) {
 		case (int) ExNivelAcesso.NIVEL_RESERVADO_ENTRE_LOTACOES:
 			return podeAcessarReservadoEntreLotacoes(titular, lotaTitular, mob);
 		default:
@@ -253,7 +253,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob == null)
 			return false;
 
-		if (mob.doc().getExNivelAcesso() == null) {
+		if (mob.doc().getExNivelAcessoAtual() == null) {
 			return true;
 		}
 		
@@ -275,7 +275,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return true;
 
 		// for (int k = numViaIniBusca; k <= numViaFimBusca; k++)
-		switch (mob.doc().getExNivelAcesso().getGrauNivelAcesso().intValue()) {
+		switch (mob.doc().getExNivelAcessoAtual().getGrauNivelAcesso().intValue()) {
 		case (int) ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS:
 			return podeAcessarNivel20(titular, lotaTitular, mob);
 		case (int) ExNivelAcesso.NIVEL_ACESSO_PUBLICO:

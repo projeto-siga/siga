@@ -107,8 +107,8 @@ public class ExDocumentoVO extends ExVO {
 			this.classificacaoDescricaoCompleta = doc.getExClassificacaoAtual()
 					.getAtual().getDescricaoCompleta();
 		this.destinatarioString = doc.getDestinatarioString();
-		if (doc.getExNivelAcesso() != null)
-			this.nmNivelAcesso = doc.getExNivelAcesso().getNmNivelAcesso();
+		if (doc.getExNivelAcessoAtual() != null)
+			this.nmNivelAcesso = doc.getExNivelAcessoAtual().getNmNivelAcesso();
 		this.listaDeAcessos = doc.getListaDeAcessos();
 		if (doc.getExMobilPai() != null)
 			this.paiSigla = doc.getExMobilPai().getSigla();

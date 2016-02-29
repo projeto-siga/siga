@@ -104,7 +104,7 @@ public class ExArquivoController extends ExController {
 			final ExMovimentacao mov = Documento.getMov(mob, arquivo);
 			final boolean imutavel = (mov != null) && !completo && !estampar && !somenteHash && !pacoteAssinavel;
 			String cacheControl = "private";
-			final Integer grauNivelAcesso = mob.doc().getExNivelAcessoDoDocumento().getGrauNivelAcesso();
+			final Integer grauNivelAcesso = mob.doc().getExNivelAcesso().getGrauNivelAcesso();
 			if (ExNivelAcesso.NIVEL_ACESSO_PUBLICO == grauNivelAcesso || ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS == grauNivelAcesso) {
 				cacheControl = "public";
 			}
@@ -234,7 +234,7 @@ public class ExArquivoController extends ExController {
 
 	private String getCacheControl(ExMobil mob) {
 		String cacheControl = "private";
-		final Integer grauNivelAcesso = mob.doc().getExNivelAcessoDoDocumento().getGrauNivelAcesso();
+		final Integer grauNivelAcesso = mob.doc().getExNivelAcesso().getGrauNivelAcesso();
 		if (ExNivelAcesso.NIVEL_ACESSO_PUBLICO == grauNivelAcesso || ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS == grauNivelAcesso)
 			cacheControl = "public";
 		return cacheControl;

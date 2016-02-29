@@ -3838,10 +3838,10 @@ public class ExBL extends CpBL {
 			DpLotacao lotaTitular) {
 		if (doc == null)
 			return false;
-		if (doc.getExNivelAcesso() == null)
+		if (doc.getExNivelAcessoAtual() == null)
 			return false;
-		if (doc.getExNivelAcesso().getGrauNivelAcesso() > ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS
-				|| (doc.getExNivelAcesso().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS && doc
+		if (doc.getExNivelAcessoAtual().getGrauNivelAcesso() > ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS
+				|| (doc.getExNivelAcessoAtual().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS && doc
 						.getOrgaoUsuario().getIdOrgaoUsu() != lotaTitular
 						.getOrgaoUsuario().getIdOrgaoUsu()))
 			return true;
@@ -3865,10 +3865,10 @@ public class ExBL extends CpBL {
 			DpLotacao lotaTitular) {
 		if (doc == null)
 			return false;
-		if (doc.getExNivelAcessoDoDocumento() == null)
+		if (doc.getExNivelAcesso() == null)
 			return false;
-		if (doc.getExNivelAcessoDoDocumento().getGrauNivelAcesso() > ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS
-				|| (doc.getExNivelAcessoDoDocumento().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS && doc
+		if (doc.getExNivelAcesso().getGrauNivelAcesso() > ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS
+				|| (doc.getExNivelAcesso().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS && doc
 						.getOrgaoUsuario().getIdOrgaoUsu() != lotaTitular
 						.getOrgaoUsuario().getIdOrgaoUsu()))
 			return true;
@@ -4102,7 +4102,7 @@ public class ExBL extends CpBL {
 			nivel = doc.getMobilGeral().getUltimaMovimentacaoNaoCancelada()
 					.getExNivelAcesso();
 		if (nivel == null)
-			nivel = doc.getExNivelAcessoDoDocumento();
+			nivel = doc.getExNivelAcesso();
 		doc.setDnmExNivelAcesso(nivel);
 		ExDao.getInstance().gravar(doc);
 		return nivel;
@@ -4547,7 +4547,7 @@ public class ExBL extends CpBL {
 			novoDoc.setFgEletronico(doc.getFgEletronico());
 		} 
 		
-		novoDoc.setExNivelAcesso(doc.getExNivelAcesso());
+		novoDoc.setExNivelAcesso(doc.getExNivelAcessoAtual());
 
 		ExClassificacao classAtual = doc.getExClassificacaoAtual();
 		if (classAtual != null && !classAtual.isFechada())
@@ -5327,7 +5327,7 @@ public class ExBL extends CpBL {
 		}
 
 		if (nivelAcesso.getIdNivelAcesso().equals(
-				doc.getExNivelAcesso().getIdNivelAcesso()))
+				doc.getExNivelAcessoAtual().getIdNivelAcesso()))
 			throw new AplicacaoException(
 					"Nível de acesso selecionado é igual ao atual");
 
@@ -5341,7 +5341,7 @@ public class ExBL extends CpBL {
 
 			mov.setNmFuncaoSubscritor(nmFuncaoSubscritor);
 			mov.setDescrMov("Nível de acesso do documento alterado de "
-					+ doc.getExNivelAcesso().getNmNivelAcesso() + " para "
+					+ doc.getExNivelAcessoAtual().getNmNivelAcesso() + " para "
 					+ nivelAcesso.getNmNivelAcesso());
 
 			mov.setExNivelAcesso(nivelAcesso);

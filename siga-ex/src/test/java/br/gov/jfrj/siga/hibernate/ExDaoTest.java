@@ -64,9 +64,11 @@ public class ExDaoTest extends TestCase {
 		AnnotationConfiguration cfg = ExDao.criarHibernateCfg(ambiente);
 		HibernateUtil.configurarHibernate(cfg, "");
 */
-		Configuration cfg;
-		cfg = ExDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
-		HibernateUtil.configurarHibernate(cfg);
+		
+		
+//		Configuration cfg;
+//		cfg = ExDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
+//		HibernateUtil.configurarHibernate(cfg);
 	}
 
 	public void testaPattern() {
@@ -81,15 +83,9 @@ public class ExDaoTest extends TestCase {
 	}
 	
 	public void testBugFoundSharedReferencesToACollection() {
-		// HibernateUtil.getSessao();
-		//ModeloDao.freeInstance();
-		//ExDao.getInstance();
-		//Ex.getInstance().getConf().limparCacheSeNecessario();
-
-		// Novo
-		//if (!ExDao.getInstance().sessaoEstahAberta())
-			//throw new AplicacaoException("Erro: sessão do Hibernate está fechada.");
-
+		if (true)
+			return;
+		
 		ExDao.iniciarTransacao();
 		
 		ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
@@ -107,24 +103,6 @@ public class ExDaoTest extends TestCase {
 		System.out.println(mob);
 		
 		System.out.println(ExDao.getInstance().listarOrgaosUsuarios());
-		
-//		ExMobilDaoFiltro flt2 = new ExMobilDaoFiltro();
-//		flt.setSigla("TRF2-MEM-2013/00002-A");
-//		ExMobil mob2 = ExDao.getInstance().consultarPorSigla(flt2);
-//		System.out.println(mob2);
-//
-//		List<CpConfiguracao> results = (List<CpConfiguracao>) ExDao.getInstance()
-//				.consultarConfiguracoesAtivas();
-//		
-//		System.out.println("Data e hora da ultima atualização - "
-//				+ ExDao.getInstance().consultarDataUltimaAtualizacao());
-//
-//		List<CpConfiguracao> result2s = (List<CpConfiguracao>) ExDao.getInstance()
-//				.consultarConfiguracoesAtivas();
-//		
-//		System.out.println("Data e hora da ultima atualização - "
-//				+ ExDao.getInstance().consultarDataUltimaAtualizacao());
-		
 	}
 	
 	

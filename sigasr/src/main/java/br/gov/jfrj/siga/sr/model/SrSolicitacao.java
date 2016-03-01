@@ -1858,7 +1858,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     				SrEtapaSolicitacao atendimentoGeral = getAtendimentoGeral();
     				prazo = atendimentoGeral.getFimPrevisto();
     				if (prazo == null){
-    					SrEtapaSolicitacao atendimentoAtual = getAtendimentoAtivo();
+    					SrEtapaSolicitacao atendimentoAtual = getUltimoAtendimento();
     					if (atendimentoAtual != null)
     						prazo = atendimentoAtual.getFimPrevisto();
     				}

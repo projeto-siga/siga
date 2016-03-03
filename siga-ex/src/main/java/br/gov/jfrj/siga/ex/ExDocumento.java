@@ -113,24 +113,23 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	}
 
 	/**
-	 * Retorna o nível de acesso (não a descrição) atual do documento.
-	 */
-
-	// @Override
-	public ExNivelAcesso getExNivelAcesso() {
-		ExNivelAcesso nivel = getDnmExNivelAcesso();
-		if (nivel == null)
-			return Ex.getInstance().getBL().atualizarDnmNivelAcesso(this);
-		return nivel;
-	}
-
-	/**
 	 * Retorna o nível de acesso (não a descrição) do documento definido no
 	 * momento da criação do documento, desconsiderando as redefinições de
 	 * nível.
 	 */
-	public ExNivelAcesso getExNivelAcessoDoDocumento() {
+	public ExNivelAcesso getExNivelAcesso() {
 		return super.getExNivelAcesso();
+	}
+
+	
+	/**
+	 * Retorna o nível de acesso (não a descrição) atual do documento.
+	 */
+	public ExNivelAcesso getExNivelAcessoAtual() {
+		ExNivelAcesso nivel = getDnmExNivelAcesso();
+		if (nivel == null)
+			return Ex.getInstance().getBL().atualizarDnmNivelAcesso(this);
+		return nivel;
 	}
 
 	/**
@@ -2520,13 +2519,11 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	 * @return o id do ExNivelAcesso quando o ExNivelAcesso não for nulo.
 	 */
 	public Long getIdExNivelAcesso() {
-//		log.info("Obtendo IdExNivelAcesso...");
-		Long idExNivelAcesso = null;
-		String nivelAcesso = this.getNivelAcesso();
-		if (nivelAcesso != null) {
-			idExNivelAcesso = this.getExNivelAcesso().getIdNivelAcesso();
+		ExNivelAcesso exNivelAcessoAtual = getExNivelAcessoAtual();
+		if (exNivelAcessoAtual != null) {
+			return exNivelAcessoAtual.getIdNivelAcesso();
 		}
-		return idExNivelAcesso;
+		return null;
 	}
 
 	public List<DpResponsavel> getResponsaveisPorPapel(
@@ -2542,7 +2539,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	public List<Object> getListaDeAcessos() {
 		if (getDnmAcesso() == null)
 			return null;
-		if (getExNivelAcesso().getIdNivelAcesso().equals(
+		if (getExNivelAcessoAtual().getIdNivelAcesso().equals(
 				ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
 				&& ExAcesso.ACESSO_PUBLICO.equals(getDnmAcesso()))
 			return null;

@@ -312,7 +312,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("sigla", sigla);
 		result.include("mob", builder.getMob());
 		result.include("listaNivelAcesso", getListaNivelAcesso(doc));
-		result.include("nivelAcesso", doc.getExNivelAcesso().getIdNivelAcesso());
+		result.include("nivelAcesso", doc.getExNivelAcessoAtual().getIdNivelAcesso());
 		result.include("subscritorSel", subscritorSel);
 		result.include("titularSel", titularSel);
 	}
@@ -2727,7 +2727,7 @@ public class ExMovimentacaoController extends ExController {
 		Boolean podeAtenderPedidoPublicacao = Boolean.FALSE;
 		DpLotacaoSelecao lot = new DpLotacaoSelecao();
 		
-		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
+		if (doc.getExNivelAcessoAtual().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
 			throw new AplicacaoException("O agendamento de publicação no DJE somente é permitido para documentos com nível de acesso Público.");
 
 		if (!Ex.getInstance().getComp()
@@ -3069,7 +3069,7 @@ public class ExMovimentacaoController extends ExController {
 		final ExDocumento doc = buscarDocumento(builder, true);
 		final ExMobil mob = builder.getMob();
 
-		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
+		if (doc.getExNivelAcessoAtual().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
 
 			throw new AplicacaoException("A solicitação de publicação no BIE somente é permitida para documentos com nível de acesso Público.");
 
@@ -3139,7 +3139,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		DpLotacaoSelecao lot = new DpLotacaoSelecao();
 
-		if (doc.getExNivelAcesso().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
+		if (doc.getExNivelAcessoAtual().getGrauNivelAcesso() != ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
 			throw new AplicacaoException(
 					"A solicitação de publicação no DJE somente é permitida para documentos com nível de acesso Público.");
 

@@ -29,9 +29,9 @@
 			<c:when test="${not empty restante}">
 				<p><span class="crono restante ${etapa.ativo ? 'ligado' : 'desligado'}"><b><span class="label-cron"></span></b><span class="descrValor"></span><span class="valor">${restante}</span></span></p>
 			</c:when>
-			<c:otherwise>
+			<c:when test="${!etapa.zeradoEParado}">
 				<p><span class="crono decorrido ${etapa.ativo ? 'ligado' : 'desligado'}"><b>Decorrido:</b> <span class="descrValor"></span><span class="valor">${etapa.decorridoEmSegundos}</span></span></p>
-			</c:otherwise>
+			</c:when>
 		</c:choose>
 	</div>
 

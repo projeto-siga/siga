@@ -766,7 +766,7 @@ public class ExDocumentoController extends ExController {
 			s += exDocumentoDTO.getMob().doc().getListaDeAcessosString();
 			s = "(" + s + ")";
 			s = " "
-					+ exDocumentoDTO.getMob().doc().getExNivelAcesso()
+					+ exDocumentoDTO.getMob().doc().getExNivelAcessoAtual()
 							.getNmNivelAcesso() + " " + s;
 
 			throw new AplicacaoException("Documento "
@@ -802,8 +802,8 @@ public class ExDocumentoController extends ExController {
 		if (!jaArquivado) {				
 			if (!dest.ativaNaData(new Date())) {																
 					if (getLotaTitular().equivale(lotaDest)  /* a pessoa que está tentando acessar está na mesma lotação onde se encontra o doc*/ 
-							&& (mob.doc().getExNivelAcesso().getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA					
-								|| mob.doc().getExNivelAcesso().getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_PESSOAL)) {
+							&& (mob.doc().getExNivelAcessoAtual().getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA					
+								|| mob.doc().getExNivelAcessoAtual().getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_PESSOAL)) {
 						
 						Boolean alguemPodeAcessar = false;
 						Set<DpPessoa> pessoas = lotaDest.getDpPessoaLotadosSet(); 
@@ -1211,7 +1211,7 @@ public class ExDocumentoController extends ExController {
 					exDocumentoDTO.getDoc().getExFormaDocumento(),
 					exDocumentoDTO.getDoc().getExModelo(),
 					exDocumentoDTO.getDoc().getExClassificacaoAtual(),
-					exDocumentoDTO.getDoc().getExNivelAcesso(),
+					exDocumentoDTO.getDoc().getExNivelAcessoAtual(),
 					CpTipoConfiguracao.TIPO_CONFIG_CRIAR)) {
 
 				if (!ex.getConf().podePorConfiguracao(getTitular(),

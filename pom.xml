@@ -130,48 +130,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
-	        <plugin>
-	            <groupId>org.codehaus.mojo</groupId>
-	            <artifactId>findbugs-maven-plugin</artifactId>
-	            <version>3.0.3</version>
-	            <configuration>
-	                <!--
-	                    Enables analysis which takes more memory but finds more bugs.
-	                    If you run out of memory, changes the value of the effort element
-	                    to 'Low'.
-	                -->
-	                <effort>Max</effort>
-	                <!-- Reports all bugs (other values are medium and max) -->
-	                <threshold>Low</threshold>
-	                <!-- Produces XML report -->
-	                <xmlOutput>true</xmlOutput>
-	                <!-- Configures the directory in which the XML report is created -->
-	                <!-- <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>  -->
-	                <failOnError>false</failOnError>
-	                <plugins>
-	                    <plugin>
-	                        <groupId>com.h3xstream.findsecbugs</groupId>
-	                        <artifactId>findsecbugs-plugin</artifactId>
-	                        <version>LATEST</version> <!-- Auto-update to the latest stable -->
-	                    </plugin>
-	                </plugins>
-	                
-	            </configuration>
-	            <executions>
-	                <!-- 
-	                    Ensures that FindBugs inspects source code when project is compiled. 
-	                -->
-	                <execution>
-	                    <id>analyze-compile</id>
-	                    <phase>compile</phase>
-	                    <goals>
-	                        <goal>check</goal>
-	                    </goals>
-	                </execution>
-	            </executions>
-	        </plugin>			
-	
 		</plugins>
 	</build>
 
@@ -850,5 +808,57 @@
 	      
 	    </plugins>
 	</reporting>
+	
+	<profiles>
+		<profile>
+			<id>findbugs</id>
+			<build>
+				<plugins>
+			        <plugin>
+			            <groupId>org.codehaus.mojo</groupId>
+			            <artifactId>findbugs-maven-plugin</artifactId>
+			            <version>3.0.3</version>
+			            <configuration>
+			                <!--
+			                    Enables analysis which takes more memory but finds more bugs.
+			                    If you run out of memory, changes the value of the effort element
+			                    to 'Low'.
+			                -->
+			                <effort>Max</effort>
+			                <!-- Reports all bugs (other values are medium and max) -->
+			                <threshold>Low</threshold>
+			                <!-- Produces XML report -->
+			                <xmlOutput>true</xmlOutput>
+			                <!-- Configures the directory in which the XML report is created -->
+			                <!-- <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>  -->
+			                <failOnError>true</failOnError>
+			                <plugins>
+			                    <plugin>
+			                        <groupId>com.h3xstream.findsecbugs</groupId>
+			                        <artifactId>findsecbugs-plugin</artifactId>
+			                        <version>LATEST</version> <!-- Auto-update to the latest stable -->
+			                    </plugin>
+			                </plugins>
+			                
+			            </configuration>
+			            <executions>
+			                <!-- 
+			                    Ensures that FindBugs inspects source code when project is compiled. 
+			                -->
+			                <execution>
+			                    <id>analyze-compile</id>
+			                    <phase>compile</phase>
+			                    <goals>
+			                        <goal>check</goal>
+			                    </goals>
+			                </execution>
+			            </executions>
+			        </plugin>			
+				</plugins>
+					
+			</build>
+		</profile>
+		
+	</profiles>
 
 </project>

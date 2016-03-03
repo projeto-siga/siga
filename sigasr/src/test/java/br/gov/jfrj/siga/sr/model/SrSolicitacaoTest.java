@@ -2,7 +2,9 @@ package br.gov.jfrj.siga.sr.model;
 
 import static org.junit.Assert.assertEquals;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -11,12 +13,14 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.sr.util.TestUtil;
 
 public class SrSolicitacaoTest {
 
-	private static int DUAS_HORAS = 1000 * 60 * 60 * 2;
+	private static int DUAS_HORAS = 60 * 60 * 2;
+	private static int UM_MINUTO = 60;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -99,7 +103,7 @@ public class SrSolicitacaoTest {
 		abrangencia.salvarComoAbrangenciaAcordo();
 
 		TestUtil.reiniciarCacheConfiguracoes();
-
+		
 		SrSolicitacao s = new SrSolicitacao();
 		s.setCadastrante(TestUtil.funcionarioMenor());
 		s.setItemConfiguracao(TestUtil.sigadoc());
@@ -108,8 +112,8 @@ public class SrSolicitacaoTest {
 		s.setRascunho(true);
 		s.salvarComHistorico();
 
-		TestCase.assertTrue(s.getCadastro().getFimPrevisto().getTime()
-				- s.getDtInicioPrimeiraEdicao().getTime() == DUAS_HORAS);
+		int restante = s.getCadastro().getRestanteEmSegundos().intValue();
+		TestCase.assertTrue(restante > DUAS_HORAS - UM_MINUTO && restante <= DUAS_HORAS);
 	}
 
 	// Edson: o método escalonarCriandoFilha deveria testar se a pessoa

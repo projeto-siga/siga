@@ -26,8 +26,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,18 +47,20 @@ import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
 
@@ -625,5 +629,27 @@ public class ExMobilController extends
 		}
 
 		return sel;
+	}
+	
+	@Get("app/ferramentas/doc/listar")
+	public void aFerramentasListarDocumentos() {
+		assertAcesso("FE:Ferramentas;LD:Listar Documentos");
+
+		final ExMobilDaoFiltro flt = createDaoFiltro();
+		List<Object[]> list = dao().consultarPorFiltroOtimizado(flt, 0, 0, getTitular(), getLotaTitular());
+		List<ExDocumento> docs = new ArrayList<>();
+		Set<ExDocumento> set = new HashSet<>();
+		
+		for (Object[] aobj : list) {
+			ExDocumento doc = (ExDocumento) aobj[0];
+			if (!set.contains(doc)) {
+				set.add(doc);
+				docs.add(doc);
+			}
+		}
+		
+		result.include("lista", docs);
+		List<ExNivelAcesso> listaNivelAcesso = ExDao.getInstance().listarOrdemNivel();
+		result.include("listaNivelAcesso", listaNivelAcesso);
 	}
 }

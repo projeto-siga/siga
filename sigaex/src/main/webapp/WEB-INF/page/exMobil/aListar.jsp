@@ -26,6 +26,13 @@
 						.getElementById('comboModeloDiv'))
 	}
 
+	function sbmtAction(id, action) {
+		var frm = document.getElementById(id);
+		frm.action = action;
+		frm.submit();
+		return;
+	}
+
 	function sbmt(offset) {
 		if (offset == null) {
 			d
@@ -1003,7 +1010,14 @@
 						${f:obterExtensaoBuscaTextual(lotaTitular.orgaoUsuario, fullText)}
 						<tr>
 							<td colspan="2"><siga:monobotao inputType="submit"
-									value="Buscar" cssClass="gt-btn-medium gt-btn-left" /></td>
+									value="Buscar" cssClass="gt-btn-medium gt-btn-left" /> 
+									<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;FE:Ferramentas;LD:Listar Documentos')}">
+									<siga:monobotao inputType="button"
+										onclique="sbmtAction('listar', '/sigaex/app/ferramentas/doc/listar');"
+										value="Administrar Documentos"
+										cssClass="gt-btn-large gt-btn-left" />
+								</c:if></td>
 						</tr>
 					</table>
 				</form>

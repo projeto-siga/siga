@@ -2062,5 +2062,13 @@ public class ExDao extends CpDao {
 	public List<ExTipoDespacho> listarExTiposDespacho() {
 		return findByCriteria(ExTipoDespacho.class);
 	}
-
+	
+	public List<ExDocumento> listarPorClassificacao(ExClassificacao cl)
+			throws Exception {
+		final Criteria crit = getSessao().createCriteria(ExDocumento.class)
+				.add(Restrictions.eq("exClassificacao", cl));
+		crit.addOrder(Order.asc("idDoc"));
+		List<ExDocumento> list = crit.list();
+		return list;
+	}
 }

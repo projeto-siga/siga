@@ -196,7 +196,8 @@
 						<c:if test="${locaisDisponiveis.size() > 1}">
 							<div class="gt-form-row gt-width-99">
 								<label>Local</label>
-								<select name="solicitacao.local.id" id="local" onchange="sbmt('solicitacao.local')">
+								<input type="hidden" name="solicitante" value="${solicitacao.solicitante.id}" id="solicitante"></input>
+ 								<select name="solicitacao.local.id" id="local" onchange="sbmt('solicitacao.local')">
         						<c:forEach items="${locaisDisponiveis.keySet()}" var="orgao">
                 						<optgroup label="${orgao.acronimoOrgaoUsu}">
                 						<c:forEach items="${locaisDisponiveis.get(orgao)}" var="local">

@@ -1457,7 +1457,10 @@ public class ExBL extends CpBL {
 					ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO,
 					cadastrante, lotaCadastrante, mob, dtMov, subscritor, null,
 					titular, lotaTitular, null);
-
+			
+			mov.setResp(cadastrante);
+			mov.setLotaResp(lotaCadastrante);
+			
 			mov.setDtDispPublicacao(dtDispPublicacao);
 			mov.setDescrMov("Disponibilização prevista para "
 					+ new SimpleDateFormat("dd/MM/yy").format(dtDispPublicacao));
@@ -1665,7 +1668,7 @@ public class ExBL extends CpBL {
 				mov.setNmArqMov("JUD.zip");
 
 			try {
-//				PublicacaoDJEBL.primeiroEnvio(mov);
+				PublicacaoDJEBL.primeiroEnvio(mov);
 			} catch (Throwable t) {
 				throw new Exception(t.getMessage());
 			}

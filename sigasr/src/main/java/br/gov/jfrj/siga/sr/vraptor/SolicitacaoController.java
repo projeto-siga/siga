@@ -293,7 +293,7 @@ public class SolicitacaoController extends SrController {
     	
         if (!solicitacao.isRascunho() && !validarFormEditar(solicitacao)) {
         	incluirListasEdicaoSolicitacao(solicitacao);
-            validator.onErrorUsePageOf(SolicitacaoController.class).editar(solicitacao.getSiglaCompacta(), null, null, null, null);
+            validator.onErrorUsePageOf(SolicitacaoController.class).editar(solicitacao.getSiglaCompacta(), null, null, null, null, null);
         	return;
         }
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
@@ -426,7 +426,7 @@ public class SolicitacaoController extends SrController {
     }
 
 	@Path({ "app/solicitacao/editar", "app/solicitacao/editar/{sigla}"})
-    public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao) throws Exception {
+    public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao, Long solicitante) throws Exception {
 
 		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.
 		if (sigla != null){
@@ -462,7 +462,9 @@ public class SolicitacaoController extends SrController {
 						
 			//Edson: O deduzir(), o setItem(), o setAcao() e o asociarPrioridade() deveriam ser chamados dentro da própria solicitação pois é responsabilidade 
 			//da própria classe atualizar os seus atributos para manter consistência após a entrada de um dado. 
-			solicitacao.deduzirLocalRamalEMeioContato();
+			if (solicitacao.getLocal() == null || 
+					(solicitacao.getSolicitante() != null && !solicitacao.getSolicitante().getId().equals(solicitante)))
+				solicitacao.deduzirLocalRamalEMeioContato();
 			if (solicitacao.getItemConfiguracao() != null && !solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao())){
 				solicitacao.setItemConfiguracao(null);
 			}
@@ -482,7 +484,6 @@ public class SolicitacaoController extends SrController {
 			solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
         
         result.include("etapasCronometro", solicitacao.getEtapas(getLotaTitular(), false));
-        
         incluirListasEdicaoSolicitacao(solicitacao);
         
     }

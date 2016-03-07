@@ -1563,6 +1563,7 @@ public class CpDao extends ModeloDao {
 			entidade.setHisIdIni(entidade.getId());
 			getSessao().update(entidade);
 		}
+		getSessao().flush();
 		try {
 			invalidarCache(entidade);
 			Cp.getInstance().getConf().limparCacheSeNecessario();

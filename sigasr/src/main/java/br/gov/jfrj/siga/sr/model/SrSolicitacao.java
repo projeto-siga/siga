@@ -2777,6 +2777,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         SrConfiguracao confSolicitante = new SrConfiguracao();
         confSolicitante.setDpPessoa(getSolicitante());
         confSolicitante.setLotacao(getLotaSolicitante());
+        confSolicitante.setOrgaoUsuario(getOrgaoUsuario());
         confSolicitante.setComplexo(getLocal());
         confSolicitante.setBuscarPorPerfis(true);
         pessoasAConsiderar.add(confSolicitante);
@@ -2786,6 +2787,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             confTitular.setDpPessoa(getTitular());
             confTitular.setLotacao(getLotaTitular());
             confTitular.setComplexo(getLocal());
+            confTitular.setOrgaoUsuario(getOrgaoUsuario());
             confTitular.setBuscarPorPerfis(true);
             pessoasAConsiderar.add(confTitular);
         }

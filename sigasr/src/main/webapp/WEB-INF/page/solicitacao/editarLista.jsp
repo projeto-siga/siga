@@ -916,6 +916,12 @@
 	         url: "${linkTo[SolicitacaoController].gravarPermissaoUsoLista}",
 	         data: serializePermissao(row),
 	         dataType: "text",
+	         "beforeSend": function () {
+	     		jQuery.blockUI(objBlock);
+	     	},
+	 		"complete": function () {
+	 			jQuery.unblockUI();
+	 		},
 	         success: function(response) {
 		         var permissao = JSON.parse(response),
 		         	tr = atualizarTr(row, permissao);

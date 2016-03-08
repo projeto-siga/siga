@@ -63,15 +63,15 @@
 										<c:if test="${not empty exceptionGeral}">
 											<c:if test="${not empty exceptionGeral.message}">
 												<tr>
-													<td style="text-align: center; padding-top: 10px;"><h3>${exceptionGeral.message}</h3>
+													<td style="text-align: center; padding-top: 10px;"><h3 id="message">${exceptionGeral.message}</h3>
 													</td>
 												</tr>
 											</c:if>
 											<c:if test="${not empty exceptionGeral.cause}">
 
 												<tr>
-													<td
-														style="text-align: center;"><h4>${exceptionGeral.cause.message}</h4></td>
+													<td 
+														style="text-align: center;"><h4 id="details">${exceptionGeral.cause.message}</h4></td>
 												</tr>
 											</c:if>
 										</c:if>

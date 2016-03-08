@@ -155,17 +155,11 @@ BaseService.prototype.serializar = function(obj) {
 }
 
 BaseService.prototype.errorHandler = function(error) {
-	if(error.status == 400) {
-		var errors = JSON.parse(error.responseText);
-		for(var i = 0; i < errors.length; i++) {
-			var span = $('<span class="error" style="color: red; font-weight:bold"></span>');
-			span.html(errors[i].message);
-			span.insertAfter($("[name='" + errors[i].key + "']"));
-		}
-	} else {
-		$("#responseText").html( error.responseText);
-		$('#server_error_dialog').dialog('open');
-	}
+	if (/<[a-z][\s\S]*>/i.test(error.responseText)){
+		var msg = $(error.responseText).find('#message').html();
+		var details = $(error.responseText).find('#details').html();
+		alert(msg + (details ? '\n' + details : ''));
+	} else alert(error.responseText);
 }
 /**
  * Remove as mensagens de erro na tela
@@ -188,6 +182,12 @@ BaseService.prototype.desativar = function(event, id) {
 	     url: this.opts.urlDesativar,
 	     data: {id : id, mostrarDesativados : this.opts.mostrarDesativados},
 	     dataType: "text",
+	     "beforeSend": function () {
+	    		jQuery.blockUI(objBlock);
+	    	},
+			"complete": function () {
+				jQuery.unblockUI();
+			},
 	     success: function(response) {
 			if(service.opts.mostrarDesativados == "true" || service.opts.mostrarDesativados == true) {
 				var obj = JSON.parse(response),
@@ -223,6 +223,12 @@ BaseService.prototype.reativar = function(event, id) {
 	     url: this.opts.urlReativar,
 	     data: {id : id, mostrarDesativados : this.opts.mostrarDesativados},
 	     dataType: "text",
+	     "beforeSend": function () {
+	    		jQuery.blockUI(objBlock);
+	    	},
+			"complete": function () {
+				jQuery.unblockUI();
+			},
 	     success: function(response) {
 	    	 service.opts.dataTable.api().row(tr).data(row);
 
@@ -338,6 +344,12 @@ BaseService.prototype.gravarAplicar = function(isAplicar) {
     	url: url,
     	data: this.serializar(obj),
     	dataType: "text",
+    	"beforeSend": function () {
+    		jQuery.blockUI(objBlock);
+    	},
+		"complete": function () {
+			jQuery.unblockUI();
+		},
     	error: BaseService.prototype.errorHandler
 
    	}).success(success);

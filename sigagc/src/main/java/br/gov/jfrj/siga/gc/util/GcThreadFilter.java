@@ -31,7 +31,8 @@ public class GcThreadFilter extends ThreadFilter {
 			chain.doFilter(request, response);
 			em.getTransaction().commit();
 		} catch (Exception e) {
-			em.getTransaction().rollback();
+			if (em.getTransaction().isActive())
+				em.getTransaction().rollback();
 			
 			throw new ServletException(e);
 		} finally {

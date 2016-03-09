@@ -280,6 +280,9 @@ public class SolicitacaoController extends SrController {
 
     @Path("app/solicitacao/gravar")
     public void gravar(SrSolicitacao solicitacao) throws Exception {
+    	if (solicitacao == null)
+    		throw new AplicacaoException("Não foram informados dados suficientes para a gravação");
+    	
     	//Edson: por causa do detach no ObjetoObjectInstantiator:
     	if (solicitacao.getSolicitacaoInicial() != null){
     		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId())); 
@@ -624,6 +627,8 @@ public class SolicitacaoController extends SrController {
 
     @Path("app/solicitacao/baixar/{idArquivo}")
     public Download baixar(Long idArquivo) throws Exception {
+    	if (idArquivo == null)
+    		throw new AplicacaoException("Arquivo não informado");
         SrArquivo arq = SrArquivo.AR.findById(idArquivo);
         return new ByteArrayDownload(arq.getBlob(), arq.getMime(), arq.getNomeArquivo(), false);
     }
@@ -773,6 +778,8 @@ public class SolicitacaoController extends SrController {
 
     @Path("app/solicitacao/anexarArquivo")
     public void anexarArquivo(SrMovimentacao movimentacao) throws Exception {
+    	if (movimentacao == null || movimentacao.getArquivo() == null)
+    		throw new AplicacaoException("Não foram informados dados suficientes para a anexação");
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(this).exibir(movimentacao.getSolicitacao().getSiglaCompacta(), todoOContexto(), ocultas());
     }

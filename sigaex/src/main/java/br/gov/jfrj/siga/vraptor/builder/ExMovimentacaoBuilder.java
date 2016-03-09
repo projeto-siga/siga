@@ -178,12 +178,14 @@ public final class ExMovimentacaoBuilder {
 		} catch (final Exception e) {
 		}
 
-		try {
-			mov.setDtMov(df.parse(dtPubl));
-		} catch (final ParseException e) {
-			mov.setDtMov(new Date());
-		} catch (final NullPointerException e) {
-			mov.setDtMov(new Date());
+		if (getDtPubl() != null) {
+			try {
+				mov.setDtMov(df.parse(dtPubl));
+			} catch (final ParseException e) {
+				mov.setDtMov(new Date());
+			} catch (final NullPointerException e) {
+				mov.setDtMov(new Date());
+			}
 		}
 
 		try {

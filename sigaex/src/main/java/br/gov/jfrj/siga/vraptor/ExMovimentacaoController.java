@@ -1069,8 +1069,19 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Post("app/expediente/mov/prever")
-	public void preve(final String sigla) {
-		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+	public void preve(final String sigla, final String dtMovString,
+			final DpPessoaSelecao subscritorSel, final boolean substituicao,
+			final DpPessoaSelecao titularSel, final String nmFuncaoSubscritor,
+			final long idTpDespacho, final long idResp,
+			final List<ExTipoDespacho> tiposDespacho, final String descrMov,
+			final List<Map<Integer, String>> listaTipoResp,
+			final int tipoResponsavel,
+			final DpLotacaoSelecao lotaResponsavelSel,
+			final DpPessoaSelecao responsavelSel,
+			final CpOrgaoSelecao cpOrgaoSel, final String dtDevolucaoMovString,
+			final String obsOrgao, final String protocolo) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
 
 		buscarDocumento(builder);
 
@@ -1079,23 +1090,37 @@ public class ExMovimentacaoController extends ExController {
 		if (builder.getId() != null) {
 			mov = daoMov(builder.getId());
 		} else {
-			mov = ExMovimentacaoBuilder.novaInstancia().construir(dao());
+
+			final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+					.novaInstancia();
+			movimentacaoBuilder.setDtMovString(dtMovString)
+					.setSubscritorSel(subscritorSel).setMob(builder.getMob())
+					.setSubstituicao(substituicao).setTitularSel(titularSel)
+					.setNmFuncaoSubscritor(nmFuncaoSubscritor)
+					.setIdTpDespacho(idTpDespacho).setDescrMov(descrMov)
+					.setLotaResponsavelSel(lotaResponsavelSel)
+					.setResponsavelSel(responsavelSel)
+					.setDtDevolucaoMovString(dtDevolucaoMovString)
+					.setCpOrgaoSel(cpOrgaoSel).setObsOrgao(obsOrgao);
+			mov = movimentacaoBuilder.construir(dao());
 		}
 
 		if (param("processar_modelo") != null) {
 			result.forwardTo(this).processaModelo(mov);
 		} else {
+			ExModelo modeloDespachoAutomatico = getModeloDespachoAutomatico();
 			result.include("par", getRequest().getParameterMap());
-			result.include("modelo", getModelo());
-			result.include("nmArqMod", getModelo().getNmArqMod());
+			result.include("modelo", modeloDespachoAutomatico);
+			result.include("nmArqMod", modeloDespachoAutomatico.getNmArqMod());
 			result.include("mov", mov);
 		}
 	}
 
 	private void processaModelo(final ExMovimentacao mov) {
+		ExModelo modeloDespachoAutomatico = getModeloDespachoAutomatico();
 		result.include("par", getRequest().getParameterMap());
-		result.include("modelo", getModelo());
-		result.include("nmArqMod", getModelo().getNmArqMod());
+		result.include("modelo", modeloDespachoAutomatico);
+		result.include("nmArqMod", modeloDespachoAutomatico.getNmArqMod());
 		result.include("mov", mov);
 	}
 
@@ -2992,8 +3017,8 @@ public class ExMovimentacaoController extends ExController {
 		return (List<ExPapel>) HibernateUtil.getSessao().createQuery("from ExPapel").list();
 	}
 
-	private ExModelo getModelo() {
-		return dao().consultarExModelo(null, "Despacho automático");
+	private ExModelo getModeloDespachoAutomatico() {
+		return dao().consultarExModelo(null, "Despacho Automático");
 	}
 
 	private int processarTipoResponsavel(ExMobil mob) {

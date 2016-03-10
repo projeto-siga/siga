@@ -37,6 +37,34 @@
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcpkix-jdk15on</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+
+		<!-- 
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.1</version>
+		</dependency>
+		 -->
+		 
+		<dependency>
+		    <groupId>com.mashape.unirest</groupId>
+		    <artifactId>unirest-java</artifactId>
+		    <version>1.4.7</version>
+		</dependency>
+
+
+		<!-- <dependency> <groupId>org.jboss.resteasy</groupId> <artifactId>resteasy-jaxrs</artifactId> 
+			<version>2.3.7.Final</version> <scope>provided</scope> </dependency> <dependency> 
+			<groupId>org.jboss.resteasy</groupId> <artifactId>resteasy-jackson-provider</artifactId> 
+			<version>2.3.7.Final</version> <scope>provided</scope> </dependency> <dependency> 
+			<groupId>org.jboss.resteasy</groupId> <artifactId>resteasy-client</artifactId> 
+			<version>2.3.8.Final</version> </dependency> -->
 		<!-- Siga -->
 	</dependencies>
 

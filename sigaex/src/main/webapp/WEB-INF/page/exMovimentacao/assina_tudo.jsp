@@ -9,21 +9,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <siga:pagina
-	titulo="Assinatura em Lote de Documentos, Despachos e Anexos"
-	onLoad="javascript: TestarAssinaturaDigital();"
-	incluirJs="/sigaex/javascript/assinatura.js" compatibilidade="IE=EmulateIE9">
-
-	<script type="text/javascript" language="Javascript1.1">
-		/*  converte para maiúscula a sigla do estado  */
-		function converteUsuario(nomeusuario) {
-			re = /^[a-zA-Z]{2}\d{3,6}$/;
-			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
-			tmp = nomeusuario.value;
-			if (tmp.match(re) || tmp.match(ret2)) {
-				nomeusuario.value = tmp.toUpperCase();
-			}
-		}
-	</script>
+	titulo="Assinatura em Lote de Documentos, Despachos e Anexos" compatibilidade="IE=EmulateIE9">
 
 	<script type="text/javascript" language="Javascript1.1">
 		$(document).ready(
@@ -94,100 +80,24 @@
 						<tr class="button">
 							<td>
 								<div id="dados-assinatura" style="visible: hidden">
-									<c:set var="jspServer"
-										value="${request.contextPath}/app/expediente/mov/assinar_gravar" />
-									<c:set var="jspServerSenha"
-										value="${request.contextPath}/app/expediente/mov/assinar_senha_gravar" />
-									<c:set var="nextURL" value="/siga/principal.action" />
-									<c:set var="urlPath" value="${request.contextPath}" />
-
-									<input type="hidden" id="jspserver" name="jspserver"
-										value="${jspServer}" /> <input type="hidden"
-										id="jspServerSenha" name="jspServerSenha"
-										value="${jspServerSenha}" /> <input type="hidden"
-										id="nexturl" name="nextUrl" value="${nextURL}" /> <input
-										type="hidden" id="urlpath" name="urlpath" value="${urlPath}" />
-									<c:set var="url">${request.requestURL}</c:set>
-									<c:set var="uri" value="${request.requestURI}" />
-									<c:set var="urlBase"
-										value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
-									<input type="hidden" id="urlbase" name="urlbase"
-										value="${urlBase}" />
+									<input type="hidden" name="ad_url_base"
+										value="${fn:substring(pageContext.request.requestURL.toString(), 0, fn:length(pageContext.request.requestURL.toString()) - fn:length(pageContext.request.requestURI.toString()))}" />
+									<input type="hidden" name="ad_url_next"
+										value="/siga/app/principal" />
 
 									<c:set var="botao" value="" />
 									<c:if test="${autenticando}">
 										<c:set var="botao" value="autenticando" />
 									</c:if>
-									<c:set var="lote" value="true" />
-								</div> <c:if
-									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-									<c:import url="/javascript/inc_assina_js.jsp" />
-									<div id="capicom-div">
-										<c:if test="${not autenticando}">
-											<a id="bot-assinar" href="#"
-												onclick="javascript: AssinarDocumentos('false', this);"
-												class="gt-btn-alternate-large gt-btn-left">Assinar
-												Documento</a>
-										</c:if>
-										<c:if test="${autenticando}">
-											<a id="bot-conferir" href="#"
-												onclick="javascript: AssinarDocumentos('true', this);"
-												class="gt-btn-alternate-large gt-btn-left">Autenticar
-												Documento</a>
-										</c:if>
-									</div>
-									<p id="ie-missing" style="display: none;">
-										A assinatura digital utilizando padrão do SIGA-DOC só poderá
-										ser realizada no Internet Explorer. No navegador atual, apenas
-										a assinatura com <i>Applet Java</i> é permitida.
-									</p>
-									<p id="capicom-missing" style="display: none;">
-										Não foi possível localizar o componente <i>CAPICOM.DLL</i>.
-										Para realizar assinaturas digitais utilizando o método padrão
-										do SIGA-DOC, será necessário instalar este componente. O <i>download</i>
-										pode ser realizado clicando <a
-											href="https://drive.google.com/file/d/0B_WTuFAmL6ZERGhIczRBS0ZMaVE/view"><u>aqui</u></a>.
-										Será necessário expandir o <i>ZIP</i> e depois executar o
-										arquivo de instalação.
-									</p>
-									<script type="text/javascript">
-										if (window.navigator.userAgent
-												.indexOf("MSIE ") > 0
-												|| window.navigator.userAgent
-														.indexOf(" rv:11.0") > 0) {
-											document
-													.getElementById("capicom-div").style.display = "block";
-											document
-													.getElementById("ie-missing").style.display = "none";
-										} else {
-											document
-													.getElementById("capicom-div").style.display = "none";
-											document
-													.getElementById("ie-missing").style.display = "block";
-										}
-									</script>
-
-								</c:if> <c:if
-									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">		    
-			   		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}	
-	         	</c:if> <c:if
-									test="${(not empty documentosQuePodemSerAssinadosComSenha)}">
-									<a id="bot-assinar-senha" href="#"
-										onclick="javascript: assinarComSenha();"
-										class="gt-btn-large gt-btn-left">Assinar com Senha</a>
-								</c:if>
+									<c:set var="lote" value="false" />
+								</div> <tags:assinatura_botoes/>
 							</td>
 						</tr>
 					</table>
 				</div>
 				<br />
 
-
 				<!-- Assinaveis -->
-
-
-
-
 				<c:if test="${(not empty assinaveis)}">
 					<h2>Assinaveis</h2>
 					<div class="gt-content-box gt-for-table">
@@ -216,7 +126,7 @@
 							</thead>
 							<tbody>
 								<c:forEach var="assdoc" items="${assinaveis}">
-									<c:set var="x" scope="request">chk_${assdoc.doc.idDoc}</c:set>
+									<c:set var="x" scope="request">ad_chk_${assdoc.doc.idDoc}</c:set>
 									<c:remove var="x_checked" scope="request" />
 									<c:if test="${param[x] == 'true'}">
 										<c:set var="x_checked" scope="request">checked</c:set>
@@ -236,8 +146,9 @@
 											</c:if></td>
 										<td style="text-align: center"></td>
 										<td style="text-align: center"><c:if
-												test="${podeAssinarComSenha}">
-												<input type="checkbox" name="${x}" value="true" ${x_checked}
+												test="${true or podeAssinarComSenha}">
+												<input type="checkbox"
+													name="ad_password_${assdoc.doc.idDoc}" value="true"
 													class="chk-senha" />
 											</c:if></td>
 										<td><a target="_blank"
@@ -249,13 +160,18 @@
 										<td>${assdoc.doc.descrFormaDoc}</td>
 										<td>${assdoc.doc.descrDocumento}</td>
 									</tr>
-									<input type="hidden" name="pdf${x}" value="${assdoc.doc.sigla}" />
-									<input type="hidden" name="url${x}"
-										value="/app/arquivo/exibir?arquivo=${assdoc.doc.codigoCompacto}.pdf" />
-
+									<input type="hidden" name="ad_descr_${assdoc.doc.idDoc}"
+										value="${assdoc.doc.sigla}" />
+									<input type="hidden" name="ad_url_pdf_${assdoc.doc.idDoc}"
+										value="/sigaex/app/arquivo/exibir?arquivo=${assdoc.doc.codigoCompacto}.pdf" />
+									<input type="hidden" name="ad_url_post_${assdoc.doc.idDoc}"
+										value="/sigaex/app/expediente/mov/assinar_gravar" />
+									<input type="hidden"
+										name="ad_url_post_password_${assdoc.doc.idDoc}"
+										value="/sigaex/app/expediente/mov/assinar_senha_gravar" />
 
 									<c:forEach var="assmov" items="${assdoc.movs}">
-										<c:set var="x" scope="request">chk_${assmov.mov.idMov}</c:set>
+										<c:set var="x" scope="request">ad_chk_mov${assmov.mov.idMov}</c:set>
 										<c:remove var="x_checked" scope="request" />
 										<c:if test="${param[x] == 'true'}">
 											<c:set var="x_checked" scope="request">checked</c:set>
@@ -272,13 +188,13 @@
 												class="chk-assinar" /></td>
 											<td style="text-align: center"><c:if
 													test="${assmov.podeAutenticar}">
-													<input type="checkbox" name="${x}" id="${x}" value="true"
-														${x_checked} class="chk-autenticar" />
+													<input type="checkbox" name="ad_aut_mov${assmov.mov.idMov}"
+														id="${x}" value="true" ${x_checked} class="chk-autenticar" />
 												</c:if></td>
 											<td style="text-align: center"><c:if
 													test="${podeAssinarComSenha}">
-													<input type="checkbox" name="${x}" id="${x}" value="true"
-														${x_checked} class="chk-senha" />
+													<input type="checkbox" name="ad_chk_mov${assmov.mov.idMov}"
+														id="${x}" value="true" class="chk-senha" />
 												</c:if></td>
 											<td><a style="padding-left: 2em;" target="_blank"
 												href="/sigaex/app/arquivo/exibir?popup=true&id=688&arquivo=${assmov.mov.nmPdf}">${assmov.mov.referencia}</a>
@@ -289,100 +205,24 @@
 											<td>${assmov.mov.exTipoMovimentacao.sigla}</td>
 											<td>${assmov.mov.obs}</td>
 										</tr>
-										<input type="hidden" name="pdf${x}"
+										<input type="hidden" name="ad_descr_mov${assmov.mov.idMov}"
 											value="${assmov.mov.referencia}" />
-										<input type="hidden" name="url${x}"
-											value="/app/arquivo/exibir?arquivo=${assmov.mov.referencia}.pdf" />
+										<input type="hidden" name="ad_url_pdf_mov${assmov.mov.idMov}"
+											value="/sigaex/app/arquivo/exibir?arquivo=${assmov.mov.referencia}.pdf" />
+										<input type="hidden" name="ad_url_post_mov${assmov.mov.idMov}"
+											value="/sigaex/app/expediente/mov/assinar_mov_gravar" />
+										<input type="hidden"
+											name="ad_url_post_password_mov${assmov.mov.idMov}"
+											value="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" />
 									</c:forEach>
 								</c:forEach>
 							</tbody>
 						</table>
 					</div>
 				</c:if>
-				</
 				<form>
 		</div>
 	</div>
-
-	<c:if test="${(not empty documentosQuePodemSerAssinadosComSenha)}">
-		<div id="dialog-form" title="Assinar com Senha">
-			<form id="form-assinarSenha" method="post"
-				action="assinar_mov_login_senha_gravar">
-				<input type="hidden" id="id" name="id" value="${mov.idMov}" /> <input
-					type="hidden" id="tipoAssinaturaMov" name="tipoAssinaturaMov"
-					value="A" />
-				<fieldset>
-					<label>Matrícula</label> <br /> <input id="nomeUsuarioSubscritor"
-						type="text" name="nomeUsuarioSubscritor"
-						class="text ui-widget-content ui-corner-all"
-						onblur="javascript:converteUsuario(this)" /><br /> <br /> <label>Senha</label>
-					<br /> <input type="password" id="senhaUsuarioSubscritor"
-						name="senhaUsuarioSubscritor"
-						class="text ui-widget-content ui-corner-all" autocomplete="off" />
-				</fieldset>
-			</form>
-		</div>
-
-		<div id="dialog-message" title="Basic dialog">
-			<p id="mensagemAssinaSenha"></p>
-		</div>
-
-		<script>
-			dialog = $("#dialog-form").dialog({
-				autoOpen : false,
-				height : 210,
-				width : 350,
-				modal : true,
-				buttons : {
-					"Assinar" : assinarGravar,
-					"Cancelar" : function() {
-						dialog.dialog("close");
-					}
-				},
-				close : function() {
-
-				}
-			});
-
-			function assinarGravar() {
-				AssinarDocumentosSenha('false', this);
-			}
-
-			dialogM = $("#dialog-message").dialog({
-				autoOpen : false,
-			});
-
-			function assinarComSenha() {
-				var n = $("input.nao-pode-assinar-senha:checked").length;
-
-				if (n > 0) {
-					$("#mensagemAssinaSenha")
-							.html(
-									n
-											+ (n === 1 ? " documento selecionado não pode ser assinado somente com senha."
-													: " documentos selecionados não podem ser assinados somente com senha.")
-											+ " Selecione somente os documentos que estão marcados com ");
-					$("#mensagemAssinaSenha")
-							.append(
-									"<img src=\"/siga/css/famfamfam/icons/keyboard.png\" alt=\"Permite assinatura com senha\" title=\"Permite assinatura com senha\" />");
-
-					dialogM.dialog("open");
-				} else {
-					var nPode = $("input.pode-assinar-senha:checked").length;
-
-					if (nPode == 0) {
-						$("#mensagemAssinaSenha")
-								.html(
-										"Nenhum documento selecionado. Selecione somente os documentos que estão marcados com ");
-						$("#mensagemAssinaSenha")
-								.append(
-										"<img src=\"/siga/css/famfamfam/icons/keyboard.png\" alt=\"Permite assinatura com senha\" title=\"Permite assinatura com senha\" />");
-						dialogM.dialog("open");
-					} else {
-						dialog.dialog("open");
-					}
-				}
-			}
-		</script>
-	</c:if>
+	
+	<tags:assinatura_rodape/>
 </siga:pagina>

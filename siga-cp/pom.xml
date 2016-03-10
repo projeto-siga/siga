@@ -63,10 +63,6 @@
 		</dependency>
 		<dependency>
 			<groupId>siga</groupId>
-			<artifactId>siga-cd-base</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>siga</groupId>
 			<artifactId>siga-ws</artifactId>
 		</dependency>
 		<dependency>

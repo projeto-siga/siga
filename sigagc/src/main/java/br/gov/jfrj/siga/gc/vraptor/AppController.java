@@ -18,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.soap.Text;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -32,6 +33,7 @@ import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPerfil;
@@ -967,9 +969,11 @@ public class AppController extends GcController {
 		informacao.visualizacao = visualizacao;
 
 		// Atualiza a classificação com as hashTags encontradas
-		if (conteudo != null)
+		if (conteudo != null){
+			conteudo = Texto.removeAcentoHTMLMinusculas(conteudo);
 			classificacao = bl.findHashTag(conteudo, classificacao,
 					CONTROLE_HASH_TAG);
+		}
 
 		if (informacao.edicao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO
 				|| informacao.visualizacao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO) {

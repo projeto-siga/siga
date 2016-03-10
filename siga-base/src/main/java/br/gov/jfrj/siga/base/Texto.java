@@ -23,6 +23,19 @@ import java.io.UnsupportedEncodingException;
 public class Texto {
 
 	/**
+	 * Remove os acentos da string e coloca os caracteres em letras minúsculas
+	 * 
+	 * @param acentuado
+	 *            - String acentuada
+	 * @return String sem acentos
+	 */
+	public static String removeAcentoHTMLMinusculas(String acentuado) {
+		if (acentuado == null)
+			return null;
+		return removeAcentoHTML(acentuado.toLowerCase());
+	}
+
+	/**
 	 * Remove os acentos da string e coloca os caracteres em letras maiúsculas
 	 * 
 	 * @param acentuado
@@ -34,7 +47,7 @@ public class Texto {
 			return null;
 		return removeAcento(acentuado.toUpperCase());
 	}
-
+	
 	/**
 	 * Remove os acentos da string
 	 * 
@@ -52,7 +65,7 @@ public class Texto {
 		temp = temp.replaceAll("[ÕÔÓÒ]", "O");
 		temp = temp.replaceAll("[ÛÚÙÜ]", "U");
 		temp = temp.replaceAll("[Ç]", "C");
-		temp = temp.replaceAll("[ãâáà]", "a");
+		temp = temp.replaceAll("[ãâáà&eacute;]", "a");
 		temp = temp.replaceAll("[éèê]", "e");
 		temp = temp.replaceAll("[íìî]", "i");
 		temp = temp.replaceAll("[õôóò]", "o");
@@ -61,6 +74,31 @@ public class Texto {
 		return temp;
 	}
 
+	/**
+	 * Remove os acentos da string
+	 * 
+	 * @param acentuado
+	 *            - String acentuada
+	 * @return String sem acentos
+	 */
+	public static String removeAcentoHTML(String acentuado) {
+		if (acentuado == null)
+			return null;
+		String temp = new String(acentuado);
+		temp = temp.replaceAll("&aacute;", "a");
+		temp = temp.replaceAll("&eacute;", "e");
+		temp = temp.replaceAll("&iacute;", "i");
+		temp = temp.replaceAll("&oacute;", "o");
+		temp = temp.replaceAll("&uacute;", "u");
+		temp = temp.replaceAll("&agrave;", "à");
+		temp = temp.replaceAll("&acirc;", "a");
+		temp = temp.replaceAll("&ecirc;", "e");
+		temp = temp.replaceAll("&ocirc;", "o");
+		temp = temp.replaceAll("&atilde;", "a");
+		temp = temp.replaceAll("&otilde;", "o");
+		return temp;
+	}
+	
 	public String iniciais(String s) {
 		final StringBuilder sb = new StringBuilder(10);
 		boolean f = true;

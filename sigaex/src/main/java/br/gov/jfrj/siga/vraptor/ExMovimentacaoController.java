@@ -2898,11 +2898,8 @@ public class ExMovimentacaoController extends ExController {
 
 			String apenas = param("apenasSolicitacao");
 
+			result.include("descrFeriado", DJE.validarDataDeDisponibilizacao((apenas != null) && apenas.equals("true")));
 			result.include("dtPrevPubl", format.format(DJE.getDataPublicacao()));
-			result.include(
-					"descrFeriado",
-					DJE.validarDataDeDisponibilizacao((apenas != null)
-							&& apenas.equals("true")));
 		} catch (Throwable t) {
 		}
 	}

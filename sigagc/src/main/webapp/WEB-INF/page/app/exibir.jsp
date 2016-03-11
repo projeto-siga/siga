@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
-<siga:pagina titulo="Exibição de Tópico de Informação">
+<siga:pagina titulo="${informacao.sigla}">
 	<div class="gt-bd gt-cols clearfix">
 		<div class="gt-content">
 			<h2>${informacao.sigla}</h2>

@@ -35,6 +35,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 
@@ -66,18 +67,18 @@ public class CpFeriado extends AbstractCpFeriado implements Serializable,
 
 		Calendar calendarFeriado = new GregorianCalendar();
 		Calendar calendarData = new GregorianCalendar();
-		calendarData.setTime(data);
-
+		calendarData.setTime(DateUtils.clearTime(data));
+		
 		for (CpOcorrenciaFeriado ocorrencia : getCpOcorrenciaFeriadoSet()) {
 			calendarFeriado.setTime(ocorrencia.getDtIniFeriado());
-			calendarFeriado.set(Calendar.YEAR, calendarData.get(Calendar.YEAR));
-			if (!calendarFeriado.after(calendarData)) {
-				if (ocorrencia.getDtFimFeriado() == null) {
-					calendarFeriado.add(Calendar.DAY_OF_MONTH, 1);
-				} else
-					calendarFeriado.setTime(ocorrencia.getDtFimFeriado());
-				if (calendarFeriado.after(calendarData))
-					return true;
+			if (calendarFeriado.get(Calendar.YEAR) <= calendarData.get(Calendar.YEAR)) {
+				calendarFeriado.set(Calendar.YEAR, calendarData.get(Calendar.YEAR));
+				if (!calendarFeriado.getTime().after(calendarData.getTime())) {
+					if (ocorrencia.getDtFimFeriado() != null) 
+						calendarFeriado.setTime(ocorrencia.getDtFimFeriado());	
+					if (!calendarFeriado.getTime().before(calendarData.getTime()))
+						return true;
+				}
 			}
 		}
 		return false;

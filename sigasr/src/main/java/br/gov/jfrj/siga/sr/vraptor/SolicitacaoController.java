@@ -13,6 +13,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hibernate.LazyInitializationException;
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -434,10 +436,12 @@ public class SolicitacaoController extends SrController {
 		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.
 		if (sigla != null){
 			solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
+			
 			//Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados
 			if (solicitacao.getAcordos() != null)
 				solicitacao.getAcordos().size();
 	        em().detach(solicitacao);
+	        
 		} else {
 			if (solicitacao == null){
 				solicitacao = new SrSolicitacao();
@@ -446,8 +450,12 @@ public class SolicitacaoController extends SrController {
 		        	solicitacao.setRascunho(true);
 		        	solicitacao.salvar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular());
 		        	solicitacao.setRascunho(false);
+		        	
 		        	//Edson: para evitar que o JPA tente salvar a solicitação por causa dos próximos set's chamados
+		        	if (solicitacao.getAcordos() != null)
+						solicitacao.getAcordos().size();
 			        em().detach(solicitacao);
+		        
 		        } catch(AplicacaoException ae){
 		        	solicitacao.setCadastrante(getCadastrante());
 		        	solicitacao.setLotaCadastrante(getLotaCadastrante());
@@ -461,7 +469,7 @@ public class SolicitacaoController extends SrController {
 		        	solicitacao.setAcao((SrAcao)SrAcao.AR.find("bySiglaAcaoAndHisDtFimIsNull", acao).first());
 		        if (descricao != null && !descricao.equals(""))
 		        	solicitacao.setDescricao(descricao);
-			}
+			} 
 						
 			//Edson: O deduzir(), o setItem(), o setAcao() e o asociarPrioridade() deveriam ser chamados dentro da própria solicitação pois é responsabilidade 
 			//da própria classe atualizar os seus atributos para manter consistência após a entrada de um dado. 
@@ -486,7 +494,12 @@ public class SolicitacaoController extends SrController {
 		if (solicitacao.getSolicitacaoInicial() != null)
 			solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
         
-        result.include("etapasCronometro", solicitacao.getEtapas(getLotaTitular(), false));
+		try{
+			result.include("etapasCronometro", solicitacao.getEtapas(getLotaTitular(), false));
+		} catch(LazyInitializationException lie){
+        	//Edson: se é um postback, não recarregar os acordos
+        }
+		
         incluirListasEdicaoSolicitacao(solicitacao);
         
     }

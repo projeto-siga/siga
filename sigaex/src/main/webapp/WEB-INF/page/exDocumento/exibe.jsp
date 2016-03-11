@@ -9,7 +9,7 @@
 
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
-<siga:cabecalho titulo="Documento" popup="${param.popup}" />
+<siga:cabecalho titulo="${docVO.sigla}" popup="${param.popup}" />
 
 <script>
 	if (window.Worker) {

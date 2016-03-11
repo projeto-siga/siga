@@ -470,24 +470,25 @@
 						<input type="file" name="solicitacao.arquivo" />
 					</div>
 		
-					<div class="gt-form-table">
-						<div class="barra-subtitulo header" align="center" valign="top">
-							Prioridade</div>
-					</div>
-					<div class="gt-form-row gt-width-33">
-							<label>Gravidade</label> 
-							<select name="solicitacao.gravidade" id="gravidade" style="width:235px" onchange="$('#prioridade').html($('#gravidade option:selected').attr('prioridade'))">
-								<c:forEach items="${gravidadeList.keySet()}" var="gravidade">
-									<c:set var="prioridade" value="${gravidadeList.get(gravidade)}" />
-										<option value="${gravidade}" prioridade="${prioridade.descPrioridade}" ${solicitacao.gravidade == gravidade ? 'selected' : ''}>${gravidade.descrGravidade}</option>
-								</c:forEach>
-							</select>
-					</div>
-					<div class="gt-form-row gt-width-66" >
-						<label style="float: left">Prioridade: &nbsp;</label>
-						<span id="prioridade">${solicitacao.prioridade.descPrioridade}</span>
-					</div>
-		
+					<c:if test="${exibirCampoPrioridade}">
+						<div class="gt-form-table">
+							<div class="barra-subtitulo header" align="center" valign="top">
+								Prioridade</div>
+						</div>
+						<div class="gt-form-row gt-width-33">
+								<label>Gravidade</label> 
+								<select name="solicitacao.gravidade" id="gravidade" style="width:235px" onchange="$('#prioridade').html($('#gravidade option:selected').attr('prioridade'))">
+									<c:forEach items="${gravidadeList.keySet()}" var="gravidade">
+										<c:set var="prioridade" value="${gravidadeList.get(gravidade)}" />
+											<option value="${gravidade}" prioridade="${prioridade.descPrioridade}" ${solicitacao.gravidade == gravidade ? 'selected' : ''}>${gravidade.descrGravidade}</option>
+									</c:forEach>
+								</select>
+						</div>
+						<div class="gt-form-row gt-width-66" >
+							<label style="float: left">Prioridade: &nbsp;</label>
+							<span id="prioridade">${solicitacao.prioridade.descPrioridade}</span>
+						</div>
+					</c:if>
 		
 					<c:if test="${solicitacao.podeAbrirJaFechando(titular, lotaTitular)}">
 						<div class="gt-form-row gt-width-66">

@@ -5,7 +5,9 @@ import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.EDTCONH_CRIAR_CONHE
 import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.EXIBIR_MENU_ADMINISTRAR;
 import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.EXIBIR_MENU_CONHECIMENTOS;
 import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.EXIBIR_MENU_RELATORIOS;
+import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.EXIBIR_CAMPO_PRIORIDADE;
 import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.REL_RELATORIOS;
+import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.PRIORIZAR_AO_ABRIR;
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.Result;
@@ -18,12 +20,12 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @RequestScoped
 @Intercepts(after = { ContextInterceptor.class }, before = InstantiateInterceptor.class)
-public class MenuAcessoInterceptor implements Interceptor {
+public class AcessoInterceptor implements Interceptor {
     
     private Result result;
     private SigaObjects so;
 
-    public MenuAcessoInterceptor(Result result, SigaObjects so) {
+    public AcessoInterceptor(Result result, SigaObjects so) {
         this.result = result;
         this.so = so;
     }
@@ -56,6 +58,13 @@ public class MenuAcessoInterceptor implements Interceptor {
              result.include(EXIBIR_MENU_RELATORIOS, true);
         } catch (Exception e) {
             result.include(EXIBIR_MENU_RELATORIOS, false);
+        }
+        
+        try {
+            so.assertAcesso(PRIORIZAR_AO_ABRIR);
+             result.include(EXIBIR_CAMPO_PRIORIDADE, true);
+        } catch (Exception e) {
+            result.include(EXIBIR_CAMPO_PRIORIDADE, false);
         }
     }
 

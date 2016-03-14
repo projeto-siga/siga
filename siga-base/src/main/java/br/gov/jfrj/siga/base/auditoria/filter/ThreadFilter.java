@@ -19,7 +19,6 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.auditoria.hibernate.util.SigaHibernateAuditorLogUtil;
-import br.gov.jfrj.siga.base.log.RequestExceptionLogger;
 
 /**
  * Filtro base para implementação dos ThreadFilters
@@ -187,12 +186,9 @@ public abstract class ThreadFilter implements Filter {
 
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
-		long inicio = System.currentTimeMillis();
 		try {
 			doFiltro(request,response,chain);
 		} catch (Exception e) {
-			long duracao = System.currentTimeMillis() - inicio;
-			new RequestExceptionLogger(request, e,duracao, getLoggerName()).logar();
 			throw e;
 		}
 

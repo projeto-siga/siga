@@ -31,6 +31,15 @@
 		</jsp-property-group>
 	</jsp-config>
 
+	<filter>
+		<filter-name>RequestLoggerFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.base.log.RequestLoggerFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>RequestLoggerFilter</filter-name>
+		<url-pattern>*</url-pattern>
+	</filter-mapping>
+
     <filter>
         <filter-name>vraptor</filter-name>
         <filter-class>br.com.caelum.vraptor.VRaptor</filter-class>

@@ -22,7 +22,7 @@
 	<c:if test="${not mob.doc.eletronico}">
 		<script type="text/javascript">
 			$("html").addClass("fisico");
-			$("body").addClass("fisico");
+<%--			$("body").addClass("fisico"); --%>
 		</script>
 	</c:if>
 

@@ -373,7 +373,7 @@
 						<c:forEach var="naoAssinado" items="${m.despachosNaoAssinados}">
 							<li><a
 								href="javascript:popitup('${pageContext.request.contextPath}
-								/app/expediente/mov/naoAssinado?id=${naoAssinado.idMov}&popup=true')"
+								/app/expediente/mov/exibir?id=${naoAssinado.idMov}&popup=true')"
 								title="${naoAssinado.descricao}" style="text-decoration: none">
 									${naoAssinado.descricao} </a></li>
 						</c:forEach>

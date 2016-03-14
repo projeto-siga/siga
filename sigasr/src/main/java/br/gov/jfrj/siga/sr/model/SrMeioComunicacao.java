@@ -2,7 +2,12 @@ package br.gov.jfrj.siga.sr.model;
 
 public enum SrMeioComunicacao {
 
-    TELEFONE(1, "Telefone"), EMAIL(2, "Email"), CONTATO_DIRETO(3, "Contato Direto"), PANDION(4, "Mensageiro (Pandion, Lync, etc)"), CHAT(5, "Chat");
+    TELEFONE(1, "Telefone"), 
+    EMAIL(2, "Email"), 
+    CONTATO_DIRETO(3, "Contato Direto"), 
+    PANDION(4, "Mensageiro (Pandion, Lync, etc)"), 
+    CHAT(5, "Chat"), 
+    OFICIO(6, "Documento (Ofício, Memorando, etc)");
 
     private int idTipoContato;
 

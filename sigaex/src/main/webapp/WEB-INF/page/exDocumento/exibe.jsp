@@ -1044,7 +1044,12 @@
 
 <c:if test="${f:resource('isWorkflowEnabled')}">
 	<script type="text/javascript">
-		var url = "/sigawf/app/doc?sigla=${docVO.mob.sigla}&ts=1${currentTimeMillis}";
+		<c:if test="${ (docVO.tipoFormaDocumento == 'processo_administrativo')}">
+			var url = "/sigawf/app/doc?sigla=${docVO.mob.sigla}&ts=1${currentTimeMillis}";
+		</c:if>
+		<c:if test="${(not m.mob.geral) or (docVO.tipoFormaDocumento != 'processo_administrativo')}">
+			var url = "/sigawf/app/doc?sigla=${docVO.doc.codigo}&ts=1${currentTimeMillis}";
+		</c:if>
 		Siga.ajax(url, null, "GET", function(response){		
 			var div = $(".wf_div:last"); 
 			$(div).html(response);

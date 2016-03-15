@@ -84,7 +84,6 @@
 										value="${fn:substring(pageContext.request.requestURL.toString(), 0, fn:length(pageContext.request.requestURL.toString()) - fn:length(pageContext.request.requestURI.toString()))}" />
 									<input type="hidden" name="ad_url_next"
 										value="/siga/app/principal" />
-
 									<c:set var="botao" value="" />
 									<c:if test="${autenticando}">
 										<c:set var="botao" value="autenticando" />
@@ -223,6 +222,6 @@
 				<form>
 		</div>
 	</div>
-	
+
 	<tags:assinatura_rodape/>
 </siga:pagina>

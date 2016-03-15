@@ -50,7 +50,7 @@
 				<td>
 					<div id="dados-assinatura" style="visible: hidden">
 					  <c:set var="jspServer" value="${request.contextPath}/expediente/mov/assinar_gravar.action" />
-			   	 	<c:set var="nextURL" value="/siga/principal.action"  />
+			   	 	<c:set var="nextURL" value="/siga/app/principal"  />
 			    	<c:set var="urlPath" value="${request.contextPath}" />
 
 						<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />

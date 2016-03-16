@@ -39,6 +39,8 @@ import java.util.logging.Logger;
 
 import javax.naming.NamingException;
 
+import net.sf.ehcache.CacheManager;
+
 import org.hibernate.cfg.Configuration;
 import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;

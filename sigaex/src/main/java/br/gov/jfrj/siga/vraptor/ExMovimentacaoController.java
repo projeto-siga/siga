@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 
+import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -39,9 +40,11 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -64,8 +67,9 @@ import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTopicoDestinacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoHash;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoItem;
+import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoListItem;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelMov;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
@@ -2362,40 +2366,6 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("assinaveis", assinaveis);
 		result.include("request", getRequest());
-	}
-
-	@Get("/public/app/assinaveis/list")
-	public void listarAssinaveis(String certificate, String time, String proof) throws Exception {
-		String servidor = SigaBaseProperties.getString("siga.ex."
-				+ SigaBaseProperties.getString("ambiente") + ".url");
-		Long cpf = 11111111111L;
-		DpPessoa pes = dao().consultarPorCpf(cpf);
-		List<ExAssinadorExternoItem> list = new ArrayList<ExAssinadorExternoItem>();
-		List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL().obterAssinaveis(pes, pes.getLotacao());
-		for (ExAssinavelDoc ass : assinaveis) {
-			if (ass.isPodeAssinar()) {
-				ExAssinadorExternoItem aei = new ExAssinadorExternoItem();
-				aei.setId(ass.getDoc().getCodigoCompacto());
-				aei.setCode(ass.getDoc().getCodigo());
-				aei.setDescr(ass.getDoc().getDescrDocumento());
-				aei.setUrlHash(servidor + "/sigaex/app/assinaveis/hash/" + aei.getId());
-				aei.setUrlSave(servidor + "/sigaex/app/assinaveis/save/" + aei.getId());
-				list.add(aei);
-			}
-			if (ass.getMovs() == null)
-				continue;
-			for (ExAssinavelMov assmov : ass.getMovs()) {
-				ExAssinadorExternoItem aei = new ExAssinadorExternoItem();
-				aei.setId(assmov.getMov().getExMobil().getReferencia());
-				aei.setCode(assmov.getMov().getExMobil().getCodigoCompacto() + ":" + assmov.getMov().getIdMov());
-				aei.setDescr(assmov.getMov().getDescrMov());
-				aei.setUrlHash(servidor + "/sigaex/app/assinaveis/hash/" + aei.getId());
-				aei.setUrlSave(servidor + "/sigaex/app/assinaveis/save/" + aei.getId());
-				list.add(aei);
-			}
-		}
-		
-		result.use(Results.json()).indented().withoutRoot().from(list).serialize();
 	}
 
 	@Post("/app/expediente/mov/assinar_gravar")

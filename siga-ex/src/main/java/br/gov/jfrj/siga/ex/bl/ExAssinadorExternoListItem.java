@@ -5,7 +5,7 @@ import java.util.List;
 
 import br.gov.jfrj.siga.ex.ExDocumento;
 
-public class ExAssinadorExternoItem {
+public class ExAssinadorExternoListItem {
 	private String id;
 	private String code;
 	private String descr;

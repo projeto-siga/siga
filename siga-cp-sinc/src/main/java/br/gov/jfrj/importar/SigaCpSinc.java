@@ -1009,6 +1009,9 @@ public class SigaCpSinc {
 			lotacao.setLotacaoPai(o);
 		}
 		String tipoLotacao = parseStr(parser, "tipoLotacao");
+		if (tipoLotacao == null){
+			tipoLotacao = parseStr(parser, "tipo");
+		}
 		if (tipoLotacao != null && !isNumerico(tipoLotacao)) {
 			CpTipoLotacao o = obterTipoLotacaoPorDescricao(tipoLotacao);
 			lotacao.setCpTipoLotacao(o);

@@ -140,6 +140,10 @@ public class ExAssinadorExternoController extends ExController {
 				throw new Exception("Não foi possível localizar o PDF.");
 
 			ExAssinadorExternoHash resp = new ExAssinadorExternoHash();
+
+			// Alterado para forçar PKCS7
+//			resp.setPolicy("PKCS7");
+//			resp.setDoc(BlucService.bytearray2b64(pdf));
 			resp.setSha1(BlucService.bytearray2b64(BlucService.calcSha1(pdf)));
 			resp.setSha256(BlucService.bytearray2b64(BlucService
 					.calcSha256(pdf)));

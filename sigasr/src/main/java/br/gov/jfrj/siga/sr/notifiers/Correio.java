@@ -2,7 +2,10 @@ package br.gov.jfrj.siga.sr.notifiers;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.logging.Logger;
 
@@ -39,16 +42,12 @@ public class Correio {
 	}
 
 	public void notificarAtendente(SrMovimentacao movimentacao, SrSolicitacao sol) {
+		List<String> recipients = new ArrayList<String>(); 
+		Map<String, List<String>> headers = getHeadersNotificarAtendente(movimentacao, sol);
+		String assunto = headers.get("assunto").get(0);
+		recipients = headers.get("recipients");
 		
-		List<String> recipients = movimentacao.getEmailsNotificacaoAtendende();
-
 		if (!recipients.isEmpty()) {
-			String assunto = "";
-			if (movimentacao.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
-		        assunto = "Fechamento de solicitação escalonada a partir de " + sol.getCodigo();
-			else
-		        assunto = "Solicitação " + sol.getCodigo() + " aguarda atendimento";
-			
 			String conteudo = getConteudoComSolicitacaoEMovimentacao(TEMPLATE_NOTIFICAR_ATENDENTE, movimentacao, sol);
 			enviar(assunto, conteudo, recipients);
 		}
@@ -99,6 +98,22 @@ public class Correio {
 			String conteudo = getConteudoComSolicitacaoEMovimentacao(TEMPLATE_NOTIFICAR_MOVIMENTACAO, movimentacao, solicitacao);
 			enviar(assunto, conteudo, destinatario.getEnderecoEmail());
 		}
+	}
+	
+	private Map<String, List<String>> getHeadersNotificarAtendente(SrMovimentacao mov, SrSolicitacao sol) {
+		Map<String, List<String>> headers = new HashMap<String, List<String>>();
+		List<String> assunto = new ArrayList<String>(), recipients = new ArrayList<String>(); 
+		if (SrTipoMovimentacao.TIPOS_MOV_FIM_ATENDIMENTO.contains(mov.getTipoMov().getIdTipoMov())) {
+	        assunto.add("Fim de atendimento de solicitação escalonada a partir da " + sol.getSolicitacaoPai().getCodigo());
+	        recipients = sol.getSolicitacaoPai().getUltimaMovimentacao().getEmailsNotificacaoAtendende();
+		} 
+		else {
+	        assunto.add("Solicitação " + sol.getCodigo() + " aguarda atendimento");
+	        recipients = mov.getEmailsNotificacaoAtendende();		
+		}
+		headers.put("assunto", assunto);
+		headers.put("recipients", recipients);
+		return headers;	
 	}
 	
 	private String getConteudoComSolicitacao(String templatePath, SrSolicitacao sol) {

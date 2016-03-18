@@ -139,6 +139,11 @@ public class MontadorQuery implements IMontadorQuery {
 				&& !flt.getNmDestinatario().trim().equals("")) {
 			sbf.append(" and upper(doc.nmDestinatario) like :nmDestinatario");
 		}
+		
+		if (flt.getOrgaoExternoDestinatarioSelId() != null
+				&& flt.getOrgaoExternoDestinatarioSelId() != 0) {
+			sbf.append(" and doc.orgaoExternoDestinatario.idOrgao = :orgaoExternoDestinatarioSelId");
+		}
 
 		if (flt.getCadastranteSelId() != null && flt.getCadastranteSelId() != 0) {
 			sbf.append(" and doc.cadastrante.idPessoaIni = :cadastranteSelId");
@@ -168,8 +173,6 @@ public class MontadorQuery implements IMontadorQuery {
 		}
 
 		if (flt.getIdMod() != null && flt.getIdMod() != 0) {
-			ExModelo mod = ExDao.getInstance().consultar(flt.getIdMod(),
-					ExModelo.class, false);
 			sbf.append(" and doc.exModelo.hisIdIni = :hisIdIni");
 		}
 

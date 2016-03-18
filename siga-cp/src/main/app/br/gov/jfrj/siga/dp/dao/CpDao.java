@@ -53,6 +53,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.DefaultNamingStrategy;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
@@ -1982,8 +1983,12 @@ public class CpDao extends ModeloDao {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpUnidadeMedida.class);
 	}
 
-	public List<CpMarcador> listarMarcadores() {
-		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpMarcador.class);
+	public List<CpMarcador> listarMarcadores(Long[] ids) {
+		return findAndCacheByCriteria(
+				CACHE_QUERY_HOURS, 
+				CpMarcador.class, 
+				new Criterion[]{Restrictions.in("idMarcador", ids)}, 
+				new Order[]{Order.asc("descrMarcador")});
 	}
 
 	public List<CpGrupoDeEmail> listarGruposDeEmail() {

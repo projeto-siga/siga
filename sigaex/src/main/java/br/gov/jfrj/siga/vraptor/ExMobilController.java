@@ -116,7 +116,7 @@ public class ExMobilController extends
 			final DpPessoaSelecao ultMovRespSel, final DpLotacaoSelecao ultMovLotaRespSel, final Long orgaoUsu, final Long idTpDoc, final String dtDocString,
 			final String dtDocFinalString, final Long idTipoFormaDoc, final Integer forma, final Long idMod, final String anoEmissaoString,
 			final String numExpediente, final String numExtDoc, final CpOrgaoSelecao cpOrgaoSel, final String numAntigoDoc,
-			final DpPessoaSelecao subscritorSel, final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel,
+			final DpPessoaSelecao subscritorSel, String nmSubscritorExt, final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel,
 			final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario, final DpPessoaSelecao destinatarioSel,
 			final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel, final String nmDestinatario,
 			final ExClassificacaoSelecao classificacaoSel, final String descrDocument, final String fullText, final Long ultMovEstadoDoc,
@@ -183,7 +183,7 @@ public class ExMobilController extends
 		result.include("numExtDoc", numExtDoc);
 		result.include("cpOrgaoSel", builder.getCpOrgaoSel());
 		result.include("numAntigoDoc", numAntigoDoc);
-		result.include("nmSubscritor", null);
+		result.include("nmSubscritorExt", nmSubscritorExt);
 		result.include("subscritorSel", builder.getSubscritorSel());
 		result.include("listaTipoResp", this.getListaTipoResp());
 		result.include("tipoCadastrante", builder.getTipoCadastrante());
@@ -218,11 +218,11 @@ public class ExMobilController extends
 	public void aListar(final String popup, final String primeiraVez, final String propriedade, final Integer postback, final int apenasRefresh,
 			final Long ultMovIdEstadoDoc, final int ordem, final int visualizacao, final Integer ultMovTipoResp, final DpPessoaSelecao ultMovRespSel,
 			final DpLotacaoSelecao ultMovLotaRespSel, final Long orgaoUsu, final Long idTpDoc, final String dtDocString, final String dtDocFinalString,
-			final Long idTipoFormaDoc, final Integer forma, final Long idMod, final String anoEmissaoString, final String numExpediente,
-			final String numExtDoc, final CpOrgaoSelecao cpOrgaoSel, final String numAntigoDoc, final DpPessoaSelecao subscritorSel,
+			final Long idTipoFormaDoc, final Integer idFormaDoc, final Long idMod, final String anoEmissaoString, final String numExpediente,
+			final String numExtDoc, final CpOrgaoSelecao cpOrgaoSel, final String numAntigoDoc, final DpPessoaSelecao subscritorSel, String nmSubscritorExt,
 			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
-			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocument, final String fullText,
+			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
 			final Long ultMovEstadoDoc, final Integer paramoffset) {
 		assertAcesso("");
 		
@@ -284,7 +284,7 @@ public class ExMobilController extends
 		result.include("numExtDoc", numExtDoc);
 		result.include("cpOrgaoSel", builder.getCpOrgaoSel());
 		result.include("numAntigoDoc", numAntigoDoc);
-		result.include("nmSubscritor", null);
+		result.include("nmSubscritorExt", nmSubscritorExt);
 		result.include("subscritorSel", builder.getSubscritorSel());
 		result.include("listaTipoResp", this.getListaTipoResp());
 		result.include("tipoCadastrante", builder.getTipoCadastrante());
@@ -298,7 +298,7 @@ public class ExMobilController extends
 		result.include("lotacaoDestinatarioSel",
 				builder.getLotacaoDestinatarioSel());
 		result.include("nmDestinatario", nmDestinatario);
-		result.include("descrDocumento", descrDocument);
+		result.include("descrDocumento", descrDocumento);
 		result.include("visualizacao", visualizacao);
 		result.include("itemPagina", this.getItemPagina());
 		result.include("tamanho", this.getTamanho());
@@ -309,7 +309,7 @@ public class ExMobilController extends
 		result.include("fullText", fullText);
 		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 		result.include("idTipoFormaDoc", idTipoFormaDoc);
-		result.include("idFormaDoc", forma);
+		result.include("idFormaDoc", idFormaDoc);
 		result.include("idMod", idMod);		
 
 		if (visualizacao == 3 || visualizacao == 4) {

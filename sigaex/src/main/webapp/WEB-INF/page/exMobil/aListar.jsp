@@ -20,7 +20,7 @@
 	function alteraForma() {
 		ReplaceInnerHTMLFromAjaxResponse(
 				'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos?forma='
-						+ document.getElementById('forma').value
+						+ document.getElementById('idFormaDoc').value
 						+ '&idMod='
 						+ '${idMod}', null, document
 						.getElementById('comboModeloDiv'))
@@ -28,7 +28,6 @@
 
 	function sbmt(offset) {
 		if (offset == null) {
-			d
 			offset = 0;
 		}
 		listar["paramoffset"].value = offset;
@@ -160,17 +159,17 @@
 
 		switch (parseInt(ultMovTipoResp.value)) {
 		case 1:
-			document.getElementById('ultMovLotaRespSel_id').value = '';
-			document.getElementById('ultMovLotaRespSel_descricao').value = '';
-			document.getElementById('ultMovLotaRespSel_buscar').value = '';
-			document.getElementById('ultMovLotaRespSel_sigla').value = '';
+			document.getElementById('formulario_ultMovLotaRespSel_id').value = '';
+			document.getElementById('formulario_ultMovLotaRespSel_descricao').value = '';
+			document.getElementById('formulario_ultMovLotaRespSel_buscar').value = '';
+			document.getElementById('formulario_ultMovLotaRespSel_sigla').value = '';
 			document.getElementById('ultMovLotaRespSelSpan').innerHTML = '';
 			break;
 		case 2:
-			document.getElementById('ultMovRespSel_id').value = '';
-			document.getElementById('ultMovRespSel_descricao').value = '';
-			document.getElementById('ultMovRespSel_buscar').value = '';
-			document.getElementById('ultMovRespSel_sigla').value = '';
+			document.getElementById('formulario_ultMovRespSel_id').value = '';
+			document.getElementById('formulario_ultMovRespSel_descricao').value = '';
+			document.getElementById('formulario_ultMovRespSel_buscar').value = '';
+			document.getElementById('formulario_ultMovRespSel_sigla').value = '';
 			document.getElementById('ultMovRespSelSpan').innerHTML = '';
 			break;
 		}
@@ -179,17 +178,17 @@
 
 		switch (parseInt(tipoCadastrante.value)) {
 		case 1:
-			document.getElementById('lotaCadastranteSel_id').value = '';
-			document.getElementById('lotaCadastranteSel_descricao').value = '';
-			document.getElementById('lotaCadastranteSel_buscar').value = '';
-			document.getElementById('lotaCadastranteSel_sigla').value = '';
+			document.getElementById('formulario_lotaCadastranteSel_id').value = '';
+			document.getElementById('formulario_lotaCadastranteSel_descricao').value = '';
+			document.getElementById('formulario_lotaCadastranteSel_buscar').value = '';
+			document.getElementById('formulario_lotaCadastranteSel_sigla').value = '';
 			document.getElementById('lotaCadastranteSelSpan').innerHTML = '';
 			break;
 		case 2:
-			document.getElementById('cadastranteSel_id').value = '';
-			document.getElementById('cadastranteSel_descricao').value = '';
-			document.getElementById('cadastranteSel_buscar').value = '';
-			document.getElementById('cadastranteSel_sigla').value = '';
+			document.getElementById('formulario_cadastranteSel_id').value = '';
+			document.getElementById('formulario_cadastranteSel_descricao').value = '';
+			document.getElementById('formulario_cadastranteSel_buscar').value = '';
+			document.getElementById('formulario_cadastranteSel_sigla').value = '';
 			document.getElementById('cadastranteSelSpan').innerHTML = '';
 			break;
 		}
@@ -198,71 +197,71 @@
 
 		switch (parseInt(tipoDestinatario.value)) {
 		case 1:
-			document.getElementById('lotacaoDestinatarioSel_id').value = '';
-			document.getElementById('lotacaoDestinatarioSel_descricao').value = '';
-			document.getElementById('lotacaoDestinatarioSel_buscar').value = '';
-			document.getElementById('reqlotacaoDestinatarioSel').value = '';
-			document.getElementById('lotacaoDestinatarioSel_sigla').value = '';
+			document.getElementById('formulario_lotacaoDestinatarioSel_id').value = '';
+			document.getElementById('formulario_lotacaoDestinatarioSel_descricao').value = '';
+			document.getElementById('formulario_lotacaoDestinatarioSel_buscar').value = '';
+			document.getElementById('formulario_reqlotacaoDestinatarioSel').value = '';
+			document.getElementById('formulario_lotacaoDestinatarioSel_sigla').value = '';
 			document.getElementById('lotacaoDestinatarioSelSpan').innerHTML = '';
-			document.getElementById('orgaoExternoDestinatarioSel_id').value = '';
-			document.getElementById('orgaoExternoDestinatarioSel_descricao').value = '';
-			document.getElementById('orgaoExternoDestinatarioSel_buscar').value = '';
-			document.getElementById('reqorgaoExternoDestinatarioSel').value = '';
-			document.getElementById('orgaoExternoDestinatarioSel_sigla').value = '';
+			document.getElementById('formulario_orgaoExternoDestinatarioSel_id').value = '';
+			document.getElementById('formulario_orgaoExternoDestinatarioSel_descricao').value = '';
+			document.getElementById('formulario_orgaoExternoDestinatarioSel_buscar').value = '';
+			document.getElementById('formulario_reqorgaoExternoDestinatarioSel').value = '';
+			document.getElementById('formulario_orgaoExternoDestinatarioSel_sigla').value = '';
 			document.getElementById('orgaoExternoDestinatarioSelSpan').innerHTML = '';
 			document.getElementById('nmDestinatario').value = '';
 
 			break;
 		case 2:
-			document.getElementById('destinatarioSel_id').value = '';
-			document.getElementById('destinatarioSel_descricao').value = '';
-			document.getElementById('destinatarioSel_buscar').value = '';
-			document.getElementById('reqdestinatarioSel').value = '';
-			document.getElementById('destinatarioSel_sigla').value = '';
+			document.getElementById('formulario_destinatarioSel_id').value = '';
+			document.getElementById('formulario_destinatarioSel_descricao').value = '';
+			document.getElementById('formulario_destinatarioSel_buscar').value = '';
+			document.getElementById('formulario_reqdestinatarioSel').value = '';
+			document.getElementById('formulario_destinatarioSel_sigla').value = '';
 			document.getElementById('destinatarioSelSpan').innerHTML = '';
-			document.getElementById('orgaoExternoDestinatarioSel_id').value = '';
-			document.getElementById('orgaoExternoDestinatarioSel_descricao').value = '';
-			document.getElementById('orgaoExternoDestinatarioSel_buscar').value = '';
-			document.getElementById('reqorgaoExternoDestinatarioSel').value = '';
-			document.getElementById('orgaoExternoDestinatarioSel_sigla').value = '';
+			document.getElementById('formulario_orgaoExternoDestinatarioSel_id').value = '';
+			document.getElementById('formulario_orgaoExternoDestinatarioSel_descricao').value = '';
+			document.getElementById('formulario_orgaoExternoDestinatarioSel_buscar').value = '';
+			document.getElementById('formulario_reqorgaoExternoDestinatarioSel').value = '';
+			document.getElementById('formulario_orgaoExternoDestinatarioSel_sigla').value = '';
 			document.getElementById('orgaoExternoDestinatarioSelSpan').innerHTML = '';
 			document.getElementById('nmDestinatario').value = '';
 
 			break;
 		case 3:
-			document.getElementById('destinatarioSel_id').value = '';
-			document.getElementById('destinatarioSel_descricao').value = '';
-			document.getElementById('destinatarioSel_buscar').value = '';
-			document.getElementById('reqdestinatarioSel').value = '';
-			document.getElementById('destinatarioSel_sigla').value = '';
+			document.getElementById('formulario_destinatarioSel_id').value = '';
+			document.getElementById('formulario_destinatarioSel_descricao').value = '';
+			document.getElementById('formulario_destinatarioSel_buscar').value = '';
+			document.getElementById('formulario_reqdestinatarioSel').value = '';
+			document.getElementById('formulario_destinatarioSel_sigla').value = '';
 			document.getElementById('destinatarioSelSpan').innerHTML = '';
-			document.getElementById('lotacaoDestinatarioSel_id').value = '';
-			document.getElementById('lotacaoDestinatarioSel_descricao').value = '';
-			document.getElementById('lotacaoDestinatarioSel_buscar').value = '';
-			document.getElementById('reqlotacaoDestinatarioSel').value = '';
-			document.getElementById('lotacaoDestinatarioSel_sigla').value = '';
+			document.getElementById('formulario_lotacaoDestinatarioSel_id').value = '';
+			document.getElementById('formulario_lotacaoDestinatarioSel_descricao').value = '';
+			document.getElementById('formulario_lotacaoDestinatarioSel_buscar').value = '';
+			document.getElementById('formulario_reqlotacaoDestinatarioSel').value = '';
+			document.getElementById('formulario_lotacaoDestinatarioSel_sigla').value = '';
 			document.getElementById('lotacaoDestinatarioSelSpan').innerHTML = '';
 			document.getElementById('nmDestinatario').value = '';
 
 			break;
 		case 4:
-			document.getElementById('destinatarioSel_id').value = '';
-			document.getElementById('destinatarioSel_descricao').value = '';
-			document.getElementById('destinatarioSel_buscar').value = '';
-			document.getElementById('reqdestinatarioSel').value = '';
-			document.getElementById('destinatarioSel_sigla').value = '';
+			document.getElementById('formulario_destinatarioSel_id').value = '';
+			document.getElementById('formulario_destinatarioSel_descricao').value = '';
+			document.getElementById('formulario_destinatarioSel_buscar').value = '';
+			document.getElementById('formulario_reqdestinatarioSel').value = '';
+			document.getElementById('formulario_destinatarioSel_sigla').value = '';
 			document.getElementById('destinatarioSelSpan').innerHTML = '';
-			document.getElementById('lotacaoDestinatarioSel_id').value = '';
-			document.getElementById('lotacaoDestinatarioSel_descricao').value = '';
-			document.getElementById('lotacaoDestinatarioSel_buscar').value = '';
-			document.getElementById('reqlotacaoDestinatarioSel').value = '';
-			document.getElementById('lotacaoDestinatarioSel_sigla').value = '';
+			document.getElementById('formulario_lotacaoDestinatarioSel_id').value = '';
+			document.getElementById('formulario_lotacaoDestinatarioSel_descricao').value = '';
+			document.getElementById('formulario_lotacaoDestinatarioSel_buscar').value = '';
+			document.getElementById('formulario_reqlotacaoDestinatarioSel').value = '';
+			document.getElementById('formulario_lotacaoDestinatarioSel_sigla').value = '';
 			document.getElementById('lotacaoDestinatarioSelSpan').innerHTML = '';
-			document.getElementById('orgaoExternoDestinatarioSel_id').value = '';
-			document.getElementById('orgaoExternoDestinatarioSel_descricao').value = '';
-			document.getElementById('orgaoExternoDestinatarioSel_buscar').value = '';
-			document.getElementById('reqorgaoExternoDestinatarioSel').value = '';
-			document.getElementById('orgaoExternoDestinatarioSel_sigla').value = '';
+			document.getElementById('formulario_orgaoExternoDestinatarioSel_id').value = '';
+			document.getElementById('formulario_orgaoExternoDestinatarioSel_descricao').value = '';
+			document.getElementById('formulario_orgaoExternoDestinatarioSel_buscar').value = '';
+			document.getElementById('formulario_reqorgaoExternoDestinatarioSel').value = '';
+			document.getElementById('formulario_orgaoExternoDestinatarioSel_sigla').value = '';
 			document.getElementById('orgaoExternoDestinatarioSelSpan').innerHTML = '';
 
 			break;
@@ -274,29 +273,29 @@
 		case 0:
 			document.getElementById('numExtDoc').value = '';
 
-			document.getElementById('cpOrgaoSel_id').value = '';
-			document.getElementById('cpOrgaoSel_descricao').value = '';
-			document.getElementById('cpOrgaoSel_buscar').value = '';
-			document.getElementById('cpOrgaoSel_sigla').value = '';
+			document.getElementById('formulario_cpOrgaoSel_id').value = '';
+			document.getElementById('formulario_cpOrgaoSel_descricao').value = '';
+			document.getElementById('formulario_cpOrgaoSel_buscar').value = '';
+			document.getElementById('formulario_cpOrgaoSel_sigla').value = '';
 			document.getElementById('cpOrgaoSelSpan').innerHTML = '';
 			document.getElementById('numAntigoDoc').value = '';
 
 			break;
 		case 1:
 			document.getElementById('numExtDoc').value = '';
-			document.getElementById('cpOrgaoSel_id').value = '';
-			document.getElementById('cpOrgaoSel_descricao').value = '';
-			document.getElementById('cpOrgaoSel_buscar').value = '';
-			document.getElementById('cpOrgaoSel_sigla').value = '';
+			document.getElementById('formulario_cpOrgaoSel_id').value = '';
+			document.getElementById('formulario_cpOrgaoSel_descricao').value = '';
+			document.getElementById('formulario_cpOrgaoSel_buscar').value = '';
+			document.getElementById('formulario_cpOrgaoSel_sigla').value = '';
 			document.getElementById('cpOrgaoSelSpan').innerHTML = '';
 			document.getElementById('numAntigoDoc').value = '';
 
 			break;
 		case 2:
-			document.getElementById('cpOrgaoSel_id').value = '';
-			document.getElementById('cpOrgaoSel_descricao').value = '';
-			document.getElementById('cpOrgaoSel_buscar').value = '';
-			document.getElementById('cpOrgaoSel_sigla').value = '';
+			document.getElementById('formulario_cpOrgaoSel_id').value = '';
+			document.getElementById('formulario_cpOrgaoSel_descricao').value = '';
+			document.getElementById('formulario_cpOrgaoSel_buscar').value = '';
+			document.getElementById('formulario_cpOrgaoSel_sigla').value = '';
 			document.getElementById('cpOrgaoSelSpan').innerHTML = '';
 
 			break;
@@ -304,78 +303,6 @@
 			document.getElementById('idFormaDoc').value = '5';
 
 			break;
-		}
-
-		var count = 0;
-
-		if (document.getElementById('idTpDoc').value != 0)
-			count++;
-
-		if (document.getElementById('dtDocString').value != "")
-			count++;
-
-		if (document.getElementById('dtDocFinalString').value != "")
-			count++;
-
-		if (document.getElementById('idTipoFormaDoc').value != 0)
-			count++;
-
-		if (document.getElementById('idMod') != null
-				&& document.getElementById('idMod').value != 0)
-			count++;
-
-		if (document.getElementById('idFormaDoc').value != 0)
-			count++;
-
-		if (document.getElementById('anoEmissaoString').value != "")
-			count++;
-
-		if (document.getElementById('numExpediente').value != "")
-			count++;
-
-		if (document.getElementById('subscritorSel_id').value != "")
-			count++;
-
-		if (document.getElementById('cadastranteSel_id').value != "")
-			count++;
-
-		if (document.getElementById('lotaCadastranteSel_id').value != "")
-			count++;
-
-		if (document.getElementById('destinatarioSel_id').value != "")
-			count++;
-
-		if (document.getElementById('lotacaoDestinatarioSel_id').value != "")
-			count++;
-
-		if (document.getElementById('orgaoExternoDestinatarioSel_id').value != "")
-			count++;
-
-		if (document.getElementById('nmDestinatario').value != "")
-			count++;
-
-		if (document.getElementById('classificacaoSel_id').value != "")
-			count++;
-
-		if (document.getElementById('descrDocumento').value != "")
-			count++;
-
-		if (document.getElementById('fullText').value != "")
-			count++;
-
-		if (document.getElementById('ultMovIdEstadoDoc').value != 0)
-			count++;
-
-		if (document.getElementById('ultMovRespSel_id').value != "")
-			count++;
-
-		if (document.getElementById('ultMovLotaRespSel_id').value != "")
-			count++;
-
-		if (count < 2) {
-			alert('Esta pesquisa retornará muitos resultados. Favor restringi-la um pouco mais.');
-			descarrega();
-			return false;
 		}
 
 		return true;
@@ -671,8 +598,7 @@
 						</tr>
 						<tr>
 							<td>Situação:</td>
-							<td><select name="ultMovIdEstadoDoc"
-								onchange="javascript:sbmt();">
+							<td><select name="ultMovIdEstadoDoc">
 									<option value="0">[Todos]</option>
 									<c:forEach items="${estados}" var="item">
 										<option value="${item.idMarcador}"
@@ -740,7 +666,7 @@
 						</tr>
 						<tr>
 							<td>Origem:</td>
-							<td><select name="idTpDoc"
+							<td><select name="idTpDoc" id="idTpDoc"
 								onchange="javascript:alteraOrigem();">
 									<option value="0">[Todos]</option>
 									<c:forEach items="${tiposDocumento}" var="item">
@@ -749,32 +675,24 @@
 											${item.descrTipoDocumento}</option>
 									</c:forEach>
 							</select> &nbsp;&nbsp;&nbsp; Data Inicial: <input type="text"
-								name="dtDocString" value="${dtDocString}"
+								name="dtDocString" id="dtDocString" value="${dtDocString}"
 								onblur="javascript:verifica_data(this,0);" /> &nbsp; Data
-								Final: <input type="text" name="dtDocFinalString"
+								Final: <input type="text" name="dtDocFinalString" id="dtDocFinalString"
 								value="${dtDocFinalString}"
 								onblur="javascript:verifica_data(this,0);" /></td>
 						</tr>
 
-						<c:choose>
-							<c:when test="${tipoDocumento != 'externo'}">
-								<tr id="trTipo" style="display:">
-							</c:when>
-							<c:otherwise>
-								<tr id="trTipo" style="display: none">
-							</c:otherwise>
-						</c:choose>
-
-						<td>Espécie:</td>
-						<td><select id="tipoForma" name="idTipoFormaDoc"
-							onchange="javascript:alteraTipoDaForma();">
-								<option value="0">[Todos]</option>
-								<c:forEach items="${tiposFormaDoc}" var="item">
-									<option value="${item.idTipoFormaDoc}"
-										${item.idTipoFormaDoc == idTipoFormaDoc ? 'selected' : ''}>
-										${item.descTipoFormaDoc}</option>
-								</c:forEach>
-						</select> &nbsp;&nbsp;&nbsp;
+						<tr id="trTipo" style="display:${idTpDoc == 3 ? 'none' : ''}">
+							<td>Espécie:</td>
+							<td><select id="tipoForma" name="idTipoFormaDoc"
+								onchange="javascript:alteraTipoDaForma();">
+									<option value="0">[Todos]</option>
+									<c:forEach items="${tiposFormaDoc}" var="item">
+										<option value="${item.idTipoFormaDoc}"
+											${item.idTipoFormaDoc == idTipoFormaDoc ? 'selected' : ''}>
+											${item.descTipoFormaDoc}</option>
+									</c:forEach>
+							</select> &nbsp;&nbsp;&nbsp;
 							<div style="display: inline" id="comboFormaDiv">
 								<script type="text/javascript">
 									alteraTipoDaForma();
@@ -806,55 +724,29 @@
 								name="numExpediente" value="${numExpediente}" maxlength="6" /></td>
 						</tr>
 
-						<c:choose>
-							<c:when
-								test='${tipoDocumento == "externo" || tipoDocumento == "antigo"}'>
-								<tr id="trNumOrigDoc" style="display:">
-							</c:when>
-							<c:otherwise>
-								<tr id="trNumOrigDoc" style="display: none">
-							</c:otherwise>
-						</c:choose>
+						<tr id="trNumOrigDoc" style="display:${idTpDoc == 2 || idTpDoc == 3 ? '' : 'none'}">
+							<td class="tdLabel">
+									Nº Original do Documento: </td>
+							<td><input type="text" name="numExtDoc" value="${numExtDoc}"
+								size="16" value="" id="numExtDoc" /></td>
+						</tr>
 
-						<td class="tdLabel"><label for="numExtDoc" class="label">
-								Nº Original do Documento: </label></td>
-						<td><input type="text" name="numExtDoc" value="${numExtDoc}"
-							size="16" value="" id="numExtDoc" /></td>
+						<tr id="trOrgExterno" style="display:${idTpDoc == 3 ? '' : 'none'}">
+							<td>Órgão Externo:</td>
+							<td><siga:selecao propriedade="cpOrgao" modulo="siga"
+									titulo="Órgão Externo" tema="simple" /></td>
+						</tr>
+
+						<tr id="trNumDocSistAntigo" style="display:${idTpDoc == 3 ? '' : 'none'}">
+							<td class="tdLabel">
+									Nº do Documento no Sistema Antigo: </td>
+							<td><input type="text" name="numAntigoDoc"
+								value="${numAntigoDoc}" size="16" value="" id="numAntigoDoc" />
+							</td>
 						</tr>
 
 						<c:choose>
-							<c:when test='${tipoDocumento == "externo"}'>
-								<tr id="trOrgExterno" style="display:">
-							</c:when>
-							<c:otherwise>
-								<tr id="trOrgExterno" style="display: none">
-							</c:otherwise>
-						</c:choose>
-
-						<td>Órgão Externo:</td>
-						<td><siga:selecao propriedade="cpOrgao" modulo="siga"
-								titulo="Órgão Externo" tema="simple" /></td>
-						</tr>
-
-						<c:choose>
-							<c:when
-								test='${tipoDocumento == "externo" || tipoDocumento == "antigo"}'>
-								<tr id="trNumDocSistAntigo" style="display:">
-							</c:when>
-							<c:otherwise>
-								<tr id="trNumDocSistAntigo" style="display: none">
-							</c:otherwise>
-						</c:choose>
-
-						<td class="tdLabel"><label for="numAntigoDoc" class="label">
-								Nº do Documento no Sistema Antigo: </label></td>
-						<td><input type="text" name="numAntigoDoc"
-							value="${numAntigoDoc}" size="16" value="" id="numAntigoDoc" />
-						</td>
-						</tr>
-
-						<c:choose>
-							<c:when test="${tipoDocumento == 'externo'}">
+							<c:when test="${idTpDoc == 3}">
 								<tr>
 									<td>Subscritor:</td>
 									<td><input type="text" label="Subscritor"
@@ -914,83 +806,23 @@
 												${item.value}</option>
 										</c:forEach>
 									</select>
-								</div> <c:choose>
-									<c:when test='${tipoDestinatario == 1}'>
-										<div id="divDestinatario" style="display:">
-											<siga:selecao propriedade="destinatario" tema="simple"
+								</div> 
+								<div id="divDestinatario" style="display:${tipoDestinatario == 1 ? '':'none'}">
+										<siga:selecao propriedade="destinatario" tema="simple"
 												paramList="buscarFechadas=true" modulo="siga" />
-										</div>
-										<div id="divLotaDestinatario" style="display: none">
-											<siga:selecao propriedade="lotacaoDestinatario" tema="simple"
+								</div>
+								<div id="divLotaDestinatario" style="display: ${tipoDestinatario == 2 ? '':'none'}">
+									<siga:selecao propriedade="lotacaoDestinatario" tema="simple"
 												paramList="buscarFechadas=true" modulo="siga" />
-										</div>
-										<div id="divOrgaoExternoDestinatario" style="display: none">
-											<siga:selecao propriedade="orgaoExternoDestinatario"
+								</div>
+								<div id="divOrgaoExternoDestinatario" style="display: ${tipoDestinatario == 3 ? '':'none'}">
+									<siga:selecao propriedade="orgaoExternoDestinatario"
 												tema="simple" modulo="siga" />
-										</div>
-										<div id="divNmDestinatario" style="display: none">
-											<input type="text" name="nmDestinatario"
-												value="${nmDestinatario}" size="80" />
-										</div>
-									</c:when>
-									<c:when test='${tipoDestinatario == 2}'>
-										<div id="divDestinatario" style="display: none">
-											<siga:selecao propriedade="destinatario" tema="simple"
-												paramList="buscarFechadas=true" modulo="siga" />
-										</div>
-										<div id="divLotaDestinatario" style="display:">
-											<siga:selecao propriedade="lotacaoDestinatario" tema="simple"
-												paramList="buscarFechadas=true" modulo="siga" />
-										</div>
-										<div id="divOrgaoExternoDestinatario" style="display: none">
-											<siga:selecao propriedade="orgaoExternoDestinatario"
-												tema="simple" modulo="siga" />
-										</div>
-										<div id="divNmDestinatario" style="display: none">
-											<input type="text" name="nmDestinatario"
-												value="${nmDestinatario}" size="80" />
-										</div>
-
-									</c:when>
-									<c:when test='${tipoDestinatario == 3}'>
-										<div id="divDestinatario" style="display: none">
-											<siga:selecao propriedade="destinatario" tema="simple"
-												paramList="buscarFechadas=true" modulo="siga" />
-										</div>
-										<div id="divLotaDestinatario" style="display: none">
-											<siga:selecao propriedade="lotacaoDestinatario" tema="simple"
-												paramList="buscarFechadas=true" modulo="siga" />
-										</div>
-										<div id="divOrgaoExternoDestinatario" style="display:">
-											<siga:selecao propriedade="orgaoExternoDestinatario"
-												tema="simple" modulo="siga" />
-										</div>
-										<div id="divNmDestinatario" style="display: none">
-											<input type="text" name="nmDestinatario"
-												value="${nmDestinatario}" size="80" />
-										</div>
-
-									</c:when>
-									<c:otherwise>
-										<div id="divDestinatario" style="display: none">
-											<siga:selecao propriedade="destinatario" tema="simple"
-												paramList="buscarFechadas=true" modulo="siga" />
-										</div>
-										<div id="divLotaDestinatario" style="display: none">
-											<siga:selecao propriedade="lotacaoDestinatario" tema="simple"
-												paramList="buscarFechadas=true" modulo="siga" />
-										</div>
-										<div id="divOrgaoExternoDestinatario" style="display: none">
-											<siga:selecao propriedade="orgaoExternoDestinatario"
-												tema="simple" modulo="siga" />
-										</div>
-										<div id="divNmDestinatario" style="display:">
-											<input type="text" name="nmDestinatario"
-												value="${nmDestinatario}" size="80" />
-										</div>
-
-									</c:otherwise>
-								</c:choose>
+								</div>
+								<div id="divNmDestinatario" style="display: ${tipoDestinatario == 4 ? '':'none'}">
+									<input type="text" name="nmDestinatario" id="nmDestinatario"
+										value="${nmDestinatario}" size="80" />
+								</div>
 							</td>
 						</tr>
 						<siga:selecao titulo="Classificação:" propriedade="classificacao"

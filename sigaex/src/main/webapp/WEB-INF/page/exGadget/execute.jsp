@@ -124,7 +124,7 @@ submitOk = function() {
 					<tr>
 						<td>
 							<siga:monolink titulo="${titulo1}" texto="${listEstado[1]}"
-								href="${pageContext.request.contextPath}/app/expediente/doc/listar?ultMovIdEstadoDoc=${listEstado[0]}&ultMovLotaRespSel.id=${lotaTitular.idLotacao}&orgaoUsu=0&idTipoFormaDoc=${idTipoFormaDoc}&ordem=${ordem}&visualizacao=${visualizacao}" />
+								href="${pageContext.request.contextPath}/app/expediente/doc/listar?ultMovIdEstadoDoc=${listEstado[0]}&ultMovLotaRespSel.id=${lotaTitular.idLotacao}&orgaoUsu=0&idTipoFormaDoc=${idTpFormaDoc}&ordem=${ordem}&visualizacao=${visualizacao}" />
 						<td align="right" class="count">
 							<siga:monolink titulo="${titulo2}" texto="${listEstado[2]}"
 								href="${pageContext.request.contextPath}/app/expediente/doc/listar?ultMovIdEstadoDoc=${listEstado[0]}&ultMovRespSel.id=${titular.idPessoa}&orgaoUsu=0&idTipoFormaDoc=${idTpFormaDoc}&ordem=${ordem}&visualizacao=${visualizacao}" />

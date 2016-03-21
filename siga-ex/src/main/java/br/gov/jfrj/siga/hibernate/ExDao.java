@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,9 +36,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
@@ -61,6 +58,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.jdbc.Work;
@@ -324,7 +322,12 @@ public class ExDao extends CpDao {
 			query.setString("nmDestinatario", "%" + flt.getNmDestinatario()
 					+ "%");
 		}
-
+		
+		if (flt.getOrgaoExternoDestinatarioSelId() != null
+				&& flt.getOrgaoExternoDestinatarioSelId() != 0) {
+			query.setLong("orgaoExternoDestinatarioSelId", flt.getOrgaoExternoDestinatarioSelId());
+		}
+		
 		if (flt.getCadastranteSelId() != null && flt.getCadastranteSelId() != 0) {
 			query.setLong("cadastranteSelId", flt.getCadastranteSelId());
 		}
@@ -351,7 +354,7 @@ public class ExDao extends CpDao {
 		}
 
 		if (flt.getNumExtDoc() != null && !flt.getNumExtDoc().trim().equals("")) {
-			query.setString("numExtDoc", "%" + flt.getNumExtDoc() + "%");
+			query.setString("numExtDoc", "%" + flt.getNumExtDoc().toUpperCase() + "%");
 		}
 
 		if (flt.getIdMod() != null && flt.getIdMod() != 0) {

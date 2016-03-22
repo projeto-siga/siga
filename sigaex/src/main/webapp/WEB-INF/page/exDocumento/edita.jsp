@@ -173,9 +173,11 @@
 							<td>
 								<input type="text" name="exDocumentoDTO.numExtDoc" size="32" maxLength="32" value="${exDocumentoDTO.numExtDoc}"/>
 							</td>
-							<td align="right">Órgão:</td>
+						</tr>
+						<tr>
+							<td>Órgão:</td>
 							<input type="hidden" name="campos" value="cpOrgaoSel.id" />
-							<td>
+							<td colspan="3">
 								<siga:selecao propriedade="cpOrgao" inputName="exDocumentoDTO.cpOrgao" tema="simple" modulo="siga"/>
 							</td>
 						</tr>

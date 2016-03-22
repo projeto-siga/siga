@@ -504,7 +504,7 @@ $(document).ready(function() {$('.dependent').dependentSelects({
 		  sbmt();
 		  },
 	  "class": false, // String: Add an extra class to all sub selects
-	  labels: [" "] // Array of strings: The text used for the sub select boxes' labels. Label element is
+	  labels: false // Array of strings: The text used for the sub select boxes' labels. Label element is
 	                // inserted before sub select.
 	});});
 // window.customOnsubmit = function() {return true;};

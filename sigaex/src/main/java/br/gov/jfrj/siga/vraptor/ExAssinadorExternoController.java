@@ -57,11 +57,10 @@ public class ExAssinadorExternoController extends ExController {
 	public void assinadorExternoList(String certificate, String time,
 			String proof) throws Exception {
 		try {
-			String servidor = SigaBaseProperties.getString("siga.ex."
-					+ SigaBaseProperties.getString("ambiente") + ".url");
-
 			JSONObject req = getJsonReq(request);
-			String sCpf = req.optString("cpf");
+
+			String urlapi = req.getString("urlapi");
+			String sCpf = req.getString("cpf");
 
 			Long cpf = Long.valueOf(sCpf);
 			DpPessoa pes = dao().consultarPorCpf(cpf);
@@ -77,12 +76,8 @@ public class ExAssinadorExternoController extends ExController {
 					aei.setId(ass.getDoc().getCodigoCompacto());
 					aei.setCode(ass.getDoc().getCodigo());
 					aei.setDescr(ass.getDoc().getDescrDocumento());
-					aei.setUrlHash(servidor
-							+ "/sigaex/public/app/assinador-externo/hash/"
-							+ aei.getId());
-					aei.setUrlSave(servidor
-							+ "/sigaex/public/app/assinador-externo/save/"
-							+ aei.getId());
+					aei.setUrlHash(urlapi + "/hash/" + aei.getId());
+					aei.setUrlSave(urlapi + "/save/" + aei.getId());
 					list.add(aei);
 				}
 				if (ass.getMovs() == null)
@@ -94,12 +89,8 @@ public class ExAssinadorExternoController extends ExController {
 							.getCodigoCompacto()
 							+ ":" + assmov.getMov().getIdMov());
 					aei.setDescr(assmov.getMov().getDescrMov());
-					aei.setUrlHash(servidor
-							+ "/sigaex/public/app/assinador-externo/hash/"
-							+ aei.getId());
-					aei.setUrlSave(servidor
-							+ "/sigaex/public/app/assinador-externo/save/"
-							+ aei.getId());
+					aei.setUrlHash(urlapi + "/hash/" + aei.getId());
+					aei.setUrlSave(urlapi + "/save/" + aei.getId());
 					list.add(aei);
 				}
 			}
@@ -142,8 +133,8 @@ public class ExAssinadorExternoController extends ExController {
 			ExAssinadorExternoHash resp = new ExAssinadorExternoHash();
 
 			// Alterado para forçar PKCS7
-//			resp.setPolicy("PKCS7");
-//			resp.setDoc(BlucService.bytearray2b64(pdf));
+			// resp.setPolicy("PKCS7");
+			// resp.setDoc(BlucService.bytearray2b64(pdf));
 			resp.setSha1(BlucService.bytearray2b64(BlucService.calcSha1(pdf)));
 			resp.setSha256(BlucService.bytearray2b64(BlucService
 					.calcSha256(pdf)));

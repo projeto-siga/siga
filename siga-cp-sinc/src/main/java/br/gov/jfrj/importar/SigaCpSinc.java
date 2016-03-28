@@ -487,6 +487,7 @@ public class SigaCpSinc {
 
 		log(" ---- Fim do Processamento --- ");
 		logEnd();
+		CacheManager.getInstance().shutdown();
 	}
 
 	private void desativarCacheDeSegundoNivel() throws Exception {
@@ -564,7 +565,6 @@ public class SigaCpSinc {
 		}
 		long total = (System.currentTimeMillis()-inicio)/1000;
 		log("Tempo total de execução: " + total + " segundos (" + total/60 +" min)" );
-		CacheManager.getInstance().shutdown();
 	}
 
 	private void logComDestaque(String msg) {

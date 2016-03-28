@@ -26,12 +26,6 @@ public class SrViewUtil {
 		return sb.toString();
 	}
 	
-	public static String replaceSiglas(String s){
-		return s.replaceAll("\\b\\w{2,4}-GC-\\d{4}/\\d{5}\\b", 
-				"<a href=\"/sigagc/app/exibir?sigla=$0\">$0</a>");
-		
-	}
-	
 	public static String botaoRemoverSolicitacao(String sigla, Long idLista) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<a onclick=\"javascript: return block();\" href=\"/sigasr/app/solicitacao/retirarDeLista?sigla=");

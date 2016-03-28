@@ -68,9 +68,20 @@
 				</p>
 				<p id="descrSolicitacao" style="font-size: 9pt;">${solicitacao.descricao}</p>
 				<script language="javascript">
-					var descricao = document.getElementById('descrSolicitacao');
-					descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g,
-							'<br />');
+					function parseDescricao(id){
+						var descricao = document.getElementById(id);
+						descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
+						descricao.innerHTML = descricao.innerHTML.replace(/(\w{2,4}\-(GC|SR)\-\d{4}\/\d{5}(?:\.\d{2})?)/g, function(a, b, c){
+							if (c.toLowerCase() == 'sr')
+								return '<a href=\'/sigasr/app/solicitacao/exibir/'+ a.replace('/','') + '\'>' + a + '</a>';
+							else
+								return '<a href=\'/sigagc/app/exibir/' + a.replace('/','') + '\'>' + a + '</a>';;
+						});
+						descricao.innerHTML = descricao.innerHTML.replace(/(https?:\/\/.*?(?=[.,;""''?!)]*$|[.,;""''?!)]*[\s\n]))/g, function(a, b){
+							return '<a href="' + b + '">' + b + '</a>' + a.replace(b, '');
+						});
+					}
+					parseDescricao('descrSolicitacao');
 				</script>
 				<c:forEach items="${solicitacao.atributoSolicitacaoSet}" var="att">
 					<c:if
@@ -288,8 +299,7 @@
 											</c:choose>
 										</td>
 										<script language="javascript">
-											var descricao = document.getElementById('descrMovimentacaoTexto${movimentacao.idMovimentacao}');
-											descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
+											parseDescricao('descrMovimentacaoTexto${movimentacao.idMovimentacao}');
 										</script>
 									</tr>
 								</c:forEach>

@@ -773,22 +773,6 @@ public class Documento {
 			}
 		}
 
-		for (ExArquivoNumerado an : ans) {
-
-			// byte[] ab = getPdf(docvia, an.getArquivo(), an.getNumVia(),
-			// an
-			// .getPaginaInicial(), an.getPaginaFinal(), request);
-
-			String sigla = mob.getSigla();
-			if (an.getArquivo() instanceof ExMovimentacao) {
-				ExMovimentacao m = (ExMovimentacao) an.getArquivo();
-				if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
-					sigla = m.getExMobil().getSigla();
-			} else {
-				return ans.get(0).getArquivo().getPdf();
-			}
-		}
-
 		try {
 			for (ExArquivoNumerado an : ans) {
 

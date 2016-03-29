@@ -109,7 +109,7 @@
 										</c:forEach>
 										<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
 											<input type="hidden" name="pdf${x}" value="${mov.mov.referencia}" />
-											<input type="hidden" name="url${x}" value="${mov.mov.nmPdf}" />
+											<input type="hidden" name="url${x}" value="/app/arquivo/exibir?arquivo=${mov.mov.nmPdf}" />
 										</c:if>
 									</siga:links></td>
 								</tr>
@@ -119,9 +119,9 @@
 			</form>
 	    </div>
 		<div id="dados-assinatura" style="visible: hidden">
-	    <c:set var="jspServer" value="${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
-			<c:set var="nextURL" value="${request.contextPath}/app/expediente/doc/atualizar_marcas?sigla=${mobilVO.sigla}" />
-		  <c:set var="urlPath" value="${request.contextPath}" />
+	    <c:set var="jspServer" value="${pageContext.request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
+			<c:set var="nextURL" value="${pageContext.request.contextPath}/app/expediente/doc/atualizar_marcas?sigla=${mobilVO.sigla}" />
+		  <c:set var="urlPath" value="${pageContext.request.contextPath}" />
 
 	   	<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />
 			<input type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" />

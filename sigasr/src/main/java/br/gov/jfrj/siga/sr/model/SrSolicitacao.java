@@ -1437,10 +1437,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	SortedSet<SrOperacao> operacoes = new TreeSet<SrOperacao>() {
     		@Override
 			public boolean add(SrOperacao e) {
-				// Edson: serÃ¯Â¿Â½ que essas coisas poderiam estar dentro do
-				// SrOperacao?
-				if (!e.isModal())
-					e.setUrl("../" + e.getUrl() + "?sigla="+getSiglaCompacta() + e.getParamsFormatted());
+    			if (!e.isModal())
+    				e.par("sigla", getSiglaCompacta());
 				if (!e.isPode())
 					return false;
 				return super.add(e);

@@ -1101,7 +1101,8 @@ public class ExMovimentacaoController extends ExController {
 					.setLotaResponsavelSel(lotaResponsavelSel)
 					.setResponsavelSel(responsavelSel)
 					.setDtDevolucaoMovString(dtDevolucaoMovString)
-					.setCpOrgaoSel(cpOrgaoSel).setObsOrgao(obsOrgao);
+					.setCpOrgaoSel(cpOrgaoSel).setObsOrgao(obsOrgao)
+					.setCadastrante(getCadastrante());
 			mov = movimentacaoBuilder.construir(dao());
 		}
 

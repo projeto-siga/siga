@@ -100,8 +100,8 @@ var providerLocalhostREST = {
 					text : "application/json"
 				},
 				success : function(data, textStatus, XMLHttpRequest) {
-					if (data.errormsg != null)
-						throw data.errormsg;
+					if (data.error != null)
+						throw data.error;
 				},
 				error : function(jqXHR, textStatus, errorThrown) {
 					throw textStatus + ": " + errorThrown;
@@ -129,8 +129,8 @@ var providerLocalhostREST = {
 					text : "application/json"
 				},
 				success : function(data, textStatus, XMLHttpRequest) {
-					if (data.errormsg != null)
-						ret = data.errormsg;
+					if (data.error != null)
+						ret = data.error;
 					else
 						gCertificadoB64 = data.certificate;
 				},

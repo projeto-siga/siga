@@ -224,8 +224,10 @@ public abstract class ModeloDao {
 		for (final Criterion c : criterion) {
 			crit.add(c);
 		}
-		for (final Order o : order) {
-			crit.addOrder(o);
+		if(order != null){
+			for (final Order o : order) {
+				crit.addOrder(o);
+			}
 		}
 		if (cacheRegion != null) {
 			crit.setCacheable(true);

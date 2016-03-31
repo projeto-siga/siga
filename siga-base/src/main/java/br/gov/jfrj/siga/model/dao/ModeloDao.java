@@ -221,8 +221,10 @@ public abstract class ModeloDao {
 	protected <T> List<T> findAndCacheByCriteria(String cacheRegion, Class<T> clazz,
 			final Criterion[] criterion, Order[] order) {
 		final Criteria crit = getSessao().createCriteria(clazz);
-		for (final Criterion c : criterion) {
-			crit.add(c);
+		if (criterion != null){
+			for (final Criterion c : criterion) {
+				crit.add(c);
+			}
 		}
 		if(order != null){
 			for (final Order o : order) {

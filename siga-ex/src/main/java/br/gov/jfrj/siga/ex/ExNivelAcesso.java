@@ -45,6 +45,14 @@ public class ExNivelAcesso extends AbstractExNivelAcesso implements
 	public static final long NIVEL_ACESSO_ENTRE_LOTACOES = 60;
 
 	public static final long NIVEL_ACESSO_PESSOAL = 100;
+	
+	public static final long ID_LIMITADO_AO_ORGAO = 1;
+	public static final long ID_LIMITADO_SUBSEC_PARA_PESSOA = 2;
+	public static final long ID_LIMITADO_ENTRE_LOTACOES = 3;
+	// ID 4 - NÃO MAPEADO
+	public static final long ID_LIMITADO_ENTRE_PESSOAS = 5;
+	public static final long ID_PUBLICO = 6;
+	public static final long ID_LIMITADO_PESSOA_PARA_SUBSEC = 7;
 
 	public ExNivelAcesso() {
 	}

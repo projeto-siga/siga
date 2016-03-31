@@ -83,6 +83,7 @@ public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltro
 				CpMarcador.MARCADOR_PUBLICACAO_SOLICITADA,
 				CpMarcador.MARCADOR_PUBLICADO,
 				CpMarcador.MARCADOR_REMETIDO_PARA_PUBLICACAO,
+				CpMarcador.MARCADOR_REVISAR,
 				CpMarcador.MARCADOR_SEM_EFEITO,
 				CpMarcador.MARCADOR_SOBRESTADO, 
 				CpMarcador.MARCADOR_TRANSFERIDO_A_ORGAO_EXTERNO

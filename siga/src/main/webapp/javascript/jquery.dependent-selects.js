@@ -283,7 +283,7 @@
         }
       });
       name = $select.attr('name');
-      selectChange($select);
+      //selectChange($select);-- comentado por conta da issue #721
       return $select.off('change').on('change', function() {
         return selectChange($select);
       });

@@ -291,7 +291,11 @@ public class SubstituicaoController extends SigaController {
 		} catch (Exception e) {
 			dao().rollbackTransacao();
 		}
-		result.redirectTo("/");
+		String referer = getRequest().getHeader("Referer");
+		if (referer != null)
+			result.redirectTo(referer);
+		else
+			result.redirectTo(PrincipalController.class).principal();
 	}	
 	
 	private void gravarFinalizar() {
@@ -338,7 +342,11 @@ public class SubstituicaoController extends SigaController {
 			e.printStackTrace();
 			dao().rollbackTransacao();
 		}
-		result.redirectTo("/");
+		String referer = getRequest().getHeader("Referer");
+		if (referer != null)
+			result.redirectTo(referer);
+		else
+			result.redirectTo(PrincipalController.class).principal();
 	}	
 	
 	public void exclui(Long id) throws Exception {

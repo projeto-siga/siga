@@ -203,12 +203,14 @@ public abstract class ModeloDao {
 	protected <T> List<T> findByCriteria(Class<T> clazz,
 			final Criterion[] criterion, Order[] order) {
 		final Criteria crit = getSessao().createCriteria(clazz);
-		for (final Criterion c : criterion) {
-			crit.add(c);
-		}
-		for (final Order o : order) {
-			crit.addOrder(o);
-		}
+		if (criterion != null)
+			for (final Criterion c : criterion) {
+				crit.add(c);
+			}
+		if (order != null)
+			for (final Order o : order) {
+				crit.addOrder(o);
+			}
 		return crit.list();
 	}
 	
@@ -221,16 +223,14 @@ public abstract class ModeloDao {
 	protected <T> List<T> findAndCacheByCriteria(String cacheRegion, Class<T> clazz,
 			final Criterion[] criterion, Order[] order) {
 		final Criteria crit = getSessao().createCriteria(clazz);
-		if (criterion != null){
+		if (criterion != null)
 			for (final Criterion c : criterion) {
 				crit.add(c);
 			}
-		}
-		if(order != null){
+		if (order != null)
 			for (final Order o : order) {
 				crit.addOrder(o);
 			}
-		}
 		if (cacheRegion != null) {
 			crit.setCacheable(true);
 			crit.setCacheRegion(cacheRegion);

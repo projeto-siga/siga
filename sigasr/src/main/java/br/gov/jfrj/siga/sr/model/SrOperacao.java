@@ -120,6 +120,11 @@ public class SrOperacao implements Comparable<SrOperacao> {
 	public void setParams(Map<String, Object> params) {
 		this.params = params;
 	}
+	
+	public SrOperacao par(String par, String value){
+		getParams().put(par, value);
+		return this;
+	}
 
 	public boolean isPopup() {
         return params.containsKey("popup");
@@ -135,6 +140,10 @@ public class SrOperacao implements Comparable<SrOperacao> {
 
     public String getUrl() {
         return this.url;
+    }
+    
+    public String getUrlComParams(){
+    	return getUrl() + "?" + getParamsFormatted();
     }
 
     @Override

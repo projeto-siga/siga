@@ -358,7 +358,7 @@
 							<li>
 								<a
 								href="javascript:popitup('${pageContext.request.contextPath}/app/expediente/mov/exibir?id=
-								${m.sigla}&popup=true')"
+								${naoAssinado.idMov}&popup=true')"
 								title="${naoAssinado.descricao}" style="text-decoration: none">
 									${naoAssinado.mov.nmArqMov} </a>
 							</li>

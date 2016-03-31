@@ -168,11 +168,11 @@ public class PrincipalController extends SigaController {
 			}
 		} else {
 			// Pessoas
-			lurls.add(urlBase + "/siga/app/pessoa/selecionar?sigla=" + sigla
+			lurls.add(urlBase + "/siga/public/app/pessoa/selecionar?sigla=" + sigla
 					+ incluirMatricula + ";/siga/app/pessoa/exibir?sigla=");
 
 			// Lotacoes
-			lurls.add(urlBase + "/siga/app/lotacao/selecionar?sigla=" + sigla
+			lurls.add(urlBase + "/siga/public/app/lotacao/selecionar?sigla=" + sigla
 					+ incluirMatricula + ";/siga/app/lotacao/exibir?sigla=");
 		}
 
@@ -187,7 +187,7 @@ public class PrincipalController extends SigaController {
 			}
 
 			if (response == null
-					|| (response.length == 1 && Integer.valueOf(response[0]) == 0))
+					|| (response.length == 1 && (response[0].equals("") || Integer.valueOf(response[0]) == 0)))
 				continue;
 
 			sel.setId(Long.valueOf(response[1]));

@@ -62,6 +62,9 @@ public class ExAssinadorExternoController extends ExController {
 			String urlapi = req.getString("urlapi");
 			String sCpf = req.getString("cpf");
 
+			String permalink = urlapi.split("sigaex/public/app/")[0]
+					+ "siga/permalink/";
+
 			Long cpf = Long.valueOf(sCpf);
 			DpPessoa pes = dao().consultarPorCpf(cpf);
 			if (pes == null)
@@ -76,6 +79,7 @@ public class ExAssinadorExternoController extends ExController {
 					aei.setId(ass.getDoc().getCodigoCompacto());
 					aei.setCode(ass.getDoc().getCodigo());
 					aei.setDescr(ass.getDoc().getDescrDocumento());
+					aei.setUrlView(permalink + ass.getDoc().getReferencia());
 					aei.setUrlHash(urlapi + "/hash/" + aei.getId());
 					aei.setUrlSave(urlapi + "/save/" + aei.getId());
 					list.add(aei);
@@ -89,6 +93,7 @@ public class ExAssinadorExternoController extends ExController {
 							.getCodigoCompacto()
 							+ ":" + assmov.getMov().getIdMov());
 					aei.setDescr(assmov.getMov().getDescrMov());
+					aei.setUrlView(permalink + assmov.getMov().getReferencia());
 					aei.setUrlHash(urlapi + "/hash/" + aei.getId());
 					aei.setUrlSave(urlapi + "/save/" + aei.getId());
 					list.add(aei);

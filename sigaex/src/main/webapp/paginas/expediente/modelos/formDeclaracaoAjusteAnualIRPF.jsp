@@ -7,7 +7,7 @@
 
 		<mod:grupo titulo="">
 			<mod:selecao titulo="Declaração de ajuste anual de IRPF referente à" var="periodo"
-				opcoes="2012/2013;2013/2014;2014/2015" />
+				opcoes="2012/2013;2013/2014;2014/2015;2015/2016;2016/2017;2017/2018;2018/2019;2019/2020" />
 		</mod:grupo>
 		
 		<mod:grupo titulo="Caso não tenha declarado bens à Receita Federal, favor marcar uma das opções abaixo:">	

@@ -114,9 +114,9 @@ public class ExAssinadorExternoController extends ExController {
 	public void assinadorExternoHash(String sigla) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
-			String certificate = req.optString("certificate");
-			String time = req.optString("time");
-			String proof = req.optString("proof");
+			String certificate = req.optString("certificate", null);
+			String time = req.optString("time", null);
+			String proof = req.optString("proof", null);
 
 			byte[] pdf = null;
 
@@ -138,8 +138,8 @@ public class ExAssinadorExternoController extends ExController {
 			ExAssinadorExternoHash resp = new ExAssinadorExternoHash();
 
 			// Alterado para forçar PKCS7
-			// resp.setPolicy("PKCS7");
-			// resp.setDoc(BlucService.bytearray2b64(pdf));
+//			resp.setPolicy("PKCS7");
+//			resp.setDoc(BlucService.bytearray2b64(pdf));
 			resp.setSha1(BlucService.bytearray2b64(BlucService.calcSha1(pdf)));
 			resp.setSha256(BlucService.bytearray2b64(BlucService
 					.calcSha256(pdf)));
@@ -157,9 +157,9 @@ public class ExAssinadorExternoController extends ExController {
 			String envelope = req.getString("envelope");
 			String certificate = req.getString("certificate");
 			String time = req.getString("time");
-			String subject = req.optString("subject");
-			String cpf = req.optString("cpf");
-			String cn = req.optString("cn");
+			String subject = req.optString("subject", null);
+			String cpf = req.optString("cpf", null);
+			String cn = req.optString("cn", null);
 
 			byte[] assinatura = Base64.decode(envelope);
 			byte[] certificado = Base64.decode(certificate);

@@ -5,27 +5,12 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
-<c:set var="gravidade_normal">
-    <%=SrGravidade.NORMAL.name()%>
-</c:set>
-
-<c:set var="sem_gravidade">
-    <%=SrGravidade.SEM_GRAVIDADE.name()%>
-</c:set>
-
-<c:set var="prioridade_baixo">
-    <%=SrPrioridade.BAIXO.name()%>
-</c:set>
-
-<c:set var="prioridade_desc">
-    <%=SrPrioridade.BAIXO.getDescPrioridade()%>
-</c:set>
-
 <siga:pagina titulo="Cadastro de Solicitação">
 	<jsp:include page="../main.jsp"></jsp:include>
 	
 	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
 	<script src="/sigasr/javascripts/cronometro.js"></script>
+	<script src="/siga/javascript/localStorage.js"></script>
 	
 	<style>
 	.barra-subtitulo {
@@ -51,11 +36,16 @@
 	
 	<script>
 		var item_default = "";
+		var IDENTIFICADOR = "sigasr/app/solicitacao/editar"; 
+		var SEPARADOR = "-"
+		
 		jQuery(document).ready(function($) {
 			$('#gravar').click(function() {
 				if ($('#siglaCadastrante').val() != $('#formulario_solicitacaosolicitante_sigla')[0].value) {
 					var stringDt= $('#calendarioComunicacao').val() + ' ' + $('#horarioComunicacao').val();
 					$('#stringDtMeioContato').val(stringDt);
+					$("#isDirty").val("true");
+					salvarNoLocalStorage();
 				} 
 			}); 
 	
@@ -68,6 +58,10 @@
 			});
 			//inicializa valores default para serem usados na function valorInputMudou()
 			item_default = $("#formulario_solicitacaoitemConfiguracao_id").val();
+
+			$('#prioridade').text($('#gravidade option:selected').attr('prioridade'));
+
+			recuperarDadosDoLocalStorage();
 		});
 
 		function postbackURL(){
@@ -107,7 +101,25 @@
 				$('#dataOrigem')[0].style.display='inline-block';
 			else $('#dataOrigem')[0].style.display='none';
 		}
-		
+
+		function salvarNoLocalStorage() {
+			if (localStorage) {
+				var ids = ["solicitacaosolicitanteSpan","solicitacaointerlocutorSpan","formulario_solicitacaoitemConfiguracao_id",
+							"solicitacaoitemConfiguracaoSpan", "formulario_solicitacaoitemConfiguracao_sigla"];
+				salvarLS(ids);
+			}
+		}
+
+		function recuperarDadosDoLocalStorage() {
+			if ($("#isDirty").val() == "true") {
+				var interlocutor = localStorage.getItem("solicitacaointerlocutorSpan"+SEPARADOR+IDENTIFICADOR);
+				
+				if (interlocutor != "undefined" || interlocutor != "null")
+					toggleInterlocutorMeioComunicacaoEDataOrigem();
+				
+				recuperarLS();
+			}
+		}
 	</script>
 	
 	<div class="gt-bd gt-cols clearfix">
@@ -135,6 +147,8 @@
 					<input type="hidden" name="solicitacao.dtIniEdicaoDDMMYYYYHHMMSS" value="${solicitacao.dtIniEdicaoDDMMYYYYHHMMSS}" /> 
 					<input type="hidden" name="solicitacao.numSolicitacao" value="${solicitacao.numSolicitacao}" />
 					<input type="hidden" name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
+					<input type="hidden" id="isDirty" value="false" />
+					
 					
 					<div class="gt-form-table">
 						<div class="barra-subtitulo barra-subtitulo-top header" align="center" valign="top">
@@ -180,10 +194,8 @@
 					
 					<div id="divLocalRamalEMeioContato" depende="solicitacao.solicitante">
 						<script>
-
 							//Edson: talvez fosse possível fazer de um modo melhor, mas assim é mais prático
 							$("#solicitacaosolicitanteSpan").html("${solicitacao.solicitante.descricaoCompleta}");
-
 							$("#calendarioComunicacao").datepicker({
 					        	showOn: "button",
 					        	buttonImage: "/siga/css/famfamfam/icons/calendar.png",
@@ -485,7 +497,7 @@
 					</div>
 					<div class="gt-form-row gt-width-66" >
 						<label style="float: left">Prioridade: &nbsp;</label>
-						<span id="prioridade">${solicitacao.prioridade.descPrioridade}</span>
+						<span id="prioridade"></span>
 					</div>
 		
 		

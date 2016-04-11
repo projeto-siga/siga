@@ -692,7 +692,7 @@ public class SolicitacaoController extends SrController {
         result.include("isPai", solicitacao.isPai());
         result.include("codigo", solicitacao.isFilha() ? solicitacao.getSolicitacaoPai().getCodigo() : solicitacao.getCodigo());
         result.include(TIPO_MOTIVO_ESCALONAMENTO_LIST, SrTipoMotivoEscalonamento.values());
-        
+        result.include("idSolicitacao",solicitacao.getId());
         
     }
 

@@ -86,7 +86,7 @@ public class AcessoController extends GiControllerSupport {
 		this.lotacaoSel = lotacaoSel != null ? lotacaoSel: this.lotacaoSel;
 		this.perfilSel = perfilSel != null ? perfilSel: this.perfilSel;		
 		
-		listar(idAbrangencia, pessoaSel, lotacaoSel, perfilSel, idOrgaoUsuSel,servicoPai);
+		listar(idAbrangencia, pessoaSel, lotacaoSel, perfilSel, idOrgaoUsuSel, servicoPai);
 		
 		result.include("idAbrangencia", this.idAbrangencia);
 		
@@ -104,7 +104,9 @@ public class AcessoController extends GiControllerSupport {
 		
 		result.include("idServico", this.idServico);
 		result.include("idSituacao", this.idSituacao);		
-	}
+
+		result.include("servicoPai", servicoPai);
+}
 	
 	private void listar(int idAbrangencia
 					  ,DpPessoaSelecao pessoaSel
@@ -158,7 +160,8 @@ public class AcessoController extends GiControllerSupport {
 			}
 
 			SortedSet<ConfiguracaoAcesso> acs = new TreeSet<ConfiguracaoAcesso>();
-			for (ConfiguracaoAcesso ac : achm.values()) {
+			Collection<ConfiguracaoAcesso> colecaoDeConfiguracoes = achm.values();
+			for (ConfiguracaoAcesso ac : colecaoDeConfiguracoes) {
 				if (ac.getServico().getCpServicoPai() == null) {
 					acs.add(ac);
 				}  else if (acs.size() == 0 && servicoPai != null && ac.getServico().getSiglaServico().toString() == servicoPai.toString())  {  
@@ -208,7 +211,8 @@ public class AcessoController extends GiControllerSupport {
 			          ,DpPessoaSelecao pessoaSel
 					  ,DpLotacaoSelecao lotacaoSel
 					  ,CpPerfilSelecao perfilSel
-					  ,Long idOrgaoUsuSel) throws Exception {
+					  ,Long idOrgaoUsuSel
+					  ,String servicoPai) throws Exception {
 		
 		assertAcesso("PERMISSAO:Gerenciar permissões");
 		CpPerfil perfil = null;
@@ -241,7 +245,8 @@ public class AcessoController extends GiControllerSupport {
 		
 		StringBuilder sb = new StringBuilder();
 		acessoHTML(sb, ac);
-		this.itemHTML = sb.toString();	
+		this.itemHTML = sb.toString();
+		result.include("servicoPai", servicoPai);
 		result.use(Results.http()).body(this.itemHTML);
 	}	
 

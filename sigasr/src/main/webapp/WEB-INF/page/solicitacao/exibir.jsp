@@ -575,6 +575,7 @@
             <form action="${linkTo[SolicitacaoController].anexarArquivo}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">               
                 <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
                 <input type="hidden" name="ocultas" value="${ocultas}" />
+                <input type="hidden" name="movimentacao.atendente.id" value="${movimentacao.solicitacao.atendente.pessoaAtual.idPessoa}" />
                 <input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
                     value="${solicitacao.idSolicitacao}" /> <input
                     type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12" />

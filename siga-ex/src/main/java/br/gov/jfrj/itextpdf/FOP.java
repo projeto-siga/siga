@@ -127,12 +127,10 @@ public class FOP implements ConversorHtml {
 	}
 
 	public byte[] converter(String html, byte outputMode) {
-		try {
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 			
 			//System.setProperty("http.proxyHost", "10.10.1.55");
 			//System.setProperty("http.proxyPort", "8080");
-
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 			// fonte: xslt
 			html = substituiComentarios(html);
@@ -164,10 +162,7 @@ public class FOP implements ConversorHtml {
 				ba = s.getBytes();
 			}
 			
-			out.close();
-			
 			return ba;
-
 		} catch (Throwable e) {
 			e.printStackTrace(System.err);
 		}

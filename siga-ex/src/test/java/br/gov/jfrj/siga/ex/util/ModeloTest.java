@@ -106,9 +106,10 @@ public class ModeloTest extends TestCase {
 
 		Template temp = cfg.getTemplate("memorando.ftl");
 
-		Writer out = new OutputStreamWriter(System.out);
-		temp.process(root, out);
-		out.flush();
+		try (Writer out = new OutputStreamWriter(System.out)) {
+			temp.process(root, out);
+			out.flush();
+		}
 	}
 
 	public void testGeraDesenhoCp() throws Exception {

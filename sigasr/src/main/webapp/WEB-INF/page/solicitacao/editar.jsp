@@ -25,6 +25,7 @@
 	<jsp:include page="../main.jsp"></jsp:include>
 	
 	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
+	<script src="/sigasr/javascripts/cronometro.js"></script>
 	
 	<style>
 	.barra-subtitulo {
@@ -65,26 +66,12 @@
 				}
 				$('#checkRascunho').prop('value', 'false');
 			});
-	
 			//inicializa valores default para serem usados na function valorInputMudou()
 			item_default = $("#formulario_solicitacaoitemConfiguracao_id").val();
 		});
 
 		function postbackURL(){
-			var url = '${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize();
-
-			//Edson: verifica se há algum campo no formulário para o qual não existe checkbox no quadro de 
-			//solicitações relacionadas (!.length), ou então existe *e* está marcado, e envia na url como true. Veja no 
-			//comentário de listarSolicitacoesRelacionadas.jsp o motivo pelo qual esta verificação tem de ser feita aqui:
-			var camposFiltraveis = ['solicitante', 'itemConfiguracao', 'acao'];
-			for (var i = 0; i < camposFiltraveis.length; i++){
-				var campo = $(" #formSolicitacao [name='solicitacao."+camposFiltraveis[i]+".id']");
-				var filtro = $(" #formRelacionadas [name='filtro."+camposFiltraveis[i]+".id']");
-				if (campo.val() && (!filtro.length || filtro.is(":checked")))
-					url += '&' + 'filtro.'+camposFiltraveis[i]+'.id=' + campo.val();
-			}
-
-			return url;
+			return '${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize();
 		}
 	
 		// param_1: id do input que deseja verificar se mudou do valor default
@@ -195,7 +182,7 @@
 						<script>
 
 							//Edson: talvez fosse possível fazer de um modo melhor, mas assim é mais prático
-							$("#solicitacaosolicitanteSpan").html('${solicitacao.solicitante.descricaoCompleta}');
+							$("#solicitacaosolicitanteSpan").html("${solicitacao.solicitante.descricaoCompleta}");
 
 							$("#calendarioComunicacao").datepicker({
 					        	showOn: "button",
@@ -278,6 +265,7 @@
 							function dispararFuncoesOnBlurItem() {
 								if (valorInputMudou('formulario_solicitacaoitemConfiguracao_id', 'item')) {
 									sbmt("solicitacao.itemConfiguracao");
+									removeSelectedDuplicado();
 								}	
 							}
 							
@@ -296,11 +284,7 @@
 							</div>
 							
 							<div id="divAcao" depende="solicitacao.itemConfiguracao">
-								<script>
-								$(document).ready(function() {
-									removeSelectedDuplicado();
-								});
-								
+								<script>						
 								function removeSelectedDuplicado() {
 									//solucao de contorno temporaria para op??es no select com mesmo value.
 									var primeiro = $("#selectAcao option:eq(0)");
@@ -338,7 +322,7 @@
 									</div>
 									<!-- CONHECIMENTOS RELACIONADOS -->
 									<script type="text/javascript">
-									var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=&titulo=${f:urlEncode(solicitacao.itemConfiguracao.tituloItemConfiguracao)}${solicitacao.itemConfiguracao.gcTagAbertura}";
+									var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=empty&titulo=${f:urlEncode(solicitacao.itemConfiguracao.tituloItemConfiguracao)}${solicitacao.itemConfiguracao.gcTagAbertura}";
 									Siga.ajax(url, null, "GET", function(response){
 										$("#gc-ancora-item").html(response);
 									});
@@ -386,7 +370,7 @@
 											<div id="gc-ancora-item-acao"></div>
 										</div>
 										<script type="text/javascript">
-										var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=&titulo=${f:urlEncode(solicitacao.gcTituloAbertura)}${solicitacao.gcTagAbertura}";
+										var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=empty&titulo=${f:urlEncode(solicitacao.gcTituloAbertura)}${solicitacao.gcTagAbertura}";
 											Siga.ajax(url, null, "GET", function(response){
 												document.getElementById('gc-ancora-item-acao').innerHTML = response;
 											});
@@ -545,6 +529,7 @@
 			</div>
 		</div>
 		
+		<div class="gt-sidebar">
  		<jsp:include page="exibirCronometro.jsp"/>
 		<jsp:include page="exibirPendencias.jsp"/>
 		
@@ -553,7 +538,25 @@
 		</div>
 		
 		<div id="divSolicitacoesRelacionadas" depende="solicitacao.local;solicitacao.solicitante;solicitacao.acao;solicitacao.itemConfiguracao">
-			<jsp:include page="listarSolicitacoesRelacionadas.jsp"/>
+			<div id="divInternaSolicitacoesRelacionadas"></div>
+			<script type="text/javascript">
+				function carregar(){
+					//Edson: verifica se há algum campo no formulário para o qual não existe checkbox no quadro de 
+					//solicitações relacionadas (!.length), ou então existe *e* está marcado, e envia na url como true. Veja no 
+					//comentário de listarSolicitacoesRelacionadas.jsp o motivo pelo qual esta verificação tem de ser feita aqui:
+					var camposFiltraveis = ['solicitante', 'itemConfiguracao', 'acao'];
+					var url = '${linkTo[SolicitacaoController].listarSolicitacoesRelacionadas}?'+$('#formSolicitacao').serialize();
+					for (var i = 0; i < camposFiltraveis.length; i++){
+						var campo = $(" #formSolicitacao [name='solicitacao."+camposFiltraveis[i]+".id']");
+						var filtro = $(" #formRelacionadas [name='filtro."+camposFiltraveis[i]+".id']");
+						if (campo.val() && (!filtro.length || filtro.is(":checked")))
+							url += '&' + 'filtro.'+camposFiltraveis[i]+'.id=' + campo.val();
+					}
+					SetInnerHTMLFromAjaxResponse(url,"divInternaSolicitacoesRelacionadas");
+				}
+				carregar();
+			</script>
+		</div>
 		</div>
 	</div>
 </siga:pagina>

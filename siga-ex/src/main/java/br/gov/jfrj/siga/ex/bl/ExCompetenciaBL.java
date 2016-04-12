@@ -1167,7 +1167,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				ExTipoMovimentacao.class, false);
 
 		return getConf().podePorConfiguracao(null, null, null, null, mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), null,
-				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 	
@@ -1229,7 +1229,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				ExTipoMovimentacao.class, false);
 
 		return getConf().podePorConfiguracao(null, null, null, null, mov.getExMobil().getExDocumento().getExFormaDocumento(), mov.getExMobil().getExDocumento().getExModelo(), null,
-				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 	
@@ -1249,7 +1249,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				ExTipoMovimentacao.class, false);
 
 		return getConf().podePorConfiguracao(null, null, null, null, mob.getExDocumento().getExFormaDocumento(), mob.getExDocumento().getExModelo(), null,
-				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 	
@@ -1275,7 +1275,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				ExTipoMovimentacao.class, false);
 
 		return getConf().podePorConfiguracao(null, null, null, null, mov.getExMobil().getExDocumento().getExFormaDocumento(), mov.getExMobil().getExDocumento().getExModelo(), null,
-				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}	
 	
@@ -1298,7 +1298,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				ExTipoMovimentacao.class, false);
 
 		return getConf().podePorConfiguracao(null, null, null, null, mob.getExDocumento().getExFormaDocumento(), mob.getExDocumento().getExModelo(), null,
-				null, exTpMov, null, null, null, lotaTitular, titular, null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}	
 	public boolean podeSerSubscritor(final ExDocumento doc) throws Exception {
@@ -2727,6 +2727,41 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
+	 * Retorna se é possível cancelar uma movimentação de vinculação de perfil,
+	 * passada através do parâmetro mov. As regras são as seguintes:
+	 * <ul>
+	 * <li>Vinculação de perfil não pode estar cancelada</li>
+	 * <li>Lotação do usuário tem de ser a lotação cadastrante da movimentação</li>
+	 * <li>Não pode haver configuração impeditiva. Tipo de configuração:
+	 * Cancelar Movimentação</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @param mov
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeCancelarVinculacaoMarca(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob,
+			final ExMovimentacao mov) {
+
+		if (mov.isCancelada())
+			return false;
+		
+		if ((mov.getSubscritor()!= null && mov.getSubscritor().equivale(titular))||( mov.getSubscritor()==null && mov.getLotaSubscritor().equivale(lotaTitular)))
+			return true;
+
+		if ((mov.getCadastrante()!= null && mov.getCadastrante().equivale(titular))||( mov.getCadastrante()==null && mov.getLotaCadastrante().equivale(lotaTitular)))
+			return true;
+
+		return getConf().podePorConfiguracao(titular, lotaTitular,
+				mov.getIdTpMov(),
+				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO);
+	}
+	
+	/**
 	 * <b>(Quando é usado este método?)</b> Retorna se é possível cancelar
 	 * movimentação do tipo despacho, representada pelo parâmetro mov. São estas
 	 * as regras:
@@ -2874,6 +2909,29 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
+
+	/**
+	 * Retorna se é possível vincular uma marca ao documento. Basta não estar
+	 * eliminado o documento e não haver configuração impeditiva, o que
+	 * significa que, tendo acesso a um documento não eliminado, qualquer
+	 * usuário pode colocar marcas.
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeMarcar(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {
+		if (mob.doc().isCancelado() || mob.doc().isSemEfeito()
+				|| mob.isEliminado())
+			return false;
+
+		return getConf().podePorConfiguracao(titular, lotaTitular,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}
 

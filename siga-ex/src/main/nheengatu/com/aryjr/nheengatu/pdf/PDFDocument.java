@@ -186,7 +186,7 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
 			document.setMargins(3.0f * PDFDocument.CM_UNIT,
 					2.0f * PDFDocument.CM_UNIT, 1.0f * PDFDocument.CM_UNIT,
 					2.0f * PDFDocument.CM_UNIT);
-			System.out.println("Processamento: terminou setMargins");
+//			System.out.println("Processamento: terminou setMargins");
 		} else {
 			Style style = ((Style) (styleSheet.getStyles().get("@page")));
 			if ("landscape".equals(style.getPropertyValue("size"))) {
@@ -205,7 +205,7 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
 									.getPropertyValue("margin-top"), "1cm"),
 							styleMeasure(style
 									.getPropertyValue("margin-bottom"), "2cm"));
-			System.out.println("Processamento: terminou setMargins do else");
+//			System.out.println("Processamento: terminou setMargins do else");
 		}
 		try {
 			final PdfWriter writer = PdfWriter.getInstance(document, out);
@@ -216,8 +216,8 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
 			// set up 3 even columns with 10pt space between
 			mct.addRegularColumns(document.left(), document.right(), 0f, 1);
 
-			System.out
-					.println("Processamento: prestes a extract visible components");
+//			System.out
+//					.println("Processamento: prestes a extract visible components");
 
 			// Extracting the document content
 			extractVisibleComponents(body, document, mct, null, null);
@@ -249,8 +249,8 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
 		while (tags.hasNext()) {
 			component = tags.next();
 			if (component instanceof Text) {
-				System.out
-						.println("Processamento: Iniciou while -> if instanceof text");
+//				System.out
+//						.println("Processamento: Iniciou while -> if instanceof text");
 				String s = ((Text) component).getText();
 				if (s.contains("\\\"")) {
 					s = s.replace("\\\"", "\"");
@@ -270,8 +270,8 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
 				else
 					mct.addElement(PDFText
 							.createParagraph((Text) component, tm));
-				System.out
-						.println("Processamento: terminou while -> if instanceof text");
+//				System.out
+//						.println("Processamento: terminou while -> if instanceof text");
 			} else if (component instanceof Tag
 					&& ((Tag) component).getName().equalsIgnoreCase("br")) {
 				// PDFDocument.log.info("br");
@@ -284,8 +284,8 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
 				} else {
 					paragraph.add("\n");
 				}
-				System.out
-						.println("Processamento: Iniciou while -> if instanceof tag br");
+//				System.out
+//						.println("Processamento: Iniciou while -> if instanceof tag br");
 			} else if (component instanceof Tag
 					&& ((Tag) component).getName().equalsIgnoreCase("p")) {
 				// If it's a HTML paragraph, create a iText paragraph for it
@@ -322,8 +322,8 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
 				// p.setAlignment(align.toLowerCase());
 				// }
 				tm.back();
-				System.out
-						.println("Processamento: Iniciou while -> if instanceof tag p");
+//				System.out
+//						.println("Processamento: Iniciou while -> if instanceof tag p");
 			} else if (component instanceof Tag
 					&& ((Tag) component).getName().equalsIgnoreCase("ol")) {
 				// If it's a HTML paragraph, create a iText paragraph for it
@@ -342,8 +342,8 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
 					mct.addElement(l);
 				extractVisibleComponents((Tag) component, doc, mct, null, l);
 				tm.back();
-				System.out
-						.println("Processamento: Iniciou while -> if instanceof tag ol");
+//				System.out
+//						.println("Processamento: Iniciou while -> if instanceof tag ol");
 			} else if (component instanceof Tag
 					&& ((Tag) component).getName().equalsIgnoreCase("ul")) {
 				// If it's a HTML paragraph, create a iText paragraph for it
@@ -355,8 +355,8 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
 					mct.addElement(l);
 				extractVisibleComponents((Tag) component, doc, mct, null, l);
 				tm.back();
-				System.out
-						.println("Processamento: Iniciou while -> if instanceof tag ul");
+//				System.out
+//						.println("Processamento: Iniciou while -> if instanceof tag ul");
 			} else if (component instanceof Tag
 					&& ((Tag) component).getName().equalsIgnoreCase("li")) {
 				// If it's a HTML paragraph, create a iText paragraph for it
@@ -388,8 +388,8 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
 				} catch (final Exception e) {
 					e.printStackTrace();
 				}
-				System.out
-						.println("Processamento: Iniciou while -> if instanceof tag img");
+//				System.out
+//						.println("Processamento: Iniciou while -> if instanceof tag img");
 			} else if (component instanceof Tag
 					&& ((Tag) component).getName().equalsIgnoreCase("table")) {
 				// If it's a HTML table, create a iText table component for it
@@ -410,8 +410,8 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
 				extractVisibleComponents((Tag) component, doc, mct, paragraph,
 						list);
 				tm.back();
-				System.out
-						.println("Processamento: Iniciou while -> if instanceof tag div");
+//				System.out
+//						.println("Processamento: Iniciou while -> if instanceof tag div");
 			} else {
 				// If it's an another tag, check the name and call this method
 				// again
@@ -424,7 +424,7 @@ public class PDFDocument extends com.aryjr.nheengatu.document.Document {
 				extractVisibleComponents((Tag) component, doc, mct, paragraph,
 						list);
 				tm.back();
-				System.out.println("Processamento: Iniciou while -> else if");
+//				System.out.println("Processamento: Iniciou while -> else if");
 			}
 		}
 	}

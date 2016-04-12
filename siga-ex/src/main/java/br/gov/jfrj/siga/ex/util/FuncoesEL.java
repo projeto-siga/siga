@@ -129,7 +129,7 @@ public class FuncoesEL {
 
 	public static Boolean podeRemeterPorConfiguracao(DpPessoa titular,
 			DpLotacao lotaTitular) throws Exception {
-		if (lotaTitular == null)
+		if (lotaTitular == null && titular == null)
 			return false;
 		return Ex
 				.getInstance()
@@ -144,7 +144,7 @@ public class FuncoesEL {
 
 	public static Boolean podeArquivarPermanentePorConfiguracao(
 			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
-		if (lotaTitular == null)
+		if (lotaTitular == null && titular == null)
 			return false;
 		return Ex
 				.getInstance()
@@ -159,7 +159,7 @@ public class FuncoesEL {
 
 	public static Boolean podeArquivarIntermediarioPorConfiguracao(
 			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
-		if (lotaTitular == null)
+		if (lotaTitular == null && titular == null)
 			return false;
 		return Ex
 				.getInstance()
@@ -174,7 +174,7 @@ public class FuncoesEL {
 
 	public static Boolean podeDefinirPublicadoresPorConfiguracao(
 			DpPessoa titular, DpLotacao lotaTitular) throws Exception {
-		if (lotaTitular == null)
+		if (lotaTitular == null && titular == null)
 			return false;
 		return Ex
 				.getInstance()
@@ -882,13 +882,13 @@ public class FuncoesEL {
 			nivel = "Auxiliar";
 
 		if (nivel.indexOf('I') > 0)
-			nivel = "Intermediï¿½rio";
+			nivel = "Intermediário";
 
 		if (nivel.indexOf('S') > 0)
 			nivel = "Superior";
 
-		return "Nï¿½vel " + nivel + ", Classe " + aux + classe + aux
-				+ ", Padrï¿½o " + aux + padrao + aux;
+		return "Nível " + nivel + ", Classe " + aux + classe + aux
+				+ ", Padrão " + aux + padrao + aux;
 	}
 
 	public static String buscarLotacaoPorSigla(String sigla, Long idOrgaoUsu)

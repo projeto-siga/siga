@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>siga</groupId>
@@ -27,6 +26,8 @@
 		<module>siga-ext</module>
 		<module>siga-ex</module>
 		<module>siga-ex-gsa</module>
+		<module>siga-ex-sinc</module>
+		<module>siga-gc-gsa</module>
 		<module>sigagc</module>
 		<module>sigasr</module>
 		<module>siga-cd</module>
@@ -39,7 +40,8 @@
  		<module>siga-cp-sinc</module> 
  		<module>siga-dump</module> -->
  		<module>siga-integration-test</module>
-	</modules>
+    	<module>siga-ldap-cli</module>
+  </modules>
 
 
 	<properties>

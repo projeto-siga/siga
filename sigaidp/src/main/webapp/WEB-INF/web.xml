@@ -18,8 +18,12 @@
 	</listener>
 
 	<session-config>
-		<session-timeout>60</session-timeout>
+		<session-timeout>150</session-timeout>
 	</session-config>
+
+	<welcome-file-list>
+		<welcome-file>/hosted/index.jsp</welcome-file>
+	</welcome-file-list>
 
 	<security-constraint>
 		<web-resource-collection>
@@ -66,4 +70,5 @@
 		<servlet-name>IDPServlet</servlet-name>
 		<url-pattern>/IDPServlet</url-pattern>
 	</servlet-mapping>
+	
 </web-app>

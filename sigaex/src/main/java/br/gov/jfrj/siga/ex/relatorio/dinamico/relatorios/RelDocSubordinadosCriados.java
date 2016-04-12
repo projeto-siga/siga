@@ -515,7 +515,7 @@ public class RelDocSubordinadosCriados extends RelatorioTemplate {
 				d.add(resp);
 				d.add(mc.getCpMarcador().getDescrMarcador());
 				indice++;
-				System.out.println(indice);
+//				System.out.println(indice);
 			}
 
 			/*

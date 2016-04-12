@@ -6,11 +6,7 @@
 
 <siga:pagina titulo="Busca Textual" popup="false">
 
-	<script type="text/javascript" language="Javascript1.1">
-		
-	</script>
-
-	<div class="container">
+	<div class="container-fluid	">
 		 <header id="topo" class="row">
             <div class="col-md-7 topo">
                 <form name="headerSearch" class="form-inline pull-right topoForm">
@@ -22,23 +18,13 @@
             </div>
         </header>
 		<div class="row">
-			<div role="main" class="col-md-9 col-md-push-3">
+			<nav class="col-md-3">
+				<div id="gsa-dynamic-navigation"></div>
+			</nav>
+			<div role="main" class="col-md-9">
 				<div id="main"></div>
 			</div>
-			<nav class="col-md-3 col-md-pull-9">
-				<h3>Filtros</h3>
-
-				<div id="gsa-dynamic-navigation"></div>
-
-
-			</nav>
 		</div>
-		<footer class="row">
-			<div class="col-md-12 text-center">
-				<h3>Desenvolvimento Busca Siga</h3>
-				<div>
-		</footer>
-
 	</div>
 
 	<script src="/siga/bootstrap/js/bootstrap.min.js"></script>

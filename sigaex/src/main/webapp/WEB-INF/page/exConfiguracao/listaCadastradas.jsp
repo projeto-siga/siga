@@ -20,6 +20,7 @@
 				<th align="center">Nível de acesso</th>
 				<th align="center">Pessoa</th>
 				<th align="center">Lotação</th>
+				<th align="center">Tipo de Lotação</th>
 				<th align="center">Função</th>
 				<th align="center">Órgão</th>
 				<th align="center">Órgão Objeto</th>
@@ -54,6 +55,7 @@
 							<siga:selecionado sigla="${configuracao.lotacao.sigla}" descricao="${configuracao.lotacao.descricao}" />
 						</c:if>
 					</td>
+					<td><c:if test="${not empty configuracao.cpTipoLotacao}">${configuracao.cpTipoLotacao.dscTpLotacao}</c:if></td>					
 					<td><c:if test="${not empty configuracao.funcaoConfianca}">${configuracao.funcaoConfianca.nomeFuncao}</c:if></td>
 					<td><c:if test="${not empty configuracao.orgaoUsuario}">${configuracao.orgaoUsuario.acronimoOrgaoUsu}</c:if></td>
 					<td><c:if test="${not empty configuracao.orgaoObjeto}">${configuracao.orgaoObjeto.acronimoOrgaoUsu}</c:if></td>

@@ -186,7 +186,7 @@ public class SigaExProperties extends ModeloPropriedade {
 
 	public static Long getAnoInicioAcronimoNoCodigoDoDocumento() throws Exception{
 		String s = getString("siga.ex.anoInicioAcronimoNoCodigoDoDocumento");
-		if (s == null)
+		if (s == null || s.trim().length() == 0)
 			return 9999L;
 		try{
 			return Long.valueOf(s);

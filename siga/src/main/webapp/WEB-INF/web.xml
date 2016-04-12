@@ -6,23 +6,23 @@
 
 	<!-- Inicio de WebServer -->
 	<context-param>
-	    <param-name>br.com.caelum.vraptor.provider</param-name>
-	    <param-value>br.com.caelum.vraptor.ioc.guice.GuiceProvider</param-value>
-	</context-param>	
-	
+		<param-name>br.com.caelum.vraptor.provider</param-name>
+		<param-value>br.com.caelum.vraptor.ioc.guice.GuiceProvider</param-value>
+	</context-param>
+
 	<context-param>
 		<param-name>br.com.caelum.vraptor.encoding</param-name>
 		<param-value>UTF-8</param-value>
-	</context-param> 
-		
-	<context-param>  
-   		<param-name>br.com.caelum.vraptor.packages</param-name>  
-	   	<param-value>  
+	</context-param>
+
+	<context-param>
+		<param-name>br.com.caelum.vraptor.packages</param-name>
+		<param-value>  
         	br.gov.jfrj.siga.vraptor,
         	br.com.caelum.vraptor.util.jpa
-   		</param-value>  
-	</context-param>  
-	
+   		</param-value>
+	</context-param>
+
 	<listener>
 		<listener-class>br.gov.jfrj.siga.jee.BouncyCastleServletContextListener</listener-class>
 	</listener>
@@ -31,7 +31,7 @@
 	<!--distributable/ -->
 
 	<session-config>
-		<session-timeout>60</session-timeout>
+		<session-timeout>120</session-timeout>
 	</session-config>
 
 	<!-- The Usual Welcome File List -->
@@ -49,7 +49,7 @@
 		<filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
 		<init-param>
 			<param-name>Cache-Control</param-name>
-			<param-value>max-age=3600</param-value>
+			<param-value>public, max-age=3600</param-value>
 		</init-param>
 	</filter>
 
@@ -57,9 +57,35 @@
 		<filter-name>HibernateFilter</filter-name>
 		<url-pattern>*.action</url-pattern>
 		<url-pattern>/app/*</url-pattern>
+		<url-pattern>/public/app/*</url-pattern>
 		<url-pattern>/permalink/*</url-pattern>
 	</filter-mapping>
-	
+
+
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<url-pattern>/imagens/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<url-pattern>/recursos/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<url-pattern>/botstrap/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<url-pattern>/css/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<url-pattern>/javascript/*</url-pattern>
+	</filter-mapping>
 
 	<filter>
 		<filter-name>vraptor</filter-name>
@@ -73,6 +99,12 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>vraptor</filter-name>
+		<url-pattern>/public/app/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>vraptor</filter-name>
 		<url-pattern>/permalink/*</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
@@ -84,14 +116,12 @@
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 
-
 	<filter-mapping>
 		<filter-name>ResponseHeaderFilter</filter-name>
+		<url-pattern>/bootstrap/*</url-pattern>
+		<url-pattern>/css/*</url-pattern>
+		<url-pattern>/javascript/*</url-pattern>
 		<url-pattern>/imagens/*</url-pattern>
-	</filter-mapping>
-
-	<filter-mapping>
-		<filter-name>ResponseHeaderFilter</filter-name>
 		<url-pattern>/recursos/*</url-pattern>
 	</filter-mapping>
 
@@ -191,9 +221,13 @@
 		<web-resource-collection>
 			<web-resource-name>testes</web-resource-name>
 			<url-pattern>/app/testes/*</url-pattern>
-    	</web-resource-collection>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>Recursos Publicos</web-resource-name>
+			<url-pattern>/public/*</url-pattern>
+		</web-resource-collection>
 	</security-constraint>
-
+	
 	<login-config>
 		<auth-method>FORM</auth-method>
 		<realm-name>siga</realm-name>
@@ -217,7 +251,7 @@
 	</security-role>
 
 	<error-page>
-		<exception-type>java.lang.Throwable</exception-type>
+		
 		<location>/WEB-INF/page/erroGeral.jsp</location>
 	</error-page>
 </web-app>

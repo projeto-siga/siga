@@ -46,10 +46,12 @@ public class SrProcessadorFreemarker implements TemplateLoader {
 		Template temp = new Template((String) attrs.get("nmMod"),
 				new StringReader(sTemplate), cfg);
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		Writer out = new OutputStreamWriter(baos);
-		try {
+		
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				Writer out = new OutputStreamWriter(baos)) {
 			temp.process(root, out);
+			out.flush();
+			return baos.toString();
 		} catch (TemplateException e) {
 			if (e.getCauseException() != null
 					&& e.getCauseException() instanceof AplicacaoException)
@@ -59,8 +61,6 @@ public class SrProcessadorFreemarker implements TemplateLoader {
 		} catch (IOException e) {
 			return e.getMessage();
 		}
-		out.flush();
-		return baos.toString();
 	}
 
 	public void closeTemplateSource(Object arg0) throws IOException {

@@ -113,14 +113,25 @@
 											</c:forEach>
 									</select></td>
 								</tr>
-
+								<tr>
+									<td>Diretório:</td>
+									<td><input type="text" name="diretorio"
+										value="${diretorio}" size="80" /></td>
+								</tr>
+								<tr>
+									<td>Identificador para sincronismo:</td>
+									<td><input readonly type="text" name="uuid" value="${uuid}"
+										size="80" /></td>
+								</tr>
 								<tr>
 									<td>Tipo do Modelo:</td>
 									<td><siga:escolha id="tipoModelo" var="tipoModelo">
 											<siga:opcao id="template/freemarker" texto="Freemarker">
 												<textarea id="conteudo" style="width: 100%;" cols="1"
 													rows="1" name="conteudo"><c:if
-														test="${not empty conteudo}"><c:out value="${conteudo}" default="" /></c:if></textarea>
+														test="${not empty conteudo}">
+														<c:out value="${conteudo}" default="" />
+													</c:if></textarea>
 											</siga:opcao>
 											<siga:opcao id="template-file/jsp" texto="JSP">
 									&nbsp;&nbsp;&nbsp;&nbsp;Nome do arquivo:

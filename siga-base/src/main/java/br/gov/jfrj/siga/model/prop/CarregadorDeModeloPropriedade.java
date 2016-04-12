@@ -160,9 +160,9 @@ public class CarregadorDeModeloPropriedade {
 			String caminhoArquivo) throws IOException {
 		Properties p = new Properties();
 		File f = new File(caminhoArquivo);
-		InputStream is = new FileInputStream(f);
-		p.load(is);
-		is.close();
+		try (InputStream is = new FileInputStream(f)) {
+			p.load(is);
+		}
 		return p;
 	}
 
@@ -179,9 +179,9 @@ public class CarregadorDeModeloPropriedade {
 	private static Properties carregarPropriedadesNoProprioCodigo(String nme)
 			throws ClassNotFoundException, IOException {
 		Properties p = new Properties();
-		InputStream is = Class.forName(nme).getResourceAsStream(NOME_ARQ_PROPS);
-		p.load(is);
-		is.close();
+		try (InputStream is = Class.forName(nme).getResourceAsStream(NOME_ARQ_PROPS)) {
+			p.load(is);
+		}
 		return p;
 	}
 

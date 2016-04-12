@@ -19,10 +19,14 @@
 						confirm="${acao.msgConfirmacao}"
 						estilo="line-height: 160% !important" />
 				</c:forEach>
+				<span class="gt-separator"> |</span> 
+					<a class="" href="javascript:visualizaImpressao('knowledgeContent');">
+						<img src="/siga/css/famfamfam/icons/printer.png" style="margin-right:5px;" title="">Visualizar&nbsp;Impressão
+					</a>			
 			</siga:links>
 
 			<!-- Dados do documento -->
-			<div class="gt-content-box" style="padding: 10px;">
+			<div id="knowledgeContent" class="gt-content-box" style="padding: 10px;">
 				<h2>${informacao.arq.titulo}</h2>
 				${conteudo}
 			</div>
@@ -37,17 +41,17 @@
 				<p>
 					<b>Órgão Usuário:</b> ${informacao.ou.acronimoOrgaoUsu}
 				</p>
-				<c:if test="${not emptyinformacao.grupo}">
-				<p>
-					<b>Grupo:</b> ${informacao.grupo.siglaGrupo} - ${informacao.grupo.dscGrupo}
-				</p>
-				</c:if>				
 				<p>
 					<b>Visualização:</b> ${informacao.visualizacao.nome}
 				</p>
 				<p>
 					<b>Edição:</b> ${informacao.edicao.nome}
 				</p>
+				<c:if test="${not empty informacao.grupo}">
+				<p>
+					<b>Grupo:</b> ${informacao.grupo.siglaGrupo} - ${informacao.grupo.dscGrupo}
+				</p>
+				</c:if>	
 				<p>
 					<b>Autor:</b> ${informacao.autor.descricaoIniciaisMaiusculas} -
 					${informacao.autor.sigla}
@@ -106,6 +110,18 @@
 		$(document).ready(function() {
 			$(".gt-success").delay(5000).fadeOut("slow", "linear");
 		});
+	</script>
+	
+	<script type="text/javascript">
+		function visualizaImpressao(divId) {
+              var printContents = document.getElementById(divId).innerHTML;
+              var popupWin = window.open('', '_blank');
+              popupWin.document.open()
+              popupWin.document
+                  .write('<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head><body onload="window.print()">'
+                      + printContents + '</html>');
+              popupWin.document.close();
+        }
 	</script>
 
 	<script type="text/javascript">

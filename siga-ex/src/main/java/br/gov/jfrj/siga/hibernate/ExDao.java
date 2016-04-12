@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,7 +37,9 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
@@ -68,11 +71,12 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
-
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -103,7 +107,6 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
-import br.gov.jfrj.siga.hibernate.ext.MontadorQuery;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.Aguarde;
@@ -118,19 +121,12 @@ public class ExDao extends CpDao {
 
 	private static final Logger log = Logger.getLogger(ExDao.class);
 
-	IMontadorQuery montadorQuery = null;
-
 	public static ExDao getInstance() {
 		return ModeloDao.getInstance(ExDao.class);
 	}
 
 	public ExDao() {
-		try {
-			montadorQuery = (IMontadorQuery) Class.forName(SigaExProperties.getMontadorQuery()).newInstance();
-			montadorQuery.setMontadorPrincipal(new MontadorQuery());
-		} catch (Exception e) {
-			montadorQuery = new MontadorQuery();
-		}
+		
 	}
 
 	public void reindexarVarios(List<ExDocumento> docs, boolean apenasExcluir) throws Exception {
@@ -368,8 +364,11 @@ public class ExDao extends CpDao {
 	public List consultarPorFiltroOtimizado(final ExMobilDaoFiltro flt,
 			final int offset, final int itemPagina, DpPessoa titular,
 			DpLotacao lotaTitular) {
+		
+		IMontadorQuery montadorQuery = carregarPlugin();
+
 		long tempoIni = System.nanoTime();
-		Query query = getSessao().createQuery(montadorQuery.montaQueryConsultaporFiltro(flt, titular, lotaTitular, false));
+		Query query = getSessao().createQuery(montadorQuery.montaQueryConsultaporFiltro(flt, false));
 		preencherParametros(flt, query);
 
 		if (offset > 0) {
@@ -380,15 +379,22 @@ public class ExDao extends CpDao {
 		}
 		List l = query.list();
 		long tempoTotal = System.nanoTime() - tempoIni;
-		System.out.println("consultarPorFiltroOtimizado: " + tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l);
+//		System.out.println("consultarPorFiltroOtimizado: " + tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l);
 		return l;
+	}
+
+	private IMontadorQuery carregarPlugin() {
+		CarregadorPlugin carregador = new CarregadorPlugin();
+		IMontadorQuery montadorQuery = carregador.getMontadorQueryImpl();
+		montadorQuery.setMontadorPrincipal(carregador.getMontadorQueryDefault());
+		return montadorQuery;
 	}
 
 	public Integer consultarQuantidadePorFiltroOtimizado(
 			final ExMobilDaoFiltro flt, DpPessoa titular, DpLotacao lotaTitular) {
 		long tempoIni = System.nanoTime();
-		String s = montadorQuery.montaQueryConsultaporFiltro(flt, titular,
-				lotaTitular, true);
+		IMontadorQuery montadorQuery = carregarPlugin();
+		String s = montadorQuery.montaQueryConsultaporFiltro(flt, true);
 		Query query = getSessao().createQuery(s);
 
 
@@ -397,8 +403,8 @@ public class ExDao extends CpDao {
 
 		Long l = (Long) query.uniqueResult();
 		long tempoTotal = System.nanoTime() - tempoIni;
-		System.out.println("consultarQuantidadePorFiltroOtimizado: "
-				+ tempoTotal / 1000000 + " ms -> " + s + ", resultado: " + l);
+//		System.out.println("consultarQuantidadePorFiltroOtimizado: "
+//				+ tempoTotal / 1000000 + " ms -> " + s + ", resultado: " + l);
 		return l.intValue();
 	}
 
@@ -442,8 +448,8 @@ public class ExDao extends CpDao {
 		long tempoIni = System.nanoTime();
 		Long l = (Long) query.uniqueResult();
 		long tempoTotal = System.nanoTime() - tempoIni;
-		System.out.println("consultarQuantidadePorFiltro: " + tempoTotal
-				/ 1000000 + ", resultado: " + l);
+//		System.out.println("consultarQuantidadePorFiltro: " + tempoTotal
+//				/ 1000000 + ", resultado: " + l);
 		return l.intValue();
 	}
 
@@ -600,21 +606,21 @@ public class ExDao extends CpDao {
 										ExDocumento.class).getResultSize() == 0)) {
 
 					if (irIndexando) {
-						System.out.println("listarNaoIndexados - indexando "
-								+ doc.getCodigo());
+//						System.out.println("listarNaoIndexados - indexando "
+//								+ doc.getCodigo());
 						indexar(doc);
 					} else {
-						System.out.println("listarNaoIndexados - nao indexar "
-								+ doc.getCodigo());
+//						System.out.println("listarNaoIndexados - nao indexar "
+//								+ doc.getCodigo());
 					}
 				}
 			}
-			System.out.println("listarNaoIndexados - " + firstResult+ " varridos");
+//			System.out.println("listarNaoIndexados - " + firstResult+ " varridos");
 			getSessao().clear();
 		} while (list.size() > 0);
-		System.out.println("listarNaoIndexados - FIM    "
-				+ (System.currentTimeMillis() - tempoIni) / 3600000
-				+ " minutos");
+//		System.out.println("listarNaoIndexados - FIM    "
+//				+ (System.currentTimeMillis() - tempoIni) / 3600000
+//				+ " minutos");
 	}
 
 	public void indexarFila(String path) throws Exception {
@@ -653,7 +659,7 @@ public class ExDao extends CpDao {
 
 	public void indexarTudo(Aguarde aguarde) throws Exception {
 
-		System.out.println("Indexando documentos...");
+//		System.out.println("Indexando documentos...");
 		long inicio = new Date().getTime();
 
 		try {
@@ -700,14 +706,14 @@ public class ExDao extends CpDao {
 			tx.commit();
 			fullTextSession.clear();
 			getSessao().clear();
-			System.out.print(String.valueOf(index)
-					+ " documentos jï¿½ indexados. --  -- ");
+//			System.out.print(String.valueOf(index)
+//					+ " documentos jï¿½ indexados. --  -- ");
 		} while (list.size() > 0);
 		//System.gc();
 
 		// fullTextSession.close();
-		System.out.println("Duraï¿½ï¿½o da indexaï¿½ï¿½o de documentos: "
-				+ (new Date().getTime() - inicio));
+//		System.out.println("Duraï¿½ï¿½o da indexaï¿½ï¿½o de documentos: "
+//				+ (new Date().getTime() - inicio));
 
 		if (aguarde != null)
 			aguarde.setMensagem(String.valueOf(index));
@@ -716,7 +722,7 @@ public class ExDao extends CpDao {
 
 	public void indexarUltimas(int desde) throws Exception {
 
-		System.out.println("Indexando documentos...");
+//		System.out.println("Indexando documentos...");
 		long inicio = new Date().getTime();
 
 		Calendar cal = Calendar.getInstance();
@@ -740,7 +746,7 @@ public class ExDao extends CpDao {
 		List<ExDocumento> list = crit.list();
 		Transaction tx = fullTextSession.beginTransaction();
 		for (ExDocumento doc : list) {
-			System.out.println(" . " + doc.getIdDoc());
+//			System.out.println(" . " + doc.getIdDoc());
 			fullTextSession.purge(ExDocumento.class, doc);
 			if (doc.isIndexavel())
 				fullTextSession.index(doc);
@@ -751,8 +757,8 @@ public class ExDao extends CpDao {
 		//System.gc();
 
 		// fullTextSession.close();
-		System.out.println("Duraï¿½ï¿½o da indexaï¿½ï¿½o de documentos: "
-				+ (new Date().getTime() - inicio));
+//		System.out.println("Duraï¿½ï¿½o da indexaï¿½ï¿½o de documentos: "
+//				+ (new Date().getTime() - inicio));
 
 	}
 
@@ -1154,10 +1160,8 @@ public class ExDao extends CpDao {
 					final ResultSet rset = psBlob.executeQuery();
 					boolean b = rset.next();
 					final Blob blob = rset.getBlob("PREENCHIMENTO_BLOB");
-					final OutputStream blobOutputStream = blob.setBinaryStream(0);
-					try {
+					try (OutputStream blobOutputStream = blob.setBinaryStream(0)) {
 						blobOutputStream.write(exPreenchimento.getPreenchimentoBA());
-						blobOutputStream.close();
 					} catch (final IOException e) {
 						throw new AplicacaoException(
 								"Ocorreu um erro ao inserir o blob", 0, e);
@@ -1250,10 +1254,8 @@ public class ExDao extends CpDao {
 				final ResultSet rset = psBlob.executeQuery();
 				boolean b = rset.next();
 				final Blob blob = rset.getBlob("PREENCHIMENTO_BLOB");
-				final OutputStream blobOutputStream = blob.setBinaryStream(0);
-				try {
+				try (OutputStream blobOutputStream = blob.setBinaryStream(0)) {
 					blobOutputStream.write(exPreenchimento.getPreenchimentoBA());
-					blobOutputStream.close();
 				} catch (final IOException e) {
 					throw new AplicacaoException("Ocorreu um erro ao inserir o blob",
 							0, e);
@@ -2009,6 +2011,11 @@ public class ExDao extends CpDao {
 
 	public List<ExPapel> listarExPapeis() {
 		return findByCriteria(ExPapel.class);
+	}
+
+	public List<CpMarcador> listarCpMarcadoresGerais() {
+		CpTipoMarcador marcador = consultar(CpTipoMarcador.TIPO_MARCADOR_GERAL, CpTipoMarcador.class, false);
+		return findByCriteria(CpMarcador.class, Restrictions.eq("cpTipoMarcador", marcador));
 	}
 
 	public List<ExTpDocPublicacao> listarExTiposDocPublicacao() {

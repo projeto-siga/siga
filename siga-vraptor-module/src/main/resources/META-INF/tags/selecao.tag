@@ -23,6 +23,7 @@
 <%@ attribute name="onchange" required="false"%>
 <%@ attribute name="onblur" required="false"%>
 <%@ attribute name="prefix" required="false"%>
+<%@ attribute name="matricula" required="false"%>
 
 <%@ attribute name="requiredValue" required="false" %>
 
@@ -206,6 +207,9 @@ self.ajax_${propriedade}${tipoSel} = function() {
 			var url = '/${urlPrefix}/app${acaoBusca}/${urlSelecionar}?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
 		</c:otherwise>
 	</c:choose>
+	<c:if test="${not empty matricula}">
+	url = url + '&matricula=${matricula}';
+	</c:if>
 	url = url + '&sigla=' + sigla;
 	Siga.ajax(url, null, "GET", function(response){		
 		resposta_ajax_${propriedade}${tipoSel}(response);

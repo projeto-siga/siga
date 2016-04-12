@@ -1,12 +1,13 @@
 package br.gov.jfrj.siga.sr.model;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -16,6 +17,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -27,6 +30,7 @@ import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -34,7 +38,7 @@ import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.sr.notifiers.CorreioHolder;
-import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
+import br.gov.jfrj.siga.sr.util.SrViewUtil;
 
 @Entity
 @Table(name = "SR_MOVIMENTACAO", schema = "SIGASR")
@@ -146,6 +150,13 @@ public class SrMovimentacao extends Objeto {
     @ManyToOne
     @JoinColumn(name = "ID_ACAO")
     private SrAcao acao;
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "SR_MOVIMENTACAO_ACORDO", schema = "SIGASR", joinColumns = { @JoinColumn(name = "ID_MOVIMENTACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_ACORDO") })
+    private List<SrAcordo> acordos;
+    
+    @Column(name = "DNM_TEMPO_DECORRIDO_ATENDMTO")
+    private Long dnmTempoDecorridoAtendimento;
 
     @Enumerated
     private SrTipoMotivoEscalonamento motivoEscalonamento;
@@ -200,24 +211,17 @@ public class SrMovimentacao extends Objeto {
     public boolean isCancelada() {
         return getMovCanceladora() != null;
     }
-
-    public boolean isFinalizada() {
-        return getMovFinalizadora() != null;
+    
+    public Date getDtFimMov() {
+        return getMovFinalizadora() != null ? getMovFinalizadora().getDtIniMov() : getDtAgenda();
+    }
+    
+    public boolean isFinalizadaOuExpirada() {
+        return getDtFimMov() != null && getDtFimMov().before(new Date());
     }
 
     public boolean isCanceladoOuCancelador() {
         return isCancelada() || getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO;
-    }
-
-    public boolean isInicioAtendimento(){
-    	return  getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO
-					|| getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
-					|| getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA;
-    }
-    
-    public boolean isFimAtendimento(){
-    	return  getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO
-					|| getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO;
     }
     
     public SrMovimentacao getAnterior() {
@@ -245,21 +249,14 @@ public class SrMovimentacao extends Objeto {
     }
 
     public String getDtIniString() {
-        SigaPlayCalendar cal = new SigaPlayCalendar();
-        cal.setTime(getDtIniMov());
-        return "<span style=\"display: none\">" + new SimpleDateFormat("yyyyMMdd").format(dtIniMov)
-                + "</span>" + cal.getTempoTranscorridoString(false);
+        return SrViewUtil.toStr(getDtIniMov());
     }
 
-    public String getDtIniMovDDMMYYHHMM() {
-        if (getDtIniMov() != null) {
-            final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm");
-            return df.format(getDtIniMov());
-        }
-        return "";
+    public String getDtIniMovDDMMYYYYHHMM() {
+        return SrViewUtil.toDDMMYYYYHHMM(getDtIniMov());
     }
 
-    public String getDtAgendaDDMMYYHHMM() {
+    public String getDtAgendaDDMMYYYYHHMM() {
         if (getDtAgenda() != null) {
             DateTime dateTime = new DateTime(getDtAgenda());
             return dateTime.toString("dd/MM/yyyy HH:mm");
@@ -272,15 +269,6 @@ public class SrMovimentacao extends Objeto {
             return getAtendente().getSigla() + " (" + getLotaAtendente().getSigla() + ")";
         else
             return getLotaAtendente().getSigla();
-    }
-
-    public String getDtIniMovDDMMYYYYHHMM() {
-        if (getDtIniMov() != null) {
-            final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-            return df.format(getDtIniMov());
-        }
-        return "";
-
     }
 
     public String getCadastranteString() {
@@ -310,7 +298,7 @@ public class SrMovimentacao extends Objeto {
         getSolicitacao().atualizarMarcas();
         
         //notificaï¿½ï¿½o usuï¿½rio
-        if (getSolicitacao().getMovimentacaoSetComCancelados().size() > 1
+        if (getAnteriorPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO) != null
                 && getTipoMov().getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
                 && getSolicitacao().getFormaAcompanhamento() != SrFormaAcompanhamento.ABERTURA
                 && !(getSolicitacao().getFormaAcompanhamento() == SrFormaAcompanhamento.ABERTURA_FECHAMENTO && getTipoMov().getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO))
@@ -329,6 +317,9 @@ public class SrMovimentacao extends Objeto {
         SrMovimentacao ultimaValida = getAnterior();
         movCanceladora.setAtendente(ultimaValida.getAtendente());
         movCanceladora.setLotaAtendente(ultimaValida.getLotaAtendente());
+        movCanceladora.setItemConfiguracao(ultimaValida.getItemConfiguracao());
+        movCanceladora.setAcao(ultimaValida.getAcao());
+        movCanceladora.setPrioridade(ultimaValida.getPrioridade());
         movCanceladora.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
 
         this.setMovCanceladora(movCanceladora);
@@ -371,11 +362,33 @@ public class SrMovimentacao extends Objeto {
 
         if (ultimaMovDoContexto == null) {
             setNumSequencia(1L);
+            setItemConfiguracao(solicitacao.getItemConfiguracao());
+            setAcao(solicitacao.getAcao());
+            setPrioridade(solicitacao.getPrioridade());
         } else {
             SrMovimentacao anterior = getSolicitacao().getUltimaMovimentacao();
 
             if (getLotaAtendente() == null) {
-                setLotaAtendente(anterior.getLotaAtendente());
+            	if (anterior != null && anterior.getLotaAtendente() != null)
+            		setLotaAtendente(anterior.getLotaAtendente());
+            }
+            
+            if (getItemConfiguracao() == null) {
+            	if (anterior != null && anterior.getItemConfiguracao() != null)
+            		setItemConfiguracao(anterior.getItemConfiguracao());
+            	else setItemConfiguracao(solicitacao.getItemAtual());
+            }
+            
+            if (getAcao() == null) {
+            	if (anterior != null && anterior.getAcao() != null)
+            		setAcao(anterior.getAcao());
+            	else setAcao(solicitacao.getAcaoAtual());
+            }
+            
+            if (getPrioridade() == null){
+            	if (anterior != null && anterior.getPrioridade() != null)
+            		setPrioridade(anterior.getPrioridade());
+            	else setPrioridade(solicitacao.getPrioridadeTecnica());
             }
 
             if (getNumSequencia() == null)
@@ -384,14 +397,54 @@ public class SrMovimentacao extends Objeto {
 
         if (getTipoMov() == null)
             setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
+        else if (SrTipoMovimentacao.TIPOS_MOV_INI_ATENDIMENTO.contains(getTipoMov().getId())
+				|| SrTipoMovimentacao.TIPOS_MOV_ATUALIZACAO_ATENDIMENTO.contains(getTipoMov().getId()))
+        	atualizarAcordos();
+        
+        SrEtapaSolicitacao ultimoAtendimento = solicitacao.getUltimoAtendimento();
+        if (ultimoAtendimento != null)
+        	setDnmTempoDecorridoAtendimento(ultimoAtendimento.getDecorridoEmSegundos());
+    }
+    
+    public void atualizarAcordos() throws Exception {
+        setAcordos(new ArrayList<SrAcordo>());
 
-//        if (!getSolicitacao().isRascunho()) {
-//            if (getAtendente() == null && getLotaAtendente() == null)
-//                throw new Exception("Atendente nï¿½o pode ser nulo");
-//
-//            if (getLotaAtendente() == null)
-//                setLotaAtendente(getAtendente().getLotacao());
-//        }
+        SrConfiguracao c = new SrConfiguracao();
+        c.setDpPessoa(solicitacao.getSolicitante());
+        c.setLotacao(solicitacao.getLotaSolicitante());
+        c.setComplexo(solicitacao.getLocal());
+        c.setBuscarPorPerfis(true);
+        c.setItemConfiguracaoFiltro(getItemConfiguracao());
+        c.setAcaoFiltro(getAcao());
+        c.setPrioridade(getPrioridade());
+        c.setAtendente(getLotaAtendente());
+        c.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class, CpTipoConfiguracao.TIPO_CONFIG_SR_ABRANGENCIA_ACORDO));
+        
+        List<SrConfiguracao> confs = SrConfiguracao.listar(c);
+        for (SrConfiguracao conf : confs) {
+        	if (conf.getAcordo() != null && conf.getAcordo().getId() != null) {
+        		SrAcordo acordoAtual = SrAcordo.AR.findById(conf.getAcordo().getIdAcordo()).getAcordoAtual();
+        		if (acordoAtual != null && acordoAtual.getHisDtFim() == null && !getAcordos().contains(acordoAtual) 
+        			&& acordoAtual.contemParametro(SrParametro.ATENDIMENTO, SrParametro.ATENDIMENTO_GERAL))
+        			getAcordos().add(acordoAtual);
+        	}
+        }
+    }
+
+    public List<SrParametroAcordo> getParametrosAcordoOrdenados(SrParametro p){
+    	List<SrParametroAcordo> l = new ArrayList<SrParametroAcordo>();
+    	for (SrParametroAcordo par : getParametrosAcordoOrdenados())
+    		if (par.getParametro().equals(p))
+    			l.add(par);
+    	return l;
+    }
+    
+    public Set<SrParametroAcordo> getParametrosAcordoOrdenados(){
+    	Set<SrParametroAcordo> set = new TreeSet<SrParametroAcordo>(
+			new SrParametroAcordoComparator());
+    	for (SrAcordo a : getAcordos())
+    		set.addAll(a.getParametroAcordoSet());
+    	return set;
     }
 
 	public void notificar() throws Exception {
@@ -444,10 +497,6 @@ public class SrMovimentacao extends Objeto {
         if (getMovFinalizadaSet() == null || getMovFinalizadaSet().size() == 0)
             return null;
         return getMovFinalizadaSet().get(0);
-    }
-
-    public Date getDtFimMov() {
-        return getMovFinalizadora() != null ? getMovFinalizadora().getDtIniMov() : getDtAgenda();
     }
 
     public SrItemConfiguracao getItemConfiguracao() {
@@ -605,6 +654,10 @@ public class SrMovimentacao extends Objeto {
     public SrPrioridade getPrioridade() {
         return prioridade;
     }
+    
+    public String getPrioridadeString(){
+        return prioridade == null ? "" : prioridade.getDescPrioridade();
+    }
 
     public void setPrioridade(SrPrioridade prioridade) {
         this.prioridade = prioridade;
@@ -678,6 +731,18 @@ public class SrMovimentacao extends Objeto {
 		this.motivoFechamento = motivoFechamento;
 	}
 
+    public List<SrAcordo> getAcordos() {
+        return acordos;
+    }
+    
+    public boolean possuiAcordos(){
+    	return getAcordos() != null && getAcordos().size() > 0;
+    }
+
+    public void setAcordos(List<SrAcordo> acordos) {
+        this.acordos = acordos;
+    }
+    
 	public List<String> getEmailsNotificacaoReplanejamento() {
 		SrSolicitacao solicitacao = getSolicitacao().getSolicitacaoAtual();
 		List<String> recipients = new ArrayList<String>();
@@ -733,6 +798,14 @@ public class SrMovimentacao extends Objeto {
 		return recipients;
 	}
 	
+	public Long getDnmTempoDecorridoAtendimento() {
+		return dnmTempoDecorridoAtendimento;
+	}
+
+	public void setDnmTempoDecorridoAtendimento(Long dnmTempoDecorridoAtendimento) {
+		this.dnmTempoDecorridoAtendimento = dnmTempoDecorridoAtendimento;
+	}
+
 	public void carregarSolicitacao() {
 	    if (this.getSolicitacao() != null && this.getSolicitacao().getId() != null) {
 	        this.setSolicitacao(SrSolicitacao.AR.findById(this.getSolicitacao().getId()));

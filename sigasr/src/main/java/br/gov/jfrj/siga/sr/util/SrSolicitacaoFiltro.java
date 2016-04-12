@@ -3,8 +3,6 @@ package br.gov.jfrj.siga.sr.util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -15,8 +13,6 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
-import br.gov.jfrj.siga.sr.model.SrAtributo;
-import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -37,6 +33,12 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	private CpMarcador situacao;
 
 	private DpPessoa atendente;
+	
+	//Edson: os dois atributos abaixo não deveriam existir. Eles foram inclusos devido a um erro em que às vezes o 
+	//VRaptor confundia "filtro.cadastrante" com o atributo "cadastrante" da sessão, preenchendo automaticamente
+	//esse campo no filtro e impedindo a busca
+	private DpPessoa cadastranteBusca;
+	private DpLotacao lotaCadastranteBusca;
 
 	private SrAcordo acordo;
 
@@ -80,8 +82,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		StringBuilder query = new StringBuilder("");
 		// Edson: foi necessario separar em subquery porque o Oracle nao aceita
 		// distinct em coluna CLOB em query contendo join
-		query.append("select sol, situacao, ultMov");
-		query.append(idListaPrioridade > 0 ? ", l " : " "); 
+		query.append("select sol, situacao, ultMov, marcaPrazo.dtIniMarca as prazo ");
+		query.append(idListaPrioridade != null && idListaPrioridade > 0 ? ", l " : " "); 
 				
 		incluirJoinsEWheres(query);
 		
@@ -103,7 +105,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		else if (orderBy.equals("prioridade"))
 			query.append(" sol.prioridade ");
 		else if (orderBy.equals("prioridadeTecnica"))
-			query.append(" sol.dnmPrioridadeTecnica ");
+			//query.append(" sol.dnmPrioridadeTecnica ");
+			query.append(" ultMov.prioridade ");
 		else if (orderBy.equals("posicaoNaLista"))
 			query.append(" l.numPosicao ");
 		else if (orderBy.equals("situacao"))
@@ -116,6 +119,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" ultMov.dtIniMov ");
 		else if (orderBy.equals("ultimaMovimentacao"))
 			query.append(" ultMov.descrMovimentacao ");
+		else if (orderBy.equals("prazo"))
+			query.append(" marcaPrazo.dtIniMarca ");
 		else {
 			query.append(" sol.idSolicitacao ");
 		}
@@ -130,15 +135,13 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	private void incluirJoinsEWheres(StringBuilder query) throws Exception {
 
-		// Edson: O join com duas marcas é necessário porque, quando se busca pelo marcador "Como cadastrante", por exemplo,
-		// o que deve ser exibido na coluna Situação é "Em andamento", não "Como cadastrante" 
-		String situacaoFiltro = "";
+		// Edson: A variável situacaoFiltro indica a marca pela qual será feita a busca por pessoa e lotação, pois há casos em que mais 
+		// de uma marca está em questão. Por exemplo, quando se busca pelo marcador "Como cadastrante", o que deve ser exibido na coluna 
+		//Situação é "Em andamento" (situacao), não "Como cadastrante" (situacaoAux). Porém, a busca deverá ser feita pela marca "Como cadastrante"
+		String situacaoFiltro = "situacao";
 		if (getSituacao() != null && getSituacao().getIdMarcador() != null
-				&& getSituacao().getIdMarcador() > 0){
-			if (MARCADORES_ESTADO.contains(getSituacao().getIdMarcador()))
-				situacaoFiltro = "situacao";
-			else situacaoFiltro = "situacaoAux";
-		}
+				&& getSituacao().getIdMarcador() > 0 && !MARCADORES_ESTADO.contains(getSituacao().getIdMarcador()))
+			situacaoFiltro = "situacaoAux";
 		
 		query.append(" from SrSolicitacao sol inner join sol.meuMarcaSet situacao ");
 		
@@ -147,25 +150,30 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		
 		query.append(" left join sol.meuMovimentacaoSet ultMov ");
 		
+		query.append(" left join sol.meuMarcaSet marcaPrazo with marcaPrazo.cpMarcador.idMarcador = 65 ");
+		
 		query.append(idListaPrioridade != null && idListaPrioridade > 0 ? " inner join sol.meuPrioridadeSolicitacaoSet l " : "");
 		
 		query.append(" where sol.hisDtFim is null ");
 		
-		query.append(" and not exists (from SrMovimentacao mov where solicitacao = sol and dtIniMov > ultMov.dtIniMov) ");
+		query.append(" and (marcaPrazo.dpLotacaoIni is null or marcaPrazo.dpLotacaoIni = situacao.dpLotacaoIni) ");
 
 		incluirWheresBasicos(query);
 		
-		if (situacaoFiltro.equals("situacao"))
-			query.append(" and situacao.cpMarcador.idMarcador = " + getSituacao().getIdMarcador());
-		else query.append(" and situacao.cpMarcador.idMarcador in (9, 42, 43, 44, 45, 61) ");
+		if (situacaoFiltro.equals("situacaoAux") || getSituacao() == null)
+			//Edson: Juntado, Em andamento, fechado, pendente, cancelado em elaboração: marcas que não se repetem numa solicitação
+			query.append(" and situacao.cpMarcador.idMarcador in (9, 42, 43, 44, 45, 61) ");
+		else 
+			query.append(" and situacao.cpMarcador.idMarcador = " + getSituacao().getIdMarcador()); 
 		
 		query.append(" and (situacao.dtIniMarca is null or "
 					+ "situacao.dtIniMarca < sysdate) ");
 		query.append(" and (situacao.dtFimMarca is null or "
 					+ "situacao.dtFimMarca > sysdate) ");
 		
-		if (situacaoFiltro.equals("situacaoAux")){
-			query.append(" and situacaoAux.cpMarcador.idMarcador = "
+		if (situacaoFiltro.equals("situacaoAux")) {
+			if (getSituacao() != null)
+				query.append(" and situacaoAux.cpMarcador.idMarcador = "
 					+ getSituacao().getIdMarcador());
 			query.append(" and (situacaoAux.dtIniMarca is null or "
 					+ "situacaoAux.dtIniMarca < sysdate) ");
@@ -185,12 +193,14 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	
 	private void incluirWheresBasicos(StringBuilder query){
 		
-		if (Filtros.deveAdicionar(getCadastrante()))
+		query.append(" and not exists (from SrMovimentacao mov where solicitacao = sol and idMovimentacao > ultMov.idMovimentacao) ");
+		
+		if (Filtros.deveAdicionar(getCadastranteBusca()))
 			query.append(" and sol.cadastrante.idPessoaIni = "
-					+ getCadastrante().getIdInicial());
-		if (Filtros.deveAdicionar(getLotaTitular()))
+					+ getCadastranteBusca().getIdInicial());
+		if (Filtros.deveAdicionar(getLotaCadastranteBusca()))
 			query.append(" and sol.lotaTitular.idLotacaoIni = "
-					+ getLotaTitular().getIdInicial());
+					+ getLotaCadastranteBusca().getIdInicial());
 		if (Filtros.deveAdicionar(getSolicitante()))
 			query.append(" and sol.solicitante.idPessoaIni = "
 					+ getSolicitante().getIdInicial());
@@ -199,18 +209,18 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 					+ getLotaSolicitante().getIdInicial());
 		
 		if (Filtros.deveAdicionar(getItemConfiguracao())){
-			query.append(" and sol.dnmItemConfiguracao.hisIdIni = "
-					+ getItemConfiguracao().getItemInicial()
-							.getIdItemConfiguracao());
+			query.append(" and ultMov.itemConfiguracao.hisIdIni = "
+					+ getItemConfiguracao().getItemInicial().getIdItemConfiguracao());
 		}
 		if (Filtros.deveAdicionar(getAcao())){
-			query.append(" and sol.dnmAcao.hisIdIni = "
+			query.append(" and ultMov.acao.hisIdIni = "
 					+ getAcao().getAcaoInicial().getIdAcao());
 		}
 		
 		if (getPrioridade() != null && getPrioridade().getIdPrioridade() > 0L){
-			query.append(" and (sol.dnmPrioridadeTecnica <= " + getPrioridade().ordinal());
-			query.append(" or sol.prioridade <= " + getPrioridade().ordinal() + ") ");
+			query.append(" and ((case when ultMov.idMovimentacao is not null then "
+					+ "ultMov.prioridade else sol.prioridade end)) = "
+					+  getPrioridade().ordinal());
 		}
 
 		if (getIdListaPrioridade() != null
@@ -266,8 +276,10 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	public boolean isRazoavelmentePreenchido() {
 		return getSituacao() != null
-				|| getCadastrante() != null
+				|| getCadastranteBusca() != null
+				|| getLotaCadastranteBusca() != null
 				|| getSolicitante() != null
+				|| getLotaSolicitante() != null
 				|| getAtendente() != null
 				|| getLotaAtendente() != null
 				|| getAcordo() != null
@@ -282,23 +294,20 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Object[]> buscarSimplificado() throws Exception {
+	public List<SrSolicitacaoSimplificada> buscarSimplificado() throws Exception {
 		StringBuilder query = new StringBuilder("select sol.hisIdIni, "
 				+ " case when sol.descrSolicitacao is null then pai.descrSolicitacao else sol.descrSolicitacao end, "
 				+ " sol.dtReg "
 				+ " from SrSolicitacao sol left join sol.solicitacaoPai pai"
+				+ " left join sol.meuMovimentacaoSet ultMov "
 				+ " where sol.rascunho = false and sol.hisDtFim is null ");
 		incluirWheresBasicos(query);
-		query.append(" order by sol.dtReg desc");
-		List<Object[]> results = ContextoPersistencia.em().createQuery(query.toString()).setMaxResults(10).getResultList();
-		
-		//Edson: ver um jeito melhor de formatar essas datas
-		for (Object[] o : results){
-			Date dtReg = (Date)o[2];
-			o[2] = new SimpleDateFormat("dd/MM/yyyy").format(dtReg);
-		}
-		
-		return results;
+		query.append(" order by sol.idSolicitacao desc ");
+		List<Object[]> results = ContextoPersistencia.em().createQuery(query.toString()).setMaxResults(8).getResultList();
+		List<SrSolicitacaoSimplificada> sols = new ArrayList<SrSolicitacaoSimplificada>();
+		for (Object[] o : results)
+			sols.add(new SrSolicitacaoSimplificada((Long)o[0], (String)o[1], (Date)o[2]));
+		return sols;
 	}
 
 	public boolean isPesquisar() {
@@ -348,6 +357,22 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	public SentidoOrdenacao getSentidoOrdenacao() {
 		return sentidoOrdenacao;
+	}
+
+	public DpPessoa getCadastranteBusca() {
+		return cadastranteBusca;
+	}
+
+	public void setCadastranteBusca(DpPessoa cadastranteBusca) {
+		this.cadastranteBusca = cadastranteBusca;
+	}
+
+	public DpLotacao getLotaCadastranteBusca() {
+		return lotaCadastranteBusca;
+	}
+
+	public void setLotaCadastranteBusca(DpLotacao lotaCadastranteBusca) {
+		this.lotaCadastranteBusca = lotaCadastranteBusca;
 	}
 
 	public void setSentidoOrdenacao(SentidoOrdenacao sentido) {

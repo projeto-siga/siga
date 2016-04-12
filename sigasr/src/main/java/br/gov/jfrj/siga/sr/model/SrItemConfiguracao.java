@@ -169,6 +169,10 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 	public String getDescricao() {
 		return getTituloItemConfiguracao();
 	}
+	
+	public String getDescricaoCompleta() {
+		return getSiglaItemConfiguracao() + " - " + getTituloItemConfiguracao();
+	}
 
 	@Override
 	public void setId(Long id) {

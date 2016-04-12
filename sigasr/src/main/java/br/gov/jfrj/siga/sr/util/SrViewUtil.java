@@ -1,19 +1,11 @@
 package br.gov.jfrj.siga.sr.util;
 
-import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
 
 public class SrViewUtil {
-
-	/**
-	 * Retorna uma String formatada para renderizar as informações do componente 
-	 * #{descricaoItem}.
-	 */
-	public static String descricaoItem(SrItemConfiguracao itemConfiguracao) {
-		if (itemConfiguracao != null)
-			return itemConfiguracao.getTituloItemConfiguracao();
-		else
-			return new String("Item não informado");
-	}
 	
 	/**
 	 * Retorna uma String formatada para renderizar as informações do componente 
@@ -54,5 +46,51 @@ public class SrViewUtil {
 	
 	public static String tagA(String descricao) {
 		return new String("<a>" + descricao + "</a>");
+	}
+	
+	public static String toDDMMYYYY(Date dt){
+		return dt != null ? new SimpleDateFormat("dd/MM/yyyy").format(dt) : "";
+	}
+	
+	public static String toHHMM(Date dt){
+		return dt != null ? new SimpleDateFormat("HH:mm").format(dt) : "";
+	}
+	
+	public static String toYYYY(Date dt){
+		return dt != null ? new SimpleDateFormat("yyyy").format(dt) : "";
+	}
+	
+	public static String toDDMMYYYYHHMM(Date dt){
+		return dt != null ? new SimpleDateFormat("dd/MM/yyyy HH:mm").format(dt) : "";
+	}
+	
+	public static String toDDMMYYYYHHMMSS(Date dt){
+		return dt != null ? new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(dt) : "";
+	}
+	
+	public static String toStr(Date dt){
+		if (dt == null)
+			return "";
+		SigaPlayCalendar cal = new SigaPlayCalendar();
+        cal.setTime(dt);
+        return cal.getTempoTranscorridoString(false);
+	}
+	
+	public static Date fromDDMMYYYYHHMM(String dt){
+		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        try {
+            return(df.parse(dt));
+        } catch (Exception e) {
+        	return null;
+        }
+	}
+	
+	public static Date fromDDMMYYYYHHMMSS(String dt){
+		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        try {
+            return(df.parse(dt));
+        } catch (Exception e) {
+        	return null;
+        }
 	}
 }

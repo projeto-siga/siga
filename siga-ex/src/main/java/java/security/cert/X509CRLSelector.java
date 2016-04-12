@@ -103,7 +103,7 @@ public class X509CRLSelector implements CRLSelector {
 	 * set so any <code>X509CRL</code> will match.
 	 */
 	public X509CRLSelector() {
-		System.out.println("Funcionou!");
+//		System.out.println("Funcionou!");
 	}
 
 	/**

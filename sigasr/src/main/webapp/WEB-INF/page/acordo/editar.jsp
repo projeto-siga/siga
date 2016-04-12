@@ -123,7 +123,7 @@
 					<label>Par&acirc;metro</label> 
 					<select id="parametro" name="parametro">
 						<c:forEach items="${parametros}" var="parametro">
-							<option value="${parametro.idAtributo}">${parametro.nomeAtributo}</option>
+							<option value="${parametro}">${parametro.descricao}</option>
 						</c:forEach>
 					</select>
 				</div>
@@ -773,13 +773,13 @@
 		$("#parametrosAcordo").find("li").each(function(i) {
 			var jDivs=$(this).find("span");
 
-			params += '&acordo.atributoAcordoSet[' + i + '].valor=' + jDivs[2].innerHTML;
-		    params += '&acordo.atributoAcordoSet[' + i + '].atributo.id=' + jDivs[0].id;
-		    params += '&acordo.atributoAcordoSet[' + i + '].unidadeMedida[' + i + '].id=' + jDivs[3].id;
-		    params += '&acordo.atributoAcordoSet[' + i + '].operador=' + jDivs[1].id;
+			params += '&acordo.parametroAcordoSet[' + i + '].valor=' + jDivs[2].innerHTML;
+		    params += '&acordo.parametroAcordoSet[' + i + '].parametro=' + jDivs[0].id;
+		    params += '&acordo.parametroAcordoSet[' + i + '].unidadeMedida[' + i + '].id=' + jDivs[3].id;
+		    params += '&acordo.parametroAcordoSet[' + i + '].operador=' + jDivs[1].id;
 
 		    if (this.id.indexOf("novo_") < 0)
-		    	params += '&atributoAcordoSet[' + i + '].id=' + this.id;
+		    	params += '&parametroAcordoSet[' + i + '].id=' + this.id;
 		});
 
 		return params;

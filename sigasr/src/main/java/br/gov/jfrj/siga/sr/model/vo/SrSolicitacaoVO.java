@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.sr.model.vo;
 
+import java.util.Date;
+
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.sr.model.SrLista;
@@ -40,8 +42,9 @@ public class SrSolicitacaoVO {
 	private String lotaAtendente = "";
 	private String dtUltimaMovimentacao = "";
 	private String ultimaMovimentacao = "";
+	private String prazo = "";
 
-	public SrSolicitacaoVO(SrSolicitacao sol, SrMarca m, SrMovimentacao ultMov, SrLista lista,
+	public SrSolicitacaoVO(SrSolicitacao sol, SrMarca m, SrMovimentacao ultMov, Date prazo, SrLista lista,
 			SrPrioridadeSolicitacao prioridadeSolicitacao,
 			DpLotacao lotaTitular, DpPessoa titular, String propriedade, boolean isPopup,
 			boolean podeRemover, boolean podePriorizar)
@@ -51,6 +54,9 @@ public class SrSolicitacaoVO {
 		this.setIdPrioridadeSolicitacao(prioridadeSolicitacao != null ? prioridadeSolicitacao.getIdPrioridadeSolicitacao() : null);
 
 		this.setDtReg(sol.getSolicitacaoInicial().getDtRegString());
+		
+		this.setPrazo(prazo != null ? SrViewUtil.toDDMMYYYYHHMM(prazo) : "");
+		
 		if (isPopup)
 			setCodigo("<a href=\"javascript:opener.retorna_" + propriedade
 					+ "(&#039;" + getIdSolicitacao() + "&#039;,&#039;" + codigo
@@ -61,7 +67,8 @@ public class SrSolicitacaoVO {
 					+ "\">" + sol.getCodigo() + "</a>");
 
 		this.setDescrSolicitacao("<b>"
-				+ (sol.getDnmItemConfiguracao() != null ? sol.getDnmItemConfiguracao().getTituloItemConfiguracao() : "Item não informado")
+				+ (ultMov != null && ultMov.getItemConfiguracao() != null ? ultMov.getItemConfiguracao().getDescricao() : 
+					sol.getItemConfiguracao() != null ? sol.getItemConfiguracao() : "Item Não Informado")
 				+ ":</b>&nbsp;" + SrViewUtil.selecionado(sol.getDescricao(), sol.getDescricao()));
 
 		String nomeCadastranteAbreviado = sol.getCadastrante() != null ? sol
@@ -88,11 +95,11 @@ public class SrSolicitacaoVO {
 				.getPrioridade() : null);
 		this.setNaoReposicionarAutomaticoNaLista(prioridadeSolicitacao != null ? prioridadeSolicitacao
 				.getNaoReposicionarAutomatico() : false);
-		this.setPrioridadeTecnica(sol.getDnmPrioridadeTecnicaString());
+		this.setPrioridadeTecnica(ultMov != null ? ultMov.getPrioridadeString() : sol.getPrioridadeString());
 		
 		if (prioridadeSolicitacao != null)
 			this.setCssClass("PRIORIDADE-" + prioridadeSolicitacao.getPrioridade());
-		else this.setCssClass("PRIORIDADE-" + sol.getDnmPrioridadeTecnica());
+		else this.setCssClass("PRIORIDADE-" + (ultMov != null ? ultMov.getPrioridade() : sol.getPrioridade()));
 
 		this.setSituacao(m.getCpMarcador().getDescrMarcador());
 
@@ -323,5 +330,12 @@ public class SrSolicitacaoVO {
 	public void setSiglaSolicitacao(String siglaSolicitacao) {
 		this.siglaSolicitacao = siglaSolicitacao;
 	}
+	
+	public String getPrazo() {
+		return prazo;
+	}
 
+	public void setPrazo(String prazo) {
+		this.prazo = prazo;
+	}
 }

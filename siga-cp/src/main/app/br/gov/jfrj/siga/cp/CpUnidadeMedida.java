@@ -3,6 +3,9 @@ package br.gov.jfrj.siga.cp;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.ActiveRecord;
+
 
 
 @Entity
@@ -20,6 +23,8 @@ public class CpUnidadeMedida extends AbstractCpUnidadeMedida {
 	final static public int MINUTO = 5;
 	
 	final static public int SEGUNDO = 6;
+	
+	public static final ActiveRecord<CpUnidadeMedida> AR = new ActiveRecord<>(CpUnidadeMedida.class);
 	
 	public String getPlural(){
 		if (getDescricao().endsWith("s"))

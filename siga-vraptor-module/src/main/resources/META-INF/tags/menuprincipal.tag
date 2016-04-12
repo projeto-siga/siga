@@ -106,6 +106,9 @@
 					
 				</ul>
 			</li>
+			<c:if test="${not empty f:resource('gsa.url')}">
+			<li><a href="/siga/app/busca">Busca Textual</a></li>
+			</c:if>
 			<li><a href="#">Administração</a>
 				<ul>
 					<li><a href="/siga/app/usuario/trocar_senha" >Trocar senha</a>

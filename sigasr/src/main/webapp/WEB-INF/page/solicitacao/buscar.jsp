@@ -56,7 +56,7 @@
 	                    <tr>
 	                        <td>Cadastrante</td>
 	                        <td>
-	                           <siga:pessoaLotaSelecao2 propriedadePessoa="filtro.cadastrante" propriedadeLotacao="filtro.lotaTitular"/>
+	                           <siga:pessoaLotaSelecao2 propriedadePessoa="filtro.cadastranteBusca" propriedadeLotacao="filtro.lotaCadastranteBusca"/>
 	                        </td>
 	                    </tr>
 	                    <tr>

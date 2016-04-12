@@ -10,6 +10,7 @@ import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -46,6 +47,7 @@ public final class ExConfiguracaoBuilder {
 	private Long idOrgaoObjeto;
 	private Long id;
 	private Integer tipoPublicador;
+	private Long idTpLotacao;
 
 	private ExConfiguracaoBuilder() {
 		this.pessoaSel = new DpPessoaSelecao(); 
@@ -128,6 +130,12 @@ public final class ExConfiguracaoBuilder {
 			config.setLotacao(dao.consultar(lotacaoSel.getId(), DpLotacao.class, false));
 		} else
 			config.setLotacao(null);
+
+		if (idTpLotacao != null && idTpLotacao != 0) {
+			config.setCpTipoLotacao(dao.consultar(idTpLotacao,
+					CpTipoLotacao.class, false));
+		} else
+			config.setExNivelAcesso(null);
 
 		if (cargoSel != null && cargoSel.getId() != null) {
 			config.setCargo(dao.consultar(cargoSel.getId(), DpCargo.class, false));
@@ -313,5 +321,10 @@ public final class ExConfiguracaoBuilder {
 	
 	public static boolean isTipoOrgaoIntegrado(Integer tipo) {
 		return ORGAO_INTEGRADO.equals(tipo);
+	}
+
+	public ExConfiguracaoBuilder setIdTpLotacao(Long idTpLotacao) {
+		this.idTpLotacao = idTpLotacao;
+		return this;
 	}
 }

@@ -138,7 +138,7 @@ public class ExDocumentoController extends ExController {
 				.novaInstancia().setSigla(sigla);
 		final ExDocumento doc = buscarDocumento(builder, false);
 
-		Ex.getInstance().getBL().processar(doc, true, false, null);
+		Ex.getInstance().getBL().processar(doc, true, false);
 
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
@@ -583,8 +583,8 @@ public class ExDocumentoController extends ExController {
 					final String as[] = new String[] { exDocumentoDTO
 							.getParamsEntrevista().get(p) };
 					parFreeMarker.put(p, as);
-					System.out.println("*** " + p + ", "
-							+ exDocumentoDTO.getParamsEntrevista().get(p));
+//					System.out.println("*** " + p + ", "
+//							+ exDocumentoDTO.getParamsEntrevista().get(p));
 				}
 			}
 		}
@@ -600,8 +600,8 @@ public class ExDocumentoController extends ExController {
 		for (String p : exDocumentoDTO.getParamsEntrevista().keySet()) {
 			result.include(p, exDocumentoDTO.getParamsEntrevista().get(p));
 			l.add(p);
-			System.out.println("*** " + p + ", "
-					+ exDocumentoDTO.getParamsEntrevista().get(p));
+//			System.out.println("*** " + p + ", "
+//					+ exDocumentoDTO.getParamsEntrevista().get(p));
 		}
 		result.include("vars", l);
 
@@ -791,7 +791,7 @@ public class ExDocumentoController extends ExController {
 			if (mob.isArquivado())
 				jaArquivado = true;	
 		
-		if (mob.doc().isFinalizado()) {
+		if (mob.doc().isFinalizado() && mob.getUltimaMovimentacaoNaoCancelada()!= null) {
 			dest = mob.getUltimaMovimentacaoNaoCancelada().getResp().getPessoaAtual(); 
 			lotaDest = mob.getUltimaMovimentacaoNaoCancelada().getLotaResp().getLotacaoAtual();	
 		} else {
@@ -1152,12 +1152,11 @@ public class ExDocumentoController extends ExController {
 		}
 
 		try {
-			final String realPath = getContext().getRealPath("");
 			exDocumentoDto.setMsg(Ex
 					.getInstance()
 					.getBL()
 					.finalizar(getCadastrante(), getLotaTitular(),
-							exDocumentoDto.getDoc(), realPath));
+							exDocumentoDto.getDoc()));
 
 			if (exDocumentoDto.getDoc().getForm() != null) {
 				if (exDocumentoDto.getDoc().getForm().get("acaoFinalizar") != null
@@ -1190,28 +1189,14 @@ public class ExDocumentoController extends ExController {
 			}
 
 			long tempoIni = System.currentTimeMillis();
-
+			
+			setPar(getRequest().getParameterMap());
 			if (!validar()) {
-				edita(exDocumentoDTO, null, vars,
-						exDocumentoDTO.getMobilPaiSel(),
-						exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando());
 				getPar().put("alerta", new String[] { "Sim" });
 				exDocumentoDTO.setAlerta("Sim");
-
-				String url = null;
-				if (exDocumentoDTO.getMobilPaiSel().getSigla() != null) {
-					url = MessageFormat.format(
-							"editar?mobilPaiSel.sigla={0}&criandoAnexo={1}",
-							exDocumentoDTO.getMobilPaiSel().getSigla(),
-							exDocumentoDTO.isCriandoAnexo());
-				} else {
-					url = MessageFormat.format(
-							"editar?sigla={0}&criandoAnexo={1}",
-							exDocumentoDTO.getSigla(),
-							exDocumentoDTO.isCriandoAnexo());
-				}
-
-				result.redirectTo(url);
+				result.forwardTo(this).edita(exDocumentoDTO, null, vars,
+						exDocumentoDTO.getMobilPaiSel(),
+						exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando());
 				return;
 			}
 
@@ -1243,11 +1228,11 @@ public class ExDocumentoController extends ExController {
 				throw new AplicacaoException("Operação não permitida");
 			}
 
-			System.out.println("monitorando gravacao IDDoc "
-					+ exDocumentoDTO.getDoc().getIdDoc() + ", PESSOA "
-					+ exDocumentoDTO.getDoc().getCadastrante().getIdPessoa()
-					+ ". Terminou verificacao de config PodeCriarModelo: "
-					+ (System.currentTimeMillis() - tempoIni));
+//			System.out.println("monitorando gravacao IDDoc "
+//					+ exDocumentoDTO.getDoc().getIdDoc() + ", PESSOA "
+//					+ exDocumentoDTO.getDoc().getCadastrante().getIdPessoa()
+//					+ ". Terminou verificacao de config PodeCriarModelo: "
+//					+ (System.currentTimeMillis() - tempoIni));
 
 			tempoIni = System.currentTimeMillis();
 
@@ -1314,12 +1299,14 @@ public class ExDocumentoController extends ExController {
 					throw new AplicacaoException("O arquivo a ser anexado não foi selecionado!");
 				}
 	
+				Integer numBytes = null;
 				try {
 					final byte[] baArquivo = toByteArray(arquivo);
 					if (baArquivo == null) {
 						throw new AplicacaoException("Arquivo vazio não pode ser anexado.");
 					}
-					if (baArquivo.length > 10 * 1024 * 1024) {
+					numBytes = baArquivo.length;
+					if (numBytes > 10 * 1024 * 1024) {
 						throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 10MB.");
 					}
 					d.setConteudoBlobPdf(baArquivo);
@@ -1327,19 +1314,23 @@ public class ExDocumentoController extends ExController {
 					throw new AplicacaoException("Falha ao manipular aquivo", 1, e);
 				}
 	
-				if (d.getContarNumeroDePaginas() == null || d.getArquivoComStamp() == null) {
+				Integer numPaginas = d.getContarNumeroDePaginas();
+				if (numPaginas == null || d.getArquivoComStamp() == null) {
 					throw new AplicacaoException(MessageFormat.format("O arquivo {0} está corrompido. Favor gera-lo novamente antes de anexar.", arquivo.getFileName()));
 				}
-			} 
+				
+				if (numPaginas != null && numBytes != null &&  (numBytes/numPaginas > (1 * 1024 * 1024))) {
+					throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 1MB por página.");
+				}
+			}
 			
-			final String realPath = getContext().getRealPath("");
 			exBL.gravar(getCadastrante(), getLotaTitular(),
-					exDocumentoDTO.getDoc(), realPath);
+					exDocumentoDTO.getDoc());
 			
 			if (!exDocumentoDTO.getDoc().isFinalizado()
 					&& exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)
 				exBL.finalizar(getCadastrante(), getLotaTitular(),
-						exDocumentoDTO.getDoc(), realPath);
+						exDocumentoDTO.getDoc());
 
 			lerEntrevista(exDocumentoDTO);
 
@@ -1473,9 +1464,8 @@ public class ExDocumentoController extends ExController {
 					ExModelo.class, false));
 		}
 
-		final String realPath = getContext().getRealPath("");
 		Ex.getInstance().getBL()
-				.processar(exDocumentoDTO.getDoc(), false, false, realPath);
+				.processar(exDocumentoDTO.getDoc(), false, false);
 
 		exDocumentoDTO.setPdfStreamResult(new ByteArrayInputStream(
 				exDocumentoDTO.getDoc().getConteudoBlobPdf()));
@@ -1889,29 +1879,30 @@ public class ExDocumentoController extends ExController {
 				aFinal.add(str);
 			}
 		}
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		if (aFinal != null && aFinal.size() > 0) {
-			for (final String par : aFinal) {
-				String s = "exDocumentoDTO.".concat(par);
-				if (param(s) == null) {
-					s = par;
-				}
-				if (param(s) != null && !param(s).trim().equals("")
-						&& !s.trim().equals("exDocumentoDTO.preenchimento")
-						&& !param(s).matches("[0-9]{2}/[0-9]{2}/[0-9]{4}")) {
-					if (baos.size() > 0) {
-						baos.write('&');
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			if (aFinal != null && aFinal.size() > 0) {
+				for (final String par : aFinal) {
+					String s = "exDocumentoDTO.".concat(par);
+					if (param(s) == null) {
+						s = par;
 					}
-					baos.write(par.getBytes());
-					baos.write('=');
-
-					// Deveria estar gravando como UTF-8
-					baos.write(URLEncoder.encode(param(s), "iso-8859-1")
-							.getBytes());
+					if (param(s) != null && !param(s).trim().equals("")
+							&& !s.trim().equals("exDocumentoDTO.preenchimento")
+							&& !param(s).matches("[0-9]{2}/[0-9]{2}/[0-9]{4}")) {
+						if (baos.size() > 0) {
+							baos.write('&');
+						}
+						baos.write(par.getBytes());
+						baos.write('=');
+	
+						// Deveria estar gravando como UTF-8
+						baos.write(URLEncoder.encode(param(s), "iso-8859-1")
+								.getBytes());
+					}
 				}
 			}
+			return baos.toByteArray();
 		}
-		return baos.toByteArray();
 	}
 
 	private void lerEntrevista(final ExDocumentoDTO exDocumentoDTO) {
@@ -1929,7 +1920,7 @@ public class ExDocumentoController extends ExController {
 						}
 					} catch (final UnsupportedEncodingException e) {
 					}
-					System.out.println(s);
+//					System.out.println(s);
 				}
 			}
 		}
@@ -2120,45 +2111,45 @@ public class ExDocumentoController extends ExController {
 			exDocumentoDTO.getDoc().setExMobilPai(null);
 		}
 
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-		final String marcacoes[] = { "<!-- INICIO NUMERO -->",
-				"<!-- FIM NUMERO -->", "<!-- INICIO NUMERO", "FIM NUMERO -->",
-				"<!-- INICIO TITULO", "FIM TITULO -->",
-				"<!-- INICIO MIOLO -->", "<!-- FIM MIOLO -->",
-				"<!-- INICIO CORPO -->", "<!-- FIM CORPO -->",
-				"<!-- INICIO CORPO", "FIM CORPO -->",
-				"<!-- INICIO ASSINATURA -->", "<!-- FIM ASSINATURA -->",
-				"<!-- INICIO ABERTURA -->", "<!-- FIM ABERTURA -->",
-				"<!-- INICIO ABERTURA", "FIM ABERTURA -->",
-				"<!-- INICIO FECHO -->", "<!-- FIM FECHO -->" };
-
-		final String as[] = vars;
-		if (as != null && as.length > 0) {
-			for (final String s : as) {
-				if (baos.size() > 0)
-					baos.write('&');
-				baos.write(s.getBytes());
-				baos.write('=');
-				if (param(s) != null) {
-					String parametro = param(s);
-					for (final String m : marcacoes) {
-						if (parametro.contains(m))
-							parametro = parametro.replaceAll(m, "");
-					}
-					if (!FuncoesEL.contemTagHTML(parametro)) {
-						if (parametro.contains("\"")) {
-							parametro = parametro.replace("\"", "&quot;");
-							setParam(s, parametro);
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			final String marcacoes[] = { "<!-- INICIO NUMERO -->",
+					"<!-- FIM NUMERO -->", "<!-- INICIO NUMERO", "FIM NUMERO -->",
+					"<!-- INICIO TITULO", "FIM TITULO -->",
+					"<!-- INICIO MIOLO -->", "<!-- FIM MIOLO -->",
+					"<!-- INICIO CORPO -->", "<!-- FIM CORPO -->",
+					"<!-- INICIO CORPO", "FIM CORPO -->",
+					"<!-- INICIO ASSINATURA -->", "<!-- FIM ASSINATURA -->",
+					"<!-- INICIO ABERTURA -->", "<!-- FIM ABERTURA -->",
+					"<!-- INICIO ABERTURA", "FIM ABERTURA -->",
+					"<!-- INICIO FECHO -->", "<!-- FIM FECHO -->" };
+	
+			final String as[] = vars;
+			if (as != null && as.length > 0) {
+				for (final String s : as) {
+					if (baos.size() > 0)
+						baos.write('&');
+					baos.write(s.getBytes());
+					baos.write('=');
+					if (param(s) != null) {
+						String parametro = param(s);
+						for (final String m : marcacoes) {
+							if (parametro.contains(m))
+								parametro = parametro.replaceAll(m, "");
 						}
+						if (!FuncoesEL.contemTagHTML(parametro)) {
+							if (parametro.contains("\"")) {
+								parametro = parametro.replace("\"", "&quot;");
+								setParam(s, parametro);
+							}
+						}
+	
+						baos.write(URLEncoder.encode(parametro, "iso-8859-1")
+								.getBytes());
 					}
-
-					baos.write(URLEncoder.encode(parametro, "iso-8859-1")
-							.getBytes());
 				}
+				exDocumentoDTO.getDoc().setConteudoTpDoc("application/zip");
+				exDocumentoDTO.getDoc().setConteudoBlobForm(baos.toByteArray());
 			}
-			exDocumentoDTO.getDoc().setConteudoTpDoc("application/zip");
-			exDocumentoDTO.getDoc().setConteudoBlobForm(baos.toByteArray());
 		}
 	}
 
@@ -2365,5 +2356,5 @@ public class ExDocumentoController extends ExController {
 				.corrigirArquivamentosEmVolume(idPrimeiroDoc, idUltimoDoc,
 						efetivarDoc);
 	}
-
+	
 }

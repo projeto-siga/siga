@@ -57,9 +57,9 @@ public class ProcessImageServlet extends HttpServlet {
 			Long taskId = Long.parseLong(request.getParameter("tkId"));
 			
 		}
-		OutputStream out = response.getOutputStream();
-		out.write(bytes);
-		out.flush();
+		try (OutputStream out = response.getOutputStream()) {
+			out.write(bytes);
+			out.flush();
+		}
 	}
-
 }

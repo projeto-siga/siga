@@ -15,16 +15,16 @@
             <c:forEach items="${contagens}" var="contagem">
             <tr>
                 <td>
-                    <a href="${linkTo[SolicitacaoController].buscar}?filtro.situacao.idMarcador=${contagem[0]}&filtro.lotaAtendenteSel.id=${lotaTitular.idLotacao}">${contagem[1]}</a>
+                    <a href="${linkTo[SolicitacaoController].buscar}?filtro.situacao.idMarcador=${contagem[0]}&filtro.lotaAtendente.id=${lotaTitular.idLotacao}">${contagem[1]}</a>
                 </td>
                 <td align="right">
-                    <a href="${linkTo[SolicitacaoController].buscar}?filtro.situacao.idMarcador=${contagem[0]}&filtro.atendenteSel.id=${titular.idPessoa}">${contagem[2]}</a>
+                    <a href="${linkTo[SolicitacaoController].buscar}?filtro.situacao.idMarcador=${contagem[0]}&filtro.atendente.id=${titular.idPessoa}">${contagem[2]}</a>
                 </td>
                 <td align="right">
-                    <a href="${linkTo[SolicitacaoController].buscar}?filtro.situacao.idMarcador=${contagem[0]}&filtro.lotaAtendenteSel.id=${lotaTitular.idLotacao}">${contagem[3]}</a>
+                    <a href="${linkTo[SolicitacaoController].buscar}?filtro.situacao.idMarcador=${contagem[0]}&filtro.lotaAtendente.id=${lotaTitular.idLotacao}">${contagem[3]}</a>
                 </td>
                 <td align="right">
-                    <a href="${linkTo[SolicitacaoController].buscar}?filtro.situacao.idMarcador=${contagem[0]}&filtro.lotaAtendenteSel.id=${lotaTitular.idLotacao}&filtro.naoDesignados=true">${contagem[4]}</a>
+                    <a href="${linkTo[SolicitacaoController].buscar}?filtro.situacao.idMarcador=${contagem[0]}&filtro.lotaAtendente.id=${lotaTitular.idLotacao}&filtro.naoDesignados=true">${contagem[4]}</a>
                 </td>
             </tr>
             </c:forEach>

@@ -474,9 +474,9 @@
 									até ${marca.dtFimMarcaDDMMYYYY}
 								</c:if>
 								<c:if test="${not empty marca.dpLotacaoIni}">
-									[${marca.dpLotacaoIni.sigla}
+									[${marca.dpLotacaoIni.lotacaoAtual.sigla}
 									<c:if test="${not empty marca.dpPessoaIni}">
-										&nbsp;${marca.dpPessoaIni.sigla}
+										&nbsp;${marca.dpPessoaIni.pessoaAtual.sigla}
 									</c:if>
 									]
 								</c:if>

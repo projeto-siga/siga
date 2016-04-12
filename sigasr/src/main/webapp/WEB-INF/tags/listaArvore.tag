@@ -10,7 +10,7 @@
 	<c:set var="nivel" value="0"/>
 </c:if>
 
-<span style="padding-left: ${nivel*10}pt;">
+<div style="padding-left: ${nivel*10}pt; font-size: 85%; padding-bottom: 4pt;">
 	<c:choose>
 		<c:when test="${visualizando == solicitacao}">
 			<b><i>
@@ -30,8 +30,7 @@
 		</c:otherwise>
 	</c:choose>
 	- ${solicitacao.marcadoresEmHtml}
-</span>
-<br/>
+</div>
 <c:forEach items="${solicitacao.solicitacaoFilhaSet}" var="solFilha">
 	<sigasr:listaArvore solicitacao="${solFilha}" visualizando="${visualizando}" nivel="${nivel+1}"/>
 </c:forEach>

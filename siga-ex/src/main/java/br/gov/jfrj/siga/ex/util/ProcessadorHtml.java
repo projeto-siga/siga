@@ -234,6 +234,9 @@ public class ProcessadorHtml {
 		tidy.setSpaces(0);
 		tidy.setTidyMark(false);
 		tidy.setIndentContent(!fRemoverEspacos);
+		
+		tidy.setQuiet(true);
+		//tidy.setErrout(null); // Nato: isso precisou ser removido pois estava fazendo o tidy retornar "" na canonicalização
 
 		s = s.replace("\r\n", "*newline*");
 		s = s.replace("\n", "*newline*");
@@ -281,19 +284,21 @@ public class ProcessadorHtml {
 		// else
 		// s = htmlc.getPrettyXmlAsString();
 
-		final ByteArrayOutputStream os = new ByteArrayOutputStream();
-		tidy.parse(new ByteArrayInputStream(s.getBytes("iso-8859-1")), os);
-		os.flush();
-		s = new String(os.toByteArray(), "iso-8859-1");
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+			tidy.parse(new ByteArrayInputStream(s.getBytes("iso-8859-1")), os);
+			os.flush();
+			s = new String(os.toByteArray(), "iso-8859-1");
+		}
 
 		if (fRemoverTagsDesconhecidos) {
 			s = removerTagsDesconhecidosHtml(s);
 			// Depois precisamos rodar o tidy novamente para recuperar a
 			// formatacao
-			final ByteArrayOutputStream os2 = new ByteArrayOutputStream();
-			tidy.parse(new ByteArrayInputStream(s.getBytes("iso-8859-1")), os2);
-			os2.flush();
-			s = new String(os2.toByteArray(), "iso-8859-1");
+			try (ByteArrayOutputStream os2 = new ByteArrayOutputStream()) {
+				tidy.parse(new ByteArrayInputStream(s.getBytes("iso-8859-1")), os2);
+				os2.flush();
+				s = new String(os2.toByteArray(), "iso-8859-1");
+			}
 		}
 
 		if (fRemoverEspacos)
@@ -481,12 +486,7 @@ public class ProcessadorHtml {
 	}
 
 	public String removerEspacosHtml(final String sHtml) throws Exception {
-		final ByteArrayOutputStream os = new ByteArrayOutputStream();
-		// final Writer os = new StringWriter();
-
-		// System.out.println(System.currentTimeMillis()
-		// + " - INI removerEspacosHtml");
-		try {
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 			fTrimLeft = true;
 
 			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
@@ -503,12 +503,8 @@ public class ProcessadorHtml {
 			writeToken(parser, serializer);
 			serializer.flush();
 			final String s = new String(os.toByteArray(), "utf-8");
-			// final String s = os.toString();
-			// System.out.println(System.currentTimeMillis()
-			// + " - FIM removerEspacosHtml");
 			return s;
 		} catch (final Exception ex) {
-			//throw new Exception(ex);
 			 return sHtml;
 		}
 	}
@@ -633,12 +629,7 @@ public class ProcessadorHtml {
 
 	public String removerTagsDesconhecidosHtml(final String sHtml)
 			throws Exception {
-		final ByteArrayOutputStream os = new ByteArrayOutputStream();
-		// final Writer os = new StringWriter();
-
-		// System.out.println(System.currentTimeMillis()
-		// + " - INI removerTagsDesconhecidosHtml");
-		try {
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
 
 			parser.setInput(new StringReader(sHtml));

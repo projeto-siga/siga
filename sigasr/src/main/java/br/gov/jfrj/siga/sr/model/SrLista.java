@@ -30,7 +30,7 @@ import br.gov.jfrj.siga.sr.model.vo.SrListaVO;
 
 @Entity
 @Table(name = "SR_LISTA", schema = "SIGASR")
-public class SrLista extends HistoricoSuporte {
+public class SrLista extends HistoricoSuporte implements Comparable<SrLista> {
 
     private static final long serialVersionUID = 1L;
 
@@ -393,4 +393,9 @@ public class SrLista extends HistoricoSuporte {
     public void setMeuListaHistoricoSet(List<SrLista> meuListaHistoricoSet) {
         this.meuListaHistoricoSet = meuListaHistoricoSet;
     }
+
+	@Override
+	public int compareTo(SrLista o) {
+		return getNomeLista().compareTo(o.getNomeLista());
+	}
 }

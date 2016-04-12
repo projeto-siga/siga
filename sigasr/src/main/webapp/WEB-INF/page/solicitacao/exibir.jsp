@@ -13,6 +13,7 @@
 	<script src="/sigasr/javascripts/base-service.js"></script>
 	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
 	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
+	<script src="/sigasr/javascripts/cronometro.js"></script>
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
 
 	<style>
@@ -45,7 +46,7 @@
 	</style>
 
 	<div class="gt-bd gt-cols clearfix" style="padding-bottom: 0px;">
-		<div class="gt-content clearfix">
+		<div class="gt-content">
 			<h2>${solicitacao.codigo}</h2>
 			<p></p>
 			<h3>
@@ -60,9 +61,9 @@
 			<sigasr:linkSr acoes="${solicitacao.operacoes(titular, lotaTitular)}" />
 			<div class="gt-content-box" style="padding: 10px">
 				<p style="font-size: 11pt; font-weight: bold; color: #365b6d;">
-					<sigasr:descricaoItem itemConfiguracao="${solicitacao.itemAtual}" />
+					${solicitacao.descrItemAtual}
 					-
-					<sigasr:descricaoAcao acao="${solicitacao.acaoAtual}" />
+					${solicitacao.descrAcaoAtual}
 				</p>
 				<p id="descrSolicitacao" style="font-size: 9pt;">${solicitacao.descricao}</p>
 				<script language="javascript">
@@ -133,17 +134,22 @@
 					</div>
 				</form>
 			</div>
-
+			<c:set var="exibirEtapas" value="${solicitacao.jaFoiAtendidaPor(titular, lotaTitular, true) || exibirMenuAdministrar}" />
 			<p style="padding-top: 30px; font-weight: bold; color: #365b6d;">
-				<c:if test="${solicitacao.parteDeArvore}">
-					<siga:checkbox name="todoOContexto" value="${todoOContexto}" onchange="postback();"></siga:checkbox> Todo o Contexto
-                    &nbsp;&nbsp;
-            </c:if>
-				<siga:checkbox name="ocultas" value="${ocultas}" onchange="postback();"></siga:checkbox>
-				Mais Detalhes
+				<c:if test="${exibirEtapas}">
+					<input type="radio" name="exibirEtapas" value="false" id="radioMovs" onclick="exibirMovs();" />&nbsp;Movimenta&ccedil;&otilde;es&nbsp;
+					<input type="radio" name="exibirEtapas" value="true" id="radioEtapas" onclick="exibirEtapas();" />&nbsp;Atendimentos&nbsp;&nbsp;
+				</c:if>
+				<span id="todoOContexto">
+					<c:if test="${solicitacao.parteDeArvore}">
+						<siga:checkbox name="todoOContexto" value="${todoOContexto}" onchange="postback();"></siga:checkbox> Todo o Contexto
+                    	&nbsp;&nbsp;
+           			</c:if>
+           		</span>
+				<span id="maisDetalhes"><siga:checkbox name="ocultas" value="${ocultas}" onchange="postback();"></siga:checkbox>
+				Mais Detalhes</span>
 			</p>
-
-			<div class="gt-content-box">
+			<div class="gt-content-box" id="movs">
 				<table border="0" width="100%" class="gt-table mov">
 					<thead>
 						<tr>
@@ -165,7 +171,7 @@
 									<tr <c:if test="${movimentacao.canceladoOuCancelador}"> class="disabled" </c:if>>
 										<c:choose>
 											<c:when test="${ocultas}">
-												<td>${movimentacao.dtIniMovDDMMYYHHMM}</td>
+												<td>${movimentacao.dtIniMovDDMMYYYYHHMM}</td>
 											</c:when>
 											<c:otherwise>
 												<td>${movimentacao.dtIniString}</td>
@@ -184,8 +190,8 @@
 										</c:if>
 										<td>${movimentacao.tipoMov.nome}</td>
 										<td><siga:selecionado
-												sigla="${movimentacao.lotaCadastrante.siglaLotacao}"
-												descricao="${movimentacao.lotaCadastrante.nomeLotacao}"></siga:selecionado>
+												sigla="${movimentacao.lotaTitular.siglaLotacao}"
+												descricao="${movimentacao.lotaTitular.nomeLotacao}"></siga:selecionado>
 										</td>
 										<td><siga:selecionado
 												sigla="${movimentacao.cadastrante.nomeAbreviado}"
@@ -234,18 +240,138 @@
 					</tbody>
 				</table>
 			</div>
+			<c:if test="${exibirEtapas}">
+			<div class="gt-content-box" id="etapas">
+				<script>
+					function clica(obj, force){
+						var jObj = $(obj);
+
+						//Se clicou no + geral...
+						if (obj.id == 'sinal' ){
+							$("a[id^=sinal]").not("#sinal").each(function(o){
+								clica(this, jObj.html());
+							})
+						}
+						
+						if ((!force && jObj.html() == '+') || force == '+'){
+							jObj.parent().parent().next().show();
+							jObj.html('-');
+						} else {
+							jObj.parent().parent().next().hide();
+							jObj.html('+');
+						}
+					}
+				</script>
+				<table border="0" width="100%" class="gt-table mov">
+					<thead>
+						<tr>
+							<th><a href="" onclick="clica(this); return false;" style="text-decoration: none;" id="sinal">+</a></th>
+							<th>Etapa</th>
+							<c:if test="${todoOContexto}">
+								<th>Solicita&ccedil;&atilde;o</th>
+							</c:if>
+							<th>Equipe</th>
+							<th>Início</th>
+							<th>Fim</th>
+							<th>Decorrido</th>
+							<th>Restante</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<c:choose>
+							<c:when test="${not empty etapas}">
+								<c:forEach items="${etapas}" var="etapa">
+									<tr>
+										<td><a href="" onclick="clica(this); return false;" style="text-decoration: none;" id="sinal${etapa.id}">+</a></td>
+										<td>${etapa.descricao}</td>
+										<c:if test="${todoOContexto}">
+											<td>
+											     <c:if test="${etapa.solicitacao.filha}">
+												     <a style="color: #365b6d;" 
+												        href="${linkTo[SolicitacaoController].exibir[etapa.solicitacao.siglaCompacta]}" 
+												        style="text-decoration: none">
+														${etapa.solicitacao.numSequenciaString} </a>
+											     </c:if>
+											</td>
+										</c:if>
+										<td>${not empty etapa.lotaResponsavel ? etapa.lotaResponsavel : ''}</td>
+										<td>${etapa.inicioString}</td>
+										<td>${etapa.fimString}</td>
+										<td class="crono resumido decorrido ${etapa.ativo ? 'ligado' : 'desligado'}">
+											<nobr><span class="descrValor"></span><span class="valor">${etapa.decorridoEmSegundos}</span></nobr>
+										</td>
+										<td class="crono resumido restante ${etapa.ativo ? 'ligado' : 'desligado'}">
+											<nobr><span class="descrValor"></span><span class="valor">${etapa.restanteEmSegundos}</span></nobr>
+										</td>
+									</tr>
+									<tr style="display: none">
+										<c:set var="haDetalhes" value="false" />
+										<td></td>
+										<td></td>
+										<td colspan="6">
+											<c:if test="${not empty etapa.paramAcordo}">
+												<c:set var="haDetalhes" value="true" />
+												<p><b>Acordo:</b> ${etapa.paramAcordo.acordo.nomeAcordo}</p>
+											</c:if>
+											<c:if test="${not empty etapa.item}">
+												<c:set var="haDetalhes" value="true" />
+												<p><b>Item de Configuração:</b> ${etapa.item.sigla} - ${etapa.item.descricao}</p>
+											</c:if>
+											<c:if test="${not empty etapa.acao}">
+												<c:set var="haDetalhes" value="true" />
+												<p><b>Ação:</b> ${etapa.acao.sigla} - ${etapa.acao.descricao}</p>
+											</c:if>
+											<c:if test="${not empty etapa.prioridade}">
+												<c:set var="haDetalhes" value="true" />
+												<p><b>Prioridade Técnica:</b> ${etapa.prioridade.descPrioridade}</p>
+											</c:if>
+										</td>
+										<c:if test="${not haDetalhes}">
+											<script>$("#sinal${etapa.id}").remove();</script>
+										</c:if>
+											
+									</tr>
+								</c:forEach>
+							</c:when>
+							<c:otherwise>
+								<tr>
+									<td align="center" colspan="10">N&atilde;o h&aacute;
+										atendimentos nesse modo de
+										exibi&ccedil;&atilde;o</td>
+								</tr>
+							</c:otherwise>
+						</c:choose>
+					</tbody>
+				</table>
+			</div>
+			<script>
+				function exibirMovs(){
+					$("#movs").show();
+					$("#maisDetalhes").show();
+					$("#todoOContexto").show();
+					$("#etapas").hide();
+				}
+				function exibirEtapas(){
+					$("#etapas").show();
+					$("#movs").hide();
+					$("#maisDetalhes").hide();
+					$("#todoOContexto").show();
+				}
+				$("#radioMovs").trigger("click");
+			</script>
+			</c:if>
 		</div>
 
-		<jsp:include page="exibirCronometro.jsp"></jsp:include>
-		<jsp:include page="exibirPendencias.jsp"></jsp:include>
 		<div class="gt-sidebar">
+			<jsp:include page="exibirCronometro.jsp"></jsp:include>
+			<jsp:include page="exibirPendencias.jsp"></jsp:include>
+		
 			<div class="gt-sidebar-content">
 				<h3>Solicita&ccedil;&atilde;o</h3>
 				<p>
 					<b>Solicitante:</b>
-					${solicitacao.solicitante.descricaoIniciaisMaiusculas},
-					${solicitacao.solicitante.funcaoString},
-					${solicitacao.lotaSolicitante.siglaLotacao},
+					${solicitacao.solicitante.descricaoCompletaIniciaisMaiusculas},
                     ${solicitacao.local.nomeComplexo}
 				</p>
 				<c:if test="${solicitacao.interlocutor != null}">
@@ -272,37 +398,12 @@
 					${solicitacao.cadastrante.descricaoIniciaisMaiusculas},
 					${solicitacao.lotaTitular.siglaLotacao}
 				</p>
-				<c:if test="${solicitacao.isEscalonada()}">
-					<c:set var="itemEscalonar"
-						value="${solicitacao.getItemAtual().toString()}" />
-					<c:set var="acaoEscalonar"
-						value="${solicitacao.getAcaoAtual().toString()}" />
-				</c:if>
+				<p><b>Cadastrado em:</b> ${solicitacao.dtRegDDMMYYYYHHMM}</p>
 				<p>
-					<span class="historico-label">Item de Configura&ccedil;&atilde;o:</span>
-				<div class="historico-item-container hidden">
-					<button type="button" class="button-historico"
-						title="Clique para abrir/fechar o histórico">+</button>
-
-					<ul class="lista-historico historico-item">
-						<c:forEach items="${solicitacao.historicoItem}" var="item">
-							<li><span>${item.sigla} - ${item.descricao}</span></li>
-						</c:forEach>
-					</ul>
-				</div>
+					<b>Item de Configura&ccedil;&atilde;o:</b> ${solicitacao.descrItemAtualCompleta}
 				</p>
 				<p>
-					<span class="historico-label">A&ccedil;&atilde;o:</span>
-				<div class="historico-acao-container hidden">
-					<button type="button" class="button-historico"
-						title="Clique para abrir/fechar o histórico">+</button>
-
-					<ul class="lista-historico historico-acao">
-						<c:forEach items="${solicitacao.historicoAcao}" var="acao">
-							<li><span>${acao.siglaAcao} - ${acao.descricao}</span></li>
-						</c:forEach>
-					</ul>
-				</div>
+					<b>A&ccedil;&atilde;o:</b> ${solicitacao.descrAcaoAtualCompleta}
 				</p>
 				<p>
 					<b>Prioridade:</b> <span style="">${solicitacao.prioridade.descPrioridade}</span>
@@ -324,11 +425,8 @@
 					</p>
 				</c:if>
 			</div>
-		</div>
 
-		<c:set var="vinculadas"	value="${solicitacao.solicitacoesVinculadas}" />
 		<c:if test="${vinculadas != null && !vinculadas.isEmpty()}">
-			<div class="gt-sidebar">
 				<div class="gt-sidebar-content">
 					<h3>Veja Tamb&eacute;m</h3>
 					<p>
@@ -340,10 +438,8 @@
 						</c:forEach>
 					</p>
 				</div>
-			</div>
 		</c:if>
 		<c:if test="${solicitacao.parteDeArvore}">
-			<div class="gt-sidebar">
 				<div class="gt-sidebar-content">
 					<h3>Contexto</h3>
 					<p>
@@ -351,27 +447,20 @@
 							visualizando="${solicitacao}" />
 					</p>
 				</div>
-			</div>
 		</c:if>
-		<c:if test="${solicitacao.temArquivosAnexos()}">
-			<div class="gt-sidebar">
+		<c:if test="${not empty arqs}">
 				<div class="gt-sidebar-content">
 					<h3>Arquivos Anexos</h3>
 					<p>
-						<sigasr:arquivo arquivo="${solicitacao.arquivoAnexoNaCriacao}" />
-						<br />
-						<c:forEach items="${solicitacao.movimentacoesAnexacao}" var="anexacao">
-							<sigasr:arquivo arquivo="${anexacao.arquivo}" /> 
-							&nbsp;-&nbsp;${anexacao.descrMovimentacao}<br />
+						<c:forEach items="${arqs}" var="anexacao">
+							<sigasr:arquivo arquivo="${anexacao}" descricao="sim"/> 
+							<br />
                     	</c:forEach>
                 	</p>
 	            </div>
-	        </div>
 	    </c:if>
-	
-	    <c:set var="juntadas" value="${solicitacao.solicitacoesJuntadas}"/>
+
 	    <c:if test="${juntadas != null && !juntadas.isEmpty()}">
-	        <div class="gt-sidebar">
 	            <div class="gt-sidebar-content">
 	                <h3>Solicita&ccedil;&otilde;es juntadas</h3>
 	                <p>
@@ -381,51 +470,42 @@
 	                    </c:forEach>
 	                </p>
 	            </div>
-	        </div>
 	    </c:if>
-	    <c:if test="${solicitacao.emLista}">
-	        <div class="gt-sidebar">
+	    <c:if test="${not empty listas}">
 	            <div class="gt-sidebar-content">
 	                <h3>Listas de Prioridade</h3>
-	                    <ul>
-	                    <c:forEach items="${solicitacao.listasAssociadas}" var="listas">
-	                        <li>
-	                            &nbsp; <input type="hidden" name="idlista"
-	                            value="${listas.idLista}"> <a
+	                    <c:forEach items="${listas}" var="listas">
+	                        <p>
+	                            <input type="hidden" name="idlista"
+	                            value="${listas.idLista}" /> <a
 	                            style="color: #365b6d; text-decoration: none"
 	                            href="${linkTo[SolicitacaoController].exibirLista[listas.idLista]}">
 	                                ${listas.listaAtual.nomeLista} </a>
-	                        </li>
+	                        </p>
 	                    </c:forEach>
-	                    </ul>
 	            </div>
-	        </div>
 	    </c:if>
-    
-	    <c:if test="${solicitacao.estaCom(titular, lotaTitular) || exibirMenuAdministrar}">
-	        <jsp:include page="exibirAcordos.jsp"></jsp:include>
-	    </c:if>
-	    
+  
 	    <div id="divConhecimentosRelacionados">
 	        <jsp:include page="exibirConhecimentosRelacionados.jsp"></jsp:include>
 	    </div>
-    
+    </div>
+    </div>
     <sigasr:modal nome="anexarArquivo" titulo="Anexar Arquivo">
         <div class="gt-content-box gt-form">
             <form action="${linkTo[SolicitacaoController].anexarArquivo}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">               
                 <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
                 <input type="hidden" name="ocultas" value="${ocultas}" />
                 <input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
-                    value="${solicitacao.idSolicitacao}"> <input
-                    type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12">
+                    value="${solicitacao.idSolicitacao}" /> <input
+                    type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12" />
                 <div class="gt-form-row">
-                    <label>Arquivo</label> <input type="file" name="movimentacao.arquivo">
+                    <label>Arquivo</label> <input type="file" name="movimentacao.arquivo" />
                 </div>
                 <div style="display: inline" class="gt-form-row gt-width-66">
                     <label>Descri&ccedil;&atilde;o</label>
                     <textarea style="width: 100%" name="movimentacao.descrMovimentacao"
-                        id="descrSolicitacao" cols="70" rows="4"
-                        value="${movimentacao.descrMovimentacao}"></textarea>
+                        id="descrSolicitacao" cols="70" rows="4"></textarea>
                 </div>
                 <div class="gt-form-row">
                     <input type="submit" value="Gravar"
@@ -446,7 +526,7 @@
         <form action="${linkTo[SolicitacaoController].juntar}" method="post" enctype="multipart/form-data" id="formGravarJuncao">
             <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
             <input type="hidden" name="ocultas" value="${ocultas}" />
-            <input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}"> 
+            <input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> 
             <div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
                 <label>Solicita&ccedil;&atilde;o</label> <br />
                 <siga:selecao2 propriedade="solRecebeJuntada" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Juncao');"
@@ -467,7 +547,7 @@
         <form action="${linkTo[SolicitacaoController].vincular}" method="post" enctype="multipart/form-data" id="formGravarVinculo">
             <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
             <input type="hidden" name="ocultas" value="${ocultas}" />
-            <input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}"> 
+            <input type="hidden" name="sigla" value="${solicitacao.siglaCompacta}" /> 
             <div style="display: inline; padding-top: 10px;" class="gt-form-row gt-width-66">
                 <label>Solicita&ccedil;&atilde;o</label> <br />
                 <siga:selecao2 propriedade="solRecebeVinculo" tipo="solicitacao" tema="simple" modulo="sigasr" onchange="validarAssociacao('Vinculo');"
@@ -500,7 +580,7 @@
                     </div>
                     <div class="gt-form-row gt-width-66">
                         <label>Hor&aacute;rio de T&eacute;rmino</label>
-                        <input type="text" name="horario" id="horario">
+                        <input type="text" name="horario" id="horario" />
                     </div>
                     <div class="gt-form-row gt-width-66">
                         <label>Motivo</label>
@@ -629,75 +709,4 @@
 		modal : true,
 		resizable : false
 	});
-
-	var MostradorHistorico = function(container, emptyMessage) {
-		var url = container.find('ul'), intermediarios = url
-				.find('li span:not(:first):not(:last)'), button = container
-				.find('button'), me = this, TAMANHO_MAXIMO_DESCRICAO = 50;
-
-		button.bind('click', function() {
-			me.toogleItens();
-		});
-
-		this.toogleItens = function() {
-			intermediarios.toggleClass('hidden');
-			if (intermediarios.hasClass('hidden'))
-				button.html('+');
-			else {
-				button.html('-');
-			}
-		}
-
-		this.init = function() {
-			this.adicionarMensagemSeVazio();
-			this.verificarIntermediarios();
-			this.formatarDescricoes();
-			this.formatarLabel();
-			container.removeClass('hidden');
-		}
-
-		this.verificarIntermediarios = function() {
-			if (intermediarios.size() > 0) {
-				this.toogleItens();
-			} else {
-				button.remove();
-			}
-		}
-
-		this.formatarDescricoes = function() {
-			url.find('li span').each(function() {
-				var me = $(this), html = me.html();
-
-				if (html.length > TAMANHO_MAXIMO_DESCRICAO) {
-					me.attr('title', html);
-					me.css('cursor', 'default');
-					me.html(html.substr(0, TAMANHO_MAXIMO_DESCRICAO) + "...");
-				}
-			});
-			url.find('li span:last').css('text-decoration', 'none');
-		}
-
-		this.adicionarMensagemSeVazio = function() {
-			var lis = url.find('li');
-			if (lis.size() == 0) {
-				url.append('<li><span>' + emptyMessage + '</li></span>')
-			}
-		}
-
-		this.formatarLabel = function() {
-			if (container.find('ul li span').size() == 1) {
-				container.prev('p').find('.historico-label').css('float',
-						'left');
-				container.find('ul li').addClass('unico');
-			} else if (container.find('ul li span').size() > 2) {
-				container.find('.lista-historico').css('margin-top', '-20px');
-			}
-		}
-	}
-
-	new MostradorHistorico($('.historico-item-container'), "Item não informado")
-			.init();
-
-	new MostradorHistorico($('.historico-acao-container'), "Ação não informada")
-			.init();
 </script>

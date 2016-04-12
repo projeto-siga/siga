@@ -34,6 +34,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
@@ -91,6 +92,10 @@ public class DpCargo extends AbstractDpCargo implements Serializable,
 
 	public String getDescricao() {
 		return getNomeCargo();
+	}
+	
+	public String getDescricaoIniciaisMaiusculas() {
+		return Texto.maiusculasEMinusculas(getDescricao());
 	}
 
 	public void setSigla(String sigla) {

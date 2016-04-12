@@ -2,7 +2,6 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -47,6 +46,8 @@ import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.dp.CpMarcador;
+import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -117,12 +118,6 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia().setMob(mob);
 
-		if (!(mob.isGeral() && mob.doc().isFinalizado())) {
-			if (!Ex.getInstance().getComp().podeAnexarArquivo(getTitular(), getLotaTitular(), mob)) {
-				throw new AplicacaoException("Arquivo não pode ser anexado");
-			}
-		}
-
 		final ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(), getLotaTitular(), true, ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false);
 		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getTitular(), getLotaTitular(), true, null, false);
 
@@ -144,6 +139,12 @@ public class ExMovimentacaoController extends ExController {
 
 		buscarDocumento(documentoBuilder);
 		final ExMobil mob = documentoBuilder.getMob();
+		
+		if (!(mob.isGeral() && mob.doc().isFinalizado())) {
+			if (!Ex.getInstance().getComp().podeAnexarArquivo(getTitular(), getLotaTitular(), mob)) {
+				throw new AplicacaoException("Arquivo não pode ser anexado");
+			}
+		}
 
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia().setMob(documentoBuilder.getMob()).setSubstituicao(substituicao)
 				.setSubscritorSel(subscritorSel).setTitularSel(titularSel).setDtMovString(dtMovString).setDescrMov(descrMov)
@@ -156,13 +157,15 @@ public class ExMovimentacaoController extends ExController {
 		if (arquivo.getFile() == null) {
 			throw new AplicacaoException("O arquivo a ser anexado não foi selecionado!");
 		}
-
+		
+		Integer numBytes = 0;
 		try {
 			final byte[] baArquivo = toByteArray(arquivo);
 			if (baArquivo == null) {
 				throw new AplicacaoException("Arquivo vazio não pode ser anexado.");
 			}
-			if (baArquivo.length > 10 * 1024 * 1024) {
+			numBytes = baArquivo.length;
+			if (numBytes > 10 * 1024 * 1024) {
 				throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 10MB.");
 			}
 			mov.setConteudoBlobMov2(baArquivo);
@@ -170,9 +173,15 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException("Falha ao manipular aquivo", 1, ex);
 		}
 
-		if (mov.getContarNumeroDePaginas() == null || mov.getArquivoComStamp() == null) {
+		Integer numPaginas = mov.getContarNumeroDePaginas();
+		if (numPaginas == null || mov.getArquivoComStamp() == null) {
 			throw new AplicacaoException(MessageFormat.format("O arquivo {0} está corrompido. Favor gera-lo novamente antes de anexar.", arquivo.getFileName()));
 		}
+		
+		if (numPaginas != null && numBytes != null &&  (numBytes/numPaginas > (1 * 1024 * 1024))) {
+			throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 1MB por página.");
+		}
+		
 		if (mob.isVolumeEncerrado()) {
 			throw new AplicacaoException("Não é possível anexar arquivo em volume encerrado.");
 		}
@@ -194,7 +203,7 @@ public class ExMovimentacaoController extends ExController {
 			}
 		}
 
-		// Nato: Precisei usar o cÃ³digo abaixo para adaptar o charset do
+		// Nato: Precisei usar o código abaixo para adaptar o charset do
 		// nome do arquivo
 		try {
 			final byte[] ab = mov.getNmArqMov().getBytes();
@@ -211,6 +220,11 @@ public class ExMovimentacaoController extends ExController {
 							mov.getLotaTitular(), mov.getConteudoBlobMov2(), mov.getConteudoTpMov(), movimentacaoBuilder.getDescrMov(), pendencias);
 		} catch (UnsupportedEncodingException ex) {
 			LOGGER.error(ex.getMessage(), ex);
+		}
+		
+		if (mob.isVolumeEncerrado()) {
+			result.redirectTo(MessageFormat.format("/app/expediente/doc/exibir?sigla={0}&msg=N%26uacute;mero m%26aacute;ximo de p%26aacute;ginas atingido. Volume fechado automaticamente.", sigla));
+			return;
 		}
 
 		result.redirectTo(MessageFormat.format("anexar?sigla={0}", sigla));
@@ -624,7 +638,7 @@ public class ExMovimentacaoController extends ExController {
 			result.include("campoDe", mov.getCadastrante().getLotacao().getDescricao());
 			result.include("campoPara", mov.getRespString());
 			result.include("campoData", mov.getDtRegMovDDMMYYHHMMSS());
-			result.include("cadastrante", this.getCadastrante());
+			result.include("cadastrante", mov.getCadastrante());
 			result.include("lotaTitular", this.getLotaTitular());
 			
 			result.use(Results.page()).forwardTo("/WEB-INF/page/exMovimentacao/aGerarProtocolo.jsp");
@@ -1245,7 +1259,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post
 	@Path("/app/expediente/mov/fechar_popup")
 	public void fecharPopup() {
-		System.out.println("popup fechado.");
+//		System.out.println("popup fechado.");
 	}
 
 	@Get("/app/expediente/mov/transferido")
@@ -1449,6 +1463,72 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 
+	@Get("/app/expediente/mov/marcar")
+	public void aMarcar(final String sigla) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		buscarDocumento(builder);
+
+		if (!Ex.getInstance().getComp().podeMarcar(getTitular(), getLotaTitular(), builder.getMob())) 
+			throw new AplicacaoException("Não é possível fazer marcação");
+
+		result.include("sigla", sigla);
+		result.include("mob", builder.getMob());
+		result.include("listaMarcadores", this.getListaMarcadoresGerais());
+		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(builder.getMob().getDoc().getMobilGeral()));
+	}
+
+	private Set<CpMarcador> getListaMarcadoresAtivos(ExMobil mob) {
+		Set<CpMarcador> set = new HashSet<CpMarcador>();
+		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
+			if (mov.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO) && !mov.isCancelada()) {
+				set.add(mov.getMarcador());
+			}
+		}
+		return set;
+	}
+
+	private Object getListaMarcadoresGerais() {
+		return dao().listarCpMarcadoresGerais();
+	}
+
+	@Post("/app/expediente/mov/marcar_gravar")
+	public void aMarcarGravar(final String sigla, final Long idMarcador,
+			final Boolean ativo) throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+		buscarDocumento(builder);
+
+		if (!Ex.getInstance().getComp()
+				.podeMarcar(getTitular(), getLotaTitular(), builder.getMob()))
+			throw new AplicacaoException("Não é possível fazer marcação");
+
+		if (idMarcador == null)
+			throw new AplicacaoException("Marcador deve ser informado.");
+
+		CpMarcador m = dao().consultar(idMarcador, CpMarcador.class, false);
+
+		Set<CpMarcador> lMarcadoresAtivos = this
+				.getListaMarcadoresAtivos(builder.getMob().getDoc().getMobilGeral());
+
+		boolean atual = lMarcadoresAtivos.contains(m);
+
+		if (ativo != atual) {
+			final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+					.novaInstancia();
+			movimentacaoBuilder.setIdMarcador(idMarcador);
+			final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+			Ex.getInstance()
+					.getBL()
+					.vincularMarcador(getCadastrante(), getLotaTitular(),
+							builder.getMob(), mov.getDtMov(),
+							mov.getLotaResp(), mov.getResp(),
+							mov.getSubscritor(), mov.getTitular(),
+							mov.getDescrMov(), mov.getNmFuncaoSubscritor(),
+							mov.getMarcador(), ativo);
+		}
+		resultOK();
+	}
+
 	@Get("app/expediente/mov/transferir_lote")
 	public void aTransferirLote() {
 		final Iterator<ExMobil> provItens = dao().consultarParaTransferirEmLote(getLotaTitular());
@@ -1568,8 +1648,8 @@ public class ExMovimentacaoController extends ExController {
 			for (Iterator<Entry<ExMobil, AplicacaoException>> it = MapMensagens.entrySet().iterator(); it.hasNext();) {
 				Entry<ExMobil, AplicacaoException> excep = it.next();
 				final Object[] ao = { excep.getKey(), excep.getValue().getMessage() };
-				System.out.println("Falha: " + excep.getKey().doc().getSigla());
-				System.out.println("Mensagem de erro: " + excep.getValue().getMessage());
+//				System.out.println("Falha: " + excep.getKey().doc().getSigla());
+//				System.out.println("Mensagem de erro: " + excep.getValue().getMessage());
 				al.add(ao);
 				throw new AplicacaoException(excep.getValue().getMessage());
 			}
@@ -1579,9 +1659,9 @@ public class ExMovimentacaoController extends ExController {
 			ExMobil mob = it.next();
 			if (!(MapMensagens.containsKey(mob))) {
 				MobilSucesso.add(mob);
-				System.out.println("Mobil Geral: " + mob.doc().getMobilGeral().isGeral());
+//				System.out.println("Mobil Geral: " + mob.doc().getMobilGeral().isGeral());
 				final Object[] ao = { mob.doc(), mob.getUltimaMovimentacaoNaoCancelada() };
-				System.out.println("Sucesso sigla: " + mob.doc().getSigla());
+//				System.out.println("Sucesso sigla: " + mob.doc().getSigla());
 				check.add(ao);
 			}
 		}
@@ -2485,14 +2565,17 @@ public class ExMovimentacaoController extends ExController {
 	@Get("/app/expediente/mov/simular_anexacao")
 	public void aSimularAnexacao(final String sigla) throws IOException, DocumentException {
 		final Document document = new Document();
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PdfWriter.getInstance(document, baos);
-		document.open();
-		document.addTitle("PDF de teste");
-		final Paragraph preface = new Paragraph();
-		preface.add(new Paragraph("Este é um documento de teste"));
-		document.add(preface);
-		document.close();
+		byte abPDF[];
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			PdfWriter.getInstance(document, baos);
+			document.open();
+			document.addTitle("PDF de teste");
+			final Paragraph preface = new Paragraph();
+			preface.add(new Paragraph("Este é um documento de teste"));
+			document.add(preface);
+			document.close();
+			abPDF = baos.toByteArray();
+		}
 
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder, true);
@@ -2513,7 +2596,7 @@ public class ExMovimentacaoController extends ExController {
 		mov.setNmArqMov("teste.pdf");
 		mov.setConteudoTpMov("application/pdf");
 
-		mov.setConteudoBlobMov2(baos.toByteArray());
+		mov.setConteudoBlobMov2(abPDF);
 
 		if (mob.isVolumeEncerrado()) {
 			throw new AplicacaoException("Não é possível anexar arquivo em volume encerrado.");

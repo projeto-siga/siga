@@ -95,6 +95,7 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
+import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
@@ -222,7 +223,7 @@ public class CpDao extends ModeloDao {
 			cache = manager.getCache(cRegion);
 			CacheConfiguration config;
 			config = cache.getCacheConfiguration();
-			config.setEternal(true);
+			config.setEternal(false);
 			config.setMaxElementsInMemory(10000);
 			config.setOverflowToDisk(false);
 			config.setMaxElementsOnDisk(0);
@@ -1413,6 +1414,16 @@ public class CpDao extends ModeloDao {
 
 	}
 
+	public <T> List<T> listarTodos(Class<T> clazz, String orderBy) {
+		Criteria c = getSessao().createCriteria(clazz);
+
+		if (orderBy != null) {
+			c.addOrder(Order.asc(orderBy));
+		}
+
+		return c.list();
+	}
+
 	public <T> T consultarAtivoPorIdInicial(Class<T> clazz, Long hisIdIni) {
 		Criteria c = getSessao().createCriteria(clazz);
 
@@ -1566,6 +1577,8 @@ public class CpDao extends ModeloDao {
 	}
 
 	public <T> T gravar(final T entidade) {
+		if (entidade instanceof CarimboDeTempo)
+			((CarimboDeTempo)entidade).setHisDtAlt(this.dt());
 		getSessao().saveOrUpdate(entidade);
 		invalidarCache(entidade);
 		return entidade;
@@ -1754,7 +1767,7 @@ public class CpDao extends ModeloDao {
 			manager.addCache(CACHE_CORPORATIVO);
 			cache = manager.getCache(CACHE_CORPORATIVO);
 			config = cache.getCacheConfiguration();
-			config.setEternal(true);
+			config.setEternal(false);
 			config.setTimeToIdleSeconds(0);
 			config.setTimeToLiveSeconds(0);
 			config.setMaxElementsInMemory(10000);

@@ -2,7 +2,6 @@ $(document).on('ready', function(){
 
 	var gsa = {
 		settings: {
-			path: "http://172.16.1.105/",// TRF2 ip 172.16.1.105
 			proxy: "/siga/app/buscargsa",
 			params:{
 				site: "siga",
@@ -45,28 +44,57 @@ $(document).on('ready', function(){
 					listhtml.push(htmlFirstLine);
 					
 					for (var i = 0; i < RES.R.length; i++) {
+						var MT = {};
+						if( Object.keys(RES.R[i].MT).length > 0) {
+							MT = RES.R[i].MT;
+
+							var t = [];
+							
+							//t.push(MT.modelo?MT.modelo:"");
+							t.push(MT.codigo?MT.codigo:"");
+							t.push(MT.data?MT.data.replace(/(\d{4})-(\d{2})-(\d{2})/,"$3/$2/$1"):"");
+							//t.push(RES.R[i].T);
+							t.push(MT.subscritor?MT.subscritor:"");
+							t.push(MT.subscritor?" ("+MT.subscritor_lotacao+")":"");
+							t.push(MT.descricao?"- "+MT.descricao:"");
+
+							MT.desc_titulo = t.join(" ");
+						}
+						else{
+							MT.desc_titulo = RES.R[i].T;
+						}
+						
 
 						var rowHtml ='<div class="panel panel-default">';
 						// Titulo
-						rowHtml += '<div class="panel-heading text-left"><a href="'+RES.R[i].U+'">'+RES.R[i].T+'</a></div>';
+						rowHtml += '<div class="panel-heading gsa-title"> <div class="row">';
+						rowHtml += '<div class="col-md-10"><a class="gsa-permalink" href="'+RES.R[i].U+'">'+MT.desc_titulo+'</a></div>';
+						//link cache
+						rowHtml += '<div class="col-md-2"><a class="gsa-cache pull-right" target="_blank" href="'+self.cacheLink(RES.R[i],json.GSP.PARAM, gsa.settings.proxy)+'">'+RES.R[i].HAS.C.SZ+' Cache</a></div>';
+						rowHtml += '</div></div>';
 
 						//snippet
 						rowHtml += '<div class="panel-body text-left">';
 						rowHtml += '<span>'+RES.R[i].S+'</span>';
 
 						// Metadados
-						rowHtml += '<p><ul>';
-						if( Object.keys(RES.R[i].MT).length > 0) {
-							for (var x in RES.R[i].MT) {
-								rowHtml += '<li><b>'+ x +': </b>'+ RES.R[i].MT[x] +'</li>';
-							}
-						}
-						rowHtml += '</ul></p>';
+//						if(Object.keys(RES.R[i].MT).length > 0){
+//							rowHtml += '<p/><p>';
+//							rowHtml += '<li><b>'+ Descrição +': </b>'+ MT.descricao +'</li>';
+//							if( Object.keys(RES.R[i].MT).length > 0) {
+//								for (var x in RES.R[i].MT) {
+//									if(/descricao/.test(x)){
+//										rowHtml += '<b>Descrição: </b>'+ RES.R[i].MT[x];
+//									}
+//								}
+//							}
+//							rowHtml += '</p>';
+//						}
 
 						//link cache
-						rowHtml += '<p>'+ RES.R[i].U + ' - ' + RES.R[i].HAS.C.SZ + ' - ' + RES.R[i].CRAWLDATE + ' - ';
-						rowHtml += '<a target="_blank" href="'+self.cacheLink(RES.R[i],json.GSP.PARAM, gsa.settings.path)+'"> Cache</a>';
-						rowHtml += '</p>';
+						// rowHtml += '<p>'+ RES.R[i].U + ' - ' + RES.R[i].HAS.C.SZ + ' - ' + RES.R[i].CRAWLDATE + ' - ';
+						// rowHtml += '<a target="_blank" href="'+self.cacheLink(RES.R[i],json.GSP.PARAM, gsa.settings.path)+'"> Cache</a>';
+						// rowHtml += '</p>';
 
 						rowHtml += '</div></div>'
 
@@ -241,7 +269,7 @@ $(document).on('ready', function(){
 				}
 
 			   	var url = gsaPath;
-			   	url += 'search?q=cache:';
+			   	url += '?q=cache:';
 			   	url += docid;
 			   	url += ":";
 			   	url += docid;
@@ -853,6 +881,10 @@ $(document).on('ready', function(){
 				var split = url[i].split('=');
 				object[split[0]] = url[i].replace(split[0]+"=","");
 			};
+    		for(var x in gsa.settings.params){
+    			if (!object.hasOwnProperty(x))
+    				object[x] = gsa.settings.params[x];
+    		}
 			return object;
 		},
 		// Função para montar modal de carregamento.

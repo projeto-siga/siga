@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 import javax.persistence.ColumnResult;
 import javax.persistence.Entity;
 import javax.persistence.NamedNativeQuery;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
@@ -62,7 +63,8 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Entity
 @SqlResultSetMapping(name = "scalar", columns = @ColumnResult(name = "dt"))
 @NamedNativeQuery(name = "consultarDataEHoraDoServidor", query = "SELECT sysdate dt FROM dual", resultSetMapping = "scalar")
-@NamedQuery(name = "consultarPorIdInicialDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni and pes.dataFimPessoa = null")
+@NamedQueries({ @NamedQuery(name = "consultarPorIdInicialDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni and pes.dataFimPessoa = null"),
+@NamedQuery(name = "consultarPorSiglaDpPessoa", query = "select pes from DpPessoa pes where pes.matricula = :matricula and pes.sesbPessoa = :sesb and pes.dataFimPessoa = null")})
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		Selecionavel, Historico, Sincronizavel, Comparable, DpConvertableEntity {
@@ -154,17 +156,31 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		// return iniciais(getNomePessoa());
 		return getSigla();
 	}
+	
+	public String getFuncaoString() {
+		return getFuncaoConfianca() != null ? getFuncaoConfianca().getNomeFuncao() : 
+			getCargo() != null ? getCargo().getNomeCargo() : "";
+	}
+	
+	public String getFuncaoStringIniciaisMaiusculas(){
+		return getFuncaoConfianca() != null ? getFuncaoConfianca().getDescricaoIniciaisMaiusculas() : 
+			getCargo() != null ? getCargo().getDescricaoIniciaisMaiusculas() : "";
+	}
 
 	public String getDescricao() {
 		return getNomePessoa();
 	}
 	
+	public String getDescricaoIniciaisMaiusculas() {
+		return Texto.maiusculasEMinusculas(getDescricao());
+	}
+	
 	public String getDescricaoCompleta() {
 		return getNomePessoa() + ", " + getFuncaoString().toUpperCase() + ", " + getLotacao().getSiglaCompleta();
 	}
-
-	public String getDescricaoIniciaisMaiusculas() {
-		return Texto.maiusculasEMinusculas(getDescricao());
+	
+	public String getDescricaoCompletaIniciaisMaiusculas() {
+		return getDescricaoIniciaisMaiusculas() + ", " + getFuncaoStringIniciaisMaiusculas() + ", " + getLotacao().getSiglaCompleta();
 	}
 
 	public void setSigla(String sigla) {
@@ -196,11 +212,6 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 
 	public Long getIdInicial() {
 		return getIdPessoaIni();
-	}
-
-	public String getFuncaoString() {
-		return getFuncaoConfianca() != null ? getFuncaoConfianca().getNomeFuncao() : 
-			getCargo() != null ? getCargo().getNomeCargo() : "";
 	}
 
 	public String getPadraoReferenciaInvertido() {

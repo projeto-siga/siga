@@ -16,32 +16,33 @@
 <c:set var="path" scope="request">${pageContext.request.contextPath}</c:set>
 <link rel="StyleSheet" href="${path}/sigalibs/siga.css" type="text/css"
 	title="SIGA Estilos" media="screen">
-<script src="${path}/sigalibs/ajax.js" language="JavaScript1.1"
-	type="text/javascript"></script>
-<script src="${path}/sigalibs/static_javascript.js"
-	language="JavaScript1.1" type="text/javascript"></script>
+	<script src="${path}/sigalibs/ajax.js" language="JavaScript1.1"
+		type="text/javascript"></script>
+	<script src="${path}/sigalibs/static_javascript.js"
+		language="JavaScript1.1" type="text/javascript"></script>
 
-<link href="${pageContext.request.contextPath}/sigalibs/menu.css"
-	rel="stylesheet" type="text/css" />
+	<link href="${pageContext.request.contextPath}/sigalibs/menu.css"
+		rel="stylesheet" type="text/css" />
 
-<%
-	ExMobil proc = (ExMobil) request.getAttribute("mob");
-	List<ExArquivoNumerado> an = proc.getArquivosNumerados();
-	request.setAttribute("arqsNum", an);
-	HashSet<String> formas = new HashSet<String>();
-	for (ExArquivoNumerado a : an) {
-		if (a.getArquivo() instanceof ExDocumento) {
-			if (a.getArquivo().getResumo().size() > 0) {
-				formas.add(((ExDocumento) a.getArquivo()).getExModelo().getNmMod());
+	<%
+		ExMobil proc = (ExMobil) request.getAttribute("mob");
+		List<ExArquivoNumerado> an = proc.getArquivosNumerados();
+		request.setAttribute("arqsNum", an);
+		HashSet<String> formas = new HashSet<String>();
+		for (ExArquivoNumerado a : an) {
+			if (a.getArquivo() instanceof ExDocumento) {
+				if (a.getArquivo().getResumo().size() > 0) {
+					formas.add(((ExDocumento) a.getArquivo()).getExModelo()
+							.getNmMod());
+				}
 			}
 		}
-	}
-	request.setAttribute("formas", formas);
-%>
+		request.setAttribute("formas", formas);
+	%>
 
-<%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
+	<%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
 
-<html>
+	<html>
 <body leftmargin="0px" topmargin="3px">
 	<table bordercolor="#000000" cellpadding="10px"
 		style="border-width: 2px; border-style: solid; table-layout: auto; width: 100%;">
@@ -60,10 +61,11 @@
 
 						<c:set var="arquivo" value="${arqNumerado}" scope="request" />
 						<%
-					ExArquivo arq = ((ExArquivoNumerado) request.getAttribute("arquivo")).getArquivo();
-				
-					if (arq instanceof ExMovimentacao) {
-						request.setAttribute("mov", (ExMovimentacao) arq);
+							ExArquivo arq = ((ExArquivoNumerado) request
+										.getAttribute("arquivo")).getArquivo();
+
+								if (arq instanceof ExMovimentacao) {
+									request.setAttribute("mov", (ExMovimentacao) arq);
 						%>
 						<c:if
 							test="${mov.exTipoMovimentacao.id == 2 && !empty mov.descrMov}">
@@ -75,8 +77,8 @@
 							</tr>
 						</c:if>
 						<%
-					}
-					%>
+							}
+						%>
 					</c:forEach>
 
 				</table> <br /> <!-- --> <c:forEach var="forma" items="${formas}">
@@ -85,10 +87,10 @@
 						<c:forEach var="arqNumerado" items="${arqsNum}">
 							<c:set var="arquivo" value="${arqNumerado}" scope="request" />
 							<%
-						ExArquivo arquivo = ((ExArquivoNumerado) request
-						.getAttribute("arquivo")).getArquivo();
-				if (arquivo instanceof ExDocumento) {
-			%>
+								ExArquivo arquivo = ((ExArquivoNumerado) request
+												.getAttribute("arquivo")).getArquivo();
+										if (arquivo instanceof ExDocumento) {
+							%>
 							<c:if test="${!empty arqNumerado.arquivo.resumo}">
 								<c:if test="${forma == arqNumerado.arquivo.exModelo.nmMod}">
 									<c:if test="${jaTemCabecalho == 'nao'}">
@@ -110,7 +112,7 @@
 										<c:forEach var="topico" items="${arqNumerado.arquivo.resumo}">
 											<c:set var="em" value="" />
 											<%-- <c:if test="${f:dataFutura(topico.value)}">--%>
-												<c:set var="em" value="background-color:#AfFFAf;" />
+											<c:set var="em" value="background-color:#AfFFAf;" />
 											<%-- </c:if>--%>
 											<td style="text-align: center;${em}">${topico.value}</td>
 										</c:forEach>
@@ -118,8 +120,8 @@
 								</c:if>
 							</c:if>
 							<%
-			}
-			%>
+								}
+							%>
 						</c:forEach>
 					</table>
 					<br>
@@ -128,5 +130,4 @@
 		</tr>
 	</table>
 </body>
-</html>
-
+	</html>

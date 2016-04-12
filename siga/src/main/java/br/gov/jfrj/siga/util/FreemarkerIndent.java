@@ -258,11 +258,13 @@ public class FreemarkerIndent {
 		tidy.setWraplen(0);
 		tidy.setWrapSection(false);
 
-		final ByteArrayOutputStream os = new ByteArrayOutputStream();
-		tidy.parse(new ByteArrayInputStream(s.getBytes("iso-8859-1")), os);
-		os.flush();
-		String sResult = new String(os.toByteArray(), "iso-8859-1");
-		return sResult;
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream();
+				ByteArrayInputStream bais = new ByteArrayInputStream(s.getBytes("iso-8859-1"))) {
+			tidy.parse(bais, os);
+			os.flush();
+			String sResult = new String(os.toByteArray(), "iso-8859-1");
+			return sResult;
+		}
 	}
 
 	public static String indent(String s) throws IOException {

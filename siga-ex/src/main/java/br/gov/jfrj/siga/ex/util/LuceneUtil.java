@@ -56,10 +56,11 @@ public class LuceneUtil {
 		Tidy tidy = new Tidy();
 		tidy.setCharEncoding(Configuration.LATIN1);
 		tidy.setRawOut(false);
-		final ByteArrayOutputStream os = new ByteArrayOutputStream();
-		tidy.parse(new ByteArrayInputStream(sHtml.getBytes("iso-8859-1")), os);
-		os.flush();
-		sHtml = new String(os.toByteArray(), "iso-8859-1");
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+			tidy.parse(new ByteArrayInputStream(sHtml.getBytes("iso-8859-1")), os);
+			os.flush();
+			sHtml = new String(os.toByteArray(), "iso-8859-1");
+		}
 
 		//String canonHtml = (new ProcessadorHtml()).canonicalizarHtml(sHtml,
 		//		true, true);

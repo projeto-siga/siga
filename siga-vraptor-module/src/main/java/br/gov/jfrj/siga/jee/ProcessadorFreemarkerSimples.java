@@ -72,18 +72,17 @@ public class ProcessadorFreemarkerSimples implements TemplateLoader {
 		Template temp = new Template((String) attrs.get("nmMod"),
 				new StringReader(sTemplate), cfg);
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		Writer out = new OutputStreamWriter(baos);
-		try {
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				Writer out = new OutputStreamWriter(baos)) {
 			temp.process(root, out);
+			out.flush();
+			return baos.toString();
 		} catch (TemplateException e) {
 			return (e.getMessage() + "\n" + e.getFTLInstructionStack())
 					.replace("\n", "<br/>").replace("\r", "");
 		} catch (IOException e) {
 			return e.getMessage();
 		}
-		out.flush();
-		return baos.toString();
 	}
 
 	public void closeTemplateSource(Object arg0) throws IOException {

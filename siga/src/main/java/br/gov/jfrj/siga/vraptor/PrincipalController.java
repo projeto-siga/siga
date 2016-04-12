@@ -2,6 +2,10 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -20,41 +24,47 @@ import br.gov.jfrj.siga.model.GenericoSelecao;
 
 @Resource
 public class PrincipalController extends SigaController {
-	
-	public PrincipalController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
+
+	public PrincipalController(HttpServletRequest request, Result result,
+			CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
 	}
 
 	@Get("app/principal")
 	public void principal() {
 	}
-	
+
 	@Get("app/pagina_vazia")
 	public void paginaVazia() {
 	}
-	
+
 	@Get("app/usuario_autenticado")
 	public void usuarioAutenticado() {
 	}
-	
+
 	@Get("permalink/{sigla}")
 	public void permalink(final String sigla) {
 		GenericoSelecao sel = buscarGenericoPorSigla(sigla, null, null, null);
 		if (sel == null || sel.getDescricao() == null)
 			result.notFound();
 		else {
-			String urlBase = getRequest().getScheme() + "://" + getRequest().getServerName() + ":" + getRequest().getServerPort();
+			String urlBase = getRequest().getScheme() + "://"
+					+ getRequest().getServerName() + ":"
+					+ getRequest().getServerPort();
 			result.redirectTo(urlBase + sel.getDescricao());
 		}
 	}
-	
+
 	@Get("permalink/{sigla}/{parte}")
 	public void permalink(final String sigla, final String parte) {
-		String urlBase = getRequest().getScheme() + "://" + getRequest().getServerName() + ":" + getRequest().getServerPort();
-		result.redirectTo(urlBase + "/sigaex/app/expediente/mov/exibir?id=" + parte);
+		String urlBase = getRequest().getScheme() + "://"
+				+ getRequest().getServerName() + ":"
+				+ getRequest().getServerPort();
+		result.redirectTo(urlBase + "/sigaex/app/expediente/mov/exibir?id="
+				+ parte);
 	}
-	
-	@Get("app/generico/selecionar")
+
+	@Get("public/app/generico/selecionar")
 	public void selecionar(final String sigla, final String matricula) {
 		try {
 			DpPessoa pes = getTitular();
@@ -65,12 +75,13 @@ public class PrincipalController extends SigaController {
 				lot = pes.getLotacao();
 				incluirMatricula = "&matricula=" + matricula;
 			} else {
-				incluirMatricula = "&matricula=" + getTitular().getSiglaCompleta();
+				incluirMatricula = "&matricula="
+						+ getTitular().getSiglaCompleta();
 			}
 
 			final GenericoSelecao sel = buscarGenericoPorSigla(sigla, pes, lot,
 					incluirMatricula);
-			
+
 			if (sel.getId() == null) {
 				if (Cp.getInstance().getProp().gsaUrl() != null) {
 					sel.setId(-1L);
@@ -80,127 +91,114 @@ public class PrincipalController extends SigaController {
 					throw new Exception("Elemento não encontrado");
 				}
 			}
-			
+
 			result.include("sel", sel);
 			result.include("request", getRequest());
-			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
+			result.use(Results.page()).forwardTo(
+					"/WEB-INF/jsp/ajax_retorno.jsp");
 		} catch (Exception e) {
 			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
 		}
 	}
 
-	private GenericoSelecao buscarGenericoPorSigla(final String sigla,
-			DpPessoa pes, DpLotacao lot, String incluirMatricula) {
+	private GenericoSelecao buscarGenericoPorSigla(String sigla, DpPessoa pes,
+			DpLotacao lot, String incluirMatricula) {
+
+		sigla = sigla.trim().toUpperCase();
+
+		Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
+		for (CpOrgaoUsuario ou : CpDao.getInstance().listarOrgaosUsuarios()) {
+			mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
+			mapAcronimo.put(ou.getSiglaOrgaoUsu(), ou);
+		}
+		String acronimos = "";
+		for (String s : mapAcronimo.keySet()) {
+			if (acronimos.length() > 0)
+				acronimos += "|";
+			acronimos += s;
+		}
+
+		final Pattern p1 = Pattern
+				.compile("^(?<orgao>"
+						+ acronimos
+						+ ")?-?(?:(?<especie>[A-Za-z]{3})|(?<modulo>SR|TMPSR|GC|TMPGC|TP))-?([0-9][0-9A-Za-z\\.\\-\\/]*)$");
+		final Matcher m1 = p1.matcher(sigla);
+
+		final GenericoSelecao sel = new GenericoSelecao();
 		if (incluirMatricula == null)
 			incluirMatricula = "";
-		final GenericoSelecao sel = new GenericoSelecao();
-		// TODO não precisa pegar isso de um properties, isso existe no proprio request getServerName, getPort...
-		String testes = "";
 
-		//String urlBase = "http://"+ SigaBaseProperties.getString(SigaBaseProperties.getString("ambiente") + ".servidor.principal")+ getRequest().getServerPort();
-		String urlBase = getRequest().getScheme() + "://" + getRequest().getServerName() + ":" + getRequest().getServerPort();
-		
-		String URLSelecionar = "";
-		String uRLExibir = "";
+		String urlBase = getRequest().getScheme() + "://"
+				+ getRequest().getServerName() + ":"
+				+ getRequest().getServerPort();
+		List<String> lurls = new ArrayList<>();
 
-		final List<String> orgaos = new ArrayList<String>();
-		String copiaSigla = sigla.toUpperCase();
-		for (CpOrgaoUsuario o : dao().consultaCpOrgaoUsuario()) {
-			orgaos.add(o.getSiglaOrgaoUsu());
-			orgaos.add(o.getAcronimoOrgaoUsu());
-		}
-		for (String s : orgaos)
-			if (copiaSigla.startsWith(s)) {
-				copiaSigla = copiaSigla.substring(s.length());
-				break;
+		if (m1.find()) {
+			String orgao = m1.group("orgao");
+			String especie = m1.group("especie");
+			String modulo = m1.group("modulo");
+
+			if (especie != null) {
+				// Documentos
+				lurls.add(urlBase
+						+ "/sigaex/public/app/expediente/selecionar?sigla="
+						+ sigla + incluirMatricula
+						+ ";/sigaex/app/expediente/doc/exibir?sigla=");
+			} else if (modulo != null) {
+				switch (modulo) {
+				case "SR": // Solicitacoes
+				case "TMPSR":
+					lurls.add(urlBase
+							+ "/sigasr/public/app/solicitacao/selecionar?sigla="
+							+ sigla + incluirMatricula);
+					break;
+				case "GC": // Conhecimentos
+				case "TMPGC":
+					lurls.add(urlBase + "/sigagc/public/app/selecionar?sigla="
+							+ sigla + incluirMatricula);
+					break;
+				case "TP": // Transportes
+					lurls.add(urlBase + "/sigatp"
+							+ "/app/documento/selecionar?sigla=" + sigla
+							+ incluirMatricula
+							+ ";/sigatp/app/documento/exibir?sigla=");
+					break;
+				}
 			}
-		if (copiaSigla.startsWith("-"))
-			copiaSigla = copiaSigla.substring(1);
+		} else {
+			// Pessoas
+			lurls.add(urlBase + "/siga/app/pessoa/selecionar?sigla=" + sigla
+					+ incluirMatricula + ";/siga/app/pessoa/exibir?sigla=");
 
-		//alterada a condição que verifica se é uma solicitação do siga-sr
-		//dessa forma a regex verifica se a sigla começa com SR ou sr e termina com números
-		//necessário para não dar conflito caso exista uma lotação que inicie com SR
-		if (copiaSigla.startsWith("SR")) {
-//			if (copiaSigla.matches("^[SR|sr].*[0-9]+$")) {
-			if (pes == null || lot == null || Cp.getInstance()
-					.getConf()
-					.podeUtilizarServicoPorConfiguracao(pes, lot, "SIGA;SR"))
-				URLSelecionar = urlBase + "/sigasr" + testes+ "/app/solicitacao/selecionar?retornarCompacta=true&sigla=" + sigla + incluirMatricula;
+			// Lotacoes
+			lurls.add(urlBase + "/siga/app/lotacao/selecionar?sigla=" + sigla
+					+ incluirMatricula + ";/siga/app/lotacao/exibir?sigla=");
 		}
-		//alterado formato da sigla de requisições, missões e serviços
-		//else if (copiaSigla.startsWith("MTP")
-		//		|| copiaSigla.startsWith("RTP")
-		//		|| copiaSigla.startsWith("STP")) {
-		else if (copiaSigla.startsWith("TP") &&
-				(copiaSigla.endsWith("M") ||
-				 copiaSigla.endsWith("S") ||
-				 copiaSigla.endsWith("R"))) {
-			if (pes == null || lot == null || Cp.getInstance()
-					.getConf()
-					.podeUtilizarServicoPorConfiguracao(pes, lot, "SIGA;TP")) {
-				URLSelecionar = urlBase + "/sigatp"
-						+ "/app/documento/selecionar?sigla=" + sigla
-						+ incluirMatricula;
-			}
-		}
-		else
-			URLSelecionar = urlBase 
-					+ "/sigaex" + (testes.length() > 0 ? testes : "/app/expediente") + "/selecionar?sigla=" + sigla+ incluirMatricula;
 
 		final SigaHTTP http = new SigaHTTP();
-		String[] response = null;
-		try {
-			response = http.get(URLSelecionar, getRequest(), null).split(";");
-		} catch (Exception e) {
-		}
-
-		if (response == null || (response.length == 1 && Integer.valueOf(response[0]) == 0)) {
-			//verificar se após a retirada dos prefixos referente 
-			//ao orgão (sigla_orgao_usu = RJ ou acronimo_orgao_usu = JFRJ) e não achar resultado com as opções anteriores 
-			//a string copiaSigla somente possui números
-			if (copiaSigla.matches("(^[0-9]+$)")) {
-				URLSelecionar = urlBase 
-						+ "/siga/app"+ (testes.length() > 0 ? testes : "/pessoa") + "/selecionar?sigla=" + sigla+ incluirMatricula;
-			}
-			//encontrar lotações
-			else {
-				URLSelecionar = urlBase 
-					+ "/siga/app"+ (testes.length() > 0 ? testes : "/lotacao")+ "/selecionar?sigla=" + sigla+ incluirMatricula;
-			}
-			
+		for (String urls : lurls) {
+			String[] aurls = urls.split(";"); // cada string pode conter a url
+												// de busca ";" a url destino
+			String[] response = null;
 			try {
-				response = http.get(URLSelecionar, getRequest(), null).split(";");
+				response = http.get(aurls[0], getRequest(), null).split(";");
 			} catch (Exception e) {
-			}	
-			if (response == null || (response.length == 1 && Integer.valueOf(response[0]) == 0))
-				return sel;
-			
-			if (copiaSigla.matches("(^[0-9]+$)")) 
-				uRLExibir = "/siga/app/pessoa/exibir?sigla="+ response[2];
+			}
+
+			if (response == null
+					|| (response.length == 1 && Integer.valueOf(response[0]) == 0))
+				continue;
+
+			sel.setId(Long.valueOf(response[1]));
+			sel.setSigla(response[2]);
+			if (aurls.length == 2)
+				// A url de destino foi especificada
+				sel.setDescricao(aurls[1] + sel.getSigla());
 			else
-				uRLExibir = "/siga/app/lotacao/exibir?sigla="+ response[2];
+				// Devemos usar o terceiro parâmetro como url de destino
+				sel.setDescricao(response[3]);
+			return sel;
 		}
-		else {
-			if (copiaSigla.startsWith("SR"))
-//					if (copiaSigla.matches("^[SR|sr].*[0-9]+$"))
-					uRLExibir = "/sigasr/app/solicitacao/exibir/" + response[2];
-			//alterado formato da sigla de requisições, missões e serviços
-			//else if (copiaSigla.startsWith("MTP")
-			//		|| copiaSigla.startsWith("STP")
-			//		|| copiaSigla.startsWith("RTP"))
-			else if (copiaSigla.startsWith("TP") &&
-					(copiaSigla.endsWith("M") ||
-					 copiaSigla.endsWith("S") ||
-					 copiaSigla.endsWith("R")))
-				uRLExibir = "/sigatp/app/documento/exibir?sigla=" + response[2];
-			else
-				uRLExibir = "/sigaex/app/expediente/doc/exibir?sigla="+ response[2];
-		}
-		
-		sel.setId(Long.valueOf(response[1]));
-		sel.setSigla(response[2]);
-		sel.setDescricao(uRLExibir);
 		return sel;
 	}
-	
 }

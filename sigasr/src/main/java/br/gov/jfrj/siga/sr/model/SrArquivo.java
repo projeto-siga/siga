@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.sr.model;
 
+import java.beans.Transient;
 import java.io.IOException;
 
 import javax.persistence.Column;
@@ -18,7 +19,7 @@ import br.gov.jfrj.siga.model.Objeto;
 
 @Entity
 @Table(name = "SR_ARQUIVO", schema = "SIGASR")
-public class SrArquivo extends Objeto {
+public class SrArquivo extends Objeto implements Comparable<SrArquivo>{
 
     private static final long serialVersionUID = -4338358297062727340L;
     
@@ -41,6 +42,9 @@ public class SrArquivo extends Objeto {
 
     @Column(name = "DESCRICAO")
     private String descricao;
+    
+    @javax.persistence.Transient
+    private String descricaoComplementar;
 
     private SrArquivo() {
 
@@ -110,5 +114,19 @@ public class SrArquivo extends Objeto {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
+
+	public String getDescricaoComplementar() {
+		return descricaoComplementar;
+	}
+
+	public SrArquivo setDescricaoComplementar(String descricaoComplementar) {
+		this.descricaoComplementar = descricaoComplementar;
+		return this;
+	}
+
+	@Override
+	public int compareTo(SrArquivo o) {
+		return getNomeArquivo().compareTo(o.getNomeArquivo());
+	}
 
 }

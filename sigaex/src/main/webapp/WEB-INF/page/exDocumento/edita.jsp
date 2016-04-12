@@ -27,7 +27,7 @@
 		<div class="gt-content-box gt-for-table">
 			<form id="frm" name="frm" theme="simple" method="post" enctype="multipart/form-data">
 				<input type="hidden" id="idTamanhoMaximoDescricao" name="exDocumentoDTO.tamanhoMaximoDescricao" value="${exDocumentoDTO.tamanhoMaximoDescricao}" />
-				<input type="hidden" id="alterouModelo" name="alterouModelo" />
+				<input type="hidden" id="alterouModelo" name="exDocumentoDTO.alterouModelo" />
 				<input type="hidden" id="clickSelect" name="clickSelect" />
 				<input type="hidden" name="postback" value="1" />
 				<input type="hidden" id="sigla" name="exDocumentoDTO.sigla" value="${exDocumentoDTO.sigla}" />
@@ -255,10 +255,11 @@
 						<input type="hidden" name="campos" value="tipoDestinatario" />
 						<td colspan="3">
 							
-							<!-- <select  name="exDocumentoDTO.tipoDestinatario" onchange="javascript:sbmt();">  -->
+							<select  name="exDocumentoDTO.tipoDestinatario" onchange="javascript:sbmt();">
 							
-							<select  name="exDocumentoDTO.tipoDestinatario" onkeypress="presskeySelect(event, this, 'tipoDestinatario')" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
-							onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, 'tipoDestinatario')">
+							<!-- a adaptacao para deficientes visuais precisou ser removida pois causava incompatibilidade com o ckeditor -->
+							<!-- <select  name="exDocumentoDTO.tipoDestinatario" onkeypress="presskeySelect(event, this, 'tipoDestinatario')" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
+							onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, 'tipoDestinatario')"> -->
 								<c:forEach items="${exDocumentoDTO.listaTipoDest}" var="item">
 									<option value="${item.key}" ${item.key == exDocumentoDTO.tipoDestinatario ? 'selected' : ''}>
 										${item.value}
@@ -323,8 +324,8 @@
 									<td>Modelo:</td>
 									<td colspan="3">
 										<siga:div id="modelo" depende="forma">
-											<%-- onchange="document.getElementById('alterouModelo').value='true';sbmt();" --%>
-											<select name="exDocumentoDTO.idMod" style="${estiloTipo}" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';" onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)">
+											<select class="dependent" name="exDocumentoDTO.idMod" style="${estiloTipo}" onchange="document.getElementById('alterouModelo').value='true';"
+											<%-- <select class="dependent" name="exDocumentoDTO.idMod" style="${estiloTipo}" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';" onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)"> --%>
 												<c:forEach items="${exDocumentoDTO.modelos}" var="item">
 													<option value="${item.idMod}" ${item.idMod == exDocumentoDTO.idMod ? 'selected' : ''}>
 														${item.nmMod}

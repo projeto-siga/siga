@@ -2,7 +2,6 @@ package br.gov.jfrj.siga.sr.vraptor;
 
 import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
 
-import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -20,18 +19,17 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
-import br.gov.jfrj.siga.sr.enumeration.SrUnidadeMedida;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
-import br.gov.jfrj.siga.sr.model.SrAtributo;
-import br.gov.jfrj.siga.sr.model.SrAtributoAcordo;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrOperador;
+import br.gov.jfrj.siga.sr.model.SrParametro;
 import br.gov.jfrj.siga.sr.model.SrPrioridade;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 @Resource
 @Path("app/acordo")
@@ -50,7 +48,7 @@ public class AcordoController extends SrController {
     @Path("/listar")
     public void listar(boolean mostrarDesativados) throws Exception {
 
-        List<SrAtributo> parametros = SrAtributo.listarParaAcordo(false);
+        List<SrParametro> parametros = Arrays.asList(SrParametro.values());
         List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
         List<CpOrgaoUsuario> orgaos = CpOrgaoUsuario.AR.findAll();
         List<CpComplexo> locais = CpComplexo.AR.all().fetch();
@@ -133,7 +131,7 @@ public class AcordoController extends SrController {
     @SuppressWarnings("unchecked")
     @Path("/buscar")
     public void buscar(boolean mostrarDesativados, String nome, boolean popup, String propriedade) throws Exception {
-        List<SrAtributo> parametros = SrAtributo.listarParaAcordo(mostrarDesativados);
+    	List<SrParametro> parametros = Arrays.asList(SrParametro.values());
         List<CpUnidadeMedida> unidadesMedida = CpDao.getInstance().listarUnidadesMedida();
         List<CpOrgaoUsuario> orgaos = ContextoPersistencia.em().createQuery("from CpOrgaoUsuario").getResultList();
         List<CpComplexo> locais = CpComplexo.AR.all().fetch();

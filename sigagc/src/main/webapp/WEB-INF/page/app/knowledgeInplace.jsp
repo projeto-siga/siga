@@ -24,7 +24,8 @@
 			</a>
 			<c:choose>
 				<c:when test="${msgvazio != null}">
-					<p>${msgvazio.replaceAll("\\$1", url)}</p>
+					<%-- Edson: isto foi necessário porque strings vazias são transformadas em null num dos interceptors --%>
+					<p>${msgvazio.replaceAll("\\$1", url).replaceAll("empty", "")}</p>
 				</c:when>
 				<c:otherwise>
 					Nenhum conhecimento relacionado registrado. 

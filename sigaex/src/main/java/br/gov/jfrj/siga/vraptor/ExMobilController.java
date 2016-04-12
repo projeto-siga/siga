@@ -54,6 +54,7 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -64,7 +65,7 @@ public class ExMobilController extends
 		ExSelecionavelController<ExMobil, ExMobilDaoFiltro> {
 	public ExMobilController(HttpServletRequest request, Result result,
 			SigaObjects so, EntityManager em) {
-		super(request, result, CpDao.getInstance(), so, em);
+		super(request, result, ExDao.getInstance(), so, em);
 		setItemPagina(50);
 	}
 
@@ -106,7 +107,7 @@ public class ExMobilController extends
 
 	@Get("app/expediente/doc/finalizou_rotina")
 	public void aFinalizouRotina() {
-		System.out.println("Finalizou rotina");
+//		System.out.println("Finalizou rotina");
 	}
 
 	@Get("app/expediente/buscar")
@@ -150,8 +151,8 @@ public class ExMobilController extends
 			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
 					getTitular(), getLotaTitular()));
 
-			System.out.println("Consulta dos por filtro: "
-					+ (System.currentTimeMillis() - tempoIni));
+//			System.out.println("Consulta dos por filtro: "
+//					+ (System.currentTimeMillis() - tempoIni));
 
 			setItens(dao().consultarPorFiltroOtimizado(flt,
 					builder.getOffset(), getItemPagina(), getTitular(),
@@ -252,8 +253,8 @@ public class ExMobilController extends
 			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
 					getTitular(), getLotaTitular()));
 
-			System.out.println("Consulta dos por filtro: "
-					+ (System.currentTimeMillis() - tempoIni));
+//			System.out.println("Consulta dos por filtro: "
+//					+ (System.currentTimeMillis() - tempoIni));
 			setItens(dao().consultarPorFiltroOtimizado(flt,
 					builder.getOffset(), getItemPagina(), getTitular(),
 					getLotaTitular()));
@@ -538,11 +539,9 @@ public class ExMobilController extends
 						getLotaTitular(), false);
 	}
 
-	@Get({"app/expediente/selecionar","/expediente/selecionar.action"})
+	@Get({"public/app/expediente/selecionar","app/expediente/selecionar","/expediente/selecionar.action"})
 	public void selecionar(final String sigla, final String matricula) throws Exception {
-		assertAcesso("");
-		
-		final String resultado = super.aSelecionar(sigla);
+		String resultado = super.aSelecionar(sigla);
 		if (getSel() != null && matricula != null) {
 			GenericoSelecao sel = new GenericoSelecao();
 			sel.setId(getSel().getId());

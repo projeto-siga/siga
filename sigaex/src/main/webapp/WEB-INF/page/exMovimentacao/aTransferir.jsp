@@ -210,6 +210,12 @@ function popitup_movimentacao() {
 							</c:when>
 						</c:choose></td>
 					</tr>
+					<c:if test="${tipoResponsavel == 3}">
+					<tr>
+						<td></td>
+						<td style="color: red; font-size: 11px">Atenção: A transferência para órgão externo não acarreta o envio digital do documento. Portanto, além de fazer esta operação, será necessário imprimir o documento e remetê-lo fisicamente ou realizar a transferência por algum outro sistema em uso pelo órgão destinatário.</td>
+					</tr>
+					</c:if>
 					<tr>
 					<td>Data da devolução:</td>
 						<td>

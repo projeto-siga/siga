@@ -24,14 +24,16 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.sr.model.SrAtendimento;
+import br.gov.jfrj.siga.sr.model.SrEtapaSolicitacao;
+import br.gov.jfrj.siga.sr.model.SrEtapaSolicitacaoComparator;
+import br.gov.jfrj.siga.sr.model.SrParametro;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 
 public class SrRelAtendimento extends RelatorioTemplate {
 
 	public SrRelAtendimento(Map parametros) throws DJBuilderException {
 		super(parametros);
-		if ((Long) parametros.get("idlotaAtendenteIni") == 0L && parametros.get("siglaLotacao") == null
+		if (parametros.get("lotaAtendente") == null && parametros.get("siglaLotacao") == null
 				&& parametros.get("listaLotacoes") == null ) {
 			throw new DJBuilderException("Parâmetro Lotação não informado!");
 		}
@@ -54,7 +56,7 @@ public class SrRelAtendimento extends RelatorioTemplate {
 		this.addColuna("Data de Início Atendimento", 20, RelatorioRapido.CENTRO, false);
 		this.addColuna("Data de Fim Atendimento", 20, RelatorioRapido.CENTRO, false);
 		this.addColuna("Tipo de Atendimento", 28, RelatorioRapido.ESQUERDA, false);
-		this.addColuna("Próximo Atendente", 15, RelatorioRapido.ESQUERDA, false);
+		//this.addColuna("Próximo Atendente", 15, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Item de Configuração", 50, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Ação", 50, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Solicitação Fechada?", 15, RelatorioRapido.ESQUERDA, false);
@@ -68,25 +70,52 @@ public class SrRelAtendimento extends RelatorioTemplate {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection processarDados() throws Exception {
-		List<Object> listaFinal = new LinkedList<Object>();
-		Set<SrAtendimento> listaAtendimento = null;
-		Set<SrAtendimento> listaAtendimentoTotal = new TreeSet<SrAtendimento>();
-		List<SrSolicitacao> lista = null;
+		List<Object> registros = new LinkedList<Object>();
+		Set<SrEtapaSolicitacao> etapas = new TreeSet<SrEtapaSolicitacao>();
+		Set<SrEtapaSolicitacao> etapasOrdenadas = new TreeSet<SrEtapaSolicitacao>(new SrEtapaSolicitacaoComparator());
 		List<Long> idsIniciais = new ArrayList<Long>();
-		int quantRegistros = 1; int tamanhoLista = 0;
-		Long  idlotaAtendenteIni = (Long) parametros.get("idlotaAtendenteIni");
+		int contadorDeRegistro = 1; int totalDeRegistros = 0;
+		DpLotacao  lotaAtendente = (DpLotacao) parametros.get("lotaAtendente");
 		String tipo = (String) parametros.get("tipo");
 		
 		try {
 			if (tipo.equals("lotacao")) 
-				idsIniciais.add(idlotaAtendenteIni);
+				idsIniciais.add(lotaAtendente.getIdLotacaoIni());
 			else if (tipo.equals("lista_lotacao")) 
 				idsIniciais = listarLotacoesPorSigla();
 			else if (tipo.equals("expressao"))
 				idsIniciais = listarLotacoesPorExpressao();
 
-			lista = consultarAtendimentoPorLotacao(idsIniciais);
-			for (SrSolicitacao sol : lista) {
+			List<SrSolicitacao> lista = consultarAtendimentoPorLotacao(idsIniciais);
+			//juntando todas as etapas de todas as solicitações
+			for (SrSolicitacao sol : lista) 
+				etapas.addAll(sol.getEtapas());
+			//filtrando as etapas 	
+			for (SrEtapaSolicitacao e : etapas) {
+				if (e.getParametro().equals(SrParametro.ATENDIMENTO) &&
+						idsIniciais.contains(e.getLotaResponsavel().getIdInicial())) 
+					etapasOrdenadas.add(e);
+			}
+			//adicionando os registros do relatório
+			totalDeRegistros = etapasOrdenadas.size();
+			for (SrEtapaSolicitacao etapa : etapasOrdenadas) {
+				registros.add(etapa.getSolicitacao().getCodigo());
+				registros.add(etapa.getSolicitacao().getHisDtIniDDMMYYYYHHMM());
+				registros.add(etapa.getLotaResponsavel().getSiglaCompleta()); 
+				registros.add(etapa.getPessoaResponsavel()!= null ?  etapa.getPessoaResponsavel().getPrimeiroNomeEIniciais() : "");
+				registros.add(etapa.getInicioString());
+				registros.add(etapa.getFimString());
+				registros.add(etapa.getTipoMov() != null ? etapa.getTipoMov().getNome() : "");
+				registros.add(etapa.getItem() != null ? etapa.getItem().toString() : "");
+				registros.add(etapa.getAcao() != null ? etapa.getAcao().toString() : "");
+				registros.add(etapa.getSolicitacao().isFechado() ? "Sim" : "Nao");
+				registros.add(etapa.getValorRealizado().toString());
+				registros.add(etapa.getFaixa().getDescricao());
+				registros.add(Float.parseFloat(String.format(Locale.US,"%.2f", 
+						(contadorDeRegistro * 100f)/totalDeRegistros)));
+				contadorDeRegistro++;
+			}
+			/*for (SrSolicitacao sol : lista) {
 				if (sol.isPai())
 					listaAtendimento = sol.getAtendimentosSetSolicitacaoPai();
 				else 
@@ -118,13 +147,13 @@ public class SrRelAtendimento extends RelatorioTemplate {
 				listaFinal.add(Float.parseFloat(String.format(Locale.US,"%.2f", 
 						(quantRegistros * 100f)/tamanhoLista)));
 				quantRegistros++;
-			}
+			}*/
 		}
 		catch (Exception e) {
 			throw new Exception(e.getMessage());
 			//throw new AplicacaoException("Erro ao gerar o relatorio de atendimentos"); 
 		}
-		return listaFinal;
+		return registros;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -132,19 +161,19 @@ public class SrRelAtendimento extends RelatorioTemplate {
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 		
 		//movimentacao de inicio de atendimento (tipo = 1), fechamento (tipo = 7), escalonamento (tipo = 24)  			
-		Query query = SrSolicitacao.AR.em().createQuery("select sol from SrSolicitacao sol inner join sol.meuMarcaSet marca "
-				+ "where marca.cpMarcador.idMarcador <> 45 and sol.idSolicitacao in ("
-					+ "select s.idSolicitacao from SrSolicitacao s inner join s.meuMovimentacaoSet mov "
-					+ "where s.hisDtIni between :dataIni and :dataFim and (mov.tipoMov = 1 or mov.tipoMov = 7 or mov.tipoMov = 24) "
-					+ "and mov.lotaAtendente.idLotacaoIni in :idsLotaAtendenteIni group by s.idSolicitacao) "
-				+ "order by sol.hisDtIni");
+		Query query = SrSolicitacao.AR.em().createQuery("select s from SrSolicitacao s where s.idSolicitacao in ("
+				+ "select distinct (sol.idSolicitacao) from SrSolicitacao sol "
+				+ "inner join sol.meuMovimentacaoSet mov inner join sol.meuMarcaSet marca "
+				+ "where marca.cpMarcador.idMarcador <> 45 and sol.hisDtIni between :dataIni and :dataFim "
+					+ "and (mov.tipoMov = 1 or mov.tipoMov = 7 or mov.tipoMov = 24) "
+					+ "and mov.lotaAtendente.idLotacaoIni in (:idsLotaAtendenteIni))");
 
 		Date dtIni = formatter.parse((String) parametros.get("dtIni") + " 00:00:00");
 		query.setParameter("dataIni", dtIni, TemporalType.TIMESTAMP);
 		Date dtFim = formatter.parse((String) parametros.get("dtFim") + " 23:59:59");
 		query.setParameter("dataFim", dtFim, TemporalType.TIMESTAMP);
 		query.setParameter("idsLotaAtendenteIni", ids);
-
+			
 		return query.getResultList();
 	}
 	
@@ -172,7 +201,6 @@ public class SrRelAtendimento extends RelatorioTemplate {
 		query.setParameter("sigla", siglaModificada);
 		query.setParameter("idOrgao", (Long) parametros.get("idOrgao"));
 		return query.getResultList();
-		
 	}
 		
 }

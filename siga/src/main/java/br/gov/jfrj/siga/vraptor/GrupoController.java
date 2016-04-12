@@ -525,7 +525,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 		int intQtd = dao().consultarQuantidade(flt);
 		setTamanho(intQtd);
 		List<CpGrupo> itgGrupos = dao().consultarPorFiltro(flt, offset,
-				itemPagina);
+				0);
 
 		Iterator<CpGrupo> it = itgGrupos.iterator();
 

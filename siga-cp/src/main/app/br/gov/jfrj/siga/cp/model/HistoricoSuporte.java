@@ -99,6 +99,8 @@ public abstract class HistoricoSuporte extends Objeto implements Historico, Asse
 	}
 
 	public boolean equivale(Object other) {
+		if (other == null)
+			return false;
 		return this.getHisIdIni().equals(((Historico) other).getIdInicial());
 	}
 

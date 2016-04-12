@@ -69,8 +69,6 @@ public class ExController extends SigaController {
 		super(request, result, dao, so, em);
 		this.response = response;
 		this.context = context;
-
-		CurrentRequest.set(new RequestInfo(context, request, response));
 	}
 
 	protected void verificaNivelAcesso(ExMobil mob) {

@@ -110,18 +110,17 @@ public class GcArquivo extends Objeto implements Serializable {
 	 * não modifica o original
 	 */
 	public GcArquivo duplicarConteudoInfo() {
-		try {
-			ByteArrayOutputStream saida = new ByteArrayOutputStream();
-			ObjectOutputStream objSaida = new ObjectOutputStream(saida);
+		try (ByteArrayOutputStream saida = new ByteArrayOutputStream();
+				ObjectOutputStream objSaida = new ObjectOutputStream(saida)) {
 			objSaida.writeObject(this);
 			objSaida.close();
 
-			ByteArrayInputStream entrada = new ByteArrayInputStream(
+			try (ByteArrayInputStream entrada = new ByteArrayInputStream(
 					saida.toByteArray());
-			ObjectInputStream objEntrada = new ObjectInputStream(entrada);
-
-			GcArquivo cloneConteudoInfo = (GcArquivo) objEntrada.readObject();
-			return cloneConteudoInfo;
+					ObjectInputStream objEntrada = new ObjectInputStream(entrada)) {
+				GcArquivo cloneConteudoInfo = (GcArquivo) objEntrada.readObject();
+				return cloneConteudoInfo;
+			}
 		} catch (Exception e) {
 			throw new AplicacaoException(
 					"Não foi possível duplicar esse conhecimento.");

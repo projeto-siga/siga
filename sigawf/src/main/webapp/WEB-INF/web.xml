@@ -5,7 +5,7 @@
 	<display-name>sigawf</display-name>
 	
 	<session-config>
-		<session-timeout>60</session-timeout>
+		<session-timeout>120</session-timeout>
 	</session-config>
 	
 	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
@@ -32,7 +32,7 @@
 
 
 	<welcome-file-list>
-		<welcome-file>app/inbox</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 
 	<filter>
@@ -43,6 +43,12 @@
 	<filter-mapping>
 		<filter-name>vraptor</filter-name>
 		<url-pattern>/app/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>vraptor</filter-name>
+		<url-pattern>/public/app/*</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
@@ -58,31 +64,17 @@
 	</filter-mapping>
 
 	<filter>
-		<filter-name>ResponseHeaderFilterNoCache</filter-name>
-		<filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
-		<init-param>
-			<param-name>Cache-Control</param-name>
-			<param-value>no-cache</param-value>
-		</init-param>
-	</filter>
-
-	<filter>
 		<filter-name>ResponseHeaderFilter</filter-name>
 		<filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
 		<init-param>
 			<param-name>Cache-Control</param-name>
-			<param-value>max-age=3600</param-value>
+			<param-value>public, max-age=3600</param-value>
 		</init-param>
 	</filter>
 
 	<filter-mapping>
-		<filter-name>ResponseHeaderFilterNoCache</filter-name>
-		<url-pattern>/app/*</url-pattern>
-	</filter-mapping>
-
-	<filter-mapping>
 		<filter-name>ResponseHeaderFilter</filter-name>
-		<url-pattern>/imagens/*</url-pattern>
+		<url-pattern>/js/*</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>
@@ -188,6 +180,10 @@
 	      <web-resource-name>upload</web-resource-name>
 	      <url-pattern>/upload</url-pattern>
 	    </web-resource-collection>
+   		<web-resource-collection>
+			<web-resource-name>Recursos Publicos</web-resource-name>
+			<url-pattern>/public/*</url-pattern>
+		</web-resource-collection>
 	</security-constraint>
 
 	<login-config>
@@ -213,7 +209,7 @@
 	</security-role>
 
 	<error-page>
-		<exception-type>java.lang.Throwable</exception-type>
+		
 		<location>/WEB-INF/page/erroGeral.jsp</location>
 	</error-page>
 </web-app>

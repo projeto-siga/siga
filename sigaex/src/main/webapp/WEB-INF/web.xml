@@ -3,6 +3,10 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
 	<display-name>SIGA - Gestão Documental</display-name>
+	
+	<session-config>
+		<session-timeout>120</session-timeout>
+	</session-config>
 		
 	<context-param>
 	    <param-name>br.com.caelum.vraptor.provider</param-name>
@@ -49,20 +53,11 @@
 	</filter>
 
     <filter>
-        <filter-name>ResponseHeaderFilterNoCache</filter-name>
-        <filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
-        <init-param>
-            <param-name>Cache-Control</param-name>
-            <param-value>no-cache</param-value>
-        </init-param>
-    </filter>
-
-    <filter>
         <filter-name>ResponseHeaderFilter</filter-name>
         <filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
         <init-param>
             <param-name>Cache-Control</param-name>
-            <param-value>max-age=3600, public</param-value>
+            <param-value>public, max-age=3600</param-value>
         </init-param>
     </filter>
 
@@ -80,6 +75,7 @@
         <url-pattern>/anexo/*</url-pattern>
         <url-pattern>/servicos/*</url-pattern>
         <url-pattern>/app/*</url-pattern>
+        <url-pattern>/public/app/*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>
@@ -93,17 +89,19 @@
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
-    <filter-mapping>
+		<filter-mapping>
+		<filter-name>vraptor</filter-name>
+		<url-pattern>/public/app/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
 		<filter-name>vraptor</filter-name>
 		<url-pattern>*.action</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>	
 
-    <filter-mapping>
-        <filter-name>ResponseHeaderFilterNoCache</filter-name>
-        <url-pattern>*.action</url-pattern>
-    </filter-mapping>
     <filter-mapping>
         <filter-name>ResponseHeaderFilter</filter-name>
         <url-pattern>/imagens/*</url-pattern>
@@ -231,6 +229,10 @@
 			<web-resource-name>staticJavascript</web-resource-name>
 			<url-pattern>/staticJavascript.jf</url-pattern>
 		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>Recursos Publicos</web-resource-name>
+			<url-pattern>/public/*</url-pattern>
+		</web-resource-collection>
 	</security-constraint>
 
 	<login-config>
@@ -255,8 +257,12 @@
 		<role-name>superusuario</role-name>
 	</security-role>
 
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
 	<error-page>
-		<exception-type>java.lang.Throwable</exception-type>
+		
 		<location>/WEB-INF/page/erroGeral.jsp</location>
 	</error-page>
 </web-app>

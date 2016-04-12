@@ -31,6 +31,7 @@ import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.CpTipoLotacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
@@ -73,7 +74,7 @@ public class ExConfiguracaoController extends ExController {
 			Long idNivelAcesso, Long idSituacao, Long idTpConfiguracao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel, 
 			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
-			Long idOrgaoObjeto, 
+			Long idOrgaoObjeto, Long idTpLotacao,
 			String nmTipoRetorno) throws Exception {
 
 		ExConfiguracao config = new ExConfiguracao();
@@ -86,7 +87,8 @@ public class ExConfiguracaoController extends ExController {
 					.setIdMod(idMod).setIdFormaDoc(idFormaDoc).setIdNivelAcesso(idNivelAcesso)
 					.setIdSituacao(idSituacao).setIdTpConfiguracao(idTpConfiguracao)
 					.setPessoaSel(pessoaSel).setLotacaoSel(lotacaoSel).setCargoSel(cargoSel)
-					.setFuncaoSel(funcaoSel).setClassificacaoSel(classificacaoSel).setIdOrgaoObjeto(idOrgaoObjeto);
+					.setFuncaoSel(funcaoSel).setClassificacaoSel(classificacaoSel).setIdOrgaoObjeto(idOrgaoObjeto)
+					.setIdTpLotacao(idTpLotacao);
 
 			config = configuracaoBuilder.construir(dao());
 		}
@@ -100,6 +102,7 @@ public class ExConfiguracaoController extends ExController {
 		result.include("listaTiposMovimentacao", getListaTiposMovimentacao());
 		result.include("tiposFormaDoc", getTiposFormaDoc());
 		result.include("listaTiposDocumento", getListaTiposDocumento());
+		result.include("listaTiposLotacao", getListaTiposLotacao());
 		result.include("nmTipoRetorno", nmTipoRetorno);
 		result.include("config", config);
 		result.include("campoFixo", campoFixo);
@@ -135,13 +138,13 @@ public class ExConfiguracaoController extends ExController {
 			Long idNivelAcesso, Long idSituacao, Long idTpConfiguracao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel, 
 			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
-			Long idOrgaoObjeto, String nmTipoRetorno, boolean campoFixo) throws Exception {
+			Long idOrgaoObjeto, Long idTpLotacao, String nmTipoRetorno, boolean campoFixo) throws Exception {
 
 		final ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setId(id).setTipoPublicador(null)
 				.setIdNivelAcesso(idNivelAcesso).setIdTpMov(idTpMov).setIdTpDoc(idTpDoc).setIdMod(idMod).setIdFormaDoc(forma).setIdTpFormaDoc(idTpFormaDoc)
 				.setIdNivelAcesso(idNivelAcesso).setIdSituacao(idSituacao).setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel)
 				.setLotacaoSel(lotacaoSel).setCargoSel(cargoSel).setFuncaoSel(funcaoSel).setClassificacaoSel(classificacaoSel).setIdOrgaoObjeto(idOrgaoObjeto)
-				.setIdOrgaoUsu(idOrgaoUsu);
+				.setIdOrgaoUsu(idOrgaoUsu).setIdTpLotacao(idTpLotacao);
 		
 		gravarConfiguracao(idTpConfiguracao, idSituacao, configuracaoBuilder.construir(dao()));
 		escreveFormRetorno(nmTipoRetorno, campoFixo, configuracaoBuilder);
@@ -479,6 +482,10 @@ public class ExConfiguracaoController extends ExController {
 
 		if (c.getCpTipoConfiguracao() != null)
 			result.include("idTpConfiguracao", c.getCpTipoConfiguracao().getIdTpConfiguracao());
+		
+		if (c.getCpTipoLotacao() != null)
+			result.include("idTpLotacao", c.getCpTipoLotacao().getIdTpLotacao());
+
 
 		if (c.getDpPessoa() != null)
 			pessoaSelecao.buscarPorObjeto(c.getDpPessoa());
@@ -573,4 +580,9 @@ public class ExConfiguracaoController extends ExController {
 	private List<ExTipoDocumento> getListaTiposDocumento() throws Exception {
 		return dao().listarExTiposDocumento();
 	}
+	
+	private List<CpTipoLotacao> getListaTiposLotacao() throws Exception {
+		return dao().listarTiposLotacao();
+	}
+
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.gov.jfrj.siga.sr.model.SrAcordo;
-import br.gov.jfrj.siga.sr.model.SrAtributoAcordo;
+import br.gov.jfrj.siga.sr.model.SrParametroAcordo;
 
 public class SrAcordoVO extends AbstractSelecionavel {
 
@@ -12,7 +12,7 @@ public class SrAcordoVO extends AbstractSelecionavel {
     private Long hisIdIni;
     private String nomeAcordo;
     private String descrAcordo;
-    private List<SrAtributoAcordoVO> atributoAcordoSet;
+    private List<SrParametroAcordoVO> parametroAcordoSet;
 
     public SrAcordoVO(Long id, String sigla, String descricao) {
         super(id, sigla, descricao);
@@ -24,11 +24,11 @@ public class SrAcordoVO extends AbstractSelecionavel {
         acordoVO.setHisIdIni(acordo.getHisIdIni());
         acordoVO.setNomeAcordo(acordo.getNomeAcordo());
         acordoVO.setDescrAcordo(acordo.getDescrAcordo());
-        acordoVO.setAtributoAcordoSet(new ArrayList<SrAtributoAcordoVO>());
+        acordoVO.setParametroAcordoSet(new ArrayList<SrParametroAcordoVO>());
 
-        if (acordo.getAtributoAcordoSet() != null)
-            for (SrAtributoAcordo atributoAcordo : acordo.getAtributoAcordoSet())
-                acordoVO.getAtributoAcordoSet().add(atributoAcordo.toVO());
+        if (acordo.getParametroAcordoSet() != null)
+            for (SrParametroAcordo atributoAcordo : acordo.getParametroAcordoSet())
+                acordoVO.getParametroAcordoSet().add(atributoAcordo.toVO());
 
         return acordoVO;
     }
@@ -65,12 +65,12 @@ public class SrAcordoVO extends AbstractSelecionavel {
         this.descrAcordo = descrAcordo;
     }
 
-    public List<SrAtributoAcordoVO> getAtributoAcordoSet() {
-        return atributoAcordoSet;
+    public List<SrParametroAcordoVO> getParametroAcordoSet() {
+        return parametroAcordoSet;
     }
 
-    public void setAtributoAcordoSet(List<SrAtributoAcordoVO> atributoAcordoSet) {
-        this.atributoAcordoSet = atributoAcordoSet;
+    public void setParametroAcordoSet(List<SrParametroAcordoVO> atributoAcordoSet) {
+        this.parametroAcordoSet = atributoAcordoSet;
     }
 
 }

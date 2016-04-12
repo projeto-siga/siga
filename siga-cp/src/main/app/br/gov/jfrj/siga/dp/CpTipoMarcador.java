@@ -25,10 +25,12 @@ package br.gov.jfrj.siga.dp;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-
-
 @Entity
 @Table(name = "CP_TIPO_MARCADOR", schema = "CORPORATIVO")
 public class CpTipoMarcador extends AbstractCpTipoMarcador {
-
+	public static final long TIPO_MARCADOR_SISTEMA = 1L;
+	public static final long TIPO_MARCADOR_GERAL = 2L;
+	public static final long TIPO_MARCADOR_LOTACAO_E_SUBLOTACOES = 3L;
+	public static final long TIPO_MARCADOR_LOTACAO = 4L;
+	public static final long TIPO_MARCADOR_PESSOA = 5L;
 }

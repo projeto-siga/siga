@@ -3,9 +3,13 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 	
 	<display-name>SIGA - Serviços</display-name>
+	
+	<session-config>
+		<session-timeout>120</session-timeout>
+	</session-config>
 
 	<welcome-file-list>
-		<welcome-file>/WEB-INF/index.jsp</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 	
 	<jsp-config>
@@ -57,14 +61,32 @@
 	<filter-mapping>
         <filter-name>SrFilter</filter-name>
         <url-pattern>/app/*</url-pattern>
+        <url-pattern>/solicitacao/*</url-pattern>
     </filter-mapping>
 	
 	<filter-mapping>
 		<filter-name>vraptor</filter-name>
 		<url-pattern>/app/*</url-pattern>
+		<url-pattern>/solicitacao/*</url-pattern>
+		<url-pattern>/public/app/solicitacao/*</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
+	
+	<filter>
+        <filter-name>ResponseHeaderFilter</filter-name>
+        <filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
+        <init-param>
+            <param-name>Cache-Control</param-name>
+            <param-value>public, max-age=3600</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>ResponseHeaderFilter</filter-name>
+        <url-pattern>/images/*</url-pattern>
+        <url-pattern>/javascripts/*</url-pattern>
+        <url-pattern>/stylesheets/*</url-pattern>
+    </filter-mapping>
 	
 	<security-constraint>
 		<web-resource-collection>
@@ -99,7 +121,7 @@
 	</security-role>
 	
 	<error-page>
-		<exception-type>java.lang.Throwable</exception-type>
+		
 		<location>/WEB-INF/page/erroGeral.jsp</location>
 	</error-page>
 </web-app>

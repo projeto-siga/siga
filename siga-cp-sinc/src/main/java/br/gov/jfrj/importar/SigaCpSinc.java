@@ -546,16 +546,16 @@ public class SigaCpSinc {
 			connMumps.setReadTimeout(0);
 
 			/* */
-			@SuppressWarnings("unused")
-			InputStream st = connMumps.getInputStream();
-			// String inputStreamString = new
-			// Scanner(st,"UTF-8").useDelimiter("\\A").next();
-			// System.out.println(inputStreamString);
-			importarXml(connMumps.getInputStream());
-			log("Importando: BD");
-			setAntigo.addAll(importarTabela());
-			log("Gravando alterações");
-			gravar(dt);
+			try (InputStream st = connMumps.getInputStream()) {
+				// String inputStreamString = new
+				// Scanner(st,"UTF-8").useDelimiter("\\A").next();
+				// System.out.println(inputStreamString);
+				importarXml(st);
+				log("Importando: BD");
+				setAntigo.addAll(importarTabela());
+				log("Gravando alterações");
+				gravar(dt);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log(e.getMessage());

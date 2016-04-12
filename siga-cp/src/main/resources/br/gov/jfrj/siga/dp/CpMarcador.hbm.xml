@@ -51,7 +51,6 @@
 			   	AND id_tp_marca = 1
 			   	GROUP BY id_marcador) c
 			WHERE m.id_marcador = c.id_marcador
-			AND m.id_marcador < 100
 			ORDER BY m.ord_marcador
     	]]>
 	</sql-query>

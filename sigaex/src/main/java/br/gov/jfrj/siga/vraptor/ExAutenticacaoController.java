@@ -49,12 +49,13 @@ public class ExAutenticacaoController extends ExController{
 					.addNoise(new StraightLineNoiseProducer()).addText()
 					.addBackground().gimp().addBorder().build();
 			getRequest().getSession().setAttribute(Captcha.NAME, captcha);
-			ByteArrayOutputStream imgOutputStream = new ByteArrayOutputStream();
-			ImageIO.write(captcha.getImage(), "png", imgOutputStream);
-			byte[] bytes = imgOutputStream.toByteArray();
-			final String fileName = "captch.png";
-			final String contentType = "image/png";
-			return new ByteArrayDownload(bytes,contentType,fileName,true);
+			try (ByteArrayOutputStream imgOutputStream = new ByteArrayOutputStream()) {
+				ImageIO.write(captcha.getImage(), "png", imgOutputStream);
+				byte[] bytes = imgOutputStream.toByteArray();
+				final String fileName = "captch.png";
+				final String contentType = "image/png";
+				return new ByteArrayDownload(bytes,contentType,fileName,true);
+			}
 		}
 		return null;
 	}

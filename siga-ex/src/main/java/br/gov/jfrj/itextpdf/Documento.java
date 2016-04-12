@@ -53,7 +53,9 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -253,371 +255,372 @@ public class Documento {
 		// final SimpleDateFormat sdf = new SimpleDateFormat(
 		// "EEE MMM dd HH:mm:ss zzz yyyy");
 		// doc.add(new Meta("creationdate", sdf.format(new Date(0L))));
-		final ByteArrayOutputStream boA4 = new ByteArrayOutputStream();
-		PdfWriter writer = PdfWriter.getInstance(doc, boA4);
-		doc.open();
-		PdfContentByte cb = writer.getDirectContent();
-
-		// Resize every page to A4 size
-		//
-		// double thetaRotation = 0.0;
-		for (int i = 1; i <= pdfIn.getNumberOfPages(); i++) {
-			int rot = pdfIn.getPageRotation(i);
-			float left = pdfIn.getPageSize(i).getLeft();
-			float bottom = pdfIn.getPageSize(i).getBottom();
-			float top = pdfIn.getPageSize(i).getTop();
-			float right = pdfIn.getPageSize(i).getRight();
-
-			PdfImportedPage page = writer.getImportedPage(pdfIn, i);
-			float w = page.getWidth();
-			float h = page.getHeight();
-
-			// Logger.getRootLogger().error("----- dimensoes: " + rot + ", " + w
-			// + ", " + h);
-
-			doc.setPageSize((rot != 0 && rot != 180) ^ (w > h) ? PageSize.A4.rotate()
-					: PageSize.A4);
-			doc.newPage();
-
-			cb.saveState();
-
-			if (rot != 0 && rot != 180) {
-				float swap = w;
-				w = h;
-				h = swap;
-			}
-
-			float pw = doc.getPageSize().getWidth();
-			float ph = doc.getPageSize().getHeight();
-			double scale = Math.min(pw / w, ph / h);
-
-			// do my transformations :
-			cb.transform(AffineTransform.getScaleInstance(scale, scale));
-
-			if (!internoProduzido) {
-				cb.transform(AffineTransform.getTranslateInstance(pw
-						* SAFETY_MARGIN, ph * SAFETY_MARGIN));
-				cb.transform(AffineTransform.getScaleInstance(
-						1.0f - 2 * SAFETY_MARGIN, 1.0f - 2 * SAFETY_MARGIN));
-			}
-
-			if (rot != 0) {
-				double theta = -rot * (Math.PI / 180);
-				if (rot == 180){
-					cb.transform(AffineTransform.getRotateInstance(theta, w / 2,
-							h / 2));
-				}else{
-					cb.transform(AffineTransform.getRotateInstance(theta, h / 2,
-							w / 2));
-				}
-				if (rot == 90) {
-					cb.transform(AffineTransform.getTranslateInstance(
-							(w - h) / 2, (w - h) / 2));
-				} else if (rot == 270) {
-					cb.transform(AffineTransform.getTranslateInstance(
-							(h - w) / 2, (h - w) / 2));
-				}
-			}
-
-			// Logger.getRootLogger().error(
-			// "----- dimensoes: " + rot + ", " + w + ", " + h);
-			// Logger.getRootLogger().error("----- page: " + pw + ", " + ph);
-
-			// cb.transform(AffineTransform.getTranslateInstance(
-			// ((pw / scale) - w) / 2, ((ph / scale) - h) / 2));
-
-			// put the page
-			cb.addTemplate(page, 0, 0);
-
-			// draw a red rectangle at the page borders
+		try (ByteArrayOutputStream boA4 = new ByteArrayOutputStream()) {
+			PdfWriter writer = PdfWriter.getInstance(doc, boA4);
+			doc.open();
+			PdfContentByte cb = writer.getDirectContent();
+	
+			// Resize every page to A4 size
 			//
-			// cb.saveState();
-			// cb.setColorStroke(Color.red);
-			// cb.rectangle(pdfIn.getPageSize(i).getLeft(), pdfIn.getPageSize(i)
-			// .getBottom(), pdfIn.getPageSize(i).getRight(), pdfIn
-			// .getPageSize(i).getTop());
-			// cb.stroke();
-			// cb.restoreState();
-
-			cb.restoreState();
-		}
-		doc.close();
-
-		abPdf = boA4.toByteArray();
-
-		final ByteArrayOutputStream bo2 = new ByteArrayOutputStream();
-
-		final PdfReader reader = new PdfReader(abPdf);
-
-		final int n = reader.getNumberOfPages();
-		final PdfStamper stamp = new PdfStamper(reader, bo2);
-
-		// adding content to each page
-		int i = 0;
-		PdfContentByte under;
-		PdfContentByte over;
-		final BaseFont helv = BaseFont.createFont("Helvetica",
-				BaseFont.WINANSI, false);
-
-		// Image img = Image.getInstance("watermark.jpg");
-		final BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA,
-				BaseFont.WINANSI, BaseFont.EMBEDDED);
-
-		byte maskr[] = { (byte) 0xff };
-		Image mask = Image.getInstance(1, 1, 1, 1, maskr);
-		mask.makeMask();
-		mask.setInverted(true);
-
-		while (i < n) {
-			i++;
-			// watermark under the existing page
-			under = stamp.getUnderContent(i);
-			over = stamp.getOverContent(i);
-
-			final Barcode39 code39 = new Barcode39();
-			// code39.setCode(doc.getCodigo());
-			code39.setCode(sigla.replace("-", "").replace("/", "")
-					.replace(".", ""));
-			code39.setStartStopText(false);
-			final Image image39 = code39.createImageWithBarcode(over, null,
-					null);
-			Rectangle r = stamp.getReader().getPageSizeWithRotation(i);
-
-			image39.setInitialRotation((float) Math.PI / 2.0f);
-			image39.setAbsolutePosition(r.getWidth() - image39.getHeight()
-					+ (STAMP_BORDER_IN_CM - PAGE_BORDER_IN_CM) * CM_UNIT,
-					BARCODE_HEIGHT_IN_CM * CM_UNIT);
-
-			image39.setBackgroundColor(Color.green);
-			image39.setBorderColor(Color.RED);
-			image39.setBorderWidth(0.5f * CM_UNIT);
-
-			image39.setImageMask(mask);
-
-			over.setRGBColorFill(255, 255, 255);
-			mask.setAbsolutePosition(r.getWidth() - image39.getHeight()
-					- (PAGE_BORDER_IN_CM) * CM_UNIT,
-					(BARCODE_HEIGHT_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
-			mask.scaleAbsolute(image39.getHeight() + 2 * STAMP_BORDER_IN_CM
-					* CM_UNIT, image39.getWidth() + 2 * STAMP_BORDER_IN_CM
-					* CM_UNIT);
-			over.addImage(mask);
-
-			over.setRGBColorFill(0, 0, 0);
-			over.addImage(image39);
-
-			// over.addImage(mask, mask.getScaledWidth() * 8, 0, 0,
-			// mask.getScaledHeight() * 8, 100, 450);
-
-			if (qrCode != null) {
-				java.awt.Image imgQRCode = createQRCodeImage(qrCode);
-				Image imageQRCode = Image.getInstance(imgQRCode, Color.BLACK,
-						true);
-				imageQRCode.scaleAbsolute(QRCODE_SIZE_IN_CM * CM_UNIT,
-						QRCODE_SIZE_IN_CM * CM_UNIT);
-				imageQRCode.setAbsolutePosition(QRCODE_LEFT_MARGIN_IN_CM
-						* CM_UNIT, PAGE_BORDER_IN_CM * CM_UNIT);
-
-				over.setRGBColorFill(255, 255, 255);
-				mask.setAbsolutePosition(
-						(QRCODE_LEFT_MARGIN_IN_CM - STAMP_BORDER_IN_CM)
-								* CM_UNIT,
-						(PAGE_BORDER_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
-				mask.scaleAbsolute((QRCODE_SIZE_IN_CM + 2 * STAMP_BORDER_IN_CM)
-						* CM_UNIT, (QRCODE_SIZE_IN_CM + 2 * STAMP_BORDER_IN_CM)
-						* CM_UNIT);
-				over.addImage(mask);
-
-				over.setRGBColorFill(0, 0, 0);
-				over.addImage(imageQRCode);
-			}
-
-			if (mensagem != null) {
-				PdfPTable table = new PdfPTable(1);
-				table.setTotalWidth(r.getWidth()
-						- image39.getHeight()
-						- (QRCODE_LEFT_MARGIN_IN_CM + QRCODE_SIZE_IN_CM + 4
-								* STAMP_BORDER_IN_CM + PAGE_BORDER_IN_CM)
-						* CM_UNIT);
-				PdfPCell cell = new PdfPCell(new Paragraph(mensagem,
-						FontFactory.getFont(FontFactory.HELVETICA, 8,
-								Font.NORMAL, Color.BLACK)));
-				cell.setBorderWidth(0);
-				table.addCell(cell);
-
-				over.setRGBColorFill(255, 255, 255);
-				mask.setAbsolutePosition((QRCODE_LEFT_MARGIN_IN_CM
-						+ QRCODE_SIZE_IN_CM + STAMP_BORDER_IN_CM)
-						* CM_UNIT, (PAGE_BORDER_IN_CM - STAMP_BORDER_IN_CM)
-						* CM_UNIT);
-				mask.scaleAbsolute(
-						2 * STAMP_BORDER_IN_CM * CM_UNIT
-								+ table.getTotalWidth(), 2 * STAMP_BORDER_IN_CM
-								* CM_UNIT + table.getTotalHeight());
-				over.addImage(mask);
-
-				over.setRGBColorFill(0, 0, 0);
-				table.writeSelectedRows(0, -1, (QRCODE_LEFT_MARGIN_IN_CM
-						+ QRCODE_SIZE_IN_CM + 2 * STAMP_BORDER_IN_CM)
-						* CM_UNIT, table.getTotalHeight() + PAGE_BORDER_IN_CM
-						* CM_UNIT, over);
-			}
-
-			if (cancelado) {
-				over.saveState();
-				final PdfGState gs = new PdfGState();
-				gs.setFillOpacity(0.5f);
-				over.setGState(gs);
-				over.setColorFill(Color.GRAY);
-				over.beginText();
-				over.setFontAndSize(helv, 72);
-				over.showTextAligned(Element.ALIGN_CENTER, "CANCELADO",
-						r.getWidth() / 2, r.getHeight() / 2, 45);
-				over.endText();
-				over.restoreState();
-			} else if (rascunho) {
-				over.saveState();
-				final PdfGState gs = new PdfGState();
-				gs.setFillOpacity(0.5f);
-				over.setGState(gs);
-				over.setColorFill(Color.GRAY);
-				over.beginText();
-				over.setFontAndSize(helv, 72);
-				over.showTextAligned(Element.ALIGN_CENTER, "MINUTA",
-						r.getWidth() / 2, r.getHeight() / 2, 45);
-				over.endText();
-				over.restoreState();
-			} else if (semEfeito) {
-				over.saveState();
-				final PdfGState gs = new PdfGState();
-				gs.setFillOpacity(0.5f);
-				over.setGState(gs);
-				over.setColorFill(Color.GRAY);
-				over.beginText();
-				over.setFontAndSize(helv, 72);
-				over.showTextAligned(Element.ALIGN_CENTER, "SEM EFEITO",
-						r.getWidth() / 2, r.getHeight() / 2, 45);
-				over.endText();
-				over.restoreState();
-			}
-
-			// if (!rascunho
-			// && request.getRequestURL().indexOf("http://laguna/") == -1) {
-
-			if (!rascunho
-					&& !cancelado
-					&& !semEfeito
-					&& ((!Contexto.resource("isVersionTest").equals("false")) || (!Contexto
-							.resource("isBaseTest").equals("false")))) {
-				over.saveState();
-				final PdfGState gs = new PdfGState();
-				gs.setFillOpacity(0.5f);
-				over.setGState(gs);
-				over.setColorFill(Color.GRAY);
-				over.beginText();
-				over.setFontAndSize(helv, 72);
-				over.showTextAligned(Element.ALIGN_CENTER, "INVÁLIDO",
-						r.getWidth() / 2, r.getHeight() / 2, 45);
-				over.endText();
-				over.restoreState();
-			}
-
-			// Imprime um circulo com o numero da pagina dentro.
-
-			if (paginaInicial != null) {
-				String sFl = String.valueOf(paginaInicial + i - 1);
-				// Se for a ultima pagina e o numero nao casar, acrescenta "-" e
-				// pagina final
-				if (n == i) {
-					if (paginaFinal != paginaInicial + n - 1) {
-						sFl = sFl + "-" + String.valueOf(paginaFinal);
+			// double thetaRotation = 0.0;
+			for (int i = 1; i <= pdfIn.getNumberOfPages(); i++) {
+				int rot = pdfIn.getPageRotation(i);
+				float left = pdfIn.getPageSize(i).getLeft();
+				float bottom = pdfIn.getPageSize(i).getBottom();
+				float top = pdfIn.getPageSize(i).getTop();
+				float right = pdfIn.getPageSize(i).getRight();
+	
+				PdfImportedPage page = writer.getImportedPage(pdfIn, i);
+				float w = page.getWidth();
+				float h = page.getHeight();
+	
+				// Logger.getRootLogger().error("----- dimensoes: " + rot + ", " + w
+				// + ", " + h);
+	
+				doc.setPageSize((rot != 0 && rot != 180) ^ (w > h) ? PageSize.A4.rotate()
+						: PageSize.A4);
+				doc.newPage();
+	
+				cb.saveState();
+	
+				if (rot != 0 && rot != 180) {
+					float swap = w;
+					w = h;
+					h = swap;
+				}
+	
+				float pw = doc.getPageSize().getWidth();
+				float ph = doc.getPageSize().getHeight();
+				double scale = Math.min(pw / w, ph / h);
+	
+				// do my transformations :
+				cb.transform(AffineTransform.getScaleInstance(scale, scale));
+	
+				if (!internoProduzido) {
+					cb.transform(AffineTransform.getTranslateInstance(pw
+							* SAFETY_MARGIN, ph * SAFETY_MARGIN));
+					cb.transform(AffineTransform.getScaleInstance(
+							1.0f - 2 * SAFETY_MARGIN, 1.0f - 2 * SAFETY_MARGIN));
+				}
+	
+				if (rot != 0) {
+					double theta = -rot * (Math.PI / 180);
+					if (rot == 180){
+						cb.transform(AffineTransform.getRotateInstance(theta, w / 2,
+								h / 2));
+					}else{
+						cb.transform(AffineTransform.getRotateInstance(theta, h / 2,
+								w / 2));
+					}
+					if (rot == 90) {
+						cb.transform(AffineTransform.getTranslateInstance(
+								(w - h) / 2, (w - h) / 2));
+					} else if (rot == 270) {
+						cb.transform(AffineTransform.getTranslateInstance(
+								(h - w) / 2, (h - w) / 2));
 					}
 				}
-				if (i > cOmitirNumeracao) {
+	
+				// Logger.getRootLogger().error(
+				// "----- dimensoes: " + rot + ", " + w + ", " + h);
+				// Logger.getRootLogger().error("----- page: " + pw + ", " + ph);
+	
+				// cb.transform(AffineTransform.getTranslateInstance(
+				// ((pw / scale) - w) / 2, ((ph / scale) - h) / 2));
+	
+				// put the page
+				cb.addTemplate(page, 0, 0);
+	
+				// draw a red rectangle at the page borders
+				//
+				// cb.saveState();
+				// cb.setColorStroke(Color.red);
+				// cb.rectangle(pdfIn.getPageSize(i).getLeft(), pdfIn.getPageSize(i)
+				// .getBottom(), pdfIn.getPageSize(i).getRight(), pdfIn
+				// .getPageSize(i).getTop());
+				// cb.stroke();
+				// cb.restoreState();
+	
+				cb.restoreState();
+			}
+			doc.close();
+	
+			abPdf = boA4.toByteArray();
+		}
 
-					// Raio do circulo interno
-					final float radius = 18f;
-
-					// Distancia entre o circulo interno e o externo
-					final float circleInterspace = Math.max(
-							helv.getAscentPoint(instancia, TEXT_HEIGHT),
-							helv.getAscentPoint(orgaoUsu, TEXT_HEIGHT))
-							- Math.min(helv.getDescentPoint(instancia,
-									TEXT_HEIGHT), helv.getDescentPoint(
-									orgaoUsu, TEXT_HEIGHT))
-							+ 2
-							* TEXT_TO_CIRCLE_INTERSPACE;
-
-					// Centro do circulo
-					float xCenter = r.getWidth() - 1.8f
-							* (radius + circleInterspace);
-					float yCenter = r.getHeight() - 1.8f
-							* (radius + circleInterspace);
-
+		try (ByteArrayOutputStream bo2 = new ByteArrayOutputStream()) {
+			final PdfReader reader = new PdfReader(abPdf);
+	
+			final int n = reader.getNumberOfPages();
+			final PdfStamper stamp = new PdfStamper(reader, bo2);
+	
+			// adding content to each page
+			int i = 0;
+			PdfContentByte under;
+			PdfContentByte over;
+			final BaseFont helv = BaseFont.createFont("Helvetica",
+					BaseFont.WINANSI, false);
+	
+			// Image img = Image.getInstance("watermark.jpg");
+			final BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA,
+					BaseFont.WINANSI, BaseFont.EMBEDDED);
+	
+			byte maskr[] = { (byte) 0xff };
+			Image mask = Image.getInstance(1, 1, 1, 1, maskr);
+			mask.makeMask();
+			mask.setInverted(true);
+	
+			while (i < n) {
+				i++;
+				// watermark under the existing page
+				under = stamp.getUnderContent(i);
+				over = stamp.getOverContent(i);
+	
+				final Barcode39 code39 = new Barcode39();
+				// code39.setCode(doc.getCodigo());
+				code39.setCode(sigla.replace("-", "").replace("/", "")
+						.replace(".", ""));
+				code39.setStartStopText(false);
+				final Image image39 = code39.createImageWithBarcode(over, null,
+						null);
+				Rectangle r = stamp.getReader().getPageSizeWithRotation(i);
+	
+				image39.setInitialRotation((float) Math.PI / 2.0f);
+				image39.setAbsolutePosition(r.getWidth() - image39.getHeight()
+						+ (STAMP_BORDER_IN_CM - PAGE_BORDER_IN_CM) * CM_UNIT,
+						BARCODE_HEIGHT_IN_CM * CM_UNIT);
+	
+				image39.setBackgroundColor(Color.green);
+				image39.setBorderColor(Color.RED);
+				image39.setBorderWidth(0.5f * CM_UNIT);
+	
+				image39.setImageMask(mask);
+	
+				over.setRGBColorFill(255, 255, 255);
+				mask.setAbsolutePosition(r.getWidth() - image39.getHeight()
+						- (PAGE_BORDER_IN_CM) * CM_UNIT,
+						(BARCODE_HEIGHT_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
+				mask.scaleAbsolute(image39.getHeight() + 2 * STAMP_BORDER_IN_CM
+						* CM_UNIT, image39.getWidth() + 2 * STAMP_BORDER_IN_CM
+						* CM_UNIT);
+				over.addImage(mask);
+	
+				over.setRGBColorFill(0, 0, 0);
+				over.addImage(image39);
+	
+				// over.addImage(mask, mask.getScaledWidth() * 8, 0, 0,
+				// mask.getScaledHeight() * 8, 100, 450);
+	
+				if (qrCode != null) {
+					java.awt.Image imgQRCode = createQRCodeImage(qrCode);
+					Image imageQRCode = Image.getInstance(imgQRCode, Color.BLACK,
+							true);
+					imageQRCode.scaleAbsolute(QRCODE_SIZE_IN_CM * CM_UNIT,
+							QRCODE_SIZE_IN_CM * CM_UNIT);
+					imageQRCode.setAbsolutePosition(QRCODE_LEFT_MARGIN_IN_CM
+							* CM_UNIT, PAGE_BORDER_IN_CM * CM_UNIT);
+	
+					over.setRGBColorFill(255, 255, 255);
+					mask.setAbsolutePosition(
+							(QRCODE_LEFT_MARGIN_IN_CM - STAMP_BORDER_IN_CM)
+									* CM_UNIT,
+							(PAGE_BORDER_IN_CM - STAMP_BORDER_IN_CM) * CM_UNIT);
+					mask.scaleAbsolute((QRCODE_SIZE_IN_CM + 2 * STAMP_BORDER_IN_CM)
+							* CM_UNIT, (QRCODE_SIZE_IN_CM + 2 * STAMP_BORDER_IN_CM)
+							* CM_UNIT);
+					over.addImage(mask);
+	
+					over.setRGBColorFill(0, 0, 0);
+					over.addImage(imageQRCode);
+				}
+	
+				if (mensagem != null) {
+					PdfPTable table = new PdfPTable(1);
+					table.setTotalWidth(r.getWidth()
+							- image39.getHeight()
+							- (QRCODE_LEFT_MARGIN_IN_CM + QRCODE_SIZE_IN_CM + 4
+									* STAMP_BORDER_IN_CM + PAGE_BORDER_IN_CM)
+							* CM_UNIT);
+					PdfPCell cell = new PdfPCell(new Paragraph(mensagem,
+							FontFactory.getFont(FontFactory.HELVETICA, 8,
+									Font.NORMAL, Color.BLACK)));
+					cell.setBorderWidth(0);
+					table.addCell(cell);
+	
+					over.setRGBColorFill(255, 255, 255);
+					mask.setAbsolutePosition((QRCODE_LEFT_MARGIN_IN_CM
+							+ QRCODE_SIZE_IN_CM + STAMP_BORDER_IN_CM)
+							* CM_UNIT, (PAGE_BORDER_IN_CM - STAMP_BORDER_IN_CM)
+							* CM_UNIT);
+					mask.scaleAbsolute(
+							2 * STAMP_BORDER_IN_CM * CM_UNIT
+									+ table.getTotalWidth(), 2 * STAMP_BORDER_IN_CM
+									* CM_UNIT + table.getTotalHeight());
+					over.addImage(mask);
+	
+					over.setRGBColorFill(0, 0, 0);
+					table.writeSelectedRows(0, -1, (QRCODE_LEFT_MARGIN_IN_CM
+							+ QRCODE_SIZE_IN_CM + 2 * STAMP_BORDER_IN_CM)
+							* CM_UNIT, table.getTotalHeight() + PAGE_BORDER_IN_CM
+							* CM_UNIT, over);
+				}
+	
+				if (cancelado) {
 					over.saveState();
 					final PdfGState gs = new PdfGState();
-					gs.setFillOpacity(1f);
+					gs.setFillOpacity(0.5f);
 					over.setGState(gs);
-					over.setColorFill(Color.BLACK);
-
-					over.saveState();
-					over.setColorStroke(Color.black);
-					over.setLineWidth(1f);
-					over.setColorFill(Color.WHITE);
-
-					// Circulo externo
-					over.circle(xCenter, yCenter, radius + circleInterspace);
-					over.fill();
-					over.circle(xCenter, yCenter, radius + circleInterspace);
-					over.stroke();
-
-					// Circulo interno
-					over.circle(xCenter, yCenter, radius);
-					over.stroke();
-					over.restoreState();
-
-					{
-						over.saveState();
-						over.beginText();
-						over.setFontAndSize(helv, TEXT_HEIGHT);
-
-						// Escreve o texto superior do carimbo
-						float fDescent = helv.getDescentPoint(instancia,
-								TEXT_HEIGHT);
-						showTextOnArc(over, instancia, helv, TEXT_HEIGHT,
-								xCenter, yCenter, radius - fDescent
-										+ TEXT_TO_CIRCLE_INTERSPACE, true);
-
-						// Escreve o texto inferior
-						float fAscent = helv.getAscentPoint(orgaoUsu,
-								TEXT_HEIGHT);
-						showTextOnArc(over, orgaoUsu, helv, TEXT_HEIGHT,
-								xCenter, yCenter, radius + fAscent
-										+ TEXT_TO_CIRCLE_INTERSPACE, false);
-						over.endText();
-						over.restoreState();
-					}
-
+					over.setColorFill(Color.GRAY);
 					over.beginText();
-					int textHeight = 23;
-
-					// Diminui o tamanho do font ate que o texto caiba dentro do
-					// circulo interno
-					while (helv.getWidthPoint(sFl, textHeight) > (2 * (radius - TEXT_TO_CIRCLE_INTERSPACE)))
-						textHeight--;
-					float fAscent = helv.getAscentPoint(sFl, textHeight)
-							+ helv.getDescentPoint(sFl, textHeight);
-					over.setFontAndSize(helv, textHeight);
-					over.showTextAligned(Element.ALIGN_CENTER, sFl, xCenter,
-							yCenter - 0.5f * fAscent, 0);
+					over.setFontAndSize(helv, 72);
+					over.showTextAligned(Element.ALIGN_CENTER, "CANCELADO",
+							r.getWidth() / 2, r.getHeight() / 2, 45);
+					over.endText();
+					over.restoreState();
+				} else if (rascunho) {
+					over.saveState();
+					final PdfGState gs = new PdfGState();
+					gs.setFillOpacity(0.5f);
+					over.setGState(gs);
+					over.setColorFill(Color.GRAY);
+					over.beginText();
+					over.setFontAndSize(helv, 72);
+					over.showTextAligned(Element.ALIGN_CENTER, "MINUTA",
+							r.getWidth() / 2, r.getHeight() / 2, 45);
+					over.endText();
+					over.restoreState();
+				} else if (semEfeito) {
+					over.saveState();
+					final PdfGState gs = new PdfGState();
+					gs.setFillOpacity(0.5f);
+					over.setGState(gs);
+					over.setColorFill(Color.GRAY);
+					over.beginText();
+					over.setFontAndSize(helv, 72);
+					over.showTextAligned(Element.ALIGN_CENTER, "SEM EFEITO",
+							r.getWidth() / 2, r.getHeight() / 2, 45);
 					over.endText();
 					over.restoreState();
 				}
+	
+				// if (!rascunho
+				// && request.getRequestURL().indexOf("http://laguna/") == -1) {
+	
+				if (!rascunho
+						&& !cancelado
+						&& !semEfeito
+						&& ((!Contexto.resource("isVersionTest").equals("false")) || (!Contexto
+								.resource("isBaseTest").equals("false")))) {
+					over.saveState();
+					final PdfGState gs = new PdfGState();
+					gs.setFillOpacity(0.5f);
+					over.setGState(gs);
+					over.setColorFill(Color.GRAY);
+					over.beginText();
+					over.setFontAndSize(helv, 72);
+					over.showTextAligned(Element.ALIGN_CENTER, "INVÁLIDO",
+							r.getWidth() / 2, r.getHeight() / 2, 45);
+					over.endText();
+					over.restoreState();
+				}
+	
+				// Imprime um circulo com o numero da pagina dentro.
+	
+				if (paginaInicial != null) {
+					String sFl = String.valueOf(paginaInicial + i - 1);
+					// Se for a ultima pagina e o numero nao casar, acrescenta "-" e
+					// pagina final
+					if (n == i) {
+						if (paginaFinal != paginaInicial + n - 1) {
+							sFl = sFl + "-" + String.valueOf(paginaFinal);
+						}
+					}
+					if (i > cOmitirNumeracao) {
+	
+						// Raio do circulo interno
+						final float radius = 18f;
+	
+						// Distancia entre o circulo interno e o externo
+						final float circleInterspace = Math.max(
+								helv.getAscentPoint(instancia, TEXT_HEIGHT),
+								helv.getAscentPoint(orgaoUsu, TEXT_HEIGHT))
+								- Math.min(helv.getDescentPoint(instancia,
+										TEXT_HEIGHT), helv.getDescentPoint(
+										orgaoUsu, TEXT_HEIGHT))
+								+ 2
+								* TEXT_TO_CIRCLE_INTERSPACE;
+	
+						// Centro do circulo
+						float xCenter = r.getWidth() - 1.8f
+								* (radius + circleInterspace);
+						float yCenter = r.getHeight() - 1.8f
+								* (radius + circleInterspace);
+	
+						over.saveState();
+						final PdfGState gs = new PdfGState();
+						gs.setFillOpacity(1f);
+						over.setGState(gs);
+						over.setColorFill(Color.BLACK);
+	
+						over.saveState();
+						over.setColorStroke(Color.black);
+						over.setLineWidth(1f);
+						over.setColorFill(Color.WHITE);
+	
+						// Circulo externo
+						over.circle(xCenter, yCenter, radius + circleInterspace);
+						over.fill();
+						over.circle(xCenter, yCenter, radius + circleInterspace);
+						over.stroke();
+	
+						// Circulo interno
+						over.circle(xCenter, yCenter, radius);
+						over.stroke();
+						over.restoreState();
+	
+						{
+							over.saveState();
+							over.beginText();
+							over.setFontAndSize(helv, TEXT_HEIGHT);
+	
+							// Escreve o texto superior do carimbo
+							float fDescent = helv.getDescentPoint(instancia,
+									TEXT_HEIGHT);
+							showTextOnArc(over, instancia, helv, TEXT_HEIGHT,
+									xCenter, yCenter, radius - fDescent
+											+ TEXT_TO_CIRCLE_INTERSPACE, true);
+	
+							// Escreve o texto inferior
+							float fAscent = helv.getAscentPoint(orgaoUsu,
+									TEXT_HEIGHT);
+							showTextOnArc(over, orgaoUsu, helv, TEXT_HEIGHT,
+									xCenter, yCenter, radius + fAscent
+											+ TEXT_TO_CIRCLE_INTERSPACE, false);
+							over.endText();
+							over.restoreState();
+						}
+	
+						over.beginText();
+						int textHeight = 23;
+	
+						// Diminui o tamanho do font ate que o texto caiba dentro do
+						// circulo interno
+						while (helv.getWidthPoint(sFl, textHeight) > (2 * (radius - TEXT_TO_CIRCLE_INTERSPACE)))
+							textHeight--;
+						float fAscent = helv.getAscentPoint(sFl, textHeight)
+								+ helv.getDescentPoint(sFl, textHeight);
+						over.setFontAndSize(helv, textHeight);
+						over.showTextAligned(Element.ALIGN_CENTER, sFl, xCenter,
+								yCenter - 0.5f * fAscent, 0);
+						over.endText();
+						over.restoreState();
+					}
+				}
+	
 			}
-
+			stamp.close();
+			return bo2.toByteArray();
 		}
-		stamp.close();
-		return bo2.toByteArray();
 	}
 
 	// Desenha texto ao redor de um circulo, acima ou abaixo
@@ -741,182 +744,164 @@ public class Documento {
 	public static byte[] getDocumento(ExMobil mob, ExMovimentacao mov,
 			boolean completo, boolean estampar, String hash, byte[] certificado)
 			throws Exception {
-		final ByteArrayOutputStream bo2 = new ByteArrayOutputStream();
-		PdfReader reader;
-		int n;
-		int pageOffset = 0;
-		ArrayList master = new ArrayList();
-		int f = 0;
-		Document document = null;
-		PdfCopy writer = null;
-		int nivelInicial = 0;
-
-		// if (request.getRequestURI().indexOf("/completo/") == -1) {
-		// return getPdf(docvia, mov != null ? mov : docvia.getExDocumento(),
-		// mov != null ? mov.getNumVia() : docvia.getNumVia(), null,
-		// null, request);
-		// }
-
-		List<ExArquivoNumerado> ans = mob.filtrarArquivosNumerados(mov,
-				completo);
-
-		if (!completo && !estampar && ans.size() == 1) {
-			if (certificado != null) {
-				CdService cdService = Service.getCdService();
-				return cdService.produzPacoteAssinavel(certificado, null, ans
-						.get(0).getArquivo().getPdf(), true, ExDao
-						.getInstance().getServerDateTime());
-			} else if (hash != null) {
-				// Calcula o hash do documento
-				String alg = hash;
-				MessageDigest md = MessageDigest.getInstance(alg);
-				md.update(ans.get(0).getArquivo().getPdf());
-				return md.digest();
-			} else {
-				return ans.get(0).getArquivo().getPdf();
-			}
-		}
-
-		try {
-			for (ExArquivoNumerado an : ans) {
-
-				// byte[] ab = getPdf(docvia, an.getArquivo(), an.getNumVia(),
-				// an
-				// .getPaginaInicial(), an.getPaginaFinal(), request);
-
-				String sigla = mob.getSigla();
-				if (an.getArquivo() instanceof ExMovimentacao) {
-					ExMovimentacao m = (ExMovimentacao) an.getArquivo();
-					if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
-						sigla = m.getExMobil().getSigla();
+		try (ByteArrayOutputStream bo2 = new ByteArrayOutputStream()) {
+			PdfReader reader;
+			int n;
+			int pageOffset = 0;
+			ArrayList master = new ArrayList();
+			int f = 0;
+			Document document = null;
+			PdfCopy writer = null;
+			int nivelInicial = 0;
+	
+			// if (request.getRequestURI().indexOf("/completo/") == -1) {
+			// return getPdf(docvia, mov != null ? mov : docvia.getExDocumento(),
+			// mov != null ? mov.getNumVia() : docvia.getNumVia(), null,
+			// null, request);
+			// }
+	
+			List<ExArquivoNumerado> ans = mob.filtrarArquivosNumerados(mov,
+					completo);
+	
+			if (!completo && !estampar && ans.size() == 1) {
+				if (certificado != null) {
+					CdService cdService = Service.getCdService();
+					return cdService.produzPacoteAssinavel(certificado, null, ans
+							.get(0).getArquivo().getPdf(), true, ExDao
+							.getInstance().getServerDateTime());
+				} else if (hash != null) {
+					// Calcula o hash do documento
+					String alg = hash;
+					MessageDigest md = MessageDigest.getInstance(alg);
+					md.update(ans.get(0).getArquivo().getPdf());
+					return md.digest();
 				} else {
-					sigla = an.getMobil().getSigla();
+					return ans.get(0).getArquivo().getPdf();
 				}
-
-				byte[] ab = !estampar ? an.getArquivo().getPdf() : stamp(an
-						.getArquivo().getPdf(), sigla, an.getArquivo()
-						.isRascunho(), an.getArquivo().isCancelado(), an
-						.getArquivo().isSemEfeito(), an.getArquivo()
-						.isInternoProduzido(), an.getArquivo().getQRCode(), an
-						.getArquivo().getMensagem(), an.getPaginaInicial(),
-						an.getPaginaFinal(), an.getOmitirNumeracao(),
-						SigaExProperties.getTextoSuperiorCarimbo(), mob.getExDocumento()
-								.getOrgaoUsuario().getDescricao());
-
-				// we create a reader for a certain document
-
-				reader = new PdfReader(ab);
-				reader.consolidateNamedDestinations();
-				// we retrieve the total number of pages
-				n = reader.getNumberOfPages();
-				// List bookmarks = SimpleBookmark.getBookmark(reader);
-				// master.add(new Bookmark)
-				// if (bookmarks != null) {
-				// if (pageOffset != 0)
-				// SimpleBookmark.shiftPageNumbers(bookmarks, pageOffset,
-				// null);
-				// master.addAll(bookmarks);
-				// }
-
-				if (f == 0) {
-					// step 1: creation of a document-object
-					document = new Document(reader.getPageSizeWithRotation(1));
-					// step 2: we create a writer that listens to the
-					// document
-					writer = new PdfCopy(document, bo2);
-					writer.setFullCompression();
-
-					// writer.setViewerPreferences(PdfWriter.PageModeUseOutlines);
-
-					// step 3: we open the document
-					document.open();
-
-					nivelInicial = an.getNivel();
-				}
-
-				// PdfOutline root = writer.getDirectContent().getRootOutline();
-				// PdfContentByte cb = writer.getDirectContent();
-				// PdfDestination destination = new
-				// PdfDestination(PdfDestination.FITH, position);
-				// step 4: we add content
-				PdfImportedPage page;
-				for (int j = 0; j < n;) {
-					++j;
-					page = writer.getImportedPage(reader, j);
-					writer.addPage(page);
-					if (j == 1) {
-						// PdfContentByte cb = writer.getDirectContent();
-						// PdfOutline root = cb.getRootOutline();
-						// PdfOutline oline1 = new PdfOutline(root,
-						// PdfAction.gotoLocalPage("1", false),"Chapter 1");
-
-						HashMap map = new HashMap();
-						map.put("Title", an.getNome());
-						map.put("Action", "GoTo");
-						map.put("Page", j + pageOffset + "");
-						map.put("Kids", new ArrayList());
-
-						ArrayList mapPai = master;
-						for (int i = 0; i < an.getNivel() - nivelInicial; i++) {
-							mapPai = ((ArrayList) ((HashMap) mapPai.get(mapPai
-									.size() - 1)).get("Kids"));
-						}
-						mapPai.add(map);
-					}
-
-				}
-				PRAcroForm form = reader.getAcroForm();
-				if (form != null)
-					writer.copyAcroForm(reader);
-
-				pageOffset += n;
-				f++;
 			}
-			if (!master.isEmpty())
-				writer.setOutlines(master);
-
-			// PdfDictionary info = writer.getInfo();
-			// info.put(PdfName.MODDATE, null);
-			// info.put(PdfName.CREATIONDATE, null);
-			// info.put(PdfName.ID, null);
-
-			document.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+	
+			try {
+				for (ExArquivoNumerado an : ans) {
+	
+					// byte[] ab = getPdf(docvia, an.getArquivo(), an.getNumVia(),
+					// an
+					// .getPaginaInicial(), an.getPaginaFinal(), request);
+	
+					String sigla = mob.getSigla();
+					if (an.getArquivo() instanceof ExMovimentacao) {
+						ExMovimentacao m = (ExMovimentacao) an.getArquivo();
+						if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
+							sigla = m.getExMobil().getSigla();
+					} else {
+						sigla = an.getMobil().getSigla();
+					}
+	
+					byte[] ab = !estampar ? an.getArquivo().getPdf() : stamp(an
+							.getArquivo().getPdf(), sigla, an.getArquivo()
+							.isRascunho(), an.getArquivo().isCancelado(), an
+							.getArquivo().isSemEfeito(), an.getArquivo()
+							.isInternoProduzido(), an.getArquivo().getQRCode(), an
+							.getArquivo().getMensagem(), an.getPaginaInicial(),
+							an.getPaginaFinal(), an.getOmitirNumeracao(),
+							SigaExProperties.getTextoSuperiorCarimbo(), mob.getExDocumento()
+									.getOrgaoUsuario().getDescricao());
+	
+					// we create a reader for a certain document
+	
+					reader = new PdfReader(ab);
+					reader.consolidateNamedDestinations();
+					// we retrieve the total number of pages
+					n = reader.getNumberOfPages();
+					// List bookmarks = SimpleBookmark.getBookmark(reader);
+					// master.add(new Bookmark)
+					// if (bookmarks != null) {
+					// if (pageOffset != 0)
+					// SimpleBookmark.shiftPageNumbers(bookmarks, pageOffset,
+					// null);
+					// master.addAll(bookmarks);
+					// }
+	
+					if (f == 0) {
+						// step 1: creation of a document-object
+						document = new Document(reader.getPageSizeWithRotation(1));
+						// step 2: we create a writer that listens to the
+						// document
+						writer = new PdfCopy(document, bo2);
+						writer.setFullCompression();
+	
+						// writer.setViewerPreferences(PdfWriter.PageModeUseOutlines);
+	
+						// step 3: we open the document
+						document.open();
+	
+						nivelInicial = an.getNivel();
+					}
+	
+					// PdfOutline root = writer.getDirectContent().getRootOutline();
+					// PdfContentByte cb = writer.getDirectContent();
+					// PdfDestination destination = new
+					// PdfDestination(PdfDestination.FITH, position);
+					// step 4: we add content
+					PdfImportedPage page;
+					for (int j = 0; j < n;) {
+						++j;
+						page = writer.getImportedPage(reader, j);
+						writer.addPage(page);
+						if (j == 1) {
+							// PdfContentByte cb = writer.getDirectContent();
+							// PdfOutline root = cb.getRootOutline();
+							// PdfOutline oline1 = new PdfOutline(root,
+							// PdfAction.gotoLocalPage("1", false),"Chapter 1");
+	
+							HashMap map = new HashMap();
+							map.put("Title", an.getNome());
+							map.put("Action", "GoTo");
+							map.put("Page", j + pageOffset + "");
+							map.put("Kids", new ArrayList());
+	
+							ArrayList mapPai = master;
+							for (int i = 0; i < an.getNivel() - nivelInicial; i++) {
+								mapPai = ((ArrayList) ((HashMap) mapPai.get(mapPai
+										.size() - 1)).get("Kids"));
+							}
+							mapPai.add(map);
+						}
+	
+					}
+					PRAcroForm form = reader.getAcroForm();
+					if (form != null)
+						writer.copyAcroForm(reader);
+	
+					pageOffset += n;
+					f++;
+				}
+				if (!master.isEmpty())
+					writer.setOutlines(master);
+	
+				// PdfDictionary info = writer.getInfo();
+				// info.put(PdfName.MODDATE, null);
+				// info.put(PdfName.CREATIONDATE, null);
+				// info.put(PdfName.ID, null);
+	
+				document.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return bo2.toByteArray();
 		}
-		return bo2.toByteArray();
 	}
 
 	public static byte[] generatePdf(String sHtml) throws Exception {
 		return generatePdf(sHtml, AbstractConversorHTMLFactory.getInstance()
-				.getConversorPadrao(), null);
+				.getConversorPadrao());
 	}
 
-	public static byte[] generatePdf(String sHtml, ConversorHtml parser, String realPath)
+	public static byte[] generatePdf(String sHtml, ConversorHtml parser)
 			throws Exception {
-		// System.out.println(System.currentTimeMillis() + " - INI
-		// generatePdf");
-
 		sHtml = (new ProcessadorHtml()).canonicalizarHtml(sHtml, true, false,
 				true, false, true);
 
-		// log.info("Processamento: terminou canonicalizar");
-
-		/*
-		 * bruno.lacerda@avantiprima.com.br - 01/08/2012 correcao para carregar
-		 * a imagem do brasao independente do protocolo
-		 */
-		// HttpServletRequest req = ServletActionContext.getRequest();
-		// sHtml = sHtml.replace("contextpath", "http://" + req.getServerName()+
-		// ":" + req.getServerPort() + req.getContextPath());
-		if(realPath == null)
-//			sHtml = sHtml.replace("contextpath", ServletActionContext
-//				.getServletContext().getRealPath(""));
-			; //Nato: Precisamos testar uma solução para fazer essa substituição sem precisar da dependência do webwork.
-		else
-			sHtml = sHtml.replace("contextpath", realPath);
-
-		// log.info("Processamento: prestes a entrar no nheengatu");
+		sHtml = sHtml.replace("contextpath", realPath());
 
 		return parser.converter(sHtml, ConversorHtml.PDF);
 
@@ -961,7 +946,7 @@ public class Documento {
 		}
 
 		void print() {
-			try {
+			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 				exp = ExDao.getInstance().consultar((long) num,
 						ExDocumento.class, false);
 				// exp = expDAO.consultarConteudoBlob(exp);
@@ -972,7 +957,6 @@ public class Documento {
 				final Document doc = new Document(PageSize.A4, 50, 50, 100, 72);
 				// Document doc = new Document(PageSize.A4, 200, 200, 200, 200);
 
-				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				final PdfWriter writer = PdfWriter.getInstance(doc, baos);
 
 				// step 2: creating the writer
@@ -1036,8 +1020,9 @@ public class Documento {
 								+ "\" width=\"50\" height=\"50\"/>";
 					}
 
-					HtmlParser.parse(doc,
-							new ByteArrayInputStream(blob.getBytes()));
+					try (ByteArrayInputStream bais = new ByteArrayInputStream(blob.getBytes())) {
+						HtmlParser.parse(doc, bais);
+					}
 				}
 
 				String blob = new String(exp.getConteudoBlobDoc2(),
@@ -1071,8 +1056,10 @@ public class Documento {
 								"");
 				blob = blob.replace("<title></title>", "");
 
-				HtmlParser
-						.parse(doc, new ByteArrayInputStream(blob.getBytes()));
+				try (ByteArrayInputStream bais = new ByteArrayInputStream(
+						blob.getBytes())) {
+					HtmlParser.parse(doc, bais);
+				}
 				// doc.close();
 
 				/*
@@ -1105,7 +1092,6 @@ public class Documento {
 				final ServletOutputStream out = response.getOutputStream();
 				baos.writeTo(out);
 				out.flush();
-
 			} catch (final Exception e) {
 				e.printStackTrace();
 			}
@@ -1355,5 +1341,16 @@ public class Documento {
 		sHtml = sHtml.replace("contextpath", contextpath);
 		return sHtml;
 	}
+	
+	public static String realPath() {
+		RequestInfo ri = CurrentRequest.get();
+		
+		final String realPath = ri.getRequest().getScheme() + "://"
+				+ ri.getRequest().getServerName() + ":"
+				+ ri.getRequest().getServerPort() + ri.getRequest().getContextPath();
+		return realPath;
+	}
+
+
 
 }

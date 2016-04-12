@@ -168,47 +168,47 @@ public class HTMLDocument extends Document {
 	 * 
 	 */
 	public void generateFile() throws IOException {
-		final PrintWriter file = new PrintWriter(new OutputStreamWriter(new FileOutputStream(getPath() + getName()), "utf-8"));
-		final StringBuffer strHTML = new StringBuffer("");
-		if (htmlTag) {
-			strHTML.append("<html>" + breakLine);
-		}
-		if (headTag) {
-			strHTML.append("<head>" + breakLine);
-			// TODO metatags!!!
-			/*
-			 * Iterator metatags = head.tags(); while(metatags.hasNext()) { name =
-			 * (String)metatags.next(); strHTML.append("<meta name=\""+name+"\"
-			 * content=\""+head.getMetaTagValue(name)+"\">"+breakLine); }
-			 */
-			strHTML.append("<title></title>" + breakLine);
-			strHTML.append("</head>" + breakLine);
-		}
-		if (bodyTag) {
-			String name = null;
-			strAux.append("<body ");
-			final Iterator properties = body.getPropertiesNames();
-			name = null;
-			while (properties.hasNext()) {
-				name = (String) properties.next();
-				if (body.getPropertyValue(name).equals("")) {
-					strAux.append(name + " ");
-				} else {
-					strAux.append(name + "=\"" + body.getPropertyValue(name) + "\" ");
-				}
+		try (PrintWriter file = new PrintWriter(new OutputStreamWriter(new FileOutputStream(getPath() + getName()), "utf-8"))) {
+			final StringBuffer strHTML = new StringBuffer("");
+			if (htmlTag) {
+				strHTML.append("<html>" + breakLine);
 			}
-			strHTML.append(strAux + ">" + breakLine);
-			strAux.setLength(0);
+			if (headTag) {
+				strHTML.append("<head>" + breakLine);
+				// TODO metatags!!!
+				/*
+				 * Iterator metatags = head.tags(); while(metatags.hasNext()) { name =
+				 * (String)metatags.next(); strHTML.append("<meta name=\""+name+"\"
+				 * content=\""+head.getMetaTagValue(name)+"\">"+breakLine); }
+				 */
+				strHTML.append("<title></title>" + breakLine);
+				strHTML.append("</head>" + breakLine);
+			}
+			if (bodyTag) {
+				String name = null;
+				strAux.append("<body ");
+				final Iterator properties = body.getPropertiesNames();
+				name = null;
+				while (properties.hasNext()) {
+					name = (String) properties.next();
+					if (body.getPropertyValue(name).equals("")) {
+						strAux.append(name + " ");
+					} else {
+						strAux.append(name + "=\"" + body.getPropertyValue(name) + "\" ");
+					}
+				}
+				strHTML.append(strAux + ">" + breakLine);
+				strAux.setLength(0);
+			}
+			generateBody(body.tags(), strHTML);
+			if (bodyTag) {
+				strHTML.append("</body>" + breakLine);
+			}
+			if (htmlTag) {
+				strHTML.append("</html>" + breakLine);
+			}
+			file.println(strHTML.toString());
 		}
-		generateBody(body.tags(), strHTML);
-		if (bodyTag) {
-			strHTML.append("</body>" + breakLine);
-		}
-		if (htmlTag) {
-			strHTML.append("</html>" + breakLine);
-		}
-		file.println(strHTML.toString());
-		file.close();
 	}
 
 	private void generateBody(final Iterator tags, final StringBuffer strHTML) {

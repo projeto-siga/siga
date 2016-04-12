@@ -176,8 +176,8 @@ public class CpConfiguracaoBL {
 		}
 		Date dt = CpDao.getInstance().consultarDataUltimaAtualizacao();
 
-		if (dtUltimaAtualizacaoCache == null
-				|| dt.after(dtUltimaAtualizacaoCache)) {
+		if (dt != null && (dtUltimaAtualizacaoCache == null
+				|| dt.after(dtUltimaAtualizacaoCache))) {
 			procederAtualizacaoDeCache(dt);
 		}
 	}

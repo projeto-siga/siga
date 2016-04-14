@@ -81,16 +81,7 @@
 
 					<div class="gt-form-row gt-width-100">
 						<label>Classificação</label>
-						<c:if test="${not empty classificacao}">
-							<c:if test="${not editarClassificacao}">
-								<c:set var="somenteLeitura" value="readonly" />
-							</c:if>
-							<textarea name="classificacao" class="gt-form-text"
-								${somenteLeitura}>${classificacao}</textarea>
-						</c:if>
-						<c:if test="${empty classificacao}">
-							<p>Esse conhecimento ainda não possui uma classificação</p>
-						</c:if>
+						<textarea name="classificacao" class="gt-form-text" ${editarClassificacao ? '' : 'readonly'}>${empty classificacao && !editarClassificacao ? 'Esse conhecimento ainda não possui uma classificação' : classificacao}</textarea>
 					</div>
 
 					<div class="gt-form-row gt-width-100">

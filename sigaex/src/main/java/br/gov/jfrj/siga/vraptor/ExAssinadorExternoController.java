@@ -80,8 +80,8 @@ public class ExAssinadorExternoController extends ExController {
 					aei.setCode(ass.getDoc().getCodigo());
 					aei.setDescr(ass.getDoc().getDescrDocumento());
 					aei.setUrlView(permalink + ass.getDoc().getReferencia());
-					aei.setUrlHash(urlapi + "/hash/" + aei.getId());
-					aei.setUrlSave(urlapi + "/save/" + aei.getId());
+					aei.setUrlHash("sigadoc/hash/" + aei.getId());
+					aei.setUrlSave("sigadoc/save/" + aei.getId());
 					list.add(aei);
 				}
 				if (ass.getMovs() == null)
@@ -94,8 +94,8 @@ public class ExAssinadorExternoController extends ExController {
 							+ ":" + assmov.getMov().getIdMov());
 					aei.setDescr(assmov.getMov().getDescrMov());
 					aei.setUrlView(permalink + assmov.getMov().getReferencia());
-					aei.setUrlHash(urlapi + "/hash/" + aei.getId());
-					aei.setUrlSave(urlapi + "/save/" + aei.getId());
+					aei.setUrlHash("sigadoc/hash/" + aei.getId());
+					aei.setUrlSave("sigadoc/save/" + aei.getId());
 					list.add(aei);
 				}
 			}

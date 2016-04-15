@@ -23,10 +23,10 @@ function sbmt(id) {
 		onSave();
 	}
 
-	if (id != null || IsRunningAjaxRequest()) {
-		frm.action = 'recarregar';
+	if (id && IsRunningAjaxRequest()) {
 		ReplaceInnerHTMLFromAjaxResponse('recarregar', frm, id);
 	} else {
+		frm.action = 'recarregar';
 		frm.submit();
 	}
 	return;

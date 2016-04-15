@@ -245,7 +245,7 @@ public class GcInformacao extends Objeto {
 		if (isCancelado())
 			return null;
 		for (GcMovimentacao mov : movs) {
-			if (mov.isCancelada())
+			 if (mov.isCancelada() && mov.tipo.id != GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR)
 				continue;
 			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR)
 				if (titular.equivale(mov.pessoaAtendente)
@@ -255,15 +255,6 @@ public class GcInformacao extends Objeto {
 				}
 		}
 
-		if (movNotificar != null)
-			for (GcMovimentacao movCiente : movs) {
-				if (movCiente.isCancelada())
-					continue;
-				if (movCiente.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE
-						&& movCiente.movRef == movNotificar
-						&& movCiente.pessoaTitular.equivale(titular))
-					return movNotificar = null;
-			}
 		return movNotificar;
 	}
 

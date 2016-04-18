@@ -39,6 +39,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7394,6 +7395,7 @@ public class ExBL extends CpBL {
 			}
 		}
 
+		Collections.sort(assinaveis, new ExAssinavelComparador());
 		return assinaveis;
 	}
 }

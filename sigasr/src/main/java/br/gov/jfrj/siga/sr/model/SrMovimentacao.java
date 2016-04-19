@@ -519,14 +519,14 @@ public class SrMovimentacao extends Objeto {
 					|| tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA
 					|| (lotaAtendente != null && lotaTitular != null && !lotaTitular.equivale(lotaAtendente))) {
 				if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
-						lotaAtendente, "SIGA;SR;EMAILATEND:Receber Notificaï¿½ï¿½o Atendente"))
+						lotaAtendente, "SIGA;SR;EMAILATEND:Receber Notificação Atendente"))
 					CorreioHolder
 					.get().notificarAtendente(this, solicitacao);
 			}
 			else if (tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO
 					&& solicitacao.isFilha()) {
 				if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
-						solicitacao.getSolicitacaoPai().getLotaAtendente(), "SIGA;SR;EMAILATEND:Receber Notificaï¿½ï¿½o Atendente"))
+						solicitacao.getSolicitacaoPai().getLotaAtendente(), "SIGA;SR;EMAILATEND:Receber Notificação Atendente"))
 					CorreioHolder
 					.get().notificarAtendente(this, solicitacao.getSolicitacaoPai());
 			}

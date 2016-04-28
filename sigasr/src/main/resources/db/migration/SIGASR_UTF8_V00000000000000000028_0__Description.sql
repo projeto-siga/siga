@@ -28,15 +28,15 @@ alter table sigasr.sr_configuracao add
 ----------------------------------------------
 insert into sigasr.sr_horario 
   values(sigasr.sr_horario_seq.nextval,11,19,'Segunda-feira','Sexta-feira',
-        '01/01/2015', null,
+        to_date('01/01/2015','dd/MM/yyyy'), null,
         'Horário padrão da Justiça Federal');
 insert into sigasr.sr_horario 
   values(sigasr.sr_horario_seq.nextval,10,19,'Segunda-feira','Sexta-feira',
-        '01/01/2015', null,
+        to_date('01/01/2015','dd/MM/yyyy'), null,
         'Horário do Suporte Local');
 insert into sigasr.sr_horario 
   values(sigasr.sr_horario_seq.nextval,8,20,'Segunda-feira','Sexta-feira',
-        '01/01/2015', null,
+        to_date('01/01/2015','dd/MM/yyyy'), null,
         'Horário da Central de Serviços da STI');
 
 commit;

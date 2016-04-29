@@ -47,7 +47,7 @@ ALTER SESSION SET CURRENT_SCHEMA=corporativo;
 ----------------------------------------------
 insert into CORPORATIVO.cp_tipo_configuracao(id_tp_configuracao, dsc_tp_configuracao)
   values (307, 'Definição do horário da equipe');
-  
+/*
 ---------------------------------------------
 --- inserir configuracao de horario
 ---------------------------------------------
@@ -103,5 +103,6 @@ insert into sigasr.sr_configuracao(fg_atributo_obrigatorio,id_configuracao_sr,id
       id_grupo = (select id_grupo from corporativo.cp_grupo where sigla_grupo = 'STI_CENTRAL') and 
       id_tp_configuracao = (select id_tp_configuracao from corporativo.cp_tipo_configuracao where dsc_tp_configuracao = 'Definição do horário da equipe')
     ), 3);
-
+*/
 commit;
+  

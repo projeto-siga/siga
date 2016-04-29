@@ -81,7 +81,14 @@
 
 					<div class="gt-form-row gt-width-100">
 						<label>Classificação</label>
-						<textarea name="classificacao" class="gt-form-text" ${editarClassificacao ? '' : 'readonly'}>${empty classificacao && !editarClassificacao ? 'Esse conhecimento ainda não possui uma classificação' : classificacao}</textarea>
+						<c:choose>
+							<c:when test="${empty classificacao && !editarClassificacao}">
+								<p>Esse conhecimento ainda não possui uma classificação</p>
+							</c:when>
+							<c:otherwise>
+								<textarea name="classificacao" class="gt-form-text" ${editarClassificacao ? '' : 'readonly'}>${classificacao}</textarea>
+							</c:otherwise>
+						</c:choose>
 					</div>
 
 					<div class="gt-form-row gt-width-100">

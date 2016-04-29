@@ -196,13 +196,6 @@
 						<script>
 							//Edson: talvez fosse possível fazer de um modo melhor, mas assim é mais prático
 							$("#solicitacaosolicitanteSpan").html("${solicitacao.solicitante.descricaoCompleta}");
-							$("#calendarioComunicacao").datepicker({
-					        	showOn: "button",
-					        	buttonImage: "/siga/css/famfamfam/icons/calendar.png",
-					        	buttonImageOnly: true,
-						        dateFormat: 'dd/mm/yy'
-					    	});
-							$("#calendarioComunicacao").mask("99/99/9999");
 							$("#horarioComunicacao").mask("99:99");
 						</script>
 						<c:if test="${locaisDisponiveis.size() > 1}">
@@ -243,7 +236,7 @@
 								<div >
 									<label>Contato inicial</label> 
 									<label>Data</label> 
-									<input type="text" name="calendario" id="calendarioComunicacao" value="${solicitacao.dtOrigemDDMMYYYY}" /> 
+									<siga:dataCalendar nome="calendario" id="calendarioComunicacao" value="${solicitacao.dtOrigemDDMMYYYY}"/>
 									<siga:error name="calendario"/>
 								</div>
 								<div style="padding-top: 5px;">

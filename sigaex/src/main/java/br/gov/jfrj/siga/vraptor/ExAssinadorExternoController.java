@@ -31,6 +31,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoHash;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoList;
@@ -58,6 +59,8 @@ public class ExAssinadorExternoController extends ExController {
 			String proof) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
+
+			assertPassword(req);
 
 			String urlapi = req.getString("urlapi");
 			String sCpf = req.getString("cpf");
@@ -114,6 +117,9 @@ public class ExAssinadorExternoController extends ExController {
 	public void assinadorExternoHash(String sigla) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
+
+			assertPassword(req);
+
 			String certificate = req.optString("certificate", null);
 			String time = req.optString("time", null);
 			String proof = req.optString("proof", null);
@@ -138,8 +144,8 @@ public class ExAssinadorExternoController extends ExController {
 			ExAssinadorExternoHash resp = new ExAssinadorExternoHash();
 
 			// Alterado para forçar PKCS7
-//			resp.setPolicy("PKCS7");
-//			resp.setDoc(BlucService.bytearray2b64(pdf));
+			// resp.setPolicy("PKCS7");
+			// resp.setDoc(BlucService.bytearray2b64(pdf));
 			resp.setSha1(BlucService.bytearray2b64(BlucService.calcSha1(pdf)));
 			resp.setSha256(BlucService.bytearray2b64(BlucService
 					.calcSha256(pdf)));
@@ -154,6 +160,9 @@ public class ExAssinadorExternoController extends ExController {
 	public void assinadorExternoSave(String sigla) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
+
+			assertPassword(req);
+
 			String envelope = req.getString("envelope");
 			String certificate = req.getString("certificate");
 			String time = req.getString("time");
@@ -201,6 +210,13 @@ public class ExAssinadorExternoController extends ExController {
 		} catch (Exception e) {
 			jsonError(e);
 		}
+	}
+
+	private void assertPassword(JSONObject req) throws Exception {
+		if (SigaExProperties.getAssinadorExternoPassword() != null
+				&& !SigaExProperties.getAssinadorExternoPassword().equals(
+						req.optString("password", null)))
+			throw new Exception("Falha de autenticação.");
 	}
 
 	protected void jsonSuccess(final Object resp) {

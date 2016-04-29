@@ -9,6 +9,7 @@
 			<div class="gt-content-box gt-for-table">
 				<form action="${linkTo[AppController].buscarTag}" id="frm">
 					<input type="hidden" name="popup" value="true" />
+					<input type="hidden" name="propriedade" value="${propriedadeClean}" />
 					<table class="gt-form-table">
 						<tr class="header">
 							<td align="center" valign="top" colspan="4">Dados do item</td>

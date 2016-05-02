@@ -17,15 +17,12 @@ import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 import org.json.JSONObject;
 
-import com.google.gson.Gson;
-
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.itextpdf.Documento;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -40,6 +37,8 @@ import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoSave;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelMov;
 import br.gov.jfrj.siga.hibernate.ExDao;
+
+import com.google.gson.Gson;
 
 @Resource
 public class ExAssinadorExternoController extends ExController {
@@ -79,7 +78,7 @@ public class ExAssinadorExternoController extends ExController {
 			for (ExAssinavelDoc ass : assinaveis) {
 				if (ass.isPodeAssinar()) {
 					ExAssinadorExternoListItem aei = new ExAssinadorExternoListItem();
-					aei.setId(ass.getDoc().getCodigoCompacto());
+					aei.setId(sigla2id(ass.getDoc().getCodigoCompacto()));
 					aei.setCode(ass.getDoc().getCodigo());
 					aei.setDescr(ass.getDoc().getDescrDocumento());
 					aei.setUrlView(permalink + ass.getDoc().getReferencia());
@@ -91,10 +90,8 @@ public class ExAssinadorExternoController extends ExController {
 					continue;
 				for (ExAssinavelMov assmov : ass.getMovs()) {
 					ExAssinadorExternoListItem aei = new ExAssinadorExternoListItem();
-					aei.setId(assmov.getMov().getExMobil().getReferencia());
-					aei.setCode(assmov.getMov().getExMobil()
-							.getCodigoCompacto()
-							+ ":" + assmov.getMov().getIdMov());
+					aei.setId(sigla2id(assmov.getMov().getReferencia()));
+					aei.setCode(assmov.getMov().getReferencia());
 					aei.setDescr(assmov.getMov().getDescrMov());
 					aei.setUrlView(permalink + assmov.getMov().getReferencia());
 					aei.setUrlHash("sigadoc/hash/" + aei.getId());
@@ -113,8 +110,8 @@ public class ExAssinadorExternoController extends ExController {
 
 	}
 
-	@Post("/public/app/assinador-externo/hash/{sigla}")
-	public void assinadorExternoHash(String sigla) throws Exception {
+	@Post("/public/app/assinador-externo/hash/{id}")
+	public void assinadorExternoHash(String id) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
 
@@ -126,8 +123,11 @@ public class ExAssinadorExternoController extends ExController {
 
 			byte[] pdf = null;
 
-			if (sigla != null)
+			String sigla = null;
+			if (id != null) {
+				sigla = id2sigla(id);
 				sigla += ".pdf";
+			}
 
 			ExMobil mob = Documento.getMobil(sigla);
 			ExMovimentacao mov = Documento.getMov(mob, sigla);
@@ -143,9 +143,10 @@ public class ExAssinadorExternoController extends ExController {
 
 			ExAssinadorExternoHash resp = new ExAssinadorExternoHash();
 
-			// Alterado para forçar PKCS7
+			// Descomentar para forçar PKCS7
 			// resp.setPolicy("PKCS7");
 			// resp.setDoc(BlucService.bytearray2b64(pdf));
+			
 			resp.setSha1(BlucService.bytearray2b64(BlucService.calcSha1(pdf)));
 			resp.setSha256(BlucService.bytearray2b64(BlucService
 					.calcSha256(pdf)));
@@ -156,8 +157,8 @@ public class ExAssinadorExternoController extends ExController {
 		}
 	}
 
-	@Post("/public/app/assinador-externo/save/{sigla}")
-	public void assinadorExternoSave(String sigla) throws Exception {
+	@Post("/public/app/assinador-externo/save/{id}")
+	public void assinadorExternoSave(String id) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
 
@@ -174,8 +175,11 @@ public class ExAssinadorExternoController extends ExController {
 			byte[] certificado = Base64.decode(certificate);
 			Date dt = dao().consultarDataEHoraDoServidor();
 
-			if (sigla != null)
+			String sigla = null;
+			if (id != null) {
+				sigla = id2sigla(id);
 				sigla += ".pdf";
+			}
 
 			ExMobil mob = Documento.getMobil(sigla);
 			ExMovimentacao mov = Documento.getMov(mob, sigla);
@@ -279,6 +283,18 @@ public class ExAssinadorExternoController extends ExController {
 
 		body = stringBuilder.toString();
 		return body;
+	}
+
+	private String sigla2id(String sigla) {
+		if (sigla == null)
+			return null;
+		return sigla.replace(":", "_");
+	}
+
+	private String id2sigla(String id) {
+		if (id == null)
+			return null;
+		return id.replace("_", ":");
 	}
 
 }

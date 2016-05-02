@@ -80,6 +80,7 @@ import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.SetUtils;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.EnvelopeRequest;
@@ -6569,9 +6570,6 @@ public class ExBL extends CpBL {
 
 	public String verificarAssinatura(byte[] conteudo, byte[] assinatura,
 			String mimeType, Date dtAssinatura) throws Exception {
-		String sNome;
-		Long lCPF;
-		
 		BlucService bluc = Service.getBlucService();
 		if (!bluc.test())
 			throw new Exception("BluC não está disponível.");
@@ -6588,25 +6586,32 @@ public class ExBL extends CpBL {
 		if (validateresp.getError() != null)
 			throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getError());
 		
+		String sNome;
+		Long lCPF;
+
 		sNome = validateresp.getCn();
 
 		Service.throwExceptionIfError(sNome);
 
+		if (sNome != null) {
+			sNome = Texto.maiusculasEMinusculas(sNome);
+		}
+		
 		String sCPF = validateresp.getCertdetails().get("cpf0");
 		Service.throwExceptionIfError(sCPF);
 
 		lCPF = Long.valueOf(sCPF);
 
-		return sNome;
+		if (validateresp.getPolicy() == null)
+			return sNome;
 
-		// sNome = AssinaturaDigital.verificarAssinatura(movAlvo
-		// .getConteudoBlobpdf(), assinatura, null);
-		// } catch (final Exception e) {
-		// throw new AplicacaoException("Erro na validação da assinatura. "
-		// + e.getMessage(), 0, e);
-		// }
+		if (validateresp.getPolicyversion() == null)
+			return sNome + " (" + validateresp.getPolicy() + ")";
+
+		return sNome + " (" + validateresp.getPolicy() + " v"
+				+ validateresp.getPolicyversion() + ")";
 	}
-
+	
 	public void gravarModelo(ExModelo modNovo, ExModelo modAntigo, Date dt,
 			CpIdentidade identidadeCadastrante) throws AplicacaoException {
 		if (modNovo.getExFormaDocumento() == null)

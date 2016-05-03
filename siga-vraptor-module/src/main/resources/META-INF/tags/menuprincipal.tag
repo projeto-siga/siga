@@ -110,6 +110,11 @@
 						</li>
 					</c:if>
 					
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GO:Gestão Orçamentária')}">
+						<li><a href="/sigago/">Gestão Orçamentária</a>
+						</li>
+					</c:if>
+					
 				</ul>
 			</li>
 			<c:if test="${not empty f:resource('gsa.url')}">

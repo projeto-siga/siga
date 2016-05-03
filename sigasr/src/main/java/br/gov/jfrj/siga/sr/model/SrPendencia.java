@@ -57,7 +57,12 @@ public class SrPendencia extends SrIntervalo {
 	
 	@Override
 	public String getDescricao() {
-		return super.getDescricao() + (sol.isFilha() ? " (" + sol.getNumSequenciaString() + ")" : "");
+		String descricao = getMotivo() != null ? getMotivo().getDescrTipoMotivoPendencia() : "";
+		if (super.getDescricao() != null)
+			descricao += " | " + super.getDescricao();
+		if (getFim() != null)
+			descricao += " | Previsão: " + getFimString();
+		return descricao + (sol.isFilha() ? " (" + sol.getNumSequenciaString() + ")" : "");
 	}
 
 }

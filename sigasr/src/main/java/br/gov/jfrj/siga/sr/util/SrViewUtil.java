@@ -63,11 +63,11 @@ public class SrViewUtil {
 	}
 	
 	public static String toDDMMYYYYHHMM(Date dt){
-		return dt != null ? new SimpleDateFormat("dd/MM/yyyy HH:mm").format(dt) : "";
+		return (dt != null ? new SimpleDateFormat("dd/MM/yyyy HH:mm").format(dt) : "").replace(" 00:00", "");
 	}
 	
 	public static String toDDMMYYYYHHMMSS(Date dt){
-		return dt != null ? new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(dt) : "";
+		return (dt != null ? new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(dt) : "").replace(" 00:00:00", "");
 	}
 	
 	public static String toStr(Date dt){

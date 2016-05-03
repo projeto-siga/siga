@@ -267,8 +267,9 @@ public class CpDao extends ModeloDao {
 
 		// Forca a carga de algums campos para garantir o lazy load.
 		CpServico srv = (CpServico) l.get(0).getImplementation();
-		Object o1 = srv.getCpServicoPai().getDescricao();
-		Object o2 = srv.getCpTipoServico().getDscTpServico();
+		if (srv.getCpServicoPai() != null)
+			srv.getCpServicoPai().getDescricao();
+		srv.getCpTipoServico().getDscTpServico();
 
 		cache.put(new Element(chave, srv));
 		return l.get(0);

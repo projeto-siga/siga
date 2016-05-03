@@ -240,5 +240,29 @@ public class SigaExProperties extends ModeloPropriedade {
 		return getString("assinador.externo.password");
 	}
 	
+	public static long getTamanhoMaxPDF() throws Exception{
+		String s = getString("siga.ex.tamanhoMaxPDF");
+		
+		if (s == null || s.trim().length() == 0)
+			return 100000000L; //10MB  
+		try{
+			return Long.valueOf(s);
+		} catch (NumberFormatException nfe){
+			throw new Exception("Erro ao obter propriedade para o limite máximo de upload de PDF");
+		}
+	}
+	
+	public static int getMaxPagVolume() throws Exception{
+		String s = getString("siga.ex.maxPagVolume");
+		
+		if (s == null || s.trim().length() == 0)
+			return 200; 
+		try{
+			return Integer.valueOf(s);
+		} catch (NumberFormatException nfe){
+			throw new Exception("Erro ao obter propriedade para o limite máximo de páginas no volume");
+		}
+	}
+	
 
 }

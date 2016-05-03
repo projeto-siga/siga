@@ -215,7 +215,9 @@ public class SrMovimentacao extends Objeto {
     	if (SrTipoMovimentacao.TIPOS_MOV_PRINCIPAIS.contains(getTipoMov().getIdTipoMov()))
     		return true;
     	if (getTipoMov().getId().equals(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA) 
-    			&& !getMotivoPendencia().equals(SrTipoMotivoPendencia.ATENDIMENTO_NA_FILHA) && !isFinalizadaOuExpirada())
+    			&& getMotivoPendencia() != null 
+    			&& !getMotivoPendencia().equals(SrTipoMotivoPendencia.ATENDIMENTO_NA_FILHA) 
+    			&& !isFinalizadaOuExpirada())
     		return true;
     	return false;
     }

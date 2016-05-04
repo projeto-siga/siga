@@ -113,6 +113,8 @@ public class AcessoController extends GiControllerSupport {
 					  ,DpLotacaoSelecao lotacaoSel
 					  ,CpPerfilSelecao perfilSel
 					  ,Long idOrgaoUsuSel, String servicoPai) throws Exception {
+		
+				
 		if (servicoPai == null) {
 			assertAcesso("PERMISSAO:Gerenciar permissões");
 		} else {
@@ -151,15 +153,17 @@ public class AcessoController extends GiControllerSupport {
 				}
 			}
 
-			HashMap<CpServico, ConfiguracaoAcesso> achm = new HashMap<CpServico, ConfiguracaoAcesso>();
+			HashMap<String, ConfiguracaoAcesso> achm = new HashMap<String, ConfiguracaoAcesso>();
 			for (CpServico srv : l) {
 				ConfiguracaoAcesso ac = ConfiguracaoAcesso.gerar(perfil, pessoa, lotacao, orgao, srv, null);
 
 				System.out.print(ac.getSituacao().getDscSitConfiguracao());
-				achm.put(ac.getServico(), ac);
+				achm.put(ac.getServico().getSigla(), ac);
+				
 			}
 
 			SortedSet<ConfiguracaoAcesso> acs = new TreeSet<ConfiguracaoAcesso>();
+		
 			Collection<ConfiguracaoAcesso> colecaoDeConfiguracoes = achm.values();
 			for (ConfiguracaoAcesso ac : colecaoDeConfiguracoes) {
 				if (ac.getServico().getCpServicoPai() == null) {
@@ -169,8 +173,8 @@ public class AcessoController extends GiControllerSupport {
 				}
 				else 
 				{
-					if (achm.get(ac.getServico().getCpServicoPai()) != null) {
-						achm.get(ac.getServico().getCpServicoPai()).getSubitens().add(ac);
+					if (achm.get(ac.getServico().getCpServicoPai().getSigla()) != null) {
+						achm.get(ac.getServico().getCpServicoPai().getSigla()).getSubitens().add(ac);
 					}
 					else {
 						acs.add(ac);

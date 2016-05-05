@@ -71,6 +71,8 @@
 				<script language="javascript">
 					function parseDescricao(id){
 						var descricao = document.getElementById(id);
+						if (!descricao)
+							return;
 						descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
 						descricao.innerHTML = descricao.innerHTML.replace(/(\w{2,4}\-(GC|SR)\-\d{4}\/\d{5}(?:\.\d{2})?)/g, function(a, b, c){
 							if (c.toLowerCase() == 'sr')

@@ -112,34 +112,9 @@ public class UsuarioAutenticado {
 			dpSubstituicao.setSubstituto(ioc.getCadastrante());
 			dpSubstituicao.setLotaSubstituto(ioc.getCadastrante().getLotacao());
 
-			List<DpSubstituicao> substituicoesPermitidas = dao()
-					.consultarSubstituicoesPermitidas(dpSubstituicao);
+			ioc.setTitular(per.getPesSubstituindo());
+			ioc.setLotaTitular(per.getLotaSubstituindo());
 
-			for (final DpSubstituicao substituicao : substituicoesPermitidas) {
-				if (per.getPesSubstituindo() != null) {
-					if (per.getPesSubstituindo().equivale(
-							substituicao.getTitular())									) {
-						ioc.setTitular(per.getPesSubstituindo());
-						break;
-					}
-				} else {
-					if (per.getLotaSubstituindo() != null)
-						if (per.getLotaSubstituindo().equivale(
-								substituicao.getLotaTitular())) {
-							ioc.setLotaTitular(per.getLotaSubstituindo());
-							break;
-						}
-				}
-
-			}
-
-			if (ioc.getTitular() == null && ioc.getLotaTitular() == null) {
-				per.setPesSubstituindo(null);
-				per.setLotaSubstituindo(null);
-				dao().iniciarTransacao();
-				dao().gravar(per);
-				dao().commitTransacao();
-			}
 		}
 
 		if (ioc.getLotaTitular() == null && ioc.getTitular() != null)

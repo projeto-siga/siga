@@ -2755,7 +2755,7 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
-	@Get("/app/expediente/mov/cancelar")
+	@Get({"/app/expediente/mov/cancelar", "/expediente/mov/cancelar.action"})
 	public void cancelar(Long id) throws Exception {
 		ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
 

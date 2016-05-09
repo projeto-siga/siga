@@ -18,7 +18,7 @@
 							<mod:grupo>
 								<mod:selecao titulo="<b>${i})</b> Período Aquisitivo"
 									var="periodoAquisitivo${i}"
-									opcoes="2011/2012;2012/2013;2013/2014;2014/2015;2015/2016" />
+									opcoes="2011/2012;2012/2013;2013/2014;2014/2015;2015/2016;2016/2017;2017/2018;2018/2019;2019/2020" />
 							&nbsp;&nbsp;&nbsp;	
 							<mod:selecao titulo="Parcela" var="sequencial${i}" opcoes="1;2;3"
 									reler="ajax" idAjax="seqMarcacoesAjax${i}" />
@@ -50,7 +50,7 @@
 							<mod:grupo>
 								<mod:selecao titulo="<b>${i})</b> Período Aquisitivo"
 									var="periodoAquisitivo${i}"
-									opcoes="2011/2012;2012/2013;2013/2014;2014/2015;2015/2016" />
+									opcoes="2011/2012;2012/2013;2013/2014;2014/2015;2015/2016;2016/2017;2017/2018;2018/2019;2019/2020" />
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
 							<mod:selecao titulo="Sequencial" var="sequencial${i}"
 									opcoes="1;2;3" reler="ajax" idAjax="seqAlteracoesAjax${i}" />
@@ -85,7 +85,7 @@
 							<mod:grupo>
 								<mod:selecao titulo="<b>${i})</b> Período Aquisitivo"
 									var="periodoAquisitivo${i}"
-									opcoes="2011/2012;2012/2013;2013/2014;2014/2015;2015/2016" />
+									opcoes="2011/2012;2012/2013;2013/2014;2014/2015;2015/2016;2016/2017;2017/2018;2018/2019;2019/2020" />
 								<mod:selecao titulo="Sequencial" var="sequencial${i}"
 									opcoes="1;2;3" />
 								<mod:data titulo="Período de" var="dataInicio${i}" />

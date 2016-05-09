@@ -1113,6 +1113,7 @@ public class ExBL extends CpBL {
 		long m_aguardandoFora = CpMarcador.MARCADOR_AGUARDANDO_DEVOLUCAO_FORA_DO_PRAZO;
 
 		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3);
+		transferencias.addAll(mob.getMovimentacoesPorTipo(6));
 		transferencias.removeAll(mob.getMovimentacoesCanceladas());
 		Set<ExMovimentacao> transferenciasComData = new TreeSet<ExMovimentacao>();
 
@@ -1179,6 +1180,7 @@ public class ExBL extends CpBL {
 			ExMobil mob) {
 		ExMovimentacao movRetorno = null;
 		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3);
+		transferencias.addAll(mob.getMovimentacoesPorTipo(6));
 		transferencias.removeAll(mob.getMovimentacoesCanceladas());
 
 		Iterator it = transferencias.iterator();

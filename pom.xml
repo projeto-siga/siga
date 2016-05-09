@@ -11,7 +11,6 @@
 		<module>siga-base</module>
 		<module>siga-ws</module>
 		<module>siga-rel</module>
-		<module>siga-cd-base</module>
 		<module>siga-cp</module>
 		<module>siga-sinc-lib</module>
 		<module>siga-cp-sinc</module>
@@ -30,13 +29,8 @@
 		<module>siga-gc-gsa</module>
 		<module>sigagc</module>
 		<module>sigasr</module>
-		<module>siga-cd</module>
-		<module>sigacd</module>
  		<module>sigapp</module>
 		<!--<module>sigari</module>
- 		<module>sigacd</module>
- 		<module>siga-cd</module>
- 		<module>siga-cd-aut</module>
  		<module>siga-cp-sinc</module> 
  		<module>siga-dump</module> -->
  		<module>siga-integration-test</module>
@@ -130,8 +124,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			
-	
 		</plugins>
 	</build>
 
@@ -264,11 +256,6 @@
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
-				<artifactId>siga-cd-base</artifactId>
-				<version>${siga.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>siga</groupId>
 				<artifactId>siga-vraptor-module</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
@@ -285,16 +272,6 @@
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>sigaex</artifactId>
-				<version>${siga.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>siga</groupId>
-				<artifactId>sigacd</artifactId>
-				<version>${siga.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>siga</groupId>
-				<artifactId>siga-cd</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>
@@ -801,7 +778,66 @@
 	        <configuration>
 	        </configuration>
 	      </plugin>
+	      
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+            <version>3.0.3</version>
+        </plugin>
+	      
 	    </plugins>
 	</reporting>
+	
+	<profiles>
+		<profile>
+			<id>findbugs</id>
+			<build>
+				<plugins>
+			        <plugin>
+			            <groupId>org.codehaus.mojo</groupId>
+			            <artifactId>findbugs-maven-plugin</artifactId>
+			            <version>3.0.3</version>
+			            <configuration>
+			                <!--
+			                    Enables analysis which takes more memory but finds more bugs.
+			                    If you run out of memory, changes the value of the effort element
+			                    to 'Low'.
+			                -->
+			                <effort>Max</effort>
+			                <!-- Reports all bugs (other values are medium and max) -->
+			                <threshold>Low</threshold>
+			                <!-- Produces XML report -->
+			                <xmlOutput>true</xmlOutput>
+			                <!-- Configures the directory in which the XML report is created -->
+			                <!-- <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>  -->
+			                <failOnError>true</failOnError>
+			                <plugins>
+			                    <plugin>
+			                        <groupId>com.h3xstream.findsecbugs</groupId>
+			                        <artifactId>findsecbugs-plugin</artifactId>
+			                        <version>LATEST</version> <!-- Auto-update to the latest stable -->
+			                    </plugin>
+			                </plugins>
+			                
+			            </configuration>
+			            <executions>
+			                <!-- 
+			                    Ensures that FindBugs inspects source code when project is compiled. 
+			                -->
+			                <execution>
+			                    <id>analyze-compile</id>
+			                    <phase>compile</phase>
+			                    <goals>
+			                        <goal>check</goal>
+			                    </goals>
+			                </execution>
+			            </executions>
+			        </plugin>			
+				</plugins>
+					
+			</build>
+		</profile>
+		
+	</profiles>
 
 </project>

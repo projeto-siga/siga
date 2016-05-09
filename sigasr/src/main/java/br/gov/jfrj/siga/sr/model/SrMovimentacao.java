@@ -151,6 +151,9 @@ public class SrMovimentacao extends Objeto {
     @JoinColumn(name = "ID_ACAO")
     private SrAcao acao;
     
+    @Column(name = "CONHECIMENTO")
+    private String conhecimento;
+    
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "SR_MOVIMENTACAO_ACORDO", schema = "SIGASR", joinColumns = { @JoinColumn(name = "ID_MOVIMENTACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_ACORDO") })
     private List<SrAcordo> acordos;
@@ -207,6 +210,25 @@ public class SrMovimentacao extends Objeto {
             }
         return map;
     }
+    
+    public boolean isEntreAsPrincipais(){
+    	if (SrTipoMovimentacao.TIPOS_MOV_PRINCIPAIS.contains(getTipoMov().getIdTipoMov()))
+    		return true;
+    	if (getTipoMov().getId().equals(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA) 
+    			&& getMotivoPendencia() != null 
+    			&& !getMotivoPendencia().equals(SrTipoMotivoPendencia.ATENDIMENTO_NA_FILHA) 
+    			&& !isFinalizadaOuExpirada())
+    		return true;
+    	return false;
+    }
+    
+    public boolean isInicioAtendimento() {
+    	return (SrTipoMovimentacao.TIPOS_MOV_INI_ATENDIMENTO.contains(getTipoMov().getIdTipoMov()));
+    }
+    
+    public boolean isFimAtendimento() {
+    	return (SrTipoMovimentacao.TIPOS_MOV_FIM_ATENDIMENTO.contains(getTipoMov().getIdTipoMov()));
+    }
 
     public boolean isCancelada() {
         return getMovCanceladora() != null;
@@ -222,6 +244,38 @@ public class SrMovimentacao extends Objeto {
 
     public boolean isCanceladoOuCancelador() {
         return isCancelada() || getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO;
+    }
+    
+    public boolean isDescricaoAtomica(){
+    	if (getDescrMovimentacao() != null)
+    		switch (getTipoMov().getId().intValue()) {
+			case (int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA:
+				return !getDescrMovimentacao().contains("Juntando a ");
+			case (int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO:
+				return !getDescrMovimentacao().contains("Vinculando a ");
+			case (int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA:
+				return !getDescrMovimentacao().contains("Fim previsto: ")
+						&& !getDescrMovimentacao().contains(" | ");
+			case (int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_ALTERACAO_PRIORIDADE:
+				return !getDescrMovimentacao().contains("Prioridade Tecnica: ");
+			case (int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_FIM_PENDENCIA:
+				return !getDescrMovimentacao().contains(" pendencia iniciada em ");
+			case (int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO:
+				return !getDescrMovimentacao().contains("Atendente: ");
+			case (int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO:
+				return !getDescrMovimentacao().contains("Atribuindo a ") 
+						&& !getDescrMovimentacao().contains("Retirando atribuição");
+			case ((int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO):
+				return !getDescrMovimentacao().contains("Motivo: ") 
+						&& !getDescrMovimentacao().contains("Item: ");
+			case ((int)SrTipoMovimentacao.TIPO_MOVIMENTACAO_RECLASSIFICACAO):
+				return !getDescrMovimentacao().contains("Item: ");
+			}
+    	return true;
+    }
+    
+    public String getDescricao(){
+    	return getDescrMovimentacao();
     }
     
     public SrMovimentacao getAnterior() {
@@ -240,12 +294,14 @@ public class SrMovimentacao extends Objeto {
     }
     
     public boolean isTrocaDePessoaAtendente(){
+    	if (!getTipoMov().getId().equals(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO))
+    		return false;
     	SrMovimentacao anterior = getAnterior();
-    	return (anterior != null 
-    			&& getTipoMov().getId().equals(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO) 
-    			&& ((getAtendente() != null && anterior.getAtendente() == null) 
-    				|| (getAtendente() == null && anterior.getAtendente() != null) 
-    				|| (!anterior.getAtendente().equivale(this.getAtendente()))));
+    	if (anterior == null)
+    		return false;
+    	if (getAtendente() == null)
+    		return anterior.getAtendente() != null;
+    	else return (anterior.getAtendente() == null || !anterior.getAtendente().equivale(this.getAtendente()));
     }
 
     public String getDtIniString() {
@@ -297,16 +353,15 @@ public class SrMovimentacao extends Objeto {
 
         getSolicitacao().atualizarMarcas();
         
-        //notificaï¿½ï¿½o usuï¿½rio
+        //notificação usuário
         if (getAnteriorPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO) != null
                 && getTipoMov().getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
                 && getSolicitacao().getFormaAcompanhamento() != SrFormaAcompanhamento.ABERTURA
                 && !(getSolicitacao().getFormaAcompanhamento() == SrFormaAcompanhamento.ABERTURA_FECHAMENTO && getTipoMov().getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO))
             notificar();
 
-        //notificaï¿½ï¿½o atendente
+        //notificação atendente
         notificarAtendente();
-
     }
 
     public void desfazer(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
@@ -400,7 +455,7 @@ public class SrMovimentacao extends Objeto {
         else if (SrTipoMovimentacao.TIPOS_MOV_INI_ATENDIMENTO.contains(getTipoMov().getId())
 				|| SrTipoMovimentacao.TIPOS_MOV_ATUALIZACAO_ATENDIMENTO.contains(getTipoMov().getId()))
         	atualizarAcordos();
-        
+              
         SrEtapaSolicitacao ultimoAtendimento = solicitacao.getUltimoAtendimento();
         if (ultimoAtendimento != null)
         	setDnmTempoDecorridoAtendimento(ultimoAtendimento.getDecorridoEmSegundos());
@@ -467,26 +522,26 @@ public class SrMovimentacao extends Objeto {
     }
 	
 	public void notificarAtendente() throws Exception {
+		DpLotacao lotaAtendente = null;
 		try{
-			if (tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
-					|| tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO
-					|| tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA
-					|| (lotaAtendente != null && lotaTitular != null && !lotaTitular.equivale(lotaAtendente))) {
-				if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
-						lotaAtendente, "SIGA;SR;EMAILATEND:Receber Notificaï¿½ï¿½o Atendente"))
-					CorreioHolder
-					.get().notificarAtendente(this, solicitacao);
-			}
-			else if (tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO
-					&& solicitacao.isFilha()) {
-				if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
-						solicitacao.getSolicitacaoPai().getLotaAtendente(), "SIGA;SR;EMAILATEND:Receber Notificaï¿½ï¿½o Atendente"))
-					CorreioHolder
-					.get().notificarAtendente(this, solicitacao.getSolicitacaoPai());
-			}
+			if ((isFimAtendimento() && getSolicitacao().isFilha())) 
+				lotaAtendente = getSolicitacao().getSolicitacaoPai().getLotaAtendente();
+			else if (isInicioAtendimento() 
+						|| (getLotaAtendente() != null && getLotaTitular() != null && !getLotaTitular().equivale(getLotaAtendente())))
+				lotaAtendente = getLotaAtendente();
+
+			if (podeReceberNotificacaoAtendente(getTitular(), lotaAtendente)) 
+				CorreioHolder
+				.get()
+				.notificarAtendente(this, getSolicitacao());	
 		} catch (Exception e){
 			log.error("Erro ao notificar", e);
 		}
+	}
+	
+	private boolean podeReceberNotificacaoAtendente(DpPessoa pessoa, DpLotacao lotaAtendente) {
+		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa,
+				lotaAtendente, "SIGA;SR;EMAILATEND:Receber Notificação Atendente");
 	}
 
     public String getMotivoPendenciaString() {
@@ -810,5 +865,13 @@ public class SrMovimentacao extends Objeto {
 	    if (this.getSolicitacao() != null && this.getSolicitacao().getId() != null) {
 	        this.setSolicitacao(SrSolicitacao.AR.findById(this.getSolicitacao().getId()));
 	    }
+	}
+
+	public String getConhecimento() {
+		return conhecimento;
+	}
+
+	public void setConhecimento(String conhecimento) {
+		this.conhecimento = conhecimento;
 	}
 }

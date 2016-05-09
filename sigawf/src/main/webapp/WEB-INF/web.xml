@@ -36,6 +36,25 @@
 	</welcome-file-list>
 
 	<filter>
+		<filter-name>RequestLoggerFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.base.log.RequestLoggerFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>RequestLoggerFilter</filter-name>
+		<url-pattern>*</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>WfFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.wf.util.WfThreadFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>WfFilter</filter-name>
+		<url-pattern>/servicos/*</url-pattern>
+		<url-pattern>/upload</url-pattern>
+	</filter-mapping>
+	
+	<filter>
 		<filter-name>vraptor</filter-name>
 		<filter-class>br.com.caelum.vraptor.VRaptor</filter-class>
 	</filter>
@@ -53,15 +72,6 @@
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 
-	<filter>
-		<filter-name>WfFilter</filter-name>
-		<filter-class>br.gov.jfrj.siga.wf.util.WfThreadFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>WfFilter</filter-name>
-		<url-pattern>/servicos/*</url-pattern>
-		<url-pattern>/upload</url-pattern>
-	</filter-mapping>
 
 	<filter>
 		<filter-name>ResponseHeaderFilter</filter-name>

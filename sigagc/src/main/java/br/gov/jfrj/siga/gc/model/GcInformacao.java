@@ -2,8 +2,10 @@ package br.gov.jfrj.siga.gc.model;
 
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -173,7 +175,7 @@ public class GcInformacao extends Objeto {
 	@PostLoad
 	private void onLoad() {
 		marcas = GcMarca.AR
-				.find("inf.id = ? and (dtFimMarca is null or dtFimMarca > sysdate) order by dtIniMarca, cpMarcador.descrMarcador",
+				.find("inf.id = ?1 and (dtFimMarca is null or dtFimMarca > sysdate) order by dtIniMarca, cpMarcador.descrMarcador",
 						this.id).fetch();
 		// marcas = GcMarca.find("id_tp_marca = 3 and inf.id = ?",
 		// this.id).fetch();
@@ -243,7 +245,7 @@ public class GcInformacao extends Objeto {
 		if (isCancelado())
 			return null;
 		for (GcMovimentacao mov : movs) {
-			if (mov.isCancelada())
+			 if (mov.isCancelada() && mov.tipo.id != GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR)
 				continue;
 			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR)
 				if (titular.equivale(mov.pessoaAtendente)
@@ -253,15 +255,6 @@ public class GcInformacao extends Objeto {
 				}
 		}
 
-		if (movNotificar != null)
-			for (GcMovimentacao movCiente : movs) {
-				if (movCiente.isCancelada())
-					continue;
-				if (movCiente.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE
-						&& movCiente.movRef == movNotificar
-						&& movCiente.pessoaTitular.equivale(titular))
-					return movNotificar = null;
-			}
 		return movNotificar;
 	}
 
@@ -632,12 +625,16 @@ public class GcInformacao extends Objeto {
 	}
 
 	public String getGcTags() throws Exception {
-		String s = "";
+		StringBuilder s = new StringBuilder();
 		for (GcTag tag : tags) {
-			// s = "&tags=" + tag.toString();
-			s += "&tags=" + URLEncoder.encode(tag.toString(), "UTF-8");
+			s.append("&tags=" + URLEncoder.encode(tag.toString(), "UTF-8"));
 		}
-		return s;
+		return s.toString();
+	}
+	
+	public static GcInformacao findBySigla(String sigla)
+			throws NumberFormatException, Exception {
+		return findBySigla(sigla, null);
 	}
 
 	/**
@@ -647,11 +644,6 @@ public class GcInformacao extends Objeto {
 	 * @throws Exception
 	 * @throws NumberFormatException
 	 **/
-	public static GcInformacao findBySigla(String sigla)
-			throws NumberFormatException, Exception {
-		return findBySigla(sigla, null);
-	}
-
 	public static GcInformacao findBySigla(String sigla, CpOrgaoUsuario ouDefault)
 			throws NumberFormatException, Exception {
 		sigla = sigla.trim().toUpperCase();
@@ -661,15 +653,15 @@ public class GcInformacao extends Objeto {
 			mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
 			mapAcronimo.put(ou.getSiglaOrgaoUsu(), ou);
 		}
-		String acronimos = "";
+		StringBuilder acronimos = new StringBuilder();
 		for (String s : mapAcronimo.keySet()) {
 			if (acronimos.length() > 0)
-				acronimos += "|";
-			acronimos += s;
+				acronimos.append("|");
+			acronimos.append(s);
 		}
 
 		final Pattern p2 = Pattern.compile("^TMPGC-?([0-9]{1,7})");
-		final Pattern p1 = Pattern.compile("^(" + acronimos
+		final Pattern p1 = Pattern.compile("^(" + acronimos.toString()
 				+ ")?-?(GC)?-?(?:(20[0-9]{2})/?)??([0-9]{1,5})$");
 		final Matcher m2 = p2.matcher(sigla);
 		final Matcher m1 = p1.matcher(sigla);
@@ -678,21 +670,21 @@ public class GcInformacao extends Objeto {
 
 		if (m2.find()) {
 			info = GcInformacao.AR.findById(Long.parseLong(m2.group(1)));
-		}
-
-		if (m1.find()) {
+		} else if (m1.find()) {
 			String ano = m1.group(3);
 			String numero = m1.group(4);
 			String orgao = m1.group(1);
 			if (orgao == null && ouDefault != null)
 				orgao = ouDefault.getAcronimoOrgaoUsu();
+			if (ano == null)
+				ano = String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
 			
 			info = GcInformacao.AR.find(
-					"ano = ? and numero = ? and (ou.acronimoOrgaoUsu = ? or ou.siglaOrgaoUsu = ?)",
+					"ano = ?1 and numero = ?2 and (ou.acronimoOrgaoUsu = ?3 or ou.siglaOrgaoUsu = ?4)",
 					(Integer) Integer.parseInt(ano),
 					(Integer) Integer.parseInt(numero), orgao, orgao)
 					.first();
-		}
+		} else throw new NumberFormatException("Formato de código inválido");
 
 		if (info == null) {
 			throw new AplicacaoException(
@@ -700,6 +692,22 @@ public class GcInformacao extends Objeto {
 							+ sigla + ". Favor verificá-lo.");
 		} else
 			return info;
+	}
+	
+	public static GcInformacao findByTitulo(String titulo) throws Exception {
+		try{
+			String[] palavras = titulo.toUpperCase().split(" ");
+			StringBuilder query = new StringBuilder("hisDtFim is null and visualizacao = " + GcAcesso.ACESSO_PUBLICO);
+			for (String palavra : palavras){
+				query.append(" and upper(arq.titulo) like '%");
+				query.append(palavra);
+				query.append("%' ");
+			}
+			List<GcInformacao> results = GcInformacao.AR.find(query.toString()).fetch();
+			return results.size() == 1 ? results.get(0) : null;
+		} catch(Exception e){
+			return null;
+		}
 	}
 
 	public Set<GcTag> getTags() {
@@ -792,12 +800,12 @@ public class GcInformacao extends Objeto {
 			return;
 		}
 
-		String s = "";
+		StringBuilder s = new StringBuilder();
 		for (GcTag tag : getTags()) {
 			if (s.length() > 0)
-				s += ", ";
-			s += tag.toString();
+				s.append(", ");
+			s.append(tag.toString());
 		}
-		arq.classificacao = s;
+		arq.classificacao = s.toString();
 	}
 }

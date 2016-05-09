@@ -10,7 +10,7 @@
 	</parent>
 	
 	<artifactId>siga-ldap-cli</artifactId>
-	<name>siga-ldap-debugger</name>
+	<name>siga-ldap-cli</name>
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

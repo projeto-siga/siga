@@ -2,7 +2,12 @@ package br.gov.jfrj.siga.sr.notifiers;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.freemarker.Freemarker;
 import br.com.caelum.vraptor.ioc.Component;
@@ -11,8 +16,8 @@ import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.sr.model.SrMovimentacao;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrTipoMovimentacao;
+import br.gov.jfrj.siga.sr.util.SigaSrProperties;
 import br.gov.jfrj.siga.sr.vraptor.CompatibilidadeController;
-import br.gov.jfrj.siga.sr.vraptor.SolicitacaoController;
 import freemarker.template.TemplateException;
 
 @Component
@@ -28,27 +33,21 @@ public class Correio {
 
 	private Freemarker freemarker;
 	private PathBuilder pathBuilder;
+	
+	private static final Logger log = Logger.getLogger(Correio.class);
 
 	public Correio(Freemarker freemarker, PathBuilder urlLogic) {
 		this.freemarker = freemarker;
 		this.pathBuilder = urlLogic;
 	}
 
-	private String remetentePadrao() {
-		return SigaBaseProperties.getString("servidor.smtp.usuario.remetente");
-	}
-
 	public void notificarAtendente(SrMovimentacao movimentacao, SrSolicitacao sol) {
+		List<String> recipients = new ArrayList<String>(); 
+		Map<String, List<String>> headers = getHeadersNotificarAtendente(movimentacao, sol);
+		String assunto = headers.get("assunto").get(0);
+		recipients = headers.get("recipients");
 		
-		List<String> recipients = movimentacao.getEmailsNotificacaoAtendende();
-
 		if (!recipients.isEmpty()) {
-			String assunto = "";
-			if (movimentacao.getTipoMov().getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO)
-		        assunto = "Fechamento de solicitação escalonada a partir de " + sol.getCodigo();
-			else
-		        assunto = "Solicitação " + sol.getCodigo() + " aguarda atendimento";
-			
 			String conteudo = getConteudoComSolicitacaoEMovimentacao(TEMPLATE_NOTIFICAR_ATENDENTE, movimentacao, sol);
 			enviar(assunto, conteudo, recipients);
 		}
@@ -101,6 +100,22 @@ public class Correio {
 		}
 	}
 	
+	private Map<String, List<String>> getHeadersNotificarAtendente(SrMovimentacao mov, SrSolicitacao sol) {
+		Map<String, List<String>> headers = new HashMap<String, List<String>>();
+		List<String> assunto = new ArrayList<String>(), recipients = new ArrayList<String>(); 
+		if (SrTipoMovimentacao.TIPOS_MOV_FIM_ATENDIMENTO.contains(mov.getTipoMov().getIdTipoMov())) {
+	        assunto.add("Fim de atendimento de solicitação escalonada a partir da " + sol.getSolicitacaoPai().getCodigo());
+	        recipients = sol.getSolicitacaoPai().getUltimaMovimentacao().getEmailsNotificacaoAtendende();
+		} 
+		else {
+	        assunto.add("Solicitação " + sol.getCodigo() + " aguarda atendimento");
+	        recipients = mov.getEmailsNotificacaoAtendende();		
+		}
+		headers.put("assunto", assunto);
+		headers.put("recipients", recipients);
+		return headers;	
+	}
+	
 	private String getConteudoComSolicitacao(String templatePath, SrSolicitacao sol) {
 		try {
 			return freemarker
@@ -109,7 +124,7 @@ public class Correio {
 					.with("link", link(sol))
 					.getContent();
 		} catch (IOException | TemplateException e) {
-			throw novaCorreioException(MessageFormat.format("Erro ao processar template {0}", templatePath), e);
+			throw new CorreioException(MessageFormat.format("Erro ao processar template {0}", templatePath), e);
 		}
 	}
 	
@@ -122,41 +137,32 @@ public class Correio {
 					.with("link", link(sol))
 					.getContent();
 		} catch (IOException | TemplateException e) {
-			throw novaCorreioException(MessageFormat.format("Erro ao processar template {0}", templatePath), e);
+			throw new CorreioException(MessageFormat.format("Erro ao processar template {0}", templatePath), e);
 		}
 	}
 
 	private String link(SrSolicitacao solicitacao) {
+		String url = SigaSrProperties.getString("url");
+		if (url != null)
+			return url + (url.endsWith("/") ? "" : "/") + "solicitacao/exibir?id=" + solicitacao.getId();
+		log.error("Não foi encontrada a property siga.sr.url");
 		try {
 			pathBuilder
 			.pathToRedirectTo(CompatibilidadeController.class)
 			.exibir(null);
-		
 			return pathBuilder.getFullPath() + "?id=" + solicitacao.getId();
 		} catch (Exception e) {
-			throw novaCorreioException("Erro ao processar link na geracao de email", e);
-		}
+			throw new CorreioException("Não foi possível obter o endereço a partir do PathBuilder", e);
+		} 
 	}
 	
-	private void enviar(String assunto, String conteudo, String... destinatarios) {
-		try {
-			br.gov.jfrj.siga.base.Correio.enviar(remetentePadrao(), destinatarios, assunto, new String(), conteudo);
-		} catch (Exception e) {
-			throw novaCorreioException("Erro ao enviar email", e);
-		}
+	private void enviar(String assunto, String conteudo, List<String> destinatarios) {
+		enviar(assunto, conteudo, destinatarios.toArray(new String[destinatarios.size()]));
 	}
 
-	private void enviar(String assunto, String conteudo, List<String> destinatarios) {
-		try {
-			br.gov.jfrj.siga.base.Correio.enviar(remetentePadrao(), destinatarios.toArray(new String[destinatarios.size()]), assunto, new String(), conteudo);
-		} catch (Exception e) {
-			throw novaCorreioException("Erro ao enviar email", e);
-		}
-	}
-	
-	private CorreioException novaCorreioException(String message, Exception e)  {
-		e.printStackTrace();
-		return new CorreioException(message, e);
+	private void enviar(String assunto, String conteudo, String... destinatarios) {
+		CorreioThread t = new CorreioThread(assunto, conteudo, "", destinatarios);
+		t.start();
 	}
 	
 	public void pesquisaSatisfacao(SrSolicitacao sol) throws Exception {
@@ -168,4 +174,41 @@ public class Correio {
 			enviar(assunto, conteudo, destinatario.getEnderecoEmail());
 		}
 	}
+	
+	/**
+	 * Classe que representa um thread de envio de e-mail. Há a necessidade do
+	 * envio de e-mail ser assíncrono, caso contrário, o usuário sentirá uma
+	 * degradação de performance.
+	 * 
+	 * @author kpf
+	 * 
+	 */
+	static class CorreioThread extends Thread {
+
+		String[] dest;
+		String html;
+		String txt;
+		String assunto;
+
+		public CorreioThread(String assunto, String html, String txt, String... dest) {
+			super();
+			this.dest = dest;
+			this.html = html;
+			this.txt = txt;	
+			this.assunto = assunto;
+		}
+
+		@Override
+		public void run() {		
+			try{
+				br.gov.jfrj.siga.base.Correio.enviar(SigaBaseProperties
+						.getString("servidor.smtp.usuario.remetente"),
+						dest,		
+						assunto, txt, html);					
+			} catch (Exception e) {
+				log.error(e);
+			}
+		}
+	}
+	
 }

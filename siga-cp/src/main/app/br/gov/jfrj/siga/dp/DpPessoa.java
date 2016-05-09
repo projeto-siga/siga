@@ -464,11 +464,13 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 
 		String nomeAbreviado = "";
 		for (String n : a) {
-			if (nomeAbreviado.length() == 0)
-				nomeAbreviado = n.substring(0, 1).toUpperCase()
-						+ n.substring(1).toLowerCase();
-			else if (!"|DA|DE|DO|DAS|DOS|E|".contains("|" + n + "|"))
-				nomeAbreviado += " " + n.substring(0, 1) + ".";
+			if (n.trim().length() != 0) {
+				if (nomeAbreviado.length() == 0)
+					nomeAbreviado = n.substring(0, 1).toUpperCase()
+							+ n.substring(1).toLowerCase();
+				else if (!"|DA|DE|DO|DAS|DOS|E|".contains("|" + n + "|"))
+					nomeAbreviado += " " + n.substring(0, 1) + ".";
+			}
 		}
 		return nomeAbreviado;
 	}

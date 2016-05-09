@@ -88,12 +88,12 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 	}
 	
 	@Override
-	public Long getDecorridoMillis(){
+	public Long getDecorridoMillis(boolean isPrevisao){
 		long decorrido = 0L;
 		for (SrIntervaloCorrente i : intervalosCorrentes){
 			if (i.isFuturo())
 				break;
-			decorrido += i.getDecorridoMillis();
+			decorrido += i.getDecorridoMillis(false);
 		}
 		return decorrido;
 	}
@@ -124,14 +124,14 @@ public class SrEtapaSolicitacao extends SrIntervaloCorrente implements SrParamet
 			Date dt = i.getDataContandoDoInicio(millisAdiante);
 			if (dt != null)
 				return dt;
-			millisAdiante -= i.getDecorridoMillis();
+			millisAdiante -= i.getDecorridoMillis(false);
 		}
 		return null;
 	}
 
 	private Long getRestanteMillis() {
 		if (getParamAcordo() != null){
-			return getParamAcordo().getValorEmMilissegundos() - getDecorridoMillis();
+			return getParamAcordo().getValorEmMilissegundos() - getDecorridoMillis(false);
 		}
 		return null;
 	}

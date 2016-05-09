@@ -26,33 +26,34 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
 import org.hibernate.Query;
-import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 
 import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.itextpdf.FOP;
-import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
+import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import br.gov.jfrj.siga.model.dao.ModeloDao;
+import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 public class ExDaoTest extends TestCase {
 
-	private ExDao dao;
+	private ExDao dao = null;
 
 	public ExDaoTest() throws Exception {
 		// HibernateUtil
@@ -62,8 +63,12 @@ public class ExDaoTest extends TestCase {
 		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
 		AnnotationConfiguration cfg = ExDao.criarHibernateCfg(ambiente);
 		HibernateUtil.configurarHibernate(cfg, "");
-
-		dao = ExDao.getInstance();*/
+*/
+		
+		
+//		Configuration cfg;
+//		cfg = ExDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
+//		HibernateUtil.configurarHibernate(cfg);
 	}
 
 	public void testaPattern() {
@@ -74,8 +79,33 @@ public class ExDaoTest extends TestCase {
 
 	public static void main(String[] a) throws Exception {
 		ExDaoTest test = new ExDaoTest();
-		test.testaPattern();
+		test.testBugFoundSharedReferencesToACollection();
 	}
+	
+	public void testBugFoundSharedReferencesToACollection() {
+		if (true)
+			return;
+		
+		ExDao.iniciarTransacao();
+		
+		ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
+		//flt.setSigla("TRF2-MEM-2013/00001-A");
+		
+		flt.setAnoEmissao(2013L);
+		flt.setIdFormaDoc(2);
+		flt.setIdTipoMobil(1L);
+		flt.setIdOrgaoUsu(3L);
+		flt.setNumExpediente(1L);
+		
+//		ExMobil mob = ExDao.getInstance().consultarPorSigla(flt);
+		
+		ExMobil mob = ExDao.getInstance().consultar(746L, ExMobil.class, false);
+		System.out.println(mob);
+		
+		System.out.println(ExDao.getInstance().listarOrgaosUsuarios());
+	}
+	
+	
 
 	/**
 	 * @param args

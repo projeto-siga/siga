@@ -17,9 +17,7 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class GcThreadFilter extends ThreadFilter {
 
-	private static final Logger log = Logger.getLogger("br.gov.jfrj.siga.gc");
-	
-	public void doFilter(final ServletRequest request,
+	public void doFiltro(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
@@ -33,23 +31,18 @@ public class GcThreadFilter extends ThreadFilter {
 			chain.doFilter(request, response);
 			em.getTransaction().commit();
 		} catch (Exception e) {
-			em.getTransaction().rollback();
-			
-			StringBuffer caminho = new StringBuffer();
-			String parametros = "";
-			if (request instanceof HttpServletRequest){
-				HttpServletRequest httpReq = (HttpServletRequest)request;
-				caminho = httpReq.getRequestURL();
-				parametros = httpReq.getQueryString()==null?"":"?" + httpReq.getQueryString();
-				caminho.append(parametros);
-			}
-			log.info("Ocorreu um erro durante a execução da operação: "+ e.getMessage() 
-					+ "\ncaminho: " + caminho.toString());
+			if (em.getTransaction().isActive())
+				em.getTransaction().rollback();
 			
 			throw new ServletException(e);
 		} finally {
 			em.close();
 			ContextoPersistencia.setEntityManager(null);
 		}
+	}
+
+	@Override
+	protected String getLoggerName() {
+		return "br.gov.jfrj.siga.gc";
 	}
 }

@@ -13,7 +13,8 @@ $(document).on('ready', function(){
 				filter: 0,
 				output: "xml_no_dtd",
 				lr:"lang_pt",
-				sort: "D:L:d1"
+				sort: "D:L:d1",
+				access: "a"
 			}
 		},
 		RenderInit:function(json){
@@ -799,6 +800,12 @@ $(document).on('ready', function(){
 			}
 			return str;
 		},
+		
+		getCookie:function(name) {
+			  var value = "; " + document.cookie;
+			  var parts = value.split("; " + name + "=");
+			  if (parts.length == 2) return parts.pop().split(";").shift();
+			},
 		//*** Função para realizar Ajax ao GSA
 		//*** Realiza metodo GET e espera resultado JSON em texto
 		//*** Retira tag <xml> e realiza o parse do resultado para JSON 
@@ -807,26 +814,50 @@ $(document).on('ready', function(){
 		//***  
 		ajaxGetGSA:function(params){
 			var self = this;
-			$.get(gsa.settings.proxy,params,function(data,status,xhr){
-				if(status = "success"){
-					var json = {};
-					data = data.replace(/\\/g,'\\\\');
-					data = data.replace(/\s+/g,' ');
-					//data = decodeURI(data);
-					try {
-					    json = JSON.parse(data);
-					    gsa.RenderInit(json);
-					}
-					catch(err) {
-						console.log(err);
-						console.log("Erro ao realizar a conversão para JSON");
-					    self.div_loader.hidePleaseWait();
-					}
-				}else{
-					self.div_loader.hidePleaseWait();
-				}
-				
-			},"text");
+			var idpSession = "";
+			jQuery.ajax({
+				 url: '/sigaidp/IDPServlet',
+			       success: function (result) {
+			            idpSession = result;
+			            gsaSession = gsa.getCookie("GSA_SESSION_ID");
+			            jQuery.ajax({
+			            	url: gsa.settings.proxy, 
+			            	data: params, 
+			            	//headers: {'IDP-JSESSIONID': idpSession},
+			            	headers: {'IDP-JSESSIONID':jQuery.trim(idpSession), 'IDP-DOMAIN': window.location.host, 'GSA_SESSION_ID': gsaSession},
+			            	success: function(json){
+							    gsa.RenderInit(json);
+								self.div_loader.hidePleaseWait();
+			            	},
+			            	error: function(){
+			            		self.div_loader.hidePleaseWait();
+			            	}
+			            	
+			            });
+			         
+			        }
+			 		
+			    });
+			
+//			var idpSession = "EqlMM5f81jZJ7AI568n0YTOy.classee:siga-auth-server01";
+//			
+//			            gsaSession = gsa.getCookie("GSA_SESSION_ID");
+//			            jQuery.ajax({
+//			            	url: gsa.settings.proxy, 
+//			            	data: params, 
+//			            	//headers: {'IDP-JSESSIONID': idpSession},
+//			            	headers: {'IDP-JSESSIONID':jQuery.trim(idpSession), 'GSA_SESSION_ID': gsaSession},
+//			            	success: function(json){
+//							    gsa.RenderInit(json);
+//								self.div_loader.hidePleaseWait();
+//			            	},
+//			            	error: function(){
+//			            		self.div_loader.hidePleaseWait();
+//			            	}
+//			            	
+//			            });
+			         
+			       
 		},
 		// Função para formatar data
 		replaceDataResult:function(string){

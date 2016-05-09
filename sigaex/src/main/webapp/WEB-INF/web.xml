@@ -32,6 +32,15 @@
         <listener-class>br.gov.jfrj.siga.jee.BouncyCastleServletContextListener</listener-class>
     </listener>
 
+	<filter>
+		<filter-name>RequestLoggerFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.base.log.RequestLoggerFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>RequestLoggerFilter</filter-name>
+		<url-pattern>*</url-pattern>
+	</filter-mapping>
+
     <filter>
         <filter-name>ExFilter</filter-name>
         <filter-class>br.gov.jfrj.siga.hibernate.ExThreadFilter</filter-class>
@@ -224,10 +233,6 @@
 		<web-resource-collection>
 			<web-resource-name>actexterno</web-resource-name>
 			<url-pattern>/autenticar.action</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>staticJavascript</web-resource-name>
-			<url-pattern>/staticJavascript.jf</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>Recursos Publicos</web-resource-name>

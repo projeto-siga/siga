@@ -26,7 +26,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cd.CertificadoUtil;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.dp.CpPersonalizacao;
@@ -112,34 +111,9 @@ public class UsuarioAutenticado {
 			dpSubstituicao.setSubstituto(ioc.getCadastrante());
 			dpSubstituicao.setLotaSubstituto(ioc.getCadastrante().getLotacao());
 
-			List<DpSubstituicao> substituicoesPermitidas = dao()
-					.consultarSubstituicoesPermitidas(dpSubstituicao);
+			ioc.setTitular(per.getPesSubstituindo());
+			ioc.setLotaTitular(per.getLotaSubstituindo());
 
-			for (final DpSubstituicao substituicao : substituicoesPermitidas) {
-				if (per.getPesSubstituindo() != null) {
-					if (per.getPesSubstituindo().equivale(
-							substituicao.getTitular())									) {
-						ioc.setTitular(per.getPesSubstituindo());
-						break;
-					}
-				} else {
-					if (per.getLotaSubstituindo() != null)
-						if (per.getLotaSubstituindo().equivale(
-								substituicao.getLotaTitular())) {
-							ioc.setLotaTitular(per.getLotaSubstituindo());
-							break;
-						}
-				}
-
-			}
-
-			if (ioc.getTitular() == null && ioc.getLotaTitular() == null) {
-				per.setPesSubstituindo(null);
-				per.setLotaSubstituindo(null);
-				dao().iniciarTransacao();
-				dao().gravar(per);
-				dao().commitTransacao();
-			}
 		}
 
 		if (ioc.getLotaTitular() == null && ioc.getTitular() != null)
@@ -219,43 +193,12 @@ public class UsuarioAutenticado {
 	 *             ,NullPointerException
 	 */
 	public static void carregarUsuarioAutenticadoRequest(HttpServletRequest request, ConheceUsuario ioc) throws SQLException, NullPointerException,	CertificateParsingException, Exception {
-		if (isClientCertAuth(request)) {
-			// login por certificado digital
-			String principal = obterSesbMatriculaUsuarioComCertificado(request);
-			carregarUsuarioAutenticadoClientCert(principal, ioc);
-		} else {
-			// login por formulario
-			carregarUsuarioAutenticado(request.getUserPrincipal().getName(),ioc);
-		}
+		// login por formulario
+		carregarUsuarioAutenticado(request.getUserPrincipal().getName(),ioc);
 	}
 
 	private static CpDao dao() {
 		return CpDao.getInstance();
-	}
-
-	/**
-	 * Verifica se o tipo de autenticação é por certificado
-	 * 
-	 * @param request
-	 * @return
-	 */
-	public static boolean isClientCertAuth(HttpServletRequest request) {
-		return CertificadoUtil.isClientCertAuth(request);
-	}
-
-	/**
-	 * * Obtém o sesb+matricula (login) a partir do request que contém um
-	 * certificado a ser usado como principal
-	 * 
-	 * @return o Sesb concatendo com a matrícula para um usuário com certificado
-	 * @param request
-	 * @throws Exception
-	 */
-	public static String obterSesbMatriculaUsuarioComCertificado(HttpServletRequest request) throws Exception {
-		String cpf = CertificadoUtil.recuperarCPF(request);
-		DpPessoa pessoa = CpDao.getInstance().consultarPorCpf(Long.parseLong(cpf));
-		
-		return pessoa.getSesbPessoa() + pessoa.getMatricula().toString();
 	}
 
 }

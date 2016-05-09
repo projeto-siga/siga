@@ -46,7 +46,49 @@ public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltro
 	}
 
 	protected List<CpMarcador> getEstados() throws AplicacaoException {
-		return dao().listarMarcadores();
+		Long[] ids = {
+				//Edson: favor manter ordem alfabética :-)
+				CpMarcador.MARCADOR_A_DEVOLVER,
+				CpMarcador.MARCADOR_A_DEVOLVER_FORA_DO_PRAZO,
+				CpMarcador.MARCADOR_A_RECEBER,
+				CpMarcador.MARCADOR_A_RECEBER, 
+				CpMarcador.MARCADOR_A_REMETER_MANUALMENTE,
+				CpMarcador.MARCADOR_A_REMETER_PARA_PUBLICACAO,
+				CpMarcador.MARCADOR_AGUARDANDO,
+				CpMarcador.MARCADOR_AGUARDANDO_DEVOLUCAO_FORA_DO_PRAZO,
+				CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA,
+				CpMarcador.MARCADOR_APENSADO, 
+				CpMarcador.MARCADOR_ARQUIVADO_CORRENTE,
+				CpMarcador.MARCADOR_CAIXA_DE_ENTRADA,
+				CpMarcador.MARCADOR_CANCELADO,
+				CpMarcador.MARCADOR_COMO_GESTOR,
+				CpMarcador.MARCADOR_COMO_INTERESSADO,
+				CpMarcador.MARCADOR_COMO_SUBSCRITOR,
+				CpMarcador.MARCADOR_DESPACHO_PENDENTE_DE_ASSINATURA,
+				CpMarcador.MARCADOR_DISPONIBILIZADO,
+				CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA,
+				CpMarcador.MARCADOR_EM_ANDAMENTO,
+				CpMarcador.MARCADOR_EM_ELABORACAO,
+				CpMarcador.MARCADOR_EM_TRANSITO,
+				CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO,
+				CpMarcador.MARCADOR_FINALIZAR_DOCUMENTO_COLABORATIVO,
+				CpMarcador.MARCADOR_JUNTADO, 
+				CpMarcador.MARCADOR_JUNTADO_A_DOCUMENTO_EXTERNO,
+				CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA,
+				CpMarcador.MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA,
+				CpMarcador.MARCADOR_PENDENTE_DE_ANEXACAO,
+				CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA,
+				CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA,
+				CpMarcador.MARCADOR_PENDENTE_DE_COLABORACAO,
+				CpMarcador.MARCADOR_PUBLICACAO_SOLICITADA,
+				CpMarcador.MARCADOR_PUBLICADO,
+				CpMarcador.MARCADOR_REMETIDO_PARA_PUBLICACAO,
+				CpMarcador.MARCADOR_REVISAR,
+				CpMarcador.MARCADOR_SEM_EFEITO,
+				CpMarcador.MARCADOR_SOBRESTADO, 
+				CpMarcador.MARCADOR_TRANSFERIDO_A_ORGAO_EXTERNO
+		};
+		return dao().listarMarcadores(ids);
 	}
 
 	protected Map<Integer, String> getListaTipoResp() {

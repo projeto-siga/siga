@@ -2,6 +2,8 @@ package br.gov.jfrj.siga.sr.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
 
@@ -61,11 +63,11 @@ public class SrViewUtil {
 	}
 	
 	public static String toDDMMYYYYHHMM(Date dt){
-		return dt != null ? new SimpleDateFormat("dd/MM/yyyy HH:mm").format(dt) : "";
+		return (dt != null ? new SimpleDateFormat("dd/MM/yyyy HH:mm").format(dt) : "").replace(" 00:00", "");
 	}
 	
 	public static String toDDMMYYYYHHMMSS(Date dt){
-		return dt != null ? new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(dt) : "";
+		return (dt != null ? new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(dt) : "").replace(" 00:00:00", "");
 	}
 	
 	public static String toStr(Date dt){

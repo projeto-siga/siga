@@ -111,16 +111,17 @@ public class PrincipalController extends SigaController {
 			mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
 			mapAcronimo.put(ou.getSiglaOrgaoUsu(), ou);
 		}
-		String acronimos = "";
+		
+		StringBuilder acronimos = new StringBuilder();
 		for (String s : mapAcronimo.keySet()) {
 			if (acronimos.length() > 0)
-				acronimos += "|";
-			acronimos += s;
+				acronimos.append("|");
+			acronimos.append(s);
 		}
 
 		final Pattern p1 = Pattern
 				.compile("^(?<orgao>"
-						+ acronimos
+						+ acronimos.toString()
 						+ ")?-?(?:(?<especie>[A-Za-z]{3})|(?<modulo>SR|TMPSR|GC|TMPGC|TP))-?([0-9][0-9A-Za-z\\.\\-\\/]*)$");
 		final Matcher m1 = p1.matcher(sigla);
 
@@ -167,11 +168,11 @@ public class PrincipalController extends SigaController {
 			}
 		} else {
 			// Pessoas
-			lurls.add(urlBase + "/siga/app/pessoa/selecionar?sigla=" + sigla
+			lurls.add(urlBase + "/siga/public/app/pessoa/selecionar?sigla=" + sigla
 					+ incluirMatricula + ";/siga/app/pessoa/exibir?sigla=");
 
 			// Lotacoes
-			lurls.add(urlBase + "/siga/app/lotacao/selecionar?sigla=" + sigla
+			lurls.add(urlBase + "/siga/public/app/lotacao/selecionar?sigla=" + sigla
 					+ incluirMatricula + ";/siga/app/lotacao/exibir?sigla=");
 		}
 
@@ -181,12 +182,12 @@ public class PrincipalController extends SigaController {
 												// de busca ";" a url destino
 			String[] response = null;
 			try {
-				response = http.get(aurls[0], getRequest(), null).split(";");
+				response = http.get(aurls[0]).split(";");
 			} catch (Exception e) {
 			}
 
 			if (response == null
-					|| (response.length == 1 && Integer.valueOf(response[0]) == 0))
+					|| (response.length == 1 && (response[0].equals("") || Integer.valueOf(response[0]) == 0)))
 				continue;
 
 			sel.setId(Long.valueOf(response[1]));

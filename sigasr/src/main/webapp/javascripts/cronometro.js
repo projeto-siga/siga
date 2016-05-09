@@ -14,7 +14,7 @@
 		var sentido = j.hasClass("decorrido") ? 1 : -1;
 		var resumido = j.hasClass("resumido");
 		j.find(".descrValor").html((resumido && valor < 0 ? '-' : '') + toString(valor, resumido));
-		if (valor > 0){
+		if (valor >= 0){
 			j.find(".label-cron").html('Restante: ');
 	   		j.css('color', 'black');
 		} else {

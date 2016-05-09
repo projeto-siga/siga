@@ -22,22 +22,35 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.net.ssl.SSLContext;
 import javax.xml.ws.http.HTTPException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContextBuilder;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.conn.ssl.X509HostnameVerifier;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.LaxRedirectStrategy;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -45,195 +58,244 @@ import org.picketlink.common.util.StringUtil;
 
 /**
  *
- * @author Rodrigo Ramalho
- * 	       hodrigohamalho@gmail.com
+ * @author Rodrigo Ramalho hodrigohamalho@gmail.com
  *
- * Essa classe deverá ser usada para requests entre módulos do SIGA. Se fizer um GET direto
- * o request será processado como feito por um usuário anônimo e retornará um form de autenticação.
+ *         Essa classe devera ser usada para requests entre modulos do SIGA. Se
+ *         fizer um GET direto o request sera processado como feito por um
+ *         usuario anonimo e retornara um form de autenticao.
  */
 public class SigaHTTP {
 
-	private Header[] headers;
-	private final String COOKIE = "cookie";
 	private final String SAMLRequest = "SAMLRequest";
 	private final String SAMLResponse = "SAMLResponse";
-	private final String JSESSIONID_PREFIX = "JSESSIONID=";
-	private final String SET_COOKIE = "set-cookie";
-	private final String HTTP_POST_BINDING_REQUEST = "HTTP Post Binding (Request)";
-	private final String doubleQuotes = "\"";
-	private static final int MAX_RETRY = 3;
-	private int retryCount = 0;
-	private String idp;
+	private final String HTTP_POST_BINDING = "HTTP Post Binding";
 
 	/**
-	 * @param URL pode ser a url completa ou relativa.
-	 * @param request (se for modulo play, setar pra null)
-	 * @param cookieValue (necessario apenas nos modulos play)
+	 * @param URL
+	 *            deve ser a url completa.
+	 * @param cookieStore
+	 *            Necessaria se desejar incluir cookies alem da session do idp
+	 * @param idpDomain
+	 *            dominio do idp, ex.: siga.jfrj.jus.br
+	 * @param idpSession
+	 *            valor do cookie JSESSIONID do idp
 	 */
-	public String get(String URL, HttpServletRequest request, String cookieValue) {
-		this.retryCount = 0;
-
-		if (URL.startsWith("/"))
-			URL = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + URL;
-
-		return handleAuthentication(URL, request, cookieValue);
+	public String get(String URL, CookieStore cookieStore, String idpDomain,
+			String idpSession) throws Exception {
+		if (idpDomain != null && idpDomain.contains(":"))
+			idpDomain = idpDomain.split(":")[0];
+		return handleAuthentication(URL, cookieStore, idpDomain, idpSession);
 	}
 
-	private String handleAuthentication(String URL, HttpServletRequest request, String cookieValue) throws HTTPException{
-		String html = "";
-		Executor exec = Executor.newInstance(HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build());
-		String currentCookie = JSESSIONID_PREFIX+doubleQuotes+getCookie(request, cookieValue)+doubleQuotes;
-		String cValue = getIdp(request);
-		String idpCookie = null;
-		if (StringUtil.isNotNull(cValue))
-		  idpCookie = JSESSIONID_PREFIX+doubleQuotes+cValue+doubleQuotes;
+	public String get(String URL) throws Exception {
+		return get(URL, null, null, null);
+	}
 
-		try{
+	/**
+	 * Esse é um cliente de HTTP que despreza o certificado e aceita qualquer
+	 * servidor. Precisamos implementar isso para conseguir conectar ao GSA, que
+	 * náo tinha certificado válido e exigia HTTPS para autenticar com o SAML.
+	 */
+	public HttpClient getNewHttpClient() throws KeyManagementException,
+			NoSuchAlgorithmException, KeyStoreException {
+		HttpClientBuilder b = HttpClientBuilder.create();
+
+		SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null,
+				new TrustStrategy() {
+					public boolean isTrusted(X509Certificate[] arg0, String arg1)
+							throws CertificateException {
+						return true;
+					}
+				}).build();
+		b.setSslcontext(sslContext);
+
+		X509HostnameVerifier hostnameVerifier = SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
+
+		SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
+				sslContext, hostnameVerifier);
+		Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder
+				.<ConnectionSocketFactory> create()
+				.register("http",
+						PlainConnectionSocketFactory.getSocketFactory())
+				.register("https", sslSocketFactory).build();
+
+		PoolingHttpClientConnectionManager connMgr = new PoolingHttpClientConnectionManager(
+				socketFactoryRegistry);
+		b.setConnectionManager(connMgr);
+
+		HttpClient client = b.build();
+		return client;
+	}
+
+	String handleAuthentication(String URL, CookieStore cookieStore,
+			String idpDomain, String idpSession) throws Exception {
+		String html = "";
+
+		Executor exec = Executor.newInstance(getNewHttpClient());
+		if (cookieStore == null)
+			cookieStore = new BasicCookieStore();
+		if (idpSession != null && idpDomain != null) {
+			BasicClientCookie cookie = new BasicClientCookie("JSESSIONID",
+					idpSession);
+			cookie.setPath("/sigaidp");
+			cookie.setDomain(idpDomain);
+			cookie.setSecure(false);
+			cookie.setVersion(1);
+			cookieStore.addCookie(cookie);
+		}
+		exec.cookieStore(cookieStore);
+
+		try {
 			// Efetua o request para o Service Provider (modulo)
 			// Atribui o html retornado e pega o header do Response
-			// Se a aplicação ja efetuou a autenticação entre o modulo da URL o conteudo sera trago nesse primeiro GET
-			// Caso contrario passara pelo processo de autenticação (if abaixo)
-			HttpResponse response = exec.execute(Request.Get(URL).addHeader(COOKIE, currentCookie)).returnResponse();
+			// Se a aplicacao ja efetuou a autenticaao entre o modulo
+			// da URL o conteudo sera trazido nesse primeiro GET
+			// Caso contrario passara pelo processo de autenticao
+			// (if abaixo)
+			HttpResponse response = exec.execute(Request.Get(URL))
+					.returnResponse();
 			html = handleResponse(html, response);
-			currentCookie = extractSetCookie(currentCookie, response);
+			// currentCookie = extractSetCookie(currentCookie, response);
 
-			// Verifica se retornou o form de autenticação do picketlink
-			if (html.contains(HTTP_POST_BINDING_REQUEST)){
-				if (StringUtil.isNullOrEmpty(idpCookie)){
-				  return "";
+			// Verifica se retornou o form de autenticao do
+			// picketlink
+			if (html.contains(HTTP_POST_BINDING)) {
+				if (StringUtil.isNullOrEmpty(idpSession)) {
+					return "";
 				}
-				
-				// Atribui o valor do SAMLRequest contido no html retornado no GET efetuado.
-				String SAMLRequestValue = getAttributeValueFromHtml(html, SAMLRequest);
-				// Atribui a URL do IDP (sigaidp)
-				String idpURL = getAttributeActionFromHtml(html);
-				if (!idpURL.contains("http"))
-					idpURL = completeURL(URL, idpURL);
 
-				// Faz um novo POST para o IDP com o SAMLRequest como parametro e utilizando o sessionID do IDP
-				response =  exec.execute(Request.Post(idpURL).useExpectContinue().
-						addHeader("content-type", "application/x-www-form-urlencoded").
-						addHeader(COOKIE, idpCookie).
-						bodyForm(Form.form().add(SAMLRequest, SAMLRequestValue).build())).
-						returnResponse();
+				if (html.contains(SAMLRequest)) {
+					// Atribui o valor do SAMLRequest contido no html retornado
+					// no GET efetuado.
+					String SAMLRequestValue = getAttributeValueFromHtml(html,
+							SAMLRequest);
+					// Atribui a URL do IDP (sigaidp)
+					String idpURL = getAttributeActionFromHtml(html);
 
-				html = handleResponse(html, response);
-
-				if (html.contains(SAMLResponse)){
-					// Extrai o valor do SAMLResponse
-					// Caso o SAMLResponse n￣o esteja disponível aqui, ￩ porque o JSESSIONID utilizado não foi o do IDP.
-					String SAMLResponseValue = getAttributeValueFromHtml(html, SAMLResponse);
-					String spURL = getAttributeActionFromHtml(html);
-					if (!spURL.contains("http"))
-						spURL = completeURL(URL, spURL);
-
-					response = exec.execute(Request.Post(spURL).useExpectContinue().
-							addHeader("content-type", "application/x-www-form-urlencoded").
-							addHeader(COOKIE, currentCookie).
-							bodyForm(Form.form().add(SAMLResponse, SAMLResponseValue).build())).returnResponse();
+					// Faz um novo POST para o IDP com o SAMLRequest como
+					// parametro
+					// e
+					// utilizando o sessionID do IDP
+					response = exec
+							.execute(
+									Request.Post(idpURL)
+											.useExpectContinue()
+											.addHeader("content-type",
+													"application/x-www-form-urlencoded")
+											// .addHeader(COOKIE, idpCookie)
+											.bodyForm(
+													Form.form()
+															.add(SAMLRequest,
+																	SAMLRequestValue)
+															.build()))
+							.returnResponse();
 
 					html = handleResponse(html, response);
-					if (isAuthPage(html)){
-						html = exec.execute(Request.Post(spURL).useExpectContinue().
-								addHeader("content-type", "application/x-www-form-urlencoded").
-								addHeader(COOKIE, currentCookie).
-								bodyForm(Form.form().add(SAMLResponse, SAMLResponseValue).build())).returnContent().asString();
+				}
+
+				if (html.contains(SAMLResponse)) {
+					// Extrai o valor do SAMLResponse. Caso o SAMLResponse nao
+					// esteja disponivel aqui, eh porque o JSESSIONID utilizado
+					// nao representa uma session valida do do IDP.
+					String SAMLResponseValue = getAttributeValueFromHtml(html,
+							SAMLResponse);
+					String spURL = getAttributeActionFromHtml(html);
+
+					// Precisei inserir totod esses headers porque o GSA
+					// reamente dava erro sem eles.
+					response = exec
+							.execute(
+									Request.Post(spURL)
+											.useExpectContinue()
+											.addHeader("Content-Type",
+													"application/x-www-form-urlencoded")
+											.addHeader("Accept",
+													"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
+											.addHeader("Accept-Encoding",
+													"gzip, deflate")
+											.addHeader("Accept-Language",
+													"en-US,en;q=0.8,pt;q=0.6")
+											.bodyForm(
+													Form.form()
+															.add(SAMLResponse,
+																	SAMLResponseValue)
+															.build()))
+							.returnResponse();
+
+					// Esse redirect deveria ser automatico, mas o GSA manda um
+					// header de connectio: close, e isso aparentemente
+					// interrompe o redirecionamento automatico.
+					if (response.getStatusLine().getStatusCode() == 302)
+						response = exec.execute(
+								Request.Get(response.getFirstHeader("Location")
+										.getValue())).returnResponse();
+
+					html = handleResponse(html, response);
+					if (isAuthPage(html)) {
+						html = exec
+								.execute(
+										Request.Post(spURL)
+												.useExpectContinue()
+												.addHeader("Content-Type",
+														"application/x-www-form-urlencoded")
+												.bodyForm(
+														Form.form()
+																.add(SAMLResponse,
+																		SAMLResponseValue)
+																.build()))
+								.returnContent().asString();
 					}
 				}
 			}
-		}catch(HTTPException httpE){
+		} catch (HTTPException httpE) {
 			throw new HTTPException(httpE.getStatusCode());
-		}catch (IOException io) {}
-
-		//		tryAgain(URL, request, cookieValue, html);
+		} catch (IOException io) {
+		}
 
 		return html;
 	}
 
-	private String completeURL(String URL, String idpURL) {
-		return URL.substring(0, StringUtils.ordinalIndexOf(URL, "/", 3)) + idpURL;
-	}
-
-	private String extractSetCookie(String currentCookie, HttpResponse response) {
-		for (Header header : response.getAllHeaders()){
-			if (header.getName().equals("Set-Cookie")){
-				if (header.getValue().contains(";")){
-					String headers[] = header.getValue().split(";");
-					for (String h : headers){
-						if (h.contains(JSESSIONID_PREFIX)){
-							currentCookie = h;
-							break;
-						}
-					}
-				}
-			}
-		}
-		return currentCookie;
-	}
-
-	private String handleResponse(String html, HttpResponse response) throws HTTPException, IllegalStateException, IOException{
-		if (response.getStatusLine().getStatusCode() != 200){
+	private String handleResponse(String html, HttpResponse response)
+			throws HTTPException, IllegalStateException, IOException {
+		if (response.getStatusLine().getStatusCode() != 200) {
 			throw new HTTPException(response.getStatusLine().getStatusCode());
-		}else{
+		} else {
 			html = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 		}
 		return html;
 	}
 
-	private void tryAgain(String URL, HttpServletRequest request,
-			String cookieValue, String html) {
-		if ( isErrorPage(html) || isAuthPage(html) || isIDPPage(html) ){
-			if (retryCount < MAX_RETRY){
-				retryCount++;
-				handleAuthentication(URL, request, cookieValue);
-			}
-		}
-	}
+	// private void tryAgain(String URL, HttpServletRequest request,
+	// String cookieValue, String html) throws Exception {
+	// if (isErrorPage(html) || isAuthPage(html) || isIDPPage(html)) {
+	// if (retryCount < MAX_RETRY) {
+	// retryCount++;
+	// handleAuthentication(URL, request, cookieValue);
+	// }
+	// }
+	// }
 
 	public boolean isErrorPage(String html) {
-		return html.contains("<title>") && html.contains("Não Foi Possível Completar a Operação");
+		return html.contains("<title>")
+				&& html.contains("vel Completar a Opera");
 	}
 
 	public boolean isAuthPage(String html) {
-		return html.contains("Senha") && html.contains("Matrícula");
+		return html.contains("Senha") && html.contains("Apostila");
 	}
 
 	public boolean isIDPPage(String html) {
 		return html.contains("siga-modules") && html.contains("siga-box");
 	}
 
-
-	private String getCookie(HttpServletRequest request, String cookieValue) {
-		if (cookieValue == null || cookieValue.isEmpty()){
-			return request.getSession().getId();
-		}
-		return cookieValue;
-	}
-
-
-	private String extractCookieFromHeader(String headerValue) {
-		return headerValue.substring(headerValue.indexOf("=")+1, headerValue.indexOf(";"));
-	}
-
-	private String getHeader(String headerName) throws ElementNotFoundException {
-
-		for (Header header : headers) {
-			if (header.getName().equalsIgnoreCase(headerName)){
-				return header.getValue();
-			}
-		}
-
-		throw new ElementNotFoundException("Header "+headerName+ " Not founded on headers variable");
-	}
-
-
-	private String getAttributeValueFromHtml(String htmlContent, String attribute){
+	private String getAttributeValueFromHtml(String htmlContent,
+			String attribute) {
 		String value = "";
 
 		Document doc = Jsoup.parse(htmlContent);
 		// Get SAMLRequest value
-		for (Element el : doc.select("input")){
-			if (el.attr("name").equals(attribute)){
+		for (Element el : doc.select("input")) {
+			if (el.attr("name").equals(attribute)) {
 				value = el.attr("value");
 			}
 		}
@@ -241,64 +303,25 @@ public class SigaHTTP {
 		return value;
 	}
 
-	private String getAttributeActionFromHtml(String htmlContent){
+	private String getAttributeActionFromHtml(String htmlContent) {
 		Document doc = Jsoup.parse(htmlContent);
 		return doc.select("form").attr("action");
 	}
 
-	@SuppressWarnings("unchecked")
-	public String getIdp(HttpServletRequest request) {
-		try{
-			if (StringUtil.isNullOrEmpty(idp)){
-				String idpSessionID = "";
-				try{
-					Map<String, Object> map = (Map<String, Object>) request.getSession().getAttribute("SESSION_ATTRIBUTE_MAP");
-					idpSessionID = (String) ((List<Object>) map.get("IDPsessionID")).get(0);
-				}catch(NullPointerException npe){
-					// relax.
-				}
-
-				if (StringUtil.isNotNull(idpSessionID)){
-					idp = idpSessionID;
-				}else{
-					idp = tryGetIDPSessionIDFromRequest(request);
-				}
-			}
-		}catch(Exception e){
-			e.printStackTrace();
-			idp = tryGetIDPSessionIDFromRequest(request);
-		}
-		return idp;
-	}
-
-	private String tryGetIDPSessionIDFromRequest(HttpServletRequest request) {
-		if (request != null && request.getAttribute("idp") != null){
-			String idpFromRequest = (String) request.getAttribute("idp");
-			if (StringUtil.isNotNull(idpFromRequest))
-				return idpFromRequest;
-
-		}
-
-		return "";
-	}
-
-	public void setIdp(String idp) {
-		this.idp = idp;
-	}
-
-	public String getNaWeb(String URL, HashMap<String, String> header, Integer timeout, String payload)
-			throws AplicacaoException {
+	public String getNaWeb(String URL, HashMap<String, String> header,
+			Integer timeout, String payload) throws AplicacaoException {
 
 		try {
 
-			HttpURLConnection conn = (HttpURLConnection) new URL(URL).openConnection();
+			HttpURLConnection conn = (HttpURLConnection) new URL(URL)
+					.openConnection();
 
 			if (timeout != null) {
 				conn.setConnectTimeout(timeout);
 				conn.setReadTimeout(timeout);
 			}
 
-			//conn.setInstanceFollowRedirects(true);
+			// conn.setInstanceFollowRedirects(true);
 
 			if (header != null) {
 				for (String s : header.keySet()) {
@@ -320,13 +343,15 @@ public class SigaHTTP {
 				}
 			}
 
-			//StringWriter writer = new StringWriter();
-			//IOUtils.copy(conn.getInputStream(), writer, "UTF-8");
-			//return writer.toString();
+			// StringWriter writer = new StringWriter();
+			// IOUtils.copy(conn.getInputStream(), writer, "UTF-8");
+			// return writer.toString();
 			return IOUtils.toString(conn.getInputStream(), "UTF-8");
 
 		} catch (IOException ioe) {
-			throw new AplicacaoException("Não foi possível abrir conexão", 1, ioe);
+			throw new AplicacaoException(
+					"NÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel abrir conexÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o",
+					1, ioe);
 		}
 
 	}

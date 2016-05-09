@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+
+	<persistence-unit name="default" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+
+
+		<class>br.gov.jfrj.siga.dp.DpCargo</class>
+		<class>br.gov.jfrj.siga.dp.DpFuncaoConfianca</class>
+		<class>br.gov.jfrj.siga.dp.DpLotacao</class>
+		<class>br.gov.jfrj.siga.dp.DpPessoa</class>
+		<class>br.gov.jfrj.siga.dp.CpOrgao</class>
+		<class>br.gov.jfrj.siga.dp.CpOrgaoUsuario</class>
+		<class>br.gov.jfrj.siga.dp.DpSubstituicao</class>
+		<class>br.gov.jfrj.siga.dp.CpFeriado</class>
+		<class>br.gov.jfrj.siga.dp.CpOcorrenciaFeriado</class>
+		<class>br.gov.jfrj.siga.dp.CpAplicacaoFeriado</class>
+		<class>br.gov.jfrj.siga.dp.CpLocalidade</class>
+		<class>br.gov.jfrj.siga.dp.CpUF</class>
+		<class>br.gov.jfrj.siga.dp.CpPersonalizacao</class>
+		<class>br.gov.jfrj.siga.dp.CpTipoPessoa</class>
+		<class>br.gov.jfrj.siga.cp.CpConfiguracao</class>
+		<class>br.gov.jfrj.siga.cp.CpSituacaoConfiguracao</class>
+		<class>br.gov.jfrj.siga.cp.CpTipoConfiguracao</class>
+		<class>br.gov.jfrj.siga.cp.CpServico</class>
+		<class>br.gov.jfrj.siga.cp.CpTipoGrupo</class>
+		<class>br.gov.jfrj.siga.cp.CpGrupo</class>
+		<class>br.gov.jfrj.siga.dp.CpTipoLotacao</class>
+		<class>br.gov.jfrj.siga.cp.CpTipoPapel</class>
+		<class>br.gov.jfrj.siga.cp.CpPapel</class>
+		<class>br.gov.jfrj.siga.cp.CpTipoServico</class>
+		<class>br.gov.jfrj.siga.cp.CpTipoIdentidade</class>
+		<class>br.gov.jfrj.siga.cp.CpIdentidade</class>
+		<class>br.gov.jfrj.siga.cp.CpModelo</class>
+		<class>br.gov.jfrj.siga.cp.CpUnidadeMedida</class>
+		<class>br.gov.jfrj.siga.cp.CpComplexo</class>
+		<class>br.gov.jfrj.siga.dp.CpMarcador</class>
+		<class>br.gov.jfrj.siga.dp.CpTipoMarcador</class>
+		<class>br.gov.jfrj.siga.dp.CpMarca</class>
+		<class>br.gov.jfrj.siga.dp.CpTipoMarca</class>
+		<class>br.gov.jfrj.siga.cp.CpPerfil</class>
+		<class>br.gov.jfrj.siga.cp.CpGrupoDeEmail</class>
+		<class>br.gov.jfrj.siga.cp.CpPerfilJEE</class>
+
+
+		<!-- colocar as classes do SigaSR -->
+
+		<class>br.gov.jfrj.siga.sr.model.DadosRH</class>
+		<class>br.gov.jfrj.siga.sr.model.SrAcao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrAcao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrAcordo</class>
+		<class>br.gov.jfrj.siga.sr.model.SrArquivo</class>
+		<class>br.gov.jfrj.siga.sr.model.SrAtributo</class>
+		<class>br.gov.jfrj.siga.sr.model.SrParametroAcordo</class>
+		<class>br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrConfiguracao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrConfiguracaoIgnorada</class>
+		<class>br.gov.jfrj.siga.sr.model.SrDisponibilidade</class>
+		<class>br.gov.jfrj.siga.sr.model.SrEquipe</class>
+		<class>br.gov.jfrj.siga.sr.model.SrExcecaoHorario</class>
+		<class>br.gov.jfrj.siga.sr.model.SrFatorMultiplicacao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrGestorItem</class>
+		<class>br.gov.jfrj.siga.sr.model.SrItemConfiguracao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrLista</class>
+		<class>br.gov.jfrj.siga.sr.model.SrMarca</class>
+		<class>br.gov.jfrj.siga.sr.model.SrMovimentacao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrObjetivoAtributo</class>
+		<class>br.gov.jfrj.siga.sr.model.SrPergunta</class>
+		<class>br.gov.jfrj.siga.sr.model.SrPesquisa</class>
+		<class>br.gov.jfrj.siga.sr.model.SrPrioridadeSolicitacao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrResposta</class>
+		<class>br.gov.jfrj.siga.sr.model.SrSolicitacao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrTipoAcao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrTipoMovimentacao</class>
+		<class>br.gov.jfrj.siga.sr.model.SrTipoPergunta</class>
+		<class>br.gov.jfrj.siga.sr.model.SrTipoPermissaoLista</class>
+
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+		<properties>
+			<property name="hibernate.connection.url"
+				value="jdbc:derby:memory:unit-testing-jpa;create=true" />
+			<property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.DerbyTenSevenDialect" />
+			<property name="hibernate.hbm2ddl.auto" value="create" />
+			<property name="hibernate.connection.username" value="" />
+			<property name="hibernate.connection.password" value="" />
+			<property name="hibernate.cache.use_second_level_cache"
+				value="false" />
+			<property name="hibernate.show_sql" value="false" />
+		</properties>
+	</persistence-unit>
+</persistence>

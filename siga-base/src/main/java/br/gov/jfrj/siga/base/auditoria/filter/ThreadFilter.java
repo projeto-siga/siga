@@ -186,8 +186,19 @@ public abstract class ThreadFilter implements Filter {
 
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
+		try {
+			doFiltro(request,response,chain);
+		} catch (Exception e) {
+			throw e;
+		}
 
+		
 	}
+	
+	protected abstract void doFiltro(ServletRequest request, ServletResponse response,
+			FilterChain chain) throws IOException, ServletException;
+	
+	protected abstract String getLoggerName();
 
 	protected String montaMensagemErroExcecoes(Exception ex) {
 		String mensagemErro = "";

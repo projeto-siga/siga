@@ -23,9 +23,10 @@
 		    dateFormat: 'dd/mm/yy',
 		    monthNames: ["Janeiro", "Fevereiro", "Mar\u00E7o", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
 		    monthNamesShort : ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
-		    dayNames: ["Segunda", "Ter\u00E7a", "Quarta", "Quinta", "Sexta", "S\u00E1bado", "Domingo"],
-		    dayNamesShort: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"],
-		    dayNamesMin: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"]
+		    dayNames: ["Domingo","Segunda", "Ter\u00E7a", "Quarta", "Quinta", "Sexta", "S\u00E1bado"],
+		    dayNamesShort: ["Dom","Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],
+		    dayNamesMin: ["Dom","Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],
+			firstDay: 0
 		});
 		$("#${nomeclean}").mask("99/99/9999");
 	});

@@ -269,11 +269,13 @@ public class ServicoController 	extends SigaController {
 	*/
 	@SuppressWarnings("unchecked")
 	private ArrayList<CpServico> obterServicosDaLotacaoEfetiva() {
+		ArrayList<CpServico> t_arlServicos = new ArrayList<CpServico>();
 		CpTipoLotacao t_ctlTipoLotacao = obterTipoDeLotacaoEfetiva();
+		if (t_ctlTipoLotacao == null)
+			return t_arlServicos;
 		final Query query = dao.getSessao().getNamedQuery("consultarCpConfiguracoesPorTipoLotacao");
 		query.setLong("idTpLotacao", t_ctlTipoLotacao.getIdTpLotacao());
 		ArrayList<CpConfiguracao> t_arlConfigServicos = (ArrayList<CpConfiguracao>) query.list();
-		ArrayList<CpServico> t_arlServicos = new ArrayList<CpServico>();
 		for (CpConfiguracao t_cfgConfiguracao : t_arlConfigServicos) {
 			t_arlServicos.add(t_cfgConfiguracao.getCpServico());
 		}

@@ -88,7 +88,7 @@ public abstract class SrIntervalo {
 	}
 	
 	public Long segundos(Long millis){
-		return millis != null ? millis / 1000 : null;
+		return millis != null ? (long) Math.round(millis / 1000f) : null;
 	}
 	
 	public float horas(Long segundos){

@@ -15,7 +15,7 @@
 	}
 </script>
 
-<c:set var="selectedOption" scope="request"><ww:property escape='false'	value="%{#request[#attr.var]}" /></c:set>
+<c:set var="selectedOption" scope="request" value="${requestScope[var]}"></c:set>
 
 <c:set var="createSelect" scope="request" >true</c:set>
 	<select id="${id}" name="${var}" onchange="javascript:muda_escolha(this);">

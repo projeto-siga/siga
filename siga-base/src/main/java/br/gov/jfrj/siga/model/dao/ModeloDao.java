@@ -34,6 +34,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Example;
+import org.hibernate.criterion.Order;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -155,7 +156,7 @@ public abstract class ModeloDao {
 	public Session getSessao() {
 		if (sessao == null)
 			throw new IllegalStateException(
-					"Variï¿½vel Session nï¿½o foi atribuï¿½da para este DAO");
+					"Variável Session não foi atribuída para este DAO");
 		return sessao;
 	}
 
@@ -165,7 +166,7 @@ public abstract class ModeloDao {
 	public StatelessSession getSessaoStateless() {
 		if (sessaoStateless == null)
 			throw new IllegalStateException(
-					"Variï¿½vel Session nï¿½o foi atribuï¿½da para este DAO");
+					"Variável Session não foi atribuída para este DAO");
 		return sessaoStateless;
 	}
 
@@ -192,23 +193,44 @@ public abstract class ModeloDao {
 	/**
 	 * Use this inside subclasses as a convenience method.
 	 */
+	
+	@SuppressWarnings("unchecked")
+	protected <T> List<T> findByCriteria(Class<T> clazz, Criterion... criterion) {
+		return findByCriteria(clazz, criterion, null);
+	}
+	
 	@SuppressWarnings("unchecked")
 	protected <T> List<T> findByCriteria(Class<T> clazz,
-			final Criterion... criterion) {
+			final Criterion[] criterion, Order[] order) {
 		final Criteria crit = getSessao().createCriteria(clazz);
-		for (final Criterion c : criterion) {
-			crit.add(c);
-		}
+		if (criterion != null)
+			for (final Criterion c : criterion) {
+				crit.add(c);
+			}
+		if (order != null)
+			for (final Order o : order) {
+				crit.addOrder(o);
+			}
 		return crit.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected <T> List<T> findAndCacheByCriteria(String cacheRegion, Class<T> clazz, Criterion... criterion) {
+		return findAndCacheByCriteria(cacheRegion, clazz, criterion, null);
 	}
 
 	@SuppressWarnings("unchecked")
 	protected <T> List<T> findAndCacheByCriteria(String cacheRegion, Class<T> clazz,
-			final Criterion... criterion) {
+			final Criterion[] criterion, Order[] order) {
 		final Criteria crit = getSessao().createCriteria(clazz);
-		for (final Criterion c : criterion) {
-			crit.add(c);
-		}
+		if (criterion != null)
+			for (final Criterion c : criterion) {
+				crit.add(c);
+			}
+		if (order != null)
+			for (final Order o : order) {
+				crit.addOrder(o);
+			}
 		if (cacheRegion != null) {
 			crit.setCacheable(true);
 			crit.setCacheRegion(cacheRegion);

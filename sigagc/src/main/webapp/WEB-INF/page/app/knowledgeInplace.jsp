@@ -4,11 +4,22 @@
 	<c:when test="${not empty conhecimentos}">
 		<c:forEach var="conhecimento" items="${conhecimentos}">
 			<c:if test="${cadastrante!=null}">
-				<a style="float: right;" title="Editar conhecimento"
-					href="${linkTo[AppController].editar}?sigla=${conhecimento[3]}&origem=${referer}"
-					${popup?'target="_blank"':''}> <img
-					src="/siga/css/famfamfam/icons/pencil.png">
-				</a>
+				<c:choose>
+					<c:when test="${pagina == 'exibir'}">
+						<a style="float: right;" title="Exibir conhecimento"
+							href="${linkTo[AppController].exibir[conhecimento[3]]}"
+							${popup?'target="_blank"':''}> <img
+							src="/siga/css/famfamfam/icons/zoom.png">
+						</a>
+					</c:when>
+					<c:otherwise>
+						<a style="float: right;" title="Editar conhecimento"
+							href="${linkTo[AppController].editar}?sigla=${conhecimento[3]}&origem=${referer}"
+							${popup?'target="_blank"':''}> <img
+							src="/siga/css/famfamfam/icons/pencil.png">
+						</a>
+					</c:otherwise>
+				</c:choose>
 			</c:if>
 
 			<p style="font-weight: bold">${conhecimento[1]}</p>

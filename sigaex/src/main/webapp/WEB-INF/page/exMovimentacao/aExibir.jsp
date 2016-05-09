@@ -7,9 +7,7 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-<siga:pagina titulo="Documento" popup="true"
-			onLoad="javascript: TestarAssinaturaDigital();"
-			incluirJs="/sigaex/javascript/assinatura.js" compatibilidade="IE=EmulateIE9">
+<siga:pagina titulo="Documento" popup="true" compatibilidade="IE=EmulateIE9">
 	<script type="text/javascript" language="Javascript1.1">
 		/*  converte para maiúscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {
@@ -24,7 +22,7 @@
 	<c:if test="${not mob.doc.eletronico}">
 		<script type="text/javascript">
 			$("html").addClass("fisico");
-			$("body").addClass("fisico");
+<%--			$("body").addClass("fisico"); --%>
 		</script>
 	</c:if>
 
@@ -296,22 +294,12 @@ function visualizarImpressao(via) {
 			</form>
 			<div style="padding-left: 10;">
 				<div id="dados-assinatura" style="visible: hidden">
-					<input type="hidden" name="pdfchk_${mov.idMov}" id="pdfchk_${mov.idMov}" value="${mov.referencia}" />
-					<input type="hidden" name="urlchk_${mov.idMov}" id="urlchk_${mov.idMov}" value="/app/arquivo/exibir?arquivo=${mov.nmPdf}" />
-
-					<c:set var="jspServer" value="${request.contextPath}/app/expediente/mov/assinar_mov_gravar" />
-					<c:set var="jspServerSenha" value="${request.contextPath}/app/expediente/mov/assinar_mov_login_senha_gravar" />
-					<c:set var="nextURL" value="${request.contextPath}/app/expediente/mov/fechar_popup?sigla=${mob.sigla}" />
-					<c:set var="urlPath" value="${request.contextPath}" />
-					
-					<input type="hidden" id="jspserver" name="jspserver" value="${jspServer}" />
-					<input type="hidden" id="jspServerSenha" name="jspServerSenha" value="${jspServerSenha}" />
-					<input type="hidden" id="nexturl" name="nextUrl" value="${nextURL}" />
-					<input type="hidden" id="urlpath" name="urlpath" value="${urlPath}" />
-					<c:set var="url">${request.requestURL}</c:set>
-					<c:set var="uri" value="${request.requestURI}" />
-					<c:set var="urlBase" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
-					<input type="hidden" id="urlbase" name="urlbase" value="${urlBase}" />
+					<input type="hidden" name="ad_url_base" value="${fn:substring(pageContext.request.requestURL.toString(), 0, fn:length(pageContext.request.requestURL.toString()) - fn:length(pageContext.request.requestURI.toString()))}" />
+					<input type="hidden" name="ad_url_next" value="/sigaex/app/expediente/mov/fechar_popup?sigla=${mob.sigla}" />
+					<input type="hidden" name="ad_descr_0" value="${mov.referencia}" /> 
+					<input type="hidden" name="ad_url_pdf_0" value="/sigaex/app/arquivo/exibir?arquivo=${mov.nmPdf}" />
+					<input type="hidden" name="ad_url_post_0" value="/sigaex/app/expediente/mov/assinar_mov_gravar" />
+					<input type="hidden" name="ad_url_post_password_0" value="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" />
 					
 					<c:if test="${not autenticando}">
 						<c:choose>
@@ -333,125 +321,14 @@ function visualizarImpressao(via) {
 					<b>Link para assinatura externa: </b>
 					${enderecoAutenticacao} (informar o código ${mov.siglaAssinaturaExterna})
 				</p>
-				<%-- <c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}"> --%>
-					<c:import url="/javascript/inc_assina_js.jsp" />
-					<div id="capicom-div">
-						<c:if test="${not autenticando}">
-							<c:choose>
-								<c:when
-									test="${mov.exTipoMovimentacao.idTpMov==5  || mov.exTipoMovimentacao.idTpMov==18}">
-									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">
-										Assinar Despacho
-									</a> 
-								</c:when>
-								<c:when test="${mov.exTipoMovimentacao.idTpMov==6 }">
-									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">
-										Assinar Transferir
-									</a> 
-								</c:when>
-								<c:when test="${mov.exTipoMovimentacao.idTpMov==13}">
-									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">
-										Assinar Desentranhamento
-									</a> 
-								</c:when>
-								<c:when test="${mov.exTipoMovimentacao.idTpMov==43}">
-									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">
-										Assinar Encerramento
-									</a> 
-								</c:when>
-								<c:when test="${mov.exTipoMovimentacao.idTpMov==2}">
-									<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">
-										Conferir Cópia
-									</a> 
-									<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">
-										Assinar Anexo
-									</a> 
-								</c:when>
-							</c:choose>
-						</c:if>
-						<c:if test="${autenticando}">
-							<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar Documento</a>
-						</c:if>
-					</div>
-					<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
-					<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://drive.google.com/file/d/0B_WTuFAmL6ZERGhIczRBS0ZMaVE/view">aqui</a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
-				<script type="text/javascript">
-					 if (window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgent.indexOf(" rv:11.0") > 0) {
-						 document.getElementById("capicom-div").style.display = "block";
-						 document.getElementById("ie-missing").style.display = "none";
-					} else {
-						 document.getElementById("capicom-div").style.display = "none";
-						 document.getElementById("ie-missing").style.display = "block";
-					}
-				 </script>
-				<%-- </c:if> --%>
-
-				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-	    			${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.localPort,urlPath,jspServer,nextURL,botao,lote)}
-			    </c:if>
+				<tags:assinatura_botoes
+					autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
+					assinarComSenha="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
+					autenticarComSenha="${f:podeConferirCopiaMovimentacaoComSenha(titular,lotaTitular,mov)}" 
+					idMovimentacao="${mov.idMov}" />
 			</div>
 		</div>
 	</div>
-	<c:if test="${not autenticando}">
-		<c:set var="podeAssinarMovimentacaoComSenha" value="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}" />
-		<c:set var="podeConferirCopiaMovimentacaoComSenha" value="${f:podeConferirCopiaMovimentacaoComSenha(titular,lotaTitular,mov)}" />
-		
-		<c:if test="${podeAssinarMovimentacaoComSenha || podeConferirCopiaMovimentacaoComSenha}">
-			<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar/Conferir com Senha</a>
-	        		
-			<div id="dialog-form" title="Assinar com Senha">
-	 			<form id="form-assinarSenha" method="post" action="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" >
-	 				<input type="hidden" id="id" name="id" value="${mov.idMov}" />
-	 				<input type="hidden" id="tipoAssinaturaMov" name="tipoAssinaturaMov" value="A" />
-	    			<fieldset>
-	    			  <label>Matrícula</label> <br/>
-	    			  <input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
-	    			  <label>Senha</label> <br/>
-	    			  <input type="password" id="senhaUsuarioSubscritor" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all" autocomplete="off"/>
-	    			</fieldset>
-	  			</form>
-			</div>
-	
-			 <script> 
-			    dialog = $("#dialog-form").dialog({
-			      autoOpen: false,
-			      height: 210,
-			      width: 350,
-//			      position: [0,0],
-			      modal: true,
-			      buttons: {
-			    	  <c:if test="${podeAssinarMovimentacaoComSenha}">
-			          	"Assinar": assinarGravar,
-			          </c:if>	
-			    	  <c:if test="${podeConferirCopiaMovimentacaoComSenha}">
-				          "Autenticar": conferirCopiaGravar,
-			          </c:if>	
-			          "Cancelar": function() {
-			            dialog.dialog( "close" );
-			          }
-			      },
-			      close: function() {
-			        
-			      }
-			    });
-			
-			    function assinarComSenha() {
-			       window.scrollTo(0, 0);
-			       dialog.dialog( "open" ).dialog('widget').position({
-			           my: "center top",
-			           at: "center top",
-			           collision: "fit"
-			         });
-			    }
-	
-			    function assinarGravar() {
-			    	AssinarDocumentosSenha('false', this);
-				}
-	
-			    function conferirCopiaGravar() {
-			    	AssinarDocumentosSenha('true', this);
-				}
-			  </script>
-		</c:if>	
-	</c:if>
+
+	<tags:assinatura_rodape/>
 </siga:pagina>

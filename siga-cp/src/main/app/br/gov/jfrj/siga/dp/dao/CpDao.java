@@ -39,6 +39,7 @@ import java.util.List;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.transaction.SystemException;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -51,8 +52,10 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.DefaultNamingStrategy;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
@@ -1326,18 +1329,33 @@ public class CpDao extends ModeloDao {
 	public Date consultarDataUltimaAtualizacao() throws AplicacaoException {
 	//	Query sql = (Query) getSessao().getNamedQuery("consultarDataUltimaAtualizacao");
 		StatelessSession statelessSession = HibernateUtil.getSessionFactory().openStatelessSession();
-		Query sql = (Query) statelessSession.getNamedQuery("consultarDataUltimaAtualizacao");
-		
-		sql.setCacheable(false);
-		List result = sql.list();
-		if (result.size() != 1)
-			throw new AplicacaoException(
-					"Nao foi possivel obter a data e a hora de atualizacao das configuracoes.");
+		Transaction transaction = statelessSession.beginTransaction();
+		try{
+			
+			Query sql = (Query) statelessSession.getNamedQuery("consultarDataUltimaAtualizacao");
+			
+			sql.setCacheable(false);
+			List result = sql.list();
+			
+			Date dtIni = (Date) ((Object[]) (result.get(0)))[0];
+			Date dtFim = (Date) ((Object[]) (result.get(0)))[1];
+			transaction.commit();
+			return DateUtils.max(dtIni, dtFim);
+		}catch(Exception e){
+			try {
+				if (transaction instanceof org.hibernate.engine.transaction.internal.jta.JtaTransaction){
+					((org.hibernate.engine.transaction.internal.jta.JtaTransaction)transaction).getUserTransaction().rollback();
+				}
+			} catch (IllegalStateException | SecurityException
+					| SystemException e1) {
+			}
+			
+			return null;
 
-		Date dtIni = (Date) ((Object[]) (result.get(0)))[0];
-		Date dtFim = (Date) ((Object[]) (result.get(0)))[1];
-		statelessSession.close();
-		return DateUtils.max(dtIni, dtFim);
+		}finally{
+			statelessSession.close();
+		}
+		
 	}
 
 	public Date dt() throws AplicacaoException {
@@ -1566,6 +1584,7 @@ public class CpDao extends ModeloDao {
 			entidade.setHisIdIni(entidade.getId());
 			getSessao().update(entidade);
 		}
+		getSessao().flush();
 		try {
 			invalidarCache(entidade);
 			Cp.getInstance().getConf().limparCacheSeNecessario();
@@ -1989,8 +2008,12 @@ public class CpDao extends ModeloDao {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpUnidadeMedida.class);
 	}
 
-	public List<CpMarcador> listarMarcadores() {
-		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpMarcador.class);
+	public List<CpMarcador> listarMarcadores(Long[] ids) {
+		return findAndCacheByCriteria(
+				CACHE_QUERY_HOURS, 
+				CpMarcador.class, 
+				new Criterion[]{Restrictions.in("idMarcador", ids)}, 
+				new Order[]{Order.asc("descrMarcador")});
 	}
 
 	public List<CpGrupoDeEmail> listarGruposDeEmail() {

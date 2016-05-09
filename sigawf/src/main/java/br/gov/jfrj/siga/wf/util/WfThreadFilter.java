@@ -18,9 +18,7 @@ import br.gov.jfrj.siga.wf.vraptor.WfInterceptor;
 
 public class WfThreadFilter extends ThreadFilter {
 
-	private static final Logger log = Logger.getLogger("br.gov.jfrj.siga.wf");
-	
-	public void doFilter(final ServletRequest request,
+	public void doFiltro(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 		WfExecutionEnvironment ee = new WfExecutionEnvironment();
@@ -32,17 +30,6 @@ public class WfThreadFilter extends ThreadFilter {
 		} catch (Exception e) {
 			ee.excecao();
 			
-			StringBuffer caminho = new StringBuffer();
-			String parametros = "";
-			if (request instanceof HttpServletRequest){
-				HttpServletRequest httpReq = (HttpServletRequest)request;
-				caminho = httpReq.getRequestURL();
-				parametros = httpReq.getQueryString()==null?"":"?" + httpReq.getQueryString();
-				caminho.append(parametros);
-			}
-			log.info("Ocorreu um erro durante a execução da operação: "+ e.getMessage() 
-					+ "\ncaminho: " + caminho.toString());
-			
 			throw new ServletException(e);
 		} finally {
 			ee.finalmente();
@@ -53,5 +40,10 @@ public class WfThreadFilter extends ThreadFilter {
 	}
 
 	public void init(FilterConfig arg0) throws ServletException {
+	}
+
+	@Override
+	protected String getLoggerName() {
+		return "br.gov.jfrj.siga.wf";
 	}
 }

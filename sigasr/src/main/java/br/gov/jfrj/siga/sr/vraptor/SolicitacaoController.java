@@ -13,6 +13,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hibernate.LazyInitializationException;
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -280,6 +282,9 @@ public class SolicitacaoController extends SrController {
 
     @Path("app/solicitacao/gravar")
     public void gravar(SrSolicitacao solicitacao) throws Exception {
+    	if (solicitacao == null)
+    		throw new AplicacaoException("Não foram informados dados suficientes para a gravação");
+    	
     	//Edson: por causa do detach no ObjetoObjectInstantiator:
     	if (solicitacao.getSolicitacaoInicial() != null){
     		solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId())); 
@@ -293,7 +298,7 @@ public class SolicitacaoController extends SrController {
     	
         if (!solicitacao.isRascunho() && !validarFormEditar(solicitacao)) {
         	incluirListasEdicaoSolicitacao(solicitacao);
-            validator.onErrorUsePageOf(SolicitacaoController.class).editar(solicitacao.getSiglaCompacta(), null, null, null, null);
+            validator.onErrorUsePageOf(SolicitacaoController.class).editar(solicitacao.getSiglaCompacta(), null, null, null, null, null);
         	return;
         }
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
@@ -426,15 +431,17 @@ public class SolicitacaoController extends SrController {
     }
 
 	@Path({ "app/solicitacao/editar", "app/solicitacao/editar/{sigla}"})
-    public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao) throws Exception {
+    public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao, Long solicitante) throws Exception {
 
 		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.
 		if (sigla != null){
 			solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
+			
 			//Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados
 			if (solicitacao.getAcordos() != null)
 				solicitacao.getAcordos().size();
 	        em().detach(solicitacao);
+	        
 		} else {
 			if (solicitacao == null){
 				solicitacao = new SrSolicitacao();
@@ -443,8 +450,12 @@ public class SolicitacaoController extends SrController {
 		        	solicitacao.setRascunho(true);
 		        	solicitacao.salvar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular());
 		        	solicitacao.setRascunho(false);
+		        	
 		        	//Edson: para evitar que o JPA tente salvar a solicitação por causa dos próximos set's chamados
+		        	if (solicitacao.getAcordos() != null)
+						solicitacao.getAcordos().size();
 			        em().detach(solicitacao);
+		        
 		        } catch(AplicacaoException ae){
 		        	solicitacao.setCadastrante(getCadastrante());
 		        	solicitacao.setLotaCadastrante(getLotaCadastrante());
@@ -458,11 +469,13 @@ public class SolicitacaoController extends SrController {
 		        	solicitacao.setAcao((SrAcao)SrAcao.AR.find("bySiglaAcaoAndHisDtFimIsNull", acao).first());
 		        if (descricao != null && !descricao.equals(""))
 		        	solicitacao.setDescricao(descricao);
-			}
+			} 
 						
 			//Edson: O deduzir(), o setItem(), o setAcao() e o asociarPrioridade() deveriam ser chamados dentro da própria solicitação pois é responsabilidade 
 			//da própria classe atualizar os seus atributos para manter consistência após a entrada de um dado. 
-			solicitacao.deduzirLocalRamalEMeioContato();
+			if (solicitacao.getLocal() == null || 
+					(solicitacao.getSolicitante() != null && !solicitacao.getSolicitante().getId().equals(solicitante)))
+				solicitacao.deduzirLocalRamalEMeioContato();
 			if (solicitacao.getItemConfiguracao() != null && !solicitacao.getItensDisponiveis().contains(solicitacao.getItemConfiguracao())){
 				solicitacao.setItemConfiguracao(null);
 			}
@@ -481,8 +494,12 @@ public class SolicitacaoController extends SrController {
 		if (solicitacao.getSolicitacaoInicial() != null)
 			solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
         
-        result.include("etapasCronometro", solicitacao.getEtapas(getLotaTitular(), false));
-        
+		try{
+			result.include("etapasCronometro", solicitacao.getEtapas(getLotaTitular(), false));
+		} catch(LazyInitializationException lie){
+        	//Edson: se é um postback, não recarregar os acordos
+        }
+		
         incluirListasEdicaoSolicitacao(solicitacao);
         
     }
@@ -591,12 +608,13 @@ public class SolicitacaoController extends SrController {
     }
     
     @Path("app/solicitacao/fecharGravar")
-    public void fecharGravar(String sigla, SrItemConfiguracao itemConfiguracao, SrAcao acao, String motivo, SrTipoMotivoFechamento tpMotivo) throws Exception {
+    public void fecharGravar(String sigla, SrItemConfiguracao itemConfiguracao, SrAcao acao, String motivo, 
+    		SrTipoMotivoFechamento tpMotivo, String conhecimento) throws Exception {
     	if (sigla == null || sigla.trim().equals(""))
     		throw new AplicacaoException("Número não informado");
     		
     	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
-        sol.fechar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), itemConfiguracao, acao, motivo, tpMotivo);
+        sol.fechar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), itemConfiguracao, acao, motivo, tpMotivo, conhecimento);
         result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
     }
     
@@ -622,6 +640,8 @@ public class SolicitacaoController extends SrController {
 
     @Path("app/solicitacao/baixar/{idArquivo}")
     public Download baixar(Long idArquivo) throws Exception {
+    	if (idArquivo == null)
+    		throw new AplicacaoException("Arquivo não informado");
         SrArquivo arq = SrArquivo.AR.findById(idArquivo);
         return new ByteArrayDownload(arq.getBlob(), arq.getMime(), arq.getNomeArquivo(), false);
     }
@@ -672,7 +692,7 @@ public class SolicitacaoController extends SrController {
         result.include("isPai", solicitacao.isPai());
         result.include("codigo", solicitacao.isFilha() ? solicitacao.getSolicitacaoPai().getCodigo() : solicitacao.getCodigo());
         result.include(TIPO_MOTIVO_ESCALONAMENTO_LIST, SrTipoMotivoEscalonamento.values());
-        
+        result.include("idSolicitacao",solicitacao.getId());
         
     }
 
@@ -771,6 +791,8 @@ public class SolicitacaoController extends SrController {
 
     @Path("app/solicitacao/anexarArquivo")
     public void anexarArquivo(SrMovimentacao movimentacao) throws Exception {
+    	if (movimentacao == null || movimentacao.getArquivo() == null)
+    		throw new AplicacaoException("Não foram informados dados suficientes para a anexação");
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(this).exibir(movimentacao.getSolicitacao().getSiglaCompacta(), todoOContexto(), ocultas());
     }
@@ -814,15 +836,7 @@ public class SolicitacaoController extends SrController {
 
     @Path("app/solicitacao/darAndamento")
     public void darAndamento(SrMovimentacao movimentacao) throws Exception {
-    	if (movimentacao == null || ((movimentacao.getDescrMovimentacao() == null || movimentacao.getDescrMovimentacao().trim().equals("")) 
-    			&& movimentacao.getAtendente() == null))
-    		throw new AplicacaoException("Não foram informados dados para o andamento");
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO));
-        if (movimentacao.getDescrMovimentacao() == null || movimentacao.getDescrMovimentacao().trim().equals("") && movimentacao.isTrocaDePessoaAtendente()){
-        	if (movimentacao.getAtendente() != null)
-        		movimentacao.setDescrMovimentacao("Atribuindo a " + movimentacao.getAtendente().getNomeAbreviado());
-        	else movimentacao.setDescrMovimentacao("Retirando atribuição");
-        }
         movimentacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
         result.redirectTo(this).exibir(movimentacao.getSolicitacao().getSiglaCompacta(), todoOContexto(), ocultas());
     }
@@ -847,15 +861,12 @@ public class SolicitacaoController extends SrController {
     @Path("public/app/solicitacao/selecionar")
     public void selecionarPublico(String sigla, String matricula) throws Exception {
     	try {
-    		CpOrgaoUsuario ouDefault = null;
+    		SrSolicitacao sol = new SrSolicitacao();
     		if (matricula != null) {
     			DpPessoa pes = dao().getPessoaFromSigla(matricula);
     			if (pes != null)
-    				ouDefault = pes.getOrgaoUsuario();
-    			
+    				sol.setLotaTitular(pes.getLotacao());
     		}
-    		SrSolicitacao sol = new SrSolicitacao();
-    		sol.setOrgaoUsuario(ouDefault);
     		sol = (SrSolicitacao) sol.selecionar(sigla);
         
 	        if (sol != null) {

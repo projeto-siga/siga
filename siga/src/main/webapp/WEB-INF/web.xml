@@ -40,6 +40,15 @@
 	</welcome-file-list>
 
 	<filter>
+		<filter-name>RequestLoggerFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.base.log.RequestLoggerFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>RequestLoggerFilter</filter-name>
+		<url-pattern>*</url-pattern>
+	</filter-mapping>
+
+	<filter>
 		<filter-name>HibernateFilter</filter-name>
 		<filter-class>br.gov.jfrj.siga.util.HibernateThreadFilter</filter-class>
 	</filter>
@@ -56,6 +65,7 @@
 	<filter-mapping>
 		<filter-name>HibernateFilter</filter-name>
 		<url-pattern>*.action</url-pattern>
+		<url-pattern>/servicos/*</url-pattern>
 		<url-pattern>/app/*</url-pattern>
 		<url-pattern>/public/app/*</url-pattern>
 		<url-pattern>/permalink/*</url-pattern>

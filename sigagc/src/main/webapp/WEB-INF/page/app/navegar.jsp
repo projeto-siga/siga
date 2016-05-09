@@ -22,27 +22,27 @@
 	$(document).ready(function(){
 		var placeHolder = "Digite as palavras da busca e tecle enter";
 				
-		$("[id^='imgMenos-']").hide();
+		$("[id^='imgMenos']").hide();
 
-		$("[id^='imgMenos-'],[id^='imgMais-']").css({"margin-left" :"10px"});
+		$("[id^='imgMenos'],[id^='imgMais']").css({"margin-left" :"10px"});
 			
-		$("[id^='imgMenos-'],[id^='imgMais-']").mouseenter(function(){
+		$("[id^='imgMenos'],[id^='imgMais']").mouseenter(function(){
 			$(this).css({"cursor": "pointer", "opacity":"0.8","filter":"alpha(opacity=70)"});
 		}).mouseleave(function(){
 			$(this).css({"cursor": "default","opacity":"1","filter":"alpha(opacity=100)"});
 		});
-		$("[id^='imgMenos-']").click(function(){	
+		$("[id^='imgMenos']").click(function(){	
 			var idImg = $(this).attr("id");
-			var id = idImg.split("-")[1];
+			var id = idImg.split("imgMenos")[1];
 			$(this).hide("fast");
-			$("#imgMais-" + id).show("fast");
+			$("#imgMais" + id).show("fast");
 			$(".li" + id).hide("fast");
 		});		
-		$("[id^='imgMais-']").click(function(){	
+		$("[id^='imgMais']").click(function(){	
 			var idImg = $(this).attr("id");
-			var id = idImg.split("-")[1];
+			var id = idImg.split("imgMais")[1];
 			$(this).hide("fast");
-			$("#imgMenos-" + id).show("fast");
+			$("#imgMenos" + id).show("fast");
 			$(".li" + id).show("fast");
 		});	
 

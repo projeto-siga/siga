@@ -161,6 +161,10 @@ td.solicitacao-prioridade {
 	cursor:move;
 }
 
+td.movimentacao-descricao p {
+	margin-bottom: 3px;
+}
+
 #sortable table { height: 1.5em; line-height: 1.2em; }
 .ui-state-highlight { height: 1.5em; line-height: 1.2em; }
 		

@@ -93,7 +93,7 @@ public class DesignacaoController extends SrController {
 		if (designacao.getDescrConfiguracao() == null
 				|| designacao.getDescrConfiguracao().isEmpty())
 			srValidator.addError("designacao.descrConfiguracao",
-					"Descriï¿½ï¿½o nï¿½o informada");
+					"Descrição não informada");
 
 		if (srValidator.hasErrors())
 			enviarErroValidacao();

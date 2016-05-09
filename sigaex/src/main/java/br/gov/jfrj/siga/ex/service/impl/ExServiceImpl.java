@@ -238,11 +238,17 @@ public class ExServiceImpl implements ExService {
 	public Boolean podeTransferir(String codigoDocumento,
 			String siglaCadastrante, Boolean forcarTransferencia) throws Exception {
 		try {
+			
 			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
 					siglaCadastrante);
 			ExMobil mob = buscarMobil(codigoDocumento);
-			if (mob.isGeral() && mob.doc().isProcesso())
-				mob = mob.doc().getUltimoVolume();
+			if (mob.isGeral()){
+				if (mob.doc().isProcesso()){
+					mob = mob.doc().getUltimoVolume();
+				}else if (contemApenasUmaVia(mob)){
+					mob = mob.doc().getPrimeiraVia();
+				}
+			}
 			if (forcarTransferencia)
 				return Ex
 						.getInstance()
@@ -259,6 +265,16 @@ public class ExServiceImpl implements ExService {
 				e.printStackTrace(System.out);
 			throw e;
 		}
+	}
+
+	/**
+	 * Verifica se o móbil contém 1 e apenas 1 via. Se houver mais de uma via
+	 * não há como determinar qual via deve ser transferida.
+	 * @param mob
+	 * @return
+	 */
+	private boolean contemApenasUmaVia(ExMobil mob) {
+		return mob.doc().getPrimeiraVia() != null && mob.doc().getSetVias().size() == 1;
 	}
 
 	public Boolean isAtendente(String codigoDocumento, String siglaTitular)

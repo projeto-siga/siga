@@ -1,5 +1,5 @@
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
-<%@ taglib uri="http://localhost/sigatags" prefix="siga"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <mod:modelo>
@@ -7,7 +7,7 @@
 
 		<mod:grupo titulo="">
 			<mod:selecao titulo="Declaração de ajuste anual de IRPF referente à" var="periodo"
-				opcoes="2012/2013;2013/2014;2014/2015" />
+				opcoes="2012/2013;2013/2014;2014/2015;2015/2016;2016/2017;2017/2018;2018/2019;2019/2020" />
 		</mod:grupo>
 		
 		<mod:grupo titulo="Caso não tenha declarado bens à Receita Federal, favor marcar uma das opções abaixo:">	

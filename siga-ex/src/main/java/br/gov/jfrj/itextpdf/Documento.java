@@ -43,10 +43,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
-import br.gov.jfrj.siga.cd.service.CdService;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -744,151 +742,146 @@ public class Documento {
 	public static byte[] getDocumento(ExMobil mob, ExMovimentacao mov,
 			boolean completo, boolean estampar, String hash, byte[] certificado)
 			throws Exception {
-		try (ByteArrayOutputStream bo2 = new ByteArrayOutputStream()) {
-			PdfReader reader;
-			int n;
-			int pageOffset = 0;
-			ArrayList master = new ArrayList();
-			int f = 0;
-			Document document = null;
-			PdfCopy writer = null;
-			int nivelInicial = 0;
-	
-			// if (request.getRequestURI().indexOf("/completo/") == -1) {
-			// return getPdf(docvia, mov != null ? mov : docvia.getExDocumento(),
-			// mov != null ? mov.getNumVia() : docvia.getNumVia(), null,
-			// null, request);
-			// }
-	
-			List<ExArquivoNumerado> ans = mob.filtrarArquivosNumerados(mov,
-					completo);
-	
-			if (!completo && !estampar && ans.size() == 1) {
-				if (certificado != null) {
-					CdService cdService = Service.getCdService();
-					return cdService.produzPacoteAssinavel(certificado, null, ans
-							.get(0).getArquivo().getPdf(), true, ExDao
-							.getInstance().getServerDateTime());
-				} else if (hash != null) {
-					// Calcula o hash do documento
-					String alg = hash;
-					MessageDigest md = MessageDigest.getInstance(alg);
-					md.update(ans.get(0).getArquivo().getPdf());
-					return md.digest();
-				} else {
-					return ans.get(0).getArquivo().getPdf();
-				}
+		final ByteArrayOutputStream bo2 = new ByteArrayOutputStream();
+		PdfReader reader;
+		int n;
+		int pageOffset = 0;
+		ArrayList master = new ArrayList();
+		int f = 0;
+		Document document = null;
+		PdfCopy writer = null;
+		int nivelInicial = 0;
+
+		// if (request.getRequestURI().indexOf("/completo/") == -1) {
+		// return getPdf(docvia, mov != null ? mov : docvia.getExDocumento(),
+		// mov != null ? mov.getNumVia() : docvia.getNumVia(), null,
+		// null, request);
+		// }
+
+		List<ExArquivoNumerado> ans = mob.filtrarArquivosNumerados(mov,
+				completo);
+
+		if (!completo && !estampar && ans.size() == 1) {
+			if (hash != null) {
+				// Calcula o hash do documento
+				String alg = hash;
+				MessageDigest md = MessageDigest.getInstance(alg);
+				md.update(ans.get(0).getArquivo().getPdf());
+				return md.digest();
+			} else {
+				return ans.get(0).getArquivo().getPdf();
 			}
-	
-			try {
-				for (ExArquivoNumerado an : ans) {
-	
-					// byte[] ab = getPdf(docvia, an.getArquivo(), an.getNumVia(),
-					// an
-					// .getPaginaInicial(), an.getPaginaFinal(), request);
-	
-					String sigla = mob.getSigla();
-					if (an.getArquivo() instanceof ExMovimentacao) {
-						ExMovimentacao m = (ExMovimentacao) an.getArquivo();
-						if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
-							sigla = m.getExMobil().getSigla();
-					} else {
-						sigla = an.getMobil().getSigla();
-					}
-	
-					byte[] ab = !estampar ? an.getArquivo().getPdf() : stamp(an
-							.getArquivo().getPdf(), sigla, an.getArquivo()
-							.isRascunho(), an.getArquivo().isCancelado(), an
-							.getArquivo().isSemEfeito(), an.getArquivo()
-							.isInternoProduzido(), an.getArquivo().getQRCode(), an
-							.getArquivo().getMensagem(), an.getPaginaInicial(),
-							an.getPaginaFinal(), an.getOmitirNumeracao(),
-							SigaExProperties.getTextoSuperiorCarimbo(), mob.getExDocumento()
-									.getOrgaoUsuario().getDescricao());
-	
-					// we create a reader for a certain document
-	
-					reader = new PdfReader(ab);
-					reader.consolidateNamedDestinations();
-					// we retrieve the total number of pages
-					n = reader.getNumberOfPages();
-					// List bookmarks = SimpleBookmark.getBookmark(reader);
-					// master.add(new Bookmark)
-					// if (bookmarks != null) {
-					// if (pageOffset != 0)
-					// SimpleBookmark.shiftPageNumbers(bookmarks, pageOffset,
-					// null);
-					// master.addAll(bookmarks);
-					// }
-	
-					if (f == 0) {
-						// step 1: creation of a document-object
-						document = new Document(reader.getPageSizeWithRotation(1));
-						// step 2: we create a writer that listens to the
-						// document
-						writer = new PdfCopy(document, bo2);
-						writer.setFullCompression();
-	
-						// writer.setViewerPreferences(PdfWriter.PageModeUseOutlines);
-	
-						// step 3: we open the document
-						document.open();
-	
-						nivelInicial = an.getNivel();
-					}
-	
-					// PdfOutline root = writer.getDirectContent().getRootOutline();
-					// PdfContentByte cb = writer.getDirectContent();
-					// PdfDestination destination = new
-					// PdfDestination(PdfDestination.FITH, position);
-					// step 4: we add content
-					PdfImportedPage page;
-					for (int j = 0; j < n;) {
-						++j;
-						page = writer.getImportedPage(reader, j);
-						writer.addPage(page);
-						if (j == 1) {
-							// PdfContentByte cb = writer.getDirectContent();
-							// PdfOutline root = cb.getRootOutline();
-							// PdfOutline oline1 = new PdfOutline(root,
-							// PdfAction.gotoLocalPage("1", false),"Chapter 1");
-	
-							HashMap map = new HashMap();
-							map.put("Title", an.getNome());
-							map.put("Action", "GoTo");
-							map.put("Page", j + pageOffset + "");
-							map.put("Kids", new ArrayList());
-	
-							ArrayList mapPai = master;
-							for (int i = 0; i < an.getNivel() - nivelInicial; i++) {
-								mapPai = ((ArrayList) ((HashMap) mapPai.get(mapPai
-										.size() - 1)).get("Kids"));
-							}
-							mapPai.add(map);
-						}
-	
-					}
-					PRAcroForm form = reader.getAcroForm();
-					if (form != null)
-						writer.copyAcroForm(reader);
-	
-					pageOffset += n;
-					f++;
-				}
-				if (!master.isEmpty())
-					writer.setOutlines(master);
-	
-				// PdfDictionary info = writer.getInfo();
-				// info.put(PdfName.MODDATE, null);
-				// info.put(PdfName.CREATIONDATE, null);
-				// info.put(PdfName.ID, null);
-	
-				document.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return bo2.toByteArray();
 		}
+
+		try {
+			for (ExArquivoNumerado an : ans) {
+
+				// byte[] ab = getPdf(docvia, an.getArquivo(), an.getNumVia(),
+				// an
+				// .getPaginaInicial(), an.getPaginaFinal(), request);
+
+				String sigla = mob.getSigla();
+				if (an.getArquivo() instanceof ExMovimentacao) {
+					ExMovimentacao m = (ExMovimentacao) an.getArquivo();
+					if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
+						sigla = m.getExMobil().getSigla();
+				} else {
+					sigla = an.getMobil().getSigla();
+				}
+
+				byte[] ab = !estampar ? an.getArquivo().getPdf() : stamp(an
+						.getArquivo().getPdf(), sigla, an.getArquivo()
+						.isRascunho(), an.getArquivo().isCancelado(), an
+						.getArquivo().isSemEfeito(), an.getArquivo()
+						.isInternoProduzido(), an.getArquivo().getQRCode(), an
+						.getArquivo().getMensagem(), an.getPaginaInicial(),
+						an.getPaginaFinal(), an.getOmitirNumeracao(),
+						SigaExProperties.getTextoSuperiorCarimbo(), mob
+								.getExDocumento().getOrgaoUsuario()
+								.getDescricao());
+
+				// we create a reader for a certain document
+
+				reader = new PdfReader(ab);
+				reader.consolidateNamedDestinations();
+				// we retrieve the total number of pages
+				n = reader.getNumberOfPages();
+				// List bookmarks = SimpleBookmark.getBookmark(reader);
+				// master.add(new Bookmark)
+				// if (bookmarks != null) {
+				// if (pageOffset != 0)
+				// SimpleBookmark.shiftPageNumbers(bookmarks, pageOffset,
+				// null);
+				// master.addAll(bookmarks);
+				// }
+
+				if (f == 0) {
+					// step 1: creation of a document-object
+					document = new Document(reader.getPageSizeWithRotation(1));
+					// step 2: we create a writer that listens to the
+					// document
+					writer = new PdfCopy(document, bo2);
+					writer.setFullCompression();
+
+					// writer.setViewerPreferences(PdfWriter.PageModeUseOutlines);
+
+					// step 3: we open the document
+					document.open();
+
+					nivelInicial = an.getNivel();
+				}
+
+				// PdfOutline root = writer.getDirectContent().getRootOutline();
+				// PdfContentByte cb = writer.getDirectContent();
+				// PdfDestination destination = new
+				// PdfDestination(PdfDestination.FITH, position);
+				// step 4: we add content
+				PdfImportedPage page;
+				for (int j = 0; j < n;) {
+					++j;
+					page = writer.getImportedPage(reader, j);
+					writer.addPage(page);
+					if (j == 1) {
+						// PdfContentByte cb = writer.getDirectContent();
+						// PdfOutline root = cb.getRootOutline();
+						// PdfOutline oline1 = new PdfOutline(root,
+						// PdfAction.gotoLocalPage("1", false),"Chapter 1");
+
+						HashMap map = new HashMap();
+						map.put("Title", an.getNome());
+						map.put("Action", "GoTo");
+						map.put("Page", j + pageOffset + "");
+						map.put("Kids", new ArrayList());
+
+						ArrayList mapPai = master;
+						for (int i = 0; i < an.getNivel() - nivelInicial; i++) {
+							mapPai = ((ArrayList) ((HashMap) mapPai.get(mapPai
+									.size() - 1)).get("Kids"));
+						}
+						mapPai.add(map);
+					}
+
+				}
+				PRAcroForm form = reader.getAcroForm();
+				if (form != null)
+					writer.copyAcroForm(reader);
+
+				pageOffset += n;
+				f++;
+			}
+			if (!master.isEmpty())
+				writer.setOutlines(master);
+
+			// PdfDictionary info = writer.getInfo();
+			// info.put(PdfName.MODDATE, null);
+			// info.put(PdfName.CREATIONDATE, null);
+			// info.put(PdfName.ID, null);
+
+			document.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return bo2.toByteArray();
 	}
 
 	public static byte[] generatePdf(String sHtml) throws Exception {

@@ -193,8 +193,8 @@ public class GcArvore extends TreeMap<GcTag, GcArvoreNo> {
 				final int size = no.infs.size();
 				//sb.append("<td width=\"2%\">");
 				sb.append("<li class=liclassificacao-" + no.tag.getTitulo() +"><b>");
-				String imgPlus = "<img style=\"width: 13px;\" id=\"imgMais-" + no.tag.getTitulo() + "\" src=\"/siga/css/famfamfam/icons/plus_toggle.png\" alt=\"mais\" title=\"Ver Detalhes\" />";
-				String imgMinus = "<img style=\"width: 13px;\" id=\"imgMenos-" + no.tag.getTitulo() + "\" src=\"/siga/css/famfamfam/icons/minus_toggle.png\" alt=\"menos\" title=\"Ocultar Detalhes\"/>";
+				String imgPlus = "<img style=\"width: 13px;\" id=\"imgMais" + no.tag.getTitulo() + "\" src=\"/siga/css/famfamfam/icons/plus_toggle.png\" alt=\"mais\" title=\"Ver Detalhes\" />";
+				String imgMinus = "<img style=\"width: 13px;\" id=\"imgMenos" + no.tag.getTitulo() + "\" src=\"/siga/css/famfamfam/icons/minus_toggle.png\" alt=\"menos\" title=\"Ocultar Detalhes\"/>";
 
 				sb.append("<a class= classificacao-" + no.tag.getTitulo() +">" + no.tag.getTitulo());
 				sb.append("</a>");

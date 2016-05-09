@@ -5,27 +5,12 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
-<c:set var="gravidade_normal">
-    <%=SrGravidade.NORMAL.name()%>
-</c:set>
-
-<c:set var="sem_gravidade">
-    <%=SrGravidade.SEM_GRAVIDADE.name()%>
-</c:set>
-
-<c:set var="prioridade_baixo">
-    <%=SrPrioridade.BAIXO.name()%>
-</c:set>
-
-<c:set var="prioridade_desc">
-    <%=SrPrioridade.BAIXO.getDescPrioridade()%>
-</c:set>
-
 <siga:pagina titulo="Cadastro de Solicitação">
 	<jsp:include page="../main.jsp"></jsp:include>
 	
 	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
 	<script src="/sigasr/javascripts/cronometro.js"></script>
+	<script src="/siga/javascript/localStorage.js"></script>
 	
 	<style>
 	.barra-subtitulo {
@@ -51,11 +36,16 @@
 	
 	<script>
 		var item_default = "";
+		var IDENTIFICADOR = "sigasr/app/solicitacao/editar"; 
+		var SEPARADOR = "-"
+		
 		jQuery(document).ready(function($) {
 			$('#gravar').click(function() {
 				if ($('#siglaCadastrante').val() != $('#formulario_solicitacaosolicitante_sigla')[0].value) {
 					var stringDt= $('#calendarioComunicacao').val() + ' ' + $('#horarioComunicacao').val();
 					$('#stringDtMeioContato').val(stringDt);
+					$("#isDirty").val("true");
+					salvarNoLocalStorage();
 				} 
 			}); 
 	
@@ -68,6 +58,10 @@
 			});
 			//inicializa valores default para serem usados na function valorInputMudou()
 			item_default = $("#formulario_solicitacaoitemConfiguracao_id").val();
+
+			$('#prioridade').text($('#gravidade option:selected').attr('prioridade'));
+
+			recuperarDadosDoLocalStorage();
 		});
 
 		function postbackURL(){
@@ -107,7 +101,25 @@
 				$('#dataOrigem')[0].style.display='inline-block';
 			else $('#dataOrigem')[0].style.display='none';
 		}
-		
+
+		function salvarNoLocalStorage() {
+			if (localStorage) {
+				var ids = ["solicitacaosolicitanteSpan","solicitacaointerlocutorSpan","formulario_solicitacaoitemConfiguracao_id",
+							"solicitacaoitemConfiguracaoSpan", "formulario_solicitacaoitemConfiguracao_sigla"];
+				salvarLS(ids);
+			}
+		}
+
+		function recuperarDadosDoLocalStorage() {
+			if ($("#isDirty").val() == "true") {
+				var interlocutor = localStorage.getItem("solicitacaointerlocutorSpan"+SEPARADOR+IDENTIFICADOR);
+				
+				if (interlocutor != "undefined" || interlocutor != "null")
+					toggleInterlocutorMeioComunicacaoEDataOrigem();
+				
+				recuperarLS();
+			}
+		}
 	</script>
 	
 	<div class="gt-bd gt-cols clearfix">
@@ -135,6 +147,8 @@
 					<input type="hidden" name="solicitacao.dtIniEdicaoDDMMYYYYHHMMSS" value="${solicitacao.dtIniEdicaoDDMMYYYYHHMMSS}" /> 
 					<input type="hidden" name="solicitacao.numSolicitacao" value="${solicitacao.numSolicitacao}" />
 					<input type="hidden" name="solicitacao.numSequencia" value="${solicitacao.numSequencia}" />
+					<input type="hidden" id="isDirty" value="false" />
+					
 					
 					<div class="gt-form-table">
 						<div class="barra-subtitulo barra-subtitulo-top header" align="center" valign="top">
@@ -180,23 +194,15 @@
 					
 					<div id="divLocalRamalEMeioContato" depende="solicitacao.solicitante">
 						<script>
-
 							//Edson: talvez fosse possível fazer de um modo melhor, mas assim é mais prático
 							$("#solicitacaosolicitanteSpan").html("${solicitacao.solicitante.descricaoCompleta}");
-
-							$("#calendarioComunicacao").datepicker({
-					        	showOn: "button",
-					        	buttonImage: "/siga/css/famfamfam/icons/calendar.png",
-					        	buttonImageOnly: true,
-						        dateFormat: 'dd/mm/yy'
-					    	});
-							$("#calendarioComunicacao").mask("99/99/9999");
 							$("#horarioComunicacao").mask("99:99");
 						</script>
 						<c:if test="${locaisDisponiveis.size() > 1}">
 							<div class="gt-form-row gt-width-99">
 								<label>Local</label>
-								<select name="solicitacao.local.id" id="local" onchange="sbmt('solicitacao.local')">
+								<input type="hidden" name="solicitante" value="${solicitacao.solicitante.id}" id="solicitante"></input>
+ 								<select name="solicitacao.local.id" id="local" onchange="sbmt('solicitacao.local')">
         						<c:forEach items="${locaisDisponiveis.keySet()}" var="orgao">
                 						<optgroup label="${orgao.acronimoOrgaoUsu}">
                 						<c:forEach items="${locaisDisponiveis.get(orgao)}" var="local">
@@ -230,7 +236,7 @@
 								<div >
 									<label>Contato inicial</label> 
 									<label>Data</label> 
-									<input type="text" name="calendario" id="calendarioComunicacao" value="${solicitacao.dtOrigemDDMMYYYY}" /> 
+									<siga:dataCalendar nome="calendario" id="calendarioComunicacao" value="${solicitacao.dtOrigemDDMMYYYY}"/>
 									<siga:error name="calendario"/>
 								</div>
 								<div style="padding-top: 5px;">
@@ -322,7 +328,7 @@
 									</div>
 									<!-- CONHECIMENTOS RELACIONADOS -->
 									<script type="text/javascript">
-									var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=empty&titulo=${f:urlEncode(solicitacao.itemConfiguracao.tituloItemConfiguracao)}${solicitacao.itemConfiguracao.gcTagAbertura}";
+									var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=empty&titulo=${f:urlEncode(solicitacao.itemConfiguracao.tituloItemConfiguracao)}${solicitacao.itemConfiguracao.gcTagAbertura}&pagina=exibir";
 									Siga.ajax(url, null, "GET", function(response){
 										$("#gc-ancora-item").html(response);
 									});
@@ -370,7 +376,7 @@
 											<div id="gc-ancora-item-acao"></div>
 										</div>
 										<script type="text/javascript">
-										var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=empty&titulo=${f:urlEncode(solicitacao.gcTituloAbertura)}${solicitacao.gcTagAbertura}";
+										var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=empty&titulo=${f:urlEncode(solicitacao.gcTituloAbertura)}${solicitacao.gcTagAbertura}&pagina=exibir";
 											Siga.ajax(url, null, "GET", function(response){
 												document.getElementById('gc-ancora-item-acao').innerHTML = response;
 											});
@@ -469,24 +475,25 @@
 						<input type="file" name="solicitacao.arquivo" />
 					</div>
 		
-					<div class="gt-form-table">
-						<div class="barra-subtitulo header" align="center" valign="top">
-							Prioridade</div>
-					</div>
-					<div class="gt-form-row gt-width-33">
-							<label>Gravidade</label> 
-							<select name="solicitacao.gravidade" id="gravidade" style="width:235px" onchange="$('#prioridade').html($('#gravidade option:selected').attr('prioridade'))">
-								<c:forEach items="${gravidadeList.keySet()}" var="gravidade">
-									<c:set var="prioridade" value="${gravidadeList.get(gravidade)}" />
-										<option value="${gravidade}" prioridade="${prioridade.descPrioridade}" ${solicitacao.gravidade == gravidade ? 'selected' : ''}>${gravidade.descrGravidade}</option>
-								</c:forEach>
-							</select>
-					</div>
-					<div class="gt-form-row gt-width-66" >
-						<label style="float: left">Prioridade: &nbsp;</label>
-						<span id="prioridade">${solicitacao.prioridade.descPrioridade}</span>
-					</div>
-		
+					<c:if test="${exibirCampoPrioridade}">
+						<div class="gt-form-table">
+							<div class="barra-subtitulo header" align="center" valign="top">
+								Prioridade</div>
+						</div>
+						<div class="gt-form-row gt-width-33">
+								<label>Gravidade</label> 
+								<select name="solicitacao.gravidade" id="gravidade" style="width:235px" onchange="$('#prioridade').html($('#gravidade option:selected').attr('prioridade'))">
+									<c:forEach items="${gravidadeList.keySet()}" var="gravidade">
+										<c:set var="prioridade" value="${gravidadeList.get(gravidade)}" />
+											<option value="${gravidade}" prioridade="${prioridade.descPrioridade}" ${solicitacao.gravidade == gravidade ? 'selected' : ''}>${gravidade.descrGravidade}</option>
+									</c:forEach>
+								</select>
+						</div>
+						<div class="gt-form-row gt-width-66" >
+							<label style="float: left">Prioridade: &nbsp;</label>
+							<span id="prioridade">${solicitacao.prioridade.descPrioridade}</span>
+						</div>
+					</c:if>
 		
 					<c:if test="${solicitacao.podeAbrirJaFechando(titular, lotaTitular)}">
 						<div class="gt-form-row gt-width-66">

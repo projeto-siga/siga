@@ -1,0 +1,1 @@
+alter table gc_arquivo modify "CLASSIFICACAO" VARCHAR2(4000 CHAR);

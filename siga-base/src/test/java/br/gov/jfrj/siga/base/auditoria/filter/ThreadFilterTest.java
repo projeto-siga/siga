@@ -2,6 +2,13 @@ package br.gov.jfrj.siga.base.auditoria.filter;
 
 import static junit.framework.Assert.*;
 
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
 import org.hibernate.cfg.Configuration;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +21,23 @@ public class ThreadFilterTest {
 
 	@Before
 	public void setUp() {
-		this.threadFilter = new ThreadFilter() {
+		this.threadFilter = getThreadFilter();
+	}
+
+	private ThreadFilter getThreadFilter() {
+		return new ThreadFilter() {
+
+			@Override
+			protected void doFiltro(ServletRequest request,
+					ServletResponse response, FilterChain chain)
+					throws IOException, ServletException {
+				
+			}
+
+			@Override
+			protected String getLoggerName() {
+				return "test.thread.filter";
+			}
 		};
 	}
 
@@ -89,7 +112,7 @@ public class ThreadFilterTest {
 	public void naoDeveAdicionarTransactionFactoryClassSeAClasseNaoForDeclaradaNoSigaProperties() throws Exception {
 		
 		Configuration cfg = new Configuration();
-		ThreadFilter tf = new ThreadFilter(){};
+		ThreadFilter tf = getThreadFilter();
 		tf.registerTransactionClasses( cfg );
 		
 		assertNull( cfg.getProperty( "hibernate.transaction.factory_class" ) );
@@ -101,7 +124,7 @@ public class ThreadFilterTest {
 		System.setProperty( "hibernate.transaction.factory_class", "org.hibernate.transaction.JTATransactionFactory" );
 		
 		Configuration cfg = new Configuration();
-		ThreadFilter tf = new ThreadFilter(){};
+		ThreadFilter tf = getThreadFilter();
 		tf.registerTransactionClasses( cfg );
 		
 		// assertNotNull( cfg.getProperty( "hibernate.transaction.factory_class" ) );
@@ -111,7 +134,7 @@ public class ThreadFilterTest {
 	public void naoDeveAdicionarTransactionManagerLookupClassSeAClasseNaoForDeclaradaNoSigaProperties() throws Exception {
 		
 		Configuration cfg = new Configuration();
-		ThreadFilter tf = new ThreadFilter(){};
+		ThreadFilter tf = getThreadFilter();
 		tf.registerTransactionClasses( cfg );
 		
 		assertNull( cfg.getProperty( "hibernate.transaction.manager_lookup_class" ) );
@@ -123,7 +146,7 @@ public class ThreadFilterTest {
 		System.setProperty( "hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup" );
 		
 		Configuration cfg = new Configuration();
-		ThreadFilter tf = new ThreadFilter(){};
+		ThreadFilter tf = getThreadFilter();
 		tf.registerTransactionClasses( cfg );
 		
 		assertNotNull( cfg.getProperty( "hibernate.transaction.manager_lookup_class" ) );

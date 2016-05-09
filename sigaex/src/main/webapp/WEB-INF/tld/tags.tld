@@ -11,12 +11,20 @@
 		<path>/WEB-INF/tags/anexo.tag</path>
 	</tag-file>
 	<tag-file>
+		<name>assinatura</name>
+		<path>/WEB-INF/tags/assinatura.tag</path>
+	</tag-file>
+	<tag-file>
 		<name>assinatura_mov</name>
 		<path>/WEB-INF/tags/assinatura_mov.tag</path>
 	</tag-file>
 	<tag-file>
-		<name>assinatura</name>
-		<path>/WEB-INF/tags/assinatura.tag</path>
+		<name>assinatura_botoes</name>
+		<path>/WEB-INF/tags/assinatura_botoes.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>assinatura_rodape</name>
+		<path>/WEB-INF/tags/assinatura_rodape.tag</path>
 	</tag-file>
 	<tag-file>
 		<name>fixdocumenthtml</name>

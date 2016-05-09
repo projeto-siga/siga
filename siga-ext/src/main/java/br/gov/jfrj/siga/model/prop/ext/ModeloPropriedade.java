@@ -192,6 +192,7 @@ public abstract class ModeloPropriedade {
 	 */
 	public Map<String, String> obterPropriedadeListaNaoNumerada(String nome)
 			throws Exception {
+		carregarPropriedades();
 		Map<String, String> map = new TreeMap<String, String>();
 		String nomeMaisSeparador = nome + ".";
 

@@ -210,7 +210,7 @@ public class ExAcesso {
 
 		// Aberto
 		if (!doc.isAssinado()) {
-			switch (doc.getExNivelAcessoDoDocumento().getGrauNivelAcesso()) {
+			switch (doc.getExNivelAcesso().getGrauNivelAcesso()) {
 			case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOAL:
 			case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOA_SUB:
 				add(doc.getCadastrante());
@@ -269,7 +269,7 @@ public class ExAcesso {
 				// TODO: buscar a data que foi feita a última movimentação de
 				// mudança de nivel de acesso
 
-				switch (d.getExNivelAcesso().getGrauNivelAcesso().intValue()) {
+				switch (d.getExNivelAcessoAtual().getGrauNivelAcesso().intValue()) {
 				case (int) ExNivelAcesso.NIVEL_ACESSO_PUBLICO:
 					add(ACESSO_PUBLICO);
 					break;

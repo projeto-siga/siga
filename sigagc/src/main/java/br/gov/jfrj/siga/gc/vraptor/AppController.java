@@ -18,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.soap.Text;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -32,6 +33,7 @@ import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPerfil;
@@ -163,39 +165,39 @@ public class AppController extends GcController {
 	@Path("/public/app/knowledge")
 	public void publicKnowledge(Long id, String[] tags, String msgvazio,
 			String urlvazio, String titulo, boolean popup, String estiloBusca,
-			Boolean podeCriar) throws Exception {
+			Boolean podeCriar, String pagina) throws Exception {
 		renderKnowledge(id, tags, null, msgvazio, urlvazio, titulo, true,
-				popup, estiloBusca, podeCriar);
+				popup, estiloBusca, podeCriar, pagina);
 	}
 
 	public void knowledge(Long id, String[] tags, String msgvazio,
 			String urlvazio, String titulo, boolean testarAcesso,
-			boolean popup, String estiloBusca, Boolean podeCriar)
+			boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {
 		renderKnowledge(id, tags, null, msgvazio, urlvazio, titulo,
-				testarAcesso, popup, estiloBusca, podeCriar);
+				testarAcesso, popup, estiloBusca, podeCriar, pagina);
 	}
 
 	public void knowledgeInplace(Long id, String[] tags, String msgvazio,
 			String urlvazio, String titulo, boolean testarAcesso,
-			boolean popup, String estiloBusca, Boolean podeCriar)
+			boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {
 		renderKnowledge(id, tags, "inplace", msgvazio, urlvazio, titulo,
-				testarAcesso, popup, estiloBusca, podeCriar);
+				testarAcesso, popup, estiloBusca, podeCriar, pagina);
 	}
 
 	public void knowledgeSidebar(Long id, String[] tags, String msgvazio,
 			String urlvazio, String titulo, boolean testarAcesso,
-			boolean popup, String estiloBusca, Boolean podeCriar)
+			boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {
 		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo,
-				testarAcesso, popup, estiloBusca, podeCriar);
+				testarAcesso, popup, estiloBusca, podeCriar, pagina);
 	}
 
 	private void renderKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo,
 			boolean testarAcesso, boolean popup, String estiloBusca,
-			Boolean podeCriar) throws UnsupportedEncodingException, Exception {
+			Boolean podeCriar, String pagina) throws UnsupportedEncodingException, Exception {
 		int index = Integer.MAX_VALUE;
 		Long idOutroConhecimento = 0l;
 		GcInformacao info = null;
@@ -267,12 +269,12 @@ public class AppController extends GcController {
 
 		}
 
-		String classificacao = "";
+		StringBuilder classificacao = new StringBuilder();
 		if (tags != null && tags.length > 0) {
 			for (String s : tags) {
 				if (classificacao.length() > 0)
-					classificacao += ", ";
-				classificacao += s;
+					classificacao.append(", ");
+				classificacao.append(s);
 			}
 		}
 		// Necessário para criar um novo conhecimento a partir de um já
@@ -289,13 +291,14 @@ public class AppController extends GcController {
 			podeCriar = true;
 
 		result.include("conhecimentos", conhecimentos);
-		result.include("classificacao", classificacao);
+		result.include("classificacao", classificacao.toString());
 		result.include("msgvazio", msgvazio);
 		result.include("urlvazio", urlvazio);
 		result.include("titulo", titulo);
 		result.include("referer", referer);
 		result.include("popup", popup);
 		result.include("podeCriar", podeCriar);
+		result.include("pagina", pagina);
 	}
 
 	public void updateTag(String before, String after) {
@@ -476,9 +479,23 @@ public class AppController extends GcController {
 		result.include("evolucao", evolucao);
 	}
 
-	public void listar(GcInformacaoFiltro filtro, int estatistica)
+	@Path({"/app/listar", "/app/informacao/buscar"})
+	public void listar(GcInformacaoFiltro filtro, int estatistica, boolean popup, String propriedade, String sigla)
 			throws Exception {
 		List<GcInformacao> lista;
+		
+		if (sigla != null){
+			//Edson: se a sigla for na verdade um texto, seta como título
+			try{
+				GcInformacao.findBySigla(sigla);
+			} catch(NumberFormatException nfe){
+				filtro.setTitulo(sigla);
+				filtro.pesquisa = true;
+			} catch(AplicacaoException ae){
+				
+			}
+		}
+		
 		if (filtro.pesquisa)
 			lista = filtro.buscar();
 		else
@@ -493,7 +510,11 @@ public class AppController extends GcController {
 
 		List<GcTipoInformacao> tiposinformacao = GcTipoInformacao.AR.all()
 				.fetch();
-
+		if(filtro.lotacao != null){
+			DpLotacao lotacaoIni = DpLotacao.AR.findById(filtro.lotacao.getIdLotacaoIni());
+			filtro.getLotacao().getLotacaoInicial().setLotacoesPosteriores(lotacaoIni.getLotacoesPosteriores());
+		}
+        
 		List<SigaIdDescr> anos = new ArrayList<SigaIdDescr>();
 		int ano = bl.dt().getYear() + 1900;
 		for (int i = 0; i < 10; i++) {
@@ -510,6 +531,8 @@ public class AppController extends GcController {
 		result.include("tiposinformacao", tiposinformacao);
 		result.include("anos", anos);
 		result.include("estatistica", estatistica);
+		result.include("propriedade", propriedade);
+    	result.include("popup", popup);
 	}
 
 	public void navegar() {
@@ -716,6 +739,10 @@ public class AppController extends GcController {
 					"Restrição de Acesso ("
 							+ informacao.edicao.nome
 							+ ") : O usuário não tem permissão para editar o conhecimento solicitado.");
+	}
+		
+	public void selecaoInplace() throws Exception {
+		int a = 0;
 	}
 
 	@Path({ "/app/exibir/{sigla}", "/app/exibir" })
@@ -943,9 +970,11 @@ public class AppController extends GcController {
 		informacao.visualizacao = visualizacao;
 
 		// Atualiza a classificação com as hashTags encontradas
-		if (conteudo != null)
+		if (conteudo != null){
+			conteudo = Texto.removeAcentoHTMLMinusculas(conteudo);
 			classificacao = bl.findHashTag(conteudo, classificacao,
 					CONTROLE_HASH_TAG);
+		}
 
 		if (informacao.edicao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO
 				|| informacao.visualizacao.id == GcAcesso.ACESSO_LOTACAO_E_GRUPO) {
@@ -1245,10 +1274,16 @@ public class AppController extends GcController {
 		result.use(Results.http()).body("0");
 	}
 
-	@Path("/app/selecionar")
+	@Path({"/app/selecionar", "/app/informacao/selecionar"})
 	public void selecionar(String sigla, boolean retornarCompacta)
 			throws Exception {
-		GcInformacao inf = GcInformacao.findBySigla(sigla);
+		GcInformacao inf;
+		
+		try{
+			inf = GcInformacao.findBySigla(sigla, getLotaTitular().getOrgaoUsuario());
+		} catch(Exception e){
+			inf = GcInformacao.findByTitulo(sigla);
+		}
 
 		if (inf != null) {
 			result.use(Results.http()).body(

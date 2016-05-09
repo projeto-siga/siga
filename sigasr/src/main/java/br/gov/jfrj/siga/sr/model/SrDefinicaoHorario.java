@@ -3,6 +3,8 @@ package br.gov.jfrj.siga.sr.model;
 import java.util.Calendar;
 import java.util.Date;
 
+import br.gov.jfrj.siga.sr.util.SrDataUtil;
+
 public enum SrDefinicaoHorario{
 	HORARIO_PADRAO(1, 11, 19, "Horário Padrão"), HORARIO_CENTRAL(2, 9, 21, "Horário da Central de Serviços"),
 	HORARIO_SUPORTE_LOCAL(3, 10, 19, "Horário do Suporte Local"), HORARIO_HELP_DESK(4, 8, 20, "Horário do Help Desk da JFRJ"), 
@@ -53,22 +55,29 @@ public enum SrDefinicaoHorario{
 		this.descricao = descricao;
 	}		
 	
-	public boolean terminaAntesDe(int tempo) {
-		return horaFinal <= tempo;
+	public boolean terminaAntesDe(int hora, int minuto) {
+		if (horaFinal == hora)
+			return minuto > 0;
+		return horaFinal < hora;
 	}
 	
 	public boolean comecaDepoisDe(int tempo) {
 		return horaInicial > tempo;
 	}
 	
-	public boolean abrange(int tempo) {
-		return !terminaAntesDe(tempo) && !comecaDepoisDe(tempo);
+	public boolean abrange(int hora, int minuto) {
+		return !terminaAntesDe(hora, minuto) && !comecaDepoisDe(hora);
+	}
+	
+	public boolean terminaAntesDe(Date dt) {
+		return terminaAntesDe(SrDataUtil.getHora(dt), SrDataUtil.getMinuto(dt));
+	}
+	
+	public boolean comecaDepoisDe(Date dt) {
+		return comecaDepoisDe(SrDataUtil.getHora(dt));
 	}
 	
 	public boolean abrange(Date dt) {
-		Calendar c = Calendar.getInstance();
-		c.setTime(dt);
-		int h = c.get(Calendar.HOUR_OF_DAY);
-		return abrange(h);
+		return abrange(SrDataUtil.getHora(dt), SrDataUtil.getMinuto(dt));
 	}
 }

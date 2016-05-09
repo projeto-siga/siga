@@ -9,7 +9,7 @@
 
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
-<siga:cabecalho titulo="Documento" popup="${param.popup}" />
+<siga:cabecalho titulo="${docVO.sigla}" popup="${param.popup}" />
 
 <script>
 	if (window.Worker) {
@@ -358,7 +358,7 @@
 							<li>
 								<a
 								href="javascript:popitup('${pageContext.request.contextPath}/app/expediente/mov/exibir?id=
-								${m.sigla}&popup=true')"
+								${naoAssinado.idMov}&popup=true')"
 								title="${naoAssinado.descricao}" style="text-decoration: none">
 									${naoAssinado.mov.nmArqMov} </a>
 							</li>
@@ -373,7 +373,7 @@
 						<c:forEach var="naoAssinado" items="${m.despachosNaoAssinados}">
 							<li><a
 								href="javascript:popitup('${pageContext.request.contextPath}
-								/app/expediente/mov/naoAssinado?id=${naoAssinado.idMov}&popup=true')"
+								/app/expediente/mov/exibir?id=${naoAssinado.idMov}&popup=true')"
 								title="${naoAssinado.descricao}" style="text-decoration: none">
 									${naoAssinado.descricao} </a></li>
 						</c:forEach>
@@ -1044,7 +1044,12 @@
 
 <c:if test="${f:resource('isWorkflowEnabled')}">
 	<script type="text/javascript">
-		var url = "/sigawf/app/doc?sigla=${docVO.doc.codigo}&ts=1${currentTimeMillis}";
+		<c:if test="${ (docVO.tipoFormaDocumento == 'processo_administrativo')}">
+			var url = "/sigawf/app/doc?sigla=${docVO.mob.sigla}&ts=1${currentTimeMillis}";
+		</c:if>
+		<c:if test="${(not m.mob.geral) or (docVO.tipoFormaDocumento != 'processo_administrativo')}">
+			var url = "/sigawf/app/doc?sigla=${docVO.doc.codigo}&ts=1${currentTimeMillis}";
+		</c:if>
 		Siga.ajax(url, null, "GET", function(response){		
 			var div = $(".wf_div:last"); 
 			$(div).html(response);

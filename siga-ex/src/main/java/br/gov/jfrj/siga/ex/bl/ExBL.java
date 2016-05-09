@@ -39,6 +39,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -80,7 +81,11 @@ import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.util.SetUtils;
-import br.gov.jfrj.siga.cd.service.CdService;
+import br.gov.jfrj.siga.bluc.service.BlucService;
+import br.gov.jfrj.siga.bluc.service.EnvelopeRequest;
+import br.gov.jfrj.siga.bluc.service.EnvelopeResponse;
+import br.gov.jfrj.siga.bluc.service.ValidateRequest;
+import br.gov.jfrj.siga.bluc.service.ValidateResponse;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -149,6 +154,8 @@ import com.google.gson.JsonSerializer;
 
 public class ExBL extends CpBL {
 	private final String SHA1 = "1.3.14.3.2.26";
+	
+	public final static String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
 
 	private final boolean BUSCAR_CARIMBO_DE_TEMPO = false;
 	private final boolean VALIDAR_LCR = false;
@@ -1457,7 +1464,10 @@ public class ExBL extends CpBL {
 					ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO,
 					cadastrante, lotaCadastrante, mob, dtMov, subscritor, null,
 					titular, lotaTitular, null);
-
+			
+			mov.setResp(cadastrante);
+			mov.setLotaResp(lotaCadastrante);
+			
 			mov.setDtDispPublicacao(dtDispPublicacao);
 			mov.setDescrMov("Disponibilização prevista para "
 					+ new SimpleDateFormat("dd/MM/yy").format(dtDispPublicacao));
@@ -1638,6 +1648,9 @@ public class ExBL extends CpBL {
 					ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO,
 					cadastrante, lotaCadastrante, mob, dtMov, subscritor, null,
 					titular, lotaTitular, null);
+			
+			mov.setResp(cadastrante);
+			mov.setLotaResp(lotaCadastrante);
 
 			mov.setDtDispPublicacao(dtDispPublicacao);
 			mov.setCadernoPublicacaoDje(tipoMateria);
@@ -2170,53 +2183,52 @@ public class ExBL extends CpBL {
 		try {
 			final byte[] data = doc.getConteudoBlobPdf();
 
-			CdService client = Service.getCdService();
-
 			String s;
-
+			
+			BlucService bluc = Service.getBlucService();
+			if (!bluc.test())
+				throw new Exception("BluC não está disponível.");
+			
 			if (certificado != null) {
-				cms = client.validarECompletarPacoteAssinavel(certificado,
-						data, pkcs7, true, (dtMov != null) ? dtMov : dao()
-								.consultarDataEHoraDoServidor());
-			} else {
-				// s = client.validarAssinatura(pkcs7, data, dao().dt(),
-				// VALIDAR_LCR);
-				// Service.throwExceptionIfError(s);
+				// Chamar o BluC para criar o pacote assinavel
 				//
-				// if (BUSCAR_CARIMBO_DE_TEMPO) {
-				cms = client.validarECompletarAssinatura(pkcs7, data, true,
-						dtMov);
+				EnvelopeRequest envelopereq = new EnvelopeRequest();
+				envelopereq.setCertificate(bluc.bytearray2b64(certificado));
+				envelopereq.setCrl("true");
+				envelopereq.setPolicy("AD-RB");
+				envelopereq.setSignature(bluc.bytearray2b64(pkcs7));
+				envelopereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(data)));
+				envelopereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(data)));
+				envelopereq.setTime(bluc.date2string((dtMov != null) ? dtMov : dao()
+						.consultarDataEHoraDoServidor()));
+				EnvelopeResponse enveloperesp = bluc.envelope(envelopereq);
+				if (enveloperesp.getError() != null)
+					throw new Exception("BluC não conseguiu produzir o envelope AD-RB. " + enveloperesp.getError());
+				cms = Base64.decode(enveloperesp.getEnvelope());
+			} else {
+				cms = pkcs7;
 			}
-			sNome = client
-					.validarAssinatura(cms, data, dao().dt(), VALIDAR_LCR);
-
-			// cms = client
-			// .converterPkcs7EmCMSComCertificadosLCRsECarimboDeTempo(pkcs7);
-			// Service.throwExceptionIfError(cms);
+			
+			// Chamar o BluC para validar a assinatura
 			//
-			// sNome = client.validarAssinaturaCMS(
-			// MessageDigest.getInstance("SHA1").digest(data), SHA1,
-			// cms, dao().dt());
+			ValidateRequest validatereq = new ValidateRequest();
+			validatereq.setEnvelope(bluc.bytearray2b64(cms));
+			validatereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(data)));
+			validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(data)));
+			validatereq.setTime(bluc.date2string(dtMov));
+			validatereq.setCrl("true");
+			ValidateResponse validateresp = bluc.validate(validatereq );
+			if (validateresp.getError() != null)
+				throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getError());
+			
+			sNome = validateresp.getCn();
+
 			Service.throwExceptionIfError(sNome);
 
-			String sCPF = client.recuperarCPF(cms);
+			String sCPF = validateresp.getCertdetails().get("cpf0");
 			Service.throwExceptionIfError(sCPF);
 
 			lCPF = Long.valueOf(sCPF);
-			// } else {
-			// sNome = s;
-			// String sCPF = client.recuperarCPF(pkcs7);
-			// Service.throwExceptionIfError(sCPF);
-			// lCPF = Long.valueOf(sCPF);
-			// }
-
-			// writeB64File("c:/trabalhos/java/cd_teste_doc.b64", data);
-			// writeB64File("c:/trabalhos/java/cd_teste_hash.b64",
-			// MessageDigest
-			// .getInstance("SHA1").digest(data));
-			// writeB64File("c:/trabalhos/java/cd_teste_pkcs7.b64", pkcs7);
-			// writeB64File("c:/trabalhos/java/cd_teste_cms.b64", cms);
-
 		} catch (final Exception e) {
 			throw new AplicacaoException("Erro na assinatura de um documento: "
 					+ e.getMessage() == null ? "" : e.getMessage(), 0, e);
@@ -2336,7 +2348,7 @@ public class ExBL extends CpBL {
 			// mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
 			mov.setConteudoBlobMov2(cms);
 			// } else {
-			mov.setConteudoTpMov(CdService.MIME_TYPE_PKCS7);
+			mov.setConteudoTpMov(MIME_TYPE_PKCS7);
 			// mov.setConteudoBlobMov2(pkcs7);
 			// }
 
@@ -2773,24 +2785,32 @@ public class ExBL extends CpBL {
 		try {
 			final byte[] data = movAlvo.getConteudoBlobpdf();
 
-			CdService client = Service.getCdService();
-
 			String s;
-
+			
+			BlucService bluc = Service.getBlucService();
+			if (!bluc.test())
+				throw new Exception("BluC não está disponível.");
+			
 			if (certificado != null) {
-				cms = client.validarECompletarPacoteAssinavel(certificado,
-						data, pkcs7, true, (dtMov != null) ? dtMov : dao()
-								.consultarDataEHoraDoServidor());
-			} else {
-				// s = client.validarAssinatura(pkcs7, data, dao().dt(),
-				// VALIDAR_LCR);
-				// Service.throwExceptionIfError(s);
+				// Chamar o BluC para criar o pacote assinavel
 				//
-				// if (BUSCAR_CARIMBO_DE_TEMPO) {
-				cms = client.validarECompletarAssinatura(pkcs7, data, true,
-						dtMov);
+				EnvelopeRequest envelopereq = new EnvelopeRequest();
+				envelopereq.setCertificate(bluc.bytearray2b64(certificado));
+				envelopereq.setCrl("true");
+				envelopereq.setPolicy("AD-RB");
+				envelopereq.setSignature(bluc.bytearray2b64(pkcs7));
+				envelopereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(data)));
+				envelopereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(data)));
+				envelopereq.setTime(bluc.date2string((dtMov != null) ? dtMov : dao()
+						.consultarDataEHoraDoServidor()));
+				EnvelopeResponse enveloperesp = bluc.envelope(envelopereq);
+				if (enveloperesp.getError() != null)
+					throw new Exception("BluC não conseguiu produzir o envelope AD-RB. " + enveloperesp.getError());
+				cms = Base64.decode(enveloperesp.getEnvelope());
+			} else {
+				cms = pkcs7;
 			}
-
+			
 			if (cms == null)
 				throw new Exception("Assinatura inválida!");
 
@@ -2798,12 +2818,22 @@ public class ExBL extends CpBL {
 				throw new Exception(
 						"Conteúdo inválido na validação da assinatura!");
 
-			sNome = client
-					.validarAssinatura(cms, data, dao().dt(), VALIDAR_LCR);
-
+			// Chamar o BluC para validar a assinatura
+			//
+			ValidateRequest validatereq = new ValidateRequest();
+			validatereq.setEnvelope(bluc.bytearray2b64(cms));
+			validatereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(data)));
+			validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(data)));
+			validatereq.setTime(bluc.date2string(dao().dt()));
+			validatereq.setCrl("true");
+			ValidateResponse validateresp = bluc.validate(validatereq );
+			if (validateresp.getError() != null)
+				throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getError());
+			
+			sNome = validateresp.getCn();
 			Service.throwExceptionIfError(sNome);
 
-			String sCPF = client.recuperarCPF(cms);
+			String sCPF = validateresp.getCertdetails().get("cpf0");
 			Service.throwExceptionIfError(sCPF);
 
 			lCPF = Long.valueOf(sCPF);
@@ -2895,7 +2925,7 @@ public class ExBL extends CpBL {
 			// mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
 			mov.setConteudoBlobMov2(cms);
 			// } else {
-			mov.setConteudoTpMov(CdService.MIME_TYPE_PKCS7);
+			mov.setConteudoTpMov(MIME_TYPE_PKCS7);
 			// mov.setConteudoBlobMov2(pkcs7);
 			// }
 
@@ -2909,7 +2939,7 @@ public class ExBL extends CpBL {
 		} catch (final Exception e) {
 			log.error("Erro ao assinar movimentação.", e);
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao assinar movimentação.", 0, e);
+			throw new AplicacaoException("Erro ao assinar movimentação. " + e.getMessage(), 0, e);
 		}
 
 	}
@@ -3838,10 +3868,10 @@ public class ExBL extends CpBL {
 			DpLotacao lotaTitular) {
 		if (doc == null)
 			return false;
-		if (doc.getExNivelAcesso() == null)
+		if (doc.getExNivelAcessoAtual() == null)
 			return false;
-		if (doc.getExNivelAcesso().getGrauNivelAcesso() > ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS
-				|| (doc.getExNivelAcesso().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS && doc
+		if (doc.getExNivelAcessoAtual().getGrauNivelAcesso() > ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS
+				|| (doc.getExNivelAcessoAtual().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS && doc
 						.getOrgaoUsuario().getIdOrgaoUsu() != lotaTitular
 						.getOrgaoUsuario().getIdOrgaoUsu()))
 			return true;
@@ -3865,10 +3895,10 @@ public class ExBL extends CpBL {
 			DpLotacao lotaTitular) {
 		if (doc == null)
 			return false;
-		if (doc.getExNivelAcessoDoDocumento() == null)
+		if (doc.getExNivelAcesso() == null)
 			return false;
-		if (doc.getExNivelAcessoDoDocumento().getGrauNivelAcesso() > ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS
-				|| (doc.getExNivelAcessoDoDocumento().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS && doc
+		if (doc.getExNivelAcesso().getGrauNivelAcesso() > ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS
+				|| (doc.getExNivelAcesso().getGrauNivelAcesso() == ExNivelAcesso.NIVEL_ACESSO_ENTRE_ORGAOS && doc
 						.getOrgaoUsuario().getIdOrgaoUsu() != lotaTitular
 						.getOrgaoUsuario().getIdOrgaoUsu()))
 			return true;
@@ -4102,7 +4132,7 @@ public class ExBL extends CpBL {
 			nivel = doc.getMobilGeral().getUltimaMovimentacaoNaoCancelada()
 					.getExNivelAcesso();
 		if (nivel == null)
-			nivel = doc.getExNivelAcessoDoDocumento();
+			nivel = doc.getExNivelAcesso();
 		doc.setDnmExNivelAcesso(nivel);
 		ExDao.getInstance().gravar(doc);
 		return nivel;
@@ -4547,7 +4577,7 @@ public class ExBL extends CpBL {
 			novoDoc.setFgEletronico(doc.getFgEletronico());
 		} 
 		
-		novoDoc.setExNivelAcesso(doc.getExNivelAcesso());
+		novoDoc.setExNivelAcesso(doc.getExNivelAcessoAtual());
 
 		ExClassificacao classAtual = doc.getExClassificacaoAtual();
 		if (classAtual != null && !classAtual.isFechada())
@@ -5327,7 +5357,7 @@ public class ExBL extends CpBL {
 		}
 
 		if (nivelAcesso.getIdNivelAcesso().equals(
-				doc.getExNivelAcesso().getIdNivelAcesso()))
+				doc.getExNivelAcessoAtual().getIdNivelAcesso()))
 			throw new AplicacaoException(
 					"Nível de acesso selecionado é igual ao atual");
 
@@ -5341,7 +5371,7 @@ public class ExBL extends CpBL {
 
 			mov.setNmFuncaoSubscritor(nmFuncaoSubscritor);
 			mov.setDescrMov("Nível de acesso do documento alterado de "
-					+ doc.getExNivelAcesso().getNmNivelAcesso() + " para "
+					+ doc.getExNivelAcessoAtual().getNmNivelAcesso() + " para "
 					+ nivelAcesso.getNmNivelAcesso());
 
 			mov.setExNivelAcesso(nivelAcesso);
@@ -6465,7 +6495,7 @@ public class ExBL extends CpBL {
 			// Verifica se é Processo e conta o número de páginas para verificar
 			// se tem que encerrar o volume
 			if (mob.doc().isProcesso()) {
-				if (mob.getTotalDePaginasSemAnexosDoMobilGeral() >= 200) {
+				if (mob.getTotalDePaginasSemAnexosDoMobilGeral() >= SigaExProperties.getMaxPagVolume()) {
 					encerrarVolume(cadastrante, lotaCadastrante, mob, dtMov,
 							null, null, null, true);
 				}
@@ -6543,16 +6573,30 @@ public class ExBL extends CpBL {
 			String mimeType, Date dtAssinatura) throws Exception {
 		String sNome;
 		Long lCPF;
+		
+		BlucService bluc = Service.getBlucService();
+		if (!bluc.test())
+			throw new Exception("BluC não está disponível.");
+		
+		// Chamar o BluC para validar a assinatura
+		//
+		ValidateRequest validatereq = new ValidateRequest();
+		validatereq.setEnvelope(bluc.bytearray2b64(assinatura));
+		validatereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(conteudo)));
+		validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(conteudo)));
+		validatereq.setTime(bluc.date2string(dtAssinatura));
+		validatereq.setCrl("true");
+		ValidateResponse validateresp = bluc.validate(validatereq );
+		if (validateresp.getError() != null)
+			throw new Exception("BluC não conseguiu validar a assinatura digital. " + validateresp.getError());
+		
+		sNome = validateresp.getCn();
 
-		// try {
-		CdService client = Service.getCdService();
-
-		sNome = client.validarAssinatura(assinatura, conteudo, dtAssinatura,
-				VALIDAR_LCR);
 		Service.throwExceptionIfError(sNome);
 
-		String sCPF = client.recuperarCPF(assinatura);
+		String sCPF = validateresp.getCertdetails().get("cpf0");
 		Service.throwExceptionIfError(sCPF);
+
 		lCPF = Long.valueOf(sCPF);
 
 		return sNome;
@@ -7394,6 +7438,7 @@ public class ExBL extends CpBL {
 			}
 		}
 
+		Collections.sort(assinaveis, new ExAssinavelComparador());
 		return assinaveis;
 	}
 }

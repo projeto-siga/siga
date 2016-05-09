@@ -173,9 +173,11 @@
 							<td>
 								<input type="text" name="exDocumentoDTO.numExtDoc" size="32" maxLength="32" value="${exDocumentoDTO.numExtDoc}"/>
 							</td>
-							<td align="right">Órgão:</td>
+						</tr>
+						<tr>
+							<td>Órgão:</td>
 							<input type="hidden" name="campos" value="cpOrgaoSel.id" />
-							<td>
+							<td colspan="3">
 								<siga:selecao propriedade="cpOrgao" inputName="exDocumentoDTO.cpOrgao" tema="simple" modulo="siga"/>
 							</td>
 						</tr>
@@ -324,7 +326,7 @@
 									<td>Modelo:</td>
 									<td colspan="3">
 										<siga:div id="modelo" depende="forma">
-											<select class="dependent" name="exDocumentoDTO.idMod" style="${estiloTipo}" onchange="document.getElementById('alterouModelo').value='true';"
+											<select class="dependent" name="exDocumentoDTO.idMod" style="${estiloTipo}" onchange="document.getElementById('alterouModelo').value='true';">
 											<%-- <select class="dependent" name="exDocumentoDTO.idMod" style="${estiloTipo}" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';" onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)"> --%>
 												<c:forEach items="${exDocumentoDTO.modelos}" var="item">
 													<option value="${item.idMod}" ${item.idMod == exDocumentoDTO.idMod ? 'selected' : ''}>
@@ -502,7 +504,7 @@ $(document).ready(function() {$('.dependent').dependentSelects({
 		  sbmt();
 		  },
 	  "class": false, // String: Add an extra class to all sub selects
-	  labels: [" "] // Array of strings: The text used for the sub select boxes' labels. Label element is
+	  labels: false // Array of strings: The text used for the sub select boxes' labels. Label element is
 	                // inserted before sub select.
 	});});
 // window.customOnsubmit = function() {return true;};

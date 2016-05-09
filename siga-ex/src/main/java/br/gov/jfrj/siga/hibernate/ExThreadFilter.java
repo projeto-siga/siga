@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.logging.Logger;
-import org.w3c.dom.svg.GetSVGDocument;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.auditoria.filter.ThreadFilter;
@@ -41,8 +40,6 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class ExThreadFilter extends ThreadFilter {
 
-	private static final Logger log = Logger.getLogger("br.gov.jfrj.siga.ex");
-	
 	private FilterConfig config;
 
 	@Override
@@ -53,7 +50,7 @@ public class ExThreadFilter extends ThreadFilter {
 	/**
 	 * Pega a sessão.
 	 */
-	public void doFilter(final ServletRequest request,
+	public void doFiltro(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
@@ -94,39 +91,16 @@ public class ExThreadFilter extends ThreadFilter {
 			throw new AplicacaoException("Erro: sessão do Hibernate está fechada.");
 
 		ExDao.iniciarTransacao();
-		doFiltro(request, response, chain);
+		chain.doFilter(request, response);
 		ExDao.commitTransacao();
 	}
 
-	private void doFiltro(final ServletRequest request,
-			final ServletResponse response, final FilterChain chain)
-			throws Exception {
-
-		try {
-			chain.doFilter(request, response);
-		} catch (Exception e) {
-			StringBuffer caminho = new StringBuffer();
-			String parametros = "";
-			if (request instanceof HttpServletRequest){
-				HttpServletRequest httpReq = (HttpServletRequest)request;
-				caminho = httpReq.getRequestURL();
-				parametros = httpReq.getQueryString()==null?"":"?" + httpReq.getQueryString();
-				caminho.append(parametros);
-			}
-			
-			if (!((e instanceof AplicacaoException) || (e.getCause() instanceof AplicacaoException)))
-				log.info("Ocorreu um erro durante a execução da operação: "+ e.getMessage() 
-						+ "\ncaminho: " + caminho.toString());
-
-			throw e;
-		}
-	}
 
 	private void fechaSessaoHibernate() {
 		try {
 			HibernateUtil.fechaSessaoSeEstiverAberta();
 		} catch (Exception ex) {
-			log.error("Ocorreu um erro ao fechar uma sessão do Hibernate", ex);
+			Logger.getLogger(getLoggerName()).error("Ocorreu um erro ao fechar uma sessão do Hibernate", ex);
 		}
 	}
 
@@ -134,7 +108,7 @@ public class ExThreadFilter extends ThreadFilter {
 		try {
 			ExDao.freeInstance();
 		} catch (Exception ex) {
-			log.error(ex.getMessage(), ex);
+			Logger.getLogger(getLoggerName()).error(ex.getMessage(), ex);
 		}
 	}
 
@@ -142,6 +116,11 @@ public class ExThreadFilter extends ThreadFilter {
 	 * Executa ao destruir o filtro.
 	 */
 	public void destroy() {
+	}
+
+	@Override
+	protected String getLoggerName() {
+		return "br.gov.jfrj.siga.ex";
 	}
 
 }

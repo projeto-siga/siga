@@ -694,6 +694,12 @@
 	         url: "${linkTo[AcordoController].gravarAbrangencia}",
 	         data: serializeAssociacao(row),
 	         dataType: "text",
+				"beforeSend": function () {
+					jQuery.blockUI(objBlock);
+				},
+				"complete": function () {
+					jQuery.unblockUI();
+				},
 	         success: function(jSon) {
 		        var associacao = JSON.parse(jSon); 
 

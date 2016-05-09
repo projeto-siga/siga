@@ -15,7 +15,7 @@ public abstract class SrIntervaloCorrente extends SrIntervalo {
 		super(dtIni, dtFim, descr);
 	}
 	
-	public abstract Long getDecorridoMillis();
+	public abstract Long getDecorridoMillis(boolean isPrevisao);
 	
 	public boolean isAtivo(){
 		return isAtivo(new Date());
@@ -29,12 +29,15 @@ public abstract class SrIntervaloCorrente extends SrIntervalo {
 		return SrViewUtil.toDDMMYYYY(data).equals(SrViewUtil.toDDMMYYYY(oData));
 	} 
 	
+	public boolean isZeradoEParado() {
+		return (getDecorridoEmSegundos() == 0) && !isAtivo();
+	}
 	public abstract boolean isAtivo(Date dt);
 	
 	public Long getDecorridoEmSegundos(){
-		return segundos(getDecorridoMillis());
+		return segundos(getDecorridoMillis(false));
 	}
-	
+		
 	public float getDecorridoEmHoras() {
 		return horas(getDecorridoEmSegundos());
 	}

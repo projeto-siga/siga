@@ -80,13 +80,13 @@ public class AcessoController extends GiControllerSupport {
 						  ,DpPessoaSelecao pessoaSel
 						  ,DpLotacaoSelecao lotacaoSel
 						  ,CpPerfilSelecao perfilSel
-						  ,Long idOrgaoUsuSel)throws Exception {
+						  ,Long idOrgaoUsuSel, String servicoPai)throws Exception {
 		
 		this.pessoaSel = pessoaSel != null ? pessoaSel: this.pessoaSel;
 		this.lotacaoSel = lotacaoSel != null ? lotacaoSel: this.lotacaoSel;
 		this.perfilSel = perfilSel != null ? perfilSel: this.perfilSel;		
 		
-		listar(idAbrangencia, pessoaSel, lotacaoSel, perfilSel, idOrgaoUsuSel);
+		listar(idAbrangencia, pessoaSel, lotacaoSel, perfilSel, idOrgaoUsuSel, servicoPai);
 		
 		result.include("idAbrangencia", this.idAbrangencia);
 		
@@ -104,14 +104,22 @@ public class AcessoController extends GiControllerSupport {
 		
 		result.include("idServico", this.idServico);
 		result.include("idSituacao", this.idSituacao);		
-	}
+
+		result.include("servicoPai", servicoPai);
+}
 	
 	private void listar(int idAbrangencia
 					  ,DpPessoaSelecao pessoaSel
 					  ,DpLotacaoSelecao lotacaoSel
 					  ,CpPerfilSelecao perfilSel
-					  ,Long idOrgaoUsuSel) throws Exception {
-		assertAcesso("PERMISSAO:Gerenciar permissões");
+					  ,Long idOrgaoUsuSel, String servicoPai) throws Exception {
+		
+				
+		if (servicoPai == null) {
+			assertAcesso("PERMISSAO:Gerenciar permissões");
+		} else {
+			assertAcesso("PERMISSAOPORSERVICO:Gerenciar permissões de um serviço");
+		}
 		if (idAbrangencia == 0) {
 			this.idAbrangencia = 1;
 			this.idOrgaoUsuSel = getLotaTitular().getOrgaoUsuario().getId();
@@ -132,23 +140,45 @@ public class AcessoController extends GiControllerSupport {
 			this.nomeOrgaoUsuSel = orgao.getDescricao();				
 				
 		if (perfil != null || pessoa != null || lotacao != null || orgao != null) {
-			List<CpServico> l = dao().listarServicos();
+			List<CpServico> l = null;
+			
+			if (servicoPai == null) {
+				l = dao().listarServicos();
+			} else {
+				l = new ArrayList<CpServico>(); 
+				CpServico cpServicoPai = dao().consultarCpServicoPorChave(servicoPai);
 
-			HashMap<CpServico, ConfiguracaoAcesso> achm = new HashMap<CpServico, ConfiguracaoAcesso>();
+				if (cpServicoPai != null) {	
+					l = listarServicosPorPai(cpServicoPai);
+				}
+			}
+
+			HashMap<String, ConfiguracaoAcesso> achm = new HashMap<String, ConfiguracaoAcesso>();
 			for (CpServico srv : l) {
 				ConfiguracaoAcesso ac = ConfiguracaoAcesso.gerar(perfil, pessoa, lotacao, orgao, srv, null);
 
 				System.out.print(ac.getSituacao().getDscSitConfiguracao());
-				achm.put(ac.getServico(), ac);
+				achm.put(ac.getServico().getSigla(), ac);
+				
 			}
 
 			SortedSet<ConfiguracaoAcesso> acs = new TreeSet<ConfiguracaoAcesso>();
-			for (ConfiguracaoAcesso ac : achm.values()) {
+		
+			Collection<ConfiguracaoAcesso> colecaoDeConfiguracoes = achm.values();
+			for (ConfiguracaoAcesso ac : colecaoDeConfiguracoes) {
 				if (ac.getServico().getCpServicoPai() == null) {
 					acs.add(ac);
-				} else {
-					achm.get(ac.getServico().getCpServicoPai()).getSubitens()
-							.add(ac);
+				}  else if (acs.size() == 0 && servicoPai != null && ac.getServico().getSiglaServico().toString() == servicoPai.toString())  {  
+					acs.add(ac);
+				}
+				else 
+				{
+					if (achm.get(ac.getServico().getCpServicoPai().getSigla()) != null) {
+						achm.get(ac.getServico().getCpServicoPai().getSigla()).getSubitens().add(ac);
+					}
+					else {
+						acs.add(ac);
+					}
 				}
 			}
 
@@ -157,13 +187,36 @@ public class AcessoController extends GiControllerSupport {
 		}
 	}
 	
+	private List<CpServico> listarServicosPorPai(CpServico cpServicoPai) {
+		List<CpServico> lista = new ArrayList<CpServico>(); 
+		lista = dao().listarServicosPorPai(cpServicoPai);
+		int contador = 0;
+		lista.add(cpServicoPai);
+		
+		while (contador < lista.size()) {
+		    CpServico item = lista.get(contador);
+		    
+			if (item != cpServicoPai) {
+				List<CpServico> subitens = dao().listarServicosPorPai(item);
+				if (subitens.size() > 0) {
+					lista.addAll(subitens);
+				}
+			}
+			
+			contador++;
+		}
+		
+		return lista;
+	}
+
 	@Get("/app/gi/acesso/gravar")
 	public void gravar(Long idServico
 			          ,Long idSituacao
 			          ,DpPessoaSelecao pessoaSel
 					  ,DpLotacaoSelecao lotacaoSel
 					  ,CpPerfilSelecao perfilSel
-					  ,Long idOrgaoUsuSel) throws Exception {
+					  ,Long idOrgaoUsuSel
+					  ,String servicoPai) throws Exception {
 		
 		assertAcesso("PERMISSAO:Gerenciar permissões");
 		CpPerfil perfil = null;
@@ -196,7 +249,8 @@ public class AcessoController extends GiControllerSupport {
 		
 		StringBuilder sb = new StringBuilder();
 		acessoHTML(sb, ac);
-		this.itemHTML = sb.toString();	
+		this.itemHTML = sb.toString();
+		result.include("servicoPai", servicoPai);
 		result.use(Results.http()).body(this.itemHTML);
 	}	
 

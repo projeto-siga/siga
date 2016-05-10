@@ -18,6 +18,7 @@
 		if (!IsRunningAjaxRequest()) {
 			ReplaceInnerHTMLFromAjaxResponse(
 					'gravar?idServico='+idServico+'&idSituacao='+idSituacao
+						+ '&servicoPai=${servicoPai}'
 						+ '<c:if test="${idAbrangencia == 4}">&perfilSel.id=${perfilSel.id}</c:if>'
 						+ '<c:if test="${idAbrangencia == 3}">&pessoaSel.id=${pessoaSel.id}</c:if>'
 						+ '<c:if test="${idAbrangencia == 2}">&lotacaoSel.id=${lotacaoSel.id}</c:if>'
@@ -35,6 +36,7 @@
 
 			<div class="gt-content-box gt-for-table">
 				<form id="listar" name="listar" action="listar" method="get" class="form100">
+				<input type="hidden" name="servicoPai" value="${servicoPai}" />
 					<table class="gt-form-table">
 						<colgroup>
 							<col width="15%" />

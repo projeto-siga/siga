@@ -267,9 +267,11 @@ public class CpDao extends ModeloDao {
 
 		// Forca a carga de algums campos para garantir o lazy load.
 		CpServico srv = (CpServico) l.get(0).getImplementation();
-		if (srv.getCpServicoPai() != null)
-			srv.getCpServicoPai().getDescricao();
-		srv.getCpTipoServico().getDscTpServico();
+		
+		if (srv.getCpServicoPai() != null) {
+			Object o1 = srv.getCpServicoPai().getDescricao();
+		}
+		Object o2 = srv.getCpTipoServico().getDscTpServico();
 
 		cache.put(new Element(chave, srv));
 		return l.get(0);
@@ -1949,6 +1951,11 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public List<CpServico> listarServicos() {
 		return findByCriteria(CpServico.class);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpServico> listarServicosPorPai(CpServico servicoPai) {
+		return findByCriteria(CpServico.class,Property.forName("cpServicoPai").eq(servicoPai));
 	}
 
 	@SuppressWarnings("unchecked")

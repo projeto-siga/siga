@@ -1,0 +1,153 @@
+package br.gov.jfrj.siga.sr.vraptor;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.DatatypeConverter;
+
+import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.sr.model.SrAcao;
+import br.gov.jfrj.siga.sr.model.SrConfiguracao;
+import br.gov.jfrj.siga.sr.model.SrFormaAcompanhamento;
+import br.gov.jfrj.siga.sr.model.SrGravidade;
+import br.gov.jfrj.siga.sr.model.SrItemConfiguracao;
+import br.gov.jfrj.siga.sr.model.SrMeioComunicacao;
+import br.gov.jfrj.siga.sr.model.SrSolicitacao;
+import br.gov.jfrj.siga.sr.validator.SrValidator;
+import br.gov.jfrj.siga.vraptor.SigaObjects;
+
+@Resource
+@Path("/public/app/solicitacaoEmail")
+public class SolicitacaoEmailController extends SrController {
+	
+	private static final String _SIGLA_DO_ITEM = "10.01.01";
+	private static final String _SIGLA_DA_ACAO = "05.01";
+	private static final long _ID_DA_DESIGNACAO = 22100L;
+
+	class Retorno {
+		public String codigo;
+		public String mensagem;
+		public Retorno(String codigo, String mensagem) {
+			this.codigo = codigo;
+			this.mensagem = mensagem;
+		}
+	}
+	
+	public SolicitacaoEmailController(HttpServletRequest request, Result result,  SigaObjects so, EntityManager em, SrValidator srValidator) {
+		super(request, result, CpDao.getInstance(), so, em, srValidator);
+	}
+	
+	private UploadedFile getArquivoMsg(final byte[] mensagem, final String assunto) {
+		return new UploadedFile() {
+			
+			@Override
+			public long getSize() {
+				return mensagem.length;
+			}
+			
+			@Override
+			public String getFileName() {
+				return limparParaNomeDeArquivo(assunto) + ".msg";
+			}
+			
+			private String limparParaNomeDeArquivo(String texto) {
+				String retorno = texto.replaceAll("\\s","_");
+				if(retorno.length() > 30) {
+					retorno = retorno.substring(retorno.length() - 30);
+				}
+				return retorno;
+			}
+
+			@Override
+			public InputStream getFile() {
+				try {
+					return new ByteArrayInputStream(mensagem);
+				} catch (Exception e) {
+					return null;
+				} 
+			}
+			
+			@Override
+			public String getContentType() {
+				return "message/rfc822";
+			}
+		};
+	}
+
+	private SrSolicitacao criarSolicitacao(DpPessoa pessoa, String descricao, String textoMensagem, UploadedFile arquivoMensagem, Calendar dataEnvio) throws Exception {
+		SrItemConfiguracao itemConfiguracao = (SrItemConfiguracao) SrItemConfiguracao.AR.find("siglaItemConfiguracao = ?", _SIGLA_DO_ITEM).first();
+        
+        SrAcao acao = (SrAcao) SrAcao.AR.find("siglaAcao = ?", _SIGLA_DA_ACAO).first();
+        
+        SrConfiguracao designacao = SrConfiguracao.AR.findById(_ID_DA_DESIGNACAO);
+		
+		SrSolicitacao srSolicitacao = new SrSolicitacao();
+		srSolicitacao.setAcao(acao);
+		srSolicitacao.setItemConfiguracao(itemConfiguracao);
+		srSolicitacao.setDesignacao(designacao);
+		
+		srSolicitacao.setArquivo(arquivoMensagem);
+		srSolicitacao.setDescricao(descricao);
+		srSolicitacao.setDescrSolicitacao(textoMensagem);
+		srSolicitacao.setDtOrigem(dataEnvio.getTime());
+		srSolicitacao.setDtOrigemString(dataEnvio.toString());
+		srSolicitacao.setDtReg(new Date());
+		srSolicitacao.setFormaAcompanhamento(SrFormaAcompanhamento.ABERTURA_ANDAMENTO);
+		srSolicitacao.setGravidade(SrGravidade.SEM_GRAVIDADE);
+		
+		srSolicitacao.setMeioComunicacao(SrMeioComunicacao.EMAIL);
+		srSolicitacao.setRascunho(false);
+
+		if (pessoa != null) {
+			srSolicitacao.setLotaSolicitante(pessoa.getLotacao());
+			srSolicitacao.setLotaTitular(pessoa.getLotacao());
+			srSolicitacao.setSolicitante(pessoa);
+			srSolicitacao.setTelPrincipal(pessoa.getTelefone() == null ? "" : pessoa.getTelefone());
+			srSolicitacao.setTitular(pessoa);
+			srSolicitacao.setOrgaoUsuario(pessoa.getOrgaoUsuario());
+			srSolicitacao.deduzirLocalRamalEMeioContato();
+		}
+		
+		srSolicitacao.salvar(pessoa, pessoa.getLotacao(), pessoa, pessoa.getLotacao());
+		return srSolicitacao;
+	}
+	
+	private static DpPessoa localizarPessoaPeloEmail(String emailPessoa) {
+		DpPessoa pessoa = ((DpPessoa) DpPessoa.AR.find("emailPessoa = ?", emailPessoa).first());
+
+		return pessoa;
+	}
+	
+	@Path("/incluir")
+    public void incluir(String emailRemetente, String assunto, String textoEmail, String msgBase64, Calendar dataEnvio) {
+    	byte[] arquivoMsg = DatatypeConverter.parseBase64Binary(msgBase64);
+    	UploadedFile anexo = getArquivoMsg(arquivoMsg, assunto);
+    	
+    	DpPessoa pessoa = localizarPessoaPeloEmail(emailRemetente);
+    	if(pessoa == null) {
+    		Retorno retorno = new Retorno("0", "nao ha usuario do siga cadastrado com o email informado");
+			result.use(Results.json()).from(retorno).serialize();
+    	} else {
+    	
+	    	try {
+	    		SrSolicitacao srSolicitacao = criarSolicitacao(pessoa, assunto, textoEmail, anexo, dataEnvio);
+	    		Retorno retorno = new Retorno("1", srSolicitacao.getCodigo());
+				result.use(Results.json()).from(retorno).serialize();
+			} catch (Exception e) {
+				Retorno retorno = new Retorno("0", "erro generico ao salvar a solicitacao: " + e.getMessage());
+				result.use(Results.json()).from(retorno).serialize();
+			}
+    	
+    	}
+    }
+}

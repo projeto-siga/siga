@@ -237,7 +237,7 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 	
 	
 	@Post("app/expediente/classificacao/gravarVia")
-	public void gravarVia(String acao, String codificacao, ExVia via, Long idDestino, Long idTemporalidadeArqCorr,
+	public void gravarVia(String acao, String codificacao, Long idVia, String obsVia, Long idDestino, Long idTemporalidadeArqCorr,
 			Long idTemporalidadeArqInterm, Long idDestinacaoFinal) throws Exception {
 		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
 		if (idDestino == null || idDestino <= 0) {
@@ -249,6 +249,7 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 			Date dt = dao().consultarDataEHoraDoServidor();
 	
 			ExClassificacao exClassAntiga = buscarExClassificacao(codificacao);
+			ExVia via = idVia != null ? dao().consultar(idVia, ExVia.class, false) : new ExVia();
 			if (exClassAntiga == null){
 				throw new AplicacaoException("Erro ao obter a classificação");
 			}
@@ -302,7 +303,7 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 			exViaGravar.setExDestinacaoFinal(destFinal);
 			exViaGravar.setTemporalidadeCorrente(tempCorrente);
 			exViaGravar.setTemporalidadeIntermediario(tempInterm);
-			exViaGravar.setObs(via.getObs());		
+			exViaGravar.setObs(obsVia);		
 	
 			dao().gravarComHistorico(exViaGravar, exVia, dtHist, getIdentidadeCadastrante());
 	
@@ -314,8 +315,7 @@ public class ExClassificacaoController extends SigaSelecionavelControllerSupport
 			
 			Ex.getInstance().getBL().copiarReferencias(exClassNovo, exClassAntiga, dt,getIdentidadeCadastrante());
 			dao().commitTransacao();
-			//result.redirectTo("editar?codificacao="+codificacao+"&acao="+acao);
-			result.forwardTo(this).edita(exClassNovo, codificacao, acao);
+			result.redirectTo("editar?codificacao="+codificacao+"&acao="+acao);
 		} catch (Exception e) {
 			dao().rollbackTransacao();
 			throw new AplicacaoException("Não foi possível gravar via no banco de dados."+e.getMessage());			

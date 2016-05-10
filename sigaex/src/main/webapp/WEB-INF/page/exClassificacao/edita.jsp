@@ -266,8 +266,7 @@
 									<form id="frmEdicaoVia_${via.id}" action="gravarVia" method="post">
 										<input type="hidden" id="acao" name="acao" value="${acao}" />
 										<input type="hidden" name="codificacao" value="${exClassificacao.codificacao}"/>
-										<input type="hidden" name="via.id" value="${via.id}"/>
-										<input type="hidden" name="via.codVia" value="${via.codVia}"/>
+										<input type="hidden" name="idVia" value="${via.id}"/>
 										<!-- form row -->
 										<div class="gt-form-row gt-width-66">
 											<h3 class="gt-form-head">Edição da Via ${via.codVia}</h3>
@@ -357,7 +356,7 @@
 										<!-- /form row -->
 										<!-- form row -->
 										<div class="gt-form-row gt-width-66">
-											<label>Observação</label> <input id="obs" name="via.obs" type="text" value="${via.obs}" size="100"/>
+											<label>Observação</label> <input id="obs" name="obsVia" type="text" value="${via.obs}" size="100"/>
 										</div>
 										<!-- /form row -->
 									</form>
@@ -466,7 +465,7 @@
 										<!-- /form row -->
 										<!-- form row -->
 										<div class="gt-form-row gt-width-66">
-											<label>Observação</label> <input id="obs" name="via.obs" type="text" />
+											<label>Observação</label> <input id="obs" name="obsVia" type="text" />
 										</div>
 										<!-- /form row -->
 									</form>

@@ -3375,8 +3375,8 @@ public class ExBL extends CpBL {
 		if (doc.isFinalizado())
 			throw new AplicacaoException("Documento já está finalizado.");
 
-		ExClassificacao classificacaoValida = doc.getExModelo().getExClassificacao().getAtual();
-		if (classificacaoValida.isAtivo() && !doc.getExClassificacao().equivale(classificacaoValida))
+		ExClassificacao classificacaoValida = doc.getExModelo().getExClassificacao()==null?null:doc.getExModelo().getExClassificacao().getAtual();
+		if (classificacaoValida != null && classificacaoValida.isAtivo() && !doc.getExClassificacao().equivale(classificacaoValida))
 			throw new AplicacaoException("Classificação documental encerrada. Selecione outra na tela de edição.");
 	
 		if (doc.getExModelo() != null && doc.getExModelo().isFechado()) {

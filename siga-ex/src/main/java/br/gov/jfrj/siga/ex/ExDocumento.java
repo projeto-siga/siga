@@ -417,8 +417,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		if (ab == null)
 			return null;
 		try {
-//			return new String(ab, "ISO-8859-1"); teste da karina
-			return new String(ab, "UTF-8");
+			return new String(ab, "ISO-8859-1");
 		} catch (UnsupportedEncodingException e) {
 			return new String(ab);
 		}

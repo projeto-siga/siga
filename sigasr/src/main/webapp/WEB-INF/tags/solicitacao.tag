@@ -1,8 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <link rel="stylesheet" type="text/css" href="/sigasr/stylesheets/jquery.multiselect.css">
-<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
-<script src="//datatables.net/release-datatables/extensions/ColVis/js/dataTables.colVis.min.js"></script>
+<script src="/sigasr/javascripts/jquery.dataTables.min.js"></script>
+<script src="/sigasr/javascripts/dataTables.colVis.min.js"></script>
 <script src="/sigasr/javascripts/detalhe-tabela.js"></script>
 <script src="/sigasr/javascripts/tabela-dinamica.js"></script>
 <script src="/sigasr/javascripts/jquery.multiselect.min.js"></script>
@@ -157,7 +157,7 @@
 			tabelaDinamica.atualizarColunasSelecionadas(selectColunasDetalhamento, tabelaDinamica.objetoTabela.colunasDetalhamentoJson, tabelaDinamica.TIPO_COLUNA_DETALHE);
 		}
 
-		//Edson: insere os menus de seleção de colunas dentro da dataTable
+		//Edson: insere os menus de seleï¿½ï¿½o de colunas dentro da dataTable
 		$(".siga-multiple-select").insertAfter("#solicitacoes_table_length");
 	});
 

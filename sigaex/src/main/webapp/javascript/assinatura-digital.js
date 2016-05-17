@@ -37,7 +37,7 @@ function selecionarProvider() {
 }
 
 function TestarAssinaturaDigital() {
-	console.log("Testando provedores de assinatura digital.");
+	//console.log("Testando provedores de assinatura digital.");
 	provider = selecionarProvider();
 	return provider != undefined;
 }
@@ -110,10 +110,10 @@ var providerLocalhostREST = {
 				cache : false
 			});
 
-			console.log("IttruREST: OK!");
+			//console.log("IttruREST: OK!");
 			return true;
 		} catch (err) {
-			console.log("IttruREST:" + err.message);
+			//console.log("IttruREST:" + err.message);
 		}
 		return false;
 	},
@@ -197,10 +197,10 @@ var providerIttruAx = {
 			if (ittruSignAx == undefined) {
 				ittruSignAx = new ActiveXObject("ittru");
 			}
-			console.log("IttruAx: OK!");
+			//console.log("IttruAx: OK!");
 			return true;
 		} catch (err) {
-			console.log("IttruAx:" + err.message);
+			//console.log("IttruAx:" + err.message);
 		}
 		return false;
 	},
@@ -262,14 +262,14 @@ var providerIttruCAPI = {
 			if (to == 'function' || to == 'object') {
 				if (document.signerCAPI.isActive()) {
 					ittruSignApplet = document.signerCAPI;
-					console.log("IttruCAPI: OK!");
+					//console.log("IttruCAPI: OK!");
 					return true;
 				} else {
-					console.log("IttruCAPI:" + document.signerCAPI.getMsg());
+					//console.log("IttruCAPI:" + document.signerCAPI.getMsg());
 				}
 			}
 		} catch (err) {
-			console.log("IttruCAPI:" + err.message);
+			//console.log("IttruCAPI:" + err.message);
 		}
 		return false;
 	},
@@ -341,14 +341,14 @@ var providerIttruP11 = {
 			if (to == 'function' || to == 'object') {
 				if (document.signer.isActive()) {
 					ittruSignApplet = document.signer;
-					console.log("IttruP11: OK!");
+					//console.log("IttruP11: OK!");
 					return true;
 				} else {
-					console.log("IttruP11:" + document.signer.getMsg());
+					//console.log("IttruP11:" + document.signer.getMsg());
 				}
 			}
 		} catch (err) {
-			console.log("IttruP11:" + err.message);
+			//console.log("IttruP11:" + err.message);
 		}
 		return false;
 	},

@@ -97,7 +97,7 @@ public class WorkflowDigitalIT extends IntegrationTestBase {
 					// Ir para a página inicial através do menu SIGA > página Inicial
 					util.getWebElement(driver, By.linkText("SIGA")).sendKeys(Keys.ENTER);
 					util.getWebElement(driver, By.linkText("página Inicial")).sendKeys(Keys.ENTER);
-					util.getWebElement(driver, By.cssSelector("a.gt-btn-small.gt-btn-right"));
+					util.getWebElement(driver, By.cssSelector("a.gt-btn-large.gt-btn-right"));
 
 					WebElement linkTarefa = util.getWebElement(driver, By.xpath("//div[h2 = 'Tarefas']//tbody/tr[td[1]/a[text() = '" + descricaoTarefa + "'] "
 							+ "and td[last()][contains(., '" + inicioTarefa +"')]]/td/a"));

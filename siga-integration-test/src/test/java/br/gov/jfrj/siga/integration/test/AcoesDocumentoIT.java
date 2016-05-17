@@ -61,7 +61,7 @@ public class AcoesDocumentoIT extends IntegrationTestBase {
 			
 			if((method.getName().equals("apensarDocumento") || method.getName().equals("vincularDocumento")) && !isDocumentoTesteCriado) {
 				driver.get(baseURL + "/siga");
-				util.getWebElement(driver, By.cssSelector("a.gt-btn-small.gt-btn-right"));
+				util.getWebElement(driver, By.cssSelector("a.gt-btn-large.gt-btn-right"));
 				String codigoDocumentoTeste = criaDocumento();
 				super.finalizarDocumento();
 				super.assinarDigitalmente(codigoDocumentoTeste, "Nº");	

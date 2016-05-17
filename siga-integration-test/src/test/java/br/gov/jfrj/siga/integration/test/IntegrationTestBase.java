@@ -49,7 +49,7 @@ public class IntegrationTestBase {
 			driver.manage().window().maximize();
 			LoginPage loginPage = PageFactory.initElements(driver,	LoginPage.class);
 			loginPage.login(System.getProperty("userSiga"), System.getProperty("passSiga"));
-			util.getWebElement(driver, By.cssSelector("a.gt-btn-small.gt-btn-right"));
+			util.getWebElement(driver, By.cssSelector("a.gt-btn-large.gt-btn-right"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			driver.quit();

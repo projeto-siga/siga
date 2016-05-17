@@ -17,10 +17,10 @@ public class PrincipalPage {
 
 	protected WebDriver driver;
 	
-	@FindBy(css="a.gt-btn-small.gt-btn-right")
+	@FindBy(css="gt-btn-large gt-btn-right")
 	private WebElement botaoNovoDocumentoEx;
 	
-	@FindBy(id="buscar_genericoSel_sigla")
+	@FindBy(css="gt-btn-large gt-btn-right")
 	private WebElement caixaBusca;
 	
 	private IntegrationTestUtil util;

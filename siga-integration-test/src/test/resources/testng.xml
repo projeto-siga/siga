@@ -3,17 +3,17 @@
 	<test name="SigaDoc - Expediente">
 		<classes>		
  			<class name="br.gov.jfrj.siga.integration.test.CriacaoDocumentoIT"/>
- 			<class name="br.gov.jfrj.siga.integration.test.AcoesDocumentoIT"/>		
-			<class name="br.gov.jfrj.siga.integration.test.AcoesDocumentoDigitalIT"/>	 	 				
+ 			<!--  <class name="br.gov.jfrj.siga.integration.test.AcoesDocumentoIT"/>		
+			<class name="br.gov.jfrj.siga.integration.test.AcoesDocumentoDigitalIT"/>	 	 	-->			
 		</classes>
 	</test>		
 
-	<test name="SigaDoc - Processo">
+	<!-- <test name="SigaDoc - Processo">
 		<classes>
 			<class name="br.gov.jfrj.siga.integration.test.ProcessoAdministrativoFisicoIT"/>
-			<class name="br.gov.jfrj.siga.integration.test.ProcessoAdministrativoDigitalIT"/>
+			<class name="br.gov.jfrj.siga.integration.test.ProcessoAdministrativoDigitalIT"/> 
 		</classes>
-	</test>
+	</test>-->
 		
 <!-- 	<test name="SigaDoc - Workflow">
 		<classes>

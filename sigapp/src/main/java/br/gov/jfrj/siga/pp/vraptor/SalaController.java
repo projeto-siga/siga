@@ -28,11 +28,12 @@ public class SalaController extends PpController {
 
     @Path("/incluir")
     public void incluir() {
-		// pega usuario do sistema
-		String matriculaSessao = getUsuarioMatricula();
-		UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao);
+		// pega usuário do sistema
+		String matriculaSessao = getCadastrante().getMatricula().toString();
+		String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
+		UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao , sesb_pessoaSessao);
 		if (null == objUsuario) {
-			redirecionaPaginaErro("Usuario sem permissao" , null);
+			redirecionaPaginaErro("Usuario sem permiss&atilde;o." , null);
 		}
 	}
 
@@ -45,7 +46,7 @@ public class SalaController extends PpController {
     	try {
     	    ContextoPersistencia.em().detach(formLocal);
     		System.out.println(ContextoPersistencia.em().createQuery("from Locais where cod_local ='" + varCodLocal+ "'").getSingleResult());
-    		resposta = "Sala ja existe. Confira o codigo da sala. ";
+    		resposta = "Sala j&aacute; existe. Confira o c&oacute;digo da sala. ";
 
     	} catch (Exception e) {
     		try {
@@ -54,18 +55,18 @@ public class SalaController extends PpController {
     			ContextoPersistencia.em().flush();
     			resposta = "Ok.";
     		} catch (Exception e2) {
-    			resposta = "Forum da sala nao cadastrado. Confira o codigo do forum.";
+    			resposta = "Forum da sala n&atilde;o cadastrado. Confira o c&oacute;digo do forum.";
     		}
     	}
     	result.include("resposta", resposta);
     }
 
     @Path("/listar")
-    public void listar(String cod_local, String sala,
-			String desc_forum) {
+    public void listar(String cod_local, String sala, String desc_forum) {
 		// pega usuario do sistema
-		String matriculaSessao = getUsuarioMatricula();
-		UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao);
+		String matriculaSessao = getCadastrante().getMatricula().toString();
+		String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
+		UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao , sesb_pessoaSessao);
 		if (objUsuario != null) {
 			List<Locais> listLocais = new ArrayList<Locais>();
 			if (desc_forum == null) {
@@ -119,7 +120,7 @@ public class SalaController extends PpController {
 						for (Iterator iterator02 = listLocaisAux.iterator(); iterator02
 								.hasNext();) {
 							listLocais.add((Locais) iterator02.next());
-							System.out.println("- Detalhe -");
+							// System.out.println("- Detalhe -");
 						}
 					}
 				} catch (Exception e) {
@@ -129,7 +130,7 @@ public class SalaController extends PpController {
 				}
 			}
 		} else {
-		    redirecionaPaginaErro("Usuario sem permissao", null);
+		    redirecionaPaginaErro("Usu$&aacute;rio sem permiss&atilde;o", null);
 		}
 	}
 
@@ -142,13 +143,11 @@ public class SalaController extends PpController {
 				Locais.AR.delete("from Locais where cod_local='" + cod_sala + "'", null);
 			} catch (Exception e) {
 				e.printStackTrace();
-				resposta = "Esta sala possui agendamentos. Delete primeiro os agendamentos referenciados.";
+				resposta = "Esta sala possui agendamentos. Delete primeiro os agendamentos desta sala.";
 			}
 		} else {
-			resposta = "NÃ£o Ok.";
+			resposta = "N&atilde;o Ok.";
 		}
 		result.include("resposta", resposta);
 	}
-
-
 }

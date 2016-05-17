@@ -59,7 +59,7 @@
 		 } );
 	 }
 	</script>
-	<center><h3 class="ui-accordion-header">IMPRIME <i>MEUS</i> AGENDAMENTOS DE <i>UMA</i> SALA</h3></center>
+	<center><h3 class="ui-accordion-header">IMPRIME AGENDAMENTOS DE <i>UMA</i> SALA</h3></center>
 	<div style="position:relative;left:05%;">
 		<h4 class="ui-accordion-header">&Oacute;RG&Atilde;O:<input class="ui-spinner-input" type="text" value="${lotacaoSessao}" readonly="true" /></h4>
 		<br>

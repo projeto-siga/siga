@@ -27,9 +27,10 @@ public class UsuarioFormController extends PpController {
     @Path("/atualiza")
     public void atualiza(String paramCodForum) throws Exception {
         String mensagem = "";
-        String matriculaSessao = getUsuarioMatricula();
+        String matriculaSessao = getCadastrante().getMatricula().toString();
+        String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
         String nomeSessao = getCadastrante().getNomeAbreviado();
-        UsuarioForum objUsuario = UsuarioForum.AR.find("matricula_usu =" + matriculaSessao).first();
+        UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao, sesb_pessoaSessao);
         if (objUsuario != null) {
             String descricaoForum = "";
             if (paramCodForum != null && !paramCodForum.isEmpty()) {
@@ -40,6 +41,7 @@ public class UsuarioFormController extends PpController {
                 ContextoPersistencia.em().flush();
                 objUsuario.setForumFk(objForum);
                 objUsuario.setMatricula_usu(matriculaSessao);
+                objUsuario.setSesb_pessoa(sesb_pessoaSessao);
                 objUsuario.setNome_usu(nomeSessao);
                 try {
                     objUsuario.save();
@@ -47,7 +49,7 @@ public class UsuarioFormController extends PpController {
                     mensagem = "Ok.";
                 } catch (Exception e) {
                     e.printStackTrace();
-                    mensagem = "Não Ok.";
+                    mensagem = "N&atilde;o Ok.";
                 }
             } else {
                 paramCodForum = Integer.toString(objUsuario.getForumFk().getCod_forum());
@@ -64,7 +66,7 @@ public class UsuarioFormController extends PpController {
             result.include("mensagem", mensagem);
             result.include("outrosForuns", outrosForuns);
         } else {
-            redirecionaPaginaErro("Usuario sem permissao." , null);
+            redirecionaPaginaErro("Usu&aacute;rio sem permiss&atilde;o." , null);
         }
     }
     

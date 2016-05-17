@@ -32,6 +32,8 @@ public class Agendamentos extends Objeto {
     private Locais localFk;
     @Column(name = "matricula", length = 9, nullable = true)
     private String matricula;
+    @Column(name = "sesb_pessoa" , length = 2, nullable = true)
+    private String sesb_pessoa;
     @Column(name = "periciado", length = 50, nullable = true)
     private String periciado;
     @Column(name = "perito_juizo", length = 50, nullable = true)
@@ -46,11 +48,12 @@ public class Agendamentos extends Objeto {
     public Agendamentos() {
     }
 
-    public Agendamentos(Date data_ag, String hora_ag, Locais localFk, String matricula, String periciado, String perito_juizo, String perito_parte, String processo, String orgao) {
+    public Agendamentos(Date data_ag, String hora_ag, Locais localFk, String matricula, String sesb_pessoa, String periciado, String perito_juizo, String perito_parte, String processo, String orgao) {
         this.data_ag = data_ag;
         this.hora_ag = hora_ag;
         this.localFk = localFk;
         this.matricula = matricula;
+        this.sesb_pessoa = sesb_pessoa;
         this.periciado = periciado;
         this.perito_juizo = perito_juizo;
         this.perito_parte = perito_parte;
@@ -89,7 +92,12 @@ public class Agendamentos extends Objeto {
     public void setMatricula(String matricula) {
         this.matricula = matricula;
     }
-
+    public String getSesb_pessoa(){
+    	return sesb_pessoa;
+    }
+    public void setSesb_Pessoa(String sesb_pessoa){
+    	this.sesb_pessoa = sesb_pessoa;
+    }
     public String getPericiado() {
         return periciado;
     }

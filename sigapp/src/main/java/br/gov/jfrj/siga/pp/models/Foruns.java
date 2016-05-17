@@ -25,11 +25,11 @@ public class Foruns extends Objeto {
     private int cod_forum;
 
     @OneToMany(mappedBy = "forumFk")
-    // isso n√£o √© campo, mas um 'references'.
+    // isso n„o È campo, mas um 'references'.
     private List<Locais> lstLocal;
 
     @OneToMany(mappedBy = "forumFk")
-    // isso n√£o √© campo, mas um 'references'.
+    // isso n„o È campo, mas um 'references'.
     private List<UsuarioForum> lstUsuarioForum;
 
     @Column(name = "descricao_forum", length = 40, nullable = true)
@@ -55,6 +55,11 @@ public class Foruns extends Objeto {
         this.cod_forum = cod_forum;
     }
 
+    public static Foruns findByCodigo(String codForum) {
+        return AR.find("cod_forum ='" + codForum + "'").first();
+        // (Foruns) Foruns.AR.find("cod_forum='"+forum_permitido+"'").first();
+    }
+    
     public List<Locais> getLstLocal() {
         return lstLocal;
     }

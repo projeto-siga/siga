@@ -20,20 +20,25 @@ public class UsuarioForum extends Objeto{
     public static final ActiveRecord<UsuarioForum> AR = new ActiveRecord<>(UsuarioForum.class);
 
     @Id
-    @Column(name = "matricula_usu", length = 6, nullable = false, unique = true)
+    @Column(name = "matricula_usu", length = 6, nullable = false)
     private String matricula_usu;
-
+    
+    @Id()
+    @Column(name="sesb_pessoa", length=2, nullable=false)
+    public String sesb_pessoa;
+    
     @Id()
     @ManyToOne
     @JoinColumn(name = "cod_forum", nullable = false)
     // fk, e tem que atribuir via objeto forumfK
-    private Foruns forumFk; // isso Ã© coluna, mas tem que atribuir como objeto
+    private Foruns forumFk; // isso é coluna, mas tem que atribuir como objeto
 
     @Column(name = "nome_usu", length = 50, nullable = true)
     private String nome_usu;
 
-    public UsuarioForum(String matricula_usu_construt, String nome_usu_construt, Foruns cod_forum_construt) {
+    public UsuarioForum(String matricula_usu_construt,  String sesb_pessoa_construt, String nome_usu_construt, Foruns cod_forum_construt) {
         this.matricula_usu = matricula_usu_construt;
+        this.sesb_pessoa = sesb_pessoa_construt;
         this.nome_usu = nome_usu_construt;
         this.forumFk = cod_forum_construt;
     }
@@ -47,6 +52,14 @@ public class UsuarioForum extends Objeto{
 
     public void setMatricula_usu(String matricula_usu) {
         this.matricula_usu = matricula_usu;
+    }
+    
+    public String getSesb_pessoa(){
+    	return sesb_pessoa;
+    }
+    
+    public void setSesb_pessoa (String sesb_pessoa){
+    	this.sesb_pessoa = sesb_pessoa;
     }
 
     public Foruns getForumFk() {
@@ -65,8 +78,8 @@ public class UsuarioForum extends Objeto{
         this.nome_usu = nome_usu;
     }
     
-    public static UsuarioForum findByMatricula(String matriculaSessao) {
-        return AR.find("matricula_usu =" + matriculaSessao).first();
+    public static UsuarioForum findByMatricula(String matriculaSessao, String sesb_pessoaSessao) {
+        return AR.find("matricula_usu ='" + matriculaSessao + "' and sesb_pessoa ='" + sesb_pessoaSessao + "'").first();
     }
     
     @Override

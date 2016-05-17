@@ -25,12 +25,11 @@ public class PeritoController extends PpController{
     
     @Path("/incluir")
     public void incluir() {
-        String matriculaSessao = getUsuarioMatricula();
-        
-        UsuarioForum objUsuario = UsuarioForum.AR.find("matricula_usu = '"+matriculaSessao+"'").first();
-        
+        String matriculaSessao = getCadastrante().getMatricula().toString();
+        String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
+        UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao , sesb_pessoaSessao);
         if(objUsuario == null)
-            redirecionaPaginaErro("Usuario sem permissao", null);
+            redirecionaPaginaErro("Usu&aacute;rio sem permiss&atilde;o", null);
     }
     
     public void insert(String cpf_perito, String nome_perito){
@@ -39,15 +38,14 @@ public class PeritoController extends PpController{
             Peritos objPerito = new Peritos(cpf_perito, nome_perito);
             objPerito.save();
             ContextoPersistencia.em().flush();
-            resposta="ok";
+            resposta="Ok.";
         } catch(PersistenceException e) {
             e.printStackTrace();
-            resposta="Nao ok.";
+            resposta="N&atilde;o ok.";
             if (e.getMessage().substring(23, 53).equals(".ConstraintViolationException:")) 
-                resposta = "Verifique se o CPF do perito esta correto, ou, se o perito ja esta cadastrado. ";
+                resposta = "Verifique se o CPF do perito est&aacute; correto, ou, se o perito j&aacute; est&aacute; cadastrado. ";
         } finally {
             result.include("resposta", resposta);
         }
     }
-
 }

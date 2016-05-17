@@ -26,31 +26,29 @@ public class PermissaoController extends PpController {
     public PermissaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
         super(request, result, dao, so, em);
     }
-
     @Path("/exclui")
-    public void exclui(String matricula_proibida){
+    public void exclui(String matricula_proibida, String sesb_proibida){
 		String mensagem = "";
-		// pega usu√°rio do sistema
-		String matriculaSessao = getUsuarioMatricula();
-		String lotacaoSessao = getUsuarioLotacao();
-		UsuarioForum objUsuario = UsuarioForum.AR.find("matricula_usu = '"+matriculaSessao+"'").first();
-		if ((objUsuario !=null) && ( (lotacaoSessao.trim().equals("CSIS")||lotacaoSessao.trim().equals("SESIA")) )){ //pode excluir a permiss√£o
+		// pega usu·rio do sistema
+		String matriculaSessao = getCadastrante().getMatricula().toString();
+		String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
+		String lotacaoSessao = getCadastrante().getLotacao().getSiglaCompleta();
+		UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao , sesb_pessoaSessao);
+		if ((objUsuario !=null) && ( (lotacaoSessao.trim().equals("T2SEADDA")||lotacaoSessao.trim().equals("T2SESIA") || lotacaoSessao.trim().equals("T2SESGET")) )){ //pode excluir a permiss„o
 			List<UsuarioForum> listPermitidos = new ArrayList<UsuarioForum>();
-			if((matricula_proibida!=null) && (!matricula_proibida.isEmpty())){ // deleta permissao
+			if((matricula_proibida!=null) && (!matricula_proibida.isEmpty()) && (sesb_proibida!=null) && (!sesb_proibida.isEmpty()) ){ // deleta permiss„o
 				try{
-					UsuarioForum objUsuarioProibido = UsuarioForum.AR.find("matricula_usu='"+matricula_proibida+"'").first();
-					objUsuarioProibido.delete();
-					ContextoPersistencia.em().flush();
-					mensagem = "Ok";
+					UsuarioForum.AR.delete("from UsuarioForum where matricula_usu='" + matricula_proibida + "' and sesb_pessoa = '" +  sesb_proibida + "'", null);
+					mensagem = "Ok.";
 				}catch(Exception e){
 					e.printStackTrace();
-					mensagem = "Nao Ok";
+					mensagem = "N&atilde;o Ok.";
 				}finally{
 				    result.include("mensagem", mensagem);
 				}
 			 } else{ // lista permitidos
 				try{
-					 listPermitidos = (List) UsuarioForum.AR.find(" order by nome_usu ").fetch(); // isso n√£o d√° erro no caso de retorno vazio.
+					 listPermitidos = (List) UsuarioForum.AR.all().fetch(); // isso n„o d· erro no caso de retorno vazio.
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -58,26 +56,32 @@ public class PermissaoController extends PpController {
 				    result.include("listPermitidos", listPermitidos);
 				}
 			}
-		}
+		}else{redirecionaPaginaErro("Usu&aacute;rio sem permiss&atilde;o." , null );}
     }
 
     @Path("/inclui")
-    public void inclui(String matricula_permitida, String nome_permitido, String forum_permitido ) throws Exception {
+    public void inclui(String matricula_permitida, String sesb_permitida, String nome_permitido, String forum_permitido ) throws Exception {
+    	// ALTERAR A P¡GINA DE CADASTRO DE USU¡RIOS PARA INCLUIR SESB_PESSOA_PERMITIDA.
+    	// POR ENQUANTO VAMOS ATRIBUIR SESB_PESSOA_PERMITIDA CONFORME A LINHA ABAIXO. MAS, DEVER¡ VIR COMO PAR¬METRO.
+    	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		String mensagem = "";
-		// pega usu√°rio do sistema
-		String matriculaSessao = getUsuarioMatricula();
-		// String nomeSessao = cadastrante().getNomeAbreviado();
-		String lotacaoSessao = getUsuarioLotacao();
-		UsuarioForum objUsuario = UsuarioForum.AR.find("matricula_usu = '"+matriculaSessao+"'").first();
-		
-		if ((objUsuario !=null) && ((lotacaoSessao.trim().equals("CSIS") || lotacaoSessao.trim().equals("SESIA")))){
-			if((matricula_permitida!=null) && (nome_permitido!=null) && (forum_permitido!=null) && (!matricula_permitida.isEmpty()) && (!nome_permitido.isEmpty()) && (!forum_permitido.isEmpty())){
-				Foruns atribForum = (Foruns) Foruns.AR.find("cod_forum='"+forum_permitido+"'").first();
-				UsuarioForum usuarioPermitido = new UsuarioForum(matricula_permitida, nome_permitido, atribForum);
+		// pega usu·rio do sistema
+		String matriculaSessao = getCadastrante().getMatricula().toString();
+		String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
+		String lotacaoSessao = getCadastrante().getLotacao().getSiglaCompleta();
+		UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao, sesb_pessoaSessao);
+		if (objUsuario == null) {
+			redirecionaPaginaErro("Usu&aacute;rio sem permiss&atilde;o." , null);
+		}
+		if (((lotacaoSessao.trim().equals("T2SEADDA") || lotacaoSessao.trim().equals("T2SESIA") || lotacaoSessao.trim().equals("T2SESGET")))){
+			// Pode incluir permiss„o de usu·rio. Estando lotado na CSIS OU SESIA 
+			if((matricula_permitida!=null) && (sesb_permitida!=null) && (nome_permitido!=null) && (forum_permitido!=null) && (!matricula_permitida.isEmpty()) && (!sesb_permitida.isEmpty()) && (!nome_permitido.isEmpty()) && (!forum_permitido.isEmpty())){
+				// Estando os par‚metros presentes. Prossegue.
+				Foruns atribForum = Foruns.findByCodigo(forum_permitido);
+				//busca na base de dados o forum que veio pelo par‚metro.
+				UsuarioForum usuarioPermitido = new UsuarioForum(matricula_permitida, sesb_permitida, nome_permitido, atribForum);
 				try {
-				    if(objUsuario.equals(usuarioPermitido))
-				        throw new Exception("org.hibernate.exception.ConstraintViolationException");
-				    
+				    if(objUsuario.equals(usuarioPermitido)) throw new Exception("org.hibernate.exception.ConstraintViolationException");
 					ContextoPersistencia.em().persist(usuarioPermitido);
 					ContextoPersistencia.em().flush();
 					mensagem = "Ok.";
@@ -85,9 +89,9 @@ public class PermissaoController extends PpController {
 				    e.printStackTrace();
 				    if (e.getMessage().contains("a different object with the same identifier value was already associated with the session") || e.getMessage().contains("Could not execute JDBC batch update")
 				            || e.getMessage().contains("org.hibernate.exception.ConstraintViolationException")){
-						mensagem="Usuario ja tinha permissao.";
+						mensagem="Usuario j&aacute; tinha permiss&atilde;o.";
 					}else{
-						mensagem = "Nao Ok.";
+						mensagem = "N&atilde;o Ok.";
 					}
 				}finally{
 				    result.include("mensagem", mensagem);
@@ -97,7 +101,7 @@ public class PermissaoController extends PpController {
 				result.include("mensagem", mensagem);
 			}
 		}else{
-		    redirecionaPaginaErro("Usuario sem permissao." , null );
+		    redirecionaPaginaErro("Usu&aacute;rio sem permiss&atilde;o." , null );
 		}
     }
 }

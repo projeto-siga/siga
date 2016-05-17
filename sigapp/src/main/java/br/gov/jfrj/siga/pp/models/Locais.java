@@ -28,7 +28,7 @@ public class Locais extends Objeto {
     @ManyToOne
     @JoinColumn(name = "cod_forum", nullable = true)
     // fk, e, tem que atribuir programaticamente como objeto.
-    private Foruns forumFk; // Isso Ã© coluna, mas, tem que atribuir como objeto.
+    private Foruns forumFk; // Isso é coluna, mas, tem que atribuir como objeto.
 
     @Column(name = "dias", length = 40, nullable = true)
     private String dias;

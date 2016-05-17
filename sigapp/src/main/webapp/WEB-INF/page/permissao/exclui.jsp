@@ -14,6 +14,7 @@
 	  <th>&nbsp; Nome &nbsp; </th>
 	  <th>&nbsp; Matricula &nbsp; </th>
 	  <th>&nbsp; Forum &nbsp;</th>
+	  <th>&nbsp; Sesb &nbsp; </th>
 	  <th></th>
 	 </tr>
 	
@@ -25,10 +26,12 @@
 		<td>&nbsp; ${usu.nome_usu}</td>
 		<td>&nbsp; ${usu.matricula_usu}</td>
 		<td>&nbsp; ${usu.forumFk.descricao_forum}</td>
+		<td>&nbsp; ${usu.sesb_pessoa}</td>
 		<td>&nbsp;
 			<form name="frm_exclui_permissao" method="get" action="${linkTo[PermissaoController].exclui}" enctype="multipart/form-data">
 				<img  src="/siga/css/famfamfam/icons/delete.png"/>
 				<input type="hidden" name="matricula_proibida" value="${usu.matricula_usu}" /> &nbsp;
+				<input type="hidden" name="sesb_proibida" value="${usu.sesb_pessoa}" /> &nbsp;
 				<input type="submit" value="Exclui"/>
 			</form>
 		</td>

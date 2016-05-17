@@ -30,8 +30,9 @@ public class PrincipalController extends PpController {
     
     @Path("/app/home")
     public void home() {
-        String matriculaSessao = getUsuarioMatricula();
-        UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao);
+        String matriculaSessao = getCadastrante().getMatricula().toString();
+        String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
+        UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao, sesb_pessoaSessao);
         if (objUsuario != null) {
             try {
                 List<Locais> lstLocais = Locais.AR.find("forumFk=" + objUsuario.getForumFk().getCod_forum() + "order by ordem_apresentacao ").fetch();
@@ -50,7 +51,7 @@ public class PrincipalController extends PpController {
                 e.printStackTrace();
             }
         } else {
-            redirecionaPaginaErro("Usuario sem permissao", null);
+            redirecionaPaginaErro("Usuario sem permiss&atilde;o", null);
         }
     }
     

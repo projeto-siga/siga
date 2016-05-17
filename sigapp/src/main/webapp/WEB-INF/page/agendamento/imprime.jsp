@@ -25,7 +25,7 @@
 	</script>
 	<br/>
 	<br/>
-	<center> <h3>IMPRIME <i>MEUS</i> AGENDAMENTOS</h3> </center>
+	<center> <h3>IMPRIME <i>MEUS<i></>AGENDAMENTOS</h3> </center>
 	<table class="ui-tabs"  align="center" style="font-size:100%;">
 		<tr bgcolor="Silver">
 			<th>&nbsp; Data &nbsp; </th>

@@ -346,7 +346,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		final Pattern p1 = Pattern
 				.compile("^(?<orgao>"
 						+ acronimos
-						+ ")?-?(?<especie>[A-Za-z]{3})?-?(?:(?:(?<ano>20[0-9]{2})/?)(?<numero>[0-9]{1,5})(?<subnumero>\\.?[0-9]{2})??|(?<sonumero>[0-9]{1,5}))(?:(?<via>(?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|(?:-?V(?<volume>[0-9]{1,2})))?$");
+						+ ")?-?(?<especie>[A-Za-z]{3})?-?(?:(?:(?<ano>20[0-9]{2})/?)(?<numero>[0-9]{1,5})(?<subnumero>\\.?[0-9]{1,2})??|(?<sonumero>[0-9]{1,5}))(?:(?<via>(?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|(?:-?V(?<volume>[0-9]{1,2})))?$");
 		final Matcher m2 = p2.matcher(sigla);
 		final Matcher m1 = p1.matcher(sigla);
 
@@ -371,7 +371,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			String via = m1.group("via");
 			String volume = m1.group("volume");
 			
-			if (orgao != null) {
+			if (orgao != null && orgao.length() > 0 ) {
 				try {
 					if (mapAcronimo.containsKey(orgao)) {
 						getExDocumento().setOrgaoUsuario(
@@ -436,6 +436,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 					ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
 					flt.setSigla(siglaPai);
 					ExMobil mobPai = null;
+					if (flt.getIdOrgaoUsu() == null){
+						flt.setIdOrgaoUsu(getExDocumento().getOrgaoUsuario().getId());
+					}
 					try {
 						mobPai = ExDao.getInstance().consultarPorSigla(flt);
 					} catch (Exception e) {

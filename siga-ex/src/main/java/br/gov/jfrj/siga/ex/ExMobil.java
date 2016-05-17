@@ -371,7 +371,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			String via = m1.group("via");
 			String volume = m1.group("volume");
 			
-			if (orgao != null) {
+			if (orgao != null && orgao.length() > 0 ) {
 				try {
 					if (mapAcronimo.containsKey(orgao)) {
 						getExDocumento().setOrgaoUsuario(
@@ -436,6 +436,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 					ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
 					flt.setSigla(siglaPai);
 					ExMobil mobPai = null;
+					if (flt.getIdOrgaoUsu() == null){
+						flt.setIdOrgaoUsu(getExDocumento().getOrgaoUsuario().getId());
+					}
 					try {
 						mobPai = ExDao.getInstance().consultarPorSigla(flt);
 					} catch (Exception e) {

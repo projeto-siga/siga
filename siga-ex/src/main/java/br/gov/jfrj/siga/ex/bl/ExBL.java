@@ -3131,7 +3131,8 @@ public class ExBL extends CpBL {
 					baos.write("&".getBytes("iso-8859-1"));
 				baos.write(sKey.getBytes("iso-8859-1"));
 				baos.write('=');
-				baos.write(URLEncoder.encode(map.get(sKey), "iso-8859-1")
+				String s = map.get(sKey);
+				baos.write(URLEncoder.encode(s == null ? "" : s, "iso-8859-1")
 						.getBytes());
 			}
 			byte[] baForm = baos.toByteArray();

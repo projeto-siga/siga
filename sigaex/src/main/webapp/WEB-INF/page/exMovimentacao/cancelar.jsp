@@ -17,7 +17,7 @@
 				<form action="${request.contextPath}/app/expediente/mov/cancelar_movimentacao_gravar" method="post">
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="id" value="${id}" />
-					<input type="hidden" name="sigla" value="${sigla}"/>
+					<input type="hidden" name="sigla" value="${mob.sigla}"/>
 					
 					<table class="gt-form-table">
 						<tr class="header">

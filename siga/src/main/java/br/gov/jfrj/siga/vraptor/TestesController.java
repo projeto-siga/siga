@@ -187,6 +187,8 @@ public class TestesController extends SigaController {
 	private List<ConfiguracaoAcessoTeste> getAcessos() {
 		return Arrays.asList(
 			new ConfiguracaoAcessoTeste("siga_ex_test_url", "siga_ex_test", "/sigaex/app/testes/gadgetTest", "Atendente"),
+			new ConfiguracaoAcessoTeste("siga_sr_test_url", "siga_sr_test", "/sigasr/app/testes/gadgetTest", "Atendente"),
+			new ConfiguracaoAcessoTeste("siga_gc_test_url", "siga_gc_test", "/sigagc/app/testes/gadgetTest", "Atendente"),
 			new ConfiguracaoAcessoTeste("siga_wf_test_url", "siga_wf_test", "/sigawf/app/testes/gadgetTest", "Atendente"),
 			new ConfiguracaoAcessoTeste("siga_cd_test_url", "siga_cd_test", "/sigacd/app/testes/CdTestesServlet", "OK!")
 		);

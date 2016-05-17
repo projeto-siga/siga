@@ -18,14 +18,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.soap.Text;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
@@ -34,7 +32,6 @@ import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
-import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -1373,6 +1370,25 @@ public class AppController extends GcController {
 		bl.cancelarMovimentacao(info, mov, getIdentidadeCadastrante(),
 				getTitular(), getLotaTitular());
 		movimentacoes(sigla);
+	}
+	
+	 @Get("app/testes/gadgetTest")
+	public void test(final String matricula) throws Exception {
+		if (matricula == null) {
+			result.use(Results.http()).body("ERRO: É necessário especificar o parâmetro 'matricula'.").setStatusCode(400);
+			return;
+		}
+			
+		final DpPessoa pes = daoPes(matricula);
+		
+		if (pes == null) {
+			result.use(Results.http()).body("ERRO: Não foi localizada a pessoa referenciada pelo parâmetro 'matricula'.").setStatusCode(400);
+			return;
+		}
+		
+		setTitular(pes);
+		setLotaTitular(pes.getLotacao());
+		result.redirectTo(this.getClass()).gadget();
 	}
 
 }

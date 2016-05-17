@@ -80,7 +80,7 @@
 									</li>
 								</c:if>
 								<c:if
-									test="${not f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados')}">
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados')}">
 									<li><a href="${f:getURLSistema('siga.sgp.terc')}">Terceirizados</a>
 									</li>
 								</c:if>

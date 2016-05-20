@@ -168,6 +168,12 @@ public class CpMarcador extends AbstractCpMarcador {
 	
 	final static public long MARCADOR_SOLICITACAO_NECESSITA_PROVIDENCIA = 69;
 	
+	final static public long MARCADOR_URGENTE = 1000;
+	
+	final static public long MARCADOR_IDOSO = 1001;
+	
+	final static public long MARCADOR_RETENCAO_INSS = 1002;
+	
 	public static ActiveRecord<CpMarcador> AR = new ActiveRecord<>(CpMarcador.class);
 
 	public CpMarcador() {

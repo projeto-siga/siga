@@ -211,9 +211,9 @@ public class ExMovimentacaoController extends ExController {
 									arquivo.getFileName()));
 		}
 		
-		if (numPaginas != null && numBytes != null &&  (numBytes/numPaginas > (1 * 1024 * 1024))) {
-			throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 1MB por página.");
-		}
+//		if (numPaginas != null && numBytes != null &&  (numBytes/numPaginas > (1 * 1024 * 1024))) {
+//			throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 1MB por página.");
+//		}
 		
 		if (mob.isVolumeEncerrado()) {
 			throw new AplicacaoException(

@@ -288,10 +288,8 @@ public class ExClassificacaoController
 	}
 
 	@Post("app/expediente/classificacao/gravarVia")
-	public void gravarVia(String acao, String codificacao, ExVia via,
-			Long idDestino, Long idTemporalidadeArqCorr,
-			Long idTemporalidadeArqInterm, Long idDestinacaoFinal)
-			throws Exception {
+	public void gravarVia(String acao, String codificacao, Long idVia, String obsVia, Long idDestino, Long idTemporalidadeArqCorr,
+			Long idTemporalidadeArqInterm, Long idDestinacaoFinal) throws Exception {
 		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
 		if (idDestino == null || idDestino <= 0) {
 			throw new AplicacaoException(
@@ -303,7 +301,8 @@ public class ExClassificacaoController
 			Date dt = dao().consultarDataEHoraDoServidor();
 
 			ExClassificacao exClassAntiga = buscarExClassificacao(codificacao);
-			if (exClassAntiga == null) {
+			ExVia via = idVia != null ? dao().consultar(idVia, ExVia.class, false) : new ExVia();
+			if (exClassAntiga == null){
 				throw new AplicacaoException("Erro ao obter a classificação");
 			}
 			ExClassificacao exClassNovo = Ex.getInstance().getBL()
@@ -363,13 +362,13 @@ public class ExClassificacaoController
 			exViaGravar.setExDestinacaoFinal(destFinal);
 			exViaGravar.setTemporalidadeCorrente(tempCorrente);
 			exViaGravar.setTemporalidadeIntermediario(tempInterm);
-			exViaGravar.setObs(via.getObs());
 
-			dao().gravarComHistorico(exViaGravar, exVia, dtHist,
-					getIdentidadeCadastrante());
-
-			exClassNovo.getExViaSet().add(exViaGravar);
-
+			exViaGravar.setObs(obsVia);		
+	
+			dao().gravarComHistorico(exViaGravar, exVia, dtHist, getIdentidadeCadastrante());
+	
+			exClassNovo.getExViaSet().add(exViaGravar);		
+			
 			if (removerViaAntiga) {
 				exClassAntiga.getExViaSet().remove(exVia);
 			}
@@ -379,8 +378,8 @@ public class ExClassificacaoController
 					.copiarReferencias(exClassNovo, exClassAntiga, dt,
 							getIdentidadeCadastrante());
 			dao().commitTransacao();
-			// result.redirectTo("editar?codificacao="+codificacao+"&acao="+acao);
-			result.forwardTo(this).edita(exClassNovo, codificacao, acao);
+
+			result.redirectTo("editar?codificacao="+codificacao+"&acao="+acao);
 		} catch (Exception e) {
 			dao().rollbackTransacao();
 			throw new AplicacaoException(

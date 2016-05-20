@@ -57,15 +57,17 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 		//Edson: chamar o mecanismo acima para fazer previsões
 		if (isInfinito() || millisAdiante <= this.getDecorridoMillis(false)) {
 			Date dtPrevista, dtFinal = null; 
-			int somaDia = 0; Long millisPrevisto = 0l;
+			SrIntervaloCorrente iPrevisto = null;
+			int somaDia = 0; Long millisRestante = 0l;
 			do {
 				dtPrevista = getDataFimPrevista(millisAdiante, somaDia);
-				millisPrevisto = getDecorridoMillisComDataPrevista(dtPrevista);
-				dtFinal = new Date(dtPrevista.getTime() + (millisAdiante - millisPrevisto));
-				somaDia = ajustarData(dtFinal, dtPrevista, somaDia);
-			} while(!isAtivo(dtFinal));
+				iPrevisto = getIntervaloComDataPrevista(dtPrevista);
+				millisRestante = millisAdiante - iPrevisto.getDecorridoMillis(true);
+				dtFinal = new Date(dtPrevista.getTime() + millisRestante);
+				somaDia = ajustarData(millisRestante, somaDia);
+			} while (!isPrevisaoCerta(millisRestante, dtFinal)); 	
 			return dtFinal;
-		}
+		}	
 		return null;
 	}
 	
@@ -93,6 +95,15 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 	
 	public boolean isMesmoDia(Date dt) {
 		return super.isMesmoDia(getInicio(), dt);
+	}
+	
+	private boolean isPrevisaoCerta(Long millis, Date dt) {
+		if (isAtivo(dt)) {
+			if (horas(segundos(millis)) > getCargaHoraria())
+				return false;
+			return true;
+		}
+		return false;
 	}
 	
 	public SrDefinicaoHorario getHorario() {
@@ -129,22 +140,22 @@ public class SrIntervaloEmAtendimento extends SrIntervaloCorrente{
 	}
 	
 	public Date getDataFimPrevista(Long millisAdiante, int somaDia) {
-		return calcularDataPrevista(getDataInicioParaPrevisao(), horas(segundos(millisAdiante)), somaDia);		
+		return SrDataUtil.addDia(getDataInicioParaPrevisao(), dias(millisAdiante).intValue() + somaDia);		
 	}
-	
-	public Date calcularDataPrevista(Date dt, float horasAdiante, int somaDia) {
-		return SrDataUtil.addDia(dt,  (int) Math.ceil((horasAdiante/getCargaHoraria())) + somaDia);
+
+	public Long dias(Long millis) {
+		return (long) (horas(segundos(millis))/getCargaHoraria());
 	}
 		
-	public Long getDecorridoMillisComDataPrevista(Date dtPrevista) {
+	public SrIntervaloCorrente getIntervaloComDataPrevista(Date dtPrevista) {
 		SrIntervaloEmAtendimento iPrevisto = new SrIntervaloEmAtendimento(getInicio(), dtPrevista, null);
 		iPrevisto.setHorario(getHorario());
-		return iPrevisto.getDecorridoMillis(true);
+		return iPrevisto;
 	}
 	
-	private int ajustarData(Date dt1, Date dt2, int ajuste) {
-		if (dt1.before(dt2))
-			return ajuste -= 1;
+	private int ajustarData(Long millis, int ajuste) {
+		if (horas(segundos(millis)) > getCargaHoraria())
+			return ajuste += dias(millis).intValue();
 		return ajuste += 1;
 	}
 }

@@ -65,6 +65,7 @@
 	<filter-mapping>
 		<filter-name>HibernateFilter</filter-name>
 		<url-pattern>*.action</url-pattern>
+		<url-pattern>/servicos/*</url-pattern>
 		<url-pattern>/app/*</url-pattern>
 		<url-pattern>/public/app/*</url-pattern>
 		<url-pattern>/permalink/*</url-pattern>

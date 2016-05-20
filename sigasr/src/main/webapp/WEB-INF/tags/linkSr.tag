@@ -25,11 +25,11 @@
 		${acao.pre}
 		<c:choose>
 			<c:when test="${acao.popup}">
-				<a href="javascript:${linkConfirm != null ? linkConfirm : ''}popitup('${acao.url}');">${img}${acao.nome}</a>
+				<a href="javascript:${linkConfirm != null ? linkConfirm : ''}popitup('/sigasr/app/solicitacao/${acao.urlComParams}');">${img}${acao.nome}</a>
 			</c:when>
 			<c:when test="${acao.ajax}">
 				<span id="spanAjax_${acao.url}"></span> 
-				<a href="javascript: SetInnerHTMLFromAjaxResponse('${acao.url}', 'spanAjax_${acao.url}');">${img}${acao.nome}</a>
+				<a href="javascript: SetInnerHTMLFromAjaxResponse('${acao.urlComParams}', 'spanAjax_${acao.url}');">${img}${acao.nome}</a>
 			</c:when>
 			<c:when test="${acao.modal}">
 				<a href="javascript: ${acao.url}();">${img}${acao.nome}</a>
@@ -37,10 +37,10 @@
 			<c:otherwise>
 				<c:choose>
 					<c:when test="${not empty linkConfirm}">
-						<a href="javascript:${linkConfirm}location.href='${acao.url}';">${img}${acao.nome}</a>
+						<a href="javascript:${linkConfirm}location.href='/sigasr/app/solicitacao/${acao.urlComParams}';">${img}${acao.nome}</a>
 					</c:when>
 					<c:otherwise>
-						<a href="${acao.url}">${img}${acao.nome}</a>
+						<a href="/sigasr/app/solicitacao/${acao.urlComParams}">${img}${acao.nome}</a>
 					</c:otherwise>
 				</c:choose>
 			</c:otherwise>

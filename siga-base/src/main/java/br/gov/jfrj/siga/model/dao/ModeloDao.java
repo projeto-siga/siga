@@ -156,7 +156,7 @@ public abstract class ModeloDao {
 	public Session getSessao() {
 		if (sessao == null)
 			throw new IllegalStateException(
-					"Variï¿½vel Session nï¿½o foi atribuï¿½da para este DAO");
+					"Variável Session não foi atribuída para este DAO");
 		return sessao;
 	}
 
@@ -166,7 +166,7 @@ public abstract class ModeloDao {
 	public StatelessSession getSessaoStateless() {
 		if (sessaoStateless == null)
 			throw new IllegalStateException(
-					"Variï¿½vel Session nï¿½o foi atribuï¿½da para este DAO");
+					"Variável Session não foi atribuída para este DAO");
 		return sessaoStateless;
 	}
 

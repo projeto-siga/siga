@@ -421,8 +421,9 @@ public class ExDocumentoController extends ExController {
 				final ExNivelAcesso nivelDefault = getNivelAcessoDefault(exDocumentoDTO);
 				if (nivelDefault != null) {
 					exDocumentoDTO.setNivelAcesso(nivelDefault.getIdNivelAcesso());
-				} else
-					exDocumentoDTO.setNivelAcesso(1L);
+				} else{
+					exDocumentoDTO.setNivelAcesso(ExNivelAcesso.ID_PUBLICO);
+				}
 			}
 			
 			if(exDocumentoDTO.getIdMod() == null)

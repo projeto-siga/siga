@@ -34,6 +34,7 @@ function sbmt(nivel){
 					<tr>
 						<td><input type="hidden" name="nome" value="${nome}" />
 							<input type="hidden" name="propriedade" value="${propriedade}" />
+							<input type="hidden" name="sol.id" value="${sol.idSolicitacao}" />
 							<input type="hidden" name="sol.solicitante.id" value="${sol.solicitante.idPessoa}" />
 							<input type="hidden" name="sol.titular.id" value="${sol.titular.idPessoa}" />
 							<input type="hidden" name="sol.lotaTitular.id" value="${sol.lotaTitular.idLotacao}" />

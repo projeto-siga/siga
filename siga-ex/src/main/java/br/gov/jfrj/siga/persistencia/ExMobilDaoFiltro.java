@@ -58,9 +58,10 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 			setNumSequencia(mob.getNumSequencia());
 			if (mob.getExTipoMobil() != null)
 				setIdTipoMobil(mob.getExTipoMobil().getIdTipoMobil());
-			if (mob.getExDocumento().getOrgaoUsuario() != null)
+			if (mob.getExDocumento().getOrgaoUsuario() != null){
 				setIdOrgaoUsu(mob.getExDocumento().getOrgaoUsuario()
 						.getIdOrgaoUsu());
+			}
 			if (mob.getExTipoMobil() != null)
 				setIdTipoMobil(mob.getExTipoMobil().getIdTipoMobil());
 		}

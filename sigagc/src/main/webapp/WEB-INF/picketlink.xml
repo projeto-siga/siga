@@ -1,7 +1,7 @@
 <PicketLink xmlns="urn:picketlink:identity-federation:config:2.1">
 	<PicketLinkSP xmlns="urn:picketlink:identity-federation:config:2.1"	ServerEnvironment="tomcat" BindingType="POST">
 		<IdentityURL>${idp.url::/sigaidp/}</IdentityURL>
-		<ServiceURL>${sigagc.url::/sigagc/app/}</ServiceURL>
+		<ServiceURL>${sigagc.url::/sigagc/}</ServiceURL>
 	</PicketLinkSP>
 
 	<Handlers xmlns="urn:picketlink:identity-federation:handler:config:2.1">

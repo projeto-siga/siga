@@ -404,7 +404,7 @@ public class Notificador {
 			conteudo.append("<p>Para visualizar o documento, ");
 			conteudo.append("clique <a href=\"");
 			conteudo.append(servidor
-					+ "/app/expediente/doc/exibir?sigla=");
+					+ "/expediente/doc/exibir.action?sigla=");
 			conteudo.append(mov.getExDocumento().getSigla());
 			conteudo.append("\">aqui</a>.</p>");		
 			conteudo.append("\n\nEste email foi enviado porque ");
@@ -414,7 +414,7 @@ public class Notificador {
 			conteudo.append("' no documento ");
 			conteudo.append(mov.getExDocumento().getSigla());
 			conteudo.append(". Caso não deseje mais receber notificações desse documento, clique no link abaixo para se descadastrar:\n\n");
-			conteudo.append(servidor + "/app/expediente/mov/cancelar?id=");
+			conteudo.append(servidor + "/expediente/mov/cancelar.action?id=");
 			conteudo.append(dest.idMovPapel);
 		
 		
@@ -461,7 +461,7 @@ public class Notificador {
 			conteudoHTML.append("<p>Para visualizar o documento, ");
 			conteudoHTML.append("clique <a href=\"");
 			conteudoHTML.append(servidor
-					+ "/app/expediente/doc/exibir?sigla=");
+					+ "/expediente/doc/exibir.action?sigla=");
 			conteudoHTML.append(mov.getExDocumento().getSigla());
 			conteudoHTML.append("\">aqui</a>.</p>");
 
@@ -473,7 +473,7 @@ public class Notificador {
 			conteudoHTML.append(mov.getExDocumento().getSigla());
 			conteudoHTML
 					.append(". <br> Caso não deseje mais receber notificações desse documento, clique <a href=\"");
-			conteudoHTML.append(servidor + "/app/expediente/mov/cancelar?id=");
+			conteudoHTML.append(servidor + "/expediente/mov/cancelar.action?id=");
 			conteudoHTML.append(dest.idMovPapel);
 			conteudoHTML.append("\">aqui</a> para descadastrar.</p>");
 
@@ -529,7 +529,7 @@ public class Notificador {
 			conteudoHTML.append("clique <a href=\"");
 
 			conteudoHTML
-					.append(servidor + "/app/expediente/doc/exibir?sigla=");
+					.append(servidor + "/expediente/doc/exibir.action?sigla=");
 
 			conteudoHTML.append(dest.siglaMobil);
 

@@ -11,15 +11,15 @@
 		<p>Solicitante: ${(sol.solicitante.descricaoIniciaisMaiusculas)!}, ${(sol.lotaSolicitante.siglaLotacao)!} </p>
 		<p>${(sol.descrSolicitacao)!}</p>
 	</blockquote>
-	<#if ((movimentacao.tipoMov.idTipoMov)! == 7)> <#--Fechamento-->
+	<#if ((movimentacao.tipoMov.idTipoMov)! == 7) || ((movimentacao.tipoMov.idTipoMov)! == 8)> <#--Fechamento ou cancelamento de solicitação-->
 	<p>
-		<#if (sol.atendente)??>
-        	<#assign descricao = (sol.atendente.descricaoIniciaisMaiusculas)!>
+		<#if (sol.solicitacaoPai.atendente)??>
+        	<#assign pessoaOuLotaAtendente = (sol.solicitacaoPai.atendente.descricaoIniciaisMaiusculas)!>
 		<#else>
-			<#assign descricao = (sol.lotaAtendente.descricao)!> 
+			<#assign pessoaOuLotaAtendente = (sol.solicitacaoPai.lotaAtendente.descricao)!> 
 		</#if>
-		Este email foi enviado porque <b>${descricao}</b> é atendente atual da solicitação <b>${(sol.codigo)!}</b>,
-		que gerou a solicitação acima atrav�s da ação <b>Escalonar</b>.
+		Este email foi enviado porque <b>${pessoaOuLotaAtendente}</b> é atendente atual da solicitação <b>${(sol.solicitacaoPai.codigo)!}</b>,
+		que gerou a solicitação acima através da ação <b>Escalonar</b>.
 	</p>
 	</#if>
 	<p>

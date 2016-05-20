@@ -176,8 +176,8 @@ public class CpConfiguracaoBL {
 		}
 		Date dt = CpDao.getInstance().consultarDataUltimaAtualizacao();
 
-		if (dtUltimaAtualizacaoCache == null
-				|| dt.after(dtUltimaAtualizacaoCache)) {
+		if (dt != null && (dtUltimaAtualizacaoCache == null
+				|| dt.after(dtUltimaAtualizacaoCache))) {
 			procederAtualizacaoDeCache(dt);
 		}
 	}
@@ -235,14 +235,17 @@ public class CpConfiguracaoBL {
 				cfg.getOrgaoUsuario().getDescricao();
 			if (cfg.getComplexo() != null)
 				cfg.getComplexo().getNomeComplexo();
-			if (cfg.getLotacao() != null)
+			if (cfg.getLotacao() != null){
 				cfg.getLotacao().getSigla();
+				cfg.getLotacao().getOrgaoUsuario().getSigla();
+			}
 			if (cfg.getCargo() != null)
 				cfg.getCargo().getDescricao();
 			if (cfg.getFuncaoConfianca() != null)
 				cfg.getFuncaoConfianca().getDescricao();
 			if (cfg.getDpPessoa() != null) {
 				cfg.getDpPessoa().getDescricao();
+				cfg.getDpPessoa().getOrgaoUsuario().getSigla();
 				// cfg.getDpPessoa().getPessoaAtual().getDescricao();
 			}
 			if (cfg.getCpTipoConfiguracao() != null)

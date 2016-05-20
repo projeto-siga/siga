@@ -80,7 +80,7 @@
 									</li>
 								</c:if>
 								<c:if
-									test="${not f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados')}">
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados')}">
 									<li><a href="${f:getURLSistema('siga.sgp.terc')}">Terceirizados</a>
 									</li>
 								</c:if>
@@ -107,6 +107,11 @@
                 
                 	<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SE:Módulo de Servicos Externos')}">
 						<li><a href="/sigade/">Dados Externos</a>
+						</li>
+					</c:if>
+					
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GO:Gestão Orçamentária')}">
+						<li><a href="/sigago/">Gestão Orçamentária</a>
 						</li>
 					</c:if>
 					

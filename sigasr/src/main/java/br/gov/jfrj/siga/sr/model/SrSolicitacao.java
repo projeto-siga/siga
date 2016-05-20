@@ -50,6 +50,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NoResultException;
 import javax.persistence.OneToMany;
+import javax.persistence.PersistenceException;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -59,6 +60,7 @@ import javax.persistence.Transient;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
+import org.hibernate.exception.ConstraintViolationException;
 import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -1437,10 +1439,8 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	SortedSet<SrOperacao> operacoes = new TreeSet<SrOperacao>() {
     		@Override
 			public boolean add(SrOperacao e) {
-				// Edson: serÃ¯Â¿Â½ que essas coisas poderiam estar dentro do
-				// SrOperacao?
-				if (!e.isModal())
-					e.setUrl("../" + e.getUrl() + "?sigla="+getSiglaCompacta() + e.getParamsFormatted());
+    			if (!e.isModal())
+    				e.par("sigla", getSiglaCompacta());
 				if (!e.isPode())
 					return false;
 				return super.add(e);
@@ -1522,16 +1522,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         }
         
         setDtReg(new Date());
-        
-        if (getNumSolicitacao() == null && !isRascunho() && !isFilha()) {
-            // DB1: Verifica se Ã¯Â¿Â½ uma Solicita\u00E7Ã£o Filha, pois caso seja nÃ£o
-            // deve atualizar o nÃ¯Â¿Â½mero da solicitaÃ§Ã£o, caso contrÃ¯Â¿Â½rio nÃ£o
-            // funcionarÃ¯Â¿Â½ o filtro por cÃ¯Â¿Â½digo para essa filha
-            setNumSolicitacao(getProximoNumero());
-            atualizarCodigo();
-            setTempoDecorridoCadastro(getCadastro().getDecorridoEmSegundos());
-        }
-                   
+                         
         // Edson: Ver por que isto está sendo necessário. Sem isso, após o salvar(),
         // ocorre LazyIniException ao tentar acessar esses meuMovimentacaoSet's
         if (getSolicitacaoInicial() != null){
@@ -1541,8 +1532,24 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	}
         }
 
-        super.salvarComHistorico();
-        refresh();
+    	// DB1: Verifica se é uma Solicitação Filha, pois caso seja não
+    	// deve atualizar o número da solicitação, caso contrário não
+    	// funcionará o filtro por código para essa filha
+        if (getNumSolicitacao() == null && !isRascunho() && !isFilha()) {	
+            setNumSolicitacao(getProximoNumero());
+            atualizarCodigo();
+            setTempoDecorridoCadastro(getCadastro().getDecorridoEmSegundos());
+        }
+        
+        try {
+        	super.salvarComHistorico();
+        } catch (PersistenceException pe) {
+        	Throwable t = pe.getCause();
+        	if (t instanceof ConstraintViolationException) 
+        		throw new AplicacaoException("Ocorreu um erro ao gravar a solicitação. Por favor, tente novamente. Clique no botão [ Voltar ] para recuperar os dados na tela de Cadastro de Solicitação"); 
+        } 
+        
+    	refresh();
         getSolicitacaoInicial().refresh();
 
         // Edson: melhorar isto, pra nao precisar salvar novamente

@@ -31,6 +31,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoHash;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoList;
@@ -57,11 +58,15 @@ public class ExAssinadorExternoController extends ExController {
 	public void assinadorExternoList(String certificate, String time,
 			String proof) throws Exception {
 		try {
-			String servidor = SigaBaseProperties.getString("siga.ex."
-					+ SigaBaseProperties.getString("ambiente") + ".url");
-
 			JSONObject req = getJsonReq(request);
-			String sCpf = req.optString("cpf");
+
+			assertPassword(req);
+
+			String urlapi = req.getString("urlapi");
+			String sCpf = req.getString("cpf");
+
+			String permalink = urlapi.split("sigaex/public/app/")[0]
+					+ "siga/permalink/";
 
 			Long cpf = Long.valueOf(sCpf);
 			DpPessoa pes = dao().consultarPorCpf(cpf);
@@ -77,12 +82,9 @@ public class ExAssinadorExternoController extends ExController {
 					aei.setId(ass.getDoc().getCodigoCompacto());
 					aei.setCode(ass.getDoc().getCodigo());
 					aei.setDescr(ass.getDoc().getDescrDocumento());
-					aei.setUrlHash(servidor
-							+ "/sigaex/public/app/assinador-externo/hash/"
-							+ aei.getId());
-					aei.setUrlSave(servidor
-							+ "/sigaex/public/app/assinador-externo/save/"
-							+ aei.getId());
+					aei.setUrlView(permalink + ass.getDoc().getReferencia());
+					aei.setUrlHash("sigadoc/hash/" + aei.getId());
+					aei.setUrlSave("sigadoc/save/" + aei.getId());
 					list.add(aei);
 				}
 				if (ass.getMovs() == null)
@@ -94,12 +96,9 @@ public class ExAssinadorExternoController extends ExController {
 							.getCodigoCompacto()
 							+ ":" + assmov.getMov().getIdMov());
 					aei.setDescr(assmov.getMov().getDescrMov());
-					aei.setUrlHash(servidor
-							+ "/sigaex/public/app/assinador-externo/hash/"
-							+ aei.getId());
-					aei.setUrlSave(servidor
-							+ "/sigaex/public/app/assinador-externo/save/"
-							+ aei.getId());
+					aei.setUrlView(permalink + assmov.getMov().getReferencia());
+					aei.setUrlHash("sigadoc/hash/" + aei.getId());
+					aei.setUrlSave("sigadoc/save/" + aei.getId());
 					list.add(aei);
 				}
 			}
@@ -118,9 +117,12 @@ public class ExAssinadorExternoController extends ExController {
 	public void assinadorExternoHash(String sigla) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
-			String certificate = req.optString("certificate");
-			String time = req.optString("time");
-			String proof = req.optString("proof");
+
+			assertPassword(req);
+
+			String certificate = req.optString("certificate", null);
+			String time = req.optString("time", null);
+			String proof = req.optString("proof", null);
 
 			byte[] pdf = null;
 
@@ -142,8 +144,8 @@ public class ExAssinadorExternoController extends ExController {
 			ExAssinadorExternoHash resp = new ExAssinadorExternoHash();
 
 			// Alterado para forçar PKCS7
-//			resp.setPolicy("PKCS7");
-//			resp.setDoc(BlucService.bytearray2b64(pdf));
+			// resp.setPolicy("PKCS7");
+			// resp.setDoc(BlucService.bytearray2b64(pdf));
 			resp.setSha1(BlucService.bytearray2b64(BlucService.calcSha1(pdf)));
 			resp.setSha256(BlucService.bytearray2b64(BlucService
 					.calcSha256(pdf)));
@@ -158,12 +160,15 @@ public class ExAssinadorExternoController extends ExController {
 	public void assinadorExternoSave(String sigla) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
+
+			assertPassword(req);
+
 			String envelope = req.getString("envelope");
 			String certificate = req.getString("certificate");
 			String time = req.getString("time");
-			String subject = req.optString("subject");
-			String cpf = req.optString("cpf");
-			String cn = req.optString("cn");
+			String subject = req.optString("subject", null);
+			String cpf = req.optString("cpf", null);
+			String cn = req.optString("cn", null);
 
 			byte[] assinatura = Base64.decode(envelope);
 			byte[] certificado = Base64.decode(certificate);
@@ -205,6 +210,13 @@ public class ExAssinadorExternoController extends ExController {
 		} catch (Exception e) {
 			jsonError(e);
 		}
+	}
+
+	private void assertPassword(JSONObject req) throws Exception {
+		if (SigaExProperties.getAssinadorExternoPassword() != null
+				&& !SigaExProperties.getAssinadorExternoPassword().equals(
+						req.optString("password", null)))
+			throw new Exception("Falha de autenticação.");
 	}
 
 	protected void jsonSuccess(final Object resp) {

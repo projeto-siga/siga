@@ -165,39 +165,39 @@ public class AppController extends GcController {
 	@Path("/public/app/knowledge")
 	public void publicKnowledge(Long id, String[] tags, String msgvazio,
 			String urlvazio, String titulo, boolean popup, String estiloBusca,
-			Boolean podeCriar) throws Exception {
+			Boolean podeCriar, String pagina) throws Exception {
 		renderKnowledge(id, tags, null, msgvazio, urlvazio, titulo, true,
-				popup, estiloBusca, podeCriar);
+				popup, estiloBusca, podeCriar, pagina);
 	}
 
 	public void knowledge(Long id, String[] tags, String msgvazio,
 			String urlvazio, String titulo, boolean testarAcesso,
-			boolean popup, String estiloBusca, Boolean podeCriar)
+			boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {
 		renderKnowledge(id, tags, null, msgvazio, urlvazio, titulo,
-				testarAcesso, popup, estiloBusca, podeCriar);
+				testarAcesso, popup, estiloBusca, podeCriar, pagina);
 	}
 
 	public void knowledgeInplace(Long id, String[] tags, String msgvazio,
 			String urlvazio, String titulo, boolean testarAcesso,
-			boolean popup, String estiloBusca, Boolean podeCriar)
+			boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {
 		renderKnowledge(id, tags, "inplace", msgvazio, urlvazio, titulo,
-				testarAcesso, popup, estiloBusca, podeCriar);
+				testarAcesso, popup, estiloBusca, podeCriar, pagina);
 	}
 
 	public void knowledgeSidebar(Long id, String[] tags, String msgvazio,
 			String urlvazio, String titulo, boolean testarAcesso,
-			boolean popup, String estiloBusca, Boolean podeCriar)
+			boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
 			throws Exception {
 		renderKnowledge(id, tags, "sidebar", msgvazio, urlvazio, titulo,
-				testarAcesso, popup, estiloBusca, podeCriar);
+				testarAcesso, popup, estiloBusca, podeCriar, pagina);
 	}
 
 	private void renderKnowledge(Long id, String[] tags, String estilo,
 			String msgvazio, String urlvazio, String titulo,
 			boolean testarAcesso, boolean popup, String estiloBusca,
-			Boolean podeCriar) throws UnsupportedEncodingException, Exception {
+			Boolean podeCriar, String pagina) throws UnsupportedEncodingException, Exception {
 		int index = Integer.MAX_VALUE;
 		Long idOutroConhecimento = 0l;
 		GcInformacao info = null;
@@ -298,6 +298,7 @@ public class AppController extends GcController {
 		result.include("referer", referer);
 		result.include("popup", popup);
 		result.include("podeCriar", podeCriar);
+		result.include("pagina", pagina);
 	}
 
 	public void updateTag(String before, String after) {

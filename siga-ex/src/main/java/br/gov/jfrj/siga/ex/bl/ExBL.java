@@ -39,6 +39,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -3159,7 +3160,8 @@ public class ExBL extends CpBL {
 					baos.write("&".getBytes("iso-8859-1"));
 				baos.write(sKey.getBytes("iso-8859-1"));
 				baos.write('=');
-				baos.write(URLEncoder.encode(map.get(sKey), "iso-8859-1")
+				String s = map.get(sKey);
+				baos.write(URLEncoder.encode(s == null ? "" : s, "iso-8859-1")
 						.getBytes());
 			}
 			byte[] baForm = baos.toByteArray();
@@ -3582,7 +3584,8 @@ public class ExBL extends CpBL {
 		if (doc.isFinalizado())
 			throw new AplicacaoException("Documento já está finalizado.");
 
-		if (!doc.getExClassificacao().isAtivo())
+		ExClassificacao classificacaoValida = doc.getExModelo().getExClassificacao()==null?null:doc.getExModelo().getExClassificacao().getAtual();
+		if (classificacaoValida != null && classificacaoValida.isAtivo() && !doc.getExClassificacao().equivale(classificacaoValida))
 			throw new AplicacaoException(
 					"Classificação documental encerrada. Selecione outra na tela de edição.");
 
@@ -6494,7 +6497,7 @@ public class ExBL extends CpBL {
 			// Verifica se é Processo e conta o número de páginas para verificar
 			// se tem que encerrar o volume
 			if (mob.doc().isProcesso()) {
-				if (mob.getTotalDePaginasSemAnexosDoMobilGeral() >= 200) {
+				if (mob.getTotalDePaginasSemAnexosDoMobilGeral() >= SigaExProperties.getMaxPagVolume()) {
 					encerrarVolume(cadastrante, lotaCadastrante, mob, dtMov,
 							null, null, null, true);
 				}
@@ -7437,6 +7440,7 @@ public class ExBL extends CpBL {
 			}
 		}
 
+		Collections.sort(assinaveis, new ExAssinavelComparador());
 		return assinaveis;
 	}
 }

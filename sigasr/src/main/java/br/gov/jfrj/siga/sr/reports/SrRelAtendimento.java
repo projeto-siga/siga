@@ -101,8 +101,8 @@ public class SrRelAtendimento extends RelatorioTemplate {
 			for (SrEtapaSolicitacao etapa : etapasOrdenadas) {
 				registros.add(etapa.getSolicitacao().getCodigo());
 				registros.add(etapa.getSolicitacao().getHisDtIniDDMMYYYYHHMM());
-				registros.add(etapa.getLotaResponsavel().getSiglaCompleta()); 
-				registros.add(etapa.getPessoaResponsavel()!= null ?  etapa.getPessoaResponsavel().getPrimeiroNomeEIniciais() : "");
+				registros.add(etapa.getLotaResponsavel().getLotacaoAtual().getSiglaCompleta()); 
+				registros.add(etapa.getPessoaResponsavel() != null ?  etapa.getPessoaResponsavel().getPessoaAtual().getPrimeiroNomeEIniciais() : "");
 				registros.add(etapa.getInicioString());
 				registros.add(etapa.getFimString());
 				registros.add(etapa.getTipoMov() != null ? etapa.getTipoMov().getNome() : "");

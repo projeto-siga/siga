@@ -47,6 +47,7 @@ public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltro
 
 	protected List<CpMarcador> getEstados() throws AplicacaoException {
 		Long[] ids = {
+				//Edson: favor manter ordem alfabética :-)
 				CpMarcador.MARCADOR_A_DEVOLVER,
 				CpMarcador.MARCADOR_A_DEVOLVER_FORA_DO_PRAZO,
 				CpMarcador.MARCADOR_A_RECEBER,

@@ -215,9 +215,19 @@ public class SrMovimentacao extends Objeto {
     	if (SrTipoMovimentacao.TIPOS_MOV_PRINCIPAIS.contains(getTipoMov().getIdTipoMov()))
     		return true;
     	if (getTipoMov().getId().equals(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA) 
-    			&& !getMotivoPendencia().equals(SrTipoMotivoPendencia.ATENDIMENTO_NA_FILHA) && !isFinalizadaOuExpirada())
+    			&& getMotivoPendencia() != null 
+    			&& !getMotivoPendencia().equals(SrTipoMotivoPendencia.ATENDIMENTO_NA_FILHA) 
+    			&& !isFinalizadaOuExpirada())
     		return true;
     	return false;
+    }
+    
+    public boolean isInicioAtendimento() {
+    	return (SrTipoMovimentacao.TIPOS_MOV_INI_ATENDIMENTO.contains(getTipoMov().getIdTipoMov()));
+    }
+    
+    public boolean isFimAtendimento() {
+    	return (SrTipoMovimentacao.TIPOS_MOV_FIM_ATENDIMENTO.contains(getTipoMov().getIdTipoMov()));
     }
 
     public boolean isCancelada() {
@@ -343,16 +353,15 @@ public class SrMovimentacao extends Objeto {
 
         getSolicitacao().atualizarMarcas();
         
-        //notificaï¿½ï¿½o usuï¿½rio
+        //notificação usuário
         if (getAnteriorPorTipo(SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO) != null
                 && getTipoMov().getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO
                 && getSolicitacao().getFormaAcompanhamento() != SrFormaAcompanhamento.ABERTURA
                 && !(getSolicitacao().getFormaAcompanhamento() == SrFormaAcompanhamento.ABERTURA_FECHAMENTO && getTipoMov().getIdTipoMov() != SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO))
             notificar();
 
-        //notificaï¿½ï¿½o atendente
+        //notificação atendente
         notificarAtendente();
-
     }
 
     public void desfazer(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
@@ -513,26 +522,26 @@ public class SrMovimentacao extends Objeto {
     }
 	
 	public void notificarAtendente() throws Exception {
+		DpLotacao lotaAtendente = null;
 		try{
-			if (tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_ATENDIMENTO
-					|| tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ESCALONAMENTO
-					|| tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA
-					|| (lotaAtendente != null && lotaTitular != null && !lotaTitular.equivale(lotaAtendente))) {
-				if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
-						lotaAtendente, "SIGA;SR;EMAILATEND:Receber Notificaï¿½ï¿½o Atendente"))
-					CorreioHolder
-					.get().notificarAtendente(this, solicitacao);
-			}
-			else if (tipoMov.getIdTipoMov() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_FECHAMENTO
-					&& solicitacao.isFilha()) {
-				if (Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(titular,
-						solicitacao.getSolicitacaoPai().getLotaAtendente(), "SIGA;SR;EMAILATEND:Receber Notificaï¿½ï¿½o Atendente"))
-					CorreioHolder
-					.get().notificarAtendente(this, solicitacao.getSolicitacaoPai());
-			}
+			if ((isFimAtendimento() && getSolicitacao().isFilha())) 
+				lotaAtendente = getSolicitacao().getSolicitacaoPai().getLotaAtendente();
+			else if (isInicioAtendimento() 
+						|| (getLotaAtendente() != null && getLotaTitular() != null && !getLotaTitular().equivale(getLotaAtendente())))
+				lotaAtendente = getLotaAtendente();
+
+			if (podeReceberNotificacaoAtendente(getTitular(), lotaAtendente)) 
+				CorreioHolder
+				.get()
+				.notificarAtendente(this, getSolicitacao());	
 		} catch (Exception e){
 			log.error("Erro ao notificar", e);
 		}
+	}
+	
+	private boolean podeReceberNotificacaoAtendente(DpPessoa pessoa, DpLotacao lotaAtendente) {
+		return Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(pessoa,
+				lotaAtendente, "SIGA;SR;EMAILATEND:Receber Notificação Atendente");
 	}
 
     public String getMotivoPendenciaString() {

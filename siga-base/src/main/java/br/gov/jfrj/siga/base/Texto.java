@@ -65,7 +65,7 @@ public class Texto {
 		temp = temp.replaceAll("[ÕÔÓÒ]", "O");
 		temp = temp.replaceAll("[ÛÚÙÜ]", "U");
 		temp = temp.replaceAll("[Ç]", "C");
-		temp = temp.replaceAll("[ãâáà&eacute;]", "a");
+		temp = temp.replaceAll("[ãâáà]", "a");
 		temp = temp.replaceAll("[éèê]", "e");
 		temp = temp.replaceAll("[íìî]", "i");
 		temp = temp.replaceAll("[õôóò]", "o");

@@ -16,6 +16,7 @@
 	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
 	<script src="/sigasr/javascripts/cronometro.js"></script>
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
+	<script src="/siga/javascript/localStorage.js"></script>
 
 	<style>
 		ul.lista-historico li span {
@@ -70,6 +71,8 @@
 				<script language="javascript">
 					function parseDescricao(id){
 						var descricao = document.getElementById(id);
+						if (!descricao)
+							return;
 						descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, '<br />');
 						descricao.innerHTML = descricao.innerHTML.replace(/(\w{2,4}\-(GC|SR)\-\d{4}\/\d{5}(?:\.\d{2})?)/g, function(a, b, c){
 							if (c.toLowerCase() == 'sr')
@@ -574,6 +577,7 @@
             <form action="${linkTo[SolicitacaoController].anexarArquivo}" method="post" onsubmit="javascript: return block();" enctype="multipart/form-data">               
                 <input type="hidden" name="todoOContexto" value="${todoOContexto}" />
                 <input type="hidden" name="ocultas" value="${ocultas}" />
+                <input type="hidden" name="movimentacao.atendente.id" value="${movimentacao.solicitacao.atendente.pessoaAtual.idPessoa}" />
                 <input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
                     value="${solicitacao.idSolicitacao}" /> <input
                     type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12" />
@@ -723,6 +727,17 @@
 </siga:pagina>
 
 <script language="javascript">
+	var IDENTIFICADOR = "sigasr/app/solicitacao/editar"; 
+
+	$(document).ready(function($) {
+		removerDoLocalStorage();	
+	});
+
+	function removerDoLocalStorage(){
+		//remove usando a variavel global IDENTIFICADOR
+		removerLS();
+	}
+	
 	function terminarPendencia(idMov) {
 		$("#movimentacaoId").val(idMov);
 		$("#terminarPendenciaModal_dialog").dialog("open");

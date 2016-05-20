@@ -35,49 +35,30 @@
 				<tbody>
 					<c:forEach items="${classificacaoVigente}" var="cla">
 						<c:set var="nivel" value="${cla.nivel}"/>
+						<c:set var="numVias" value="${fn:length(cla.exViaSet)}" />
 						<tr>
-							<td style="width: 100px"><a title="${cla.descricao}" href="editar?codificacao=${cla.codificacao}&acao=editar_classificacao">${cla.codificacao}</a></td>
-							<td rowspan="${fn:length(cla.exViaSet)}">
-								<c:forEach begin="1" end="${nivel*nivel}">&nbsp;</c:forEach>
-								<span style="font-size: ${16-nivel}">${cla.descrClassificacao}</span>
-							</td>
-						<c:choose>
-							<c:when test="${fn:length(cla.exViaSet)>0}">
-								<c:forEach items="${cla.exViaSet}" var="via">
-									<c:if test="${via.codVia==1}">
+							<td rowspan="${numVias}" style="width: 100px"><a title="${cla.descricao}" href="editar?codificacao=${cla.codificacao}&acao=editar_classificacao">${cla.codificacao}</a></td>
+							<td rowspan="${numVias}" style="font-size: ${16-nivel}; padding-left: ${20*nivel}">${cla.descrClassificacao}</td>
+							<c:choose>
+								<c:when test="${numVias > 0}">
+									<c:forEach items="${cla.exViaSet}" var="via" varStatus="loop">
+										<c:if test="${loop.index>0}">
+											</tr>
+											<tr>
+										</c:if>
 										<td>${via.codVia}</td>
-											<td>${via.exTipoDestinacao.descrTipoDestinacao}</td>
-											<td>${via.temporalidadeCorrente.descTemporalidade}</td>
-											<td>${via.temporalidadeIntermediario.descTemporalidade}</td>
-											<td>${via.exDestinacaoFinal.descrTipoDestinacao}</td>
-										
-									</c:if>
-									<c:if test="${via.codVia>1}">
-										<tr>
-											<td>${via.exClassificacao.codificacao}-${via.letraVia}</td>
-											<td>${via.codVia}</td>
-											<td>${via.exTipoDestinacao.descrTipoDestinacao}</td>
-											<td>${via.temporalidadeCorrente.descTemporalidade}</td>
-											<td>${via.temporalidadeIntermediario.descTemporalidade}</td>
-											<td>${via.exDestinacaoFinal.descrTipoDestinacao}</td>
-											
+										<td>${via.exTipoDestinacao.descrTipoDestinacao}</td>
+										<td>${via.temporalidadeCorrente.descTemporalidade}</td>
+										<td>${via.temporalidadeIntermediario.descTemporalidade}</td>
+										<td>${via.exDestinacaoFinal.descrTipoDestinacao}</td>
 										</tr>
-										
-									</c:if>
-									
-								</c:forEach>
-							</c:when>
-							<c:otherwise>
-								<td/>
-								<td/>
-								<td/>
-								<td/>
-								<td/>
-							</c:otherwise>
-						</c:choose>
-							
+									</c:forEach>
+								</c:when>
+								<c:otherwise>
+									<td/><td/><td/><td/><td/>
+								</c:otherwise>
+							</c:choose>
 						</tr>
-						
 					</c:forEach>
 				</tbody>
 			</table>

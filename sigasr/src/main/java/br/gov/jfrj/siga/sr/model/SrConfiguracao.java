@@ -240,7 +240,7 @@ public class SrConfiguracao extends CpConfiguracao {
     }
 
     public String getAtributoObrigatorioString() {
-        return atributoObrigatorio ? "Sim" : "Nï¿½o";
+        return atributoObrigatorio ? "Sim" : "Não";
     }
 
     public void salvarComoDesignacao() throws Exception {

@@ -81,16 +81,14 @@
 
 					<div class="gt-form-row gt-width-100">
 						<label>Classificação</label>
-						<c:if test="${not empty classificacao}">
-							<c:if test="${not editarClassificacao}">
-								<c:set var="somenteLeitura" value="readonly" />
-							</c:if>
-							<textarea name="classificacao" class="gt-form-text"
-								${somenteLeitura}>${classificacao}</textarea>
-						</c:if>
-						<c:if test="${empty classificacao}">
-							<p>Esse conhecimento ainda não possui uma classificação</p>
-						</c:if>
+						<c:choose>
+							<c:when test="${empty classificacao && !editarClassificacao}">
+								<p>Esse conhecimento ainda não possui uma classificação</p>
+							</c:when>
+							<c:otherwise>
+								<textarea name="classificacao" class="gt-form-text" ${editarClassificacao ? '' : 'readonly'}>${classificacao}</textarea>
+							</c:otherwise>
+						</c:choose>
 					</div>
 
 					<div class="gt-form-row gt-width-100">
@@ -101,7 +99,7 @@
 						<p class="gt-cancel">
 							<c:choose>
 								<c:when
-									test="not empty informacao && not empty informacao.id && informacao.id != 0}">
+									test="${not empty informacao && not empty informacao.id && informacao.id != 0}">
 								ou <a href="${linkTo[AppController].editar[informacao.sigla]}">cancelar
 										alterações</a>
 								ou <a

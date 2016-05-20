@@ -39,6 +39,7 @@ import java.util.List;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.transaction.SystemException;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -51,6 +52,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.DefaultNamingStrategy;
 import org.hibernate.criterion.Criterion;
@@ -265,8 +267,9 @@ public class CpDao extends ModeloDao {
 
 		// Forca a carga de algums campos para garantir o lazy load.
 		CpServico srv = (CpServico) l.get(0).getImplementation();
-		Object o1 = srv.getCpServicoPai().getDescricao();
-		Object o2 = srv.getCpTipoServico().getDscTpServico();
+		if (srv.getCpServicoPai() != null)
+			srv.getCpServicoPai().getDescricao();
+		srv.getCpTipoServico().getDscTpServico();
 
 		cache.put(new Element(chave, srv));
 		return l.get(0);
@@ -1324,18 +1327,33 @@ public class CpDao extends ModeloDao {
 	public Date consultarDataUltimaAtualizacao() throws AplicacaoException {
 	//	Query sql = (Query) getSessao().getNamedQuery("consultarDataUltimaAtualizacao");
 		StatelessSession statelessSession = HibernateUtil.getSessionFactory().openStatelessSession();
-		Query sql = (Query) statelessSession.getNamedQuery("consultarDataUltimaAtualizacao");
-		
-		sql.setCacheable(false);
-		List result = sql.list();
-		if (result.size() != 1)
-			throw new AplicacaoException(
-					"Nao foi possivel obter a data e a hora de atualizacao das configuracoes.");
+		Transaction transaction = statelessSession.beginTransaction();
+		try{
+			
+			Query sql = (Query) statelessSession.getNamedQuery("consultarDataUltimaAtualizacao");
+			
+			sql.setCacheable(false);
+			List result = sql.list();
+			
+			Date dtIni = (Date) ((Object[]) (result.get(0)))[0];
+			Date dtFim = (Date) ((Object[]) (result.get(0)))[1];
+			transaction.commit();
+			return DateUtils.max(dtIni, dtFim);
+		}catch(Exception e){
+			try {
+				if (transaction instanceof org.hibernate.engine.transaction.internal.jta.JtaTransaction){
+					((org.hibernate.engine.transaction.internal.jta.JtaTransaction)transaction).getUserTransaction().rollback();
+				}
+			} catch (IllegalStateException | SecurityException
+					| SystemException e1) {
+			}
+			
+			return null;
 
-		Date dtIni = (Date) ((Object[]) (result.get(0)))[0];
-		Date dtFim = (Date) ((Object[]) (result.get(0)))[1];
-		statelessSession.close();
-		return DateUtils.max(dtIni, dtFim);
+		}finally{
+			statelessSession.close();
+		}
+		
 	}
 
 	public Date dt() throws AplicacaoException {

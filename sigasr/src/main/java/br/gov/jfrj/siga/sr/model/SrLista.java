@@ -245,7 +245,7 @@ public class SrLista extends HistoricoSuporte implements Comparable<SrLista> {
 
     public void validarPodeExibirLista(DpLotacao lotacao, DpPessoa titular) throws Exception {
         if (!podeConsultar(lotacao, titular)) {
-            throw new Exception("Exibiï¿½ï¿½o nï¿½o permitida");
+            throw new Exception("Exibição não permitida");
         }
     }
 

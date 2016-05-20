@@ -81,7 +81,7 @@
 					<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label>
 					<siga:selecao2 tamanho="grande" propriedade="itemConfiguracao" tipo="itemConfiguracao" tema="simple" modulo="sigasr"
 						onchange="$('#itemNaoInformado').hide();" reler="ajax"
-						paramList="sol.solicitante.id=${solicitante.idPessoa};sol.local.id=${local.idComplexo};sol.titular.id=${cadastrante.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}" />
+						paramList="sol.id=${idSolicitacao};sol.solicitante.id=${solicitante.idPessoa};sol.local.id=${local.idComplexo};sol.titular.id=${cadastrante.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}" />
 					<br/><span id="itemNaoInformado" style="color: red; display: none;">Item não informado</span>
 					<br/>
 					<div id="divAcao" depende="itemConfiguracao">

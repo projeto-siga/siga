@@ -8,7 +8,6 @@
 	<jsp:include page="../main.jsp"></jsp:include>
 
 
-	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
 	<script src="/sigasr/javascripts/jquery.dataTables.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>

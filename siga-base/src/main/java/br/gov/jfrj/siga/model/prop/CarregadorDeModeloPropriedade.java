@@ -132,7 +132,7 @@ public class CarregadorDeModeloPropriedade {
 						+ NOME_ARQ_PROPS
 						+ ".file=CAMINHO_COMPLETO_DO_ARQUIVO na inicialização do programa \n 3) Coloque um arquivo "
 						+ NOME_ARQ_PROPS
-						+ " no mesmo diretï¿½rio do aplicativo \n 4) Se for uma aplicação web, coloque o arquivo "
+						+ " no mesmo diretório do aplicativo \n 4) Se for uma aplicação web, coloque o arquivo "
 						+ NOME_ARQ_PROPS
 						+ " no diretório de configuração do servidor de aplicação e configure-o para ler tal arquivo");
 

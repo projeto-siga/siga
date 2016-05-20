@@ -5296,12 +5296,6 @@ public class ExBL extends CpBL {
 			String nmFuncaoSubscritor, CpMarcador marcador, boolean ativo)
 			throws Exception {
 
-		if (descrMov == null) {
-			if (responsavel == null && lotaResponsavel == null)
-				if (dtMov == null)
-					throw new AplicacaoException(
-							"não foram informados dados para a marcação");
-		}
 		if (marcador == null)
 			throw new AplicacaoException("não foi informado o marcador");
 		

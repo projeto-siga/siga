@@ -1320,9 +1320,9 @@ public class ExDocumentoController extends ExController {
 					throw new AplicacaoException(MessageFormat.format("O arquivo {0} está corrompido. Favor gera-lo novamente antes de anexar.", arquivo.getFileName()));
 				}
 				
-				if (numPaginas != null && numBytes != null &&  (numBytes/numPaginas > (1 * 1024 * 1024))) {
-					throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 1MB por página.");
-				}
+//				if (numPaginas != null && numBytes != null &&  (numBytes/numPaginas > (1 * 1024 * 1024))) {
+//					throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 1MB por página.");
+//				}
 			}
 			
 			exBL.gravar(getCadastrante(), getLotaTitular(),

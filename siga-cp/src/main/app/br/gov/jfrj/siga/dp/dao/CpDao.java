@@ -1948,7 +1948,7 @@ public class CpDao extends ModeloDao {
 
 	@SuppressWarnings("unchecked")
 	public List<CpServico> listarServicos() {
-		return findByCriteria(CpServico.class);
+		return findAndCacheByCriteria(CACHE_QUERY_SECONDS, CpServico.class);
 	}
 
 	@SuppressWarnings("unchecked")

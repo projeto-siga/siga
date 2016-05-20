@@ -1138,4 +1138,19 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return false;
 
 	}
+
+	@Override
+	public String getTipoDescr() {
+		switch (getExTipoMovimentacao().getIdTpMov().intValue()) {
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO:
+			return "Anexo";
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO:
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA:
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO:
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA:
+		case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA:
+			return "Despacho";
+		}
+		return "Outro";
+	}
 }

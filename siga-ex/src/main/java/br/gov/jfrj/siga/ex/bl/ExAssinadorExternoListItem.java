@@ -9,6 +9,8 @@ public class ExAssinadorExternoListItem {
 	private String id;
 	private String code;
 	private String descr;
+	private String kind;
+	private String origin;
 	private String urlView;
 	private String urlHash;
 	private String urlSave;
@@ -35,6 +37,22 @@ public class ExAssinadorExternoListItem {
 
 	public void setDescr(String descr) {
 		this.descr = descr;
+	}
+
+	public String getKind() {
+		return kind;
+	}
+
+	public void setKind(String kind) {
+		this.kind = kind;
+	}
+
+	public String getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
 	}
 
 	public String getUrlHash() {

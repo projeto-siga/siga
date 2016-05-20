@@ -2695,4 +2695,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	public void setHisDtAlt(Date hisDtAlt) {
 		setDtAltDoc(hisDtAlt);
 	}
+	
+
+	@Override
+	public String getTipoDescr() {
+		return getExFormaDocumento().getDescricao();
+//		switch (getExFormaDocumento().getExTipoFormaDoc().getIdTipoFormaDoc().intValue()) {
+//		case (int) ExTipoFormaDoc.TIPO_FORMA_DOC_EXPEDIENTE:
+//			return "Expediente";
+//		}
+//		return "Outro";
+	}
 }

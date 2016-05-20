@@ -304,5 +304,7 @@ public abstract class ExArquivo extends Objeto {
 	}
 	
 	public abstract boolean isCodigoParaAssinaturaExterna(String num);
+	
+	public abstract String getTipoDescr();
 
 }

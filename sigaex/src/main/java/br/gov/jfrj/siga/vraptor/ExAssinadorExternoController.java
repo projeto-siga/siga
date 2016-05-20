@@ -81,6 +81,8 @@ public class ExAssinadorExternoController extends ExController {
 					aei.setId(sigla2id(ass.getDoc().getCodigoCompacto()));
 					aei.setCode(ass.getDoc().getCodigo());
 					aei.setDescr(ass.getDoc().getDescrDocumento());
+					aei.setKind(ass.getDoc().getTipoDescr());
+					aei.setOrigin("Siga-Doc");
 					aei.setUrlView(permalink + ass.getDoc().getReferencia());
 					aei.setUrlHash("sigadoc/hash/" + aei.getId());
 					aei.setUrlSave("sigadoc/save/" + aei.getId());
@@ -93,6 +95,8 @@ public class ExAssinadorExternoController extends ExController {
 					aei.setId(sigla2id(assmov.getMov().getReferencia()));
 					aei.setCode(assmov.getMov().getReferencia());
 					aei.setDescr(assmov.getMov().getDescrMov());
+					aei.setKind(assmov.getMov().getTipoDescr());
+					aei.setOrigin("Siga-Doc");
 					aei.setUrlView(permalink + assmov.getMov().getReferencia());
 					aei.setUrlHash("sigadoc/hash/" + aei.getId());
 					aei.setUrlSave("sigadoc/save/" + aei.getId());
@@ -114,12 +118,7 @@ public class ExAssinadorExternoController extends ExController {
 	public void assinadorExternoHash(String id) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
-
 			assertPassword(req);
-
-			String certificate = req.optString("certificate", null);
-			String time = req.optString("time", null);
-			String proof = req.optString("proof", null);
 
 			byte[] pdf = null;
 
@@ -146,7 +145,7 @@ public class ExAssinadorExternoController extends ExController {
 			// Descomentar para forçar PKCS7
 			// resp.setPolicy("PKCS7");
 			// resp.setDoc(BlucService.bytearray2b64(pdf));
-			
+
 			resp.setSha1(BlucService.bytearray2b64(BlucService.calcSha1(pdf)));
 			resp.setSha256(BlucService.bytearray2b64(BlucService
 					.calcSha256(pdf)));

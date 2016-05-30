@@ -968,7 +968,6 @@ public class AppController extends GcController {
 
 		// Atualiza a classificação com as hashTags encontradas
 		if (conteudo != null){
-			conteudo = Texto.removeAcentoHTMLMinusculas(conteudo);
 			classificacao = bl.findHashTag(conteudo, classificacao,
 					CONTROLE_HASH_TAG);
 		}

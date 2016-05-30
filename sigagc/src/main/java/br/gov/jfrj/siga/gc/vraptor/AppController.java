@@ -970,8 +970,7 @@ public class AppController extends GcController {
 		informacao.visualizacao = visualizacao;
 
 		// Atualiza a classificação com as hashTags encontradas
-		if (conteudo != null){
-			conteudo = Texto.removeAcentoHTMLMinusculas(conteudo);
+		if (conteudo != null){			
 			classificacao = bl.findHashTag(conteudo, classificacao,
 					CONTROLE_HASH_TAG);
 		}

@@ -3587,10 +3587,15 @@ public class ExBL extends CpBL {
 		if (doc.isFinalizado())
 			throw new AplicacaoException("Documento já está finalizado.");
 
-		ExClassificacao classificacaoValida = doc.getExModelo().getExClassificacao()==null?null:doc.getExModelo().getExClassificacao().getAtual();
-		if (classificacaoValida != null && classificacaoValida.isAtivo() && !doc.getExClassificacao().equivale(classificacaoValida))
+		ExClassificacao classificacaoValidaModelo = doc.getExModelo().getExClassificacao()==null?null:doc.getExModelo().getExClassificacao().getAtual();
+		
+		if (classificacaoValidaModelo != null && classificacaoValidaModelo.isAtivo() && !doc.getExClassificacao().equivale(classificacaoValidaModelo))
 			throw new AplicacaoException(
-					"Classificação documental encerrada. Selecione outra na tela de edição.");
+					"Classificação documental do modelo foi alterada. Edite e grave o documento para atualizá-lo.");
+		
+		if (!doc.getExClassificacao().getAtual().isAtivo()) 
+			throw new AplicacaoException(
+					"Classificação documental encerrada. Edite o documento para escolher outra.");	
 
 		if (doc.getExModelo() != null && doc.getExModelo().isFechado()) {
 			throw new AplicacaoException(
@@ -3616,11 +3621,12 @@ public class ExBL extends CpBL {
 		if (doc.isProcesso() && doc.getMobilGeral().temAnexos())
 			throw new AplicacaoException(
 					"Processos não podem possuir anexos antes da finalização. Exclua todos os anexos para poder finalizar. Os anexos poderão ser incluídos no primeiro volume após a finalização.");
-
-		Set<ExVia> setVias = doc.getSetVias();
+	
 
 		try {
 			iniciarAlteracao();
+			
+			doc.setExClassificacao(doc.getExClassificacao().getAtual()); /* atualizando a classificação do documento */
 
 			Date dt = dao().dt();
 			Calendar c = Calendar.getInstance();
@@ -3649,7 +3655,7 @@ public class ExBL extends CpBL {
 				doc.setNumExpediente(obterProximoNumero(doc));
 
 			doc.setDtFinalizacao(dt);
-
+			
 			if (doc.getExMobilPai() != null) {
 				if (doc.getExMobilPai().doc().isProcesso() && doc.isProcesso()) {
 					if (getComp().podeCriarSubprocesso(cadastrante,
@@ -3663,12 +3669,15 @@ public class ExBL extends CpBL {
 					}
 				}
 			}
+			
+			Set<ExVia> setVias = doc.getSetVias();
 
 			processar(doc, false, false);
 
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
 			dao().gravar(doc);
-
+			
+			
 			if (doc.getExFormaDocumento().getExTipoFormaDoc().isExpediente()) {
 				for (final ExVia via : setVias) {
 					Integer numVia = null;

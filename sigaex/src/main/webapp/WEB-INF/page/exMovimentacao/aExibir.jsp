@@ -294,7 +294,7 @@ function visualizarImpressao(via) {
 			</form>
 			<div style="padding-left: 10;">
 				<div id="dados-assinatura" style="visible: hidden">
-					<input type="hidden" name="ad_url_base" value="${fn:substring(pageContext.request.requestURL.toString(), 0, fn:length(pageContext.request.requestURL.toString()) - fn:length(pageContext.request.requestURI.toString()))}" />
+					<input type="hidden" name="ad_url_base" value="" />
 					<input type="hidden" name="ad_url_next" value="/sigaex/app/expediente/mov/fechar_popup?sigla=${mob.sigla}" />
 					<input type="hidden" name="ad_descr_0" value="${mov.referencia}" /> 
 					<input type="hidden" name="ad_url_pdf_0" value="/sigaex/app/arquivo/exibir?arquivo=${mov.nmPdf}" />

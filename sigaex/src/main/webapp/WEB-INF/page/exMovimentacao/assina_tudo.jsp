@@ -81,7 +81,7 @@
 							<td>
 								<div id="dados-assinatura" style="visible: hidden">
 									<input type="hidden" name="ad_url_base"
-										value="${fn:substring(pageContext.request.requestURL.toString(), 0, fn:length(pageContext.request.requestURL.toString()) - fn:length(pageContext.request.requestURI.toString()))}" />
+										value="" />
 									<input type="hidden" name="ad_url_next"
 										value="/siga/app/principal" />
 									<c:set var="botao" value="" />

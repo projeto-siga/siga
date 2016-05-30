@@ -966,7 +966,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 			vias = getExModelo().getExClassCriacaoVia().getExViaSet();
 		} else {
 			if (getExClassificacao() != null)
-				vias = getExClassificacaoAtual().getExViaSet();
+	/*			vias = getExClassificacaoAtual().getExViaSet(); */
+				vias = getExClassificacao().getAtual().getExViaSet();
+	 
+
 		}
 
 		// Edson: Antes da versão Destinação, quando se alterava uma via, a nova

@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import br.com.caelum.vraptor.Get;
@@ -231,8 +234,22 @@ public class ExAssinadorExternoController extends ExController {
 	}
 
 	protected void jsonError(final Exception e) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		e.printStackTrace(pw);
+		String errstack = sw.toString(); // stack trace as a string
+		
 		JSONObject json = new JSONObject();
 		json.put("error", e.getMessage());
+		
+		// Error Details
+		JSONArray arr = new JSONArray();
+		JSONObject detail = new JSONObject();
+		detail.put("context", context);
+		detail.put("service", "sigadocsigner");
+		detail.put("stacktrace", errstack);
+		json.put("errordetails", arr);
+
 		String s = json.toString();
 		result.use(Results.http())
 				.addHeader("Content-Type", "application/json").body(s)

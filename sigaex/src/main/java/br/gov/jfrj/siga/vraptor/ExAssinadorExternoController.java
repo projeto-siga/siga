@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,9 +17,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
-import br.com.caelum.vraptor.Post;
+import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Put;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
@@ -53,9 +57,8 @@ public class ExAssinadorExternoController extends ExController {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
 	}
 
-	@Post("/public/app/assinador-externo/list")
-	public void assinadorExternoList(String certificate, String time,
-			String proof) throws Exception {
+	@Get("/public/app/assinador-externo/doc/list")
+	public void assinadorExternoList() throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
 
@@ -84,8 +87,8 @@ public class ExAssinadorExternoController extends ExController {
 					aei.setKind(ass.getDoc().getTipoDescr());
 					aei.setOrigin("Siga-Doc");
 					aei.setUrlView(permalink + ass.getDoc().getReferencia());
-					aei.setUrlHash("sigadoc/hash/" + aei.getId());
-					aei.setUrlSave("sigadoc/save/" + aei.getId());
+					aei.setUrlHash("sigadoc/doc/" + aei.getId() + "/hash");
+					aei.setUrlSave("sigadoc/doc/" + aei.getId() + "/sign");
 					list.add(aei);
 				}
 				if (ass.getMovs() == null)
@@ -114,7 +117,7 @@ public class ExAssinadorExternoController extends ExController {
 
 	}
 
-	@Post("/public/app/assinador-externo/hash/{id}")
+	@Get("/public/app/assinador-externo/doc/{id}/hash")
 	public void assinadorExternoHash(String id) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
@@ -156,7 +159,7 @@ public class ExAssinadorExternoController extends ExController {
 		}
 	}
 
-	@Post("/public/app/assinador-externo/save/{id}")
+	@Put("/public/app/assinador-externo/doc/{id}/sign")
 	public void assinadorExternoSave(String id) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
@@ -231,8 +234,22 @@ public class ExAssinadorExternoController extends ExController {
 	}
 
 	protected void jsonError(final Exception e) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		e.printStackTrace(pw);
+		String errstack = sw.toString(); // stack trace as a string
+		
 		JSONObject json = new JSONObject();
 		json.put("error", e.getMessage());
+		
+		// Error Details
+		JSONArray arr = new JSONArray();
+		JSONObject detail = new JSONObject();
+		detail.put("context", context);
+		detail.put("service", "sigadocsigner");
+		detail.put("stacktrace", errstack);
+		json.put("errordetails", arr);
+
 		String s = json.toString();
 		result.use(Results.http())
 				.addHeader("Content-Type", "application/json").body(s)
@@ -241,8 +258,21 @@ public class ExAssinadorExternoController extends ExController {
 
 	private static JSONObject getJsonReq(HttpServletRequest request) {
 		try {
-			String sJson = getBody(request);
-			return new JSONObject(sJson);
+			JSONObject req = new JSONObject();
+
+			try {
+				String sJson = getBody(request);
+				req = new JSONObject(sJson);
+			} catch (Exception ex) {
+
+			}
+			for (Object key : request.getParameterMap().keySet())
+				if (key instanceof String
+						&& request.getParameter((String) key) instanceof String
+						&& !req.has((String) key))
+					req.put((String) key, request.getParameter((String) key));
+
+			return req;
 		} catch (Exception ex) {
 			throw new RuntimeException("Cannot parse request body as JSON", ex);
 		}

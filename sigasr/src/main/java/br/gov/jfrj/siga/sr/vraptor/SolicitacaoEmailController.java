@@ -86,10 +86,10 @@ public class SolicitacaoEmailController extends SrController {
 
 	private SrSolicitacao criarSolicitacao(DpPessoa pessoa, String descricao, String textoMensagem, UploadedFile arquivoMensagem, Calendar dataEnvio) throws Exception {
 		SrItemConfiguracao itemConfiguracao = (SrItemConfiguracao) SrItemConfiguracao.AR.find("siglaItemConfiguracao = ?", _SIGLA_DO_ITEM).first();
-        
-        SrAcao acao = (SrAcao) SrAcao.AR.find("siglaAcao = ?", _SIGLA_DA_ACAO).first();
-        
-        SrConfiguracao designacao = SrConfiguracao.AR.findById(_ID_DA_DESIGNACAO);
+		
+		SrAcao acao = (SrAcao) SrAcao.AR.find("siglaAcao = ?", _SIGLA_DA_ACAO).first();
+		
+		SrConfiguracao designacao = SrConfiguracao.AR.findById(_ID_DA_DESIGNACAO);
 		
 		SrSolicitacao srSolicitacao = new SrSolicitacao();
 		srSolicitacao.setAcao(acao);
@@ -129,25 +129,28 @@ public class SolicitacaoEmailController extends SrController {
 	}
 	
 	@Path("/incluir")
-    public void incluir(String emailRemetente, String assunto, String textoEmail, String msgBase64, Calendar dataEnvio) {
-    	byte[] arquivoMsg = DatatypeConverter.parseBase64Binary(msgBase64);
-    	UploadedFile anexo = getArquivoMsg(arquivoMsg, assunto);
-    	
-    	DpPessoa pessoa = localizarPessoaPeloEmail(emailRemetente);
-    	if(pessoa == null) {
-    		Retorno retorno = new Retorno("0", "nao ha usuario do siga cadastrado com o email informado");
-			result.use(Results.json()).from(retorno).serialize();
-    	} else {
-    	
-	    	try {
-	    		SrSolicitacao srSolicitacao = criarSolicitacao(pessoa, assunto, textoEmail, anexo, dataEnvio);
-	    		Retorno retorno = new Retorno("1", srSolicitacao.getCodigo());
-				result.use(Results.json()).from(retorno).serialize();
-			} catch (Exception e) {
-				Retorno retorno = new Retorno("0", "erro generico ao salvar a solicitacao: " + e.getMessage());
-				result.use(Results.json()).from(retorno).serialize();
+	public void incluir(String emailRemetente, String assunto, String textoEmail, String msgBase64, Calendar dataEnvio) {
+		Retorno retorno = null;
+		if(emailRemetente == null || msgBase64 == null || assunto == null) {
+			retorno = new Retorno("0", "dados incompletos");
+		} else {
+			byte[] arquivoMsg = DatatypeConverter.parseBase64Binary(msgBase64);
+			UploadedFile anexo = getArquivoMsg(arquivoMsg, assunto);
+			
+			DpPessoa pessoa = localizarPessoaPeloEmail(emailRemetente);
+			if(pessoa == null) {
+				retorno = new Retorno("0", "nao ha usuario do siga cadastrado com o email informado");
+			} else {
+			
+				try {
+					SrSolicitacao srSolicitacao = criarSolicitacao(pessoa, assunto, textoEmail, anexo, dataEnvio);
+					retorno = new Retorno("1", srSolicitacao.getCodigo());
+				} catch (Exception e) {
+					retorno = new Retorno("0", "erro generico ao salvar a solicitacao: " + e.getMessage());
+				}
+			
 			}
-    	
-    	}
-    }
+		}
+		result.use(Results.xml()).from(retorno).serialize();
+	}
 }

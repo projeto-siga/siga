@@ -108,6 +108,7 @@ public class GiServiceImpl implements GiService {
 			pessoa.put("idPessoa", p.getId());
 			pessoa.put("idExternaPessoa", p.getIdExterna());
 			pessoa.put("matriculaPessoa", p.getMatricula());
+			pessoa.put("cpf", p.getCpfPessoa());
 			pessoa.put("siglaPessoa", p.getSiglaCompleta());
 			pessoa.put("nomePessoa", p.getNomePessoa());
 			pessoa.put("emailPessoa", p.getEmailPessoaAtual());

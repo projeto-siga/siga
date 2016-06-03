@@ -78,6 +78,7 @@
 		<url-pattern>/app/*</url-pattern>
 		<url-pattern>/solicitacao/*</url-pattern>
 		<url-pattern>/public/app/solicitacao/*</url-pattern>
+		<url-pattern>/public/app/solicitacaoEmail/*</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>

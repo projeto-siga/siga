@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Title</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# SIGA-WF
+
+---
+# Tópicos
+
+1. Workflow e JBPM
+
+  * O que é workflow?
+
+  * Problemas o workflow se propõe a resolver
+
+  * Automatização de fluxos com JBPM
+
+2. SIGA-WF
+
+  * Fluxos da JFRJ
+
+  * O SIGA-WF
+
+  * Definição e execução dos fluxos
+
+  * Integração com SIGA-DOC
+
+3. Experiência
+
+  * Implantação
+  * Incidentes
+  * Melhorias
+
+---
+# Parte 1
+## Workflow e JBPM
+
+  * O que é workflow?
+
+  * Problemas o workflow se propõe a resolver
+
+  * Automatização de fluxos com JBPM
+
+---
+# O que é workflow? (1/2)
+
+* Processo, tarefa e objetivo
+
+* Trabalho individual x grupo
+
+* Manual e automatizado
+
+* Mapeamento
+
+* Instâncias do processo
+
+---
+# O que é workflow? (2/2)
+
+![](instancia-processo.png)
+
+---
+
+# Problemas o workflow se propõe a resolver
+
+* Burocracia
+* Eliminação de desperdício e problemas de execução (eficiência)
+* Coordenação de pessoas, atividades, documentos sem violação de leis, normas e protocolos
+* Controle de prazos
+* Extensão continental
+* Rotatividade de pessoas e treinamento
+* Métricas para apoiar previsibilidade e redução de custo
+* Integração a sistemas pré-existentes
+* Esforço de articulação (remoção de conflitos e repetições)
+
+---
+
+# Automatização de fluxos com JBPM (1/2)
+
+* O que é o jBPM?
+* Características
+  * persistência do estado
+  * representação gráfica
+  * arquitetura plugável
+* Componentes
+  * Banco de dados
+  * jPDL
+  * jPDL Graphical Process Designer
+  * Job executor
+
+---
+# Automatização de fluxos com JBPM (2/2)
+
+  * Process Definition
+    * Start e End state
+    * Node
+    * Task
+    * Task list
+    * Transitions
+    * Decisions
+    * Events
+    * Actions (java code + jBPM)
+    * Swimlanes
+  * Process Instances
+    * Task assignment (AssignmentHandler)
+    * Token (Execution)
+  * Extensões
+    * Variáveis de processos
+    * Caminhos concorrentes (múltiplos tokens). Ex. Compra e entrega
+    * Composição de processos (subprocessos)
+    * Execução assíncrona
+    * Persistência de definição de processo e execução
+    * Injeção de serviços e ambientes (timer, jms, db, etc)
+    * Versões de processos
+    * Calendário
+---
+# Parte 2
+
+## SIGA-WF
+
+  * Fluxos da JFRJ
+
+  * O sistema SIGA-WF
+
+  * Definição e execução dos fluxos
+
+  * Outras características
+
+---
+# Fluxos da JFRJ
+
+* Área-meio e fim
+* Contrato e licitação
+![](macroprocesso.png)
+* O que foi mapeado
+* Checklists e disciplina
+* Controle de prazos e notificações
+---
+# O sistema SIGA-WF
+
+* Definição de fluxos
+* Execução de fluxos
+* Outras características
+
+---
+# Definição dos fluxos (1/3)
+
+* Mapeamento
+* Conversão (jpdl)
+* Carga do processo
+* Designação de tarefas (humanos ou agentes computacionais)
+---
+# Definição dos fluxos (2/3)
+
+![](process-design.png)
+---
+# Definição dos fluxos (3/3)
+
+![](process-design-xml.png)
+---
+
+# Execução dos fluxos
+
+* Instanciação do processo (manual ou automática)
+
+```html
+<mod:assinatura>
+  <c:if test="${doc.orgaoUsuario.idOrgaoUsu == '1'}">
+    {SEC Assinada! Iniciando procedimento "Contratação: fase de análise".}
+    <c:set var="f" value="${f:criarWorkflow('Contratação: fase de análise', doc, cadastrante, titular, lotaCadastrante, lotaTitular)}" />
+    </c:if>
+</mod:assinatura>
+```
+* Alocação dos responsáveis (pooled actor)
+* Execução da tarefa
+* Comentários
+---
+# Outras características
+
+* Integração com SIGA-DOC
+
+```html
+<event type="node-leave">
+    <script name="Arquivar">
+        br.gov.jfrj.siga.Service.getExService().arquivarCorrente(doc_a,
+        null, null);
+    </script>
+</event>
+
+```
+
+* Estatísticas
+
+---
+#Parte 3
+
+## Experiência
+
+  * Implantação
+
+  * Incidentes
+
+  * Melhorias
+
+---
+# Implantação
+
+* Massa crítica,  benefícios não explícitos e mudanças políticas
+* Inflexibilidade de improvisações
+* Estrutura do banco de dados
+---
+# Incidentes
+
+* Fluxos inacabados ou acabados antes do tempo
+* Reestruturação
+* Quedas de instâncias
+---
+# Melhorias
+
+* Responsável por converter o processo
+* Responsável por fazer deploy do processo
+* Monitoramento dos fluxos em execução
+---
+# FIM
+
+
+
+    </textarea>
+    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>

@@ -25,6 +25,9 @@
 		<welcome-file>/hosted/index.jsp</welcome-file>
 	</welcome-file-list>
 
+	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
+	<distributable/>
+
 	<filter>
 		<filter-name>RequestLoggerFilter</filter-name>
 		<filter-class>br.gov.jfrj.siga.base.log.RequestLoggerFilter</filter-class>

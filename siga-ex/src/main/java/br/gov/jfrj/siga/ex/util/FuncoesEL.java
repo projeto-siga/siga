@@ -244,6 +244,14 @@ public class FuncoesEL {
 
 		return dao().consultar(id, CpOrgao.class, false);
 	}
+	
+	public static CpOrgaoUsuario orgaoUsuario (String sigla){
+        CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
+        orgaoUsuario.setSiglaOrgaoUsu(sigla);
+
+        return ExDao.getInstance().consultarPorSigla(
+                orgaoUsuario);
+    }	
 
 	public static String destinacaoPorNumeroVia(ExDocumento doc, Short i) {
 		ExVia via = doc.via(new Short(i.shortValue()));

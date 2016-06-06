@@ -13,6 +13,14 @@
 		readonly="readonly" /> 
 		<br>
 		<br>
+		<div class="ui-state-default" style="position: absolute; left: 5%; right: 77%;">Sesb (Ex.: T2, RJ ou ES):</div>
+		<input type="text" name="objUsuario.sesb_pessoa" style="position: absolute; left: 25%;" 
+		<c:if test="${objUsuario!=null}">
+			value="${objUsuario.sesb_pessoa}"
+		</c:if>
+		readonly="readonly" />
+		<br>
+		<br>
 		<div class="ui-state-default" style="position: absolute; left: 5%; right: 77%;">Nome:</div>
 		<input type="text" name="objUsuario.nome_usu" style="position: absolute; left: 25%;"
 		<c:if test="${objUsuario!=null}">

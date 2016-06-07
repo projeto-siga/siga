@@ -660,7 +660,7 @@ public class GcInformacao extends Objeto {
 			acronimos.append(s);
 		}
 
-		final Pattern p2 = Pattern.compile("^TMPGC-?([0-9]{1,7})");
+		final Pattern p2 = Pattern.compile("^TMPGC-?([0-9]+)");
 		final Pattern p1 = Pattern.compile("^(" + acronimos.toString()
 				+ ")?-?(GC)?-?(?:(20[0-9]{2})/?)??([0-9]{1,5})$");
 		final Matcher m2 = p2.matcher(sigla);

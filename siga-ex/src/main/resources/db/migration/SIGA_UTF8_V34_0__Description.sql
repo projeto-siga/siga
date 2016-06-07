@@ -47,7 +47,7 @@ update siga.ex_classificacao c set his_dt_fim = (
   select his_dt_ini from siga.ex_classificacao where his_id_ini = c.his_id_ini and his_dt_fim is null and his_dt_ini > c.his_dt_ini
 ), his_ativo = 0 where his_dt_fim is null and exists (
 	select 1 from siga.ex_classificacao where his_id_ini = c.his_id_ini and his_dt_fim is null and his_dt_ini > c.his_dt_ini
-)
+);
 
 --3. Obtém todas as vias ativas ainda ligadas aos registros fechados pelo script 2 acima e as conecta aos novos regsitros
 --correspondentes inseridos pelo script 1
@@ -58,6 +58,6 @@ update siga.ex_via v set id_classificacao = (
 ) where his_dt_fim is null 
 and (
 	select his_dt_fim from siga.ex_classificacao where id_classificacao = v.id_classificacao
-) is not null
+) is not null;
 
 commit;

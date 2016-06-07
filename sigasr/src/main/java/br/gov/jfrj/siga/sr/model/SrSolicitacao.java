@@ -344,7 +344,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     @Override
     public void setSigla(String sigla) {
         String siglaUpper = sigla.trim().toUpperCase();
-        final Matcher mTMP = Pattern.compile("^TMPSR-?([0-9]{1,5})$").matcher(siglaUpper);
+        final Matcher mTMP = Pattern.compile("^TMPSR-?([0-9]+)$").matcher(siglaUpper);
         if (mTMP.find())
         	setId(Long.valueOf(mTMP.group(1)));
         else {

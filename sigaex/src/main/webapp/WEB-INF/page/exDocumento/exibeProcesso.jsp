@@ -146,6 +146,7 @@
 <div id="main" class="gt-bd clearfix"
 	style="padding-top: 0px; margin-top: 0px;">
 
+	<c:set var="arqsNum" value="${mob.arquivosNumerados}" />
 	<c:set var="paginacao" value="${not empty arqsNum[0].paginaInicial}" />
 
 	<div id="sidebar" class="gt-left-col">
@@ -156,8 +157,6 @@
 				<COL width="30%" />
 				<COL width="15%" />
 				 -->
-
-				<c:set var="arqsNum" value="${mob.arquivosNumerados}" />
 
 				<tr class="${exibedoc}">
 					<td align="center"></td>

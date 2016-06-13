@@ -14,7 +14,7 @@
 	<c:set var="jsp" scope="request" value="${nmArqMod}" />
 </c:if>
 
-<c:import context="/siga" url="/WEB-INF/page/principal/cabecalho_popup.jsp" />
+<siga:pagina titulo="Visualizar movimentaçao" popup="true">
 
 <table width="100%" border="0">
 	<tr>
@@ -35,5 +35,5 @@
 		</tags:fixdocumenthtml></td>
 	</tr>
 </table>
-<c:import context="/siga" url="/WEB-INF/page/principal/rodape_popup.jsp" />
+</siga:pagina>
 

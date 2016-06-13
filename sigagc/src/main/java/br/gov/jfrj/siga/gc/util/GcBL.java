@@ -524,6 +524,7 @@ public class GcBL {
 							GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE, null,
 							movNotificacao.lotacaoAtendente, null, null, null,
 							null, movNotificacao, null, null);
+					movNotificacao.movCanceladora = m;
 					gravar(informacao, idc, titular, lotaTitular);
 					if (m.todaLotacaoCiente(movNotificacao)) {
 						movNotificacao.movCanceladora = m;

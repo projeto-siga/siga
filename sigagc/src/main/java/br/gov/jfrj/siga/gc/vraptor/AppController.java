@@ -662,7 +662,7 @@ public class AppController extends GcController {
 			informacao = new GcInformacao();
 
 		if (informacao.autor == null
-				|| informacao.podeRevisar(titular, lotaTitular)
+				|| informacao.podeRevisar(titular, lotaTitular) != null
 				|| informacao.acessoPermitido(titular, lotaTitular,
 						informacao.edicao.id)) {
 			List<GcTipoInformacao> tiposInformacao = GcTipoInformacao.AR.find(
@@ -754,7 +754,7 @@ public class AppController extends GcController {
 
 		if (!informacao.acessoPermitido(titular, lotaTitular,
 				informacao.visualizacao.id)
-				&& !informacao.podeRevisar(titular, lotaTitular)
+				&& informacao.podeRevisar(titular, lotaTitular) != null
 				&& movNotificacao == null)
 			throw new AplicacaoException(
 					"Restrição de Acesso ("
@@ -1039,8 +1039,17 @@ public class AppController extends GcController {
 			pessoa = null;
 		if (lotacao != null && lotacao.getId() == null)
 			lotacao = null;
-
+		
 		if (pessoa != null || lotacao != null || email != null) {
+			
+			if (pessoa != null && lotacao == null)
+				lotacao = pessoa.getLotacao();
+			
+			GcMovimentacao n = informacao.podeTomarCiencia(pessoa, lotacao);
+			if (n != null)
+				throw new AplicacaoException(
+						"Já há uma notificação pendente para a pessoa/lotação, feita em " + n.getHisDtIni());
+			
 			bl.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR, pessoa,
 					lotacao, email, null, null, null, null, null, null);
@@ -1051,7 +1060,7 @@ public class AppController extends GcController {
 					"Notificacao realizada com sucesso!", false, false);
 		} else
 			throw new AplicacaoException(
-					"Para notificar so e necessario selecionar uma Pessoa ou Lotacao.");
+					"Para notificar é necessario selecionar uma Pessoa ou Lotacao.");
 	}
 
 	@Path("/app/solicitarRevisao/{sigla}")
@@ -1073,8 +1082,15 @@ public class AppController extends GcController {
 			pessoa = null;
 		if (lotacao != null && lotacao.getId() == null)
 			lotacao = null;
-
+		
 		if (pessoa != null || lotacao != null) {
+			if (pessoa != null && lotacao == null)
+				lotacao = pessoa.getLotacao();
+				
+			GcMovimentacao n = informacao.podeRevisar(pessoa, lotacao);
+			if (n != null)
+				throw new AplicacaoException(
+						"Já há um pedido de revisão pendente para a pessoa/lotação, feita em " + n.getHisDtIni());
 			bl.movimentar(informacao,
 					GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO,
 					pessoa, lotacao, null, null, null, null, null, null, null);
@@ -1368,7 +1384,7 @@ public class AppController extends GcController {
 
 		bl.cancelarMovimentacao(info, mov, getIdentidadeCadastrante(),
 				getTitular(), getLotaTitular());
-		movimentacoes(sigla);
+		result.redirectTo(this).exibir(sigla, null, false, true);
 	}
 	
 	 @Get("app/testes/gadgetTest")

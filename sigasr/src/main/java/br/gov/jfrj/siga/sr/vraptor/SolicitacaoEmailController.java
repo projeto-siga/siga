@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.sr.vraptor;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -14,6 +15,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.model.SrAcao;
@@ -30,9 +32,9 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 @Path("/public/app/solicitacaoEmail")
 public class SolicitacaoEmailController extends SrController {
 	
-	private static final String _SIGLA_DO_ITEM = "10.01.01";
-	private static final String _SIGLA_DA_ACAO = "05.01";
-	private static final long _ID_DA_DESIGNACAO = 22100L;
+	private static final String _NOME_PARAM_ACAO_SIGLA = "sigasr.solicitacaoPorEmail.acao.sigla";
+	private static final String _NOME_PARAM_ITEM_SIGLA = "sigasr.solicitacaoPorEmail.item.sigla";
+	private static final String _MSG_MIME_TYPE = "application/vnd.ms-outlook"; // antes message/rfc822
 
 	class Retorno {
 		public String codigo;
@@ -79,17 +81,21 @@ public class SolicitacaoEmailController extends SrController {
 			
 			@Override
 			public String getContentType() {
-				return "message/rfc822";
+				return _MSG_MIME_TYPE;
 			}
 		};
 	}
 
 	private SrSolicitacao criarSolicitacao(DpPessoa pessoa, String descricao, String textoMensagem, UploadedFile arquivoMensagem, Calendar dataEnvio) throws Exception {
-		SrItemConfiguracao itemConfiguracao = (SrItemConfiguracao) SrItemConfiguracao.AR.find("siglaItemConfiguracao = ?", _SIGLA_DO_ITEM).first();
+		String siglaDoItem = SigaBaseProperties.getString(_NOME_PARAM_ITEM_SIGLA);
+		String siglaDaAcao = SigaBaseProperties.getString(_NOME_PARAM_ACAO_SIGLA);
 		
-		SrAcao acao = (SrAcao) SrAcao.AR.find("siglaAcao = ?", _SIGLA_DA_ACAO).first();
+		SrItemConfiguracao itemConfiguracao = (SrItemConfiguracao) SrItemConfiguracao.AR.find("siglaItemConfiguracao = ?", siglaDoItem).first();
+		SrAcao acao = (SrAcao) SrAcao.AR.find("siglaAcao = ?", siglaDaAcao).first();
 		
-		SrConfiguracao designacao = SrConfiguracao.AR.findById(_ID_DA_DESIGNACAO);
+		ArrayList<SrConfiguracao> desigs = new ArrayList<SrConfiguracao>(itemConfiguracao.getDesignacoesAtivas());
+		
+		SrConfiguracao designacao = (SrConfiguracao) desigs.toArray()[0]; // antes SrConfiguracao.AR.findById(_ID_DA_DESIGNACAO);
 		
 		SrSolicitacao srSolicitacao = new SrSolicitacao();
 		srSolicitacao.setAcao(acao);

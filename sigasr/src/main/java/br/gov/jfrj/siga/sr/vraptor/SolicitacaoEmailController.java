@@ -98,8 +98,8 @@ public class SolicitacaoEmailController extends SrController {
 		SrConfiguracao designacao = desigs.get(0);
 		
 		SrSolicitacao srSolicitacao = new SrSolicitacao();
-		srSolicitacao.setAcao(acao);
-		srSolicitacao.setItemConfiguracao(itemConfiguracao);
+		srSolicitacao.setAcao(acao.getAtual());
+		srSolicitacao.setItemConfiguracao(itemConfiguracao.getAtual());
 		srSolicitacao.setDesignacao(designacao);
 		
 		srSolicitacao.setArquivo(arquivoMensagem);

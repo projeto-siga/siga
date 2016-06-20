@@ -95,7 +95,7 @@ public class SolicitacaoEmailController extends SrController {
 		
 		ArrayList<SrConfiguracao> desigs = new ArrayList<SrConfiguracao>(itemConfiguracao.getDesignacoesAtivas());
 		
-		SrConfiguracao designacao = (SrConfiguracao) desigs.toArray()[0]; // antes SrConfiguracao.AR.findById(_ID_DA_DESIGNACAO);
+		SrConfiguracao designacao = desigs.get(0);
 		
 		SrSolicitacao srSolicitacao = new SrSolicitacao();
 		srSolicitacao.setAcao(acao);

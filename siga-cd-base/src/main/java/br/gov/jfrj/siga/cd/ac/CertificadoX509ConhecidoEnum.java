@@ -50,7 +50,9 @@ public enum CertificadoX509ConhecidoEnum {
 	AC_CERTISIGN_RFB_G4(CertificadoACEnum.AC_CERTISIGN_RFB_G4.toX509Certificate()),
 	AC_SERASA_JUS_V1(CertificadoACEnum.AC_SERASA_JUS_V1.toX509Certificate()),
 	AC_SERPRO_V3(CertificadoACEnum.AC_SERPRO_V3.toX509Certificate()),
-	AC_SERPRO_FINAL_V4(CertificadoACEnum.AC_SERPRO_FINAL_V4.toX509Certificate())
+	AC_SERPRO_FINAL_V4(CertificadoACEnum.AC_SERPRO_FINAL_V4.toX509Certificate()),
+	AC_SOLUTI_MULTIPLA_V1(CertificadoACEnum.AC_SOLUTI_MULTIPLA_V1.toX509Certificate()),
+	AC_SOLUTI_V1(CertificadoACEnum.AC_SOLUTI_V1.toX509Certificate())
 	;
 	
 	

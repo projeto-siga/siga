@@ -1367,8 +1367,9 @@ public class AppController extends GcController {
 		GcMovimentacao mov = GcMovimentacao.AR.findById(movId);
 
 		bl.cancelarMovimentacao(info, mov, getIdentidadeCadastrante(),
-				getTitular(), getLotaTitular());
-		movimentacoes(sigla);
+				getTitular(), getLotaTitular());		
+		result.redirectTo(this).exibir(info.getSiglaCompacta(), null, false,
+				false);
 	}
 	
 	 @Get("app/testes/gadgetTest")

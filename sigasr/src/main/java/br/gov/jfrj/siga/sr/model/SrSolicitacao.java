@@ -403,6 +403,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         } else
             return getDescrSolicitacao();
     }
+    
+    public String getDescricaoSemQuebraDeLinha() {
+    	return getDescricao().replaceAll("[\\r\\n]+", " ");
+    }
 
     public List<SrAtributoSolicitacao> getMeuAtributoSolicitacaoSet() {
         if ((meuAtributoSolicitacaoSet == null || meuAtributoSolicitacaoSet.isEmpty()) && isFilha()) {

@@ -62,5 +62,5 @@ function formata(){
 <input type="submit" class="ui-button" style="position:absolute;left:5%;" value="Busca" onclick="" /> 
 </form>
 <br><br>
-<a class="ui-state-hover" style="position:absolute;left:5%;" href="/sigapp/">Voltar</a>
+<a class="ui-state-hover" style="position:absolute;left:5%;" href="/sigapp/">In&iacute;cio</a>
 </siga:pagina>

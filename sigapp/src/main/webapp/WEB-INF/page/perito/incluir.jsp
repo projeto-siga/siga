@@ -12,6 +12,6 @@
 			<input class="ui-button" type="Submit" value="Incluir Perito" >
 		</div>
 		<div id="div_msg" class="ui-widget"></div>
-		<a style="position:fixed;left:5%;top:55%;" class="ui-state-hover" href="/sigapp/">Voltar</a>
+		<a style="position:fixed;left:5%;top:55%;" class="ui-state-hover" href="/sigapp/">In&iacute;cio</a>
 	</form>
 </siga:pagina>

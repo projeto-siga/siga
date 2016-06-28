@@ -38,5 +38,5 @@ function formata(){
 	<br/>
 	</div>
 </form>
-<a style="position:absolute;left:5%;top:150%;" class="ui-state-hover" href="/sigapp/">Voltar</a>
+<a style="position:absolute;left:5%;top:150%;" class="ui-state-hover" href="/sigapp/">In&iacute;cio</a>
 </siga:pagina>

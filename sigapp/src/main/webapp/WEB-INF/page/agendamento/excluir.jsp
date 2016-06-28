@@ -115,6 +115,7 @@
 	 	<input type="submit" value="Buscar" /> &nbsp <br><br>
 	 	
 	  </form>
-	  <a style="position:absolute;left:5%;" class="ui-state-hover" href="/sigapp/">Voltar</a>
+	  <br>
+	  <a style="position:absolute;left:5%;" class="ui-state-hover" href="/sigapp/">In&iacute;cio</a>
 	 </div>
  </siga:pagina>

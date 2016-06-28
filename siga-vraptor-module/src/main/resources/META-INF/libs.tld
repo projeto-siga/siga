@@ -101,4 +101,9 @@
   <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
   <function-signature>java.lang.String pluralize(java.lang.Integer, java.lang.String, java.lang.String)</function-signature>
  </function>
+   <function>
+  <name>maximoCaracteres</name>
+  <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
+  <function-signature>java.lang.String maximoCaracteres(java.lang.String, java.lang.Integer)</function-signature>
+ </function>
 </taglib>

@@ -28,14 +28,13 @@ import java.util.Map;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.export.JExcelApiExporter;
-import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
 import ar.com.fdvs.dj.domain.builders.DJBuilderException;
+import ar.com.fdvs.dj.domain.constants.VerticalAlign;
 
 /**
  * USE ESTA CLASSE para a criação de relatórios rápidos.<br />
@@ -297,14 +296,15 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 	public byte[]  getRelatorioExcel() throws JRException, IOException {
 		try (ByteArrayOutputStream xlsReport = new ByteArrayOutputStream()) {
 			JRXlsxExporter excelExp = new JRXlsxExporter();
+			
+			relatorio.estiloColuna.setPadding(15);
+			relatorio.estiloColuna.setVerticalAlign(VerticalAlign.MIDDLE);
+			
 			excelExp.setParameter(JRExporterParameter.JASPER_PRINT,
 					relatorio.getRelatorioJasperPrint());
-			
 			excelExp.setParameter(JRExporterParameter.OUTPUT_STREAM, xlsReport);
 			excelExp.setParameter(JRXlsExporterParameter.MAXIMUM_ROWS_PER_SHEET, 0);
 			excelExp.setParameter(JRXlsExporterParameter.IGNORE_PAGE_MARGINS, true);
-			excelExp.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS, true);
-			excelExp.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, true);
 			excelExp.setParameter(JRXlsExporterParameter.IS_IMAGE_BORDER_FIX_ENABLED, true);
 			excelExp.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, false);
 			excelExp.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, true);

@@ -229,5 +229,17 @@ public class Texto {
 
 		return (lowercase ? string.toLowerCase() : string);
 	}
-
+	
+	public static String semQuebraDeLinha(String string) {
+		return string.replaceAll("[\\r\\n]+", " ");
+	}
+	
+	public static String maximoCaracteres(String string, int max) {
+		return string.length() > max ? (string.substring(0, max) + "...") : string;
+	}
+	
+	public static String maximoCaracteres(String string, int max, int limit) {
+		return string.length() > limit ? (string.substring(0, max) + "...") : string;
+	}
+	
 }

@@ -51,12 +51,13 @@ public class SrRelAtendimento extends RelatorioTemplate {
 		this.setTitle("Relatório de Atendimentos");
 		this.addColuna("Solicitação", 25, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Data de Abertura", 20, RelatorioRapido.CENTRO, false);
+		this.addColuna("Descrição", 90, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Equipe Atendente", 15, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Pessoa Atendente", 18, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Data de Início Atendimento", 20, RelatorioRapido.CENTRO, false);
 		this.addColuna("Data de Fim Atendimento", 20, RelatorioRapido.CENTRO, false);
 		this.addColuna("Tipo de Atendimento", 28, RelatorioRapido.ESQUERDA, false);
-		//this.addColuna("Próximo Atendente", 15, RelatorioRapido.ESQUERDA, false);
+		this.addColuna("Prioridade", 20, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Item de Configuração", 50, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Ação", 50, RelatorioRapido.ESQUERDA, false);
 		this.addColuna("Solicitação Fechada?", 15, RelatorioRapido.ESQUERDA, false);
@@ -101,11 +102,13 @@ public class SrRelAtendimento extends RelatorioTemplate {
 			for (SrEtapaSolicitacao etapa : etapasOrdenadas) {
 				registros.add(etapa.getSolicitacao().getCodigo());
 				registros.add(etapa.getSolicitacao().getHisDtIniDDMMYYYYHHMM());
+				registros.add(etapa.getSolicitacao().getDescricaoSemQuebraDeLinha());
 				registros.add(etapa.getLotaResponsavel().getLotacaoAtual().getSiglaCompleta()); 
 				registros.add(etapa.getPessoaResponsavel() != null ?  etapa.getPessoaResponsavel().getPessoaAtual().getPrimeiroNomeEIniciais() : "");
 				registros.add(etapa.getInicioString());
 				registros.add(etapa.getFimString());
 				registros.add(etapa.getTipoMov() != null ? etapa.getTipoMov().getNome() : "");
+				registros.add(etapa.getPrioridade().getDescPrioridade());
 				registros.add(etapa.getItem() != null ? etapa.getItem().toString() : "");
 				registros.add(etapa.getAcao() != null ? etapa.getAcao().toString() : "");
 				registros.add(etapa.getSolicitacao().isFechado() ? "Sim" : "Nao");

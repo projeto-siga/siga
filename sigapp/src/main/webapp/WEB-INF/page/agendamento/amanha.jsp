@@ -1,21 +1,24 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
+<!-- uma linha de comando html  -->
+ <%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!-- -------------------------- -->    
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<siga:pagina titulo="Agendadas Hoje">
-	<link rel="stylesheet" href="/sigapp/stylesheets/jquery-ui.css" type="text/css" media="screen, projection" />
-	<center class="ui-tabs"> <h4> Per&iacute;cias marcadas para hoje:</h4>
+<siga:pagina titulo="Agendadas Amanh&atilde;">
+ <link rel="stylesheet" href="/sigapp/stylesheets/jquery-ui.css" type="text/css" media="screen, projection" />
+ <center class="ui-tabs"> <h4> Per&iacute;cias marcadas para Amanh&atilde;: </h4>
 		<c:if test="${listAgendamentos != null}">
-			<h4>${dataHoje}</h4>
 	 	</c:if>
-	</center>
-	<form action="${linkTo[AgendamentoController].hojePrint}" method="get" style="position: relative; left: 10%;">
-		<input type="hidden" name="frm_data_ag" value="${dataHoje}" />
+	 	<h4> ${dataAmanha} &nbsp (${diaSemana}) </h4>
+ </center>
+ <form action="${linkTo[AgendamentoController].amanhaPrint}" method="get" style="position: relative; left: 10%;">
+		<input type="hidden" name="frm_data_ag" value="${dataAmanha}" />
 		<input type="submit" value="imprime" />
-	</form>
-	<table class="ui-tabs" align="center" style="font-size: 100%;">
+ </form>
+ <table class="ui-tabs" align="center" style="font-size: 100%;">
 		<tr bgcolor="Silver">
 			<th>&nbsp; Hora &nbsp;</th>
 			<th>&nbsp; Periciado &nbsp;</th>
@@ -57,6 +60,7 @@
 				<td>&nbsp; ${ag.localFk.local}</td>
 			</tr>
 		</c:forEach>
-	</table>
-	<a style="position: absolute; left: 5%;" class="ui-state-hover" href="/sigapp/">In&iacute;cio</a>
-</siga:pagina>
+ </table>
+ <a style="position: absolute; left: 5%;" class="ui-state-hover" href="/sigapp/">In&iacute;cio</a>
+</siga:pagina>   
+

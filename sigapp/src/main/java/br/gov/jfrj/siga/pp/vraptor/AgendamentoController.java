@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.pp.vraptor;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -39,10 +40,11 @@ public class AgendamentoController extends PpController {
 		String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
 		UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao, sesb_pessoaSessao);
 		if (objUsuario != null) {
-			// busca locais em função da configuração do usuário
+			// busca locais em função do forum do usuário
 			String criterioSalas="";
 			List<Locais> listaDeSalas = Locais.AR.find("forumFk="+objUsuario.getForumFk().getCod_forum()).fetch();
-			// monta string de criterio
+			// Usa COD_FORUM para buscar e montar string de criterio para SELECT ... IN (criterioSalas)
+			// 	ONDE criterioSalas = "MF1, MF2, MF3"
 			for(int j=0;j<listaDeSalas.size();j++){
 				criterioSalas = criterioSalas + "'" +listaDeSalas.get(j).getCod_local().toString() + "'";
 				if(j+1<listaDeSalas.size()){
@@ -50,38 +52,43 @@ public class AgendamentoController extends PpController {
 				}
 			}
 			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+			// pega a data de hoje
 			Date hoje = new Date();
 			String dtt = df.format(hoje);
-			// busca agendamentos de hoje
+			// Em caso de não haver salas em criterioSalas atribui-se '' (string vazia)
             if (criterioSalas.equals("")) {
                 criterioSalas = "''";
             }
+            // busca todos os agendamentos de hoje em criterioSalas (salas do forum do usuário). 
             List<Agendamentos> listAgendamentos = Agendamentos.AR.find(
                     "data_ag = to_date('" + dtt
                             + "','dd-mm-yy') and localFk in(" + criterioSalas
                             + ") order by hora_ag, cod_local").fetch();
+            // Se houver agendamentos em listAgendamentos
             if (!listAgendamentos.isEmpty()) {
-                // busca as salas daquele forum
+                // repete a busca das salas usando COD_FORUM
                 List<Locais> listLocais = Locais.AR.find("cod_forum='" + objUsuario.getForumFk().getCod_forum() + "'").fetch();
-                // lista auxiliar
+                // lista auxiliar para filtrar os agendamentos  (já buscou todos)
                 List<Agendamentos> auxAgendamentos = new ArrayList<Agendamentos>();
+             // varre listAgendamentos
                 for (int i = 0; i < listAgendamentos.size(); i++) {
-                    // varre listAgendamentos
+                	// filtra listAgendamentos deixando de fora os locais que não são do forum do usuário ?
                     for (int ii = 0; ii < listLocais.size(); ii++) {
-                        // compara com cada local do forum do usuário
                         if (listAgendamentos.get(i).getLocalFk().getCod_local() == listLocais.get(ii).getCod_local()) {
                             auxAgendamentos.add((Agendamentos) listAgendamentos.get(i));
                         }
                     }
                 }
                 List<Peritos> listPeritos = new ArrayList<Peritos>();
+                //Busca todos os peritos
                 listPeritos = (ArrayList<Peritos>) Peritos.AR.findAll();
+                // renderiza as listas
                 result.include("listAgendamentos", listAgendamentos);
                 result.include("listPeritos", listPeritos);
                 result.include("dataHoje", dtt);
             }
 		} else {
-		    redirecionaPaginaErro("Usu&aacute;rio sem permiss&atilde;o" , null);
+		    redirecionaPaginaErro("Usu&aacute;rio sem permiss&atilde;o." , null);
 		}
     }
 
@@ -91,10 +98,10 @@ public class AgendamentoController extends PpController {
 		String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
 		UsuarioForum objUsuario = UsuarioForum.findByMatricula( matriculaSessao , sesb_pessoaSessao);
 		if (objUsuario != null) {
-			// busca locais em função da configuração do usuário
+			// busca locais em função do fórum do usuário.
 			String criterioSalas="";
 			List<Locais> listaDeSalas = Locais.AR.find("forumFk="+objUsuario.getForumFk().getCod_forum()).fetch();
-			// monta string de criterio
+			// monta string de criterio para a cláusula WHERE ... IN (critério).
 			for(int j=0; j<listaDeSalas.size();j++){
 				criterioSalas = criterioSalas + "'" +listaDeSalas.get(j).getCod_local().toString() + "'";
 				if(j+1<listaDeSalas.size()){
@@ -102,17 +109,130 @@ public class AgendamentoController extends PpController {
 				}
 			}
 			if ((null != frm_data_ag) && !(frm_data_ag.isEmpty())){
+				// Busca os agendamentos da data do parâmetro, e, das salas do forum do usuário.
 				List<Agendamentos> listAgendamentos = (List) Agendamentos.AR.find("data_ag=to_date('"+frm_data_ag.substring(0,10)+"','dd-mm-yy') and localFk in("+criterioSalas+") order by hora_ag , localFk" ).fetch();
+				// Busca todos os peritos.
 				List<Peritos> listPeritos = (List) new ArrayList<Peritos>();
 				listPeritos = Peritos.AR.findAll();
+				// Passa parâmetros para a página .JSP
 				result.include("listAgendamentos", listAgendamentos);
 				result.include("listPeritos", listPeritos);
 			}
 		} else {
-		    redirecionaPaginaErro("Usu&aacute;ario sem permiss&atilde;o" , null);
+		    redirecionaPaginaErro("Usu&aacute;ario sem permiss&atilde;o." , null);
 		}
     }
-
+    
+    @Path("/amanha")
+    public void amanha(){
+    	String matriculaSessao = getCadastrante().getMatricula().toString();
+		String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
+		UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao, sesb_pessoaSessao);
+		if (objUsuario != null) {
+			// busca locais em função do forum do usuário
+			String criterioSalas="";
+			List<Locais> listaDeSalas = Locais.AR.find("forumFk="+objUsuario.getForumFk().getCod_forum()).fetch();
+			// Usa COD_FORUM para buscar e montar string de criterio para SELECT ... IN (criterioSalas)
+			// 	ONDE criterioSalas = "MF1, MF2, MF3"
+			for(int j=0;j<listaDeSalas.size();j++){
+				criterioSalas = criterioSalas + "'" +listaDeSalas.get(j).getCod_local().toString() + "'";
+				if(j+1<listaDeSalas.size()){
+					criterioSalas = criterioSalas + ",";
+				}
+			}
+			// Em caso de não haver salas em criterioSalas atribui-se '' (string vazia)
+            if (criterioSalas.equals("")) {
+                criterioSalas = "''";
+            }
+			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+			// pega a data de hoje
+			Date hoje = new Date();
+			Calendar c = Calendar.getInstance(); 
+			c.setTime(hoje);
+			// determina a data de amanhã
+			c.add(Calendar.DATE, 1);
+			int num_sem = c.get(Calendar.DAY_OF_WEEK);
+			String dtt = df.format(c.getTime());
+			String dia_sem = "";
+			switch(num_sem){
+			case 1:
+				dia_sem = "Domingo";
+				break;
+			case 2:
+				dia_sem = "Segunda";
+				break;
+			case 3:
+				dia_sem = "Ter&ccedil;a";
+				break;
+			case 4: 
+				dia_sem = "Quarta";
+				break;
+			case 5:
+				dia_sem = "Quinta";
+				break;
+			case 6:
+				dia_sem = "Sexta";
+				break;
+			case 7:
+				dia_sem = "S&aacute;bado";
+				break;
+			}
+			// busca todos os agendamentos de amanhã em criterioSalas (só das salas do forum do usuário). 
+            List<Agendamentos> listAgendamentos = Agendamentos.AR.find(
+                    "data_ag = to_date('" + dtt
+                            + "','dd-mm-yy') and localFk in(" + criterioSalas
+                            + ") order by hora_ag, cod_local").fetch();
+            // Se houver agendamentos em listAgendamentos
+            if (!listAgendamentos.isEmpty()) {
+            	//Busca todos os peritos
+            	List<Peritos> listPeritos = new ArrayList<Peritos>();
+                listPeritos = (ArrayList<Peritos>) Peritos.AR.findAll();
+                // renderiza as listas
+                result.include("listAgendamentos", listAgendamentos);
+                result.include("listPeritos", listPeritos);
+            	
+            }
+			result.include("dataAmanha", dtt);
+			result.include("diaSemana", dia_sem);
+			} else {
+			redirecionaPaginaErro("Usu&aacute;rio sem permiss&atilde;o." , null);
+		}
+    }
+    
+    @Path("/amanhaPrint")
+    public void amanhaPrint(String frm_data_ag){
+    	String matriculaSessao = getCadastrante().getMatricula().toString();
+		String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
+		UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao, sesb_pessoaSessao);
+		if (objUsuario != null) {
+			if (!frm_data_ag.isEmpty() && (frm_data_ag != null)){
+				// busca locais em função do forum do usuário.
+				String criterioSalas="";
+				List<Locais> listaDeSalas = Locais.AR.find("forumFk="+objUsuario.getForumFk().getCod_forum()).fetch();
+				// monta string de criterio para a cláusula WHERE ... IN (criterio).
+				for(int j=0; j<listaDeSalas.size();j++){
+					criterioSalas = criterioSalas + "'" +listaDeSalas.get(j).getCod_local().toString() + "'";
+					if(j+1<listaDeSalas.size()){
+						criterioSalas = criterioSalas + ",";
+					}
+				}
+				// Busca os agendamentos da data do parametro, e, das salas do forum do usuário.
+				List<Agendamentos> listAgendamentos = (List) Agendamentos.AR.find("data_ag=to_date('"+frm_data_ag.substring(0,10)+"','dd-mm-yy') and localFk in("+criterioSalas+") order by hora_ag , localFk" ).fetch();
+				// Busca todos os peritos.
+				List<Peritos> listPeritos = (List) new ArrayList<Peritos>();
+				listPeritos = Peritos.AR.findAll();
+				// passa os objetos para a página .JSP
+				result.include("listAgendamentos", listAgendamentos);
+				result.include("listPeritos", listPeritos);
+			}else{
+				redirecionaPaginaErro("Parametro data vazio." , null);
+			}
+			
+		} else {
+			redirecionaPaginaErro("Usu&aacute;rio sem permiss&atilde;o." , null);
+		}
+    }
+    
     @Path("/print")
     public void print(String frm_data_ag, String frm_sala_ag, String frm_processo_ag, String frm_periciado ){
 		if(frm_periciado == "" || frm_periciado == null){

@@ -122,7 +122,7 @@
 	 <br><br><br><br><br><br><br><br><br>
 	   <input class="ui-button" style="position: absolute; left:05%;" type="button" value="Listar" onclick="funcData();" />
 		<br><br><br><br>
-		<a style="position:absolute;left:05%;" class="ui-state-hover" href="/sigapp/">Voltar</a>  
+		<a style="position:absolute;left:05%;" class="ui-state-hover" href="/sigapp/">In&iacute;cio</a>  
 	 </div>
 	</form>
 </siga:pagina>

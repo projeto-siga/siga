@@ -176,7 +176,7 @@
 	  <br><br><br>
 	  <input class="ui-button" style="position: absolute; left:25%;" type="button" value="Agendar" onclick="funcData()" />
 		<br><br><br><br>
-		<a style="position:absolute;left:25%;" class="ui-state-hover" href="/sigapp/">Voltar</a>  
+		<a style="position:absolute;left:25%;" class="ui-state-hover" href="/sigapp/">In&iacute;cio</a>  
 	 </div>
 	 
 	</form>

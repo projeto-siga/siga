@@ -461,6 +461,8 @@ public class SigaLibsEL {
 //	    Object output = Ognl.getValue(expr, ctx, vars);
 //		return output;
 //	}
-	
+	public static String maximoCaracteres(String s, Integer max) {
+		return Texto.maximoCaracteres(s, max);
+	}
 
 }

@@ -69,6 +69,7 @@ import org.joda.time.format.DateTimeFormatter;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Par;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
@@ -389,13 +390,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
     
     public String getDescricaoMax70(){
-    	String descr = getDescricao();
-    	return descr.length() > 100 ? (descr.substring(0, 70) + "...") : descr;
+    	return Texto.maximoCaracteres(getDescricao(), 70, 100);
     }
 
     @Override
     public String getDescricao() {
-        if (getDescrSolicitacao() == null || getDescrSolicitacao().length() == 0) {
+        if (!isDescrSolicitacaoPreenchida()) {
             if (isFilha())
                 return getSolicitacaoPai().getDescricao();
             else
@@ -403,7 +403,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         } else
             return getDescrSolicitacao();
     }
-
+      
+    public String getDescricaoSemQuebraDeLinha() {
+    	return Texto.semQuebraDeLinha(getDescricao());
+    }
+    
     public List<SrAtributoSolicitacao> getMeuAtributoSolicitacaoSet() {
         if ((meuAtributoSolicitacaoSet == null || meuAtributoSolicitacaoSet.isEmpty()) && isFilha()) {
             return getSolicitacaoPai().getMeuAtributoSolicitacaoSet();
@@ -3099,6 +3103,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public boolean isFecharAoAbrir() {
         return fecharAoAbrir;
+    }
+    
+    public boolean isDescrSolicitacaoPreenchida() {
+    	return (getDescrSolicitacao() != null && getDescrSolicitacao().trim().length() > 0);
     }
 
     public void setFecharAoAbrir(boolean fecharAoAbrir) {

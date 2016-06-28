@@ -55,19 +55,8 @@
 
 
 	<script type="text/javascript" language="Javascript1.1">
-function visualizarImpressao(via) {
-	var v;
-	var a = frm.action;
-	var t = frm.target;
-	if (via != null)
-		v = '-' + String.fromCharCode('A'.charCodeAt(0) + via - 1);
-	else
-		v = ''; 
-	frm.target='_blank'; 
-	frm.action='<c:url value="/app/arquivo/exibir?arquivo="/>' + ('${mob.codigoCompacto}' + v + ':' + ${mov.idMov} + '.pdf').replace(/\//gi, '').replace(/-/gi, '');
-	frm.submit();
-	frm.target=t;
-	frm.action=a;
+function visualizarImpressao() {
+	window.open("/sigaex/app/arquivo/exibir?arquivo=${mov.referencia}.pdf","_blank");
 }
 
 </script>

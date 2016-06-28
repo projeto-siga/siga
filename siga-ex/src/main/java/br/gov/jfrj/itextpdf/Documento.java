@@ -507,8 +507,7 @@ public class Documento {
 				if (!rascunho
 						&& !cancelado
 						&& !semEfeito
-						&& ((!Contexto.resource("isVersionTest").equals("false")) || (!Contexto
-								.resource("isBaseTest").equals("false")))) {
+						&& !SigaExProperties.isAmbienteProducao()) {
 					over.saveState();
 					final PdfGState gs = new PdfGState();
 					gs.setFillOpacity(0.5f);

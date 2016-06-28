@@ -33,7 +33,7 @@
 	- ${solicitacao.marcadoresEmHtml}
 	<c:if test="${solicitacao.filha && visualizando != solicitacao && solicitacao.descrSolicitacaoPreenchida}">
 		<br />
-		<span title="solicitacao.descrSolicitacao">${f:maximoCaracteres(solicitacao.descrSolicitacao, 140)}</span>
+		<span title="${solicitacao.descrSolicitacao}">${f:maximoCaracteres(solicitacao.descrSolicitacao, 140)}</span>
 	</c:if>
 </div>
 <c:forEach items="${solicitacao.solicitacaoFilhaSet}" var="solFilha">

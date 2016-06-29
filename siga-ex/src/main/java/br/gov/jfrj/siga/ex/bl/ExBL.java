@@ -7386,7 +7386,7 @@ public class ExBL extends CpBL {
 		// Acrescenta documentos
 		//
 		for (final ExDocumento doc : dao().listarDocPendenteAssinatura(titular)) {
-			if (!doc.isFinalizado())
+			if (!doc.isFinalizado() || !doc.isEletronico())
 				continue;
 			ExAssinavelDoc ass = map.get(doc.getIdDoc());
 			if (ass == null) {

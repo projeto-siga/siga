@@ -60,7 +60,6 @@ import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
-import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
 
@@ -341,6 +340,10 @@ public class ExMobilController extends
 			return null;
 		return s;
 	}
+	
+	public ExClassificacao daoClassificacao(long id) {
+		return dao().consultar(id, ExClassificacao.class, false);
+	}
 
 	@Override
 	protected ExMobilDaoFiltro createDaoFiltro() {
@@ -382,6 +385,9 @@ public class ExMobilController extends
 
 		flt.setAnoEmissao(paramLong("anoEmissaoString"));
 		flt.setClassificacaoSelId(paramLong("classificacaoSel.id"));
+		if (flt.getClassificacaoSelId() != null)
+			flt.setClassificacaoSelId((daoClassificacao(flt.getClassificacaoSelId()))
+					.getIdInicial());
 		flt.setDescrDocumento(Texto
 				.removeAcentoMaiusculas(param("descrDocumento")));
 		String paramFullText = param("fullText");

@@ -241,36 +241,41 @@ public class GcInformacao extends Objeto {
 
 	public GcMovimentacao podeTomarCiencia(DpPessoa titular,
 			DpLotacao lotaTitular) throws Exception {
-		GcMovimentacao movNotificar = null;
+		if (titular == null && lotaTitular == null)
+			return null;
 		if (isCancelado())
 			return null;
 		for (GcMovimentacao mov : movs) {
-			 if (mov.isCancelada() && mov.tipo.id != GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR)
+			if (mov.isCancelada() || mov.tipo.id != GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR)
 				continue;
-			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR)
-				if (titular.equivale(mov.pessoaAtendente)
-						|| lotaTitular.equivale(mov.lotacaoAtendente)) {
-					movNotificar = mov;
-					break;
-				}
+			if (titular != null){
+				if (titular.equivale(mov.pessoaAtendente)) 
+					return mov;
+				if (mov.pessoaAtendente == null && lotaTitular.equivale(mov.lotacaoAtendente)) 
+					return mov;
+			} else if (lotaTitular.equivale(mov.lotacaoAtendente))
+					return mov;
 		}
-
-		return movNotificar;
+		return null;
 	}
 
-	public boolean podeRevisar(DpPessoa titular, DpLotacao lotaTitular) {
+	public GcMovimentacao podeRevisar(DpPessoa titular, DpLotacao lotaTitular) {
+		if (titular == null && lotaTitular == null)
+			return null;
 		if (isCancelado())
-			return false;
+			return null;
 		for (GcMovimentacao mov : movs) {
-			if (mov.isCancelada())
+			if (mov.isCancelada() || mov.tipo.id != GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO)
 				continue;
-			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO
-					&& (titular.equivale(mov.pessoaAtendente) || lotaTitular
-							.equivale(mov.lotacaoAtendente))) {
-				return true;
-			}
+			if (titular != null){
+				if (titular.equivale(mov.pessoaAtendente)) 
+					return mov;
+				if (mov.pessoaAtendente == null && lotaTitular.equivale(mov.lotacaoAtendente)) 
+					return mov;
+			} else if (lotaTitular.equivale(mov.lotacaoAtendente))
+					return mov;
 		}
-		return false;
+		return null;
 	}
 
 	public boolean podeMarcarComoInteressado(DpPessoa titular) {
@@ -308,7 +313,7 @@ public class GcInformacao extends Objeto {
 	}
 
 	public boolean podeEditar(DpPessoa titular, DpLotacao lotaTitular) {
-		return (!isCancelado() && (podeRevisar(titular, lotaTitular) || acessoPermitido(
+		return (!isCancelado() && (podeRevisar(titular, lotaTitular) != null || acessoPermitido(
 				titular, lotaTitular, edicao.id)));
 	}
 
@@ -333,7 +338,7 @@ public class GcInformacao extends Objeto {
 	}
 
 	public boolean podeAnexar(DpPessoa titular, DpLotacao lotaTitular) {
-		return (!isCancelado() && (podeRevisar(titular, lotaTitular) || acessoPermitido(
+		return (!isCancelado() && (podeRevisar(titular, lotaTitular) != null || acessoPermitido(
 				titular, lotaTitular, edicao.id)));
 	}
 
@@ -402,7 +407,7 @@ public class GcInformacao extends Objeto {
 		router.getRedirectURL(sb, AppController.class).revisado(
 				this.getSiglaCompacta());
 		addAcao(acoes, "folder_user", "Revisado", null, sb.toString(),
-				podeRevisar(titular, lotaTitular),
+				podeRevisar(titular, lotaTitular) != null,
 				"Confirma a revisão deste conhecimento?", null, null);
 
 		router.getRedirectURL(sb, AppController.class).solicitarRevisao(

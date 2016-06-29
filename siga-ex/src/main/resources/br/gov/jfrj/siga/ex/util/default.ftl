@@ -2718,14 +2718,7 @@ Pede deferimento.</span><br/><br/><br/>
 
 
 [#macro extensaoBuscaTextual]
-<tr>
-    <td class="tdLabel">
-                <label class="label" for="fullText">Conteudo:</label>
-        </td>
-    <td>
-                <input type="text" id="fullText" value="${valFullText}" size="80" name="fullText">
-        </td>
-</tr>
+
 [/#macro]
 
 

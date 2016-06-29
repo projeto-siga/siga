@@ -89,7 +89,7 @@ public class MontadorQuery implements IMontadorQuery {
 
 		if (flt.getClassificacaoSelId() != null
 				&& flt.getClassificacaoSelId() != 0) {
-			sbf.append(" and doc.exClassificacao.idClassificacao = :classificacaoSelId");
+			sbf.append(" and doc.exClassificacao.hisIdIni = :classificacaoSelId");
 		}
 
 		if (flt.getDescrDocumento() != null

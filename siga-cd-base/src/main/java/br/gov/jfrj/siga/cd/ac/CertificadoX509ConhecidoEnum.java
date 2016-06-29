@@ -52,7 +52,8 @@ public enum CertificadoX509ConhecidoEnum {
 	AC_SERPRO_V3(CertificadoACEnum.AC_SERPRO_V3.toX509Certificate()),
 	AC_SERPRO_FINAL_V4(CertificadoACEnum.AC_SERPRO_FINAL_V4.toX509Certificate()),
 	AC_SOLUTI_MULTIPLA_V1(CertificadoACEnum.AC_SOLUTI_MULTIPLA_V1.toX509Certificate()),
-	AC_SOLUTI_V1(CertificadoACEnum.AC_SOLUTI_V1.toX509Certificate())
+	AC_SOLUTI_V1(CertificadoACEnum.AC_SOLUTI_V1.toX509Certificate()),
+	AC_SOLUTI_JUS_V1(CertificadoACEnum.AC_SOLUTI_JUS_V1.toX509Certificate())
 	;
 	
 	

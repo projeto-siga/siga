@@ -1,0 +1,65 @@
+digraph siga {
+
+"pp" -> "bd-sigapmp"
+"ex" -> "bd-siga"
+"wf" -> "bd-sigawf"
+"sr" -> "bd-sigasr"
+"gc" -> "bd-sigagc"
+"idp" -> "bd-corporativo"
+"gc" -> "bd-corporativo"
+"ex" -> "bd-corporativo"
+"pp" -> "bd-corporativo"
+"sr" -> "bd-corporativo"
+"wf" -> "bd-corporativo"
+"cp-sinc" -> "xml"
+"cp-sinc" -> "bd-corporativo"
+"cp-sinc-ldap" -> "active-directory"
+"cp-sinc-ldap" -> "bd-corporativo"
+"cp-sinc-matrix" -> "bd-corporativo"
+"cp-sinc-matrix" -> "bd-apolo" [constraint=false]
+"siga" -> "bd-corporativo"
+"siga" -> "active-directory" [style=dotted,color="red",label="troca de senha",fontcolor="red"]
+subgraph cluster_apps_web{
+		label="módulos"
+		style=dashed
+		"siga"
+		"idp"
+		"ex"
+		"wf"
+		"sr"
+		"gc"
+		"pp"
+	}
+	subgraph cluster_bd{
+		label="Bancos de dados/Repositórios/diretórios"
+		style=dashed
+	
+		"bd-apolo"
+		"bd-corporativo"
+		"active-directory"
+		"bd-siga"
+		"bd-sigawf"
+		"bd-sigagc"
+		"bd-sigapmp"
+		"bd-sigasr"
+	}
+	
+	subgraph cluster_cron{
+		label="Serviços em lote"
+		style=dashed
+		"cp-sinc"
+		"cp-sinc-matrix"
+		"cp-sinc-ldap"
+	}
+	subgraph cluster_fontes{
+		label="Fontes de dados"
+		style=dashed
+		"xml"
+	}
+	//alinhamento dos agrupamentos
+	"wf" -> "bd-siga" [style=invis]
+	"bd-siga" -> "cp-sinc" [style=invis]
+	"bd-sigagc" -> "cp-sinc-ldap" [style=invis]
+	"bd-corporativo" -> "cp-sinc" [style=invis]
+	"bd-apolo" -> "cp-sinc-matrix"  [style=invis]
+}

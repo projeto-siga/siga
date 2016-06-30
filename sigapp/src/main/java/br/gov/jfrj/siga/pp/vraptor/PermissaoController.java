@@ -29,14 +29,14 @@ public class PermissaoController extends PpController {
     @Path("/exclui")
     public void exclui(String matricula_proibida, String sesb_proibida){
 		String mensagem = "";
-		// pega usuário do sistema
+		// pega usuario do sistema
 		String matriculaSessao = getCadastrante().getMatricula().toString();
 		String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
 		String lotacaoSessao = getCadastrante().getLotacao().getSiglaCompleta();
 		UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao , sesb_pessoaSessao);
-		if ((objUsuario !=null) && ( (lotacaoSessao.trim().equals("T2SEADDA")||lotacaoSessao.trim().equals("T2SESIA") || lotacaoSessao.trim().equals("T2SESGET")) )){ //pode excluir a permissão
+		if ((objUsuario !=null) && ( (lotacaoSessao.trim().equals("T2SEADDA")||lotacaoSessao.trim().equals("T2SESIA") || lotacaoSessao.trim().equals("T2SESGET")) )){ //pode excluir a permissao
 			List<UsuarioForum> listPermitidos = new ArrayList<UsuarioForum>();
-			if((matricula_proibida!=null) && (!matricula_proibida.isEmpty()) && (sesb_proibida!=null) && (!sesb_proibida.isEmpty()) ){ // deleta permissão
+			if((matricula_proibida!=null) && (!matricula_proibida.isEmpty()) && (sesb_proibida!=null) && (!sesb_proibida.isEmpty()) ){ // deleta permissao
 				try{
 					UsuarioForum.AR.delete("from UsuarioForum where matricula_usu='" + matricula_proibida + "' and sesb_pessoa = '" +  sesb_proibida + "'", null);
 					mensagem = "Ok.";
@@ -48,7 +48,7 @@ public class PermissaoController extends PpController {
 				}
 			 } else{ // lista permitidos
 				try{
-					 listPermitidos = (List) UsuarioForum.AR.all().fetch(); // isso não dá erro no caso de retorno vazio.
+					 listPermitidos = (List) UsuarioForum.AR.all().fetch(); // isso nao da erro no caso de retorno vazio.
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -61,11 +61,11 @@ public class PermissaoController extends PpController {
 
     @Path("/inclui")
     public void inclui(String matricula_permitida, String sesb_permitida, String nome_permitido, String forum_permitido ) throws Exception {
-    	// ALTERAR A PÁGINA DE CADASTRO DE USUÁRIOS PARA INCLUIR SESB_PESSOA_PERMITIDA.
-    	// POR ENQUANTO VAMOS ATRIBUIR SESB_PESSOA_PERMITIDA CONFORME A LINHA ABAIXO. MAS, DEVERÁ VIR COMO PARÂMETRO.
+    	// ALTERAR A PAGINA DE CADASTRO DE USUARIOS PARA INCLUIR SESB_PESSOA_PERMITIDA.
+    	// POR ENQUANTO VAMOS ATRIBUIR SESB_PESSOA_PERMITIDA CONFORME A LINHA ABAIXO. MAS, DEVERA VIR COMO PARAMETRO.
     	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		String mensagem = "";
-		// pega usuário do sistema
+		// pega usuario do sistema
 		String matriculaSessao = getCadastrante().getMatricula().toString();
 		String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
 		String lotacaoSessao = getCadastrante().getLotacao().getSiglaCompleta();
@@ -74,11 +74,11 @@ public class PermissaoController extends PpController {
 			redirecionaPaginaErro("Usu&aacute;rio sem permiss&atilde;o." , null);
 		}
 		if (((lotacaoSessao.trim().equals("T2SEADDA") || lotacaoSessao.trim().equals("T2SESIA") || lotacaoSessao.trim().equals("T2SESGET")))){
-			// Pode incluir permissão de usuário. Estando lotado na CSIS OU SESIA 
+			// Pode incluir permissao de usuario. Estando lotado na CSIS OU SESIA 
 			if((matricula_permitida!=null) && (sesb_permitida!=null) && (nome_permitido!=null) && (forum_permitido!=null) && (!matricula_permitida.isEmpty()) && (!sesb_permitida.isEmpty()) && (!nome_permitido.isEmpty()) && (!forum_permitido.isEmpty())){
-				// Estando os parâmetros presentes. Prossegue.
+				// Estando os parametros presentes. Prossegue.
 				Foruns atribForum = Foruns.findByCodigo(forum_permitido);
-				//busca na base de dados o forum que veio pelo parâmetro.
+				//busca na base de dados o forum que veio pelo parametro.
 				UsuarioForum usuarioPermitido = new UsuarioForum(matricula_permitida, sesb_permitida, nome_permitido, atribForum);
 				try {
 				    if(objUsuario.equals(usuarioPermitido)) throw new Exception("org.hibernate.exception.ConstraintViolationException");

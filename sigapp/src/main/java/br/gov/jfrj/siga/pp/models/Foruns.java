@@ -25,11 +25,11 @@ public class Foruns extends Objeto {
     private int cod_forum;
 
     @OneToMany(mappedBy = "forumFk")
-    // isso não é campo, mas um 'references'.
+    // isso nao eh campo, mas um 'references'.
     private List<Locais> lstLocal;
 
     @OneToMany(mappedBy = "forumFk")
-    // isso não é campo, mas um 'references'.
+    // isso nao eh campo, mas um 'references'.
     private List<UsuarioForum> lstUsuarioForum;
 
     @Column(name = "descricao_forum", length = 40, nullable = true)

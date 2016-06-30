@@ -28,7 +28,7 @@ public class SalaController extends PpController {
 
     @Path("/incluir")
     public void incluir() {
-		// pega usuário do sistema
+		// pega usuario do sistema
 		String matriculaSessao = getCadastrante().getMatricula().toString();
 		String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
 		UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao , sesb_pessoaSessao);

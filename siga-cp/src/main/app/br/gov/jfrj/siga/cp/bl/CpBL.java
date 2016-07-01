@@ -203,7 +203,7 @@ public class CpBL {
 		}
 	}
 
-	public void configurarAcesso(CpPerfil perfil, CpOrgaoUsuario orgao,
+	public CpConfiguracao configurarAcesso(CpPerfil perfil, CpOrgaoUsuario orgao,
 			DpLotacao lotacao, DpPessoa pes, CpServico servico,
 			CpSituacaoConfiguracao situacao, CpTipoConfiguracao tpConf,
 			CpIdentidade identidadeCadastrante) throws Exception {
@@ -244,7 +244,7 @@ public class CpBL {
 		dao().gravarComHistorico(conf, identidadeCadastrante);
 		dao().commitTransacao();
 
-		comp.getConfiguracaoBL().limparCacheSeNecessario();
+		return conf;
 	}
 
 	/**

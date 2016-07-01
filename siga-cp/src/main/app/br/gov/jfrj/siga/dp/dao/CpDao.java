@@ -1242,7 +1242,14 @@ public class CpDao extends ModeloDao {
 		if (id == null || id == 0)
 			return null;
 
+		List<DpPessoa> lstCompleta = new ArrayList<DpPessoa>();
+		
 		DpLotacao lotacao = consultar(id, DpLotacao.class, false);
+				
+		lotacao = lotacao.getLotacaoAtual();
+		
+		if (lotacao == null)
+			return lstCompleta;
 
 		List<DpLotacao> sublotacoes = new ArrayList<DpLotacao>();
 		sublotacoes.add(lotacao);
@@ -1264,7 +1271,7 @@ public class CpDao extends ModeloDao {
 			}
 		}
 
-		List<DpPessoa> lstCompleta = new ArrayList<DpPessoa>();
+		
 		for (DpLotacao lot : sublotacoes) {
 
 			Criteria c = HibernateUtil.getSessao().createCriteria(

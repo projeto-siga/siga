@@ -1594,7 +1594,10 @@ public class CpDao extends ModeloDao {
 		getSessao().flush();
 		try {
 			invalidarCache(entidade);
-			Cp.getInstance().getConf().limparCacheSeNecessario();
+			//Edson: não há necessidade de limpar o cache de configs no próprio request
+			//pois, no request seguinte, a limpeza será feita. Além disso, estava gerando
+			//o erro #972 (ver comentários)
+			//Cp.getInstance().getConf().limparCacheSeNecessario();
 		} catch (Exception e) {
 			throw new AplicacaoException("Nao foi possivel limpar o cache.", 0,
 					e);

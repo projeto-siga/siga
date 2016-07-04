@@ -40,7 +40,7 @@
 										<td><select name="configuracao_pessoa_servico"
 											id="configuracao_${pessoa.idPessoa}_${servico.idServico}"
 											valorSalvo="${config.cpSituacaoConfiguracao.idSitConfiguracao}"
-											onchange="javascript:alterar(${pessoa.idPessoa},${servico.idServico},${idTpConfUtilizarSvc});">
+											onchange="javascript:alterar(this, ${pessoa.idPessoa},${servico.idServico},${idTpConfUtilizarSvc});">
 												<%--<c:forEach var="sit" items="${cpSituacoesPossiveis}"> --%>
 												<c:forEach var="sit"
 													items="${servico.cpTipoServico.cpSituacoesConfiguracaoSet}">
@@ -81,7 +81,7 @@
 									<select	name="configuracao_pessoa_servico"
 										id="configuracao_${pessoa.idPessoa}_${servico.idServico}"
 										valorSalvo="${idSitConf}"
-										onchange="javascript:alterar(${pessoa.idPessoa},${servico.idServico},${idTpConfUtilizarSvcOutraLot});">
+										onchange="javascript:alterar(this, ${pessoa.idPessoa},${servico.idServico},${idTpConfUtilizarSvcOutraLot});">
 										<%--<c:forEach var="sit" items="${cpSituacoesPossiveis}"> --%>
 										<c:forEach var="sit"
 											items="${servico.cpTipoServico.cpSituacoesConfiguracaoSet}">
@@ -129,22 +129,8 @@
 <script type="text/javascript">
 
 
-	alterar = function (p_strIdPessoa,p_strIdServico,p_strIdTpConf) {
-		var t_domSituacao = document.getElementById("configuracao_" + p_strIdPessoa + "_" + p_strIdServico);
-		if (!t_domSituacao) {
-			alert("Problema ao identificar o item configuracao_"  + p_strIdPessoa + "_" + p_strIdServico);
-			return;
-		}
-		var t_strIdSituacao = t_domSituacao.options[t_domSituacao.selectedIndex].value;
-		if (!t_strIdSituacao) {
-			alert("Ocorreu um erro na atualização do item " 
-					+ "configuracao_" + p_strIdPessoa + "_" + p_strIdServico 
-					+ "\n : situação não encontrada ! " 
-					+ "\n Atualização não realizada !"  );
-			restaurarValor(t_domSituacao);
-			return;
-		}
-		//
+	alterar = function (obj, p_strIdPessoa,p_strIdServico,p_strIdTpConf) {
+		var t_strIdSituacao = obj.value;
 		var t_smrRequisicao = new SimpleMethodRequestRPCGet();
 		var t_strUrl = 'gravar';
 		t_smrRequisicao.setUrl(t_strUrl);
@@ -175,11 +161,11 @@
 						+ t_strIdSituacao 
 						+  "). \nAlteração não confirmada ! ");
 			}
-			confirmarValor(t_domSituacao,t_strIdSituacao);
-			hover(t_domSituacao.parentNode,"[OK]");
+			confirmarValor(obj,t_strIdSituacao);
+			hover(obj.parentNode,"[OK]");
 			setTimeout(
 				function () {
-					delhover(t_domSituacao.parentNode);
+					delhover(obj.parentNode);
 				}
 			, 2000);
 		} catch (e) {
@@ -188,7 +174,7 @@
 			} else {
 				alert (e.message);
 			}
-			restaurarValor(t_domSituacao);
+			restaurarValor(obj);
 			return;
 		}
 	}

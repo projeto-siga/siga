@@ -148,6 +148,7 @@ public class CpConfiguracaoBL {
 			throw new RuntimeException(
 					"Ocorreu um erro na inicialização do cache.");
 		cacheInicializado = true;
+		dtUltimaAtualizacaoCache = CpDao.getInstance().consultarDataUltimaAtualizacao();
 		
 		long fim = System.currentTimeMillis();
 
@@ -155,7 +156,8 @@ public class CpConfiguracaoBL {
 				"Cache de configurações inicializado via "
 						+ this.getClass().getSimpleName() + " em "
 						+ (fim - inicio) + "ms, select: " + (inicioLazy - inicio) + "ms, lazy: " + (fimLazy - inicioLazy) + "ms, tree: " + (fim - fimLazy) + "ms");
-	}
+		
+		}
 
 	public HashMap<Long, TreeSet<CpConfiguracao>> getHashListas() {
 		if (!cacheInicializado) {

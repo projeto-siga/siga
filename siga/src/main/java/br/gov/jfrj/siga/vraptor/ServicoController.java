@@ -378,21 +378,13 @@ public class ServicoController 	extends SigaController {
                 CpServico t_cpsServico = dao().consultar(t_lngIdServico, CpServico.class, false);
                 Long t_lngIdSituacao = Long.parseLong(idSituacaoConfiguracao);
                 CpSituacaoConfiguracao t_cstSituacao = dao().consultar(t_lngIdSituacao,CpSituacaoConfiguracao.class, false);
-                Cp.getInstance().getBL().configurarAcesso(null,t_dplLotacao.getOrgaoUsuario()
+                CpConfiguracao t_cfgConfigGravada = Cp.getInstance().getBL().configurarAcesso(null,t_dplLotacao.getOrgaoUsuario()
                 											  ,t_dplLotacao
                 											  ,t_dppPessoa
                 											  ,t_cpsServico
                 											  ,t_cstSituacao
                 											  ,obterCpTipoConfiguracaoAConfigurar(idTipoConfiguracao)
                 											  ,getIdentidadeCadastrante());
-                // pesquisa novamente o item gravado
-                CpConfiguracao t_cfgConfigGravada = obterConfiguracao(	t_dplLotacao,
-																	  	t_dppPessoa,
-																	  	obterCpTipoConfiguracaoAConfigurar(idTipoConfiguracao),
-																		t_cpsServico);
-                
-                t_cfgConfigGravada.toString();
-                // devolve os ids como confirmação
 				HashMap<String, String> t_hmpRetorno = new HashMap<String, String>();
 				t_hmpRetorno.put("idpessoa", /*idPessoaConfiguracao*/ String.valueOf(t_cfgConfigGravada.getDpPessoa().getIdPessoa()));
 				t_hmpRetorno.put("idservico", /*idServicoConfiguracao*/String.valueOf(t_cfgConfigGravada.getCpServico().getIdServico()));

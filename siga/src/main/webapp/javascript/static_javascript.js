@@ -1087,8 +1087,10 @@ function SimpleMethodRequestRPCGet () {
 		}
 		xmlhttp.open("GET",_url + t_strParams,false);
 		xmlhttp.send(null);
-		var t_domResp = xmlhttp.responseXML;
-		//var t_domResp = xmlhttp.responseText;
+		//var t_domResp = xmlhttp.responseXML;
+		var t_domResp = null;
+		if (!t_domResp) 
+			t_domResp = (new DOMParser()).parseFromString(xmlhttp.responseText, 'text/xml');     
 		if (t_domResp) {
 			return t2_funDecodeMethodResponseRPC(t_domResp);
 		} else {

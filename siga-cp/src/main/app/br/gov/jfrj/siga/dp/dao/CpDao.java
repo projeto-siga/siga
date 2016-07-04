@@ -1242,7 +1242,14 @@ public class CpDao extends ModeloDao {
 		if (id == null || id == 0)
 			return null;
 
+		List<DpPessoa> lstCompleta = new ArrayList<DpPessoa>();
+		
 		DpLotacao lotacao = consultar(id, DpLotacao.class, false);
+				
+		lotacao = lotacao.getLotacaoAtual();
+		
+		if (lotacao == null)
+			return lstCompleta;
 
 		List<DpLotacao> sublotacoes = new ArrayList<DpLotacao>();
 		sublotacoes.add(lotacao);
@@ -1264,7 +1271,7 @@ public class CpDao extends ModeloDao {
 			}
 		}
 
-		List<DpPessoa> lstCompleta = new ArrayList<DpPessoa>();
+		
 		for (DpLotacao lot : sublotacoes) {
 
 			Criteria c = HibernateUtil.getSessao().createCriteria(
@@ -1587,7 +1594,10 @@ public class CpDao extends ModeloDao {
 		getSessao().flush();
 		try {
 			invalidarCache(entidade);
-			Cp.getInstance().getConf().limparCacheSeNecessario();
+			//Edson: não há necessidade de limpar o cache de configs no próprio request
+			//pois, no request seguinte, a limpeza será feita. Além disso, estava gerando
+			//o erro #972 (ver comentários)
+			//Cp.getInstance().getConf().limparCacheSeNecessario();
 		} catch (Exception e) {
 			throw new AplicacaoException("Nao foi possivel limpar o cache.", 0,
 					e);

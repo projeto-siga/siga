@@ -522,6 +522,16 @@ div#carregando {
     display: none;
 }
 
+.erro {
+	color: red;
+    font-weight: bold;
+}
+
+.sucesso {
+	color: green;
+    font-weight: bold;
+}
+
 input, textarea { color: #000; }
 .placeholder { color: #aaa; }
 

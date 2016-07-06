@@ -50,7 +50,7 @@ window.Siga = {
          data: ajax.params,
          cache: cacheValue
       }).fail(function(jqXHR, textStatus, errorThrown){
-         doneCallback(jqXHR.statusText);
+         doneCallback(jqXHR.statusText,jqXHR.status);
       }).done(function(data, textStatus, jqXHR ){
        if (data.indexOf("Não foi Possível completar a Operação.") > 1){
          data = "Não foi Possível completar a Operação.";
@@ -68,7 +68,7 @@ window.Siga = {
     ajax: function(url, params, httpMethod, callback){
         var self = this;
 
-         self._ajaxCall({url: url, type: httpMethod, params: params}, function(textResponse) {
+         self._ajaxCall({url: url, type: httpMethod, params: params}, function(textResponse,statusReponse) {
             // Verifica se o SP foi previamente inicializado, caso nao tenha sido apenas renderiza.
             if (textResponse.indexOf("SAMLRequest") > -1){
                 var SAMLRequest = self._picketlinkResponse(textResponse);
@@ -84,7 +84,7 @@ window.Siga = {
                     });
                 });
             }else{ // Quando nao precisa de passar pelo fluxo do SAML.
-                callback(textResponse);
+                callback(textResponse,statusReponse);
             }
         });
     }

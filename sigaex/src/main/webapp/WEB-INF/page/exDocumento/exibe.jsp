@@ -1050,9 +1050,9 @@
 		<c:if test="${(not m.mob.geral) or (docVO.tipoFormaDocumento != 'processo_administrativo')}">
 			var url = "/sigawf/app/doc?sigla=${docVO.doc.codigo}&ts=1${currentTimeMillis}";
 		</c:if>
-		Siga.ajax(url, null, "GET", function(response){		
-			var div = $(".wf_div:last"); 
-			$(div).html(response);
+		Siga.ajax(url, null, "GET", function(response,status){		
+			var div = $(".wf_div:last");
+			$(div).html(status==undefined || status == 200?response:'<span class="erro">Houve um problema ao verificar fluxos do SIGA-WF associados a este documento. Por favor, atualize a página para tentar novamente.</span>');
 		});		
 	</script>
 </c:if>

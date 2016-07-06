@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
+<c:if test="${mobilMap.size() == 0}"><span class="sucesso">Nenhum fluxo do SIGA-WF associado a este documento.</span></c:if>
 <c:forEach var="item" items="${mobilMap}">
 	<!--ajax:${item.key}-->
 	<c:forEach var="t" items="${item.value}">

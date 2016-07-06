@@ -88,16 +88,19 @@ public class AdminController extends WfController {
 	@Get
 	@Path("/app/download/{pdId}")
 	public ByteArrayDownload downloadArquivoDeployed(Long pdId) throws IOException {
-		
-		String _proc_img = "processimage.jpg";
-		String _proc_def = "processdefinition.xml";
-		String _gpd_xml = "gpd.xml";
-		
-		ProcessDefinition processDefinition = WfDao.getInstance().getProcessDefinition(pdId);
-		FileDefinition fileDefinition = processDefinition.getFileDefinition();
-		
-		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ZipOutputStream zos = new ZipOutputStream(baos)) {
+		ByteArrayOutputStream baos = null;
+		ZipOutputStream zos = null;
+
+		try{
+			String _proc_img = "processimage.jpg";
+			String _proc_def = "processdefinition.xml";
+			String _gpd_xml = "gpd.xml";
+			
+			ProcessDefinition processDefinition = WfDao.getInstance().getProcessDefinition(pdId);
+			FileDefinition fileDefinition = processDefinition.getFileDefinition();
+			
+			baos = new ByteArrayOutputStream();
+			zos = new ZipOutputStream(baos);
 			
 			byte[] arquivo = fileDefinition.getBytes(_proc_img);
 			ZipEntry entry = new ZipEntry(_proc_img);
@@ -119,8 +122,14 @@ public class AdminController extends WfController {
 			zos.putNextEntry(entry);
 			zos.write(arquivo);
 			zos.closeEntry();
+
+			zos.close();
 			
 			return new ByteArrayDownload(baos.toByteArray(), "applicatiion/zip", "process-definition-" + processDefinition.getName() + "-" + pdId + ".zip");
+
+		}finally{
+			baos.close();
+			zos.close();
 		}
 	}
 

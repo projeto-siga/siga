@@ -240,7 +240,7 @@ public class ExAssinadorExternoController extends ExController {
 		String errstack = sw.toString(); // stack trace as a string
 		
 		JSONObject json = new JSONObject();
-		json.put("error", e.getMessage());
+		json.put("errormsg", e.getMessage());
 		
 		// Error Details
 		JSONArray arr = new JSONArray();

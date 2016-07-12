@@ -7,7 +7,7 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-<siga:pagina titulo="Documento" popup="true" compatibilidade="IE=EmulateIE9">
+<siga:pagina titulo="Documento" popup="${popup}" compatibilidade="IE=EmulateIE9">
 	<script type="text/javascript" language="Javascript1.1">
 		/*  converte para maiúscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {
@@ -19,10 +19,11 @@
 			}
 		}
 	</script>
-	<c:if test="${not mob.doc.eletronico}">
+	<c:if test="${not doc.eletronico}">
 		<script type="text/javascript">
-			$("html").addClass("fisico");
-<%--			$("body").addClass("fisico"); --%>
+					$("html").addClass("fisico"); 
+					$("body").addClass("fisico");
+					<%--	--%>
 		</script>
 	</c:if>
 
@@ -65,7 +66,7 @@ function visualizarImpressao() {
 		<div class="gt-content">
 
 			<h2>
-				Documento ${doc.exTipoDocumento.descricao}: ${doc.codigo}
+				${mov.exTipoMovimentacao.descricao}: ${doc.codigo}:${mov.idMov}
 			</h2>
 
 			<form name="frm" action="exibir" theme="simple" method="post">
@@ -276,6 +277,9 @@ function visualizarImpressao() {
 					</div>
 				</c:if>
 				<div style="padding-left: 10; padding-top: 10px;">
+				<c:if test="${not popup}">
+						<input type="button" value="${doc.codigo}" class="gt-btn-large gt-btn-left" onclick="window.location='../doc/exibir?sigla=${doc.codigoCompacto}'" />
+				</c:if>
 					<c:if test="${mov.exTipoMovimentacao.idTpMov!=2}">
 						<input type="button" value="Visualizar Impressão" class="gt-btn-large gt-btn-left" onclick="javascript:visualizarImpressao();" />
 					</c:if>
@@ -306,15 +310,15 @@ function visualizarImpressao() {
 						
 					<c:set var="lote" value="false" />
 				</div>		
-				<p>
-					<b>Link para assinatura externa: </b>
-					${enderecoAutenticacao} (informar o código ${mov.siglaAssinaturaExterna})
-				</p>
 				<tags:assinatura_botoes
 					autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
 					assinarComSenha="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
 					autenticarComSenha="${f:podeConferirCopiaMovimentacaoComSenha(titular,lotaTitular,mov)}" 
 					idMovimentacao="${mov.idMov}" />
+				<p>
+					<b>Link para assinatura externa: </b>
+					${enderecoAutenticacao} (informar o código ${mov.siglaAssinaturaExterna})
+				</p>
 			</div>
 		</div>
 	</div>

@@ -502,6 +502,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("autenticando", autenticando);
 		result.include("enderecoAutenticacao",
 				SigaExProperties.getEnderecoAutenticidadeDocs());
+		result.include("popup", popup);
 		result.include("request", getRequest());
 
 	}

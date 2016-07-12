@@ -15,6 +15,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.taglibs.standard.tag.common.core.SetSupport;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 import org.json.JSONArray;
@@ -81,7 +82,7 @@ public class ExAssinadorExternoController extends ExController {
 			for (ExAssinavelDoc ass : assinaveis) {
 				if (ass.isPodeAssinar()) {
 					ExAssinadorExternoListItem aei = new ExAssinadorExternoListItem();
-					aei.setId(sigla2id(ass.getDoc().getCodigoCompacto()));
+					aei.setId(makeId(cpf, ass.getDoc().getCodigoCompacto()));
 					aei.setCode(ass.getDoc().getCodigo());
 					aei.setDescr(ass.getDoc().getDescrDocumento());
 					aei.setKind(ass.getDoc().getTipoDescr());
@@ -95,14 +96,15 @@ public class ExAssinadorExternoController extends ExController {
 					continue;
 				for (ExAssinavelMov assmov : ass.getMovs()) {
 					ExAssinadorExternoListItem aei = new ExAssinadorExternoListItem();
-					aei.setId(sigla2id(assmov.getMov().getReferencia()));
+					aei.setId(makeId(cpf, assmov.getMov().getReferencia()));
 					aei.setCode(assmov.getMov().getReferencia());
 					aei.setDescr(assmov.getMov().getDescrMov());
 					aei.setKind(assmov.getMov().getTipoDescr());
 					aei.setOrigin("Siga-Doc");
-					aei.setUrlView(permalink + assmov.getMov().getReferencia().replace(":", "/"));
-					aei.setUrlHash("sigadoc/hash/" + aei.getId());
-					aei.setUrlSave("sigadoc/save/" + aei.getId());
+					aei.setUrlView(permalink
+							+ assmov.getMov().getReferencia().replace(":", "/"));
+					aei.setUrlHash("sigadoc/doc/" + aei.getId() + "/hash");
+					aei.setUrlSave("sigadoc/doc/" + aei.getId() + "/sign");
 					list.add(aei);
 				}
 			}
@@ -170,21 +172,31 @@ public class ExAssinadorExternoController extends ExController {
 			String certificate = req.getString("certificate");
 			String time = req.getString("time");
 			String subject = req.optString("subject", null);
-			String cpf = req.optString("cpf", null);
 			String cn = req.optString("cn", null);
 
 			byte[] assinatura = Base64.decode(envelope);
 			byte[] certificado = Base64.decode(certificate);
 			Date dt = dao().consultarDataEHoraDoServidor();
 
-			String sigla = null;
-			if (id != null) {
-				sigla = id2sigla(id);
-				sigla += ".pdf";
-			}
+			if (id == null)
+				throw new Exception("Id não informada.");
+			Long cpf = id2cpf(id);
+			String sigla = id2sigla(id) + ".pdf";
 
 			ExMobil mob = Documento.getMobil(sigla);
 			ExMovimentacao mov = Documento.getMov(mob, sigla);
+
+			DpPessoa cadastrante = null;
+			List<DpPessoa> pessoas = ExDao.getInstance()
+					.consultarPessoasAtivasPorCpf(cpf);
+			if (mov.getResp() != null)
+				for (DpPessoa p : pessoas)
+					if (p.equivale(mov.getResp()))
+						cadastrante = p;
+			if (cadastrante == null)
+				cadastrante = pessoas.get(0);
+			if (cadastrante == null)
+				throw new Exception("Não foi possível localizar a pessoa que representa o subscritor.");
 
 			String msg = null;
 
@@ -193,15 +205,15 @@ public class ExAssinadorExternoController extends ExController {
 
 				Ex.getInstance()
 						.getBL()
-						.assinarMovimentacao(getCadastrante(),
-								getLotaTitular(), mov, dt, assinatura, null,
+						.assinarMovimentacao(cadastrante,
+								cadastrante.getLotacao(), mov, dt, assinatura, null,
 								tpMov);
 				msg = "OK";
 			} else if (mob != null) {
 				long tpMov = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
 				msg = Ex.getInstance()
 						.getBL()
-						.assinarDocumento(getCadastrante(), getLotaTitular(),
+						.assinarDocumento(cadastrante, cadastrante.getLotacao(),
 								mob.doc(), dt, assinatura, null, tpMov);
 				msg = "OK: " + msg;
 			} else {
@@ -238,10 +250,10 @@ public class ExAssinadorExternoController extends ExController {
 		PrintWriter pw = new PrintWriter(sw);
 		e.printStackTrace(pw);
 		String errstack = sw.toString(); // stack trace as a string
-		
+
 		JSONObject json = new JSONObject();
 		json.put("errormsg", e.getMessage());
-		
+
 		// Error Details
 		JSONArray arr = new JSONArray();
 		JSONObject detail = new JSONObject();
@@ -314,16 +326,22 @@ public class ExAssinadorExternoController extends ExController {
 		return body;
 	}
 
-	private String sigla2id(String sigla) {
+	private String makeId(Long cpf, String sigla) {
 		if (sigla == null)
 			return null;
-		return sigla.replace(":", "_");
+		return cpf.toString() + "__" + sigla.replace(":", "_");
+	}
+
+	private Long id2cpf(String id) {
+		if (id == null)
+			return null;
+		return Long.valueOf(id.split("__")[0]);
 	}
 
 	private String id2sigla(String id) {
 		if (id == null)
 			return null;
-		return id.replace("_", ":");
+		return id.split("__")[1].replace("_", ":");
 	}
 
 }

@@ -832,6 +832,14 @@ public class CpDao extends ModeloDao {
 		return pes;
 	}
 
+	public List<DpPessoa> consultarPessoasAtivasPorCpf(final long cpf) {
+
+		final Query qry = getSessao().getNamedQuery("consultarPorCpf");
+		qry.setLong("cpfPessoa", cpf);
+		final List<DpPessoa> l = qry.list();
+		return l;
+	}
+
 	public DpPessoa consultarPorEmail(final String email) {
 
 		final Query qry = getSessao().getNamedQuery("consultarPorEmail");

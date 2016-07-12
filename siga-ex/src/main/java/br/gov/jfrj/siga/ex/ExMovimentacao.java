@@ -807,18 +807,22 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 *         contrário.
 	 */
 	public boolean isAssinada() {
-		if (!this.isCancelada()
-				&& this.getExMobil().getExMovimentacaoSet() != null) {
-			// Usamos getExMovimentacaoSet() em vez de getExMovimentacaoReferenciadoraSet() porque o segundo faz lazy initialization e não recebe as movimentações mais recentes quando se está calculando os marcadores.
-			for (ExMovimentacao movRef : this.getExMobil().getExMovimentacaoSet()) {
-				if (this.getExMovimentacaoRef() != null && this.getExMovimentacaoRef().getIdMov() == movRef
-						.getIdMov() && (movRef.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
-						|| movRef.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
-						|| movRef.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA
-						|| movRef.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA))
-					return true;
-			}
+		if (this.isCancelada()
+				|| this.getExMobil().getExMovimentacaoSet() == null) 
+			return false;
+		
+		// Usamos getExMovimentacaoSet() em vez de getExMovimentacaoReferenciadoraSet() porque o segundo faz lazy initialization e não recebe as movimentações mais recentes quando se está calculando os marcadores.
+		for (ExMovimentacao assinatura : this.getExMobil().getExMovimentacaoSet()) {
+			long l = assinatura.getIdTpMov();
+			if (l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
+				&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
+				&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA
+				&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
+				continue;
+			if (this.getIdMov().equals(assinatura.getExMovimentacaoRef().getIdMov()))
+				return true;
 		}
+
 		return false;
 	}
 

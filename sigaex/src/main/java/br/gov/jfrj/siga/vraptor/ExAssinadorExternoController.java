@@ -100,7 +100,7 @@ public class ExAssinadorExternoController extends ExController {
 					aei.setDescr(assmov.getMov().getDescrMov());
 					aei.setKind(assmov.getMov().getTipoDescr());
 					aei.setOrigin("Siga-Doc");
-					aei.setUrlView(permalink + assmov.getMov().getReferencia());
+					aei.setUrlView(permalink + assmov.getMov().getReferencia().replace(":", "/"));
 					aei.setUrlHash("sigadoc/hash/" + aei.getId());
 					aei.setUrlSave("sigadoc/save/" + aei.getId());
 					list.add(aei);

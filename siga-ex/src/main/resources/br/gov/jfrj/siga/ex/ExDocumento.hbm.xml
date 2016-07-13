@@ -98,7 +98,7 @@
   <set batch-size="500" inverse="true" lazy="true"
    name="exBoletimDocSet" order-by="ID_DOC" sort="unsorted">
    <key column="ID_DOC"/>
-   <one-to-many class="ExBoletimDoc"/>
+   <one-to-many class="br.gov.jfrj.siga.ex.BIE.ExBoletimDoc"/>
   </set>
   <set batch-size="500" inverse="true" lazy="true" name="exMobilSet" sort="natural">
    <key column="ID_DOC"/>

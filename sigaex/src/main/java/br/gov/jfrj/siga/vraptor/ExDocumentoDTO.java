@@ -295,8 +295,8 @@ public class ExDocumentoDTO {
 		return FuncoesEL.listaPublicacao(getIdMod());
 	}	
 
-	 public List<ExDocumento> getListaDocsAPublicarBoletimPorDocumento() {
-         return FuncoesEL.listaDocsAPublicarBoletimPorDocumento(getDoc());
+	 public List<ExDocumento> getDocsInclusosNoBoletim() {
+         return FuncoesEL.consultarDocsInclusosNoBoletim(getDoc());
 	 }
 
 	public boolean isEletronicoFixo() {

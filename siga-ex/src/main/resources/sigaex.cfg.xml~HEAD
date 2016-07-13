@@ -10,8 +10,8 @@
   <property name="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</property>
   <!-- <mapping resource="br/gov/jfrj/siga/ex/ExBoletimDoc.hbm.xml"/> -->
   <mapping class="br.gov.jfrj.siga.ex.ExMarca"/>
-  <mapping class="br.gov.jfrj.siga.ex.ExBoletimDoc"/>
-  <mapping resource="br/gov/jfrj/siga/ex/ExBoletimDoc.hbm.xml"/>
+  <mapping class="br.gov.jfrj.siga.ex.BIE.ExBoletimDoc"/>
+  <mapping resource="br/gov/jfrj/siga/ex/BIE/ExBoletimDoc.hbm.xml"/>
   <mapping resource="br/gov/jfrj/siga/ex/ExVia.hbm.xml"/>
   <mapping resource="br/gov/jfrj/siga/ex/ExDocumento.hbm.xml"/>
   <mapping resource="br/gov/jfrj/siga/ex/ExClassificacao.hbm.xml"/>

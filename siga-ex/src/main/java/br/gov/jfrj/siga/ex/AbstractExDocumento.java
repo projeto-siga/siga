@@ -39,6 +39,7 @@ import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 
 /**
  * A class that represents a row in the EX_DOCUMENTO table. You can customize

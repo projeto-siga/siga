@@ -3,7 +3,7 @@
                             "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
                             "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 
-<hibernate-mapping package="br.gov.jfrj.siga.ex">
+<hibernate-mapping package="br.gov.jfrj.siga.ex.BIE">
 	<class name="ExBoletimDoc" schema="SIGA" table="EX_BOLETIM_DOC">
 		<id name="idBoletimDoc" column="ID_BOLETIM_DOC" type="java.lang.Long">
 			<generator class="sequence"></generator>
@@ -13,26 +13,26 @@
 		<many-to-one name="boletim" column="ID_BOLETIM" class="br.gov.jfrj.siga.ex.ExDocumento" not-null="false" />
 	</class>
 
-	<query name="consultarPorModeloParaPublicarBI">
+	<query name="consultarDocsDisponiveisParaInclusaoEmBoletim">
 		<![CDATA[select bol.exDocumento from ExBoletimDoc bol
 		where bol.boletim is null
 		and bol.exDocumento.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu
 		]]>
 	</query>
 	
-	<query name="consultarPorBoletimParaPublicarBI">
+	<query name="consultarDocsInclusosNoBoletim">
 		<![CDATA[select bol.exDocumento from ExBoletimDoc bol
 		where bol.boletim.idDoc = :idDoc 
 		]]>
 	</query>
 	
-	<query name="consultarBoletimPorDocumento">
+	<query name="consultarBoletimEmQueODocumentoEstaIncluso">
 		<![CDATA[from ExBoletimDoc bol
 		where bol.exDocumento.idDoc = :idDoc 
 		]]>
 	</query>
 	
-	<query name="consultarBoletimPorBoletim">
+	<query name="consultarBoletim">
 		<![CDATA[from ExBoletimDoc bol
 		where bol.boletim.idDoc = :idDoc 
 		]]>

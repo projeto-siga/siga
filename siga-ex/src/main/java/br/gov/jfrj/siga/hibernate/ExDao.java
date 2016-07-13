@@ -58,7 +58,6 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.jdbc.Work;
@@ -78,7 +77,6 @@ import br.gov.jfrj.siga.dp.CpTipoMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.ex.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -101,6 +99,7 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
@@ -125,6 +124,44 @@ public class ExDao extends CpDao {
 
 	public ExDao() {
 		
+	}
+	
+	public List<ExDocumento> consultarDocsInclusosNoBoletim(ExDocumento doc) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarDocsInclusosNoBoletim");
+
+		query.setLong("idDoc", doc.getIdDoc());
+		return query.list();
+	}
+
+	public ExBoletimDoc consultarBoletimEmQueODocumentoEstaIncluso(ExDocumento doc) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarBoletimEmQueODocumentoEstaIncluso");
+
+		query.setLong("idDoc", doc.getIdDoc());
+
+		final List<ExBoletimDoc> l = query.list();
+		if (l.size() != 1)
+			return null;
+
+		return l.get(0);
+	}
+	
+	public List<ExDocumento> consultarDocsDisponiveisParaInclusaoEmBoletim(
+			CpOrgaoUsuario orgaoUsu) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarDocsDisponiveisParaInclusaoEmBoletim");
+		query.setLong("idOrgaoUsu", orgaoUsu.getIdOrgaoUsu());
+		return query.list();
+	}
+
+	public List<ExBoletimDoc> consultarBoletim(ExDocumento doc) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarBoletim");
+
+		query.setLong("idDoc", doc.getIdDoc());
+
+		return query.list();
 	}
 
 	public void reindexarVarios(List<ExDocumento> docs, boolean apenasExcluir) throws Exception {
@@ -767,44 +804,6 @@ public class ExDao extends CpDao {
 
 	public List<ExDocumento> listarAgendados() {
 		final Query query = getSessao().getNamedQuery("listarAgendados");
-		return query.list();
-	}
-
-	public List<ExDocumento> consultarPorModeloParaPublicar(
-			CpOrgaoUsuario orgaoUsu) {
-		final Query query = getSessao().getNamedQuery(
-				"consultarPorModeloParaPublicarBI");
-		query.setLong("idOrgaoUsu", orgaoUsu.getIdOrgaoUsu());
-		return query.list();
-	}
-
-	public List<ExDocumento> consultarPorBoletimParaPublicar(ExDocumento doc) {
-		final Query query = getSessao().getNamedQuery(
-				"consultarPorBoletimParaPublicarBI");
-
-		query.setLong("idDoc", doc.getIdDoc());
-		return query.list();
-	}
-
-	public ExBoletimDoc consultarBoletimPorDocumento(ExDocumento doc) {
-		final Query query = getSessao().getNamedQuery(
-				"consultarBoletimPorDocumento");
-
-		query.setLong("idDoc", doc.getIdDoc());
-
-		final List<ExBoletimDoc> l = query.list();
-		if (l.size() != 1)
-			return null;
-
-		return l.get(0);
-	}
-
-	public List<ExBoletimDoc> consultarBoletimPorBoletim(ExDocumento doc) {
-		final Query query = getSessao().getNamedQuery(
-				"consultarBoletimPorBoletim");
-
-		query.setLong("idDoc", doc.getIdDoc());
-
 		return query.list();
 	}
 
@@ -1788,7 +1787,7 @@ public class ExDao extends CpDao {
 		cfg.addClass(br.gov.jfrj.siga.ex.ExMovimentacao.class);
 		cfg.addClass(br.gov.jfrj.siga.ex.ExTpDocPublicacao.class);
 		cfg.addClass(br.gov.jfrj.siga.ex.ExTipoMobil.class);
-		cfg.addClass(br.gov.jfrj.siga.ex.ExBoletimDoc.class);
+		cfg.addClass(br.gov.jfrj.siga.ex.BIE.ExBoletimDoc.class);
 		cfg.addClass(br.gov.jfrj.siga.ex.ExPapel.class);
 		cfg.addClass(br.gov.jfrj.siga.ex.ExEmailNotificacao.class);
 		cfg.addClass(br.gov.jfrj.siga.dp.CpTipoMarcador.class);

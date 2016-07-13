@@ -211,8 +211,9 @@ public class ExDocumentoVO extends ExVO {
 			}
 		}
 
-		if (doc.getPublicadoNoBoletim() != null)
-			boletim = new ExDocumentoVO(doc.getPublicadoNoBoletim());
+		ExDocumento bol = doc.getBoletimEmQueDocFoiPublicado();
+		if (bol != null)
+			boletim = new ExDocumentoVO(bol);
 
 	}
 

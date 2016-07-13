@@ -64,15 +64,8 @@ import br.gov.jfrj.siga.ex.ExTratamento;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.bl.ExDependencia;
 import br.gov.jfrj.siga.ex.bl.ExParte;
-import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInterno;
-import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoCJF;
-import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoES;
-import br.gov.jfrj.siga.ex.bl.BIE.HierarquizadorBoletimInternoTRF2;
-import br.gov.jfrj.siga.ex.bl.BIE.NodoMenor;
-import br.gov.jfrj.siga.ex.util.ExGraph.Nodo;
-import br.gov.jfrj.siga.ex.util.ExGraph.Transicao;
+import br.gov.jfrj.siga.ex.util.BIE.Hierarquizador;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import freemarker.ext.dom.NodeModel;
 
@@ -102,29 +95,8 @@ public class FuncoesEL {
 		return null;
 	}
 
-	public static HierarquizadorBoletimInterno obterHierarquizadorBIE(
-			CpOrgaoUsuario orgao, ExDocumento d) {
-		return new HierarquizadorBoletimInterno(orgao, Ex.getInstance().getBL()
-				.obterDocumentosBoletim(d));
-
-	}
-
-	public static HierarquizadorBoletimInternoTRF2 obterHierarquizadorBIETRF2(
-			CpOrgaoUsuario orgao, ExDocumento d) {
-		return new HierarquizadorBoletimInternoTRF2(orgao, Ex.getInstance()
-				.getBL().obterDocumentosBoletim(d));
-	}
-
-	public static HierarquizadorBoletimInternoES obterHierarquizadorBIEES(
-			CpOrgaoUsuario orgao, ExDocumento d) {
-		return new HierarquizadorBoletimInternoES(orgao, Ex.getInstance()
-				.getBL().obterDocumentosBoletim(d));
-	}
-
-	public static HierarquizadorBoletimInternoCJF obterHierarquizadorBIECJF(
-			CpOrgaoUsuario orgao, ExDocumento d) {
-		return new HierarquizadorBoletimInternoCJF(orgao, Ex.getInstance()
-				.getBL().obterDocumentosBoletim(d));
+	public static Hierarquizador obterHierarquizadorBIE(ExDocumento docBIE) {
+		return new Hierarquizador(docBIE);
 	}
 
 	public static Boolean podeRemeterPorConfiguracao(DpPessoa titular,
@@ -386,44 +358,9 @@ public class FuncoesEL {
 
 	}
 
-	public static String obterTituloMateriaLivre(NodoMenor nodoMenor,
-			ExDocumento doc, Integer i) {
-		return HierarquizadorBoletimInterno.obterTituloMateriaLivre(nodoMenor,
-				doc, i);
-	}
-
-	public static String obterBlobMateriaLivre(NodoMenor nodoMenor,
-			ExDocumento doc, Integer i) {
-		return HierarquizadorBoletimInterno.obterBlobMateriaLivre(nodoMenor,
-				doc, i);
-	}
-
 	public static ExTratamento tratamento(String autoridade, String genero) {
 		return ExTratamento.tratamento(autoridade, genero);
 	}
-
-	public static String enxugaHtml(String html) {
-		return HierarquizadorBoletimInterno.enxugaHtml(html);
-	}
-
-	/*
-	 * public static List<Object[]> gerarEntrevistaEditalEliminacao( ExDocumento
-	 * edital) { return ExEditalEliminacao.gerarEntrevista(edital); }
-	 * 
-	 * public static List<ExMobil> obterInclusosNoEditalComBaseNaEntrevista(
-	 * ExDocumento edital) { return ExEditalEliminacao
-	 * .obterInclusosNoEditalComBaseNaEntrevista(edital); }
-	 * 
-	 * public static List<Object[]> obterInclusosNoEdital(Long idMobilEdital) {
-	 * ExMobil edital = dao().consultar(idMobilEdital, ExMobil.class, false);
-	 * return ExEditalEliminacao.obterInclusosNoEdital(edital.getExDocumento());
-	 * }
-	 * 
-	 * public static void eliminarInclusosNoTermo(ExDocumento termo, DpPessoa
-	 * cadastrante, DpLotacao lotaCadastrante) {
-	 * ExTermoEliminacao.eliminarInclusosNoTermo(termo, cadastrante,
-	 * lotaCadastrante); }
-	 */
 
 	public static ExEditalEliminacao editalEliminacao(ExDocumento doc) {
 		return new ExEditalEliminacao(doc);
@@ -531,22 +468,6 @@ public class FuncoesEL {
 		}
 
 		return documentos;
-	}
-
-	public static List<ExDocumento> buscaDocumentosParaPublicar(
-			String publicacao, CpOrgaoUsuario usu) throws AplicacaoException {
-
-		if (usu == null) {
-			return null;
-		}
-
-		if (!publicacao.equals("BI")) {
-			return null;
-		}
-
-		List<ExDocumento> l = dao().consultarPorModeloParaPublicar(usu);
-
-		return l;
 	}
 
 	public static DpLotacao lotacaoPorNivelMaximo(DpLotacao lot,
@@ -1011,18 +932,17 @@ public class FuncoesEL {
 		return calculo;
 	}
 
-	public static List<ExDocumento> listaDocsAPublicarBoletim(
+	public static List<ExDocumento> consultarDocsDisponiveisParaInclusaoEmBoletim(
 			CpOrgaoUsuario orgaoUsuario) {
-		final List<ExDocumento> l = dao().consultarPorModeloParaPublicar(
-				orgaoUsuario);
+		final List<ExDocumento> l = ExDao.getInstance()
+				.consultarDocsDisponiveisParaInclusaoEmBoletim(orgaoUsuario);
 		return l;
 	}
 
-	public static List<ExDocumento> listaDocsAPublicarBoletimPorDocumento(
+	public static List<ExDocumento> consultarDocsInclusosNoBoletim(
 			ExDocumento doc) {
 		if (doc.getIdDoc() != null) {
-			final List<ExDocumento> l = dao().consultarPorBoletimParaPublicar(
-					doc);
+			final List<ExDocumento> l = ExDao.getInstance().consultarDocsInclusosNoBoletim(doc);
 			return l;
 		}
 

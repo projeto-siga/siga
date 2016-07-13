@@ -20,6 +20,8 @@ package br.gov.jfrj.siga.base;
 
 import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.lang.StringUtils;
+
 public class Texto {
 
 	/**
@@ -156,11 +158,16 @@ public class Texto {
 		String stringAux2 = string.substring(1).toLowerCase();
 		return stringAux1 + stringAux2;
 	}
+	
+	public static String extrai(final String sSource, final String sBegin,
+			final String sEnd) throws UnsupportedEncodingException{
+		return extrai(sSource, sBegin, sEnd, 1);
+	}
 
 	public static String extrai(final String sSource, final String sBegin,
-			final String sEnd) throws UnsupportedEncodingException {
-		final Integer iBegin = sSource.indexOf(sBegin);
-		final Integer iEnd = sSource.indexOf(sEnd);
+			final String sEnd, int apenasNaNesimaOcorrencia) throws UnsupportedEncodingException {
+		final Integer iBegin = StringUtils.ordinalIndexOf(sSource, sBegin, apenasNaNesimaOcorrencia);
+		final Integer iEnd = sSource.indexOf(sEnd, iBegin); 
 
 		if (iBegin == -1 || iEnd == -1)
 			return null;
@@ -170,7 +177,8 @@ public class Texto {
 		return sResult;
 	}
 
-	public static String extraiTudo(final String sSource, final String sBegin,
+	/*Edson: ver se este método é realmente necessário no BIE
+	 * public static String extraiTudo(final String sSource, final String sBegin,
 			final String sEnd) throws UnsupportedEncodingException {
 
 		int startPos = 0;
@@ -188,7 +196,7 @@ public class Texto {
 		}
 
 		return sResult;
-	}
+	}*/
 
 	public static String removerEspacosExtra(String texto) {
 		return texto.replaceAll("\\s{2,}", " ");

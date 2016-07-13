@@ -101,7 +101,6 @@ import br.gov.jfrj.siga.dp.DpResponsavel;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
-import br.gov.jfrj.siga.ex.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -117,13 +116,13 @@ import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTermoEliminacao;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
-import br.gov.jfrj.siga.ex.ExTipoDestinacao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.bl.BIE.BoletimInternoBL;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
@@ -134,6 +133,7 @@ import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.ex.util.ProcessadorModelo;
 import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
+import br.gov.jfrj.siga.ex.util.BIE.ManipuladorEntrevista;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.ObjetoBase;
@@ -669,11 +669,7 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 
-			// Grava o documento na tabela de boletim
-			ExBoletimDoc boletim = new ExBoletimDoc();
-			boletim.setExDocumento(mov.getExDocumento());
-
-			ExDao.getInstance().gravar(boletim);
+			new BoletimInternoBL().deixarDocDisponivelParaInclusaoEmBoletim(mov.getExDocumento());
 
 			concluirAlteracao(mov.getExDocumento());
 		} catch (final Exception e) {
@@ -700,7 +696,7 @@ public class ExBL extends CpBL {
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExDocumento());
 
-			for (ExDocumento ex : obterDocumentosBoletim(doc))
+			for (ExDocumento ex : new ManipuladorEntrevista(doc).obterDocsMarcados())
 				notificarPublicacao(cadastrante, lotaCadastrante, ex,
 						mov.getDtMov(), doc);
 		} catch (final Exception e) {
@@ -776,6 +772,23 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao notificar publicação.", 0, e);
 		}
+	}
+	
+	//Edson: os métodos abaixo apenas repassam a chamada aos correspondentes
+	//na BoletimInternoBL, e estão aqui para facilitar a referência por
+	//nome do método (por exemplo, [@entrevista acaoGravar="gravarBIE"])
+	
+	public void gravarBIE(ExDocumento docBIE) throws Exception {
+		new BoletimInternoBL().gravarBIE(docBIE);
+	}
+	public void excluirBIE(ExDocumento docBIE) throws Exception {
+		new BoletimInternoBL().gravarBIE(docBIE);
+	}
+	public void refazerBIE(ExDocumento docBIE) throws Exception {
+		new BoletimInternoBL().gravarBIE(docBIE);
+	}
+	public void finalizarBIE(ExDocumento docBIE) throws Exception {
+		new BoletimInternoBL().gravarBIE(docBIE);
 	}
 
 	public void pedirPublicacao(final DpPessoa cadastrante,
@@ -2588,7 +2601,7 @@ public class ExBL extends CpBL {
 			for (ExMobil m : set) {
 				if (m.getUltimaMovimentacao().getExTipoMovimentacao()
 						.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM) {
-					cancelarPedidoBI(m.doc());
+					new BoletimInternoBL().deixarDocIndisponivelParaInclusaoEmBoletim(m.doc());
 				}
 
 				final ExMovimentacao ultMov = m.getUltimaMovimentacao();
@@ -2766,7 +2779,7 @@ public class ExBL extends CpBL {
 			}
 
 			if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM) {
-				cancelarPedidoBI(mob.doc());
+				new BoletimInternoBL().deixarDocIndisponivelParaInclusaoEmBoletim(mob.doc());
 			}
 
 			gravarMovimentacaoCancelamento(mov, movCancelar);
@@ -2778,7 +2791,7 @@ public class ExBL extends CpBL {
 			// throw e;
 		}
 	}
-
+	
 	public void criarVia(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc) {
 		criarVia(cadastrante, lotaCadastrante, doc, null);
@@ -5326,29 +5339,6 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	public List<ExDocumento> obterDocumentosBoletim(Map<String, String> form) {
-		final Pattern p = Pattern.compile("^doc_boletim?([0-9]{1,7})");
-		long l;
-		List<ExDocumento> list = new ArrayList<ExDocumento>();
-		ExDocumento doqueRef = new ExDocumento();
-		for (String chave : form.keySet()) {
-			final Matcher m = p.matcher(chave);
-			if (m.find()) {
-				if (m.group(1) != null && form.get(chave).equals("Sim")) {
-					l = new Long(m.group(1));
-					doqueRef = dao().consultar(l, ExDocumento.class, false);
-					list.add(doqueRef);
-				}
-			}
-		}
-		return list;
-	}
-
-	public List<ExDocumento> obterDocumentosBoletim(ExDocumento doque) {
-		return obterDocumentosBoletim(doque.getForm());
-
-	}
-
 	/**
 	 * Obtem a lista de formas de documentos a partir dos modelos selecionados e
 	 * das restrições de tipo (interno, externo) e de tipo da forma (expediente,
@@ -5510,102 +5500,6 @@ public class ExBL extends CpBL {
 
 	}
 
-	public void gravarBI(ExDocumento doc) throws Exception {
-		final List<ExDocumento> documentosPublicar = obterDocumentosBoletim(doc);
-		final List<ExDocumento> documentosNaoPublicar = obterDocumentosNaoVaoBoletim(doc
-				.getForm());
-
-		ExBoletimDoc boletim;
-		ExDao exDao = ExDao.getInstance();
-
-		for (ExDocumento docPubl : documentosPublicar) {
-
-			if (docPubl
-					.getMobilGeral()
-					.getMovimentacoesPorTipo(
-							ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO_PUBL_BI)
-					.size() > 0)
-
-				throw new AplicacaoException(
-						"O documento "
-								+ docPubl.getCodigo()
-								+ " já foi publicado em outro boletim. Retire esse documento da lista de documentos a publicar e entre em contato com a equipe de suporte do siga-doc.");
-
-			boletim = exDao.consultarBoletimPorDocumento(docPubl);
-			boletim.setBoletim(doc);
-			exDao.gravar(boletim);
-		}
-
-		for (ExDocumento docPubl : documentosNaoPublicar) {
-			boletim = exDao.consultarBoletimPorDocumento(docPubl);
-			if (boletim.getBoletim() != null
-					&& boletim.getBoletim().getIdDoc() == doc.getIdDoc())
-				boletim.setBoletim(null);
-			exDao.gravar(boletim);
-		}
-	}
-
-	public void excluirBI(ExDocumento doc) throws Exception {
-		ExDao exDao = ExDao.getInstance();
-
-		final List<ExBoletimDoc> documentosDoBoletim = exDao
-				.consultarBoletimPorBoletim(doc);
-		for (ExBoletimDoc docBol : documentosDoBoletim) {
-			docBol.setBoletim(null);
-			exDao.gravar(docBol);
-		}
-	}
-
-	public void cancelarPedidoBI(ExDocumento doc) throws Exception {
-		ExBoletimDoc boletim;
-		ExDao exDao = ExDao.getInstance();
-
-		boletim = exDao.consultarBoletimPorDocumento(doc);
-		exDao.excluir(boletim);
-	}
-
-	public void refazerBI(ExDocumento doc) throws Exception {
-		final List<ExDocumento> documentosPublicar = obterDocumentosBoletim(doc);
-
-		ExBoletimDoc boletim;
-		ExDao exDao = ExDao.getInstance();
-
-		for (ExDocumento docPubl : documentosPublicar) {
-			boletim = exDao.consultarBoletimPorDocumento(docPubl);
-			boletim.setBoletim(doc);
-			exDao.gravar(boletim);
-		}
-	}
-
-	public void finalizarBI(ExDocumento doc) throws Exception {
-		final List<ExDocumento> documentosPublicar = obterDocumentosBoletim(doc);
-		ExDao exDao = ExDao.getInstance();
-
-		for (ExDocumento exDoc : documentosPublicar) {
-			ExBoletimDoc boletim = exDao.consultarBoletimPorDocumento(exDoc);
-			if (boletim == null) {
-				throw new AplicacaoException(
-						"Foi cancelada a solicitação de pedido de publicação do documento "
-								+ exDoc.getCodigo()
-								+ ". Por favor queira retorna é tela de edição de documento para uma nova conferência.");
-			} else if (boletim.getBoletim() == null) {
-				throw new AplicacaoException(
-						"O documento "
-								+ exDoc.getCodigo()
-								+ " foi retirado da lista de documentos deste boletim"
-								+ ". Por favor queira retorna é tela de edição de documento para uma nova conferência.");
-			} else if (boletim.getBoletim() != doc) {
-				throw new AplicacaoException(
-						"O documento "
-								+ exDoc.getCodigo()
-								+ " já consta da lista de documentos do boletim "
-								+ boletim.getBoletim().getCodigo()
-								+ ". Por favor queira retorna é tela de edição de documento para uma nova conferência.");
-
-			}
-		}
-	}
-
 	public void obterMetodoPorString(String metodo, ExDocumento doc)
 			throws Exception {
 		if (metodo != null) {
@@ -5681,26 +5575,6 @@ public class ExBL extends CpBL {
 			return move;
 		}
 
-	}
-
-	public List<ExDocumento> obterDocumentosNaoVaoBoletim(
-			Map<String, String> form) {
-		final Pattern p = Pattern.compile("^doc_boletim?([0-9]{1,7})");
-		long l;
-		List<ExDocumento> list = new ArrayList<ExDocumento>();
-		ExDocumento doqueRef = new ExDocumento();
-		for (String chave : form.keySet()) {
-			final Matcher m = p.matcher(chave);
-			if (m.find()) {
-				if (m.group(1) != null && form.get(chave).equals("Nao")) {
-					l = new Long(m.group(1));
-					doqueRef = ExDao.getInstance().consultar(l,
-							ExDocumento.class, false);
-					list.add(doqueRef);
-				}
-			}
-		}
-		return list;
 	}
 
 	public void apensarDocumento(final DpPessoa cadastrante,

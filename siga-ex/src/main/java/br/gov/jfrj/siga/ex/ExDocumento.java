@@ -60,6 +60,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
+import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAcesso;
 import br.gov.jfrj.siga.ex.util.AnexoNumeradoComparator;
@@ -1454,112 +1455,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		return m;
 	}
 
-	/**
-	 * Retorna o conteúdo do corpo do documento que se encontra entre as tags
-	 * <!-- INICIO CORPO --> e <!-- FIM CORPO -->
-	 */
-	public String getCorpoHtmlString() {
-		try {
-			String s = getConteudoBlobHtmlString();
-			if (s.contains("<!-- INICIO CORPO -->")) {
-				return Texto.extraiTudo(s, "<!-- INICIO CORPO -->",
-						"<!-- FIM CORPO -->");
-			} else {
-				String inicioCorpo = "<!-- INICIO CORPO";
-
-				String fimCorpo = "FIM CORPO -->";
-
-				return Texto.extrai(s, inicioCorpo, fimCorpo);
-			}
-
-		} catch (UnsupportedEncodingException e) {
-			return null;
-		}
-	}
-
-	/**
-	 * Retorna texto da assinatura do documento que se encontra entre as tags
-	 * <!-- INICIO ASSINATURA --> e <!-- FIM ASSINATURA -->.
-	 */
-	public String getAssinaturaHtmlString() {
-		try {
-			String s = getConteudoBlobHtmlString();
-			return Texto.extrai(s, "<!-- INICIO ASSINATURA -->",
-					"<!-- FIM ASSINATURA -->");
-		} catch (UnsupportedEncodingException e) {
-			return null;
-		}
-	}
-
-	/**
-	 * Retorna número do documento que se encontra entre as tags <!-- INICIO
-	 * NUMERO --> e <!-- FIM NUMERO -->.
-	 */
-	public String getNumeroHtmlString() {
-
-		try {
-
-			String s = getConteudoBlobHtmlString();
-
-			String inicioNumero = "<!-- INICIO NUMERO -->";
-
-			String fimNumero = "<!-- FIM NUMERO -->";
-
-			if (!s.contains(inicioNumero)) {
-
-				inicioNumero = "<!-- INICIO NUMERO";
-
-				fimNumero = "FIM NUMERO -->";
-
-
-	}
-		return Texto.extrai(s, inicioNumero, fimNumero);
-
-		} catch (UnsupportedEncodingException e) {
-
-			return null;
-
-		}
-
-	}
-
-	/**
-	 * Retorna texto da abertura do documento que se encontra entre as tags <!--
-	 * INICIO ABERTURA --> e <!-- FIM ABERTURA -->.
-	 */
-	public String getAberturaHtmlString() {
-		try {
-			String s = getConteudoBlobHtmlString();
-
-			String inicioAbertura = "<!-- INICIO ABERTURA -->";
-			String fimAbertura = "<!-- FIM ABERTURA -->";
-
-			if (!s.contains(inicioAbertura)) {
-				inicioAbertura = "<!-- INICIO ABERTURA";
-
-				fimAbertura = "FIM ABERTURA -->";
-			}
-
-			return Texto.extrai(s, inicioAbertura, fimAbertura);
-		} catch (UnsupportedEncodingException e) {
-			return null;
-		}
-	}
-
-	/**
-	 * Retorna texto do fecho do documento que se encontra entre as tags <!--
-	 * INICIO FECHO --> e <!-- FIM FECHO -->.
-	 */
-	public String getFechoHtmlString() {
-		try {
-			String s = getConteudoBlobHtmlString();
-			return Texto.extrai(s, "<!-- INICIO FECHO -->",
-					"<!-- FIM FECHO -->");
-		} catch (UnsupportedEncodingException e) {
-			return null;
-		}
-	}
-
+	
 	/**
 	 * COMPLETAR
 	 * 
@@ -2655,13 +2551,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	}
 
 	public List<ExDocumento> getDocumentosPublicadosNoBoletim() {
-		return ExDao.getInstance().consultarPorBoletimParaPublicar(this);
+		return ExDao.getInstance().consultarDocsInclusosNoBoletim(this);
 	}
 
-	public ExDocumento getPublicadoNoBoletim() {
+	public ExDocumento getBoletimEmQueDocFoiPublicado() {
 		if (isBoletimPublicado()) {
 			ExBoletimDoc boletimDoc = ExDao.getInstance()
-					.consultarBoletimPorDocumento(this);
+					.consultarBoletimEmQueODocumentoEstaIncluso(this);
 
 			if (boletimDoc != null)
 				return boletimDoc.getBoletim();

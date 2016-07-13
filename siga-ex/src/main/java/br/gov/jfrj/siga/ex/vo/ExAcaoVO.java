@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import br.gov.jfrj.siga.ex.bl.BIE.Nodo;
+import br.gov.jfrj.siga.ex.util.BIE.Topico;
 
 public class ExAcaoVO {
 	String icone;

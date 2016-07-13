@@ -213,6 +213,14 @@
                 ) order by mar.dtIniMarca desc]]>
         </query>
         
+        <query name="listarAnexoPendenteAssinatura">	
+				<![CDATA[select mov from ExMovimentacao mov join mov.exMobil mobil 
+					where mobil in (select distinct(mob) from ExMobil mob join mob.exMarcaSet mar
+               		where mar.cpMarcador.idMarcador = 30) and (mov.exTipoMovimentacao.idTpMov = 2)
+					and mov.subscritor.idPessoaIni = :idPessoaIni
+					order by mov.dtIniMov desc]]>
+		</query>
+
         <query name="listarDespachoPendenteAssinatura">	
 				<![CDATA[select mov from ExMovimentacao mov join mov.exMobil mobil 
 					where mobil in (select distinct(mob) from ExMobil mob join mob.exMarcaSet mar

@@ -603,7 +603,8 @@ function Conteudo(url) {
 	return "Não foi possível obter o conteúdo do documento a ser assinado.";
 }
 
-var providers = [ providerLocalhostREST, providerIttruAx, providerIttruCAPI];
+var providers = [// providerLocalhostREST, 
+                 providerIttruAx, providerIttruCAPI];
 
 //
 // Processamento de assinaturas em lote, com progress bar

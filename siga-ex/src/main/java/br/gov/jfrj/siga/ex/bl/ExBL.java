@@ -6757,15 +6757,9 @@ public class ExBL extends CpBL {
 		for (final ExDocumento doc : dao().listarDocPendenteAssinatura(titular)) {
 			if (!doc.isFinalizado() || !doc.isEletronico())
 				continue;
-			ExAssinavelDoc ass = map.get(doc.getIdDoc());
-			if (ass == null) {
-				ass = new ExAssinavelDoc();
-				ass.setDoc(doc);
-				map.put(doc.getIdDoc(), ass);
-				assinaveis.add(ass);
-			}
+			ExAssinavelDoc ass = acrescentarDocAssinavel(assinaveis, map, titular, lotaTitular, doc);
 			ass.setPodeAssinar(true);
-			ass.setPodeSenha(Ex
+			ass.setPodeSenha(ass.isPodeAssinar() && Ex
 					.getInstance()
 					.getComp()
 					.podeAssinarComSenha(titular, lotaTitular,
@@ -6778,23 +6772,19 @@ public class ExBL extends CpBL {
 				titular)) {
 			if (mov.isAssinada() || mov.isCancelada())
 				continue;
-
-			ExDocumento doc = mov.getExDocumento();
-			ExAssinavelDoc ass = map.get(doc.getIdDoc());
-			if (ass == null) {
-				ass = new ExAssinavelDoc();
-				ass.setDoc(doc);
-				map.put(doc.getIdDoc(), ass);
-				assinaveis.add(ass);
-			}
-			ExAssinavelMov assmov = new ExAssinavelMov();
-			assmov.setMov(mov);
-			assmov.setPodeSenha(Ex.getInstance().getComp()
-					.podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov));
-			ass.getMovs().add(assmov);
+			acrescentarMovAssinavel( assinaveis, map, titular, lotaTitular, false, mov);
 		}
 
 		// Acrescenta anexos
+		//
+		for (final ExMovimentacao mov : dao().listarAnexoPendenteAssinatura(
+				titular)) {
+			if (mov.isAssinada() || mov.isCancelada())
+				continue;
+			acrescentarMovAssinavel( assinaveis, map, titular, lotaTitular, true, mov);
+		}
+
+		// Acrescenta anexos que não estão destinados ao subscritor em questão
 		//
 		for (final ExAssinavelDoc assdoc : assinaveis) {
 			for (ExMobil mob : assdoc.getDoc().getExMobilSet()) {
@@ -6807,21 +6797,43 @@ public class ExBL extends CpBL {
 									.getId()
 									.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO))
 						continue;
-					ExDocumento doc = mov.getExDocumento();
-					ExAssinavelMov assmov = new ExAssinavelMov();
-					assmov.setMov(mov);
-					assmov.setPodeSenha(Ex
-							.getInstance()
-							.getComp()
-							.podeAssinarMovimentacaoComSenha(titular,
-									lotaTitular, mov));
-					assmov.setPodeAutenticar(true);
-					assdoc.getMovs().add(assmov);
+					
+					acrescentarMovAssinavel( assinaveis, map, titular, lotaTitular, true, mov);
 				}
 			}
 		}
 
 		Collections.sort(assinaveis, new ExAssinavelComparador());
 		return assinaveis;
+	}
+
+	protected ExAssinavelDoc acrescentarDocAssinavel(
+			List<ExAssinavelDoc> assinaveis, Map<Long, ExAssinavelDoc> map, DpPessoa titular,
+			DpLotacao lotaTitular, final ExDocumento doc) {
+		ExAssinavelDoc ass = map.get(doc.getIdDoc());
+		if (ass == null) {
+			ass = new ExAssinavelDoc();
+			ass.setDoc(doc);
+			map.put(doc.getIdDoc(), ass);
+			ass.setPodeAssinar(!(doc.isAssinado() && doc.jaAssinadoPor(titular)));
+			ass.setPodeSenha(ass.isPodeAssinar() && Ex.getInstance().getComp()
+				.podeAssinarComSenha(titular, lotaTitular, doc.getMobilGeral()));
+			assinaveis.add(ass);
+		}
+		return ass;
+	}
+	
+	private void acrescentarMovAssinavel(
+			List<ExAssinavelDoc> assinaveis, Map<Long, ExAssinavelDoc> map, DpPessoa titular,
+			DpLotacao lotaTitular, boolean podeAutenticar,
+			final ExMovimentacao mov) {
+		ExDocumento doc = mov.getExDocumento();
+		ExAssinavelDoc ass = acrescentarDocAssinavel(assinaveis, map, titular, lotaTitular, doc);
+		ExAssinavelMov assmov = new ExAssinavelMov();
+		assmov.setMov(mov);
+		assmov.setPodeSenha(Ex.getInstance().getComp()
+				.podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov));
+		assmov.setPodeAutenticar(podeAutenticar);
+		ass.getMovs().add(assmov);
 	}
 }

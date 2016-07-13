@@ -98,7 +98,7 @@ public class ExAssinadorExternoController extends ExController {
 					ExAssinadorExternoListItem aei = new ExAssinadorExternoListItem();
 					aei.setId(makeId(cpf, assmov.getMov().getReferencia()));
 					aei.setCode(assmov.getMov().getReferencia());
-					aei.setDescr(assmov.getMov().getDescrMov());
+					aei.setDescr(assmov.getMov().getObs());
 					aei.setKind(assmov.getMov().getTipoDescr());
 					aei.setOrigin("Siga-Doc");
 					aei.setUrlView(permalink

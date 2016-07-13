@@ -1,7 +1,7 @@
 package br.gov.jfrj.siga.ex.bl;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import br.gov.jfrj.siga.ex.ExDocumento;
 
@@ -9,13 +9,13 @@ public class ExAssinavelDoc {
 	private ExDocumento doc;
 	private boolean podeAssinar;
 	private boolean podeSenha;
-	private List<ExAssinavelMov> movs = new ArrayList<>();
+	private Set<ExAssinavelMov> movs = new TreeSet<>();
 
 	public ExDocumento getDoc() {
 		return doc;
 	}
 
-	public List<ExAssinavelMov> getMovs() {
+	public Set<ExAssinavelMov> getMovs() {
 		return movs;
 	}
 
@@ -31,7 +31,7 @@ public class ExAssinavelDoc {
 		this.doc = doc;
 	}
 
-	public void setMovs(List<ExAssinavelMov> movs) {
+	public void setMovs(Set<ExAssinavelMov> movs) {
 		this.movs = movs;
 	}
 

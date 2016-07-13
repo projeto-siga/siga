@@ -2,7 +2,7 @@ package br.gov.jfrj.siga.ex.bl;
 
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 
-public class ExAssinavelMov {
+public class ExAssinavelMov implements Comparable<ExAssinavelMov> {
 	private ExMovimentacao mov;
 	private boolean podeAutenticar;
 	private boolean podeSenha;
@@ -24,5 +24,9 @@ public class ExAssinavelMov {
 	}
 	public void setPodeSenha(boolean podeSenha) {
 		this.podeSenha = podeSenha;
+	}
+	@Override
+	public int compareTo(ExAssinavelMov o) {
+		return this.mov.getIdMov().compareTo(o.mov.getIdMov());
 	}
 }

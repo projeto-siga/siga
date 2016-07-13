@@ -145,7 +145,7 @@
 											</c:if></td>
 										<td style="text-align: center"></td>
 										<td style="text-align: center"><c:if
-												test="${true or podeAssinarComSenha}">
+												test="${assdoc.podeSenha}">
 												<input type="checkbox"
 													name="ad_password_${assdoc.doc.idDoc}" value="true"
 													class="chk-senha" />

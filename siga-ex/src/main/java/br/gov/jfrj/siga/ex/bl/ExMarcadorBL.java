@@ -441,28 +441,16 @@ public class ExMarcadorBL {
 			return;
 
 		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO)) {
-			Long m = null;
 			if (mob.getDoc().isEletronico()) {
-				if (!mob.getDoc().isAssinado())
-					m = CpMarcador.MARCADOR_REVISAR;
-				else {
-					if (mob.getDoc().isAssinadoSubscritor())
-						m = CpMarcador.MARCADOR_COMO_SUBSCRITOR;
-					else
-						m = CpMarcador.MARCADOR_REVISAR;
-
-					for (ExMovimentacao assinatura : mob.getDoc()
-							.getTodasAsAssinaturas()) {
-						if (assinatura.getSubscritor().equivale(
-								mov.getSubscritor())) {
-							m = null;
-							break;
-						}
-					}
-				}
-				if (m != null)
-					acrescentarMarca(m, mov.getDtIniMov(), mov.getSubscritor(),
+				if (mob.getDoc().jaAssinadoPor(mov.getSubscritor()))
+					return;
+				else if (mob.getDoc().isAssinadoSubscritor())
+					acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, mov.getDtIniMov(), mov.getSubscritor(),
 							null);
+				else
+					acrescentarMarca(CpMarcador.MARCADOR_REVISAR, mov.getDtIniMov(), mov.getSubscritor(),
+							null);
+
 			}
 		}
 	}

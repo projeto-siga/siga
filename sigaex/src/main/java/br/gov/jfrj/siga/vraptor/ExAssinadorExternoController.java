@@ -189,14 +189,21 @@ public class ExAssinadorExternoController extends ExController {
 			DpPessoa cadastrante = null;
 			List<DpPessoa> pessoas = ExDao.getInstance()
 					.consultarPessoasAtivasPorCpf(cpf);
-			if (mov.getResp() != null)
-				for (DpPessoa p : pessoas)
-					if (p.equivale(mov.getResp()))
+			for (DpPessoa p : pessoas) {
+				if (mov != null && mov.getResp() != null) {
+					if (p.equivale(mov.getResp())) {
 						cadastrante = p;
-			if (cadastrante == null)
+						break;
+					}
+				} else if (p.equivale(mob.doc().getSubscritor())) {
+					cadastrante = p;
+				}
+			}
+			if (cadastrante == null && pessoas.size() >= 1)
 				cadastrante = pessoas.get(0);
 			if (cadastrante == null)
-				throw new Exception("Não foi possível localizar a pessoa que representa o subscritor.");
+				throw new Exception(
+						"Não foi possível localizar a pessoa que representa o subscritor.");
 
 			String msg = null;
 
@@ -206,16 +213,20 @@ public class ExAssinadorExternoController extends ExController {
 				Ex.getInstance()
 						.getBL()
 						.assinarMovimentacao(cadastrante,
-								cadastrante.getLotacao(), mov, dt, assinatura, null,
-								tpMov);
+								cadastrante.getLotacao(), mov, dt, assinatura,
+								null, tpMov);
 				msg = "OK";
 			} else if (mob != null) {
 				long tpMov = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
 				msg = Ex.getInstance()
 						.getBL()
-						.assinarDocumento(cadastrante, cadastrante.getLotacao(),
-								mob.doc(), dt, assinatura, null, tpMov);
-				msg = "OK: " + msg;
+						.assinarDocumento(cadastrante,
+								cadastrante.getLotacao(), mob.doc(), dt,
+								assinatura, null, tpMov);
+				if (msg != null)
+					msg = "OK: " + msg;
+				else
+					msg = "OK";
 			} else {
 				throw new Exception(
 						"Não foi possível localizar o documento para gravar a assinatura.");

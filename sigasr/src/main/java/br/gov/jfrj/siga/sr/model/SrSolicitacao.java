@@ -409,10 +409,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
     
     public List<SrAtributoSolicitacao> getMeuAtributoSolicitacaoSet() {
-        if ((meuAtributoSolicitacaoSet == null || meuAtributoSolicitacaoSet.isEmpty()) && isFilha()) {
-            return getSolicitacaoPai().getMeuAtributoSolicitacaoSet();
-        }
-        return meuAtributoSolicitacaoSet;
+    	if (meuAtributoSolicitacaoSet != null && !meuAtributoSolicitacaoSet.isEmpty())
+			return meuAtributoSolicitacaoSet;
+		if (isFilha())
+			return getSolicitacaoPai().getMeuAtributoSolicitacaoSet();
+		return new ArrayList<SrAtributoSolicitacao>();
     }
 
     public void setMeuAtributoSolicitacaoSet(List<SrAtributoSolicitacao> meuAtributoSolicitacaoSet) {
@@ -509,21 +510,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         codigo = getOrgaoUsuario().getAcronimoOrgaoUsu() + "-SR-" + getAnoEmissao() + "/" + numString.toString();
     }
 
-    public List<SrAtributoSolicitacao> getAtributoSolicitacaoSet() {
-    	try{
-    		if (meuAtributoSolicitacaoSet != null && !meuAtributoSolicitacaoSet.isEmpty())
-    			return meuAtributoSolicitacaoSet;
-    		if (isFilha())
-    			return getSolicitacaoPai().getAtributoSolicitacaoSet();
-    	} catch(LazyInitializationException lie){
-    		//Edson: isso está ruim. Durante o preenchimento do formulário de edição, acontecem
-    		//alguns requests nos quais o meuAtributoSolicitacaoSet não pode ser acessado
-    		//por causa do ObjetoInstantiator.detach(). Este try catch impede o lazy exception mas
-    		//apaga os atributos já preenchidos pelo usuário. O mesmo vale para o getAtributoSolicitacaoMap()
-    	}
-    	return new ArrayList<SrAtributoSolicitacao>();
-    }
-
     public String getDtRegString() {
         SigaPlayCalendar cal = new SigaPlayCalendar();
         cal.setTime(getDtReg());
@@ -549,7 +535,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public String getAtributosString() {
         StringBuilder s = new StringBuilder();
-        for (SrAtributoSolicitacao att : getAtributoSolicitacaoSet()) {
+        for (SrAtributoSolicitacao att : getMeuAtributoSolicitacaoSet()) {
             if (att.getValorAtributoSolicitacao() != null)
                 s.append(att.getAtributo().getNomeAtributo() + ": " + att.getValorAtributoSolicitacao() + ". ");
         }
@@ -883,32 +869,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	            meuAtributoSolicitacaoSet.add(attSolicitacao);
 	        }
         }
-
-//        if (atributosSolicitacao != null) {
-//            meuAtributoSolicitacaoSet = new ArrayList<SrAtributoSolicitacao>();
-//            for (Long idAtt : atributosSolicitacao.keySet()) {
-//                SrAtributo att = SrAtributo.AR.findById(idAtt);
-//                SrAtributoSolicitacao attSolicitacao = new SrAtributoSolicitacao(att, atributosSolicitacao.get(idAtt), this);
-//                meuAtributoSolicitacaoSet.add(attSolicitacao);
-//            }
-//        }
     }
 
     public Map<Long, String> getAtributoSolicitacaoMap() {
     	Map<Long, String> map = new HashMap<Long, String>();
-    	try{
-    		if(meuAtributoSolicitacaoSet != null){
-    			for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
-    				if(att.getAtributo() != null)
-    					map.put(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao());
-    			}
-    		}
-    	} catch(LazyInitializationException lie){
-    		//Edson: isso está ruim. Durante o preenchimento do formulário de edição, acontecem
-    		//alguns requests nos quais o meuAtributoSolicitacaoSet não pode ser acessado
-    		//por causa do ObjetoInstantiator.detach(). Este try catch impede o lazy exception mas
-    		//apaga os atributos já preenchidos pelo usuário. O mesmo vale para o getAtributoSolicitacaoSet()
-    	}
+		for (SrAtributoSolicitacao att : getMeuAtributoSolicitacaoSet()) {
+			if(att.getAtributo() != null)
+				map.put(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao());
+		}
     	return map;
     }
 

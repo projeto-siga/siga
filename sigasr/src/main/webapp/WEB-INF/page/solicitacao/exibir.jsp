@@ -86,7 +86,7 @@
 					}
 					parseDescricao('descrSolicitacao');
 				</script>
-				<c:forEach items="${solicitacao.atributoSolicitacaoSet}" var="att">
+				<c:forEach items="${solicitacao.meuAtributoSolicitacaoSet}" var="att">
 					<c:if
 						test="${att.valorAtributoSolicitacao != null && !att.valorAtributoSolicitacao.isEmpty()}">
 						<p style="font-size: 9pt; padding: 0px">

@@ -333,8 +333,8 @@ public class SolicitacaoController extends SrController {
         }
 
         Map<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
-        for (int i = 0; i < solicitacao.getAtributoSolicitacaoSet().size(); i++) {
-        	SrAtributoSolicitacao att = solicitacao.getAtributoSolicitacaoSet().get(i);
+        for (int i = 0; i < solicitacao.getMeuAtributoSolicitacaoSet().size(); i++) {
+        	SrAtributoSolicitacao att = solicitacao.getMeuAtributoSolicitacaoSet().get(i);
 
             // Para evitar NullPointerExcetpion quando nao encontrar no Map
             if (Boolean.TRUE.equals(obrigatorio.get(att.getAtributo().getIdAtributo()))) {
@@ -434,15 +434,12 @@ public class SolicitacaoController extends SrController {
     public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao, Long solicitante) throws Exception {
 
 		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.
-		if (sigla != null){
-			solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
-			
-			//Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados
+		if (sigla != null) {
+			solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);  
 			if (solicitacao.getAcordos() != null)
 				solicitacao.getAcordos().size();
-	        em().detach(solicitacao);
-	        
-		} else {
+		}
+		else {
 			if (solicitacao == null){
 				solicitacao = new SrSolicitacao();
 		        try{
@@ -488,12 +485,11 @@ public class SolicitacaoController extends SrController {
 				if (!containsAcao)
 					solicitacao.setAcao(null);
 			}
+			//Edson: por causa do detach:
+			if (solicitacao.getSolicitacaoInicial() != null)
+				solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
 		} 
-		
-		//Edson: por causa do detach:
-		if (solicitacao.getSolicitacaoInicial() != null)
-			solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
-        
+		       
 		try{
 			result.include("etapasCronometro", solicitacao.getEtapas(getLotaTitular(), false));
 		} catch(LazyInitializationException lie){

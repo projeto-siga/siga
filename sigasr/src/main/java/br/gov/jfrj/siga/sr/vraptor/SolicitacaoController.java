@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hibernate.Hibernate;
 import org.hibernate.LazyInitializationException;
 
 import br.com.caelum.vraptor.Get;
@@ -333,15 +334,15 @@ public class SolicitacaoController extends SrController {
         }
 
         Map<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
-        for (int i = 0; i < solicitacao.getMeuAtributoSolicitacaoSet().size(); i++) {
-        	SrAtributoSolicitacao att = solicitacao.getMeuAtributoSolicitacaoSet().get(i);
-
+        int index = 0;
+        for (Map.Entry<Long, String> atributo : solicitacao.getAtributoSolicitacaoMap().entrySet()) {
             // Para evitar NullPointerExcetpion quando nao encontrar no Map
-            if (Boolean.TRUE.equals(obrigatorio.get(att.getAtributo().getIdAtributo()))) {
-                if ((att.getValorAtributoSolicitacao() == null || "".equals(att.getValorAtributoSolicitacao().trim()))) {
-                	validator.add(new ValidationMessage(att.getAtributo().getNomeAtributo() + " n&atilde;o informado", "solicitacao.atributoSolicitacaoMap[" + i + "]"));
+            if (Boolean.TRUE.equals(obrigatorio.get(atributo.getKey()))) {
+                if ((atributo.getValue() == null || "".equals(atributo.getValue().trim()))) {
+                	validator.add(new ValidationMessage("Atributo n&atilde;o informado", "solicitacao.atributoSolicitacaoMap[" + index + "].valorAtributo"));
                 }
             }
+            index++;
         }
 
         return !validator.hasErrors();
@@ -436,8 +437,10 @@ public class SolicitacaoController extends SrController {
 		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.
 		if (sigla != null) {
 			solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);  
+			//carregamento forçado de atributos lazy
 			if (solicitacao.getAcordos() != null)
 				solicitacao.getAcordos().size();
+			Hibernate.initialize(solicitacao.getMeuAtributoSolicitacaoSet());
 		}
 		else {
 			if (solicitacao == null){

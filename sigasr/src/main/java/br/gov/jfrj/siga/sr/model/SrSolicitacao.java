@@ -57,6 +57,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.Hibernate;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
@@ -255,6 +256,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     
     @Column(name="DNM_TEMPO_DECORRIDO_CADASTRO")
     private Long dnmTempoDecorridoCadastro;
+    
+    @Transient
+    private Map<Long, String> atributoSolicitacaoMap;
 
     public SrSolicitacao() {
 
@@ -416,8 +420,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 		return new ArrayList<SrAtributoSolicitacao>();
     }
 
-    public void setMeuAtributoSolicitacaoSet(List<SrAtributoSolicitacao> meuAtributoSolicitacaoSet) {
-        this.meuAtributoSolicitacaoSet = meuAtributoSolicitacaoSet;
+    public void setMeuAtributoSolicitacaoSet(Map<Long, String> atributoSolicitacaoMap) {
+    	if (atributoSolicitacaoMap != null) {
+    		meuAtributoSolicitacaoSet = new ArrayList<SrAtributoSolicitacao>();
+    		for (Map.Entry<Long, String> atributo : atributoSolicitacaoMap.entrySet()) {
+    			if (atributo.getValue() == null) 
+    				continue;
+    			SrAtributo tipoAtributo = SrAtributo.AR.findById(atributo.getKey());
+    			SrAtributoSolicitacao attSolicitacao = new SrAtributoSolicitacao(tipoAtributo, atributo.getValue(), this);
+    			meuAtributoSolicitacaoSet.add(attSolicitacao);
+    		}
+    	}
     }
 
     @Override
@@ -853,31 +866,24 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         return null;
     }
 
-    // Edson: poderia tambÃÂ©m guardar num HashMap transiente e, ao salvar(),
-    // mandar criar os atributos, caso se quisesse permitir um
-    // solicitacao.getAtributoSet().put...
-    public void setAtributoSolicitacaoMap(List<SrAtributoSolicitacaoMap> atributoSolicitacaoMap) throws Exception {
-
-        if (atributoSolicitacaoMap != null) {
-            meuAtributoSolicitacaoSet = new ArrayList<SrAtributoSolicitacao>();
-
-            for (SrAtributoSolicitacaoMap atribSolicitacao : atributoSolicitacaoMap) {
-            	if (atribSolicitacao.getIdAtributo() == null)
-            		continue;
-            	SrAtributo att = SrAtributo.AR.findById(atribSolicitacao.getIdAtributo());
-	            SrAtributoSolicitacao attSolicitacao = new SrAtributoSolicitacao(att, atribSolicitacao.getValorAtributo(), this);
-	            meuAtributoSolicitacaoSet.add(attSolicitacao);
-	        }
-        }
+    public void setAtributoSolicitacaoMap(List<SrAtributoSolicitacaoMap> atributoSolicitacaoList) throws Exception {
+        if (atributoSolicitacaoMap == null) 
+        	atributoSolicitacaoMap = new HashMap<Long, String>();
+        for (SrAtributoSolicitacaoMap atribSolicitacao : atributoSolicitacaoList)
+            atributoSolicitacaoMap.put(atribSolicitacao.getIdAtributo(), atribSolicitacao.getValorAtributo());    
     }
 
     public Map<Long, String> getAtributoSolicitacaoMap() {
-    	Map<Long, String> map = new HashMap<Long, String>();
-		for (SrAtributoSolicitacao att : getMeuAtributoSolicitacaoSet()) {
-			if(att.getAtributo() != null)
-				map.put(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao());
+    	if (atributoSolicitacaoMap != null)
+    		return atributoSolicitacaoMap;
+		if (isAtributoDaEntidadeCarregado("meuAtributoSolicitacaoSet")) {
+        	atributoSolicitacaoMap = new HashMap<Long, String>();
+			for (SrAtributoSolicitacao att : getMeuAtributoSolicitacaoSet()) 
+				if(att.getAtributo() != null)
+					atributoSolicitacaoMap.put(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao());	
+			return atributoSolicitacaoMap;
 		}
-    	return map;
+		return new HashMap<Long, String>();
     }
 
     public Set<SrSolicitacao> getSolicitacaoFilhaSet() {
@@ -1632,6 +1638,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             setGravidade(SrGravidade.SEM_GRAVIDADE);
 
         setPrioridade(getGravidadesDisponiveisEPrioridades().get(getGravidade()));
+        setMeuAtributoSolicitacaoSet(getAtributoSolicitacaoMap());
         
         atualizarAcordos();
     }
@@ -3069,6 +3076,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     
     public boolean isDescrSolicitacaoPreenchida() {
     	return (getDescrSolicitacao() != null && getDescrSolicitacao().trim().length() > 0);
+    }
+    
+    private boolean isAtributoDaEntidadeCarregado(String nomeAtributo) {
+    	return em().getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(this, nomeAtributo);
     }
 
     public void setFecharAoAbrir(boolean fecharAoAbrir) {

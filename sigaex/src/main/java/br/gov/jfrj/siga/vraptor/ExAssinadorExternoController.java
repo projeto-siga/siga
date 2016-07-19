@@ -242,9 +242,8 @@ public class ExAssinadorExternoController extends ExController {
 	}
 
 	private void assertPassword(JSONObject req) throws Exception {
-		if (SigaExProperties.getAssinadorExternoPassword() != null
-				&& !SigaExProperties.getAssinadorExternoPassword().equals(
-						req.optString("password", null)))
+		String pwd = SigaExProperties.getAssinadorExternoPassword();
+		if (pwd != null && !pwd.equals(this.request.getHeader("Authorization")))
 			throw new Exception("Falha de autenticação.");
 	}
 

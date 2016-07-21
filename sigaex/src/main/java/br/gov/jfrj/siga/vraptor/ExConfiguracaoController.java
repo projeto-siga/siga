@@ -141,7 +141,7 @@ public class ExConfiguracaoController extends ExController {
 			Long idOrgaoObjeto, Long idTpLotacao, String nmTipoRetorno, boolean campoFixo) throws Exception {
 
 		final ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setId(id).setTipoPublicador(null)
-				.setIdNivelAcesso(idNivelAcesso).setIdTpMov(idTpMov).setIdTpDoc(idTpDoc).setIdMod(idMod).setIdFormaDoc(forma).setIdTpFormaDoc(idTpFormaDoc)
+				.setIdTpMov(idTpMov).setIdTpDoc(idTpDoc).setIdMod(idMod).setIdFormaDoc(forma).setIdTpFormaDoc(idTpFormaDoc)
 				.setIdNivelAcesso(idNivelAcesso).setIdSituacao(idSituacao).setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel)
 				.setLotacaoSel(lotacaoSel).setCargoSel(cargoSel).setFuncaoSel(funcaoSel).setClassificacaoSel(classificacaoSel).setIdOrgaoObjeto(idOrgaoObjeto)
 				.setIdOrgaoUsu(idOrgaoUsu).setIdTpLotacao(idTpLotacao);

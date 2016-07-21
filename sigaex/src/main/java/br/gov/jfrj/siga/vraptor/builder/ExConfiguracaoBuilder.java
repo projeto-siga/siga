@@ -135,7 +135,7 @@ public final class ExConfiguracaoBuilder {
 			config.setCpTipoLotacao(dao.consultar(idTpLotacao,
 					CpTipoLotacao.class, false));
 		} else
-			config.setExNivelAcesso(null);
+			config.setCpTipoLotacao(null);
 
 		if (cargoSel != null && cargoSel.getId() != null) {
 			config.setCargo(dao.consultar(cargoSel.getId(), DpCargo.class, false));

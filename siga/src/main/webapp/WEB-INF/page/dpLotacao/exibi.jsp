@@ -5,9 +5,53 @@
 
 
 <siga:pagina titulo="Dados da Lotação">
+	<script>
+		if (window.Worker) {
+			window.VizWorker = new Worker("/siga/javascript/viz.js");
+			window.VizWorker.onmessage = function(oEvent) {
+				document.getElementById(oEvent.data.id).innerHTML = oEvent.data.svg;
+				$(document).ready(function() {
+					try {
+						updateContainerTramitacao();
+					} catch (ex) {
+					}
+					;
+					try {
+						updateContainerRelacaoDocs();
+					} catch (ex) {
+					}
+					;
+					try {
+						updateContainerColaboracao();
+					} catch (ex) {
+					}
+					;
+				});
+			};
+		} else {
+			document
+					.write("<script src='/siga/javascript/viz.js' language='JavaScript1.1' type='text/javascript'>"
+							+ "<"+"/script>");
+		}
+
+		function pageHeight() {
+			return window.innerHeight != null ? window.innerHeight
+					: document.documentElement
+							&& document.documentElement.clientHeight ? document.documentElement.clientHeight
+							: document.body != null ? document.body.clientHeight
+									: null;
+		}
+
+		function resize() {
+			var ifr = document.getElementById('painel');
+
+			ifr.height = pageHeight() - 300;
+			console.log("resize foi chamado!");
+		}
+	</script>
 	<!-- main content -->
 	<div class="gt-bd clearfix">
-	<div class="gt-content clearfix">		
+		<div class="gt-content clearfix">
 			<h2 class="gt-table-head">Dados da Lotação</h2>
 		</div>
 		<div class="gt-form gt-content-box">
@@ -18,77 +62,95 @@
 				<b>Sigla:</b> ${lotacao.sigla}
 			</p>
 			<p>
-				<b>Lotação Pai:</b> <siga:selecionado 
-									sigla="${lotacao.lotacaoPai.sigla} - ${lotacao.lotacaoPai.descricaoAmpliada}"
-									descricao="${lotacao.lotacaoPai.descricaoAmpliada}"
-									lotacaoParam="${lotacao.lotacaoPai.orgaoUsuario.sigla}${lotacao.lotacaoPai.sigla}" />
+				<b>Lotação Pai:</b>
+				<siga:selecionado
+					sigla="${lotacao.lotacaoPai.sigla} - ${lotacao.lotacaoPai.descricaoAmpliada}"
+					descricao="${lotacao.lotacaoPai.descricaoAmpliada}"
+					lotacaoParam="${lotacao.lotacaoPai.orgaoUsuario.sigla}${lotacao.lotacaoPai.sigla}" />
 			</p>
 		</div>
-	
-		<div class="gt-content clearfix">		
+
+		<div class="gt-content clearfix">
 			<h2 class="gt-table-head">Lotações Subordinadas</h2>
 			<div class="gt-content-box gt-for-table">
 				<table border="0" class="gt-table">
 					<thead>
-						<tr>							
-							<th align="right">Sigla</th>														
-							<th align="right">Nome</th>														
+						<tr>
+							<th align="right">Sigla</th>
+							<th align="right">Nome</th>
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach var="lotacaoSubordinada" items="${lotacao.dpLotacaoSubordinadosSet}">
+						<c:forEach var="lotacaoSubordinada"
+							items="${lotacao.dpLotacaoSubordinadosSet}">
 							<c:if test="${empty lotacaoSubordinada.dataFimLotacao}">
 								<tr>
-									<td><siga:selecionado 
-											sigla="${lotacaoSubordinada.sigla}"
+									<td><siga:selecionado sigla="${lotacaoSubordinada.sigla}"
 											descricao="${lotacaoSubordinada.descricaoAmpliada}"
 											lotacaoParam="${lotacaoSubordinada.orgaoUsuario.sigla}${lotacaoSubordinada.sigla}" />
 									</td>
-									<td>${lotacaoSubordinada.nomeLotacao}</td>							
+									<td>${lotacaoSubordinada.nomeLotacao}</td>
 								</tr>
 							</c:if>
 						</c:forEach>
 					</tbody>
-				</table>				
-			</div>				
+				</table>
+			</div>
 		</div>
-		<br/><br/>
-		<div class="gt-content clearfix">		
+		<br /> <br />
+		<div class="gt-content clearfix">
 			<h2 class="gt-table-head">Magistrados/ Servidores</h2>
 			<div class="gt-content-box gt-for-table">
 				<table border="0" class="gt-table">
 					<thead>
-						<tr>							
-							<th align="right">Nome</th>														
-							<th align="right">Matricula</th>														
-							<!-- <th align="right">Lotacao</th> -->														
-							<th align="right">Cargo</th>														
-							<th align="right">Função</th>														
-							<th align="right">Email</th>														
+						<tr>
+							<th align="right">Nome</th>
+							<th align="right">Matricula</th>
+							<!-- <th align="right">Lotacao</th> -->
+							<th align="right">Cargo</th>
+							<th align="right">Função</th>
+							<th align="right">Email</th>
 						</tr>
 					</thead>
-					
+
 					<tbody>
 						<c:forEach var="pessoa" items="${lotacao.dpPessoaLotadosSet}">
 							<tr>
-								<td>${pessoa.nomePessoa}</td>							
-								<td><siga:selecionado
-									sigla="${pessoa.sigla}"
-									descricao="${pessoa.descricao} - ${pessoa.sigla}"
-									pessoaParam="${pessoa.sigla}" />
-								</td>							
+								<td>${pessoa.nomePessoa}</td>
+								<td><siga:selecionado sigla="${pessoa.sigla}"
+										descricao="${pessoa.descricao} - ${pessoa.sigla}"
+										pessoaParam="${pessoa.sigla}" /></td>
 								<%-- <td><siga:selecionado 
 									sigla="${pessoa.lotacao.sigla}"
 									descricao="${pessoa.lotacao.descricaoAmpliada}"
-									lotacaoParam="${pessoa.lotacao.orgaoUsuario.sigla}${pessoa.lotacao.sigla}" /></td> --%>	
-								<td>${pessoa.cargo.descricao}</td>							
-								<td>${pessoa.funcaoConfianca.descricao}</td>							
-								<td>${pessoa.emailPessoa}</td>							
+									lotacaoParam="${pessoa.lotacao.orgaoUsuario.sigla}${pessoa.lotacao.sigla}" /></td> --%>
+								<td>${pessoa.cargo.descricao}</td>
+								<td>${pessoa.funcaoConfianca.descricao}</td>
+								<td>${pessoa.emailPessoa}</td>
 							</tr>
 						</c:forEach>
 					</tbody>
-				</table>				
-			</div>				
+				</table>
+			</div>
 		</div>
-	</div>		
+		<br /> <br />
+		<div class="gt-content clearfix">
+			<h2 class="gt-table-head">Organograma</h2>
+			<div class="gt-content-box gt-for-table">
+				<div id="organograma"></div>
+			</div>
+		</div>
+	</div>
+	<script>
+		if (window.VizWorker) {
+			document.getElementById("organograma").innerHTML = "Aguarde...";
+			window.VizWorker.postMessage({
+				id : "organograma",
+				graph : '${graph}'
+			});
+		} else {
+			var result = Viz(input, "svg", "dot");
+			document.getElementById("organograma").innerHTML = result;
+		}
+	</script>
 </siga:pagina>

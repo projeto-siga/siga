@@ -2,10 +2,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<%@ attribute name="solicitacao" required="true" type="br.gov.jfrj.siga.sr.model.SrSolicitacao"%>
-<c:if test="${not empty solicitacao.atributoAssociados}">
-	<c:set var="atributoSolicitacaoMap" value="${solicitacao.atributoSolicitacaoMap}"/>
-	<c:forEach items="${solicitacao.atributoAssociados}" var="atributo" varStatus="loop">
+<%@ attribute name="atributoAssociados" required="true" type="java.util.List"%>
+<%@ attribute name="atributoSolicitacaoMap" required="true" type="java.util.Map"%>
+<%@ attribute name="entidade" required="true" type="java.lang.String"%>
+
+<c:if test="${not empty atributoAssociados}">
+	<c:set var="atributoSolicitacaoMap" value="${atributoSolicitacaoMap}"/>
+	<c:forEach items="${atributoAssociados}" var="atributo" varStatus="loop">
 		<div class="gt-form-row gt-width-66">
 			<label>
 				${atributo.nomeAtributo} 
@@ -14,33 +17,33 @@
 				</c:if>
 			</label>
 			<c:if test="${atributo.tipoAtributo != null}">
-				<input type="hidden" name="solicitacao.atributoSolicitacaoMap[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
+				<input type="hidden" name="${entidade}.atributoSolicitacaoList[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
 				<c:choose>
 					<c:when test="${atributo.tipoAtributo.name() == 'TEXTO'}">
-						<input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo]}" class="${atributo.idAtributo}" size="70" maxlength="255" />
+						<input type="text" name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo]}" class="${atributo.idAtributo}" size="70" maxlength="255" />
 					</c:when>
 					<c:when test="${atributo.tipoAtributo.name() == 'TEXT_AREA'}">
-						<textarea cols="85" rows="10" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" class="${atributo.idAtributo}" maxlength="255">${atributoSolicitacaoMap[atributo.idAtributo]}</textarea>
+						<textarea cols="85" rows="10" name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" class="${atributo.idAtributo}" maxlength="255">${atributoSolicitacaoMap[atributo.idAtributo]}</textarea>
 					</c:when>
 					<c:when test="${atributo.tipoAtributo.name() == 'DATA'}">
-						<siga:dataCalendar nome="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" id="calendarioAtributo${atributo.idAtributo}"
+						<siga:dataCalendar nome="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" id="calendarioAtributo${atributo.idAtributo}"
 							value="${atributoSolicitacaoMap[atributo.idAtributo]}" cssClass="${atributo.idAtributo}"/>
 					</c:when>
 					<c:when test="${atributo.tipoAtributo.name() == 'NUM_INTEIRO'}">
 						<input type="text" class="${atributo.idAtributo}"
 							onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
-							name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo]}" maxlength="9"/>
+							name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo]}" maxlength="9"/>
 					</c:when>
 					<c:when test="${atributo.tipoAtributo.name() == 'NUM_DECIMAL'}">
-						<input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo]}" 
+						<input type="text" name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo]}" 
 							id="numDecimal" pattern="^\d*(\,\d{2}$)?" title="Somente número e com duas casas decimais EX: 222,22" class="${atributo.idAtributo}" maxlength="9"/>
 					</c:when>
 					<c:when test="${atributo.tipoAtributo.name() == 'HORA'}">
-						<input type="text" name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo]}" id="horarioAtributo${atributo.idAtributo}" class="${atributo.idAtributo}" />
+						<input type="text" name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo]}" id="horarioAtributo${atributo.idAtributo}" class="${atributo.idAtributo}" />
 						<span style="color: red; display: none;" id="erroHoraAtributo${atributo.idAtributo}">Hor&aacute;rio inv&aacute;lido</span>
 					</c:when>
 					<c:when test="${atributo.tipoAtributo.name() == 'VL_PRE_DEFINIDO'}" >
-						<select name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo]}" class="${atributo.idAtributo}" >
+						<select name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo]}" class="${atributo.idAtributo}" >
 							<c:forEach items="${atributo.preDefinidoSet}" var="valorAtributoSolicitacao">
 								<option value="${valorAtributoSolicitacao}" <c:if test="${atributoSolicitacaoMap[atributo.idAtributo] == valorAtributoSolicitacao}">selected</c:if> >
 									${valorAtributoSolicitacao}
@@ -49,7 +52,7 @@
 						</select>
 					</c:when>
 				</c:choose>
-				<siga:error name="solicitacao.atributoSolicitacaoMap[${loop.index}].valorAtributo"/>
+				<siga:error name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo"/>
 			</c:if>
 		</div>
 	</c:forEach>

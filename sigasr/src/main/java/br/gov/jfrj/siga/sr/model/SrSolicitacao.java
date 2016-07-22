@@ -866,24 +866,28 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         return null;
     }
 
-    public void setAtributoSolicitacaoMap(List<SrAtributoSolicitacaoMap> atributoSolicitacaoList) throws Exception {
+    public void setAtributoSolicitacaoList(List<SrAtributoSolicitacaoMap> atributoSolicitacaoList) throws Exception {
         if (atributoSolicitacaoMap == null) 
-        	atributoSolicitacaoMap = new HashMap<Long, String>();
+        	atributoSolicitacaoMap = new LinkedHashMap<Long, String>();
         for (SrAtributoSolicitacaoMap atribSolicitacao : atributoSolicitacaoList)
             atributoSolicitacaoMap.put(atribSolicitacao.getIdAtributo(), atribSolicitacao.getValorAtributo());    
     }
+        
+    public void setAtributoSolicitacaoMap(Map<Long, String> atributoSolicitacaoMap) {
+		this.atributoSolicitacaoMap = atributoSolicitacaoMap;
+	}
 
-    public Map<Long, String> getAtributoSolicitacaoMap() {
+	public Map<Long, String> getAtributoSolicitacaoMap() {
     	if (atributoSolicitacaoMap != null)
     		return atributoSolicitacaoMap;
 		if (isAtributoDaEntidadeCarregado("meuAtributoSolicitacaoSet")) {
-        	atributoSolicitacaoMap = new HashMap<Long, String>();
+        	atributoSolicitacaoMap = new LinkedHashMap<Long, String>();
 			for (SrAtributoSolicitacao att : getMeuAtributoSolicitacaoSet()) 
 				if(att.getAtributo() != null)
 					atributoSolicitacaoMap.put(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao());	
 			return atributoSolicitacaoMap;
 		}
-		return new HashMap<Long, String>();
+		return new LinkedHashMap<Long, String>();
     }
 
     public Set<SrSolicitacao> getSolicitacaoFilhaSet() {

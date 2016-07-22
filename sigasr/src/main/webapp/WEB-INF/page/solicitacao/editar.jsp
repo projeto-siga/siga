@@ -382,7 +382,9 @@
 										</script>
 									</c:if>								
 									<div id="atributos" class="gt-form-row gt-width-66" style="margin-top: 10px;">
-										<sigasr:atributo solicitacao="${solicitacao}"/>
+										<sigasr:atributo atributoSolicitacaoMap="${atributoSolicitacaoMap}" 
+											atributoAssociados="${atributoAssociados}"
+											entidade="solicitacao" />
 									</div>
 								</div>
 							</div>

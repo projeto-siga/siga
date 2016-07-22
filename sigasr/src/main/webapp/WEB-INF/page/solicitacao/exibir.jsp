@@ -602,7 +602,7 @@
     
     <sigasr:modal nome="escalonar" titulo="Escalonar Solicitação" url="${linkTo[SolicitacaoController].escalonar}?sigla=${solicitacao.siglaCompacta}" />
 
-	<sigasr:modal nome="reclassificar" titulo="Reclassificar" url="${linkTo[SolicitacaoController].reclassificar}?sigla=${solicitacao.siglaCompacta}" />
+	<sigasr:modal nome="reclassificar" titulo="Reclassificar" url="${linkTo[SolicitacaoController].reclassificar}?solicitacao.codigo=${solicitacao.siglaCompacta}" />
 
     <sigasr:modal nome="juntar" titulo="Juntar">
         <form action="${linkTo[SolicitacaoController].juntar}" method="post" enctype="multipart/form-data" id="formGravarJuncao">

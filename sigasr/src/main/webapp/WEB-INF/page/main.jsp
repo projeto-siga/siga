@@ -33,13 +33,15 @@
 		requesting = false;
 	}
 
-	function sbmt(id, URL, preventBlocking) {
+	function sbmt(id, URL, preventBlocking, afterSbmtResponse) {
 		if (!preventBlocking)
 			jQuery.blockUI(objBlock);
 		if (!URL && typeof postbackURL == 'function')
 			URL = postbackURL();
-		Siga.ajax(URL, null, "GET", function(response){		
+		Siga.ajax(URL, null, "GET", function(response){	
 	    	sbmtResponse(response, id, preventBlocking);
+	    	if (typeof afterSbmtResponse == 'function')
+		    	afterSbmtResponse();	    	
 		});	
 	}
 	

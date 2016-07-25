@@ -6,7 +6,7 @@
 <form action="#" method="post" enctype="multipart/form-data" id="frm">
 	<input type="hidden" name="todoOContexto" value="${todoOContexto}" />
 	<input type="hidden" name="ocultas" value="${ocultas}" />
-	<input type="hidden" id="sigla" name="solicitacao.codigo" value="${siglaCompacta}" />
+	<input type="hidden" id="sigla" name="solicitacao.codigo" value="${siglaCompacta}" autofocus="true"/>
 	<div id="reclassificacao" class="gt-form-row">
 		<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label>
 		<siga:selecao2 propriedade="solicitacao.itemConfiguracao" 
@@ -14,7 +14,8 @@
 			tema="simple" 
 			modulo="sigasr" 
 			tamanho="grande"
-			onchange="dispararFuncoesOnBlurItem();" 
+			onchange="dispararFuncoesOnBlurItem();"
+			checarInput="true"
 			paramList="sol.solicitante.id=${solicitante.idPessoa};sol.local.id=${local.idComplexo};sol.titular.id=${cadastrante.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}" />
 		<br/><span id="itemNaoInformado" style="color: red; display: none;">Item não informado</span>
 		<br/>
@@ -50,21 +51,6 @@
 </div>
 
 <script>
-$(document).ready(function($) {
-	//inicializa valores default para serem usados na function valorInputMudou()
-	window.item_default = $("#formulario_solicitacaoitemConfiguracao_id").val();
-});
-// param_1: id do input que deseja verificar se mudou do valor default
-// param_2: tipo de input (solicitante, item...)
-function valorInputMudou(id, tipo){
-	var input = $("#"+ id);
-	if (input.val() != window[tipo + '_default']) {
-		window[tipo + '_default'] = input.val(); 
-		return true;
-	}
-	return false;
-}
-
 function postbackURL(){
 	return '${linkTo[SolicitacaoController].reclassificar}?solicitacao.codigo='+$("#sigla").val()
 		+'&solicitacao.itemConfiguracao.id='+$("#formulario_solicitacaoitemConfiguracao_id").val();
@@ -89,10 +75,8 @@ function carregarAcao() {
 }
 
 function dispararFuncoesOnBlurItem() {
-	if (valorInputMudou('formulario_solicitacaoitemConfiguracao_id', 'item')) {
-		$('#itemNaoInformado').hide();
-		sbmt('solicitacao.itemConfiguracao', null, false, carregarAcao);
-	}	
+	$('#itemNaoInformado').hide();
+	sbmt('solicitacao.itemConfiguracao', null, false, carregarAcao);
 }
 
 function gravar() {

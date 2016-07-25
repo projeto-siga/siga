@@ -48,7 +48,8 @@ window.Siga = {
          url: ajax.url,
          type: ajax.type,
          data: ajax.params,
-         cache: cacheValue
+         cache: cacheValue,
+         timeout: ajax.timeout
       }).fail(function(jqXHR, textStatus, errorThrown){
          doneCallback(jqXHR.statusText,jqXHR.status);
       }).done(function(data, textStatus, jqXHR ){
@@ -65,10 +66,10 @@ window.Siga = {
      * httpMethod: Metodo HTTP, ex: GET, POST
      * callback: funcao que sera chamada passando o conteudo pego
      */
-    ajax: function(url, params, httpMethod, callback){
+    ajax: function(url, params, httpMethod, callback, timeout){
         var self = this;
 
-         self._ajaxCall({url: url, type: httpMethod, params: params}, function(textResponse,statusReponse) {
+         self._ajaxCall({url: url, type: httpMethod, params: params, timeout: timeout}, function(textResponse,statusReponse) {
             // Verifica se o SP foi previamente inicializado, caso nao tenha sido apenas renderiza.
             if (textResponse.indexOf("SAMLRequest") > -1){
                 var SAMLRequest = self._picketlinkResponse(textResponse);

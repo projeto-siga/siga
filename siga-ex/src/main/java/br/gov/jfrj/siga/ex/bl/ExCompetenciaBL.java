@@ -3808,7 +3808,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		GregorianCalendar agora = new GregorianCalendar();
 		agora.setTime(new Date());
 		return podeBotaoAgendarPublicacaoBoletim(titular, lotaTitular, mob)
-				&& agora.get(Calendar.HOUR_OF_DAY) < 17;
+				&& (agora.get(Calendar.HOUR_OF_DAY) < 17 
+					|| podeGerenciarPublicacaoBoletimPorConfiguracao(titular, lotaTitular, mob));
 	}
 
 	/**

@@ -29,7 +29,7 @@ public class Hierarquizador {
 
 	private List<TopicoMaior> topicos;
 
-	public Hierarquizador(ExDocumento docBIE) {
+	public Hierarquizador(ExDocumento docBIE, String hierarquia) {
 		
 		//Edson: gerar os tópicos conforme a hierarquia de tópicos do órgão
 		this.topicos = HierarquiaPorOrgao.valueOf(docBIE.getLotaCadastrante().getOrgaoUsuario().getAcronimoOrgaoUsu()).getEstruturaTopicos();
@@ -39,13 +39,13 @@ public class Hierarquizador {
 		
 		//Edson: transformar docs em matérias
 		List<Materia> materias = new ArrayList<Materia>();
-		for (ExDocumento doc : docsJaNoBoletim){
+		/*for (ExDocumento doc : docsJaNoBoletim){
 			for (TipoMateria t : TipoMateria.values()){
 				for (ConversorDeExDocParaMateria conversor : t.getConversores())
 					if (conversor.canHandle(doc))
 						materias.addAll(conversor.converter(doc));
 			}
-		}
+		}*/
 		
 		//Edson: alocar matérias nos tópicos
 		for (Materia m : materias){

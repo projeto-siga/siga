@@ -24,26 +24,22 @@ import java.util.List;
 
 public abstract class Topico {
 	private String descr;
-	private List<Localidade> localidades;
-	private List<TipoMateria> tiposMateria;
-	private List<Unidade> unidades;
+	private List<String> localidades;
+	private List<String> tiposMateria;
 	
-	public Topico(String descr, List<Localidade> localidades, List<TipoMateria> tiposMateria, List<Unidade> unidades) {
+	public Topico(String descr, List<String> localidades, List<String> tiposMateria) {
 		setDescr(descr);
-		this.localidades = localidades != null ? localidades : new ArrayList<Localidade>();
-		this.tiposMateria = tiposMateria != null ? tiposMateria : new ArrayList<TipoMateria>();
-		this.unidades = unidades != null ? unidades : new ArrayList<Unidade>();
+		this.localidades = localidades != null ? localidades : new ArrayList<String>();
+		this.tiposMateria = tiposMateria != null ? tiposMateria : new ArrayList<String>();
 	}
 
 	public String getDescr() {
 		if (descr != null)
 			return descr;
 		if (localidades.size() == 1)
-			return localidades.get(0).getDescricao();
-		if (unidades.size() == 1)
-			return unidades.get(0).getDescricao();
+			return localidades.get(0);
 		if (tiposMateria.size() == 1){
-			return tiposMateria.get(0).getDescricaoPluralMaiusculas();
+			return tiposMateria.get(0);
 		}
 		return null;
 	}
@@ -53,33 +49,25 @@ public abstract class Topico {
 		return this;
 	}
 
-	public List<Localidade> getLocalidades() {
+	public abstract boolean alocar(Materia m);
+
+	public List<String> getLocalidades() {
 		return localidades;
 	}
 
-	public List<TipoMateria> getTiposMateria() {
+	public void setLocalidades(List<String> localidades) {
+		this.localidades = localidades;
+	}
+
+	public List<String> getTiposMateria() {
 		return tiposMateria;
 	}
 
-	public List<Unidade> getUnidades() {
-		return unidades;
-	}
-	
-	public void addTiposMateria(TipoMateria... tiposMateria){
-		getTiposMateria().addAll(Arrays.asList(tiposMateria));
-	}
-	
-	public void addLocalidades(Localidade... localidades){
-		getLocalidades().addAll(Arrays.asList(localidades));
-	}
-	
-	public void addUnidades(Localidade... localidades){
-		getLocalidades().addAll(Arrays.asList(localidades));
+	public void setTiposMateria(List<String> tiposMateria) {
+		this.tiposMateria = tiposMateria;
 	}
 
-	public abstract boolean alocar(Materia m);
-
-	public boolean podeAlocar(Materia m){
+	/*public boolean podeAlocar(Materia m){
 		if (localidades.size() > 0){
 			for (Localidade l : localidades)
 				if (l.equals(m.getLocalidade()))
@@ -99,6 +87,6 @@ public abstract class Topico {
 			return false;
 		}
 		return true;
-	}
+	}*/
 
 };

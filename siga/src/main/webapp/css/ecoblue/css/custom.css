@@ -525,6 +525,7 @@ div#carregando {
 .erro {
 	color: red;
     font-weight: bold;
+    font-size: 10pt;
 }
 
 .sucesso {

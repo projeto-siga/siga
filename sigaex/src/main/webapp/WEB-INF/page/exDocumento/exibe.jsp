@@ -1052,8 +1052,8 @@
 		</c:if>
 		Siga.ajax(url, null, "GET", function(response,status){		
 			var div = $(".wf_div:last");
-			$(div).html(status==undefined || status == 200?response:'<span class="erro">Houve um problema ao verificar fluxos do SIGA-WF associados a este documento. Por favor, atualize a página para tentar novamente.</span>');
-		});		
+			$(div).html(status==undefined || status == 200?response:'<p class="erro">Houve um problema ao verificar se há fluxos do SIGA-WF associados a este documento. Favor atualizar a página para tentar novamente.</p>');
+		}, 15000);		
 	</script>
 </c:if>
 <c:if

@@ -23,17 +23,14 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class ExMarcadorBL {
 	private ExMobil mob;
-	private Set<ExMobil> mobsAfetados;
 	private SortedSet<ExMarca> set;
 	private SortedSet<ExMovimentacao> movs;
 	ExMovimentacao ultMovNaoCanc;
 
-	public ExMarcadorBL(SortedSet<ExMarca> set, ExMobil mob,
-			Set<ExMobil> mobsAfetados) {
+	public ExMarcadorBL(SortedSet<ExMarca> set, ExMobil mob) {
 		this.mob = mob;
 		this.set = set;
 		this.ultMovNaoCanc = mob.getUltimaMovimentacaoNaoCancelada();
-		this.mobsAfetados = mobsAfetados;
 
 		movs = new TreeSet<>();
 		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
@@ -120,16 +117,10 @@ public class ExMarcadorBL {
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA) {
 				m = CpMarcador.MARCADOR_TRANSFERIDO_A_ORGAO_EXTERNO;
-				if (mob.temDocumentosJuntados()) {
-					mobsAfetados.addAll(mob.getJuntados());
-				}
 			}
 			if ((t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA || t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA)
 					&& !apensadoAVolumeDoMesmoProcesso) {
 				m = CpMarcador.MARCADOR_CAIXA_DE_ENTRADA;
-				if (mob.temDocumentosJuntados()) {
-					mobsAfetados.addAll(mob.getJuntados());
-				}
 			}
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
 					&& mob.doc().isEletronico() && !mov.isAssinada()) {

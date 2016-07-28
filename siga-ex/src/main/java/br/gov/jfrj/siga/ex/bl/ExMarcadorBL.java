@@ -33,6 +33,7 @@ public class ExMarcadorBL {
 		this.mob = mob;
 		this.set = set;
 		this.ultMovNaoCanc = mob.getUltimaMovimentacaoNaoCancelada();
+		this.mobsAfetados = mobsAfetados;
 
 		movs = new TreeSet<>();
 		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {

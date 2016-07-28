@@ -2239,9 +2239,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         
         SrMovimentacao mov = new SrMovimentacao(this);
         mov.setTipoMov(SrTipoMovimentacao.AR.findById(TIPO_MOVIMENTACAO_FECHAMENTO));
-        mov.setItemConfiguracao(itemConfiguracao);
+        mov.setItemConfiguracao(SrItemConfiguracao.AR.findById(itemConfiguracao.getId()));
         mov.setMotivoFechamento(tpMotivo);
-        mov.setAcao(acao);
+        mov.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
         mov.setConhecimento(conhecimento);
 
         mov.setDescrMovimentacao(motivo);

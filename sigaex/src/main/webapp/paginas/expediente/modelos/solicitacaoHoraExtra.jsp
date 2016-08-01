@@ -15,8 +15,8 @@ var newwin = null;
         <c:set var="intervaloMsg">
 &nbsp;&nbsp;&nbsp;O servidor submetido à jornada ininterrupta poderá prestar serviço extraordinário desde que, no dia da prestação do serviço, cumpra jornada de oito horas de trabalho com intervalo de, no mínimo, uma hora (§1º do Art. 45, Resolução nº 4/2008 - CJF, alterado pela Resolução nº 173/2011 - CJF).</br>&nbsp;&nbsp;&nbsp;Na hipótese de prestação de serviço extraordinário em fins de semana/feriados, somente a sobrejornada igual ou superior a 8 (oito) horas poderá conter intervalo para almoço, a teor do artigo 1º, caput, da Resolução nº 88/2009, do Conselho Nacional de Justiça. </c:set>
 	<mod:grupo >    
-            <mod:radio titulo="A presente solicitação observa a antecedÃªncia mínima de 5 (cinco) dias Ãºteis, prevista no artigo 42, parágrafo 2º, da Resolução nº 4/2008-CJF ." var="Antecedencia" valor="1" reler="não" marcado="Sim"/> </br>
-            <mod:radio titulo="Não foi possível observar a antecedência mínima de 5 (cinco) dias úteis, prevista no artigo 42, parágrafo 2Âº, da Resolução nº 4/2008-CJF, " var="Antecedencia" valor="2" reler="não" gerarHidden="Não"/>	
+            <mod:radio titulo="A presente solicitação observa a antecedência mínima de 5 (cinco) dias úteis, prevista no artigo 42, parágrafo 2º, da Resolução nº 4/2008-CJF ." var="Antecedencia" valor="1" reler="não" marcado="Sim"/> </br>
+            <mod:radio titulo="Não foi possível observar a antecedência mínima de 5 (cinco) dias úteis, prevista no artigo 42, parágrafo 2º, da Resolução nº 4/2008-CJF, " var="Antecedencia" valor="2" reler="não" gerarHidden="Não"/>	
             haja vista&nbsp;&nbsp;<mod:memo colunas="80" linhas="5" var="antecedenciaNao" titulo="" />
             
     </mod:grupo>	
@@ -251,7 +251,8 @@ A prestação remunerada de serviço extraordinário aos sábados, domingos e fe
 					<td bgcolor="#FFFFFF" width="5%" align="center"><p style="font-size:8px">${f:pessoa(servidorX).lotacao.descricao}</p></td>
 					<c:forEach var="j" begin="1"
 						end="${requestScope[f:concat('numDatas',i)]}">
-						<ww:if test="${j == 1}">
+						<c:choose>
+						<c:when test="${j == 1}">
 							<td bgcolor="#FFFFFF" width="10%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('dataServico',i),j)]}</p></td>
 							<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('dataSemana',i),j)]}</p></td>
 							<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('feriado',i),j)]}</p></td>
@@ -260,8 +261,8 @@ A prestação remunerada de serviço extraordinário aos sábados, domingos e fe
 							<td bgcolor="#FFFFFF" width="7%" align="center"><p style="font-size:11px">${requestScope[f:concat(f:concat('intervalo',i),j)]}</p></td>
 						    <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaFim',i),j)]}:${requestScope[f:concat(f:concat('minutoFim',i),j)]}:00</p></td>
                             <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('totalHoras',i),j)]}:${requestScope[f:concat(f:concat('totalMinutos',i),j)]}:00</p></td>
-						</ww:if>
-						<ww:else>
+						</c:when>
+						<c:otherwise>
 							<tr>
 							<td bgcolor="#FFFFFF" width="20%" align="center"><p style="font-size:11px">${f:maiusculasEMinusculas(f:pessoa(servidorX).nomePessoa)}</p></td>
                             <td bgcolor="#FFFFFF" width="07%" align="center"><p style="font-size:11px">${f:pessoa(servidorX).matricula}</p></td>
@@ -275,7 +276,8 @@ A prestação remunerada de serviço extraordinário aos sábados, domingos e fe
                             <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('horaFim',i),j)]}:${requestScope[f:concat(f:concat('minutoFim',i),j)]}:00</p></td>
                             <td bgcolor="#FFFFFF" width="10%"><p style="font-size:11px">${requestScope[f:concat(f:concat('totalHoras',i),j)]}:${requestScope[f:concat(f:concat('totalMinutos',i),j)]}:00</p></td>
 							</tr>
-						</ww:else>
+						</c:otherwise>
+						</c:choose>
 					</c:forEach>
 
 				</tr>

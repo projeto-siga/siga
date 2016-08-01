@@ -42,6 +42,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrArquivo;
+import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacaoMap;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracaoBL;
 import br.gov.jfrj.siga.sr.model.SrEtapaSolicitacao;
@@ -335,7 +336,6 @@ public class SolicitacaoController extends SrController {
     }
 	
 	private boolean validarFormReclassificar(SrSolicitacao solicitacao) throws Exception {
-        //classificação = item + ação
 		if (solicitacao.getItemConfiguracao() == null || solicitacao.getItemConfiguracao().getId() == null) 
 			srValidator.addError("solicitacao.itemConfiguracao", "Item n&atilde;o informado");
         if (solicitacao.getAcao() == null || solicitacao.getAcao().getId() == null) 
@@ -344,10 +344,12 @@ public class SolicitacaoController extends SrController {
         //atributos
         Map<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
         int index = 0;
-        for (Map.Entry<Long, String> atributo : solicitacao.getAtributoSolicitacaoMap().entrySet()) {
+        for (Map.Entry<Long, SrAtributoSolicitacaoMap> atributo : solicitacao.getAtributoSolicitacaoMap().entrySet()) {
             // Para evitar NullPointerExcetpion quando nao encontrar no Map
             if (Boolean.TRUE.equals(obrigatorio.get(atributo.getKey()))) 
-                if ((atributo.getValue() == null || "".equals(atributo.getValue().trim()))) 
+                if (atributo.getValue() != null && 
+                	(atributo.getValue().getValorAtributo() == null || 
+                		"".equals(atributo.getValue().getValorAtributo().trim()))) 
                 	srValidator.addError("solicitacao.atributoSolicitacaoList[" + index + "].valorAtributo", "Atributo n&atilde;o informado");
             index++;
         }
@@ -564,12 +566,12 @@ public class SolicitacaoController extends SrController {
 			throw new AplicacaoException("Número não informado");
     	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());
     	
+    	Hibernate.initialize(solicitacaoEntity.getMeuAtributoSolicitacaoSet());
         //Edson: por algum motivo, está sendo necessário dar o detach na solicitacaoPai, se não, o JPA entende que o arquivo 
         //foi alterado e precisa ser salvo, o que dá erro pois o arquivo também é detached:
         if (solicitacaoEntity.isFilha())
         	for (SrSolicitacao sol : solicitacaoEntity.getPaiDaArvore().getSolicitacaoFilhaSetRecursivo())
         		em().detach(sol);
-    	Hibernate.initialize(solicitacaoEntity.getMeuAtributoSolicitacaoSet());
     	//Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados:
         em().detach(solicitacaoEntity);
         
@@ -580,6 +582,7 @@ public class SolicitacaoController extends SrController {
         else solicitacaoEntity.setItemConfiguracao(solicitacaoEntity.getItemAtual());
         if (solicitacao.getAcao() != null)
         	solicitacaoEntity.setAcao(solicitacao.getAcao());
+        else solicitacaoEntity.setAcao(solicitacaoEntity.getAcaoAtual());
         if (solicitacao.getAtributoSolicitacaoMap() != null && !solicitacao.getAtributoSolicitacaoMap().isEmpty())
         	solicitacaoEntity.setAtributoSolicitacaoMap(solicitacao.getAtributoSolicitacaoMap());
         
@@ -598,7 +601,7 @@ public class SolicitacaoController extends SrController {
         	return;
     	}	
     	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());
-    	solicitacaoEntity.reclassificar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solicitacao.getItemConfiguracao(), solicitacao.getAcao());
+    	solicitacaoEntity.reclassificar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solicitacao);
     	result.use(Results.status()).ok();
     }
 

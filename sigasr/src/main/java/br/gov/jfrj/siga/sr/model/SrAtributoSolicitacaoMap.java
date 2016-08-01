@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.sr.model;
 
 public class SrAtributoSolicitacaoMap
 {
+	private Long idAtributoSolicitacao;
 	private Long idAtributo;
 	private String valorAtributo;
 	
@@ -9,9 +10,18 @@ public class SrAtributoSolicitacaoMap
 		//this(0L,"");
 	}
 	
-	public SrAtributoSolicitacaoMap(Long idAtributo,String valorAtributo){
+	public SrAtributoSolicitacaoMap(Long idAtributoSolicitacao, Long idAtributo,String valorAtributo){
+		this.idAtributoSolicitacao = idAtributoSolicitacao;
 		this.idAtributo = idAtributo;
 		this.valorAtributo = valorAtributo;
+	}
+	
+	public Long getIdAtributoSolicitacao() {
+		return idAtributoSolicitacao;
+	}
+
+	public void setIdAtributoSolicitacao(Long idAtributoSolicitacao) {
+		this.idAtributoSolicitacao = idAtributoSolicitacao;
 	}
 
 	public Long getIdAtributo() {

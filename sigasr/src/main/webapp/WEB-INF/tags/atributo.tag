@@ -17,35 +17,36 @@
 				</c:if>
 			</label>
 			<c:if test="${atributo.tipoAtributo != null}">
+				<input type="hidden" name="${entidade}.atributoSolicitacaoList[${loop.index}].idAtributoSolicitacao" value="${atributoSolicitacaoMap[atributo.idAtributo].idAtributoSolicitacao}" class="${atributo.idAtributo}"/>
 				<input type="hidden" name="${entidade}.atributoSolicitacaoList[${loop.index}].idAtributo" value="${atributo.idAtributo}" class="${atributo.idAtributo}"/>
 				<c:choose>
 					<c:when test="${atributo.tipoAtributo.name() == 'TEXTO'}">
-						<input type="text" name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo]}" class="${atributo.idAtributo}" size="70" maxlength="255" />
+						<input type="text" name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo].valorAtributo}" class="${atributo.idAtributo}" size="70" maxlength="255" />
 					</c:when>
 					<c:when test="${atributo.tipoAtributo.name() == 'TEXT_AREA'}">
-						<textarea cols="85" rows="10" name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" class="${atributo.idAtributo}" maxlength="255">${atributoSolicitacaoMap[atributo.idAtributo]}</textarea>
+						<textarea cols="85" rows="10" name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" class="${atributo.idAtributo}" maxlength="255">${atributoSolicitacaoMap[atributo.idAtributo].valorAtributo}</textarea>
 					</c:when>
 					<c:when test="${atributo.tipoAtributo.name() == 'DATA'}">
 						<siga:dataCalendar nome="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" id="calendarioAtributo${atributo.idAtributo}"
-							value="${atributoSolicitacaoMap[atributo.idAtributo]}" cssClass="${atributo.idAtributo}"/>
+							value="${atributoSolicitacaoMap[atributo.idAtributo].valorAtributo}" cssClass="${atributo.idAtributo}"/>
 					</c:when>
 					<c:when test="${atributo.tipoAtributo.name() == 'NUM_INTEIRO'}">
 						<input type="text" class="${atributo.idAtributo}"
 							onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }"
-							name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo]}" maxlength="9"/>
+							name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo].valorAtributo}" maxlength="9"/>
 					</c:when>
 					<c:when test="${atributo.tipoAtributo.name() == 'NUM_DECIMAL'}">
-						<input type="text" name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo]}" 
+						<input type="text" name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo].valorAtributo}" 
 							id="numDecimal" pattern="^\d*(\,\d{2}$)?" title="Somente número e com duas casas decimais EX: 222,22" class="${atributo.idAtributo}" maxlength="9"/>
 					</c:when>
 					<c:when test="${atributo.tipoAtributo.name() == 'HORA'}">
-						<input type="text" name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo]}" id="horarioAtributo${atributo.idAtributo}" class="${atributo.idAtributo}" />
+						<input type="text" name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo].valorAtributo}" id="horarioAtributo${atributo.idAtributo}" class="${atributo.idAtributo}" />
 						<span style="color: red; display: none;" id="erroHoraAtributo${atributo.idAtributo}">Hor&aacute;rio inv&aacute;lido</span>
 					</c:when>
 					<c:when test="${atributo.tipoAtributo.name() == 'VL_PRE_DEFINIDO'}" >
-						<select name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo]}" class="${atributo.idAtributo}" >
+						<select name="${entidade}.atributoSolicitacaoList[${loop.index}].valorAtributo" value="${atributoSolicitacaoMap[atributo.idAtributo].valorAtributo}" class="${atributo.idAtributo}" >
 							<c:forEach items="${atributo.preDefinidoSet}" var="valorAtributoSolicitacao">
-								<option value="${valorAtributoSolicitacao}" <c:if test="${atributoSolicitacaoMap[atributo.idAtributo] == valorAtributoSolicitacao}">selected</c:if> >
+								<option value="${valorAtributoSolicitacao}" <c:if test="${atributoSolicitacaoMap[atributo.idAtributo].valorAtributo == valorAtributoSolicitacao}">selected</c:if> >
 									${valorAtributoSolicitacao}
 								</option>
 							</c:forEach>

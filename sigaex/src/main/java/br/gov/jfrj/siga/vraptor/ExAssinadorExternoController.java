@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +17,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.taglibs.standard.tag.common.core.SetSupport;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 import org.json.JSONArray;
@@ -38,6 +39,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoHash;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoList;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoListItem;
+import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoPdf;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoSave;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelMov;
@@ -119,31 +121,56 @@ public class ExAssinadorExternoController extends ExController {
 
 	}
 
+	@Get("/public/app/assinador-externo/doc/{id}/pdf")
+	public void assinadorExternoPdf(String id) throws Exception {
+		try {
+			JSONObject req = getJsonReq(request);
+			assertPassword(req);
+
+			byte[] pdf = getPdf(id);
+
+			ExAssinadorExternoPdf resp = new ExAssinadorExternoPdf();
+
+			resp.setDoc(BlucService.bytearray2b64(pdf));
+
+			jsonSuccess(resp);
+		} catch (Exception e) {
+			jsonError(e);
+		}
+	}
+
+	private byte[] getPdf(String id) throws IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, Exception,
+			SQLException {
+		byte[] pdf = null;
+
+		String sigla = null;
+		if (id != null) {
+			sigla = id2sigla(id);
+			sigla += ".pdf";
+		}
+
+		ExMobil mob = Documento.getMobil(sigla);
+		ExMovimentacao mov = Documento.getMov(mob, sigla);
+
+		if (mov != null)
+			pdf = mov.getConteudoBlobpdf();
+		else if (mob != null) {
+			pdf = mob.doc().getConteudoBlobPdf();
+		}
+
+		if (pdf == null)
+			throw new Exception("Não foi possível localizar o PDF.");
+		return pdf;
+	}
+
 	@Get("/public/app/assinador-externo/doc/{id}/hash")
 	public void assinadorExternoHash(String id) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
 			assertPassword(req);
 
-			byte[] pdf = null;
-
-			String sigla = null;
-			if (id != null) {
-				sigla = id2sigla(id);
-				sigla += ".pdf";
-			}
-
-			ExMobil mob = Documento.getMobil(sigla);
-			ExMovimentacao mov = Documento.getMov(mob, sigla);
-
-			if (mov != null)
-				pdf = mov.getConteudoBlobpdf();
-			else if (mob != null) {
-				pdf = mob.doc().getConteudoBlobPdf();
-			}
-
-			if (pdf == null)
-				throw new Exception("Não foi possível localizar o PDF.");
+			byte[] pdf = getPdf(id);
 
 			ExAssinadorExternoHash resp = new ExAssinadorExternoHash();
 

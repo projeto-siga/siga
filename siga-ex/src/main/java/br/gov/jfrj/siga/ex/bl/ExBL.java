@@ -312,16 +312,7 @@ public class ExBL extends CpBL {
 			setA = mob.getExMarcaSet();
 		}
 
-		SortedSet<ExMobil> mobsAfetados = new TreeSet<>();
-		new ExMarcadorBL(setB, mob, mobsAfetados).calcular(apenasTemporalidade);
-
-		// Quando são retornados mobsAfetados, iterar neles e atualizar suas
-		// marcas, antes.
-		Iterator itJuntados = mobsAfetados.iterator();
-		while (itJuntados.hasNext()) {
-			ExMobil mobilJuntado = (ExMobil) itJuntados.next();
-			atualizarMarcas(false, mobilJuntado);
-		}
+		new ExMarcadorBL(setB, mob).calcular(apenasTemporalidade);
 
 		if (setA == null)
 			setA = new TreeSet<ExMarca>();

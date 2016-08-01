@@ -39,7 +39,6 @@ public class UsuarioController extends SigaController {
 
 	@Post("/app/usuario/trocar_senha_gravar")
 	public void gravarTrocaSenha(UsuarioAction usuario) throws Exception {
-		String msgAD = "";
 		String senhaAtual = usuario.getSenhaAtual();
 		String senhaNova = usuario.getSenhaNova();
 		String senhaConfirma = usuario.getSenhaConfirma();
@@ -49,21 +48,16 @@ public class UsuarioController extends SigaController {
 				senhaAtual, senhaNova, senhaConfirma, nomeUsuario,
 				getIdentidadeCadastrante());
 		
-		boolean senhaTrocadaAD = false;
-		
 		if ("on".equals(usuario.getTrocarSenhaRede())) {
-			senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);	
+			try{
+				IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);	
+			} catch(Exception e){
+				throw new AplicacaoException("Não foi possível alterar a senha de rede e e-mail. "
+						+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Alterar Senha de Rede\"", 9, e);
+			}
 		}
 
-		if (isIntegradoAD(nomeUsuario) && senhaTrocadaAD){
-			msgAD = "<br/><br/><br/>OBS: A senha de rede e e-mail também foi alterada.";
-		}
-		
-		if (isIntegradoAD(nomeUsuario) && !senhaTrocadaAD){
-			msgAD = "<br/><br/><br/>ATENÇÃO: A senha de rede e e-mail NÃO foi alterada embora o seu órgão esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
-		}
-		
-		result.include("mensagem", "A senha foi alterada com sucesso" + msgAD);	
+		result.include("mensagem", "A senha foi alterada com sucesso. <br/><br/><br/>OBS: A senha de rede e e-mail também foi alterada.");	
 		result.include("volta", "troca");
 		result.include("titulo", "Troca de Senha");
 		result.redirectTo("/app/principal");
@@ -82,7 +76,6 @@ public class UsuarioController extends SigaController {
 	public void gravarIncluirUsuario(UsuarioAction usuario) throws Exception {
 		String msgComplemento = "";
 		String[] senhaGerada = new String[1];
-		boolean senhaTrocadaAD = false;
 		boolean isIntegradoAoAD = isIntegradoAD(usuario.getMatricula());
 		CpIdentidade idNova = null;
 		switch (usuario.getMetodo()) {
@@ -91,7 +84,12 @@ public class UsuarioController extends SigaController {
 			idNova = Cp.getInstance().getBL().criarIdentidade(usuario.getMatricula(), usuario.getCpf(),
 					getIdentidadeCadastrante(), usuario.getSenhaNova(), senhaGerada, isIntegradoAoAD);
 			if (isIntegradoAoAD){
-				senhaTrocadaAD = IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,usuario.getSenhaNova());
+				try{
+					IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,usuario.getSenhaNova());
+				} catch(Exception e){
+					throw new AplicacaoException("Não foi possível definir a sua senha de rede e e-mail. "
+							+ "Tente novamente em alguns instantes", 9, e);
+				}
 			}
 			break;
 		case 2:
@@ -116,14 +114,7 @@ public class UsuarioController extends SigaController {
 		}
 		
 		if (isIntegradoAoAD){
-			
-			if (senhaTrocadaAD){
 				msgComplemento = "<br/> Atenção: Sua senha de rede e e-mail foi definida com sucesso.";
-			}else{
-				msgComplemento = "<br/> ATENÇÃO: A senha de rede e e-mail NÃO foi definida embora o seu órgão esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
-			}
-
-			
 		}else{
 			msgComplemento = "<br/> O seu login e senha foram enviados para seu email.";
 		}
@@ -257,7 +248,7 @@ public class UsuarioController extends SigaController {
 		try{
 			lstPessoa = dao.consultarPorMatriculaEOrgao(Long.valueOf(matricula.substring(2)), orgaoUsu.getId(), false, false);
 		}catch(Exception e){
-			throw new AplicacaoException("Formato de matrícula inválida." );
+			throw new AplicacaoException("Formato de matrícula inválida.", 9, e);
 		}
 
 		if (lstPessoa.size() == 0){

@@ -41,32 +41,23 @@ public class IntegracaoLdap {
 	}
 	
 
-	public boolean atualizarSenhaLdap(CpIdentidade id, String senha) {
+	public void atualizarSenhaLdap(CpIdentidade id, String senha) {
 		String localidade = id.getDpPessoa().getOrgaoUsuario().getAcronimoOrgaoUsu().toLowerCase();
 		
 		IntegracaoLdapProperties prop = configurarProperties(localidade);
 		
-		try {
-			if (!integrarComLdap(id.getDpPessoa().getOrgaoUsuario())){
-				return false;
-			}
-			
-			ILdapDao ldap = new LdapDaoImpl(false);
-			ldap.conectarComSSL(prop.getServidorLdap(), prop.getPortaSSLLdap(), prop.getUsuarioLdap(), prop.getSenhaLdap(), prop.getKeyStore());
-			
-
-				String cnPessoa = id.getDpPessoa().getSesbPessoa() + id.getDpPessoa().getMatricula();
-				ldap.definirSenha("CN=" + cnPessoa +  "," + prop.getDnUsuarios() , senha);
-				limparSenhaSincDB(id);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
+		
+		if (!integrarComLdap(id.getDpPessoa().getOrgaoUsuario())){
+			throw new AplicacaoException("Órgão do usuário não configurado para integração com AD");
 		}
-		
-		return true;
 
-		
+		ILdapDao ldap = new LdapDaoImpl(false);
+		ldap.conectarComSSL(prop.getServidorLdap(), prop.getPortaSSLLdap(), prop.getUsuarioLdap(), prop.getSenhaLdap(), prop.getKeyStore());
+
+
+		String cnPessoa = id.getDpPessoa().getSesbPessoa() + id.getDpPessoa().getMatricula();
+		ldap.definirSenha("CN=" + cnPessoa +  "," + prop.getDnUsuarios() , senha);
+		limparSenhaSincDB(id);		
 	}
 
 	private void limparSenhaSincDB(CpIdentidade id) throws AplicacaoException {

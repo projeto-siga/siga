@@ -302,7 +302,7 @@ public class ExDocumentoVO extends ExVO {
 			List<ExMovimentacao> juntadasRevertidas = new ArrayList<ExMovimentacao>();
 
 			for (ExMovimentacaoVO exMovVO : mobVO.getMovs()) {
-				if (movimentacoesPermitidas.contains(exMovVO.getIdTpMov())) {
+				if (!exMovVO.isCancelada() && movimentacoesPermitidas.contains(exMovVO.getIdTpMov())) {
 					if (exMovVO.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA) {
 						juntadasRevertidas.add(exMovVO.getMov()
 								.getExMovimentacaoRef());
@@ -311,8 +311,7 @@ public class ExDocumentoVO extends ExVO {
 						if (exMovVO.getMov().getConteudoBlobMov() == null)
 							continue;
 					}
-					if (!exMovVO.isCancelada()
-							&& !juntadasRevertidas.contains(exMovVO.getMov()))
+					if (!juntadasRevertidas.contains(exMovVO.getMov()))
 						movimentacoesFinais.add(exMovVO);
 				}
 

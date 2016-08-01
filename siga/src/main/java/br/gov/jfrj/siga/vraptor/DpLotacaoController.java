@@ -133,8 +133,28 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	
 	@Get("app/lotacao/exibir")
 	public void exibi(String sigla) throws Exception {
-        if(sigla != null){
-        	result.include("lotacao", dao().getLotacaoFromSigla(sigla));
-        }
+		StringBuilder sb = new StringBuilder();
+        if(sigla == null) 
+        	throw new Exception("sigla deve ser informada.");
+    	DpLotacao lot = dao().getLotacaoFromSigla(sigla);
+    	
+    	sb.append("digraph G {");
+    	
+    	sb.append("graph [dpi = 60]; node [shape = rectangle];"); 
+    	
+    	graphAcrescentarLotacao(sb, lot);
+    	sb.append("}");
+	
+		result.include("lotacao", lot);
+		result.include("graph", sb.toString());
+	}
+
+	private void graphAcrescentarLotacao(StringBuilder sb, DpLotacao lot) {
+		for (DpLotacao lotsub : lot.getDpLotacaoSubordinadosSet()) {
+    		if (lotsub.getDataFimLotacao() != null)
+    			continue;
+    		sb.append("\"" + lot.getSigla() + "\" -> \"" + lotsub.getSigla() + "\";");
+    		graphAcrescentarLotacao(sb, lotsub);
+    	}
 	}
 }

@@ -83,11 +83,12 @@ public class LdapDaoImpl implements ILdapDao {
 		}
 		try {
 			contexto = new InitialLdapContext(environment, null);
-		} catch (NamingException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 			throw new AplicacaoException(
 					"Não foi possível criar o contexto LDAP!\n"
-							+ "Verifique se o certificado foi importado coma ferramenta keytool ou se o parâmetro ldap.keystore está apontando para o arquivo cacerts correto (Exemplo: JDK_PATH/jre/lib/security/cacerts");
+							+ "Verifique se o certificado foi importado coma ferramenta keytool "
+							+ "ou se o parâmetro ldap.keystore está apontando para o arquivo cacerts "
+							+ "correto (Exemplo: JDK_PATH/jre/lib/security/cacerts", 9, e);
 		}
 
 	}
@@ -107,10 +108,9 @@ public class LdapDaoImpl implements ILdapDao {
 		// Attributes attrs = converterParaAtributosLdap(atributos);
 		try {
 			contexto.createSubcontext(dn, atributos);
-		} catch (NamingException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 			throw new AplicacaoException("Não foi possível incluir o objeto "
-					+ dn);
+					+ dn, 9, e);
 		}
 	}
 
@@ -126,10 +126,9 @@ public class LdapDaoImpl implements ILdapDao {
 	public void excluir(String dn) throws AplicacaoException {
 		try {
 			contexto.destroySubcontext(dn);
-		} catch (NamingException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 			throw new AplicacaoException("Não foi possível excluir o objeto "
-					+ dn);
+					+ dn, 9, e);
 		}
 	}
 
@@ -142,10 +141,9 @@ public class LdapDaoImpl implements ILdapDao {
 			Attribute attr;
 			try {
 				attr = atributos.get(iAttrs.next());
-			} catch (NamingException e1) {
-				e1.printStackTrace();
+			} catch (Exception e1) {
 				throw new AplicacaoException(
-						"Não foi possível ler os próximos atributos!");
+						"Não foi possível ler os próximos atributos!", 9, e1);
 			}
 			if (attr.getID().equals("cn")
 					|| attr.getID().equals("distinguishedName")
@@ -156,13 +154,9 @@ public class LdapDaoImpl implements ILdapDao {
 			member[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr);
 			try {
 				contexto.modifyAttributes(dn, member);
-			} catch (AttributeInUseException e) {
-				e.printStackTrace();
-				throw new AplicacaoException("O atributo já existe!");
-			} catch (NamingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			} catch (Exception e) {
+				throw new AplicacaoException("O atributo já existe!", 9, e);
+			} 
 		}
 
 	}
@@ -180,13 +174,9 @@ public class LdapDaoImpl implements ILdapDao {
 			// atributos.put(id, a.get());
 			// }
 
-		} catch (NamingException e) {
-			if (e instanceof NameNotFoundException) {
-				return null;
-			}
-			e.printStackTrace();
+		} catch (Exception e) {
 			throw new AplicacaoException(
-					"Não foi possível ler os atributos de " + dn);
+					"Não foi possível ler os atributos de " + dn, 9, e);
 		}
 
 		return attrs;
@@ -199,9 +189,9 @@ public class LdapDaoImpl implements ILdapDao {
 		byte unicodePwd[];
 		try {
 			unicodePwd = quotedPassword.getBytes("UTF-8");
-		} catch (UnsupportedEncodingException e1) {
+		} catch (Exception e1) {
 			throw new AplicacaoException(
-					"Não foi possível converter a senha para bytes em UTF-8");
+					"Não foi possível converter a senha para bytes em UTF-8", 9, e1);
 		}
 		byte pwdArray[] = new byte[unicodePwd.length * 2];
 		for (int i = 0; i < unicodePwd.length; i++) {
@@ -214,12 +204,11 @@ public class LdapDaoImpl implements ILdapDao {
 				new BasicAttribute("UnicodePwd", pwdArray));
 		try {
 			contexto.modifyAttributes(dnUsuario, mods);
-		} catch (NamingException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 			throw new AplicacaoException(
 					"Não foi possível alterar a senha do usuário "
 							+ dnUsuario
-							+ " \nVerifique se a senha atende aos requisitos de complexidade impostos pelo servidor LDAP");
+							+ " \nVerifique se a senha atende aos requisitos de complexidade impostos pelo servidor LDAP", 9, e);
 		}
 
 	}
@@ -236,9 +225,9 @@ public class LdapDaoImpl implements ILdapDao {
 		Attributes ats;
 		try {
 			ats = contexto.getAttributes(dnUsuario);
-		} catch (NamingException e) {
+		} catch (Exception e) {
 			throw new AplicacaoException(
-					"Não foi possível ler os atributos do usuário " + dnUsuario);
+					"Não foi possível ler os atributos do usuário " + dnUsuario, 9, e);
 		}
 		ModificationItem member[] = new ModificationItem[1];
 		Attribute at = ats.get("useraccountcontrol");
@@ -251,13 +240,9 @@ public class LdapDaoImpl implements ILdapDao {
 				uac = String
 						.valueOf((Integer.valueOf(at.get().toString()) | UF_ACCOUNTDISABLE));
 			}
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			throw new AplicacaoException("Erro no formato numérico!");
-		} catch (NamingException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 			throw new AplicacaoException(
-					"Não foi possível ler um atributo do usuário!");
+					"Não foi possível ler um atributo do usuário!", 9, e);
 		}
 
 		at.clear();
@@ -265,10 +250,9 @@ public class LdapDaoImpl implements ILdapDao {
 		member[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, at);
 		try {
 			this.contexto.modifyAttributes(dnUsuario, member);
-		} catch (NamingException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 			throw new AplicacaoException(
-					"Não foi possível alterar o atributo de ativação do usuário!");
+					"Não foi possível alterar o atributo de ativação do usuário!", 9, e);
 		}
 	}
 
@@ -320,9 +304,9 @@ public class LdapDaoImpl implements ILdapDao {
 	public void mover(String dn, String novoDN) throws AplicacaoException {
 		try {
 			this.contexto.rename(dn, novoDN);
-		} catch (NamingException e) {
+		} catch (Exception e) {
 			throw new AplicacaoException("Não foi possível mover " + dn
-					+ " para " + novoDN + "\n" + e.getMessage());
+					+ " para " + novoDN + "\n" + e.getMessage(), 9, e);
 		}
 	}
 
@@ -397,8 +381,8 @@ public class LdapDaoImpl implements ILdapDao {
 		Attributes attrs = null;
 		try {
 			attrs = this.contexto.getAttributes(dn);
-		} catch (NamingException e) {
-			new AplicacaoException("Não foi possível ler os atributos de " + dn);
+		} catch (Exception e) {
+			new AplicacaoException("Não foi possível ler os atributos de " + dn, 9, e);
 		}
 		return attrs;
 	}
@@ -407,14 +391,10 @@ public class LdapDaoImpl implements ILdapDao {
 		Attributes attrs = getAttributes(dn);
 		try {
 			return Integer.valueOf(attrs.get("groupType").get().toString());
-		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NamingException e) {
-			new AplicacaoException(
-					"Não foi possível identificar o tipo do grupo " + dn);
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Não foi possível identificar o tipo do grupo " + dn, 9, e);
 		}
-		return null;
 	}
 
 	private boolean isTipoGrupoGlobal(Integer tipoGrupo) {
@@ -459,10 +439,10 @@ public class LdapDaoImpl implements ILdapDao {
 				new BasicAttribute(nomeAtributo, valorAtributo));
 		try {
 			this.contexto.modifyAttributes(dn, member);
-		} catch (NamingException e) {
+		} catch (Exception e) {
 			throw new AplicacaoException("Não foi possível inserir o valor "
 					+ valorAtributo + " no atributo " + nomeAtributo
-					+ " do objeto " + dn + "!");
+					+ " do objeto " + dn + "!", 9, e);
 		}
 	}
 
@@ -474,10 +454,10 @@ public class LdapDaoImpl implements ILdapDao {
 				new BasicAttribute(nomeAtributo, valorAtributo));
 		try {
 			this.contexto.modifyAttributes(dn, member);
-		} catch (NamingException e) {
+		} catch (Exception e) {
 			throw new AplicacaoException("Não foi possível remover o valor "
 					+ valorAtributo + " no atributo " + nomeAtributo
-					+ " do objeto " + dn + "!");
+					+ " do objeto " + dn + "!", 9, e);
 		}
 	}
 
@@ -494,11 +474,11 @@ public class LdapDaoImpl implements ILdapDao {
 		member[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, at);
 		try {
 			this.contexto.modifyAttributes(dn, member);
-		} catch (NamingException e) {
+		} catch (Exception e) {
 			throw new AplicacaoException(
 					"Não foi possível substitur o valor atual do atributo "
 							+ nomeAtributo + " pelo valor " + valorAtributo
-							+ " do objeto " + dn);
+							+ " do objeto " + dn, 9, e);
 		}
 
 	}
@@ -549,11 +529,9 @@ public class LdapDaoImpl implements ILdapDao {
 		try {
 			return (new InitialLdapContext(environment, null) != null);
 
-		} catch (NamingException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new AplicacaoException("Não foi possível verificar conexão", 9, e);
 		}
-
-		return false;
 	}
 
 	/**
@@ -592,9 +570,9 @@ public class LdapDaoImpl implements ILdapDao {
 			oldUnicodePassword = oldQuotedPassword.getBytes("UTF-16LE");
 			String newQuotedPassword = "\"" + senhaNova + "\"";
 			newUnicodePassword = newQuotedPassword.getBytes("UTF-16LE");
-		} catch (UnsupportedEncodingException e) {
+		} catch (Exception e) {
 			new AplicacaoException(
-					"Não foi possível converter as senhas em bytes UTF-16LE!");
+					"Não foi possível converter as senhas em bytes UTF-16LE!", 9, e);
 		}
 
 		definirSenha(dnUsuario, senhaNova);
@@ -605,9 +583,9 @@ public class LdapDaoImpl implements ILdapDao {
 		try {
 			urlServidor = contexto.getEnvironment()
 					.get("java.naming.provider.url").toString();
-		} catch (NamingException e) {
+		} catch (Exception e) {
 			throw new AplicacaoException(
-					"Não foi possível determinar o servidor do contexto!");
+					"Não foi possível determinar o servidor do contexto!", 9, e);
 		}
 		return urlServidor.substring(urlServidor.lastIndexOf(":") + 1);
 	}
@@ -617,9 +595,9 @@ public class LdapDaoImpl implements ILdapDao {
 		try {
 			urlServidor = contexto.getEnvironment()
 					.get("java.naming.provider.url").toString();
-		} catch (NamingException e) {
+		} catch (Exception e) {
 			throw new AplicacaoException(
-					"Não foi possível determinar o servidor do contexto!");
+					"Não foi possível determinar o servidor do contexto!", 9, e);
 		}
 		return urlServidor.substring(urlServidor.lastIndexOf("/") + 1,
 				urlServidor.lastIndexOf(":"));
@@ -630,9 +608,9 @@ public class LdapDaoImpl implements ILdapDao {
 		try {
 			usuarioAutenticadoContexto = contexto.getEnvironment()
 					.get("java.naming.security.principal").toString();
-		} catch (NamingException e) {
+		} catch (Exception e) {
 			throw new AplicacaoException(
-					"Não foi possível determinar o domínio do contexto!");
+					"Não foi possível determinar o domínio do contexto!", 9, e);
 		}
 		return usuarioAutenticadoContexto.substring(usuarioAutenticadoContexto
 				.indexOf("@") + 1);
@@ -645,9 +623,8 @@ public class LdapDaoImpl implements ILdapDao {
 		String siglaUsuario = null;
 		try {
 			siglaUsuario = attrs.get("samaccountname").get().toString();
-		} catch (NamingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new AplicacaoException("Não foi possível obter a sigla do usuário", 9, e);
 		}
 		return siglaUsuario;
 	}
@@ -738,9 +715,9 @@ public class LdapDaoImpl implements ILdapDao {
 				new BasicAttribute(nomeAtributo));
 		try {
 			this.contexto.modifyAttributes(dn, member);
-		} catch (NamingException e) {
+		} catch (Exception e) {
 			throw new AplicacaoException("Não foi possível excluir o atributo "
-					+ nomeAtributo + " do objeto " + dn + "!");
+					+ nomeAtributo + " do objeto " + dn + "!", 9, e);
 		}
 
 	}

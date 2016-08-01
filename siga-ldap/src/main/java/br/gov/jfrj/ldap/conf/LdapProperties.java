@@ -28,6 +28,7 @@ import javax.crypto.NoSuchPaddingException;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Criptografia;
 import br.gov.jfrj.siga.model.prop.ModeloPropriedade;
 
@@ -44,50 +45,40 @@ public class LdapProperties extends ModeloPropriedade {
 		try {
 			return this.obterPropriedade("dnUsuarios");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new AplicacaoException("Erro ao obter a propriedade dnUsuarios", 9, e);
 		}
-		return null;
 	}
 
 	public String getServidorLdap()  {
 		try {
 			return this.obterPropriedade("servidor");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new AplicacaoException("Erro ao obter o servidor LDAP", 9, e);
 		}
-		return null;
 	}
 
 	public String getPortaLdap()  {
 		try {
 			return this.obterPropriedade("porta");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new AplicacaoException("Erro ao obter a porta LDAP", 9, e);
 		}
-		return null;
 	}
 
 	public String getPortaSSLLdap()  {
 		try {
 			return this.obterPropriedade("ssl.porta");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new AplicacaoException("Erro ao obter a porta SSL LDAP", 9, e);
 		}
-		return null;
 	}
 
 	public String getUsuarioLdap()  {
 		try {
 			return this.obterPropriedade("usuario");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new AplicacaoException("Erro ao obter o usuário LDAP", 9, e);
 		}
-		return null;
 	}
 
 	public String getSenhaLdap()  {
@@ -96,9 +87,7 @@ public class LdapProperties extends ModeloPropriedade {
 					"senha").trim();
 			return descriptografarSenha(senhaCriptografada);
 		} catch (Exception e) {
-
-			e.printStackTrace();
-			return null;
+			throw new AplicacaoException("Erro ao obter a senha LDAP", 9, e);
 		}
 	}
 
@@ -110,36 +99,17 @@ public class LdapProperties extends ModeloPropriedade {
 			return new String(Criptografia.desCriptografar(dec
 					.decodeBuffer(senhaCriptografada), enc.encode(CHAVE_CRIPTO
 					.getBytes())));
-		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BadPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao descriptografar a senha LDAP", 9, e);
+		} 
 	}
 
 	public String getKeyStore()  {
 		try {
 			return this.obterPropriedade("keystore");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new AplicacaoException("Erro ao obter o keystore", 9, e);
 		}
-		return null;
 	}
 	
 	public Boolean isModoEscrita() {
@@ -147,9 +117,7 @@ public class LdapProperties extends ModeloPropriedade {
 			return Boolean.valueOf(this.obterPropriedade("modo_escrita")
 					.trim());
 		} catch (Exception e) {
-			
-			e.printStackTrace();
-			return null;
+			throw new AplicacaoException("Erro ao obter a propriedade modo_escrita", 9, e);
 		}
 	}
 

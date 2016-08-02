@@ -87,8 +87,8 @@ public class UsuarioController extends SigaController {
 				try{
 					IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,usuario.getSenhaNova());
 				} catch(Exception e){
-					throw new AplicacaoException("Não foi possível definir a sua senha de rede e e-mail. "
-							+ "Tente novamente em alguns instantes", 9, e);
+					LOG.error("Não foi possível definir a sua senha de rede e e-mail. "
+							+ "Tente novamente em alguns instantes", e);
 				}
 			}
 			break;

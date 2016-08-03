@@ -616,9 +616,8 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("app/solicitacao/fechar")
-    public void fechar(String sigla, SrItemConfiguracao itemConfiguracao) throws Exception {
-    	//reclassificar(sigla, itemConfiguracao, null, null);
-    	reclassificar(null);
+    public void fechar(SrSolicitacao solicitacao) throws Exception {
+    	reclassificar(solicitacao);
     	Set<SrTipoMotivoFechamento> motivos = new TreeSet<SrTipoMotivoFechamento>(new Comparator<SrTipoMotivoFechamento>(){
 			@Override
 			public int compare(SrTipoMotivoFechamento o1,
@@ -632,14 +631,20 @@ public class SolicitacaoController extends SrController {
     }
     
     @Path("app/solicitacao/fecharGravar")
-    public void fecharGravar(String sigla, SrItemConfiguracao itemConfiguracao, SrAcao acao, String motivo, 
-    		SrTipoMotivoFechamento tpMotivo, String conhecimento) throws Exception {
-    	if (sigla == null || sigla.trim().equals(""))
+    public void fecharGravar(SrSolicitacao solicitacao, String motivo, SrTipoMotivoFechamento tpMotivo, String conhecimento) throws Exception {
+    	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
     		throw new AplicacaoException("Número não informado");
-    		
-    	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
-        sol.fechar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), itemConfiguracao, acao, motivo, tpMotivo, conhecimento);
-        result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
+    	
+    	if (!validarFormReclassificar(solicitacao)) {
+        	enviarErroValidacao();
+        	result.include("errors", srValidator.getErros());
+        	result.forwardTo(this).fechar(solicitacao);
+        	return;
+    	}	
+    	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());
+    	solicitacaoEntity.fechar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solicitacao.getItemConfiguracao(), 
+    			solicitacao.getAcao(), motivo, tpMotivo, conhecimento, solicitacao.getAtributoSolicitacaoMap());    	
+    	result.use(Results.status()).ok();
     }
     
     @Path("app/solicitacao/erPesquisa")

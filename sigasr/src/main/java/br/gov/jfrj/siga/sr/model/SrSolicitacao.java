@@ -1556,7 +1556,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     private void salvarAtributosComHistorico(DpPessoa cadastrante, DpLotacao lotaCadastrante) throws Exception {
     	if (getAtributoSolicitacaoMap() != null) {
     		for (Map.Entry<Long, SrAtributoSolicitacaoMap> atributo : getAtributoSolicitacaoMap().entrySet()) {
-    			if (atributo.getValue().getValorAtributo() == null) 
+    			if (atributo.getValue() == null || atributo.getValue().getValorAtributo() == null) 
     				continue;
     			SrAtributo tipoAtributo = SrAtributo.AR.findById(atributo.getKey());
     			SrAtributoSolicitacao atributoSolicitacao = new SrAtributoSolicitacao(atributo.getValue().getValorAtributo(), tipoAtributo, this,
@@ -2198,11 +2198,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
     
     private void fechar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String motivo, SrTipoMotivoFechamento tpMotivo) throws Exception {
-    	fechar(cadastrante, lotaCadastrante, titular, lotaTitular, getItemAtual(), getAcaoAtual(), motivo, tpMotivo, null);
+    	fechar(cadastrante, lotaCadastrante, titular, lotaTitular, getItemAtual(), getAcaoAtual(), motivo, tpMotivo, null, null);
     }
 
     public void fechar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, 
-    		SrItemConfiguracao itemConfiguracao, SrAcao acao, String motivo, SrTipoMotivoFechamento tpMotivo, String conhecimento) throws Exception {
+    		SrItemConfiguracao itemConfiguracao, SrAcao acao, String motivo, SrTipoMotivoFechamento tpMotivo, 
+    		String conhecimento, Map<Long, SrAtributoSolicitacaoMap> atributos) throws Exception {
         if (isPai() && !isAbertaComTodasFilhasFechadas())
             throw new AplicacaoException("Operação não permitida. Necessário fechar toda solicitação " + 
             			"filha criada a partir dessa que deseja fechar.");
@@ -2229,6 +2230,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
 
         removerDasListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
+        
+        mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
+        this.setAtributoSolicitacaoMap(atributos);
+        salvarAtributosComHistorico(cadastrante, lotaCadastrante);
 
         if (isFilha()) {
         	DpLotacao lotaAtendente = getSolicitacaoPai().getLotaAtendente(); 

@@ -140,14 +140,14 @@ public class SrSolicitacaoTest {
 				filha.getTitular(), filha.getLotaTitular(),
 				filha.getItemConfiguracao(), filha.getAcao(),
 				"Fechando para teste",
-				SrTipoMotivoFechamento.ATENDIMENTO_CONCLUÍDO, null);
+				SrTipoMotivoFechamento.ATENDIMENTO_CONCLUÍDO, null, null);
 		TestCase.assertFalse(s.isFechado());
 
 		filha2.fechar(filha2.getCadastrante(), filha2.getLotaCadastrante(),
 				filha2.getTitular(), filha2.getLotaTitular(),
 				filha2.getItemConfiguracao(), filha2.getAcao(),
 				"Fechando para teste",
-				SrTipoMotivoFechamento.ATENDIMENTO_CONCLUÍDO, null);
+				SrTipoMotivoFechamento.ATENDIMENTO_CONCLUÍDO, null, null);
 		TestCase.assertTrue(s.isFechado());
 
 	}
@@ -164,7 +164,7 @@ public class SrSolicitacaoTest {
 			filha.fechar(filha.getCadastrante(), filha.getLotaCadastrante(),
 					filha.getTitular(), filha.getLotaTitular(),
 					filha.getItemConfiguracao(), filha.getAcao(),
-					"Fechando para teste", m, null);
+					"Fechando para teste", m, null, null);
 			long marcadorEsperado = m.equals(SrTipoMotivoFechamento.ATENDIMENTO_CONCLUÍDO) 
 					? CpMarcador.MARCADOR_SOLICITACAO_FECHADO_PARCIAL
 					: CpMarcador.MARCADOR_SOLICITACAO_NECESSITA_PROVIDENCIA;

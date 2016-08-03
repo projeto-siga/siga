@@ -596,7 +596,7 @@
             </form>
         </div>
     </sigasr:modal> 
-    <sigasr:modal nome="fechar" titulo="Fechar" url="${linkTo[SolicitacaoController].fechar}?sigla=${solicitacao.siglaCompacta}" />
+    <sigasr:modal nome="fechar" titulo="Fechar" url="${linkTo[SolicitacaoController].fechar}?solicitacao.codigo=${solicitacao.siglaCompacta}" />
     
     <sigasr:modal nome="incluirEmLista" titulo="Definir Lista" url="${linkTo[SolicitacaoController].incluirEmLista}?sigla=${solicitacao.siglaCompacta}" />
     

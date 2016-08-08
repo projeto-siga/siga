@@ -545,31 +545,33 @@ public class ExMobilVO extends ExVO {
 	public String getMarcadoresEmHtml(DpPessoa pess, DpLotacao lota) {
 		StringBuilder sb = new StringBuilder();
 
-		// Marcacoes para a propria lotacao e para a propria pessoa ou sem
-		// informacao de pessoa
-		//
-		for (ExMarca mar : getMarcasAtivas()) {
-			if (mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO
-					&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO
-					&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA
-					&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA
-					&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA
-					&& ((mar.getDpLotacaoIni() != null && lota.getIdInicial()
-							.equals(mar.getDpLotacaoIni().getIdInicial())) || mar
-							.getDpLotacaoIni() == null)
-					&& (mar.getDpPessoaIni() == null || pess.getIdInicial()
+		
+		if (pess != null && lota != null){
+			// Marcacoes para a propria lotacao e para a propria pessoa ou sem
+			// informacao de pessoa
+			//
+		  for (ExMarca mar : getMarcasAtivas()) {
+			  if (mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO
+				    	&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO
+					    && mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA
+					    && mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA
+					    && mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_CONFERIDA_COM_SENHA
+					    && ((mar.getDpLotacaoIni() != null && lota.getIdInicial()
+					    		.equals(mar.getDpLotacaoIni().getIdInicial())) || mar
+								.getDpLotacaoIni() == null)
+						&& (mar.getDpPessoaIni() == null || pess.getIdInicial()
 							.equals(mar.getDpPessoaIni().getIdInicial()))) {
-				if (sb.length() > 0)
-					sb.append(", ");
-				sb.append(mar.getCpMarcador().getDescrMarcador());
-			}
-		}
+			    	if (sb.length() > 0)
+			    		sb.append(", ");
+			    	sb.append(mar.getCpMarcador().getDescrMarcador());
+			  }
+		  }
 
-		// Marcacoes para a propria lotacao e para outra pessoa
-		//
-		if (sb.length() == 0) {
-			for (ExMarca mar : getMarcasAtivas()) {
-				if (mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO
+		  // Marcacoes para a propria lotacao e para outra pessoa
+		  //
+	      if (sb.length() == 0) {
+		    for (ExMarca mar : getMarcasAtivas()) {
+			    if (mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO
 						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_EM_TRANSITO_ELETRONICO
 						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_DOCUMENTO_ASSINADO_COM_SENHA
 						&& mar.getCpMarcador().getIdMarcador() != CpMarcador.MARCADOR_MOVIMENTACAO_ASSINADA_COM_SENHA
@@ -590,6 +592,7 @@ public class ExMobilVO extends ExVO {
 					}
 				}
 			}
+		  }
 		}
 
 		// Marcacoes para qualquer outra pessoa ou lotacao

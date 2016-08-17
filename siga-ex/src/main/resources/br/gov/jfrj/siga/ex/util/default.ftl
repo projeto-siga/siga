@@ -3600,7 +3600,28 @@ Pede deferimento.</span><br/><br/><br/>
     [/#if]
 [/#function]
 
-[#macro boletimInterno templateInfosComplementaresEntrevista templateInfosComplementaresDocumento pathImgCabecalho]
+[#macro materiasBoletimInterno materias]
+				[#assign ultAbertura="" /]
+            	[#list materias as d]   
+					[#if ultFecho?? && ultFecho != d.fecho]
+						<div align="center">${ultFecho!}</div><br/>
+					[/#if]
+                    <span style="font-weight: bold">${d.numero}</span>
+                    [#if ultAbertura != d.abertura]
+                    	<div align="center">${d.abertura}</div><br/>
+                    [/#if]
+					${d.conteudo}
+					[#assign ultFecho=d.fecho /]
+                    [#assign ultAbertura=d.abertura /]
+                    <br/>
+				[/#list]
+		        <div align="center">${ultFecho!}</div>
+                <br/>
+				[#assign ultFecho="" /]
+                [#assign ultAbertura="" /]
+            [/#macro]
+
+[#macro boletimInterno xmlHierarquia templateInfosComplementaresEntrevista templateInfosComplementaresDocumento pathImgCabecalho]
 														
 	[@entrevista acaoGravar="gravarBIE" acaoExcluir="excluirBIE" acaoCancelar="refazerBIE" acaoFinalizar="finalizarBIE"]
 		${templateInfosComplementaresEntrevista}
@@ -3646,7 +3667,7 @@ Pede deferimento.</span><br/><br/><br/>
 	[/@entrevista]
 	
 	[@documento]
-	
+    
 			<!-- INICIO PRIMEIRO CABECALHO
 			<table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
 				<table width="100%" align="left" border="0" bgcolor="#FFFFFF">
@@ -3674,9 +3695,9 @@ Pede deferimento.</span><br/><br/><br/>
 			
 			FIM PRIMEIRO CABECALHO -->		
 	
-		[@br/]
-		[@br/]
-		[@br/]
+			[@br/]
+			[@br/]
+			[@br/]
 	
 			<!-- INICIO CABECALHO
 				<table width="100%" bgcolor="#FFFFFF">
@@ -3687,9 +3708,9 @@ Pede deferimento.</span><br/><br/><br/>
 					</tr>
 				</table>
 			FIM CABECALHO -->		
-		
+		        
 			[#if lotaCadastrante??]
-				[#assign hBIE=func.obterHierarquizadorBIE(doc)!/]
+				[#assign hBIE=func.obterBIE(doc, xmlHierarquia)!/]
 			[/#if]
 	
 			[#if hBIE??]
@@ -3703,28 +3724,25 @@ Pede deferimento.</span><br/><br/><br/>
 								</td>
                                 [/#if]
 							</tr>
-						</table>	                  
-						[#list topico.subTopicos as subTopico]
-	                    	[#if !subTopico.vazio]
-								<span style="page-break-inside: avoid">
-									[#if subTopico.descr??]<h3 align="right">${(subTopico.descr)!}</h3>[/#if]
-									[#list subTopico.materias as d]                                        
-										[#if ultFecho?? && ultFecho != d.fecho]
-											<div align="center">${ultFecho!}</div>
-										[/#if]
-										<span style="font-weight: bold">${d.numero}</span>
-										${d.conteudo}
-										[#assign ultFecho=d.fecho /]
-									[/#list]
-		                            <div align="center">${ultFecho!}</div>
+						</table>	   
+                        [#if topico.materias??]
+                        	[@materiasBoletimInterno topico.materias /]
+                        [/#if]
+						[#if topico.topicos??]
+                        	[#list topico.topicos as subTopico]
+		                    	[#if !subTopico.vazio]
+									<span style="page-break-inside: avoid">
+										[#if subTopico.descr??]<h3 align="right">${(subTopico.descr)!}</h3>[/#if]
+										[@materiasBoletimInterno subTopico.materias /]
+									</span>
                                     <br/>
-									[#assign ultFecho="" /]
-								</span>
-	                        [/#if] [#-- if !subtopico.vazio--]
-						[/#list] [#-- list subtopicos--]
-					[/#if] [#--if !topico.vazio--]
-				[/#list] [#-- list topicos--]
-			[/#if] [#--if hBIE--]
+		                        [/#if] 
+							[/#list] 
+                        [/#if]
+                        <br/><br/>
+					[/#if]
+				[/#list] 
+			[/#if] 
 	
 			<span>&nbsp;</span>
 			[@br/]
@@ -3810,5 +3828,4 @@ Pede deferimento.</span><br/><br/><br/>
 		FIM RODAPE -->		
 	[/@documento]													
 [/#macro]
-
 

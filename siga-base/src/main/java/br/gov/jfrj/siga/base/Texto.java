@@ -19,8 +19,8 @@
 package br.gov.jfrj.siga.base;
 
 import java.io.UnsupportedEncodingException;
-
-import org.apache.commons.lang.StringUtils;
+import java.util.Arrays;
+import java.util.List;
 
 public class Texto {
 
@@ -160,14 +160,9 @@ public class Texto {
 	}
 	
 	public static String extrai(final String sSource, final String sBegin,
-			final String sEnd) throws UnsupportedEncodingException{
-		return extrai(sSource, sBegin, sEnd, 1);
-	}
-
-	public static String extrai(final String sSource, final String sBegin,
-			final String sEnd, int apenasNaNesimaOcorrencia) throws UnsupportedEncodingException {
-		final Integer iBegin = StringUtils.ordinalIndexOf(sSource, sBegin, apenasNaNesimaOcorrencia);
-		final Integer iEnd = sSource.indexOf(sEnd, iBegin); 
+			final String sEnd) throws UnsupportedEncodingException {
+		final Integer iBegin = sSource.indexOf(sBegin);
+		final Integer iEnd = sSource.indexOf(sEnd);
 
 		if (iBegin == -1 || iEnd == -1)
 			return null;
@@ -176,27 +171,6 @@ public class Texto {
 				.substring(iBegin + sBegin.length(), iEnd);
 		return sResult;
 	}
-
-	/*Edson: ver se este método é realmente necessário no BIE
-	 * public static String extraiTudo(final String sSource, final String sBegin,
-			final String sEnd) throws UnsupportedEncodingException {
-
-		int startPos = 0;
-
-		Integer iBegin = sSource.indexOf(sBegin, startPos);
-		Integer iEnd = sSource.indexOf(sEnd, startPos);
-		String sResult = "";
-
-		while (iBegin != -1 && iEnd != -1) {
-			sResult = sResult
-					+ sSource.substring(iBegin + sBegin.length(), iEnd);
-			startPos = iEnd + sEnd.length();
-			iBegin = sSource.indexOf(sBegin, startPos);
-			iEnd = sSource.indexOf(sEnd, startPos);
-		}
-
-		return sResult;
-	}*/
 
 	public static String removerEspacosExtra(String texto) {
 		return texto.replaceAll("\\s{2,}", " ");
@@ -236,6 +210,31 @@ public class Texto {
 			string.replaceAll("-", "_");
 
 		return (lowercase ? string.toLowerCase() : string);
+	}
+	
+	//Edson: esta rotina não cobre todos os casos. Foi feita inicialmente
+	//para pluralizar apenas nomes de espécies documentais
+	public static String pluralizar(String s){
+		StringBuilder pluralFinal = new StringBuilder();
+		List<String> stopList = Arrays.asList("de", "do", "da");
+		boolean atingiuStopList = false;
+		
+		for (String palavra : s.trim().split("\\s")){
+			String palavraPlural = palavra;
+			if (stopList.contains(palavraPlural))
+				atingiuStopList = true;
+			if (!atingiuStopList){
+				palavraPlural = palavraPlural.replaceAll("m$", "ns").replaceAll("M$", "NS");
+				palavraPlural = palavraPlural.replaceAll("ão$", "ões").replaceAll("ÃO$", "ÕES");
+				palavraPlural = palavraPlural.replaceAll("r$", "es").replaceAll("R$", "RES");
+				palavraPlural = palavraPlural.replaceAll("l$", "is").replaceAll("I$", "IS");
+				palavraPlural = palavraPlural.replaceAll("a$", "as").replaceAll("A$", "AS");
+				palavraPlural = palavraPlural.replaceAll("e$", "es").replaceAll("E$", "ES");
+				palavraPlural = palavraPlural.replaceAll("o$", "os").replaceAll("O$", "OS");
+			}
+			pluralFinal.append((pluralFinal.length() > 0 ? " " : "") + palavraPlural); 
+		}
+		return pluralFinal.toString();
 	}
 	
 	public static String semQuebraDeLinha(String string) {

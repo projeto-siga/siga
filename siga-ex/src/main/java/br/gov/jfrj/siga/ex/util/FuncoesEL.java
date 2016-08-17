@@ -65,7 +65,7 @@ import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExParte;
-import br.gov.jfrj.siga.ex.util.BIE.Hierarquizador;
+import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import freemarker.ext.dom.NodeModel;
 
@@ -95,8 +95,8 @@ public class FuncoesEL {
 		return null;
 	}
 
-	public static Hierarquizador obterHierarquizadorBIE(ExDocumento docBIE) {
-		return new Hierarquizador(docBIE);
+	public static ModeloBIE obterBIE(ExDocumento docBIE, String xmlHierarquia) throws Exception {
+		return new ModeloBIE(docBIE, xmlHierarquia);
 	}
 
 	public static Boolean podeRemeterPorConfiguracao(DpPessoa titular,

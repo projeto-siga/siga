@@ -18,75 +18,104 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.util.BIE;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
 
-public abstract class Topico {
-	private String descr;
-	private List<String> localidades;
-	private List<String> tiposMateria;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import br.gov.jfrj.siga.base.Texto;
+
+@XmlRootElement(name="topico")
+@XmlAccessorType (XmlAccessType.FIELD)
+public class Topico extends ListaDeTopicos{
 	
-	public Topico(String descr, List<String> localidades, List<String> tiposMateria) {
-		setDescr(descr);
-		this.localidades = localidades != null ? localidades : new ArrayList<String>();
-		this.tiposMateria = tiposMateria != null ? tiposMateria : new ArrayList<String>();
-	}
+	@XmlAttribute(name="descr")
+	private String descr;
+	
+	@XmlAttribute(name="localidade")
+	private String localidadeDasMaterias;
+	
+	@XmlAttribute(name="tipoMateria")
+	private String tipoDasMaterias;
+	
+	private Set<Materia> materias;
+	
+	@XmlTransient
+	private Comparator<Materia> ordenacao = new Comparator<Materia>(){
+		public int compare(Materia o1, Materia o2) {
+			return o1.getCodigo().compareTo(o2.getCodigo());
+		}
+	};
 
 	public String getDescr() {
 		if (descr != null)
 			return descr;
-		if (localidades.size() == 1)
-			return localidades.get(0);
-		if (tiposMateria.size() == 1){
-			return tiposMateria.get(0);
-		}
-		return null;
+		if (getLocalidadeDasMaterias() != null)
+			return getLocalidadeDasMaterias().toUpperCase();
+		if (getTipoDasMaterias() != null)
+			return Texto.pluralizar(getTipoDasMaterias().split("\\|")[1]).toUpperCase();
+		return "";
 	}
 
 	public Topico setDescr(String descr) {
 		this.descr = descr;
 		return this;
 	}
-
-	public abstract boolean alocar(Materia m);
-
-	public List<String> getLocalidades() {
-		return localidades;
+	
+	public Set<Materia> getMaterias() {
+		return materias;
 	}
 
-	public void setLocalidades(List<String> localidades) {
-		this.localidades = localidades;
+	public void addMateria(Materia materia){
+		if (materias == null)
+			materias = new TreeSet<Materia>(ordenacao);
+		materias.add(materia);
 	}
 
-	public List<String> getTiposMateria() {
-		return tiposMateria;
-	}
-
-	public void setTiposMateria(List<String> tiposMateria) {
-		this.tiposMateria = tiposMateria;
-	}
-
-	/*public boolean podeAlocar(Materia m){
-		if (localidades.size() > 0){
-			for (Localidade l : localidades)
-				if (l.equals(m.getLocalidade()))
-					return true;
+	public boolean isVazio() {
+		if (!super.isVazio())
 			return false;
-		}
-		if (unidades.size() > 0){
-			for (Unidade u : unidades)
-				if (u.equals(m.getUnidade()))
-					return true;
+		return (materias ==null || materias.size() == 0);
+	}
+	
+	public boolean alocar(Materia m) {
+		if (super.alocar(m))
+			return true;
+		
+		if (getLocalidadeDasMaterias() != null && !m.getLocalidade().equalsIgnoreCase(getLocalidadeDasMaterias()))
 			return false;
+		if (getTipoDasMaterias() != null){
+			if (!m.getTipoMateria().split("\\|")[0].equals(getTipoDasMaterias().split("\\|")[0]))
+				return false;
+			//Edson: abaixo, atualiza o tipo de matéria com o valor completo, pois pode ter sido
+			//definido na variável xmlHierarquia do BIE apenas com a sigla em vez de sigla|nome
+			setTipoDasMaterias(m.getTipoMateria());
 		}
-		if (tiposMateria.size() > 0){
-			for (TipoMateria t : tiposMateria)
-				if (t.equals(m.getTipoMateria()))
-					return true;
-			return false;
-		}
+		addMateria(m);
 		return true;
-	}*/
+	}
 
+	public String getTipoDasMaterias() {
+		return tipoDasMaterias;
+	}
+
+	public Topico setTipoDasMaterias(String tipoMateria) {
+		this.tipoDasMaterias = tipoMateria;
+		return this;
+	}
+
+	public String getLocalidadeDasMaterias() {
+		return localidadeDasMaterias;
+	}
+
+	public Topico setLocalidadeDasMaterias(String localidade) {
+		this.localidadeDasMaterias = localidade;
+		return this;
+	}
+	
 };

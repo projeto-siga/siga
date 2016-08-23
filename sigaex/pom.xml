@@ -117,7 +117,7 @@
 
 		<dependency>
 			<groupId>nl.captcha</groupId>
-			<artifactId>simpleCaptcha</artifactId>
+			<artifactId>simplecaptcha</artifactId>
 		</dependency>
 
 		<!-- <dependency> <groupId>org.zefer.pd4ml</groupId> <artifactId>pd4ml</artifactId> 

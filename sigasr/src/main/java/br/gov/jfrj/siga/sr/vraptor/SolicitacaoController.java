@@ -631,7 +631,7 @@ public class SolicitacaoController extends SrController {
     }
     
     @Path("app/solicitacao/fecharGravar")
-    public void fecharGravar(SrSolicitacao solicitacao, String motivo, SrTipoMotivoFechamento tpMotivo, String conhecimento) throws Exception {
+    public void fecharGravar(SrSolicitacao solicitacao, String motivoFechar, SrTipoMotivoFechamento tpMotivo, String conhecimento) throws Exception {
     	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
     		throw new AplicacaoException("Número não informado");
     	
@@ -643,7 +643,7 @@ public class SolicitacaoController extends SrController {
     	}	
     	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());
     	solicitacaoEntity.fechar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solicitacao.getItemConfiguracao(), 
-    			solicitacao.getAcao(), motivo, tpMotivo, conhecimento, solicitacao.getAtributoSolicitacaoMap());    	
+    			solicitacao.getAcao(), motivoFechar, tpMotivo, conhecimento, solicitacao.getAtributoSolicitacaoMap());    	
     	result.use(Results.status()).ok();
     }
     

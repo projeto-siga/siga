@@ -15,7 +15,7 @@
 	</div>
 	<div style="display: inline" class="gt-form-row gt-width-66">
 		<label>Detalhes</label>
-		<textarea style="width: 100%" name="motivo" cols="50" rows="4"> </textarea>
+		<textarea style="width: 100%" name="motivoFechar" cols="50" rows="4"> </textarea>
     </div><br/>
 	<sigasr:classificacao metodo="fechar" />
 	<div class="gt-form-row">

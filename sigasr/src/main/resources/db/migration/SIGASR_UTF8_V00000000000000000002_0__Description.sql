@@ -11,5 +11,5 @@ insert into corporativo.cp_marcador (id_marcador, descr_marcador, id_tp_marcador
 insert into corporativo.cp_marcador (id_marcador, descr_marcador, id_tp_marcador) values (48,	'Como cadastrante', 1);
 insert into corporativo.cp_marcador (id_marcador, descr_marcador, id_tp_marcador) values (49,	'Como solicitante', 1);
 update corporativo.cp_marca set id_marcador = id_marcador - 259 where id_marcador >=300;
-delete from corporativo.cp_marcador where id_marcador >=300;
+--delete from corporativo.cp_marcador where id_marcador >=300;
 commit;

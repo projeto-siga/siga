@@ -84,7 +84,7 @@ function gravar() {
 		},
     	success: function(response) {
         	${metodo}_fechar();
-        	window.location.href = "${linTo[SolicitacaoController].exibir}?sigla=${siglaCompacta}";
+        	window.location.href = "${linkTo[SolicitacaoController].exibir}${siglaCompacta}";
     	},
     	error: function(response) {
         	var responseHtml = $(response.responseText).find("#${metodo}").html();

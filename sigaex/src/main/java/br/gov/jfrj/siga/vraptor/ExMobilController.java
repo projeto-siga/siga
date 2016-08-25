@@ -221,7 +221,7 @@ public class ExMobilController extends
 	public void aListar(final String popup, final String primeiraVez, final String propriedade, final Integer postback, final int apenasRefresh,
 			final Long ultMovIdEstadoDoc, final int ordem, final int visualizacao, final Integer ultMovTipoResp, final DpPessoaSelecao ultMovRespSel,
 			final DpLotacaoSelecao ultMovLotaRespSel, final Long orgaoUsu, final Long idTpDoc, final String dtDocString, final String dtDocFinalString,
-			final Long idTipoFormaDoc, final Integer idFormaDoc, final Long idMod, final String anoEmissaoString, final String numExpediente,
+			final Long idTipoFormaDoc, final Long idFormaDoc, final Long idMod, final String anoEmissaoString, final String numExpediente,
 			final String numExtDoc, final CpOrgaoSelecao cpOrgaoSel, final String numAntigoDoc, final DpPessoaSelecao subscritorSel, String nmSubscritorExt,
 			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
@@ -401,7 +401,7 @@ public class ExMobilController extends
 			flt.setDestinatarioSelId((daoPes(flt.getDestinatarioSelId()))
 					.getIdInicial());
 		}
-		flt.setIdFormaDoc(paramInteger("idFormaDoc"));
+		flt.setIdFormaDoc(paramLong("idFormaDoc"));
 		flt.setIdTipoFormaDoc(paramLong("idTipoFormaDoc"));
 		flt.setIdTpDoc(paramInteger("idTpDoc"));
 		flt.setLotacaoDestinatarioSelId(paramLong("lotacaoDestinatarioSel.id"));
@@ -466,14 +466,14 @@ public class ExMobilController extends
 	}
 
 	@Get("app/expediente/doc/carregar_lista_formas")
-	public void aCarregarListaFormas(Long tipoForma, Integer idFormaDoc) {
+	public void aCarregarListaFormas(Long tipoForma, Long idFormaDoc) {
 		result.include("todasFormasDocPorTipoForma",
 				this.getTodasFormasDocPorTipoForma(tipoForma));
 		result.include("idFormaDoc", idFormaDoc);
 	}
 
 	@Get("app/expediente/doc/carregar_lista_modelos")
-	public void aCarregarListaModelos(final int forma, final Long idMod) {
+	public void aCarregarListaModelos(final Long forma, final Long idMod) {
 		result.include("modelos", this.getModelos(forma));
 		result.include("idMod", idMod);
 	}
@@ -536,7 +536,7 @@ public class ExMobilController extends
 		return dao().listarExTiposFormaDoc();
 	}
 
-	private List<ExModelo> getModelos(final Integer idFormaDoc) {
+	private List<ExModelo> getModelos(final Long idFormaDoc) {
 		ExFormaDocumento forma = null;
 		if (idFormaDoc != null && idFormaDoc != 0) {
 			forma = dao().consultar(idFormaDoc, ExFormaDocumento.class, false);

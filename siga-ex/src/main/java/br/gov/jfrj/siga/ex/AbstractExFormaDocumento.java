@@ -46,7 +46,7 @@ public abstract class AbstractExFormaDocumento extends Objeto implements Seriali
 	private int hashValue = 0;
 
 	/** The composite primary key value. */
-	private Integer idFormaDoc;
+	private Long idFormaDoc;
 
 	private String siglaFormaDoc;
 
@@ -62,7 +62,7 @@ public abstract class AbstractExFormaDocumento extends Objeto implements Seriali
 	 * 
 	 * @param idFormaDoc
 	 */
-	public AbstractExFormaDocumento(final java.lang.Integer idFormaDoc) {
+	public AbstractExFormaDocumento(final java.lang.Long idFormaDoc) {
 		this.setIdFormaDoc(idFormaDoc);
 	}
 
@@ -112,7 +112,7 @@ public abstract class AbstractExFormaDocumento extends Objeto implements Seriali
 	 * 
 	 * @return java.lang.Short
 	 */
-	public java.lang.Integer getIdFormaDoc() {
+	public java.lang.Long getIdFormaDoc() {
 		return idFormaDoc;
 	}
 
@@ -168,7 +168,7 @@ public abstract class AbstractExFormaDocumento extends Objeto implements Seriali
 	 * 
 	 * @param idFormaDoc
 	 */
-	public void setIdFormaDoc(final Integer idFormaDoc) {
+	public void setIdFormaDoc(final Long idFormaDoc) {
 		this.hashValue = 0;
 		this.idFormaDoc = idFormaDoc;
 	}

@@ -90,7 +90,7 @@ public class ExModeloController extends ExSelecionavelController {
 
 			final String conteudo = modelo.getConteudoBlobMod() != null ? new String(
 					modelo.getConteudoBlobMod2(), UTF8) : null;
-			final Integer forma = modelo.getExFormaDocumento() != null ? modelo
+			final Long forma = modelo.getExFormaDocumento() != null ? modelo
 					.getExFormaDocumento().getIdFormaDoc() : null;
 			final Long nivel = modelo.getExNivelAcesso() != null ? modelo
 					.getExNivelAcesso().getIdNivelAcesso() : null;

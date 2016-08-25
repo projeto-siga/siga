@@ -43,7 +43,7 @@ public class ExFormaDocumentoController extends ExController {
 	}
 
 	@Get("app/forma/editar")
-	public void editarForma(final Integer id) {
+	public void editarForma(final Long id) {
 		assertAcesso("MOD:Gerenciar modelos");
 
 		final ExFormaDocumento forma = id != null ? recuperarForma(id) : new ExFormaDocumento();
@@ -88,7 +88,7 @@ public class ExFormaDocumentoController extends ExController {
 	}
 
 	@Get("app/forma/verificar_sigla")
-	public void aVerificarSigla(final Integer id, final String sigla) {
+	public void aVerificarSigla(final Long id, final String sigla) {
 		ExFormaDocumento formaConsulta = new ExFormaDocumento();
 
 		if (sigla != null && !sigla.isEmpty()) {
@@ -109,7 +109,7 @@ public class ExFormaDocumentoController extends ExController {
 	}
 
 	@Post("app/forma/gravar")
-	public void gravar(final Integer postback, final Integer id, final String descricao, final String sigla, final Long idTipoFormaDoc, final boolean origemExterno,
+	public void gravar(final Integer postback, final Long id, final String descricao, final String sigla, final Long idTipoFormaDoc, final boolean origemExterno,
 			final boolean origemInternoImportado, final boolean origemInternoProduzido, final boolean origemCapturado) {
 		assertAcesso("MOD:Gerenciar modelos");
 		setPostback(postback);
@@ -153,7 +153,7 @@ public class ExFormaDocumentoController extends ExController {
 		result.redirectTo("/app/forma/editar?id=" + forma.getIdFormaDoc());
 	}
 
-	private ExFormaDocumento recuperarForma(final Integer id) {
+	private ExFormaDocumento recuperarForma(final Long id) {
 		return dao().consultar(id, ExFormaDocumento.class, false);
 	}
 

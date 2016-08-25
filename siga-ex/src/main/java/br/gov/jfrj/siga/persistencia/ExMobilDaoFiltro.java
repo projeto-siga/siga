@@ -89,7 +89,7 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 
 	private Long idMod;
 
-	private Integer idFormaDoc;
+	private Long idFormaDoc;
 
 	private Integer idTpDoc;
 
@@ -153,7 +153,7 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 		return destinatarioSelId;
 	}
 
-	public Integer getIdFormaDoc() {
+	public Long getIdFormaDoc() {
 		return idFormaDoc;
 	}
 
@@ -225,7 +225,7 @@ public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 		this.destinatarioSelId = destinatarioSelId;
 	}
 
-	public void setIdFormaDoc(final Integer idFormaDoc) {
+	public void setIdFormaDoc(final Long idFormaDoc) {
 		this.idFormaDoc = idFormaDoc;
 	}
 

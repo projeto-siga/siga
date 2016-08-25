@@ -7,7 +7,7 @@
 <hibernate-mapping package="br.gov.jfrj.siga.ex">
 
 	<class name="ExFormaDocumento" schema="SIGA" table="EX_FORMA_DOCUMENTO" batch-size="500">
-		<id name="idFormaDoc" column="ID_FORMA_DOC" type="int">
+		<id name="idFormaDoc" column="ID_FORMA_DOC" type="long">
 			<generator class="sequence">
 				<param name="sequence">EX_FORMA_DOCUMENTO_SEQ</param>
 			</generator>

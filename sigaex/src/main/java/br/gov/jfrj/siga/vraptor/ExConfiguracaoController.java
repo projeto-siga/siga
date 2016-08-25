@@ -70,7 +70,7 @@ public class ExConfiguracaoController extends ExController {
 	@Get("app/expediente/configuracao/editar")
 	public void edita(Long id, boolean campoFixo, 
 			Long idOrgaoUsu, Long idTpMov, Long idTpDoc,
-			Long idMod, Integer idFormaDoc,
+			Long idMod, Long idFormaDoc,
 			Long idNivelAcesso, Long idSituacao, Long idTpConfiguracao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel, 
 			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
@@ -111,7 +111,7 @@ public class ExConfiguracaoController extends ExController {
 
 	@SuppressWarnings("all")
 	@Get("app/expediente/configuracao/excluir")
-	public void excluir(Long id, String nmTipoRetorno, Long idMod, Integer idFormaDoc) throws Exception {
+	public void excluir(Long id, String nmTipoRetorno, Long idMod, Long idFormaDoc) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);
 
 		if (id != null) {
@@ -134,14 +134,14 @@ public class ExConfiguracaoController extends ExController {
 	@Get("app/expediente/configuracao/editar_gravar")
 	public void editarGravar(Long id,
 			Long idOrgaoUsu, Long idTpMov, Long idTpDoc,
-			Long idTpFormaDoc, Long idMod, Integer forma,
+			Long idTpFormaDoc, Long idMod, Long idFormaDoc,
 			Long idNivelAcesso, Long idSituacao, Long idTpConfiguracao,
 			DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel, 
 			DpFuncaoConfiancaSelecao funcaoSel, ExClassificacaoSelecao classificacaoSel,
 			Long idOrgaoObjeto, Long idTpLotacao, String nmTipoRetorno, boolean campoFixo) throws Exception {
 
 		final ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setId(id).setTipoPublicador(null)
-				.setIdTpMov(idTpMov).setIdTpDoc(idTpDoc).setIdMod(idMod).setIdFormaDoc(forma).setIdTpFormaDoc(idTpFormaDoc)
+				.setIdTpMov(idTpMov).setIdTpDoc(idTpDoc).setIdMod(idMod).setIdFormaDoc(idFormaDoc).setIdTpFormaDoc(idTpFormaDoc)
 				.setIdNivelAcesso(idNivelAcesso).setIdSituacao(idSituacao).setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel)
 				.setLotacaoSel(lotacaoSel).setCargoSel(cargoSel).setFuncaoSel(funcaoSel).setClassificacaoSel(classificacaoSel).setIdOrgaoObjeto(idOrgaoObjeto)
 				.setIdOrgaoUsu(idOrgaoUsu).setIdTpLotacao(idTpLotacao);
@@ -156,7 +156,7 @@ public class ExConfiguracaoController extends ExController {
 			String gerenciaPublicacao, 
 			Long idTpMov, 
 			Long idTpConfiguracao,
-			Integer idFormaDoc,
+			Long idFormaDoc,
 			Long idMod,
 			Integer tipoPublicador,
 			Long idSituacao,
@@ -182,7 +182,7 @@ public class ExConfiguracaoController extends ExController {
 	@Get("app/expediente/configuracao/listar_cadastradas")
 	public void listaCadastradas(Long idTpConfiguracao, 
 			Long idOrgaoUsu, Long idTpMov, 
-			Integer idFormaDoc,  Long idMod,
+			Long idFormaDoc,  Long idMod,
 			String nmTipoRetorno,  boolean campoFixo) throws Exception {
 
 		assertAcesso(VERIFICADOR_ACESSO);
@@ -314,7 +314,7 @@ public class ExConfiguracaoController extends ExController {
 		}
 	}
 	
-	private void escreveFormRetornoExclusao(String nmTipoRetorno, Long idMod, Integer idFormaDoc) throws Exception {
+	private void escreveFormRetornoExclusao(String nmTipoRetorno, Long idMod, Long idFormaDoc) throws Exception {
 		if (MODELO.equals(nmTipoRetorno)) {
 			redirectToModelo(idMod);
 		} else if (FORMA.equals(nmTipoRetorno)) {
@@ -324,7 +324,7 @@ public class ExConfiguracaoController extends ExController {
 		}
 	}
 
-	private void redirectToForma(Integer idFormaDoc) {
+	private void redirectToForma(Long idFormaDoc) {
 		result.redirectTo("/app/forma/editar?id=" + idFormaDoc);
 	}
 	

@@ -25,7 +25,10 @@ function ${nome}_fechar(){
 }
 
 function carregouAjax${nome}(response, param){
-	${nome}_dialog.html(response);
+	if (param !== undefined) 
+		param.html(response);
+	else
+		${nome}_dialog.html(response);
 	${nome}_dialog.dialog( "open" );
 }
 

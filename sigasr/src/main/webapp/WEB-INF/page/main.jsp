@@ -1,4 +1,5 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <!-- DataTables CSS -->
 <link rel="stylesheet" type="text/css" href="/sigasr/stylesheets/main.css">
@@ -64,7 +65,7 @@
 <script src="/sigasr/javascripts/jquery.blockUI.js"></script>
 <script src="/sigasr/javascripts/jquery-config.js"></script>
 
-<sigasr:modal nome="server_error" titulo="Erro interno no servidor">
+<sigasr:modal nome="server_error" titulo="Mensagem de erro">
 	<div id="erroInterno">
 		<div id="responseText"></div>
 	</div>

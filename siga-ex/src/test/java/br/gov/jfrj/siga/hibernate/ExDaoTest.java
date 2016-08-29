@@ -92,7 +92,7 @@ public class ExDaoTest extends TestCase {
 		//flt.setSigla("TRF2-MEM-2013/00001-A");
 		
 		flt.setAnoEmissao(2013L);
-		flt.setIdFormaDoc(2);
+		flt.setIdFormaDoc(2L);
 		flt.setIdTipoMobil(1L);
 		flt.setIdOrgaoUsu(3L);
 		flt.setNumExpediente(1L);

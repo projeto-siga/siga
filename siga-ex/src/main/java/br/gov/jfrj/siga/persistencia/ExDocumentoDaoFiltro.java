@@ -63,7 +63,7 @@ public class ExDocumentoDaoFiltro extends DaoFiltroSelecionavel {
 
 	public Date dtDoc;
 
-	private Integer idFormaDoc;
+	private Long idFormaDoc;
 
 	private Integer idTpDoc;
 
@@ -119,7 +119,7 @@ public class ExDocumentoDaoFiltro extends DaoFiltroSelecionavel {
 		return destinatarioSelId;
 	}
 
-	public Integer getIdFormaDoc() {
+	public Long getIdFormaDoc() {
 		return idFormaDoc;
 	}
 
@@ -187,7 +187,7 @@ public class ExDocumentoDaoFiltro extends DaoFiltroSelecionavel {
 		this.destinatarioSelId = destinatarioSelId;
 	}
 
-	public void setIdFormaDoc(final Integer idFormaDoc) {
+	public void setIdFormaDoc(final Long idFormaDoc) {
 		this.idFormaDoc = idFormaDoc;
 	}
 

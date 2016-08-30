@@ -18,13 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.ldap.conf;
 
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import java.util.Map;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -84,8 +78,13 @@ public class LdapProperties extends ModeloPropriedade {
 	public String getSenhaLdap()  {
 		try {
 			String senhaCriptografada = this.obterPropriedade(
-					"senha").trim();
-			return descriptografarSenha(senhaCriptografada);
+					"senha");
+			if(senhaCriptografada != null){
+				senhaCriptografada= senhaCriptografada.trim();
+				return descriptografarSenha(senhaCriptografada);
+			}else{
+				return null;
+			}
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro ao obter a senha LDAP", 9, e);
 		}

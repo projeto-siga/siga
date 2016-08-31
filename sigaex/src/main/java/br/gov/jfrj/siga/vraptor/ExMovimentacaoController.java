@@ -116,7 +116,7 @@ public class ExMovimentacaoController extends ExController {
 
 		return doc;
 	}
-
+	
 	@Get("app/expediente/mov/anexar")
 	public void anexa(final String sigla, final boolean assinandoAnexosGeral) {
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
@@ -149,6 +149,35 @@ public class ExMovimentacaoController extends ExController {
 		result.include("titularSel", movimentacaoBuilder.getTitularSel());
 		result.include("request", getRequest());
 		result.include("assinandoAnexosGeral", assinandoAnexosGeral);
+	}
+
+	@Get("app/expediente/mov/assinarAnexos")
+	public void assinarAnexos(final String sigla, final boolean assinandoAnexosGeral) {
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		buscarDocumento(documentoBuilder);
+		final ExMobil mob = documentoBuilder.getMob();
+
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia().setMob(mob);
+
+		final ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(),
+				getLotaTitular(), true,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false);
+		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getTitular(),
+				getLotaTitular(), true, null, false);
+
+		result.include("mobilCompletoVO", mobilCompletoVO);
+		result.include("mobilVO", mobilVO);
+		result.include("sigla", sigla);
+		result.include("mob", mob);
+//		result.include("subscritorSel", movimentacaoBuilder.getSubscritorSel());
+//		result.include("titularSel", movimentacaoBuilder.getTitularSel());
+		result.include("request", getRequest());
+		result.include("assinandoAnexosGeral", assinandoAnexosGeral);
+		result.use(Results.page()).forwardTo(
+				"/WEB-INF/page/exMovimentacao/anexa.jsp");
 	}
 
 	@Post("app/expediente/mov/anexar_gravar")

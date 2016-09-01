@@ -1,3 +1,87 @@
+[#macro parte id titulo depende="" responsavel="" bloquear=true esconder=false]
+    [#if !esconder]
+      [#if gerar_partes!false]
+        [#if root[id]??]
+          [#local preenchido = root[id]/]
+        [#else]
+          [#local preenchido = false/]
+        [/#if]
+        [#local body][#nested/][/#local]
+        [#local hash = false/]
+          <parte id="${id}" titulo="${titulo}" preenchido="${(preenchido == "Sim")?string("1","0")}" responsavel="${responsavel}" [#if .vars["parte_mensagem_" + id]??] mensagem="${.vars["parte_mensagem_" + id]!default}" [/#if]>
+          [#if depende!=""]
+            [#list depende?split(";") as dependencia]
+              <depende id="${dependencia}" hash="hash"/>
+            [/#list]
+          [/#if]
+        </parte>
+      [#else]
+        [#local idDiv = "parte_div_" + id /] 
+        [@div id=idDiv depende=depende suprimirIndependente=true]
+          <input type="hidden" id="parte_dependentes_${id}" class="parte_dependentes" value="${id}:${depende}:${bloquear?c}:${responsavel}"/>
+          [@oculto var="parte_mensagem_${id}" /]
+          
+          <table class="parte" width="100%">
+            <tr class="header">
+              <td>${titulo}
+                <span style="float: right"><input type="button" value="Solicitar Alteração" onclick="parte_solicitar_alteracao('${id}', '${titular}', '${lotaTitular}');"/> [@checkbox titulo="Preenchimento Concluído" var=id reler=true idAjax=id id="parte_chk_"+id onclique="parte_atualizar('${titular}', '${lotaTitular}');" /]</span>
+                <span style="float: right; padding-right: 2em;">Responsável: ${responsavel}</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+              	<div id="parte_div_mensagem_${id}" class="gt-error"></div>
+				<fieldset id="parte_fieldset_${id}">[#nested]</fieldset></td>
+            </tr>
+          </table>
+          [#local titular = .vars['sigla_titular']!""]
+          [#local lotaTitular = .vars['sigla_lota_titular']!""]
+            <script type="text/javascript">
+                $(document).ready(function(){parte_atualizar('${titular}', '${lotaTitular}')});
+            </script>
+        [/@div]
+      [/#if]
+    [#else]
+        [#nested]
+    [/#if]
+[/#macro]
+
+[#-- Assinatura de Parte de Documento Colaborativo --]
+[#macro assinaturaParte doc parte formatarOrgao=false]
+  [#attempt]
+    [#assign mov = func.parteUltimaMovimentacao(doc, parte) /]
+  [#recover]
+    [#return]
+  [/#attempt]
+  <p style="font-family: Arial; font-size: 11pt; text-align: center">
+    ${(mov.subscritor.descricao)!}<br />
+  
+  [#if mov.nmFuncao??]
+    ${mov.nmFuncao} 
+  [#elseif mov.titular?? && doc.titular?? && mov.titular.idPessoa == doc.titular.idPessoa && doc.nmFuncao??]
+    ${doc.nmFuncao} 
+  [#elseif mov.subscritor?? && doc.subscritor?? && mov.subscritor.idPessoa == doc.subscritor.idPessoa && doc.nmFuncao??]
+    ${doc.nmFuncao} 
+  [#elseif (mov.titular.funcaoConfianca.nomeFuncao)??]
+    ${mov.titular.funcaoConfianca.nomeFuncao} ${(mov.titular.idPessoa != mov.subscritor.idPessoa)?string('EM EXERCÍCIO', '')} 
+  [#elseif (mov.subscritor.funcaoConfianca.nomeFuncao)??]
+    ${mov.subscritor.funcaoConfianca.nomeFuncao} 
+  [#else]
+    ${(mov.subscritor.cargo.nomeCargo)!}
+  [/#if]
+  <br />
+   
+  [#if mov.nmLotacao??]
+    ${mov.nmLotacao} 
+  [#else]
+    ${(mov.titular.lotacao.nomeLotacao)!}
+  [/#if]
+  </p>
+[/#macro]
+
+
+
+
 [#function par parameter]
     [#if param[parameter]??]
         [#return param[parameter]]
@@ -728,7 +812,7 @@ LINHA  VARIÁVEL / CONTEÚDO
 
 
 [#macro entrevista acaoGravar="" acaoExcluir="" acaoCancelar="" acaoFinalizar=""]
-    [#if gerar_entrevista!false || gerar_formulario!false]
+    [#if gerar_entrevista!false || gerar_formulario!false || gerar_partes!false]
         [#if acaoGravar!=""]
             <input type="hidden" name="acaoGravar" id="acaoGravar" value="${acaoGravar}" />
 	    <input type="hidden" name="vars" value="acaoGravar" />
@@ -748,6 +832,7 @@ LINHA  VARIÁVEL / CONTEÚDO
         [#nested]
     [/#if]
 [/#macro]
+
 [#macro documento formato="A4" orientacao="retrato" margemEsquerda="3cm" margemDireita="2cm" margemSuperior="1cm" margemInferior="2cm"]
     [#if !gerar_entrevista!false || gerar_finalizacao!false || gerar_assinatura!false]
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -915,7 +1000,7 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 [/#macro]
 
-[#macro checkbox var titulo="" default="Nao" idAjax="" reler=false onclique="" obrigatorio=false]
+[#macro checkbox var titulo="" default="Nao" idAjax="" reler=false onclique="" obrigatorio=false id=""]
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');\""]
     [#elseif reler == true]
@@ -947,9 +1032,9 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 
     [#if !gerar_formulario!false]
-    <input type="checkbox" name="${var}_chk" value="Sim"
+        <input id="${id}" type="checkbox" name="${var}_chk" value="Sim"
                [#if v=='Sim']checked[/#if] 
-               onclick="javascript: if (this.checked) document.getElementById('${var}').value = 'Sim'; else document.getElementById('${var}').value = 'Nao'; ${onclique!""}; ${jreler!""}" /> <span style="${negrito!""};${vermelho!""}">${titulo!""}</span>
+               onclick="javascript: if (this.checked) document.getElementById('${var}').value = 'Sim'; else document.getElementById('${var}').value = 'Nao'; ${onclique!""}; ${jreler!""}" /> <label for="${id}" style="${negrito!""};${vermelho!""}">${titulo!""}</label>
 
     [#else]
     <span class="valor">${v}</span>

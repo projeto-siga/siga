@@ -1,4 +1,4 @@
-<%@ tag body-content="empty"%>
+<%@ tag body-content="scriptless" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
@@ -44,6 +44,10 @@
 	</div>
 </div>
 <script>
+$(document).ready(function($) {
+	limparMensagem();	
+});
+
 function validarCampos() {
 	$("#itemNaoInformado").hide();
 	$("#erroJustificativa").hide();
@@ -68,28 +72,48 @@ function dispararFuncoesOnBlurItem() {
 	sbmt('solicitacao.itemConfiguracao', null, false, carregarAcao);
 }
 
+/**
+ * Limpa o span que contem mensagem informando que determinado input nao foi informado
+ * assim que começar a digitar nesse input
+ */
+function limparMensagem() {
+	$("#${metodo}").on("keyup", "input", function() {
+		$(this).next("span.error").text("");
+	});
+}
+
+// retirar esse metodo daqui. Nao esta intuitivo que ele existe dentro do classificacao.tag
 function gravar() {
 	if (!validarCampos()) 
 		return false; 
 	$.ajax({
     	type: "POST",
     	url: submitURL(),
-    	data: $("form").serialize(),
+    	data: $("#${metodo}").parent("form").serialize(),
     	dataType: "text",
     	"beforeSend": function () {
     		jQuery.blockUI(objBlock);
     	},
-		"complete": function () {
-			jQuery.unblockUI();
-		},
     	success: function(response) {
         	${metodo}_fechar();
+    		jQuery.unblockUI();
         	window.location.href = "${linkTo[SolicitacaoController].exibir}${siglaCompacta}";
     	},
     	error: function(response) {
-        	var responseHtml = $(response.responseText).find("#${metodo}").html();
-        	$("#${metodo}").replaceWith(responseHtml);
-    	}
+        	//criar funcao separa para tratar dos erros  		
+			if (response.getResponseHeader('Validation') === "true") {
+				$("span.error").remove();
+	        	var errors = JSON.parse(response.responseText);
+	      		for(var i = 0; i < errors.length; i++) {
+	     			var span = $('&nbsp<span class="error" style="color: red"></span>');
+	     			span.html(errors[i].message);
+	      			span.insertAfter($("[name='" + errors[i].category + "']"));
+	      		}
+			}
+			else 
+				carregouAjaxserver_error(response.responseText, $("#responseText"));
+			jQuery.unblockUI();
+        }
    	});
 }
 </script>

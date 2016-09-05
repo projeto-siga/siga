@@ -31,6 +31,7 @@ public class SrController extends SigaController {
 	public void enviarErroValidacao() {
 		HttpResult res = this.result.use(http());
 		res.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+		res.addHeader("Validation", "true");
 
 		result.use(Results.http()).body(jsonErrors().toString());
 	}

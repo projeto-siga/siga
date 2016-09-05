@@ -754,8 +754,10 @@ public class AppController extends GcController {
 
 		if (!informacao.acessoPermitido(titular, lotaTitular,
 				informacao.visualizacao.id)
-				&& informacao.podeRevisar(titular, lotaTitular) != null
-				&& movNotificacao == null)
+				&& (informacao.podeRevisar(titular, lotaTitular) == null)
+				&& (!jaRevisou(sigla))
+				&& movNotificacao == null
+				&& (!jaFoiNotificado(sigla)))
 			throw new AplicacaoException(
 					"Restrição de Acesso ("
 							+ informacao.visualizacao.nome
@@ -1205,17 +1207,10 @@ public class AppController extends GcController {
 					mov.movCanceladora = m;
 					bl.gravar(informacao, getIdentidadeCadastrante(), titular,
 							lotaTitular);
-					if (informacao.acessoPermitido(titular, lotaTitular,
-							informacao.visualizacao.id))
-						result.redirectTo(this).exibir(
+					result.redirectTo(this).exibir(
 								informacao.getSiglaCompacta(),
 								"Conhecimento revisado com sucesso!", false,
 								false);
-					else {
-						// buscar(null);
-						buscar(null, null);
-					}
-
 				}
 			}
 		}
@@ -1226,6 +1221,48 @@ public class AppController extends GcController {
 									.getSigla());
 	}
 
+	//Verifica se usuário já revisou o conhecimento, para liberar acesso ao conhecimento
+	public boolean jaRevisou(String sigla) throws Exception {
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
+		boolean jaRevisou = false;
+		if (informacao.movs != null) {
+			DpPessoa titular = getTitular();
+			DpLotacao lotaTitular = getLotaTitular();
+			SortedSet<GcMovimentacao> movsCopy = new TreeSet<GcMovimentacao>();
+			movsCopy.addAll(informacao.movs);
+			for (GcMovimentacao mov : movsCopy) {
+				if (mov.isCancelada())
+					continue;
+				if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO 
+					&& (titular.equivale(mov.pessoaTitular) || lotaTitular
+							.equivale(mov.lotacaoTitular)))
+					jaRevisou = true;								
+			}
+		}
+		return jaRevisou;
+	}
+	
+	//Verifica se usuário já foi notificado sobre o conhecimento, para liberar acesso ao conhecimento
+	public boolean jaFoiNotificado(String sigla) throws Exception {
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
+		boolean jaFoiNotificado = false;
+		if (informacao.movs != null) {
+			DpPessoa titular = getTitular();
+			DpLotacao lotaTitular = getLotaTitular();
+			SortedSet<GcMovimentacao> movsCopy = new TreeSet<GcMovimentacao>();
+			movsCopy.addAll(informacao.movs);
+			for (GcMovimentacao mov : movsCopy) {
+				if (mov.isCancelada())
+					continue;
+				if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_CIENTE
+					&& (titular.equivale(mov.pessoaTitular) || lotaTitular
+							.equivale(mov.lotacaoTitular)))
+					jaFoiNotificado = true;								
+			}
+		}
+		return jaFoiNotificado;
+	}
+	
 	@Path("/app/marcarComoInteressado/{sigla}")
 	public void marcarComoInteressado(String sigla) throws Exception {
 		GcInformacao informacao = GcInformacao.findBySigla(sigla);

@@ -101,6 +101,9 @@ public class SolicitacaoController extends SrController {
     public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em,  SrValidator srValidator, Validator validator) {
         super(request, result, dao, so, em, srValidator);
         this.validator = validator;
+        
+        result.on(AplicacaoException.class).forwardTo(this).appexception();
+        result.on(Exception.class).forwardTo(this).exception();
     }
 
     @SuppressWarnings("unchecked")
@@ -596,8 +599,6 @@ public class SolicitacaoController extends SrController {
     	
     	if (!validarFormReclassificar(solicitacao)) {
         	enviarErroValidacao();
-        	result.include("errors", srValidator.getErros());
-        	result.forwardTo(this).reclassificar(solicitacao);
         	return;
     	}	
     	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());
@@ -637,8 +638,6 @@ public class SolicitacaoController extends SrController {
     	
     	if (!validarFormReclassificar(solicitacao)) {
         	enviarErroValidacao();
-        	result.include("errors", srValidator.getErros());
-        	result.forwardTo(this).fechar(solicitacao);
         	return;
     	}	
     	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());

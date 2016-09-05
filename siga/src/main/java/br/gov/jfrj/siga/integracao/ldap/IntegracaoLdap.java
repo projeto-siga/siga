@@ -51,13 +51,18 @@ public class IntegracaoLdap {
 			throw new AplicacaoException("Órgão do usuário não configurado para integração com AD");
 		}
 
-		ILdapDao ldap = new LdapDaoImpl(false);
-		ldap.conectarComSSL(prop.getServidorLdap(), prop.getPortaSSLLdap(), prop.getUsuarioLdap(), prop.getSenhaLdap(), prop.getKeyStore());
+		ILdapDao ldap = conectarLDAP(prop);
 
 
 		String cnPessoa = id.getDpPessoa().getSesbPessoa() + id.getDpPessoa().getMatricula();
 		ldap.definirSenha("CN=" + cnPessoa +  "," + prop.getDnUsuarios() , senha);
 		limparSenhaSincDB(id);		
+	}
+
+	public ILdapDao conectarLDAP(IntegracaoLdapProperties prop) {
+		ILdapDao ldap = new LdapDaoImpl(false);
+		ldap.conectarComSSL(prop.getServidorLdap(), prop.getPortaSSLLdap(), prop.getUsuarioLdap(), prop.getSenhaLdap(), prop.getKeyStore());
+		return ldap;
 	}
 
 	private void limparSenhaSincDB(CpIdentidade id) throws AplicacaoException {
@@ -75,11 +80,16 @@ public class IntegracaoLdap {
 		
 	}
 
-	private IntegracaoLdapProperties configurarProperties(String localidade) {
-		String ambiente = System.getProperty("ambiente", "");
+	public IntegracaoLdapProperties configurarProperties(String localidade) {
 		IntegracaoLdapProperties prop = new IntegracaoLdapProperties();
-		if (localidade.length()>0 && ambiente.length()>0){
-			prop.setPrefixo("siga.cp.sinc.ldap." + localidade + "." +ambiente) ;	
+		try {
+			String ambiente = prop.obterPropriedade("ambiente");
+			if (localidade.length()>0 && ambiente.length()>0){
+				prop.setPrefixo("siga.cp.sinc.ldap." + localidade + "." +ambiente) ;	
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return prop;
 	}

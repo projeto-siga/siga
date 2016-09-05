@@ -304,31 +304,33 @@
 							</table>
 						</form>
 					</div>
-					<br />
-					<div id="dados-assinatura" style="visible: hidden">
-						<input type="hidden" name="ad_url_base" value="" />
-						<input type="hidden" name="ad_url_next" value="/sigaex/app/expediente/doc/atualizar_marcas?sigla=${mobilVO.sigla}" />
-						<tags:assinatura_botoes
-							autenticar="true"
-							assinarComSenha="${f:podeAssinarMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}"
-							autenticarComSenha="${f:podeConferirCopiaMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
-					
-						<c:set var="botao" value="ambos" />
-						<c:set var="lote" value="true" />
-					</div>
+					<br />					
 				</div>
 			</c:when>
 			<c:otherwise>
 				<c:if test="${assinandoAnexosGeral}">
 					<script language="javascript">
-						montaTableAssinados(true);
+						montaTableAssinados(true);						
 					</script>
 				</c:if>
 			</c:otherwise>
 		</c:choose>
 		<div class="gt-content clearfix">
-			<div id="tableAssinados"></div>
+			<div id="tableAssinados"><br/></div>
+		</div>   
+		<c:if test="${assinandoAnexosGeral}">     
+		<div id="dados-assinatura" style="visible: hidden">
+			<input type="hidden" name="ad_url_base" value="" />
+			<input type="hidden" name="ad_url_next" value="/sigaex/app/expediente/doc/atualizar_marcas?sigla=${mobilVO.sigla}" />
+			<tags:assinatura_botoes
+				autenticar="true"
+				assinarComSenha="${f:podeAssinarMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}"
+				autenticarComSenha="${f:podeConferirCopiaMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
+					
+				<c:set var="botao" value="ambos" />
+				<c:set var="lote" value="true" />
 		</div>
+		</c:if>
 	</div>
 	<tags:assinatura_rodape/>
 </siga:pagina>

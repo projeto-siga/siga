@@ -110,12 +110,16 @@
 								</tr>
 							</c:if>
 	     				</c:forEach>
-				</table>
-			</form>
+				</table>				
+			</form>			
 	    </div>
+	    
+	    
 
 	</c:when>
 	<c:otherwise>
 			<b>Não há anexos assinados</b>
-	</c:otherwise>
+	</c:otherwise>	
 </c:choose>
+<br/><br/>
+

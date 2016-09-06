@@ -40,6 +40,18 @@ public class SrAtributoSolicitacaoMap
 		this.valorAtributo = valorAtributo;
 	}
 	
+    public boolean isValorPreenchido() {
+    	return getValorAtributo() != null; 
+    }
+	
+	public boolean isAtributoSolicitacaoInicial() {
+		return getIdAtributoSolicitacao() == null;
+	}
+
+	public void definirAtributoSolicitacaoComoInicial() {
+		setIdAtributoSolicitacao(null);
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof SrAtributoSolicitacaoMap){

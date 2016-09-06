@@ -675,25 +675,31 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("app/solicitacao/escalonar")
-    public void escalonar(String sigla, SrItemConfiguracao itemConfiguracao) throws Exception {
-    	if (sigla == null || sigla.trim().equals(""))
+    public void escalonar(SrSolicitacao solicitacao) throws Exception {
+    	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
     		throw new AplicacaoException("Número não informado");
-    	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
+    	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());
     	
+    	Hibernate.initialize(solicitacaoEntity.getMeuAtributoSolicitacaoSet());
     	//Edson: por algum motivo, está sendo necessário dar o detach na solicitacaoPai, se não, o JPA entende que o arquivo 
         //foi alterado e precisa ser salvo, o que dá erro pois o arquivo também é detached:
-        if (solicitacao.isFilha())
-        	for (SrSolicitacao sol : solicitacao.getPaiDaArvore().getSolicitacaoFilhaSetRecursivo())
+        if (solicitacaoEntity.isFilha())
+        	for (SrSolicitacao sol : solicitacaoEntity.getPaiDaArvore().getSolicitacaoFilhaSetRecursivo())
         		em().detach(sol);
     	
     	//Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados:
-        em().detach(solicitacao);
+        em().detach(solicitacaoEntity);
     	
-    	solicitacao.setTitular(getTitular());
-        solicitacao.setLotaTitular(getLotaTitular());
-        if (itemConfiguracao != null)
-        	solicitacao.setItemConfiguracao(itemConfiguracao);
-        else solicitacao.setItemConfiguracao(solicitacao.getItemAtual());
+        solicitacaoEntity.setTitular(getTitular());
+        solicitacaoEntity.setLotaTitular(getLotaTitular());
+        if (solicitacao.getItemConfiguracao() != null)
+        	solicitacaoEntity.setItemConfiguracao(solicitacao.getItemConfiguracao());
+        else solicitacaoEntity.setItemConfiguracao(solicitacaoEntity.getItemAtual());
+        if (solicitacao.getAcao() != null)
+        	solicitacaoEntity.setAcao(solicitacao.getAcao());
+        else solicitacaoEntity.setAcao(solicitacaoEntity.getAcaoAtual());
+        if (solicitacao.getAtributoSolicitacaoMap() != null && !solicitacao.getAtributoSolicitacaoMap().isEmpty())
+        	solicitacaoEntity.setAtributoSolicitacaoMap(solicitacao.getAtributoSolicitacaoMap());
 
     	CpConfiguracao filtro = new CpConfiguracao();
         filtro.setDpPessoa(getTitular());
@@ -708,40 +714,42 @@ public class SolicitacaoController extends SrController {
                         || situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT))
                 criarFilhaDefault = true;
         
-        result.include("itemConfiguracao", solicitacao.getItemAtual());
-        result.include("acao", solicitacao.getAcaoAtual());
-        result.include("siglaCompacta", solicitacao.getSiglaCompacta());
-        result.include("solicitante", solicitacao.getSolicitante());
-        result.include("local", solicitacao.getLocal());
-        result.include("acoesEAtendentes", solicitacao.getAcoesEAtendentes());
+        incluirListasReclassificacao(solicitacaoEntity);
         result.include("criarFilhaDefault", criarFilhaDefault);
-        result.include("isFechadoAutomaticamente", solicitacao.isFechadoAutomaticamente());
-        result.include("solicitacaoPai", solicitacao.getSolicitacaoPai());
-        result.include("isPai", solicitacao.isPai());
-        result.include("codigo", solicitacao.isFilha() ? solicitacao.getSolicitacaoPai().getCodigo() : solicitacao.getCodigo());
+        result.include("isFechadoAutomaticamente", solicitacaoEntity.isFechadoAutomaticamente());
+        result.include("solicitacaoPai", solicitacaoEntity.getSolicitacaoPai());
+        result.include("isPai", solicitacaoEntity.isPai());
+        result.include("codigo", solicitacaoEntity.isFilha() ? solicitacaoEntity.getSolicitacaoPai().getCodigo() : solicitacaoEntity.getCodigo());
         result.include(TIPO_MOTIVO_ESCALONAMENTO_LIST, SrTipoMotivoEscalonamento.values());
-        result.include("idSolicitacao",solicitacao.getId());
+        result.include("idSolicitacao",solicitacaoEntity.getId());
         
     }
 
     @Path("app/solicitacao/escalonarGravar")
-    public void escalonarGravar(String sigla, SrItemConfiguracao itemConfiguracao, SrAcao acao, DpLotacao atendente, DpLotacao atendenteNaoDesignado, 
-    		SrConfiguracao designacao, SrTipoMotivoEscalonamento motivo, String descricao,
+    public void escalonarGravar(SrSolicitacao solicitacao, DpLotacao atendente, DpLotacao atendenteNaoDesignado, 
+        	SrConfiguracao designacao, SrTipoMotivoEscalonamento motivo, String descricao,
             Boolean criaFilha, Boolean fechadoAuto) throws Exception {
-        
-        if (sigla == null || sigla.trim().equals(""))
+          	
+    	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
     		throw new AplicacaoException("Número não informado");
+    	
+    	if (!validarFormReclassificar(solicitacao)) {
+        	enviarErroValidacao();
+        	return;
+    	}	
     		
-    	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
+    	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());
         
         if (criaFilha) {
-        	SrSolicitacao filha = solicitacao.escalonarCriandoFilha(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 
-        			itemConfiguracao, acao, designacao, atendenteNaoDesignado, fechadoAuto, descricao);
+        	SrSolicitacao filha = solicitacaoEntity.escalonarCriandoFilha(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 
+        			solicitacao.getItemConfiguracao(), solicitacao.getAcao(), designacao, atendenteNaoDesignado,
+        			fechadoAuto, descricao, solicitacao.getAtributoSolicitacaoMap());
         	result.redirectTo(this).exibir(filha.getSiglaCompacta(), todoOContexto(), ocultas());
         } 
         else {
-        	solicitacao.escalonarPorMovimentacao(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 
-        			itemConfiguracao, acao, designacao, atendenteNaoDesignado, motivo, descricao, atendente);
+        	solicitacaoEntity.escalonarPorMovimentacao(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 
+        			solicitacao.getItemConfiguracao(), solicitacao.getAcao(), designacao, atendenteNaoDesignado, 
+        			motivo, descricao, atendente, solicitacao.getAtributoSolicitacaoMap());
         	result.redirectTo(this).exibir(solicitacao.getSiglaCompacta(), todoOContexto(), ocultas());
         }
     }

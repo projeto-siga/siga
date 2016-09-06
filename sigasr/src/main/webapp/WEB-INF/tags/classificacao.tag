@@ -5,6 +5,7 @@
 <%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
 
 <%@ attribute name="metodo" required="true"%>
+<%@ attribute name="exibeLotacaoNaAcao" required="false"%>
 
 <div id="${metodo}" class="gt-form-row">
 	<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label>
@@ -28,7 +29,10 @@
 					<c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
 						<optgroup  label="${cat.tituloAcao}">
 							<c:forEach items="${acoesEAtendentes.get(cat)}" var="tarefa">
-								<option value="${tarefa.acao.idAcao}" ${solicitacao.acao.idAcao.equals(tarefa.acao.idAcao) ? 'selected' : ''}> ${tarefa.acao.tituloAcao}</option>
+								<option value="${tarefa.acao.idAcao}" ${solicitacao.acao.idAcao.equals(tarefa.acao.idAcao) ? 'selected' : ''}> 
+									${tarefa.acao.tituloAcao}
+									<c:if test="${exibeLotacaoNaAcao == true}">(${tarefa.conf.atendente.siglaCompleta})</c:if>
+								</option>
 							</c:forEach>					 
 						</optgroup>
 					</c:forEach>
@@ -86,10 +90,11 @@ function limparMensagem() {
 function gravar() {
 	if (!validarCampos()) 
 		return false; 
+	
 	$.ajax({
     	type: "POST",
     	url: submitURL(),
-    	data: $("#${metodo}").parent("form").serialize(),
+    	data: $("#${metodo}").closest("form").serialize(),
     	dataType: "text",
     	"beforeSend": function () {
     		jQuery.blockUI(objBlock);

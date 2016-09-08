@@ -38,7 +38,7 @@ public class Correio {
 					+ lotResponsavel.getSigla();
 			email = "";
 			for (DpPessoa p : lotResponsavel.getDpPessoaLotadosSet()) {
-				if (p.getHisDtFim() == null){
+				if (p.getHisDtFim() == null && p.getEmailPessoaAtual() != null){
 					if (email.length() > 0){
 						email += " ";
 					}

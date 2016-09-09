@@ -56,7 +56,7 @@
 							url : '/sigaex/app/expediente/mov/mostrar_anexos_assinados?sigla=${mobilVO.sigla}',
 							success : function(data) {
 								$('#tableAssinados').html(data);
-								window.setTimeout(mostraBotaoAssinatura, 0);
+								window.setTimeout(mostraBotaoAssinatura, 300);
 							}
 						});
 			} else
@@ -310,8 +310,7 @@
 								</c:forEach>
 							</table>
 						</form>
-					</div>
-					<br />					
+					</div>									
 				</div>
 			</c:when>
 			<c:otherwise>
@@ -322,8 +321,7 @@
 				</c:if>
 			</c:otherwise>
 		</c:choose>
-		<div class="gt-content clearfix">
-			<br />
+		<div class="gt-content clearfix">			
 			<div id="tableAssinados"><br/></div>
 		</div>   
 		

@@ -9,6 +9,7 @@
 
 <c:choose>
 	<c:when test="${(not empty mobilVO.movs)}">
+	    <br/>
 	    <h2>Anexos Assinados</h2>
 		<div class="gt-content-box gt-for-table">
 		    <form name="frm_anexo" id="frm_anexo" class="form">
@@ -112,14 +113,13 @@
 	     				</c:forEach>
 				</table>				
 			</form>			
-	    </div>
-	    
-	    
+	    </div>	    
 
 	</c:when>
 	<c:otherwise>
 			<b>Não há anexos assinados</b>
 	</c:otherwise>	
 </c:choose>
-<br/><br/>
+<br/>
+
 

@@ -3684,3 +3684,233 @@ Pede deferimento.</span><br/><br/><br/>
          [#return "ES" /]
     [/#if]
 [/#function]
+
+[#macro materiasBoletimInterno materias]
+				[#assign ultAbertura="" /]
+            	[#list materias as d]   
+					[#if ultFecho?? && ultFecho != d.fecho]
+						<div align="center">${ultFecho!}</div><br/>
+					[/#if]
+                    <span style="font-weight: bold">${d.numero}</span>
+                    [#if ultAbertura != d.abertura]
+                    	<div align="center">${d.abertura}</div><br/>
+                    [/#if]
+					${d.conteudo}
+					[#assign ultFecho=d.fecho /]
+                    [#assign ultAbertura=d.abertura /]
+                    <br/>
+				[/#list]
+		        <div align="center">${ultFecho!}</div>
+                <br/>
+				[#assign ultFecho="" /]
+                [#assign ultAbertura="" /]
+            [/#macro]
+
+[#macro boletimInterno xmlHierarquia templateInfosComplementaresEntrevista templateInfosComplementaresDocumento pathImgCabecalho]
+														
+	[@entrevista acaoGravar="gravarBIE" acaoExcluir="excluirBIE" acaoCancelar="refazerBIE" acaoFinalizar="finalizarBIE"]
+		${templateInfosComplementaresEntrevista}
+		[@grupo titulo="Documentos a Publicar"]
+			<table>
+				[#assign publicacoes = func.consultarDocsDisponiveisParaInclusaoEmBoletim(doc.lotaCadastrante.orgaoUsuario)!/]
+				[#if publicacoes??]
+					[#list publicacoes as ex ]
+						<tr>
+							<td>[@checkbox var="doc_boletim${ex.idDoc!}" titulo="" default="Sim"/]</td>
+							<td><a href="javascript:void(0)" onclick="javascript: window.open('/sigaex/expediente/doc/exibir.action?popup=true&sigla=${ex.sigla!}', '_new', 	'width=700,height=500,scrollbars=yes,resizable')">${ex.codigo!}</a></td>
+							<td>&nbsp;&nbsp;&nbsp;&nbsp;${ex.dtFinalizacaoDDMMYY!}</td>
+							<td>&nbsp;&nbsp;&nbsp;&nbsp;${(ex.lotaCadastrante.sigla)!}</td>
+							<td>&nbsp;&nbsp;&nbsp;&nbsp;${ex.descrDocumento!}</td>
+							<td>&nbsp;&nbsp;&nbsp;&nbsp;${ex.sigla!}</td>
+							<td>&nbsp;&nbsp;&nbsp;&nbsp;${ex.idDoc!}</td>
+							<td style="padding-left: 30px">
+								<a href="/sigaex/expediente/mov/cancelar_pedido_publicacao_boletim.action?sigla=${ex.sigla!}">Cancelar Pedido</a>
+							</td>	
+						</tr>
+					[/#list]
+				[/#if]
+			</table>
+		[/@grupo]
+		
+		[@grupo titulo="Documentos Selecionados"]
+			<table>
+				[#assign publicacoesPorDoc = (func.consultarDocsInclusosNoBoletim(doc))! /]			      	
+				[#if publicacoesPorDoc??]
+					[#list publicacoesPorDoc as ex]
+						<tr>
+							<td>[@checkbox var="doc_boletim${ex.idDoc!}" titulo="" default="Sim"/]</td>
+							<td><a href="javascript:void(0)"
+								onclick="javascript: window.open('/sigaex/expediente/doc/exibir.action?popup=true&sigla=${ex.sigla!}', '_new', 'width=700,height=500,scrollbars=yes,resizable')">${ex.codigo!}</a></td>
+							<td style="padding-left: 30px">&nbsp;&nbsp;&nbsp;&nbsp${ex.dtFinalizacaoDDMMYY!}</td>
+							<td style="padding-left: 30px">&nbsp;&nbsp;&nbsp;&nbsp${ex.lotaCadastrante.sigla!}</td>
+							<td style="padding-left: 30px">&nbsp;&nbsp;&nbsp;&nbsp${ex.descrDocumento!}</td>
+						</tr>
+					[/#list]
+				[/#if]
+			</table>
+		[/@grupo]
+	[/@entrevista]
+	
+	[@documento]
+    
+			<!-- INICIO PRIMEIRO CABECALHO
+			<table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
+				<table width="100%" align="left" border="0" bgcolor="#FFFFFF">
+					<tr bgcolor="#FFFFFF">
+						<td align="left" valign="bottom" width="100%"><img
+							src="${pathImgCabecalho}" width="450" height="65" /></td>
+					</tr>
+				</table>
+			</td></tr>
+			<tr>
+				<td style="border-width: 2px 0px 2px 0px; border-style: solid; padding-bottom: 0px">
+					<table width="100%">
+						<tr>
+							<td align="left" width="50%">
+								${doc.codigo!}
+							</td>
+							<td align="right" width="50%">
+								Publicação Diária - Data: ${doc.dtDocDDMMYYYY!}
+							</td>	
+						</tr>
+					</table>
+				</td>
+			</tr>
+			</table>
+			
+			FIM PRIMEIRO CABECALHO -->		
+	
+			[@br/]
+			[@br/]
+			[@br/]
+	
+			<!-- INICIO CABECALHO
+				<table width="100%" bgcolor="#FFFFFF">
+					<tr>
+						<td valign="bottom" align="center" style="border-width: 0px 0px 1px 0px; border-style: solid; padding-top: 3px">
+							<span style="font-size:11px">${doc.codigo!} de ${doc.dtDocDDMMYY!}</span>
+						</td>
+					</tr>
+				</table>
+			FIM CABECALHO -->		
+		        
+			[#if lotaCadastrante??]
+				[#assign hBIE=func.obterBIE(doc, xmlHierarquia)!/]
+			[/#if]
+	
+			[#if hBIE??]
+				[#list hBIE.topicos as topico]
+					[#if !topico.vazio]
+						<table align="left" border="0" width="100%" bgcolor="#FFFFFF">
+							<tr>
+                            	[#if topico.descr??]
+								<td valign="bottom" style="border-width: 0px 0px 0px 0px; border-style: solid; padding-top: 3px">
+								<h2>${(topico.descr)!}</h2>
+								</td>
+                                [/#if]
+							</tr>
+						</table>	   
+                        [#if topico.materias??]
+                        	[@materiasBoletimInterno topico.materias /]
+                        [/#if]
+						[#if topico.topicos??]
+                        	[#list topico.topicos as subTopico]
+		                    	[#if !subTopico.vazio]
+									<span style="page-break-inside: avoid">
+										[#if subTopico.descr??]<h3 align="right">${(subTopico.descr)!}</h3>[/#if]
+										[@materiasBoletimInterno subTopico.materias /]
+									</span>
+                                    <br/>
+		                        [/#if] 
+							[/#list] 
+                        [/#if]
+                        <br/><br/>
+					[/#if]
+				[/#list] 
+			[/#if] 
+	
+			<span>&nbsp;</span>
+			[@br/]
+			<center><span style="font-size: 15px;">********************************* FIM *********************************</span></center>
+		
+		
+			<!-- INICIO PRIMEIRO RODAPE
+			[#assign idOrgaoUsu=""/]
+			[#assign acronimoOrgaoUsu=""/]
+			[#assign descricaoOrgaoUsu=""/]
+	
+			[#if !mov??]
+				[#if doc.lotaCadastrante??]
+					[#assign descricaoOrgaoUsu=(doc.lotaCadastrante.orgaoUsuario.descricao)!/]
+					[#assign idOrgaoUsu=(doc.lotaCadastrante.orgaoUsuario.idOrgaoUsu)!/]
+					[#assign acronimoOrgaoUsu=(doc.lotaCadastrante.orgaoUsuario.acronimoOrgaoUsu)!/]
+				[/#if]
+			[#else]
+				[#assign descricaoOrgaoUsu=mov.lotaCadastrante.orgaoUsuario.descricao/]
+				[#assign idOrgaoUsu=mov.lotaCadastrante.orgaoUsuario.idOrgaoUsu/]
+				[#assign acronimoOrgaoUsu=mov.lotaCadastrante.orgaoUsuario.acronimoOrgaoUsu/]
+			[/#if]
+	
+			<span align="center">
+			<table bgcolor="#000000" width="96%">
+				<tr>
+					<td width="100%">
+						<table width="100%" align="left" bgcolor="#FFFFFF">
+							<col width="15%"></col>
+							<col width="85%"></col>
+							<tr bgcolor="#FFFFFF">
+								<td width="15%" align="left" valign="bottom"><img
+									src="contextpath/imagens/brasao2.png" width="65" height="65" />
+								</td>
+								<td>
+									<table align="left" width="100%" bgcolor="#FFFFFF">
+										<tr>
+											<td width="18%" width="100%" align="left">
+											<p style="font-size: 11pt;">${func.resource('siga.ex.modelos.cabecalho.titulo')!}</p>
+											</td>
+										</tr>
+										[#if func.resource('siga.ex.modelos.cabecalho.subtitulo')??]
+											<tr>
+												<td width="100%" align="left">
+												<p style="font-size: 10pt; font-weight: bold;">${func.resource('siga.ex.modelos.cabecalho.subtitulo')!}</p>
+												</td>
+											</tr>
+										[/#if]
+										<tr>
+											<td width="100%" align="left">
+												<p style="font-size: 8pt;">
+												[#if !mov??]
+													[#if doc.lotaCadastrante??]
+														${(doc.lotaCadastrante.orgaoUsuario.descricaoMaiusculas)!}
+													[/#if]
+												[#else]
+													${(mov.lotaCadastrante.orgaoUsuario.descricaoMaiusculas)!}
+												[/#if]</p>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>						
+					</td>
+				</tr>
+				<tr>
+					<td width="100%" style="padding-left: 0px; margin-left: 0px;">
+						${templateInfosComplementaresDocumento}
+					</td>
+				</tr>
+			</table>			
+	        </span>		
+		FIM PRIMEIRO RODAPE -->
+	
+		<!-- INICIO RODAPE
+			<table width="100%" border="0" cellpadding="0" bgcolor="#000000">
+				<col></col>
+				<tr>
+					<td width="100%" align="right"><div id="numero_pagina" /></td>
+				</tr>
+			</table>
+		FIM RODAPE -->		
+	[/@documento]													
+[/#macro]
+

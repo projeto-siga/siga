@@ -4,11 +4,9 @@ import java.util.Date;
 
 public class Materia {
 
-	private Localidade localidade;
-	
-	private Unidade unidade;
+	private String localidade;
 
-	private TipoMateria tipoMateria;
+	private String tipoMateria;
 
 	private String numero;
 
@@ -19,17 +17,19 @@ public class Materia {
 	private String fecho;
 	
 	private Date dt;
+	
+	private String codigo;
 
 	public Materia() {
 
 	}
 
-	public Localidade getLocalidade() {
+	public String getLocalidade() {
 		return localidade;
 
 	}
 
-	public TipoMateria getTipoMateria() {
+	public String getTipoMateria() {
 		return tipoMateria;
 	}
 
@@ -65,11 +65,11 @@ public class Materia {
 		this.fecho = fecho;
 	}
 
-	public void setLocalidade(Localidade localidade) {
+	public void setLocalidade(String localidade) {
 		this.localidade = localidade;
 	}
 
-	public void setTipoMateria(TipoMateria tipoMateria) {
+	public void setTipoMateria(String tipoMateria) {
 		this.tipoMateria = tipoMateria;
 	}
 
@@ -81,12 +81,11 @@ public class Materia {
 		this.dt = dt;
 	}
 
-	public Unidade getUnidade() {
-		return unidade;
+	public String getCodigo() {
+		return codigo;
 	}
 
-	public void setUnidade(Unidade unidade) {
-		this.unidade = unidade;
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
-
 }

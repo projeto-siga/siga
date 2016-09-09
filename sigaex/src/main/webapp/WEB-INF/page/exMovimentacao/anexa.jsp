@@ -56,10 +56,17 @@
 							url : '/sigaex/app/expediente/mov/mostrar_anexos_assinados?sigla=${mobilVO.sigla}',
 							success : function(data) {
 								$('#tableAssinados').html(data);
+								window.setTimeout(mostraBotaoAssinatura, 300);
 							}
 						});
 			} else
 				($('#tableAssinados').html(''));
+		}
+
+		function mostraBotaoAssinatura(){
+			if($("input[name^='ad_chk']").length > 0){
+				$('#dados-assinatura').show();
+				}
 		}
 
 		/**
@@ -303,8 +310,7 @@
 								</c:forEach>
 							</table>
 						</form>
-					</div>
-					<br />					
+					</div>									
 				</div>
 			</c:when>
 			<c:otherwise>
@@ -315,22 +321,27 @@
 				</c:if>
 			</c:otherwise>
 		</c:choose>
-		<div class="gt-content clearfix">
+		<div class="gt-content clearfix">			
 			<div id="tableAssinados"><br/></div>
 		</div>   
-		<c:if test="${assinandoAnexosGeral}">     
-		<div id="dados-assinatura" style="visible: hidden">
-			<input type="hidden" name="ad_url_base" value="" />
-			<input type="hidden" name="ad_url_next" value="/sigaex/app/expediente/doc/atualizar_marcas?sigla=${mobilVO.sigla}" />
-			<tags:assinatura_botoes
-				autenticar="true"
-				assinarComSenha="${f:podeAssinarMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}"
-				autenticarComSenha="${f:podeConferirCopiaMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
+		
+			<div id="dados-assinatura" style="display: none">
+			    
+				<input type="hidden" name="ad_url_base" value="" />
+				<input type="hidden" name="ad_url_next" value="/sigaex/app/expediente/doc/atualizar_marcas?sigla=${mobilVO.sigla}" />
+				<tags:assinatura_botoes
+					autenticar="true"
+					assinarComSenha="${f:podeAssinarMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}"
+					autenticarComSenha="${f:podeConferirCopiaMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
 					
-				<c:set var="botao" value="ambos" />
-				<c:set var="lote" value="true" />
+					<c:set var="botao" value="ambos" />
+					<c:set var="lote" value="true" />
 		</div>
-		</c:if>
+		<script>
+			mostraBotaoAssinatura();
+		</script>
+		
+		
 	</div>
 	<tags:assinatura_rodape/>
 </siga:pagina>

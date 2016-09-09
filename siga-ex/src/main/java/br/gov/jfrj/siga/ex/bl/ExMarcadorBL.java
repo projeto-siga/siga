@@ -587,9 +587,7 @@ public class ExMarcadorBL {
 					movDest[nivelMDest].getDtIniMov(),
 					movDest[nivelMDest].getResp(),
 					movDest[nivelMDest].getLotaResp());
-			// Edson: nao calcular nada, por enquanto
-			// calcularMarcadoresFuturosTemporalidade(set, mob,
-			// movDest[nivelMDest], mDest[nivelMDest]);
+			calcularMarcadoresFuturosTemporalidade(movDest[nivelMDest], mDest[nivelMDest]);
 		}
 
 		return set;

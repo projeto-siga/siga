@@ -3835,12 +3835,12 @@ public class ExBL extends CpBL {
 			for (ExMobil apenso : mob.getApensos()) {
 				if (apenso.getId() == mobPai.getId())
 					throw new AplicacaoException(
-							"não é possível juntar um documento a um documento que estáapensado a ele.");
+							"não é possível juntar um documento a um documento que está apensado a ele.");
 			}
 
 			if (!getComp().podeSerJuntado(docTitular, lotaCadastrante, mobPai))
 				throw new AplicacaoException(
-						"A via não pode ser juntada ao documento porque ele estáem trânsito, arquivado, juntado, cancelado, arquivado, pendente de assinatura ou encontra-se em outra lotação");
+						"A via não pode ser juntada ao documento porque ele está em trânsito, arquivado, juntado, cancelado, pendente de assinatura ou encontra-se em outra lotação");
 		}
 
 		final ExMovimentacao mov;

@@ -2453,10 +2453,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 						CpOrgaoUsuario.class, false));
 			else if (s.startsWith("L"))
 				l.add(dao.consultar(Long.parseLong(s.substring(1)),
-						DpLotacao.class, false));
+						DpLotacao.class, false).getLotacaoAtual());
 			else if (s.startsWith("P"))
 				l.add(dao.consultar(Long.parseLong(s.substring(1)),
-						DpPessoa.class, false));
+						DpPessoa.class, false).getPessoaAtual());
 		}
 
 		return l;

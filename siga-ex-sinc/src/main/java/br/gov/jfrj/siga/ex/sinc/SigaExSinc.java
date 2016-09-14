@@ -263,7 +263,7 @@ public class SigaExSinc {
 
 	protected static String CalcularDiretorio(String dir, String filepath,
 			String xmlpath) {
-		String s = filepath;
+		String s = filepath.replace("\\", "/");
 		// Remover o nome do arquivo
 		//
 		s = s.substring(0, s.lastIndexOf("/"));

@@ -23,6 +23,8 @@ import java.util.Comparator;
 public class SincronizavelComparator implements Comparator<Sincronizavel> {
 
 	public int compare(Sincronizavel o1, Sincronizavel o2) {
+		if (o1 == o2)
+	        return 0;
 		int i = o1.getClass().getName().compareTo(o2.getClass().getName());
 		if (i != 0)
 			return i;

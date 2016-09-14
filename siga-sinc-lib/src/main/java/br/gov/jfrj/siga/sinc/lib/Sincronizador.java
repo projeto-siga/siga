@@ -66,12 +66,16 @@ public class Sincronizador {
 		for (Sincronizavel s : this.setAntigo)
 			this.map.put(getSicronizavelKey(s), s);
 	}
+	
+	private void encaixar() throws AplicacaoException {
+        encaixar(false);
+	}
 
 	// Executa algoritmo de comparação entre as listas xml e tabela e
 	// preenche
 	// as listas: inserir, excluir e atualizar.
 	//
-	private void encaixar() throws AplicacaoException {
+	private void encaixar(boolean naoExcluir) throws AplicacaoException {
 		Iterator<Sincronizavel> iNovo = setNovo.iterator();
 		Iterator<Sincronizavel> iAntigo = setAntigo.iterator();
 
@@ -96,7 +100,8 @@ public class Sincronizador {
 			} else if (oNovo == null
 					|| (oAntigo != null && sc.compare(oNovo, oAntigo) > 0)) {
 				// O corp não existe no xml
-				list.add(new Item(Item.Operacao.excluir, null, oAntigo));
+				if (!naoExcluir)
+			        list.add(new Item(Item.Operacao.excluir, null, oAntigo));
 				// excluir.add(oTabela);
 				if (iAntigo.hasNext())
 					oAntigo = iAntigo.next();
@@ -132,10 +137,14 @@ public class Sincronizador {
 		iNovo = null;
 		iAntigo = null;
 	}
-
+	
 	public List<Item> getOperacoes(Date dt) throws AplicacaoException {
+        return getOperacoes(dt, false);
+	}
+
+	public List<Item> getOperacoes(Date dt, boolean naoExcluir) throws AplicacaoException {
 		list = new OperacaoList();
-		encaixar();
+		encaixar(naoExcluir);
 		replicarIdInicial();
 		atualizarDataInicialEFinal(dt);
 		ordenarOperacoes();

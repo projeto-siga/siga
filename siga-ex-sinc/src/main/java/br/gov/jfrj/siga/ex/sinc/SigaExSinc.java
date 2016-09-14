@@ -69,6 +69,7 @@ public class SigaExSinc {
 	private static Level logLevel = Level.WARNING;
 	private String servidor = "";
 	private String url = "";
+	private boolean naoExcluir = false;
 
 	private Map<String, ExFormaDocumento> mapEspecies = new HashMap<>();
 	private Map<String, ExClassificacao> mapClassificacoes = new HashMap<>();
@@ -399,7 +400,7 @@ public class SigaExSinc {
 			// }
 			// }
 			// }
-			list = sinc.getOperacoes(dt);
+			list = sinc.getOperacoes(dt, true);
 		} catch (Exception e) {
 			log("Transação abortada por erro: " + e.getMessage());
 			throw new Exception("Erro na gravação", e);

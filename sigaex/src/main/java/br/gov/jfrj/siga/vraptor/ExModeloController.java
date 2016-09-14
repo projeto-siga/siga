@@ -277,7 +277,7 @@ public class ExModeloController extends ExSelecionavelController {
 	}
 
 	@Get("app/modelo/exportarxml")
-	public void exportarXml(HttpServletResponse response) {
+	public Download exportarXml(HttpServletResponse response) {
 		final String modelos = "siga-doc-modelos";
 		final String modeloGeral = "modelo-geral";
 		final String modelo = "modelo";
@@ -380,18 +380,9 @@ public class ExModeloController extends ExSelecionavelController {
 			serializer.endDocument();
 
 			serializer.flush();
+			
+			return new ByteArrayDownload(os.toByteArray(), "application/xml", "dadosrh.xml");
 
-			final OutputStream out = response.getOutputStream();
-
-			final ByteArrayInputStream bais = new ByteArrayInputStream(
-					os.toByteArray());
-
-			int i;
-			while ((i = bais.read()) != -1) {
-				out.write(i);
-			}
-			bais.close();
-			out.close();
 		} catch (Exception e) {
 			throw new AplicacaoException(e.getMessage(), 0, e);
 		}

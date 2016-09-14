@@ -354,6 +354,13 @@ public class ExModeloController extends ExSelecionavelController {
 				if (m.getConteudoTpBlob() != null) {
 					serializer.attribute(null, "tipo", m.getConteudoTpBlob());
 				}
+				if (m.getUuid() == null) {
+			        m.setUuid(UUID.randomUUID().toString());
+			        dao().gravar(m);
+				}
+				if (m.getUuid() != null) {
+					serializer.attribute(null, "uuid", m.getUuid());
+				}
 				final byte[] template = m.getConteudoBlobMod2();
 				if (template != null) {
 					serializer.flush();

@@ -233,12 +233,13 @@ public class SigaExSinc {
 						// System.out.println(file.getName()
 						// + " Total file size to read (in bytes) : "
 						// + fis.available());
-						ExModelo mod = importarXml(fis);
-						String nmDiretorio = CalcularDiretorio(diretorio,
-								file.getPath(), mod.getSubdiretorio());
-						mod.setNmDiretorio(nmDiretorio);
-
-						setNovo.add(mod);
+						List<ExModelo> mods = importarXml(fis);
+						for (ExModelo mod : mods){
+						        String nmDiretorio = CalcularDiretorio(diretorio,
+						                file.getPath(), mod.getSubdiretorio());
+						        mod.setNmDiretorio(nmDiretorio);
+						        setNovo.add(mod);
+						}
 					} catch (Exception e) {
 						throw new Exception(
 								"Não foi possível importar o XML de '"
@@ -288,9 +289,11 @@ public class SigaExSinc {
 		return s;
 	}
 
-	public ExModelo importarXml(InputStream in) throws Exception {
+	public List<ExModelo> importarXml(InputStream in) throws Exception {
 		XmlPullParser parser = new KXmlParser();
 
+		List<ExModelo> mods = new ArrayList<ExModelo>();
+		
 		try {
 			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
 			parser.setInput(in, null);
@@ -298,11 +301,12 @@ public class SigaExSinc {
 			while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
 				if (parser.getEventType() == XmlPullParser.START_TAG) {
 					if (parser.getName().equals("modelo")) {
-						return importarXmlModelo(parser);
+						mods.add(importarXmlModelo(parser));
 					}
 				}
 				parser.nextToken();
 			}
+			return mods;
 		} catch (FileNotFoundException e) {
 			throw e;
 		} catch (XmlPullParserException e) {
@@ -310,7 +314,6 @@ public class SigaExSinc {
 		} catch (IOException e) {
 			throw e;
 		}
-		throw new Exception("XML inválido.");
 	}
 
 	private ExModelo importarXmlModelo(XmlPullParser parser) throws Exception {

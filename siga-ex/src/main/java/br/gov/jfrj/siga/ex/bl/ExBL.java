@@ -3837,10 +3837,40 @@ public class ExBL extends CpBL {
 					throw new AplicacaoException(
 							"não é possível juntar um documento a um documento que está apensado a ele.");
 			}
-
-			if (!getComp().podeSerJuntado(docTitular, lotaCadastrante, mobPai))
+			
+			if (mobPai.isSobrestado())
 				throw new AplicacaoException(
-						"A via não pode ser juntada ao documento porque ele está em trânsito, arquivado, juntado, cancelado, pendente de assinatura ou encontra-se em outra lotação");
+						"não é possível juntar um documento a um volume sobrestado.");
+			
+			if (mobPai.isCancelada())
+				throw new AplicacaoException(
+						"A via não pode ser juntada ao documento porque ele está cancelado.");
+						 
+			if (mobPai.isVolumeEncerrado())
+				throw new AplicacaoException(
+						"A via não pode ser juntada ao documento porque o volume está encerrado.");
+			
+			if (!mobPai.doc().isAssinado())
+				throw new AplicacaoException(
+						"A via não pode ser juntada ao documento porque ele está pendente de assinatura.");
+						 
+			if (mobPai.isJuntado())
+				throw new AplicacaoException(
+						"A via não pode ser juntada ao documento porque ele está juntado.");
+			
+			if (mobPai.isEmTransito())
+				throw new AplicacaoException(
+						"A via não pode ser juntada ao documento porque ele está em trânsito.");
+			
+			if (mobPai.isArquivado())
+				throw new AplicacaoException(
+						"A via não pode ser juntada ao documento porque ele está arquivado");
+			
+			
+			if (!getComp().podeMovimentar(docTitular, lotaCadastrante, mobPai))
+				throw new AplicacaoException(
+						"A via não pode ser juntada ao documento porque ele não pode ser movimentado.");
+						
 		}
 
 		final ExMovimentacao mov;

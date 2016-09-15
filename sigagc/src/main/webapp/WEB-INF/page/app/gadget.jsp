@@ -25,3 +25,7 @@
 <input type="button" value="Novo Conhecimento"
 	onclick="javascript: window.location='${linkTo[AppController].editar}';"
 	class="gt-btn-large gt-btn-right" style="cursor: pointer;" title="Criar Novo Conhecimento"/>
+<input type="button" value="Pesquisar Conhecimentos"
+	onclick="javascript: window.location='${linkTo[AppController].listar}';"
+	class="gt-btn-large gt-btn-right" style="cursor: pointer;" title="Pesquisar Conhecimentos"/>
+	

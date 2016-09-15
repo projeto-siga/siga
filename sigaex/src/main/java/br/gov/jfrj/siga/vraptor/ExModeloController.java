@@ -327,7 +327,7 @@ public class ExModeloController extends ExSelecionavelController {
 			for (final ExModelo m : l) {
 				serializer.startTag(null, modelo);
 				if (m.getExFormaDocumento() != null) {
-					serializer.attribute(null, "expecie", m
+					serializer.attribute(null, "especie", m
 							.getExFormaDocumento().getDescricao());
 				}
 				if (m.getNmMod() != null) {

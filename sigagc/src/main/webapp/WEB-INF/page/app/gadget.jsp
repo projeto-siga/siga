@@ -22,10 +22,5 @@
 	</table>
 </div>
 <br />
-<input type="button" value="Novo Conhecimento"
-	onclick="javascript: window.location='${linkTo[AppController].editar}';"
-	class="gt-btn-large gt-btn-right" style="cursor: pointer;" title="Criar Novo Conhecimento"/>
-<input type="button" value="Pesquisar Conhecimentos"
-	onclick="javascript: window.location='${linkTo[AppController].listar}';"
-	class="gt-btn-large gt-btn-right" style="cursor: pointer;" title="Pesquisar Conhecimentos"/>
-	
+<a title="Novo Conhecimento" class="gt-btn-large gt-btn-right" href="${linkTo[AppController].editar}" >Novo Conhecimento</a>
+<a title="Pesquisar Conhecimentos" class="gt-btn-large gt-btn-right" href="${linkTo[AppController].listar}">Pesquisar Conhecimentos</a>

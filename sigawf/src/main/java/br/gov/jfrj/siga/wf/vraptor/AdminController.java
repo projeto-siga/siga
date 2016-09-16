@@ -125,7 +125,7 @@ public class AdminController extends WfController {
 
 			zos.close();
 			
-			return new ByteArrayDownload(baos.toByteArray(), "applicatiion/zip", "process-definition-" + processDefinition.getName() + "-" + pdId + ".zip");
+			return new ByteArrayDownload(baos.toByteArray(), "application/zip", "process-definition-" + processDefinition.getName() + "-" + pdId + ".zip");
 
 		}finally{
 			baos.close();

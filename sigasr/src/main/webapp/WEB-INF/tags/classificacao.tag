@@ -31,7 +31,7 @@
 							<c:forEach items="${acoesEAtendentes.get(cat)}" var="tarefa">
 								<option value="${tarefa.acao.idAcao}" ${solicitacao.acao.idAcao.equals(tarefa.acao.idAcao) ? 'selected' : ''}> 
 									${tarefa.acao.tituloAcao}
-									<c:if test="${exibeLotacaoNaAcao == true}">(${tarefa.conf.atendente.siglaCompleta})</c:if>
+									<c:if test="${exibeLotacaoNaAcao}">(${tarefa.conf.atendente.siglaCompleta})</c:if>
 								</option>
 							</c:forEach>					 
 						</optgroup>
@@ -68,7 +68,11 @@ function validarCampos() {
 }
 
 function carregarAcao() {
-	sbmt('solicitacao.acao', postbackURL()+'&solicitacao.acao.id='+$("#selectAcao").val(), true);
+	var executarFuncaoDepoisDoSbmt = null;
+	var idSelecionado = $("#${metodo} #selectAcao").find(":selected").val();
+	if ('${exibeLotacaoNaAcao}' === 'true')
+		executarFuncaoDepoisDoSbmt = carregarLotacaoDaAcao;
+	sbmt('solicitacao.acao', postbackURL()+'&solicitacao.acao.id='+idSelecionado, true, executarFuncaoDepoisDoSbmt);
 }
 
 function dispararFuncoesOnBlurItem() {

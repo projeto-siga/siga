@@ -58,7 +58,6 @@
 		</div>
 	</c:forEach>
 </c:if>
-<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
 <script>
 	$(function() {
 		$("#horarioAtributo${atributo.idAtributo}").mask("99:99");

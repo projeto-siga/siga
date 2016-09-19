@@ -32,10 +32,6 @@
 			$('#outrasInformacoesDaFilha').hide();
 			$('#motivoEscalonamento').show();
 		}
-
-		$(document).ready(function() {
-			removeSelectedDuplicado();
-		});
 		
 		function carregarLotacaoDaAcao(){
 			//preenche o campo atendente com a lotacao designada a cada alteracao da acao 
@@ -59,16 +55,6 @@
 				$("#idAtendente").val('');
 				//garante que quando alterar a acao o atendenteNaoDesignado fique vazio
 				$("#atendenteNaoDesignado").val('');
-			}
-		}
-		
-		function removeSelectedDuplicado() {
-			//solucao de contorno temporaria para opções no select com mesmo value.
-			var primeiro = $("#selectAcao option:eq(0)");
-			var segundo = $("#selectAcao option:eq(1)");
-			if (primeiro.val() == segundo.val()) {
-				segundo.prop("selected", false);
-				primeiro.prop("selected", true);
 			}
 		}
 		

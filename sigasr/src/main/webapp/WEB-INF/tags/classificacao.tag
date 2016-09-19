@@ -72,6 +72,8 @@
 <script>
 $(document).ready(function($) {
 	limparMensagem();	
+	removerAcaoRepetida();
+	selecionarOpcaoDefault();
 });
 
 function validarCampos() {
@@ -90,7 +92,7 @@ function validarCampos() {
 }
 
 function carregarAcao() {
-	var executarFuncaoDepoisDoSbmt = null;
+	var executarFuncaoDepoisDoSbmt = removerAcaoRepetida;
 	var idSelecionado = $("#${metodo} #selectAcao").find(":selected").val();
 	if ('${exibeLotacaoNaAcao}' === 'true')
 		executarFuncaoDepoisDoSbmt = carregarLotacaoDaAcao;
@@ -110,6 +112,18 @@ function limparMensagem() {
 	$("#${metodo}").on("keyup", "input", function() {
 		$(this).next("span.error").text("");
 	});
+}
+
+function removerAcaoRepetida() {
+	if ('${exibeLotacaoNaAcao}' !== 'true') {
+		$("#${metodo} #selectAcao option").each(function(){
+			  $(this).siblings("[value='"+ this.value+"']").remove();
+		});
+	}
+}
+
+function selecionarOpcaoDefault() {
+	$("#${metodo} #selectAcao option[selected]").prop('selected', true);
 }
 
 // retirar esse metodo daqui. Nao esta intuitivo que ele existe dentro do classificacao.tag

@@ -142,7 +142,7 @@ function gravar() {
     	success: function(response) {
         	${metodo}_fechar();
     		jQuery.unblockUI();
-        	window.location.href = "${linkTo[SolicitacaoController].exibir}${siglaCompacta}";
+        	window.location.href = "${linkTo[SolicitacaoController].exibir}" + response;
     	},
     	error: function(response) {
         	//criar funcao separa para tratar dos erros  		

@@ -20,7 +20,7 @@
 	   width: auto;
 	}
 	
-	h2,h3 { font-size: 120%; }
+	.modal-erro-fix h2, .modal-erro-fix h3 { font-size: 120%; }
 
 </style>
 

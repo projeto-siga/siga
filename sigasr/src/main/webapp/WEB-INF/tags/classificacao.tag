@@ -39,12 +39,34 @@
 				</select>
 				<br/><span id="acaoNaoInformada" style="color: red; display: none;">Ação não informada</span>
 			</div>
+			<div id="divAtributos" depende="solicitacao.acao">	
+				<sigasr:atributo atributoSolicitacaoMap="${atributoSolicitacaoMap}" 
+					atributoAssociados="${atributoAssociados}"
+					entidade="solicitacao" />
+			</div>
+			<c:if test="${exibeLotacaoNaAcao}">
+				<div>
+					<!-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao
+							ja que acima no select nao tem como "esconder" essa informacao -->
+					<c:forEach items="${acoesEAtendentes.keySet()}" var="cat" varStatus="catPosition">
+						<c:forEach items="${acoesEAtendentes.get(cat)}" var="t" varStatus="tPosition">
+							<span class="idDesignacao-${t.acao.idAcao}" style="display:none;">${t.conf.idConfiguracao}</span>
+							<span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.siglaCompleta} 
+												- ${t.conf.atendente.descricao}</span>
+							<span class="idLotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.idLotacao}</span>
+						</c:forEach>
+					</c:forEach>
+			
+					<label>Atendente</label>
+					<span id="atendentePadrao" style="display:block;"></span>
+					<input type="hidden" id="idDesignacao" name="designacao.id" value="" />
+					<input type="hidden" name="atendente.id" id="idAtendente" value="" />
+				</div>
+				<a href="javascript: modalAbrir('lotacaoAtendente')" class="gt-btn-medium" style="margin: 5px 0 0 -3px;">
+					Alterar atendente
+				</a>
+			</c:if>
 		</c:if>
-		<div id="divAtributos" depende="solicitacao.acao">	
-			<sigasr:atributo atributoSolicitacaoMap="${atributoSolicitacaoMap}" 
-				atributoAssociados="${atributoAssociados}"
-				entidade="solicitacao" />
-		</div>
 	</div>
 </div>
 <script>

@@ -50,6 +50,14 @@
         <name>solicitacao</name>
         <path>/WEB-INF/tags/solicitacao.tag</path>
     </tag-file>
+    <tag-file>
+    	<name>atributo</name>
+    	<path>/WEB-INF/tags/atributo.tag</path>
+    </tag-file>
+    <tag-file>
+    	<name>classificacao</name>
+    	<path>/WEB-INF/tags/classificacao.tag</path>
+    </tag-file>
     <function>
   		<name>replaceSiglas</name>
   		<function-class>br.gov.jfrj.siga.sr.util.SrViewUtil</function-class>

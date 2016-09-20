@@ -37,7 +37,7 @@ function sbmt() {
 		<input type="hidden" name="postback" value="1" />
 		<input type="hidden" name="nmTipoRetorno" value="${nmTipoRetorno}" />
 		<input type="hidden" name="id" value="${id}" />
-		<input type="hidden" name="idFormaDoc" value="${idFormaDoc}"/> 
+		
 		<c:set var="dataFim" value="" />
 		
 		<h1>Cadastro de configuração</h1>

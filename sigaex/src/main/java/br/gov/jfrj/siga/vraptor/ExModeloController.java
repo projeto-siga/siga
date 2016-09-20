@@ -90,7 +90,7 @@ public class ExModeloController extends ExSelecionavelController {
 
 			final String conteudo = modelo.getConteudoBlobMod() != null ? new String(
 					modelo.getConteudoBlobMod2(), UTF8) : null;
-			final Integer forma = modelo.getExFormaDocumento() != null ? modelo
+			final Long forma = modelo.getExFormaDocumento() != null ? modelo
 					.getExFormaDocumento().getIdFormaDoc() : null;
 			final Long nivel = modelo.getExNivelAcesso() != null ? modelo
 					.getExNivelAcesso().getIdNivelAcesso() : null;
@@ -122,7 +122,7 @@ public class ExModeloController extends ExSelecionavelController {
 			final String tipoModelo, final String conteudo,
 			final ExClassificacaoSelecao classificacaoSel,
 			final ExClassificacaoSelecao classificacaoCriacaoViasSel,
-			final String descricao, final Integer forma, final Long nivel,
+			final String descricao, final Long forma, final Long nivel,
 			final String arquivo, final String diretorio, final String uuid,
 			final Integer postback) throws Exception {
 		assertAcesso(VERIFICADOR_ACESSO);

@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hibernate.Hibernate;
 import org.hibernate.LazyInitializationException;
 
 import br.com.caelum.vraptor.Get;
@@ -41,7 +42,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrArquivo;
-import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
+import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacaoMap;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracaoBL;
 import br.gov.jfrj.siga.sr.model.SrEtapaSolicitacao;
@@ -64,6 +65,7 @@ import br.gov.jfrj.siga.sr.model.vo.SrListaVO;
 import br.gov.jfrj.siga.sr.model.vo.SrSolicitacaoListaVO;
 import br.gov.jfrj.siga.sr.util.SrSolicitacaoFiltro;
 import br.gov.jfrj.siga.sr.util.SrViewUtil;
+import br.gov.jfrj.siga.sr.validator.SrError;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -99,6 +101,9 @@ public class SolicitacaoController extends SrController {
     public SolicitacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em,  SrValidator srValidator, Validator validator) {
         super(request, result, dao, so, em, srValidator);
         this.validator = validator;
+        
+        result.on(AplicacaoException.class).forwardTo(this).appexception();
+        result.on(Exception.class).forwardTo(this).exception();
     }
 
     @SuppressWarnings("unchecked")
@@ -315,37 +320,44 @@ public class SolicitacaoController extends SrController {
         result.include("locaisDisponiveis", solicitacao.getLocaisDisponiveis());
         result.include("meiosComunicadaoList", SrMeioComunicacao.values());
         result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
+        result.include("atributoAssociados", solicitacao.getAtributoAssociados());
+        result.include("atributoSolicitacaoMap", solicitacao.getAtributoSolicitacaoMap());
 	}
 
 	private boolean validarFormEditar(SrSolicitacao solicitacao) throws Exception {
-        if (solicitacao.getSolicitante() == null || solicitacao.getSolicitante().getId() == null) {
+        if (solicitacao.getSolicitante() == null || solicitacao.getSolicitante().getId() == null) 
             validator.add(new ValidationMessage("Solicitante n\u00e3o informado", "solicitacao.solicitante"));
-        }
-        if (solicitacao.getItemConfiguracao() == null || solicitacao.getItemConfiguracao().getId() == null) {
-            validator.add(new ValidationMessage("Item n&atilde;o informado", "solicitacao.itemConfiguracao"));
-        }
-        if (solicitacao.getAcao() == null || solicitacao.getAcao().getId() == null) {
-            validator.add(new ValidationMessage("A&ccedil&atilde;o n&atilde;o informada", "solicitacao.acao"));
-        }
-
-        if (solicitacao.getDescrSolicitacao() == null || "".equals(solicitacao.getDescrSolicitacao().trim())) {
+            
+        if (solicitacao.getDescrSolicitacao() == null || "".equals(solicitacao.getDescrSolicitacao().trim())) 
             validator.add(new ValidationMessage("Descri&ccedil&atilde;o n&atilde;o informada", "solicitacao.descrSolicitacao"));
-        }
-
-        Map<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
-        for (int i = 0; i < solicitacao.getAtributoSolicitacaoSet().size(); i++) {
-        	SrAtributoSolicitacao att = solicitacao.getAtributoSolicitacaoSet().get(i);
-
-            // Para evitar NullPointerExcetpion quando nao encontrar no Map
-            if (Boolean.TRUE.equals(obrigatorio.get(att.getAtributo().getIdAtributo()))) {
-                if ((att.getValorAtributoSolicitacao() == null || "".equals(att.getValorAtributoSolicitacao().trim()))) {
-                	validator.add(new ValidationMessage(att.getAtributo().getNomeAtributo() + " n&atilde;o informado", "solicitacao.atributoSolicitacaoMap[" + i + "]"));
-                }
-            }
-        }
-
+        
+        if (!validarFormReclassificar(solicitacao)) 
+        	for (SrError error : srValidator.getErros())
+        		validator.add(new ValidationMessage(error.getMessage(), error.getCategory()));
+        
         return !validator.hasErrors();
     }
+	
+	private boolean validarFormReclassificar(SrSolicitacao solicitacao) throws Exception {
+		if (solicitacao.getItemConfiguracao() == null || solicitacao.getItemConfiguracao().getId() == null) 
+			srValidator.addError("solicitacao.itemConfiguracao", "Item n&atilde;o informado");
+        if (solicitacao.getAcao() == null || solicitacao.getAcao().getId() == null) 
+        	srValidator.addError("solicitacao.acao", "A&ccedil&atilde;o n&atilde;o informada");
+        
+        //atributos
+        Map<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
+        int index = 0;
+        for (Map.Entry<Long, SrAtributoSolicitacaoMap> atributo : solicitacao.getAtributoSolicitacaoMap().entrySet()) {
+            // Para evitar NullPointerExcetpion quando nao encontrar no Map
+            if (Boolean.TRUE.equals(obrigatorio.get(atributo.getKey()))) 
+                if (atributo.getValue() != null && 
+                	(atributo.getValue().getValorAtributo() == null || 
+                		"".equals(atributo.getValue().getValorAtributo().trim()))) 
+                	srValidator.addError("solicitacao.atributoSolicitacaoList[" + index + "].valorAtributo", "Atributo n&atilde;o informado");
+            index++;
+        }
+        return !srValidator.hasErrors();
+	}
 
 	public Boolean todoOContexto() {
          return Boolean.parseBoolean(getRequest().getParameter("todoOContexto"));
@@ -434,15 +446,14 @@ public class SolicitacaoController extends SrController {
     public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao, Long solicitante) throws Exception {
 
 		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.
-		if (sigla != null){
-			solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
-			
-			//Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados
+		if (sigla != null) {
+			solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);  
+			//carregamento forçado de atributos lazy
 			if (solicitacao.getAcordos() != null)
 				solicitacao.getAcordos().size();
-	        em().detach(solicitacao);
-	        
-		} else {
+			Hibernate.initialize(solicitacao.getMeuAtributoSolicitacaoSet());
+		}
+		else {
 			if (solicitacao == null){
 				solicitacao = new SrSolicitacao();
 		        try{
@@ -488,12 +499,11 @@ public class SolicitacaoController extends SrController {
 				if (!containsAcao)
 					solicitacao.setAcao(null);
 			}
+			//Edson: por causa do detach:
+			if (solicitacao.getSolicitacaoInicial() != null)
+				solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
 		} 
-		
-		//Edson: por causa do detach:
-		if (solicitacao.getSolicitacaoInicial() != null)
-			solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
-        
+		       
 		try{
 			result.include("etapasCronometro", solicitacao.getEtapas(getLotaTitular(), false));
 		} catch(LazyInitializationException lie){
@@ -553,48 +563,62 @@ public class SolicitacaoController extends SrController {
         result.redirectTo(this).exibir(solicitacao.getSiglaCompacta(), todoOContexto(), ocultas());
     }
     
-    @Path("app/solicitacao/reclassificar")
-    public void reclassificar(String sigla, SrItemConfiguracao itemConfiguracao) throws Exception {
-    	if (sigla == null || sigla.trim().equals(""))
-    		throw new AplicacaoException("Número não informado");
-    	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
+	@Path("app/solicitacao/reclassificar")
+    public void reclassificar(SrSolicitacao solicitacao) throws Exception {
+		if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
+			throw new AplicacaoException("Número não informado");
+    	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());
     	
+    	Hibernate.initialize(solicitacaoEntity.getMeuAtributoSolicitacaoSet());
         //Edson: por algum motivo, está sendo necessário dar o detach na solicitacaoPai, se não, o JPA entende que o arquivo 
         //foi alterado e precisa ser salvo, o que dá erro pois o arquivo também é detached:
-        if (solicitacao.isFilha())
-        	for (SrSolicitacao sol : solicitacao.getPaiDaArvore().getSolicitacaoFilhaSetRecursivo())
+        if (solicitacaoEntity.isFilha())
+        	for (SrSolicitacao sol : solicitacaoEntity.getPaiDaArvore().getSolicitacaoFilhaSetRecursivo())
         		em().detach(sol);
-    	
     	//Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados:
-        em().detach(solicitacao);
-    	
-    	solicitacao.setTitular(getTitular());
-        solicitacao.setLotaTitular(getLotaTitular());
-        if (itemConfiguracao != null)
-        	solicitacao.setItemConfiguracao(itemConfiguracao);
-        else solicitacao.setItemConfiguracao(solicitacao.getItemAtual());
+        em().detach(solicitacaoEntity);
         
-        result.include("itemConfiguracao", solicitacao.getItemAtual());
-        result.include("acao", solicitacao.getAcaoAtual());
+        solicitacaoEntity.setTitular(getTitular());
+        solicitacaoEntity.setLotaTitular(getLotaTitular());
+        if (solicitacao.getItemConfiguracao() != null)
+        	solicitacaoEntity.setItemConfiguracao(solicitacao.getItemConfiguracao());
+        else solicitacaoEntity.setItemConfiguracao(solicitacaoEntity.getItemAtual());
+        if (solicitacao.getAcao() != null)
+        	solicitacaoEntity.setAcao(solicitacao.getAcao());
+        else solicitacaoEntity.setAcao(solicitacaoEntity.getAcaoAtual());
+        if (solicitacao.getAtributoSolicitacaoMap() != null && !solicitacao.getAtributoSolicitacaoMap().isEmpty())
+        	solicitacaoEntity.setAtributoSolicitacaoMap(solicitacao.getAtributoSolicitacaoMap());
+        
+        incluirListasReclassificacao(solicitacaoEntity);
+    }
+        
+    @Path("app/solicitacao/reclassificarGravar")
+    public void reclassificarGravar(SrSolicitacao solicitacao) throws Exception {
+    	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
+    		throw new AplicacaoException("Número não informado");
+    	
+    	if (!validarFormReclassificar(solicitacao)) {
+        	enviarErroValidacao();
+        	return;
+    	}	
+    	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());
+    	solicitacaoEntity.reclassificar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solicitacao);
+    	result.use(Results.http()).body(solicitacaoEntity.getSiglaCompacta());
+    }
+
+	private void incluirListasReclassificacao(SrSolicitacao solicitacao) throws Exception {
+    	result.include(SOLICITACAO, solicitacao);
         result.include("siglaCompacta", solicitacao.getSiglaCompacta());
         result.include("solicitante", solicitacao.getSolicitante());
         result.include("local", solicitacao.getLocal());
         result.include("acoesEAtendentes", solicitacao.getAcoesEAtendentes());
-    }
-        
-    @Path("app/solicitacao/reclassificarGravar")
-    public void reclassificarGravar(String sigla, SrItemConfiguracao itemConfiguracao, SrAcao acao) throws Exception {
-    	if (sigla == null || sigla.trim().equals(""))
-    		throw new AplicacaoException("Número não informado");
-    		
-    	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
-        sol.reclassificar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), itemConfiguracao, acao);
-        result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
+        result.include("atributoAssociados", solicitacao.getAtributoAssociados());
+        result.include("atributoSolicitacaoMap", solicitacao.getAtributoSolicitacaoMap());
     }
 
     @Path("app/solicitacao/fechar")
-    public void fechar(String sigla, SrItemConfiguracao itemConfiguracao) throws Exception {
-    	reclassificar(sigla, itemConfiguracao);        
+    public void fechar(SrSolicitacao solicitacao) throws Exception {
+    	reclassificar(solicitacao);
     	Set<SrTipoMotivoFechamento> motivos = new TreeSet<SrTipoMotivoFechamento>(new Comparator<SrTipoMotivoFechamento>(){
 			@Override
 			public int compare(SrTipoMotivoFechamento o1,
@@ -608,14 +632,18 @@ public class SolicitacaoController extends SrController {
     }
     
     @Path("app/solicitacao/fecharGravar")
-    public void fecharGravar(String sigla, SrItemConfiguracao itemConfiguracao, SrAcao acao, String motivo, 
-    		SrTipoMotivoFechamento tpMotivo, String conhecimento) throws Exception {
-    	if (sigla == null || sigla.trim().equals(""))
+    public void fecharGravar(SrSolicitacao solicitacao, String motivoFechar, SrTipoMotivoFechamento tpMotivo, String conhecimento) throws Exception {
+    	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
     		throw new AplicacaoException("Número não informado");
-    		
-    	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
-        sol.fechar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), itemConfiguracao, acao, motivo, tpMotivo, conhecimento);
-        result.redirectTo(this).exibir(sol.getSiglaCompacta(), todoOContexto(), ocultas());
+    	
+    	if (!validarFormReclassificar(solicitacao)) {
+        	enviarErroValidacao();
+        	return;
+    	}	
+    	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());
+    	solicitacaoEntity.fechar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solicitacao.getItemConfiguracao(), 
+    			solicitacao.getAcao(), motivoFechar, tpMotivo, conhecimento, solicitacao.getAtributoSolicitacaoMap());    	
+    	result.use(Results.http()).body(solicitacaoEntity.getSiglaCompacta());
     }
     
     @Path("app/solicitacao/erPesquisa")
@@ -647,25 +675,31 @@ public class SolicitacaoController extends SrController {
     }
 
     @Path("app/solicitacao/escalonar")
-    public void escalonar(String sigla, SrItemConfiguracao itemConfiguracao) throws Exception {
-    	if (sigla == null || sigla.trim().equals(""))
+    public void escalonar(SrSolicitacao solicitacao) throws Exception {
+    	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
     		throw new AplicacaoException("Número não informado");
-    	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
+    	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());
     	
+    	Hibernate.initialize(solicitacaoEntity.getMeuAtributoSolicitacaoSet());
     	//Edson: por algum motivo, está sendo necessário dar o detach na solicitacaoPai, se não, o JPA entende que o arquivo 
         //foi alterado e precisa ser salvo, o que dá erro pois o arquivo também é detached:
-        if (solicitacao.isFilha())
-        	for (SrSolicitacao sol : solicitacao.getPaiDaArvore().getSolicitacaoFilhaSetRecursivo())
+        if (solicitacaoEntity.isFilha())
+        	for (SrSolicitacao sol : solicitacaoEntity.getPaiDaArvore().getSolicitacaoFilhaSetRecursivo())
         		em().detach(sol);
     	
     	//Edson: para evitar que o JPA tente salvar a solicitação por causa dos set's chamados:
-        em().detach(solicitacao);
+        em().detach(solicitacaoEntity);
     	
-    	solicitacao.setTitular(getTitular());
-        solicitacao.setLotaTitular(getLotaTitular());
-        if (itemConfiguracao != null)
-        	solicitacao.setItemConfiguracao(itemConfiguracao);
-        else solicitacao.setItemConfiguracao(solicitacao.getItemAtual());
+        solicitacaoEntity.setTitular(getTitular());
+        solicitacaoEntity.setLotaTitular(getLotaTitular());
+        if (solicitacao.getItemConfiguracao() != null)
+        	solicitacaoEntity.setItemConfiguracao(solicitacao.getItemConfiguracao());
+        else solicitacaoEntity.setItemConfiguracao(solicitacaoEntity.getItemAtual());
+        if (solicitacao.getAcao() != null)
+        	solicitacaoEntity.setAcao(solicitacao.getAcao());
+        else solicitacaoEntity.setAcao(solicitacaoEntity.getAcaoAtual());
+        if (solicitacao.getAtributoSolicitacaoMap() != null && !solicitacao.getAtributoSolicitacaoMap().isEmpty())
+        	solicitacaoEntity.setAtributoSolicitacaoMap(solicitacao.getAtributoSolicitacaoMap());
 
     	CpConfiguracao filtro = new CpConfiguracao();
         filtro.setDpPessoa(getTitular());
@@ -680,41 +714,43 @@ public class SolicitacaoController extends SrController {
                         || situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_DEFAULT))
                 criarFilhaDefault = true;
         
-        result.include("itemConfiguracao", solicitacao.getItemAtual());
-        result.include("acao", solicitacao.getAcaoAtual());
-        result.include("siglaCompacta", solicitacao.getSiglaCompacta());
-        result.include("solicitante", solicitacao.getSolicitante());
-        result.include("local", solicitacao.getLocal());
-        result.include("acoesEAtendentes", solicitacao.getAcoesEAtendentes());
+        incluirListasReclassificacao(solicitacaoEntity);
         result.include("criarFilhaDefault", criarFilhaDefault);
-        result.include("isFechadoAutomaticamente", solicitacao.isFechadoAutomaticamente());
-        result.include("solicitacaoPai", solicitacao.getSolicitacaoPai());
-        result.include("isPai", solicitacao.isPai());
-        result.include("codigo", solicitacao.isFilha() ? solicitacao.getSolicitacaoPai().getCodigo() : solicitacao.getCodigo());
+        result.include("isFechadoAutomaticamente", solicitacaoEntity.isFechadoAutomaticamente());
+        result.include("solicitacaoPai", solicitacaoEntity.getSolicitacaoPai());
+        result.include("isPai", solicitacaoEntity.isPai());
+        result.include("codigo", solicitacaoEntity.isFilha() ? solicitacaoEntity.getSolicitacaoPai().getCodigo() : solicitacaoEntity.getCodigo());
         result.include(TIPO_MOTIVO_ESCALONAMENTO_LIST, SrTipoMotivoEscalonamento.values());
-        result.include("idSolicitacao",solicitacao.getId());
+        result.include("idSolicitacao",solicitacaoEntity.getId());
         
     }
 
     @Path("app/solicitacao/escalonarGravar")
-    public void escalonarGravar(String sigla, SrItemConfiguracao itemConfiguracao, SrAcao acao, DpLotacao atendente, DpLotacao atendenteNaoDesignado, 
-    		SrConfiguracao designacao, SrTipoMotivoEscalonamento motivo, String descricao,
+    public void escalonarGravar(SrSolicitacao solicitacao, DpLotacao atendente, DpLotacao atendenteNaoDesignado, 
+        	SrConfiguracao designacao, SrTipoMotivoEscalonamento motivo, String descricao,
             Boolean criaFilha, Boolean fechadoAuto) throws Exception {
-        
-        if (sigla == null || sigla.trim().equals(""))
+          	
+    	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
     		throw new AplicacaoException("Número não informado");
+    	
+    	if (!validarFormReclassificar(solicitacao)) {
+        	enviarErroValidacao();
+        	return;
+    	}	
     		
-    	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
+    	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());
         
         if (criaFilha) {
-        	SrSolicitacao filha = solicitacao.escalonarCriandoFilha(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 
-        			itemConfiguracao, acao, designacao, atendenteNaoDesignado, fechadoAuto, descricao);
-        	result.redirectTo(this).exibir(filha.getSiglaCompacta(), todoOContexto(), ocultas());
+        	SrSolicitacao filha = solicitacaoEntity.escalonarCriandoFilha(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 
+        			solicitacao.getItemConfiguracao(), solicitacao.getAcao(), designacao, atendenteNaoDesignado,
+        			fechadoAuto, descricao, solicitacao.getAtributoSolicitacaoMap());
+        	result.use(Results.http()).body(filha.getSiglaCompacta());
         } 
         else {
-        	solicitacao.escalonarPorMovimentacao(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 
-        			itemConfiguracao, acao, designacao, atendenteNaoDesignado, motivo, descricao, atendente);
-        	result.redirectTo(this).exibir(solicitacao.getSiglaCompacta(), todoOContexto(), ocultas());
+        	solicitacaoEntity.escalonarPorMovimentacao(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 
+        			solicitacao.getItemConfiguracao(), solicitacao.getAcao(), designacao, atendenteNaoDesignado, 
+        			motivo, descricao, atendente, solicitacao.getAtributoSolicitacaoMap());
+        	result.use(Results.http()).body(solicitacaoEntity.getSiglaCompacta());
         }
     }
 

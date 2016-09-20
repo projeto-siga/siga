@@ -169,25 +169,30 @@ public class SigaController {
 	}
 	
 	public void appexception() {
-		HttpResult res = this.result.use(http());
-		res.setStatusCode(400);
-		result.forwardTo("/WEB-INF/page/erroGeral.jsp");
+		configurarHttpResult(400);
 	}
 
 	public void exception() {
-		HttpResult res = this.result.use(http());
-		res.setStatusCode(500);
-		if (requisicaoEhAjax()) {
-		    result.forwardTo("/WEB-INF/page/erroGeralAjax.jsp");
-		} else {
-		    result.forwardTo("/WEB-INF/page/erroGeral.jsp");
-		}
+		configurarHttpResult(500);
 	}
-
+	
+	private void configurarHttpResult(int statusCode) {
+		HttpResult res = this.result.use(http());
+		res.setStatusCode(statusCode);
+		definirPaginaDeErro();
+	}
+    
+	private void definirPaginaDeErro() {
+		if (requisicaoEhAjax())
+		    result.forwardTo("/WEB-INF/page/erroGeralAjax.jsp");
+		else 
+		    result.forwardTo("/WEB-INF/page/erroGeral.jsp");
+    }
+	
     private boolean requisicaoEhAjax() {
         return request.getHeader("X-Requested-With") != null;
     }
-
+    
 	protected DpLotacao getLotaTitular() {
 		return so.getLotaTitular();
 	}

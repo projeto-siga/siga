@@ -138,22 +138,48 @@ public abstract class ModeloPropriedade {
 	public String obterPropriedade(String nome) throws Exception {
 		carregarPropriedades();
 		if (prefixo != null) {
-			for (int i = 0; i < prefixo.length; i++) {
-				String prop = new String();
-				for (int j = i; j < prefixo.length; j++) {
-					prop += prefixo[j] + ".";
-				}
-				String value = propriedades.getProperty(prop + nome);
+			VarredorPropriedades varredor = new VarredorPropriedades(prefixo,nome);
+			while(!varredor.isVarreduraCompleta()){
+				String value = propriedades.getProperty(varredor.getNext());
 				if (value != null)
 					return value.trim();
 			}
+
 		}
 		if (propriedades.getProperty(nome) !=null){
 			return propriedades.getProperty(nome).trim();
 		}
 		return null;
 	}
+	
+	/**
+	 * Além do valor, retorna qual foi a propriedade lida.
+	 * */
+	public Map<String,String> obterDefinicaoPropriedade(String nome) throws Exception {
+		Map<String,String> defProp = new HashMap<String,String>();
+		carregarPropriedades();
+		if (prefixo != null) {
+			VarredorPropriedades varredor = new VarredorPropriedades(prefixo,nome);
+			while(!varredor.isVarreduraCompleta()){
+				String nomePropriedade = varredor.getNext();
+				String value = propriedades.getProperty(nomePropriedade);
+				if (value != null){
+					defProp.put(nomePropriedade, value.trim());
+					return defProp;
+				}
+					
+			}
 
+		}
+		if (propriedades.getProperty(nome) !=null){
+			defProp.put(nome, propriedades.getProperty(nome).trim());
+			return defProp;
+		}
+		return null;
+	}
+
+	
+	
 	/**
 	 * obtém uma lista de propriedades que começam com um nome (parâmetro) que é
 	 * separado por um ponto e seguido de um numero sequencial. Ex: parâmetro

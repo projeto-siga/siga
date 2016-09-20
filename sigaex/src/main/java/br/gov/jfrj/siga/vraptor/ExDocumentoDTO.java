@@ -111,7 +111,7 @@ public class ExDocumentoDTO {
 	private String idDoc;
 
 	/** The value of the exFormaDocumento association. */
-	private Integer idFormaDoc;
+	private Long idFormaDoc;
 
 	private Long idMod;
 
@@ -435,7 +435,7 @@ public class ExDocumentoDTO {
 		return idDoc;
 	}
 
-	public Integer getIdFormaDoc() {
+	public Long getIdFormaDoc() {
 		return idFormaDoc;
 	}
 
@@ -686,7 +686,7 @@ public class ExDocumentoDTO {
 		this.idDoc = idDoc;
 	}
 
-	public void setIdFormaDoc(final Integer idFormaDoc) {
+	public void setIdFormaDoc(final Long idFormaDoc) {
 		this.idFormaDoc = idFormaDoc;
 	}
 

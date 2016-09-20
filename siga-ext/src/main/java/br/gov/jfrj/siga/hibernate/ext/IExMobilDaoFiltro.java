@@ -32,7 +32,7 @@ public interface IExMobilDaoFiltro {
 
 	public abstract Long getDestinatarioSelId();
 
-	public abstract Integer getIdFormaDoc();
+	public abstract Long getIdFormaDoc();
 
 	public abstract Integer getIdTpDoc();
 
@@ -68,7 +68,7 @@ public interface IExMobilDaoFiltro {
 
 	public abstract void setDestinatarioSelId(final Long destinatarioSelId);
 
-	public abstract void setIdFormaDoc(final Integer idFormaDoc);
+	public abstract void setIdFormaDoc(final Long idFormaDoc);
 
 	public abstract void setIdTpDoc(final Integer idTpDoc);
 

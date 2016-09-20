@@ -237,6 +237,11 @@
 						</li>
 					</c:if>
 					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;LDAP_ADMIN:Administrar Integracao LDAP')}">
+						<li><a href="/siga/app/admin/ldap/administrar">Administrar Integração LDAP</a>
+						</li>
+					</c:if>
+					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_FERIADO:Cadastrar Feriados')}">
 						<li><a href="/siga/app/feriado/listar">Cadastro de Feriados</a></li>
 					</c:if>	

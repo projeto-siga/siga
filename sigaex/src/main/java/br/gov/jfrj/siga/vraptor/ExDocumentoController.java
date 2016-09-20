@@ -412,7 +412,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.setTipoDestinatario(2);
 
 			if (exDocumentoDTO.getIdFormaDoc() == null)
-				exDocumentoDTO.setIdFormaDoc(2);
+				exDocumentoDTO.setIdFormaDoc(2L);
 
 			if (exDocumentoDTO.getIdTpDoc() == null)
 				exDocumentoDTO.setIdTpDoc(1L);
@@ -434,7 +434,7 @@ public class ExDocumentoController extends ExController {
 
 		if (exDocumentoDTO.isCriandoAnexo() && exDocumentoDTO.getId() == null
 				&& isDocNovo) {
-			exDocumentoDTO.setIdFormaDoc(60);
+			exDocumentoDTO.setIdFormaDoc(60L);
 			exDocumentoDTO.setIdMod(((ExModelo) dao()
 					.consultarAtivoPorIdInicial(ExModelo.class, 507L))
 					.getIdMod());
@@ -442,7 +442,7 @@ public class ExDocumentoController extends ExController {
 
 		if (exDocumentoDTO.getDespachando() && exDocumentoDTO.getId() == null
 				&& (isDocNovo)) {
-			exDocumentoDTO.setIdFormaDoc(8);
+			exDocumentoDTO.setIdFormaDoc(8L);
 		}
 
 		if (exDocumentoDTO.getId() == null && exDocumentoDTO.getDoc() != null)
@@ -1605,7 +1605,7 @@ public class ExDocumentoController extends ExController {
 					// Documento Pai
 					mobPai = daoMob(exDocumentoDTO.getMobilPaiSel().getId());
 
-					final Integer idForma = paramInteger("exDocumentoDTO.idFormaDoc");
+					final Long idForma = paramLong("exDocumentoDTO.idFormaDoc");
 					if (idForma != null) {
 						exDocumentoDTO.setIdFormaDoc(idForma);
 					}
@@ -1640,7 +1640,7 @@ public class ExDocumentoController extends ExController {
 
 		// Fim das questões referentes a doc pai--------------------
 
-		final Integer idFormaDoc = exDocumentoDTO.getIdFormaDoc();
+		final Long idFormaDoc = exDocumentoDTO.getIdFormaDoc();
 		if (idFormaDoc != null) {
 			if (idFormaDoc == 0) {
 				exDocumentoDTO.setIdMod(0L);

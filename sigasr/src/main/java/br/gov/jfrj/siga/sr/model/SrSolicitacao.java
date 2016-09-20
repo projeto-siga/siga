@@ -10,9 +10,7 @@ import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INI
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_INICIO_PENDENCIA;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_REABERTURA;
-import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_RECLASSIFICACAO;
 import static br.gov.jfrj.siga.sr.model.SrTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO;
-import static org.joda.time.format.DateTimeFormat.forPattern;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -57,14 +55,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jboss.logging.Logger;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -222,7 +216,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     // @OrderBy("hisDtIni desc")
     private List<SrSolicitacao> meuSolicitacaoHistoricoSet;
 
-    @OneToMany(targetEntity = SrAtributoSolicitacao.class, mappedBy = "solicitacao", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = SrAtributoSolicitacao.class, mappedBy = "solicitacao", fetch = FetchType.LAZY)
     protected List<SrAtributoSolicitacao> meuAtributoSolicitacaoSet;
 
     @OneToMany(targetEntity = SrMovimentacao.class, mappedBy = "solicitacao", fetch = FetchType.LAZY)
@@ -255,6 +249,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     
     @Column(name="DNM_TEMPO_DECORRIDO_CADASTRO")
     private Long dnmTempoDecorridoCadastro;
+    
+    @Transient
+    private Map<Long, SrAtributoSolicitacaoMap> atributoSolicitacaoMap;
 
     public SrSolicitacao() {
 
@@ -409,16 +406,24 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
     
     public List<SrAtributoSolicitacao> getMeuAtributoSolicitacaoSet() {
-        if ((meuAtributoSolicitacaoSet == null || meuAtributoSolicitacaoSet.isEmpty()) && isFilha()) {
-            return getSolicitacaoPai().getMeuAtributoSolicitacaoSet();
-        }
-        return meuAtributoSolicitacaoSet;
+    	if (meuAtributoSolicitacaoSet != null && !meuAtributoSolicitacaoSet.isEmpty())
+			return meuAtributoSolicitacaoSet;
+		if (isFilha())
+			return getSolicitacaoPai().getMeuAtributoSolicitacaoSet();
+		return new ArrayList<SrAtributoSolicitacao>();
     }
 
-    public void setMeuAtributoSolicitacaoSet(List<SrAtributoSolicitacao> meuAtributoSolicitacaoSet) {
-        this.meuAtributoSolicitacaoSet = meuAtributoSolicitacaoSet;
+    public List<SrAtributoSolicitacao> getAtributoSolicitacaoSetAtual() {
+		List<SrAtributoSolicitacao> atributosAtuais = new ArrayList<SrAtributoSolicitacao>();
+    	if (getMeuAtributoSolicitacaoSet() != null) {
+    		List<SrAtributoSolicitacao> atributos = getMeuAtributoSolicitacaoSet();
+    		for (SrAtributoSolicitacao atributo : atributos)
+    			if (atributo != null && atributo.isAtivo())
+    				atributosAtuais.add(atributo);
+    	}
+    	return atributosAtuais;
     }
-
+    
     @Override
     public void setDescricao(String descricao) {
         this.setDescrSolicitacao(descricao);
@@ -509,21 +514,6 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         codigo = getOrgaoUsuario().getAcronimoOrgaoUsu() + "-SR-" + getAnoEmissao() + "/" + numString.toString();
     }
 
-    public List<SrAtributoSolicitacao> getAtributoSolicitacaoSet() {
-    	try{
-    		if (meuAtributoSolicitacaoSet != null && !meuAtributoSolicitacaoSet.isEmpty())
-    			return meuAtributoSolicitacaoSet;
-    		if (isFilha())
-    			return getSolicitacaoPai().getAtributoSolicitacaoSet();
-    	} catch(LazyInitializationException lie){
-    		//Edson: isso está ruim. Durante o preenchimento do formulário de edição, acontecem
-    		//alguns requests nos quais o meuAtributoSolicitacaoSet não pode ser acessado
-    		//por causa do ObjetoInstantiator.detach(). Este try catch impede o lazy exception mas
-    		//apaga os atributos já preenchidos pelo usuário. O mesmo vale para o getAtributoSolicitacaoMap()
-    	}
-    	return new ArrayList<SrAtributoSolicitacao>();
-    }
-
     public String getDtRegString() {
         SigaPlayCalendar cal = new SigaPlayCalendar();
         cal.setTime(getDtReg());
@@ -549,7 +539,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public String getAtributosString() {
         StringBuilder s = new StringBuilder();
-        for (SrAtributoSolicitacao att : getAtributoSolicitacaoSet()) {
+        for (SrAtributoSolicitacao att : getMeuAtributoSolicitacaoSet()) {
             if (att.getValorAtributoSolicitacao() != null)
                 s.append(att.getAtributo().getNomeAtributo() + ": " + att.getValorAtributoSolicitacao() + ". ");
         }
@@ -867,55 +857,30 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         return null;
     }
 
-    // Edson: poderia tambÃÂ©m guardar num HashMap transiente e, ao salvar(),
-    // mandar criar os atributos, caso se quisesse permitir um
-    // solicitacao.getAtributoSet().put...
-    public void setAtributoSolicitacaoMap(List<SrAtributoSolicitacaoMap> atributoSolicitacaoMap) throws Exception {
-
-        if (atributoSolicitacaoMap != null) {
-            meuAtributoSolicitacaoSet = new ArrayList<SrAtributoSolicitacao>();
-
-            for (SrAtributoSolicitacaoMap atribSolicitacao : atributoSolicitacaoMap) {
-            	if (atribSolicitacao.getIdAtributo() == null)
-            		continue;
-            	SrAtributo att = SrAtributo.AR.findById(atribSolicitacao.getIdAtributo());
-	            SrAtributoSolicitacao attSolicitacao = new SrAtributoSolicitacao(att, atribSolicitacao.getValorAtributo(), this);
-	            meuAtributoSolicitacaoSet.add(attSolicitacao);
-	        }
-        }
-
-//        if (atributosSolicitacao != null) {
-//            meuAtributoSolicitacaoSet = new ArrayList<SrAtributoSolicitacao>();
-//            for (Long idAtt : atributosSolicitacao.keySet()) {
-//                SrAtributo att = SrAtributo.AR.findById(idAtt);
-//                SrAtributoSolicitacao attSolicitacao = new SrAtributoSolicitacao(att, atributosSolicitacao.get(idAtt), this);
-//                meuAtributoSolicitacaoSet.add(attSolicitacao);
-//            }
-//        }
+    public void setAtributoSolicitacaoList(List<SrAtributoSolicitacaoMap> atributoSolicitacaoList) throws Exception {
+        if (atributoSolicitacaoMap == null) 
+        	atributoSolicitacaoMap = new LinkedHashMap<Long, SrAtributoSolicitacaoMap>();
+        for (SrAtributoSolicitacaoMap atribSolicitacao : atributoSolicitacaoList)
+            atributoSolicitacaoMap.put(atribSolicitacao.getIdAtributo(), atribSolicitacao);    
     }
+        
+    public void setAtributoSolicitacaoMap(Map<Long, SrAtributoSolicitacaoMap> atributoSolicitacaoMap) {
+		this.atributoSolicitacaoMap = atributoSolicitacaoMap;
+	}
 
-    public List<SrAtributoSolicitacaoMap> getAtributoSolicitacaoMap() {
-    	List<SrAtributoSolicitacaoMap> list = new ArrayList<>();
-    	try{
-    		if(meuAtributoSolicitacaoSet != null){
-    			for (SrAtributoSolicitacao att : meuAtributoSolicitacaoSet) {
-    				if(att.getAtributo() != null)
-    					list.add(new SrAtributoSolicitacaoMap(att.getAtributo().getIdAtributo(), att.getValorAtributoSolicitacao()));
-    			}
-    		}
-    		Collections.sort(list, new Comparator<SrAtributoSolicitacaoMap>() {
-    			@Override
-    			public int compare(SrAtributoSolicitacaoMap o1, SrAtributoSolicitacaoMap o2) {
-    				return o1.getIdAtributo().compareTo(o2.getIdAtributo());
-    			}
-    		});
-    	} catch(LazyInitializationException lie){
-    		//Edson: isso está ruim. Durante o preenchimento do formulário de edição, acontecem
-    		//alguns requests nos quais o meuAtributoSolicitacaoSet não pode ser acessado
-    		//por causa do ObjetoInstantiator.detach(). Este try catch impede o lazy exception mas
-    		//apaga os atributos já preenchidos pelo usuário. O mesmo vale para o getAtributoSolicitacaoSet()
-    	}
-    	return list;
+	public Map<Long, SrAtributoSolicitacaoMap> getAtributoSolicitacaoMap() {
+    	if (atributoSolicitacaoMap != null)
+    		return atributoSolicitacaoMap;
+		if (isAtributoDaEntidadeCarregado("meuAtributoSolicitacaoSet")) {
+        	atributoSolicitacaoMap = new LinkedHashMap<Long, SrAtributoSolicitacaoMap>();
+			for (SrAtributoSolicitacao att : getAtributoSolicitacaoSetAtual()) 
+				if(att.getAtributo() != null) {
+					atributoSolicitacaoMap.put(att.getAtributo().getAtual().getIdAtributo(), 
+							new SrAtributoSolicitacaoMap(att.getId(), att.getAtributo().getAtual().getIdAtributo(), att.getValorAtributoSolicitacao()));
+				}
+			return atributoSolicitacaoMap;
+		}
+		return new LinkedHashMap<Long, SrAtributoSolicitacaoMap>();
     }
 
     public Set<SrSolicitacao> getSolicitacaoFilhaSet() {
@@ -1552,6 +1517,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	if (t instanceof ConstraintViolationException) 
         		throw new AplicacaoException("Ocorreu um erro ao gravar a solicitação. Por favor, tente novamente. Clique no botão [ Voltar ] para recuperar os dados na tela de Cadastro de Solicitação"); 
         } 
+        salvarAtributosComHistorico(getCadastrante(), getLotaCadastrante());
         
     	refresh();
         getSolicitacaoInicial().refresh();
@@ -1588,6 +1554,33 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         	getSolicitacaoPai().deixarPendenteAguardandoFilha(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular(), this);
     }
 
+    private void salvarAtributosComHistorico(DpPessoa cadastrante, DpLotacao lotaCadastrante) throws Exception {
+    	if (getAtributoSolicitacaoMap() != null) {
+    		for (Map.Entry<Long, SrAtributoSolicitacaoMap> atributo : getAtributoSolicitacaoMap().entrySet()) {
+    			if (atributo.getValue() == null || !atributo.getValue().isValorPreenchido())
+    				continue;
+    			SrAtributoSolicitacao atributoSolicitacao = criarAtributoDaSolicitacao(atributo.getKey(),atributo.getValue(), cadastrante, lotaCadastrante);
+    			if (!atributo.getValue().isAtributoSolicitacaoInicial())
+    				atributoSolicitacao.setId(atributo.getValue().getIdAtributoSolicitacao());
+    			atributoSolicitacao.salvarComHistorico();
+    		}
+    	}
+	}
+    
+    private void definirAtributoSolicitacaoMapComoInicial() {
+    	if (getAtributoSolicitacaoMap() != null) {
+    		for (Map.Entry<Long, SrAtributoSolicitacaoMap> atributo : getAtributoSolicitacaoMap().entrySet()) {
+    			if (atributo.getValue() != null)
+    				atributo.getValue().definirAtributoSolicitacaoComoInicial();
+    		}
+    	}    	
+    }
+    
+    private SrAtributoSolicitacao criarAtributoDaSolicitacao(Long idTipoAtributo, SrAtributoSolicitacaoMap atributo, DpPessoa cadastrante, DpLotacao lotaCadastrante) {
+		SrAtributo tipoAtributo = SrAtributo.AR.findById(idTipoAtributo);
+		return new SrAtributoSolicitacao(atributo.getValorAtributo(), tipoAtributo, this, cadastrante, lotaCadastrante);
+    }
+           
     private void incluirEmListasAutomaticas() throws Exception {
         for (ListaInclusaoAutomatica dadosInclusao : getListasParaInclusaoAutomatica(getLotaCadastrante())) {
             incluirEmLista(dadosInclusao.getLista(), getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular(), dadosInclusao.getPrioridadeNaLista(), Boolean.FALSE);
@@ -2218,11 +2211,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
     
     private void fechar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, String motivo, SrTipoMotivoFechamento tpMotivo) throws Exception {
-    	fechar(cadastrante, lotaCadastrante, titular, lotaTitular, getItemAtual(), getAcaoAtual(), motivo, tpMotivo, null);
+    	fechar(cadastrante, lotaCadastrante, titular, lotaTitular, getItemAtual(), getAcaoAtual(), motivo, tpMotivo, null, null);
     }
 
     public void fechar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, 
-    		SrItemConfiguracao itemConfiguracao, SrAcao acao, String motivo, SrTipoMotivoFechamento tpMotivo, String conhecimento) throws Exception {
+    		SrItemConfiguracao itemConfiguracao, SrAcao acao, String motivo, SrTipoMotivoFechamento tpMotivo, 
+    		String conhecimento, Map<Long, SrAtributoSolicitacaoMap> atributos) throws Exception {
         if (isPai() && !isAbertaComTodasFilhasFechadas())
             throw new AplicacaoException("Operação não permitida. Necessário fechar toda solicitação " + 
             			"filha criada a partir dessa que deseja fechar.");
@@ -2249,6 +2243,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
 
         removerDasListasDePrioridade(cadastrante, lotaCadastrante, titular, lotaTitular);
+        
+        mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
+        this.setAtributoSolicitacaoMap(atributos);
+        salvarAtributosComHistorico(cadastrante, lotaCadastrante);
 
         if (isFilha()) {
         	DpLotacao lotaAtendente = getSolicitacaoPai().getLotaAtendente(); 
@@ -2264,7 +2262,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     
     public SrSolicitacao escalonarCriandoFilha(DpPessoa cadastrante, DpLotacao lotacao, DpPessoa titular, DpLotacao lotaTitular,
     		SrItemConfiguracao itemConfiguracao, SrAcao acao, SrConfiguracao designacao, DpLotacao atendenteNaoDesignado,
-    		Boolean fechadoAuto, String descricao) throws Exception{
+    		Boolean fechadoAuto, String descricao, Map<Long, SrAtributoSolicitacaoMap> atributos) throws Exception{
 
     	if (itemConfiguracao == null || itemConfiguracao.getId() == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
     		throw new AplicacaoException("Operação não permitida. Necessário informar um item de configuração e uma ação.");
@@ -2284,13 +2282,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	filha.setDescrSolicitacao(descricao);
     	if (atendenteNaoDesignado != null)
     		filha.setAtendenteNaoDesignado(atendenteNaoDesignado);
+    	filha.setAtributoSolicitacaoMap(atributos);
+    	filha.definirAtributoSolicitacaoMapComoInicial();
     	filha.salvar(cadastrante, lotacao, titular, lotaTitular);
     	return filha;
     }
     
     public void escalonarPorMovimentacao(DpPessoa cadastrante, DpLotacao lotacao, DpPessoa titular, DpLotacao lotaTitular,
     		SrItemConfiguracao itemConfiguracao, SrAcao acao, SrConfiguracao designacao, DpLotacao atendenteNaoDesignado,
-    		SrTipoMotivoEscalonamento motivo, String descricao, DpLotacao atendente) throws Exception{
+    		SrTipoMotivoEscalonamento motivo, String descricao, DpLotacao atendente, Map<Long, SrAtributoSolicitacaoMap> atributos) throws Exception{
     	
     	if (itemConfiguracao == null || itemConfiguracao.getId() == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
             throw new AplicacaoException("Operação não permitida. Necessário informar um item de configuração e uma ação.");
@@ -2317,22 +2317,28 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         mov.setDescrMovimentacao(descricao);
         mov.salvar(cadastrante, lotacao, titular, lotaTitular);
         save();
+        this.setAtributoSolicitacaoMap(atributos);
+        this.salvarAtributosComHistorico(cadastrante, lotacao);
     }
         
-    public void reclassificar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrItemConfiguracao item, SrAcao acao) throws Exception {
-        
+    public void reclassificar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, SrSolicitacao dadosDoForm) throws Exception {
         if (!podeReclassificar(cadastrante, lotaTitular))
             throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
+        
+        SrItemConfiguracao item = dadosDoForm.getItemConfiguracao();
+        SrAcao acao = dadosDoForm.getAcao();
         
         if (item == null || item.getId() == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
             throw new AplicacaoException("Operação não permitida. Necessario informar um item de configuração e uma ação.");
 
         SrMovimentacao mov = new SrMovimentacao(this);
         mov.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_RECLASSIFICACAO));
-        mov.setItemConfiguracao(item);
-        mov.setAcao(acao);
+        mov.setItemConfiguracao(SrItemConfiguracao.AR.findById(item.getId()));
+        mov.setAcao(SrAcao.AR.findById(acao.getIdAcao()));
         
         mov.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);
+        this.setAtributoSolicitacaoMap(dadosDoForm.getAtributoSolicitacaoMap());
+        salvarAtributosComHistorico(cadastrante, lotaCadastrante);
     }
 
 
@@ -3107,6 +3113,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     
     public boolean isDescrSolicitacaoPreenchida() {
     	return (getDescrSolicitacao() != null && getDescrSolicitacao().trim().length() > 0);
+    }
+    
+    private boolean isAtributoDaEntidadeCarregado(String nomeAtributo) {
+    	return em().getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(this, nomeAtributo);
     }
 
     public void setFecharAoAbrir(boolean fecharAoAbrir) {

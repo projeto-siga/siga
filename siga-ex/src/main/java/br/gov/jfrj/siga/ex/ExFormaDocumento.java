@@ -45,7 +45,7 @@ public class ExFormaDocumento extends AbstractExFormaDocumento implements
 	 * 
 	 * @param idFormaDoc
 	 */
-	public ExFormaDocumento(final java.lang.Integer idFormaDoc) {
+	public ExFormaDocumento(final java.lang.Long idFormaDoc) {
 		super(idFormaDoc);
 	}
 

@@ -16,6 +16,7 @@
 <%@ attribute name="onchange" required="false"%>
 <%@ attribute name="paramList" required="false"%>
 <%@ attribute name="tamanho" required="false"%>
+<%@ attribute name="checarInput" required="false"%>
 
 <c:set var="propriedadeClean" value="${fn:replace(propriedade,'.','')}" />
 
@@ -34,7 +35,18 @@
 <c:set var="alturaPopup" value="400" />
 
 <script type="text/javascript">
+$(document).ready(function($) {
+	window.${propriedadeClean}_default = document.getElementsByName('${propriedade}.sigla')[0].value;
+});
 
+self.isValorInputMudou_${propriedadeClean} = function() {
+	var inputValue = document.getElementsByName('${propriedade}.sigla')[0].value;
+	if (inputValue != window.${propriedadeClean}_default) {
+		return true;
+	}
+	return false;
+}
+	
 self.retorna_${propriedadeClean} = function(id, sigla, descricao) {
     try {
 		newwindow_${propriedadeClean}.close();
@@ -53,6 +65,7 @@ self.retorna_${propriedadeClean} = function(id, sigla, descricao) {
 	</c:if>
 	
 	document.getElementsByName('${propriedade}.sigla')[0].value = sigla;
+	window.${propriedadeClean}_default = sigla; //atualiza valor do input para ser usado na function self.isValorInputMudou_
 	
 	<c:if test="${reler == 'sim'}">
 		document.getElementsByName('req${propriedadeClean}')[0].value = "sim";
@@ -120,15 +133,22 @@ self.resposta_ajax_${propriedadeClean} = function(response, d1, d2, d3) {
 
 self.ajax_${propriedadeClean} = function() {
 	var sigla = $.trim(document.getElementsByName('${propriedade}.sigla')[0].value);
+	var executarEventos = true;
 	if (sigla == '') {
 		return retorna_${propriedadeClean}('', '', '');
 	}
-	var url = '/${modulo}/app/${tipo}/selecionar?propriedade=${propriedade}'+'${selecaoParams}';
-	url = url + '&sigla=' + sigla;
-	Siga.ajax(url, null, "GET", function(response){		
-		resposta_ajax_${propriedadeClean}(response);
-	});	
-	//PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedadeClean}', false);
+	<c:if test="${checarInput == 'true'}">
+		executarEventos = self.isValorInputMudou_${propriedadeClean}();
+	</c:if>
+
+	if (executarEventos) {
+		var url = '/${modulo}/app/${tipo}/selecionar?propriedade=${propriedade}'+'${selecaoParams}';
+		url = url + '&sigla=' + sigla;
+		Siga.ajax(url, null, "GET", function(response){		
+			resposta_ajax_${propriedadeClean}(response);
+		});	
+		//PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedadeClean}', false);
+	}
 }
 
 </script>

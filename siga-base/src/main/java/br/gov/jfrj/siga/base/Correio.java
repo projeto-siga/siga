@@ -98,7 +98,8 @@ public class Correio {
 			final String conteudoHTML) throws Exception {
 		// Cria propriedades a serem usadas na sessão.
 		final Properties props = new Properties();
-
+		Set<String> destSet = new HashSet<String>();
+		
 		// Define propriedades da sessão.
 		props.put("mail.transport.protocol", "smtp");
 		props.put("mail.smtp.host", servidorEmail);
@@ -133,13 +134,14 @@ public class Correio {
 		final Message msg = new MimeMessage(session);
 
 		if (destinatarios.length == 1) {
+			if (!destinatarios[0].equals("null") && !destSet.contains(destinatarios[0]))
+				destSet.add(destinatarios[0]);
 			msg.setRecipient(Message.RecipientType.TO, new InternetAddress(
-					destinatarios[0]));
+				destinatarios[0]));
 
 		} else {
-			Set<String> destSet = new HashSet<String>();
 			for (String s : destinatarios) {
-				if (!destSet.contains(s))
+				if (!s.equals("null") && !destSet.contains(s))
 					destSet.add(s);
 			}
 
@@ -147,8 +149,10 @@ public class Correio {
 					.size()];
 			int i = 0;
 			for (String email : destSet) {
-				endereco[i] = new InternetAddress(email);
-				i++;
+				if(!email.equals("null")){
+					endereco[i] = new InternetAddress(email);
+					i++;
+				}
 			}
 			msg.setRecipients(Message.RecipientType.TO, endereco);
 		}
@@ -193,7 +197,7 @@ public class Correio {
 		tr.sendMessage(msg, msg.getAllRecipients());
 		tr.close();
 
-		logger.log(Level.INFO,"Email enviado para " + Arrays.asList(destinatarios).toString() + "[" + assunto + "]");
+		logger.log(Level.INFO,"Email enviado para " + Arrays.asList(destSet).toString() + "[" + assunto + "]");
 		logger.log(Level.FINE, "Detalhes do e-mail enviado:"
 					+ "\nAssunto: " + assunto
 					+ "\nDe: " + remetente

@@ -2,19 +2,19 @@ package br.gov.jfrj.siga.sr.validator;
 
 public class SrError {
 
-	private final String key;
+	private final String category;
 	private final String message;
 
-	public SrError(String key, String value) {
-		this.key = key;
-		this.message = value;
+	public SrError(String category, String message) {
+		this.category = category;
+		this.message = message;
 	}
 
-	public String getKey() {
-		return key;
+	public String getCategory() {
+		return category;
 	}
 
-	public String getValue() {
+	public String getMessage() {
 		return message;
 	}
 }

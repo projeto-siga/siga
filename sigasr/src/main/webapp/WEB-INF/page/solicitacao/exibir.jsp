@@ -86,7 +86,7 @@
 					}
 					parseDescricao('descrSolicitacao');
 				</script>
-				<c:forEach items="${solicitacao.atributoSolicitacaoSet}" var="att">
+				<c:forEach items="${solicitacao.atributoSolicitacaoSetAtual}" var="att">
 					<c:if
 						test="${att.valorAtributoSolicitacao != null && !att.valorAtributoSolicitacao.isEmpty()}">
 						<p style="font-size: 9pt; padding: 0px">
@@ -596,13 +596,13 @@
             </form>
         </div>
     </sigasr:modal> 
-    <sigasr:modal nome="fechar" titulo="Fechar" url="${linkTo[SolicitacaoController].fechar}?sigla=${solicitacao.siglaCompacta}" />
+    <sigasr:modal nome="fechar" titulo="Fechar" url="${linkTo[SolicitacaoController].fechar}?solicitacao.codigo=${solicitacao.siglaCompacta}" />
     
     <sigasr:modal nome="incluirEmLista" titulo="Definir Lista" url="${linkTo[SolicitacaoController].incluirEmLista}?sigla=${solicitacao.siglaCompacta}" />
     
-    <sigasr:modal nome="escalonar" titulo="Escalonar Solicitação" url="${linkTo[SolicitacaoController].escalonar}?sigla=${solicitacao.siglaCompacta}" />
+    <sigasr:modal nome="escalonar" titulo="Escalonar Solicitação" url="${linkTo[SolicitacaoController].escalonar}?solicitacao.codigo=${solicitacao.siglaCompacta}" />
 
-	<sigasr:modal nome="reclassificar" titulo="Reclassificar" url="${linkTo[SolicitacaoController].reclassificar}?sigla=${solicitacao.siglaCompacta}" />
+	<sigasr:modal nome="reclassificar" titulo="Reclassificar" url="${linkTo[SolicitacaoController].reclassificar}?solicitacao.codigo=${solicitacao.siglaCompacta}" />
 
     <sigasr:modal nome="juntar" titulo="Juntar">
         <form action="${linkTo[SolicitacaoController].juntar}" method="post" enctype="multipart/form-data" id="formGravarJuncao">

@@ -83,105 +83,74 @@ function AssinarDocumentos(copia, politica) {
 	}
 }
 
+
 //
-// Provider: Localhost REST
+// Provider: Assijus
 //
-var providerLocalhostREST = {
-	nome : 'Localhost REST',
+var providerAssijus = {
+	nome : 'Assijus',
+	endpoint : location.hostname == "siga.jfrj.jus.br" ? "https://assijus.jfrj.jus.br/assijus" : "/assijus",
+	list : [],
 
 	testar : function() {
-		try {
-			var ret = "OK";
-			$.ajax({
-				type : "GET",
-				url : "http://localhost:8612/test",
-				dataType : 'json',
-				accepts : {
-					text : "application/json"
-				},
-				success : function(data, textStatus, XMLHttpRequest) {
-					if (data.error != null)
-						throw data.error;
-				},
-				error : function(jqXHR, textStatus, errorThrown) {
-					throw textStatus + ": " + errorThrown;
-				},
-				async : false,
-				cache : false
-			});
+		// please note, 
+		// that IE11 now returns undefined again for window.chrome
+		// and new Opera 30 outputs true for window.chrome
+		// and new IE Edge outputs to true now for window.chrome
+		// and if not iOS Chrome check
+		// so use the below updated condition
+		var isChromium = window.chrome,
+		    winNav = window.navigator,
+		    vendorName = winNav.vendor,
+		    isOpera = winNav.userAgent.indexOf("OPR") > -1,
+		    isIEedge = winNav.userAgent.indexOf("Edge") > -1,
+		    isIOSChrome = winNav.userAgent.match("CriOS");
 
-			//console.log("IttruREST: OK!");
+		if(isIOSChrome){
+		   // is Google Chrome on IOS
+		} else if(isChromium !== null && isChromium !== undefined && vendorName === "Google Inc." && isOpera == false && isIEedge == false) {
+		   // is Google Chrome
 			return true;
-		} catch (err) {
-			//console.log("IttruREST:" + err.message);
+		} else { 
+		   // not Google Chrome 
 		}
 		return false;
 	},
 
 	inicializar : function() {
-		var ret = "OK";
-		try {
-			$.ajax({
-				type : "GET",
-				url : "http://localhost:8612/cert",
-				dataType : 'json',
-				accepts : {
-					text : "application/json"
-				},
-				success : function(data, textStatus, XMLHttpRequest) {
-					if (data.error != null)
-						ret = data.error;
-					else
-						gCertificadoB64 = data.certificate;
-				},
-				error : function(jqXHR, textStatus, errorThrown) {
-					ret = textStatus + ": " + errorThrown;
-				},
-				async : false,
-				cache : false
-			});
-
-		} catch (Err) {
-			return Err.description;
-		}
-		return ret;
+		this.list = [];
+		return "OK";
 	},
 
-	assinar : function(conteudo) {
-		var ret = {};
-		var signreq = {
-			policy : (gPolitica ? "AD-RB" : "PKCS7"),
-			payload : conteudo,
-			certificate : gCertificadoB64
-		};
-		try {
-			$.ajax({
-				url : "http://localhost:8612/sign",
-				dataType : 'json',
-				contentType : "application/json",
-				type : "POST",
-				data : JSON.stringify(signreq),
-				processData: false,
-				async : false,
-				success : function(data, textStatus, XMLHttpRequest) {
-					ret.assinaturaB64 = data.sign;
-					ret.assinante = data.cn;
-					var re = /CN=([^,]+),/gi;
-					var m;
-					if ((m = re.exec(ret.assinante)) != null) {
-						ret.assinante = m[1];
-					}
-					ret.status = "OK"
-				},
-				error : function(jqXHR, textStatus, errorThrown) {
-					ret.status = textStatus + ": " + errorThrown;
-				},
-			});
-		} catch (err) {
-			Erro(err);
-			ret.status = err.message;
+	assinar : function(signable) {
+		 var item = {
+		      id: signable.id,
+		      system: "sigadocsigner",
+		      code: signable.code,
+		      descr: signable.descr,
+		      kind: signable.kind,
+		      origin: "Siga-Doc"
 		}
-		return ret;
+		this.list.push(item);
+		return;
+	},
+	
+	concluir : function(urlRedirect) {
+		var parent = this;
+		$.ajax({
+			url : this.endpoint + "/api/v1/store",
+			type : "POST",
+			data : {
+		        payload: JSON.stringify({list:this.list})
+		    },
+			async : false,
+			success : function(xhr) {
+			    window.location.href = parent.endpoint + "/?endpointlistkey=" + xhr.key + "&endpointcallback=" + encodeURI(urlRedirect);
+			},
+			error : function(xhr) {
+				result = "Erro na gravação da assinatura. " + xhr.responseText;
+			}
+		});
 	}
 }
 
@@ -603,8 +572,7 @@ function Conteudo(url) {
 	return "Não foi possível obter o conteúdo do documento a ser assinado.";
 }
 
-var providers = [// providerLocalhostREST, 
-                 providerIttruAx, providerIttruCAPI];
+var providers = [providerAssijus, providerIttruAx, providerIttruCAPI];
 
 //
 // Processamento de assinaturas em lote, com progress bar
@@ -715,62 +683,72 @@ function ExecutarAssinarDocumentos(Copia) {
 
 		process.push("Copia=" + Copia + ";");
 		if (!o.usePassword) {
-			process
-					.push("gNome='"
-							+ o.nome
-							+ "'; gAutenticar = "
-							+ (o.hasOwnProperty('autenticar') ? o.autenticar
-									: Copia)
-							+ "; gUrlPost = '"
-							+ oUrlBase.value
-							+ o.urlPost
-							+ "'; gUrlDocumento = '"
-							+ oUrlBase.value
-							+ o.urlPdf
-							+ "&semmarcas=1'; if (gPolitica){gUrlDocumento = gUrlDocumento + '&certificadoB64=' + encodeURIComponent(gCertificadoB64);};");
-			process.push(function() {
-				Log(o.nome + ": Buscando no servidor...")
-			});
-			process.push(function() {
-				gDocumento = Conteudo(gUrlDocumento);
-				if (typeof gDocumento == "string"
-						&& gDocumento.indexOf("Não") == 0)
-					return gDocumento;
-			});
-
-			var ret;
-			process.push(function() {
-				Log(o.nome + ": Assinando...")
-			});
-			process.push(function() {
-				gRet = provider.assinar(gDocumento)
-			});
-			process.push(function() {
-				Log(o.nome + ": Gravando assinatura de " + gRet.assinante)
-			});
-
-			process.push(function() {
-				var DadosDoPost = "sigla=" + encodeURIComponent(gNome)
-						+ "&copia=" + gAutenticar + "&assinaturaB64="
-						+ encodeURIComponent(gRet.assinaturaB64)
-						+ "&assinante=" + encodeURIComponent(gRet.assinante);
-				if (gPolitica) {
-					DadosDoPost = DadosDoPost + "&certificadoB64="
-							+ encodeURIComponent(gCertificadoB64);
-					DadosDoPost = DadosDoPost + "&atributoAssinavelDataHora="
-							+ gAtributoAssinavelDataHora;
-				}
-
-				// alert("oNome: " + oNome.value);
-				var aNome = gNome.split(":");
-				if (aNome.length == 2) {
-					// alert("id: " + aNome(1));
-					DadosDoPost = "id=" + aNome[1] + "&" + DadosDoPost;
-				}
-
-				Status = GravarAssinatura(gUrlPost, DadosDoPost);
-				return Status;
-			});
+			if (provider != providerAssijus) {
+				process
+						.push("gNome='"
+								+ o.nome
+								+ "'; gAutenticar = "
+								+ (o.hasOwnProperty('autenticar') ? o.autenticar
+										: Copia)
+								+ "; gUrlPost = '"
+								+ oUrlBase.value
+								+ o.urlPost
+								+ "'; gUrlDocumento = '"
+								+ oUrlBase.value
+								+ o.urlPdf
+								+ "&semmarcas=1'; if (gPolitica){gUrlDocumento = gUrlDocumento + '&certificadoB64=' + encodeURIComponent(gCertificadoB64);};");
+				process.push(function() {
+					Log(o.nome + ": Buscando no servidor...")
+				});
+				process.push(function() {
+					gDocumento = Conteudo(gUrlDocumento);
+					if (typeof gDocumento == "string"
+							&& gDocumento.indexOf("Não") == 0)
+						return gDocumento;
+				});
+	
+				var ret;
+				process.push(function() {
+					Log(o.nome + ": Assinando...")
+				});
+				process.push(function() {
+					gRet = provider.assinar(gDocumento);
+				});
+				process.push(function() {
+					Log(o.nome + ": Gravando assinatura de " + gRet.assinante)
+				});
+	
+				process.push(function() {
+					var DadosDoPost = "sigla=" + encodeURIComponent(gNome)
+							+ "&copia=" + gAutenticar + "&assinaturaB64="
+							+ encodeURIComponent(gRet.assinaturaB64)
+							+ "&assinante=" + encodeURIComponent(gRet.assinante);
+					if (gPolitica) {
+						DadosDoPost = DadosDoPost + "&certificadoB64="
+								+ encodeURIComponent(gCertificadoB64);
+						DadosDoPost = DadosDoPost + "&atributoAssinavelDataHora="
+								+ gAtributoAssinavelDataHora;
+					}
+	
+					// alert("oNome: " + oNome.value);
+					var aNome = gNome.split(":");
+					if (aNome.length == 2) {
+						// alert("id: " + aNome(1));
+						DadosDoPost = "id=" + aNome[1] + "&" + DadosDoPost;
+					}
+	
+					Status = GravarAssinatura(gUrlPost, DadosDoPost);
+					return Status;
+				});
+			} else {
+//			      "code": "TRF2-MEM-2016/00144",
+//			      "descr": "Teste",
+//			      "id": "489623760__TRF2MEM201600144",
+//			      "kind": "Memorando",
+//			      "origin": "Siga-Doc",
+//			      "system": "sigadocsigner"
+				provider.assinar({id: o.id, code: o.nome, descr: o.descr, kind: o.kind});
+			}
 		} else {
 			process.push(function() {
 				Log(o.nome + ": Gravando assinatura com senha de " + gLogin)
@@ -789,15 +767,42 @@ function ExecutarAssinarDocumentos(Copia) {
 				return Status;
 			});
 		}
-
 	}
+	
+	if (provider != providerAssijus) {
+		process.push(function() {
+			if (gRet == undefined)
+				return;
+			Log("Concluído, redirecionando...");
+		});
+		process.push(function() {
+			if (gRet == undefined)
+				return;
+			location.href = oUrlNext.value;
+		});
+	} else {
+		process.push(function() {
+			var resolve = function(url, base_url) {
+				  var doc      = document
+				    , old_base = doc.getElementsByTagName('base')[0]
+				    , old_href = old_base && old_base.href
+				    , doc_head = doc.head || doc.getElementsByTagName('head')[0]
+				    , our_base = old_base || doc_head.appendChild(doc.createElement('base'))
+				    , resolver = doc.createElement('a')
+				    , resolved_url
+				    ;
+				  our_base.href = base_url || '';
+				  resolver.href = url;
+				  resolved_url  = resolver.href; // browser magic at work here
 
-	process.push(function() {
-		Log("Concluído, redirecionando...");
-	});
-	process.push(function() {
-		location.href = oUrlNext.value;
-	});
+				  if (old_base) old_base.href = old_href;
+				  else doc_head.removeChild(our_base);
+				  return resolved_url;
+				}
+			
+			gRet = provider.concluir(resolve(oUrlNext.value, window.location.href));
+		});
+	}
 	process.run();
 }
 
@@ -837,6 +842,15 @@ function identificarOperacoes() {
 					.getElementsByName("ad_url_post_password_"
 							+ operacao.codigo)[0].value;
 			operacao.usePassword = false;
+
+			// Assijus
+			operacao.id = document.getElementsByName("ad_id_"
+					+ operacao.codigo)[0].value;
+			operacao.descr = document.getElementsByName("ad_description_"
+					+ operacao.codigo)[0].value;
+			operacao.kind = document.getElementsByName("ad_kind_"
+					+ operacao.codigo)[0].value;
+
 
 			var oChkPwd = document.getElementsByName("ad_password_"
 					+ operacao.codigo)[0];

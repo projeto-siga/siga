@@ -14,8 +14,8 @@ var newwin = null;
 &nbsp;&nbsp;&nbsp;O servidor submetido à jornada ininterrupta poderá prestar serviço extraordinário desde que, no dia da prestação do serviço, cumpra jornada de oito horas de trabalho com intervalo de, no mínimo, uma hora (§1º do Art. 45, Resolução nº 4/2008 - CJF, alterado pela Resolução nº 173/2011 - CJF).</br>&nbsp;&nbsp;&nbsp; Na hipótese de prestação de serviço extraordinário em fins de semana/feriados, somente a sobrejornada igual ou superior a 8 (oito) horas poderá conter intervalo para almoço, a teor do artigo 1º, caput, da Resolução nº 88/2009, do Conselho Nacional de Justiça.        </c:set>
     
     <mod:grupo titulo="Referente">
-        <mod:radio titulo="ao Plantão Judiciário." var="referente" valor="1" reler="sim" marcado="Sim"/>
-        <mod:radio titulo="à Solicitação de Serviço Extraordinário" var="referente" valor="2" reler="sim" />
+        <mod:radio titulo="ao Plantão Judiciário." var="referente" valor="1"marcado="Sim"/>
+        <mod:radio titulo="à Solicitação de Serviço Extraordinário" var="referente" valor="2" />
         <c:set var="valorreferente" value="${referente}" />
         <c:if test="${empty valorreferente}">
             <c:set var="valorreferente" value="${param['referente']}" />
@@ -248,10 +248,10 @@ var newwin = null;
         &nbsp;<br/> <%-- Solução by Edson --%>
         <b>Referente:</b>
 
-        <c:if test="${referente == '1'}">
-        ao Plantão Judiciário.</br></c:if>
-        <c:if test="${referente == '2'}">
-        à Solicitação de Serviço Extraordinário Nº:${numerosolicitacao}</br></c:if>
+        <c:if test="${(referente == '1')}">
+        ao Plantão Judiciário.</c:if></br>
+        <c:if test="${(referente == '2')}">
+        à Solicitação de Serviço Extraordinário Nº:${numerosolicitacao}</c:if></br>
         
         <b>Unidade Organizacional:</b> ${requestScope['unidade_lotacaoSel.sigla']}-${requestScope['unidade_lotacaoSel.descricao']}<br/>
         <b>Mês/Ano:</b>  ${mes}/${ano} <br/>
@@ -372,12 +372,12 @@ var newwin = null;
             </tr>           
         </table>        
         <br/>
-        <c:if test="${solicitacaoCumprida == '1'}">
+        <c:if test="${(solicitacaoCumprida == '1')}">
         <p style="text-align: justify; text-indent: 2cm;">
          Informo que todas as tarefas/atividades descritas na Solicitação de Serviço Extraordinário foram cumpridas.</p>
         </c:if>
         </br>
-        <c:if test="${solicitacaoCumprida == '2'}">
+        <c:if test="${(solicitacaoCumprida == '2')}">
         <p style="text-align: justify; text-indent: 2cm;">
          Informo que as tarefas/atividades descritas na Solicitação de Serviço Extraordinário não foram todas cumpridas pois:&nbsp; ${solicitacaoCumpridaNaoPois}</p>
         </c:if></br>

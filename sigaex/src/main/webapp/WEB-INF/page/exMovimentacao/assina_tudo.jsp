@@ -168,6 +168,13 @@
 									<input type="hidden"
 										name="ad_url_post_password_${assdoc.doc.idDoc}"
 										value="/sigaex/app/expediente/mov/assinar_senha_gravar" />
+										
+									<input type="hidden" name="ad_id_${assdoc.doc.idDoc}"
+										value="${titular.cpfPessoa}__${assdoc.doc.codigoCompacto}" />
+									<input type="hidden" name="ad_description_${assdoc.doc.idDoc}"
+										value="${assdoc.doc.descrDocumento}" />
+									<input type="hidden" name="ad_kind_${assdoc.doc.idDoc}"
+										value="${assdoc.doc.descrFormaDoc}" />
 
 									<c:forEach var="assmov" items="${assdoc.movs}">
 										<c:set var="x" scope="request">ad_chk_mov${assmov.mov.idMov}</c:set>
@@ -205,7 +212,7 @@
 											<td>${assmov.mov.obs}</td>
 										</tr>
 										<input type="hidden" name="ad_descr_mov${assmov.mov.idMov}"
-											value="${assmov.mov.referencia}" />
+											value="${assdoc.doc.sigla}:${assmov.mov.idMov}" />
 										<input type="hidden" name="ad_url_pdf_mov${assmov.mov.idMov}"
 											value="/sigaex/app/arquivo/exibir?arquivo=${assmov.mov.referencia}.pdf" />
 										<input type="hidden" name="ad_url_post_mov${assmov.mov.idMov}"
@@ -213,6 +220,13 @@
 										<input type="hidden"
 											name="ad_url_post_password_mov${assmov.mov.idMov}"
 											value="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" />
+											
+										<input type="hidden" name="ad_id_mov${assmov.mov.idMov}"
+											value="${titular.cpfPessoa}__${fn:replace(assmov.mov.referencia, ':', '_')}" />
+										<input type="hidden" name="ad_description_mov${assmov.mov.idMov}"
+											value="${assmov.mov.obs}" />
+										<input type="hidden" name="ad_kind_mov${assmov.mov.idMov}"
+											value="${assmov.mov.exTipoMovimentacao.sigla}" />
 									</c:forEach>
 								</c:forEach>
 							</tbody>

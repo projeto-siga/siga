@@ -603,7 +603,7 @@ public class SolicitacaoController extends SrController {
     	}	
     	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());
     	solicitacaoEntity.reclassificar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solicitacao);
-    	result.use(Results.status()).ok();
+    	result.use(Results.http()).body(solicitacaoEntity.getSiglaCompacta());
     }
 
 	private void incluirListasReclassificacao(SrSolicitacao solicitacao) throws Exception {
@@ -643,7 +643,7 @@ public class SolicitacaoController extends SrController {
     	SrSolicitacao solicitacaoEntity = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(solicitacao.getCodigo());
     	solicitacaoEntity.fechar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solicitacao.getItemConfiguracao(), 
     			solicitacao.getAcao(), motivoFechar, tpMotivo, conhecimento, solicitacao.getAtributoSolicitacaoMap());    	
-    	result.use(Results.status()).ok();
+    	result.use(Results.http()).body(solicitacaoEntity.getSiglaCompacta());
     }
     
     @Path("app/solicitacao/erPesquisa")
@@ -744,13 +744,13 @@ public class SolicitacaoController extends SrController {
         	SrSolicitacao filha = solicitacaoEntity.escalonarCriandoFilha(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 
         			solicitacao.getItemConfiguracao(), solicitacao.getAcao(), designacao, atendenteNaoDesignado,
         			fechadoAuto, descricao, solicitacao.getAtributoSolicitacaoMap());
-        	result.redirectTo(this).exibir(filha.getSiglaCompacta(), todoOContexto(), ocultas());
+        	result.use(Results.http()).body(filha.getSiglaCompacta());
         } 
         else {
         	solicitacaoEntity.escalonarPorMovimentacao(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 
         			solicitacao.getItemConfiguracao(), solicitacao.getAcao(), designacao, atendenteNaoDesignado, 
         			motivo, descricao, atendente, solicitacao.getAtributoSolicitacaoMap());
-        	result.redirectTo(this).exibir(solicitacao.getSiglaCompacta(), todoOContexto(), ocultas());
+        	result.use(Results.http()).body(solicitacaoEntity.getSiglaCompacta());
         }
     }
 

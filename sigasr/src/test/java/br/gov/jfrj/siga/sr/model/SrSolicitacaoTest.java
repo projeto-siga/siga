@@ -53,7 +53,7 @@ public class SrSolicitacaoTest {
 				solRj.getCadastrante(), solRj.getLotaCadastrante(),
 				solRj.getTitular(), solRj.getLotaTitular(),
 				solRj.getItemConfiguracao(), solRj.getAcao(),
-				solRj.getDesignacao(), null, false, "Escalonamento para teste");
+				solRj.getDesignacao(), null, false, "Escalonamento para teste", null);
 		String sigla = solRj.getSigla() + "01";
 		SrSolicitacao solBusca = (SrSolicitacao) new SrSolicitacao()
 				.setLotaTitular(TestUtil.lotaMenor()).selecionar(sigla);
@@ -68,7 +68,7 @@ public class SrSolicitacaoTest {
 				solRj.getCadastrante(), solRj.getLotaCadastrante(),
 				solRj.getTitular(), solRj.getLotaTitular(),
 				solRj.getItemConfiguracao(), solRj.getAcao(),
-				solRj.getDesignacao(), null, false, "Escalonamento para teste");
+				solRj.getDesignacao(), null, false, "Escalonamento para teste", null);
 		String sigla = solRj.getSigla().replace(
 				solRj.getOrgaoUsuario().getAcronimoOrgaoUsu(), "");
 		sigla = sigla.replace(
@@ -127,14 +127,14 @@ public class SrSolicitacaoTest {
 		SrSolicitacao filha = s.escalonarCriandoFilha(s.getCadastrante(),
 				s.getLotaCadastrante(), s.getTitular(), s.getLotaTitular(),
 				s.getItemConfiguracao(), s.getAcao(), s.getDesignacao(), null,
-				true, "Escalonamento para teste");
+				true, "Escalonamento para teste", null);
 		
 		TestCase.assertTrue(s.isFechadoAutomaticamente());
 		
 		SrSolicitacao filha2 = s.escalonarCriandoFilha(s.getCadastrante(),
 				s.getLotaCadastrante(), s.getTitular(), s.getLotaTitular(),
 				s.getItemConfiguracao(), s.getAcao(), s.getDesignacao(), null,
-				true, "Segundo escalonamento para teste");
+				true, "Segundo escalonamento para teste", null);
 
 		filha.fechar(filha.getCadastrante(), filha.getLotaCadastrante(),
 				filha.getTitular(), filha.getLotaTitular(),
@@ -158,7 +158,7 @@ public class SrSolicitacaoTest {
 		SrSolicitacao filha = principal.escalonarCriandoFilha(principal.getCadastrante(),
 				principal.getLotaCadastrante(), principal.getTitular(), principal.getLotaTitular(),
 				principal.getItemConfiguracao(), principal.getAcao(), principal.getDesignacao(), null,
-				false, "Escalonamento para teste");
+				false, "Escalonamento para teste", null);
 
 		for (SrTipoMotivoFechamento m : SrTipoMotivoFechamento.values()) {
 			filha.fechar(filha.getCadastrante(), filha.getLotaCadastrante(),

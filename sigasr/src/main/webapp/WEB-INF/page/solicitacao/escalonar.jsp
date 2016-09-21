@@ -17,6 +17,7 @@
 			$('#outrasInformacoesDaFilha').hide();
 			$("#escalonar_dialog").dialog('option', 'width', 700);
 			onchangeCheckCriaFilha();
+			carregarLotacaoDaAcao();
 		});
 		
 		function onchangeCheckCriaFilha() {
@@ -31,14 +32,10 @@
 			$('#outrasInformacoesDaFilha').hide();
 			$('#motivoEscalonamento').show();
 		}
-
-		$(document).ready(function() {
-			removeSelectedDuplicado();
-		});
 		
 		function carregarLotacaoDaAcao(){
 			//preenche o campo atendente com a lotacao designada a cada alteracao da acao 
-			var opcaoSelecionada = $("#selectAcao option:selected");
+			var opcaoSelecionada = $("#escalonar #selectAcao option:selected");
 			var idAcao = opcaoSelecionada.val();
 			try{
 				var siglaLotacao = opcaoSelecionada.html().split(/[)|(]+/)[1]; //[ "(", "SEDGET", ")" ]
@@ -61,16 +58,6 @@
 			}
 		}
 		
-		function removeSelectedDuplicado() {
-			//solucao de contorno temporaria para opções no select com mesmo value.
-			var primeiro = $("#selectAcao option:eq(0)");
-			var segundo = $("#selectAcao option:eq(1)");
-			if (primeiro.val() == segundo.val()) {
-				segundo.prop("selected", false);
-				primeiro.prop("selected", true);
-			}
-		}
-		
 	</script>
 	<div class="gt-content-box gt-form">
 		<form action="#" method="post" enctype="multipart/form-data" id="frmEscalonar">
@@ -81,30 +68,7 @@
 				</label>
 				<br/>
 				<sigasr:classificacao metodo="escalonar" exibeLotacaoNaAcao="true"/>
-				<c:if test="${not empty solicitacao.itemConfiguracao && not empty acoesEAtendentes}">
-					<div>
-						<!-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao
-								ja que acima no select nao tem como "esconder" essa informacao -->
-						<c:forEach items="${acoesEAtendentes.keySet()}" var="cat" varStatus="catPosition">
-							<c:forEach items="${acoesEAtendentes.get(cat)}" var="t" varStatus="tPosition">
-								<span class="idDesignacao-${t.acao.idAcao}" style="display:none;">${t.conf.idConfiguracao}</span>
-								<span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.siglaCompleta} 
-													- ${t.conf.atendente.descricao}</span>
-								<span class="idLotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.idLotacao}</span>
-							</c:forEach>
-						</c:forEach>
 				
-						<label>Atendente</label>
-						<span id="atendentePadrao" style="display:block;"></span>
-						<input type="hidden" id="idDesignacao" name="designacao.id" value="" />
-						<input type="hidden" name="atendente.id" id="idAtendente" value="" />
-						<script>carregarLotacaoDaAcao();</script>
-					</div>
-					<a href="javascript: modalAbrir('lotacaoAtendente')" class="gt-btn-medium" style="margin: 5px 0 0 -3px;">
-						Alterar atendente
-					</a>
-				</c:if>
-
 				<input type="hidden" name="atendenteNaoDesignado.id" id="atendenteNaoDesignado" value="" />
 				<br/>
 				<div class="gt-form-row">

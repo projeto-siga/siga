@@ -341,9 +341,12 @@ public class SolicitacaoController extends SrController {
 	private boolean validarFormReclassificar(SrSolicitacao solicitacao) throws Exception {
 		if (solicitacao.getItemConfiguracao() == null || solicitacao.getItemConfiguracao().getId() == null) 
 			srValidator.addError("solicitacao.itemConfiguracao", "Item n&atilde;o informado");
+		else 
+			solicitacao.setItemConfiguracao(SrItemConfiguracao.AR.findById(solicitacao.getItemConfiguracao().getId()));
         if (solicitacao.getAcao() == null || solicitacao.getAcao().getId() == null) 
         	srValidator.addError("solicitacao.acao", "A&ccedil&atilde;o n&atilde;o informada");
-        
+        else
+        	solicitacao.setAcao(SrAcao.AR.findById(solicitacao.getAcao().getId()));
         //atributos
         Map<Long, Boolean> obrigatorio = solicitacao.getObrigatoriedadeTiposAtributoAssociados();
         int index = 0;

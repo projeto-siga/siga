@@ -1,1 +1,1 @@
-Informamos ${msgDestinatario} a respeito do conhecimento n&ordm; ${inf.sigla}, com o seguinte título: ${inf.arq.titulo}. Para acessar o conhecimento, acesse o endereço http://siga/sigagc/app/exibir/${inf.siglaCompacta}.
+Informamos ${msgDestinatario} a respeito do conhecimento nº ${inf.sigla}, com o seguinte título: ${inf.arq.titulo}. Para acessar o conhecimento, acesse o endereço http://siga/sigagc/app/exibir/${inf.siglaCompacta}.

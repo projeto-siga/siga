@@ -34,7 +34,7 @@ public class Correio {
 			msgDestinatario = pesResponsavel.getNomePessoa();
 			destinatarios = new String[] { pesResponsavel.getEmailPessoa() };
 		} else if (lotResponsavel != null) {
-			msgDestinatario = "a lota&ccedil;&atilde;o "
+			msgDestinatario = "a lotação "
 					+ lotResponsavel.getSigla();
 			email = "";
 			for (DpPessoa p : lotResponsavel.getDpPessoaLotadosSet()) {

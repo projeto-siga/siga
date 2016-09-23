@@ -79,19 +79,16 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	public String getLocalidadeString() {
-		String s[] = getNomeLotacao().toLowerCase().split(" de ");
-		String s2 = "";
-		if (s.length >= 2) {
-			s2 = s[s.length - 1].toLowerCase();
-			if (CpLocalidade.getMunicipios().contains(s2))
-				return s2;
-			// Fix:
-			s2 = s[s.length - 2] + " de " + s[s.length - 1];
-			if (CpLocalidade.getMunicipios().contains(s2))
-				return s2;
+		String s = getNomeLotacao().toLowerCase();
+		int posicaoNmMunicipio = s.lastIndexOf(" de ");
+		if (posicaoNmMunicipio > 0){
+			s = s.substring(posicaoNmMunicipio+4);
+			for (String municipio : CpLocalidade.getMunicipios()){
+				if (municipio.toLowerCase().contains(s))
+							return municipio;
+			}
 		}
 		return getOrgaoUsuario().getMunicipioOrgaoUsu();
-
 	}
 
 	public String iniciais(String s) {

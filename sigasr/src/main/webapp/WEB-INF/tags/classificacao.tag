@@ -96,7 +96,7 @@ function carregarAcao() {
 	var idSelecionado = $("#${metodo} #selectAcao").find(":selected").val();
 	if ('${exibeLotacaoNaAcao}' === 'true')
 		executarFuncaoDepoisDoSbmt = carregarLotacaoDaAcao;
-	sbmt('solicitacao.acao', postbackURL()+'&solicitacao.acao.id='+idSelecionado, true, executarFuncaoDepoisDoSbmt);
+	sbmt('solicitacao.acao', postbackURL()+'&solicitacao.acao.id='+idSelecionado, false, executarFuncaoDepoisDoSbmt);
 }
 
 function dispararFuncoesOnBlurItem() {

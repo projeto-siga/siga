@@ -92,11 +92,12 @@ function validarCampos() {
 }
 
 function carregarAcao() {
-	var executarFuncaoDepoisDoSbmt = removerAcaoRepetida;
 	var idSelecionado = $("#${metodo} #selectAcao").find(":selected").val();
 	if ('${exibeLotacaoNaAcao}' === 'true')
-		executarFuncaoDepoisDoSbmt = carregarLotacaoDaAcao;
-	sbmt('solicitacao.acao', postbackURL()+'&solicitacao.acao.id='+idSelecionado, true, executarFuncaoDepoisDoSbmt);
+		carregarLotacaoDaAcao();
+ 	else
+		removerAcaoRepetida();
+	sbmt('solicitacao.acao', postbackURL()+'&solicitacao.acao.id='+idSelecionado, false, null);
 }
 
 function dispararFuncoesOnBlurItem() {
@@ -140,8 +141,6 @@ function gravar() {
     		jQuery.blockUI(objBlock);
     	},
     	success: function(response) {
-        	${metodo}_fechar();
-    		jQuery.unblockUI();
         	window.location.href = "${linkTo[SolicitacaoController].exibir}" + response;
     	},
     	error: function(response) {

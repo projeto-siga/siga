@@ -98,9 +98,9 @@ public class ConversorDeExDocParaMateria {
 	}
 
 	private String getTrecho(ExDocumento doc, ParteDaMateria parte) {
-		String regex = ".*<!--\\sINICIO\\s" + parte + "(?:\\s-->)*"
+		String regex = ".*<!--\\sINICIO\\s" + parte + "\\s(?:-->)*"
 				+ "(?<conteudo>.*?)" 
-				+ "(?:<!--\\s)*FIM\\s" + parte + "\\s-->.*";
+				+ "(?:<!--)*\\sFIM\\s" + parte + "\\s-->.*";
 		Matcher m = Pattern.compile(regex, Pattern.DOTALL).matcher(
 				doc.getConteudoBlobHtmlString());
 		if (m.matches())

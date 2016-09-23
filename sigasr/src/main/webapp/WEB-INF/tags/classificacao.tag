@@ -92,11 +92,12 @@ function validarCampos() {
 }
 
 function carregarAcao() {
-	var executarFuncaoDepoisDoSbmt = removerAcaoRepetida;
 	var idSelecionado = $("#${metodo} #selectAcao").find(":selected").val();
 	if ('${exibeLotacaoNaAcao}' === 'true')
-		executarFuncaoDepoisDoSbmt = carregarLotacaoDaAcao;
-	sbmt('solicitacao.acao', postbackURL()+'&solicitacao.acao.id='+idSelecionado, false, executarFuncaoDepoisDoSbmt);
+		carregarLotacaoDaAcao();
+ 	else
+		removerAcaoRepetida();
+	sbmt('solicitacao.acao', postbackURL()+'&solicitacao.acao.id='+idSelecionado, false, null);
 }
 
 function dispararFuncoesOnBlurItem() {

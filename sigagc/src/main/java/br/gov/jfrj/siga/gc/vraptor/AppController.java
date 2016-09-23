@@ -692,7 +692,10 @@ public class AppController extends GcController {
 				}
 
 			}
-
+			//Evita que o título do conhecimento apareça cortado ao editá-lo, quando este contiver aspas.   
+			if (inftitulo != null && inftitulo.contains("\""))
+				inftitulo = inftitulo.replaceAll("\"", "&quot;");
+			
 			if (classificacao == null || classificacao.isEmpty())
 				classificacao = (informacao.arq != null) ? informacao.arq.classificacao
 						: null;

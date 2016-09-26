@@ -29,6 +29,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
@@ -1142,6 +1143,10 @@ public class AppController extends GcController {
 			String url = "/sigagc/app/baixar?id=" + id;
 			String js = "<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction('"
 					+ CKEditorFuncNum + "','" + url + "');</script>";
+			
+			HttpResult response = result.use(Results.http());
+			response.addHeader("Content-Type", "text/html");
+			
 			result.use(Results.http()).body(js);
 		} else {
 			if (titulo != null && titulo.trim().length() > 0)

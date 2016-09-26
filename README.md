@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/projeto-siga/siga.png?label=ready&title=Ready)](https://waffle.io/projeto-siga/siga)
 Projeto Siga
 ============
 

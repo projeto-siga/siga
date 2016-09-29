@@ -32,8 +32,14 @@ import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPerfil;
+import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
+import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
+import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -208,6 +214,10 @@ public class AppController extends GcController {
 				.toUpperCase() + estiloBusca.substring(1) : "";
 		Query query = em().createNamedQuery("buscarConhecimento" + estiloBusca);
 		query.setParameter("tags", set);
+		if (estiloBusca == null || estiloBusca.isEmpty() || estiloBusca.equals("AlgumIgualNenhumDiferente")){
+			query.setParameter("lotacaoIni", getLotaTitular().getIdInicial());
+			query.setParameter("pessoaIni", getTitular().getIdInicial());
+		}
 		if ("ExatoOuNada".equals(estiloBusca))
 			query.setParameter("numeroDeTags", (long) tags.length);
 
@@ -1083,39 +1093,18 @@ public class AppController extends GcController {
 		
 		result.include("informacao", informacao);
 		result.include("listaPapel", this.getListaGcPapel());
+		result.include("pessoaSel", new DpPessoaSelecao());
+	    result.include("lotacaoSel", new DpLotacaoSelecao());
+	    result.include("grupoSel", new CpPerfilSelecao());
 	}
-
-	public void vincularPapelGravar(GcInformacao informacao, DpPessoa pessoa, DpLotacao lotacao, 
+	
+	public void vincularPapelGravar(GcInformacao informacao, DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, CpPerfilSelecao grupoSel,
 			GcPapel papel) throws Exception {
 		informacao = GcInformacao.AR.findById(informacao.id);
-
-		// Nato: precisei fazer isso pq o vraptor injeta a entidade vazia. O
-		// ideal seria injetar null se nenhum parâmetro for especificado.
-		if (pessoa != null && pessoa.getId() == null)
-			pessoa = null;
-		if (lotacao != null && lotacao.getId() == null)
-			lotacao = null;
 		
-		if (informacao == null && pessoa == null && lotacao == null)
-			throw new AplicacaoException("Não foram informados dados para a definição de perfil");
+		bl.vincularPapel(informacao, getIdentidadeCadastrante(), getTitular(), getLotaTitular(), 
+				pessoaSel.buscarObjeto(), lotacaoSel.buscarObjeto(), grupoSel.buscarObjeto(), papel, correio);
 		
-		if (pessoa != null && lotacao == null)
-			lotacao = pessoa.getLotacao();
-		
-		if (!informacao.podeVincularPapel(getTitular(), getLotaTitular())){
-			throw new AplicacaoException("Definição de perfil não permitida");
-		}
-		
-		String descr = papel.getDescPapel() + ":"
-			+ (pessoa != null ? pessoa.getDescricaoCompletaIniciaisMaiusculas() : lotacao.getDescricaoIniciaisMaiusculas());  
-		
-		GcMovimentacao mov = bl.movimentar(informacao,
-				GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL, pessoa,
-				lotacao, descr, null, null, null, null, null, null);
-		mov.setPapel(papel);
-		bl.gravar(informacao, getIdentidadeCadastrante(), getTitular(),
-				getLotaTitular());
-		correio.notificar(informacao, pessoa, lotacao, null);
 		result.redirectTo(this).exibir(informacao.getSiglaCompacta(),
 				"Vinculação de perfil realizada com sucesso!", false, false);
 	}

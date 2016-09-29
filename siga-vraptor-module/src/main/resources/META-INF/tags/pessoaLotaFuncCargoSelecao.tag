@@ -27,43 +27,52 @@
 </c:if>
 
 <select id="${nomeSelPessoa}${nomeSelLotacao}${nomeSelFuncao}${nomeSelCargo}${nomeSelGrupo}" onchange="" ${pessoaLotaFuncCargoSelecaoDisabled} >
-  <option value="1">Pessoa</option>
-  <option value="2">Lotação</option>
-  <option value="3">Função</option>
-  <option value="4">Cargo</option>
-  <option value="5">Grupo</option>
+  <c:if test="${not empty nomeSelPessoa}"><option value="1">Pessoa</option></c:if>
+  <c:if test="${not empty nomeSelLotacao}"><option value="2">Lotação</option></c:if>
+  <c:if test="${not empty nomeSelFuncao}"><option value="3">Função</option></c:if>
+  <c:if test="${not empty nomeSelCargo}"><option value="4">Cargo</option></c:if>
+  <c:if test="${not empty nomeSelGrupo}"><option value="5">Grupo</option></c:if>
 </select>
 
+<c:if test="${not empty nomeSelPessoa}">
 <span id="spanPessoa${nomeSelPessoa}">
 	<input type="hidden" name="${nomeSelPessoa}" id="${nomeSelPessoa}" class="pessoaLotaFuncCargoSelecao">
 	<siga:selecao propriedade="${nomeSelPessoa}" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valuePessoa}"/>
 </span>
+</c:if>
 
+<c:if test="${not empty nomeSelLotacao}">
 <span id="spanLotacao${nomeSelLotacao}">
 	<input type="hidden" name="${nomeSelLotacao}" id="${nomeSelLotacao}" class="pessoaLotaFuncCargoSelecao">
 	<siga:selecao propriedade="${nomeSelLotacao}" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueLotacao}"/>
 </span>
+</c:if>
 
+<c:if test="${not empty nomeSelFuncao}">
 <span id="spanFuncao${nomeSelFuncao}">
 	<input type="hidden" name="${nomeSelFuncao}" id="${nomeSelFuncao}" class="pessoaLotaFuncCargoSelecao">
 	<siga:selecao propriedade="${nomeSelFuncao}" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueFuncao}"/>
 </span>
+</c:if>
 
+<c:if test="${not empty nomeSelCargo}">
 <span id="spanCargo${nomeSelCargo}">
 	<input type="hidden" name="${nomeSelCargo}" id="${nomeSelCargo}" class="pessoaLotaFuncCargoSelecao">
 	<siga:selecao propriedade="${nomeSelCargo}" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueCargo}"/>
 </span>
+</c:if>
 
+<c:if test="${not empty nomeSelGrupo}">
 <span id="spanGrupo${nomeSelGrupo}">
 	<input type="hidden" name="${nomeSelGrupo}" id="${nomeSelGrupo}" class="pessoaLotaFuncCargoSelecao">
 	<siga:selecao propriedade="${nomeSelGrupo}" tema="simple" modulo="siga"
 		 urlAcao="buscar" desativar="${desativar}" siglaInicial="${valueGrupo}"/>
 </span>
-
+</c:if>
 
 <script language="javascript">
 
@@ -73,43 +82,53 @@ var select = document.getElementById('${nomeSelPessoa}${nomeSelLotacao}${nomeSel
 // carregado por ajax, nÃ£o funciona o tratamento do modo tradicional (onchange="", etc)
 // http://stackoverflow.com/questions/8893786/uncaught-referenceerror-x-is-not-defined
 function limparPessoa() {
+	<c:if test="${not empty nomeSelPessoa}">
 	document.getElementById('spanPessoa${nomeSelPessoa}').style.display = 'none';
 	document.getElementById('formulario_${nomeSelPessoa}Sel_id').value='';
 	document.getElementById('formulario_${nomeSelPessoa}Sel_sigla').value='';
 	document.getElementById('formulario_${nomeSelPessoa}Sel_descricao').value='';
 	document.getElementById('${nomeSelPessoa}SelSpan').innerHTML='';
+	</c:if>
 }
 
 function limparLotacao() { 
+	<c:if test="${not empty nomeSelLotacao}">
 	document.getElementById('spanLotacao${nomeSelLotacao}').style.display = 'none';
 	document.getElementById('formulario_${nomeSelLotacao}Sel_id').value='';
 	document.getElementById('formulario_${nomeSelLotacao}Sel_sigla').value='';
 	document.getElementById('formulario_${nomeSelLotacao}Sel_descricao').value='';
 	document.getElementById('${nomeSelLotacao}SelSpan').innerHTML='';
+	</c:if>
 }
 
 function limparFuncao() {
+	<c:if test="${not empty nomeSelFuncao}">
 	document.getElementById('spanFuncao${nomeSelFuncao}').style.display = 'none';
 	document.getElementById('formulario_${nomeSelFuncao}Sel_id').value='';
 	document.getElementById('formulario_${nomeSelFuncao}Sel_sigla').value='';
 	document.getElementById('formulario_${nomeSelFuncao}Sel_descricao').value='';
 	document.getElementById('${nomeSelFuncao}SelSpan').innerHTML='';
+	</c:if>
 }
 
 function limparCargo() {
+	<c:if test="${not empty nomeSelCargo}">
 	document.getElementById('spanCargo${nomeSelCargo}').style.display = 'none';
 	document.getElementById('formulario_${nomeSelCargo}Sel_id').value='';
 	document.getElementById('formulario_${nomeSelCargo}Sel_sigla').value='';
 	document.getElementById('formulario_${nomeSelCargo}Sel_descricao').value='';
 	document.getElementById('${nomeSelCargo}SelSpan').innerHTML='';
+	</c:if>
 }
 
 function limparGrupo() {
+	<c:if test="${not empty nomeSelGrupo}">
 	document.getElementById('spanGrupo${nomeSelGrupo}').style.display = 'none';
 	document.getElementById('formulario_${nomeSelGrupo}Sel_id').value='';
 	document.getElementById('formulario_${nomeSelGrupo}Sel_sigla').value='';
 	document.getElementById('formulario_${nomeSelGrupo}Sel_descricao').value='';
 	document.getElementById('${nomeSelGrupo}SelSpan').innerHTML='';
+	</c:if>
 }
 
 select.onchange = function(){

@@ -40,6 +40,7 @@ import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -54,9 +55,9 @@ import br.gov.jfrj.siga.vraptor.SigaLogicResult;
 @Entity
 @Table(name = "GC_INFORMACAO", schema = "SIGAGC")
 @NamedQueries({
-		@NamedQuery(name = "buscarConhecimento", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where t in (:tags) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni  order by count(*) desc, i.hisDtIni desc"),
+		@NamedQuery(name = "buscarConhecimento", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*), (select count(*) from GcMarca m where m.inf=i and m.cpMarcador.idMarcador = 28 and (m.dpLotacaoIni.idLotacao = :lotacaoIni or m.dpPessoaIni.idPessoa = :pessoaIni) and m.dtFimMarca is null) as interessado, (select count(*) from GcMarca m where m.inf=i and m.cpMarcador.idMarcador = 70 and (m.dpLotacaoIni.idLotacao = :lotacaoIni or m.dpPessoaIni.idPessoa = :pessoaIni) and m.dtFimMarca is null) as executor from GcInformacao i inner join i.tags t where t in (:tags) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni  order by interessado desc, executor desc, count(*) desc, i.hisDtIni desc"),
 		@NamedQuery(name = "buscarConhecimentoTudoIgual", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where (select count(*) from GcTag t2 where t2 in t and t2 not in (:tags) and t2.tipo in (select tipo from GcTag where id in (:tags))) = 0 and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni order by count(*) desc, i.hisDtIni desc"),
-		@NamedQuery(name = "buscarConhecimentoAlgumIgualNenhumDiferente", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where t in (:tags) and i not in (select i2 from GcInformacao i2 inner join i2.tags t2 where t2 not in (:tags) and t2.tipo in (select tipo from GcTag where id in (:tags))) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni order by count(*) desc, i.hisDtIni desc"),
+		@NamedQuery(name = "buscarConhecimentoAlgumIgualNenhumDiferente", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*), (select count(*) from GcMarca m where m.inf=i and m.cpMarcador.idMarcador = 28 and (m.dpLotacaoIni.idLotacao = :lotacaoIni or m.dpPessoaIni.idPessoa = :pessoaIni) and m.dtFimMarca is null) as interessado, (select count(*) from GcMarca m where m.inf=i and m.cpMarcador.idMarcador = 70 and (m.dpLotacaoIni.idLotacao = :lotacaoIni or m.dpPessoaIni.idPessoa = :pessoaIni) and m.dtFimMarca is null) as executor from GcInformacao i inner join i.tags t where t in (:tags) and i not in (select i2 from GcInformacao i2 inner join i2.tags t2 where t2 not in (:tags) and t2.tipo in (select tipo from GcTag where id in (:tags))) and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni order by interessado desc, executor desc, count(*) desc, i.hisDtIni desc"),
 		@NamedQuery(name = "buscarConhecimentoExatoOuNada", query = "select i.id, i.arq.titulo, (select j.arq.conteudo from GcInformacao j where j = i), count(*) from GcInformacao i inner join i.tags t where (select count(*) from GcTag t2 where t2 in t and t2 not in (:tags) and t2.tipo in (select tipo from GcTag where id in (:tags))) = 0 and i.hisDtFim is null group by i.id, i.arq.titulo, i.hisDtIni having count(*) = :numeroDeTags order by count(*) desc, i.hisDtIni desc"),
 		@NamedQuery(name = "maisRecentes", query = "from GcInformacao i where i.hisDtFim is null and i.elaboracaoFim is not null order by i.hisDtIni desc"),
 		// @NamedQuery(name = "maisRecentesLotacao", query =
@@ -229,15 +230,19 @@ public class GcInformacao extends Objeto {
 		return this.hisDtFim != null;
 	}
 
-	public boolean podeDesfazer(DpPessoa titular, GcMovimentacao mov) {
+	public boolean podeDesfazer(DpPessoa titular, DpLotacao lotaTitular, GcMovimentacao mov) {
 		if (isCancelado())
 			return false;
-		if ((mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO || mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR)
-				&& mov.movCanceladora == null
-				&& titular.equivale(mov.pessoaTitular))
-			return true;
-		else
-			return false;
+		if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL || mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO 
+				|| mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR){
+				if (mov.movCanceladora != null)
+					return false;
+				if ((mov.pessoaAtendente == null && lotaTitular.equivale(mov.lotacaoAtendente)) || titular.equivale(mov.pessoaAtendente))
+					return true;
+				if ((mov.pessoaTitular == null && lotaTitular.equivale(mov.lotacaoTitular)) || titular.equivale(mov.pessoaTitular))
+					return true;
+		}
+		return false;
 	}
 	
 	public boolean podeVincularPapel(DpPessoa titular, DpLotacao lotaTitular) {
@@ -284,34 +289,28 @@ public class GcInformacao extends Objeto {
 		return null;
 	}
 		
-	public List<GcMovimentacao> getMovsVinculacaoPapel(DpPessoa titular, DpLotacao lotaTitular) {
-		List<GcMovimentacao> movs = new ArrayList<GcMovimentacao>();
-		if (titular == null && lotaTitular == null)
-			return null;
-		if (isCancelado())
-			return null;
-		for (GcMovimentacao mov : movs) {
-			if (mov.isCancelada() || mov.tipo.id != GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL)
-				continue;
-			if (titular != null){
-				if (titular.equivale(mov.pessoaAtendente)) 
-					movs.add(mov);
-				if (mov.pessoaAtendente == null && lotaTitular.equivale(mov.lotacaoAtendente)) 
-					movs.add(mov);
-			} else if (lotaTitular.equivale(mov.lotacaoAtendente))
-					movs.add(mov);
-		}
-		return movs;
+	public Map<GcPapel, List<Object>> getPapeisVinculados() {
+		Map<GcPapel, List<Object>> mapa = new HashMap<GcPapel, List<Object>>();
+		for (GcMovimentacao mov : movs)
+			if (!mov.isCancelada() && mov.getTipo() .getId() == GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL) {
+				if (mapa.get(mov.getPapel()) == null)
+					mapa.put(mov.getPapel(), new ArrayList<Object>());
+				if (mov.getPessoaAtendente() != null)
+					mapa.get(mov.getPapel()).add(mov.getPessoaAtendente());
+				else if (mov.getLotacaoAtendente() != null)
+					mapa.get(mov.getPapel()).add(mov.getLotacaoAtendente());
+				else if (mov.getGrupo() != null)
+					mapa.get(mov.getPapel()).add(mov.getGrupo());
+			}
+		return mapa;
 	}
 
 	public boolean podeMarcarComoInteressado(DpPessoa titular) {
 		if (isCancelado())
 			return false;
 		for (GcMovimentacao mov : movs) {
-			if (mov.isCancelada())
-				continue;
-			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_INTERESSADO
-					&& titular.equivale(mov.pessoaTitular)) {
+			if (!mov.isCancelada() && mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL
+					&& titular.equivale(mov.getPessoaAtendente())) {
 				return false;
 			}
 		}
@@ -504,68 +503,51 @@ public class GcInformacao extends Objeto {
 	}
 
 	public String getMarcadoresEmHtml(DpPessoa pess, DpLotacao lota) {
+		
+		//Edson: usa um critério para impedir que marcas com um número muito grande de ocorrências
+		//polua a tela
+		Map<CpMarcador, GcMarca> marcasUmaPorMarcador = new HashMap<CpMarcador, GcMarca>();
+		for (GcMarca m : marcas){
+			//Se já tem uma marca elencada para exibição que se refira à pessoa ou lotação que
+			//está visualizando, não mostra as demais que tenham o mesmo marcador
+			GcMarca marcaJaEscolhida = marcasUmaPorMarcador.get(m.getCpMarcador());
+			if (marcaJaEscolhida != null && 
+					((marcaJaEscolhida.getDpPessoaIni() != null && marcaJaEscolhida.getDpPessoaIni().equivale(pess))
+					|| (marcaJaEscolhida.getDpLotacaoIni() != null && marcaJaEscolhida.getDpLotacaoIni().equivale(lota)))){
+				continue;
+			}
+			marcasUmaPorMarcador.put(m.getCpMarcador(), m);
+		}
+		
 		StringBuilder sb = new StringBuilder();
+        
+        for (GcMarca mar : marcasUmaPorMarcador.values()) {
+            if (sb.length() > 0)
+                sb.append(", ");
+            sb.append(mar.getCpMarcador().getDescrMarcador());
+            if (mar.getDpPessoaIni() != null || mar.getDpLotacaoIni() != null){
+            	sb.append(" (");
+            	StringBuilder subSb = new StringBuilder();
+            	if (mar.getDpPessoaIni() != null) {
+            		String nome = mar.getDpPessoaIni().getDescricaoIniciaisMaiusculas();
+            		subSb.append(nome.substring(0, nome.indexOf(" ")));
+            	}
+            	if (mar.getDpLotacaoIni() != null) {
+            		if (subSb.length() > 0)
+            			subSb.append(", ");
+            		DpLotacao atual = mar.getDpLotacaoIni().getLotacaoAtual();
+            		if (atual == null)
+            			atual = mar.getDpLotacaoIni();
+            		subSb.append(atual.getSigla());
+            	}
+            	sb.append(subSb);
+            	sb.append(")");
+            }
+        }
 
-		// Marcacoes para a propria lotacao e para a propria pessoa ou sem
-		// informacao de pessoa
-		//
-		for (GcMarca mar : marcas) {
-			if (((mar.getDpLotacaoIni() != null && lota.getIdInicial().equals(
-					mar.getDpLotacaoIni().getIdInicial())) || mar
-					.getDpLotacaoIni() == null)
-					&& (mar.getDpPessoaIni() == null || pess.getIdInicial()
-							.equals(mar.getDpPessoaIni().getIdInicial()))) {
-				if (sb.length() > 0)
-					sb.append(", ");
-				sb.append(mar.getCpMarcador().getDescrMarcador());
-			}
-		}
-
-		// Marcacoes para a propria lotacao e para outra pessoa
-		//
-		if (sb.length() == 0) {
-			for (GcMarca mar : marcas) {
-				if (sb.length() > 0)
-					sb.append(", ");
-				if ((mar.getDpLotacaoIni() != null && lota.getIdInicial()
-						.equals(mar.getDpLotacaoIni().getIdInicial()))
-						&& (mar.getDpPessoaIni() != null && !pess
-								.getIdInicial().equals(
-										mar.getDpPessoaIni().getIdInicial()))) {
-					sb.append(mar.getCpMarcador().getDescrMarcador());
-					sb.append(" [");
-					sb.append(mar.getDpPessoaIni().getSigla());
-					sb.append("]");
-				}
-			}
-		}
-
-		// Marcacoes para qualquer outra pessoa ou lotacao
-		//
-		if (sb.length() == 0) {
-			for (GcMarca mar : marcas) {
-				if (sb.length() > 0)
-					sb.append(", ");
-				sb.append(mar.getCpMarcador().getDescrMarcador());
-				if (mar.getDpLotacaoIni() != null
-						|| mar.getDpPessoaIni() != null) {
-					sb.append(" [");
-					if (mar.getDpLotacaoIni() != null) {
-						sb.append(mar.getDpLotacaoIni().getSigla());
-					}
-					if (mar.getDpPessoaIni() != null) {
-						if (mar.getDpLotacaoIni() != null) {
-							sb.append(", ");
-						}
-						sb.append(mar.getDpPessoaIni().getSigla());
-					}
-					sb.append("]");
-				}
-			}
-		}
-		if (sb.length() == 0)
-			return null;
-		return sb.toString();
+        if (sb.length() == 0)
+            return null;
+        return sb.toString();
 	}
 
 	public String getConteudoHTML() throws Exception {

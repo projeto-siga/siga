@@ -1,3 +1,4 @@
+<<<<<<< 229893344ca9ac5f4197c55662d72be36cee7200
 /*
  * 
  * SCRIPT PARA DESATIVAR CP_GRUPO QUE ESTEJAM DUPLICADOS.
@@ -34,3 +35,8 @@ UPDATE CORPORATIVO.CP_GRUPO G1 SET HIS_ATIVO = 0, HIS_DT_FIM = SYSDATE
 CREATE UNIQUE INDEX apenas_um_grupo_ativo on CORPORATIVO.CP_GRUPO (CASE WHEN HIS_ATIVO=1 THEN ID_ORGAO_USU || '_' || ID_TP_GRUPO || '_' || SIGLA_GRUPO END);
 
 COMMIT;
+=======
+
+ALTER SESSION SET CURRENT_SCHEMA = CORPORATIVO;
+insert into corporativo.cp_marcador (id_marcador, descr_marcador, id_tp_marcador) values (70, 'Como Executor', 1);
+>>>>>>> GC: movimentacao de definicao de perfil

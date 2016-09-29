@@ -23,8 +23,10 @@
 					</div>
 					<div class="gt-form-row gt-width-100">
 						<label>Vincular a</label>
-						<siga:pessoaLotaSelecao2 propriedadePessoa="pessoa"
-							propriedadeLotacao="lotacao" />
+						<siga:pessoaLotaFuncCargoSelecao 
+								nomeSelLotacao="lotacao"
+								nomeSelPessoa="pessoa"
+								nomeSelGrupo="grupo" />
 					</div>
 					<br />
 					<div class="gt-form-row gt-width-100">

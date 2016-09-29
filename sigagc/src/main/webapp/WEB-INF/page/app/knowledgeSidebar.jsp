@@ -10,6 +10,12 @@
 	<c:when test="${not empty conhecimentos}">
 		<c:forEach var="conhecimento" items="${conhecimentos}">
 			<p>
+				<c:if test="${conhecimento[4] > 0}"> 
+					<img src="/siga/css/famfamfam/icons/heart.png" title="Como Interessado" style="width: 11px; height: 11px" />
+				</c:if>
+				<c:if test="${conhecimento[5] > 0}">
+					<img src="/siga/css/famfamfam/icons/star.png" title="Como Executor" style="width: 11px; height: 11px" />
+				</c:if>
 				<b><a href="${linkTo[AppController].exibir[conhecimento[3]]}"
 					${popup?'target="_blank" ':''}>${conhecimento[1]}</a> </b>
 			</p>

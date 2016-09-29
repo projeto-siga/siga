@@ -55,6 +55,7 @@
 		<class>br.gov.jfrj.siga.gc.model.GcTipoInformacao</class>
 		<class>br.gov.jfrj.siga.gc.model.GcTipoMovimentacao</class>
 		<class>br.gov.jfrj.siga.gc.model.GcTipoTag</class>
+		<class>br.gov.jfrj.siga.gc.model.GcPapel</class>
 
 		<properties>
 			<property name="hibernate.current_session_context_class"

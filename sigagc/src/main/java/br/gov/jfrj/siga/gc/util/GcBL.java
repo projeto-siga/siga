@@ -19,7 +19,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import br.com.caelum.vraptor.ioc.Component;
-
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -31,6 +30,7 @@ import br.gov.jfrj.siga.gc.model.GcArquivo;
 import br.gov.jfrj.siga.gc.model.GcInformacao;
 import br.gov.jfrj.siga.gc.model.GcMarca;
 import br.gov.jfrj.siga.gc.model.GcMovimentacao;
+import br.gov.jfrj.siga.gc.model.GcPapel;
 import br.gov.jfrj.siga.gc.model.GcTag;
 import br.gov.jfrj.siga.gc.model.GcTipoMovimentacao;
 import br.gov.jfrj.siga.gc.model.GcTipoTag;
@@ -474,6 +474,16 @@ public class GcBL {
 						acrescentarMarca(set, inf,
 								CpMarcador.MARCADOR_COMO_INTERESSADO,
 								mov.hisDtIni, null, mov.pessoaTitular, null);
+					
+					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL){
+						Long marcador = 0L;
+						switch (mov.getPapel().getId().intValue()){
+							case (int)GcPapel.PAPEL_INTERESSADO : marcador = CpMarcador.MARCADOR_COMO_INTERESSADO;
+							case (int)GcPapel.PAPEL_EXECUTOR: marcador = CpMarcador.MARCADOR_COMO_EXECUTOR; 
+						}
+						acrescentarMarca(set, inf, marcador,
+								mov.hisDtIni, null, mov.pessoaTitular, null);
+					}
 				}
 			}
 		}

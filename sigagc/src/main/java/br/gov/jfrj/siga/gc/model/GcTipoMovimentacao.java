@@ -43,6 +43,8 @@ public class GcTipoMovimentacao extends Objeto {
 	public static final long TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO = 13;
 
 	public static final long TIPO_MOVIMENTACAO_DUPLICAR = 14;
+	
+	final static public long TIPO_MOVIMENTACAO_VINCULAR_PAPEL = 15;
 
 	@Id
 	@Column(name = "ID_TIPO_MOVIMENTACAO")

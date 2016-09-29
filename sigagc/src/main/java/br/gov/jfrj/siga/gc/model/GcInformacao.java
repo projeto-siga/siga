@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.gc.model;
 
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -238,6 +239,11 @@ public class GcInformacao extends Objeto {
 		else
 			return false;
 	}
+	
+	public boolean podeVincularPapel(DpPessoa titular, DpLotacao lotaTitular) {
+		return !isCancelado() && isFinalizado()
+			&& acessoPermitido(titular, lotaTitular, getEdicao().getId());
+	}
 
 	public GcMovimentacao podeTomarCiencia(DpPessoa titular,
 			DpLotacao lotaTitular) throws Exception {
@@ -276,6 +282,26 @@ public class GcInformacao extends Objeto {
 					return mov;
 		}
 		return null;
+	}
+		
+	public List<GcMovimentacao> getMovsVinculacaoPapel(DpPessoa titular, DpLotacao lotaTitular) {
+		List<GcMovimentacao> movs = new ArrayList<GcMovimentacao>();
+		if (titular == null && lotaTitular == null)
+			return null;
+		if (isCancelado())
+			return null;
+		for (GcMovimentacao mov : movs) {
+			if (mov.isCancelada() || mov.tipo.id != GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL)
+				continue;
+			if (titular != null){
+				if (titular.equivale(mov.pessoaAtendente)) 
+					movs.add(mov);
+				if (mov.pessoaAtendente == null && lotaTitular.equivale(mov.lotacaoAtendente)) 
+					movs.add(mov);
+			} else if (lotaTitular.equivale(mov.lotacaoAtendente))
+					movs.add(mov);
+		}
+		return movs;
 	}
 
 	public boolean podeMarcarComoInteressado(DpPessoa titular) {
@@ -391,6 +417,11 @@ public class GcInformacao extends Objeto {
 				this.getSiglaCompacta());
 		addAcao(acoes, "bell", "Notificar", null, sb.toString(),
 				podeNotificar(titular, lotaTitular));
+		
+		router.getRedirectURL(sb, AppController.class).vincularPapel(
+				this.getSiglaCompacta());
+		addAcao(acoes, "folder_user", "Definir Perfil", null, sb.toString(),
+				podeVincularPapel(titular, lotaTitular));
 
 		router.getRedirectURL(sb, AppController.class).fechar(
 				this.getSiglaCompacta());

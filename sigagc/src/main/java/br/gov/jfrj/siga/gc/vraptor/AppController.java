@@ -32,7 +32,6 @@ import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -43,6 +42,7 @@ import br.gov.jfrj.siga.gc.model.GcAcesso;
 import br.gov.jfrj.siga.gc.model.GcArquivo;
 import br.gov.jfrj.siga.gc.model.GcInformacao;
 import br.gov.jfrj.siga.gc.model.GcMovimentacao;
+import br.gov.jfrj.siga.gc.model.GcPapel;
 import br.gov.jfrj.siga.gc.model.GcTag;
 import br.gov.jfrj.siga.gc.model.GcTipoInformacao;
 import br.gov.jfrj.siga.gc.model.GcTipoMovimentacao;
@@ -1068,6 +1068,58 @@ public class AppController extends GcController {
 			throw new AplicacaoException(
 					"Para notificar é necessario selecionar uma Pessoa ou Lotacao.");
 	}
+	
+	private List<GcPapel> getListaGcPapel() {
+		return GcPapel.AR.all().fetch();
+	}
+	
+	@Get("/app/vincular_papel/{sigla}")
+	public void vincularPapel(final String sigla) throws Exception{
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
+
+		if (!informacao.podeVincularPapel(getTitular(), getLotaTitular())){
+			throw new AplicacaoException("Definição de perfil não permitida");
+		}
+		
+		result.include("informacao", informacao);
+		result.include("listaPapel", this.getListaGcPapel());
+	}
+
+	public void vincularPapelGravar(GcInformacao informacao, DpPessoa pessoa, DpLotacao lotacao, 
+			GcPapel papel) throws Exception {
+		informacao = GcInformacao.AR.findById(informacao.id);
+
+		// Nato: precisei fazer isso pq o vraptor injeta a entidade vazia. O
+		// ideal seria injetar null se nenhum parâmetro for especificado.
+		if (pessoa != null && pessoa.getId() == null)
+			pessoa = null;
+		if (lotacao != null && lotacao.getId() == null)
+			lotacao = null;
+		
+		if (informacao == null && pessoa == null && lotacao == null)
+			throw new AplicacaoException("Não foram informados dados para a definição de perfil");
+		
+		if (pessoa != null && lotacao == null)
+			lotacao = pessoa.getLotacao();
+		
+		if (!informacao.podeVincularPapel(getTitular(), getLotaTitular())){
+			throw new AplicacaoException("Definição de perfil não permitida");
+		}
+		
+		String descr = papel.getDescPapel() + ":"
+			+ (pessoa != null ? pessoa.getDescricaoCompletaIniciaisMaiusculas() : lotacao.getDescricaoIniciaisMaiusculas());  
+		
+		GcMovimentacao mov = bl.movimentar(informacao,
+				GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL, pessoa,
+				lotacao, descr, null, null, null, null, null, null);
+		mov.setPapel(papel);
+		bl.gravar(informacao, getIdentidadeCadastrante(), getTitular(),
+				getLotaTitular());
+		correio.notificar(informacao, pessoa, lotacao, null);
+		result.redirectTo(this).exibir(informacao.getSiglaCompacta(),
+				"Vinculação de perfil realizada com sucesso!", false, false);
+	}
+
 
 	@Path("/app/solicitarRevisao/{sigla}")
 	public void solicitarRevisao(String sigla) throws Exception {

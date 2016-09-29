@@ -62,6 +62,10 @@ public class GcMovimentacao extends Objeto implements
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_LOTACAO_ATENDENTE")
 	public DpLotacao lotacaoAtendente;
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "ID_PAPEL")
+	public GcPapel papel;
 
 	// Edson: pode ser usado quando o grupo de e-mail notificado for do siga-gi
 	// @ManyToOne(optional = true)
@@ -191,6 +195,14 @@ public class GcMovimentacao extends Objeto implements
 
 	public CpIdentidade getHisIdcIni() {
 		return hisIdcIni;
+	}
+
+	public GcPapel getPapel() {
+		return papel;
+	}
+
+	public void setPapel(GcPapel papel) {
+		this.papel = papel;
 	}
 
 	/*

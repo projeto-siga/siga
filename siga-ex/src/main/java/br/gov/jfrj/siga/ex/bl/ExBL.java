@@ -2617,8 +2617,8 @@ public class ExBL extends CpBL {
 				mov.setExMovimentacaoRef(ultMovNaoCancelada);
 				mov.setExNivelAcesso(ultMovNaoCancelada.getExNivelAcesso());
 
-				if (ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO)
-					PublicacaoDJEBL.cancelarRemessaPublicacao(mov);
+				//if (ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO)
+				//	PublicacaoDJEBL.cancelarRemessaPublicacao(mov);
 
 				if (ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
 						&& ultMovNaoCancelada.getExMovimentacaoRef() != null) {

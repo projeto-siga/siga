@@ -160,4 +160,24 @@ public class SrAtributoSolicitacao extends HistoricoSuporte {
 			return null;
 		return att.get(0);
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof SrAtributoSolicitacao){
+			return this.getAtributo().equals(((SrAtributoSolicitacao) obj).getAtributo()) &&
+					this.getValorAtributoSolicitacao().equals(((SrAtributoSolicitacao) obj).getValorAtributoSolicitacao());
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+		result = prime * result
+				+ ((getAtributo() == null) ? 0 : getAtributo().hashCode());
+		result = prime * result
+				+ ((getValorAtributoSolicitacao() == null) ? 0 : getValorAtributoSolicitacao().hashCode());
+		return result;
+	}
 }

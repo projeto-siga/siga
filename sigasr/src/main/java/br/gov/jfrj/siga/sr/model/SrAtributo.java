@@ -173,12 +173,16 @@ public class SrAtributo extends HistoricoSuporte {
 
 	@Override
 	public boolean equals(Object obj) {
-		return this.getIdAtributo().equals(((SrAtributo) obj).getIdAtributo());
+		return this.getAtributoInicial().getId().equals(((SrAtributo) obj).getAtributoInicial().getId());
 	}
-
+	
 	@Override
 	public int hashCode() {
-		return super.hashCode();
+        final int prime = 31;
+        int result = 1;
+		result = prime * result
+				+ ((getAtributoInicial().getId() == null) ? 0 : getAtributoInicial().getId().hashCode());
+		return result;
 	}
 	
 	public SrAtributoVO toVO(boolean listarAssociacoes) throws Exception {

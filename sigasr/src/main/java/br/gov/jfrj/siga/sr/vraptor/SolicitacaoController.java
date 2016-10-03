@@ -42,6 +42,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrArquivo;
+import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacaoMap;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracaoBL;
@@ -404,6 +405,7 @@ public class SolicitacaoController extends SrController {
         Set<SrEtapaSolicitacao> etapas = solicitacao.getEtapas(todoOContexto);
         Set<SrSolicitacao> vinculadas = solicitacao.getSolicitacoesVinculadas(todoOContexto);
         Set<SrSolicitacao> juntadas = solicitacao.getSolicitacoesJuntadas(todoOContexto);
+        Set<SrAtributoSolicitacao> atributos = solicitacao.getAtributoSolicitacaoSetAtual(todoOContexto);
         
         result.include(SOLICITACAO, solicitacao);
         result.include("movimentacao", movimentacao);
@@ -421,6 +423,7 @@ public class SolicitacaoController extends SrController {
         result.include("motivosPendencia",SrTipoMotivoPendencia.values());
         result.include(PRIORIDADE_LIST, SrPrioridade.values());
         result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
+        result.include("atributos", atributos);
     }
 
     @SuppressWarnings("unchecked")

@@ -3557,10 +3557,10 @@ public class ExMovimentacaoController extends ExController {
 
 		DatasPublicacaoDJE DJE = new DatasPublicacaoDJE(
 				mov.getDtDispPublicacao());
-		String mensagemValidacao = DJE
-				.validarDataDeDisponibilizacao(apenasSolicitacao);
-		if (mensagemValidacao != null)
-			throw new AplicacaoException(mensagemValidacao);
+		//String mensagemValidacao = DJE
+		//		.validarDataDeDisponibilizacao(apenasSolicitacao);
+		//if (mensagemValidacao != null)
+		//	throw new AplicacaoException(mensagemValidacao);
 	}
 
 	private ListaLotPubl getListaLotacaoPublicacao(ExDocumento doc)

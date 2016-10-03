@@ -13,15 +13,14 @@ public class ConversorDeExDocParaMateria {
 		NUMERO, CORPO, ABERTURA, FECHO, ASSINATURA, TIPO_MATERIA, LOCALIDADE
 	}
 	
-	//Edson: criar uma configuração para retirar daqui este ID: 
-	private static Integer ID_FORMA_DOC_ANEXO = 60;
+	private static String SIGLA_FORMA_DOC_ANEXO = "ANE";
 	
 	public List<Materia> converter(List<ExDocumento> docs){
 		List<Materia> materias = new ArrayList<Materia>();
 		for (ExDocumento doc : docs){
 			materias.add(converter(doc));
 			for (ExDocumento filho : doc.getExDocumentoFilhoSet())
-				if (filho.isAssinado() && filho.getExFormaDocumento().getIdFormaDoc().equals(ID_FORMA_DOC_ANEXO))
+				if (filho.isAssinado() && filho.getExFormaDocumento().getSiglaFormaDoc().equals(SIGLA_FORMA_DOC_ANEXO))
 					materias.add(converter(filho));
 		}
 		return materias;

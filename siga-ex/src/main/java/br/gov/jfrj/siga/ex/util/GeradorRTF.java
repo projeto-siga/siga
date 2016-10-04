@@ -159,7 +159,6 @@ public class GeradorRTF {
 	public byte[] geraRTFFOP(ExDocumento doc) throws Exception {
 		try {
 			html = doc.getConteudoBlobHtmlString();
-			html = html.replace("<!-- INICIO CORPO -->", "<!-- INICIO MIOLO --><!-- INICIO CORPO -->");
 			String htmlDocPrincipal;
 
 			String inicioNumero = "<!-- INICIO NUMERO -->";

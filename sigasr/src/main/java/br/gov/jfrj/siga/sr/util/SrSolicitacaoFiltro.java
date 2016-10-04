@@ -13,6 +13,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
+import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -41,6 +42,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	private DpLotacao lotaCadastranteBusca;
 
 	private SrAcordo acordo;
+	
+	private SrAtributo atributo;
 
 	private DpLotacao lotaAtendente;
 
@@ -149,6 +152,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" inner join sol.meuMarcaSet situacaoAux ");
 		
 		query.append(" left join sol.meuMovimentacaoSet ultMov ");
+		
+		query.append(" left join sol.meuAtributoSolicitacaoSet atributoDaSolicitacao ");
 		
 		query.append(" left join sol.meuMarcaSet marcaPrazo with marcaPrazo.cpMarcador.idMarcador = 65 ");
 		
@@ -268,6 +273,10 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		
 		if (Filtros.deveAdicionar(getAcordo()))
 			query.append(" and sol.acordos.hisIdIni = " + getAcordo().getHisIdIni() + " ");		
+		
+		if (Filtros.deveAdicionar(getAtributo()))
+			query.append(" and atributoDaSolicitacao.atributo.hisIdIni = " + getAtributo().getHisIdIni() + 
+					" and atributoDaSolicitacao.hisDtFim is null ");
 	}
 
 	public boolean isRazoavelmentePreenchido() {
@@ -284,6 +293,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 				|| getItemConfiguracao() != null
 				|| getAcao() != null
 				|| getAcordo() != null
+				|| getAtributo() != null
 				|| (getIdListaPrioridade() != null && getIdListaPrioridade() >= 0)
 				|| (getDescrSolicitacao() != null && !getDescrSolicitacao()
 						.trim().equals("")) || getPrioridade() != null;
@@ -426,6 +436,14 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	public void setLength(Long length) {
 		this.length = length;
+	}
+
+	public SrAtributo getAtributo() {
+		return atributo;
+	}
+
+	public void setAtributo(SrAtributo atributo) {
+		this.atributo = atributo;
 	}
 
 }

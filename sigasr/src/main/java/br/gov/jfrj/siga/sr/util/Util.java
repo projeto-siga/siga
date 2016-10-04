@@ -43,4 +43,8 @@ public class Util {
 			.addSerializationExclusionStrategy(FieldNameExclusionEstrategy.notIn(exclusions))
 			.create();
 	}
+	
+	public static boolean notNullAndEmpty(String s) {
+		return s != null && !"".equals(s);
+	}
 }

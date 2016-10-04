@@ -188,7 +188,7 @@ public class PublicacaoDJEBL {
 
 		log.info("DJE: prestes a chamarrrr serviço");
 		try {
-			AxisClientAlternativo cliente = new AxisClientAlternativo("http://vmdjeweb.trf.net/dje.webservice/wsprimeirainstancia.asmx", "RecebeDocumentos", true);
+			AxisClientAlternativo cliente = new AxisClientAlternativo(SigaExProperties.getServidorDJE(), "RecebeDocumentos", true);
 
 			cliente.setParam(new Object[] { mov.getConteudoBlobMov2() });
 			Object o = cliente.call();
@@ -200,13 +200,13 @@ public class PublicacaoDJEBL {
 	}
 
 	public static void primeiroEnvio(ExMovimentacao mov) throws Exception {
-		//if(!SigaExProperties.getServidorDJE().isEmpty()) {
+		if(!SigaExProperties.getServidorDJE().isEmpty()) {
 			String conteudoXML = enviarTRF(mov);
 	
 			System.out.println("\n\n DJE envio " + mov.getExDocumento().getCodigo() + ", retorno: " + conteudoXML);
 	
 			verificaRetornoErrosTRF(conteudoXML);
-		//}
+		}
 	}
 
 	/*
@@ -477,9 +477,9 @@ public class PublicacaoDJEBL {
 		DatasPublicacaoDJE datas = new DatasPublicacaoDJE(mov
 				.getDtDispPublicacao());
 
-		//if (!datas.isDisponibilizacaoMaiorQueDMais1())
-		//	throw new AplicacaoException(
-		//			"Não é possível cancelar a remessa no dia da assinatura (data de disponibilização - 1)");
+		if (!datas.isDisponibilizacaoMaiorQueDMais1())
+			throw new AplicacaoException(
+					"Não é possível cancelar a remessa no dia da assinatura (data de disponibilização - 1)");
 		Service service = new Service();
 		OperationDesc oper;
 

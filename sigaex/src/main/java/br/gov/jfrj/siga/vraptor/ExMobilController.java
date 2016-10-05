@@ -66,6 +66,8 @@ import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
 @Resource
 public class ExMobilController extends
 		ExSelecionavelController<ExMobil, ExMobilDaoFiltro> {
+	private static final String SIGA_DOC_FE_LD = "FE:Ferramentas;LD:Listar Documentos";
+
 	public ExMobilController(HttpServletRequest request, Result result,
 			SigaObjects so, EntityManager em) {
 		super(request, result, ExDao.getInstance(), so, em);
@@ -639,7 +641,7 @@ public class ExMobilController extends
 	
 	@Get("app/ferramentas/doc/listar")
 	public void aFerramentasListarDocumentos() {
-		assertAcesso("FE:Ferramentas;LD:Listar Documentos");
+		assertAcesso(SIGA_DOC_FE_LD);
 
 		final ExMobilDaoFiltro flt = createDaoFiltro();
 		List<Object[]> list = dao().consultarPorFiltroOtimizado(flt, 0, 0, getTitular(), getLotaTitular());

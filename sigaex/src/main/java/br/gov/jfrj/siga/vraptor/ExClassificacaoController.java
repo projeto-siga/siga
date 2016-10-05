@@ -63,6 +63,7 @@ import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
 public class ExClassificacaoController
 		extends
 		SigaSelecionavelControllerSupport<ExClassificacao, ExClassificacaoDaoFiltro> {
+	private static final String ACESSO_SIGA_DOC_FE_PC = "DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação";
 	private String[] nivelSelecionado;
 	private Integer nivelAlterado;
 
@@ -103,7 +104,7 @@ public class ExClassificacaoController
 
 	@Get("app/expediente/classificacao/listar")
 	public void lista() {
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
+		assertAcesso(ACESSO_SIGA_DOC_FE_PC);
 		result.include("classificacaoVigente", getClassificacaoVigente());
 	}
 
@@ -154,7 +155,7 @@ public class ExClassificacaoController
 	@Get("app/expediente/classificacao/editar")
 	public ExClassificacao edita(ExClassificacao exClassificacao,
 			String codificacao, String acao) throws Exception {
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
+		assertAcesso(ACESSO_SIGA_DOC_FE_PC);
 		ExClassificacao exClass = null;
 		if (codificacao != null && exClassificacao == null) {
 			exClass = buscarExClassificacao(codificacao);
@@ -188,7 +189,7 @@ public class ExClassificacaoController
 	@Get("app/expediente/classificacao/gravar")
 	public void gravar(ExClassificacao exClassificacao,
 			String codificacaoAntiga, String acao) throws Exception {
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
+		assertAcesso(ACESSO_SIGA_DOC_FE_PC);
 
 		if (exClassificacao.getCodificacao().length() == 0
 				|| exClassificacao.getDescrClassificacao().length() == 0) {
@@ -269,7 +270,7 @@ public class ExClassificacaoController
 
 	@Get("app/expediente/classificacao/excluir")
 	public void excluir(String codificacao) throws Exception {
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
+		assertAcesso(ACESSO_SIGA_DOC_FE_PC);
 		dao().iniciarTransacao();
 		try {
 			ExClassificacao exClass;
@@ -290,7 +291,7 @@ public class ExClassificacaoController
 	@Post("app/expediente/classificacao/gravarVia")
 	public void gravarVia(String acao, String codificacao, Long idVia, String obsVia, Long idDestino, Long idTemporalidadeArqCorr,
 			Long idTemporalidadeArqInterm, Long idDestinacaoFinal) throws Exception {
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
+		assertAcesso(ACESSO_SIGA_DOC_FE_PC);
 		if (idDestino == null || idDestino <= 0) {
 			throw new AplicacaoException(
 					"A destinação da via deve ser definida!");
@@ -391,7 +392,7 @@ public class ExClassificacaoController
 	@Get("app/expediente/classificacao/excluirVia")
 	public void excluirVia(Long idVia, String codificacao, String acao)
 			throws Exception {
-		assertAcesso("DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação");
+		assertAcesso(ACESSO_SIGA_DOC_FE_PC);
 		dao().iniciarTransacao();
 		try {
 			ExVia exVia = dao().consultar(idVia, ExVia.class, false);

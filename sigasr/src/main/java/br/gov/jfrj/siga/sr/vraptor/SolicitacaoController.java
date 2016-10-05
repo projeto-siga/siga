@@ -727,8 +727,6 @@ public class SolicitacaoController extends SrController {
         result.include("isPai", solicitacaoEntity.isPai());
         result.include("codigo", solicitacaoEntity.isFilha() ? solicitacaoEntity.getSolicitacaoPai().getCodigo() : solicitacaoEntity.getCodigo());
         result.include(TIPO_MOTIVO_ESCALONAMENTO_LIST, SrTipoMotivoEscalonamento.values());
-        result.include("idSolicitacao",solicitacaoEntity.getId());
-        
     }
 
     @Path("app/solicitacao/escalonarGravar")

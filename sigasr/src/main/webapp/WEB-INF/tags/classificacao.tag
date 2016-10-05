@@ -16,7 +16,7 @@
 		tamanho="grande"
 		onchange="dispararFuncoesOnBlurItem();"
 		checarInput="true"
-		paramList="sol.solicitante.id=${solicitante.idPessoa};sol.local.id=${local.idComplexo};sol.titular.id=${cadastrante.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}" />
+		paramList="sol.id=${solicitacao.id};sol.solicitante.id=${solicitante.idPessoa};sol.local.id=${local.idComplexo};sol.titular.id=${cadastrante.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}" />
 	<br/><span id="itemNaoInformado" style="color: red; display: none;">Item não informado</span>
 	<br/>
 	<div id="divAcao" depende="solicitacao.itemConfiguracao">

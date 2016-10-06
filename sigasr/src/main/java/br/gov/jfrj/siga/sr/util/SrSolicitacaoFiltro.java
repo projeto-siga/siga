@@ -202,6 +202,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	private void incluirWheresBasicos(StringBuilder query){
 		
 		query.append(" and not exists (from SrMovimentacao mov where solicitacao = sol and idMovimentacao > ultMov.idMovimentacao) ");
+		query.append(" and not exists (from SrAtributoSolicitacao att where att.solicitacao = sol and att.id > atributoDaSolicitacao.id) ");
 		
 		if (Filtros.deveAdicionar(getCadastranteBusca()))
 			query.append(" and sol.cadastrante.idPessoaIni = "
@@ -275,8 +276,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" and sol.acordos.hisIdIni = " + getAcordo().getHisIdIni() + " ");		
 		
 		if (Filtros.deveAdicionar(getAtributo()))
-			query.append(" and atributoDaSolicitacao.atributo.hisIdIni = " + getAtributo().getHisIdIni() + 
-					" and atributoDaSolicitacao.hisDtFim is null ");
+			query.append(" and atributoDaSolicitacao.atributo.hisIdIni = " + getAtributo().getHisIdIni() + " ");
 	}
 
 	public boolean isRazoavelmentePreenchido() {

@@ -127,8 +127,7 @@ public class PerfilController extends GrupoController {
 	public void buscar(final String sigla,
 			           final String postback,
 			           final Long idCpTipoGrupo,
-			           final Integer offset,
-			           final String propriedade) throws Exception{
+			           final Integer offset) throws Exception{
 		
 		getP().setOffset(offset);
 		super.aBuscar(sigla, postback);
@@ -139,7 +138,6 @@ public class PerfilController extends GrupoController {
 		result.include("postback",postback);
 		result.include("offset",offset);
 		result.include("param",getRequest().getParameterMap());
-		result.include("propriedade",propriedade);
 	}
 	
 	@Get("/app/gi/perfil/selecionar")

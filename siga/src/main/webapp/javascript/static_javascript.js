@@ -23,8 +23,8 @@ var newwindow = '';
 }*/
 
 function popitup(url) {
-	var popW = 600;
-	var popH = 400;
+	var popW = screen.width * 0.8;
+	var popH = screen.height * 0.8;
 	var winleft = (screen.width - popW) / 2;
 	var winUp = (screen.height - popH) / 2;
 	

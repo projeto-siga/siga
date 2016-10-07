@@ -196,13 +196,11 @@ public class ExAssinadorExternoController extends ExController {
 			assertPassword(req);
 
 			String envelope = req.getString("envelope");
-			String certificate = req.getString("certificate");
 			String time = req.getString("time");
-			String subject = req.optString("subject", null);
-			String cn = req.optString("cn", null);
+			String extra = req.optString("extra", null);
+			boolean autenticar = "autenticar".equals(extra);
 
 			byte[] assinatura = Base64.decode(envelope);
-			byte[] certificado = Base64.decode(certificate);
 			Date dt = dao().consultarDataEHoraDoServidor();
 
 			if (id == null)
@@ -235,7 +233,8 @@ public class ExAssinadorExternoController extends ExController {
 			String msg = null;
 
 			if (mov != null) {
-				long tpMov = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO;
+				long tpMov = autenticar ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
+						: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO;
 
 				Ex.getInstance()
 						.getBL()
@@ -244,7 +243,8 @@ public class ExAssinadorExternoController extends ExController {
 								null, tpMov);
 				msg = "OK";
 			} else if (mob != null) {
-				long tpMov = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
+				long tpMov = autenticar ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
+						: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
 				msg = Ex.getInstance()
 						.getBL()
 						.assinarDocumento(cadastrante,

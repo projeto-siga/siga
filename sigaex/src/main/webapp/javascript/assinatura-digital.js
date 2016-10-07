@@ -37,7 +37,7 @@ function selecionarProvider() {
 }
 
 function TestarAssinaturaDigital() {
-	//console.log("Testando provedores de assinatura digital.");
+	// console.log("Testando provedores de assinatura digital.");
 	provider = selecionarProvider();
 	return provider != undefined;
 }
@@ -83,36 +83,36 @@ function AssinarDocumentos(copia, politica) {
 	}
 }
 
-
 //
 // Provider: Assijus
 //
 var providerAssijus = {
 	nome : 'Assijus',
-	endpoint : location.hostname == "siga.jfrj.jus.br" ? "https://assijus.jfrj.jus.br/assijus" : "/assijus",
+	endpoint : location.hostname == "siga.jfrj.jus.br" ? "https://assijus.jfrj.jus.br/assijus"
+			: "/assijus",
 	list : [],
 
 	testar : function() {
-		// please note, 
+		// please note,
 		// that IE11 now returns undefined again for window.chrome
 		// and new Opera 30 outputs true for window.chrome
 		// and new IE Edge outputs to true now for window.chrome
 		// and if not iOS Chrome check
 		// so use the below updated condition
-		var isChromium = window.chrome,
-		    winNav = window.navigator,
-		    vendorName = winNav.vendor,
-		    isOpera = winNav.userAgent.indexOf("OPR") > -1,
-		    isIEedge = winNav.userAgent.indexOf("Edge") > -1,
-		    isIOSChrome = winNav.userAgent.match("CriOS");
+		var isChromium = window.chrome, winNav = window.navigator, vendorName = winNav.vendor, isOpera = winNav.userAgent
+				.indexOf("OPR") > -1, isIEedge = winNav.userAgent
+				.indexOf("Edge") > -1, isIOSChrome = winNav.userAgent
+				.match("CriOS");
 
-		if(isIOSChrome){
-		   // is Google Chrome on IOS
-		} else if(isChromium !== null && isChromium !== undefined && vendorName === "Google Inc." && isOpera == false && isIEedge == false) {
-		   // is Google Chrome
+		if (isIOSChrome) {
+			// is Google Chrome on IOS
+		} else if (isChromium !== null && isChromium !== undefined
+				&& vendorName === "Google Inc." && isOpera == false
+				&& isIEedge == false) {
+			// is Google Chrome
 			return true;
-		} else { 
-		   // not Google Chrome 
+		} else {
+			// not Google Chrome
 		}
 		return false;
 	},
@@ -123,29 +123,34 @@ var providerAssijus = {
 	},
 
 	assinar : function(signable) {
-		 var item = {
-		      id: signable.id,
-		      system: "sigadocsigner",
-		      code: signable.code,
-		      descr: signable.descr,
-		      kind: signable.kind,
-		      origin: "Siga-Doc"
+		var item = {
+			id : signable.id,
+			system : "sigadocsigner",
+			extra : signable.extra,
+			code : signable.code,
+			descr : signable.descr,
+			kind : signable.kind,
+			origin : "Siga-Doc"
 		}
 		this.list.push(item);
 		return;
 	},
-	
+
 	concluir : function(urlRedirect) {
 		var parent = this;
 		$.ajax({
 			url : this.endpoint + "/api/v1/store",
 			type : "POST",
 			data : {
-		        payload: JSON.stringify({list:this.list})
-		    },
+				payload : JSON.stringify({
+					list : this.list
+				})
+			},
 			async : false,
 			success : function(xhr) {
-			    window.location.href = parent.endpoint + "/?endpointlistkey=" + xhr.key + "&endpointcallback=" + encodeURI(urlRedirect);
+				window.location.href = parent.endpoint + "/?endpointlistkey="
+						+ xhr.key + "&endpointcallback="
+						+ encodeURI(urlRedirect);
 			},
 			error : function(xhr) {
 				result = "Erro na gravação da assinatura. " + xhr.responseText;
@@ -166,10 +171,10 @@ var providerIttruAx = {
 			if (ittruSignAx == undefined) {
 				ittruSignAx = new ActiveXObject("ittru");
 			}
-			//console.log("IttruAx: OK!");
+			// console.log("IttruAx: OK!");
 			return true;
 		} catch (err) {
-			//console.log("IttruAx:" + err.message);
+			// console.log("IttruAx:" + err.message);
 		}
 		return false;
 	},
@@ -231,14 +236,14 @@ var providerIttruCAPI = {
 			if (to == 'function' || to == 'object') {
 				if (document.signerCAPI.isActive()) {
 					ittruSignApplet = document.signerCAPI;
-					//console.log("IttruCAPI: OK!");
+					// console.log("IttruCAPI: OK!");
 					return true;
 				} else {
-					//console.log("IttruCAPI:" + document.signerCAPI.getMsg());
+					// console.log("IttruCAPI:" + document.signerCAPI.getMsg());
 				}
 			}
 		} catch (err) {
-			//console.log("IttruCAPI:" + err.message);
+			// console.log("IttruCAPI:" + err.message);
 		}
 		return false;
 	},
@@ -310,14 +315,14 @@ var providerIttruP11 = {
 			if (to == 'function' || to == 'object') {
 				if (document.signer.isActive()) {
 					ittruSignApplet = document.signer;
-					//console.log("IttruP11: OK!");
+					// console.log("IttruP11: OK!");
 					return true;
 				} else {
-					//console.log("IttruP11:" + document.signer.getMsg());
+					// console.log("IttruP11:" + document.signer.getMsg());
 				}
 			}
 		} catch (err) {
-			//console.log("IttruP11:" + err.message);
+			// console.log("IttruP11:" + err.message);
 		}
 		return false;
 	},
@@ -572,7 +577,7 @@ function Conteudo(url) {
 	return "Não foi possível obter o conteúdo do documento a ser assinado.";
 }
 
-var providers = [providerAssijus, providerIttruAx, providerIttruCAPI];
+var providers = [ providerAssijus, providerIttruAx, providerIttruCAPI ];
 
 //
 // Processamento de assinaturas em lote, com progress bar
@@ -706,7 +711,7 @@ function ExecutarAssinarDocumentos(Copia) {
 							&& gDocumento.indexOf("Não") == 0)
 						return gDocumento;
 				});
-	
+
 				var ret;
 				process.push(function() {
 					Log(o.nome + ": Assinando...")
@@ -717,37 +722,49 @@ function ExecutarAssinarDocumentos(Copia) {
 				process.push(function() {
 					Log(o.nome + ": Gravando assinatura de " + gRet.assinante)
 				});
-	
+
 				process.push(function() {
 					var DadosDoPost = "sigla=" + encodeURIComponent(gNome)
 							+ "&copia=" + gAutenticar + "&assinaturaB64="
 							+ encodeURIComponent(gRet.assinaturaB64)
-							+ "&assinante=" + encodeURIComponent(gRet.assinante);
+							+ "&assinante="
+							+ encodeURIComponent(gRet.assinante);
 					if (gPolitica) {
 						DadosDoPost = DadosDoPost + "&certificadoB64="
 								+ encodeURIComponent(gCertificadoB64);
-						DadosDoPost = DadosDoPost + "&atributoAssinavelDataHora="
+						DadosDoPost = DadosDoPost
+								+ "&atributoAssinavelDataHora="
 								+ gAtributoAssinavelDataHora;
 					}
-	
+
 					// alert("oNome: " + oNome.value);
 					var aNome = gNome.split(":");
 					if (aNome.length == 2) {
 						// alert("id: " + aNome(1));
 						DadosDoPost = "id=" + aNome[1] + "&" + DadosDoPost;
 					}
-	
+
 					Status = GravarAssinatura(gUrlPost, DadosDoPost);
 					return Status;
 				});
 			} else {
-//			      "code": "TRF2-MEM-2016/00144",
-//			      "descr": "Teste",
-//			      "id": "489623760__TRF2MEM201600144",
-//			      "kind": "Memorando",
-//			      "origin": "Siga-Doc",
-//			      "system": "sigadocsigner"
-				provider.assinar({id: o.id, code: o.nome, descr: o.descr, kind: o.kind});
+				// "code": "TRF2-MEM-2016/00144",
+				// "descr": "Teste",
+				// "id": "489623760__TRF2MEM201600144",
+				// "kind": "Memorando",
+				// "origin": "Siga-Doc",
+				// "system": "sigadocsigner"
+				var signable = {
+					id : o.id,
+					code : o.nome,
+					descr : o.descr,
+					kind : o.kind,
+				};
+				if (o.hasOwnProperty('autenticar') && o.autenticar)
+					signable.extra = "autenticar";
+				if (Copia == "true")
+					signable.extra = "autenticar";
+				provider.assinar(signable);
 			}
 		} else {
 			process.push(function() {
@@ -768,7 +785,7 @@ function ExecutarAssinarDocumentos(Copia) {
 			});
 		}
 	}
-	
+
 	if (provider != providerAssijus) {
 		process.push(function() {
 			if (gRet == undefined)
@@ -781,27 +798,31 @@ function ExecutarAssinarDocumentos(Copia) {
 			location.href = oUrlNext.value;
 		});
 	} else {
-		process.push(function() {
-			var resolve = function(url, base_url) {
-				  var doc      = document
-				    , old_base = doc.getElementsByTagName('base')[0]
-				    , old_href = old_base && old_base.href
-				    , doc_head = doc.head || doc.getElementsByTagName('head')[0]
-				    , our_base = old_base || doc_head.appendChild(doc.createElement('base'))
-				    , resolver = doc.createElement('a')
-				    , resolved_url
-				    ;
-				  our_base.href = base_url || '';
-				  resolver.href = url;
-				  resolved_url  = resolver.href; // browser magic at work here
+		process
+				.push(function() {
+					var resolve = function(url, base_url) {
+						var doc = document, old_base = doc
+								.getElementsByTagName('base')[0], old_href = old_base
+								&& old_base.href, doc_head = doc.head
+								|| doc.getElementsByTagName('head')[0], our_base = old_base
+								|| doc_head.appendChild(doc
+										.createElement('base')), resolver = doc
+								.createElement('a'), resolved_url;
+						our_base.href = base_url || '';
+						resolver.href = url;
+						resolved_url = resolver.href; // browser magic at work
+						// here
 
-				  if (old_base) old_base.href = old_href;
-				  else doc_head.removeChild(our_base);
-				  return resolved_url;
-				}
-			
-			gRet = provider.concluir(resolve(oUrlNext.value, window.location.href));
-		});
+						if (old_base)
+							old_base.href = old_href;
+						else
+							doc_head.removeChild(our_base);
+						return resolved_url;
+					}
+
+					gRet = provider.concluir(resolve(oUrlNext.value,
+							window.location.href));
+				});
 	}
 	process.run();
 }
@@ -844,13 +865,12 @@ function identificarOperacoes() {
 			operacao.usePassword = false;
 
 			// Assijus
-			operacao.id = document.getElementsByName("ad_id_"
-					+ operacao.codigo)[0].value;
+			operacao.id = document
+					.getElementsByName("ad_id_" + operacao.codigo)[0].value;
 			operacao.descr = document.getElementsByName("ad_description_"
 					+ operacao.codigo)[0].value;
 			operacao.kind = document.getElementsByName("ad_kind_"
 					+ operacao.codigo)[0].value;
-
 
 			var oChkPwd = document.getElementsByName("ad_password_"
 					+ operacao.codigo)[0];

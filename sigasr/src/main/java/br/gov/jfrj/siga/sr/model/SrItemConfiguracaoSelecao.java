@@ -50,7 +50,7 @@ public class SrItemConfiguracaoSelecao extends Selecao<SrItemConfiguracao> {
     public void carregarDadosParaView(SrItemConfiguracao itemConfiguracao) {
         if (itemConfiguracao != null) {
             this.setId(itemConfiguracao.getId());
-            this.setDescricao(itemConfiguracao.getDescricao());
+            this.setDescricao(itemConfiguracao.getTituloItemConfiguracao());
             this.setSigla(itemConfiguracao.getSigla());
         }
     }

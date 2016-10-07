@@ -324,6 +324,23 @@
 								}
 								</script>
 								<c:if test="${solicitacao.itemConfiguracao != null && podeUtilizarServicoSigaGC}">
+									<c:if test="${podeVerGestorItem && not empty solicitacao.itemConfiguracao.gestorSet}">
+									<label>Gestor do Produto</label>
+									<div style="display: inline-block" >
+										<c:forEach var="g" items="${solicitacao.itemConfiguracao.gestorSet}">
+											<p>
+											<c:choose>
+												<c:when test="${not empty g.dpPessoa}">
+													<a href="/siga/app/pessoa/exibir?sigla=${g.dpPessoa.siglaCompleta}" target="${g.dpPessoa.siglaCompleta}">${g.dpPessoa.nomePessoa}</a>
+												</c:when>
+												<c:otherwise>
+													<a href="/siga/app/lotacao/exibir?sigla=${g.dpLotacao.siglaCompleta}" target="${g.dpLotacao.siglaCompleta}">${g.dpLotacao.siglaCompleta} - ${g.dpLotacao.nomeLotacao}</a>
+												</c:otherwise>
+											</c:choose>
+											</p>
+										</c:forEach>
+									</div>
+									</c:if>
 									<div style="display: inline-block" >
 										<div id="gc-ancora-item"></div>
 									</div>

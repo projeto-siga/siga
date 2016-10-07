@@ -2909,7 +2909,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 	
 	public String getDescrItemAtual(){
-		return getItemAtual() != null ? getItemAtual().getDescricao() : "Item Não Informado";
+		return getItemAtual() != null ? getItemAtual().getTituloItemConfiguracao() : "Item Não Informado";
 	}
 	
 	public String getDescrAcaoAtual(){

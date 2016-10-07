@@ -321,6 +321,7 @@ public class SolicitacaoController extends SrController {
         result.include("locaisDisponiveis", solicitacao.getLocaisDisponiveis());
         result.include("meiosComunicadaoList", SrMeioComunicacao.values());
         result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
+        result.include("podeVerGestorItem", podeUtilizarServico("SIGA;SR;VER_GESTOR_ITEM"));
         result.include("atributoAssociados", solicitacao.getAtributoAssociados());
         result.include("atributoSolicitacaoMap", solicitacao.getAtributoSolicitacaoMap());
 	}
@@ -506,8 +507,12 @@ public class SolicitacaoController extends SrController {
 					solicitacao.setAcao(null);
 			}
 			//Edson: por causa do detach:
-			if (solicitacao.getSolicitacaoInicial() != null)
+			if (solicitacao.getSolicitacaoInicial() != null){
 				solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
+				//Edson: ainda devido ao detach e por causa da referência ao gestorSet do item ao obter a descrição
+				if (solicitacao.getItemConfiguracao() != null)
+					solicitacao.setItemConfiguracao(SrItemConfiguracao.AR.findById(solicitacao.getItemConfiguracao().getId()));
+			}
 		} 
 		       
 		try{

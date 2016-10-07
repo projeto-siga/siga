@@ -162,6 +162,8 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		query.append(" where sol.hisDtFim is null ");
 		
 		query.append(" and (marcaPrazo.dpLotacaoIni is null or marcaPrazo.dpLotacaoIni = situacao.dpLotacaoIni) ");
+		
+		query.append(" and not exists (from SrAtributoSolicitacao att where att.solicitacao = sol and att.id > atributoDaSolicitacao.id) ");
 
 		incluirWheresBasicos(query);
 		
@@ -202,7 +204,6 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 	private void incluirWheresBasicos(StringBuilder query){
 		
 		query.append(" and not exists (from SrMovimentacao mov where solicitacao = sol and idMovimentacao > ultMov.idMovimentacao) ");
-		query.append(" and not exists (from SrAtributoSolicitacao att where att.solicitacao = sol and att.id > atributoDaSolicitacao.id) ");
 		
 		if (Filtros.deveAdicionar(getCadastranteBusca()))
 			query.append(" and sol.cadastrante.idPessoaIni = "

@@ -85,6 +85,12 @@
 	                        </td>
 	                    </tr>
 	                    <tr>
+	                    	<td>Atributo</td>
+	                    	<td>
+	                    		<siga:selecao2 tamanho="grande" propriedade="filtro.atributo" tipo="atributo" tema="simple" modulo="sigasr"/>
+	                    	</td>
+	                    </tr>
+	                    <tr>
 	                        <td>Prioridade M&iacute;nima</td>
 	                        <td>
 	                           <select name="filtro.prioridade" id="filtroPrioridade" value="${filtro.prioridade}" style="width:250px;">

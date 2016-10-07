@@ -98,6 +98,28 @@
 						</c:if>
 					</c:forEach>
 				</c:if>
+				
+				<c:set var="papeis" value="${informacao.papeisVinculados}"/>
+				<c:if test="${not empty papeis}">
+				<div class="gt-sidebar-content" style="padding-top: 10px">
+					<h3>Perfis</h3>
+					<c:forEach var="papel" items="${papeis}">
+						<p style="margin-bottom: 3px;">
+							<b>${papel.key.descPapel}:</b>
+						</p>
+						<ul>
+							<c:forEach var="pessoaLotaOuGrupo" items="${papel.value}">
+								<li><c:catch var="exception">${pessoaLotaOuGrupo.nomePessoa}</c:catch>
+									<c:catch var="exception">${pessoaLotaOuGrupo.nomeLotacao}</c:catch>
+									<c:if test="${not empty exception}">${pessoaLotaOuGrupo.dscGrupo}</c:if>
+								</li>
+							</c:forEach>
+						</ul>
+					</c:forEach>
+				</div>
+				</c:if>
+				
+				
 			</div>
 
 			<div class="gt-sidebar-content" id="gc"></div>
@@ -200,12 +222,12 @@
 							<tr class="juntada ${classe}">
 								<td align="left">${m.hisDtIni}</td>
 								<c:choose>
-									<c:when test="${informacao.podeDesfazer(titular, m)}">
-										<td>${m.tipo.nome}[<img
+									<c:when test="${informacao.podeDesfazer(titular, lotaTitular, m)}">
+										<td>${m.tipo.nome}<img
 											style="margin-bottom: -2px; width: 11px;"
 											src="/siga/css/famfamfam/icons/cross.png" /> <span
 											class="gt-table-action-list"> <a
-												href="javascript:if (confirm('Deseja desfazer essa movimentação?')) location.href = '${linkTo[AppController].desfazer[informacao.siglaCompacta][m.id]}';">desfazer</a></span>&nbsp;]
+												href="javascript:if (confirm('Deseja desfazer essa movimentação?')) location.href = '${linkTo[AppController].desfazer[informacao.siglaCompacta][m.id]}';">desfazer</a></span>&nbsp;
 										</td>
 									</c:when>
 									<c:otherwise>

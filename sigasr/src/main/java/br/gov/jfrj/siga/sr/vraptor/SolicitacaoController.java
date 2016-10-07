@@ -42,6 +42,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.SrAcao;
 import br.gov.jfrj.siga.sr.model.SrArquivo;
+import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacaoMap;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrConfiguracaoBL;
@@ -320,6 +321,7 @@ public class SolicitacaoController extends SrController {
         result.include("locaisDisponiveis", solicitacao.getLocaisDisponiveis());
         result.include("meiosComunicadaoList", SrMeioComunicacao.values());
         result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
+        result.include("podeVerGestorItem", podeUtilizarServico("SIGA;SR;VER_GESTOR_ITEM"));
         result.include("atributoAssociados", solicitacao.getAtributoAssociados());
         result.include("atributoSolicitacaoMap", solicitacao.getAtributoSolicitacaoMap());
 	}
@@ -404,6 +406,7 @@ public class SolicitacaoController extends SrController {
         Set<SrEtapaSolicitacao> etapas = solicitacao.getEtapas(todoOContexto);
         Set<SrSolicitacao> vinculadas = solicitacao.getSolicitacoesVinculadas(todoOContexto);
         Set<SrSolicitacao> juntadas = solicitacao.getSolicitacoesJuntadas(todoOContexto);
+        Set<SrAtributoSolicitacao> atributos = solicitacao.getAtributoSolicitacaoSetAtual(todoOContexto);
         
         result.include(SOLICITACAO, solicitacao);
         result.include("movimentacao", movimentacao);
@@ -421,6 +424,7 @@ public class SolicitacaoController extends SrController {
         result.include("motivosPendencia",SrTipoMotivoPendencia.values());
         result.include(PRIORIDADE_LIST, SrPrioridade.values());
         result.include("podeUtilizarServicoSigaGC", podeUtilizarServico("SIGA;GC"));
+        result.include("atributos", atributos);
     }
 
     @SuppressWarnings("unchecked")
@@ -503,8 +507,12 @@ public class SolicitacaoController extends SrController {
 					solicitacao.setAcao(null);
 			}
 			//Edson: por causa do detach:
-			if (solicitacao.getSolicitacaoInicial() != null)
+			if (solicitacao.getSolicitacaoInicial() != null){
 				solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
+				//Edson: ainda devido ao detach e por causa da referência ao gestorSet do item ao obter a descrição
+				if (solicitacao.getItemConfiguracao() != null)
+					solicitacao.setItemConfiguracao(SrItemConfiguracao.AR.findById(solicitacao.getItemConfiguracao().getId()));
+			}
 		} 
 		       
 		try{
@@ -724,8 +732,6 @@ public class SolicitacaoController extends SrController {
         result.include("isPai", solicitacaoEntity.isPai());
         result.include("codigo", solicitacaoEntity.isFilha() ? solicitacaoEntity.getSolicitacaoPai().getCodigo() : solicitacaoEntity.getCodigo());
         result.include(TIPO_MOTIVO_ESCALONAMENTO_LIST, SrTipoMotivoEscalonamento.values());
-        result.include("idSolicitacao",solicitacaoEntity.getId());
-        
     }
 
     @Path("app/solicitacao/escalonarGravar")

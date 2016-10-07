@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.sr.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +22,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -28,12 +30,13 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sr.model.vo.SrAtributoVO;
 
 @Entity
 @Table(name = "SR_ATRIBUTO", schema = "SIGASR")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class SrAtributo extends HistoricoSuporte {
+public class SrAtributo extends HistoricoSuporte implements SrSelecionavel, Selecionavel {
 	private static final long serialVersionUID = 1L;
 
 	public static final ActiveRecord<SrAtributo> AR = new ActiveRecord<>(SrAtributo.class);
@@ -173,12 +176,16 @@ public class SrAtributo extends HistoricoSuporte {
 
 	@Override
 	public boolean equals(Object obj) {
-		return this.getIdAtributo().equals(((SrAtributo) obj).getIdAtributo());
+		return this.getAtributoInicial().getId().equals(((SrAtributo) obj).getAtributoInicial().getId());
 	}
-
+	
 	@Override
 	public int hashCode() {
-		return super.hashCode();
+        final int prime = 31;
+        int result = 1;
+		result = prime * result
+				+ ((getAtributoInicial().getId() == null) ? 0 : getAtributoInicial().getId().hashCode());
+		return result;
 	}
 	
 	public SrAtributoVO toVO(boolean listarAssociacoes) throws Exception {
@@ -271,5 +278,51 @@ public class SrAtributo extends HistoricoSuporte {
 
 	public void setMeuAtributoHistoricoSet(List<SrAtributo> meuAtributoHistoricoSet) {
 		this.meuAtributoHistoricoSet = meuAtributoHistoricoSet;
+	}
+
+	@Override
+	public String getSigla() {
+		return getNomeAtributo();
+	}
+
+	@Override
+	public void setSigla(String sigla) {
+		setNomeAtributo(sigla);
+	}
+
+	@Override
+	public String getDescricao() {
+		return getNomeAtributo();
+	}
+
+	@Override
+	public void setDescricao(String descricao) {
+		
+	}
+
+	@Override
+	public List<SrAtributo> buscar() throws Exception {	
+		boolean mostrarDesativados = false;
+		List<SrAtributo> todosOsAtributos = listarParaSolicitacao(mostrarDesativados);
+		List<SrAtributo> atributosFiltrados = new ArrayList<SrAtributo>();
+		
+		if (getNomeAtributo() == null || "".equals(getNomeAtributo()))
+			return todosOsAtributos;
+		
+		for (SrAtributo atributo : todosOsAtributos)
+			if (Texto.removeAcento(atributo.getNomeAtributo())
+					.toLowerCase()
+					.contains( Texto.removeAcento(this.getNomeAtributo())
+									.toLowerCase()) )
+				atributosFiltrados.add(atributo);
+		
+		return atributosFiltrados;
+	}
+	
+	@Override
+	public SrAtributo selecionar(String sigla) throws Exception {
+		setSigla(sigla);
+		List<SrAtributo> atributos = buscar();
+		return atributos.size() == 1 ? atributos.get(0) : null;
 	}
 }

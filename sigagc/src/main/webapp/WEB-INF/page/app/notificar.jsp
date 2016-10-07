@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
-<siga:pagina titulo="Notificar sobre TÃ³pico de InformaÃ§Ã£o">
+<siga:pagina titulo="Notificar sobre Tópico de Informação">
 
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
@@ -11,10 +11,10 @@
 			<div class="gt-form gt-content-box">
 				<form action="${linkTo[AppController].notificarGravar}">
 					<input type="hidden" name="informacao.id" value="${informacao.id}" />
-					<p>Escolha quem serÃ¡ notificado sobre esse conhecimento</p>
+					<p>Escolha quem será notificado sobre esse conhecimento</p>
 					<br />
 					<div class="gt-form-row gt-width-100">
-						<label>Tomar CiÃªncia</label>
+						<label>Tomar Ciência</label>
 						<siga:pessoaLotaSelecao2 propriedadePessoa="pessoa"
 							propriedadeLotacao="lotacao" propriedadeEmail="email" />
 					</div>

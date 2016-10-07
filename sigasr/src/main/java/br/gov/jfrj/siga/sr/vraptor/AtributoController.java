@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.sr.vraptor;
 
 import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.ADM_ADMINISTRAR;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -17,11 +18,15 @@ import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.annotation.AssertAcesso;
+import br.gov.jfrj.siga.sr.model.SrAcao;
+import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
 import br.gov.jfrj.siga.sr.model.SrConfiguracao;
 import br.gov.jfrj.siga.sr.model.SrObjetivoAtributo;
+import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrTipoAtributo;
 import br.gov.jfrj.siga.sr.model.vo.SelecionavelVO;
+import br.gov.jfrj.siga.sr.util.Util;
 import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.uteis.PessoaLotaFuncCargoSelecaoHelper;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -119,6 +124,36 @@ public class AtributoController extends SrController {
 		
 		return true;
 	}
+	
+	@Path("/selecionar")
+	public void selecionar(String sigla)throws Exception {
+		SrAtributo atributo = new SrAtributo().selecionar(sigla);
+		result
+			.forwardTo(SelecaoController.class)
+			.ajaxRetorno(atributo);
+	}
+
+	@Path("/buscar")
+	public void buscar(String sigla, String nomeAtributo, String propriedade) {
+		List<SrAtributo> atributos = null;
+		SrAtributo filtro = new SrAtributo();
+		
+		if (Util.notNullAndEmpty(sigla))
+			filtro.setSigla(sigla);
+		if (Util.notNullAndEmpty(nomeAtributo))
+			filtro.setNomeAtributo(nomeAtributo);
+		
+		try {
+			atributos = filtro.buscar();			
+		} catch (Exception e) {
+			atributos = new ArrayList<SrAtributo>();
+		}
+		
+		result.include("atributos", atributos);
+		result.include("filtro", filtro);
+		result.include("propriedade", propriedade);
+	}
+
 
 }
 

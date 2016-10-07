@@ -433,7 +433,7 @@ public class ExDocumentoController extends ExController {
 		}
 
 		if (exDocumentoDTO.isCriandoAnexo() && exDocumentoDTO.getId() == null
-				&& isDocNovo) {
+				&& isDocNovo && param("postback") == null) {
 			exDocumentoDTO.setIdFormaDoc(60L);
 			exDocumentoDTO.setIdMod(((ExModelo) dao()
 					.consultarAtivoPorIdInicial(ExModelo.class, 507L))

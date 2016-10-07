@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.util.HashSet;
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,8 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 @Resource
 public class ExFormaDocumentoController extends ExController {
 
+	private static final String ACESSO_SIGA_DOC_MOD = "MOD:Gerenciar modelos";
+
 	public ExFormaDocumentoController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so,
 			EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
@@ -29,7 +32,7 @@ public class ExFormaDocumentoController extends ExController {
 
 	@Get("app/forma/listar")
 	public void listarFormas(final String ordenar) {
-		assertAcesso("MOD:Gerenciar modelos");
+		assertAcesso(ACESSO_SIGA_DOC_MOD);
 
 		final List<ExFormaDocumento> itens;
 
@@ -44,7 +47,7 @@ public class ExFormaDocumentoController extends ExController {
 
 	@Get("app/forma/editar")
 	public void editarForma(final Long id) {
-		assertAcesso("MOD:Gerenciar modelos");
+		assertAcesso(ACESSO_SIGA_DOC_MOD);
 
 		final ExFormaDocumento forma = id != null ? recuperarForma(id) : new ExFormaDocumento();
 
@@ -111,7 +114,7 @@ public class ExFormaDocumentoController extends ExController {
 	@Post("app/forma/gravar")
 	public void gravar(final Integer postback, final Long id, final String descricao, final String sigla, final Long idTipoFormaDoc, final boolean origemExterno,
 			final boolean origemInternoImportado, final boolean origemInternoProduzido, final boolean origemCapturado) {
-		assertAcesso("MOD:Gerenciar modelos");
+		assertAcesso(ACESSO_SIGA_DOC_MOD);
 		setPostback(postback);
 
 		final ExFormaDocumento forma = id != null ? recuperarForma(id) : new ExFormaDocumento();

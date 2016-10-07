@@ -19,21 +19,28 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import br.com.caelum.vraptor.ioc.Component;
-
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Par;
+import br.gov.jfrj.siga.cp.CpConfiguracao;
+import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoMarca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.gc.model.GcArquivo;
 import br.gov.jfrj.siga.gc.model.GcInformacao;
 import br.gov.jfrj.siga.gc.model.GcMarca;
 import br.gov.jfrj.siga.gc.model.GcMovimentacao;
+import br.gov.jfrj.siga.gc.model.GcPapel;
 import br.gov.jfrj.siga.gc.model.GcTag;
 import br.gov.jfrj.siga.gc.model.GcTipoMovimentacao;
 import br.gov.jfrj.siga.gc.model.GcTipoTag;
+import br.gov.jfrj.siga.gc.vraptor.Correio;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -450,30 +457,45 @@ public class GcBL {
 
 					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICAR
 							&& (mov.pessoaAtendente != null || mov.lotacaoAtendente != null)) {
-
-						/*
-						 * /*Edson: pode ser usado quando o grupo de e-mail
-						 * notificado for do siga-gi if (mov.grupo != null) {
-						 * Map<DpLotacao, List<DpPessoa>> mapa = mov
-						 * .getLotasEPessoasDoGrupo(); for (DpLotacao l :
-						 * mapa.keySet()) if (mapa.get(l).size() == 0) {
-						 * acrescentarMarca(set, inf,
-						 * CpMarcador.MARCADOR_TOMAR_CIENCIA, mov.hisDtIni,
-						 * null, null, l); } else { for (DpPessoa p :
-						 * mapa.get(l)) acrescentarMarca( set, inf,
-						 * CpMarcador.MARCADOR_TOMAR_CIENCIA, mov.hisDtIni,
-						 * null, p, l); } }
-						 */
+						 
 						acrescentarMarca(set, inf,
 								CpMarcador.MARCADOR_TOMAR_CIENCIA,
 								mov.hisDtIni, null, mov.pessoaAtendente,
 								mov.lotacaoAtendente);
 					}
-
-					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_INTERESSADO)
-						acrescentarMarca(set, inf,
-								CpMarcador.MARCADOR_COMO_INTERESSADO,
-								mov.hisDtIni, null, mov.pessoaTitular, null);
+					
+					List<Par<DpPessoa, DpLotacao>> pessoasELotasDoGrupo = new ArrayList<Par<DpPessoa, DpLotacao>>();
+					if (mov.getGrupo() != null){
+						for (CpConfiguracao cfg : Cp.getInstance().getConf()
+								.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_PERTENCER)) {
+							if (cfg.getCpGrupo() != null && cfg.getCpGrupo().equivale(mov.getGrupo())
+									&& cfg.getHisDtFim() == null){
+								DpPessoa pess = cfg.getDpPessoa();
+								//Edson: evitar LazyException:
+								if (pess != null)
+									pess = CpDao.getInstance().consultar(pess.getId(), DpPessoa.class, false);
+								DpLotacao lota = cfg.getLotacao();
+								if (lota != null)
+									lota = CpDao.getInstance().consultar(lota.getId(), DpLotacao.class, false);
+								else if (pess != null)
+									lota = pess.getLotacao();
+								pessoasELotasDoGrupo.add(new Par<DpPessoa, DpLotacao>(pess, lota));
+							}
+						}
+					}
+					
+					if (t == GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL){
+						Long marcador = 0L;
+						switch (mov.getPapel().getId().intValue()){
+							case (int)GcPapel.PAPEL_INTERESSADO : marcador = CpMarcador.MARCADOR_COMO_INTERESSADO; break;
+							case (int)GcPapel.PAPEL_EXECUTOR: marcador = CpMarcador.MARCADOR_COMO_EXECUTOR; break;
+						}
+						if (mov.getLotacaoAtendente() != null)
+							pessoasELotasDoGrupo.add(new Par<DpPessoa, DpLotacao>(mov.pessoaAtendente, mov.lotacaoAtendente));
+						for (Par<DpPessoa, DpLotacao> p : pessoasELotasDoGrupo)
+							acrescentarMarca(set, inf, marcador,
+									mov.hisDtIni, null, p.getKey(), p.getValue());
+					}
 				}
 			}
 		}
@@ -545,31 +567,50 @@ public class GcBL {
 			throws Exception {
 		GcMovimentacao movLocalizada = null;
 		for (GcMovimentacao mov : informacao.movs) {
-			if (mov.isCancelada())
-				continue;
-			if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_INTERESSADO
-					&& titular.equivale(mov.pessoaTitular)) {
+			if (!mov.isCancelada() && mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL
+					&& titular.equivale(mov.getPessoaAtendente()) && mov.getPapel().getIdPapel() == GcPapel.PAPEL_INTERESSADO) {
 				movLocalizada = mov;
 				break;
 			}
 		}
 		if (movLocalizada == null && fInteresse) {
-			GcMovimentacao m = movimentar(informacao,
-					GcTipoMovimentacao.TIPO_MOVIMENTACAO_INTERESSADO, null,
-					null, null, null, null, null, null, null, null);
-			gravar(informacao, idc, titular, lotaTitular);
+			vincularPapel(informacao, idc, titular, lotaTitular, titular, lotaTitular, null,
+					GcPapel.AR.findById(GcPapel.PAPEL_INTERESSADO), null);
 		} else if (movLocalizada != null && !fInteresse) {
 			cancelarMovimentacao(informacao, movLocalizada, idc,
-					movLocalizada.pessoaTitular, movLocalizada.lotacaoTitular);
-			/*
-			 * GcMovimentacao m = GcBL .movimentar( informacao,
-			 * GcTipoMovimentacao
-			 * .TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO, null, null,
-			 * null, null, null, movLocalizada, null, null, null);
-			 * movLocalizada.movCanceladora = m; gravar(informacao, idc,
-			 * movLocalizada.pessoaTitular, movLocalizada.lotacaoTitular);
-			 */
+					titular, lotaTitular);
 		}
+	}
+	
+	public void vincularPapel(GcInformacao informacao, CpIdentidade idc, DpPessoa titular, DpLotacao lotaTitular, 
+			DpPessoa pessoa, DpLotacao lotacao, CpGrupo grupo, GcPapel papel, Correio correio) throws Exception{
+		if (informacao == null && pessoa == null && lotacao == null)
+			throw new AplicacaoException("Não foram informados dados para a definição de perfil");
+		
+		if (pessoa != null && lotacao == null && grupo == null)
+			lotacao = pessoa.getLotacao();
+		
+		if (!(papel.getIdPapel() == GcPapel.PAPEL_INTERESSADO && titular.equivale(pessoa)) 
+				&& !informacao.podeVincularPapel(titular, lotaTitular)){
+			throw new AplicacaoException("Definição de perfil não permitida");
+		}
+		
+		String descr = papel.getDescPapel() + ": ";
+		if (pessoa != null)
+			descr += pessoa.getDescricaoCompletaIniciaisMaiusculas();
+		else if (lotacao != null)
+			descr += lotacao.getDescricaoIniciaisMaiusculas();
+		else if (grupo != null)
+			descr += grupo.getDscGrupo();
+		
+		GcMovimentacao mov = movimentar(informacao,
+				GcTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULAR_PAPEL, pessoa,
+				lotacao, descr, null, null, null, null, null, null);
+		mov.setPapel(papel);
+		mov.setGrupo(grupo);
+		gravar(informacao, idc, titular, lotaTitular);
+		if (correio != null && (pessoa != null || lotacao != null))
+			correio.notificar(informacao, pessoa, lotacao, null);
 	}
 
 	public void cancelar(GcInformacao informacao, CpIdentidade idc,

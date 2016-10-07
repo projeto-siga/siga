@@ -32,7 +32,8 @@ public class GcTipoMovimentacao extends Objeto {
 
 	final static public long TIPO_MOVIMENTACAO_CLASSIFICACAO = 8;
 
-	final static public long TIPO_MOVIMENTACAO_INTERESSADO = 9;
+	//Edson: eliminada no desenvolvimento da vinculação de perfil:
+	//final static public long TIPO_MOVIMENTACAO_INTERESSADO = 9;
 
 	final static public long TIPO_MOVIMENTACAO_EDICAO = 10;
 
@@ -43,6 +44,8 @@ public class GcTipoMovimentacao extends Objeto {
 	public static final long TIPO_MOVIMENTACAO_ANEXAR_ARQUIVO = 13;
 
 	public static final long TIPO_MOVIMENTACAO_DUPLICAR = 14;
+	
+	final static public long TIPO_MOVIMENTACAO_VINCULAR_PAPEL = 15;
 
 	@Id
 	@Column(name = "ID_TIPO_MOVIMENTACAO")

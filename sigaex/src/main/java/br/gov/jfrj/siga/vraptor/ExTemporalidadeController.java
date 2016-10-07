@@ -23,6 +23,8 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 @Resource
 public class ExTemporalidadeController extends ExController {
 
+	private static final String ACESSO_FE_TT = "FE:Ferramentas;TT:Tabela de Temporalidade";
+
 	public ExTemporalidadeController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so,
 			EntityManager em) {
 		super(request, response, context, result, ExDao.getInstance(), so, em);
@@ -30,7 +32,7 @@ public class ExTemporalidadeController extends ExController {
 
 	@Get("app/expediente/temporalidade/listar")
 	public void listarTemporalidade() {
-		assertAcesso("FE:Ferramentas;TT:Tabela de Temporalidade");
+		assertAcesso(ACESSO_FE_TT);
 
 		final List<ExTemporalidade> temporalidadeVigente = ExDao.getInstance().listarAtivos(ExTemporalidade.class, "descTemporalidade");
 
@@ -39,7 +41,7 @@ public class ExTemporalidadeController extends ExController {
 
 	@Get("app/expediente/temporalidade/editar")
 	public void editarTemporalidade(final Long idTemporalidade, final String acao) {
-		assertAcesso("FE:Ferramentas;TT:Tabela de Temporalidade");
+		assertAcesso(ACESSO_FE_TT);
 
 		final ExTemporalidade exTemporal = buscarExTemporalidade(idTemporalidade);
 
@@ -56,7 +58,7 @@ public class ExTemporalidadeController extends ExController {
 
 	@Post("app/expediente/temporalidade/gravar")
 	public void gravar(final Long idTemporalidade, final String acao, final String descTemporalidade, Integer valorTemporalidade, final Long idCpUnidade) {
-		assertAcesso("FE:Ferramentas;TT:Tabela de Temporalidade");
+		assertAcesso(ACESSO_FE_TT);
 		
 		if (valorTemporalidade == -1){
 			valorTemporalidade = null;
@@ -109,7 +111,7 @@ public class ExTemporalidadeController extends ExController {
 
 	@Get("app/expediente/temporalidade/excluir")
 	public void excluir(final Long idTemporalidade) {
-		assertAcesso("FE:Ferramentas;TT:Tabela de Temporalidade");
+		assertAcesso(ACESSO_FE_TT);
 		ModeloDao.iniciarTransacao();
 		final ExTemporalidade exTemporal = buscarExTemporalidade(idTemporalidade);
 		Date dt = dao().consultarDataEHoraDoServidor();

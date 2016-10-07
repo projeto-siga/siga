@@ -77,6 +77,15 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 @Resource
 public class ExRelatorioController extends ExController {
 
+	private static final String ACESSO_CLSD_DOCS = "CLSD:Classificação Documental;DOCS:Relação de documentos classificados";
+	private static final String ACESSO_CLSD = "CLSD:Classificação Documental;CLASS:Relação de classificações";
+	private static final String ACESSO_RELMVP = "RELMVP:Relação de movimentações de processos";
+	private static final String ACESSO_MOVCAD = "MOVCAD:Relação de movimentações por cadastrante";
+	private static final String ACESSO_DATAS = "DATAS:Relação de documentos entre datas";
+	private static final String ACESSO_CRSUB = "CRSUB:Relatório de criação de documentos em setores subordinados";
+	private static final String ACESSO_MVSUB = "MVSUB:Relatório de movimentação de documentos em setores subordinados";
+	private static final String ACESSO_SUBORD = "SUBORD:Relatório de documentos em setores subordinados";
+	private static final String ACESSO_FORMS = "FORMS:Relação de formulários";
 	private static final String APPLICATION_PDF = "application/pdf";
 
 	public ExRelatorioController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so,
@@ -234,7 +243,7 @@ public class ExRelatorioController extends ExController {
 	public Download aRelFormularios(final String secaoUsuario, final String orgaoUsuario, final String lotacaoTitular, final String idTit,
 			final String nomeArquivoRel) throws Exception {
 
-		assertAcesso("FORMS:Relação de formulários");
+		assertAcesso(ACESSO_FORMS);
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 		parametros.put("secaoUsuario", secaoUsuario);
@@ -307,7 +316,7 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelDocumentosSubordinados")
 	public Download aRelDocumentosSubordinados() throws Exception {
-		assertAcesso("SUBORD:Relatório de documentos em setores subordinados");
+		assertAcesso(ACESSO_SUBORD);
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
@@ -331,7 +340,7 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelMovDocsSubordinados")
 	public Download aRelMovDocumentosSubordinados() throws Exception {
-		assertAcesso("MVSUB:Relatório de movimentação de documentos em setores subordinados");
+		assertAcesso(ACESSO_MVSUB);
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
@@ -355,7 +364,7 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelDocsSubCriados")
 	public Download aRelDocsSubCriados() throws Exception {
-		assertAcesso("CRSUB:Relatório de criação de documentos em setores subordinados");
+		assertAcesso(ACESSO_CRSUB);
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
@@ -390,7 +399,7 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelDocEntreDatas")
 	public Download aRelDocEntreDatas() throws Exception {
-		assertAcesso("DATAS:Relação de documentos entre datas");
+		assertAcesso(ACESSO_DATAS);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
@@ -421,7 +430,7 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelMovimentacao")
 	public Download aRelMovimentacao() throws Exception {
-		assertAcesso("DATAS:Relação de documentos entre datas");
+		assertAcesso(ACESSO_DATAS);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
@@ -452,7 +461,7 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelMovCad")
 	public Download aRelMovCad() throws Exception {
-		assertAcesso("MOVCAD:Relação de movimentações por cadastrante");
+		assertAcesso(ACESSO_MOVCAD);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
@@ -483,7 +492,7 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelOrgao")
 	public Download aRelOrgao() throws Exception {
-		assertAcesso("DATAS:Relação de documentos entre datas");
+		assertAcesso(ACESSO_DATAS);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
@@ -516,7 +525,7 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelTipoDoc")
 	public Download aRelTipoDoc() throws Exception {
-		assertAcesso("DATAS:Relação de documentos entre datas");
+		assertAcesso(ACESSO_DATAS);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
@@ -546,7 +555,7 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelMovProcesso")
 	public Download aRelMovProcesso() throws Exception {
-		assertAcesso("RELMVP:Relação de movimentações de processos");
+		assertAcesso(ACESSO_RELMVP);
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
@@ -574,7 +583,7 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/aRelClassificacao")
 	public Download aRelClassificacao() throws Exception {
-		assertAcesso("CLSD:Classificação Documental;CLASS:Relação de classificações");
+		assertAcesso(ACESSO_CLSD);
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 		parametros.put("codificacao", getRequest().getParameter("codificacao"));
@@ -589,7 +598,7 @@ public class ExRelatorioController extends ExController {
 
 	@Get("app/expediente/rel/emiteRelClassDocDocumentos")
 	public Download aRelClassDocDocumentos() throws Exception {
-		assertAcesso("CLSD:Classificação Documental;DOCS:Relação de documentos classificados");
+		assertAcesso(ACESSO_CLSD_DOCS);
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 		String codificacao = getRequest().getParameter("codificacao");

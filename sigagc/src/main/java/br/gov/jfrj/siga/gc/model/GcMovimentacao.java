@@ -15,6 +15,8 @@ import javax.persistence.Query;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.jfrj.siga.cp.CpGrupo;
+import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -62,11 +64,15 @@ public class GcMovimentacao extends Objeto implements
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_LOTACAO_ATENDENTE")
 	public DpLotacao lotacaoAtendente;
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "ID_PAPEL")
+	public GcPapel papel;
 
 	// Edson: pode ser usado quando o grupo de e-mail notificado for do siga-gi
-	// @ManyToOne(optional = true)
-	// @JoinColumn(name = "ID_GRUPO")
-	// public CpGrupoDeEmail grupo;
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "ID_GRUPO")
+	public CpGrupo grupo;
 
 	@Column(name = "DESCRICAO")
 	public String descricao;
@@ -193,21 +199,20 @@ public class GcMovimentacao extends Objeto implements
 		return hisIdcIni;
 	}
 
-	/*
-	 * Edson: pode ser usado quando o grupo de e-mail notificado for do siga-gi
-	 * public Map<DpLotacao, List<DpPessoa>> getLotasEPessoasDoGrupo() throws
-	 * Exception { Map<DpLotacao, List<DpPessoa>> mapa = new HashMap<DpLotacao,
-	 * List<DpPessoa>>(); if (grupo == null) return mapa; for (CpConfiguracao
-	 * cfg : Cp.getInstance().getConf()
-	 * .getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_PERTENCER)) { if
-	 * (cfg.getCpGrupo() == null || !cfg.getCpGrupo().equivale(grupo) ||
-	 * cfg.getHisDtFim() != null) continue;
-	 * 
-	 * if (cfg.getDpPessoa() != null) { if
-	 * (mapa.get(cfg.getDpPessoa().getLotacao()) == null)
-	 * mapa.put(cfg.getDpPessoa().getLotacao(), new ArrayList<DpPessoa>());
-	 * mapa.get(cfg.getDpPessoa().getLotacao()).add(cfg.getDpPessoa()); } else
-	 * if (cfg.getLotacao() != null) { if (mapa.get(cfg.getLotacao()) == null)
-	 * mapa.put(cfg.getLotacao(), new ArrayList<DpPessoa>()); } } return mapa; }
-	 */
+	public GcPapel getPapel() {
+		return papel;
+	}
+
+	public void setPapel(GcPapel papel) {
+		this.papel = papel;
+	}
+
+	public CpGrupo getGrupo() {
+		return grupo;
+	}
+
+	public void setGrupo(CpGrupo grupo) {
+		this.grupo = grupo;
+	}
+
 }

@@ -405,25 +405,33 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     	return Texto.semQuebraDeLinha(getDescricao());
     }
     
-    public List<SrAtributoSolicitacao> getMeuAtributoSolicitacaoSet() {
-    	if (meuAtributoSolicitacaoSet != null && !meuAtributoSolicitacaoSet.isEmpty())
-			return meuAtributoSolicitacaoSet;
-		if (isFilha())
-			return getSolicitacaoPai().getMeuAtributoSolicitacaoSet();
-		return new ArrayList<SrAtributoSolicitacao>();
-    }
-
-    public List<SrAtributoSolicitacao> getAtributoSolicitacaoSetAtual() {
-		List<SrAtributoSolicitacao> atributosAtuais = new ArrayList<SrAtributoSolicitacao>();
-    	if (getMeuAtributoSolicitacaoSet() != null) {
-    		List<SrAtributoSolicitacao> atributos = getMeuAtributoSolicitacaoSet();
-    		for (SrAtributoSolicitacao atributo : atributos)
-    			if (atributo != null && atributo.isAtivo())
-    				atributosAtuais.add(atributo);
-    	}
-    	return atributosAtuais;
+    public Set<SrAtributoSolicitacao> getAtributoSolicitacaoSetAtual(boolean todoOContexto) {
+    	boolean atributosComHistorico = false;
+    	return getAtributoSolicitacaoSet(todoOContexto, atributosComHistorico);
     }
     
+    public Set<SrAtributoSolicitacao> getAtributoSolicitacaoSet(boolean todoOContexto, boolean atributosComHistorico) {
+    	Set<SrSolicitacao> solsAConsiderar = getSolicitacoesDependendoDoContexto(todoOContexto);
+		Set<SrAtributoSolicitacao> atributos = new LinkedHashSet<SrAtributoSolicitacao>();
+		for (SrSolicitacao solicitacao : solsAConsiderar) {
+	    	if (solicitacao.getMeuAtributoSolicitacaoSet() != null) {
+	    		if (atributosComHistorico)
+	    			atributos.addAll(solicitacao.getMeuAtributoSolicitacaoSet());
+	    		else
+	    			atributos.addAll(solicitacao.buscarAtributosAtuais());
+	    	}
+		}
+    	return atributos;
+    }
+    
+    private Set<SrAtributoSolicitacao> buscarAtributosAtuais() {
+    	Set<SrAtributoSolicitacao> atributosAtuais = new LinkedHashSet<SrAtributoSolicitacao>();
+		for (SrAtributoSolicitacao atributo : getMeuAtributoSolicitacaoSet())
+			if (atributo != null && atributo.isAtivo())
+				atributosAtuais.add(atributo);
+		return atributosAtuais;
+    }
+
     @Override
     public void setDescricao(String descricao) {
         this.setDescrSolicitacao(descricao);
@@ -869,11 +877,12 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
 	public Map<Long, SrAtributoSolicitacaoMap> getAtributoSolicitacaoMap() {
+		boolean todoOContexto = false;
     	if (atributoSolicitacaoMap != null)
     		return atributoSolicitacaoMap;
 		if (isAtributoDaEntidadeCarregado("meuAtributoSolicitacaoSet")) {
         	atributoSolicitacaoMap = new LinkedHashMap<Long, SrAtributoSolicitacaoMap>();
-			for (SrAtributoSolicitacao att : getAtributoSolicitacaoSetAtual()) 
+			for (SrAtributoSolicitacao att : getAtributoSolicitacaoSetAtual(todoOContexto)) 
 				if(att.getAtributo() != null) {
 					atributoSolicitacaoMap.put(att.getAtributo().getAtual().getIdAtributo(), 
 							new SrAtributoSolicitacaoMap(att.getId(), att.getAtributo().getAtual().getIdAtributo(), att.getValorAtributoSolicitacao()));
@@ -1103,11 +1112,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public Set<SrArquivo> getArquivosAnexos(boolean todoOContexto) {
-    	Set<SrSolicitacao> solsAConsiderar = new LinkedHashSet<SrSolicitacao>();
-    	if (todoOContexto) {
-    		solsAConsiderar.addAll(getPaiDaArvore().getSolicitacaoFilhaSetRecursivo());
-    	} else
-    		solsAConsiderar.add(this);
+    	Set<SrSolicitacao> solsAConsiderar = getSolicitacoesDependendoDoContexto(todoOContexto);
     	Set<SrArquivo> arqs = new TreeSet<SrArquivo>();
     	for (SrSolicitacao s : solsAConsiderar){
     		String numSequencia = s.isFilha() ? " (" + s.getNumSequenciaString() + ")" : "";
@@ -2883,6 +2888,15 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 					return sol.getArquivo();
 		return null;
 	}
+	
+	private Set<SrSolicitacao> getSolicitacoesDependendoDoContexto(boolean todoOContexto) {
+        Set<SrSolicitacao> solsAConsiderar = new LinkedHashSet<SrSolicitacao>();
+        if (todoOContexto) 
+            solsAConsiderar.addAll(getPaiDaArvore().getSolicitacaoFilhaSetRecursivo());
+        else
+            solsAConsiderar.add(this);
+       return solsAConsiderar;
+	}
     
 	public SrItemConfiguracao getItemAtual() {
 		SrMovimentacao ultMov = getUltimaMovimentacao();
@@ -2895,7 +2909,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 	
 	public String getDescrItemAtual(){
-		return getItemAtual() != null ? getItemAtual().getDescricao() : "Item Não Informado";
+		return getItemAtual() != null ? getItemAtual().getTituloItemConfiguracao() : "Item Não Informado";
 	}
 	
 	public String getDescrAcaoAtual(){
@@ -3210,6 +3224,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public void setMeuMarcaSet(Set<SrMarca> meuMarcaSet) {
         this.meuMarcaSet = meuMarcaSet;
+    }
+    
+    public List<SrAtributoSolicitacao> getMeuAtributoSolicitacaoSet() {
+    	return meuAtributoSolicitacaoSet;
     }
 
     public Boolean getRascunho() {

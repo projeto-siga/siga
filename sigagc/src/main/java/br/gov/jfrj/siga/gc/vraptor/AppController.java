@@ -32,9 +32,14 @@ import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpPerfil;
+import br.gov.jfrj.siga.cp.model.CpPerfilSelecao;
+import br.gov.jfrj.siga.cp.model.DpCargoSelecao;
+import br.gov.jfrj.siga.cp.model.DpFuncaoConfiancaSelecao;
+import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -43,6 +48,7 @@ import br.gov.jfrj.siga.gc.model.GcAcesso;
 import br.gov.jfrj.siga.gc.model.GcArquivo;
 import br.gov.jfrj.siga.gc.model.GcInformacao;
 import br.gov.jfrj.siga.gc.model.GcMovimentacao;
+import br.gov.jfrj.siga.gc.model.GcPapel;
 import br.gov.jfrj.siga.gc.model.GcTag;
 import br.gov.jfrj.siga.gc.model.GcTipoInformacao;
 import br.gov.jfrj.siga.gc.model.GcTipoMovimentacao;
@@ -208,6 +214,10 @@ public class AppController extends GcController {
 				.toUpperCase() + estiloBusca.substring(1) : "";
 		Query query = em().createNamedQuery("buscarConhecimento" + estiloBusca);
 		query.setParameter("tags", set);
+		if (estiloBusca == null || estiloBusca.isEmpty() || estiloBusca.equals("AlgumIgualNenhumDiferente")){
+			query.setParameter("lotacaoIni", getLotaTitular().getIdInicial());
+			query.setParameter("pessoaIni", getTitular().getIdInicial());
+		}
 		if ("ExatoOuNada".equals(estiloBusca))
 			query.setParameter("numeroDeTags", (long) tags.length);
 
@@ -1068,6 +1078,37 @@ public class AppController extends GcController {
 			throw new AplicacaoException(
 					"Para notificar é necessario selecionar uma Pessoa ou Lotacao.");
 	}
+	
+	private List<GcPapel> getListaGcPapel() {
+		return GcPapel.AR.all().fetch();
+	}
+	
+	@Get("/app/vincular_papel/{sigla}")
+	public void vincularPapel(final String sigla) throws Exception{
+		GcInformacao informacao = GcInformacao.findBySigla(sigla);
+
+		if (!informacao.podeVincularPapel(getTitular(), getLotaTitular())){
+			throw new AplicacaoException("Definição de perfil não permitida");
+		}
+		
+		result.include("informacao", informacao);
+		result.include("listaPapel", this.getListaGcPapel());
+		result.include("pessoaSel", new DpPessoaSelecao());
+	    result.include("lotacaoSel", new DpLotacaoSelecao());
+	    result.include("grupoSel", new CpPerfilSelecao());
+	}
+	
+	public void vincularPapelGravar(GcInformacao informacao, DpPessoaSelecao pessoaSel, DpLotacaoSelecao lotacaoSel, CpPerfilSelecao grupoSel,
+			GcPapel papel) throws Exception {
+		informacao = GcInformacao.AR.findById(informacao.id);
+		
+		bl.vincularPapel(informacao, getIdentidadeCadastrante(), getTitular(), getLotaTitular(), 
+				pessoaSel.buscarObjeto(), lotacaoSel.buscarObjeto(), grupoSel.buscarObjeto(), papel, correio);
+		
+		result.redirectTo(this).exibir(informacao.getSiglaCompacta(),
+				"Vinculação de perfil realizada com sucesso!", false, false);
+	}
+
 
 	@Path("/app/solicitarRevisao/{sigla}")
 	public void solicitarRevisao(String sigla) throws Exception {

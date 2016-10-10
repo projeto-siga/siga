@@ -40,7 +40,7 @@ public class AdminController extends WfController {
 
 	@SuppressWarnings("unchecked")
 	public void moveToken(Long idToken, Long idNode) throws Exception {
-		assertAcesso("MOVER_TOKEN:Mover token");
+		assertAcesso(ACESSO_MOVER_TOKEN);
 		Token t = WfContextBuilder.getJbpmContext().getJbpmContext()
 				.getToken(idToken);
 		if (idNode == 0) {
@@ -61,7 +61,7 @@ public class AdminController extends WfController {
 	}
 
 	public void endProcessInstance(Long idTI, Long idPI, Date dtFim) throws Exception {
-		assertAcesso("ENCERRAR:Encerrar instancia de processo");
+		assertAcesso(ACESSO_ENCERRAR_INSTANCIA_DE_PROCESSO);
 		dtFim = dtFim == null ? new Date() : dtFim;
 
 		if (idTI != null) {
@@ -80,7 +80,7 @@ public class AdminController extends WfController {
 	}
 
 	public void deleteProcessInstance(Long idPI) throws AplicacaoException, Exception {
-		assertAcesso("EXCLUIR:Excluir instancia de processo");
+		assertAcesso(ACESSO_EXCLUIR_INSTANCIA_DE_PROCESSO);
 		Wf.getInstance().getBL().excluirProcessInstance(idPI);
 		redirectToHome();
 	}

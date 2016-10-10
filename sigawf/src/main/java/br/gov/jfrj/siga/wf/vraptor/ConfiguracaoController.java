@@ -125,7 +125,7 @@ public class ConfiguracaoController extends WfController {
 	 * @throws Exception
 	 */
 	public void pesquisar(String orgao, String procedimento) throws Exception {
-		assertAcesso("CONFIGURAR:Configurar iniciadores");
+		assertAcesso(ACESSO_CONFIGURAR_INICIADORES);
 
 		limparCache();
 		ProcessDefinition pd = WfContextBuilder.getJbpmContext()

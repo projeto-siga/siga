@@ -39,7 +39,7 @@ public class MetricaController extends WfController {
 	 */
 	public void medir(Long orgao, String procedimento, Long pdId)
 			throws Exception {
-		assertAcesso("MEDIR:Analisar métricas");
+		assertAcesso(ACESSO_ANALISAR_METRICAS);
 
 		ProcessDefinition pd = WfDao.getInstance().getProcessDefinition(pdId);
 

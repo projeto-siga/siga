@@ -169,7 +169,7 @@ public class DesignacaoController extends WfController {
 	 */
 	@Path("/app/designacao/pesquisar/{orgao}/{procedimento}")
 	public void pesquisar(String orgao, String procedimento) throws Exception {
-		assertAcesso("DESIGNAR:Designar tarefas");
+		assertAcesso(ACESSO_DESIGNAR_TAREFAS);
 
 		limparCache();
 		ProcessDefinition pd = WfContextBuilder.getJbpmContext()

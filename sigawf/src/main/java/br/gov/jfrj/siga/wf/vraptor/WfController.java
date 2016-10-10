@@ -22,6 +22,14 @@ import br.gov.jfrj.siga.wf.util.WfContextBuilder;
 
 public class WfController extends SigaController {
 
+	private static final String ACESSO_WF = "WF:Módulo de Workflow";
+	protected static final String ACESSO_EXCLUIR_INSTANCIA_DE_PROCESSO = "EXCLUIR:Excluir instancia de processo";
+	protected static final String ACESSO_ENCERRAR_INSTANCIA_DE_PROCESSO = "ENCERRAR:Encerrar instancia de processo";
+	protected static final String ACESSO_MOVER_TOKEN = "MOVER_TOKEN:Mover token";
+	protected static final String ACESSO_CONFIGURAR_INICIADORES = "CONFIGURAR:Configurar iniciadores";
+	protected static final String ACESSO_DESIGNAR_TAREFAS = "DESIGNAR:Designar tarefas";
+	protected static final String ACESSO_ANALISAR_METRICAS = "MEDIR:Analisar métricas";
+	
 	protected WfUtil util;
 
 	public WfController(HttpServletRequest request, Result result, WfDao dao,
@@ -47,7 +55,7 @@ public class WfController extends SigaController {
 	}
 
 	public void assertAcesso(String pathServico) throws AplicacaoException {
-		so.assertAcesso("WF:Módulo de Workflow;" + pathServico);
+		so.assertAcesso(ACESSO_WF + ";" + pathServico);
 	}
 
 	protected WfDao dao() {

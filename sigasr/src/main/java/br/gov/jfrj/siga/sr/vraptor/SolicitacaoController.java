@@ -509,10 +509,9 @@ public class SolicitacaoController extends SrController {
 			//Edson: por causa do detach:
 			if (solicitacao.getSolicitacaoInicial() != null){
 				solicitacao.setSolicitacaoInicial(SrSolicitacao.AR.findById(solicitacao.getSolicitacaoInicial().getId()));
-				//Edson: ainda devido ao detach e por causa da referência ao gestorSet do item ao obter a descrição
-				if (solicitacao.getItemConfiguracao() != null)
-					solicitacao.setItemConfiguracao(SrItemConfiguracao.AR.findById(solicitacao.getItemConfiguracao().getId()));
 			}
+			if (solicitacao.getItemConfiguracao() != null)
+				solicitacao.setItemConfiguracao(SrItemConfiguracao.AR.findById(solicitacao.getItemConfiguracao().getId()));
 		} 
 		       
 		try{

@@ -9,7 +9,7 @@
 <c:if test="${not empty atributoAssociados}">
 	<c:set var="atributoSolicitacaoMap" value="${atributoSolicitacaoMap}"/>
 	<c:forEach items="${atributoAssociados}" var="atributo" varStatus="loop">
-		<div class="gt-form-row gt-width-66">
+		<div class="gt-form-row" style="margin-top: 10px;">
 			<label>
 				${atributo.nomeAtributo} 
 				<c:if test="${atributo.descrAtributo != null && atributo.descrAtributo != ''}">

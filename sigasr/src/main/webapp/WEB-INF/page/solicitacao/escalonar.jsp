@@ -17,7 +17,6 @@
 			$('#outrasInformacoesDaFilha').hide();
 			$("#escalonar_dialog").dialog('option', 'width', 700);
 			onchangeCheckCriaFilha();
-			carregarLotacaoDaAcao();
 		});
 		
 		function onchangeCheckCriaFilha() {
@@ -32,32 +31,6 @@
 			$('#outrasInformacoesDaFilha').hide();
 			$('#motivoEscalonamento').show();
 		}
-		
-		function carregarLotacaoDaAcao(){
-			//preenche o campo atendente com a lotacao designada a cada alteracao da acao 
-			var opcaoSelecionada = $("#escalonar #selectAcao option:selected");
-			var idAcao = opcaoSelecionada.val();
-			try{
-				var siglaLotacao = opcaoSelecionada.html().split(/[)|(]+/)[1]; //[ "(", "SEDGET", ")" ]
-				var spanLotacao = $(".lotacao-" + idAcao + ":contains(" + siglaLotacao + ")");
-				var descLotacao = spanLotacao.html();
-				var idLotacao = spanLotacao.next().html();
-				var idDesignacaoDaAcao = spanLotacao.prev().html();
-				
-				$("#idDesignacao").val(idDesignacaoDaAcao);
-				$("#atendentePadrao").html(descLotacao);
-				$("#idAtendente").val(idLotacao);
-				//garante que quando alterar a acao o atendenteNaoDesignado fique vazio
-				$("#atendenteNaoDesignado").val('');
-			} catch(err){
-				$("#idDesignacao").val('');
-				$("#atendentePadrao").html('');
-				$("#idAtendente").val('');
-				//garante que quando alterar a acao o atendenteNaoDesignado fique vazio
-				$("#atendenteNaoDesignado").val('');
-			}
-		}
-		
 	</script>
 	<div class="gt-content-box gt-form">
 		<form action="#" method="post" enctype="multipart/form-data" id="frmEscalonar">

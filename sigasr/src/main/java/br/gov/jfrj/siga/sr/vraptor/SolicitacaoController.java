@@ -324,6 +324,9 @@ public class SolicitacaoController extends SrController {
         result.include("podeVerGestorItem", podeUtilizarServico("SIGA;SR;VER_GESTOR_ITEM"));
         result.include("atributoAssociados", solicitacao.getAtributoAssociados());
         result.include("atributoSolicitacaoMap", solicitacao.getAtributoSolicitacaoMap());
+        result.include("solicitante", solicitacao.getSolicitante());
+        result.include("siglaCompacta", solicitacao.getSiglaCompacta());
+        result.include("local", solicitacao.getLocal());
 	}
 
 	private boolean validarFormEditar(SrSolicitacao solicitacao) throws Exception {
@@ -735,7 +738,7 @@ public class SolicitacaoController extends SrController {
 
     @Path("app/solicitacao/escalonarGravar")
     public void escalonarGravar(SrSolicitacao solicitacao, DpLotacao atendente, DpLotacao atendenteNaoDesignado, 
-        	SrConfiguracao designacao, SrTipoMotivoEscalonamento motivo, String descricao,
+        	SrTipoMotivoEscalonamento motivo, String descricao,
             Boolean criaFilha, Boolean fechadoAuto) throws Exception {
           	
     	if (solicitacao.getCodigo() == null || solicitacao.getCodigo().trim().equals(""))
@@ -750,13 +753,13 @@ public class SolicitacaoController extends SrController {
         
         if (criaFilha) {
         	SrSolicitacao filha = solicitacaoEntity.escalonarCriandoFilha(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 
-        			solicitacao.getItemConfiguracao(), solicitacao.getAcao(), designacao, atendenteNaoDesignado,
+        			solicitacao.getItemConfiguracao(), solicitacao.getAcao(), solicitacao.getDesignacao(), atendenteNaoDesignado,
         			fechadoAuto, descricao, solicitacao.getAtributoSolicitacaoMap());
         	result.use(Results.http()).body(filha.getSiglaCompacta());
         } 
         else {
         	solicitacaoEntity.escalonarPorMovimentacao(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 
-        			solicitacao.getItemConfiguracao(), solicitacao.getAcao(), designacao, atendenteNaoDesignado, 
+        			solicitacao.getItemConfiguracao(), solicitacao.getAcao(), solicitacao.getDesignacao(), atendenteNaoDesignado, 
         			motivo, descricao, atendente, solicitacao.getAtributoSolicitacaoMap());
         	result.use(Results.http()).body(solicitacaoEntity.getSiglaCompacta());
         }

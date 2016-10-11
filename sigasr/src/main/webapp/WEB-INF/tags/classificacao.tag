@@ -3,11 +3,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/sigasrtags" prefix="sigasr"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
 <%@ attribute name="metodo" required="true"%>
 <%@ attribute name="exibeLotacaoNaAcao" required="false"%>
+<%@ attribute name="exibeConhecimento" required="false"%>
 
-<div id="${metodo}" class="gt-form-row">
+<div id="${metodo}" class="gt-form-row" style="min-width: 550px;">
 	<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label>
 	<siga:selecao2 propriedade="solicitacao.itemConfiguracao" 
 		tipo="itemConfiguracao" 
@@ -16,16 +18,48 @@
 		tamanho="grande"
 		onchange="dispararFuncoesOnBlurItem();"
 		checarInput="true"
-		paramList="sol.id=${solicitacao.id};sol.solicitante.id=${solicitante.idPessoa};sol.local.id=${local.idComplexo};sol.titular.id=${cadastrante.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}" />
+		paramList="sol.id=${solicitacao.id};sol.solicitante.id=${solicitante.idPessoa};sol.local.id=${local.idComplexo};sol.titular.id=${titular.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}" />
 	<br/><span id="itemNaoInformado" style="color: red; display: none;">Item não informado</span>
 	<br/>
-	<div id="divAcao" depende="solicitacao.itemConfiguracao">
-		
+	<div id="divAcao" depende="solicitacao.itemConfiguracao" >
+		<c:if test="${exibeConhecimento}">
+			<c:if test="${solicitacao.itemConfiguracao != null && podeUtilizarServicoSigaGC}">
+				<c:if test="${podeVerGestorItem && not empty solicitacao.itemConfiguracao.gestorSet}">
+					<div class="gt-form-row">
+						<label>Gestor do Produto</label>
+					    <c:forEach var="g" items="${solicitacao.itemConfiguracao.gestorSet}">
+					        <p>
+					        <c:choose>
+					            <c:when test="${not empty g.dpPessoa}">
+					                <a href="/siga/app/pessoa/exibir?sigla=${g.dpPessoa.siglaCompleta}" target="${g.dpPessoa.siglaCompleta}">${g.dpPessoa.nomePessoa}</a>
+					            </c:when>
+					            <c:otherwise>
+					                <a href="/siga/app/lotacao/exibir?sigla=${g.dpLotacao.siglaCompleta}" target="${g.dpLotacao.siglaCompleta}">${g.dpLotacao.siglaCompleta} - ${g.dpLotacao.nomeLotacao}</a>
+					            </c:otherwise>
+					        </c:choose>
+					        </p>
+					    </c:forEach>
+					</div>	
+				</c:if>
+				<!-- CONHECIMENTOS RELACIONADOS -->
+				<div style="display: inline-block" >
+					<div id="gc-ancora-item"></div>
+				</div>
+				<script>
+					var tituloItem = '${f:urlEncode(solicitacao.itemConfiguracao.tituloItemConfiguracao)}';
+					var gcTag = '${solicitacao.itemConfiguracao.gcTagAbertura}';
+					exibirConhecimentoRelacionadoAoItem(tituloItem, gcTag);
+				</script>
+			</c:if>
+		</c:if>
 		<c:set var="acoesEAtendentes" value="${solicitacao.acoesEAtendentes}" />
 		<c:if test="${not empty solicitacao.itemConfiguracao && not empty acoesEAtendentes}"> 
-			<div class="gt-form-row">
+			<div class="gt-form-row" style="margin-top: 10px;">
 				<label>A&ccedil;&atilde;o</label>	
 				<select name="solicitacao.acao.id" id="selectAcao" onchange="carregarAcao();">
+					<c:if test="${metodo == 'editar'}">
+						<option value=""></option>
+					</c:if>	
 					<c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
 						<optgroup  label="${cat.tituloAcao}">
 							<c:forEach items="${acoesEAtendentes.get(cat)}" var="tarefa">
@@ -39,13 +73,8 @@
 				</select>
 				<br/><span id="acaoNaoInformada" style="color: red; display: none;">Ação não informada</span>
 			</div>
-			<div id="divAtributos" depende="solicitacao.acao">	
-				<sigasr:atributo atributoSolicitacaoMap="${atributoSolicitacaoMap}" 
-					atributoAssociados="${atributoAssociados}"
-					entidade="solicitacao" />
-			</div>
 			<c:if test="${exibeLotacaoNaAcao}">
-				<div>
+				<div class="gt-form-row" style="margin-top: 10px;">
 					<!-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao
 							ja que acima no select nao tem como "esconder" essa informacao -->
 					<c:forEach items="${acoesEAtendentes.keySet()}" var="cat" varStatus="catPosition">
@@ -57,15 +86,35 @@
 						</c:forEach>
 					</c:forEach>
 			
-					<label>Atendente</label>
+					<label id="labelAtendentePadrao">Atendente</label>
 					<span id="atendentePadrao" style="display:block;"></span>
-					<input type="hidden" id="idDesignacao" name="designacao.id" value="" />
+					<input type="hidden" name="solicitacao.designacao.id" id="idDesignacao" value="" />
 					<input type="hidden" name="atendente.id" id="idAtendente" value="" />
 				</div>
-				<a href="javascript: modalAbrir('lotacaoAtendente')" class="gt-btn-medium" style="margin: 5px 0 0 -3px;">
-					Alterar atendente
-				</a>
+				<c:if test="${metodo == 'escalonar'}">
+					<a href="javascript: modalAbrir('lotacaoAtendente')" class="gt-btn-medium" style="margin: 5px 0 0 -3px;">
+						Alterar atendente
+					</a>
+				</c:if>
 			</c:if>
+			<div id="divAtributos" depende="solicitacao.acao">
+				<c:if test="${exibeConhecimento}">
+					<c:if test="${not empty solicitacao.itemConfiguracao && not empty solicitacao.acao && podeUtilizarServicoSigaGC}">
+						<!-- CONHECIMENTOS RELACIONADOS -->
+						<div style="display: inline-block" >
+							<div id="gc-ancora-item-acao"></div>
+						</div>
+						<script>
+							var tituloItemAcao = '${f:urlEncode(solicitacao.gcTituloAbertura)}';
+							var gcTag = '${solicitacao.gcTagAbertura}';
+							exibirConhecimentoRelacionadoAoItemEAcao(tituloItemAcao, gcTag);
+						</script>
+					</c:if>	
+				</c:if>
+				<sigasr:atributo atributoSolicitacaoMap="${atributoSolicitacaoMap}" 
+					atributoAssociados="${atributoAssociados}"
+					entidade="solicitacao" />
+			</div>
 		</c:if>
 	</div>
 </div>
@@ -74,6 +123,7 @@ $(document).ready(function($) {
 	limparMensagem();	
 	removerAcaoRepetida();
 	selecionarOpcaoDefault();
+	carregarLotacaoDaAcao();
 });
 
 function validarCampos() {
@@ -93,11 +143,11 @@ function validarCampos() {
 
 function carregarAcao() {
 	var idSelecionado = $("#${metodo} #selectAcao").find(":selected").val();
-	if ('${exibeLotacaoNaAcao}' === 'true')
+	if (typeof idSelecionado !== 'undefined') {
 		carregarLotacaoDaAcao();
- 	else
 		removerAcaoRepetida();
-	sbmt('solicitacao.acao', postbackURL()+'&solicitacao.acao.id='+idSelecionado, false, null);
+		sbmt('solicitacao.acao', postbackURL()+'&solicitacao.acao.id='+idSelecionado, false, null);
+	}
 }
 
 function dispararFuncoesOnBlurItem() {
@@ -125,6 +175,53 @@ function removerAcaoRepetida() {
 
 function selecionarOpcaoDefault() {
 	$("#${metodo} #selectAcao option[selected]").prop('selected', true);
+}
+
+function exibirConhecimentoRelacionadoAoItem(titulo, gcTag) {
+	carregarConhecimento(titulo, gcTag, $("#gc-ancora-item"));
+}
+
+function exibirConhecimentoRelacionadoAoItemEAcao(titulo, gcTag) {
+	carregarConhecimento(titulo, gcTag, $("#gc-ancora-item-acao"));
+}
+
+function carregarConhecimento(titulo, gcTag, div) {
+	var url = "/../sigagc/app/knowledgeInplace?testarAcesso=true&popup=true&podeCriar=${exibirMenuConhecimentos}&msgvazio=empty" +
+	"&titulo=" + titulo + gcTag + "&pagina=exibir";
+	
+	Siga.ajax(url, null, "GET", function(response) {
+		div.html(response);
+	});
+}
+
+function carregarLotacaoDaAcao() {
+	if ('${exibeLotacaoNaAcao}' === 'true') {
+		//preenche o campo atendente com a lotacao designada a cada alteracao da acao 
+		var opcaoSelecionada = $("#${metodo} #selectAcao option:selected");
+		if (typeof opcaoSelecionada.html() !== 'undefined' && opcaoSelecionada.html() !== '') {
+			var idAcao = opcaoSelecionada.val();
+			var siglaLotacao = opcaoSelecionada.html().split(/[)|(]+/)[1]; //[ "(", "SEDGET", ")" ]
+			var spanLotacao = $(".lotacao-" + idAcao + ":contains(" + siglaLotacao + ")");
+			var descLotacao = spanLotacao.html();
+			var idLotacao = spanLotacao.next().html();
+			var idDesignacaoDaAcao = spanLotacao.prev().html();
+			
+			definirDesignacaoEAtendente(idDesignacaoDaAcao, descLotacao, idLotacao);
+			$("#labelAtendentePadrao").show();
+		}
+		else {
+			definirDesignacaoEAtendente('', '', '');
+			$("#labelAtendentePadrao").hide();
+		}
+	}
+}
+
+function definirDesignacaoEAtendente(idDesignacaoDaAcao, descLotacao, idLotacao) {
+	$("#idDesignacao").val(idDesignacaoDaAcao);
+	$("#atendentePadrao").html(descLotacao);
+	$("#idAtendente").val(idLotacao);
+	//garante que quando alterar a acao o atendenteNaoDesignado fique vazio
+	$("#atendenteNaoDesignado").val('');
 }
 
 // retirar esse metodo daqui. Nao esta intuitivo que ele existe dentro do classificacao.tag

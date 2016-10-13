@@ -1358,7 +1358,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podePublicar(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
+			final DpLotacao lotaTitular, final ExMobil mob) {
 		return (mob.doc().isFinalizado())
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& mob.doc().isAssinado()

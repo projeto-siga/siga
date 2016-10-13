@@ -37,7 +37,7 @@ function confirma(){
 						</tr>
 						<tr class="tdLabel">
 							<td>
-								<label for="boletim_publicar_gravar_dtPubl" class="label">Data da Publicação:</label>
+								Data da Publica&ccedil;&atilde;o:
 							</td>
 							<td>
 								<input type="text" name="dtPubl" onblur="javascript:verifica_data(this,0);" label="Data da Publicação" value="${dtPubl}"/>

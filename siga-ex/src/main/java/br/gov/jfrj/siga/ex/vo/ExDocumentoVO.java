@@ -560,10 +560,8 @@ public class ExDocumentoVO extends ExVO {
 				"Registrar Publicação do BIE",
 				"/app/expediente/mov",
 				"boletim_publicar",
-				Ex.getInstance()
-						.getComp()
-						.podeBotaoAgendarPublicacaoBoletim(titular,
-								lotaTitular, mob), null, null, null, null,
+				Ex.getInstance().getComp()
+				.podePublicar(titular, lotaTitular, mob), null, null, null, null,
 				"once");
 
 		vo.addAcao(

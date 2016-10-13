@@ -110,8 +110,10 @@
 						<ul>
 							<c:forEach var="pessoaLotaOuGrupo" items="${papel.value}">
 								<li><c:catch var="exception">${pessoaLotaOuGrupo.nomePessoa}</c:catch>
-									<c:catch var="exception">${pessoaLotaOuGrupo.nomeLotacao}</c:catch>
-									<c:if test="${not empty exception}">${pessoaLotaOuGrupo.dscGrupo}</c:if>
+									<c:if test="${not empty exception}">
+										<c:catch var="exception">${pessoaLotaOuGrupo.nomeLotacao}</c:catch>
+										<c:if test="${not empty exception}">${pessoaLotaOuGrupo.dscGrupo}</c:if>
+									</c:if>
 								</li>
 							</c:forEach>
 						</ul>

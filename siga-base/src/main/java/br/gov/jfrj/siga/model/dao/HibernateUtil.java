@@ -91,9 +91,13 @@ public class HibernateUtil {
 			tx = HibernateUtil.getSessao().beginTransaction();
 			
 			// bruno.lacerda@avantiprima.com.br
-			String strTimeout = SigaBaseProperties.getString( "jta.transaction.timeout.value" );
-			if ( StringUtils.isNumeric( strTimeout ) ) {
-				tx.setTimeout( Integer.parseInt( strTimeout ) );
+			try{
+				String strTimeout = SigaBaseProperties.getString( "jta.transaction.timeout.value" );
+				if ( StringUtils.isNumeric( strTimeout ) ) {
+					tx.setTimeout( Integer.parseInt( strTimeout ) );
+				}
+			} catch(Exception e) {
+				tx.setTimeout(120);
 			}
 			
 			

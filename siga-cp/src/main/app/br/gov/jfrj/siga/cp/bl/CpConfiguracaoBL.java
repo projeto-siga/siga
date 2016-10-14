@@ -148,7 +148,6 @@ public class CpConfiguracaoBL {
 			throw new RuntimeException(
 					"Ocorreu um erro na inicialização do cache.");
 		cacheInicializado = true;
-		dtUltimaAtualizacaoCache = CpDao.getInstance().consultarDataUltimaAtualizacao();
 		
 		long fim = System.currentTimeMillis();
 

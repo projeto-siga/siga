@@ -36,6 +36,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 public class GcCacheTest extends TestCase {
 	private EntityManager em;
@@ -53,6 +54,7 @@ public class GcCacheTest extends TestCase {
 		CpDao.freeInstance();
 		CpDao.getInstance((Session) em.getDelegate(), ((Session) em
 				.getDelegate()).getSessionFactory().openStatelessSession());
+		HibernateUtil.configurarHibernate((Session)em.getDelegate());
 
 		em.getTransaction().begin();
 

@@ -33,20 +33,20 @@ public class IndentTest extends TestCase {
 	}
 	
 	public void testIndentacaoInlineIf() throws Exception {
-		assertEquals("<div>\n  oi1\n  [#if]\n    oi2\n  [/#if]\n  oi3\n</div>",
-				FreemarkerIndent.indent("<div>oi1[#if]oi2[/#if]oi3</div>"));
+		assertTrue(FreemarkerIndent.indent("<div>oi1[#if]oi2[/#if]oi3</div>")
+				.matches("<div>\r?\n\\x20{2}oi1\r?\n\\x20{2}\\[\\#if\\]\r?\n\\x20{4}oi2\r?\n\\x20{2}\\[/\\#if\\]\r?\n\\x20{2}oi3\r?\n</div>"));
 	}
 	
 	public void testIndentacaoProblemaDe1CharAMais() throws Exception {
-		assertEquals("<div>\n  oi1\n  [#if]\n    oi2\n  [/#if]\n  oi3\n</div>",
-				FreemarkerIndent.indent("<div>\n  oi1\n  [#if]\n    oi2\n  [/#if]\n  oi3\n</div>"));
+		assertTrue(FreemarkerIndent.indent("<div>\n  oi1\n  [#if]\n    oi2\n  [/#if]\n  oi3\n</div>")
+				.matches("<div>\\r?\\n\\x20{2}oi1\\r?\\n\\x20{2}\\[\\#if\\]\\r?\\n\\x20{4}oi2\\r?\\n\\x20{2}\\[/\\#if\\]\\r?\\n\\x20{2}oi3\\r?\\n</div>"));
 	}
 	
 	
 
 	public void testIndentacaoDentroDeDiv() throws Exception {
-		assertEquals("<div>\n  [#if]\n    oi\n  [/#if]\n</div>",
-				FreemarkerIndent.indent("<div>[#if]oi[/#if]</div>"));
+		assertTrue(FreemarkerIndent.indent("<div>[#if]oi[/#if]</div>")
+				.matches("<div>\r?\n\\x20{2}\\[\\#if\\]\r?\n\\x20{4}oi\r?\n\\x20{2}\\[/\\#if\\]\r?\n</div>"));
 	}
 
 	public void testFtlParser() {

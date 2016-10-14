@@ -14,7 +14,7 @@ import org.w3c.tidy.Tidy;
 
 public class FreemarkerIndent {
 	static Pattern patternBody = Pattern.compile(
-			"<body[^>]*>\n(\\s*+.*?)\\s*+</body>", Pattern.CASE_INSENSITIVE
+			"<body[^>]*>\\s*(.*?)\\s*</body>", Pattern.CASE_INSENSITIVE
 					+ Pattern.DOTALL);
 
 	static Pattern patternRemoveBodyIndent = Pattern.compile("^    (.*)$",

@@ -57,7 +57,7 @@ function getItem(nome) {
  * Remove os dados do Local Storage de uma mesma página usando o IDENTIFICADOR
  */
 function removerLS() {
-	for (var i = 0; i < localStorage.length; i++) {
+	for (var i = localStorage.length - 1, j = 0; i >= j; i--) {
 		if (contemString(localStorage.key(i), IDENTIFICADOR)) 
 			removeItem(localStorage.key(i));
 	}

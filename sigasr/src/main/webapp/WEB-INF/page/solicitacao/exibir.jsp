@@ -16,8 +16,7 @@
 	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
 	<script src="/sigasr/javascripts/cronometro.js"></script>
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
-	<script src="/siga/javascript/localStorage.js"></script>
-
+	
 	<style>
 		ul.lista-historico li span {
 			text-decoration: line-through;
@@ -726,18 +725,7 @@
     </sigasr:modal>    
 </siga:pagina>
 
-<script language="javascript">
-	var IDENTIFICADOR = "sigasr/app/solicitacao/editar"; 
-
-	$(document).ready(function($) {
-		removerDoLocalStorage();	
-	});
-
-	function removerDoLocalStorage(){
-		//remove usando a variavel global IDENTIFICADOR
-		removerLS();
-	}
-	
+<script language="javascript">	
 	function terminarPendencia(idMov) {
 		$("#movimentacaoId").val(idMov);
 		$("#terminarPendenciaModal_dialog").dialog("open");

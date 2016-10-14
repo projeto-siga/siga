@@ -11,7 +11,6 @@
 	
 	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
 	<script src="/sigasr/javascripts/cronometro.js"></script>
-	<script src="/siga/javascript/localStorage.js"></script>
 	
 	<style>
 	.barra-subtitulo {
@@ -36,17 +35,11 @@
 	</style>
 	
 	<script>
-		var item_default = "";
-		var IDENTIFICADOR = "sigasr/app/solicitacao/editar"; 
-		var SEPARADOR = "-"
-		
 		jQuery(document).ready(function($) {
 			$('#gravar').click(function() {
 				if ($('#siglaCadastrante').val() != $('#formulario_solicitacaosolicitante_sigla')[0].value) {
 					var stringDt= $('#calendarioComunicacao').val() + ' ' + $('#horarioComunicacao').val();
 					$('#stringDtMeioContato').val(stringDt);
-					$("#isDirty").val("true");
-					salvarNoLocalStorage();
 				} 
 			}); 
 	
@@ -57,29 +50,12 @@
 				}
 				$('#checkRascunho').prop('value', 'false');
 			});
-			//inicializa valores default para serem usados na function valorInputMudou()
-			item_default = $("#formulario_solicitacaoitemConfiguracao_id").val();
-
 			$('#prioridade').text($('#gravidade option:selected').attr('prioridade'));
-
-			recuperarDadosDoLocalStorage();
 		});
 
 		function postbackURL(){
 			return '${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize();
 		}
-	
-		// param_1: id do input que deseja verificar se mudou do valor default
-		// param_2: tipo de input (solicitante, item...)
-		function valorInputMudou(id, tipo){
-			var input = $("#"+ id);
-			if (input.val() != window[tipo + '_default']) {
-				window[tipo + '_default'] = input.val(); 
-				return true;
-			}
-			return false;
-		}
-		
 		
 		function toggleInterlocutorMeioComunicacaoEDataOrigem() {
 			var siglaCadastrante = $('#siglaCadastrante').val();
@@ -101,25 +77,6 @@
 			if ($("#meioComunicacao").val() == 'EMAIL')
 				$('#dataOrigem')[0].style.display='inline-block';
 			else $('#dataOrigem')[0].style.display='none';
-		}
-
-		function salvarNoLocalStorage() {
-			if (localStorage) {
-				var ids = ["solicitacaosolicitanteSpan","solicitacaointerlocutorSpan","formulario_solicitacaoitemConfiguracao_id",
-							"solicitacaoitemConfiguracaoSpan", "formulario_solicitacaoitemConfiguracao_sigla"];
-				salvarLS(ids);
-			}
-		}
-
-		function recuperarDadosDoLocalStorage() {
-			if ($("#isDirty").val() == "true") {
-				var interlocutor = localStorage.getItem("solicitacaointerlocutorSpan"+SEPARADOR+IDENTIFICADOR);
-				
-				if (interlocutor != "undefined" || interlocutor != "null")
-					toggleInterlocutorMeioComunicacaoEDataOrigem();
-				
-				recuperarLS();
-			}
 		}
 	</script>
 	

@@ -36,11 +36,13 @@
 	
 	<script>
 		jQuery(document).ready(function($) {
+			
 			$('#gravar').click(function() {
 				if ($('#siglaCadastrante').val() != $('#formulario_solicitacaosolicitante_sigla')[0].value) {
 					var stringDt= $('#calendarioComunicacao').val() + ' ' + $('#horarioComunicacao').val();
 					$('#stringDtMeioContato').val(stringDt);
-				} 
+				}
+				gravar(); 
 			}); 
 	
 			$('#checkRascunho').change(function() {
@@ -55,6 +57,10 @@
 
 		function postbackURL(){
 			return '${linkTo[SolicitacaoController].editar}?'+$('#formSolicitacao').serialize();
+		}
+
+		function submitURL() {
+			return '${linkTo[SolicitacaoController].gravar}';
 		}
 		
 		function toggleInterlocutorMeioComunicacaoEDataOrigem() {
@@ -94,8 +100,7 @@
 			</h2>
 			<div class="gt-content-box gt-for-table gt-form" style="margin-top: 15px;">
 	
-				<form action="${linkTo[SolicitacaoController].gravar}" method="post"
-					enctype="multipart/form-data" id="formSolicitacao" onsubmit="javascript:return block();"> 
+				<form action="#" method="post" enctype="multipart/form-data" id="formSolicitacao"> 
 					<c:if test="${solicitacao.solicitacaoPai != null}">
 						<input type="hidden" name="solicitacao.solicitacaoPai.id" 
 						value="${solicitacao.solicitacaoPai.idSolicitacao}" /> 
@@ -113,15 +118,8 @@
 							Dados B&aacute;sicos
 						</div>
 					</div>
-					
-					<c:if test="${errors != null && !erros.isEmpty()}">
-						<div class="gt-form-table">
-					        <p class="gt-error">Alguns campos obrigat&oacute;rios n&atilde;o foram preenchidos</p>
-						    <c:forEach items="${errors}" var="erro">
-								<p class="gt-error">${erro.message}</p>
-						    </c:forEach>
-						</div>
-					</c:if>
+
+					<div class="error-message gt-form-table"><p></p></div>
 					
 					<div class="gt-form-row gt-width-99">
 						<label>Cadastrante</label> ${cadastrante.nomePessoa} <input
@@ -291,7 +289,7 @@
 						</c:when>
 					</c:choose>
 					<div class="gt-form-row">
-						<input type="submit" value="Gravar"
+						<input type="button" value="Gravar"
 							class="gt-btn-medium gt-btn-left" id="gravar" /> 
 						<c:if test="${not empty solicitacao.id}">
 						<a href="${linkTo[SolicitacaoController].excluir}?sigla=${solicitacao.siglaCompacta}" class="gt-btn-alternate-medium gt-btn-left">Descartar</a>

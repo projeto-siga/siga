@@ -1520,7 +1520,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         } catch (PersistenceException pe) {
         	Throwable t = pe.getCause();
         	if (t instanceof ConstraintViolationException) 
-        		throw new AplicacaoException("Ocorreu um erro ao gravar a solicitação. Por favor, tente novamente. Clique no botão [ Voltar ] para recuperar os dados na tela de Cadastro de Solicitação"); 
+        		throw new AplicacaoException("Não foi possível gravar sua solicitação. Tente novamente."); 
         } 
         salvarAtributosComHistorico(getCadastrante(), getLotaCadastrante());
         

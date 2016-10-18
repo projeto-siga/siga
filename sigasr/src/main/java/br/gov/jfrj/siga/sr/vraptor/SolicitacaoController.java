@@ -302,13 +302,12 @@ public class SolicitacaoController extends SrController {
     	if (solicitacao.getArquivo() != null && solicitacao.getArquivo().getId() != null)
     		solicitacao.setArquivo(null);
     	
-        if (!solicitacao.isRascunho() && !validarFormEditar(solicitacao)) {
-        	incluirListasEdicaoSolicitacao(solicitacao);
-            validator.onErrorUsePageOf(SolicitacaoController.class).editar(solicitacao.getSiglaCompacta(), null, null, null, null, null);
-        	return;
-        }
+		if (!solicitacao.isRascunho() && !validarFormEditar(solicitacao)) {
+			 enviarErroValidacao();
+			 return;
+		}
         solicitacao.salvar(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular());
-        result.redirectTo(SolicitacaoController.class).exibir(solicitacao.getSiglaCompacta(), todoOContexto(), ocultas());
+        result.use(Results.http()).body(solicitacao.getSiglaCompacta());
     }
 
     private void incluirListasEdicaoSolicitacao(SrSolicitacao solicitacao) throws Exception {
@@ -331,16 +330,14 @@ public class SolicitacaoController extends SrController {
 
 	private boolean validarFormEditar(SrSolicitacao solicitacao) throws Exception {
         if (solicitacao.getSolicitante() == null || solicitacao.getSolicitante().getId() == null) 
-            validator.add(new ValidationMessage("Solicitante n\u00e3o informado", "solicitacao.solicitante"));
+        	srValidator.addError("solicitacao.solicitante", "Solicitante n\u00e3o informado");
             
         if (solicitacao.getDescrSolicitacao() == null || "".equals(solicitacao.getDescrSolicitacao().trim())) 
-            validator.add(new ValidationMessage("Descri&ccedil&atilde;o n&atilde;o informada", "solicitacao.descrSolicitacao"));
+        	srValidator.addError("solicitacao.descrSolicitacao", "Descri&ccedil&atilde;o n&atilde;o informada");	
+
+        validarFormReclassificar(solicitacao);
         
-        if (!validarFormReclassificar(solicitacao)) 
-        	for (SrError error : srValidator.getErros())
-        		validator.add(new ValidationMessage(error.getMessage(), error.getCategory()));
-        
-        return !validator.hasErrors();
+        return !srValidator.hasErrors(); 
     }
 	
 	private boolean validarFormReclassificar(SrSolicitacao solicitacao) throws Exception {

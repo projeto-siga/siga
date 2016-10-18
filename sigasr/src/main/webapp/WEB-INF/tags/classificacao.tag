@@ -19,7 +19,7 @@
 		onchange="dispararFuncoesOnBlurItem();"
 		checarInput="true"
 		paramList="sol.id=${solicitacao.id};sol.solicitante.id=${solicitante.idPessoa};sol.local.id=${local.idComplexo};sol.titular.id=${titular.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}" />
-	<br/><span id="itemNaoInformado" style="color: red; display: none;">Item não informado</span>
+	<br/><span id="itemNaoInformado" class="error" style="color: red; display: none;">Item não informado</span>
 	<br/>
 	<div id="divAcao" depende="solicitacao.itemConfiguracao" >
 		<c:if test="${exibeConhecimento}">
@@ -71,7 +71,7 @@
 						</optgroup>
 					</c:forEach>
 				</select>
-				<br/><span id="acaoNaoInformada" style="color: red; display: none;">Ação não informada</span>
+				<br/><span id="acaoNaoInformada" class="error" style="color: red; display: none;">Ação não informada</span>
 			</div>
 			<c:if test="${exibeLotacaoNaAcao}">
 				<div class="gt-form-row" style="margin-top: 10px;">
@@ -120,7 +120,6 @@
 </div>
 <script>
 $(document).ready(function($) {
-	limparMensagem();	
 	removerAcaoRepetida();
 	selecionarOpcaoDefault();
 	carregarLotacaoDaAcao();
@@ -132,10 +131,12 @@ function validarCampos() {
 
 	if (!$("#formulario_solicitacaoitemConfiguracao_id").val()){
 		$("#itemNaoInformado").show();
+		addMensagemErroGeral();
 		return false;
 	}
 	if (!$("#selectAcao").val()) {
 		$("#acaoNaoInformada").show();
+		addMensagemErroGeral();
 		return false;
 	}
 	return true;
@@ -155,14 +156,44 @@ function dispararFuncoesOnBlurItem() {
 	sbmt('solicitacao.itemConfiguracao', null, false, carregarAcao);
 }
 
-/**
- * Limpa o span que contem mensagem informando que determinado input nao foi informado
- * assim que começar a digitar nesse input
- */
-function limparMensagem() {
-	$("#${metodo}").on("keyup", "input", function() {
-		$(this).next("span.error").text("");
+var inputHandler = function() {
+	mensagemHandler("keyup", "input");
+}
+
+var selectHandler = function() {
+	mensagemHandler("change", "select");
+}
+
+var textareaHandler = function() {
+	mensagemHandler("keyup", "textarea");
+}
+
+function mensagemHandler(evento, targetElement) {
+	$("#${metodo}").closest("form").on(evento, targetElement, function() {
+		event.stopPropagation();
+		$(this).siblings("span.error").text("");
+		removerMensagemErroGeral();
 	});
+}
+
+function limparMensagemListener() {
+	inputHandler();
+	selectHandler();
+	textareaHandler();
+}
+
+function addMensagemErroGeral() {
+	$('div.error-message').find('p')
+		.addClass('gt-error')
+		.text('Alguns campos obrigatórios não foram preenchidos. Verificar mensagens abaixo.');
+
+	$('html, body').animate({ scrollTop: 0 }, 'fast');
+}
+
+function removerMensagemErroGeral() {
+	$('.error-message').find('p')
+		.removeClass('gt-error')
+		.text('');	
 }
 
 function removerAcaoRepetida() {
@@ -226,6 +257,8 @@ function definirDesignacaoEAtendente(idDesignacaoDaAcao, descLotacao, idLotacao)
 
 // retirar esse metodo daqui. Nao esta intuitivo que ele existe dentro do classificacao.tag
 function gravar() {
+	limparMensagemListener();
+	
 	if (!validarCampos()) 
 		return false; 
 	
@@ -243,6 +276,7 @@ function gravar() {
     	error: function(response) {
         	//criar funcao separa para tratar dos erros  		
 			if (response.getResponseHeader('Validation') === "true") {
+				addMensagemErroGeral();
 				$("span.error").remove();
 	        	var errors = JSON.parse(response.responseText);
 	      		for(var i = 0; i < errors.length; i++) {

@@ -325,8 +325,8 @@
 								</script>
 								<c:if test="${solicitacao.itemConfiguracao != null && podeUtilizarServicoSigaGC}">
 									<c:if test="${podeVerGestorItem && not empty solicitacao.itemConfiguracao.gestorSet}">
-									<label>Gestor do Produto</label>
-									<div style="display: inline-block" >
+									<div class="gt-form-row">
+										<label>Gestor do Produto</label>
 										<c:forEach var="g" items="${solicitacao.itemConfiguracao.gestorSet}">
 											<p>
 											<c:choose>

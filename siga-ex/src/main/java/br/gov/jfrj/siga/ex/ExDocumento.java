@@ -1955,8 +1955,17 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	 * número.
 	 */
 	public ExMobil getVolume(int i) {
+		return getMobil(i, ExTipoMobil.TIPO_MOBIL_VOLUME);
+	}
+	
+	/**
+	 * Retorna o móbil do documento de acordo com o seu número.
+	 */
+	private ExMobil getMobil(int i, Long idTipoMobil) {
 		for (final ExMobil mob : getExMobilSet()) {
-			if (mob.isVolume() && mob.getNumSequencia() == i) {
+			if (!mob.isGeral() 
+					&& (idTipoMobil == null || mob.getExTipoMobil().getIdTipoMobil() == idTipoMobil) 
+					&& mob.getNumSequencia() == i) {
 				return mob;
 			}
 		}
@@ -1980,12 +1989,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	 * Retorna o móbil-via de um expediente de acordo com o seu número.
 	 */
 	public ExMobil getVia(int i) {
-		for (final ExMobil mob : getExMobilSet()) {
-			if (mob.isVia() && mob.getNumSequencia() == i) {
-				return mob;
-			}
-		}
-		return null;
+		return getMobil(i, ExTipoMobil.TIPO_MOBIL_VIA);
 	}
 
 	/**
@@ -2030,6 +2034,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	 */
 	public ExMobil getUltimoVolume() {
 		return getVolume(getNumUltimoVolume());
+	}
+	
+	/**
+	 * Retorna o último móbil do documento, seja via ou volume.
+	 */
+	public ExMobil getUltimoMobil() {
+		return getMobil(getNumUltimoVolume(), null);
 	}
 
 	/**

@@ -3240,11 +3240,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		if (mob.isGeral()) {
-			for (ExMobil m : mob.doc().getExMobilSet()) {
-				if (!m.isGeral() && podeMovimentar(titular, lotaTitular, m))
-					return true;
-			}
-			return false;
+			return podeMovimentar(titular, lotaTitular, mob.doc().getUltimoMobil());
 		}
 
 		final ExMovimentacao exMov = mob.getUltimaMovimentacaoNaoCancelada();
@@ -3274,12 +3270,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 
-		if (mob.isGeral()) {
-			for (ExMobil m : mob.doc().getExMobilSet()) {
-				if (!m.isGeral() && podeSerMovimentado(m))
-					return true;
-			}
-			return false;
+		if (mob.doc().isFinalizado() && mob.isGeral()) {
+			return podeSerMovimentado(mob.doc().getUltimoMobil());
 		}
 		if (!mob.isVia() && !mob.isVolume())
 			return false;

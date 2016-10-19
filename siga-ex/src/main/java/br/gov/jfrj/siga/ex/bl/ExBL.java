@@ -140,6 +140,7 @@ import br.gov.jfrj.siga.model.ObjetoBase;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.parser.SiglaParser;
+import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.wf.service.WfService;
 
 import com.google.gson.FieldNamingPolicy;
@@ -353,8 +354,11 @@ public class ExBL extends CpBL {
 		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.PRODUCAO;
 		Configuration cfg = ExDao.criarHibernateCfg(ambiente);
 		HibernateUtil.configurarHibernate(cfg);
-		Ex.getInstance().getBL()
-				.corrigirArquivamentosEmVolume(300000, 400000, false);
+		final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+		filter.setSigla("JFRJ-EOF-2014/01573.01");
+		ExMobil mob = (ExMobil) ExDao.getInstance().consultarPorSigla(filter);
+		System.out.println(mob.doc().getExClassificacaoAtual());
+		int a = 0;
 	}
 
 	public void corrigirArquivamentosEmVolume(int primeiro, int ultimo,

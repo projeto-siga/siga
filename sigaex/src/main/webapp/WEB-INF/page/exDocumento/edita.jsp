@@ -40,6 +40,7 @@
 				<input type="hidden" name="exDocumentoDTO.criandoAnexo" value="${exDocumentoDTO.criandoAnexo}" />
 				<input type="hidden" name="campos" value="idMobilAutuado" />
 				<input type="hidden" name="exDocumentoDTO.idMobilAutuado" value="${exDocumentoDTO.idMobilAutuado}" />
+				<input type="hidden" name="exDocumentoDTO.id" value="${exDocumentoDTO.doc.idDoc}" />
 
 				<table class="gt-form-table">
 					<tr class="header">
@@ -204,10 +205,9 @@
 							<siga:selecao titulo="Documento Pai:" propriedade="mobilPai" inputName="exDocumentoDTO.mobilPai" tema="simple" modulo="sigaex" desativar="${exDocumentoDTO.desativarDocPai}" reler="sim" />
 						</td>
 					</tr>
-<c:if test='${exDocumentoDTO.tipoDocumento != "capturado" }'>
 					<tr>
 						<c:choose>
-							<c:when test='${exDocumentoDTO.tipoDocumento == "externo" or exDocumentoDTO.tipoDocumento == "capturado"}'>
+							<c:when test='${exDocumentoDTO.tipoDocumento == "externo"}'>
 								<td>Subscritor:</td>
 								<input type="hidden" name="campos" value="nmSubscritorExt" />
 								<td colspan="3">
@@ -218,40 +218,36 @@
 								<td>Subscritor:</td>
 								<input type="hidden" name="campos" value="subscritorSel.id" />
 								<input type="hidden" name="campos" value="substituicao" />
+								<input type="hidden" name="campos" value="personalizacao" />
 								<td colspan="3">
 									<siga:selecao propriedade="subscritor" inputName="exDocumentoDTO.subscritor" modulo="siga" tema="simple" />&nbsp;&nbsp;
 									<input type="checkbox" name="exDocumentoDTO.substituicao" onclick="javascript:displayTitular(this);"
 										<c:if test="${exDocumentoDTO.substituicao}">checked</c:if>/>
-									Substituto
+									Substituto&nbsp;&nbsp;
+									<input type="checkbox" name="exDocumentoDTO.personalizacao" onclick="javascript:displayPersonalizacao(this);"
+										<c:if test="${exDocumentoDTO.personalizacao}">checked</c:if>/>
+									Personalizar
 								</td>
-							</c:otherwise>
+							</c:otherwise> 
 						</c:choose>
 					</tr>
-					<c:choose>
-						<c:when test="${!exDocumentoDTO.substituicao}">
-							<tr id="tr_titular" style="display: none">
-						</c:when>
-						<c:otherwise>
-							<tr id="tr_titular" style="">
-						</c:otherwise>
-					</c:choose>
-
-					<td>Titular:</td>
-					<input type="hidden" name="campos" value="titularSel.id" />
-					<td colspan="3">
-						<siga:selecao propriedade="titular" inputName="exDocumentoDTO.titular" tema="simple" modulo="siga"/>
-					</td>
+					<tr id="tr_titular" style="display: ${exDocumentoDTO.substituicao ? 'inline' : 'none'};">
+						<td>Titular:</td>
+						<input type="hidden" name="campos" value="titularSel.id" />
+						<td colspan="3">
+							<siga:selecao propriedade="titular" inputName="exDocumentoDTO.titular" tema="simple" modulo="siga"/>
+						</td>
 					</tr>
-					<tr>
-						<td>Função;<br/>Lotação;<br/>Localidade:</td>
+					<tr id="tr_personalizacao" style="display: ${exDocumentoDTO.personalizacao ? 'inline' : 'none'};">
+						<td>Personalização:</td>
 						<td colspan="3">
 							<input type="hidden" name="campos" value="nmFuncaoSubscritor" />
 							<input type="text" name="exDocumentoDTO.nmFuncaoSubscritor" size="50" maxlength="128" id="frm_nmFuncaoSubscritor" value="${exDocumentoDTO.nmFuncaoSubscritor}">							
-							(Opcionalmente informe a função e a lotação na forma:
-						Função;Lotação;Localidade)
+							(Opcionalmente informe forma: Função;Lotação;Localidade;Nome)
 						</td>
 					</tr>
 					
+<c:if test='${exDocumentoDTO.tipoDocumento != "capturado" }'>
 					<tr>
 						<td>Destinatário:</td>
 						<input type="hidden" name="campos" value="tipoDestinatario" />
@@ -422,7 +418,7 @@
 						</td>
 					</tr>
 					
-					<c:if test='${exDocumentoDTO.tipoDocumento == "capturado"}'>
+					<c:if test='${empty exDocumentoDTO.doc.idDoc and exDocumentoDTO.tipoDocumento == "capturado"}'>
 						<tr>
 							<input type="hidden" name="campos" value="descrDocumento" />
 							<td>Arquivo PDF:</td>

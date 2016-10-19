@@ -378,7 +378,11 @@ public class ExMovimentacaoController extends ExController {
 				.setSigla(sigla);
 
 		ExDocumento doc = buscarDocumento(builder);
+		
+		if (autenticando == null)
+			autenticando = false;
 		boolean previamenteAssinado = doc.isAssinado();
+		boolean assinando = !(autenticando && doc.isAssinadoEletronicoPorTodosOsSignatarios());
 
 		if (devePreAssinar(doc, previamenteAssinado)) {
 			Ex.getInstance().getBL()
@@ -389,6 +393,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("titular", this.getTitular());
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("autenticando", autenticando);
+		result.include("assinando", assinando);
 	}
 
 	private boolean devePreAssinar(ExDocumento doc, boolean fPreviamenteAssinado) {

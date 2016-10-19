@@ -13,6 +13,14 @@ function testpdf(x) {
 	}
 }
 
+function displayPersonalizacao(thisElement) {
+	var thatElement = document.getElementById('tr_personalizacao');
+	if (thisElement.checked)
+		thatElement.style.display = '';
+	else
+		thatElement.style.display = 'none';
+}
+
 // <c:set var="url" value="editar" />
 function sbmt(id) {
 
@@ -119,10 +127,11 @@ function validar(silencioso) {
 	// Impede que um documento capturado seja gravado sem que seja informado o
 	// arquivo PDF
 	var origem = document.getElementsByName('exDocumentoDTO.idTpDoc')[0].value;
-	if (origem == 4) {
+	var id = document.getElementsByName('exDocumentoDTO.id')[0].value;
+	if (origem == 4 && !id) {
 		var arquivo = document.getElementsByName('arquivo')[0];
 		if (arquivo.value == "") {
-			aviso(
+			aviso('('+document.getElementById('codigoDoc').innerHTML + ') ' +
 					'Documento capturado não pode ser gravado sem que seja informado o nome do arquivo PDF',
 					silencioso);
 			arquivo.focus();

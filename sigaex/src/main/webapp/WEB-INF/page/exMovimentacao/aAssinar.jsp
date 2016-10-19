@@ -78,8 +78,9 @@
 				</div>
 				
 				<tags:assinatura_botoes
+					assinar="${assinando}"
 					autenticar="${autenticando}"
-					assinarComSenha="${f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"/>
+					assinarComSenha="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"/>
 			</div>
 		</div>
 	</div>

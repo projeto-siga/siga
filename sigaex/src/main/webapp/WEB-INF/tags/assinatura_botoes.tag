@@ -2,15 +2,18 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
+<%@ attribute name="assinar" required="false"%>
 <%@ attribute name="autenticar" required="false"%>
 <%@ attribute name="assinarComSenha" required="false"%>
 <%@ attribute name="autenticarComSenha" required="false"%>
 <%@ attribute name="idMovimentacao" required="false"%>
 
 <div class="gt-form-row">
-	<a id="bot-assinar" href="#"
-		onclick="javascript: AssinarDocumentos(false, ${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;POL:Política ICP-Brasil')});"
-		class="gt-btn-medium gt-btn-left">Assinar</a>
+	<c:if test="${not empty assinar and assinar}">
+		<a id="bot-assinar" href="#"
+			onclick="javascript: AssinarDocumentos(false, ${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;POL:Política ICP-Brasil')});"
+			class="gt-btn-medium gt-btn-left">Assinar</a>
+	</c:if>
 
 	<c:if test="${not empty autenticar and autenticar}">
 		<a id="bot-autenticar" href="#"

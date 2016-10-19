@@ -80,6 +80,7 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPreenchimento;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
+import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
@@ -1028,11 +1029,11 @@ public class ExDocumentoController extends ExController {
 
 	private void verificaDocumento(final ExDocumento doc) {
 		if ((doc.getSubscritor() == null && doc.getNmSubscritor() == null && doc
-				.getNmSubscritorExt() == null)
+				.getNmSubscritorExt() == null) && (doc.getExTipoDocumento().getId() != ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)
 				&& ((doc.getExFormaDocumento().getExTipoFormaDoc()
-						.getIdTipoFormaDoc() == 2 && doc.isEletronico()) || doc
+						.getIdTipoFormaDoc() == ExTipoFormaDoc.TIPO_FORMA_DOC_PROCESSO_ADMINISTRATIVO && doc.isEletronico()) || doc
 						.getExFormaDocumento().getExTipoFormaDoc()
-						.getIdTipoFormaDoc() != 2)) {
+						.getIdTipoFormaDoc() != ExTipoFormaDoc.TIPO_FORMA_DOC_PROCESSO_ADMINISTRATIVO)) {
 			throw new AplicacaoException(
 					"É necessário definir um subscritor para o documento.");
 		}
@@ -1815,6 +1816,8 @@ public class ExDocumentoController extends ExController {
 			exDocumentoDTO.getTitularSel().buscarPorObjeto(doc.getTitular());
 			exDocumentoDTO.setSubstituicao(true);
 		}
+		
+		exDocumentoDTO.setPersonalizacao(doc.getNmFuncaoSubscritor() != null);
 
 		// TODO Verificar se ha realmente a necessidade de setar novamente o
 		// nível de acesso do documento

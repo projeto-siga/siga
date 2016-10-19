@@ -1096,9 +1096,14 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	 */
 	public boolean isAssinado() {
 		// Interno antigo e externo são considerados como assinados
-		if (getExTipoDocumento().getIdTpDoc() != 1L) {
+		if (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO || getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO) {
 			return getExMobilSet() != null && getExMobilSet().size() > 1;
 		}
+
+		// Nato: Isso é uma questão conceitual: estou considerando que um documento capturado deve responder isAssinado = true quando não tem nenhuma assinatura, pois ele não precisa ser assinado. O ideal seria que metodos como esse fossem escritor na forma isPendenteDeAssinatura()
+		if (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)
+			return possuiAlgumaAssinaturaOuAutenticacao();
+			
 
 		/*if(isEletronico() && !isAssinadoEletronicoPorTodosOsSignatarios())
 			return false;*/
@@ -1151,6 +1156,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	 * Verifica se um documento já foi assinado pelo Subscritor.
 	 */
 	public boolean isAssinadoSubscritor() {
+		if (getSubscritor() == null) // Para documento capturado
+			return true;
 		for (ExMovimentacao assinatura : getTodasAsAssinaturas()) {
 			if (assinatura.getSubscritor().equivale(getSubscritor()))
 				return true;
@@ -1729,7 +1736,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 
 		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
 			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO 
-					|| m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA)
+					|| m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA|| m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
 					&& m.getExMovimentacaoCanceladora() == null) {
 				set.add(m);
 			}
@@ -2083,6 +2090,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	}
 
 	/**
+	 * Verifica se um documento é capturado de uma fonte externa.
+	 */
+	public boolean isCapturado() {
+		if (getExTipoDocumento() == null)
+			return false;
+		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO);
+	}
+
+	/**
 	 * Retorna uma lista com o subscritor e todos os cossignatários.
 	 */
 	public List<DpPessoa> getSubscritorECosignatarios() {
@@ -2182,6 +2198,29 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	}
 	
 	/**
+	 * Retorna todas as movimentações de assinatura digital e de registro de
+	 * assinatura.
+	 */
+	public Set<ExMovimentacao> getTodasAsAutenticacoes() {
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		if (getMobilGeral() == null)
+			return null;
+
+		if (getMobilGeral().getExMovimentacaoSet() == null)
+			return null;
+
+		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
+			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA || m
+					.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
+					&& m.getExMovimentacaoCanceladora() == null) {
+				set.add(m);
+			}
+		}
+		return set;
+	}
+	
+	/**
 	 * Retorna se um documento possui alguma assinatura.
 	 */
 	public boolean possuiAlgumaAssinatura() {
@@ -2192,18 +2231,29 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	}
 
 	/**
+	 * Retorna se um documento possui alguma assinatura.
+	 */
+	public boolean possuiAlgumaAssinaturaOuAutenticacao() {
+		Set<ExMovimentacao> todasAsAssinaturas = getTodasAsAssinaturas();
+		if(todasAsAssinaturas != null && todasAsAssinaturas.size() > 0)
+			return true;
+		
+		Set<ExMovimentacao> todasAsAutenticacoes = getTodasAsAutenticacoes();
+		if(todasAsAutenticacoes != null && todasAsAutenticacoes.size() > 0)
+			return true;
+		
+		return false;
+	}
+
+	/**
 	 * Verifica se um documento foi assinado pelo subscritor e por todos os
 	 * cosignatários
 	 */
-	private boolean isAssinadoEletronicoPorTodosOsSignatarios() {
+	public boolean isAssinadoEletronicoPorTodosOsSignatarios() {
 		// Interno antigo e externo são considerados como assinados
-		if (getExTipoDocumento().getIdTpDoc() != 1L) {
+		if (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO || getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO) {
 			return getExMobilSet() != null && getExMobilSet().size() > 1;
 		}
-
-		ExMovimentacao mov = getMovAssinatura();
-		if (mov == null)
-			return false;
 
 		List<DpPessoa> todosQueJaAssinaram = new ArrayList<DpPessoa>();
 
@@ -2218,18 +2268,21 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 			return true;
 		}
 
-		for (DpPessoa signatario : getSubscritorECosignatarios()) {
-			boolean encontrou = false;
-
-			for (DpPessoa jaAssinou : todosQueJaAssinaram) {
-				if (jaAssinou.equivale(signatario)) {
-					encontrou = true;
-					break;
+		List<DpPessoa> subscritorECosignatarios = getSubscritorECosignatarios();
+		if (subscritorECosignatarios.size() > 0) {
+			for (DpPessoa signatario : subscritorECosignatarios) {
+				boolean encontrou = false;
+	
+				for (DpPessoa jaAssinou : todosQueJaAssinaram) {
+					if (jaAssinou.equivale(signatario)) {
+						encontrou = true;
+						break;
+					}
 				}
+	
+				if (!encontrou)
+					return false;
 			}
-
-			if (!encontrou)
-				return false;
 		}
 
 		return true;

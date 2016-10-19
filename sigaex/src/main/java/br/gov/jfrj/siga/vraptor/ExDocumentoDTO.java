@@ -164,6 +164,8 @@ public class ExDocumentoDTO {
 
 	private boolean substituicao;
 
+	private boolean personalizacao;
+
 	private Integer tipoDestinatario;
 
 	private DpPessoaSelecao titularSel;
@@ -589,6 +591,14 @@ public class ExDocumentoDTO {
 		return substituicao;
 	}
 	
+	public boolean isPersonalizacao() {
+		return personalizacao;
+	}
+
+	public void setPersonalizacao(boolean personalizacao) {
+		this.personalizacao = personalizacao;
+	}
+
 	public ExFormaDocumento getFormaDocPorTipo() {
 		return getFormasDoc().get(0);
 	}

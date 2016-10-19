@@ -1103,6 +1103,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		if (mob.isPendenteDeColaboracao())
 			return false;
+		
+		if (mob.doc().getSubscritor() == null)
+			return false;
+		
+		if (mob.getDoc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)
+			if (mob.getDoc().isAssinadoEletronicoPorTodosOsSignatarios())
+				return false;
 
 		// cosignatario pode assinar depois que o subscritor já tiver assinado
 
@@ -1132,14 +1139,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return ((mob.doc().getSubscritor() != null && mob.doc().getSubscritor()
 				.equivale(titular))
 
-				|| isCadastranteExterno || (isConsignatario && !mob.doc().isAssinado() && mob.doc().isAssinadoSubscritor()) 
+				|| isCadastranteExterno || (isConsignatario && !mob.doc().isAssinado() && mob.doc().isAssinadoSubscritor())
 						|| podeMovimentar(
 				titular, lotaTitular, mob))
-
-
-				// && mob.doc().isEletronico() //Nato: Permitido assinar
-				// digitalmente
-				// doc em papel, a pedido do Dr Libonati.
 				&& (mob.doc().isFinalizado())
 				&& !mob.doc().isCancelado()
 				&& !mob.doc().isSemEfeito()
@@ -1186,6 +1188,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (doc.isEletronico() &&  !doc.isAutenticado() && doc.temAssinaturasComSenha()) {
 			 return true;
 		}
+		
+		if (doc.isEletronico() && doc.isCapturado() && doc.getSubscritor() == null && !doc.isAutenticado())
+			return true;
 
 		return false;
 	}

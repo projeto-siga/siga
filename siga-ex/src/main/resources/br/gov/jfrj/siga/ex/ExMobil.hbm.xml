@@ -24,25 +24,25 @@
 			class="ExTipoMobil" />
 
 		<set name="exMovimentacaoSet" order-by="ID_MOV" inverse="true"
-			lazy="true" batch-size="500">
+			lazy="true" >
 			<key column="ID_MOBIL" />
 			<one-to-many class="ExMovimentacao" />
 		</set>
 
 		<set name="exMovimentacaoReferenciaSet" order-by="DT_INI_MOV"
-			inverse="true" lazy="true" batch-size="500">
+			inverse="true" lazy="true" >
 			<key column="ID_MOB_REF" />
 			<one-to-many class="ExMovimentacao" />
 		</set>
 
 		<set name="exDocumentoFilhoSet" order-by="NUM_SEQUENCIA"
-			inverse="true" lazy="true" batch-size="500">
+			inverse="true" lazy="true" >
 			<key column="ID_MOB_PAI" />
 			<one-to-many class="ExDocumento" />
 		</set>
 
 		<set name="exMarcaSet" sort="natural" inverse="true" lazy="true"
-			batch-size="500" where="ID_TP_MARCA=1">
+			 where="ID_TP_MARCA=1">
 			<key column="ID_REF" />
 			<one-to-many class="ExMarca" />
 		</set>

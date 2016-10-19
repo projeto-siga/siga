@@ -1695,10 +1695,10 @@ public class CpDao extends ModeloDao {
 		cfg.setProperty("hibernate.cache.infinispan.cachemanager","java:jboss/infinispan/container/hibernate");
 		cfg.setProperty("hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup");
 
-		cfg.setProperty("hibernate.cache.use_query_cache",  Cp.getInstance().getProp().cacheUseQueryCache());
+		cfg.setProperty("hibernate.cache.use_query_cache", Cp.getInstance().getProp().cacheUseQueryCache());
 		cfg.setProperty("hibernate.cache.use_minimal_puts", "false");
 		cfg.setProperty("hibernate.max_fetch_depth", "3");
-		cfg.setProperty("hibernate.default_batch_fetch_size", "1000");
+		cfg.setProperty("hibernate.default_batch_fetch_size", "5");
 	//	cfg.setProperty("hibernate.cache.provider_configuration_file_resource_path","classpath:ehcache.xml");
 		cfg.setProperty("hibernate.show_sql", "false");
 

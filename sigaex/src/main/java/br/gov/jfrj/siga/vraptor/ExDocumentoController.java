@@ -501,18 +501,13 @@ public class ExDocumentoController extends ExController {
 		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_PROIBIDO) {
 			exDocumentoDTO.setEletronico(2);
 			exDocumentoDTO.setEletronicoFixo(true);
-		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT
-				&& (exDocumentoDTO.getEletronico() == null || exDocumentoDTO
-						.getEletronico() == 0)) {
+		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT && exDocumentoDTO.isAlterouModelo()){
 			exDocumentoDTO.setEletronico(1);
-		} else if (exDocumentoDTO.isAlterouModelo()) {
-			if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT) {
-				exDocumentoDTO.setEletronico(1);
-			} else {
-				exDocumentoDTO.setEletronicoFixo(false);
-				exDocumentoDTO.setEletronico(0);
-			}
-		}
+			exDocumentoDTO.setEletronicoFixo(false);
+		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_NAO_DEFAULT && exDocumentoDTO.isAlterouModelo()){
+			exDocumentoDTO.setEletronico(2);
+			exDocumentoDTO.setEletronicoFixo(false);
+		} 
 
 		lerForm(exDocumentoDTO, vars);
 

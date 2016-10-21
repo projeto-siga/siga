@@ -1,4 +1,5 @@
 
 ALTER SESSION SET CURRENT_SCHEMA = CORPORATIVO;
-insert into corporativo.cp_marcador (id_marcador, descr_marcador, id_tp_marcador) values (70, 'Como Executor', 1);
-
+update corporativo.cp_situacao_configuracao set restritividade_sit_conf = 5 where id_sit_configuracao = 5;
+update corporativo.cp_situacao_configuracao set restritividade_sit_conf = 6 where id_sit_configuracao = 6;
+update corporativo.cp_situacao_configuracao set restritividade_sit_conf = 4 where id_sit_configuracao = 4;

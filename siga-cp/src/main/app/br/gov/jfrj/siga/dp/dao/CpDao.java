@@ -1698,7 +1698,7 @@ public class CpDao extends ModeloDao {
 		cfg.setProperty("hibernate.cache.use_query_cache", Cp.getInstance().getProp().cacheUseQueryCache());
 		cfg.setProperty("hibernate.cache.use_minimal_puts", "false");
 		cfg.setProperty("hibernate.max_fetch_depth", "3");
-		cfg.setProperty("hibernate.default_batch_fetch_size", "5");
+		//cfg.setProperty("hibernate.default_batch_fetch_size", "5");
 	//	cfg.setProperty("hibernate.cache.provider_configuration_file_resource_path","classpath:ehcache.xml");
 		cfg.setProperty("hibernate.show_sql", "false");
 

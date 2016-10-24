@@ -42,12 +42,12 @@
 			class="br.gov.jfrj.siga.dp.CpOrgaoUsuario" not-null="false" />
 
 		<set name="dpLotacaoSubordinadosSet" order-by="ID_LOTACAO"
-			inverse="true" lazy="true" batch-size="500">
+			inverse="true" lazy="true">
 			<key column="ID_LOTACAO_PAI" />
 			<one-to-many class="DpLotacao" />
 		</set>
 		<set name="dpPessoaLotadosSet" order-by="ID_PESSOA"
-            inverse="true" lazy="true" batch-size="500" where="DATA_FIM_PESSOA is null" sort="natural">
+            inverse="true" lazy="true" where="DATA_FIM_PESSOA is null" sort="natural">
         	<key column="ID_LOTACAO" />
             <one-to-many class="DpPessoa" />
         </set>

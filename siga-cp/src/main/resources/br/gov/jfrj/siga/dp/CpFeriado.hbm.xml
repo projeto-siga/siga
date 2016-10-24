@@ -14,7 +14,7 @@
 		<property name="dscFeriado" column="DSC_FERIADO" type="string"
 			not-null="true" />
 		<set name="cpOcorrenciaFeriadoSet" cascade="all"
-			inverse="true" lazy="true" batch-size="20">
+			inverse="true" lazy="true">
 			<key column="ID_FERIADO" />
 			<one-to-many class="CpOcorrenciaFeriado"  />
 		</set>

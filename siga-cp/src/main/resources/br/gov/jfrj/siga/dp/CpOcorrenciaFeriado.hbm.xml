@@ -17,8 +17,7 @@
 			type="java.util.Date" not-null="false" />
 		<many-to-one name="cpFeriado" column="ID_FERIADO"
 			class="CpFeriado" />
-		<set name="cpAplicacaoFeriadoSet" inverse="true" lazy="true"
-			batch-size="500">
+		<set name="cpAplicacaoFeriadoSet" inverse="true" lazy="true">
 			<key column="ID_OCORRENCIA_FERIADO" />
 			<one-to-many class="CpAplicacaoFeriado" />
 		</set>

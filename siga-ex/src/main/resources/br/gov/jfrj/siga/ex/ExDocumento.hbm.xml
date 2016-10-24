@@ -95,12 +95,12 @@
    name="exMobilPai" not-null="false"/>
   <many-to-one class="br.gov.jfrj.siga.ex.ExMobil" column="ID_MOB_AUTUADO" 
   name="exMobilAutuado" not-null="false"/>
-  <set batch-size="500" inverse="true" lazy="true"
+  <set inverse="true" lazy="true"
    name="exBoletimDocSet" order-by="ID_DOC" sort="unsorted">
    <key column="ID_DOC"/>
    <one-to-many class="br.gov.jfrj.siga.ex.BIE.ExBoletimDoc"/>
   </set>
-  <set batch-size="500" inverse="true" lazy="true" name="exMobilSet" sort="natural">
+  <set inverse="true" lazy="true" name="exMobilSet" sort="natural">
    <key column="ID_DOC"/>
    <one-to-many class="ExMobil"/>
   </set>

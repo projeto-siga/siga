@@ -1949,6 +1949,20 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		}
 		return maxNumVolume;
 	}
+	
+	/**
+	 * Retorna o número do último volume (funciona apenas para processo
+	 * administrativo).
+	 */
+	public int getNumUltimoMobil() {
+		int maxNumVolume = 0;
+		for (final ExMobil mob : getExMobilSet()) {
+			if (mob.getNumSequencia() > maxNumVolume) {
+				maxNumVolume = mob.getNumSequencia();
+			}
+		}
+		return maxNumVolume;
+	}
 
 	/**
 	 * Retorna o móbil-volume de um processo administrativo de acordo com o seu
@@ -2040,7 +2054,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	 * Retorna o último móbil do documento, seja via ou volume.
 	 */
 	public ExMobil getUltimoMobil() {
-		return getMobil(getNumUltimoVolume(), null);
+		return getMobil(getNumUltimoMobil(), null);
 	}
 
 	/**

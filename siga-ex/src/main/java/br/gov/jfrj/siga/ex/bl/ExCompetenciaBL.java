@@ -3269,7 +3269,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.doc().isSemEfeito())
 			return false;
 
-
 		if (mob.doc().isFinalizado() && mob.isGeral()) {
 			return podeSerMovimentado(mob.doc().getUltimoMobil());
 		}

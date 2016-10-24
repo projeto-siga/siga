@@ -2116,12 +2116,16 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	public Set<ExMobil> getArvoreMobilesParaAnaliseDestinacao() {
 
 		Set<ExMobil> set = new LinkedHashSet<ExMobil>();
-		for (ExMobil mob : getMobilesDoDocParaAnaliseDestinacao())
+		//Edson: por enquanto, comentando este trecho, pois está causando terríveis
+		//impactos na performance de processos grandes. Melhorar esta verificação.
+		/*for (ExMobil mob : getMobilesDoDocParaAnaliseDestinacao())
 			for (ExMobil mob2 : mob.getMobilPrincipal()
 					.getMobilesDoDocParaAnaliseDestinacao())
 				for (ExMobil mob3 : mob2.getMobilETodosOsJuntados())
 					if (!mob3.isVolume())
 						set.add(mob3);
+						*/
+		set.add(this);
 		return set;
 	}
 

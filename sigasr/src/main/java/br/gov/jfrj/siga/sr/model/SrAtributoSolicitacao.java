@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 @Entity
@@ -24,7 +25,8 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 public class SrAtributoSolicitacao extends HistoricoSuporte {
 	
 	private static final long serialVersionUID = 1L;
-
+	public static final ActiveRecord<SrAtributoSolicitacao> AR = new ActiveRecord<>(SrAtributoSolicitacao.class);
+	
 	@Id
 	@SequenceGenerator(sequenceName = "SIGASR" +".SR_ATRIBUTO_SOLICITACAO_SEQ", name = "srAtributoSolicitacaoSeq")
 	@GeneratedValue(generator = "srAtributoSolicitacaoSeq")

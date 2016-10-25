@@ -16,7 +16,8 @@
 	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
 	<script src="/sigasr/javascripts/cronometro.js"></script>
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
-	
+	<script src="/sigasr/javascripts/atributo.editavel.js"></script>
+
 	<style>
 		ul.lista-historico li span {
 			text-decoration: line-through;
@@ -88,10 +89,15 @@
 				<c:forEach items="${atributos}" var="att">
 					<c:if
 						test="${att.valorAtributoSolicitacao != null && !att.valorAtributoSolicitacao.isEmpty()}">
-						<p style="font-size: 9pt; padding: 0px">
-							<b>${att.atributo.nomeAtributo}:</b>
-							${att.valorAtributoSolicitacao}
-						</p>
+						<p style="float: left; font-size: 9pt; padding: 0px"><b>${att.atributo.nomeAtributo}: &nbsp</b></p>
+						<div class="atributo-editavel">
+							<p style="font-size: 9pt;">
+								${att.valorAtributoSolicitacao}
+								<a href="#" onclick="editarAtributo('${att.id}', '${att.valorAtributoSolicitacao}', 
+									'${att.atributo.tipoAtributo.name()}', '${att.atributo.preDefinidoSet}');">editar</a>
+								<a href="#">remover</a>
+							</p>
+						</div>
 					</c:if>
 				</c:forEach>
 			</div>
@@ -790,4 +796,18 @@
 		modal : true,
 		resizable : false
 	});
+		
+	function editarAtributo(idAtributo, valorAtributo, tipoAtributo, preDefinidoSet) {
+		event.preventDefault();
+		var propriedades = {
+			id: idAtributo,
+			valor: valorAtributo,
+			tipo: tipoAtributo,
+			valoresPreDefinidos: preDefinidoSet,
+			elemento: event.target,
+			nome: 'atributoSolicitacao'
+		};
+		var atributoSolicitacao = new AtributoEditavel(propriedades);
+		atributoSolicitacao.editar();
+	}
 </script>

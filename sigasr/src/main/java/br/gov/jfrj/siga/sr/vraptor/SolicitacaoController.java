@@ -949,4 +949,11 @@ public class SolicitacaoController extends SrController {
         result.include("contagens", contagens);
     }
     
+    @Path("app/solicitacao/editar/atributo/{id}")
+    public void editarAtributo(Long id) {
+    	SrAtributoSolicitacao attSolicitacao = SrAtributoSolicitacao.AR.findById(id);
+    	result.include("attSolicitacao", attSolicitacao);
+    }
+    
+    
 }

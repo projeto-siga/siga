@@ -119,81 +119,88 @@ FormEditavel.prototype = {
 }
 
 var CampoEditavel = function (propriedades) {
-	this.propriedades = propriedades;
-	this.tipoEditavel =  new TipoCampoEditavel(this.propriedades.tipo).definir();
+	this.campoFactory =  new CampoEditavelFactory(propriedades).getInstancia();
 }
 
 CampoEditavel.prototype = {
 	constructor: CampoEditavel,
 	
 	construir: function() {
-		this.tipoEditavel.iniciar();
-		this.tipoEditavel.inserirParametros();
+		this.campoFactory.iniciar();
+		this.campoFactory.inserirParametros();
+		this.campoFactory.inserirNomeEValor();
 		
-		return this.tipoEditavel.campo;
+		return this.campoFactory.campo;
 	}
 }
 
-var TipoCampoEditavel = function(tipo) {
-	this.tipo = tipo;
+var CampoEditavelFactory = function(propriedades) {
+	this.propriedades = propriedades;
 	this.input 		= "<input class='campo-editavel' />";
 	this.textarea 	= "<textarea class='campo-editavel'></texarea>";
 	this.select 	= "<select class='campo-editavel'></select>";
 }
 
-TipoCampoEditavel.prototype = {
-	csontructor: TipoCampoEditavel,
+CampoEditavelFactory.prototype = {
+	constructor: CampoEditavelFactory,
 	
-	definir: function() {
-		if (this.tipo === 'TEXTO')
-			return new Texto(this.input);
-		if (this.tipo === 'NUM_INTEIRO' || this.tipo === 'NUM_DECIMAL')
-			return new Numero(this.input);
-		if (this.tipo === 'VL_PRE_DEFINIDO')
-			return new ValorPreDefinido(this.select);
+	getInstancia: function() {
+		if (this.propriedades.tipo === 'TEXTO')
+			return new Texto(this.propriedades, this.input);
+		if (this.propriedades.tipo === 'NUM_INTEIRO' || this.propriedades.tipo === 'NUM_DECIMAL')
+			return new Numero(this.propriedades, this.input);
+		if (this.propriedades.tipo === 'VL_PRE_DEFINIDO')
+			return new ValorPreDefinido(this.propriedades, this.select);
 	}
 }
 
 
-var AcoesEmComum = function(campo) {
+var CampoEditavelAbstract = function(propriedades, campo) {
+	this.propriedades = propriedades;
 	this.campo = campo;
 }
 
-AcoesEmComum.prototype = {
-	constructor: AcoesEmComum,
+CampoEditavelAbstract.prototype = {
+	constructor: CampoEditavelAbstract,
 		
 	iniciar: function() {
 		var campoJquery = $(this.campo);
 		this.campo = campoJquery;
 	},
 	
-	inserirNomeEvalorAoCampo: function() {
-		this.tipoEditavel.campo.attr("name", this.propriedades.nome)
-		 					   .attr("value", this.propriedades.valor);
+	inserirNomeEValor: function() {
+		this.campo.attr("name", this.propriedades.nome)
+		 		  .attr("value", this.propriedades.valor);
 	},
 
 	inserirAtributos: function(arrayComParamentros) {
 		var campo = this.campo;
-		arrayComParamentros.forEach(function(elemento){
+		arrayComParamentros.forEach(function(elemento) {
 			campo.attr(elemento.key, elemento.value);
 		});
 		this.campo = campo;
 	},
 	
 	inserirOpcoes: function() {
-		
-	}	
+		var campo = this.campo;
+		var arrayComValores = this.propriedades.valoresPreDefinidos.slice(1, -1).split(",");
+		arrayComValores.forEach(function(elemento) {
+			campo.append($('<option>', {value: elemento.trim()})
+				 .text(elemento.trim())); 
+		});
+		this.campo = campo;
+	}
 }
 
 
-var Texto = function(campo) {
-	this.campo = campo; 
+var Texto = function(propriedades, campo) {
+	CampoEditavelAbstract.call(this, propriedades, campo);
 	this.tipo = {key: 'type', value: 'text'};
 	this.tamanho = {key: 'size', valaue: '70'};
 	this.maximo = {key: 'maxlength', value: '255'};
 }
 
-Texto.prototype = new AcoesEmComum(this.campo); 
+Texto.prototype = new CampoEditavelAbstract(this.propriedades, this.campo); 
 
 Texto.prototype.constructor = Texto;
 	
@@ -207,28 +214,34 @@ Texto.prototype.inserirParametros = function() {
 };
 
 
-var Numero = function(campo) {
-	this.campo = campo;
+var Numero = function(propriedades, campo) {
+	CampoEditavelAbstract.call(this, propriedades, campo);
 	this.tipo = {key: 'type', value: 'text'};
 	this.maximo = {key: 'maxlength', value: '9'};
 }
 
+Numero.prototype = new CampoEditavelAbstract(this.propriedades, this.campo); 
 
-
-
-var ValorPreDefinido = function(campo) {
-	this.campo = campo;
-}
-
-ValorPreDefinido.prototype = new AcoesEmComum(this.campo); 
-
-ValorPreDefinido.prototype.constructor = ValorPreDefinido;
+Numero.prototype.constructor = Numero;
 	
-ValorPreDefinido.prototype.getParametros = function() {
+Numero.prototype.getParametros = function() {
 	return new Array(this.tipo, this.maximo);
 };
 	
-ValorPreDefinido.prototype.inserirParametros = function() {
+Numero.prototype.inserirParametros = function() {
 	var arrParam = this.getParametros();
 	this.inserirAtributos(arrParam);
+};
+
+
+var ValorPreDefinido = function(propriedades, campo) {
+	CampoEditavelAbstract.call(this, propriedades, campo);
+}
+
+ValorPreDefinido.prototype = new CampoEditavelAbstract(this.propriedades, this.campo); 
+
+ValorPreDefinido.prototype.constructor = ValorPreDefinido;
+	
+ValorPreDefinido.prototype.inserirParametros = function() {
+	this.inserirOpcoes();
 };

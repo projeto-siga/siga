@@ -92,9 +92,8 @@
 						<p style="float: left; font-size: 9pt; padding: 0px"><b>${att.atributo.nomeAtributo}: &nbsp</b></p>
 						<div class="atributo-editavel">
 							<p style="font-size: 9pt;">
-								${att.valorAtributoSolicitacao}
-								<a href="#" onclick="editarAtributo('${att.id}', '${att.valorAtributoSolicitacao}', 
-									'${att.atributo.tipoAtributo.name()}', '${att.atributo.preDefinidoSet}');">editar</a>
+								<span>${att.valorAtributoSolicitacao}</span>
+								<a href="#" onclick="editarAtributo('${att.id}', '${att.atributo.tipoAtributo.name()}', '${att.atributo.preDefinidoSet}');">editar</a>
 								<a href="#">remover</a>
 							</p>
 						</div>
@@ -797,15 +796,17 @@
 		resizable : false
 	});
 		
-	function editarAtributo(idAtributo, valorAtributo, tipoAtributo, preDefinidoSet) {
+	function editarAtributo(idAtributo, tipoAtributo, preDefinidoSet) {
 		event.preventDefault();
+		var valorAtributo = $(event.target).siblings("span").text();
 		var propriedades = {
 			id: idAtributo,
 			valor: valorAtributo,
 			tipo: tipoAtributo,
 			valoresPreDefinidos: preDefinidoSet,
 			elemento: event.target,
-			nome: 'atributoSolicitacao'
+			nome: 'atributo.valorAtributoSolicitacao',
+			urlDestino: '${linkTo[SolicitacaoController].gravarAtributo}'
 		};
 		var atributoSolicitacao = new AtributoEditavel(propriedades);
 		atributoSolicitacao.editar();

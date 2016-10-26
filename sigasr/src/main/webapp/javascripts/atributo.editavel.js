@@ -1,13 +1,15 @@
 /**
  * @class atributoEditavel
  * 
+ * exemplo @param propriedades
  * 		var propriedades = {
 			id: idAtributo,
 			valor: valorAtributo,
 			tipo: tipoAtributo,
 			valoresPreDefinidos: preDefinidoSet,
 			elemento: event.target,
-			nome: 'atributoSolicitacao'
+			nome: 'atributoSolicitacao',
+			urlDestino: '${linkTo[SolicitacaoController].editarAtributo}'
 		};
  **/
 var AtributoEditavel = function (propriedades) {
@@ -26,8 +28,8 @@ AtributoEditavel.prototype = {
 	},
 	
 	construirForm: function() {
-		var form = new FormEditavel(AtributoEditavel.DIV_EDITAVEL);
-		return form.construir(this.propriedades);
+		var form = new FormEditavel(this.propriedades, AtributoEditavel.DIV_EDITAVEL);
+		return form.construir();
 	},
 	
 	getElementoComAtributoEditavel: function() {
@@ -52,10 +54,11 @@ AtributoEditavel.DIV_EDITAVEL = "";
 /**
  * @class formEditavel
  **/
-var FormEditavel = function (divEditavel) {
+var FormEditavel = function (propriedades, divEditavel) {
+	this.propriedades = propriedades;
 	this.divEditavel = divEditavel;
 	
-	this.form = "<form class='form-editavel'>" +	
+	this.form = "<form class='form-editavel' action='#' method='post' enctype='multipart/form-data'>" +	
 						"<div class='div-campo-editavel' style='float: left; margin-right: 11px;'></div>" +
 						"<div class='botao-editavel' style='height:30px;'></div>" +
 				"</form>";
@@ -70,10 +73,11 @@ var FormEditavel = function (divEditavel) {
 FormEditavel.prototype = {
 	constructor: FormEditavel,
 	
-	construir: function(propriedades) {
+	construir: function() {
 		this.iniciar();
 		this.inserirBotao();
-		this.inserirCampoEditavel(propriedades);
+		this.inserirCampoHidden();
+		this.inserirCampoEditavel(this.propriedades);
 
 		return this.form;
 	},
@@ -95,7 +99,19 @@ FormEditavel.prototype = {
 	},
 	
 	acaoOk: function() {
-		
+		var div = this.divEditavel;
+		var url = this.propriedades.urlDestino;
+		var form = this.form;
+		form.find('.botao-editavel > .ok').click(function(event) {
+			event.preventDefault();
+			jQuery.blockUI(objBlock);
+			Siga.ajax(url, form.serialize(), "POST", function(response) {
+				div.find('span').text(response);
+				div.show();
+				form.remove();
+				jQuery.unblockUI();
+			});
+		});
 	},
 	
 	acaoCancelar: function() {
@@ -104,6 +120,11 @@ FormEditavel.prototype = {
 			div.show();
 			this.form.remove();
 		});
+	},
+	
+	inserirCampoHidden: function() {
+		var nameDoInput = this.propriedades.nome.split(".")[0] + '.id';
+		this.inserirCampoEditavel({tipo: 'HIDDEN', nome: nameDoInput, valor: this.propriedades.id});
 	},
 	
 	inserirCampoEditavel: function(propriedades) {
@@ -151,6 +172,8 @@ CampoEditavelFactory.prototype = {
 			return new Numero(this.propriedades, this.input);
 		if (this.propriedades.tipo === 'VL_PRE_DEFINIDO')
 			return new ValorPreDefinido(this.propriedades, this.select);
+		if (this.propriedades.tipo === 'HIDDEN')
+			return new Hidden(this.propriedades, this.input);
 	}
 }
 
@@ -244,4 +267,23 @@ ValorPreDefinido.prototype.constructor = ValorPreDefinido;
 	
 ValorPreDefinido.prototype.inserirParametros = function() {
 	this.inserirOpcoes();
+};
+
+
+var Hidden = function(propriedades, campo) {
+	CampoEditavelAbstract.call(this, propriedades, campo);
+	this.tipo = {key: 'type', value: 'hidden'};
+}
+
+Hidden.prototype = new CampoEditavelAbstract(this.propriedades, this.campo); 
+
+Hidden.prototype.constructor = Hidden;
+	
+Hidden.prototype.getParametros = function() {
+	return new Array(this.tipo);
+};
+	
+Hidden.prototype.inserirParametros = function() {
+	var arrParam = this.getParametros();
+	this.inserirAtributos(arrParam);
 };

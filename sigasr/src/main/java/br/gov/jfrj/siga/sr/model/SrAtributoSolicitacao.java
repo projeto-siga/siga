@@ -162,6 +162,14 @@ public class SrAtributoSolicitacao extends HistoricoSuporte {
 			return null;
 		return att.get(0);
 	}
+	
+	public void gravar(String valor, DpPessoa cadastrante, DpLotacao lotaCadastrante) throws Exception {
+		SrAtributoSolicitacao atributoAtual = this.getAtual();
+		atributoAtual.setValorAtributoSolicitacao(valor);
+		atributoAtual.setCadastrante(cadastrante);
+		atributoAtual.setLotaCadastrante(lotaCadastrante);
+		atributoAtual.salvarComHistorico();
+	}
 
 	@Override
 	public boolean equals(Object obj) {

@@ -102,16 +102,28 @@ FormEditavel.prototype = {
 		var div = this.divEditavel;
 		var url = this.propriedades.urlDestino;
 		var form = this.form;
+		var param = this.getParamToBlock();
 		form.find('.botao-editavel > .ok').click(function(event) {
 			event.preventDefault();
-			jQuery.blockUI(objBlock);
+			form.block(param);
 			Siga.ajax(url, form.serialize(), "POST", function(response) {
 				div.find('span').text(response);
 				div.show();
+				form.unblock();
 				form.remove();
-				jQuery.unblockUI();
 			});
 		});
+	},
+	
+	getParamToBlock: function() {
+		var param = { css: {
+		    border: 'none',
+		    paddingTop: '3px',
+		    backgroundColor: '#000',
+		    opacity: .6,
+		}, message: '<h4 style="color : #fff;"> Carregando... </h4>' };
+		
+		return param;	
 	},
 	
 	acaoCancelar: function() {

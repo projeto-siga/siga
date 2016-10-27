@@ -93,8 +93,10 @@
 						<div class="atributo-editavel">
 							<p style="font-size: 9pt;">
 								<span>${att.valorAtributoSolicitacao}</span>
-								<a href="#" onclick="editarAtributo('${att.id}', '${att.atributo.tipoAtributo.name()}', '${att.atributo.preDefinidoSet}');">editar</a>
-								<a href="#">remover</a>
+								<a href="#" onclick="editarAtributo('${att.id}', '${att.atributo.tipoAtributo.name()}', '${att.atributo.preDefinidoSet}');">
+									<img src="/siga/css/famfamfam/icons/pencil.png" title="editar" style="margin-left: 5px;">
+								</a>
+								<!-- <a href="#">remover</a>-->
 							</p>
 						</div>
 					</c:if>
@@ -798,7 +800,7 @@
 		
 	function editarAtributo(idAtributo, tipoAtributo, preDefinidoSet) {
 		event.preventDefault();
-		var valorAtributo = $(event.target).siblings("span").text();
+		var valorAtributo = $(event.target).parent().siblings("span").text();
 		var propriedades = {
 			id: idAtributo,
 			valor: valorAtributo,

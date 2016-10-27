@@ -93,10 +93,12 @@
 						<div class="atributo-editavel">
 							<p style="font-size: 9pt;">
 								<span>${att.valorAtributoSolicitacao}</span>
-								<a href="#" onclick="editarAtributo('${att.id}', '${att.atributo.tipoAtributo.name()}', '${att.atributo.preDefinidoSet}');">
-									<img src="/siga/css/famfamfam/icons/pencil.png" title="editar" style="margin-left: 5px;">
-								</a>
-								<!-- <a href="#">remover</a>-->
+								<c:if test="${solicitacao.podeEditarAtributo(titular, lotaTitular)}">
+									<a href="#" onclick="editarAtributo('${att.id}', '${att.atributo.tipoAtributo.name()}', '${att.atributo.preDefinidoSet}');">
+										<img src="/siga/css/famfamfam/icons/pencil.png" title="editar" style="margin-left: 5px;">
+									</a>
+									<!-- <a href="#">remover</a>-->
+								</c:if>
 							</p>
 						</div>
 					</c:if>

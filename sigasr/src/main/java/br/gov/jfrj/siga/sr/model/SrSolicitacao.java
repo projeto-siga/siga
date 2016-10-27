@@ -1229,6 +1229,10 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         return isFechadoAutomaticamente() && isEmAndamento() && isAbertaComTodasFilhasFechadas();
     }
     
+    public boolean podeEditarAtributo(DpPessoa pess, DpLotacao lota) {
+    	return estaCom(pess, lota) && isAtivo();
+    }
+    
     @SuppressWarnings("unchecked")
     public SrSolicitacao deduzirLocalRamalEMeioContato() {
 

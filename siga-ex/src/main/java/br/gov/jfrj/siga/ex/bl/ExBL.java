@@ -4129,8 +4129,6 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, final ExMobil mob, final Date dtMov)
 			throws AplicacaoException {
 
-		if (mob.isEmTransitoExterno())
-			return;
 
 		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
 

@@ -16,6 +16,9 @@
 		<property name="numSequencia" column="NUM_SEQUENCIA" type="int" />
 
 		<property name="dnmUltimaAnotacao" column="DNM_ULTIMA_ANOTACAO" type="java.lang.String" />
+		
+		<property name="dnmNumPrimeiraPagina" column="DNM_NUM_PRIMEIRA_PAGINA"
+                        type="java.lang.Integer" />
 
 		<many-to-one name="exDocumento" column="ID_DOC"
 			class="ExDocumento" not-null="true" />

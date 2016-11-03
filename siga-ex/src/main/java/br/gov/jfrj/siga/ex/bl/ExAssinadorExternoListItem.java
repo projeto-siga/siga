@@ -7,6 +7,7 @@ import br.gov.jfrj.siga.ex.ExDocumento;
 
 public class ExAssinadorExternoListItem {
 	private String id;
+	private String secret;
 	private String code;
 	private String descr;
 	private String kind;
@@ -21,6 +22,14 @@ public class ExAssinadorExternoListItem {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getSecret() {
+		return secret;
+	}
+
+	public void setSecret(String secret) {
+		this.secret = secret;
 	}
 
 	public String getCode() {

@@ -10,6 +10,7 @@ public class ExAssinadorExternoHash {
 	private String sha256;
 	private String doc;
 	private String policy;
+	private String secret;
 
 	public String getSha1() {
 		return sha1;
@@ -41,5 +42,13 @@ public class ExAssinadorExternoHash {
 
 	public void setPolicy(String policy) {
 		this.policy = policy;
+	}
+
+	public String getSecret() {
+		return secret;
+	}
+
+	public void setSecret(String secret) {
+		this.secret = secret;
 	}
 }

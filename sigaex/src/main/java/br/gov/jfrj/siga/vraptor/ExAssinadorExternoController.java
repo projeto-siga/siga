@@ -31,6 +31,7 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
@@ -50,17 +51,37 @@ import com.google.gson.Gson;
 @Resource
 public class ExAssinadorExternoController extends ExController {
 
-	private static final Logger LOGGER = Logger
-			.getLogger(ExAssinadorExternoController.class);
+	private static final Logger LOGGER = Logger.getLogger(ExAssinadorExternoController.class);
 
-	public ExAssinadorExternoController(HttpServletRequest request,
-			HttpServletResponse response, ServletContext context,
-			Result result, SigaObjects so, EntityManager em, Validator validator) {
+	public ExAssinadorExternoController(HttpServletRequest request, HttpServletResponse response,
+			ServletContext context, Result result, SigaObjects so, EntityManager em, Validator validator) {
 
 		super(request, response, context, result, ExDao.getInstance(), so, em);
 	}
 
-	@Get("/public/app/assinador-externo/doc/list")
+	private class ExAssinadorExternoTest {
+		String category;
+		String service;
+		String url;
+		String responsable;
+		boolean available;
+	}
+	
+	@Get("/public/app/assinador-externo/test")
+	public void assinadorExternoTest() throws Exception {
+		try {
+			ExAssinadorExternoTest resp = new ExAssinadorExternoTest();
+			resp.category = "webapp";
+			resp.service = "sigadocsigner";
+			resp.url = request.getRequestURI();
+			resp.responsable = null;
+			resp.available = true;
+			jsonSuccess(resp);
+		} catch (Exception e) {
+			jsonError(e);
+		}
+
+	}	@Get("/public/app/assinador-externo/doc/list")
 	public void assinadorExternoList() throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
@@ -70,21 +91,19 @@ public class ExAssinadorExternoController extends ExController {
 			String urlapi = req.getString("urlapi");
 			String sCpf = req.getString("cpf");
 
-			String permalink = urlapi.split("sigaex/public/app/")[0]
-					+ "siga/permalink/";
+			String permalink = urlapi.split("sigaex/public/app/")[0] + "siga/permalink/";
 
 			Long cpf = Long.valueOf(sCpf);
 			DpPessoa pes = dao().consultarPorCpf(cpf);
 			if (pes == null)
-				throw new Exception("Nenhuma pessoa localizada com o CPF: "
-						+ sCpf);
+				throw new Exception("Nenhuma pessoa localizada com o CPF: " + sCpf);
 			List<ExAssinadorExternoListItem> list = new ArrayList<ExAssinadorExternoListItem>();
-			List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL()
-					.obterAssinaveis(pes, pes.getLotacao());
+			List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL().obterAssinaveis(pes, pes.getLotacao());
 			for (ExAssinavelDoc ass : assinaveis) {
 				if (ass.isPodeAssinar()) {
 					ExAssinadorExternoListItem aei = new ExAssinadorExternoListItem();
 					aei.setId(makeId(cpf, ass.getDoc().getCodigoCompacto()));
+					aei.setSecret(docSecret(ass.getDoc()));
 					aei.setCode(ass.getDoc().getCodigo());
 					aei.setDescr(ass.getDoc().getDescrDocumento());
 					aei.setKind(ass.getDoc().getTipoDescr());
@@ -99,12 +118,12 @@ public class ExAssinadorExternoController extends ExController {
 				for (ExAssinavelMov assmov : ass.getMovs()) {
 					ExAssinadorExternoListItem aei = new ExAssinadorExternoListItem();
 					aei.setId(makeId(cpf, assmov.getMov().getReferencia()));
+					aei.setSecret(movSecret(assmov.getMov()));
 					aei.setCode(assmov.getMov().getReferencia());
 					aei.setDescr(assmov.getMov().getObs());
 					aei.setKind(assmov.getMov().getTipoDescr());
 					aei.setOrigin("Siga-Doc");
-					aei.setUrlView(permalink
-							+ assmov.getMov().getReferencia().replace(":", "/"));
+					aei.setUrlView(permalink + assmov.getMov().getReferencia().replace(":", "/"));
 					aei.setUrlHash("sigadoc/doc/" + aei.getId() + "/hash");
 					aei.setUrlSave("sigadoc/doc/" + aei.getId() + "/sign");
 					list.add(aei);
@@ -127,23 +146,28 @@ public class ExAssinadorExternoController extends ExController {
 			JSONObject req = getJsonReq(request);
 			assertPassword(req);
 
-			byte[] pdf = getPdf(id);
+			PdfData pdfd = getPdf(id);
 
 			ExAssinadorExternoPdf resp = new ExAssinadorExternoPdf();
 
-			resp.setDoc(BlucService.bytearray2b64(pdf));
+			resp.setDoc(BlucService.bytearray2b64(pdfd.pdf));
+			resp.setSecret(pdfd.secret);
 
 			jsonSuccess(resp);
 		} catch (Exception e) {
 			jsonError(e);
 		}
 	}
+	
+	private class PdfData {
+		byte[] pdf;
+		String secret;
+	}
 
-	private byte[] getPdf(String id) throws IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException, Exception,
-			SQLException {
-		byte[] pdf = null;
-
+	private PdfData getPdf(String id)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, Exception, SQLException {
+		PdfData pdfd = new PdfData();
+		
 		String sigla = null;
 		if (id != null) {
 			sigla = id2sigla(id);
@@ -153,15 +177,17 @@ public class ExAssinadorExternoController extends ExController {
 		ExMobil mob = Documento.getMobil(sigla);
 		ExMovimentacao mov = Documento.getMov(mob, sigla);
 
-		if (mov != null)
-			pdf = mov.getConteudoBlobpdf();
-		else if (mob != null) {
-			pdf = mob.doc().getConteudoBlobPdf();
+		if (mov != null) {
+			pdfd.pdf = mov.getConteudoBlobpdf();
+			pdfd.secret = movSecret(mov);
+		} else if (mob != null) {
+			pdfd.pdf = mob.doc().getConteudoBlobPdf();
+			pdfd.secret = docSecret(mob.doc());
 		}
 
-		if (pdf == null)
+		if (pdfd.pdf == null)
 			throw new Exception("Não foi possível localizar o PDF.");
-		return pdf;
+		return pdfd;
 	}
 
 	@Get("/public/app/assinador-externo/doc/{id}/hash")
@@ -170,7 +196,7 @@ public class ExAssinadorExternoController extends ExController {
 			JSONObject req = getJsonReq(request);
 			assertPassword(req);
 
-			byte[] pdf = getPdf(id);
+			PdfData pdfd = getPdf(id);
 
 			ExAssinadorExternoHash resp = new ExAssinadorExternoHash();
 
@@ -178,9 +204,9 @@ public class ExAssinadorExternoController extends ExController {
 			// resp.setPolicy("PKCS7");
 			// resp.setDoc(BlucService.bytearray2b64(pdf));
 
-			resp.setSha1(BlucService.bytearray2b64(BlucService.calcSha1(pdf)));
-			resp.setSha256(BlucService.bytearray2b64(BlucService
-					.calcSha256(pdf)));
+			resp.setSha1(BlucService.bytearray2b64(BlucService.calcSha1(pdfd.pdf)));
+			resp.setSha256(BlucService.bytearray2b64(BlucService.calcSha256(pdfd.pdf)));
+			resp.setSecret(pdfd.secret);
 
 			jsonSuccess(resp);
 		} catch (Exception e) {
@@ -212,8 +238,7 @@ public class ExAssinadorExternoController extends ExController {
 			ExMovimentacao mov = Documento.getMov(mob, sigla);
 
 			DpPessoa cadastrante = null;
-			List<DpPessoa> pessoas = ExDao.getInstance()
-					.consultarPessoasAtivasPorCpf(cpf);
+			List<DpPessoa> pessoas = ExDao.getInstance().consultarPessoasAtivasPorCpf(cpf);
 			for (DpPessoa p : pessoas) {
 				if (mov != null && mov.getResp() != null) {
 					if (p.equivale(mov.getResp())) {
@@ -227,8 +252,7 @@ public class ExAssinadorExternoController extends ExController {
 			if (cadastrante == null && pessoas.size() >= 1)
 				cadastrante = pessoas.get(0);
 			if (cadastrante == null)
-				throw new Exception(
-						"Não foi possível localizar a pessoa que representa o subscritor.");
+				throw new Exception("Não foi possível localizar a pessoa que representa o subscritor.");
 
 			String msg = null;
 
@@ -236,27 +260,20 @@ public class ExAssinadorExternoController extends ExController {
 				long tpMov = autenticar ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
 						: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO;
 
-				Ex.getInstance()
-						.getBL()
-						.assinarMovimentacao(cadastrante,
-								cadastrante.getLotacao(), mov, dt, assinatura,
-								null, tpMov);
+				Ex.getInstance().getBL().assinarMovimentacao(cadastrante, cadastrante.getLotacao(), mov, dt, assinatura,
+						null, tpMov);
 				msg = "OK";
 			} else if (mob != null) {
 				long tpMov = autenticar ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
 						: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
-				msg = Ex.getInstance()
-						.getBL()
-						.assinarDocumento(cadastrante,
-								cadastrante.getLotacao(), mob.doc(), dt,
-								assinatura, null, tpMov);
+				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, cadastrante.getLotacao(), mob.doc(), dt,
+						assinatura, null, tpMov);
 				if (msg != null)
 					msg = "OK: " + msg;
 				else
 					msg = "OK";
 			} else {
-				throw new Exception(
-						"Não foi possível localizar o documento para gravar a assinatura.");
+				throw new Exception("Não foi possível localizar o documento para gravar a assinatura.");
 			}
 
 			ExAssinadorExternoSave resp = new ExAssinadorExternoSave();
@@ -277,9 +294,7 @@ public class ExAssinadorExternoController extends ExController {
 	protected void jsonSuccess(final Object resp) {
 		Gson gson = new Gson();
 		String s = gson.toJson(resp);
-		result.use(Results.http())
-				.addHeader("Content-Type", "application/json").body(s)
-				.setStatusCode(200);
+		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
 	}
 
 	protected void jsonError(final Exception e) {
@@ -300,9 +315,7 @@ public class ExAssinadorExternoController extends ExController {
 		json.put("errordetails", arr);
 
 		String s = json.toString();
-		result.use(Results.http())
-				.addHeader("Content-Type", "application/json").body(s)
-				.setStatusCode(500);
+		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(500);
 	}
 
 	private static JSONObject getJsonReq(HttpServletRequest request) {
@@ -316,8 +329,7 @@ public class ExAssinadorExternoController extends ExController {
 
 			}
 			for (Object key : request.getParameterMap().keySet())
-				if (key instanceof String
-						&& request.getParameter((String) key) instanceof String
+				if (key instanceof String && request.getParameter((String) key) instanceof String
 						&& !req.has((String) key))
 					req.put((String) key, request.getParameter((String) key));
 
@@ -327,8 +339,7 @@ public class ExAssinadorExternoController extends ExController {
 		}
 	}
 
-	private static String getBody(HttpServletRequest request)
-			throws IOException {
+	private static String getBody(HttpServletRequest request) throws IOException {
 
 		String body = null;
 		StringBuilder stringBuilder = new StringBuilder();
@@ -337,8 +348,7 @@ public class ExAssinadorExternoController extends ExController {
 		try {
 			InputStream inputStream = request.getInputStream();
 			if (inputStream != null) {
-				bufferedReader = new BufferedReader(new InputStreamReader(
-						inputStream));
+				bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 				char[] charBuffer = new char[128];
 				int bytesRead = -1;
 				while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
@@ -379,6 +389,28 @@ public class ExAssinadorExternoController extends ExController {
 		if (id == null)
 			return null;
 		return id.split("__")[1].replace("_", ":");
+	}
+
+	private String dateSecret(Date dt) {
+		if (dt == null)
+			return "null";
+		else
+			return Long.toString(dt.getTime());
+	}
+
+	private String docSecret(ExDocumento doc) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(dateSecret(doc.getDtRegDoc()));
+		sb.append(doc.getCadastrante().getId());
+		return sb.toString();
+	}
+
+	private String movSecret(ExMovimentacao mov) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(dateSecret(mov.getExDocumento().getDtRegDoc()));
+		sb.append(dateSecret(mov.getDtIniMov()));
+		sb.append(mov.getCadastrante().getId());
+		return sb.toString();
 	}
 
 }

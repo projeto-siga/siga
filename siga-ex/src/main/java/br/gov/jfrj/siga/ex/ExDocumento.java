@@ -1550,7 +1550,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	 * @param nivel
 	 * @return
 	 */
-	public List<ExArquivoNumerado> getArquivosNumerados(ExMobil mob,
+	private List<ExArquivoNumerado> getArquivosNumerados(ExMobil mob,
 			List<ExArquivoNumerado> list, int nivel) {
 
 		// Incluir o documento principal
@@ -1564,22 +1564,28 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 
 		// Numerar as paginas
 		if (isNumeracaoUnicaAutomatica()) {
-			int i = 0;
-
-			if (mob.isVolume() && mob.getNumSequencia() > 1) {
-				List<ExArquivoNumerado> listVolumeAnterior = getArquivosNumerados(mob
-						.doc().getVolume(mob.getNumSequencia() - 1));
-				i = listVolumeAnterior.get(listVolumeAnterior.size() - 1)
-						.getPaginaFinal();
+			
+			if (mob.getDnmNumPrimeiraPagina() == null) {
+				if (mob.isVolume() && mob.getNumSequencia() > 1){
+					List<ExArquivoNumerado> listVolumeAnterior = mob.doc().getArquivosNumerados(mob
+							.doc().getVolume(mob.getNumSequencia() - 1));
+					int i = listVolumeAnterior.get(listVolumeAnterior.size() - 1)
+							.getPaginaFinal();
+					mob.setDnmNumPrimeiraPagina(i+1);
+					ExDao.getInstance().gravar(mob);
+				} else {
+					mob.setDnmNumPrimeiraPagina(1);
+				}
 			}
+			int j = mob.getDnmNumPrimeiraPagina();
 
 			removerDesentranhamentosQueNaoFazemParteDoDossie(list);
-
+					
 			for (ExArquivoNumerado an : list) {
-				i++;
-				an.setPaginaInicial(i);
-				i += an.getNumeroDePaginasParaInsercaoEmDossie() - 1;
-				an.setPaginaFinal(i);
+				an.setPaginaInicial(j);
+				j += an.getNumeroDePaginasParaInsercaoEmDossie() - 1;
+				an.setPaginaFinal(j);
+				j++;
 			}
 		}
 

@@ -55,6 +55,9 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 
 	@Column(name = "DNM_ULTIMA_ANOTACAO")
 	private java.lang.String dnmUltimaAnotacao;
+	
+	@Column(name = "DNM_NUM_PRIMEIRA_PAGINA")
+	private Integer dnmNumPrimeiraPagina;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_DOC")
@@ -151,6 +154,14 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 
 	public void setDnmUltimaAnotacao(java.lang.String dnmUltimaAnotacao) {
 		this.dnmUltimaAnotacao = dnmUltimaAnotacao;
+	}
+
+	public Integer getDnmNumPrimeiraPagina() {
+		return dnmNumPrimeiraPagina;
+	}
+
+	public void setDnmNumPrimeiraPagina(Integer dnmNumPrimeiraPagina) {
+		this.dnmNumPrimeiraPagina = dnmNumPrimeiraPagina;
 	}
 
 }

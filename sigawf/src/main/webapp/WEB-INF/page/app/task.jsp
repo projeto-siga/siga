@@ -170,9 +170,9 @@
 						test="${(titular.sigla eq taskInstance.actorId) or (wf:podePegarTarefa(cadastrante, titular,lotaCadastrante,lotaTitular,taskInstance) == true)}">
 						<div class="gt-form-row gt-width-100">
 							<c:forEach var="transition" items="${task.transitions}">
-								<input name="transitionName" type="submit"
-									value="${empty transition.name ? 'Prosseguir' : transition.name}${transition.resp}"
-									class="gt-btn-large gt-btn-left" />
+								<button type="submit" name="transitionName"
+									value="${transition.name}${transition.resp}"
+									class="gt-btn-large gt-btn-left" style="white-space: nowrap" >${empty transition.name ? 'Prosseguir' : transition.name}${transition.resp}</button>
 							</c:forEach>
 						</div>
 					</c:if>

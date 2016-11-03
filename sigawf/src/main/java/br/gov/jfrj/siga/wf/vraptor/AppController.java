@@ -229,24 +229,27 @@ public class AppController extends WfController {
 		}
 
 		// Bloco que transfere a tarefa
-		if (transitionName != null && transitionName.contains(" » ")) {
+		if (transitionName != null && transitionName.contains("» ")) {
 			transitionName = transitionName.substring(0,
-					transitionName.indexOf(" » "));
+					transitionName.indexOf("» "));
 		}
 		/*
 		 * código inserido para corrigir o caracter &raquo; (») contido no botão
 		 * e enviado pelo submit. Este, no caso de autenticação por certificado,
 		 * vem em conjunto com o caracter Â. (
 		 */
-		if (transitionName != null && transitionName.contains(" Â» ")) {
+		if (transitionName != null && transitionName.contains("Â» ")) {
 			transitionName = transitionName.substring(0,
-					transitionName.indexOf(" Â» "));
+					transitionName.indexOf("Â» "));
 		}
 		/*
 		 * fim do código inserido para corrigir o caracter &raquo;
 		 */
-		if (transitionName == null || transitionName.length() == 0 || transitionName.equals("Prosseguir"))
-			transitionName = null;
+		if (transitionName != null){
+			transitionName = transitionName.trim();
+			if (transitionName.length() == 0)
+				transitionName = null;
+		}
 		// Transition transition = taskInstance.getTask().getTaskNode()
 		// .getLeavingTransition(transitionName);
 		for (Transition transition : (List<Transition>) (taskInstance

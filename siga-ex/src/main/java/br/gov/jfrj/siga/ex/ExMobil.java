@@ -341,8 +341,11 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		for (String s : mapAcronimo.keySet()) {
 			acronimos += "|" + s;
 		}
-
+		
 		final Pattern p2 = Pattern.compile("^TMP-?([0-9]{1,7})");
+		
+		//Edson: testes unitários para esta regex: https://regex101.com/r/NJidBr/2
+		//Ao acessar, clique em "Switch to unit tests"
 		final Pattern p1 = Pattern
 				.compile("^(?<orgao>"
 						+ acronimos

@@ -3615,13 +3615,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		}
 
 
-		// Orlando: O IF abaixo foi incluído para não permitir que o documento
-		// seja recebido após ter sido transferido para um órgão externo,
-		// inclusive no caso de despacho com transferência externa.
-		if (mob.isEmTransitoExterno())
-			return false;
-
-
 		// Verifica se o despacho já está assinado, em caso de documentos
 		// eletrônicos
 		if (mob.doc().isEletronico()) {

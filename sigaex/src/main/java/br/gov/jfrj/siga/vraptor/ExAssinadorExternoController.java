@@ -7,7 +7,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +24,16 @@ import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Put;
@@ -46,8 +59,6 @@ import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelMov;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
-import com.google.gson.Gson;
-
 @Resource
 public class ExAssinadorExternoController extends ExController {
 
@@ -66,7 +77,7 @@ public class ExAssinadorExternoController extends ExController {
 		String responsable;
 		boolean available;
 	}
-	
+
 	@Get("/public/app/assinador-externo/test")
 	public void assinadorExternoTest() throws Exception {
 		try {
@@ -81,7 +92,9 @@ public class ExAssinadorExternoController extends ExController {
 			jsonError(e);
 		}
 
-	}	@Get("/public/app/assinador-externo/doc/list")
+	}
+
+	@Get("/public/app/assinador-externo/doc/list")
 	public void assinadorExternoList() throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
@@ -102,7 +115,7 @@ public class ExAssinadorExternoController extends ExController {
 			for (ExAssinavelDoc ass : assinaveis) {
 				if (ass.isPodeAssinar()) {
 					ExAssinadorExternoListItem aei = new ExAssinadorExternoListItem();
-					aei.setId(makeId(cpf, ass.getDoc().getCodigoCompacto()));
+					aei.setId(makeId(ass.getDoc().getCodigoCompacto()));
 					aei.setSecret(docSecret(ass.getDoc()));
 					aei.setCode(ass.getDoc().getCodigo());
 					aei.setDescr(ass.getDoc().getDescrDocumento());
@@ -117,7 +130,7 @@ public class ExAssinadorExternoController extends ExController {
 					continue;
 				for (ExAssinavelMov assmov : ass.getMovs()) {
 					ExAssinadorExternoListItem aei = new ExAssinadorExternoListItem();
-					aei.setId(makeId(cpf, assmov.getMov().getReferencia()));
+					aei.setId(makeId(assmov.getMov().getReferencia()));
 					aei.setSecret(movSecret(assmov.getMov()));
 					aei.setCode(assmov.getMov().getReferencia());
 					aei.setDescr(assmov.getMov().getObs());
@@ -158,7 +171,7 @@ public class ExAssinadorExternoController extends ExController {
 			jsonError(e);
 		}
 	}
-	
+
 	private class PdfData {
 		byte[] pdf;
 		String secret;
@@ -167,7 +180,7 @@ public class ExAssinadorExternoController extends ExController {
 	private PdfData getPdf(String id)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, Exception, SQLException {
 		PdfData pdfd = new PdfData();
-		
+
 		String sigla = null;
 		if (id != null) {
 			sigla = id2sigla(id);
@@ -231,7 +244,7 @@ public class ExAssinadorExternoController extends ExController {
 
 			if (id == null)
 				throw new Exception("Id não informada.");
-			Long cpf = id2cpf(id);
+			Long cpf = req.getLong("cpf");
 			String sigla = id2sigla(id) + ".pdf";
 
 			ExMobil mob = Documento.getMobil(sigla);
@@ -285,14 +298,151 @@ public class ExAssinadorExternoController extends ExController {
 		}
 	}
 
+	private class Signature {
+		public String ref;
+		public String signer;
+		public String kind;
+	}
+
+	private class Movement {
+		public Date time;
+		public String department;
+		public String kind;
+	}
+
+	private class DocIdGetResponse {
+		public String status;
+		public List<Signature> signature;
+		public List<Movement> movement;
+	}
+
+	@Get("/public/app/assinador-externo/doc/{id}/info")
+	public void assinadorExternoDocInfo(String id) throws Exception {
+		try {
+			JSONObject req = getJsonReq(request);
+
+			assertPassword(req);
+
+			if (id == null)
+				throw new Exception("Id não informada.");
+			String sigla = id2sigla(id) + ".pdf";
+			ExMobil mob = Documento.getMobil(sigla);
+			ExMovimentacao mov = Documento.getMov(mob, sigla);
+
+			DocIdGetResponse resp = new DocIdGetResponse();
+			resp.signature = new ArrayList<>();
+			for (ExMovimentacao m : mob.doc().getAssinaturasDigitais()) {
+				Signature signature = new Signature();
+				signature.ref = makeId(m.getReferencia());
+				signature.kind = m.getExTipoMovimentacao().getDescricao();
+				signature.signer = m.getObs();
+				resp.signature.add(signature);
+			}
+
+			if (mov == null) {
+				if (mob.getDoc().isProcesso())
+					mob = mob.getDoc().getUltimoVolume();
+				if (mob.getDoc().isExpediente())
+					mob = mob.getDoc().getPrimeiraVia();
+				resp.status = mob.getMarcadores();
+				resp.movement = new ArrayList<>();
+
+				for (ExMovimentacao m : mob.getExMovimentacaoSet()) {
+					if (m.isCancelada() || m.isCanceladora())
+						continue;
+					Movement movement = new Movement();
+					movement.time = m.getDtIniMov();
+					movement.department = m.getLotaCadastrante().getSigla();
+					movement.kind = m.getExTipoMovimentacao().getDescricao();
+					resp.movement.add(movement);
+				}
+			}
+
+			jsonSuccess(resp);
+		} catch (Exception e) {
+			jsonError(e);
+		}
+	}
+
+	private class SignRefGetResponse {
+		public byte[] envelope;
+		public Date time;
+	}
+
+	@Get("/public/app/assinador-externo/sign/{ref}")
+	public void assinadorExternoSignCms(String ref) throws Exception {
+		try {
+			JSONObject req = getJsonReq(request);
+
+			assertPassword(req);
+
+			if (ref == null)
+				throw new Exception("Ref. não informada.");
+			ExMovimentacao mov = ExDao.getInstance().consultar(Long.parseLong(ref.split("_")[1]), ExMovimentacao.class,
+					false);
+			if (!(mov.getExTipoMovimentacao().getId()
+					.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
+					|| mov.getExTipoMovimentacao().getId()
+							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO))) {
+				throw new Exception("Não é assinatura digital");
+			}
+			SignRefGetResponse resp = new SignRefGetResponse();
+			resp.envelope = mov.getConteudoBlobMov2();
+			resp.time = mov.getDtMov();
+			jsonSuccess(resp);
+		} catch (Exception e) {
+			jsonError(e);
+		}
+	}
+
 	private void assertPassword(JSONObject req) throws Exception {
 		String pwd = SigaExProperties.getAssinadorExternoPassword();
 		if (pwd != null && !pwd.equals(this.request.getHeader("Authorization")))
 			throw new Exception("Falha de autenticação.");
 	}
 
+	public static String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
+	public static final SimpleDateFormat isoFormatter = new SimpleDateFormat(ISO_FORMAT);
+
+	public static final Gson gson = new GsonBuilder()
+			.registerTypeHierarchyAdapter(byte[].class, new ByteArrayToBase64TypeAdapter())
+			.registerTypeHierarchyAdapter(Date.class, new DateToStringTypeAdapter()).setPrettyPrinting().create();
+
+	private static class ByteArrayToBase64TypeAdapter implements JsonSerializer<byte[]>, JsonDeserializer<byte[]> {
+		public byte[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
+			return Base64.decode(json.getAsString());
+		}
+
+		public JsonElement serialize(byte[] src, Type typeOfSrc, JsonSerializationContext context) {
+			return new JsonPrimitive(Base64.encode(src));
+		}
+	}
+
+	private static class DateToStringTypeAdapter implements JsonSerializer<Date>, JsonDeserializer<Date> {
+		public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
+			return parse(json.getAsString());
+		}
+
+		public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
+			return new JsonPrimitive(format(src));
+		}
+	}
+
+	public static String format(Date date) {
+		return isoFormatter.format(date);
+	}
+
+	public static Date parse(String date) {
+		try {
+			return isoFormatter.parse(date);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
+
 	protected void jsonSuccess(final Object resp) {
-		Gson gson = new Gson();
 		String s = gson.toJson(resp);
 		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
 	}
@@ -373,22 +523,16 @@ public class ExAssinadorExternoController extends ExController {
 		return body;
 	}
 
-	private String makeId(Long cpf, String sigla) {
+	private String makeId(String sigla) {
 		if (sigla == null)
 			return null;
-		return cpf.toString() + "__" + sigla.replace(":", "_");
-	}
-
-	private Long id2cpf(String id) {
-		if (id == null)
-			return null;
-		return Long.valueOf(id.split("__")[0]);
+		return sigla.replace(":", "_");
 	}
 
 	private String id2sigla(String id) {
 		if (id == null)
 			return null;
-		return id.split("__")[1].replace("_", ":");
+		return id.replace("_", ":");
 	}
 
 	private String dateSecret(Date dt) {

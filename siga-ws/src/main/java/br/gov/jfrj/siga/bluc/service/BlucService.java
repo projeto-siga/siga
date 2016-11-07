@@ -124,7 +124,7 @@ public class BlucService {
 
 	public boolean test() throws Exception {
 		String r = void2string(this.endpoint + "/test");
-		return r.contains("OK");
+		return r.contains("\"available\": true");
 	}
 
 	public String date2string(Date dt) {

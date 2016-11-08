@@ -246,6 +246,7 @@
 						</c:if>
 						:
 						<c:forEach var="docFilho" items="${m.expedientesFilhosNaoCancelados}">
+							<c:if test="${!docFilho.doc.cancelado}">
 							<c:if test="${not first}">
 								, 
 							</c:if>
@@ -255,6 +256,7 @@
 								</b>
 							</a>
 							<c:set var="first" value="false" />
+							</c:if>
 						</c:forEach>
 					</p>
 				</c:if>
@@ -267,6 +269,7 @@
 						</c:if>
 						:
 						<c:forEach var="docFilho" items="${m.processosFilhosNaoCancelados}">
+							<c:if test="${!docFilho.doc.cancelado}">
 							<c:if test="${not first}">
 								, 
 							</c:if>
@@ -276,6 +279,7 @@
 								</b>
 							</a>
 							<c:set var="first" value="false" />
+							</c:if>
 						</c:forEach>
 					</p>
 				</c:if>	

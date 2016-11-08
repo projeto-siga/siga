@@ -128,18 +128,12 @@ public class ExMobilVO extends ExVO {
 
 		tempoIni = System.currentTimeMillis();
 		for (ExDocumento d : mob.getExDocumentoFilhoSet()) {
-			if (d.isEliminado())
-				continue;
-			// filhos.add(new ExDocumentoVO(d, null, titular, lotaTitular,
-			// false));
-			if (!d.isFinalizado() || !d.isCancelado()) {
-				if (d.isExpediente())
-					expedientesFilhosNaoCancelados.add(new ExDocumentoVO(d,
-							null, titular, lotaTitular, false, false));
-				else
-					processosFilhosNaoCancelados.add(new ExDocumentoVO(d, null,
-							titular, lotaTitular, false, false));
-			}
+			if (d.isExpediente())
+				expedientesFilhosNaoCancelados.add(new ExDocumentoVO(d,
+						null, titular, lotaTitular, false, false));
+			else
+				processosFilhosNaoCancelados.add(new ExDocumentoVO(d, null,
+						titular, lotaTitular, false, false));
 		}
 
 		for (ExDocumento doc : mob.getDocsFilhosNaoJuntados())

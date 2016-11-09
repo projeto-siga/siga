@@ -170,6 +170,13 @@ public class SrAtributoSolicitacao extends HistoricoSuporte {
 		atributoAtual.setLotaCadastrante(lotaCadastrante);
 		atributoAtual.salvarComHistorico();
 	}
+	
+	public void excluir(DpPessoa cadastrante, DpLotacao lotaCadastrante) throws Exception {
+		SrAtributoSolicitacao atributoAtual = this.getAtual();
+		atributoAtual.setCadastrante(cadastrante);
+		atributoAtual.setLotaCadastrante(lotaCadastrante);	
+		atributoAtual.finalizar();
+	}
 
 	@Override
 	public boolean equals(Object obj) {

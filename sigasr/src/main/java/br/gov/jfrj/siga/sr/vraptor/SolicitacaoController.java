@@ -949,7 +949,7 @@ public class SolicitacaoController extends SrController {
         result.include("contagens", contagens);
     }
     
-    @Path("app/solicitacao/gravar/atributo")
+    @Path("app/solicitacao/atributo/gravar")
     public void gravarAtributo(SrAtributoSolicitacao atributo) throws Exception {
     	SrAtributoSolicitacao atributoEntity = SrAtributoSolicitacao.AR.findById(atributo.getId());
     	//inserir validacao de atributo obrigatorios
@@ -958,5 +958,10 @@ public class SolicitacaoController extends SrController {
     	result.use(Results.http()).body(atributo.getValorAtributoSolicitacao());
     }
     
-    
+    @Path("app/solicitacao/atributo/excluir")
+	public void excluirAtributo(Long id) throws Exception {
+		SrAtributoSolicitacao atributoEntity = SrAtributoSolicitacao.AR.findById(id);	
+		atributoEntity.excluir(getCadastrante(), getLotaCadastrante());
+		result.use(Results.status()).ok();
+	}
 }

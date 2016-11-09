@@ -41,6 +41,15 @@ AtributoEditavel.prototype = {
 		AtributoEditavel.ELEMENTO_EDITAVEL.hide().after(AtributoEditavel.FORM_EDITAVEL);
 	},
 	
+	excluir: function() {
+		var elementoEditavel = this.getElementoComAtributoEditavel();
+		elementoEditavel.block(paramToBlock);
+		Siga.ajax(this.propriedades.urlDestino, null, "GET", function() {
+			elementoEditavel.unblock();
+			elementoEditavel.parent().remove();
+		});
+	},
+	
 	toString: function() {
 		console.log(this.propriedades.id + ", " + this.propriedades.valor + ", " + this.propriedades.tipo + ", " + this.propriedades.valoresPreDefinidos +
 				", " + $(this.propriedades.elemento).text());
@@ -102,26 +111,14 @@ FormEditavel.prototype = {
 		var self = this;
 		self.form.find('.botao-editavel > .ok').click(function(event) {
 			event.preventDefault();
-			var parametros = self.getParamToBlock();
-			self.form.block(parametros);
+			self.form.block(paramToBlock);
 			Siga.ajax(self.propriedades.urlDestino, self.form.serialize(), "POST", function(response) {
-				self.elementoEditavel.find('span').text(response);
+				self.elementoEditavel.find('span.valor-atributo').text(response);
 				self.elementoEditavel.show();
 				self.form.unblock();
 				self.form.remove();
 			});
 		});
-	},
-	
-	getParamToBlock: function() {
-		var param = { css: {
-		    border: 'none',
-		    paddingTop: '3px',
-		    backgroundColor: '#000',
-		    opacity: .6,
-		}, message: '<h4 style="color : #fff;"> Carregando... </h4>' };
-		
-		return param;	
 	},
 	
 	acaoCancelar: function() {
@@ -434,3 +431,12 @@ Validador.prototype = {
 		campo.siblings('span.error').remove();
 	}
 }
+
+
+var paramToBlock = { css: {
+	    border: 'none',
+	    paddingTop: '3px',
+	    backgroundColor: '#000',
+	    opacity: .6,
+	}, message: '<h4 style="color : #fff;"> Carregando... </h4>'
+};

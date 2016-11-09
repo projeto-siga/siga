@@ -87,19 +87,25 @@
 					parseDescricao('descrSolicitacao');
 				</script>
 				<c:forEach items="${atributos}" var="att">
-					<c:if
-						test="${att.valorAtributoSolicitacao != null && !att.valorAtributoSolicitacao.isEmpty()}">
-						<p style="float: left; font-size: 9pt; padding: 0px"><b>${att.atributo.nomeAtributo}: &nbsp</b></p>
-						<div class="atributo-editavel">
-							<p style="font-size: 9pt;">
-								<span>${att.valorAtributoSolicitacao}</span>
-								<c:if test="${solicitacao.podeEditarAtributo(titular, lotaTitular)}">
-									<a href="#" onclick="editarAtributo('${att.id}', '${att.atributo.tipoAtributo.name()}', '${att.atributo.preDefinidoSet}');">
-										<img src="/siga/css/famfamfam/icons/pencil.png" title="editar" style="margin-left: 5px;">
-									</a>
-									<!-- <a href="#">remover</a>-->
-								</c:if>
-							</p>
+					<c:if test="${att.valorAtributoSolicitacao != null && !att.valorAtributoSolicitacao.isEmpty()}">
+						<div>
+							<p style="float: left; font-size: 9pt; padding: 0px"><b>${att.atributo.nomeAtributo}: &nbsp</b></p>
+							<div class="atributo-editavel">
+								<p style="font-size: 9pt; float: left;">
+									<span class="valor-atributo">${att.valorAtributoSolicitacao}</span>
+									<c:if test="${solicitacao.podeEditarAtributo(titular, lotaTitular)}">
+										<div class="gt-table-action-list" style=>
+											<a href="#" onclick="editarAtributo('${att.id}', '${att.atributo.tipoAtributo.name()}', '${att.atributo.preDefinidoSet}');">
+												<img src="/siga/css/famfamfam/icons/pencil.png" title="editar" style="width: 40%; margin-left: 20px;" />
+											</a>		
+											<span class="gt-separator">|</span>			
+											<a href="#" onclick="excluirAtributo('${att.id}', '${att.atributo.nomeAtributo}');">
+												<img src="/siga/css/famfamfam/icons/delete.png" title="excluir" style="width: 80%;"/>
+											</a>
+										</div>
+									</c:if>
+								</p>
+							</div>
 						</div>
 					</c:if>
 				</c:forEach>
@@ -802,7 +808,7 @@
 		
 	function editarAtributo(idAtributo, tipoAtributo, preDefinidoSet) {
 		event.preventDefault();
-		var valorAtributo = $(event.target).parent().siblings("span").text();
+		var valorAtributo = $(event.target).closest(".atributo-editavel").find(".valor-atributo").text();
 		var propriedades = {
 			id: idAtributo,
 			valor: valorAtributo,
@@ -814,5 +820,17 @@
 		};
 		var atributoSolicitacao = new AtributoEditavel(propriedades);
 		atributoSolicitacao.editar();
+	}
+
+	function excluirAtributo(idAtributo, nome) {
+		event.preventDefault();
+		if (!confirm('Confirmar exclusão do atributo ' + nome))
+			return;
+		var propriedades = {
+			elemento: event.target,
+			urlDestino: '${linkTo[SolicitacaoController].excluirAtributo}?id=' + idAtributo
+		};
+		var atributoSolicitacao = new AtributoEditavel(propriedades);
+		atributoSolicitacao.excluir();
 	}
 </script>

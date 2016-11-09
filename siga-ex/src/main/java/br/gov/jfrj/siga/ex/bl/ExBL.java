@@ -3534,7 +3534,7 @@ public class ExBL extends CpBL {
 		// Se houve alteração, propagar para os documentos juntados em cada
 		// mobil
 		//
-		if (!doc.getDnmAcesso().equals(acesso.getAcessosString(doc, dt))){
+		if (doc.getDnmAcesso() == null || !doc.getDnmAcesso().equals(acesso.getAcessosString(doc, dt))){
 			for (ExMobil mob : doc.getExMobilSet()) {
 				int pularInferiores = 0;
 				for (ExArquivoNumerado an : doc.getArquivosNumerados(mob)) {
@@ -5283,7 +5283,10 @@ public class ExBL extends CpBL {
 			set = threadAlteracaoParcial.get();
 		}
 		if (mob != null && mob.doc() != null) {
-			atualizarMarcas(mob);
+			if (mob.isGeral())
+				atualizarMarcas(mob.doc());
+			else
+				atualizarMarcas(mob);
 			atualizarVariaveisDenormalizadas(mob.doc());
 		}
 		set.add(mob);
@@ -5304,7 +5307,10 @@ public class ExBL extends CpBL {
 
 	private void concluirAlteracao(ExMobil mob, ExDocumento doc) throws Exception {
 		if (mob != null) {
-			atualizarMarcas(mob);
+			if (mob.isGeral())
+				atualizarMarcas(mob.doc());
+			else
+				atualizarMarcas(mob);
 			atualizarVariaveisDenormalizadas(mob.doc());
 		} else if (doc != null){
 			atualizarMarcas(doc);

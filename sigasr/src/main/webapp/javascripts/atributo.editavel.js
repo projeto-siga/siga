@@ -24,12 +24,12 @@ AtributoEditavel.prototype = {
 	
 	iniciar: function() {
 		AtributoEditavel.ELEMENTO_EDITAVEL = this.getElementoComAtributoEditavel();
-		AtributoEditavel.FORM_EDITAVEL = this.construirForm();
+		AtributoEditavel.FORM_EDITAVEL = this.getForm();
 	},
 	
-	construirForm: function() {
+	getForm: function() {
 		var form = new FormEditavel(this.propriedades, AtributoEditavel.ELEMENTO_EDITAVEL);
-		return form.construir();
+		return form;
 	},
 	
 	getElementoComAtributoEditavel: function() {
@@ -38,7 +38,8 @@ AtributoEditavel.prototype = {
 	
 	editar: function() {
 		this.iniciar();
-		AtributoEditavel.ELEMENTO_EDITAVEL.hide().after(AtributoEditavel.FORM_EDITAVEL);
+		AtributoEditavel.ELEMENTO_EDITAVEL.hide().after(AtributoEditavel.FORM_EDITAVEL.construir());
+		AtributoEditavel.FORM_EDITAVEL.definirAlturaDivBotao();
 	},
 	
 	excluir: function() {
@@ -69,7 +70,7 @@ var FormEditavel = function (propriedades, elementoEditavel) {
 	
 	this.form = "<form class='form-editavel' action='#' method='post' enctype='multipart/form-data'>" +	
 						"<div class='div-campo-editavel' style='float: left; margin-right: 11px;'></div>" +
-						"<div class='botao-editavel' style='height:30px;'></div>" +
+						"<div class='botao-editavel'></div>" +
 				"</form>";
 	
 	this.botao = "<input type='submit' class='ok ui-state-default ui-corner-all' style='padding:.2em 1em; margin-right: 5px;' value='ok'/>" +
@@ -84,10 +85,10 @@ FormEditavel.prototype = {
 	
 	construir: function() {
 		this.iniciar();
-		this.inserirBotao();
-		this.inserirCampoHidden();
 		this.inserirCampoEditavel(this.propriedades);
-
+		this.inserirCampoHidden();
+		this.inserirBotao();
+		
 		return this.form;
 	},
 	
@@ -111,6 +112,12 @@ FormEditavel.prototype = {
 		var self = this;
 		self.form.find('.botao-editavel > .ok').click(function(event) {
 			event.preventDefault();
+			var validador = new Validador(self.getCampoEditavel(), self.propriedades.tipo);
+			validador.mensagemHandler();
+			if (!validador.isCampoPreenchido()) {
+				validador.getMensagemCampoNaoPreenchido();
+				return;
+			}
 			self.form.block(paramToBlock);
 			Siga.ajax(self.propriedades.urlDestino, self.form.serialize(), "POST", function(response) {
 				self.elementoEditavel.find('span.valor-atributo').text(response);
@@ -128,7 +135,7 @@ FormEditavel.prototype = {
 			self.form.remove();
 		});
 	},
-	
+		
 	inserirCampoHidden: function() {
 		var nameDoInput = this.propriedades.nome.split(".")[0] + '.id';
 		this.inserirCampoEditavel({tipo: 'HIDDEN', nome: nameDoInput, valor: this.propriedades.id});
@@ -143,7 +150,19 @@ FormEditavel.prototype = {
 	construirCampoEditavel: function(propriedades) {
 		var campo = new CampoEditavel(propriedades); 
 		return campo.construir();
-	}
+	},
+	
+	getCampoEditavel: function() {
+		var divComCampoEditavel = this.form.find('.div-campo-editavel');
+		var campoEditavel = divComCampoEditavel.find('.campo-editavel').first();
+		return campoEditavel;
+	},
+	
+	definirAlturaDivBotao: function() {
+		var divBotao = this.form.find('.botao-editavel');
+		var campoEditavel = this.getCampoEditavel();
+		divBotao.css({'height': campoEditavel.height() + 15 + 'px'});
+	},
 }
 
 /**
@@ -303,7 +322,7 @@ ValorPreDefinido.prototype.inserirParametros = function() {
 
 var Textarea = function(propriedades, campo) {
 	CampoEditavelAbstract.call(this, propriedades, campo);
-	this.coluna = {key: 'cols', value: '75'};
+	this.coluna = {key: 'cols', value: '85'};
 	this.linha = {key: 'rows', value: '5'};
 	this.maximo = {key: 'maxlength', value: '255'};
 }
@@ -399,11 +418,9 @@ Validador.prototype = {
 		var tempo = valor.split(':');
 		var hora = tempo[0];
 		var minuto = tempo[1];
-		if (hora > 23 || minuto > 59) {
-			this.mostrarMensagem(this.campo, 'Horário inválido para o padrão 24h') 
-			return;
-		}
-		this.removerMensagem(this.campo);
+		this.removerMensagem();
+		if (hora > 23 || minuto > 59)
+			this.mostrarMensagem('Horário inválido para o padrão 24h'); 
 	},
 	
 	inserirMascara_NUM_INTEIRO: function() {
@@ -419,16 +436,33 @@ Validador.prototype = {
 		this.campo.mask('99/99/9999');
 	},
 	
-	mostrarMensagem: function(campo, msg) {
+	isCampoPreenchido: function() {
+		var valor = this.campo.val();
+		return valor.length > 0;
+	},
+	
+	getMensagemCampoNaoPreenchido: function() {
+		this.mostrarMensagem('Atributo não informado');
+	},
+	
+	mostrarMensagem: function(msg) {
 		var span = $('<span>'); 
 		span.addClass('error')
 			.css({'margin-left':'10px', 'color':'red'})
 			.text(msg)
-			.insertAfter(campo);
+			.insertAfter(this.campo);
 	},
 	
-	removerMensagem: function(campo) {
-		campo.siblings('span.error').remove();
+	mensagemHandler: function() {
+		var self = this;
+		self.campo.focus(function() {
+			event.stopPropagation();
+			self.removerMensagem();
+		});
+	},
+	
+	removerMensagem: function() {
+		this.campo.siblings('span.error').remove();
 	}
 }
 

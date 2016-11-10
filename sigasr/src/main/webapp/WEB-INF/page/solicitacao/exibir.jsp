@@ -91,19 +91,19 @@
 						<div>
 							<p style="float: left; font-size: 9pt; padding: 0px"><b>${att.atributo.nomeAtributo}: &nbsp</b></p>
 							<div class="atributo-editavel">
-								<p style="font-size: 9pt; float: left;">
+								<c:if test="${solicitacao.podeEditarAtributo(titular, lotaTitular)}">
+									<div class="gt-table-action-list" style="float:right;">
+										<a href="#" onclick="editarAtributo('${att.id}', '${att.atributo.tipoAtributo.name()}', '${att.atributo.preDefinidoSet}');">
+											<img src="/siga/css/famfamfam/icons/pencil.png" title="editar" style="width: 40%; margin-left: 20px;" />
+										</a>		
+										<span class="gt-separator">|</span>			
+										<a href="#" onclick="excluirAtributo('${att.id}', '${att.atributo.nomeAtributo}');">
+											<img src="/siga/css/famfamfam/icons/delete.png" title="excluir" style="width: 80%;"/>
+										</a>
+									</div>
+								</c:if>
+								<p style="font-size: 9pt;">
 									<span class="valor-atributo">${att.valorAtributoSolicitacao}</span>
-									<c:if test="${solicitacao.podeEditarAtributo(titular, lotaTitular)}">
-										<div class="gt-table-action-list" style=>
-											<a href="#" onclick="editarAtributo('${att.id}', '${att.atributo.tipoAtributo.name()}', '${att.atributo.preDefinidoSet}');">
-												<img src="/siga/css/famfamfam/icons/pencil.png" title="editar" style="width: 40%; margin-left: 20px;" />
-											</a>		
-											<span class="gt-separator">|</span>			
-											<a href="#" onclick="excluirAtributo('${att.id}', '${att.atributo.nomeAtributo}');">
-												<img src="/siga/css/famfamfam/icons/delete.png" title="excluir" style="width: 80%;"/>
-											</a>
-										</div>
-									</c:if>
 								</p>
 							</div>
 						</div>

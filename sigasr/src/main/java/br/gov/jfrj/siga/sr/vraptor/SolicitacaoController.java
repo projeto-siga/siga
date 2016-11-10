@@ -952,8 +952,6 @@ public class SolicitacaoController extends SrController {
     @Path("app/solicitacao/atributo/gravar")
     public void gravarAtributo(SrAtributoSolicitacao atributo) throws Exception {
     	SrAtributoSolicitacao atributoEntity = SrAtributoSolicitacao.AR.findById(atributo.getId());
-    	//inserir validacao de atributo obrigatorios
-    	
     	atributoEntity.gravar(atributo.getValorAtributoSolicitacao(), getCadastrante(), getLotaCadastrante());
     	result.use(Results.http()).body(atributo.getValorAtributoSolicitacao());
     }

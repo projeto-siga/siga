@@ -4,8 +4,7 @@
                             "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 	<!-- Criado em 21 Dez 2005       -->
 <hibernate-mapping package="br.gov.jfrj.siga.dp" schema="CORPORATIVO">
-	<class name="DpLotacao" mutable="true" table="DP_LOTACAO"
-		batch-size="500">
+	<class name="DpLotacao" mutable="true" table="DP_LOTACAO">
 		<id name="idLotacao" column="ID_LOTACAO" type="long">
 			<generator class="sequence">
 				<param name="sequence">DP_LOTACAO_SEQ</param>

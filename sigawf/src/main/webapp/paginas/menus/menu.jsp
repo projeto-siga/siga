@@ -63,7 +63,7 @@
 			<li><a href="#">Apresentar Métricas</a>
 				<ul class="navmenu-large">
 					<c:forEach var="pd" items="${processDefinitions}">
-						<li><a href="${linkTo[MedicaoController].medir}?orgao=${lotaTitular.orgaoUsuario.acronimoOrgaoUsu}&procedimento=${pd.name}">${pd.name}</a>
+						<li><a href="${linkTo[MetricaController].medir}?orgao=${lotaTitular.orgaoUsuario.id}&procedimento=${pd.name}&pdId=${pd.id}">${pd.name}</a>
 						</li>
 					</c:forEach>
 				</ul></li>

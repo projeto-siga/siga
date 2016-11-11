@@ -2,7 +2,7 @@
 
 <script type="text/javascript" language="Javascript1.1">
 	function sbmt() {
-		frmRelatorio.action = '${linkTo[MedirController].relatorio}';
+		frmRelatorio.action = '${linkTo[MetricaController].relatorio}';
 		frmRelatorio.submit();
 	}
 </script>
@@ -35,10 +35,10 @@
 			<h2>${titulo_pagina}</h2>
 			<div class="gt-content-box gt-for-table">
 				<form name="frmRelatorio" method="get" class="form">
+					<input type="hidden" name="pdId" value="${pdId}" />
+					<input type="hidden" name="orgao" value="${orgao}" />
+					<input type="hidden" name="procedimento" value="${procedimento}" />
 					<table class="gt-form-table">
-						<input type="hidden" name="pdId" value="${pdId}" />
-						<input type="hidden" name="orgao" value="${pdId}" />
-						<input type="hidden" name="procedimento" value="${procedimento}" />
 						<tr>
 							<td>Órgão</td>
 							<td>${orgao}</td>
@@ -49,8 +49,10 @@
 						</tr>
 						<tr>
 							<siga:select
-								list="#{'1':'Estatísticas gerais', '2':'Tempo de documentos','3':'Tempo de documentos detalhado'}"
+								list="listaTipoRelatorio"
+								listKey="id" listValue="descr" 
 								label="Relatório" name="selecaoRelatorio"
+								id="selecaoRelatorio"
 								onchange="javascript:exibirOpcoesExtras()" />
 						</tr>
 						<tr>

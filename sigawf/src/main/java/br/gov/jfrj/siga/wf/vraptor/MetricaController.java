@@ -1,6 +1,8 @@
 package br.gov.jfrj.siga.wf.vraptor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,6 +15,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.Download;
+import br.gov.jfrj.siga.vraptor.SigaIdDescr;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.wf.SigaWfProperties;
 import br.gov.jfrj.siga.wf.dao.WfDao;
@@ -49,12 +52,23 @@ public class MetricaController extends WfController {
 				.getNmOrgaoUsu());
 
 		result.include("procedimento", procedimento);
+		result.include("pdId", pdId);
 		result.include("lstGruposIni", tarefas);
 		result.include("lstGruposFim", tarefas);
 		result.include("minMediaTruncada", SigaWfProperties.getRelEstatGeraisMinMediaTrunc().toString()
 				.replace(".", ","));
 		result.include("maxMediaTruncada", SigaWfProperties.getRelEstatGeraisMaxMediaTrunc().toString()
 				.replace(".", ","));
+		result.include("listaTipoRelatorio", getListaTipoRelatorio());
+	}
+
+	private List<SigaIdDescr> getListaTipoRelatorio() {
+		ArrayList<SigaIdDescr> lista = new ArrayList<SigaIdDescr>();
+		
+		lista.add(new SigaIdDescr(1, "Estatísticas gerais"));
+		lista.add(new SigaIdDescr(2, "Tempo de documentos"));
+		lista.add(new SigaIdDescr(3, "Tempo de documentos detalhado"));
+		return lista;
 	}
 
 	public Download relatorio(Long pdId, Long grpIni, Long grpFim,

@@ -273,7 +273,7 @@
 							<c:if test="${not first}">
 								, 
 							</c:if>
-							<a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?${docFilho.sigla}" title="${docFilho.descrDocumento}">
+							<a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${docFilho.sigla}" title="${docFilho.descrDocumento}">
 								<b>
 									${docFilho.siglaCurtaSubProcesso}
 								</b>
@@ -284,7 +284,7 @@
 					</p>
 				</c:if>	
 				<c:if test="${not empty m.apensos}">
-					<c:set var="first" value="true" />
+					<c:set var="first" value="true" />siga.
 					<p class="apensados" style="margin-top: 0pt;">
 						Documento
 						<c:if test="${m.apensos.size() gt 1}">

@@ -1284,7 +1284,7 @@ public class ExBL extends CpBL {
 					null, null, dt);
 			mov.setExMobilRef(termo);
 			gravarMovimentacao(mov);
-			concluirAlteracaoParcial(mob);
+			concluirAlteracaoParcialComRecalculoAcesso(mob);
 			concluirAlteracao(null);
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -1719,7 +1719,7 @@ public class ExBL extends CpBL {
 			mov.setDescrMov(sNome);
 
 			gravarMovimentacao(mov);
-			concluirAlteracaoDoc(mov.getExMobil().getDoc());
+			concluirAlteracaoDocComRecalculoAcesso(mov.getExMobil().getDoc());
 
 			// Verifica se o documento possui documento pai e faz a juntada
 			// automática. Caso o pai seja um volume de um processo, primeiro
@@ -1857,7 +1857,7 @@ public class ExBL extends CpBL {
 					+ subscritor.getSigla());
 
 			gravarMovimentacao(mov);
-			concluirAlteracaoDoc(doc);
+			concluirAlteracaoDocComRecalculoAcesso(doc);
 
 			// Verifica se o documento possui documento pai e faz a juntada
 			// automática.
@@ -2350,7 +2350,7 @@ public class ExBL extends CpBL {
 			iniciarAlteracao();
 			cancelarMovimentacoes(cadastrante, lotaCadastrante, doc);
 			cancelarMovimentacoesReferencia(cadastrante, lotaCadastrante, doc);
-			concluirAlteracaoDoc(doc);
+			concluirAlteracaoDocComRecalculoAcesso(doc);
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao cancelar o documento.", 0, e);
@@ -2445,7 +2445,7 @@ public class ExBL extends CpBL {
 			}
 
 			gravarMovimentacao(mov);
-			concluirAlteracao(mov.getExMobil());
+			concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao cancelar juntada.", 0, e);
@@ -2683,7 +2683,7 @@ public class ExBL extends CpBL {
 							atualizarMarcas(mobPai);
 					}
 
-				concluirAlteracaoParcial(m);
+				concluirAlteracaoParcialComRecalculoAcesso(m);
 			}
 
 			concluirAlteracao(null);
@@ -3434,7 +3434,7 @@ public class ExBL extends CpBL {
 
 			String s = processarComandosEmTag(doc, "gravacao");
 
-			concluirAlteracaoDoc(doc);
+			concluirAlteracaoDocComRecalculoAcesso(doc);
 
 			// Finaliza o documento automaticamente se ele for coloborativo
 			if (!primeiraGravacao && doc.isColaborativo() && !doc.isFisico()
@@ -3787,7 +3787,7 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			processar(doc, true, false);
-			concluirAlteracaoDoc(doc);
+			concluirAlteracaoDocComRecalculoAcesso(doc);
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao incluir Cossignatário.", 0, e);
@@ -3910,7 +3910,7 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException("Opção inválida.");
 
 			gravarMovimentacao(mov);
-			concluirAlteracao(mov.getExMobil());
+			concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -3939,7 +3939,7 @@ public class ExBL extends CpBL {
 
 			cancelarMovimentacoes(cadastrante, lotaCadastrante, doc);
 
-			concluirAlteracaoDoc(novoDoc);
+			concluirAlteracaoDocComRecalculoAcesso(novoDoc);
 			// atualizarWorkflow(doc, null);
 			return novoDoc;
 		} catch (final Exception e) {
@@ -4294,7 +4294,7 @@ public class ExBL extends CpBL {
 					subscritor, null, null, null, null);
 
 			gravarMovimentacao(mov);
-			concluirAlteracaoDoc(doc);
+			concluirAlteracaoDocComRecalculoAcesso(doc);
 
 			// Verifica se o documento possui documento pai e faz a juntada
 			// automática.
@@ -4574,7 +4574,7 @@ public class ExBL extends CpBL {
 						mov.setDescrMov("Transferência automática.");
 
 					gravarMovimentacao(mov);
-					concluirAlteracaoParcial(m);
+					concluirAlteracaoParcialComRecalculoAcesso(m);
 				}
 			}
 
@@ -4790,7 +4790,7 @@ public class ExBL extends CpBL {
 			doc.setExNivelAcesso(nivelAcesso);
 
 			gravarMovimentacao(mov);
-			concluirAlteracao(mov.getExMobil());
+			concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException(
@@ -5275,8 +5275,16 @@ public class ExBL extends CpBL {
 	private void iniciarAlteracao() throws AplicacaoException {
 		ExDao.iniciarTransacao();
 	}
-
+	
 	private void concluirAlteracaoParcial(ExMobil mob) {
+		concluirAlteracaoParcial(mob, false);
+	}
+	
+	private void concluirAlteracaoParcialComRecalculoAcesso(ExMobil mob) {
+		concluirAlteracaoParcial(mob, true);
+	}
+
+	private void concluirAlteracaoParcial(ExMobil mob, boolean recalcularAcesso) {
 		SortedSet<ExMobil> set = threadAlteracaoParcial.get();
 		if (set == null) {
 			threadAlteracaoParcial.set(new TreeSet<ExMobil>());
@@ -5287,7 +5295,8 @@ public class ExBL extends CpBL {
 				atualizarMarcas(mob.doc());
 			else
 				atualizarMarcas(mob);
-			atualizarVariaveisDenormalizadas(mob.doc());
+			if (recalcularAcesso)
+				atualizarVariaveisDenormalizadas(mob.doc());
 		}
 		set.add(mob);
 	}
@@ -5298,23 +5307,33 @@ public class ExBL extends CpBL {
 	}
 	
 	private void concluirAlteracao(ExMobil mob) throws Exception {
-		concluirAlteracao(mob, null);
+		concluirAlteracao(mob, null, false);
 	}
 	
 	private void concluirAlteracaoDoc(ExDocumento doc) throws Exception {
-		concluirAlteracao(null, doc);
+		concluirAlteracao(null, doc, false);
+	}
+	
+	private void concluirAlteracaoComRecalculoAcesso(ExMobil mob) throws Exception {
+		concluirAlteracao(mob, null, true);
+	}
+	
+	private void concluirAlteracaoDocComRecalculoAcesso(ExDocumento doc) throws Exception {
+		concluirAlteracao(null, doc, true);
 	}
 
-	private void concluirAlteracao(ExMobil mob, ExDocumento doc) throws Exception {
+	private void concluirAlteracao(ExMobil mob, ExDocumento doc, boolean recalcularAcesso) throws Exception {
 		if (mob != null) {
 			if (mob.isGeral())
 				atualizarMarcas(mob.doc());
 			else
 				atualizarMarcas(mob);
-			atualizarVariaveisDenormalizadas(mob.doc());
+			if (recalcularAcesso)
+				atualizarVariaveisDenormalizadas(mob.doc());
 		} else if (doc != null){
 			atualizarMarcas(doc);
-			atualizarVariaveisDenormalizadas(doc);
+			if (recalcularAcesso)
+				atualizarVariaveisDenormalizadas(doc);
 		}
 		ExDao.commitTransacao();
 		// if (doc != null)
@@ -6022,7 +6041,7 @@ public class ExBL extends CpBL {
 				obterMetodoPorString(funcao, doc);
 			}
 
-			concluirAlteracaoDoc(doc);
+			concluirAlteracaoDocComRecalculoAcesso(doc);
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException(

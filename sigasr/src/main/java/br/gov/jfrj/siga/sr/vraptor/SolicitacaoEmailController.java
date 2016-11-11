@@ -2,7 +2,6 @@ package br.gov.jfrj.siga.sr.vraptor;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -86,18 +85,9 @@ public class SolicitacaoEmailController extends SrController {
 		};
 	}
 
-	private SrSolicitacao criarSolicitacao(DpPessoa pessoa, String descricao, String textoMensagem, UploadedFile arquivoMensagem, Calendar dataEnvio) throws Exception {
-		String siglaDoItem = SigaBaseProperties.getString(_NOME_PARAM_ITEM_SIGLA);
-		String siglaDaAcao = SigaBaseProperties.getString(_NOME_PARAM_ACAO_SIGLA);
-		
-		SrItemConfiguracao itemConfiguracao = (SrItemConfiguracao) SrItemConfiguracao.AR.find("siglaItemConfiguracao = ?", siglaDoItem).first();
-		SrAcao acao = (SrAcao) SrAcao.AR.find("siglaAcao = ?", siglaDaAcao).first();
-		
-		ArrayList<SrConfiguracao> desigs = new ArrayList<SrConfiguracao>(itemConfiguracao.getDesignacoesAtivas());
-		
-		SrConfiguracao designacao = desigs.get(0);
-		
+	private SrSolicitacao criarSolicitacao(DpPessoa pessoa, String descricao, String textoMensagem, UploadedFile arquivoMensagem, Calendar dataEnvio, SrItemConfiguracao itemConfiguracao, SrAcao acao, SrConfiguracao designacao) throws Exception {
 		SrSolicitacao srSolicitacao = new SrSolicitacao();
+		
 		srSolicitacao.setAcao(acao.getAtual());
 		srSolicitacao.setItemConfiguracao(itemConfiguracao.getAtual());
 		srSolicitacao.setDesignacao(designacao);
@@ -114,7 +104,7 @@ public class SolicitacaoEmailController extends SrController {
 		srSolicitacao.setMeioComunicacao(SrMeioComunicacao.EMAIL);
 		srSolicitacao.setRascunho(false);
 
-		if (pessoa != null) {
+		if (pessoa != null) { 
 			srSolicitacao.setLotaSolicitante(pessoa.getLotacao());
 			srSolicitacao.setLotaTitular(pessoa.getLotacao());
 			srSolicitacao.setSolicitante(pessoa);
@@ -127,10 +117,50 @@ public class SolicitacaoEmailController extends SrController {
 		srSolicitacao.salvar(pessoa, pessoa.getLotacao(), pessoa, pessoa.getLotacao());
 		return srSolicitacao;
 	}
+
+	private SrConfiguracao recuperarDesignacao(SrItemConfiguracao itemConfiguracao, SrAcao acao) {
+		SrConfiguracao designacao = null;
+		SrConfiguracao filtro = new SrConfiguracao();
+		filtro.setItemConfiguracaoFiltro(itemConfiguracao);
+		filtro.setAcaoFiltro(acao);
+		try {
+			designacao = SrConfiguracao.buscarDesignacao(filtro);
+		} catch(Exception e) {
+			return null;
+		}
+		return designacao;
+	}
+
+	private SrAcao recuperarAcao() {
+		String siglaDaAcao = SigaBaseProperties.getString(_NOME_PARAM_ACAO_SIGLA);
+		SrAcao acao = null;
+		try {
+			acao = (SrAcao) SrAcao.AR.find("siglaAcao = ? and hisDtFim is null", siglaDaAcao).first();
+		} catch(Exception e) {
+			return null;
+		}
+		return acao;
+	}
+
+	private SrItemConfiguracao recuperarItem() {
+		String siglaDoItem = SigaBaseProperties.getString(_NOME_PARAM_ITEM_SIGLA);
+		SrItemConfiguracao itemConfiguracao = null;
+		try {
+			itemConfiguracao = (SrItemConfiguracao) SrItemConfiguracao.AR.find("siglaItemConfiguracao = ? and hisDtFim is null", siglaDoItem).first();
+		} catch(Exception e) {
+			return null;
+		}
+		return itemConfiguracao;
+	}
 	
 	private static DpPessoa localizarPessoaPeloEmail(String emailPessoa) {
-		DpPessoa pessoa = ((DpPessoa) DpPessoa.AR.find("emailPessoa = ?", emailPessoa).first());
-
+		DpPessoa pessoa = null;
+		try {
+			pessoa = ((DpPessoa) DpPessoa.AR.find("emailPessoa = ? and dataFimPessoa is null", emailPessoa).first());
+		}
+		catch(Exception e) {
+			return null;
+		}
 		return pessoa;
 	}
 	
@@ -144,17 +174,25 @@ public class SolicitacaoEmailController extends SrController {
 			UploadedFile anexo = getArquivoMsg(arquivoMsg, assunto);
 			
 			DpPessoa pessoa = localizarPessoaPeloEmail(emailRemetente);
+			SrItemConfiguracao itemConfiguracao = recuperarItem();
+			SrAcao acao = recuperarAcao();
+			SrConfiguracao designacao = recuperarDesignacao(itemConfiguracao, acao);
+			
 			if(pessoa == null) {
 				retorno = new Retorno("0", "nao ha usuario do siga cadastrado com o email informado");
+			} else if(itemConfiguracao == null) { 
+				retorno = new Retorno("0", "Erro ao recuperar o Item");
+			} else if(acao == null) { 
+				retorno = new Retorno("0", "Erro ao recuperar a Acao");
+			} else if(designacao == null) { 
+				retorno = new Retorno("0", "Erro ao recuperar a Designacao");
 			} else {
-			
 				try {
-					SrSolicitacao srSolicitacao = criarSolicitacao(pessoa, assunto, textoEmail, anexo, dataEnvio);
+					SrSolicitacao srSolicitacao = criarSolicitacao(pessoa, assunto, textoEmail, anexo, dataEnvio, itemConfiguracao, acao, designacao);
 					retorno = new Retorno("1", srSolicitacao.getCodigo());
 				} catch (Exception e) {
 					retorno = new Retorno("0", "erro generico ao salvar a solicitacao: " + e.getMessage());
 				}
-			
 			}
 		}
 		result.use(Results.xml()).from(retorno).serialize();

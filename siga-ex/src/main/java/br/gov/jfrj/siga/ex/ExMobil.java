@@ -900,15 +900,11 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 */
 	public boolean isEliminado() {
 
-		// Edson: prejudicando performance, devido aos lugares em que é chamado
-		// Ver jeito melhor de verificar se está eliminado
-		return false;
-		/*
-		 * if (isGeral() && doc().isExpediente()) return doc().isEliminado();
-		 * 
-		 * return sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO, 0,
-		 * getMobilParaMovimentarDestinacao());
-		 */
+		 if (isGeral() && doc().isExpediente()) 
+			 return doc().isEliminado();
+		
+		 return sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO, 0,  getMobilParaMovimentarDestinacao());
+
 	}
 
 	/**

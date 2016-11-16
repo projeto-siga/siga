@@ -5,7 +5,7 @@
 <!-- Criado em 21 Dez 2005       -->
 <hibernate-mapping package="br.gov.jfrj.siga.dp" schema="CORPORATIVO">
 	<class name="DpPessoa" mutable="true" table="DP_PESSOA"
-		schema="CORPORATIVO" batch-size="500">
+		schema="CORPORATIVO" >
 		<id name="idPessoa" column="ID_PESSOA" type="long">
 			<generator class="sequence">
 				<param name="sequence">DP_PESSOA_SEQ</param>

@@ -6,7 +6,7 @@
 <!-- Created Mon Nov 14 13:36:50 GMT-03:00 2005                         -->
 <hibernate-mapping package="br.gov.jfrj.siga.ex">
 
-	<class name="ExClassificacao" schema="SIGA" table="EX_CLASSIFICACAO" batch-size="500">
+	<class name="ExClassificacao" schema="SIGA" table="EX_CLASSIFICACAO" >
 		<id name="idClassificacao" column="ID_CLASSIFICACAO"
 			type="long">
 			<generator class="sequence">

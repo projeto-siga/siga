@@ -2383,20 +2383,22 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	 * Verifica se todos os móbiles do documento estão eliminados.
 	 */
 	public boolean isEliminado() {
+		if (isProcesso()){ 
+			return getMobilGeral().isEliminado();
+		}
 
-		// Edson: este método, ainda mais nos lugares em que ele é chamado,
-		// estava prejudicando a performance. Ver um jeito melhor de fazer
-		return false;
-		/*
-		 * if (isProcesso()) return getMobilGeral().isEliminado();
-		 * 
-		 * boolean eliminado = false;
-		 * 
-		 * for (ExMobil m : getExMobilSet()) if (!m.isGeral()) if
-		 * (m.isEliminado()) eliminado = true; else { return false; }
-		 * 
-		 * return eliminado;
-		 */
+		boolean eliminado = false;
+
+		for (ExMobil m : getExMobilSet()) 
+			if (!m.isGeral()) 
+				if (m.isEliminado()) 
+					eliminado = true; 
+				else { 
+					return false; 
+				}
+
+		return eliminado;
+
 	}
 
 	/**

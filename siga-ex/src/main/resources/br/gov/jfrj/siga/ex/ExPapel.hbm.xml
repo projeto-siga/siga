@@ -8,7 +8,7 @@
 		</id>
 		<property name="descPapel" column="DESC_PAPEL" type="java.lang.String" />
 		<set name="exMovimentacaoSet" order-by="ID_MOV" inverse="true"
-			lazy="true" batch-size="500">
+			lazy="true">
 			<key column="ID_PAPEL" />
 			<one-to-many class="ExMovimentacao" />
 		</set>

@@ -43,7 +43,7 @@
 	           //chunk_size: '1mb',
 	           filters : {
 	               // Maximum file size
-	               max_file_size: '2mb', //-- quando alterar esse valor alterar tb o arquivo pt_BR.js para alterar a msg de erro
+	               max_file_size: '10mb', //-- quando alterar esse valor alterar tb o arquivo pt_BR.js para alterar a msg de erro
 	               // Specify what files to browse for
 	               mime_types: [
 	                            {title: "Todos os arquivos", extensions : "jpg,bmp,png,doc,docx,xls,xlsx,ppt,pptx,pdf,txt"},

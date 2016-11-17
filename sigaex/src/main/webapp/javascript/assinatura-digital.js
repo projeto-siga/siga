@@ -148,7 +148,7 @@ var providerAssijus = {
 			},
 			async : false,
 			success : function(xhr) {
-				window.location.href = parent.endpoint + "/?endpointlistkey="
+				window.location.href = parent.endpoint + "/?endpointautostart=true&endpointlistkey="
 						+ xhr.key + "&endpointcallback="
 						+ encodeURI(urlRedirect);
 			},

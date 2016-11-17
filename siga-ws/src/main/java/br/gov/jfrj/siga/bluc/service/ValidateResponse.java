@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ValidateResponse {
 	private String cn;
 	private String policy;
-	private String error;
+	private String errormsg;
 
 	private Map<String, String> certdetails = new TreeMap<>();
 
@@ -39,8 +39,8 @@ public class ValidateResponse {
 		return cn;
 	}
 
-	public String getError() {
-		return error;
+	public String getErrormsg() {
+		return errormsg;
 	}
 
 	public String getPolicy() {
@@ -51,8 +51,8 @@ public class ValidateResponse {
 		this.cn = cn;
 	}
 
-	public void setError(String error) {
-		this.error = error;
+	public void setErrormsg(String errormsg) {
+		this.errormsg = errormsg;
 	}
 
 	public void setPolicy(String policy) {

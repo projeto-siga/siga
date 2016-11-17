@@ -1545,9 +1545,6 @@ public class ExBL extends CpBL {
 			String s;
 
 			BlucService bluc = Service.getBlucService();
-			if (!bluc.test())
-				throw new Exception("BluC não está disponível.");
-
 			if (certificado != null) {
 				// Chamar o BluC para criar o pacote assinavel
 				//
@@ -1559,13 +1556,13 @@ public class ExBL extends CpBL {
 				envelopereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(data)));
 				envelopereq
 						.setSha256(bluc.bytearray2b64(bluc.calcSha256(data)));
-				envelopereq.setTime(bluc.date2string((dtMov != null) ? dtMov
-						: dao().consultarDataEHoraDoServidor()));
+				envelopereq.setTime(dtMov != null ? dtMov
+						: dao().consultarDataEHoraDoServidor());
 				EnvelopeResponse enveloperesp = bluc.envelope(envelopereq);
-				if (enveloperesp.getError() != null)
+				if (enveloperesp.getErrormsg() != null)
 					throw new Exception(
 							"BluC não conseguiu produzir o envelope AD-RB. "
-									+ enveloperesp.getError());
+									+ enveloperesp.getErrormsg());
 				cms = Base64.decode(enveloperesp.getEnvelope());
 			} else {
 				cms = pkcs7;
@@ -1577,13 +1574,13 @@ public class ExBL extends CpBL {
 			validatereq.setEnvelope(bluc.bytearray2b64(cms));
 			validatereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(data)));
 			validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(data)));
-			validatereq.setTime(bluc.date2string(dtMov));
+			validatereq.setTime(dtMov);
 			validatereq.setCrl("true");
 			ValidateResponse validateresp = bluc.validate(validatereq);
-			if (validateresp.getError() != null)
+			if (validateresp.getErrormsg() != null)
 				throw new Exception(
 						"BluC não conseguiu validar a assinatura digital. "
-								+ validateresp.getError());
+								+ validateresp.getErrormsg());
 
 			sNome = validateresp.getCn();
 
@@ -2152,9 +2149,6 @@ public class ExBL extends CpBL {
 			String s;
 
 			BlucService bluc = Service.getBlucService();
-			if (!bluc.test())
-				throw new Exception("BluC não está disponível.");
-
 			if (certificado != null) {
 				// Chamar o BluC para criar o pacote assinavel
 				//
@@ -2166,13 +2160,13 @@ public class ExBL extends CpBL {
 				envelopereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(data)));
 				envelopereq
 						.setSha256(bluc.bytearray2b64(bluc.calcSha256(data)));
-				envelopereq.setTime(bluc.date2string((dtMov != null) ? dtMov
-						: dao().consultarDataEHoraDoServidor()));
+				envelopereq.setTime((dtMov != null) ? dtMov
+						: dao().consultarDataEHoraDoServidor());
 				EnvelopeResponse enveloperesp = bluc.envelope(envelopereq);
-				if (enveloperesp.getError() != null)
+				if (enveloperesp.getErrormsg() != null)
 					throw new Exception(
 							"BluC não conseguiu produzir o envelope AD-RB. "
-									+ enveloperesp.getError());
+									+ enveloperesp.getErrormsg());
 				cms = Base64.decode(enveloperesp.getEnvelope());
 			} else {
 				cms = pkcs7;
@@ -2191,13 +2185,13 @@ public class ExBL extends CpBL {
 			validatereq.setEnvelope(bluc.bytearray2b64(cms));
 			validatereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(data)));
 			validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(data)));
-			validatereq.setTime(bluc.date2string(dao().dt()));
+			validatereq.setTime(dao().dt());
 			validatereq.setCrl("true");
 			ValidateResponse validateresp = bluc.validate(validatereq);
-			if (validateresp.getError() != null)
+			if (validateresp.getErrormsg() != null)
 				throw new Exception(
 						"BluC não conseguiu validar a assinatura digital. "
-								+ validateresp.getError());
+								+ validateresp.getErrormsg());
 
 			sNome = validateresp.getCn();
 			Service.throwExceptionIfError(sNome);
@@ -5882,22 +5876,20 @@ public class ExBL extends CpBL {
 	public String verificarAssinatura(byte[] conteudo, byte[] assinatura,
 			String mimeType, Date dtAssinatura) throws Exception {
 		BlucService bluc = Service.getBlucService();
-		if (!bluc.test())
-			throw new Exception("BluC não está disponível.");
-
+	
 		// Chamar o BluC para validar a assinatura
 		//
 		ValidateRequest validatereq = new ValidateRequest();
 		validatereq.setEnvelope(bluc.bytearray2b64(assinatura));
 		validatereq.setSha1(bluc.bytearray2b64(bluc.calcSha1(conteudo)));
 		validatereq.setSha256(bluc.bytearray2b64(bluc.calcSha256(conteudo)));
-		validatereq.setTime(bluc.date2string(dtAssinatura));
+		validatereq.setTime(dtAssinatura);
 		validatereq.setCrl("true");
 		ValidateResponse validateresp = bluc.validate(validatereq);
-		if (validateresp.getError() != null)
+		if (validateresp.getErrormsg() != null)
 			throw new Exception(
 					"BluC não conseguiu validar a assinatura digital. "
-							+ validateresp.getError());
+							+ validateresp.getErrormsg());
 
 		String sNome;
 		Long lCPF;

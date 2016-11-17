@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.bluc.service;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -7,7 +9,7 @@ public class HashRequest {
 	private String policy;
 	private String sha1;
 	private String sha256;
-	private String time;
+	private Date time;
 	private String certificate;
 	private String crl;
 
@@ -35,11 +37,11 @@ public class HashRequest {
 		this.sha256 = sha256;
 	}
 
-	public String getTime() {
+	public Date getTime() {
 		return time;
 	}
 
-	public void setTime(String time) {
+	public void setTime(Date time) {
 		this.time = time;
 	}
 

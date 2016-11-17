@@ -128,18 +128,16 @@ public class ExArquivoController extends ExController {
 					// Chamar o BluC para criar o pacote assinavel
 					//
 					BlucService bluc = Service.getBlucService();
-					if (!bluc.test())
-						throw new Exception("BluC não está disponível.");
 					HashRequest hashreq = new HashRequest();
 					hashreq.setCertificate(certificadoB64);
 					hashreq.setCrl("true");
 					hashreq.setPolicy("AD-RB");
 					hashreq.setSha1(bluc.bytearray2b64(bluc.calcSha1(ab)));
 					hashreq.setSha256(bluc.bytearray2b64(bluc.calcSha256(ab)));
-					hashreq.setTime(bluc.date2string(dt));
+					hashreq.setTime(dt);
 					HashResponse hashresp = bluc.hash(hashreq);
-					if (hashresp.getError() != null)
-						throw new Exception("BluC não conseguiu produzir o pacote assinável. " + hashresp.getError());
+					if (hashresp.getErrormsg() != null)
+						throw new Exception("BluC não conseguiu produzir o pacote assinável. " + hashresp.getErrormsg());
 					byte[] sa = Base64.decode(hashresp.getHash());
 					
 					return new InputStreamDownload(makeByteArrayInputStream(sa, fB64), APPLICATION_OCTET_STREAM, arquivo);

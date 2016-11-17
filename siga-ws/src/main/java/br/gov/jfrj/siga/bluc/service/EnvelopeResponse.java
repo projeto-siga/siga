@@ -12,7 +12,7 @@ public class EnvelopeResponse {
 	private String policyversion;
 	private String policyoid;
 	private String envelope;
-	private String error;
+	private String errormsg;
 
 	private Map<String, String> certdetails = new TreeMap<>();
 
@@ -48,14 +48,7 @@ public class EnvelopeResponse {
 		this.policyoid = policyoid;
 	}
 
-	public String getError() {
-		return error;
-	}
-
-	public void setError(String error) {
-		this.error = error;
-	}
-
+	
 	public String getEnvelope() {
 		return envelope;
 	}
@@ -70,6 +63,14 @@ public class EnvelopeResponse {
 
 	public void setCertdetails(Map<String, String> certdetails) {
 		this.certdetails = certdetails;
+	}
+
+	public String getErrormsg() {
+		return errormsg;
+	}
+
+	public void setErrormsg(String errormsg) {
+		this.errormsg = errormsg;
 	}
 
 }

@@ -12,7 +12,7 @@ public class HashResponse {
 	private String policy;
 	private String policyversion;
 	private String policyoid;
-	private String error;
+	private String errormsg;
 
 	private Map<String, String> certdetails = new TreeMap<>();
 
@@ -56,12 +56,12 @@ public class HashResponse {
 		this.policyoid = policyoid;
 	}
 
-	public String getError() {
-		return error;
+	public String getErrormsg() {
+		return errormsg;
 	}
 
-	public void setError(String error) {
-		this.error = error;
+	public void setErrormsg(String errormsg) {
+		this.errormsg = errormsg;
 	}
 
 	public Map<String, String> getCertdetails() {

@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.bluc.service;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -8,7 +10,7 @@ public class ValidateRequest {
 	private String sha1;
 	private String sha256;
 	private String envelope;
-	private String time;
+	private Date time;
 	private String crl;
 
 	public String getMd5() {
@@ -43,11 +45,11 @@ public class ValidateRequest {
 		this.envelope = envelope;
 	}
 
-	public String getTime() {
+	public Date getTime() {
 		return time;
 	}
 
-	public void setTime(String time) {
+	public void setTime(Date time) {
 		this.time = time;
 	}
 

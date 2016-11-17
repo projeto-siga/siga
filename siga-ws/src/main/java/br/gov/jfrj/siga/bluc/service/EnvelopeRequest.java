@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.bluc.service;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -7,7 +9,7 @@ public class EnvelopeRequest {
 	private String sha1;
 	private String sha256;
 	private String certificate;
-	private String time;
+	private Date time;
 	private String policy;
 	private String signature;
 	private String crl;
@@ -40,11 +42,11 @@ public class EnvelopeRequest {
 		this.certificate = certificate;
 	}
 
-	public String getTime() {
+	public Date getTime() {
 		return time;
 	}
 
-	public void setTime(String time) {
+	public void setTime(Date time) {
 		this.time = time;
 	}
 

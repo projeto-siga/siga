@@ -23,31 +23,29 @@ import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 
 public class BlucService {
-	static {
-		Unirest.setObjectMapper(new ObjectMapper() {
-			private Gson gson = new GsonBuilder()
-					.registerTypeHierarchyAdapter(Date.class, new DateToStringTypeAdapter()).setPrettyPrinting()
-					.create();
-
-			@Override
-			public <T> T readValue(String value, Class<T> valueType) {
-				return gson.fromJson(value, valueType);
-			}
-
-			@Override
-			public String writeValue(Object value) {
-				return gson.toJson(value);
-			}
-		});
-	}
-
-
-	
-	// ResteasyClient client = new ResteasyClientBuilder().build();
+	static boolean bInitialized = false;
 	private String endpoint;
 
 	public BlucService(String endpoint) {
 		this.endpoint = endpoint;
+		if (!bInitialized) {
+			bInitialized = true;
+			Unirest.setObjectMapper(new ObjectMapper() {
+				private Gson gson = new GsonBuilder()
+						.registerTypeHierarchyAdapter(Date.class, new DateToStringTypeAdapter()).setPrettyPrinting()
+						.create();
+
+				@Override
+				public <T> T readValue(String value, Class<T> valueType) {
+					return gson.fromJson(value, valueType);
+				}
+
+				@Override
+				public String writeValue(Object value) {
+					return gson.toJson(value);
+				}
+			});
+		}
 	}
 
 	public static String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
@@ -151,12 +149,6 @@ public class BlucService {
 		return json2json(req, ValidateResponse.class, this.endpoint + "/validate");
 	}
 
-	public String date2string(Date dt) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(dt);
-		return javax.xml.bind.DatatypeConverter.printDateTime(cal);
-	}
-
 	public static String bytearray2b64(byte[] ab) {
 		return Base64.encodeBase64String(ab);
 	}
@@ -176,77 +168,4 @@ public class BlucService {
 		byte[] output = md.digest();
 		return output;
 	}
-
-	// public HashResponse hash(HashRequest req) {
-	// ResteasyWebTarget target = client.target(endpoint);
-	//
-	// Response response = target.request().post(
-	// Entity.entity(req, "application/json"));
-	//
-	// if (response.getStatus() != 200) {
-	// throw new RuntimeException("Failed : HTTP error code : "
-	// + response.getStatus());
-	// }
-	//
-	// HashResponse resp = response.readEntity(HashResponse.class);
-	//
-	// response.close();
-	//
-	// return resp;
-	// }
-	//
-	//
-	// public EnvelopeResponse validate(EnvelopeRequest req) {
-	// ResteasyWebTarget target = client.target(endpoint);
-	//
-	// Response response = target.request().post(
-	// Entity.entity(req, "application/json"));
-	//
-	// if (response.getStatus() != 200) {
-	// throw new RuntimeException("Failed : HTTP error code : "
-	// + response.getStatus());
-	// }
-	//
-	// EnvelopeResponse resp = response.readEntity(EnvelopeResponse.class);
-	//
-	// response.close();
-	//
-	// return resp;
-	// }
-	//
-	// public ValidateResponse validate(ValidateRequest req) {
-	// ResteasyWebTarget target = client.target(endpoint);
-	//
-	// Response response = target.request().post(
-	// Entity.entity(req, "application/json"));
-	//
-	// if (response.getStatus() != 200) {
-	// throw new RuntimeException("Failed : HTTP error code : "
-	// + response.getStatus());
-	// }
-	//
-	// ValidateResponse resp = response.readEntity(ValidateResponse.class);
-	//
-	// response.close();
-	//
-	// return resp;
-	// }
-
-	// public boolean test() {
-	// ResteasyWebTarget target = client.target(endpoint);
-	//
-	// Response response = target.request().get();
-	//
-	// if (response.getStatus() != 200) {
-	// throw new RuntimeException("Failed : HTTP error code : "
-	// + response.getStatus());
-	// }
-	//
-	// String resp = response.readEntity(String.class);
-	//
-	// response.close();
-
-	// return resp.contains("OK");
-	// }
-
 }

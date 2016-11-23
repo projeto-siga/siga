@@ -38,7 +38,8 @@ import br.gov.jfrj.siga.sr.model.vo.SrAtributoVO;
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SrAtributo extends HistoricoSuporte implements SrSelecionavel, Selecionavel {
 	private static final long serialVersionUID = 1L;
-
+	private static final String DESCRICAO_VAZIA = "";
+	
 	public static final ActiveRecord<SrAtributo> AR = new ActiveRecord<>(SrAtributo.class);
 
 	@Id
@@ -292,7 +293,7 @@ public class SrAtributo extends HistoricoSuporte implements SrSelecionavel, Sele
 
 	@Override
 	public String getDescricao() {
-		return getNomeAtributo();
+		return DESCRICAO_VAZIA;
 	}
 
 	@Override

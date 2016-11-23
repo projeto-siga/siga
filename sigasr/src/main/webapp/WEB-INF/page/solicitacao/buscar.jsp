@@ -87,7 +87,17 @@
 	                    <tr>
 	                    	<td>Atributo</td>
 	                    	<td>
-	                    		<siga:selecao2 tamanho="grande" propriedade="filtro.atributo" tipo="atributo" tema="simple" modulo="sigasr"/>
+	                    		<div id="atributo" style="float:left;"> 
+	                    			<siga:selecao2 tamanho="grande" propriedade="filtro.atributoSolicitacao.atributo" tipo="atributo" tema="simple" modulo="sigasr"
+	                    				onchange="toggleInputValorAtributo();"/>
+	                    		</div>
+	                    		<div id="valorAtributo">
+	                    			<table>
+	                    				<tr>
+	                    					<td style="padding: 0 10px;"><input type="text" name="filtro.atributoSolicitacao.valorAtributoSolicitacao" value="${filtro.atributoSolicitacao.valorAtributoSolicitacao}" /></td>
+	                    				</tr>
+	                    			</table>
+	                    		</div>
 	                    	</td>
 	                    </tr>
 	                    <tr>
@@ -134,5 +144,23 @@
 	    </div>
     </div>
 </div>
+<script>
+	function toggleInputValorAtributo() {
+		var show = true;
+		var inputNomeAtributo = $('#formulario_filtroatributoSolicitacaoatributo_sigla');
 
+		if (inputNomeAtributo.val() === "") {
+			show = false;
+			limparInputValorAtributo();
+		}
+		$('#valorAtributo').toggle(show);
+	};
+
+	function limparInputValorAtributo() {
+		var inputValorAtributo = $('#valorAtributo input');
+		inputValorAtributo.val('');
+	}
+
+	toggleInputValorAtributo();
+</script>
 </siga:pagina>

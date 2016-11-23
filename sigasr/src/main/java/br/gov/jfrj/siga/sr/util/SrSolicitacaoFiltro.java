@@ -14,6 +14,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.sr.model.SrAcordo;
 import br.gov.jfrj.siga.sr.model.SrAtributo;
+import br.gov.jfrj.siga.sr.model.SrAtributoSolicitacao;
 import br.gov.jfrj.siga.sr.model.SrLista;
 import br.gov.jfrj.siga.sr.model.SrSolicitacao;
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -43,7 +44,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 
 	private SrAcordo acordo;
 	
-	private SrAtributo atributo;
+	private SrAtributoSolicitacao atributoSolicitacao;
 
 	private DpLotacao lotaAtendente;
 
@@ -276,8 +277,15 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		if (Filtros.deveAdicionar(getAcordo()))
 			query.append(" and sol.acordos.hisIdIni = " + getAcordo().getHisIdIni() + " ");		
 		
-		if (Filtros.deveAdicionar(getAtributo()))
-			query.append(" and atributoDaSolicitacao.atributo.hisIdIni = " + getAtributo().getHisIdIni() + " ");
+		if (Filtros.deveAdicionar(getAtributoSolicitacao())) {
+			query.append(" and atributoDaSolicitacao.hisDtFim is null and atributoDaSolicitacao.atributo.hisIdIni = " + getAtributoSolicitacao().getAtributo().getHisIdIni() + " ");
+			
+			if (!"".equals(getAtributoSolicitacao().getValorAtributoSolicitacao().trim())) {
+				String[] valorPreenchido = getAtributoSolicitacao().getValorAtributoSolicitacao().split(" ");
+				for (String valor : valorPreenchido) 
+					query.append(" and lower(atributoDaSolicitacao.valorAtributoSolicitacao) like '%" + valor.toLowerCase() + "%' ");
+			}
+		}
 	}
 
 	public boolean isRazoavelmentePreenchido() {
@@ -294,7 +302,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 				|| getItemConfiguracao() != null
 				|| getAcao() != null
 				|| getAcordo() != null
-				|| getAtributo() != null
+				|| getAtributoSolicitacao() != null
 				|| (getIdListaPrioridade() != null && getIdListaPrioridade() >= 0)
 				|| (getDescrSolicitacao() != null && !getDescrSolicitacao()
 						.trim().equals("")) || getPrioridade() != null;
@@ -439,12 +447,12 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		this.length = length;
 	}
 
-	public SrAtributo getAtributo() {
-		return atributo;
+	public SrAtributoSolicitacao getAtributoSolicitacao() {
+		return atributoSolicitacao;
 	}
 
-	public void setAtributo(SrAtributo atributo) {
-		this.atributo = atributo;
+	public void setAtributoSolicitacao(SrAtributoSolicitacao atributoSolicitacao) {
+		this.atributoSolicitacao = atributoSolicitacao;
 	}
 
 }

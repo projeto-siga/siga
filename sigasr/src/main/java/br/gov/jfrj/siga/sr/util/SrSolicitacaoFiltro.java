@@ -154,8 +154,6 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		
 		query.append(" left join sol.meuMovimentacaoSet ultMov ");
 		
-		query.append(" left join sol.meuAtributoSolicitacaoSet atributoDaSolicitacao ");
-		
 		query.append(" left join sol.meuMarcaSet marcaPrazo with marcaPrazo.cpMarcador.idMarcador = 65 ");
 		
 		query.append(idListaPrioridade != null && idListaPrioridade > 0 ? " inner join sol.meuPrioridadeSolicitacaoSet l " : "");
@@ -164,8 +162,6 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 		
 		query.append(" and (marcaPrazo.dpLotacaoIni is null or marcaPrazo.dpLotacaoIni = situacao.dpLotacaoIni) ");
 		
-		query.append(" and not exists (from SrAtributoSolicitacao att where att.solicitacao = sol and att.id > atributoDaSolicitacao.id) ");
-
 		incluirWheresBasicos(query);
 		
 		if (situacaoFiltro.equals("situacaoAux") || getSituacao() == null)
@@ -278,13 +274,16 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			query.append(" and sol.acordos.hisIdIni = " + getAcordo().getHisIdIni() + " ");		
 		
 		if (Filtros.deveAdicionar(getAtributoSolicitacao())) {
-			query.append(" and atributoDaSolicitacao.hisDtFim is null and atributoDaSolicitacao.atributo.hisIdIni = " + getAtributoSolicitacao().getAtributo().getHisIdIni() + " ");
+			query.append("  and sol.hisIdIni in (select distinct atributoDaSolicitacao.solicitacao.hisIdIni "
+					+ "from sol.meuAtributoSolicitacaoSet atributoDaSolicitacao where atributoDaSolicitacao.hisDtFim is null "
+					+ "and atributoDaSolicitacao.atributo.hisIdIni = " + getAtributoSolicitacao().getAtributo().getHisIdIni());
 			
 			if (!"".equals(getAtributoSolicitacao().getValorAtributoSolicitacao().trim())) {
 				String[] valorPreenchido = getAtributoSolicitacao().getValorAtributoSolicitacao().split(" ");
 				for (String valor : valorPreenchido) 
-					query.append(" and lower(atributoDaSolicitacao.valorAtributoSolicitacao) like '%" + valor.toLowerCase() + "%' ");
+					query.append(" and lower(atributoDaSolicitacao.valorAtributoSolicitacao) like '%" + valor.toLowerCase() + "%'");
 			}
+			query.append(" ) ");
 		}
 	}
 

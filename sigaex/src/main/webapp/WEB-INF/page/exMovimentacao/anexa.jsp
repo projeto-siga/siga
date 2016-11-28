@@ -334,6 +334,7 @@
 				<input type="hidden" name="ad_url_next" value="/sigaex/app/expediente/doc/atualizar_marcas?sigla=${mobilVO.sigla}" />
 				<tags:assinatura_botoes
 					autenticar="true"
+					assinar="true"
 					assinarComSenha="${f:podeAssinarMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}"
 					autenticarComSenha="${f:podeConferirCopiaMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
 					

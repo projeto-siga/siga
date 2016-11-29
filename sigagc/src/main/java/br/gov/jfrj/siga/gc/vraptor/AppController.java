@@ -1168,6 +1168,10 @@ public class AppController extends GcController {
 			upload = file;
 		}
 		if (upload != null) {
+			if (upload.getSize() > 2097152)
+				throw new AplicacaoException(
+						"O tamanho do arquivo é maior que o "
+								+ "máximo permitido (2MB)");
 			if (!(upload.getSize() > 0))
 				throw new AplicacaoException(
 						"Nao é permitido anexar se nenhum arquivo estiver selecionado. Favor selecionar arquivo.");

@@ -54,6 +54,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.TypedQuery;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
@@ -87,6 +88,8 @@ import br.gov.jfrj.siga.uteis.SigaPlayCalendar;
 public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     private static final String MODAL_TRUE = "modal=true";
     private static final String OPERACAO_NAO_PERMITIDA = "Opera\u00E7\u00E3o n\u00E3o permitida";
+    private static final Long SEM_NUMERACAO = 0L;
+    private static final Long NUMERACAO_INICIAL = 1L;
     
     private static final long serialVersionUID = 1L;
 
@@ -585,10 +588,17 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 	}
 
     public Long getProximoNumero() {
-        if (getOrgaoUsuario() == null)
-            return 0L;
-        Long num = AR.find("select max(numSolicitacao)+1 from SrSolicitacao where numSolicitacao < 90000 and orgaoUsuario.idOrgaoUsu = " + getOrgaoUsuario().getIdOrgaoUsu()).first();
-        return (num != null) ? num : 1;
+    	if (getOrgaoUsuario() == null || getAnoEmissao() == null)
+            return SEM_NUMERACAO;
+        
+        TypedQuery<Long> query = em().createQuery("select max(numSolicitacao) + 1 from SrSolicitacao "
+        		+ "where orgaoUsuario.idOrgaoUsu = :idOrgaoUsu and extract(year from dtReg) = :ano and numSolicitacao < 90000", Long.class);
+        query.setParameter("idOrgaoUsu", getOrgaoUsuario().getIdOrgaoUsu());
+        query.setParameter("ano", Integer.valueOf(getAnoEmissao()));
+        Long resultado = query.getSingleResult();
+        if (resultado == null)
+        	return NUMERACAO_INICIAL;
+        return resultado;
     }
 
     public String getAnoEmissao() {

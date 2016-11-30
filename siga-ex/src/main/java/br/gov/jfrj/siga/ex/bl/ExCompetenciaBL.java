@@ -3240,7 +3240,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		if (mob.isGeral()) {
-			return podeMovimentar(titular, lotaTitular, mob.doc().getUltimoMobil());
+			if (mob.doc().isProcesso())
+				return podeMovimentar(titular, lotaTitular, mob.doc().getUltimoVolume());
+			else {
+				for (ExMobil m : mob.doc().getExMobilSet()) {
+					if (!m.isGeral() && podeMovimentar(titular, lotaTitular, m))
+						return true;
+				}
+				return false;
+			}
 		}
 
 		final ExMovimentacao exMov = mob.getUltimaMovimentacaoNaoCancelada();
@@ -3270,7 +3278,15 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		if (mob.doc().isFinalizado() && mob.isGeral()) {
-			return podeSerMovimentado(mob.doc().getUltimoMobil());
+			if (mob.doc().isProcesso())
+				return podeSerMovimentado(mob.doc().getUltimoVolume());
+			else {
+				for (ExMobil m : mob.doc().getExMobilSet()) {
+					if (!m.isGeral() && podeSerMovimentado(m))
+						return true;
+				}
+				return false;
+			}
 		}
 		if (!mob.isVia() && !mob.isVolume())
 			return false;

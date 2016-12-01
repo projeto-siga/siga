@@ -4859,7 +4859,7 @@ public class ExBL extends CpBL {
 			if (doc != null
 					&& (doc.isAssinado() || doc.isAssinadoDigitalmente()))
 				throw new AplicacaoException(
-						"O documento não pode ser reprocessado, pois já estáassinado");
+						"O documento não pode ser reprocessado, pois já está assinado");
 
 			if ((doc.getExModelo() != null && ("template/freemarker".equals(doc
 					.getExModelo().getConteudoTpBlob()) || doc.getExModelo()

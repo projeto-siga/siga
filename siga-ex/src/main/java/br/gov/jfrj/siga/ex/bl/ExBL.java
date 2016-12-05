@@ -4688,7 +4688,7 @@ public class ExBL extends CpBL {
 			mov.setExPapel(papel);
 
 			gravarMovimentacao(mov);
-			concluirAlteracao(mov.getExMobil());
+			concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao fazer vinculação de papel.",

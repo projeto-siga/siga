@@ -152,8 +152,11 @@ function carregarAcao() {
 }
 
 function dispararFuncoesOnBlurItem() {
+	var executarFuncao = null;
 	$('#itemNaoInformado').hide();
-	sbmt('solicitacao.itemConfiguracao', null, false, carregarAcao);
+	if ('${metodo}' !== 'editar')
+		executarFuncao = carregarAcao;
+	sbmt('solicitacao.itemConfiguracao', null, false, executarFuncao);
 }
 
 var inputHandler = function() {

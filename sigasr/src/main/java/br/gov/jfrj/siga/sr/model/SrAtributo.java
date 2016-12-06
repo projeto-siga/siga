@@ -185,7 +185,7 @@ public class SrAtributo extends HistoricoSuporte implements SrSelecionavel, Sele
         final int prime = 31;
         int result = 1;
 		result = prime * result
-				+ ((getAtributoInicial().getId() == null) ? 0 : getAtributoInicial().getId().hashCode());
+				+ ((getAtributoInicial() == null) ? 0 : getAtributoInicial().getId().hashCode());
 		return result;
 	}
 	

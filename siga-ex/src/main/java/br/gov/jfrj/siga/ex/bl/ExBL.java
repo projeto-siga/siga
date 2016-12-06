@@ -2772,7 +2772,10 @@ public class ExBL extends CpBL {
 			}
 
 			gravarMovimentacaoCancelamento(mov, movCancelar);
-			concluirAlteracao(mov.getExMobil());
+			if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)
+				concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
+			else	
+			   concluirAlteracao(mov.getExMobil());
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -4688,7 +4691,7 @@ public class ExBL extends CpBL {
 			mov.setExPapel(papel);
 
 			gravarMovimentacao(mov);
-			concluirAlteracao(mov.getExMobil());
+			concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao fazer vinculação de papel.",
@@ -4859,7 +4862,7 @@ public class ExBL extends CpBL {
 			if (doc != null
 					&& (doc.isAssinado() || doc.isAssinadoDigitalmente()))
 				throw new AplicacaoException(
-						"O documento não pode ser reprocessado, pois já estáassinado");
+						"O documento não pode ser reprocessado, pois já está assinado");
 
 			if ((doc.getExModelo() != null && ("template/freemarker".equals(doc
 					.getExModelo().getConteudoTpBlob()) || doc.getExModelo()

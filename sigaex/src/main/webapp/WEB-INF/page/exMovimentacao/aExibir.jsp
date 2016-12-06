@@ -315,6 +315,7 @@ function visualizarImpressao() {
 					<c:set var="lote" value="false" />
 				</div>		
 				<tags:assinatura_botoes
+					assinar="true"
 					autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
 					assinarComSenha="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
 					autenticarComSenha="${f:podeConferirCopiaMovimentacaoComSenha(titular,lotaTitular,mov)}" 

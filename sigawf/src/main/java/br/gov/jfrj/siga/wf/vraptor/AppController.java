@@ -252,6 +252,7 @@ public class AppController extends WfController {
 		}
 		// Transition transition = taskInstance.getTask().getTaskNode()
 		// .getLeavingTransition(transitionName);
+		boolean prosseguiu = false;
 		for (Transition transition : (List<Transition>) (taskInstance
 				.getAvailableTransitions())) {
 			if ((transition.getName() == null && transitionName == null)
@@ -262,8 +263,14 @@ public class AppController extends WfController {
 							.getName().equals(new String(transitionName
 							.getBytes("UTF-8")))))) {
 				taskInstance.end(transition);
+				prosseguiu = true;
 				break;
 			}
+		}
+		
+		//Se não prosseguiu pelos caminhos alternativos, prossiga pelo caminho padrão.
+		if (!prosseguiu){
+			taskInstance.end();
 		}
 
 		WfContextBuilder.getJbpmContext().getJbpmContext()

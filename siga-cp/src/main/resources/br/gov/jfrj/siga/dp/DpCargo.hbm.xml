@@ -4,7 +4,7 @@
                             "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 	<!-- Criado em 21 Dez 2005       -->
 <hibernate-mapping package="br.gov.jfrj.siga.dp" schema="CORPORATIVO">
-	<class name="DpCargo" mutable="true" table="DP_CARGO" schema="CORPORATIVO">
+	<class name="DpCargo" mutable="true" table="DP_CARGO" schema="CORPORATIVO" batch-size="500">
 		<id name="idCargo" column="ID_CARGO" type="long">
 			<generator class="sequence">
 				<param name="sequence">DP_CARGO_SEQ</param>

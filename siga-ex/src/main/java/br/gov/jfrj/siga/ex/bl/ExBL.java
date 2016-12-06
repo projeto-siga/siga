@@ -2772,7 +2772,10 @@ public class ExBL extends CpBL {
 			}
 
 			gravarMovimentacaoCancelamento(mov, movCancelar);
-			concluirAlteracao(mov.getExMobil());
+			if (movCancelar.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)
+				concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
+			else	
+			   concluirAlteracao(mov.getExMobil());
 
 		} catch (final Exception e) {
 			cancelarAlteracao();

@@ -16,6 +16,19 @@ function sbmt() {
 	Relação de documentos entre duas datas
 </c:set>
 <input type="hidden" name="secaoUsuario" id="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
+<input type="hidden" name="campos" value="idTpDoc" />
+<tr>
+	<td>Origem:</td>
+	<td>
+		<select name="origem">
+			<c:forEach items="${listaExTipoDocumento}" var="item">
+				<option value="${item.idTpDoc}">
+					${item.descrTipoDocumento}
+				</option>  
+			</c:forEach>
+		</select>
+	</td>
+</tr>
 <tr>
 	<td>
 		Lotação

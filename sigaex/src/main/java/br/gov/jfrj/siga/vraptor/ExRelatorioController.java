@@ -143,6 +143,7 @@ public class ExRelatorioController extends ExController {
 	}
 
 	private void fazerResultsParaRelConsultaDocEntreDatas(final DpLotacaoSelecao lotacaoDestinatarioSel) {
+		result.include("listaExTipoDocumento", getTiposDocumento());
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
 		result.include("titular", this.getTitular());
@@ -401,15 +402,9 @@ public class ExRelatorioController extends ExController {
 	public Download aRelDocEntreDatas() throws Exception {
 		assertAcesso(ACESSO_DATAS);
 
-		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
-		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
-			throw new Exception("O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
-		}
-
 		final Map<String, String> parametros = new HashMap<String, String>();
 
+		parametros.put("origem", getRequest().getParameter("origem"));
 		parametros.put("lotacao", getRequest().getParameter("lotacaoDestinatarioSel.id"));
 		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
@@ -422,7 +417,12 @@ public class ExRelatorioController extends ExController {
 		parametros.put("idTit", getRequest().getParameter("idTit"));
 
 		final RelConsultaDocEntreDatas rel = new RelConsultaDocEntreDatas(parametros);
-		rel.gerar();
+		
+		try {
+			rel.gerar();
+		} catch (Exception e) {
+			throw new AplicacaoException(e.getMessage());
+		}
 
 		final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
 		return new InputStreamDownload(inputStream, APPLICATION_PDF, "emiteRelDocEntreDatas");

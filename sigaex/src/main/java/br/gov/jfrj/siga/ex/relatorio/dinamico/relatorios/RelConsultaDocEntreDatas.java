@@ -19,8 +19,12 @@
 package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,8 +39,11 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -44,67 +51,103 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 
-	public RelConsultaDocEntreDatas(Map parametros) throws DJBuilderException {
+	private Long tipoDoDocumento;
+	private DpLotacao lotacao;
+	private Date dataInicial;
+	private Date dataFinal;
+	private String link;
+
+	public RelConsultaDocEntreDatas(Map<String, String> parametros) throws Exception {
 		super(parametros);
-		if (parametros.get("secaoUsuario") == null) {
-			throw new DJBuilderException(
-					"Parâmetro secaoUsuario não informado!");
+		
+		if (!isPreenchido(parametros.get("secaoUsuario"))) {
+			throw new AplicacaoException("Parâmetro secaoUsuario não informado!");
 		}
-		if (parametros.get("lotacao") == null) {
-			throw new DJBuilderException("Parâmetro lotacao não informado!");
+		if (!isPreenchido(parametros.get("lotacao"))) {
+			throw new AplicacaoException("Parâmetro lotação não informado!");
 		}
-		if (parametros.get("dataInicial") == null) {
-			throw new DJBuilderException("Parâmetro dataInicial não informado!");
+		if (!isPreenchido(parametros.get("dataInicial"))) {
+			throw new AplicacaoException("Parâmetro data inicial não informado!");
 		}
-		if (parametros.get("dataFinal") == null) {
-			throw new DJBuilderException("Parâmetro dataFinal não informado!");
+		if (!isPreenchido(parametros.get("dataFinal"))) {
+			throw new AplicacaoException("Parâmetro data final não informado!");
 		}
-		if (parametros.get("link_siga") == null) {
-			throw new DJBuilderException("Parâmetro link_siga não informado!");
+		if (!isPreenchido(parametros.get("link_siga"))) {
+			throw new AplicacaoException("Parâmetro link_siga não informado!");
 		}
+		
+		preencherAtributosCom(parametros);
+		
+		if (dataFinal.getTime() - dataInicial.getTime() > 31536000000L) 
+			throw new AplicacaoException("O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
+	}
+		
+	private void preencherAtributosCom(Map<String, String> parametros) throws ParseException {
+		this.tipoDoDocumento = Long.valueOf(parametros.get("origem"));
+		this.lotacao = buscarLotacaoPor(Long.valueOf(parametros.get("lotacao")));
+		this.dataInicial = stringToDate(parametros.get("dataInicial") + " 00:00:00");
+		this.dataFinal = stringToDate(parametros.get("dataFinal") + " 23:59:59");	
+		this.link = parametros.get("link_siga"); 
+	}
+	
+	private boolean isPreenchido(String texto) {
+		return parametros.get("link_siga") != null && !"".equals(texto);
+	}
+	
+	private DpLotacao buscarLotacaoPor(Long id) {
+		CpDao dao = CpDao.getInstance();
+		DpLotacao lotacao = dao.consultar(id, DpLotacao.class, false);
+		return lotacao;
+	}
+	
+	private Date stringToDate(String texto) throws ParseException {
+		DateFormat formatador = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+		return formatador.parse(texto);
+	}
+	
+	private String dateToString(Date data) {
+		DateFormat formatador = new SimpleDateFormat("dd/MM/yy");
+		return formatador.format(data);
 	}
 
 	@Override
 	public AbstractRelatorioBaseBuilder configurarRelatorio()
 			throws DJBuilderException, JRException {
-		// TODO Auto-generated method stub
-		this.setTitle("Relação de Documentos entre Datas");
-		this.addColuna("Código do Documento", 20, RelatorioRapido.ESQUERDA,
-				 true, true);
-		this.addColuna("Descrição do documento", 100, RelatorioRapido.ESQUERDA,
-				false);
-		this.addColuna("Lotação do Cadastrante", 40, RelatorioRapido.ESQUERDA,
-				false);
+
+		String titulo = "Relação de Documentos do(a) " + lotacao.getSiglaCompleta() 
+				+ " de " + dateToString(dataInicial) + " a " + dateToString(dataFinal);
+		
+		this.setTitle(titulo);
+		this.addColuna("Código do Documento", 140, RelatorioRapido.ESQUERDA, true, true);
+		this.addColuna("Descrição do documento", 140, RelatorioRapido.ESQUERDA, false);
 
 		return this;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Collection processarDados() throws Exception {
-
-		ExDao dao = ExDao.getInstance();
-		final Query query = dao.getSessao().getNamedQuery(
-				"consultarMobilNoPeriodo");
-
-		//DpLotacao lot = new DpLotacao();
-		//lot.setSigla((String) parametros.get("lotacao"));
-		//List<DpLotacao> listaLotacao = dao.consultar(lot, null);
-		
-		Long idLotacao = Long.valueOf((String)parametros.get("lotacao"));
-		query.setLong("idLotacao", idLotacao);
-		query.setString("dataInicial", (String) parametros.get("dataInicial"));
-		query.setString("dataFinal", (String) parametros.get("dataFinal"));
-
-		query.setString("URL", (String) parametros.get("link_siga"));
-
-		List<Object[]> provResultList = query.list();
-
 		List<String> dados = new ArrayList<String>();
+		
+		try {
+			ExDao dao = ExDao.getInstance();
+			Query query = dao.getSessao().getNamedQuery("consultarDocumentosFinalizadosEntreDatas");
+			
+			query.setParameter("idTipoDocumento", tipoDoDocumento);
+			query.setParameter("idLotacaoInicial", lotacao.getIdInicial());
+			query.setParameter("dataInicial", dataInicial);
+			query.setParameter("dataFinal", dataFinal);
+			
+			List<ExDocumento> listaDocumentos = query.list();
 
-		for (Object[] array : provResultList) {
-			for (Object value : array)
-				dados.add((String) value);
+			for (ExDocumento documento : listaDocumentos) {
+				dados.add(documento.getCodigo());
+				dados.add(link.concat(documento.getCodigo()));
+				dados.add(documento.getDescrDocumento());
+			}
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao gerar o relatorio");
 		}
-
+		
 		return dados;
 	}
 

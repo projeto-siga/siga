@@ -1788,6 +1788,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 
 		for (ExMovimentacao m : getMobilGeral().getExMovimentacaoSet()) {
 			if ((m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO)
+					&& m.getExMovimentacaoRef() == null //necessario para nao considerar anexos autenticados
 					&& m.getExMovimentacaoCanceladora() == null) {
 				set.add(m);
 			}

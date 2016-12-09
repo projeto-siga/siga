@@ -3063,6 +3063,7 @@ public class ExBL extends CpBL {
 			} else {
 				criarVolume(cadastrante, lotaCadastrante, doc);
 			}
+			iniciarAlteracao();
 			concluirAlteracaoDoc(doc);
 
 			if (setVias == null || setVias.size() == 0)

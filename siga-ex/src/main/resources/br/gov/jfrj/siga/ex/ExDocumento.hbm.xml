@@ -277,7 +277,7 @@
 	 <query name="consultarDocumentosFinalizadosEntreDatas">
 		<![CDATA[select doc from ExDocumento doc where 
 					doc.exTipoDocumento.idTpDoc = :idTipoDocumento
-					and doc.lotaSubscritor.idLotacaoIni = :idLotacaoInicial
+					and doc.lotaCadastrante.idLotacaoIni = :idLotacaoInicial
 					and doc.dtFinalizacao is not null
 					and doc.dtFinalizacao between :dataInicial and :dataFinal  
 				order by  doc.dtFinalizacao	

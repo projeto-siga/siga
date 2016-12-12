@@ -91,7 +91,7 @@ public class RelConsultaDocEntreDatas extends RelatorioTemplate {
 	}
 	
 	private boolean isPreenchido(String texto) {
-		return parametros.get("link_siga") != null && !"".equals(texto);
+		return texto != null && !"".equals(texto);
 	}
 	
 	private DpLotacao buscarLotacaoPor(Long id) {

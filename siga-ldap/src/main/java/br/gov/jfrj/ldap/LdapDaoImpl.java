@@ -67,6 +67,11 @@ public class LdapDaoImpl implements ILdapDao {
 			System.setProperty("javax.net.ssl.trustStore", caminhoKeystore);
 			environment.put(Context.SECURITY_PROTOCOL, "ssl");
 		}
+		
+		String vendor = System.getProperty("java.vendor");
+		if(vendor != null && vendor.equals("Oracle Corporation")){
+			environment.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+		}
 
 		environment.put(Context.PROVIDER_URL, "ldap://" + servidor + ":"
 				+ porta);
@@ -82,18 +87,11 @@ public class LdapDaoImpl implements ILdapDao {
 		try {
 			contexto = new InitialLdapContext(environment, null);
 		} catch (Exception e1) {
-			try{
-				environment.put(Context.INITIAL_CONTEXT_FACTORY,
-						"com.sun.jndi.ldap.LdapCtxFactory");
-				contexto = new InitialLdapContext(environment, null);
-			}catch(Exception e2){
-				throw new AplicacaoException(
-						"Não foi possível criar o contexto LDAP!\n"
-								+ "Verifique se o certificado foi importado coma ferramenta keytool "
-								+ "ou se o parâmetro ldap.keystore está apontando para o arquivo cacerts "
-								+ "correto (Exemplo: JDK_PATH/jre/lib/security/cacerts", 9, e2);
-				
-			}
+			throw new AplicacaoException(
+					"Não foi possível criar o contexto LDAP!\n"
+							+ "Verifique se o certificado foi importado coma ferramenta keytool "
+							+ "ou se o parâmetro ldap.keystore está apontando para o arquivo cacerts "
+							+ "correto (Exemplo: JDK_PATH/jre/lib/security/cacerts", 9, e1);
 		}
 
 	}

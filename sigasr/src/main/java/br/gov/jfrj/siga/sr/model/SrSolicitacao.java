@@ -592,7 +592,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             return SEM_NUMERACAO;
         
         TypedQuery<Long> query = em().createQuery("select max(numSolicitacao) + 1 from SrSolicitacao "
-        		+ "where orgaoUsuario.idOrgaoUsu = :idOrgaoUsu and year(dtReg) = :ano and numSolicitacao < 90000", Long.class);
+        		+ "where orgaoUsuario.idOrgaoUsu = :idOrgaoUsu and year(dtReg) = :ano and numSequencia is null and numSolicitacao < 90000", Long.class);
         query.setParameter("idOrgaoUsu", getOrgaoUsuario().getIdOrgaoUsu());
         query.setParameter("ano", Integer.valueOf(getAnoEmissao()));
         Long resultado = query.getSingleResult();

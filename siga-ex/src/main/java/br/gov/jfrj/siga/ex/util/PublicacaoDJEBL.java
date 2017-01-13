@@ -71,21 +71,12 @@ public class PublicacaoDJEBL {
 
 	public static int MODELO_FORMULARIO_PUBLICACAO_DJF2R = 230;
 
-	private static String xmlRetornado;
-
-	public static String getXmlRetornado() {
-		return xmlRetornado;
-	}
-
-	public static void setXmlRetornado(String xmlRetornado) {
-		PublicacaoDJEBL.xmlRetornado = xmlRetornado;
-	}
-
-	public static void segundoRetorno(Date data, String tipoCaderno,
+	public static String segundoRetorno(Date data, String tipoCaderno,
 			String secao, String soLerXml) throws Exception {
 		String xml = buscarSegundoRetorno(data, tipoCaderno, secao);
 		if (!soLerXml.equals("sim"))
 			lerXMLSegundoRetorno(data, xml);
+		return xml;
 	}
 
 	private static void lerXMLSegundoRetorno(Date data, String xml)
@@ -102,24 +93,20 @@ public class PublicacaoDJEBL {
 		Iterator i = elementos.iterator();
 
 		while (i.hasNext()) {
-			try {
-				Element elemento = (Element) i.next();
-				String numeroDoDocumento = elemento.getAttributeValue("NUMDOCUMENTO");
-				String paginaDaPublicacao = elemento.getAttributeValue("PAGPUBLICACAO");
+			Element elemento = (Element) i.next();
+			String numeroDoDocumento = elemento.getAttributeValue("NUMDOCUMENTO");
+			String paginaDaPublicacao = elemento.getAttributeValue("PAGPUBLICACAO");
 
-				final ExMobilDaoFiltro daoViaFiltro = new ExMobilDaoFiltro();
-				daoViaFiltro.setSigla(numeroDoDocumento);
+			final ExMobilDaoFiltro daoViaFiltro = new ExMobilDaoFiltro();
+			daoViaFiltro.setSigla(numeroDoDocumento);
 
-				final ExDao exDao = ExDao.getInstance();
+			final ExDao exDao = ExDao.getInstance();
 
-				final ExMobil docVia;
-				docVia = exDao.consultarPorSigla(daoViaFiltro);
+			final ExMobil docVia;
+			docVia = exDao.consultarPorSigla(daoViaFiltro);
 
-				if (docVia != null)
-					Ex.getInstance().getBL().registrarDisponibilizacaoPublicacao(docVia, data, paginaDaPublicacao);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			if (docVia != null)
+				Ex.getInstance().getBL().registrarDisponibilizacaoPublicacao(docVia, data, paginaDaPublicacao);
 		}
 	}
 
@@ -165,14 +152,8 @@ public class PublicacaoDJEBL {
 			xmlRetorno = new String((byte[]) call.invoke(new Object[] { secao, "Judicial", data }));
 		else
 			xmlRetorno = new String((byte[]) call.invoke(new Object[] { secao, "Administrativo", data }));
-
-		log.info("DJE Busca Publicacoes "
-                + new SimpleDateFormat("dd/MM/yyyy").format(data) + ":"
-                + xmlRetorno);
-
-		setXmlRetornado(xmlRetorno);
-
-		return xmlRetornado;
+		
+		return xmlRetorno;
 	}
 
 	public static String enviarTRF(ExMovimentacao mov) throws Exception {

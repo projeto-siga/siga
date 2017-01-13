@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 
@@ -4110,27 +4111,30 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mob", mob);
 	}
 
-	@Get("/app/expediente/mov/atualizar_publicacao")
+	@Get("/public/app/atualizar_publicacao")
 	public void atualizarPublicacao(final String data,
 			final String tipoCaderno, final String secao, final String soLerXml)
 			throws Exception {
-		String sData = data;
-		Date dataBusca = null;
-		if (sData != null) {
-			dataBusca = new SimpleDateFormat("ddMMyyyy").parse(sData);
+		try{
+			String sData = data;
+			Date dataBusca = null;
+			if (sData != null) {
+				dataBusca = new SimpleDateFormat("ddMMyyyy").parse(sData);
+			} else dataBusca = new Date();
+
+			String sTipoCaderno = tipoCaderno;
+			String sSecao = secao;
+
+			String sSoLerXml = "nao";
+			if (soLerXml != null)
+				sSoLerXml = soLerXml;
+
+			String xml = PublicacaoDJEBL.segundoRetorno(dataBusca, sTipoCaderno, sSecao,
+					sSoLerXml);
+			result.use(Results.http()).body(xml).setStatusCode(200);
+		} catch(Exception e){
+			result.use(Results.http()).body(ExceptionUtils.getStackTrace(e)).setStatusCode(500);
 		}
-		;
-
-		String sTipoCaderno = tipoCaderno;
-		String sSecao = secao;
-
-		String sSoLerXml = "nao";
-		if (soLerXml != null)
-			sSoLerXml = soLerXml;
-
-		PublicacaoDJEBL.segundoRetorno(dataBusca, sTipoCaderno, sSecao,
-				sSoLerXml);
-		setMensagem(PublicacaoDJEBL.getXmlRetornado());
 	}
 
 }

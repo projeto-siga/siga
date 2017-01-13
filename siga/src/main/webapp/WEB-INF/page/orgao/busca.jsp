@@ -19,7 +19,7 @@ function sbmt(offset) {
 }
 </script>
 
-<form name="frm" action="buscar" namespace="/orgao" cssClass="form" method="POST">
+<form name="frm" action="${request.contextPath}/app/orgao/buscar" cssClass="form" method="POST">
 	<input type="hidden" name="propriedade" value="${param.propriedade}" />
 	<input type="hidden" name="postback" value="1" />
 	<input type="hidden" name="offset" value="0" />

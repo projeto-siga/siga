@@ -138,7 +138,9 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 		result.include("propriedade",propriedade);
 	}
 	
-	@Get({"/app/orgao/selecionar","/orgao/selecionar.action"})
+	@Get
+	@Post
+	@Path({"/app/orgao/selecionar","/orgao/selecionar.action"})
 	public void selecionar(final String sigla){
 		String resultado =  super.aSelecionar(sigla);
 		if (resultado == "ajax_retorno"){

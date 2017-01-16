@@ -231,14 +231,14 @@
 							</c:otherwise> 
 						</c:choose>
 					</tr>
-					<tr id="tr_titular" style="display: ${exDocumentoDTO.substituicao ? 'inline' : 'none'};">
+					<tr id="tr_titular" style="display: ${exDocumentoDTO.substituicao ? '' : 'none'};">
 						<td>Titular:</td>
 						<input type="hidden" name="campos" value="titularSel.id" />
 						<td colspan="3">
 							<siga:selecao propriedade="titular" inputName="exDocumentoDTO.titular" tema="simple" modulo="siga"/>
 						</td>
 					</tr>
-					<tr id="tr_personalizacao" style="display: ${exDocumentoDTO.personalizacao ? 'inline' : 'none'};">
+					<tr id="tr_personalizacao" style="display: ${exDocumentoDTO.personalizacao ? '' : 'none'};">
 						<td>Personalização:</td>
 						<td colspan="3">
 							<input type="hidden" name="campos" value="nmFuncaoSubscritor" />

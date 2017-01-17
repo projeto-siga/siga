@@ -180,11 +180,21 @@ public class SrAtributoSolicitacao extends HistoricoSuporte {
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof SrAtributoSolicitacao){
-			return this.getAtributo().equals(((SrAtributoSolicitacao) obj).getAtributo()) &&
-					this.getValorAtributoSolicitacao().equals(((SrAtributoSolicitacao) obj).getValorAtributoSolicitacao());
-		}
-		return false;
+		if (obj == null || !(obj instanceof SrAtributoSolicitacao))
+			return false;	
+		SrAtributoSolicitacao other = (SrAtributoSolicitacao) obj;
+		if (this.atributo == null) {
+			if (other.atributo != null)
+				return false;
+		} else if (!this.atributo.equals(other.atributo))
+			return false;
+		
+		if (this.valorAtributoSolicitacao == null) {
+			if (other.valorAtributoSolicitacao != null)
+				return false;
+		} else if (!this.valorAtributoSolicitacao.equals(other.valorAtributoSolicitacao))
+			return false;
+		return true;
 	}
 	
 	@Override

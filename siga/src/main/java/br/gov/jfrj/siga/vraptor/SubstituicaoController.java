@@ -312,20 +312,22 @@ public class SubstituicaoController extends SigaController {
 	}
 	
 	@Get("/app/substituicao/substituirGravar")
-	public void substituirGravar(Long idTitular, Long idLotaTitular) throws Exception {
+	public void substituirGravar(Long id) throws Exception {
 		try {
 			dao().iniciarTransacao();
 			gravarFinalizar();
 			
-			if (idTitular != null) {
-				setTitular(daoPes(idTitular));
-				setTitular(dao().consultarPorIdInicial(getTitular().getIdInicial()));
-				setLotaTitular(getTitular().getLotacao());
-				setLotaTitular(dao().consultarPorIdInicial(DpLotacao.class,getTitular().getLotacao().getIdInicial()));
-			} else {
-				setLotaTitular(daoLot(idLotaTitular));
-				setLotaTitular(dao().consultarPorIdInicialInclusiveLotacaoFechada(DpLotacao.class, getLotaTitular().getIdInicial()));
-			}
+			if (id == null)
+				throw new AplicacaoException("Dados não informados");
+			
+			DpSubstituicao dpSub = dao().consultar(id, DpSubstituicao.class, false);
+			
+			if ((dpSub.getSubstituto() == null && !dpSub.getLotaSubstituto().equivale(getLotaCadastrante()) 
+				|| (dpSub.getSubstituto() != null && !dpSub.getSubstituto().equivale(getCadastrante()))))
+				throw new AplicacaoException("Substituição não permitida");
+			
+			setLotaTitular(dpSub.getLotaTitular());
+			setTitular(dpSub.getTitular());
 	
 			CpPersonalizacao per = dao().consultarPersonalizacao(getCadastrante());
 			if (per == null) {

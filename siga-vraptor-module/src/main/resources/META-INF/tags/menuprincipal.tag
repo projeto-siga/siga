@@ -262,7 +262,7 @@
 							onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';"
 							onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';">
 						</a> 
-						<a href="/siga/app/substituicao/substituirGravar?idTitular=${substituicao.titular.idPessoa}&idLotaTitular=${substituicao.lotaTitular.idLotacao}">
+						<a href="/siga/app/substituicao/substituirGravar?id=${substituicao.idSubstituicao}">
 							<c:choose>
 								<c:when test="${not empty substituicao.titular}">
 									${f:maiusculasEMinusculas(substituicao.titular.nomePessoa)}

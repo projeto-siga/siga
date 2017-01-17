@@ -464,6 +464,7 @@ public class ExDocumentoController extends ExController {
 					getTitular().getOrgaoUsuario());
 		} else {
 			exDocumentoDTO.setDoc(daoDoc(exDocumentoDTO.getId()));
+			dao().getSessao().evict(exDocumentoDTO.getDoc());
 
 			if (!Ex.getInstance()
 					.getComp()

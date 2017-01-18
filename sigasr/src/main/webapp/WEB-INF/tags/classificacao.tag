@@ -265,11 +265,15 @@ function gravar() {
 	if (!validarCampos()) 
 		return false; 
 	
+	var formJquery = $("#${metodo}").closest("form");
+	var formDOM = formJquery.get(0);
+	var formData = new FormData(formDOM);
 	$.ajax({
     	type: "POST",
     	url: submitURL(),
-    	data: $("#${metodo}").closest("form").serialize(),
-    	dataType: "text",
+    	data: formData,
+    	processData: false,
+    	contentType: false,
     	"beforeSend": function () {
     		jQuery.blockUI(objBlock);
     	},

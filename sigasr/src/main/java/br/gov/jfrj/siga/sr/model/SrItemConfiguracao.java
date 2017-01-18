@@ -248,13 +248,10 @@ public class SrItemConfiguracao extends HistoricoSuporte implements
 			if (getTituloItemConfiguracao() != null
 					&& !getTituloItemConfiguracao().equals("")) {
 				boolean naoAtende = false;
-				for (String s : getTituloItemConfiguracao().toLowerCase()
-						.split("\\s")) {
-					if (!item.getTituloItemConfiguracao().toLowerCase()
-							.contains(s)
-							&& !(item.getDescricaoSimilaridade() != null && item
-									.getDescricaoSimilaridade().toLowerCase()
-									.contains(s)))
+				for (String s : Texto.removeAcento(getTituloItemConfiguracao()).toLowerCase().split("\\s")) {
+					if (!Texto.removeAcento(item.getTituloItemConfiguracao()).toLowerCase().contains(s)
+						&& !(item.getDescricaoSimilaridade() != null 
+							&& Texto.removeAcento(item.getDescricaoSimilaridade()).toLowerCase().contains(s)))
 						naoAtende = true;
 				}
 

@@ -30,8 +30,7 @@ function sbmt(id) {
 	if (typeof (onSave) == "function") {
 		onSave();
 	}
-
-	if (id && IsRunningAjaxRequest()) {
+	if (id && !IsRunningAjaxRequest()) {
 		ReplaceInnerHTMLFromAjaxResponse('recarregar', frm, id);
 	} else {
 		frm.action = 'recarregar';

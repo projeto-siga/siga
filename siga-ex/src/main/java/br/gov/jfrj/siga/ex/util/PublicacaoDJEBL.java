@@ -105,7 +105,7 @@ public class PublicacaoDJEBL {
 			final ExMobil docVia;
 			docVia = exDao.consultarPorSigla(daoViaFiltro);
 
-			if (docVia != null)
+			if (docVia != null && !docVia.doc().isDJEPublicado())
 				Ex.getInstance().getBL().registrarDisponibilizacaoPublicacao(docVia, data, paginaDaPublicacao);
 		}
 	}

@@ -152,7 +152,7 @@ function carregarAcao() {
 }
 
 function dispararFuncoesOnBlurItem() {
-	var executarFuncao = null;
+	var executarFuncao = carregarLotacaoDaAcao;
 	$('#itemNaoInformado').hide();
 	if ('${metodo}' !== 'editar')
 		executarFuncao = carregarAcao;

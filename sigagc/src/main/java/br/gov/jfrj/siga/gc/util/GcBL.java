@@ -733,7 +733,7 @@ public class GcBL {
 	private String acronimoOrgao = null;
 	private final int CONTROLE_LINK_HASH_TAG = 2;
 	private final String URL_SIGA_DOC = "/sigaex/app/expediente/doc/exibir?sigla=";
-	private final String URL_SIGA_SR = "/sigasr/app/solicitacao/exibir?sigla=";
+	private final String URL_SIGA_SR = "/sigasr/app/solicitacao/exibir/";
 	private final String URL_SIGA_GC = "/sigagc/app/exibir?sigla=";
 
 	// public void salvar(Historico o) throws Exception {
@@ -921,6 +921,10 @@ public class GcBL {
 		return sb.toString();
 	}
 
+	private String getSiglaSRCompacta(String sigla){
+		return sigla.replace("-", "").replace("/", "");
+	}
+	
 	private String findSiglaHTML(String conteudo) throws Exception {
 		String sigla = null;
 		GcInformacao infoReferenciada = null;
@@ -951,8 +955,8 @@ public class GcBL {
 				// serviço
 				else if (matcherSigla.group(1).toUpperCase().equals("SR")) {
 					matcherSigla.appendReplacement(sb, "<a href=\""
-							+ URL_SIGA_SR + URLEncoder.encode(sigla, "UTF-8")
-							+ "\">" + sigla + "</a>");
+							+ URL_SIGA_SR + URLEncoder.encode(getSiglaSRCompacta(sigla), "UTF-8")
+							+ "\">" + getSiglaSRCompacta(sigla) + "</a>");
 				}
 				// documento
 				else {

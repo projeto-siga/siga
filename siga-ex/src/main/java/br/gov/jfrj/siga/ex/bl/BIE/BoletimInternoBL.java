@@ -59,19 +59,6 @@ public class BoletimInternoBL {
 		}
 	}
 
-	public void refazerBIE(ExDocumento docBIE) throws Exception {
-		final List<ExDocumento> documentosPublicar = new ManipuladorEntrevista(docBIE).obterDocsMarcados();
-
-		ExBoletimDoc boletim;
-		ExDao dao = ExDao.getInstance();
-
-		for (ExDocumento docPubl : documentosPublicar) {
-			boletim = dao.consultarBoletimEmQueODocumentoEstaIncluso(docPubl);
-			boletim.setBoletim(docBIE);
-			dao.gravar(boletim);
-		}
-	}
-
 	public void finalizarBIE(ExDocumento docBIE) throws Exception {
 		final List<ExDocumento> documentosPublicar = new ManipuladorEntrevista(docBIE).obterDocsMarcados();
 		ExDao dao = ExDao.getInstance();

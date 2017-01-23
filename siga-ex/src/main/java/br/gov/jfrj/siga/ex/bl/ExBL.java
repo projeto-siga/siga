@@ -778,13 +778,10 @@ public class ExBL extends CpBL {
 		new BoletimInternoBL().gravarBIE(docBIE);
 	}
 	public void excluirBIE(ExDocumento docBIE) throws Exception {
-		new BoletimInternoBL().gravarBIE(docBIE);
-	}
-	public void refazerBIE(ExDocumento docBIE) throws Exception {
-		new BoletimInternoBL().gravarBIE(docBIE);
+		new BoletimInternoBL().excluirBIE(docBIE);
 	}
 	public void finalizarBIE(ExDocumento docBIE) throws Exception {
-		new BoletimInternoBL().gravarBIE(docBIE);
+		new BoletimInternoBL().finalizarBIE(docBIE);
 	}
 
 	public void pedirPublicacao(final DpPessoa cadastrante,
@@ -2624,6 +2621,14 @@ public class ExBL extends CpBL {
 					mov.setExMobilRef(ultMovNaoCancelada.getExMovimentacaoRef()
 							.getExMobilRef());
 				}
+				
+				if (ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO){
+					// Exclui documento da tabela de Boletim Interno
+					final String funcao = mob.getExDocumento().getForm().get("acaoExcluir");
+					if (funcao != null) {
+						obterMetodoPorString(funcao, mob.getExDocumento());
+					}
+				}
 
 				if (penultMovNaoCancelada != null) {
 					// if (mov.getLotaResp() == null)
@@ -3936,6 +3941,11 @@ public class ExBL extends CpBL {
 					lotaCadastrante, doc, true);
 
 			cancelarMovimentacoes(cadastrante, lotaCadastrante, doc);
+			
+			String funcao = doc.getForm().get("acaoGravar");
+			if (funcao != null) {
+				obterMetodoPorString(funcao, doc);
+			}
 
 			concluirAlteracaoDocComRecalculoAcesso(novoDoc);
 			// atualizarWorkflow(doc, null);

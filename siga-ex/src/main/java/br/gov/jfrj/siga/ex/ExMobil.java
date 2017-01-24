@@ -23,6 +23,7 @@ import static br.gov.jfrj.siga.dp.CpMarcador.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -2147,5 +2148,21 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			return "";
 		}
 		// return getSigla().substring(getSigla().lastIndexOf("-")+1);
+	}
+	
+	public Set<ExMovimentacao> getTransferenciasPendentesDeDevolucao(ExMobil mob){
+		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3);
+		transferencias.addAll(mob.getMovimentacoesPorTipo(6));
+		transferencias.removeAll(mob.getMovimentacoesCanceladas());
+		Set<ExMovimentacao> transferenciasComData = new TreeSet<ExMovimentacao>();
+
+		Iterator it = transferencias.iterator();
+		while (it.hasNext()) {
+			ExMovimentacao mov = (ExMovimentacao) it.next();
+			if (mov.getDtFimMov() != null) {
+				transferenciasComData.add(mov);
+			}
+		}
+		return transferenciasComData;
 	}
 }

@@ -2697,6 +2697,28 @@ public class ExBL extends CpBL {
 		}
 	}
 
+	public void removerPendenciaDeDevolucao(Set<ExMovimentacao> movs, ExMobil mob) {
+		if(movs.isEmpty())
+			return;
+		try {
+			iniciarAlteracao();
+
+			for (ExMovimentacao m : movs) {
+				if (m.getDtFimMov()!= null){
+					m.setDtFimMov(null);
+				}
+				gravarMovimentacao(m);
+			}
+			
+			concluirAlteracao(mob);
+				
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao remover data de devolução.", 0, e);
+			// throw e;
+		}
+	}	
+	
 	public void cancelar(final DpPessoa titular, final DpLotacao lotaTitular,
 			final ExMobil mob, final ExMovimentacao movCancelar,
 			final Date dtMovForm, final DpPessoa subscritorForm,
@@ -3923,6 +3945,13 @@ public class ExBL extends CpBL {
 		try {
 			encerrarVolumeAutomatico(cadastrante, lotaCadastrante,
 					mov.getExMobilRef(), dtMov);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		try {
+			Set<ExMovimentacao> movs = mob.getTransferenciasPendentesDeDevolucao(mob);
+			if(!movs.isEmpty())
+				removerPendenciaDeDevolucao(movs, mob);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}

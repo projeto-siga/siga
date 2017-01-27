@@ -68,8 +68,8 @@ public class LdapDaoImpl implements ILdapDao {
 			environment.put(Context.SECURITY_PROTOCOL, "ssl");
 		}
 		
-		String vendor = System.getProperty("java.vendor");
-		if(vendor != null && vendor.equals("Oracle Corporation")){
+		String vmName = System.getProperty("java.vm.name");
+		if(vmName != null && (vmName.contains("HotSpot") || vmName.contains("JRockit"))){
 			environment.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 		}
 

@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.wf.vraptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -442,9 +443,12 @@ public class AppController extends WfController {
 		}
 
 		if (fPooledActorsChanged) {
-			if (lotaActorId == null)
+			if (lotaActorId == null){
+				Iterator<PooledActor> it= taskInstance.getPooledActors().iterator();
+				removerPooledActorsAnteriores(it);
+				
 				taskInstance.setPooledActors(new String[] {});
-			else {
+			}else {
 				//util.assertLotacaoAscendenteOuDescendente(
 				//		lotAtualPool != null ? lotAtualPool : lotAtualAtor,
 				//		daoLot(lotaAtor_lotacaoSel.getId()));
@@ -452,6 +456,8 @@ public class AppController extends WfController {
 				if (taskInstance.getSwimlaneInstance() != null){
 					//PooledActor pa = (PooledActor) taskInstance.getSwimlaneInstance().getPooledActors().iterator().next();
 					//pa.setActorId(lotaActorId);
+					Iterator<PooledActor> it= taskInstance.getSwimlaneInstance().getPooledActors().iterator();
+					removerPooledActorsAnteriores(it);
 					taskInstance.getSwimlaneInstance().setPooledActors(new String[] {lotaActorId});
 				}else{
 				}
@@ -493,6 +499,14 @@ public class AppController extends WfController {
 		}
 
 		result.redirectTo(this).task(taskInstance.getId());
+	}
+
+	private void removerPooledActorsAnteriores(Iterator<PooledActor> it) {
+		while (it.hasNext()) {	//remove o polledActor atual
+			PooledActor pooledActor = (PooledActor) it.next();
+			pooledActor.setActorId(null); 
+			pooledActor.setSwimlaneInstance(null);
+		}
 	}
 
 	/**

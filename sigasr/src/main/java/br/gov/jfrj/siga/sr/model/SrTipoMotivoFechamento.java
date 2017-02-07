@@ -2,7 +2,7 @@ package br.gov.jfrj.siga.sr.model;
 
 public enum SrTipoMotivoFechamento {
 
-	ATENDIMENTO_CONCLUÍDO(1, "Usuário plenamente atendido. Chamado pode ser fechado."),
+	ATENDIMENTO_CONCLUÍDO(1, "Usuário atendido. Chamado pode ser fechado."),
 	ERRO_CLASSIFICACAO(3, "Devolução por erro de escalonamento."), 
 	DADOS_INCORRETOS(4, "Script de atendimento não cumprido - Requer mais informações."),
 	SOLUCAO_ALTERNATIVA(5, "Solução de contorno criada/aplicada - Avaliar abertura de Problema."),

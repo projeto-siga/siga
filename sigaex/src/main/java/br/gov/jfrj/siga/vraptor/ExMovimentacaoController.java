@@ -82,6 +82,7 @@ import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Paragraph;
@@ -379,6 +380,10 @@ public class ExMovimentacaoController extends ExController {
 				.setSigla(sigla);
 
 		ExDocumento doc = buscarDocumento(builder);
+		
+		if (Strings.isNullOrEmpty(doc.getDescrDocumento()))
+			throw new AplicacaoException(
+					"Não é possível assinar o documento pois a descrição está vazia. Edite-o e informe uma descrição.");
 		
 		if (autenticando == null)
 			autenticando = false;

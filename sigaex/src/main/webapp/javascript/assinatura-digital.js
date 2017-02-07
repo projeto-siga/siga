@@ -67,6 +67,7 @@ function AssinarDocumentos(copia, politica) {
 	}
 
 	if (tipo == 2) {
+		provider = providerPassword;
 		providerPassword.inicializar(function() {
 			ExecutarAssinarDocumentos(copia);
 		});
@@ -479,7 +480,7 @@ var providerIttruP11 = {
 // Provider: Assinador com senha
 //
 var providerPassword = {
-
+	nome : 'Assinatura com Senha',
 	inicializar : function(cont) {
 		try {
 			this.dialog = $(
@@ -777,10 +778,13 @@ function ExecutarAssinarDocumentos(Copia) {
 					+ o.urlPostPassword + "';");
 
 			process.push(function() {
-				var DadosDoPost = "sigla=" + o.nome + "&nomeUsuarioSubscritor="
+				var id = o.nome?o.nome.split(':')[1]:null;
+				var DadosDoPost = "id=" + id
+						+ "&sigla=" + o.nome + "&nomeUsuarioSubscritor="
 						+ gLogin + "&senhaUsuarioSubscritor=" + gPassword
 						+ "&copia=" + gAutenticar;
 				Status = GravarAssinatura(gUrlPostPassword, DadosDoPost);
+				gRet = Status;
 				return Status;
 			});
 		}

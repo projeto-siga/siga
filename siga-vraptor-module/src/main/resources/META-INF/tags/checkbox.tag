@@ -33,6 +33,7 @@
 	<c:set var="nameInput" value="${name}"></c:set>
 </c:if>
 
-<input type="hidden" name="${nameInput}" id="${nameClean}" value="${value ? 'true':'false'}" />
 <input id="check${nameClean}" type="checkbox" ${null != disabled ? "disabled='disabled'" : '' } ${value == true ? 'checked="checked"':''} 
 	onchange="javascript:change${nameClean}(); show${nameClean}(this.checked, '${depende}');${onchange}" />  
+	
+<input type="hidden" name="${nameInput}" id="${nameClean}" value="${value ? 'true':'false'}" />

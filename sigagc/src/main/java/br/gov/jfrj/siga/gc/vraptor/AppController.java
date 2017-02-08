@@ -1394,8 +1394,8 @@ public class AppController extends GcController {
 
 	@Path("/app/tag/buscar")
 	public void buscarTag(String sigla, GcTag filtro) {
-		List<GcTag> itens = null;
-		Set<GcTag> itensTemp = null;
+		List<GcTag> itensTemp = null;
+		Set<GcTag> itens = null;
 		
 		Query query = em().createNamedQuery("listarTagCategorias");
 		List<String> l = query.getResultList();
@@ -1409,14 +1409,14 @@ public class AppController extends GcController {
 				filtro = new GcTag();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			itens = (List<GcTag>) filtro.buscar();
-			itensTemp = new TreeSet<GcTag>(itens);
+			itensTemp = (List<GcTag>) filtro.buscar();
+			itens = new TreeSet<GcTag>(itensTemp);
 			
 		} catch (Exception e) {
-			itens = new ArrayList<GcTag>();
+			itensTemp = new ArrayList<GcTag>();
 		}
 
-		result.include("itens", itensTemp);
+		result.include("itens", itens);
 		result.include("filtro", filtro);
 		result.include("listaTagCategorias", listaTagCategorias);
 	}

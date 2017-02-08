@@ -66,6 +66,14 @@ public class GcBL {
 			return null;
 		return s.trim();
 	}
+	
+	private String simplificarHashtag(String s) {
+		if (s == null)
+			return null;
+		if (s.trim().length() == 0)
+			return null;
+		return s.trim().toLowerCase();
+	}
 
 	public GcMovimentacao movimentar(GcInformacao inf, GcArquivo arqDuplicado,
 			long id) throws Exception {
@@ -236,7 +244,7 @@ public class GcBL {
 					}
 				} else if (s.startsWith("#")) {
 					s = s.substring(1);
-					titulo = simplificarString(s);
+					titulo = simplificarHashtag(s);
 					tipo = GcTipoTag.TIPO_TAG_HASHTAG;
 				}
 			}

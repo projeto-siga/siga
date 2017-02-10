@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
 import java.util.Set;
@@ -19,7 +20,12 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.bluc.service.BlucService;
+import br.gov.jfrj.siga.bluc.service.HashRequest;
+import br.gov.jfrj.siga.bluc.service.HashResponse;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -34,6 +40,8 @@ import com.lowagie.text.pdf.codec.Base64;
 @Resource
 public class ExAutenticacaoController extends ExController {
 	private static final String URL_EXIBIR = "/app/externo/autenticar";
+	private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
+	private static final String APPLICATION_PDF = "application/pdf";
 
 	public ExAutenticacaoController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
@@ -146,7 +154,8 @@ public class ExAutenticacaoController extends ExController {
 
 	@Get("/app/externo/arquivoAutenticado_stream")
 	public Download arquivoAutenticado_stream(final String n,
-			final String answer, final boolean assinado, final Long idMov)
+			final String answer, final boolean assinado, final Long idMov, 
+			final String certificadoB64)
 			throws Exception {
 
 		Captcha captcha = (Captcha) getRequest().getSession().getAttribute(
@@ -173,14 +182,6 @@ public class ExAutenticacaoController extends ExController {
 
 				bytes = mov.getConteudoBlobMov2();
 
-				if (bytes == null) {
-					throw new AplicacaoException(
-							"Arquivo não encontrado para Download.");
-				} else {
-					return new ByteArrayDownload(bytes, contentType, fileName,
-							false);
-				}
-
 			} else {
 				fileName = arq.getReferenciaPDF();
 				contentType = "application/pdf";
@@ -190,19 +191,45 @@ public class ExAutenticacaoController extends ExController {
 							.obterPdfPorNumeroAssinatura(n);
 				else
 					bytes = arq.getPdf();
-
-				if (bytes == null) {
-					throw new AplicacaoException(
-							"Arquivo não encontrado para Download.");
-				} else {
-					return new ByteArrayDownload(bytes, contentType, fileName,
-							false);
-				}
 			}
+			if (bytes == null) {
+				throw new AplicacaoException(
+						"Arquivo não encontrado para Download.");
+			}
+			final boolean fB64 = getRequest().getHeader("Accept") != null && getRequest().getHeader("Accept").startsWith("text/vnd.siga.b64encoded");
+			if (certificadoB64 != null){
+				final Date dt = dao().consultarDataEHoraDoServidor();
+				getResponse().setHeader("Atributo-Assinavel-Data-Hora", Long.toString(dt.getTime()));
+
+				// Chamar o BluC para criar o pacote assinavel
+				//
+				BlucService bluc = Service.getBlucService();
+				HashRequest hashreq = new HashRequest();
+				hashreq.setCertificate(certificadoB64);
+				hashreq.setCrl("true");
+				hashreq.setPolicy("AD-RB");
+				hashreq.setSha1(bluc.bytearray2b64(bluc.calcSha1(bytes)));
+				hashreq.setSha256(bluc.bytearray2b64(bluc.calcSha256(bytes)));
+				hashreq.setTime(dt);
+				HashResponse hashresp = bluc.hash(hashreq);
+				if (hashresp.getErrormsg() != null)
+					throw new Exception("BluC não conseguiu produzir o pacote assinável. " + hashresp.getErrormsg());
+				byte[] sa = Base64.decode(hashresp.getHash());
+				
+				return new InputStreamDownload(makeByteArrayInputStream(sa, fB64), APPLICATION_OCTET_STREAM, null);
+			}
+			
+			return new InputStreamDownload(makeByteArrayInputStream(bytes, fB64), APPLICATION_PDF, null);
+			
 		} else {
 			result.redirectTo(URL_EXIBIR);
 			return null;
 		}
+	}
+	
+	private ByteArrayInputStream makeByteArrayInputStream(final byte[] content, final boolean fB64) {
+		final byte[] conteudo = (fB64 ? Base64.encodeBytes(content).getBytes() : content);
+		return (new ByteArrayInputStream(conteudo));
 	}
 
 	// antigo metodo arquivo();

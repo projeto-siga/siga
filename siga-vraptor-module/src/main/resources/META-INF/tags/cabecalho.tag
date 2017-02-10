@@ -84,7 +84,7 @@ ${meta}
 
 <link rel="shortcut icon" href="/siga/imagens/siga.ico" />
 
-<script src="/siga/javascript/jquery/jquery-1.11.2.min.js" type="text/javascript"></script>
+<script src="/siga/public/javascript/jquery/jquery-1.11.2.min.js" type="text/javascript"></script>
 <script src="/siga/javascript/jquery/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
 <script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
 <script src="/siga/javascript/json2.js" type="text/javascript"></script>

@@ -429,28 +429,28 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 							.substring(vsNumSubdocumento.indexOf(".") + 1);
 				Integer vshNumSubdocumento = new Integer(vsNumSubdocumento);
 				if (vshNumSubdocumento != 0) {
-					String siglaPai = (orgao == null ? (getExDocumento()
-							.getOrgaoUsuario() != null ? getExDocumento()
-							.getOrgaoUsuario().getAcronimoOrgaoUsu() : "") : orgao)
-							+ (especie == null ? "" : especie)
-							+ (ano == null ? "" : ano)
-							+ ((ano != null && numero != null) ? "/"
-									: "")
-							+ (numero == null ? "" : numero);
-					ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
-					flt.setSigla(siglaPai);
-					ExMobil mobPai = null;
-					if (flt.getIdOrgaoUsu() == null){
-						flt.setIdOrgaoUsu(getExDocumento().getOrgaoUsuario().getId());
-					}
 					try {
+						String siglaPai = (orgao == null ? (getExDocumento()
+								.getOrgaoUsuario() != null ? getExDocumento()
+								.getOrgaoUsuario().getAcronimoOrgaoUsu() : "") : orgao)
+								+ (especie == null ? "" : especie)
+								+ (ano == null ? "" : ano)
+								+ ((ano != null && numero != null) ? "/"
+										: "")
+								+ (numero == null ? "" : numero);
+						ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
+						flt.setSigla(siglaPai);
+						ExMobil mobPai = null;
+						if (flt.getIdOrgaoUsu() == null){
+							flt.setIdOrgaoUsu(getExDocumento().getOrgaoUsuario().getId());
+						}
 						mobPai = ExDao.getInstance().consultarPorSigla(flt);
+						ExDocumento docFilho = mobPai.doc().getMobilGeral()
+								.getSubdocumento(vshNumSubdocumento);
+						setExDocumento(docFilho);
 					} catch (Exception e) {
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
-					ExDocumento docFilho = mobPai.doc().getMobilGeral()
-							.getSubdocumento(vshNumSubdocumento);
-					setExDocumento(docFilho);
 				}
 			}
 

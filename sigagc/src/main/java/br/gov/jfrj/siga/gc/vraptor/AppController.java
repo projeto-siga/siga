@@ -841,9 +841,10 @@ public class AppController extends GcController {
 
 		for (GcTag t : informacao.getTags())
 			;
-		em().detach(informacao);
-		String conteudo = bl.marcarLinkNoConteudo(informacao.arq
+		
+		String conteudo = bl.marcarLinkNoConteudo(informacao, informacao.arq
 				.getConteudoTXT());
+		em().detach(informacao);
 		// if (conteudo != null)
 		// informacao.arq.setConteudoTXT(conteudo);
 
@@ -863,7 +864,7 @@ public class AppController extends GcController {
 
 		if (informacao.acessoPermitido(titular, lotaTitular,
 				informacao.visualizacao.id)) {
-			String conteudo = bl.marcarLinkNoConteudo(informacao.arq
+			String conteudo = bl.marcarLinkNoConteudo(informacao, informacao.arq
 					.getConteudoTXT());
 			// if (conteudo != null)
 			// informacao.arq.setConteudoTXT(conteudo);
@@ -984,7 +985,7 @@ public class AppController extends GcController {
 
 		// Atualiza a classificação com as hashTags encontradas
 		if (conteudo != null){
-			classificacao = bl.findHashTag(conteudo, classificacao,
+			classificacao = bl.findHashTag(informacao, conteudo, classificacao,
 					CONTROLE_HASH_TAG);
 		}
 

@@ -866,7 +866,7 @@ public class GcBL {
 	 * são inseridos no campo de classificação do conhecimento.
 	 * 
 	 **/
-	public String marcarLinkNoConteudo(String conteudo) throws Exception {
+	public String marcarLinkNoConteudo(GcInformacao informacao, String conteudo) throws Exception {
 		if (conteudo == null)
 			return null;
 
@@ -879,10 +879,10 @@ public class GcBL {
 		}
 		if (conteudo.startsWith("<")) {
 			conteudo = findSiglaHTML(conteudo);
-			return findHashTagHTML(conteudo, null, CONTROLE_LINK_HASH_TAG);
+			return findHashTagHTML(informacao, conteudo, null, CONTROLE_LINK_HASH_TAG);
 		}
 		conteudo = findSigla(conteudo);
-		return findHashTag(conteudo, null, CONTROLE_LINK_HASH_TAG);
+		return findHashTag(informacao, conteudo, null, CONTROLE_LINK_HASH_TAG);
 	}
 
 	private String findSigla(String conteudo) throws Exception {
@@ -984,11 +984,12 @@ public class GcBL {
 	 * igual a 2, o conteudo é marcado com os links das hashTags encontradas. O
 	 * conteudo não é gravado com os links.
 	 */
-	public String findHashTag(String conteudo, String classificacao,
+	public String findHashTag(GcInformacao informacao, String conteudo, String classificacao,
 			int controle) {
 		StringBuffer sb = new StringBuffer();
 		String hashTag = new String();
-
+		Long id= 0L;
+		
 		Pattern padraoHashTag = Pattern.compile(
 		// reconhece uma hashTag (#)
 				"(#(?:[0-9a-fA-F]+[G-Zg-z]|[G-Zg-z])[\\w-]*[\\w])");
@@ -1000,8 +1001,14 @@ public class GcBL {
 				hashTag += (hashTag.isEmpty() ? "" : ", ")
 						+ matcherHashTag.group(0);
 			else if (controle == 2) {
+				for (GcTag t : informacao.getTags()){
+					if(t.getTitulo().equals(matcherHashTag.group(0).substring(1))){
+						id = t.getId(); 
+					}
+				}
 				matcherHashTag.appendReplacement(sb,
-						"[[/sigagc/app/listar?filtro.pesquisa=true&filtro.tag.sigla="
+						"[[/sigagc/app/listar?filtro.pesquisa=true&filtro.tag.id="+ id
+								+ "&filtro.tag.sigla="
 								+ matcherHashTag.group(0).substring(1)
 								+ "|$0]]");
 			}
@@ -1041,11 +1048,12 @@ public class GcBL {
 		return sb.toString();
 	}
 
-	public String findHashTagHTML(String conteudo, String classificacao,
+	public String findHashTagHTML(GcInformacao informacao, String conteudo, String classificacao,
 			int controle) {
 		StringBuffer sb = new StringBuffer();
 		String hashTag = new String();
-
+		Long id= 0L;
+		
 		Pattern padraoHashTag = Pattern.compile(
 		// reconhece uma hashTag (#)
 				"(#(?:[0-9a-fA-F]+[G-Zg-z]|[G-Zg-z])[\\w-]*[\\w])");
@@ -1056,8 +1064,14 @@ public class GcBL {
 				hashTag += (hashTag.isEmpty() ? "" : ", ")
 						+ matcherHashTag.group(0);
 			else if (controle == 2) {
+				for (GcTag t : informacao.getTags()){
+					if(t.getTitulo().equals(matcherHashTag.group(0).substring(1))){
+						id = t.getId(); 
+					}
+				}
 				matcherHashTag.appendReplacement(sb,
-						"<a href=\"/sigagc/app/listar?filtro.pesquisa=true&filtro.tag.sigla="
+						"<a href=\"/sigagc/app/listar?filtro.pesquisa=true&filtro.tag.id="+ id
+								+ "&filtro.tag.sigla="
 								+ matcherHashTag.group(0).substring(1)
 								+ "\">$0</a>");
 			}

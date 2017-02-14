@@ -11,14 +11,14 @@
 				<img style="margin-bottom: -4px;"
 					src="/siga/css/famfamfam/icons/${m.arq.icon}.png" /> <a
 					style="padding-right: 5px;"
-					href="javascript: var frm = document.getElementById('frm'); insertTextAtCursor(frm.conteudo, '<c:choose><c:when test="${m.arq.image}">{{${m.arq.id}|${m.arq.titulo}}}</c:when>
+					href="javascript: var frm = document.getElementById('frm'); insertImageAtCursor(frm.conteudo, '<c:choose><c:when test="${m.arq.image}">{{${m.arq.id}|${m.arq.titulo}}}</c:when>
 					<c:otherwise>[[${m.arq.id}|${m.arq.titulo}]]</c:otherwise>
 					</c:choose>');">${m.arq.titulo}
 				</a> [ <img style="margin-bottom: -1px; width: 9px;"
 					src="/siga/css/famfamfam/icons/cross.png" /> <span
 					class="gt-table-action-list"> <a
 					href="javascript:if (confirm('Confirma a remoção deste anexo?')) 
-					ReplaceInnerHTMLFromAjaxResponse('removerAnexo?sigla=${informacao.sigla}&idArq=${m.arq.id}&idMov=${m.id}',
+					ReplaceInnerHTMLFromAjaxResponse('../removerAnexo?sigla=${informacao.sigla}&idArq=${m.arq.id}&idMov=${m.id}',
 										null, document.getElementById('ajax_arquivo'));">remover</a></span>
 				&nbsp;]
 			</p>

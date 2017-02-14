@@ -150,7 +150,7 @@
 
 	<script type="text/javascript">
 		SetInnerHTMLFromAjaxResponse(
-				"/sigagc/app/knowledgeSidebar?ts=${currentTimeMillis}${informacao.gcTags}&id=${informacao.id}",
+				"/sigagc/app/knowledgeSidebar?${informacao.gcTags}&id=${informacao.id}&estiloBusca=algumIgualNenhumDiferente&ts=${currentTimeMillis}",
 				document.getElementById('gc'));
 	</script>
 

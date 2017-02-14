@@ -256,6 +256,17 @@
 				</table>
 			</div>
 		</div>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$("body").css({
+					"overflow-x" : "hidden"
+				});
+
+				$("html, body").stop().animate({
+					"scrollTop" : $("#ancora_mov").offset().top
+				}, 900);
+			});
+		</script>
 	</c:if>
 
 	<c:if test="${historico}">
@@ -304,10 +315,10 @@
 				$("body").css({
 					"overflow-x" : "hidden"
 				});
+
 				$("html, body").stop().animate({
 					"scrollTop" : $("#ancora_his").offset().top
 				}, 900);
-				// event.preventDefault();
 			});
 		</script>
 	</c:if>

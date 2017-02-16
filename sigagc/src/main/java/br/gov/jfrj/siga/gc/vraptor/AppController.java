@@ -1239,8 +1239,10 @@ public class AppController extends GcController {
 		if (informacao.movs != null) {
 			DpPessoa titular = getTitular();
 			DpLotacao lotaTitular = getLotaTitular();
+						
 			SortedSet<GcMovimentacao> movsCopy = new TreeSet<GcMovimentacao>();
 			movsCopy.addAll(informacao.movs);
+			
 			for (GcMovimentacao mov : movsCopy) {
 				if (mov.isCancelada())
 					continue;
@@ -1248,21 +1250,27 @@ public class AppController extends GcController {
 						&& (titular.equivale(mov.pessoaAtendente) || lotaTitular
 								.equivale(mov.lotacaoAtendente))) {
 					temPedidoDeRevisao = true;
+				
+					bl.cancelarMovimentacao(informacao, mov,
+							getIdentidadeCadastrante(), getTitular(), getLotaTitular());
+
 					GcMovimentacao m = bl
 							.movimentar(
 									informacao,
 									GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO,
 									null, null, null, null, null, null, mov,
 									null, null);
-					mov.movCanceladora = m;
+					
 					bl.gravar(informacao, getIdentidadeCadastrante(), titular,
 							lotaTitular);
-					result.redirectTo(this).exibir(
-								informacao.getSiglaCompacta(),
-								"Conhecimento revisado com sucesso!", false,
-								false);
+					break;
 				}
+				
 			}
+			result.redirectTo(this).exibir(
+					informacao.getSiglaCompacta(),
+					"Conhecimento revisado com sucesso!", false,
+					false);
 		}
 		if (!temPedidoDeRevisao)
 			throw new AplicacaoException(

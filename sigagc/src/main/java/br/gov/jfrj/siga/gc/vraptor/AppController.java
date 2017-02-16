@@ -1239,11 +1239,8 @@ public class AppController extends GcController {
 		if (informacao.movs != null) {
 			DpPessoa titular = getTitular();
 			DpLotacao lotaTitular = getLotaTitular();
-						
-			SortedSet<GcMovimentacao> movsCopy = new TreeSet<GcMovimentacao>();
-			movsCopy.addAll(informacao.movs);
-			
-			for (GcMovimentacao mov : movsCopy) {
+
+			for (GcMovimentacao mov : informacao.movs) {
 				if (mov.isCancelada())
 					continue;
 				if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO

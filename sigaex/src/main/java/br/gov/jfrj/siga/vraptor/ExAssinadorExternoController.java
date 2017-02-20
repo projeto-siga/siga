@@ -43,6 +43,7 @@ import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.bluc.service.BlucService;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -249,7 +250,7 @@ public class ExAssinadorExternoController extends ExController {
 
 			ExMobil mob = Documento.getMobil(sigla);
 			ExMovimentacao mov = Documento.getMov(mob, sigla);
-
+			
 			DpPessoa cadastrante = null;
 			List<DpPessoa> pessoas = ExDao.getInstance().consultarPessoasAtivasPorCpf(cpf);
 			for (DpPessoa p : pessoas) {
@@ -264,22 +265,23 @@ public class ExAssinadorExternoController extends ExController {
 			}
 			if (cadastrante == null && pessoas.size() >= 1)
 				cadastrante = pessoas.get(0);
-			if (cadastrante == null)
+			if (cadastrante == null && mov == null)
 				throw new Exception("Não foi possível localizar a pessoa que representa o subscritor.");
 
 			String msg = null;
 
+			DpLotacao lotaCadastrante = cadastrante != null ? cadastrante.getLotacao() : null;
 			if (mov != null) {
 				long tpMov = autenticar ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
 						: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO;
 
-				Ex.getInstance().getBL().assinarMovimentacao(cadastrante, cadastrante.getLotacao(), mov, dt, assinatura,
+				Ex.getInstance().getBL().assinarMovimentacao(cadastrante, lotaCadastrante, mov, dt, assinatura,
 						null, tpMov);
 				msg = "OK";
 			} else if (mob != null) {
 				long tpMov = autenticar ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
 						: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
-				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, cadastrante.getLotacao(), mob.doc(), dt,
+				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, lotaCadastrante, mob.doc(), dt,
 						assinatura, null, tpMov);
 				if (msg != null)
 					msg = "OK: " + msg;

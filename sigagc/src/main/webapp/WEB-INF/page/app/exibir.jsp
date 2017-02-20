@@ -137,6 +137,15 @@
 	</script>
 	
 	<script type="text/javascript">
+			$(document).ready(function() {
+			    $("img").css({
+			    	"max-width" : "100%",
+			    	"height" : "auto",
+			    });		
+			});
+		</script>
+	
+	<script type="text/javascript">
 		function visualizaImpressao(divId) {
               var printContents = document.getElementById(divId).innerHTML;
               var popupWin = window.open('', '_blank');
@@ -261,7 +270,7 @@
 				$("body").css({
 					"overflow-x" : "hidden"
 				});
-
+				
 				$("html, body").stop().animate({
 					"scrollTop" : $("#ancora_mov").offset().top
 				}, 900);
@@ -315,7 +324,7 @@
 				$("body").css({
 					"overflow-x" : "hidden"
 				});
-
+		    		
 				$("html, body").stop().animate({
 					"scrollTop" : $("#ancora_his").offset().top
 				}, 900);

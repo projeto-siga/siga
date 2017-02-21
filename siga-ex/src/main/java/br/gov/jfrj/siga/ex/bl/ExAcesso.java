@@ -238,10 +238,8 @@ public class ExAcesso {
 		// TODO: devemos buscar a data que ficou sem efeito
 
 		// Sem Efeito
-		else if (doc.isSemEfeito()) {
-			add(doc.getLotaCadastrante());
-			add(doc.getSubscritor());
-			add(doc.getTitular());
+		else if (doc.isSemEfeito()) {			
+			add(doc.getSubscritor());			
 		}
 
 		// Por nivel de acesso

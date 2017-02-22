@@ -51,9 +51,11 @@ public class ExAcesso {
 		acessos.add(o);
 	}
 
-	private void incluirPessoas(ExDocumento doc) {
+	private void incluirPessoas(ExDocumento doc, Date dtDeRedefinicaoDoNivelDeAcesso) {
 		for (ExMobil m : doc.getExMobilSet()) {
 			for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
+				if (dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
+					continue;
 				if (mov.getResp() == null) {
 					add(mov.getLotaResp());
 				} else {
@@ -71,9 +73,11 @@ public class ExAcesso {
 		}
 	}
 
-	private void incluirLotacoes(ExDocumento doc) {
+	private void incluirLotacoes(ExDocumento doc, Date dtDeRedefinicaoDoNivelDeAcesso) {
 		for (ExMobil m : doc.getExMobilSet()) {
 			for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
+				if (dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
+					continue;
 				add(mov.getLotaResp());
 				if (mov.getResp() != null)
 					add(mov.getResp().getLotacao());
@@ -142,9 +146,11 @@ public class ExAcesso {
 		}
 	}
 
-	private void incluirOrgaos(ExDocumento doc) {
+	private void incluirOrgaos(ExDocumento doc, Date dtDeRedefinicaoDoNivelDeAcesso) {
 		for (ExMobil m : doc.getExMobilSet()) {
 			for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
+				if (dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
+					continue;
 				if (mov.getLotaResp() != null)
 					add(mov.getLotaResp().getOrgaoUsuario());
 				if (mov.getResp() != null)
@@ -266,6 +272,8 @@ public class ExAcesso {
 
 				// TODO: buscar a data que foi feita a última movimentação de
 				// mudança de nivel de acesso
+				
+				Date dtDeRedefinicaoDoNivelDeAcesso = d.getDataDeRedefinicaoDoNivelDeAcesso();
 
 				switch (d.getExNivelAcessoAtual().getGrauNivelAcesso().intValue()) {
 				case (int) ExNivelAcesso.NIVEL_ACESSO_PUBLICO:
@@ -277,7 +285,7 @@ public class ExAcesso {
 					add(d.getTitular());
 					add(d.getDestinatario());
 					add(d.getLotaDestinatario());
-					incluirOrgaos(d);
+					incluirOrgaos(d, dtDeRedefinicaoDoNivelDeAcesso);
 					break;
 				case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOA_SUB:
 					add(d.getSubscritor());
@@ -286,7 +294,7 @@ public class ExAcesso {
 					if (d.getDestinatario() == null)
 						add(d.getLotaDestinatario());
 					incluirSubsecretaria(d.getLotaDestinatario());
-					incluirPessoas(d);
+					incluirPessoas(d, dtDeRedefinicaoDoNivelDeAcesso);
 					break;
 				case (int) ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA:
 					add(d.getSubscritor());
@@ -295,21 +303,21 @@ public class ExAcesso {
 					if (d.getDestinatario() == null)
 						add(d.getLotaDestinatario());
 					incluirSubsecretaria(d.getLotaCadastrante());
-					incluirPessoas(d);
+					incluirPessoas(d, dtDeRedefinicaoDoNivelDeAcesso);
 					break;
 				case (int) ExNivelAcesso.NIVEL_ACESSO_ENTRE_LOTACOES:
 					add(d.getLotaCadastrante());
 					add(d.getSubscritor());
 					add(d.getTitular());
 					add(d.getLotaDestinatario());
-					incluirLotacoes(d);
+					incluirLotacoes(d, dtDeRedefinicaoDoNivelDeAcesso);
 					break;
 				case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOAL:
 					add(d.getCadastrante());
 					add(d.getSubscritor());
 					add(d.getTitular());
 					add(d.getDestinatario());
-					incluirPessoas(d);
+					incluirPessoas(d, dtDeRedefinicaoDoNivelDeAcesso);
 					break;
 				}
 				cache.put(d, acessos);

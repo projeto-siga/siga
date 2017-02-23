@@ -132,21 +132,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 			return Ex.getInstance().getBL().atualizarDnmNivelAcesso(this);
 		return nivel;
 	}
-	
-	/**
-	 * Retorna o nível de acesso (não a descrição) atual do documento.
-	 */
-	public Date getDataDeRedefinicaoDoNivelDeAcesso() {
-		ExMobil m = this.getMobilGeral();
-		Date dt = null;
-		for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
-			if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REDEFINICAO_NIVEL_ACESSO) {
-				dt = mov.getDtMov();
-			}
-		}
-		return dt;
-	}
-	
 
 	/**
 	 * Retorna o código do documento.

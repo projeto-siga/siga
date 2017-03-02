@@ -6808,7 +6808,7 @@ public class ExBL extends CpBL {
 			ass = new ExAssinavelDoc();
 			ass.setDoc(doc);
 			map.put(doc.getIdDoc(), ass);
-			ass.setPodeAssinar(!(doc.isAssinado() && doc.jaAssinadoPor(titular)));
+			ass.setPodeAssinar(doc.isFinalizado() && !(doc.isAssinado() && doc.jaAssinadoPor(titular)));
 			ass.setPodeSenha(ass.isPodeAssinar() && Ex.getInstance().getComp()
 				.podeAssinarComSenha(titular, lotaTitular, doc.getMobilGeral()));
 			assinaveis.add(ass);

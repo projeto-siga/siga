@@ -53,8 +53,9 @@ public class ExAcesso {
 
 	private void incluirPessoas(ExDocumento doc, Date dtDeRedefinicaoDoNivelDeAcesso) {
 		for (ExMobil m : doc.getExMobilSet()) {
+			ExMovimentacao movUlt = m.getUltimaMovimentacaoNaoCancelada();
 			for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
-				if (dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
+				if (mov != movUlt && dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
 					continue;
 				if (mov.getResp() == null) {
 					add(mov.getLotaResp());
@@ -75,8 +76,9 @@ public class ExAcesso {
 
 	private void incluirLotacoes(ExDocumento doc, Date dtDeRedefinicaoDoNivelDeAcesso) {
 		for (ExMobil m : doc.getExMobilSet()) {
+			ExMovimentacao movUlt = m.getUltimaMovimentacaoNaoCancelada();
 			for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
-				if (dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
+				if (mov != movUlt && dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
 					continue;
 				add(mov.getLotaResp());
 				if (mov.getResp() != null)

@@ -817,7 +817,7 @@ public class SolicitacaoController extends SrController {
     	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         
     	if (calendario != null && !calendario.equals("")){
-    		calendario += " " + (horario != null && !horario.equals("") ? horario : "00:00");
+    		calendario += " " + (horario != null && !horario.equals("") ? horario : "23:59");
     	}
     	
         sol.deixarPendente(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 

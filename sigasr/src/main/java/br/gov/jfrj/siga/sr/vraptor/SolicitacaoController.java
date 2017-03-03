@@ -451,7 +451,6 @@ public class SolicitacaoController extends SrController {
 
 	@Path({ "app/solicitacao/editar", "app/solicitacao/editar/{sigla}"})
     public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao, Long solicitante) throws Exception {
-
 		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.
 		if (sigla != null) {
 			solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);  
@@ -459,6 +458,9 @@ public class SolicitacaoController extends SrController {
 			if (solicitacao.getAcordos() != null)
 				solicitacao.getAcordos().size();
 			Hibernate.initialize(solicitacao.getMeuAtributoSolicitacaoSet());
+			if(!solicitacao.isRascunho()){
+				throw new AplicacaoException("Não é possível editar Solicitação que não seja rascunho.");
+			}
 		}
 		else {
 			if (solicitacao == null){

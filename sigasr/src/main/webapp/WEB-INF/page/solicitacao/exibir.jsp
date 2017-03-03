@@ -249,12 +249,12 @@
 												sigla="${movimentacao.atendente.nomeAbreviado}"
 												descricao="${movimentacao.atendente.descricaoIniciaisMaiusculas}"></siga:selecionado>
 										</td>
-										<td class="jjjjjk" id="descrMovimentacao${movimentacao.idMovimentacao}" class="movimentacao-descricao">
+										<td id="descrMovimentacao${movimentacao.idMovimentacao}" class="movimentacao-descricao">
 										    <c:choose>
 										    <%-- Edson: se a descrição do fechamento for da nova versão... Depois, melhorar isto --%>
 										    <c:when test="${movimentacao.descricaoAtomica}">
 										    	<c:if test="${not empty movimentacao.descricao}">
-										    		<p class="jjjjjj" id="descrMovimentacaoTexto${movimentacao.idMovimentacao}">${movimentacao.descricao}</p>
+										    		<p id="descrMovimentacaoTexto${movimentacao.idMovimentacao}">${movimentacao.descricao}</p>
 										    	</c:if>
 										    	<c:if test="${not empty movimentacao.motivoFechamento}">
 											    	<p><i>Motivo do fechamento:</i> ${movimentacao.motivoFechamento.descrTipoMotivoFechamento}</p>
@@ -369,7 +369,7 @@
 						}
 					}
 				</script>
-				<table id="andamentos" border="0" width="100%" class="gt-table mov">
+				<table border="0" width="100%" class="gt-table mov">
 					<thead>
 						<tr>
 							<th><a href="" onclick="clica(this); return false;" style="text-decoration: none;" id="sinal">+</a></th>

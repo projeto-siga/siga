@@ -44,7 +44,9 @@
 		
 		.hidden {
 			display: none;
-		}
+		}	
+		
+
 	</style>
 
 	<div class="gt-bd gt-cols clearfix" style="padding-bottom: 0px;">
@@ -71,8 +73,21 @@
 				<script language="javascript">
 					function parseDescricao(id){
 						var descricao = document.getElementById(id);
+						
 						if (!descricao)
 							return;
+						
+					    var wordsArray = descricao.innerHTML.split(/(\s+)/);
+					    
+						for(var i=0; i < wordsArray.length; i++){
+				    		if (wordsArray[i].length > 50) {
+								descricao.style.wordBreak = "break-all";
+								descricao.style.wordWrap = "break-word";
+								descricao.style.whiteSpace = "simple";
+								break;
+							}
+						}
+																	
 						descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, ' <br />');
 						descricao.innerHTML = descricao.innerHTML.replace(/(\w{2,4}\-(GC|SR)\-\d{4}\/\d{5}(?:\.\d{2})?)/g, function(a, b, c){
 							if (c.toLowerCase() == 'sr')
@@ -234,12 +249,12 @@
 												sigla="${movimentacao.atendente.nomeAbreviado}"
 												descricao="${movimentacao.atendente.descricaoIniciaisMaiusculas}"></siga:selecionado>
 										</td>
-										<td id="descrMovimentacao${movimentacao.idMovimentacao}" class="movimentacao-descricao">
+										<td class="jjjjjk" id="descrMovimentacao${movimentacao.idMovimentacao}" class="movimentacao-descricao">
 										    <c:choose>
 										    <%-- Edson: se a descrição do fechamento for da nova versão... Depois, melhorar isto --%>
 										    <c:when test="${movimentacao.descricaoAtomica}">
 										    	<c:if test="${not empty movimentacao.descricao}">
-										    		<p id="descrMovimentacaoTexto${movimentacao.idMovimentacao}">${movimentacao.descricao}</p>
+										    		<p class="jjjjjj" id="descrMovimentacaoTexto${movimentacao.idMovimentacao}">${movimentacao.descricao}</p>
 										    	</c:if>
 										    	<c:if test="${not empty movimentacao.motivoFechamento}">
 											    	<p><i>Motivo do fechamento:</i> ${movimentacao.motivoFechamento.descrTipoMotivoFechamento}</p>
@@ -354,7 +369,7 @@
 						}
 					}
 				</script>
-				<table border="0" width="100%" class="gt-table mov">
+				<table id="andamentos" border="0" width="100%" class="gt-table mov">
 					<thead>
 						<tr>
 							<th><a href="" onclick="clica(this); return false;" style="text-decoration: none;" id="sinal">+</a></th>

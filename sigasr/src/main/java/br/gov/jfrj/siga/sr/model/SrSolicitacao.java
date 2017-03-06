@@ -995,6 +995,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         return getPendenciasEmAberto().size() > 0;
     }
     
+    public boolean isTemporaria(){
+    	if (getSigla() != null)
+    			return getSigla().substring(0, 3).equals("TMP") ? true : false;
+    	else 
+    		return false;
+    }
+    
     public boolean isPendenteSemPrevisao(){
     	for (SrPendencia p : getPendenciasEmAberto())
     		if (p.isInfinito())

@@ -302,6 +302,14 @@ public class SolicitacaoController extends SrController {
     	if (solicitacao.getArquivo() != null && solicitacao.getArquivo().getId() != null)
     		solicitacao.setArquivo(null);
     	
+    	//Chrys: Impede que uma solicitação deixe de ser rascunho caso tenha alguma pendência.
+    	//Solicitacao temporária e solicitacao rascunho são conceitos diferentes.  	
+    	//solicitacao.isTemporaria() retorna true caso a sigla da solicitação comece com "TMP" 
+    	//solicitacao.isRascunho() retorna true se o checkbox rascunho (da tela de edição) estiver marcado
+    	if (solicitacao.isTemporaria() && !solicitacao.isRascunho() && solicitacao.isPendente()) {
+    		throw new AplicacaoException("Para que a solicitação possa deixar de ser rascunho, é necessário terminar a pendência.");
+		}
+    	
 		if (!solicitacao.isRascunho() && !validarFormEditar(solicitacao)) {
 			 enviarErroValidacao();
 			 return;

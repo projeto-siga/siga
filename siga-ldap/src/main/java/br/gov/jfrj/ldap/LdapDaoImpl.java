@@ -67,11 +67,7 @@ public class LdapDaoImpl implements ILdapDao {
 			System.setProperty("javax.net.ssl.trustStore", caminhoKeystore);
 			environment.put(Context.SECURITY_PROTOCOL, "ssl");
 		}
-		
-		String vmName = System.getProperty("java.vm.name");
-		if(vmName != null && (vmName.contains("HotSpot") || vmName.contains("JRockit"))){
-			environment.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		}
+		environment.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 
 		environment.put(Context.PROVIDER_URL, "ldap://" + servidor + ":"
 				+ porta);

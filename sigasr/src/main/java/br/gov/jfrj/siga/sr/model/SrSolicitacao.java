@@ -2473,6 +2473,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public void cancelar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
         if (!podeCancelar(titular, lotaTitular))
             throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
+        if (isPai() && !isAbertaComTodasFilhasFechadas())
+            throw new AplicacaoException("Operação não permitida. Necessário fechar ou cancelar toda solicitação " + 
+            			"filha criada a partir dessa que deseja cancelar.");
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO));
         movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);

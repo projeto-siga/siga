@@ -17,7 +17,7 @@ public class SigaPlayCalendar extends GregorianCalendar {
         calMeiaNoite.set(Calendar.SECOND, 0);
         calMeiaNoite.set(Calendar.MILLISECOND, 0);
         calMeiaNoite.add(Calendar.DAY_OF_MONTH, diasAtras * (-1));
-        return calMeiaNoite.getTimeInMillis();
+        return calMeiaNoite.getTimeInMillis() + calMeiaNoite.getTimeZone().getOffset(calMeiaNoite.getTimeInMillis());
     }
 
     private long semanaPassadaMillis() {
@@ -55,7 +55,7 @@ public class SigaPlayCalendar extends GregorianCalendar {
         return tempoTranscorridoMillis() < (1000 * 60 * 60);
     }
 
-    public boolean foiOntemOuHoje() {
+    public boolean foiOntem() {
         return momentoOcorrenciaMillis() > meiaNoiteMillis(1);
     }
 
@@ -81,7 +81,7 @@ public class SigaPlayCalendar extends GregorianCalendar {
             haQuantoTempo = "Há " + tempoTranscorridoMinutos() + " minutos";
         else if (foiHoje())
             haQuantoTempo = "às " + format.format(this.getTime());
-        else if (foiOntemOuHoje())
+        else if (foiOntem())
             haQuantoTempo = "Ontem, às " + format.format(this.getTime());
         else if (fazMenosDeUmaSemana()) {
             switch (this.get(Calendar.DAY_OF_WEEK)) {

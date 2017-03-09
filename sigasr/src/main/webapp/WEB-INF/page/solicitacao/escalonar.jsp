@@ -31,6 +31,21 @@
 			$('#outrasInformacoesDaFilha').hide();
 			$('#motivoEscalonamento').show();
 		}
+
+		function onchangeCheckFechaAutomatico() {
+			var checkbox = $('#checkfechadoAuto');
+			var acao = $('#selectAcao').val();
+			var labelAcao = $("#selectAcao").find(":selected").text();
+			var labelAcaoGenerica = labelAcao.trim().substr(0,23);
+			if (checkbox[0].checked) {
+				if(labelAcaoGenerica == 'Atendimento de 1º nível'){
+					$('#erroCheckFechadoAuto').show();
+					checkbox[0].checked = false;
+					return;
+				}
+			}
+		}
+				
 	</script>
 	<div class="gt-content-box gt-form">
 		<form action="#" method="post" enctype="multipart/form-data" id="frmEscalonar">
@@ -50,10 +65,12 @@
 				</div>
 			<div id="outrasInformacoesDaFilha" class="gt-form-row">
 				<c:if test="${!isPai && empty solicitacaoPai}">
-					<siga:checkbox name="fechadoAuto" onchange="onchangeCheckCriaFilha()" value="${isFechadoAutomaticamente}" />
+					<siga:checkbox name="fechadoAuto" onchange="onchangeCheckCriaFilha();onchangeCheckFechaAutomatico()" value="${isFechadoAutomaticamente}" />
 					Fechar automaticamente a solicita&ccedil;&atilde;o <b>${codigo}</b>, quando
 					todas as solicita&ccedil;&otilde;es filhas forem fechadas pelos seus
 					respectivos atendentes. 
+					<br/>
+					<span style="display: none; color: red" id="erroCheckFechadoAuto">N&atilde;o é possível fechar automaticamente solicita&ccedil;&atilde;o com a&ccedil;&atilde;o Atendimento de 1º nível. Necessário reclassificar a aç&atilde;o.</span>
 				</c:if>
 			</div>
 			<div id="motivoEscalonamento" class="gt-form-row">

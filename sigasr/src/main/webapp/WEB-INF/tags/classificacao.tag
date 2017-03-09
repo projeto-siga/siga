@@ -147,10 +147,14 @@ function carregarAcao() {
 	if (typeof idSelecionado !== 'undefined') {
 		carregarLotacaoDaAcao();
 		removerAcaoRepetida();
+		apagarMsgErroFechamentoAutomatico();
 		sbmt('solicitacao.acao', postbackURL()+'&solicitacao.acao.id='+idSelecionado, false, null);
 	}
 }
-
+function carregarAcao() {
+	$('#erroCheckFechadoAuto').hide();
+	onchangeCheckFechaAutomatico();
+}
 function dispararFuncoesOnBlurItem() {
 	var executarFuncao = carregarLotacaoDaAcao;
 	$('#itemNaoInformado').hide();

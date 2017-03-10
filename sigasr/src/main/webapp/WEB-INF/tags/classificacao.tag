@@ -151,7 +151,7 @@ function carregarAcao() {
 		sbmt('solicitacao.acao', postbackURL()+'&solicitacao.acao.id='+idSelecionado, false, null);
 	}
 }
-function carregarAcao() {
+function apagarMsgErroFechamentoAutomatico() {
 	$('#erroCheckFechadoAuto').hide();
 	onchangeCheckFechaAutomatico();
 }
@@ -232,13 +232,28 @@ function carregarConhecimento(titulo, gcTag, div) {
 	});
 }
 
+function getLotacaoDaAcao(conteudoAcao) {
+	var regExp = /\(([^)]+)\)/g;
+	var matches = conteudoAcao.match(regExp);
+	var lotacoes = [];
+	for (var i = 0; i < matches.length; i++) {
+	    var str = matches[i];
+	    var texto = str.substring(1, str.length - 1);
+	    if (texto.length > 2 && (texto.substring(0, 2) == "ES" || texto.substring(0, 2) == "T2" 
+	        || texto.substring(0, 2) == "RJ")){
+	    	lotacoes[i]= texto;
+	    }
+	}
+	return lotacoes[lotacoes.length-1];
+}
+
 function carregarLotacaoDaAcao() {
 	if ('${exibeLotacaoNaAcao}' === 'true') {
 		//preenche o campo atendente com a lotacao designada a cada alteracao da acao 
 		var opcaoSelecionada = $("#${metodo} #selectAcao option:selected");
 		if (typeof opcaoSelecionada.html() !== 'undefined' && opcaoSelecionada.html() !== '') {
 			var idAcao = opcaoSelecionada.val();
-			var siglaLotacao = opcaoSelecionada.html().split(/[)|(]+/)[1]; //[ "(", "SEDGET", ")" ]
+			var siglaLotacao = getLotacaoDaAcao(opcaoSelecionada.html()); 
 			var spanLotacao = $(".lotacao-" + idAcao + ":contains(" + siglaLotacao + ")");
 			var descLotacao = spanLotacao.html();
 			var idLotacao = spanLotacao.next().html();

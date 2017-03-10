@@ -857,6 +857,9 @@ public class SolicitacaoController extends SrController {
     		throw new AplicacaoException("Número não informado");
     		
     	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
+    	if (solicitacao.isFilha()){
+    		solicitacao.setDescrSolicitacao(solicitacao.getDescricao());
+    	}
         result.include(SOLICITACAO, solicitacao);
     }
 

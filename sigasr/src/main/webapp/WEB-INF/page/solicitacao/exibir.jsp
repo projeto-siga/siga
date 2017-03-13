@@ -608,8 +608,9 @@
                 <input type="hidden" name="ocultas" value="${ocultas}" />
                 <input type="hidden" name="movimentacao.atendente.id" value="${movimentacao.solicitacao.atendente.pessoaAtual.idPessoa}" />
                 <input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
-                    value="${solicitacao.idSolicitacao}" /> <input
-                    type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12" />
+                    value="${solicitacao.idSolicitacao}" /> 
+                <input type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12" />
+                <input type="hidden" name="movimentacao.tipoMov.nome" value="Anexação de Arquivo" />
                 <div class="gt-form-row">
                     <label>Arquivo</label> <input type="file" name="movimentacao.arquivo" />
                 </div>

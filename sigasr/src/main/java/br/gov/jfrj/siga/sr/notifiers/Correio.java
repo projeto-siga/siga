@@ -48,6 +48,9 @@ public class Correio {
 		recipients = headers.get("recipients");
 		
 		if (!recipients.isEmpty()) {
+			if(sol.isFilha() && sol.getLotaAtendente() != movimentacao.getLotaAtendente()){
+				sol = sol.getSolicitacaoPai();
+			}
 			String conteudo = getConteudoComSolicitacaoEMovimentacao(TEMPLATE_NOTIFICAR_ATENDENTE, movimentacao, sol);
 			enviar(assunto, conteudo, recipients);
 		}
@@ -107,6 +110,10 @@ public class Correio {
 	        assunto.add("Fim de atendimento de solicitação escalonada a partir da " + sol.getSolicitacaoPai().getCodigo());
 	        recipients = sol.getSolicitacaoPai().getUltimaMovimentacao().getEmailsNotificacaoAtendende();
 		} 
+		else if(sol.isFilha() && sol.getLotaAtendente() != mov.getLotaAtendente()){
+			assunto.add("Solicitação " + sol.getSolicitacaoPai().getCodigo() + " recebeu andamento");
+	        recipients = sol.getUltimaMovimentacao().getEmailsNotificacaoAtendende();
+		}
 		else {
 	        assunto.add("Solicitação " + sol.getCodigo() + " aguarda atendimento");
 	        recipients = mov.getEmailsNotificacaoAtendende();		

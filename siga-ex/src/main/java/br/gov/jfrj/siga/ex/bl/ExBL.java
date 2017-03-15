@@ -1294,7 +1294,7 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, ExMobil mob, Date dtMov,
 			Date dtMovIni, DpPessoa subscritor) throws AplicacaoException {
 
-		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
+		SortedSet<ExMobil> set = mob.getMobilEApensosDiretosExcetoVolumeApensadoAoProximo();
 		for (ExMobil m : set) {
 			if (!m.getExDocumento().isFinalizado())
 				throw new AplicacaoException(
@@ -2566,12 +2566,12 @@ public class ExBL extends CpBL {
 					.getIdTpMov()) {
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR:
-				set = mob.getMobilETodosOsApensos();
+				set = mob.getMobilEApensosDiretosExcetoVolumeApensadoAoProximo();
 				break;
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO:
-				set = mob.getMobilETodosOsApensos();
+				set = mob.getMobilEApensosDiretosExcetoVolumeApensadoAoProximo();
 				break;
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA:
@@ -2939,7 +2939,7 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor)
 			throws AplicacaoException {
-		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
+		SortedSet<ExMobil> set = mob.getMobilEApensosDiretosExcetoVolumeApensadoAoProximo();
 		for (ExMobil m : set) {
 			if (!m.isSobrestado())
 				throw new AplicacaoException(
@@ -4196,7 +4196,7 @@ public class ExBL extends CpBL {
 			throws AplicacaoException {
 
 
-		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
+		SortedSet<ExMobil> set = mob.getMobilEApensosDiretosExcetoVolumeApensadoAoProximo();
 
 		try {
 			iniciarAlteracao();
@@ -4427,7 +4427,7 @@ public class ExBL extends CpBL {
 
 		boolean fTranferencia = lotaResponsavel != null || responsavel != null;
 
-		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
+		SortedSet<ExMobil> set = mob.getMobilEApensosDiretosExcetoVolumeApensadoAoProximo();
 
 		Date dtUltReceb = null;
 

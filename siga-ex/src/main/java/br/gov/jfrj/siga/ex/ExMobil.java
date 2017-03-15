@@ -1274,6 +1274,15 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	public SortedSet<ExMobil> getApensos() {
 		return getApensos(false, false);
 	}
+	
+	public SortedSet<ExMobil> getMobilEApensosDiretosExcetoVolumeApensadoAoProximo() {
+		TreeSet<ExMobil> setFinal = new TreeSet<ExMobil>();
+		ExMobil grandeMestre = getGrandeMestre();
+		setFinal.add(grandeMestre);
+		setFinal.addAll(grandeMestre.getApensosDiretosExcetoVolumeApensadoAoProximo());
+		return setFinal;
+
+	}
 
 	public SortedSet<ExMobil> getApensosDiretosExcetoVolumeApensadoAoProximo() {
 		return getApensos(true, true);

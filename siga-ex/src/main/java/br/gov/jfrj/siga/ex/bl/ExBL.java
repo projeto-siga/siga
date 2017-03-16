@@ -3186,6 +3186,7 @@ public class ExBL extends CpBL {
 						null, null, null, null);
 				movApenso.setExMobilRef(mob);
 				gravarMovimentacao(movApenso);
+				concluirAlteracaoParcial(mobApenso);
 			}
 			concluirAlteracao(mob);
 		} catch (final Exception e) {

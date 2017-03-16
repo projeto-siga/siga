@@ -3177,18 +3177,25 @@ public class ExBL extends CpBL {
 					lotaCadastrante, mob, null, null, null, null, null, null);
 
 			gravarMovimentacao(mov);
+			concluirAlteracao(mob);
+			
+			//Edson: comando necessário, pois o apensarDocumento, abaixo, vai precisar acessar as coleções
+			dao().getSessao().refresh(mob);
+			
 			if (mob.getNumSequencia() > 1) {
 				ExMobil mobApenso = mob.doc().getVolume(
 						mob.getNumSequencia() - 1);
-				ExMovimentacao movApenso = criarNovaMovimentacao(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO,
-						cadastrante, lotaCadastrante, mobApenso, null, null,
-						null, null, null, null);
-				movApenso.setExMobilRef(mob);
-				gravarMovimentacao(movApenso);
-				concluirAlteracaoParcial(mobApenso);
+				for (ExMobil apensoAoApenso: mobApenso.getApensosDiretosExcetoVolumeApensadoAoProximo()){
+					desapensarDocumento(cadastrante, lotaCadastrante, apensoAoApenso, null, null, null);
+					apensarDocumento(cadastrante, cadastrante, lotaCadastrante, apensoAoApenso, mob, null, null, null);
+				}
+				if (mobApenso.isApensado()){
+					ExMobil outroMestreDoApenso = mobApenso.getMestre();
+					desapensarDocumento(cadastrante, lotaCadastrante, mobApenso, null, null, null);
+					apensarDocumento(cadastrante, cadastrante, lotaCadastrante, mob, outroMestreDoApenso, null, null, null);
+				}
+				apensarDocumento(cadastrante, cadastrante, lotaCadastrante, mobApenso, mob, null, null, null);
 			}
-			concluirAlteracao(mob);
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao criar novo volume.", 0, e);

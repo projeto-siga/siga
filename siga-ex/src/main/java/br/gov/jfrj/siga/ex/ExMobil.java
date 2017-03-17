@@ -1272,7 +1272,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 *         próprio mobil que está sendo chamado.
 	 */
 	public SortedSet<ExMobil> getApensos() {
-		return getApensos(false, false);
+		return getApensos(true, false);
 	}
 	
 	public SortedSet<ExMobil> getMobilEApensosDiretosExcetoVolumeApensadoAoProximo() {

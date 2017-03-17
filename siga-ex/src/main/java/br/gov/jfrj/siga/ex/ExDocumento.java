@@ -2173,23 +2173,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	}
 
 	/**
-	 * Verifica se um documento já foi transferido alguma vez
-	 */
-	public boolean jaTransferido() {
-		for (ExMovimentacao mov : getExMovimentacaoSet()) {
-			if (!mov.isCancelada()
-					&& (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO_TRANSFERENCIA
-							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
-							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA
-							|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA || mov
-							.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA))
-				return true;
-		}
-
-		return false;
-	}
-
-	/**
 	 * Verifica se uma pessoa é subscritor ou cosignatário de um documento
 	 */
 	public boolean isSubscritorOuCosignatario(DpPessoa subscritor) {

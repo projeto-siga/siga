@@ -4514,7 +4514,6 @@ public class ExBL extends CpBL {
 						}
 
 						if (m.getExDocumento().isEletronico()
-								&& !m.getExDocumento().jaTransferido()
 								&& m.getExDocumento().isPendenteDeAssinatura())
 							throw new AplicacaoException(
 									"não é permitido fazer transferência em documento que ainda não foi assinado por todos os subscritores.");

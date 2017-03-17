@@ -1298,9 +1298,18 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	public SortedSet<ExMobil> getApensos(SortedSet<ExMobil> set,
 			boolean omitirApensosIndiretos,
 			boolean omitirVolumesApensadosAosProximos) {
+		
+		varrendoMovRefsDesteMobil:
 		for (ExMovimentacao mov : getExMovimentacaoReferenciaSet()) {
-			if (!ExTipoMovimentacao.hasApensacao(mov.getIdTpMov()))
+			
+			if (mov.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO)
 				continue;
+			
+			if (mov.getExMovimentacaoReferenciadoraSet() != null)
+				for (ExMovimentacao ref : mov.getExMovimentacaoReferenciadoraSet())
+					if (ref.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
+						continue varrendoMovRefsDesteMobil;
+			
 			ExMobil mobMestre = mov.getExMobil().getMestre();
 			if (this.equals(mobMestre)) {
 				if (!set.contains(mov.getExMobil())) {

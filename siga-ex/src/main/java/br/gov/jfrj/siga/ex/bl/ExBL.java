@@ -1112,7 +1112,7 @@ public class ExBL extends CpBL {
 				lotaVerif = mobVerif.getUltimaMovimentacaoNaoCancelada()
 						.getLotaResp();
 
-				if (lotaBase != null && !lotaVerif.equivale(lotaBase))
+				if (lotaBase != null && !mobVerif.isApensadoAVolumeDoMesmoProcesso() && !lotaVerif.equivale(lotaBase))
 					foraDaLota += (foraDaLota.length() < 2 ? " Os seguintes volumes encontram-se em lotação diferente de "
 							+ lotaBase.getSigla() + ": "
 							: ", ")

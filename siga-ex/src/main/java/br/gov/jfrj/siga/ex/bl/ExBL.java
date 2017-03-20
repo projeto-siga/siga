@@ -4440,7 +4440,7 @@ public class ExBL extends CpBL {
 		Date dtUltReceb = null;
 
 		// Edson: apagar isto? A verificação já é feita no for abaixo...
-		if (fDespacho && mob.isVolumeApensadoAoProximo())
+		if (fDespacho && mob.isApensadoAVolumeDoMesmoProcesso())
 			throw new AplicacaoException(
 					"não é possível fazer despacho em um documento que faça parte de um apenso");
 

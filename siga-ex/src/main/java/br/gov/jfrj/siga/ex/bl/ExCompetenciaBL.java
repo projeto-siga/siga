@@ -3191,7 +3191,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (ultMovNaoCancelada == null)
 			return false;
 		
-		if(mob.doc().isEletronico() && mob.isVolumeApensadoAoProximo())
+		if(mob.doc().isEletronico() && mob.isApensadoAVolumeDoMesmoProcesso())
 			return false;
 
 		if (!mob.isApensado() || mob.isEmTransito() || mob.isCancelada()

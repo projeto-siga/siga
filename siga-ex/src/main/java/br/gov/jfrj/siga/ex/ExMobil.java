@@ -1314,7 +1314,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 						continue varrendoMovRefsDesteMobil;
 			
 			if (!set.contains(mov.getExMobil())) {
-				if (incluirVolumesApensadosAosProximos || !mov.getExMobil().isVolumeApensadoAoProximo()){
+				if (incluirVolumesApensadosAosProximos || !mov.getExMobil().isApensadoAVolumeDoMesmoProcesso()){
 					set.add(mov.getExMobil());
 					//Edson: passando a deixar o if abaixo dentro do anterior pois, se um nó não vai
 					//ser adicionado, não há necessidade de verificar os nós abaixo
@@ -1456,28 +1456,6 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 */
 	public boolean isVolumeEncerrado() {
 		return sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO_DE_VOLUME);
-	}
-
-	/**
-	 * Verifica se um Mobil do tipo Volume está Apensado ao próximo Mobil. Para
-	 * saber o próximo Mobil é utilizado o número de sequência do Mobil.
-	 * 
-	 * @return Verdadeiro se o Mobil estiver apensado ao próximo volume e Falso
-	 *         caso contrário.
-	 * 
-	 */
-	public boolean isVolumeApensadoAoProximo() {
-		if (getMestre() == null)
-			return false;
-		if (!isVolume())
-			return false;
-		if (!getMestre().isVolume())
-			return false;
-		if (!getNumSequencia().equals(getMestre().getNumSequencia() - 1))
-			return false;
-		if (!getMestre().doc().getIdDoc().equals(doc().getIdDoc()))
-			return false;
-		return true;
 	}
 
 	/**

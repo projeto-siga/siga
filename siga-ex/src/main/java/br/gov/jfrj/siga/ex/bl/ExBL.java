@@ -6090,6 +6090,22 @@ public class ExBL extends CpBL {
 		try {
 			iniciarAlteracao();
 
+			if (!getComp().podeTornarDocumentoSemEfeito(cadastrante, lotaCadastrante, doc.getMobilGeral()))
+				throw new AplicacaoException("Cancelamento não permitido");
+			
+			//Verifica se o subscritor pode movimentar todos os mobils
+			//E Também se algum documento diferente está apensado ou juntado a este documento
+			
+			for (ExMobil m : doc.getExMobilSet()) {
+				if(!m.isGeral()) {
+					if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, m)
+						|| m.isJuntado() || m.isApensado()
+						|| m.temApensos()
+						|| m.temDocumentosJuntados())
+						throw new AplicacaoException("Cancelamento não permitido");
+				}
+			}
+
 			final ExMovimentacao mov = criarNovaMovimentacao(
 					ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO,
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), null,

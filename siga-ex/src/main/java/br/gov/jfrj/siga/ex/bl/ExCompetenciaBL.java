@@ -823,29 +823,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				mob.doc().isBoletimPublicado() ||
 				mob.doc().isDJEPublicado()) 
 			return false;
-		
-		
-		//Verifica se o subscritor pode movimentar todos os mobils
-		//E Também se algum documento diferente está apensado ou juntado a este documento
-
-
-		for (ExMobil m : mob.doc().getExMobilSet()) {
-			if(!m.isGeral()) {
-				if (!podeMovimentar(titular, lotaTitular, m))
-					return false;
 				
-				if(m.isJuntado() || m.isApensado())
-					return false;
-				
-				if (m.temApensos())
-					return false;
-				
-				if(m.temDocumentosJuntados())
-					return false;
-			}
-		}
-		
-		
 		return  getConf()
 						.podePorConfiguracao(
 								titular,

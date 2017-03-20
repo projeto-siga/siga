@@ -131,6 +131,30 @@ public class ExDocumentoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 
+	@Get("app/expediente/doc/cancelar_movimentacoes_replicadas")
+	public void aCancelarMovimentacoesReplicadasDoc(final String sigla) throws Exception {
+		assertAcesso("");
+
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+		final ExDocumento doc = buscarDocumento(builder, false);
+		
+		Set<ExMovimentacao> movsReplicadas = new TreeSet<ExMovimentacao>();
+		Set<ExMovimentacao> movs = null;
+		
+		for (ExMobil m : doc.getExMobilSet()) {
+			movs = m.getExMovimentacaoSet();
+			movsReplicadas.addAll(m.getMovimentacoesReplicadas(movs));
+		}
+
+		if(!movsReplicadas.isEmpty()){
+			Ex.getInstance().getBL().cancelarMovimentacoesReplicadas(movsReplicadas);
+			Ex.getInstance().getBL().atualizarMarcas(doc);
+		}
+		
+		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+	}
+	
 	@Get("app/expediente/doc/corrigirPDF")
 	public void aCorrigirPDF(final String sigla) {
 		assertAcesso("");

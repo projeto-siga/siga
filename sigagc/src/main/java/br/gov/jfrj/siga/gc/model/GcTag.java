@@ -249,7 +249,7 @@ public class GcTag extends Objeto implements Comparable<GcTag>,
 		String query = "from GcTag where 1=1";
 		if (tag.getTitulo() != null && tag.getTitulo().trim().length() > 0) {
 			String t = Texto.slugify(tag.getTitulo(), true, true);
-			query += " and titulo like '%" + t + "%'";
+			query += "and lower(titulo) like '%" + t + "%'";
 		}
 		return GcTag.AR.find(query).fetch();
 	}

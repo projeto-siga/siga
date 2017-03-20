@@ -1900,7 +1900,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     				Long marcadorAFechar = CpMarcador.MARCADOR_SOLICITACAO_NECESSITA_PROVIDENCIA;
     				SrTipoMotivoFechamento motivoFilha = getMotivoFechamentoUltimaFilha();
     				//Edson: a aceitação do motivo null é para compatibilizar com fechamentos anteriores à funcionalidade do tipo de fechamento
-    				if (motivoFilha == null || motivoFilha.equals(SrTipoMotivoFechamento.ATENDIMENTO_CONCLUÍDO))
+    				if (motivoFilha == null || motivoFilha.equals(SrTipoMotivoFechamento.ATENDIMENTO_CONCLUÍDO) || motivoFilha.equals(SrTipoMotivoFechamento.TAREFA_CONCLUÍDA))
     					marcadorAFechar = CpMarcador.MARCADOR_SOLICITACAO_FECHADO_PARCIAL;
     				acrescentarMarca(set, marcadorAFechar, movMarca.getDtIniMov(),
     						null, movMarca.getAtendente(), movMarca.getLotaAtendente());

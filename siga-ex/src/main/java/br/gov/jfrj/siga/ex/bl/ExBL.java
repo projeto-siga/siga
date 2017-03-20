@@ -2816,6 +2816,20 @@ public class ExBL extends CpBL {
 		}
 	}
 	
+	public void cancelarMovimentacoesReplicadas(Set<ExMovimentacao> movs) throws Exception {
+		try {
+			iniciarAlteracao();
+			for (ExMovimentacao mov : movs) {
+				mov.setExMovimentacaoRef(mov);
+				gravarMovimentacaoCancelamento(mov, mov);	
+			}
+						
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao cancelar movimentaçôes replicadas.", 0, e);
+		}
+	}
+	
 	public void criarVia(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc) {
 		criarVia(cadastrante, lotaCadastrante, doc, null);

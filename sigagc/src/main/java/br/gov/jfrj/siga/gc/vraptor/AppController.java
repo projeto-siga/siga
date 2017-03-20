@@ -841,9 +841,10 @@ public class AppController extends GcController {
 
 		for (GcTag t : informacao.getTags())
 			;
-		em().detach(informacao);
-		String conteudo = bl.marcarLinkNoConteudo(informacao.arq
+		
+		String conteudo = bl.marcarLinkNoConteudo(informacao, informacao.arq
 				.getConteudoTXT());
+		em().detach(informacao);
 		// if (conteudo != null)
 		// informacao.arq.setConteudoTXT(conteudo);
 
@@ -863,7 +864,7 @@ public class AppController extends GcController {
 
 		if (informacao.acessoPermitido(titular, lotaTitular,
 				informacao.visualizacao.id)) {
-			String conteudo = bl.marcarLinkNoConteudo(informacao.arq
+			String conteudo = bl.marcarLinkNoConteudo(informacao, informacao.arq
 					.getConteudoTXT());
 			// if (conteudo != null)
 			// informacao.arq.setConteudoTXT(conteudo);
@@ -984,7 +985,7 @@ public class AppController extends GcController {
 
 		// Atualiza a classificação com as hashTags encontradas
 		if (conteudo != null){
-			classificacao = bl.findHashTag(conteudo, classificacao,
+			classificacao = bl.findHashTag(informacao, conteudo, classificacao,
 					CONTROLE_HASH_TAG);
 		}
 
@@ -1238,30 +1239,35 @@ public class AppController extends GcController {
 		if (informacao.movs != null) {
 			DpPessoa titular = getTitular();
 			DpLotacao lotaTitular = getLotaTitular();
-			SortedSet<GcMovimentacao> movsCopy = new TreeSet<GcMovimentacao>();
-			movsCopy.addAll(informacao.movs);
-			for (GcMovimentacao mov : movsCopy) {
+
+			for (GcMovimentacao mov : informacao.movs) {
 				if (mov.isCancelada())
 					continue;
 				if (mov.tipo.id == GcTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_DE_REVISAO
 						&& (titular.equivale(mov.pessoaAtendente) || lotaTitular
 								.equivale(mov.lotacaoAtendente))) {
 					temPedidoDeRevisao = true;
+				
+					bl.cancelarMovimentacao(informacao, mov,
+							getIdentidadeCadastrante(), getTitular(), getLotaTitular());
+
 					GcMovimentacao m = bl
 							.movimentar(
 									informacao,
 									GcTipoMovimentacao.TIPO_MOVIMENTACAO_REVISADO,
 									null, null, null, null, null, null, mov,
 									null, null);
-					mov.movCanceladora = m;
+					
 					bl.gravar(informacao, getIdentidadeCadastrante(), titular,
 							lotaTitular);
-					result.redirectTo(this).exibir(
-								informacao.getSiglaCompacta(),
-								"Conhecimento revisado com sucesso!", false,
-								false);
+					break;
 				}
+				
 			}
+			result.redirectTo(this).exibir(
+					informacao.getSiglaCompacta(),
+					"Conhecimento revisado com sucesso!", false,
+					false);
 		}
 		if (!temPedidoDeRevisao)
 			throw new AplicacaoException(
@@ -1394,8 +1400,9 @@ public class AppController extends GcController {
 
 	@Path("/app/tag/buscar")
 	public void buscarTag(String sigla, GcTag filtro) {
-		List<GcTag> itens = null;
-
+		List<GcTag> itensTemp = null;
+		Set<GcTag> itens = null;
+		
 		Query query = em().createNamedQuery("listarTagCategorias");
 		List<String> l = query.getResultList();
 		List<SigaIdDescr> listaTagCategorias = new ArrayList<SigaIdDescr>();
@@ -1408,9 +1415,11 @@ public class AppController extends GcController {
 				filtro = new GcTag();
 			if (sigla != null && !sigla.trim().equals(""))
 				filtro.setSigla(sigla);
-			itens = (List<GcTag>) filtro.buscar();
+			itensTemp = (List<GcTag>) filtro.buscar();
+			itens = new TreeSet<GcTag>(itensTemp);
+			
 		} catch (Exception e) {
-			itens = new ArrayList<GcTag>();
+			itensTemp = new ArrayList<GcTag>();
 		}
 
 		result.include("itens", itens);

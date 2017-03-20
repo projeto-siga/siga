@@ -137,6 +137,15 @@
 	</script>
 	
 	<script type="text/javascript">
+			$(document).ready(function() {
+			    $("img").css({
+			    	"max-width" : "100%",
+			    	"height" : "auto",
+			    });		
+			});
+		</script>
+	
+	<script type="text/javascript">
 		function visualizaImpressao(divId) {
               var printContents = document.getElementById(divId).innerHTML;
               var popupWin = window.open('', '_blank');
@@ -150,7 +159,7 @@
 
 	<script type="text/javascript">
 		SetInnerHTMLFromAjaxResponse(
-				"/sigagc/app/knowledgeSidebar?ts=${currentTimeMillis}${informacao.gcTags}&id=${informacao.id}",
+				"/sigagc/app/knowledgeSidebar?${informacao.gcTags}&id=${informacao.id}&estiloBusca=algumIgualNenhumDiferente&ts=${currentTimeMillis}",
 				document.getElementById('gc'));
 	</script>
 
@@ -256,6 +265,17 @@
 				</table>
 			</div>
 		</div>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$("body").css({
+					"overflow-x" : "hidden"
+				});
+				
+				$("html, body").stop().animate({
+					"scrollTop" : $("#ancora_mov").offset().top
+				}, 900);
+			});
+		</script>
 	</c:if>
 
 	<c:if test="${historico}">
@@ -304,10 +324,10 @@
 				$("body").css({
 					"overflow-x" : "hidden"
 				});
+		    		
 				$("html, body").stop().animate({
 					"scrollTop" : $("#ancora_his").offset().top
 				}, 900);
-				// event.preventDefault();
 			});
 		</script>
 	</c:if>

@@ -429,28 +429,28 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 							.substring(vsNumSubdocumento.indexOf(".") + 1);
 				Integer vshNumSubdocumento = new Integer(vsNumSubdocumento);
 				if (vshNumSubdocumento != 0) {
-					String siglaPai = (orgao == null ? (getExDocumento()
-							.getOrgaoUsuario() != null ? getExDocumento()
-							.getOrgaoUsuario().getAcronimoOrgaoUsu() : "") : orgao)
-							+ (especie == null ? "" : especie)
-							+ (ano == null ? "" : ano)
-							+ ((ano != null && numero != null) ? "/"
-									: "")
-							+ (numero == null ? "" : numero);
-					ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
-					flt.setSigla(siglaPai);
-					ExMobil mobPai = null;
-					if (flt.getIdOrgaoUsu() == null){
-						flt.setIdOrgaoUsu(getExDocumento().getOrgaoUsuario().getId());
-					}
 					try {
+						String siglaPai = (orgao == null ? (getExDocumento()
+								.getOrgaoUsuario() != null ? getExDocumento()
+								.getOrgaoUsuario().getAcronimoOrgaoUsu() : "") : orgao)
+								+ (especie == null ? "" : especie)
+								+ (ano == null ? "" : ano)
+								+ ((ano != null && numero != null) ? "/"
+										: "")
+								+ (numero == null ? "" : numero);
+						ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
+						flt.setSigla(siglaPai);
+						ExMobil mobPai = null;
+						if (flt.getIdOrgaoUsu() == null){
+							flt.setIdOrgaoUsu(getExDocumento().getOrgaoUsuario().getId());
+						}
 						mobPai = ExDao.getInstance().consultarPorSigla(flt);
+						ExDocumento docFilho = mobPai.doc().getMobilGeral()
+								.getSubdocumento(vshNumSubdocumento);
+						setExDocumento(docFilho);
 					} catch (Exception e) {
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
-					ExDocumento docFilho = mobPai.doc().getMobilGeral()
-							.getSubdocumento(vshNumSubdocumento);
-					setExDocumento(docFilho);
 				}
 			}
 
@@ -1492,6 +1492,45 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		return pendenciasDeAnexacao;
 	}
 
+	/**
+	 * Retorna a lista de movimentações replicadas devido a lentidão no Siga
+	 * 
+	 */
+	public List<ExMovimentacao> getMovimentacoesReplicadas(Set<ExMovimentacao> movs) {
+		List<ExMovimentacao> movsReplicadas = new ArrayList<ExMovimentacao>();
+		ExMovimentacao movPosterior = null;
+		
+		Iterator it = movs.iterator();
+		Iterator itPosterior = movs.iterator();
+		
+		if (itPosterior.hasNext()) 
+			movPosterior = (ExMovimentacao) itPosterior.next();
+		
+			while (it.hasNext()) {
+				ExMovimentacao mov = (ExMovimentacao) it.next();
+
+				while (itPosterior.hasNext()) {
+					movPosterior = (ExMovimentacao) itPosterior.next();
+			
+					if (mov.getCadastrante().equivale(movPosterior.getCadastrante()) 
+						&& mov.getLotaCadastrante().equivale(movPosterior.getLotaCadastrante())
+						
+						&& mov.getSubscritor().equivale(movPosterior.getSubscritor())
+						&& mov.getLotaSubscritor().equivale(movPosterior.getLotaSubscritor())
+						&& mov.getLotaResp().equivale(movPosterior.getLotaResp())
+						&& mov.getLotaTitular().equivale(movPosterior.getLotaTitular())
+						&& mov.getIdTpMov().equals(movPosterior.getIdTpMov())
+						&& (mov.getDtMov().getTime() - movPosterior.getDtMov().getTime()) < 3600000
+						&& (mov.getDtIniMov().getTime() - movPosterior.getDtIniMov().getTime()) < 3600000){
+							movsReplicadas.add(mov);
+				}
+				break;				
+			}
+			continue;
+		}
+		return movsReplicadas;
+	}
+	
 	/**
 	 * Retorna a lista de movimentações de pendência de colaboração
 	 * 

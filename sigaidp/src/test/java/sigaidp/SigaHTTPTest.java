@@ -65,7 +65,7 @@ public class SigaHTTPTest {
 					"	rel='stylesheet' type='text/css' /> -->"+
 					"<link rel='shortcut icon' href='/siga/sigalibs/siga.ico' />"+
 					"<!-- "+
-					"<script src='/siga/javascript/jquery/jquery-1.11.2.min.js' type='text/javascript'></script>"+
+					"<script src='/siga/public/javascript/jquery/jquery-1.11.2.min.js' type='text/javascript'></script>"+
 					"<script src='/siga/javascript/jquery/jquery-migrate-1.2.1.min.js' type='text/javascript'></script>"+
 					"-->"+
 					"<script src='/siga/javascript/jquery/1.6/jquery-1.6.4.min.js' type='text/javascript'></script>"+

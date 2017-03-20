@@ -5762,7 +5762,7 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"não é possível apensar um volume aberto a um volume encerrado");
 
-		for (ExMobil apenso : mobMestre.getMobilETodosOsApensos(true)) {
+		for (ExMobil apenso : mobMestre.getApensosExcetoVolumeApensadoAoProximo()) {
 			if (apenso.getIdMobil() == mob.getIdMobil()) {
 				throw new AplicacaoException(
 						"não é possível apensar ao documento "

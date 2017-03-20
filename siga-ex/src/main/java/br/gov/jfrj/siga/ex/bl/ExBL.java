@@ -38,6 +38,7 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -1101,61 +1102,64 @@ public class ExBL extends CpBL {
 
 	private void permitirOuNaoMovimentarDestinacao(ExMobil mob) {
 
-		if (mob.isGeralDeProcesso()) {
+		Set<ExMobil> mobsVerif = new HashSet<ExMobil>();
+		
+		if (mob.isGeralDeProcesso()){
+			if (mob.doc().isEletronico())
+				mobsVerif.add(mob.doc().getUltimoVolume());
+			else mobsVerif.addAll(mob.doc().getVolumes());
+		} else mobsVerif.add(mob);
+				
 
-			String sobrestados = "", emTransito = "", foraDaLota = "", apensados = "", msgFinal = "", comApensos = "";
+		String sobrestados = "", emTransito = "", foraDaLota = "", apensados = "", msgFinal = "", comApensos = "";
 
-			DpLotacao lotaBase = null, lotaVerif = null;
+		DpLotacao lotaBase = null, lotaVerif = null;
 
-			for (ExMobil mobVerif : mob.doc().getVolumes()) {
+		for (ExMobil mobVerif : mobsVerif) {
+			
+			if (mobVerif.isApensadoAVolumeDoMesmoProcesso())
+				continue;
 
-				lotaVerif = mobVerif.getUltimaMovimentacaoNaoCancelada()
-						.getLotaResp();
+			lotaVerif = mobVerif.getUltimaMovimentacaoNaoCancelada().getLotaResp();
 
-				if (lotaBase != null && !mobVerif.isApensadoAVolumeDoMesmoProcesso() && !lotaVerif.equivale(lotaBase))
-					foraDaLota += (foraDaLota.length() < 2 ? " Os seguintes volumes encontram-se em lotação diferente de "
-							+ lotaBase.getSigla() + ": "
-							: ", ")
-							+ mobVerif.getSigla();
+			if (lotaBase != null && !mobVerif.isApensadoAVolumeDoMesmoProcesso() && !lotaVerif.equivale(lotaBase))
+				foraDaLota += (foraDaLota.length() < 2 ? " Os seguintes volumes ou vias encontram-se em lotação diferente de "
+						+ lotaBase.getSigla() + ": "
+						: ", ")
+						+ mobVerif.getSigla();
 
-				if (lotaBase == null)
-					lotaBase = lotaVerif;
+			if (lotaBase == null)
+				lotaBase = lotaVerif;
 
-				if (mobVerif.isSobrestado())
-					sobrestados += (sobrestados.length() < 2 ? " Os seguintes volumes encontram-se sobrestados: "
-							: ", ")
-							+ mobVerif.getSigla();
+			if (mobVerif.isSobrestado())
+				sobrestados += (sobrestados.length() < 2 ? " Os seguintes volumes ou vias encontram-se sobrestados: "
+						: ", ")
+						+ mobVerif.getSigla();
 
-				if (mobVerif.isEmTransito())
-					emTransito += (emTransito.length() < 2 ? " Os seguintes volumes encontram-se em trânsito: "
-							: ", ")
-							+ mobVerif.getSigla();
+			if (mobVerif.isEmTransito())
+				emTransito += (emTransito.length() < 2 ? " Os seguintes volumes ou vias encontram-se em trânsito: "
+						: ", ")
+						+ mobVerif.getSigla();
 
-				if (mobVerif.isApensado()
-						&& !mobVerif.getMestre().doc().equals(mobVerif.doc()))
-					apensados += (apensados.length() < 2 ? " Os seguintes volumes encontram-se apensados a outro processo: "
-							: ", ")
-							+ mobVerif.getSigla();
+			if (mobVerif.isApensado())
+				apensados += (apensados.length() < 2 ? " Os seguintes volumes ou vias encontram-se apensados a outro documento: "
+						: ", ")
+						+ mobVerif.getSigla();
 
-				for (ExMobil apenso : mobVerif.getApensos()) {
-					if (!apenso.doc().equals(mobVerif.doc()))
-						comApensos += (comApensos.length() < 2 ? " Os seguintes volumes possuem volumes de outros processos apensados: "
-								: ", ")
-								+ apenso.getSigla()
-								+ " apensado a "
-								+ mobVerif.getSigla();
-				}
+			for (ExMobil apenso : mobVerif.getApensosExcetoVolumeApensadoAoProximo()) {
+				comApensos += (comApensos.length() < 2 ? " Os seguintes volumes ou vias possuem outros documentos apensados: "
+						: ", ")
+						+ apenso.getSigla()
+						+ " apensado a "
+						+ mobVerif.getSigla();
 			}
+		}
 
-			msgFinal += foraDaLota + sobrestados + emTransito + apensados
-					+ comApensos;
-			if (msgFinal.length() > 2)
-				throw new AplicacaoException(
-						"não foi possível movimentar o processo." + msgFinal);
-
-		} else if (mob.isApensado() || mob.temApensos())
+		msgFinal += foraDaLota + sobrestados + emTransito + apensados
+				+ comApensos;
+		if (msgFinal.length() > 2)
 			throw new AplicacaoException(
-					"não foi possível movimentar a via porque ela encontra-se apensada ou possui apensos.");
+					"não foi possível movimentar o processo." + msgFinal);
 	}
 
 	public void arquivarCorrenteAutomatico(DpPessoa cadastrante,
@@ -2874,26 +2878,20 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor)
 			throws AplicacaoException {
-		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
-		for (ExMobil m : set) {
-			if (!m.isArquivado())
-				throw new AplicacaoException(
-						"não é possível desarquivar um documento não arquivado");
-		}
+		if (!mob.isArquivado())
+			throw new AplicacaoException(
+					"não é possível desarquivar um documento não arquivado");
 
 		Date dt = dao().dt();
 		try {
 			iniciarAlteracao();
 
-			for (ExMobil m : set) {
-				final ExMovimentacao mov = criarNovaMovimentacao(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE,
-						cadastrante, lotaCadastrante, m, dtMov, subscritor,
-						null, null, null, dt);
-				gravarMovimentacao(mov);
-				concluirAlteracaoParcial(m);
-			}
-			concluirAlteracao(null);
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE,
+					cadastrante, lotaCadastrante, mob, dtMov, subscritor,
+					null, null, null, dt);
+			gravarMovimentacao(mov);
+			concluirAlteracao(mob);
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao reabrir.", 0, e);
@@ -2905,26 +2903,21 @@ public class ExBL extends CpBL {
 			final Date dtMov, final DpPessoa subscritor)
 			throws AplicacaoException {
 
-		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
-		for (ExMobil m : set) {
-			if (!m.isArquivadoIntermediario())
-				throw new AplicacaoException(
-						"não é possível retirar do arquivo intermediário um documento que não esteja arquivado");
-		}
+		if (!mob.isArquivadoIntermediario())
+			throw new AplicacaoException(
+					"não é possível retirar do arquivo intermediário um documento que não esteja arquivado");
+		
 
 		Date dt = dao().dt();
 		try {
 			iniciarAlteracao();
 
-			for (ExMobil m : set) {
-				final ExMovimentacao mov = criarNovaMovimentacao(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO,
-						cadastrante, lotaCadastrante, m, dtMov, subscritor,
-						null, null, null, dt);
-				gravarMovimentacao(mov);
-				concluirAlteracaoParcial(m);
-			}
-			concluirAlteracao(null);
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO,
+					cadastrante, lotaCadastrante, mob, dtMov, subscritor,
+					null, null, null, dt);
+			gravarMovimentacao(mov);
+			concluirAlteracao(mob);
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao desarquivar intermediário.",

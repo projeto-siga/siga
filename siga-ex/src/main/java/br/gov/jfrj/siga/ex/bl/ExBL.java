@@ -2576,13 +2576,10 @@ public class ExBL extends CpBL {
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA:
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_REDEFINICAO_NIVEL_ACESSO:
 				indexar = true;
 				set = new TreeSet<ExMobil>();
 				set.add(mob);
-				break;
-			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_REDEFINICAO_NIVEL_ACESSO:
-				indexar = true;
-				set = mob.getMobilETodosOsApensos();
 				break;
 			default:
 				set = new TreeSet<ExMobil>();

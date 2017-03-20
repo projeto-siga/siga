@@ -117,7 +117,7 @@ public class ExMobilVO extends ExVO {
 		// .converterEmTexto(byteCount);
 		// }
 
-		for (ExMobil m : mob.getApensosDiretosExcetoVolumeApensadoAoProximo()) {
+		for (ExMobil m : mob.getApensosExcetoVolumeApensadoAoProximo()) {
 			if (m.isEliminado())
 				continue;
 			apensos.add(new ExMobilVO(m, titular, lotaTitular, false));

@@ -1294,7 +1294,7 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, ExMobil mob, Date dtMov,
 			Date dtMovIni, DpPessoa subscritor) throws AplicacaoException {
 
-		SortedSet<ExMobil> set = mob.getMobilEApensosDiretosExcetoVolumeApensadoAoProximo();
+		SortedSet<ExMobil> set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
 		for (ExMobil m : set) {
 			if (!m.getExDocumento().isFinalizado())
 				throw new AplicacaoException(
@@ -2566,12 +2566,12 @@ public class ExBL extends CpBL {
 					.getIdTpMov()) {
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR:
-				set = mob.getMobilEApensosDiretosExcetoVolumeApensadoAoProximo();
+				set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
 				break;
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO:
-				set = mob.getMobilEApensosDiretosExcetoVolumeApensadoAoProximo();
+				set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
 				break;
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA:
@@ -2939,7 +2939,7 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor)
 			throws AplicacaoException {
-		SortedSet<ExMobil> set = mob.getMobilEApensosDiretosExcetoVolumeApensadoAoProximo();
+		SortedSet<ExMobil> set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
 		for (ExMobil m : set) {
 			if (!m.isSobrestado())
 				throw new AplicacaoException(
@@ -3185,7 +3185,7 @@ public class ExBL extends CpBL {
 			if (mob.getNumSequencia() > 1) {
 				ExMobil mobApenso = mob.doc().getVolume(
 						mob.getNumSequencia() - 1);
-				for (ExMobil apensoAoApenso: mobApenso.getApensosDiretosExcetoVolumeApensadoAoProximo()){
+				for (ExMobil apensoAoApenso: mobApenso.getApensosExcetoVolumeApensadoAoProximo()){
 					desapensarDocumento(cadastrante, lotaCadastrante, apensoAoApenso, null, null, null);
 					apensarDocumento(cadastrante, cadastrante, lotaCadastrante, apensoAoApenso, mob, null, null, null);
 				}
@@ -4204,7 +4204,7 @@ public class ExBL extends CpBL {
 			throws AplicacaoException {
 
 
-		SortedSet<ExMobil> set = mob.getMobilEApensosDiretosExcetoVolumeApensadoAoProximo();
+		SortedSet<ExMobil> set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
 
 		try {
 			iniciarAlteracao();
@@ -4435,7 +4435,7 @@ public class ExBL extends CpBL {
 
 		boolean fTranferencia = lotaResponsavel != null || responsavel != null;
 
-		SortedSet<ExMobil> set = mob.getMobilEApensosDiretosExcetoVolumeApensadoAoProximo();
+		SortedSet<ExMobil> set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
 
 		Date dtUltReceb = null;
 
@@ -5750,11 +5750,6 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"não é possível apensar a um documento juntado");
 
-		if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, mobMestre)
-				|| !mob.estaNaMesmaLotacao(mobMestre))
-			throw new AplicacaoException(
-					"não é possível apensar a um documento que esteja em outra lotação");
-
 		if (mobMestre.isEmTransito())
 			throw new AplicacaoException(
 					"não é possível apensar a um documento em trânsito");
@@ -5767,12 +5762,12 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"não é possível apensar um volume aberto a um volume encerrado");
 
-		for (ExMobil apenso : mobMestre.getMobilETodosOsApensos(false)) {
+		for (ExMobil apenso : mobMestre.getMobilETodosOsApensos(true)) {
 			if (apenso.getIdMobil() == mob.getIdMobil()) {
 				throw new AplicacaoException(
 						"não é possível apensar ao documento "
 								+ mobMestre.getSigla()
-								+ ", pois este já estáapensado ao documento "
+								+ ", pois este já está apensado ao documento "
 								+ mob.getSigla());
 			}
 		}
@@ -5785,6 +5780,11 @@ public class ExBL extends CpBL {
 							+ "cancelado ou "
 							+ "em local diferente da lotação em que se encontra o documento ao qual se quer apensar");
 
+		if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, mobMestre)
+				|| !mob.estaNaMesmaLotacao(mobMestre))
+			throw new AplicacaoException(
+					"não é possível apensar a um documento que esteja em outra lotação");
+		
 		try {
 			iniciarAlteracao();
 

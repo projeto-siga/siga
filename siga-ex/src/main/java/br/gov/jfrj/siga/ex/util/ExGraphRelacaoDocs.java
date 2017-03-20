@@ -94,7 +94,7 @@ public class ExGraphRelacaoDocs extends ExGraph {
 		adicionar(new NodoMob(mobBase, pessVendo).setDestacar(true));
 
 		// Apensações
-		for (ExMobil apenso : mobBase.getApensos(true, false)) {
+		for (ExMobil apenso : mobBase.getApensos(false, true)) {
 			adicionar(new NodoMob(apenso, pessVendo, mobBase.doc()));
 			adicionar(new TransicaoMob(mobBase, apenso, "apensacao"));
 		}

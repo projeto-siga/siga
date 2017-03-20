@@ -3969,6 +3969,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return (mob.isVia() || mob.isVolume())
 				&& !mob.isEmTransito() && !mob.isJuntado()
+				&& !mob.isApensadoAVolumeDoMesmoProcesso()
 				&& !mob.isArquivado()
 				&& (!mob.doc().isPendenteDeAssinatura() || (mob.doc().getExTipoDocumento()
 						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO) || 

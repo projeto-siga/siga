@@ -52,7 +52,7 @@ public class ExAcesso {
 	}
 
 	private void incluirPessoas(ExDocumento doc, Date dtDeRedefinicaoDoNivelDeAcesso) {
-		for (ExMobil m : doc.getExMobilSet()) {
+		for (ExMobil m : getMobilesAVarrer(doc)) {
 			if (m.isGeral())
 				continue;
 			ExMovimentacao movUlt = m.getUltimaMovimentacaoNaoCancelada();
@@ -80,8 +80,20 @@ public class ExAcesso {
 		}
 	}
 
+	private Set<ExMobil> getMobilesAVarrer(ExDocumento doc) {
+		Set<ExMobil> mobiles = new HashSet<ExMobil>(); 
+		if (doc.isProcesso()){
+			mobiles.add(doc.getMobilGeral());
+			mobiles.add(doc.getUltimoVolume());
+			mobiles.add(doc.getVolume(doc.getNumUltimoVolume()-1)) ;
+		} else {
+			doc.getExMobilSet();
+		}
+		return mobiles;
+	}
+
 	private void incluirLotacoes(ExDocumento doc, Date dtDeRedefinicaoDoNivelDeAcesso) {
-		for (ExMobil m : doc.getExMobilSet()) {
+		for (ExMobil m : getMobilesAVarrer(doc)) {
 			if (m.isGeral())
 				continue;
 			ExMovimentacao movUlt = m.getUltimaMovimentacaoNaoCancelada();
@@ -167,7 +179,7 @@ public class ExAcesso {
 	}
 
 	private void incluirOrgaos(ExDocumento doc, Date dtDeRedefinicaoDoNivelDeAcesso) {
-		for (ExMobil m : doc.getExMobilSet()) {
+		for (ExMobil m : getMobilesAVarrer(doc)) {
 			if (m.isGeral())
 				continue;
 			ExMovimentacao movUlt = m.getUltimaMovimentacaoNaoCancelada();
@@ -374,7 +386,7 @@ public class ExAcesso {
 	private void addSubscritorDespacho(ExDocumento doc) {
 		List<DpPessoa> subscritoresDesp = new ArrayList<DpPessoa>();
 
-		for (ExMobil mob : doc.getExMobilSet()) {
+		for (ExMobil mob : getMobilesAVarrer(doc)) {
 			for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 				if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
 						|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO

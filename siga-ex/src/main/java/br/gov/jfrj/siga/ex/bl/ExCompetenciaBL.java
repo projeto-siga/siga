@@ -198,7 +198,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			}
 		}		
 		
-		if (doc.getDnmAcesso() == null) {
+		if (doc.getDnmAcesso() == null || doc.isDnmAcessoMAisAntigoQueODosPais()) {
 			Ex.getInstance().getBL().atualizarDnmAcesso(doc);
 		}
 		AcessoConsulta ac = new AcessoConsulta(titular == null ? 0L

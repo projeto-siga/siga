@@ -87,7 +87,7 @@ public class ExAcesso {
 			mobiles.add(doc.getUltimoVolume());
 			mobiles.add(doc.getVolume(doc.getNumUltimoVolume()-1)) ;
 		} else {
-			doc.getExMobilSet();
+			mobiles.addAll(doc.getExMobilSet());
 		}
 		return mobiles;
 	}
@@ -121,6 +121,8 @@ public class ExAcesso {
 		if (doc.getMobilGeral().getExMovimentacaoSet() != null) {
 			for (ExMovimentacao mov : doc.getMobilGeral()
 					.getExMovimentacaoSet()) {
+				if (mov.isCancelada())
+					continue;
 				if (mov.getExTipoMovimentacao()
 						.getIdTpMov()
 						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO)
@@ -134,6 +136,8 @@ public class ExAcesso {
 		if (doc.getMobilGeral().getExMovimentacaoSet() != null) {
 			for (ExMovimentacao mov : doc.getMobilGeral()
 					.getExMovimentacaoSet()) {
+				if (mov.isCancelada())
+					continue;
 				if (mov.getExTipoMovimentacao()
 						.getIdTpMov()
 						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO)
@@ -186,7 +190,6 @@ public class ExAcesso {
 			for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
 				if (mov.isCancelada() || mov.isCanceladora())
 					continue;
-				
 				if (mov != movUlt && dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
 					continue;
 				if (mov.getLotaResp() != null)
@@ -234,25 +237,6 @@ public class ExAcesso {
 		return todosSubordinados;
 	}
 
-	private Set<ExDocumento> getDocumentoESeusPais(ExDocumento doc,
-			Set<ExDocumento> set) {
-		if (set == null) {
-			set = new HashSet<ExDocumento>();
-		}
-		set.add(doc);
-
-		for (ExMobil mob : doc.getExMobilSet()) {
-			ExMobil pai = mob.getExMobilPai();
-			if (pai != null) {
-				ExDocumento docPai = pai.doc();
-				if (!set.contains(docPai)) {
-					getDocumentoESeusPais(docPai, set);
-				}
-			}
-		}
-		return set;
-	}
-
 	private Set<Object> calcularAcessos(ExDocumento doc, Date dt) {
 		acessos = new HashSet<Object>();
 
@@ -295,8 +279,7 @@ public class ExAcesso {
 
 		// Por nivel de acesso
 		else {
-			Set<ExDocumento> documentoESeusPais = getDocumentoESeusPais(doc,
-					null);
+			Set<ExDocumento> documentoESeusPais = doc.getDocumentoETodosOsPaisDasVias();
 
 			// Calcula os acessos de cada documento individualmente e armazena
 			// no cache

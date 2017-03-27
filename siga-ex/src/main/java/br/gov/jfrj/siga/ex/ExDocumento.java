@@ -2273,10 +2273,41 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		}
 		return null;
 	}
+	
+	public boolean isDnmAcessoMAisAntigoQueODosPais(){
+		for (ExDocumento doc : getTodosOsPaisDasVias()){
+			if (doc.getDnmDtAcesso() != null && doc.getDnmDtAcesso()
+					.after(this.getDnmDtAcesso()))
+				return true;
+		}
+		return false;
+	}
+	
+	public Set<ExDocumento> getDocumentoETodosOsPaisDasVias(){
+		Set<ExDocumento> docs = new HashSet<ExDocumento>();
+		docs.add(this);
+		docs.addAll(getTodosOsPaisDasVias());
+		return docs;
+	}
+	
+	public List<ExDocumento> getTodosOsPaisDasVias(){
+		List<ExDocumento> pais = new ArrayList<ExDocumento>();
+		if (!isExpediente())
+			return pais;
+		for (ExMobil mob : getExMobilSet()){
+			if (mob.isGeral())
+				continue;
+			ExMobil pai = mob.getExMobilPai();
+			if (pai != null)
+				pais.addAll(pai.doc().getDocumentoETodosOsPaisDasVias());
+		}
+		return pais;
+	}
 
 	public List<Object> getListaDeAcessos() {
-		if (getDnmAcesso() == null)
-			return null;
+		if (getDnmAcesso() == null || isDnmAcessoMAisAntigoQueODosPais()) {
+			Ex.getInstance().getBL().atualizarDnmAcesso(this);
+		}
 		if (getExNivelAcessoAtual().getIdNivelAcesso().equals(
 				ExNivelAcesso.NIVEL_ACESSO_PUBLICO)
 				&& ExAcesso.ACESSO_PUBLICO.equals(getDnmAcesso()))

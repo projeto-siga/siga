@@ -3574,40 +3574,12 @@ public class ExBL extends CpBL {
 
 	public void atualizarDnmAcesso(ExDocumento doc) {
 		Date dt = ExDao.getInstance().dt();
-		ExAcesso acesso = new ExAcesso();
-		Set docsAlterados = new HashSet<Long>();
+		String acessoRecalculado = new ExAcesso().getAcessosString(doc, dt);
 
-		// Se houve alteração, propagar para os documentos juntados em cada
-		// mobil
-		//
-		if (doc.getDnmAcesso() == null || !doc.getDnmAcesso().equals(acesso.getAcessosString(doc, dt))){
-			for (ExMobil mob : doc.getExMobilSet()) {
-				int pularInferiores = 0;
-				for (ExArquivoNumerado an : doc.getArquivosNumerados(mob)) {
-					if (an.getArquivo() instanceof ExDocumento) {
-						if (pularInferiores > an.getNivel())
-							continue;
-						else
-							pularInferiores = 0;
-						ExDocumento d = (ExDocumento) (an.getArquivo());
-						// if (dt.equals(d.getDnmDtAcesso()))
-						// continue;
-
-						String sAcessoAntigo = d.getDnmAcesso();
-						String sAcessoNovo = acesso.getAcessosString(d, dt);
-						if (!sAcessoNovo.equals(sAcessoAntigo)) {
-							docsAlterados.add(d.getIdDoc());
-							d.setDnmAcesso(sAcessoNovo);
-							d.setDnmDtAcesso(dt);
-							ExDao.getInstance().gravar(d);
-						}
-						if (!docsAlterados.contains(d.getIdDoc())) {
-							pularInferiores = an.getNivel();
-						}
-					}
-
-				}
-			}
+		if (doc.getDnmAcesso() == null || !doc.getDnmAcesso().equals(acessoRecalculado)){
+			doc.setDnmAcesso(acessoRecalculado);
+			doc.setDnmDtAcesso(dt);
+			ExDao.getInstance().gravar(doc);
 		}
 	}
 

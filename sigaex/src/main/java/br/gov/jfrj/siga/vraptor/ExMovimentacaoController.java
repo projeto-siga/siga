@@ -1923,6 +1923,17 @@ public class ExMovimentacaoController extends ExController {
 		result.include("listaMarcadores", this.getListaMarcadoresGerais());
 		result.include("listaMarcadoresAtivos", this.getListaMarcadoresAtivos(builder.getMob().getDoc().getMobilGeral()));
 	}
+	
+	@Get("/app/expediente/mov/recalcular_acesso")
+	public void aRecalcularAcesso(final String sigla) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		buscarDocumento(builder);
+
+		Ex.getInstance().getBL().atualizarDnmAcesso(builder.getMob().getDoc()); 
+
+		result.use(Results.http()).body("Acesso: " + builder.getMob().doc().getDnmAcesso() 
+				+ "\n Alterado: " + builder.getMob().doc().getDnmDtAcesso()).setStatusCode(200);
+	}
 
 	private Set<CpMarcador> getListaMarcadoresAtivos(ExMobil mob) {
 		Set<CpMarcador> set = new HashSet<CpMarcador>();

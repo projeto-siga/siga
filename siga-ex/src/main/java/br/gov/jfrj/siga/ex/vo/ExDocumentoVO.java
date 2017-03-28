@@ -585,6 +585,7 @@ public class ExDocumentoVO extends ExVO {
 				null, null, null, "once");
 
 		// test="${exibirCompleto != true}" />
+		int numUltMobil = doc.getNumUltimoMobil();
 		vo.addAcao(
 				"eye",
 				"Exibir Informações Completas",
@@ -594,7 +595,9 @@ public class ExDocumentoVO extends ExVO {
 						.getComp()
 						.podeExibirInformacoesCompletas(titular, lotaTitular,
 								mob)
-						&& !exibirAntigo, null, null, null, null, null);
+						&& !exibirAntigo, 
+						numUltMobil < 20 ? "" : "Exibir todos os " + numUltMobil + " volumes do processo simultaneamente pode exigir um tempo maior de processamento. Deseja exibi-los?", 
+						null, null, null, null);
 
 		vo.addAcao(
 				"eye",

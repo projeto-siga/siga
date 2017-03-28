@@ -89,6 +89,7 @@ public class ExAcesso {
 		} else {
 			mobiles.addAll(doc.getExMobilSet());
 		}
+		mobiles.remove(null);
 		return mobiles;
 	}
 

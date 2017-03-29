@@ -2159,6 +2159,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isArquivado()
 				&& !mob.isEmEditalEliminacao()
 				&& !mob.isSobrestado()
+				&& !mob.isApensadoAVolumeDoMesmoProcesso()
 				&& !mob.isPendenteDeAnexacao()
 				&& !mob.doc().isSemEfeito()
 				&& (!mob.doc().isPendenteDeAssinatura() || (mob.doc().getExTipoDocumento()

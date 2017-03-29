@@ -1083,18 +1083,14 @@ public class ExBL extends CpBL {
 					gravarMovimentacao(m);
 				}
 			}
+			
+			encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mob, dtMov);
 
 			concluirAlteracao(mov.getExMobil());
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao anexar documento.", 0, e);
-		}
-
-		try {
-			encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mob, dtMov);
-		} catch (Exception e) {
-			// TODO: handle exception
 		}
 
 		alimentaFilaIndexacao(mob.getExDocumento(), true);
@@ -3928,6 +3924,13 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException("Opção inválida.");
 
 			gravarMovimentacao(mov);
+			
+			encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mov.getExMobilRef(), dtMov);
+
+			Set<ExMovimentacao> movs = mob.getTransferenciasPendentesDeDevolucao(mob);
+			if(!movs.isEmpty())
+				removerPendenciaDeDevolucao(movs, mob);
+						
 			concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
 
 		} catch (final Exception e) {
@@ -3935,20 +3938,7 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao juntar documento.", 0, e);
 		}
 
-		try {
-			encerrarVolumeAutomatico(cadastrante, lotaCadastrante,
-					mov.getExMobilRef(), dtMov);
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		try {
-			Set<ExMovimentacao> movs = mob.getTransferenciasPendentesDeDevolucao(mob);
-			if(!movs.isEmpty())
-				removerPendenciaDeDevolucao(movs, mob);
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-	}
+}
 
 	public ExDocumento refazer(DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, ExDocumento doc) {
@@ -4606,7 +4596,10 @@ public class ExBL extends CpBL {
 					concluirAlteracaoParcialComRecalculoAcesso(m);
 				}
 			}
-
+			
+			if (fDespacho)
+				encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mob, dtMovIni);
+			
 			concluirAlteracao(null);
 
 		} catch (final AplicacaoException e) {
@@ -4615,15 +4608,6 @@ public class ExBL extends CpBL {
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao transferir documento.", 0, e);
-		}
-
-		if (fDespacho) {
-			try {
-				encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mob,
-						dtMovIni);
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
 		}
 	}
 

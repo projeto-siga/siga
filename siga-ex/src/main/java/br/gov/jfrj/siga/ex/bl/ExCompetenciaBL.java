@@ -774,6 +774,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isJuntado()
 				&& !mob.isEmTransito()
 				&& !mob.doc().isSemEfeito()
+				&& !mob.isApensadoAVolumeDoMesmoProcesso()
 				&& getConf()
 						.podePorConfiguracao(
 								titular,
@@ -2123,6 +2124,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		return podeMovimentar(titular, lotaTitular, mob)
 				&& (mob.isSobrestado())
+				&& !mob.isApensadoAVolumeDoMesmoProcesso()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
@@ -3590,7 +3592,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		final ExMovimentacao exMov = mob.getUltimaMovimentacaoNaoCancelada();
 
-		if (mob.isCancelada() || mob.isSobrestado() || (!mob.isEmTransito()))
+		if (mob.isCancelada() || mob.isSobrestado() || !mob.isEmTransito() 
+				|| mob.isApensadoAVolumeDoMesmoProcesso())
 			return false;
 		else if (!mob.isEmTransitoExterno()) {
 			if (!exMov.getLotaResp().equivale(lotaTitular))

@@ -4781,11 +4781,6 @@ public class ExBL extends CpBL {
 					"não foram informados dados para a redefinição do nível de acesso");
 		}
 
-		if (nivelAcesso.getIdNivelAcesso().equals(
-				doc.getExNivelAcessoAtual().getIdNivelAcesso()))
-			throw new AplicacaoException(
-					"Nível de acesso selecionado é igual ao atual");
-
 		try {
 			iniciarAlteracao();
 
@@ -5817,8 +5812,7 @@ public class ExBL extends CpBL {
 			// Verifica se é Processo e conta o número de páginas para verificar
 			// se tem que encerrar o volume
 			if (mob.doc().isProcesso()) {
-				if (mob.getTotalDePaginasSemAnexosDoMobilGeral() >= SigaExProperties
-						.getMaxPagVolume()) {
+				if (mob.getTotalDePaginasSemAnexosDoMobilGeral() >= SigaExProperties.getMaxPagVolume()) {
 					encerrarVolume(cadastrante, lotaCadastrante, mob, dtMov,
 							null, null, null, true);
 				}

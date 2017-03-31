@@ -3748,7 +3748,7 @@ public class ExBL extends CpBL {
 					dao().excluir(marc);
 
 				set = m.getExMovimentacaoReferenciaSet();
-				if (set.size() > 0) {
+ 				if (set.size() > 0) {
 					final Object[] aMovimentacao = set.toArray();
 					for (int i = 0; i < set.size(); i++) {
 						final ExMovimentacao movimentacao = (ExMovimentacao) aMovimentacao[i];

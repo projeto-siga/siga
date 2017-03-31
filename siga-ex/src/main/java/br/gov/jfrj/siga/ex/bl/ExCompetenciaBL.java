@@ -721,7 +721,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if (mob.doc().isEletronico()
 				&& (mob.temAnexosNaoAssinados() || mob
-						.temDespachosNaoAssinados()))
+						.temDespachosNaoAssinados() || mob.doc().getMobilGeral().temAnexosNaoAssinados()
+						|| mob.doc().getMobilGeral().temDespachosNaoAssinados()))
 			return false;
 
 		return mob != null

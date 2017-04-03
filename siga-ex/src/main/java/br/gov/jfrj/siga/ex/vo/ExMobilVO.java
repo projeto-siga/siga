@@ -49,6 +49,7 @@ public class ExMobilVO extends ExVO {
 	List<ExMovimentacaoVO> anexosNaoAssinados = new ArrayList<ExMovimentacaoVO>();
 	List<ExMovimentacaoVO> despachosNaoAssinados = new ArrayList<ExMovimentacaoVO>();
 	List<ExDocumentoVO> expedientesFilhosNaoJuntados = new ArrayList<ExDocumentoVO>();
+	List<ExMobilVO> expedientesJuntadosNaoAssinados = new ArrayList<ExMobilVO>();
 	List<ExMovimentacaoVO> pendenciasDeAnexacao = new ArrayList<ExMovimentacaoVO>();
 	List<ExMovimentacaoVO> pendenciasDeColaboracao = new ArrayList<ExMovimentacaoVO>();
 	Long pendenciaProximoModelo = null;
@@ -178,6 +179,10 @@ public class ExMobilVO extends ExVO {
 			for (ExMovimentacao mov : mob.getAnexosNaoAssinados())
 				anexosNaoAssinados.add(new ExMovimentacaoVO(this, mov, titular,
 						lotaTitular));
+			
+			for (ExMobil juntado : mob.getJuntados())
+				if (juntado.doc().isPendenteDeAssinatura())
+					expedientesJuntadosNaoAssinados.add(new ExMobilVO(juntado, titular, lotaTitular, false));
 
 			for (ExMovimentacao mov : mob.getDespachosNaoAssinados())
 				despachosNaoAssinados.add(new ExMovimentacaoVO(this, mov,
@@ -667,6 +672,10 @@ public class ExMobilVO extends ExVO {
 	public List getProcessosFilhosNaoCancelados() {
 		return processosFilhosNaoCancelados;
 	}
+	
+	public List<ExMobilVO> getExpedientesJuntadosNaoAssinados() {
+		return expedientesJuntadosNaoAssinados;
+	}
 
 	public List<ExMovimentacaoVO> getPendenciasDeAnexacao() {
 		return pendenciasDeAnexacao;
@@ -713,6 +722,7 @@ public class ExMobilVO extends ExVO {
 		return anexosNaoAssinados.size() > 0
 				|| despachosNaoAssinados.size() > 0
 				|| expedientesFilhosNaoJuntados.size() > 0
+				|| expedientesJuntadosNaoAssinados.size() > 0
 				|| pendenciasDeAnexacao.size() > 0
 				|| pendenciasDeColaboracao.size() > 0
 				|| pendenciaProximoModelo != null;

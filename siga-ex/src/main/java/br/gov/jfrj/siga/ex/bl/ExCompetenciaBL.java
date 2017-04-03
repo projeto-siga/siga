@@ -3108,7 +3108,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isEmTransito()
 				&& podeMovimentar(titular, lotaTitular, mob)
 
-				&& !mob.doc().isPendenteDeAssinatura()
+				&& (!mob.doc().isPendenteDeAssinatura() || mob.doc().isCapturado())
 				&& !mob.isJuntado()
 				&& !mob.isApensado()
 				&& !mob.isArquivado()

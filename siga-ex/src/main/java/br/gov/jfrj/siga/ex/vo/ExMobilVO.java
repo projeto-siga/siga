@@ -199,7 +199,7 @@ public class ExMobilVO extends ExVO {
 			}
 		}
 
-		if (mob.getExDocumento().isAssinado()) {
+		if (!mob.getExDocumento().isPendenteDeAssinatura()) {
 			if (mob.getExDocumento().getExFormaDocumento().getId() == 107L)
 				pendenciaProximoModelo = 110L;
 			else if (mob.getExDocumento().getExFormaDocumento().getId() == 110L)

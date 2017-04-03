@@ -1393,7 +1393,7 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"não é possível assinar um documento cancelado.");
 
-		boolean fPreviamenteAssinado = doc.isAssinado();
+		boolean fPreviamenteAssinado = !doc.isPendenteDeAssinatura();
 
 		if (!fPreviamenteAssinado) {
 			try {
@@ -1439,7 +1439,7 @@ public class ExBL extends CpBL {
 						mov.getDtMov(), cadastrante, cadastrante, mov);
 			}
 
-			if (!fPreviamenteAssinado && doc.isAssinado()) {
+			if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura()) {
 				processarComandosEmTag(doc, "assinatura");
 			}
 
@@ -1528,7 +1528,7 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Não é possível assinar o documento pois a descrição está vazia. Edite-o e informe uma descrição.");
 
-		boolean fPreviamenteAssinado = doc.isAssinado();
+		boolean fPreviamenteAssinado = !doc.isPendenteDeAssinatura();
 
 		if (!fPreviamenteAssinado) {
 			try {
@@ -1741,7 +1741,7 @@ public class ExBL extends CpBL {
 						dtMov, cadastrante, cadastrante, mov);
 			}
 
-			if (!fPreviamenteAssinado && doc.isAssinado()) {
+			if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura()) {
 				processarComandosEmTag(doc, "assinatura");
 			}
 
@@ -1795,7 +1795,7 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Senha do subscritor inválida.");
 		}
 
-		boolean fPreviamenteAssinado = doc.isAssinado();
+		boolean fPreviamenteAssinado = !doc.isPendenteDeAssinatura();
 
 		if (!doc.isFinalizado())
 			throw new AplicacaoException(
@@ -1865,7 +1865,7 @@ public class ExBL extends CpBL {
 						subscritor, titular, mov);
 			}
 
-			if (!fPreviamenteAssinado && doc.isAssinado())
+			if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura())
 				s = processarComandosEmTag(doc, "assinatura");
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -2975,10 +2975,10 @@ public class ExBL extends CpBL {
 			// ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO
 			// movDao.excluir(mov);
 			excluirMovimentacao(mov);
-			if (!mob.doc().isAssinado()
-					&& ((mob.doc().isFisico() && !mob.doc().isFinalizado()) || (mob
-							.doc().isEletronico() && !mob.doc()
-							.possuiAlgumaAssinatura())))
+			if (mob.doc().isPendenteDeAssinatura()
+					&& ((mob.doc().isFisico() && !mob.doc().isFinalizado()) 
+							|| (mob.doc().isEletronico() 
+							&& mob.doc().getAssinaturasEAutenticacoesComTokenOuSenhaERegistros().isEmpty())))
 				processar(mob.getExDocumento(), true, false);
 			concluirAlteracao(mov.getExMobil());
 
@@ -3904,7 +3904,7 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException(
 						"A via não pode ser juntada ao documento porque o volume está encerrado.");
 			
-			if (!mobPai.doc().isAssinado())
+			if (mobPai.doc().isPendenteDeAssinatura())
 				throw new AplicacaoException(
 						"A via não pode ser juntada ao documento porque ele está pendente de assinatura.");
 						 
@@ -4338,7 +4338,7 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final DpPessoa subscritor, final DpPessoa titular)
 			throws AplicacaoException {
-		boolean fPreviamenteAssinado = doc.isAssinado();
+		boolean fPreviamenteAssinado = !doc.isPendenteDeAssinatura();
 
 		if (!doc.isFinalizado())
 			throw new AplicacaoException(
@@ -4363,7 +4363,7 @@ public class ExBL extends CpBL {
 						subscritor, titular, mov);
 			}
 
-			if (!fPreviamenteAssinado && doc.isAssinado())
+			if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura())
 				s = processarComandosEmTag(doc, "assinatura");
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -4489,7 +4489,7 @@ public class ExBL extends CpBL {
 												+ m.getSigla() + " ID_MOBIL: "
 												+ m.getId() + ")");
 						}
-						if (!m.getExDocumento().isAssinado()
+						if (m.getExDocumento().isPendenteDeAssinatura()
 								&& !lotaResponsavel.equivale(m.getExDocumento()
 										.getLotaTitular())
 								&& !getComp()
@@ -4507,7 +4507,7 @@ public class ExBL extends CpBL {
 
 						if (m.getExDocumento().isEletronico()
 								&& !m.getExDocumento().jaTransferido()
-								&& !m.getExDocumento().isAssinado())
+								&& m.getExDocumento().isPendenteDeAssinatura())
 							throw new AplicacaoException(
 									"não é permitido fazer transferência em documento que ainda não foi assinado por todos os subscritores.");
 					}
@@ -4923,7 +4923,7 @@ public class ExBL extends CpBL {
 
 		try {
 			if (doc != null
-					&& (doc.isAssinado() || doc.isAssinadoDigitalmente()))
+					&& (!doc.isPendenteDeAssinatura() || doc.isAssinadoDigitalmente()))
 				throw new AplicacaoException(
 						"O documento não pode ser reprocessado, pois já está assinado");
 
@@ -5552,7 +5552,7 @@ public class ExBL extends CpBL {
 			for (ExDocumento docFilho : mob.getExDocumentoFilhoSet()) {
 				// Verifica se docFilho é do tipo anexo
 				if (docFilho.getExFormaDocumento().getIdFormaDoc() == 60) {
-					if (!docFilho.isCancelado() && !docFilho.isAssinado())
+					if (!docFilho.isCancelado() && docFilho.isPendenteDeAssinatura())
 						return false;
 				}
 			}
@@ -5719,7 +5719,7 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"não é possível apensar a um documento não finalizado");
 
-		if (!mobMestre.doc().isAssinado())
+		if (mobMestre.doc().isPendenteDeAssinatura())
 			throw new AplicacaoException(
 					"não é possível apensar a um documento não finalizado");
 
@@ -5727,7 +5727,7 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"[E necessário definir a via ou volume do documento ao qual se quer apensar");
 
-		if (!mobMestre.doc().isAssinado())
+		if (mobMestre.doc().isPendenteDeAssinatura())
 			throw new AplicacaoException(
 					"não é possível apensar a um documento não finalizado");
 
@@ -6808,7 +6808,7 @@ public class ExBL extends CpBL {
 			ass = new ExAssinavelDoc();
 			ass.setDoc(doc);
 			map.put(doc.getIdDoc(), ass);
-			ass.setPodeAssinar(doc.isFinalizado() && !(doc.isAssinado() && doc.jaAssinadoPor(titular)));
+			ass.setPodeAssinar(doc.isFinalizado() && doc.isPendenteDeAssinatura() && !doc.isAssinadoPelaPessoaComTokenOuSenha(titular));
 			ass.setPodeSenha(ass.isPodeAssinar() && Ex.getInstance().getComp()
 				.podeAssinarComSenha(titular, lotaTitular, doc.getMobilGeral()));
 			assinaveis.add(ass);

@@ -195,7 +195,7 @@ public class ExServiceImpl implements ExService {
 			throws Exception {
 		try {
 			ExMobil mob = buscarMobil(codigoDocumento);
-			return mob.getExDocumento().isAssinado();
+			return !mob.getExDocumento().isPendenteDeAssinatura();
 		} catch (Exception e) {
 			if (!isHideStackTrace())
 				e.printStackTrace(System.out);
@@ -649,7 +649,7 @@ public class ExServiceImpl implements ExService {
     				if(docPai.getExMobilPai() != null)
     					throw new AplicacaoException("Não foi possível criar o documento pois o documento pai (" + docPai.getSigla() + ") já é documento filho.");
     				
-    				if(!docPai.isAssinado())
+    				if(docPai.isPendenteDeAssinatura())
     					throw new AplicacaoException("Não foi possível criar o documento pois o documento pai (" + docPai.getSigla() + ") ainda não foi assinado.");
     				
     				doc.setExMobilPai(mobPai);

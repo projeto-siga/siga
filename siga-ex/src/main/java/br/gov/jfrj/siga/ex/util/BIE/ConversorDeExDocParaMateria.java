@@ -20,7 +20,7 @@ public class ConversorDeExDocParaMateria {
 		for (ExDocumento doc : docs){
 			materias.add(converter(doc));
 			for (ExDocumento filho : doc.getExDocumentoFilhoSet())
-				if (filho.isAssinado() && filho.getExFormaDocumento().getSiglaFormaDoc().equals(SIGLA_FORMA_DOC_ANEXO))
+				if (!filho.isPendenteDeAssinatura() && filho.getExFormaDocumento().getSiglaFormaDoc().equals(SIGLA_FORMA_DOC_ANEXO))
 					materias.add(converter(filho));
 		}
 		return materias;

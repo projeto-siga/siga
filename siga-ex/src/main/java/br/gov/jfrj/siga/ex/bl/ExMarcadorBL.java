@@ -134,7 +134,7 @@ public class ExMarcadorBL {
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO) {
-				if (mob.doc().isAssinado()
+				if (!mob.doc().isPendenteDeAssinatura()
 						|| mob.doc().getExTipoDocumento().getIdTpDoc() == 2
 						|| mob.doc().getExTipoDocumento().getIdTpDoc() == 3) {
 
@@ -194,7 +194,7 @@ public class ExMarcadorBL {
 		// Quando o documento está pendente de assinatura, criar uma marca
 		// também para o subscritor
 		if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {
-			if (!mob.getDoc().isAssinadoSubscritor())
+			if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha())
 				acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, dt, mob
 						.getExDocumento().getSubscritor(), null);
 		}
@@ -434,9 +434,9 @@ public class ExMarcadorBL {
 
 		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO)) {
 			if (mob.getDoc().isEletronico()) {
-				if (mob.getDoc().jaAssinadoPor(mov.getSubscritor()))
+				if (mob.getDoc().isAssinadoPelaPessoaComTokenOuSenha(mov.getSubscritor()))
 					return;
-				else if (mob.getDoc().isAssinadoSubscritor())
+				else if (mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha())
 					acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, mov.getDtIniMov(), mov.getSubscritor(),
 							null);
 				else

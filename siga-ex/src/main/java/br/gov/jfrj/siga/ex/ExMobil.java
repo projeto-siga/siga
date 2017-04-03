@@ -2204,4 +2204,28 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		return transferenciasComData;
 	}
+		
+	public Set<ExMovimentacao> getMovsNaoCanceladas(long idTpMov){
+		return getMovsNaoCanceladas(idTpMov, false);
+	}
+	
+	public Set<ExMovimentacao> getMovsNaoCanceladas(long idTpMov, boolean apenasNaoReferenciadoras) {
+		//Edson: o apenasNaoReferenciadoras serve para, por exemplo, não retornar movimentações
+		//de autenticação de anexos, mas apenas de documento
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		if (getExMovimentacaoSet() == null)
+			return set;
+
+		for (ExMovimentacao m : getExMovimentacaoSet()) {
+			if (m.getExMovimentacaoCanceladora() != null)
+				continue;
+			if (idTpMov > 0 && m.getExTipoMovimentacao().getIdTpMov() != idTpMov)
+				continue;
+			if (apenasNaoReferenciadoras && m.getExMovimentacaoRef() != null)
+				continue;
+			set.add(m);
+		}
+		return set;
+	}
 }

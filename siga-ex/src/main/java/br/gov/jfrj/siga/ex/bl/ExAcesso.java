@@ -217,7 +217,7 @@ public class ExAcesso {
 			return acessos;
 
 		// Aberto
-		if (!doc.isAssinado()) {
+		if (doc.isPendenteDeAssinatura()) {
 			switch (doc.getExNivelAcesso().getGrauNivelAcesso()) {
 			case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOAL:
 			case (int) ExNivelAcesso.NIVEL_ACESSO_PESSOA_SUB:

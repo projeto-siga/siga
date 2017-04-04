@@ -819,6 +819,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 				&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA
 				&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
 				continue;
+			if (assinatura.getExMovimentacaoRef() == null)
+				continue;
 			if (this.getIdMov().equals(assinatura.getExMovimentacaoRef().getIdMov()))
 				return true;
 		}

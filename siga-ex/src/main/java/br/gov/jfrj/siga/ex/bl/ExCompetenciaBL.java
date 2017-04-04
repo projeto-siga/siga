@@ -2604,9 +2604,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		if (mov.isCancelada())
 			return false;
-		
-		if (mov.isAssinada())
-			return false;
 
 		if (mob.doc().isFinalizado() && !mob.doc().isEletronico()) {
 			return false;

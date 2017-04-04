@@ -810,8 +810,7 @@ public class ExDocumentoController extends ExController {
 											 * documento
 											 */
 						if (mob.doc().isFinalizado()) {							
-							if (mob.doc()
-									.isAssinado()) { 
+							if (!mob.doc().isPendenteDeAssinatura()) { 
 								if (Ex.getInstance()
 										.getComp()
 										.podeArquivarCorrente(getTitular(),

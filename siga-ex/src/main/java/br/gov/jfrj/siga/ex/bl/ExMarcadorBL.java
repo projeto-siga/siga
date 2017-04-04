@@ -193,7 +193,7 @@ public class ExMarcadorBL {
 
 		// Quando o documento está pendente de assinatura, criar uma marca
 		// também para o subscritor
-		if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {
+		if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA && mob.doc().getSubscritor() != null) {
 			if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha())
 				acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, dt, mob
 						.getExDocumento().getSubscritor(), null);

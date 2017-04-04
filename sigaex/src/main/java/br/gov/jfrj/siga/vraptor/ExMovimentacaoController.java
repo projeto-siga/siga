@@ -388,7 +388,7 @@ public class ExMovimentacaoController extends ExController {
 		if (autenticando == null)
 			autenticando = false;
 		boolean previamenteAssinado = !doc.isPendenteDeAssinatura();
-		boolean assinando = !(autenticando && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha());
+		boolean assinando = !autenticando;
 
 		if (devePreAssinar(doc, previamenteAssinado)) {
 			Ex.getInstance().getBL()

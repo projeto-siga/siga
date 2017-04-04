@@ -263,14 +263,14 @@ public class ExAcesso {
 
 				acessos = new HashSet<Object>();
 
-				add(doc.getSubscritor());
-				add(doc.getTitular());
-				incluirPerfis(doc);
-				incluirCossignatarios(doc);
+				add(d.getSubscritor());
+				add(d.getTitular());
+				incluirPerfis(d);
+				incluirCossignatarios(d);
 
 				// Verifica se o titular é subscritor de algum despacho do
 				// dumento
-				addSubscritorDespacho(doc);
+				addSubscritorDespacho(d);
 
 				// TODO: buscar a data que foi feita a última movimentação de
 				// mudança de nivel de acesso

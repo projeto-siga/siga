@@ -53,38 +53,56 @@ public class ExAcesso {
 
 	private void incluirPessoas(ExDocumento doc, Date dtDeRedefinicaoDoNivelDeAcesso) {
 		for (ExMobil m : doc.getExMobilSet()) {
+			if (m.isGeral())
+				continue;
 			ExMovimentacao movUlt = m.getUltimaMovimentacaoNaoCancelada();
 			for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
+				if (mov.isCancelada() || mov.isCanceladora())
+					continue;
 				if (mov != movUlt && dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
 					continue;
 				if (mov.getResp() == null) {
 					add(mov.getLotaResp());
 				} else {
 					add(mov.getResp());
-				}
-
-				if (mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REDEFINICAO_NIVEL_ACESSO) {
-					if (mov.getCadastrante() == null) {
-						add(mov.getLotaCadastrante());
+				}				
+			 }	
+			if (dtDeRedefinicaoDoNivelDeAcesso != null) {
+				movUlt = m.getUltimaMovimentacaoAntesDaData(dtDeRedefinicaoDoNivelDeAcesso);
+				if (movUlt != null){
+					if (movUlt.getResp() == null) {
+						add(movUlt.getLotaResp());
 					} else {
-						add(mov.getCadastrante());
-					}
-				}
-			}
+						add(movUlt.getResp());
+					}				
+				}				
+			}			
 		}
 	}
 
 	private void incluirLotacoes(ExDocumento doc, Date dtDeRedefinicaoDoNivelDeAcesso) {
 		for (ExMobil m : doc.getExMobilSet()) {
+			if (m.isGeral())
+				continue;
 			ExMovimentacao movUlt = m.getUltimaMovimentacaoNaoCancelada();
 			for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
+				if (mov.isCancelada() || mov.isCanceladora())
+					continue;
 				if (mov != movUlt && dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
 					continue;
 				add(mov.getLotaResp());
 				if (mov.getResp() != null)
-					add(mov.getResp().getLotacao());
+					add(mov.getResp().getLotacao());				
 			}
-		}
+			if (dtDeRedefinicaoDoNivelDeAcesso != null){
+				movUlt = m.getUltimaMovimentacaoAntesDaData(dtDeRedefinicaoDoNivelDeAcesso);
+				if (movUlt != null){
+				    add(movUlt.getLotaResp());
+				    if (movUlt.getResp() != null)
+				        add(movUlt.getResp().getLotacao());
+				}				
+			}			
+		}		
 	}
 
 	private void incluirCossignatarios(ExDocumento doc) {
@@ -150,14 +168,27 @@ public class ExAcesso {
 
 	private void incluirOrgaos(ExDocumento doc, Date dtDeRedefinicaoDoNivelDeAcesso) {
 		for (ExMobil m : doc.getExMobilSet()) {
+			if (m.isGeral())
+				continue;
+			ExMovimentacao movUlt = m.getUltimaMovimentacaoNaoCancelada();
 			for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
-				if (dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
+				if (mov.isCancelada() || mov.isCanceladora())
+					continue;
+				
+				if (mov != movUlt && dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
 					continue;
 				if (mov.getLotaResp() != null)
 					add(mov.getLotaResp().getOrgaoUsuario());
 				if (mov.getResp() != null)
 					add(mov.getResp().getOrgaoUsuario());
 			}
+			if (dtDeRedefinicaoDoNivelDeAcesso != null){
+				movUlt = m.getUltimaMovimentacaoAntesDaData(dtDeRedefinicaoDoNivelDeAcesso);
+				if (movUlt.getLotaResp() != null)
+					add(movUlt.getLotaResp().getOrgaoUsuario());
+				if (movUlt.getResp() != null)
+					add(movUlt.getResp().getOrgaoUsuario());					
+			}					
 		}
 	}
 

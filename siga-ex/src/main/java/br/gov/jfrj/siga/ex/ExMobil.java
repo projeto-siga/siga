@@ -808,6 +808,30 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		return movReturn;
 	}
+	/**
+	 * Retorna a última movimentação não cancelada que o móbil mob recebeu 
+	 * antes de determinada data dt passada por parâmetro 
+	 * 	 
+	 * @param mob	
+	 * @param dt
+	 * @return
+	 */
+	public ExMovimentacao getUltimaMovimentacaoAntesDaData(Date dt) {
+		
+		ExMovimentacao ultMovAntesDaData = null;
+		
+		for (ExMovimentacao mov : getExMovimentacaoSet()) {			
+			
+			if (mov.isCancelada() || mov.isCanceladora())
+				continue;
+			if (mov.getDtMov().after(dt))				
+	           break;
+			
+			ultMovAntesDaData = mov;			
+			
+		}
+		return ultMovAntesDaData;
+	}
 
 	/**
 	 * Verifica se o mobil está arquivado corrente

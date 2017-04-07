@@ -215,6 +215,7 @@
 								</td>
 							</c:when>
 							<c:otherwise>
+								<input type="hidden" id="temCossignatarios" value="${not empty exDocumentoDTO.doc.cosignatarios}" />
 								<td>Subscritor:</td>
 								<input type="hidden" name="campos" value="subscritorSel.id" />
 								<input type="hidden" name="campos" value="substituicao" />

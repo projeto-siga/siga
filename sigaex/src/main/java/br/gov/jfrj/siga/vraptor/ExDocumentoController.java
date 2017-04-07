@@ -559,7 +559,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getClassificacaoSel().setId(null);
 			}
 		}
-
+		
 		exDocumentoDTO.getSubscritorSel().buscar();
 		exDocumentoDTO.getDestinatarioSel().buscar();
 		exDocumentoDTO.getLotacaoDestinatarioSel().buscar();

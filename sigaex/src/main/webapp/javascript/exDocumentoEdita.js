@@ -81,10 +81,16 @@ function validar(silencioso) {
 	var eletroHidden = document.getElementById('eletronicoHidden');
 	var eletro1 = document.getElementById('eletronicoCheck1');
 	var eletro2 = document.getElementById('eletronicoCheck2');
+	var subscritor = document.getElementById('formulario_exDocumentoDTO.subscritorSel_id').value;
+	var temCossignatarios = document.getElementById('temCossignatarios').value;
 	var descricaoAutomatica = document.getElementById('descricaoAutomatica');
 	if (descricaoAutomatica == null && (descr == null || descr == "")) {
 		aviso("Preencha o campo Descrição antes de gravar o documento.",
 				silencioso);
+		return false;
+	}
+	if (temCossignatarios === 'true' && !subscritor) {
+		aviso("É necessário informar um subscritor, pois o documento possui cossignatários",silencioso);
 		return false;
 	}
 	if (eletroHidden == null && !eletro1.checked && !eletro2.checked) {

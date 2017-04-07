@@ -1694,10 +1694,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 
 	public boolean isAssinadoPorTodosOsSignatariosComTokenOuSenha() {
 		for (DpPessoa pess : getSubscritorECosignatarios()){
-			if (!isAssinadoPelaPessoaComTokenOuSenha(pess))
-				return false;
+			if (isAssinadoPelaPessoaComTokenOuSenha(pess))
+				return true;
 		}
-		return true;
+		return false;
 	}
 	
 	@Override
@@ -1743,7 +1743,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		}
 			
 		if(isEletronico()){ 
-			
 			if (isCapturado() && getAutenticacoesComTokenOuSenha().isEmpty())
 				return true;
 			
@@ -1756,7 +1755,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 					return false;
 			} catch (ParseException e) {
 			}
-			if (!isAssinadoPorTodosOsSignatariosComTokenOuSenha())
+			if (getSubscritor() != null && !isAssinadoPorTodosOsSignatariosComTokenOuSenha())
 				return true;
 		} else {
 			if (getAssinaturasComTokenOuSenhaERegistros().isEmpty())

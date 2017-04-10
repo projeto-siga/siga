@@ -3417,6 +3417,10 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException(
 						"A descrição do documento não pode ser vazia.");
 
+			if (doc.getSubscritor() == null && !doc.getCosignatarios().isEmpty())
+				throw new AplicacaoException(
+						"É necessário informar um subscritor, pois o documento possui cossignatários");
+			
 			long tempoIni = System.currentTimeMillis();
 
 			// Remover eventuais pendencias de anexos que foram inseridar por

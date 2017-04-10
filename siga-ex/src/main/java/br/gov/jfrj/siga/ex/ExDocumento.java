@@ -1693,6 +1693,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	}
 
 	public boolean isAssinadoPorTodosOsSignatariosComTokenOuSenha() {
+		if (getSubscritor() == null)
+			return false;
 		for (DpPessoa pess : getSubscritorECosignatarios()){
 			if (!isAssinadoPelaPessoaComTokenOuSenha(pess))
 				return false;
@@ -1743,7 +1745,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		}
 			
 		if(isEletronico()){ 
-			
 			if (isCapturado() && getAutenticacoesComTokenOuSenha().isEmpty())
 				return true;
 			
@@ -1756,7 +1757,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 					return false;
 			} catch (ParseException e) {
 			}
-			if (!isAssinadoPorTodosOsSignatariosComTokenOuSenha())
+			if (getSubscritor() != null && !isAssinadoPorTodosOsSignatariosComTokenOuSenha())
 				return true;
 		} else {
 			if (getAssinaturasComTokenOuSenhaERegistros().isEmpty())

@@ -130,6 +130,17 @@ public class ExDocumentoController extends ExController {
 
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
+	
+	@Get("/app/expediente/mov/recalcular_acesso")
+    public void aRecalcularAcesso(final String sigla) {
+        final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+        buscarDocumento(builder, false);
+
+        Ex.getInstance().getBL().atualizarDnmAcesso(builder.getMob().getDoc());
+
+        result.use(Results.http()).body("Acesso: " + builder.getMob().doc().getDnmAcesso()
+                + "\n Alterado: " + builder.getMob().doc().getDnmDtAcesso()).setStatusCode(200);
+    }
 
 	@Get("app/expediente/doc/cancelar_movimentacoes_replicadas")
 	public void aCancelarMovimentacoesReplicadasDoc(final String sigla)

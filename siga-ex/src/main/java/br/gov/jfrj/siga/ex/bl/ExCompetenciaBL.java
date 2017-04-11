@@ -3179,6 +3179,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if (!mob.isApensado() || mob.isEmTransito() || mob.isCancelada()
 				|| mob.isArquivado()
+				|| mob.isSobrestado()
 				|| !podeMovimentar(titular, lotaTitular, mob)
 				|| mob.isJuntado())
 			return false;

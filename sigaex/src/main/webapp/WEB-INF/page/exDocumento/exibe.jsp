@@ -165,7 +165,6 @@
 					}
 				</script>
 
-				<c:set var="dtUlt" value="" />
 				<c:set var="temmov" value="${false}" />
 				<c:forEach var="mov" items="${m.movs}">
 					<c:if test="${ (mov.idTpMov != 14 and not mov.cancelada)}">
@@ -242,26 +241,8 @@
 									test="${ (mov.idTpMov != 14 and
 							          not mov.cancelada)}">
 									<tr class="${mov.classe} ${mov.disabled}">
-										<c:set var="dt" value="${mov.dtRegMovDDMMYY}" />
-										<c:choose>
-											<c:when test="${dt == dtUlt}">
-												<c:set var="dt" value="" />
-											</c:when>
-											<c:otherwise>
-												<c:set var="dtUlt" value="${dt}" />
-											</c:otherwise>
-										</c:choose>
-										<c:set var="lota" value="${mov.mov.lotaCadastrante.sigla}" />
-										<c:choose>
-											<c:when test="${lota == lotaUlt}">
-												<c:set var="lota" value="" />
-											</c:when>
-											<c:otherwise>
-												<c:set var="lotaUlt" value="${lota}" />
-											</c:otherwise>
-										</c:choose>
-										<td align="center" style="padding: 5px 5px;">${dt}</td>
-										<td style="padding: 5px 5px;">${lota}</td>
+										<td align="center" style="padding: 5px 5px;">${mov.dtRegMovDDMMYY}</td>
+										<td style="padding: 5px 5px;">${mov.mov.lotaCadastrante.sigla}</td>
 										<td style="padding: 5px 5px;">${mov.mov.exTipoMovimentacao.sigla}</td>
 										<td style="padding: 5px 5px; word-break: break-all;">${mov.descricao}
 											<c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>

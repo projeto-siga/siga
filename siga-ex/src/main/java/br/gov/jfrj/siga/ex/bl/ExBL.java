@@ -5687,6 +5687,10 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"não é possível apensar a um documento arquivado");
 
+		if (!mob.isVolumeEncerrado() && mobMestre.isVolumeEncerrado())
+			throw new AplicacaoException(
+					"não é possível apensar um volume aberto a um volume encerrado");
+		
 		if (mobMestre.isSobrestado())
 			throw new AplicacaoException(
 					"não é possível apensar a um documento Sobrestado");
@@ -5702,10 +5706,6 @@ public class ExBL extends CpBL {
 		if (mobMestre.isCancelada())
 			throw new AplicacaoException(
 					"não é possível apensar a um documento cancelado");
-
-		if (!mob.isVolumeEncerrado() && mobMestre.isVolumeEncerrado())
-			throw new AplicacaoException(
-					"não é possível apensar um volume aberto a um volume encerrado");
 
 		for (ExMobil apenso : mobMestre.getMobilEApensosExcetoVolumeApensadoAoProximo()) {
 			if (apenso.getIdMobil() == mob.getIdMobil()) {

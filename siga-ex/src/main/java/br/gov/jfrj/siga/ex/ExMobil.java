@@ -878,6 +878,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 * Verifica se o mobil está sobrestado
 	 */
 	public boolean isSobrestado() {
+		if (isApensadoAVolumeDoMesmoProcesso())
+			return false;
 		return sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR);
 	}
@@ -892,7 +894,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 * 
 	 */
 	public boolean isEmTransito() {
-
+		if (isApensadoAVolumeDoMesmoProcesso())
+			return false;
 		return sofreuMov(
 				new long[] {
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
@@ -1429,24 +1432,6 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		if (other == null || other.getIdMobil() == null)
 			return false;
 		return this.getIdMobil().equals(other.getIdMobil());
-	}
-
-	public SortedSet<ExMobil> getMobilETodosOsApensos() {
-		return getMobilETodosOsApensos(true);
-	}
-
-	public SortedSet<ExMobil> getMobilETodosOsApensos(
-			boolean fIncluirVolumesApensadosAosProximos) {
-		SortedSet<ExMobil> set = new TreeSet<ExMobil>();
-		ExMobil mobGrandeMestre = getGrandeMestre();
-		if (mobGrandeMestre != null) {
-			set.add(mobGrandeMestre);
-			mobGrandeMestre.getApensos(set, true,
-					fIncluirVolumesApensadosAosProximos);
-		} else {
-			set.add(this);
-		}
-		return set;
 	}
 
 	/**

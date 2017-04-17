@@ -38,6 +38,7 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -1082,6 +1083,8 @@ public class ExBL extends CpBL {
 					gravarMovimentacao(m);
 				}
 			}
+			
+			encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mob, dtMov);
 
 			concluirAlteracao(mov.getExMobil());
 
@@ -1090,72 +1093,69 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao anexar documento.", 0, e);
 		}
 
-		try {
-			encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mob, dtMov);
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-
 		alimentaFilaIndexacao(mob.getExDocumento(), true);
 	}
 
 	private void permitirOuNaoMovimentarDestinacao(ExMobil mob) {
 
-		if (mob.isGeralDeProcesso()) {
+		Set<ExMobil> mobsVerif = new HashSet<ExMobil>();
+		
+		if (mob.isGeralDeProcesso()){
+			if (mob.doc().isEletronico())
+				mobsVerif.add(mob.doc().getUltimoVolume());
+			else mobsVerif.addAll(mob.doc().getVolumes());
+		} else mobsVerif.add(mob);
+				
 
-			String sobrestados = "", emTransito = "", foraDaLota = "", apensados = "", msgFinal = "", comApensos = "";
+		String sobrestados = "", emTransito = "", foraDaLota = "", apensados = "", msgFinal = "", comApensos = "";
 
-			DpLotacao lotaBase = null, lotaVerif = null;
+		DpLotacao lotaBase = null, lotaVerif = null;
 
-			for (ExMobil mobVerif : mob.doc().getVolumes()) {
+		for (ExMobil mobVerif : mobsVerif) {
+			
+			if (mobVerif.isApensadoAVolumeDoMesmoProcesso())
+				continue;
 
-				lotaVerif = mobVerif.getUltimaMovimentacaoNaoCancelada()
-						.getLotaResp();
+			lotaVerif = mobVerif.getUltimaMovimentacaoNaoCancelada().getLotaResp();
 
-				if (lotaBase != null && !lotaVerif.equivale(lotaBase))
-					foraDaLota += (foraDaLota.length() < 2 ? " Os seguintes volumes encontram-se em lotação diferente de "
-							+ lotaBase.getSigla() + ": "
-							: ", ")
-							+ mobVerif.getSigla();
+			if (lotaBase != null && !mobVerif.isApensadoAVolumeDoMesmoProcesso() && !lotaVerif.equivale(lotaBase))
+				foraDaLota += (foraDaLota.length() < 2 ? " Os seguintes volumes ou vias encontram-se em lotação diferente de "
+						+ lotaBase.getSigla() + ": "
+						: ", ")
+						+ mobVerif.getSigla();
 
-				if (lotaBase == null)
-					lotaBase = lotaVerif;
+			if (lotaBase == null)
+				lotaBase = lotaVerif;
 
-				if (mobVerif.isSobrestado())
-					sobrestados += (sobrestados.length() < 2 ? " Os seguintes volumes encontram-se sobrestados: "
-							: ", ")
-							+ mobVerif.getSigla();
+			if (mobVerif.isSobrestado())
+				sobrestados += (sobrestados.length() < 2 ? " Os seguintes volumes ou vias encontram-se sobrestados: "
+						: ", ")
+						+ mobVerif.getSigla();
 
-				if (mobVerif.isEmTransito())
-					emTransito += (emTransito.length() < 2 ? " Os seguintes volumes encontram-se em trânsito: "
-							: ", ")
-							+ mobVerif.getSigla();
+			if (mobVerif.isEmTransito())
+				emTransito += (emTransito.length() < 2 ? " Os seguintes volumes ou vias encontram-se em trânsito: "
+						: ", ")
+						+ mobVerif.getSigla();
 
-				if (mobVerif.isApensado()
-						&& !mobVerif.getMestre().doc().equals(mobVerif.doc()))
-					apensados += (apensados.length() < 2 ? " Os seguintes volumes encontram-se apensados a outro processo: "
-							: ", ")
-							+ mobVerif.getSigla();
+			if (mobVerif.isApensado())
+				apensados += (apensados.length() < 2 ? " Os seguintes volumes ou vias encontram-se apensados a outro documento: "
+						: ", ")
+						+ mobVerif.getSigla();
 
-				for (ExMobil apenso : mobVerif.getApensos()) {
-					if (!apenso.doc().equals(mobVerif.doc()))
-						comApensos += (comApensos.length() < 2 ? " Os seguintes volumes possuem volumes de outros processos apensados: "
-								: ", ")
-								+ apenso.getSigla()
-								+ " apensado a "
-								+ mobVerif.getSigla();
-				}
+			for (ExMobil apenso : mobVerif.getApensosExcetoVolumeApensadoAoProximo()) {
+				comApensos += (comApensos.length() < 2 ? " Os seguintes volumes ou vias possuem outros documentos apensados: "
+						: ", ")
+						+ apenso.getSigla()
+						+ " apensado a "
+						+ mobVerif.getSigla();
 			}
+		}
 
-			msgFinal += foraDaLota + sobrestados + emTransito + apensados
-					+ comApensos;
-			if (msgFinal.length() > 2)
-				throw new AplicacaoException(
-						"não foi possível movimentar o processo." + msgFinal);
-
-		} else if (mob.isApensado() || mob.temApensos())
+		msgFinal += foraDaLota + sobrestados + emTransito + apensados
+				+ comApensos;
+		if (msgFinal.length() > 2)
 			throw new AplicacaoException(
-					"não foi possível movimentar a via porque ela encontra-se apensada ou possui apensos.");
+					"não foi possível movimentar o processo." + msgFinal);
 	}
 
 	public void arquivarCorrenteAutomatico(DpPessoa cadastrante,
@@ -1294,7 +1294,7 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, ExMobil mob, Date dtMov,
 			Date dtMovIni, DpPessoa subscritor) throws AplicacaoException {
 
-		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
+		SortedSet<ExMobil> set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
 		for (ExMobil m : set) {
 			if (!m.getExDocumento().isFinalizado())
 				throw new AplicacaoException(
@@ -2566,23 +2566,20 @@ public class ExBL extends CpBL {
 					.getIdTpMov()) {
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR:
-				set = mob.getMobilETodosOsApensos();
+				set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
 				break;
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO:
-				set = mob.getMobilETodosOsApensos();
+				set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
 				break;
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA:
+			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_REDEFINICAO_NIVEL_ACESSO:
 				indexar = true;
 				set = new TreeSet<ExMobil>();
 				set.add(mob);
-				break;
-			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_REDEFINICAO_NIVEL_ACESSO:
-				indexar = true;
-				set = mob.getMobilETodosOsApensos();
 				break;
 			default:
 				set = new TreeSet<ExMobil>();
@@ -2877,26 +2874,20 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor)
 			throws AplicacaoException {
-		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
-		for (ExMobil m : set) {
-			if (!m.isArquivado())
-				throw new AplicacaoException(
-						"não é possível desarquivar um documento não arquivado");
-		}
+		if (!mob.isArquivado())
+			throw new AplicacaoException(
+					"não é possível desarquivar um documento não arquivado");
 
 		Date dt = dao().dt();
 		try {
 			iniciarAlteracao();
 
-			for (ExMobil m : set) {
-				final ExMovimentacao mov = criarNovaMovimentacao(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE,
-						cadastrante, lotaCadastrante, m, dtMov, subscritor,
-						null, null, null, dt);
-				gravarMovimentacao(mov);
-				concluirAlteracaoParcial(m);
-			}
-			concluirAlteracao(null);
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE,
+					cadastrante, lotaCadastrante, mob, dtMov, subscritor,
+					null, null, null, dt);
+			gravarMovimentacao(mov);
+			concluirAlteracao(mob);
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao reabrir.", 0, e);
@@ -2908,26 +2899,21 @@ public class ExBL extends CpBL {
 			final Date dtMov, final DpPessoa subscritor)
 			throws AplicacaoException {
 
-		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
-		for (ExMobil m : set) {
-			if (!m.isArquivadoIntermediario())
-				throw new AplicacaoException(
-						"não é possível retirar do arquivo intermediário um documento que não esteja arquivado");
-		}
+		if (!mob.isArquivadoIntermediario())
+			throw new AplicacaoException(
+					"não é possível retirar do arquivo intermediário um documento que não esteja arquivado");
+		
 
 		Date dt = dao().dt();
 		try {
 			iniciarAlteracao();
 
-			for (ExMobil m : set) {
-				final ExMovimentacao mov = criarNovaMovimentacao(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO,
-						cadastrante, lotaCadastrante, m, dtMov, subscritor,
-						null, null, null, dt);
-				gravarMovimentacao(mov);
-				concluirAlteracaoParcial(m);
-			}
-			concluirAlteracao(null);
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO,
+					cadastrante, lotaCadastrante, mob, dtMov, subscritor,
+					null, null, null, dt);
+			gravarMovimentacao(mov);
+			concluirAlteracao(mob);
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao desarquivar intermediário.",
@@ -2939,7 +2925,7 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor)
 			throws AplicacaoException {
-		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
+		SortedSet<ExMobil> set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
 		for (ExMobil m : set) {
 			if (!m.isSobrestado())
 				throw new AplicacaoException(
@@ -3177,17 +3163,25 @@ public class ExBL extends CpBL {
 					lotaCadastrante, mob, null, null, null, null, null, null);
 
 			gravarMovimentacao(mov);
+			concluirAlteracao(mob);
+			
+			//Edson: comando necessário, pois o apensarDocumento, abaixo, vai precisar acessar as coleções
+			dao().getSessao().refresh(mob);
+			
 			if (mob.getNumSequencia() > 1) {
 				ExMobil mobApenso = mob.doc().getVolume(
 						mob.getNumSequencia() - 1);
-				ExMovimentacao movApenso = criarNovaMovimentacao(
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO,
-						cadastrante, lotaCadastrante, mobApenso, null, null,
-						null, null, null, null);
-				movApenso.setExMobilRef(mob);
-				gravarMovimentacao(movApenso);
+				for (ExMobil apensoAoApenso: mobApenso.getApensosExcetoVolumeApensadoAoProximo()){
+					desapensarDocumento(cadastrante, lotaCadastrante, apensoAoApenso, null, null, null);
+					apensarDocumento(cadastrante, cadastrante, lotaCadastrante, apensoAoApenso, mob, null, null, null);
+				}
+				if (mobApenso.isApensado()){
+					ExMobil outroMestreDoApenso = mobApenso.getMestre();
+					desapensarDocumento(cadastrante, lotaCadastrante, mobApenso, null, null, null);
+					apensarDocumento(cadastrante, cadastrante, lotaCadastrante, mob, outroMestreDoApenso, null, null, null);
+				}
+				apensarDocumento(cadastrante, cadastrante, lotaCadastrante, mobApenso, mob, null, null, null);
 			}
-			concluirAlteracao(mob);
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao criar novo volume.", 0, e);
@@ -3580,40 +3574,12 @@ public class ExBL extends CpBL {
 
 	public void atualizarDnmAcesso(ExDocumento doc) {
 		Date dt = ExDao.getInstance().dt();
-		ExAcesso acesso = new ExAcesso();
-		Set docsAlterados = new HashSet<Long>();
+		String acessoRecalculado = new ExAcesso().getAcessosString(doc, dt);
 
-		// Se houve alteração, propagar para os documentos juntados em cada
-		// mobil
-		//
-		if (doc.getDnmAcesso() == null || !doc.getDnmAcesso().equals(acesso.getAcessosString(doc, dt))){
-			for (ExMobil mob : doc.getExMobilSet()) {
-				int pularInferiores = 0;
-				for (ExArquivoNumerado an : doc.getArquivosNumerados(mob)) {
-					if (an.getArquivo() instanceof ExDocumento) {
-						if (pularInferiores > an.getNivel())
-							continue;
-						else
-							pularInferiores = 0;
-						ExDocumento d = (ExDocumento) (an.getArquivo());
-						// if (dt.equals(d.getDnmDtAcesso()))
-						// continue;
-
-						String sAcessoAntigo = d.getDnmAcesso();
-						String sAcessoNovo = acesso.getAcessosString(d, dt);
-						if (!sAcessoNovo.equals(sAcessoAntigo)) {
-							docsAlterados.add(d.getIdDoc());
-							d.setDnmAcesso(sAcessoNovo);
-							d.setDnmDtAcesso(dt);
-							ExDao.getInstance().gravar(d);
-						}
-						if (!docsAlterados.contains(d.getIdDoc())) {
-							pularInferiores = an.getNivel();
-						}
-					}
-
-				}
-			}
+		if (doc.getDnmAcesso() == null || !doc.getDnmAcesso().equals(acessoRecalculado)){
+			doc.setDnmAcesso(acessoRecalculado);
+			doc.setDnmDtAcesso(dt);
+			ExDao.getInstance().gravar(doc);
 		}
 	}
 
@@ -3962,6 +3928,13 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException("Opção inválida.");
 
 			gravarMovimentacao(mov);
+			
+			encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mov.getExMobilRef(), dtMov);
+
+			Set<ExMovimentacao> movs = mob.getTransferenciasPendentesDeDevolucao(mob);
+			if(!movs.isEmpty())
+				removerPendenciaDeDevolucao(movs, mob);
+						
 			concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
 
 		} catch (final Exception e) {
@@ -3969,20 +3942,7 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao juntar documento.", 0, e);
 		}
 
-		try {
-			encerrarVolumeAutomatico(cadastrante, lotaCadastrante,
-					mov.getExMobilRef(), dtMov);
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		try {
-			Set<ExMovimentacao> movs = mob.getTransferenciasPendentesDeDevolucao(mob);
-			if(!movs.isEmpty())
-				removerPendenciaDeDevolucao(movs, mob);
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-	}
+}
 
 	public ExDocumento refazer(DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, ExDocumento doc) {
@@ -4200,7 +4160,7 @@ public class ExBL extends CpBL {
 			throws AplicacaoException {
 
 
-		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
+		SortedSet<ExMobil> set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
 
 		try {
 			iniciarAlteracao();
@@ -4431,12 +4391,12 @@ public class ExBL extends CpBL {
 
 		boolean fTranferencia = lotaResponsavel != null || responsavel != null;
 
-		SortedSet<ExMobil> set = mob.getMobilETodosOsApensos();
+		SortedSet<ExMobil> set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
 
 		Date dtUltReceb = null;
 
 		// Edson: apagar isto? A verificação já é feita no for abaixo...
-		if (fDespacho && mob.isVolumeApensadoAoProximo())
+		if (fDespacho && mob.isApensadoAVolumeDoMesmoProcesso())
 			throw new AplicacaoException(
 					"não é possível fazer despacho em um documento que faça parte de um apenso");
 
@@ -4510,7 +4470,6 @@ public class ExBL extends CpBL {
 						}
 
 						if (m.getExDocumento().isEletronico()
-								&& !m.getExDocumento().jaTransferido()
 								&& m.getExDocumento().isPendenteDeAssinatura())
 							throw new AplicacaoException(
 									"não é permitido fazer transferência em documento que ainda não foi assinado por todos os subscritores.");
@@ -4641,7 +4600,10 @@ public class ExBL extends CpBL {
 					concluirAlteracaoParcialComRecalculoAcesso(m);
 				}
 			}
-
+			
+			if (fDespacho)
+				encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mob, dtMovIni);
+			
 			concluirAlteracao(null);
 
 		} catch (final AplicacaoException e) {
@@ -4650,15 +4612,6 @@ public class ExBL extends CpBL {
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao transferir documento.", 0, e);
-		}
-
-		if (fDespacho) {
-			try {
-				encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mob,
-						dtMovIni);
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
 		}
 	}
 
@@ -4831,11 +4784,6 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"não foram informados dados para a redefinição do nível de acesso");
 		}
-
-		if (nivelAcesso.getIdNivelAcesso().equals(
-				doc.getExNivelAcessoAtual().getIdNivelAcesso()))
-			throw new AplicacaoException(
-					"Nível de acesso selecionado é igual ao atual");
 
 		try {
 			iniciarAlteracao();
@@ -5747,11 +5695,6 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"não é possível apensar a um documento juntado");
 
-		if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, mobMestre)
-				|| !mob.estaNaMesmaLotacao(mobMestre))
-			throw new AplicacaoException(
-					"não é possível apensar a um documento que esteja em outra lotação");
-
 		if (mobMestre.isEmTransito())
 			throw new AplicacaoException(
 					"não é possível apensar a um documento em trânsito");
@@ -5764,12 +5707,12 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"não é possível apensar um volume aberto a um volume encerrado");
 
-		for (ExMobil apenso : mobMestre.getMobilETodosOsApensos(false)) {
+		for (ExMobil apenso : mobMestre.getMobilEApensosExcetoVolumeApensadoAoProximo()) {
 			if (apenso.getIdMobil() == mob.getIdMobil()) {
 				throw new AplicacaoException(
 						"não é possível apensar ao documento "
 								+ mobMestre.getSigla()
-								+ ", pois este já estáapensado ao documento "
+								+ ", pois este já está apensado ao documento "
 								+ mob.getSigla());
 			}
 		}
@@ -5782,6 +5725,11 @@ public class ExBL extends CpBL {
 							+ "cancelado ou "
 							+ "em local diferente da lotação em que se encontra o documento ao qual se quer apensar");
 
+		if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, mobMestre)
+				|| !mob.estaNaMesmaLotacao(mobMestre))
+			throw new AplicacaoException(
+					"não é possível apensar a um documento que esteja em outra lotação");
+		
 		try {
 			iniciarAlteracao();
 
@@ -5868,8 +5816,7 @@ public class ExBL extends CpBL {
 			// Verifica se é Processo e conta o número de páginas para verificar
 			// se tem que encerrar o volume
 			if (mob.doc().isProcesso()) {
-				if (mob.getTotalDePaginasSemAnexosDoMobilGeral() >= SigaExProperties
-						.getMaxPagVolume()) {
+				if (mob.getTotalDePaginasSemAnexosDoMobilGeral() >= SigaExProperties.getMaxPagVolume()) {
 					encerrarVolume(cadastrante, lotaCadastrante, mob, dtMov,
 							null, null, null, true);
 				}
@@ -6086,6 +6033,22 @@ public class ExBL extends CpBL {
 			throws Exception {
 		try {
 			iniciarAlteracao();
+
+			if (!getComp().podeTornarDocumentoSemEfeito(cadastrante, lotaCadastrante, doc.getMobilGeral()))
+				throw new AplicacaoException("Cancelamento não permitido");
+			
+			//Verifica se o subscritor pode movimentar todos os mobils
+			//E Também se algum documento diferente está apensado ou juntado a este documento
+			
+			for (ExMobil m : doc.getExMobilSet()) {
+				if(!m.isGeral()) {
+					if (!getComp().podeMovimentar(cadastrante, lotaCadastrante, m)
+						|| m.isJuntado() || m.isApensado()
+						|| m.temApensos()
+						|| m.temDocumentosJuntados())
+						throw new AplicacaoException("Cancelamento não permitido");
+				}
+			}
 
 			final ExMovimentacao mov = criarNovaMovimentacao(
 					ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO,

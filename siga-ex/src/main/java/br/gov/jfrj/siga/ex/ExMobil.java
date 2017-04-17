@@ -1265,45 +1265,68 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		return null;
 	}
+	
+	public SortedSet<ExMobil> getMobilEApensosExcetoVolumeApensadoAoProximo() {
+		TreeSet<ExMobil> setFinal = new TreeSet<ExMobil>();
+		ExMobil grandeMestre = getGrandeMestre();
+		if (grandeMestre != null){
+			setFinal.add(grandeMestre);
+			setFinal.addAll(grandeMestre.getApensosExcetoVolumeApensadoAoProximo());
+		} else setFinal.add(this);
+		return setFinal;
 
+	}
+
+	public SortedSet<ExMobil> getApensosExcetoVolumeApensadoAoProximo() {
+		return getApensos(true, false);
+	}
+	
 	/**
 	 * 
 	 * @return Retorna todos os apensos desse mobil para baixo. Não inclui o
 	 *         próprio mobil que está sendo chamado.
 	 */
 	public SortedSet<ExMobil> getApensos() {
-		return getApensos(false, false);
+		return getApensos(false, true);
 	}
 
-	public SortedSet<ExMobil> getApensosDiretosExcetoVolumeApensadoAoProximo() {
-		return getApensos(true, true);
-	}
-
-	public SortedSet<ExMobil> getApensos(boolean omitirApensosIndiretos,
-			boolean omitirVolumesApensadosAosProximos) {
+	public SortedSet<ExMobil> getApensos(boolean incluirApensosIndiretos,
+			boolean incluirVolumesApensadosAosProximos) {
 		SortedSet<ExMobil> set = new TreeSet<ExMobil>();
-		return getApensos(set, omitirApensosIndiretos,
-				omitirVolumesApensadosAosProximos);
+		return getApensos(set, incluirApensosIndiretos,
+				incluirVolumesApensadosAosProximos);
 	}
 
 	public SortedSet<ExMobil> getApensos(SortedSet<ExMobil> set,
-			boolean omitirApensosIndiretos,
-			boolean omitirVolumesApensadosAosProximos) {
+			boolean incluirApensosIndiretos,
+			boolean incluirVolumesApensadosAosProximos) {
+		
+		varrendoMovRefsDesteMobil:
 		for (ExMovimentacao mov : getExMovimentacaoReferenciaSet()) {
-			if (!ExTipoMovimentacao.hasApensacao(mov.getIdTpMov()))
-				continue;
-			ExMobil mobMestre = mov.getExMobil().getMestre();
-			if (this.equals(mobMestre)) {
-				if (!set.contains(mov.getExMobil())) {
-					if (!omitirVolumesApensadosAosProximos
-							|| !mov.getExMobil().isVolumeApensadoAoProximo())
-						set.add(mov.getExMobil());
-					if (!omitirApensosIndiretos)
+			
+			if (mov.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO)
+				continue varrendoMovRefsDesteMobil;
+			
+			if (mov.isCancelada())
+				continue varrendoMovRefsDesteMobil;
+			
+			if (mov.getExMovimentacaoReferenciadoraSet() != null)
+				for (ExMovimentacao ref : mov.getExMovimentacaoReferenciadoraSet())
+					if (ref.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
+						continue varrendoMovRefsDesteMobil;
+			
+			if (!set.contains(mov.getExMobil())) {
+				if (incluirVolumesApensadosAosProximos || !mov.getExMobil().isApensadoAVolumeDoMesmoProcesso()){
+					set.add(mov.getExMobil());
+					//Edson: passando a deixar o if abaixo dentro do anterior pois, se um nó não vai
+					//ser adicionado, não há necessidade de verificar os nós abaixo
+					if (incluirApensosIndiretos)
 						mov.getExMobil().getApensos(set,
-								omitirApensosIndiretos,
-								omitirVolumesApensadosAosProximos);
+								incluirApensosIndiretos,
+								incluirVolumesApensadosAosProximos);
 				}
 			}
+			
 		}
 		return set;
 	}
@@ -1409,17 +1432,17 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	}
 
 	public SortedSet<ExMobil> getMobilETodosOsApensos() {
-		return getMobilETodosOsApensos(false);
+		return getMobilETodosOsApensos(true);
 	}
 
 	public SortedSet<ExMobil> getMobilETodosOsApensos(
-			boolean fOmitirVolumesApensadosAosProximos) {
+			boolean fIncluirVolumesApensadosAosProximos) {
 		SortedSet<ExMobil> set = new TreeSet<ExMobil>();
 		ExMobil mobGrandeMestre = getGrandeMestre();
 		if (mobGrandeMestre != null) {
 			set.add(mobGrandeMestre);
-			mobGrandeMestre.getApensos(set, false,
-					fOmitirVolumesApensadosAosProximos);
+			mobGrandeMestre.getApensos(set, true,
+					fIncluirVolumesApensadosAosProximos);
 		} else {
 			set.add(this);
 		}
@@ -1435,28 +1458,6 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 */
 	public boolean isVolumeEncerrado() {
 		return sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO_DE_VOLUME);
-	}
-
-	/**
-	 * Verifica se um Mobil do tipo Volume está Apensado ao próximo Mobil. Para
-	 * saber o próximo Mobil é utilizado o número de sequência do Mobil.
-	 * 
-	 * @return Verdadeiro se o Mobil estiver apensado ao próximo volume e Falso
-	 *         caso contrário.
-	 * 
-	 */
-	public boolean isVolumeApensadoAoProximo() {
-		if (getMestre() == null)
-			return false;
-		if (!isVolume())
-			return false;
-		if (!getMestre().isVolume())
-			return false;
-		if (!getNumSequencia().equals(getMestre().getNumSequencia() - 1))
-			return false;
-		if (!getMestre().doc().getIdDoc().equals(doc().getIdDoc()))
-			return false;
-		return true;
 	}
 
 	/**
@@ -2251,5 +2252,17 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			set.add(m);
 		}
 		return set;
+	}
+	
+	@Override
+	public Set<ExMovimentacao> getExMovimentacaoSet() {
+		// TODO Auto-generated method stub
+		return super.getExMovimentacaoSet();
+	}
+	
+	@Override
+	public Set<ExMovimentacao> getExMovimentacaoReferenciaSet() {
+		// TODO Auto-generated method stub
+		return super.getExMovimentacaoReferenciaSet();
 	}
 }

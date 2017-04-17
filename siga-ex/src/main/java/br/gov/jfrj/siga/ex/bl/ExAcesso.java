@@ -52,14 +52,13 @@ public class ExAcesso {
 	}
 
 	private void incluirPessoas(ExDocumento doc, Date dtDeRedefinicaoDoNivelDeAcesso) {
-		for (ExMobil m : doc.getExMobilSet()) {
+		for (ExMobil m : getMobilesAVarrer(doc)) {
 			if (m.isGeral())
 				continue;
-			ExMovimentacao movUlt = m.getUltimaMovimentacaoNaoCancelada();
 			for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
 				if (mov.isCancelada() || mov.isCanceladora())
 					continue;
-				if (mov != movUlt && dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
+				if (dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
 					continue;
 				if (mov.getResp() == null) {
 					add(mov.getLotaResp());
@@ -68,7 +67,7 @@ public class ExAcesso {
 				}				
 			 }	
 			if (dtDeRedefinicaoDoNivelDeAcesso != null) {
-				movUlt = m.getUltimaMovimentacaoAntesDaData(dtDeRedefinicaoDoNivelDeAcesso);
+				ExMovimentacao movUlt = m.getUltimaMovimentacaoAntesDaData(dtDeRedefinicaoDoNivelDeAcesso);
 				if (movUlt != null){
 					if (movUlt.getResp() == null) {
 						add(movUlt.getLotaResp());
@@ -80,22 +79,34 @@ public class ExAcesso {
 		}
 	}
 
+	private Set<ExMobil> getMobilesAVarrer(ExDocumento doc) {
+		Set<ExMobil> mobiles = new HashSet<ExMobil>(); 
+		if (doc.isProcesso()){
+			mobiles.add(doc.getMobilGeral());
+			mobiles.add(doc.getUltimoVolume());
+			mobiles.add(doc.getVolume(doc.getNumUltimoVolume()-1)) ;
+		} else {
+			mobiles.addAll(doc.getExMobilSet());
+		}
+		mobiles.remove(null);
+		return mobiles;
+	}
+
 	private void incluirLotacoes(ExDocumento doc, Date dtDeRedefinicaoDoNivelDeAcesso) {
-		for (ExMobil m : doc.getExMobilSet()) {
+		for (ExMobil m : getMobilesAVarrer(doc)) {
 			if (m.isGeral())
 				continue;
-			ExMovimentacao movUlt = m.getUltimaMovimentacaoNaoCancelada();
 			for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
 				if (mov.isCancelada() || mov.isCanceladora())
 					continue;
-				if (mov != movUlt && dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
+				if (dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
 					continue;
 				add(mov.getLotaResp());
 				if (mov.getResp() != null)
 					add(mov.getResp().getLotacao());				
 			}
 			if (dtDeRedefinicaoDoNivelDeAcesso != null){
-				movUlt = m.getUltimaMovimentacaoAntesDaData(dtDeRedefinicaoDoNivelDeAcesso);
+				ExMovimentacao movUlt = m.getUltimaMovimentacaoAntesDaData(dtDeRedefinicaoDoNivelDeAcesso);
 				if (movUlt != null){
 				    add(movUlt.getLotaResp());
 				    if (movUlt.getResp() != null)
@@ -109,6 +120,8 @@ public class ExAcesso {
 		if (doc.getMobilGeral().getExMovimentacaoSet() != null) {
 			for (ExMovimentacao mov : doc.getMobilGeral()
 					.getExMovimentacaoSet()) {
+				if (mov.isCancelada())
+					continue;
 				if (mov.getExTipoMovimentacao()
 						.getIdTpMov()
 						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO)
@@ -122,6 +135,8 @@ public class ExAcesso {
 		if (doc.getMobilGeral().getExMovimentacaoSet() != null) {
 			for (ExMovimentacao mov : doc.getMobilGeral()
 					.getExMovimentacaoSet()) {
+				if (mov.isCancelada())
+					continue;
 				if (mov.getExTipoMovimentacao()
 						.getIdTpMov()
 						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO)
@@ -167,15 +182,13 @@ public class ExAcesso {
 	}
 
 	private void incluirOrgaos(ExDocumento doc, Date dtDeRedefinicaoDoNivelDeAcesso) {
-		for (ExMobil m : doc.getExMobilSet()) {
+		for (ExMobil m : getMobilesAVarrer(doc)) {
 			if (m.isGeral())
 				continue;
-			ExMovimentacao movUlt = m.getUltimaMovimentacaoNaoCancelada();
 			for (ExMovimentacao mov : m.getExMovimentacaoSet()) {
 				if (mov.isCancelada() || mov.isCanceladora())
 					continue;
-				
-				if (mov != movUlt && dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
+				if (dtDeRedefinicaoDoNivelDeAcesso != null && mov.getDtMov().before(dtDeRedefinicaoDoNivelDeAcesso))
 					continue;
 				if (mov.getLotaResp() != null)
 					add(mov.getLotaResp().getOrgaoUsuario());
@@ -183,7 +196,7 @@ public class ExAcesso {
 					add(mov.getResp().getOrgaoUsuario());
 			}
 			if (dtDeRedefinicaoDoNivelDeAcesso != null){
-				movUlt = m.getUltimaMovimentacaoAntesDaData(dtDeRedefinicaoDoNivelDeAcesso);
+				ExMovimentacao movUlt = m.getUltimaMovimentacaoAntesDaData(dtDeRedefinicaoDoNivelDeAcesso);
 				if (movUlt.getLotaResp() != null)
 					add(movUlt.getLotaResp().getOrgaoUsuario());
 				if (movUlt.getResp() != null)
@@ -220,25 +233,6 @@ public class ExAcesso {
 		}
 
 		return todosSubordinados;
-	}
-
-	private Set<ExDocumento> getDocumentoESeusPais(ExDocumento doc,
-			Set<ExDocumento> set) {
-		if (set == null) {
-			set = new HashSet<ExDocumento>();
-		}
-		set.add(doc);
-
-		for (ExMobil mob : doc.getExMobilSet()) {
-			ExMobil pai = mob.getExMobilPai();
-			if (pai != null) {
-				ExDocumento docPai = pai.doc();
-				if (!set.contains(docPai)) {
-					getDocumentoESeusPais(docPai, set);
-				}
-			}
-		}
-		return set;
 	}
 
 	private Set<Object> calcularAcessos(ExDocumento doc, Date dt) {
@@ -283,8 +277,7 @@ public class ExAcesso {
 
 		// Por nivel de acesso
 		else {
-			Set<ExDocumento> documentoESeusPais = getDocumentoESeusPais(doc,
-					null);
+			Set<ExDocumento> documentoESeusPais = doc.getDocumentoETodosOsPaisDasVias();
 
 			// Calcula os acessos de cada documento individualmente e armazena
 			// no cache
@@ -374,7 +367,7 @@ public class ExAcesso {
 	private void addSubscritorDespacho(ExDocumento doc) {
 		List<DpPessoa> subscritoresDesp = new ArrayList<DpPessoa>();
 
-		for (ExMobil mob : doc.getExMobilSet()) {
+		for (ExMobil mob : getMobilesAVarrer(doc)) {
 			for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
 				if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
 						|| mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_INTERNO

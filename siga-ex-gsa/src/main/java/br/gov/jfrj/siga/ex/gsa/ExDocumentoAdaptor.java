@@ -38,6 +38,7 @@ import com.google.enterprise.adaptor.Response;
 
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAcesso;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -145,6 +146,9 @@ public class ExDocumentoAdaptor extends ExAdaptor {
 	}
 
 	protected static void addAclForDoc(ExDocumento doc, Response resp) {
+		if (doc.getDnmAcesso() == null || doc.isDnmAcessoMAisAntigoQueODosPais()) {
+			Ex.getInstance().getBL().atualizarDnmAcesso(doc);
+		}
 		String sAcessos = doc.getDnmAcesso();
 		List<GroupPrincipal> groups = new ArrayList<>();
 

@@ -198,7 +198,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			}
 		}		
 		
-		if (doc.getDnmAcesso() == null) {
+		if (doc.getDnmAcesso() == null || doc.isDnmAcessoMAisAntigoQueODosPais()) {
 			Ex.getInstance().getBL().atualizarDnmAcesso(doc);
 		}
 		AcessoConsulta ac = new AcessoConsulta(titular == null ? 0L
@@ -568,8 +568,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	
 		if (mob.doc().isFinalizado())
 			return !mob.isEmTransito()
-					&& (!mob.isGeral() 
-							|| (mob.doc().isExterno() && !mob.doc().jaTransferido() ))
+					&& (!mob.isGeral() || mob.doc().isExterno())
 					&& !mob.isJuntado()
 					&& !mob.isArquivado()
 					&& !mob.isSobrestado()
@@ -775,6 +774,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isJuntado()
 				&& !mob.isEmTransito()
 				&& !mob.doc().isSemEfeito()
+				&& !mob.isApensadoAVolumeDoMesmoProcesso()
 				&& getConf()
 						.podePorConfiguracao(
 								titular,
@@ -824,29 +824,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				mob.doc().isBoletimPublicado() ||
 				mob.doc().isDJEPublicado()) 
 			return false;
-		
-		
-		//Verifica se o subscritor pode movimentar todos os mobils
-		//E Também se algum documento diferente está apensado ou juntado a este documento
-
-
-		for (ExMobil m : mob.doc().getExMobilSet()) {
-			if(!m.isGeral()) {
-				if (!podeMovimentar(titular, lotaTitular, m))
-					return false;
 				
-				if(m.isJuntado() || m.isApensado())
-					return false;
-				
-				if (m.temApensos())
-					return false;
-				
-				if(m.temDocumentosJuntados())
-					return false;
-			}
-		}
-		
-		
 		return  getConf()
 						.podePorConfiguracao(
 								titular,
@@ -2146,6 +2124,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		return podeMovimentar(titular, lotaTitular, mob)
 				&& (mob.isSobrestado())
+				&& !mob.isApensadoAVolumeDoMesmoProcesso()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
@@ -2182,6 +2161,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isArquivado()
 				&& !mob.isEmEditalEliminacao()
 				&& !mob.isSobrestado()
+				&& !mob.isApensadoAVolumeDoMesmoProcesso()
 				&& !mob.isPendenteDeAnexacao()
 				&& !mob.doc().isSemEfeito()
 				&& (!mob.doc().isPendenteDeAssinatura() || (mob.doc().getExTipoDocumento()
@@ -3194,12 +3174,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (ultMovNaoCancelada == null)
 			return false;
 		
-		if(mob.doc().isEletronico() && mob.isVolumeApensadoAoProximo())
+		if(mob.doc().isEletronico() && mob.isApensadoAVolumeDoMesmoProcesso())
 			return false;
 
 		if (!mob.isApensado() || mob.isEmTransito() || mob.isCancelada()
 				|| mob.isArquivado()
-				|| !podeMovimentar(titular, lotaTitular, mob)
+				|| mob.isSobrestado()
+				|| !podeMovimentar(titular, lotaTitular, mob.getGrandeMestre())
 				|| mob.isJuntado())
 			return false;
 
@@ -3614,7 +3595,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		final ExMovimentacao exMov = mob.getUltimaMovimentacaoNaoCancelada();
 
-		if (mob.isCancelada() || mob.isSobrestado() || (!mob.isEmTransito()))
+		if (mob.isCancelada() || mob.isSobrestado() || !mob.isEmTransito() 
+				|| mob.isApensadoAVolumeDoMesmoProcesso())
 			return false;
 		else if (!mob.isEmTransitoExterno()) {
 			if (!exMov.getLotaResp().equivale(lotaTitular))
@@ -3972,6 +3954,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return (mob.isVia() || mob.isVolume())
 				&& !mob.isEmTransito() && !mob.isJuntado()
+				&& !mob.isApensadoAVolumeDoMesmoProcesso()
 				&& !mob.isArquivado()
 				&& (!mob.doc().isPendenteDeAssinatura() || (mob.doc().getExTipoDocumento()
 						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO) || 

@@ -410,7 +410,7 @@ public class ExMarcadorBL {
 	public void acrescentarMarcadoresPendenciaDeAssinaturaMovimentacao() {
 		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)) {
 			Long m = null;
-			if (mob.doc().isEletronico() && !mob.doc().jaTransferido()) {
+			if (mob.doc().isEletronico()) {
 				m = CpMarcador.MARCADOR_ANEXO_PENDENTE_DE_ASSINATURA;
 				/*
 				 * não é possível usar ExMovimentacao.isAssinada() pois não há

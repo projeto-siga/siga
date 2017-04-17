@@ -1737,6 +1737,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	}
 	
 	public boolean isPendenteDeAssinatura() {
+		
+		//Edson: não deve estar pendente de assinatura se estiver em elaboração, pois ainda não está
+		//pronto para ser assinado. Acertar isso.
+		if (!isFinalizado())
+			return true;
+		
 		if (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO 
 				|| getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO) {
 			if (getExMobilSet() != null && getExMobilSet().size() > 1)

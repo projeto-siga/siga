@@ -379,6 +379,21 @@
 						</c:forEach>
 					</ul>
 				</c:if>
+				<c:if test="${not empty m.expedientesJuntadosNaoAssinados}">
+					<p style="margin-bottom: 3px; margin-top: 8px;">
+						<b style="color: rgb(195, 0, 0)">Expedientes juntados não assinados:</b>
+					</p>
+					<ul>
+						<c:forEach var="naoAssinado"
+							items="${m.expedientesJuntadosNaoAssinados}">
+							<li>
+							<a
+								href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${naoAssinado.sigla}"
+								style="text-decoration: none"> ${naoAssinado.sigla} </a>
+							</li>
+						</c:forEach>
+					</ul>
+				</c:if>
 				<c:if test="${not empty m.expedientesFilhosNaoJuntados}">
 					<p style="margin-bottom: 3px; margin-top: 8px;">
 						<b style="color: rgb(195, 0, 0)">Expedientes não juntados:</b>

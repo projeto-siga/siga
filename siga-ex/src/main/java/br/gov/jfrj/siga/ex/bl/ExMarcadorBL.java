@@ -91,12 +91,16 @@ public class ExMarcadorBL {
 		
 		// converter as linhas abaixo em um único método que identifica a movimentação principal, o marcador e a data.
 
-		long m = CpMarcador.MARCADOR_CANCELADO;
+		long m = 0L;
 		long mAnterior = m;
 		Date dt = null;
 
 		for (ExMovimentacao mov : movs) {
 			Long t = mov.getIdTpMov();
+			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO 
+					&& mov.getExMovimentacaoRef() != null 
+					&& mov.getExMovimentacaoRef().getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO)
+				m = CpMarcador.MARCADOR_CANCELADO;
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO)
 				m = CpMarcador.MARCADOR_PENDENTE_DE_ANEXACAO;
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO)
@@ -134,7 +138,7 @@ public class ExMarcadorBL {
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO) {
-				if (mob.doc().isAssinado()
+				if (!mob.doc().isPendenteDeAssinatura()
 						|| mob.doc().getExTipoDocumento().getIdTpDoc() == 2
 						|| mob.doc().getExTipoDocumento().getIdTpDoc() == 3) {
 
@@ -145,9 +149,7 @@ public class ExMarcadorBL {
 
 				} else if (mob.isApensado()) {
 					m = CpMarcador.MARCADOR_APENSADO;
-				} else {
-					m = CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA;
-				}
+				} 
 			}
 
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO
@@ -172,6 +174,8 @@ public class ExMarcadorBL {
 				mAnterior = m;
 			}
 		}
+		
+		acrescentarMarcadoresPendenciaDeAssinatura(dt);
 
 		calcularMarcadoresTransferencia(dt);
 
@@ -189,14 +193,6 @@ public class ExMarcadorBL {
 								ultMovNaoCanc.getLotaResp());
 				}
 			}
-		}
-
-		// Quando o documento está pendente de assinatura, criar uma marca
-		// também para o subscritor
-		if (m == CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA) {
-			if (!mob.getDoc().isAssinadoSubscritor())
-				acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, dt, mob
-						.getExDocumento().getSubscritor(), null);
 		}
 
 		// Quando está na caixa de entrada, substituir por "A Receber", se for
@@ -251,7 +247,7 @@ public class ExMarcadorBL {
 				|| m == CpMarcador.MARCADOR_APENSADO) {
 			if (!mob.isEliminado())
 				acrescentarMarca(m, dt, null, null);
-		} else {
+		} else if (m != 0L){
 			// Edson: Os marcadores "Arq Corrente" e
 			// "Aguardando andamento" são mutuamente exclusivos
 			if (m != CpMarcador.MARCADOR_EM_ANDAMENTO
@@ -293,7 +289,7 @@ public class ExMarcadorBL {
 		acrescentarMarcadoresPapel();
 		acrescentarMarcadoresDJe();
 		acrescentarMarcadoresPendenciaDeAnexacao();
-		acrescentarMarcadoresPendenciaDeAssinatura();
+		acrescentarMarcadoresPendenciaDeAssinaturaMovimentacao();
 		acrescentarMarcadoresDoCossignatario();
 		acrescentarMarcadoresAssinaturaComSenha();
 	}
@@ -399,8 +395,19 @@ public class ExMarcadorBL {
 					mov.getLotaCadastrante());
 		}
 	}
+	
+	public void acrescentarMarcadoresPendenciaDeAssinatura(Date dt){
+		if (mob.doc().isPendenteDeAssinatura()){
+			acrescentarMarca(CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA, dt, ultMovNaoCanc.getResp(),
+					ultMovNaoCanc.getLotaResp());
+			if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()){
+					acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, dt, mob
+							.getExDocumento().getSubscritor(), null);
+			}
+		}
+	}
 
-	public void acrescentarMarcadoresPendenciaDeAssinatura() {
+	public void acrescentarMarcadoresPendenciaDeAssinaturaMovimentacao() {
 		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO)) {
 			Long m = null;
 			if (mob.doc().isEletronico() && !mob.doc().jaTransferido()) {
@@ -429,14 +436,15 @@ public class ExMarcadorBL {
 	}
 
 	public void acrescentarMarcadoresDoCossignatario() {
-		if (mob.getDoc().getExTipoDocumento().getId() != ExTipoDocumento.TIPO_DOCUMENTO_INTERNO)
+		if (mob.getDoc().getExTipoDocumento().getId() != ExTipoDocumento.TIPO_DOCUMENTO_INTERNO
+				&& mob.getDoc().getExTipoDocumento().getId() != ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)
 			return;
 
 		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO)) {
 			if (mob.getDoc().isEletronico()) {
-				if (mob.getDoc().jaAssinadoPor(mov.getSubscritor()))
+				if (mob.getDoc().isAssinadoPelaPessoaComTokenOuSenha(mov.getSubscritor()))
 					return;
-				else if (mob.getDoc().isAssinadoSubscritor())
+				else if (mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha())
 					acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, mov.getDtIniMov(), mov.getSubscritor(),
 							null);
 				else

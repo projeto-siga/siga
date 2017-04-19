@@ -44,7 +44,9 @@
 		
 		.hidden {
 			display: none;
-		}
+		}	
+		
+
 	</style>
 
 	<div class="gt-bd gt-cols clearfix" style="padding-bottom: 0px;">
@@ -71,8 +73,21 @@
 				<script language="javascript">
 					function parseDescricao(id){
 						var descricao = document.getElementById(id);
+						
 						if (!descricao)
 							return;
+						
+					    var wordsArray = descricao.innerHTML.split(/(\s+)/);
+					    
+						for(var i=0; i < wordsArray.length; i++){
+				    		if (wordsArray[i].length > 50) {
+								descricao.style.wordBreak = "break-all";
+								descricao.style.wordWrap = "break-word";
+								descricao.style.whiteSpace = "simple";
+								break;
+							}
+						}
+																	
 						descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, ' <br />');
 						descricao.innerHTML = descricao.innerHTML.replace(/(\w{2,4}\-(GC|SR)\-\d{4}\/\d{5}(?:\.\d{2})?)/g, function(a, b, c){
 							if (c.toLowerCase() == 'sr')
@@ -593,8 +608,9 @@
                 <input type="hidden" name="ocultas" value="${ocultas}" />
                 <input type="hidden" name="movimentacao.atendente.id" value="${movimentacao.solicitacao.atendente.pessoaAtual.idPessoa}" />
                 <input type="hidden" name="movimentacao.solicitacao.idSolicitacao"
-                    value="${solicitacao.idSolicitacao}" /> <input
-                    type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12" />
+                    value="${solicitacao.idSolicitacao}" /> 
+                <input type="hidden" name="movimentacao.tipoMov.idTipoMov" value="12" />
+                <input type="hidden" name="movimentacao.tipoMov.nome" value="Anexação de Arquivo" />
                 <div class="gt-form-row">
                     <label>Arquivo</label> <input type="file" name="movimentacao.arquivo" />
                 </div>

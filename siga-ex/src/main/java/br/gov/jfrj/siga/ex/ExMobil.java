@@ -808,6 +808,30 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		return movReturn;
 	}
+	/**
+	 * Retorna a última movimentação não cancelada que o móbil mob recebeu 
+	 * antes de determinada data dt passada por parâmetro 
+	 * 	 
+	 * @param mob	
+	 * @param dt
+	 * @return
+	 */
+	public ExMovimentacao getUltimaMovimentacaoAntesDaData(Date dt) {
+		
+		ExMovimentacao ultMovAntesDaData = null;
+		
+		for (ExMovimentacao mov : getExMovimentacaoSet()) {			
+			
+			if (mov.isCancelada() || mov.isCanceladora())
+				continue;
+			if (mov.getDtMov().after(dt))				
+	           break;
+			
+			ultMovAntesDaData = mov;			
+			
+		}
+		return ultMovAntesDaData;
+	}
 
 	/**
 	 * Verifica se o mobil está arquivado corrente
@@ -2203,5 +2227,29 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			}
 		}
 		return transferenciasComData;
+	}
+		
+	public Set<ExMovimentacao> getMovsNaoCanceladas(long idTpMov){
+		return getMovsNaoCanceladas(idTpMov, false);
+	}
+	
+	public Set<ExMovimentacao> getMovsNaoCanceladas(long idTpMov, boolean apenasNaoReferenciadoras) {
+		//Edson: o apenasNaoReferenciadoras serve para, por exemplo, não retornar movimentações
+		//de autenticação de anexos, mas apenas de documento
+		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
+
+		if (getExMovimentacaoSet() == null)
+			return set;
+
+		for (ExMovimentacao m : getExMovimentacaoSet()) {
+			if (m.getExMovimentacaoCanceladora() != null)
+				continue;
+			if (idTpMov > 0 && m.getExTipoMovimentacao().getIdTpMov() != idTpMov)
+				continue;
+			if (apenasNaoReferenciadoras && m.getExMovimentacaoRef() != null)
+				continue;
+			set.add(m);
+		}
+		return set;
 	}
 }

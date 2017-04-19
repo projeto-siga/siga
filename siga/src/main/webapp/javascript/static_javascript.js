@@ -144,11 +144,6 @@ function verifica_data(data, naoObriga) {
 	mydata = new String(data.value);
 	var mySplit;
 	var msg = "";
-	if (mydata.length == 0 && naoObriga == null) {
-		msg = msg + "O campo data deve ser preenchido\n";
-		alert(msg);
-		return;
-	}
 	if (mydata.length > 0) {
 		mySplit = mydata.split("/");
 		if (mySplit[0] == mydata) {

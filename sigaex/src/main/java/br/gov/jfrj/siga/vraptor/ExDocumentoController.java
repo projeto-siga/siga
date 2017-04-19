@@ -97,7 +97,7 @@ import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 public class ExDocumentoController extends ExController {
 
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
-	private static final String URL_EDITAR	 = "/app/expediente/doc/editar?sigla={0}";
+	private static final String URL_EDITAR = "/app/expediente/doc/editar?sigla={0}";
 
 	public ExDocumentoController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
@@ -130,31 +130,44 @@ public class ExDocumentoController extends ExController {
 
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
+	
+	@Get("/app/expediente/mov/recalcular_acesso")
+    public void aRecalcularAcesso(final String sigla) {
+        final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+        buscarDocumento(builder, false);
+
+        Ex.getInstance().getBL().atualizarDnmAcesso(builder.getMob().getDoc());
+
+        result.use(Results.http()).body("Acesso: " + builder.getMob().doc().getDnmAcesso()
+                + "\n Alterado: " + builder.getMob().doc().getDnmDtAcesso()).setStatusCode(200);
+    }
 
 	@Get("app/expediente/doc/cancelar_movimentacoes_replicadas")
-	public void aCancelarMovimentacoesReplicadasDoc(final String sigla) throws Exception {
+	public void aCancelarMovimentacoesReplicadasDoc(final String sigla)
+			throws Exception {
 		assertAcesso("");
 
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		final ExDocumento doc = buscarDocumento(builder, false);
-		
+
 		Set<ExMovimentacao> movsReplicadas = new TreeSet<ExMovimentacao>();
 		Set<ExMovimentacao> movs = null;
-		
+
 		for (ExMobil m : doc.getExMobilSet()) {
 			movs = m.getExMovimentacaoSet();
 			movsReplicadas.addAll(m.getMovimentacoesReplicadas(movs));
 		}
 
-		if(!movsReplicadas.isEmpty()){
-			Ex.getInstance().getBL().cancelarMovimentacoesReplicadas(movsReplicadas);
+		if (!movsReplicadas.isEmpty()) {
+			Ex.getInstance().getBL()
+					.cancelarMovimentacoesReplicadas(movsReplicadas);
 			Ex.getInstance().getBL().atualizarMarcas(doc);
 		}
-		
+
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
-	
+
 	@Get("app/expediente/doc/corrigirPDF")
 	public void aCorrigirPDF(final String sigla) {
 		assertAcesso("");
@@ -341,7 +354,8 @@ public class ExDocumentoController extends ExController {
 
 		result.forwardTo(this).edita(exDocumentoDTOPreench, null, vars,
 				exDocumentoDTO.getMobilPaiSel(),
-				exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando());
+				exDocumentoDTO.isCriandoAnexo(),
+				exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando());
 	}
 
 	@Get("app/expediente/doc/criar_via")
@@ -396,7 +410,8 @@ public class ExDocumentoController extends ExController {
 			InvocationTargetException, IOException {
 		result.forwardTo(this).edita(exDocumentoDTO, null, vars,
 				exDocumentoDTO.getMobilPaiSel(),
-				exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando());
+				exDocumentoDTO.isCriandoAnexo(),
+				exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando());
 		return exDocumentoDTO;
 	}
 
@@ -404,7 +419,8 @@ public class ExDocumentoController extends ExController {
 	@Get("app/expediente/doc/editar")
 	public ExDocumentoDTO edita(ExDocumentoDTO exDocumentoDTO,
 			final String sigla, String[] vars,
-			final ExMobilSelecao mobilPaiSel, final Boolean criandoAnexo, final Boolean despachando, final Boolean autuando)
+			final ExMobilSelecao mobilPaiSel, final Boolean criandoAnexo,
+			final Boolean despachando, final Boolean autuando)
 			throws IOException, IllegalAccessException,
 			InvocationTargetException {
 		assertAcesso("");
@@ -418,8 +434,7 @@ public class ExDocumentoController extends ExController {
 					: criandoAnexo);
 			exDocumentoDTO.setDespachando(despachando == null ? false
 					: despachando);
-			exDocumentoDTO.setAutuando(autuando == null ? false
-					: autuando);
+			exDocumentoDTO.setAutuando(autuando == null ? false : autuando);
 
 			if (mobilPaiSel != null) {
 				exDocumentoDTO.setMobilPaiSel(mobilPaiSel);
@@ -442,19 +457,20 @@ public class ExDocumentoController extends ExController {
 			if (exDocumentoDTO.getIdTpDoc() == null)
 				exDocumentoDTO.setIdTpDoc(1L);
 
-			if(exDocumentoDTO.getNivelAcesso() == null) {
+			if (exDocumentoDTO.getNivelAcesso() == null) {
 				final ExNivelAcesso nivelDefault = getNivelAcessoDefault(exDocumentoDTO);
 				if (nivelDefault != null) {
-					exDocumentoDTO.setNivelAcesso(nivelDefault.getIdNivelAcesso());
-				} else{
+					exDocumentoDTO.setNivelAcesso(nivelDefault
+							.getIdNivelAcesso());
+				} else {
 					exDocumentoDTO.setNivelAcesso(ExNivelAcesso.ID_PUBLICO);
 				}
 			}
-			
-			if(exDocumentoDTO.getIdMod() == null)
+
+			if (exDocumentoDTO.getIdMod() == null)
 				exDocumentoDTO.setIdMod(((ExModelo) dao()
-					.consultarAtivoPorIdInicial(ExModelo.class, 26L))
-					.getIdMod());
+						.consultarAtivoPorIdInicial(ExModelo.class, 26L))
+						.getIdMod());
 		}
 
 		if (exDocumentoDTO.isCriandoAnexo() && exDocumentoDTO.getId() == null
@@ -525,13 +541,15 @@ public class ExDocumentoController extends ExController {
 		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_PROIBIDO) {
 			exDocumentoDTO.setEletronico(2);
 			exDocumentoDTO.setEletronicoFixo(true);
-		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT && exDocumentoDTO.isAlterouModelo()){
+		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT
+				&& exDocumentoDTO.isAlterouModelo()) {
 			exDocumentoDTO.setEletronico(1);
 			exDocumentoDTO.setEletronicoFixo(false);
-		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_NAO_DEFAULT && exDocumentoDTO.isAlterouModelo()){
+		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_NAO_DEFAULT
+				&& exDocumentoDTO.isAlterouModelo()) {
 			exDocumentoDTO.setEletronico(2);
 			exDocumentoDTO.setEletronicoFixo(false);
-		} 
+		}
 
 		lerForm(exDocumentoDTO, vars);
 
@@ -552,7 +570,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getClassificacaoSel().setId(null);
 			}
 		}
-
+		
 		exDocumentoDTO.getSubscritorSel().buscar();
 		exDocumentoDTO.getDestinatarioSel().buscar();
 		exDocumentoDTO.getLotacaoDestinatarioSel().buscar();
@@ -604,16 +622,16 @@ public class ExDocumentoController extends ExController {
 					final String as[] = new String[] { exDocumentoDTO
 							.getParamsEntrevista().get(p) };
 					parFreeMarker.put(p, as);
-//					System.out.println("*** " + p + ", "
-//							+ exDocumentoDTO.getParamsEntrevista().get(p));
+					// System.out.println("*** " + p + ", "
+					// + exDocumentoDTO.getParamsEntrevista().get(p));
 				}
 			}
 		}
 		// Usado pela macro de "partes"...
-		parFreeMarker.put("sigla_titular", new String[] { getTitular().getSigla() });
-		parFreeMarker.put("sigla_lota_titular",
-				new String[] { getLotaTitular().getSiglaCompleta() });
-
+		parFreeMarker.put("sigla_titular", new String[] { getTitular()
+				.getSigla() });
+		parFreeMarker.put("sigla_lota_titular", new String[] { getLotaTitular()
+				.getSiglaCompleta() });
 
 		// result.include("param", exDocumentoDTO.getParamsEntrevista());
 
@@ -621,8 +639,8 @@ public class ExDocumentoController extends ExController {
 		for (String p : exDocumentoDTO.getParamsEntrevista().keySet()) {
 			result.include(p, exDocumentoDTO.getParamsEntrevista().get(p));
 			l.add(p);
-//			System.out.println("*** " + p + ", "
-//					+ exDocumentoDTO.getParamsEntrevista().get(p));
+			// System.out.println("*** " + p + ", "
+			// + exDocumentoDTO.getParamsEntrevista().get(p));
 		}
 		result.include("vars", l);
 
@@ -677,83 +695,19 @@ public class ExDocumentoController extends ExController {
 	}
 
 	@Get("/app/expediente/doc/excluir")
-	public void aExcluirDocMovimentacoes(final String sigla) {
+	public void aExcluirDocMovimentacoes(final String sigla) throws Exception {
 		assertAcesso("");
 
 		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
 		exDocumentoDTO.setSigla(sigla);
 		buscarDocumento(true, exDocumentoDTO);
 		final ExDocumento doc = exDocumentoDTO.getDoc();
-		try {
-			ExDao.iniciarTransacao();
-
-			try {
-				doc.getDtRegDoc();
-			} catch (final ObjectNotFoundException e) {
-				throw new AplicacaoException(
-						"Documento já foi excluído anteriormente", 1, e);
-			}
-
-			if (doc.isFinalizado()) {
-				throw new AplicacaoException(
-						"Documento já foi finalizado e não pode ser excluído",
-						2);
-			}
-
-			for (final ExMobil m : doc.getExMobilSet()) {
-				Set<ExMovimentacao> set = m.getExMovimentacaoSet();
-
-				if (!Ex.getInstance().getComp()
-						.podeExcluir(getTitular(), getLotaTitular(), m)) {
-					throw new AplicacaoException("Não é possível excluir");
-				}
-
-				if (set.size() > 0) {
-					final Object[] aMovimentacao = set.toArray();
-					for (int i = 0; i < set.size(); i++) {
-						final ExMovimentacao movimentacao = (ExMovimentacao) aMovimentacao[i];
-						dao().excluir(movimentacao);
-					}
-				}
-
-				for (ExMarca marc : m.getExMarcaSet()) {
-					dao().excluir(marc);
-				}
-
-				set = m.getExMovimentacaoReferenciaSet();
-				if (set.size() > 0) {
-					final Object[] aMovimentacao = set.toArray();
-					for (int i = 0; i < set.size(); i++) {
-						final ExMovimentacao movimentacao = (ExMovimentacao) aMovimentacao[i];
-						Ex.getInstance()
-								.getBL()
-								.excluirMovimentacao(getCadastrante(),
-										getLotaTitular(),
-										movimentacao.getExMobil(),
-										movimentacao.getIdMov());
-					}
-				}
-
-				dao().excluir(m);
-			}
-
-			// Exclui documento da tabela de Boletim Interno
-			final String funcao = doc.getForm().get("acaoExcluir");
-			if (funcao != null) {
-				obterMetodoPorString(funcao, doc);
-			}
-
-			dao().excluir(doc);
-			ExDao.commitTransacao();
-			result.redirectTo("/");
-		} catch (final AplicacaoException e) {
-			ExDao.rollbackTransacao();
-			throw e;
-		} catch (final Exception e) {
-			ExDao.rollbackTransacao();
-			throw new AplicacaoException("Ocorreu um Erro durante a Operação",
-					0, e);
-		}
+		
+		Ex.getInstance()
+		.getBL()
+		.excluirDocumento(doc, getTitular(), getLotaTitular(), false);
+		
+		result.redirectTo("/");
 	}
 
 	@Post("app/expediente/doc/excluirpreench")
@@ -771,7 +725,8 @@ public class ExDocumentoController extends ExController {
 		exDocumentoDTO.setPreenchimento(0L);
 		result.forwardTo(this).edita(exDocumentoDTO, null, vars,
 				exDocumentoDTO.getMobilPaiSel(),
-				exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando());
+				exDocumentoDTO.isCriandoAnexo(),
+				exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando());
 	}
 
 	private void assertAcesso(final ExDocumentoDTO exDocumentoDTO)
@@ -799,137 +754,174 @@ public class ExDocumentoController extends ExController {
 	}
 
 	private String arquivamentoAutomatico(ExMobil mob) throws Exception {
-		
+
 		String msgDestinoDoc = "";
 		DpPessoa dest;
-		DpLotacao lotaDest;		
+		DpLotacao lotaDest;
 		Boolean jaArquivado = false;
+		ExMobil mobArq = null; /* mobil a ser arquivado */
 		
-		if (mob.doc().isProcesso()) {
-			if (mob.doc().isArquivado())
+		
+		if (mob.doc().isProcesso()) {   
+			mobArq = mob.doc().getMobilGeral();
+			if (mob.doc().isArquivado())   /* se é processo o arquivamento é no geral */
 				jaArquivado = true;
-		} else
-			if (mob.isArquivado())
-				jaArquivado = true;	
-		
-		if (mob.doc().isFinalizado() && mob.getUltimaMovimentacaoNaoCancelada()!= null) {
-			dest = mob.getUltimaMovimentacaoNaoCancelada().getResp().getPessoaAtual(); 
-			lotaDest = mob.getUltimaMovimentacaoNaoCancelada().getLotaResp().getLotacaoAtual();	
+		} else {
+			if (mob.isGeral() && mob.doc().isFinalizado()) {
+				mobArq = mob.doc().getPrimeiraVia();
+			} else
+				mobArq = mob;
+			if (mob.isArquivado())    /* se é expediente o arquivamento é na via */
+				jaArquivado = true;
+		}
+			
+
+		if (mob.doc().isFinalizado()
+				&& mob.getUltimaMovimentacaoNaoCancelada() != null) {
+			dest = mob.getUltimaMovimentacaoNaoCancelada().getResp()
+					.getPessoaAtual();
+			lotaDest = mob.getUltimaMovimentacaoNaoCancelada().getLotaResp()
+					.getLotacaoAtual();
 		} else {
 			dest = mob.doc().getCadastrante().getPessoaAtual();
 			lotaDest = mob.doc().getLotaCadastrante().getLotacaoAtual();
 		}
-		
-		if (!jaArquivado) {				
-			if (!dest.ativaNaData(new Date())) {																
-					if (getLotaTitular().equivale(lotaDest)  /* a pessoa que está tentando acessar está na mesma lotação onde se encontra o doc*/ 
-							&& (mob.doc().getExNivelAcessoAtual().getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA					
-								|| mob.doc().getExNivelAcessoAtual().getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_PESSOAL)) {
-						
-						Boolean alguemPodeAcessar = false;
-						Set<DpPessoa> pessoas = lotaDest.getDpPessoaLotadosSet(); 
-						for (DpPessoa pes : pessoas) { /* verificar se alguem da lotação pode acessar o documento */
-							if(Ex.getInstance().getComp()
-									.podeAcessarDocumento(pes, lotaDest, mob))					
-								if (pes.getPessoaAtual().ativaNaData(new Date()))  {
-									alguemPodeAcessar = true;	
-									break;							
-								}					
-						}			
-						if (!alguemPodeAcessar) { /* ninguem pode acessar este documento */
-							if (mob.doc().isFinalizado()) {
-							Ex.getInstance()
-								.getBL()
-								.arquivarCorrenteAutomatico(dest, getLotaTitular(), mob);	
-							msgDestinoDoc = "documento sendo arquivado automaticamente";
-							} else {  /* doc temporário */								 
-								Ex.getInstance().getBL().excluirDocumentoAutomatico(mob.doc(), dest,
-											getLotaTitular());						
-									msgDestinoDoc = "documento sendo excluído automaticamente";								
-							}							
-						}								
+
+		if (!jaArquivado  && !mob.doc().isCancelado()) {
+			if (!dest.ativaNaData(new Date())) {
+				if (getLotaTitular().equivale(lotaDest) /*
+														 * a pessoa que está
+														 * tentando acessar está
+														 * na mesma lotação onde
+														 * se encontra o doc
+														 */
+						&& (mob.doc().getExNivelAcessoAtual()
+								.getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA || mob
+								.doc().getExNivelAcessoAtual()
+								.getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_PESSOAL || mob
+								.doc().getExNivelAcessoAtual()
+								.getGrauNivelAcesso().intValue() == ExNivelAcesso.NIVEL_ACESSO_PESSOA_SUB)) {
+
+					Boolean alguemPodeAcessar = false;
+					Set<DpPessoa> pessoas = lotaDest.getDpPessoaLotadosSet();
+					for (DpPessoa pes : pessoas) { /*
+													 * verificar se alguem da
+													 * lotação pode acessar o
+													 * documento
+													 */
+						if (Ex.getInstance().getComp()
+								.podeAcessarDocumento(pes, lotaDest, mob))
+							if (pes.getPessoaAtual().ativaNaData(new Date())) {
+								alguemPodeAcessar = true;
+								break;
+							}
 					}
+					if (!alguemPodeAcessar) { /*
+											 * ninguem pode acessar este
+											 * documento
+											 */
+						if (mob.doc().isFinalizado()) {							
+							if (!mob.doc().isPendenteDeAssinatura()) { 
+								if (Ex.getInstance()
+										.getComp()
+										.podeArquivarCorrente(getTitular(),
+												getLotaTitular(), mobArq)) {
+									
+										Ex.getInstance()
+										.getBL()
+										.arquivarCorrenteAutomatico(dest, getLotaTitular(), mobArq);
+										msgDestinoDoc = "documento sendo arquivado automaticamente";
+								} else { /* não pode arquivar */	 	
+									
+									Ex.getInstance().getBL().cancelarDocumento(getTitular(), getLotaTitular(), mob.doc());	
+									msgDestinoDoc = "documento sendo cancelado automaticamente";
+								}								
+							} else {            /* pendente de assinatura */
+								
+								Ex.getInstance().getBL().cancelarDocumento(getTitular(), getLotaTitular(), mob.doc());	
+								msgDestinoDoc = "documento sendo cancelado automaticamente";
+								
+							}
+
+						} else { /* doc temporário */
+							Ex.getInstance()
+									.getBL()
+									.excluirDocumentoAutomatico(mob.doc(),
+											dest, getLotaTitular());
+							msgDestinoDoc = "documento sendo excluído automaticamente";
+						}
+					}
+				}
 			}
 		}
-		
+
 		return msgDestinoDoc;
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-//		String msgDestinoDoc = "";
-//
-//		if (!mob.doc().isArquivado() && !mob.isGeral()) {
-//			DpLotacao lotaDest;
-//			if (mob.doc().isFinalizado())
-//				lotaDest = mob.getUltimaMovimentacaoNaoCancelada()
-//						.getLotaResp();
-//			else
-//				lotaDest = getLotaTitular();
-//
-//			if (getLotaTitular().equivale(lotaDest) /*
-//													 * a pessoa que está
-//													 * tentando acessar está na
-//													 * mesma lotação onde se
-//													 * encontra o doc
-//													 */
-//					&& (mob.doc().getExNivelAcesso().getGrauNivelAcesso()
-//							.intValue() == ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA || mob
-//							.doc().getExNivelAcesso().getGrauNivelAcesso()
-//							.intValue() == ExNivelAcesso.NIVEL_ACESSO_PESSOAL)) {
-//
-//				Boolean alguemPodeAcessar = false;
-//				Set<DpPessoa> pessoas = lotaDest.getDpPessoaLotadosSet();
-//				for (DpPessoa pes : pessoas) { /*
-//												 * verificar se alguem da
-//												 * lotação pode acessar o
-//												 * documento
-//												 */
-//					if (Ex.getInstance().getComp()
-//							.podeAcessarDocumento(pes, lotaDest, mob))
-//						if (pes.getPessoaAtual().ativaNaData(new Date())) {
-//							alguemPodeAcessar = true;
-//							break;
-//						}
-//				}
-//				if (!alguemPodeAcessar) { /* ninguem pode acessar este documento */
-//					DpPessoa dest;
-//					if (mob.doc().isFinalizado()) {
-//						dest = mob.getUltimaMovimentacaoNaoCancelada()
-//								.getResp().getPessoaAtual();
-//						Ex.getInstance()
-//								.getBL()
-//								.arquivarCorrenteAutomatico(dest,
-//										getLotaTitular(), mob);
-//						msgDestinoDoc = "documento sendo arquivado automaticamente";
-//
-//					} else { /* doc temporário */
-//						dest = mob.doc().getCadastrante().getPessoaAtual();
-//						Ex.getInstance()
-//								.getBL()
-//								.excluirDocumentoAutomatico(mob.doc(),
-//										getCadastrante(), getLotaTitular());
-//						msgDestinoDoc = "documento sendo excluído automaticamente";
-//					}
-//
-//				}
-//
-//			}
-//		}
-//		return msgDestinoDoc;
+
+		// String msgDestinoDoc = "";
+		//
+		// if (!mob.doc().isArquivado() && !mob.isGeral()) {
+		// DpLotacao lotaDest;
+		// if (mob.doc().isFinalizado())
+		// lotaDest = mob.getUltimaMovimentacaoNaoCancelada()
+		// .getLotaResp();
+		// else
+		// lotaDest = getLotaTitular();
+		//
+		// if (getLotaTitular().equivale(lotaDest) /*
+		// * a pessoa que está
+		// * tentando acessar está na
+		// * mesma lotação onde se
+		// * encontra o doc
+		// */
+		// && (mob.doc().getExNivelAcesso().getGrauNivelAcesso()
+		// .intValue() == ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA || mob
+		// .doc().getExNivelAcesso().getGrauNivelAcesso()
+		// .intValue() == ExNivelAcesso.NIVEL_ACESSO_PESSOAL)) {
+		//
+		// Boolean alguemPodeAcessar = false;
+		// Set<DpPessoa> pessoas = lotaDest.getDpPessoaLotadosSet();
+		// for (DpPessoa pes : pessoas) { /*
+		// * verificar se alguem da
+		// * lotação pode acessar o
+		// * documento
+		// */
+		// if (Ex.getInstance().getComp()
+		// .podeAcessarDocumento(pes, lotaDest, mob))
+		// if (pes.getPessoaAtual().ativaNaData(new Date())) {
+		// alguemPodeAcessar = true;
+		// break;
+		// }
+		// }
+		// if (!alguemPodeAcessar) { /* ninguem pode acessar este documento */
+		// DpPessoa dest;
+		// if (mob.doc().isFinalizado()) {
+		// dest = mob.getUltimaMovimentacaoNaoCancelada()
+		// .getResp().getPessoaAtual();
+		// Ex.getInstance()
+		// .getBL()
+		// .arquivarCorrenteAutomatico(dest,
+		// getLotaTitular(), mob);
+		// msgDestinoDoc = "documento sendo arquivado automaticamente";
+		//
+		// } else { /* doc temporário */
+		// dest = mob.doc().getCadastrante().getPessoaAtual();
+		// Ex.getInstance()
+		// .getBL()
+		// .excluirDocumentoAutomatico(mob.doc(),
+		// getCadastrante(), getLotaTitular());
+		// msgDestinoDoc = "documento sendo excluído automaticamente";
+		// }
+		//
+		// }
+		//
+		// }
+		// }
+		// return msgDestinoDoc;
 	}
 
 	@Get("app/expediente/doc/exibirAntigo")
-	public void aExibirAntigo(final String sigla, final boolean popup, final boolean exibirCompleto)
-			throws Exception {
+	public void aExibirAntigo(final String sigla, final boolean popup,
+			final boolean exibirCompleto) throws Exception {
 		assertAcesso("");
 
 		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
@@ -972,7 +964,7 @@ public class ExDocumentoController extends ExController {
 		result.include("popup", popup);
 	}
 
-	@Get({"/app/expediente/doc/exibir","/expediente/doc/exibir.action"})
+	@Get({ "/app/expediente/doc/exibir", "/expediente/doc/exibir.action" })
 	public void exibe(final boolean conviteEletronico, final String sigla,
 			final ExDocumentoDTO exDocumentoDTO, final Long idmob)
 			throws Exception {
@@ -1048,11 +1040,12 @@ public class ExDocumentoController extends ExController {
 
 	private void verificaDocumento(final ExDocumento doc) {
 		if ((doc.getSubscritor() == null && doc.getNmSubscritor() == null && doc
-				.getNmSubscritorExt() == null) && (doc.getExTipoDocumento().getId() != ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)
+				.getNmSubscritorExt() == null)
+				&& (doc.getExTipoDocumento().getId() != ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)
 				&& ((doc.getExFormaDocumento().getExTipoFormaDoc()
-						.getIdTipoFormaDoc() == ExTipoFormaDoc.TIPO_FORMA_DOC_PROCESSO_ADMINISTRATIVO && doc.isEletronico()) || doc
-						.getExFormaDocumento().getExTipoFormaDoc()
-						.getIdTipoFormaDoc() != ExTipoFormaDoc.TIPO_FORMA_DOC_PROCESSO_ADMINISTRATIVO)) {
+						.getIdTipoFormaDoc() == ExTipoFormaDoc.TIPO_FORMA_DOC_PROCESSO_ADMINISTRATIVO && doc
+						.isEletronico()) || doc.getExFormaDocumento()
+						.getExTipoFormaDoc().getIdTipoFormaDoc() != ExTipoFormaDoc.TIPO_FORMA_DOC_PROCESSO_ADMINISTRATIVO)) {
 			throw new AplicacaoException(
 					"É necessário definir um subscritor para o documento.");
 		}
@@ -1199,7 +1192,8 @@ public class ExDocumentoController extends ExController {
 
 	@Post("/app/expediente/doc/gravar")
 	public void gravar(final ExDocumentoDTO exDocumentoDTO,
-			final String[] vars, final String[] campos, final UploadedFile arquivo) {
+			final String[] vars, final String[] campos,
+			final UploadedFile arquivo) {
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();
 
@@ -1210,21 +1204,26 @@ public class ExDocumentoController extends ExController {
 			}
 
 			long tempoIni = System.currentTimeMillis();
-			
+
 			setPar(getRequest().getParameterMap());
 			if (!validar()) {
 				getPar().put("alerta", new String[] { "Sim" });
 				exDocumentoDTO.setAlerta("Sim");
 				result.forwardTo(this).edita(exDocumentoDTO, null, vars,
 						exDocumentoDTO.getMobilPaiSel(),
-						exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando());
+						exDocumentoDTO.isCriandoAnexo(),
+						exDocumentoDTO.getDespachando(),
+						exDocumentoDTO.getAutuando());
 				return;
 			}
 
 			lerForm(exDocumentoDTO, vars);
-			
-			if (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO && exDocumentoDTO.getDoc().getIdDoc() == null && arquivo == null)
-				throw new AplicacaoException("Documento capturado não pode ser gravado sem que seja informado o arquivo PDF.");
+
+			if (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO
+					&& exDocumentoDTO.getDoc().getIdDoc() == null
+					&& arquivo == null)
+				throw new AplicacaoException(
+						"Documento capturado não pode ser gravado sem que seja informado o arquivo PDF.");
 
 			if (!ex.getConf().podePorConfiguracao(getTitular(),
 					getLotaTitular(),
@@ -1249,11 +1248,11 @@ public class ExDocumentoController extends ExController {
 				throw new AplicacaoException("Operação não permitida");
 			}
 
-//			System.out.println("monitorando gravacao IDDoc "
-//					+ exDocumentoDTO.getDoc().getIdDoc() + ", PESSOA "
-//					+ exDocumentoDTO.getDoc().getCadastrante().getIdPessoa()
-//					+ ". Terminou verificacao de config PodeCriarModelo: "
-//					+ (System.currentTimeMillis() - tempoIni));
+			// System.out.println("monitorando gravacao IDDoc "
+			// + exDocumentoDTO.getDoc().getIdDoc() + ", PESSOA "
+			// + exDocumentoDTO.getDoc().getCadastrante().getIdPessoa()
+			// + ". Terminou verificacao de config PodeCriarModelo: "
+			// + (System.currentTimeMillis() - tempoIni));
 
 			tempoIni = System.currentTimeMillis();
 
@@ -1271,9 +1270,9 @@ public class ExDocumentoController extends ExController {
 								+ "classificação para ser incluída na próxima revisão da tabela de classificações.");
 			}
 
-			if (exDocumentoDTO.getDoc().getDescrDocumento() != null 
+			if (exDocumentoDTO.getDoc().getDescrDocumento() != null
 					&& exDocumentoDTO.getDoc().getDescrDocumento().length() > exDocumentoDTO
-					.getTamanhoMaximoDescricao()) {
+							.getTamanhoMaximoDescricao()) {
 				throw new AplicacaoException(
 						"O campo descrição possui mais do que "
 								+ exDocumentoDTO.getTamanhoMaximoDescricao()
@@ -1310,44 +1309,53 @@ public class ExDocumentoController extends ExController {
 						false);
 				exDocumentoDTO.getDoc().setExMobilAutuado(mobilAutuado);
 			}
-			
+
 			// Insere PDF de documento capturado
 			//
 			if (arquivo != null) {
 				ExDocumento d = exDocumentoDTO.getDoc();
-				
+
 				if (arquivo.getFile() == null) {
-					throw new AplicacaoException("O arquivo a ser anexado não foi selecionado!");
+					throw new AplicacaoException(
+							"O arquivo a ser anexado não foi selecionado!");
 				}
-	
+
 				Integer numBytes = null;
 				try {
 					final byte[] baArquivo = toByteArray(arquivo);
 					if (baArquivo == null) {
-						throw new AplicacaoException("Arquivo vazio não pode ser anexado.");
+						throw new AplicacaoException(
+								"Arquivo vazio não pode ser anexado.");
 					}
 					numBytes = baArquivo.length;
 					if (numBytes > 10 * 1024 * 1024) {
-						throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 10MB.");
+						throw new AplicacaoException(
+								"Não é permitida a anexação de arquivos com mais de 10MB.");
 					}
 					d.setConteudoBlobPdf(baArquivo);
 				} catch (IOException e) {
-					throw new AplicacaoException("Falha ao manipular aquivo", 1, e);
+					throw new AplicacaoException("Falha ao manipular aquivo",
+							1, e);
 				}
-	
+
 				Integer numPaginas = d.getContarNumeroDePaginas();
 				if (numPaginas == null || d.getArquivoComStamp() == null) {
-					throw new AplicacaoException(MessageFormat.format("O arquivo {0} está corrompido. Favor gera-lo novamente antes de anexar.", arquivo.getFileName()));
+					throw new AplicacaoException(
+							MessageFormat
+									.format("O arquivo {0} está corrompido. Favor gera-lo novamente antes de anexar.",
+											arquivo.getFileName()));
 				}
-				
-//				if (numPaginas != null && numBytes != null &&  (numBytes/numPaginas > (1 * 1024 * 1024))) {
-//					throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 1MB por página.");
-//				}
+
+				// if (numPaginas != null && numBytes != null &&
+				// (numBytes/numPaginas > (1 * 1024 * 1024))) {
+				// throw new
+				// AplicacaoException("Não é permitida a anexação de arquivos com mais de 1MB por página.");
+				// }
 			}
-			
+
 			exBL.gravar(getCadastrante(), getLotaTitular(),
 					exDocumentoDTO.getDoc());
-			
+
 			if (!exDocumentoDTO.getDoc().isFinalizado()
 					&& exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)
 				exBL.finalizar(getCadastrante(), getLotaTitular(),
@@ -1835,7 +1843,7 @@ public class ExDocumentoController extends ExController {
 			exDocumentoDTO.getTitularSel().buscarPorObjeto(doc.getTitular());
 			exDocumentoDTO.setSubstituicao(true);
 		}
-		
+
 		exDocumentoDTO.setPersonalizacao(doc.getNmFuncaoSubscritor() != null);
 
 		// TODO Verificar se ha realmente a necessidade de setar novamente o
@@ -1917,7 +1925,7 @@ public class ExDocumentoController extends ExController {
 						}
 						baos.write(par.getBytes());
 						baos.write('=');
-	
+
 						// Deveria estar gravando como UTF-8
 						baos.write(URLEncoder.encode(param(s), "iso-8859-1")
 								.getBytes());
@@ -1943,7 +1951,7 @@ public class ExDocumentoController extends ExController {
 						}
 					} catch (final UnsupportedEncodingException e) {
 					}
-//					System.out.println(s);
+					// System.out.println(s);
 				}
 			}
 		}
@@ -2136,8 +2144,8 @@ public class ExDocumentoController extends ExController {
 
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 			final String marcacoes[] = { "<!-- INICIO NUMERO -->",
-					"<!-- FIM NUMERO -->", "<!-- INICIO NUMERO", "FIM NUMERO -->",
-					"<!-- INICIO TITULO", "FIM TITULO -->",
+					"<!-- FIM NUMERO -->", "<!-- INICIO NUMERO",
+					"FIM NUMERO -->", "<!-- INICIO TITULO", "FIM TITULO -->",
 					"<!-- INICIO MIOLO -->", "<!-- FIM MIOLO -->",
 					"<!-- INICIO CORPO -->", "<!-- FIM CORPO -->",
 					"<!-- INICIO CORPO", "FIM CORPO -->",
@@ -2145,7 +2153,7 @@ public class ExDocumentoController extends ExController {
 					"<!-- INICIO ABERTURA -->", "<!-- FIM ABERTURA -->",
 					"<!-- INICIO ABERTURA", "FIM ABERTURA -->",
 					"<!-- INICIO FECHO -->", "<!-- FIM FECHO -->" };
-	
+
 			final String as[] = vars;
 			if (as != null && as.length > 0) {
 				for (final String s : as) {
@@ -2165,7 +2173,7 @@ public class ExDocumentoController extends ExController {
 								setParam(s, parametro);
 							}
 						}
-	
+
 						baos.write(URLEncoder.encode(parametro, "iso-8859-1")
 								.getBytes());
 					}
@@ -2251,7 +2259,8 @@ public class ExDocumentoController extends ExController {
 			for (final DpLotacao lotacao : lotacaoSet) {
 				preench.setDpLotacao(lotacao);
 				try {
-					exDocumentoDTO.getPreenchSet().addAll(dao().consultar(preench));
+					exDocumentoDTO.getPreenchSet().addAll(
+							dao().consultar(preench));
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -2328,7 +2337,7 @@ public class ExDocumentoController extends ExController {
 			final String sigla) {
 		result.redirectTo(MessageFormat.format(URL_EXIBIR, sigla));
 	}
-	
+
 	protected static void redirecionarParaEditar(final Result result,
 			final String sigla) {
 		result.redirectTo(MessageFormat.format(URL_EDITAR, sigla));
@@ -2379,5 +2388,5 @@ public class ExDocumentoController extends ExController {
 				.corrigirArquivamentosEmVolume(idPrimeiroDoc, idUltimoDoc,
 						efetivarDoc);
 	}
-	
+
 }

@@ -215,6 +215,7 @@
 								</td>
 							</c:when>
 							<c:otherwise>
+								<input type="hidden" id="temCossignatarios" value="${not empty exDocumentoDTO.doc.cosignatarios}" />
 								<td>Subscritor:</td>
 								<input type="hidden" name="campos" value="subscritorSel.id" />
 								<input type="hidden" name="campos" value="substituicao" />
@@ -231,6 +232,14 @@
 							</c:otherwise> 
 						</c:choose>
 					</tr>
+					<c:if test='${exDocumentoDTO.tipoDocumento == "capturado"}'>
+					<tr>
+						<td></td>
+						<td colspan="3">
+							<span style="color: red">N&atilde;o preencher o subscritor quando o documento for externo ao &oacute;rg&atilde;o</span>
+						</td>
+					</tr>
+					</c:if>
 					<tr id="tr_titular" style="display: ${exDocumentoDTO.substituicao ? '' : 'none'};">
 						<td>Titular:</td>
 						<input type="hidden" name="campos" value="titularSel.id" />

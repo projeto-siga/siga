@@ -529,14 +529,20 @@ public class SrMovimentacao extends Objeto {
 			else if (isInicioAtendimento() 
 						|| (getLotaAtendente() != null && getLotaTitular() != null && !getLotaTitular().equivale(getLotaAtendente())))
 				lotaAtendente = getLotaAtendente();
-
+			else if (getSolicitacao().isPai() && !getSolicitacao().getSolicitacaoFilhaSet().isEmpty()) 
+				for (SrSolicitacao filha: getSolicitacao().getSolicitacaoFilhaSet()){
+					if (filha.isAtivo())
+						CorreioHolder
+						.get()
+						.notificarAtendente(this, filha);	
+				}
 			if (podeReceberNotificacaoAtendente(getTitular(), lotaAtendente)) 
 				CorreioHolder
 				.get()
 				.notificarAtendente(this, getSolicitacao());	
-		} catch (Exception e){
-			log.error("Erro ao notificar", e);
-		}
+			} catch (Exception e){
+				log.error("Erro ao notificar", e);
+			}
 	}
 	
 	private boolean podeReceberNotificacaoAtendente(DpPessoa pessoa, DpLotacao lotaAtendente) {

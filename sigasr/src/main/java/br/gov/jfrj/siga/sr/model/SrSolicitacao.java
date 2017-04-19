@@ -995,6 +995,13 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         return getPendenciasEmAberto().size() > 0;
     }
     
+    public boolean isTemporaria(){
+    	if (getSigla() != null)
+    			return getSigla().substring(0, 3).equals("TMP") ? true : false;
+    	else 
+    		return false;
+    }
+    
     public boolean isPendenteSemPrevisao(){
     	for (SrPendencia p : getPendenciasEmAberto())
     		if (p.isInfinito())
@@ -1242,7 +1249,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public boolean podeEditarAtributo(DpPessoa pess, DpLotacao lota) {
     	return estaCom(pess, lota) && isAtivo();
     }
-    
+
     @SuppressWarnings("unchecked")
     public SrSolicitacao deduzirLocalRamalEMeioContato() {
 
@@ -2236,7 +2243,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public void fechar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular, 
     		SrItemConfiguracao itemConfiguracao, SrAcao acao, String motivo, SrTipoMotivoFechamento tpMotivo, 
     		String conhecimento, Map<Long, SrAtributoSolicitacaoMap> atributos) throws Exception {
-        if (isPai() && !isAbertaComTodasFilhasFechadas())
+    	//Impede que seja lançado erro na tela de fechamento de solicitação filha quando ocorre tentativa de fechadamento automático 
+    	//da solicitação principal com ação "Atendimento de primeiro nível". 
+    	if (isPai() && acao.getTituloAcao().toLowerCase().contains("1º nível"))
+    		return;
+    	if (isPai() && !isAbertaComTodasFilhasFechadas())
             throw new AplicacaoException("Operação não permitida. Necessário fechar toda solicitação " + 
             			"filha criada a partir dessa que deseja fechar.");
 
@@ -2246,7 +2257,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         if (itemConfiguracao == null || itemConfiguracao.getId() == null || acao == null || acao.getIdAcao() == null || acao.getIdAcao().equals(0L))
             throw new AplicacaoException("Operação não permitida. Necessário informar um item de configuração e uma ação.");
 
-        if (acao.getTituloAcao().toLowerCase().contains("1º nível")) 
+        if (acao.getTituloAcao().toLowerCase().contains("1º nível")  && !isPai()) 
         	throw new AplicacaoException("Operação não permitida. Necessário reclassificar a solicitação. Selecione uma 'ação' " +
         				"relacionada ao atendimento realizado.");
         
@@ -2466,6 +2477,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     public void cancelar(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
         if (!podeCancelar(titular, lotaTitular))
             throw new AplicacaoException(OPERACAO_NAO_PERMITIDA);
+        if (isPai() && !isAbertaComTodasFilhasFechadas())
+            throw new AplicacaoException("Operação não permitida. Necessário fechar ou cancelar toda solicitação " + 
+            			"filha criada a partir dessa que deseja cancelar.");
         SrMovimentacao movimentacao = new SrMovimentacao(this);
         movimentacao.setTipoMov(SrTipoMovimentacao.AR.findById(SrTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_SOLICITACAO));
         movimentacao.salvar(cadastrante, lotaCadastrante, titular, lotaTitular);

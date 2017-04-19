@@ -302,6 +302,14 @@ public class SolicitacaoController extends SrController {
     	if (solicitacao.getArquivo() != null && solicitacao.getArquivo().getId() != null)
     		solicitacao.setArquivo(null);
     	
+    	//Chrys: Impede que uma solicitação deixe de ser rascunho caso tenha alguma pendência.
+    	//Solicitacao temporária e solicitacao rascunho são conceitos diferentes.  	
+    	//solicitacao.isTemporaria() retorna true caso a sigla da solicitação comece com "TMP" 
+    	//solicitacao.isRascunho() retorna true se o checkbox rascunho (da tela de edição) estiver marcado
+    	if (solicitacao.isTemporaria() && !solicitacao.isRascunho() && solicitacao.isPendente()) {
+    		throw new AplicacaoException("Para que a solicitação possa deixar de ser rascunho, é necessário terminar a pendência.");
+		}
+    	
 		if (!solicitacao.isRascunho() && !validarFormEditar(solicitacao)) {
 			 enviarErroValidacao();
 			 return;
@@ -451,7 +459,6 @@ public class SolicitacaoController extends SrController {
 
 	@Path({ "app/solicitacao/editar", "app/solicitacao/editar/{sigla}"})
     public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao, Long solicitante) throws Exception {
-
 		//Edson: se a sigla é != null, está vindo pelo link Editar. Se sigla for == null mas solicitacao for != null é um postback.
 		if (sigla != null) {
 			solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);  
@@ -459,6 +466,9 @@ public class SolicitacaoController extends SrController {
 			if (solicitacao.getAcordos() != null)
 				solicitacao.getAcordos().size();
 			Hibernate.initialize(solicitacao.getMeuAtributoSolicitacaoSet());
+			if(!solicitacao.isRascunho()){
+				throw new AplicacaoException("Não é possível editar Solicitação que não seja rascunho.");
+			}
 		}
 		else {
 			if (solicitacao == null){
@@ -815,7 +825,7 @@ public class SolicitacaoController extends SrController {
     	SrSolicitacao sol = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
         
     	if (calendario != null && !calendario.equals("")){
-    		calendario += " " + (horario != null && !horario.equals("") ? horario : "00:00");
+    		calendario += " " + (horario != null && !horario.equals("") ? horario : "23:59");
     	}
     	
         sol.deixarPendente(getCadastrante(), getCadastrante().getLotacao(), getTitular(), getLotaTitular(), 
@@ -847,6 +857,9 @@ public class SolicitacaoController extends SrController {
     		throw new AplicacaoException("Número não informado");
     		
     	SrSolicitacao solicitacao = (SrSolicitacao) new SrSolicitacao().setLotaTitular(getLotaTitular()).selecionar(sigla);
+    	if (solicitacao.isFilha()){
+    		solicitacao.setDescrSolicitacao(solicitacao.getDescricao());
+    	}
         result.include(SOLICITACAO, solicitacao);
     }
 

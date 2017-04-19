@@ -80,7 +80,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 		if (mob == null)
 			return false;
-		if (!mob.doc().isAssinado()
+		if (mob.doc().isPendenteDeAssinatura()
 				&& !mob.doc().getLotaCadastrante().equivale(lotaTitular)				
 				&& !titular.equivale(mob.doc().getTitular())
 				&& !podeMovimentar(titular, lotaTitular, mob)) {			
@@ -721,11 +721,12 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		if (mob.doc().isEletronico()
 				&& (mob.temAnexosNaoAssinados() || mob
-						.temDespachosNaoAssinados()))
+						.temDespachosNaoAssinados() || mob.doc().getMobilGeral().temAnexosNaoAssinados()
+						|| mob.doc().getMobilGeral().temDespachosNaoAssinados()))
 			return false;
 
 		return mob != null
-				&& mob.doc().isAssinado()
+				&& !mob.doc().isPendenteDeAssinatura()
 				&& podeMovimentar(titular, lotaTitular, mob)
 				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
@@ -760,7 +761,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeSobrestar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		
-		if(!mob.doc().isAssinado())
+		if(mob.doc().isPendenteDeAssinatura())
 			return false;
 		
 		final ExMovimentacao ultMovNaoCancelada = mob
@@ -810,7 +811,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if(mob.doc().isSemEfeito())
 			return false;
 		
-		if(!mob.doc().isEletronico() || !mob.doc().isAssinado())
+		if(!mob.doc().isEletronico() || mob.doc().isPendenteDeAssinatura())
 			return false;
 		
 		if(mob.doc().getSubscritor() == null || !mob.doc().getSubscritor().equivale(titular))
@@ -887,7 +888,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return !mob.doc().isCancelado()
 				&& !mob.doc().isSemEfeito()
 				&& !mob.isArquivado()
-				&& mob.doc().isAssinado()
+				&& !mob.doc().isPendenteDeAssinatura()
 				&& podeAcessarDocumento(titular, lotaTitular, mob)
 				&& podePorConfiguracao(titular, lotaTitular,
 						CpTipoConfiguracao.TIPO_CONFIG_CRIAR_DOC_FILHO);
@@ -968,7 +969,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		return mob != null
-				&& mob.doc().isAssinado()
+				&& !mob.doc().isPendenteDeAssinatura()
 				&& mob.isArquivadoCorrente()
 				&& mob.temTemporalidadeIntermediario()
 				&& !mob.isArquivadoIntermediario()
@@ -1032,7 +1033,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 
 		return mob != null
-				&& mob.doc().isAssinado()
+				&& !mob.doc().isPendenteDeAssinatura()
 				&& ((!mob.temTemporalidadeIntermediario() && mob.isArquivadoCorrente()) || mob
 						.isArquivadoIntermediario())
 				&& !mob.isArquivadoPermanente()
@@ -1091,7 +1092,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if(mob.doc().isCancelado())
 			return false;
 		
-		if (mob.getDoc().isEletronico() && mob.getDoc().isAssinado())
+		//Edson: este isEletronico() está aqui porque o físico deixa de estar pendente de 
+		//assinatura logo que a primeira pessoa assina. Porém, isso não significa que os demais 
+		//cossignatários não podem mais assinar
+		if (mob.getDoc().isEletronico() && !mob.getDoc().isPendenteDeAssinatura())
 			return false;
 
 		if (mob.getExDocumento().isProcesso()
@@ -1107,42 +1111,21 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.doc().getSubscritor() == null)
 			return false;
 		
-		if (mob.getDoc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)
-			if (mob.getDoc().isAssinadoEletronicoPorTodosOsSignatarios())
+		if (mob.getDoc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO){
+			if (mob.getDoc().getAutenticacoesComTokenOuSenha().isEmpty())
 				return false;
-
-		// cosignatario pode assinar depois que o subscritor já tiver assinado
-
-		boolean isConsignatario = false;
-
-		for (ExMovimentacao m : mob.doc().getMobilGeral()
-				.getExMovimentacaoSet()) {
-			if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
-					&& m.getExMovimentacaoCanceladora() == null
-					&& (m.getSubscritor() != null && m.getSubscritor()
-							.equivale(titular))) {
-				isConsignatario = true;
-				break;
-			}
 		}
 
-		boolean isCadastranteExterno = false;
-		if (mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO
-				&& mob.doc().getCadastrante().equivale(titular))
-			isCadastranteExterno = true;
-
 		//condições para assinatura digital de cosignatários em documentos físicos 
-		if 	((mob.doc().getSubscritor() != null && mob.doc().getSubscritor().equivale(titular) 
-				|| isConsignatario) && mob.doc().isFisico() && mob.doc().isFinalizado())
+		if (mob.doc().isFisico() && mob.doc().isFinalizado() 
+			&& ((mob.doc().getSubscritor() != null && mob.doc().getSubscritor().equivale(titular)) || mob.doc().isCossignatario(titular)))
 			return true;
 		
-		return ((mob.doc().getSubscritor() != null && mob.doc().getSubscritor()
-				.equivale(titular))
-
-				|| isCadastranteExterno || (isConsignatario && !mob.doc().isAssinado() && mob.doc().isAssinadoSubscritor())
-						|| podeMovimentar(
-				titular, lotaTitular, mob))
-				&& (mob.doc().isFinalizado())
+		return (mob.doc().getSubscritor().equivale(titular)
+				|| (mob.doc().isExterno() && mob.doc().getCadastrante().equivale(titular))
+				|| (mob.doc().isCossignatario(titular) && mob.doc().isPendenteDeAssinatura() && mob.doc().isAssinadoPeloSubscritorComTokenOuSenha())
+				|| podeMovimentar(titular, lotaTitular, mob))
+				&& mob.doc().isFinalizado()
 				&& !mob.doc().isCancelado()
 				&& !mob.doc().isSemEfeito()
 				&& getConf()
@@ -1185,14 +1168,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeAutenticarDocumento(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExDocumento doc) {
 		
-		if (doc.isEletronico() &&  !doc.isAutenticado() && doc.temAssinaturasComSenha()) {
-			 return true;
-		}
+		if (!doc.isEletronico() || !doc.getAutenticacoesComTokenOuSenha().isEmpty())
+			return false;
 		
-		if (doc.isEletronico() && doc.isCapturado() && doc.getSubscritor() == null && !doc.isAutenticado())
-			return true;
-
-		return false;
+		return doc.isCapturado() || doc.getAssinaturasComSenha().size() > 0;
 	}
 	
 	/*
@@ -1366,7 +1345,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		return (mob.doc().isFinalizado())
 				&& podeMovimentar(titular, lotaTitular, mob)
-				&& mob.doc().isAssinado()
+				&& !mob.doc().isPendenteDeAssinatura()
 				&& !mob.doc().isBoletimPublicado()
 				&& !mob.doc().isSemEfeito()
 				&& !mob.doc().isEliminado()
@@ -1847,7 +1826,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		if (!mob.isVia())
 			return false;
-		if (mob.getExDocumento().isAssinado())
+		if (!mob.getExDocumento().isPendenteDeAssinatura())
 			return false;
 		final ExMovimentacao exUltMovNaoCanc = mob
 				.getUltimaMovimentacaoNaoCancelada();
@@ -1926,7 +1905,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.doc().getMobilGeral().isPendenteDeColaboracao())
 			return false;
 			
-		if (mob.doc().getExMobilPai() != null && !mob.doc().isAssinado())
+		if (mob.doc().getExMobilPai() != null && mob.doc().isPendenteDeAssinatura())
 			return false;
 
 		if (mob.doc().getNumUltimaVia() >= 21)
@@ -1980,7 +1959,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!podeMovimentar(titular, lotaTitular, mob))
 			return false;
 		
-		if(!mob.doc().isAssinado())
+		if(mob.doc().isPendenteDeAssinatura())
 			return false;
 		
 		if (mob.doc().isFinalizado()
@@ -2029,7 +2008,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.isEmTransito())
 			return false;
 		
-		if(!mob.doc().isAssinado())
+		if(mob.doc().isPendenteDeAssinatura())
 			return false;
 
 		if (mob.isSobrestado())
@@ -2205,7 +2184,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isSobrestado()
 				&& !mob.isPendenteDeAnexacao()
 				&& !mob.doc().isSemEfeito()
-				&& (mob.doc().isAssinado() || (mob.doc().getExTipoDocumento()
+				&& (!mob.doc().isPendenteDeAssinatura() || (mob.doc().getExTipoDocumento()
 						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO) || 
 						(mob.doc().isProcesso() && mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO))
 				// && mob.doc().isAssinadoPorTodosOsSignatarios()
@@ -2282,11 +2261,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeEditar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
 
-		if (mob.doc().isFinalizado() && !mob.doc().isEletronico())
-			return false;
+		if (mob.doc().isEletronico()){
+			if (!mob.doc().getAssinaturasEAutenticacoesComTokenOuSenhaERegistros().isEmpty())
+				return false;
+		} else {
+			if (mob.doc().isFinalizado())
+				return false;
+		}
 		if (mob.doc().isCancelado() || mob.doc().isSemEfeito())
 			return false;
-		if (mob.doc().isAssinado() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaDigital() ||  mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaComSenha())
+		if (!mob.doc().isPendenteDeAssinatura())
 			return false;
 		if (!mob.doc().getLotaCadastrante().equivale(lotaTitular)
 				&& (mob.doc().getSubscritor() != null && !mob.doc()
@@ -2332,7 +2316,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		if (!mob.doc().isFinalizado()
-				|| !mob.doc().isAssinado() 
+				|| mob.doc().isPendenteDeAssinatura() 
 				|| mob.doc().isPublicacaoAgendada()
 				|| mob.doc().isSemEfeito()
 				|| mob.doc().isEliminado()
@@ -2413,7 +2397,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return (mob.doc().isFinalizado())
 					&& (podeMovimentar(titular, lotaTitular, mob) || podeAtenderPedidoPublicacao(
 							titular, lotaTitular, mob))
-					&& mob.doc().isAssinado()
+					&& !mob.doc().isPendenteDeAssinatura()
 					&& !mob.doc().isPublicacaoSolicitada()
 					&& !mob.doc().isPublicacaoBoletimSolicitada()
 					&& !mob.doc().isPublicacaoAgendada()
@@ -2448,10 +2432,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeAnexarArquivoAlternativo(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		
-		if (!mob.isGeral() && !mob.doc().isAssinado())
+		if (!mob.isGeral() && mob.doc().isPendenteDeAssinatura())
 			return false;
 		
-		if(mob.isGeral() && mob.doc().isAssinado())
+		if(mob.isGeral() && !mob.doc().isPendenteDeAssinatura())
 			return false;
 		
 		if (mob.doc().isExpediente() && mob.doc().getPai() != null)
@@ -2620,9 +2604,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		if (mov.isCancelada())
 			return false;
-		
-		if (mov.isAssinada())
-			return false;
 
 		if (mob.doc().isFinalizado() && !mob.doc().isEletronico()) {
 			return false;
@@ -2631,7 +2612,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!(mov.getLotaCadastrante().equivale(lotaTitular)))
 			return false;
 
-		if(mov.getExDocumento().isAssinado() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaDigital() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaComSenha())
+		if(!mov.getExDocumento().isPendenteDeAssinatura())
+			return false;
+		
+		if(mov.getExDocumento().isEletronico() && !mov.getExDocumento().getAssinaturasEAutenticacoesComTokenOuSenhaERegistros().isEmpty())
 			return false;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
@@ -2680,7 +2664,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				return false;
 		}
 
-		if (mob.doc().isAssinado()
+		if (!mob.doc().isPendenteDeAssinatura()
 				&& mob.doc().getExTipoDocumento().getIdTpDoc() == 1
 				&& mob.doc().isEletronico()) {
 			cal2.setTime(mob.doc().getDtAssinatura());
@@ -3021,11 +3005,18 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeIncluirCosignatario(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
 
+		if (mob.doc().getSubscritor() == null)
+			return false;
 		if (mob.doc().isCancelado())
 			return false;
-		if (mob.doc().isFinalizado() && !mob.doc().isEletronico())
-			return false;
-		if (mob.doc().isAssinado() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaDigital() || mob.doc().isEletronicoEPossuiPeloMenosUmaAssinaturaComSenha())
+		if (mob.doc().isEletronico()){
+			if (!mob.doc().getAssinaturasEAutenticacoesComTokenOuSenhaERegistros().isEmpty())
+				return false;
+		} else {
+			if (mob.doc().isFinalizado())
+				return false;
+		}
+		if (!mob.doc().isPendenteDeAssinatura())
 			return false;
 		if (!mob.doc().getLotaCadastrante().equivale(lotaTitular))
 			return false;
@@ -3117,7 +3108,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isEmTransito()
 				&& podeMovimentar(titular, lotaTitular, mob)
 
-				&& mob.doc().isAssinado()
+				&& (!mob.doc().isPendenteDeAssinatura() || mob.doc().isCapturado())
 				&& !mob.isJuntado()
 				&& !mob.isApensado()
 				&& !mob.isArquivado()
@@ -3159,7 +3150,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.doc().isSemEfeito()
 				&& !mob.isEmTransito()
 				&& podeMovimentar(titular, lotaTitular, mob)
-				&& mob.doc().isAssinado()
+				&& !mob.doc().isPendenteDeAssinatura()
 				&& !mob.isApensado()
 				&& !mob.isJuntado()
 				&& !mob.isArquivado()
@@ -3402,7 +3393,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						.doc().getTitular() != null && mob.doc().getTitular()
 						.equivale(titular)))
 						&& !mob.doc().isColaborativo()
-						&& (!mob.doc().isAssinado() || (mob.doc()
+						&& (mob.doc().isPendenteDeAssinatura() || (mob.doc()
 								.getExTipoDocumento().getIdTpDoc() != 1L && !mob
 								.doc().hasPDF())) && (mob.doc()
 						.getNumUltimaViaNaoCancelada() != 0 || (mob.doc()
@@ -3437,7 +3428,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.isPendenteDeAnexacao())
 			return false;
 		
-		return (mob.doc().isAssinado()
+		return (!mob.doc().isPendenteDeAssinatura()
 				&& (mob.isVia() || mob.isGeralDeProcesso())
 				&& !mob.isCancelada() && !mob.isEmTransito()
 				&& !mob.isJuntado()
@@ -3470,7 +3461,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeReclassificar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
 
-		return (mob.doc().isAssinado() && mob.isGeral() && !mob.isCancelada()
+		return (!mob.doc().isPendenteDeAssinatura() && mob.isGeral() && !mob.isCancelada()
 				&& !mob.isEliminado() && getConf().podePorConfiguracao(titular,
 				lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECLASSIFICACAO,
@@ -3496,7 +3487,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeAvaliar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
 
-		return (mob.doc().isAssinado() && mob.isGeral() && !mob.isCancelada()
+		return (!mob.doc().isPendenteDeAssinatura() && mob.isGeral() && !mob.isCancelada()
 				&& !mob.isEliminado() && getConf().podePorConfiguracao(titular,
 				lotaTitular, ExTipoMovimentacao.TIPO_MOVIMENTACAO_AVALIACAO,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
@@ -3567,7 +3558,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		ExDocumento edital = movInclusao.getExMobilRef().getExDocumento();
 
-		if (!edital.isAssinado())
+		if (edital.isPendenteDeAssinatura())
 			return false;
 
 		if (edital.getSubscritor() == null)
@@ -3859,7 +3850,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return (podeMovimentar(titular, lotaTitular, mob) || gerente)
 				// && !mob.doc().isEletronico()
 				&& !mob.doc().isBoletimPublicado()
-				&& mob.doc().isAssinado()
+				&& !mob.doc().isPendenteDeAssinatura()
 				&& !mob.doc().isPublicacaoBoletimSolicitada()
 				&& !mob.isArquivado()
 				&& (getConf()
@@ -3927,7 +3918,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		return !mob.isCancelada() && !mob.isVolumeEncerrado()
-				&& mob.doc().isAssinado() && !mob.isJuntado()
+				&& !mob.doc().isPendenteDeAssinatura() && !mob.isJuntado()
 				&& !mob.isEmTransito() && !mob.isArquivado()
 				&& podeMovimentar(titular, lotaTitular, mob);
 	}
@@ -3982,7 +3973,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return (mob.isVia() || mob.isVolume())
 				&& !mob.isEmTransito() && !mob.isJuntado()
 				&& !mob.isArquivado()
-				&& (mob.doc().isAssinado() || (mob.doc().getExTipoDocumento()
+				&& (!mob.doc().isPendenteDeAssinatura() || (mob.doc().getExTipoDocumento()
 						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO) || 
 						(mob.doc().isProcesso() && mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO))
 				&& !mob.isEmEditalEliminacao()
@@ -4300,6 +4291,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		final boolean podeMovimentar = podeMovimentar(titular, lotaTitular, mob);
 
 		return (!mob.isGeral() && mob.doc().isExpediente()
-				&& mob.doc().isAssinado() && !mob.isEmTransito() && podeMovimentar);
+				&& !mob.doc().isPendenteDeAssinatura() && !mob.isEmTransito() && podeMovimentar);
 
 	}}

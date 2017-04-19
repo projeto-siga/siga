@@ -165,7 +165,7 @@ public class SrSolicitacaoTest {
 					filha.getTitular(), filha.getLotaTitular(),
 					filha.getItemConfiguracao(), filha.getAcao(),
 					"Fechando para teste", m, null, null);
-			long marcadorEsperado = m.equals(SrTipoMotivoFechamento.ATENDIMENTO_CONCLUÍDO) 
+			long marcadorEsperado = m.equals(SrTipoMotivoFechamento.ATENDIMENTO_CONCLUÍDO) || m.equals(SrTipoMotivoFechamento.TAREFA_CONCLUÍDA)
 					? CpMarcador.MARCADOR_SOLICITACAO_FECHADO_PARCIAL
 					: CpMarcador.MARCADOR_SOLICITACAO_NECESSITA_PROVIDENCIA;
 			TestCase.assertTrue(principal.isMarcada(marcadorEsperado));

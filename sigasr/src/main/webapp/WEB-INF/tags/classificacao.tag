@@ -153,7 +153,8 @@ function carregarAcao() {
 }
 function apagarMsgErroFechamentoAutomatico() {
 	$('#erroCheckFechadoAuto').hide();
-	onchangeCheckFechaAutomatico();
+	if (typeof onchangeCheckFechaAutomatico === 'function')
+		onchangeCheckFechaAutomatico();
 }
 function dispararFuncoesOnBlurItem() {
 	var executarFuncao = carregarLotacaoDaAcao;

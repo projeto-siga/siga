@@ -900,9 +900,30 @@
 			<p>
 				<b>Modelo:</b> ${docVO.modelo}
 			</p>
-			<p>
-				<b>Descrição:</b> ${docVO.descrDocumento}
-			</p>
+            <p id="descricao">
+                <b>Descrição:</b> ${docVO.descrDocumento}
+            </p>
+           		 <script language="javascript">
+                    function parseDescricao(id){
+                        var descricao = document.getElementById(id);
+                        
+                        if (!descricao)
+                            return;
+                        
+                        var wordsArray = descricao.innerHTML.split(/(\s+)/);
+                        
+                        for(var i=0; i < wordsArray.length; i++){
+                            if (wordsArray[i].length > 50) {
+                                descricao.style.wordWrap = "break-word";
+                                descricao.style.whiteSpace = "simple";
+                                break;
+                            }
+                        }
+
+                    }
+                    
+                    parseDescricao('descricao');
+           		 </script>
 			<p>
 				<b>Classificação:</b> ${docVO.classificacaoDescricaoCompleta}
 			</p>

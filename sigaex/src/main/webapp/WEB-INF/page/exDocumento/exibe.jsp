@@ -911,11 +911,12 @@
                             return;
                         
                         var wordsArray = descricao.innerHTML.split(/(\s+)/);
+                        descricao.style.wordWrap = "break-word";
+                        descricao.style.whiteSpace = "simple";
                         
                         for(var i=0; i < wordsArray.length; i++){
                             if (wordsArray[i].length > 50) {
-                                descricao.style.wordWrap = "break-word";
-                                descricao.style.whiteSpace = "simple";
+                            	descricao.style.wordWrap = "break-all";
                                 break;
                             }
                         }

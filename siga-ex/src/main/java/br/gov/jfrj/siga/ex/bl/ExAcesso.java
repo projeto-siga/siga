@@ -196,11 +196,13 @@ public class ExAcesso {
 					add(mov.getResp().getOrgaoUsuario());
 			}
 			if (dtDeRedefinicaoDoNivelDeAcesso != null){
-				ExMovimentacao movUlt = m.getUltimaMovimentacaoAntesDaData(dtDeRedefinicaoDoNivelDeAcesso);
-				if (movUlt.getLotaResp() != null)
-					add(movUlt.getLotaResp().getOrgaoUsuario());
-				if (movUlt.getResp() != null)
-					add(movUlt.getResp().getOrgaoUsuario());					
+                ExMovimentacao movUlt = m.getUltimaMovimentacaoAntesDaData(dtDeRedefinicaoDoNivelDeAcesso);
+				if (movUlt != null) {
+				  if (movUlt.getLotaResp() != null)
+					  add(movUlt.getLotaResp().getOrgaoUsuario());
+			      if (movUlt.getResp() != null)
+					 add(movUlt.getResp().getOrgaoUsuario());
+				}
 			}					
 		}
 	}

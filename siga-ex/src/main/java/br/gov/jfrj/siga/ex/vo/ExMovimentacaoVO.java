@@ -467,12 +467,12 @@ public class ExMovimentacaoVO extends ExVO {
 				|| idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO
 				|| idTpMov == TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE) {
 			if (!mov.isCancelada())
-				addAcao(null, "Protocolo", "/app/expediente/mov", "protocolo_arq",
-						true, null, "pessoa="
+				addAcao(null, "Protocolo", "/app/expediente/mov", "protocolo_arq_transf",
+						true, null, "sigla="
 								+ (mov.getCadastrante() == null ? "null" : mov
 										.getCadastrante().getSigla()) + "&dt="
 								+ mov.getDtRegMovDDMMYYYYHHMMSS()
-								+ "&popup=true", null, null, null);
+								+ "&popup=true&isTransf=false", null, null, null);
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
@@ -487,12 +487,12 @@ public class ExMovimentacaoVO extends ExVO {
 			}
 			if (!mov.isCancelada())
 				addAcao(null, "Protocolo", "/app/expediente/mov",
-						"protocolo_transf", true, null,
-						"pessoa="
+						"protocolo_arq_transf", true, null,
+						"sigla="
 								+ (mov.getCadastrante() == null ? "null" : mov
 										.getCadastrante().getSigla()) + "&dt="
 								+ mov.getDtRegMovDDMMYYYYHHMMSS()
-								+ "&popup=true", pre, null, null);
+								+ "&popup=true&isTransf=true", pre, null, null);
 		}
 
 		if (idTpMov == TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO) {

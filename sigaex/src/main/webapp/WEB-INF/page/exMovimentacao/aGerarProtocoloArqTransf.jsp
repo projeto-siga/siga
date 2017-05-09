@@ -67,7 +67,7 @@
 						<td align="center">Pessoa</td>
 					</tr>
 
-					<c:forEach var="documento" items="${itens}">
+					<c:forEach var="i" items="${itens}">
 						<c:choose>
 							<c:when test='${evenorodd == "even"}'>
 								<c:set var="evenorodd" value="odd" />
@@ -78,42 +78,42 @@
 						</c:choose>
 						<tr class="${evenorodd}">
 							<td align="right"><a
-								href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento[1].exMobil.sigla}">${documento[1].exMobil.codigo}</a>
-								<c:if test="${not documento[1].exMobil.geral}">
-									<td align="center">${documento[0].dtDocDDMMYY}</td>
+								href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${i.mob.sigla}">${i.mob.codigo}</a>
+								<c:if test="${not i.mob.geral}">
+									<td align="center">${i.doc.dtDocDDMMYY}</td>
 									<td align="center"><siga:selecionado
-											sigla="${documento[0].lotaSubscritor.sigla}"
-											descricao="${documento[0].lotaSubscritor.descricao}" /></td>
+											sigla="${i.doc.lotaSubscritor.sigla}"
+											descricao="${i.doc.lotaSubscritor.descricao}" /></td>
 									<td align="center"><siga:selecionado
-											sigla="${documento[0].subscritor.iniciais}"
-											descricao="${documento[0].subscritor.descricao}" /></td>
-									<td align="center">${documento[1].dtMovDDMMYY}</td>
+											sigla="${i.doc.subscritor.iniciais}"
+											descricao="${i.doc.subscritor.descricao}" /></td>
+									<td align="center">${i.dtDDMMYY}</td>
 									<td align="center"><siga:selecionado
-											sigla="${documento[1].lotaSubscritor.sigla}"
-											descricao="${documento[1].lotaSubscritor.descricao}" /></td>
+											sigla="${i.lotaSubscritor.sigla}"
+											descricao="${i.lotaSubscritor.descricao}" /></td>
 									<td align="center"><siga:selecionado
-											sigla="${documento[1].subscritor.iniciais}"
-											descricao="${documento[1].subscritor.descricao}" /></td>
+											sigla="${i.subscritor.iniciais}"
+											descricao="${i.subscritor.descricao}" /></td>
 									<td align="center"><siga:selecionado
-											sigla="${documento[1].lotaResp.sigla}"
-											descricao="${documento[1].lotaResp.descricao}" /></td>
+											sigla="${i.lotaAtendente.sigla}"
+											descricao="${i.lotaAtendente.descricao}" /></td>
 									<td align="center"><siga:selecionado
-											sigla="${documento[1].resp.iniciais}"
-											descricao="${documento[1].resp.descricao}" /></td>
-								</c:if> <c:if test="${documento[1].exMobil.geral}">
-									<td align="center">${documento[0].dtDocDDMMYY}</td>
+											sigla="${i.atendente.iniciais}"
+											descricao="${i.atendente.descricao}" /></td>
+								</c:if> <c:if test="${i.mob.geral}">
+									<td align="center">${i.doc.dtDocDDMMYY}</td>
 									<td align="center"><siga:selecionado
-											sigla="${documento[0].subscritor.iniciais}"
-											descricao="${documento[0].subscritor.descricao}" /></td>
+											sigla="${i.doc.subscritor.iniciais}"
+											descricao="${i.doc.subscritor.descricao}" /></td>
 									<td align="center"><siga:selecionado
-											sigla="${documento[0].lotaSubscritor.sigla}"
-											descricao="${documento[0].lotaSubscritor.descricao}" /></td>
+											sigla="${i.doc.lotaSubscritor.sigla}"
+											descricao="${i.doc.lotaSubscritor.descricao}" /></td>
 									<td align="center"></td>
 									<td align="center"></td>
 									<td align="center"></td>
 									<td align="center"></td>
 								</c:if>
-								<td>${f:descricaoConfidencial(documento[0], lotaTitular)}</td>
+								<td>${f:descricaoConfidencial(i.doc, lotaTitular)}</td>
 						</tr>
 					</c:forEach>
 

@@ -8,6 +8,7 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -67,6 +68,8 @@ import br.gov.jfrj.siga.ex.ExTipoDespacho;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTopicoDestinacao;
+import br.gov.jfrj.siga.ex.ItemDeProtocolo;
+import br.gov.jfrj.siga.ex.ItemDeProtocoloComparator;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoHash;
 import br.gov.jfrj.siga.ex.bl.Ex;
@@ -547,102 +550,6 @@ public class ExMovimentacaoController extends ExController {
 
 	}
 
-	@Get("app/expediente/mov/protocolo")
-	public void aProtocolo(DpLotacaoSelecao lotaResponsavelSel,
-			DpPessoaSelecao responsavelSel, CpOrgaoSelecao cpOrgaoSel,
-			String obsOrgao) {
-		aGerarProtocolo(lotaResponsavelSel, responsavelSel, cpOrgaoSel,
-				obsOrgao);
-	}
-
-	@Get("app/expediente/mov/via_protocolo_gravar")
-	public void aGerarProtocolo(DpLotacaoSelecao lotaResponsavelSel,
-			DpPessoaSelecao responsavelSel, CpOrgaoSelecao cpOrgaoSel,
-			String obsOrgao) {
-		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder
-				.novaInstancia();
-		builder.setCadastrante(getCadastrante());
-		builder.setLotaResponsavelSel(lotaResponsavelSel);
-		builder.setResponsavelSel(responsavelSel);
-		builder.setCpOrgaoSel(cpOrgaoSel);
-		builder.setObsOrgao(obsOrgao);
-		final ExMovimentacao mov = builder.construir(dao());
-
-		final Pattern p = Pattern.compile("chk_([0-9]+)");
-
-		final ArrayList al = new ArrayList();
-
-		for (final String s : getPar().keySet()) {
-			if (s.startsWith("chk_") && param(s).equals("true")) {
-				final Matcher m = p.matcher(s);
-				if (!m.find()) {
-					throw new AplicacaoException(
-							"Não foi possível ler a Id do documento e o número da via.");
-				}
-				final ExMobil mob = dao().consultar(Long.valueOf(m.group(1)),
-						ExMobil.class, false);
-				final Object[] ao = { mob.doc(),
-						mob.getUltimaMovimentacaoNaoCancelada() };
-				al.add(ao);
-			}
-		}
-
-		final Object[] arr = al.toArray();
-
-		Arrays.sort(arr, new Comparator<Object>() {
-			public int compare(Object obj1, Object obj2) {
-				final ExDocumento doc1 = (ExDocumento) ((Object[]) obj1)[0];
-				final ExMovimentacao mov1 = (ExMovimentacao) ((Object[]) obj1)[1];
-				final ExDocumento doc2 = (ExDocumento) ((Object[]) obj2)[0];
-				final ExMovimentacao mov2 = (ExMovimentacao) ((Object[]) obj2)[1];
-
-				if (doc1.getAnoEmissao() > doc2.getAnoEmissao()) {
-					return 1;
-				} else if (doc1.getAnoEmissao() < doc2.getAnoEmissao()) {
-					return -1;
-				} else if (doc1.getExFormaDocumento().getIdFormaDoc() > doc2
-						.getExFormaDocumento().getIdFormaDoc()) {
-					return 1;
-				} else if (doc1.getExFormaDocumento().getIdFormaDoc() < doc2
-						.getExFormaDocumento().getIdFormaDoc()) {
-					return -1;
-				} else if (doc1.getNumExpediente() > doc2.getNumExpediente()) {
-					return 1;
-				} else if (doc1.getNumExpediente() < doc2.getNumExpediente()) {
-					return -1;
-				} else if (mov1.getExMobil().getExTipoMobil().getIdTipoMobil() > mov2
-						.getExMobil().getExTipoMobil().getIdTipoMobil()) {
-					return 1;
-				} else if (mov1.getExMobil().getExTipoMobil().getIdTipoMobil() < mov2
-						.getExMobil().getExTipoMobil().getIdTipoMobil()) {
-					return -1;
-				} else if (mov1.getExMobil().getNumSequencia() > mov2
-						.getExMobil().getNumSequencia()) {
-					return 1;
-				} else if (mov1.getExMobil().getNumSequencia() < mov2
-						.getExMobil().getNumSequencia()) {
-					return -1;
-				} else if (doc1.getIdDoc() > doc2.getIdDoc()) {
-					return 1;
-				} else if (doc1.getIdDoc() < doc2.getIdDoc()) {
-					return -1;
-				} else {
-					return 0;
-				}
-			}
-		});
-
-		al.clear();
-		for (int k = 0; k < arr.length; k++) {
-			al.add(arr[k]);
-		}
-
-		result.include("itens", al);
-		result.include("cadastrante", this.getCadastrante());
-		result.include("mov", mov);
-		result.include("lotaTitular", this.getLotaTitular());
-	}
-
 	private ArrayList<Object> criarListaDocumentos(List<String> itens) {
 		final ArrayList<Object> listarDocumentos = new ArrayList<Object>();
 
@@ -697,27 +604,15 @@ public class ExMovimentacaoController extends ExController {
 		result.include("popup", popup);
 	}
 
-	@Get("/app/expediente/mov/protocolo_arq")
-	public void aGerarProtocoloArq(final String pessoa, boolean popup)
-			throws Exception {
-		aGerarProtocoloArqTransf(pessoa, popup, false);
-	}
-
-	@Get
-	@Post
-	@Path("/app/expediente/mov/protocolo_transf")
-	public void aGerarProtocoloTransf(final String pessoa, boolean popup)
-			throws Exception {
-		aGerarProtocoloArqTransf(pessoa, popup, true);
-	}
-
+	
+	@Get("/app/expediente/mov/protocolo_arq_transf")
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void aGerarProtocoloArqTransf(String sigla, boolean popup,
+	public void aGerarProtocoloArqTransf(String sigla, boolean popup,
 			boolean isTransf) throws Exception {
 		ExMovimentacao mov = null;
 
 		final DpPessoa pes;
-		final ArrayList al = new ArrayList();
+		final List<ItemDeProtocolo> al = new ArrayList<ItemDeProtocolo>();
 		final DpPessoa oExemplo = new DpPessoa();
 
 		if (sigla == null || sigla.trim() == "") {
@@ -741,59 +636,37 @@ public class ExMovimentacaoController extends ExController {
 		for (ExMovimentacao m : movs) {
 			if (mov == null)
 				mov = m;
-			final Object[] ao = { m.getExMobil().doc(),
-					m.getExMobil().getUltimaMovimentacaoNaoCancelada() };
-			al.add(ao);
+			al.add(new ItemDeProtocolo(m));
+			
+			//Edson: incluindo os mobs apensos do mesmo processo, q não receberam a mov de transferência
+			for (ExMobil apenso : m.getExMobil().getDoc().getExMobilSet()){
+				if (apenso.isGeral() || apenso.equals(m.getExMobil()))
+					continue;
+				
+				boolean fazParteDaTrilha = false;
+				ExMobil mestreDoApenso = apenso;
+				while (mestreDoApenso != null && !fazParteDaTrilha){
+					mestreDoApenso = mestreDoApenso.getMestre();
+					if (mestreDoApenso != null && mestreDoApenso.equals(m.getExMobil()))
+						fazParteDaTrilha = true;
+				}
+				
+				if (!fazParteDaTrilha)
+					continue;
+				
+				ItemDeProtocolo i = new ItemDeProtocolo();
+				i.setMob(apenso);
+				i.setSubscritor(m.getSubscritor());
+				i.setLotaSubscritor(m.getLotaSubscritor());
+				i.setAtendente(m.getResp());
+				i.setLotaAtendente(m.getLotaResp());
+				i.setDtDDMMYY(m.getDtMovDDMMYY());
+				al.add(i);
+			}
 		}
 
-		Object[] arr = al.toArray();
-
-		Arrays.sort(arr, new Comparator() {
-			public int compare(Object obj1, Object obj2) {
-				ExDocumento doc1 = (ExDocumento) ((Object[]) obj1)[0];
-				ExMovimentacao mov1 = (ExMovimentacao) ((Object[]) obj1)[1];
-				ExDocumento doc2 = (ExDocumento) ((Object[]) obj2)[0];
-				ExMovimentacao mov2 = (ExMovimentacao) ((Object[]) obj2)[1];
-
-				if (doc1.getAnoEmissao() > doc2.getAnoEmissao())
-					return 1;
-				else if (doc1.getAnoEmissao() < doc2.getAnoEmissao())
-					return -1;
-				else if (doc1.getExFormaDocumento().getIdFormaDoc() > doc2
-						.getExFormaDocumento().getIdFormaDoc())
-					return 1;
-				else if (doc1.getExFormaDocumento().getIdFormaDoc() < doc2
-						.getExFormaDocumento().getIdFormaDoc())
-					return -1;
-				else if (doc1.getNumExpediente() > doc2.getNumExpediente())
-					return 1;
-				else if (doc1.getNumExpediente() < doc2.getNumExpediente())
-					return -1;
-				else if (mov1.getExMobil().getExTipoMobil().getIdTipoMobil() > mov2
-						.getExMobil().getExTipoMobil().getIdTipoMobil())
-					return 1;
-				else if (mov1.getExMobil().getExTipoMobil().getIdTipoMobil() < mov2
-						.getExMobil().getExTipoMobil().getIdTipoMobil())
-					return -1;
-				else if (mov1.getExMobil().getNumSequencia() > mov2
-						.getExMobil().getNumSequencia())
-					return 1;
-				else if (mov1.getExMobil().getNumSequencia() < mov2
-						.getExMobil().getNumSequencia())
-					return -1;
-				else if (doc1.getIdDoc() > doc2.getIdDoc())
-					return 1;
-				else if (doc1.getIdDoc() < doc2.getIdDoc())
-					return -1;
-				else
-					return 0;
-			}
-		});
-
-		al.clear();
-		for (int k = 0; k < arr.length; k++)
-			al.add(arr[k]);
-
+		Collections.sort(al, new ItemDeProtocoloComparator());
+		
 		result.include("itens", al);
 		result.include("mov", mov);
 		result.include("popup", popup);
@@ -806,8 +679,8 @@ public class ExMovimentacaoController extends ExController {
 			result.include("cadastrante", mov.getCadastrante());
 			result.include("lotaTitular", this.getLotaTitular());
 
-			result.use(Results.page()).forwardTo(
-					"/WEB-INF/page/exMovimentacao/aGerarProtocolo.jsp");
+			/*result.use(Results.page()).forwardTo(
+					"/WEB-INF/page/exMovimentacao/aGerarProtocolo.jsp");*/
 		} else
 			result.redirectTo("/app/expediente/mov/protocolo_unitario?popup="
 					+ popup + "&sigla=" + mov.getExMobil().getDoc().getSigla()
@@ -3538,37 +3411,6 @@ public class ExMovimentacaoController extends ExController {
 			result.use(Results.page()).forwardTo(
 					"/WEB-INF/page/exMovimentacao/assinatura_erro.jsp");
 		}
-	}
-
-	@Get("/app/expediente/mov/via_protocolo")
-	public void aViaProtocolo(Integer tipoResponsavel,
-			final CpOrgaoSelecao cpOrgaoSel,
-			final DpLotacaoSelecao lotaResponsavelSel,
-			final DpPessoaSelecao responsavelSel) {
-
-		final List<ExMobil> provItens = dao().consultarParaViaDeProtocolo(
-				getLotaTitular());
-		final List<ExMobil> itens = new ArrayList<ExMobil>();
-		final CpOrgaoSelecao cpOrgaoSelecaoFinal = Optional.fromNullable(
-				cpOrgaoSel).or(new CpOrgaoSelecao());
-		final DpLotacaoSelecao lotaResponsavelSelFinal = Optional.fromNullable(
-				lotaResponsavelSel).or(new DpLotacaoSelecao());
-		final DpPessoaSelecao responsavelSelFinal = Optional.fromNullable(
-				responsavelSel).or(new DpPessoaSelecao());
-
-		for (ExMobil m : provItens) {
-			if (Ex.getInstance().getComp()
-					.podeAcessarDocumento(getTitular(), getLotaTitular(), m))
-				itens.add(m);
-		}
-
-		result.include("itens", itens);
-		result.include("listaTipoResp", this.getListaTipoResp());
-		result.include("tipoResponsavel",
-				tipoResponsavel != null ? tipoResponsavel : 1);
-		result.include("cpOrgaoSel", cpOrgaoSelecaoFinal);
-		result.include("lotaResponsavelSel", lotaResponsavelSelFinal);
-		result.include("responsavelSel", responsavelSelFinal);
 	}
 
 	private void validarDataGravacao(ExMovimentacao mov,

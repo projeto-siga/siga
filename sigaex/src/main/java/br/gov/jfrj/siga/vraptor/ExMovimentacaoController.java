@@ -604,7 +604,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("popup", popup);
 	}
 
-	
+	@Post("/app/expediente/mov/protocolo_arq_transf")
 	@Get("/app/expediente/mov/protocolo_arq_transf")
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void aGerarProtocoloArqTransf(String sigla, boolean popup,

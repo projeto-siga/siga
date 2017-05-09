@@ -9,7 +9,8 @@
 
 <siga:pagina titulo="Protocolo de Transferência" popup="true">
 
-	<form name="frm" action="protocolo_transf" method="post">
+	<form name="frm" action="protocolo_arq_transf" method="post">
+	<input type="hidden" name="isTransf" value="true" />
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 			<h2>
@@ -24,7 +25,7 @@
 						<td>
 							${cadastrante.lotacao.descricao} - ${cadastrante.descricao}
 						</td>
-						<input type="hidden" name="pessoa" id="pessoa" value="${cadastrante.sigla}" />
+						<input type="hidden" name="sigla" id="pessoa" value="${cadastrante.sigla}" />
 					</tr>
 					<td>
 						Para:

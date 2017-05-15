@@ -3930,7 +3930,8 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			
-			encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mov.getExMobilRef(), dtMov);
+			if (idDocEscolha.equals("1"))
+				encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mov.getExMobilRef(), dtMov);
 
 			Set<ExMovimentacao> movs = mob.getTransferenciasPendentesDeDevolucao(mob);
 			if(!movs.isEmpty())

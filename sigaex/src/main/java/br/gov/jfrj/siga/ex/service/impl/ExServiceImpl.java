@@ -242,12 +242,10 @@ public class ExServiceImpl implements ExService {
 			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
 					siglaCadastrante);
 			ExMobil mob = buscarMobil(codigoDocumento);
-			if (mob.isGeral()){
-				if (mob.doc().isProcesso()){
-					mob = mob.doc().getUltimoVolume();
-				}else if (contemApenasUmaVia(mob)){
-					mob = mob.doc().getPrimeiraVia();
-				}
+			if (mob.doc().isProcesso()){
+				mob = mob.doc().getUltimoVolume();
+			}else if (contemApenasUmaVia(mob)){
+				mob = mob.doc().getPrimeiraVia();
 			}
 			if (forcarTransferencia)
 				return Ex

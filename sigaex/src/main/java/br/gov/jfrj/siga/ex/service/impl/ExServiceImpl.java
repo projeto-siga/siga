@@ -87,7 +87,7 @@ public class ExServiceImpl implements ExService {
 			return false;
 		try {
 			ExMobil mob = buscarMobil(codigoDocumentoVia);
-			if (mob.isGeral() && mob.doc().isProcesso())
+			if (mob.doc().isProcesso())
 				mob = mob.doc().getUltimoVolume();
 			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
 					siglaCadastrante);
@@ -297,6 +297,10 @@ public class ExServiceImpl implements ExService {
 		try {
 			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaTitular);
 			ExMobil mob = buscarMobil(codigoDocumento);
+			
+			if(mob.getDoc().isProcesso())
+				mob = mob.getDoc().getUltimoVolume();
+			
 			DpResponsavel resp = ExCompetenciaBL.getAtendente(mob);
 			if (resp == null)
 				return null;

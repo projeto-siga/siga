@@ -3317,8 +3317,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return true;
 	}
 
-	public static DpResponsavel getAtendente(final ExMobil mob)
+	public static DpResponsavel getAtendente(ExMobil mob)
 			throws Exception {
+		
 		if (mob.isGeral()) {
 			for (ExMobil m : mob.doc().getExMobilSet()) {
 				if (!m.isGeral() && getAtendente(m) != null)

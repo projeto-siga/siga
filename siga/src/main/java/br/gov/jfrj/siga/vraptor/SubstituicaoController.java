@@ -188,7 +188,7 @@ public class SubstituicaoController extends SigaController {
 					  ) throws Exception {
 		
 		
-		
+		Long lotacaoPai;
 
 		DpSubstituicao subst = new DpSubstituicao();
 		
@@ -219,14 +219,17 @@ public class SubstituicaoController extends SigaController {
 					throw new AplicacaoException("A lotação titular não foi informada");
 				
 				subst.setLotaTitular(dao().consultar(this.lotaTitularSel.getId(), DpLotacao.class, false));
+				lotacaoPai = subst.getLotaTitular().getIdLotacaoPai();
 				
 				if (!subst.getLotaTitular().getIdLotacao().equals(getCadastrante().getIdLotacao()) 
-						&& !podeCadastrarQualquerSubstituicao())
-					throw new AplicacaoException("Lotação titular não permitida. Apenas um usuário da própria lotação pode defini-la como titular.");
+						&& !podeCadastrarQualquerSubstituicao()) 
+					if ((lotacaoPai == null) || !(lotacaoPai.equals(getCadastrante().getIdLotacao())))
+						throw new AplicacaoException("Lotação titular não permitida. Apenas um usuário da própria lotação ou da lotação imediatamente superior pode defini-la como titular.");
+				
 			}
 			if (tipoSubstituto == 1) {
 				if (this.substitutoSel.getId() == null)
-					throw new AplicacaoException("Substituto não informado");
+					throw new AplicacaoException("Substituto não informado"); 
 				
 				subst.setSubstituto(daoPes(this.substitutoSel.getId()));
 				subst.setLotaSubstituto(subst.getSubstituto().getLotacao());

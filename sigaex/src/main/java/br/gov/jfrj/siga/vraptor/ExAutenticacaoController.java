@@ -219,7 +219,7 @@ public class ExAutenticacaoController extends ExController {
 				return new InputStreamDownload(makeByteArrayInputStream(sa, fB64), APPLICATION_OCTET_STREAM, null);
 			}
 			
-			return new InputStreamDownload(makeByteArrayInputStream(bytes, fB64), APPLICATION_PDF, null);
+			return new InputStreamDownload(makeByteArrayInputStream(bytes, fB64), contentType, fileName);
 			
 		} else {
 			result.redirectTo(URL_EXIBIR);

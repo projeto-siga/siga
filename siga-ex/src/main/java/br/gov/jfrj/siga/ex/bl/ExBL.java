@@ -6482,14 +6482,18 @@ public class ExBL extends CpBL {
 	public void excluirCosignatariosAutomaticamente(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc)
 			throws Exception {
+		
+		List<Long> idExcl = new ArrayList<Long>();
 
 		for (ExMovimentacao m : doc.getMobilGeral().getExMovimentacaoSet()) {
 			if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
 					&& m.getExMovimentacaoCanceladora() == null) {
-
-				excluirMovimentacao(cadastrante, lotaCadastrante,
-						doc.getMobilGeral(), m.getIdMov());
+						idExcl.add(m.getIdMov());				
 			}
+		}
+		for (Long id : idExcl) {
+			excluirMovimentacao(cadastrante, lotaCadastrante, 
+				doc.getMobilGeral(), id);
 		}
 	}
 

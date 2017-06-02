@@ -1,4 +1,4 @@
-<%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
+<%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -11,9 +11,9 @@
 		</mod:grupo>
 		
 		<mod:grupo titulo="Caso não tenha declarado bens à Receita Federal, favor marcar uma das opções abaixo:">	
-			<mod:radio titulo="Não se aplica." var="tipoFormulario" valor="1" reler="sim" />
-			<mod:radio titulo="Declaro não possuir bens." var="tipoFormulario" valor="2" reler="sim" marcado="Não" />
-			<mod:radio titulo="Declaro que possuo os seguintes bens:" var="tipoFormulario" reler="sim" valor="3" gerarHidden="Não"/>
+			<mod:radio titulo="Não se aplica." var="tipoFormulario" valor="1" />
+			<mod:radio titulo="Declaro não possuir bens." var="tipoFormulario" valor="2" />
+			<mod:radio titulo="Declaro que possuo os seguintes bens:" var="tipoFormulario" valor="3" />
 		</mod:grupo>
 		
 		<c:set var="valorTipoDeForm" value="${tipoFormulario}" />

@@ -284,6 +284,8 @@
 			</ul>
 		</li>
 
+		<li><a href="/siga/arquivos/apostila_sigaex.pdf" target="_blank">Apostila SIGA-Doc</a>
+		</li>	
 
 		<li><a href="/siga/?GLO=true">Logoff</a>
 		</li>

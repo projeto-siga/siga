@@ -529,9 +529,9 @@ public class SrMovimentacao extends Objeto {
 			else if (isInicioAtendimento() 
 						|| (getLotaAtendente() != null && getLotaTitular() != null && !getLotaTitular().equivale(getLotaAtendente())))
 				lotaAtendente = getLotaAtendente();
-			else if (getSolicitacao().isPai() && !getSolicitacao().getSolicitacaoFilhaSet().isEmpty()) 
+			else if (getSolicitacao().isPai() && !getSolicitacao().getSolicitacaoFilhaSet().isEmpty() && getTipoMov().getId() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO) 
 				for (SrSolicitacao filha: getSolicitacao().getSolicitacaoFilhaSet()){
-					if (filha.isAtivo())
+					if (filha.isAtivo() && podeReceberNotificacaoAtendente(getTitular(), filha.getLotaAtendente()))
 						CorreioHolder
 						.get()
 						.notificarAtendente(this, filha);	

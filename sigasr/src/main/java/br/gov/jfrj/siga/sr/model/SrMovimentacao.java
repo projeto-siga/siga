@@ -362,6 +362,7 @@ public class SrMovimentacao extends Objeto {
 
         //notificação atendente
         notificarAtendente();
+        notificarAtendenteSolicitacaoFilha();
     }
 
     public void desfazer(DpPessoa cadastrante, DpLotacao lotaCadastrante, DpPessoa titular, DpLotacao lotaTitular) throws Exception {
@@ -523,26 +524,37 @@ public class SrMovimentacao extends Objeto {
 	
 	public void notificarAtendente() throws Exception {
 		DpLotacao lotaAtendente = null;
-		try{
-			if ((isFimAtendimento() && getSolicitacao().isFilha())) 
-				lotaAtendente = getSolicitacao().getSolicitacaoPai().getLotaAtendente();
-			else if (isInicioAtendimento() 
-						|| (getLotaAtendente() != null && getLotaTitular() != null && !getLotaTitular().equivale(getLotaAtendente())))
+		try {
+			if ((isFimAtendimento() && getSolicitacao().isFilha()))
+				lotaAtendente = getSolicitacao().getSolicitacaoPai()
+						.getLotaAtendente();
+			else if (isInicioAtendimento()
+					|| !isLotaAtendenteResponsavelPelaMovimentacao())
 				lotaAtendente = getLotaAtendente();
-			else if (getSolicitacao().isPai() && !getSolicitacao().getSolicitacaoFilhaSet().isEmpty() && getTipoMov().getId() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO) 
-				for (SrSolicitacao filha: getSolicitacao().getSolicitacaoFilhaSet()){
-					if (filha.isAtivo() && podeReceberNotificacaoAtendente(getTitular(), filha.getLotaAtendente()))
-						CorreioHolder
-						.get()
-						.notificarAtendente(this, filha);	
-				}
-			if (podeReceberNotificacaoAtendente(getTitular(), lotaAtendente)) 
-				CorreioHolder
-				.get()
-				.notificarAtendente(this, getSolicitacao());	
-			} catch (Exception e){
-				log.error("Erro ao notificar", e);
+			
+			if (podeReceberNotificacaoAtendente(getTitular(), lotaAtendente))
+				CorreioHolder.get().notificarAtendente(this, getSolicitacao());
+		} catch (Exception e) {
+			log.error("Erro ao notificar", e);
+		}
+	}
+
+	private void notificarAtendenteSolicitacaoFilha() {
+		if (getSolicitacao().isPai()
+				&& !getSolicitacao().getSolicitacaoFilhaSet().isEmpty()
+				&& getTipoMov().getId() == SrTipoMovimentacao.TIPO_MOVIMENTACAO_ANDAMENTO)
+			for (SrSolicitacao filha : getSolicitacao()
+					.getSolicitacaoFilhaSet()) {
+				if (filha.isAtivo()
+						&& podeReceberNotificacaoAtendente(getTitular(),
+								filha.getLotaAtendente()))
+					CorreioHolder.get().notificarAtendente(this, filha);
 			}
+	}
+
+	private boolean isLotaAtendenteResponsavelPelaMovimentacao() {
+		return getLotaAtendente() != null && getLotaTitular() != null && getLotaTitular()
+				.equivale(getLotaAtendente());
 	}
 	
 	private boolean podeReceberNotificacaoAtendente(DpPessoa pessoa, DpLotacao lotaAtendente) {

@@ -51,7 +51,8 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 		+ "and (pes.dataFimPessoa is null) "
 		+ "and (pes.situacaoFuncionalPessoa = '1' "
 		+ "or pes.situacaoFuncionalPessoa = '2' "
-		+ "or pes.situacaoFuncionalPessoa = '12' "		
+		+ "or pes.situacaoFuncionalPessoa = '12' "	
+		+ "or pes.situacaoFuncionalPessoa = '22' "	
 		+ "or pes.situacaoFuncionalPessoa = '31') ") })
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpIdentidade extends AbstractCpIdentidade {

@@ -736,14 +736,18 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
 		
-		if (movimentacaoBuilder.getMob().getExDocumento().getIdDoc()
-				.equals(mov.getExMobilRef().getExDocumento().getIdDoc())
-				&& movimentacaoBuilder.getMob().getExTipoMobil().getIdTipoMobil()
-						.equals(mov.getExMobilRef().getExTipoMobil().getIdTipoMobil()))
-			throw new AplicacaoException(
-					"não é possível juntar um documento a ele mesmo");
+		if (mov.getExMobilRef() != null)
+			if (movimentacaoBuilder.getMob().getExDocumento().getIdDoc()
+					.equals(mov.getExMobilRef().getExDocumento().getIdDoc())
+					&& movimentacaoBuilder
+							.getMob()
+							.getExTipoMobil()
+							.getIdTipoMobil()
+							.equals(mov.getExMobilRef().getExTipoMobil()
+									.getIdTipoMobil()))
+				throw new AplicacaoException(
+						"não é possível juntar um documento a ele mesmo");
 		
-
 		if (!Ex.getInstance()
 				.getComp()
 				.podeJuntar(getTitular(), getLotaTitular(),

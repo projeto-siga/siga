@@ -2156,4 +2156,16 @@ public class CpDao extends ModeloDao {
 		return null;
 	}
 
+	public DpLotacao verificarLotacaoAtual(final DpLotacao lotacao) throws SQLException {
+		try {
+			final Query qry = getSessao().getNamedQuery("consultarLotacaoAtualPelaLotacaoInicial");
+			qry.setLong("idLotacaoIni", lotacao.getIdLotacaoIni());
+			final DpLotacao lot = (DpLotacao) qry.uniqueResult();
+			return lot;
+		} catch(final IllegalArgumentException e) {
+			throw e;
+		} catch (final Exception e) {
+			return null;
+		}
+	}
 }

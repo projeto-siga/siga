@@ -1,128 +1,96 @@
-<?xml version="1.0" encoding='UTF-8'?>
-<!DOCTYPE hibernate-mapping PUBLIC
-                            "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-                            "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
-	<!-- Criado em 21 Dez 2005       -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Criado em 21 Dez 2005       -->
 <hibernate-mapping package="br.gov.jfrj.siga.dp" schema="CORPORATIVO">
-	<class name="DpLotacao" mutable="true" table="DP_LOTACAO"
-		batch-size="500">
-		<id name="idLotacao" column="ID_LOTACAO" type="long">
-			<generator class="sequence">
-				<param name="sequence">DP_LOTACAO_SEQ</param>
-			</generator>
-		</id>
-		<property name="idLotacaoIni" column="ID_LOTACAO_INI" type="long" />
-		<property name="nomeLotacao" column="NOME_LOTACAO" type="string"
-			not-null="true" />
-		<property name="siglaLotacao" column="SIGLA_LOTACAO" type="string"
-			not-null="false" />
-		<property name="dataFimLotacao" column="DATA_FIM_LOT" type="date" />
-		<property name="dataInicioLotacao" column="DATA_INI_LOT"
-			type="date" />
-		<property name="nomeLotacaoAI" formula="REMOVE_ACENTO(NOME_LOTACAO)"
-			type="string" />
-
-		<property name="ideLotacao" column="IDE_LOTACAO" type="string"
-			not-null="false" />
-
-		<!-- Marcado como false para não conflitar com o idLotacaoIni -->
-		<many-to-one name="lotacaoInicial" column="ID_LOTACAO_INI"
-			class="DpLotacao" insert="false" update="false" />
-
-		<many-to-one name="lotacaoPai" column="ID_LOTACAO_PAI"
-			class="DpLotacao" />
-
-		<set name="lotacoesPosteriores" order-by="DATA_INI_LOT desc"
-			inverse="true">
-			<key column="ID_LOTACAO_INI" />
-			<one-to-many class="DpLotacao" />
-		</set>
-
-		<many-to-one name="orgaoUsuario" column="ID_ORGAO_USU"
-			class="br.gov.jfrj.siga.dp.CpOrgaoUsuario" not-null="false" />
-
-		<set name="dpLotacaoSubordinadosSet" order-by="ID_LOTACAO"
-			inverse="true" lazy="true">
-			<key column="ID_LOTACAO_PAI" />
-			<one-to-many class="DpLotacao" />
-		</set>
-		<set name="dpPessoaLotadosSet" order-by="ID_PESSOA"
-            inverse="true" lazy="true" where="DATA_FIM_PESSOA is null" sort="natural">
-        	<key column="ID_LOTACAO" />
-            <one-to-many class="DpPessoa" />
-        </set>
-		<!-- Gestao de Identidade : Drive K e grupo de e-mail -->
-		<many-to-one name="cpTipoLotacao" column="ID_TP_LOTACAO"
-			class="br.gov.jfrj.siga.dp.CpTipoLotacao" />
-	</class>
-
-	<query name="consultarPorIdDpLotacao">
-		<![CDATA[select lot from DpLotacao lot where
+ <class batch-size="500" name="DpLotacao" table="DP_LOTACAO">
+  <id column="ID_LOTACAO" name="idLotacao" type="long">
+   <generator class="sequence">
+    <param name="sequence">DP_LOTACAO_SEQ</param>
+   </generator>
+  </id>
+  <property column="ID_LOTACAO_INI" generated="never" lazy="false"
+   name="idLotacaoIni" type="long"/>
+  <property column="NOME_LOTACAO" generated="never" lazy="false"
+   name="nomeLotacao" not-null="true" type="string"/>
+  <property column="SIGLA_LOTACAO" generated="never" lazy="false"
+   name="siglaLotacao" type="string"/>
+  <property column="DATA_FIM_LOT" generated="never" lazy="false"
+   name="dataFimLotacao" type="date"/>
+  <property column="DATA_INI_LOT" generated="never" lazy="false"
+   name="dataInicioLotacao" type="date"/>
+  <property formula="REMOVE_ACENTO(NOME_LOTACAO)" generated="never"
+   lazy="false" name="nomeLotacaoAI" type="string"/>
+  <property column="IDE_LOTACAO" generated="never" lazy="false"
+   name="ideLotacao" type="string"/>
+  <!-- Marcado como false para não conflitar com o idLotacaoIni -->
+  <many-to-one class="DpLotacao" column="ID_LOTACAO_INI" insert="false"
+   name="lotacaoInicial" update="false"/>
+  <many-to-one class="DpLotacao" column="ID_LOTACAO_PAI" name="lotacaoPai"/>
+  <set inverse="true" name="lotacoesPosteriores"
+   order-by="DATA_INI_LOT desc" sort="unsorted">
+   <key column="ID_LOTACAO_INI"/>
+   <one-to-many class="DpLotacao"/>
+  </set>
+  <many-to-one class="br.gov.jfrj.siga.dp.CpOrgaoUsuario"
+   column="ID_ORGAO_USU" name="orgaoUsuario" not-null="false"/>
+  <set inverse="true" lazy="true" name="dpLotacaoSubordinadosSet"
+   order-by="ID_LOTACAO" sort="unsorted">
+   <key column="ID_LOTACAO_PAI"/>
+   <one-to-many class="DpLotacao"/>
+  </set>
+  <set inverse="true" lazy="true" name="dpPessoaLotadosSet"
+   order-by="ID_PESSOA" sort="natural" where="DATA_FIM_PESSOA is null">
+   <key column="ID_LOTACAO"/>
+   <one-to-many class="DpPessoa"/>
+  </set>
+  <!-- Gestao de Identidade : Drive K e grupo de e-mail -->
+  <many-to-one class="br.gov.jfrj.siga.dp.CpTipoLotacao"
+   column="ID_TP_LOTACAO" name="cpTipoLotacao"/>
+ </class>
+ <query name="consultarPorIdDpLotacao">select lot from DpLotacao lot where
 			lot.idLotacao = :idLotacao
-			]]>
-	</query>
-	
-	<query name="consultarPorSiglaDpLotacao">
-		<![CDATA[select lot from DpLotacao lot where
+			</query>
+ <query name="consultarPorSiglaDpLotacao">select lot from DpLotacao lot where
 			upper(lot.siglaLotacao) = upper(:siglaLotacao)
 			and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)
-	       	and lot.dataFimLotacao = null]]>
-	</query>
-	
-	<query name="consultarPorSiglaDpLotacaoComLike">
-		<![CDATA[select lot from DpLotacao lot where
+	       	and lot.dataFimLotacao = null</query>
+ <query name="consultarPorSiglaDpLotacaoComLike">select lot from DpLotacao lot where
                     upper(lot.siglaLotacao) like upper('%' || :siglaLotacao || '%') 
                     and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)
-                    and lot.dataFimLotacao = null]]>
-	</query>
-
-	<query name="consultarPorIdInicialDpLotacao">
-		<![CDATA[select lot from DpLotacao lot where
+                    and lot.dataFimLotacao = null</query>
+ <query name="consultarPorIdInicialDpLotacao">select lot from DpLotacao lot where
 			lot.idLotacaoIni = :idLotacaoIni
-	       	and lot.dataFimLotacao = null]]>
-	</query>
-
-	<query name="consultarPorIdInicialDpLotacaoInclusiveFechada">
-		<![CDATA[select lot from DpLotacao lot where
+	       	and lot.dataFimLotacao = null</query>
+ <query name="consultarPorIdInicialDpLotacaoInclusiveFechada">select lot from DpLotacao lot where
 			lot.idLotacao = (
 				select max(idLotacao) from DpLotacao 
 				where idLotacaoIni = :idLotacaoIni
 			)
-			]]>
-	</query>
-
-	<query name="consultarPorFiltroDpLotacao">
-		<![CDATA[from DpLotacao lot 
+			</query>
+ <query name="consultarPorFiltroDpLotacao">from DpLotacao lot 
 	      where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))
 	      	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)
 	       	and lot.dataFimLotacao = null
-	       	order by lot.nomeLotacao]]>
-	</query>
-
-	<query name="consultarQuantidadeDpLotacao">
-		<![CDATA[select count(lot) from DpLotacao lot 
+	       	order by lot.nomeLotacao</query>
+ <query name="consultarQuantidadeDpLotacao">select count(lot) from DpLotacao lot 
 	      where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))
 	      	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)
 	       	and lot.dataFimLotacao = null
-	       	order by lot.nomeLotacao]]>
-	</query>
-
-	<query name="consultarPorFiltroDpLotacaoInclusiveFechadas">
-		<![CDATA[from DpLotacao where idLotacao in (
+	       	order by lot.nomeLotacao</query>
+ <query name="consultarPorFiltroDpLotacaoInclusiveFechadas">from DpLotacao where idLotacao in (
     		select max(lot.idLotacao)
     		from DpLotacao lot
     		where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))
 	      	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)
     		group by lot.idLotacaoIni
-    		)]]>
-	</query>
-
-	<query name="consultarQuantidadeDpLotacaoInclusiveFechadas">
-		<![CDATA[select count(distinct lot.idLotacaoIni)
+    		)</query>
+ <query name="consultarQuantidadeDpLotacaoInclusiveFechadas">select count(distinct lot.idLotacaoIni)
 				from DpLotacao lot
 				where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))
-	      	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)]]>
-	</query>
-
+	      	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)</query>
+ <query name="consultarLotacaoAtualPelaLotacaoInicial">from DpLotacao lot 
+			where lot.idLotacao = (
+			select max(lot.idLotacao) from DpLotacao lot 
+			where lot.idLotacaoIni = :idLotacaoIni)</query>
 </hibernate-mapping>
-

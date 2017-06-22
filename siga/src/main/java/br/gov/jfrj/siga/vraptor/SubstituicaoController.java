@@ -83,7 +83,7 @@ public class SubstituicaoController extends SigaController {
 	    
 	    if (getCadastrante().getId().equals(getTitular().getId())
 				&& !getCadastrante().getLotacao().getId().equals(getLotaTitular().getId()))
-	    	    	isSubstLotacao = true;			
+	    	    	isSubstLotacao = true;	
 	    
 	    for (DpSubstituicao subst : todasSubst) {	
 	    	if (substituicao == "true") {
@@ -98,6 +98,8 @@ public class SubstituicaoController extends SigaController {
 	    			|| subst.getSubstituto().isBloqueada()) && substituicao == "false")
 	    		continue;
 	    	if (subst.isEmVoga() || subst.isFutura()) {
+	    		subst.setLotaSubstituto(dao.verificarLotacaoAtual(subst.getLotaSubstituto()));
+	    		subst.setLotaTitular(dao.verificarLotacaoAtual(subst.getLotaTitular()));
 	    		substVigentes.add(subst);	    		
 	    	}
 	    }
@@ -113,8 +115,8 @@ public class SubstituicaoController extends SigaController {
 			if(podeCadastrarQualquerSubstituicao()){
 				substituicao = "true";					
 				result.include("itensTitular", buscarSubstitutos(substituicao, getTitular(), getLotaTitular()));
-			}		
-		}			
+			}	
+		}
 		result.include("isSubstituicao", substituicao);
 		result.include("itens", buscarSubstitutos(substituicao, getCadastrante(), getCadastrante().getLotacao()));
 	}	

@@ -65,7 +65,7 @@
 							<c:forEach items="${acoesEAtendentes.get(cat)}" var="tarefa">
 								<option value="${tarefa.acao.idAcao}" ${solicitacao.acao.idAcao.equals(tarefa.acao.idAcao) ? 'selected' : ''}> 
 									${tarefa.acao.tituloAcao}
-									<c:if test="${exibeLotacaoNaAcao}">(${tarefa.conf.atendente.siglaCompleta})</c:if>
+									<c:if test="${exibeLotacaoNaAcao}">(${tarefa.conf.atendente.lotacaoAtual.siglaCompleta})</c:if>
 								</option>
 							</c:forEach>					 
 						</optgroup>

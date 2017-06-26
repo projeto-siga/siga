@@ -3,6 +3,43 @@
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
+<script type="text/javascript">
+	$(document).ready(function(){
+		document.getElementById("apostilaSiga").title = getServidorSiga("JSESSIONID"); 
+	});
+
+	function getServidorSiga(cname) {
+		try {
+			var name = cname + "=";
+			var ca = document.cookie.split(';');
+			var str = "";
+	
+			for (var i = 0; i < ca.length; i++) {
+				var c = ca[i];
+				while (c.charAt(0) == ' ') {
+					c = c.substring(1);
+				}
+				
+				if (c.indexOf(name) == 0) {
+					str = c.substring(name.length, c.length);
+				}
+			}
+	
+			if (str != "") {
+		    	var res = str.replace(/"/g, "");
+		    	if (res != null && res != "undefined") {
+		    		return res.split(';')[0].substring(25);
+				}
+			}	
+
+			return "";
+		}
+		catch(err) {
+			return "";    
+		}
+	}			
+</script>
+
 <li><a id="menu_siga" class="" href="#">SIGA</a>
 	<ul>
 		<li><a href="/siga/app/principal">Página Inicial</a>
@@ -284,9 +321,9 @@
 			</ul>
 		</li>
 
-		<li><a href="/siga/arquivos/apostila_sigaex.pdf" target="_blank">Apostila SIGA-Doc</a>
-		</li>	
-
+		<li><a id="apostilaSiga" href="/siga/arquivos/apostila_sigaex.pdf" target="_blank">Apostila SIGA-Doc</a>
+		</li>
+		
 		<li><a href="/siga/?GLO=true">Logoff</a>
 		</li>
 

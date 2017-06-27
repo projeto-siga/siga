@@ -425,7 +425,8 @@ public class AppController extends WfController {
 						&& taskInstance.getPooledActors().size() != 0 && !((PooledActor) taskInstance
 						.getPooledActors().toArray()[0]).getActorId().equals(
 						lotaActorId) || 
-						(taskInstance.getSwimlaneInstance() != null && 
+						(taskInstance.getSwimlaneInstance() != null && taskInstance.getSwimlaneInstance().getPooledActors() != null && 
+						taskInstance.getSwimlaneInstance().getPooledActors().size() != 0 &&
 						!((PooledActor)taskInstance.getSwimlaneInstance().getPooledActors().toArray()[0]).getActorId().equals(lotaActorId))
 					);
 

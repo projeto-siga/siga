@@ -313,7 +313,7 @@ public class WfUtil {
 							.getContextInstance()
 							.getVariable(variable.getMappedName());
 					if (value != null && value.trim().length() != 0)
-						if (!service.podeTransferir(value, siglaTitular, true)) {
+						if (!service.podeTransferir(value, siglaTitular, false)) {
 							throw new AplicacaoException(
 									"A tarefa nï¿½o pode prosseguir porque o documento '"
 											+ value

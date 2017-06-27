@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
+import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExPreenchimento;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
@@ -91,6 +93,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Selecao;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import br.gov.jfrj.siga.vraptor.ExDocumentoDTO;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 
 @Resource
@@ -744,12 +747,33 @@ public class ExDocumentoController extends ExController {
 			s = " "
 					+ exDocumentoDTO.getMob().doc().getExNivelAcessoAtual()
 							.getNmNivelAcesso() + " " + s;
-
-			throw new AplicacaoException("Documento "
-					+ exDocumentoDTO.getMob().getSigla()
-					+ " inacessível ao usuário " + getTitular().getSigla()
-					+ "/" + getLotaTitular().getSiglaCompleta() + "." + s + " "
-					+ msgDestinoDoc);
+			
+			Map<ExPapel, List<Object>> mapa = exDocumentoDTO.getMob().doc().getPerfis();
+			boolean isInteressado = false;
+			
+			for (ExPapel exPapel : mapa.keySet()) {
+				Iterator<Object> it = mapa.get(exPapel).iterator();
+				
+				while (it.hasNext() && !isInteressado) {
+					Object item = it.next();
+					isInteressado = item.toString().equals(getTitular().getSigla()) ? true : false;
+				}
+			} 
+			
+			if (exDocumentoDTO.getMob().doc().isSemEfeito()) {
+				if (!exDocumentoDTO.getMob().doc().getCadastrante().equals(getTitular()) &&
+				    !exDocumentoDTO.getMob().doc().getSubscritor().equals(getTitular()) && !isInteressado) {
+						throw new AplicacaoException("Documento "
+								+ exDocumentoDTO.getMob().getSigla()
+								+ " cancelado ");
+				}
+			} else {
+					throw new AplicacaoException("Documento "
+							+ exDocumentoDTO.getMob().getSigla()
+							+ " inacessível ao usuário " + getTitular().getSigla()
+							+ "/" + getLotaTitular().getSiglaCompleta() + "." + s + " "
+							+ msgDestinoDoc);
+			}
 		}
 	}
 

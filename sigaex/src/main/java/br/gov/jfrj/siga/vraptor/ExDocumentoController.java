@@ -732,6 +732,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando());
 	}
 
+	@SuppressWarnings("static-access")
 	private void assertAcesso(final ExDocumentoDTO exDocumentoDTO)
 			throws Exception {
 		if (!Ex.getInstance()
@@ -754,9 +755,11 @@ public class ExDocumentoController extends ExController {
 			for (ExPapel exPapel : mapa.keySet()) {
 				Iterator<Object> it = mapa.get(exPapel).iterator();
 				
-				while (it.hasNext() && !isInteressado) {
-					Object item = it.next();
-					isInteressado = item.toString().equals(getTitular().getSigla()) ? true : false;
+				if ((exPapel != null) && (exPapel.getIdPapel() == exPapel.PAPEL_INTERESSADO)) {
+					while (it.hasNext() && !isInteressado) {
+						Object item = it.next();
+						isInteressado = item.toString().equals(getTitular().getSigla()) ? true : false;
+					}
 				}
 			} 
 			

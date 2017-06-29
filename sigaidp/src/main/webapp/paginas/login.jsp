@@ -102,6 +102,12 @@
 				</ul>
 			</div>
 			<!-- /Sidebar Navigation -->
+			
+			<!-- Selo 50 anos Box  -->
+			<div class="gt-form-row">
+				<img class="img50anos" id="selo50anos" src="/siga/imagens/selo_jubileu_siga_doc.jpg">
+			</div>
+			<!-- /Selo 50 anos Box  -->
 			<!-- Sidebar Content -->
 		</div>
 		<!-- / sidebar -->

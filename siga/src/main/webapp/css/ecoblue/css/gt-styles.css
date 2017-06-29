@@ -970,3 +970,16 @@ a:hover {
 .clearfix {display: block;}
 /* End hide from IE-mac */
 /* @end */
+
+/* Selo 50 anos box */
+
+.img50anos {	
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 300px;
+	height: 150px;
+	border: 0;	
+}
+/* end Selo 50 anos box */
+/* @end */ 

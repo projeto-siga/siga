@@ -134,7 +134,7 @@ public class ExDocumentoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 	
-	@Get("/app/expediente/mov/recalcular_acesso")
+	@Get("/app/expediente/doc/recalcular_acesso")
     public void aRecalcularAcesso(final String sigla) {
         final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
         buscarDocumento(builder, false);
@@ -783,36 +783,50 @@ public class ExDocumentoController extends ExController {
 	private String arquivamentoAutomatico(ExMobil mob) throws Exception {
 
 		String msgDestinoDoc = "";
-		DpPessoa dest;
-		DpLotacao lotaDest;
+		DpPessoa dest = null;
+		DpLotacao lotaDest = null;
 		Boolean jaArquivado = false;
-		ExMobil mobArq = null; /* mobil a ser arquivado */
+		ExMobil mobArq, mobUlt = null; /* mobil a ser arquivado / ultimo mobil */		
 		
 		
-		if (mob.doc().isProcesso()) {   
-			mobArq = mob.doc().getMobilGeral();
-			if (mob.doc().isArquivado())   /* se é processo o arquivamento é no geral */
-				jaArquivado = true;
-		} else {
-			if (mob.isGeral() && mob.doc().isFinalizado()) {
-				mobArq = mob.doc().getPrimeiraVia();
-			} else
-				mobArq = mob;
-			if (mob.isArquivado())    /* se é expediente o arquivamento é na via */
-				jaArquivado = true;
-		}
-			
-
-		if (mob.doc().isFinalizado()
-				&& mob.getUltimaMovimentacaoNaoCancelada() != null) {
-			dest = mob.getUltimaMovimentacaoNaoCancelada().getResp()
-					.getPessoaAtual();
-			lotaDest = mob.getUltimaMovimentacaoNaoCancelada().getLotaResp()
-					.getLotacaoAtual();
-		} else {
+		if (!mob.doc().isFinalizado()) { /* doc temporário só tem o geral */
 			dest = mob.doc().getCadastrante().getPessoaAtual();
 			lotaDest = mob.doc().getLotaCadastrante().getLotacaoAtual();
+			mobArq = mob;  /* mobil a ser arquivado (excluido) sempre vai ser o geral */
+		} else {
+			if (mob.doc().isProcesso()) {
+				mobUlt = mob.doc().getUltimoVolume();
+				mobArq = mob.doc().getMobilGeral();
+			} else {
+				if (mob.isGeral()){
+					msgDestinoDoc = "Para arquivar ou cancelar informe a via";
+					return msgDestinoDoc;					
+				} else {
+					mobUlt = mob;
+					mobArq = mob;
+				}				
+			}
+			 /* verificar onde está o documento no momento */
+			if (mobUlt.isJuntado()) {
+				if (mobUlt.getExMobilPai().doc().isProcesso())
+					mobUlt = mobUlt.getExMobilPai().doc().getUltimoVolume();
+				else
+					mobUlt = mobUlt.getExMobilPai();
+			}
+			
+			if (mobUlt.isApensado())
+				mobUlt = mobUlt.getGrandeMestre();
+			
+			if (mobUlt.getUltimaMovimentacaoNaoCancelada() != null) {
+				dest = mobUlt.getUltimaMovimentacaoNaoCancelada().getResp().getPessoaAtual();
+				lotaDest = mobUlt.getUltimaMovimentacaoNaoCancelada().getLotaResp()
+							.getLotacaoAtual();
+			} 
 		}
+		
+		if (mobArq.isArquivado()) 
+			jaArquivado = true;	
+		
 
 		if (!jaArquivado  && !mob.doc().isCancelado()) {
 			if (!dest.ativaNaData(new Date())) {
@@ -884,67 +898,8 @@ public class ExDocumentoController extends ExController {
 
 		return msgDestinoDoc;
 
-		// String msgDestinoDoc = "";
-		//
-		// if (!mob.doc().isArquivado() && !mob.isGeral()) {
-		// DpLotacao lotaDest;
-		// if (mob.doc().isFinalizado())
-		// lotaDest = mob.getUltimaMovimentacaoNaoCancelada()
-		// .getLotaResp();
-		// else
-		// lotaDest = getLotaTitular();
-		//
-		// if (getLotaTitular().equivale(lotaDest) /*
-		// * a pessoa que está
-		// * tentando acessar está na
-		// * mesma lotação onde se
-		// * encontra o doc
-		// */
-		// && (mob.doc().getExNivelAcesso().getGrauNivelAcesso()
-		// .intValue() == ExNivelAcesso.NIVEL_ACESSO_SUB_PESSOA || mob
-		// .doc().getExNivelAcesso().getGrauNivelAcesso()
-		// .intValue() == ExNivelAcesso.NIVEL_ACESSO_PESSOAL)) {
-		//
-		// Boolean alguemPodeAcessar = false;
-		// Set<DpPessoa> pessoas = lotaDest.getDpPessoaLotadosSet();
-		// for (DpPessoa pes : pessoas) { /*
-		// * verificar se alguem da
-		// * lotação pode acessar o
-		// * documento
-		// */
-		// if (Ex.getInstance().getComp()
-		// .podeAcessarDocumento(pes, lotaDest, mob))
-		// if (pes.getPessoaAtual().ativaNaData(new Date())) {
-		// alguemPodeAcessar = true;
-		// break;
-		// }
-		// }
-		// if (!alguemPodeAcessar) { /* ninguem pode acessar este documento */
-		// DpPessoa dest;
-		// if (mob.doc().isFinalizado()) {
-		// dest = mob.getUltimaMovimentacaoNaoCancelada()
-		// .getResp().getPessoaAtual();
-		// Ex.getInstance()
-		// .getBL()
-		// .arquivarCorrenteAutomatico(dest,
-		// getLotaTitular(), mob);
-		// msgDestinoDoc = "documento sendo arquivado automaticamente";
-		//
-		// } else { /* doc temporário */
-		// dest = mob.doc().getCadastrante().getPessoaAtual();
-		// Ex.getInstance()
-		// .getBL()
-		// .excluirDocumentoAutomatico(mob.doc(),
-		// getCadastrante(), getLotaTitular());
-		// msgDestinoDoc = "documento sendo excluído automaticamente";
-		// }
-		//
-		// }
-		//
-		// }
-		// }
-		// return msgDestinoDoc;
 	}
+	
 
 	@Get("app/expediente/doc/exibirAntigo")
 	public void aExibirAntigo(final String sigla, final boolean popup,

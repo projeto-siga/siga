@@ -799,7 +799,7 @@ public class ExDocumentoController extends ExController {
 				mobArq = mob.doc().getMobilGeral();
 			} else {
 				if (mob.isGeral()){
-					msgDestinoDoc = "Para arquivar ou cancelar informe a via";
+					msgDestinoDoc = "Para arquivar ou cancelar informe a via.";
 					return msgDestinoDoc;					
 				} else {
 					mobUlt = mob;
@@ -807,13 +807,8 @@ public class ExDocumentoController extends ExController {
 				}				
 			}
 			 /* verificar onde está o documento no momento */
-			if (mobUlt.isJuntado()) {
-				if (mobUlt.getExMobilPai().doc().isProcesso())
-					mobUlt = mobUlt.getExMobilPai().doc().getUltimoVolume();
-				else
-					mobUlt = mobUlt.getExMobilPai();
-			}
-			
+			if (mobUlt.isJuntado()) 
+				mobUlt = mobUlt.getMobilPrincipal();				
 			if (mobUlt.isApensado())
 				mobUlt = mobUlt.getGrandeMestre();
 			

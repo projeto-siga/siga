@@ -80,9 +80,9 @@
 					<c:forEach items="${acoesEAtendentes.keySet()}" var="cat" varStatus="catPosition">
 						<c:forEach items="${acoesEAtendentes.get(cat)}" var="t" varStatus="tPosition">
 							<span class="idDesignacao-${t.acao.idAcao}" style="display:none;">${t.conf.idConfiguracao}</span>
-							<span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.siglaCompleta} 
-												- ${t.conf.atendente.descricao}</span>
-							<span class="idLotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.idLotacao}</span>
+							<span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.lotacaoAtual.siglaCompleta} 
+												- ${t.conf.atendente.lotacaoAtual.descricao}</span>
+							<span class="idLotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.lotacaoAtual.idLotacao}</span>
 						</c:forEach>
 					</c:forEach>
 			

@@ -234,16 +234,16 @@
 										</c:if>
 										<td>${movimentacao.tipoMov.nome}</td>
 										<td><siga:selecionado
-												sigla="${movimentacao.lotaTitular.siglaLotacao}"
-												descricao="${movimentacao.lotaTitular.nomeLotacao}"></siga:selecionado>
+												sigla="${movimentacao.lotaTitular.lotacaoAtual.siglaLotacao}"
+												descricao="${movimentacao.lotaTitular.lotacaoAtual.nomeLotacao}"></siga:selecionado>
 										</td>
 										<td><siga:selecionado
 												sigla="${movimentacao.cadastrante.nomeAbreviado}"
 												descricao="${movimentacao.cadastrante.descricaoIniciaisMaiusculas}"></siga:selecionado>
 										</td>
 										<td><siga:selecionado
-												sigla="${movimentacao.lotaAtendente.siglaLotacao}"
-												descricao="${movimentacao.lotaAtendente.nomeLotacao}"></siga:selecionado>
+												sigla="${movimentacao.lotaAtendente.lotacaoAtual.siglaLotacao}"
+												descricao="${movimentacao.lotaAtendente.lotacaoAtual.nomeLotacao}"></siga:selecionado>
 										</td>
 										<td><siga:selecionado
 												sigla="${movimentacao.atendente.nomeAbreviado}"

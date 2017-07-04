@@ -98,8 +98,8 @@ public class SubstituicaoController extends SigaController {
 	    			|| subst.getSubstituto().isBloqueada()) && substituicao == "false")
 	    		continue;
 	    	if (subst.isEmVoga() || subst.isFutura()) {
-	    		subst.setLotaSubstituto(dao.verificarLotacaoAtual(subst.getLotaSubstituto()));
-	    		subst.setLotaTitular(dao.verificarLotacaoAtual(subst.getLotaTitular()));
+	    		subst.setLotaSubstituto(subst.getLotaSubstituto() != null ? subst.getLotaSubstituto().getLotacaoAtual() : null);
+	    		subst.setLotaTitular(subst.getLotaTitular() != null ? subst.getLotaTitular().getLotacaoAtual() : null);
 	    		substVigentes.add(subst);	    		
 	    	}
 	    }

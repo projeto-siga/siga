@@ -680,12 +680,17 @@ public class AgendamentoController extends PpController {
                 null, null, null, null, null, null);
         List<Agendamentos> results = new ArrayList<Agendamentos>();
         if (frm_data_ag != null && !frm_data_ag.isEmpty()) {
-            listHorasLivres.add("09:00");
-            listHorasLivres.add("09:10");
-            listHorasLivres.add("09:20");
-            listHorasLivres.add("09:30");
-            listHorasLivres.add("09:40");
-            listHorasLivres.add("09:50");
+        	String matriculaSessao = getCadastrante().getMatricula().toString();
+            String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
+        	UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao, sesb_pessoaSessao);
+        	if(objUsuario.getForumFk().getCod_forum()!=2){
+             listHorasLivres.add("09:00");
+             listHorasLivres.add("09:10");
+             listHorasLivres.add("09:20");
+             listHorasLivres.add("09:30");
+             listHorasLivres.add("09:40");
+             listHorasLivres.add("09:50");
+        	}
             listHorasLivres.add("10:00");
             listHorasLivres.add("10:10");
             listHorasLivres.add("10:20");

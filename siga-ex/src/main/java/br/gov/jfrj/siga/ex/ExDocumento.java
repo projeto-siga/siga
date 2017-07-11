@@ -2305,8 +2305,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 			if (mob.isGeral())
 				continue;
 			ExMobil pai = mob.getExMobilPai();
-			if (pai != null)
-				pais.addAll(pai.doc().getDocumentoETodosOsPaisDasVias());
+			//impede loop infinito ao acessar documentos juntados a ele mesmo
+			if (pai != null && pai.getDoc().getIdDoc() != mob.getDoc().getIdDoc())
+					pais.addAll(pai.doc().getDocumentoETodosOsPaisDasVias());
 		}
 		return pais;
 	}

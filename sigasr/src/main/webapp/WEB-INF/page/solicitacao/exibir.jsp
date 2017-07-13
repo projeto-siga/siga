@@ -71,23 +71,33 @@
 				</p>
 				<p id="descrSolicitacao" style="font-size: 9pt;">${solicitacao.descricao}</p>
 				<script language="javascript">
+
+					function formatStr(str, n) {
+					   var strTmp = [], start=0;
+					   while(start<str.length) {
+						   strTmp.push(str.slice(start, start+n));
+					      start+=n;
+					   }
+					   return strTmp.join(" ");
+					};
+					
 					function parseDescricao(id){
 						var descricao = document.getElementById(id);
-						
 						if (!descricao)
 							return;
 						
 					    var wordsArray = descricao.innerHTML.split(/(\s+)/);
-					    
+					    var temStringLonga = false;
 						for(var i=0; i < wordsArray.length; i++){
 				    		if (wordsArray[i].length > 50) {
-								descricao.style.wordBreak = "break-all";
-								descricao.style.wordWrap = "break-word";
-								descricao.style.whiteSpace = "simple";
-								break;
+				    			wordsArray[i] = formatStr(wordsArray[i],60);
+				    			temStringLonga = true;	    			
 							}
+				    		
 						}
-																	
+						if(temStringLonga){
+							descricao.innerHTML = wordsArray.join(" ");
+						}																			
 						descricao.innerHTML = descricao.innerHTML.replace(/\n\r?/g, ' <br />');
 						descricao.innerHTML = descricao.innerHTML.replace(/(\w{2,4}\-(GC|SR)\-\d{4}\/\d{5}(?:\.\d{2})?)/g, function(a, b, c){
 							if (c.toLowerCase() == 'sr')

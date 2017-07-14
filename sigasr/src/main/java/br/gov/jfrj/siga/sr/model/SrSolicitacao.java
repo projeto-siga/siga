@@ -1997,7 +1997,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             sb.append(mar.getCpMarcador().getDescrMarcador());
             sb.append(" (");
             if (mar.getDpPessoaIni() != null) {
-                String nome = mar.getDpPessoaIni().getDescricaoIniciaisMaiusculas();
+                String nome = mar.getDpPessoaIni().getPessoaAtual().getDescricaoIniciaisMaiusculas();
                 sb.append(nome.substring(0, nome.indexOf(" ")));
                 sb.append(", ");
             }

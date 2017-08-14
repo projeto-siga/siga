@@ -1,2 +1,2 @@
 
-alter table sigasr.sr_tipo_acao add UST NUMBER(2);
+alter table sigasr.sr_tipo_acao add UST NUMBER default 0;

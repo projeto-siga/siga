@@ -1012,9 +1012,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		vias = new HashSet<ExVia>(viasUmaPorCodigo.values());
 
 		if (vias != null
-				&& vias.size() > 0
-				&& ((ExVia) vias.toArray()[0]).getExTipoDestinacao()
-						.getFacilitadorDest() != null)
+				&& vias.size() > 0 
+				&& ((ExVia) vias.toArray()[0]) != null
+				&& ((ExVia) vias.toArray()[0]).getExTipoDestinacao() != null
+				&& ((ExVia) vias.toArray()[0]).getExTipoDestinacao().getFacilitadorDest() != null)
 			return vias;
 
 		// Expediente externo ou eletrônico e com Documento Pai tem apenas 1 via

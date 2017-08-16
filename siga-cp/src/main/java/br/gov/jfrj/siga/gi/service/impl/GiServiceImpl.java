@@ -112,6 +112,9 @@ public class GiServiceImpl implements GiService {
 			pessoa.put("siglaPessoa", p.getSiglaCompleta());
 			pessoa.put("nomePessoa", p.getNomePessoa());
 			pessoa.put("emailPessoa", p.getEmailPessoaAtual());
+			pessoa.put("siglaPessoaWEmul", p.getSiglaPessoa());
+			pessoa.put("tipoServidor", p.getCpTipoPessoa() != null ? p
+					.getCpTipoPessoa().getIdTpPessoa() : "null");
 
 			DpLotacao l = p.getLotacao();
 			lotacao.put("idLotacao", l.getId());
@@ -157,6 +160,7 @@ public class GiServiceImpl implements GiService {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public String acesso(String matricula, String lotacao, String servico) {
 		JSONObject servicos = new JSONObject();
 		String resultado = "";

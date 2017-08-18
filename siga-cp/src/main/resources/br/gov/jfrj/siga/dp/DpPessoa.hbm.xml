@@ -209,8 +209,12 @@
 	
 	<query name="consultarPessoasComCargo">
 		<![CDATA[from DpPessoa p where p.cargo.id = :idCargo and p.dataFimPessoa is null]]>
-	</query>
-	
+	</query>	
+                  
+    <query name = "consultarPessoaAtualPelaInicial">from DpPessoa pes 
+    			where pes.dataInicioPessoa = 
+    			(select max(p.dataInicioPessoa) from DpPessoa p where p.idPessoaIni = :idPessoaIni)
+    			 and pes.idPessoaIni = :idPessoaIni</query>
 	
 	
 	

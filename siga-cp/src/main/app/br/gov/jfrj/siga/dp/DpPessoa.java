@@ -25,6 +25,7 @@
 package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,6 +52,7 @@ import org.hibernate.annotations.Formula;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
@@ -64,7 +66,10 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @SqlResultSetMapping(name = "scalar", columns = @ColumnResult(name = "dt"))
 @NamedNativeQuery(name = "consultarDataEHoraDoServidor", query = "SELECT sysdate dt FROM dual", resultSetMapping = "scalar")
 @NamedQueries({ @NamedQuery(name = "consultarPorIdInicialDpPessoa", query = "select pes from DpPessoa pes where pes.idPessoaIni = :idPessoaIni and pes.dataFimPessoa = null"),
-@NamedQuery(name = "consultarPorSiglaDpPessoa", query = "select pes from DpPessoa pes where pes.matricula = :matricula and pes.sesbPessoa = :sesb and pes.dataFimPessoa = null")})
+@NamedQuery(name = "consultarPorSiglaDpPessoa", query = "select pes from DpPessoa pes where pes.matricula = :matricula and pes.sesbPessoa = :sesb and pes.dataFimPessoa = null"),
+@NamedQuery(name = "consultarPessoaAtualPelaInicial", query = "from DpPessoa pes where pes.dataInicioPessoa = (select max(p.dataInicioPessoa) from DpPessoa p where p.idPessoaIni = :idPessoaIni) and" +
+		" pes.idPessoaIni = :idPessoaIni)"
+		)})
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		Selecionavel, Historico, Sincronizavel, Comparable, DpConvertableEntity {
@@ -412,12 +417,11 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 				|| descricao.toLowerCase().contains(s);
 	}
 
-	public DpPessoa getPessoaAtual() {
-		DpPessoa pesIni = getPessoaInicial();
-		Set<DpPessoa> setPessoas = pesIni.getPessoasPosteriores();
-		if (setPessoas != null)
-			for (DpPessoa p : setPessoas)
-				return p;
+	public DpPessoa getPessoaAtual() throws SQLException {
+		
+		if (this.getDataFim() != null)
+			return CpDao.getInstance().obterPessoaAtual(this);
+		
 		return this;
 	}
 

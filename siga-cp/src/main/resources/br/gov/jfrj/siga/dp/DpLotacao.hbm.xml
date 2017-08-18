@@ -90,7 +90,7 @@
 				where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))
 	      	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)</query>
  <query name="consultarLotacaoAtualPelaLotacaoInicial">from DpLotacao lot 
-			where lot.idLotacao = (
-			select max(lot.idLotacao) from DpLotacao lot 
-			where lot.idLotacaoIni = :idLotacaoIni)</query>
+                  where dataInicioLotacao = 
+                  (select max(l.dataInicioLotacao) from DpLotacao l where l.idLotacaoIni = :idLotacaoIni) 
+                  and lot.idLotacaoIni = :idLotacaoIni</query>
 </hibernate-mapping>

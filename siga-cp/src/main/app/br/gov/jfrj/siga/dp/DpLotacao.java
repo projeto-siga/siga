@@ -25,6 +25,7 @@
 package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +33,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.Query;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -48,6 +52,15 @@ import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
+
+@NamedQueries({
+	@NamedQuery(
+	name = "consultarLotacaoAtualPelaLotacaoInicial",
+	query = "from DpLotacao lot where lot.dataInicioLotacao = (select max(l.dataInicioLotacao) from DpLotacao l where l.idLotacaoIni = :idLotacaoIni) and" +
+	" lot.idLotacaoIni = :idLotacaoIni)"
+	)
+	
+})
 
 @Entity
 @Table(name = "DP_LOTACAO", schema = "CORPORATIVO")
@@ -326,22 +339,16 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	/**
-	 * Retorna a lotacao atual no historico desta lotacao
+	 * Retorna a lotacao atual (última) no historico desta lotacao
 	 * 
 	 * @return DpLotacao
+	 * @throws SQLException 
 	 */
-	public DpLotacao getLotacaoAtual() {
-		DpLotacao lotIni = getLotacaoInicial();
-		Set<DpLotacao> setLotas = lotIni.getLotacoesPosteriores();
-		if (setLotas != null)
-			for (DpLotacao l : setLotas){
-				if(l.getDataFim()==null){
-					return l;
-				}
-				
-			}
-				
-
+	public DpLotacao getLotacaoAtual() throws SQLException {
+		
+		if (this.getDataFim() != null)
+			return CpDao.getInstance().obterLotacaoAtual(this);
+		
 		return this;
 	}
 

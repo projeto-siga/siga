@@ -1246,7 +1246,7 @@ public class CpDao extends ModeloDao {
 	public List<DpPessoa> pessoasPorLotacao(Long id,
 			Boolean incluirSublotacoes, Boolean somenteServidor,
 			SituacaoFuncionalEnum situacoesFuncionais)
-					throws AplicacaoException {
+					throws AplicacaoException, SQLException {
 		if (id == null || id == 0)
 			return null;
 
@@ -1307,7 +1307,7 @@ public class CpDao extends ModeloDao {
 	}
 
 	public List<DpPessoa> pessoasPorLotacao(Long id,
-			Boolean incluirSublotacoes, Boolean somenteServidor) {
+			Boolean incluirSublotacoes, Boolean somenteServidor) throws AplicacaoException, SQLException {
 		return pessoasPorLotacao(id, incluirSublotacoes, somenteServidor,
 				SituacaoFuncionalEnum.APENAS_ATIVOS);
 	}
@@ -2156,16 +2156,34 @@ public class CpDao extends ModeloDao {
 		return null;
 	}
 
-	public DpLotacao verificarLotacaoAtual(final DpLotacao lotacao) throws SQLException {
+	public DpLotacao obterLotacaoAtual(final DpLotacao lotacao) {
 		try {
+			
 			final Query qry = getSessao().getNamedQuery("consultarLotacaoAtualPelaLotacaoInicial");
 			qry.setLong("idLotacaoIni", lotacao.getIdLotacaoIni());
 			final DpLotacao lot = (DpLotacao) qry.uniqueResult();
 			return lot;
 		} catch(final IllegalArgumentException e) {
 			throw e;
+			
 		} catch (final Exception e) {
-			return null;
+	       return null;			
 		}
 	}
+	
+	public DpPessoa obterPessoaAtual(final DpPessoa pessoa)  {
+		try {
+			
+			final Query qry = getSessao().getNamedQuery("consultarPessoaAtualPelaInicial");
+			qry.setLong("idPessoaIni", pessoa.getIdPessoaIni());
+			final DpPessoa pes = (DpPessoa) qry.uniqueResult();
+			return pes;
+		} catch(final IllegalArgumentException e) {
+			throw e;
+			
+		} catch (final Exception e) {
+	       return null;			
+		}
+	}
+	
 }

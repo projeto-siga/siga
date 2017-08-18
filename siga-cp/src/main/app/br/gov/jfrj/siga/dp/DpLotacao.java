@@ -344,7 +344,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	 * @return DpLotacao
 	 * @throws SQLException 
 	 */
-	public DpLotacao getLotacaoAtual() throws SQLException {
+	public DpLotacao getLotacaoAtual() {
 		
 		if (this.getDataFim() != null)
 			return CpDao.getInstance().obterLotacaoAtual(this);

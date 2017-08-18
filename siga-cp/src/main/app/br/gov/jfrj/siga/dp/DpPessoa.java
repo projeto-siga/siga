@@ -417,7 +417,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 				|| descricao.toLowerCase().contains(s);
 	}
 
-	public DpPessoa getPessoaAtual() throws SQLException {
+	public DpPessoa getPessoaAtual() {
 		
 		if (this.getDataFim() != null)
 			return CpDao.getInstance().obterPessoaAtual(this);

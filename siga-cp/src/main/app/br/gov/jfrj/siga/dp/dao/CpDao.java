@@ -1246,7 +1246,7 @@ public class CpDao extends ModeloDao {
 	public List<DpPessoa> pessoasPorLotacao(Long id,
 			Boolean incluirSublotacoes, Boolean somenteServidor,
 			SituacaoFuncionalEnum situacoesFuncionais)
-					throws AplicacaoException, SQLException {
+					throws AplicacaoException {
 		if (id == null || id == 0)
 			return null;
 
@@ -1307,7 +1307,7 @@ public class CpDao extends ModeloDao {
 	}
 
 	public List<DpPessoa> pessoasPorLotacao(Long id,
-			Boolean incluirSublotacoes, Boolean somenteServidor) throws AplicacaoException, SQLException {
+			Boolean incluirSublotacoes, Boolean somenteServidor) throws AplicacaoException {
 		return pessoasPorLotacao(id, incluirSublotacoes, somenteServidor,
 				SituacaoFuncionalEnum.APENAS_ATIVOS);
 	}

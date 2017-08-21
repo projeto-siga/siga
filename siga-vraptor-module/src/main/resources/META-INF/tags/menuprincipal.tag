@@ -308,10 +308,10 @@
 						<a href="/siga/app/substituicao/substituirGravar?id=${substituicao.idSubstituicao}">
 							<c:choose>
 								<c:when test="${not empty substituicao.titular}">
-									${f:maiusculasEMinusculas(substituicao.titular.nomePessoa)}
+									${f:maiusculasEMinusculas(substituicao.titular.pessoaAtual.nomePessoa)}
 								</c:when>
 								<c:otherwise>
-									${f:maiusculasEMinusculas(substituicao.lotaTitular.nomeLotacao)}
+									${f:maiusculasEMinusculas(substituicao.lotaTitular.lotacaoAtual.nomeLotacao)}
 								</c:otherwise>
 							</c:choose> 
 						</a>

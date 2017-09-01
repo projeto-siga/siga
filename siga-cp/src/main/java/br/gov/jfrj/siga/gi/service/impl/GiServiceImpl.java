@@ -32,6 +32,7 @@ import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -238,5 +239,42 @@ public class GiServiceImpl implements GiService {
 			return "";
 		}
 		return resultado;
+	}
+
+	@Override
+	public String existeMatricula(String matricula) throws Exception {
+		String matriculaValida = "";
+		
+		try {
+			CpDao dao = CpDao.getInstance();
+			CpOrgaoUsuario orgaoFlt = new CpOrgaoUsuario();
+	
+			orgaoFlt.setSiglaOrgaoUsu(matricula.substring(0, 2));		
+			CpOrgaoUsuario orgaoUsu = dao.consultarPorSigla(orgaoFlt);
+			
+			if (orgaoUsu == null){
+				throw new AplicacaoException("O órgão informado é nulo ou inválido." );
+			}
+			
+			List<DpPessoa> lstPessoa = null;
+			try{
+				lstPessoa = dao.consultarPorMatriculaEOrgao(Long.valueOf(matricula.substring(2)), orgaoUsu.getId(), false, false);
+			}catch(Exception e){
+				throw new AplicacaoException("Matrícula informada inválida.", 9, e);
+			}
+	
+			if (lstPessoa.size() == 0){
+				throw new AplicacaoException("Usuário ainda não utilizou o SIGA." );
+			}
+			
+			if (lstPessoa != null && lstPessoa.size() == 1) {
+				matriculaValida = lstPessoa.get(0).getSiglaPessoa();
+			}
+
+		} catch(Exception ex) {
+			return null;
+		}
+		
+		return matriculaValida;
 	}
 }

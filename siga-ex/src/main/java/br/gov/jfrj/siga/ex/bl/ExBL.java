@@ -3930,15 +3930,18 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			
-			if (idDocEscolha.equals("1"))
+			atualizarMarcas(false, mob);
+			
+			if (idDocEscolha.equals("1")){
 				encerrarVolumeAutomatico(cadastrante, lotaCadastrante, mov.getExMobilRef(), dtMov);
+			}
 
 			Set<ExMovimentacao> movs = mob.getTransferenciasPendentesDeDevolucao(mob);
 			if(!movs.isEmpty())
 				removerPendenciaDeDevolucao(movs, mob);
 						
 			concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
-
+			
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao juntar documento.", 0, e);

@@ -31,6 +31,10 @@ public class ExPapel extends AbstractExPapel {
 	final static public long PAPEL_FISCAL_ADMINISTRATIVO = 3;
 	
 	final static public long PAPEL_FISCAL_TECNICO = 4;
+	
+	final static public long PAPEL_LIQUIDANTE = 5;
+	
+	final static public long PAPEL_DIRETOR_COORDENADOR = 6;
 
 	public String getComoNomeDeVariavel() {
 		String s = getDescPapel().trim().toLowerCase();
@@ -39,7 +43,7 @@ public class ExPapel extends AbstractExPapel {
 		for (char ch : s.toCharArray()) {
 			if (ch >='a' && ch <='z') {
 				sb.append(ch);
-			} else if (ch == ' ' || ch == '-'){
+			} else if (ch == ' ' || ch == '-' || ch == '/'){
 				sb.append('_');
 			}
 		}

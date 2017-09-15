@@ -34,7 +34,7 @@ public class ExPapel extends AbstractExPapel {
 	
 	final static public long PAPEL_LIQUIDANTE = 5;
 	
-	final static public long PAPEL_DIRETOR_COORDENADOR = 6;
+	final static public long PAPEL_AUTORIZADOR = 6;
 
 	public String getComoNomeDeVariavel() {
 		String s = getDescPapel().trim().toLowerCase();

@@ -23,7 +23,7 @@
 							De:
 						</td>
 						<td>
-							${cadastrante.lotacao.descricao} - ${cadastrante.descricao}
+							${lotaTitular.descricao} - ${cadastrante.descricao}
 						</td>
 						<input type="hidden" name="sigla" id="pessoa" value="${cadastrante.sigla}" />
 					</tr>
@@ -218,7 +218,7 @@
 					</c:forEach>
 				</table>
 			</div>
-			<input type="hidden" name="campoDe" id="campoDe" value="${cadastrante.lotacao.descricao} - ${cadastrante.descricao}" />
+			<input type="hidden" name="campoDe" id="campoDe" value="${lotaTitular.descricao} - ${cadastrante.descricao}" />
 			<input type="hidden" name="campoPara" id="campoPara" value="${mov.respString}" />
 			<input type="hidden" name="campoData" id="campoData" value="${mov.dtRegMovDDMMYYYYHHMMSS}" />
 			<input type="submit" value="Gerar Protocolo" class="gt-btn-medium gt-btn-left" />

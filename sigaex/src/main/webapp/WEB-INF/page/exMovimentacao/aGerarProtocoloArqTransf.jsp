@@ -20,7 +20,7 @@
 					<tr>
 						<tr>
 							<td>De:</td>
-							<td>${cadastrante.lotacao.descricao} -
+							<td>${lotaTitular.descricao} -
 								${cadastrante.descricao}</td>
 						</tr>
 						<tr>

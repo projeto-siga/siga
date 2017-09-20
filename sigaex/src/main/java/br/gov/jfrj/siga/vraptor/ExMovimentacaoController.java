@@ -677,7 +677,7 @@ public class ExMovimentacaoController extends ExController {
 			result.include("campoPara", mov.getRespString());
 			result.include("campoData", mov.getDtRegMovDDMMYYHHMMSS());
 			result.include("cadastrante", mov.getCadastrante());
-			result.include("lotaTitular", this.getLotaTitular());
+			result.include("lotaTitular", mov.getLotaTitular());
 
 			/*result.use(Results.page()).forwardTo(
 					"/WEB-INF/page/exMovimentacao/aGerarProtocolo.jsp");*/

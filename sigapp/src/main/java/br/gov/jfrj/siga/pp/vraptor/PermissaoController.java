@@ -34,7 +34,7 @@ public class PermissaoController extends PpController {
 		String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
 		String lotacaoSessao = getCadastrante().getLotacao().getSiglaCompleta();
 		UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao , sesb_pessoaSessao);
-		if ((objUsuario !=null) && ( (lotacaoSessao.trim().equals("T2SEADDA")||lotacaoSessao.trim().equals("T2SESIA") || lotacaoSessao.trim().equals("T2SESGET")) )){ //pode excluir a permissao
+		if ((objUsuario !=null) && ((lotacaoSessao.trim().equals("T2COSISA"))) ){ //pode excluir a permissao estando lotado na COSISA
 			List<UsuarioForum> listPermitidos = new ArrayList<UsuarioForum>();
 			if((matricula_proibida!=null) && (!matricula_proibida.isEmpty()) && (sesb_proibida!=null) && (!sesb_proibida.isEmpty()) ){ // deleta permissao
 				try{
@@ -73,8 +73,8 @@ public class PermissaoController extends PpController {
 		if (objUsuario == null) {
 			redirecionaPaginaErro("Usu&aacute;rio sem permiss&atilde;o." , null);
 		}
-		if (((lotacaoSessao.trim().equals("T2SEADDA") || lotacaoSessao.trim().equals("T2SESIA") || lotacaoSessao.trim().equals("T2SESGET")))){
-			// Pode incluir permissao de usuario. Estando lotado na CSIS OU SESIA 
+		if (lotacaoSessao.trim().equals("T2COSISA")){
+			// Pode incluir permissao de usuario. Estando lotado na COSISA 
 			if((matricula_permitida!=null) && (sesb_permitida!=null) && (nome_permitido!=null) && (forum_permitido!=null) && (!matricula_permitida.isEmpty()) && (!sesb_permitida.isEmpty()) && (!nome_permitido.isEmpty()) && (!forum_permitido.isEmpty())){
 				// Estando os parametros presentes. Prossegue.
 				Foruns atribForum = Foruns.findByCodigo(forum_permitido);

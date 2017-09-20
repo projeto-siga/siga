@@ -556,6 +556,60 @@ public class AgendamentoController extends PpController {
             exception();
         }
     }
+    
+    @Path("/agendadas")
+    public void agendadas(String data) {
+        // pega matricula do usuario do sistema
+        String matriculaSessao = getCadastrante().getMatricula().toString();
+        String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
+        // busca a permissao do usuario
+        UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao, sesb_pessoaSessao);
+        // verifica se existe permissao
+        if (objUsuario != null) {
+            List<Agendamentos> listAgendamentos = new ArrayList<Agendamentos>();
+            // verifica se o formulario submeteu alguma data
+            if (data != null) {
+                // Busca os agendamentos da data do formulario
+                listAgendamentos = Agendamentos.AR.find("data_ag = to_date('" + data + "','dd-mm-yy') order by hora_ag , cod_local").fetch();
+                // filtra os locais do forum do usuario
+                List<Locais> listLocais = Locais.AR.find("cod_forum='" + objUsuario.getForumFk().getCod_forum() + "'").fetch();
+                // Verifica se existe local (sala) naquele forum do usuario
+                if (!listAgendamentos.isEmpty()) {
+                    // para cada agendamento, inlcui na lista a sala que eh do
+                    // forum daquele usuario
+                    List<Agendamentos> auxAgendamentos = new ArrayList<Agendamentos>();
+                    for (Integer i = 0; i < listAgendamentos.size(); i++) {
+                        // pega o agendamento
+                        for (Integer ii = 0; ii < listLocais.size(); ii++) {
+                            // varre os locais do forum
+                            if (listAgendamentos.get(i).getLocalFk().getCod_local() == listLocais.get(ii).getCod_local()) {
+                                // pertence a lista de agendamentos do forum do usuario
+                                auxAgendamentos.add((Agendamentos) listAgendamentos.get(i));
+                            }
+                        }
+                    }
+                    listLocais.clear();
+                    listAgendamentos.clear();
+                    listAgendamentos.addAll(auxAgendamentos);
+                    auxAgendamentos.clear();
+                }
+
+            }
+            if (!listAgendamentos.isEmpty()) {
+                List <Peritos> listPeritos = new ArrayList<Peritos>();
+                listPeritos = Peritos.AR.findAll();
+                // excluir do arraylist, os peritos que nao possuem agendamentos nesta data.
+                result.include("listAgendamentos", listAgendamentos);
+                result.include("listPeritos", listPeritos);
+            } else {
+
+            }
+
+        } else {
+            exception();
+        }
+    }
+
 
     @Path("/atualiza")
     public void atualiza(String cod_sala, String data_ag, String hora_ag) {
@@ -568,7 +622,6 @@ public class AgendamentoController extends PpController {
     		Locais objSala = Locais.AR.find("cod_forum='" + objUsuario.getForumFk().getCod_forum() + "' and cod_local='" + cod_sala + "'").first(); // isso nao da erro no caso de retorno vazio?
     		String sala_ag = objSala.getLocal();
     		String lotacaoSessao = getCadastrante().getLotacao().getSiglaCompleta();
-    		//System.out.println(lotacaoSessao);
     		Agendamentos objAgendamento = Agendamentos.AR.find("cod_local='" + cod_sala + "' and data_ag = to_date('" + data_ag + "','yy-mm-dd') and hora_ag='" + hora_ag + "'").first();
     		String matricula_ag = objAgendamento.getMatricula();
     		String sesb_ag = objAgendamento.getSesb_pessoa();

@@ -32,7 +32,7 @@
 		</li>
 		<li><a href="${linkTo[AgendamentoController].amanha}">Marcadas Amanh&atilde;</a>
 		</li>
-		<li><a href="${linkTo[AgendamentoController].excluir}">Agendadas</a>
+		<li><a href="${linkTo[AgendamentoController].agendadas}">Agendadas</a>
 		</li>
 		<li><a href="${linkTo[AgendamentoController].imprime}">Imprime agendamentos</a>
 		</li>

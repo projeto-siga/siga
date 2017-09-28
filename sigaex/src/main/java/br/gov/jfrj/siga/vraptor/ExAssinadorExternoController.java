@@ -100,7 +100,7 @@ public class ExAssinadorExternoController extends ExController {
 		try {
 			JSONObject req = getJsonReq(request);
 
-			assertPassword(req);
+			assertPassword();
 
 			String urlapi = req.getString("urlapi");
 			String sCpf = req.getString("cpf");
@@ -158,7 +158,7 @@ public class ExAssinadorExternoController extends ExController {
 	public void assinadorExternoPdf(String id) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
-			assertPassword(req);
+			assertPassword();
 
 			PdfData pdfd = getPdf(id);
 
@@ -204,23 +204,17 @@ public class ExAssinadorExternoController extends ExController {
 		return pdfd;
 	}
 
-	@Get("/public/app/assinador-externo/doc/{id}/hash")
-	public void assinadorExternoHash(String id) throws Exception {
+	@Get("/app/assinador-popup/doc/{id}/hash")
+	public void assinadorPopupHash(String id) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
-			assertPassword(req);
 
 			PdfData pdfd = getPdf(id);
 
 			ExAssinadorExternoHash resp = new ExAssinadorExternoHash();
 
-			// Descomentar para forçar PKCS7
-			// resp.setPolicy("PKCS7");
-			// resp.setDoc(BlucService.bytearray2b64(pdf));
-
 			resp.setSha1(BlucService.bytearray2b64(BlucService.calcSha1(pdfd.pdf)));
 			resp.setSha256(BlucService.bytearray2b64(BlucService.calcSha256(pdfd.pdf)));
-			resp.setSecret(pdfd.secret);
 
 			jsonSuccess(resp);
 		} catch (Exception e) {
@@ -228,12 +222,28 @@ public class ExAssinadorExternoController extends ExController {
 		}
 	}
 
-	@Put("/public/app/assinador-externo/doc/{id}/sign")
-	public void assinadorExternoSave(String id) throws Exception {
+	@Get("/public/app/assinador-externo/doc/{id}/hash")
+	public void assinadorExternoHash(String id) throws Exception {
 		try {
+			assertPassword();
 			JSONObject req = getJsonReq(request);
 
-			assertPassword(req);
+			PdfData pdfd = getPdf(id);
+
+			ExAssinadorExternoHash resp = new ExAssinadorExternoHash();
+
+			resp.setSha1(BlucService.bytearray2b64(BlucService.calcSha1(pdfd.pdf)));
+			resp.setSha256(BlucService.bytearray2b64(BlucService.calcSha256(pdfd.pdf)));
+			resp.setSecret(pdfd.secret);
+		} catch (Exception e) {
+			jsonError(e);
+		}
+	}
+
+	@Put("/app/assinador-popup/doc/{id}/sign")
+	public void assinadorPopupSave(String id) throws Exception {
+		try {
+			JSONObject req = getJsonReq(request);
 
 			String envelope = req.getString("envelope");
 			String time = req.getString("time");
@@ -250,23 +260,25 @@ public class ExAssinadorExternoController extends ExController {
 
 			ExMobil mob = Documento.getMobil(sigla);
 			ExMovimentacao mov = Documento.getMov(mob, sigla);
-			
-			DpPessoa cadastrante = null;
-			List<DpPessoa> pessoas = ExDao.getInstance().consultarPessoasAtivasPorCpf(cpf);
-			for (DpPessoa p : pessoas) {
-				if (mov != null && mov.getResp() != null) {
-					if (p.equivale(mov.getResp())) {
+
+			DpPessoa cadastrante = getCadastrante();
+			if (cadastrante == null) {
+				List<DpPessoa> pessoas = ExDao.getInstance().consultarPessoasAtivasPorCpf(cpf);
+				for (DpPessoa p : pessoas) {
+					if (mov != null && mov.getResp() != null) {
+						if (p.equivale(mov.getResp())) {
+							cadastrante = p;
+							break;
+						}
+					} else if (p.equivale(mob.doc().getSubscritor())) {
 						cadastrante = p;
-						break;
 					}
-				} else if (p.equivale(mob.doc().getSubscritor())) {
-					cadastrante = p;
 				}
+				if (cadastrante == null && pessoas.size() >= 1)
+					cadastrante = pessoas.get(0);
+				if (cadastrante == null && mov == null)
+					throw new Exception("Não foi possível localizar a pessoa que representa o subscritor.");
 			}
-			if (cadastrante == null && pessoas.size() >= 1)
-				cadastrante = pessoas.get(0);
-			if (cadastrante == null && mov == null)
-				throw new Exception("Não foi possível localizar a pessoa que representa o subscritor.");
 
 			String msg = null;
 
@@ -275,14 +287,14 @@ public class ExAssinadorExternoController extends ExController {
 				long tpMov = autenticar ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
 						: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO;
 
-				Ex.getInstance().getBL().assinarMovimentacao(cadastrante, lotaCadastrante, mov, dt, assinatura,
-						null, tpMov);
+				Ex.getInstance().getBL().assinarMovimentacao(cadastrante, lotaCadastrante, mov, dt, assinatura, null,
+						tpMov);
 				msg = "OK";
 			} else if (mob != null) {
 				long tpMov = autenticar ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
 						: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
-				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, lotaCadastrante, mob.doc(), dt,
-						assinatura, null, tpMov);
+				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, lotaCadastrante, mob.doc(), dt, assinatura,
+						null, tpMov);
 				if (msg != null)
 					msg = "OK: " + msg;
 				else
@@ -298,6 +310,16 @@ public class ExAssinadorExternoController extends ExController {
 		} catch (Exception e) {
 			jsonError(e);
 		}
+	}
+
+	@Put("/public/app/assinador-externo/doc/{id}/sign")
+	public void assinadorExternoSave(String id) throws Exception {
+		try {
+			assertPassword();
+		} catch (Exception e) {
+			jsonError(e);
+		}
+		assinadorPopupSave(id);
 	}
 
 	private class Signature {
@@ -323,7 +345,7 @@ public class ExAssinadorExternoController extends ExController {
 		try {
 			JSONObject req = getJsonReq(request);
 
-			assertPassword(req);
+			assertPassword();
 
 			if (id == null)
 				throw new Exception("Id não informada.");
@@ -376,7 +398,7 @@ public class ExAssinadorExternoController extends ExController {
 		try {
 			JSONObject req = getJsonReq(request);
 
-			assertPassword(req);
+			assertPassword();
 
 			if (ref == null)
 				throw new Exception("Ref. não informada.");
@@ -397,7 +419,7 @@ public class ExAssinadorExternoController extends ExController {
 		}
 	}
 
-	private void assertPassword(JSONObject req) throws Exception {
+	private void assertPassword() throws Exception {
 		String pwd = SigaExProperties.getAssinadorExternoPassword();
 		if (pwd != null && !pwd.equals(this.request.getHeader("Authorization")))
 			throw new Exception("Falha de autenticação.");

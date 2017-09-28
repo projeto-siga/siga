@@ -85,6 +85,126 @@ function AssinarDocumentos(copia, politica) {
 }
 
 //
+// Provider: AssijusPopup
+//
+var providerAssijusPopup = {
+	nome : 'AssijusPopup',
+	list : [],
+	errormsg : [],
+
+	testar : function() {
+		if (produzirAssinaturaDigital === undefined)
+			return false;
+		// please note,
+		// that IE11 now returns undefined again for window.chrome
+		// and new Opera 30 outputs true for window.chrome
+		// and new IE Edge outputs to true now for window.chrome
+		// and if not iOS Chrome check
+		// so use the below updated condition
+		var isChromium = window.chrome, winNav = window.navigator, vendorName = winNav.vendor, isOpera = winNav.userAgent
+				.indexOf("OPR") > -1, isIEedge = winNav.userAgent
+				.indexOf("Edge") > -1, isIOSChrome = winNav.userAgent
+				.match("CriOS");
+
+		if (isIOSChrome) {
+			// is Google Chrome on IOS
+		} else if (isChromium !== null && isChromium !== undefined
+				&& vendorName === "Google Inc." && isOpera == false
+				&& isIEedge == false) {
+			// is Google Chrome
+			return true;
+		} else {
+			// not Google Chrome
+		}
+		return false;
+	},
+
+	inicializar : function() {
+		this.list = [];
+		return "OK";
+	},
+
+	assinar : function(signable) {
+		var item = {
+			id : signable.id,
+			system : "sigadocsigner",
+			extra : signable.extra,
+			code : signable.code,
+			descr : signable.descr,
+			kind : signable.kind,
+			origin : "Siga-Doc"
+		}
+		this.list.push(item);
+		return;
+	},
+
+	concluir : function(urlRedirect) {
+		var parent = this;
+		produzirAssinaturaDigital({
+			ui: 'bootstrap-3',
+
+			docs: this.list,
+			
+			errormsg: [],
+
+			hashCallback: function(id, cont) {
+				console.log(id, 'hash')
+				var errormsg = this.errormsg;
+				$.ajax({
+					url : "/sigaex/app/assinador-popup/doc/" + id + "/hash",
+					type : "GET",
+					async : false,
+					success : function(xhr) {
+						console.log(xhr)
+						cont({sha1: xhr.sha1, sha256: xhr.sha256});
+					},
+					error : function(xhr) {
+						errormsg.push("Erro calculando hash de documento. " + xhr.responseJSON.errormsg);
+						cont();
+					}
+				});
+			},
+			
+			saveCallback: function(id, sign, cont) {
+				console.log(id, 'sign')
+				console.log(sign)
+				var errormsg = this.errormsg;
+				$.ajax({
+					url : "/sigaex/app/assinador-popup/doc/" + id + "/sign",
+					type : "PUT",
+					contentType: "application/json",
+					data : JSON.stringify(sign),
+					async : false,
+					success : function(xhr) {
+						console.log(xhr)
+						cont({success: true});
+					},
+					error : function(xhr) {
+						console.log(xhr);
+						errormsg.push("Erro na gravação da assinatura. " + xhr.responseJSON.errormsg);
+						cont();
+					}
+				});
+				var success = true;
+				cont({success: success});
+			},
+			
+			errorCallback: function(id, err, cont) {
+				result = "Erro na gravação da assinatura. " + err;
+				cont();
+			},
+			
+			endCallback: function() {
+				if (this.errormsg.length > 0)
+					window.alert(this.errormsg);
+				else
+					window.location.href = urlRedirect;
+			}
+		});
+	}
+}
+
+//
 // Provider: Assijus
 //
 var providerAssijus = {
@@ -149,9 +269,9 @@ var providerAssijus = {
 			},
 			async : false,
 			success : function(xhr) {
-				window.location.href = parent.endpoint + "/?endpointautostart=true&endpointlistkey="
-						+ xhr.key + "&endpointcallback="
-						+ encodeURI(urlRedirect);
+				window.location.href = parent.endpoint
+						+ "/?endpointautostart=true&endpointlistkey=" + xhr.key
+						+ "&endpointcallback=" + encodeURI(urlRedirect);
 			},
 			error : function(xhr) {
 				result = "Erro na gravação da assinatura. " + xhr.responseText;
@@ -578,7 +698,7 @@ function Conteudo(url) {
 	return "Não foi possível obter o conteúdo do documento a ser assinado.";
 }
 
-var providers = [ providerAssijus, providerIttruAx, providerIttruCAPI ];
+var providers = [ providerAssijusPopup, providerAssijus, providerIttruAx, providerIttruCAPI ];
 
 //
 // Processamento de assinaturas em lote, com progress bar
@@ -689,7 +809,7 @@ function ExecutarAssinarDocumentos(Copia) {
 
 		process.push("Copia=" + Copia + ";");
 		if (!o.usePassword) {
-			if (provider != providerAssijus) {
+			if (provider != providerAssijusPopup && provider != providerAssijus) {
 				process
 						.push("gNome='"
 								+ o.nome
@@ -778,11 +898,11 @@ function ExecutarAssinarDocumentos(Copia) {
 					+ o.urlPostPassword + "';");
 
 			process.push(function() {
-				var id = o.nome?o.nome.split(':')[1]:null;
-				var DadosDoPost = "id=" + id
-						+ "&sigla=" + o.nome + "&nomeUsuarioSubscritor="
-						+ gLogin + "&senhaUsuarioSubscritor=" + gPassword
-						+ "&copia=" + gAutenticar;
+				var id = o.nome ? o.nome.split(':')[1] : null;
+				var DadosDoPost = "id=" + id + "&sigla=" + o.nome
+						+ "&nomeUsuarioSubscritor=" + gLogin
+						+ "&senhaUsuarioSubscritor=" + gPassword + "&copia="
+						+ gAutenticar;
 				Status = GravarAssinatura(gUrlPostPassword, DadosDoPost);
 				gRet = Status;
 				return Status;
@@ -790,7 +910,7 @@ function ExecutarAssinarDocumentos(Copia) {
 		}
 	}
 
-	if (provider != providerAssijus) {
+	if (provider != providerAssijusPopup && provider != providerAssijus) {
 		process.push(function() {
 			if (gRet == undefined)
 				return;

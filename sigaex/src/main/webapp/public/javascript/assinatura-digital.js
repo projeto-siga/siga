@@ -93,7 +93,7 @@ var providerAssijusPopup = {
 	errormsg : [],
 
 	testar : function() {
-		if (produzirAssinaturaDigital === undefined)
+		if (window.produzirAssinaturaDigital === undefined)
 			return false;
 		// please note,
 		// that IE11 now returns undefined again for window.chrome
@@ -140,7 +140,7 @@ var providerAssijusPopup = {
 
 	concluir : function(urlRedirect) {
 		var parent = this;
-		produzirAssinaturaDigital({
+		window.produzirAssinaturaDigital({
 			ui: 'bootstrap-3',
 
 			docs: this.list,

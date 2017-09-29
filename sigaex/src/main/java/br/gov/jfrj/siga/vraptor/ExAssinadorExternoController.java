@@ -235,6 +235,8 @@ public class ExAssinadorExternoController extends ExController {
 			resp.setSha1(BlucService.bytearray2b64(BlucService.calcSha1(pdfd.pdf)));
 			resp.setSha256(BlucService.bytearray2b64(BlucService.calcSha256(pdfd.pdf)));
 			resp.setSecret(pdfd.secret);
+
+			jsonSuccess(resp);
 		} catch (Exception e) {
 			jsonError(e);
 		}

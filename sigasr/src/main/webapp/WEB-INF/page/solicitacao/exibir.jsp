@@ -88,12 +88,11 @@
 						
 					    var wordsArray = descricao.innerHTML.split(/(\s+)/);
 					    var temStringLonga = false;
-						for(var i=0; i < wordsArray.length; i++){
-				    		if (wordsArray[i].length > 50) {
+						for(var i=0; i < wordsArray.length; i++){						
+				    		if (wordsArray[i].length > 50 && wordsArray[i].substr(0,7) != "http://" && wordsArray[i].substr(0,8) != "https://") {
 				    			wordsArray[i] = formatStr(wordsArray[i],60);
 				    			temStringLonga = true;	    			
 							}
-				    		
 						}
 						if(temStringLonga){
 							descricao.innerHTML = wordsArray.join(" ");

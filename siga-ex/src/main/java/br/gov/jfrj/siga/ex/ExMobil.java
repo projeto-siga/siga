@@ -573,7 +573,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 */
 
 	/**
-	 * Se esse documento estiver juntado, retorna o pai Senão, retorna null
+	 * Se esse documento estiver juntado, retorna o pai Senão, retorna ele mesmo
 	 * 
 	 */
 	public ExMobil getMobilPrincipal() {
@@ -1333,7 +1333,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		return set;
 	}
-
+	
 	/**
 	 * Retorna, num Set, os móbiles que tenham sido juntados a este móbil, de
 	 * modo recursivo ou não, conforme parâmetro.

@@ -2424,11 +2424,11 @@ public class ExBL extends CpBL {
 
 				mov.setLotaResp(ultMovPai.getLotaResp());
 				mov.setResp(ultMovPai.getResp());
-
-				if (mobPai.isNumeracaoUnicaAutomatica()) {
+				
+				if (mobPai.getMobilPrincipal().isNumeracaoUnicaAutomatica()) {
 					List<ExArquivoNumerado> ans = mov.getExMobil()
 							.filtrarArquivosNumerados(null, true);
-					armazenarCertidaoDeDesentranhamento(mov, mobPai, ans,
+					armazenarCertidaoDeDesentranhamento(mov, mobPai.getMobilPrincipal(), ans,
 							textoMotivo);
 				}
 			} else {
@@ -2783,10 +2783,10 @@ public class ExBL extends CpBL {
 			mov.setDescrMov(textoMotivo);
 
 			if ((ExTipoMovimentacao.hasDocumento(movCancelar.getIdTpMov()))
-					&& movCancelar.getExMobil().isNumeracaoUnicaAutomatica()) {
+					&& movCancelar.getExMobil().getMobilPrincipal().isNumeracaoUnicaAutomatica()) {
 				List<ExArquivoNumerado> ans = mob.filtrarArquivosNumerados(
 						mov.getExMovimentacaoRef(), false);
-				armazenarCertidaoDeDesentranhamento(mov, mob, ans, textoMotivo);
+				armazenarCertidaoDeDesentranhamento(mov, mob.getMobilPrincipal(), ans, textoMotivo);
 				// if (ans.size() != 1)
 				// throw new AplicacaoException(
 				// "não foi possível obter a numeração única automática das

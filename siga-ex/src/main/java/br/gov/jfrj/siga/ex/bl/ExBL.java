@@ -921,7 +921,7 @@ public class ExBL extends CpBL {
 
 			mov.setPagPublicacao(pagPublicacao);
 
-			mov.setDescrMov("Documento disponibilizado no Diário");
+			mov.setDescrMov("Documento disponibilizado no Diário em " + FuncoesEL.getDataDDMMYYYY(dtMov));
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExMobil());

@@ -1478,7 +1478,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 			}
 			int j = mob.getDnmNumPrimeiraPagina();
 
-			removerDesentranhamentosQueNaoFazemParteDoDossie(list);
+//			removerDesentranhamentosQueNaoFazemParteDoDossie(list);
 					
 			for (ExArquivoNumerado an : list) {
 				an.setPaginaInicial(j);

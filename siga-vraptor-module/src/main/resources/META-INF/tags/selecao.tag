@@ -24,6 +24,7 @@
 <%@ attribute name="onblur" required="false"%>
 <%@ attribute name="prefix" required="false"%>
 <%@ attribute name="matricula" required="false"%>
+<%@ attribute name="email" required="false"%>
 
 <%@ attribute name="requiredValue" required="false" %>
 
@@ -98,10 +99,9 @@
 <c:set var="larguraPopup" value="600" />
 <c:set var="alturaPopup" value="400" />
 
-
 <script type="text/javascript">
 
-self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
+self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao, email) {
     try {
 		newwindow_${propriedade}.close();
     } catch (E) {
@@ -113,7 +113,7 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
 	<c:if test="${ocultardescricao != 'sim'}">
 		try {
 			document.getElementsByName('${inputNameTipoSel}.descricao')[0].value = descricao;
-			document.getElementById('${spanName}SelSpan').innerHTML = descricao;
+			document.getElementById('${spanName}SelSpan').innerHTML = descricao + " " + email;
 		} catch (E) {
 		}
 	</c:if>
@@ -177,12 +177,12 @@ self.popitup_${propriedade}${tipoSel} = function(sigla) {
 	return false;
 }
 
-self.resposta_ajax_${propriedade}${tipoSel} = function(response, d1, d2, d3) {
+self.resposta_ajax_${propriedade}${tipoSel} = function(response, d1, d2, d3, d4) {
 	var sigla = document.getElementsByName('${inputNameTipoSel}.sigla')[0].value;
     var data = response.split(';');
     if (data[0] == '1')
-	    return retorna_${propriedade}${tipoSel}(data[1], data[2], data[3]);
-    retorna_${propriedade}${tipoSel}('', '', '');
+	    return retorna_${propriedade}${tipoSel}(data[1], data[2], data[3], data[4]);
+    retorna_${propriedade}${tipoSel}('', '', '', '');
     
     <c:choose>
 		<c:when test="${buscar != 'nao'}">
@@ -197,11 +197,43 @@ self.resposta_ajax_${propriedade}${tipoSel} = function(response, d1, d2, d3) {
 self.ajax_${propriedade}${tipoSel} = function() {
 	var sigla = $.trim(document.getElementsByName('${inputNameTipoSel}.sigla')[0].value);
 	if (sigla == '') {
-		return retorna_${propriedade}${tipoSel}('', '', '');
+		return retorna_${propriedade}${tipoSel}('', '', '', '');
 	}
 	<c:choose>
 		<c:when test="${empty urlSelecionar}">
-			var url = '/${urlPrefix}/app${acaoBusca}/selecionar?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
+			var grupoDeEmaiPage = "/gi/grupoDeEmail/editar";
+			
+			if (window.location.href.match(grupoDeEmaiPage)) {
+		    	 document.getElementsByName('exibeEmail')[0].value = "true";
+			}
+			else {
+				document.getElementsByName('exibeEmail')[0].value = "false";
+			} 
+			var url = '/${urlPrefix}/app${acaoBusca}/selecionar?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}' + '&exibeEmail=' + document.getElementsByName('exibeEmail')[0].value;
+		</c:when>
+		<c:otherwise>
+			var url = '/${urlPrefix}/app${acaoBusca}/${urlSelecionar}?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
+		</c:otherwise>
+	</c:choose>
+	<c:if test="${not empty matricula}">
+	url = url + '&matricula=${matricula}';
+	</c:if>
+	url = url + '&sigla=' + sigla;
+	Siga.ajax(url, null, "GET", function(response){		
+		resposta_ajax_${propriedade}${tipoSel}(response);
+	});	
+
+}
+
+self.ajax2_${propriedade}${tipoSel} = function() {
+	alert("here");
+	var sigla = $.trim(document.getElementsByName('${inputNameTipoSel}.sigla')[0].value);
+	if (sigla == '') {
+		return retorna_${propriedade}${tipoSel}('');
+	}
+	<c:choose>
+		<c:when test="${empty urlSelecionar}">
+			var url = '/${urlPrefix}/app${acaoBusca}/selecionarEmail?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
 		</c:when>
 		<c:otherwise>
 			var url = '/${urlPrefix}/app${acaoBusca}/${urlSelecionar}?propriedade=${propriedade}${tipoSel}'+'${selecaoParams}';
@@ -238,6 +270,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 
 <input type="hidden" name="req${inputNameTipoSel}" value="" id="formulario_req${inputNameTipoSel}" />
 <input type="hidden" name="alterouSel" value="" id="alterouSel" />
+<input type="hidden" name="exibeEmail" value="false" id="exibeEmail" />
 <input type="hidden" name="${inputNameTipoSel}.id" value="<c:out value="${requestScope[propriedadeTipoSel].id}"/>" id="formulario_${inputNameTipoSel}_id"/>
 <input type="hidden" name="${inputNameTipoSel}.descricao" value="<c:out value="${requestScope[propriedadeTipoSel].descricao}"/>" id="formulario_${inputNameTipoSel}_descricao"/>
 <input type="hidden" name="${inputNameTipoSel}.buscar" value="<c:out value="${requestScope[propriedadeTipoSel].buscar}"/>" id="formulario_${inputNameTipoSel}_buscar"/>

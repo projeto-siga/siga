@@ -240,6 +240,10 @@ public class SigaExProperties extends ModeloPropriedade {
 		return getString("assinador.externo.password");
 	}
 	
+	public static String getUtilWebservicePassword() {
+		return getString("util.webservice.password");
+	}
+	
 	public static long getTamanhoMaxPDF() throws Exception{
 		String s = getString("siga.ex.tamanhoMaxPDF");
 		

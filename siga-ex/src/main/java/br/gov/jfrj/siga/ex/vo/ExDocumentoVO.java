@@ -486,7 +486,7 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeCriarSubprocesso(titular, lotaTitular, mob), null,
 				"mobilPaiSel.sigla=" + getSigla() + "&idForma="
-						+ mob.doc().getExFormaDocumento().getIdFormaDoc(),
+						+ mob.doc().getExFormaDocumento().getIdFormaDoc() + "&criandoSubprocesso=true",
 				null, null, null);
 
 		vo.addAcao(

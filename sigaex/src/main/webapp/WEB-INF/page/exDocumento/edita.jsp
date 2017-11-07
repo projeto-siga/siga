@@ -27,7 +27,7 @@
 		<div class="gt-content-box gt-for-table">
 			<form id="frm" name="frm" theme="simple" method="post" enctype="multipart/form-data">
 				<input type="hidden" id="idTamanhoMaximoDescricao" name="exDocumentoDTO.tamanhoMaximoDescricao" value="${exDocumentoDTO.tamanhoMaximoDescricao}" />
-				<input type="hidden" id="alterouModelo" name="exDocumentoDTO.alterouModelo" />
+				<input type="hidden" id="alterouModelo" name="exDocumentoDTO.alterouModelo" />				
 				<input type="hidden" id="clickSelect" name="clickSelect" />
 				<input type="hidden" name="postback" value="1" />
 				<input type="hidden" id="sigla" name="exDocumentoDTO.sigla" value="${exDocumentoDTO.sigla}" />
@@ -306,7 +306,7 @@
 
 
 					<c:if test='${ exDocumentoDTO.tipoDocumento != "externo"}'>
-						<tr style="display: ${(exDocumentoDTO.formasDoc).size() != 1 ? 'visible' : 'none'};">
+						<tr style="display: ${(exDocumentoDTO.formasDoc).size() != 1 || exDocumentoDTO.criandoSubprocesso ? 'visible' : 'none'};">
 							<td>Espécie:</td>
 							<td colspan="3">
 								<select  name="exDocumentoDTO.idFormaDoc" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
@@ -323,7 +323,7 @@
 						</tr>
 
 						<c:choose>
-							<c:when test="${possuiMaisQueUmModelo}">
+							<c:when test="${possuiMaisQueUmModelo || exDocumentoDTO.criandoSubprocesso}">
 								<tr>
 									<td>Modelo:</td>
 									<td colspan="3">

@@ -221,6 +221,8 @@ public class ExDocumentoDTO {
 	private Long idMobilAutuado;
 
 	private boolean autuando;
+	
+	private boolean criandoSubprocesso;
 
 	private String descrMov;
 	
@@ -274,11 +276,18 @@ public class ExDocumentoDTO {
 	public boolean getAutuando() {
 		return autuando;
 	}
+	
+	public boolean getCriandoSubprocesso() {
+		return criandoSubprocesso;
+	}
 
 	public void setAutuando(boolean autuando) {
 		this.autuando = autuando;
 	}
 
+	public void setCriandoSubprocesso(boolean criandoSubprocesso) {
+		this.criandoSubprocesso = criandoSubprocesso;
+	}
 	public String getAlerta() {
 		return alerta;
 	}

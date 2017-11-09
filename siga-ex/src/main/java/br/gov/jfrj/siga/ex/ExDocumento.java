@@ -715,7 +715,25 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 			//
 			// df1.applyPattern("dd/MM/yyyy");
 			// df1.applyPattern("dd 'de' MMMM 'de' yyyy.");
-			String s = Texto.maiusculasEMinusculas(getLocalidadeString());
+			String s, localidade = null;
+			
+			localidade = getLocalidadeString();
+			
+		    if (localidade.contains("-") ) {
+			
+		    	String p[] = localidade.split("-");   // p não existia até aqui. Se existir hífen, teremos 
+		    										  // p[0] = String antes do hífen e p[1] = String após o hífen
+
+
+		    	if ((p[1] != null) && (p[1].length() == 2)){     // 	se existe o hífen e p[1] parece ser uma UF ...
+		    		s = Texto.maiusculasEMinusculas(p[0]) + "-" + p[1]; // só transformamos a primeira substring
+		    	} else {               //
+		    		s = Texto.maiusculasEMinusculas(localidade);  // se não, a string s não se modifica
+		    	}
+		    } else {
+		    	s = Texto.maiusculasEMinusculas(localidade);
+		    }
+
 
 			return s + ", " + df1.format(getDtDoc()).toLowerCase();
 		} catch (Exception e) {

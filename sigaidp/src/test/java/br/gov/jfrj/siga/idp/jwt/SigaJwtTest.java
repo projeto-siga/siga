@@ -21,6 +21,7 @@ public class SigaJwtTest {
 	private static SigaJwtOptions options = new SigaJwtOptionsBuilder()
 		.setTTL(TTL_TOKEN)
 		.setPassword(PROVIDER_PASSWORD)
+		.setModulo("teste")
 		.build();
 		
 
@@ -31,7 +32,7 @@ public class SigaJwtTest {
 	
 	@Test
 	public void t002_obterNovoToken() throws SigaJwtProviderException{
-		tokenCriado = SigaJwtProvider.getInstance(options).criarToken(MATRICULA);
+		tokenCriado = SigaJwtProvider.getInstance(options).criarToken(MATRICULA,null,null,null);
 		assertNotNull(tokenCriado);
 	}
 	

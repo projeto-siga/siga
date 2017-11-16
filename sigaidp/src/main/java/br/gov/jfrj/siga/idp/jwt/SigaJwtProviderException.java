@@ -6,4 +6,8 @@ public class SigaJwtProviderException extends Exception {
 		super(mensagem,e);
 	}
 
+	public SigaJwtProviderException(String mensagem) {
+		super(mensagem);
+	}
+
 }

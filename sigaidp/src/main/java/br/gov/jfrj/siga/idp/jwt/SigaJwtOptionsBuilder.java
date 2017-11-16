@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.idp.jwt;
 
 public class SigaJwtOptionsBuilder {
 
+	private String modulo;
 	private String password;
 	private long ttlToken;
 	
@@ -15,8 +16,13 @@ public class SigaJwtOptionsBuilder {
 		return this;
 	}
 
+	public SigaJwtOptionsBuilder setModulo(String modulo) {
+		this.modulo = modulo;
+		return this;
+	}
+
 	public SigaJwtOptions build() {
-		return new SigaJwtOptions(password,ttlToken);
+		return new SigaJwtOptions(password,ttlToken,modulo);
 	}
 
 }

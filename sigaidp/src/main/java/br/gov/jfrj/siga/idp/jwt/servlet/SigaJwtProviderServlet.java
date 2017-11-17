@@ -1,0 +1,95 @@
+package br.gov.jfrj.siga.idp.jwt.servlet;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.picketlink.common.util.Base64;
+
+import br.gov.jfrj.siga.idp.jwt.SigaJwtProviderException;
+
+/**
+ * Servlet para troca de tokens JWT. Ainda não foi utilizado o swagger, pois as bibliotecas do siga são incompatíveis com a versão atual.
+ * @author kpf
+ *
+ */
+public class SigaJwtProviderServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private SigaJwtBL instance;
+
+	public SigaJwtProviderServlet() throws SigaJwtProviderException {
+		super();
+	}
+
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+	}
+
+	/**
+	 * O BODY pode conter
+	 *  perm - OPCIONAL. REGEX com permissões do siga-gi requeridas
+	 *  ttl - OPCIONAL. Tempo de vida do token em milissegundos
+	 *  mod - OBRIGATÓRIO. Módulo para o qual o token deve ser emitido. Essa informação é utilizada para saber a senha a ser utilizada para gerar a assinatura do token. 
+	 * {"perm":'.*',ttl:'xxx',"mod":"siga-wf"}
+	 */
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		
+		SigaJwtBL jwtBL = null;
+		String result = null;
+		if(request.getPathInfo().endsWith("/login")){
+			String b64 = extrairAuthorization(request);
+			String[] auth = new String(Base64.decode(b64)).split(":");
+			
+			String[] usuarioELotacao = auth[0].split("@");
+			String usuario = usuarioELotacao[0];
+			String lotacao = usuarioELotacao.length>1?usuarioELotacao[1]:null;
+			
+			String senha = auth[1];
+			String modulo = null;
+			String permissoes = null;
+			Integer ttl = null;
+			
+			String body = request.getReader().readLine();
+			if(body != null){
+				modulo = new JSONObject(body).optString("mod");
+				if(modulo == null || modulo.length() == 0){
+					throw new ServletException("O parâmetro mod deve ser informado no BODY do request. Ex: {\"mod\":\"siga-wf\"}");
+				}
+				permissoes = new JSONObject(body).optString("perm");
+				ttl = new JSONObject(body).optInt("ttl");
+				ttl = ttl > 0?ttl:null;
+			}
+			
+			try {
+				jwtBL = SigaJwtBL.getInstance(modulo);
+			} catch (SigaJwtProviderException e) {
+				throw new ServletException("Erro ao iniciar o provider", e);
+			}
+			
+			result = jwtBL.login(usuario,lotacao,senha,body,permissoes,ttl);
+			
+		}else if(request.getPathInfo().endsWith("/validar")){
+			String token = extrairAuthorization(request);;
+			result = jwtBL.validar(token);
+		}
+		
+		response.setContentType("text/plain");
+	    PrintWriter out = response.getWriter();
+	    out.println(result);
+
+		
+	}
+
+	private String extrairAuthorization(HttpServletRequest request) {
+		return request.getHeader("Authorization").replaceAll(".* ", "").trim();
+	}
+
+}

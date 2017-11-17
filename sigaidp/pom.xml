@@ -144,5 +144,16 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+		    <groupId>com.auth0</groupId>
+		    <artifactId>java-jwt</artifactId>
+		    <version>3.2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>siga-ws</artifactId>
+		</dependency>
+	
 	</dependencies>
 </project>

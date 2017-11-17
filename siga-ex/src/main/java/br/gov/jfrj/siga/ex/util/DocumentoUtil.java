@@ -18,7 +18,13 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.util;
 
-import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import br.gov.jfrj.siga.base.Texto;
 
 public class DocumentoUtil {
 
@@ -28,6 +34,29 @@ public class DocumentoUtil {
 	
 	public static String obterLetraViaPorCodigo(String codigo){
 		return obterLetraViaPorCodigo(Integer.parseInt(codigo));
+	}
+	
+	public static String obterDataExtenso(String localidade, Date dataDoc) {
+
+		// Forçando a ficar em pt_BR, antes a data aparecia na linguagem
+		// definida no servidor de aplicação (tomcat, jbos, etc.)
+		SimpleDateFormat df1 = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy.",
+				new Locale("pt", "BR"));
+		try {
+			Pattern p = Pattern.compile("(-..)$"); //hifen e dois últimos caracteres
+			Matcher m = p.matcher(Texto.maiusculasEMinusculas(localidade));
+			StringBuffer sb = new StringBuffer();
+			while (m.find()) {
+			    m.appendReplacement(sb, m.group(1).toUpperCase());
+			}
+			m.appendTail(sb);
+			
+			
+			return sb + ", " + df1.format(dataDoc).toLowerCase();
+		} catch (Exception e) {
+			return null;
+		}
+
 	}
 
 }

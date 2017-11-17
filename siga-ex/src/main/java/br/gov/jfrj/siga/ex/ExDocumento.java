@@ -67,6 +67,7 @@ import br.gov.jfrj.siga.ex.bl.ExAcesso;
 import br.gov.jfrj.siga.ex.util.AnexoNumeradoComparator;
 import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DocumentoFilhoComparator;
+import br.gov.jfrj.siga.ex.util.DocumentoUtil;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 import br.gov.jfrj.siga.ex.util.TipoMobilComparatorInverso;
@@ -705,40 +706,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	 * de fevereiro de 2010", por exemplo.
 	 */
 	public String getDtExtenso() {
-		// Forçando a ficar em pt_BR, antes a data aparecia na linguagem
-		// definida no servidor de aplicação (tomcat, jbos, etc.)
-		SimpleDateFormat df1 = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy.",
-				new Locale("pt", "BR"));
-		try {
-			// As linhas abaixo foram comentadas porque o formato já está
-			// definido na declaração da variável df1.
-			//
-			// df1.applyPattern("dd/MM/yyyy");
-			// df1.applyPattern("dd 'de' MMMM 'de' yyyy.");
-			String s, localidade = null;
-			
-			localidade = getLocalidadeString();
-			
-		    if (localidade.contains("-") ) {
-			
-		    	String p[] = localidade.split("-");   // p não existia até aqui. Se existir hífen, teremos 
-		    										  // p[0] = String antes do hífen e p[1] = String após o hífen
-
-
-		    	if ((p[1] != null) && (p[1].length() == 2)){     // 	se existe o hífen e p[1] parece ser uma UF ...
-		    		s = Texto.maiusculasEMinusculas(p[0]) + "-" + p[1]; // só transformamos a primeira substring
-		    	} else {               //
-		    		s = Texto.maiusculasEMinusculas(localidade);  // se não, a string s não se modifica
-		    	}
-		    } else {
-		    	s = Texto.maiusculasEMinusculas(localidade);
-		    }
-
-
-			return s + ", " + df1.format(getDtDoc()).toLowerCase();
-		} catch (Exception e) {
-			return null;
-		}
+		return DocumentoUtil.obterDataExtenso(getLocalidadeString(),getDtDoc());
 	}
 
 	/**

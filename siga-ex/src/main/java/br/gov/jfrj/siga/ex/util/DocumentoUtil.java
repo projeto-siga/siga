@@ -19,10 +19,10 @@
 package br.gov.jfrj.siga.ex.util;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import br.gov.jfrj.siga.base.Texto;
 
@@ -38,24 +38,40 @@ public class DocumentoUtil {
 	
 	public static String obterDataExtenso(String localidade, Date dataDoc) {
 
-		// Forçando a ficar em pt_BR, antes a data aparecia na linguagem
-		// definida no servidor de aplicação (tomcat, jbos, etc.)
-		SimpleDateFormat df1 = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy.",
-				new Locale("pt", "BR"));
-		try {
-			Pattern p = Pattern.compile("(-..)$"); //hifen e dois últimos caracteres
-			Matcher m = p.matcher(Texto.maiusculasEMinusculas(localidade));
-			StringBuffer sb = new StringBuffer();
-			while (m.find()) {
-			    m.appendReplacement(sb, m.group(1).toUpperCase());
-			}
-			m.appendTail(sb);
-			
-			
-			return sb + ", " + df1.format(dataDoc).toLowerCase();
-		} catch (Exception e) {
-			return null;
-		}
+        // Forçando a ficar em pt_BR, antes a data aparecia na linguagem
+        // definida no servidor de aplicação (tomcat, jbos, etc.)
+        SimpleDateFormat df1 = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy.",
+                                       new Locale("pt", "BR"));
+        try {
+                       // As linhas abaixo foram comentadas porque o formato já está
+                       // definido na declaração da variável df1.
+                       //
+                       // df1.applyPattern("dd/MM/yyyy");
+                       // df1.applyPattern("dd 'de' MMMM 'de' yyyy.");
+                       String s;
+
+                       List<String> uf = Arrays.asList("AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MT","MS","PA","PB","PE","PR","RN","RJ","RO","RR","RS","SE","SP","SC","TO");
+                       
+                       
+                      if (localidade.contains("-") ) {
+                       
+                              String p[] = localidade.split("-");      
+
+                              if ((p[p.length-1] != null) && (uf.contains(p[p.length-1].toUpperCase()))){                                                                                                                    
+                                   s = Texto.maiusculasEMinusculas(localidade.replace("-" + p[p.length-1],"")) + "-" + p[p.length-1].toUpperCase();     
+
+                              } else {               
+                                       s = Texto.maiusculasEMinusculas(localidade);  
+                              }
+                     } else {
+                               s = Texto.maiusculasEMinusculas(localidade);
+                     }
+
+
+                       return s + ", " + df1.format(dataDoc).toLowerCase();
+        } catch (Exception e) {
+                       return null;
+        }
 
 	}
 

@@ -27,7 +27,6 @@ import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -711,29 +710,36 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		SimpleDateFormat df1 = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy.",
 				new Locale("pt", "BR"));
 		try {
-			String m = getLocalidadeString();
-			String[] p = getLocalidadeString().split("-"); // p não existia até aqui. Se existir hífen, teremos p[n-2] = String antes do hífen e p[n-1] = String após o hífen
-			String s = null;
+			// As linhas abaixo foram comentadas porque o formato já está
+			// definido na declaração da variável df1.
+			//
+			// df1.applyPattern("dd/MM/yyyy");
+			// df1.applyPattern("dd 'de' MMMM 'de' yyyy.");
+			String s, localidade = null;
 			
-			List<String> uf = Arrays.asList("AC", "AL", "AM", "AP", "BA", "CE",
-					"DF", "ES", "GO", "MA", "MG", "MT", "MS", "PA", "PB", "PE",
-					"PR", "RN", "RJ", "RO", "RR", "RS", "SE", "SP", "SC", "TO");
+			localidade = getLocalidadeString();
+			
+		    if (localidade.contains("-") ) {
+			
+		    	String p[] = localidade.split("-");   // p não existia até aqui. Se existir hífen, teremos 
+		    										  // p[0] = String antes do hífen e p[1] = String após o hífen
 
-			if ((p[p.length - 1] != null) && (uf.contains(p[p.length - 1]))) { // se existe o hífen e p[p.size-1] é uma UF ...
-				s = Texto.maiusculasEMinusculas(m.replace("-"
-						+ p[p.length - 1], ""))
-						+ "-" + p[p.length - 1]; // ... mantém como escrevemos uma UF
-			} else {
-				s = Texto.maiusculasEMinusculas(m); // se não, a string s não se modifica
-			}
+
+		    	if ((p[1] != null) && (p[1].length() == 2)){     // 	se existe o hífen e p[1] parece ser uma UF ...
+		    		s = Texto.maiusculasEMinusculas(p[0]) + "-" + p[1]; // só transformamos a primeira substring
+		    	} else {               //
+		    		s = Texto.maiusculasEMinusculas(localidade);  // se não, a string s não se modifica
+		    	}
+		    } else {
+		    	s = Texto.maiusculasEMinusculas(localidade);
+		    }
+
 
 			return s + ", " + df1.format(getDtDoc()).toLowerCase();
 		} catch (Exception e) {
-			e.printStackTrace();
 			return null;
 		}
 	}
-
 
 	/**
 	 * Retorna a data do documento por extenso <b>sem localidade</b>, no formato

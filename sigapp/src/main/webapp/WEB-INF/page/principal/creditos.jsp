@@ -5,7 +5,7 @@
 	<br>
 	<div class="ui-accordion-header"  style="position:absolute;left:5%;">
 		<h3>
-			TRF2/STI/SITI/NUINT - vs.: SigaPP 2017.11.09
+			TRF2/STI/COSISA - vs.: SigaPP 2017.11.14
 		</h3>
 		<h5>
 			tscsis@jfrj.jus.br

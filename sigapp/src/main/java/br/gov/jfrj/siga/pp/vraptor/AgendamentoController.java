@@ -1,5 +1,4 @@
 package br.gov.jfrj.siga.pp.vraptor;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -331,12 +330,17 @@ public class AgendamentoController extends PpController {
 				EntityManager em = emf.createEntityManager();
 				  
 				em.getTransaction().begin();
+				// persiste o lote de horários 
 				for (int i = 0; i < lote; i++) {
+					System.out.println("Hora a persistir: " + hrAux);
+					if(hrAux.trim().length() < 2){
+						//acerta o tamanho do conteúdo da hora de hrAux
+						hrAux="0"+hrAux; 
+					}
 					objAgendamento.setHora_ag(hrAux + minAux);
 					em.persist(objAgendamento);
 					em.flush();
 		            em.clear();
-		            
 					minAux = String.valueOf(Integer.parseInt(minAux)
 							+ auxLocal.getIntervalo_atendimento());
 					if (Integer.parseInt(minAux) >= 60) {
@@ -353,14 +357,15 @@ public class AgendamentoController extends PpController {
 			} else {
 				resposta = "N&atilde;o Ok.";
 			}
-		} catch (Exception e) {
+		} catch(Exception e) {
 			// rollback transaction, que segundo o Da Rocha eh automatico; ocorre em qualquer erro
-			e.printStackTrace();
+			//e.printStackTrace();
 			String erro = e.getMessage();
+			System.out.println("Mensagem de erro: "+erro);
 			if (erro.substring(24, 52).equals("ConstraintViolationException")) {
 				resposta = "N&atilde;o Ok. O lote n&atilde;o foi agendado.";
 			} else {
-				resposta = "N&atilde;o Ok. Verifique se preencheu todos os campos do agendamento.";
+				resposta = "N&atilde;o Ok. Verifique se preencheu todos os campos do agendamento."+erro;
 			}
 		} finally {
 		    result.include("resposta", resposta);

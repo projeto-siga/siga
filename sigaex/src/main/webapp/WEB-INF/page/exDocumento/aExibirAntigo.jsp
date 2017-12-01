@@ -157,7 +157,7 @@
 											${mov.descrTipoMovimentacao}
 										</td>
 										<td align="left">
-											<siga:selecionado isVraptor="true" sigla="${mov.parte.lotaCadastrante.sigla}"
+											<siga:selecionado isVraptor="true" sigla="${mov.parte.lotaCadastrante.siglaOrgao}${mov.parte.lotaCadastrante.sigla}"
 												descricao="${mov.parte.lotaCadastrante.descricaoAmpliada}"
 												lotacaoParam="${mov.parte.lotaCadastrante.siglaOrgao}${mov.parte.lotaCadastrante.sigla}" />
 										</td>
@@ -168,7 +168,7 @@
 										</td>
 										<c:if test="${ (exibirCompleto == 'true')}">
 											<td align="left">
-												<siga:selecionado isVraptor="true" sigla="${mov.parte.lotaSubscritor.sigla}" 
+												<siga:selecionado isVraptor="true" sigla="${mov.parte.lotaSubscritor.siglaOrgao}${mov.parte.lotaSubscritor.sigla}" 
 													descricao="${mov.parte.lotaSubscritor.descricaoAmpliada}" 
 													lotacaoParam="${mov.parte.lotaSubscritor.siglaOrgao}${mov.parte.lotaSubscritor.sigla}" />
 											</td>
@@ -180,7 +180,7 @@
 											</td>
 										</c:if>
 										<td align="left">
-											<siga:selecionado isVraptor="true" sigla="${mov.parte.lotaResp.sigla}"
+											<siga:selecionado isVraptor="true" sigla="${mov.parte.lotaResp.siglaOrgao}${mov.parte.lotaResp.sigla}"
 												descricao="${mov.parte.lotaResp.descricaoAmpliada}" 
 												lotacaoParam="${mov.parte.lotaResp.siglaOrgao}${mov.parte.lotaResp.sigla}" />
 										</td>

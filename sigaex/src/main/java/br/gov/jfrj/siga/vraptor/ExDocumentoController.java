@@ -2174,32 +2174,24 @@ public class ExDocumentoController extends ExController {
 			return exDocumentoDTO.getModelos();
 		}
 		
-		if (exDocumentoDTO.getCriandoSubprocesso()){
-			ArrayList<ExModelo> modeloPai = new ArrayList<ExModelo>();
-		    modeloPai.add(0, exDocumentoDTO.getMobilPaiSel().getObjeto().getDoc().getExModelo());		
-			exDocumentoDTO.setModelos(modeloPai);	
-		}else {
-
-			ExFormaDocumento forma = null;
-			if (exDocumentoDTO.getIdFormaDoc() != null
-					&& exDocumentoDTO.getIdFormaDoc() != 0) {
-				forma = dao().consultar(exDocumentoDTO.getIdFormaDoc(),
-						ExFormaDocumento.class, false);
-			}
-
-		    String headerValue = null;
-			if (exDocumentoDTO.getTipoDocumento() != null
-					&& exDocumentoDTO.getTipoDocumento().equals("antigo")) {
-				headerValue = "Não Informado";
-			}
-			
-			exDocumentoDTO.setModelos(Ex
-							.getInstance()
-							.getBL()
-							.obterListaModelos(forma, exDocumentoDTO.getDespachando(),
-									headerValue, true, getTitular(), getLotaTitular(),
-									exDocumentoDTO.getAutuando()));
+		ExFormaDocumento forma = null;
+		if (exDocumentoDTO.getIdFormaDoc() != null
+				&& exDocumentoDTO.getIdFormaDoc() != 0) {
+			forma = dao().consultar(exDocumentoDTO.getIdFormaDoc(),
+					ExFormaDocumento.class, false);
 		}
+	    String headerValue = null;
+		if (exDocumentoDTO.getTipoDocumento() != null
+				&& exDocumentoDTO.getTipoDocumento().equals("antigo")) {
+			headerValue = "Não Informado";
+		}
+		
+		exDocumentoDTO.setModelos(Ex
+						.getInstance()
+						.getBL()
+						.obterListaModelos(forma, exDocumentoDTO.getDespachando(),
+								headerValue, true, getTitular(), getLotaTitular(),
+								exDocumentoDTO.getAutuando()));
 		
 		return exDocumentoDTO.getModelos();
 	}

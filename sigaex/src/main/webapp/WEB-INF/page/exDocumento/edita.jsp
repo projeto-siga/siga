@@ -323,7 +323,7 @@
 						</tr>
 
 						<c:choose>
-							<c:when test="${possuiMaisQueUmModelo || exDocumentoDTO.criandoSubprocesso}">
+							<c:when test="${possuiMaisQueUmModelo}">
 								<tr>
 									<td>Modelo:</td>
 									<td colspan="3">

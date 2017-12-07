@@ -101,7 +101,7 @@
 
 <script type="text/javascript">
 
-self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao, email) {
+self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao, complemento) {
     try {
 		newwindow_${propriedade}.close();
     } catch (E) {
@@ -113,7 +113,10 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao, email) {
 	<c:if test="${ocultardescricao != 'sim'}">
 		try {
 			document.getElementsByName('${inputNameTipoSel}.descricao')[0].value = descricao;
-			document.getElementById('${spanName}SelSpan').innerHTML = descricao + " " + email;
+			if(complemento.indexOf('@') != -1)
+				document.getElementById('${spanName}SelSpan').innerHTML = descricao + " " + complemento;
+			else
+				document.getElementById('${spanName}SelSpan').innerHTML = descricao;
 		} catch (E) {
 		}
 	</c:if>

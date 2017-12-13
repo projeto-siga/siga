@@ -1,5 +1,10 @@
 package br.gov.jfrj.siga.idp.jwt;
 
+/**
+ * Opcões de inicialização do provider
+ * @author kpf
+ *
+ */
 public class SigaJwtOptions {
 
 	private String password;

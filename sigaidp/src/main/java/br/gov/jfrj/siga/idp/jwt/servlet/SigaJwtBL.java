@@ -16,7 +16,11 @@ import br.gov.jfrj.siga.idp.jwt.SigaJwtProviderException;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 
-
+/**
+ * Contém a lógica de utilização do Provider
+ * @author kpf
+ *
+ */
 public class SigaJwtBL {
 
 	private static final String MODULO_SIGAIDP = "sigaidp";
@@ -28,17 +32,20 @@ public class SigaJwtBL {
 		
 		if(modulo == null){
 			modulo = MODULO_SIGAIDP;
-		}else{
-			try {
-				moduloPwd = Cp.getInstance().getProp().getJWTModuloPwd(modulo);
-				if (moduloPwd == null){
-					throw new SigaJwtProviderException("Senha do modulo indefinida. Defina a propriedade idp.jwt.modulo.pwd." + modulo);
-				}
-			} catch (Exception e) {
-				throw new SigaJwtProviderException("Não foi possível obter a senha do módulo " + modulo, e);
-			}			
 		}
 		
+		try {
+			moduloPwd = Cp.getInstance().getProp().getJWTModuloPwd(modulo);
+			if (moduloPwd == null) {
+				throw new SigaJwtProviderException(
+						"Senha do modulo indefinida. Defina a propriedade idp.jwt.modulo.pwd."
+								+ modulo);
+			}
+		} catch (Exception e) {
+			throw new SigaJwtProviderException(
+					"Não foi possível obter a senha do módulo " + modulo, e);
+		}
+				
 		SigaJwtOptions options = new SigaJwtOptionsBuilder()
 		.setPassword(moduloPwd)
 		.setModulo(modulo)

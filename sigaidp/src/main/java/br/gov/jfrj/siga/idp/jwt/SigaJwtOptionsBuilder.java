@@ -1,5 +1,10 @@
 package br.gov.jfrj.siga.idp.jwt;
 
+/**
+ * Constrói um SigaJwtOptions
+ * @author kpf
+ *
+ */
 public class SigaJwtOptionsBuilder {
 
 	private String modulo;

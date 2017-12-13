@@ -42,7 +42,9 @@ public class SigaJwtProviderServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		
-		SigaJwtBL jwtBL = null;
+		String modulo = extrairModulo(request);
+		SigaJwtBL jwtBL = inicializarJwtBL(modulo);
+		
 		String result = null;
 		if(request.getPathInfo().endsWith("/login")){
 			String b64 = extrairAuthorization(request);
@@ -53,27 +55,13 @@ public class SigaJwtProviderServlet extends HttpServlet {
 			String lotacao = usuarioELotacao.length>1?usuarioELotacao[1]:null;
 			
 			String senha = auth[1];
-			String modulo = null;
 			String permissoes = null;
 			Integer ttl = null;
 			
+			permissoes = extrairPermissoes(request);
+			ttl = extrairTTL(request);
+		
 			String body = request.getReader().readLine();
-			if(body != null){
-				modulo = new JSONObject(body).optString("mod");
-				if(modulo == null || modulo.length() == 0){
-					throw new ServletException("O parâmetro mod deve ser informado no BODY do request. Ex: {\"mod\":\"siga-wf\"}");
-				}
-				permissoes = new JSONObject(body).optString("perm");
-				ttl = new JSONObject(body).optInt("ttl");
-				ttl = ttl > 0?ttl:null;
-			}
-			
-			try {
-				jwtBL = SigaJwtBL.getInstance(modulo);
-			} catch (SigaJwtProviderException e) {
-				throw new ServletException("Erro ao iniciar o provider", e);
-			}
-			
 			result = jwtBL.login(usuario,lotacao,senha,body,permissoes,ttl);
 			
 		}else if(request.getPathInfo().endsWith("/validar")){
@@ -90,6 +78,48 @@ public class SigaJwtProviderServlet extends HttpServlet {
 
 	private String extrairAuthorization(HttpServletRequest request) {
 		return request.getHeader("Authorization").replaceAll(".* ", "").trim();
+	}
+	
+	private SigaJwtBL inicializarJwtBL(String modulo) throws IOException, ServletException{
+		SigaJwtBL jwtBL = null;
+		
+		try {
+			jwtBL = SigaJwtBL.getInstance(modulo);
+		} catch (SigaJwtProviderException e) {
+			throw new ServletException("Erro ao iniciar o provider", e);
+		}
+		
+		return jwtBL;
+	}
+	
+	private String extrairModulo(HttpServletRequest request) throws IOException, ServletException{
+		String body = request.getReader().readLine();
+		if(body!=null){
+			String modulo = new JSONObject(body).optString("mod");
+			if(modulo == null || modulo.length() == 0){
+				throw new ServletException("O parâmetro mod deve ser informado no BODY do request. Ex: {\"mod\":\"siga-wf\"}");
+			}
+			return modulo;
+		}
+		return null;
+	}
+	private Integer extrairTTL(HttpServletRequest request) throws IOException{
+		String body = request.getReader().readLine();
+		if(body!=null){
+			Integer ttl = new JSONObject(body).optInt("ttl");
+			ttl = ttl > 0?ttl:null;
+			return ttl;
+		}
+		
+		return null;
+	}
+	
+	private String extrairPermissoes(HttpServletRequest request) throws IOException{
+		String body = request.getReader().readLine();
+		if(body!=null){
+			return new JSONObject(body).optString("perm");
+		}
+		return null;
 	}
 
 }

@@ -35,6 +35,7 @@
  		<module>siga-dump</module> -->
  		<module>siga-integration-test</module>
     	<module>siga-ldap-cli</module>
+		<module>jwt-client</module>
   </modules>
 
 

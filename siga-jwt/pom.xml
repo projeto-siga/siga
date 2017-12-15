@@ -8,9 +8,9 @@
     <version>1.2-SNAPSHOT</version>
   </parent>
   <groupId>siga</groupId>
-  <artifactId>jwt-client</artifactId>
+  <artifactId>siga-jwt</artifactId>
   <version>1.0</version>
-  <name>jwt-client</name>
+  <name>siga-jwt</name>
   <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,5 +22,10 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+	<dependency>
+	    <groupId>com.auth0</groupId>
+	    <artifactId>java-jwt</artifactId>
+	    <version>3.2.0</version>
+	</dependency>
   </dependencies>
 </project>

@@ -1880,18 +1880,20 @@ Pede deferimento.</span><br/><br/><br/>
         <td width="100%">
         <table width="100%" border="0" cellpadding="2">
             <tr>
-                <td width="100%" align="center" valign="bottom"><img src="contextpath/imagens/brasao2.png" width="65" height="65" /></td>
+                <td width="100%" align="center" valign="bottom"><img src="${_pathBrasao}" width="65" height="65" /></td>
             </tr>
             <tr>
                 <td width="100%" align="center">
-                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">PODER JUDICIÁRIO</p>
+                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">${_tituloGeral}</p>
                 </td>
             </tr>
+            [#if _subtituloGeral?has_content]
             <tr>
                 <td width="100%" align="center">
-                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">JUSTIÇA FEDERAL</p>
+                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">${_subtituloGeral}</p>
                 </td>
             </tr>
+            [/#if]
             <tr>
                 <td width="100%" align="center">
                 <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
@@ -1915,14 +1917,16 @@ Pede deferimento.</span><br/><br/><br/>
         <table width="100%" border="0" cellpadding="2">
             <tr>
                 <td width="100%" align="center">
-                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">PODER JUDICIÁRIO</p>
+                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">${_tituloGeral}</p>
                 </td>
             </tr>
+            [#if _subtituloGeral?has_content]
             <tr>
                 <td width="100%" align="center">
-                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">JUSTIÇA FEDERAL</p>
+                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">${_subtituloGeral}</p>
                 </td>
             </tr>
+            [/#if]
             <tr>
                 <td width="100%" align="center">
                 <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
@@ -1942,20 +1946,22 @@ Pede deferimento.</span><br/><br/><br/>
 [#macro cabecalhoEsquerdaPrimeiraPagina]
 <table width="100%" align="left" border="0">
     <tr>
-        <td align="left" valign="bottom" width="15%"><img src="contextpath/imagens/brasao2.png" width="65" height="65" /></td>
+        <td align="left" valign="bottom" width="15%"><img src="${_pathBrasao}" width="65" height="65" /></td>
         <td align="left" width="1%"></td>
         <td width="84%">
         <table align="left" width="100%">
             <tr>
                 <td width="100%" align="left">
-                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">PODER JUDICIÁRIO</p>
+                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">${_tituloGeral}</p>
                 </td>
             </tr>
+            [#if _subtituloGeral?has_content]
             <tr>
-                <td width="100%" align="left">
-                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">JUSTIÇA FEDERAL</p>
+                <td width="100%" align="center">
+                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">${_subtituloGeral}</p>
                 </td>
             </tr>
+            [/#if]
             <tr>
                 <td width="100%" align="left">
                 <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
@@ -1979,14 +1985,16 @@ Pede deferimento.</span><br/><br/><br/>
         <table width="100%">
             <tr>
                 <td width="100%" align="left">
-                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">PODER JUDICIÁRIO</p>
+                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">${_tituloGeral}</p>
                 </td>
             </tr>
+            [#if _subtituloGeral?has_content]
             <tr>
-                <td width="100%" align="left">
-                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">JUSTIÇA FEDERAL</p>
+                <td width="100%" align="center">
+                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">${_subtituloGeral}</p>
                 </td>
             </tr>
+            [/#if]
             <tr>
                 <td width="100%" align="left">
                 <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
@@ -3355,19 +3363,21 @@ Pede deferimento.</span><br/><br/><br/>
             </tr>
             [#else]
             <tr>
-                <td width="100%" align="center" valign="bottom"><img src="contextpath/imagens/brasao2.png" width="65" height="65" /></td>
+                <td width="100%" align="center" valign="bottom"><img src="${_pathBrasao}" width="65" height="65" /></td>
             </tr>
             
             <tr>
                 <td width="100%" align="center">
-                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">PODER JUDICIÁRIO</p>
+                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 11pt;">${_tituloGeral}</p>
                 </td>
             </tr>
+            [#if _subtituloGeral?has_content]
             <tr>
                 <td width="100%" align="center">
-                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">JUSTIÇA FEDERAL</p>
+                <p style="font-family: Arial; font-size: 10pt; font-weight: bold;">${_subtituloGeral}</p>
                 </td>
             </tr>
+            [/#if]
             
             <tr>
                 <td width="100%" align="center">
@@ -3860,7 +3870,7 @@ Pede deferimento.</span><br/><br/><br/>
 							<col width="85%"></col>
 							<tr bgcolor="#FFFFFF">
 								<td width="15%" align="left" valign="bottom"><img
-									src="contextpath/imagens/brasao2.png" width="65" height="65" />
+									src="${_pathBrasao}" width="65" height="65" />
 								</td>
 								<td>
 									<table align="left" width="100%" bgcolor="#FFFFFF">
@@ -3914,3 +3924,6 @@ Pede deferimento.</span><br/><br/><br/>
 	[/@documento]													
 [/#macro]
 
+[#assign _pathBrasao = "contextpath/imagens/brasao2.png" /]
+[#assign _tituloGeral = "PODER JUDICIÁRIO" /]
+[#assign _subtituloGeral = "JUSTIÇA FEDERAL" /]

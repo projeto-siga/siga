@@ -250,8 +250,10 @@ public class ExModeloController extends ExSelecionavelController {
 					String filename = Texto.slugify(
 							(m.getNmDiretorio() != null ? m.getNmDiretorio().replace(
 									"/", SUBDIRETORIO)
-									+ SUBDIRETORIO : ""), true, false).replace(
-							SUBDIRETORIO, "/");
+									+ SUBDIRETORIO : ""), true, false);
+					if (filename == null)
+						filename = "";
+					filename = filename.replace(SUBDIRETORIO, "/");
 					if (filename.length() > 0)
 						filename += "/";
 					filename += m.getSubdiretorioENome();

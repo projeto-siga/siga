@@ -83,7 +83,7 @@
 							</select>
 						</td>
 						<td>
-							<span style="display: ${exDocumentoDTO.tipoDocumento != 'capturado' ? 'inline' : 'none'};">
+							<span style="display: ${exDocumentoDTO.tipoDocumento != 'capturado' and podeEditarData ? 'inline' : 'none'};">
 								<input type="hidden" name="campos" value="dtDocString" />
 									Data:
 								<input type="text" name="exDocumentoDTO.dtDocString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocString}" /> &nbsp;&nbsp; 

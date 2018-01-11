@@ -642,6 +642,9 @@ public class ExDocumentoController extends ExController {
 				.getSiglaCompleta() });
 
 		// result.include("param", exDocumentoDTO.getParamsEntrevista());
+		
+		boolean podeEditarData = Ex.getInstance().getComp()
+				.podeEditarData(getTitular(), getLotaTitular(), exDocumentoDTO.getModelo());
 
 		List<String> l = new ArrayList<String>();
 		for (String p : exDocumentoDTO.getParamsEntrevista().keySet()) {
@@ -666,7 +669,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getOrgaoExternoDestinatarioSel());
 		result.include("classificacaoSel", exDocumentoDTO.getClassificacaoSel());
 		result.include("tipoDestinatario", exDocumentoDTO.getTipoDestinatario());
-
+		result.include("podeEditarData", podeEditarData);
 		return exDocumentoDTO;
 	}
 

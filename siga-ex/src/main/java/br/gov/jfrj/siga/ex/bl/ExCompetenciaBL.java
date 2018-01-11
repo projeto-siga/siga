@@ -26,12 +26,16 @@ import java.util.Set;
 
 import org.hibernate.LockMode;
 
+import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpCompetenciaBL;
 import br.gov.jfrj.siga.dp.CpMarca;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.CpTipoLotacao;
+import br.gov.jfrj.siga.dp.DpCargo;
+import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
@@ -2266,6 +2270,23 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				CpTipoConfiguracao.TIPO_CONFIG_EDITAR);
 				
+	}
+
+	/**
+	 * Retorna se é possível editar a data de um documento, conforme configuração específica.
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mod
+	 * @return
+	 */
+	public boolean podeEditarData(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExModelo mod) {
+
+		return getConf().podePorConfiguracao(null, null, null, null, mod.getExFormaDocumento(),
+				mod, null, null, null, titular.getCargo(), titular.getOrgaoUsuario(),
+				titular.getFuncaoConfianca(), lotaTitular, titular, null, null, 
+				CpTipoConfiguracao.TIPO_CONFIG_EDITAR_DATA);
 	}
 
 	/**

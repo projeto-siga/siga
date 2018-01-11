@@ -1864,6 +1864,11 @@ public class ExBL extends CpBL {
 				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov,
 						subscritor, titular, mov);
 			}
+			
+			if (doc.getExMobilAutuado() != null) {
+				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc,
+						dtMov, cadastrante, cadastrante, mov);
+			}
 
 			if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura())
 				s = processarComandosEmTag(doc, "assinatura");

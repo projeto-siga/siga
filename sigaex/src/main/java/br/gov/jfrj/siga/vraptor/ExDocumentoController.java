@@ -358,7 +358,7 @@ public class ExDocumentoController extends ExController {
 		result.forwardTo(this).edita(exDocumentoDTOPreench, null, vars,
 				exDocumentoDTO.getMobilPaiSel(),
 				exDocumentoDTO.isCriandoAnexo(),
-				exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando(), exDocumentoDTO.getCriandoSubprocesso());
+				exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando(), exDocumentoDTO.getIdMobilAutuado(), exDocumentoDTO.getCriandoSubprocesso());
 	}
 
 	@Get("app/expediente/doc/criar_via")
@@ -414,7 +414,7 @@ public class ExDocumentoController extends ExController {
 		result.forwardTo(this).edita(exDocumentoDTO, null, vars,
 				exDocumentoDTO.getMobilPaiSel(),
 				exDocumentoDTO.isCriandoAnexo(),
-				exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando(), exDocumentoDTO.getCriandoSubprocesso());
+				exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando(), exDocumentoDTO.getIdMobilAutuado(), exDocumentoDTO.getCriandoSubprocesso());
 		return exDocumentoDTO;
 	}
 
@@ -423,7 +423,7 @@ public class ExDocumentoController extends ExController {
 	public ExDocumentoDTO edita(ExDocumentoDTO exDocumentoDTO,
 			final String sigla, String[] vars,
 			final ExMobilSelecao mobilPaiSel, final Boolean criandoAnexo,
-			final Boolean despachando, final Boolean autuando, final Boolean criandoSubprocesso)
+			final Boolean despachando, final Boolean autuando, final Long idMobilAutuado, final Boolean criandoSubprocesso)
 			throws IOException, IllegalAccessException,
 			InvocationTargetException {
 		assertAcesso("");
@@ -438,6 +438,9 @@ public class ExDocumentoController extends ExController {
 			exDocumentoDTO.setDespachando(despachando == null ? false
 					: despachando);
 			exDocumentoDTO.setAutuando(autuando == null ? false : autuando);
+
+			if (idMobilAutuado != null)
+				exDocumentoDTO.setIdMobilAutuado(idMobilAutuado);
 
 			exDocumentoDTO.setCriandoSubprocesso(criandoSubprocesso == null ? false : criandoSubprocesso);
 			
@@ -731,7 +734,7 @@ public class ExDocumentoController extends ExController {
 		result.forwardTo(this).edita(exDocumentoDTO, null, vars,
 				exDocumentoDTO.getMobilPaiSel(),
 				exDocumentoDTO.isCriandoAnexo(),
-				exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando(), exDocumentoDTO.getCriandoSubprocesso());
+				exDocumentoDTO.getDespachando(), exDocumentoDTO.getAutuando(), exDocumentoDTO.getIdMobilAutuado(), exDocumentoDTO.getCriandoSubprocesso());
 	}
 
 	@SuppressWarnings("static-access")
@@ -1193,6 +1196,7 @@ public class ExDocumentoController extends ExController {
 						exDocumentoDTO.isCriandoAnexo(),
 						exDocumentoDTO.getDespachando(),
 						exDocumentoDTO.getAutuando(),
+						exDocumentoDTO.getIdMobilAutuado(),
 						exDocumentoDTO.getCriandoSubprocesso());
 				return;
 			}

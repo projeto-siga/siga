@@ -41,6 +41,7 @@
 				<input type="hidden" name="campos" value="idMobilAutuado" />
 				<input type="hidden" name="exDocumentoDTO.idMobilAutuado" value="${exDocumentoDTO.idMobilAutuado}" />
 				<input type="hidden" name="exDocumentoDTO.id" value="${exDocumentoDTO.doc.idDoc}" />
+				<input type="hidden" name="exDocumentoDTO.idMod.original" value="${exDocumentoDTO.modelo.idMod}" />
 
 				<table class="gt-form-table">
 					<tr class="header">
@@ -328,7 +329,8 @@
 									<td>Modelo:</td>
 									<td colspan="3">
 										<siga:div id="modelo" depende="forma">										    
-											<select class="dependent" name="exDocumentoDTO.idMod" style="${estiloTipo}">
+											<select class="dependent" name="exDocumentoDTO.idMod" style="${estiloTipo}" xonchange="document.getElementById('alterouModelo').value='true'; sbmt();">
+											<option hidden value="">[Selecionar]</option>
 											<!-- o onchange do select do modelo está sendo tratado pelo jquery dependentSelects abaixo, não incluir o evento onchange pare este componete -->											
 												<c:forEach items="${exDocumentoDTO.modelos}" var="item">
 													<option value="${item.idMod}" ${item.idMod == exDocumentoDTO.idMod ? 'selected' : ''}>
@@ -351,7 +353,8 @@
 							</c:otherwise>
 						</c:choose>
 						
-						<c:if test='${exDocumentoDTO.tipoDocumento != "capturado" }'>
+						<!-- 
+						<c:if test='${ exDocumentoDTO.tipoDocumento != "capturado" }'>
 						<tr>
 							<td>Preenchimento Automático:</td>
 							<input type="hidden" name="campos" value="preenchimento" />
@@ -374,6 +377,7 @@
 								<input type="button" value="Adicionar" name="btnAdicionar" onclick="javascript:adicionaPreench()">
 							</td>
 						</tr>
+						-->
 					</c:if>
 
 						
@@ -497,16 +501,19 @@ function mouseSelect(event, id, parameter) {
 
 $(document).ready(function() {$('.dependent').dependentSelects({
 	  separator: ': ', // String: The separator used to define the nesting in the option field's text
-	  placeholderOption: false,
-	  placeholderSelect: false,
+	  placeholderOption: '[Selecione]',
+	  // placeholderSelect: false,
 	  changed:function() {
-		  document.getElementById('alterouModelo').value='true';
-//		  var conceptName = $('select[name="exDocumentoDTO.idMod"]').find(":selected").text();
-//		  console.log('valor ' + conceptName);
-		  sbmt();
+		  var valor = $('select[name="exDocumentoDTO.idMod"]').find(":selected").val();
+		  var valorOriginal = $('input[name="exDocumentoDTO.idMod.original"]').val();
+		  console.log('valor ' + valor + ' - valor original: ' + valorOriginal);
+		  if (valor !== '' && valor !== '[Selecione]' && valor !== valorOriginal) {		
+		    document.getElementById('alterouModelo').value='true';
+		    sbmt();
+		  }
 		  },
-	  "class": false, // String: Add an extra class to all sub selects
-	  labels: false // Array of strings: The text used for the sub select boxes' labels. Label element is
+	  // "class": false, // String: Add an extra class to all sub selects
+	  // labels: false // Array of strings: The text used for the sub select boxes' labels. Label element is
 	                // inserted before sub select.
 	});});
 // window.customOnsubmit = function() {return true;};

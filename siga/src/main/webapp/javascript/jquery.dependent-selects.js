@@ -284,6 +284,7 @@
       });
       name = $select.attr('name');
       //selectChange($select);-- comentado por conta da issue #721
+      selectChange($select); // descomentado pois precisamos de 3 níveis
       return $select.off('change').on('change', function() {
         return selectChange($select);
       });

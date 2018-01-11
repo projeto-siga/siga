@@ -3132,7 +3132,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isJuntado()
 				&& !mob.isArquivado()
 				&& !mob.isSobrestado()
-				&& getConf().podePorConfiguracao(titular, lotaTitular,
+				&& getConf().podePorConfiguracao(titular, lotaTitular, titular.getCargo(), titular.getFuncaoConfianca(), mob.doc().getExFormaDocumento(), mob.doc().getExModelo(), 
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO,
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}

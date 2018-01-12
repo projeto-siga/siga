@@ -430,8 +430,9 @@ public class ExDocumentoController extends ExController {
 
 		final boolean isDocNovo = (exDocumentoDTO == null || exDocumentoDTO
 				.getSigla() == null);
+		boolean postback = param("postback") != null;
 		if (isDocNovo) {
-			if (param("postback") == null)
+			if (!postback)
 				exDocumentoDTO = new ExDocumentoDTO();
 			exDocumentoDTO.setCriandoAnexo(criandoAnexo == null ? false
 					: criandoAnexo);
@@ -456,14 +457,24 @@ public class ExDocumentoController extends ExController {
 		buscarDocumentoOuNovo(true, exDocumentoDTO);
 
 		if ((isDocNovo) || (param("exDocumentoDTO.docFilho") != null)) {
+			
 			if (exDocumentoDTO.getTipoDestinatario() == null)
 				exDocumentoDTO.setTipoDestinatario(2);
 
 			if (exDocumentoDTO.getIdFormaDoc() == null)
 				exDocumentoDTO.setIdFormaDoc(2L);
 
-			if (exDocumentoDTO.getIdTpDoc() == null)
+			if (exDocumentoDTO.getIdTpDoc() == null) {
 				exDocumentoDTO.setIdTpDoc(1L);
+
+				// Preencher automaticamente o subscritor quando se tratar de novo documento
+				if (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO && !postback) {
+					DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
+					subscritorSel.buscarPorObjeto(getCadastrante());
+					exDocumentoDTO.setSubscritorSel(subscritorSel);
+				}
+			}
+			
 
 			if (exDocumentoDTO.getNivelAcesso() == null) {
 				final ExNivelAcesso nivelDefault = getNivelAcessoDefault(exDocumentoDTO);
@@ -482,7 +493,7 @@ public class ExDocumentoController extends ExController {
 		}
 
 		if (exDocumentoDTO.isCriandoAnexo() && exDocumentoDTO.getId() == null
-				&& isDocNovo && param("postback") == null) {
+				&& isDocNovo && !postback) {
 			exDocumentoDTO.setIdFormaDoc(60L);
 			exDocumentoDTO.setIdMod(((ExModelo) dao()
 					.consultarAtivoPorIdInicial(ExModelo.class, 507L))

@@ -74,7 +74,7 @@
 						<td width="10%">
 						
 							<select  name="exDocumentoDTO.idTpDoc" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
-							onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)" style="${estiloTipo}">
+							onchange="alterouOrigem(); mouseSelect(event, this, null)" style="${estiloTipo}">
 								<c:forEach items="${exDocumentoDTO.tiposDocumento}" var="item">
 									<option value="${item.idTpDoc}" ${item.idTpDoc == exDocumentoDTO.idTpDoc ? 'selected' : ''}>
 										${item.descrTipoDocumento}
@@ -377,8 +377,8 @@
 								<input type="button" value="Adicionar" name="btnAdicionar" onclick="javascript:adicionaPreench()">
 							</td>
 						</tr>
-						-->
 					</c:if>
+						-->
 
 						
 					</c:if>
@@ -397,6 +397,7 @@
 						<td colspan="3">
 						    <input type="hidden" name="campos" value="classificacaoSel.id" />
 							<siga:span id="classificacao" depende="forma;modelo">
+							<!-- OI -->
 							<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"  inputName="exDocumentoDTO.classificacao" urlAcao="buscar" urlSelecionar="selecionar" tema="simple" />
 							<!--  idAjax="classificacao" -->
 						</siga:span></td>
@@ -483,6 +484,13 @@
 <script src="/siga/javascript/jquery.dependent-selects.js"></script>
 
 <script type="text/javascript">
+function alterouOrigem() {
+	<c:if test="${exDocumentoDTO.doc.codigo == 'NOVO' and exDocumentoDTO.tipoDocumento == 'interno'}">
+	retorna_subscritor('', '', '', ''); // remove o subscritor default quando troca a origem
+	</c:if>
+	document.getElementById('alterouModelo').value='true'
+}
+
 function presskeySelect(event, id, parameter) {
     if (event.type == 'keypress') {
         if(event.keyCode == '13'){

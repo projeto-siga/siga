@@ -569,8 +569,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeAnexarArquivo(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
+		Boolean podePorConf = podePorConfiguracao(titular, lotaTitular,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null);
 	
-		if (mob.doc().isFinalizado())
+		if (mob.doc().isFinalizado()) {
 			return !mob.isEmTransito()
 					&& (!mob.isGeral() || mob.doc().isExterno())
 					&& !mob.isJuntado()
@@ -579,14 +582,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 					&& !mob.isSobrestado()
 					&& podeMovimentar(titular, lotaTitular, mob)
 					&& !mob.doc().isSemEfeito()
-					&& podePorConfiguracao(titular, lotaTitular,
-							ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO,
-							CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null);
+					&& podePorConf;
+		}
 		
 		if(mob.isGeral() && mob.doc().isProcesso())
 			return false;
 			
-		return mob.isGeral();
+		return mob.isGeral() && podePorConf;
 	}
 
 	/**

@@ -1544,13 +1544,14 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 				new AnexoNumeradoComparator());
 
 		incluirArquivos(getMobilGeral(), set);
-		incluirArquivos(mob, set);
+		if (!mob.isGeral())
+			incluirArquivos(mob, set);
 
 		// Incluir recursivamente
 		for (ExMovimentacao m : set) {
 			ExArquivoNumerado an = new ExArquivoNumerado();
 			an.setNivel(nivel);
-			if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA) {
+			if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA || m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA) {
 				an.setArquivo(m.getExDocumento());
 				an.setMobil(m.getExMobil());
 				an.setData(m.getData());
@@ -1577,6 +1578,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 			for (ExMovimentacao m : mob.getExMovimentacaoSet()) {
 				if (!m.isCancelada() && m.isPdf()) {
 					set.add(m);
+				}
+			}
+		}
+		// Incluir copias
+		if (mob.getExMovimentacaoSet() != null) {
+			for (ExMovimentacao m : mob.getExMovimentacaoSet()) {
+				if (!m.isCancelada()) {
+					if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA) {
+						set.add(m);
+					}
 				}
 			}
 		}

@@ -592,6 +592,42 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
+	 * Retorna se é possível incluir uma cópia a um móbil. As condições são as
+	 * seguintes:
+	 * <ul>
+	 * <li>Móbil não pode estar em trânsito</li>
+	 * <li>Móbil não pode estar juntado</li>
+	  * <li>Móbil não pode estar arquivado</li>
+	 * <li>Volume não pode estar encerrado</li>
+	 * <li>Móbil tem de estar finalizado</li>
+	 * <li><i>podeMovimentar()</i> tem de ser verdadeiro para o móbil / usuário</li>
+	 * <li>Não pode haver configuração impeditiva</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeCopiar(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {
+		Boolean podePorConf = podePorConfiguracao(titular, lotaTitular,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR, null);
+	
+		return mob.doc().isFinalizado() && !mob.isEmTransito()
+				&& (!mob.isGeral() || mob.doc().isExterno())
+				&& !mob.isJuntado()
+				&& !mob.isArquivado()
+				&& !mob.isVolumeEncerrado()
+				&& !mob.isSobrestado()
+				&& podeMovimentar(titular, lotaTitular, mob)
+				&& !mob.doc().isSemEfeito()
+				&& podePorConf;
+	}
+
+	/**
 	 * Retorna um configuração existente para a combinação dos dados passados
 	 * como parâmetros, caso exista.
 	 * 
@@ -4300,4 +4336,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return (!mob.isGeral() && mob.doc().isExpediente()
 				&& !mob.doc().isPendenteDeAssinatura() && !mob.isEmTransito() && podeMovimentar);
 
-	}}
+	}
+
+}

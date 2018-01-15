@@ -319,6 +319,83 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mobilVO", mobilVO);
 	}
 
+	@Get("app/expediente/mov/copiar")
+	public void copia(final String sigla) {
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		buscarDocumento(documentoBuilder);
+		final ExMobil mob = documentoBuilder.getMob();
+
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia().setMob(mob);
+
+		if (!Ex.getInstance().getComp()
+				.podeCopiar(getTitular(), getLotaTitular(), mob)) {
+			throw new AplicacaoException("Não é permitido incluir cópia");
+		}
+
+		final ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(),
+				getLotaTitular(), true,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA, false);
+		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getTitular(),
+				getLotaTitular(), true, null, false);
+
+		result.include("sigla", sigla);
+		result.include("doc", mob.doc());
+		result.include("mob", mob);
+		result.include("request", getRequest());
+		result.include("titularSel", new DpPessoaSelecao());
+		result.include("subscritorSel", new DpPessoaSelecao());
+		result.include("documentoRefSel", new ExDocumentoSelecao());
+	}
+	
+	@Post("app/expediente/mov/copiar_gravar")
+	public void copiarGravar(final String sigla,
+			final String dtMovString, final boolean substituicao,
+			final DpPessoaSelecao titularSel,
+			final DpPessoaSelecao subscritorSel,
+			final ExMobilSelecao documentoRefSel) {
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		buscarDocumento(documentoBuilder);
+		final ExMobil mob = documentoBuilder.getMob();
+		
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia();
+		movimentacaoBuilder.setDtMovString(dtMovString)
+				.setSubstituicao(substituicao).setTitularSel(titularSel)
+				.setSubscritorSel(subscritorSel).setMob(mob)
+				.setDocumentoRefSel(documentoRefSel);
+
+		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeCopiar(getTitular(), getLotaTitular(),
+						mob)) {
+			throw new AplicacaoException("Não é permitido incluir cópia");
+		}
+		if (mov.getExMobilRef() == null) {
+			throw new AplicacaoException(
+					"Não foi selecionado um documento para a vinculação");
+		}
+
+		if (mov.getExDocumento().isEletronico()) {
+			mov.setSubscritor(getTitular());
+		}
+
+		Ex.getInstance()
+				.getBL()
+				.copiar(getCadastrante(), getLotaTitular(),
+						mob, mov.getExMobilRef(), mov.getDtMov(),
+						mov.getSubscritor(), mov.getTitular());
+
+		ExDocumentoController.redirecionarParaExibir(result, mov
+				.getExDocumento().getSigla());
+	}
+
 	@Get("app/expediente/mov/desobrestar_gravar")
 	public void aDesobrestarGravar(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder

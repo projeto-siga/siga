@@ -403,6 +403,12 @@ public class ExMobilVO extends ExVO {
 					"anotar",
 					Ex.getInstance().getComp()
 							.podeFazerAnotacao(titular, lotaTitular, mob));
+			addAcao("page_white_copy",
+					"Incluir Cópia",
+					"/app/expediente/mov",
+					"copiar",
+					Ex.getInstance().getComp()
+							.podeCopiar(titular, lotaTitular, mob));
 		}
 
 		addAcao("package", "Arq. Corrente", "/app/expediente/mov",

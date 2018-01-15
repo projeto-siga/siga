@@ -4308,6 +4308,49 @@ public class ExBL extends CpBL {
 		}
 	}
 
+	public void copiar(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExMobil mob,
+			final ExMobil mobRef, final Date dtMov, final DpPessoa subscritor,
+			final DpPessoa titular) throws AplicacaoException {
+		
+		final ExMobil mobRefGeral = mobRef.doc().getMobilGeral();
+
+		if (mobRefGeral == null)
+			throw new AplicacaoException(
+					"não foi selecionado um documento para a inclusão de cópia");
+
+		if (mob.getExDocumento().getIdDoc()
+				.equals(mobRefGeral.getExDocumento().getIdDoc())
+				&& mob.getNumSequencia().equals(mobRefGeral.getNumSequencia())
+				&& mob.getExTipoMobil().getIdTipoMobil()
+						.equals(mobRefGeral.getExTipoMobil().getIdTipoMobil()))
+			throw new AplicacaoException(
+					"não é possível incluir uma cópia de um documento nele mesmo");
+
+		if (!mobRefGeral.getExDocumento().isFinalizado())
+			throw new AplicacaoException(
+					"não é possível incluir uma cópia de um documento não finalizado");
+
+		try {
+			iniciarAlteracao();
+
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA,
+					cadastrante, lotaCadastrante, mob, dtMov, subscritor, null,
+					titular, null, null);
+
+			mov.setExMobilRef(mobRefGeral);
+			mov.setDescrMov("Inclusão de Cópia: documento "
+					+ mov.getExMobilRef().getCodigo().toString());
+
+			gravarMovimentacao(mov);
+			concluirAlteracao(mov.getExMobil());
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao copiar documento.", 0, e);
+		}
+	}
+
 	public String RegistrarAssinatura(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final DpPessoa subscritor, final DpPessoa titular)

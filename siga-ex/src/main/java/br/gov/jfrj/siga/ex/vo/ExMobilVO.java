@@ -157,6 +157,9 @@ public class ExMobilVO extends ExVO {
 
 		if (tpMov == null)
 			for (ExMovimentacao mov : mob.getCronologiaSet()) {
+				if (mov.getExMobil() != mob && mov.getExTipoMovimentacao().getId()
+						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA))
+					continue;
 				movs.add(new ExMovimentacaoVO(this, mov, titular, lotaTitular));
 			}
 		else

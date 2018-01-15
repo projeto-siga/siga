@@ -1551,13 +1551,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		for (ExMovimentacao m : set) {
 			ExArquivoNumerado an = new ExArquivoNumerado();
 			an.setNivel(nivel);
-			if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA || m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA) {
+			if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA) {
 				an.setArquivo(m.getExDocumento());
 				an.setMobil(m.getExMobil());
 				an.setData(m.getData());
 				list.add(an);
-				m.getExDocumento().getAnexosNumerados(m.getExMobil(), list,
-						nivel + 1);
+				m.getExDocumento().getAnexosNumerados(m.getExMobil(), list, nivel + 1);
+			} else if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA) {
+				an.setArquivo(m.getExMobilRef().doc());
+				an.setMobil(m.getExMobilRef());
+				an.setData(m.getData());
+				list.add(an);
+				m.getExDocumento().getAnexosNumerados(m.getExMobilRef(), list, nivel + 1);
 			} else {
 				an.setArquivo(m);
 				an.setMobil(m.getExMobil());

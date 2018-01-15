@@ -38,6 +38,7 @@ import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO_DE_VOLUME;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_NOTIFICACAO_PUBL_BI;
@@ -317,6 +318,19 @@ public class ExMovimentacaoVO extends ExVO {
 			}
 		}
 
+		if (idTpMov == TIPO_MOVIMENTACAO_COPIA) {
+			descricao = null;
+			String mensagemPos = null;
+			
+			if(!mov.getExMobilRef().getExDocumento().getDescrDocumento().equals(mov.getExMobil().getExDocumento().getDescrDocumento()))
+				mensagemPos = " Descrição: " +  mov.getExMobilRef().getExDocumento().getDescrDocumento();
+			
+			addAcao(null, mov.getExMobilRef().getSigla(),
+					"/app/expediente/doc", "exibir", true, null, "sigla="
+							+ mov.getExMobilRef().getSigla(),
+					"Copia do documento: ", mensagemPos, null);
+		}
+		
 		if (idTpMov == TIPO_MOVIMENTACAO_JUNTADA
 				|| idTpMov == TIPO_MOVIMENTACAO_JUNTADA_EXTERNO) {
 			descricao = null;
@@ -536,6 +550,9 @@ public class ExMovimentacaoVO extends ExVO {
 			case (int) TIPO_MOVIMENTACAO_ARQUIVAMENTO_PERMANENTE:
 			case (int) TIPO_MOVIMENTACAO_ARQUIVAMENTO_INTERMEDIARIO:
 				classe = "arquivamento";
+				break;
+			case (int) TIPO_MOVIMENTACAO_COPIA:
+				classe = "copia";
 				break;
 			case (int) TIPO_MOVIMENTACAO_JUNTADA:
 				classe = "juntada";

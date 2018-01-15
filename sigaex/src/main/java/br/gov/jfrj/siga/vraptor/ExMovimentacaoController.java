@@ -320,7 +320,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("app/expediente/mov/copiar")
-	public void copia(final String sigla) {
+	public void aCopiar(final String sigla) {
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 

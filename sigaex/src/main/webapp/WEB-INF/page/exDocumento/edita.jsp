@@ -83,7 +83,7 @@
 							</select>
 						</td>
 						<td>
-							<span style="display: ${exDocumentoDTO.tipoDocumento != 'capturado' and podeEditarData ? 'inline' : 'none'};">
+							<span style="display: ${exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData ? 'inline' : 'none'};">
 								<input type="hidden" name="campos" value="dtDocString" />
 									Data:
 								<input type="text" name="exDocumentoDTO.dtDocString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocString}" /> &nbsp;&nbsp; 
@@ -208,7 +208,7 @@
 					</tr>
 					<tr>
 						<c:choose>
-							<c:when test='${exDocumentoDTO.tipoDocumento == "externo"}'>
+							<c:when test='${exDocumentoDTO.tipoDocumento == "externo" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
 								<td>Subscritor:</td>
 								<input type="hidden" name="campos" value="nmSubscritorExt" />
 								<td colspan="3">
@@ -233,14 +233,6 @@
 							</c:otherwise> 
 						</c:choose>
 					</tr>
-					<c:if test='${exDocumentoDTO.tipoDocumento == "capturado"}'>
-					<tr>
-						<td></td>
-						<td colspan="3">
-							<span style="color: red">N&atilde;o preencher o subscritor quando o documento for externo ao &oacute;rg&atilde;o</span>
-						</td>
-					</tr>
-					</c:if>
 					<tr id="tr_titular" style="display: ${exDocumentoDTO.substituicao ? '' : 'none'};">
 						<td>Titular:</td>
 						<input type="hidden" name="campos" value="titularSel.id" />
@@ -257,7 +249,7 @@
 						</td>
 					</tr>
 					
-<c:if test='${exDocumentoDTO.tipoDocumento != "capturado" }'>
+<c:if test='${exDocumentoDTO.tipoDocumento != "interno_capturado" }'>
 					<tr>
 						<td>Destinatário:</td>
 						<input type="hidden" name="campos" value="tipoDestinatario" />
@@ -343,7 +335,7 @@
 												<span style="${estiloTipoSpan}">${exDocumentoDTO.doc.exModelo.nmMod}</span>
 											</c:if>
 											<!-- sbmt('modelo') -->
-											<c:if test='${exDocumentoDTO.tipoDocumento!="interno" and exDocumentoDTO.tipoDocumento!="capturado"}'>(opcional)</c:if>
+											<c:if test='${exDocumentoDTO.tipoDocumento=="antigo" and exDocumentoDTO.tipoDocumento=="externo"}'>(opcional)</c:if>
 										</siga:div>
 									</td>
 								</tr>
@@ -354,7 +346,7 @@
 						</c:choose>
 						
 						<!-- 
-						<c:if test='${ exDocumentoDTO.tipoDocumento != "capturado" }'>
+						<c:if test='${ exDocumentoDTO.tipoDocumento == "interno" }'>
 						<tr>
 							<td>Preenchimento Automático:</td>
 							<input type="hidden" name="campos" value="preenchimento" />
@@ -432,7 +424,7 @@
 						</td>
 					</tr>
 					
-					<c:if test='${empty exDocumentoDTO.doc.idDoc and exDocumentoDTO.tipoDocumento == "capturado"}'>
+					<c:if test='${empty exDocumentoDTO.doc.idDoc and exDocumentoDTO.tipoDocumento == "interno_capturado" or  exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
 						<tr>
 							<input type="hidden" name="campos" value="descrDocumento" />
 							<td>Arquivo PDF:</td>
@@ -442,7 +434,7 @@
 						</tr>
 					</c:if>
 				
-					<c:if test='${exDocumentoDTO.tipoDocumento == "interno" or exDocumentoDTO.tipoDocumento == "capturado"}'>
+					<c:if test='${exDocumentoDTO.tipoDocumento == "interno" or exDocumentoDTO.tipoDocumento == "interno_capturado" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
 						<c:if test="${exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker' or not empty exDocumentoDTO.modelo.nmArqMod}">
 							<tr class="header">
 								<td colspan="4">Dados complementares</td>

@@ -563,17 +563,16 @@ public class ExDocumentoDTO {
 		if (getIdTpDoc() == null && doc != null
 				&& doc.getExTipoDocumento() != null)
 			setIdTpDoc(doc.getExTipoDocumento().getId());
-		if (getIdTpDoc() == null || getIdTpDoc() == 1L)
+		if (getIdTpDoc() == null || getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO)
 			return "interno";
-		else if (getIdTpDoc() == 2L)
+		else if (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO)
 			return "antigo";
-		else if (getIdTpDoc() == 3L)
+		else if (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO)
 			return "externo";
-		else if (getIdTpDoc() == 4L)
-			return "capturado";
-
-		// if (param("idTpDoc") == null)
-		// setParam("idTpDoc", "1");
+		else if (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO)
+			return "interno_capturado";
+		else if (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO)
+			return "externo_capturado";
 		return "";
 	}
 

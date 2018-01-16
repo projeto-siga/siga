@@ -97,7 +97,7 @@ public class ExArquivoNumerado implements Comparable {
 	public String getNomeOuDescricao() {
 		if (getArquivo() instanceof ExDocumento) {
 			ExDocumento doc = (ExDocumento) getArquivo();
-			if (doc.getExTipoDocumento().getId() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)
+			if (doc.isCapturado())
 				return doc.getDescrDocumento();
 		}
 		return getNome();

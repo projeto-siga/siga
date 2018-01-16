@@ -1119,7 +1119,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 
 		if (mob.getExDocumento().isProcesso()
-				&& mob.getExDocumento().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO)
+				&& mob.getExDocumento().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO)
 			return false;
 
 		if (mob.isArquivado() || mob.isEliminado())
@@ -1131,7 +1131,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.doc().getSubscritor() == null)
 			return false;
 		
-		if (mob.getDoc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO){
+		if (mob.doc().isCapturado()){
 			if (mob.getDoc().getAutenticacoesComTokenOuSenha().isEmpty())
 				return false;
 		}
@@ -1191,7 +1191,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!doc.isEletronico() || !doc.getAutenticacoesComTokenOuSenha().isEmpty())
 			return false;
 		
-		return doc.isCapturado() || doc.getAssinaturasComSenha().size() > 0;
+		return doc.isInternoCapturado() || doc.getAssinaturasComSenha().size() > 0;
 	}
 	
 	/*
@@ -1307,10 +1307,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}	
 	public boolean podeSerSubscritor(final ExDocumento doc) throws Exception {
 		
-		if(doc.getExTipoDocumento().getIdTpDoc().equals(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO))
-			return true;
-		
-		if(doc.getExTipoDocumento().getIdTpDoc().equals(ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO))
+		if(doc.isExterno() || doc.isExternoCapturado())
 			return true;
 		
 		return podeSerSubscritor(doc.getTitular(), doc.getLotaTitular(), doc.getExModelo());
@@ -2204,8 +2201,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isPendenteDeAnexacao()
 				&& !mob.doc().isSemEfeito()
 				&& (!mob.doc().isPendenteDeAssinatura() || (mob.doc().getExTipoDocumento()
-						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO) || 
-						(mob.doc().isProcesso() && mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO))
+						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO) || 
+						(mob.doc().isProcesso() && mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO))
 				// && mob.doc().isAssinadoPorTodosOsSignatarios()
 				&& getConf().podePorConfiguracao(titular, lotaTitular,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO,
@@ -2522,7 +2519,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
 
 		return (mob.getExDocumento().isFinalizado())
-				&& (mob.getExDocumento().getExTipoDocumento().getIdTpDoc() != ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO)				
+				&& (mob.getExDocumento().getExTipoDocumento().getIdTpDoc() != ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO)				
 				&& !mob.isEmTransito()
 				&& podeMovimentar;
 
@@ -3144,7 +3141,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isEmTransito()
 				&& podeMovimentar(titular, lotaTitular, mob)
 
-				&& (!mob.doc().isPendenteDeAssinatura() || mob.doc().isCapturado())
+				&& (!mob.doc().isPendenteDeAssinatura() || mob.doc().isInternoCapturado())
 				&& !mob.isJuntado()
 				&& !mob.isApensado()
 				&& !mob.isArquivado()
@@ -3802,9 +3799,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.isArquivado() || mob.isEliminado())
 			return false;
 		if (mob.getExDocumento().isProcesso()
-				&& mob.getExDocumento().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO)
+				&& mob.getExDocumento().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO)
 			return false;
-		if (mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO
+		if (mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO
 				|| mob.doc().isCancelado())
 			return false;
 		return ((mob.doc().getSubscritor() != null && mob.doc().getSubscritor()
@@ -3883,9 +3880,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		if (mob.doc().isEliminado())
 			return false;
-		if (mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO)
+		if (mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO)
 			return false;
-		if (mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO)
+		if (mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO)
 			return false;
 		boolean gerente = podeGerenciarPublicacaoBoletimPorConfiguracao(
 				titular, lotaTitular, mob);
@@ -4017,8 +4014,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.isApensadoAVolumeDoMesmoProcesso()
 				&& !mob.isArquivado()
 				&& (!mob.doc().isPendenteDeAssinatura() || (mob.doc().getExTipoDocumento()
-						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO) || 
-						(mob.doc().isProcesso() && mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO))
+						.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO) || 
+						(mob.doc().isProcesso() && mob.doc().getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO))
 				&& !mob.isEmEditalEliminacao()
 				&& !mob.isSobrestado()
 				&& !mob.doc().isSemEfeito()

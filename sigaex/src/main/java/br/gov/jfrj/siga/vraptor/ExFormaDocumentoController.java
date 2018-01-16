@@ -61,21 +61,25 @@ public class ExFormaDocumentoController extends ExController {
 			boolean origemExterno = false;
 			boolean origemInternoImportado = false;
 			boolean origemInternoProduzido = false;
-			boolean origemCapturado = false;
+			boolean origemInternoCapturado = false;
+			boolean origemExternoCapturado = false;
 
 			if (forma.getExTipoDocumentoSet() != null) {
 				for (ExTipoDocumento origem : forma.getExTipoDocumentoSet()) {
-					if (origem.getId() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO) {
+					if (origem.getId() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO) {
 						origemExterno = true;
 					}
 					if (origem.getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO) {
 						origemInternoProduzido = true;
 					}
-					if (origem.getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO) {
+					if (origem.getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO) {
 						origemInternoImportado = true;
 					}
-					if (origem.getId() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO) {
-						origemCapturado = true;
+					if (origem.getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO) {
+						origemInternoCapturado = true;
+					}
+					if (origem.getId() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO) {
+						origemExternoCapturado = true;
 					}
 				}
 			}
@@ -83,7 +87,8 @@ public class ExFormaDocumentoController extends ExController {
 			result.include("origemExterno", origemExterno);
 			result.include("origemInternoImportado", origemInternoImportado);
 			result.include("origemInternoProduzido", origemInternoProduzido);
-			result.include("origemCapturado", origemCapturado);
+			result.include("origemInternoCapturado", origemInternoCapturado);
+			result.include("origemExternoCapturado", origemExternoCapturado);
 		}
 
 		result.include("id", id);
@@ -113,7 +118,7 @@ public class ExFormaDocumentoController extends ExController {
 
 	@Post("app/forma/gravar")
 	public void gravar(final Integer postback, final Long id, final String descricao, final String sigla, final Long idTipoFormaDoc, final boolean origemExterno,
-			final boolean origemInternoImportado, final boolean origemInternoProduzido, final boolean origemCapturado) {
+			final boolean origemInternoImportado, final boolean origemInternoProduzido, final boolean origemInternoCapturado, final boolean origemExternoCapturado) {
 		assertAcesso(ACESSO_SIGA_DOC_MOD);
 		setPostback(postback);
 
@@ -132,14 +137,18 @@ public class ExFormaDocumentoController extends ExController {
 			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO, ExTipoDocumento.class, false));
 		}
 		if (origemInternoImportado) {
-			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO, ExTipoDocumento.class, false));
+			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO, ExTipoDocumento.class, false));
 		}
 		if (origemExterno) {
-			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO, ExTipoDocumento.class, false));
+			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO, ExTipoDocumento.class, false));
 		}
 
-		if (origemCapturado) {
-			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO, ExTipoDocumento.class, false));
+		if (origemInternoCapturado) {
+			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO, ExTipoDocumento.class, false));
+		}
+
+		if (origemExternoCapturado) {
+			forma.getExTipoDocumentoSet().add(dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO, ExTipoDocumento.class, false));
 		}
 
 		Ex.getInstance().getBL().gravarForma(forma);
@@ -151,7 +160,8 @@ public class ExFormaDocumentoController extends ExController {
 		result.include("origemExterno", origemExterno);
 		result.include("origemInternoImportado", origemInternoImportado);
 		result.include("origemInternoProduzido", origemInternoProduzido);
-		result.include("origemCapturado", origemCapturado);
+		result.include("origemInternoCapturado", origemInternoCapturado);
+		result.include("origemExternoCapturado", origemExternoCapturado);
 		
 		result.redirectTo("/app/forma/editar?id=" + forma.getIdFormaDoc());
 	}

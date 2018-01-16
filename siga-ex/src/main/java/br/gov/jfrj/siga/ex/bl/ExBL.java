@@ -1627,7 +1627,7 @@ public class ExBL extends CpBL {
 				if (!fValido) {
 					fValido = (lMatricula.equals(doc.getCadastrante()
 							.getMatricula()))
-							&& (doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO);
+							&& (doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
 				}
 				if (!fValido)
 					for (ExMovimentacao m : doc.getMobilGeral()
@@ -1660,7 +1660,7 @@ public class ExBL extends CpBL {
 				}
 				if (!fValido) {
 					fValido = (lCPF.equals(doc.getCadastrante().getCpfPessoa()))
-							&& (doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO);
+							&& (doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
 				}
 				if (!fValido)
 					for (ExMovimentacao m : doc.getMobilGeral()
@@ -1820,7 +1820,7 @@ public class ExBL extends CpBL {
 				}
 				if (!fValido) {
 					fValido = (subscritor.equivale(doc.getCadastrante()))
-							&& (doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO);
+							&& (doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
 				}
 				if (!fValido)
 					for (ExMovimentacao m : doc.getMobilGeral()
@@ -4922,8 +4922,7 @@ public class ExBL extends CpBL {
 	public void processar(final ExDocumento doc, final boolean gravar,
 			final boolean transacao) {
 		// Não existe processamento de modelo para documento capturado
-		if (doc.getExTipoDocumento().getId()
-				.equals(ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO))
+		if (doc.isCapturado())
 			return;
 
 		try {

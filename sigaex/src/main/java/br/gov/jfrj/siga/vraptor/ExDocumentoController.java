@@ -1037,7 +1037,7 @@ public class ExDocumentoController extends ExController {
 	private void verificaDocumento(final ExDocumento doc) {
 		if ((doc.getSubscritor() == null && doc.getNmSubscritor() == null && doc
 				.getNmSubscritorExt() == null)
-				&& (doc.getExTipoDocumento().getId() != ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)
+				&& !doc.isExternoCapturado()
 				&& ((doc.getExFormaDocumento().getExTipoFormaDoc()
 						.getIdTipoFormaDoc() == ExTipoFormaDoc.TIPO_FORMA_DOC_PROCESSO_ADMINISTRATIVO && doc
 						.isEletronico()) || doc.getExFormaDocumento()
@@ -1217,7 +1217,8 @@ public class ExDocumentoController extends ExController {
 
 			lerForm(exDocumentoDTO, vars);
 
-			if (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO
+			if ((exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO ||
+					exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO)
 					&& exDocumentoDTO.getDoc().getIdDoc() == null
 					&& arquivo == null)
 				throw new AplicacaoException(
@@ -1355,7 +1356,8 @@ public class ExDocumentoController extends ExController {
 					exDocumentoDTO.getDoc());
 
 			if (!exDocumentoDTO.getDoc().isFinalizado()
-					&& exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)
+					&& (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO 
+					|| exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO))
 				exBL.finalizar(getCadastrante(), getLotaTitular(),
 						exDocumentoDTO.getDoc());
 

@@ -1522,7 +1522,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		// return isEletronico() && getExFormaDocumento().isNumeracaoUnica();
 		return (getExFormaDocumento().isNumeracaoUnica())
 				&& (getExTipoDocumento().getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO || getExTipoDocumento()
-						.getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO)
+						.getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO)
 				&& isEletronico();
 		// return true;
 	}
@@ -1746,15 +1746,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		if (!isFinalizado())
 			return true;
 		
-		if (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO 
-				|| getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO) {
+		if (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO 
+				|| getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO) {
 			if (getExMobilSet() != null && getExMobilSet().size() > 1)
 				return false;
 			else return true;
 		}
 			
 		if(isEletronico()){ 
-			if (isCapturado() && getAutenticacoesComTokenOuSenha().isEmpty())
+			if (isInternoCapturado() && getAutenticacoesComTokenOuSenha().isEmpty())
 				return true;
 			
 			// compatibiliza com versoes anteriores do SIGA que permitia transferir
@@ -2048,10 +2048,26 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	/**
 	 * Verifica se um documento é capturado de uma fonte externa.
 	 */
-	public boolean isCapturado() {
+	public boolean isInternoCapturado() {
 		if (getExTipoDocumento() == null)
 			return false;
-		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO);
+		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO);
+	}
+
+	/**
+	 * Verifica se um documento é capturado de uma fonte externa.
+	 */
+	public boolean isExternoCapturado() {
+		if (getExTipoDocumento() == null)
+			return false;
+		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO);
+	}
+
+	/**
+	 * Verifica se um documento é capturado de uma fonte externa.
+	 */
+	public boolean isCapturado() {
+		return isInternoCapturado() || isExternoCapturado();
 	}
 
 	/**

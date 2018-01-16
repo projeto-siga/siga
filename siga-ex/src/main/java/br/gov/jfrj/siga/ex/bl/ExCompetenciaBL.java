@@ -1131,7 +1131,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.doc().getSubscritor() == null)
 			return false;
 		
-		if (mob.doc().isCapturado()){
+		if (mob.doc().isExternoCapturado()){
 			if (mob.getDoc().getAutenticacoesComTokenOuSenha().isEmpty())
 				return false;
 		}
@@ -1191,7 +1191,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!doc.isEletronico() || !doc.getAutenticacoesComTokenOuSenha().isEmpty())
 			return false;
 		
-		return doc.isInternoCapturado() || doc.getAssinaturasComSenha().size() > 0;
+		return doc.isExternoCapturado() || doc.getAssinaturasComSenha().size() > 0;
 	}
 	
 	/*

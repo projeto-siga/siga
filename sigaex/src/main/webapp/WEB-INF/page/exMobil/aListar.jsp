@@ -72,7 +72,7 @@
 
 			document.getElementById('idFormaDoc').value = '0';
 			break;
-		case 1:
+		case 1: // Interno Produzido
 			document.getElementById('trNumOrigDoc').style.display = 'none';
 			document.getElementById('trNumDocSistAntigo').style.display = 'none';
 			document.getElementById('trOrgExterno').style.display = 'none';
@@ -80,7 +80,7 @@
 
 			document.getElementById('idFormaDoc').value = '0';
 			break;
-		case 2:
+		case 2: // Interno Folha de Rosto
 			document.getElementById('trNumOrigDoc').style.display = '';
 			document.getElementById('trNumDocSistAntigo').style.display = '';
 			document.getElementById('trOrgExterno').style.display = 'none';
@@ -88,13 +88,29 @@
 
 			document.getElementById('idFormaDoc').value = '0';
 			break;
-		case 3:
+		case 3: // Externo Folha de Rosto
 			document.getElementById('trNumOrigDoc').style.display = '';
 			document.getElementById('trNumDocSistAntigo').style.display = '';
 			document.getElementById('trOrgExterno').style.display = '';
 			document.getElementById('trTipo').style.display = 'none';
 
 			document.getElementById('idFormaDoc').value = '5';
+			break;
+		case 4: // Externo Capturado
+			document.getElementById('trNumOrigDoc').style.display = '';
+			document.getElementById('trNumDocSistAntigo').style.display = 'none';
+			document.getElementById('trOrgExterno').style.display = '';
+			document.getElementById('trTipo').style.display = 'none';
+
+			document.getElementById('idFormaDoc').value = '0';
+			break;
+		case 5: // Interno Capturado
+			document.getElementById('trNumOrigDoc').style.display = 'none';
+			document.getElementById('trNumDocSistAntigo').style.display = 'none';
+			document.getElementById('trOrgExterno').style.display = 'none';
+			document.getElementById('trTipo').style.display = '';
+
+			document.getElementById('idFormaDoc').value = '0';
 			break;
 		}
 	}
@@ -752,20 +768,18 @@
 							</td>
 						</tr>
 
-						<c:choose>
-							<c:when test="${idTpDoc == 3}">
-								<tr>
-									<td>Subscritor:</td>
-									<td><input type="text" label="Subscritor"
-										name="nmSubscritorExt" value="${nmSubscritorExt}" size="80" />
-									</td>
-								</tr>
-							</c:when>
-							<c:otherwise>
-								<siga:selecao titulo="Subscritor:" propriedade="subscritor"
-									paramList="buscarFechadas=true" modulo="siga" />
-							</c:otherwise>
-						</c:choose>
+						<tr id="trSubscritorExt" style="display:${idTpDoc == 3 or idTpDoc == 4 ? '' : 'none'}">
+							<td>Subscritor:</td>
+							<td><input type="text" label="Subscritor"
+								name="nmSubscritorExt" value="${nmSubscritorExt}" size="80" />
+							</td>
+						</tr>
+						<tr id="trSubscritor" style="display:${idTpDoc != 3 and idTpDoc != 4 ? '' : 'none'}">
+							<td>Subscritor:</td>
+							<td><siga:selecao titulo="Subscritor:" propriedade="subscritor"
+								paramList="buscarFechadas=true" modulo="siga" tema="simple" />
+							</td>
+						</tr>
 
 						<tr>
 							<td>Cadastrante:</td>
@@ -856,4 +870,7 @@
 			</div>
 		</div>
 	</div>
+	<script>
+		alteraOrigem();
+	</script>
 </siga:pagina>

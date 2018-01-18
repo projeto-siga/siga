@@ -528,12 +528,12 @@ public class ExDocumentoVO extends ExVO {
 
 			vo.addAcao(
 					"link_add",
-					"Criar Anexo",
+					"Incluir Documento",
 					"/app/expediente/doc",
 					"editar",
 					Ex.getInstance()
 							.getComp()
-							.podeAnexarArquivoAlternativo(titular, lotaTitular,
+							.podeIncluirDocumento(titular, lotaTitular,
 									mob), null,
 					"criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(), null,
 					null, null);

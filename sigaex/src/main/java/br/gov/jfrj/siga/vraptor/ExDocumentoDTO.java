@@ -210,8 +210,6 @@ public class ExDocumentoDTO {
 
 	private ExMobil mob;
 
-	private boolean despachando;
-
 	private boolean criandoAnexo;
 
 	private List<ExFormaDocumento> formasDoc;
@@ -263,14 +261,6 @@ public class ExDocumentoDTO {
 
 	public Integer getTamanhoMaximoDescricao() {
 		return 4000;
-	}
-
-	public boolean getDespachando() {
-		return despachando;
-	}
-
-	public void setDespachando(boolean despachando) {
-		this.despachando = despachando;
 	}
 
 	public boolean getAutuando() {

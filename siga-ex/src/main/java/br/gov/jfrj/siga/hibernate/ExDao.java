@@ -1909,6 +1909,13 @@ public class ExDao extends CpDao {
 	}
 
 	
+	public ExFormaDocumento consultarExForma(String sForma) {
+		final Criteria crit = getSessao().createCriteria(ExFormaDocumento.class);
+		crit.add(Restrictions.eq("descrFormaDoc", sForma));
+		return (ExFormaDocumento) crit.uniqueResult();
+	}
+
+	
 	public ExTipoDocumento consultarExTipoDocumento(String descricao) {
 		final Criteria crit = getSessao().createCriteria(ExTipoDocumento.class);
 		crit.add(Restrictions.eq("descrTipoDocumento", descricao));

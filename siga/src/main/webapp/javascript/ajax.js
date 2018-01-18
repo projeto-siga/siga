@@ -339,7 +339,7 @@ function MixWithNewPage(aElements, sPage, sIdObj) {
 	}					
 }
 
-function ReplaceInnerHTMLFromAjaxResponse(url, frm, obj_id) {
+function ReplaceInnerHTMLFromAjaxResponse(url, frm, obj_id, cont) {
 	var res = new RespostaAjax();
 	mostraCarregando();
 	var xmlhttp = new GetXmlHttp();
@@ -360,6 +360,8 @@ function ReplaceInnerHTMLFromAjaxResponse(url, frm, obj_id) {
 						MixWithNewPage(document.getElementsByTagName('div'), r, obj_id);
 					}
 					res.invokeSuccess(xmlhttp.responseText);
+					if (cont) 
+						cont();
 				} else if (debug) {
 					document.Write(xmlhttp.responseText);
 					res.invokeError(xmlhttp.responseText);

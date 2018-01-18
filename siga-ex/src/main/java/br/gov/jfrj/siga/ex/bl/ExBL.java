@@ -5525,6 +5525,7 @@ public class ExBL extends CpBL {
 		return formasFinal;
 	}
 
+	//Nato: esse método está muito lento, precisamos melhorar isso.
 	public List<ExModelo> obterListaModelos(ExFormaDocumento forma,
 			boolean despachando, String headerValue, boolean protegido,
 			DpPessoa titular, DpLotacao lotaTitular, boolean autuando) {

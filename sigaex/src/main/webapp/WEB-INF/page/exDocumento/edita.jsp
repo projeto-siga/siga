@@ -1,5 +1,4 @@
-
-<%@ page language="java" contentType="text/html; charset=UTF-8"buffer="128kb"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
@@ -32,8 +31,6 @@
 				<input type="hidden" name="postback" value="1" />
 				<input type="hidden" id="sigla" name="exDocumentoDTO.sigla" value="${exDocumentoDTO.sigla}" />
 				<input type="hidden" name="exDocumentoDTO.nomePreenchimento" value="" />
-				<input type="hidden" name="campos" value="despachando" />
-				<input type="hidden" name="exDocumentoDTO.despachando" value="${exDocumentoDTO.despachando}" />
 				<input type="hidden" name="campos" value="criandoAnexo" />
 				<input type="hidden" name="campos" value="autuando" />
 				<input type="hidden" name="exDocumentoDTO.autuando" value="${exDocumentoDTO.autuando}" />

@@ -2463,7 +2463,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean podeAnexarArquivoAlternativo(final DpPessoa titular,
+	public boolean podeIncluirDocumento(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		
 		if (!mob.isGeral() && mob.doc().isPendenteDeAssinatura())

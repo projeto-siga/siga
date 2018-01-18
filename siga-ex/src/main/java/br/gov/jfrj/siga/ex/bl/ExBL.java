@@ -1756,9 +1756,22 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao assinar documento.", 0, e);
 		}
 
+		trasferirAutomaticamente(cadastrante, lotaCadastrante, usuarioDoToken, doc, fPreviamenteAssinado);
+
 		alimentaFilaIndexacao(doc, true);
 
 		return s;
+	}
+
+	private void trasferirAutomaticamente(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
+			DpPessoa assinante, final ExDocumento doc, boolean fPreviamenteAssinado) {
+		// Transferir automaticamente os documentos quando forem plenamente assinados
+		if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura()) {
+			transferir(doc.getOrgaoExternoDestinatario(), doc.getObsOrgao(), cadastrante, lotaCadastrante, 
+					doc.getPrimeiroMobil(), null, null, null, assinante.getLotacao(), assinante, 
+					doc.getLotaDestinatario(), doc.getDestinatario(), assinante, assinante, null, 
+					false, null, null, null, false, false);
+		}
 	}
 
 	public String assinarDocumentoComSenha(final DpPessoa cadastrante,
@@ -1876,6 +1889,8 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
 		}
+
+		trasferirAutomaticamente(cadastrante, lotaCadastrante, subscritor, doc, fPreviamenteAssinado);
 
 		alimentaFilaIndexacao(doc, true);
 		return s;

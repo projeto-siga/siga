@@ -1932,18 +1932,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if(mob.isEmTransito())
 			return false;
 		
-		if (mob.doc().getNumUltimaViaNaoCancelada() > 0
+		return mob.doc().getNumUltimaViaNaoCancelada() > 0
 				&& mob.doc().isFinalizado() && 
 				(podeMovimentar(titular, lotaTitular, mob) 
 				   || mob.doc().getLotaCadastrante().equivale(lotaTitular)				        
 				   || (mob.doc().getLotaSubscritor() != null && mob.doc().getLotaSubscritor().equivale(lotaTitular))
-			       || (mob.doc().getSubscritor() != null &&  mob.doc().getSubscritor().equivale(titular))) // subscritor é null para documentos externos		      
-			) {
-
-			return true;
-		}
-
-		return false;
+			       || (mob.doc().getSubscritor() != null &&  mob.doc().getSubscritor().equivale(titular))) // subscritor é null para documentos externos
+		       && getConf().podePorConfiguracao(mob.doc().getExModelo(), CpTipoConfiguracao.TIPO_CONFIG_CRIAR_VIA);
 	}
 
 	/**

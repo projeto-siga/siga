@@ -1528,6 +1528,9 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Não é possível assinar o documento pois a descrição está vazia. Edite-o e informe uma descrição.");
 
+		if (!doc.isFinalizado())
+			finalizar(cadastrante, lotaCadastrante, doc);
+		
 		boolean fPreviamenteAssinado = !doc.isPendenteDeAssinatura();
 
 		if (!fPreviamenteAssinado) {
@@ -1808,6 +1811,9 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Senha do subscritor inválida.");
 		}
 
+		if (!doc.isFinalizado())
+			finalizar(cadastrante, lotaCadastrante, doc);
+		
 		boolean fPreviamenteAssinado = !doc.isPendenteDeAssinatura();
 
 		if (!doc.isFinalizado())
@@ -2997,7 +3003,7 @@ public class ExBL extends CpBL {
 
 	@SuppressWarnings("unchecked")
 	public String finalizar(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+			final DpLotacao lotaCadastrante, ExDocumento doc) throws AplicacaoException {
 
 		if (doc.isFisico() && Strings.isNullOrEmpty(doc.getDescrDocumento()))
 			throw new AplicacaoException(

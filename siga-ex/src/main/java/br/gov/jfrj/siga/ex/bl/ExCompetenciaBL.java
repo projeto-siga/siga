@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.hibernate.LockMode;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -1145,7 +1146,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				|| (mob.doc().isExterno() && mob.doc().getCadastrante().equivale(titular))
 				|| (mob.doc().isCossignatario(titular) && mob.doc().isPendenteDeAssinatura() && mob.doc().isAssinadoPeloSubscritorComTokenOuSenha())
 				|| podeMovimentar(titular, lotaTitular, mob))
-				&& mob.doc().isFinalizado()
+				&& (mob.doc().isFinalizado() || podeFinalizar(titular, lotaTitular, mob))
 				&& !mob.doc().isCancelado()
 				&& !mob.doc().isSemEfeito()
 				&& getConf()
@@ -1305,7 +1306,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
 				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
 	}	
-	public boolean podeSerSubscritor(final ExDocumento doc) throws Exception {
+	public boolean podeSerSubscritor(final ExDocumento doc) {
 		
 		if(doc.isExterno() || doc.isExternoCapturado())
 			return true;
@@ -1323,7 +1324,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @throws Exception
 	 */
 	public boolean podeSerSubscritor(final DpPessoa titular,
-			final DpLotacao lotaTitular, final ExModelo mod) throws Exception {
+			final DpLotacao lotaTitular, final ExModelo mod) {
 		
 		if(titular == null || mod == null)
 			return false;

@@ -85,6 +85,7 @@ import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
@@ -622,7 +623,7 @@ public class ExDocumentoController extends ExController {
 					+ getPar().get("serverAndPort")[0]);
 		}
 
-		exDocumentoDTO.setTiposDocumento(getTiposDocumento());
+		exDocumentoDTO.setTiposDocumento(getTiposDocumentoParaCriacao());
 		exDocumentoDTO.setListaNivelAcesso(getListaNivelAcesso(exDocumentoDTO));
 		exDocumentoDTO.setFormasDoc(getFormasDocPorTipo(exDocumentoDTO));
 		exDocumentoDTO.setModelos(getModelos(exDocumentoDTO));
@@ -682,6 +683,20 @@ public class ExDocumentoController extends ExController {
 		result.include("tipoDestinatario", exDocumentoDTO.getTipoDestinatario());
 		result.include("podeEditarData", podeEditarData);
 		return exDocumentoDTO;
+	}
+
+	private List<ExTipoDocumento> getTiposDocumentoParaCriacao() {
+		List<ExTipoDocumento> l = dao().listarExTiposDocumento();
+		if (!SigaExProperties.isCriarFolhaDeRosto()) {
+			List<ExTipoDocumento> l2 = new ArrayList<>();
+			for (ExTipoDocumento i : l) {
+				if (i.getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO || i.getId() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO)
+					continue;
+				l2.add(i);
+			}
+			l = l2;
+		}
+		return l;
 	}
 
 	private void registraErroExtEditor() throws IOException {

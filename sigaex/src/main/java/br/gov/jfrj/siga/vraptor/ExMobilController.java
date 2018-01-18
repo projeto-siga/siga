@@ -54,7 +54,9 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
+import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
+import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -177,7 +179,7 @@ public class ExMobilController extends
 		result.include("ultMovRespSel", builder.getUltMovRespSel());
 		result.include("orgaoUsu", builder.getOrgaoUsu());
 		result.include("orgaosUsu", this.getOrgaosUsu());
-		result.include("tiposDocumento", this.getTiposDocumento());
+		result.include("tiposDocumento", this.getTiposDocumentoParaConsulta());
 		result.include("idTpDoc", builder.getIdTpDoc());
 		result.include("dtDocString", dtDocString);
 		result.include("dtDocFinalString", dtDocFinalString);
@@ -217,6 +219,20 @@ public class ExMobilController extends
 		result.include("idTipoFormaDoc", idTipoFormaDoc);
 		result.include("idFormaDoc", forma);
 		result.include("idMod", idMod);		
+	}
+
+	private List<ExTipoDocumento> getTiposDocumentoParaConsulta() {
+		List<ExTipoDocumento> l = dao().listarExTiposDocumento();
+		if (!SigaExProperties.isConsultarFolhaDeRosto()) {
+			List<ExTipoDocumento> l2 = new ArrayList<>();
+			for (ExTipoDocumento i : l) {
+				if (i.getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO || i.getId() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO)
+					continue;
+				l2.add(i);
+			}
+			l = l2;
+		}
+		return l;
 	}
 
 	@Get("app/expediente/doc/listar")

@@ -1982,6 +1982,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	}
 	
 	/**
+	 * Retorna o primeiro móbil do documento, seja via ou volume.
+	 */
+	public ExMobil getPrimeiroMobil() {
+		return getMobil(1, null);
+	}
+
+	/**
 	 * Retorna o último móbil do documento, seja via ou volume.
 	 */
 	public ExMobil getUltimoMobil() {

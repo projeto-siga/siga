@@ -678,6 +678,9 @@ public class ExDocumentoController extends ExController {
 		result.include("classificacaoSel", exDocumentoDTO.getClassificacaoSel());
 		result.include("tipoDestinatario", exDocumentoDTO.getTipoDestinatario());
 		result.include("podeEditarData", podeEditarData);
+		
+		// Desabilita a proteção contra injeção maldosa de html e js
+		this.response.addHeader("X-XSS-Protection", "0");
 		return exDocumentoDTO;
 	}
 

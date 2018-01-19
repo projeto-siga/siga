@@ -385,7 +385,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"folder_magnify",
-				"Visualizar Dossiê",
+				"Ver Dossiê",
 				"/app/expediente/doc",
 				"exibirProcesso",
 				Ex.getInstance().getComp()
@@ -393,7 +393,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"printer",
-				"Visualizar Impressão",
+				"Ver Impressão",
 				"/app/arquivo",
 				"exibir",
 				Ex.getInstance().getComp()
@@ -436,14 +436,14 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"attach",
-				"Anexar Arquivo",
+				"Anexar",
 				"/app/expediente/mov",
 				"anexar",
 				Ex.getInstance().getComp()
 						.podeAnexarArquivo(titular, lotaTitular, mob));
 		vo.addAcao(
-				"tag_yellow",
-				"Fazer Anotação",
+				"note_add",
+				"Anotar",
 				"/app/expediente/mov",
 				"anotar",
 				Ex.getInstance().getComp()
@@ -453,7 +453,7 @@ public class ExDocumentoVO extends ExVO {
 				"vincularPapel", Ex.getInstance().getComp()
 						.podeFazerVinculacaoPapel(titular, lotaTitular, mob));
 
-		vo.addAcao("folder_user", "Definir Marcador", "/app/expediente/mov",
+		vo.addAcao("folder_star", "Definir Marcador", "/app/expediente/mov",
 				"marcar", Ex.getInstance().getComp()
 						.podeMarcar(titular, lotaTitular, mob));
 
@@ -541,7 +541,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"shield",
-				"Redefinir Nível de Acesso",
+				"Redefinir Acesso",
 				"/app/expediente/mov",
 				"redefinir_nivel_acesso",
 				Ex.getInstance().getComp()
@@ -559,7 +559,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"book_link",
-				"Registrar Publicação do BIE",
+				"Registrar Publicação do Boletim",
 				"/app/expediente/mov",
 				"boletim_publicar",
 				Ex.getInstance().getComp()
@@ -590,7 +590,7 @@ public class ExDocumentoVO extends ExVO {
 		int numUltMobil = doc.getNumUltimoMobil();
 		vo.addAcao(
 				"eye",
-				"Exibir Informações Completas",
+				"Ver Mais",
 				"/app/expediente/doc",
 				"exibirAntigo",
 				Ex.getInstance()
@@ -602,8 +602,8 @@ public class ExDocumentoVO extends ExVO {
 						null, null, null, null);
 
 		vo.addAcao(
-				"eye",
-				"Exibir Informações Completas",
+				"magnifier",
+				"Auditar",
 				"/app/expediente/doc",
 				"exibirAntigo",
 				Ex.getInstance()
@@ -615,7 +615,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"report_link",
-				"Agendar Publicação no DJE",
+				"Agendar Publicação no Diário",
 				"/app/expediente/mov",
 				"agendar_publicacao",
 				Ex.getInstance().getComp()
@@ -623,7 +623,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"report_add",
-				"Solicitar Publicação no DJE",
+				"Solicitar Publicação no Diário",
 				"/app/expediente/mov",
 				"pedirPublicacao",
 				Ex.getInstance().getComp()
@@ -644,7 +644,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"delete",
-				"Cancelar Documento",
+				"Cancelar",
 				"/app/expediente/doc",
 				"tornarDocumentoSemEfeito",
 				Ex.getInstance()

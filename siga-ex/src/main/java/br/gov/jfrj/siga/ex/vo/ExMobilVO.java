@@ -327,8 +327,8 @@ public class ExMobilVO extends ExVO {
 	 */
 	private void addAcoes(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 		if (!mob.isGeral()) {
-			addAcao("application_side_tree",
-					"Visualizar Dossiê",
+			addAcao("folder",
+					"Ver Dossiê",
 					"/app/expediente/doc",
 					"exibirProcesso",
 					Ex.getInstance().getComp()
@@ -336,7 +336,7 @@ public class ExMobilVO extends ExVO {
 					null, null, null, null, "once");
 
 			addAcao("printer",
-					"Visualizar Impressão",
+					"Ver Impressão",
 					"/app/arquivo",
 					"exibir",
 					Ex.getInstance().getComp()
@@ -344,7 +344,7 @@ public class ExMobilVO extends ExVO {
 					null, "&popup=true&arquivo=" + mob.getReferenciaPDF(),
 					null, null, null);
 
-			addAcao("link_add",
+			addAcao("page_white_add",
 					"Incluir Documento",
 					"/app/expediente/doc",
 					"editar",
@@ -362,7 +362,7 @@ public class ExMobilVO extends ExVO {
 						null, null);
 			}
 		}
-		addAcao("link_break", "Desentranhar", "/app/expediente/mov",
+		addAcao("page_white_error", "Desentranhar", "/app/expediente/mov",
 				"cancelar_juntada", Ex.getInstance().getComp()
 						.podeCancelarJuntada(titular, lotaTitular, mob), null,
 				null, null, null, "once");
@@ -383,8 +383,8 @@ public class ExMobilVO extends ExVO {
 						.podeReceber(titular, lotaTitular, mob), null, null,
 				null, null, "once");
 
-		addAcao("email_edit",
-				"Despachar/Transferir",
+		addAcao("email_go",
+				"Despachar/Tramitar",
 				"/app/expediente/mov",
 				"transferir",
 				Ex.getInstance().getComp()
@@ -395,13 +395,13 @@ public class ExMobilVO extends ExVO {
 
 		if (mob.isVia() || mob.isVolume()) {
 			addAcao("attach",
-					"Anexar Arquivo",
+					"Anexar",
 					"/app/expediente/mov",
 					"anexar",
 					Ex.getInstance().getComp()
 							.podeAnexarArquivo(titular, lotaTitular, mob));
-			addAcao("tag_yellow",
-					"Fazer Anotação",
+			addAcao("note_add",
+					"Anotar",
 					"/app/expediente/mov",
 					"anotar",
 					Ex.getInstance().getComp()
@@ -414,19 +414,19 @@ public class ExMobilVO extends ExVO {
 							.podeCopiar(titular, lotaTitular, mob));
 		}
 
-		addAcao("package", "Arq. Corrente", "/app/expediente/mov",
+		addAcao("box_add", "Arq. Corrente", "/app/expediente/mov",
 				"arquivar_corrente_gravar", Ex.getInstance().getComp()
 						.podeArquivarCorrente(titular, lotaTitular, mob), null,
 				null, null, null, "once");
 
-		addAcao("database_add",
+		addAcao("building_go",
 				"Indicar para Guarda Permanente",
 				"/app/expediente/mov",
 				"indicar_permanente",
 				Ex.getInstance().getComp()
 						.podeIndicarPermanente(titular, lotaTitular, mob));
 
-		addAcao("database_delete",
+		addAcao("buildinge_delete",
 				"Reverter Ind. Guarda Permanente",
 				"/app/expediente/mov",
 				"reverter_indicacao_permanente",
@@ -462,7 +462,7 @@ public class ExMobilVO extends ExVO {
 						.podeSobrestar(titular, lotaTitular, mob), null, null,
 				null, null, "once");
 
-		addAcao("database",
+		addAcao("building_add",
 				"Recolher ao Arq. Permanente",
 				"/app/expediente/mov",
 				"arquivar_permanente_gravar",
@@ -470,7 +470,7 @@ public class ExMobilVO extends ExVO {
 						.podeBotaoArquivarPermanente(titular, lotaTitular, mob),
 				null, null, null, null, "once");
 
-		addAcao("box",
+		addAcao("package_add",
 				"Arq. Intermediário",
 				"/app/expediente/mov",
 				"arquivar_intermediario",
@@ -479,12 +479,12 @@ public class ExMobilVO extends ExVO {
 						.podeBotaoArquivarIntermediario(titular, lotaTitular,
 								mob), null, null, null, null, "once");
 
-		addAcao("package_go", "Desarq. Corrente", "/app/expediente/mov",
+		addAcao("box_delete", "Desarq. Corrente", "/app/expediente/mov",
 				"reabrir_gravar", Ex.getInstance().getComp()
 						.podeDesarquivarCorrente(titular, lotaTitular, mob),
 				null, null, null, null, "once");
 
-		addAcao("box_go",
+		addAcao("package_delete",
 				"Desarq. Intermediário",
 				"/app/expediente/mov",
 				"desarquivar_intermediario_gravar",
@@ -499,7 +499,7 @@ public class ExMobilVO extends ExVO {
 						.podeDesobrestar(titular, lotaTitular, mob), null,
 				null, null, null, "once");
 
-		addAcao("link", "Juntar", "/app/expediente/mov", "juntar", Ex
+		addAcao("page_white_go", "Juntar", "/app/expediente/mov", "juntar", Ex
 				.getInstance().getComp().podeJuntar(titular, lotaTitular, mob));
 
 		addAcao("page_find",
@@ -544,7 +544,7 @@ public class ExMobilVO extends ExVO {
 						.podeCancelarVia(titular, lotaTitular, mob),
 				"Confirma o cancelamento da via?", null, null, null, "once");
 
-		addAcao("brick", "Autuar", "/app/expediente/doc", "editar", Ex
+		addAcao("page_white_get", "Autuar", "/app/expediente/doc", "editar", Ex
 				.getInstance().getComp().podeAutuar(titular, lotaTitular, mob),
 				null, "idMobilAutuado=" + mob.getId() + "&autuando=true", null,
 				null, null);

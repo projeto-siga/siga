@@ -1780,7 +1780,7 @@ public class ExBL extends CpBL {
 	public String assinarDocumentoComSenha(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final String matriculaSubscritor,
-			final String senhaSubscritor, final DpPessoa titular)
+			final String senhaSubscritor, final DpPessoa titular, final boolean autenticando)
 			throws Exception {
 
 		DpPessoa subscritor = null;
@@ -1831,42 +1831,44 @@ public class ExBL extends CpBL {
 
 		// Verifica se a matrícula confere com o subscritor titular ou com um
 		// cossignatario
-		try {
-			if (subscritor != null) {
-				if (doc.getSubscritor() != null
-						&& subscritor.equivale(doc.getSubscritor())) {
-					fValido = true;
-				}
-				if (!fValido) {
-					fValido = (subscritor.equivale(doc.getCadastrante()))
-							&& (doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
-				}
-				if (!fValido)
-					for (ExMovimentacao m : doc.getMobilGeral()
-							.getExMovimentacaoSet()) {
-						if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
-								&& m.getExMovimentacaoCanceladora() == null
-								&& subscritor.equivale(m.getSubscritor())) {
-							fValido = true;
-							continue;
-						}
+		if (!autenticando) {
+			try {
+				if (subscritor != null) {
+					if (doc.getSubscritor() != null
+							&& subscritor.equivale(doc.getSubscritor())) {
+						fValido = true;
 					}
-			}
-
-			if (fValido == false)
+					if (!fValido) {
+						fValido = (subscritor.equivale(doc.getCadastrante()))
+								&& (doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
+					}
+					if (!fValido)
+						for (ExMovimentacao m : doc.getMobilGeral()
+								.getExMovimentacaoSet()) {
+							if (m.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+									&& m.getExMovimentacaoCanceladora() == null
+									&& subscritor.equivale(m.getSubscritor())) {
+								fValido = true;
+								continue;
+							}
+						}
+				}
+	
+				if (fValido == false)
+					throw new AplicacaoException(
+							"Assinante não é subscritor nem cossignatario");
+			} catch (final Exception e) {
 				throw new AplicacaoException(
-						"Assinante não é subscritor nem cossignatario");
-		} catch (final Exception e) {
-			throw new AplicacaoException(
-					"Só é permitida a assinatura digital do subscritor e dos cossignatários do documento",
-					0, e);
+						"Só é permitida a assinatura digital do subscritor e dos cossignatários do documento",
+						0, e);
+			}
 		}
 
 		String s = null;
 		try {
 			iniciarAlteracao();
 
-			final ExMovimentacao mov = criarNovaMovimentacao(
+			final ExMovimentacao mov = criarNovaMovimentacao(autenticando ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA :
 					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
 					subscritor, null, null, null, null);
@@ -1953,7 +1955,7 @@ public class ExBL extends CpBL {
 		}
 
 		if (tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA
-				&& !getComp().podeConferirCopiaMovimentacaoComSenha(
+				&& !getComp().podeAutenticarMovimentacaoComSenha(
 						cadastrante, lotaCadastrante, movAlvo))
 			throw new AplicacaoException(
 					"Usuário não tem permissão de autenticar documento com senha.");

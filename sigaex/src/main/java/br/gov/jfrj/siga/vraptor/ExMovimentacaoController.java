@@ -2445,7 +2445,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Post("/app/expediente/mov/assinar_senha_gravar")
-	public void aAssinarSenhaGravar(String sigla, String nomeUsuarioSubscritor,
+	public void aAssinarSenhaGravar(String sigla, final Boolean copia, String nomeUsuarioSubscritor,
 			String senhaUsuarioSubscritor) throws Exception {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
@@ -2461,7 +2461,7 @@ public class ExMovimentacaoController extends ExController {
 					.assinarDocumentoComSenha(getCadastrante(),
 							getLotaTitular(), doc, mov.getDtMov(),
 							nomeUsuarioSubscritor, senhaUsuarioSubscritor,
-							mov.getTitular());
+							mov.getTitular(), copia);
 		} catch (final Exception e) {
 			httpError(e);
 			return;

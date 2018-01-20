@@ -1721,6 +1721,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		String retorno =  "";
 		String conferentes = Documento
 				.getAssinantesString(getAutenticacoesComToken());
+		String conferentesSenha = Documento
+				.getAssinantesString(getAutenticacoesComSenha());
 		String assinantesToken = Documento
 				.getAssinantesString(getAssinaturasComToken());
 		String assinantesSenha = Documento
@@ -1736,6 +1738,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 			retorno += conferentes.length() > 0 ? "Autenticado digitalmente por "
 				+ conferentes + ".\n" : "";
 		
+		if (conferentesSenha.length() > 0)
+			retorno += conferentesSenha.length() > 0 ? "Autenticado com senha por "
+				+ conferentesSenha + ".\n" : "";
+			
 		return retorno;
 	}
 	

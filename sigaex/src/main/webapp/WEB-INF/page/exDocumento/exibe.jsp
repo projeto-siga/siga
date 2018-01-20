@@ -44,8 +44,9 @@
 
 	function resize() {
 		var ifr = document.getElementById('painel');
-
 		ifr.height = pageHeight() - 300;
+		if (ifr.height < 300)
+			ifr.height = 300;
 		console.log("resize foi chamado!");
 	}
 
@@ -201,12 +202,12 @@
 										</tags:fixdocumenthtml>
 									</td>
 								</tr>
-							</table>
+							</table>	
 						</div>
 					</c:when>
 					<c:when test="${docVO.doc.pdf}">
-						<iframe style="visibility: visible; margin: 0px; padding: 0px;" 
-							name="painel" id="painel" src="/sigaex/app/arquivo/exibir?arquivo=${docVO.doc.referenciaPDF}" align="right" width="100%"
+						<iframe style="display: block;" 
+							name="painel" id="painel" src="/sigaex/app/arquivo/exibir?arquivo=${docVO.doc.referenciaPDF}" width="100%"
 							frameborder="0" 
 							scrolling="auto"></iframe>
 						<script>

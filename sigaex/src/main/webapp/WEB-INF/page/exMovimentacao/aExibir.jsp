@@ -330,7 +330,7 @@ function visualizarImpressao() {
 					assinar="true"
 					autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
 					assinarComSenha="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-					autenticarComSenha="${f:podeConferirCopiaMovimentacaoComSenha(titular,lotaTitular,mov)}" 
+					autenticarComSenha="${f:podeAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}" 
 					idMovimentacao="${mov.idMov}" />
 				<p>
 					<b>Link para assinatura externa: </b>

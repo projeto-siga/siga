@@ -598,6 +598,8 @@ public class ExDocumentoDTO {
 	}
 
 	public ExFormaDocumento getFormaDocPorTipo() {
+		if (getFormasDoc().size() == 0)
+			throw new AplicacaoException("Não existe nenhuma espécie cadastrada para essa origem.");
 		return getFormasDoc().get(0);
 	}
 

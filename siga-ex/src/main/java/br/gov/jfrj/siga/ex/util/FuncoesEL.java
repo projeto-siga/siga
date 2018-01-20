@@ -985,13 +985,13 @@ public class FuncoesEL {
 				.podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov);
 	}
 
-	public static Boolean podeConferirCopiaMovimentacaoComSenha(
+	public static Boolean podeAutenticarMovimentacaoComSenha(
 			DpPessoa titular, DpLotacao lotaTitular, ExMovimentacao mov)
 			throws Exception {
 		return Ex
 				.getInstance()
 				.getComp()
-				.podeConferirCopiaMovimentacaoComSenha(titular, lotaTitular,
+				.podeAutenticarMovimentacaoComSenha(titular, lotaTitular,
 						mov);
 	}
 
@@ -1001,13 +1001,13 @@ public class FuncoesEL {
 				.podeAssinarMovimentacaoComSenha(titular, lotaTitular, mob);
 	}
 
-	public static Boolean podeConferirCopiaMovimentacaoComSenha(
+	public static Boolean podeAutenticarComSenha(
 			DpPessoa titular, DpLotacao lotaTitular, ExMobil mob)
 			throws Exception {
 		return Ex
 				.getInstance()
 				.getComp()
-				.podeConferirCopiaMovimentacaoComSenha(titular, lotaTitular,
+				.podeAutenticarComSenha(titular, lotaTitular,
 						mob);
 	}
 

@@ -1267,7 +1267,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean podeConferirCopiaMovimentacaoComSenha(final DpPessoa titular,
+	public boolean podeAutenticarMovimentacaoComSenha(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMovimentacao mov) throws Exception {
 		
 		if(mov == null)
@@ -1293,7 +1293,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean podeConferirCopiaMovimentacaoComSenha(final DpPessoa titular,
+	public boolean podeAutenticarComSenha(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 		
 		if(mob == null)

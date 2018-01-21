@@ -294,7 +294,7 @@ public class ExMobilController extends
 		result.include("ultMovRespSel", builder.getUltMovRespSel());
 		result.include("orgaoUsu", builder.getOrgaoUsu());
 		result.include("orgaosUsu", this.getOrgaosUsu());
-		result.include("tiposDocumento", this.getTiposDocumento());
+		result.include("tiposDocumento", this.getTiposDocumentoParaConsulta());
 		result.include("idTpDoc", builder.getIdTpDoc());
 		result.include("dtDocString", dtDocString);
 		result.include("dtDocFinalString", dtDocFinalString);

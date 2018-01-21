@@ -270,9 +270,10 @@ public class SigaExProperties extends ModeloPropriedade {
 	
 	// Opções: ativa, consulta, inativa
 	private static String getFolhaDeRosto() {
-		String s = getString("siga.ex.folhaDeRosto");
+		String s = getString("siga.ex.folha.de.rosto");
+
 		if (s == null)
-			s = "ativa";
+			s = "inativa";
 		return s;
 	}
 	

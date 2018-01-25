@@ -1038,7 +1038,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	public String getSubscritorString() {
 		if (getSubscritor() != null)
 			return getSubscritor().getDescricaoIniciaisMaiusculas();
-		else if (getOrgaoExterno() != null || getObsOrgao() != null) {
+		else if (getOrgaoExterno() != null || getObsOrgao() != null || getNmSubscritorExt() != null) {
 			String str = "";
 			if (getOrgaoExterno() != null)
 				str = getOrgaoExterno().getDescricao();

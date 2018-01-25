@@ -68,8 +68,8 @@
 
 
 						<td width="10%">Origem:</td>
-						<td width="10%">
-						
+						<td colspan="3">
+							<span>
 							<select  name="exDocumentoDTO.idTpDoc" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
 							onchange="alterouOrigem(); mouseSelect(event, this, null)" style="${estiloTipo}">
 								<c:forEach items="${exDocumentoDTO.tiposDocumento}" var="item">
@@ -78,14 +78,13 @@
 									</option>  
 								</c:forEach>
 							</select>
-						</td>
-						<td>
-							<span style="display: ${exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData ? 'inline' : 'none'};">
+							</span>
+							<span style="margin-left: 1em; display: ${exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData ? 'inline' : 'none'};">
 								<input type="hidden" name="campos" value="dtDocString" />
 									Data:
 								<input type="text" name="exDocumentoDTO.dtDocString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocString}" /> &nbsp;&nbsp; 
 							</span>
-							<span style="display: ${(exDocumentoDTO.listaNivelAcesso).size() != 1 ? 'inline' : 'none'};">
+							<span style="margin-left: 1em; display: ${(exDocumentoDTO.listaNivelAcesso).size() != 1 ? 'inline' : 'none'};">
 								<input type="hidden" name="campos" value="nivelAcesso" />
 								Acesso 
 								<select  name="exDocumentoDTO.nivelAcesso" >
@@ -158,43 +157,33 @@
 							</td>
 						</tr>
 					</c:if>
-					<c:if test='${exDocumentoDTO.tipoDocumento == "externo"}'>
+					<c:if test='${exDocumentoDTO.tipoDocumento == "externo" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
 						<tr>
-							<td>Data original do documento:</td>
+							<td>Nº origial:</td>
 							<input type="hidden" name="campos" value="dtDocOriginalString" />
 							<td colspan="3">
-								<input type="text" name="exDocumentoDTO.dtDocOriginalString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocOriginalString}"/>
+								<input type="hidden" name="campos" value="numExtDoc" /><input type="text" name="exDocumentoDTO.numExtDoc" size="32" maxLength="32" value="${exDocumentoDTO.numExtDoc}"/>
+								<span style="margin-left: 1em;">Data:<input type="text" name="exDocumentoDTO.dtDocOriginalString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocOriginalString}"/></span>
+								<span style="margin-left: 1em;">Órgão:<input type="hidden" name="campos" value="cpOrgaoSel.id" /><siga:selecao propriedade="cpOrgao" inputName="exDocumentoDTO.cpOrgao" tema="simple" modulo="siga"/></span>
 							</td>
 						</tr>
-						<tr>
-							<td>Nº original:</td>
-							<input type="hidden" name="campos" value="numExtDoc" />
-							<td>
-								<input type="text" name="exDocumentoDTO.numExtDoc" size="32" maxLength="32" value="${exDocumentoDTO.numExtDoc}"/>
-							</td>
-						</tr>
-						<tr>
-							<td>Órgão:</td>
-							<input type="hidden" name="campos" value="cpOrgaoSel.id" />
-							<td colspan="3">
-								<siga:selecao propriedade="cpOrgao" inputName="exDocumentoDTO.cpOrgao" tema="simple" modulo="siga"/>
-							</td>
-						</tr>
-						<tr>
-							<td>Obs. sobre o Órgão Externo:</td>
-							<input type="hidden" name="campos" value="obsOrgao" />
-							<td colspan="3">
-								<input type="text" size="120" name="exDocumentoDTO.obsOrgao" maxLength="256" value="${exDocumentoDTO.obsOrgao}"/>
-							</td>
-						</tr>
-						<tr>
-							<td>Nº antigo:</td>
-							<input type="hidden" name="campos" value="numAntigoDoc" />
-							<td colspan="3">
-								<input type="text" name="exDocumentoDTO.numAntigoDoc" size="32" maxLength="34" value="${exDocumentoDTO.numAntigoDoc}" /> 
-								(informar o número do documento no antigo sistema de controle de expedientes, caso tenha sido cadastrado)
-							</td>
-						</tr>
+						<c:if test='${exDocumentoDTO.tipoDocumento == "externo"}'>
+							<tr>
+								<td>Obs. sobre o Órgão Externo:</td>
+								<input type="hidden" name="campos" value="obsOrgao" />
+								<td colspan="3">
+									<input type="text" size="120" name="exDocumentoDTO.obsOrgao" maxLength="256" value="${exDocumentoDTO.obsOrgao}"/>
+								</td>
+							</tr>
+							<tr>
+								<td>Nº antigo:</td>
+								<input type="hidden" name="campos" value="numAntigoDoc" />
+								<td colspan="3">
+									<input type="text" name="exDocumentoDTO.numAntigoDoc" size="32" maxLength="34" value="${exDocumentoDTO.numAntigoDoc}" /> 
+									(informar o número do documento no antigo sistema de controle de expedientes, caso tenha sido cadastrado)
+								</td>
+							</tr>
+						</c:if>
 					</c:if>
 					<input type="hidden" name="exDocumentoDTO.desativarDocPai" value="${exDocumentoDTO.desativarDocPai}" />
 					<tr style="display: none;">

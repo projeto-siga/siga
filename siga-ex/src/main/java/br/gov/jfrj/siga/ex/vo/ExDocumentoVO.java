@@ -55,6 +55,9 @@ public class ExDocumentoVO extends ExVO {
 	String nomeCompleto;
 	String dtDocDDMMYY;
 	String subscritorString;
+	String originalNumero;
+	String originalData;
+	String originalOrgao;
 	String classificacaoDescricaoCompleta;
 	List<String> tags;
 	String destinatarioString;
@@ -214,7 +217,10 @@ public class ExDocumentoVO extends ExVO {
 		ExDocumento bol = doc.getBoletimEmQueDocFoiPublicado();
 		if (bol != null)
 			boletim = new ExDocumentoVO(bol);
-
+		
+		this.originalNumero = doc.getNumExtDoc();
+		this.originalData = doc.getDtDocOriginalDDMMYYYY();
+		this.originalOrgao = doc.getOrgaoExterno() != null ? doc.getOrgaoExterno().getDescricao() : null;
 	}
 
 	public List<Object> getListaDeAcessos() {
@@ -842,5 +848,19 @@ public class ExDocumentoVO extends ExVO {
 	public void setCossignatarios(Map<ExMovimentacao, Boolean> cossignatarios) {
 		this.cossignatarios = cossignatarios;
 	}
+	
+	public String getOriginalNumero() {
+		return originalNumero;
+	}
+
+	public String getOriginalData() {
+		return originalData;
+	}
+
+	public String getOriginalOrgao() {
+		return originalOrgao;
+	}
+
+
 
 }

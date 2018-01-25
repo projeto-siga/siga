@@ -885,7 +885,15 @@
 			</p>
 			<p>
 				<b>Data:</b> ${docVO.dtDocDDMMYY}
+				<c:if test="${not empty docVO.originalData}">
+					- <b>original:</b> ${docVO.originalData}
+				</c:if>
 			</p>
+			<c:if test="${not empty docVO.originalNumero}">
+				<p>
+					<b>Número original:</b> ${docVO.originalNumero}
+				</p>
+			</c:if>
 			<p>
 				<b>De:</b> ${docVO.subscritorString}
 			</p>

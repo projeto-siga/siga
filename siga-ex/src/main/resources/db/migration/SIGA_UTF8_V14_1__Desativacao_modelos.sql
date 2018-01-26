@@ -31,10 +31,6 @@ update siga.ex_modelo set his_ativo = 0, his_dt_fim = sysdate where NM_MOD not i
 'Boletim Interno',
 'Despacho Automático');
 
-update siga.ex_modelo set conteudo_tp_blob = 'template/freemarker' where his_ativo = 1 and nm_mod in(
-'Boletim Interno'
-);
-
 update siga.ex_modelo set conteudo_tp_blob = 'template/freemarker' where  his_ativo = 1 and nm_mod in(
 'Boletim Interno','Termo - Modelo Livre','Carta','Certidão de desentranhamento'
 );
@@ -51,62 +47,6 @@ src_blob_ex_mod := utl_raw.cast_to_raw(convert('
 ELABORE SEU MODELO DE BOLETIM INTERNO NO MENU FERRAMENTAS/CADASTRO DE MODELOS
 ','AL32UTF8'));
 dbms_lob.append(dest_blob_ex_mod, src_blob_ex_mod);
-
-
-update SIGA.EX_MODELO set conteudo_blob_mod = utl_raw.cast_to_raw(' ') where id_mod = 200;
-select conteudo_blob_mod into dest_blob_ex_mod from SIGA.EX_MODELO where id_mod = 200 for update;
-src_blob_ex_mod := utl_raw.cast_to_raw(convert('
-ELABORE SEU MODELO DE CARTA NO MENU FERRAMENTAS/CADASTRO DE MODELOS
-','AL32UTF8'));
-dbms_lob.append(dest_blob_ex_mod, src_blob_ex_mod);
-
-
-update SIGA.EX_MODELO set conteudo_blob_mod = utl_raw.cast_to_raw(' ') where id_mod = 586;
-select conteudo_blob_mod into dest_blob_ex_mod from SIGA.EX_MODELO where id_mod = 586 for update;
-src_blob_ex_mod := utl_raw.cast_to_raw(convert('
-[#--
- Aplicacao: Termo
- Tipo de documento: Termo - Modelo Livre
- Autor: Marcos Melo
---] 
-[@entrevista]
-	[@grupo titulo="Texto a ser inserido no corpo do contrato"]
-		[@grupo]
-			[@editor titulo="" var="texto_contrato" /]
-		[/@grupo]
-	[/@grupo]
-	[@selecao
-		titulo="Tamanho da letra"
-		var="tamanhoLetra" opcoes="Normal;Pequeno;Grande"/]
-[/@entrevista]
-
-[@documento]
-	[#if tamanhoLetra! == "Normal"]
-		[#assign tl = "11pt" /]
-	[#elseif tamanhoLetra! == "Pequeno"]
-		[#assign tl = "9pt" /]
-	[#elseif tamanhoLetra! == "Grande"]
-		[#assign tl = "13pt" /]
-	[#else]     
-		[#assign tl = "11pt"]
-	[/#if]
-	
-	[@estiloBrasaoCentralizado tipo="TERMO" tamanhoLetra=tl formatarOrgao=true dataAntesDaAssinatura=false numeracaoCentralizada=false]
-		[@letra tl]
-			[@br/]
-			[@br/]
-			<span style="font-size:${tl!};">
-				${texto_contrato!}
-			</span>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-		[/@letra]
-	[/@estiloBrasaoCentralizado]
-[/@documento]
-
-','AL32UTF8'));
-dbms_lob.append(dest_blob_ex_mod, src_blob_ex_mod);
-
 
 
 update SIGA.EX_MODELO set conteudo_blob_mod = utl_raw.cast_to_raw(' ') where id_mod = 529;

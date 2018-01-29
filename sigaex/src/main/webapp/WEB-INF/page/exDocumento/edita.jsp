@@ -159,7 +159,7 @@
 					</c:if>
 					<c:if test='${exDocumentoDTO.tipoDocumento == "externo" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
 						<tr>
-							<td>Nº origial:</td>
+							<td>Nº original:</td>
 							<input type="hidden" name="campos" value="dtDocOriginalString" />
 							<td colspan="3">
 								<input type="hidden" name="campos" value="numExtDoc" /><input type="text" name="exDocumentoDTO.numExtDoc" size="32" maxLength="32" value="${exDocumentoDTO.numExtDoc}"/>

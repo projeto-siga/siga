@@ -145,16 +145,13 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	@Get
 	@Post
 	@Path({"/public/app/pessoa/selecionar","/app/pessoa/selecionar","/app/cosignatario/selecionar", "/pessoa/selecionar.action","/cosignatario/selecionar.action"})
-	public void selecionar(String sigla, boolean exibeEmail) {
+	public void selecionar(String sigla) {
 		String resultado =  super.aSelecionar(sigla);
 		if (resultado == "ajax_retorno"){
 			result.include("sel", getSel());
-			if(exibeEmail)
-				result.include("email", dao().getPessoaPorPrincipal(sigla).getEmailPessoaAtual());
 			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
 		}else{
 			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
 		}
 	}
-
 }

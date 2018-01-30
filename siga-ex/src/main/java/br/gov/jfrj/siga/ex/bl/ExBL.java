@@ -4415,20 +4415,18 @@ public class ExBL extends CpBL {
 
 			}
 
+			if (fDespacho && mob.isVolumeEncerrado())
+				if (!mob.isApensadoAVolumeDoMesmoProcesso())
+					throw new AplicacaoException(
+							"não é permitido fazer despacho em volume que esta encerrado ID_MOBIL:"
+									+ mob.getId());
+			
 			for (ExMobil m : set) {
 
 				if (!m.equals(mob) && fDespacho && fTranferencia) {
 					throw new AplicacaoException(
 							"não é permitido fazer despacho com transferência em um documento que faça parte de um apenso. faça primeiro o despacho e depois transfira o documento.");
 				}
-
-				if (fDespacho && m.isVolumeEncerrado())
-					if (m.isApensadoAVolumeDoMesmoProcesso())
-						continue;
-					else
-						throw new AplicacaoException(
-								"não é permitido fazer despacho em volume que esta encerrado ID_MOBIL:"
-										+ m.getId());
 
 				if (fDespacho
 						&& !getComp().podeDespachar(cadastrante,

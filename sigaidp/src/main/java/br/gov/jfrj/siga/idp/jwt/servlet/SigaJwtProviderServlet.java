@@ -2,14 +2,12 @@ package br.gov.jfrj.siga.idp.jwt.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.picketlink.common.util.Base64;
 
@@ -63,16 +61,17 @@ public class SigaJwtProviderServlet extends HttpServlet {
 		
 			String body = request.getReader().readLine();
 			result = jwtBL.login(usuario,lotacao,senha,body,permissoes,ttl);
+			result = "{token:\"" + result + "\"}";
 			
 		}else if(request.getPathInfo().endsWith("/validar")){
 			String token = extrairAuthorization(request);;
 			result = jwtBL.validar(token);
 		}
 		
-		response.setContentType("text/plain");
+		//response.setContentType("application/json");
 	    PrintWriter out = response.getWriter();
-	    out.println(result);
-
+	    JSONObject jsonResult = new JSONObject(result);
+	    out.println(jsonResult);
 		
 	}
 

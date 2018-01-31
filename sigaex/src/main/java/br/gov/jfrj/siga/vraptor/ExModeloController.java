@@ -57,7 +57,7 @@ public class ExModeloController extends ExSelecionavelController {
 	public void lista(final String script) throws Exception {
 		try {
 			assertAcesso(VERIFICADOR_ACESSO);
-			List<ExModelo> modelos = dao().listarTodosModelosOrdenarPorNome(
+			List<ExModelo> modelos = dao().listarTodosModelosOrdenarPorNome(null, 
 					script);
 			result.include("itens", modelos);
 			result.include("script", script);
@@ -187,7 +187,7 @@ public class ExModeloController extends ExSelecionavelController {
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				ZipOutputStream zos = new ZipOutputStream(baos)) {
 
-			final List<ExModelo> l = dao().listarTodosModelosOrdenarPorNome(null);
+			final List<ExModelo> l = dao().listarTodosModelosOrdenarPorNome(null, null);
 	
 			for (final ExModelo m : l) {
 				final KXmlSerializer serializer = new KXmlSerializer();
@@ -323,7 +323,7 @@ public class ExModeloController extends ExSelecionavelController {
 			os.write('\n');
 			os.write('\n');
 
-			final List<ExModelo> l = dao().listarTodosModelosOrdenarPorNome(
+			final List<ExModelo> l = dao().listarTodosModelosOrdenarPorNome(null, 
 					null);
 
 			for (final ExModelo m : l) {

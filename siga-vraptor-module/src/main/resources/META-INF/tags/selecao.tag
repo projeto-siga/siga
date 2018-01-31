@@ -113,7 +113,7 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao, complemen
 	<c:if test="${ocultardescricao != 'sim'}">
 		try {
 			document.getElementsByName('${inputNameTipoSel}.descricao')[0].value = descricao;
-			if(complemento.indexOf('@') != -1)
+			if(complemento && complemento.indexOf('@') != -1)
 				document.getElementById('${spanName}SelSpan').innerHTML = descricao + " " + complemento;
 			else
 				document.getElementById('${spanName}SelSpan').innerHTML = descricao;

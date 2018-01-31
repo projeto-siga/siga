@@ -23,9 +23,12 @@ function displayPersonalizacao(thisElement) {
 
 // <c:set var="url" value="editar" />
 function sbmt(id) {
-
 	var frm = document.getElementById('frm');
-
+	
+	var mod = document.getElementsByName('exDocumentoDTO.idMod')[0];
+	if (mod.value == '[Selecione]')
+		mod.value = '0';
+	
 	// Dispara a função onSave() do editor, caso exista
 	if (typeof (onSave) == "function") {
 		onSave();
@@ -76,7 +79,6 @@ function gravarDoc() {
 }
 
 function validar(silencioso) {
-
 	var descr = document.getElementsByName('exDocumentoDTO.descrDocumento')[0].value;
 	var eletroHidden = document.getElementById('eletronicoHidden');
 	var eletro1 = document.getElementById('eletronicoCheck1');

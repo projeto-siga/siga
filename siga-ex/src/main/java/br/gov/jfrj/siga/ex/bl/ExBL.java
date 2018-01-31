@@ -5528,7 +5528,7 @@ public class ExBL extends CpBL {
 	}
 
 	//Nato: esse método está muito lento, precisamos melhorar isso.
-	public List<ExModelo> obterListaModelos(ExFormaDocumento forma,
+	public List<ExModelo> obterListaModelos(ExTipoDocumento tipo, ExFormaDocumento forma,
 			boolean despachando, String headerValue, boolean protegido,
 			DpPessoa titular, DpLotacao lotaTitular, boolean autuando) {
 		ArrayList<ExModelo> modeloSetFinal = new ArrayList<ExModelo>();
@@ -5537,7 +5537,7 @@ public class ExBL extends CpBL {
 			modeloSetFinal = new ArrayList<ExModelo>(forma.getExModeloSet());
 		else
 			modeloSetFinal = (ArrayList) dao()
-					.listarTodosModelosOrdenarPorNome(null);
+					.listarTodosModelosOrdenarPorNome(tipo, null);
 		if (despachando) {
 			provSet = new ArrayList<ExModelo>();
 			for (ExModelo mod : modeloSetFinal)

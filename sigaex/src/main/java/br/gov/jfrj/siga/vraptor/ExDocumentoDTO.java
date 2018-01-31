@@ -110,9 +110,6 @@ public class ExDocumentoDTO {
 	/** The composite primary key value. */
 	private String idDoc;
 
-	/** The value of the exFormaDocumento association. */
-	private Long idFormaDoc;
-
 	private Long idMod;
 
 	/** The value of the exTipoDocumento association. */
@@ -436,10 +433,6 @@ public class ExDocumentoDTO {
 		return idDoc;
 	}
 
-	public Long getIdFormaDoc() {
-		return idFormaDoc;
-	}
-
 	public Long getIdMod() {
 		return idMod;
 	}
@@ -694,10 +687,6 @@ public class ExDocumentoDTO {
 
 	public void setIdDoc(final String idDoc) {
 		this.idDoc = idDoc;
-	}
-
-	public void setIdFormaDoc(final Long idFormaDoc) {
-		this.idFormaDoc = idFormaDoc;
 	}
 
 	public void setIdMod(final Long idMod) {

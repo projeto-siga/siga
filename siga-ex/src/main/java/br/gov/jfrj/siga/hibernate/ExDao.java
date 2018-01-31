@@ -1687,11 +1687,21 @@ public class ExDao extends CpDao {
 		return null;
 	}
 
-	public List<ExModelo> listarTodosModelosOrdenarPorNome(String script) {
-		final Query q = getSessao()
+	public List<ExModelo> listarTodosModelosOrdenarPorNome(ExTipoDocumento tipo, String script) {
+		Query q = null;
+		
+		if (tipo != null) { 
+			q = getSessao()
 				.createQuery(
-						"select m from ExModelo m left join m.exFormaDocumento as f where m.hisAtivo = 1"
-								+ "order by f.descrFormaDoc, m.nmMod");
+						"select m from ExModelo m left join m.exFormaDocumento as f join f.exTipoDocumentoSet as t where t = :tipo and m.hisAtivo = 1"
+								+ "order by m.nmMod");
+			q.setEntity("tipo", tipo);
+		} else {
+			q = getSessao()
+					.createQuery(
+							"select m from ExModelo m left join m.exFormaDocumento as f where m.hisAtivo = 1"
+									+ "order by m.nmMod");
+		}
 		List<ExModelo> l = new ArrayList<ExModelo>();		
 		for (ExModelo mod : (List<ExModelo>) q.list()) {
 			if (script != null && script.trim().length() != 0) {

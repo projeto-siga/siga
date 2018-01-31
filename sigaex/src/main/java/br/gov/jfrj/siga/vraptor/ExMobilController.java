@@ -544,7 +544,7 @@ public class ExMobilController extends
 		}
 
 		final List<ExFormaDocumento> formasDoc = new ArrayList<ExFormaDocumento>();
-		formasDoc.addAll(bl.obterFormasDocumento(bl.obterListaModelos(null,
+		formasDoc.addAll(bl.obterFormasDocumento(bl.obterListaModelos(null, null,
 				false, null, false, getTitular(), getLotaTitular(), false),
 				null, tipoForma));
 		return formasDoc;
@@ -563,7 +563,7 @@ public class ExMobilController extends
 		return Ex
 				.getInstance()
 				.getBL()
-				.obterListaModelos(forma, false, "Todos", false, getTitular(),
+				.obterListaModelos(null, forma, false, "Todos", false, getTitular(),
 						getLotaTitular(), false);
 	}
 

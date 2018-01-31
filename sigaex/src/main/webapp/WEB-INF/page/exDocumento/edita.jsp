@@ -140,6 +140,42 @@
 							</span>
 						</td>
 					</tr>
+					
+					<c:if test='${ exDocumentoDTO.tipoDocumento != "externo"}'>
+						<c:choose>
+							<c:when test="${possuiMaisQueUmModelo}">
+								<tr>
+									<td>Modelo:</td>
+									<td colspan="3">
+										<siga:div id="modelo" depende="forma">										    
+											<select class="dependent" name="exDocumentoDTO.idMod" style="${estiloTipo}" xonchange="document.getElementById('alterouModelo').value='true'; sbmt();">
+											<option hidden value="">[Selecionar]</option>
+											<!-- o onchange do select do modelo está sendo tratado pelo jquery dependentSelects abaixo, não incluir o evento onchange pare este componete -->											
+												<c:forEach items="${exDocumentoDTO.modelos}" var="item">
+													<option value="${item.idMod}" ${item.idMod == exDocumentoDTO.idMod ? 'selected' : ''}>
+														${item.nmMod}
+													</option>  
+												</c:forEach>
+											</select>											
+											
+											<c:if test="${not empty exDocumentoDTO.doc.exModelo}">
+												<span style="${estiloTipoSpan}">${exDocumentoDTO.doc.exModelo.nmMod}</span>
+											</c:if>
+											<!-- sbmt('modelo') -->
+											<c:if test='${exDocumentoDTO.tipoDocumento=="antigo" and exDocumentoDTO.tipoDocumento=="externo"}'>(opcional)</c:if>
+										</siga:div>
+									</td>
+								</tr>
+							</c:when>
+							<c:otherwise>
+								<input type="hidden" name="exDocumentoDTO.idMod" value="${exDocumentoDTO.modelo.idMod}" />
+							</c:otherwise>
+						</c:choose>
+					</c:if>
+					<c:if test='${exDocumentoDTO.tipoDocumento == "externo" }'>
+						<input type="hidden" name="exDocumentoDTO.idMod" value="${exDocumentoDTO.idMod}"/>
+					</c:if>
+					
 					<c:if test='${exDocumentoDTO.tipoDocumento == "antigo"}'>
 						<tr>
 							<td>Nº original:</td>
@@ -281,92 +317,7 @@
 							</siga:span>
 					</tr>
 </c:if>
-					<%--</c:if>--%>
 
-
-					<c:if test='${ exDocumentoDTO.tipoDocumento != "externo"}'>
-						<tr style="display: ${(exDocumentoDTO.formasDoc).size() != 1 || exDocumentoDTO.criandoSubprocesso ? 'visible' : 'none'};">
-							<td>Espécie:</td>
-							<td colspan="3">
-								<select  name="exDocumentoDTO.idFormaDoc" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
-								onchange="document.getElementById('alterouModelo').value='true';mouseSelect(event, this, null)" style="${estiloTipo}">
-									<c:forEach items="${exDocumentoDTO.formasDoc}" var="item">
-										<option value="${item.idFormaDoc}" ${item.idFormaDoc == exDocumentoDTO.idFormaDoc ? 'selected' : ''}>
-											${item.descrFormaDoc}
-										</option>  
-									</c:forEach>
-								</select>	
-							<c:if test="${not empty exDocumentoDTO.doc.exFormaDocumento}">
-								<span style="${estiloTipoSpan}">${exDocumentoDTO.doc.exFormaDocumento.descrFormaDoc}</span>
-							</c:if></td>
-						</tr>
-
-						<c:choose>
-							<c:when test="${possuiMaisQueUmModelo}">
-								<tr>
-									<td>Modelo:</td>
-									<td colspan="3">
-										<siga:div id="modelo" depende="forma">										    
-											<select class="dependent" name="exDocumentoDTO.idMod" style="${estiloTipo}" xonchange="document.getElementById('alterouModelo').value='true'; sbmt();">
-											<option hidden value="">[Selecionar]</option>
-											<!-- o onchange do select do modelo está sendo tratado pelo jquery dependentSelects abaixo, não incluir o evento onchange pare este componete -->											
-												<c:forEach items="${exDocumentoDTO.modelos}" var="item">
-													<option value="${item.idMod}" ${item.idMod == exDocumentoDTO.idMod ? 'selected' : ''}>
-														${item.nmMod}
-													</option>  
-												</c:forEach>
-											</select>											
-											
-											<c:if test="${not empty exDocumentoDTO.doc.exModelo}">
-												<span style="${estiloTipoSpan}">${exDocumentoDTO.doc.exModelo.nmMod}</span>
-											</c:if>
-											<!-- sbmt('modelo') -->
-											<c:if test='${exDocumentoDTO.tipoDocumento=="antigo" and exDocumentoDTO.tipoDocumento=="externo"}'>(opcional)</c:if>
-										</siga:div>
-									</td>
-								</tr>
-							</c:when>
-							<c:otherwise>
-								<input type="hidden" name="exDocumentoDTO.idMod" value="${exDocumentoDTO.modelo.idMod}" />
-							</c:otherwise>
-						</c:choose>
-						
-						<!-- 
-						<c:if test='${ exDocumentoDTO.tipoDocumento == "interno" }'>
-						<tr>
-							<td>Preenchimento Automático:</td>
-							<input type="hidden" name="campos" value="preenchimento" />
-							<td colspan="3">
-								
-								<select  id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()">
-									<c:forEach items="${exDocumentoDTO.preenchimentos}" var="item">
-										<option value="${item.idPreenchimento}" ${item.idPreenchimento == exDocumentoDTO.preenchimento ? 'selected' : ''}>
-											${item.nomePreenchimento}
-										</option>  
-									</c:forEach>
-								</select>&nbsp;								
-									 
-								<c:if test="${exDocumentoDTO.preenchimento==0}">
-									<c:set var="desabilitaBtn"> disabled="disabled" </c:set>
-								</c:if>
-								 
-								<input type="button" name="btnAlterar" value="Alterar" onclick="javascript:alteraPreench()"${desabilitaBtn}>&nbsp;								
-								<input type="button" name="btnRemover" value="Remover" onclick="javascript:removePreench()"${desabilitaBtn} >&nbsp;								
-								<input type="button" value="Adicionar" name="btnAdicionar" onclick="javascript:adicionaPreench()">
-							</td>
-						</tr>
-					</c:if>
-						-->
-
-						
-					</c:if>
-					<c:if test='${exDocumentoDTO.tipoDocumento == "externo" }'>
-						<input type="hidden" name="exDocumentoDTO.idFormaDoc" value="${exDocumentoDTO.formaDocPorTipo.idFormaDoc}" />
-						<input type="hidden" name="exDocumentoDTO.idMod" value="${exDocumentoDTO.idMod}"/>
-					</c:if>
-				
-
-						
 					<tr style="display:<c:choose><c:when test="${exDocumentoDTO.modelo.exClassificacao!=null}">none</c:when><c:otherwise>visible</c:otherwise></c:choose>">
 						<td>Classificação:</td>
 						<c:if test="${exDocumentoDTO.modelo.exClassificacao!=null}">

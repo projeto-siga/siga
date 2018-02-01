@@ -1,0 +1,129 @@
+.hierarchy-select.btn-group .dropdown-menu {
+	box-sizing: border-box;
+	min-width: 100%;
+	z-index: 1035
+}
+
+.hierarchy-select.btn-group .dropdown-menu.inner {
+	border: 0 none;
+	border-radius: 0;
+	box-shadow: none;
+	float: none;
+	margin: 0;
+	padding: 0;
+	position: relative;
+	max-height: 500px;
+}
+
+.hierarchy-select.btn-group .dropdown-menu li {
+	position: relative;
+	list-style-type: none;
+	margin-left: 0;
+	margin-bottom: 0;
+	padding: 0;
+}
+
+.hierarchy-select.btn-group .dropdown-menu li a {
+	padding-top: 0 !important;
+	padding-bottom: 0;
+}
+
+.hierarchy-select.btn-group .dropdown-menu li.active a {
+    color: #fff;
+}
+
+.hierarchy-select.btn-group .dropdown-menu li.group a {
+    color: #aaa;
+}
+
+.hierarchy-select.btn-group .hs-searchbox {
+	padding: 4px 8px
+}
+
+.hierarchy-select.btn-group .hs-searchbox>input.form-control {
+	margin-bottom: 0;
+	width: 100%
+}
+
+.hierarchy-select.btn-group>.dropdown-toggle {
+	padding-right: 25px;
+	width: 100%
+}
+
+.hierarchy-select.btn-group>.dropdown-toggle:focus {
+	outline: thin dotted #333 !important;
+	outline-offset: -2px
+}
+
+.hierarchy-select.btn-group>.dropdown-toggle>.selected-label {
+	display: inline-block;
+	overflow: hidden;
+	text-align: left;
+	width: 100%
+}
+
+.hierarchy-select.btn-group>.dropdown-toggle>.caret {
+	margin-top: -2px;
+	position: absolute;
+	right: 12px;
+	top: 50%;
+	vertical-align: middle
+}
+
+.hierarchy-select.btn-group .dropdown-menu li[data-level='2']>a {
+	padding-left: 40px
+}
+
+.hierarchy-select.btn-group .dropdown-menu li[data-level='3']>a {
+	padding-left: 60px
+}
+
+.hierarchy-select.btn-group .dropdown-menu li[data-level='4']>a {
+	padding-left: 80px
+}
+
+.hierarchy-select.btn-group .dropdown-menu li[data-level='5']>a {
+	padding-left: 100px
+}
+
+.hierarchy-select.btn-group .dropdown-menu li[data-level='6']>a {
+	padding-left: 120px
+}
+
+.hierarchy-select.btn-group .dropdown-menu li[data-level='7']>a {
+	padding-left: 140px
+}
+
+.hierarchy-select.btn-group .dropdown-menu li[data-level='8']>a {
+	padding-left: 160px
+}
+
+.hierarchy-select.btn-group .dropdown-menu li[data-level='9']>a {
+	padding-left: 180px
+}
+
+.hierarchy-select.btn-group .dropdown-menu li[data-level='10']>a {
+	padding-left: 200px
+}
+
+.has-error .hierarchy-select.btn-group>button, .has-error .hierarchy-select.btn-group>button:active,
+	.has-error .hierarchy-select.btn-group>button:focus, .has-error .hierarchy-select.btn-group>button:hover
+	{
+	border-color: #a94442
+}
+
+.has-error .hierarchy-select.btn-group.open>button, .has-error .hierarchy-select.btn-group.open>button:active,
+	.has-error .hierarchy-select.btn-group.open>button:focus, .has-error .hierarchy-select.btn-group.open>button:hover
+	{
+	border-color: #a94442
+}
+
+.has-error .hierarchy-select.btn-group .form-control {
+	border-color: #ccc
+}
+
+.has-error .hierarchy-select.btn-group .form-control:focus {
+	border-color: #66afe9;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px
+		rgba(102, 175, 233, 0.6)
+}

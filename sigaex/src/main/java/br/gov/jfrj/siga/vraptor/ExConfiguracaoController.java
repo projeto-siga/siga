@@ -372,7 +372,7 @@ public class ExConfiguracaoController extends ExController {
 
 	private Set<ExFormaDocumento> getListaFormas() throws Exception {
 		ExBL bl = Ex.getInstance().getBL();
-		return bl.obterFormasDocumento(bl.obterListaModelos(null, false, null, false, null, null, false), null, null);
+		return bl.obterFormasDocumento(bl.obterListaModelos(null, null, false, null, false, null, null, false), null, null);
 	}
 
 	private Set<ExModelo> getListaModelosPorForma(Integer idFormaDoc) throws Exception {

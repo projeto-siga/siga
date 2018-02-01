@@ -5,9 +5,13 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <siga:pagina titulo="Novo Documento">
+<link rel="stylesheet" href="/siga/javascript/hierarchy-select/hierarchy-select.css" type="text/css" media="screen, projection"/>
+
 <script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js"></script>
 <script type="text/javascript" src="../../../javascript/exDocumentoEdita.js"></script>
 <script type="text/javascript" src="/siga/javascript/jquery.blockUI.js"></script>
+<script src="/siga/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/hierarchy-select/hierarchy-select.js"></script>
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
 	
@@ -140,30 +144,40 @@
 							</span>
 						</td>
 					</tr>
-					
-					<c:if test='${ exDocumentoDTO.tipoDocumento != "externo"}'>
+
+						<c:if test='${ exDocumentoDTO.tipoDocumento != "externo"}'>
 						<c:choose>
 							<c:when test="${possuiMaisQueUmModelo}">
 								<tr>
 									<td>Modelo:</td>
 									<td colspan="3">
-										<siga:div id="modelo" depende="forma">										    
-											<select class="dependent" name="exDocumentoDTO.idMod" style="${estiloTipo}" xonchange="document.getElementById('alterouModelo').value='true'; sbmt();">
-											<option hidden value="">[Selecionar]</option>
-											<!-- o onchange do select do modelo está sendo tratado pelo jquery dependentSelects abaixo, não incluir o evento onchange pare este componete -->											
-												<c:forEach items="${exDocumentoDTO.modelos}" var="item">
-													<option value="${item.idMod}" ${item.idMod == exDocumentoDTO.idMod ? 'selected' : ''}>
-														${item.nmMod}
-													</option>  
-												</c:forEach>
-											</select>											
-											
-											<c:if test="${not empty exDocumentoDTO.doc.exModelo}">
-												<span style="${estiloTipoSpan}">${exDocumentoDTO.doc.exModelo.nmMod}</span>
-											</c:if>
-											<!-- sbmt('modelo') -->
-											<c:if test='${exDocumentoDTO.tipoDocumento=="antigo" and exDocumentoDTO.tipoDocumento=="externo"}'>(opcional)</c:if>
-										</siga:div>
+										<div class="btn-group hierarchy-select" data-resize="auto"
+											id="modelos-select">
+											<button type="button" class="btn btn-default dropdown-toggle"
+												data-toggle="dropdown">
+												<span class="selected-label pull-left">&nbsp;</span> <span
+													class="caret"></span> <span class="sr-only">Toggle
+													Dropdown</span>
+											</button>
+											<div class="dropdown-menu open">
+												<div class="hs-searchbox">
+													<input type="text" class="form-control" autocomplete="off" placeholder="Pesquisar modelo...">
+												</div>
+												<ul class="dropdown-menu inner" role="menu">
+													<c:forEach items="${hierarquiaDeModelos}" var="item">
+														<li data-value="${item.value}" data-level="${item.level}"
+															data-search="${item.searchText}"
+															${item.group ? 'data-group' : ''}
+															${item.selected ? 'data-default-selected' : ''}><a
+															href="#">${item.text}</a></li>
+													</c:forEach>
+												</ul>
+											</div>
+											<input class="hidden hidden-field" name="exDocumentoDTO.idMod"
+												readonly="readonly" onchange="alterouModeloSelect()"
+												aria-hidden="true" type="text" value="${exDocumentoDTO.idMod}"/>
+										</div>
+		
 									</td>
 								</tr>
 							</c:when>
@@ -410,14 +424,21 @@
 	<!--  tabela do rodapé -->
 </siga:pagina>
 
-<script src="/siga/javascript/jquery.dependent-selects.js"></script>
-
 <script type="text/javascript">
 function alterouOrigem() {
 	<c:if test="${exDocumentoDTO.doc.codigo == 'NOVO' and exDocumentoDTO.tipoDocumento == 'interno'}">
 	retorna_subscritor('', '', '', ''); // remove o subscritor default quando troca a origem
 	</c:if>
 	document.getElementById('alterouModelo').value='true'
+}
+
+function alterouModeloSelect() {
+	var valor = $('input[name="exDocumentoDTO.idMod"]').val();
+	var valorOriginal = $('input[name="exDocumentoDTO.idMod.original"]').val();
+	if (valor !== '' && valor !== valorOriginal) {
+		document.getElementById('alterouModelo').value='true';
+		sbmt();
+	}
 }
 
 function presskeySelect(event, id, parameter) {
@@ -436,23 +457,12 @@ function mouseSelect(event, id, parameter) {
     }
 }
 
-$(document).ready(function() {$('.dependent').dependentSelects({
-	  separator: ': ', // String: The separator used to define the nesting in the option field's text
-	  placeholderOption: '[Selecione]',
-	  // placeholderSelect: false,
-	  changed:function() {
-		  var valor = $('select[name="exDocumentoDTO.idMod"]').find(":selected").val();
-		  var valorOriginal = $('input[name="exDocumentoDTO.idMod.original"]').val();
-		  console.log('valor ' + valor + ' - valor original: ' + valorOriginal);
-		  if (valor !== '' && valor !== '[Selecione]' && valor !== valorOriginal) {		
-		    document.getElementById('alterouModelo').value='true';
-		    sbmt();
-		  }
-		  },
-	  // "class": false, // String: Add an extra class to all sub selects
-	  // labels: false // Array of strings: The text used for the sub select boxes' labels. Label element is
-	                // inserted before sub select.
-	});});
+$(document).ready(function() {
+    $('#modelos-select').hierarchySelect({
+        width: 'auto',
+        height: 'auto'
+    });
+});
 // window.customOnsubmit = function() {return true;};
 // {
 //	var frm = document.getElementById('frm');

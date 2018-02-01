@@ -63,6 +63,7 @@ import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -415,6 +416,72 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getAutuando(), exDocumentoDTO.getIdMobilAutuado(), exDocumentoDTO.getCriandoSubprocesso());
 		return exDocumentoDTO;
 	}
+	
+	public static class ListaHierarquica {
+		public static class ModeloItem {
+			public int level;
+			public String text;
+			public String searchText;
+			public Long value;
+			public boolean group;
+			public boolean selected;
+			
+			public ModeloItem(int level, String text, String searchText, Long value, boolean group, boolean selected) {
+				this.level = level;
+				this.text = text;
+				this.searchText = searchText;
+				this.value = value;
+				this.group = group;
+				this.selected = selected;
+			}
+
+			public int getLevel() {
+				return level;
+			}
+			public String getText() {
+				return text;
+			}
+			public String getSearchText() {
+				return searchText;
+			}
+			public Long getValue() {
+				return value;
+			}
+			public boolean getGroup() {
+				return group;
+			}
+			public boolean getSelected() {
+				return selected;
+			}
+		}
+		
+		static final String DIVIDER = ": ";
+		List<String> groups = new ArrayList<String>();
+		List<ModeloItem> l = new ArrayList<ModeloItem>();
+		
+		public void add(String text, Long value, boolean selected) {
+			if (text == null || value == null)
+				return;
+			String as[] = text.split(DIVIDER);
+			for (int i = 0; i<as.length; i++) {
+				String s = as[i];
+				
+				// igual ao anterior
+				if (i < groups.size() && s.equals(groups.get(i)))
+					continue;
+				else {
+					groups = groups.subList(0, i);
+					groups.add(s);
+					boolean group = i < as.length - 1;
+					l.add(new ModeloItem(i + 1, s, group ? null : Texto.removeAcentoMaiusculas(text), group ? null : value, group, group ? false : selected));
+				}
+			}
+		}
+		
+		public List<ModeloItem> getList() {
+			return l;
+		}
+	}
 
 	@Post("app/expediente/doc/editar")
 	@Get("app/expediente/doc/editar")
@@ -613,7 +680,6 @@ public class ExDocumentoController extends ExController {
 
 		exDocumentoDTO.setTiposDocumento(getTiposDocumentoParaCriacao());
 		exDocumentoDTO.setListaNivelAcesso(getListaNivelAcesso(exDocumentoDTO));
-		exDocumentoDTO.setModelos(getModelos(exDocumentoDTO));
 
 		final Map<String, String[]> parFreeMarker = new HashMap<>();
 		setPar(getRequest().getParameterMap());
@@ -651,10 +717,15 @@ public class ExDocumentoController extends ExController {
 			// System.out.println("*** " + p + ", "
 			// + exDocumentoDTO.getParamsEntrevista().get(p));
 		}
+		
+		ListaHierarquica lh = new ListaHierarquica();
+		for (ExModelo m : exDocumentoDTO.getModelos()) {
+			lh.add(m.getNmMod(), m.getId(), m.getId().equals(exDocumentoDTO.getIdMod()));
+		}
+		
 		result.include("vars", l);
 
-		result.include("possuiMaisQueUmModelo", !exDocumentoDTO.getCriandoSubprocesso() && (getModelos(exDocumentoDTO)
-				.size() > 1));
+		result.include("possuiMaisQueUmModelo", !exDocumentoDTO.getCriandoSubprocesso() && (exDocumentoDTO.getModelos().size() > 1));
 		result.include("par", parFreeMarker);
 		result.include("cpOrgaoSel", exDocumentoDTO.getCpOrgaoSel());
 		result.include("mobilPaiSel", exDocumentoDTO.getMobilPaiSel());
@@ -668,6 +739,7 @@ public class ExDocumentoController extends ExController {
 		result.include("classificacaoSel", exDocumentoDTO.getClassificacaoSel());
 		result.include("tipoDestinatario", exDocumentoDTO.getTipoDestinatario());
 		result.include("podeEditarData", podeEditarData);
+		result.include("hierarquiaDeModelos", lh.getList());
 		
 		// Desabilita a proteção contra injeção maldosa de html e js
 		this.response.addHeader("X-XSS-Protection", "0");

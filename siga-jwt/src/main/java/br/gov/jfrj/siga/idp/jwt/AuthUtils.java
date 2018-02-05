@@ -28,9 +28,8 @@ public class AuthUtils {
 		}
 	}
 
-	public String getModuloPassword() {
-		String modulo = System.getProperty("idp.jwt.modulo.nome");
-		return System.getProperty("idp.jwt." + modulo + ".pwd");
+	public String getModuloPassword(String nomeModulo) {
+		return System.getProperty("idp.jwt.client." + nomeModulo + ".pwd");
 	}
 
 	public String getProviderIssuer() {

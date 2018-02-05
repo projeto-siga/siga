@@ -20,11 +20,14 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 public class AuthJwtFilter implements Filter {
 	
+	private FilterConfig filterConfig;
+
+
 	private DecodedJWT validarToken(String token) throws IllegalArgumentException, UnsupportedEncodingException{
 		if(token==null){
 			throw new RuntimeException("Token inválido");
 		}
-    	String password = AuthUtils.getInstance().getModuloPassword();
+    	String password = AuthUtils.getInstance().getModuloPassword(filterConfig.getInitParameter("nome-modulo"));
     	Algorithm algorithm = Algorithm.HMAC256(password);
 
 		JWTVerifier verificador = JWT.require(algorithm)
@@ -57,7 +60,7 @@ public class AuthJwtFilter implements Filter {
 
 	
 	public void init(FilterConfig fConfig) throws ServletException {
-		// TODO Auto-generated method stub
+		this.filterConfig = fConfig;
 	}
 
 }

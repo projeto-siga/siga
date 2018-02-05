@@ -55,7 +55,6 @@
 							</c:otherwise>
 						</c:choose>
 					</tr>
-
 					<c:choose>
 						<c:when test="${(exDocumentoDTO.doc.eletronico) && (exDocumentoDTO.doc.numExpediente != null)}">
 							<c:set var="estiloTipo" value="display: none" />
@@ -66,14 +65,59 @@
 							<c:set var="estiloTipoSpan" value="display: none" />
 						</c:otherwise>
 					</c:choose>
-
 					<input type="hidden" name="campos" value="idTpDoc" />
-					<tr>
 
-
-						<td width="10%">Origem:</td>
+					<!-- Modelo -->
+					<c:if test='${ exDocumentoDTO.tipoDocumento != "externo"}'>
+						<c:choose>
+							<c:when test="${possuiMaisQueUmModelo}">
+								<tr>
+									<td>Modelo:</td>
+									<td colspan="3">
+										<div class="btn-group hierarchy-select" data-resize="auto"
+											id="modelos-select">
+											<button type="button" class="btn btn-default dropdown-toggle"
+												data-toggle="dropdown">
+												<span class="selected-label pull-left">&nbsp;</span> <span
+													class="caret"></span> <span class="sr-only">Toggle
+													Dropdown</span>
+											</button>
+											<div class="dropdown-menu open">
+												<div class="hs-searchbox">
+													<input type="text" class="form-control" autocomplete="off" placeholder="Pesquisar modelo...">
+												</div>
+												<ul class="dropdown-menu inner" role="menu">
+													<c:forEach items="${hierarquiaDeModelos}" var="item">
+														<li data-value="${item.value}" data-level="${item.level}"
+															data-search="${item.searchText}"
+															${item.group ? 'data-group' : ''}
+															${item.selected ? 'data-default-selected' : ''}><a
+															href="#">${item.text}</a></li>
+													</c:forEach>
+												</ul>
+											</div>
+											<input class="hidden hidden-field" name="exDocumentoDTO.idMod"
+												readonly="readonly" onchange="alterouModeloSelect()"
+												aria-hidden="true" type="text" value="${exDocumentoDTO.idMod}"/>
+										</div>
+		
+									</td>
+								</tr>
+							</c:when>
+							<c:otherwise>
+								<input type="hidden" name="exDocumentoDTO.idMod" value="${exDocumentoDTO.modelo.idMod}" />
+							</c:otherwise>
+						</c:choose>
+					</c:if>
+					<c:if test='${exDocumentoDTO.tipoDocumento == "externo" }'>
+						<input type="hidden" name="exDocumentoDTO.idMod" value="${exDocumentoDTO.idMod}"/>
+					</c:if>
+					
+					<!-- Origem -->
+					<tr style="display: ${((exDocumentoDTO.tiposDocumento).size() != 1 or (exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData) or (exDocumentoDTO.listaNivelAcesso.size() != 1) or (!exDocumentoDTO.eletronicoFixo)) ? 'table-row' : 'none'};">
+						<td width="10%"></td>
 						<td colspan="3">
-							<span>
+							<span style="margin-right: 1em; display: ${(exDocumentoDTO.tiposDocumento).size() != 1 ? 'inline' : 'none'};">Origem:
 							<select  name="exDocumentoDTO.idTpDoc" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
 							onchange="alterouOrigem(); mouseSelect(event, this, null)" style="${estiloTipo}">
 								<c:forEach items="${exDocumentoDTO.tiposDocumento}" var="item">
@@ -83,12 +127,12 @@
 								</c:forEach>
 							</select>
 							</span>
-							<span style="margin-left: 1em; display: ${exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData ? 'inline' : 'none'};">
+							<span style="margin-right: 1em; display: ${exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData ? 'inline' : 'none'};">
 								<input type="hidden" name="campos" value="dtDocString" />
 									Data:
 								<input type="text" name="exDocumentoDTO.dtDocString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocString}" /> &nbsp;&nbsp; 
 							</span>
-							<span style="margin-left: 1em; display: ${(exDocumentoDTO.listaNivelAcesso).size() != 1 ? 'inline' : 'none'};">
+							<span style="margin-right: 1em; display: ${(exDocumentoDTO.listaNivelAcesso).size() != 1 ? 'inline' : 'none'};">
 								<input type="hidden" name="campos" value="nivelAcesso" />
 								Acesso 
 								<select  name="exDocumentoDTO.nivelAcesso" >
@@ -145,50 +189,6 @@
 						</td>
 					</tr>
 
-						<c:if test='${ exDocumentoDTO.tipoDocumento != "externo"}'>
-						<c:choose>
-							<c:when test="${possuiMaisQueUmModelo}">
-								<tr>
-									<td>Modelo:</td>
-									<td colspan="3">
-										<div class="btn-group hierarchy-select" data-resize="auto"
-											id="modelos-select">
-											<button type="button" class="btn btn-default dropdown-toggle"
-												data-toggle="dropdown">
-												<span class="selected-label pull-left">&nbsp;</span> <span
-													class="caret"></span> <span class="sr-only">Toggle
-													Dropdown</span>
-											</button>
-											<div class="dropdown-menu open">
-												<div class="hs-searchbox">
-													<input type="text" class="form-control" autocomplete="off" placeholder="Pesquisar modelo...">
-												</div>
-												<ul class="dropdown-menu inner" role="menu">
-													<c:forEach items="${hierarquiaDeModelos}" var="item">
-														<li data-value="${item.value}" data-level="${item.level}"
-															data-search="${item.searchText}"
-															${item.group ? 'data-group' : ''}
-															${item.selected ? 'data-default-selected' : ''}><a
-															href="#">${item.text}</a></li>
-													</c:forEach>
-												</ul>
-											</div>
-											<input class="hidden hidden-field" name="exDocumentoDTO.idMod"
-												readonly="readonly" onchange="alterouModeloSelect()"
-												aria-hidden="true" type="text" value="${exDocumentoDTO.idMod}"/>
-										</div>
-		
-									</td>
-								</tr>
-							</c:when>
-							<c:otherwise>
-								<input type="hidden" name="exDocumentoDTO.idMod" value="${exDocumentoDTO.modelo.idMod}" />
-							</c:otherwise>
-						</c:choose>
-					</c:if>
-					<c:if test='${exDocumentoDTO.tipoDocumento == "externo" }'>
-						<input type="hidden" name="exDocumentoDTO.idMod" value="${exDocumentoDTO.idMod}"/>
-					</c:if>
 					
 					<c:if test='${exDocumentoDTO.tipoDocumento == "antigo"}'>
 						<tr>
@@ -213,8 +213,8 @@
 							<input type="hidden" name="campos" value="dtDocOriginalString" />
 							<td colspan="3">
 								<input type="hidden" name="campos" value="numExtDoc" /><input type="text" name="exDocumentoDTO.numExtDoc" size="32" maxLength="32" value="${exDocumentoDTO.numExtDoc}"/>
-								<span style="margin-left: 1em;">Data:<input type="text" name="exDocumentoDTO.dtDocOriginalString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocOriginalString}"/></span>
-								<span style="margin-left: 1em;">Órgão:<input type="hidden" name="campos" value="cpOrgaoSel.id" /><siga:selecao propriedade="cpOrgao" inputName="exDocumentoDTO.cpOrgao" tema="simple" modulo="siga"/></span>
+								<span style="margin-left: 1em;">Data: <input type="text" name="exDocumentoDTO.dtDocOriginalString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocOriginalString}"/></span>
+								<span style="margin-left: 1em;">Órgão: <input type="hidden" name="campos" value="cpOrgaoSel.id" /><siga:selecao propriedade="cpOrgao" inputName="exDocumentoDTO.cpOrgao" tema="simple" modulo="siga"/></span>
 							</td>
 						</tr>
 						<c:if test='${exDocumentoDTO.tipoDocumento == "externo"}'>

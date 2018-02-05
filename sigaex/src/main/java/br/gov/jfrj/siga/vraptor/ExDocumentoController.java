@@ -535,8 +535,16 @@ public class ExDocumentoController extends ExController {
 				}
 			}
 			
+			exDocumentoDTO.setModelos(getModelos(exDocumentoDTO));
+			
 			if (exDocumentoDTO.getIdMod() == null) {
-				ExModelo modeloDefault = dao().consultarExModelo(null, "Memorando");
+				ExModelo modeloDefault = null;
+				for (ExModelo mod : exDocumentoDTO.getModelos()) {
+					if ("Memorando".equals(mod.getNmMod())) {
+						modeloDefault = mod;
+						break;
+					}
+				}
 				if (modeloDefault == null)
 					throw new RuntimeException("Não foi possível carregar um modelo chamado 'Memorando'");
 				exDocumentoDTO.setIdMod(modeloDefault.getId());
@@ -679,7 +687,21 @@ public class ExDocumentoController extends ExController {
 		}
 
 		exDocumentoDTO.setTiposDocumento(getTiposDocumentoParaCriacao());
+		if (exDocumentoDTO.getModelo() != null) {
+			Set<ExTipoDocumento> set = exDocumentoDTO.getModelo().getExFormaDocumento().getExTipoDocumentoSet();
+			List<ExTipoDocumento> l = new ArrayList<>();
+			for (ExTipoDocumento tp : exDocumentoDTO.getTiposDocumento()) {
+				if (set.contains(tp))
+					l.add(tp);
+			}
+			exDocumentoDTO.setTiposDocumento(l);
+		}
 		exDocumentoDTO.setListaNivelAcesso(getListaNivelAcesso(exDocumentoDTO));
+		if (exDocumentoDTO.getModelo() != null && exDocumentoDTO.getModelo().getExNivelAcesso() != null) {
+			List<ExNivelAcesso> l = new ArrayList<>();
+			l.add(exDocumentoDTO.getModelo().getExNivelAcesso());
+			exDocumentoDTO.setListaNivelAcesso(l);
+		}
 
 		final Map<String, String[]> parFreeMarker = new HashMap<>();
 		setPar(getRequest().getParameterMap());
@@ -2183,11 +2205,11 @@ public class ExDocumentoController extends ExController {
 		}
 		
 		ExTipoDocumento tipo = null;
-		if (exDocumentoDTO.getIdTpDoc() != null
-				&& exDocumentoDTO.getIdTpDoc() != 0) {
-			tipo = dao().consultar(exDocumentoDTO.getIdTpDoc(),
-					ExTipoDocumento.class, false);
-		}
+//		if (exDocumentoDTO.getIdTpDoc() != null
+//				&& exDocumentoDTO.getIdTpDoc() != 0) {
+//			tipo = dao().consultar(exDocumentoDTO.getIdTpDoc(),
+//					ExTipoDocumento.class, false);
+//		}
 	    String headerValue = null;
 		if (exDocumentoDTO.getTipoDocumento() != null
 				&& exDocumentoDTO.getTipoDocumento().equals("antigo")) {

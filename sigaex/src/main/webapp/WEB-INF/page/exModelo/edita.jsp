@@ -97,6 +97,7 @@
 						<tr>
 							<td>Nivel de acesso:</td>
 							<td><select name="nivel" value="${nivel}">
+									<option value="0">[Indeterminado]</option>
 									<c:forEach var="item" items="${listaNivelAcesso}">
 										<option value="${item.idNivelAcesso}"
 											${item.idNivelAcesso == nivel ? 'selected' : ''}>${item.nmNivelAcesso}</option>

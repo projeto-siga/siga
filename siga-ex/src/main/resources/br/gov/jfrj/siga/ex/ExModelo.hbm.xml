@@ -34,6 +34,8 @@
 			
 		<many-to-one name="exFormaDocumento" column="ID_FORMA_DOC"
 			class="ExFormaDocumento" not-null="true" />
+		<many-to-one name="exNivelAcesso" column="ID_NIVEL_ACESSO"
+			class="ExNivelAcesso" not-null="false" />
 		<many-to-one name="exClassificacao" column="ID_CLASSIFICACAO"
 			class="ExClassificacao" not-null="false" />
 		<many-to-one name="exClassCriacaoVia" column="ID_CLASS_CRIACAO_VIA"

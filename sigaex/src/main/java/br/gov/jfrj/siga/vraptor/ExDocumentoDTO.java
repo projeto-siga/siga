@@ -212,7 +212,7 @@ public class ExDocumentoDTO {
 	private List<ExFormaDocumento> formasDoc;
 
 	private List<ExModelo> modelos;
-
+	
 	private Long idMobilAutuado;
 
 	private boolean autuando;

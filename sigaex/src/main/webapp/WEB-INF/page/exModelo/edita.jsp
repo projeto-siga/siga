@@ -85,7 +85,7 @@
 									urlSelecionar="selecionar" /></td>
 						</tr>
 						<tr>
-							<td>Forma:</td>
+							<td>Espécie:</td>
 							<td><select name="forma" value="${forma}">
 									<c:forEach var="item" items="${listaForma}">
 										<option value="${item.idFormaDoc}"

@@ -22,6 +22,8 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
+
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -41,7 +43,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,6 +55,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -63,7 +66,6 @@ import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -72,7 +74,6 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
-import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -93,6 +94,8 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Selecao;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import br.gov.jfrj.siga.util.ListaHierarquica;
+import br.gov.jfrj.siga.util.ListaHierarquicaItem;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 
 @Resource
@@ -357,7 +360,7 @@ public class ExDocumentoController extends ExController {
 		result.forwardTo(this).edita(exDocumentoDTOPreench, null, vars,
 				exDocumentoDTO.getMobilPaiSel(),
 				exDocumentoDTO.isCriandoAnexo(),
-				exDocumentoDTO.getAutuando(), exDocumentoDTO.getIdMobilAutuado(), exDocumentoDTO.getCriandoSubprocesso());
+				exDocumentoDTO.getAutuando(), exDocumentoDTO.getIdMobilAutuado(), exDocumentoDTO.getCriandoSubprocesso(), null);
 	}
 
 	@Get("app/expediente/doc/criar_via")
@@ -408,87 +411,21 @@ public class ExDocumentoController extends ExController {
 
 	@Post("app/expediente/doc/recarregar")
 	public ExDocumentoDTO recarregar(final ExDocumentoDTO exDocumentoDTO,
-			final String[] vars) throws IllegalAccessException,
+			final String[] vars, String jsonHierarquiaDeModelos) throws IllegalAccessException,
 			InvocationTargetException, IOException {
 		result.forwardTo(this).edita(exDocumentoDTO, null, vars,
 				exDocumentoDTO.getMobilPaiSel(),
 				exDocumentoDTO.isCriandoAnexo(),
-				exDocumentoDTO.getAutuando(), exDocumentoDTO.getIdMobilAutuado(), exDocumentoDTO.getCriandoSubprocesso());
+				exDocumentoDTO.getAutuando(), exDocumentoDTO.getIdMobilAutuado(), exDocumentoDTO.getCriandoSubprocesso(), jsonHierarquiaDeModelos);
 		return exDocumentoDTO;
 	}
 	
-	public static class ListaHierarquica {
-		public static class ModeloItem {
-			public int level;
-			public String text;
-			public String searchText;
-			public Long value;
-			public boolean group;
-			public boolean selected;
-			
-			public ModeloItem(int level, String text, String searchText, Long value, boolean group, boolean selected) {
-				this.level = level;
-				this.text = text;
-				this.searchText = searchText;
-				this.value = value;
-				this.group = group;
-				this.selected = selected;
-			}
-
-			public int getLevel() {
-				return level;
-			}
-			public String getText() {
-				return text;
-			}
-			public String getSearchText() {
-				return searchText;
-			}
-			public Long getValue() {
-				return value;
-			}
-			public boolean getGroup() {
-				return group;
-			}
-			public boolean getSelected() {
-				return selected;
-			}
-		}
-		
-		static final String DIVIDER = ": ";
-		List<String> groups = new ArrayList<String>();
-		List<ModeloItem> l = new ArrayList<ModeloItem>();
-		
-		public void add(String text, Long value, boolean selected) {
-			if (text == null || value == null)
-				return;
-			String as[] = text.split(DIVIDER);
-			for (int i = 0; i<as.length; i++) {
-				String s = as[i];
-				
-				// igual ao anterior
-				if (i < groups.size() && s.equals(groups.get(i)))
-					continue;
-				else {
-					groups = groups.subList(0, i);
-					groups.add(s);
-					boolean group = i < as.length - 1;
-					l.add(new ModeloItem(i + 1, s, group ? null : Texto.removeAcentoMaiusculas(text), group ? null : value, group, group ? false : selected));
-				}
-			}
-		}
-		
-		public List<ModeloItem> getList() {
-			return l;
-		}
-	}
-
 	@Post("app/expediente/doc/editar")
 	@Get("app/expediente/doc/editar")
 	public ExDocumentoDTO edita(ExDocumentoDTO exDocumentoDTO,
 			final String sigla, String[] vars,
 			final ExMobilSelecao mobilPaiSel, final Boolean criandoAnexo,
-			final Boolean autuando, final Long idMobilAutuado, final Boolean criandoSubprocesso)
+			final Boolean autuando, final Long idMobilAutuado, final Boolean criandoSubprocesso, String jsonHierarquiaDeModelos)
 			throws IOException, IllegalAccessException,
 			InvocationTargetException {
 		assertAcesso("");
@@ -535,9 +472,10 @@ public class ExDocumentoController extends ExController {
 				}
 			}
 			
-			exDocumentoDTO.setModelos(getModelos(exDocumentoDTO));
 			
 			if (exDocumentoDTO.getIdMod() == null) {
+				final List<ExModelo> modelos = getModelos(exDocumentoDTO);
+
 				ExModelo modeloDefault = null;
 				for (ExModelo mod : exDocumentoDTO.getModelos()) {
 					if ("Memorando".equals(mod.getNmMod())) {
@@ -545,8 +483,12 @@ public class ExDocumentoController extends ExController {
 						break;
 					}
 				}
+				
+				if (modeloDefault == null && modelos.size() > 0) 
+					modeloDefault = modelos.get(0);
+
 				if (modeloDefault == null)
-					throw new RuntimeException("Não foi possível carregar um modelo chamado 'Memorando'");
+					throw new RuntimeException("Não foi possível carregar um modelo inicial");
 				exDocumentoDTO.setIdMod(modeloDefault.getId());
 			}
 			
@@ -740,14 +682,40 @@ public class ExDocumentoController extends ExController {
 			// + exDocumentoDTO.getParamsEntrevista().get(p));
 		}
 		
-		ListaHierarquica lh = new ListaHierarquica();
-		for (ExModelo m : exDocumentoDTO.getModelos()) {
-			lh.add(m.getNmMod(), m.getId(), m.getId().equals(exDocumentoDTO.getIdMod()));
-		}
+		ListaHierarquica lh = null;
+    	if (jsonHierarquiaDeModelos != null) {
+	    	ObjectMapper mapper = new ObjectMapper();
+	    	try {
+	    		lh = mapper.readValue(jsonHierarquiaDeModelos, ListaHierarquica.class);
+	    		for (ListaHierarquicaItem m : lh.getList()) {
+	    			if (m.getValue() != null && m.getValue().equals(exDocumentoDTO.getIdMod()))
+	    				m.selected = true;
+	    		}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+    	} else {
+    		lh = new ListaHierarquica();
+			for (ExModelo m : exDocumentoDTO.getModelos()) {
+				lh.add(m.getNmMod(), m.getId(), m.getId().equals(exDocumentoDTO.getIdMod()));
+			}
+		
+	    	ObjectMapper mapper = new ObjectMapper();
+	    	try {
+				jsonHierarquiaDeModelos = mapper.writeValueAsString(lh);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+    	}
+    	
+    	int cModelos = 0;
+    	for (ListaHierarquicaItem i : lh.getList())
+    		if (!i.group)
+    			cModelos++;
 		
 		result.include("vars", l);
 
-		result.include("possuiMaisQueUmModelo", !exDocumentoDTO.getCriandoSubprocesso() && (exDocumentoDTO.getModelos().size() > 1));
+		result.include("possuiMaisQueUmModelo", !exDocumentoDTO.getCriandoSubprocesso() && (cModelos > 1));
 		result.include("par", parFreeMarker);
 		result.include("cpOrgaoSel", exDocumentoDTO.getCpOrgaoSel());
 		result.include("mobilPaiSel", exDocumentoDTO.getMobilPaiSel());
@@ -762,6 +730,7 @@ public class ExDocumentoController extends ExController {
 		result.include("tipoDestinatario", exDocumentoDTO.getTipoDestinatario());
 		result.include("podeEditarData", podeEditarData);
 		result.include("hierarquiaDeModelos", lh.getList());
+		result.include("jsonHierarquiaDeModelos", escapeHtml(jsonHierarquiaDeModelos));
 		
 		// Desabilita a proteção contra injeção maldosa de html e js
 		this.response.addHeader("X-XSS-Protection", "0");
@@ -846,7 +815,7 @@ public class ExDocumentoController extends ExController {
 		result.forwardTo(this).edita(exDocumentoDTO, null, vars,
 				exDocumentoDTO.getMobilPaiSel(),
 				exDocumentoDTO.isCriandoAnexo(),
-				exDocumentoDTO.getAutuando(), exDocumentoDTO.getIdMobilAutuado(), exDocumentoDTO.getCriandoSubprocesso());
+				exDocumentoDTO.getAutuando(), exDocumentoDTO.getIdMobilAutuado(), exDocumentoDTO.getCriandoSubprocesso(), null);
 	}
 
 	@SuppressWarnings("static-access")
@@ -1287,7 +1256,7 @@ public class ExDocumentoController extends ExController {
 	@Post("/app/expediente/doc/gravar")
 	public void gravar(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos,
-			final UploadedFile arquivo) {
+			final UploadedFile arquivo, String jsonHierarquiaDeModelos) {
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();
 
@@ -1308,7 +1277,7 @@ public class ExDocumentoController extends ExController {
 						exDocumentoDTO.isCriandoAnexo(),
 						exDocumentoDTO.getAutuando(),
 						exDocumentoDTO.getIdMobilAutuado(),
-						exDocumentoDTO.getCriandoSubprocesso());
+						exDocumentoDTO.getCriandoSubprocesso(), jsonHierarquiaDeModelos);
 				return;
 			}
 
@@ -1771,13 +1740,6 @@ public class ExDocumentoController extends ExController {
 			}
 		}
 
-		final List<ExModelo> modelos = getModelos(exDocumentoDTO);
-		if (mod != null && !modelos.contains(mod)) 
-			mod = null;
-					
-		if (mod == null && modelos.size() > 0) 
-			mod = modelos.get(0);
-		
 		if (mod != null && exDocumentoDTO.isAlterouModelo()) {
 			exDocumentoDTO.setIdMod(mod.getIdMod());
 			if ((exDocumentoDTO.getIdMod() != 0)

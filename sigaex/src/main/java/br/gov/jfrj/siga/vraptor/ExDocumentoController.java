@@ -673,6 +673,9 @@ public class ExDocumentoController extends ExController {
 		
 		boolean podeEditarData = Ex.getInstance().getComp()
 				.podeEditarData(getTitular(), getLotaTitular(), exDocumentoDTO.getModelo());
+		
+		boolean podeEditarDescricao = Ex.getInstance().getComp()
+				.podeEditarDescricao(getTitular(), getLotaTitular(), exDocumentoDTO.getModelo());
 
 		List<String> l = new ArrayList<String>();
 		for (String p : exDocumentoDTO.getParamsEntrevista().keySet()) {
@@ -729,6 +732,7 @@ public class ExDocumentoController extends ExController {
 		result.include("classificacaoSel", exDocumentoDTO.getClassificacaoSel());
 		result.include("tipoDestinatario", exDocumentoDTO.getTipoDestinatario());
 		result.include("podeEditarData", podeEditarData);
+		result.include("podeEditarDescricao", podeEditarData);
 		result.include("hierarquiaDeModelos", lh.getList());
 		result.include("jsonHierarquiaDeModelos", escapeHtml(jsonHierarquiaDeModelos));
 		

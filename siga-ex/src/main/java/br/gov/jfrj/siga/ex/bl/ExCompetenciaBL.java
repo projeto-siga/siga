@@ -2321,6 +2321,23 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 
 	/**
+	 * Retorna se é possível editar a descrição de um documento, conforme configuração específica.
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mod
+	 * @return
+	 */
+	public boolean podeEditarDescricao(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExModelo mod) {
+
+		return getConf().podePorConfiguracao(null, null, null, null, mod.getExFormaDocumento(),
+				mod, null, null, null, titular.getCargo(), titular.getOrgaoUsuario(),
+				titular.getFuncaoConfianca(), lotaTitular, titular, null, null, 
+				CpTipoConfiguracao.TIPO_CONFIG_EDITAR_DESCRICAO);
+	}
+
+	/**
 	 * Retorna se é possível agendar publicação direta, de acordo com as
 	 * seguintes regras:
 	 * <ul>

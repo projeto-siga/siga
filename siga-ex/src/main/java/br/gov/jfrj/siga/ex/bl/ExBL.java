@@ -3442,6 +3442,11 @@ public class ExBL extends CpBL {
 				doc.setDescrDocumento(processarComandosEmTag(doc, "descricao"));
 
 			if (doc.getDescrDocumento() == null
+					|| doc.getDescrDocumento().isEmpty()) {
+				doc.setDescrDocumento(doc.getExModelo().getNmMod());
+			}
+
+			if (doc.getDescrDocumento() == null
 					|| doc.getDescrDocumento().isEmpty())
 				throw new AplicacaoException(
 						"A descrição do documento não pode ser vazia.");

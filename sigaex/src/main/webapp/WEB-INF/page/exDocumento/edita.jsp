@@ -357,7 +357,7 @@
 						</tr>
 					</c:if>
 					<c:choose>
-						<c:when test='${exDocumentoDTO.modelo.descricaoAutomatica}'>
+						<c:when test='${exDocumentoDTO.modelo.descricaoAutomatica or (not podeEditarDescricao)}'>
     					   <c:set var="displayDescricao" value="none" />
 						</c:when>
 						<c:otherwise>
@@ -365,7 +365,7 @@
 						</c:otherwise>
 					</c:choose>
 					<tr style="display:${displayDescricao}">
-					    <c:if test="${exDocumentoDTO.modelo.descricaoAutomatica}">
+					    <c:if test="${exDocumentoDTO.modelo.descricaoAutomatica or (not podeEditarDescricao)}">
 							<input type="hidden" id="descricaoAutomatica" value="sim" />
 						</c:if>
 						<input type="hidden" name="campos" value="descrDocumento" />

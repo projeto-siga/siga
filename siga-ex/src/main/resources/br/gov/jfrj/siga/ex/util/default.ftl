@@ -809,9 +809,37 @@ LINHA  VARIÁVEL / CONTEÚDO
 [@oculto var="fm_dumpDepoisFm" valor="${fm_logDump?html}"/]
 [/#macro]
 
+[#function descricaoDefault]
+	[#local descr = doc.exModelo.nmMod]
+	[#if doc.exTipoDocumento.id = 3 || doc.exTipoDocumento.id = 4]
+		[#if doc.numExtDoc?has_content]
+			[#local descr = descr + ' Nº ' + doc.numExtDoc]
+		[/#if]
+		[#if doc.dtDocOriginalDDMMYYYY?has_content]
+			[#local descr = descr + ' de ' + doc.dtDocOriginalDDMMYYYY]
+		[/#if]
+		[#if doc.orgaoExterno??]
+			[#local descr = descr + ' - ' + doc.orgaoExterno.descricao]
+		[/#if]	
+	[/#if]
+	[#if doc.subscritor??]
+		[#local descr = descr + ' de ' + doc.subscritorString]
+	[/#if]
+	[#if doc.lotaTitular??]
+		[#local descr = descr + ' / ' + doc.lotaTitular.sigla]
+	[/#if]
+    [#return descr]
+[/#function]
 
+[#macro retorna tag valor]
+    <!-- ${tag} --><!--{${valor}}--><!-- /${tag} -->
+[/#macro]
 
-[#macro entrevista acaoGravar="" acaoExcluir="" acaoCancelar="" acaoFinalizar=""]
+[#if gerar_descricaodefault!false]
+	[@retorna tag="descricaodefault" valor=descricaoDefault() /]
+[/#if]
+
+[#macro entrevista acaoGravar="" acaoExcluir="" acaoCancelar="" acaoFinalizar="" descricao=""]
     [#if gerar_entrevista!false || gerar_formulario!false || gerar_partes!false]
         [#if acaoGravar!=""]
             <input type="hidden" name="acaoGravar" id="acaoGravar" value="${acaoGravar}" />
@@ -828,6 +856,9 @@ LINHA  VARIÁVEL / CONTEÚDO
         [#if acaoFinalizar!=""]
             <input type="hidden" name="acaoFinalizar" id="acaoFinalizar" value="${acaoFinalizar}" />
 	    <input type="hidden" name="vars" value="acaoFinalizar" />
+        [/#if]
+        [#if descricao!=""]
+        	[@retorna tag="descricaoentrevista" valor=descricao /]
         [/#if]
         [#nested]
     [/#if]

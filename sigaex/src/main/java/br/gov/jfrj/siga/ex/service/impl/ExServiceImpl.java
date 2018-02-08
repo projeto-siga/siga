@@ -674,7 +674,7 @@ public class ExServiceImpl implements ExService {
 				    (ServletContext) context.getMessageContext().get(MessageContext.SERVLET_CONTEXT);
 			
     		doc = Ex.getInstance()
-			       .getBL().gravar(cadastrante, cadastrante.getLotacao(), doc);
+			       .getBL().gravar(cadastrante, cadastrante, cadastrante.getLotacao(), doc);
     		
     		if(finalizar)
     			Ex.getInstance().getBL().finalizar(cadastrante, cadastrante.getLotacao(), doc);

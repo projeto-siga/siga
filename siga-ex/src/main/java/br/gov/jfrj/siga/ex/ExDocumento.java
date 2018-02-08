@@ -1044,12 +1044,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 				str = getOrgaoExterno().getDescricao();
 			if (getObsOrgao() != null) {
 				if (str.length() != 0)
-					str = str + "; ";
+					str = str + " - ";
 				str = str + getObsOrgao();
 			}
 			if (getNmSubscritorExt() != null) {
 				if (str.length() != 0)
-					str = str + "; ";
+					str = str + " - ";
 				str = str + getNmSubscritorExt();
 			}
 			return str;

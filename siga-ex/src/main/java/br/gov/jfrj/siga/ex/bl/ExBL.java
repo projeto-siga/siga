@@ -1428,7 +1428,7 @@ public class ExBL extends CpBL {
 						&& doc.getExMobilPai().isVolumeEncerrado()) {
 					doc.setExMobilPai(doc.getExMobilPai().doc()
 							.getUltimoVolume());
-					gravar(cadastrante, lotaCadastrante, doc);
+					gravar(cadastrante, cadastrante, lotaCadastrante, doc);
 				}
 				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc,
 						mov.getDtMov(), cadastrante, cadastrante, mov);
@@ -1733,7 +1733,7 @@ public class ExBL extends CpBL {
 						&& doc.getExMobilPai().isVolumeEncerrado()) {
 					doc.setExMobilPai(doc.getExMobilPai().doc()
 							.getUltimoVolume());
-					gravar(cadastrante, lotaCadastrante, doc);
+					gravar(cadastrante, cadastrante, lotaCadastrante, doc);
 				}
 				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov,
 						cadastrante, cadastrante, mov);
@@ -2031,7 +2031,13 @@ public class ExBL extends CpBL {
 	public String processarComandosEmTag(final ExDocumento doc, String tag)
 			throws Exception {
 		String s = processarModelo(doc, null, tag, null, null);
+		return extraiTag(s, tag);
+	}
 
+	private String extraiTag(String s, String tag) {
+		if (s == null)
+			return null;
+		
 		// retorna a resposta produzida pelo processamento da instrucao de
 		// assinatura
 		int start = s.indexOf("<!-- " + tag + " -->");
@@ -3395,8 +3401,8 @@ public class ExBL extends CpBL {
 		return s;
 	}
 
-	public ExDocumento gravar(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
+	public ExDocumento gravar(final DpPessoa cadastrante, final DpPessoa titular,
+			final DpLotacao lotaTitular, ExDocumento doc) throws Exception {
 
 		// Verifica se o documento possui documento pai e se o usuário possui
 		// permissões de criar documento filho
@@ -3423,7 +3429,7 @@ public class ExBL extends CpBL {
 			if (doc.getCadastrante() == null)
 				doc.setCadastrante(cadastrante);
 			if (doc.getLotaCadastrante() == null) {
-				doc.setLotaCadastrante(lotaCadastrante);
+				doc.setLotaCadastrante(lotaTitular);
 				if (doc.getLotaCadastrante() == null)
 					doc.setLotaCadastrante(doc.getCadastrante().getLotacao());
 			}
@@ -3438,13 +3444,19 @@ public class ExBL extends CpBL {
 				primeiraGravacao = true;
 			}
 
-			if (doc.getExModelo().isDescricaoAutomatica())
+			// Obtem a descricao pela macro @descricao
+			if (doc.getExModelo().isDescricaoAutomatica()) {
 				doc.setDescrDocumento(processarComandosEmTag(doc, "descricao"));
-
-			if (doc.getDescrDocumento() == null
-					|| doc.getDescrDocumento().isEmpty()) {
-				doc.setDescrDocumento(doc.getExModelo().getNmMod());
+			
+			// Obter a descricao pela macro @entrevista
+			} else if (!Ex.getInstance().getComp().podeEditarDescricao(titular, lotaTitular, doc.getExModelo())) {
+				String s = processarModelo(doc, null, "entrevista", null, null);
+				String descr = extraiTag(s, "descricaoentrevista");
+				doc.setDescrDocumento(descr);
 			}
+			if (doc.getDescrDocumento() == null
+					|| doc.getDescrDocumento().isEmpty())
+				doc.setDescrDocumento(processarComandosEmTag(doc, "descricaodefault"));
 
 			if (doc.getDescrDocumento() == null
 					|| doc.getDescrDocumento().isEmpty())
@@ -3509,7 +3521,7 @@ public class ExBL extends CpBL {
 				obterMetodoPorString(funcao, doc);
 			}
 
-			atualizarMovimentacoesDePartes(doc, cadastrante, lotaCadastrante,
+			atualizarMovimentacoesDePartes(doc, cadastrante, lotaTitular,
 					dt);
 
 			String s = processarComandosEmTag(doc, "gravacao");
@@ -3519,7 +3531,7 @@ public class ExBL extends CpBL {
 			// Finaliza o documento automaticamente se ele for coloborativo
 			if (!primeiraGravacao && doc.isColaborativo() && !doc.isFisico()
 					&& !doc.isFinalizado()) {
-				finalizar(cadastrante, lotaCadastrante, doc);
+				finalizar(cadastrante, lotaTitular, doc);
 			}
 
 			// System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
@@ -4121,7 +4133,7 @@ public class ExBL extends CpBL {
 		novoDoc.setExMobilSet(new TreeSet<ExMobil>());
 		novoDoc.getExMobilSet().add(mob);
 
-		novoDoc = gravar(cadastrante, lotaCadastrante, novoDoc);
+		novoDoc = gravar(cadastrante, cadastrante, lotaCadastrante, novoDoc);
 
 		// mob = dao().gravar(mob);
 
@@ -4159,7 +4171,7 @@ public class ExBL extends CpBL {
 		// deve ser gravado novamente pois isso faria com que ele fosse
 		// automaticamente finalizado, o que não é desejavel na duplicação.
 		if (!doc.isColaborativo())
-			novoDoc = gravar(cadastrante, lotaCadastrante, novoDoc);
+			novoDoc = gravar(cadastrante, cadastrante, lotaCadastrante, novoDoc);
 
 		return novoDoc;
 	}
@@ -5085,8 +5097,10 @@ public class ExBL extends CpBL {
 				if ("template/freemarker".equals(doc.getExModelo()
 						.getConteudoTpBlob())) {
 					attrs.put("nmMod", doc.getExModelo().getNmMod());
-					attrs.put("template", new String(doc.getExModelo()
-							.getConteudoBlobMod2(), "utf-8"));
+					byte[] fm = doc.getExModelo()
+							.getConteudoBlobMod2();
+					if (fm != null)
+						attrs.put("template", new String(fm, "utf-8"));
 					p = processadorModeloFreemarker;
 				}
 			}

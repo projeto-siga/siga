@@ -78,7 +78,11 @@ public class SigaJwtProvider {
 	}
 	
 	private long getTTL(Integer ttl) {
-		return ttl != null? ttl:DEFAULT_TTL_TOKEN ;
+		if (ttl != null && ttl < DEFAULT_TTL_TOKEN){
+			return ttl;
+		}else{
+			return DEFAULT_TTL_TOKEN;
+		}
 	}
 
 	public DecodedJWT validarToken(String token){

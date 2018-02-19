@@ -31,7 +31,7 @@ public class SigaJwtProviderServlet extends HttpServlet {
 	}
 
 	/**
-	 * O BODY pode conter
+	 * O HEADER Jwt-Options pode conter
 	 *  perm - OPCIONAL. REGEX com permissões do siga-gi requeridas
 	 *  ttl - OPCIONAL. Tempo de vida do token em milissegundos
 	 *  mod - OBRIGATÓRIO. Módulo para o qual o token deve ser emitido. Essa informação é utilizada para saber a senha a ser utilizada para gerar a assinatura do token. 
@@ -60,8 +60,14 @@ public class SigaJwtProviderServlet extends HttpServlet {
 			ttl = extrairTTL(request);
 		
 			String body = request.getReader().readLine();
-			result = jwtBL.login(usuario,lotacao,senha,body,permissoes,ttl);
-			result = "{token:\"" + result + "\"}";
+			try{
+				result = jwtBL.login(usuario,lotacao,senha,body,permissoes,ttl);
+				result = "{token:\"" + result + "\"}";
+			}catch(RuntimeException e){
+				response.setStatus(401);
+				response.getWriter().write("{token:\"" + e.getLocalizedMessage() + "\"}");
+				return;
+			}
 			
 		}else if(request.getPathInfo().endsWith("/validar")){
 			String token = extrairAuthorization(request);;
@@ -92,20 +98,20 @@ public class SigaJwtProviderServlet extends HttpServlet {
 	}
 	
 	private String extrairModulo(HttpServletRequest request) throws IOException, ServletException{
-		String body = request.getReader().readLine();
-		if(body!=null){
-			String modulo = new JSONObject(body).optString("mod");
+		String opcoes = request.getHeader("Jwt-Options");
+		if(opcoes!=null){
+			String modulo = new JSONObject(opcoes).optString("mod");
 			if(modulo == null || modulo.length() == 0){
-				throw new ServletException("O parâmetro mod deve ser informado no BODY do request. Ex: {\"mod\":\"siga-wf\"}");
+				throw new ServletException("O parâmetro mod deve ser informado no HEADER Jwt-Options do request. Ex: {\"mod\":\"siga-wf\"}");
 			}
 			return modulo;
 		}
 		return null;
 	}
 	private Integer extrairTTL(HttpServletRequest request) throws IOException{
-		String body = request.getReader().readLine();
-		if(body!=null){
-			Integer ttl = new JSONObject(body).optInt("ttl");
+		String opcoes = request.getHeader("Jwt-Options");
+		if(opcoes!=null){
+			Integer ttl = new JSONObject(opcoes).optInt("ttl");
 			ttl = ttl > 0?ttl:null;
 			return ttl;
 		}
@@ -114,9 +120,9 @@ public class SigaJwtProviderServlet extends HttpServlet {
 	}
 	
 	private String extrairPermissoes(HttpServletRequest request) throws IOException{
-		String body = request.getReader().readLine();
-		if(body!=null){
-			return new JSONObject(body).optString("perm");
+		String opcoes = request.getHeader("Jwt-Options");
+		if(opcoes!=null){
+			return new JSONObject(opcoes).optString("perm");
 		}
 		return null;
 	}

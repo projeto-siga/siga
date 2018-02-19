@@ -10,10 +10,13 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
@@ -33,7 +36,12 @@ public class AuthJwtFilter implements Filter {
 		JWTVerifier verificador = JWT.require(algorithm)
 					.withIssuer(AuthUtils.getInstance().getProviderIssuer())
 				.build();
-		DecodedJWT jwt = verificador.verify(token);
+		DecodedJWT jwt = null;
+		try{
+			jwt = verificador.verify(token);
+		}catch(JWTDecodeException e){
+			throw new AuthJwtException("Token inválido.");
+		}
 		return jwt;
 	}
 	
@@ -51,11 +59,44 @@ public class AuthJwtFilter implements Filter {
 	}
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		String token = extrairAuthorization((HttpServletRequest)request);
-		DecodedJWT decodedToken = validarToken(token);
-		Claim claim = decodedToken.getClaim("perm");
-		AuthUtils.getInstance().setPermissoes(claim.asList(java.lang.String.class)); 
-		chain.doFilter(request, response);
+		HttpServletRequest req = (HttpServletRequest)request;
+		HttpServletResponse resp = (HttpServletResponse)response;
+		
+		try{
+			String token = extrairAuthorization(req);
+			DecodedJWT decodedToken = validarToken(token);
+			Claim claim = decodedToken.getClaim("perm");
+			AuthUtils.getInstance().setPermissoes(claim.asList(java.lang.String.class)); 
+			chain.doFilter(request, response);
+		}catch(TokenExpiredException e){
+			informarAutenticacaoInvalida(resp, e);
+			return;
+		}catch (AuthJwtException e) {
+			informarAutenticacaoProibida(resp, e);
+			return;
+		}catch (Exception e) {
+			if(e.getCause() instanceof AuthJwtException){
+				informarAutenticacaoProibida(resp, e);
+				return;
+			}else{
+				throw e;
+			}
+		}
+	}
+
+	private void informarAutenticacaoInvalida(HttpServletResponse resp,
+			Exception e) throws IOException {
+		String mensagem = e.getCause() != null?e.getCause().getLocalizedMessage():e.getLocalizedMessage();
+		resp.setStatus(401); //401 Unauthorized - authentication is required and has failed or has not yet been provided.
+		resp.getWriter().write(mensagem);
+	}
+
+	private void informarAutenticacaoProibida(HttpServletResponse resp, Exception e)
+			throws IOException {
+		String mensagem = e.getCause() != null?e.getCause().getLocalizedMessage():e.getLocalizedMessage();
+		resp.setStatus(403); //403 Forbidden - The request was valid, but the server is refusing action. The user might not have the necessary permissions for a resource, or may need an account of some sort
+		resp.getWriter().write(mensagem);
+		return;
 	}
 
 	

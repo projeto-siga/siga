@@ -24,7 +24,7 @@ public class AuthUtils {
 	
 	public void assertAcesso(String permissao) {
 		if(listaPermissoes == null || !listaPermissoes.contains(permissao)){
-			throw new RuntimeException("Acesso negado.");
+			throw new AuthJwtException("Acesso negado.");
 		}
 	}
 

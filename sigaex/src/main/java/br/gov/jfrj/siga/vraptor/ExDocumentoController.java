@@ -686,21 +686,25 @@ public class ExDocumentoController extends ExController {
 			// + exDocumentoDTO.getParamsEntrevista().get(p));
 		}
 		
+		boolean modeloEncontrado = false;
 		ListaHierarquica lh = null;
     	if (jsonHierarquiaDeModelos != null) {
 	    	ObjectMapper mapper = new ObjectMapper();
 	    	try {
 	    		lh = mapper.readValue(jsonHierarquiaDeModelos, ListaHierarquica.class);
 	    		for (ListaHierarquicaItem m : lh.getList()) {
-	    			if (m.getValue() != null && m.getValue().equals(exDocumentoDTO.getIdMod()))
+	    			if (m.getValue() != null && m.getValue().equals(exDocumentoDTO.getIdMod())) {
 	    				m.selected = true;
+	    				modeloEncontrado = true;
+	    			}
 	    		}
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
-    	} else {
+    	} 
+    	if (jsonHierarquiaDeModelos == null || !modeloEncontrado) {
     		lh = new ListaHierarquica();
-			for (ExModelo m : exDocumentoDTO.getModelos()) {
+			for (ExModelo m : getModelos(exDocumentoDTO)) {
 				lh.add(m.getNmMod(), m.getId(), m.getId().equals(exDocumentoDTO.getIdMod()));
 			}
 		

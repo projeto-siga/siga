@@ -27,7 +27,7 @@ public class SigaJwtBL {
 	private SigaJwtProvider provider;
 
 	public SigaJwtBL(String modulo) throws SigaJwtProviderException {
-		int ttl = Cp.getInstance().getProp().getJWTTokenTTL();
+		int ttl = Cp.getInstance().getProp().getJWTTokenTTL(modulo);
 		String moduloPwd = null;
 		
 		if(modulo == null){
@@ -84,6 +84,9 @@ public class SigaJwtBL {
 		
 		GiService giService = Service.getGiService();
 		String usuarioLogado = giService.login(matricula, senha);
+		if(usuarioLogado == null || usuarioLogado.trim().length() == 0){
+			throw new RuntimeException("Falha de autenticação");
+		}
 		if(usuarioLogado != null && usuarioLogado.length() > 0){
 			Map<String,String[]> mapClaims = new HashMap<String, String[]>();
 			

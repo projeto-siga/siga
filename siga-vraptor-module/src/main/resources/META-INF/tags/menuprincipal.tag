@@ -83,6 +83,7 @@
 						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;BNF: Módulo de Benefícios') or 
 						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CAD: Módulo de Cadastro') or 
 						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CST: Módulo de Consultas') or 
+						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DMA: Módulo de Docência de Magistrados') or 
 						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;LOT: Módulo de Lotação') or 
 						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TRN: Módulo de Treinamento') or
 						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados')}">
@@ -110,6 +111,11 @@
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CST: Módulo de Consultas')}">
 									<li><a href="${f:getURLSistema('siga.sgp.cst')}">Consultas</a>
+									</li>
+								</c:if>
+								<c:if
+									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DMA: Módulo de Docência de Magistrados')}">
+									<li><a href="${f:getURLSistema('siga.sgp.dma')}">Consultas</a>
 									</li>
 								</c:if>
 								<c:if

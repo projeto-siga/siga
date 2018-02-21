@@ -927,9 +927,8 @@ LINHA  VARIÁVEL / CONTEÚDO
 [/#macro]
 
 [#macro grupo titulo="" largura=0 depende="" esconder=false]
-    [#if !esconder]
     [#local id = (depende=="")?string("", "div" + depende)] 
-    [@div id=id depende=depende suprimirIndependente=true]
+    [@div id=id depende=depende suprimirIndependente=true esconder=esconder]
         [#if largura != 0]
             [#if !grupoLarguraTotal??]
                 [#assign grupoLarguraTotal = 0/]
@@ -958,14 +957,11 @@ LINHA  VARIÁVEL / CONTEÚDO
             [/#if]
         [/#if]
     [/@div]
-    [#else]
-        [#nested]
-    [/#if]
 [/#macro]
 
-[#macro div id="" depende="" suprimirIndependente=false]
+[#macro div id="" depende="" suprimirIndependente=false esconder=false]
     [#if suprimirIndependente || depende != ""]
-        <div[#if id != ""] id="${id}"[/#if][#if depende != ""] depende=";${depende};"[/#if]>[#if id != ""]<!--ajax:${id}-->[/#if][#nested][#if id != ""]<!--/ajax:${id}-->[/#if]</div>
+        <div class="entrevista-grupo"[#if esconder] style="display: none"[/#if][#if id != ""] id="${id}"[/#if][#if depende != ""] depende=";${depende};"[/#if]>[#if id != ""]<!--ajax:${id}-->[/#if][#nested][#if id != ""]<!--/ajax:${id}-->[/#if]</div>
     [#else]
     [#nested]
     [/#if]

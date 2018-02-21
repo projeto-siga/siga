@@ -81,7 +81,8 @@
 					assinar="${assinando}"
 					autenticar="${autenticando}"
 					assinarComSenha="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-					autenticarComSenha="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"/>
+					autenticarComSenha="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+					tramitar="true"/>
 			</div>
 		</div>
 	</div>

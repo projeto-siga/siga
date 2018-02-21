@@ -2386,7 +2386,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/assinar_gravar")
 	public void aAssinarGravar(final String sigla, final Boolean copia,
 			final String atributoAssinavelDataHora, String assinaturaB64,
-			final String certificadoB64) throws AplicacaoException,
+			final String certificadoB64, final Boolean tramitar) throws AplicacaoException,
 			ServletException {
 		try {
 
@@ -2434,7 +2434,7 @@ public class ExMovimentacaoController extends ExController {
 							.getBL()
 							.assinarDocumento(getCadastrante(),
 									getLotaTitular(), mob.doc(), dt,
-									assinatura, certificado, tpMovAssinatura));
+									assinatura, certificado, tpMovAssinatura, tramitar));
 
 		} catch (final Exception e) {
 			httpError(e);
@@ -2445,7 +2445,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Post("/app/expediente/mov/assinar_senha_gravar")
-	public void aAssinarSenhaGravar(String sigla, final Boolean copia, String nomeUsuarioSubscritor,
+	public void aAssinarSenhaGravar(String sigla, final Boolean copia, final Boolean tramitar, String nomeUsuarioSubscritor,
 			String senhaUsuarioSubscritor) throws Exception {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
@@ -2461,7 +2461,7 @@ public class ExMovimentacaoController extends ExController {
 					.assinarDocumentoComSenha(getCadastrante(),
 							getLotaTitular(), doc, mov.getDtMov(),
 							nomeUsuarioSubscritor, senhaUsuarioSubscritor,
-							mov.getTitular(), copia);
+							mov.getTitular(), copia, tramitar);
 		} catch (final Exception e) {
 			httpError(e);
 			return;

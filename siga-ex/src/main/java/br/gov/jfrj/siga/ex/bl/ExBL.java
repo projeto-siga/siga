@@ -1516,7 +1516,7 @@ public class ExBL extends CpBL {
 	public String assinarDocumento(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final byte[] pkcs7, final byte[] certificado,
-			long tpMovAssinatura) throws AplicacaoException {
+			long tpMovAssinatura, final Boolean tramitarAutomaticamente) throws AplicacaoException {
 		String sNome;
 		Long lCPF = null;
 
@@ -1759,7 +1759,8 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao assinar documento.", 0, e);
 		}
 
-		trasferirAutomaticamente(cadastrante, lotaCadastrante, usuarioDoToken, doc, fPreviamenteAssinado);
+		if (tramitarAutomaticamente != null && tramitarAutomaticamente == true)
+			trasferirAutomaticamente(cadastrante, lotaCadastrante, usuarioDoToken, doc, fPreviamenteAssinado);
 
 		alimentaFilaIndexacao(doc, true);
 
@@ -1780,7 +1781,7 @@ public class ExBL extends CpBL {
 	public String assinarDocumentoComSenha(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final String matriculaSubscritor,
-			final String senhaSubscritor, final DpPessoa titular, final boolean autenticando)
+			final String senhaSubscritor, final DpPessoa titular, final boolean autenticando, final Boolean tramitarAutomaticamente)
 			throws Exception {
 
 		DpPessoa subscritor = null;
@@ -1898,7 +1899,8 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
 		}
 
-		trasferirAutomaticamente(cadastrante, lotaCadastrante, subscritor, doc, fPreviamenteAssinado);
+		if (tramitarAutomaticamente != null && tramitarAutomaticamente == true)
+			trasferirAutomaticamente(cadastrante, lotaCadastrante, subscritor, doc, fPreviamenteAssinado);
 
 		alimentaFilaIndexacao(doc, true);
 		return s;

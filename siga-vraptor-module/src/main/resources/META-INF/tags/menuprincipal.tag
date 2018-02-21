@@ -115,7 +115,7 @@
 								</c:if>
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DMA: Módulo de Docência de Magistrados')}">
-									<li><a href="${f:getURLSistema('siga.sgp.dma')}">Consultas</a>
+									<li><a href="${f:getURLSistema('siga.sgp.dma')}">Docência de Magistrados</a>
 									</li>
 								</c:if>
 								<c:if

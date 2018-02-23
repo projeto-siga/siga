@@ -2478,13 +2478,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeIncluirDocumento(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		
-		if (!mob.isGeral() && mob.doc().isPendenteDeAssinatura())
-			return false;
-		
 		if(mob.isGeral() && !mob.doc().isPendenteDeAssinatura())
-			return false;
-		
-		if (mob.doc().isExpediente() && mob.doc().getPai() != null)
 			return false;
 		
 		if (mob.doc().isProcesso() && mob.isArquivadoCorrente())
@@ -2505,36 +2499,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if(mob.isJuntado())
 			return false;
 		
-		final boolean podeMovimentar = podeMovimentar(titular, lotaTitular, mob);
-		final boolean gerenteBIE = podeGerenciarPublicacaoBoletimPorConfiguracao(
-				titular, lotaTitular, mob);
-		final boolean gerenteDJE = podeAtenderPedidoPublicacao(titular,
-				lotaTitular, mob);
-		final boolean podePorConfigAgendar = getConf().podePorConfiguracao(
-				titular, lotaTitular,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)
-				&& getConf()
-						.podePorConfiguracao(
-								mob.getExDocumento().getExModelo(),
-								ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO,
-								CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
-		final boolean podePorConfigPedirPubl = getConf().podePorConfiguracao(
-				titular, lotaTitular, mob.getExDocumento().getExModelo(),
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
-		final boolean podePorConfigAgendarBoletim = (getConf()
-				.podePorConfiguracao(
-						titular,
-						lotaTitular,
-						mob.getExDocumento().getExModelo(),
-						ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM,
-						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
-
 		return (mob.getExDocumento().isFinalizado())
 				&& (mob.getExDocumento().getExTipoDocumento().getIdTpDoc() != ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO)				
 				&& !mob.isEmTransito()
-				&& podeMovimentar;
+				&& podeMovimentar(titular, lotaTitular, mob);
 
 	}
 	
@@ -3438,6 +3406,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeRefazer(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
 		return (mob.doc().isFinalizado())
+				&& !mob.doc().isRecebeuJuntada()
 				&& ((mob.doc().getLotaCadastrante().equivale(lotaTitular)
 						|| (mob.doc().getSubscritor() != null && mob.doc()
 								.getSubscritor().equivale(titular)) || (mob
@@ -3970,7 +3939,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			final DpLotacao lotaTitular, final ExMobil mob) {
 
 		return !mob.isCancelada() && !mob.isVolumeEncerrado()
-				&& !mob.doc().isPendenteDeAssinatura() && !mob.isJuntado()
+				&& !mob.isJuntado()
 				&& !mob.isEmTransito() && !mob.isArquivado()
 				&& podeMovimentar(titular, lotaTitular, mob);
 	}

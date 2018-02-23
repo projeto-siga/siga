@@ -3922,9 +3922,9 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException(
 						"A via não pode ser juntada ao documento porque o volume está encerrado.");
 			
-			if (mobPai.doc().isPendenteDeAssinatura())
-				throw new AplicacaoException(
-						"A via não pode ser juntada ao documento porque ele está pendente de assinatura.");
+//			if (mobPai.doc().isPendenteDeAssinatura())
+//				throw new AplicacaoException(
+//						"A via não pode ser juntada ao documento porque ele está pendente de assinatura.");
 						 
 			if (mobPai.isJuntado())
 				throw new AplicacaoException(
@@ -5182,7 +5182,7 @@ public class ExBL extends CpBL {
 			ExMovimentacao ultMov = mob.getUltimaMovimentacaoNaoCancelada();
 			if (getComp().podeJuntar(ultMov.getCadastrante(),
 					ultMov.getLotaCadastrante(), mob)
-					& getComp().podeSerJuntado(ultMov.getCadastrante(),
+					&& getComp().podeSerJuntado(ultMov.getCadastrante(),
 							ultMov.getLotaCadastrante(), doc.getExMobilPai())) {
 				juntarDocumento(ultMov.getCadastrante(), ultMov.getTitular(),
 						ultMov.getLotaCadastrante(), null, mob,

@@ -2169,6 +2169,20 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	}
 	
 	/**
+	 * Retorna se determinado documento recebeu juntada.
+	 */
+	public boolean isRecebeuJuntada() {
+		for (ExMobil mob : getExMobilSet()) {
+			for (ExMovimentacao mov : mob.getExMovimentacaoReferenciaSet()) {
+				if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
+						&& !mov.isCancelada())
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Verifica se todos os móbiles do documento estão eliminados.
 	 */
 	public boolean isArquivadoPermanente() {

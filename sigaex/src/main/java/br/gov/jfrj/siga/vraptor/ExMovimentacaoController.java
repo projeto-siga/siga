@@ -64,6 +64,7 @@ import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
+import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDespacho;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
@@ -474,14 +475,52 @@ public class ExMovimentacaoController extends ExController {
 			Ex.getInstance().getBL()
 					.processarComandosEmTag(doc, "pre_assinatura");
 		}
+		
+		AtivoEFixo af = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), CpTipoConfiguracao.TIPO_CONFIG_TRAMITE_AUTOMATICO);
+		
 		result.include("sigla", sigla);
 		result.include("doc", doc);
 		result.include("titular", this.getTitular());
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("autenticando", autenticando);
 		result.include("assinando", assinando);
+		result.include("tramitarAtivo", af.ativo);
+		result.include("tramitarFixo", af.fixo);
+	}
+	
+	public static class AtivoEFixo {
+		public boolean ativo;
+		public boolean fixo;
 	}
 
+	public AtivoEFixo obterAtivoEFixo(ExModelo modelo, ExTipoDocumento tipoDocumento, long tipoConf) {
+		final Long idSit = Ex
+				.getInstance()
+				.getConf()
+				.buscaSituacao(modelo,
+						tipoDocumento,
+						getTitular(), getLotaTitular(),
+						tipoConf)
+				.getIdSitConfiguracao();
+
+		AtivoEFixo af = new AtivoEFixo();
+		
+		if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO) {
+			af.ativo = true;
+			af.fixo = true;
+		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_PROIBIDO || idSit == ExSituacaoConfiguracao.SITUACAO_NAO_PODE) {
+			af.ativo = false;
+			af.fixo = true;
+		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT) {
+			af.ativo = true;
+			af.fixo = false;
+		} else if (idSit == ExSituacaoConfiguracao.SITUACAO_NAO_DEFAULT || idSit == ExSituacaoConfiguracao.SITUACAO_PODE) {
+			af.ativo = false;
+			af.fixo = false;
+		}
+		return af;
+	}
+	
 	private boolean devePreAssinar(ExDocumento doc, boolean fPreviamenteAssinado) {
 		return !fPreviamenteAssinado
 				&& (doc.getExModelo() != null && ("template/freemarker"

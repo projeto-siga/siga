@@ -7,7 +7,8 @@
 <%@ attribute name="assinarComSenha" required="false"%>
 <%@ attribute name="autenticarComSenha" required="false"%>
 <%@ attribute name="idMovimentacao" required="false"%>
-<%@ attribute name="tramitar" required="false"%>
+<%@ attribute name="tramitarAtivo" required="false"%>
+<%@ attribute name="tramitarFixo" required="false"%>
 
 <div class="gt-form-row">
 	<c:if test="${not empty assinar and assinar}">
@@ -30,9 +31,9 @@
 			</span>
 		</c:if>
 
-		<c:if test="${tramitar}">
+		<c:if test="${not empty tramitarAtivo}">
 			<span style="margin-left: 1em;"> <label> <input type="checkbox"
-					name="ad_tramitar_0" checked /> Tramitar Automaticamente
+					name="ad_tramitar_0" <c:if test="${tramitarAtivo}">checked</c:if>  <c:if test="${tramitarFixo}">disabled</c:if> /> Tramitar Automaticamente
 			</label>
 			</span>
 		</c:if>

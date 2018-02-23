@@ -38,7 +38,6 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -71,6 +70,18 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+
+import com.google.common.base.Strings;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.itextpdf.Documento;
@@ -143,18 +154,6 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.wf.service.WfService;
-
-import com.google.common.base.Strings;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 
 public class ExBL extends CpBL {
 	private final String SHA1 = "1.3.14.3.2.26";
@@ -1512,11 +1511,26 @@ public class ExBL extends CpBL {
 
 		return null;
 	}
+	
+	public boolean deveTramitarAutomaticamente(DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc) {
+		final Long idSit = Ex
+				.getInstance()
+				.getConf()
+				.buscaSituacao(doc.getExModelo(),
+						doc.getExTipoDocumento(),
+						titular, lotaTitular,
+						CpTipoConfiguracao.TIPO_CONFIG_TRAMITE_AUTOMATICO)
+				.getIdSitConfiguracao();
+
+		if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO || idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT)
+			return true;
+		return false;
+	}
 
 	public String assinarDocumento(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final byte[] pkcs7, final byte[] certificado,
-			long tpMovAssinatura, final Boolean tramitarAutomaticamente) throws AplicacaoException {
+			long tpMovAssinatura, Boolean tramitarAutomaticamente) throws AplicacaoException {
 		String sNome;
 		Long lCPF = null;
 
@@ -1759,7 +1773,9 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao assinar documento.", 0, e);
 		}
 
-		if (tramitarAutomaticamente != null && tramitarAutomaticamente == true)
+		if (tramitarAutomaticamente == null)
+			tramitarAutomaticamente = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
+		if (tramitarAutomaticamente)
 			trasferirAutomaticamente(cadastrante, lotaCadastrante, usuarioDoToken, doc, fPreviamenteAssinado);
 
 		alimentaFilaIndexacao(doc, true);
@@ -1770,10 +1786,10 @@ public class ExBL extends CpBL {
 	private void trasferirAutomaticamente(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
 			DpPessoa assinante, final ExDocumento doc, boolean fPreviamenteAssinado) {
 		// Transferir automaticamente os documentos quando forem plenamente assinados
-		if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura()) {
+		if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura() && !doc.getPrimeiroMobil().getMobilPrincipal().doc().isPendenteDeAssinatura()) {
 			transferir(doc.getOrgaoExternoDestinatario(), doc.getObsOrgao(), cadastrante, lotaCadastrante, 
-					doc.getPrimeiroMobil().getMobilPrincipal(), null, null, null, assinante.getLotacao(), assinante, 
-					doc.getLotaDestinatario(), doc.getDestinatario(), assinante, assinante, null, 
+					doc.getPrimeiroMobil().getMobilPrincipal(), null, null, null,  
+					doc.getLotaDestinatario(), doc.getDestinatario(), null, null, assinante, assinante, null, 
 					false, null, null, null, false, false);
 		}
 	}
@@ -1781,7 +1797,7 @@ public class ExBL extends CpBL {
 	public String assinarDocumentoComSenha(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final String matriculaSubscritor,
-			final String senhaSubscritor, final DpPessoa titular, final boolean autenticando, final Boolean tramitarAutomaticamente)
+			final String senhaSubscritor, final DpPessoa titular, final boolean autenticando, Boolean tramitarAutomaticamente)
 			throws Exception {
 
 		DpPessoa subscritor = null;
@@ -1899,7 +1915,9 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
 		}
 
-		if (tramitarAutomaticamente != null && tramitarAutomaticamente == true)
+		if (tramitarAutomaticamente == null)
+			tramitarAutomaticamente = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
+		if (tramitarAutomaticamente)
 			trasferirAutomaticamente(cadastrante, lotaCadastrante, subscritor, doc, fPreviamenteAssinado);
 
 		alimentaFilaIndexacao(doc, true);

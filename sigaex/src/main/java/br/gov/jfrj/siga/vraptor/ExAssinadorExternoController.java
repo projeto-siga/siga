@@ -296,7 +296,7 @@ public class ExAssinadorExternoController extends ExController {
 				long tpMov = autenticar ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
 						: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
 				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, lotaCadastrante, mob.doc(), dt, assinatura,
-						null, tpMov, null);
+						null, tpMov, null, null);
 				if (msg != null)
 					msg = "OK: " + msg;
 				else

@@ -45,7 +45,7 @@ function TestarAssinaturaDigital() {
 // Inicia a operação de assinatura para todos os documentos referenciados na
 // pagina
 //
-function AssinarDocumentos(copia, politica, tramitar) {
+function AssinarDocumentos(copia, politica, juntar, tramitar) {
 	if (politica != undefined)
 		gPolitica = politica;
 
@@ -60,25 +60,25 @@ function AssinarDocumentos(copia, politica, tramitar) {
 
 	if (tipo == 1) {
 		if ("OK" == provider.inicializar(function() {
-			ExecutarAssinarDocumentos(copia, tramitar);
+			ExecutarAssinarDocumentos(copia, juntar, tramitar);
 		})) {
-			ExecutarAssinarDocumentos(copia, tramitar);
+			ExecutarAssinarDocumentos(copia, juntar, tramitar);
 		}
 	}
 
 	if (tipo == 2) {
 		provider = providerPassword;
 		providerPassword.inicializar(function() {
-			ExecutarAssinarDocumentos(copia, tramitar);
+			ExecutarAssinarDocumentos(copia, juntar, tramitar);
 		});
 	}
 
 	if (tipo == 3) {
 		providerPassword.inicializar(function() {
 			if ("OK" == provider.inicializar(function() {
-				ExecutarAssinarDocumentos(copia, tramitar);
+				ExecutarAssinarDocumentos(copia, juntar, tramitar);
 			})) {
-				ExecutarAssinarDocumentos(copia, tramitar);
+				ExecutarAssinarDocumentos(copia, juntar, tramitar);
 			}
 		});
 	}
@@ -771,7 +771,7 @@ function Erro(err) {
 	return "Ocorreu um erro durante o processo de assinatura: " + err.message;
 }
 
-function ExecutarAssinarDocumentos(Copia, Tramitar) {
+function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 	process.reset();
 
 	if (Copia || Copia == "true") {
@@ -817,6 +817,9 @@ function ExecutarAssinarDocumentos(Copia, Tramitar) {
 								+ "; gTramitar = "
 								+ (o.hasOwnProperty('tramitar') ? o.tramitar
 										: Tramitar)
+								+ "; gJuntar = "
+								+ (o.hasOwnProperty('juntar') ? o.juntar
+										: Juntar)
 								+ "; gUrlPost = '"
 								+ oUrlBase.value
 								+ o.urlPost
@@ -851,6 +854,9 @@ function ExecutarAssinarDocumentos(Copia, Tramitar) {
 							+ encodeURIComponent(gRet.assinaturaB64)
 							+ "&assinante="
 							+ encodeURIComponent(gRet.assinante);
+					if (gJuntar !== undefined) {
+						DadosDoPost = DadosDoPost + "&juntar=" + gJuntar;
+					}
 					if (gTramitar !== undefined) {
 						DadosDoPost = DadosDoPost + "&tramitar=" + gTramitar;
 					}
@@ -900,6 +906,8 @@ function ExecutarAssinarDocumentos(Copia, Tramitar) {
 					+ (o.hasOwnProperty('autenticar') ? o.autenticar : Copia)
 					 + "; gTramitar = "
 					+ (o.hasOwnProperty('tramitar') ? o.tramitar : Tramitar)
+					 + "; gJuntar = "
+					+ (o.hasOwnProperty('juntar') ? o.juntar : Juntar)
 					+ "; gUrlPostPassword = '" + oUrlBase.value
 					+ o.urlPostPassword + "';");
 
@@ -911,6 +919,9 @@ function ExecutarAssinarDocumentos(Copia, Tramitar) {
 						+ gAutenticar;
 				if (gTramitar !== undefined) {
 					DadosDoPost = DadosDoPost + "&tramitar=" + gTramitar;
+				}
+				if (gJuntar !== undefined) {
+					DadosDoPost = DadosDoPost + "&juntar=" + gJuntar;
 				}
 				Status = GravarAssinatura(gUrlPostPassword, DadosDoPost);
 				gRet = Status;
@@ -1041,9 +1052,13 @@ function identificarOperacoes() {
 
 			var oChkTramitar = document.getElementsByName("ad_tramitar_"
 					+ operacao.codigo)[0];
-			if (oChkTramitar != null) {
+			if (oChkTramitar != null) 
 				operacao.tramitar = oChkTramitar.checked;
-			}
+
+			var oChkJuntar = document.getElementsByName("ad_juntar_"
+					+ operacao.codigo)[0];
+			if (oChkJuntar != null) 
+				operacao.juntar = oChkJuntar.checked;
 
 			gOperacoes.push(operacao);
 		}

@@ -1530,7 +1530,7 @@ public class ExBL extends CpBL {
 	public String assinarDocumento(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final byte[] pkcs7, final byte[] certificado,
-			long tpMovAssinatura, Boolean tramitarAutomaticamente) throws AplicacaoException {
+			long tpMovAssinatura, Boolean juntar, Boolean tramitar) throws AplicacaoException {
 		String sNome;
 		Long lCPF = null;
 
@@ -1742,7 +1742,7 @@ public class ExBL extends CpBL {
 			// verifica se o volume está encerrado, se estiver procura o último
 			// volume para juntar.
 
-			if (doc.getExMobilPai() != null) {
+			if (doc.getExMobilPai() != null && (juntar == null || juntar)) {
 				if (doc.getExMobilPai().getDoc().isProcesso()
 						&& doc.getExMobilPai().isVolumeEncerrado()) {
 					doc.setExMobilPai(doc.getExMobilPai().doc()
@@ -1773,9 +1773,9 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao assinar documento.", 0, e);
 		}
 
-		if (tramitarAutomaticamente == null)
-			tramitarAutomaticamente = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
-		if (tramitarAutomaticamente)
+		if (tramitar == null)
+			tramitar = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
+		if (tramitar)
 			trasferirAutomaticamente(cadastrante, lotaCadastrante, usuarioDoToken, doc, fPreviamenteAssinado);
 
 		alimentaFilaIndexacao(doc, true);
@@ -1797,7 +1797,7 @@ public class ExBL extends CpBL {
 	public String assinarDocumentoComSenha(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final String matriculaSubscritor,
-			final String senhaSubscritor, final DpPessoa titular, final boolean autenticando, Boolean tramitarAutomaticamente)
+			final String senhaSubscritor, final DpPessoa titular, final boolean autenticando, Boolean juntar, Boolean tramitar)
 			throws Exception {
 
 		DpPessoa subscritor = null;
@@ -1898,7 +1898,7 @@ public class ExBL extends CpBL {
 
 			// Verifica se o documento possui documento pai e faz a juntada
 			// automática.
-			if (doc.getExMobilPai() != null) {
+			if (doc.getExMobilPai() != null && (juntar == null || juntar)) {
 				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov,
 						subscritor, titular, mov);
 			}
@@ -1915,9 +1915,9 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
 		}
 
-		if (tramitarAutomaticamente == null)
-			tramitarAutomaticamente = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
-		if (tramitarAutomaticamente)
+		if (tramitar == null)
+			tramitar = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
+		if (tramitar)
 			trasferirAutomaticamente(cadastrante, lotaCadastrante, subscritor, doc, fPreviamenteAssinado);
 
 		alimentaFilaIndexacao(doc, true);

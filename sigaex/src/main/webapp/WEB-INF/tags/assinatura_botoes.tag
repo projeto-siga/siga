@@ -7,6 +7,8 @@
 <%@ attribute name="assinarComSenha" required="false"%>
 <%@ attribute name="autenticarComSenha" required="false"%>
 <%@ attribute name="idMovimentacao" required="false"%>
+<%@ attribute name="juntarAtivo" required="false"%>
+<%@ attribute name="juntarFixo" required="false"%>
 <%@ attribute name="tramitarAtivo" required="false"%>
 <%@ attribute name="tramitarFixo" required="false"%>
 
@@ -25,15 +27,26 @@
 
 	<p class="gt-cancel" style="height: 38px; padding-top: 8px;">
 		<c:if test="${assinarComSenha || autenticarComSenha}">
-			<span style="margin-left: 0.5em;"> <label> <input type="checkbox"
-					name="ad_password_0" /> Com Senha
+			<span style="margin-left: 0.5em;"> <label> <input
+					type="checkbox" name="ad_password_0" /> Com Senha
+			</label>
+			</span>
+		</c:if>
+
+		<c:if test="${not empty juntarAtivo}">
+			<span style="margin-left: 1em;"> <label> <input
+					type="checkbox" name="ad_juntar_0"
+					<c:if test="${juntarAtivo}">checked</c:if>
+					<c:if test="${juntarFixo}">disabled</c:if> /> Juntar
 			</label>
 			</span>
 		</c:if>
 
 		<c:if test="${not empty tramitarAtivo}">
-			<span style="margin-left: 1em;"> <label> <input type="checkbox"
-					name="ad_tramitar_0" <c:if test="${tramitarAtivo}">checked</c:if>  <c:if test="${tramitarFixo}">disabled</c:if> /> Tramitar Automaticamente
+			<span style="margin-left: 1em;"> <label> <input
+					type="checkbox" name="ad_tramitar_0"
+					<c:if test="${tramitarAtivo}">checked</c:if>
+					<c:if test="${tramitarFixo}">disabled</c:if> /> Tramitar
 			</label>
 			</span>
 		</c:if>

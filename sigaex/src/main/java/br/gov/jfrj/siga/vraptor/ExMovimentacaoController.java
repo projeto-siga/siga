@@ -484,6 +484,8 @@ public class ExMovimentacaoController extends ExController {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("autenticando", autenticando);
 		result.include("assinando", assinando);
+		result.include("juntarAtivo", doc.getPai() != null ? true : null);
+		result.include("juntarFixo", doc.getPai() != null ? false : null);
 		result.include("tramitarAtivo", af.ativo);
 		result.include("tramitarFixo", af.fixo);
 	}
@@ -2425,7 +2427,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/assinar_gravar")
 	public void aAssinarGravar(final String sigla, final Boolean copia,
 			final String atributoAssinavelDataHora, String assinaturaB64,
-			final String certificadoB64, final Boolean tramitar) throws AplicacaoException,
+			final String certificadoB64, final Boolean juntar, final Boolean tramitar) throws AplicacaoException,
 			ServletException {
 		try {
 
@@ -2473,7 +2475,7 @@ public class ExMovimentacaoController extends ExController {
 							.getBL()
 							.assinarDocumento(getCadastrante(),
 									getLotaTitular(), mob.doc(), dt,
-									assinatura, certificado, tpMovAssinatura, tramitar));
+									assinatura, certificado, tpMovAssinatura, juntar, tramitar));
 
 		} catch (final Exception e) {
 			httpError(e);
@@ -2484,7 +2486,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Post("/app/expediente/mov/assinar_senha_gravar")
-	public void aAssinarSenhaGravar(String sigla, final Boolean copia, final Boolean tramitar, String nomeUsuarioSubscritor,
+	public void aAssinarSenhaGravar(String sigla, final Boolean copia, final Boolean juntar, final Boolean tramitar, String nomeUsuarioSubscritor,
 			String senhaUsuarioSubscritor) throws Exception {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
@@ -2500,7 +2502,7 @@ public class ExMovimentacaoController extends ExController {
 					.assinarDocumentoComSenha(getCadastrante(),
 							getLotaTitular(), doc, mov.getDtMov(),
 							nomeUsuarioSubscritor, senhaUsuarioSubscritor,
-							mov.getTitular(), copia, tramitar);
+							mov.getTitular(), copia, juntar, tramitar);
 		} catch (final Exception e) {
 			httpError(e);
 			return;

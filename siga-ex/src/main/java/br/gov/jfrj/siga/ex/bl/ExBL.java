@@ -2051,6 +2051,8 @@ public class ExBL extends CpBL {
 	public String processarComandosEmTag(final ExDocumento doc, String tag)
 			throws Exception {
 		String s = processarModelo(doc, null, tag, null, null);
+		if (s != null && s.contains("Erro executando template FreeMarker"))
+			throw new Exception(s);
 		return extraiTag(s, tag);
 	}
 

@@ -4521,7 +4521,7 @@ public class ExBL extends CpBL {
 				if (mob.doc().getMobilGeral().temAnexosNaoAssinados()
 						|| mob.doc().getMobilGeral().temDespachosNaoAssinados())
 					throw new AplicacaoException(
-							"não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
+							"não é permitido tramitar documento com anexo/despacho pendente de assinatura ou conferência");
 
 			}
 
@@ -4535,14 +4535,14 @@ public class ExBL extends CpBL {
 
 				if (!m.equals(mob) && fDespacho && fTranferencia) {
 					throw new AplicacaoException(
-							"não é permitido fazer despacho com transferência em um documento que faça parte de um apenso. faça primeiro o despacho e depois transfira o documento.");
+							"não é permitido fazer despacho com trâmite em um documento que faça parte de um apenso. faça primeiro o despacho e depois tramite o documento.");
 				}
 
 				if (fDespacho
 						&& !getComp().podeDespachar(cadastrante,
 								lotaCadastrante, m))
 					throw new AplicacaoException(
-							"não é permitido fazer despacho. Verifique se a via ou processo não estáarquivado(a) e se não possui despachos pendentes de assinatura.");
+							"não é permitido fazer despacho. Verifique se a via ou processo não está arquivado(a) e se não possui despachos pendentes de assinatura.");
 
 				if (fTranferencia) {
 
@@ -4550,19 +4550,19 @@ public class ExBL extends CpBL {
 
 						if (lotaResponsavel.isFechada())
 							throw new AplicacaoException(
-									"não é permitido transferir documento para lotação fechada");
+									"não é permitido tramitar documento para lotação fechada");
 
 						if (forcarTransferencia) {
 							if (!getComp().podeSerTransferido(m))
 								throw new AplicacaoException(
-										"Transferência não pode ser realizada ("
+										"Trâmite não pode ser realizado ("
 												+ m.getSigla() + " ID_MOBIL: "
 												+ m.getId() + ")");
 						} else {
 							if (!getComp().podeTransferir(cadastrante,
 									lotaCadastrante, m))
 								throw new AplicacaoException(
-										"Transferência não permitida ("
+										"Trâmite não permitido ("
 												+ m.getSigla() + " ID_MOBIL: "
 												+ m.getId() + ")");
 						}
@@ -4573,19 +4573,19 @@ public class ExBL extends CpBL {
 										.podeReceberDocumentoSemAssinatura(
 												responsavel, lotaResponsavel, m))
 							throw new AplicacaoException(
-									"não é permitido fazer transferência em documento que ainda não foi assinado");
+									"não é permitido tramitar documento que ainda não foi assinado");
 
 						if (m.doc().isEletronico()) {
 							if (m.temAnexosNaoAssinados()
 									|| m.temDespachosNaoAssinados())
 								throw new AplicacaoException(
-										"não é permitido fazer transferência em documento com anexo/despacho pendente de assinatura ou conferência");
+										"não é permitido tramitar documento com anexo/despacho pendente de assinatura ou conferência");
 						}
 
 						if (m.getExDocumento().isEletronico()
 								&& m.getExDocumento().isPendenteDeAssinatura())
 							throw new AplicacaoException(
-									"não é permitido fazer transferência em documento que ainda não foi assinado por todos os subscritores.");
+									"não é permitido tramitar documento que ainda não foi assinado por todos os subscritores.");
 					}
 
 				}
@@ -4594,7 +4594,7 @@ public class ExBL extends CpBL {
 					if (responsavel == null && lotaResponsavel == null)
 						if (orgaoExterno == null && obsOrgao == null)
 							throw new AplicacaoException(
-									"não foram informados dados para o despacho/transferência");
+									"não foram informados dados para o trâmite");
 				}
 			}
 		}

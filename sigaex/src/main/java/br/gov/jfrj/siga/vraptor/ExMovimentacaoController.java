@@ -1619,7 +1619,7 @@ public class ExMovimentacaoController extends ExController {
 				.getComp()
 				.podeDespachar(getTitular(), getLotaTitular(), builder.getMob()))) {
 			throw new AplicacaoException(
-					"Não é possível fazer despacho nem transferência");
+					"Não é possível tramitar");
 		}
 
 		Ex.getInstance()
@@ -1641,7 +1641,7 @@ public class ExMovimentacaoController extends ExController {
 					"/app/expediente/mov/transferido?sigla={0}&idMov={1}",
 					sigla, ultimaMovimentacao.getIdMov().toString()));
 		} else {
-			result.redirectTo(this).fecharPopup();
+			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getExDocumento().getSigla());
 		}
 	}
 

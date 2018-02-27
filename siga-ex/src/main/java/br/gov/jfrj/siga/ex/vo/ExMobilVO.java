@@ -384,14 +384,11 @@ public class ExMobilVO extends ExVO {
 				null, null, "once");
 
 		addAcao("email_go",
-				"Despachar/Tramitar",
+				"Tramitar",
 				"/app/expediente/mov",
 				"transferir",
 				Ex.getInstance().getComp()
-						.podeDespachar(titular, lotaTitular, mob)
-						|| Ex.getInstance().getComp()
-								.podeTransferir(titular, lotaTitular, mob),
-				null, "&popup=true", null, null, null);
+						.podeTransferir(titular, lotaTitular, mob));
 
 		if (mob.isVia() || mob.isVolume()) {
 			addAcao("attach",

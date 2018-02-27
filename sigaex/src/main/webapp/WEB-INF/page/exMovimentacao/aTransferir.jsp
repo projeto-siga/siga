@@ -7,7 +7,7 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
 
-<siga:pagina titulo="Transferência">
+<siga:pagina titulo="Tramitar">
 
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");$("body").addClass("fisico");</script>
@@ -85,17 +85,25 @@ function popitup_movimentacao() {
 	}
 	return false;
 }	
-	
+
+function submeter() {
+	document.getElementById('frm').submit();
+}
+
+$(function(){
+    $("#formulario_lotaResponsavelSel_sigla").focus();
+});
+
 </script>
 
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 		
-			<h2>Despacho / Transferencia - ${mob.siglaEDescricaoCompleta}</h2>
+			<h2>Tramitar - ${mob.siglaEDescricaoCompleta}</h2>
 			
 			<div class="gt-content-box gt-for-table">
 			
-			<form name="frm" action="transferir_gravar" method="post">
+			<form name="frm" id="frm" action="transferir_gravar" method="post">
 				<input type="hidden" name="id" value="${id}" />
 				<input type="hidden" name="postback" value="1" />
 				<input type="hidden" name="docFilho" value="true" />
@@ -103,83 +111,6 @@ function popitup_movimentacao() {
 				<input type="hidden" name="mobilPaiSel.sigla" value="" id="transferir_gravar_pai" />
 				<input type="hidden" name="despachando" value="" id="transferir_gravar_despachando" />
 				<table class="gt-form-table">
-					<tr class="header">
-						<td colspan="2">Despacho</td>
-					</tr>
-					<tr>
-						<td>Data:</td>
-						<td><input type="text" name="dtMovString" value="${dtMovString}"
-							onblur="javascript:verifica_data(this,0);"/></td>
-					</tr>
-					<tr>
-						<td>Subscritor:</td>
-						<td>
-							<siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
-							&nbsp;&nbsp;
-							<input type="checkbox" theme="simple" name="substituicao" onclick="javascript:displayTitular(this);"  <c:if test="${substituicao}">checked</c:if> />
-							Substituto
-						</td>
-					</tr>
-					<c:choose>
-						<c:when test="${!substituicao}">
-							<tr id="tr_titular" style="display: none">
-						</c:when>
-						<c:otherwise>
-							<tr id="tr_titular" style="">
-						</c:otherwise>
-					</c:choose>
-
-					<td>Titular:</td>
-					<input type="hidden" name="campos" value="${titularSel.id}" />
-					<td colspan="3">
-						<siga:selecao propriedade="titular" tema="simple" modulo="siga"/></td>
-					</tr>
-					<tr>
-						<td>
-						Função;Lotação;Localidade:
-						</td>
-						<td colspan="3">
-							<input type="hidden" name="campos" value="${nmFuncaoSubscritor}" />
-							<input type="text" name="nmFuncaoSubscritor" size="50" maxLength="128" value="${nmFuncaoSubscritor}"/>
-						(Opcionalmente informe a função e a lotação na forma:
-						Função;Lotação;Localidade)</td>
-					</tr>
-					<tr>
-						<td>
-							Despacho
-						</td>
-						<td>
-							<select  id="transferir_gravar_idTpDespacho" name="idTpDespacho" onchange="javascript:sbmt();">
-								<c:forEach items="${tiposDespacho}" var="item">
-									<option value="${item.idTpDespacho}" ${item.idTpDespacho == idTpDespacho ? 'selected' : ''}>
-										${item.descTpDespacho}
-									</option>  
-								</c:forEach>
-							</select>
-							&nbsp;							
-						</td>
-					</tr>
-					<c:choose>
-						<c:when test="${idTpDespacho == -1}">
-							<tr>
-								<td>
-									Texto
-								</td>
-                                <td>
-	                                <textarea rows="3" cols="50"  name="descrMov" onkeyup="corrige();tamanho();" onblur="tamanho();" onclick="tamanho();">${descrMov}</textarea>
-                                	
-									<div id="Qtd">
-										Restam&nbsp;400&nbsp;Caracteres
-									</div>
-								</td>
-							</tr>
-						</c:when>
-					</c:choose>
-					
-					<tr class="header">
-						<td colspan="2">Transferência</td>
-					</tr>
-
 					<c:if test="${not doc.eletronico}">
 						<tr>
 							<td><span style="color: red"><b>Atenção:</b></span></td>
@@ -240,9 +171,8 @@ function popitup_movimentacao() {
 					</c:if>
 					<tr>
 						<td colspan="2">
-							<input type="submit" value="Ok" class="gt-btn-medium gt-btn-left once" /> 
+							<a accesskey="o" id="button_ok" onclick="javascript:submeter();" class="gt-btn-medium gt-btn-left once"><u>O</u>k</a>
 							<input type="button" value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/>
-							<input type="button" name="ver_doc"	value="Visualizar o despacho" class="gt-btn-large gt-btn-left" onclick="javascript: popitup_movimentacao();"/>
 						</td>
 					</tr>
 				</table>

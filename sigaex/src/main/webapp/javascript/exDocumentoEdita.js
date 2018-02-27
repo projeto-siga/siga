@@ -21,6 +21,25 @@ function displayPersonalizacao(thisElement) {
 		thatElement.style.display = 'none';
 }
 
+function personalizacaoSeparar() {
+	var a = document.getElementById('frm_nmFuncaoSubscritor').value.split(';');
+	document.getElementById('personalizarFuncao').value = a.length > 0 ? a[0] : '';
+	document.getElementById('personalizarUnidade').value = a.length > 1 ? a[1] : '';
+	document.getElementById('personalizarLocalidade').value = a.length > 2 ? a[2] : '';
+	document.getElementById('personalizarNome').value = a.length > 3 ? a[3] : '';
+}
+
+function personalizacaoJuntar() {
+	var f = document.getElementById('personalizarFuncao').value.trim();
+	var u = document.getElementById('personalizarUnidade').value.trim();
+	var l = document.getElementById('personalizarLocalidade').value.trim();
+	var n = document.getElementById('personalizarNome').value.trim();
+	var j = f + ';' + u + ';' + l + ';' + n;
+	while (j.slice(-1) == ';')
+		j = j.substring(0, j.length - 1);
+	document.getElementById('frm_nmFuncaoSubscritor').value = j;
+}
+
 // <c:set var="url" value="editar" />
 function sbmt(id) {
 	var frm = document.getElementById('frm');
@@ -79,6 +98,8 @@ function gravarDoc() {
 }
 
 function validar(silencioso) {
+	personalizacaoJuntar();
+	
 	var descr = document.getElementsByName('exDocumentoDTO.descrDocumento')[0].value;
 	var eletroHidden = document.getElementById('eletronicoHidden');
 	var eletro1 = document.getElementById('eletronicoCheck1');
@@ -106,6 +127,12 @@ function validar(silencioso) {
 			.getElementsByName('exDocumentoDTO.tamanhoMaximoDescricao')[0].value;
 	if (document.getElementsByName('exDocumentoDTO.descrDocumento')[0].value.length >= limite) {
 		aviso('O tamanho máximo da descrição é de ' + limite + ' caracteres',
+				silencioso);
+		return false;
+	}
+
+	if (document.getElementById('frm_nmFuncaoSubscritor').value.length > 128) {
+		aviso('O tamanho máximo da soma dos caracteres de personalização é de 128 caracteres',
 				silencioso);
 		return false;
 	}
@@ -218,6 +245,8 @@ function adicionaPreench() {
 // <c:set var="url" value="prever" />
 var newwindow = '';
 function popitup_documento(pdf) {
+	personalizacaoJuntar();
+	
 	if (!newwindow.closed && newwindow.location) {
 	} else {
 		var popW = 600;

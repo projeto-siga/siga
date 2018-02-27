@@ -391,7 +391,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"folder_magnify",
-				"Ver Dossiê",
+				"_Ver Dossiê",
 				"/app/expediente/doc",
 				"exibirProcesso",
 				Ex.getInstance().getComp()
@@ -399,7 +399,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"printer",
-				"Ver Impressão",
+				"Ver _Impressão",
 				"/app/arquivo",
 				"exibir",
 				Ex.getInstance().getComp()
@@ -409,13 +409,13 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"lock",
-				"Finalizar",
+				"Fina_lizar",
 				"/app/expediente/doc",
 
 				"finalizar",
 				Ex.getInstance().getComp()
 						.podeFinalizar(titular, lotaTitular, mob),
-				"Confirma a finalização do documento?", null, null, null,
+				null, null, null, null,
 				"once");
 
 		// addAcao("Finalizar e Assinar", "/expediente/mov",
@@ -423,7 +423,7 @@ public class ExDocumentoVO extends ExVO {
 		// podeFinalizarAssinar(titular, lotaTitular, mob),
 		// "Confirma a finalização do documento?", null, null, null);
 
-		vo.addAcao("pencil", "Editar", "/app/expediente/doc", "editar", Ex
+		vo.addAcao("pencil", "Edita_r", "/app/expediente/doc", "editar", Ex
 				.getInstance().getComp().podeEditar(titular, lotaTitular, mob));
 
 		vo.addAcao(
@@ -442,14 +442,14 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"attach",
-				"Anexar",
+				"Ane_xar",
 				"/app/expediente/mov",
 				"anexar",
 				Ex.getInstance().getComp()
 						.podeAnexarArquivo(titular, lotaTitular, mob));
 		vo.addAcao(
 				"note_add",
-				"Anotar",
+				"_Anotar",
 				"/app/expediente/mov",
 				"anotar",
 				Ex.getInstance().getComp()
@@ -499,7 +499,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"script_edit",
-				"Registrar Assinatura Manual",
+				"Registrar A_ssinatura Manual",
 				"/app/expediente/mov",
 				"registrar_assinatura",
 				Ex.getInstance().getComp()
@@ -507,7 +507,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"script_key",
-				"Assinar",
+				"A_ssinar",
 				"/app/expediente/mov",
 				"assinar",
 				Ex.getInstance().getComp()
@@ -515,7 +515,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"script_key",
-				"Autenticar",
+				"A_utenticar",
 				"/app/expediente/mov",
 				"autenticar_documento",
 				Ex.getInstance()
@@ -534,7 +534,7 @@ public class ExDocumentoVO extends ExVO {
 
 			vo.addAcao(
 					"link_add",
-					"Incluir Documento",
+					"Incluir _Documento",
 					"/app/expediente/doc",
 					"editar",
 					Ex.getInstance()
@@ -596,7 +596,7 @@ public class ExDocumentoVO extends ExVO {
 		int numUltMobil = doc.getNumUltimoMobil();
 		vo.addAcao(
 				"eye",
-				"Ver Mais",
+				"Ver _Mais",
 				"/app/expediente/doc",
 				"exibirAntigo",
 				Ex.getInstance()

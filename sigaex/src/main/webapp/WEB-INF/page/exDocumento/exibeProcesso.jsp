@@ -111,31 +111,31 @@
 					style="margin-right: 5px;"> Ir para o Final
 				</a>
 				<siga:link icon="application_view_list" classe="once"
-					title="Visualizar&nbsp;Movimentações"
+					title="Visualizar&nbsp;_Movimentações"
 					url="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}"
 					test="${true}" />
 				<siga:link icon="wrench" title="Preferência:" test="${true}" url="#" />
-				<input type="radio" id="radioHTML" name="formato" value="html"
+				<input type="radio" id="radioHTML" name="formato" value="html" accesskey="h"
 					checked="checked" onclick="exibir(htmlAtual,pdfAtual,'');">
-					&nbsp;HTML
+					&nbsp;<u>H</u>TML
 				</input>
 
-				<input type="radio" id="radioPDF" name="formato" value="pdf"
+				<input type="radio" id="radioPDF" name="formato" value="pdf" accesskey="p"
 					onclick="exibir(htmlAtual,pdfAtual,'');">
-					&nbsp;PDF - 
-					<a id="pdflink"> abrir&nbsp; </a>
+					&nbsp;<u>P</u>DF - 
+					<a id="pdflink" accesskey="a"> <u>a</u>brir&nbsp; </a>
 				</input>
 
-				<input type="radio" id="radioPDFSemMarcas" name="formato"
+				<input type="radio" id="radioPDFSemMarcas" name="formato" accesskey="s"
 					value="pdfsemmarcas"
 					onclick="exibir(htmlAtual,pdfAtual,'semmarcas/');">
-				&nbsp;PDF sem marcas - 
-				<a id="pdfsemmarcaslink"> abrir&nbsp; </a>
+				&nbsp;PDF <u>s</u>em marcas - 
+				<a id="pdfsemmarcaslink" accesskey="b"> a<u>b</u>rir&nbsp; </a>
 				</input>
 
-				<input type="checkbox" id="TelaCheia" name="telacheia"
+				<input type="checkbox" id="TelaCheia" name="telacheia" accesskey="t"
 					value="telacheia" " onclick="javascript: telaCheia(this.checked);">
-					&nbsp;Tela cheia
+					&nbsp;<u>T</u>ela cheia
 				</input>
 			</siga:links>
 		</p>

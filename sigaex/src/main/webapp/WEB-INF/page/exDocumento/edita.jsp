@@ -407,11 +407,11 @@
 					</c:if>
 					<tr>
 						<td colspan="4">
-							<input type="button" onclick="javascript: gravarDoc();" name="gravar" value="Ok" class="gt-btn-small gt-btn-left"/>
+							<button onclick="javascript: gravarDoc(); return false;" name="gravar" class="gt-btn-small gt-btn-left" accesskey="o"><u>O</u>K</button>
 						 	<c:if test='${exDocumentoDTO.tipoDocumento == "interno"}'>
 							<c:if test="${not empty exDocumentoDTO.modelo.nmArqMod or exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker'}">
-								<input type="button" name="ver_doc" value="Visualizar o Documento" onclick="javascript: popitup_documento(false);" class="gt-btn-large gt-btn-left"/>
-								<input type="button" name="ver_doc_pdf" onclick="javascript: popitup_documento(true);" value="Visualizar a Impressão" class="gt-btn-large gt-btn-left"/>
+								<button name="ver_doc" onclick="javascript: popitup_documento(false); return false;" class="gt-btn-large gt-btn-left" accesskey="v"><u>V</u>er Documento</button>
+								<button name="ver_doc_pdf" onclick="javascript: popitup_documento(true); return false;" class="gt-btn-large gt-btn-left" accesskey="i">Ver <u>I</u>mpressão</button>
 							</c:if>
 						</c:if></td>
 					</tr>

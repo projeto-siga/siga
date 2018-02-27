@@ -328,7 +328,7 @@ public class ExMobilVO extends ExVO {
 	private void addAcoes(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 		if (!mob.isGeral()) {
 			addAcao("folder",
-					"Ver Dossiê",
+					"_Ver Dossiê",
 					"/app/expediente/doc",
 					"exibirProcesso",
 					Ex.getInstance().getComp()
@@ -336,7 +336,7 @@ public class ExMobilVO extends ExVO {
 					null, null, null, null, "once");
 
 			addAcao("printer",
-					"Ver Impressão",
+					"Ver _Impressão",
 					"/app/arquivo",
 					"exibir",
 					Ex.getInstance().getComp()
@@ -345,7 +345,7 @@ public class ExMobilVO extends ExVO {
 					null, null, null);
 
 			addAcao("page_white_add",
-					"Incluir Documento",
+					"Incluir _Documento",
 					"/app/expediente/doc",
 					"editar",
 					Ex.getInstance()
@@ -384,7 +384,7 @@ public class ExMobilVO extends ExVO {
 				null, null, "once");
 
 		addAcao("email_go",
-				"Tramitar",
+				"_Tramitar",
 				"/app/expediente/mov",
 				"transferir",
 				Ex.getInstance().getComp()
@@ -392,26 +392,26 @@ public class ExMobilVO extends ExVO {
 
 		if (mob.isVia() || mob.isVolume()) {
 			addAcao("attach",
-					"Anexar",
+					"Ane_xar",
 					"/app/expediente/mov",
 					"anexar",
 					Ex.getInstance().getComp()
 							.podeAnexarArquivo(titular, lotaTitular, mob));
 			addAcao("note_add",
-					"Anotar",
+					"_Anotar",
 					"/app/expediente/mov",
 					"anotar",
 					Ex.getInstance().getComp()
 							.podeFazerAnotacao(titular, lotaTitular, mob));
 			addAcao("page_white_copy",
-					"Incluir Cópia",
+					"Incluir _Cópia",
 					"/app/expediente/mov",
 					"copiar",
 					Ex.getInstance().getComp()
 							.podeCopiar(titular, lotaTitular, mob));
 		}
 
-		addAcao("box_add", "Arq. Corrente", "/app/expediente/mov",
+		addAcao("box_add", "Ar_q. Corrente", "/app/expediente/mov",
 				"arquivar_corrente_gravar", Ex.getInstance().getComp()
 						.podeArquivarCorrente(titular, lotaTitular, mob), null,
 				null, null, null, "once");
@@ -452,7 +452,7 @@ public class ExMobilVO extends ExVO {
 				.getInstance().getComp().podeAvaliar(titular, lotaTitular, mob));
 
 		addAcao("hourglass_add",
-				"Sobrestar",
+				"So_brestar",
 				"/app/expediente/mov",
 				"sobrestar_gravar",
 				Ex.getInstance().getComp()
@@ -476,7 +476,7 @@ public class ExMobilVO extends ExVO {
 						.podeBotaoArquivarIntermediario(titular, lotaTitular,
 								mob), null, null, null, null, "once");
 
-		addAcao("box_delete", "Desarq. Corrente", "/app/expediente/mov",
+		addAcao("box_delete", "Desar_q. Corrente", "/app/expediente/mov",
 				"reabrir_gravar", Ex.getInstance().getComp()
 						.podeDesarquivarCorrente(titular, lotaTitular, mob),
 				null, null, null, null, "once");
@@ -491,16 +491,16 @@ public class ExMobilVO extends ExVO {
 								lotaTitular, mob), null, null, null, null,
 				"once");
 
-		addAcao("hourglass_delete", "Desobrestar", "/app/expediente/mov",
+		addAcao("hourglass_delete", "Deso_brestar", "/app/expediente/mov",
 				"desobrestar_gravar", Ex.getInstance().getComp()
 						.podeDesobrestar(titular, lotaTitular, mob), null,
 				null, null, null, "once");
 
-		addAcao("page_white_go", "Juntar", "/app/expediente/mov", "juntar", Ex
+		addAcao("page_white_go", "_Juntar", "/app/expediente/mov", "juntar", Ex
 				.getInstance().getComp().podeJuntar(titular, lotaTitular, mob));
 
 		addAcao("page_find",
-				"Vincular",
+				"Vi_ncular",
 				"/app/expediente/mov",
 				"referenciar",
 				Ex.getInstance().getComp()
@@ -518,7 +518,7 @@ public class ExMobilVO extends ExVO {
 				&& mob.getUltimaMovimentacaoNaoCancelada()
 				.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO)
 			addAcao("arrow_undo",
-					"Desfazer "
+					"Desfa_zer "
 							+ mob.getDescricaoUltimaMovimentacaoNaoCancelada(),
 					"/app/expediente/mov",
 					"cancelarMovimentacao",

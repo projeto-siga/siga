@@ -46,6 +46,16 @@
 				<input type="hidden" name="jsonHierarquiaDeModelos" value="${jsonHierarquiaDeModelos}" />
 
 				<table class="gt-form-table">
+					<tr class="header">
+						<c:choose>
+							<c:when test='${empty exDocumentoDTO.doc}'>
+								<td colspan="4">Novo Documento</td>
+							</c:when>
+							<c:otherwise>
+								<td colspan="4">Dados básicos:</td>
+							</c:otherwise>
+						</c:choose>
+					</tr>
 					<c:choose>
 						<c:when test="${(exDocumentoDTO.doc.eletronico) && (exDocumentoDTO.doc.numExpediente != null)}">
 							<c:set var="estiloTipo" value="display: none" />
@@ -391,6 +401,9 @@
 				
 					<c:if test='${exDocumentoDTO.tipoDocumento == "interno" or exDocumentoDTO.tipoDocumento == "interno_capturado" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
 						<c:if test="${exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker' or not empty exDocumentoDTO.modelo.nmArqMod}">
+							<tr class="header">
+								<td colspan="4">Dados complementares</td>
+							</tr>
 							<tr>
 								<td colspan="4">
 									<siga:span id="spanEntrevista" depende="tipoDestinatario;destinatario;forma;modelo">

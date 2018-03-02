@@ -84,7 +84,7 @@
 							<siga:opcao id='1' texto="Documento Interno" >
 								<siga:selecao tema='simple'  titulo="Documento Pai:" propriedade="documentoRef" urlAcao="expediente/buscar" urlSelecionar="expediente/selecionar" modulo="sigaex"/>
 							</siga:opcao>
-							<siga:opcao id='2' texto="Documento Externo ao SIGAEX" >
+							<siga:opcao id='2' texto="Documento Externo ao Siga-Doc" >
 								<input type="text" theme='simple' name="idDocumentoPaiExterno" value="${idDocumentoPaiExterno}" />
 							</siga:opcao>
 						</siga:escolha>

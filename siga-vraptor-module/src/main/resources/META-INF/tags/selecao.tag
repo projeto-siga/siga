@@ -255,7 +255,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 
 <c:if test="${ocultardescricao != 'sim'}">
 	<span id="${spanName}SelSpan">
-		<c:out value="${requestScope[propriedadeTipoSel].descricao}" />
+		<c:out value="${requestScope[propriedadeTipoSel].descricao}" escapeXml="false" />
 	</span>
 </c:if>
 

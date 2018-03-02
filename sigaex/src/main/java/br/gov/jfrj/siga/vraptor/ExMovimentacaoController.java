@@ -816,11 +816,18 @@ public class ExMovimentacaoController extends ExController {
 				.podeJuntar(getTitular(), getLotaTitular(), builder.getMob())) {
 			throw new AplicacaoException("Não é possível fazer juntada");
 		}
+		
+		// Preencher automaticamente o mobil pai quando se tratar de documento filho
+		ExMobilSelecao documentoRefSel = new ExMobilSelecao();
+		if (doc.getPai() != null) {
+			documentoRefSel.buscarPorObjeto(doc.getPai().isExpediente() ? doc.getPai().getPrimeiraVia() : doc.getPai().getUltimoVolume());
+		}
 
 		result.include("sigla", sigla);
 		result.include("mob", builder.getMob());
 		result.include("doc", doc);
 		result.include("subscritorSel", new DpPessoaSelecao());
+		result.include("documentoRefSel", documentoRefSel);
 	}
 
 	@Post("app/expediente/mov/juntar_gravar")

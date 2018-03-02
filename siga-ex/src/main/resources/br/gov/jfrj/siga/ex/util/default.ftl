@@ -813,7 +813,7 @@ LINHA  VARIÁVEL / CONTEÚDO
 	[#local descr = doc.exModelo.nmMod]
 	[#if doc.exTipoDocumento.id = 3 || doc.exTipoDocumento.id = 4]
 		[#if doc.numExtDoc?has_content]
-			[#local descr = descr + ' Nº ' + doc.numExtDoc]
+			[#local descr = descr + ' nº ' + doc.numExtDoc]
 		[/#if]
 		[#if doc.dtDocOriginalDDMMYYYY?has_content]
 			[#local descr = descr + ' de ' + doc.dtDocOriginalDDMMYYYY]

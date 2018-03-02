@@ -46,16 +46,6 @@
 				<input type="hidden" name="jsonHierarquiaDeModelos" value="${jsonHierarquiaDeModelos}" />
 
 				<table class="gt-form-table">
-					<tr class="header">
-						<c:choose>
-							<c:when test='${empty exDocumentoDTO.doc}'>
-								<td colspan="4">Novo Documento</td>
-							</c:when>
-							<c:otherwise>
-								<td colspan="4">Dados básicos:</td>
-							</c:otherwise>
-						</c:choose>
-					</tr>
 					<c:choose>
 						<c:when test="${(exDocumentoDTO.doc.eletronico) && (exDocumentoDTO.doc.numExpediente != null)}">
 							<c:set var="estiloTipo" value="display: none" />
@@ -208,34 +198,6 @@
 							</td>
 						</tr>
 					</c:if>
-					<c:if test='${exDocumentoDTO.tipoDocumento == "externo" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
-						<tr>
-							<td>Nº original:</td>
-							<input type="hidden" name="campos" value="dtDocOriginalString" />
-							<td colspan="3">
-								<input type="hidden" name="campos" value="numExtDoc" /><input type="text" name="exDocumentoDTO.numExtDoc" size="32" maxLength="32" value="${exDocumentoDTO.numExtDoc}"/>
-								<span style="margin-left: 1em;">Data: <input type="text" name="exDocumentoDTO.dtDocOriginalString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocOriginalString}"/></span>
-								<span style="margin-left: 1em;">Órgão: <input type="hidden" name="campos" value="cpOrgaoSel.id" /><siga:selecao propriedade="cpOrgao" inputName="exDocumentoDTO.cpOrgao" tema="simple" modulo="siga"/></span>
-							</td>
-						</tr>
-						<c:if test='${exDocumentoDTO.tipoDocumento == "externo"}'>
-							<tr>
-								<td>Obs. sobre o Órgão Externo:</td>
-								<input type="hidden" name="campos" value="obsOrgao" />
-								<td colspan="3">
-									<input type="text" size="120" name="exDocumentoDTO.obsOrgao" maxLength="256" value="${exDocumentoDTO.obsOrgao}"/>
-								</td>
-							</tr>
-							<tr>
-								<td>Nº antigo:</td>
-								<input type="hidden" name="campos" value="numAntigoDoc" />
-								<td colspan="3">
-									<input type="text" name="exDocumentoDTO.numAntigoDoc" size="32" maxLength="34" value="${exDocumentoDTO.numAntigoDoc}" /> 
-									(informar o número do documento no antigo sistema de controle de expedientes, caso tenha sido cadastrado)
-								</td>
-							</tr>
-						</c:if>
-					</c:if>
 					<input type="hidden" name="exDocumentoDTO.desativarDocPai" value="${exDocumentoDTO.desativarDocPai}" />
 					<tr style="display: none;">
 						<td>Documento Pai:</td>
@@ -246,11 +208,6 @@
 					<tr>
 						<c:choose>
 							<c:when test='${exDocumentoDTO.tipoDocumento == "externo" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
-								<td>Subscritor:</td>
-								<input type="hidden" name="campos" value="nmSubscritorExt" />
-								<td colspan="3">
-									<input type="text" name="exDocumentoDTO.nmSubscritorExt" size="80" maxLength="256" value="${exDocumentoDTO.nmSubscritorExt}"/>
-								</td>
 							</c:when>
 							<c:otherwise>
 								<input type="hidden" id="temCossignatarios" value="${not empty exDocumentoDTO.doc.cosignatarios}" />
@@ -399,11 +356,47 @@
 						</tr>
 					</c:if>
 				
+					<c:if test='${exDocumentoDTO.tipoDocumento == "externo" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
+						<tr class="header">
+							<td colspan="4">Dados do Documento Original</td>
+						</tr>
+						<tr>
+							<td>Nº original:</td>
+							<input type="hidden" name="campos" value="dtDocOriginalString" />
+							<td colspan="3">
+								<input type="hidden" name="campos" value="numExtDoc" /><input type="text" name="exDocumentoDTO.numExtDoc" size="32" maxLength="32" value="${exDocumentoDTO.numExtDoc}"/>
+								<span style="margin-left: 1em;">Data: <input type="text" name="exDocumentoDTO.dtDocOriginalString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocOriginalString}"/></span>
+							</td>
+						</tr>
+						<c:if test='${exDocumentoDTO.tipoDocumento == "externo"}'>
+							<tr>
+								<td>Obs. sobre o Órgão Externo:</td>
+								<input type="hidden" name="campos" value="obsOrgao" />
+								<td colspan="3">
+									<input type="text" size="120" name="exDocumentoDTO.obsOrgao" maxLength="256" value="${exDocumentoDTO.obsOrgao}"/>
+								</td>
+							</tr>
+							<tr>
+								<td>Nº antigo:</td>
+								<input type="hidden" name="campos" value="numAntigoDoc" />
+								<td colspan="3">
+									<input type="text" name="exDocumentoDTO.numAntigoDoc" size="32" maxLength="34" value="${exDocumentoDTO.numAntigoDoc}" /> 
+									(informar o número do documento no antigo sistema de controle de expedientes, caso tenha sido cadastrado)
+								</td>
+							</tr>
+						</c:if>
+							<tr> 
+								<td>Emitente:</td>
+								<td colspan="3">
+									<span style="">Órgão: <input type="hidden" name="campos" value="cpOrgaoSel.id" /><siga:selecao propriedade="cpOrgao" inputName="exDocumentoDTO.cpOrgao" tema="simple" modulo="siga"/></span>
+									<span style="margin-left: 1em;">Subscritor: <input type="hidden" name="campos" value="nmSubscritorExt" /><input type="text" name="exDocumentoDTO.nmSubscritorExt" size="30" maxLength="256" value="${exDocumentoDTO.nmSubscritorExt}"/></span>
+								</td>
+							</tr>
+					</c:if>
+				
+				
 					<c:if test='${exDocumentoDTO.tipoDocumento == "interno" or exDocumentoDTO.tipoDocumento == "interno_capturado" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
 						<c:if test="${exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker' or not empty exDocumentoDTO.modelo.nmArqMod}">
-							<tr class="header">
-								<td colspan="4">Dados complementares</td>
-							</tr>
 							<tr>
 								<td colspan="4">
 									<siga:span id="spanEntrevista" depende="tipoDestinatario;destinatario;forma;modelo">
@@ -420,11 +413,11 @@
 					</c:if>
 					<tr>
 						<td colspan="4">
-							<button onclick="javascript: gravarDoc(); return false;" name="gravar" class="gt-btn-small gt-btn-left" accesskey="o"><u>O</u>K</button>
+							<button type="button" onclick="javascript: gravarDoc(); return false;" name="gravar" class="gt-btn-small gt-btn-left" accesskey="o"><u>O</u>K</button>
 						 	<c:if test='${exDocumentoDTO.tipoDocumento == "interno"}'>
 							<c:if test="${not empty exDocumentoDTO.modelo.nmArqMod or exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker'}">
-								<button name="ver_doc" onclick="javascript: popitup_documento(false); return false;" class="gt-btn-large gt-btn-left" accesskey="v"><u>V</u>er Documento</button>
-								<button name="ver_doc_pdf" onclick="javascript: popitup_documento(true); return false;" class="gt-btn-large gt-btn-left" accesskey="i">Ver <u>I</u>mpressão</button>
+								<button type="button" name="ver_doc" onclick="javascript: popitup_documento(false); return false;" class="gt-btn-large gt-btn-left" accesskey="v"><u>V</u>er Documento</button>
+								<button type="button" name="ver_doc_pdf" onclick="javascript: popitup_documento(true); return false;" class="gt-btn-large gt-btn-left" accesskey="i">Ver <u>I</u>mpressão</button>
 							</c:if>
 						</c:if></td>
 					</tr>

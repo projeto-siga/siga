@@ -3484,8 +3484,7 @@ public class ExBL extends CpBL {
 
 			if (doc.getDescrDocumento() == null
 					|| doc.getDescrDocumento().isEmpty())
-				throw new AplicacaoException(
-						"A descrição do documento não pode ser vazia.");
+				doc.setDescrDocumento(doc.getExModelo().getNmMod() + (doc.getSubscritorString() != null ? " de " + doc.getSubscritorString() : ""));
 
 			if (doc.getSubscritor() == null && !doc.getCosignatarios().isEmpty())
 				throw new AplicacaoException(

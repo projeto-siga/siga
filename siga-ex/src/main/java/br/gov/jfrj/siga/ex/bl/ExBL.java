@@ -1785,6 +1785,8 @@ public class ExBL extends CpBL {
 
 	private void trasferirAutomaticamente(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
 			DpPessoa assinante, final ExDocumento doc, boolean fPreviamenteAssinado) {
+		if (doc.getLotaDestinatario() == null && doc.getDestinatario() == null)
+			return;
 		// Transferir automaticamente os documentos quando forem plenamente assinados
 		if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura() && !doc.getPrimeiroMobil().getMobilPrincipal().doc().isPendenteDeAssinatura()) {
 			transferir(doc.getOrgaoExternoDestinatario(), doc.getObsOrgao(), cadastrante, lotaCadastrante, 

@@ -133,7 +133,6 @@ public class ExMarcadorBL {
 
 			if (t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO
-					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOBRESTAR
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESOBRESTAR
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
 					|| t == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA

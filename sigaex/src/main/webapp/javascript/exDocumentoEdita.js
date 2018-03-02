@@ -151,7 +151,7 @@ function validar(silencioso) {
 			var obr = elm.value;
 			if (obr == null || obr == "" || !obr || /^\s*$/.test(obr)) {
 				aviso("Parâmetro obrigatório não foi informado: "
-						+ obrigatorios[i].value);
+						+ obrigatorios[i].value, silencioso);
 				elm.focus();
 				return false;
 			}

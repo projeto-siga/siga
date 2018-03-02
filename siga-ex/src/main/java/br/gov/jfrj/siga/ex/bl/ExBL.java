@@ -3883,7 +3883,7 @@ public class ExBL extends CpBL {
 
 	public void juntarDocumento(final DpPessoa cadastrante,
 			final DpPessoa docTitular, final DpLotacao lotaCadastrante,
-			final String idDocExterno, final ExMobil mob, final ExMobil mobPai,
+			final String idDocExterno, final ExMobil mob, ExMobil mobPai,
 			final Date dtMov, final DpPessoa subscritor,
 			final DpPessoa titular, final String idDocEscolha) {
 
@@ -3905,10 +3905,14 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException(
 						"não é possível juntar a um documento não finalizado");
 
-			if (mobPai.isGeral())
+			if (mobPai.isGeral()) 
+				mobPai = mobPai.doc().getMobilDefaultParaReceberJuntada();
+			
+			if (mobPai.isGeral()) {
 				throw new AplicacaoException(
 						"É necessário informar a via é qual será feita a juntada");
-
+			}
+			
 			if (mob.doc().isEletronico()) {
 				if (mob.temAnexosNaoAssinados()
 						|| mob.temDespachosNaoAssinados())

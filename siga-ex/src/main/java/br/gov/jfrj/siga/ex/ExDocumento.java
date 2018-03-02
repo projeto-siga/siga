@@ -1851,6 +1851,17 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		}
 		return null;
 	}
+	
+
+	public ExMobil getMobilDefaultParaReceberJuntada() {
+		if (getExMobilSet() == null)
+			return null;
+		if (isExpediente())
+			return getPrimeiraVia();
+		else
+			return getUltimoVolume();
+	}
+
 
 	/**
 	 * Retorna uma lista de documentos filhos [de cada móbil] do documento

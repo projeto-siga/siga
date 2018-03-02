@@ -235,22 +235,21 @@
 						</td>
 					</tr>
 					<tr id="tr_personalizacao" style="display: ${exDocumentoDTO.personalizacao ? '' : 'none'};">
-						<td>Personalização:</td>
+						<td style="vertical-align: middle">Personalização:</td>
 						<td colspan="3">
-							<span style="margin-right: 1em;">Função:
+							<p><span style="margin-right: 1em;">Função:
 								<input type="text" id="personalizarFuncao" size="30" maxlength="29">			
 							</span>
 							<span style="margin-right: 1em;">Lotação:
 								<input type="text" id="personalizarUnidade" size="30" maxlength="29">			
-							</span>
+							</span></p>
+							<p>
 							<span style="margin-right: 1em;">Cidade:
 								<input type="text" id="personalizarLocalidade" size="30" maxlength="29">			
 							</span>
 							<span style="margin-right: 1em;">Nome:
 								<input type="text" id="personalizarNome" size="30" maxlength="38">			
-							</span>
-						
-							<br/>
+							</span></p>
 							<input type="hidden" name="campos" value="nmFuncaoSubscritor" />
 							<input type="hidden" name="exDocumentoDTO.nmFuncaoSubscritor" maxlength="128" id="frm_nmFuncaoSubscritor" value="${exDocumentoDTO.nmFuncaoSubscritor}"/>							
 						</td>

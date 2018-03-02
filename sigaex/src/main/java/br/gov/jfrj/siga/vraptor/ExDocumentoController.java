@@ -1746,9 +1746,22 @@ public class ExDocumentoController extends ExController {
 		}
 
 		if (mod != null && exDocumentoDTO.isAlterouModelo()) {
-			for (ExTipoDocumento tp : mod.getExFormaDocumento().getExTipoDocumentoSet()) {
-				exDocumentoDTO.setIdTpDoc(tp.getId());
-				break;
+			if (exDocumentoDTO.getIdTpDoc() != null) {
+				boolean permitido = false;
+				for (ExTipoDocumento tp : mod.getExFormaDocumento().getExTipoDocumentoSet()) {
+					if (exDocumentoDTO.getIdTpDoc().equals(tp.getId())) {
+						permitido = true;
+						break;
+					}
+				}
+				if (!permitido)
+					exDocumentoDTO.setIdTpDoc(null);
+			}
+			if (exDocumentoDTO.getIdTpDoc() == null) {
+				for (ExTipoDocumento tp : mod.getExFormaDocumento().getExTipoDocumentoSet()) {
+					exDocumentoDTO.setIdTpDoc(tp.getId());
+					break;
+				}
 			}
 
 			exDocumentoDTO.setIdMod(mod.getIdMod());

@@ -20,6 +20,7 @@ package br.gov.jfrj.siga.ex.vo;
 
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO;
+import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO;
 import static br.gov.jfrj.siga.ex.ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE;
@@ -182,6 +183,19 @@ public class ExMovimentacaoVO extends ExVO {
 							.podeCancelarVinculacaoDocumento(titular,
 									lotaTitular, mov.mob(), mov));
 		}
+		
+		if (idTpMov == TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) {
+			addAcao(null, mov.getNmArqMov(), "/app/arquivo",
+					"exibir", mov.getNmArqMov() != null, null,
+					"&arquivo=" + mov.getReferencia(), null, null, null);
+
+			if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito()) {
+				addAcao(null,
+						"Cancelar",
+						"/app/expediente/mov",
+						"cancelar", true);
+			}
+		}
 
 		if (mov.getNumPaginas() != null
 				|| idTpMov == TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
@@ -193,6 +207,7 @@ public class ExMovimentacaoVO extends ExVO {
 			addAcao(null, mov.getNmArqMov(), "/app/arquivo",
 					"exibir", mov.getNmArqMov() != null, null,
 					"&popup=true&arquivo=" + mov.getReferenciaPDF(), null, null, null);
+
 
 			if (idTpMov == TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO) {
 				addAcao(null,
@@ -254,7 +269,8 @@ public class ExMovimentacaoVO extends ExVO {
 					&& idTpMov != TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
 					&& idTpMov != TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
 					&& idTpMov != TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO
-					&& idTpMov != TIPO_MOVIMENTACAO_ANEXACAO) {
+					&& idTpMov != TIPO_MOVIMENTACAO_ANEXACAO
+					&& idTpMov != TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) {
 				if (!mov.isCancelada() && !mov.mob().doc().isSemEfeito())
 					
 					if((idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
@@ -713,5 +729,49 @@ public class ExMovimentacaoVO extends ExVO {
 	public void setDuracaoSpanExibirCompleto(int duracaoSpanExibirCompleto) {
 		this.duracaoSpanExibirCompleto = duracaoSpanExibirCompleto;
 	}
+	
+	private String mimeType() {
+		if (mov == null ||  mov.getConteudoTpMov() == null)
+			return "";
+		return mov.getConteudoTpMov();
+	}
+	
 
+	public boolean isImage() {
+		return mimeType().startsWith("image/");
+	}
+
+	public boolean isPDF() {
+		return mimeType().endsWith("/pdf");
+	}
+
+	public boolean isWord() {
+		return mimeType().endsWith("/msword") || mimeType()
+						.endsWith(".wordprocessingml.document");
+	}
+
+	public boolean isExcel() {
+		return mimeType().endsWith("/vnd.ms-excel") || mimeType()
+						.endsWith(".spreadsheetml.sheet");
+	}
+
+	public boolean isPresentation() {
+		return mimeType().endsWith("/vnd.ms-powerpoint") || mimeType()
+						.endsWith(".presentationml.presentation");
+	}
+
+	public String getIcon() {
+		if (isImage())
+			return "image";
+		if (isPDF())
+			return "page_white_acrobat";
+		if (isWord())
+			return "page_white_word";
+		if (isExcel())
+			return "page_white_excel";
+		if (isPresentation())
+			return "page_white_powerpoint";
+
+		return "page_white";
+	}
 }

@@ -1095,6 +1095,37 @@ public class ExBL extends CpBL {
 		alimentaFilaIndexacao(mob.getExDocumento(), true);
 	}
 
+	public void anexarArquivoAuxiliar(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExMobil mob,
+			final Date dtMov, final DpPessoa subscritor, final String nmArqMov,
+			final DpPessoa titular, final DpLotacao lotaTitular,
+			final byte[] conteudo, final String tipoConteudo) throws AplicacaoException {
+
+		final ExMovimentacao mov;
+
+		try {
+			iniciarAlteracao();
+
+			mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR, cadastrante,
+					lotaCadastrante, mob, dtMov, subscritor, null, titular,
+					lotaTitular, null);
+
+			mov.setNmArqMov(nmArqMov);
+			mov.setConteudoTpMov(tipoConteudo);
+			mov.setConteudoBlobMov2(conteudo);
+
+			gravarMovimentacao(mov);
+
+			concluirAlteracao(mov.getExMobil());
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao anexar arquivo auxiliar.", 0, e);
+		}
+
+		alimentaFilaIndexacao(mob.getExDocumento(), true);
+	}
+
 	private void permitirOuNaoMovimentarDestinacao(ExMobil mob) {
 
 		Set<ExMobil> mobsVerif = new HashSet<ExMobil>();
@@ -3700,7 +3731,9 @@ public class ExBL extends CpBL {
 		// ultMov.setDtFimMov(new Date());
 		// ExDao.getInstance().gravar(ultMov);
 		// }
-		mov.setNumPaginas(mov.getContarNumeroDePaginas());
+		if (!mov.getExTipoMovimentacao().getIdTpMov()
+				.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR))
+			mov.setNumPaginas(mov.getContarNumeroDePaginas());
 		dao().gravar(mov);
 
 		/*

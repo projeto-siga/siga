@@ -879,6 +879,32 @@
     	</c:if>
 
 		<div class="gt-sidebar-content">
+			<a title="Registrar um novo conhecimento" style="float: right;"
+				href="${linkTo[ExMovimentacaoController].anexarArquivoAuxiliar}?sigla=${sigla}"
+				${popup?'target="_blank" ':''}> <img
+				src="/siga/css/famfamfam/icons/add.png">
+			</a>
+			<h3>Arquivos Auxiliares</h3>
+			<c:forEach var="mov" items="${m.movs}">
+				<c:if test="${mov.idTpMov == 64 and not mov.cancelada}">
+					<p><img style="margin-bottom: -4px;"
+									src="/siga/css/famfamfam/icons/${mov.icon}.png" />
+						<siga:links	inline="${true}" separator="${false}">
+							<c:forEach var="acao" items="${mov.acoes}">
+								<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
+									pos="${acao.pos}"
+									url="${pageContext.request.contextPath}${acao.url}"
+									test="${true}" popup="${acao.popup}"
+									confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
+									idAjax="${mov.idMov}" classe="${acao.classe}" />
+							</c:forEach>
+						</siga:links>
+					</p>
+				</c:if>
+			</c:forEach>
+		</div>
+		
+		<div class="gt-sidebar-content">
 			<h3>Documento ${docVO.doc.exTipoDocumento.descricao}</h3>
 			<p>
 				<b>Suporte:</b> ${docVO.fisicoOuEletronico}

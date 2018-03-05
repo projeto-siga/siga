@@ -319,6 +319,86 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("mobilVO", mobilVO);
 	}
+	
+	@Get("app/expediente/mov/anexar_arquivo_auxiliar")
+	public void anexarArquivoAuxiliar(final String sigla) {
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		buscarDocumento(documentoBuilder);
+		ExMobil mob = documentoBuilder.getMob();
+		if (mob != null && !mob.isGeral())
+			mob = mob.doc().getMobilGeral();
+
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia().setMob(mob);
+
+		result.include("sigla", sigla);
+		result.include("mob", mob);
+		result.include("request", getRequest());
+	}
+
+	@Post("app/expediente/mov/anexar_arquivo_auxiliar_gravar")
+	public void anexarArquivoAuxiliarGravar(final String sigla, final UploadedFile arquivo) {
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		buscarDocumento(documentoBuilder);
+		final ExMobil mobOriginal = documentoBuilder.getMob();
+		ExMobil mob = mobOriginal;
+		if (mob != null && !mob.isGeral())
+			mob = mob.doc().getMobilGeral();
+		
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia().setMob(documentoBuilder.getMob()).setContentType(arquivo.getContentType())
+				.setFileName(arquivo.getFileName());
+
+		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+		mov.setSubscritor(getCadastrante());
+		mov.setTitular(getCadastrante());
+
+		if (arquivo.getFile() == null) {
+			throw new AplicacaoException(
+					"O arquivo a ser anexado não foi selecionado!");
+		}
+		
+		Integer numBytes = 0;
+		try {
+			final byte[] baArquivo = toByteArray(arquivo);
+			if (baArquivo == null) {
+				throw new AplicacaoException(
+						"Arquivo vazio não pode ser anexado.");
+			}
+			numBytes = baArquivo.length;
+			if (numBytes > 10 * 1024 * 1024) {
+				throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 10MB.");
+			}
+			mov.setConteudoBlobMov2(baArquivo);
+		} catch (IOException ex) {
+			throw new AplicacaoException("Falha ao manipular aquivo", 1, ex);
+		}
+
+		// Nato: Precisei usar o código abaixo para adaptar o charset do
+		// nome do arquivo
+		try {
+			final byte[] ab = mov.getNmArqMov().getBytes();
+			for (int i = 0; i < ab.length; i++) {
+				if (ab[i] == -29) {
+					ab[i] = -61;
+				}
+			}
+			final String sNmArqMov = new String(ab, "utf-8");
+
+			Ex.getInstance().getBL()
+					.anexarArquivoAuxiliar(getCadastrante(), getLotaTitular(), mob,
+							mov.getDtMov(), mov.getSubscritor(), sNmArqMov,
+							mov.getTitular(), mov.getLotaTitular(),
+							mov.getConteudoBlobMov2(), mov.getConteudoTpMov());
+		} catch (UnsupportedEncodingException ex) {
+			LOGGER.error(ex.getMessage(), ex);
+		}
+		ExDocumentoController.redirecionarParaExibir(result, mobOriginal.getSigla());
+	}
 
 	@Get("app/expediente/mov/copiar")
 	public void aCopiar(final String sigla) {

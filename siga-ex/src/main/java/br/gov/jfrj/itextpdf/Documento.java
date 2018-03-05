@@ -121,7 +121,7 @@ public class Documento {
 	private static final float STAMP_BORDER_IN_CM = 0.2f;
 
 	private static final Pattern pattern = Pattern
-		.compile("([0-9A-Z\\-\\/\\.]+)(:?[0-9]*)\\.(pdf|html|zip|rtf)");
+		.compile("([0-9A-Z\\-\\/\\.]+)(:?[0-9]*)\\.?(pdf|html|zip|rtf)?");
 
 	private static Log log = LogFactory.getLog(Documento.class);
 

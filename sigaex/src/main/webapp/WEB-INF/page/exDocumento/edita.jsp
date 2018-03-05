@@ -345,7 +345,7 @@
 						</td>
 					</tr>
 					
-					<c:if test='${empty exDocumentoDTO.doc.idDoc and exDocumentoDTO.tipoDocumento == "interno_capturado" or  exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
+					<c:if test='${(not exDocumentoDTO.doc.finalizado) and (exDocumentoDTO.tipoDocumento == "interno_capturado" or  exDocumentoDTO.tipoDocumento == "externo_capturado")}'>
 						<tr>
 							<input type="hidden" name="campos" value="descrDocumento" />
 							<td>Arquivo PDF:</td>

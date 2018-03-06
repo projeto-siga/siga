@@ -24,11 +24,13 @@
 		
 		<c:choose>
 		<c:when test="${empty valorTipoDeForm or valorTipoDeForm == 1 or valorTipoDeForm == 2}"> <div style="display: none;"></c:when>
-			<c:otherwise></div>			
+			<c:otherwise>
+				<mod:memo colunas="80" linhas="6" titulo="Declaração de bens e direitos" var="bens" />
+				</div>			
 			</c:otherwise>
 		</c:choose>
 		
-		<mod:memo colunas="80" linhas="6" titulo="Declaração de bens e direitos" var="bens" />
+		
 		</div>
 				
 		<mod:grupo titulo="">

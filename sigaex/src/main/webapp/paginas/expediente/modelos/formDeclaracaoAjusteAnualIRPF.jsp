@@ -11,9 +11,9 @@
 		</mod:grupo>
 		
 		<mod:grupo titulo="Caso não tenha declarado bens à Receita Federal, favor marcar uma das opções abaixo:">	
-			<mod:radio titulo="Não se aplica." var="tipoFormulario" valor="1" />
-			<mod:radio titulo="Declaro não possuir bens." var="tipoFormulario" valor="2" />
-			<mod:radio titulo="Declaro que possuo os seguintes bens:" var="tipoFormulario" valor="3" />
+			<mod:radio titulo="Não se aplica." var="tipoFormulario" valor="1" reler="ajax" idAjax="bensAjax" />
+			<mod:radio titulo="Declaro não possuir bens." var="tipoFormulario" valor="2" reler="ajax" idAjax="bensAjax"/>
+			<mod:radio titulo="Declaro que possuo os seguintes bens:" var="tipoFormulario" valor="3" reler="ajax" idAjax="bensAjax" />
 		</mod:grupo>
 		
 		<c:set var="valorTipoDeForm" value="${tipoFormulario}" />
@@ -22,17 +22,13 @@
 		</c:if>
 		
 		
-		<c:choose>
-		<c:when test="${empty valorTipoDeForm or valorTipoDeForm == 1 or valorTipoDeForm == 2}"> <div style="display: none;"></c:when>
-			<c:otherwise>
-				<mod:memo colunas="80" linhas="6" titulo="Declaração de bens e direitos" var="bens" />
-				</div>			
-			</c:otherwise>
-		</c:choose>
-		
-		
-		</div>
-				
+		<mod:grupo  depende="bensAjax">
+		  <c:if test="${valorTipoDeForm == 3}">
+		  	<mod:memo colunas="80" linhas="6" titulo="Declaração de bens e direitos" var="bens" />
+		  </c:if>
+		</mod:grupo>  	
+		 
+						
 		<mod:grupo titulo="">
 		<br /><b>A Declaração de IRPF e o Recibo de Entrega à Receita Federal deverão ser encaminhados, 
 		DIGITALMENTE, em formato PDF, pelo SIGA-DOC, por meio do campo 'anexar arquivo': <br />

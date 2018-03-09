@@ -5,14 +5,15 @@
 	<br>
 	<div class="ui-accordion-header"  style="position:absolute;left:5%;">
 		<h3>
-			TRF2/STI/COSISA - vs.: SigaPP 2017.11.14
+			TRF2/STI/COSISA - vs.: SigaPP 2018.03.08
 		</h3>
 		<h5>
-			tscsis@jfrj.jus.br
+			tscosisa@trf2.jus.br
 			<br>
 			ramal:9091
 		</h5>
-		<h6>TECNOLOGIAS: Java, Javascript, Ajax, Hibernate, Oracle, HTML, DHTML, Luna, vRaptor.</h6>
+		<h5> TECNOLOGIAS: Java, Javascript, Ajax, Hibernate, Oracle, HTML, DHTML, Eclipse Luna, vRaptor, JBoss EAP. </h5>
+		<h5> Nomenclatura da Pauta de Per&iacute;cias com duas letras (PP). </h5>
 		<br><br>
 		<a class="ui-state-hover" style="position:absolute;left:5%;" href="/sigapp/">In&iacute;cio</a>
 	</div>

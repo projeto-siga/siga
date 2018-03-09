@@ -514,6 +514,8 @@ public class AgendamentoController extends PpController {
         // pega matricula do usuario do sistema
         String matriculaSessao = getCadastrante().getMatricula().toString();
         String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
+        String lotacaoSessao = getCadastrante().getLotacao().getSiglaCompleta();
+        // System.out.println("A LOTACAO DO CADASTRANTE E´: " + lotacaoSessao);
         // busca a permissao do usuario
         UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao, sesb_pessoaSessao);
         // verifica se existe permissao
@@ -553,6 +555,7 @@ public class AgendamentoController extends PpController {
                 // excluir do arraylist, os peritos que nao possuem agendamentos nesta data.
                 result.include("listAgendamentos", listAgendamentos);
                 result.include("listPeritos", listPeritos);
+                result.include("lotacaoSecao", lotacaoSessao);
             } else {
 
             }

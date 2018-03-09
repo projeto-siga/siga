@@ -1,12 +1,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-
+<!DOCTYPE html>
 <siga:pagina titulo="Cancelar Agendamento">
-	
 	<link rel="stylesheet" href="/sigapp/stylesheets/jquery-ui.css" type="text/css" media="screen, projection" />
 	<script type="text/javascript" language="Javascript1.1">
-	
 	 $(function () {
 		 $.datepicker.setDefaults({monthNames: [ "Janeiro", "Fevereiro", "Mar&ccedil;o", "Abril", "Maio", "Junho", "Julho", "Agosto",  "Setembro", "Outubro", "Novembro", "Dezembro" ] ,
 			  dayNamesMin: [ "Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab" ],
@@ -20,7 +18,6 @@
 			  });  	  
 	  	$( "#frm_data_ag01" ).datepicker();
 	 });
-	 
 	</script>
 	<br>
 	<br>
@@ -111,9 +108,12 @@
 	  <form style="border-style: groove; border-color: silver;" method="get" action="${linkTo[AgendamentoController].excluir}">
 	  	<br>
 	 	&nbsp Data:<input type="text" name="data" id="frm_data_ag01" maxlength="10" readonly="readonly" />
-	 	
-	 	<input type="submit" value="Buscar" /> &nbsp <br><br>
-	 	
+
+	 	&nbsp <select name="filtra_forum" class="ui-widget" onchange="form.submit();">
+		  <option value="">Ver todos</option>
+		  <option value="${lotacaoSecao}" >Ver os meus</option>
+		</select>
+	 	&nbsp <input type="submit" value="Buscar" /> &nbsp <br><br>
 	  </form>
 	  <br>
 	  <a style="position:absolute;left:5%;" class="ui-state-hover" href="/sigapp/">In&iacute;cio</a>

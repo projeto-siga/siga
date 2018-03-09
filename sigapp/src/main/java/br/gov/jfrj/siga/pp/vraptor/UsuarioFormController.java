@@ -1,9 +1,12 @@
 package br.gov.jfrj.siga.pp.vraptor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+
+import org.junit.internal.runners.model.EachTestNotifier;
 
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
@@ -26,10 +29,16 @@ public class UsuarioFormController extends PpController {
     
     @Path("/atualiza")
     public void atualiza(String paramCodForum) throws Exception {
+    	/** Item de menu "configuração"
+    	    Usado para trocar para agenda de outro forum
+    	*  */
         String mensagem = "";
         String matriculaSessao = getCadastrante().getMatricula().toString();
         String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
         String nomeSessao = getCadastrante().getNomeAbreviado();
+        String lotacaoSessao = getLotaTitular().getSiglaCompleta();   // O final da substring -SG é de São Goncalo . Tribunal tem o seguinte formato: T2COSIGP
+        lotacaoSessao = lotacaoSessao.substring(lotacaoSessao.length()-3, lotacaoSessao.length());
+        //java.lang.System.out.println("------------------------------------------------------------ >>>> LOTACAO: "+lotacaoSessao.substring(lotacaoSessao.length()-3, lotacaoSessao.length()));
         UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao, sesb_pessoaSessao);
         if (objUsuario != null) {
             String descricaoForum = "";
@@ -59,7 +68,16 @@ public class UsuarioFormController extends PpController {
                 descricaoForum = objForum.getDescricao_forum();
                 ContextoPersistencia.em().flush();
             }
-            List<Foruns> outrosForuns = Foruns.AR.find("cod_forum <> " + paramCodForum).fetch();
+            //List<Foruns> outrosForuns = Foruns.AR.find("cod_forum <> " + paramCodForum).fetch();
+            ArrayList<Foruns> outrosForuns = (ArrayList) Foruns.AR.find("cod_forum <> " + paramCodForum).fetch();
+            if(!lotacaoSessao.equals("-NI")){
+             for (byte i = 0;i<outrosForuns.size();i++) {
+				if (outrosForuns.get(i).getDescricao_forum().equals("Niterói")){
+					outrosForuns.remove(i);
+					// System.out.println(" ==>"+f.getDescricao_forum());
+				}
+			 }
+            }
             result.include("objUsuario", objUsuario);
             result.include("paramCodForum", paramCodForum);
             result.include("descricaoForum", descricaoForum);

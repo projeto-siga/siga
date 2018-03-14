@@ -37,7 +37,7 @@
 					<br/>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
-							<td align="center"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">ORDEM DE SERVIÇO N&ordm; ${doc.codigo}, DE ${doc.dtD} DE ${doc.dtMMMM?upper_case} DE ${doc.dtYYYY}</p></td>
+							<td align="center"><p style="font-family:Arial;font-size:11pt;font-weight:bold;">ORDEM DE SERVIÇO N&ordm; ${doc.codigo}, DE ${doc.dtD} DE ${f:maiusculasEMinusculas(doc.dtMMMM)} DE ${doc.dtYYYY}</p></td>
 						</tr>
 					</table>
 				</td>

@@ -1687,11 +1687,21 @@ public class ExDao extends CpDao {
 		return null;
 	}
 
-	public List<ExModelo> listarTodosModelosOrdenarPorNome(String script) {
-		final Query q = getSessao()
+	public List<ExModelo> listarTodosModelosOrdenarPorNome(ExTipoDocumento tipo, String script) {
+		Query q = null;
+		
+		if (tipo != null) { 
+			q = getSessao()
 				.createQuery(
-						"select m from ExModelo m left join m.exFormaDocumento as f where m.hisAtivo = 1"
-								+ "order by f.descrFormaDoc, m.nmMod");
+						"select m from ExModelo m left join m.exFormaDocumento as f join f.exTipoDocumentoSet as t where t = :tipo and m.hisAtivo = 1"
+								+ "order by m.nmMod");
+			q.setEntity("tipo", tipo);
+		} else {
+			q = getSessao()
+					.createQuery(
+							"select m from ExModelo m left join m.exFormaDocumento as f where m.hisAtivo = 1"
+									+ "order by m.nmMod");
+		}
 		List<ExModelo> l = new ArrayList<ExModelo>();		
 		for (ExModelo mod : (List<ExModelo>) q.list()) {
 			if (script != null && script.trim().length() != 0) {
@@ -1906,6 +1916,13 @@ public class ExDao extends CpDao {
 			crit.add(Restrictions.eq("f.descrFormaDoc", sForma));
 		}
 		return (ExModelo) crit.uniqueResult();
+	}
+
+	
+	public ExFormaDocumento consultarExForma(String sForma) {
+		final Criteria crit = getSessao().createCriteria(ExFormaDocumento.class);
+		crit.add(Restrictions.eq("descrFormaDoc", sForma));
+		return (ExFormaDocumento) crit.uniqueResult();
 	}
 
 	

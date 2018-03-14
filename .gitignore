@@ -11,6 +11,7 @@ target/
 /.settings
 .project
 .classpath
+.tern-project
 build.bat
 siga-play-module\bin/
 siga-play-module/bin/

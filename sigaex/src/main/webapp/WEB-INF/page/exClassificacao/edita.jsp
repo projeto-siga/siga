@@ -140,6 +140,7 @@
 							<c:choose>
 								<c:when test="${acao == 'editar_classificacao'}">
 										ou <a href="excluir?codificacao=${exClassificacao.codificacao}">excluir</a>
+										ou <a href="listar">voltar para a lista</a>
 								</c:when>
 								<c:otherwise>
 										ou <a href="listar">cancelar</a>

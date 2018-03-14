@@ -74,13 +74,12 @@
 					</c:forEach>
 				</table>
 			</div>
-			<form name="frm" action="editar" method="GET">
-				<input type="submit" value="Novo" class="gt-btn-medium gt-btn-left" />
-				<input type="button" value="Exportar Zip"
-					onclick="window.location.href = 'exportar'"
-					class="gt-btn-medium gt-btn-left" /> <input type="button"
-					value="Exportar XML" onclick="window.location.href = 'exportarxml'"
-					class="gt-btn-medium gt-btn-left" />
+			<form>
+				<div class="gt-table-buttons">
+					<a href="editar" class="gt-btn-medium gt-btn-left" style="cursor: pointer;" accesskey="n"><u>N</u>ovo Modelo</a>
+					<a href="exportar" class="gt-btn-medium gt-btn-left" style="cursor: pointer;">Exportar Zip</a>
+					<a href="exportarxml" class="gt-btn-medium gt-btn-left" style="cursor: pointer;">Exportar XML</a>
+				</div>
 			</form>
 		</div>
 	</div>

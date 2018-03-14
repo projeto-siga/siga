@@ -45,7 +45,7 @@ function TestarAssinaturaDigital() {
 // Inicia a operação de assinatura para todos os documentos referenciados na
 // pagina
 //
-function AssinarDocumentos(copia, politica) {
+function AssinarDocumentos(copia, politica, juntar, tramitar) {
 	if (politica != undefined)
 		gPolitica = politica;
 
@@ -60,25 +60,25 @@ function AssinarDocumentos(copia, politica) {
 
 	if (tipo == 1) {
 		if ("OK" == provider.inicializar(function() {
-			ExecutarAssinarDocumentos(copia);
+			ExecutarAssinarDocumentos(copia, juntar, tramitar);
 		})) {
-			ExecutarAssinarDocumentos(copia);
+			ExecutarAssinarDocumentos(copia, juntar, tramitar);
 		}
 	}
 
 	if (tipo == 2) {
 		provider = providerPassword;
 		providerPassword.inicializar(function() {
-			ExecutarAssinarDocumentos(copia);
+			ExecutarAssinarDocumentos(copia, juntar, tramitar);
 		});
 	}
 
 	if (tipo == 3) {
 		providerPassword.inicializar(function() {
 			if ("OK" == provider.inicializar(function() {
-				ExecutarAssinarDocumentos(copia);
+				ExecutarAssinarDocumentos(copia, juntar, tramitar);
 			})) {
-				ExecutarAssinarDocumentos(copia);
+				ExecutarAssinarDocumentos(copia, juntar, tramitar);
 			}
 		});
 	}
@@ -632,6 +632,17 @@ var providerPassword = {
 						close : function() {
 						}
 					});
+			$(document).delegate('.ui-dialog', 'keyup', function(e) {
+		        var tagName = e.target.tagName.toLowerCase();
+
+		        tagName = (tagName === 'input' && e.target.type === 'button') ? 'button' : tagName;
+
+		        if (e.which === $.ui.keyCode.ENTER && tagName !== 'textarea' && tagName !== 'select' && tagName !== 'button') {
+		            $(this).find('.ui-dialog-buttonset button').eq(0).trigger('click');
+
+		            return false;
+		        }
+		    });
 			return "AGUARDE";
 		} catch (Err) {
 			return Err.description;
@@ -771,18 +782,16 @@ function Erro(err) {
 	return "Ocorreu um erro durante o processo de assinatura: " + err.message;
 }
 
-function ExecutarAssinarDocumentos(Copia) {
+function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 	process.reset();
 
 	if (Copia || Copia == "true") {
 		Copia = "true";
-		// alert("Iniciando conferência")
 		process.push(function() {
 			Log("Iniciando conferência")
 		});
 	} else {
 		Copia = "false";
-		// alert("Iniciando assinatura")
 		process.push(function() {
 			Log("Iniciando assinatura")
 		});
@@ -816,6 +825,12 @@ function ExecutarAssinarDocumentos(Copia) {
 								+ "'; gAutenticar = "
 								+ (o.hasOwnProperty('autenticar') ? o.autenticar
 										: Copia)
+								+ "; gTramitar = "
+								+ (o.hasOwnProperty('tramitar') ? o.tramitar
+										: Tramitar)
+								+ "; gJuntar = "
+								+ (o.hasOwnProperty('juntar') ? o.juntar
+										: Juntar)
 								+ "; gUrlPost = '"
 								+ oUrlBase.value
 								+ o.urlPost
@@ -850,6 +865,12 @@ function ExecutarAssinarDocumentos(Copia) {
 							+ encodeURIComponent(gRet.assinaturaB64)
 							+ "&assinante="
 							+ encodeURIComponent(gRet.assinante);
+					if (gJuntar !== undefined) {
+						DadosDoPost = DadosDoPost + "&juntar=" + gJuntar;
+					}
+					if (gTramitar !== undefined) {
+						DadosDoPost = DadosDoPost + "&tramitar=" + gTramitar;
+					}
 					if (gPolitica) {
 						DadosDoPost = DadosDoPost + "&certificadoB64="
 								+ encodeURIComponent(gCertificadoB64);
@@ -894,6 +915,10 @@ function ExecutarAssinarDocumentos(Copia) {
 
 			process.push("gNome='" + o.nome + "'; gAutenticar = "
 					+ (o.hasOwnProperty('autenticar') ? o.autenticar : Copia)
+					 + "; gTramitar = "
+					+ (o.hasOwnProperty('tramitar') ? o.tramitar : Tramitar)
+					 + "; gJuntar = "
+					+ (o.hasOwnProperty('juntar') ? o.juntar : Juntar)
 					+ "; gUrlPostPassword = '" + oUrlBase.value
 					+ o.urlPostPassword + "';");
 
@@ -903,6 +928,12 @@ function ExecutarAssinarDocumentos(Copia) {
 						+ "&nomeUsuarioSubscritor=" + gLogin
 						+ "&senhaUsuarioSubscritor=" + gPassword + "&copia="
 						+ gAutenticar;
+				if (gTramitar !== undefined) {
+					DadosDoPost = DadosDoPost + "&tramitar=" + gTramitar;
+				}
+				if (gJuntar !== undefined) {
+					DadosDoPost = DadosDoPost + "&juntar=" + gJuntar;
+				}
 				Status = GravarAssinatura(gUrlPostPassword, DadosDoPost);
 				gRet = Status;
 				return Status;
@@ -987,6 +1018,7 @@ function identificarOperacoes() {
 					.getElementsByName("ad_url_post_password_"
 							+ operacao.codigo)[0].value;
 			operacao.usePassword = false;
+			operacao.transfer = false;
 
 			// Assijus
 			operacao.id = document
@@ -998,10 +1030,20 @@ function identificarOperacoes() {
 
 			var oChkPwd = document.getElementsByName("ad_password_"
 					+ operacao.codigo)[0];
+
 			if (oChkPwd == null) {
 				operacao.usePassword = false;
 			} else {
 				operacao.usePassword = oChkPwd.checked;
+			}
+
+			var oChkTransf = document.getElementsByName("ad_password_"
+					+ operacao.codigo)[0];
+			
+			if (oChkTransf == null) {
+				operacao.transfer = false;
+			} else {
+				operacao.transfer = oChkTransf.checked;
 			}
 
 			var oChk = document.getElementsByName("ad_chk_" + operacao.codigo)[0];
@@ -1018,6 +1060,16 @@ function identificarOperacoes() {
 				if (operacao.autenticar)
 					operacao.enabled = true;
 			}
+
+			var oChkTramitar = document.getElementsByName("ad_tramitar_"
+					+ operacao.codigo)[0];
+			if (oChkTramitar != null) 
+				operacao.tramitar = oChkTramitar.checked;
+
+			var oChkJuntar = document.getElementsByName("ad_juntar_"
+					+ operacao.codigo)[0];
+			if (oChkJuntar != null) 
+				operacao.juntar = oChkJuntar.checked;
 
 			gOperacoes.push(operacao);
 		}

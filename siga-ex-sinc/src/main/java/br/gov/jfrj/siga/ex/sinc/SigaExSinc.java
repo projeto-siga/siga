@@ -514,7 +514,7 @@ public class SigaExSinc {
 	public List<Sincronizavel> importarTabela() {
 		List<Sincronizavel> l = new ArrayList<Sincronizavel>();
 
-		for (ExModelo o : ExDao.getInstance().listarTodosModelosOrdenarPorNome(
+		for (ExModelo o : ExDao.getInstance().listarTodosModelosOrdenarPorNome(null, 
 				null)) {
 			l.add(o);
 		}

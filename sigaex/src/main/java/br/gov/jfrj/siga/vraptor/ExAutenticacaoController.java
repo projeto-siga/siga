@@ -277,7 +277,7 @@ public class ExAutenticacaoController extends ExController {
 			}
 
 			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob,
-					doc.getSubscritor(), doc.getLotaSubscritor(), true, false);
+					getCadastrante(), doc.getSubscritor(), doc.getLotaSubscritor(), true, false);
 
 			docVO.exibe();
 

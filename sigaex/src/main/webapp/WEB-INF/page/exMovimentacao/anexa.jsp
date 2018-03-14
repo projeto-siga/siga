@@ -336,7 +336,7 @@
 					autenticar="true"
 					assinar="true"
 					assinarComSenha="${f:podeAssinarMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}"
-					autenticarComSenha="${f:podeConferirCopiaMovimentacaoDoMobilComSenha(titular,lotaTitular,mob)}" />
+					autenticarComSenha="${f:podeAutenticarComSenha(titular,lotaTitular,mob)}" />
 					
 					<c:set var="botao" value="ambos" />
 					<c:set var="lote" value="true" />

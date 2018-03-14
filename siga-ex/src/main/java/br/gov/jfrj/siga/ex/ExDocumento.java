@@ -1038,18 +1038,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	public String getSubscritorString() {
 		if (getSubscritor() != null)
 			return getSubscritor().getDescricaoIniciaisMaiusculas();
-		else if (getOrgaoExterno() != null || getObsOrgao() != null) {
+		else if (getOrgaoExterno() != null || getObsOrgao() != null || getNmSubscritorExt() != null) {
 			String str = "";
 			if (getOrgaoExterno() != null)
 				str = getOrgaoExterno().getDescricao();
 			if (getObsOrgao() != null) {
 				if (str.length() != 0)
-					str = str + "; ";
+					str = str + " - ";
 				str = str + getObsOrgao();
 			}
 			if (getNmSubscritorExt() != null) {
 				if (str.length() != 0)
-					str = str + "; ";
+					str = str + " - ";
 				str = str + getNmSubscritorExt();
 			}
 			return str;
@@ -1522,7 +1522,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		// return isEletronico() && getExFormaDocumento().isNumeracaoUnica();
 		return (getExFormaDocumento().isNumeracaoUnica())
 				&& (getExTipoDocumento().getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO || getExTipoDocumento()
-						.getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO)
+						.getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO)
 				&& isEletronico();
 		// return true;
 	}
@@ -1544,7 +1544,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 				new AnexoNumeradoComparator());
 
 		incluirArquivos(getMobilGeral(), set);
-		incluirArquivos(mob, set);
+		if (!mob.isGeral())
+			incluirArquivos(mob, set);
 
 		// Incluir recursivamente
 		for (ExMovimentacao m : set) {
@@ -1555,8 +1556,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 				an.setMobil(m.getExMobil());
 				an.setData(m.getData());
 				list.add(an);
-				m.getExDocumento().getAnexosNumerados(m.getExMobil(), list,
-						nivel + 1);
+				m.getExDocumento().getAnexosNumerados(m.getExMobil(), list, nivel + 1);
+			} else if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA) {
+				an.setArquivo(m.getExMobilRef().doc());
+				an.setMobil(m.getExMobilRef());
+				an.setData(m.getData());
+				list.add(an);
+				m.getExDocumento().getAnexosNumerados(m.getExMobilRef(), list, nivel + 1);
 			} else {
 				an.setArquivo(m);
 				an.setMobil(m.getExMobil());
@@ -1577,6 +1583,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 			for (ExMovimentacao m : mob.getExMovimentacaoSet()) {
 				if (!m.isCancelada() && m.isPdf()) {
 					set.add(m);
+				}
+			}
+		}
+		// Incluir copias
+		if (mob.getExMovimentacaoSet() != null) {
+			for (ExMovimentacao m : mob.getExMovimentacaoSet()) {
+				if (!m.isCancelada()) {
+					if (m.getExTipoMovimentacao().getId() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA) {
+						set.add(m);
+					}
 				}
 			}
 		}
@@ -1705,6 +1721,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		String retorno =  "";
 		String conferentes = Documento
 				.getAssinantesString(getAutenticacoesComToken());
+		String conferentesSenha = Documento
+				.getAssinantesString(getAutenticacoesComSenha());
 		String assinantesToken = Documento
 				.getAssinantesString(getAssinaturasComToken());
 		String assinantesSenha = Documento
@@ -1720,6 +1738,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 			retorno += conferentes.length() > 0 ? "Autenticado digitalmente por "
 				+ conferentes + ".\n" : "";
 		
+		if (conferentesSenha.length() > 0)
+			retorno += conferentesSenha.length() > 0 ? "Autenticado com senha por "
+				+ conferentesSenha + ".\n" : "";
+			
 		return retorno;
 	}
 	
@@ -1730,15 +1752,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		if (!isFinalizado())
 			return true;
 		
-		if (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO 
-				|| getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_ANTIGO) {
+		if (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO 
+				|| getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO) {
 			if (getExMobilSet() != null && getExMobilSet().size() > 1)
 				return false;
 			else return true;
 		}
 			
 		if(isEletronico()){ 
-			if (isCapturado() && getAutenticacoesComTokenOuSenha().isEmpty())
+			if (isInternoCapturado() && getAutenticacoesComTokenOuSenha().isEmpty())
 				return true;
 			
 			// compatibiliza com versoes anteriores do SIGA que permitia transferir
@@ -1829,6 +1851,17 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		}
 		return null;
 	}
+	
+
+	public ExMobil getMobilDefaultParaReceberJuntada() {
+		if (getExMobilSet() == null)
+			return null;
+		if (isExpediente())
+			return getPrimeiraVia();
+		else
+			return getUltimoVolume();
+	}
+
 
 	/**
 	 * Retorna uma lista de documentos filhos [de cada móbil] do documento
@@ -1966,6 +1999,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	}
 	
 	/**
+	 * Retorna o primeiro móbil do documento, seja via ou volume.
+	 */
+	public ExMobil getPrimeiroMobil() {
+		return getMobil(1, null);
+	}
+
+	/**
 	 * Retorna o último móbil do documento, seja via ou volume.
 	 */
 	public ExMobil getUltimoMobil() {
@@ -2032,10 +2072,26 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	/**
 	 * Verifica se um documento é capturado de uma fonte externa.
 	 */
-	public boolean isCapturado() {
+	public boolean isInternoCapturado() {
 		if (getExTipoDocumento() == null)
 			return false;
-		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO);
+		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO);
+	}
+
+	/**
+	 * Verifica se um documento é capturado de uma fonte externa.
+	 */
+	public boolean isExternoCapturado() {
+		if (getExTipoDocumento() == null)
+			return false;
+		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO);
+	}
+
+	/**
+	 * Verifica se um documento é capturado de uma fonte externa.
+	 */
+	public boolean isCapturado() {
+		return isInternoCapturado() || isExternoCapturado();
 	}
 
 	/**
@@ -2121,6 +2177,20 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		}
 
 		return subscritoresDesp;
+	}
+	
+	/**
+	 * Retorna se determinado documento recebeu juntada.
+	 */
+	public boolean isRecebeuJuntada() {
+		for (ExMobil mob : getExMobilSet()) {
+			for (ExMovimentacao mov : mob.getExMovimentacaoReferenciaSet()) {
+				if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA)
+						&& !mov.isCancelada())
+					return true;
+			}
+		}
+		return false;
 	}
 	
 	/**

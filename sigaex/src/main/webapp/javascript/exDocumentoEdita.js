@@ -21,11 +21,33 @@ function displayPersonalizacao(thisElement) {
 		thatElement.style.display = 'none';
 }
 
+function personalizacaoSeparar() {
+	var a = document.getElementById('frm_nmFuncaoSubscritor').value.split(';');
+	document.getElementById('personalizarFuncao').value = a.length > 0 ? a[0] : '';
+	document.getElementById('personalizarUnidade').value = a.length > 1 ? a[1] : '';
+	document.getElementById('personalizarLocalidade').value = a.length > 2 ? a[2] : '';
+	document.getElementById('personalizarNome').value = a.length > 3 ? a[3] : '';
+}
+
+function personalizacaoJuntar() {
+	var f = document.getElementById('personalizarFuncao').value.trim();
+	var u = document.getElementById('personalizarUnidade').value.trim();
+	var l = document.getElementById('personalizarLocalidade').value.trim();
+	var n = document.getElementById('personalizarNome').value.trim();
+	var j = f + ';' + u + ';' + l + ';' + n;
+	while (j.slice(-1) == ';')
+		j = j.substring(0, j.length - 1);
+	document.getElementById('frm_nmFuncaoSubscritor').value = j;
+}
+
 // <c:set var="url" value="editar" />
 function sbmt(id) {
-
 	var frm = document.getElementById('frm');
-
+	
+	var mod = document.getElementsByName('exDocumentoDTO.idMod')[0];
+	if (mod.value == '[Selecione]')
+		mod.value = '0';
+	
 	// Dispara a função onSave() do editor, caso exista
 	if (typeof (onSave) == "function") {
 		onSave();
@@ -76,7 +98,8 @@ function gravarDoc() {
 }
 
 function validar(silencioso) {
-
+	personalizacaoJuntar();
+	
 	var descr = document.getElementsByName('exDocumentoDTO.descrDocumento')[0].value;
 	var eletroHidden = document.getElementById('eletronicoHidden');
 	var eletro1 = document.getElementById('eletronicoCheck1');
@@ -108,6 +131,12 @@ function validar(silencioso) {
 		return false;
 	}
 
+	if (document.getElementById('frm_nmFuncaoSubscritor').value.length > 128) {
+		aviso('O tamanho máximo da soma dos caracteres de personalização é de 128 caracteres',
+				silencioso);
+		return false;
+	}
+
 	// Impede a gravação de um documento que possui campos obrigatorios quando
 	// esses não forem informados
 	var frm = document.getElementById('frm');
@@ -122,7 +151,7 @@ function validar(silencioso) {
 			var obr = elm.value;
 			if (obr == null || obr == "" || !obr || /^\s*$/.test(obr)) {
 				aviso("Parâmetro obrigatório não foi informado: "
-						+ obrigatorios[i].value);
+						+ obrigatorios[i].value, silencioso);
 				elm.focus();
 				return false;
 			}
@@ -216,6 +245,8 @@ function adicionaPreench() {
 // <c:set var="url" value="prever" />
 var newwindow = '';
 function popitup_documento(pdf) {
+	personalizacaoJuntar();
+	
 	if (!newwindow.closed && newwindow.location) {
 	} else {
 		var popW = 600;

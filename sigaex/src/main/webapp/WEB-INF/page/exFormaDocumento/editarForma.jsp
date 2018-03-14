@@ -52,7 +52,8 @@
 						   <input type="checkbox" name="origemExterno" value="true" ${origemExterno ? 'checked' : ''} /> Externo &nbsp;
 						   <input type="checkbox" name="origemInternoProduzido" value="true" ${origemInternoProduzido ? 'checked' : ''} /> Interno Produzido &nbsp;
 						   <input type="checkbox" name="origemInternoImportado" value="true" ${origemInternoImportado ? 'checked' : ''} /> Interno Importado 
-						   <input type="checkbox" name="origemCapturado" value="true" ${origemCapturado ? 'checked' : ''} /> Capturado 
+						   <input type="checkbox" name="origemInternoCapturado" value="true" ${origemInternoCapturado ? 'checked' : ''} /> Interno Capturado 
+						   <input type="checkbox" name="origemExternoCapturado" value="true" ${origemExternoCapturado ? 'checked' : ''} /> Externo Capturado 
 						</td>
 					</tr>
 

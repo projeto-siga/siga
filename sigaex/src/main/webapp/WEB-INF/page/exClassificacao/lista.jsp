@@ -65,7 +65,7 @@
 		</div>
 		<form id="frmNovaClassif" action="editar" method="get">
 			<div class="gt-table-buttons">
-				<a id="btNovaClassif" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:novaClassificacao()">Nova Classificação</a>
+				<a id="btNovaClassif" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:novaClassificacao()" accesskey="n"><u>N</u>ova Classificação</a>
 			</div>
 			<input type="hidden" id="acao" name="acao" value="nova_classificacao"/>
 		</form>

@@ -110,9 +110,6 @@ public class ExDocumentoDTO {
 	/** The composite primary key value. */
 	private String idDoc;
 
-	/** The value of the exFormaDocumento association. */
-	private Long idFormaDoc;
-
 	private Long idMod;
 
 	/** The value of the exTipoDocumento association. */
@@ -210,14 +207,12 @@ public class ExDocumentoDTO {
 
 	private ExMobil mob;
 
-	private boolean despachando;
-
 	private boolean criandoAnexo;
 
 	private List<ExFormaDocumento> formasDoc;
 
 	private List<ExModelo> modelos;
-
+	
 	private Long idMobilAutuado;
 
 	private boolean autuando;
@@ -263,14 +258,6 @@ public class ExDocumentoDTO {
 
 	public Integer getTamanhoMaximoDescricao() {
 		return 4000;
-	}
-
-	public boolean getDespachando() {
-		return despachando;
-	}
-
-	public void setDespachando(boolean despachando) {
-		this.despachando = despachando;
 	}
 
 	public boolean getAutuando() {
@@ -446,10 +433,6 @@ public class ExDocumentoDTO {
 		return idDoc;
 	}
 
-	public Long getIdFormaDoc() {
-		return idFormaDoc;
-	}
-
 	public Long getIdMod() {
 		return idMod;
 	}
@@ -563,17 +546,16 @@ public class ExDocumentoDTO {
 		if (getIdTpDoc() == null && doc != null
 				&& doc.getExTipoDocumento() != null)
 			setIdTpDoc(doc.getExTipoDocumento().getId());
-		if (getIdTpDoc() == null || getIdTpDoc() == 1L)
+		if (getIdTpDoc() == null || getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO)
 			return "interno";
-		else if (getIdTpDoc() == 2L)
+		else if (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO)
 			return "antigo";
-		else if (getIdTpDoc() == 3L)
+		else if (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO)
 			return "externo";
-		else if (getIdTpDoc() == 4L)
-			return "capturado";
-
-		// if (param("idTpDoc") == null)
-		// setParam("idTpDoc", "1");
+		else if (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO)
+			return "interno_capturado";
+		else if (getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO)
+			return "externo_capturado";
 		return "";
 	}
 
@@ -609,6 +591,8 @@ public class ExDocumentoDTO {
 	}
 
 	public ExFormaDocumento getFormaDocPorTipo() {
+		if (getFormasDoc().size() == 0)
+			throw new AplicacaoException("Não existe nenhuma espécie cadastrada para essa origem.");
 		return getFormasDoc().get(0);
 	}
 
@@ -703,10 +687,6 @@ public class ExDocumentoDTO {
 
 	public void setIdDoc(final String idDoc) {
 		this.idDoc = idDoc;
-	}
-
-	public void setIdFormaDoc(final Long idFormaDoc) {
-		this.idFormaDoc = idFormaDoc;
 	}
 
 	public void setIdMod(final Long idMod) {

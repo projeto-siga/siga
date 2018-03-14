@@ -436,8 +436,7 @@ public class ExMarcadorBL {
 	}
 
 	public void acrescentarMarcadoresDoCossignatario() {
-		if (mob.getDoc().getExTipoDocumento().getId() != ExTipoDocumento.TIPO_DOCUMENTO_INTERNO
-				&& mob.getDoc().getExTipoDocumento().getId() != ExTipoDocumento.TIPO_DOCUMENTO_CAPTURADO)
+		if (mob.doc().isInternoProduzido() || mob.doc().isInternoCapturado())
 			return;
 
 		for (ExMovimentacao mov : movs(ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO)) {

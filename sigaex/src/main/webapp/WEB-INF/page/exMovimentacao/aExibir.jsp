@@ -88,6 +88,9 @@ function visualizarImpressao() {
 												<c:if test='${mov.exTipoMovimentacao.idTpMov == 12}'>
 													<c:set var="exibemov" scope="request" value="juntada" />
 												</c:if>
+												<c:if test='${mov.exTipoMovimentacao.idTpMov == 63}'>
+													<c:set var="exibemov" scope="request" value="copia" />
+												</c:if>
 												<c:if test='${mov.exTipoMovimentacao.idTpMov == 16}'>
 													<c:set var="exibemov" scope="request" value="vinculo" />
 													<c:if test="${mov.exDocumento.idDoc == doc.idDoc}">
@@ -138,6 +141,15 @@ function visualizarImpressao() {
 															<b>Documento filho:</b>
 															<a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?id=${mov.exDocumento.idDoc}&via=${mov.numVia}">
 																${mov.exDocumento.codigo}-${mov.numViaToChar}
+															</a>
+															</td>
+														</c:if>
+
+														<c:if test="${exibemov == 'copia'}">
+															<td>
+															<b>Documento filho:</b>
+															<a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?id=${mov.exDocumentoRef.idDoc}">
+																${mov.exDocumentoRef.codigo}
 															</a>
 															</td>
 														</c:if>
@@ -318,7 +330,7 @@ function visualizarImpressao() {
 					assinar="true"
 					autenticar="${mov.exTipoMovimentacao.idTpMov==2}"
 					assinarComSenha="${f:podeAssinarMovimentacaoComSenha(titular,lotaTitular,mov)}"
-					autenticarComSenha="${f:podeConferirCopiaMovimentacaoComSenha(titular,lotaTitular,mov)}" 
+					autenticarComSenha="${f:podeAutenticarMovimentacaoComSenha(titular,lotaTitular,mov)}" 
 					idMovimentacao="${mov.idMov}" />
 				<p>
 					<b>Link para assinatura externa: </b>

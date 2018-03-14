@@ -117,20 +117,28 @@ public class ExGraphRelacaoDocs extends ExGraph {
 			adicionar(new TransicaoMob(pai, mobBase, "juntada"));
 		}
 
-		// Paternidades
-		for (ExDocumento sub : mobBase.doc().getMobilGeral()
-				.getExDocumentoFilhoSet()) {
-			boolean jaTemNodo = false;
-			for (Nodo n : getNodos())
-				if (((NodoMob) n).getMob().doc().equals(sub)) {
-					jaTemNodo = true;
-					break;
+		// Incluir os documentos filhos juntados (ou não) enquanto o principal não estiver assinado
+		if (mobBase.doc().isPendenteDeAssinatura()) {
+			for (ExMobil m : mobBase.getJuntados()) {
+				adicionar(new NodoMob(m, pessVendo, mobBase.doc()));
+				adicionar(new TransicaoMob(mobBase, m, "juntada"));
+			}
+
+			// Paternidades
+			for (ExDocumento sub : mobBase.doc().getMobilGeral()
+					.getExDocumentoFilhoSet()) {
+				boolean jaTemNodo = false;
+				for (Nodo n : getNodos())
+					if (((NodoMob) n).getMob().doc().equals(sub)) {
+						jaTemNodo = true;
+						break;
+					}
+				if (!jaTemNodo) {
+					adicionar(new NodoMob(sub.getMobilGeral(), pessVendo,
+							mobBase.doc()));
+					adicionar(new TransicaoMob(mobBase, sub.getMobilGeral(),
+							"paternidade"));
 				}
-			if (!jaTemNodo) {
-				adicionar(new NodoMob(sub.getMobilGeral(), pessVendo,
-						mobBase.doc()));
-				adicionar(new TransicaoMob(mobBase, sub.getMobilGeral(),
-						"paternidade"));
 			}
 		}
 		if (mobBase.doc().getExMobilPai() != null) {

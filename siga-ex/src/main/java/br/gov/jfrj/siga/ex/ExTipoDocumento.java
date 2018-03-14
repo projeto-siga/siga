@@ -37,9 +37,10 @@ public class ExTipoDocumento extends AbstractExTipoDocumento implements
 		Serializable, Selecionavel {
 
 	final static public long TIPO_DOCUMENTO_INTERNO = 1;
-	final static public long TIPO_DOCUMENTO_INTERNO_ANTIGO = 2;
-	final static public long TIPO_DOCUMENTO_EXTERNO = 3;
-	final static public long TIPO_DOCUMENTO_CAPTURADO = 4;
+	final static public long TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO = 2;
+	final static public long TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO = 3;
+	final static public long TIPO_DOCUMENTO_EXTERNO_CAPTURADO = 4;
+	final static public long TIPO_DOCUMENTO_INTERNO_CAPTURADO = 5;
 
 	/**
 	 * 

@@ -367,7 +367,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 	 * @throws Exception
 	 */
 	public boolean podePorConfiguracao(DpPessoa dpPessoa, DpLotacao dpLotacao, DpCargo cargo, DpFuncaoConfianca funcaoConficanca, ExFormaDocumento tipo, ExModelo modelo,
-			long idTpMov, long idTpConf) throws Exception {
+			long idTpMov, long idTpConf) {
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(idTpMov,
 				ExTipoMovimentacao.class, false);
 		return podePorConfiguracao(null, null, null, null, tipo, modelo, null,
@@ -375,8 +375,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 				idTpConf);
 	}	
 
-	public boolean podePorConfiguracao(ExModelo mod, long idTpConf)
-			throws Exception {
+	public boolean podePorConfiguracao(ExModelo mod, long idTpConf) {
 		return podePorConfiguracao(null, null, null, null, null, mod, null,
 				null, null, null, null, null, null, null, null, null,idTpConf);
 	}

@@ -1256,7 +1256,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	public ExMobil getGrandeMestre() {
 		ExMobil m = getMestre();
 		if (m == null) {
-			if (getApensos().size() != 0)
+			if (getApensos() == null || getApensos().size() != 0)
 				return this;
 		}
 		while (m != null) {
@@ -1303,6 +1303,9 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	public SortedSet<ExMobil> getApensos(SortedSet<ExMobil> set,
 			boolean incluirApensosIndiretos,
 			boolean incluirVolumesApensadosAosProximos) {
+		
+		if (getExMovimentacaoReferenciaSet() == null)
+			return set;
 		
 		varrendoMovRefsDesteMobil:
 		for (ExMovimentacao mov : getExMovimentacaoReferenciaSet()) {

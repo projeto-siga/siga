@@ -89,12 +89,16 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 			root.put("gerar_partes", true);
 		if (attrs.containsKey("descricao"))
 			root.put("gerar_descricao", true);
+		if (attrs.containsKey("descricaodefault"))
+			root.put("gerar_descricaodefault", true);
 
 		String sTemplate = "[#compress]\n[#include \"DEFAULT\"][#include \"GERAL\"]\n";
 		if (ou != null) {
 			sTemplate += "[#include \"" + ou.getAcronimoOrgaoUsu() + "\"]";
 		}
-		sTemplate += "\n" + (String) attrs.get("template") + "\n[/#compress]";
+		if (attrs.get("template") != null)
+			sTemplate += "\n" + (String) attrs.get("template");
+		sTemplate += "\n[/#compress]";
 
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); Writer out = new OutputStreamWriter(baos)) {
 			Template temp = new Template((String) attrs.get("nmMod"),
@@ -106,10 +110,10 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 			if (e.getCauseException() != null
 					&& e.getCauseException() instanceof AplicacaoException)
 				throw (AplicacaoException) e.getCauseException();
-			return (e.getMessage() + "\n" + e.getFTLInstructionStack())
+			return ("Erro executando template FreeMarker\n\n" + e.getMessage() + "\n" + e.getFTLInstructionStack())
 					.replace("\n", "<br/>").replace("\r", "");
 		} catch (IOException e) {
-			return e.getMessage();
+			return "Erro executando template FreeMarker\n\n" + e.getMessage();
 		}
 	}
 

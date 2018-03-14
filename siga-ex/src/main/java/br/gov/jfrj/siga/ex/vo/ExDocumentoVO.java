@@ -55,6 +55,9 @@ public class ExDocumentoVO extends ExVO {
 	String nomeCompleto;
 	String dtDocDDMMYY;
 	String subscritorString;
+	String originalNumero;
+	String originalData;
+	String originalOrgao;
 	String classificacaoDescricaoCompleta;
 	List<String> tags;
 	String destinatarioString;
@@ -81,7 +84,7 @@ public class ExDocumentoVO extends ExVO {
 	ExGraphColaboracao dotColaboracao;
 	private List<Object> listaDeAcessos;
 
-	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa titular,
+	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo) {
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
@@ -175,7 +178,7 @@ public class ExDocumentoVO extends ExVO {
 			for (ExMobil m : mobsDoc) {
 				if (mob.isGeral() || m.isGeral()
 						|| mob.getId().equals(m.getId()))
-					mobs.add(new ExMobilVO(m, titular, lotaTitular, completo));
+					mobs.add(new ExMobilVO(m, cadastrante, titular, lotaTitular, completo));
 			}
 
 			addAcoes(doc, titular, lotaTitular, exibirAntigo);
@@ -214,7 +217,10 @@ public class ExDocumentoVO extends ExVO {
 		ExDocumento bol = doc.getBoletimEmQueDocFoiPublicado();
 		if (bol != null)
 			boletim = new ExDocumentoVO(bol);
-
+		
+		this.originalNumero = doc.getNumExtDoc();
+		this.originalData = doc.getDtDocOriginalDDMMYYYY();
+		this.originalOrgao = doc.getOrgaoExterno() != null ? doc.getOrgaoExterno().getDescricao() : null;
 	}
 
 	public List<Object> getListaDeAcessos() {
@@ -252,6 +258,8 @@ public class ExDocumentoVO extends ExVO {
 		movimentacoesPermitidas
 				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO);
 		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR);
+		movimentacoesPermitidas
 				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO);
 		movimentacoesPermitidas
 				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO);
@@ -273,6 +281,8 @@ public class ExDocumentoVO extends ExVO {
 				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_PEDIDO_PUBLICACAO);
 		movimentacoesPermitidas
 				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO_DE_VOLUME);
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA);
 
 		List<Long> marcasGeralPermitidas = new ArrayList<Long>();
 		marcasGeralPermitidas.add(CpMarcador.MARCADOR_A_ELIMINAR);
@@ -383,7 +393,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"folder_magnify",
-				"Visualizar Dossiê",
+				"_Ver Dossiê",
 				"/app/expediente/doc",
 				"exibirProcesso",
 				Ex.getInstance().getComp()
@@ -391,7 +401,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"printer",
-				"Visualizar Impressão",
+				"Ver _Impressão",
 				"/app/arquivo",
 				"exibir",
 				Ex.getInstance().getComp()
@@ -401,13 +411,13 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"lock",
-				"Finalizar",
+				"Fina_lizar",
 				"/app/expediente/doc",
 
 				"finalizar",
 				Ex.getInstance().getComp()
 						.podeFinalizar(titular, lotaTitular, mob),
-				"Confirma a finalização do documento?", null, null, null,
+				null, null, null, null,
 				"once");
 
 		// addAcao("Finalizar e Assinar", "/expediente/mov",
@@ -415,7 +425,7 @@ public class ExDocumentoVO extends ExVO {
 		// podeFinalizarAssinar(titular, lotaTitular, mob),
 		// "Confirma a finalização do documento?", null, null, null);
 
-		vo.addAcao("pencil", "Editar", "/app/expediente/doc", "editar", Ex
+		vo.addAcao("pencil", "Edita_r", "/app/expediente/doc", "editar", Ex
 				.getInstance().getComp().podeEditar(titular, lotaTitular, mob));
 
 		vo.addAcao(
@@ -434,14 +444,14 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"attach",
-				"Anexar Arquivo",
+				"Ane_xar",
 				"/app/expediente/mov",
 				"anexar",
 				Ex.getInstance().getComp()
 						.podeAnexarArquivo(titular, lotaTitular, mob));
 		vo.addAcao(
-				"tag_yellow",
-				"Fazer Anotação",
+				"note_add",
+				"_Anotar",
 				"/app/expediente/mov",
 				"anotar",
 				Ex.getInstance().getComp()
@@ -451,7 +461,7 @@ public class ExDocumentoVO extends ExVO {
 				"vincularPapel", Ex.getInstance().getComp()
 						.podeFazerVinculacaoPapel(titular, lotaTitular, mob));
 
-		vo.addAcao("folder_user", "Definir Marcador", "/app/expediente/mov",
+		vo.addAcao("folder_star", "Definir Marcador", "/app/expediente/mov",
 				"marcar", Ex.getInstance().getComp()
 						.podeMarcar(titular, lotaTitular, mob));
 
@@ -491,7 +501,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"script_edit",
-				"Registrar Assinatura Manual",
+				"Registrar A_ssinatura Manual",
 				"/app/expediente/mov",
 				"registrar_assinatura",
 				Ex.getInstance().getComp()
@@ -499,7 +509,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"script_key",
-				"Assinar",
+				"A_ssinar",
 				"/app/expediente/mov",
 				"assinar",
 				Ex.getInstance().getComp()
@@ -507,7 +517,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"script_key",
-				"Autenticar",
+				"A_utenticar",
 				"/app/expediente/mov",
 				"autenticar_documento",
 				Ex.getInstance()
@@ -526,12 +536,12 @@ public class ExDocumentoVO extends ExVO {
 
 			vo.addAcao(
 					"link_add",
-					"Criar Anexo",
+					"Incluir _Documento",
 					"/app/expediente/doc",
 					"editar",
 					Ex.getInstance()
 							.getComp()
-							.podeAnexarArquivoAlternativo(titular, lotaTitular,
+							.podeIncluirDocumento(titular, lotaTitular,
 									mob), null,
 					"criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(), null,
 					null, null);
@@ -539,7 +549,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"shield",
-				"Redefinir Nível de Acesso",
+				"Redefinir Acesso",
 				"/app/expediente/mov",
 				"redefinir_nivel_acesso",
 				Ex.getInstance().getComp()
@@ -557,7 +567,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"book_link",
-				"Registrar Publicação do BIE",
+				"Registrar Publicação do Boletim",
 				"/app/expediente/mov",
 				"boletim_publicar",
 				Ex.getInstance().getComp()
@@ -588,7 +598,7 @@ public class ExDocumentoVO extends ExVO {
 		int numUltMobil = doc.getNumUltimoMobil();
 		vo.addAcao(
 				"eye",
-				"Exibir Informações Completas",
+				"Ver _Mais",
 				"/app/expediente/doc",
 				"exibirAntigo",
 				Ex.getInstance()
@@ -600,8 +610,8 @@ public class ExDocumentoVO extends ExVO {
 						null, null, null, null);
 
 		vo.addAcao(
-				"eye",
-				"Exibir Informações Completas",
+				"magnifier",
+				"Auditar",
 				"/app/expediente/doc",
 				"exibirAntigo",
 				Ex.getInstance()
@@ -613,7 +623,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"report_link",
-				"Agendar Publicação no DJE",
+				"Agendar Publicação no Diário",
 				"/app/expediente/mov",
 				"agendar_publicacao",
 				Ex.getInstance().getComp()
@@ -621,7 +631,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"report_add",
-				"Solicitar Publicação no DJE",
+				"Solicitar Publicação no Diário",
 				"/app/expediente/mov",
 				"pedirPublicacao",
 				Ex.getInstance().getComp()
@@ -642,7 +652,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"delete",
-				"Cancelar Documento",
+				"Cancelar",
 				"/app/expediente/doc",
 				"tornarDocumentoSemEfeito",
 				Ex.getInstance()
@@ -840,5 +850,19 @@ public class ExDocumentoVO extends ExVO {
 	public void setCossignatarios(Map<ExMovimentacao, Boolean> cossignatarios) {
 		this.cossignatarios = cossignatarios;
 	}
+	
+	public String getOriginalNumero() {
+		return originalNumero;
+	}
+
+	public String getOriginalData() {
+		return originalData;
+	}
+
+	public String getOriginalOrgao() {
+		return originalOrgao;
+	}
+
+
 
 }

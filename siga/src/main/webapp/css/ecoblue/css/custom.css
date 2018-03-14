@@ -5,6 +5,17 @@ File:		custom.css - Use this file to add any custom styles you need
 If you add styles to this template, be sure to include it in your template files.
 */
 
+div.entrevista-grupo {
+	margin-top: 1em;
+} 
+
+table td.shrink {
+    white-space:nowrap
+}
+table td.expand {
+    width: 99%
+}
+
 html.fisico {
 	background-color: #f1e9c6 !important;
 }

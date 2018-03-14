@@ -6,7 +6,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.internal.runners.model.EachTestNotifier;
+
 
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;

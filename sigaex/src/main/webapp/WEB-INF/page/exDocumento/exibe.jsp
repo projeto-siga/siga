@@ -2,6 +2,7 @@
 "http://www.w3.org/TR/html4/strict.dtd">
 <%@ page language="java" contentType="text/html; charset=UTF-8" buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
@@ -879,32 +880,6 @@
     	</c:if>
 
 		<div class="gt-sidebar-content">
-			<a title="Registrar um novo conhecimento" style="float: right;"
-				href="${linkTo[ExMovimentacaoController].anexarArquivoAuxiliar}?sigla=${sigla}"
-				${popup?'target="_blank" ':''}> <img
-				src="/siga/css/famfamfam/icons/add.png">
-			</a>
-			<h3>Arquivos Auxiliares</h3>
-			<c:forEach var="mov" items="${m.movs}">
-				<c:if test="${mov.idTpMov == 64 and not mov.cancelada}">
-					<p><img style="margin-bottom: -4px;"
-									src="/siga/css/famfamfam/icons/${mov.icon}.png" />
-						<siga:links	inline="${true}" separator="${false}">
-							<c:forEach var="acao" items="${mov.acoes}">
-								<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
-									pos="${acao.pos}"
-									url="${pageContext.request.contextPath}${acao.url}"
-									test="${true}" popup="${acao.popup}"
-									confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
-									idAjax="${mov.idMov}" classe="${acao.classe}" />
-							</c:forEach>
-						</siga:links>
-					</p>
-				</c:if>
-			</c:forEach>
-		</div>
-		
-		<div class="gt-sidebar-content">
 			<h3>Documento ${docVO.doc.exTipoDocumento.descricao}</h3>
 			<p>
 				<b>Suporte:</b> ${docVO.fisicoOuEletronico}
@@ -1030,9 +1005,43 @@
 					</c:if>
 				</p>
 			</div>
-			<div class="gt-sidebar-content" id="gc"></div>
 		</div>
 
+		<div class="gt-sidebar-content">
+			<a title="Anexar um novo arquivo auxiliar" style="float: right; margin-top: -3px;"
+				href="${linkTo[ExMovimentacaoController].anexarArquivoAuxiliar}?sigla=${sigla}"
+				${popup?'target="_blank" ':''}> <img
+				src="/siga/css/famfamfam/icons/add.png">
+			</a>
+			<h3>Arquivos Auxiliares</h3>
+			<c:forEach var="mov" items="${m.movs}">
+				<c:if test="${mov.idTpMov == 64 and not mov.cancelada}">
+					<p>
+						<siga:links	inline="${true}" separator="${false}">
+							<c:forEach var="acao" items="${mov.acoes}">
+								<c:set var="acaourl" value="${acao.url}" />
+								<c:set var="acaourl" value="${fn:replace(acaourl, '__scheme__', pageContext.request.scheme)}" />
+								<c:set var="acaourl" value="${fn:replace(acaourl, '__serverName__', pageContext.request.serverName)}" />
+								<c:set var="acaourl" value="${fn:replace(acaourl, '__serverPort__', pageContext.request.serverPort)}" />
+								<c:set var="acaourl" value="${fn:replace(acaourl, '__contextPath__', pageContext.request.contextPath)}" />
+								<c:set var="acaourl" value="${fn:replace(acaourl, '__pathInfo__', pageContext.request.pathInfo)}" />
+								<c:if test="${acao.url == acaourl}">
+									<c:set var="acaourl" value="${pageContext.request.contextPath}${acao.url}" />
+								</c:if>
+								<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}" pre="${acao.pre}"
+									pos="${acao.pos}"
+									url="${acaourl}"
+									test="${true}" popup="${acao.popup}"
+									confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
+									idAjax="${mov.idMov}" classe="${acao.classe}" />
+							</c:forEach>
+						</siga:links>
+					</p>
+				</c:if>
+			</c:forEach>
+		</div>
+			
+		<div class="gt-sidebar-content"><div id="gc"></div></div>
 	</div>
 	</c:if>
 	</c:forEach>

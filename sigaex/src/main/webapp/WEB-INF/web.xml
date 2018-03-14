@@ -168,6 +168,30 @@
         <servlet-name>ExService</servlet-name>
         <servlet-class>br.gov.jfrj.siga.ex.service.impl.ExServiceImpl</servlet-class>
     </servlet>
+    
+	<servlet>
+		<servlet-name>webdav</servlet-name>
+		<servlet-class>
+			net.sf.webdav.WebdavServlet
+		</servlet-class>
+		<init-param>
+			<param-name>ResourceHandlerImplementation</param-name>
+			<param-value>
+				br.gov.jfrj.siga.util.ExWebdavStore
+			</param-value>
+		</init-param>
+		<init-param>
+			<param-name>rootpath</param-name>
+			<param-value>/tmp/webdav</param-value>
+			<description>
+				folder where webdavcontent on the local filesystem is stored
+			</description>
+		</init-param>
+		<init-param>
+			<param-name>storeDebug</param-name>
+			<param-value>0</param-value>
+		</init-param>
+	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>AudioCaptcha</servlet-name>
@@ -189,6 +213,10 @@
 		<servlet-name>ExService</servlet-name>
 		<url-pattern>/servicos/ExService</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>webdav</servlet-name>
+		<url-pattern>/public/app/webdav/*</url-pattern>
+	</servlet-mapping>    
 
 	<security-constraint>
 		<web-resource-collection>

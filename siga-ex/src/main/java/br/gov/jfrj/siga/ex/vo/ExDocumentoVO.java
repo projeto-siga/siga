@@ -84,7 +84,7 @@ public class ExDocumentoVO extends ExVO {
 	ExGraphColaboracao dotColaboracao;
 	private List<Object> listaDeAcessos;
 
-	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa titular,
+	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo) {
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
@@ -178,7 +178,7 @@ public class ExDocumentoVO extends ExVO {
 			for (ExMobil m : mobsDoc) {
 				if (mob.isGeral() || m.isGeral()
 						|| mob.getId().equals(m.getId()))
-					mobs.add(new ExMobilVO(m, titular, lotaTitular, completo));
+					mobs.add(new ExMobilVO(m, cadastrante, titular, lotaTitular, completo));
 			}
 
 			addAcoes(doc, titular, lotaTitular, exibirAntigo);

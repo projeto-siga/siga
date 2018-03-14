@@ -1097,11 +1097,24 @@ public class ExBL extends CpBL {
 
 	public void anexarArquivoAuxiliar(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob,
-			final Date dtMov, final DpPessoa subscritor, final String nmArqMov,
+			final Date dtMov, final DpPessoa subscritor, String nmArqMov,
 			final DpPessoa titular, final DpLotacao lotaTitular,
 			final byte[] conteudo, final String tipoConteudo) throws AplicacaoException {
 
 		final ExMovimentacao mov;
+		
+		if (nmArqMov == null)
+			throw new AplicacaoException("Nome do arquivo precisa ser informado");
+		nmArqMov = nmArqMov.replace("_", "-");
+		
+		Set<ExMovimentacao> cancelar = new HashSet<>();
+		for (ExMovimentacao m : mob.getExMovimentacaoSet()) {
+			if (m.getExTipoMovimentacao().getId()
+					.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) && !m.isCancelada()
+					&& m.getNmArqMov() != null && m.getNmArqMov().equals(nmArqMov))
+				cancelar.add(m);
+		}
+
 
 		try {
 			iniciarAlteracao();
@@ -1116,6 +1129,10 @@ public class ExBL extends CpBL {
 			mov.setConteudoBlobMov2(conteudo);
 
 			gravarMovimentacao(mov);
+			for (ExMovimentacao m : cancelar) {
+				m.setExMovimentacaoCanceladora(mov);
+				dao().gravar(m);
+			}
 
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {

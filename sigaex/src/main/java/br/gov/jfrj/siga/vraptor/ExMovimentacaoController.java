@@ -141,10 +141,10 @@ public class ExMovimentacaoController extends ExController {
 			}
 		}
 
-		final ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(),
+		final ExMobilVO mobilVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false);
-		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getTitular(),
+		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true, null, false);
 
 		result.include("mobilCompletoVO", mobilCompletoVO);
@@ -168,10 +168,10 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia().setMob(mob);
 
-		final ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(),
+		final ExMobilVO mobilVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, false);
-		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getTitular(),
+		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true, null, false);
 
 		result.include("mobilCompletoVO", mobilCompletoVO);
@@ -313,7 +313,7 @@ public class ExMovimentacaoController extends ExController {
 
 		buscarDocumento(builder);
 
-		final ExMobilVO mobilVO = new ExMobilVO(builder.getMob(), getTitular(),
+		final ExMobilVO mobilVO = new ExMobilVO(builder.getMob(), getCadastrante(), getTitular(),
 				getLotaTitular(), true,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO, true);
 
@@ -416,10 +416,10 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException("Não é permitido incluir cópia");
 		}
 
-		final ExMobilVO mobilVO = new ExMobilVO(mob, getTitular(),
+		final ExMobilVO mobilVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA, false);
-		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getTitular(),
+		final ExMobilVO mobilCompletoVO = new ExMobilVO(mob, getCadastrante(), getTitular(),
 				getLotaTitular(), true, null, false);
 
 		result.include("sigla", sigla);
@@ -3033,6 +3033,11 @@ public class ExMovimentacaoController extends ExController {
 					.getComp()
 					.podeCancelarAnexo(getTitular(), getLotaTitular(), mob, mov))
 				throw new AplicacaoException("Não é possível cancelar anexo");
+		} else if (mov.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) {
+			if (!Ex.getInstance()
+					.getComp()
+					.podeCancelarArquivoAuxiliar(getTitular(), getLotaTitular(), mob, mov))
+				throw new AplicacaoException("Não é possível cancelar arquivo auxiliar");
 		} else if (ExTipoMovimentacao.hasDespacho(mov.getIdTpMov())) {
 			if (!Ex.getInstance()
 					.getComp()

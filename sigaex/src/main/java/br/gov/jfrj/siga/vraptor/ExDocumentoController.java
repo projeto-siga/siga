@@ -1014,7 +1014,7 @@ public class ExDocumentoController extends ExController {
 		}
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
-				exDocumentoDTO.getMob(), getTitular(), getLotaTitular(), true,
+				exDocumentoDTO.getMob(), getCadastrante(), getTitular(), getLotaTitular(), true,
 				true);
 
 		if (exDocumentoDTO.getMob().isEliminado()) {
@@ -1080,7 +1080,7 @@ public class ExDocumentoController extends ExController {
 		}
 
 		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDto.getDoc(),
-				exDocumentoDto.getMob(), getTitular(), getLotaTitular(), true,
+				exDocumentoDto.getMob(), getCadastrante(), getTitular(), getLotaTitular(), true,
 				false);
 
 		docVO.exibe();

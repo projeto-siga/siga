@@ -87,12 +87,12 @@ public class ExMobilVO extends ExVO {
 		this.mob = mob;
 	}
 
-	public ExMobilVO(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular,
+	public ExMobilVO(ExMobil mob, DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaTitular,
 			boolean completo) {
-		this(mob, titular, lotaTitular, completo, null, false);
+		this(mob, cadastrante, titular, lotaTitular, completo, null, false);
 	}
 
-	public ExMobilVO(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular,
+	public ExMobilVO(ExMobil mob, DpPessoa cadastrante, DpPessoa titular, DpLotacao lotaTitular,
 			boolean completo, Long tpMov, boolean movAssinada) {
 		this.mob = mob;
 		this.sigla = mob.getSigla();
@@ -120,7 +120,7 @@ public class ExMobilVO extends ExVO {
 		for (ExMobil m : mob.getApensosExcetoVolumeApensadoAoProximo()) {
 			if (m.isEliminado())
 				continue;
-			apensos.add(new ExMobilVO(m, titular, lotaTitular, false));
+			apensos.add(new ExMobilVO(m, cadastrante, titular, lotaTitular, false));
 		}
 		log.debug(mob.getExDocumento().getCodigoString()
 				+ ": aExibir - mobil " + mob.getNumSequencia()
@@ -131,15 +131,15 @@ public class ExMobilVO extends ExVO {
 		for (ExDocumento d : mob.getExDocumentoFilhoSet()) {
 			if (d.isExpediente())
 				expedientesFilhosNaoCancelados.add(new ExDocumentoVO(d,
-						null, titular, lotaTitular, false, false));
+						null, cadastrante, titular, lotaTitular, false, false));
 			else
 				processosFilhosNaoCancelados.add(new ExDocumentoVO(d, null,
-						titular, lotaTitular, false, false));
+						cadastrante, titular, lotaTitular, false, false));
 		}
 
 		for (ExDocumento doc : mob.getDocsFilhosNaoJuntados())
 			expedientesFilhosNaoJuntados.add(new ExDocumentoVO(doc, null,
-					titular, lotaTitular, false, false));
+					cadastrante, titular, lotaTitular, false, false));
 
 		log.debug(mob.getExDocumento().getCodigoString()
 				+ ": aExibir - mobil " + mob.getNumSequencia()
@@ -160,17 +160,17 @@ public class ExMobilVO extends ExVO {
 				if (mov.getExMobil() != mob && mov.getExTipoMovimentacao().getId()
 						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA))
 					continue;
-				movs.add(new ExMovimentacaoVO(this, mov, titular, lotaTitular));
+				movs.add(new ExMovimentacaoVO(this, mov, cadastrante, titular, lotaTitular));
 			}
 		else
 			for (ExMovimentacao mov : mob.getMovimentacoesPorTipo(tpMov)) {
 				if (!movAssinada) {
 					if (!mov.isAssinada() && !mov.isCancelada())
-						movs.add(new ExMovimentacaoVO(this, mov, titular,
+						movs.add(new ExMovimentacaoVO(this, mov, cadastrante, titular,
 								lotaTitular));
 				} else {
 					if (mov.isAssinada())
-						movs.add(new ExMovimentacaoVO(this, mov, titular,
+						movs.add(new ExMovimentacaoVO(this, mov, cadastrante, titular,
 								lotaTitular));
 				}
 			}
@@ -180,27 +180,27 @@ public class ExMobilVO extends ExVO {
 
 		if (mob.doc().isEletronico()) {
 			for (ExMovimentacao mov : mob.getAnexosNaoAssinados())
-				anexosNaoAssinados.add(new ExMovimentacaoVO(this, mov, titular,
+				anexosNaoAssinados.add(new ExMovimentacaoVO(this, mov, cadastrante, titular,
 						lotaTitular));
 			
 			for (ExMobil juntado : mob.getJuntados())
 				if (juntado.doc().isPendenteDeAssinatura())
-					expedientesJuntadosNaoAssinados.add(new ExMobilVO(juntado, titular, lotaTitular, false));
+					expedientesJuntadosNaoAssinados.add(new ExMobilVO(juntado, cadastrante, titular, lotaTitular, false));
 
 			for (ExMovimentacao mov : mob.getDespachosNaoAssinados())
 				despachosNaoAssinados.add(new ExMovimentacaoVO(this, mov,
-						titular, lotaTitular));
+						cadastrante, titular, lotaTitular));
 		}
 
 		if (mob.getPendenciasDeAnexacao() != null) {
 			for (ExMovimentacao mov : mob.getPendenciasDeAnexacao())
 				pendenciasDeAnexacao.add(new ExMovimentacaoVO(this, mov,
-						titular, lotaTitular));
+						cadastrante, titular, lotaTitular));
 		}
 
 		if (mob.getPendenciasDeColaboracao() != null) {
 			for (ExMovimentacao mov : mob.getPendenciasDeColaboracao()) {
-				ExMovimentacaoVO m = new ExMovimentacaoVO(this, mov, mov
+				ExMovimentacaoVO m = new ExMovimentacaoVO(this, mov, cadastrante, mov
 						.getSubscritor(), mov.getLotaSubscritor());
 				m.descricao = ExParte.create(mov.getDescrMov()).getString();
 				pendenciasDeColaboracao.add(m);

@@ -15,4 +15,4 @@ Para saber mais sobre o Siga-Doc, clique [aqui](https://github.com/projeto-siga/
 
 Para instalar uma versão de testes do Siga-Doc, utilizando o Docker, clique [aqui](https://github.com/projeto-siga/docker).
 
-Para tirar dúvidas, entre em contato através email crivano(at)jfrj.jus.br
+Para tirar dúvidas, entre em contato através do email crivano(at)jfrj.jus.br

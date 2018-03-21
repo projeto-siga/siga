@@ -6,7 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
@@ -21,12 +26,15 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.vo.ExMovimentacaoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import net.sf.webdav.DavExtensionConfig;
 import net.sf.webdav.ITransaction;
 import net.sf.webdav.IWebdavStore;
 import net.sf.webdav.StoredObject;
 
 public class ExWebdavStore implements IWebdavStore {
 	private static final Logger log = Logger.getLogger(ExWebdavStore.class);
+
+    private static DavExtensionConfig config = new DavExtensionConfig();
 
 	private static class Transaction implements ITransaction {
 		Principal principal;
@@ -322,5 +330,46 @@ public class ExWebdavStore implements IWebdavStore {
 			return "application/vnd.ms-powerpoint";
 		return null;
 	}
+
+	@Override
+	public void addNamespace(HashMap<String, String> arg0) {
+		
+	}
+
+	@Override
+	public Principal createPrincipal(HttpServletRequest request) {
+        return request.getUserPrincipal();
+	}
+
+	@Override
+	public void destroy() {
+	}
+
+	@Override
+	public Map<String, String> getAdditionalProperties(String arg0, Vector<String> arg1) {
+		// report not supported at all
+		return null;
+	}
+
+	@Override
+	public DavExtensionConfig getConfig() {
+		return config;
+	}
+
+	@Override
+	public List<String> getReportSubEntries(String arg0, String arg1) {
+		// report not supported at all
+		return null;
+	}
+
+    @Override
+    public boolean supportsMoveOperation() {
+        return false;
+    }
+
+    @Override
+    public void moveResource(ITransaction transaction, String sourceUri, String destinationUri) {
+        throw new UnsupportedOperationException("Operação de mover não é suportada");
+    }
 
 }

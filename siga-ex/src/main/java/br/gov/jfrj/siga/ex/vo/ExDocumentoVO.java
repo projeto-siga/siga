@@ -533,18 +533,6 @@ public class ExDocumentoVO extends ExVO {
 						"assinandoAnexosGeral=true&sigla=" + getSigla(), null,
 						null, null);
 			}
-
-			vo.addAcao(
-					"link_add",
-					"Incluir _Documento",
-					"/app/expediente/doc",
-					"editar",
-					Ex.getInstance()
-							.getComp()
-							.podeIncluirDocumento(titular, lotaTitular,
-									mob), null,
-					"criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(), null,
-					null, null);
 		}
 
 		vo.addAcao(

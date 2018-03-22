@@ -38,23 +38,10 @@ function corrige() {
 }
 
 function sbmt() {
-	if(document.getElementById('transferir_gravar_idTpDespacho').value == -2)
-		{
-			document.getElementById('transferir_gravar_sigla').value= '';
-			document.getElementById('transferir_gravar_pai').value= '${mob.sigla}';
-			document.getElementById('transferir_gravar_despachando').value= 'true';
-			frm["postback"].value=0;
-			frm.action='${pageContext.request.contextPath}/app/expediente/doc/editar';
-  		}	
-  		else {
-			document.getElementById('transferir_gravar_sigla').value= '${mob.sigla}';
-			document.getElementById('transferir_gravar_pai').value= '';
-			document.getElementById('transferir_gravar_despachando').value= 'false';
-
-			frm.action='transferir?sigla=VALOR_SIGLA&popup=true&idTpDespacho=VALOR_ID_DESPACHO'
-					.replace('VALOR_SIGLA', document.getElementById('transferir_gravar_sigla').value)
-					.replace('VALOR_ID_DESPACHO', document.getElementById('transferir_gravar_idTpDespacho').value);
-		}
+	document.getElementById('transferir_gravar_sigla').value= '${mob.sigla}';
+	document.getElementById('transferir_gravar_pai').value= '';
+	frm.action='transferir?sigla=VALOR_SIGLA&popup=true'
+			.replace('VALOR_SIGLA', document.getElementById('transferir_gravar_sigla').value);
 	frm.submit();
 }
 
@@ -144,7 +131,7 @@ $(function(){
 					<c:if test="${tipoResponsavel == 3}">
 					<tr>
 						<td></td>
-						<td style="color: red; font-size: 11px">Atenção: A transferência para órgão externo não acarreta o envio digital do documento. Portanto, além de fazer esta operação, será necessário imprimir o documento e remetê-lo fisicamente ou realizar a transferência por algum outro sistema em uso pelo órgão destinatário.</td>
+						<td style="color: red; font-size: 11px">Atenção: O trâmite para órgão externo não acarreta o envio digital do documento. Portanto, além de fazer esta operação, será necessário imprimir o documento e remetê-lo fisicamente ou realizar o trâmite por algum outro sistema em uso pelo órgão destinatário.</td>
 					</tr>
 					</c:if>
 					<tr>
@@ -158,7 +145,7 @@ $(function(){
 					<tr>
 						<td colspan=2>
 							<input type="checkbox" name="protocolo" value="mostrar" <c:if test="${protocolo}">checked</c:if>/>
-							&nbsp;Mostrar protocolo ao concluir a transferência
+							&nbsp;Mostrar protocolo ao concluir o trâmite
 						</td>
 					</tr>
 					<c:if test="${tipoResponsavel == 3}">

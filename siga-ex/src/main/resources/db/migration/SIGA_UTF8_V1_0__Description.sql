@@ -763,80 +763,101 @@ update SIGA.EX_MODELO set conteudo_blob_mod = utl_raw.cast_to_raw(' ') where id_
 select conteudo_blob_mod into dest_blob_ex_mod from SIGA.EX_MODELO where id_mod = 78 for update;
 src_blob_ex_mod := utl_raw.cast_to_raw(convert('
 [#-- Se existir uma variável chamada ''texto'' copiar seu valor para ''texto_depacho'', pois a macro vai destruir o conteúdo da variável --]
-[#if ((root.texto!'''') != '''') && ((texto_despacho!'''') == '''')]
-     [#assign texto_despacho = root.texto/]
-[/#if]
-
 [@entrevista]
-    [@grupo titulo="Dados do Documento de Origem"]
-        [#if postback?? && !doc.idDoc?? && doc.pai??]
-            [#assign tipoDeDocumentoValue = doc.pai.descrFormaDoc /]
-            [#assign numeroValue = doc.pai.sigla /]
-            [#assign dataValue = doc.pai.dtDocDDMMYY /]
-            [#assign orgaoValue = doc.pai.orgaoUsuario.acronimoOrgaoUsu /]
-        [#else]
-            [#assign tipoDeDocumentoValue = tipoDeDocumentoOrigem! /]
-            [#assign numeroValue = numeroOrigem! /]
-            [#assign dataValue = dataOrigem! /]
-            [#assign orgaoValue = orgaoOrigem! /]
-        [/#if]
-        [@grupo]
-            [@texto titulo="Tipo de documento" var="tipoDeDocumentoOrigem" largura=20 default=tipoDeDocumentoValue /]
-            [@texto titulo="Número" var="numeroOrigem" largura=20 default=numeroValue /]
-        [/@grupo]
-        [@grupo]
-            [@data titulo="Data" var="dataOrigem" default=dataValue /]
-            [@texto titulo="Nome do Órgão" var="orgaoOrigem" largura=30 default=orgaoValue /]
-        [/@grupo]
+  [@grupo titulo="Órgão de destino"]
+    [#assign orgao_dest_atual = (doc.lotaDestinatario.nomeLotacao)!/]
+    [#if orgao_dest_ult! != orgao_dest_atual]
+      [#assign orgao_dest = orgao_dest_atual/]
+      [#assign orgao_dest_ult = orgao_dest_atual/]
+    [/#if]
+    [@oculto var="orgao_dest_ult"/]
+    [@grupo]
+      [@selecao titulo="" var="combinacao" opcoes="A(o);À;Ao" /]
+      [@texto titulo="Nome (opcional)" var="orgao_dest" largura=30 /]
     [/@grupo]
-    [@grupo titulo="Órgão de destino"]
-        [#assign orgao_dest_atual = (doc.lotaDestinatario.nomeLotacao)!/]
-        [#if orgao_dest_ult! != orgao_dest_atual]
-            [#assign orgao_dest = orgao_dest_atual/]
-            [#assign orgao_dest_ult = orgao_dest_atual/]
-        [/#if]
-        [@oculto var="orgao_dest_ult"/]
-        [@grupo]
-            [@texto titulo="Nome" var="orgao_dest" largura=30 default=orgao_dest_prov /]
-            [@selecao titulo="Gênero do Destinatário" var="genero" opcoes="Feminino;Masculino" /]
-        [/@grupo]
-    [/@grupo]	
-    [@grupo titulo="Texto do despacho"]
-        [@editor titulo="" var="texto_despacho" /]
+  [/@grupo]
+  [@grupo titulo="Texto do despacho"]
+    [@grupo]
+      [#if !texto_padrao??]
+        [#assign texto_padrao = "Para as providências cabíveis."/]
+      [/#if]
+      [@selecao titulo="Texto" opcoes="A pedido.;Arquive-se.;Autorizo.;Ciente. Arquive-se.;De acordo.;Expeça-se memorando.;Expeça-se memorando-circular.;Expeça-se ofício-circular.;Intime-se.;Junte-se ao dossiê.;Junte-se ao processo.;Oficie-se.;Para as providências cabíveis.;Para atendimento.;Para atendimento e encaminhamento direto.;Para ciência.;Para publicação.;Para verificar a possibilidade de atendimento.;[Outro]" var="texto_padrao" reler=true /]
+    [/@grupo]
+  [/@grupo]
+  [@grupo depende="textopadrao" esconder=((texto_padrao!"") != "[Outro]")]
+    [@editor titulo="" var="texto_despacho" /]
+  [/@grupo]
+  [@grupo]
+    [@selecao titulo="Tamanho da letra" var="tamanhoLetra" opcoes="Normal;Pequeno;Grande" /]
+  [/@grupo]
+  [@grupo titulo="Dados do Documento de Origem" esconder=doc.pai??]
+    [#if postback?? && !doc.idDoc?? && doc.pai??]
+      [#assign tipoDeDocumentoValue = doc.pai.descrFormaDoc /]
+      [#assign numeroValue = doc.pai.sigla /]
+      [#assign dataValue = doc.pai.dtDocDDMMYY /]
+      [#assign orgaoValue = doc.pai.orgaoUsuario.acronimoOrgaoUsu /]
+    [#else]
+      [#assign tipoDeDocumentoValue = tipoDeDocumentoOrigem! /]
+      [#assign numeroValue = numeroOrigem! /]
+      [#assign dataValue = dataOrigem! /]
+      [#assign orgaoValue = orgaoOrigem! /]
+    [/#if]
+    [@grupo]
+      [@texto titulo="Tipo de documento" var="tipoDeDocumentoOrigem" largura=20 default=tipoDeDocumentoValue /]
+      [@texto titulo="Número" var="numeroOrigem" largura=20 default=numeroValue /]
     [/@grupo]
     [@grupo]
-        [@selecao titulo="Tamanho da letra" var="tamanhoLetra" opcoes="Normal;Pequeno;Grande" /]
+      [@data titulo="Data" var="dataOrigem" default=dataValue /]
+      [@texto titulo="Nome do Órgão" var="orgaoOrigem" largura=30 default=orgaoValue /]
     [/@grupo]
+  [/@grupo]
 [/@entrevista]
-
 [@documento margemDireita="3cm"]
-    [#if param.tamanhoLetra! == "Normal"]
-        [#assign tl = "11pt" /]
-    [#elseif param.tamanhoLetra! == "Pequeno"]
-        [#assign tl = "9pt" /]
-    [#elseif param.tamanhoLetra! == "Grande"]
-        [#assign tl = "13pt" /]
-    [#else]     
-        [#assign tl = "11pt"]
-    [/#if]
-
-    [@estiloBrasaoCentralizado tipo="DESPACHO" tamanhoLetra=tl formatarOrgao=true numeracaoCentralizada=false dataAntesDaAssinatura =true]
-        <div style="font-family: Arial; font-size: ${tl};">
-            [#if tipoDeDocumentoOrigem?? && tipoDeDocumentoOrigem != ""]
-                Referência: ${tipoDeDocumentoOrigem!} N&ordm; ${numeroOrigem!}, ${dataOrigem!} - ${orgaoOrigem!}.<br/>
-            [/#if]
-            Assunto: ${(doc.exClassificacao.descrClassificacao)!}
-        </div>
-
-        <div style="font-family: Arial; font-size: ${tl};">
-            [#if orgao_dest?? && orgao_dest != '''']<p style="TEXT-INDENT: 2cm">
-                <span style="font-size: ${tl}">${(genero??)?string((genero==''Feminino'')?string(''À '',''Ao ''),''A(o) '')}${orgao_dest!},</span></p>
-            [/#if]
-            <p style="TEXT-INDENT: 2cm"><span style="font-size: ${tl}">${texto_despacho}</span></p>
-        </div>
-    [/@estiloBrasaoCentralizado]
+  [#if param.tamanhoLetra! == "Normal"]
+    [#assign tl = "11pt" /]
+  [#elseif param.tamanhoLetra! == "Pequeno"]
+    [#assign tl = "9pt" /]
+  [#elseif param.tamanhoLetra! == "Grande"]
+    [#assign tl = "13pt" /]
+  [#else]
+    [#assign tl = "11pt"/]
+  [/#if]
+  [@estiloBrasaoCentralizado tipo="DESPACHO" tamanhoLetra=tl formatarOrgao=true numeracaoCentralizada=false dataAntesDaAssinatura =true]
+    <div style="font-family: Arial; font-size: ${tl};">
+      [#if tipoDeDocumentoOrigem?? && tipoDeDocumentoOrigem != ""]
+        Referência: ${tipoDeDocumentoOrigem!} Nº ${numeroOrigem!}
+        [#if dataOrigem?? && dataOrigem != ""]
+          , ${dataOrigem!}
+        [/#if]
+        [#if orgaoOrigem?? && orgaoOrigem != ""]
+          - ${orgaoOrigem!}.
+        [/#if]
+        <br />
+      [/#if]
+      Assunto: ${(doc.exClassificacao.descrClassificacao)!}
+    </div>
+    <div style="font-family: Arial; font-size: ${tl};">
+      [#if orgao_dest?? && orgao_dest != ""]
+        <p style="TEXT-INDENT: 2cm">
+          <span style="font-size: ${tl}">${combinacao} ${orgao_dest!},</span>
+        </p>
+      [#elseif (doc.lotaDestinatario.nomeLotacao)?? && (doc.lotaDestinatario.nomeLotacao) != ""]
+        <p style="TEXT-INDENT: 2cm">
+          <span style="font-size: ${tl}">${combinacao} ${(doc.lotaDestinatario.nomeLotacao)!},</span>
+        </p>
+      [/#if]
+      [#if (texto_padrao!"") != "[Outro]"]
+        <p style="TEXT-INDENT: 2cm">
+          <span style="font-size: ${tl!}">${texto_padrao!}</span>
+        </p>
+      [#else]
+        <p style="TEXT-INDENT: 2cm">
+          <span style="font-size: ${tl!}">${texto_despacho!}</span>
+        </p>
+      [/#if]
+    </div>
+  [/@estiloBrasaoCentralizado]
 [/@documento]
-
 ','AL32UTF8'));
 dbms_lob.append(dest_blob_ex_mod, src_blob_ex_mod);
 

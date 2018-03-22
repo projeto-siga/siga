@@ -451,6 +451,13 @@ public class ExMovimentacaoController extends ExController {
 				.setDocumentoRefSel(documentoRefSel);
 
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+		
+		if (!Ex.getInstance()
+				.getComp()
+				.podeAcessarDocumento(getTitular(), getLotaTitular(),
+						mov.getExMobilRef())) {
+			throw new AplicacaoException("Não é permitido incluir cópia de documento que o usuário não tenha acesso");
+		}
 
 		if (!Ex.getInstance()
 				.getComp()

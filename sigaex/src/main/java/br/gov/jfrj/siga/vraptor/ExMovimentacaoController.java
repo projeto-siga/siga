@@ -565,6 +565,12 @@ public class ExMovimentacaoController extends ExController {
 		
 		AtivoEFixo af = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), CpTipoConfiguracao.TIPO_CONFIG_TRAMITE_AUTOMATICO);
 		
+		// Desabilita o trâmite quando não há destinatário
+		if (doc.getLotaDestinatario() == null && doc.getDestinatario() == null) {
+			af.ativo = false;
+			af.fixo = true;
+		}
+		
 		result.include("sigla", sigla);
 		result.include("doc", doc);
 		result.include("titular", this.getTitular());

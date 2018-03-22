@@ -3096,6 +3096,10 @@ public class ExBL extends CpBL {
 				.getExClassificacao() == null ? null : doc.getExModelo()
 				.getExClassificacao().getAtual();
 
+		if (doc.getExClassificacao() == null)
+			throw new AplicacaoException(
+					"Não é possível finalizar documento sem que seja informada a classificação documental.");
+
 		if (classificacaoValidaModelo != null
 				&& classificacaoValidaModelo.isAtivo()
 				&& !doc.getExClassificacao()
@@ -3122,7 +3126,7 @@ public class ExBL extends CpBL {
 				&& doc.getExMobilPai().getExDocumento().isProcesso()
 				&& doc.getExMobilPai().getExDocumento().isEletronico())
 			throw new AplicacaoException(
-					"não é possível criar Subprocesso físico de processo eletrônico.");
+					"Não é possível criar Subprocesso físico de processo eletrônico.");
 
 		if (!getComp().podeSerSubscritor(doc))
 			throw new AplicacaoException(

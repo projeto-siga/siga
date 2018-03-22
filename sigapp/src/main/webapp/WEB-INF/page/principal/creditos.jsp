@@ -5,10 +5,10 @@
 	<br>
 	<div class="ui-accordion-header"  style="position:absolute;left:5%;">
 		<h3>
-			TRF2/STI/COSISA - vs.: SigaPP 2018.03.08
+			TRF2/STI/COSADM - vs.: SigaPP 2018.03.08
 		</h3>
 		<h5>
-			tscosisa@trf2.jus.br
+			tscosadm@trf2.jus.br
 			<br>
 			ramal:9091
 		</h5>

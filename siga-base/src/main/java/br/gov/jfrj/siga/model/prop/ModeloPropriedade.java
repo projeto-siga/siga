@@ -140,7 +140,8 @@ public abstract class ModeloPropriedade {
 		if (prefixo != null) {
 			VarredorPropriedades varredor = new VarredorPropriedades(prefixo,nome);
 			while(!varredor.isVarreduraCompleta()){
-				String value = propriedades.getProperty(varredor.getNext());
+				String key = varredor.getNext();
+				String value = propriedades.getProperty(key);
 				if (value != null)
 					return value.trim();
 			}

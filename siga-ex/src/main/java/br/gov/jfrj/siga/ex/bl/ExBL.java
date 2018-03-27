@@ -1881,7 +1881,7 @@ public class ExBL extends CpBL {
 		if (!doc.isFinalizado())
 			finalizar(cadastrante, lotaCadastrante, doc);
 		
-		boolean fPreviamenteAssinado = !doc.isPendenteDeAssinatura();
+		boolean fPreviamenteAssinado = doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha();
 
 		if (!doc.isFinalizado())
 			throw new AplicacaoException(
@@ -1958,7 +1958,7 @@ public class ExBL extends CpBL {
 						dtMov, cadastrante, cadastrante, mov);
 			}
 
-			if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura())
+			if (!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
 				s = processarComandosEmTag(doc, "assinatura");
 		} catch (final Exception e) {
 			cancelarAlteracao();

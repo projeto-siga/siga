@@ -1407,6 +1407,7 @@ public class ExDocumentoController extends ExController {
 								"Não é permitida a anexação de arquivos com mais de 10MB.");
 					}
 					d.setConteudoBlobPdf(baArquivo);
+					d.setConteudoBlobHtml(null);
 				} catch (IOException e) {
 					throw new AplicacaoException("Falha ao manipular aquivo",
 							1, e);

@@ -32,7 +32,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 
 public class ExDocumentoAdaptorTest {
 
-	//@Ignore
+	// @Ignore
 	@Test
 	public void testGetAllItems() throws Exception {
 		ExDocumentoAdaptor da = new ExDocumentoAdaptor();
@@ -54,7 +54,8 @@ public class ExDocumentoAdaptorTest {
 			Long id = (Long) i.next();
 			Response resp = new Response();
 			try {
-				da.pushItem(id, resp);
+				resp = da.pushItem(id);
+				da.updateIndex(id, resp);
 				// Tem um PDF
 				assertNotNull(resp.content);
 				return;

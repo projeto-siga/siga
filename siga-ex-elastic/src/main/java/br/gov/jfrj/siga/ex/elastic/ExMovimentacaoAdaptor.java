@@ -52,18 +52,18 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 	}
 
 	/** Gives the bytes of a document referenced with id. */
-	public void pushItem(Long id, Response resp) throws IOException {
+	public Response pushItem(Long id) throws IOException {
+		Response resp = new Response();
 		try {
 			log.fine("obtendo movimentação ...");
-			ExMovimentacao mov = ExDao.getInstance().consultar(id,
-					ExMovimentacao.class, false);
+			ExMovimentacao mov = ExDao.getInstance().consultar(id, ExMovimentacao.class, false);
 			log.fine("movimentação obtida.");
 			if (mov == null || mov.isCancelado()) {
 				if (mov != null) {
 					log.warning("Movimentação foi cancelada!");
 				}
 				resp.respondNotFound();
-				return;
+				return resp;
 			}
 
 			ExDocumento doc = mov.getExDocumento();
@@ -73,7 +73,7 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 					log.warning("Movimentação foi cancelada!");
 				}
 				resp.respondNotFound();
-				return;
+				return resp;
 			}
 
 			Date dt = doc.getDtFinalizacao();
@@ -87,8 +87,7 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 			ExDocumentoAdaptor.addAclForDoc(doc, resp);
 			resp.setLastModified(dt);
 			try {
-				resp.setDisplayUrl(new URI(permalink + doc.getCodigoCompacto()
-						+ "/" + mov.getIdMov()));
+				resp.setDisplayUrl(new URI(permalink + doc.getCodigoCompacto() + "/" + mov.getIdMov()));
 			} catch (URISyntaxException e) {
 				log.severe("Erro ao formar a URL de exibição do documento!");
 				throw new RuntimeException(e);
@@ -99,7 +98,7 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 				log.fine("documento é HTML");
 				resp.setContentType("text/html");
 				resp.setContent(html.getBytes());
-				return;
+				return resp;
 			}
 
 			byte pdf[] = mov.getPdf();
@@ -107,45 +106,37 @@ public class ExMovimentacaoAdaptor extends ExAdaptor {
 				log.fine("documento é PDF");
 				resp.setContentType("application/pdf");
 				resp.setContent(pdf);
-				return;
+				return resp;
 			}
 			log.fine("no content from mov: " + mov.toString());
 		} finally {
 			ExDao.freeInstance();
 		}
+		return null;
 	}
 
-	private void addMetadataForMov(ExDocumento doc, ExMovimentacao mov,
-			Response resp) {
+	private void addMetadataForMov(ExDocumento doc, ExMovimentacao mov, Response resp) {
 		addMetadata(resp, "orgao", doc.getOrgaoUsuario().getAcronimoOrgaoUsu());
 		addMetadata(resp, "codigo", doc.getCodigo() + ":" + mov.getIdMov());
 		if (doc.getExTipoDocumento() != null) {
-			addMetadata(
-					resp,
-					"origem",
-					mov.getExTipoMovimentacao()
-							.getId()
-							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO) ? "Anexo"
+			addMetadata(resp, "origem",
+					mov.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO) ? "Anexo"
 							: "Despacho Curto");
 
 		}
 		if (doc.getDnmExNivelAcesso() != null)
-			addMetadata(resp, "acesso", doc.getDnmExNivelAcesso()
-					.getNmNivelAcesso());
+			addMetadata(resp, "acesso", doc.getDnmExNivelAcesso().getNmNivelAcesso());
 		if (mov.getDtMovYYYYMMDD() != null)
 			addMetadata(resp, "data", mov.getDtMovYYYYMMDD());
 		if (mov.getLotaSubscritor() != null)
-			addMetadata(resp, "subscritor_lotacao", mov.getLotaSubscritor()
-					.getSiglaLotacao());
+			addMetadata(resp, "subscritor_lotacao", mov.getLotaSubscritor().getSiglaLotacao());
 		if (mov.getSubscritor() != null)
 			addMetadata(resp, "subscritor", mov.getSubscritor().getNomePessoa());
 
 		if (mov.getLotaCadastrante() != null)
-			addMetadata(resp, "cadastrante_lotacao", mov.getLotaCadastrante()
-					.getSiglaLotacao());
+			addMetadata(resp, "cadastrante_lotacao", mov.getLotaCadastrante().getSiglaLotacao());
 		if (mov.getCadastrante() != null)
-			addMetadata(resp, "cadastrante", mov.getCadastrante()
-					.getNomePessoa());
+			addMetadata(resp, "cadastrante", mov.getCadastrante().getNomePessoa());
 	}
 
 	public static void main(String[] args) {

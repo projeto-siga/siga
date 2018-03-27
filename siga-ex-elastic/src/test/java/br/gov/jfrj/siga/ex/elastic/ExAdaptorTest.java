@@ -19,8 +19,7 @@ public class ExAdaptorTest {
 		File file = new File(LAST_MODIFIED_FILENAME_TEST);
 		file.delete();
 		TestAdaptor adaptor = new TestAdaptor();
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date t = new Date();
 		String d = dateFormat.format(t);
 		Date t2 = adaptor.getLastModified(LAST_MODIFIED_FILENAME_TEST, t);
@@ -37,8 +36,8 @@ public class ExAdaptorTest {
 		}
 
 		@Override
-		public void pushItem(Long id, br.gov.jfrj.siga.ex.elastic.Response resp)
-				throws IOException {
+		public Response pushItem(Long id) throws IOException {
+			return null;
 		}
 
 		@Override

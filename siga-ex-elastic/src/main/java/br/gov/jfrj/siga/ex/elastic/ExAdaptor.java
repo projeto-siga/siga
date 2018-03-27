@@ -37,6 +37,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.hibernate.Query;
 import org.hibernate.cfg.Configuration;
 
@@ -54,8 +59,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
  * -Djournal.reducedMem=true
  */
 public abstract class ExAdaptor {
-	protected static final Logger log = Logger.getLogger(ExAdaptor.class
-			.getName());
+	protected static final Logger log = Logger.getLogger(ExAdaptor.class.getName());
 	protected Charset encoding = Charset.forName("UTF-8");
 	protected Date dateLastUpdated;
 	protected String permalink;
@@ -68,8 +72,7 @@ public abstract class ExAdaptor {
 			props.load(new FileInputStream("siga.properties"));
 			for (Object key : props.keySet()) {
 				if (key instanceof String)
-					System.setProperty((String) key,
-							props.getProperty((String) key));
+					System.setProperty((String) key, props.getProperty((String) key));
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -134,7 +137,8 @@ public abstract class ExAdaptor {
 		for (long id : l) {
 			Response resp = new Response();
 			try {
-				pushItem(id, resp);
+				resp = pushItem(id);
+				updateIndex(id, resp);
 				System.out.println(resp.toJson());
 			} catch (IOException e) {
 				throw new RuntimeException(e);
@@ -142,9 +146,23 @@ public abstract class ExAdaptor {
 		}
 	}
 
+	protected void updateIndex(long id, Response resp) {
+		HttpClient httpClient = HttpClientBuilder.create().build();
+		try {
+			HttpPost request = new HttpPost(
+					"https://78bc75f224e18374da3f35bbb8d20f74.us-central1.gcp.cloud.es.io:9243/siga3/_doc");
+			StringEntity params = new StringEntity(resp.toString());
+			request.addHeader("Authorization", "Basic ZWxhc3RpYzpwaXFLeklkOU1RNkhYejkzTmVEazNMVU4=");
+			request.addHeader("content-type", "application/x-www-form-urlencoded");
+			request.setEntity(params);
+			HttpResponse response = httpClient.execute(request);
+		} catch (Exception ex) {
+		}
+	}
+
 	public abstract String getIdsHql();
 
-	public abstract void pushItem(Long id, Response resp) throws IOException;
+	public abstract Response pushItem(Long id) throws IOException;
 
 	public void addMetadata(Response resp, String title, String value) {
 		if (value == null)
@@ -162,12 +180,10 @@ public abstract class ExAdaptor {
 				this.adaptorProperties = new Properties();
 				this.adaptorProperties.load(propStream);
 			} catch (FileNotFoundException e) {
-				log.warning("Arquivo de propriedades " + DEFAULT_CONFIG_FILE
-						+ "não encontrado!");
+				log.warning("Arquivo de propriedades " + DEFAULT_CONFIG_FILE + "não encontrado!");
 				log.warning("Propriedades do adaptor do Siga não serão carregadas.");
 			} catch (IOException e) {
-				log.warning("Não foi possível carregar as propriedades do arquivo "
-						+ DEFAULT_CONFIG_FILE);
+				log.warning("Não foi possível carregar as propriedades do arquivo " + DEFAULT_CONFIG_FILE);
 				log.warning("Propriedades do adaptor do Siga não serão carregadas.");
 			} finally {
 				if (propStream != null) {
@@ -192,19 +208,16 @@ public abstract class ExAdaptor {
 	 * @param path
 	 */
 	protected Date getLastModified(String path, Date lastModifiedDefault) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		File lastModifiedFile = new File(path);
 		if (lastModifiedFile.exists()) {
-			try (BufferedReader br = new BufferedReader(new FileReader(
-					lastModifiedFile))) {
+			try (BufferedReader br = new BufferedReader(new FileReader(lastModifiedFile))) {
 				String line;
 				while ((line = br.readLine()) != null) {
 					log.fine("A data da última  atualização é " + line);
 					return dateFormat.parse(line);
 				}
-				throw new RuntimeException(
-						"Não foi possível obter a data da última atualização");
+				throw new RuntimeException("Não foi possível obter a data da última atualização");
 			} catch (Exception e) {
 				log.severe("Erro ao obter a data das ultimas alterações!");
 				throw new RuntimeException(e);
@@ -236,8 +249,7 @@ public abstract class ExAdaptor {
 	 * @param path
 	 */
 	protected void saveLastModified(String path, Date lastModified) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		File lastModifiedFile = new File(path);
 		if (lastModifiedFile.exists()) {
 			lastModifiedFile.delete();
@@ -257,8 +269,7 @@ public abstract class ExAdaptor {
 		}
 	}
 
-	public static void run(ExMovimentacaoAdaptor exMovimentacaoAdaptor,
-			String[] args) {
+	public static void run(ExMovimentacaoAdaptor exMovimentacaoAdaptor, String[] args) {
 		// TODO Auto-generated method stub
 	}
 

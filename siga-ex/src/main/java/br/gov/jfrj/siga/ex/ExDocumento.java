@@ -2066,7 +2066,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	public boolean isExterno() {
 		if (getExTipoDocumento() == null)
 			return false;
-		return (getExTipoDocumento().getIdTpDoc() == 3);
+		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO);
 	}
 
 	/**

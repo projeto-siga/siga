@@ -2753,7 +2753,7 @@ Pede deferimento.</span><br/><br/><br/>
     [/@documento]
 [/#macro]
 
-[#macro externoFolhaDeRosto]
+[#macro folhaDeRostoExterno]
 	[@documento]
 	  [@estiloBrasaoCentralizado tipo="DOCUMENTO EXTERNO" tamanhoLetra="11pt"]
 	    <table width="100%" border="0" cellpadding="6" cellspacing="6" bgcolor="#FFFFFF">
@@ -2837,6 +2837,87 @@ Pede deferimento.</span><br/><br/><br/>
 	        </td>
 	        <td>
 	          ${(doc.dtRegDocDDMMYYHHMMSS)!}
+	        </td>
+	      </tr>
+	    </table>
+	  [/@estiloBrasaoCentralizado]
+	[/@documento]
+[/#macro]
+
+[#macro folhaDeRostoInterno]
+	[@documento]
+	  [@estiloBrasaoCentralizado tipo="DOCUMENTO INTERNO" tamanhoLetra="11pt"]
+	    <table width="100%" border="0" cellpadding="6" cellspacing="6" bgcolor="#FFFFFF">
+	      <tr>
+	        <td width="50%">
+	          Número Original:
+	        </td>
+	        <td width="50%">
+	          ${doc.numExtDoc!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Número no Sistema Antigo:
+	        </td>
+	        <td>
+	          ${doc.numAntigoDoc!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Forma:
+	        </td>
+	        <td>
+	          ${doc.exFormaDocumento.descrFormaDoc!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Modelo:
+	        </td>
+	        <td>
+	          ${doc.exModelo.nmMod!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Subscritor:
+	        </td>
+	        <td>
+	          ${doc.subscritorString!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Destinatário:
+	        </td>
+	        <td>
+	          ${doc.destinatarioString!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Descrição:
+	        </td>
+	        <td>
+	          ${doc.descrDocumento!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Cadastrante:
+	        </td>
+	        <td>
+	          ${doc.cadastrante.descricao!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Data do cadastro:
+	        </td>
+	        <td>
+	          ${doc.dtRegDocDDMMYYHHMMSS!}
 	        </td>
 	      </tr>
 	    </table>

@@ -1106,13 +1106,9 @@ public class ExDocumentoController extends ExController {
 	}
 
 	private void verificaDocumento(final ExDocumento doc) {
-		if ((doc.getSubscritor() == null && doc.getNmSubscritor() == null && doc
-				.getNmSubscritorExt() == null)
+		if ((doc.getSubscritor() == null && doc.getNmSubscritor() == null && doc.getNmSubscritorExt() == null)
 				&& !doc.isExternoCapturado()
-				&& ((doc.getExFormaDocumento().getExTipoFormaDoc()
-						.getIdTipoFormaDoc() == ExTipoFormaDoc.TIPO_FORMA_DOC_PROCESSO_ADMINISTRATIVO && doc
-						.isEletronico()) || doc.getExFormaDocumento()
-						.getExTipoFormaDoc().getIdTipoFormaDoc() != ExTipoFormaDoc.TIPO_FORMA_DOC_PROCESSO_ADMINISTRATIVO)) {
+				&& ((doc.isProcesso() && doc.isEletronico()) || !doc.isProcesso())) {
 			throw new AplicacaoException(
 					"É necessário definir um subscritor para o documento.");
 		}

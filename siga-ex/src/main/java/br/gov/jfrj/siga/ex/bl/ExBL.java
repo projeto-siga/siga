@@ -156,12 +156,10 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.wf.service.WfService;
 
 public class ExBL extends CpBL {
-	private final String SHA1 = "1.3.14.3.2.26";
-
-	public final static String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
-
-	private final boolean BUSCAR_CARIMBO_DE_TEMPO = false;
-	private final boolean VALIDAR_LCR = false;
+	private static final String MODELO_FOLHA_DE_ROSTO_EXPEDIENTE_INTERNO = "Folha de Rosto - Expediente Interno";
+	private static final String MODELO_FOLHA_DE_ROSTO_PROCESSO_ADMINISTRATIVO_INTERNO = "Folha de Rosto - Processo Administrativo Interno";
+	private static final String SHA1 = "1.3.14.3.2.26";
+	private static final String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
 
 	private final ThreadLocal<SortedSet<ExMobil>> threadAlteracaoParcial = new ThreadLocal<SortedSet<ExMobil>>();
 
@@ -5065,11 +5063,17 @@ public class ExBL extends CpBL {
 				if (doc.getExTipoDocumento().getIdTpDoc() == 2) {
 					if (doc.getExModelo() != null)
 						backupID = doc.getExModelo().getIdMod();
-					doc.setExModelo(dao().consultarAtivoPorIdInicial(
-							ExModelo.class,
-							doc.isProcesso() ? SigaExProperties.getIdModPA()
-									: SigaExProperties
-											.getIdModInternoImportado()));
+					
+					Long idMod;
+					if (doc.isProcesso()) {
+						ExModelo modPA = dao().consultarExModelo(null, MODELO_FOLHA_DE_ROSTO_PROCESSO_ADMINISTRATIVO_INTERNO);
+						idMod = modPA != null ? modPA.getId() : SigaExProperties.getIdModPA();
+					} else {
+						ExModelo modInterno = dao().consultarExModelo(null, MODELO_FOLHA_DE_ROSTO_EXPEDIENTE_INTERNO);
+						idMod = modInterno != null ? modInterno.getId() : SigaExProperties
+								.getIdModInternoImportado();
+					}
+					doc.setExModelo(dao().consultar(idMod, ExModelo.class, false));
 				}
 
 				final String strHtml;

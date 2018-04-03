@@ -100,11 +100,8 @@ CodeMirror.defineMode("freemarker", function(config, parserConfig) {
 								value="${modelo.cpOrgaoUsuario.id}" />
 
 							<textarea id="conteudo${i}" style="width: 100%;" cols="1"
-								rows="1" name="conteudo"><c:if
-									test="${not empty modelo.conteudoBlobString}">
-									<c:out value="${modelo.conteudoBlobString}" escapeXml="true"
-										default="" />
-								</c:if></textarea>
+								rows="1" name="conteudo"><c:out value="${modelo.conteudoBlobString}" escapeXml="true"
+										default="" /></textarea>
 							<c:if test="${empty modelo.cpOrgaoUsuario}">
 								<p align="right">Ctrl-I: Indentar, Crtl-S: Salvar</p>
 							</c:if>

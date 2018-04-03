@@ -119,10 +119,9 @@
 							<td><siga:escolha id="tipoModelo" var="tipoModelo">
 									<siga:opcao id="template/freemarker" texto="Freemarker">
 										<textarea id="conteudo" style="width: 100%;" cols="1" rows="1"
-											name="conteudo"><c:if test="${not empty conteudo}">
-														<c:out value="${conteudo}" default="" />
-													</c:if></textarea>
-													<p align="right">Ctrl-I: Indentar, Crtl-S: Salvar</p>
+											name="conteudo"><c:out value="${conteudo}"
+												default="" /></textarea>
+										<p align="right">Ctrl-I: Indentar, Crtl-S: Salvar</p>
 									</siga:opcao>
 									<siga:opcao id="template-file/jsp" texto="JSP">
 									&nbsp;&nbsp;&nbsp;&nbsp;Nome do arquivo:

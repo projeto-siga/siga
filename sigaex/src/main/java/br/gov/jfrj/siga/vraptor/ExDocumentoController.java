@@ -461,6 +461,9 @@ public class ExDocumentoController extends ExController {
 			if (exDocumentoDTO.getTipoDestinatario() == null)
 				exDocumentoDTO.setTipoDestinatario(2);
 
+			if (exDocumentoDTO.getTipoEmitente() == null)
+				exDocumentoDTO.setTipoEmitente(1);
+
 			if (exDocumentoDTO.getIdMod() == null) {
 				final List<ExModelo> modelos = getModelos(exDocumentoDTO);
 
@@ -736,6 +739,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getOrgaoExternoDestinatarioSel());
 		result.include("classificacaoSel", exDocumentoDTO.getClassificacaoSel());
 		result.include("tipoDestinatario", exDocumentoDTO.getTipoDestinatario());
+		result.include("tipoEmitente", exDocumentoDTO.getTipoEmitente());
 		result.include("podeEditarData", podeEditarData);
 		result.include("podeEditarDescricao", podeEditarDescricao);
 		result.include("hierarquiaDeModelos", lh.getList());
@@ -748,15 +752,6 @@ public class ExDocumentoController extends ExController {
 
 	private List<ExTipoDocumento> getTiposDocumentoParaCriacao() {
 		List<ExTipoDocumento> l = dao().listarExTiposDocumento();
-		if (!SigaExProperties.isCriarFolhaDeRosto()) {
-			List<ExTipoDocumento> l2 = new ArrayList<>();
-			for (ExTipoDocumento i : l) {
-				if (i.getId() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO || i.getId() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO)
-					continue;
-				l2.add(i);
-			}
-			l = l2;
-		}
 		return l;
 	}
 
@@ -1871,10 +1866,14 @@ public class ExDocumentoController extends ExController {
 		if (doc.getOrgaoExterno() != null) {
 			exDocumentoDTO.getCpOrgaoSel().buscarPorObjeto(
 					doc.getOrgaoExterno());
+			exDocumentoDTO.setObsOrgao(null);
+			exDocumentoDTO.setTipoEmitente(1);
 		}
 
 		if (doc.getObsOrgao() != null) {
+			exDocumentoDTO.getCpOrgaoSel().apagar();
 			exDocumentoDTO.setObsOrgao(doc.getObsOrgao());
+			exDocumentoDTO.setTipoEmitente(2);
 		}
 
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");

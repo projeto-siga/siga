@@ -824,6 +824,13 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
     [#if doc.orgaoExterno??]
       [#local descr = descr + ' Órgão: ' + doc.orgaoExterno.descricao + '. ' /]
+    [#else]
+      [#if doc.obsOrgao?has_content]
+        [#local descr = descr + ' Órgão: ' + doc.obsOrgao + '. ' /]
+      [/#if]
+    [/#if]
+    [#if doc.nmSubscritorExt?has_content]
+      [#local descr = descr + ' Subscritor: ' + doc.nmSubscritorExt + '. ' /]
     [/#if]
   [/#if]
   [#if doc.subscritor??]
@@ -2746,6 +2753,96 @@ Pede deferimento.</span><br/><br/><br/>
     [/@documento]
 [/#macro]
 
+[#macro externoFolhaDeRosto]
+	[@documento]
+	  [@estiloBrasaoCentralizado tipo="DOCUMENTO EXTERNO" tamanhoLetra="11pt"]
+	    <table width="100%" border="0" cellpadding="6" cellspacing="6" bgcolor="#FFFFFF">
+	      <tr>
+	        <td width="50%">
+	          Órgão Externo:
+	        </td>
+	        <td width="50%">
+	          ${(doc.orgaoExterno.descricao)!} ${(doc.obsOrgao)!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Data Original do Documento:
+	        </td>
+	        <td>
+	          ${(doc.dtDocOriginalDDMMYYYY)!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Número Original:
+	        </td>
+	        <td>
+	          ${(doc.numExtDoc)!}
+	        </td>
+	      </tr>
+	      [#if (doc.numAntigoDoc)! != '']
+	        <tr>
+	          <td>
+	            Número no Sistema Antigo:
+	          </td>
+	          <td>
+	            ${(doc.numAntigoDoc)!}
+	          </td>
+	        </tr>
+	      [/#if]
+	      <tr>
+	        <td>
+	          Data:
+	        </td>
+	        <td>
+	          ${(doc.dtDocDDMMYY)!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Subscritor:
+	        </td>
+	        <td>
+	          ${(doc.nmSubscritorExt)!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Descrição:
+	        </td>
+	        <td>
+	          ${(doc.descrDocumento)!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	        </td>
+	        <td>
+	        </td>
+	      </tr>
+	      [#if doc.cadastrante??]
+	        <tr>
+	          <td>
+	            Cadastrante:
+	          </td>
+	          <td>
+	            ${(doc.cadastrante.descricao)!}
+	          </td>
+	        </tr>
+	      [/#if]
+	      <tr>
+	        <td>
+	          Data do cadastro:
+	        </td>
+	        <td>
+	          ${(doc.dtRegDocDDMMYYHHMMSS)!}
+	        </td>
+	      </tr>
+	    </table>
+	  [/@estiloBrasaoCentralizado]
+	[/@documento]
+[/#macro]
 
 
 [#macro moeda var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default=""]

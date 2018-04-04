@@ -16,6 +16,8 @@
     <script type="text/javascript" src="../../_static/translations.js"></script>
     <link rel="index" title="Índice" href="../../genindex.html" />
     <link rel="search" title="Buscar" href="../../search.html" />
+    <link rel="next" title="Movimentando um Documento" href="../mov/index.html" />
+    <link rel="prev" title="Situação dos Documentos" href="../situacao/index.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
@@ -37,19 +39,19 @@
 <img alt="../../_images/novo-documento-pagina.png" src="../../_images/novo-documento-pagina.png" />
 <div class="section" id="origem">
 <h2>Origem<a class="headerlink" href="#origem" title="Link permanente para este título">¶</a></h2>
-<p>Há 4  tipos de origens, que podem ser classificadas como:</p>
-<p>a. Capturado: O objetivo desse documento é substituir o recurso Anexar Arquivo (PDF) em processos administrativos, possibilitando
+<p>Há 4 tipos de origens, que podem ser classificadas como:</p>
+<ol class="arabic simple">
+<li>Capturado: O objetivo desse documento é substituir o recurso Anexar Arquivo (PDF) em processos administrativos, possibilitando
 a organização e identificação desses documentos (PDF) que são juntados aos processos. Para juntar um PDF como documento Capturado,
 basta acessar o processo administrativo, clicar em Despachar/Transferir, escolher Despacho Longo e, em seguida, mudar a origem do
 despacho para Capturado; A listagem dos modelos de documentos Capturados existentes no sistema está no arquivo que pode ser gerado
-no próprio Siga-Doc, na opção Relatórios &gt; Relação de formulários.</p>
-<p>b. Externo: para cadastrar documentos originários de órgãos externos (AGU, Banco do Brasil, CEF, STF etc). O SIGA irá gerar uma
-folha de rosto, citando o signatário, o número do documento e o número SIGA gerado.</p>
-<ol class="loweralpha simple" start="3">
+no próprio Siga-Doc, na opção Relatórios &gt; Relação de formulários.</li>
+<li>Externo: para cadastrar documentos originários de órgãos externos (AGU, Banco do Brasil, CEF, STF etc). O SIGA irá gerar uma
+folha de rosto, citando o signatário, o número do documento e o número SIGA gerado.</li>
 <li>Interno Produzido: utilizar esta opção para a criação de um documento novo no SIGA.</li>
+<li>Interno Importado: para cadastrar um documento recebido fisicamente, em papel, sem origem no SIGA por um órgão integrado
+(TRF2, SJRJ e SJES). O SIGA irá gerar uma folha de rosto, citando o signatário, o número “antigo” e o número SIGA gerado.</li>
 </ol>
-<p>d. Interno Importado: para cadastrar um documento recebido fisicamente, em papel, sem origem no SIGA por um órgão integrado
-(TRF2, SJRJ e SJES). O SIGA irá gerar uma folha de rosto, citando o signatário, o número “antigo” e o número SIGA gerado.</p>
 <p>Quando recebemos um documento cuja origem é de algum órgão externo, devemos cadastrá-lo como Externo. Para isto, devemos seguir
 o procedimento para criação de um novo documento, porém com o campo Origem selecionado como Documento Interno ou Externo
 (imagem 15 página 8). A seguinte tela será apresenta:</p>
@@ -74,20 +76,24 @@ a data atual. Apenas será exibida a data após o documento ser finalizado.</p>
 </div>
 <div class="section" id="acesso">
 <h2>Acesso<a class="headerlink" href="#acesso" title="Link permanente para este título">¶</a></h2>
-<p>Disponibiliza critérios de acesso para definição da “CONFIDENCIALIDADE”  do documento.
-- Público – Todos podem visualizar o conteúdo do documento.
-- Limitado ao órgão – Todos lotados no órgão específico (TRF2, JFRJ ou JFES) onde o documento foi criado, podem visualizá-lo.
-- Limitado de pessoa para subsecretaria – Somente a pessoa, subscritora, e a lotação destinatária podem visualizar o documento.
-- Limitado de subsecretaria para pessoa - Somente a lotação subscritora e a pessoa destinatária podem visualizar o documento.
-- Limitado entre lotações – Somente as lotações, subscritora e destinatária, podem visualizar o documento.
-- Limitado entre pessoas - Somente as pessoas, subscritora e destinatária, podem visualizar o documento.</p>
+<p>Disponibiliza critérios de acesso para definição da “CONFIDENCIALIDADE”  do documento.</p>
+<ul class="simple">
+<li><strong>Público</strong>: Todos podem visualizar o conteúdo do documento.</li>
+<li><strong>Limitado ao órgão</strong>: Todos lotados no órgão específico (TRF2, JFRJ ou JFES) onde o documento foi criado, podem visualizá-lo.</li>
+<li><strong>Limitado de pessoa para subsecretaria</strong>: Somente a pessoa, subscritora, e a lotação destinatária podem visualizar o documento.</li>
+<li><strong>Limitado de subsecretaria para pessoa</strong>: Somente a lotação subscritora e a pessoa destinatária podem visualizar o documento.</li>
+<li><strong>Limitado entre lotações</strong>: Somente as lotações, subscritora e destinatária, podem visualizar o documento.</li>
+<li><strong>Limitado entre pessoas</strong>: Somente as pessoas, subscritora e destinatária, podem visualizar o documento.</li>
+</ul>
 <p>De acordo com o selecionado, o documento apenas será recebido e lido pelo destinatário e pelo remetente, sendo um setor ou matrícula específica.</p>
 <img alt="../../_images/novo-documento-acesso.png" src="../../_images/novo-documento-acesso.png" />
 </div>
 <div class="section" id="digital-fisico">
 <h2>Digital / Físico<a class="headerlink" href="#digital-fisico" title="Link permanente para este título">¶</a></h2>
-<p>Digital: Marca o documento como digital, este documento terá a impressão opcional e receberá a assinatura digital através do certificado digital.</p>
-<p>Físico: Marca o documento como físico e a impressão obrigatória.</p>
+<ul class="simple">
+<li><strong>Digital</strong>: Marca o documento como digital, este documento terá a impressão opcional e receberá a assinatura digital através do certificado digital.</li>
+<li><strong>Físico</strong>: Marca o documento como físico e a impressão obrigatória.</li>
+</ul>
 </div>
 <div class="section" id="subscritor">
 <h2>Subscritor<a class="headerlink" href="#subscritor" title="Link permanente para este título">¶</a></h2>
@@ -224,6 +230,10 @@ número do código da classificação:</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Siga - Manual do Usuário</a><ul>
+      <li>Previous: <a href="../situacao/index.html" title="capítulo anterior">Situação dos Documentos</a></li>
+      <li>Next: <a href="../mov/index.html" title="próximo capítulo">Movimentando um Documento</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>

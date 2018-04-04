@@ -14,9 +14,3 @@ Bem vindo à documentação do Siga!
    manual/index
    
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

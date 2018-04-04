@@ -11,21 +11,21 @@ Para criar um documento, acesse a opção: “Novo Documento” na página princ
 Origem
 ^^^^^^
 
-Há 4  tipos de origens, que podem ser classificadas como:
+Há 4 tipos de origens, que podem ser classificadas como:
 
-a. Capturado: O objetivo desse documento é substituir o recurso Anexar Arquivo (PDF) em processos administrativos, possibilitando 
-a organização e identificação desses documentos (PDF) que são juntados aos processos. Para juntar um PDF como documento Capturado, 
-basta acessar o processo administrativo, clicar em Despachar/Transferir, escolher Despacho Longo e, em seguida, mudar a origem do 
-despacho para Capturado; A listagem dos modelos de documentos Capturados existentes no sistema está no arquivo que pode ser gerado 
-no próprio Siga-Doc, na opção Relatórios > Relação de formulários.
+#. Capturado: O objetivo desse documento é substituir o recurso Anexar Arquivo (PDF) em processos administrativos, possibilitando 
+   a organização e identificação desses documentos (PDF) que são juntados aos processos. Para juntar um PDF como documento Capturado, 
+   basta acessar o processo administrativo, clicar em Despachar/Transferir, escolher Despacho Longo e, em seguida, mudar a origem do 
+   despacho para Capturado; A listagem dos modelos de documentos Capturados existentes no sistema está no arquivo que pode ser gerado 
+   no próprio Siga-Doc, na opção Relatórios > Relação de formulários.
 
-b. Externo: para cadastrar documentos originários de órgãos externos (AGU, Banco do Brasil, CEF, STF etc). O SIGA irá gerar uma 
-folha de rosto, citando o signatário, o número do documento e o número SIGA gerado.
+#. Externo: para cadastrar documentos originários de órgãos externos (AGU, Banco do Brasil, CEF, STF etc). O SIGA irá gerar uma 
+   folha de rosto, citando o signatário, o número do documento e o número SIGA gerado.
 
-c. Interno Produzido: utilizar esta opção para a criação de um documento novo no SIGA.
+#. Interno Produzido: utilizar esta opção para a criação de um documento novo no SIGA.
 
-d. Interno Importado: para cadastrar um documento recebido fisicamente, em papel, sem origem no SIGA por um órgão integrado 
-(TRF2, SJRJ e SJES). O SIGA irá gerar uma folha de rosto, citando o signatário, o número "antigo" e o número SIGA gerado.
+#. Interno Importado: para cadastrar um documento recebido fisicamente, em papel, sem origem no SIGA por um órgão integrado 
+   (TRF2, SJRJ e SJES). O SIGA irá gerar uma folha de rosto, citando o signatário, o número "antigo" e o número SIGA gerado.
 
 Quando recebemos um documento cuja origem é de algum órgão externo, devemos cadastrá-lo como Externo. Para isto, devemos seguir 
 o procedimento para criação de um novo documento, porém com o campo Origem selecionado como Documento Interno ou Externo 
@@ -64,12 +64,18 @@ Acesso
 ^^^^^^
 
 Disponibiliza critérios de acesso para definição da “CONFIDENCIALIDADE”  do documento.
-- Público – Todos podem visualizar o conteúdo do documento. 
-- Limitado ao órgão – Todos lotados no órgão específico (TRF2, JFRJ ou JFES) onde o documento foi criado, podem visualizá-lo.
-- Limitado de pessoa para subsecretaria – Somente a pessoa, subscritora, e a lotação destinatária podem visualizar o documento.
-- Limitado de subsecretaria para pessoa - Somente a lotação subscritora e a pessoa destinatária podem visualizar o documento.
-- Limitado entre lotações – Somente as lotações, subscritora e destinatária, podem visualizar o documento.
-- Limitado entre pessoas - Somente as pessoas, subscritora e destinatária, podem visualizar o documento.
+
+* **Público**: Todos podem visualizar o conteúdo do documento. 
+
+* **Limitado ao órgão**: Todos lotados no órgão específico (TRF2, JFRJ ou JFES) onde o documento foi criado, podem visualizá-lo.
+
+* **Limitado de pessoa para subsecretaria**: Somente a pessoa, subscritora, e a lotação destinatária podem visualizar o documento.
+
+* **Limitado de subsecretaria para pessoa**: Somente a lotação subscritora e a pessoa destinatária podem visualizar o documento.
+
+* **Limitado entre lotações**: Somente as lotações, subscritora e destinatária, podem visualizar o documento.
+
+* **Limitado entre pessoas**: Somente as pessoas, subscritora e destinatária, podem visualizar o documento.
 
 De acordo com o selecionado, o documento apenas será recebido e lido pelo destinatário e pelo remetente, sendo um setor ou matrícula específica. 
 
@@ -79,9 +85,9 @@ De acordo com o selecionado, o documento apenas será recebido e lido pelo desti
 Digital / Físico
 ^^^^^^^^^^^^^^^^
 
-Digital: Marca o documento como digital, este documento terá a impressão opcional e receberá a assinatura digital através do certificado digital.
+* **Digital**: Marca o documento como digital, este documento terá a impressão opcional e receberá a assinatura digital através do certificado digital.
 
-Físico: Marca o documento como físico e a impressão obrigatória.
+* **Físico**: Marca o documento como físico e a impressão obrigatória.
 
 
 Subscritor

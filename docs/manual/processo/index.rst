@@ -65,12 +65,12 @@ Definir Perfil
 
 Deverá ser preenchido nos seguintes casos:
 
-a. Interessado – Quando recebido um requerimento e aberto um processo que possua nível de acesso restrito, o subscritor deverá cadastrar o requerente como interessado, a fim de que este possa também acompanhar o andamento do processo.
+* **Interessado**: Quando recebido um requerimento e aberto um processo que possua nível de acesso restrito, o subscritor deverá cadastrar o requerente como interessado, a fim de que este possa também acompanhar o andamento do processo.
 
-b. Gestor – Deve ser cadastrado pelo próprio gestor, em cada processo e subprocesso em que é gerente.
+* **Gestor**: Deve ser cadastrado pelo próprio gestor, em cada processo e subprocesso em que é gerente.
 
-c. Fiscal Adm – Serve para marcar os fiscais administrativo de um EOF de pagamento
+* **Fiscal Adm.**: Serve para marcar os fiscais administrativo de um EOF de pagamento
 
-d. Fiscal Téc. – Serve para marcar os fiscais técnico de um EOF de pagamento.
+* **Fiscal Téc.**: Serve para marcar os fiscais técnico de um EOF de pagamento.
 
 .. image:: perfil.png

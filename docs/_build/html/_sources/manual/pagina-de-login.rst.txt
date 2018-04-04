@@ -1,0 +1,5 @@
+ Página de Login
+============================================================
+
+Ao acessar o endereço será exibida a página de login com o texto de boas vindas, 
+Últimas Novidades: Notícias de atualizações ocorridas no SIGA, Identificação e link para apostilas do SIGA-DOC e SIGA Workflow

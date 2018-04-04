@@ -5,7 +5,15 @@ Siga - Manual do Usuário
    :maxdepth: 2
    :caption: Contents:
 
-   login
-   inicial
-   situacao
+   login/index
+   inicial/index
+   situacao/index
+   novo/index
+   mov/index
+   lote/index
+   substituicao/index
+   pesquisa/index
+   resumo/index
+   processo/index
+   faq/index
 

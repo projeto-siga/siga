@@ -29,3 +29,19 @@ sob uma matrícula (Em Elaboração) e 2 Despachos pendentes de assinatura(Trans
 (inclui os documentos relacionados à matrícula e disponibilizados também na coluna Atendente, já que 
 o atendente é uma das matrículas integrantes da lotação). No exemplo acima, Imagem 11 existem 1(um) 
 Processo físico para ser recebido pela lotação (A Receber (Físico)) e 3 Processos (Aguardando Andamento), entre outros.
+
+Para obter a descrição de cada uma dessas situações, posicione no Quadro de Documentos, o ponteiro do mouse sobre a 
+Situação ou sobre o quantitativo do Atendente ou da Lotação.
+
+.. image:: inicial-detalhe-descricao.png
+
+
+Localizando um Documento pelo Número
+------------------------------------
+
+Caso saiba o número do documento, e se for datado com o ano atual, e criado pelo mesmo órgão de que o usuário faz parte, 
+utilize o campo livre na página inicial do SIGA informando: tipo de documento + o número do mesmo, ex: mem560, ofi345... 
+O sistema possui uma máscara que formatará para o modelo “TRF2-MEM-2017/00560-A”. Caso o documento não seja do mesmo 
+órgão que o usuário, informe o número do documento, porém antecedido da sigla do órgão: “JFRJMEM560”, que será formatado 
+para “JFRJ-MEM-2017/00560-A”. O mesmo funciona para anos anteriores, “MEM2014/560”.                                
+

@@ -456,14 +456,14 @@ public class ExDocumentoDTO {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Matrícula");
 		map.put(2, "Órgão Integrado");
-		map.put(3, "Órgão Externo");
+		map.put(3, "Externo");
 		map.put(4, "Campo Livre");
 		return map;
 	}
 
 	public Map<Integer, String> getListaTipoEmitente() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Órgão Externo");
+		map.put(1, "Externo");
 		map.put(2, "Campo Livre");
 		return map;
 	}

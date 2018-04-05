@@ -86,3 +86,6 @@ sigaex/.tern-project
 sigasr/.tern-project
 *.orig
 *rebel.xml
+
+# Sphinx documentation
+docs/_build/

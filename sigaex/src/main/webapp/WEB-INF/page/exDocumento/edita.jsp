@@ -384,6 +384,7 @@
 										<c:when test='${exDocumentoDTO.tipoEmitente == 1}'>
 											<input type="hidden" name="campos" value="cpOrgaoSel.id" />
 											<siga:selecao propriedade="cpOrgao" inputName="exDocumentoDTO.cpOrgao" tema="simple" modulo="siga"/>										    
+											<span style="margin-left: 1em;">Subscritor: <input type="hidden" name="campos" value="nmSubscritorExt" /><input type="text" name="exDocumentoDTO.nmSubscritorExt" size="30" maxLength="256" value="${exDocumentoDTO.nmSubscritorExt}"/></span>
 										</c:when>
 										<c:when test='${exDocumentoDTO.tipoEmitente == 2}'>
 											<input type="hidden" name="campos" value="obsOrgao" />
@@ -391,8 +392,6 @@
 										</c:when>
 									</c:choose>
 								</siga:span>
-								
-								<span style="margin-left: 1em;">Subscritor: <input type="hidden" name="campos" value="nmSubscritorExt" /><input type="text" name="exDocumentoDTO.nmSubscritorExt" size="30" maxLength="256" value="${exDocumentoDTO.nmSubscritorExt}"/></span>
 								</td>
 							</tr>
 					</c:if>

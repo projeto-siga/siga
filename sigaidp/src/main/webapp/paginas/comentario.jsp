@@ -6,20 +6,21 @@
 	<b>Bem-vindo ao SIGA.</b>
 </h2>
 
-<h3 class="gt-table-head" style="text-align: center">O QUE É O SIGA?</h3>
+<h3 class="gt-table-head" style="text-align: center">O QUE É O
+	SIGA?</h3>
 
 <p>Sistema Integrado de Gestão Administrativa que dispõe dos
 	seguintes módulos: DOCUMENTOS (SIGA-DOC), WORKFLOW, SERVIÇOS, GESTÃO DO
 	CONHECIMENTO, RECURSOS HUMANOS, AGENDAS e TRANSPORTES. O uso de cada
 	módulo vai depender das permissões de cada usuário.</p>
 
-<h4><br>NOVIDADES DA VERSÃO 6.0</h4>
+<h4>
+	<br>NOVIDADES DA VERSÃO 6.0
+</h4>
 <p>O SIGA-Doc, um dos principais módulos do sistema, incorpora novas
 	funcionalidades que melhoram significativamente a racionalização da
-	produção de documentos e a gestão de seu ciclo de vida. As melhorias
-	são resultado do projeto "Administração 100% digital da Justiça Federal
-	da 2a Região" e visam conferir celeridade, eficiência e economia.
-	Principais inovações:</p>
+	produção de documentos e a gestão de seu ciclo de vida. Principais
+	inovações:</p>
 <ul>
 	<li>Na produção:
 		<ul>
@@ -62,7 +63,7 @@
 
 
 <p>
-	<br>Resultado final
+	<br>Resultado final 
 </p>
 <ul>
 	<li>Menor número de cliques;</li>

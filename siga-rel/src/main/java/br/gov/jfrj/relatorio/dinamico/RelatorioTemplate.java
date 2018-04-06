@@ -37,137 +37,137 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import ar.com.fdvs.dj.domain.constants.VerticalAlign;
 
 /**
- * USE ESTA CLASSE para a criação de relatórios rápidos.<br />
+ * USE ESTA CLASSE para a criação de relatórios rápidos.<br>
  * 
- * Procedimentos para criar relatorios no siga-ex<br />
+ * Procedimentos para criar relatorios no siga-ex<br>
  * 
- * RESUMO:<BR/>
- * 1) Criar a classe do relatório (extends RelatorioTemplate)<br/>
- * 2) Implementar os métodos:<br/>
+ * RESUMO:<br>
+ * 1) Criar a classe do relatório (extends RelatorioTemplate)<br>
+ * 2) Implementar os métodos:<br>
  * 2.1) construtor passando um Map <-- Com o parâmentros que podem ser usados no
- * relatório.<br/>
- * 2.2) configurarRelatorio() <-- Para definir o layout do relatório.<br/>
+ * relatório.<br>
+ * 2.2) configurarRelatorio() <-- Para definir o layout do relatório.<br>
  * 2.3) processarDados() <-- Para gerar um Set ou List contendo os dados do
- * relatório.<br/>
- * 3) Usar o relatório:<br/>
+ * relatório.<br>
+ * 3) Usar o relatório:<br>
  * Exemplo: MeuRelatorio r = new MeuRelatorio(null); r.gerar();
  * JasperViewer.viewReport(r.getRelatorioJasperPrint());
  * 
  * 
- * <br/>
+ * <br>
  * 
- * <br />
- * A) Crie a classe do relatorio<br />
+ * <br>
+ * A) Crie a classe do relatorio<br>
  * a.1) Crie um builder baseado no AbstractRelatorioBaseBuilder caso não use o
- * RelatorioTemplate ou RelatorioRapido<br />
+ * RelatorioTemplate ou RelatorioRapido<br>
  * a.2) Crie a classe do relatorio baseada no template
- * (br.gov.jfrj.siga.ex.relatorio.dinamico.RelatorioTemplate.java)<br />
- * <br />
- * 1) Crie o menu do relatório (/sigaex/WebContent/paginas/menus/menu.jsp)<br />
- * Exemplo:<br />
- * <li><ww:url id="url" action="relRelatorios"<br />
- * namespace="/expediente/rel"><br />
- * <ww:param name="nomeArquivoRel">relModelos.jsp</ww:param><br />
- * </ww:url> <ww:a href="%{url}">Relatório de Modelos</ww:a></li> <br />
+ * (br.gov.jfrj.siga.ex.relatorio.dinamico.RelatorioTemplate.java)<br>
+ * <br>
+ * 1) Crie o menu do relatório (/sigaex/WebContent/paginas/menus/menu.jsp)<br>
+ * Exemplo:<br>
+ * <li><ww:url id="url" action="relRelatorios"<br>
+ * namespace="/expediente/rel"><br>
+ * <ww:param name="nomeArquivoRel">relModelos.jsp</ww:param><br>
+ * </ww:url> <ww:a href="%{url}">Relatório de Modelos</ww:a></li> <br>
  * 
  * 
  * 2) Insira o código de teste do .jsp no relatorio.jsp
  * (/sigaex/WebContent/paginas/expediente/relatorio.jsp) <______ ATENÇÃO
- * /sigaex/WebContent/paginas/EXPEDIENTE!!!!!!/relatorio.jsp<br />
- * <br />
- * <br />
- * 2.1) Informe o nome do arquivo<br />
- * 2.2) Informe o actionName<br />
- * 2.3) Informe o título da página<br />
- * 2.4) Informe o nomeRelatorio<br />
- * <br />
- * Exemplo: <br />
- * </c:when><br />
- * <c:when test='${param.nomeArquivoRel eq "NOME_DO_RELATORIO.jsp"}'><br />
- * <c:set var="actionName" scope="request">emiteRelNOME_DO_RELATORIO</c:set><br />
- * <c:set var="titulo_pagina" scope="request">NOME_DO_RELATORIO</c:set><br />
- * <c:set var="nomeRelatorio" scope="request">relNOME_DO_RELATORIO.jsp</c:set><br />
- * </c:when><br />
- * <br />
- * 3) Crie a página .jsp que receberá os parâmetros do relatório<br />
- * /sigaex/WebContent/paginas/expediente/relatorios/<nomeDoRelatorio>.jsp<br />
- * <br />
- * 4) Crie a action no xwork.xml<br />
- * 4.1) Informe o nome da action (emiteRel...)<br />
- * 4.2) Informe a classe (br.gov.jfrj.webwork.action.ExRelatorioAction)<br />
- * 4.3) Informe o método que tratará o relatório<br />
- * 4.5) Informe o result name = relatorio<br />
- * 4.6) Informe o contentType = application/pdf<br />
- * 4.7) Informe o inputName = inputStream<br />
- * <br />
- * Ex:<br />
- * <br />
- * <action name="emiteRelDocumentosSubordinados"<br />
- * class="br.gov.jfrj.webwork.action.ExRelatorioAction"<br />
- * method="aRelDocumentosSubordinados"><br />
- * <result name="relatorio" type="stream"><br />
- * <param name="contentType">application/pdf</param><br />
- * <param name="inputName">inputStream</param><br />
- * </result><br />
- * </action><br />
- * <br />
+ * /sigaex/WebContent/paginas/EXPEDIENTE!!!!!!/relatorio.jsp<br>
+ * <br>
+ * <br>
+ * 2.1) Informe o nome do arquivo<br>
+ * 2.2) Informe o actionName<br>
+ * 2.3) Informe o título da página<br>
+ * 2.4) Informe o nomeRelatorio<br>
+ * <br>
+ * Exemplo: <br>
+ * </c:when><br>
+ * <c:when test='${param.nomeArquivoRel eq "NOME_DO_RELATORIO.jsp"}'><br>
+ * <c:set var="actionName" scope="request">emiteRelNOME_DO_RELATORIO</c:set><br>
+ * <c:set var="titulo_pagina" scope="request">NOME_DO_RELATORIO</c:set><br>
+ * <c:set var="nomeRelatorio" scope="request">relNOME_DO_RELATORIO.jsp</c:set><br>
+ * </c:when><br>
+ * <br>
+ * 3) Crie a página .jsp que receberá os parâmetros do relatório<br>
+ * /sigaex/WebContent/paginas/expediente/relatorios/<nomeDoRelatorio>.jsp<br>
+ * <br>
+ * 4) Crie a action no xwork.xml<br>
+ * 4.1) Informe o nome da action (emiteRel...)<br>
+ * 4.2) Informe a classe (br.gov.jfrj.webwork.action.ExRelatorioAction)<br>
+ * 4.3) Informe o método que tratará o relatório<br>
+ * 4.5) Informe o result name = relatorio<br>
+ * 4.6) Informe o contentType = application/pdf<br>
+ * 4.7) Informe o inputName = inputStream<br>
+ * <br>
+ * Ex:<br>
+ * <br>
+ * <action name="emiteRelDocumentosSubordinados"<br>
+ * class="br.gov.jfrj.webwork.action.ExRelatorioAction"<br>
+ * method="aRelDocumentosSubordinados"><br>
+ * <result name="relatorio" type="stream"><br>
+ * <param name="contentType">application/pdf</param><br>
+ * <param name="inputName">inputStream</param><br>
+ * </result><br>
+ * </action><br>
+ * <br>
  * 5) No br.gov.jfrj.webwork.action.ExRelatorioAction.java inclua o método que
- * vai gerar o relatório<br />
- * 5.1) Use um código como esse para gerar o relatorio<br />
- * <br />
- * public String aRelDocumentosSubordinados() throws Exception {<br />
- * <br />
+ * vai gerar o relatório<br>
+ * 5.1) Use um código como esse para gerar o relatorio<br>
+ * <br>
+ * public String aRelDocumentosSubordinados() throws Exception {<br>
+ * <br>
  * Map parametros = new HashMap<String, String>(); <-- Para passar parâmetros
- * para o relatório<br />
- * <br />
- * <br />
+ * para o relatório<br>
+ * <br>
+ * <br>
  * Obrigatório para
  * RelatórioRapido--->parametros.put("secaoUsuario",getRequest()
- * .getParameter("secaoUsuario"));<br />
- * <br />
+ * .getParameter("secaoUsuario"));<br>
+ * <br>
  * parametros.put("lotacao",getRequest().getParameter(
- * "lotacaoDestinatarioSel.sigla"));<br />
- * parametros.put("tipoFormaDoc", getRequest().getParameter("tipoFormaDoc"));<br />
+ * "lotacaoDestinatarioSel.sigla"));<br>
+ * parametros.put("tipoFormaDoc", getRequest().getParameter("tipoFormaDoc"));<br>
  * parametros.put("incluirSubordinados",
- * getRequest().getParameter("incluirSubordinados"));<br />
+ * getRequest().getParameter("incluirSubordinados"));<br>
  * parametros.put("lotacaoTitular",
- * getRequest().getParameter("lotacaoTitular"));<br />
- * parametros.put("orgaoUsuario",getRequest().getParameter("orgaoUsuario"));<br />
- * parametros.put("link_siga","http://" + getRequest().getServerName() + ":" <br />
- * + getRequest().getServerPort() <br />
- * + getRequest().getContextPath() + "/app/expediente/doc/exibir?id=");<br />
- * <br />
+ * getRequest().getParameter("lotacaoTitular"));<br>
+ * parametros.put("orgaoUsuario",getRequest().getParameter("orgaoUsuario"));<br>
+ * parametros.put("link_siga","http://" + getRequest().getServerName() + ":" <br>
+ * + getRequest().getServerPort() <br>
+ * + getRequest().getContextPath() + "/app/expediente/doc/exibir?id=");<br>
+ * <br>
  * RelatorioDocumentosSubordinados rel = new
- * RelatorioDocumentosSubordinados(parametros);<br />
- * <br />
- * rel.gerar();<br />
- * <br />
- * this.setInputStream(new ByteArrayInputStream( rel.getRelatorioPDF()));<br />
- * <br />
- * return "relatorio";<br />
- * <br />
- * <br />
- * 5.1) Na última linha do método coloque (return "relatorio";)<br />
- * <br />
+ * RelatorioDocumentosSubordinados(parametros);<br>
+ * <br>
+ * rel.gerar();<br>
+ * <br>
+ * this.setInputStream(new ByteArrayInputStream( rel.getRelatorioPDF()));<br>
+ * <br>
+ * return "relatorio";<br>
+ * <br>
+ * <br>
+ * 5.1) Na última linha do método coloque (return "relatorio";)<br>
+ * <br>
  * 
- * DICA: Para testar o relatório na própria classe, use o método main. Exemplo <br/>
- * public static void main(String[] args){<br/>
- * <br/>
- * try {<br/>
+ * DICA: Para testar o relatório na própria classe, use o método main. Exemplo <br>
+ * public static void main(String[] args){<br>
+ * <br>
+ * try {<br>
  * RelatorioEstatisticaProcedimento rep = new
- * RelatorioEstatisticaProcedimento(null);<br/>
- * rep.gerar();<br/>
- * JasperViewer.viewReport(rep.getRelatorioJasperPrint());<br/>
- * } catch (JRException e) {<br/>
- * // TODO Auto-generated catch block<br/>
- * e.printStackTrace();<br/>
- * } catch (DJBuilderException e) {<br/>
- * // TODO Auto-generated catch block<br/>
- * e.printStackTrace();<br/>
- * } catch (Exception e) {<br/>
- * // TODO Auto-generated catch block<br/>
- * e.printStackTrace();<br/>
- * }<br/>
+ * RelatorioEstatisticaProcedimento(null);<br>
+ * rep.gerar();<br>
+ * JasperViewer.viewReport(rep.getRelatorioJasperPrint());<br>
+ * } catch (JRException e) {<br>
+ * // TODO Auto-generated catch block<br>
+ * e.printStackTrace();<br>
+ * } catch (DJBuilderException e) {<br>
+ * // TODO Auto-generated catch block<br>
+ * e.printStackTrace();<br>
+ * } catch (Exception e) {<br>
+ * // TODO Auto-generated catch block<br>
+ * e.printStackTrace();<br>
+ * }<br>
  * 
  * @author kpf
  * 
@@ -181,8 +181,8 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 	/**
 	 * Caso o relatório precise receber parâmetros, use o construtor para
 	 * obrigar o utilizador do relatório a informá-los. O ideal é que as
-	 * validações dos parâmetros sejam feitas aqui no construtor<br />
-	 * Exemplo: <br />
+	 * validações dos parâmetros sejam feitas aqui no construtor<br>
+	 * Exemplo: <br>
 	 * public RelatorioDocumentosSubordinados(Map parametros) throws
 	 * DJBuilderException {
 	 * 
@@ -216,8 +216,8 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 	 * Caso queira um builder de relatório personalizado, estenda a classe
 	 * AbstractRelatorioBaseBuilder.<BR>
 	 * 
-	 * <br />
-	 * Exemplo:<br />
+	 * <br>
+	 * Exemplo:<br>
 	 * public AbstractRelatorioBaseBuilder configurarRelatorio() throws
 	 * DJBuilderException, JRException {
 	 * 
@@ -241,9 +241,9 @@ public abstract class RelatorioTemplate extends RelatorioRapido {
 	/**
 	 * Implemente este método para processar os dados que serão exibidos no
 	 * relatório. É neste método que se faz as consultas a um banco de dados,
-	 * por exemplo. <br />
+	 * por exemplo. <br>
 	 * CUIDADO: A coleção de dados deve ser ordenada, senão os dados vão
-	 * aparecer desordenados no relatório. Exemplo:<br />
+	 * aparecer desordenados no relatório. Exemplo:<br>
 	 * public Collection processarDados() {
 	 * 
 	 * List<String> d = new LinkedList<String>(); Query q =

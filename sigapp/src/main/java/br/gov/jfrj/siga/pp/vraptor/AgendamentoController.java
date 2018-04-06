@@ -262,7 +262,7 @@ public class AgendamentoController extends PpController {
 		UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao, sesb_pessoaSessao);
 		if (objUsuario != null) {
 			// Pega o usuario do sistema, e, filtra os locais(salas) daquele forum onde ele esta.
-			listSalas = ((List) Locais.AR.find("forumFk='" + objUsuario.getForumFk().getCod_forum() + "' order by ordem_apresentacao ").fetch()); // isso não dá erro no caso de retorno vazio.
+			listSalas = ((List) Locais.AR.find("forumFk='" + objUsuario.getForumFk().getCod_forum() + "' order by ordem_apresentacao ").fetch()); // isso nÃ£o dÃ¡ erro no caso de retorno vazio.
 			List<Agendamentos> listAgendamentosMeusSala = new ArrayList();
 			if(!(frm_cod_local==null||frm_data_ag.isEmpty())){
 				//lista os agendamentos do dia, e, da lotacao do cadastrante
@@ -330,11 +330,11 @@ public class AgendamentoController extends PpController {
 				EntityManager em = emf.createEntityManager();
 				  
 				em.getTransaction().begin();
-				// persiste o lote de hor�rios 
+				// persiste o lote de horários 
 				for (int i = 0; i < lote; i++) {
 					System.out.println("Hora a persistir: " + hrAux);
 					if(hrAux.trim().length() < 2){
-						//acerta o tamanho do conte�do da hora de hrAux
+						//acerta o tamanho do conteúdo da hora de hrAux
 						hrAux="0"+hrAux; 
 					}
 					objAgendamento.setHora_ag(hrAux + minAux);
@@ -387,7 +387,7 @@ public class AgendamentoController extends PpController {
             // Pega o usuario do sistema, e, filtra os locais(salas) daquele forum onde ele esta.
             listSalas = (List) Locais.AR.find(
                     "cod_forum='" + objUsuario.getForumFk().getCod_forum()
-                            + "' order by ordem_apresentacao ").fetch(); // isso não dá erro no caso de retorno vazio.
+                            + "' order by ordem_apresentacao ").fetch(); // isso nÃ£o dÃ¡ erro no caso de retorno vazio.
             listPeritos =  (List) Peritos.AR.find("1=1 order by nome_perito").fetch();
             //   buscar o nome do perito fixo na lista se existir
             if(fixo_perito_juizo!=null){
@@ -515,7 +515,7 @@ public class AgendamentoController extends PpController {
         String matriculaSessao = getCadastrante().getMatricula().toString();
         String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
         String lotacaoSessao = getCadastrante().getLotacao().getSiglaCompleta();
-        // System.out.println("A LOTACAO DO CADASTRANTE E�: " + lotacaoSessao);
+        // System.out.println("A LOTACAO DO CADASTRANTE E´: " + lotacaoSessao);
         // busca a permissao do usuario
         UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao, sesb_pessoaSessao);
         // verifica se existe permissao

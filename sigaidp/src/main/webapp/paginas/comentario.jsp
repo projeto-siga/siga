@@ -11,7 +11,7 @@
 
 <p>Sistema Integrado de Gestão Administrativa que dispõe dos
 	seguintes módulos: DOCUMENTOS (SIGA-DOC), WORKFLOW, SERVIÇOS, GESTÃO DO
-	CONHECIMENTO, RECURSOS HUMANOS, AGENDAS e TRANSPORTES. O uso de cada
+	CONHECIMENTO, AGENDAS e TRANSPORTES. O uso de cada
 	módulo vai depender das permissões de cada usuário.</p>
 
 <h4>

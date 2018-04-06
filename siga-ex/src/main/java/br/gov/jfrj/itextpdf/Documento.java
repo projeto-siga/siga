@@ -242,7 +242,7 @@ public class Documento {
 		return retorno;
 	}
 
-	public static byte[] stamp(byte[] abPdf, String sigla, boolean rascunho,
+	public static byte[] stamp(byte[] abPdf, String sigla, boolean rascunho, boolean copia,
 			boolean cancelado, boolean semEfeito, boolean internoProduzido,
 			String qrCode, String mensagem, Integer paginaInicial,
 			Integer paginaFinal, Integer cOmitirNumeracao, String instancia,
@@ -464,61 +464,17 @@ public class Documento {
 				}
 	
 				if (cancelado) {
-					over.saveState();
-					final PdfGState gs = new PdfGState();
-					gs.setFillOpacity(0.5f);
-					over.setGState(gs);
-					over.setColorFill(Color.GRAY);
-					over.beginText();
-					over.setFontAndSize(helv, 72);
-					over.showTextAligned(Element.ALIGN_CENTER, "CANCELADO",
-							r.getWidth() / 2, r.getHeight() / 2, 45);
-					over.endText();
-					over.restoreState();
+					tarjar("CANCELADO", over, helv, r);
+				} else if (rascunho && copia) {
+					tarjar("CÓPIA DE MINUTA", over, helv, r);
 				} else if (rascunho) {
-					over.saveState();
-					final PdfGState gs = new PdfGState();
-					gs.setFillOpacity(0.5f);
-					over.setGState(gs);
-					over.setColorFill(Color.GRAY);
-					over.beginText();
-					over.setFontAndSize(helv, 72);
-					over.showTextAligned(Element.ALIGN_CENTER, "MINUTA",
-							r.getWidth() / 2, r.getHeight() / 2, 45);
-					over.endText();
-					over.restoreState();
+					tarjar("MINUTA", over, helv, r);
 				} else if (semEfeito) {
-					over.saveState();
-					final PdfGState gs = new PdfGState();
-					gs.setFillOpacity(0.5f);
-					over.setGState(gs);
-					over.setColorFill(Color.GRAY);
-					over.beginText();
-					over.setFontAndSize(helv, 72);
-					over.showTextAligned(Element.ALIGN_CENTER, "SEM EFEITO",
-							r.getWidth() / 2, r.getHeight() / 2, 45);
-					over.endText();
-					over.restoreState();
-				}
-	
-				// if (!rascunho
-				// && request.getRequestURL().indexOf("http://laguna/") == -1) {
-	
-				if (!rascunho
-						&& !cancelado
-						&& !semEfeito
-						&& !SigaExProperties.isAmbienteProducao()) {
-					over.saveState();
-					final PdfGState gs = new PdfGState();
-					gs.setFillOpacity(0.5f);
-					over.setGState(gs);
-					over.setColorFill(Color.GRAY);
-					over.beginText();
-					over.setFontAndSize(helv, 72);
-					over.showTextAligned(Element.ALIGN_CENTER, "INVÁLIDO",
-							r.getWidth() / 2, r.getHeight() / 2, 45);
-					over.endText();
-					over.restoreState();
+					tarjar("SEM EFEITO", over, helv, r);
+				} else if (copia) {
+					tarjar("CÓPIA", over, helv, r);
+				} else if (!SigaExProperties.isAmbienteProducao()) {
+					tarjar("INVÁLIDO", over, helv, r);
 				}
 	
 				// Imprime um circulo com o numero da pagina dentro.
@@ -618,6 +574,20 @@ public class Documento {
 			stamp.close();
 			return bo2.toByteArray();
 		}
+	}
+
+	private static void tarjar(String tarja, PdfContentByte over, final BaseFont helv, Rectangle r) {
+		over.saveState();
+		final PdfGState gs = new PdfGState();
+		gs.setFillOpacity(0.5f);
+		over.setGState(gs);
+		over.setColorFill(Color.GRAY);
+		over.beginText();
+		over.setFontAndSize(helv, 72);
+		over.showTextAligned(Element.ALIGN_CENTER, tarja,
+				r.getWidth() / 2, r.getHeight() / 2, 45);
+		over.endText();
+		over.restoreState();
 	}
 
 	// Desenha texto ao redor de um circulo, acima ou abaixo
@@ -790,7 +760,7 @@ public class Documento {
 
 				byte[] ab = !estampar ? an.getArquivo().getPdf() : stamp(an
 						.getArquivo().getPdf(), sigla, an.getArquivo()
-						.isRascunho(), an.getArquivo().isCancelado(), an
+						.isRascunho(), an.isCopia(), an.getArquivo().isCancelado(), an
 						.getArquivo().isSemEfeito(), an.getArquivo()
 						.isInternoProduzido(), an.getArquivo().getQRCode(), an
 						.getArquivo().getMensagem(), an.getPaginaInicial(),

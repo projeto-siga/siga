@@ -353,7 +353,7 @@
 						</tr>
 					</c:if>
 				
-					<c:if test='${exDocumentoDTO.tipoDocumento == "externo" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
+					<c:if test='${exDocumentoDTO.tipoDocumento == "externo"}'>
 						<tr class="header">
 							<td colspan="4">Dados do Documento Original</td>
 						</tr>

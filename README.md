@@ -1,61 +1,18 @@
-Projeto Siga
-============
+Siga - Sistema de Gestão Administrativa
+=======================================
 
-## Dependências do Projeto
-* [Git](https://windows.github.com/)
-* Maven ftp://mirror.reverse.net/pub/apache/maven/maven-3/3.2.3/binaries/apache-maven-3.2.3-bin.zip
-* [Java JDK 1.7](http://download.oracle.com/otn-pub/java/jdk/7u67-b01/jdk-7u67-windows-x64.exe)
-* [JBoss EAP 6.3](http://www.redhat.com/j/elqNow/elqRedir.htm?ref=https://www.jboss.org/download-manager/content/origin/files/sha256/62/627773f1798623eb599bbf7d39567f60941a706dc971c17f5232ffad028bc6f4/jboss-eap-6.2.0.zip)  
-* [Play! Framework 1.3.x] 
+O Siga é composto de diversos módulos:
 
-### Variáveis de ambiente
-* **MAVEN_HOME**=C:\Desenvolvimento\apache-maven-3.2.1  
-* **JAVA_HOME**=C:\Program Files\Java\jdk1.7  
-* **JBOSS_HOME**=C:\Desenvolvimento\jboss-eap-6.2
-* O trecho abaixo deverá ser **ACRESCENTADO** no final da variável **PATH**:
-* **PATH**=;%JAVA_HOME%\bin;%MAVEN_HOME%\bin;
+- Siga-Doc: Gestão Documental
+- Siga-WF: Worklow
+- Siga-GI: Gestão de Identidade
+- Siga-GC: Gestão de Conhecimento
+- Siga-SR: Serviços e Tickets
 
-#### Testando variáveis de ambiente
-Abra um ***novo*** prompt de comando do Windows (cmd) e execute:
-```
-java -version
-mvn -version
-```
+O módulo mas popular, o Siga-Doc, é capaz de controlar o trâmite de documentos digitais ou físico, processos administrativos ou expedientes, usando assinatura com certificado digital ou simplesmente assinatura com login e senha. Este módulo foi desenvolvido seguindo os requisitos do e-Arq, portanto, tem um elevado grau de aderência.
 
-Ambos deverão mostrar a versão dos respectivos programas, caso mostre erro, algum desses passos foi configurado incorretamente.
+Para saber mais sobre o Siga-Doc, clique [aqui](https://github.com/projeto-siga/siga/wiki/Sobre-o-Siga-Doc).
 
-## Deploy
-Para gerar o pacote para deploy do siga, é necessário entrar no diretório projeto-siga e executa a task package do maven.  
-PS: (A primeira vez isso pode demorar bastante).
-```
-   mvn clean package
-```
+Para instalar uma versão de testes do Siga-Doc, utilizando o Docker, clique [aqui](https://github.com/projeto-siga/docker).
 
-## JBoss
-### Configuração
-* Deploy do drive oracle JDBC. Copiar o arquivo ***projeto-siga/configuracao/ojdbc6.jar*** para ***%JBOSS_HOME%/standalone/deployments/***
-* Substituir o arquivo ***%JBOSS_HOME%/standalone/configuracao/standalone.xml*** pelo arquivo ***projeto-siga/configuration/standalone.xml***.
-* Colocar o arquivo ***projeto-siga/configuracao/siga.properties*** em ***%JBOSS_HOME%/standalone/configuration/***
-
-## Play
-* JBoss -> Criar o módulo do Play! Framework, copiando a pasta ***projeto-siga/configuracao/Play/modulo/sigadoc*** em ***%JBOSS_HOME%/modules/***  
-* Maven -> Instalar a biblioteca no repositório local do maven executando o arquivo ***projeto-siga/configuracao/Play/maven/configure.bat***
-
-## Fonte do Play
-* Para compilar: na pasta framework, executar ant package
-### Administração
-[Interface de administração](http://localhost:9990)
-usuário: admin
-password: admin@123
-
-* Start:
-Dentro do diretório ***%JBOSS_HOME%/bin executar:
-```
-standalone.bat
-```
-* Stop:
-```
-Ctrl + C
-```
-
-
+Para tirar dúvidas, entre em contato através do email crivano(at)jfrj.jus.br

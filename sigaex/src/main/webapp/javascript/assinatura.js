@@ -351,7 +351,8 @@ function AssinarDocumentos(Copia, oElm){
 				process.push(function(){Log(gNome + ": Gravando assinatura de " + gRet.assinante)});
 
 				process.push(function(){
-					var DadosDoPost = "sigla=" + encodeURIComponent(gNome) + "&copia=" + Copia + "&assinaturaB64=" + encodeURIComponent(gRet.assinaturaB64) + "&assinante=" + encodeURIComponent(gRet.assinante);
+					// Nato: Acrescentei um tramitar = false para garantir que assinatura em lote não provoque trâmite. O ideal é remover esse JS e a página antiga de assinatura em lote.
+					var DadosDoPost = "tramitar=false&sigla=" + encodeURIComponent(gNome) + "&copia=" + Copia + "&assinaturaB64=" + encodeURIComponent(gRet.assinaturaB64) + "&assinante=" + encodeURIComponent(gRet.assinante);
 					if (gPolitica){
 						DadosDoPost = DadosDoPost + "&certificadoB64=" + encodeURIComponent(gCertificadoB64);
 						DadosDoPost = DadosDoPost + "&atributoAssinavelDataHora=" + gAtributoAssinavelDataHora;
@@ -450,7 +451,7 @@ function AssinarDocumentosSenha(Copia, oElm){
 				process.push(function(){Log(gNome + ": Gravando assinatura de " + $("#nomeUsuarioSubscritor").val())});
 
 				process.push(function(){
-					var DadosDoPost = "sigla=" + encodeURIComponent(gNome) + "&copia=" + Copia + "&nomeUsuarioSubscritor=" + encodeURIComponent($("#nomeUsuarioSubscritor").val()) + "&senhaUsuarioSubscritor=" + encodeURIComponent($("#senhaUsuarioSubscritor").val());
+					var DadosDoPost = "tramitar=false&sigla=" + encodeURIComponent(gNome) + "&copia=" + Copia + "&nomeUsuarioSubscritor=" + encodeURIComponent($("#nomeUsuarioSubscritor").val()) + "&senhaUsuarioSubscritor=" + encodeURIComponent($("#senhaUsuarioSubscritor").val());
 
 					//alert("oNome: " + oNome.value);
 					var aNome = gNome.split(":");

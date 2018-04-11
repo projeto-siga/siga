@@ -10,7 +10,7 @@
 	SIGA?</h3>
 
 <p>Sistema Integrado de Gestão Administrativa que dispõe dos
-	seguintes módulos: DOCUMENTOS (SIGA-DOC), WORKFLOW, SERVIÇOS, GESTÃO DO
+	seguintes módulos: DOCUMENTOS (SIGA-DOC), FLUXOS DE TRABALHO, SERVIÇOS, GESTÃO DO
 	CONHECIMENTO, AGENDAS e TRANSPORTES. O uso de cada
 	módulo vai depender das permissões de cada usuário.</p>
 
@@ -34,7 +34,7 @@
 	<li>Na tramitação do documento:
 		<ul>
 			<li>Simplificação dos ícones e das ações;</li>
-			<li>Shortcuts de teclado para os principais links e botões;</li>
+			<li>Teclas de atalho para os principais links e botões;</li>
 			<li>Inclusão de cópia de outros documentos do Siga-Doc;</li>
 			<li>Único campo para inclusão de novos documentos;</li>
 			<li>Despachos passam a receber numeração, o que possibilita a
@@ -45,7 +45,7 @@
 			<li>Criação da funcionalidade "Arquivos Auxiliares", que
 				possibilita a inserção, o versionamento e a consulta de documentos
 				em formatos que não sejam PDF e facultada a edição de arquivos do
-				Word, Excel e PowerPoint;</li>
+				Microsoft Word, Excel e PowerPoint;</li>
 		</ul>
 	</li>
 

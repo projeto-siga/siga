@@ -839,7 +839,7 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 								+ o.urlPdf
 								+ "&semmarcas=1'; if (gPolitica){gUrlDocumento = gUrlDocumento + '&certificadoB64=' + encodeURIComponent(gCertificadoB64);};");
 				process.push(function() {
-					Log(o.nome + ": Buscando no servidor...")
+					Log(gNome + ": Buscando no servidor...")
 				});
 				process.push(function() {
 					gDocumento = Conteudo(gUrlDocumento);
@@ -850,13 +850,13 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 
 				var ret;
 				process.push(function() {
-					Log(o.nome + ": Assinando...")
+					Log(gNome + ": Assinando...")
 				});
 				process.push(function() {
 					gRet = provider.assinar(gDocumento);
 				});
 				process.push(function() {
-					Log(o.nome + ": Gravando assinatura de " + gRet.assinante)
+					Log(gNome + ": Gravando assinatura de " + gRet.assinante)
 				});
 
 				process.push(function() {
@@ -909,10 +909,6 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 				provider.assinar(signable);
 			}
 		} else {
-			process.push(function() {
-				Log(o.nome + ": Gravando assinatura com senha de " + gLogin)
-			});
-
 			process.push("gNome='" + o.nome + "'; gAutenticar = "
 					+ (o.hasOwnProperty('autenticar') ? o.autenticar : Copia)
 					 + "; gTramitar = "
@@ -923,8 +919,12 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 					+ o.urlPostPassword + "';");
 
 			process.push(function() {
-				var id = o.nome ? o.nome.split(':')[1] : null;
-				var DadosDoPost = "id=" + id + "&sigla=" + o.nome
+				Log(gNome + ": Gravando assinatura com senha de " + gLogin)
+			});
+
+			process.push(function() {
+				var id = gNome ? gNome.split(':')[1] : null;
+				var DadosDoPost = "id=" + id + "&sigla=" + gNome
 						+ "&nomeUsuarioSubscritor=" + gLogin
 						+ "&senhaUsuarioSubscritor=" + gPassword + "&copia="
 						+ gAutenticar;
@@ -1035,15 +1035,6 @@ function identificarOperacoes() {
 				operacao.usePassword = false;
 			} else {
 				operacao.usePassword = oChkPwd.checked;
-			}
-
-			var oChkTransf = document.getElementsByName("ad_password_"
-					+ operacao.codigo)[0];
-			
-			if (oChkTransf == null) {
-				operacao.transfer = false;
-			} else {
-				operacao.transfer = oChkTransf.checked;
 			}
 
 			var oChk = document.getElementsByName("ad_chk_" + operacao.codigo)[0];

@@ -332,6 +332,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 */
 	public void setSigla(String sigla) {
 		sigla = sigla.trim().toUpperCase();
+		if (sigla != null && sigla.contains(":"))
+			sigla = sigla.split(":")[0];
 
 		Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
 		for (CpOrgaoUsuario ou : ExDao.getInstance().listarOrgaosUsuarios()) {

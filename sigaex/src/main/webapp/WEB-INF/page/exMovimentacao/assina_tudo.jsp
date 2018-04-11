@@ -9,7 +9,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <siga:pagina
-	titulo="Assinatura em Lote de Documentos, Despachos e Anexos" compatibilidade="IE=EmulateIE9">
+	titulo="Assinatura em Lote de Documentos, Despachos e Anexos"
+	compatibilidade="IE=EmulateIE9">
 
 	<script type="text/javascript" language="Javascript1.1">
 		$(document).ready(
@@ -80,16 +81,14 @@
 						<tr class="button">
 							<td>
 								<div id="dados-assinatura" style="visible: hidden">
-									<input type="hidden" name="ad_url_base"
-										value="" />
-									<input type="hidden" name="ad_url_next"
-										value="/siga/app/principal" />
+									<input type="hidden" name="ad_url_base" value="" /> <input
+										type="hidden" name="ad_url_next" value="/siga/app/principal" />
 									<c:set var="botao" value="" />
 									<c:if test="${autenticando}">
 										<c:set var="botao" value="autenticando" />
 									</c:if>
 									<c:set var="lote" value="false" />
-								</div> <tags:assinatura_botoes assinar="true"/>
+								</div> <tags:assinatura_botoes assinar="true" />
 							</td>
 						</tr>
 					</table>
@@ -138,18 +137,27 @@
 									</c:if>
 									<tr class="even">
 
-										<td style="text-align: center"><c:if
-												test="${assdoc.podeAssinar}">
-												<input type="checkbox" name="${x}" value="true" ${x_checked}
-													class="chk-assinar" />
-											</c:if></td>
+										<td style="text-align: center"><c:choose>
+												<c:when test="${assdoc.podeAssinar}">
+													<input type="checkbox" name="${x}" value="true"
+														${x_checked} class="chk-assinar" />
+												</c:when>
+												<c:otherwise>
+													<input type="hidden" name="${x}" value="false" />
+												</c:otherwise>
+											</c:choose></td>
 										<td style="text-align: center"></td>
-										<td style="text-align: center"><c:if
-												test="${assdoc.podeSenha}">
-												<input type="checkbox"
-													name="ad_password_${assdoc.doc.idDoc}" value="true"
-													class="chk-senha" />
-											</c:if></td>
+										<td style="text-align: center"><c:choose>
+												<c:when test="${assdoc.podeSenha}">
+													<input type="checkbox"
+														name="ad_password_${assdoc.doc.idDoc}" value="true"
+														class="chk-senha" />
+												</c:when>
+												<c:otherwise>
+													<input type="hidden" name="ad_password_${assdoc.doc.idDoc}"
+														value="false" />
+												</c:otherwise>
+											</c:choose></td>
 										<td><a target="_blank"
 											href="/sigaex/app/expediente/doc/exibir?sigla=${assdoc.doc.sigla}">${assdoc.doc.codigo}</a>
 										</td>
@@ -159,6 +167,9 @@
 										<td>${assdoc.doc.descrFormaDoc}</td>
 										<td>${assdoc.doc.descrDocumento}</td>
 									</tr>
+									<!-- Nato: desabilitando o trâmite automático na assinatura em lote -->
+									<input type="hidden" name="ad_tramitar_${assdoc.doc.idDoc}"
+										value="false" />
 									<input type="hidden" name="ad_descr_${assdoc.doc.idDoc}"
 										value="${assdoc.doc.sigla}" />
 									<input type="hidden" name="ad_url_pdf_${assdoc.doc.idDoc}"
@@ -168,7 +179,7 @@
 									<input type="hidden"
 										name="ad_url_post_password_${assdoc.doc.idDoc}"
 										value="/sigaex/app/expediente/mov/assinar_senha_gravar" />
-										
+
 									<input type="hidden" name="ad_id_${assdoc.doc.idDoc}"
 										value="${titular.cpfPessoa}__${assdoc.doc.codigoCompacto}" />
 									<input type="hidden" name="ad_description_${assdoc.doc.idDoc}"
@@ -199,8 +210,9 @@
 												</c:if></td>
 											<td style="text-align: center"><c:if
 													test="${podeAssinarComSenha}">
-													<input type="checkbox" name="ad_chk_mov${assmov.mov.idMov}"
-														id="${x}" value="true" class="chk-senha" />
+													<input type="checkbox"
+														name="ad_password_mov${assmov.mov.idMov}" id="${x}"
+														value="true" class="chk-senha" />
 												</c:if></td>
 											<td><a style="padding-left: 2em;" target="_blank"
 												href="/sigaex/app/arquivo/exibir?popup=true&id=688&arquivo=${assmov.mov.nmPdf}">${assmov.mov.referencia}</a>
@@ -211,6 +223,9 @@
 											<td>${assmov.mov.exTipoMovimentacao.sigla}</td>
 											<td>${assmov.mov.obs}</td>
 										</tr>
+										<!-- Nato: desabilitando o trâmite automático na assinatura em lote -->
+										<input type="hidden" name="ad_tramitar_${assmov.mov.idMov}"
+											value="false" />
 										<input type="hidden" name="ad_descr_mov${assmov.mov.idMov}"
 											value="${assdoc.doc.sigla}:${assmov.mov.idMov}" />
 										<input type="hidden" name="ad_url_pdf_mov${assmov.mov.idMov}"
@@ -220,10 +235,11 @@
 										<input type="hidden"
 											name="ad_url_post_password_mov${assmov.mov.idMov}"
 											value="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" />
-											
+
 										<input type="hidden" name="ad_id_mov${assmov.mov.idMov}"
 											value="${titular.cpfPessoa}__${fn:replace(assmov.mov.referencia, ':', '_')}" />
-										<input type="hidden" name="ad_description_mov${assmov.mov.idMov}"
+										<input type="hidden"
+											name="ad_description_mov${assmov.mov.idMov}"
 											value="${assmov.mov.obs}" />
 										<input type="hidden" name="ad_kind_mov${assmov.mov.idMov}"
 											value="${assmov.mov.exTipoMovimentacao.sigla}" />
@@ -237,5 +253,5 @@
 		</div>
 	</div>
 
-	<tags:assinatura_rodape/>
+	<tags:assinatura_rodape />
 </siga:pagina>

@@ -3154,7 +3154,7 @@ public class ExBL extends CpBL {
 				dtDocCalendar.setTime(doc.getDtDoc());
 
 				if (c.before(dtDocCalendar))
-					throw new Exception(
+					throw new AplicacaoException(
 							"não é permitido criar documento com data futura");
 			}
 

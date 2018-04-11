@@ -43,6 +43,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -82,10 +83,8 @@ import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExPreenchimento;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
-import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
-import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
@@ -648,6 +647,8 @@ public class ExDocumentoController extends ExController {
 			l.add(exDocumentoDTO.getModelo().getExNivelAcesso());
 			exDocumentoDTO.setListaNivelAcesso(l);
 		}
+		
+		getPreenchimentos(exDocumentoDTO);
 
 		final Map<String, String[]> parFreeMarker = new HashMap<>();
 		setPar(getRequest().getParameterMap());
@@ -1737,6 +1738,10 @@ public class ExDocumentoController extends ExController {
 			}
 		}
 
+		if (getPreenchimentos(exDocumentoDTO).size() <= 1) {
+			exDocumentoDTO.setPreenchimento(0L);
+		}
+
 		if (mod != null && exDocumentoDTO.isAlterouModelo()) {
 			if (exDocumentoDTO.getIdTpDoc() != null) {
 				boolean permitido = false;
@@ -1753,6 +1758,23 @@ public class ExDocumentoController extends ExController {
 				for (ExTipoDocumento tp : mod.getExFormaDocumento().getExTipoDocumentoSet()) {
 					exDocumentoDTO.setIdTpDoc(tp.getId());
 					break;
+				}
+			}
+			
+			boolean naLista = false;
+			final Set<ExPreenchimento> preenchimentos = getPreenchimentos(exDocumentoDTO);
+			if (preenchimentos != null && preenchimentos.size() > 0) {
+				for (final ExPreenchimento exp : preenchimentos) {
+					if (exp.getIdPreenchimento().equals(
+							exDocumentoDTO.getPreenchimento())) {
+						naLista = true;
+						break;
+					}
+				}
+				if (!naLista) {
+					exDocumentoDTO
+							.setPreenchimento(((ExPreenchimento) (preenchimentos
+									.toArray())[0]).getIdPreenchimento());
 				}
 			}
 
@@ -2207,6 +2229,44 @@ public class ExDocumentoController extends ExController {
 								exDocumentoDTO.getAutuando()));
 		
 		return exDocumentoDTO.getModelos();
+	}
+
+	private Set<ExPreenchimento> getPreenchimentos(
+			final ExDocumentoDTO exDocumentoDTO) {
+		if (exDocumentoDTO.getPreenchSet() != null) {
+			return exDocumentoDTO.getPreenchSet();
+		}
+
+		exDocumentoDTO.setPreenchSet(new LinkedHashSet<ExPreenchimento>());
+
+		ExPreenchimento preench = new ExPreenchimento();
+		if (exDocumentoDTO.getIdMod() != null
+				&& exDocumentoDTO.getIdMod() != 0L) {
+			preench.setExModelo(dao().consultar(exDocumentoDTO.getIdMod(),
+					ExModelo.class, false));
+		}
+
+		final DpLotacao lota = new DpLotacao();
+		lota.setIdLotacaoIni(getLotaTitular().getIdLotacaoIni());
+		final List<DpLotacao> lotacaoSet = dao().consultar(lota, null);
+
+		exDocumentoDTO.getPreenchSet().add(
+				new ExPreenchimento(0, null, " [Em branco] ", null));
+
+		if (exDocumentoDTO.getIdMod() != null && exDocumentoDTO.getIdMod() != 0) {
+			for (final DpLotacao lotacao : lotacaoSet) {
+				preench.setDpLotacao(lotacao);
+				try {
+					exDocumentoDTO.getPreenchSet().addAll(
+							dao().consultar(preench));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return exDocumentoDTO.getPreenchSet();
 	}
 
 	private List<ExNivelAcesso> getListaNivelAcesso(

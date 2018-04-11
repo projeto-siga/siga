@@ -236,17 +236,17 @@
 						<td style="vertical-align: middle">Personalização:</td>
 						<td colspan="3">
 							<p><span style="margin-right: 1em;">Função:
-								<input type="text" id="personalizarFuncao" size="30" maxlength="29">			
+								<input type="text" id="personalizarFuncao" size="30" maxlength="125">			
 							</span>
 							<span style="margin-right: 1em;">Lotação:
-								<input type="text" id="personalizarUnidade" size="30" maxlength="29">			
+								<input type="text" id="personalizarUnidade" size="30" maxlength="125">			
 							</span></p>
 							<p>
 							<span style="margin-right: 1em;">Cidade:
-								<input type="text" id="personalizarLocalidade" size="30" maxlength="29">			
+								<input type="text" id="personalizarLocalidade" size="30" maxlength="125">			
 							</span>
 							<span style="margin-right: 1em;">Nome:
-								<input type="text" id="personalizarNome" size="30" maxlength="38">			
+								<input type="text" id="personalizarNome" size="30" maxlength="125">			
 							</span></p>
 							<input type="hidden" name="campos" value="nmFuncaoSubscritor" />
 							<input type="hidden" name="exDocumentoDTO.nmFuncaoSubscritor" maxlength="128" id="frm_nmFuncaoSubscritor" value="${exDocumentoDTO.nmFuncaoSubscritor}"/>							
@@ -299,6 +299,31 @@
 							</siga:span>
 					</tr>
 </c:if>
+
+					<c:if test='${ exDocumentoDTO.tipoDocumento == "interno" }'>
+						<tr>
+							<td>Preenchimento Automático:</td>
+							<input type="hidden" name="campos" value="preenchimento" />
+							<td colspan="3">
+								
+								<select  id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()">
+									<c:forEach items="${exDocumentoDTO.preenchimentos}" var="item">
+										<option value="${item.idPreenchimento}" ${item.idPreenchimento == exDocumentoDTO.preenchimento ? 'selected' : ''}>
+											${item.nomePreenchimento}
+										</option>  
+									</c:forEach>
+								</select>&nbsp;								
+									 
+								<c:if test="${exDocumentoDTO.preenchimento==0}">
+									<c:set var="desabilitaBtn"> disabled="disabled" </c:set>
+								</c:if>
+								 
+								<input type="button" name="btnAlterar" value="Alterar" onclick="javascript:alteraPreench()"${desabilitaBtn}>&nbsp;								
+								<input type="button" name="btnRemover" value="Remover" onclick="javascript:removePreench()"${desabilitaBtn} >&nbsp;								
+								<input type="button" value="Adicionar" name="btnAdicionar" onclick="javascript:adicionaPreench()">
+							</td>
+						</tr>
+					</c:if>
 
 					<tr style="display:<c:choose><c:when test="${exDocumentoDTO.modelo.exClassificacao!=null}">none</c:when><c:otherwise>visible</c:otherwise></c:choose>">
 						<td>Classificação:</td>

@@ -121,7 +121,7 @@ public class Documento {
 	private static final float STAMP_BORDER_IN_CM = 0.2f;
 
 	private static final Pattern pattern = Pattern
-		.compile("([0-9A-Z\\-\\/]+(?:\\.[0-9]+)?)(:?[0-9]*)(?:\\.pdf|\\.html|\\.zip|\\.rtf)?");
+		.compile("^([0-9A-Z\\-\\/]+(?:\\.[0-9]+)?(?:V[0-9]+)?)(:[0-9]+)?(?:\\.pdf|\\.html|\\.zip|\\.rtf)?$");
 
 	private static Log log = LogFactory.getLog(Documento.class);
 
@@ -150,7 +150,7 @@ public class Documento {
 		final Matcher m = pattern.matcher(requestURI);
 		if (m.find()) {
 			sMovId = m.group(2);
-			if (sMovId.length() <= 1)
+			if (sMovId == null || sMovId.length() <= 1)
 				return null;
 			final long l = Long.parseLong(sMovId.substring(1));
 			for (ExMovimentacao movAux : mob.getExMovimentacaoSet()) {

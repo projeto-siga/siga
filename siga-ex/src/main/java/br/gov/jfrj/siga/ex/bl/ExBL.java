@@ -5631,7 +5631,7 @@ public class ExBL extends CpBL {
 
 	//Nato: esse método está muito lento, precisamos melhorar isso.
 	public List<ExModelo> obterListaModelos(ExTipoDocumento tipo, ExFormaDocumento forma,
-			boolean despachando, String headerValue, boolean protegido,
+			boolean despachando, boolean criandoSubprocesso, ExMobil mobPai, String headerValue, boolean protegido,
 			DpPessoa titular, DpLotacao lotaTitular, boolean autuando) {
 		ArrayList<ExModelo> modeloSetFinal = new ArrayList<ExModelo>();
 		ArrayList<ExModelo> provSet;
@@ -5640,6 +5640,14 @@ public class ExBL extends CpBL {
 		else
 			modeloSetFinal = (ArrayList) dao()
 					.listarTodosModelosOrdenarPorNome(tipo, null);
+		if (criandoSubprocesso && mobPai != null) {
+			ExFormaDocumento especie = mobPai.doc().getExModelo().getExFormaDocumento();
+			provSet = new ArrayList<ExModelo>();
+			for (ExModelo mod : modeloSetFinal)
+				if (especie.equals(mod.getExFormaDocumento()))
+					provSet.add(mod);
+			modeloSetFinal = provSet;
+		}
 		if (despachando) {
 			provSet = new ArrayList<ExModelo>();
 			for (ExModelo mod : modeloSetFinal)

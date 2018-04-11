@@ -726,7 +726,7 @@ public class ExDocumentoController extends ExController {
 		
 		result.include("vars", l);
 
-		result.include("possuiMaisQueUmModelo", !exDocumentoDTO.getCriandoSubprocesso() && (cModelos > 1));
+		result.include("possuiMaisQueUmModelo", cModelos > 1);
 		result.include("par", parFreeMarker);
 		result.include("cpOrgaoSel", exDocumentoDTO.getCpOrgaoSel());
 		result.include("mobilPaiSel", exDocumentoDTO.getMobilPaiSel());
@@ -2196,10 +2196,13 @@ public class ExDocumentoController extends ExController {
 			headerValue = "Não Informado";
 		}
 		
+		ExMobil mobPai = null;
+		if (exDocumentoDTO.getMobilPaiSel().buscarPorSigla())
+			mobPai = exDocumentoDTO.getMobilPaiSel().buscarObjeto();
 		exDocumentoDTO.setModelos(Ex
 						.getInstance()
 						.getBL()
-						.obterListaModelos(tipo, null, exDocumentoDTO.isCriandoAnexo(),
+						.obterListaModelos(tipo, null, exDocumentoDTO.isCriandoAnexo(), exDocumentoDTO.getCriandoSubprocesso(), mobPai,
 								headerValue, true, getTitular(), getLotaTitular(),
 								exDocumentoDTO.getAutuando()));
 		

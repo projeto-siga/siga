@@ -300,6 +300,31 @@
 					</tr>
 </c:if>
 
+					<c:if test='${ exDocumentoDTO.tipoDocumento == "interno" }'>
+						<tr>
+							<td>Preenchimento Automático:</td>
+							<input type="hidden" name="campos" value="preenchimento" />
+							<td colspan="3">
+								
+								<select  id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()">
+									<c:forEach items="${exDocumentoDTO.preenchimentos}" var="item">
+										<option value="${item.idPreenchimento}" ${item.idPreenchimento == exDocumentoDTO.preenchimento ? 'selected' : ''}>
+											${item.nomePreenchimento}
+										</option>  
+									</c:forEach>
+								</select>&nbsp;								
+									 
+								<c:if test="${exDocumentoDTO.preenchimento==0}">
+									<c:set var="desabilitaBtn"> disabled="disabled" </c:set>
+								</c:if>
+								 
+								<input type="button" name="btnAlterar" value="Alterar" onclick="javascript:alteraPreench()"${desabilitaBtn}>&nbsp;								
+								<input type="button" name="btnRemover" value="Remover" onclick="javascript:removePreench()"${desabilitaBtn} >&nbsp;								
+								<input type="button" value="Adicionar" name="btnAdicionar" onclick="javascript:adicionaPreench()">
+							</td>
+						</tr>
+					</c:if>
+
 					<tr style="display:<c:choose><c:when test="${exDocumentoDTO.modelo.exClassificacao!=null}">none</c:when><c:otherwise>visible</c:otherwise></c:choose>">
 						<td>Classificação:</td>
 						<c:if test="${exDocumentoDTO.modelo.exClassificacao!=null}">

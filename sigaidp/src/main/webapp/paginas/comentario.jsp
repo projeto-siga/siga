@@ -51,8 +51,7 @@
 
 	<li>Documentos capturados:
 		<ul>
-			<li>Criada a possibilidade de edição, inclusive inserção de
-				outro PDF;</li>
+			<li>Criada a possibilidade de edição;</li>
 			<li>Inclusão em documentos já finalizados;</li>
 			<li>Documentos externos podem ser recuperados a partir de seu
 				número ou do nome do emitente;</li>

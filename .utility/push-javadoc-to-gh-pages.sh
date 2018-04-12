@@ -4,11 +4,11 @@ pwd
 ls
 
 if [ "$TRAVIS_REPO_SLUG" == "projeto-siga/siga" ]; then echo “TRAVIS_REPO_SLUG - OK”; fi
-if [ "$TRAVIS_JDK_VERSION" == "oraclejdk7" ]; then echo “TRAVIS_JDK_VERSION - OK”; fi
+if [ "$TRAVIS_JDK_VERSION" == "openjdk7" ]; then echo “TRAVIS_JDK_VERSION - OK”; fi
 if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo “TRAVIS_PULL_REQUEST - OK”; fi
 if [ "$TRAVIS_BRANCH" == "master" ]; then echo “TRAVIS_BRANCH - OK”; fi
 
-if [ "$TRAVIS_REPO_SLUG" == "projeto-siga/siga" ] && [ "$TRAVIS_JDK_VERSION" == "oraclejdk7" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
+if [ "$TRAVIS_REPO_SLUG" == "projeto-siga/siga" ] && [ "$TRAVIS_JDK_VERSION" == "openjdk7" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
 
   echo -e "Publishing javadoc...\n"
 

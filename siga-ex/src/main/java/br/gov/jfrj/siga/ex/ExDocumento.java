@@ -1761,7 +1761,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		}
 			
 		if(isEletronico()){ 
-			if (isInternoCapturado() && getAutenticacoesComTokenOuSenha().isEmpty())
+			if (isExternoCapturado() && getAutenticacoesComTokenOuSenha().isEmpty())
 				return true;
 			
 			// compatibiliza com versoes anteriores do SIGA que permitia transferir

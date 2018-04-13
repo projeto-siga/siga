@@ -189,7 +189,7 @@
 					<!--  Edson: a assinatura com senha está desabilitada aqui, por enquanto -->
 					<input type="hidden" name="ad_url_post_password_0" value="${request.contextPath}/app/externo/autenticar?n=${n}&ass=1&answer=${answer}" />
 					
-					<input type="hidden" name="ad_id_0" value="11111111111__${fn:replace(mov.referencia, ':', '_')}" />
+					<input type="hidden" name="ad_id_0" value="${fn:replace(mov.referencia, ':', '_')}" />
 					<input type="hidden" name="ad_description_0" value="${mov.obs}" />
 					<input type="hidden" name="ad_kind_0" value="${mov.exTipoMovimentacao.sigla}" />
 	

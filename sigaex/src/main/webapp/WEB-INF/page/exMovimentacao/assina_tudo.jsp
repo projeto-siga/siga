@@ -181,7 +181,7 @@
 										value="/sigaex/app/expediente/mov/assinar_senha_gravar" />
 
 									<input type="hidden" name="ad_id_${assdoc.doc.idDoc}"
-										value="${titular.cpfPessoa}__${assdoc.doc.codigoCompacto}" />
+										value="${assdoc.doc.codigoCompacto}" />
 									<input type="hidden" name="ad_description_${assdoc.doc.idDoc}"
 										value="${assdoc.doc.descrDocumento}" />
 									<input type="hidden" name="ad_kind_${assdoc.doc.idDoc}"
@@ -237,7 +237,7 @@
 											value="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" />
 
 										<input type="hidden" name="ad_id_mov${assmov.mov.idMov}"
-											value="${titular.cpfPessoa}__${fn:replace(assmov.mov.referencia, ':', '_')}" />
+											value="${fn:replace(assmov.mov.referencia, ':', '_')}" />
 										<input type="hidden"
 											name="ad_description_mov${assmov.mov.idMov}"
 											value="${assmov.mov.obs}" />

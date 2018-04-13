@@ -306,7 +306,7 @@ function visualizarImpressao() {
 					<input type="hidden" name="ad_url_post_0" value="/sigaex/app/expediente/mov/assinar_mov_gravar" />
 					<input type="hidden" name="ad_url_post_password_0" value="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" />
 					
-					<input type="hidden" name="ad_id_0" value="${titular.cpfPessoa}__${fn:replace(mov.referencia, ':', '_')}" />
+					<input type="hidden" name="ad_id_0" value="${fn:replace(mov.referencia, ':', '_')}" />
 					<input type="hidden" name="ad_description_0" value="${mov.obs}" />
 					<input type="hidden" name="ad_kind_0" value="${mov.exTipoMovimentacao.sigla}" />
 					

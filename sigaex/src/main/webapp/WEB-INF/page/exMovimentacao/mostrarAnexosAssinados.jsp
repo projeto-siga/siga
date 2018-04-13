@@ -107,7 +107,7 @@
 										<input type="hidden" name="ad_url_pdf_${mov.idMov}" value="/sigaex/app/arquivo/exibir?arquivo=${mov.mov.nmPdf}" />
 										<input type="hidden" name="ad_url_post_${mov.idMov}" value="/sigaex/app/expediente/mov/assinar_mov_gravar" />
 										<input type="hidden" name="ad_url_post_password_${mov.idMov}" value="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" />
-										<input type="hidden" name="ad_id_${mov.idMov}" value="${titular.cpfPessoa}__${fn:replace(mov.mov.referencia, ':', '_')}" />
+										<input type="hidden" name="ad_id_${mov.idMov}" value="${fn:replace(mov.mov.referencia, ':', '_')}" />
 										<input type="hidden" name="ad_description_${mov.idMov}" value="${mov.mov.obs}" />
 										<input type="hidden" name="ad_kind_${mov.idMov}" value="${mov.mov.exTipoMovimentacao.sigla}" />
 									</siga:links></td>

@@ -1280,9 +1280,9 @@ CKEDITOR.replace( '${var}',
                             
                             <script type="text/javascript">
 
-CKEDITOR.config.scayt_autoStartup = true;
+CKEDITOR.config.disableNativeSpellChecker = false;
+CKEDITOR.config.scayt_autoStartup = false;
 CKEDITOR.config.scayt_sLang = 'pt_BR';
-
 CKEDITOR.config.stylesSet = 'siga_ckeditor_styles';
 
 
@@ -1318,7 +1318,7 @@ CKEDITOR.stylesSet.add('siga_ckeditor_styles',[
 	[
 		{ name: 'styles', items : [ 'Styles' ] },
 		{ name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-		{ name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','Scayt' ] },
+		{ name: 'editing', items : [ 'Find','Replace','-','SelectAll' ] },
 		'/',
 		{ name: 'basicstyles', items : [ 'Bold','Italic','Subscript','Underline','Strike','-','RemoveFormat' ] },
 		{ name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','JustifyLeft','JustifyCenter','JustifyBlock','JustifyRight' ] },

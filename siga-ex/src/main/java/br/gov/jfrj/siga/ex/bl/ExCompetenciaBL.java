@@ -1192,7 +1192,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!doc.isEletronico() || !doc.getAutenticacoesComTokenOuSenha().isEmpty())
 			return false;
 		
-		return doc.isExternoCapturado() || doc.getAssinaturasComSenha().size() > 0;
+		return doc.isExternoCapturado() || doc.isInternoCapturado() || doc.getAssinaturasComSenha().size() > 0;
 	}
 	
 	/*

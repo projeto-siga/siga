@@ -123,24 +123,25 @@ public class ExGraphRelacaoDocs extends ExGraph {
 				adicionar(new NodoMob(m, pessVendo, mobBase.doc()));
 				adicionar(new TransicaoMob(mobBase, m, "juntada"));
 			}
+		}
 
-			// Paternidades
-			for (ExDocumento sub : mobBase.doc().getMobilGeral()
-					.getExDocumentoFilhoSet()) {
-				boolean jaTemNodo = false;
-				for (Nodo n : getNodos())
-					if (((NodoMob) n).getMob().doc().equals(sub)) {
-						jaTemNodo = true;
-						break;
-					}
-				if (!jaTemNodo) {
-					adicionar(new NodoMob(sub.getMobilGeral(), pessVendo,
-							mobBase.doc()));
-					adicionar(new TransicaoMob(mobBase, sub.getMobilGeral(),
-							"paternidade"));
+		// Paternidades
+		for (ExDocumento sub : mobBase.doc().getMobilGeral()
+				.getExDocumentoFilhoSet()) {
+			boolean jaTemNodo = false;
+			for (Nodo n : getNodos())
+				if (((NodoMob) n).getMob().doc().equals(sub)) {
+					jaTemNodo = true;
+					break;
 				}
+			if (!jaTemNodo) {
+				adicionar(new NodoMob(sub.getMobilGeral(), pessVendo,
+						mobBase.doc()));
+				adicionar(new TransicaoMob(mobBase, sub.getMobilGeral(),
+						"paternidade"));
 			}
 		}
+
 		if (mobBase.doc().getExMobilPai() != null) {
 			boolean jaTemNodo = false;
 			for (Nodo n : getNodos())

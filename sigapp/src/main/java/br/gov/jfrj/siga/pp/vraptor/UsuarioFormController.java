@@ -38,7 +38,7 @@ public class UsuarioFormController extends PpController {
         String nomeSessao = getCadastrante().getNomeAbreviado();
         String lotacaoSessao = getLotaTitular().getSiglaCompleta();   // O final da substring -SG é de São Goncalo . Tribunal tem o seguinte formato: T2COSIGP
         lotacaoSessao = lotacaoSessao.substring(lotacaoSessao.length()-3, lotacaoSessao.length());
-        //java.lang.System.out.println("------------------------------------------------------------ >>>> LOTACAO: "+lotacaoSessao.substring(lotacaoSessao.length()-3, lotacaoSessao.length()));
+        //java.lang.System.out.println("- >>>> LOTACAO: "+lotacaoSessao.substring(lotacaoSessao.length()-3, lotacaoSessao.length()));
         UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao, sesb_pessoaSessao);
         if (objUsuario != null) {
             String descricaoForum = "";
@@ -68,13 +68,12 @@ public class UsuarioFormController extends PpController {
                 descricaoForum = objForum.getDescricao_forum();
                 ContextoPersistencia.em().flush();
             }
-            //List<Foruns> outrosForuns = Foruns.AR.find("cod_forum <> " + paramCodForum).fetch();
             ArrayList<Foruns> outrosForuns = (ArrayList) Foruns.AR.find("cod_forum <> " + paramCodForum).fetch();
-            if(!lotacaoSessao.equals("-NI")){
-             for (byte i = 0;i<outrosForuns.size();i++) {
-				if (outrosForuns.get(i).getDescricao_forum().equals("Niterói")){
-					outrosForuns.remove(i);
-					// System.out.println(" ==>"+f.getDescricao_forum());
+            if(!lotacaoSessao.equals("-NI")){ // entra no if caso não seja lotado em Niterói
+             for (byte i = 0;i<outrosForuns.size();i++) { // varre o arraylist
+				if (outrosForuns.get(i).getCod_forum()==2){ // dois é o código de niterói.
+					outrosForuns.remove(i); // remove niteroi da lista
+					// System.out.println("================> Retirou o código dois da lista.");
 				}
 			 }
             }
@@ -87,6 +86,4 @@ public class UsuarioFormController extends PpController {
             redirecionaPaginaErro("Usu&aacute;rio sem permiss&atilde;o." , null);
         }
     }
-    
-
 }

@@ -510,7 +510,7 @@ public class AgendamentoController extends PpController {
     }
 
     @Path("/excluir")
-    public void excluir(String data) {
+    public void excluir(String data, String filtra_forum) {
         // pega matricula do usuario do sistema
         String matriculaSessao = getCadastrante().getMatricula().toString();
         String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
@@ -751,19 +751,19 @@ public class AgendamentoController extends PpController {
              listHorasLivres.add("07:30");
              listHorasLivres.add("07:40");
              listHorasLivres.add("07:50");
-             listHorasLivres.add("08:00");
-             listHorasLivres.add("08:10");
-             listHorasLivres.add("08:20");
-             listHorasLivres.add("08:30");
-             listHorasLivres.add("08:40");
-             listHorasLivres.add("08:50");
-             listHorasLivres.add("09:00");
-             listHorasLivres.add("09:10");
-             listHorasLivres.add("09:20");
-             listHorasLivres.add("09:30");
-             listHorasLivres.add("09:40");
-             listHorasLivres.add("09:50");
         	}
+            listHorasLivres.add("08:00");
+            listHorasLivres.add("08:10");
+            listHorasLivres.add("08:20");
+            listHorasLivres.add("08:30");
+            listHorasLivres.add("08:40");
+            listHorasLivres.add("08:50");
+            listHorasLivres.add("09:00");
+            listHorasLivres.add("09:10");
+            listHorasLivres.add("09:20");
+            listHorasLivres.add("09:30");
+            listHorasLivres.add("09:40");
+            listHorasLivres.add("09:50");
             listHorasLivres.add("10:00");
             listHorasLivres.add("10:10");
             listHorasLivres.add("10:20");
@@ -807,14 +807,12 @@ public class AgendamentoController extends PpController {
             listHorasLivres.add("16:40");
             listHorasLivres.add("16:50");
             listHorasLivres.add("17:00");
-            if(objUsuario.getForumFk().getCod_forum()!=2){
-             listHorasLivres.add("17:10");
-             listHorasLivres.add("17:20");
-             listHorasLivres.add("17:30");
-             listHorasLivres.add("17:40");
-             listHorasLivres.add("17:50");
-             listHorasLivres.add("18:00");
-            }
+            listHorasLivres.add("17:10");
+            listHorasLivres.add("17:20");
+            listHorasLivres.add("17:30");
+            listHorasLivres.add("17:40");
+            listHorasLivres.add("17:50");
+            listHorasLivres.add("18:00");
             df.applyPattern("dd-MM-yyyy");
             try {
                 dtt = frm_data_ag;

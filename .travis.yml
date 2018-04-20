@@ -1,6 +1,6 @@
 language: java
 jdk:
-- oraclejdk7
+- openjdk7
 install: mvn install -q -B -Dmaven.test.skip=true -Dsiga.versao=3.14.0.0
 script: mvn test javadoc:aggregate -B -Dsiga-integration-test.skip.tests=true -Dsiga.versao=3.14.0.0
 after_success:

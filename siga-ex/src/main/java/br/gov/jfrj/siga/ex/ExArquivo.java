@@ -69,7 +69,7 @@ public abstract class ExArquivo extends Objeto {
 			// Verifica se é possível estampar o documento
 			try {
 				byte[] documentoComStamp = Documento.stamp(abPdf, "", true,
-						false, false, false, null, null, null, null, null,
+						false, false, false, false, null, null, null, null, null,
 						null, null);
 
 				return documentoComStamp;

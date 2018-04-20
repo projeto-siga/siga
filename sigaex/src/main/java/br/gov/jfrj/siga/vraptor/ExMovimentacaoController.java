@@ -1738,7 +1738,7 @@ public class ExMovimentacaoController extends ExController {
 			ExMovimentacao ultimaMovimentacao = builder.getMob()
 					.getUltimaMovimentacao();
 			result.redirectTo(MessageFormat.format(
-					"/app/expediente/mov/transferido?sigla={0}&idMov={1}",
+					"/app/expediente/mov/protocolo_unitario?popup=false&sigla={0}&idMov={1}",
 					sigla, ultimaMovimentacao.getIdMov().toString()));
 		} else {
 			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getExDocumento().getSigla());
@@ -3730,7 +3730,7 @@ public class ExMovimentacaoController extends ExController {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Órgão Integrado");
 		map.put(2, "Matrícula");
-		map.put(3, "Órgão Externo");
+		map.put(3, "Externo");
 		return map;
 	}
 

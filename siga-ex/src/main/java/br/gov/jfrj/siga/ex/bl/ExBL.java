@@ -156,12 +156,10 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.wf.service.WfService;
 
 public class ExBL extends CpBL {
-	private final String SHA1 = "1.3.14.3.2.26";
-
-	public final static String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
-
-	private final boolean BUSCAR_CARIMBO_DE_TEMPO = false;
-	private final boolean VALIDAR_LCR = false;
+	private static final String MODELO_FOLHA_DE_ROSTO_EXPEDIENTE_INTERNO = "Folha de Rosto - Expediente Interno";
+	private static final String MODELO_FOLHA_DE_ROSTO_PROCESSO_ADMINISTRATIVO_INTERNO = "Folha de Rosto - Processo Administrativo Interno";
+	private static final String SHA1 = "1.3.14.3.2.26";
+	private static final String MIME_TYPE_PKCS7 = "application/pkcs7-signature";
 
 	private final ThreadLocal<SortedSet<ExMobil>> threadAlteracaoParcial = new ThreadLocal<SortedSet<ExMobil>>();
 
@@ -1881,7 +1879,7 @@ public class ExBL extends CpBL {
 		if (!doc.isFinalizado())
 			finalizar(cadastrante, lotaCadastrante, doc);
 		
-		boolean fPreviamenteAssinado = !doc.isPendenteDeAssinatura();
+		boolean fPreviamenteAssinado = doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha();
 
 		if (!doc.isFinalizado())
 			throw new AplicacaoException(
@@ -1958,7 +1956,7 @@ public class ExBL extends CpBL {
 						dtMov, cadastrante, cadastrante, mov);
 			}
 
-			if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura())
+			if (!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
 				s = processarComandosEmTag(doc, "assinatura");
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -3156,7 +3154,7 @@ public class ExBL extends CpBL {
 				dtDocCalendar.setTime(doc.getDtDoc());
 
 				if (c.before(dtDocCalendar))
-					throw new Exception(
+					throw new AplicacaoException(
 							"não é permitido criar documento com data futura");
 			}
 
@@ -5065,11 +5063,17 @@ public class ExBL extends CpBL {
 				if (doc.getExTipoDocumento().getIdTpDoc() == 2) {
 					if (doc.getExModelo() != null)
 						backupID = doc.getExModelo().getIdMod();
-					doc.setExModelo(dao().consultarAtivoPorIdInicial(
-							ExModelo.class,
-							doc.isProcesso() ? SigaExProperties.getIdModPA()
-									: SigaExProperties
-											.getIdModInternoImportado()));
+					
+					Long idMod;
+					if (doc.isProcesso()) {
+						ExModelo modPA = dao().consultarExModelo(null, MODELO_FOLHA_DE_ROSTO_PROCESSO_ADMINISTRATIVO_INTERNO);
+						idMod = modPA != null ? modPA.getId() : SigaExProperties.getIdModPA();
+					} else {
+						ExModelo modInterno = dao().consultarExModelo(null, MODELO_FOLHA_DE_ROSTO_EXPEDIENTE_INTERNO);
+						idMod = modInterno != null ? modInterno.getId() : SigaExProperties
+								.getIdModInternoImportado();
+					}
+					doc.setExModelo(dao().consultar(idMod, ExModelo.class, false));
 				}
 
 				final String strHtml;
@@ -5627,7 +5631,7 @@ public class ExBL extends CpBL {
 
 	//Nato: esse método está muito lento, precisamos melhorar isso.
 	public List<ExModelo> obterListaModelos(ExTipoDocumento tipo, ExFormaDocumento forma,
-			boolean despachando, String headerValue, boolean protegido,
+			boolean despachando, boolean criandoSubprocesso, ExMobil mobPai, String headerValue, boolean protegido,
 			DpPessoa titular, DpLotacao lotaTitular, boolean autuando) {
 		ArrayList<ExModelo> modeloSetFinal = new ArrayList<ExModelo>();
 		ArrayList<ExModelo> provSet;
@@ -5636,6 +5640,14 @@ public class ExBL extends CpBL {
 		else
 			modeloSetFinal = (ArrayList) dao()
 					.listarTodosModelosOrdenarPorNome(tipo, null);
+		if (criandoSubprocesso && mobPai != null) {
+			ExFormaDocumento especie = mobPai.doc().getExModelo().getExFormaDocumento();
+			provSet = new ArrayList<ExModelo>();
+			for (ExModelo mod : modeloSetFinal)
+				if (especie.equals(mod.getExFormaDocumento()))
+					provSet.add(mod);
+			modeloSetFinal = provSet;
+		}
 		if (despachando) {
 			provSet = new ArrayList<ExModelo>();
 			for (ExModelo mod : modeloSetFinal)

@@ -29,14 +29,14 @@ public class UsuarioFormController extends PpController {
     
     @Path("/atualiza")
     public void atualiza(String paramCodForum) throws Exception {
-    	/** Item de menu "configuração"
+    	/** Item de menu "configuraÃ§Ã£o"
     	    Usado para trocar para agenda de outro forum
     	*  */
         String mensagem = "";
         String matriculaSessao = getCadastrante().getMatricula().toString();
         String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
         String nomeSessao = getCadastrante().getNomeAbreviado();
-        String lotacaoSessao = getLotaTitular().getSiglaCompleta();   // O final da substring -SG é de São Goncalo . Tribunal tem o seguinte formato: T2COSIGP
+        String lotacaoSessao = getLotaTitular().getSiglaCompleta();   // O final da substring -SG Ã© de SÃ£o Goncalo . Tribunal tem o seguinte formato: T2COSIGP
         lotacaoSessao = lotacaoSessao.substring(lotacaoSessao.length()-3, lotacaoSessao.length());
         //java.lang.System.out.println("- >>>> LOTACAO: "+lotacaoSessao.substring(lotacaoSessao.length()-3, lotacaoSessao.length()));
         UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao, sesb_pessoaSessao);
@@ -74,6 +74,7 @@ public class UsuarioFormController extends PpController {
 				if (outrosForuns.get(i).getCod_forum()==2){ // dois é o código de niterói.
 					outrosForuns.remove(i); // remove niteroi da lista
 					// System.out.println("================> Retirou o código dois da lista.");
+
 				}
 			 }
             }

@@ -27,6 +27,7 @@ public class ExArquivoNumerado implements Comparable {
 	private ExMobil mobil;
 	private Date data;
 	private int nivel;
+	private boolean copia;
 
 	public ExArquivo getArquivo() {
 		return arquivo;
@@ -157,6 +158,14 @@ public class ExArquivoNumerado implements Comparable {
 				return 1;
 		}
 		return 0;
+	}
+
+	public boolean isCopia() {
+		return copia;
+	}
+
+	public void setCopia(boolean copia) {
+		this.copia = copia;
 	}
 
 }

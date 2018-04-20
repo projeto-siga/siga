@@ -809,26 +809,59 @@ LINHA  VARIÁVEL / CONTEÚDO
 [@oculto var="fm_dumpDepoisFm" valor="${fm_logDump?html}"/]
 [/#macro]
 
-[#function descricaoDefault]
-	[#local descr = doc.exModelo.nmMod]
-	[#if doc.exTipoDocumento.id = 3 || doc.exTipoDocumento.id = 4]
-		[#if doc.numExtDoc?has_content]
-			[#local descr = descr + ' nº ' + doc.numExtDoc]
-		[/#if]
-		[#if doc.dtDocOriginalDDMMYYYY?has_content]
-			[#local descr = descr + ' de ' + doc.dtDocOriginalDDMMYYYY]
-		[/#if]
-		[#if doc.orgaoExterno??]
-			[#local descr = descr + ' - ' + doc.orgaoExterno.descricao]
-		[/#if]	
-	[/#if]
-	[#if doc.subscritor??]
-		[#local descr = descr + ' de ' + doc.subscritorString]
-	[/#if]
-	[#if doc.lotaTitular??]
-		[#local descr = descr + ' / ' + doc.lotaTitular.sigla]
-	[/#if]
-    [#return descr]
+[#function descricaoDefault args...]
+  [#if doc.exModelo.nmMod?last_index_of(": ") > 0]
+    [#local descr = doc.exModelo.nmMod?substring(doc.exModelo.nmMod?last_index_of(": ") + 2) /]
+  [#else]
+    [#local descr = doc.exModelo.nmMod /]
+  [/#if]
+  [#if doc.exTipoDocumento.id = 3 || doc.exTipoDocumento.id = 4]
+    [#if doc.numExtDoc?has_content]
+      [#local descr = descr + ' nº ' + doc.numExtDoc + '. ' /]
+    [/#if]
+    [#if doc.dtDocOriginalDDMMYYYY?has_content]
+      [#local descr = descr + ' Data: ' + doc.dtDocOriginalDDMMYYYY + '. ' /]
+    [/#if]
+    [#if doc.orgaoExterno??]
+      [#local descr = descr + ' Órgão: ' + doc.orgaoExterno.descricao + '. ' /]
+    [#else]
+      [#if doc.obsOrgao?has_content]
+        [#local descr = descr + ' Órgão: ' + doc.obsOrgao + '. ' /]
+      [/#if]
+    [/#if]
+    [#if doc.nmSubscritorExt?has_content]
+      [#local descr = descr + ' Subscritor: ' + doc.nmSubscritorExt + '. ' /]
+    [/#if]
+  [/#if]
+  [#if doc.subscritor??]
+    [#local descr = descr + ' de ' + doc.subscritorString /]
+  [/#if]
+  [#if doc.lotaTitular??]
+    [#local descr = descr + ' / ' + doc.lotaTitular.sigla /]
+  [/#if]
+  [#local primeiro = true /]
+  [#list args as arg]
+    [#if primeiro]
+      [#local titulo = arg /]
+      [#local primeiro = false/]
+    [#else]
+      [#if arg?has_content]
+        [#if titulo?has_content]
+          [#if arg?is_boolean]
+            [#if arg]
+              [#local descr =descr + " " + titulo + '.' /]
+            [/#if]
+          [#else]
+            [#local descr =descr + " " + titulo + ': ' + arg + '.' /]
+          [/#if]
+        [#else]
+          [#local descr =descr + " " + arg + '.' /]
+        [/#if]
+      [/#if]
+      [#local primeiro = true/]
+    [/#if]
+  [/#list]
+  [#return descr /]
 [/#function]
 
 [#macro retorna tag valor]
@@ -1247,9 +1280,9 @@ CKEDITOR.replace( '${var}',
                             
                             <script type="text/javascript">
 
-CKEDITOR.config.scayt_autoStartup = true;
+CKEDITOR.config.disableNativeSpellChecker = false;
+CKEDITOR.config.scayt_autoStartup = false;
 CKEDITOR.config.scayt_sLang = 'pt_BR';
-
 CKEDITOR.config.stylesSet = 'siga_ckeditor_styles';
 
 
@@ -1285,7 +1318,7 @@ CKEDITOR.stylesSet.add('siga_ckeditor_styles',[
 	[
 		{ name: 'styles', items : [ 'Styles' ] },
 		{ name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-		{ name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','Scayt' ] },
+		{ name: 'editing', items : [ 'Find','Replace','-','SelectAll' ] },
 		'/',
 		{ name: 'basicstyles', items : [ 'Bold','Italic','Subscript','Underline','Strike','-','RemoveFormat' ] },
 		{ name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','JustifyLeft','JustifyCenter','JustifyBlock','JustifyRight' ] },
@@ -2720,6 +2753,177 @@ Pede deferimento.</span><br/><br/><br/>
     [/@documento]
 [/#macro]
 
+[#macro folhaDeRostoExterno]
+	[@documento]
+	  [@estiloBrasaoCentralizado tipo="DOCUMENTO EXTERNO" tamanhoLetra="11pt"]
+	    <table width="100%" border="0" cellpadding="6" cellspacing="6" bgcolor="#FFFFFF">
+	      <tr>
+	        <td width="50%">
+	          Órgão Externo:
+	        </td>
+	        <td width="50%">
+	          ${(doc.orgaoExterno.descricao)!} ${(doc.obsOrgao)!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Data Original do Documento:
+	        </td>
+	        <td>
+	          ${(doc.dtDocOriginalDDMMYYYY)!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Número Original:
+	        </td>
+	        <td>
+	          ${(doc.numExtDoc)!}
+	        </td>
+	      </tr>
+	      [#if (doc.numAntigoDoc)! != '']
+	        <tr>
+	          <td>
+	            Número no Sistema Antigo:
+	          </td>
+	          <td>
+	            ${(doc.numAntigoDoc)!}
+	          </td>
+	        </tr>
+	      [/#if]
+	      <tr>
+	        <td>
+	          Data:
+	        </td>
+	        <td>
+	          ${(doc.dtDocDDMMYY)!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Subscritor:
+	        </td>
+	        <td>
+	          ${(doc.nmSubscritorExt)!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Descrição:
+	        </td>
+	        <td>
+	          ${(doc.descrDocumento)!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	        </td>
+	        <td>
+	        </td>
+	      </tr>
+	      [#if doc.cadastrante??]
+	        <tr>
+	          <td>
+	            Cadastrante:
+	          </td>
+	          <td>
+	            ${(doc.cadastrante.descricao)!}
+	          </td>
+	        </tr>
+	      [/#if]
+	      <tr>
+	        <td>
+	          Data do cadastro:
+	        </td>
+	        <td>
+	          ${(doc.dtRegDocDDMMYYHHMMSS)!}
+	        </td>
+	      </tr>
+	    </table>
+	  [/@estiloBrasaoCentralizado]
+	[/@documento]
+[/#macro]
+
+[#macro folhaDeRostoInterno]
+	[@documento]
+	  [@estiloBrasaoCentralizado tipo="DOCUMENTO INTERNO" tamanhoLetra="11pt"]
+	    <table width="100%" border="0" cellpadding="6" cellspacing="6" bgcolor="#FFFFFF">
+	      <tr>
+	        <td width="50%">
+	          Número Original:
+	        </td>
+	        <td width="50%">
+	          ${doc.numExtDoc!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Número no Sistema Antigo:
+	        </td>
+	        <td>
+	          ${doc.numAntigoDoc!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Forma:
+	        </td>
+	        <td>
+	          ${doc.exFormaDocumento.descrFormaDoc!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Modelo:
+	        </td>
+	        <td>
+	          ${doc.exModelo.nmMod!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Subscritor:
+	        </td>
+	        <td>
+	          ${doc.subscritorString!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Destinatário:
+	        </td>
+	        <td>
+	          ${doc.destinatarioString!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Descrição:
+	        </td>
+	        <td>
+	          ${doc.descrDocumento!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Cadastrante:
+	        </td>
+	        <td>
+	          ${doc.cadastrante.descricao!}
+	        </td>
+	      </tr>
+	      <tr>
+	        <td>
+	          Data do cadastro:
+	        </td>
+	        <td>
+	          ${doc.dtRegDocDDMMYYHHMMSS!}
+	        </td>
+	      </tr>
+	    </table>
+	  [/@estiloBrasaoCentralizado]
+	[/@documento]
+[/#macro]
 
 
 [#macro moeda var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default=""]

@@ -165,6 +165,8 @@ public class ExDocumentoDTO {
 
 	private Integer tipoDestinatario;
 
+	private Integer tipoEmitente;
+
 	private DpPessoaSelecao titularSel;
 
 	private DpPessoaSelecao ultMovCadastranteSel;
@@ -454,8 +456,15 @@ public class ExDocumentoDTO {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Matrícula");
 		map.put(2, "Órgão Integrado");
-		map.put(3, "Órgão Externo");
+		map.put(3, "Externo");
 		map.put(4, "Campo Livre");
+		return map;
+	}
+
+	public Map<Integer, String> getListaTipoEmitente() {
+		final Map<Integer, String> map = new TreeMap<Integer, String>();
+		map.put(1, "Externo");
+		map.put(2, "Campo Livre");
 		return map;
 	}
 
@@ -540,6 +549,10 @@ public class ExDocumentoDTO {
 
 	public Integer getTipoDestinatario() {
 		return tipoDestinatario;
+	}
+
+	public Integer getTipoEmitente() {
+		return tipoEmitente;
 	}
 
 	public String getTipoDocumento() {
@@ -781,6 +794,10 @@ public class ExDocumentoDTO {
 
 	public void setTipoDestinatario(final Integer tipoDestinatario) {
 		this.tipoDestinatario = tipoDestinatario;
+	}
+
+	public void setTipoEmitente(final Integer tipoEmitente) {
+		this.tipoEmitente = tipoEmitente;
 	}
 
 	public void setTitularSel(DpPessoaSelecao subscritorTitularSel) {

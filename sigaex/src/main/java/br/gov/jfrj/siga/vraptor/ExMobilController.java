@@ -529,7 +529,7 @@ public class ExMobilController extends
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Matrícula");
 		map.put(2, "Órgão Integrado");
-		map.put(3, "Órgão Externo");
+		map.put(3, "Externo");
 		map.put(4, "Campo Livre");
 		return map;
 	}
@@ -545,7 +545,7 @@ public class ExMobilController extends
 
 		final List<ExFormaDocumento> formasDoc = new ArrayList<ExFormaDocumento>();
 		formasDoc.addAll(bl.obterFormasDocumento(bl.obterListaModelos(null, null,
-				false, null, false, getTitular(), getLotaTitular(), false),
+				false, false, null, null, false, getTitular(), getLotaTitular(), false),
 				null, tipoForma));
 		return formasDoc;
 	}
@@ -563,7 +563,7 @@ public class ExMobilController extends
 		return Ex
 				.getInstance()
 				.getBL()
-				.obterListaModelos(null, forma, false, "Todos", false, getTitular(),
+				.obterListaModelos(null, forma, false, false, null, "Todos", false, getTitular(),
 						getLotaTitular(), false);
 	}
 

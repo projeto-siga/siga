@@ -30,7 +30,7 @@ import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 public class ExMobilDaoFiltro extends DaoFiltroSelecionavel implements
 		IExMobilDaoFiltro {
 	@Override
-	public void setSigla(final String nome) {
+	public void setSigla(String nome) {
 		// Se receber valor nulo, zerar todos os campos
 		if (nome == null || nome.equals("")) {
 			setIdFormaDoc(null);

@@ -1192,7 +1192,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!doc.isEletronico() || !doc.getAutenticacoesComTokenOuSenha().isEmpty())
 			return false;
 		
-		return doc.isExternoCapturado() || doc.getAssinaturasComSenha().size() > 0;
+		return doc.isExternoCapturado() || doc.isInternoCapturado() || doc.getAssinaturasComSenha().size() > 0;
 	}
 	
 	/*
@@ -2499,8 +2499,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if(mob.isJuntado())
 			return false;
 		
-		return (mob.getExDocumento().isFinalizado())
-				&& (mob.getExDocumento().getExTipoDocumento().getIdTpDoc() != ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_FOLHA_DE_ROSTO)				
+		return (mob.getExDocumento().isFinalizado())								
 				&& !mob.isEmTransito()
 				&& podeMovimentar(titular, lotaTitular, mob);
 

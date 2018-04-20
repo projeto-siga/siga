@@ -658,8 +658,8 @@ public class Compactador {
 			ZipEntry entry = in.getNextEntry();
 
 			while (entry != null) {
-				// Open the output file
-				if (!arqNome.contains(entry.getName())) {
+				// Skip the file to be deleted
+				if (arqNome.contains(entry.getName())) {
 					entry = in.getNextEntry();
 					continue;
 				}

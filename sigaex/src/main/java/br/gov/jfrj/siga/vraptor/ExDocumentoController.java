@@ -1107,7 +1107,7 @@ public class ExDocumentoController extends ExController {
 	}
 
 	private void verificaDocumento(final ExDocumento doc) {
-		if ((doc.getSubscritor() == null && doc.getNmSubscritor() == null && doc.getNmSubscritorExt() == null)
+		if ((doc.getSubscritor() == null)
 				&& !doc.isExternoCapturado() && !doc.isExterno()
 				&& ((doc.isProcesso() && doc.isEletronico()) || !doc.isProcesso())) {
 			throw new AplicacaoException(

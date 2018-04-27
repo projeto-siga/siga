@@ -1107,8 +1107,8 @@ public class ExDocumentoController extends ExController {
 	}
 
 	private void verificaDocumento(final ExDocumento doc) {
-		if ((doc.getSubscritor() == null && doc.getNmSubscritor() == null && doc.getNmSubscritorExt() == null)
-				&& !doc.isExternoCapturado()
+		if ((doc.getSubscritor() == null)
+				&& !doc.isExternoCapturado() && !doc.isExterno()
 				&& ((doc.isProcesso() && doc.isEletronico()) || !doc.isProcesso())) {
 			throw new AplicacaoException(
 					"É necessário definir um subscritor para o documento.");

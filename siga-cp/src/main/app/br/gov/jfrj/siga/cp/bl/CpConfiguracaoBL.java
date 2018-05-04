@@ -210,14 +210,38 @@ public class CpConfiguracaoBL {
 					hashListas.put(idTpConf, tree);
 				}
 				if (cpConfiguracao.ativaNaData(dt)) {
+					int i = tree.size();
+					removeById(tree, cpConfiguracao);
 					tree.add(cpConfiguracao);
+					if (tree.size() != i + 1)
+						Logger.getLogger("siga.conf.cache").fine(
+								"Configuração atualizada: " + cpConfiguracao.toString());
+					else
+						Logger.getLogger("siga.conf.cache").fine(
+							"Configuração adicionada: " + cpConfiguracao.toString());
 				} else {
-					tree.remove(cpConfiguracao);
+					int i = tree.size();
+					removeById(tree, cpConfiguracao);
+					if (tree.size() != i - 1)
+						Logger.getLogger("siga.conf.cache").fine(
+								"Configuração previamente removida: " + cpConfiguracao.toString());
+					else
+						Logger.getLogger("siga.conf.cache").fine(
+							"Configuração removida: " + cpConfiguracao.toString());
 				}
 			}
 		}
 
 		dtUltimaAtualizacaoCache = dt;
+	}
+
+	private void removeById(TreeSet<CpConfiguracao> tree, CpConfiguracao cpConfiguracao) {
+		List<CpConfiguracao> found = new ArrayList<>();
+		for (CpConfiguracao cfg : tree)
+			if (cfg.getId().equals(cpConfiguracao.getId()))
+				found.add(cfg);
+		for (CpConfiguracao cfg : found)
+			tree.remove(cfg);
 	}
 
 	/**

@@ -272,7 +272,7 @@
 								<c:choose>
 									<c:when test='${exDocumentoDTO.tipoDestinatario == 1}'>
 										<input type="hidden" name="campos" value="destinatario" />
-										<siga:selecao propriedade="destinatario" inputName="exDocumentoDTO.destinatario" tema="simple" idAjax="destinatario" reler="ajax" modulo="siga" />
+										<siga:selecao propriedade="destinatario" inputName="exDocumentoDTO.destinatario" tema="simple" idAjax="destinatario1" reler="ajax" modulo="siga" />
 										<!--  idAjax="destinatario"  -->										    
 									</c:when>
 									<c:when test='${exDocumentoDTO.tipoDestinatario == 2}'>

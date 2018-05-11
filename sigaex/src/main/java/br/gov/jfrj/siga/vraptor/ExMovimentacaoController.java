@@ -1737,9 +1737,10 @@ public class ExMovimentacaoController extends ExController {
 		if (protocolo != null && protocolo.equals(OPCAO_MOSTRAR)) {
 			ExMovimentacao ultimaMovimentacao = builder.getMob()
 					.getUltimaMovimentacao();
-			result.redirectTo(MessageFormat.format(
-					"/app/expediente/mov/protocolo_unitario?popup=false&sigla={0}&idMov={1}",
-					sigla, ultimaMovimentacao.getIdMov().toString()));
+				
+			result.redirectTo("/app/expediente/mov/protocolo_unitario?popup=false&sigla=" + sigla
+					+ "&id=" + ultimaMovimentacao.getIdMov());
+			
 		} else {
 			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getExDocumento().getSigla());
 		}

@@ -14,14 +14,15 @@
 <%@ attribute name="idAjax"%>
 <%@ attribute name="classe"%>
 <%@ attribute name="estilo"%>
+<%@ attribute name="atalho"%>
 
-<c:if test="${fn:contains(title, '_')}">
+<c:if test="${(atalho == true) and fn:contains(title, '_')}">
 	<c:set var="ious" value="${fn:indexOf(title, '_')}" />
 	<c:set var="accesskey" value="${fn:toLowerCase(fn:substring(title, ious+1, ious+2))}" />
 	<c:set var="title">${fn:substring(title, 0, ious)}<u>${fn:substring(title, ious+1, ious+2)}</u>${fn:substring(title, ious+2, -1)}</c:set>
 </c:if>
 
-<c:if test="${fn:contains(title, '_')}">
+<c:if test="${(atalho == true) and fn:contains(title, '_')}">
 	<c:set var="ious" value="${fn:indexOf(title, '_')}" />
 	<c:set var="title">${fn:substring(title, 0, ious)}<u>${fn:substring(title, ious+1, ious+1)}</u>${fn:substring(title, ious+2, -1)}</c:set>
 </c:if>

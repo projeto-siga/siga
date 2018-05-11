@@ -105,7 +105,7 @@
 							<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}" pre="${acao.pre}" pos="${acao.pos}"
 								url="${pageContext.request.contextPath}${acao.url}" test="${true}" popup="${acao.popup}"
 								confirm="${acao.msgConfirmacao}" classe="${acao.classe}" 
-								estilo="line-height: 160% !important" />
+								estilo="line-height: 160% !important" atalho="${true}"/>
 						</c:forEach>
 					</siga:links>
 				</c:if>

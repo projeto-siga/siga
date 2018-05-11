@@ -43,7 +43,7 @@ public abstract class AbstractCpServico extends Objeto implements Serializable {
 
 	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO" + ".CP_SERVICO_SEQ")
 	@Id
-	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_SERVICO", nullable = false)
 	private Long idServico;
 	@Column(name = "SIGLA_SERVICO")

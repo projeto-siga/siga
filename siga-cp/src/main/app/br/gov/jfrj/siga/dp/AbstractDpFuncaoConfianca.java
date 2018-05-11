@@ -67,7 +67,7 @@ public abstract class AbstractDpFuncaoConfianca extends Objeto implements Serial
 
 	@SequenceGenerator(name = "generator", sequenceName = "DP_FUNCAO_CONFIANCA_SEQ")
 	@Id
-	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_FUNCAO_CONFIANCA", nullable = false)
 	@Desconsiderar
 	private Long idFuncao;

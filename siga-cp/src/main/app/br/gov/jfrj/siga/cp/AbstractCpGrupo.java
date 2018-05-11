@@ -54,7 +54,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 public abstract class AbstractCpGrupo extends HistoricoAuditavelSuporte {
 	@SequenceGenerator(name = "generator", sequenceName = "CP_GRUPO_SEQ")
 	@Id
-	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_GRUPO", nullable = false)
 	@Desconsiderar
 	private Long idGrupo;

@@ -8,7 +8,7 @@
 	<class name="ExModelo" schema="SIGA" table="EX_MODELO" mutable="true"
 		batch-size="500">
 		<id name="idMod" column="ID_MOD" type="long">
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">EX_MODELO_SEQ</param>
 			</generator>
 		</id>

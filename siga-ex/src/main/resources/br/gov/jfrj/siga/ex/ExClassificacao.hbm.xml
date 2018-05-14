@@ -9,7 +9,7 @@
 	<class name="ExClassificacao" schema="SIGA" table="EX_CLASSIFICACAO" batch-size="500">
 		<id name="idClassificacao" column="ID_CLASSIFICACAO"
 			type="long">
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">EX_CLASSIFICACAO_SEQ</param>
 			</generator>
 		</id>

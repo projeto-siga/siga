@@ -8,7 +8,7 @@
 
 	<class name="ExVia" schema="SIGA" table="EX_VIA">
 		<id name="idVia" column="ID_VIA" type="long">
-			<generator class="sequence" >
+			<generator class="native" >
 			<param name="sequence">EX_VIA_SEQ</param>
 			</generator>
 		</id>

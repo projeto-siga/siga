@@ -4,7 +4,7 @@
 <hibernate-mapping package="br.gov.jfrj.siga.ex">
  <class name="ExDocumento" schema="SIGA" table="EX_DOCUMENTO" dynamic-update="true">
   <id column="ID_DOC" name="idDoc" type="java.lang.Long">
-   <generator class="sequence">
+   <generator class="native">
     <param name="sequence">EX_DOCUMENTO_SEQ</param>
    </generator>
   </id>

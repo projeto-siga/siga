@@ -15,8 +15,8 @@
 	schema="CORPORATIVO">
 	<class name="CpConfiguracao" table="CP_CONFIGURACAO" lazy="false">
 		<id name="idConfiguracao" column="ID_CONFIGURACAO" type="java.lang.Long">
-			<!-- <generator class="sequence"></generator> -->
-			<generator class="sequence">
+			<!-- <generator class="native"></generator> -->
+			<generator class="native">
 				<param name="sequence">CORPORATIVO.CP_CONFIGURACAO_SEQ</param>
 			</generator>
 		</id>

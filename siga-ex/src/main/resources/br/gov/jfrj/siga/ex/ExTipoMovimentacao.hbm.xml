@@ -8,7 +8,7 @@
 
 	<class name="ExTipoMovimentacao" schema="SIGA" table="EX_TIPO_MOVIMENTACAO">
 		<id name="idTpMov" column="ID_TP_MOV" type="long">
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">EX_TIPO_MOVIMENTACAO_SEQ</param>
 			</generator>
 		</id>

@@ -6,7 +6,7 @@
 <hibernate-mapping package="br.gov.jfrj.siga.ex.BIE">
 	<class name="ExBoletimDoc" schema="SIGA" table="EX_BOLETIM_DOC">
 		<id name="idBoletimDoc" column="ID_BOLETIM_DOC" type="java.lang.Long">
-			<generator class="sequence"></generator>
+			<generator class="native"></generator>
 		</id>
 		
 		<many-to-one name="exDocumento" column="ID_DOC" class="br.gov.jfrj.siga.ex.ExDocumento" not-null="true" />

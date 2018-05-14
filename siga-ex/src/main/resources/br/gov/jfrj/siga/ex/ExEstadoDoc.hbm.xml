@@ -8,7 +8,7 @@
 
 	<class name="ExEstadoDoc" schema="SIGA" table="EX_ESTADO_DOC">
 		<id name="idEstadoDoc" column="ID_ESTADO_DOC" type="long">
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">EX_ESTADO_DOC_SEQ</param>
 			</generator>
 		</id>

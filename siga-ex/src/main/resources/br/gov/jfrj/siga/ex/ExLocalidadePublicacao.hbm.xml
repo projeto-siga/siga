@@ -5,7 +5,7 @@
 <hibernate-mapping package="br.gov.jfrj.siga.ex">
 	<class name="ExLocalidadePublicacao" schema="SIGA" table="EX_LOCALIDADE_PUBLICACAO">
 		<id name="idLocalidadePublicacao" column="ID_LOCALIDADE_PUBLICACAO" type="java.lang.Integer">
-		<generator class="sequence"></generator>
+		<generator class="native"></generator>
 		</id>	
 		<many-to-one name="cpLocalidade" column="ID_LOCALIDADE" />
 		<property name="codLocalidadePublicacao" column="COD_LOCALIDADE_PUBLICACAO" />

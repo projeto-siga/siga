@@ -9,7 +9,7 @@
 	<class name="ExTipoFormaDoc" schema="SIGA" table="EX_TIPO_FORMA_DOCUMENTO">
 		<id name="idTipoFormaDoc" column="ID_TIPO_FORMA_DOC"
 			type="long">
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">
 					EX_TIPO_FORMA_DOCUMENTO_SEQ
 				</param>

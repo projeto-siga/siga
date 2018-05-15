@@ -4,7 +4,7 @@
 <hibernate-mapping package="br.gov.jfrj.siga.ex">
  <class name="ExEmailNotificacao" schema="SIGA" table="EX_EMAIL_NOTIFICACAO">
   <id column="ID_EMAIL_NOTIFICACAO" name="idEmailNotificacao" type="java.lang.Long">
-   <generator class="sequence">
+   <generator class="native">
     <param name="sequence">SIGA.EX_EMAIL_NOTIFICACAO_SEQ</param>
    </generator>
   </id>

@@ -69,11 +69,11 @@ public class UsuarioFormController extends PpController {
                 ContextoPersistencia.em().flush();
             }
             ArrayList<Foruns> outrosForuns = (ArrayList) Foruns.AR.find("cod_forum <> " + paramCodForum).fetch();
-            if(!lotacaoSessao.equals("-NI")){ // entra no if caso não seja lotado em Niterói
+            if(!lotacaoSessao.equals("-NI")){ // entra no if caso nao seja lotado em Niteroi
              for (byte i = 0;i<outrosForuns.size();i++) { // varre o arraylist
-				if (outrosForuns.get(i).getCod_forum()==2){ // dois é o código de niterói.
+				if (outrosForuns.get(i).getCod_forum()==2){ // dois e o codigo de niteroi.
 					outrosForuns.remove(i); // remove niteroi da lista
-					// System.out.println("================> Retirou o código dois da lista.");
+					// System.out.println("================> Retirou o cï¿½digo dois da lista.");
 
 				}
 			 }

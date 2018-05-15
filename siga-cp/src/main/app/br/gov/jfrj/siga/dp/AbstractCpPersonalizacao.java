@@ -42,7 +42,7 @@ public abstract class AbstractCpPersonalizacao extends Objeto implements Seriali
 	
 	@SequenceGenerator(name = "generator", sequenceName = "CP_PERSONALIZACAO_SEQ")
 	@Id
-	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_PERSONALIZACAO", nullable = false)
 	private Long idPersonalizacao;
 	

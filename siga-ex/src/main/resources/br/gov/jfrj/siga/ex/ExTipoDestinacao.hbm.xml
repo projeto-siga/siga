@@ -9,7 +9,7 @@
 	<class name="ExTipoDestinacao" schema="SIGA" table="EX_TIPO_DESTINACAO">
 		<id name="idTpDestinacao" column="ID_TP_DESTINACAO"
 			type="long">
-			<generator class="sequence" >
+			<generator class="native" >
 			<param name="sequence">EX_TIPO_DESTINACAO_SEQ</param>
 			</generator>
 		</id>

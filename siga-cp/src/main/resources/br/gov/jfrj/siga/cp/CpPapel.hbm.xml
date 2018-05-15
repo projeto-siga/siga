@@ -6,7 +6,7 @@
 	<class name="CpPapel" mutable="true" table="CP_PAPEL"
 		schema="CORPORATIVO">
 		<id name="idCpPapel" column="ID_PAPEL" type="long">
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">CP_PAPEL_SEQ</param>
 			</generator>
 		</id>

@@ -7,7 +7,7 @@
 	<class name="CpFeriado" table="CP_FERIADO" 
 	>
 		<id name="idFeriado" column="ID_FERIADO" type="integer">
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">CP_FERIADO_SEQ</param>
 			</generator>
 		</id>

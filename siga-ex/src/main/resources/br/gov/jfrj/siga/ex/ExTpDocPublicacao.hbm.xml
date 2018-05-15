@@ -5,7 +5,7 @@
 <hibernate-mapping package="br.gov.jfrj.siga.ex">
 	<class name="ExTpDocPublicacao" schema="SIGA" table="EX_TP_DOC_PUBLICACAO">
 		<id name="idDocPublicacao" column="ID_doc_publicacao" type="java.lang.Long">
-		<generator class="sequence"></generator>
+		<generator class="native"></generator>
 		</id>	
 		<property name="nmDocPublicacao" column="nm_doc_publicacao" type="java.lang.String" />
 		<property name="carater" column="CARATER" type="java.lang.String" />

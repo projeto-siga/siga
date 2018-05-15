@@ -7,7 +7,7 @@
 	<class name="CpOcorrenciaFeriado"
 		table="CP_OCORRENCIA_FERIADO">
 		<id name="idOcorrencia" column="ID_OCORRENCIA" type="long">		 
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">CP_OCORRENCIA_FERIADO_SEQ</param>
 			</generator>
 		</id>

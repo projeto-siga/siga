@@ -45,7 +45,7 @@ public abstract class AbstractCpPapel extends HistoricoSuporte implements
 		Serializable {
 	@SequenceGenerator(name = "generator", sequenceName = "CP_PAPEL_SEQ")
 	@Id
-	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_PAPEL", nullable = false)
 	@Desconsiderar
 	private Long idCpPapel;

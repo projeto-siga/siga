@@ -5,7 +5,7 @@
 	<class name="CpGrupo" abstract="true" table="CP_GRUPO"
 		discriminator-value="0">
 		<id column="ID_GRUPO" name="idGrupo" type="java.lang.Long">
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">CP_GRUPO_SEQ</param>
 			</generator>
 		</id>

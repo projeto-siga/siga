@@ -7,7 +7,7 @@
 	<class name="CpOrgao"  table="CP_ORGAO" schema="CORPORATIVO">
 		<id name="idOrgao" column="ID_ORGAO" type="long">
 			<!-- <generator class="assigned"></generator>  -->
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">CP_ORGAO_SEQ</param>
 			</generator>
 		</id>

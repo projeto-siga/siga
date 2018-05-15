@@ -50,7 +50,7 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 
 	@SequenceGenerator(name = "generator", sequenceName = "DP_PESSOA_SEQ")
 	@Id
-	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_PESSOA", nullable = false)
 	@Desconsiderar
 	private Long idPessoa;

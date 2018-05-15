@@ -901,11 +901,19 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 					code : o.nome,
 					descr : o.descr,
 					kind : o.kind,
+					extra : ""
 				};
 				if (o.hasOwnProperty('autenticar') && o.autenticar)
 					signable.extra = "autenticar";
 				if (Copia == "true")
 					signable.extra = "autenticar";
+				
+				if (o.hasOwnProperty('juntar') || Juntar || Juntar == false)
+					signable.extra += (signable.extra.length > 0 ? "," : "") + ((o.juntar || Juntar == "true" || Juntar == true) ? "juntar" : "nao_juntar");
+
+				if (o.hasOwnProperty('tramitar') || Tramitar || Tramitar == false)
+					signable.extra += (signable.extra.length > 0 ? "," : "") + ((o.tramitar || Tramitar == "true" || Tramitar == true) ? "tramitar" : "nao_tramitar");
+				
 				provider.assinar(signable);
 			}
 		} else {

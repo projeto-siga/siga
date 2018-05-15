@@ -8,7 +8,7 @@
 
 	<class name="ExTipoMobil" schema="SIGA" table="EX_TIPO_MOBIL">
 		<id name="idTipoMobil" column="ID_TIPO_MOBIL" type="long">
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">EX_TIPO_MOBIL_SEQ</param>
 			</generator>
 		</id>

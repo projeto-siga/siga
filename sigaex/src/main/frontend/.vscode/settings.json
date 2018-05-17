@@ -1,0 +1,7 @@
+{
+  "vsicons.presets.angular": false,
+  "vetur.format.js.InsertSpaceBeforeFunctionParenthesis": true,
+  "prettier.eslintIntegration": true,
+  "prettier.singleQuote": true,
+  "prettier.semi": false
+}

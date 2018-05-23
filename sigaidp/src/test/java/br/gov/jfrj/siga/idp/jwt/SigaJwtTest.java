@@ -19,7 +19,7 @@ import com.auth0.jwt.JWTVerifyException;
 public class SigaJwtTest {
 
 	private static final String PROVIDER_PASSWORD = "12345";
-	private static final long TTL_TOKEN = 1000;
+	private static final long TTL_TOKEN = 60; // 1min
 	private static final String MATRICULA = "ZZ99999";
 
 	private static String tokenCriado;
@@ -81,7 +81,8 @@ public class SigaJwtTest {
 			SigaJwtProviderException, InvalidKeyException,
 			NoSuchAlgorithmException, IllegalStateException,
 			SignatureException, IOException, JWTVerifyException {
-		Thread.sleep(TTL_TOKEN + 1000); // 1 segundo depois
+		tokenCriado = SigaJwtProvider.getInstance(options).criarToken(
+				MATRICULA, null, null, 0);
 		SigaJwtProvider.getInstance(options).validarToken(tokenCriado);
 	}
 

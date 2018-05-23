@@ -60,7 +60,7 @@ public class SigaJwtProvider {
 		final JWTSigner signer = new JWTSigner(options.getPassword());
 		final HashMap<String, Object> claims = new HashMap<String, Object>();
 
-		setTimes(claims);
+		setTimes(claims, ttl);
 
 		claims.put("sub", subject);
 		claims.put("iss", PROVIDER_ISSUER);
@@ -85,14 +85,14 @@ public class SigaJwtProvider {
 			JWTVerifyException {
 		final JWTSigner signer = new JWTSigner(options.getPassword());
 		Map<String, Object> claims = validarToken(token);
-		setTimes(claims);
+		setTimes(claims, ttl);
 		return signer.sign(claims);
 
 	}
 
-	public void setTimes(final Map<String, Object> claims) {
+	public void setTimes(final Map<String, Object> claims, final Integer ttl) {
 		final long iat = System.currentTimeMillis() / 1000L; // issued at claim
-		final long exp = iat + DEFAULT_TTL_TOKEN;
+		final long exp = iat + (ttl == null ? DEFAULT_TTL_TOKEN : ttl);
 		claims.put("iat", iat);
 		claims.put("nbf", iat);
 		claims.put("exp", exp);

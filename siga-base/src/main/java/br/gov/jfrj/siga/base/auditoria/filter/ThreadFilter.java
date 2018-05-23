@@ -19,6 +19,7 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.auditoria.hibernate.util.SigaHibernateAuditorLogUtil;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 /**
  * Filtro base para implementação dos ThreadFilters
@@ -83,8 +84,7 @@ public abstract class ThreadFilter implements Filter {
 	 *         implementação da interface Principal
 	 */
 	protected String getUserPrincipalName(HttpServletRequest request) {
-		return request.getUserPrincipal() != null ? request.getUserPrincipal()
-				.getName() : "";
+		return ContextoPersistencia.getUserPrincipal() != null ? ContextoPersistencia.getUserPrincipal() : "";
 	}
 
 	/**
@@ -164,8 +164,7 @@ public abstract class ThreadFilter implements Filter {
 		String url = httpRequest.getRequestURL().toString();
 		String queryString = httpRequest.getQueryString() != null ? "?"
 				+ httpRequest.getQueryString() : "";
-		String principalName = httpRequest.getUserPrincipal() != null ? httpRequest
-				.getUserPrincipal().getName() : "convidado";
+		String principalName = ContextoPersistencia.getUserPrincipal() != null ? ContextoPersistencia.getUserPrincipal() : "convidado";
 
 		String mensagemErro = this.montaMensagemErroExcecoes(ex);
 

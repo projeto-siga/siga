@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class RequestExceptionLogger {
 	
@@ -55,7 +56,7 @@ public class RequestExceptionLogger {
 			requestInfo.append("\n");
 			
 			requestInfo.append("User Principal: ");
-			requestInfo.append(httpReq.getUserPrincipal()==null?"indefinido":httpReq.getUserPrincipal());
+			requestInfo.append(ContextoPersistencia.getUserPrincipal()==null?"indefinido":ContextoPersistencia.getUserPrincipal());
 			requestInfo.append("\n");
 
 			requestInfo.append("Thread ID: ");

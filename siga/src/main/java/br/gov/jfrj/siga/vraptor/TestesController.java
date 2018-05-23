@@ -14,6 +14,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -24,27 +25,30 @@ import br.gov.jfrj.siga.model.GenericoSelecao;
 
 @Resource
 public class TestesController extends SigaController {
-	
+
 	private static final String OK = "<span style=\"color: green;\">OK</span>";
 	private static final String ERRO = "<span style=\"color: red;\">ERRO</span>";
-	private static final String SIGA_TESTES_ACTION = "/siga/app/testes/testes";
+	private static final String SIGA_TESTES_ACTION = "/siga/public/app/testes/testes";
 
-	public TestesController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
+	public TestesController(HttpServletRequest request, Result result,
+			CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
 	}
 
-	@Get("app/testes/testes")
+	@Get("/public/app/testes/testes")
 	public void testes() {
 		String matricula = param("matricula");
 		if (matricula == null) {
-			throw new IllegalArgumentException("Par&acirc;metro&nbsp;'matricula'&nbsp;n&atilde;o&nbsp;informado");
+			throw new AplicacaoException(
+					"Par&acirc;metro&nbsp;'matricula'&nbsp;n&atilde;o&nbsp;informado");
 		}
 		this.testarSiga(matricula);
 		this.testarOutrosModulos();
 	}
 
-	@Get("app/testes/selecionar")
-	public void selecionar(String matricula, String sigla, GenericoSelecao sel) throws Exception {
+	@Get("/public/app/testes/selecionar")
+	public void selecionar(String matricula, String sigla, GenericoSelecao sel)
+			throws Exception {
 		try {
 			DpPessoa pes = getTitular();
 			DpLotacao lot = getLotaTitular();
@@ -75,11 +79,13 @@ public class TestesController extends SigaController {
 			if (copiaSigla.startsWith("-"))
 				copiaSigla = copiaSigla.substring(1);
 
-			//alterada a condicao que verifica se eh uma solicitacao do siga-sr
-			//dessa forma a regex verifica se a sigla comeca com SR ou sr e termina com numeros
-			//necessario para nao dar conflito caso exista uma lotacao que inicie com SR
+			// alterada a condicao que verifica se eh uma solicitacao do siga-sr
+			// dessa forma a regex verifica se a sigla comeca com SR ou sr e
+			// termina com numeros
+			// necessario para nao dar conflito caso exista uma lotacao que
+			// inicie com SR
 			if (copiaSigla.startsWith("SR")) {
-//			if (copiaSigla.matches("^[SR|sr].*[0-9]+$")) {
+				// if (copiaSigla.matches("^[SR|sr].*[0-9]+$")) {
 				if (Cp.getInstance()
 						.getConf()
 						.podeUtilizarServicoPorConfiguracao(pes, lot, "SIGA;SR"))
@@ -96,78 +102,83 @@ public class TestesController extends SigaController {
 							+ "/selecionar.action?sigla=" + sigla
 							+ incluirMatricula;
 				}
-			} 
-			else
+			} else
 				URLSelecionar = urlBase + "/sigaex"
 						+ (testes.length() > 0 ? testes : "/app/expediente")
-						+ "/selecionar?sigla=" + sigla
-						+ incluirMatricula;
+						+ "/selecionar?sigla=" + sigla + incluirMatricula;
 
 			SigaHTTP http = new SigaHTTP();
 			String[] response = http.get(URLSelecionar).split(";");
 
 			if (response.length == 1 && Integer.valueOf(response[0]) == 0) {
-				//verificar se apos retirada dos prefixos referente 
-				//ao orgao (sigla_orgao_usu = RJ ou acronimo_orgao_usu = JFRJ) e não achar resultado com as opcoes anteriores 
-				//a string copiaSigla somente possui números
+				// verificar se apos retirada dos prefixos referente
+				// ao orgao (sigla_orgao_usu = RJ ou acronimo_orgao_usu = JFRJ)
+				// e não achar resultado com as opcoes anteriores
+				// a string copiaSigla somente possui números
 				if (copiaSigla.matches("(^[0-9]+$)")) {
 					URLSelecionar = urlBase + "/siga"
 							+ (testes.length() > 0 ? testes : "/pessoa")
 							+ "/selecionar.action?sigla=" + sigla
 							+ incluirMatricula;
 				}
-				//encontrar lotacoes
+				// encontrar lotacoes
 				else {
 					URLSelecionar = urlBase + "/siga"
-						+ (testes.length() > 0 ? testes : "/lotacao")
-						+ "/selecionar.action?sigla=" + sigla
-						+ incluirMatricula;
+							+ (testes.length() > 0 ? testes : "/lotacao")
+							+ "/selecionar.action?sigla=" + sigla
+							+ incluirMatricula;
 				}
 				response = http.get(URLSelecionar).split(";");
-				
-				if (copiaSigla.matches("(^[0-9]+$)")) 
-					uRLExibir = "/siga/pessoa/exibir.action?sigla=" + response[2];
+
+				if (copiaSigla.matches("(^[0-9]+$)"))
+					uRLExibir = "/siga/pessoa/exibir.action?sigla="
+							+ response[2];
 				else
-					uRLExibir = "/siga/lotacao/exibir.action?sigla=" + response[2];
-			}
-			else {
+					uRLExibir = "/siga/lotacao/exibir.action?sigla="
+							+ response[2];
+			} else {
 				if (copiaSigla.startsWith("SR"))
 					uRLExibir = "/sigasr/app/solicitacao/exibir/" + response[2];
 				else if (copiaSigla.startsWith("MTP")
 						|| copiaSigla.startsWith("STP")
 						|| copiaSigla.startsWith("RTP"))
-					
+
 					uRLExibir = "/sigatp/exibir.action?sigla=" + response[2];
 				else
-					uRLExibir = "/sigaex/app/expediente/doc/exibir?sigla=" + response[2];
+					uRLExibir = "/sigaex/app/expediente/doc/exibir?sigla="
+							+ response[2];
 			}
 			sel.setId(Long.valueOf(response[1]));
 			sel.setSigla(response[2]);
 			sel.setDescricao(uRLExibir);
-			
-			
+
 			result.include("sel", sel);
-			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
-			
+			result.use(Results.page()).forwardTo(
+					"/WEB-INF/jsp/ajax_retorno.jsp");
+
 		} catch (Exception e) {
 			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
 		}
 	}
 
 	private String getURLBase() {
-		return MessageFormat.format("{0}://{1}:{2}", getRequest().getScheme(), getRequest().getServerName(), getRequest().getServerPort());
+		return MessageFormat.format("{0}://{1}:{2}", getRequest().getScheme(),
+				getRequest().getServerName(), getRequest().getServerPort());
 	}
-	
+
 	private void testarOutrosModulos() {
 		String templateURL = getURL();
-		
+
 		for (ConfiguracaoAcessoTeste acessoTeste : getAcessos()) {
-			String urlTeste = templateURL.replace(SIGA_TESTES_ACTION, acessoTeste.getUrlTeste());
+			String urlTeste = templateURL.replace(SIGA_TESTES_ACTION,
+					acessoTeste.getUrlTeste());
 			super.getRequest().setAttribute(acessoTeste.getAttrURL(), urlTeste);
-			super.getRequest().setAttribute(acessoTeste.getAttrNomeTeste(), ERRO);
+			super.getRequest().setAttribute(acessoTeste.getAttrNomeTeste(),
+					ERRO);
 
 			if (httpTest(urlTeste, acessoTeste.getMustHave()))
-				super.getRequest().setAttribute(acessoTeste.getAttrNomeTeste(), OK);
+				super.getRequest().setAttribute(acessoTeste.getAttrNomeTeste(),
+						OK);
 		}
 	}
 
@@ -181,19 +192,23 @@ public class TestesController extends SigaController {
 	}
 
 	private String getURL() {
-		return MessageFormat.format("{0}?matricula={1}", super.getRequest().getRequestURL().toString(), super.getRequest().getParameter("matricula"));
+		return MessageFormat.format("{0}?matricula={1}", super.getRequest()
+				.getRequestURL().toString(),
+				super.getRequest().getParameter("matricula"));
 	}
 
 	private List<ConfiguracaoAcessoTeste> getAcessos() {
-		return Arrays.asList(
-			new ConfiguracaoAcessoTeste("siga_ex_test_url", "siga_ex_test", "/sigaex/app/testes/gadgetTest", "Atendente"),
-			new ConfiguracaoAcessoTeste("siga_sr_test_url", "siga_sr_test", "/sigasr/app/testes/gadgetTest", "Atendente"),
-			new ConfiguracaoAcessoTeste("siga_gc_test_url", "siga_gc_test", "/sigagc/app/testes/gadgetTest", "Atendente"),
-			new ConfiguracaoAcessoTeste("siga_wf_test_url", "siga_wf_test", "/sigawf/app/testes/gadgetTest", "Atendente"),
-			new ConfiguracaoAcessoTeste("siga_cd_test_url", "siga_cd_test", "/sigacd/app/testes/CdTestesServlet", "OK!")
-		);
+		return Arrays.asList(new ConfiguracaoAcessoTeste("siga_ex_test_url",
+				"siga_ex_test", "/sigaex/public/app/testes/gadgetTest",
+				"Atendente"), new ConfiguracaoAcessoTeste("siga_sr_test_url",
+				"siga_sr_test", "/sigasr/public/app/testes/gadgetTest",
+				"Atendente"), new ConfiguracaoAcessoTeste("siga_gc_test_url",
+				"siga_gc_test", "/sigagc/public/app/testes/gadgetTest",
+				"Atendente"), new ConfiguracaoAcessoTeste("siga_wf_test_url",
+				"siga_wf_test", "/sigawf/public/app/testes/gadgetTest",
+				"Atendente"));
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	private boolean httpTest(String url, String mustHave) {
 		try {
@@ -213,14 +228,15 @@ public class TestesController extends SigaController {
 			return false;
 		}
 	}
-	
+
 	class ConfiguracaoAcessoTeste {
 		private String attrURL;
 		private String attrNomeTeste;
 		private String urlTeste;
 		private String mustHave;
-		
-		public ConfiguracaoAcessoTeste(String atributoURL, String atributoNomeTeste, String url, String mustHave) {
+
+		public ConfiguracaoAcessoTeste(String atributoURL,
+				String atributoNomeTeste, String url, String mustHave) {
 			super();
 			this.attrURL = atributoURL;
 			this.attrNomeTeste = atributoNomeTeste;

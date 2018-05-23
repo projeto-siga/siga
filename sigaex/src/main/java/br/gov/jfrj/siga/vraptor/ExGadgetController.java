@@ -86,7 +86,7 @@ public class ExGadgetController extends ExController {
 		result.include("apenasQuadro", apenasQuadro);
 	}
 
-	@Get("/app/testes/gadgetTest")
+	@Get("/public/app/testes/gadgetTest")
 	public void test(final String matricula, final Integer idTpFormaDoc) throws Exception {
 		if (matricula == null) {
 			result.use(Results.http()).body("ERRO: É necessário especificar o parâmetro 'matricula'.").setStatusCode(400);

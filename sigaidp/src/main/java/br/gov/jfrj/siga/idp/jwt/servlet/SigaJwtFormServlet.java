@@ -1,10 +1,6 @@
 package br.gov.jfrj.siga.idp.jwt.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,24 +8,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
-import org.picketlink.common.util.Base64;
 
-import com.auth0.jwt.JWTVerifyException;
-
+import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.gi.service.GiService;
+import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.idp.jwt.SigaJwtProviderException;
 
 /**
- * Servlet para troca de tokens JWT. Ainda não foi utilizado o swagger, pois as
- * bibliotecas do siga são incompatíveis com a versão atual.
+ * Servlet para FORM de autenticação usando JWT.
  * 
- * @author kpf
+ * @author tah
  *
  */
-public class SigaJwtProviderServlet extends HttpServlet {
+public class SigaJwtFormServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private SigaJwtBL instance;
 
-	public SigaJwtProviderServlet() throws SigaJwtProviderException {
+	public SigaJwtFormServlet() throws SigaJwtProviderException {
 		super();
 	}
 
@@ -43,62 +38,38 @@ public class SigaJwtProviderServlet extends HttpServlet {
 				"Authorization,Content-Type,Jwt-Options");
 	}
 
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		req.getRequestDispatcher("/paginas/jwt-login.jsp").forward(req, resp);
+	}
+
 	/**
-	 * O HEADER Jwt-Options pode conter perm - OPCIONAL. REGEX com permissões do
-	 * siga-gi requeridas ttl - OPCIONAL. Tempo de vida do token em
-	 * milissegundos mod - OBRIGATÓRIO. Módulo para o qual o token deve ser
-	 * emitido. Essa informação é utilizada para saber a senha a ser utilizada
-	 * para gerar a assinatura do token. {"perm":'.*',ttl:'xxx',"mod":"siga-wf"}
+	 * Recebe login e senha e tenta autenticar o usuário
 	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+		try {
+			String usuario = request.getParameter("username");
+			String senha = request.getParameter("password");
 
-		String modulo = extrairModulo(request);
-		SigaJwtBL jwtBL = inicializarJwtBL(modulo);
-
-		String result = null;
-		if (request.getPathInfo().endsWith("/login")) {
-			String b64 = extrairAuthorization(request);
-			String[] auth = new String(Base64.decode(b64)).split(":");
-
-			String[] usuarioELotacao = auth[0].split("@");
-			String usuario = usuarioELotacao[0];
-			String lotacao = usuarioELotacao.length > 1 ? usuarioELotacao[1]
-					: null;
-
-			String senha = auth[1];
-			String permissoes = null;
-			Integer ttl = null;
-
-			permissoes = extrairPermissoes(request);
-			ttl = extrairTTL(request);
-
-			String body = request.getReader().readLine();
-			try {
-				result = jwtBL.login(usuario, lotacao, senha, body, permissoes,
-						ttl);
-				result = "{token:\"" + result + "\"}";
-			} catch (RuntimeException e) {
-				response.setStatus(401);
-				response.getWriter().write(
-						"{token:\"" + e.getLocalizedMessage() + "\"}");
-				return;
+			GiService giService = Service.getGiService();
+			String usuarioLogado = giService.login(usuario, senha);
+			if (usuarioLogado == null || usuarioLogado.trim().length() == 0) {
+				throw new RuntimeException("Falha de autenticação!");
 			}
 
-		} else if (request.getPathInfo().endsWith("/validar")) {
-			String token = extrairAuthorization(request);
-			try {
-				result = jwtBL.validar(token);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+			String modulo = extrairModulo(request);
+			SigaJwtBL jwtBL = inicializarJwtBL(modulo);
+
+			String token = jwtBL.criarToken(usuario, null, null, null);
+			response.addCookie(AuthJwtFormFilter.buildCookie(token));
+			response.sendRedirect(request.getParameter("cont"));
+		} catch (RuntimeException e) {
+			request.setAttribute("mensagem", e.getMessage());
+			request.getRequestDispatcher("/paginas/jwt-login.jsp").forward(
+					request, response);
 		}
-
-		// response.setContentType("application/json");
-		PrintWriter out = response.getWriter();
-		JSONObject jsonResult = new JSONObject(result);
-		out.println(jsonResult);
-
 	}
 
 	private String extrairAuthorization(HttpServletRequest request) {

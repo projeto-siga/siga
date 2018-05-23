@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -13,12 +12,21 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.gov.jfrj.siga.model.ContextoPersistencia;
+
 import com.auth0.jwt.JWTVerifyException;
 
-public class AuthJwtFilter implements Filter {
+public class AuthJwtFormFilter implements Filter {
+
+	public static final String SIGA_JWT_AUTH_COOKIE_NAME = "siga-jwt-auth";
+	private static final int TIME_TO_EXPIRE_IN_S = 60 * 60 * 2; // 2h
+	private static final int TIME_TO_RENEW_IN_S = 60 * 60; // 1h
+
+	static final String PROVIDER_ISSUER = "sigaidp";
 	static long DEFAULT_TTL_TOKEN = 3600; // default 1 hora
 
 	private FilterConfig filterConfig;
@@ -32,14 +40,25 @@ public class AuthJwtFilter implements Filter {
 			throw new SigaJwtInvalidException("Token inválido");
 		}
 		SigaJwtProvider provider = getProvider();
-		return getProvider().validarToken(token);
+		return provider.validarToken(token);
+	}
+
+	private String renovarToken(String token) throws IllegalArgumentException,
+			SigaJwtProviderException, InvalidKeyException,
+			NoSuchAlgorithmException, IllegalStateException,
+			SignatureException, IOException, JWTVerifyException {
+		if (token == null) {
+			throw new RuntimeException("Token inválido");
+		}
+		SigaJwtProvider provider = getProvider();
+		return provider.renovarToken(token, TIME_TO_EXPIRE_IN_S);
 	}
 
 	public SigaJwtProvider getProvider() throws SigaJwtProviderException {
 		String password = System.getProperty("idp.jwt.modulo.pwd.sigaidp");
 		SigaJwtOptions options = new SigaJwtOptionsBuilder()
 				.setPassword(password).setModulo(null)
-				.setTTL(DEFAULT_TTL_TOKEN).build();
+				.setTTL(TIME_TO_EXPIRE_IN_S).build();
 		SigaJwtProvider provider = SigaJwtProvider.getInstance(options);
 		return provider;
 	}
@@ -49,6 +68,13 @@ public class AuthJwtFilter implements Filter {
 		if (auth != null) {
 			return request.getHeader("Authorization").replaceAll(".* ", "")
 					.trim();
+		}
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie c : cookies) {
+				if (SIGA_JWT_AUTH_COOKIE_NAME.equals(c.getName()))
+					return c.getValue();
+			}
 		}
 		return null;
 	}
@@ -65,14 +91,29 @@ public class AuthJwtFilter implements Filter {
 		try {
 			String token = extrairAuthorization(req);
 			Map<String, Object> decodedToken = validarToken(token);
-			List<String> claim = (List<String>) decodedToken.get("perm");
-			AuthUtils.getInstance().setPermissoes(claim);
+			final long now = System.currentTimeMillis() / 1000L;
+			if ((Integer) decodedToken.get("exp") < now + TIME_TO_RENEW_IN_S) {
+				// Seria bom incluir o attributo HttpOnly
+				String tokenNew = renovarToken(token);
+				Cookie cookie = buildCookie(tokenNew);
+				resp.addCookie(cookie);
+			}
+			ContextoPersistencia.setUserPrincipal((String) decodedToken
+					.get("sub"));
 			chain.doFilter(request, response);
-		} catch (JWTVerifyException e) {
-			informarAutenticacaoInvalida(resp, e);
-			return;
 		} catch (AuthJwtException e) {
 			informarAutenticacaoProibida(resp, e);
+			return;
+		} catch (SigaJwtProviderException e) {
+			informarAutenticacaoProibida(resp, e);
+			return;
+		} catch (JWTVerifyException e) {
+			if ("jwt expired".equals(e.getMessage()))
+				redirecionarParaFormDeLogin(req, resp, e);
+			else
+				throw new RuntimeException(e);
+		} catch (SigaJwtInvalidException e) {
+			redirecionarParaFormDeLogin(req, resp, e);
 			return;
 		} catch (Exception e) {
 			if (e.getCause() instanceof AuthJwtException) {
@@ -82,6 +123,29 @@ public class AuthJwtFilter implements Filter {
 				throw new RuntimeException(e);
 			}
 		}
+	}
+
+	public static Cookie buildCookie(String tokenNew) {
+		Cookie cookie = new Cookie(SIGA_JWT_AUTH_COOKIE_NAME, tokenNew);
+		cookie.setPath("/");
+		// cookie.setSecure(true);
+		return cookie;
+	}
+
+	public static Cookie buildEraseCookie() {
+		Cookie cookie = new Cookie(SIGA_JWT_AUTH_COOKIE_NAME, "");
+		cookie.setPath("/");
+		cookie.setMaxAge(0);
+		return cookie;
+	}
+
+	private void redirecionarParaFormDeLogin(HttpServletRequest req,
+			HttpServletResponse resp, Exception e) throws IOException {
+		if (req.getHeader("X-Requested-With") != null) {
+			informarAutenticacaoInvalida(resp, e);
+			return;
+		}
+		resp.sendRedirect("/sigaidp/jwt/login?cont=" + req.getRequestURI());
 	}
 
 	private void informarAutenticacaoInvalida(HttpServletResponse resp,

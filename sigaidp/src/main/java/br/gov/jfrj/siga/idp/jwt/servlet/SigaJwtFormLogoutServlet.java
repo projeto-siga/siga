@@ -32,6 +32,7 @@ public class SigaJwtFormLogoutServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		resp.addCookie(AuthJwtFormFilter.buildEraseCookie());
-		req.getRequestDispatcher("/paginas/jwt-login.jsp").forward(req, resp);
+		resp.sendRedirect("/siga");
+		// req.getRequestDispatcher("/paginas/jwt-login.jsp").forward(req, resp);
 	}
 }

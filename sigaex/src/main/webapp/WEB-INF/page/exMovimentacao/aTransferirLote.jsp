@@ -66,20 +66,7 @@
 			document.getElementById(el).focus();
 		}
 
-		function enableDisableAll(theElement) {
-			var theForm = theElement.form, z = 0;
-			for (z = 0; z < theForm.length; z++) {
-				if (((theForm[z].type == 'select-one' && theForm[z].name
-						.substr(0, 4) == 'tpd_') || (theForm[z].type == 'text' && theForm[z].name
-						.substr(0, 4) == 'txt_'))
-						&& theForm[z].name != 'tpdall'
-						&& theForm[z].name != 'txtall') {
-					if (theElement.value != 0)
-						enableDisableItem(theForm[z].name.substring(4), false);
-					else
-						enableDisableItem(theForm[z].name.substring(4), true);
-				}
-			}
+		function enableDisableAll(theElement) {				
 			if (theElement.value == -1) {
 				document.getElementById('div_txtall').style.display = '';
 				document.getElementById('txtall').focus();
@@ -216,7 +203,7 @@
 												${item.descTpDespacho}
 											</option>
 										</c:forEach>
-									</select>
+									</select>																
 								</div>
 							</td>
 						</tr>
@@ -224,7 +211,7 @@
 							<td>
 							</td>
 							<td>
-								<div id="div_txtall" style="display: none">
+								<div id="div_txtall" style="display: none;">
 									<input type="text" name="txtall" id="txtall" maxlength="255" />
 								</div>
 							</td>

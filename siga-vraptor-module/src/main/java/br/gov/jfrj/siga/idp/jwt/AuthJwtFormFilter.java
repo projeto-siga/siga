@@ -145,13 +145,20 @@ public class AuthJwtFormFilter implements Filter {
 			informarAutenticacaoInvalida(resp, e);
 			return;
 		}
+		if (!"GET".equalsIgnoreCase(req.getMethod())) {
+			informarAutenticacaoInvalida(resp, e);
+			return;
+		}
 		resp.sendRedirect("/sigaidp/jwt/login?cont=" + req.getRequestURI());
 	}
 
 	private void informarAutenticacaoInvalida(HttpServletResponse resp,
 			Exception e) throws IOException {
-		String mensagem = e.getCause() != null ? e.getCause()
-				.getLocalizedMessage() : e.getLocalizedMessage();
+		String mensagem = "Não foi possível autenticar o usuário, se não quiser perder o trabalho, use uma outra janela do navegador para entrar no sistema e fazer um novo login, depois volte nessa página e clique no botão de atualizar: ";
+		if (e.getCause() == null)
+			mensagem += e.getLocalizedMessage();
+		else
+			mensagem += e.getCause().getLocalizedMessage();
 		resp.setStatus(401); // 401 Unauthorized - authentication is required
 								// and has failed or has not yet been provided.
 		resp.getWriter().write(mensagem);

@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+	<display-name>Siga Transportes</display-name>
+
+	<context-param>
+		<param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
+		<param-value>conf.messages</param-value>
+	</context-param>
+
+	<welcome-file-list>
+		<welcome-file>/WEB-INF/index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<context-param>
+		<param-name>br.com.caelum.vraptor.provider</param-name>
+		<param-value>br.com.caelum.vraptor.ioc.guice.GuiceProvider</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>br.com.caelum.vraptor.encoding</param-name>
+		<param-value>UTF-8</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>br.com.caelum.vraptor.packages</param-name>
+		<param-value>br.gov.jfrj.siga.vraptor, br.gov.jfrj.siga.feature.converter.entity.vraptor</param-value>
+	</context-param>
+
+	<filter>
+		<filter-name>AuthJwtFormFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter
+		</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>AuthJwtFormFilter</filter-name>
+		<url-pattern>/app/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>vraptor</filter-name>
+		<filter-class>br.com.caelum.vraptor.VRaptor</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>vraptor</filter-name>
+		<url-pattern>/app/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+
+	<error-page>
+		<error-code>500</error-code>
+		<location>/WEB-INF/page/erroGeral.jsp</location>
+	</error-page>
+</web-app>

@@ -1,0 +1,2 @@
+insert into cp_servico (id_servico, sigla_servico, desc_servico, id_servico_pai, id_tp_servico) 
+	values (cp_servico_seq.nextval, 'SIGA-TP-ADMMISSAOCOMPLEXO', 'AdministrarMissaoporComplexo', (select ID_SERVICO from cp_servico where sigla_servico = 'SIGA-TP'), 2);

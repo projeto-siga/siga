@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<parent>
+		<groupId>siga</groupId>
+		<artifactId>siga-doc</artifactId>
+		<version>1.1</version>
+	</parent>
+
+	<artifactId>sigatp</artifactId>
+	<modelVersion>4.0.0</modelVersion>
+	<packaging>war</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.12</version>
+		</dependency>
+		<!-- SIGA -->
+		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>siga-vraptor-module</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>xerces</artifactId>
+					<groupId>xercesImpl</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jettison</groupId>
+			<artifactId>jettison</artifactId>
+			<version>1.3.5</version>
+		</dependency>
+		<dependency>
+			<groupId>br.com.caelum.vraptor</groupId>
+			<artifactId>vraptor-jpa</artifactId>
+			<version>1.0.2</version>
+			<exclusions>
+				<exclusion>  <!-- declare the exclusion here -->
+					<groupId>org.eclipse.persistence</groupId>
+					<artifactId>javax.persistence</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Especifico do sigatp -->
+		<dependency>
+			<groupId>net.sf.oval</groupId>
+			<artifactId>oval</artifactId>
+			<version>1.84</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>c3p0</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>0.9.1.2</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-server</artifactId>
+			<version>2.42.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>xerces</artifactId>
+					<groupId>xercesImpl</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant-junit</artifactId>
+			<version>1.9.4</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>net.objectlab.kit</groupId>
+			<artifactId>datecalc-common</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.objectlab.kit</groupId>
+			<artifactId>datecalc-joda</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>de.jollyday</groupId>
+			<artifactId>jollyday</artifactId>
+			<version>0.4.7</version>
+		</dependency>
+
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>1.4.01</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>ar.com.fdvs</groupId>
+			<artifactId>DynamicJasper</artifactId>
+			<version>3.0.6</version>
+			<exclusions>
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+					<artifactId>bcmail-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+					<artifactId>bcprov-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>eclipse</groupId>
+					<artifactId>jdtcore</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>4.1.0.Final</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.1.0.Final</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-envers</artifactId>
+			<version>4.2.15.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>jsp-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>jsptags</groupId>
+			<artifactId>pager-taglib</artifactId>
+		</dependency>
+
+		<!-- standard.jar -->
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+
+		<!-- JSTL -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+
+		<!-- DEV <scope>provided</scope> -->
+
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>2.42.2</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.8.8</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- Dependencia Jobs -->
+		<dependency>
+		    <groupId>br.com.prixma</groupId>
+		    <artifactId>vraptor-tasks</artifactId>
+		    <version>1.1.0</version>
+		    <exclusions>
+		        <exclusion>
+		            <groupId>br.com.caelum</groupId>
+		            <artifactId>3.5.4</artifactId>
+		        </exclusion>
+		    </exclusions>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.javassist</groupId>
+						<artifactId>javassist</artifactId>
+						<version>3.18.1-GA</version>
+					</dependency>
+					<dependency>
+						<groupId>br.com.caelum</groupId>
+						<artifactId>vraptor</artifactId>
+						<version>3.5.4</version>
+					</dependency>
+					<dependency>
+						<groupId>siga</groupId>
+						<artifactId>siga-vraptor-module</artifactId>
+						<version>1.1</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>static-scanning</id>
+						<phase>package</phase>
+						<configuration>
+							<target>
+								<echo message="Starting static scanning process..." />
+								<path id="build.classpath">
+									<fileset dir="${project.build.directory}/${project.build.finalName}/WEB-INF/lib" includes="*.jar" />
+								</path>
+								<java classpathref="build.classpath" classname="br.com.caelum.vraptor.scan.VRaptorStaticScanning" fork="true">
+									<arg value="${project.build.directory}/${project.build.finalName}/WEB-INF/web.xml" />
+									<classpath refid="build.classpath" />
+									<classpath path="${project.build.directory}/${project.build.finalName}/WEB-INF/classes" />
+								</java>
+								<war destfile="${project.build.directory}/${project.build.finalName}.war" webxml="${project.build.directory}/${project.build.finalName}/WEB-INF/web.xml">
+									<fileset dir="${project.build.directory}/${project.build.finalName}" />
+								</war>
+								<echo message="Static scanning process finished!" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

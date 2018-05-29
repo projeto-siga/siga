@@ -61,7 +61,10 @@ public class AuthJwtFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest)request;
 		HttpServletResponse resp = (HttpServletResponse)response;
-		
+		if(req.getPathInfo().equals("/info")){
+			chain.doFilter(request, response);
+			return;
+		}
 		try{
 			String token = extrairAuthorization(req);
 			DecodedJWT decodedToken = validarToken(token);

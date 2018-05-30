@@ -4,10 +4,11 @@ Siga - Sistema de Gestão Administrativa
 O Siga é composto de diversos módulos:
 
 - Siga-Doc: Gestão Documental
-- Siga-WF: Worklow
+- Siga-WF: Workflow
 - Siga-GI: Gestão de Identidade
 - Siga-GC: Gestão de Conhecimento
 - Siga-SR: Serviços e Tickets
+- Siga-tp: Solicitação de transportes
 
 O módulo mas popular, o Siga-Doc, é capaz de controlar o trâmite de documentos digitais ou físico, processos administrativos ou expedientes, usando assinatura com certificado digital ou simplesmente assinatura com login e senha. Este módulo foi desenvolvido seguindo os requisitos do e-Arq, portanto, tem um elevado grau de aderência.
 

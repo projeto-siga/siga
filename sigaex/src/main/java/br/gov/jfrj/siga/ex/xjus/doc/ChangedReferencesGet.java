@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.xjus;
+package br.gov.jfrj.siga.ex.xjus.doc;
 
 import java.util.ArrayList;
 import java.util.Date;

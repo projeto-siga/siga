@@ -3,11 +3,11 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
 	<display-name>SIGA - Gestão Documental</display-name>
-	
+
 	<context-param>
-	    <param-name>br.com.caelum.vraptor.provider</param-name>
-	    <param-value>br.com.caelum.vraptor.ioc.guice.GuiceProvider</param-value>
-	</context-param>	
+		<param-name>br.com.caelum.vraptor.provider</param-name>
+		<param-value>br.com.caelum.vraptor.ioc.guice.GuiceProvider</param-value>
+	</context-param>
 	<context-param>
 		<param-name>br.com.caelum.vraptor.encoding</param-name>
 		<param-value>UTF-8</param-value>
@@ -16,7 +16,7 @@
 		<param-name>br.com.caelum.vraptor.packages</param-name>
 		<param-value>br.gov.jfrj.siga.vraptor</param-value>
 	</context-param>
-	
+
 	<jsp-config>
 		<jsp-property-group>
 			<url-pattern>*.jsp</url-pattern>
@@ -35,10 +35,10 @@
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
-	
-    <listener>
-        <listener-class>br.gov.jfrj.siga.jee.BouncyCastleServletContextListener</listener-class>
-    </listener>
+
+	<listener>
+		<listener-class>br.gov.jfrj.siga.jee.BouncyCastleServletContextListener</listener-class>
+	</listener>
 
 	<filter>
 		<filter-name>RequestLoggerFilter</filter-name>
@@ -49,58 +49,58 @@
 		<url-pattern>*</url-pattern>
 	</filter-mapping>
 
-    <filter>
-        <filter-name>ExFilter</filter-name>
-        <filter-class>br.gov.jfrj.siga.hibernate.ExThreadFilter</filter-class>
-    </filter>
+	<filter>
+		<filter-name>ExFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.hibernate.ExThreadFilter</filter-class>
+	</filter>
 
-    <filter>
-        <filter-name>SigaLogFilter</filter-name>
-        <filter-class>br.gov.jfrj.siga.ex.util.LogThreadFilter</filter-class>
-    </filter>
+	<filter>
+		<filter-name>SigaLogFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.ex.util.LogThreadFilter</filter-class>
+	</filter>
 
-    <filter>
-        <filter-name>SalvamentoAutomaticoFilter</filter-name>
-        <filter-class>br.gov.jfrj.siga.util.SalvamentoAutomaticoThreadFilter</filter-class>
-    </filter>
+	<filter>
+		<filter-name>SalvamentoAutomaticoFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.util.SalvamentoAutomaticoThreadFilter</filter-class>
+	</filter>
 
 	<filter>
 		<filter-name>vraptor</filter-name>
 		<filter-class>br.com.caelum.vraptor.VRaptor</filter-class>
 	</filter>
 
-    <filter>
-        <filter-name>ResponseHeaderFilter</filter-name>
-        <filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
-        <init-param>
-            <param-name>Cache-Control</param-name>
-            <param-value>public, max-age=3600</param-value>
-        </init-param>
-    </filter>
+	<filter>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
+		<init-param>
+			<param-name>Cache-Control</param-name>
+			<param-value>public, max-age=3600</param-value>
+		</init-param>
+	</filter>
 
-    <filter-mapping>
-        <filter-name>SigaLogFilter</filter-name>
-        <url-pattern>*.action</url-pattern>
-    </filter-mapping>
+	<filter-mapping>
+		<filter-name>SigaLogFilter</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
 
-    <filter-mapping>
-        <filter-name>ExFilter</filter-name>
-        <url-pattern>*.pdf</url-pattern>
-        <url-pattern>*.html</url-pattern>
-        <url-pattern>*.action</url-pattern>
-        <url-pattern>/dwr/*</url-pattern>
-        <url-pattern>/anexo/*</url-pattern>
-        <url-pattern>/servicos/*</url-pattern>
-        <url-pattern>/apis/*</url-pattern>
-        <url-pattern>/app/*</url-pattern>
-        <url-pattern>/public/app/*</url-pattern>
-        <url-pattern>/public/api/*</url-pattern>
-    </filter-mapping>
+	<filter-mapping>
+		<filter-name>ExFilter</filter-name>
+		<url-pattern>*.pdf</url-pattern>
+		<url-pattern>*.html</url-pattern>
+		<url-pattern>*.action</url-pattern>
+		<url-pattern>/dwr/*</url-pattern>
+		<url-pattern>/anexo/*</url-pattern>
+		<url-pattern>/servicos/*</url-pattern>
+		<url-pattern>/apis/*</url-pattern>
+		<url-pattern>/app/*</url-pattern>
+		<url-pattern>/public/app/*</url-pattern>
+		<url-pattern>/public/api/*</url-pattern>
+	</filter-mapping>
 
-    <filter-mapping>
-        <filter-name>SalvamentoAutomaticoFilter</filter-name>
-        <url-pattern>/expediente/doc/gravar_ajax.action</url-pattern>
-    </filter-mapping>
+	<filter-mapping>
+		<filter-name>SalvamentoAutomaticoFilter</filter-name>
+		<url-pattern>/expediente/doc/gravar_ajax.action</url-pattern>
+	</filter-mapping>
 
 	<filter-mapping>
 		<filter-name>vraptor</filter-name>
@@ -108,7 +108,7 @@
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
-		<filter-mapping>
+	<filter-mapping>
 		<filter-name>vraptor</filter-name>
 		<url-pattern>/public/app/*</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
@@ -119,16 +119,16 @@
 		<url-pattern>*.action</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
-	</filter-mapping>	
+	</filter-mapping>
 
-    <filter-mapping>
-        <filter-name>ResponseHeaderFilter</filter-name>
-        <url-pattern>/imagens/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>ResponseHeaderFilter</filter-name>
-        <url-pattern>/recursos/*</url-pattern>
-    </filter-mapping>
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<url-pattern>/imagens/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<url-pattern>/recursos/*</url-pattern>
+	</filter-mapping>
 
 	<servlet>
 		<servlet-name>AudioCaptcha</servlet-name>
@@ -169,21 +169,19 @@
 		</init-param>
 	</servlet>
 
-    <!-- Standard Action Servlet Configuration -->
-    <servlet>
-        <servlet-name>dwr</servlet-name>
-        <servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ExService</servlet-name>
-        <servlet-class>br.gov.jfrj.siga.ex.service.impl.ExServiceImpl</servlet-class>
-    </servlet>
-    
+	<!-- Standard Action Servlet Configuration -->
+	<servlet>
+		<servlet-name>dwr</servlet-name>
+		<servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ExService</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.ex.service.impl.ExServiceImpl</servlet-class>
+	</servlet>
+
 	<servlet>
 		<servlet-name>webdav</servlet-name>
-		<servlet-class>
-			net.sf.webdav.WebdavServlet
-		</servlet-class>
+		<servlet-class>net.sf.webdav.WebdavServlet</servlet-class>
 		<init-param>
 			<param-name>ResourceHandlerImplementation</param-name>
 			<param-value>
@@ -223,18 +221,27 @@
 	<servlet-mapping>
 		<servlet-name>webdav</servlet-name>
 		<url-pattern>/public/app/webdav/*</url-pattern>
-	</servlet-mapping>    
-	
+	</servlet-mapping>
+
 	<servlet>
 		<servlet-name>XjusDocRecordServlet</servlet-name>
-		<servlet-class>br.gov.jfrj.siga.ex.xjus.XjusDocRecordServlet</servlet-class>
+		<servlet-class>br.gov.jfrj.siga.ex.xjus.doc.XjusDocRecordServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>XjusDocRecordServlet</servlet-name>
 		<url-pattern>/apis/x-jus/doc/v1/*</url-pattern>
 	</servlet-mapping>
 
-	
+	<servlet>
+		<servlet-name>XjusMovRecordServlet</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.ex.xjus.mov.XjusMovRecordServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>XjusMovRecordServlet</servlet-name>
+		<url-pattern>/apis/x-jus/mov/v1/*</url-pattern>
+	</servlet-mapping>
+
+
 
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>

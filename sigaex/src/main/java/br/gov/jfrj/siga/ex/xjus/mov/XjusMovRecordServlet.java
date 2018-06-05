@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.xjus;
+package br.gov.jfrj.siga.ex.xjus.mov;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 
 import com.crivano.swaggerservlet.SwaggerServlet;
 
-public class XjusDocRecordServlet extends SwaggerServlet {
+public class XjusMovRecordServlet extends SwaggerServlet {
 	private static final long serialVersionUID = 1756711359239182178L;
 
 	@Override
@@ -20,7 +20,7 @@ public class XjusDocRecordServlet extends SwaggerServlet {
 
 		super.setAPI(IXjusRecordAPI.class);
 
-		super.setActionPackage("br.gov.jfrj.siga.ex.xjus");
+		super.setActionPackage("br.gov.jfrj.siga.ex.xjus.mov");
 	}
 
 	@Override
@@ -31,6 +31,6 @@ public class XjusDocRecordServlet extends SwaggerServlet {
 
 	@Override
 	public String getService() {
-		return "siga-doc document record api";
+		return "siga-doc movement record api";
 	}
 }

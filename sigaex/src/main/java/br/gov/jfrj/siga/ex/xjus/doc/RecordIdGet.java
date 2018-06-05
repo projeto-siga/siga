@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.xjus;
+package br.gov.jfrj.siga.ex.xjus.doc;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -90,7 +90,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		addFacet(resp, name, value);
 	}
 
-	protected static void addAclForDoc(ExDocumento doc, RecordIdGetResponse resp) {
+	public static void addAclForDoc(ExDocumento doc, RecordIdGetResponse resp) {
 		if (doc.getDnmAcesso() == null
 				|| doc.isDnmAcessoMAisAntigoQueODosPais()) {
 			Ex.getInstance().getBL().atualizarDnmAcesso(doc);

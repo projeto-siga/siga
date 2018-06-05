@@ -854,7 +854,7 @@ public class ExDocumentoController extends ExController {
 				}
 			} 
 			
-			if (exDocumentoDTO.getMob().doc().isSemEfeito()) {
+			if (exDocumentoDTO.getMob().doc().isSemEfeito() ) {
 				if (!exDocumentoDTO.getMob().doc().getCadastrante().equals(getTitular()) &&
 				    !exDocumentoDTO.getMob().doc().getSubscritor().equals(getTitular()) && !isInteressado) {
 						throw new AplicacaoException("Documento "
@@ -949,6 +949,19 @@ public class ExDocumentoController extends ExController {
 											 */
 						if (mob.doc().isFinalizado()) {							
 							if (!mob.doc().isPendenteDeAssinatura()) { 
+								if(mobUlt.isEmTransito()) { /*  em transito */
+									Ex.getInstance()
+									.getBL()
+									.receber(getCadastrante(), getLotaTitular(),
+											mobUlt, new Date());
+								}
+								if (mob.doc().isEletronico()
+										&& (mobUlt.temAnexosNaoAssinados() || mobUlt
+												.temDespachosNaoAssinados() || mobUlt.doc().getMobilGeral().temAnexosNaoAssinados())) {
+									Ex.getInstance()
+									.getBL()
+									.excluirAnexosDespachosNaoAssinados(getTitular(), getLotaTitular(), mobUlt);															
+								}
 								if (Ex.getInstance()
 										.getComp()
 										.podeArquivarCorrente(getTitular(),
@@ -958,12 +971,11 @@ public class ExDocumentoController extends ExController {
 										.getBL()
 										.arquivarCorrenteAutomatico(dest, getLotaTitular(), mobArq);
 										msgDestinoDoc = "documento sendo arquivado automaticamente";
-								} else { /* não pode arquivar */	 	
+								} else { /* não pode arquivar */	
 									
-									Ex.getInstance().getBL().cancelarDocumento(getTitular(), getLotaTitular(), mob.doc());	
-									msgDestinoDoc = "documento sendo cancelado automaticamente";
+										msgDestinoDoc = "documento não pode ser arquivado automaticamente";																		
 								}								
-							} else {            /* pendente de assinatura */
+							} else { /* pendente de assinatura */
 								
 								Ex.getInstance().getBL().cancelarDocumento(getTitular(), getLotaTitular(), mob.doc());	
 								msgDestinoDoc = "documento sendo cancelado automaticamente";
@@ -980,7 +992,7 @@ public class ExDocumentoController extends ExController {
 					}
 				}
 			}
-		}
+		}		
 
 		return msgDestinoDoc;
 

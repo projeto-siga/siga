@@ -372,7 +372,7 @@
 										"atendente sigla": '<c:out value="${documento[2].dpPessoaIni.sigla}" />',
 										"atendente nome": '<c:out value="${documento[2].dpPessoaIni.descricao}" />',
 										"atendente lotação sigla": '<c:out value="${documento[2].dpLotacaoIni.lotacaoAtual.sigla}" />',
-										"atendente lotação nome": '<c:out value="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}" />'
+										"atendente lotação nome": '<c:out value="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}" />';
 										<c:if test="${visualizacao == 4}">
 											<c:forEach var="campo" items="${campos.keySet()}">
 												,"${campos.get(campo)}": '<c:out value="${documento[0].form[campo]}" />'
@@ -489,6 +489,8 @@
 										<tr class="${exibedoc}">
 											<c:set var="podeAcessar"
 												value="${f:testaCompetencia('acessarDocumento',titular,lotaTitular, documento[1])}" />
+											<c:set var="podeAcessar"
+												value="true" />	
 											<td width="11.5%" align="right"><c:choose>
 													<c:when test='${popup!="true"}'>
 														<c:choose>
@@ -558,6 +560,8 @@
 											<c:set var="acessivel" value="" />
 											<c:set var="acessivel"
 												value="${f:testaCompetencia('acessarDocumento',titular,lotaTitular,documento[1])}" />
+											<c:set var="acessivel"
+												value="true" />		
 											<c:choose>
 												<c:when test="${acessivel eq true}">
 													<c:set var="estilo" value="" />

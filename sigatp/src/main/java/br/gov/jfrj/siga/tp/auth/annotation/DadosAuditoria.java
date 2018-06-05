@@ -1,10 +1,10 @@
 package br.gov.jfrj.siga.tp.auth.annotation;
 
 import br.com.caelum.vraptor.ioc.Component;
-import br.com.caelum.vraptor.ioc.SessionScoped;
+import br.com.caelum.vraptor.ioc.RequestScoped;
 
 @Component
-@SessionScoped
+@RequestScoped
 public class DadosAuditoria {
 	private String matricula;
 	private String motivoLog;

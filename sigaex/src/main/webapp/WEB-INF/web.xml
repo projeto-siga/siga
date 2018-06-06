@@ -241,6 +241,15 @@
 		<url-pattern>/apis/x-jus/mov/v1/*</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>XjusRecordServlet</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.ex.xjus.XjusRecordServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>XjusRecordServlet</servlet-name>
+		<url-pattern>/apis/x-jus/v1/*</url-pattern>
+	</servlet-mapping>
+
 
 
 	<welcome-file-list>

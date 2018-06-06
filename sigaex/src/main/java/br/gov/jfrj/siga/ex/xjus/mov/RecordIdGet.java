@@ -23,7 +23,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		try {
 			long primaryKey;
 			try {
-				primaryKey = Long.valueOf(req.id.split(":")[1]);
+				primaryKey = Long.valueOf(req.id);
 			} catch (NumberFormatException nfe) {
 				throw new RuntimeException("REMOVED");
 			}

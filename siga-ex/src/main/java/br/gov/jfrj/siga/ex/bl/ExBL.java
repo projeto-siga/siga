@@ -3907,6 +3907,32 @@ public class ExBL extends CpBL {
 		Notificador.notificarDestinariosEmail(mov,
 				Notificador.TIPO_NOTIFICACAO_EXCLUSAO);
 	}
+	
+	public void excluirAnexosDespachosNaoAssinados (final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante,ExMobil mob) {
+		
+		for (ExMovimentacao movNaoAss : mob.getAnexosNaoAssinados()) { 
+			if (movNaoAss != null) {
+				Ex.getInstance()
+				.getBL().
+				excluirMovimentacao(cadastrante, lotaCadastrante, mob, movNaoAss.getIdMov());
+			}
+		}	
+		for (ExMovimentacao movNaoAss : mob.doc().getMobilGeral().getAnexosNaoAssinados()) { 
+			if (movNaoAss != null) {
+				Ex.getInstance()
+				.getBL().
+				excluirMovimentacao(cadastrante, lotaCadastrante, mob, movNaoAss.getIdMov());
+			}	
+		}	
+		for (ExMovimentacao movNaoAss : mob.getDespachosNaoAssinados()) { 
+			if (movNaoAss != null) {
+				Ex.getInstance()
+				.getBL().
+				excluirMovimentacao(cadastrante, lotaCadastrante, mob, movNaoAss.getIdMov());
+			}
+		}				
+	}
 
 	public void incluirCosignatario(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,

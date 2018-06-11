@@ -129,14 +129,14 @@
 					<c:if test="${f:resource('isWorkflowEnabled')}">
 						<c:if
 							test="${ (primeiroMobil) and (docVO.tipoFormaDocumento == 'processo_administrativo')}">
-							<div id="${docVO.sigla}" depende=";wf;" class="wf_div" />
+							<div id="${docVO.sigla}" depende=";wf;" class="wf_div"></div>
 							<!--ajax:${doc.codigo}-${i}-->
 							<!--/ajax:${doc.codigo}-${i}-->
 							<c:set var="primeiroMobil" value="${false}" />
 						</c:if>
 						<c:if
 							test="${(not m.mob.geral) or (docVO.tipoFormaDocumento != 'processo_administrativo')}">
-							<div id="${m.sigla}" depende=";wf;" class="wf_div" />
+							<div id="${m.sigla}" depende=";wf;" class="wf_div"></div>
 							<!--ajax:${doc.codigo}-${i}-->
 							<!--/ajax:${doc.codigo}-${i}-->
 						</c:if>

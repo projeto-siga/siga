@@ -25,7 +25,6 @@
 			<jsp:doBody />
 		</pg:item>
 	</c:forEach>
-	
 	</table>
 	<div class="gt-table-controls gt-table-controls-btm clearfix">
 		<p class="gt-table-pager">
@@ -37,7 +36,6 @@
 			</pg:pages>
 		</p>
 	</div>
-</div>
-	
+	<table style="display: none">
 </pg:pager>
 

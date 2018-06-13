@@ -146,6 +146,12 @@ tr.fisicoeven:hover td {
 	
 }
 
+.table-action-list a:link,.gt-table .table-action-list a:visited {
+	color: #877b6d;
+	text-decoration: none !important;
+}
+
+
 /* Login Box Styles */
 .gt-mylogin-hd {
 	width: 100%;
@@ -282,6 +288,15 @@ tr.fisicoeven:hover td {
 table.mov TR.disabled td {
 	color: #bbb;
 }
+
+.siga-table {
+	background-color: white;
+}
+
+.siga-table a:link,.siga-table a:visited {
+	text-decoration: none;
+}
+
 
 /*
 Author: Craig Erskine

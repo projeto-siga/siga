@@ -17,9 +17,14 @@ public class RevInfoListener  implements RevisionListener  {
 			entity.setMatricula(null);
 			entity.setMotivoLog(null);
 		} else {
-			DadosAuditoria da = (DadosAuditoria) VRaptorRequestHolder.currentRequest().getRequest().getSession().getAttribute("dadosAuditoria");
-			entity.setMatricula(da.getMatricula());
-			entity.setMotivoLog(da.getMotivoLog());
+			DadosAuditoria da = (DadosAuditoria) VRaptorRequestHolder.currentRequest().getRequest().getAttribute("dadosAuditoria"); //getSession().getAttribute("dadosAuditoria");
+			if(da == null) {
+				entity.setMatricula(null);
+				entity.setMotivoLog(null);
+			} else {
+				entity.setMatricula(da.getMatricula());
+				entity.setMotivoLog(da.getMotivoLog());
+			}
 		}
 
 		try {

@@ -3908,7 +3908,7 @@ public class ExBL extends CpBL {
 				Notificador.TIPO_NOTIFICACAO_EXCLUSAO);
 	}
 	
-	public void excluirAnexosDespachosNaoAssinados (final DpPessoa cadastrante,
+	public void excluirAnexosNaoAssinados (final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante,ExMobil mob) {
 		
 		for (ExMovimentacao movNaoAss : mob.getAnexosNaoAssinados()) { 
@@ -3924,14 +3924,8 @@ public class ExBL extends CpBL {
 				.getBL().
 				excluirMovimentacao(cadastrante, lotaCadastrante, mob, movNaoAss.getIdMov());
 			}	
-		}	
-		for (ExMovimentacao movNaoAss : mob.getDespachosNaoAssinados()) { 
-			if (movNaoAss != null) {
-				Ex.getInstance()
-				.getBL().
-				excluirMovimentacao(cadastrante, lotaCadastrante, mob, movNaoAss.getIdMov());
-			}
-		}				
+		}
+		
 	}
 
 	public void incluirCosignatario(final DpPessoa cadastrante,

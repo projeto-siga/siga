@@ -956,11 +956,10 @@ public class ExDocumentoController extends ExController {
 											mobUlt, new Date());
 								}
 								if (mob.doc().isEletronico()
-										&& (mobUlt.temAnexosNaoAssinados() || mobUlt
-												.temDespachosNaoAssinados() || mobUlt.doc().getMobilGeral().temAnexosNaoAssinados())) {
+										&& (mobUlt.temAnexosNaoAssinados() ||  mobUlt.doc().getMobilGeral().temAnexosNaoAssinados())) {
 									Ex.getInstance()
 									.getBL()
-									.excluirAnexosDespachosNaoAssinados(getTitular(), getLotaTitular(), mobUlt);															
+									.excluirAnexosNaoAssinados(getTitular(), getLotaTitular(), mobUlt);															
 								}
 								if (Ex.getInstance()
 										.getComp()

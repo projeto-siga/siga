@@ -10,6 +10,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.ChangedReferencesGetRequest;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.ChangedReferencesGetResponse;
@@ -29,9 +30,10 @@ public class ChangedReferencesGet implements
 			ChangedReferencesGetResponse resp) throws Exception {
 		resp.list = new ArrayList<>();
 
-		if (req.last == null)
-			req.last = SwaggerUtils.format(new Date(0L)) + ";"
-					+ AllReferencesGet.defaultLastId();
+		if (req.lastdate == null)
+			req.lastdate = new Date(0L);
+		if (req.lastid == null)
+			req.lastid = AllReferencesGet.defaultLastId();
 
 		final CountDownLatch responseWaiter = new CountDownLatch(
 				RecordServiceEnum.values().length);
@@ -43,15 +45,16 @@ public class ChangedReferencesGet implements
 
 			ChangedReferencesGetRequest q = new ChangedReferencesGetRequest();
 			q.max = req.max;
-			String split1[] = req.last.split(";");
-			String split2[] = split1[1].split("-");
-			String lastid = split2[0];
-			if (service.ordinal() > Integer.valueOf(split2[1]))
+			String split[] = req.lastid.split("-");
+			String lastid = split[0];
+			if (service.ordinal() > Integer.valueOf(split[1]))
 				lastid = Utils.formatId(Long.valueOf(lastid) - 1);
-			q.last = split1[0] + ";" + lastid;
+			q.lastdate = req.lastdate;
+			q.lastid = lastid;
 			Future<SwaggerAsyncResponse<ChangedReferencesGetResponse>> future = SwaggerCall
 					.callAsync(service.name().toLowerCase()
-							+ "-changed-references", null, "GET", url, q,
+							+ "-changed-references", Cp.getInstance().getProp()
+							.xjusPassword(), "GET", url, q,
 							ChangedReferencesGetResponse.class);
 			map.put(service, future);
 		}

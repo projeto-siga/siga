@@ -10,6 +10,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.AllReferencesGetRequest;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.AllReferencesGetResponse;
@@ -27,8 +28,8 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 	public void run(AllReferencesGetRequest req, AllReferencesGetResponse resp)
 			throws Exception {
 		resp.list = new ArrayList<>();
-		if (req.last == null)
-			req.last = defaultLastId();
+		if (req.lastid == null)
+			req.lastid = defaultLastId();
 
 		final CountDownLatch responseWaiter = new CountDownLatch(
 				RecordServiceEnum.values().length);
@@ -40,14 +41,15 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 
 			AllReferencesGetRequest q = new AllReferencesGetRequest();
 			q.max = req.max;
-			String split[] = req.last.split("-");
-			q.last = split[0];
+			String split[] = req.lastid.split("-");
+			q.lastid = split[0];
 			if (service.ordinal() > Integer.valueOf(split[1]))
-				q.last = Utils.formatId(Long.valueOf(q.last) - 1);
+				q.lastid = Utils.formatId(Long.valueOf(q.lastid) - 1);
 			Future<SwaggerAsyncResponse<AllReferencesGetResponse>> future = SwaggerCall
 					.callAsync(
 							service.name().toLowerCase() + "-all-references",
-							null, "GET", url, q, AllReferencesGetResponse.class);
+							Cp.getInstance().getProp().xjusPassword(), "GET",
+							url, q, AllReferencesGetResponse.class);
 			map.put(service, future);
 		}
 

@@ -71,6 +71,15 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 	public String xjusUrl  ( ) throws Exception {
 		return this.obterPropriedade("xjus.url");
 	}
+	public String xjusJwtSecret  ( ) throws Exception {
+		return this.obterPropriedade("xjus.jwt.secret");
+	}
+	public String xjusPermalinkUrl  ( ) throws Exception {
+		return this.obterPropriedade("xjus.permalink.url");
+	}
+	public String xjusPassword  ( ) throws Exception {
+		return this.obterPropriedade("xjus.password");
+	}
 	@Override
 	public String getPrefixoModulo() {
 		return "siga.cp";

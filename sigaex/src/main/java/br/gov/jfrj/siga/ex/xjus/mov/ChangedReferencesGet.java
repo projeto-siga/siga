@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
-import javax.persistence.TemporalType;
-
 import org.hibernate.Query;
 
 import br.gov.jfrj.siga.ex.xjus.Utils;
@@ -26,15 +24,16 @@ public class ChangedReferencesGet implements
 	public void run(ChangedReferencesGetRequest req,
 			ChangedReferencesGetResponse resp) throws Exception {
 		resp.list = new ArrayList<>();
-		if (req.last == null)
-			req.last = SwaggerUtils.format(new Date(0L)) + ";0";
+		if (req.lastdate == null)
+			req.lastdate = new Date(0L);
+		if (req.lastid == null)
+			req.lastid = Utils.formatId(0L);
 		try {
 			ExDao dao = ExDao.getInstance();
 			Query q = dao.getSessao().createQuery(HQL);
 			q.setMaxResults(Integer.valueOf(req.max));
-			String[] split = req.last.split(";");
-			Date first = SwaggerUtils.isoFormatter.parse(split[0]);
-			Long lastid = Long.valueOf(split[1]);
+			Date first = req.lastdate;
+			Long lastid = Long.valueOf(req.lastid);
 			// System.out.println("req.last: " + SwaggerUtils.format(first));
 			q.setTimestamp("dt", first);
 			q.setLong("id", lastid);
@@ -48,7 +47,7 @@ public class ChangedReferencesGet implements
 				Date dt = (Date) ((Object[]) rs)[1];
 				// System.out.println(SwaggerUtils.format(dt));
 				ref.id = Utils.formatId(id);
-				ref.date = SwaggerUtils.format(dt);
+				ref.date = dt;
 				resp.list.add(ref);
 			}
 		} finally {

@@ -20,13 +20,13 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 	public void run(AllReferencesGetRequest req, AllReferencesGetResponse resp)
 			throws Exception {
 		resp.list = new ArrayList<>();
-		if (req.last == null)
-			req.last = Utils.formatId(0L);
+		if (req.lastid == null)
+			req.lastid = Utils.formatId(0L);
 		try {
 			ExDao dao = ExDao.getInstance();
 			Query q = dao.getSessao().createQuery(HQL);
 			q.setMaxResults(Integer.valueOf(req.max));
-			Long first = Long.valueOf(req.last);
+			Long first = Long.valueOf(req.lastid);
 			// System.out.println("req.last: " + SwaggerUtils.format(first));
 			q.setLong("id", first);
 			// System.out.println(q.getQueryString());

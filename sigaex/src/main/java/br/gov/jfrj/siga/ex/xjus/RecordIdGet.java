@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.beanutils.BeanUtils;
 
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.RecordIdGetRequest;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.RecordIdGetResponse;
@@ -24,8 +25,9 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		url = url.replaceFirst("/record/.+$", "/record/" + split[0]);
 
 		SwaggerAsyncResponse<RecordIdGetResponse> o = SwaggerCall.callAsync(
-				service.name().toLowerCase() + "-record-id", null, "GET", url,
-				null, RecordIdGetResponse.class).get(
+				service.name().toLowerCase() + "-record-id",
+				Cp.getInstance().getProp().xjusPassword(), "GET", url, null,
+				RecordIdGetResponse.class).get(
 				AllReferencesGet.TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS);
 		if (o.getException() != null)
 			throw o.getException();

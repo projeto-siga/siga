@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -54,7 +55,6 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoHash;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoList;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoListItem;
-import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoPdf;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoSave;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelMov;
@@ -159,15 +159,11 @@ public class ExAssinadorExternoController extends ExController {
 		try {
 			JSONObject req = getJsonReq(request);
 			assertPassword();
-
 			PdfData pdfd = getPdf(id);
-
-			ExAssinadorExternoPdf resp = new ExAssinadorExternoPdf();
-
-			resp.setDoc(BlucService.bytearray2b64(pdfd.pdf));
-			resp.setSecret(pdfd.secret);
-
-			jsonSuccess(resp);
+			result.use(Results.http()).addHeader("Content-Type", "application/pdf")
+				.addHeader("Content-Length", Integer.toString(pdfd.pdf.length))
+				.addHeader("Doc-Secret", pdfd.secret)
+				.body(new ByteArrayInputStream(pdfd.pdf)).setStatusCode(200);
 		} catch (Exception e) {
 			jsonError(e);
 		}

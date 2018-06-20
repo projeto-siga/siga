@@ -8,7 +8,7 @@
 		table="CP_PERSONALIZACAO">
 		<id name="idPersonalizacao" column="ID_PERSONALIZACAO"
 			type="long">
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">CP_PERSONALIZACAO_SEQ</param>
 			</generator>
 		</id>

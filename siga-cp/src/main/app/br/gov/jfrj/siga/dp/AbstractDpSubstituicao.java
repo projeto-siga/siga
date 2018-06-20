@@ -53,7 +53,7 @@ public abstract class AbstractDpSubstituicao extends Objeto implements Serializa
 
 	@SequenceGenerator(name = "generator", sequenceName = "DP_SUBSTITUICAO_SEQ")
 	@Id
-	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_SUBSTITUICAO", nullable = false)
 	private Long idSubstituicao;
 

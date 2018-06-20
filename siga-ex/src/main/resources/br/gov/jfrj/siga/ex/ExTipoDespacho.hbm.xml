@@ -8,7 +8,7 @@
 
 	<class name="ExTipoDespacho" schema="SIGA" table="EX_TIPO_DESPACHO">
 		<id name="idTpDespacho" column="ID_TP_DESPACHO" type="long">
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">EX_TIPO_DESPACHO_SEQ</param>
 			</generator>
 		</id>

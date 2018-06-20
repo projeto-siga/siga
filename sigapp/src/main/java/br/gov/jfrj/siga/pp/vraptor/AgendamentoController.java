@@ -387,7 +387,7 @@ public class AgendamentoController extends PpController {
             // Pega o usuario do sistema, e, filtra os locais(salas) daquele forum onde ele esta.
             listSalas = (List) Locais.AR.find(
                     "cod_forum='" + objUsuario.getForumFk().getCod_forum()
-                            + "' order by ordem_apresentacao ").fetch(); // isso nÃ£o dÃ¡ erro no caso de retorno vazio.
+                            + "' order by ordem_apresentacao ").fetch(); // isso nao da erro no caso de retorno vazio.
             listPeritos =  (List) Peritos.AR.find("1=1 order by nome_perito").fetch();
             //   buscar o nome do perito fixo na lista se existir
             if(fixo_perito_juizo!=null){
@@ -510,12 +510,11 @@ public class AgendamentoController extends PpController {
     }
 
     @Path("/excluir")
-    public void excluir(String data) {
+    public void excluir(String data, String filtra_forum) {
         // pega matricula do usuario do sistema
         String matriculaSessao = getCadastrante().getMatricula().toString();
         String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
-        String lotacaoSessao = getCadastrante().getLotacao().getSiglaCompleta();
-        // System.out.println("A LOTACAO DO CADASTRANTE E´: " + lotacaoSessao);
+        String lotacaoSessao = getLotaTitular().getLotacaoAtual().getSiglaCompleta();
         // busca a permissao do usuario
         UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao, sesb_pessoaSessao);
         // verifica se existe permissao
@@ -524,7 +523,12 @@ public class AgendamentoController extends PpController {
             // verifica se o formulario submeteu alguma data
             if (data != null) {
                 // Busca os agendamentos da data do formulario
-                listAgendamentos = Agendamentos.AR.find("data_ag = to_date('" + data + "','dd-mm-yy') order by hora_ag , cod_local").fetch();
+            	// System.out.println("-------- filtro --------> "+ filtra_forum);
+            	if(filtra_forum!=null && filtra_forum.equals("todos")){   // lista todos os agendamentos
+            		listAgendamentos = Agendamentos.AR.find("data_ag = to_date('" + data + "','dd-mm-yy') order by hora_ag , cod_local").fetch();
+            	}else if(filtra_forum != null && (!filtra_forum.equals(""))){   // lista somente os meus agendamentos; filtro
+            		listAgendamentos = Agendamentos.AR.find("data_ag = to_date('"+ data +"','dd-mm-yy') and orgao = '" + filtra_forum + "' order by hora_ag, cod_local").fetch();
+            	}
                 // filtra os locais do forum do usuario
                 List<Locais> listLocais = Locais.AR.find("cod_forum='" + objUsuario.getForumFk().getCod_forum() + "'").fetch();
                 // Verifica se existe local (sala) naquele forum do usuario
@@ -555,11 +559,10 @@ public class AgendamentoController extends PpController {
                 // excluir do arraylist, os peritos que nao possuem agendamentos nesta data.
                 result.include("listAgendamentos", listAgendamentos);
                 result.include("listPeritos", listPeritos);
-                result.include("lotacaoSecao", lotacaoSessao);
+                result.include("lotacaoSessao", lotacaoSessao);
             } else {
-
+            	result.include("lotacaoSessao", lotacaoSessao);
             }
-
         } else {
             exception();
         }
@@ -751,19 +754,19 @@ public class AgendamentoController extends PpController {
              listHorasLivres.add("07:30");
              listHorasLivres.add("07:40");
              listHorasLivres.add("07:50");
-             listHorasLivres.add("08:00");
-             listHorasLivres.add("08:10");
-             listHorasLivres.add("08:20");
-             listHorasLivres.add("08:30");
-             listHorasLivres.add("08:40");
-             listHorasLivres.add("08:50");
-             listHorasLivres.add("09:00");
-             listHorasLivres.add("09:10");
-             listHorasLivres.add("09:20");
-             listHorasLivres.add("09:30");
-             listHorasLivres.add("09:40");
-             listHorasLivres.add("09:50");
         	}
+            listHorasLivres.add("08:00");
+            listHorasLivres.add("08:10");
+            listHorasLivres.add("08:20");
+            listHorasLivres.add("08:30");
+            listHorasLivres.add("08:40");
+            listHorasLivres.add("08:50");
+            listHorasLivres.add("09:00");
+            listHorasLivres.add("09:10");
+            listHorasLivres.add("09:20");
+            listHorasLivres.add("09:30");
+            listHorasLivres.add("09:40");
+            listHorasLivres.add("09:50");
             listHorasLivres.add("10:00");
             listHorasLivres.add("10:10");
             listHorasLivres.add("10:20");
@@ -807,14 +810,12 @@ public class AgendamentoController extends PpController {
             listHorasLivres.add("16:40");
             listHorasLivres.add("16:50");
             listHorasLivres.add("17:00");
-            if(objUsuario.getForumFk().getCod_forum()!=2){
-             listHorasLivres.add("17:10");
-             listHorasLivres.add("17:20");
-             listHorasLivres.add("17:30");
-             listHorasLivres.add("17:40");
-             listHorasLivres.add("17:50");
-             listHorasLivres.add("18:00");
-            }
+            listHorasLivres.add("17:10");
+            listHorasLivres.add("17:20");
+            listHorasLivres.add("17:30");
+            listHorasLivres.add("17:40");
+            listHorasLivres.add("17:50");
+            listHorasLivres.add("18:00");
             df.applyPattern("dd-MM-yyyy");
             try {
                 dtt = frm_data_ag;

@@ -60,6 +60,7 @@ import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.SimpleExpression;
 import org.hibernate.jdbc.Work;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -1335,8 +1336,8 @@ public class CpDao extends ModeloDao {
 
 	public List<CpConfiguracao> consultarConfiguracoesDesde(Date desde) {
 		Criteria c = HibernateUtil.getSessao().createCriteria(CpConfiguracao.class);
-		LogicalExpression confsAtivas = Restrictions.and(Restrictions.ge("hisDtIni", desde),Restrictions.isNull("hisDtFim"));
-		LogicalExpression confsInativas = Restrictions.and(Restrictions.ge("hisDtFim", desde),Restrictions.isNotNull("hisDtFim"));
+		SimpleExpression confsAtivas = Restrictions.gt("hisDtIni", desde);
+		SimpleExpression confsInativas = Restrictions.ge("hisDtFim", desde);
 		c.add(Restrictions.or(confsAtivas,confsInativas));
 		return c.list();
 	}

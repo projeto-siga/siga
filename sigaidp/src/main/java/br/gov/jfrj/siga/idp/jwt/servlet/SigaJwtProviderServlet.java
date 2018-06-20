@@ -25,10 +25,16 @@ public class SigaJwtProviderServlet extends HttpServlet {
 	public SigaJwtProviderServlet() throws SigaJwtProviderException {
 		super();
 	}
-
-	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	
+	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		super.service(req, resp);
+		resp.setHeader("Access-Control-Allow-Origin", "*");
+		resp.setHeader("Access-Control-Allow-Headers", "Authorization,Content-Type,Jwt-Options");
 	}
+	
 
 	/**
 	 * O HEADER Jwt-Options pode conter

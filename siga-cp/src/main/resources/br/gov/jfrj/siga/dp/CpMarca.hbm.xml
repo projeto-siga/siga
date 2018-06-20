@@ -9,7 +9,7 @@
 	<class name="CpMarca" table="CP_MARCA" discriminator-value="0"
 		schema="CORPORATIVO">
 		<id name="idMarca" column="ID_MARCA" type="long">
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">CORPORATIVO.CP_MARCA_SEQ</param>
 			</generator>
 		</id>

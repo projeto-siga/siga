@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -54,7 +55,6 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoHash;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoList;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoListItem;
-import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoPdf;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoSave;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelMov;
@@ -159,15 +159,11 @@ public class ExAssinadorExternoController extends ExController {
 		try {
 			JSONObject req = getJsonReq(request);
 			assertPassword();
-
 			PdfData pdfd = getPdf(id);
-
-			ExAssinadorExternoPdf resp = new ExAssinadorExternoPdf();
-
-			resp.setDoc(BlucService.bytearray2b64(pdfd.pdf));
-			resp.setSecret(pdfd.secret);
-
-			jsonSuccess(resp);
+			result.use(Results.http()).addHeader("Content-Type", "application/pdf")
+				.addHeader("Content-Length", Integer.toString(pdfd.pdf.length))
+				.addHeader("Doc-Secret", pdfd.secret)
+				.body(new ByteArrayInputStream(pdfd.pdf)).setStatusCode(200);
 		} catch (Exception e) {
 			jsonError(e);
 		}
@@ -250,7 +246,21 @@ public class ExAssinadorExternoController extends ExController {
 			String envelope = req.getString("envelope");
 			String time = req.getString("time");
 			String extra = req.optString("extra", null);
-			boolean autenticar = "autenticar".equals(extra);
+			Boolean autenticar = false;
+			Boolean juntar = null;
+			Boolean tramitar = null;
+			if (extra != null) {
+				if (extra.contains("autenticar"))
+					autenticar = true;
+				if (extra.contains("nao_juntar"))
+					juntar = false;
+				else if (extra.contains("juntar"))
+					juntar = true;
+				if (extra.contains("nao_tramitar"))
+					tramitar = false;
+				else if (extra.contains("tramitar"))
+					tramitar = true;
+			}
 
 			byte[] assinatura = Base64.decode(envelope);
 			Date dt = dao().consultarDataEHoraDoServidor();
@@ -298,7 +308,7 @@ public class ExAssinadorExternoController extends ExController {
 				// Nato: Assinatura externa não deve produzir transferência. 
 				// Se preferir a configuração default, deveria trocar o último parâmetro por null.
 				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, lotaCadastrante, mob.doc(), dt, assinatura,
-						null, tpMov, null, false);
+						null, tpMov, juntar, tramitar == null ? false : tramitar);
 				if (msg != null)
 					msg = "OK: " + msg;
 				else

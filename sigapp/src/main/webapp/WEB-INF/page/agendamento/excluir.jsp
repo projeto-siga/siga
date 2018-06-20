@@ -110,8 +110,10 @@
 	 	&nbsp Data:<input type="text" name="data" id="frm_data_ag01" maxlength="10" readonly="readonly" />
 
 	 	&nbsp <select name="filtra_forum" class="ui-widget" onchange="form.submit();">
-		  <option value="">Ver todos</option>
-		  <option value="${lotacaoSecao}" >Ver os meus</option>
+		  <option value="todos">Ver todos</option>
+		  <c:forEach items="${lotacaoSessao}" var="sess">
+		  <option value="${sess}" >Ver os meus</option>
+		  </c:forEach>
 		</select>
 	 	&nbsp <input type="submit" value="Buscar" /> &nbsp <br><br>
 	  </form>

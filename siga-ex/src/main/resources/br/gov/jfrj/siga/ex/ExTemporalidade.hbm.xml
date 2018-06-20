@@ -5,7 +5,7 @@
 <hibernate-mapping package="br.gov.jfrj.siga.ex">
 	<class name="ExTemporalidade" schema="SIGA" table="EX_TEMPORALIDADE">
 		<id column="ID_TEMPORALIDADE" name="idTemporalidade" type="java.lang.Long">
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">EX_TEMPORALIDADE_SEQ</param>
 			</generator>
 		</id>

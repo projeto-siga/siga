@@ -51,7 +51,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 public abstract class AbstractDpCargo extends Objeto implements Serializable {
 
 	@Id
-	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_CARGO", nullable = false)
 	@SequenceGenerator(name = "generator", sequenceName = "DP_CARGO_SEQ")
 	@Desconsiderar

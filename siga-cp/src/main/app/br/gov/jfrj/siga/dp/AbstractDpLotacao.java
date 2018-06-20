@@ -49,7 +49,7 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 
 	@SequenceGenerator(name = "generator", sequenceName = "DP_LOTACAO_SEQ")
 	@Id
-	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_LOTACAO", nullable = false)
 	@Desconsiderar
 	private Long idLotacao;

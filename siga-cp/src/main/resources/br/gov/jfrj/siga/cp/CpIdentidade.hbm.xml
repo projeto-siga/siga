@@ -5,8 +5,8 @@
 <hibernate-mapping package="br.gov.jfrj.siga.cp" schema="CORPORATIVO">
 	<class name="CpIdentidade" table="CP_IDENTIDADE">
 		<id name="idIdentidade" column="ID_IDENTIDADE" type="java.lang.Long">
-			<!-- <generator class="sequence"></generator> -->
-			<generator class="sequence">
+			<!-- <generator class="native"></generator> -->
+			<generator class="native">
 				<param name="sequence">CORPORATIVO.CP_IDENTIDADE_SEQ</param>
 			</generator>
 		</id>

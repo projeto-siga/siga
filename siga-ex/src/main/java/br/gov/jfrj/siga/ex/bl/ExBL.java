@@ -3493,7 +3493,7 @@ public class ExBL extends CpBL {
 		 * "não é permitido criar documento filho do documento pai selecionado, pois este está inacessível ao usuário."
 		 * ); }
 		 */
-
+		
 		try {
 			Date dt = dao().dt();
 
@@ -3518,6 +3518,10 @@ public class ExBL extends CpBL {
 				primeiraGravacao = true;
 			}
 
+			// Verifica se a data está entre o ano 2000 e o ano 2100
+			if (doc.getDtDoc() != null && (doc.getDtDoc().before(new Date(100, 0, 1)) || doc.getDtDoc().after(new Date(200, 0, 1)))) {
+				throw new AplicacaoException("Data inválida");
+			}
 			// Obtem a descricao pela macro @descricao
 			if (doc.getExModelo().isDescricaoAutomatica()) {
 				doc.setDescrDocumento(processarComandosEmTag(doc, "descricao"));

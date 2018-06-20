@@ -18,8 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
-import static javax.persistence.GenerationType.SEQUENCE;
-
 import java.sql.Blob;
 
 import javax.persistence.Column;
@@ -43,7 +41,7 @@ public abstract class AbstractCpModelo extends HistoricoAuditavelSuporte {
 	
 	@SequenceGenerator(name="generator", sequenceName="CP_MODELO_SEQ")
 	@Id 
-	@GeneratedValue(strategy=SEQUENCE, generator="generator")
+	@GeneratedValue(generator="generator")
     @Column(name="ID_MODELO", nullable=false)
 	@Desconsiderar
 	private java.lang.Long idMod;

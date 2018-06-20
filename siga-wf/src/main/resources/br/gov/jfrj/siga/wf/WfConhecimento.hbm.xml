@@ -4,7 +4,7 @@
 <hibernate-mapping auto-import="false" package="br.gov.jfrj.siga.wf">
 	<class name="WfConhecimento" table="WF_CONHECIMENTO">
 		<id column="ID_CONHECIMENTO" name="id" type="java.lang.Long">
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">WF_CONHECIMENTO_SEQ</param>
 			</generator>
 		</id>

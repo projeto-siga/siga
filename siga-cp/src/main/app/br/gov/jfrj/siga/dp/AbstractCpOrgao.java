@@ -65,7 +65,7 @@ public abstract class AbstractCpOrgao extends HistoricoSuporte implements
 
 	@SequenceGenerator(name = "generator", sequenceName = "CP_ORGAO_SEQ")
 	@Id
-	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
+	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_ORGAO", nullable = false)
 	@Desconsiderar
 	private Long idOrgao;

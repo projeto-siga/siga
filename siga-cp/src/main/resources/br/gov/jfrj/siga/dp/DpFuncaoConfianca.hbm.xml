@@ -7,7 +7,7 @@
 	<class name="DpFuncaoConfianca" mutable="true" table="DP_FUNCAO_CONFIANCA"
 		schema="CORPORATIVO" batch-size="500">
 		<id name="idFuncao" column="ID_FUNCAO_CONFIANCA" type="long">
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">DP_FUNCAO_CONFIANCA_SEQ</param>
 			</generator>
 		</id>

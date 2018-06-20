@@ -60,7 +60,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@Id
 	@DocumentId
 	@SequenceGenerator(name = "EX_DOCUMENTO_SEQ")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EX_DOCUMENTO_SEQ")
+	@GeneratedValue(generator = "EX_DOCUMENTO_SEQ")
 	@Column(name = "ID_DOC")
 	private java.lang.Long idDoc;
 

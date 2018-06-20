@@ -8,7 +8,7 @@
 	<class name="ExPreenchimento" schema="SIGA" table="EX_PREENCHIMENTO">
 		<id name="idPreenchimento" column="ID_PREENCHIMENTO"
 			type="long">
-			<generator class="sequence">
+			<generator class="native">
 				<param name="sequence">EX_PREENCHIMENTO_SEQ</param>
 			</generator>
 		</id>

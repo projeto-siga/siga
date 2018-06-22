@@ -1015,10 +1015,17 @@
 		<c:if test="${(not m.mob.geral) or (docVO.tipoFormaDocumento != 'processo_administrativo')}">
 			var url = "/sigawf/app/doc?sigla=${docVO.doc.codigo}&ts=1${currentTimeMillis}";
 		</c:if>
-		Siga.ajax(url, null, "GET", function(response,status){		
+		
+        $.ajax({
+            url: url,
+            type: "GET"
+        }).fail(function(jqXHR, textStatus, errorThrown){
 			var div = $(".wf_div:last");
-			$(div).html(status==undefined || status == 200?response:'<p class="erro">Houve um problema ao verificar se há fluxos do SIGA-WF associados a este documento. Favor atualizar a página para tentar novamente.</p>');
-		}, 15000);		
+			$(div).html('<p class="erro">Houve um problema ao verificar se há fluxos do SIGA-WF associados a este documento. Favor atualizar a página para tentar novamente.</p>');
+        }).done(function(data, textStatus, jqXHR ){
+			var div = $(".wf_div:last");
+			$(div).html(data);
+        });
 	</script>
 </c:if>
 <c:if
@@ -1033,9 +1040,15 @@
 	</c:url>
 	<script type="text/javascript">
 		var urlGc = "${url}";
-		Siga.ajax(urlGc.substring(7), null, "GET", function(response){	
+
+        $.ajax({
+            url: url,
+            type: "GET"
+        }).fail(function(jqXHR, textStatus, errorThrown){
+			$("#gc").html(errorThrown);
+        }).done(function(data, textStatus, jqXHR ){
 			$("#gc").html(response);
-		});		
+        });
 	</script>
 </c:if>
 

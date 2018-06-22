@@ -31,10 +31,17 @@
 						<c:if test="${f:resource('isWorkflowEnabled')}">
 							<script type="text/javascript">
 								var url = "/sigawf/app/doc?sigla=${m.sigla}&ts=1${currentTimeMillis}";
-								Siga.ajax(url, null, "GET", function(response) {
-									var div = $(".wf_div${m.mob.codigoCompacto}:last");
-									$(div).html(response);
-								});
+
+					            $.ajax({
+					                url: url,
+					                type: "GET"
+					            }).fail(function(jqXHR, textStatus, errorThrown){
+					                var div = $(".wf_div${m.mob.codigoCompacto}:last");
+									$(div).html(errorThrown);
+					            }).done(function(data, textStatus, jqXHR ){
+					                var div = $(".wf_div${m.mob.codigoCompacto}:last");
+									$(div).html(data);
+					            });
 							</script>
 						</c:if>
 

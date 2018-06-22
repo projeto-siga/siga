@@ -1,6 +1,55 @@
-@import url("reset-fonts.css");
-@import url("gt-rounded-corners.css");
-@import url("gt-fixed.css");
+/* reset-fonts.css */
+/*
+THIS IS THE RESET CSS FILE, DO NOT MODIFY THIS FILE.
+IF YOU NEED TO MAKE CHANGES TO ANY OF THESE STYLES, MAKE THE CHANGES IN OVERRIDE.CSS
+
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.net/yui/license.txt
+version: 2.7.0
+*/
+html{color:#000;background:#FFF;}body,div,dl,ol,ul,li,dt,dd,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,p,blockquote,th,td{margin:0;padding:0;}table{border-collapse:collapse;border-spacing:0;}fieldset,img{border:0;}address,caption,cite,code,dfn,em,strong,th,var,optgroup{font-style:inherit;font-weight:inherit;}del,ins{text-decoration:none;}li{list-style:none;}caption,th{text-align:left;}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}q:before,q:after{content:'';}abbr,acronym{border:0;font-variant:normal;}sup{vertical-align:baseline;}sub{vertical-align:baseline;}legend{color:#000;}input,button,textarea,select,optgroup,option{font-family:inherit;font-size:inherit;font-style:inherit;font-weight:inherit;}input,button,textarea,select{*font-size:100%;}body{font:13px/1.231 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small;}select,input,button,textarea,button{font:99% arial,helvetica,clean,sans-serif;}table{font-size:inherit;font:100%;}pre,code,kbd,samp,tt{font-family:monospace;*font-size:108%;line-height:100%;}
+
+/* Reset the z-index on the body to make negative z-indexes work in FF2 */
+body {
+	position: relative;
+	top: 0;
+	left: 0;
+	z-index: 0;
+}
+
+/* Fixes for link borders */
+a:active {
+	outline: none;
+}
+:focus {
+	-moz-outline-style: none;
+}
+
+/* gt-rouded-corners.css */
+/* Rounded Corner Styles for Safari/FF */
+/* 
+	This file allows Safari/FF to support rounded corners. If you need rounded corner support in other browsers, please contact us at gooeytemplates.com.
+*/
+.gt-sidebar-nav, .gt-sidebar-box, .gt-sidebar-list-content, .gt-footer, .gt-login-box, .gt-content-box {
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+}
+
+/* gt-fixed.css */
+/*
+Template:	GT-502
+File:		gt-fixed.css - If you want a fixed width layout, add "gt-fixed" to the body tag of your page. You can change
+			the width of the page below. This file is automatically included on all app pages via gt-styles.css.
+*/
+
+.gt-fixed .gt-fixed-wrap, .gt-fixed .gt-bd, .gt-fixed .gt-footer {
+	width: 960px!important;
+	margin-left: auto!important;
+	margin-right: auto!important;
+}
+
+/*gt-styles.css */
 
 /*
 Template:	GT-502

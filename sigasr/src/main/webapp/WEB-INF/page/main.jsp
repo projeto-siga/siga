@@ -39,11 +39,16 @@
 			jQuery.blockUI(objBlock);
 		if (!URL && typeof postbackURL == 'function')
 			URL = postbackURL();
-		Siga.ajax(URL, null, "GET", function(response){	
-	    	sbmtResponse(response, id, preventBlocking);
+
+        $.ajax({
+            url: URL,
+            type: "GET"
+        }).done(function(data, textStatus, jqXHR ){
+	    	sbmtResponse(data, id, preventBlocking);
 	    	if (typeof afterSbmtResponse == 'function')
 		    	afterSbmtResponse();	    	
-		});	
+        });
+
 	}
 	
 	function sbmtResponse(response, id, preventBlocking) {

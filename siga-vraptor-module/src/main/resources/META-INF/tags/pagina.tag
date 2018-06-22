@@ -25,4 +25,4 @@
 
 <jsp:doBody />
 
-<siga:rodape popup="${popup}" />
+<siga:rodape popup="${popup}" incluirJs="${incluirJs}" />

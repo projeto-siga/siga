@@ -6,37 +6,36 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Movimentação" desabilitarmenu="sim" onLoad="try{var num = document.getElementById('id_number');if (num.value == ''){num.focus();num.select();}else{var cap = document.getElementById('id_captcha');cap.focus();cap.select();}}catch(e){};">
+
+<siga:pagina titulo="Movimentação" desabilitarmenu="sim"
+	onLoad="try{var num = document.getElementById('id_number');if (num.value == ''){num.focus();num.select();}else{var cap = document.getElementById('id_captcha');cap.focus();cap.select();}}catch(e){};">
+	<script src='https://www.google.com/recaptcha/api.js'></script>
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 			<h2>Autenticação de Documentos</h2>
 			<div class="gt-content-box gt-for-table">
 
-				<form action="${request.contextPath}/app/externo/autenticar" method="GET" class="form">
+				<form action="${request.contextPath}/app/externo/autenticar"
+					method="GET" class="form">
 					<table class="gt-form-table">
 						<tr class="header">
 							<td colspan="2">Dados do Documento</td>
 						</tr>
 						<tr>
-							<td>
-								<label>Número de referência:</label>
-							</td>
-							<td>
-								<input type="text" id="id_number" name="n" style="width:150px;" />
-							</td>						
+							<td><label>Número de referência:</label></td>
+							<td><input type="text" id="id_number" name="n"
+								style="width: 150px;" /></td>
 						</tr>
 						<tr>
-							<td width="30%" valign="top">Digite os caracteres conforme são mostrados na imagem ao lado:</td>
+							<td><label>Verificação:</label></td>
 							<td>
-								<jsp:useBean id="now" class="java.util.Date" /> 
-								<img src="<c:url value="/app/externo/captcha?sc=1" />&ts=${now.time}">
-								<br />
-								<input id="id_captcha" type="text" name="answer" style="width: 150px; margin-top: 15px;" />
+								<div class="g-recaptcha" data-sitekey="${recaptchaSiteKey}"></div>
 							</td>
 						</tr>
 
 						<tr class="button">
-							<td colspan="2"><input type="submit" value="Ok" class="gt-btn-small gt-btn-left" /></td>
+							<td colspan="2"><input type="submit" value="Ok"
+								class="gt-btn-small gt-btn-left" /></td>
 						</tr>
 					</table>
 				</form>

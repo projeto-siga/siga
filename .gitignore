@@ -82,7 +82,7 @@ siga-libs/.externalToolBuilders/org.eclipse.wst.validation.validationbuilder (1)
 sigasr/desktop.ini
 
 siga-uteis-play-module/
-/sigatp/
+sigatp/.tern-project
 sigaex/.tern-project
 sigasr/.tern-project
 *.orig
@@ -90,3 +90,4 @@ sigasr/.tern-project
 
 # Sphinx documentation
 docs/_build/
+resultado.txt

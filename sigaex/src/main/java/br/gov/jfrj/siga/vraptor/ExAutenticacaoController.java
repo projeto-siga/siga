@@ -3,6 +3,8 @@ package br.gov.jfrj.siga.vraptor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
@@ -26,6 +28,8 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.HashRequest;
 import br.gov.jfrj.siga.bluc.service.HashResponse;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -35,7 +39,12 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
+import com.auth0.jwt.JWTSigner;
+import com.auth0.jwt.JWTVerifier;
 import com.lowagie.text.pdf.codec.Base64;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
 
 @Resource
 public class ExAutenticacaoController extends ExController {
@@ -53,32 +62,12 @@ public class ExAutenticacaoController extends ExController {
 		result.include("request", getRequest());
 	}
 
-	@Get("/app/externo/captcha")
-	public Download captcha(final String sc, final String ts) throws Exception {
-
-		if (sc != null && sc.trim().length() != 0) {
-			Captcha captcha = new Captcha.Builder(150, 75)
-					.addNoise(new StraightLineNoiseProducer()).addText()
-					.addBackground().gimp().addBorder().build();
-			getRequest().getSession().setAttribute(Captcha.NAME, captcha);
-			try (ByteArrayOutputStream imgOutputStream = new ByteArrayOutputStream()) {
-				ImageIO.write(captcha.getImage(), "png", imgOutputStream);
-				byte[] bytes = imgOutputStream.toByteArray();
-				final String fileName = "captch.png";
-				final String contentType = "image/png";
-				return new ByteArrayDownload(bytes, contentType, fileName, true);
-			}
-		}
-		return null;
-	}
-
 	@Get
 	@Path("/autenticar.action")
 	public void redirecionar() throws Exception {
 		result.redirectTo(this).autenticar(null, null, null, null, null, null);
 	}
 
-	// antigo metodo exec()
 	@Get
 	@Post
 	@Path("/app/externo/autenticar")
@@ -87,17 +76,38 @@ public class ExAutenticacaoController extends ExController {
 			final String certificadoB64, final String atributoAssinavelDataHora)
 			throws Exception {
 
-		Captcha captcha = (Captcha) getRequest().getSession().getAttribute(
-				Captcha.NAME);
+		// Só para já dar o erro logo.
+		String pwd = getJwtPassword();
+		String recaptchaSiteKey = getRecaptchaSiteKey();
+		String recaptchaSitePassword = getRecaptchaSitePassword();
+		result.include("recaptchaSiteKey", recaptchaSiteKey);
 
-		if (captcha == null || n == null || n.trim().length() == 0
-				|| answer == null) {
+		if (n == null || n.trim().length() == 0) {
 			setDefaultResults();
 			return;
 		}
 
-		if (!captcha.isCorrect(answer)) {
-			setMensagem("Caracteres digitados não conferem com a imagem apresentada. Por favor, tente novamente.");
+		String gRecaptchaResponse = request
+				.getParameter("g-recaptcha-response");
+
+		boolean success = false;
+		if (gRecaptchaResponse != null) {
+			HttpResponse<JsonNode> result = Unirest
+					.post("https://www.google.com/recaptcha/api/siteverify")
+					.header("accept", "application/json")
+					.header("Content-Type", "application/json")
+					.queryString("secret", getRecaptchaSitePassword())
+					.queryString("response", gRecaptchaResponse)
+					.queryString("remoteip", request.getRemoteAddr()).asJson();
+
+			JsonNode body = result.getBody();
+			String hostname = request.getServerName();
+			if (body.getObject().getBoolean("success")) {
+				String retHostname = body.getObject().getString("hostname");
+				success = retHostname.equals(hostname);
+			}
+		}
+		if (!success) {
 			setDefaultResults();
 			return;
 		}
@@ -141,7 +151,6 @@ public class ExAutenticacaoController extends ExController {
 
 		setDefaultResults();
 		result.include("n", n);
-		result.include("answer", answer);
 		result.include("assinaturas", assinaturas);
 		result.include("mov", mov);
 		result.include("mostrarBotaoAssinarExterno", mostrarBotaoAssinarExterno);
@@ -149,106 +158,96 @@ public class ExAutenticacaoController extends ExController {
 		result.include("assinaturaB64", assinaturaB64);
 		result.include("certificadoB64", certificadoB64);
 		result.include("atributoAssinavelDataHora", atributoAssinavelDataHora);
-		result.forwardTo(this).arquivoAutenticado(n, answer);
+		result.forwardTo(this).arquivoAutenticado(buildJwtToken(n));
 	}
 
 	@Get("/app/externo/arquivoAutenticado_stream")
-	public Download arquivoAutenticado_stream(final String n,
-			final String answer, final boolean assinado, final Long idMov, 
-			final String certificadoB64)
-			throws Exception {
+	public Download arquivoAutenticado_stream(final String jwt,
+			final boolean assinado, final Long idMov,
+			final String certificadoB64) throws Exception {
 
-		Captcha captcha = (Captcha) getRequest().getSession().getAttribute(
-				Captcha.NAME);
-		if (captcha == null || n == null || n.trim().length() == 0
-				|| answer == null) {
+		if (jwt == null) {
+			setDefaultResults();
 			result.redirectTo(URL_EXIBIR);
 			return null;
 		}
+		String n = verifyJwtToken(jwt).get("n").toString();
 
-		if (captcha.isCorrect(answer)) {
-			ExArquivo arq = Ex.getInstance().getBL()
-					.buscarPorNumeroAssinatura(n);
+		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
 
-			byte[] bytes;
-			String fileName;
-			String contentType;
-			if (idMov != null && idMov != 0) {
-				ExMovimentacao mov = dao().consultar(idMov,
-						ExMovimentacao.class, false);
+		byte[] bytes;
+		String fileName;
+		String contentType;
+		if (idMov != null && idMov != 0) {
+			ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class,
+					false);
 
-				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
-				contentType = mov.getConteudoTpMov();
+			fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".p7s";
+			contentType = mov.getConteudoTpMov();
 
-				bytes = mov.getConteudoBlobMov2();
+			bytes = mov.getConteudoBlobMov2();
 
-			} else {
-				fileName = arq.getReferenciaPDF();
-				contentType = "application/pdf";
-
-				if (assinado)
-					bytes = Ex.getInstance().getBL()
-							.obterPdfPorNumeroAssinatura(n);
-				else
-					bytes = arq.getPdf();
-			}
-			if (bytes == null) {
-				throw new AplicacaoException(
-						"Arquivo não encontrado para Download.");
-			}
-			final boolean fB64 = getRequest().getHeader("Accept") != null && getRequest().getHeader("Accept").startsWith("text/vnd.siga.b64encoded");
-			if (certificadoB64 != null){
-				final Date dt = dao().consultarDataEHoraDoServidor();
-				getResponse().setHeader("Atributo-Assinavel-Data-Hora", Long.toString(dt.getTime()));
-
-				// Chamar o BluC para criar o pacote assinavel
-				//
-				BlucService bluc = Service.getBlucService();
-				HashRequest hashreq = new HashRequest();
-				hashreq.setCertificate(certificadoB64);
-				hashreq.setCrl("true");
-				hashreq.setPolicy("AD-RB");
-				hashreq.setSha1(bluc.bytearray2b64(bluc.calcSha1(bytes)));
-				hashreq.setSha256(bluc.bytearray2b64(bluc.calcSha256(bytes)));
-				hashreq.setTime(dt);
-				HashResponse hashresp = bluc.hash(hashreq);
-				if (hashresp.getErrormsg() != null)
-					throw new Exception("BluC não conseguiu produzir o pacote assinável. " + hashresp.getErrormsg());
-				byte[] sa = Base64.decode(hashresp.getHash());
-				
-				return new InputStreamDownload(makeByteArrayInputStream(sa, fB64), APPLICATION_OCTET_STREAM, null);
-			}
-			
-			return new InputStreamDownload(makeByteArrayInputStream(bytes, fB64), contentType, fileName);
-			
 		} else {
-			result.redirectTo(URL_EXIBIR);
-			return null;
+			fileName = arq.getReferenciaPDF();
+			contentType = "application/pdf";
+
+			if (assinado)
+				bytes = Ex.getInstance().getBL().obterPdfPorNumeroAssinatura(n);
+			else
+				bytes = arq.getPdf();
 		}
+		if (bytes == null) {
+			throw new AplicacaoException(
+					"Arquivo não encontrado para Download.");
+		}
+		final boolean fB64 = getRequest().getHeader("Accept") != null
+				&& getRequest().getHeader("Accept").startsWith(
+						"text/vnd.siga.b64encoded");
+		if (certificadoB64 != null) {
+			final Date dt = dao().consultarDataEHoraDoServidor();
+			getResponse().setHeader("Atributo-Assinavel-Data-Hora",
+					Long.toString(dt.getTime()));
+
+			// Chamar o BluC para criar o pacote assinavel
+			//
+			BlucService bluc = Service.getBlucService();
+			HashRequest hashreq = new HashRequest();
+			hashreq.setCertificate(certificadoB64);
+			hashreq.setCrl("true");
+			hashreq.setPolicy("AD-RB");
+			hashreq.setSha1(bluc.bytearray2b64(bluc.calcSha1(bytes)));
+			hashreq.setSha256(bluc.bytearray2b64(bluc.calcSha256(bytes)));
+			hashreq.setTime(dt);
+			HashResponse hashresp = bluc.hash(hashreq);
+			if (hashresp.getErrormsg() != null)
+				throw new Exception(
+						"BluC não conseguiu produzir o pacote assinável. "
+								+ hashresp.getErrormsg());
+			byte[] sa = Base64.decode(hashresp.getHash());
+
+			return new InputStreamDownload(makeByteArrayInputStream(sa, fB64),
+					APPLICATION_OCTET_STREAM, null);
+		}
+		return new InputStreamDownload(makeByteArrayInputStream(bytes, fB64),
+				contentType, fileName);
 	}
-	
-	private ByteArrayInputStream makeByteArrayInputStream(final byte[] content, final boolean fB64) {
-		final byte[] conteudo = (fB64 ? Base64.encodeBytes(content).getBytes() : content);
+
+	private ByteArrayInputStream makeByteArrayInputStream(final byte[] content,
+			final boolean fB64) {
+		final byte[] conteudo = (fB64 ? Base64.encodeBytes(content).getBytes()
+				: content);
 		return (new ByteArrayInputStream(conteudo));
 	}
 
 	// antigo metodo arquivo();
 	@Get("/app/externo/arquivoAutenticado")
-	public void arquivoAutenticado(final String n, final String answer)
-			throws Exception {
-		Captcha captcha = (Captcha) getRequest().getSession().getAttribute(
-				Captcha.NAME);
-
-		if (captcha == null || n == null || n.trim().length() == 0
-				|| answer == null) {
+	public void arquivoAutenticado(final String jwt) throws Exception {
+		if (jwt == null) {
 			setDefaultResults();
 			result.redirectTo(URL_EXIBIR);
 			return;
 		}
-
-		if (!captcha.isCorrect(answer)) {
-			setMensagem("Caracteres digitados não conferem com a imagem apresentada. Por favor, tente novamente.");
- }
+		String n = verifyJwtToken(jwt).get("n").toString();
 
 		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
 		Set<ExMovimentacao> assinaturas = arq.getAssinaturasDigitais();
@@ -262,7 +261,7 @@ public class ExAutenticacaoController extends ExController {
 		result.include("assinaturas", assinaturas);
 		result.include("mov", mov);
 		result.include("n", n);
-		result.include("answer", answer);
+		result.include("jwt", jwt);
 
 		if (arq instanceof ExDocumento) {
 			ExMobil mob = null;
@@ -277,11 +276,84 @@ public class ExAutenticacaoController extends ExController {
 			}
 
 			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob,
-					getCadastrante(), doc.getSubscritor(), doc.getLotaSubscritor(), true, false);
+					getCadastrante(), doc.getSubscritor(),
+					doc.getLotaSubscritor(), true, false);
 
 			docVO.exibe();
 
 			result.include("docVO", docVO);
 		}
 	}
+
+	private static String getRecaptchaSiteKey() {
+		String pwd = null;
+		try {
+			pwd = System.getProperty("siga.ex.autenticacao.recaptcha.key");
+			if (pwd == null)
+				throw new AplicacaoException(
+						"Erro obtendo propriedade siga.ex.autenticacao.recaptcha.key");
+			return pwd;
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro obtendo propriedade siga.ex.autenticacao.recaptcha.key",
+					0, e);
+		}
+	}
+
+	private static String getRecaptchaSitePassword() {
+		String pwd = null;
+		try {
+			pwd = System.getProperty("siga.ex.autenticacao.recaptcha.pwd");
+			if (pwd == null)
+				throw new AplicacaoException(
+						"Erro obtendo propriedade siga.ex.autenticacao.recaptcha.pwd");
+			return pwd;
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro obtendo propriedade siga.ex.autenticacao.recaptcha.pwd",
+					0, e);
+		}
+	}
+
+	private static String getJwtPassword() {
+		String pwd = null;
+		try {
+			pwd = System.getProperty("siga.ex.autenticacao.pwd");
+			if (pwd == null)
+				throw new AplicacaoException(
+						"Erro obtendo propriedade siga.ex.autenticacao.pwd");
+			return pwd;
+		} catch (Exception e) {
+			throw new AplicacaoException(
+					"Erro obtendo propriedade siga.ex.autenticacao.pwd", 0, e);
+		}
+	}
+
+	private static String buildJwtToken(String n) {
+		String token;
+
+		final JWTSigner signer = new JWTSigner(getJwtPassword());
+		final HashMap<String, Object> claims = new HashMap<String, Object>();
+
+		final long iat = System.currentTimeMillis() / 1000L; // issued at claim
+		final long exp = iat + 1 * 60 * 60L; // token expires in 1 hours
+		claims.put("exp", exp);
+		claims.put("iat", iat);
+
+		claims.put("n", n);
+		token = signer.sign(claims);
+
+		return token;
+	}
+
+	private static Map<String, Object> verifyJwtToken(String token) {
+		final JWTVerifier verifier = new JWTVerifier(getJwtPassword());
+		try {
+			Map<String, Object> map = verifier.verify(token);
+			return map;
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao verificar token JWT", 0, e);
+		}
+	}
+
 }

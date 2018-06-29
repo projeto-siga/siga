@@ -416,7 +416,8 @@
 	</c:if>
 
 	<script>
-		if (window.Worker) {
+		if (${not empty f:resource('graphviz.url')}) {
+		} else if (window.Worker) {
 			window.VizWorker = new Worker("/siga/javascript/viz.js");
 			window.VizWorker.onmessage = function(oEvent) {
 				document.getElementById(oEvent.data.id).innerHTML = oEvent.data.svg;
@@ -431,55 +432,43 @@
 		}
 	</script>
 	<script>
-		function bigmap() {
-			var input = 'digraph G { graph[size="100,100"]; ${dot} }';
-
-			if (window.VizWorker) {
-				document.getElementById("output2").innerHTML = "Aguarde...";
+		function buildSvg(id, input, cont) {
+			if (${not empty f:resource('graphviz.url')}) {
+			    input = input.replace(/fontsize=\d+/gm, "");
+			    $.ajax({
+				    url: "/siga/public/app/graphviz/svg",
+				    data: input,
+				    type: 'POST',
+				    processData: false,
+				    contentType: 'text/vnd.graphviz',
+				    contents: window.String,
+				    success: function(data) {
+					    data = data.replace(/width="\d+pt" height="\d+pt"/gm, "");
+					    $(data).width("100%");
+				        $("#" + id).html(data);
+				    }
+				});
+			} else if (window.VizWorker) {
+				document.getElementById(id).innerHTML = "Aguarde...";
 				window.VizWorker.postMessage({
-					id : "output2",
+					id : id,
 					graph : input
 				});
-				return;
-			}
-
-			var format = "svg";
-			var engine = "dot";
-
-			var result = Viz(input, format, engine);
-
-			if (format == "svg") {
-				document.getElementById("output2").innerHTML = result;
 			} else {
-				document.getElementById("output2").innerHTML = "";
+				var result = Viz(input, "svg", "dot");
+				document.getElementById(id).innerHTML = result;
+				cont();
 			}
-			$(document).ready(function() {
-				updateContainer();
-			});
+		}
+
+		function bigmap() {
+			var input = 'digraph G { graph[size="100,100"]; ${dot} }';
+			buildSvg('output2', input, updateContainer);
 		}
 
 		function smallmap() {
 			var input = 'digraph G { graph[size="3,3"]; ${dot} }';
-
-			if (window.VizWorker) {
-				document.getElementById("output").innerHTML = "Aguarde...";
-				window.VizWorker.postMessage({
-					id : "output",
-					graph : input
-				});
-				return;
-			}
-
-			var format = "svg";
-			var engine = "dot";
-
-			var result = Viz(input, format, engine);
-
-			if (format == "svg") {
-				document.getElementById("output").innerHTML = result;
-			} else {
-				document.getElementById("output").innerHTML = "";
-			}
+			buildSvg('output', input, updateContainer);
 		}
 
 		function showBig() {

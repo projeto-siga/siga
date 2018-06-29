@@ -42,24 +42,22 @@
 			FIM CABECALHO -->
 
 		<br />
+		<br />
+		<br />
 		
-		<p align="left"><b>PROCESSO ${doc.sigla}</b></p>
-
+		<p align="center" style="font-family:Times New Roman;font-size:14pt;" ><b>Termo de Encerramento</b></p>
+        <p align="center" style="font-family:Times New Roman;font-size:12pt;"><b>PROCESSO ${doc.sigla!}</b></p>
+		
 		<br />
 		<br />
 
-		<p align="center"><b>CERTIDÃO</b></p>
-
-		<br />
-		<br />
-
-		<p align="left" style="TEXT-INDENT: 2cm">Certifico que, nesta
+		<p align="center" style="font-family:Times New Roman;font-size:12pt;">Certifico que, nesta
 		data, encerrei o volume ${mob.numSequencia} do processo em epígrafe.</p>
 
 		<br />
 		<br />
 
-		<p align="center" style="TEXT-INDENT: 0cm">${mov.dtExtenso}</p>
+		<p align="center" style="TEXT-INDENT: 0cm;font-family:Times New Roman;font-size:12pt;">${mov.dtExtenso}</p>
 
 		<br />
 		<br />

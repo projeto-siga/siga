@@ -62,12 +62,10 @@
 			FIM CABECALHO -->
 
 		<br />
-		<br />
-		<br />
-
-		<p align="center"><b>CERTIDÃO DE DESENTRANHAMENTO</b></p>
-		<br />
-		<br />
+		<br />	
+		<p align="center" style="font-family:Times New Roman;font-size:14pt;" ><b>Certidão de Desentranhamento</b></p>
+        <br />
+        <p align="left" style="font-family:Times New Roman;font-size:12pt;"><b>Processo Administrativo: ${doc.sigla!}</b></p>
 		<c:choose>
 			<c:when test="${not empty mov.exMovimentacaoRef.exMobilRef}">
 				<c:set var="mobil"
@@ -80,15 +78,15 @@
 
 		<p align="left">${mobil.nomeCompleto}</p>
 
-		<p align="left">RESPONSÁVEL: ${vocativo}
-		${mov.subscritor.descricao}</p>
+		<p align="left"style="font-family:Times New Roman;font-size:12pt;"><b>RESPONSÁVEL: ${vocativo}
+		${mov.subscritor.descricao}</b></p>
 		<c:if test="${not empty textoMotivo}">
-			<p align="left">MOTIVO: ${textoMotivo}</p>
+		<p align="left" style="font-family:Times New Roman;font-size:12pt;"><b>MOTIVO: ${textoMotivo}<></p>
 		</c:if>
 		<br />
 		<br />
 		<br />
-		<p align="left" style="TEXT-INDENT: 2cm">Certifico que, nesta
+		<p align="left" style="TEXT-INDENT: 2.5cm;font-family:Times New Roman;font-size:12pt;">Certifico que, nesta
 		data, desentranhei <c:if test="${folhaInicial != folhaFinal}">
 		 as folhas ${folhaInicial} a ${folhaFinal}
 		</c:if> <c:if test="${folhaInicial == folhaFinal}">
@@ -99,7 +97,7 @@
 		<br />
 		<br />
 
-		<p align="center" style="TEXT-INDENT: 0cm">${mov.dtExtenso}</p>
+		<p align="center" style="TEXT-INDENT: 0cm;font-family:Times New Roman;font-size:12pt;">${mov.dtExtenso}</p>
 
 		<br />
 

@@ -46,7 +46,7 @@
 		<br />
 		
 		<p align="center" style="font-family:Times New Roman;font-size:14pt;" ><b>Termo de Encerramento</b></p>
-        <p align="center" style="font-family:Times New Roman;font-size:12pt;"><b>PROCESSO ${doc.sigla!}</b></p>
+        <p align="center" style="font-family:Times New Roman;font-size:12pt;"><b>PROCESSO ${doc.sigla}</b></p>
 		
 		<br />
 		<br />

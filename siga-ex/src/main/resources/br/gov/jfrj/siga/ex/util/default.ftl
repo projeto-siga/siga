@@ -2003,10 +2003,10 @@ Pede deferimento.</span><br/><br/><br/>
 </table>
 [/#macro]
 
-[#macro cabecalhoEsquerdaPrimeiraPagina]
+[#macro cabecalhoEsquerdaPrimeiraPagina width=65 height=65 exibirOrgao=true]
 <table width="100%" align="left" border="0">
     <tr>
-        <td align="left" valign="bottom" width="15%"><img src="${_pathBrasao}" width="65" height="65" /></td>
+        <td align="left" valign="bottom" width="15%"><img src="${_pathBrasao}" width="${width}" height="${height}" /></td>
         <td align="left" width="1%"></td>
         <td width="84%">
         <table align="left" width="100%">
@@ -2022,6 +2022,7 @@ Pede deferimento.</span><br/><br/><br/>
                 </td>
             </tr>
             [/#if]
+            [#if exibirOrgao]
             <tr>
                 <td width="100%" align="left">
                 <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
@@ -2032,6 +2033,7 @@ Pede deferimento.</span><br/><br/><br/>
                 [/#if]</p>
                 </td>
             </tr>
+            [/#if]
         </table>
         </td>
     </tr>
@@ -2235,10 +2237,10 @@ Pede deferimento.</span><br/><br/><br/>
 <!-- FIM ASSINATURA -->
 [/#macro]
 
-[#macro estiloBrasaoAEsquerda tipo exibeData=true tamanhoLetra="11pt" obs="" omitirCodigo=false]
+[#macro estiloBrasaoAEsquerda tipo exibeData=true tamanhoLetra="11pt" obs="" omitirCodigo=false width=65 height=65 exibirOrgao=true]
     [@primeiroCabecalho]
     <table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
-    [@cabecalhoEsquerdaPrimeiraPagina/]
+    [@cabecalhoEsquerdaPrimeiraPagina width=width height=height exibirOrgao=exibirOrgao/]
     </td></tr>
         <tr bgcolor="#FFFFFF">
             <td width="100%">

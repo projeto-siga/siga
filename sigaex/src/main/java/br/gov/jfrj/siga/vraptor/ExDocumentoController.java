@@ -1786,6 +1786,10 @@ public class ExDocumentoController extends ExController {
 				if (exDocumentoDTO.getClassificacaoSel() != null)
 					exDocumentoDTO.getClassificacaoSel().apagar();
 			}
+			
+			if(exDocumentoDTO.getSubscritorSel() != null && exDocumentoDTO.getSubscritorSel().getId() == null) {
+				exDocumentoDTO.getSubscritorSel().buscarPorObjeto(getCadastrante());
+			}
 		}
 
 		exDocumentoDTO.setModelo(mod);

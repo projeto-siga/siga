@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.gson.Gson;
@@ -492,15 +493,19 @@ public class ExAssinadorExternoController extends ExController {
 		String errstack = sw.toString(); // stack trace as a string
 
 		JSONObject json = new JSONObject();
-		json.put("errormsg", e.getMessage());
+		try {
+			json.put("errormsg", e.getMessage());
 
-		// Error Details
-		JSONArray arr = new JSONArray();
-		JSONObject detail = new JSONObject();
-		detail.put("context", context);
-		detail.put("service", "sigadocsigner");
-		detail.put("stacktrace", errstack);
-		json.put("errordetails", arr);
+			// Error Details
+			JSONArray arr = new JSONArray();
+			JSONObject detail = new JSONObject();
+			detail.put("context", context);
+			detail.put("service", "sigadocsigner");
+			detail.put("stacktrace", errstack);
+			json.put("errordetails", arr);
+		} catch (JSONException e1) {
+			throw new RuntimeException(e1);
+		}
 
 		String s = json.toString();
 		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(500);

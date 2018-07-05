@@ -9,15 +9,15 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <siga:pagina titulo="Movimentação" desabilitarmenu="sim"
-	onLoad="try{var num = document.getElementById('id_number');if (num.value == ''){num.focus();num.select();}else{var cap = document.getElementById('id_captcha');cap.focus();cap.select();}}catch(e){};"	>
+	onLoad="try{var num = document.getElementById('id_number');if (num.value == ''){num.focus();num.select();}else{var cap = document.getElementById('id_captcha');cap.focus();cap.select();}}catch(e){};">
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 			<h2>Acompanhamento e Autenticação de Documentos</h2>
 			<div>
 				<c:url var='pdfAssinado'
-					value='/app/externo/arquivoAutenticado_stream?n=${n}&answer=${answer}&assinado=true' />
+					value='/app/externo/arquivoAutenticado_stream?jwt=${jwt}&assinado=true' />
 				<c:url var='pdf'
-					value='/app/externo/arquivoAutenticado_stream?n=${n}&answer=${answer}&assinado=false' />
+					value='/app/externo/arquivoAutenticado_stream?jwt=${jwt}&assinado=false' />
 				<iframe src="${pdfAssinado}" width="100%" height="600"
 					align="center" style="margin-top: 10px;"> </iframe>
 			</div>
@@ -31,15 +31,10 @@
 						<c:if test="${f:resource('isWorkflowEnabled')}">
 							<script type="text/javascript">
 								var url = "/sigawf/app/doc?sigla=${m.sigla}&ts=1${currentTimeMillis}";
-								Siga
-										.ajax(
-												url,
-												null,
-												"GET",
-												function(response) {
-													var div = $(".wf_div${m.mob.codigoCompacto}:last");
-													$(div).html(response);
-												});
+								Siga.ajax(url, null, "GET", function(response) {
+									var div = $(".wf_div${m.mob.codigoCompacto}:last");
+									$(div).html(response);
+								});
 							</script>
 						</c:if>
 
@@ -176,36 +171,39 @@
 				<ul>
 					<c:forEach var="assinatura" items="${assinaturas}" varStatus="loop">
 						<c:url var='arqAssinatura'
-							value='/app/externo/arquivoAutenticado_stream?n=${n}&answer=${answer}&idMov=${assinatura.idMov}' />
+							value='/app/externo/arquivoAutenticado_stream?jwt=${jwt}&idMov=${assinatura.idMov}' />
 						<li><a href="${arqAssinatura}" target="_blank">${assinatura.descrMov}</a></li>
 					</c:forEach>
 				</ul>
 				<div id="dados-assinatura" style="visible: hidden">
-					<input type="hidden" name="ad_url_base" value="" />
-					<input type="hidden" name="ad_url_next" value="${request.contextPath}/app/externo/autenticar?n=${n}&answer=${answer}" />
-					<input type="hidden" name="ad_descr_0" value="${mov.referencia}" /> 
-					<input type="hidden" name="ad_url_pdf_0" value="${request.contextPath}/app/externo/arquivoAutenticado_stream?n=${n}&answer=${answer}&assinado=false" />
-					<input type="hidden" name="ad_url_post_0" value="${request.contextPath}/app/externo/autenticar?n=${n}&ass=1&answer=${answer}" />
+					<input type="hidden" name="ad_url_base" value="" /> <input
+						type="hidden" name="ad_url_next"
+						value="${request.contextPath}/app/externo/autenticar?jwt=${jwt}" />
+					<input type="hidden" name="ad_descr_0" value="${mov.referencia}" />
+					<input type="hidden" name="ad_url_pdf_0"
+						value="${request.contextPath}/app/externo/arquivoAutenticado_stream?jwt=${jwt}&assinado=false" />
+					<input type="hidden" name="ad_url_post_0"
+						value="${request.contextPath}/app/externo/autenticar?jwt=${jwt}&ass=1" />
 					<!--  Edson: a assinatura com senha está desabilitada aqui, por enquanto -->
-					<input type="hidden" name="ad_url_post_password_0" value="${request.contextPath}/app/externo/autenticar?n=${n}&ass=1&answer=${answer}" />
-					
-					<input type="hidden" name="ad_id_0" value="${fn:replace(mov.referencia, ':', '_')}" />
-					<input type="hidden" name="ad_description_0" value="${mov.obs}" />
-					<input type="hidden" name="ad_kind_0" value="${mov.exTipoMovimentacao.sigla}" />
-	
-				</div>		
-				<c:if test="${mostrarBotaoAssinarExterno}">					
-			    	<tags:assinatura_botoes
-					assinar="true"
-					autenticar="false"
-					assinarComSenha="false"
-					autenticarComSenha="false" 
-					idMovimentacao="${mov.idMov}" />			
+					<input type="hidden" name="ad_url_post_password_0"
+						value="${request.contextPath}/app/externo/autenticar?jwt=${jwt}&ass=1" />
+
+					<input type="hidden" name="ad_id_0"
+						value="${fn:replace(mov.referencia, ':', '_')}" /> <input
+						type="hidden" name="ad_description_0" value="${mov.obs}" /> <input
+						type="hidden" name="ad_kind_0"
+						value="${mov.exTipoMovimentacao.sigla}" />
+
+				</div>
+				<c:if test="${mostrarBotaoAssinarExterno}">
+					<tags:assinatura_botoes assinar="true" autenticar="false"
+						assinarComSenha="false" autenticarComSenha="false"
+						idMovimentacao="${mov.idMov}" />
 				</c:if>
 			</div>
 		</div>
 	</div>
 
 
-<tags:assinatura_rodape/>
+	<tags:assinatura_rodape />
 </siga:pagina>

@@ -22,23 +22,50 @@
         	br.com.caelum.vraptor.util.jpa
    		</param-value>
 	</context-param>
+	
+	<jsp-config>
+		<taglib>
+			<taglib-uri>http://localhost/customtag</taglib-uri>
+			<taglib-location>/WEB-INF/tags/tags.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>http://localhost/functiontag</taglib-uri>
+			<taglib-location>/WEB-INF/tags/func.tld</taglib-location>
+		</taglib>
+		<jsp-property-group>
+			<description>Property group for common configuration for all the
+				JSP's
+			</description>
+			<url-pattern>*.jsp</url-pattern>
+			<url-pattern>*.html</url-pattern>
+			<el-ignored>false</el-ignored>
+			<page-encoding>UTF-8</page-encoding>
+		</jsp-property-group>
+	</jsp-config>
+
+	
 
 	<listener>
 		<listener-class>br.gov.jfrj.siga.jee.BouncyCastleServletContextListener</listener-class>
 	</listener>
-
-	<!-- habilita replicacao dos dados da sessao do usuario no cluster -->
-	<!--distributable/ -->
-
-	<session-config>
-		<session-timeout>120</session-timeout>
-	</session-config>
 
 	<!-- The Usual Welcome File List -->
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 
+	<filter>
+		<filter-name>AuthJwtFormFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>AuthJwtFormFilter</filter-name>
+		<url-pattern>/paginas/*</url-pattern>
+		<url-pattern>/app/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+	
 	<filter>
 		<filter-name>RequestLoggerFilter</filter-name>
 		<filter-class>br.gov.jfrj.siga.base.log.RequestLoggerFilter</filter-class>
@@ -48,20 +75,11 @@
 		<url-pattern>*</url-pattern>
 	</filter-mapping>
 
+
 	<filter>
 		<filter-name>HibernateFilter</filter-name>
 		<filter-class>br.gov.jfrj.siga.util.HibernateThreadFilter</filter-class>
 	</filter>
-
-	<filter>
-		<filter-name>ResponseHeaderFilter</filter-name>
-		<filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
-		<init-param>
-			<param-name>Cache-Control</param-name>
-			<param-value>public, max-age=3600</param-value>
-		</init-param>
-	</filter>
-
 	<filter-mapping>
 		<filter-name>HibernateFilter</filter-name>
 		<url-pattern>*.action</url-pattern>
@@ -71,29 +89,20 @@
 		<url-pattern>/permalink/*</url-pattern>
 	</filter-mapping>
 
-
+	<filter>
+		<filter-name>ResponseHeaderFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
+		<init-param>
+			<param-name>Cache-Control</param-name>
+			<param-value>public, max-age=3600</param-value>
+		</init-param>
+	</filter>
 	<filter-mapping>
 		<filter-name>ResponseHeaderFilter</filter-name>
 		<url-pattern>/imagens/*</url-pattern>
-	</filter-mapping>
-
-	<filter-mapping>
-		<filter-name>ResponseHeaderFilter</filter-name>
 		<url-pattern>/recursos/*</url-pattern>
-	</filter-mapping>
-
-	<filter-mapping>
-		<filter-name>ResponseHeaderFilter</filter-name>
 		<url-pattern>/botstrap/*</url-pattern>
-	</filter-mapping>
-
-	<filter-mapping>
-		<filter-name>ResponseHeaderFilter</filter-name>
 		<url-pattern>/css/*</url-pattern>
-	</filter-mapping>
-
-	<filter-mapping>
-		<filter-name>ResponseHeaderFilter</filter-name>
 		<url-pattern>/javascript/*</url-pattern>
 	</filter-mapping>
 
@@ -104,36 +113,13 @@
 	<filter-mapping>
 		<filter-name>vraptor</filter-name>
 		<url-pattern>/app/*</url-pattern>
-		<dispatcher>FORWARD</dispatcher>
-		<dispatcher>REQUEST</dispatcher>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>vraptor</filter-name>
 		<url-pattern>/public/app/*</url-pattern>
-		<dispatcher>FORWARD</dispatcher>
-		<dispatcher>REQUEST</dispatcher>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>vraptor</filter-name>
 		<url-pattern>/permalink/*</url-pattern>
-		<dispatcher>FORWARD</dispatcher>
-		<dispatcher>REQUEST</dispatcher>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>vraptor</filter-name>
 		<url-pattern>*.action</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 
-	<filter-mapping>
-		<filter-name>ResponseHeaderFilter</filter-name>
-		<url-pattern>/bootstrap/*</url-pattern>
-		<url-pattern>/css/*</url-pattern>
-		<url-pattern>/javascript/*</url-pattern>
-		<url-pattern>/imagens/*</url-pattern>
-		<url-pattern>/recursos/*</url-pattern>
-	</filter-mapping>
 
 	<servlet>
 		<servlet-name>GiService</servlet-name>
@@ -144,124 +130,8 @@
 		<servlet-name>GiService</servlet-name>
 		<url-pattern>/servicos/GiService</url-pattern>
 	</servlet-mapping>
-
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Paginas do Sistema</web-resource-name>
-			<url-pattern>/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>sigausuario</role-name>
-		</auth-constraint>
-	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Area do Administrador</web-resource-name>
-			<url-pattern>/despacho/tipodespacho/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>sigaadministrador</role-name>
-		</auth-constraint>
-	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Area do Desenvolvedor</web-resource-name>
-			<url-pattern>/manutencao/desenvolvimento/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>sigadesenvolvimento</role-name>
-		</auth-constraint>
-	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Páginas Restritas</web-resource-name>
-			<url-pattern>/paginas/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>superusuario</role-name>
-		</auth-constraint>
-	</security-constraint>
-
-	<!-- Libera acesso aos seguintes diretorios -->
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>bootstrap</web-resource-name>
-			<url-pattern>/bootstrap/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>css</web-resource-name>
-			<url-pattern>/css/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>imagens</web-resource-name>
-			<url-pattern>/imagens/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>javascript</web-resource-name>
-			<url-pattern>/javascript/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>arquivos</web-resource-name>
-			<url-pattern>/arquivos/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>sigalibs</web-resource-name>
-			<url-pattern>/sigalibs/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>usuario</web-resource-name>
-			<url-pattern>/app/usuario/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>pagina_vazia</web-resource-name>
-			<url-pattern>/pagina_vazia.action</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>pagina_vazia</web-resource-name>
-			<url-pattern>/app/pagina_vazia</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>codemirror</web-resource-name>
-			<url-pattern>/codemirror/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>servicos</web-resource-name>
-			<url-pattern>/servicos/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>testes</web-resource-name>
-			<url-pattern>/app/testes/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>Recursos Publicos</web-resource-name>
-			<url-pattern>/public/*</url-pattern>
-		</web-resource-collection>
-	</security-constraint>
 	
-	<login-config>
-		<auth-method>FORM</auth-method>
-		<realm-name>siga</realm-name>
-		<form-login-config>
-			<form-login-page>/paginas/login.jsp</form-login-page>
-			<form-error-page>/paginas/loginInvalido.jsp</form-error-page>
-		</form-login-config>
-	</login-config>
-
-	<security-role>
-		<role-name>sigausuario</role-name>
-	</security-role>
-	<security-role>
-		<role-name>sigaadministrador</role-name>
-	</security-role>
-	<security-role>
-		<role-name>sigadesenvolvimento</role-name>
-	</security-role>
-	<security-role>
-		<role-name>superusuario</role-name>
-	</security-role>
-
 	<error-page>
-		
 		<location>/WEB-INF/page/erroGeral.jsp</location>
 	</error-page>
 </web-app>

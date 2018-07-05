@@ -1,0 +1,16 @@
+Insert into COR (ID,NOME) values (1,'AMARELA');
+Insert into COR (ID,NOME) values (2,'AZUL');
+Insert into COR (ID,NOME) values (3,'BEGE');
+Insert into COR (ID,NOME) values (4,'BRANCA');
+Insert into COR (ID,NOME) values (5,'CINZA');
+Insert into COR (ID,NOME) values (6,'DOURADA');
+Insert into COR (ID,NOME) values (7,'GRENA');
+Insert into COR (ID,NOME) values (8,'LARANJA');
+Insert into COR (ID,NOME) values (9,'MARROM');
+Insert into COR (ID,NOME) values (10,'PRATA');
+Insert into COR (ID,NOME) values (11,'PRETA');
+Insert into COR (ID,NOME) values (12,'ROSA');
+Insert into COR (ID,NOME) values (13,'ROXA');
+Insert into COR (ID,NOME) values (14,'VERDE');
+Insert into COR (ID,NOME) values (15,'VERMELHA');
+Insert into COR (ID,NOME) values (16,'FANTASIA');

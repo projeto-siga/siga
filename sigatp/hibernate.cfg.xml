@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+                                         "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+ <session-factory name="">
+  <property name="hibernate.connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
+  <property name="hibernate.connection.password">SIGATP</property>
+  <property name="hibernate.connection.url">jdbc:oracle:thin:@oracleLocal:1521/xe</property>
+  <!--  NÃO UTILIZAR <property name="hibernate.connection.url">jdbc:oracle:thin:@mclaren:1521:homolo</property>  -->
+  <property name="hibernate.connection.username">SIGATP</property>
+  <property name="hibernate.dialect">org.hibernate.dialect.Oracle9Dialect</property>
+  <!--  Para evitar erro de second level cache  na SectionFactory -->
+  <property name="hibernate.cache.use_second_level_cache">true</property>
+  <property name="hibernate.cache.use_query_cache">true</property>
+  <property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
+  <!--  Para evitar erro de could not locate TransactionManager na SectionFactory -->
+  <property name="hibernate.connection.datasource">java:comp/env/jdbc/app</property>
+  <mapping class="br.gov.jfrj.siga.tp.model.RequisicaoTransporte"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.Andamento"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.Missao"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.FinalidadeRequisicao"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.Condutor"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.ServicoVeiculo"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.EscalaDeTrabalho"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.Veiculo"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.DiaDeTrabalho"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.Cor"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.Fornecedor"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.Grupo"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.Abastecimento"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.AutoDeInfracao"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.Avaria"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.LotacaoVeiculo"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.RelatorioDiario"/>
+  <mapping class="br.gov.jfrj.siga.dp.DpCargo"/>
+  <mapping class="br.gov.jfrj.siga.dp.CpTipoPessoa"/>
+  <mapping class="br.gov.jfrj.siga.dp.DpFuncaoConfianca"/>
+  <mapping class="br.gov.jfrj.siga.dp.DpLotacao"/>
+  <mapping class="br.gov.jfrj.siga.dp.CpTipoLotacao"/>
+  <mapping class="br.gov.jfrj.siga.dp.CpOrgaoUsuario"/>
+  <mapping class="br.gov.jfrj.siga.dp.DpPessoa"/>
+  <mapping class="br.gov.jfrj.siga.cp.CpComplexo"/>
+  <mapping class="br.gov.jfrj.siga.dp.CpLocalidade"/>
+  <mapping class="br.gov.jfrj.siga.dp.CpUF"/>
+  <mapping class="br.gov.jfrj.siga.cp.CpConfiguracao"/>
+  <mapping class="br.gov.jfrj.siga.cp.CpServico"/>
+  <mapping class="br.gov.jfrj.siga.cp.CpTipoConfiguracao"/>
+  <mapping class="br.gov.jfrj.siga.cp.CpIdentidade"/>
+  <mapping class="br.gov.jfrj.siga.cp.CpGrupo"/>
+  <mapping class="br.gov.jfrj.siga.cp.CpSituacaoConfiguracao"/>
+  <mapping class="br.gov.jfrj.siga.cp.CpTipoServico"/>
+  <mapping class="br.gov.jfrj.siga.cp.CpTipoIdentidade"/>
+  <mapping class="br.gov.jfrj.siga.cp.CpTipoGrupo"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.Plantao"/>
+  <mapping class="br.gov.jfrj.siga.tp.model.Penalidade"/>
+ </session-factory>
+</hibernate-configuration>

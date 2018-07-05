@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,17 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
@@ -44,6 +34,16 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.hibernate.ExDao;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 @Resource
 public class ExUtilController extends ExController {
@@ -207,15 +207,20 @@ public class ExUtilController extends ExController {
 		String errstack = sw.toString(); // stack trace as a string
 
 		JSONObject json = new JSONObject();
-		json.put("errormsg", e.getMessage());
+		try {
+			json.put("errormsg", e.getMessage());
 
-		// Error Details
-		JSONArray arr = new JSONArray();
-		JSONObject detail = new JSONObject();
-		detail.put("context", context);
-		detail.put("service", "sigadocsigner");
-		detail.put("stacktrace", errstack);
-		json.put("errordetails", arr);
+			// Error Details
+			JSONArray arr = new JSONArray();
+			JSONObject detail = new JSONObject();
+			detail.put("context", context);
+			detail.put("service", "sigadocsigner");
+			detail.put("stacktrace", errstack);
+			json.put("errordetails", arr);
+		} catch (JSONException e1) {
+			throw new RuntimeException(e1);
+		}
+
 
 		String s = json.toString();
 		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(500);

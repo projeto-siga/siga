@@ -57,7 +57,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>SIGA - ${titulo_pagina}</title>
-<meta http-equiv="X-UA-Compatible" content="${XUACompatible}"/>
+<meta http-equiv="X-UA-Compatible" content="${XUACompatible}" />
 <META HTTP-EQUIV="Expires" CONTENT="0">
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache">
@@ -66,17 +66,22 @@ ${meta}
 
 <c:set var="path" scope="request">${pageContext.request.contextPath}</c:set>
 
-<link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.css" type="text/css" media="screen, projection"/>
+<link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css" type="text/css" media="screen, projection"/>
 
-<link rel="stylesheet" href="/siga/css/ecoblue/css/reset-fonts.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="/siga/css/ecoblue/css/gt-styles.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="/siga/css/ecoblue/css/custom.css" type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/siga/css/ecoblue/css/reset-fonts.css"
+	type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/siga/css/ecoblue/css/gt-styles.css"
+	type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/siga/css/ecoblue/css/custom.css"
+	type="text/css" media="screen, projection">
 
 <!-- <link rel="StyleSheet" href="/sigalibs/siga.css" type="text/css"	title="SIGA Estilos" media="screen"> -->
 
 <script src="/siga/javascript/ajax.js" type="text/javascript"></script>
-<script src="/siga/javascript/static_javascript.js" type="text/javascript" charset="utf-8"></script>
-<script src="/siga/javascript/picketlink.js" type="text/javascript" charset="utf-8"></script>
+<script src="/siga/javascript/static_javascript.js"
+	type="text/javascript" charset="utf-8"></script>
+<script src="/siga/javascript/picketlink.js" type="text/javascript"
+	charset="utf-8"></script>
 
 
 <!-- <link href="${pageContext.request.contextPath}/sigalibs/menu.css"
@@ -84,22 +89,27 @@ ${meta}
 
 <link rel="shortcut icon" href="/siga/imagens/siga.ico" />
 
-<script src="/siga/public/javascript/jquery/jquery-1.11.2.min.js" type="text/javascript"></script>
-<script src="/siga/javascript/jquery/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
-<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
+<script src="/siga/public/javascript/jquery/jquery-1.11.2.min.js"
+	type="text/javascript"></script>
+<script src="/siga/javascript/jquery/jquery-migrate-1.2.1.min.js"
+	type="text/javascript"></script>
+<script
+	src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"
+	type="text/javascript"></script>
 <script src="/siga/javascript/json2.js" type="text/javascript"></script>
 <link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/css/ui-lightness/jquery-ui-1.10.3.custom.min.css" type="text/css" media="screen, projection">
+<script language="JavaScript" src="/siga/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 <script language="JavaScript" src="/siga/javascript/datepicker-pt-BR.js" type="text/javascript"></script>
 <!-- <link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/development-bundle/themes/base/jquery.ui.all.css"
 	type="text/css" media="screen, projection"> -->
 <c:if test="${not empty incluirJs}">
-    <script src="${incluirJs}" type="text/javascript"></script>
+	<script src="${incluirJs}" type="text/javascript"></script>
 </c:if>
-		
+
 <%-- Desabilitado porque requer o jquery 1.7 ou maior. 	
 <script language="JavaScript"
 	src="/siga/javascript/autogrow.min.js" type="text/javascript"></script>
---%>	
+--%>
 <!--[if gte IE 5.5]><script language="JavaScript" src="/siga/javascript/jquery.ienav.js" type="text/javascript"></script><![endif]-->
 
 <script type="text/javascript">
@@ -148,7 +158,7 @@ ${meta}
 						 - ${cadastrante.lotacao.sigla}</c:when>
 												</c:choose>
 											</c:catch> </strong> <span class="gt-util-separator">|</span> <a
-											href="${pageContext.request.contextPath}/?GLO=true">sair</a>
+											href="/sigaidp/jwt/logout">sair</a>
 									</p>
 									<p style="text-align: right; padding-top: 10px;">
 										<c:catch>
@@ -178,22 +188,20 @@ ${meta}
 									src="/siga/imagens/logo.png">
 							</div>
 							<div class="gt-company">
-								<strong>${f:resource('siga.cabecalho.titulo')} 
-									<c:catch>
+								<strong>${f:resource('siga.cabecalho.titulo')} <c:catch>
 										<c:if test="${not empty titular.orgaoUsuario.descricao}">- ${titular.orgaoUsuario.descricao}</c:if>
-									</c:catch> 
+									</c:catch>
 								</strong>
 							</div>
 							<div class="gt-version">
 								Sistema Integrado de Gest&atilde;o Administrativa
 								<c:if test="${not empty env}"> - <span style="color: red">${env}</span>
 								</c:if>
-							</div>
-							<!-- / logo -->
+							</div> <!-- / logo -->
 						</a>
 					</div>
 				</div>
-				
+
 				<!-- /head top -->
 				<!-- navbar -->
 				<c:if test="${desabilitarmenu != 'sim'}">
@@ -202,48 +210,45 @@ ${meta}
 							<!-- navigation -->
 							<div class="gt-nav">
 								<ul id="navmenu-h">
-									<siga:menuprincipal/>
+									<siga:menuprincipal />
 								</ul>
 							</div>
 							<!-- / navigation -->
 							<!-- search -->
 							<c:if test="${desabilitarbusca != 'sim'}">
 								<div class="gt-search">
-									<div class="gt-search-inner" onclick="" style="-webkit-box-sizing: content-box; box-sizing: content-box;">
-										<siga:selecao propriedade="buscar"
-											tipo="generico" tema="simple" ocultardescricao="sim"
-											buscar="nao" siglaInicial="Buscar" modulo="siga/public" urlAcao="buscar" urlSelecionar="selecionar" matricula="${titular.siglaCompleta}"/>
-											<script type="text/javascript">
-											
-											var lis = document
-													.getElementsByTagName('li');
-											 
+									<div class="gt-search-inner" onclick=""
+										style="-webkit-box-sizing: content-box; box-sizing: content-box;">
+										<siga:selecao propriedade="buscar" tipo="generico"
+											tema="simple" ocultardescricao="sim" buscar="nao"
+											siglaInicial="Buscar" modulo="siga/public" urlAcao="buscar"
+											urlSelecionar="selecionar"
+											matricula="${titular.siglaCompleta}" />
+										<script type="text/javascript">
+											var lis = document.getElementsByTagName('li');
+
 											for (var i = 0, li; li = lis[i]; i++) {
-												var link = li
-														.getElementsByTagName('a')[0];
-											
+												var link = li.getElementsByTagName('a')[0];
+
 												if (link) {
 													link.onfocus = function() {
-														var ul = this.parentNode
-																.getElementsByTagName('ul')[0];
-														if (ul){
+														var ul = this.parentNode.getElementsByTagName('ul')[0];
+														if (ul) {
 															ul.style.display = 'block';
 														}
 													}
-													var ul = link.parentNode
-															.getElementsByTagName('ul')[0];
+													var ul = link.parentNode.getElementsByTagName('ul')[0];
 													if (ul) {
-														var ullinks = ul
-																.getElementsByTagName('a');
+														var ullinks = ul.getElementsByTagName('a');
 														var ullinksqty = ullinks.length;
 														var lastItem = ullinks[ullinksqty - 1];
 														if (lastItem) {
 															lastItem.onblur = function() {
 																this.parentNode.parentNode.style.display = 'none';
-																  if (this.id == "relclassificados"){
-			                                                          var rel = document.getElementById("relatorios");
-			                                                          rel.style.display = 'none';
-			                                                      }
+																if (this.id == "relclassificados") {
+																	var rel = document.getElementById("relatorios");
+																	rel.style.display = 'none';
+																}
 															}
 															lastItem.parentNode.onblur = function() {
 																this.parentNode.style.display = '';
@@ -252,7 +257,7 @@ ${meta}
 													}
 												}
 											}
-											
+
 											var fld = document.getElementsByName('buscar_genericoSel.sigla')[0];
 											fld.setAttribute("class", "gt-search-text");
 											fld.className = "gt-search-text";
@@ -271,14 +276,11 @@ ${meta}
 											};
 											fld.onkeypress = function(event) {
 												var fid = document.getElementsByName('buscar_genericoSel.id')[0];
-											
-												event = (event) ? event
-														: window.event
-												var keyCode = (event.which) ? event.which
-														: event.keyCode;
+
+												event = (event) ? event : window.event
+												var keyCode = (event.which) ? event.which : event.keyCode;
 												if (keyCode == 13) {
-													if (fid.value == null
-															|| fid.value == "") {
+													if (fid.value == null || fid.value == "") {
 														fld.onblur();
 													}
 													return false;
@@ -287,29 +289,26 @@ ${meta}
 													return true;
 												}
 											};
-											
-											self.resposta_ajax_buscar_generico = function(
-													response, d1, d2, d3) {
+
+											self.resposta_ajax_buscar_generico = function(response, d1, d2, d3) {
 												var sigla = document.getElementsByName('buscar_genericoSel.sigla')[0].value;
 												var data = response.split(';');
 												if (data[0] == '1') {
-													retorna_buscar_generico(
-															data[1], data[2],
-															data[3]);
-													if (data[1] != null
-															&& data[1] != "") {
+													retorna_buscar_generico(data[1], data[2], data[3]);
+													if (data[1] != null && data[1] != "") {
 														window.location.href = data[3];
 													}
 													return
-											
+
+																								
+
 												}
-												retorna_buscar_generico('', '',
-														'');
-											
+												retorna_buscar_generico('', '', '');
+
 												return;
-											
+
 											}
-											</script>											
+										</script>
 									</div>
 							</c:if>
 						</div>

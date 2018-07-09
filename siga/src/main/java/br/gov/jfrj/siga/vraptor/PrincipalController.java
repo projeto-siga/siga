@@ -83,10 +83,14 @@ public class PrincipalController extends SigaController {
 					incluirMatricula);
 
 			if (sel.getId() == null) {
-				if (Cp.getInstance().getProp().gsaUrl() != null) {
+				if (Cp.getInstance().getProp().xjusUrl() != null) {
 					sel.setId(-1L);
 					sel.setSigla(sigla);
-					sel.setDescricao("/siga/app/busca?q=" + sigla);
+					sel.setDescricao("/siga/app/xjus?q=" + sigla);
+				} else if (Cp.getInstance().getProp().gsaUrl() != null) {
+						sel.setId(-1L);
+						sel.setSigla(sigla);
+						sel.setDescricao("/siga/app/busca?q=" + sigla);
 				} else {
 					throw new Exception("Elemento não encontrado");
 				}

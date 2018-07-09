@@ -1,0 +1,115 @@
+<style type="text/css">
+		.filtro {	
+			background: url(atuais/filter-icon.png)	no-repeat;
+		}
+		
+		/* NAO E MAIS NECESSARIO --> ISSUE 136
+			No html, usar a letra correspondente ao nome do filtro/status, salvo indicacao em contrario
+			N = nao atendida, P = programada, A = atendida, E = em atendimento,
+			U = autorizada, B = aberta, R = rejeitada, C = cancelada,
+			I = iniciada, F = finalizada,	na_A = autorizada (quando no filtro Nao Autorizada/Autorizada, usar caracter 'A'),
+			T = todas (usar caracter '+') */
+		.status_N, .status_P, .status_A, .status_E,	.filtro_N, .filtro_P, .filtro_A, .filtro_E,
+		.filtro_U, .filtro_B, .filtro_R, .filtro_C, .filtro_I, .filtro_F,	.filtro_na_A, .filtro_T, .filtro_Avancado, .filtro_Voltar {
+			border: 2px solid;
+			border-radius: 1em;
+			text-transform: uppercase;
+			padding: 0 .25em;
+			font:normal 70% verdana, arial, sans-serif;
+			font-weight: 900;
+			position:relative;
+		}
+		 .status_N, .status_P, .status_A, .status_E {
+			margin-left: .2em;
+			top: -.2em;
+		}	
+		.filtro_N, .filtro_P, .filtro_A, .filtro_E, .filtro_U, .filtro_B, 
+		.filtro_R, .filtro_C, .filtro_I, .filtro_F, .filtro_T, .filtro_Avancado, .filtro_Voltar	{
+			top: .4em;
+			left: -.7em;
+		}	
+		.filtro_B {
+			border-color: #6080FF;
+			color: #6080FF;
+		}
+		.status_N, .filtro_N, .filtro_R, .filtro_C {
+			border-color: #C80000;
+			color: #C80000;
+		}
+		.status_P, .filtro_P {
+			border-color: #00A000;
+			color: #00A000;
+		}
+		.status_A, .filtro_A, .filtro_U, .filtro_na_A, .filtro_F, .filtro_T, .filtro_Avancado, .filtro_Voltar {
+			border-color: #00A000;
+			color: #00A000;
+		}
+		.filtro_na_A {
+			top: .4em;
+			margin-left: -1.5em;
+		}	
+		.status_E, .filtro_E, .filtro_I {
+			border-color: #F8B400;
+			color: #F8B400;
+		}
+		 .filtro_I {
+			 padding: 0 .38em;
+		 } 
+		.filtro_N::after {
+			content: "N";
+		}
+		.filtro_P::after {
+			content: "P";
+		}
+		.filtro_A::after {
+			content: "A";
+		}
+		.filtro_E::after {
+			content: "E";
+		}
+		.filtro_U::after {
+			content: "U";
+		}
+		.filtro_B::after {
+			content: "B";
+		}
+		.filtro_R::after {
+			content: "R";
+		}
+		.filtro_C::after {
+			content: "C";
+		}
+		.filtro_I::after {
+			content: "I";
+		}
+		.filtro_F::after {
+			content: "F";
+		}
+		.filtro_naA::after {
+			content: "A";
+		}
+		.filtro_T::after {
+			content: "+";
+		}
+		.filtro_Avancado, .filtro_Voltar{
+			font-family: "letter gothic std", "century gothic", sans serif;
+		}
+		.filtro_Avancado::after {
+			content: ">";
+		}
+		.filtro_Voltar::after {
+			content: "<";
+		}
+		.caixa_busca_avancado {
+			display: none;
+		}
+		.escondido {
+			display: none;
+		}
+		.div-inline {
+			display: inline;
+		}
+		.div-margin-right {
+			margin-right: 50px;
+		}
+</style>

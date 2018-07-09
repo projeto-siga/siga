@@ -1,0 +1,2 @@
+insert into sigatp.parametro(id, nomeparametro, valorparametro, datainicio, descricao) values (40, 'mostrarTipoFinalidadeOutra', 'false', current_timestamp, 'NAO mostrar o tipo de finalidade OUTRA e NAO permitir detalhar finalidade.');
+insert into sigatp.parametro(id, id_orgao_usu, nomeparametro, valorparametro, datainicio, descricao) values (41, 3, 'mostrarTipoFinalidadeOutra', 'true', current_timestamp, 'Mostrar ou nao o tipo de finalidade OUTRA e permitir detalhar finalidade para TRF.');

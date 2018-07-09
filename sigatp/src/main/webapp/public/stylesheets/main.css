@@ -1,0 +1,199 @@
+<style type="text/css">
+{}
+
+/********* tabela responsiva ********* 
+http://www.filamentgroup.com/lab/responsive-design-approach-for-complex-multicolumn-data-tables.html
+http://codepen.io/justincavery/pen/uazhd
+********* tabela responsiva fim *********/
+
+* {
+ 	max-width: 100%;
+}
+
+.caracteresRestantes {
+	font-weight: normal;
+	color: gray;
+	text-align: right;
+}
+
+.filtro {
+	white-space:nowrap;
+	padding-right: 15px;	 
+	line-height: 30px;	 
+}
+
+.filtro::after {
+	content: ".";
+	white-space: normal;
+	background-color: blue;
+	visibility: hidden;
+}
+
+.gt-form p {
+ padding-top: 10px;
+ padding-bottom: 0px;
+ margin-bottom: 0;
+}
+
+.gt-form.gt-content-box {
+	padding-bottom: 10px;
+}
+.gt-form.gt-content-box:not(.paddingTop) {
+	padding-top: 0;
+}
+td img, ul{
+ 	max-width: none !important;
+}
+.gt-for-table {
+/* 	overflow: auto;  */
+	overflow-x: auto; 
+	overflow-y: hidden; 
+	table-layout: fixed;
+}
+
+.gt-for-table:not(.tabelaFormGrande) {
+	max-height: 100% !important;
+}
+	
+
+table.tablesorter thead tr  .header:not(.noSort) {
+	background-image: url('/sigatp/public/javascripts/tablesorter/bg.gif'); 
+	background-repeat: no-repeat;
+	background-position: center right; 
+	padding-right: 20px;
+	cursor: pointer;
+}
+table.tablesorter thead tr .headerSortUp:not(.noSort)  {
+	background-image: url('/sigatp/public/javascripts/tablesorter/asc.gif'); 
+	background-repeat: no-repeat;
+	background-position: center right; 
+}
+table.tablesorter thead tr .headerSortDown:not(.noSort) {
+	background-image: url('/sigatp/public/javascripts/tablesorter/desc.gif');
+	background-repeat: no-repeat;
+	background-position: center right; 
+}
+.pager {
+	margin-bottom: 10px;
+/* 	background-color: white;
+ */	padding: 10px;
+}
+.pager span {
+	border: thin solid #BBB;
+	cursor: pointer;
+	width: 30px;
+	text-align:center; 
+	display:block;
+	float:left;
+	padding: 1px 5px;	
+}
+
+:not(ul){
+ 	max-width: 100%;
+ } 
+h5 {
+	padding-left: 5% !important;
+}
+.gt-content-box input, 
+.gt-content-box .container, 
+.gt-content-box select, 
+.gt-content-box textarea/* ,
+.gt-form input, 
+.gt-form .container, 
+.gt-form textarea */ {
+	margin-bottom: 14px; 	
+}
+
+.gt-content-box label {
+	margin-top: 12px;
+}
+input[type="checkbox"] + label {
+	margin-top: 0px;
+}
+
+.gt-content-box select {
+/* o select é mais alto que o input, tem que ter uma margem menor para ficar equilibrado -- aparentemente, não sempre */	
+	/* margin-bottom: 12px; */
+	overflow: auto;
+} */
+.datePicker {
+	position: relative;
+	top: -3px; /* o datePicker costuma se apresentar um pouco deslocado para baixo */
+}
+.gt-content-box input[type="checkbox"]/* ,
+.gt-form input[type="checkbox"] */ {
+	float: left;
+	margin: 2px 12px 0 0;
+	clear: left;
+}
+.inline{
+	display: inline !important;
+}
+.invisivel {
+	display: none;
+}
+.margemInferior {
+	height: 12px;
+}
+.gt-form.clearfix > div:last-of-type,
+.gt-form.clearfix > div > div:last-of-type,
+.gt-form.clearfix > div > div > div:last-of-type  {
+	margin-right: 0 !important;
+}
+.indentado {
+	margin-left: 25px;
+}
+.obrigatorio:after {
+	content: " *";
+	color: #FF0000;
+	font-weight: 900;
+	font-style: normal;
+}
+.alerta {
+	color: red; 
+	font-weight: bolder; 
+}
+.menor {
+	font-size: 90%;
+}
+.valor_numerico {
+	width: 100px;
+	text-align: right;
+}
+.coluna {
+	display: inline;
+	float: left;
+	margin-right: 30px;
+}
+.margemDireitaG {
+	margin-right: 60px;
+}
+.margemDireitaP {
+	margin-right: 10px;
+}
+@media (max-width:1160px) {
+	.gt-cols-3 div,
+	.gt-cols-2 > .gt-content {
+	float: left !important;
+	}
+}
+
+@media (max-width:900px) {
+	.gt-right-col {
+		float: left !important;
+	}
+	.gt-bd {
+		padding: 12px 12px !important;
+	}
+}
+@media (max-width:400px) {
+	.gt-content-box > div {
+		min-width: 100% !important;
+		max-width: 100% !important;
+	}
+	.gt-bd {
+		padding: 5px 5px !important;
+	}
+}
+
+</style>

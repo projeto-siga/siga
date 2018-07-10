@@ -4,7 +4,7 @@
                             "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 <!-- Criado em 16/03/2006       -->
 <hibernate-mapping package="br.gov.jfrj.siga.dp" schema="CORPORATIVO">
-	<class name="CpOrgaoUsuario" mutable="false"
+	<class name="CpOrgaoUsuario"
 		table="CP_ORGAO_USUARIO" schema="CORPORATIVO"> <!--  schema="CORPORATIVO" -->
 		<id name="idOrgaoUsu" column="ID_ORGAO_USU" type="long">
 			<generator class="assigned"></generator>
@@ -71,6 +71,15 @@
 	      ]]>
 	</query>
 
-	
+	<query name="consultarIdOrgaoUsuario">
+        <![CDATA[from CpOrgaoUsuario org 
+        where upper(org.idOrgaoUsu) = upper(:idOrgaoUsu)]]>
+    </query>
+    
+    <query name="consultarCpOrgaoUsuarioOrdenadoPorNome">
+         <![CDATA[select u from CpOrgaoUsuario u 
+          order by u.nmOrgaoUsu
+          ]]>
+    </query>
 </hibernate-mapping>
 

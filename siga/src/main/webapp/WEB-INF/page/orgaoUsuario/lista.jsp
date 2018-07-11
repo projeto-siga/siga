@@ -15,7 +15,7 @@
 							<th algin="center">ID</th>
 							<th align="left">Nome</th>
 							<th align="center">Sigla</th>
-							<th colspan="2" align="center">Op&ccedil;&oacute;es</th>					
+							<th colspan="2" align="center">Op&ccedil;&otilde;es</th>					
 						</tr>
 					</thead>
 					

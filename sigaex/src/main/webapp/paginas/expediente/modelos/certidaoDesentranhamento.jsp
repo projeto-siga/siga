@@ -65,9 +65,7 @@
 		<br />	
 		<p align="center" style="font-family:Times New Roman;font-size:14pt;" ><b>Certidão de Desentranhamento</b></p>
         <br />
-        <!--<p align="left" style="font-family:Times New Roman;font-size:12pt;"><b>Processo Administrativo: ${doc.sigla}</b></p>-->
-		<p align="left" style="font-family:Times New Roman;font-size:12pt;"><b>&nbsp;</b></p>
-		<c:choose>
+		<!--<p align="center" style="font-family:Times New Roman;font-size:12pt;font-weight:normal;"><b>&nbsp;</b></p>-->
 			<c:when test="${not empty mov.exMovimentacaoRef.exMobilRef}">
 				<c:set var="mobil"
 					value="${mov.exMovimentacaoRef.exMobilRef.mobilPrincipal}" />
@@ -77,12 +75,11 @@
 			</c:otherwise>
 		</c:choose>
 
-		<p align="left"><b>${mobil.nomeCompleto}</b></p>
-
-		<p align="left"style="font-family:Times New Roman;font-size:12pt;"><b>RESPONSÁVEL: ${vocativo}
-		${mov.subscritor.descricao}</b></p>
+		<p align="center" style="font-family:Times New Roman;font-size:12pt;font-weight:normal;">${mobil.nomeCompleto}</p>
+		<p align="left" style="font-family:Times New Roman;font-size:12pt;font-weight:normal;">Documento Desentranhado: ${doc.sigla}</p>
+		<!--<p align="left"style="font-family:Times New Roman;font-size:12pt;"><b>RESPONSÁVEL: ${vocativo}${mov.subscritor.descricao}</b></p>-->
 		<c:if test="${not empty textoMotivo}">
-		<p align="left" style="font-family:Times New Roman;font-size:12pt;"><b>MOTIVO: ${textoMotivo}<></p>
+		<p align="left" style="font-family:Times New Roman;font-size:12pt;">MOTIVO: ${textoMotivo} </p>
 		</c:if>
 		<br />
 		<br />

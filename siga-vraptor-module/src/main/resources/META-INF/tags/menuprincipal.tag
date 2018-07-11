@@ -290,6 +290,11 @@
                         <li><a href="/siga/app/cargo/listar">Cadastro de Cargo</a>
                         </li>
                     </c:if>
+                    <c:if
+                        test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_LOTACAO:Cadastrar Lotação')}">
+                        <li><a href="/siga/app/lotacao/listar">Cadastro de Lotação</a>
+                        </li>
+                    </c:if>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;WF_ADMIN:Administrar SIGAWF')}">
 						<li><a href="/sigawf/app/admin/administrar">Administrar SIGA WF</a>

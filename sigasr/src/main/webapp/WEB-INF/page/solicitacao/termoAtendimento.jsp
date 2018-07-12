@@ -66,6 +66,12 @@ function printpage()
 					Telefone:&nbsp; </font> <font style="font-size: 11pt;">
 					${solicitacao.telPrincipal} 
 		</c:if>
+		<c:if test="${not empty solicitacao.endereco}">
+			<p>
+				<font style="font-size: 11pt; font-weight: bold; text-align: left;">
+					Endereco&nbsp; </font> <font style="font-size: 11pt;">
+					${solicitacao.endereco} 
+		</c:if>
 		</font>
 			</p>
 			<p>

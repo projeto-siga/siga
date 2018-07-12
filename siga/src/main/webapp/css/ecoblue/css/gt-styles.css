@@ -866,6 +866,10 @@ ul li {
 }
 
 .gt-form-row {display: inline-block;}
+.gt-form-row-inline-block {
+	display: inline-block;
+	padding-bottom: 10px;
+}
 
 /* Hides from IE-mac \*/
 * html .gt-form-row {height: 1%;}

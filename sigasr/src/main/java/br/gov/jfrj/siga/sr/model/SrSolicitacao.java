@@ -195,6 +195,9 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     @Column(name = "TEL_PRINCIPAL")
     private String telPrincipal;
+    
+    @Column(name = "ENDERECO")
+    private String endereco;
 
     @Transient
     private boolean fecharAoAbrir;
@@ -1280,9 +1283,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             setTelPrincipal(ultima.getTelPrincipal());
             setLocal(ultima.getLocal());
             setMeioComunicacao(ultima.getMeioComunicacao());
+            setEndereco(ultima.getEndereco());
         } else {
             setTelPrincipal("");
             setLocal(null);
+            setEndereco("");
         }
 
         return this;
@@ -3147,6 +3152,14 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     public void setTelPrincipal(String telPrincipal) {
         this.telPrincipal = telPrincipal;
+    }
+    
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
     }
 
     public boolean isFecharAoAbrir() {

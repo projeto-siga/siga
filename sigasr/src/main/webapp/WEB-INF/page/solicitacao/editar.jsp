@@ -170,10 +170,18 @@
 							</div>
 							</c:if>
 						
-						<div class="gt-form-row gt-width-66">
+						<div class="gt-form-row-inline-block gt-width-33">
+						
 							<label>Telefone</label> 
 							<input type="text" name="solicitacao.telPrincipal" id="telPrincipal" value="${solicitacao.telPrincipal}" maxlength="255" />
+											
 						</div>
+						
+						<div class="gt-form-row-inline-block gt-width-33">
+							<label>Endereço de atendimento</label> 
+								<input type="text" name="solicitacao.endereco" id="endereco" value="${solicitacao.endereco}" size="70" maxlength="255" />
+						</div>
+					
 
 						<div id="meioComunicacaoEDataOrigem">
 							<div class="gt-form-row gt-width-66">

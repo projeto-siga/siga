@@ -36,9 +36,19 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 	}
 	
 	@Get("app/orgaoUsuario/listar")
-	public void lista() throws Exception {
-		setItens(CpDao.getInstance().listarOrgaosUsuarios());// consultarCpOrgaoUsuarioOrdenadoPorNome());
+	public void lista(Integer offset, String nome) throws Exception {
+		if(offset == null) {
+			offset = 0;
+		}
+		CpOrgaoUsuarioDaoFiltro orgaoUsuario = new CpOrgaoUsuarioDaoFiltro();
+		orgaoUsuario.setNome(nome);
+		setItens(CpDao.getInstance().consultarPorFiltro(orgaoUsuario, offset, 10));
 		result.include("itens", getItens());
+		result.include("tamanho", dao().consultarQuantidade(orgaoUsuario));
+		result.include("nome", nome);
+		if(!"ZZ".equalsIgnoreCase(getTitular().getOrgaoUsuario().getSigla())) {
+			result.include("orgaoUsuarioSiglaLogado", getTitular().getOrgaoUsuario().getSigla());
+		}
 	}
 	
 	@Get("/app/orgaoUsuario/editar")
@@ -64,7 +74,7 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 							 final String siglaOrgaoUsuario,
 							 final String acao
 						) throws Exception{
-		assertAcesso("FE:Ferramentas;CAD_ORGAO: Cadastrar Orgãos");
+		assertAcesso("FE:Ferramentas;CAD_ORGAO_USUARIO: Cadastrar Orgãos Usuário");
 		
 		if(nmOrgaoUsuario == null)
 			throw new AplicacaoException("Nome do órgão usuário não informado");
@@ -74,12 +84,21 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		
 		CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
 		
-		orgaoUsuario.setSiglaOrgaoUsu(siglaOrgaoUsuario.toUpperCase());
+		orgaoUsuario.setSiglaOrgaoUsu(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase().trim()));
 		orgaoUsuario = dao().consultarPorSigla(orgaoUsuario);
 		
 		if(orgaoUsuario != null && 
-				((!orgaoUsuario.getIdOrgaoUsu().equals(id) && acao.equalsIgnoreCase("a")) || (orgaoUsuario.getIdOrgaoUsu().equals(id) && acao.equalsIgnoreCase("i")))) {
+				!orgaoUsuario.getIdOrgaoUsu().equals(id)) {
 			throw new AplicacaoException("Sigla já cadastrada para outro órgão");
+		}
+		
+		orgaoUsuario = new CpOrgaoUsuario();
+		orgaoUsuario.setNmOrgaoUsu(Texto.removeAcento(Texto.removerEspacosExtra(nmOrgaoUsuario).trim()));
+		orgaoUsuario = dao().consultarPorNome(orgaoUsuario);
+		
+		if(orgaoUsuario != null && 
+				!orgaoUsuario.getIdOrgaoUsu().equals(id)) {
+			throw new AplicacaoException("Nome já cadastrado para outro órgão");
 		}
 		
 		orgaoUsuario = new CpOrgaoUsuario();
@@ -88,22 +107,27 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		
 		if(orgaoUsuario != null && !orgaoUsuario.getSiglaOrgaoUsu().equalsIgnoreCase(siglaOrgaoUsuario) &&
 				((!orgaoUsuario.getIdOrgaoUsu().equals(id) && acao.equalsIgnoreCase("a")) || (orgaoUsuario.getIdOrgaoUsu().equals(id) && acao.equalsIgnoreCase("i")))  ) {
-			throw new AplicacaoException("ID já cadastrada para outro órgão");
+			throw new AplicacaoException("ID já cadastrado para outro órgão");
+		}
+		
+		if(orgaoUsuario != null && acao.equalsIgnoreCase("i") && orgaoUsuario.getIdOrgaoUsu().equals(id) &&
+				orgaoUsuario.getSiglaOrgaoUsu().equalsIgnoreCase(siglaOrgaoUsuario) && orgaoUsuario.getNmOrgaoUsu().equals(nmOrgaoUsuario)) {
+			throw new AplicacaoException("ID já cadastrado para outro órgão");
 		}
 
 		if(orgaoUsuario == null || orgaoUsuario.getIdOrgaoUsu() == null) {
 			orgaoUsuario = new CpOrgaoUsuario();
 			orgaoUsuario.setIdOrgaoUsu(id);
-			orgaoUsuario.setNmOrgaoUsu(nmOrgaoUsuario);
-			orgaoUsuario.setSigla(siglaOrgaoUsuario.toUpperCase());
-			orgaoUsuario.setAcronimoOrgaoUsu(siglaOrgaoUsuario.toUpperCase());
+			orgaoUsuario.setNmOrgaoUsu(Texto.removerEspacosExtra(nmOrgaoUsuario.trim()));
+			orgaoUsuario.setSigla(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
+			orgaoUsuario.setAcronimoOrgaoUsu(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
 			
 
 		} else {
 			orgaoUsuario = daoOrgaoUsuario(id);
-			orgaoUsuario.setNmOrgaoUsu(nmOrgaoUsuario);
-			orgaoUsuario.setSigla(siglaOrgaoUsuario.toUpperCase());
-			orgaoUsuario.setAcronimoOrgaoUsu(siglaOrgaoUsuario.toUpperCase());
+			orgaoUsuario.setNmOrgaoUsu(Texto.removerEspacosExtra(nmOrgaoUsuario.trim()));
+			orgaoUsuario.setSigla(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
+			orgaoUsuario.setAcronimoOrgaoUsu(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase()).trim());
 		}
 		
 		try {
@@ -117,7 +141,7 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		}
 
 		
-		this.result.redirectTo(this).lista();
+		this.result.redirectTo(this).lista(0, "");
 	}
 	
 	public CpOrgaoUsuario daoOrgaoUsuario(long id) {

@@ -4,22 +4,17 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 
-<siga:pagina titulo="Cadastro de Lota&ccedil;&atilde;o">
+<siga:pagina titulo="Cadastro de Fun&ccedil;&atilde;o de Confian&ccedil;a">
 
 <script type="text/javascript">
 	function validar() {
-		var nmLotacao = document.getElementsByName('nmLotacao')[0].value;
-		var siglaLotacao = document.getElementsByName('siglaLotacao')[0].value;		
+		var nmFuncao = document.getElementsByName('nmFuncao')[0].value;		
 		var id = document.getElementsByName('id')[0].value;	
-		if (nmLotacao==null || nmLotacao=="") {			
-			alert("Preencha o nome da Lotação.");
-			document.getElementById('nmLotacao').focus();		
+		if (nmFuncao==null || nmFuncao=="") {			
+			alert("Preencha o nome da Função.");
+			document.getElementById('nmFuncao').focus();		
 		}else {
-			if(siglaLotacao==null || siglaLotacao=="") {
-				alert("Preencha a sigla da Lotação.");
-			} else {
-				frm.submit();
-			}
+			frm.submit();
 		}			
 	}
 </script>
@@ -28,14 +23,14 @@
 
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">		
-		<form name="frm" action="${request.contextPath}/app/lotacao/gravar" method="POST">
+		<form name="frm" action="${request.contextPath}/app/funcao/gravar" method="POST">
 			<input type="hidden" name="postback" value="1" />
 			<input type="hidden" name="id" value="${id}" />
-			<h1>Cadastro de Lota&ccedil;&atilde;o</h1>
+			<h1>Cadastro de Fun&ccedil;&atilde;o de Confian&ccedil;a</h1>
 			<div class="gt-content-box gt-for-table">
 				<table class="gt-form-table" width="100%">
 					<tr class="header">
-						<td colspan="2">Dados da Lota&ccedil;&atilde;o</td>
+						<td colspan="2">Dados da Fun&ccedil;&atilde;o de Confian&ccedil;a</td>
 					</tr>
 					<tr><td></td></tr>
 					
@@ -65,16 +60,7 @@
 							<label>Nome:</label>
 						</td>
 						<td>
-							<input type="text" id="nmLotacao" name="nmLotacao" value="${nmLotacao}" maxlength="100" size="100" />
-						</td>
-					</tr>
-					<tr>				
-						<td>
-							<label>Sigla:</label>
-						</td>
-						<td>
-							<input type="text" id="siglaLotacao" name="siglaLotacao" value="${siglaLotacao}" 
-								maxlength="20" size="20"  style="text-transform:uppercase" onkeyup="this.value = this.value.trim()"/>
+							<input type="text" id="nmFuncao" name="nmFuncao" value="${nmFuncao}" maxlength="100" size="100" />
 						</td>
 					</tr>
 					

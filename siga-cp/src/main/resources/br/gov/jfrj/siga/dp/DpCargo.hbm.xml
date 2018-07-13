@@ -27,6 +27,11 @@
 		<![CDATA[select cargo from DpCargo cargo where
 		cargo.siglaCargo = :siglaCargo]]>
 	</query>
+	
+	<query name="consultarPorNomeDpCargoOrgao">
+		<![CDATA[select cargo from DpCargo cargo where
+		upper(cargo.nomeCargoAI) = upper(:nome) and cargo.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario]]>
+	</query>
 
 	<query name="consultarPorFiltroDpCargo">
 		<![CDATA[from DpCargo o 

@@ -180,7 +180,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 				offset = 0;
 			}
 			dpLotacao.setIdOrgaoUsu(idOrgaoUsu);
-			dpLotacao.setNome(nome);
+			dpLotacao.setNome(Texto.removeAcento(nome));
 			setItens(CpDao.getInstance().consultarPorFiltro(dpLotacao, offset, 10));
 			result.include("itens", getItens());
 			result.include("tamanho", dao().consultarQuantidade(dpLotacao));
@@ -242,6 +242,17 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			throw new AplicacaoException("Sigla já cadastrada para outra lotação");
 		}
 		
+		lotacao = new DpLotacao();
+		lotacao.setNomeLotacao(Texto.removeAcento(Texto.removerEspacosExtra(nmLotacao).trim()));
+		CpOrgaoUsuario ou = new CpOrgaoUsuario();
+		ou.setIdOrgaoUsu(idOrgaoUsu);
+		lotacao.setOrgaoUsuario(ou);
+		lotacao = dao().getInstance().consultarPorNomeOrgao(lotacao);
+		
+		if(lotacao != null && !lotacao.getId().equals(id)) {
+			throw new AplicacaoException("Nome da lotação já cadastrado!");
+		}
+		
 		List<DpPessoa> listPessoa = null;
 		
 		lotacao = new DpLotacao();	
@@ -255,7 +266,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			listPessoa = dao().getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
 			
 		}
-		lotacao.setNomeLotacao(nmLotacao);
+		lotacao.setNomeLotacao(Texto.removerEspacosExtra(nmLotacao).trim());
 		lotacao.setSigla(siglaLotacao.toUpperCase());
 		
 		if (idOrgaoUsu != null && idOrgaoUsu != 0 && (listPessoa == null || listPessoa.size() == 0)) {

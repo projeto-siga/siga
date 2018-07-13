@@ -32,7 +32,8 @@
 		<property name="ufOrgaoUsu" column="UF_ORGAO_USU" type="string" />
 		<property name="acronimoOrgaoUsu" column="ACRONIMO_ORGAO_USU"
 			type="string" />
-
+	    <property name="nmOrgaoAI"
+			formula="REMOVE_ACENTO(NM_ORGAO_USU)" type="string" />
 		<!--
 			
 			<set name="cpOrgaoSet" inverse="true">
@@ -65,6 +66,11 @@
 		or upper(org.acronimoOrgaoUsu) = upper(:sigla)]]>
 	</query>
 	
+	<query name="consultarNomeOrgaoUsuario">
+		<![CDATA[from CpOrgaoUsuario org 
+		where upper(org.nmOrgaoAI) = upper(:nome)]]>
+	</query>
+	
 	<query name="consultarCpOrgaoUsuario">
 		 <![CDATA[select u from CpOrgaoUsuario u 
 	      order by u.siglaOrgaoUsu
@@ -81,5 +87,15 @@
           order by u.nmOrgaoUsu
           ]]>
     </query>
+    <query name="consultarPorFiltroCpOrgaoUsuario">
+	 <![CDATA[from CpOrgaoUsuario org 
+	 	where (upper(org.nmOrgaoUsu) like upper('%' || :nome || '%'))
+    	order by org.nmOrgaoUsu]]>
+	</query>
+	<query name="consultarQuantidadeCpOrgaoUsuario">
+	 <![CDATA[select count(org) from CpOrgaoUsuario org 
+	 	where ((upper(org.nmOrgaoUsu) like upper('%' || :nome || '%')) or (upper(org.siglaOrgaoUsu) like upper('%' || :nome || '%')))
+       	order by org.siglaOrgaoUsu]]>
+	</query>
 </hibernate-mapping>
 

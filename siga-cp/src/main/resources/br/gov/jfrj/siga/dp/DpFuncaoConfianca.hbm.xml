@@ -40,6 +40,11 @@
 		<![CDATA[select fun from DpFuncaoConfianca fun where
 			fun.idFuncao = :idFuncao]]>
 	</query>
+	
+	<query name="consultarPorNomeOrgaoDpFuncaoConfianca">
+		<![CDATA[select fun from DpFuncaoConfianca fun where
+			upper(fun.nmFuncaoConfiancaAI) = upper(:nome) and fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario]]>
+	</query>
 
 	<query name="consultarPorFiltroDpFuncaoConfianca">
 		<![CDATA[from DpFuncaoConfianca fun 

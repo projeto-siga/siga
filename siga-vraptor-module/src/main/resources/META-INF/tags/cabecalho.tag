@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 <%@ attribute name="titulo"%>
 <%@ attribute name="menu"%>
 <%@ attribute name="idpagina"%>
@@ -185,7 +186,14 @@ ${meta}
 								</strong>
 							</div>
 							<div class="gt-version">
-								Sistema Integrado de Gest&atilde;o Administrativa
+								<c:choose>
+									<c:when test="${not empty f:resource('siga.cabecalho.titulo') && fn:contains(f:resource('siga.cabecalho.titulo'), 'Governo do Estado de S')}">
+										Sistema de Gest&atilde;o Arquiv&iacute;stica de Documentos
+									</c:when>
+									<c:otherwise>
+										Sistema Integrado de Gest&atilde;o Administrativa
+									</c:otherwise>
+								</c:choose>
 								<c:if test="${not empty env}"> - <span style="color: red">${env}</span>
 								</c:if>
 							</div>

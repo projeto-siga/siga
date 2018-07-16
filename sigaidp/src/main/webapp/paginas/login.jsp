@@ -41,12 +41,7 @@
 					</script>
 				</c:when>
 				<c:when test="${not empty f:resource('siga.cabecalho.titulo') && fn:contains(f:resource('siga.cabecalho.titulo'), 'Governo do Estado de São Paulo')}">
-					<table style="width:100%; height:50%">
-						<tr><td align="center">
-							<img src="/siga/imagens/LogoSIGADoc.png" />
-						</td></tr>
-					</table>
-					
+					<c:import url="comentarioSP.jsp" />
 				</c:when>
 				<c:otherwise>
 					<c:import url="comentario.jsp" />

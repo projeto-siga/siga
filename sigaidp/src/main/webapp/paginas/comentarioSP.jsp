@@ -8,13 +8,14 @@
 			<img src="/siga/imagens/LogoSIGADoc.png" />
 		</td>
 		<td align="center" valign="bottom">
-			<p align="justify"><font size="4">O Sistema de Gestão Arquivística de Documentos do Estado de São Paulo (SIGADoc.SP),  plataforma corporativa, de iniciativa open source, desenvolvida pelo TRF-2, implantada para a produção, gestão e controle de documentos digitais, garante a classificação dos documentos no ato de sua produção de acordo  com a política estadual de arquivos, que garante a gestão,  preservação e acesso dos documentos produzidos pela Administração Paulista. Realiza controle de documentos sigilosos, tramitação e assinatura digital por autenticação ou certificação digital.</font></p>
+			<p align="justify"><font style="font-family: Calibri; font-size: 20px; line-height: 27px">O Sistema de Gestão Arquivística de Documentos do Estado de São Paulo (SIGADoc.SP),  plataforma corporativa, de iniciativa open source, desenvolvida pelo TRF-2, implantada para a produção, gestão e controle de documentos digitais, garante a classificação dos documentos no ato de sua produção de acordo  com a política estadual de arquivos.</font></p>
 		<td/>
 	</tr>
 	<tr>
-		<td colspan="2" valign="top"><p align="justify"><font size="4">A estrutura de criação dos documentos na plataforma é adaptável as necessidades e características dos documentos e respectivos órgãos, por meio do processo de modelagem que consiste na transformação do suporte papel para digital.</font></p>
-<p align="justify"><font size="4">Para mais informações acesse o site. <a href="http://www.sigadoc.sp.gov.br/sigaidp/">www.sigadoc.sp.gov.br</a></font></p>
-<p align="justify"><font size="4"><a href="https://sway.com/6tcLGC0jYE7zUSBX" target="_blank">Clique aqui para acessar o manual de uso.</a></font></p>  
+		<td colspan="2" valign="top"><p align="justify"><font style="font-family: Calibri; font-size: 20px; line-height: 27px">Garante a gestão, preservação e acesso dos documentos produzidos pela Administração Paulista. Realiza controle de documentos sigilosos, tramitação e assinatura digital por autenticação ou certificação digital.</font></p>
+		<p align="justify"><font style="font-family: Calibri; font-size: 20px; line-height: 27px">A estrutura de criação dos documentos na plataforma é adaptável as necessidades e características dos documentos e respectivos órgãos, por meio do processo de modelagem que consiste na transformação do suporte papel para digital.</font></p>
+<p align="justify"><font style="font-family: Calibri; font-size: 20px; line-height: 27px">Para mais informações acesse o site. <a href="http://www.sigadoc.sp.gov.br/siga/" target="_blank">www.sigadoc.sp.gov.br</a></font></p>
+<p align="justify"><font style="font-family: Calibri; font-size: 20px; line-height: 27px"><a href="https://sway.com/6tcLGC0jYE7zUSBX" target="_blank">Clique aqui para acessar o manual de uso.</a></font></p>  
 		</td>
 	</tr>
 </table>

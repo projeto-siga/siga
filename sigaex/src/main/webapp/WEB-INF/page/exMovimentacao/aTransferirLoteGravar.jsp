@@ -11,6 +11,7 @@
 
 	<form name="frm" action="protocolo_arq_transf" method="post">
 	<input type="hidden" name="isTransf" value="true" />
+	<div width="100%" align="left" valign="bottom"><img src="contextpath/imagens/brasao.png" width="190" height="40" /></div>
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
 			<h2>
@@ -221,9 +222,9 @@
 			<input type="hidden" name="campoDe" id="campoDe" value="${lotaTitular.descricao} - ${cadastrante.descricao}" />
 			<input type="hidden" name="campoPara" id="campoPara" value="${mov.respString}" />
 			<input type="hidden" name="campoData" id="campoData" value="${mov.dtRegMovDDMMYYYYHHMMSS}" />
-			<input type="submit" value="Gerar Protocolo" class="gt-btn-medium gt-btn-left" />
+			<!--<input type="submit" value="Gerar Protocolo" class="gt-btn-medium gt-btn-left" />-->
 		</c:if>
-		<input type="button" value="Voltar" class="gt-btn-medium gt-btn-left"  onclick="javascript:history.back();" />	
+		<!--<input type="button" value="Voltar" class="gt-btn-medium gt-btn-left"  onclick="javascript:history.back();" />	-->
 	</form>			
 	</div>
 </siga:pagina>

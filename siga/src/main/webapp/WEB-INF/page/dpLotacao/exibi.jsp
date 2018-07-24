@@ -2,36 +2,53 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
 
 <siga:pagina titulo="Dados da Lotação">
 	<script>
-		if (window.Worker) {
+		if (${not empty f:resource('graphviz.url')}) {
+		} else if (window.Worker) {
 			window.VizWorker = new Worker("/siga/javascript/viz.js");
 			window.VizWorker.onmessage = function(oEvent) {
 				document.getElementById(oEvent.data.id).innerHTML = oEvent.data.svg;
 				$(document).ready(function() {
-					try {
-						updateContainerTramitacao();
-					} catch (ex) {
-					}
-					;
-					try {
-						updateContainerRelacaoDocs();
-					} catch (ex) {
-					}
-					;
-					try {
-						updateContainerColaboracao();
-					} catch (ex) {
-					}
-					;
 				});
 			};
 		} else {
 			document
 					.write("<script src='/siga/javascript/viz.js' language='JavaScript1.1' type='text/javascript'>"
 							+ "<"+"/script>");
+		}
+
+		function buildSvg(id, input, cont) {
+			if (${not empty f:resource('graphviz.url')}) {
+			    input = input.replace(/fontsize=\d+/gm, "");
+			    $.ajax({
+				    url: "/siga/public/app/graphviz/svg",
+				    data: input,
+				    type: 'POST',
+				    processData: false,
+				    contentType: 'text/vnd.graphviz',
+				    contents: window.String,
+				    success: function(data) {
+					    data = data.replace(/width="\d+pt" height="\d+pt"/gm, "");
+					    $(data).width("100%");
+				        $("#" + id).html(data);
+				    }
+				});
+			} else if (window.VizWorker) {
+				document.getElementById(id).innerHTML = "Aguarde...";
+				window.VizWorker.postMessage({
+					id : id,
+					graph : input
+				});
+			} else {
+				var result = Viz(input, "svg", "dot");
+				document.getElementById(id).innerHTML = result;
+				if (cont) 
+					cont();
+			}
 		}
 
 		function pageHeight() {
@@ -142,15 +159,6 @@
 		</div>
 	</div>
 	<script>
-		if (window.VizWorker) {
-			document.getElementById("organograma").innerHTML = "Aguarde...";
-			window.VizWorker.postMessage({
-				id : "organograma",
-				graph : '${graph}'
-			});
-		} else {
-			var result = Viz(input, "svg", "dot");
-			document.getElementById("organograma").innerHTML = result;
-		}
+		buildSvg('organograma', '${graph}');
 	</script>
 </siga:pagina>

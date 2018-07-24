@@ -98,6 +98,7 @@ ${meta}
 	type="text/javascript"></script>
 <script src="/siga/javascript/json2.js" type="text/javascript"></script>
 <link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/css/ui-lightness/jquery-ui-1.10.3.custom.min.css" type="text/css" media="screen, projection">
+<script src="/siga/popper-1-14-3/popper.min.js"></script>
 <script language="JavaScript" src="/siga/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 <script language="JavaScript" src="/siga/javascript/datepicker-pt-BR.js" type="text/javascript"></script>
 <!-- <link rel="stylesheet" href="/siga/javascript/jquery-ui-1.10.3.custom/development-bundle/themes/base/jquery.ui.all.css"

@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -9,11 +10,20 @@ import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import com.mashape.unirest.http.Unirest;
+
+import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
+import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -24,10 +34,12 @@ import br.gov.jfrj.siga.model.GenericoSelecao;
 
 @Resource
 public class PrincipalController extends SigaController {
-
-	public PrincipalController(HttpServletRequest request, Result result,
+	HttpServletResponse response;
+	
+	public PrincipalController(HttpServletRequest request, HttpServletResponse response, Result result,
 			CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
+		this.response = response;
 	}
 
 	@Get("app/principal")
@@ -206,4 +218,26 @@ public class PrincipalController extends SigaController {
 		}
 		return sel;
 	}
+	
+	@Post
+	@Consumes("text/vnd.graphviz")
+	@Path("/public/app/graphviz/svg")
+	public Download graphvizProxy(String dot) throws Exception {
+		String url = (String) Contexto.resource("graphviz.url");
+		if (url == null)
+			throw new Exception("Parâmetro graphviz.url precisa ser informado");
+		corsHeaders(response);
+		
+		String body = Unirest.post(url).header("Content-Type", "text/vnd.graphviz").body(dot).asString().getBody();
+		return new ByteArrayDownload(body.getBytes(), "image/svg+xml", "graphic.svg");
+	}
+	
+	public static void corsHeaders(HttpServletResponse response) {
+		response.addHeader("Access-Control-Allow-Origin", "*");
+		response.addHeader("Access-Control-Allow-Methods",
+				"GET,POST,DELETE,PUT,OPTIONS");
+		response.addHeader("Access-Control-Allow-Headers",
+				"Content-Type,Authorization");
+	}
+
 }

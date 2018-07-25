@@ -25,7 +25,7 @@
 package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
-import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +44,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.swing.text.MaskFormatter;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -553,6 +554,28 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
             }
             return "";
     }	
+    
+    public String getCpfFormatado() {
+    	MaskFormatter mf;
+		try {
+			mf = new MaskFormatter("###.###.###-##");
+	        mf.setValueContainsLiteralCharacters(false);
+	        return mf.valueToString(String.format("%011d", getCpfPessoa()));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return getCpfPessoa().toString();
+    }
+    
+    public String getDtNascimentoDDMMYYYY() {
+        if (getDataNascimento() != null) {
+                final SimpleDateFormat df = new SimpleDateFormat(
+                                "dd/MM/yyyy");
+                return df.format(getDataNascimento());
+        }
+        return "";
+}	
 	
     public int compareTo(Object o) {
         DpPessoa other = (DpPessoa) o;

@@ -300,6 +300,11 @@
                         <li><a href="/siga/app/funcao/listar">Cadastro de Função de Confiança</a>
                         </li>
                     </c:if>
+                    <c:if
+                        test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_PESSOA:Cadastrar Pessoa')}">
+                        <li><a href="/siga/app/pessoa/listar">Cadastro de Pessoa</a>
+                        </li>
+                    </c:if>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;WF_ADMIN:Administrar SIGAWF')}">
 						<li><a href="/sigawf/app/admin/administrar">Administrar SIGA WF</a>

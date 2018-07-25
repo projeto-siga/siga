@@ -1097,6 +1097,11 @@ public class CpDao extends ModeloDao {
 				query.setString("situacaoFuncionalPessoa",
 						flt.getSituacaoFuncionalPessoa());
 
+			if(flt.getCpf() != null && !"".equals(flt.getCpf())) {
+				query.setLong("cpf", Long.valueOf(flt.getCpf()));
+			} else {
+				query.setLong("cpf", 0);
+			}
 			if (flt.getIdOrgaoUsu() != null)
 				query.setLong("idOrgaoUsu", flt.getIdOrgaoUsu());
 			else
@@ -1148,6 +1153,11 @@ public class CpDao extends ModeloDao {
 				query.setString("situacaoFuncionalPessoa",
 						flt.getSituacaoFuncionalPessoa());
 
+			if (flt.getCpf() != null)
+				query.setLong("cpf", flt.getCpf());
+			else
+				query.setLong("cpf", 0);
+			
 			if (flt.getIdOrgaoUsu() != null)
 				query.setLong("idOrgaoUsu", flt.getIdOrgaoUsu());
 			else

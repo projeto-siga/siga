@@ -437,147 +437,70 @@
 				                    });
 					             });
 							</script>
-<<<<<<< HEAD
-						</c:when>
-						<c:otherwise>
-							<div class="gt-content-box gt-for-table">
-								<table class="gt-table">
-									<thead>
-										<tr>
-											<th rowspan="3" align="right">Número</th>
-											<th colspan="3" align="center">Documento</th>
-											<th colspan="4" align="center">Situação</th>
-											<th rowspan="3">Tipo</th>
-											<th rowspan="3">Modelo</th>
-											<th rowspan="3">Descrição</th>
-											<c:if test="${visualizacao == 1}">
-												<th rowspan="3">Última Anotação</th>
-											</c:if>
-											<c:if test="${visualizacao == 3}">
-												<c:forEach var="campo" items="${campos.keySet()}">
-													<th rowspan="3" align="left">${campos.get(campo)}</th>
-												</c:forEach>
-											</c:if>
-										</tr>
-										<tr>
-											<th rowspan="2" align="center">Data</th>
-											<th colspan="2" align="center">Subscritor</th>
-											<th rowspan="2" align="center">Data</th>
-											<th colspan="2" align="center">Atendente</th>
-											<th rowspan="2" align="center">Situação</th>
-										</tr>
-										<tr>
-											<th align="center">Lotação</th>
-											<th align="center">Pessoa</th>
-											<th align="center">Lotação</th>
-											<th align="center">Pessoa</th>
-										</tr>
-										
-									</thead>
+					</c:when>
+					<c:otherwise>
+						<div class="gt-content-box gt-for-table">
+							<table class="gt-table">
+								<thead>
+									<tr>
+										<th rowspan="3" align="right">Número</th>
+										<th colspan="3" align="center">Documento</th>
+										<th colspan="4" align="center">Situação</th>
+										<th rowspan="3">Tipo</th>
+										<th rowspan="3">Modelo</th>
+										<th rowspan="3">Descrição</th>
+										<c:if test="${visualizacao == 1}">
+											<th rowspan="3">Última Anotação</th>
+										</c:if>
+										<c:if test="${visualizacao == 3}">
+											<c:forEach var="campo" items="${campos.keySet()}">
+												<th rowspan="3" align="left">${campos.get(campo)}</th>
+											</c:forEach>
+										</c:if>
+									</tr>
+									<tr>
+										<th rowspan="2" align="center">Data</th>
+										<th colspan="2" align="center">Subscritor</th>
+										<th rowspan="2" align="center">Data</th>
+										<th colspan="2" align="center">Atendente</th>
+										<th rowspan="2" align="center">Situação</th>
+									</tr>
+									<tr>
+										<th align="center">Lotação</th>
+										<th align="center">Pessoa</th>
+										<th align="center">Lotação</th>
+										<th align="center">Pessoa</th>
+									</tr>
 
-									<siga:paginador maxItens="${itemPagina}" maxIndices="10"
-										totalItens="${tamanho}" itens="${itens}" var="documento">
-										<c:choose>
-											<c:when test="${documento[0].eletronico}">
-												<c:set var="exibedoc" value="even" />
-											</c:when>
-											<c:otherwise>
-												<c:set var="exibedoc" value="fisicoeven" />
-											</c:otherwise>
-										</c:choose>
+								</thead>
 
-										<tr class="${exibedoc}">
-											<c:set var="podeAcessar"
-												value="${f:testaCompetencia('acessarDocumento',titular,lotaTitular, documento[1])}" />
-											<c:set var="podeAcessar"
-												value="true" />	
-											<td width="11.5%" align="right"><c:choose>
-													<c:when test='${popup!="true"}'>
-														<c:choose>
-															<c:when test="${podeAcessar eq true}">
-																<a
-																	href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento[1].sigla}">
-																	${documento[1].codigo} </a>
-															</c:when>
-															<c:otherwise> 
+								<siga:paginador maxItens="${itemPagina}" maxIndices="10"
+									totalItens="${tamanho}" itens="${itens}" var="documento">
+									<c:choose>
+										<c:when test="${documento[0].eletronico}">
+											<c:set var="exibedoc" value="even" />
+										</c:when>
+										<c:otherwise>
+											<c:set var="exibedoc" value="fisicoeven" />
+										</c:otherwise>
+									</c:choose>
+
+									<tr class="${exibedoc}">
+										<c:set var="podeAcessar"
+											value="${f:testaCompetencia('acessarDocumento',titular,lotaTitular, documento[1])}" />
+										<c:set var="podeAcessar" value="true" />
+										<td width="11.5%" align="right"><c:choose>
+												<c:when test='${popup!="true"}'>
+													<c:choose>
+														<c:when test="${podeAcessar eq true}">
+															<a
+																href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento[1].sigla}">
+																${documento[1].codigo} </a>
+														</c:when>
+														<c:otherwise> 
 														${documento[1].codigo}
 													</c:otherwise>
-														</c:choose>
-													</c:when>
-													<c:otherwise>
-														<a
-															href="javascript:opener.retorna_${propriedade}('${documento[1].id}','${documento[1].sigla}','${f:selDescricaoConfidencial(documento[1], lotaTitular, titular)}');">
-															${documento[1].codigo} </a>
-													</c:otherwise>
-												</c:choose></td>
-											<c:if test="${documento[1].numSequencia != 0}">
-												<td width="5%" align="center">
-													${documento[0].dtDocDDMMYY}</td>
-												<td width="4%" align="center"><siga:selecionado
-														sigla="${documento[0].lotaSubscritor.sigla}"
-														descricao="${documento[0].lotaSubscritor.descricao}"
-														lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgaoUsu}${documento[0].lotaSubscritor.sigla}" />
-												</td>
-												<td width="4%" align="center"><siga:selecionado
-														sigla="${documento[0].subscritor.iniciais}"
-														descricao="${documento[0].subscritor.descricao}"
-														pessoaParam="${documento[0].subscritor.sigla}" /></td>
-												<td width="5%" align="center">
-													${documento[2].dtIniMarcaDDMMYYYY}</td>
-												<td width="4%" align="center"><siga:selecionado
-														sigla="${documento[2].dpLotacaoIni.lotacaoAtual.sigla}"
-														descricao="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}"
-														lotacaoParam="${documento[2].dpLotacaoIni.orgaoUsuario.siglaOrgaoUsu}${documento[2].dpLotacaoIni.sigla}" />
-												</td>
-												<td width="4%" align="center"><siga:selecionado
-														sigla="${documento[2].dpPessoaIni.iniciais}"
-														descricao="${documento[2].dpPessoaIni.descricao}"
-														pessoaParam="${documento[2].dpPessoaIni.sigla}" /></td>
-												<td width="10.5%" align="center">
-													${documento[2].cpMarcador.descrMarcador}</td>
-											</c:if>
-											<c:if test="${documento[1].numSequencia == 0}">
-												<td width="5%" align="center">
-													${documento[0].dtDocDDMMYY}</td>
-												<td width="4%" align="center"><siga:selecionado
-														sigla="${documento[0].lotaSubscritor.sigla}"
-														descricao="${documento[0].lotaSubscritor.descricao}"
-														lotacaoParam="${documento[0].lotaSubscritor.orgaoUsuario.siglaOrgao}${documento[0].lotaSubscritor.sigla}" />
-												</td>
-												<td width="4%" align="center"><siga:selecionado
-														sigla="${documento[0].subscritor.iniciais}"
-														descricao="${documento[0].subscritor.descricao}"
-														pessoaParam="${documento[0].subscritor.sigla}" /></td>
-												<td width="5%" align="center">tag1</td>
-												<td width="4%" align="center"></td>
-												<td width="4%" align="center"></td>
-												<td width="10.5%" align="center">tag4</td>
-											</c:if>
-
-											<td width="6%">${documento[0].descrFormaDoc}</td>
-											<td width="6%">${documento[0].nmMod}</td>
-
-											<c:set var="acessivel" value="" />
-											<c:set var="acessivel"
-												value="${f:testaCompetencia('acessarDocumento',titular,lotaTitular,documento[1])}" />
-											<c:set var="acessivel"
-												value="true" />		
-											<c:choose>
-												<c:when test="${acessivel eq true}">
-													<c:set var="estilo" value="" />
-													<c:if
-														test="${f:mostraDescricaoConfidencial(documento[0], titular, lotaTitular) eq true}">
-														<c:set var="estilo" value="confidencial" />
-													</c:if>
-													<td class="${estilo}" width="38%">
-														${f:descricaoSePuderAcessar(documento[0], titular, lotaTitular)}
-													</td>
-													<c:if test="${visualizacao == 1}">
-														<td class="${estilo}" width="38%">
-															${f:anotacaoConfidencial(documento[1], titular,lotaTitular)}
-														</td>
-													</c:if>
-
+													</c:choose>
 												</c:when>
 												<c:otherwise>
 													<a
@@ -635,6 +558,7 @@
 										<c:set var="acessivel" value="" />
 										<c:set var="acessivel"
 											value="${f:testaCompetencia('acessarDocumento',titular,lotaTitular,documento[1])}" />
+										<c:set var="acessivel" value="true" />
 										<c:choose>
 											<c:when test="${acessivel eq true}">
 												<c:set var="estilo" value="" />
@@ -650,14 +574,15 @@
 														${f:anotacaoConfidencial(documento[1], titular,lotaTitular)}
 													</td>
 												</c:if>
+
 											</c:when>
 											<c:otherwise>
-												<td>[Descrição Inacessível]</td>
-												<c:if test="${visualizacao == 1}">
-													<td>[Anotação Inacessível]</td>
-												</c:if>
+												<a
+													href="javascript:opener.retorna_${propriedade}('${documento[1].id}','${documento[1].sigla}','${f:selDescricaoConfidencial(documento[1], lotaTitular, titular)}');">
+													${documento[1].codigo} </a>
 											</c:otherwise>
 										</c:choose>
+										</td>
 										<c:if test="${visualizacao == 3}">
 											<c:forEach var="campo" items="${campos.keySet()}">
 												<td>${documento[0].form[campo]}</td>
@@ -665,8 +590,9 @@
 										</c:if>
 									</tr>
 								</siga:paginador>
-							</tbody>
-						</table>
+								</tbody>
+							</table>
+						</div>
 					</c:otherwise>
 				</c:choose>
 			</c:if>

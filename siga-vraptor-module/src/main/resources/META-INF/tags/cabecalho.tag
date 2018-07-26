@@ -68,9 +68,11 @@ ${meta}
 
 <link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css" type="text/css" media="screen, projection"/>
 
+<!-- 
 <link rel="stylesheet" href="/siga/css/ecoblue/css/ecoblue.css"
 	type="text/css" media="screen, projection">
-
+ -->
+ 
 <link rel="stylesheet" href="/siga/css/ecoblue/css/custom.css"
 	type="text/css" media="screen, projection">
 <link rel="shortcut icon" href="/siga/imagens/siga.ico" />

@@ -774,40 +774,43 @@
 						<!-- Fim mapa tramitação -->
 					</c:if>
 
-					<div class="gt-sidebar-content">
-						<h3>Documento ${docVO.doc.exTipoDocumento.descricao}</h3>
-						<p>
-							<b>Suporte:</b> ${docVO.fisicoOuEletronico}
-						</p>
-						<p>
-							<b>Data:</b> ${docVO.dtDocDDMMYY}
-							<c:if test="${not empty docVO.originalData}">- <b>original:</b> ${docVO.originalData}</c:if>
-						</p>
-						<c:if test="${not empty docVO.originalNumero}">
+					<div class="card bg-light mb-3">
+						<div class="card-header">
+							<h5>Documento ${docVO.doc.exTipoDocumento.descricao}</h5>
+						</div>
+						<div class="card-body">
 							<p>
-								<b>Número original:</b> ${docVO.originalNumero}
+								<b>Suporte:</b> ${docVO.fisicoOuEletronico}
 							</p>
-						</c:if>
-						<p>
-							<b>De:</b> ${docVO.subscritorString}
-						</p>
-						<p>
-							<b>Para:</b> ${docVO.destinatarioString}
-						</p>
-						<p>
-							<b>Cadastrante:</b> ${docVO.cadastranteString}
-							${docVO.lotaCadastranteString}
-						</p>
-						<p>
-							<b>Espécie:</b> ${docVO.forma}
-						</p>
-						<p>
-							<b>Modelo:</b> ${docVO.modelo}
-						</p>
-						<p id="descricao">
-							<b>Descrição:</b> ${docVO.descrDocumento}
-						</p>
-						<script language="javascript">
+							<p>
+								<b>Data:</b> ${docVO.dtDocDDMMYY}
+								<c:if test="${not empty docVO.originalData}">- <b>original:</b> ${docVO.originalData}</c:if>
+							</p>
+							<c:if test="${not empty docVO.originalNumero}">
+								<p>
+									<b>Número original:</b> ${docVO.originalNumero}
+								</p>
+							</c:if>
+							<p>
+								<b>De:</b> ${docVO.subscritorString}
+							</p>
+							<p>
+								<b>Para:</b> ${docVO.destinatarioString}
+							</p>
+							<p>
+								<b>Cadastrante:</b> ${docVO.cadastranteString}
+								${docVO.lotaCadastranteString}
+							</p>
+							<p>
+								<b>Espécie:</b> ${docVO.forma}
+							</p>
+							<p>
+								<b>Modelo:</b> ${docVO.modelo}
+							</p>
+							<p id="descricao">
+								<b>Descrição:</b> ${docVO.descrDocumento}
+							</p>
+							<script language="javascript">
                     function parseDescricao(id){
                         var descricao = document.getElementById(id);
                         
@@ -829,29 +832,35 @@
                     
                     parseDescricao('descricao');
            		 </script>
-						<p>
-							<b>Classificação:</b> ${docVO.classificacaoDescricaoCompleta}
-						</p>
-						<c:if test="${not empty docVO.dadosComplementares}">${docVO.dadosComplementares}</c:if>
+							<p>
+								<b>Classificação:</b> ${docVO.classificacaoDescricaoCompleta}
+							</p>
+							<c:if test="${not empty docVO.dadosComplementares}">${docVO.dadosComplementares}</c:if>
 
-						<c:if test="${not empty docVO.cossignatarios}">
-							<div class="gt-sidebar-content" style="padding-top: 10px">
-								<h3>Cossignatários</h3>
-								<ul>
-									<c:forEach var="cossig" items="${docVO.cossignatarios}">
-										<li>${cossig.key.subscritor.nomePessoa}<c:if
-												test="${cossig.value}">&nbsp;
+							<c:if test="${not empty docVO.cossignatarios}">
+								<div class="gt-sidebar-content" style="padding-top: 10px">
+									<h3>Cossignatários</h3>
+									<ul>
+										<c:forEach var="cossig" items="${docVO.cossignatarios}">
+											<li>${cossig.key.subscritor.nomePessoa}<c:if
+													test="${cossig.value}">&nbsp;
 					<a href="/sigaex/app/expediente/mov/excluir?id=${cossig.key.idMov}">Excluir</a>
-											</c:if>
-										</li>
-									</c:forEach>
-								</ul>
-							</div>
-						</c:if>
+												</c:if>
+											</li>
+										</c:forEach>
+									</ul>
+								</div>
+							</c:if>
+						</div>
+					</div>
 
-						<c:if test="${not empty docVO.doc.perfis}">
-							<div class="gt-sidebar-content" style="padding-top: 10px">
-								<h3>Perfis</h3>
+
+					<c:if test="${not empty docVO.doc.perfis}">
+						<div class="card bg-light mb-3">
+							<div class="card-header">
+								<h5>Perfis</h5>
+							</div>
+							<div class="card-body">
 								<c:forEach var="perfil" items="${docVO.doc.perfis}">
 									<p style="margin-bottom: 3px;">
 										<b>${perfil.key.descPapel}:</b>
@@ -865,10 +874,14 @@
 									</ul>
 								</c:forEach>
 							</div>
-						</c:if>
+						</div>
+					</c:if>
 
-						<div class="gt-sidebar-content" style="padding-top: 10px">
-							<h3>Nível de Acesso</h3>
+					<div class="card bg-light mb-3">
+						<div class="card-header">
+							<h5>Nível de Acesso</h5>
+						</div>
+						<div class="card-body">
 							<p>
 								<b>${docVO.nmNivelAcesso}</b>
 								<c:if test="${not empty docVO.listaDeAcessos}">
@@ -900,44 +913,49 @@
 						</div>
 					</div>
 
-					<div class="gt-sidebar-content">
-						<a title="Anexar um novo arquivo auxiliar"
-							style="float: right; margin-top: -3px;"
-							href="${linkTo[ExMovimentacaoController].anexarArquivoAuxiliar}?sigla=${sigla}"
-							${popup?'target="_blank" ':''}> <img
-							src="/siga/css/famfamfam/icons/add.png">
-						</a>
-						<h3>Arquivos Auxiliares</h3>
-						<c:forEach var="mov" items="${m.movs}">
-							<c:if test="${mov.idTpMov == 64 and not mov.cancelada}">
-								<p>
-									<siga:links inline="${true}" separator="${false}">
-										<c:forEach var="acao" items="${mov.acoes}">
-											<c:set var="acaourl" value="${acao.url}" />
-											<c:set var="acaourl"
-												value="${fn:replace(acaourl, '__scheme__', pageContext.request.scheme)}" />
-											<c:set var="acaourl"
-												value="${fn:replace(acaourl, '__serverName__', pageContext.request.serverName)}" />
-											<c:set var="acaourl"
-												value="${fn:replace(acaourl, '__serverPort__', pageContext.request.serverPort)}" />
-											<c:set var="acaourl"
-												value="${fn:replace(acaourl, '__contextPath__', pageContext.request.contextPath)}" />
-											<c:set var="acaourl"
-												value="${fn:replace(acaourl, '__pathInfo__', pageContext.request.pathInfo)}" />
-											<c:if test="${acao.url == acaourl}">
+					<div class="card bg-light mb-3">
+						<div class="card-header">
+							<a title="Anexar um novo arquivo auxiliar"
+								style="float: right; margin-top: -3px;"
+								href="${linkTo[ExMovimentacaoController].anexarArquivoAuxiliar}?sigla=${sigla}"
+								${popup?'target="_blank" ':''}> <img
+								src="/siga/css/famfamfam/icons/add.png">
+							</a>
+							<h5>Arquivos Auxiliares</h5>
+						</div>
+						<div class="card-body">
+
+							<c:forEach var="mov" items="${m.movs}">
+								<c:if test="${mov.idTpMov == 64 and not mov.cancelada}">
+									<p>
+										<siga:links inline="${true}" separator="${false}">
+											<c:forEach var="acao" items="${mov.acoes}">
+												<c:set var="acaourl" value="${acao.url}" />
 												<c:set var="acaourl"
-													value="${pageContext.request.contextPath}${acao.url}" />
-											</c:if>
-											<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
-												pre="${acao.pre}" pos="${acao.pos}" url="${acaourl}"
-												test="${true}" popup="${acao.popup}"
-												confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
-												idAjax="${mov.idMov}" classe="${acao.classe}" />
-										</c:forEach>
-									</siga:links>
-								</p>
-							</c:if>
-						</c:forEach>
+													value="${fn:replace(acaourl, '__scheme__', pageContext.request.scheme)}" />
+												<c:set var="acaourl"
+													value="${fn:replace(acaourl, '__serverName__', pageContext.request.serverName)}" />
+												<c:set var="acaourl"
+													value="${fn:replace(acaourl, '__serverPort__', pageContext.request.serverPort)}" />
+												<c:set var="acaourl"
+													value="${fn:replace(acaourl, '__contextPath__', pageContext.request.contextPath)}" />
+												<c:set var="acaourl"
+													value="${fn:replace(acaourl, '__pathInfo__', pageContext.request.pathInfo)}" />
+												<c:if test="${acao.url == acaourl}">
+													<c:set var="acaourl"
+														value="${pageContext.request.contextPath}${acao.url}" />
+												</c:if>
+												<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
+													pre="${acao.pre}" pos="${acao.pos}" url="${acaourl}"
+													test="${true}" popup="${acao.popup}"
+													confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
+													idAjax="${mov.idMov}" classe="${acao.classe}" />
+											</c:forEach>
+										</siga:links>
+									</p>
+								</c:if>
+							</c:forEach>
+						</div>
 					</div>
 
 					<div class="gt-sidebar-content">

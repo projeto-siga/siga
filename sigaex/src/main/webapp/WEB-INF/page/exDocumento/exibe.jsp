@@ -145,14 +145,14 @@
 
 					<c:choose>
 						<c:when test="${docVO.conteudoBlobHtmlString != null}">
-							<div class="gt-content-box" style="padding: 10px;">
-								<table style="width: 100%">
-									<tr>
-										<td><tags:fixdocumenthtml>
+							<div class="card-sidebar card border-primary bg-white mb-3">
+								<div class="card-body">
+
+
+									<tags:fixdocumenthtml>
 											${docVO.conteudoBlobHtmlString}
-										</tags:fixdocumenthtml></td>
-									</tr>
-								</table>
+										</tags:fixdocumenthtml>
+								</div>
 							</div>
 						</c:when>
 						<c:when test="${docVO.doc.pdf}">
@@ -232,7 +232,7 @@
 				<div class="gt-sidebar">
 					<c:if test="${m.pendencias}">
 						<div class="gt-sidebar-content" id="pendencias">
-							<h3>Pendências</h3>
+							Pendências
 							<c:if test="${not empty m.pendenciaProximoModelo}">
 								<p style="margin-bottom: 3px;">
 									<b style="color: rgb(195, 0, 0)">Próximo Documento:</b>
@@ -380,10 +380,11 @@
 							</c:if>
 						</div>
 					</c:if>
-					<c:if test="${not empty docVO.outrosMobsLabel}">
+					<c:if
+						test="${not empty docVO.outrosMobsLabel and not empty docVO.marcasPorMobil}">
 						<jsp:useBean id="now" class="java.util.Date" />
 						<div class="gt-sidebar-content">
-							<h3>${docVO.outrosMobsLabel}</h3>
+							${docVO.outrosMobsLabel}
 							<ul style="list-style-type: none; margin: 0; padding: 0;">
 								<c:forEach var="entry" items="${docVO.marcasPorMobil}">
 									<c:set var="outroMob" value="${entry.key}" />
@@ -774,10 +775,9 @@
 						<!-- Fim mapa tramitação -->
 					</c:if>
 
-					<div class="card bg-light mb-3">
-						<div class="card-header">
-							<h5>Documento ${docVO.doc.exTipoDocumento.descricao}</h5>
-						</div>
+					<div class="card-sidebar card bg-light mb-3">
+						<div class="card-header">Documento
+							${docVO.doc.exTipoDocumento.descricao}</div>
 						<div class="card-body">
 							<p>
 								<b>Suporte:</b> ${docVO.fisicoOuEletronico}
@@ -856,10 +856,8 @@
 
 
 					<c:if test="${not empty docVO.doc.perfis}">
-						<div class="card bg-light mb-3">
-							<div class="card-header">
-								<h5>Perfis</h5>
-							</div>
+						<div class="card-sidebar card bg-light mb-3">
+							<div class="card-header">Perfis</div>
 							<div class="card-body">
 								<c:forEach var="perfil" items="${docVO.doc.perfis}">
 									<p style="margin-bottom: 3px;">
@@ -877,10 +875,8 @@
 						</div>
 					</c:if>
 
-					<div class="card bg-light mb-3">
-						<div class="card-header">
-							<h5>Nível de Acesso</h5>
-						</div>
+					<div class="card-sidebar card bg-light mb-3">
+						<div class="card-header">Nível de Acesso</div>
 						<div class="card-body">
 							<p>
 								<b>${docVO.nmNivelAcesso}</b>
@@ -913,15 +909,14 @@
 						</div>
 					</div>
 
-					<div class="card bg-light mb-3">
+					<div class="card-sidebar card bg-light mb-3">
 						<div class="card-header">
 							<a title="Anexar um novo arquivo auxiliar"
 								style="float: right; margin-top: -3px;"
 								href="${linkTo[ExMovimentacaoController].anexarArquivoAuxiliar}?sigla=${sigla}"
 								${popup?'target="_blank" ':''}> <img
 								src="/siga/css/famfamfam/icons/add.png">
-							</a>
-							<h5>Arquivos Auxiliares</h5>
+							</a> Arquivos Auxiliares
 						</div>
 						<div class="card-body">
 

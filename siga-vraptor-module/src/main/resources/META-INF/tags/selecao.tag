@@ -241,10 +241,10 @@ self.ajax_${propriedade}${tipoSel} = function() {
 <input type="hidden" name="${inputNameTipoSel}.id" value="<c:out value="${requestScope[propriedadeTipoSel].id}"/>" id="formulario_${inputNameTipoSel}_id"/>
 <input type="hidden" name="${inputNameTipoSel}.descricao" value="<c:out value="${requestScope[propriedadeTipoSel].descricao}"/>" id="formulario_${inputNameTipoSel}_descricao"/>
 <input type="hidden" name="${inputNameTipoSel}.buscar" value="<c:out value="${requestScope[propriedadeTipoSel].buscar}"/>" id="formulario_${inputNameTipoSel}_buscar"/>
-<input type="text" name="${inputNameTipoSel}.sigla" value="<c:out value="${requestScope[propriedadeTipoSel].sigla}"/>" id="formulario_${inputNameTipoSel}_sigla" 
+<input type="search" name="${inputNameTipoSel}.sigla" value="<c:out value="${requestScope[propriedadeTipoSel].sigla}"/>" id="formulario_${inputNameTipoSel}_sigla" 
 	onkeypress="return handleEnter(this, event)" ${requiredValue}
 	onblur="javascript: ajax_${propriedade}${tipoSel}();" <c:if test="${not empty onblur}">${onblur};</c:if> size="25"
-	onchange="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>"
+	onchange="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>" class="form-control mr-sm-2"
 	${disabledTxt} />	
 	
 <c:if test="${buscar != 'nao'}">

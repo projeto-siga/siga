@@ -34,34 +34,32 @@
 			});
 		}
 	</script>
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>Marcação - ${mob.siglaEDescricaoCompleta}</h2>
-			<div class="gt-content-box gt-for-table">
-				<form name="frm" action="vincularPapel_gravar" method="post">
-					<input type="hidden" name="postback" value="1" /> <input
-						type="hidden" name="sigla" value="${sigla}" />
-					<table class="gt-form-table">
-						<tr class="header">
-							<td colspan="2">Marcação de Documento</td>
-						</tr>
-						<tr>
-							<td>Marcadores Gerais <c:forEach items="${listaMarcadores}"
-									var="item">
-									<br />
-									<input type="checkbox" value="${item.idMarcador}"
-										onclick="marcar(this.value,this.checked)"
-										${listaMarcadoresAtivos.contains(item) ? 'checked' : ''} />
+	<div class="container-fluid content pt-5">
+		<div class="row">
+			<div class="col offset-sm-3 col-sm-6">
+				<div class="jumbotron">
+					<h2>Marcação - ${mob.siglaEDescricaoCompleta}</h2>
+					<form name="frm" action="vincularPapel_gravar" method="post">
+						<input type="hidden" name="postback" value="1" /> <input
+							type="hidden" name="sigla" value="${sigla}" />
+						<table class="">
+							<tr>
+								<td><c:forEach items="${listaMarcadores}" var="item">
+										<input type="checkbox" value="${item.idMarcador}"
+											onclick="marcar(this.value,this.checked)"
+											${listaMarcadoresAtivos.contains(item) ? 'checked' : ''} />
 										${item.descrMarcador}
-								</c:forEach></td>
-						</tr>
-						<tr class="button">
-							<td colspan="2"><input type="button" value="Voltar"
-								onclick="javascript:history.back();"
-								class="gt-btn-medium gt-btn-left" /></td>
-						</tr>
-					</table>
-				</form>
+										<br />
+									</c:forEach></td>
+							</tr>
+							<tr class="button">
+								<td colspan="2"><input type="button" value="Voltar"
+									onclick="javascript:history.back();"
+									class="btn btn-primary mt-3" /></td>
+							</tr>
+						</table>
+					</form>
+				</div>
 			</div>
 		</div>
 	</div>

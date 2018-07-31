@@ -125,11 +125,11 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		if (mov.getSubscritor() != null)
 			addField(resp, "subscritor", mov.getSubscritor().getNomePessoa());
 
-		if (mov.getLotaCadastrante() != null)
-			addFieldAndFacet(resp, "cadastrante_lotacao", mov
-					.getLotaCadastrante().getSiglaLotacao());
-		if (mov.getCadastrante() != null)
-			addField(resp, "cadastrante", mov.getCadastrante().getNomePessoa());
+//		if (mov.getLotaCadastrante() != null)
+//			addFieldAndFacet(resp, "cadastrante_lotacao", mov
+//					.getLotaCadastrante().getSiglaLotacao());
+//		if (mov.getCadastrante() != null)
+//			addField(resp, "cadastrante", mov.getCadastrante().getNomePessoa());
 	}
 
 	public String getContext() {

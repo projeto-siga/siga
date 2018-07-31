@@ -37,6 +37,35 @@
 						+ "<"+"/script>");
 	}
 
+	function buildSvg(id, input, cont) {
+		if (${not empty f:resource('graphviz.url')}) {
+		    input = input.replace(/fontsize=\d+/gm, "");
+			$.ajax({
+			    url: "/siga/public/app/graphviz/svg",
+			    data: input,
+			    type: 'POST',
+			    processData: false,
+			    contentType: 'text/vnd.graphviz',
+			    contents: window.String,
+			    success: function(data) {
+				    data = data.replace(/width="\d+pt" height="\d+pt"/gm, "");
+				    $(data).width("100%");
+			        $("#" + id).html(data);
+			    }
+			});
+		} else if (window.VizWorker) {
+			document.getElementById(id).innerHTML = "Aguarde...";
+			window.VizWorker.postMessage({
+				id : id,
+				graph : input
+			});
+		} else {
+			var result = Viz(input, "svg", "dot");
+			document.getElementById(id).innerHTML = result;
+			cont();
+		}
+	}
+
 	function pageHeight() {
 		return window.innerHeight != null ? window.innerHeight
 				: document.documentElement
@@ -594,35 +623,6 @@
 										+ hexDigits[x % 16];
 							}
 
-							function buildSvg(id, input, cont) {
-								if (${not empty f:resource('graphviz.url')}) {
-								    input = input.replace(/fontsize=\d+/gm, "");
-									$.ajax({
-									    url: "/siga/public/app/graphviz/svg",
-									    data: input,
-									    type: 'POST',
-									    processData: false,
-									    contentType: 'text/vnd.graphviz',
-									    contents: window.String,
-									    success: function(data) {
-										    data = data.replace(/width="\d+pt" height="\d+pt"/gm, "");
-										    $(data).width("100%");
-									        $("#" + id).html(data);
-									    }
-									});
-								} else if (window.VizWorker) {
-									document.getElementById(id).innerHTML = "Aguarde...";
-									window.VizWorker.postMessage({
-										id : id,
-										graph : input
-									});
-								} else {
-									var result = Viz(input, "svg", "dot");
-									document.getElementById(id).innerHTML = result;
-									cont();
-								}
-							}
-			
 							function smallmapRelacaoDocs() {
 								$("#outputRelacaoDocs").css("background-color",
 										$("html").css("background-color"));

@@ -106,7 +106,7 @@
 							<directory>src/main/webapp/paginas</directory>
 							<filtering>true</filtering>
 							<includes>
-								<include>login.jsp</include>
+								<include>jwt-login.jsp</include>
 								<include>loginInvalido.jsp </include>
 							</includes>
 							<targetPath>/paginas</targetPath>

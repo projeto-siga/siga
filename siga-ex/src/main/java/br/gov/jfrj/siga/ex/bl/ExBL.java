@@ -6289,7 +6289,6 @@ public class ExBL extends CpBL {
 			CpIdentidade identidadeCadastrante) throws AplicacaoException {
 		verificarDuplicacaoTermoCompleto(exClassNovo, exClassAntigo);
 		try {
-			exClassNovo.setClassificacoesPosteriores(null);
 			dao().gravarComHistorico(exClassNovo, exClassAntigo, dt,
 					identidadeCadastrante);
 			copiarReferencias(exClassNovo, exClassAntigo, dt,
@@ -6449,10 +6448,6 @@ public class ExBL extends CpBL {
 
 			Set<ExModelo> setExModeloCriacaoVia = new HashSet<ExModelo>();
 			exClassCopia.setExModeloCriacaoViaSet(setExModeloCriacaoVia);
-
-			Set<ExClassificacao> setPosteriores = new HashSet<ExClassificacao>();
-			exClassCopia.setClassificacoesPosteriores(setPosteriores);
-
 		} catch (Exception e) {
 			throw new AplicacaoException(
 					"Erro ao copiar as propriedades do modelo anterior.");

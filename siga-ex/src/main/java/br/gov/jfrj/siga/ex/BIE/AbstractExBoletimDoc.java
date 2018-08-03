@@ -18,23 +18,51 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.BIE;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.model.Objeto;
 
-public abstract class AbstractExBoletimDoc extends Objeto implements Serializable {
-	
+@Entity
+@Table(name = "ex_boletim_doc", catalog = "siga", uniqueConstraints = @UniqueConstraint(columnNames = "id_doc"))
+public abstract class AbstractExBoletimDoc extends Objeto implements
+		Serializable {
+
 	/** The composite primary key value. */
 	private java.lang.Long idBoletimDoc;
-	
+
 	private ExDocumento exDocumento;
-	
+
 	private ExDocumento boletim;
-	
+
 	public AbstractExBoletimDoc() {
 	}
 
+	@Id
+	@GeneratedValue(strategy = IDENTITY)
+	@Column(name = "id_boletim_doc", unique = true, nullable = false)
+	public java.lang.Long getIdBoletimDoc() {
+		return idBoletimDoc;
+	}
+
+	public void setIdBoletimDoc(java.lang.Long idBoletimDoc) {
+		this.idBoletimDoc = idBoletimDoc;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_doc", unique = true)
 	public ExDocumento getExDocumento() {
 		return exDocumento;
 	}
@@ -43,20 +71,14 @@ public abstract class AbstractExBoletimDoc extends Objeto implements Serializabl
 		this.exDocumento = exDocumento;
 	}
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_boletim")
 	public ExDocumento getBoletim() {
 		return boletim;
 	}
 
 	public void setBoletim(ExDocumento boletim) {
 		this.boletim = boletim;
-	}
-
-	public java.lang.Long getIdBoletimDoc() {
-		return idBoletimDoc;
-	}
-
-	public void setIdBoletimDoc(java.lang.Long idBoletimDoc) {
-		this.idBoletimDoc = idBoletimDoc;
 	}
 
 }

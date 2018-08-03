@@ -1748,41 +1748,12 @@ public class ExDao extends CpDao {
 
 	static private void configurarHibernate(Configuration cfg)
 			throws Exception {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		cfg.addClass(br.gov.jfrj.siga.ex.ExMobil.class);
 		cfg.addClass(br.gov.jfrj.siga.ex.ExDocumento.class);
 		cfg.addClass(br.gov.jfrj.siga.ex.ExFormaDocumento.class);
 		cfg.addClass(br.gov.jfrj.siga.ex.ExConfiguracao.class);
 		cfg.addClass(br.gov.jfrj.siga.ex.ExSituacaoConfiguracao.class);
-		cfg.addClass(br.gov.jfrj.siga.ex.ExClassificacao.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.ExClassificacao.class);
 		cfg.addClass(br.gov.jfrj.siga.ex.ExModelo.class);
 		cfg.addClass(br.gov.jfrj.siga.ex.ExTemporalidade.class);
 		cfg.addClass(br.gov.jfrj.siga.ex.ExTipoDespacho.class);
@@ -2097,4 +2068,18 @@ public class ExDao extends CpDao {
 		List<ExDocumento> list = crit.list();
 		return list;
 	}
+	
+	public ExClassificacao obterClassificacaoAtual(final ExClassificacao classificacao)  {
+		try {
+			final Query qry = getSessao().getNamedQuery("consultarAtualPorId");
+			qry.setLong("hisIdIni", classificacao.getHisIdIni());
+			final ExClassificacao c = (ExClassificacao) qry.uniqueResult();
+			return c;
+		} catch(final IllegalArgumentException e) {
+			throw e;
+		} catch (final Exception e) {
+	       return null;			
+		}
+	}
+
 }

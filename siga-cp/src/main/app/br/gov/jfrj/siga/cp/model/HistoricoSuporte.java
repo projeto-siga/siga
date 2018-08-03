@@ -22,14 +22,12 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Objeto;
@@ -52,8 +50,8 @@ public abstract class HistoricoSuporte extends Objeto implements Historico, Asse
 	@Desconsiderar
 	private Date hisDtFim;
 
-	@Transient
-	// @Column(name = "HIS_ATIVO")
+//	@Transient
+	@Column(name = "HIS_ATIVO")
 	@Desconsiderar
 	private Integer hisAtivo;
 

@@ -24,8 +24,14 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.BatchSize;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -35,6 +41,9 @@ import br.gov.jfrj.siga.model.Selecionavel;
  * A class that represents a row in the 'EX_CLASSIFICACAO' table. This class may
  * be customized as it is never re-generated after being created.
  */
+@Entity
+@BatchSize(size = 500)
+@Table(name = "ex_classificacao", catalog = "siga")
 public class ExClassificacao extends AbstractExClassificacao implements
 		Serializable, Selecionavel {
 	/**
@@ -147,13 +156,8 @@ public class ExClassificacao extends AbstractExClassificacao implements
 
 
 	public ExClassificacao getClassificacaoAtual() {
-		ExClassificacao classIni = getClassificacaoInicial();
-		if (classIni != null) {
-			Set<ExClassificacao> setClassificacoes = classIni.getClassificacoesPosteriores();
-			if (setClassificacoes != null)
-				for (ExClassificacao c : setClassificacoes)
-					return c;
-		}
+		if (this.getHisDtFim() != null)
+			return ExDao.getInstance().obterClassificacaoAtual(this);
 		return this;
 	}
 
@@ -176,14 +180,7 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	}
 	
 	public ExClassificacao getAtual() {
-		ExClassificacao ini = getClassificacaoInicial();
-		if (ini == null)
-			ini = this;
-		Set<ExClassificacao> set = ini.getClassificacoesPosteriores();
-		if (set != null)
-			for (ExClassificacao c : set)
-				return c;
-		return this;
+		return getClassificacaoAtual();
 	}
 
 	public void setId(Long id) {

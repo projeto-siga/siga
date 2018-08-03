@@ -179,7 +179,7 @@
 						
 						<div class="gt-form-row-inline-block gt-width-33">
 							<label>Endereço de atendimento</label> 
-								<input type="text" name="solicitacao.endereco" id="endereco" value="${solicitacao.endereco}" size="70" maxlength="255" />
+								<input type="text" name="solicitacao.endereco" id="endereco" value="${solicitacao.endereco}" size="65" maxlength="255" />
 						</div>
 					
 

@@ -106,6 +106,18 @@ public class ExTratamento extends AbstractExTratamento {
 		l.add(new ExTratamento("Monsenhor, Cônego", "M", "Vossa Senhoria Reverendíssima", "V. Sª. Revmª" , "Reverendíssimo Senhor", "Reverendíssimo SenhorPadre "));
 		l.add(new ExTratamento("Dirigente administrativo e Procurador", "F", "Vossa Senhoria", "V. Sª." , "Senhora", "Srª."));
 		l.add(new ExTratamento("Dirigente administrativo e Procurador", "M", "Vossa Senhoria", "V. Sª." , "Senhor", "Sr."));
+		
+		l.add(new ExTratamento("Membro do Ministério Público", "F", "Vossa Excelência", "V. Exª." , "Excelentíssima Senhora", "Exmª. Srª."));
+		l.add(new ExTratamento("Membro do Ministério Público", "M", "Vossa Excelência", "V. Exª." , "Excelentíssimo Senhor", "Exmº. Sr."));
+		l.add(new ExTratamento("Desembargador Federal", "F", "Vossa Excelência", "V. Exª." , "Excelentíssima Senhora", "Exmª. Srª."));
+		l.add(new ExTratamento("Desembargador Federal", "M", "Vossa Excelência", "V. Exª." , "Excelentíssimo Senhor", "Exmº. Sr."));
+		l.add(new ExTratamento("Juiz de Direito", "F", "Vossa Excelência", "V. Exª." , "Excelentíssima Senhora", "Exmª. Srª."));
+		l.add(new ExTratamento("Juiz de Direito", "M", "Vossa Excelência", "V. Exª." , "Excelentíssimo Senhor", "Exmº. Sr."));
+		l.add(new ExTratamento("Delegado de Polícia Federal", "F", "Vossa Senhoria", "V. Sª." , "Senhora", "Srª."));
+		l.add(new ExTratamento("Delegado de Polícia Federal", "M", "Vossa Senhoria", "V. Sª." , "Senhor", "Sr."));
+		l.add(new ExTratamento("Delegado de Polícia", "F", "Vossa Senhoria", "V. Sª." , "Senhora", "Srª."));
+		l.add(new ExTratamento("Delegado de Polícia", "M", "Vossa Senhoria", "V. Sª." , "Senhor", "Sr."));
+		
 		l.add(new ExTratamento("[Outros]", "F", "Vossa Senhoria", "V. Sª." , "Prezada Senhora", "Srª."));
 		l.add(new ExTratamento("[Outros]", "M", "Vossa Senhoria", "V. Sª." , "Prezado Senhor", "Sr."));
 		

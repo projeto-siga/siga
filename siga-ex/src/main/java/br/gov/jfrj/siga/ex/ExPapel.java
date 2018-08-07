@@ -18,8 +18,16 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.BatchSize;
+
 import br.gov.jfrj.siga.base.Texto;
 
+@Entity
+@BatchSize(size = 500)
+@Table(name = "EX_PAPEL", catalog = "siga")
 public class ExPapel extends AbstractExPapel {
 	
 	private static final long serialVersionUID = 2096492527289909346L;

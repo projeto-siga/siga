@@ -23,24 +23,34 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+
 import br.gov.jfrj.siga.model.Objeto;
 
-public abstract class AbstractExNivelAcesso extends Objeto implements Serializable {
-
-	private java.lang.String dscNivelAcesso;
-
-	private String nmNivelAcesso;
-
-	private Integer grauNivelAcesso;
-
-	/**
-	 * The cached hash code value for this instance. Settting to 0 triggers
-	 * re-calculation.
-	 */
-	private int hashValue = 0;
+@MappedSuperclass
+@NamedQueries({ @NamedQuery(name = "listarOrdemNivel", query = "from ExNivelAcesso as ena order by ena.grauNivelAcesso") })
+public abstract class AbstractExNivelAcesso extends Objeto implements
+		Serializable {
 
 	/** The composite primary key value. */
+	@Id
+	@Column(name = "ID_NIVEL_ACESSO", unique = true, nullable = false)
 	private Long idNivelAcesso;
+
+	@Column(name = "nm_nivel_acesso", nullable = false, length = 50)
+	private String nmNivelAcesso;
+
+	@Column(name = "dsc_nivel_acesso", length = 256)
+	private java.lang.String dscNivelAcesso;
+
+	@Column(name = "grau_nivel_acesso")
+	private Integer grauNivelAcesso;
 
 	public AbstractExNivelAcesso() {
 	}
@@ -75,10 +85,7 @@ public abstract class AbstractExNivelAcesso extends Objeto implements Serializab
 		result = result * 37 + idValue;
 		idValue = this.getDscNivelAcesso() == null ? 0 : this
 				.getDscNivelAcesso().hashCode();
-		result = result * 37 + idValue;
-		this.hashValue = result;
-
-		return this.hashValue;
+		return result * 37 + idValue;
 	}
 
 	public java.lang.String getDscNivelAcesso() {

@@ -23,6 +23,11 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.BatchSize;
+
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
@@ -31,6 +36,9 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
  * A class that represents a row in the 'EX_TIPO_DESPACHO' table. This class may
  * be customized as it is never re-generated after being created.
  */
+@Entity
+@BatchSize(size = 500)
+@Table(name = "EX_PREENCHIMENTO", catalog = "siga")
 public class ExPreenchimento extends AbstractExPreenchimento implements
 		Serializable {
 

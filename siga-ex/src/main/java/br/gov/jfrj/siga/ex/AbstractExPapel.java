@@ -21,35 +21,52 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 
 import br.gov.jfrj.siga.model.Objeto;
 
+@MappedSuperclass
 public abstract class AbstractExPapel extends Objeto implements Serializable {
 
+	@Id
+	@Column(name = "ID_PAPEL", unique = true, nullable = false)
 	private java.lang.Long idPapel;
+
+	@Column(name = "desc_papel", length = 20)
 	private java.lang.String descPapel;
-	
+
 	@OneToMany(mappedBy = "exPapel")
 	private Set<ExMovimentacao> exMovimentacaoSet;
-	
+
 	public java.lang.Long getIdPapel() {
 		return idPapel;
 	}
+
 	public void setIdPapel(java.lang.Long idPapel) {
 		this.idPapel = idPapel;
 	}
+
 	public java.lang.String getDescPapel() {
 		return descPapel;
 	}
+
 	public void setDescPapel(java.lang.String descPapel) {
 		this.descPapel = descPapel;
 	}
+
 	public Set<ExMovimentacao> getExMovimentacaoSet() {
 		return exMovimentacaoSet;
 	}
+
 	public void setExMovimentacaoSet(Set<ExMovimentacao> exMovimentacaoSet) {
 		this.exMovimentacaoSet = exMovimentacaoSet;
 	}
-	
+
 }

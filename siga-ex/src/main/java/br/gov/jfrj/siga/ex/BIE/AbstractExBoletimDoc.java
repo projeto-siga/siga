@@ -29,30 +29,41 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.model.Objeto;
 
-@Entity
-@Table(name = "ex_boletim_doc", catalog = "siga", uniqueConstraints = @UniqueConstraint(columnNames = "id_doc"))
+@MappedSuperclass
+@NamedQueries({
+		@NamedQuery(name = "consultarDocsDisponiveisParaInclusaoEmBoletim", query = "select bol.exDocumento from ExBoletimDoc bol where bol.boletim is null and bol.exDocumento.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"),
+		@NamedQuery(name = "consultarDocsInclusosNoBoletim", query = "select bol.exDocumento from ExBoletimDoc bol where bol.boletim.idDoc = :idDoc"),
+		@NamedQuery(name = "consultarBoletimEmQueODocumentoEstaIncluso", query = "from ExBoletimDoc bol where bol.exDocumento.idDoc = :idDoc"),
+		@NamedQuery(name = "consultarBoletim", query = "from ExBoletimDoc bol where bol.boletim.idDoc = :idDoc") })
 public abstract class AbstractExBoletimDoc extends Objeto implements
 		Serializable {
 
 	/** The composite primary key value. */
+	@Id
+	@GeneratedValue(strategy = IDENTITY)
+	@Column(name = "id_boletim_doc", unique = true, nullable = false)
 	private java.lang.Long idBoletimDoc;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_doc", unique = true)
 	private ExDocumento exDocumento;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_boletim")
 	private ExDocumento boletim;
 
 	public AbstractExBoletimDoc() {
 	}
 
-	@Id
-	@GeneratedValue(strategy = IDENTITY)
-	@Column(name = "id_boletim_doc", unique = true, nullable = false)
 	public java.lang.Long getIdBoletimDoc() {
 		return idBoletimDoc;
 	}
@@ -61,8 +72,6 @@ public abstract class AbstractExBoletimDoc extends Objeto implements
 		this.idBoletimDoc = idBoletimDoc;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_doc", unique = true)
 	public ExDocumento getExDocumento() {
 		return exDocumento;
 	}
@@ -71,8 +80,6 @@ public abstract class AbstractExBoletimDoc extends Objeto implements
 		this.exDocumento = exDocumento;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_boletim")
 	public ExDocumento getBoletim() {
 		return boletim;
 	}

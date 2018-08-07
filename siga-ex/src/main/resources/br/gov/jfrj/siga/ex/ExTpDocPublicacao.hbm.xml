@@ -9,11 +9,12 @@
 		</id>	
 		<property name="nmDocPublicacao" column="nm_doc_publicacao" type="java.lang.String" />
 		<property name="carater" column="CARATER" type="java.lang.String" />
-		
+<!-- 		
 		<set name="exModeloSet" schema="SIGA" table="EX_MODELO_TP_DOC_PUBLICACAO" inverse="true">
 			<key column="ID_DOC_PUBLICACAO" />
 			<many-to-many class="ExModelo" column="ID_MOD" />
 		</set>
+ -->
 	</class>
 
 	<query name="consultarPorModelo">

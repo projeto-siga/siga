@@ -23,12 +23,17 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 import br.gov.jfrj.siga.model.Selecionavel;
 
 /**
  * A class that represents a row in the 'EX_TIPO_MOVIMENTACAO' table. This class
  * may be customized as it is never re-generated after being created.
  */
+@Entity
+@Table(name = "ex_tipo_forma_documento", catalog = "siga")
 public class ExTipoFormaDoc extends AbstractExTipoFormaDoc implements
 		Serializable, Selecionavel {
 	/**

@@ -23,28 +23,53 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.model.Objeto;
 
 /**
  * A class that represents a row in the EX_TIPO_DESPACHO table. You can
- * customize the behavior of this class by editing the class,
- * {@link ExTipoDespacho()}.
+ * customize the behavior of this class by editing the class, {@link
+ * ExTipoDespacho()}.
  */
-public abstract class AbstractExPreenchimento extends Objeto implements Serializable {
+@MappedSuperclass
+@NamedQueries({
+		@NamedQuery(name = "consultarPorFiltroExPreenchimento", query = "from ExPreenchimento pre "
+				+ "	      where upper(pre.nomePreenchimento) like upper('%' || :nomePreenchimento || '%') "
+				+ "			and (:lotacao = null or :lotacao = 0 or pre.dpLotacao = :lotacao)"
+				+ "			and (:modelo=null or :modelo = 0 or pre.exModelo.hisIdIni = :modelo)"),
+		@NamedQuery(name = "excluirPorIdExPreenchimento", query = "delete from ExPreenchimento where idPreenchimento = :id") })
+public abstract class AbstractExPreenchimento extends Objeto implements
+		Serializable {
 
 	/** The composite primary key value. */
-
-	private int hashValue = 0;
-
+	@Id
+	@SequenceGenerator(sequenceName = "EX_PREENCHIMENTO_SEQ", name = "EX_PREENCHIMENTO_SEQ")
+	@GeneratedValue(generator = "EX_PREENCHIMENTO_SEQ")
+	@Column(name = "ID_PREENCHIMENTO", unique = true, nullable = false)
 	private java.lang.Long idPreenchimento;
 
+	@Column(name = "id_lotacao", nullable = false)
 	private DpLotacao dpLotacao;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_mod", nullable = false)
 	private ExModelo exModelo;
 
+	@Column(name = "ex_nome_preenchimento", nullable = false, length = 256)
 	private String nomePreenchimento;
 
+	@Column(name = "preenchimento_blob")
 	private java.sql.Blob preenchimentoBlob;
 
 	/**
@@ -110,14 +135,10 @@ public abstract class AbstractExPreenchimento extends Objeto implements Serializ
 	 */
 	@Override
 	public int hashCode() {
-		if (this.hashValue == 0) {
-			int result = 17;
-			final int idDocValue = this.getIdPreenchimento() == null ? 0 : this
-					.getIdPreenchimento().hashCode();
-			result = result * 37 + idDocValue;
-			this.hashValue = result;
-		}
-		return this.hashValue;
+		int result = 17;
+		final int idDocValue = this.getIdPreenchimento() == null ? 0 : this
+				.getIdPreenchimento().hashCode();
+		return result * 37 + idDocValue;
 	}
 
 	public String getNomePreenchimento() {

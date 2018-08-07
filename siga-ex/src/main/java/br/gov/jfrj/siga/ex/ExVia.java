@@ -21,12 +21,17 @@
  */
 package br.gov.jfrj.siga.ex;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 /**
  * A class that represents a row in the 'EX_VIA' table. This class may be
  * customized as it is never re-generated after being created.
  */
+@Entity
+@Table(name = "ex_via", catalog = "siga")
 public class ExVia extends AbstractExVia {
 	/**
 	 * 
@@ -39,12 +44,12 @@ public class ExVia extends AbstractExVia {
 	public ExVia() {
 	}
 
-//	public String getDestinacao() {
-//		if (getExTipoDestinacao() != null)
-//			return getExTipoDestinacao().getDescrTipoDestinacao();
-//		else
-//			return "";
-//	}
+	// public String getDestinacao() {
+	// if (getExTipoDestinacao() != null)
+	// return getExTipoDestinacao().getDescrTipoDestinacao();
+	// else
+	// return "";
+	// }
 
 	public String getLetraVia() {
 		if (getCodVia() != null)

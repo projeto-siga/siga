@@ -24,72 +24,63 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.SequenceGenerator;
+
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 
 /**
  * A class that represents a row in the EX_VIA table. You can customize the
  * behavior of this class by editing the class, {@link ExVia()}.
  */
-public abstract class AbstractExVia extends HistoricoAuditavelSuporte implements Serializable {
+@MappedSuperclass
+public abstract class AbstractExVia extends HistoricoAuditavelSuporte implements
+		Serializable {
+	/** The composite primary key value. */
+	@Id
+	@SequenceGenerator(sequenceName = "EX_VIA_SEQ", name = "EX_VIA_SEQ")
+	@GeneratedValue(generator = "EX_VIA_SEQ")
+	@Column(name = "id_via", unique = true, nullable = false)
+	private java.lang.Long idVia;
+
 	/** The value of the simple codVia property. */
+	@Column(name = "cod_via", length = 2)
 	private java.lang.String codVia;
 
 	/** The value of the exClassificacao association. */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_classificacao", nullable = false)
 	private ExClassificacao exClassificacao;
 
 	/** The value of the temporalidadeCorrente association. */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_temporal_arq_cor")
 	private ExTemporalidade temporalidadeCorrente;
 
 	/** The value of the temporalidadeIntermediario association. */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_temporal_arq_int")
 	private ExTemporalidade temporalidadeIntermediario;
 
 	/** The value of the exTipoDestinacao association. */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_destinacao")
 	private ExTipoDestinacao exTipoDestinacao;
 
 	/** The value of the exTipoDestinacao association. */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_destinacao_final")
 	private ExTipoDestinacao exDestinacaoFinal;
 
-	/**
-	 * The cached hash code value for this instance. Setting to 0 triggers
-	 * re-calculation.
-	 */
-	private int hashValue = 0;
-
-	/** The composite primary key value. */
-	private java.lang.Long idVia;
-
 	/** The value of the simple obs property. */
+	@Column(name = "obs", length = 4000)
 	private java.lang.String obs;
-
-	private Date dtIniReg;
-
-	private Date dtFimReg;
-
-	private Long idRegIni;
-
-	public Date getDtIniReg() {
-		return dtIniReg;
-	}
-
-	public void setDtIniReg(Date dtIniReg) {
-		this.dtIniReg = dtIniReg;
-	}
-
-	public Date getDtFimReg() {
-		return dtFimReg;
-	}
-
-	public void setDtFimReg(Date dtFimReg) {
-		this.dtFimReg = dtFimReg;
-	}
-
-	public Long getIdRegIni() {
-		return idRegIni;
-	}
-
-	public void setIdRegIni(Long idRegIni) {
-		this.idRegIni = idRegIni;
-	}
 
 	/**
 	 * Simple constructor of AbstractExVia instances.
@@ -201,14 +192,10 @@ public abstract class AbstractExVia extends HistoricoAuditavelSuporte implements
 	 */
 	@Override
 	public int hashCode() {
-		if (this.hashValue == 0) {
-			int result = 17;
-			final int idValue = this.getIdVia() == null ? 0 : this.getIdVia()
-					.hashCode();
-			result = result * 37 + idValue;
-			this.hashValue = result;
-		}
-		return this.hashValue;
+		int result = 17;
+		final int idValue = this.getIdVia() == null ? 0 : this.getIdVia()
+				.hashCode();
+		return result * 37 + idValue;
 	}
 
 	/**
@@ -267,7 +254,6 @@ public abstract class AbstractExVia extends HistoricoAuditavelSuporte implements
 	 * @param idVia
 	 */
 	public void setIdVia(final java.lang.Long idVia) {
-		this.hashValue = 0;
 		this.idVia = idVia;
 	}
 

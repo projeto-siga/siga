@@ -17,25 +17,47 @@
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package br.gov.jfrj.siga.ex;
+
 import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.model.Objeto;
 
-public class AbstractExEmailNotificacao extends Objeto  {
-	
+@MappedSuperclass
+@NamedQueries({
+		@NamedQuery(name = "consultarEmailporPessoa", query = "from ExEmailNotificacao e where e.dpPessoa = :idPessoaIni"),
+		@NamedQuery(name = "consultarEmailporLotacao", query = "from ExEmailNotificacao e where e.dpLotacao = :idLotacaoIni") })
+public class AbstractExEmailNotificacao extends Objeto {
+
 	/** The composite primary key value. */
+	@Id
+	@SequenceGenerator(sequenceName = "EX_EMAIL_NOTIFICACAO_SEQ", name = "EX_EMAIL_NOTIFICACAO_SEQ")
+	@GeneratedValue(generator = "EX_EMAIL_NOTIFICACAO_SEQ")
+	@Column(name = "ID_EMAIL_NOTIFICACAO", unique = true, nullable = false)
 	private java.lang.Long idEmailNotificacao;
 
+	@Column(name = "id_lotacao")
 	private DpLotacao dpLotacao;
 
+	@Column(name = "id_pessoa")
 	private DpPessoa dpPessoa;
 
+	@Column(name = "email", length = 60)
 	private String email;
 
+	@Column(name = "id_lota_email")
 	private DpLotacao lotacaoEmail;
 
+	@Column(name = "id_pessoa_email")
 	private DpPessoa pessoaEmail;
 
 	public java.lang.Long getIdEmailNotificacao() {
@@ -45,36 +67,47 @@ public class AbstractExEmailNotificacao extends Objeto  {
 	public void setIdEmailNotificacao(java.lang.Long idEmailNotificacao) {
 		this.idEmailNotificacao = idEmailNotificacao;
 	}
+
 	public DpLotacao getDpLotacao() {
 		return dpLotacao;
 	}
+
 	public DpPessoa getDpPessoa() {
 		return dpPessoa;
 	}
+
 	public void setDpLotacao(DpLotacao dpLotacao) {
 		this.dpLotacao = dpLotacao;
-	}	
+	}
+
 	public void setDpPessoa(DpPessoa dpPessoa) {
 		this.dpPessoa = dpPessoa;
 	}
+
 	public DpLotacao getLotacaoEmail() {
 		return lotacaoEmail;
 	}
+
 	public void setLotacaoEmail(DpLotacao lotacaoEmail) {
 		this.lotacaoEmail = lotacaoEmail;
 	}
+
 	public String getEmail() {
 		return email;
 	}
+
 	public DpPessoa getPessoaEmail() {
 		return pessoaEmail;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	public void setPessoaEmail(DpPessoa pessoaEmail) {
 		this.pessoaEmail = pessoaEmail;
 	}
+
 	public AbstractExEmailNotificacao() {
 	}
 }

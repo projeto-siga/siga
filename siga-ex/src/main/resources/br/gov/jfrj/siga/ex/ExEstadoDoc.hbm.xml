@@ -16,6 +16,7 @@
 		<property name="descEstadoDoc" column="DESC_ESTADO_DOC"
 			type="string" not-null="true" />
 
+<!-- 
 		<set name="deTpMovSet" schema="SIGA" table="EX_TP_MOV_ESTADO"
 			inverse="true">
 			<key column="ID_ESTADO_DOC" />
@@ -32,7 +33,7 @@
 			<key column="ID_ESTADO_DOC" />
 			<one-to-many class="ExMovimentacao" />
 		</set>
-
+ -->
 	</class>
 
 	<sql-query name="consultarPorResponsavel">

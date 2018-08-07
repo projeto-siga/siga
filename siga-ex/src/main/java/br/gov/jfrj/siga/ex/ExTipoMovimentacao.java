@@ -23,12 +23,20 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.BatchSize;
+
 import br.gov.jfrj.siga.model.Selecionavel;
 
 /**
  * A class that represents a row in the 'EX_TIPO_MOVIMENTACAO' table. This class
  * may be customized as it is never re-generated after being created.
  */
+@Entity
+@BatchSize(size = 500)
+@Table(name = "EX_TIPO_MOVIMENTACAO", catalog = "siga")
 public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
 		Serializable, Selecionavel {
 	/**

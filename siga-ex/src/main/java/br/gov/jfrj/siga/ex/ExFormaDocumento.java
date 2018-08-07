@@ -25,12 +25,17 @@ import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 import br.gov.jfrj.siga.model.Selecionavel;
 
 /**
  * A class that represents a row in the 'EX_FORMA_DOCUMENTO' table. This class
  * may be customized as it is never re-generated after being created.
  */
+@Entity
+@Table(name = "EX_FORMA_DOCUMENTO", catalog = "siga")
 public class ExFormaDocumento extends AbstractExFormaDocumento implements
 		Serializable, Selecionavel, Comparable<ExFormaDocumento> {
 	

@@ -26,16 +26,33 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+
 import br.gov.jfrj.siga.model.Objeto;
 
-public abstract class AbstractExTipoFormaDoc extends Objeto implements Serializable {
+@MappedSuperclass
+public abstract class AbstractExTipoFormaDoc extends Objeto implements
+		Serializable {
 
+	@Id
+	@SequenceGenerator(sequenceName = "EX_TIPO_FORMA_DOCUMENTO_SEQ", name = "EX_TIPO_FORMA_DOCUMENTO_SEQ")
+	@GeneratedValue(generator = "EX_TIPO_FORMA_DOCUMENTO_SEQ")
+	@Column(name = "ID_TIPO_FORMA_DOC", unique = true, nullable = false)
 	private Long idTipoFormaDoc;
 
+	@Column(name = "desc_tipo_forma_doc", length = 60)
 	private String descTipoFormaDoc;
-	
+
+	@Column(name = "numeracao_unica")
 	private Integer numeracaoUnica;
 
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exTipoFormaDoc")
 	private Set<ExFormaDocumento> exFormaDocSet;
 
 	public Long getIdTipoFormaDoc() {

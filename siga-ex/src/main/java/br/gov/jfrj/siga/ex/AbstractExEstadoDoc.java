@@ -94,13 +94,13 @@ public abstract class AbstractExEstadoDoc extends Objeto implements
 	private java.lang.Long idEstadoDoc;
 
 	/** The value of the simple descEstadoDoc property. */
-	@Column(name = "desc_estado_doc", nullable = false, length = 128)
+	@Column(name = "DESC_ESTADO_DOC", nullable = false, length = 128)
 	private java.lang.String descEstadoDoc;
 
 	// @OneToMany(fetch = FetchType.LAZY, mappedBy = "exEstadoDoc")
 	// private Set<ExMovimentacao> exMovimentacaoSet;
 
-	@Column(name = "ordem_estado_doc")
+	@Column(name = "ORDEM_ESTADO_DOC")
 	private Integer ordemEstadoDoc;
 
 	/**

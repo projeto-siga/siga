@@ -94,13 +94,13 @@ public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte
 	@Id
 	@SequenceGenerator(sequenceName = "EX_CLASSIFICACAO_SEQ", name = "EX_CLASSIFICACAO_SEQ")
 	@GeneratedValue(generator = "EX_CLASSIFICACAO_SEQ")
-	@Column(name = "id_classificacao", unique = true, nullable = false)
+	@Column(name = "ID_CLASSIFICACAO", unique = true, nullable = false)
 	private Long idClassificacao;
 
-	@Column(name = "codificacao", nullable = false, length = 11)
+	@Column(name = "CODIFICACAO", nullable = false, length = 11)
 	private String codificacao;
 
-	@Column(name = "descr_classificacao", nullable = false, length = 4000)
+	@Column(name = "DESCR_CLASSIFICACAO", nullable = false, length = 4000)
 	private String descrClassificacao;
 
 	@Formula("REMOVE_ACENTO(DESCR_CLASSIFICACAO)")
@@ -109,7 +109,7 @@ public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exClassificacao")
 	private Set<ExVia> exViaSet;
 
-	@Column(name = "obs", length = 4000)
+	@Column(name = "OBS", length = 4000)
 	private String obs;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exClassificacao")

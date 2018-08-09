@@ -43,7 +43,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
  */
 @Entity
 @BatchSize(size = 500)
-@Table(name = "ex_classificacao", catalog = "siga")
+@Table(name = "EX_CLASSIFICACAO", catalog = "SIGA")
 public class ExClassificacao extends AbstractExClassificacao implements
 		Serializable, Selecionavel {
 	/**

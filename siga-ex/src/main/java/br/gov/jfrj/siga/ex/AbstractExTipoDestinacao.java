@@ -50,7 +50,7 @@ public abstract class AbstractExTipoDestinacao extends Objeto implements
 	private java.lang.Long idTpDestinacao;
 
 	/** The value of the simple descrTipoDestinacao property. */
-	@Column(name = "descr_tipo_destinacao", nullable = false, length = 256)
+	@Column(name = "DESCR_TIPO_DESTINACAO", nullable = false, length = 256)
 	private java.lang.String descrTipoDestinacao;
 
 	/** The value of the exViaSet one-to-many association. */
@@ -58,7 +58,7 @@ public abstract class AbstractExTipoDestinacao extends Objeto implements
 	private Set<ExVia> exViaSet;
 
 	/** The value of the simple facilitadorDest property. */
-	@Column(name = "facilitador_dest", length = 4000)
+	@Column(name = "FACILITADOR_DEST", length = 4000)
 	private java.lang.String facilitadorDest;
 
 	/**

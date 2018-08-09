@@ -46,10 +46,10 @@ public abstract class AbstractExTipoFormaDoc extends Objeto implements
 	@Column(name = "ID_TIPO_FORMA_DOC", unique = true, nullable = false)
 	private Long idTipoFormaDoc;
 
-	@Column(name = "desc_tipo_forma_doc", length = 60)
+	@Column(name = "DESC_TIPO_FORMA_DOC", length = 60)
 	private String descTipoFormaDoc;
 
-	@Column(name = "numeracao_unica")
+	@Column(name = "NUMERACAO_UNICA")
 	private Integer numeracaoUnica;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exTipoFormaDoc")

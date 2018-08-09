@@ -51,7 +51,7 @@ public abstract class AbstractExTipoMovimentacao extends Objeto implements
 	private java.lang.Long idTpMov;
 
 	/** The value of the simple descrTipoMovimentacao property. */
-	@Column(name = "descr_tipo_movimentacao", nullable = false, length = 256)
+	@Column(name = "DESCR_TIPO_MOVIMENTACAO", nullable = false, length = 256)
 	private java.lang.String descrTipoMovimentacao;
 
 	/**

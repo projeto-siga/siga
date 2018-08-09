@@ -47,19 +47,19 @@ public abstract class AbstractExTemporalidade extends HistoricoAuditavelSuporte 
 	@Id
 	@SequenceGenerator(sequenceName = "EX_TEMPORALIDADE_SEQ", name = "EX_TEMPORALIDADE_SEQ")
 	@GeneratedValue(generator = "EX_TEMPORALIDADE_SEQ")
-	@Column(name = "id_temporalidade", unique = true, nullable = false)
+	@Column(name = "ID_TEMPORALIDADE", unique = true, nullable = false)
 	private Long idTemporalidade;
 
 	/** The value of the simple descTemporalidade property. */
-	@Column(name = "desc_temporalidade", nullable = false, length = 128)
+	@Column(name = "DESC_TEMPORALIDADE", nullable = false, length = 128)
 	private java.lang.String descTemporalidade;
 
 	/** Valor em dias, meses ou anos */
-	@Column(name = "valor_temporalidade")
+	@Column(name = "VALOR_TEMPORALIDADE")
 	private Integer valorTemporalidade;
 
 	@ManyToOne
-	@JoinColumn(name = "id_unidade_medida", nullable = true)
+	@JoinColumn(name = "ID_UNIDADE_MEDIDA", nullable = true)
 	private CpUnidadeMedida cpUnidadeMedida;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "temporalidadeCorrente")

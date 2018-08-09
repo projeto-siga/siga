@@ -47,14 +47,14 @@ public abstract class AbstractExTpDocPublicacao extends Objeto implements
 	@Column(name = "ID_DOC_PUBLICACAO", unique = true, nullable = false)
 	private Long idDocPublicacao;
 
-	@Column(name = "nm_doc_publicacao", length = 256)
+	@Column(name = "NM_DOC_PUBLICACAO", length = 256)
 	private String nmDocPublicacao;
 
 	@ManyToMany
 	@JoinTable(name = "EX_MODELO_TP_DOC_PUBLICACAO", joinColumns = { @JoinColumn(name = "ID_DOC_PUBLICACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_MOD") })
 	private Set<ExModelo> exModeloSet;
 
-	@Column(name = "carater", length = 1)
+	@Column(name = "CARATER", length = 1)
 	private String carater;
 
 	public Long getIdDocPublicacao() {

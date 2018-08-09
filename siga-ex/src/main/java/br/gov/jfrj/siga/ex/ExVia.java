@@ -31,7 +31,7 @@ import br.gov.jfrj.siga.model.Assemelhavel;
  * customized as it is never re-generated after being created.
  */
 @Entity
-@Table(name = "ex_via", catalog = "siga")
+@Table(name = "EX_VIA", catalog = "SIGA")
 public class ExVia extends AbstractExVia {
 	/**
 	 * 

@@ -46,40 +46,40 @@ public abstract class AbstractExVia extends HistoricoAuditavelSuporte implements
 	@Id
 	@SequenceGenerator(sequenceName = "EX_VIA_SEQ", name = "EX_VIA_SEQ")
 	@GeneratedValue(generator = "EX_VIA_SEQ")
-	@Column(name = "id_via", unique = true, nullable = false)
+	@Column(name = "ID_VIA", unique = true, nullable = false)
 	private java.lang.Long idVia;
 
 	/** The value of the simple codVia property. */
-	@Column(name = "cod_via", length = 2)
+	@Column(name = "COD_VIA", length = 2)
 	private java.lang.String codVia;
 
 	/** The value of the exClassificacao association. */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_classificacao", nullable = false)
+	@JoinColumn(name = "ID_CLASSIFICACAO", nullable = false)
 	private ExClassificacao exClassificacao;
 
 	/** The value of the temporalidadeCorrente association. */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_temporal_arq_cor")
+	@JoinColumn(name = "ID_TEMPORAL_ARQ_COR")
 	private ExTemporalidade temporalidadeCorrente;
 
 	/** The value of the temporalidadeIntermediario association. */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_temporal_arq_int")
+	@JoinColumn(name = "ID_TEMPORAL_ARQ_INT")
 	private ExTemporalidade temporalidadeIntermediario;
 
 	/** The value of the exTipoDestinacao association. */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_destinacao")
+	@JoinColumn(name = "ID_DESTINACAO")
 	private ExTipoDestinacao exTipoDestinacao;
 
 	/** The value of the exTipoDestinacao association. */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_destinacao_final")
+	@JoinColumn(name = "ID_DESTINACAO_FINAL")
 	private ExTipoDestinacao exDestinacaoFinal;
 
 	/** The value of the simple obs property. */
-	@Column(name = "obs", length = 4000)
+	@Column(name = "OBS", length = 4000)
 	private java.lang.String obs;
 
 	/**

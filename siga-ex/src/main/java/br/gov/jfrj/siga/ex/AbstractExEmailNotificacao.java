@@ -21,8 +21,11 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -45,19 +48,23 @@ public class AbstractExEmailNotificacao extends Objeto {
 	@Column(name = "ID_EMAIL_NOTIFICACAO", unique = true, nullable = false)
 	private java.lang.Long idEmailNotificacao;
 
-	@Column(name = "id_lotacao")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_LOTACAO", nullable = false)
 	private DpLotacao dpLotacao;
 
-	@Column(name = "id_pessoa")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_PESSOA", nullable = false)
 	private DpPessoa dpPessoa;
 
-	@Column(name = "email", length = 60)
+	@Column(name = "EMAIL", length = 60)
 	private String email;
 
-	@Column(name = "id_lota_email")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_LOTA_EMAIL", nullable = false)
 	private DpLotacao lotacaoEmail;
 
-	@Column(name = "id_pessoa_email")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_PESSOA_EMAIL", nullable = false)
 	private DpPessoa pessoaEmail;
 
 	public java.lang.Long getIdEmailNotificacao() {

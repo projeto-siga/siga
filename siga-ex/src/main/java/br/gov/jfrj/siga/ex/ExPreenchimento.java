@@ -25,6 +25,7 @@ import java.io.Serializable;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
 
@@ -38,12 +39,13 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
  */
 @Entity
 @BatchSize(size = 500)
-@Table(name = "EX_PREENCHIMENTO", catalog = "siga")
+@Table(name = "EX_PREENCHIMENTO", catalog = "SIGA")
 public class ExPreenchimento extends AbstractExPreenchimento implements
 		Serializable {
 
 	private static final long serialVersionUID = 3256722875116761397L;
 
+	@Transient
 	private byte[] cachePreenchimentoBA;
 
 	/**
@@ -73,7 +75,8 @@ public class ExPreenchimento extends AbstractExPreenchimento implements
 
 	public void setPreenchimentoBA(byte[] blob) {
 		if (blob != null)
-			setPreenchimentoBlob(HibernateUtil.getSessao().getLobHelper().createBlob(blob));
+			setPreenchimentoBlob(HibernateUtil.getSessao().getLobHelper()
+					.createBlob(blob));
 	}
 
 	public ExPreenchimento() {

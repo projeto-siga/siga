@@ -33,7 +33,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
  * may be customized as it is never re-generated after being created.
  */
 @Entity
-@Table(name = "ex_tipo_forma_documento", catalog = "siga")
+@Table(name = "EX_TIPO_FORMA_DOCUMENTO", catalog = "SIGA")
 public class ExTipoFormaDoc extends AbstractExTipoFormaDoc implements
 		Serializable, Selecionavel {
 	/**

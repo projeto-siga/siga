@@ -1799,10 +1799,11 @@ public class ExDao extends CpDao {
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.ExPapel.class);
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.BIE.ExBoletimDoc.class);
 
-		cfg.addClass(br.gov.jfrj.siga.ex.ExDocumento.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.ExModelo.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.ExMovimentacao.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.ExDocumento.class);
+
 		cfg.addClass(br.gov.jfrj.siga.ex.ExMobil.class);
-		cfg.addClass(br.gov.jfrj.siga.ex.ExMovimentacao.class);
-		cfg.addClass(br.gov.jfrj.siga.ex.ExModelo.class);
 		cfg.addClass(br.gov.jfrj.siga.ex.ExConfiguracao.class);
 		cfg.addClass(br.gov.jfrj.siga.ex.ExSituacaoConfiguracao.class);
 		cfg.addClass(br.gov.jfrj.siga.ex.ExTipoMobil.class);

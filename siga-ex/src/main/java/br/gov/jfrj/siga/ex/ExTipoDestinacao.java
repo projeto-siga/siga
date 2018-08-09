@@ -33,7 +33,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
  * may be customized as it is never re-generated after being created.
  */
 @Entity
-@Table(name = "ex_tipo_destinacao", catalog = "siga")
+@Table(name = "EX_TIPO_DESTINACAO", catalog = "SIGA")
 public class ExTipoDestinacao extends AbstractExTipoDestinacao implements
 		Serializable {
 	/**

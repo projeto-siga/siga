@@ -36,7 +36,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
  */
 @Entity
 @BatchSize(size = 500)
-@Table(name = "EX_ESTADO_DOC", catalog = "siga")
+@Table(name = "EX_ESTADO_DOC", catalog = "SIGA")
 public class ExEstadoDoc extends AbstractExEstadoDoc implements Serializable,
 		Selecionavel {
 

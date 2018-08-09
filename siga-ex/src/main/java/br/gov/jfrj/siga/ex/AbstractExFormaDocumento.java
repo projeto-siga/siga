@@ -54,7 +54,7 @@ public abstract class AbstractExFormaDocumento extends Objeto implements
 	private Long idFormaDoc;
 
 	/** The value of the simple descrFormaDoc property. */
-	@Column(name = "descr_forma_doc", nullable = false, length = 64)
+	@Column(name = "DESCR_FORMA_DOC", nullable = false, length = 64)
 	private String descrFormaDoc;
 
 	/** The value of the exModeloSet one-to-many association. */
@@ -66,10 +66,10 @@ public abstract class AbstractExFormaDocumento extends Objeto implements
 	private Set<ExTipoDocumento> exTipoDocumentoSet;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_tipo_forma_doc", nullable = false)
+	@JoinColumn(name = "ID_TIPO_FORMA_DOC", nullable = false)
 	private ExTipoFormaDoc exTipoFormaDoc;
 
-	@Column(name = "sigla_forma_doc", nullable = false, length = 3)
+	@Column(name = "SIGLA_FORMA_DOC", nullable = false, length = 3)
 	private String siglaFormaDoc;
 
 	/**

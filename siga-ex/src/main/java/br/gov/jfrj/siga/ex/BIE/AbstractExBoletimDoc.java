@@ -50,15 +50,15 @@ public abstract class AbstractExBoletimDoc extends Objeto implements
 	/** The composite primary key value. */
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
-	@Column(name = "id_boletim_doc", unique = true, nullable = false)
+	@Column(name = "ID_BOLETIM_DOC", unique = true, nullable = false)
 	private java.lang.Long idBoletimDoc;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_doc", unique = true)
+	@JoinColumn(name = "ID_DOC", unique = true)
 	private ExDocumento exDocumento;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_boletim")
+	@JoinColumn(name = "ID_BOLETIM")
 	private ExDocumento boletim;
 
 	public AbstractExBoletimDoc() {

@@ -43,13 +43,13 @@ public abstract class AbstractExNivelAcesso extends Objeto implements
 	@Column(name = "ID_NIVEL_ACESSO", unique = true, nullable = false)
 	private Long idNivelAcesso;
 
-	@Column(name = "nm_nivel_acesso", nullable = false, length = 50)
+	@Column(name = "NM_NIVEL_ACESSO", nullable = false, length = 50)
 	private String nmNivelAcesso;
 
-	@Column(name = "dsc_nivel_acesso", length = 256)
+	@Column(name = "DSC_NIVEL_ACESSO", length = 256)
 	private java.lang.String dscNivelAcesso;
 
-	@Column(name = "grau_nivel_acesso")
+	@Column(name = "GRAU_NIVEL_ACESSO")
 	private Integer grauNivelAcesso;
 
 	public AbstractExNivelAcesso() {

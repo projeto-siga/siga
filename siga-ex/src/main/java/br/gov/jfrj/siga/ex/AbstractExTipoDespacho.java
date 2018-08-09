@@ -50,10 +50,10 @@ public abstract class AbstractExTipoDespacho extends Objeto implements
 	private java.lang.Long idTpDespacho;
 
 	/** The value of the simple descTpDespacho property. */
-	@Column(name = "desc_tp_despacho", nullable = false, length = 256)
+	@Column(name = "DESC_TP_DESPACHO", nullable = false, length = 256)
 	private java.lang.String descTpDespacho;
 
-	@Column(name = "fg_ativo_tp_despacho", length = 1)
+	@Column(name = "FG_ATIVO_TP_DESPACHO", length = 1)
 	private String fgAtivo;
 
 	/**

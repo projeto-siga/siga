@@ -30,9 +30,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.apache.lucene.analysis.br.BrazilianAnalyzer;
 import org.apache.xerces.impl.dv.util.Base64;
-import org.hibernate.annotations.Entity;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
@@ -57,8 +61,10 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
  * be customized as it is never re-generated after being created.
  */
 
-@Entity
 @Indexed
+@Entity
+@BatchSize(size = 500)
+@Table(name = "EX_MOVIMENTACAO", catalog = "SIGA")
 public class ExMovimentacao extends AbstractExMovimentacao implements
 		Serializable, Comparable {
 	/**
@@ -66,6 +72,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 */
 	private static final long serialVersionUID = 2559924666592487436L;
 
+	@Transient
 	private byte[] cacheConteudoBlobMov;
 
 	/**
@@ -808,20 +815,25 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 */
 	public boolean isAssinada() {
 		if (this.isCancelada()
-				|| this.getExMobil().getExMovimentacaoSet() == null) 
+				|| this.getExMobil().getExMovimentacaoSet() == null)
 			return false;
-		
-		// Usamos getExMovimentacaoSet() em vez de getExMovimentacaoReferenciadoraSet() porque o segundo faz lazy initialization e não recebe as movimentações mais recentes quando se está calculando os marcadores.
-		for (ExMovimentacao assinatura : this.getExMobil().getExMovimentacaoSet()) {
+
+		// Usamos getExMovimentacaoSet() em vez de
+		// getExMovimentacaoReferenciadoraSet() porque o segundo faz lazy
+		// initialization e não recebe as movimentações mais recentes quando se
+		// está calculando os marcadores.
+		for (ExMovimentacao assinatura : this.getExMobil()
+				.getExMovimentacaoSet()) {
 			long l = assinatura.getIdTpMov();
 			if (l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
-				&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
-				&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA
-				&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
+					&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
+					&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA
+					&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
 				continue;
 			if (assinatura.getExMovimentacaoRef() == null)
 				continue;
-			if (this.getIdMov().equals(assinatura.getExMovimentacaoRef().getIdMov()))
+			if (this.getIdMov().equals(
+					assinatura.getExMovimentacaoRef().getIdMov()))
 				return true;
 		}
 

@@ -39,7 +39,7 @@ public abstract class AbstractExPapel extends Objeto implements Serializable {
 	@Column(name = "ID_PAPEL", unique = true, nullable = false)
 	private java.lang.Long idPapel;
 
-	@Column(name = "desc_papel", length = 20)
+	@Column(name = "DESC_PAPEL", length = 20)
 	private java.lang.String descPapel;
 
 	@OneToMany(mappedBy = "exPapel")

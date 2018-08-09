@@ -59,17 +59,18 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 	@Column(name = "ID_PREENCHIMENTO", unique = true, nullable = false)
 	private java.lang.Long idPreenchimento;
 
-	@Column(name = "id_lotacao", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_LOTACAO", nullable = false)
 	private DpLotacao dpLotacao;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_mod", nullable = false)
+	@JoinColumn(name = "ID_MOD", nullable = false)
 	private ExModelo exModelo;
 
-	@Column(name = "ex_nome_preenchimento", nullable = false, length = 256)
+	@Column(name = "EX_NOME_PREENCHIMENTO", nullable = false, length = 256)
 	private String nomePreenchimento;
 
-	@Column(name = "preenchimento_blob")
+	@Column(name = "PREENCHIMENTO_BLOB")
 	private java.sql.Blob preenchimentoBlob;
 
 	/**

@@ -3,15 +3,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
+<siga:pagina titulo="Listar Pessoas">
 <script type="text/javascript" language="Javascript1.1">
 function sbmt(offset) {
-	if (offset==null) {
-		offset=0;
-	}
-	frm.elements['offset'].value=offset;
-	frm.submit();
+    if (offset==null) {
+        offset=0;
+    }
+    frm.elements['offset'].value=offset;
+    frm.submit();
 }
+
 function validarCPF(Objcpf){
 	var strCPF = Objcpf.replace(".","").replace(".","").replace("-","").replace("/","");
     var Soma;
@@ -50,10 +51,10 @@ function cpf_mask(v){
     	validarCPF(v);
     }
 	return v;
-	}
+}
 </script>
-<form name="frm" action="listar" class="form" method="POST>
-<siga:pagina titulo="Listar Pessoas">
+<form name="frm" action="listar" class="form" method="POST">
+
 	<input type="hidden" name="offset" value="0" />
 		<div class="gt-bd clearfix">
 			<div class="gt-content clearfix">
@@ -62,13 +63,49 @@ function cpf_mask(v){
 					<table border="0" class="gt-table">
 						<tr>
 							<td><label>Órgão:</label></td>
-							<td><select name="idOrgaoUsu" value="${idOrgaoUsu}")>
+							<td><select name="idOrgaoUsu" value="${idOrgaoUsu}" onchange="carregarRelacionados(this.value)">
 									<c:forEach items="${orgaosUsu}" var="item">
 										<option value="${item.idOrgaoUsu}"
 											${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
 											${item.nmOrgaoUsu}</option>
 									</c:forEach>
 							</select></td>
+						</tr>
+						<tr>
+							<td><label>Cargo:</label></td>
+							<td>
+								<select name="idCargoPesquisa" value="${idCargoPesquisa}">
+									<c:forEach items="${listaCargo}" var="item">
+										<option value="${item.idCargo}"
+											${item.idCargo == idCargoPesquisa ? 'selected' : ''}>
+											${item.descricao}</option>
+									</c:forEach>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td><label>Fun&ccedil;&atilde;o de Confian&ccedil;a:</label></td>
+							<td>
+								<select name="idFuncaoPesquisa" value="${idFuncaoPesquisa}">
+									<c:forEach items="${listaFuncao}" var="item">
+										<option value="${item.idFuncao}"
+											${item.idFuncao == idFuncaoPesquisa ? 'selected' : ''}>
+											${item.descricao}</option>
+									</c:forEach>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td><label>Lota&ccedil;&atilde;o:</label></td>
+							<td>
+								<select name="idLotacaoPesquisa" value="${idLotacaoPesquisa}">
+									<c:forEach items="${listaLotacao}" var="item">
+										<option value="${item.idLotacao}"
+											${item.idLotacao == idLotacaoPesquisa ? 'selected' : ''}>
+											${item.descricao}</option>
+									</c:forEach>
+								</select>
+							</td>
 						</tr>
 						<tr>
 							<td><label>Nome:</label></td>
@@ -153,5 +190,13 @@ function cpf_mask(v){
 				</div>				
 		</div>			
 	</div>
-</siga:pagina>
+
 </form>
+
+<script>
+function carregarRelacionados(id) {
+	frm.action = 'carregarCombos';
+	frm.submit();
+}
+</script>
+</siga:pagina>

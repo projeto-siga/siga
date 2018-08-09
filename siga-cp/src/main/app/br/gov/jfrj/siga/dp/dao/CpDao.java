@@ -1111,6 +1111,16 @@ public class CpDao extends ModeloDao {
 				query.setLong("lotacao", flt.getLotacao().getId());
 			else
 				query.setLong("lotacao", 0);
+			
+			if (flt.getCargo() != null)
+				query.setLong("cargo", flt.getCargo().getId());
+			else
+				query.setLong("cargo", 0);
+			
+			if (flt.getFuncaoConfianca() != null)
+				query.setLong("funcao", flt.getFuncaoConfianca().getId());
+			else
+				query.setLong("funcao", 0);
 
 			final List<DpPessoa> l = query.list();
 			return l;
@@ -1166,6 +1176,16 @@ public class CpDao extends ModeloDao {
 				query.setLong("lotacao", flt.getLotacao().getId());
 			else
 				query.setLong("lotacao", 0);
+			
+			if (flt.getCargo() != null)
+				query.setLong("cargo", flt.getCargo().getId());
+			else
+				query.setLong("cargo", 0);
+			
+			if (flt.getFuncaoConfianca() != null)
+				query.setLong("funcao", flt.getFuncaoConfianca().getId());
+			else
+				query.setLong("funcao", 0);
 
 			final int l = ((Long) query.uniqueResult()).intValue();
 			return l;

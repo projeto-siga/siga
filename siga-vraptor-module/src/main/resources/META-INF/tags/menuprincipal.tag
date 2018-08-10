@@ -1,6 +1,7 @@
 <%@ tag body-content="empty" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <script type="text/javascript">
@@ -352,7 +353,17 @@
 			</ul>
 		</li>
 
-		<li><a id="apostilaSiga" href="/siga/arquivos/apostila_sigaex.pdf" target="_blank">Apostila SIGA-Doc</a>
+		<li>
+			<c:choose>
+				<c:when test="${not empty f:resource('siga.cabecalho.titulo') && fn:contains(f:resource('siga.cabecalho.titulo'), 'o Paulo')}">
+					<a id="apostilaSiga" href="https://sway.com/hqqkj8MJG9jm8xI4" target="_blank">Apostila SIGA-Doc</a>
+				</c:when>
+				<c:otherwise>
+					<a id="apostilaSiga" href="/siga/arquivos/apostila_sigaex.pdf" target="_blank">Apostila SIGA-Doc</a>
+
+				</c:otherwise>
+			</c:choose>
+			
 		</li>
 		
 		<li><a href="/siga/?GLO=true">Logoff</a>

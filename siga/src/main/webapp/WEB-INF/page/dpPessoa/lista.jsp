@@ -143,7 +143,7 @@ function cpf_mask(v){
 					</thead>
 					
 					<tbody>
-						<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}"
+						<siga:paginador maxItens="10" maxIndices="${empty maxIndices ? 10 : maxIndices}" totalItens="${tamanho}"
 							itens="${itens}" var="pessoa">
 							<tr>
 								<td align="left">${pessoa.descricao}</td>

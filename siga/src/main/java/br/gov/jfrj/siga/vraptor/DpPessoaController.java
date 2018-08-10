@@ -104,6 +104,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		result.include("sigla",sigla);
 		result.include("postbak",postback);
 		result.include("offset",offset);
+		result.include("maxIndices", getTamanho()/10 + 1);
 	}
 	
 	@Get("/app/pessoa/exibir")
@@ -216,7 +217,9 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			dpPessoa.setBuscarFechadas(Boolean.TRUE);
 			setItens(CpDao.getInstance().consultarPorFiltro(dpPessoa, offset, 10));
 			result.include("itens", getItens());
-			result.include("tamanho", dao().consultarQuantidade(dpPessoa));
+			Integer tamanho = dao().consultarQuantidade(dpPessoa);
+			result.include("tamanho", tamanho);
+			result.include("maxIndices", tamanho/10+1);
 			
 			result.include("idOrgaoUsu", idOrgaoUsu);
 			result.include("nome", nome);

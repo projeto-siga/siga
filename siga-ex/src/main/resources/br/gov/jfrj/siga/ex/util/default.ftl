@@ -1094,7 +1094,7 @@ LINHA  VARIÁVEL / CONTEÚDO
     [#if !gerar_formulario!false]
         <input id="${id}" type="checkbox" name="${var}_chk" value="Sim"
                [#if v=='Sim']checked[/#if] 
-               onclick="javascript: if (this.checked) document.getElementById('${var}').value = 'Sim'; else document.getElementById('${var}').value = 'Nao'; ${onclique!""}; ${jreler!""}" /> <label for="${id}" style="${negrito!""};${vermelho!""}">${titulo!""}</label>
+               onclick="javascript: if (this.checked) document.getElementById('${var}').value = 'Sim'; else document.getElementById('${var}').value = '{default}'; ${onclique!""}; ${jreler!""}" /> <label for="${id}" style="${negrito!""};${vermelho!""}">${titulo!""}</label>
 
     [#else]
     <span class="valor">${v}</span>

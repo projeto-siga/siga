@@ -23,8 +23,6 @@
  */
 package br.gov.jfrj.siga.cp;
 
-import static javax.persistence.GenerationType.SEQUENCE;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
@@ -37,6 +35,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
@@ -58,21 +58,33 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
  * CpClassificacao()}.
  */
 @MappedSuperclass
+@NamedQueries({
+		@NamedQuery(name = "consultarDataUltimaAtualizacao", query = ""
+				+ "select max(cpcfg.hisDtIni), max(cpcfg.hisDtFim) "
+				+ "from CpConfiguracao cpcfg"),
+		@NamedQuery(name = "consultarCpConfiguracoes", query = "from "
+				+ "CpConfiguracao cpcfg where (:idTpConfiguracao is null or "
+				+ "cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"),
+		@NamedQuery(name = "consultarCpConfiguracoesPorTipo", query = " from "
+				+ "CpConfiguracao cpcfg where (cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"
+				+ "and hisDtFim is null"),
+		@NamedQuery(name = "consultarCpConfiguracoesAtivas", query = " from "
+				+ "CpConfiguracao cpcfg where hisDtFim is null") })
 public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
-		implements Serializable,CpConvertableEntity {
+		implements Serializable, CpConvertableEntity {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 4514355304185987860L;
-	
+
 	@Id
 	@GeneratedValue(generator = "generator")
 	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_CONFIGURACAO_SEQ")
 	@Column(name = "ID_CONFIGURACAO", nullable = false)
 	@Desconsiderar
 	private Long idConfiguracao;
-	
+
 	@Column(name = "DESCR_CONFIGURACAO")
 	private String descrConfiguracao;
 
@@ -160,7 +172,7 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@Desconsiderar
 	private Set<CpConfiguracao> configuracoesPosteriores = new HashSet<CpConfiguracao>(
 			0);
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_OBJETO")
 	@NaoRecursivo
@@ -259,7 +271,7 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	public void setCargo(DpCargo cargo) {
 		this.cargo = cargo;
 	}
-	
+
 	public CpComplexo getComplexo() {
 		return complexo;
 	}

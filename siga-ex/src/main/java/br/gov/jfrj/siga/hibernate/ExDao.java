@@ -1803,16 +1803,18 @@ public class ExDao extends CpDao {
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.ExMovimentacao.class);
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.ExDocumento.class);
 
-		cfg.addClass(br.gov.jfrj.siga.ex.ExMobil.class);
-		cfg.addClass(br.gov.jfrj.siga.ex.ExConfiguracao.class);
-		cfg.addClass(br.gov.jfrj.siga.ex.ExSituacaoConfiguracao.class);
-		cfg.addClass(br.gov.jfrj.siga.ex.ExTipoMobil.class);
-		cfg.addClass(br.gov.jfrj.siga.dp.CpTipoMarcador.class);
-		cfg.addClass(br.gov.jfrj.siga.dp.CpMarcador.class);
-		cfg.addClass(br.gov.jfrj.siga.dp.CpTipoMarca.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.ExMobil.class);
+
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.ExTipoMobil.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpTipoMarcador.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.ExSituacaoConfiguracao.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpMarcador.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpTipoMarca.class);
 
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.ExMarca.class);
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpMarca.class);
+		
+		cfg.addClass(br.gov.jfrj.siga.ex.ExConfiguracao.class);
 
 		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExClassificacao",
 		// "read-only", "ex");

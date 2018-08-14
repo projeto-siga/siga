@@ -18,6 +18,14 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.BatchSize;
+
+@Entity
+@BatchSize(size = 500)
+@Table(name = "EX_SITUACAO_CONFIGURACAO", catalog = "SIGA")
 public class ExSituacaoConfiguracao extends AbstractExSituacaoConfiguracao {
 
 	/**

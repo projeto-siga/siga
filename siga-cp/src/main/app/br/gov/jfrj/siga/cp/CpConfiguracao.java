@@ -46,19 +46,6 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Entity
 @Table(name = "CP_CONFIGURACAO", schema = "CORPORATIVO")
 @Inheritance(strategy = InheritanceType.JOINED)
-@NamedQueries({
-		@NamedQuery(name = "consultarDataUltimaAtualizacao", query = ""
-				+ "select max(cpcfg.hisDtIni), max(cpcfg.hisDtFim) "
-				+ "from CpConfiguracao cpcfg"),
-		@NamedQuery(name = "consultarCpConfiguracoes", query = "from "
-				+ "CpConfiguracao cpcfg where (:idTpConfiguracao is null or "
-				+ "cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"),
-		@NamedQuery(name = "consultarCpConfiguracoesPorTipo", query = " from "
-				+ "CpConfiguracao cpcfg where (cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"
-				+ "and hisDtFim is null"),
-		@NamedQuery(name = "consultarCpConfiguracoesAtivas", query = " from "
-				+ "CpConfiguracao cpcfg where hisDtFim is null")
-})
 public class CpConfiguracao extends AbstractCpConfiguracao implements CpConvertableEntity {
 
 	/**

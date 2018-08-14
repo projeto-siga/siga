@@ -24,28 +24,59 @@
  */
 package br.gov.jfrj.siga.ex;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 
+@Entity
+@Table(name = "EX_CONFIGURACAO", schema = "SIGA")
+@PrimaryKeyJoinColumn(name = "ID_CONFIGURACAO_EX")
+@NamedQueries({ @NamedQuery(name = "consultarExConfiguracoes", query = "from ExConfiguracao excfg where (:idTpConfiguracao is null or excfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)") })
 public class ExConfiguracao extends CpConfiguracao {
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_TP_MOV")
 	private ExTipoMovimentacao exTipoMovimentacao;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_TP_DOC")
 	private ExTipoDocumento exTipoDocumento;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_TP_FORMA_DOC")
 	private ExTipoFormaDoc exTipoFormaDoc;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_FORMA_DOC")
 	private ExFormaDocumento exFormaDocumento;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_MOD")
 	private ExModelo exModelo;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_CLASSIFICACAO")
 	private ExClassificacao exClassificacao;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_VIA")
 	private ExVia exVia;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_NIVEL_ACESSO")
 	private ExNivelAcesso exNivelAcesso;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_PAPEL")
 	private ExPapel exPapel;
 
 	/**
@@ -133,16 +164,17 @@ public class ExConfiguracao extends CpConfiguracao {
 	}
 
 	public boolean isAgendamentoPublicacaoBoletim() {
-		return getExTipoMovimentacao() != null 
+		return getExTipoMovimentacao() != null
 				&& getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM;
 	}
 
-	public boolean podeAdicionarComoPublicador(DpPessoa titular, DpLotacao lotacaoTitular) {
-		return (getDpPessoa() != null 
-					&& titular != null 
-					&& getDpPessoa().getOrgaoUsuario().getId().equals(titular.getOrgaoUsuario().getId()))
-				|| (getLotacao() != null 
-						&& lotacaoTitular != null 
-						&& getLotacao().getOrgaoUsuario().getId().equals(lotacaoTitular.getOrgaoUsuario().getId()));
+	public boolean podeAdicionarComoPublicador(DpPessoa titular,
+			DpLotacao lotacaoTitular) {
+		return (getDpPessoa() != null && titular != null && getDpPessoa()
+				.getOrgaoUsuario().getId()
+				.equals(titular.getOrgaoUsuario().getId()))
+				|| (getLotacao() != null && lotacaoTitular != null && getLotacao()
+						.getOrgaoUsuario().getId()
+						.equals(lotacaoTitular.getOrgaoUsuario().getId()));
 	}
 }

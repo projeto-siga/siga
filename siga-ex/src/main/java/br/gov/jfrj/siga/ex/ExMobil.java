@@ -47,10 +47,12 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
+import org.hibernate.annotations.BatchSize;
 import org.jboss.logging.Logger;
 
 @Entity
-@Table(name = "EX_MOBIL")
+@BatchSize(size = 500)
+@Table(name = "EX_MOBIL", catalog = "SIGA")
 public class ExMobil extends AbstractExMobil implements Serializable,
 		Selecionavel, Comparable {
 
@@ -344,11 +346,12 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		for (String s : mapAcronimo.keySet()) {
 			acronimos += "|" + s;
 		}
-		
+
 		final Pattern p2 = Pattern.compile("^TMP-?([0-9]{1,7})");
-		
-		//Edson: testes unitários para esta regex: https://regex101.com/r/NJidBr/2
-		//Ao acessar, clique em "Switch to unit tests"
+
+		// Edson: testes unitários para esta regex:
+		// https://regex101.com/r/NJidBr/2
+		// Ao acessar, clique em "Switch to unit tests"
 		final Pattern p1 = Pattern
 				.compile("^(?<orgao>"
 						+ acronimos
@@ -376,12 +379,12 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			String sonumero = m1.group("sonumero");
 			String via = m1.group("via");
 			String volume = m1.group("volume");
-			
-			if (orgao != null && orgao.length() > 0 ) {
+
+			if (orgao != null && orgao.length() > 0) {
 				try {
 					if (mapAcronimo.containsKey(orgao)) {
-						getExDocumento().setOrgaoUsuario(
-								mapAcronimo.get(orgao));
+						getExDocumento()
+								.setOrgaoUsuario(mapAcronimo.get(orgao));
 					} else {
 						CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
 						orgaoUsuario.setSiglaOrgaoUsu(orgao);
@@ -418,7 +421,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 				getExDocumento().setNumExpediente(Long.parseLong(numero));
 			if (sonumero != null) {
 				getExDocumento().setNumExpediente(Long.parseLong(sonumero));
-				getExDocumento().setAnoEmissao((long) new Date().getYear() + 1900);
+				getExDocumento().setAnoEmissao(
+						(long) new Date().getYear() + 1900);
 
 			}
 
@@ -434,24 +438,25 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 					try {
 						String siglaPai = (orgao == null ? (getExDocumento()
 								.getOrgaoUsuario() != null ? getExDocumento()
-								.getOrgaoUsuario().getAcronimoOrgaoUsu() : "") : orgao)
+								.getOrgaoUsuario().getAcronimoOrgaoUsu() : "")
+								: orgao)
 								+ (especie == null ? "" : especie)
 								+ (ano == null ? "" : ano)
-								+ ((ano != null && numero != null) ? "/"
-										: "")
+								+ ((ano != null && numero != null) ? "/" : "")
 								+ (numero == null ? "" : numero);
 						ExMobilDaoFiltro flt = new ExMobilDaoFiltro();
 						flt.setSigla(siglaPai);
 						ExMobil mobPai = null;
-						if (flt.getIdOrgaoUsu() == null){
-							flt.setIdOrgaoUsu(getExDocumento().getOrgaoUsuario().getId());
+						if (flt.getIdOrgaoUsu() == null) {
+							flt.setIdOrgaoUsu(getExDocumento()
+									.getOrgaoUsuario().getId());
 						}
 						mobPai = ExDao.getInstance().consultarPorSigla(flt);
 						ExDocumento docFilho = mobPai.doc().getMobilGeral()
 								.getSubdocumento(vshNumSubdocumento);
 						setExDocumento(docFilho);
 					} catch (Exception e) {
-						//e.printStackTrace();
+						// e.printStackTrace();
 					}
 				}
 			}
@@ -478,13 +483,14 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 				if (volume != null) {
 					String vsNumVolume = volume.toUpperCase();
 					Integer vshNumVolume = new Integer(vsNumVolume);
-					setExTipoMobil(ExDao.getInstance()
-							.consultar(ExTipoMobil.TIPO_MOBIL_VOLUME,
-									ExTipoMobil.class, false));
+					setExTipoMobil(ExDao.getInstance().consultar(
+							ExTipoMobil.TIPO_MOBIL_VOLUME, ExTipoMobil.class,
+							false));
 					setNumSequencia(vshNumVolume);
 				} else {
 					setExTipoMobil(ExDao.getInstance().consultar(
-							ExTipoMobil.TIPO_MOBIL_GERAL, ExTipoMobil.class, false));
+							ExTipoMobil.TIPO_MOBIL_GERAL, ExTipoMobil.class,
+							false));
 				}
 			}
 		}
@@ -810,27 +816,28 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		return movReturn;
 	}
+
 	/**
-	 * Retorna a última movimentação não cancelada que o móbil mob recebeu 
-	 * antes de determinada data dt passada por parâmetro 
-	 * 	 
-	 * @param mob	
+	 * Retorna a última movimentação não cancelada que o móbil mob recebeu antes
+	 * de determinada data dt passada por parâmetro
+	 * 
+	 * @param mob
 	 * @param dt
 	 * @return
 	 */
 	public ExMovimentacao getUltimaMovimentacaoAntesDaData(Date dt) {
-		
+
 		ExMovimentacao ultMovAntesDaData = null;
-		
-		for (ExMovimentacao mov : getExMovimentacaoSet()) {			
-			
+
+		for (ExMovimentacao mov : getExMovimentacaoSet()) {
+
 			if (mov.isCancelada() || mov.isCanceladora())
 				continue;
-			if (mov.getDtMov().after(dt))				
-	           break;
-			
-			ultMovAntesDaData = mov;			
-			
+			if (mov.getDtMov().after(dt))
+				break;
+
+			ultMovAntesDaData = mov;
+
 		}
 		return ultMovAntesDaData;
 	}
@@ -930,10 +937,11 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 */
 	public boolean isEliminado() {
 
-		 if (isGeral() && doc().isExpediente()) 
-			 return doc().isEliminado();
-		
-		 return sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO, 0,  getMobilParaMovimentarDestinacao());
+		if (isGeral() && doc().isExpediente())
+			return doc().isEliminado();
+
+		return sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO, 0,
+				getMobilParaMovimentarDestinacao());
 
 	}
 
@@ -1019,7 +1027,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		for (ExMovimentacao mov : getExMovimentacaoSet()) {
 			if (mov.isCancelada())
 				continue;
-			if (mov.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO) 
+			if (mov.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO)
 				continue;
 			if (ExParte.create(mov.getDescrMov()).isPendente())
 				return true;
@@ -1270,14 +1278,16 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		return null;
 	}
-	
+
 	public SortedSet<ExMobil> getMobilEApensosExcetoVolumeApensadoAoProximo() {
 		TreeSet<ExMobil> setFinal = new TreeSet<ExMobil>();
 		ExMobil grandeMestre = getGrandeMestre();
-		if (grandeMestre != null){
+		if (grandeMestre != null) {
 			setFinal.add(grandeMestre);
-			setFinal.addAll(grandeMestre.getApensosExcetoVolumeApensadoAoProximo());
-		} else setFinal.add(this);
+			setFinal.addAll(grandeMestre
+					.getApensosExcetoVolumeApensadoAoProximo());
+		} else
+			setFinal.add(this);
 		return setFinal;
 
 	}
@@ -1285,7 +1295,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	public SortedSet<ExMobil> getApensosExcetoVolumeApensadoAoProximo() {
 		return getApensos(true, false);
 	}
-	
+
 	/**
 	 * 
 	 * @return Retorna todos os apensos desse mobil para baixo. Não inclui o
@@ -1305,40 +1315,43 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	public SortedSet<ExMobil> getApensos(SortedSet<ExMobil> set,
 			boolean incluirApensosIndiretos,
 			boolean incluirVolumesApensadosAosProximos) {
-		
+
 		if (getExMovimentacaoReferenciaSet() == null)
 			return set;
-		
-		varrendoMovRefsDesteMobil:
-		for (ExMovimentacao mov : getExMovimentacaoReferenciaSet()) {
-			
+
+		varrendoMovRefsDesteMobil: for (ExMovimentacao mov : getExMovimentacaoReferenciaSet()) {
+
 			if (mov.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_APENSACAO)
 				continue varrendoMovRefsDesteMobil;
-			
+
 			if (mov.isCancelada())
 				continue varrendoMovRefsDesteMobil;
-			
+
 			if (mov.getExMovimentacaoReferenciadoraSet() != null)
-				for (ExMovimentacao ref : mov.getExMovimentacaoReferenciadoraSet())
+				for (ExMovimentacao ref : mov
+						.getExMovimentacaoReferenciadoraSet())
 					if (ref.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESAPENSACAO)
 						continue varrendoMovRefsDesteMobil;
-			
+
 			if (!set.contains(mov.getExMobil())) {
-				if (incluirVolumesApensadosAosProximos || !mov.getExMobil().isApensadoAVolumeDoMesmoProcesso()){
+				if (incluirVolumesApensadosAosProximos
+						|| !mov.getExMobil().isApensadoAVolumeDoMesmoProcesso()) {
 					set.add(mov.getExMobil());
-					//Edson: passando a deixar o if abaixo dentro do anterior pois, se um nó não vai
-					//ser adicionado, não há necessidade de verificar os nós abaixo
+					// Edson: passando a deixar o if abaixo dentro do anterior
+					// pois, se um nó não vai
+					// ser adicionado, não há necessidade de verificar os nós
+					// abaixo
 					if (incluirApensosIndiretos)
 						mov.getExMobil().getApensos(set,
 								incluirApensosIndiretos,
 								incluirVolumesApensadosAosProximos);
 				}
 			}
-			
+
 		}
 		return set;
 	}
-	
+
 	/**
 	 * Retorna, num Set, os móbiles que tenham sido juntados a este móbil, de
 	 * modo recursivo ou não, conforme parâmetro.
@@ -1511,41 +1524,50 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	 * Retorna a lista de movimentações replicadas devido a lentidão no Siga
 	 * 
 	 */
-	public List<ExMovimentacao> getMovimentacoesReplicadas(Set<ExMovimentacao> movs) {
+	public List<ExMovimentacao> getMovimentacoesReplicadas(
+			Set<ExMovimentacao> movs) {
 		List<ExMovimentacao> movsReplicadas = new ArrayList<ExMovimentacao>();
 		ExMovimentacao movPosterior = null;
-		
+
 		Iterator it = movs.iterator();
 		Iterator itPosterior = movs.iterator();
-		
-		if (itPosterior.hasNext()) 
-			movPosterior = (ExMovimentacao) itPosterior.next();
-		
-			while (it.hasNext()) {
-				ExMovimentacao mov = (ExMovimentacao) it.next();
 
-				while (itPosterior.hasNext()) {
-					movPosterior = (ExMovimentacao) itPosterior.next();
-			
-					if (mov.getCadastrante().equivale(movPosterior.getCadastrante()) 
-						&& mov.getLotaCadastrante().equivale(movPosterior.getLotaCadastrante())
-						
-						&& mov.getSubscritor().equivale(movPosterior.getSubscritor())
-						&& mov.getLotaSubscritor().equivale(movPosterior.getLotaSubscritor())
-						&& mov.getLotaResp().equivale(movPosterior.getLotaResp())
-						&& mov.getLotaTitular().equivale(movPosterior.getLotaTitular())
+		if (itPosterior.hasNext())
+			movPosterior = (ExMovimentacao) itPosterior.next();
+
+		while (it.hasNext()) {
+			ExMovimentacao mov = (ExMovimentacao) it.next();
+
+			while (itPosterior.hasNext()) {
+				movPosterior = (ExMovimentacao) itPosterior.next();
+
+				if (mov.getCadastrante()
+						.equivale(movPosterior.getCadastrante())
+						&& mov.getLotaCadastrante().equivale(
+								movPosterior.getLotaCadastrante())
+
+						&& mov.getSubscritor().equivale(
+								movPosterior.getSubscritor())
+						&& mov.getLotaSubscritor().equivale(
+								movPosterior.getLotaSubscritor())
+						&& mov.getLotaResp().equivale(
+								movPosterior.getLotaResp())
+						&& mov.getLotaTitular().equivale(
+								movPosterior.getLotaTitular())
 						&& mov.getIdTpMov().equals(movPosterior.getIdTpMov())
-						&& (mov.getDtMov().getTime() - movPosterior.getDtMov().getTime()) < 3600000
-						&& (mov.getDtIniMov().getTime() - movPosterior.getDtIniMov().getTime()) < 3600000){
-							movsReplicadas.add(mov);
+						&& (mov.getDtMov().getTime() - movPosterior.getDtMov()
+								.getTime()) < 3600000
+						&& (mov.getDtIniMov().getTime() - movPosterior
+								.getDtIniMov().getTime()) < 3600000) {
+					movsReplicadas.add(mov);
 				}
-				break;				
+				break;
 			}
 			continue;
 		}
 		return movsReplicadas;
 	}
-	
+
 	/**
 	 * Retorna a lista de movimentações de pendência de colaboração
 	 * 
@@ -1658,7 +1680,7 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 					juntado = true;
 				else if (mobFilho.isJuntado())
 					juntadoAOutro = true;
-					
+
 			}
 			if (!juntado && !juntadoAOutro)
 				meusFilhosNaoJuntados.add(docFilho);
@@ -2173,15 +2195,16 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 	public Set<ExMobil> getArvoreMobilesParaAnaliseDestinacao() {
 
 		Set<ExMobil> set = new LinkedHashSet<ExMobil>();
-		//Edson: por enquanto, comentando este trecho, pois está causando terríveis
-		//impactos na performance de processos grandes. Melhorar esta verificação.
-		/*for (ExMobil mob : getMobilesDoDocParaAnaliseDestinacao())
-			for (ExMobil mob2 : mob.getMobilPrincipal()
-					.getMobilesDoDocParaAnaliseDestinacao())
-				for (ExMobil mob3 : mob2.getMobilETodosOsJuntados())
-					if (!mob3.isVolume())
-						set.add(mob3);
-						*/
+		// Edson: por enquanto, comentando este trecho, pois está causando
+		// terríveis
+		// impactos na performance de processos grandes. Melhorar esta
+		// verificação.
+		/*
+		 * for (ExMobil mob : getMobilesDoDocParaAnaliseDestinacao()) for
+		 * (ExMobil mob2 : mob.getMobilPrincipal()
+		 * .getMobilesDoDocParaAnaliseDestinacao()) for (ExMobil mob3 :
+		 * mob2.getMobilETodosOsJuntados()) if (!mob3.isVolume()) set.add(mob3);
+		 */
 		set.add(this);
 		return set;
 	}
@@ -2206,8 +2229,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		// return getSigla().substring(getSigla().lastIndexOf("-")+1);
 	}
-	
-	public Set<ExMovimentacao> getTransferenciasPendentesDeDevolucao(ExMobil mob){
+
+	public Set<ExMovimentacao> getTransferenciasPendentesDeDevolucao(ExMobil mob) {
 		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(3);
 		transferencias.addAll(mob.getMovimentacoesPorTipo(6));
 		transferencias.removeAll(mob.getMovimentacoesCanceladas());
@@ -2222,14 +2245,16 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		return transferenciasComData;
 	}
-		
-	public Set<ExMovimentacao> getMovsNaoCanceladas(long idTpMov){
+
+	public Set<ExMovimentacao> getMovsNaoCanceladas(long idTpMov) {
 		return getMovsNaoCanceladas(idTpMov, false);
 	}
-	
-	public Set<ExMovimentacao> getMovsNaoCanceladas(long idTpMov, boolean apenasNaoReferenciadoras) {
-		//Edson: o apenasNaoReferenciadoras serve para, por exemplo, não retornar movimentações
-		//de autenticação de anexos, mas apenas de documento
+
+	public Set<ExMovimentacao> getMovsNaoCanceladas(long idTpMov,
+			boolean apenasNaoReferenciadoras) {
+		// Edson: o apenasNaoReferenciadoras serve para, por exemplo, não
+		// retornar movimentações
+		// de autenticação de anexos, mas apenas de documento
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 
 		if (getExMovimentacaoSet() == null)
@@ -2238,7 +2263,8 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		for (ExMovimentacao m : getExMovimentacaoSet()) {
 			if (m.getExMovimentacaoCanceladora() != null)
 				continue;
-			if (idTpMov > 0 && m.getExTipoMovimentacao().getIdTpMov() != idTpMov)
+			if (idTpMov > 0
+					&& m.getExTipoMovimentacao().getIdTpMov() != idTpMov)
 				continue;
 			if (apenasNaoReferenciadoras && m.getExMovimentacaoRef() != null)
 				continue;
@@ -2246,13 +2272,13 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		return set;
 	}
-	
+
 	@Override
 	public Set<ExMovimentacao> getExMovimentacaoSet() {
 		// TODO Auto-generated method stub
 		return super.getExMovimentacaoSet();
 	}
-	
+
 	@Override
 	public Set<ExMovimentacao> getExMovimentacaoReferenciaSet() {
 		// TODO Auto-generated method stub

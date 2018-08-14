@@ -18,31 +18,19 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex;
 
-import java.io.Serializable;
-import java.sql.Blob;
-import java.util.Date;
-
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Table;
 
 import br.gov.jfrj.siga.dp.CpMarca;
-import br.gov.jfrj.siga.dp.CpMarcador;
-import br.gov.jfrj.siga.dp.CpOrgao;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 
 /**
  * A class that represents a row in the EX_DOCUMENTO table. You can customize
  * the behavior of this class by editing the class, {@link ExDocumento()}.
  */
-@Entity
+@MappedSuperclass
 public class AbstractExMarca extends CpMarca {
-	
+
 	@ManyToOne
 	@JoinColumn(name = "ID_REF")
 	private ExMobil exMobil;
@@ -53,6 +41,6 @@ public class AbstractExMarca extends CpMarca {
 
 	public void setExMobil(ExMobil exMobil) {
 		this.exMobil = exMobil;
-	}     
+	}
 
 }

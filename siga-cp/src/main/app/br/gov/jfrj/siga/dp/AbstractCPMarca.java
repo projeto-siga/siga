@@ -24,18 +24,17 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 
 import br.gov.jfrj.siga.model.Objeto;
 
@@ -43,16 +42,12 @@ import br.gov.jfrj.siga.model.Objeto;
  * A class that represents a row in the EX_DOCUMENTO table. You can customize
  * the behavior of this class by editing the class, {@link ExDocumento()}.
  */
-@Entity()
-@Table(name = "CP_MARCA", schema = "CORPORATIVO")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "ID_TP_MARCA", discriminatorType = DiscriminatorType.INTEGER
-
-)
+@MappedSuperclass
 public abstract class AbstractCPMarca extends Objeto implements Serializable {
 
 	@Id
-	@SequenceGenerator(name="my_seq", sequenceName = "CORPORATIVO" + ".CP_MARCA_SEQ")
+	@SequenceGenerator(name = "my_seq", sequenceName = "CORPORATIVO"
+			+ ".CP_MARCA_SEQ")
 	@GeneratedValue(generator = "my_seq")
 	@Column(name = "ID_MARCA")
 	private java.lang.Long idMarca;

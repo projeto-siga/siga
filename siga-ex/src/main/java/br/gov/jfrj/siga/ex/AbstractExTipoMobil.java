@@ -19,27 +19,42 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.SequenceGenerator;
 
 import br.gov.jfrj.siga.model.Objeto;
 
-public abstract class AbstractExTipoMobil extends Objeto implements Serializable {
+@MappedSuperclass
+public abstract class AbstractExTipoMobil extends Objeto implements
+		Serializable {
 
+	@Id
+	@SequenceGenerator(sequenceName = "EX_TIPO_MOBIL_SEQ", name = "EX_TIPO_MOBIL_SEQ")
+	@GeneratedValue(generator = "EX_TIPO_MOBIL_SEQ")
+	@Column(name = "ID_TIPO_MOBIL", unique = true, nullable = false)
 	private java.lang.Long idTipoMobil;
+
+	@Column(name = "desc_tipo_mobil", length = 20)
 	private java.lang.String descTipoMobil;
-	
+
 	public java.lang.Long getIdTipoMobil() {
 		return idTipoMobil;
 	}
+
 	public void setIdTipoMobil(java.lang.Long idTipoMobil) {
 		this.idTipoMobil = idTipoMobil;
 	}
+
 	public java.lang.String getDescTipoMobil() {
 		return descTipoMobil;
 	}
+
 	public void setDescTipoMobil(java.lang.String descTipoMobil) {
 		this.descTipoMobil = descTipoMobil;
 	}
-	
 
 }

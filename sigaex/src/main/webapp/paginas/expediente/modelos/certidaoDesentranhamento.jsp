@@ -65,8 +65,8 @@
 		<br />	
 		<p align="center" style="font-family:Times New Roman;font-size:14pt;" ><b>Certidão de Desentranhamento</b></p>
         <br />
-		<c:choose>
 		<!--<p align="center" style="font-family:Times New Roman;font-size:12pt;font-weight:normal;"><b>&nbsp;</b></p>-->
+		<c:choose>
 			<c:when test="${not empty mov.exMovimentacaoRef.exMobilRef}">
 				<c:set var="mobil"
 					value="${mov.exMovimentacaoRef.exMobilRef.mobilPrincipal}" />

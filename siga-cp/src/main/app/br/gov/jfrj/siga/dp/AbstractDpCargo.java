@@ -24,8 +24,6 @@
  */
 package br.gov.jfrj.siga.dp;
 
-import static javax.persistence.GenerationType.SEQUENCE;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -36,6 +34,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -48,41 +48,51 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
  * comportamento desta classe editando a classe {@link DpCargo}.
  */
 @MappedSuperclass
+@NamedQueries({
+		@NamedQuery(name = "consultarPorSiglaDpCargo", query = "select cargo from DpCargo cargo where cargo.siglaCargo = :siglaCargo"),
+		@NamedQuery(name = "consultarPorFiltroDpCargo", query = "from DpCargo o "
+				+ "  where upper(o.nomeCargoAI) like upper('%' || :nome || '%')"
+				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or o.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "   	and o.dataFimCargo = null" + "   	order by o.nomeCargo"),
+		@NamedQuery(name = "consultarQuantidadeDpCargo", query = "select count(o) from DpCargo o "
+				+ "  where upper(o.nomeCargoAI) like upper('%' || :nome || '%')"
+				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or o.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "   	and o.dataFimCargo = null") })
 public abstract class AbstractDpCargo extends Objeto implements Serializable {
 
 	@Id
 	@GeneratedValue(generator = "generator")
-	@Column(name = "ID_CARGO", nullable = false)
+	@Column(name = "ID_CARGO", unique = true, nullable = false)
 	@SequenceGenerator(name = "generator", sequenceName = "DP_CARGO_SEQ")
 	@Desconsiderar
 	private Long idCargo;
 
-	@Column(name = "NOME_CARGO", nullable = false)
+	@Column(name = "NOME_CARGO", nullable = false, length = 100)
 	private String nomeCargo;
 
-	@Column(name = "DT_FIM_CARGO")
 	@Desconsiderar
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DT_FIM_CARGO", length = 19)
 	private Date dataFimCargo;
 
-	@Column(name = "DT_INI_CARGO")
 	@Desconsiderar
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DT_INI_CARGO", length = 19)
 	private Date dataInicioCargo;
 
 	@Column(name = "ID_CARGO_INICIAL")
 	@Desconsiderar
 	private Long idCargoIni;
 
-	@Column(name = "IDE_CARGO")
+	@Column(name = "IDE_CARGO", length = 256)
 	private String ideCargo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_ORGAO_USU")
+	@JoinColumn(name = "ID_ORGAO_USU", nullable = false)
 	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
-	
-	@Column(name = "SIGLA_CARGO")
+
+	@Column(name = "SIGLA_CARGO", length = 30)
 	@Desconsiderar
 	private String siglaCargo;
 
@@ -204,7 +214,8 @@ public abstract class AbstractDpCargo extends Objeto implements Serializable {
 	}
 
 	/**
-	 * @param siglaCargo the siglaCargo to set
+	 * @param siglaCargo
+	 *            the siglaCargo to set
 	 */
 	public void setSiglaCargo(String siglaCargo) {
 		this.siglaCargo = siglaCargo;

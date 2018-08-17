@@ -22,8 +22,6 @@
  */
 package br.gov.jfrj.siga.dp;
 
-import static javax.persistence.GenerationType.SEQUENCE;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -36,6 +34,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
@@ -44,57 +44,110 @@ import javax.persistence.TemporalType;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @MappedSuperclass
+@NamedQueries({
+		@NamedQuery(name = "consultarLotacaoAtualPelaLotacaoInicial", query = "from DpLotacao lot "
+				+ "      where dataInicioLotacao = "
+				+ "      (select max(l.dataInicioLotacao) from DpLotacao l where l.idLotacaoIni = :idLotacaoIni) "
+				+ "      and lot.idLotacaoIni = :idLotacaoIni"),
+
+		@NamedQuery(name = "consultarPorIdDpLotacao", query = "select lot from DpLotacao lot where lot.idLotacao = :idLotacao"),
+		@NamedQuery(name = "consultarPorSiglaDpLotacao", query = "select lot from DpLotacao lot where"
+				+ "      upper(lot.siglaLotacao) = upper(:siglaLotacao)"
+				+ "      and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "	     and lot.dataFimLotacao = null"),
+		@NamedQuery(name = "consultarPorSiglaDpLotacaoComLike", query = "select lot from DpLotacao lot where"
+				+ "        upper(lot.siglaLotacao) like upper('%' || :siglaLotacao || '%') "
+				+ "        and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "        and lot.dataFimLotacao = null"),
+		@NamedQuery(name = "consultarPorIdInicialDpLotacao", query = "select lot from DpLotacao lot where lot.idLotacaoIni = :idLotacaoIni and lot.dataFimLotacao = null"),
+		@NamedQuery(name = "consultarPorIdInicialDpLotacaoInclusiveFechada", query = "select lot from DpLotacao lot where lot.idLotacao = (select max(idLotacao) from DpLotacao where idLotacaoIni = :idLotacaoIni)"),
+		@NamedQuery(name = "consultarPorFiltroDpLotacao", query = "from DpLotacao lot "
+				+ "  where "
+				+ "     ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) "
+				+ "          or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"
+				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "	and lot.dataFimLotacao = null"
+				+ "	order by lot.nomeLotacao"),
+		@NamedQuery(name = "consultarQuantidadeDpLotacao", query = "select count(lot) from DpLotacao lot "
+				+ "  where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"
+				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "	and lot.dataFimLotacao = null"
+				+ "	order by lot.nomeLotacao"),
+		@NamedQuery(name = "consultarPorFiltroDpLotacaoInclusiveFechadas", query = "from DpLotacao where idLotacao in ("
+				+ "  select max(lot.idLotacao)"
+				+ "  from DpLotacao lot"
+				+ "  where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' "
+				+ "  || :nome || '%')))"
+				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "  group by lot.idLotacaoIni)"),
+		@NamedQuery(name = "consultarQuantidadeDpLotacaoInclusiveFechadas", query = "select count(distinct lot.idLotacaoIni)"
+				+ "	from DpLotacao lot"
+				+ "	where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"
+				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)") })
 public abstract class AbstractDpLotacao extends DpResponsavel implements
 		Serializable {
 
 	@SequenceGenerator(name = "generator", sequenceName = "DP_LOTACAO_SEQ")
 	@Id
 	@GeneratedValue(generator = "generator")
-	@Column(name = "ID_LOTACAO", nullable = false)
+	@Column(name = "ID_LOTACAO", unique = true, nullable = false)
 	@Desconsiderar
 	private Long idLotacao;
+
 	@Column(name = "ID_LOTACAO_INI")
 	@Desconsiderar
 	private Long idLotacaoIni;
-	@Column(name = "NOME_LOTACAO", nullable = false)
+
+	@Column(name = "NOME_LOTACAO", nullable = false, length = 120)
 	private String nomeLotacao;
-	@Column(name = "SIGLA_LOTACAO")
+
+	@Column(name = "SIGLA_LOTACAO", length = 20)
 	private String siglaLotacao;
-	@Temporal(TemporalType.DATE)
-	@Column(name = "DATA_FIM_LOT")
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DATA_FIM_LOT", length = 19)
 	@Desconsiderar
 	private Date dataFimLotacao;
-	@Temporal(TemporalType.DATE)
-	@Column(name = "DATA_INI_LOT")
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DATA_INI_LOT", nullable = false, length = 19)
 	@Desconsiderar
 	private Date dataInicioLotacao;
+
 	@Column(name = "IDE_LOTACAO")
 	@Desconsiderar
 	private String ideLotacao;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_LOTACAO_INI", insertable = false, updatable = false)
 	@Desconsiderar
 	private DpLotacao lotacaoInicial;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_LOTACAO_PAI")
 	private DpLotacao lotacaoPai;
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lotacaoInicial")
 	@Desconsiderar
 	private Set<DpLotacao> lotacoesPosteriores = new TreeSet<DpLotacao>();
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_ORGAO_USU")
+	@JoinColumn(name = "ID_ORGAO_USU", nullable = false)
 	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lotacaoPai")
 	@Desconsiderar
 	private Set<DpLotacao> dpLotacaoSubordinadosSet = new TreeSet<DpLotacao>();
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lotacao")
-    @Desconsiderar
-    private Set<DpPessoa> dpPessoaLotadosSet  = new TreeSet<DpPessoa>();
+	@Desconsiderar
+	private Set<DpPessoa> dpPessoaLotadosSet = new TreeSet<DpPessoa>();
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_TP_LOTACAO")
 	private CpTipoLotacao cpTipoLotacao;
-	
+
 	/**
 	 * @return the cpTipoLotacao
 	 */
@@ -103,7 +156,8 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	}
 
 	/**
-	 * @param cpTipoLotacao the cpTipoLotacao to set
+	 * @param cpTipoLotacao
+	 *            the cpTipoLotacao to set
 	 */
 	public void setCpTipoLotacao(CpTipoLotacao cpTipoLotacao) {
 		this.cpTipoLotacao = cpTipoLotacao;

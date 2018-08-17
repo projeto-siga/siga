@@ -105,7 +105,6 @@ import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
-
 public class CpDao extends ModeloDao {
 
 	public static final String CACHE_QUERY_SUBSTITUICAO = "query.substituicao";
@@ -115,10 +114,11 @@ public class CpDao extends ModeloDao {
 	public static final String CACHE_QUERY_HOURS = "query.hours";
 	public static final String CACHE_SECONDS = "seconds";
 
-	public static CpDao getInstance(Session sessao, StatelessSession sessaoStateless) {
+	public static CpDao getInstance(Session sessao,
+			StatelessSession sessaoStateless) {
 		return ModeloDao.getInstance(CpDao.class, sessao, sessaoStateless);
 	}
-	
+
 	public static CpDao getInstance(Session sessao) {
 		return ModeloDao.getInstance(CpDao.class, sessao);
 	}
@@ -200,7 +200,7 @@ public class CpDao extends ModeloDao {
 		query.setLong("idServicoPai", o.getCpServicoPai() == null ? 0 : o
 				.getCpServicoPai().getIdServico());
 
-		// Renato: Comentei a linha abaixo pois  nao entendi porque foi feito
+		// Renato: Comentei a linha abaixo pois nao entendi porque foi feito
 		// dessa forma.
 		// query.setFlushMode(FlushMode.MANUAL);
 
@@ -268,7 +268,7 @@ public class CpDao extends ModeloDao {
 
 		// Forca a carga de algums campos para garantir o lazy load.
 		CpServico srv = (CpServico) l.get(0).getImplementation();
-		
+
 		if (srv.getCpServicoPai() != null) {
 			Object o1 = srv.getCpServicoPai().getDescricao();
 		}
@@ -301,16 +301,16 @@ public class CpDao extends ModeloDao {
 	// }
 
 	public int consultarQuantidade(final DaoFiltro o) throws Exception,
-	SecurityException, IllegalAccessException,
-	InvocationTargetException, NoSuchMethodException {
+			SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException {
 		Class[] argType = { o.getClass() };
 		return (Integer) this.getClass()
 				.getMethod("consultarQuantidade", argType).invoke(this, o);
 	}
 
 	public Selecionavel consultarPorSigla(final DaoFiltro o) throws Exception,
-	SecurityException, IllegalAccessException,
-	InvocationTargetException, NoSuchMethodException {
+			SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException {
 		Class[] argType = { o.getClass() };
 		return (Selecionavel) this.getClass()
 				.getMethod("consultarPorSigla", argType).invoke(this, o);
@@ -528,10 +528,12 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CpAplicacaoFeriado> listarAplicacoesFeriado(final CpAplicacaoFeriado apl) {
-		final Query query = getSessao().getNamedQuery(
-				"listarAplicacoesFeriado");
-		query.setLong("cpOcorrenciaFeriado", apl.getCpOcorrenciaFeriado().getId());
+	public List<CpAplicacaoFeriado> listarAplicacoesFeriado(
+			final CpAplicacaoFeriado apl) {
+		final Query query = getSessao()
+				.getNamedQuery("listarAplicacoesFeriado");
+		query.setLong("cpOcorrenciaFeriado", apl.getCpOcorrenciaFeriado()
+				.getId());
 
 		query.setCacheable(true);
 		query.setCacheRegion(CACHE_QUERY_HOURS);
@@ -539,7 +541,6 @@ public class CpDao extends ModeloDao {
 		final List<CpAplicacaoFeriado> l = query.list();
 		return l;
 	}
-
 
 	@SuppressWarnings("unchecked")
 	public DpFuncaoConfianca consultarPorSigla(final DpFuncaoConfianca o) {
@@ -613,7 +614,7 @@ public class CpDao extends ModeloDao {
 
 			if (!o.isBuscarFechadas())
 				query = getSessao()
-				.getNamedQuery("consultarPorFiltroDpLotacao");
+						.getNamedQuery("consultarPorFiltroDpLotacao");
 			else
 				query = getSessao().getNamedQuery(
 						"consultarPorFiltroDpLotacaoInclusiveFechadas");
@@ -645,11 +646,12 @@ public class CpDao extends ModeloDao {
 		final Query query = getSessao().getNamedQuery(
 				"consultarPorSiglaDpLotacao");
 		query.setString("siglaLotacao", o.getSigla());
-		if (o.getOrgaoUsuario() != null) 
-			if (o.getOrgaoUsuario().getIdOrgaoUsu() != null) 
+		if (o.getOrgaoUsuario() != null)
+			if (o.getOrgaoUsuario().getIdOrgaoUsu() != null)
 				query.setLong("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());
-			else 
-				query.setLong("idOrgaoUsu", consultarPorSigla(o.getOrgaoUsuario()).getId());	
+			else
+				query.setLong("idOrgaoUsu",
+						consultarPorSigla(o.getOrgaoUsuario()).getId());
 		else
 			query.setLong("idOrgaoUsu", 0);
 
@@ -694,15 +696,17 @@ public class CpDao extends ModeloDao {
 	public Selecionavel consultarPorSigla(final DpLotacaoDaoFiltro flt) {
 		final DpLotacao o = new DpLotacao();
 		o.setSigla(flt.getSigla());
-		if (o.getOrgaoUsuario() == null && flt.getIdOrgaoUsu() != null){
-			CpOrgaoUsuario cpOrgaoUsu = consultar(flt.getIdOrgaoUsu(), CpOrgaoUsuario.class, false);
+		if (o.getOrgaoUsuario() == null && flt.getIdOrgaoUsu() != null) {
+			CpOrgaoUsuario cpOrgaoUsu = consultar(flt.getIdOrgaoUsu(),
+					CpOrgaoUsuario.class, false);
 			o.setOrgaoUsuario(cpOrgaoUsu);
 		}
 
-
-		/*		CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
-		cpOrgao.setIdOrgaoUsu(flt.getIdOrgaoUsu());
-		o.setOrgaoUsuario(cpOrgao);*/
+		/*
+		 * CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
+		 * cpOrgao.setIdOrgaoUsu(flt.getIdOrgaoUsu());
+		 * o.setOrgaoUsuario(cpOrgao);
+		 */
 		return consultarPorSigla(o);
 	}
 
@@ -777,13 +781,15 @@ public class CpDao extends ModeloDao {
 	public int consultarQuantidade(final CpGrupoDaoFiltro o) {
 		try {
 			final Query query;
-			if (o.getNome() != null){
-				query = getSessao().getNamedQuery("consultarQuantidadeCpGrupoPorCpTipoGrupoIdENome");
+			if (o.getNome() != null) {
+				query = getSessao().getNamedQuery(
+						"consultarQuantidadeCpGrupoPorCpTipoGrupoIdENome");
 				query.setString("siglaGrupo", o.getNome());
-			}else{
-				query = getSessao().getNamedQuery("consultarQuantidadeCpGrupoPorCpTipoGrupoId");
+			} else {
+				query = getSessao().getNamedQuery(
+						"consultarQuantidadeCpGrupoPorCpTipoGrupoId");
 			}
-				
+
 			if (o.getIdTpGrupo() != null) {
 				query.setLong("idTpGrupo", o.getIdTpGrupo());
 			} else {
@@ -801,11 +807,13 @@ public class CpDao extends ModeloDao {
 			final int offset, final int itemPagina) {
 		try {
 			final Query query;
-			if (o.getNome() != null){
-				query = getSessao().getNamedQuery("consultarCpGrupoPorCpTipoGrupoIdENome");
+			if (o.getNome() != null) {
+				query = getSessao().getNamedQuery(
+						"consultarCpGrupoPorCpTipoGrupoIdENome");
 				query.setString("siglaGrupo", o.getNome());
-			}else{
-				query = getSessao().getNamedQuery("consultarCpGrupoPorCpTipoGrupoId");
+			} else {
+				query = getSessao().getNamedQuery(
+						"consultarCpGrupoPorCpTipoGrupoId");
 			}
 			if (offset > 0) {
 				query.setFirstResult(offset);
@@ -939,8 +947,7 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public List<CpUF> consultarUF() {
 
-		Query query = getSessao().createQuery(
-				"from CpUF l order by l.nmUF");
+		Query query = getSessao().createQuery("from CpUF l order by l.nmUF");
 		List l = query.list();
 		return l;
 	}
@@ -972,7 +979,7 @@ public class CpDao extends ModeloDao {
 				"from CpLocalidade l order by l.nmLocalidade");
 		List l = query.list();
 		return l;
-	}	
+	}
 
 	@SuppressWarnings("unchecked")
 	public CpPersonalizacao consultarPersonalizacao(DpPessoa pes) {
@@ -1066,7 +1073,7 @@ public class CpDao extends ModeloDao {
 
 			if (!flt.isBuscarFechadas())
 				query = getSessao()
-				.getNamedQuery("consultarQuantidadeDpPessoa");
+						.getNamedQuery("consultarQuantidadeDpPessoa");
 			else
 				query = getSessao().getNamedQuery(
 						"consultarQuantidadeDpPessoaInclusiveFechadas");
@@ -1116,7 +1123,8 @@ public class CpDao extends ModeloDao {
 					.getIdPessoaIni());
 			query.setLong("idLotaSubstitutoIni", exemplo.getLotaSubstituto()
 					.getIdLotacaoIni());
-			// Reativado pois esse query é executado a cada chamada, inclusive as ajax.
+			// Reativado pois esse query é executado a cada chamada, inclusive
+			// as ajax.
 			query.setCacheable(true);
 			query.setCacheRegion(CACHE_QUERY_SUBSTITUICAO);
 			return query.list();
@@ -1247,16 +1255,16 @@ public class CpDao extends ModeloDao {
 	public List<DpPessoa> pessoasPorLotacao(Long id,
 			Boolean incluirSublotacoes, Boolean somenteServidor,
 			SituacaoFuncionalEnum situacoesFuncionais)
-					throws AplicacaoException {
+			throws AplicacaoException {
 		if (id == null || id == 0)
 			return null;
 
 		List<DpPessoa> lstCompleta = new ArrayList<DpPessoa>();
-		
+
 		DpLotacao lotacao = consultar(id, DpLotacao.class, false);
-				
+
 		lotacao = lotacao.getLotacaoAtual();
-		
+
 		if (lotacao == null)
 			return lstCompleta;
 
@@ -1280,7 +1288,6 @@ public class CpDao extends ModeloDao {
 			}
 		}
 
-		
 		for (DpLotacao lot : sublotacoes) {
 
 			Criteria c = HibernateUtil.getSessao().createCriteria(
@@ -1291,7 +1298,7 @@ public class CpDao extends ModeloDao {
 			if (somenteServidor) {
 				c.add(Restrictions.not(Restrictions.in("c.nomeCargo",
 						new String[] { "ESTAGIARIO", "JUIZ SUBSTITUTO",
-				"JUIZ FEDERAL" })));
+								"JUIZ FEDERAL" })));
 			}
 
 			c.add(Restrictions.in("situacaoFuncionalPessoa",
@@ -1308,7 +1315,8 @@ public class CpDao extends ModeloDao {
 	}
 
 	public List<DpPessoa> pessoasPorLotacao(Long id,
-			Boolean incluirSublotacoes, Boolean somenteServidor) throws AplicacaoException {
+			Boolean incluirSublotacoes, Boolean somenteServidor)
+			throws AplicacaoException {
 		return pessoasPorLotacao(id, incluirSublotacoes, somenteServidor,
 				SituacaoFuncionalEnum.APENAS_ATIVOS);
 	}
@@ -1335,43 +1343,48 @@ public class CpDao extends ModeloDao {
 	}
 
 	public List<CpConfiguracao> consultarConfiguracoesDesde(Date desde) {
-		Criteria c = HibernateUtil.getSessao().createCriteria(CpConfiguracao.class);
+		Criteria c = HibernateUtil.getSessao().createCriteria(
+				CpConfiguracao.class);
 		SimpleExpression confsAtivas = Restrictions.gt("hisDtIni", desde);
 		SimpleExpression confsInativas = Restrictions.ge("hisDtFim", desde);
-		c.add(Restrictions.or(confsAtivas,confsInativas));
+		c.add(Restrictions.or(confsAtivas, confsInativas));
 		return c.list();
 	}
 
 	public Date consultarDataUltimaAtualizacao() throws AplicacaoException {
-	//	Query sql = (Query) getSessao().getNamedQuery("consultarDataUltimaAtualizacao");
-		StatelessSession statelessSession = HibernateUtil.getSessionFactory().openStatelessSession();
+		// Query sql = (Query)
+		// getSessao().getNamedQuery("consultarDataUltimaAtualizacao");
+		StatelessSession statelessSession = HibernateUtil.getSessionFactory()
+				.openStatelessSession();
 		Transaction transaction = statelessSession.beginTransaction();
-		try{
-			
-			Query sql = (Query) statelessSession.getNamedQuery("consultarDataUltimaAtualizacao");
-			
+		try {
+
+			Query sql = (Query) statelessSession
+					.getNamedQuery("consultarDataUltimaAtualizacao");
+
 			sql.setCacheable(false);
 			List result = sql.list();
-			
+
 			Date dtIni = (Date) ((Object[]) (result.get(0)))[0];
 			Date dtFim = (Date) ((Object[]) (result.get(0)))[1];
 			transaction.commit();
 			return DateUtils.max(dtIni, dtFim);
-		}catch(Exception e){
+		} catch (Exception e) {
 			try {
-				if (transaction instanceof org.hibernate.engine.transaction.internal.jta.JtaTransaction){
-					((org.hibernate.engine.transaction.internal.jta.JtaTransaction)transaction).getUserTransaction().rollback();
+				if (transaction instanceof org.hibernate.engine.transaction.internal.jta.JtaTransaction) {
+					((org.hibernate.engine.transaction.internal.jta.JtaTransaction) transaction)
+							.getUserTransaction().rollback();
 				}
 			} catch (IllegalStateException | SecurityException
 					| SystemException e1) {
 			}
-			
+
 			return null;
 
-		}finally{
+		} finally {
 			statelessSession.close();
 		}
-		
+
 	}
 
 	public Date dt() throws AplicacaoException {
@@ -1389,8 +1402,10 @@ public class CpDao extends ModeloDao {
 		return query.list();
 	}
 
-	public List<CpConfiguracao> consultarConfiguracoesPorTipo(final Long idTipoConfig) {
-		Query query = getSessao().getNamedQuery("consultarCpConfiguracoesPorTipo");
+	public List<CpConfiguracao> consultarConfiguracoesPorTipo(
+			final Long idTipoConfig) {
+		Query query = getSessao().getNamedQuery(
+				"consultarCpConfiguracoesPorTipo");
 
 		query.setLong("idTpConfiguracao", idTipoConfig);
 
@@ -1400,11 +1415,11 @@ public class CpDao extends ModeloDao {
 	}
 
 	public List<CpConfiguracao> consultarConfiguracoesAtivas() {
-		Query query = getSessao().getNamedQuery("consultarCpConfiguracoesAtivas");
+		Query query = getSessao().getNamedQuery(
+				"consultarCpConfiguracoesAtivas");
 		query.setCacheable(false);
 		return query.list();
 	}
-
 
 	public List<CpConfiguracao> porLotacaoPessoaServicoTipo(
 			final CpConfiguracao exemplo) {
@@ -1489,82 +1504,85 @@ public class CpDao extends ModeloDao {
 	 * @throws AplicacaoException
 	 */
 	public void importarAcessoTomcat() throws SQLException,
-	InvalidKeyException, NoSuchAlgorithmException,
-	NoSuchPaddingException, IllegalBlockSizeException,
-	BadPaddingException, AplicacaoException {
+			InvalidKeyException, NoSuchAlgorithmException,
+			NoSuchPaddingException, IllegalBlockSizeException,
+			BadPaddingException, AplicacaoException {
 		final Date dt = consultarDataEHoraDoServidor();
 		final String s = "SELECT * FROM ACESSO_TOMCAT.USUARIO";
 
-		getSessao().doWork(
-				new Work() {
-					public void execute(Connection conn) throws SQLException 
-					{ 
-						final PreparedStatement ps = conn.prepareStatement(s);
-						try{
-							final ResultSet rset = ps.executeQuery();
-							CpTipoIdentidade tid = consultar(1, CpTipoIdentidade.class, false);
-							while (rset.next()) {
-								final String login = (String) rset.getObject(1);
-								final String senha = (String) rset.getObject(2);
-								Long cpf;
-								try {
-									cpf = ((BigDecimal) rset.getObject(4)).longValue();
-								} catch (NullPointerException e1) {
-									System.out.println("CPF nulo:" + login);
-									continue;
-								}
-								if (!Character.isDigit(login.charAt(2))) {
-									System.out.println("Login sem matricula:" + login);
-									continue;
-								}
-								final long longmatricula = Long.parseLong(login.substring(2));
-
-								DpPessoa pessoa;
-								try {
-									pessoa = consultarPorCpfMatricula(cpf, longmatricula);
-								} catch (org.hibernate.NonUniqueResultException e) {
-									System.out.println("Mais de um registro retornado:" + login);
-									continue;
-								}
-								if (pessoa == null) {
-									System.out.println("Pessoa nao localizada:" + login);
-									continue;
-								}
-
-								CpIdentidade id = new CpIdentidade();
-								id.setCpOrgaoUsuario(pessoa.getOrgaoUsuario());
-								id.setCpTipoIdentidade(tid);
-								id.setDpPessoa(pessoa);
-								id.setDscSenhaIdentidade(senha);
-
-								// BASE64Encoder encoderBase64 = new BASE64Encoder();
-								// String chave =
-								// encoderBase64.encode(id.getDpPessoa().getIdInicial()
-								// .toString().getBytes());
-								// String senhaCripto = encoderBase64.encode(Criptografia
-								// .criptografar(senha, chave));
-								// id.setDscSenhaIdentidadeCripto(senhaCripto);
-								// id.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
-
-								id.setDtCancelamentoIdentidade(null);
-								id.setDtCriacaoIdentidade(dt);
-								id.setDtExpiracaoIdentidade(null);
-								id.setHisDtFim(null);
-								id.setHisDtIni(dt);
-								// id.setIdCpIdentidade(null);
-								id.setNmLoginIdentidade(login);
-								gravar(id);
-								id.setHisIdIni(id.getIdIdentidade());
-								gravar(id);
-							} 
-						}catch(Exception ex){
-							ex.printStackTrace();
-						}finally{
-							ps.close();
+		getSessao().doWork(new Work() {
+			public void execute(Connection conn) throws SQLException {
+				final PreparedStatement ps = conn.prepareStatement(s);
+				try {
+					final ResultSet rset = ps.executeQuery();
+					CpTipoIdentidade tid = consultar(1, CpTipoIdentidade.class,
+							false);
+					while (rset.next()) {
+						final String login = (String) rset.getObject(1);
+						final String senha = (String) rset.getObject(2);
+						Long cpf;
+						try {
+							cpf = ((BigDecimal) rset.getObject(4)).longValue();
+						} catch (NullPointerException e1) {
+							System.out.println("CPF nulo:" + login);
+							continue;
 						}
-					}
-				});
+						if (!Character.isDigit(login.charAt(2))) {
+							System.out.println("Login sem matricula:" + login);
+							continue;
+						}
+						final long longmatricula = Long.parseLong(login
+								.substring(2));
 
+						DpPessoa pessoa;
+						try {
+							pessoa = consultarPorCpfMatricula(cpf,
+									longmatricula);
+						} catch (org.hibernate.NonUniqueResultException e) {
+							System.out.println("Mais de um registro retornado:"
+									+ login);
+							continue;
+						}
+						if (pessoa == null) {
+							System.out
+									.println("Pessoa nao localizada:" + login);
+							continue;
+						}
+
+						CpIdentidade id = new CpIdentidade();
+						id.setCpOrgaoUsuario(pessoa.getOrgaoUsuario());
+						id.setCpTipoIdentidade(tid);
+						id.setDpPessoa(pessoa);
+						id.setDscSenhaIdentidade(senha);
+
+						// BASE64Encoder encoderBase64 = new BASE64Encoder();
+						// String chave =
+						// encoderBase64.encode(id.getDpPessoa().getIdInicial()
+						// .toString().getBytes());
+						// String senhaCripto =
+						// encoderBase64.encode(Criptografia
+						// .criptografar(senha, chave));
+						// id.setDscSenhaIdentidadeCripto(senhaCripto);
+						// id.setDscSenhaIdentidadeCriptoSinc(senhaCripto);
+
+						id.setDtCancelamentoIdentidade(null);
+						id.setDtCriacaoIdentidade(dt);
+						id.setDtExpiracaoIdentidade(null);
+						id.setHisDtFim(null);
+						id.setHisDtIni(dt);
+						// id.setIdCpIdentidade(null);
+						id.setNmLoginIdentidade(login);
+						gravar(id);
+						id.setHisIdIni(id.getIdIdentidade());
+						gravar(id);
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				} finally {
+					ps.close();
+				}
+			}
+		});
 
 	}
 
@@ -1603,10 +1621,12 @@ public class CpDao extends ModeloDao {
 		getSessao().flush();
 		try {
 			invalidarCache(entidade);
-			//Edson: não há necessidade de limpar o cache de configs no próprio request
-			//pois, no request seguinte, a limpeza será feita. Além disso, estava gerando
-			//o erro #972 (ver comentários)
-			//Cp.getInstance().getConf().limparCacheSeNecessario();
+			// Edson: não há necessidade de limpar o cache de configs no próprio
+			// request
+			// pois, no request seguinte, a limpeza será feita. Além disso,
+			// estava gerando
+			// o erro #972 (ver comentários)
+			// Cp.getInstance().getConf().limparCacheSeNecessario();
 		} catch (Exception e) {
 			throw new AplicacaoException("Nao foi possivel limpar o cache.", 0,
 					e);
@@ -1616,7 +1636,7 @@ public class CpDao extends ModeloDao {
 
 	public <T> T gravar(final T entidade) {
 		if (entidade instanceof CarimboDeTempo)
-			((CarimboDeTempo)entidade).setHisDtAlt(this.dt());
+			((CarimboDeTempo) entidade).setHisDtAlt(this.dt());
 		getSessao().saveOrUpdate(entidade);
 		invalidarCache(entidade);
 		return entidade;
@@ -1625,14 +1645,16 @@ public class CpDao extends ModeloDao {
 	public void invalidarCache(Object entidade) {
 		if (entidade == null)
 			return;
-		SessionFactory sfCpDao = CpDao.getInstance().getSessao().getSessionFactory();
+		SessionFactory sfCpDao = CpDao.getInstance().getSessao()
+				.getSessionFactory();
 		if (entidade instanceof DpSubstituicao) {
 			sfCpDao.evict(DpSubstituicao.class);
 			sfCpDao.evictQueries(CACHE_QUERY_SUBSTITUICAO);
 		}
 	}
 
-	static public Configuration criarHibernateCfg(String datasource) throws Exception {
+	static public Configuration criarHibernateCfg(String datasource)
+			throws Exception {
 
 		Configuration cfg = new Configuration();
 		cfg.setProperty("hibernate.connection.datasource", datasource);
@@ -1656,14 +1678,15 @@ public class CpDao extends ModeloDao {
 		return configurarHibernate(cfg);
 	}
 
-	static public Configuration criarHibernateCfg(
-			CpAmbienteEnumBL ambiente) throws Exception {
+	static public Configuration criarHibernateCfg(CpAmbienteEnumBL ambiente)
+			throws Exception {
 		CpPropriedadeBL prop = Cp.getInstance().getProp();
 		prop.setPrefixo(ambiente.getSigla());
 		return criarHibernateCfg(ambiente, prop);
 	}
 
-	static public Configuration criarHibernateCfg(CpAmbienteEnumBL ambiente, CpPropriedadeBL prop) throws Exception {
+	static public Configuration criarHibernateCfg(CpAmbienteEnumBL ambiente,
+			CpPropriedadeBL prop) throws Exception {
 
 		Configuration cfg = new Configuration();
 
@@ -1672,7 +1695,8 @@ public class CpDao extends ModeloDao {
 		cfg.setProperty("hibernate.connection.url", prop.urlConexao());
 		cfg.setProperty("hibernate.connection.username", prop.usuario());
 		cfg.setProperty("hibernate.connection.password", prop.senha());
-		cfg.setProperty("hibernate.connection.driver_class", prop.driverConexao());
+		cfg.setProperty("hibernate.connection.driver_class",
+				prop.driverConexao());
 		cfg.setProperty("c3p0.min_size", prop.c3poMinSize());
 		cfg.setProperty("c3p0.max_size", prop.c3poMaxSize());
 		cfg.setProperty("c3p0.timeout", prop.c3poTimeout());
@@ -1684,23 +1708,30 @@ public class CpDao extends ModeloDao {
 		return cfg;
 	}
 
-	static private Configuration configurarHibernate(Configuration cfg) throws Exception {
-		cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
+	static private Configuration configurarHibernate(Configuration cfg)
+			throws Exception {
+		cfg.setProperty("hibernate.dialect",
+				"org.hibernate.dialect.Oracle10gDialect");
 
 		cfg.setProperty("hibernate.current_session_context_class", "thread");
 		cfg.setProperty("hibernate.query.substitutions", "true 1, false 0");
 
-		cfg.setProperty("hibernate.cache.region.factory_class", "org.jboss.as.jpa.hibernate4.infinispan.InfinispanRegionFactory");
+		cfg.setProperty("hibernate.cache.region.factory_class",
+				"org.jboss.as.jpa.hibernate4.infinispan.InfinispanRegionFactory");
 
-		cfg.setProperty("hibernate.cache.use_second_level_cache", Cp.getInstance().getProp().cacheUseSecondLevelCache());
-		cfg.setProperty("hibernate.cache.infinispan.cachemanager","java:jboss/infinispan/container/hibernate");
-		cfg.setProperty("hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup");
+		cfg.setProperty("hibernate.cache.use_second_level_cache", Cp
+				.getInstance().getProp().cacheUseSecondLevelCache());
+		cfg.setProperty("hibernate.cache.infinispan.cachemanager",
+				"java:jboss/infinispan/container/hibernate");
+		cfg.setProperty("hibernate.transaction.manager_lookup_class",
+				"org.hibernate.transaction.JBossTransactionManagerLookup");
 
-		cfg.setProperty("hibernate.cache.use_query_cache", Cp.getInstance().getProp().cacheUseQueryCache());
+		cfg.setProperty("hibernate.cache.use_query_cache", Cp.getInstance()
+				.getProp().cacheUseQueryCache());
 		cfg.setProperty("hibernate.cache.use_minimal_puts", "false");
 		cfg.setProperty("hibernate.max_fetch_depth", "3");
-		//cfg.setProperty("hibernate.default_batch_fetch_size", "5");
-	//	cfg.setProperty("hibernate.cache.provider_configuration_file_resource_path","classpath:ehcache.xml");
+		// cfg.setProperty("hibernate.default_batch_fetch_size", "5");
+		// cfg.setProperty("hibernate.cache.provider_configuration_file_resource_path","classpath:ehcache.xml");
 		cfg.setProperty("hibernate.show_sql", "false");
 
 		// descomentar para inpecionar o SQL
@@ -1712,35 +1743,37 @@ public class CpDao extends ModeloDao {
 		// name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
 		// <property name="cache.use_query_cache">false</property>
 
-		cfg.addClass(br.gov.jfrj.siga.dp.DpCargo.class);
-		cfg.addClass(br.gov.jfrj.siga.dp.DpFuncaoConfianca.class);
-		cfg.addClass(br.gov.jfrj.siga.dp.DpLotacao.class);
-		cfg.addClass(br.gov.jfrj.siga.dp.DpPessoa.class);
-		cfg.addClass(br.gov.jfrj.siga.dp.CpOrgao.class);
-		cfg.addClass(br.gov.jfrj.siga.dp.CpOrgaoUsuario.class);
-		cfg.addClass(br.gov.jfrj.siga.dp.DpSubstituicao.class);
-		cfg.addClass(br.gov.jfrj.siga.dp.CpFeriado.class);
-		cfg.addClass(br.gov.jfrj.siga.dp.CpOcorrenciaFeriado.class);
-		cfg.addClass(br.gov.jfrj.siga.dp.CpAplicacaoFeriado.class);
-		cfg.addClass(br.gov.jfrj.siga.dp.CpLocalidade.class);
-		cfg.addClass(br.gov.jfrj.siga.dp.CpUF.class);
-		cfg.addClass(br.gov.jfrj.siga.dp.CpPersonalizacao.class);
-		cfg.addClass(br.gov.jfrj.siga.dp.CpTipoPessoa.class);
-		cfg.addClass(br.gov.jfrj.siga.cp.CpConfiguracao.class);
-		cfg.addClass(br.gov.jfrj.siga.cp.CpSituacaoConfiguracao.class);
-		cfg.addClass(br.gov.jfrj.siga.cp.CpTipoConfiguracao.class);
-		cfg.addClass(br.gov.jfrj.siga.cp.CpServico.class);
-		cfg.addClass(br.gov.jfrj.siga.cp.CpTipoGrupo.class);
-		cfg.addClass(br.gov.jfrj.siga.cp.CpGrupo.class);
-		cfg.addClass(br.gov.jfrj.siga.dp.CpTipoLotacao.class);
-		cfg.addClass(br.gov.jfrj.siga.cp.CpTipoPapel.class);
-		cfg.addClass(br.gov.jfrj.siga.cp.CpPapel.class);
-		cfg.addClass(br.gov.jfrj.siga.cp.CpTipoServico.class);
-		cfg.addClass(br.gov.jfrj.siga.cp.CpTipoIdentidade.class);
-		cfg.addClass(br.gov.jfrj.siga.cp.CpIdentidade.class);
-		cfg.addClass(br.gov.jfrj.siga.cp.CpModelo.class);
-		cfg.addClass(br.gov.jfrj.siga.cp.CpUnidadeMedida.class);
-		cfg.addClass(br.gov.jfrj.siga.cp.CpComplexo.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpConfiguracao.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpTipoConfiguracao.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpTipoPessoa.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpTipoGrupo.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpTipoLotacao.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpTipoServico.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpTipoIdentidade.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpTipoPapel.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpSituacaoConfiguracao.class);
+
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpModelo.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.DpPessoa.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.DpCargo.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.DpFuncaoConfianca.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.DpLotacao.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpIdentidade.class);
+
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpOrgao.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpOrgaoUsuario.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.DpSubstituicao.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpFeriado.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpOcorrenciaFeriado.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpAplicacaoFeriado.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpLocalidade.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpUF.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpPersonalizacao.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpServico.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpGrupo.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpPapel.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpUnidadeMedida.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpComplexo.class);
 
 		// <!--
 		// <mapping resource="br/gov/jfrj/siga/dp/CpTipoMarcador.hbm.xml" />
@@ -1813,26 +1846,46 @@ public class CpDao extends ModeloDao {
 			config.setMaxElementsOnDisk(0);
 		}
 
-
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoLotacao","transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpLotacao", "transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoPessoa","transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpPessoa", "transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpFuncaoConfianca", "transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpOrgaoUsuario", "transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpCargo", "transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpOrgao", "transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpLocalidade",	"transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpUF", "transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpFeriado", "transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoServico", "transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpServico", "transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoConfiguracao", "transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoIdentidade", "transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoPapel", "transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoGrupo", "transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpIdentidade", "transactional", CACHE_SECONDS);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpSubstituicao", "transactional", CACHE_QUERY_SUBSTITUICAO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoLotacao",
+				"transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpLotacao",
+				"transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoPessoa",
+				"transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpPessoa",
+				"transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy(
+				"br.gov.jfrj.siga.dp.DpFuncaoConfianca", "transactional",
+				CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpOrgaoUsuario",
+				"transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpCargo",
+				"transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpOrgao",
+				"transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpLocalidade",
+				"transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpUF",
+				"transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpFeriado",
+				"transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoServico",
+				"transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpServico",
+				"transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy(
+				"br.gov.jfrj.siga.cp.CpTipoConfiguracao", "transactional",
+				CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoIdentidade",
+				"transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoPapel",
+				"transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoGrupo",
+				"transactional", CACHE_CORPORATIVO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpIdentidade",
+				"transactional", CACHE_SECONDS);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpSubstituicao",
+				"transactional", CACHE_QUERY_SUBSTITUICAO);
 
 		return cfg;
 	}
@@ -1899,8 +1952,8 @@ public class CpDao extends ModeloDao {
 			for (CpModelo mod : lista) {
 				if ((mod.getCpOrgaoUsuario() == null && orgUsu == null)
 						|| (mod.getCpOrgaoUsuario() != null && orgUsu != null && mod
-						.getCpOrgaoUsuario().getId()
-						.equals(orgUsu.getId()))) {
+								.getCpOrgaoUsuario().getId()
+								.equals(orgUsu.getId()))) {
 					listaFinal.add(mod);
 					fFound = true;
 				}
@@ -1930,7 +1983,7 @@ public class CpDao extends ModeloDao {
 				l.add(mod);
 		return l;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public CpModelo consultarPorIdInicialCpModelo(final Long idInicial) {
 		final Query query = getSessao().getNamedQuery(
@@ -1971,10 +2024,11 @@ public class CpDao extends ModeloDao {
 	public List<CpServico> listarServicos() {
 		return findAndCacheByCriteria(CACHE_QUERY_SECONDS, CpServico.class);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<CpServico> listarServicosPorPai(CpServico servicoPai) {
-		return findByCriteria(CpServico.class,Property.forName("cpServicoPai").eq(servicoPai));
+		return findByCriteria(CpServico.class, Property.forName("cpServicoPai")
+				.eq(servicoPai));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -2028,11 +2082,9 @@ public class CpDao extends ModeloDao {
 	}
 
 	public List<CpMarcador> listarMarcadores(Long[] ids) {
-		return findAndCacheByCriteria(
-				CACHE_QUERY_HOURS, 
-				CpMarcador.class, 
-				new Criterion[]{Restrictions.in("idMarcador", ids)}, 
-				new Order[]{Order.asc("descrMarcador")});
+		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpMarcador.class,
+				new Criterion[] { Restrictions.in("idMarcador", ids) },
+				new Order[] { Order.asc("descrMarcador") });
 	}
 
 	public List<CpGrupoDeEmail> listarGruposDeEmail() {
@@ -2159,32 +2211,34 @@ public class CpDao extends ModeloDao {
 
 	public DpLotacao obterLotacaoAtual(final DpLotacao lotacao) {
 		try {
-			
-			final Query qry = getSessao().getNamedQuery("consultarLotacaoAtualPelaLotacaoInicial");
+
+			final Query qry = getSessao().getNamedQuery(
+					"consultarLotacaoAtualPelaLotacaoInicial");
 			qry.setLong("idLotacaoIni", lotacao.getIdLotacaoIni());
 			final DpLotacao lot = (DpLotacao) qry.uniqueResult();
 			return lot;
-		} catch(final IllegalArgumentException e) {
+		} catch (final IllegalArgumentException e) {
 			throw e;
-			
+
 		} catch (final Exception e) {
-	       return null;			
+			return null;
 		}
 	}
-	
-	public DpPessoa obterPessoaAtual(final DpPessoa pessoa)  {
+
+	public DpPessoa obterPessoaAtual(final DpPessoa pessoa) {
 		try {
-			
-			final Query qry = getSessao().getNamedQuery("consultarPessoaAtualPelaInicial");
+
+			final Query qry = getSessao().getNamedQuery(
+					"consultarPessoaAtualPelaInicial");
 			qry.setLong("idPessoaIni", pessoa.getIdPessoaIni());
 			final DpPessoa pes = (DpPessoa) qry.uniqueResult();
 			return pes;
-		} catch(final IllegalArgumentException e) {
+		} catch (final IllegalArgumentException e) {
 			throw e;
-			
+
 		} catch (final Exception e) {
-	       return null;			
+			return null;
 		}
 	}
-	
+
 }

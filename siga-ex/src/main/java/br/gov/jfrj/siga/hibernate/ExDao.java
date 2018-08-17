@@ -1814,7 +1814,7 @@ public class ExDao extends CpDao {
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.ExMarca.class);
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpMarca.class);
 		
-		cfg.addClass(br.gov.jfrj.siga.ex.ExConfiguracao.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.ExConfiguracao.class);
 
 		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExClassificacao",
 		// "read-only", "ex");

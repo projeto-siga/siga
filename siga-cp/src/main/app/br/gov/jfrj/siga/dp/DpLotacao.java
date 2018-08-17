@@ -53,22 +53,14 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
-@NamedQueries({
-	@NamedQuery(
-	name = "consultarLotacaoAtualPelaLotacaoInicial",
-	query = "from DpLotacao lot where lot.dataInicioLotacao = (select max(l.dataInicioLotacao) from DpLotacao l where l.idLotacaoIni = :idLotacaoIni) and" +
-	" lot.idLotacaoIni = :idLotacaoIni)"
-	)
-	
-})
-
 @Entity
 @Table(name = "DP_LOTACAO", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpLotacao extends AbstractDpLotacao implements Serializable,
-		Selecionavel, Historico, Sincronizavel,  Comparable, DpConvertableEntity  {
+		Selecionavel, Historico, Sincronizavel, Comparable, DpConvertableEntity {
 	private static final long serialVersionUID = 5628179687234082413L;
-	public static ActiveRecord<DpLotacao> AR = new ActiveRecord<>(DpLotacao.class);
+	public static ActiveRecord<DpLotacao> AR = new ActiveRecord<>(
+			DpLotacao.class);
 
 	@Formula(value = "REMOVE_ACENTO(NOME_LOTACAO)")
 	@Desconsiderar
@@ -93,7 +85,8 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 
 	public String getLocalidadeString() {
 		for (String municipio : CpLocalidade.getMunicipios())
-			if (getNomeLotacao().toLowerCase().contains(municipio.toLowerCase()))
+			if (getNomeLotacao().toLowerCase()
+					.contains(municipio.toLowerCase()))
 				return municipio;
 		return getOrgaoUsuario().getMunicipioOrgaoUsu();
 	}
@@ -127,8 +120,8 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	public Long getId() {
 		return super.getIdLotacao();
 	}
-	
-	public void setId(Long id){
+
+	public void setId(Long id) {
 		setIdLotacao(id);
 	}
 
@@ -151,12 +144,11 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	}
 
 	public void setSigla(String sigla) {
-	    if (sigla == null) {
-	        sigla = "";
-	    }
+		if (sigla == null) {
+			sigla = "";
+		}
 		String siglasOrgaoUsu = "";
-		List<CpOrgaoUsuario> lou = CpDao.getInstance()
-				.listarOrgaosUsuarios();
+		List<CpOrgaoUsuario> lou = CpDao.getInstance().listarOrgaosUsuarios();
 		for (CpOrgaoUsuario ou : lou) {
 			siglasOrgaoUsu += (siglasOrgaoUsu.length() > 0 ? "|" : "")
 					+ ou.getSiglaOrgaoUsu();
@@ -168,8 +160,7 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 			cpOrgao.setSiglaOrgaoUsu(m.group(1).toUpperCase());
 			setOrgaoUsuario(cpOrgao);
 			setSiglaLotacao(m.group(2).toUpperCase());
-		}
-		else {
+		} else {
 			setSiglaLotacao(sigla.toUpperCase());
 		}
 	}
@@ -342,13 +333,13 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	 * Retorna a lotacao atual (última) no historico desta lotacao
 	 * 
 	 * @return DpLotacao
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
 	public DpLotacao getLotacaoAtual() {
-		
+
 		if (this.getDataFim() != null)
 			return CpDao.getInstance().obterLotacaoAtual(this);
-		
+
 		return this;
 	}
 
@@ -396,47 +387,47 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		}
 		return idOrgaoUsuario;
 	}
-	
-	 /**
-     * Retorna a data de inicio da lotacao no formato dd/mm/aa HH:MI:SS,
-     * por exemplo, 01/02/10 14:10:00.
-     * 
-     * @return Data de inicio da pessoa no formato dd/mm/aa HH:MI:SS, por
-     *         exemplo, 01/02/10 14:10:00.
-     * 
-     */
-    public String getDtInicioLotacaoDDMMYYHHMMSS() {
-            if (getDataInicioLotacao() != null) {
-                    final SimpleDateFormat df = new SimpleDateFormat(
-                                    "dd/MM/yy HH:mm:ss");
-                    return df.format(getDataInicioLotacao());
-            }
-            return "";
-    }
 
-    /**
-     * Retorna a data de fim da lotacao no formato dd/mm/aa HH:MI:SS,
-     * por exemplo, 01/02/10 14:10:00.
-     * 
-     * @return Data de inicio da fim no formato dd/mm/aa HH:MI:SS, por
-     *         exemplo, 01/02/10 14:10:00.
-     * 
-     */
-    public String getDtFimLotacaoDDMMYYHHMMSS() {
-            if (getDataFimLotacao() != null) {
-                    final SimpleDateFormat df = new SimpleDateFormat(
-                                    "dd/MM/yy HH:mm:ss");
-                    return df.format(getDataFimLotacao());
-            }
-            return "";
-    }       
-    
-    public int compareTo(Object o) {
-            DpLotacao other = (DpLotacao) o;
+	/**
+	 * Retorna a data de inicio da lotacao no formato dd/mm/aa HH:MI:SS, por
+	 * exemplo, 01/02/10 14:10:00.
+	 * 
+	 * @return Data de inicio da pessoa no formato dd/mm/aa HH:MI:SS, por
+	 *         exemplo, 01/02/10 14:10:00.
+	 * 
+	 */
+	public String getDtInicioLotacaoDDMMYYHHMMSS() {
+		if (getDataInicioLotacao() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat(
+					"dd/MM/yy HH:mm:ss");
+			return df.format(getDataInicioLotacao());
+		}
+		return "";
+	}
 
-            return getNomeLotacao().compareTo(other.getNomeLotacao());
-    }
-    
+	/**
+	 * Retorna a data de fim da lotacao no formato dd/mm/aa HH:MI:SS, por
+	 * exemplo, 01/02/10 14:10:00.
+	 * 
+	 * @return Data de inicio da fim no formato dd/mm/aa HH:MI:SS, por exemplo,
+	 *         01/02/10 14:10:00.
+	 * 
+	 */
+	public String getDtFimLotacaoDDMMYYHHMMSS() {
+		if (getDataFimLotacao() != null) {
+			final SimpleDateFormat df = new SimpleDateFormat(
+					"dd/MM/yy HH:mm:ss");
+			return df.format(getDataFimLotacao());
+		}
+		return "";
+	}
+
+	public int compareTo(Object o) {
+		DpLotacao other = (DpLotacao) o;
+
+		return getNomeLotacao().compareTo(other.getNomeLotacao());
+	}
+
 	@Override
 	public String toString() {
 		return getSiglaCompleta();

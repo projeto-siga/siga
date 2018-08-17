@@ -22,8 +22,6 @@
  */
 package br.gov.jfrj.siga.dp;
 
-import static javax.persistence.GenerationType.SEQUENCE;
-
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -33,76 +31,84 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @MappedSuperclass
+@NamedQueries({
+		@NamedQuery(name = "consultarPorSiglaCpOrgao", query = "select org from CpOrgao org where upper(org.siglaOrgao) like upper('%' || :siglaOrgao || '%') and org.ativo='S'"),
+		@NamedQuery(name = "consultarPorSiglaExataCpOrgao", query = "select org from CpOrgao org where upper(org.siglaOrgao) = upper(:siglaOrgao) and org.ativo='S'"),
+		@NamedQuery(name = "consultarPorFiltroCpOrgao", query = "from CpOrgao org where ((upper(org.nmOrgaoAI) like upper('%' || :nome || '%')) or (upper(org.siglaOrgao) like upper('%' || :nome || '%'))) and org.ativo='S' order by org.nmOrgao"),
+		@NamedQuery(name = "consultarQuantidadeCpOrgao", query = "select count(org) from CpOrgao org where ((upper(org.nmOrgaoAI) like upper('%' || :nome || '%')) or (upper(org.siglaOrgao) like upper('%' || :nome || '%'))) and org.ativo='S' order by org.nmOrgao"),
+		@NamedQuery(name = "consultarCpOrgaoOrdenadoPorNome", query = "from CpOrgao org order by org.nmOrgao") })
 public abstract class AbstractCpOrgao extends HistoricoSuporte implements
 		Serializable {
 
-	@Column(name = "BAIRRO_ORGAO")
+	@SequenceGenerator(name = "generator", sequenceName = "CP_ORGAO_SEQ")
+	@Id
+	@GeneratedValue(generator = "generator")
+	@Column(name = "ID_ORGAO", unique = true, nullable = false)
+	@Desconsiderar
+	private Long idOrgao;
+
+	@Column(name = "BAIRRO_ORGAO", length = 50)
 	private String bairroOrgao;
 
-	@Column(name = "CEP_ORGAO")
+	@Column(name = "CEP_ORGAO", length = 8)
 	private String cepOrgao;
 
 	@Column(name = "CGC_ORGAO")
 	private Integer cgcOrgao;
 
-	@Column(name = "DSC_TIPO_ORGAO")
+	@Column(name = "DSC_TIPO_ORGAO", length = 100)
 	private String dscTipoOrgao;
 
 	@Column(name = "EMAIL_CONTATO_ORGAO")
 	private String emailContatoOrgao;
 
-	@Column(name = "EMAIL_RESPONSAVEL_ORGAO")
+	@Column(name = "EMAIL_RESPONSAVEL_ORGAO", length = 60)
 	private String emailRespOrgao;
 
-	@Column(name = "END_ORGAO")
+	@Column(name = "END_ORGAO", length = 256)
 	private String enderecoOrgao;
 
-	@SequenceGenerator(name = "generator", sequenceName = "CP_ORGAO_SEQ")
-	@Id
-	@GeneratedValue(generator = "generator")
-	@Column(name = "ID_ORGAO", nullable = false)
-	@Desconsiderar
-	private Long idOrgao;
-
-	@Column(name = "MUNICIPIO_ORGAO")
+	@Column(name = "MUNICIPIO_ORGAO", length = 50)
 	private String municipioOrgao;
 
 	@Column(name = "NOME_CONTATO_ORGAO")
 	private String nmContatoOrgao;
 
-	@Column(name = "NM_ORGAO", nullable = false)
+	@Column(name = "NM_ORGAO", nullable = false, length = 256)
 	private String nmOrgao;
 
-	@Column(name = "NOME_RESPONSAVEL_ORGAO")
+	@Column(name = "NOME_RESPONSAVEL_ORGAO", length = 60)
 	private String nmRespOrgao;
 
-	@Column(name = "RAZAO_SOCIAL_ORGAO")
+	@Column(name = "RAZAO_SOCIAL_ORGAO", length = 256)
 	private String razaoSocialOrgao;
 
-	@Column(name = "SIGLA_ORGAO")
+	@Column(name = "SIGLA_ORGAO", length = 30)
 	private String siglaOrgao;
 
-	@Column(name = "TEL_CONTATO_ORGAO")
+	@Column(name = "TEL_CONTATO_ORGAO", length = 10)
 	private String telContatoOrgao;
 
-	@Column(name = "UF_ORGAO")
+	@Column(name = "UF_ORGAO", length = 2)
 	private String ufOrgao;
 
-	@Column(name = "FG_ATIVO")
+	@Column(name = "FG_ATIVO", length = 1)
 	private String ativo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_ORGAO_USU")
+	@JoinColumn(name = "ID_ORGAO_USU", nullable = false)
 	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
-	
-	@Column(name = "HIS_IDE")
+
+	@Column(name = "HIS_IDE", length = 256)
 	private String ideOrgao;
 
 	/*

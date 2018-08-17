@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -31,7 +32,7 @@ public abstract class CpGrupo extends AbstractCpGrupo implements Selecionavel,
 
 	public CpGrupo() {
 	}
-	
+
 	public int compareTo(CpGrupo o) {
 		return getId().compareTo(o.getId());
 	}
@@ -84,5 +85,24 @@ public abstract class CpGrupo extends AbstractCpGrupo implements Selecionavel,
 
 	public boolean semelhante(Assemelhavel obj, int nivel) {
 		return SincronizavelSuporte.semelhante(this, obj, nivel);
+	}
+
+	//
+	// Solução para não precisar criar HIS_ATIVO em todas as tabelas que herdam
+	// de HistoricoSuporte.
+	//
+	@Column(name = "HIS_ATIVO")
+	private Integer hisAtivo;
+
+	@Override
+	public Integer getHisAtivo() {
+		this.hisAtivo = super.getHisAtivo();
+		return this.hisAtivo;
+	}
+
+	@Override
+	public void setHisAtivo(Integer hisAtivo) {
+		super.setHisAtivo(hisAtivo);
+		this.hisAtivo = getHisAtivo();
 	}
 }

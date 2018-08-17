@@ -24,6 +24,8 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -43,6 +45,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
  */
 @Entity
 @BatchSize(size = 500)
+//@AttributeOverride(name = "hisAtivo", column = @Column(name = "HIS_ATIVO"))
 @Table(name = "EX_CLASSIFICACAO", catalog = "SIGA")
 public class ExClassificacao extends AbstractExClassificacao implements
 		Serializable, Selecionavel {
@@ -50,13 +53,12 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	 * 
 	 */
 	private static final long serialVersionUID = -5783951238385826556L;
-
+	
 	/**
 	 * Simple constructor of ExClassificacao instances.
 	 */
 	public ExClassificacao() {
 	}
-
 
 	public Long getId() {
 		return getIdClassificacao();
@@ -72,7 +74,7 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	/**
 	 * Verifica se uma classificação é do tipo intermediária.
 	 * 
-
+	 * 
 	 * @return Verdadeiro caso a classificação seja do tipo intermediária e
 	 *         Falso caso a classificação não seja do tipo intermediária.
 	 * 
@@ -93,8 +95,6 @@ public class ExClassificacao extends AbstractExClassificacao implements
 		return false;
 	}
 
-
-
 	/**
 	 * Retorna a sigla de uma classificação.
 	 * 
@@ -114,8 +114,8 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	}
 
 	/**
-
-
+	 * 
+	 * 
 	 * Retorna a descrição de uma classificação. A descrição de uma
 	 * classificação é formada pela descrição do Assunto, da classe e da
 	 * subclasse.
@@ -154,18 +154,16 @@ public class ExClassificacao extends AbstractExClassificacao implements
 		return "";
 	}
 
-
 	public ExClassificacao getClassificacaoAtual() {
 		if (this.getHisDtFim() != null)
 			return ExDao.getInstance().obterClassificacaoAtual(this);
 		return this;
 	}
 
-
 	/**
 	 * Verifica se uma classificação está fechada.
 	 * 
-
+	 * 
 	 * @return Verdadeiro se a classificação está fechado e falso caso
 	 *         contrário.
 	 * 
@@ -173,12 +171,11 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	public boolean isFechada() {
 		if (this.getHisDtFim() == null)
 
-
 			return false;
 
 		return getAtual().getHisDtFim() != null;
 	}
-	
+
 	public ExClassificacao getAtual() {
 		return getClassificacaoAtual();
 	}
@@ -186,21 +183,36 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	public void setId(Long id) {
 		setIdClassificacao(id);
 
-
 	}
 
 	public boolean semelhante(Assemelhavel obj, int profundidade) {
 		return false;
 	}
 
-
 	public int getNivel() {
 		return MascaraUtil.getInstance().calcularNivel(this.getCodificacao());
 	}
 
-
 	@Override
 	public String toString() {
 		return getCodificacao() + " " + getDescricao();
+	}
+
+	//
+	// Solução para não precisar criar HIS_ATIVO em todas as tabelas que herdam de HistoricoSuporte.
+	//
+	@Column(name = "HIS_ATIVO")
+	private Integer hisAtivo;
+
+	@Override
+	public Integer getHisAtivo() {
+		this.hisAtivo = super.getHisAtivo();
+		return this.hisAtivo;
+	}
+	
+	@Override
+	public void setHisAtivo(Integer hisAtivo) {
+		super.setHisAtivo(hisAtivo);
+		this.hisAtivo = getHisAtivo();
 	}
 }

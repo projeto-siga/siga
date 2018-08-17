@@ -25,13 +25,13 @@ import javax.persistence.MappedSuperclass;
 import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
-public class AbstractCpTipoIdentidade extends Objeto{
+public class AbstractCpTipoIdentidade extends Objeto {
 
 	@Id
-	@Column(name = "ID_TP_IDENTIDADE", nullable = false)
+	@Column(name = "ID_TP_IDENTIDADE", unique = true, nullable = false)
 	private Integer idCpTpIdentidade;
 
-	@Column(name = "DESC_TP_IDENTIDADE")
+	@Column(name = "DESC_TP_IDENTIDADE", length = 60)
 	private String dscCpTpIdentidade;
 
 	/**

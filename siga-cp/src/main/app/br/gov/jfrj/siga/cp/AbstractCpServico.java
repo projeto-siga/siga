@@ -34,29 +34,43 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 
 import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
+@NamedQueries({
+		@NamedQuery(name = "consultarPorSiglaCpServico", query = "select org from CpServico org "
+				+ "where upper(org.siglaServico) like upper(:siglaServico) "
+				+ "and ((:idServicoPai = 0 and org.cpServicoPai is null) or org.cpServicoPai.idServico = :idServicoPai)"),
+		@NamedQuery(name = "consultarPorSiglaStringCpServico", query = "select org from CpServico org "
+				+ "where upper(org.siglaServico) like upper(:siglaServico)") })
 public abstract class AbstractCpServico extends Objeto implements Serializable {
 
-	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO" + ".CP_SERVICO_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO"
+			+ ".CP_SERVICO_SEQ")
 	@Id
 	@GeneratedValue(generator = "generator")
-	@Column(name = "ID_SERVICO", nullable = false)
+	@Column(name = "ID_SERVICO", unique = true, nullable = false)
 	private Long idServico;
-	@Column(name = "SIGLA_SERVICO")
+
+	@Column(name = "SIGLA_SERVICO", nullable = false, length = 35)
 	private String siglaServico;
-	@Column(name = "DESC_SERVICO")
+
+	@Column(name = "DESC_SERVICO", nullable = false, length = 200)
 	private String dscServico;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_SERVICO_PAI")
 	private CpServico cpServicoPai;
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_TP_SERVICO")
+	@JoinColumn(name = "ID_TP_SERVICO", nullable = false)
 	private CpTipoServico cpTipoServico;
-	@Column(name = "LABEL_SERVICO")
+
+	@Column(name = "LABEL_SERVICO", length = 35)
 	private String labelServico;
 
 	/**

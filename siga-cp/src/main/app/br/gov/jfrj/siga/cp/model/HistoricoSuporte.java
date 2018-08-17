@@ -22,6 +22,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -50,9 +51,8 @@ public abstract class HistoricoSuporte extends Objeto implements Historico, Asse
 	@Desconsiderar
 	private Date hisDtFim;
 
-//	@Transient
-	@Column(name = "HIS_ATIVO")
 	@Desconsiderar
+	@Transient
 	private Integer hisAtivo;
 
 	/**
@@ -99,7 +99,6 @@ public abstract class HistoricoSuporte extends Objeto implements Historico, Asse
 
 	public void setHisAtivo(Integer hisAtivo) {
 		this.updateAtivo();
-		// this.hisAtivo = hisAtivo;
 	}
 
 	public boolean equivale(Object other) {

@@ -35,24 +35,24 @@ import javax.persistence.MappedSuperclass;
 
 import br.gov.jfrj.siga.model.Objeto;
 
-
 /**
  * Classe que representa uma linha na tabela DP_CARGO. Você pode customizar o
  * comportamento desta classe editando a classe {@link DpCargo}.
  */
 
 @MappedSuperclass
-public abstract class AbstractCpLocalidade extends Objeto implements Serializable {
+public abstract class AbstractCpLocalidade extends Objeto implements
+		Serializable {
 
 	@Id
-	@Column(name = "ID_LOCALIDADE", nullable = false)
+	@Column(name = "ID_LOCALIDADE", unique = true, nullable = false)
 	private Long idLocalidade;
 
-	@Column(name = "NM_LOCALIDADE", nullable = false)
+	@Column(name = "NM_LOCALIDADE", nullable = false, length = 256)
 	private String nmLocalidade;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_UF")
+	@JoinColumn(name = "ID_UF", nullable = false)
 	private CpUF UF;
 
 	public Long getIdLocalidade() {

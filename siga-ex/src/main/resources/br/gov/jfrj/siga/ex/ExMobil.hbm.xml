@@ -26,13 +26,13 @@
 		<many-to-one name="exTipoMobil" column="ID_TIPO_MOBIL"
 			class="ExTipoMobil" />
 
-		<set name="exMovimentacaoSet" order-by="ID_MOV" inverse="true"
+		<set name="exMovimentacaoSet" inverse="true" sort="natural"
 			lazy="true" >
 			<key column="ID_MOBIL" />
 			<one-to-many class="ExMovimentacao" />
 		</set>
 
-		<set name="exMovimentacaoReferenciaSet" order-by="DT_INI_MOV"
+		<set name="exMovimentacaoReferenciaSet" sort="natural"
 			inverse="true" lazy="true" >
 			<key column="ID_MOB_REF" />
 			<one-to-many class="ExMovimentacao" />

@@ -22,21 +22,16 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.SortedSet;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
 
 import br.gov.jfrj.siga.model.Objeto;
 
@@ -48,14 +43,13 @@ import br.gov.jfrj.siga.model.Objeto;
 public abstract class AbstractExMobil extends Objeto implements Serializable {
 	@Id
 	@SequenceGenerator(name = "EX_MOBIL_SEQ")
-	
 	@GeneratedValue(generator = "EX_MOBIL_SEQ")
 	@Column(name = "ID_MOBIL")
 	private java.lang.Long IdMobil;
 
 	@Column(name = "DNM_ULTIMA_ANOTACAO")
 	private java.lang.String dnmUltimaAnotacao;
-	
+
 	@Column(name = "DNM_NUM_PRIMEIRA_PAGINA")
 	private Integer dnmNumPrimeiraPagina;
 
@@ -71,16 +65,16 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 	private java.lang.Integer numSequencia;
 
 	@OneToMany(mappedBy = "exMobil")
-	private Set<ExMovimentacao> exMovimentacaoSet;
+	private SortedSet<ExMovimentacao> exMovimentacaoSet;
 
 	@OneToMany(mappedBy = "exMobilRef")
-	private Set<ExMovimentacao> exMovimentacaoReferenciaSet;
+	private SortedSet<ExMovimentacao> exMovimentacaoReferenciaSet;
 
 	@OneToMany(mappedBy = "exMobilPai")
 	private java.util.Set<ExDocumento> exDocumentoFilhoSet;
 
 	@OneToMany(mappedBy = "exMobil")
-	private java.util.SortedSet<ExMarca> exMarcaSet;
+	private SortedSet<ExMarca> exMarcaSet;
 
 	public java.lang.Long getIdMobil() {
 		return IdMobil;
@@ -114,20 +108,20 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 		this.numSequencia = numSequencia;
 	}
 
-	public Set<ExMovimentacao> getExMovimentacaoSet() {
+	public SortedSet<ExMovimentacao> getExMovimentacaoSet() {
 		return exMovimentacaoSet;
 	}
 
-	public void setExMovimentacaoSet(Set<ExMovimentacao> exMovimentacaoSet) {
+	public void setExMovimentacaoSet(SortedSet<ExMovimentacao> exMovimentacaoSet) {
 		this.exMovimentacaoSet = exMovimentacaoSet;
 	}
 
-	public Set<ExMovimentacao> getExMovimentacaoReferenciaSet() {
+	public SortedSet<ExMovimentacao> getExMovimentacaoReferenciaSet() {
 		return exMovimentacaoReferenciaSet;
 	}
 
 	public void setExMovimentacaoReferenciaSet(
-			Set<ExMovimentacao> exMovimentacaoReferenciaSet) {
+			SortedSet<ExMovimentacao> exMovimentacaoReferenciaSet) {
 		this.exMovimentacaoReferenciaSet = exMovimentacaoReferenciaSet;
 	}
 

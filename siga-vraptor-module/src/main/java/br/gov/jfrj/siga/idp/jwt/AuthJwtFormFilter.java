@@ -23,8 +23,8 @@ import com.auth0.jwt.JWTVerifyException;
 public class AuthJwtFormFilter implements Filter {
 
 	public static final String SIGA_JWT_AUTH_COOKIE_NAME = "siga-jwt-auth";
-	private static final int TIME_TO_EXPIRE_IN_S = 60 * 60 * 2; // 2h
-	private static final int TIME_TO_RENEW_IN_S = 60 * 60; // 1h
+	private static final int TIME_TO_EXPIRE_IN_S = 60 * 60 * 8; // 8h é o tempo de duração
+	private static final int TIME_TO_RENEW_IN_S = 60 * 60 * 7; // renova automaticamente 7h antes de expirar
 
 	static final String PROVIDER_ISSUER = "sigaidp";
 	static long DEFAULT_TTL_TOKEN = 3600; // default 1 hora

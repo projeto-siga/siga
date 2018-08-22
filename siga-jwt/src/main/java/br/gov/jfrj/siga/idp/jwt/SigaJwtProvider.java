@@ -23,14 +23,15 @@ import com.auth0.jwt.JWTVerifyException;
 public class SigaJwtProvider {
 
 	static final String PROVIDER_ISSUER = "sigaidp";
-	static long DEFAULT_TTL_TOKEN = 3600; // default 1 hora
+	private long defaultTTLToken = 3600; // default 1 hora
 	private SigaJwtOptions options;
 
 	private SigaJwtProvider(SigaJwtOptions options)
 			throws SigaJwtProviderException {
 		try {
 			this.options = options;
-			DEFAULT_TTL_TOKEN = options.getTtlToken();
+			defaultTTLToken = options.getTtlToken();
+			System.out.println("TTL: " + defaultTTLToken);
 		} catch (Exception e) {
 			throw new SigaJwtProviderException(
 					"Problema ao definir o algoritimo", e);
@@ -92,17 +93,17 @@ public class SigaJwtProvider {
 
 	public void setTimes(final Map<String, Object> claims, final Integer ttl) {
 		final long iat = System.currentTimeMillis() / 1000L; // issued at claim
-		final long exp = iat + (ttl == null ? DEFAULT_TTL_TOKEN : ttl);
+		final long exp = iat + (ttl == null ? defaultTTLToken : ttl);
 		claims.put("iat", iat);
 		claims.put("nbf", iat);
 		claims.put("exp", exp);
 	}
 
 	private long getTTL(Integer ttl) {
-		if (ttl != null && ttl < DEFAULT_TTL_TOKEN) {
+		if (ttl != null && ttl < defaultTTLToken) {
 			return ttl;
 		} else {
-			return DEFAULT_TTL_TOKEN;
+			return defaultTTLToken;
 		}
 	}
 

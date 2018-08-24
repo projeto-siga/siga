@@ -4,7 +4,6 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -17,26 +16,31 @@ import br.gov.jfrj.siga.vraptor.SigaObjects;
 @Resource
 public class TestesController extends SrController {
 
-    public TestesController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) {
-        super(request, result, dao, so, em, srValidator);
-        result.on(AplicacaoException.class).forwardTo(this).appexception();
-        result.on(Exception.class).forwardTo(this).exception();
-    }
-    
-    @Get("app/testes/gadgetTest")
+	public TestesController(HttpServletRequest request, Result result,
+			CpDao dao, SigaObjects so, EntityManager em, SrValidator srValidator) {
+		super(request, result, dao, so, em, srValidator);
+		result.on(AplicacaoException.class).forwardTo(this).appexception();
+		result.on(Exception.class).forwardTo(this).exception();
+	}
+
+	@Get("/public/app/testes/gadgetTest")
 	public void test(final String matricula) throws Exception {
 		if (matricula == null) {
-			result.use(Results.http()).body("ERRO: É necessário especificar o parâmetro 'matricula'.").setStatusCode(400);
+			result.use(Results.http())
+					.body("ERRO: É necessário especificar o parâmetro 'matricula'.")
+					.setStatusCode(400);
 			return;
 		}
-			
+
 		final DpPessoa pes = daoPes(matricula);
-		
+
 		if (pes == null) {
-			result.use(Results.http()).body("ERRO: Não foi localizada a pessoa referenciada pelo parâmetro 'matricula'.").setStatusCode(400);
+			result.use(Results.http())
+					.body("ERRO: Não foi localizada a pessoa referenciada pelo parâmetro 'matricula'.")
+					.setStatusCode(400);
 			return;
 		}
-		
+
 		setTitular(pes);
 		setLotaTitular(pes.getLotacao());
 		result.redirectTo(SolicitacaoController.class).gadget();

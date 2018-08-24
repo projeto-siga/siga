@@ -60,7 +60,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 @Entity
 @Indexed
 public class ExMovimentacao extends AbstractExMovimentacao implements
-		Serializable, Comparable {
+		Serializable, Comparable<ExMovimentacao> {
 	/**
 	 * 
 	 */
@@ -407,10 +407,12 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return String.valueOf(getNumVia2());
 	}
 
-	public int compareTo(final Object o) {
+	public int compareTo(final ExMovimentacao o) {
 		try {
 			final ExMovimentacao mov = (ExMovimentacao) o;
-			int i = getDtIniMov().compareTo(mov.getDtIniMov());
+			int i = 0;
+			if (getDtIniMov() != null)
+				i = getDtIniMov().compareTo(mov.getDtIniMov());
 			if (i != 0)
 				return i;
 			i = getIdMov().compareTo(mov.getIdMov());
@@ -808,20 +810,25 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 */
 	public boolean isAssinada() {
 		if (this.isCancelada()
-				|| this.getExMobil().getExMovimentacaoSet() == null) 
+				|| this.getExMobil().getExMovimentacaoSet() == null)
 			return false;
-		
-		// Usamos getExMovimentacaoSet() em vez de getExMovimentacaoReferenciadoraSet() porque o segundo faz lazy initialization e não recebe as movimentações mais recentes quando se está calculando os marcadores.
-		for (ExMovimentacao assinatura : this.getExMobil().getExMovimentacaoSet()) {
+
+		// Usamos getExMovimentacaoSet() em vez de
+		// getExMovimentacaoReferenciadoraSet() porque o segundo faz lazy
+		// initialization e não recebe as movimentações mais recentes quando se
+		// está calculando os marcadores.
+		for (ExMovimentacao assinatura : this.getExMobil()
+				.getExMovimentacaoSet()) {
 			long l = assinatura.getIdTpMov();
 			if (l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO
-				&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
-				&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA
-				&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
+					&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
+					&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA
+					&& l != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA)
 				continue;
 			if (assinatura.getExMovimentacaoRef() == null)
 				continue;
-			if (this.getIdMov().equals(assinatura.getExMovimentacaoRef().getIdMov()))
+			if (this.getIdMov().equals(
+					assinatura.getExMovimentacaoRef().getIdMov()))
 				return true;
 		}
 

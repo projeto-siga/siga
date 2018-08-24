@@ -36,6 +36,7 @@
  		<module>siga-integration-test</module> -->
     	<module>siga-ldap-cli</module>
 		<module>siga-jwt</module>
+		<module>sigatp</module>
   </modules>
 
 
@@ -259,6 +260,11 @@
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-vraptor-module</artifactId>
+				<version>${siga.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>siga</groupId>
+				<artifactId>siga-jwt</artifactId>
 				<version>${siga.version}</version>
 			</dependency>
 			<dependency>

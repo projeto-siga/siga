@@ -57,6 +57,49 @@ public class Notificador {
 		return ExDao.getInstance();	}
 	
 	
+	/**
+	 * Método que notifica pessoas por email.
+	 * 
+	 * @param destinatarios
+	 * 			  - String com uma lista de emails separados por ponto-e-vírgula. Também podem ser utilizadas siglas de pessoas ou lotações.
+	 * @param assunto
+	 *            - Assunto do email
+	 * @param html
+	 *            - HTML do email
+	 * @param txt
+	 *            - Texto do email
+	 * @throws AplicacaoException
+	 */
+	public static void notificar(String destinatarios, String assunto, String html, String txt) throws AplicacaoException {
+		HashSet<String> emails = new HashSet<String>();
+		List<Notificacao> notificacoes = new ArrayList<Notificacao>();
+		
+		String[] addrs = destinatarios.split(";");
+		for (String addr : addrs) {
+			addr = addr.trim();
+			DpPessoa p = exDao().getPessoaFromSigla(addr);
+			if (p != null) {
+				List<ExEmailNotificacao> emns = exDao().consultarEmailNotificacao(p, null);
+					for (ExEmailNotificacao emn : emns) {
+						emails.add(emn.getEmail());
+					}
+					continue;
+			} 
+			DpLotacao l = exDao().getLotacaoFromSigla(addr);
+			if (l != null) {
+				List<ExEmailNotificacao> emns = exDao().consultarEmailNotificacao(null, l);
+				for (ExEmailNotificacao emn : emns) {
+					emails.add(emn.getEmail());
+				}
+				continue;
+			} 
+			emails.add(addr);
+		}
+		
+		Notificacao not = new Notificacao(new Destinatario(null, null, null, null, null, null, emails), html, txt, assunto);
+		notificacoes.add(not);
+		notificarPorEmail(notificacoes);
+	}
 
 	
 	/**

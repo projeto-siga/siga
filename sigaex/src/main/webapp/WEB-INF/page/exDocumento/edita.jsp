@@ -10,7 +10,6 @@
 <script type="text/javascript" src="/ckeditor/ckeditor/ckeditor.js"></script>
 <script type="text/javascript" src="../../../javascript/exDocumentoEdita.js"></script>
 <script type="text/javascript" src="/siga/javascript/jquery.blockUI.js"></script>
-<script src="/siga/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/siga/javascript/hierarchy-select/hierarchy-select.js"></script>
 <div class="gt-bd clearfix">
 	<div class="gt-content clearfix">
@@ -66,19 +65,17 @@
 								<td colspan="3">
 									<div class="btn-group hierarchy-select" data-resize="auto"
 										id="modelos-select">
-										<button type="button" class="btn btn-default dropdown-toggle"
-											data-toggle="dropdown">
-											<span class="selected-label pull-left">&nbsp;</span> <span
-												class="caret"></span> <span class="sr-only">Toggle
-												Dropdown</span>
+										<button type="button" class="btn btn-sm btn-light border border-dark dropdown-toggle"
+											 id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-disabled="true">
+											<span class="selected-label pull-left">&nbsp;</span>
 										</button>
-										<div class="dropdown-menu open">
+										<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 											<div class="hs-searchbox">
 												<input type="text" class="form-control" autocomplete="off" placeholder="Pesquisar modelo...">
 											</div>
-											<ul class="dropdown-menu inner" role="menu">
+											<ul class="dropdown-menu show inner" role="menu">
 												<c:forEach items="${hierarquiaDeModelos}" var="item">
-													<li data-value="${item.value}" data-level="${item.level}"
+													<li class="dropdown-item" data-value="${item.value}" data-level="${item.level}"
 														data-search="${item.searchText}"
 														${item.group ? 'data-group' : ''}
 														${item.selected ? 'data-default-selected' : ''}><a

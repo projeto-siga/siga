@@ -22,6 +22,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.CpOrgaoUsuarioDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 @Component
 @RequestScoped
@@ -70,11 +71,11 @@ public class SigaObjects implements ConheceUsuario {
 	}
 
 	protected void carregaPerfil() throws Exception {
-		if (request.getUserPrincipal() == null)
+		if (ContextoPersistencia.getUserPrincipal() == null)
 			return;
 
 		// autenticação por formulário
-		String principal = request.getUserPrincipal().getName();
+		String principal = ContextoPersistencia.getUserPrincipal();
 		UsuarioAutenticado.carregarUsuarioAutenticado(principal, this);
 	}
 

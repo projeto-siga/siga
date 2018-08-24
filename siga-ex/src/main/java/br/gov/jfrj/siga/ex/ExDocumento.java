@@ -839,6 +839,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 			return null;
 		if (a[0].length() == 0)
 			return null;
+		if (a[0].equals("-"))
+			return " ";
 		return a[0];
 	}
 
@@ -854,6 +856,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 			return null;
 		if (a[1].length() == 0)
 			return null;
+		if (a[1].equals("-"))
+			return " ";
 		return a[1];
 	}
 
@@ -869,6 +873,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 			return null;
 		if (a[2].length() == 0)
 			return null;
+		if (a[2].equals("-"))
+			return " ";
 		return a[2];
 	}
 
@@ -900,6 +906,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 			return null;
 		if (a[3].length() == 0)
 			return null;
+		if (a[3].equals("-"))
+			return " ";
 		return a[3];
 	}
 

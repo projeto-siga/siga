@@ -1,0 +1,36 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                                       Application.index
+
+# Ignore favicon requests
+GET     /favicon.ico                            404
+
+GET     /veiculos/{idVeiculo}/{controller}/listar	{controller}.listarPorVeiculo() 
+
+# Map static resources from the /app/public folder to the /public path
+GET     /public/                                staticDir:public
+*       /selecionar.action	   					Application.selecionar
+*		/exibir.action				   			Application.exibir
+*       /selecionarPessoa						Application.selecionarPessoa
+*		/{tipo}/buscar							Application.buscarSiga
+*		/{tipo}/selecionar						Application.selecionarSiga
+*	    /gadget									Application.gadget
+
+#*       /{controller}/avarias/listar/{idVeiculo}         {controller}.listarAvarias()
+
+# Catch all
+*       /{action}                  				Principal.{action}
+*       /{controller}/{action}                  {controller}.{action}
+
+# rest
+GET     /rest/Requisicoes/buscar 					    rest.Requisicoes.buscar 
+GET     /rest/Requisicoes/estaAtendida				    rest.Requisicoes.estaAtendida
+GET     /rest/Requisicoes/estaAutorizada			    rest.Requisicoes.estaAutorizada
+GET     /rest/Requisicoes/estaRejeitada				    rest.Requisicoes.estaRejeitada
+GET     /rest/{controller}/{<[0-9]+>id}       		 	rest.{controller}.ver
+POST    /rest/{controller}/               				rest.{controller}.incluir
+PUT     /rest/{controller}/{<[0-9]+>id}              	rest.{controller}.alterar
+DELETE  /rest/{controller}/{<[0-9]+>id}              	rest.{controller}.excluir

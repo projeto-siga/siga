@@ -1,0 +1,5 @@
+Versão 1.0.02 - Primeira versão do projeto apresentada para usuario em 09/05/2014.
+Versão 1.01   - Última versão
+versao 1.02   - Migracao realizada na secope
+Versão 1.1	  - Versão para EAP 6
+versão 1.05   - Criação de novos perfis

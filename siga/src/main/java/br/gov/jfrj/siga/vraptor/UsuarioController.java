@@ -32,12 +32,12 @@ public class UsuarioController extends SigaController {
 		result.on(Exception.class).forwardTo(this).exception();
 	}
 	
-	@Get("/app/usuario/trocar_senha")
+	@Get({"/app/usuario/trocar_senha", "/public/app/usuario/trocar_senha"})
 	public void trocaSenha() {
 		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
 	}
 
-	@Post("/app/usuario/trocar_senha_gravar")
+	@Post({"/app/usuario/trocar_senha_gravar","/public/app/usuario/trocar_senha_gravar"})
 	public void gravarTrocaSenha(UsuarioAction usuario) throws Exception {
 		String senhaAtual = usuario.getSenhaAtual();
 		String senhaNova = usuario.getSenhaNova();
@@ -63,7 +63,7 @@ public class UsuarioController extends SigaController {
 		result.redirectTo("/app/principal");
 	}
 
-	@Get("/app/usuario/incluir_usuario")
+	@Get({"/app/usuario/incluir_usuario","/public/app/usuario/incluir_usuario"})
 	public void incluirUsuario() {
 		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
 		result.include("titulo", "Novo Usuário");
@@ -72,7 +72,7 @@ public class UsuarioController extends SigaController {
 		
 	}
 	
-	@Post("/app/usuario/incluir_usuario_gravar")
+	@Post({"/app/usuario/incluir_usuario_gravar","/public/app/usuario/incluir_usuario_gravar"})
 	public void gravarIncluirUsuario(UsuarioAction usuario) throws Exception {
 		String msgComplemento = "";
 		String[] senhaGerada = new String[1];
@@ -125,14 +125,14 @@ public class UsuarioController extends SigaController {
 		result.redirectTo("/app/usuario/incluir_usuario");
 	}
 	
-	@Get("/app/usuario/esqueci_senha")
+	@Get({"/app/usuario/esqueci_senha","/public/app/usuario/esqueci_senha"})
 	public void esqueciSenha() {
 		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
 		result.include("titulo", "Esqueci Minha Senha");
 		result.include("proxima_acao", "esqueci_senha_gravar");
 	}
 	
-	@Post("/app/usuario/esqueci_senha_gravar")
+	@Post({"/app/usuario/esqueci_senha_gravar","/public/app/usuario/esqueci_senha_gravar"})
 	public void gravarEsqueciSenha(UsuarioAction usuario) throws Exception {
 		String msgAD = "";
 		boolean senhaTrocadaAD = false;
@@ -184,7 +184,7 @@ public class UsuarioController extends SigaController {
 	}
 
 	
-	@Get("/app/usuario/integracao_ldap")
+	@Get({"/app/usuario/integracao_ldap","/public/app/usuario/integracao_ldap"})
 	public void isIntegradoLdap(String matricula) throws AplicacaoException {
 		try{
 			String retorno = isIntegradoAD(matricula) ? "" : "0";
@@ -213,7 +213,7 @@ public class UsuarioController extends SigaController {
 		return result;
 	}
 	
-	@Get("/app/usuario/check_email_valido")
+	@Get({"/app/usuario/check_email_valido","/public/app/usuario/check_email_valido"})
 	public void checkEmailValido(String matricula) throws AplicacaoException {
 		try{
 			if(isEmailValido(matricula)) {

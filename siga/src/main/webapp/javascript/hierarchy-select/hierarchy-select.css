@@ -57,7 +57,7 @@
 
 .hierarchy-select.btn-group>.dropdown-toggle>.selected-label {
 	display: inline-block;
-	overflow: hidden;
+	overflowx: hidden;
 	text-align: left;
 	width: 100%
 }

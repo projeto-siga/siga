@@ -113,7 +113,7 @@ public class AppController extends WfController {
 	 * @return
 	 * @throws Exception
 	 */
-	@Path("/app/testes/gadgetTest")
+	@Path("/public/app/testes/gadgetTest")
 	public void test(String matricula) throws Exception {
 		DpPessoa pes = so.daoPes(matricula);
 		so.setTitular(pes);

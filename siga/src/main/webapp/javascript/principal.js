@@ -52,13 +52,7 @@ Siga.principal = {
         	$(target.find(".loading")).show();
 
           Siga.ajax(model.url, {}, "GET", function(response){
-              if (response.indexOf("HTTP Post Binding") > -1){
-                Siga.ajax(model.url, {}, "GET", function(sec){
-                  self.render(target, sec);
-                });
-              }else{
-                self.render(target, response);
-              }
+            self.render(target, response);
           });
       });
     }

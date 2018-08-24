@@ -512,6 +512,11 @@
 						<b>Telefone:</b> ${solicitacao.telPrincipal}
 					</p>
 				</c:if>
+				<c:if test="${solicitacao.endereco != null}">
+					<p>
+						<b>Endereço:</b> ${solicitacao.endereco}
+					</p>
+				</c:if>
 				<p>
 					<b>Cadastrante:</b>
 					${solicitacao.cadastrante.descricaoIniciaisMaiusculas},

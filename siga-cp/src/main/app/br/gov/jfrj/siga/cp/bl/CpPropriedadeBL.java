@@ -68,6 +68,18 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 	public String gsaUrl  ( ) throws Exception {
 		return this.obterPropriedade("gsa.url");
 	}
+	public String xjusUrl  ( ) throws Exception {
+		return this.obterPropriedade("xjus.url");
+	}
+	public String xjusJwtSecret  ( ) throws Exception {
+		return this.obterPropriedade("xjus.jwt.secret");
+	}
+	public String xjusPermalinkUrl  ( ) throws Exception {
+		return this.obterPropriedade("xjus.permalink.url");
+	}
+	public String xjusPassword  ( ) throws Exception {
+		return this.obterPropriedade("xjus.password");
+	}
 	@Override
 	public String getPrefixoModulo() {
 		return "siga.cp";
@@ -80,7 +92,7 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 	}
 	
 	public Integer getJWTTokenTTL(String modulo) {
-		int defaultTTL = 3600 * 1000;
+		int defaultTTL = 3600;
 		String ttl = System.getProperty("idp.jwt.token.ttl." + modulo,String.valueOf(defaultTTL));
 		return Integer.valueOf(ttl); 
 		 

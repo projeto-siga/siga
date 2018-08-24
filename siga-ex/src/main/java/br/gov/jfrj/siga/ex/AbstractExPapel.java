@@ -19,7 +19,7 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.SortedSet;
 
 import javax.persistence.OneToMany;
 
@@ -29,27 +29,32 @@ public abstract class AbstractExPapel extends Objeto implements Serializable {
 
 	private java.lang.Long idPapel;
 	private java.lang.String descPapel;
-	
+
 	@OneToMany(mappedBy = "exPapel")
-	private Set<ExMovimentacao> exMovimentacaoSet;
-	
+	private SortedSet<ExMovimentacao> exMovimentacaoSet;
+
 	public java.lang.Long getIdPapel() {
 		return idPapel;
 	}
+
 	public void setIdPapel(java.lang.Long idPapel) {
 		this.idPapel = idPapel;
 	}
+
 	public java.lang.String getDescPapel() {
 		return descPapel;
 	}
+
 	public void setDescPapel(java.lang.String descPapel) {
 		this.descPapel = descPapel;
 	}
-	public Set<ExMovimentacao> getExMovimentacaoSet() {
+
+	public SortedSet<ExMovimentacao> getExMovimentacaoSet() {
 		return exMovimentacaoSet;
 	}
-	public void setExMovimentacaoSet(Set<ExMovimentacao> exMovimentacaoSet) {
+
+	public void setExMovimentacaoSet(SortedSet<ExMovimentacao> exMovimentacaoSet) {
 		this.exMovimentacaoSet = exMovimentacaoSet;
 	}
-	
+
 }

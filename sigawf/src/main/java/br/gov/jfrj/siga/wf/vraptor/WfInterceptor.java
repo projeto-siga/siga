@@ -31,8 +31,6 @@ public class WfInterceptor implements Interceptor {
 		WfExecutionEnvironment ee = new WfExecutionEnvironment();
 
 		try {
-			ContextoPersistencia.setUserPrincipal(this.request
-					.getUserPrincipal().getName());
 			ee.antes(null);
 			stack.next(method, resourceInstance);
 			ee.depois();

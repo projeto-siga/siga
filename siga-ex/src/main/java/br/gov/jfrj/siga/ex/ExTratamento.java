@@ -109,6 +109,8 @@ public class ExTratamento extends AbstractExTratamento {
 		
 		l.add(new ExTratamento("Membro do Ministério Público", "F", "Vossa Excelência", "V. Exª." , "Excelentíssima Senhora", "Exmª. Srª."));
 		l.add(new ExTratamento("Membro do Ministério Público", "M", "Vossa Excelência", "V. Exª." , "Excelentíssimo Senhor", "Exmº. Sr."));
+		l.add(new ExTratamento("Desembargador", "F", "Vossa Excelência", "V. Exª." , "Excelentíssima Senhora", "Exmª. Srª."));
+		l.add(new ExTratamento("Desembargador", "M", "Vossa Excelência", "V. Exª." , "Excelentíssimo Senhor", "Exmº. Sr."));
 		l.add(new ExTratamento("Desembargador Federal", "F", "Vossa Excelência", "V. Exª." , "Excelentíssima Senhora", "Exmª. Srª."));
 		l.add(new ExTratamento("Desembargador Federal", "M", "Vossa Excelência", "V. Exª." , "Excelentíssimo Senhor", "Exmº. Sr."));
 		l.add(new ExTratamento("Juiz de Direito", "F", "Vossa Excelência", "V. Exª." , "Excelentíssima Senhora", "Exmª. Srª."));

@@ -30,7 +30,7 @@
 					<font fontName="Arial" pdfFontName="Helvetica" size="11" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded="false"
 						pdfEncoding="Cp1252" isStrikeThrough="false" />
 				</textElement>
-				<text><![CDATA[PODER JUDICIÁRIO]]></text>
+				<text><![CDATA[INFRAERO]]></text>
 			</staticText>
 			<image scaleImage="RetainShape" vAlign="Middle" hAlign="Center" isUsingCache="true" evaluationTime="Now" hyperlinkType="None"
 				hyperlinkTarget="Self">
@@ -52,7 +52,7 @@
 					<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded="false"
 						pdfEncoding="Cp1252" isStrikeThrough="false" />
 				</textElement>
-				<text><![CDATA[JUSTIÇA FEDERAL]]></text>
+				<text><![CDATA[]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"
 				hyperlinkTarget="Self">

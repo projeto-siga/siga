@@ -223,7 +223,7 @@
 			<input type="hidden" name="campoData" id="campoData" value="${mov.dtRegMovDDMMYYYYHHMMSS}" />
 			<input type="submit" value="Gerar Protocolo" class="gt-btn-medium gt-btn-left" />
 		</c:if>
-		<input type="button" value="Voltar" class="gt-btn-medium gt-btn-left"  onclick="javascript:history.back();" />	
+		<input type="button" value="Voltar" class="gt-btn-medium gt-btn-left"  onclick="javascript:history.back();" />
 	</form>			
 	</div>
 </siga:pagina>

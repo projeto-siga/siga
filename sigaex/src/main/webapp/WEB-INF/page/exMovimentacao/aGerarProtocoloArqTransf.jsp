@@ -122,8 +122,7 @@
 			</div>
 
 			<br />
-			<form name="frm" action="principal" namespace="/" method="get"
-				theme="simple">
+			<form name="frm" action="principal" namespace="/" method="get" theme="simple">
 				<input type="button" value="Imprimir"
 					class="gt-btn-medium gt-btn-left"
 					onclick="javascript: document.body.offsetHeight; window.print();" />
@@ -139,7 +138,7 @@
 				<p align="center">Recebido em: _____/_____/_____ às _____:_____</p>
 				<br /> <br /> <br />
 				<p align="center">________________________________________________</p>
-				<p align="center">Assinatura do Servidor</p>
+				<p align="center">Assinatura do Empregado e Matrícula</p>
 			</div>
 		</div>
 	</div>

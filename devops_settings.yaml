@@ -1,17 +1,13 @@
 solicitante:
   nome: "sigadoc"
   sobrenome: "DevOps"
-#Nome e Sobrenome utilizados para abertura de chamado no ITSM. Dados fornecidos pela equipe ITSM.
-  
+
 homologacao:
   pre_aprovado: false
   restricao_horario_inicio: "07:00"
   restricao_horario_fim: "23:00"
-  #Em homologação é possível escolher entre GMUD pré-aprovada ou não (true/false). 
-  #Informar janela de período em que a GMUD poderá ser executada.
 
 producao:
   pre_aprovado: false
-  restricao_horario_inicio: "20:00"
-  restricao_horario_fim: "06:00"
-  #Informar janela de período em que a GMUD poderá ser executada.
+  restricao_horario_inicio: "19:00"
+  restricao_horario_fim: "23:59"

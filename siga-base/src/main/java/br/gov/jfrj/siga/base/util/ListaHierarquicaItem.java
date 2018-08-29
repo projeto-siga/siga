@@ -1,20 +1,21 @@
-package br.gov.jfrj.siga.util;
+package br.gov.jfrj.siga.base.util;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 
 @JsonIgnoreProperties({ "selected" })
 public class ListaHierarquicaItem {
 	public int level;
 	public String text;
 	public String searchText;
-	public Long value;
+	public String value;
 	public boolean group;
 	public boolean selected;
 
 	public ListaHierarquicaItem() {
 	}
 	
-	public ListaHierarquicaItem(int level, String text, String searchText, Long value, boolean group,
+	public ListaHierarquicaItem(int level, String text, String searchText, String value, boolean group,
 			boolean selected) {
 		this.level = level;
 		this.text = text;
@@ -36,7 +37,7 @@ public class ListaHierarquicaItem {
 		return searchText;
 	}
 
-	public Long getValue() {
+	public String getValue() {
 		return value;
 	}
 

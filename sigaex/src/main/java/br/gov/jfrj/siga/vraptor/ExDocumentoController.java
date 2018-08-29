@@ -67,6 +67,8 @@ import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.util.ListaHierarquica;
+import br.gov.jfrj.siga.base.util.ListaHierarquicaItem;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -93,8 +95,6 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Selecao;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
-import br.gov.jfrj.siga.util.ListaHierarquica;
-import br.gov.jfrj.siga.util.ListaHierarquicaItem;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 
 @Resource

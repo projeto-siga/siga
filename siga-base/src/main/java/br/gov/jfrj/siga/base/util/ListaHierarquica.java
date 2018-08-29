@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.util;
+package br.gov.jfrj.siga.base.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,11 +7,11 @@ import br.gov.jfrj.siga.base.Texto;
 
 public class ListaHierarquica {
 
-	static final String DIVIDER = ": ";
+	static public final String DIVIDER = ": ";
 	List<String> groups = new ArrayList<String>();
 	List<ListaHierarquicaItem> l = new ArrayList<ListaHierarquicaItem>();
 
-	public void add(String text, Long value, boolean selected) {
+	public void add(String text, String value, boolean selected) {
 		if (text == null || value == null)
 			return;
 		String as[] = text.split(DIVIDER);

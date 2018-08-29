@@ -65,6 +65,8 @@ import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.base.util.ListaHierarquica;
+import br.gov.jfrj.siga.base.util.ListaHierarquicaItem;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
@@ -263,14 +265,24 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
     }
 
-    public class SrTarefa {
+    public class SrTarefa implements Comparable<SrTarefa> {
+        private SrItemConfiguracao item;
         private SrAcao acao;
         private SrConfiguracao conf;
+        private String titulo;
 
-        public SrTarefa() {
+		public SrTarefa() {
 
         }
 
+		public SrItemConfiguracao getItem() {
+			return item;
+		}
+		
+		public void setItem(SrItemConfiguracao item) {
+			this.item = item;
+		}
+		
         public SrAcao getAcao() {
             return acao;
         }
@@ -292,6 +304,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
             final int prime = 31;
             int result = 1;
             result = prime * result + getOuterType().hashCode();
+            result = prime * result + ((getItem() == null) ? 0 : getItem().hashCode());
             result = prime * result + ((acao == null) ? 0 : acao.hashCode());
             result = prime * result + ((conf == null || conf.getAtendente() == null) ? 0 : conf.getAtendente().hashCode());
             return result;
@@ -307,6 +320,11 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
                 return false;
             SrTarefa other = (SrTarefa) obj;
             if (!getOuterType().equals(other.getOuterType()))
+                return false;
+            if (getItem() == null) {
+                if (other.getItem() != null)
+                    return false;
+            } else if (!getItem().equals(other.getItem()))
                 return false;
             if (acao == null) {
                 if (other.acao != null)
@@ -324,8 +342,77 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         private SrSolicitacao getOuterType() {
             return SrSolicitacao.this;
         }
+
+		@Override
+		public int compareTo(SrTarefa other) {
+            if (titulo != null && other.titulo != null)
+            	return titulo.compareTo(other.titulo);
+            
+            int i;
+            if (getItem() != null || other.getItem() != null) {
+	            if (getItem() == null)
+	            	return -1;
+	            if (other.getItem() == null)
+	                return 1;
+	            if (getItem().getTituloItemConfiguracao() == null && other.getItem().getTituloItemConfiguracao() != null)
+	            	return -1;
+	            i = getItem().getTituloItemConfiguracao().compareTo(other.getItem().getTituloItemConfiguracao());
+	            if (i != 0)
+	                return i;
+	            i = getItem().getId().compareTo(other.getItem().getId());
+	            if (i != 0)
+	                return i;
+            }
+            
+            if (acao != null || other.acao != null) {
+	            if (acao == null)
+	            	return -1;
+	            if (other.acao == null)
+	                return 1;
+	            if (acao.getTituloAcao() == null && other.acao.getTituloAcao() != null)
+	            	return -1;
+	
+	            i = acao.getTituloAcao().compareTo(other.acao.getTituloAcao());
+	            if (i != 0)
+	                return i;
+	            i = acao.getIdAcao().compareTo(other.acao.getIdAcao());
+	            if (i != 0)
+	                return i;
+            }
+            
+            if (conf != null || other.conf != null) {
+	            if (conf == null)
+	            	return -1;
+	            if (other.conf == null)
+	                return 1;
+	            if (conf.getAtendente() == null && other.conf.getAtendente() != null)
+	            	return -1;
+	            if (conf.getAtendente() != null && other.conf.getAtendente() == null)
+	                return 1;
+	            if (conf.getAtendente().getSigla() == null && other.conf.getAtendente().getSigla() != null)
+	            	return -1;
+	            if (conf.getAtendente().getSigla() != null && other.conf.getAtendente().getSigla() == null)
+	                return 1;
+	
+	            i = conf.getAtendente().getSigla().compareTo(other.conf.getAtendente().getSigla());
+	            if (i != 0)
+	                return i;
+	            i = conf.getId().compareTo(other.conf.getId());
+	            if (i != 0)
+	                return i;
+            }
+            return 0;
+		}
+
+		public String getId() {
+			return buildId(item.getId(), acao.getId(), conf.getId());
+		}
     }
 
+	public static String buildId(Long idItem, Long idAcao, Long idConf) {
+		return idItem + ";" + idAcao + ";" + idConf;
+	}
+	
     @Override
     public Long getId() {
         return getIdSolicitacao();
@@ -1433,6 +1520,73 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
 
         return acoesEAtendentesFinal;
     }
+
+    
+    public List<ListaHierarquicaItem> getItensAcoesEAtendentes() throws Exception {
+    	ListaHierarquica lh = new ListaHierarquica();
+		if (getSolicitante() == null)
+			return lh.getList();
+
+		Set<SrTarefa> setTarefa = new HashSet<SrTarefa>();
+		List<SrConfiguracao> listaPessoasAConsiderar = getFiltrosParaConsultarDesignacoes();
+		SrTarefa tarefa = null;
+
+		for (SrConfiguracao c : listaPessoasAConsiderar) {
+			c.setCpTipoConfiguracao(AR.em().find(CpTipoConfiguracao.class,
+					CpTipoConfiguracao.TIPO_CONFIG_SR_DESIGNACAO));
+			
+			for (SrItemConfiguracao i : SrItemConfiguracao.listar(false)) {
+				if (!i.isEspecifico())
+					continue;
+				c.setItemConfiguracaoFiltro(i);
+				
+				for (SrAcao a : SrAcao.listar(false)) {
+					if (!a.isEspecifico())
+						continue;
+					c.setAcaoFiltro(a);
+
+					List<SrConfiguracao> confs = SrConfiguracao.listar(c, new int[] {
+							SrConfiguracaoBL.ATENDENTE });
+					
+					for (SrConfiguracao conf : confs) {
+						tarefa = this.new SrTarefa();
+						tarefa.item = i;
+						tarefa.acao = a;
+						tarefa.conf = conf;
+						setTarefa.add(tarefa);
+					}
+				}
+			}
+		}
+    	
+        for (SrTarefa t : setTarefa) {
+        	String s = "";
+        	
+        	SrItemConfiguracao i = t.getItem();
+        	while (i != null) {
+        		s = i.getDescricao() + ListaHierarquica.DIVIDER + s;
+        		i = i.getPai();
+        	}
+        	if (t.getAcao().getPai() != null)
+        		s += t.getAcao().getPai().getDescricao() + ListaHierarquica.DIVIDER;
+        	s += t.getAcao().getDescricao() + " (" + t.getConf().getAtendente().getSigla() + ")";
+        	t.titulo = s;
+        }
+        
+        // Set reordenado pelo titulo
+        SortedSet<SrTarefa> sset = new TreeSet<>();
+        sset.addAll(setTarefa);
+        
+        String idAtual = null;
+        if (itemConfiguracao != null && acao != null && designacao != null)
+        	idAtual = buildId(itemConfiguracao.getId(), acao.getId(), designacao.getId());
+        for (SrTarefa t : sset) {
+        	String id = t.getId();
+			lh.add(t.titulo, id, idAtual == null ? false : idAtual.equals(id));
+        }
+        return lh.getList();
+    }
+
 
     @SuppressWarnings("serial")
     public SortedSet<SrOperacao> operacoes(final DpPessoa pess, final DpLotacao lota) throws Exception {

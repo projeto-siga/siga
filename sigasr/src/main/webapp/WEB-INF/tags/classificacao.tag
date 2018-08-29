@@ -10,15 +10,33 @@
 <%@ attribute name="exibeConhecimento" required="false"%>
 
 <div id="${metodo}" class="gt-form-row" style="min-width: 550px;">
-	<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o</label>
-	<siga:selecao2 propriedade="solicitacao.itemConfiguracao" 
-		tipo="itemConfiguracao" 
-		tema="simple" 
-		modulo="sigasr" 
-		tamanho="grande"
-		onchange="dispararFuncoesOnBlurItem();"
-		checarInput="true"
-		paramList="sol.id=${solicitacao.id};sol.solicitante.id=${solicitante.idPessoa};sol.local.id=${local.idComplexo};sol.titular.id=${titular.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}" />
+	<label>Produto, Servi&ccedil;o ou Sistema relacionado &agrave; Solicita&ccedil;&atilde;o e A&ccedil;&atilde;o</label>
+	<input type="hidden" id="hItem" name="solicitacao.itemConfiguracao.id" value="${solicitacao.itemConfiguracao.id}"/>
+	<input type="hidden" id="hAcao" name="solicitacao.acao.id" value="${solicitacao.acao.id}"/>
+	<input type="hidden" id="hDesignacao" name="solicitacao.acao.id" value="${solicitacao.designacao.id}"/>
+	<div class="btn-group hierarchy-select" data-resize="auto" id="itens-acoes-select">
+		<button type="button" class="btn btn-sm btn-light border border-dark dropdown-toggle"
+			 id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-disabled="true">
+			<span class="selected-label pull-left">&nbsp;</span>
+		</button>
+		<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+			<div class="hs-searchbox">
+				<input type="text" class="form-control" autocomplete="off" placeholder="Pesquisar itens e ações...">
+			</div>
+			<ul class="dropdown-menu show inner" role="menu">
+				<c:forEach items="${solicitacao.itensAcoesEAtendentes}" var="item">
+					<li class="dropdown-item" data-value="${item.value}" data-level="${item.level}"
+						data-search="${item.searchText}"
+						${item.group ? 'data-group' : ''}
+						${item.selected ? 'data-default-selected' : ''}><a
+						href="#">${item.text}</a></li>
+				</c:forEach>
+			</ul>
+		</div>
+		<input class="hidden hidden-field" name="idItemEAcao"
+			readonly="readonly" onchange="alterouItemEAcaoSelect(this.value)"
+			aria-hidden="true" type="hidden" value="${solicitacao.itemConfiguracao.id};${solicitacao.acao.id};${dolicitacao.designacao.id}"/>
+	</div>
 	<br/><span id="itemNaoInformado" class="error" style="color: red; display: none;">Item não informado</span>
 	<br/>
 	<div id="divAcao" depende="solicitacao.itemConfiguracao" >
@@ -52,70 +70,24 @@
 				</script>
 			</c:if>
 		</c:if>
-		<c:set var="acoesEAtendentes" value="${solicitacao.acoesEAtendentes}" />
-		<c:if test="${not empty solicitacao.itemConfiguracao && not empty acoesEAtendentes}"> 
-			<div class="gt-form-row" style="margin-top: 10px;">
-				<label>A&ccedil;&atilde;o</label>	
-				<select name="solicitacao.acao.id" id="selectAcao" onchange="carregarAcao();">
-					<c:if test="${metodo == 'editar'}">
-						<option value=""></option>
-					</c:if>	
-					<c:forEach items="${acoesEAtendentes.keySet()}" var="cat">
-						<optgroup  label="${cat.tituloAcao}">
-							<c:forEach items="${acoesEAtendentes.get(cat)}" var="tarefa">
-								<option value="${tarefa.acao.idAcao}" ${solicitacao.acao.idAcao.equals(tarefa.acao.idAcao) ? 'selected' : ''}> 
-									${tarefa.acao.tituloAcao}
-									<c:if test="${exibeLotacaoNaAcao}">(${tarefa.conf.atendente.lotacaoAtual.siglaCompleta})</c:if>
-								</option>
-							</c:forEach>					 
-						</optgroup>
-					</c:forEach>
-				</select>
-				<br/><span id="acaoNaoInformada" class="error" style="color: red; display: none;">Ação não informada</span>
-			</div>
-			<c:if test="${exibeLotacaoNaAcao}">
-				<div class="gt-form-row" style="margin-top: 10px;">
-					<!-- Necessario listar novamente a lista "acoesEAtendentes" para ter a lotacao designada da cada acao
-							ja que acima no select nao tem como "esconder" essa informacao -->
-					<c:forEach items="${acoesEAtendentes.keySet()}" var="cat" varStatus="catPosition">
-						<c:forEach items="${acoesEAtendentes.get(cat)}" var="t" varStatus="tPosition">
-							<span class="idDesignacao-${t.acao.idAcao}" style="display:none;">${t.conf.idConfiguracao}</span>
-							<span class="lotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.lotacaoAtual.siglaCompleta} 
-												- ${t.conf.atendente.lotacaoAtual.descricao}</span>
-							<span class="idLotacao-${t.acao.idAcao}" style="display:none;">${t.conf.atendente.lotacaoAtual.idLotacao}</span>
-						</c:forEach>
-					</c:forEach>
-			
-					<label id="labelAtendentePadrao">Atendente</label>
-					<span id="atendentePadrao" style="display:block;"></span>
-					<input type="hidden" name="solicitacao.designacao.id" id="idDesignacao" value="" />
-					<input type="hidden" name="atendente.id" id="idAtendente" value="" />
-				</div>
-				<c:if test="${metodo == 'escalonar'}">
-					<a href="javascript: modalAbrir('lotacaoAtendente')" class="gt-btn-medium" style="margin: 5px 0 0 -3px;">
-						Alterar atendente
-					</a>
-				</c:if>
+		<div id="divAtributos" depende="solicitacao.acao">
+			<c:if test="${exibeConhecimento}">
+				<c:if test="${not empty solicitacao.itemConfiguracao && not empty solicitacao.acao && podeUtilizarServicoSigaGC}">
+					<!-- CONHECIMENTOS RELACIONADOS -->
+					<div style="display: inline-block" >
+						<div id="gc-ancora-item-acao"></div>
+					</div>
+					<script>
+						var tituloItemAcao = '${f:urlEncode(solicitacao.gcTituloAbertura)}';
+						var gcTag = '${solicitacao.gcTagAbertura}';
+						exibirConhecimentoRelacionadoAoItemEAcao(tituloItemAcao, gcTag);
+					</script>
+				</c:if>	
 			</c:if>
-			<div id="divAtributos" depende="solicitacao.acao">
-				<c:if test="${exibeConhecimento}">
-					<c:if test="${not empty solicitacao.itemConfiguracao && not empty solicitacao.acao && podeUtilizarServicoSigaGC}">
-						<!-- CONHECIMENTOS RELACIONADOS -->
-						<div style="display: inline-block" >
-							<div id="gc-ancora-item-acao"></div>
-						</div>
-						<script>
-							var tituloItemAcao = '${f:urlEncode(solicitacao.gcTituloAbertura)}';
-							var gcTag = '${solicitacao.gcTagAbertura}';
-							exibirConhecimentoRelacionadoAoItemEAcao(tituloItemAcao, gcTag);
-						</script>
-					</c:if>	
-				</c:if>
-				<sigasr:atributo atributoSolicitacaoMap="${atributoSolicitacaoMap}" 
-					atributoAssociados="${atributoAssociados}"
-					entidade="solicitacao" />
-			</div>
-		</c:if>
+			<sigasr:atributo atributoSolicitacaoMap="${atributoSolicitacaoMap}" 
+				atributoAssociados="${atributoAssociados}"
+				entidade="solicitacao" />
+		</div>
 	</div>
 </div>
 <script>
@@ -123,18 +95,31 @@ $(document).ready(function($) {
 	removerAcaoRepetida();
 	selecionarOpcaoDefault();
 	carregarLotacaoDaAcao();
+    $('#itens-acoes-select').hierarchySelect({
+        width: 'auto',
+        height: 'auto'
+    });
+
 });
+
+function alterouItemEAcaoSelect(value) {
+	var a = value.split(";");
+	$("#hItem").val(a[0]);
+	$("#hAcao").val(a[1]);
+	$("#hDesignacao").val(a[2]);
+	dispararFuncoesOnBlurItem();
+}
 
 function validarCampos() {
 	$("#itemNaoInformado").hide();
 	$("#erroJustificativa").hide();
 
-	if (!$("#formulario_solicitacaoitemConfiguracao_id").val()){
+	if (!$("#hItem").val()){
 		$("#itemNaoInformado").show();
 		addMensagemErroGeral();
 		return false;
 	}
-	if (!$("#selectAcao").val()) {
+	if (!$("#hAcao").val()) {
 		$("#acaoNaoInformada").show();
 		addMensagemErroGeral();
 		return false;

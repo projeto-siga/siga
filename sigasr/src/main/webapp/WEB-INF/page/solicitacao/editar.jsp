@@ -9,6 +9,9 @@
 <siga:pagina titulo="Cadastro de Solicitação">
 	<jsp:include page="../main.jsp"></jsp:include>
 	
+	<link rel="stylesheet" href="/siga/javascript/hierarchy-select/hierarchy-select.css" type="text/css" media="screen, projection"/>
+	<script type="text/javascript" src="/siga/javascript/hierarchy-select/hierarchy-select.js"></script>
+
 	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
 	<script src="/sigasr/javascripts/cronometro.js"></script>
 	
@@ -228,7 +231,7 @@
 							Detalhamento
 						</div>
 					</div>
-		
+					
 					<div id="divItem" depende="solicitacao.solicitante;solicitacao.local">
 						<c:if test="${not empty solicitacao.solicitante}">						
 							<sigasr:classificacao metodo="editar" exibeLotacaoNaAcao="true" exibeConhecimento="true"/>
@@ -337,4 +340,5 @@
 		</div>
 		</div>
 	</div>
+	
 </siga:pagina>

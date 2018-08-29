@@ -2074,9 +2074,16 @@ Pede deferimento.</span><br/><br/><br/>
 </table>
 [/#macro]
 
-[#macro rodapeClassificacaoDocumental somenteTR=false]
+[#macro rodapeClassificacaoDocumental somenteTR=false texto=""]
 [#if !somenteTR]
 <table align="left" width="100%" bgcolor="#FFFFFF">
+[/#if]
+[#if texto?? && texto!=""]
+<tr>
+<td colspan="2" align="left" style="border-collapse: collapse; border-color: black; font-family:Arial; font-size:8pt;">
+${texto} 
+</td>
+</tr>
 [/#if]
 <tr>
 <td width="70%" ></td>
@@ -2098,8 +2105,15 @@ Pede deferimento.</span><br/><br/><br/>
 [/#if]
 [/#macro]
 
-[#macro rodapeNumeracaoADireita]
+[#macro rodapeNumeracaoADireita texto=""]
 <table width="100%" border="0" cellpadding="0" bgcolor="#FFFFFF">
+	[#if texto?? && texto!=""]
+		<tr>
+			<td align="left" style="border-collapse: collapse; border-color: black; font-family:Arial; font-size:8pt;">
+				${texto} 
+			</td>
+		</tr>
+	[/#if]
     <tr>
         <td width="100%" align="right">#pg</td>
     </tr>
@@ -2237,7 +2251,7 @@ Pede deferimento.</span><br/><br/><br/>
 <!-- FIM ASSINATURA -->
 [/#macro]
 
-[#macro estiloBrasaoAEsquerda tipo exibeData=true tamanhoLetra="11pt" obs="" omitirCodigo=false width=65 height=65 exibirOrgao=true]
+[#macro estiloBrasaoAEsquerda tipo exibeData=true tamanhoLetra="11pt" obs="" omitirCodigo=false width=65 height=65 exibirOrgao=true texto=""]
     [@primeiroCabecalho]
     <table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
     [@cabecalhoEsquerdaPrimeiraPagina width=width height=height exibirOrgao=exibirOrgao/]
@@ -2279,11 +2293,11 @@ Pede deferimento.</span><br/><br/><br/>
                 ${obs}
         [/#if]
     [@primeiroRodape]
-    [@rodapeClassificacaoDocumental/]
+    [@rodapeClassificacaoDocumental texto=texto/]
     [/@primeiroRodape]
 
     [@rodape]
-    [@rodapeNumeracaoADireita/]
+    [@rodapeNumeracaoADireita texto=texto/]
     [/@rodape]
 [/#macro]
 

@@ -49,14 +49,10 @@ import net.sf.ehcache.config.CacheConfiguration;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.StatelessSession;
-import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.DefaultNamingStrategy;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
@@ -113,15 +109,6 @@ public class CpDao extends ModeloDao {
 	public static final String CACHE_QUERY_SECONDS = "query.seconds";
 	public static final String CACHE_QUERY_HOURS = "query.hours";
 	public static final String CACHE_SECONDS = "seconds";
-
-	public static CpDao getInstance(Session sessao,
-			StatelessSession sessaoStateless) {
-		return ModeloDao.getInstance(CpDao.class, sessao, sessaoStateless);
-	}
-
-	public static CpDao getInstance(Session sessao) {
-		return ModeloDao.getInstance(CpDao.class, sessao);
-	}
 
 	public static CpDao getInstance() {
 		return ModeloDao.getInstance(CpDao.class);
@@ -1352,39 +1339,13 @@ public class CpDao extends ModeloDao {
 	}
 
 	public Date consultarDataUltimaAtualizacao() throws AplicacaoException {
-		// Query sql = (Query)
-		// getSessao().getNamedQuery("consultarDataUltimaAtualizacao");
-		StatelessSession statelessSession = HibernateUtil.getSessionFactory()
-				.openStatelessSession();
-		Transaction transaction = statelessSession.beginTransaction();
-		try {
-
-			Query sql = (Query) statelessSession
-					.getNamedQuery("consultarDataUltimaAtualizacao");
-
-			sql.setCacheable(false);
-			List result = sql.list();
-
-			Date dtIni = (Date) ((Object[]) (result.get(0)))[0];
-			Date dtFim = (Date) ((Object[]) (result.get(0)))[1];
-			transaction.commit();
-			return DateUtils.max(dtIni, dtFim);
-		} catch (Exception e) {
-			try {
-				if (transaction instanceof org.hibernate.engine.transaction.internal.jta.JtaTransaction) {
-					((org.hibernate.engine.transaction.internal.jta.JtaTransaction) transaction)
-							.getUserTransaction().rollback();
-				}
-			} catch (IllegalStateException | SecurityException
-					| SystemException e1) {
-			}
-
-			return null;
-
-		} finally {
-			statelessSession.close();
-		}
-
+		Query sql = (Query) getSessao().getNamedQuery(
+				"consultarDataUltimaAtualizacao");
+		sql.setCacheable(false);
+		List result = sql.list();
+		Date dtIni = (Date) ((Object[]) (result.get(0)))[0];
+		Date dtFim = (Date) ((Object[]) (result.get(0)))[1];
+		return DateUtils.max(dtIni, dtFim);
 	}
 
 	public Date dt() throws AplicacaoException {

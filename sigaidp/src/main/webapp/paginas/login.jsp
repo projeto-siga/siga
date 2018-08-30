@@ -47,7 +47,7 @@
 					<c:import url="comentario.jsp" />
 				</c:otherwise>
 			</c:choose>
-			<h4>Versão: ${siga.versao}*</h4>
+			<h4>Versão: ${siga.versao}**</h4>
 		</div>
 		<!-- / main content -->
 

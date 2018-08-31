@@ -281,7 +281,7 @@ public class SigaHTTP {
 	}
 
 	public boolean isAuthPage(String html) {
-		return html.contains("Senha") && html.contains("Apostila");
+		return html.contains("Senha") && html.contains("Manual");
 	}
 
 	public boolean isIDPPage(String html) {

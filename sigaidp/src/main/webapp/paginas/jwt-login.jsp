@@ -107,10 +107,10 @@
 			<div class="gt-sidebar-nav gt-sidebar-nav-blue">
 				<h3>Links Úteis</h3>
 				<ul>
-					<li><a href="/siga/arquivos/apostila_sigaex.pdf">Apostila
+					<li><a href="/siga/arquivos/MANUAL_SIGA_DOC_USUARIO.pdf">Manual
 							SIGA-Doc</a></li>
-					<li><a href="/siga/arquivos/apostila_sigawf.pdf">Apostila
-							SIGA-Workflow</a></li>
+					<%--<li><a href="/siga/arquivos/apostila_sigawf.pdf">Apostila
+							SIGA-Workflow</a></li>--%>
 				</ul>
 			</div>
 			<!-- /Sidebar Navigation -->

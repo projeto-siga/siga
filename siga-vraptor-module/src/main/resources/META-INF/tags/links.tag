@@ -14,19 +14,15 @@
 	<c:set var="linkInline" value="${true}" scope="request" />
 </c:if>
 
-<c:if test="${not empty linkSeparator}">
-	<c:if test="${empty linkInline}">
-		<p class="gt-table-action-list" style="${estilo}">
-	</c:if>
+<c:if test="${empty linkInline}">
+	<p class="gt-table-action-list" style="${estilo}">
 </c:if>
 
 <jsp:doBody/>
 
-<c:if test="${not empty linkSeparator}">
-	<c:if test="${empty linkInline}">
-		</p>
-	</c:if>
-	<c:remove var="linkSeparator" scope="request" />
+<c:if test="${empty linkInline}">
+	</p>
 </c:if>
+<c:remove var="linkSeparator" scope="request" />
 
 <c:remove var="linkInline" scope="request" />

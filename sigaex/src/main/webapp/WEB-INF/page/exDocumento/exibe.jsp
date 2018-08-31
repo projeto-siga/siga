@@ -174,7 +174,7 @@
 
 					<c:choose>
 						<c:when test="${docVO.conteudoBlobHtmlString != null}">
-							<div class="card-sidebar card border-primary bg-white mb-3">
+							<div class="card-sidebar card border-alert bg-white mb-3">
 								<div class="card-body">
 
 

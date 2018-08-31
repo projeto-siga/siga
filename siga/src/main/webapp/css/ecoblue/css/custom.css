@@ -120,6 +120,11 @@ tr.fisicoeven:hover td {
 	line-height: 175% !important;
 }
 
+P.gt-table-action-list {
+	margin: 0;
+}
+
+/*
 .gt-table-action-list img {
 	vertical-align: text-bottom;
 }
@@ -145,6 +150,7 @@ tr.fisicoeven:hover td {
 .gt-table-action-list span {
 	
 }
+*/
 
 .table-action-list a:link,.gt-table .table-action-list a:visited {
 	color: #877b6d;
@@ -290,7 +296,7 @@ table.mov TR.disabled td {
 }
 
 .siga-table {
-	background-color: white;
+/*	background-color: white; */
 }
 
 .siga-table a:link,.siga-table a:visited {

@@ -592,6 +592,7 @@
 								</siga:paginador>
 								</tbody>
 							</table>
+						</div>
 					</c:otherwise>
 				</c:choose>
 			</c:if>

@@ -92,7 +92,7 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 	}
 	
 	public Integer getJWTTokenTTL(String modulo) {
-		int defaultTTL = 3600 * 1000;
+		int defaultTTL = 3600;
 		String ttl = System.getProperty("idp.jwt.token.ttl." + modulo,String.valueOf(defaultTTL));
 		return Integer.valueOf(ttl); 
 		 

@@ -168,13 +168,13 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		if (doc.getSubscritor() != null) {
 			addField(resp, "subscritor", doc.getSubscritor().getNomePessoa());
 		}
-		if (doc.getLotaCadastrante() != null) {
-			addField(resp, "cadastrante_lotacao", doc.getLotaCadastrante()
-					.getSiglaLotacao());
-		}
-		if (doc.getCadastrante() != null) {
-			addField(resp, "cadastrante", doc.getCadastrante().getNomePessoa());
-		}
+//		if (doc.getLotaCadastrante() != null) {
+//			addField(resp, "cadastrante_lotacao", doc.getLotaCadastrante()
+//					.getSiglaLotacao());
+//		}
+//		if (doc.getCadastrante() != null) {
+//			addField(resp, "cadastrante", doc.getCadastrante().getNomePessoa());
+//		}
 
 		Map<String, String> map = doc.getResumo();
 		if (map != null)

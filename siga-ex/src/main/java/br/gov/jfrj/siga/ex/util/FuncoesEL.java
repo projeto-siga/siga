@@ -1032,4 +1032,8 @@ public class FuncoesEL {
 		}
 		return null;
 	}
+
+	public static void email(String destinatarios, String assunto, String html, String txt) throws Exception {
+		Notificador.notificar(destinatarios, assunto, html, txt);
+	}
 }

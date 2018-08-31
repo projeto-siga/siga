@@ -92,11 +92,11 @@
 					<!-- /form row -->
 
 					<p class="gt-forgot-password">
-						<a href="/siga/app/usuario/incluir_usuario">Sou um novo
+						<a href="/siga/public/app/usuario/incluir_usuario">Sou um novo
 							usuário</a>
 					</p>
 					<p class="gt-forgot-password">
-						<a href="/siga/app/usuario/esqueci_senha">Esqueci minha senha</a>
+						<a href="/siga/public/app/usuario/esqueci_senha">Esqueci minha senha</a>
 					</p>
 				</form>
 				<!-- /login form -->

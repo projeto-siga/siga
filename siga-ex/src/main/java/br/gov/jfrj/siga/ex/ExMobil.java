@@ -2246,16 +2246,4 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 		}
 		return set;
 	}
-	
-	@Override
-	public Set<ExMovimentacao> getExMovimentacaoSet() {
-		// TODO Auto-generated method stub
-		return super.getExMovimentacaoSet();
-	}
-	
-	@Override
-	public Set<ExMovimentacao> getExMovimentacaoReferenciaSet() {
-		// TODO Auto-generated method stub
-		return super.getExMovimentacaoReferenciaSet();
-	}
 }

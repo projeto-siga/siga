@@ -731,7 +731,7 @@ public class ExDocumentoController extends ExController {
 		if (jsonHierarquiaDeModelos == null || !modeloEncontrado) {
 			lh = new ListaHierarquica();
 			for (ExModelo m : getModelos(exDocumentoDTO)) {
-				lh.add(m.getNmMod(), m.getId(),
+				lh.add(m.getNmMod(), m.getId().toString(),
 						m.getId().equals(exDocumentoDTO.getIdMod()));
 			}
 

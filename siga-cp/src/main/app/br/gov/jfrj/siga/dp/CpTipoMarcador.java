@@ -22,10 +22,16 @@
  */
 package br.gov.jfrj.siga.dp;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "CP_TIPO_MARCADOR", schema = "CORPORATIVO")
 public class CpTipoMarcador extends AbstractCpTipoMarcador {
 	public static final long TIPO_MARCADOR_SISTEMA = 1L;

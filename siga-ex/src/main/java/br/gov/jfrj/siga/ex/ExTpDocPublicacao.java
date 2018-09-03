@@ -25,13 +25,18 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @BatchSize(size = 500)
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "EX_TP_DOC_PUBLICACAO", catalog = "SIGA")
 public class ExTpDocPublicacao extends AbstractExTpDocPublicacao implements
 		Serializable {

@@ -350,17 +350,6 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	public static void main(String args[]) throws Exception {
-		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.PRODUCAO;
-		Configuration cfg = ExDao.criarHibernateCfg(ambiente);
-		HibernateUtil.configurarHibernate(cfg);
-		final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
-		filter.setSigla("JFRJ-EOF-2014/01573.01");
-		ExMobil mob = (ExMobil) ExDao.getInstance().consultarPorSigla(filter);
-		System.out.println(mob.doc().getExClassificacaoAtual());
-		int a = 0;
-	}
-
 	public void corrigirArquivamentosEmVolume(int primeiro, int ultimo,
 			boolean efetivar) {
 		Long ini = System.currentTimeMillis();

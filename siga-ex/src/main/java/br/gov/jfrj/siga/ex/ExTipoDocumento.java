@@ -27,10 +27,13 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.model.Selecionavel;
 
@@ -40,6 +43,8 @@ import br.gov.jfrj.siga.model.Selecionavel;
  */
 @Entity
 @BatchSize(size = 500)
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "EX_TIPO_DOCUMENTO", catalog = "siga")
 public class ExTipoDocumento extends AbstractExTipoDocumento implements
 		Serializable, Selecionavel {

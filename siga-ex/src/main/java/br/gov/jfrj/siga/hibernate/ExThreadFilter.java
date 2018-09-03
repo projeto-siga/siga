@@ -20,6 +20,8 @@ package br.gov.jfrj.siga.hibernate;
 
 import java.io.IOException;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -28,14 +30,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jboss.logging.Logger;
-
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.auditoria.filter.ThreadFilter;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
-import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class ExThreadFilter extends ThreadFilter {
@@ -44,78 +42,37 @@ public class ExThreadFilter extends ThreadFilter {
 
 	@Override
 	public void init(FilterConfig config) {
-	    this.config = config;
+		this.config = config;
 	}
 
-	/**
-	 * Pega a sessão.
-	 */
 	public void doFiltro(final ServletRequest request,
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
-		final StringBuilder csv = super.iniciaAuditoria(request);
+		EntityManager em = Persistence.createEntityManagerFactory("default-ex")
+				.createEntityManager();
+		ContextoPersistencia.setEntityManager(em);
 
-		try {
-			this.executaFiltro(request, response, chain);
-
-		} catch (final Exception ex) {
-			ExDao.rollbackTransacao();
-			if (ex instanceof RuntimeException)
-				throw (RuntimeException) ex;
-			else
-				throw new ServletException(ex);
-		} finally {
-			this.fechaSessaoHibernate();
-			this.liberaInstanciaDao();
-			Thread.interrupted();			
-		}
-
-		super.terminaAuditoria(csv);
-
-	}
-
-	private void executaFiltro(final ServletRequest request,
-			final ServletResponse response, final FilterChain chain)
-			throws Exception, AplicacaoException {
-
-		CurrentRequest.set(new RequestInfo(config.getServletContext(), (HttpServletRequest)request, (HttpServletResponse)response));
-
-		// HibernateUtil.getSessao();
+		// Inicialização padronizada
+		CurrentRequest.set(new RequestInfo(config.getServletContext(),
+				(HttpServletRequest) request, (HttpServletResponse) response));
 		ModeloDao.freeInstance();
 		ExDao.getInstance();
-		Ex.getInstance().getConf().limparCacheSeNecessario();
 
-		// Novo
-		if (!ExDao.getInstance().sessaoEstahAberta())
-			throw new AplicacaoException("Erro: sessão do Hibernate está fechada.");
+		em.getTransaction().begin();
 
-		ExDao.iniciarTransacao();
-		chain.doFilter(request, response);
-		ExDao.commitTransacao();
-	}
-
-
-	private void fechaSessaoHibernate() {
 		try {
-			HibernateUtil.fechaSessaoSeEstiverAberta();
-		} catch (Exception ex) {
-			Logger.getLogger(getLoggerName()).error("Ocorreu um erro ao fechar uma sessão do Hibernate", ex);
-		}
-	}
+			chain.doFilter(request, response);
+			em.getTransaction().commit();
+		} catch (Exception e) {
+			if (em.getTransaction().isActive())
+				em.getTransaction().rollback();
 
-	private void liberaInstanciaDao() {
-		try {
-			ExDao.freeInstance();
-		} catch (Exception ex) {
-			Logger.getLogger(getLoggerName()).error(ex.getMessage(), ex);
+			throw new ServletException(e);
+		} finally {
+			em.close();
+			ContextoPersistencia.setEntityManager(null);
 		}
-	}
-
-	/**
-	 * Executa ao destruir o filtro.
-	 */
-	public void destroy() {
 	}
 
 	@Override

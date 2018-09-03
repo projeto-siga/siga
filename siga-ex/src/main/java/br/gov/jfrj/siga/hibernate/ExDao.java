@@ -1816,52 +1816,6 @@ public class ExDao extends CpDao {
 		
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.ex.ExConfiguracao.class);
 
-		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExClassificacao",
-		// "read-only", "ex");
-		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExConfiguracao",
-		// "read-only", "ex");
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExEstadoDoc",
-				"read-only", CACHE_EX);
-		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExFormaDocumento",
-		// "read-only", CACHE_EX);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExNivelAcesso",
-				"read-only", CACHE_EX);
-		cfg.setCacheConcurrencyStrategy(
-				"br.gov.jfrj.siga.ex.ExSituacaoConfiguracao", "read-only",
-				CACHE_EX);
-		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTemporalidade",
-		// "read-only", "ex");
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoDespacho",
-				"read-only", CACHE_EX);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoDestinacao",
-				"read-only", CACHE_EX);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoDocumento",
-				"read-only", CACHE_EX);
-		cfg.setCacheConcurrencyStrategy(
-				"br.gov.jfrj.siga.ex.ExTpDocPublicacao", "read-only", CACHE_EX);
-		cfg.setCacheConcurrencyStrategy(
-				"br.gov.jfrj.siga.ex.ExTipoMovimentacao", "read-only", CACHE_EX);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoFormaDoc",
-				"read-only", CACHE_EX);
-		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExVia",
-		// "read-only", "ex");
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExTipoMobil",
-				"read-only", CACHE_EX);
-
-		// Nato: comentei pois estava recebendo erro
-		// org.hibernate.MappingException: Cannot cache an unknown collection:
-		// br.gov.jfrj.siga.ex.ExTipoDocumento.exFormaDocumentoSet.
-		// Seria importante habilitar novamente esse cache.
-		// cfg.setCollectionCacheConcurrencyStrategy(
-		// "br.gov.jfrj.siga.ex.ExTipoDocumento.exFormaDocumentoSet",
-		// "read-only", CACHE_EX);
-
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoMarca",
-				"transactional", "corporativo");
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoMarcador",
-				"transactional", "corporativo");
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpMarcador",
-				"transactional", "corporativo");
 
 		CacheManager manager = CacheManager.getInstance();
 		Cache cache;

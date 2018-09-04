@@ -49,8 +49,7 @@ public class ExThreadFilter extends ThreadFilter {
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
-		EntityManager em = Persistence.createEntityManagerFactory("default-ex")
-				.createEntityManager();
+		EntityManager em = ExStarter.emf.createEntityManager();
 		ContextoPersistencia.setEntityManager(em);
 
 		// Inicialização padronizada

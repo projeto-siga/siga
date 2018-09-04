@@ -3,7 +3,6 @@ package br.gov.jfrj.siga.util;
 import java.io.IOException;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -18,8 +17,7 @@ public class SigaThreadFilter extends ThreadFilter {
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
-		EntityManager em = Persistence.createEntityManagerFactory("default")
-				.createEntityManager();
+		EntityManager em = SigaStarter.emf.createEntityManager();
 		ContextoPersistencia.setEntityManager(em);
 
 		em.getTransaction().begin();

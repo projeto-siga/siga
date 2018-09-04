@@ -21,6 +21,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.tp.model.Andamento;
 import br.gov.jfrj.siga.tp.model.EstadoRequisicao;
 import br.gov.jfrj.siga.tp.model.Parametro;
+import br.gov.jfrj.siga.tp.model.TpDao;
 import br.gov.jfrj.siga.tp.util.FormatarTextoHtml;
 import br.gov.jfrj.siga.tp.util.VerificadorEnvioEmail;
 
@@ -95,12 +96,12 @@ public class WorkFlowNotificacao implements Task {
 
 					if (enviarEmail(titulo, lstPessoas, sequencia)) {
 						try {
-							HibernateUtil.iniciarTransacao();
+							TpDao.iniciarTransacao();
 							Andamento.gravarDataNotificacaoWorkFlow(item.getId());
-							HibernateUtil.commitTransacao();
+							TpDao.commitTransacao();
 						} catch (Exception ex) {
 							Logger.getLogger(SIGATP_WORKFLOW).info("Falha ao gravar notifica\u00E7\u00E3o: " + ex.getMessage());
-							HibernateUtil.rollbackTransacao();
+							TpDao.rollbackTransacao();
 						}
 					}
 				}

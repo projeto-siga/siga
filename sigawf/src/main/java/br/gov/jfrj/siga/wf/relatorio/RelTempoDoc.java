@@ -290,41 +290,6 @@ public class RelTempoDoc extends RelatorioTemplate {
 
 	}
 
-	/**
-	 * Utilizado para realizar testes no relatório. ATENÇÃO; Uma classe de teste
-	 * (JUnit) deve ser criada para substituir este método.
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-
-		Map<String, String> parametros = new HashMap<String, String>();
-		parametros.put("dataInicial", "01/01/2010");
-		parametros.put("dataFinal", "01/01/2011");
-		parametros.put("secaoUsuario", "SJRJ");
-
-		try {
-			CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
-			Wf.getInstance().getProp().setPrefixo(ambiente.getSigla());
-			Configuration cfg = WfDao.criarHibernateCfg(ambiente);
-//			CpDao.configurarHibernateParaDebug(cfg);
-			HibernateUtil.configurarHibernate(cfg);
-
-			RelTempoDoc rep = new RelTempoDoc(parametros);
-			rep.gerar();
-			JasperViewer.viewReport(rep.getRelatorioJasperPrint());
-		} catch (JRException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (DJBuilderException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	class Doc {
 		private String numeroDoc;
 		private Calendar inicio;

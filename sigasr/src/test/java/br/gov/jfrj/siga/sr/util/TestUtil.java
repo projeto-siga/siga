@@ -46,12 +46,7 @@ public class TestUtil {
 		ContextoPersistencia.setEntityManager(em);
 		
 		CpDao.freeInstance();
-		CpDao.getInstance((Session) em.getDelegate(), ((Session) em
-				.getDelegate()).getSessionFactory().openStatelessSession());
-		
-		//Edson: não sei por que o HibernateUtil precisa de uma sessao. Os Dao's
-				//que chamam essa classe já têm o objeto sessão 
-		HibernateUtil.configurarHibernate((Session)em.getDelegate());
+		CpDao.getInstance();
 	}
 	
 	public static void criarDadosBasicos(){
@@ -364,15 +359,6 @@ public class TestUtil {
 		return solSp;
 	}	
 	
-	public static void listLocks(){
-		List<Object[]> l = ((Query) HibernateUtil.getSessionFactory().openStatelessSession().createSQLQuery("SELECT * FROM SYSCS_DIAG.LOCK_TABLE")).list();
-		for (Object[] m : l){
-			for (Object n : m)
-				System.out.print(n + "\t\t\t");
-			System.out.println("");
-		}
-	}
-
 	private static void tiposMov() {
 		new SrTipoMovimentacao(1L, "Início do Atendimento").save();
 		//ContextoPersistencia.em().createQuery("from SrTipoMovimentacao cpcfg").getFirstResult();

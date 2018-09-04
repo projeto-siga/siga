@@ -48,7 +48,7 @@ public class SigaWFStarter {
 	
 	private void initJBPM() {
 		JbpmConfiguration configuration = JbpmConfiguration.getInstance(JBPM_CFG_XML);
-		configuration.createJbpmContext().setSessionFactory(HibernateUtil.getSessionFactory());
+		configuration.createJbpmContext().setSessionFactory(HibernateUtil.getSessao().getSessionFactory());
 		configuration.startJobExecutor();
 		WfContextBuilder.setConfiguration(configuration);
 	}

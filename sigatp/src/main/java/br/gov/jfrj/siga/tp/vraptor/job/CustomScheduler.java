@@ -13,7 +13,6 @@ import br.com.caelum.vraptor.tasks.helpers.TriggerBuilder;
 import br.com.caelum.vraptor.tasks.scheduler.Scheduled;
 import br.com.caelum.vraptor.tasks.scheduler.TaskScheduler;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.tp.model.Parametro;
 import br.gov.jfrj.siga.tp.model.TpDao;
 
@@ -52,10 +51,8 @@ public class CustomScheduler {
 		Session session = (Session) em.getDelegate();
 
 		TpDao.freeInstance();
-		TpDao.getInstance(session, session.getSessionFactory().openStatelessSession());
-
+		TpDao.getInstance();
 		ContextoPersistencia.setEntityManager(em);
-		HibernateUtil.setSessao(session);
 	}
 
 	public static void fecharEntityManager() {

@@ -2479,11 +2479,13 @@ public class ExBL extends CpBL {
 				final Object[] aMovimentacao = set.toArray();
 				for (int i = 0; i < set.size(); i++) {
 					final ExMovimentacao movimentacao = (ExMovimentacao) aMovimentacao[i];
-					Ex.getInstance()
-							.getBL()
-							.cancelar(cadastrante, lotaCadastrante,
-									movimentacao.getExMobil(), movimentacao,
-									null, cadastrante, cadastrante, "");
+					if (!movimentacao.isCancelada()) {
+						Ex.getInstance()
+								.getBL()
+								.cancelar(cadastrante, lotaCadastrante,
+										movimentacao.getExMobil(), movimentacao,
+										null, cadastrante, cadastrante, "");
+					}
 				}
 			}
 		}

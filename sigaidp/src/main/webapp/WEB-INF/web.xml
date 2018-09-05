@@ -89,7 +89,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SigaJwtProviderServlet</servlet-name>
-		<url-pattern>/jwt/*</url-pattern>
+		<url-pattern>/jwt/api/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

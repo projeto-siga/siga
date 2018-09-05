@@ -32,6 +32,7 @@
 		<filter-name>AuthJwtFormFilter</filter-name>
 		<url-pattern>/paginas/*</url-pattern>
 		<url-pattern>/app/*</url-pattern>
+		<url-pattern>*.action</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>

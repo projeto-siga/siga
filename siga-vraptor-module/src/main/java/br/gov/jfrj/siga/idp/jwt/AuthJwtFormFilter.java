@@ -122,6 +122,8 @@ public class AuthJwtFormFilter implements Filter {
 			} else {
 				throw new RuntimeException(e);
 			}
+		} finally {
+			ContextoPersistencia.removeUserPrincipal();
 		}
 	}
 

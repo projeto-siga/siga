@@ -6,9 +6,9 @@
 
 <siga:pagina titulo="Busca Textual" popup="false">
 
-	<div class="container-fluid	">
-		 <header id="topo" class="row">
-            <div class="col-md-7 topo">
+	<div class="container-fluid">
+		 <header id="topo" class="row justify-content-center">
+            <div class="col col-auto topo">
                 <form name="headerSearch" class="form-inline pull-right topoForm">
                     <div class="form-group">
                         <input type="text" class="form-control typeahead" name="q" placeholder="Pesquisa Siga">

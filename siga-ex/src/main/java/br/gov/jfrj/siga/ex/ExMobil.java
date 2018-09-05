@@ -1652,12 +1652,15 @@ public class ExMobil extends AbstractExMobil implements Serializable,
 			if (!docFilho.isExpediente() || docFilho.isCancelado()
 					|| docFilho.isArquivado() || docFilho.isSemEfeito())
 				continue;
-			boolean juntado = false;
+			boolean juntado = false, juntadoAOutro = false;
 			for (ExMobil mobFilho : docFilho.getExMobilSet()) {
 				if (todosOsMeusJuntados.contains(mobFilho))
 					juntado = true;
+				else if (mobFilho.isJuntado())
+					juntadoAOutro = true;
+					
 			}
-			if (!juntado)
+			if (!juntado && !juntadoAOutro)
 				meusFilhosNaoJuntados.add(docFilho);
 		}
 		return meusFilhosNaoJuntados;

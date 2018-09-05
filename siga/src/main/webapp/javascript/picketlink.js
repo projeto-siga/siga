@@ -53,7 +53,7 @@ window.Siga = {
       }).fail(function(jqXHR, textStatus, errorThrown){
          doneCallback(jqXHR.statusText,jqXHR.status);
       }).done(function(data, textStatus, jqXHR ){
-       if (data.indexOf("Não foi Possível completar a Operação.") > 1){
+       if (typeof data == "string" && data.indexOf("Não foi Possível completar a Operação.") > 1){
          data = "Não foi Possível completar a Operação.";
        }
        doneCallback(data);
@@ -71,7 +71,7 @@ window.Siga = {
 
          self._ajaxCall({url: url, type: httpMethod, params: params, timeout: timeout}, function(textResponse,statusReponse) {
             // Verifica se o SP foi previamente inicializado, caso nao tenha sido apenas renderiza.
-            if (textResponse.indexOf("SAMLRequest") > -1){
+            if (typeof textResponse == "string" && textResponse.indexOf("SAMLRequest") > -1){
                 var SAMLRequest = self._picketlinkResponse(textResponse);
 
                 // Envia um POST para o IDP com o atributo SAMLRequest da ultima requisicao

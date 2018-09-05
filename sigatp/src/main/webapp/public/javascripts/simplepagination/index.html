@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, maximum-scale=1"/>
+        <title>SimplePagination</title>
+
+        <link href="css/simplePagination.css" type="text/css" rel="stylesheet"/>
+        <script src="js/jquery-1.10.2.min.js"></script>
+        <script src="js/jquery.simplePagination.js"></script>
+
+        <script>
+            jQuery(function($) {
+                var items = $("#content tbody tr");
+
+                var numItems = items.length;
+                var perPage = 2;
+
+                // only show the first 2 (or "first per_page") items initially
+                items.slice(perPage).hide();
+
+                // now setup pagination
+                $("#pagination").pagination({
+                    items: numItems,
+                    itemsOnPage: perPage,
+                    cssStyle: "light-theme",
+                    onPageClick: function(pageNumber) { // this is where the magic happens
+                        // someone changed page, lets hide/show trs appropriately
+                        var showFrom = perPage * (pageNumber - 1);
+                        var showTo = showFrom + perPage;
+
+                        items.hide() // first hide everything, then show for the new page
+                             .slice(showFrom, showTo).show();
+                    }
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <a href="../">Back to bin</a>,
+        <a href="https://github.com/2unco/bin/tree/master/simplepagination" target="_blank">see on GitHub</a>
+
+        <h1>SimplePagination</h1>
+
+        <div id="pagination"></div>
+        <table id="content">
+            <tbody>
+                <tr>
+                    <td>Window</td>
+                    <td>John</td>
+                </tr>
+                <tr>
+                    <td>Door</td>
+                    <td>Chris</td>
+                </tr>
+                <tr>
+                    <td>Floor</td>
+                    <td>Michael</td>
+                </tr>
+                <tr>
+                    <td>Car</td>
+                    <td>James</td>
+                </tr>
+                <tr>
+                    <td>Bike</td>
+                    <td>Steven</td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>

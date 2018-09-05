@@ -1,0 +1,228 @@
+/*body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, p, pre, code, blockquote {
+	margin:0;
+	padding:0;
+	border-width:0;
+	color:#4d4d4f;
+	font-family:"Century Gothic", sans-serif;
+}*/
+h1, h2, h3, h4, h5, h6, p{
+	margin:0;
+	padding:0;
+	border-width:0;
+	color:#4d4d4f;
+	font-family:"Century Gothic", sans-serif;
+	max-width: 1500px;
+	text-align: justify;
+}
+body {
+	font-size:12px;
+}
+.nivel1 {
+	margin: 100px 5% 0 5%;
+	
+}
+.nivel2 {
+	margin: 70px 0 0 5%;
+	padding-left: 10px;
+	border-left: thin solid #CCC;
+}
+.nivel3 {
+	margin: 40px 0 0 5%;
+	padding-left: 10px;
+	border-left: thin solid #CCC;
+}
+.nivel1 h1 {
+	font-family:"Century Gothic Bold", sans-serif;
+	font-size:2.2em;
+	font-weight:normal;
+	line-height:1.2;
+	margin-bottom: 20px;
+	text-align:justify;
+}
+.nivel2 h1 {
+	font-size:1.7em;
+	line-height:1.2;
+	margin-bottom: 15px;
+}
+.nivel3 h1{
+	font-size:1.4em;
+	font-weight:bold;
+	line-height:1.2;
+	margin-bottom:10px;
+	text-decoration:none;
+}
+p {
+	font-size: 1.4em;
+	font-style:normal;
+	font-variant:normal;
+	font-weight:normal;
+	line-height:1.2;
+	margin-top: 30px;
+/*	margin-bottom:0px;  
+	margin-left:34px;
+	margin-right:0px;
+	text-align:left;
+	text-decoration:none;
+	text-indent:-34px;*/
+}
+h1 {
+	font-family:"Century Gothic Bold", sans-serif;
+	font-size:2.5em;
+	font-style:normal;
+	text-align:center;
+	margin-top: 50px;
+}
+h2 {
+	font-size:2em;
+	font-style:normal;
+	text-align:center;
+	margin-top: 10px;
+}
+h3 {
+	color:#C06;
+	font-family:"Myriad Pro", sans-serif;
+	font-size:1.2em;
+	font-style:italic;
+	font-weight:normal;
+	line-height:1.2;
+	margin-top:10px;
+}
+strong {
+	font-style:normal;
+	font-weight:bold;
+	font-family:"Century Gothic Bold", sans-serif;
+}
+img {
+	margin-top: 20px;
+	max-width: 100%;
+	display: block; 
+    margin-left: auto;
+    margin-right: auto;  /*border-style: outset;
+	border-width:thin; */
+}
+ul {
+  list-style-type: none;
+  margin-left: 30px;
+  padding: 0;
+}
+ 
+
+a:hover{
+	font-size: 1.15em;
+	transition: font-size 0.3s ease;
+}
+
+.coluna {
+	display: inline;
+	float: left;
+	margin-left: 25%;
+}
+#sidebar { 
+	width: 22%;
+	position: fixed; 
+}
+
+#nav{
+    list-style:none;
+    font-weight:bold;
+    margin-bottom:10px;
+    float:left; /* Clear floats */
+    width:100%;
+    /* Bring the nav above everything else--uncomment if needed.
+    position:relative;
+    z-index:5;
+    */
+}
+#nav li{
+/*    float:left;*/
+    margin-right:10px;
+	font: 14px Helvetica, Verdana, sans-serif;
+/*	border-bottom: 1px solid #ccc;  */
+/*    position:relative; */
+}
+#nav li:last-child {/*
+	border: none; */
+}
+ 
+#nav li a {
+/*	
+  text-decoration: none;
+  color: #000;
+  display: block;
+/*  width: 200px;*/
+ 
+}
+#nav a{
+    display:block;
+    padding:5px;
+    color:#333;
+    background:#fff;
+    text-decoration:none;
+
+	-webkit-transition: font-size 0.3s ease, background-color 0.3s ease;
+	-moz-transition: font-size 0.3s ease, background-color 0.3s ease;
+	-o-transition: font-size 0.3s ease, background-color 0.3s ease;
+	-ms-transition: font-size 0.3s ease, background-color 0.3s ease;
+	transition: font-size 0.3s ease, background-color 0.3s ease;
+}
+#nav a:hover{
+    color:#333;
+    background:#ccc;
+}
+
+/*--- DROPDOWN ---*/
+#nav ul{
+    background:#fff; /* Adding a background makes the dropdown work properly in IE7+. Make this as close to your page's background as possible (i.e. white page == white background). */
+    background:rgba(255,255,255,0); /* But! Let's make the background fully transparent where we can, we don't actually want to see it if we can help it... */
+    list-style:none;
+    position:absolute;
+    left:-9999px; /* Hide off-screen when not needed (this is more accessible than display:none;) */
+}
+#nav ul li{
+    /*padding-top:1px; /* Introducing a padding between the li and the a give the illusion spaced items */
+	border-bottom: thin #ccc solid; 
+    float:none;
+}
+#nav ul a{
+    white-space:nowrap; /* Stop text wrapping and creating multi-line dropdown items */
+}
+#nav li:hover>ul{ /*:not(.nav1) Display the dropdown on hover */
+    left:0px; /* Bring back on-screen when needed */
+	position: relative;
+	width: 130%;
+/*	max-width: 300px; */
+	top:0px;
+}
+/*
+#nav li a::before,
+#nav ul li a::before {
+    content:"+";
+	font-family: century gothic;
+	margin-right: 10px;
+}
+#nav ul li a::before {
+    content:"+";
+	font-family: century gothic;
+	margin-right: 10px;	
+    float: left;
+}
+#nav ul li ul li a::before {
+	content:" \21AA"; /*utf-8*/ /*
+	font-family: century gothic;
+    float: left;
+}
+*/
+#nav li:hover a,
+#nav ul li.subItem:hover a { /* These create persistent hover states, meaning the top-most link stays 'hovered' even when your cursor has moved down the list. */
+    background:#eee;
+    font-size: 18px;
+}
+#nav li:hover ul a,
+#nav ul li.subItem:hover ul a{ /* The persistent hover state does however create a global style for links even before they're hovered. Here we undo these effects. */
+    font-size: 14px;
+    background:#fff;
+}
+#nav li:hover ul li a:hover{ /* Here we define the most explicit hover states--what happens when you hover each individual link. */
+    background:#eee;
+    font-size: 18px;
+}

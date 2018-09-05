@@ -56,7 +56,7 @@ SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
       THEN 'Unidade Judicial'
       WHEN 'JUIZADO ESPECIAL'
       THEN 'Unidade Judicial'
-      ELSE 'Unidade da AdministraÁ„o'
+      ELSE 'Unidade da Administra√ß√£o'
     END               AS LOTACAO_TIPO,
     'Principal'       AS LOTACAO_TIPO_PAPEL,
     LO.ID_LOT_LOTACAO AS PAPEL_ID
@@ -159,7 +159,7 @@ SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
     U.NM_UNIDADE                                                                                                                                                                                                                                 AS LOTACAO_NOME,
     U.SG_UNIDADE                                                                                                                                                                                                                                 AS LOTACAO_SIGLA,
     U_PAI.ID_LOT_UNIDADE                                                                                                                                                                                                                         AS LOTACAO_ID_PAI,
-    'Unidade da AdministraÁ„o'                                                                                                                                                                                                                   AS LOTACAO_TIPO,
+    'Unidade da Administra√ß√£o'                                                                                                                                                                                                                   AS LOTACAO_TIPO,
     'Funcional'                                                                                                                                                                                                                                  AS LOTACAO_TIPO_PAPEL,
     LAF.ID_LOT_LOTACAO                                                                                                                                                                                                                           AS PAPEL_ID
   FROM SIGARH.CAD_PESSOA_FISICA PF
@@ -212,7 +212,7 @@ SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
   AND PF.ID_CAD_TP_SANGUINEO  = TPS.ID_CAD_TP_SANGUINEO
   AND PF.ID_CAD_NACIONALIDADE = NAC.ID_CAD_NACIONALIDADE
   UNION
-  --SERVIDOR REQUISITADO DA CARREIRA JUDICI¡RIA
+  --SERVIDOR REQUISITADO DA CARREIRA JUDICI√ÅRIA
   SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
     PF.CPF                        AS PESSOA_CPF,
     PF.NM_PESSOA                  AS PESSOA_NOME,
@@ -270,7 +270,7 @@ SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
       THEN 'Unidade Judicial'
       WHEN 'JUIZADO ESPECIAL'
       THEN 'Unidade Judicial'
-      ELSE 'Unidade da AdministraÁ„o'
+      ELSE 'Unidade da Administra√ß√£o'
     END               AS LOTACAO_TIPO,
     'Principal'       AS LOTACAO_TIPO_PAPEL,
     LO.ID_LOT_LOTACAO AS PAPEL_ID
@@ -321,7 +321,7 @@ SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
   WHERE RH.ID_CAD_ORGAO = 1
   AND U.ID_CAD_ORGAO    = 1
   UNION
-  --SERVIDOR REQUISITADO SEM VÕNCULO
+  --SERVIDOR REQUISITADO SEM V√çNCULO
   SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
     PF.CPF                        AS PESSOA_CPF,
     PF.NM_PESSOA                  AS PESSOA_NOME,
@@ -379,7 +379,7 @@ SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
       THEN 'Unidade Judicial'
       WHEN 'JUIZADO ESPECIAL'
       THEN 'Unidade Judicial'
-      ELSE 'Unidade da AdministraÁ„o'
+      ELSE 'Unidade da Administra√ß√£o'
     END               AS LOTACAO_TIPO,
     'Principal'       AS LOTACAO_TIPO_PAPEL,
     LO.ID_LOT_LOTACAO AS PAPEL_ID
@@ -430,7 +430,7 @@ SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
   WHERE RH.ID_CAD_ORGAO = 1
   AND U.ID_CAD_ORGAO    = 1
   UNION
-  --SERVIDOR REQUISITADO DE OUTROS ”RG√OS
+  --SERVIDOR REQUISITADO DE OUTROS √ìRG√ÉOS
   SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
     PF.CPF                        AS PESSOA_CPF,
     PF.NM_PESSOA                  AS PESSOA_NOME,
@@ -488,7 +488,7 @@ SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
       THEN 'Unidade Judicial'
       WHEN 'JUIZADO ESPECIAL'
       THEN 'Unidade Judicial'
-      ELSE 'Unidade da AdministraÁ„o'
+      ELSE 'Unidade da Administra√ß√£o'
     END               AS LOTACAO_TIPO,
     'Principal'       AS LOTACAO_TIPO_PAPEL,
     LO.ID_LOT_LOTACAO AS PAPEL_ID
@@ -579,7 +579,7 @@ SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
     NVL(TPS.NM_TP_SANGUINEO,' ')                                                                                                                                                                                                                 AS PESSOA_TP_SANGUINEO,
     NVL(PF.NATURALIDADE, ' ')                                                                                                                                                                                                                    AS PESSOA_NATURALIDADE,
     NVL(NAC.DSC_NACIONALIDADE, ' ')                                                                                                                                                                                                              AS PESSOA_NACIONALIDADE,
-    'ESTAGI¡RIO'                                                                                                                                                                                                                                 AS TIPO_RH,
+    'ESTAGI√ÅRIO'                                                                                                                                                                                                                                 AS TIPO_RH,
     TP.ID_CARGO                                                                                                                                                                                                                                  AS CARGO_ID,
     MC.NM_CARGO                                                                                                                                                                                                                                  AS CARGO_NOME,
     MC.COD_CARGO2                                                                                                                                                                                                                                AS CARGO_SIGLA,
@@ -597,7 +597,7 @@ SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
       THEN 'Unidade Judicial'
       WHEN 'JUIZADO ESPECIAL'
       THEN 'Unidade Judicial'
-      ELSE 'Unidade da AdministraÁ„o'
+      ELSE 'Unidade da Administra√ß√£o'
     END               AS LOTACAO_TIPO,
     'Principal'       AS LOTACAO_TIPO_PAPEL,
     LO.ID_LOT_LOTACAO AS PAPEL_ID
@@ -726,7 +726,7 @@ SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
   AND CTT.DT_INICIO<=SYSDATE
   AND (CTT.DT_TERMINO IS NULL OR CTT.DT_TERMINO>=SYSDATE)
   UNION
-  --JUIZ COM LOTA«√O TITULAR EXIBINDO SOMENTE A LOTA«√O TITULAR
+  --JUIZ COM LOTA√á√ÉO TITULAR EXIBINDO SOMENTE A LOTA√á√ÉO TITULAR
   SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
     PF.CPF                        AS PESSOA_CPF,
     PF.NM_PESSOA                  AS PESSOA_NOME,
@@ -784,7 +784,7 @@ SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
       THEN 'Unidade Judicial'
       WHEN 'JUIZADO ESPECIAL'
       THEN 'Unidade Judicial'
-      ELSE 'Unidade da AdministraÁ„o'
+      ELSE 'Unidade da Administra√ß√£o'
     END               AS LOTACAO_TIPO,
     'Principal'       AS LOTACAO_TIPO_PAPEL,
     LO.ID_LOT_LOTACAO AS PAPEL_ID
@@ -836,7 +836,7 @@ SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
   WHERE RH.ID_CAD_ORGAO = 1
   AND U.ID_CAD_ORGAO    = 1
   UNION
-  --JUIZ SOMENTE COM LOTA«’ES SUBSTITUTAS EXIBINDO SOMENTE A LOTA«√O SUBSTITUTA COM MAIOR DATA DE INÕCIO
+  --JUIZ SOMENTE COM LOTA√á√ïES SUBSTITUTAS EXIBINDO SOMENTE A LOTA√á√ÉO SUBSTITUTA COM MAIOR DATA DE IN√çCIO
   SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
     PF.CPF                        AS PESSOA_CPF,
     PF.NM_PESSOA                  AS PESSOA_NOME,
@@ -894,7 +894,7 @@ SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
       THEN 'Unidade Judicial'
       WHEN 'JUIZADO ESPECIAL'
       THEN 'Unidade Judicial'
-      ELSE 'Unidade da AdministraÁ„o'
+      ELSE 'Unidade da Administra√ß√£o'
     END               AS LOTACAO_TIPO,
     'Principal'       AS LOTACAO_TIPO_PAPEL,
     LO.ID_LOT_LOTACAO AS PAPEL_ID
@@ -996,7 +996,7 @@ SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
   WHERE RH.ID_CAD_ORGAO   = 1
   AND U.ID_CAD_ORGAO      = 1
   UNION
-  --LOTA«’ES ATIVAS
+  --UNIDADES OFICIAIS ATIVAS
   SELECT NULL            AS PESSOA_ID,
     NULL                 AS PESSOA_CPF,
     NULL                 AS PESSOA_NOME,
@@ -1044,7 +1044,7 @@ SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
       THEN 'Unidade Judicial'
       WHEN 'JUIZADO ESPECIAL'
       THEN 'Unidade Judicial'
-      ELSE 'Unidade da AdministraÁ„o'
+      ELSE 'Unidade da Administra√ß√£o'
     END         AS LOTACAO_TIPO,
     'Principal' AS LOTACAO_TIPO_PAPEL,
     NULL        AS PAPEL_ID
@@ -1059,7 +1059,63 @@ SELECT RH.ID_CAD_RECURSO_HUMANO AS PESSOA_ID,
   INNER JOIN SIGARH.LOT_UNIDADE U_PAI
   ON U_PAI.ID_LOT_UNIDADE =HH.LOT_UNIDADE_SUPERIOR
   WHERE U.ID_CAD_ORGAO    = 1
-  ORDER BY PESSOA_MATRICULA
+  UNION
+    --UNIDADES DO TIPO AGRUPAMENTO OFICIAL
+  SELECT NULL            AS PESSOA_ID,
+    NULL                 AS PESSOA_CPF,
+    NULL                 AS PESSOA_NOME,
+    NULL                 AS PESSOA_SEXO,
+    NULL                 AS PESSOA_DATA_NASCIMENTO,
+    NULL                 AS PESSOA_RUA,
+    NULL                 AS PESSOA_BAIRRO,
+    NULL                 AS PESSOA_CIDADE,
+    NULL                 AS PESSOA_UF,
+    NULL                 AS PESSOA_CEP,
+    NULL                 AS PESSOA_MATRICULA,
+    NULL                 AS PESSOA_DATA_INICIO_EXERCICIO,
+    NULL                 AS PESSOA_ATO_NOMEACAO,
+    NULL                 AS PESSOA_DATA_NOMEACAO,
+    NULL                 AS PESSOA_DT_PUBL_NOMEACAO,
+    NULL                 AS PESSOA_DATA_POSSE,
+    NULL                 AS PESSOA_PADRAO_REFERENCIA ,
+    NULL                 AS PESSOA_SITUACAO ,
+    NULL                 AS PESSOA_RG,
+    NULL                 AS PESSOA_RG_ORGAO,
+    NULL                 AS PESSOA_RG_UF,
+    NULL                 AS PESSOA_DATA_EXPEDICAO_RG,
+    NULL                 AS PESSOA_ESTADO_CIVIL,
+    NULL                 AS PESSOA_SIGLA,
+    NULL                 AS PESSOA_EMAIL,
+    NULL                 AS PESSOA_GRAU_DE_INSTRUCAO,
+    NULL                 AS PESSOA_TP_SANGUINEO,
+    NULL                 AS PESSOA_NATURALIDADE,
+    NULL                 AS PESSOA_NACIONALIDADE,
+    NULL                 AS TIPO_RH,
+    NULL                 AS CARGO_ID,
+    NULL                 AS CARGO_NOME,
+    NULL                 AS FUNCAO_ID,
+    NULL                 AS CARGO_SIGLA,
+    NULL                 AS FUNCAO_NOME,
+    NULL                 AS FUNCAO_SIGLA,
+    U.ID_LOT_UNIDADE     AS LOTACAO_ID,
+    U.NM_UNIDADE         AS LOTACAO_NOME,
+    U.SG_UNIDADE         AS LOTACAO_SIGLA,
+    U_PAI.ID_LOT_UNIDADE AS LOTACAO_ID_PAI,
+    'Agrupamento Formal' AS LOTACAO_TIPO,
+    'Funcional' AS LOTACAO_TIPO_PAPEL,
+    NULL        AS PAPEL_ID
+  FROM SIGARH.LOT_UNIDADE U
+  INNER JOIN SIGARH.LOT_EQUIP_TRAB_OFICIAL O
+  ON O.ID_LOT_UNIDADE=U.ID_LOT_UNIDADE
+  INNER JOIN SIGARH.LOT_TIPO_CATEGORIA_OFICIAL TC
+  ON TC.ID_LOT_TIPO_CATEGORIA_OFICIAL=O.ID_LOT_TIPO_CATEGORIA_OFICIAL
+  INNER JOIN SIGARH.LOT_HIST_HIERARQUIA HH
+  ON HH.DT_FIM              IS NULL
+  AND HH.LOT_UNIDADE_INFERIOR=U.ID_LOT_UNIDADE
+  INNER JOIN SIGARH.LOT_UNIDADE U_PAI
+  ON U_PAI.ID_LOT_UNIDADE =HH.LOT_UNIDADE_SUPERIOR
+  WHERE U.ID_CAD_ORGAO    = 1
+  ORDER BY PESSOA_MATRICULA;
 -- new object type path: SCHEMA_EXPORT/VIEW/GRANT/OWNER_GRANT/OBJECT_GRANT
 GRANT SELECT ON "SIGARH"."DADOS_RH" TO "SIGASR_CON";
 GRANT SELECT ON "SIGARH"."DADOS_RH" TO "SIGARH_SELECT";

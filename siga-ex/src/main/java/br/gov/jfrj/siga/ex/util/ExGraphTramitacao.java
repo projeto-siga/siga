@@ -1,10 +1,10 @@
 package br.gov.jfrj.siga.ex.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 
@@ -15,7 +15,12 @@ public class ExGraphTramitacao extends ExGraph {
 		ExMovimentacao ultMovNaoCanc = mob.getUltimaMovimentacaoNaoCancelada();
 		DpLotacao atendenteInicial = null;
 		int numTransicao = 0;
-		for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
+		
+		List<ExMovimentacao> listMov = new ArrayList<ExMovimentacao>();
+		listMov.addAll(mob.getExMovimentacaoSet());
+		Collections.sort(listMov);
+		
+		for (ExMovimentacao mov : listMov) {
 			if (!mov.isCancelada() && !mov.isCanceladora()
 					&& mov.getLotaResp() != null && !mov.getLotaResp().equivale(atendenteAnterior)) {
 

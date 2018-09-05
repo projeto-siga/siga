@@ -809,6 +809,37 @@ LINHA  VARIÁVEL / CONTEÚDO
 [@oculto var="fm_dumpDepoisFm" valor="${fm_logDump?html}"/]
 [/#macro]
 
+[#function descricaoComposta args...]
+  [#if args?size = 1]
+  	[#local args = args[0] /]
+  [/#if]
+
+  [#local descr = " " /]
+  [#local primeiro = true /]
+  [#list args as arg]
+    [#if primeiro]
+      [#local titulo = arg /]
+      [#local primeiro = false/]
+    [#else]
+      [#if arg?has_content]
+        [#if titulo?has_content]
+          [#if arg?is_boolean]
+            [#if arg]
+              [#local descr =descr + " " + titulo + '.' /]
+            [/#if]
+          [#else]
+            [#local descr =descr + " " + titulo + ': ' + arg + '.' /]
+          [/#if]
+        [#else]
+          [#local descr =descr + " " + arg + '.' /]
+        [/#if]
+      [/#if]
+      [#local primeiro = true/]
+    [/#if]
+  [/#list]
+  [#return descr /]
+[/#function]
+
 [#function descricaoDefault args...]
   [#if doc.exModelo.nmMod?last_index_of(": ") > 0]
     [#local descr = doc.exModelo.nmMod?substring(doc.exModelo.nmMod?last_index_of(": ") + 2) /]
@@ -839,28 +870,7 @@ LINHA  VARIÁVEL / CONTEÚDO
   [#if doc.lotaTitular??]
     [#local descr = descr + ' / ' + doc.lotaTitular.sigla /]
   [/#if]
-  [#local primeiro = true /]
-  [#list args as arg]
-    [#if primeiro]
-      [#local titulo = arg /]
-      [#local primeiro = false/]
-    [#else]
-      [#if arg?has_content]
-        [#if titulo?has_content]
-          [#if arg?is_boolean]
-            [#if arg]
-              [#local descr =descr + " " + titulo + '.' /]
-            [/#if]
-          [#else]
-            [#local descr =descr + " " + titulo + ': ' + arg + '.' /]
-          [/#if]
-        [#else]
-          [#local descr =descr + " " + arg + '.' /]
-        [/#if]
-      [/#if]
-      [#local primeiro = true/]
-    [/#if]
-  [/#list]
+  [#local descr = descr + descricaoComposta(args) /]
   [#return descr /]
 [/#function]
 
@@ -2003,10 +2013,10 @@ Pede deferimento.</span><br/><br/><br/>
 </table>
 [/#macro]
 
-[#macro cabecalhoEsquerdaPrimeiraPagina]
+[#macro cabecalhoEsquerdaPrimeiraPagina width=65 height=65 exibirOrgao=true]
 <table width="100%" align="left" border="0">
     <tr>
-        <td align="left" valign="bottom" width="15%"><img src="${_pathBrasao}" width="65" height="65" /></td>
+        <td align="left" valign="bottom" width="15%"><img src="${_pathBrasao}" width="${width}" height="${height}" /></td>
         <td align="left" width="1%"></td>
         <td width="84%">
         <table align="left" width="100%">
@@ -2022,6 +2032,7 @@ Pede deferimento.</span><br/><br/><br/>
                 </td>
             </tr>
             [/#if]
+            [#if exibirOrgao]
             <tr>
                 <td width="100%" align="left">
                 <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
@@ -2032,6 +2043,7 @@ Pede deferimento.</span><br/><br/><br/>
                 [/#if]</p>
                 </td>
             </tr>
+            [/#if]
         </table>
         </td>
     </tr>
@@ -2235,10 +2247,10 @@ Pede deferimento.</span><br/><br/><br/>
 <!-- FIM ASSINATURA -->
 [/#macro]
 
-[#macro estiloBrasaoAEsquerda tipo exibeData=true tamanhoLetra="11pt" obs="" omitirCodigo=false]
+[#macro estiloBrasaoAEsquerda tipo exibeData=true tamanhoLetra="11pt" obs="" omitirCodigo=false width=65 height=65 exibirOrgao=true]
     [@primeiroCabecalho]
     <table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
-    [@cabecalhoEsquerdaPrimeiraPagina/]
+    [@cabecalhoEsquerdaPrimeiraPagina width=width height=height exibirOrgao=exibirOrgao/]
     </td></tr>
         <tr bgcolor="#FFFFFF">
             <td width="100%">

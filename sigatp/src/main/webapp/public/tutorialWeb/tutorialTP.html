@@ -1,0 +1,428 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta charset="utf-8" />
+		<title>Manual do SigaTP</title>
+		<link href="tutorialTP-web-resources/css/tutorialTP.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body id="tutorialTP" xml:lang="pt-BR">
+        <div>
+            <div id="sidebar">
+                <h2>Conteúdo</h2>
+                <ul id="nav">
+                    <li><a href="#acesso">Acesso ao sistema</a></li>
+                    <li><a href="#requisicao">Requisições</a>
+                        <ul>
+                            <li><a href="#requisicaoVisualizar">Visualizar</a></li>
+                            <li><a href="#requisicaoIncluir">Incluir</a></li>
+                            <li><a href="#requisicaoEditar">Editar</a></li>
+                            <li><a href="#requisicaoAprovar">Aprovar/Rejeitar</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#missao">Missões</a>
+                        <ul>
+                            <li><a href="#missaoVisualizar">Visualizar</a></li>
+                            <li><a href="#missaoIncluir">Incluir</a></li>
+                            <li><a href="#missaoEditar">Editar</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#condutor">Condutores</a>
+                        <ul>
+                            <li class="subItem"><a href="#condutorIncluir">Incluir</a>
+                                <ul>
+                                    <li><a href="#condutorCadastro">Dados cadastrais</a></li>
+                                </ul>
+                            </li>
+                            <li class="subItem"><a href="#condutorEditar">Editar</a>
+                                <ul>
+                                    <li><a href="#condutorPlantaoIncluir">Incluir plantões</a></li>
+                                    <li><a href="#condutorPlantaoEditar">Excluir e editar plantões</a></li>
+                                    <li><a href="#condutorAfastamentoIncluir">Incluir afastamentos</a></li>
+                                    <li><a href="#condutorAfastamentoEditar">Excluir e editar afastamentos</a></li>
+                                    <li><a href="#condutorEscalaTrabalho">Escala de trabalho</a></li>
+                                    <li><a href="#condutorAgenda">Agenda</a></li>
+                                    <li><a href="#condutorInfracao">Infrações</a></li>                                                                
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="#veiculo">Veículos</a>
+                        <ul>
+                            <li><a href="#veiculoIncluir">Incluir</a></li>
+                            <li class="subItem"><a href="#veiculoEditar">Editar</a>
+                                <ul>
+                                    <li><a href="#veiculoCadastro">Dados cadastrais</a></li>
+                                    <li><a href="#veiculoAvariaIncluir">Incluir avarias</a></li>
+                                    <li><a href="#veiculoAvariaEditar">Excluir e editar avarias</a></li>
+                                    <li><a href="#veiculoRelatorioDiarioIncluir">Incluir relatórios diários</a></li>
+                                    <li><a href="#veiculoRelatorioDiarioEditar">Excluir e editar relatórios diários</a></li>
+                                    <li><a href="#veiculoAgenda">Agenda</a></li>
+                                    <li><a href="#veiculoAbastecimento">Abastecimentos</a></li>
+                                    <li><a href="#veiculoInfracao">Infrações</a></li>
+                                    <li><a href="#veiculoLotacao">Lotações</a></li>
+                                </ul>                       
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="#autoInfracao">Autos de Infração</a>
+                        <ul>
+                            <li><a href="#autoInfracaoIncluir">Incluir</a></li>
+                            <li><a href="#autoInfracaoEditar">Excluir e editar</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#abastecimento">Abastecimentos</a>
+                        <ul>
+                            <li><a href="#abastecimentoIncluir">Incluir</a></li>
+                            <li><a href="#abastecimentoEditar">Excluir e editar</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#finalidade">Finalidades</a>
+                        <ul>
+                            <li><a href="#finalidadeIncluir">Incluir</a></li>
+                            <li><a href="#finalidadeEditar">Excluir e editar</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#fornecedor">Fornecedores</a>
+                        <ul>
+                            <li><a href="#fornecedorIncluir">Incluir</a></li>
+                            <li><a href="#fornecedorEditar">Excluir e editar</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#servico">Serviços</a>
+                        <ul>
+                            <li><a href="#servicoIncluir">Incluir</a></li>
+                            <li><a href="#servicoEditar">Excluir e editar</a></li>
+                            <li><a href="#servicoVisualizar">Visualizar</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#relatorio">Relatórios</a>
+                        <ul>
+                            <li><a href="#relatorioMissao">Missões em Andamento</a></li>
+                            <li><a href="#relatorioAgendaCondutor">Agenda dos Condutores</a></li>
+                            <li><a href="#relatorioAgendaVeiculo">Agenda dos Veículos</a></li>
+                        </ul>
+                    </li>
+                </ul> 
+            </div>
+            <div class="coluna">
+                <h1>SISTEMA DE TRANSPORTES</h1>
+                <h2>Manual</h2>          
+                <div class="nivel1">
+                    <a id="acesso"></a><h1>Acesso ao sistema</h1>
+                    <p>Para acessar o sistema, selecione o menu SIGA / Módulos / Transportes</p>
+                    <img src="tutorialTP-web-resources/image/4664.png" alt="4664.png" />
+                </div>
+                <div class="nivel1">
+                    <a id="requisicao"></a><h1>Requisições</h1>
+                    <p> A <strong">Lista de Requisições</strong> é a tela inicial do Módulo de Transportes. Nela, é possível ver todas as requisições e também aplicar filtros para visualizar somente as que se encaixarem nas condições desejadas.</p>
+                    <img src="tutorialTP-web-resources/image/0_opt.png" alt="Lista de Requisições" />
+                    <div class="nivel2">
+                  <div class="nivel3">
+                            <p> Alternativamente, esta tela também pode ser acessada através do menu Requisições - Listar: </p>
+                            <img src="tutorialTP-web-resources/image/4556.png" alt="menu listar Requisição" />
+                        </div>
+                    </div>
+                    <div class="nivel2">
+                        <a id="requisicaoVisualizar"></a><h1>Visualizar Requisição</h1>
+                        <p> A tela <strong>Visualizar Requisição</strong> exibe detalhes de uma requisição (selecionada na <strong>Lista de Requisições</strong>). Se o usuário tiver permissão e se a tela não tiver sido aberta em uma nova guia, esta visualização exibe ainda ícones que permitem alterar a requisição, entre outras operações.</p>
+                        <img src="tutorialTP-web-resources/image/0a_opt.png" alt="menu listar Requisição" />
+                        <img src="tutorialTP-web-resources/image/1_opt1.png" alt="visualizar Requisição" />
+                    </div>
+                    <div class="nivel2">
+                        <a id="requisicaoIncluir"></a><h1>Incluir Requisição</h1>
+                        <p>a) Podem-se usar dois caminhos diferentes para ara incluir uma nova requisição: através do botão <strong>Incluir</strong>, na <strong>Lista de Requisições</strong>, ou através do menu <strong>Requisições - Cadastrar</strong>.</p>
+                        <img src="tutorialTP-web-resources/image/4840.png" alt="4840.png" />
+                        <img src="tutorialTP-web-resources/image/4231.png" alt="4231.png" />
+                        <img src="tutorialTP-web-resources/image/incluir2_opt.png" alt="incluir2.png" />
+                    </div>
+                    <div class="nivel2">
+                        <a id="requisicaoEditar"></a><h1>Editar Requisição</h1>
+                        <p> É possível alterar qualquer dado de uma requisição após a criação caso seja necessário. Pode-se acessar a tela <strong>Editar Requisição</strong> através da lista de requisições ou da tela <strong>Visualizar Requisição</strong>:</p>
+                        <img src="tutorialTP-web-resources/image/0a_opt2.png" alt="0a1.png" />
+                        <img src="tutorialTP-web-resources/image/1_opt.png" alt="1.png" />
+                        <img src="tutorialTP-web-resources/image/editar_opt.png" alt="editar.png" />
+                      <h3>Se necessário, <a href="#finalidadeIncluir">Incluir Finalidade</a></h3>
+                    </div>
+                    <div class="nivel2">
+                        <a id="requisicaoAprovar"></a><h1>Aprovar/Rejeitar Requisição</h1>
+                        <p> Depois de criada a requisição, ela pode ser aprovada ou rejeitada. Mostramos a seguir o caminho para se rejeitar uma requisição. A tela <strong>Autorizar Requisição </strong>é semelhante, mas não é obrigatório citar um motivo. É possível autorizar e rejeitar uma requisição tantas vezes quanto necessário, desde que ela ainda não tenha sido programada.</p>
+                        <img src="tutorialTP-web-resources/image/4298.png" alt="4298.png" />
+                        <img src="tutorialTP-web-resources/image/4303.png" alt="4303.png" />
+                        <img src="tutorialTP-web-resources/image/4359.png" alt="4359.jpg" />
+                    </div>
+                </div>
+                <div class="nivel1">
+                    <a id="missao"></a><h1>Missões</h1>
+                    <p> Na <strong>Lista de Missões</strong> é possível ver todas as missões e também aplicar filtros para visualizar somente as que se encaixem nas condições desejadas. Para acessá-la, utilize o menu <strong>Missões - Listar</strong>.</p>
+                    <img src="tutorialTP-web-resources/image/6054.png" alt="6054.png" />
+                    <img src="tutorialTP-web-resources/image/lista_opt.png" alt="lista.png" />
+                  <div class="nivel2">
+                <a id="missaoVisualizar"></a><h1>Visualizar Missão</h1>
+                        <p> A tela <strong>Visualizar Missão</strong> exibe detalhes de uma missão selecionada previamente. Se o usuário tiver permissão e se a tela não tiver sido aberta em uma nova guia, esta tela exibe ainda ícones que permitem alterar o andamento da missão, entre outras operações.</p>
+                        <img src="tutorialTP-web-resources/image/lista_opt1.png" alt="lista.png" />
+                        <img src="tutorialTP-web-resources/image/visualizar_opt.png" alt="visualizar.png" />
+                    </div>
+                    <div class="nivel2">
+                        <a id="missaoIncluir"></a><h1>Incluir Missão</h1>
+                        <p>a.1) Para criar uma nova missão, utilize o botão na tela <strong>Lista de Requisições</strong>. Observe que apenas usuários autorizados podem efetuar esta operação, e que é possível agrupar várias requisições em uma única missão (bem como é possível criar várias missões para uma única requisição).</p>
+                        <img src="tutorialTP-web-resources/image/listaReq1_opt.png" alt="listaReq1.png" />
+                        <img src="tutorialTP-web-resources/image/criarMissaoReq_opt.png" alt="criarMissaoReq.png" />
+                  <p><a id="missaoA.2"></a>a.2) Alternativamente, pode-se utilizar o menu <strong>Missões - Cadastrar</strong> para incluir uma nova missão:</p>
+                        <img src="tutorialTP-web-resources/image/menuMissoesIncluir_opt.png" alt="menuMissoesIncluir.png" />
+                        <img src="tutorialTP-web-resources/image/5299.png" alt="5299.png" />
+                        <img src="tutorialTP-web-resources/image/selecionarReq_opt.png" alt="selecionarReq.png" />
+                <p>a.3) Há ainda um terceiro caminho para se criar uma nova missão: através do botão <strong>Incluir</strong> na tela <strong>Lista de Missões</strong>.</p>
+                        <img src="tutorialTP-web-resources/image/lista_opt2.png" alt="lista.png" />
+                    <h3>Ir para <a href="#missaoA.2">item a.2</a></h3>
+                        <p>b) Independente do caminho escolhido, será exibida a tela <strong>Incluir Missão</strong>. Nela, é possível incluir ou excluir requisições, caso necessário, e se define uma data, veículo e condutor para a missão.</p>
+                        <img src="tutorialTP-web-resources/image/incluirMissao_opt.png" alt="incluirMissao.png" />
+                        <h3>Ir para <a href="#veiculoIncluir">Incluir Veículo</a> ou <a href="#condutorIncluir">Incluir Condutor</a></h3>
+                    </div>
+                    <div class="nivel2">
+                        <a id="missaoEditar"></a><h1>Editar Missão</h1>
+                        <p> É possível alterar qualquer dado de uma missão após a criação caso seja necessário. Por exemplo, é possível incluir e excluir requisições da missão, ou alterar o condutor. Pode-se acessar a tela <strong>Editar Missão</strong> através da lista de missões ou da tela <strong>Visualizar Missão</strong>.</p>
+                        <img src="tutorialTP-web-resources/image/lista_opt3.png" alt="lista.png" />
+                        <img src="tutorialTP-web-resources/image/visualizar_opt2.png" alt="visualizar.png" />
+                        <img src="tutorialTP-web-resources/image/editar_opt1.png" alt="editar.png" />
+                    </div>
+                </div>      
+                <div class="nivel1">
+                    <a id="condutor"></a><h1>Condutores</h1>
+                    <p> A tela Condutores exibe uma lista de todos os agentes cadastrados, e permite que se cadastrem novos condutores, ou se editem os dados e mesmo que se exclua um condutor.</p>
+                    <img src="tutorialTP-web-resources/image/7943.png" alt="7943.png" />
+                    <img src="tutorialTP-web-resources/image/7947.png" alt="7947.png" />
+                  <div class="nivel2">
+                    <a id="condutorIncluir"></a><h1>Incluir Condutor</h1>
+                        <img src="tutorialTP-web-resources/image/condutores2_opt.png" alt="condutores2.png" />
+                        <img src="tutorialTP-web-resources/image/8243.png" alt="8243.png" />
+                      <div class="nivel3">
+                <a id="condutorCadastro"></a><h1>1) Dados cadastrais</h1>
+                            <p> Esta tela permite a alteração dos dados cadastrais do condutor, e também permite visualizar outras informações importantes. Ela pode ser acessada através da tela <a href="#condutor">Condutores</a>.</p>
+                            <img src="tutorialTP-web-resources/image/condutores3_opt.png" alt="condutores3.png" />
+                        </div>
+                    </div>
+                    <div class="nivel2">
+                        <a id="condutorEditar"></a><h1>Editar Condutor</h1>
+                        <div class="nivel3">
+                            <a id="condutorPlantaoIncluir"></a><h1>2) Incluir plantões</h1>
+                            <img src="tutorialTP-web-resources/image/10295.png" alt="10295.png" />
+                            <img src="tutorialTP-web-resources/image/plantao1_opt.png" alt="plantao1.png" />
+                            <img src="tutorialTP-web-resources/image/plantao2_opt.png" alt="plantao2.png" />
+                        </div>
+                        <div class="nivel3">
+                            <a id="condutorPlantaoEditar"></a><h1>2.a) Excluir e editar plantões</h1>
+                            <img src="tutorialTP-web-resources/image/plantao3_opt.png" alt="plantao3.png" />
+                            <img src="tutorialTP-web-resources/image/plantao4_opt.png" alt="plantao4.png" />
+                        </div>
+                        <div class="nivel3">
+                            <a id="condutorAfastamentoIncluir"></a><h1>3) Incluir afastamentos</h1>
+                            <img src="tutorialTP-web-resources/image/9725.png" alt="9725.png" />
+                            <img src="tutorialTP-web-resources/image/afastamentos0_opt.png" alt="afastamentos0.png" />
+                            <img src="tutorialTP-web-resources/image/afastamentos1_opt.png" alt="afastamentos1.png" />
+                        </div>
+                        <div class="nivel3">
+                            <a id="condutorAfastamentoEditar"></a><h1>3.a) Excluir e editar afastamentos</h1>
+                            <img src="tutorialTP-web-resources/image/afastamentos2_opt.png" alt="afastamentos2.png" />
+                            <img src="tutorialTP-web-resources/image/afastamentos3_opt.png" alt="afastamentos3.png" />
+                        </div>
+                        <div class="nivel3">
+                            <a id="condutorEscalaTrabalho"></a><h1>4) Escala de trabalho</h1>
+                            <img src="tutorialTP-web-resources/image/8667.png" alt="8667.png" />
+                            <img src="tutorialTP-web-resources/image/escalas0_opt.png" alt="escalas0.png" />
+                        </div>
+                        <div class="nivel3">
+                            <a id="condutorAgenda"></a><h1>5) Agenda</h1>
+                            <p> O <strong>Relatório de Agendamentos por Condutor</strong> permite a visualização dos compromissos (escala de trabalho, plantões, missões) do condutor consultado num dado dia. Para maiores informações, observe a <a href="#relatorioAgendaCondutor">Agenda dos Condutores</a>.</p>
+                            <img src="tutorialTP-web-resources/image/10654.png" alt="10654.png" />
+                            <img src="tutorialTP-web-resources/image/condutores5_opt.png" alt="condutores5.png" />
+                        </div>
+                        <div class="nivel3">
+                            <a id="condutorInfracao"></a><h1>6) Infrações</h1>
+                            <p> A <strong>Relação de Autos de Infração </strong>exibe as infrações do condutor consultado. Para cadastrar e editar infrações, consulte a seção <a href="#autoInfracao">Autos de Infração</a>.</p>
+                            <img src="tutorialTP-web-resources/image/10741.png" alt="10741.png" />
+                            <img src="tutorialTP-web-resources/image/condutores6_opt.png" alt="condutores6.png" />
+                        </div>
+                    </div>
+                </div>
+                <div class="nivel1">        
+                    <a id="veiculo"></a><h1>Veículos</h1>
+                            <p> A tela <strong>Relação de Veículos</strong> exibe uma lista de todos os veículos cadastrados, e permite que se cadastrem novos veículos, ou se editem os dados e mesmo que se exclua um veículo da base.</p>
+                            <img src="tutorialTP-web-resources/image/veiculos0_opt.png" alt="veiculos0.png" />
+                            <img src="tutorialTP-web-resources/image/veiculos2_opt.png" alt="veiculos2.png" />
+                  <div class="nivel2">
+                <a id="veiculoIncluir"></a><h1>Incluir Veículo</h1>
+                        <p>Esta tela permite inclusão de um novo veículo. Ela pode ser acessada através da <a href="#veiculo">Relação de Veículos</a>.</p>
+                        <img src="tutorialTP-web-resources/image/veiculos3_opt.png" alt="veiculos3.png" />
+                        <h3>Consultar <a href="#condutorIncluir">Incluir Condutor</a> ou <a href="#fornecedorIncluir">Incluir Fornecedor</a></h3>
+                    </div>
+                    <div class="nivel2">
+                        <a id="veiculoEditar"></a><h1>Editar Veículo</h1>
+                        <div class="nivel3">
+                            <a id="veiculoCadastro"></a><h1>1) Dados cadastrais</h1>
+                            <p> Esta tela permite a alteração dos dados cadastrais do veículo, e também permite visualizar outras informações importantes. Ela pode ser acessada através da tela <a href="#veiculo">Veículos</a>.</p>
+                            <img src="tutorialTP-web-resources/image/veiculos4_opt.png" alt="veiculos4.png" />
+                        </div>
+                        <div class="nivel3">
+                            <a id="veiculoAvariaIncluir"></a><h1>2) Incluir avarias</h1>
+                            <img src="tutorialTP-web-resources/image/veiculos4_opt1.png" alt="veiculos4.png" />
+                            <img src="tutorialTP-web-resources/image/v_avarias0_opt.png" alt="v_avarias0.png" />
+                            <img src="tutorialTP-web-resources/image/v_avarias1_opt.png" alt="v_avarias1.png" />
+                        </div>
+                        <div class="nivel3">
+                            <a id="veiculoAvariaEditar"></a><h1>2.a) Excluir e editar avarias</h1>
+                            <img src="tutorialTP-web-resources/image/v_avarias0_opt1.png" alt="v_avarias0.png" />
+                            <img src="tutorialTP-web-resources/image/v_avarias2_opt.png" alt="v_avarias2.png" />
+                        </div>
+                        <div class="nivel3">
+                            <a id="veiculoRelatorioDiarioIncluir"></a><h1>3) Incluir relatórios diários</h1>
+                            <img src="tutorialTP-web-resources/image/veiculos4_opt2.png" alt="veiculos4.png" />
+                            <img src="tutorialTP-web-resources/image/v_relatorios0_opt.png" alt="v_relatorios0.png" />
+                            <img src="tutorialTP-web-resources/image/v_relatorios1_opt.png" alt="v_relatorios1.png" />
+                        </div>
+                        <div class="nivel3">
+                            <a id="veiculoRelatorioDiarioEditar"></a><h1>3.a) Excluir e editar relatórios diários</h1>
+                            <img src="tutorialTP-web-resources/image/v_relatorios2_opt.png" alt="v_relatorios2.png" />
+                            <img src="tutorialTP-web-resources/image/v_relatorios3_opt.png" alt="v_relatorios3.png" />
+                        </div>
+                        <div class="nivel3">
+                            <a id="veiculoAgenda"></a><h1>4) Agenda</h1>
+                            <p> O <strong>Relatório de Agendamentos por Veículo</strong> permite a visualização das missões do veículo consultado num dado dia. Para maiores informações, observe a <a href="#relatorioAgendaVeiculo">Agenda dos Veículos</a>.</p>
+                            <img src="tutorialTP-web-resources/image/veiculos4_opt4.png" alt="veiculos4.png" />
+                            <img src="tutorialTP-web-resources/image/veiculos5_opt.png" alt="veiculos5.png" />
+                        </div>
+                        <div class="nivel3">
+                            <a id="veiculoAbastecimento"></a><h1>5) Abastecimentos</h1>
+                            <p>A tela de <strong>Abastecimentos </strong> exibe todos os abastecimentos do veículo consultado. Para incluir novos abastecimentos, consulte a seção <a href="#abastecimento">Abastecimentos</a>.</p>
+                            <img src="tutorialTP-web-resources/image/veiculos4_opt5.png" alt="veiculos4.png" />
+                            <img src="tutorialTP-web-resources/image/veiculos6_opt.png" alt="veiculos6.png" />
+                        </div>
+                        <div class="nivel3">
+                            <a id="veiculoInfracao"></a><h1>6) Infrações</h1>
+                            <p>A <strong>Relação de Autos de Infração </strong> exibe as infrações do veículo consultado. Para cadastrar e editar infrações, consulte a seção <a href="#autoInfracao">Autos de Infração</a>.</p>
+                            <img src="tutorialTP-web-resources/image/veiculos4_opt6.png" alt="veiculos4.png" />
+                            <img src="tutorialTP-web-resources/image/veiculos7_opt.png" alt="veiculos7.png" />
+                        </div>
+                        <div class="nivel3">
+                            <a id="veiculoLotacao"></a><h1>7) Lotações</h1>
+                            <p> A tela de <strong>Lotações </strong>exibe o histórico de lotações do veículo consultado (ou seja, quando se altera o campo lotação, o sistema armazena a lotação antiga para exibição posterior).</p>
+                            <img src="tutorialTP-web-resources/image/veiculos9_opt.png" alt="veiculos9.png" />
+                            <img src="tutorialTP-web-resources/image/veiculos10_opt.png" alt="veiculos10.png" />
+                        </div>
+                    </div>
+                </div>
+                <div class="nivel1">
+                    <a id="autoInfracao"></a><h1>Autos de Infração</h1>
+                    <p> A <strong>Lista de Autos de Infração</strong> exibe todas as infrações já cadastradas e permite a inclusão, exclusão e edição de autos de infração.</p>
+                    <img src="tutorialTP-web-resources/image/infracoes0_opt.png" alt="infracoes0.png" />
+                    <img src="tutorialTP-web-resources/image/infracoes1_opt.png" alt="infracoes1.png" />
+                  <div class="nivel2">
+                <a id="autoInfracaoIncluir"></a><h1>Incluir Auto de Infração</h1>
+                        <img src="tutorialTP-web-resources/image/infracoes1_opt1.png" alt="infracoes1.png" />
+                        <img src="tutorialTP-web-resources/image/infracoes2_opt.png" alt="infracoes2.png" />
+                    </div>
+                    <div class="nivel2">
+                        <a id="autoInfracaoEditar"></a><h1>Excluir e editar Auto de Infração</h1>
+                        <img src="tutorialTP-web-resources/image/infracoes1_opt2.png" alt="infracoes1.png" />
+                        <img src="tutorialTP-web-resources/image/infracoes3_opt.png" alt="infracoes3.png" />
+                    </div>
+                </div>
+                <div class="nivel1">
+                    <a id="abastecimento"></a><h1>Abastecimentos</h1>
+                    <p> A <strong>Lista de Abastecimentos</strong> exibe todos os abastecimentos já cadastrados e permite a inclusão, exclusão e edição de abastecimentos.</p>
+                    <img src="tutorialTP-web-resources/image/abastecimentos0_opt.png" alt="abastecimentos0.png" />
+                    <img src="tutorialTP-web-resources/image/abastecimentos1_opt.png" alt="abastecimentos1.png" />
+                  <div class="nivel2">
+                <a id="abastecimentoIncluir"></a><h1>Incluir Abastecimento</h1>
+                        <img src="tutorialTP-web-resources/image/abastecimentos1_opt2.png" alt="abastecimentos1.png" />
+                        <img src="tutorialTP-web-resources/image/abastecimentos2_opt.png" alt="abastecimentos2.png" />
+                    <h3> Ver <a href="#fornecedorIncluir">Incluir Fornecedor</a></h3>
+                    </div>
+                    <div class="nivel2">
+                        <a id="abastecimentoEditar"></a><h1>Excluir e editar Abastecimento</h1>
+                        <img src="tutorialTP-web-resources/image/abastecimentos1_opt3.png" alt="abastecimentos1.png" />
+                        <img src="tutorialTP-web-resources/image/abastecimentos3_opt.png" alt="abastecimentos3.png" />
+                    </div>
+                </div>
+                <div class="nivel1">
+                    <a id="finalidade"></a><h1>Finalidades</h1>
+                    <p> A <strong>Lista de Finalidades</strong> exibe todas as finalidades já cadastradas e permite a inclusão, exclusão e edição de finalidades.</p>
+                    <img src="tutorialTP-web-resources/image/0menu_opt.png" alt="0menu.png" />
+                    <img src="tutorialTP-web-resources/image/1lista_opt.png" alt="1lista.png" />
+                  <div class="nivel2">
+                    <a id="finalidadeIncluir"></a><h1>Incluir Finalidade</h1>
+                        <img src="tutorialTP-web-resources/image/1lista_opt2.png" alt="1lista.png" />
+                        <img src="tutorialTP-web-resources/image/2incluir_opt.png" alt="2incluir.png" />
+                    </div>
+                    <div class="nivel2">
+                        <a id="finalidadeEditar"></a><h1>Excluir e editar Finalidade</h1>
+                        <img src="tutorialTP-web-resources/image/1lista_opt3.png" alt="1lista.png" />
+                        <img src="tutorialTP-web-resources/image/4editar_opt.png" alt="4editar.png" />
+                    </div>
+                </div>
+                <div class="nivel1">
+                    <a id="fornecedor"></a><h1>Fornecedores</h1>
+                    <p> A <strong>Lista de Fornecedores</strong> exibe todos os fornecedores já cadastrados e permite a inclusão, exclusão e edição de fornecedores.</p>
+                    <img src="tutorialTP-web-resources/image/fornecedores0_opt.png" alt="fornecedores0.png" />
+                    <img src="tutorialTP-web-resources/image/fornecedores1_opt.png" alt="fornecedores1.png" />
+                  <div class="nivel2">
+                    <a id="fornecedorIncluir"></a><h1>Incluir Fornecedor</h1>
+                        <img src="tutorialTP-web-resources/image/fornecedores1_opt2.png" alt="fornecedores1.png" />
+                        <img src="tutorialTP-web-resources/image/fornecedores2_opt.png" alt="fornecedores2.png" />
+                    </div>
+                    <div class="nivel2">
+                        <a id="fornecedorEditar"></a><h1>Excluir e editar Fornecedor</h1>
+                        <img src="tutorialTP-web-resources/image/fornecedores1_opt3.png" alt="fornecedores1.png" />
+                        <img src="tutorialTP-web-resources/image/fornecedores3_opt.png" alt="fornecedores3.png" />
+                    </div>
+                </div>
+                <div class="nivel1">
+                    <a id="servico"></a><h1>Serviços</h1>
+                    <p> A <strong>Lista de Serviços</strong> exibe todos os serviços já cadastrados e permite a inclusão, exclusão e edição de fornecedores.</p>
+                    <img src="tutorialTP-web-resources/image/servicos0_opt.png" alt="servicos0.png" />
+                    <img src="tutorialTP-web-resources/image/servicos1_opt.png" alt="servicos1.png" />
+                  <div class="nivel2">
+                    <a id="servicoIncluir"></a><h1>Incluir Serviço</h1>
+                        <img src="tutorialTP-web-resources/image/servicos1_opt2.png" alt="servicos1.png" />
+                        <img src="tutorialTP-web-resources/image/servicos2_opt.png" alt="servicos2.png" />
+                    <h3>Se necessário, <a href="#veiculoIncluir">incluir veículo</a></h3>
+                    </div>
+                    <div class="nivel2">
+                        <a id="servicoEditar"></a><h1>Excluir e editar Serviço</h1>
+                        <img src="tutorialTP-web-resources/image/servicos4_opt.png" alt="servicos4.png" />
+                        <img src="tutorialTP-web-resources/image/servicos5_opt.png" alt="servicos5.png" />
+                    </div>
+                    <div class="nivel2">
+                        <a id="servicoVisualizar"></a><h1>Visualizar Serviço</h1>
+                        <p> Esta tela permite a visualização rápida de um serviço selecionado, sem opções de edição.</p>
+                        <img src="tutorialTP-web-resources/image/servicos1_opt3.png" alt="servicos1.png" />
+                        <img src="tutorialTP-web-resources/image/servicos3_opt.png" alt="servicos3.png" />
+                    </div>
+                </div>
+                <div class="nivel1">
+                    <a id="relatorio"></a><h1>Relatórios</h1>
+                    <div class="nivel2">
+                        <a id="relatorioMissao"></a><h1>Missões em Andamento</h1>
+                        <p> O relatório de <strong>Missões em Andamento</strong> exibe todas as missões em andamento no momento da consulta.</p>
+                        <img src="tutorialTP-web-resources/image/andamento0_opt.png" alt="andamento0.png" />
+                        <img src="tutorialTP-web-resources/image/andamento1_opt.png" alt="andamento1.png" />
+                        <img src="tutorialTP-web-resources/image/andamento2_opt.png" alt="andamento2.png" />
+                    </div>
+                    <div class="nivel2">
+                        <a id="relatorioAgendaCondutor"></a><h1>Agenda dos Condutores</h1>
+                        <p> O relatório de <strong>Agenda dos Condutores</strong> exibe a agenda de todos os condutores em determinada data.</p>
+                        <img src="tutorialTP-web-resources/image/agendamentos0_opt.png" alt="agendamentos0.png" />
+                        <img src="tutorialTP-web-resources/image/agendamentos1_opt.png" alt="agendamentos1.png" />
+                        <img src="tutorialTP-web-resources/image/agendamentos2_opt.png" alt="agendamentos2.png" />
+                    </div>
+                    <div class="nivel2">
+                        <a id="relatorioAgendaVeiculo"></a><h1>Agenda dos Veículos</h1>
+                        <p> O relatório de <strong>Agenda dos Veículos</strong> exibe a agenda de todos os veículos em determinada data.</p>
+                        <img src="tutorialTP-web-resources/image/agenda0_opt.png" alt="agenda0.png" />
+                        <img src="tutorialTP-web-resources/image/agenda1_opt.png" alt="agenda1.png" />
+                        <img src="tutorialTP-web-resources/image/agenda2_opt.png" alt="agenda2.png" />
+                    </div>
+                </div>
+            </div>
+		</div>
+	</body>
+</html>

@@ -24,6 +24,7 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.sql.Blob;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,6 +63,7 @@ import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.lucene.HtmlBridge;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -369,6 +371,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return "";
 	}
 
+	public Blob getConteudoBlobDoc() {
+		if (getCpArquivo() == null)
+			return null;
+		return getCpArquivo().getConteudoBlobArq();
+	}
+
 	/**
 	 * Retorna, em formato array de bytes, o conteúdo de um arquivo contido no
 	 * zip gravado no blob do documento.
@@ -392,9 +400,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 */
 	public byte[] getConteudoBlobDoc2() {
 
-		if (cacheConteudoBlobDoc == null)
+		if (cacheConteudoBlobDoc == null && getCpArquivo() != null)
 			cacheConteudoBlobDoc = br.gov.jfrj.siga.cp.util.Blob
-					.toByteArray(getConteudoBlobDoc());
+					.toByteArray(getCpArquivo().getConteudoBlobArq());
 		return cacheConteudoBlobDoc;
 
 	}
@@ -2311,6 +2319,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			setConteudoBlobDoc(HibernateUtil.getSessao().getLobHelper()
 					.createBlob(blob));
 		cacheConteudoBlobDoc = blob;
+	}
+
+	public void setConteudoBlobDoc(Blob createBlob) {
+		if (getCpArquivo() == null) {
+			CpArquivo arq = new CpArquivo();
+			setCpArquivo(arq);
+			// ExDao.getInstance().gravar(arq);
+		}
+		getCpArquivo().setConteudoBlobArq(createBlob);
 	}
 
 	public void setConteudoBlobForm(final byte[] conteudo) {

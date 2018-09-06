@@ -19,10 +19,10 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.Date;
 import java.util.TreeSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -41,6 +41,7 @@ import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.hibernate.search.annotations.DocumentId;
 
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -231,6 +232,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@JoinColumn(name = "ID_MOB_PAI")
 	private ExMobil exMobilPai;
 
+	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ID_ARQ")
+	private CpArquivo cpArquivo;
+
 	@Column(name = "ANO_EMISSAO")
 	private java.lang.Long anoEmissao;
 
@@ -292,9 +297,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	@Column(name = "FG_ELETRONICO", nullable = false, length = 1)
 	private String fgEletronico;
-
-	@Column(name = "CONTEUDO_BLOB_DOC")
-	private Blob conteudoBlobDoc;
 
 	@Column(name = "NUM_SEQUENCIA")
 	private Integer numSequencia;
@@ -432,13 +434,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 */
 	public DpPessoa getCadastrante() {
 		return cadastrante;
-	}
-
-	/**
-	 * COMPLETAR
-	 */
-	public Blob getConteudoBlobDoc() {
-		return this.conteudoBlobDoc;
 	}
 
 	/**
@@ -779,15 +774,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Set the value of the CONTEUDO_BLOB_DOC column.
-	 * 
-	 * @param conteudoBlobDoc
-	 */
-	public void setConteudoBlobDoc(Blob conteudoBlobDoc) {
-		this.conteudoBlobDoc = conteudoBlobDoc;
-	}
-
-	/**
 	 * Set the value of the CONTEUDO_TP_DOC column.
 	 * 
 	 * @param conteudoTpDoc
@@ -1056,5 +1042,13 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	public void setDtAltDoc(java.util.Date dtAltDoc) {
 		this.dtAltDoc = dtAltDoc;
+	}
+
+	public CpArquivo getCpArquivo() {
+		return cpArquivo;
+	}
+
+	public void setCpArquivo(CpArquivo cpArquivo) {
+		this.cpArquivo = cpArquivo;
 	}
 }

@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.idp.jwt;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
@@ -23,8 +24,12 @@ import com.auth0.jwt.JWTVerifyException;
 public class AuthJwtFormFilter implements Filter {
 
 	public static final String SIGA_JWT_AUTH_COOKIE_NAME = "siga-jwt-auth";
-	private static final int TIME_TO_EXPIRE_IN_S = 60 * 60 * 8; // 8h é o tempo de duração
-	private static final int TIME_TO_RENEW_IN_S = 60 * 60 * 7; // renova automaticamente 7h antes de expirar
+	private static final int TIME_TO_EXPIRE_IN_S = 60 * 60 * 8; // 8h é o tempo
+																// de duração
+	private static final int TIME_TO_RENEW_IN_S = 60 * 60 * 7; // renova
+																// automaticamente
+																// 7h antes de
+																// expirar
 
 	static final String PROVIDER_ISSUER = "sigaidp";
 	static long DEFAULT_TTL_TOKEN = 3600; // default 1 hora
@@ -151,7 +156,11 @@ public class AuthJwtFormFilter implements Filter {
 			informarAutenticacaoInvalida(resp, e);
 			return;
 		}
-		resp.sendRedirect("/sigaidp/jwt/login?cont=" + req.getRequestURI());
+		resp.sendRedirect("/sigaidp/jwt/login?cont="
+				+ URLEncoder.encode(
+						req.getRequestURL()
+								+ (req.getQueryString() != null ? "?"
+										+ req.getQueryString() : ""), "UTF-8"));
 	}
 
 	private void informarAutenticacaoInvalida(HttpServletResponse resp,

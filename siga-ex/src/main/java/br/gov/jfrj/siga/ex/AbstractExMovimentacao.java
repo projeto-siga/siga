@@ -21,7 +21,6 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -180,12 +179,6 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_cadastrante")
 	private DpPessoa cadastrante;
-
-	@Column(name = "conteudo_blob_mov")
-	private Blob conteudoBlobMov;
-
-	@Column(name = "conteudo_tp_mov", length = 128)
-	private String conteudoTpMov;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMovimentacaoRef")
 	private java.util.Set<ExMovimentacao> exMovimentacaoReferenciadoraSet;
@@ -357,14 +350,6 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 		return cadastrante;
 	}
 
-	public Blob getConteudoBlobMov() {
-		return conteudoBlobMov;
-	}
-
-	public String getConteudoTpMov() {
-		return conteudoTpMov;
-	}
-
 	public String getDescrMov() {
 		return descrMov;
 	}
@@ -431,14 +416,6 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 
 	public void setCadastrante(final DpPessoa cadastrante) {
 		this.cadastrante = cadastrante;
-	}
-
-	public void setConteudoBlobMov(Blob conteudoBlobMov) {
-		this.conteudoBlobMov = conteudoBlobMov;
-	}
-
-	public void setConteudoTpMov(final String conteudoTpMov) {
-		this.conteudoTpMov = conteudoTpMov;
 	}
 
 	public void setDescrMov(final String descrMov) {

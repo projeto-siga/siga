@@ -23,6 +23,7 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.sql.Blob;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.lucene.HtmlBridge;
 import br.gov.jfrj.lucene.PDFBridge;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
@@ -1172,4 +1174,35 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		}
 		return "Outro";
 	}
+
+	public java.lang.String getConteudoTpMov() {
+		if (getCpArquivo() == null)
+			return null;
+		return getCpArquivo().getConteudoTpArq();
+	}
+
+	public void setConteudoTpMov(final java.lang.String conteudoTpMov) {
+		if (getCpArquivo() == null) {
+			CpArquivo arq = new CpArquivo();
+			setCpArquivo(arq);
+			// ExDao.getInstance().gravar(arq);
+		}
+		getCpArquivo().setConteudoTpArq(conteudoTpMov);
+	}
+
+	public Blob getConteudoBlobMov() {
+		if (getCpArquivo() == null)
+			return null;
+		return getCpArquivo().getConteudoBlobArq();
+	}
+
+	public void setConteudoBlobMov(Blob createBlob) {
+		if (getCpArquivo() == null) {
+			CpArquivo arq = new CpArquivo();
+			setCpArquivo(arq);
+			// ExDao.getInstance().gravar(arq);
+		}
+		getCpArquivo().setConteudoBlobArq(createBlob);
+	}
+
 }

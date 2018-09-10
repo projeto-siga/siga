@@ -22,7 +22,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.TreeSet;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -41,7 +40,6 @@ import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.hibernate.search.annotations.DocumentId;
 
-import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -232,18 +230,11 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@JoinColumn(name = "ID_MOB_PAI")
 	private ExMobil exMobilPai;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
-	@JoinColumn(name = "ID_ARQ")
-	private CpArquivo cpArquivo;
-
 	@Column(name = "ANO_EMISSAO")
 	private java.lang.Long anoEmissao;
 
 	@Column(name = "NUM_EXPEDIENTE")
 	private java.lang.Long numExpediente;
-
-	@Column(name = "CONTEUDO_TP_DOC", length = 128)
-	private java.lang.String conteudoTpDoc;
 
 	@Column(name = "DESCR_DOCUMENTO", length = 4000)
 	private java.lang.String descrDocumento;
@@ -434,13 +425,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 */
 	public DpPessoa getCadastrante() {
 		return cadastrante;
-	}
-
-	/**
-	 * COMPLETAR
-	 */
-	public java.lang.String getConteudoTpDoc() {
-		return this.conteudoTpDoc;
 	}
 
 	/**
@@ -773,15 +757,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.cadastrante = cadastrante;
 	}
 
-	/**
-	 * Set the value of the CONTEUDO_TP_DOC column.
-	 * 
-	 * @param conteudoTpDoc
-	 */
-	public void setConteudoTpDoc(final java.lang.String conteudoTpDoc) {
-		this.conteudoTpDoc = conteudoTpDoc;
-	}
-
 	/*
 	 * public void setFgPessoal(final String fgPessoal) { this.fgPessoal =
 	 * fgPessoal; }
@@ -1044,11 +1019,4 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.dtAltDoc = dtAltDoc;
 	}
 
-	public CpArquivo getCpArquivo() {
-		return cpArquivo;
-	}
-
-	public void setCpArquivo(CpArquivo cpArquivo) {
-		this.cpArquivo = cpArquivo;
-	}
 }

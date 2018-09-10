@@ -371,12 +371,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return "";
 	}
 
-	public Blob getConteudoBlobDoc() {
-		if (getCpArquivo() == null)
-			return null;
-		return getCpArquivo().getConteudoBlobArq();
-	}
-
 	/**
 	 * Retorna, em formato array de bytes, o conteúdo de um arquivo contido no
 	 * zip gravado no blob do documento.
@@ -2321,15 +2315,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		cacheConteudoBlobDoc = blob;
 	}
 
-	public void setConteudoBlobDoc(Blob createBlob) {
-		if (getCpArquivo() == null) {
-			CpArquivo arq = new CpArquivo();
-			setCpArquivo(arq);
-			// ExDao.getInstance().gravar(arq);
-		}
-		getCpArquivo().setConteudoBlobArq(createBlob);
-	}
-
 	public void setConteudoBlobForm(final byte[] conteudo) {
 		setConteudoBlob("doc.form", conteudo);
 	}
@@ -2600,4 +2585,35 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		// }
 		// return "Outro";
 	}
+
+	public java.lang.String getConteudoTpDoc() {
+		if (getCpArquivo() == null)
+			return null;
+		return getCpArquivo().getConteudoTpArq();
+	}
+
+	public void setConteudoTpDoc(final java.lang.String conteudoTpDoc) {
+		if (getCpArquivo() == null) {
+			CpArquivo arq = new CpArquivo();
+			setCpArquivo(arq);
+			// ExDao.getInstance().gravar(arq);
+		}
+		getCpArquivo().setConteudoTpArq(conteudoTpDoc);
+	}
+
+	public Blob getConteudoBlobDoc() {
+		if (getCpArquivo() == null)
+			return null;
+		return getCpArquivo().getConteudoBlobArq();
+	}
+
+	public void setConteudoBlobDoc(Blob createBlob) {
+		if (getCpArquivo() == null) {
+			CpArquivo arq = new CpArquivo();
+			setCpArquivo(arq);
+			// ExDao.getInstance().gravar(arq);
+		}
+		getCpArquivo().setConteudoBlobArq(createBlob);
+	}
+
 }

@@ -23,16 +23,26 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 import br.gov.jfrj.itextpdf.Documento;
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.model.Objeto;
+
 @MappedSuperclass
 public abstract class ExArquivo extends Objeto {
 	@Column(name = "NUM_PAGINAS")
 	private Integer numPaginas;
+
+	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ID_ARQ")
+	private CpArquivo cpArquivo;
 
 	public abstract String getAssinantesCompleto();
 
@@ -73,8 +83,8 @@ public abstract class ExArquivo extends Objeto {
 			// Verifica se é possível estampar o documento
 			try {
 				byte[] documentoComStamp = Documento.stamp(abPdf, "", true,
-						false, false, false, false, null, null, null, null, null,
-						null, null);
+						false, false, false, false, null, null, null, null,
+						null, null, null);
 
 				return documentoComStamp;
 
@@ -103,7 +113,7 @@ public abstract class ExArquivo extends Objeto {
 			return 0;
 		}
 	}
-	
+
 	public abstract Date getData();
 
 	public abstract String getHtml();
@@ -182,7 +192,7 @@ public abstract class ExArquivo extends Objeto {
 	}
 
 	public abstract byte[] getPdf();
-	
+
 	public abstract boolean isPdf();
 
 	public long getByteCount() {
@@ -244,7 +254,8 @@ public abstract class ExArquivo extends Objeto {
 	}
 
 	/**
-	 * Retorna a referência do objeto mais o extensão ".html" e um outro parâmetro de queryString para indicar o arquivo completo.
+	 * Retorna a referência do objeto mais o extensão ".html" e um outro
+	 * parâmetro de queryString para indicar o arquivo completo.
 	 * 
 	 */
 	public String getReferenciaHtmlCompleto() {
@@ -260,13 +271,13 @@ public abstract class ExArquivo extends Objeto {
 			return null;
 		return getReferencia() + ".pdf";
 	};
-	
+
 	public String getReferenciaPDFCompleto() {
 		if (getNumPaginas() == null || getNumPaginas() == 0)
 			return null;
 		return getReferencia() + ".pdf&completo=1";
 	};
-	
+
 	/**
 	 * Retorna a referência do objeto mais o extensão ".pdf".
 	 * 
@@ -280,7 +291,7 @@ public abstract class ExArquivo extends Objeto {
 	};
 
 	public abstract String getSiglaAssinatura();
-	
+
 	public abstract String getSiglaAssinaturaExterna();
 
 	/**
@@ -306,9 +317,17 @@ public abstract class ExArquivo extends Objeto {
 	public void setNumPaginas(Integer numPaginas) {
 		this.numPaginas = numPaginas;
 	}
-	
+
 	public abstract boolean isCodigoParaAssinaturaExterna(String num);
-	
+
 	public abstract String getTipoDescr();
+
+	public CpArquivo getCpArquivo() {
+		return cpArquivo;
+	}
+
+	public void setCpArquivo(CpArquivo cpArquivo) {
+		this.cpArquivo = cpArquivo;
+	}
 
 }

@@ -11,14 +11,19 @@ CREATE SEQUENCE "CORPORATIVO"."CP_ARQUIVO_SEQ"
 
 CREATE TABLE "CORPORATIVO"."cp_arquivo" 
   ( 
-     "id_arq"            NUMBER COMMENT 'Identificador do arquivo', 
-     "id_orgao_usu"      NUMBER COMMENT 'Identificador do órgão usuário dono deste arquivo', 
-     "conteudo_tp_arq"   VARCHAR2(128) COMMENT 'Content-Type do arquivo', 
-     "conteudo_blob_arq" BLOB COMMENT 'Bytes do arquivo' 
+     "ID_ARQ"            NUMBER, 
+     "ID_ORGAO_USU"      NUMBER, 
+     "CONTEUDO_TP_ARQ"   VARCHAR2(128), 
+     "CONTEUDO_BLOB_ARQ" BLOB 
   ); 
+  
+COMMENT ON COLUMN "CORPORATIVO"."CP_ARQUIVO"."ID_ARQ" IS 'Identificador do arquivo';
+COMMENT ON COLUMN "CORPORATIVO"."CP_ARQUIVO"."ID_ORGAO_USU" IS 'Identificador do órgão usuário dono deste arquivo';
+COMMENT ON COLUMN "CORPORATIVO"."CP_ARQUIVO"."CONTEUDO_TP_ARQ" IS 'Content-Type do arquivo';
+COMMENT ON COLUMN "CORPORATIVO"."CP_ARQUIVO"."CONTEUDO_BLOB_ARQ" IS 'Bytes do arquivo';
 
 ALTER TABLE "CORPORATIVO"."cp_arquivo" 
-  ADD CONSTRAINT "ARQUIVO_PK" PRIMARY KEY ("id_arq") ENABLE; 
+  ADD CONSTRAINT "ARQUIVO_PK" PRIMARY KEY ("ID_ARQ") ENABLE; 
 
 GRANT SELECT ON "CORPORATIVO"."CP_ARQUIVO_SEQ" TO "SIGA"; 
 

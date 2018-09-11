@@ -1590,7 +1590,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 		// Incluir os documentos anexos
 		if (mob.getExMovimentacaoSet() != null) {
 			for (ExMovimentacao m : mob.getExMovimentacaoSet()) {
-				if (!m.isCancelada() && m.isPdf()) {
+				if (!m.isCancelada() && m.isPdf() && m.getExTipoMovimentacao().getId() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) {
 					set.add(m);
 				}
 			}

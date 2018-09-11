@@ -33,6 +33,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
@@ -45,6 +46,7 @@ import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.wf.WfConfiguracao;
 import br.gov.jfrj.siga.wf.WfConhecimento;
 import br.gov.jfrj.siga.wf.util.WfContextBuilder;
+import br.gov.jfrj.siga.wf.util.WfHibernateUtil;
 
 /**
  * Classe que representa o DAO do sistema de workflow.
@@ -63,6 +65,10 @@ public class WfDao extends CpDao {
 	 */
 	public static WfDao getInstance() {
 		return ModeloDao.getInstance(WfDao.class);
+	}
+
+	public Session getSessao() {
+		return WfHibernateUtil.getSessao();
 	}
 
 	/**
@@ -101,20 +107,21 @@ public class WfDao extends CpDao {
 		return l.get(0);
 
 	}
-	
-	 public List<ProcessInstance> consultarInstanciasDoProcessInstance(Long id) {
-			return WfContextBuilder.getJbpmContext().getGraphSession().findProcessInstances(id);
+
+	public List<ProcessInstance> consultarInstanciasDoProcessInstance(Long id) {
+		return WfContextBuilder.getJbpmContext().getGraphSession()
+				.findProcessInstances(id);
 	}
 
-
-	static public Configuration criarHibernateCfg(String datasource) throws Exception {
+	static public Configuration criarHibernateCfg(String datasource)
+			throws Exception {
 		Configuration cfg = CpDao.criarHibernateCfg(datasource);
 
 		return WfDao.configurarHibernate(cfg);
 	}
 
-
-	static private Configuration configurarHibernate(Configuration cfg) throws Exception {
+	static private Configuration configurarHibernate(Configuration cfg)
+			throws Exception {
 		cfg.addClass(br.gov.jfrj.siga.wf.WfConfiguracao.class);
 		cfg.addClass(br.gov.jfrj.siga.wf.WfConhecimento.class);
 
@@ -243,42 +250,99 @@ public class WfDao extends CpDao {
 
 		cfg.addClass(br.gov.jfrj.siga.wf.util.WfTaskInstance.class);
 
-		cfg.setCacheConcurrencyStrategy("org.jbpm.context.def.VariableAccess","transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.file.def.FileDefinition.processFiles", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.action.Script.variableAccesses", "transactional", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Action", "transactional", CACHE_WF);	
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Event",	"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.Event.actions", "transactional", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.ExceptionHandler", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.ExceptionHandler.actions","transactional", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Node", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.Node.events", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.Node.exceptionHandlers", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.Node.leavingTransitions",	"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.Node.arrivingTransitions", "transactional", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.ProcessDefinition",	"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.ProcessDefinition.events", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.ProcessDefinition.exceptionHandlers",	"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.ProcessDefinition.nodes",	"transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.ProcessDefinition.actions", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.ProcessDefinition.definitions", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.SuperState.nodes", "transactional", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Transition","transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.Transition.events", "transactional",CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.def.Transition.exceptionHandlers", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.node.Decision.decisionConditions", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.node.ProcessState.variableAccesses", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.graph.node.TaskNode.tasks", "transactional",	CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.instantiation.Delegation","transactional", CACHE_WF);		
-		cfg.setCacheConcurrencyStrategy("org.jbpm.module.def.ModuleDefinition", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.Swimlane.tasks", "transactional", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.TaskController", "transactional", CACHE_WF);
-		cfg.setCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.Task", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.TaskController.variableAccesses", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.Task.events", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.Task.exceptionHandlers", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.TaskMgmtDefinition.swimlanes", "transactional", CACHE_WF);
-		cfg.setCollectionCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.TaskMgmtDefinition.tasks", "transactional", CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.context.def.VariableAccess",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.file.def.FileDefinition.processFiles",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.action.Script.variableAccesses",
+				"transactional", CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Action",
+				"transactional", CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Event",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.def.Event.actions", "transactional", CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.ExceptionHandler",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.def.ExceptionHandler.actions", "transactional",
+				CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Node",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.def.Node.events", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.def.Node.exceptionHandlers", "transactional",
+				CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.def.Node.leavingTransitions", "transactional",
+				CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.def.Node.arrivingTransitions", "transactional",
+				CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.ProcessDefinition",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.def.ProcessDefinition.events", "transactional",
+				CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.def.ProcessDefinition.exceptionHandlers",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.def.ProcessDefinition.nodes", "transactional",
+				CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.def.ProcessDefinition.actions",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.def.ProcessDefinition.definitions",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.def.SuperState.nodes", "transactional",
+				CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.graph.def.Transition",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.def.Transition.events", "transactional",
+				CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.def.Transition.exceptionHandlers",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.node.Decision.decisionConditions",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.node.ProcessState.variableAccesses",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.graph.node.TaskNode.tasks", "transactional", CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.instantiation.Delegation",
+				"transactional", CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.module.def.ModuleDefinition",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.taskmgmt.def.Swimlane.tasks", "transactional",
+				CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.TaskController",
+				"transactional", CACHE_WF);
+		cfg.setCacheConcurrencyStrategy("org.jbpm.taskmgmt.def.Task",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.taskmgmt.def.TaskController.variableAccesses",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.taskmgmt.def.Task.events", "transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.taskmgmt.def.Task.exceptionHandlers",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.taskmgmt.def.TaskMgmtDefinition.swimlanes",
+				"transactional", CACHE_WF);
+		cfg.setCollectionCacheConcurrencyStrategy(
+				"org.jbpm.taskmgmt.def.TaskMgmtDefinition.tasks",
+				"transactional", CACHE_WF);
 
 		CacheManager manager = CacheManager.getInstance();
 		Cache cache;
@@ -298,12 +362,14 @@ public class WfDao extends CpDao {
 	}
 
 	public ProcessDefinition getProcessDefinition(Long id) {
-		return WfContextBuilder
-		.getJbpmContext().getGraphSession().getProcessDefinition(id);
+		return WfContextBuilder.getJbpmContext().getGraphSession()
+				.getProcessDefinition(id);
 	}
-	
-	public List<ProcessDefinition> getTodasAsVersoesProcessDefinition(String nome) {
-		return WfContextBuilder.getJbpmContext().getGraphSession().findAllProcessDefinitionVersions(nome);
+
+	public List<ProcessDefinition> getTodasAsVersoesProcessDefinition(
+			String nome) {
+		return WfContextBuilder.getJbpmContext().getGraphSession()
+				.findAllProcessDefinitionVersions(nome);
 	}
 
 	public Set<Task> getTodasAsTarefas(String nomeProcessDefinition) {
@@ -313,17 +379,18 @@ public class WfDao extends CpDao {
 			public int compare(Task t1, Task t2) {
 				return t1.getName().compareTo(t2.getName());
 			}
-			
+
 		});
 
-		List<ProcessDefinition> lstPD = WfDao.getInstance().getTodasAsVersoesProcessDefinition(nomeProcessDefinition);
+		List<ProcessDefinition> lstPD = WfDao.getInstance()
+				.getTodasAsVersoesProcessDefinition(nomeProcessDefinition);
 		for (ProcessDefinition pd : lstPD) {
 			for (Object o : pd.getNodes()) {
-				if (o instanceof TaskNode){
-					TaskNode t = (TaskNode)o;
+				if (o instanceof TaskNode) {
+					TaskNode t = (TaskNode) o;
 					result.addAll(t.getTasks());
 				}
-				
+
 			}
 		}
 		return result;

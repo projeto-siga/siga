@@ -7,14 +7,8 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-
-import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.auditoria.filter.ThreadFilter;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.wf.bl.Wf;
-import br.gov.jfrj.siga.wf.vraptor.WfInterceptor;
 
 public class WfThreadFilter extends ThreadFilter {
 
@@ -23,13 +17,12 @@ public class WfThreadFilter extends ThreadFilter {
 			throws IOException, ServletException {
 		WfExecutionEnvironment ee = new WfExecutionEnvironment();
 		try {
-			// Wf.setInstance(null); // Nato: removido pois forçava a carga da configurações a cada request!
-			ee.antes(null);
+			ee.antes();
 			chain.doFilter(request, response);
 			ee.depois();
 		} catch (Exception e) {
 			ee.excecao();
-			
+
 			throw new ServletException(e);
 		} finally {
 			ee.finalmente();

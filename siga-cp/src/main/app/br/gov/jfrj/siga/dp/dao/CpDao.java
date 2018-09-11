@@ -39,7 +39,6 @@ import java.util.List;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.transaction.SystemException;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -98,7 +97,6 @@ import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class CpDao extends ModeloDao {
@@ -1277,8 +1275,7 @@ public class CpDao extends ModeloDao {
 
 		for (DpLotacao lot : sublotacoes) {
 
-			Criteria c = HibernateUtil.getSessao().createCriteria(
-					DpPessoa.class);
+			Criteria c = getSessao().createCriteria(DpPessoa.class);
 			c.createAlias("cargo", "c");
 
 			c.add(Restrictions.eq("lotacao.id", lot.getId()));
@@ -1330,8 +1327,7 @@ public class CpDao extends ModeloDao {
 	}
 
 	public List<CpConfiguracao> consultarConfiguracoesDesde(Date desde) {
-		Criteria c = HibernateUtil.getSessao().createCriteria(
-				CpConfiguracao.class);
+		Criteria c = getSessao().createCriteria(CpConfiguracao.class);
 		SimpleExpression confsAtivas = Restrictions.gt("hisDtIni", desde);
 		SimpleExpression confsInativas = Restrictions.ge("hisDtFim", desde);
 		c.add(Restrictions.or(confsAtivas, confsInativas));
@@ -2116,7 +2112,7 @@ public class CpDao extends ModeloDao {
 
 	public List<DpPessoa> consultarPorMatriculaEOrgao(Long matricula,
 			Long idOrgaoUsu, boolean pessoasFinalizadas, boolean ordemDesc) {
-		Criteria c = HibernateUtil.getSessao().createCriteria(DpPessoa.class);
+		Criteria c = getSessao().createCriteria(DpPessoa.class);
 		c.add(Restrictions.eq("matricula", matricula));
 		c.add(Restrictions.eq("orgaoUsuario.idOrgaoUsu", idOrgaoUsu));
 
@@ -2138,8 +2134,7 @@ public class CpDao extends ModeloDao {
 	public List<?> consultarFechadosPorIdExterna(Class<?> clazz,
 			String idExterna, Long idOrgaoUsu) {
 		if (clazz == DpLotacao.class) {
-			Criteria c = HibernateUtil.getSessao().createCriteria(
-					DpLotacao.class);
+			Criteria c = getSessao().createCriteria(DpLotacao.class);
 			c.add(Restrictions.eq("ideLotacao", idExterna));
 			c.add(Restrictions.eq("orgaoUsuario.idOrgaoUsu", idOrgaoUsu));
 			c.add(Restrictions.isNotNull("dataFimLotacao"));
@@ -2148,8 +2143,7 @@ public class CpDao extends ModeloDao {
 		}
 
 		if (clazz == DpCargo.class) {
-			Criteria c = HibernateUtil.getSessao()
-					.createCriteria(DpCargo.class);
+			Criteria c = getSessao().createCriteria(DpCargo.class);
 			c.add(Restrictions.eq("ideCargo", idExterna));
 			c.add(Restrictions.eq("orgaoUsuario.idOrgaoUsu", idOrgaoUsu));
 			c.add(Restrictions.isNotNull("dataFimCargo"));
@@ -2158,8 +2152,7 @@ public class CpDao extends ModeloDao {
 		}
 
 		if (clazz == DpFuncaoConfianca.class) {
-			Criteria c = HibernateUtil.getSessao().createCriteria(
-					DpFuncaoConfianca.class);
+			Criteria c = getSessao().createCriteria(DpFuncaoConfianca.class);
 			c.add(Restrictions.eq("ideFuncao", idExterna));
 			c.add(Restrictions.eq("orgaoUsuario.idOrgaoUsu", idOrgaoUsu));
 			c.add(Restrictions.isNotNull("dataFimFuncao"));

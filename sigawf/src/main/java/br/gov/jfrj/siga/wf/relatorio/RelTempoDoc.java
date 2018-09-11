@@ -25,17 +25,14 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.view.JasperViewer;
 
 import org.hibernate.SQLQuery;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.type.CalendarType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
@@ -45,10 +42,6 @@ import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.SigaCalendar;
-import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
-import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
-import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
 /**
@@ -133,15 +126,18 @@ public class RelTempoDoc extends RelatorioTemplate {
 		Date dataInicialAte = getDataAte("dataInicialAte");
 		Date dataFinalDe = getDataDe("dataFinalDe");
 		Date dataFinalAte = getDataAte("dataFinalAte");
-		Boolean incluirAbertos = parametros.get("incluirAbertos")==null?false:Boolean.valueOf(parametros.get("incluirAbertos").toString().equals("on"));
+		Boolean incluirAbertos = parametros.get("incluirAbertos") == null ? false
+				: Boolean.valueOf(parametros.get("incluirAbertos").toString()
+						.equals("on"));
 
 		Set<Doc> docs = consultarDocs(procedimento, dataInicialDe,
-				dataInicialAte, dataFinalDe, dataFinalAte,incluirAbertos);
+				dataInicialAte, dataFinalDe, dataFinalAte, incluirAbertos);
 		List<String> dados = new ArrayList<String>();
 		for (Doc s : docs) {
 			dados.add(s.getNumeroDoc());
 			dados.add(DateFormat.getInstance().format(s.getInicio().getTime()));
-			dados.add(s.getFim()==null?"Em Andamento":DateFormat.getInstance().format(s.getFim().getTime()));
+			dados.add(s.getFim() == null ? "Em Andamento" : DateFormat
+					.getInstance().format(s.getFim().getTime()));
 			dados.add(s.getDuracao());
 		}
 		return dados;
@@ -149,8 +145,8 @@ public class RelTempoDoc extends RelatorioTemplate {
 	}
 
 	/**
-	 * Retorna os docs no período indicado, ordenadas pelo tempo de
-	 * demora, podendo estar ou não finalizados.
+	 * Retorna os docs no período indicado, ordenadas pelo tempo de demora,
+	 * podendo estar ou não finalizados.
 	 * 
 	 * Exemplo da query:
 	 * 
@@ -169,16 +165,25 @@ public class RelTempoDoc extends RelatorioTemplate {
 	 * @param dataFinal
 	 * @param dataFinalAte
 	 * @param dataFinalDe
-	 * @param incluirAbertos 
+	 * @param incluirAbertos
 	 * @return
 	 */
 	private Set<Doc> consultarDocs(String nomeProcedimento, Date dataInicialDe,
-			Date dataInicialAte, Date dataFinalDe, Date dataFinalAte, Boolean incluirAbertos) {
+			Date dataInicialAte, Date dataFinalDe, Date dataFinalAte,
+			Boolean incluirAbertos) {
 		SQLQuery query = null;
-		if (incluirAbertos){
-			query = (SQLQuery) WfDao.getInstance().getSessao().createSQLQuery(getSQLConsultarDocumentosFinalizadosEAbertosNoPeriodo());
-		}else{
-			query = (SQLQuery) WfDao.getInstance().getSessao().createSQLQuery(getSQLConsultarDocumentosFinalizadosNoPeriodo());
+		if (incluirAbertos) {
+			query = (SQLQuery) WfDao
+					.getInstance()
+					.getSessao()
+					.createSQLQuery(
+							getSQLConsultarDocumentosFinalizadosEAbertosNoPeriodo());
+		} else {
+			query = (SQLQuery) WfDao
+					.getInstance()
+					.getSessao()
+					.createSQLQuery(
+							getSQLConsultarDocumentosFinalizadosNoPeriodo());
 		}
 
 		query.addScalar("START_", new CalendarType());
@@ -188,7 +193,7 @@ public class RelTempoDoc extends RelatorioTemplate {
 
 		dataInicialAte = inclusiveData(dataInicialAte);
 		dataFinalAte = inclusiveData(dataFinalAte);
-		
+
 		query.setString("nomeProcedimento", nomeProcedimento);
 		query.setDate("dataInicialDe", dataInicialDe);
 		query.setDate("dataInicialAte", dataInicialAte);
@@ -211,37 +216,36 @@ public class RelTempoDoc extends RelatorioTemplate {
 	}
 
 	private String getSQLConsultarDocumentosFinalizadosEAbertosNoPeriodo() {
-		return
-		"SELECT " + 
-		"PI.START_,PI.END_,VI.STRINGVALUE_,PI.ID_ " + 
-	"FROM  " +
-		"JBPM_PROCESSINSTANCE PI, " +
-		"(SELECT DISTINCT PROCESSINSTANCE_, STRINGVALUE_ FROM JBPM_VARIABLEINSTANCE WHERE NAME_ LIKE 'doc_%' AND STRINGVALUE_ LIKE '%-_' AND STRINGVALUE_ IS NOT NULL) VI, " +
-		"(SELECT ID_ FROM JBPM_PROCESSDEFINITION WHERE NAME_ = :nomeProcedimento) PD  " +
-	"WHERE " +
-		"PI.PROCESSDEFINITION_=PD.ID_ AND " + 
-		"PI.ID_ = VI.PROCESSINSTANCE_ AND   " +
-		"(PI.START_ >= :dataInicialDe and PI.START_ <= :dataInicialAte) AND " + 
-		"(PI.END_ >= :dataFinalDe and PI.END_ <= :dataFinalAte OR PI.END_ IS NULL)";
+		return "SELECT "
+				+ "PI.START_,PI.END_,VI.STRINGVALUE_,PI.ID_ "
+				+ "FROM  "
+				+ "JBPM_PROCESSINSTANCE PI, "
+				+ "(SELECT DISTINCT PROCESSINSTANCE_, STRINGVALUE_ FROM JBPM_VARIABLEINSTANCE WHERE NAME_ LIKE 'doc_%' AND STRINGVALUE_ LIKE '%-_' AND STRINGVALUE_ IS NOT NULL) VI, "
+				+ "(SELECT ID_ FROM JBPM_PROCESSDEFINITION WHERE NAME_ = :nomeProcedimento) PD  "
+				+ "WHERE "
+				+ "PI.PROCESSDEFINITION_=PD.ID_ AND "
+				+ "PI.ID_ = VI.PROCESSINSTANCE_ AND   "
+				+ "(PI.START_ >= :dataInicialDe and PI.START_ <= :dataInicialAte) AND "
+				+ "(PI.END_ >= :dataFinalDe and PI.END_ <= :dataFinalAte OR PI.END_ IS NULL)";
 	}
 
 	private String getSQLConsultarDocumentosFinalizadosNoPeriodo() {
-		return 
-	"SELECT PI.START_,PI.END_,VI.STRINGVALUE_,PI.ID_ " +  
-	"FROM " +
-		"JBPM_PROCESSINSTANCE PI, " +
-		"(SELECT DISTINCT PROCESSINSTANCE_, STRINGVALUE_ FROM JBPM_VARIABLEINSTANCE WHERE NAME_ LIKE 'doc_%' AND STRINGVALUE_ LIKE '%-_' AND STRINGVALUE_ IS NOT NULL) VI, " +
-		"(SELECT ID_ FROM JBPM_PROCESSDEFINITION WHERE NAME_ = :nomeProcedimento) PD " + 
-	"WHERE " +
-		"PI.PROCESSDEFINITION_=PD.ID_ AND " + 
-		"PI.END_ IS NOT NULL AND  " +
-		"PI.ID_ = VI.PROCESSINSTANCE_ AND " +  
-		"(PI.START_ >= :dataInicialDe and PI.START_ <= :dataInicialAte) AND " + 
-		"(PI.END_ >= :dataFinalDe and PI.END_ <= :dataFinalAte) " ;
+		return "SELECT PI.START_,PI.END_,VI.STRINGVALUE_,PI.ID_ "
+				+ "FROM "
+				+ "JBPM_PROCESSINSTANCE PI, "
+				+ "(SELECT DISTINCT PROCESSINSTANCE_, STRINGVALUE_ FROM JBPM_VARIABLEINSTANCE WHERE NAME_ LIKE 'doc_%' AND STRINGVALUE_ LIKE '%-_' AND STRINGVALUE_ IS NOT NULL) VI, "
+				+ "(SELECT ID_ FROM JBPM_PROCESSDEFINITION WHERE NAME_ = :nomeProcedimento) PD "
+				+ "WHERE "
+				+ "PI.PROCESSDEFINITION_=PD.ID_ AND "
+				+ "PI.END_ IS NOT NULL AND  "
+				+ "PI.ID_ = VI.PROCESSINSTANCE_ AND "
+				+ "(PI.START_ >= :dataInicialDe and PI.START_ <= :dataInicialAte) AND "
+				+ "(PI.END_ >= :dataFinalDe and PI.END_ <= :dataFinalAte) ";
 	}
 
 	/**
 	 * Soma um dia à data para que esta possa estar incluída na pesquisa.
+	 * 
 	 * @param dataInicialAte
 	 * @return
 	 */
@@ -265,8 +269,8 @@ public class RelTempoDoc extends RelatorioTemplate {
 		GregorianCalendar dt = new GregorianCalendar();
 
 		dt.set(new Integer(pDT.substring(6)),
-				new Integer(pDT.substring(3, 5)) - 1, new Integer(pDT
-						.substring(0, 2)), 0, 0, 0);
+				new Integer(pDT.substring(3, 5)) - 1,
+				new Integer(pDT.substring(0, 2)), 0, 0, 0);
 		return dt.getTime();
 
 	}
@@ -284,8 +288,8 @@ public class RelTempoDoc extends RelatorioTemplate {
 		GregorianCalendar dt = new GregorianCalendar();
 
 		dt.set(new Integer(pDT.substring(6)),
-				new Integer(pDT.substring(3, 5)) - 1, new Integer(pDT
-						.substring(0, 2)), 23, 59, 59);
+				new Integer(pDT.substring(3, 5)) - 1,
+				new Integer(pDT.substring(0, 2)), 23, 59, 59);
 		return dt.getTime();
 
 	}
@@ -309,8 +313,9 @@ public class RelTempoDoc extends RelatorioTemplate {
 		}
 
 		public long getDuracaoEmMili() {
-			if (getFim()==null || getInicio()==null){
-				return Calendar.getInstance().getTimeInMillis() - getInicio().getTimeInMillis();
+			if (getFim() == null || getInicio() == null) {
+				return Calendar.getInstance().getTimeInMillis()
+						- getInicio().getTimeInMillis();
 			}
 			return getFim().getTimeInMillis() - getInicio().getTimeInMillis();
 		}

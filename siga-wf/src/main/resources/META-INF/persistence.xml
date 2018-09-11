@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+
+	<persistence-unit name="default-wf" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<non-jta-data-source>java:/jboss/datasources/SigaWfDS</non-jta-data-source>
+
+		<mapping-file>org/jbpm/db/hibernate.queries.hbm.xml</mapping-file>
+		<mapping-file>org/jbpm/db/hibernate.types.hbm.xml</mapping-file>
+		<mapping-file>hibernate.extra.hbm.xml</mapping-file>
+
+		<class>br.gov.jfrj.siga.dp.DpCargo</class>
+		<class>br.gov.jfrj.siga.dp.DpFuncaoConfianca</class>
+		<class>br.gov.jfrj.siga.dp.DpLotacao</class>
+		<class>br.gov.jfrj.siga.dp.DpPessoa</class>
+		<class>br.gov.jfrj.siga.dp.CpOrgao</class>
+		<class>br.gov.jfrj.siga.dp.CpOrgaoUsuario</class>
+		<class>br.gov.jfrj.siga.dp.DpSubstituicao</class>
+		<class>br.gov.jfrj.siga.dp.CpFeriado</class>
+		<class>br.gov.jfrj.siga.dp.CpOcorrenciaFeriado</class>
+		<class>br.gov.jfrj.siga.dp.CpAplicacaoFeriado</class>
+		<class>br.gov.jfrj.siga.dp.CpLocalidade</class>
+		<class>br.gov.jfrj.siga.dp.CpUF</class>
+		<class>br.gov.jfrj.siga.dp.CpPersonalizacao</class>
+		<class>br.gov.jfrj.siga.dp.CpTipoPessoa</class>
+		<class>br.gov.jfrj.siga.cp.CpConfiguracao</class>
+		<class>br.gov.jfrj.siga.cp.CpSituacaoConfiguracao</class>
+		<class>br.gov.jfrj.siga.cp.CpTipoConfiguracao</class>
+		<class>br.gov.jfrj.siga.cp.CpServico</class>
+		<class>br.gov.jfrj.siga.cp.CpTipoGrupo</class>
+		<class>br.gov.jfrj.siga.cp.CpGrupo</class>
+		<class>br.gov.jfrj.siga.cp.CpGrupoDeEmail</class>
+		<class>br.gov.jfrj.siga.cp.CpPerfil</class>
+		<class>br.gov.jfrj.siga.cp.CpPerfilJEE</class>
+		<class>br.gov.jfrj.siga.dp.CpTipoLotacao</class>
+		<class>br.gov.jfrj.siga.cp.CpTipoPapel</class>
+		<class>br.gov.jfrj.siga.cp.CpPapel</class>
+		<class>br.gov.jfrj.siga.cp.CpTipoServico</class>
+		<class>br.gov.jfrj.siga.cp.CpTipoIdentidade</class>
+		<class>br.gov.jfrj.siga.cp.CpIdentidade</class>
+		<class>br.gov.jfrj.siga.cp.CpModelo</class>
+		<class>br.gov.jfrj.siga.cp.CpUnidadeMedida</class>
+		<class>br.gov.jfrj.siga.cp.CpComplexo</class>
+		<class>br.gov.jfrj.siga.dp.CpMarcador</class>
+		<class>br.gov.jfrj.siga.dp.CpTipoMarcador</class>
+		<class>br.gov.jfrj.siga.dp.CpMarca</class>
+		<class>br.gov.jfrj.siga.dp.CpTipoMarca</class>
+		
+		<class>org.jbpm.graph.action.MailAction</class>
+		<class>org.jbpm.graph.def.ProcessDefinition</class>
+		<class>org.jbpm.graph.def.Node</class>
+		<class>org.jbpm.graph.def.Transition</class>
+		<class>org.jbpm.graph.def.Event</class>
+		<class>org.jbpm.graph.def.Action</class>
+		<class>org.jbpm.graph.def.SuperState</class>
+		<class>org.jbpm.graph.def.ExceptionHandler</class>
+		<class>org.jbpm.instantiation.Delegation</class>
+		<class>org.jbpm.graph.action.Script</class>
+		<class>org.jbpm.graph.node.StartState</class>
+		<class>org.jbpm.graph.node.EndState</class>
+		<class>org.jbpm.graph.node.ProcessState</class>
+		<class>org.jbpm.graph.node.Decision</class>
+		<class>org.jbpm.graph.node.Fork</class>
+		<class>org.jbpm.graph.node.Join</class>
+		<class>org.jbpm.graph.node.MailNode</class>
+		<class>org.jbpm.graph.node.State</class>
+		<class>org.jbpm.graph.node.TaskNode</class>
+		<class>org.jbpm.context.def.ContextDefinition</class>
+		<class>org.jbpm.context.def.VariableAccess</class>
+		<class>org.jbpm.bytes.ByteArray</class>
+		<class>org.jbpm.module.def.ModuleDefinition</class>
+		<class>org.jbpm.file.def.FileDefinition</class>
+		<class>org.jbpm.taskmgmt.def.TaskMgmtDefinition</class>
+		<class>org.jbpm.taskmgmt.def.Swimlane</class>
+		<class>org.jbpm.taskmgmt.def.Task</class>
+		<class>org.jbpm.taskmgmt.def.TaskController</class>
+		<class>org.jbpm.scheduler.def.CreateTimerAction</class>
+		<class>org.jbpm.scheduler.def.CancelTimerAction</class>
+		<class>org.jbpm.graph.exe.Comment</class>
+		<class>org.jbpm.graph.exe.ProcessInstance</class>
+		<class>org.jbpm.graph.exe.Token</class>
+		<class>org.jbpm.graph.exe.RuntimeAction</class>
+		<class>org.jbpm.module.exe.ModuleInstance</class>
+		<class>org.jbpm.context.exe.ContextInstance</class>
+		<class>org.jbpm.context.exe.TokenVariableMap</class>
+		<class>org.jbpm.context.exe.VariableInstance</class>
+		<class>org.jbpm.context.exe.variableinstance.ByteArrayInstance</class>
+		<class>org.jbpm.context.exe.variableinstance.DateInstance</class>
+		<class>org.jbpm.context.exe.variableinstance.DoubleInstance</class>
+		<class>org.jbpm.context.exe.variableinstance.HibernateLongInstance</class>
+		<class>org.jbpm.context.exe.variableinstance.HibernateStringInstance</class>
+		<class>org.jbpm.context.exe.variableinstance.LongInstance</class>
+		<class>org.jbpm.context.exe.variableinstance.NullInstance</class>
+		<class>org.jbpm.context.exe.variableinstance.StringInstance</class>
+		<class>org.jbpm.job.Job</class>
+		<class>org.jbpm.job.Timer</class>
+		<class>org.jbpm.job.ExecuteNodeJob</class>
+		<class>org.jbpm.job.ExecuteActionJob</class>
+		<class>org.jbpm.job.CleanUpProcessJob</class>
+		<class>org.jbpm.taskmgmt.exe.TaskMgmtInstance</class>
+		<class>org.jbpm.taskmgmt.exe.TaskInstance</class>
+		<class>org.jbpm.taskmgmt.exe.PooledActor</class>
+		<class>org.jbpm.taskmgmt.exe.SwimlaneInstance</class>
+		<class>org.jbpm.logging.log.ProcessLog</class>
+		<class>org.jbpm.logging.log.MessageLog</class>
+		<class>org.jbpm.logging.log.CompositeLog</class>
+		<class>org.jbpm.graph.log.ActionLog</class>
+		<class>org.jbpm.graph.log.NodeLog</class>
+		<class>org.jbpm.graph.log.ProcessInstanceCreateLog</class>
+		<class>org.jbpm.graph.log.ProcessInstanceEndLog</class>
+		<class>org.jbpm.graph.log.ProcessStateLog</class>
+		<class>org.jbpm.graph.log.SignalLog</class>
+		<class>org.jbpm.graph.log.TokenCreateLog</class>
+		<class>org.jbpm.graph.log.TokenEndLog</class>
+		<class>org.jbpm.graph.log.TransitionLog</class>
+		<class>org.jbpm.context.log.VariableLog</class>
+		<class>org.jbpm.context.log.VariableCreateLog</class>
+		<class>org.jbpm.context.log.VariableDeleteLog</class>
+		<class>org.jbpm.context.log.VariableUpdateLog</class>
+		<class>org.jbpm.context.log.variableinstance.ByteArrayUpdateLog</class>
+		<class>org.jbpm.context.log.variableinstance.DateUpdateLog</class>
+		<class>org.jbpm.context.log.variableinstance.DoubleUpdateLog</class>
+		<class>org.jbpm.context.log.variableinstance.HibernateLongUpdateLog</class>
+		<class>org.jbpm.context.log.variableinstance.HibernateStringUpdateLog</class>
+		<class>org.jbpm.context.log.variableinstance.LongUpdateLog</class>
+		<class>org.jbpm.context.log.variableinstance.StringUpdateLog</class>
+		<class>org.jbpm.taskmgmt.log.TaskLog</class>
+		<class>org.jbpm.taskmgmt.log.TaskCreateLog</class>
+		<class>org.jbpm.taskmgmt.log.TaskAssignLog</class>
+		<class>org.jbpm.taskmgmt.log.TaskEndLog</class>
+		<class>org.jbpm.taskmgmt.log.SwimlaneLog</class>
+		<class>org.jbpm.taskmgmt.log.SwimlaneCreateLog</class>
+		<class>org.jbpm.taskmgmt.log.SwimlaneAssignLog</class>
+
+		<class>br.gov.jfrj.siga.wf.WfConfiguracao</class>
+		<class>br.gov.jfrj.siga.wf.WfConhecimento</class>
+		<class>br.gov.jfrj.siga.wf.util.WfTaskInstance</class>
+		
+		<properties>
+			<property name="hibernate.current_session_context_class"
+				value="thread" />
+			<property name="hibernate.query.substitutions" value="true 1, false 0" />
+			<property name="hibernate.cache.use_second_level_cache"
+				value="true" />
+			<property name="hibernate.cache.infinispan.cachemanager"
+				value="java:jboss/infinispan/container/hibernate" />
+			<property name="hibernate.transaction.manager_lookup_class"
+				value="org.hibernate.transaction.JBossTransactionManagerLookup" />
+			<property name="hibernate.cache.use_query_cache" value="true" />
+			<property name="hibernate.cache.use_minimal_puts" value="false" />
+			<property name="hibernate.max_fetch_depth" value="3" />
+			<property name="hibernate.default_batch_fetch_size" value="1000" />
+			<property name="hibernate.cache.provider_configuration_file_resource_path"
+				value="classpath:ehcache.xml" />
+			<property name="hibernate.cache.region.factory_class"
+				value="org.jboss.as.jpa.hibernate4.infinispan.InfinispanRegionFactory" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect" />
+			<property name="hibernate.show_sql" value="false" />
+		</properties>
+	</persistence-unit>
+</persistence>
+

@@ -1,11 +1,13 @@
 package br.gov.jfrj.siga.wf.util;
 
+import javax.persistence.EntityManager;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
@@ -20,17 +22,6 @@ public class WfExecutionEnvironment {
 		} catch (Exception ex) {
 			log.error(
 					"[fechaContextoWorkflow] - Ocorreu um erro ao fechar o contexto do Workflow",
-					ex);
-			// ex.printStackTrace();
-		}
-	}
-
-	private void fechaSessaoHibernate() {
-		try {
-			HibernateUtil.fechaSessaoSeEstiverAberta();
-		} catch (Exception ex) {
-			log.error(
-					"[fechaSessaoHibernate] - Ocorreu um erro ao fechar uma sessï¿½o do Hibernate",
 					ex);
 			// ex.printStackTrace();
 		}
@@ -63,25 +54,27 @@ public class WfExecutionEnvironment {
 
 	public void finalmente() {
 		this.fechaContextoWorkflow();
-		this.fechaSessaoHibernate();
+		ContextoPersistencia.em().close();
+		ContextoPersistencia.setEntityManager(null);
 		this.liberaInstanciaDao();
 	}
 
 	public void excecao() {
-		WfDao.rollbackTransacao();
+		if (ContextoPersistencia.em().getTransaction().isActive())
+			ContextoPersistencia.em().getTransaction().rollback();
 	}
 
 	public void depois() {
-		WfDao.commitTransacao();
+		ContextoPersistencia.em().getTransaction().commit();
 	}
 
 	public void antes(Session session) throws Exception {
-		if (session == null) {
-			HibernateUtil.getSessao();
-			ModeloDao.freeInstance();
-		} else {
-			HibernateUtil.setSessao(session);
-		}
+		EntityManager em = ContextoPersistencia.emf.createEntityManager();
+		ContextoPersistencia.setEntityManager(em);
+
+		em.getTransaction().begin();
+
+		ModeloDao.freeInstance();
 		WfDao.getInstance();
 		Wf.getInstance().getConf().limparCacheSeNecessario();
 
@@ -94,29 +87,11 @@ public class WfExecutionEnvironment {
 		// Novo
 		if (!WfDao.getInstance().sessaoEstahAberta())
 			throw new AplicacaoException(
-					"Erro: sessï¿½o do Hibernate estï¿½ fechada.");
+					"Erro: sessão do Hibernate está fechada.");
 
 		if (session == null)
 			WfContextBuilder.getJbpmContext().getJbpmContext()
 					.setSession(WfDao.getInstance().getSessao());
-
-		// Velho
-		// GraphSession s = WfContextBuilder.getJbpmContext()
-		// .getGraphSession();
-		// Field fld = GraphSession.class.getDeclaredField("session");
-		// fld.setAccessible(true);
-		// Session session = (Session) fld.get(s);
-		// if (!session.isOpen())
-		// throw new AplicacaoException(
-		// "Erro: sessï¿½o do Hibernate estï¿½ fechada.");
-		// HibernateUtil.setSessao(session);
-		// WfDao.getInstance();
-
-		// if (session.getTransaction() != null)
-		// return;
-
-		if (session == null)
-			WfDao.iniciarTransacao();
 	}
 
 }

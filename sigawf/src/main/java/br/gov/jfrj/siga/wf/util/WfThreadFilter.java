@@ -23,13 +23,13 @@ public class WfThreadFilter extends ThreadFilter {
 			throws IOException, ServletException {
 		WfExecutionEnvironment ee = new WfExecutionEnvironment();
 		try {
-			// Wf.setInstance(null); // Nato: removido pois forçava a carga da configurações a cada request!
+			// Wf.setInstance(null); // Nato: removido pois forçava a carga da
+			// configurações a cada request!
 			ee.antes(null);
 			chain.doFilter(request, response);
 			ee.depois();
 		} catch (Exception e) {
 			ee.excecao();
-			
 			throw new ServletException(e);
 		} finally {
 			ee.finalmente();

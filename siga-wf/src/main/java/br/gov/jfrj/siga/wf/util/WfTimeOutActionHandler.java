@@ -27,10 +27,10 @@ import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.Token;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
 public class WfTimeOutActionHandler implements ActionHandler {
+	private static final long serialVersionUID = -2535068306022103837L;
 
 	/**
 	 * Termina a tarefa e sai para a terefa definita no atributo "transition="
@@ -40,8 +40,6 @@ public class WfTimeOutActionHandler implements ActionHandler {
 	 * @throws Exception
 	 */
 	public void execute(ExecutionContext executionContext) throws Exception {
-		HibernateUtil.setSessao(executionContext.getJbpmContext().getSession());
-
 		WfDao.getInstance();
 
 		Token to = executionContext.getToken();

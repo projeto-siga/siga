@@ -17,7 +17,7 @@ public class SigaThreadFilter extends ThreadFilter {
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
-		EntityManager em = SigaStarter.emf.createEntityManager();
+		EntityManager em = ContextoPersistencia.emf.createEntityManager();
 		ContextoPersistencia.setEntityManager(em);
 
 		em.getTransaction().begin();

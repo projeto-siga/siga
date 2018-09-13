@@ -89,6 +89,7 @@ import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
@@ -3521,8 +3522,12 @@ public class ExBL extends CpBL {
 			}
 
 			// Verifica se a data está entre o ano 2000 e o ano 2100
-			if (doc.getDtDoc() != null && (doc.getDtDoc().before(new Date(100, 0, 1)) || doc.getDtDoc().after(new Date(200, 0, 1)))) {
-				throw new AplicacaoException("Data inválida");
+			if (doc.getDtDoc() != null && Data.verificaDataValida(doc.getDtDoc())) {
+				throw new AplicacaoException("Data inválida, deve estar entre o ano 2000 e ano 2100");
+			}
+			
+			if (doc.getDtDocOriginal() != null && Data.verificaDataValida(doc.getDtDocOriginal())) {
+				throw new AplicacaoException("Data original inválida, deve estar entre o ano 2000 e ano 2100");
 			}
 			// Obtem a descricao pela macro @descricao
 			if (doc.getExModelo().isDescricaoAutomatica()) {

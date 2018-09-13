@@ -67,6 +67,7 @@ import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -1410,6 +1411,11 @@ public class ExDocumentoController extends ExController {
 				if (c.before(dtDocCalendar)) {
 					throw new Exception(
 							"Não é permitido criar documento com data futura");
+				}
+				
+				// Verifica se a data está entre o ano 2000 e o ano 2100
+				if (Data.verificaDataValida(exDocumentoDTO.getDoc().getDtDoc())) {
+					throw new AplicacaoException("Data inválida, deve estar entre o ano 2000 e ano 2100");
 				}
 
 				verificaDocumento(exDocumentoDTO.getDoc());

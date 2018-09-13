@@ -45,6 +45,7 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -1710,6 +1711,9 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException(
 					"Destinatário não pode receber documentos");
 		}
+		
+		if (mov.getDtFimMov() != null && Data.verificaDataValida(mov.getDtFimMov()))
+			throw new AplicacaoException("Data de devolução inválida, deve estar entre o ano 2000 e ano 2100");	
 
 		if (!(Ex.getInstance()
 				.getComp()
@@ -3654,6 +3658,11 @@ public class ExMovimentacaoController extends ExController {
 		if (mov.getDtDispPublicacao() == null)
 			throw new AplicacaoException(
 					"A data desejada para a disponibilização precisa ser informada.");
+		
+		// Verifica se a data está entre o ano 2000 e o ano 2100
+		if (Data.verificaDataValida(mov.getDtDispPublicacao())) {
+				throw new AplicacaoException("Data de disponibilização inválida, deve estar entre o ano 2000 e ano 2100");
+		}
 
 		DatasPublicacaoDJE DJE = new DatasPublicacaoDJE(
 				mov.getDtDispPublicacao());

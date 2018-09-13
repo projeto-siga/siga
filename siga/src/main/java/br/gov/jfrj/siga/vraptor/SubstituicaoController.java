@@ -18,6 +18,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -257,9 +258,16 @@ public class SubstituicaoController extends SigaController {
 			} catch (final NullPointerException e) {
 				subst.setDtFimSubst(null);
 			}
-
+			
 			if (subst.getDtIniSubst() == null)
 				subst.setDtIniSubst(new Date());
+			else {
+				if (Data.verificaDataValida(subst.getDtIniSubst()))
+					throw new AplicacaoException("Data inicial inválida, deve estar entre o ano 2000 e ano 2100");
+			}
+				
+			if(subst.getDtFimSubst() != null && !Data.verificaDataValida(subst.getDtFimSubst()))
+				throw new AplicacaoException("Data final inválida");	
 
 			subst.setDtIniRegistro(new Date());
 

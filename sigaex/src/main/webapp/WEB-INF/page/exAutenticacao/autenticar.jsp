@@ -15,7 +15,7 @@
 			<h2>Autenticação de Documentos</h2>
 			<div class="gt-content-box gt-for-table">
 
-				<form action="${request.contextPath}/app/externo/autenticar"
+				<form action="${request.contextPath}/public/app/autenticar"
 					method="GET" class="form">
 					<table class="gt-form-table">
 						<tr class="header">

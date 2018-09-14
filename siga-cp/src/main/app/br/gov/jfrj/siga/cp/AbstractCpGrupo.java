@@ -29,6 +29,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
@@ -38,10 +39,7 @@ import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
-@Entity
-@Table(name = "CP_GRUPO", schema = "CORPORATIVO")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "ID_TP_GRUPO", discriminatorType = DiscriminatorType.INTEGER)
+@MappedSuperclass
 @NamedQueries({
 		@NamedQuery(name = "consultarCpGrupo", query = "from br.gov.jfrj.siga.cp.CpGrupo where dataFimGrupo is null order by siglaGrupo"),
 		@NamedQuery(name = "consultarQuantidadeCpGrupo", query = "select count(*) from br.gov.jfrj.siga.cp.CpGrupo where hisAtivo = 1"),

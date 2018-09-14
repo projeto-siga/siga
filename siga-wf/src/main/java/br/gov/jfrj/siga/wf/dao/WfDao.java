@@ -41,6 +41,7 @@ import org.jbpm.graph.node.TaskNode;
 import org.jbpm.taskmgmt.def.Task;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.wf.WfConfiguracao;
@@ -395,5 +396,19 @@ public class WfDao extends CpDao {
 		}
 		return result;
 	}
+	
+	public static void iniciarTransacao() {
+		WfHibernateUtil.iniciarTransacao();
+	}
+
+	public static void commitTransacao() throws AplicacaoException {
+		WfHibernateUtil.commitTransacao();
+	}
+
+	public static void rollbackTransacao() {
+		WfHibernateUtil.rollbackTransacao();
+	}
+
+
 
 }

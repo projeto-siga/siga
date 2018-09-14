@@ -19,7 +19,12 @@
 package br.gov.jfrj.siga.cp;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -27,6 +32,9 @@ import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
+@Table(name = "CP_GRUPO", schema = "CORPORATIVO")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "ID_TP_GRUPO", discriminatorType = DiscriminatorType.INTEGER)
 public abstract class CpGrupo extends AbstractCpGrupo implements Selecionavel,
 		Comparable<CpGrupo>, CpConvertableEntity {
 

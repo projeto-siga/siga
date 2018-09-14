@@ -1689,10 +1689,10 @@ public class CpDao extends ModeloDao {
 		cfg.setProperty("hibernate.max_fetch_depth", "3");
 		// cfg.setProperty("hibernate.default_batch_fetch_size", "5");
 		// cfg.setProperty("hibernate.cache.provider_configuration_file_resource_path","classpath:ehcache.xml");
-		cfg.setProperty("hibernate.show_sql", "false");
+		// cfg.setProperty("hibernate.show_sql", "false");
 
 		// descomentar para inpecionar o SQL
-		// cfg.setProperty("hibernate.show_sql", "true");
+	    cfg.setProperty("hibernate.show_sql", "true");
 		// cfg.setProperty("hibernate.format_sql", "false");
 		// cfg.setProperty("hibernate.use_sql_comments", "true");
 		// Disable second-level cache.
@@ -1728,6 +1728,9 @@ public class CpDao extends ModeloDao {
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.dp.CpPersonalizacao.class);
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpServico.class);
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpGrupo.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpGrupoDeEmail.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpPerfil.class);
+		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpPerfilJEE.class);
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpPapel.class);
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpUnidadeMedida.class);
 		cfg.addAnnotatedClass(br.gov.jfrj.siga.cp.CpComplexo.class);

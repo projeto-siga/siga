@@ -227,7 +227,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@Column(name = "ID_DOC")
 	private java.lang.Long idDoc;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_MOB_PAI")
 	private ExMobil exMobilPai;
 
@@ -306,86 +306,86 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@Column(name = "DNM_ACESSO", length = 4000)
 	private String dnmAcesso;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_SUBSCRITOR")
 	private DpPessoa subscritor;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_CADASTRANTE", nullable = false)
 	private DpPessoa cadastrante;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_TITULAR")
 	private DpPessoa titular;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	private DpLotacao lotaCadastrante;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_LOTA_TITULAR")
 	private DpLotacao lotaTitular;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_LOTA_DESTINATARIO")
 	private DpLotacao lotaDestinatario;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_LOTA_SUBSCRITOR")
 	private DpLotacao lotaSubscritor;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_DESTINATARIO")
 	private DpPessoa destinatario;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_CLASSIFICACAO")
 	private ExClassificacao exClassificacao;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_FORMA_DOC")
 	private ExFormaDocumento exFormaDocumento;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_MOD")
 	private ExModelo exModelo;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_TP_DOC", nullable = false)
 	private ExTipoDocumento exTipoDocumento;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_NIVEL_ACESSO")
 	private ExNivelAcesso exNivelAcesso;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DNM_ID_NIVEL_ACESSO")
 	private ExNivelAcesso dnmExNivelAcesso;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO")
 	private CpOrgao orgaoExterno;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU")
 	private CpOrgaoUsuario orgaoUsuario;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_DESTINATARIO")
 	private CpOrgao orgaoExternoDestinatario;
 
-	@OneToMany(mappedBy = "exDocumento")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exDocumento")
 	@Sort(type = SortType.NATURAL)
 	private java.util.SortedSet<ExMobil> exMobilSet = new TreeSet<ExMobil>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exDocumento")
 	private java.util.Set<ExBoletimDoc> exBoletimDocSet;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_DOC_ANTERIOR")
 	private ExDocumento exDocAnterior;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_MOB_AUTUADO")
 	private ExMobil exMobilAutuado;
 

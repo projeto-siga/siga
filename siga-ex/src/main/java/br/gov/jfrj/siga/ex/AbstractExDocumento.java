@@ -23,6 +23,7 @@ import java.sql.Blob;
 import java.util.Date;
 import java.util.TreeSet;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -294,6 +295,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	private String fgEletronico;
 
 	@Column(name = "CONTEUDO_BLOB_DOC")
+	@Basic(fetch = FetchType.LAZY)
 	private Blob conteudoBlobDoc;
 
 	@Column(name = "NUM_SEQUENCIA")

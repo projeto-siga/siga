@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.sql.Blob;
 import java.util.Date;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -182,6 +183,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 	private DpPessoa cadastrante;
 
 	@Column(name = "conteudo_blob_mov")
+	@Basic(fetch = FetchType.LAZY)
 	private Blob conteudoBlobMov;
 
 	@Column(name = "conteudo_tp_mov", length = 128)

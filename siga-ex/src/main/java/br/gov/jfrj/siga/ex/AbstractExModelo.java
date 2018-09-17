@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.sql.Blob;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -55,6 +56,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 
 	/** The value of the simple conteudoBlobMod property. */
 	@Column(name = "CONTEUDO_BLOB_MOD")
+	@Basic(fetch = FetchType.LAZY)
 	private Blob conteudoBlobMod;
 
 	/** The value of the simple conteudoTpBlob property. */

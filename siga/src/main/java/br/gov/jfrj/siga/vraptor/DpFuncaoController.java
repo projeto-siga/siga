@@ -164,7 +164,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		
 		DpFuncaoConfianca funcao = new DpFuncaoConfianca();
 		
-		funcao.setNomeFuncao(Texto.removerEspacosExtra(nmFuncao).trim());
+		funcao.setNomeFuncao(Texto.removeAcento(Texto.removerEspacosExtra(nmFuncao).trim()));
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
 		ou.setIdOrgaoUsu(idOrgaoUsu);
 		funcao.setOrgaoUsuario(ou);
@@ -190,7 +190,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			listPessoa = dao().getInstance().consultarPessoasComFuncaoConfianca(id);
 			
 		}
-		funcao.setNomeFuncao(Texto.removeAcento(Texto.removerEspacosExtra(nmFuncao).trim()));
+		funcao.setNomeFuncao(Texto.removerEspacosExtra(nmFuncao).trim());
 		
 		if (idOrgaoUsu != null && idOrgaoUsu != 0 && (listPessoa == null || listPessoa.size() == 0)) {
 			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();

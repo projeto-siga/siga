@@ -39,8 +39,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.search.annotations.DocumentId;
-
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -171,7 +169,6 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 				+ "                ) order by mov.idMov"), })
 public abstract class AbstractExMovimentacao extends ExArquivo implements
 		Serializable {
-	@DocumentId
 	@Id
 	@SequenceGenerator(sequenceName = "EX_MOVIMENTACAO_SEQ", name = "EX_MOVIMENTACAO_SEQ")
 	@GeneratedValue(generator = "EX_MOVIMENTACAO_SEQ")

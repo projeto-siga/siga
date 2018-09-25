@@ -44,13 +44,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 
-import org.apache.lucene.analysis.br.BrazilianAnalyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.MultiFieldQueryParser;
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.util.Version;
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
@@ -61,9 +54,6 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.jdbc.Work;
-import org.hibernate.search.FullTextQuery;
-import org.hibernate.search.FullTextSession;
-import org.hibernate.search.Search;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -162,21 +152,6 @@ public class ExDao extends CpDao {
 		query.setLong("idDoc", doc.getIdDoc());
 
 		return query.list();
-	}
-
-	public void reindexarVarios(List<ExDocumento> docs, boolean apenasExcluir)
-			throws Exception {
-		FullTextSession fullTextSession = Search
-				.getFullTextSession(getSessao());
-		Transaction tx = fullTextSession.beginTransaction();
-		for (ExDocumento doc : docs) {
-			fullTextSession.purge(ExDocumento.class, doc);
-			if ((!apenasExcluir) && doc.isIndexavel())
-				fullTextSession.index(doc);
-		}
-		tx.commit();
-		fullTextSession.clear();
-		getSessao().clear();
 	}
 
 	public List<ExDocumento> consultarEmLotePorId(Object[] ids) {
@@ -577,239 +552,6 @@ public class ExDao extends CpDao {
 		return null;
 	}
 
-	public Object[] consultarPorTexto(String query) throws Exception {
-		return consultarPorTexto(query, 0, 0);
-	}
-
-	public Object[] consultarPorTexto(String query, int offset, int itemPagina)
-			throws Exception {
-
-		// Substitui n espaï¿½os brancos seguidos de letra ou nï¿½mero por " +"
-		// As duas linhas abaixo poderï¿½o ser substituï¿½das por uma
-		// query = "+"+query.replaceAll("(\\s+)", " +");
-		// query = query.replaceAll("\\+\\-", "-");
-
-		QueryParser parser = new MultiFieldQueryParser(Version.LUCENE_36,
-				new String[] { "conteudoBlobDocHtml", "nmMod",
-						"descrDocumento",
-						"exMovimentacaoIndexacaoSet.descrMov",
-						"exMovimentacaoIndexacaoSet.descrTipoMovimentacao",
-						"exMovimentacaoIndexacaoSet.conteudoBlobMovHtml",
-						"exMovimentacaoIndexacaoSet.conteudoBlobMovPdf" },
-				new BrazilianAnalyzer(Version.LUCENE_36));
-
-		parser.setDefaultOperator(QueryParser.AND_OPERATOR);
-
-		org.apache.lucene.search.Query luceneQuery = parser.parse(query);
-
-		// ------------------------------- hibernate search query:
-
-		FullTextSession fullTextSession = Search
-				.getFullTextSession(getSessao());
-
-		FullTextQuery hbQuery = fullTextSession.createFullTextQuery(
-				luceneQuery, ExDocumento.class);
-
-		if (offset > 0) {
-			hbQuery.setFirstResult(offset);
-		}
-		if (itemPagina > 0) {
-			hbQuery.setMaxResults(itemPagina);
-		}
-
-		hbQuery.setCacheable(true);
-
-		hbQuery.setProjection("descrDocumento", "nmMod", "codigo", "idDoc",
-				"dtDocDDMMYY", "subscritorString", "destinatarioString",
-				"nivelAcesso");
-
-		return new Object[] { hbQuery.list(), hbQuery.getResultSize() };
-	}
-
-	public void listarNaoIndexados(int aPartir, boolean irIndexando)
-			throws Exception {
-
-		long tempoIni = System.currentTimeMillis();
-		FullTextSession fullTextSession = Search
-				.getFullTextSession(getSessao());
-		QueryParser parser = new QueryParser(Version.LUCENE_36, "idDoc",
-				new StandardAnalyzer(Version.LUCENE_36));
-
-		final Criteria crit = getSessao().createCriteria(ExDocumento.class)
-				.add(Restrictions.gt("idDoc", new Long(aPartir)));
-		crit.setMaxResults(300);
-		crit.addOrder(Order.asc("idDoc"));
-		List<ExDocumento> list = new ArrayList<ExDocumento>();
-		int firstResult = 0;
-		do {
-			crit.setFirstResult(firstResult);
-			list = crit.list();
-			for (ExDocumento doc : list) {
-				firstResult++;
-				if (doc.isIndexavel()
-						&& (fullTextSession.createFullTextQuery(
-								new TermQuery(new Term("idDoc",
-										String.valueOf(doc.getIdDoc()))),
-								ExDocumento.class).getResultSize() == 0)) {
-
-					if (irIndexando) {
-						// System.out.println("listarNaoIndexados - indexando "
-						// + doc.getCodigo());
-						indexar(doc);
-					} else {
-						// System.out.println("listarNaoIndexados - nao indexar "
-						// + doc.getCodigo());
-					}
-				}
-			}
-			// System.out.println("listarNaoIndexados - " + firstResult+
-			// " varridos");
-			getSessao().clear();
-		} while (list.size() > 0);
-		// System.out.println("listarNaoIndexados - FIM    "
-		// + (System.currentTimeMillis() - tempoIni) / 3600000
-		// + " minutos");
-	}
-
-	public void indexarFila(String path) throws Exception {
-		String _path = path;
-		if (_path == null)
-			_path = SigaExProperties.getString("siga.lucene.index.path")
-					+ "/siga-ex-lucene-index-fila";
-		File dir = new File(_path);
-		ExDocumento doc = null;
-		List<ExDocumento> listaDocs = new ArrayList<ExDocumento>();
-
-		File[] children = dir.listFiles();
-		if (children == null) {
-			// Either dir does not exist or is not a directory
-		} else {
-			for (int i = 0; i < children.length; i++) {
-				String filename = children[i].getName();
-
-				try {
-					doc = consultar(Long.valueOf(filename), ExDocumento.class,
-							false);
-					listaDocs.add(doc);
-					children[i].delete();
-				} catch (Throwable e) {
-					e.printStackTrace();
-				}
-			}
-			reindexarVarios(listaDocs, false);
-		}
-	}
-
-	public void indexarTudo() throws Exception {
-		indexarTudo(null);
-		return;
-	}
-
-	public void indexarTudo(Aguarde aguarde) throws Exception {
-
-		// System.out.println("Indexando documentos...");
-		long inicio = new Date().getTime();
-
-		try {
-			FullTextSession fullTextSession = Search
-					.getFullTextSession(getSessao());
-			Transaction deleteTx = fullTextSession.beginTransaction();
-			fullTextSession.purgeAll(ExDocumento.class);
-			deleteTx.commit();
-			fullTextSession.clear();
-			getSessao().clear();
-		} catch (Throwable t) {
-			// Nï¿½o havia documentos a excluir
-		}
-
-		final Criteria crit = getSessao().createCriteria(ExDocumento.class);
-
-		int index = 0;
-
-		FullTextSession fullTextSession = Search
-				.getFullTextSession(getSessao());
-		fullTextSession.setFlushMode(FlushMode.MANUAL);
-		fullTextSession.setCacheMode(CacheMode.IGNORE);
-		crit.setMaxResults(30);
-		crit.addOrder(Order.desc("idDoc"));
-		List<ExDocumento> list;
-		do {
-			crit.setFirstResult(index);
-			list = crit.list();
-			Transaction tx = fullTextSession.beginTransaction();
-			for (ExDocumento doc : list) {
-				index++;
-				// if (aguarde != null)
-				// aguarde.setMensagem(String.valueOf(index)
-				// + " documentos jï¿½ indexados.");
-				if (doc.isIndexavel())
-					fullTextSession.index(doc);
-
-				if (index % 100 == 0) {
-					// System.gc();
-					// fullTextSession.flush();
-					// fullTextSession.clear();
-				}
-			}
-			tx.commit();
-			fullTextSession.clear();
-			getSessao().clear();
-			// System.out.print(String.valueOf(index)
-			// + " documentos jï¿½ indexados. --  -- ");
-		} while (list.size() > 0);
-		// System.gc();
-
-		// fullTextSession.close();
-		// System.out.println("Duraï¿½ï¿½o da indexaï¿½ï¿½o de documentos: "
-		// + (new Date().getTime() - inicio));
-
-		if (aguarde != null)
-			aguarde.setMensagem(String.valueOf(index));
-
-	}
-
-	public void indexarUltimas(int desde) throws Exception {
-
-		// System.out.println("Indexando documentos...");
-		long inicio = new Date().getTime();
-
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.MINUTE, desde);
-		Date dtIni = cal.getTime();
-
-		Criteria crit = getSessao().createCriteria(ExDocumento.class);
-		crit.createCriteria("exMovimentacaoSet").add(
-				Restrictions.gt("dtIniMov", dtIni));
-		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
-		/*
-		 * Query indexQuery = getSessao() .createQuery( "from ExDocumento as doc
-		 * inner join doc.exMovimentacaoSet as mov where mov.dtIniMov >=
-		 * :dtIni"); indexQuery.setParameter("dtIni", dtIni);
-		 */
-
-		FullTextSession fullTextSession = Search
-				.getFullTextSession(getSessao());
-		// List<ExDocumento> list = indexQuery.list();
-		List<ExDocumento> list = crit.list();
-		Transaction tx = fullTextSession.beginTransaction();
-		for (ExDocumento doc : list) {
-			// System.out.println(" . " + doc.getIdDoc());
-			fullTextSession.purge(ExDocumento.class, doc);
-			if (doc.isIndexavel())
-				fullTextSession.index(doc);
-		}
-		tx.commit();
-		fullTextSession.clear();
-		getSessao().clear();
-		// System.gc();
-
-		// fullTextSession.close();
-		// System.out.println("Duraï¿½ï¿½o da indexaï¿½ï¿½o de documentos: "
-		// + (new Date().getTime() - inicio));
-
-	}
-
 	public List<ExDocumento> listarAgendados() {
 		final Query query = getSessao().getNamedQuery("listarAgendados");
 		return query.list();
@@ -829,26 +571,6 @@ public class ExDao extends CpDao {
 		}
 
 		return query.list();
-	}
-
-	public void indexar(ExDocumento entidade) {
-		FullTextSession fullTextSession = Search
-				.getFullTextSession(getSessao());
-		Transaction tx = fullTextSession.beginTransaction();
-		fullTextSession.index(entidade);
-		tx.commit();
-	}
-
-	public void desindexar(ExDocumento entidade) {
-		FullTextSession fullTextSession = Search
-				.getFullTextSession(getSessao());
-		try {
-			Transaction tx = fullTextSession.beginTransaction();
-			fullTextSession.purge(ExDocumento.class, entidade.getIdDoc());
-			tx.commit();
-		} catch (Throwable t) {
-			// Nï¿½o havia aquela movimentaï¿½ï¿½o no ï¿½ndice
-		}
 	}
 
 	public List consultarPorResponsavel(final DpPessoa o, final DpLotacao lot)
@@ -1840,46 +1562,6 @@ public class ExDao extends CpDao {
 		// "transactional", "ex");
 		// cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.ex.ExModelo",
 		// "transactional", "ex");
-
-		// Hibernate search configuration
-		//
-		if ("true".equals(SigaExProperties.getString("siga.lucene.ativo"))) {
-			cfg.setProperty("hibernate.search.default.directory_provider",
-					"org.hibernate.search.store.FSDirectoryProvider");
-			cfg.setProperty("hibernate.search.default.indexBase",
-					SigaExProperties.getString("siga.lucene.index.path")
-							+ "/siga-ex-lucene-index/");
-			cfg.setProperty(
-					"hibernate.search.default.optimizer.operation_limit.max",
-					"2000");
-			cfg.setProperty("org.hibernate.worker.execution", "sync");
-			cfg.setProperty("org.hibernate.worker.batch_size", "1000");
-			cfg.setProperty("hibernate.search.indexing_strategy", "manual");
-			// cfg.getEventListeners()
-			// .setPostUpdateEventListeners(
-			// new PostUpdateEventListener[] { (PostUpdateEventListener)
-			// ReflectHelper
-			// .classForName(
-			// "org.hibernate.search.event.FullTextIndexEventListener")
-			// .newInstance() });
-			// cfg.getEventListeners()
-			// .setPostInsertEventListeners(
-			// new PostInsertEventListener[] { (PostInsertEventListener)
-			// ReflectHelper
-			// .classForName(
-			// "org.hibernate.search.event.FullTextIndexEventListener")
-			// .newInstance() });
-			// cfg.getEventListeners()
-			// .setPostDeleteEventListeners(
-			// new PostDeleteEventListener[] { (PostDeleteEventListener)
-			// ReflectHelper
-			// .classForName(
-			// "org.hibernate.search.event.FullTextIndexEventListener")
-			// .newInstance() });
-		} else {
-			cfg.setProperty("hibernate.search.autoregister_listeners", "false");
-		}
-
 	}
 
 	public ExModelo consultarExModelo(String sForma, String sModelo) {

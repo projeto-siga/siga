@@ -1078,8 +1078,6 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao anexar documento.", 0, e);
 		}
-
-		alimentaFilaIndexacao(mob.getExDocumento(), true);
 	}
 
 	public void anexarArquivoAuxiliar(final DpPessoa cadastrante,
@@ -1126,8 +1124,6 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao anexar arquivo auxiliar.", 0, e);
 		}
-
-		alimentaFilaIndexacao(mob.getExDocumento(), true);
 	}
 
 	private void permitirOuNaoMovimentarDestinacao(ExMobil mob) {
@@ -1813,8 +1809,6 @@ public class ExBL extends CpBL {
 		if (tramitar)
 			trasferirAutomaticamente(cadastrante, lotaCadastrante, usuarioDoToken, doc, fPreviamenteAssinado);
 
-		alimentaFilaIndexacao(doc, true);
-
 		return s;
 	}
 
@@ -1956,8 +1950,6 @@ public class ExBL extends CpBL {
 			tramitar = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
 		if (tramitar)
 			trasferirAutomaticamente(cadastrante, lotaCadastrante, subscritor, doc, fPreviamenteAssinado);
-
-		alimentaFilaIndexacao(doc, true);
 		return s;
 
 	}
@@ -2198,19 +2190,6 @@ public class ExBL extends CpBL {
 			throws FileNotFoundException, IOException {
 		try (FileOutputStream fout2 = new FileOutputStream(sFileName)) {
 			fout2.write(Base64.encode(data).getBytes());
-		}
-	}
-
-	public void alimentaFilaIndexacao(ExDocumento doc, boolean reindexar) {
-		try {
-			if (doc == null || (!doc.isIndexavel()))
-				return;
-			BufferedWriter out = new BufferedWriter(new FileWriter(
-					SigaExProperties.getString("siga.lucene.index.path")
-							+ "/siga-ex-lucene-index-fila/" + doc.getIdDoc()));
-			out.close();
-		} catch (IOException e) {
-			//
 		}
 	}
 
@@ -2781,10 +2760,6 @@ public class ExBL extends CpBL {
 			}
 
 			concluirAlteracao(null);
-
-			if (indexar)
-				alimentaFilaIndexacao(mob.getExDocumento(), true);
-
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao cancelar movimentação.", 0, e);
@@ -3065,7 +3040,6 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao excluir movimentação.", 0, e);
 		}
-		alimentaFilaIndexacao(mob.getExDocumento(), true);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -3204,8 +3178,6 @@ public class ExBL extends CpBL {
 				criarVia(cadastrante, lotaCadastrante, doc, null);
 
 			String s = processarComandosEmTag(doc, "finalizacao");
-
-			alimentaFilaIndexacao(doc, true);
 
 			return s;
 		} catch (final Exception e) {
@@ -4518,8 +4490,6 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
 		}
-
-		alimentaFilaIndexacao(doc, true);
 		return s;
 	}
 
@@ -4857,9 +4827,6 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao fazer anotação.", 0, e);
 		}
-
-		alimentaFilaIndexacao(mob.getExDocumento(), true);
-
 	}
 
 	// Nato: removi: final HttpServletRequest request,
@@ -4991,7 +4958,6 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Erro ao tentar redefinir nível de acesso", 0, e);
 		}
-		alimentaFilaIndexacao(doc, true);
 	}
 
 	public void exigirAnexo(final DpPessoa cadastrante,

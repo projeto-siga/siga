@@ -45,21 +45,12 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.lucene.analysis.br.BrazilianAnalyzer;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Formula;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Store;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.itextpdf.Documento;
-import br.gov.jfrj.lucene.HtmlBridge;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -84,7 +75,6 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
  * A class that represents a row in the 'EX_DOCUMENTO' table. This class may be
  * customized as it is never re-generated after being created.
  */
-@Indexed
 @Entity
 @BatchSize(size = 500)
 @Table(name = "EX_DOCUMENTO", catalog = "SIGA")
@@ -348,7 +338,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * adiciona ao código do documento o código externo. Se for interno
 	 * importado, adiciona ao código do documento o número antigo.
 	 */
-	@Field(name = "codigo", store = Store.COMPRESS, index = Index.NO)
 	public String getCodigoString() {
 		String s = getCodigo();
 
@@ -419,9 +408,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * Retorna, em formato array de bytes, o conteúdo do arquivo <b>html</b>
 	 * contido no zip gravado no blob do documento.
 	 */
-	@Field(name = "conteudoBlobDocHtml")
-	@FieldBridge(impl = HtmlBridge.class)
-	@Analyzer(impl = BrazilianAnalyzer.class)
 	public byte[] getConteudoBlobHtml() {
 		return getConteudoBlob("doc.htm");
 	}
@@ -526,8 +512,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	/**
 	 * Retorna a descrição completa do documento.
 	 */
-	@Field(name = "descrDocumento", store = Store.COMPRESS)
-	@Analyzer(impl = BrazilianAnalyzer.class)
 	@Override
 	public String getDescrDocumento() {
 		return super.getDescrDocumento();
@@ -546,7 +530,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * momento da criação do documento, desconsiderando as redefinições de
 	 * nível.
 	 */
-	@Field(name = "nivelAcesso", store = Store.COMPRESS)
 	public String getNivelAcesso() {
 		log.debug("[getNivelAcesso] - Obtendo Nivel de Acesso do documento, definido no momento da criação do mesmo");
 		String nivel = null;
@@ -578,7 +561,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * <li></li>
 	 * </ul>
 	 */
-	@Field(name = "destinatarioString", index = Index.NO, store = Store.COMPRESS)
 	public String getDestinatarioString() {
 		if (getDestinatario() != null)
 			return getDestinatario().getDescricaoIniciaisMaiusculas();
@@ -613,7 +595,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	/**
 	 * Retorna a data do documento no formato dd/mm/aa, por exemplo, 01/02/10.
 	 */
-	@Field(name = "dtDocDDMMYY", index = Index.NO, store = Store.COMPRESS)
 	public String getDtDocDDMMYY() {
 		if (getDtDoc() != null) {
 			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
@@ -626,7 +607,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * Retorna a data original do documento externo no formato dd/mm/aa, por
 	 * exemplo, 01/02/2010.
 	 */
-	@Field(name = "dtDocOriginalDDMMYYYY", index = Index.NO, store = Store.COMPRESS)
 	public String getDtDocOriginalDDMMYYYY() {
 		if (getDtDocOriginal() != null) {
 			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
@@ -1045,7 +1025,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * 
 	 * @return Nome do subscritor.
 	 */
-	@Field(name = "subscritorString", index = Index.NO, store = Store.COMPRESS)
 	public String getSubscritorString() {
 		if (getSubscritor() != null)
 			return getSubscritor().getDescricaoIniciaisMaiusculas();
@@ -1074,7 +1053,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * 
 	 * @return Nome do cadastrante.
 	 */
-	@Field(name = "cadastranteString", index = Index.NO, store = Store.COMPRESS)
 	public String getCadastranteString() {
 		if (getCadastrante() != null)
 			return getCadastrante().getDescricaoIniciaisMaiusculas();
@@ -1097,8 +1075,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	/**
 	 * Retorna o nome do modelo do documento
 	 */
-	@Field(name = "nmMod", store = Store.COMPRESS)
-	@Analyzer(impl = BrazilianAnalyzer.class)
 	public String getNmMod() {
 		if (getExModelo() != null)
 			return getExModelo().getNmMod();
@@ -1364,7 +1340,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * 
 	 * @return
 	 */
-	@IndexedEmbedded
 	public Set<ExMovimentacao> getExMovimentacaoIndexacaoSet() {
 		Set<ExMovimentacao> mSet = new HashSet<ExMovimentacao>();
 		for (ExMobil mob : getExMobilSet()) {
@@ -1385,7 +1360,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	/**
 	 * Retorna conjunto com todas as movimentações do documento.
 	 */
-	@IndexedEmbedded
 	public Set<ExMovimentacao> getExMovimentacaoSet() {
 		Set<ExMovimentacao> mSet = new HashSet<ExMovimentacao>();
 		for (ExMobil mob : getExMobilSet()) {

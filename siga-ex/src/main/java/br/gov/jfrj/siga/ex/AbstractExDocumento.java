@@ -40,7 +40,6 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
-import org.hibernate.search.annotations.DocumentId;
 
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -221,7 +220,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	private static final long serialVersionUID = 1L;
 
-	@DocumentId
 	@Id
 	@SequenceGenerator(sequenceName = "EX_DOCUMENTO_SEQ", name = "EX_DOCUMENTO_SEQ")
 	@GeneratedValue(generator = "EX_DOCUMENTO_SEQ")

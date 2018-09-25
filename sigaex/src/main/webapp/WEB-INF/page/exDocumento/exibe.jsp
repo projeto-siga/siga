@@ -217,7 +217,7 @@
 								<c:set var="evenorodd" value="odd" />
 								<c:forEach var="mov" items="${m.movs}">
 									<c:if
-										test="${ (mov.idTpMov != 14 and
+										test="${ (mov.idTpMov != 14 and mov.idTpMov != 64 and
 							          not mov.cancelada)}">
 										<tr class="${mov.classe} ${mov.disabled}">
 											<td align="center" style="padding: 5px 5px;">${mov.dtRegMovDDMMYY}</td>

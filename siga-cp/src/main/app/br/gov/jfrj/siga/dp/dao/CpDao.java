@@ -698,12 +698,17 @@ public class CpDao extends ModeloDao {
 			CpOrgaoUsuario cpOrgaoUsu = consultar(flt.getIdOrgaoUsu(), CpOrgaoUsuario.class, false);
 			o.setOrgaoUsuario(cpOrgaoUsu);
 		}
+		DpLotacao lotacao = consultarPorSigla(o);
+		if (lotacao == null) {
+			o.setSiglaLotacao(flt.getSigla());
+			o.setOrgaoUsuario(null);
+			return consultarPorSigla(o);
 
-
+		}
 		/*		CpOrgaoUsuario cpOrgao = new CpOrgaoUsuario();
 		cpOrgao.setIdOrgaoUsu(flt.getIdOrgaoUsu());
 		o.setOrgaoUsuario(cpOrgao);*/
-		return consultarPorSigla(o);
+		return lotacao;
 	}
 
 	public int consultarQuantidade(final DpLotacaoDaoFiltro o) {

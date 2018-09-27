@@ -3522,11 +3522,11 @@ public class ExBL extends CpBL {
 			}
 
 			// Verifica se a data está entre o ano 2000 e o ano 2100
-			if (doc.getDtDoc() != null && Data.verificaDataValida(doc.getDtDoc())) {
+			if (doc.getDtDoc() != null && !Data.dataDentroSeculo21(doc.getDtDoc())) {
 				throw new AplicacaoException("Data inválida, deve estar entre o ano 2000 e ano 2100");
 			}
 			
-			if (doc.getDtDocOriginal() != null && Data.verificaDataValida(doc.getDtDocOriginal())) {
+			if (doc.getDtDocOriginal() != null && !Data.dataDentroSeculo21(doc.getDtDocOriginal())) {
 				throw new AplicacaoException("Data original inválida, deve estar entre o ano 2000 e ano 2100");
 			}
 			// Obtem a descricao pela macro @descricao

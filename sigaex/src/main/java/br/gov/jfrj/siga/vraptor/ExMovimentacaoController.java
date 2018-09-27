@@ -1712,7 +1712,7 @@ public class ExMovimentacaoController extends ExController {
 					"Destinatário não pode receber documentos");
 		}
 		
-		if (mov.getDtFimMov() != null && Data.verificaDataValida(mov.getDtFimMov()))
+		if (mov.getDtFimMov() != null && !Data.dataDentroSeculo21(mov.getDtFimMov()))
 			throw new AplicacaoException("Data de devolução inválida, deve estar entre o ano 2000 e ano 2100");	
 
 		if (!(Ex.getInstance()
@@ -3660,7 +3660,7 @@ public class ExMovimentacaoController extends ExController {
 					"A data desejada para a disponibilização precisa ser informada.");
 		
 		// Verifica se a data está entre o ano 2000 e o ano 2100
-		if (Data.verificaDataValida(mov.getDtDispPublicacao())) {
+		if (!Data.dataDentroSeculo21(mov.getDtDispPublicacao())) {
 				throw new AplicacaoException("Data de disponibilização inválida, deve estar entre o ano 2000 e ano 2100");
 		}
 

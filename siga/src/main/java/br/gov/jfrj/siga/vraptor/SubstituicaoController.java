@@ -262,12 +262,12 @@ public class SubstituicaoController extends SigaController {
 			if (subst.getDtIniSubst() == null)
 				subst.setDtIniSubst(new Date());
 			else {
-				if (Data.verificaDataValida(subst.getDtIniSubst()))
+				if (!Data.dataDentroSeculo21(subst.getDtIniSubst()))
 					throw new AplicacaoException("Data inicial inválida, deve estar entre o ano 2000 e ano 2100");
 			}
 				
-			if(subst.getDtFimSubst() != null && !Data.verificaDataValida(subst.getDtFimSubst()))
-				throw new AplicacaoException("Data final inválida");	
+			if(subst.getDtFimSubst() != null && !Data.dataDentroSeculo21(subst.getDtFimSubst()))
+				throw new AplicacaoException("Data final inválida, deve estar entre o ano 2000 e ano 2100");	
 
 			subst.setDtIniRegistro(new Date());
 

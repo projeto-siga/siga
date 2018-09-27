@@ -1414,7 +1414,7 @@ public class ExDocumentoController extends ExController {
 				}
 				
 				// Verifica se a data está entre o ano 2000 e o ano 2100
-				if (Data.verificaDataValida(exDocumentoDTO.getDoc().getDtDoc())) {
+				if (!Data.dataDentroSeculo21(exDocumentoDTO.getDoc().getDtDoc())) {
 					throw new AplicacaoException("Data inválida, deve estar entre o ano 2000 e ano 2100");
 				}
 

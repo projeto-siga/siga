@@ -15,7 +15,7 @@
 
 		<property name="descrTipoMovimentacao"
 			column="DESCR_TIPO_MOVIMENTACAO" type="string" not-null="true" />
-			
+<!-- 			
 		<set name="deEstadoDocSet" schema="SIGA" table="EX_ESTADO_TP_MOV" inverse="true">
 			<key column="ID_TP_MOV" />
 			<many-to-many class="ExEstadoDoc" column="ID_ESTADO_DOC" />
@@ -25,7 +25,7 @@
 			<key column="ID_TP_MOV" />
 			<many-to-many class="ExEstadoDoc" column="ID_ESTADO_DOC" />
 		</set>
-
+ -->
 	</class>
 
 	<query name="consultarPorSiglaExTipoMovimentacao">

@@ -27,7 +27,6 @@ import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.Token;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
 public class WfTimeOutActionHandler implements ActionHandler {
@@ -40,7 +39,8 @@ public class WfTimeOutActionHandler implements ActionHandler {
 	 * @throws Exception
 	 */
 	public void execute(ExecutionContext executionContext) throws Exception {
-		HibernateUtil.setSessao(executionContext.getJbpmContext().getSession());
+		WfHibernateUtil.setSessao(executionContext.getJbpmContext()
+				.getSession());
 
 		WfDao.getInstance();
 

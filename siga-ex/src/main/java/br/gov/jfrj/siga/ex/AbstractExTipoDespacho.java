@@ -23,27 +23,38 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+
 import br.gov.jfrj.siga.model.Objeto;
 
 /**
  * A class that represents a row in the EX_TIPO_DESPACHO table. You can
- * customize the behavior of this class by editing the class,
- * {@link ExTipoDespacho()}.
+ * customize the behavior of this class by editing the class, {@link
+ * ExTipoDespacho()}.
  */
-public abstract class AbstractExTipoDespacho extends Objeto implements Serializable {
+@MappedSuperclass
+@NamedQueries({ @NamedQuery(name = "consultarAtivos", query = "select tpd from ExTipoDespacho tpd where tpd.fgAtivo = 'S' order by tpd.descTpDespacho") })
+public abstract class AbstractExTipoDespacho extends Objeto implements
+		Serializable {
+	/** The composite primary key value. */
+	@Id
+	@SequenceGenerator(sequenceName = "EX_TIPO_DESPACHO_SEQ", name = "EX_TIPO_DESPACHO_SEQ")
+	@GeneratedValue(generator = "EX_TIPO_DESPACHO_SEQ")
+	@Column(name = "ID_TP_DESPACHO", unique = true, nullable = false)
+	private java.lang.Long idTpDespacho;
+
 	/** The value of the simple descTpDespacho property. */
+	@Column(name = "DESC_TP_DESPACHO", nullable = false, length = 256)
 	private java.lang.String descTpDespacho;
 
+	@Column(name = "FG_ATIVO_TP_DESPACHO", length = 1)
 	private String fgAtivo;
-
-	/**
-	 * The cached hash code value for this instance. Settting to 0 triggers
-	 * re-calculation.
-	 */
-	private int hashValue = 0;
-
-	/** The composite primary key value. */
-	private java.lang.Long idTpDespacho;
 
 	/**
 	 * Simple constructor of AbstractExTipoDespacho instances.
@@ -73,10 +84,10 @@ public abstract class AbstractExTipoDespacho extends Objeto implements Serializa
 		if ((rhs == null) || !(rhs instanceof ExTipoDespacho))
 			return false;
 		final ExTipoDespacho that = (ExTipoDespacho) rhs;
-		if ((this.getIdTpDespacho() == null ? that.getIdTpDespacho() == null : this.getIdTpDespacho().equals(
-				that.getIdTpDespacho()))) {
-			if ((this.getDescTpDespacho() == null ? that.getDescTpDespacho() == null : this.getDescTpDespacho().equals(
-					that.getDescTpDespacho())))
+		if ((this.getIdTpDespacho() == null ? that.getIdTpDespacho() == null
+				: this.getIdTpDespacho().equals(that.getIdTpDespacho()))) {
+			if ((this.getDescTpDespacho() == null ? that.getDescTpDespacho() == null
+					: this.getDescTpDespacho().equals(that.getDescTpDespacho())))
 				return true;
 		}
 		return false;
@@ -118,13 +129,12 @@ public abstract class AbstractExTipoDespacho extends Objeto implements Serializa
 	@Override
 	public int hashCode() {
 		int result = 17;
-		int idValue = this.getIdTpDespacho() == null ? 0 : this.getIdTpDespacho().hashCode();
+		int idValue = this.getIdTpDespacho() == null ? 0 : this
+				.getIdTpDespacho().hashCode();
 		result = result * 37 + idValue;
-		idValue = this.getDescTpDespacho() == null ? 0 : this.getDescTpDespacho().hashCode();
-		result = result * 37 + idValue;
-		this.hashValue = result;
-
-		return this.hashValue;
+		idValue = this.getDescTpDespacho() == null ? 0 : this
+				.getDescTpDespacho().hashCode();
+		return result * 37 + idValue;
 	}
 
 	/**

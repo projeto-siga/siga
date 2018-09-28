@@ -23,17 +23,23 @@ import java.sql.Blob;
 import java.util.Date;
 import java.util.TreeSet;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -46,25 +52,181 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
  * the behavior of this class by editing the class, {@link ExDocumento()}.
  */
 @MappedSuperclass
+@NamedQueries({
+		@NamedQuery(name = "obterProximoNumeroSub", query = "select max(doc.numExpediente)+1"
+				+ "			from ExDocumento doc"
+				+ "			inner join doc.subscritor sub "
+				+ "			inner join doc.exFormaDocumento frm "
+				+ "			where doc.anoEmissao = :anoEmissao"
+				+ "			and sub.sesbPessoa = :sesb"
+				+ "			and frm.idFormaDoc = :idFormaDoc"),
+		@NamedQuery(name = "obterProximoNumeroCad", query = "select max(doc.numExpediente)+1 "
+				+ "			from ExDocumento doc"
+				+ "			inner join doc.cadastrante sub "
+				+ "			inner join doc.exFormaDocumento frm "
+				+ "			where doc.anoEmissao = :anoEmissao"
+				+ "			and sub.sesbPessoa = :sesb"
+				+ "			and frm.idFormaDoc = :idFormaDoc"),
+		@NamedQuery(name = "obterProximoNumero", query = "select max(doc.numExpediente)+1"
+				+ "			from ExDocumento doc"
+				+ "			inner join doc.exFormaDocumento frm"
+				+ "			inner join doc.orgaoUsuario org"
+				+ "			where org.idOrgaoUsu = :idOrgaoUsu"
+				+ "			and frm.idFormaDoc = :idFormaDoc"
+				+ "			and doc.anoEmissao = :anoEmissao"),
+		@NamedQuery(name = "consultarPorSiglaDocumento", query = "from ExDocumento doc"
+				+ "		where ("
+				+ "		doc.anoEmissao=:anoEmissao"
+				+ "		and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "		and doc.exFormaDocumento.idFormaDoc=:idFormaDoc"
+				+ "		and doc.numExpediente=:numExpediente" + "		)"),
+		@NamedQuery(name = "consultarPorModeloEAssinatura", query = "from ExDocumento d where d.idDoc in (select doc.idDoc from ExDocumento as doc join doc.exMobilSet as mob join mob.exMovimentacaoSet as mov"
+				+ "			where (mov.exTipoMovimentacao.idTpMov = 11 or mov.exTipoMovimentacao.idTpMov = 25)"
+				+ "			and mov.exMovimentacaoCanceladora = null"
+				+ "			and doc.exModelo.idMod = :idMod"
+				+ "			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
+				+ "			group by doc.idDoc"
+				+ "			having min(mov.dtIniMov) between :dataIni and :dataFim)"),
+		@NamedQuery(name = "consultarPorFiltro", query = "select doc, mob, label "
+				+ "			from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc"
+				+ "			"
+				+ "			where ("
+				+ "				:descrDocumento = null or :descrDocumento = '' or ("
+				+ "					doc.exNivelAcesso.grauNivelAcesso < 21 and label.cpMarcador.idMarcador != 1 and label.cpMarcador.idMarcador != 10"
+				+ "				) or ( "
+				+ "					:lotaTitular!=null and :lotaTitular!=0 and doc.lotaCadastrante in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular)"
+				+ "					or (:titular!=null and :titular!=0 and doc.subscritor in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+				+ "					or (:titular!=null and :titular!=0 and doc.destinatario in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+				+ "					or (:lotaTitular!=null and :lotaTitular!=0 and doc.destinatario = null and doc.lotaDestinatario in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
+				+ "					or (:lotaTitular!=null and :lotaTitular!=0 and label.dpLotacaoIni in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
+				+ "					or (:titular!=null and :titular!=0 and label.dpPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+				+ "				)"
+				+ "			)"
+				+ "			"
+				+ "			and ("
+				+ "				("
+				+ "					(:ultMovIdEstadoDoc = null or :ultMovIdEstadoDoc = 0) and not (label.cpMarcador.idMarcador in (3, 14, 25))"
+				+ "				) 	or label.cpMarcador.idMarcador = :ultMovIdEstadoDoc"
+				+ "			) and (:ultMovRespSelId = null or :ultMovRespSelId = 0 or label.dpPessoaIni.idPessoa = :ultMovRespSelId)"
+				+ "			and (:ultMovLotaRespSelId = null or :ultMovLotaRespSelId = 0 or label.dpLotacaoIni.idLotacao = :ultMovLotaRespSelId)"
+				+ "			and (:idTipoMobil = null or :idTipoMobil = 0 or mob.exTipoMobil.idTipoMobil = :idTipoMobil)"
+				+ "			and (:numSequencia = null or :numSequencia = 0 or mob.numSequencia = :numSequencia)"
+				+ "			"
+				+ "			and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "			and (:anoEmissao = null or :anoEmissao = 0 or doc.anoEmissao = :anoEmissao)"
+				+ "			and (:numExpediente = null or :numExpediente = 0 or doc.numExpediente = :numExpediente)"
+				+ "			and (:idTpDoc = null or :idTpDoc = 0 or doc.exTipoDocumento.idTpDoc = :idTpDoc)"
+				+ "			and (:idFormaDoc = null or :idFormaDoc = 0 or doc.exFormaDocumento.idFormaDoc = :idFormaDoc)"
+				+ "			and (:idTipoFormaDoc = null or :idTipoFormaDoc = 0 or doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc = :idTipoFormaDoc)"
+				+ "			and (:classificacaoSelId = null or :classificacaoSelId = 0 or doc.exClassificacao.idClassificacao = :classificacaoSelId)"
+				+ "			and (:descrDocumento = null or :descrDocumento = '' or upper(doc.descrDocumentoAI) like upper('%' || :descrDocumento || '%'))"
+				+ "			"
+				+ "			and (:dtDoc = null or doc.dtDoc >= :dtDoc)"
+				+ "			and (:dtDocFinal = null or doc.dtDoc <= :dtDocFinal)"
+				+ "			"
+				+ "			and (:numAntigoDoc = null or :numAntigoDoc = '' or upper (doc.numAntigoDoc) like upper('%' || :numAntigoDoc || '%'))	"
+				+ "			"
+				+ "			and (:destinatarioSelId = null or :destinatarioSelId = 0 or doc.destinatario.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :destinatarioSelId))"
+				+ "			and (:lotacaoDestinatarioSelId = null or :lotacaoDestinatarioSelId = 0 or doc.lotaDestinatario.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotacaoDestinatarioSelId))"
+				+ "			and (:nmDestinatario = null or :nmDestinatario = '' or upper(doc.nmDestinatario) like '%' || :nmDestinatario || '%')"
+				+ "			"
+				+ "			and (:cadastranteSelId = null or :cadastranteSelId = 0 or doc.cadastrante.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :cadastranteSelId))"
+				+ "			and (:lotaCadastranteSelId = null or :lotaCadastranteSelId = 0 or doc.lotaCadastrante.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaCadastranteSelId))"
+				+ "			"
+				+ "			and (:subscritorSelId = null or :subscritorSelId = 0 or doc.subscritor.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :subscritorSelId))"
+				+ "			and (:nmSubscritorExt = null or :nmSubscritorExt = '' or upper(doc.nmSubscritorExt) like '%' || :nmSubscritorExt || '%')"
+				+ "			and (:orgaoExternoSelId = null or :orgaoExternoSelId = null or doc.orgaoExterno.idOrgao = :orgaoExternoSelId)"
+				+ "			and (:numExtDoc = null or :numExtDoc = '' or upper(doc.numExtDoc) like upper('%' || :numExtDoc || '%'))"
+				+ "			" + "			order by doc.dtDoc desc"),
+		@NamedQuery(name = "consultarQuantidadePorFiltro", query = "select count(doc) "
+				+ "				from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc"
+				+ "				"
+				+ "				where ("
+				+ "					:descrDocumento = null or :descrDocumento = '' or ("
+				+ "						doc.exNivelAcesso.grauNivelAcesso < 21 and label.cpMarcador.idMarcador != 1 and label.cpMarcador.idMarcador != 10"
+				+ "					) or ( "
+				+ "						:lotaTitular!=null and :lotaTitular!=0 and doc.lotaCadastrante in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular)"
+				+ "						or (:titular!=null and :titular!=0 and doc.subscritor in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+				+ "						or (:titular!=null and :titular!=0 and doc.destinatario in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+				+ "						or (:lotaTitular!=null and :lotaTitular!=0 and doc.destinatario = null and doc.lotaDestinatario in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
+				+ "						or (:lotaTitular!=null and :lotaTitular!=0 and label.dpLotacaoIni in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
+				+ "						or (:titular!=null and :titular!=0 and label.dpPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
+				+ "					)"
+				+ "				)"
+				+ "				"
+				+ "				and ("
+				+ "					("
+				+ "						(:ultMovIdEstadoDoc = null or :ultMovIdEstadoDoc = 0) and not (label.cpMarcador.idMarcador in (3, 14, 25))"
+				+ "					) 	or label.cpMarcador.idMarcador = :ultMovIdEstadoDoc"
+				+ "				) and (:ultMovRespSelId = null or :ultMovRespSelId = 0 or label.dpPessoaIni.idPessoa = :ultMovRespSelId)"
+				+ "				and (:ultMovLotaRespSelId = null or :ultMovLotaRespSelId = 0 or label.dpLotacaoIni.idLotacao = :ultMovLotaRespSelId)"
+				+ "				and (:idTipoMobil = null or :idTipoMobil = 0 or mob.exTipoMobil.idTipoMobil = :idTipoMobil)"
+				+ "				and (:numSequencia = null or :numSequencia = 0 or mob.numSequencia = :numSequencia)"
+				+ "				"
+				+ "				and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "				and (:anoEmissao = null or :anoEmissao = 0 or doc.anoEmissao = :anoEmissao)"
+				+ "				and (:numExpediente = null or :numExpediente = 0 or doc.numExpediente = :numExpediente)"
+				+ "				and (:idTpDoc = null or :idTpDoc = 0 or doc.exTipoDocumento.idTpDoc = :idTpDoc)"
+				+ "				and (:idTipoFormaDoc = null or :idTipoFormaDoc = 0 or doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc = :idTipoFormaDoc)"
+				+ "				and (:idFormaDoc = null or :idFormaDoc = 0 or doc.exFormaDocumento.idFormaDoc = :idFormaDoc)"
+				+ "				and (:classificacaoSelId = null or :classificacaoSelId = 0 or doc.exClassificacao.idClassificacao = :classificacaoSelId)"
+				+ "				and (:descrDocumento = null or :descrDocumento = '' or upper(doc.descrDocumentoAI) like upper('%' || :descrDocumento || '%'))"
+				+ "				"
+				+ "				and (:dtDoc = null or doc.dtDoc >= :dtDoc)"
+				+ "				and (:dtDocFinal = null or doc.dtDoc <= :dtDocFinal)"
+				+ "				"
+				+ "				and (:numAntigoDoc = null or :numAntigoDoc = '' or upper (doc.numAntigoDoc) like upper('%' || :numAntigoDoc || '%'))	"
+				+ "				"
+				+ "				and (:destinatarioSelId = null or :destinatarioSelId = 0 or doc.destinatario.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :destinatarioSelId))"
+				+ "				and (:lotacaoDestinatarioSelId = null or :lotacaoDestinatarioSelId = 0 or doc.lotaDestinatario.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotacaoDestinatarioSelId))"
+				+ "				and (:nmDestinatario = null or :nmDestinatario = '' or upper(doc.nmDestinatario) like '%' || :nmDestinatario || '%')"
+				+ "				"
+				+ "				and (:cadastranteSelId = null or :cadastranteSelId = 0 or doc.cadastrante.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :cadastranteSelId))"
+				+ "				and (:lotaCadastranteSelId = null or :lotaCadastranteSelId = 0 or doc.lotaCadastrante.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaCadastranteSelId))"
+				+ "				"
+				+ "				and (:subscritorSelId = null or :subscritorSelId = 0 or doc.subscritor.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :subscritorSelId))"
+				+ "				"
+				+ "				and (:nmSubscritorExt = null or :nmSubscritorExt = '' or upper(doc.nmSubscritorExt) like '%' || :nmSubscritorExt || '%')"
+				+ "				and (:orgaoExternoSelId = null or :orgaoExternoSelId = null or doc.orgaoExterno.idOrgao = :orgaoExternoSelId)"
+				+ "				and (:numExtDoc = null or :numExtDoc = '' or upper(doc.numExtDoc) like upper('%' || :numExtDoc || '%'))"),
+		@NamedQuery(name = "listarSolicitados", query = "select doc "
+				+ "			from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc"
+				+ "			where label.cpMarcador.idMarcador = 21"
+				+ "			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"),
+		@NamedQuery(name = "listarDisponibilizados", query = "select doc "
+				+ "			from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc"
+				+ "			where label.cpMarcador.idMarcador = 22"
+				+ "			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"),
+		@NamedQuery(name = "listarDocPendenteAssinatura", query = "select doc "
+				+ "			from ExDocumento doc where doc.idDoc in (select distinct(exDocumento.idDoc) from ExMobil mob where mob.idMobil in "
+				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 25 and label.dpPessoaIni=:idPessoaIni)) order by doc.dtDoc desc"),
+		@NamedQuery(name = "consultarExDocumentoClassificados", query = "select doc from ExDocumento doc left join fetch doc.exClassificacao"
+				+ "		where doc.exClassificacao.codificacao like :mascara"
+				+ "		and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario"
+				+ "		and doc.dtFinalizacao is not null"),
+		@NamedQuery(name = "consultarExDocumentoClassificadosPorLotacao", query = "select doc from ExDocumento doc left join fetch doc.exClassificacao"
+				+ "		where doc.exClassificacao.codificacao like :mascara"
+				+ "			and (doc.lotaTitular.id = :idLotacao)"
+				+ "			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario"
+				+ "			and doc.dtFinalizacao is not null"),
+		@NamedQuery(name = "consultarDocumentosFinalizadosEntreDatas", query = "select doc from ExDocumento doc where "
+				+ "					doc.exTipoDocumento.idTpDoc = :idTipoDocumento"
+				+ "					and doc.lotaCadastrante.idLotacaoIni = :idLotacaoInicial"
+				+ "					and doc.dtFinalizacao is not null"
+				+ "					and doc.dtFinalizacao between :dataInicial and :dataFinal"
+				+ "				order by  doc.dtFinalizacao") })
 public abstract class AbstractExDocumento extends ExArquivo implements
 		Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * The cached hash code value for this instance. Settting to 0 triggers
-	 * re-calculation.
-	 */
-	private int hashValue = 0;
-
 	@Id
-	@DocumentId
-	@SequenceGenerator(name = "EX_DOCUMENTO_SEQ")
+	@SequenceGenerator(sequenceName = "EX_DOCUMENTO_SEQ", name = "EX_DOCUMENTO_SEQ")
 	@GeneratedValue(generator = "EX_DOCUMENTO_SEQ")
 	@Column(name = "ID_DOC")
 	private java.lang.Long idDoc;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_MOB_PAI")
 	private ExMobil exMobilPai;
 
@@ -74,144 +236,156 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@Column(name = "NUM_EXPEDIENTE")
 	private java.lang.Long numExpediente;
 
-	@Column(name = "CONTEUDO_TP_DOC")
+	@Column(name = "CONTEUDO_TP_DOC", length = 128)
 	private java.lang.String conteudoTpDoc;
 
-	@Column(name = "DESCR_DOCUMENTO")
+	@Column(name = "DESCR_DOCUMENTO", length = 4000)
 	private java.lang.String descrDocumento;
 
-	@Column(name = "DSC_CLASS_DOC")
+	@Column(name = "DSC_CLASS_DOC", length = 4000)
 	private java.lang.String descrClassifNovo;
 
-	@Column(name = "DT_DOC")
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DT_DOC", length = 19)
 	private java.util.Date dtDoc;
 
-	@Column(name = "DT_DOC_ORIGINAL")
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DT_DOC_ORIGINAL", length = 19)
 	private java.util.Date dtDocOriginal;
 
-	@Column(name = "DT_FECHAMENTO")
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DT_FINALIZACAO", length = 19)
 	private Date dtFinalizacao;
 
-	@Column(name = "DT_REG_DOC")
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DT_REG_DOC", nullable = false, length = 19)
 	private java.util.Date dtRegDoc;
 
-	@Column(name = "HIS_DT_ALT")
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "HIS_DT_ALT", nullable = false, length = 19)
 	private java.util.Date dtAltDoc;
 
-	@Column(name = "NM_ARQ_DOC")
+	@Column(name = "NM_ARQ_DOC", length = 256)
 	private java.lang.String nmArqDoc;
 
-	@Column(name = "NM_DESTINATARIO")
+	@Column(name = "NM_DESTINATARIO", length = 256)
 	private String nmDestinatario;
 
-	@Column(name = "NM_ORGAO_DESTINATARIO")
+	@Column(name = "NM_ORGAO_DESTINATARIO", length = 256)
 	private String nmOrgaoExterno;
 
-	@Column(name = "NM_SUBSCRITOR_EXT")
+	@Column(name = "NM_SUBSCRITOR_EXT", length = 256)
 	private java.lang.String nmSubscritorExt;
 
-	@Column(name = "NM_FUNCAO_SUBSCRITOR")
+	@Column(name = "NM_FUNCAO_SUBSCRITOR", length = 128)
 	private java.lang.String nmFuncaoSubscritor;
 
-	@Column(name = "NUM_EXT_DOC")
+	@Column(name = "NUM_EXT_DOC", length = 32)
 	private java.lang.String numExtDoc;
 
-	@Column(name = "NUM_ANTIGO_DOC")
+	@Column(name = "NUM_ANTIGO_DOC", length = 32)
 	private java.lang.String numAntigoDoc;
 
-	@Column(name = "OBS_ORGAO_DOC")
+	@Column(name = "OBS_ORGAO_DOC", length = 256)
 	private String obsOrgao;
 
-	@Column(name = "FG_ELETRONICO")
+	@Column(name = "FG_ELETRONICO", nullable = false, length = 1)
 	private String fgEletronico;
 
 	@Column(name = "CONTEUDO_BLOB_DOC")
+	@Basic(fetch = FetchType.LAZY)
 	private Blob conteudoBlobDoc;
 
+	@Column(name = "NUM_SEQUENCIA")
 	private Integer numSequencia;
 
-	@Column(name = "DNM_DT_ACESSO")
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DNM_DT_ACESSO", length = 19)
 	private Date dnmDtAcesso;
 
-	@Column(name = "DNM_ACESSO")
+	@Column(name = "DNM_ACESSO", length = 4000)
 	private String dnmAcesso;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_SUBSCRITOR")
 	private DpPessoa subscritor;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_CADASTRANTE")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_CADASTRANTE", nullable = false)
 	private DpPessoa cadastrante;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_TITULAR")
 	private DpPessoa titular;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_LOTA_CADASTRANTE")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_LOTA_CADASTRANTE", nullable = false)
 	private DpLotacao lotaCadastrante;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_LOTA_TITULAR")
 	private DpLotacao lotaTitular;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_LOTA_DESTINATARIO")
 	private DpLotacao lotaDestinatario;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_LOTA_SUBSCRITOR")
 	private DpLotacao lotaSubscritor;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_DESTINATARIO")
 	private DpPessoa destinatario;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_CLASSIFICACAO")
 	private ExClassificacao exClassificacao;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_FORMA_DOC")
 	private ExFormaDocumento exFormaDocumento;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_MOD")
 	private ExModelo exModelo;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_TP_DOC")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_TP_DOC", nullable = false)
 	private ExTipoDocumento exTipoDocumento;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_NIVEL_ACESSO")
 	private ExNivelAcesso exNivelAcesso;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DNM_ID_NIVEL_ACESSO")
 	private ExNivelAcesso dnmExNivelAcesso;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO")
 	private CpOrgao orgaoExterno;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU")
 	private CpOrgaoUsuario orgaoUsuario;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_DESTINATARIO")
 	private CpOrgao orgaoExternoDestinatario;
 
-	@OneToMany(mappedBy = "exDocumento")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exDocumento")
+	@Sort(type = SortType.NATURAL)
 	private java.util.SortedSet<ExMobil> exMobilSet = new TreeSet<ExMobil>();
 
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exDocumento")
 	private java.util.Set<ExBoletimDoc> exBoletimDocSet;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_DOC_ANTERIOR")
 	private ExDocumento exDocAnterior;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_MOB_AUTUADO")
 	private ExMobil exMobilAutuado;
 
@@ -581,14 +755,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 */
 	@Override
 	public int hashCode() {
-		if (this.hashValue == 0) {
-			int result = 17;
-			final int idDocValue = this.getIdDoc() == null ? 0 : this
-					.getIdDoc().hashCode();
-			result = result * 37 + idDocValue;
-			this.hashValue = result;
-		}
-		return this.hashValue;
+		int result = 17;
+		final int idDocValue = this.getIdDoc() == null ? 0 : this.getIdDoc()
+				.hashCode();
+		return result * 37 + idDocValue;
 	}
 
 	/**
@@ -729,7 +899,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * @param idDoc
 	 */
 	public void setIdDoc(final java.lang.Long idDoc) {
-		this.hashValue = 0;
 		this.idDoc = idDoc;
 	}
 

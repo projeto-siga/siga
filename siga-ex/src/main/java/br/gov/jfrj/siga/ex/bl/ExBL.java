@@ -351,17 +351,6 @@ public class ExBL extends CpBL {
 		}
 	}
 
-	public static void main(String args[]) throws Exception {
-		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.PRODUCAO;
-		Configuration cfg = ExDao.criarHibernateCfg(ambiente);
-		HibernateUtil.configurarHibernate(cfg);
-		final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
-		filter.setSigla("JFRJ-EOF-2014/01573.01");
-		ExMobil mob = (ExMobil) ExDao.getInstance().consultarPorSigla(filter);
-		System.out.println(mob.doc().getExClassificacaoAtual());
-		int a = 0;
-	}
-
 	public void corrigirArquivamentosEmVolume(int primeiro, int ultimo,
 			boolean efetivar) {
 		Long ini = System.currentTimeMillis();
@@ -1090,8 +1079,6 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao anexar documento.", 0, e);
 		}
-
-		alimentaFilaIndexacao(mob.getExDocumento(), true);
 	}
 
 	public void anexarArquivoAuxiliar(final DpPessoa cadastrante,
@@ -1138,8 +1125,6 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao anexar arquivo auxiliar.", 0, e);
 		}
-
-		alimentaFilaIndexacao(mob.getExDocumento(), true);
 	}
 
 	private void permitirOuNaoMovimentarDestinacao(ExMobil mob) {
@@ -1825,8 +1810,6 @@ public class ExBL extends CpBL {
 		if (tramitar)
 			trasferirAutomaticamente(cadastrante, lotaCadastrante, usuarioDoToken, doc, fPreviamenteAssinado);
 
-		alimentaFilaIndexacao(doc, true);
-
 		return s;
 	}
 
@@ -1968,8 +1951,6 @@ public class ExBL extends CpBL {
 			tramitar = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
 		if (tramitar)
 			trasferirAutomaticamente(cadastrante, lotaCadastrante, subscritor, doc, fPreviamenteAssinado);
-
-		alimentaFilaIndexacao(doc, true);
 		return s;
 
 	}
@@ -2210,19 +2191,6 @@ public class ExBL extends CpBL {
 			throws FileNotFoundException, IOException {
 		try (FileOutputStream fout2 = new FileOutputStream(sFileName)) {
 			fout2.write(Base64.encode(data).getBytes());
-		}
-	}
-
-	public void alimentaFilaIndexacao(ExDocumento doc, boolean reindexar) {
-		try {
-			if (doc == null || (!doc.isIndexavel()))
-				return;
-			BufferedWriter out = new BufferedWriter(new FileWriter(
-					SigaExProperties.getString("siga.lucene.index.path")
-							+ "/siga-ex-lucene-index-fila/" + doc.getIdDoc()));
-			out.close();
-		} catch (IOException e) {
-			//
 		}
 	}
 
@@ -2795,10 +2763,6 @@ public class ExBL extends CpBL {
 			}
 
 			concluirAlteracao(null);
-
-			if (indexar)
-				alimentaFilaIndexacao(mob.getExDocumento(), true);
-
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao cancelar movimentação.", 0, e);
@@ -3079,7 +3043,6 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao excluir movimentação.", 0, e);
 		}
-		alimentaFilaIndexacao(mob.getExDocumento(), true);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -3218,8 +3181,6 @@ public class ExBL extends CpBL {
 				criarVia(cadastrante, lotaCadastrante, doc, null);
 
 			String s = processarComandosEmTag(doc, "finalizacao");
-
-			alimentaFilaIndexacao(doc, true);
 
 			return s;
 		} catch (final Exception e) {
@@ -4536,8 +4497,6 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
 		}
-
-		alimentaFilaIndexacao(doc, true);
 		return s;
 	}
 
@@ -4875,9 +4834,6 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao fazer anotação.", 0, e);
 		}
-
-		alimentaFilaIndexacao(mob.getExDocumento(), true);
-
 	}
 
 	// Nato: removi: final HttpServletRequest request,
@@ -5009,7 +4965,6 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Erro ao tentar redefinir nível de acesso", 0, e);
 		}
-		alimentaFilaIndexacao(doc, true);
 	}
 
 	public void exigirAnexo(final DpPessoa cadastrante,
@@ -6296,7 +6251,6 @@ public class ExBL extends CpBL {
 			CpIdentidade identidadeCadastrante) throws AplicacaoException {
 		verificarDuplicacaoTermoCompleto(exClassNovo, exClassAntigo);
 		try {
-			exClassNovo.setClassificacoesPosteriores(null);
 			dao().gravarComHistorico(exClassNovo, exClassAntigo, dt,
 					identidadeCadastrante);
 			copiarReferencias(exClassNovo, exClassAntigo, dt,
@@ -6456,10 +6410,6 @@ public class ExBL extends CpBL {
 
 			Set<ExModelo> setExModeloCriacaoVia = new HashSet<ExModelo>();
 			exClassCopia.setExModeloCriacaoViaSet(setExModeloCriacaoVia);
-
-			Set<ExClassificacao> setPosteriores = new HashSet<ExClassificacao>();
-			exClassCopia.setClassificacoesPosteriores(setPosteriores);
-
 		} catch (Exception e) {
 			throw new AplicacaoException(
 					"Erro ao copiar as propriedades do modelo anterior.");

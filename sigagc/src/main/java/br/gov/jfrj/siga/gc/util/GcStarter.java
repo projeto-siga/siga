@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.hibernate;
+package br.gov.jfrj.siga.gc.util;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -13,12 +13,12 @@ import javax.persistence.Persistence;
  */
 @Startup
 @Singleton
-public class ExStarter {
+public class GcStarter {
 
 	public static EntityManagerFactory emf;
 
 	@PostConstruct
 	public void init() {
-		emf = Persistence.createEntityManagerFactory("default-ex");
+		emf = Persistence.createEntityManagerFactory("default");
 	}
 }

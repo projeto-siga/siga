@@ -25,11 +25,14 @@ import java.io.Serializable;
 import java.util.SortedSet;
 
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
@@ -40,48 +43,106 @@ import br.gov.jfrj.siga.model.Objeto;
  * behavior of this class by editing the class, {@link ExMobil()}.
  */
 @MappedSuperclass
+@NamedNativeQueries({ @NamedNativeQuery(name = "consultarMobilNoPeriodoLento", query = "select id_mobil " + "from"
+		+ "    SIGA.ex_movimentacao m," + "    (select id_lotacao from CORPORATIVO.dp_lotacao where id_lotacao_ini ="
+		+ "(select id_lotacao_ini  from CORPORATIVO.dp_lotacao where id_lotacao = :idLotacao)) " + "l " + "where "
+		+ "    (m.dt_ini_mov >= to_date(:dataInicial,'dd/mm/yyyy') and "
+		+ "m.dt_ini_mov <= to_date(:dataFinal,'dd/mm/yyyy'))" + "    and m.id_lota_resp = l.id_lotacao "
+		+ "union select m3.id_mobil " + "from " + "    SIGA.ex_movimentacao m3,"
+		+ "    (select id_lotacao from CORPORATIVO.dp_lotacao where id_lotacao_ini = "
+		+ "(select id_lotacao_ini  from CORPORATIVO.dp_lotacao where id_lotacao = :idLotacao)) " + "L2, "
+		+ "    (select max(id_mov) id_mov" + "    from" + "        SIGA.ex_movimentacao m2," + "        "
+		+ "        (select id_mobil" + "        from" + "            SIGA.ex_movimentacao m,"
+		+ "            (select id_lotacao from CORPORATIVO.dp_lotacao where "
+		+ "id_lotacao_ini = (select id_lotacao_ini  from CORPORATIVO.dp_lotacao where " + "id_lotacao = :idLotacao)) L "
+		+ "        where " + "            m.id_lota_resp = l.id_lotacao"
+		+ "            and (M.DT_INI_MOV <= to_date(:dataInicial,'DD/MM/YYYY'))) mob" + "    where"
+		+ "        m2.id_mobil = mob.id_mobil" + "        and (M2.DT_INI_MOV <= to_date(:dataInicial,'DD/MM/YYYY'))"
+		+ "    group by m2.id_mobil) max_mov " + "where" + "    m3.id_mov = max_mov.id_mov"
+		+ "    and m3.id_lota_resp = l2.id_lotacao"),
+		@NamedNativeQuery(name = "consultarMobilNoPeriodo", query = "select " + "	("
+				+ "		(select sigla_orgao_usu from corporativo.cp_orgao_usuario where id_orgao_usu = doc.id_orgao_usu)"
+				+ "		|| '-' || "
+				+ "		(select sigla_forma_doc from siga.ex_forma_documento where id_forma_doc = doc.id_forma_doc)"
+				+ "		|| '-' ||" + "		doc.ano_emissao" + "		|| '/' ||" + "		doc.num_Expediente"
+				+ "		|| '-' ||" + "		(case when (mob.id_Tipo_Mobil = 4) "
+				+ "			then (to_char(mob.num_Sequencia)) else (chr(mob.num_Sequencia+64)) end)" + "	)," + "	("
+				+ "		:URL" + "		||"
+				+ "		(select sigla_orgao_usu from corporativo.cp_orgao_usuario where id_orgao_usu = doc.id_orgao_usu)"
+				+ "		|| '-' || "
+				+ "		(select sigla_forma_doc from siga.ex_forma_documento where id_forma_doc = doc.id_forma_doc)"
+				+ "		|| '-' ||" + "		doc.ano_emissao" + "		|| '/' ||" + "		doc.num_Expediente"
+				+ "		|| '-' ||" + "		(case when (mob.id_Tipo_Mobil = 4) "
+				+ "			then (to_char(mob.num_Sequencia)) else (chr(mob.num_Sequencia+64)) end)" + "	),"
+				+ "	(case when (doc.id_Nivel_Acesso <> 1 and doc.id_Nivel_Acesso <> 6) "
+				+ "		then 'CONFIDENCIAL' else doc.descr_Documento end),"
+				+ "	(select sigla_lotacao from corporativo.dp_lotacao where id_lotacao = doc.id_lota_cadastrante) "
+				+ "from siga.ex_mobil mob " + "	inner join siga.ex_documento doc on mob.id_doc = doc.id_doc "
+				+ "where mob.id_mobil in (" + "	select id_mobil" + "	from" + "		SIGA.ex_movimentacao m,"
+				+ "		(" + "			select id_lotacao " + "			from CORPORATIVO.dp_lotacao "
+				+ "			where id_lotacao_ini =("
+				+ "				select id_lotacao_ini  from CORPORATIVO.dp_lotacao where id_lotacao = :idLotacao"
+				+ "			)" + "		) l" + "	where(" + "		m.dt_ini_mov >= to_date(:dataInicial,'dd/mm/yyyy') "
+				+ "		and m.dt_ini_mov <= to_date(:dataFinal,'dd/mm/yyyy')" + "	) and m.id_lota_resp = l.id_lotacao"
+				+ "	" + "	union select m3.id_mobil" + "	from" + "		SIGA.ex_movimentacao m3," + "		("
+				+ "			select id_lotacao " + "			from CORPORATIVO.dp_lotacao "
+				+ "			where id_lotacao_ini =(" + "				select id_lotacao_ini  "
+				+ "				from CORPORATIVO.dp_lotacao " + "				where id_lotacao = :idLotacao)"
+				+ "		) L2," + "		(" + "			select max(id_mov) id_mov" + "			from"
+				+ "			SIGA.ex_movimentacao m2," + "			(" + "				select id_mobil"
+				+ "				from" + "				SIGA.ex_movimentacao m," + "				("
+				+ "				select id_lotacao " + "					from CORPORATIVO.dp_lotacao "
+				+ "					where id_lotacao_ini = (" + "						select id_lotacao_ini  "
+				+ "						from CORPORATIVO.dp_lotacao "
+				+ "						where id_lotacao = :idLotacao)" + "					) L"
+				+ "				where m.id_lota_resp = l.id_lotacao"
+				+ "				and (M.DT_INI_MOV <= to_date(:dataInicial,'DD/MM/YYYY'))" + "			) mob"
+				+ "			where m2.id_mobil = mob.id_mobil"
+				+ "			and (M2.DT_INI_MOV <= to_date(:dataInicial,'DD/MM/YYYY'))"
+				+ "			group by m2.id_mobil" + "		) max_mov" + "	where" + "		m3.id_mov = max_mov.id_mov"
+				+ "		and m3.id_lota_resp = l2.id_lotacao" + ")") })
 public abstract class AbstractExMobil extends Objeto implements Serializable {
 	@Id
-	@SequenceGenerator(name = "EX_MOBIL_SEQ")
+	@SequenceGenerator(sequenceName = "EX_MOBIL_SEQ", name = "EX_MOBIL_SEQ")
 	@GeneratedValue(generator = "EX_MOBIL_SEQ")
-	@Column(name = "ID_MOBIL")
-	private java.lang.Long IdMobil;
+	@Column(name = "ID_MOBIL", unique = true, nullable = false)
+	private java.lang.Long idMobil;
 
-	@Column(name = "DNM_ULTIMA_ANOTACAO")
+	@Column(name = "DNM_ULTIMA_ANOTACAO", length = 400)
 	private java.lang.String dnmUltimaAnotacao;
 
 	@Column(name = "DNM_NUM_PRIMEIRA_PAGINA")
 	private Integer dnmNumPrimeiraPagina;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_DOC")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_DOC", nullable = false)
 	private ExDocumento exDocumento;
 
-	@ManyToOne
-	@JoinColumn(name = "ID_TIPO_MOBIL")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_TIPO_MOBIL", nullable = false)
 	private ExTipoMobil exTipoMobil;
 
-	@Column(name = "NUM_SEQUENCIA")
+	@Column(name = "NUM_SEQUENCIA", nullable = false)
 	private java.lang.Integer numSequencia;
 
-	@OneToMany(mappedBy = "exMobil")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobil")
 	private SortedSet<ExMovimentacao> exMovimentacaoSet;
 
-	@OneToMany(mappedBy = "exMobilRef")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobilRef")
 	private SortedSet<ExMovimentacao> exMovimentacaoReferenciaSet;
 
-	@OneToMany(mappedBy = "exMobilPai")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobilPai")
 	private java.util.Set<ExDocumento> exDocumentoFilhoSet;
 
-	@OneToMany(mappedBy = "exMobil")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobil")
 	private SortedSet<ExMarca> exMarcaSet;
 
 	public java.lang.Long getIdMobil() {
-		return IdMobil;
+		return idMobil;
 	}
 
 	public void setIdMobil(java.lang.Long idMobil) {
-		IdMobil = idMobil;
+		idMobil = idMobil;
 	}
 
 	public ExDocumento getExDocumento() {
@@ -120,8 +181,7 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 		return exMovimentacaoReferenciaSet;
 	}
 
-	public void setExMovimentacaoReferenciaSet(
-			SortedSet<ExMovimentacao> exMovimentacaoReferenciaSet) {
+	public void setExMovimentacaoReferenciaSet(SortedSet<ExMovimentacao> exMovimentacaoReferenciaSet) {
 		this.exMovimentacaoReferenciaSet = exMovimentacaoReferenciaSet;
 	}
 
@@ -129,8 +189,7 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 		return exDocumentoFilhoSet;
 	}
 
-	public void setExDocumentoFilhoSet(
-			java.util.Set<ExDocumento> exDocumentoFilhoSet) {
+	public void setExDocumentoFilhoSet(java.util.Set<ExDocumento> exDocumentoFilhoSet) {
 		this.exDocumentoFilhoSet = exDocumentoFilhoSet;
 	}
 

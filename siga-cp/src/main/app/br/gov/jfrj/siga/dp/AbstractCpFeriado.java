@@ -30,18 +30,21 @@ import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
+@NamedQueries({ @NamedQuery(name = "listarCpFeriadoOrdenadoPorDescricao", query = "from CpFeriado feriado order by feriado.dscFeriado") })
 public abstract class AbstractCpFeriado extends Objeto implements Serializable {
 
 	@Id
-	@Column(name = "ID_FERIADO", nullable = false)
+	@Column(name = "ID_FERIADO", unique = true, nullable = false)
 	private Integer idFeriado;
 
-	@Column(name = "DSC_FERIADO", nullable = false)
+	@Column(name = "DSC_FERIADO", nullable = false, length = 256)
 	private String dscFeriado;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cpFeriado")

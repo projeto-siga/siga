@@ -18,8 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
-import static javax.persistence.GenerationType.SEQUENCE;
-
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -46,29 +44,36 @@ public abstract class AbstractCpPapel extends HistoricoSuporte implements
 	@SequenceGenerator(name = "generator", sequenceName = "CP_PAPEL_SEQ")
 	@Id
 	@GeneratedValue(generator = "generator")
-	@Column(name = "ID_PAPEL", nullable = false)
+	@Column(name = "ID_PAPEL", unique = true, nullable = false)
 	@Desconsiderar
 	private Long idCpPapel;
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_PESSOA")
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_PESSOA", nullable = false)
 	private DpPessoa dpPessoa;
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_LOTACAO")
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_LOTACAO", nullable = false)
 	private DpLotacao dpLotacao;
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_FUNCAO_CONFIANCA")
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_FUNCAO_CONFIANCA")
 	private DpFuncaoConfianca dpFuncaoConfianca;
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_CARGO")
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_CARGO", nullable = false)
 	private DpCargo dpCargo;
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_ORGAO_USU")
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ORGAO_USU", nullable = false)
 	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_TP_PAPEL")
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_TP_PAPEL", nullable = false)
 	private CpTipoPapel cpTipoPapel;
-	@Column(name = "HIS_IDE")
+
+	@Column(name = "HIS_IDE", length = 256)
 	private String idePapel;
 
 	/**

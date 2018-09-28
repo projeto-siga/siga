@@ -21,6 +21,7 @@ package br.gov.jfrj.siga.cp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -38,25 +39,9 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
 @Table(name = "CP_IDENTIDADE", schema = "CORPORATIVO")
-
-// Ver um lugar melhor para queries assim ficarem quando não se estiver usando
-// XML
-@NamedQueries({ @NamedQuery(name = "consultarIdentidadeCadastranteAtiva", query = "select u from CpIdentidade u , DpPessoa pes "
-		+ "where u.nmLoginIdentidade = :nmUsuario "
-		+ "and pes.sesbPessoa = :sesbPessoa "
-		+ "and u.dpPessoa.cpfPessoa = pes.cpfPessoa "
-		+ "and (u.hisDtFim is null) "
-		+ "and (u.dtCancelamentoIdentidade is null) "
-		+ "and (u.dtExpiracaoIdentidade is null or u.dtExpiracaoIdentidade > current_date()) "
-		+ "and (pes.dataFimPessoa is null) "
-		+ "and (pes.situacaoFuncionalPessoa = '1' "
-		+ "or pes.situacaoFuncionalPessoa = '2' "
-		+ "or pes.situacaoFuncionalPessoa = '12' "	
-		+ "or pes.situacaoFuncionalPessoa = '22' "	
-		+ "or pes.situacaoFuncionalPessoa = '31') ") })
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpIdentidade extends AbstractCpIdentidade {
-	
+
 	public DpPessoa getPessoaAtual() {
 		return CpDao.getInstance().consultarPorIdInicial(
 				getDpPessoa().getIdInicial());
@@ -104,8 +89,8 @@ public class CpIdentidade extends AbstractCpIdentidade {
 	public Long getId() {
 		return getIdIdentidade();
 	}
-	
-	public void setId(Long id){
+
+	public void setId(Long id) {
 		setIdIdentidade(id);
 	}
 
@@ -116,9 +101,28 @@ public class CpIdentidade extends AbstractCpIdentidade {
 	public boolean ativaNaData(Date dt) {
 		return super.ativoNaData(dt);
 	}
-	
+
 	@Override
 	public String toString() {
 		return "CpIdentidade(" + String.valueOf(getId()) + ")";
+	}
+
+	//
+	// Solução para não precisar criar HIS_ATIVO em todas as tabelas que herdam
+	// de HistoricoSuporte.
+	//
+	@Column(name = "HIS_ATIVO")
+	private Integer hisAtivo;
+
+	@Override
+	public Integer getHisAtivo() {
+		this.hisAtivo = super.getHisAtivo();
+		return this.hisAtivo;
+	}
+
+	@Override
+	public void setHisAtivo(Integer hisAtivo) {
+		super.setHisAtivo(hisAtivo);
+		this.hisAtivo = getHisAtivo();
 	}
 }

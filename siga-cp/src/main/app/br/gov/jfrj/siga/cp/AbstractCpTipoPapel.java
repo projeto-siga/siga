@@ -28,9 +28,10 @@ import br.gov.jfrj.siga.model.Objeto;
 public class AbstractCpTipoPapel extends Objeto {
 
 	@Id
-	@Column(name = "ID_TP_PAPEL", nullable = false)
+	@Column(name = "ID_TP_PAPEL", unique = true, nullable = false)
 	private Integer idCpTpPapel;
-	@Column(name = "DESC_TP_PAPEL")
+
+	@Column(name = "DESC_TP_PAPEL", length = 60)
 	private String dscTpPapel;
 
 	/**

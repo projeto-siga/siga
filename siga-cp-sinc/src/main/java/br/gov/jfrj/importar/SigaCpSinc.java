@@ -29,8 +29,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -38,6 +40,9 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 import net.sf.ehcache.CacheManager;
 
@@ -51,6 +56,7 @@ import br.gov.jfrj.siga.cp.CpPapel;
 import br.gov.jfrj.siga.cp.CpTipoPapel;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
+import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
@@ -60,6 +66,7 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.sinc.lib.Item;
 import br.gov.jfrj.siga.sinc.lib.Item.Operacao;
@@ -83,7 +90,7 @@ public class SigaCpSinc {
 	private String url = "";
 
 	private static String destinatariosExtras = "";
-	private static Level logLevel = Level.WARNING; 
+	private static Level logLevel = Level.WARNING;
 
 	public String getServidor() {
 		return servidor;
@@ -96,7 +103,6 @@ public class SigaCpSinc {
 	public Date getDt() {
 		return dt;
 	}
-
 
 	private SincronizavelComparator sc = new SincronizavelComparator();
 
@@ -114,7 +120,7 @@ public class SigaCpSinc {
 	private String dataHora;
 
 	private String versao;
-	
+
 	List<Item> list;
 
 	/*
@@ -153,7 +159,7 @@ public class SigaCpSinc {
 	//
 	@SuppressWarnings("static-access")
 	public void gravar(Date dt) throws Exception {
-		//List<Item> list;
+		// List<Item> list;
 		Sincronizador sinc = new Sincronizador();
 		try {
 			sinc.religarListaPorIdExterna(setNovo);
@@ -162,7 +168,7 @@ public class SigaCpSinc {
 			sinc.setSetAntigo(setAntigo);
 
 			// verifica se as pessoas possuem lotação
-			
+
 			if (modoLog) {
 				for (Sincronizavel item : setNovo) {
 					if (item instanceof DpPessoa) {
@@ -402,15 +408,14 @@ public class SigaCpSinc {
 				maxSinc = Integer.valueOf(param.split("=")[1]);
 			}
 
-			if (param.startsWith("-destinatariosExtras")){
+			if (param.startsWith("-destinatariosExtras")) {
 				setDestinatariosExtras(param.split("=")[1]);
 			}
-			
-			if (param.startsWith("-logLevel")){
+
+			if (param.startsWith("-logLevel")) {
 				setLogLevel(param.split("=")[1]);
 			}
-			
-			
+
 		}
 
 		return 0;
@@ -451,25 +456,54 @@ public class SigaCpSinc {
 		sinc.run();
 	}
 
-	public void run() throws Exception, NamingException,
-			AplicacaoException {
-		
+	public static void configurarEntityManager(CpAmbienteEnumBL ambiente)
+			throws Exception {
+		CpPropriedadeBL prop = Cp.getInstance().getProp();
+		prop.setPrefixo(ambiente.getSigla());
+
+		Map<String, String> properties = new HashMap<>();
+
+		properties.put("hibernate.connection.url", prop.urlConexao());
+		properties.put("hibernate.connection.username", prop.usuario());
+		properties.put("hibernate.connection.password", prop.senha());
+		properties.put("hibernate.connection.driver_class",
+				prop.driverConexao());
+		properties.put("c3p0.min_size", prop.c3poMinSize());
+		properties.put("c3p0.max_size", prop.c3poMaxSize());
+		properties.put("c3p0.timeout", prop.c3poTimeout());
+		properties.put("c3p0.max_statements", prop.c3poMaxStatements());
+
+		// persistenceMap.put("javax.persistence.jdbc.url", "<url>");
+		// persistenceMap.put("javax.persistence.jdbc.user", "<username>");
+		// persistenceMap.put("javax.persistence.jdbc.password", "<password>");
+		// persistenceMap.put("javax.persistence.jdbc.driver", "<driver>");
+		// <property name="jboss.entity.manager.jndi.name"
+		// value="java:/EntityManager/simpledb"/>
+
+		properties.put("hibernate.jdbc.use_streams_for_binary", "true");
+
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory(
+				"default-ex", properties);
+
+		EntityManager em = emf.createEntityManager();
+		ContextoPersistencia.setEntityManager(em);
+	}
+
+	public void run() throws Exception, NamingException, AplicacaoException {
+
 		desativarCacheDeSegundoNivel();
-		
+
 		Configuration cfg;
 		if (servidor.equals("prod"))
-			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.PRODUCAO);
+			configurarEntityManager(CpAmbienteEnumBL.PRODUCAO);
 		else if (servidor.equals("homolo"))
-			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.HOMOLOGACAO);
+			configurarEntityManager(CpAmbienteEnumBL.HOMOLOGACAO);
 		else if (servidor.equals("treina"))
-			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.TREINAMENTO);
+			configurarEntityManager(CpAmbienteEnumBL.TREINAMENTO);
 		else if (servidor.equals("desenv"))
-			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
+			configurarEntityManager(CpAmbienteEnumBL.DESENVOLVIMENTO);
 		else
-			cfg = CpDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
-		
-		
-		HibernateUtil.configurarHibernate(cfg);
+			configurarEntityManager(CpAmbienteEnumBL.DESENVOLVIMENTO);
 
 		verificarOrigemDeDados();
 
@@ -563,14 +597,15 @@ public class SigaCpSinc {
 			e.printStackTrace();
 			log(e.getMessage());
 		}
-		long total = (System.currentTimeMillis()-inicio)/1000;
-		log("Tempo total de execução: " + total + " segundos (" + total/60 +" min)" );
+		long total = (System.currentTimeMillis() - inicio) / 1000;
+		log("Tempo total de execução: " + total + " segundos (" + total / 60
+				+ " min)");
 	}
 
 	private void logComDestaque(String msg) {
 		String espaco = "";
 		for (int i = 0; i < 10; i++) {
-			espaco+="\n";
+			espaco += "\n";
 		}
 		log(espaco + msg + espaco);
 	}
@@ -583,13 +618,11 @@ public class SigaCpSinc {
 
 		logger.addHandler(logHandler);
 		logger.setLevel(logLevel);
-		
-		
+
 		if (modoLog) {
 			logComDestaque(">>>Iniciando em modo LOG!<<<\nUse -modoLog=false para sair do modo LOG e escrever as alterações");
 		}
 		log("MAX SINC = " + maxSinc);
-
 
 		String aUrl = "";
 		String oServidor = args[0].toLowerCase();
@@ -802,11 +835,14 @@ public class SigaCpSinc {
 						orgaoUsuario = cpOrgaoUsuario.getIdOrgaoUsu();
 						aditionalEmails = parser.getAttributeValue(null,
 								"NotificarPorEmail");
-						
-						if (destinatariosExtras != null && aditionalEmails != null){
-							destinatariosExtras = destinatariosExtras + (!aditionalEmails.trim().equals("") ? "," + aditionalEmails : "");
+
+						if (destinatariosExtras != null
+								&& aditionalEmails != null) {
+							destinatariosExtras = destinatariosExtras
+									+ (!aditionalEmails.trim().equals("") ? ","
+											+ aditionalEmails : "");
 						}
-						
+
 					} else if (parser.getName().equals("cargo")) {
 						setNovo.add(importarXmlCargo(parser));
 						contemCargo = true;
@@ -1011,7 +1047,7 @@ public class SigaCpSinc {
 			lotacao.setLotacaoPai(o);
 		}
 		String tipoLotacao = parseStr(parser, "tipoLotacao");
-		if (tipoLotacao == null){
+		if (tipoLotacao == null) {
 			tipoLotacao = parseStr(parser, "tipo");
 		}
 		if (tipoLotacao != null && !isNumerico(tipoLotacao)) {
@@ -1023,7 +1059,7 @@ public class SigaCpSinc {
 		}
 		return lotacao;
 	}
-	
+
 	private boolean isNumerico(String tipoLotacao) {
 		try {
 			new Long(tipoLotacao);
@@ -1143,17 +1179,20 @@ public class SigaCpSinc {
 			}
 			CpTipoPessoa o;
 			// Edson: 1) alguns XML's informam a descrição do tipo
-			// ("Servidor", por exemplo) em vez do ID. 2) Alterar o nome do atributo de
+			// ("Servidor", por exemplo) em vez do ID. 2) Alterar o nome do
+			// atributo de
 			// tipo_rh para tipo e, na hora de importar, ver se o valor é ID ou
-			// descrição. Ou então solicitar que os órgãos passem a enviar o ID, não
+			// descrição. Ou então solicitar que os órgãos passem a enviar o ID,
+			// não
 			// a descrição
 			if (parseStr(parser, "tipo") != null) {
 				o = obterTipoPessoaPorDescricao(parseStr(parser, "tipo"));
 				pessoa.setCpTipoPessoa(o);
-			/*}else if (parseStr(parser, "tipo_rh") != null) {
-				o = obterTipoPessoaPorId(Integer.valueOf(parseStr(parser,
-						"tipo_rh")));
-				pessoa.setCpTipoPessoa(o);*/
+				/*
+				 * }else if (parseStr(parser, "tipo_rh") != null) { o =
+				 * obterTipoPessoaPorId(Integer.valueOf(parseStr(parser,
+				 * "tipo_rh"))); pessoa.setCpTipoPessoa(o);
+				 */
 			} else {
 				// inferir tipo de pessoa para a SJRJ se vier nulo no XML
 				inferirTipoPessoaSJRJ(pessoa);
@@ -1171,10 +1210,10 @@ public class SigaCpSinc {
 		papel.setIdExterna(parseStr(parser, "id"));
 		criarUnicidade(cpOrgaoUsuario.getSiglaOrgaoUsu(), "tipo", "idExterna",
 				parseStr(parser, "id"), dpPessoaCorrente.getIdExterna());
-		//if (parseStr(parser, "tipo") != null) {
-		//	CpTipoPapel o = obterTipoPapelPorDescricao(parseStr(parser, "tipo"));
-		//	papel.setCpTipoPapel(o);
-		//}
+		// if (parseStr(parser, "tipo") != null) {
+		// CpTipoPapel o = obterTipoPapelPorDescricao(parseStr(parser, "tipo"));
+		// papel.setCpTipoPapel(o);
+		// }
 		if (parseStr(parser, "tipo") != null) {
 			CpTipoPapel o = obterTipoPapelPorDescricao(parseStr(parser, "tipo"));
 			papel.setCpTipoPapel(o);
@@ -1208,10 +1247,11 @@ public class SigaCpSinc {
 			log("Arquivo XML gerado em " + getDataHora() + "\n");
 		}
 
-		if (maxSinc != -1 && list != null && (list.size() > maxSinc)){
-			logHandler.setAssunto("Limite de operações por sincronismo superior a 200. Execute o sincronismo manualmente.");
+		if (maxSinc != -1 && list != null && (list.size() > maxSinc)) {
+			logHandler
+					.setAssunto("Limite de operações por sincronismo superior a 200. Execute o sincronismo manualmente.");
 		}
-		
+
 		logHandler.setDestinatariosEmail(sDest.split(","));
 
 	}

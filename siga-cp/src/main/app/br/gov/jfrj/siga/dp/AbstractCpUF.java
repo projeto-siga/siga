@@ -40,10 +40,10 @@ import br.gov.jfrj.siga.model.Objeto;
 public abstract class AbstractCpUF extends Objeto implements Serializable {
 
 	@Id
-	@Column(name = "ID_UF", nullable = false)
+	@Column(name = "ID_UF", unique = true, nullable = false)
 	private Long idUF;
 
-	@Column(name = "NM_UF", nullable = false)
+	@Column(name = "NM_UF", nullable = false, length = 256)
 	private String nmUF;
 
 	public Long getIdUF() {

@@ -3,23 +3,20 @@ package br.gov.jfrj.siga.wf.vraptor;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-import br.com.caelum.vraptor.ioc.ApplicationScoped;
-import br.com.caelum.vraptor.ioc.Component;
 import br.com.caelum.vraptor.ioc.ComponentFactory;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
+import br.gov.jfrj.siga.wf.util.WfHibernateUtil;
 
 //@Component
 //@ApplicationScoped
-public class WfSessionFactoryCreator implements ComponentFactory<SessionFactory> {
-	
+public class WfSessionFactoryCreator implements
+		ComponentFactory<SessionFactory> {
+
 	private SessionFactory sessionFactory = null;
 	private Configuration conf = null;
 
@@ -32,7 +29,7 @@ public class WfSessionFactoryCreator implements ComponentFactory<SessionFactory>
 			}
 
 			// bruno.lacerda@avantiprima.com.br
-//			configurarHibernateParaDebug(cfg);
+			// configurarHibernateParaDebug(cfg);
 
 			// cfg.configure();
 			this.conf = cfg;
@@ -47,7 +44,7 @@ public class WfSessionFactoryCreator implements ComponentFactory<SessionFactory>
 		boolean isDebugHibernateHabilitado = SigaBaseProperties
 				.getBooleanValue("configura.hibernate.para.debug");
 		if (isDebugHibernateHabilitado) {
-//			ModeloDao.configurarHibernateParaDebug(cfg);
+			// ModeloDao.configurarHibernateParaDebug(cfg);
 		}
 	}
 
@@ -67,12 +64,11 @@ public class WfSessionFactoryCreator implements ComponentFactory<SessionFactory>
 		}
 	}
 
-
 	public WfSessionFactoryCreator() {
 		super();
 	}
-	
-    @PostConstruct
+
+	@PostConstruct
 	public void create() throws ExceptionInInitializerError {
 		try {
 			Wf.getInstance();
@@ -81,20 +77,19 @@ public class WfSessionFactoryCreator implements ComponentFactory<SessionFactory>
 
 			registerTransactionClasses(cfg);
 
-			HibernateUtil.configurarHibernate(cfg);
+			WfHibernateUtil.configurarHibernate(cfg);
 		} catch (final Throwable ex) {
 			throw new ExceptionInInitializerError(ex);
 		}
 	}
 
+	public SessionFactory getInstance() {
+		return sessionFactory;
+	}
 
-    public SessionFactory getInstance() {
-        return sessionFactory;
-    }
-
-    @PreDestroy
-    public void destroy() {
-        this.sessionFactory.close();
-    }
+	@PreDestroy
+	public void destroy() {
+		this.sessionFactory.close();
+	}
 
 }

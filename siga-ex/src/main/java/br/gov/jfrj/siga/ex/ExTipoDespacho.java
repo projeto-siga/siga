@@ -23,24 +23,39 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 /**
  * A class that represents a row in the 'EX_TIPO_DESPACHO' table. This class may
  * be customized as it is never re-generated after being created.
  */
-public class ExTipoDespacho extends AbstractExTipoDespacho implements Serializable {
+@Entity
+@BatchSize(size = 500)
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Table(name = "EX_TIPO_DESPACHO", catalog = "SIGA")
+public class ExTipoDespacho extends AbstractExTipoDespacho implements
+		Serializable {
 
 	private static final long serialVersionUID = 3256722875116761397L;
 
 	/**
 	 * Simple constructor of ExTipoDespacho instances.
 	 */
-	public ExTipoDespacho(final long idTpDespacho,final String descTpDespacho,final String fgAtivo) {
+	public ExTipoDespacho(final long idTpDespacho, final String descTpDespacho,
+			final String fgAtivo) {
 		super();
 		super.setDescTpDespacho(descTpDespacho);
 		super.setFgAtivo(fgAtivo);
 		super.setIdTpDespacho(idTpDespacho);
 	}
-	
+
 	/**
 	 * Simple constructor of ExTipoDespacho instances.
 	 */

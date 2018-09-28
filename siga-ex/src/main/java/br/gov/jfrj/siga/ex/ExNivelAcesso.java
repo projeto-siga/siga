@@ -23,10 +23,23 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 /**
  * A class that represents a row in the 'EX_TIPO_DESPACHO' table. This class may
  * be customized as it is never re-generated after being created.
  */
+@Entity
+@BatchSize(size = 500)
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Table(name = "EX_NIVEL_ACESSO", catalog = "SIGA")
 public class ExNivelAcesso extends AbstractExNivelAcesso implements
 		Serializable {
 
@@ -45,7 +58,7 @@ public class ExNivelAcesso extends AbstractExNivelAcesso implements
 	public static final long NIVEL_ACESSO_ENTRE_LOTACOES = 60;
 
 	public static final long NIVEL_ACESSO_PESSOAL = 100;
-	
+
 	public static final long ID_LIMITADO_AO_ORGAO = 1;
 	public static final long ID_LIMITADO_SUBSEC_PARA_PESSOA = 2;
 	public static final long ID_LIMITADO_ENTRE_LOTACOES = 3;

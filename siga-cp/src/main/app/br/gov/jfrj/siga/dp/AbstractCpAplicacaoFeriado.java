@@ -32,15 +32,19 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 import br.gov.jfrj.siga.model.Objeto;
 
 //Essa anotação é necessária por causa do mappedBy em CpOcorrenciaFeriado que aponta pra cá 
 @MappedSuperclass
-public abstract class AbstractCpAplicacaoFeriado extends Objeto implements Serializable {
+@NamedQueries({ @NamedQuery(name = "listarAplicacoesFeriado", query = "from CpAplicacaoFeriado apl where apl.cpOcorrenciaFeriado = :cpOcorrenciaFeriado") })
+public abstract class AbstractCpAplicacaoFeriado extends Objeto implements
+		Serializable {
 
 	@Id
-	@Column(name = "ID_APLICACAO", nullable = false)
+	@Column(name = "ID_APLICACAO", unique = true, nullable = false)
 	private Long idAplicacao;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -59,7 +63,7 @@ public abstract class AbstractCpAplicacaoFeriado extends Objeto implements Seria
 	@JoinColumn(name = "ID_OCORRENCIA_FERIADO")
 	private CpOcorrenciaFeriado cpOcorrenciaFeriado;
 
-	@Column(name = "FERIADO", nullable = false)
+	@Column(name = "FERIADO", nullable = false, length = 1)
 	private String fgFeriado;
 
 	public String getFgFeriado() {

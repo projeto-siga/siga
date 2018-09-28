@@ -52,9 +52,8 @@ public class GcCacheTest extends TestCase {
 				.createEntityManager();
 		ContextoPersistencia.setEntityManager(em);
 		CpDao.freeInstance();
-		CpDao.getInstance((Session) em.getDelegate(), ((Session) em
-				.getDelegate()).getSessionFactory().openStatelessSession());
-		HibernateUtil.configurarHibernate((Session)em.getDelegate());
+		CpDao.getInstance();
+		// HibernateUtil.configurarHibernate((Session)em.getDelegate());
 
 		em.getTransaction().begin();
 

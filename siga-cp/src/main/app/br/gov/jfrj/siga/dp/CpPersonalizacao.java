@@ -19,14 +19,10 @@
 package br.gov.jfrj.siga.dp;
 
 import javax.persistence.Entity;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-
-
 
 @Entity
 @Table(name = "CP_PERSONALIZACAO", schema = "CORPORATIVO")
-@NamedQuery(name = "consultarPersonalizacao", query = "select per from CpPersonalizacao per, DpPessoa pes where per.pessoa.idPessoa = pes.idPessoa and pes.idPessoaIni = :idPessoaIni")
 public class CpPersonalizacao extends AbstractCpPersonalizacao {
 
 }

@@ -39,12 +39,15 @@ import br.gov.jfrj.siga.model.Objeto;
 public abstract class AbstractCpTipoConfiguracao extends Objeto implements Serializable {
 
 	@Id
-	@Column(name = "ID_TP_CONFIGURACAO", nullable = false)
+	@Column(name = "ID_TP_CONFIGURACAO", unique = true, nullable = false)
 	private Long idTpConfiguracao;
+	
 	@Column(name = "DSC_TP_CONFIGURACAO")
 	private String dscTpConfiguracao;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_SIT_CONFIGURACAO")
+	
 	private CpSituacaoConfiguracao situacaoDefault;
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cpTipoConfiguracao")
 	//private Set<CpSituacaoConfiguracao> cpSituacoesConfiguracaoSet;

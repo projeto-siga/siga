@@ -21,6 +21,7 @@ package br.gov.jfrj.siga.cp;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -53,8 +54,8 @@ public class CpPapel extends AbstractCpPapel implements Serializable,
 	public Long getId() {
 		return getIdCpPapel();
 	}
-	
-	public void setId(Long id){
+
+	public void setId(Long id) {
 		setIdCpPapel(id);
 	}
 
@@ -127,4 +128,22 @@ public class CpPapel extends AbstractCpPapel implements Serializable,
 		return super.getHisDtIni();
 	}
 
+	//
+	// Solução para não precisar criar HIS_ATIVO em todas as tabelas que herdam
+	// de HistoricoSuporte.
+	//
+	@Column(name = "HIS_ATIVO")
+	private Integer hisAtivo;
+
+	@Override
+	public Integer getHisAtivo() {
+		this.hisAtivo = super.getHisAtivo();
+		return this.hisAtivo;
+	}
+
+	@Override
+	public void setHisAtivo(Integer hisAtivo) {
+		super.setHisAtivo(hisAtivo);
+		this.hisAtivo = getHisAtivo();
+	}
 }

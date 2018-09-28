@@ -45,13 +45,16 @@ public abstract class AbstractCpSituacaoConfiguracao extends Objeto implements S
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "ID_SIT_CONFIGURACAO", nullable = false)
+	@Column(name = "ID_SIT_CONFIGURACAO", unique = true, nullable = false)
 	private Long idSitConfiguracao;
+	
 	@Column(name = "DSC_SIT_CONFIGURACAO")
 	private String dscSitConfiguracao;
-	@Column(name = "RESTRITIVIDADE_SIT_CONF")
+	
+	@Column(name = "RESTRITIVIDADE_SIT_CONF", nullable = false)
 	private Long restritividadeSitConfiguracao;
 	//private Set<CpTipoConfiguracao> cpTiposConfiguracaoSet;
+	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CP_TIPO_SERVICO_SITUACAO", schema = "CORPORATIVO", joinColumns = { @JoinColumn(name = "ID_SIT_CONFIGURACAO", nullable = false, updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "ID_TP_SERVICO", nullable = false, updatable = false) })
 	private Set<CpTipoServico> cpTiposServicoSet;

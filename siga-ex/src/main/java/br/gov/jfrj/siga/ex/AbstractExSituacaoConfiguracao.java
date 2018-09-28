@@ -24,13 +24,22 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
 import br.gov.jfrj.siga.model.Objeto;
 
-public abstract class AbstractExSituacaoConfiguracao extends Objeto implements Serializable {
+@MappedSuperclass
+public abstract class AbstractExSituacaoConfiguracao extends Objeto implements
+		Serializable {
 
+	@Id
+	@Column(name = "ID_SIT_CONFIGURACAO", unique = true, nullable = false)
 	private Long idSitConfiguracao;
+
+	@Column(name = "DSC_SIT_CONFIGURACAO", length = 256)
 	private String dscSitConfiguracao;
 
 	public Long getIdSitConfiguracao() {

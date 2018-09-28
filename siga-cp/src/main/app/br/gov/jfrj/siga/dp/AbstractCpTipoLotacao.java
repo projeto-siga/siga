@@ -29,46 +29,56 @@ import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
 public class AbstractCpTipoLotacao extends Objeto {
-	
+
 	@Id
-	@Column(name = "ID_TP_LOTACAO", nullable = false)
+	@Column(name = "ID_TP_LOTACAO", unique = true, nullable = false)
 	private Long idTpLotacao;
-	
-	@Column(name = "SIGLA_TP_LOTACAO")
+
+	@Column(name = "SIGLA_TP_LOTACAO", length = 40)
 	private String siglaTpLotacao;
-	
-	@Column(name = "DESC_TP_LOTACAO")
+
+	@Column(name = "DESC_TP_LOTACAO", length = 200)
 	private String dscTpLotacao;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_TP_LOTACAO_PAI")
 	private CpTipoLotacao tipoLotacaoPai;
-	
+
 	public Long getIdTpLotacao() {
 		return idTpLotacao;
 	}
+
 	public void setIdTpLotacao(Long idTpLotacao) {
 		this.idTpLotacao = idTpLotacao;
 	}
+
 	public String getSiglaTpLotacao() {
 		return siglaTpLotacao;
 	}
+
 	public void setSiglaTpLotacao(String siglaTpLotacao) {
 		this.siglaTpLotacao = siglaTpLotacao;
 	}
+
 	public String getDscTpLotacao() {
 		return dscTpLotacao;
 	}
+
 	public void setDscTpLotacao(String dscTpLotacao) {
 		this.dscTpLotacao = dscTpLotacao;
 	}
+
 	public CpTipoLotacao getTipoLotacaoPai() {
 		return tipoLotacaoPai;
 	}
+
 	public void setTipoLotacaoPai(CpTipoLotacao tipoLotacaoPai) {
 		this.tipoLotacaoPai = tipoLotacaoPai;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -83,7 +93,10 @@ public class AbstractCpTipoLotacao extends Objeto {
 				+ ((siglaTpLotacao == null) ? 0 : siglaTpLotacao.hashCode());
 		return result;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

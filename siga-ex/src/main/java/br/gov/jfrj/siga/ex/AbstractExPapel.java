@@ -26,6 +26,9 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
+
 import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
@@ -39,6 +42,7 @@ public abstract class AbstractExPapel extends Objeto implements Serializable {
 	private java.lang.String descPapel;
 
 	@OneToMany(mappedBy = "exPapel")
+	@Sort(type = SortType.NATURAL)
 	private SortedSet<ExMovimentacao> exMovimentacaoSet;
 
 	public java.lang.Long getIdPapel() {

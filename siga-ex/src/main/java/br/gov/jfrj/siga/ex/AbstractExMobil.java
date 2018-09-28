@@ -36,6 +36,9 @@ import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
+
 import br.gov.jfrj.siga.model.Objeto;
 
 /**
@@ -126,15 +129,18 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 	private java.lang.Integer numSequencia;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobil")
+	@Sort(type = SortType.NATURAL)
 	private SortedSet<ExMovimentacao> exMovimentacaoSet;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobilRef")
+	@Sort(type = SortType.NATURAL)
 	private SortedSet<ExMovimentacao> exMovimentacaoReferenciaSet;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobilPai")
 	private java.util.Set<ExDocumento> exDocumentoFilhoSet;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobil")
+	@Sort(type = SortType.NATURAL)
 	private SortedSet<ExMarca> exMarcaSet;
 
 	public java.lang.Long getIdMobil() {

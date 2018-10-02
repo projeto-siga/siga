@@ -343,6 +343,12 @@ public class SolicitacaoController extends SrController {
         if (solicitacao.getDescrSolicitacao() == null || "".equals(solicitacao.getDescrSolicitacao().trim())) 
         	srValidator.addError("solicitacao.descrSolicitacao", "Descri&ccedil&atilde;o n&atilde;o informada");	
 
+        if (solicitacao.getTelPrincipal() == null || "".equals(solicitacao.getTelPrincipal().trim())) 
+        	srValidator.addError("solicitacao.telPrincipal", "Telefone n&atilde;o informado");	
+
+        if (solicitacao.getEndereco() == null || "".equals(solicitacao.getEndereco().trim())) 
+        	srValidator.addError("solicitacao.endereco", "Endere&ccedil;o de atendimento n&atilde;o informado");	
+
         validarFormReclassificar(solicitacao);
         
         return !srValidator.hasErrors(); 

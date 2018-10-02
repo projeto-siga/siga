@@ -89,6 +89,15 @@ public class LdapProperties extends ModeloPropriedade {
 			throw new AplicacaoException("Erro ao obter a senha LDAP", 9, e);
 		}
 	}
+	
+	public String getEnderecoWebServiceLdap() {
+		//"http://localhost:8080/authldap/api/v1/credentials"
+		try {
+			return this.obterPropriedade("ws.endereco");
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao obter o endereco do Web Service do LDAP", 9, e);
+		}
+	}
 
 	protected String descriptografarSenha(String senhaCriptografada)
 			 {

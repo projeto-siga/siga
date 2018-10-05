@@ -458,7 +458,8 @@ public class SolicitacaoController extends SrController {
         	result.include("filtro", filtro);
         	result.include("propriedade", propriedade);
         	result.include("popup", popup);
-        	result.include("listasPrioridade", SrLista.listar(false));
+        	result.include("locaisDisponiveis", filtro.getLocaisParaBusca());
+            result.include("listasPrioridade", SrLista.listar(false));
         	result.include("prioridadesEnum", SrPrioridade.values());
         }
     }

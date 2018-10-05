@@ -1308,6 +1308,19 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
         return hashFinal;
     }
 
+    @SuppressWarnings("unchecked")
+    public Map<CpOrgaoUsuario, List<CpComplexo>> getLocaisParaBusca() {
+        List<CpComplexo> locais = new ArrayList<CpComplexo>();
+        Map<CpOrgaoUsuario, List<CpComplexo>> hashFinal = new HashMap<CpOrgaoUsuario, List<CpComplexo>>();
+        locais = AR.em().createQuery("from CpComplexo order by nomeComplexo").getResultList();
+        for (CpComplexo c : locais){
+        	if (hashFinal.get(c.getOrgaoUsuario()) == null)
+                hashFinal.put(c.getOrgaoUsuario(), new ArrayList<CpComplexo>());
+        	hashFinal.get(c.getOrgaoUsuario()).add(c);
+        }
+        return hashFinal;
+    }
+
     public List<SrItemConfiguracao> getItensDisponiveis() throws Exception {
     	List<SrItemConfiguracao> listaFinal = new ArrayList<SrItemConfiguracao>();
     	if (getSolicitante() == null)

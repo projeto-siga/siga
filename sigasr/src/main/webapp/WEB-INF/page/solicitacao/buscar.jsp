@@ -123,13 +123,27 @@
 	                           </select>
                             </td>                                            
                         </tr>
-                        <tr>
+	                    <tr>
                             <td>Descri&ccedil;&atilde;o</td>
                             <td>
                                 <input type="text" name="filtro.descrSolicitacao" style="width: 247px;" id="filtro.descrSolicitacao" value="${filtro.descrSolicitacao}"/>
                             </td>
                         </tr>
-	                        
+                        <tr>
+                            <td>Local</td>
+                            <td>
+ 								<select name="filtro.local.idComplexo" id="filtro.local.idComplexo" style="width:250px;">
+        						<option value="-1" ${-1 == filtro.local.idComplexo ? 'selected' : ''}>Qualquer Um</option>
+        						<c:forEach items="${locaisDisponiveis.keySet()}" var="orgao">
+        								<optgroup label="${orgao.acronimoOrgaoUsu}">
+                						<c:forEach items="${locaisDisponiveis.get(orgao)}" var="local">
+                        						<option value="${local.idComplexo}" ${filtro.local.idComplexo.equals(local.idComplexo) ? 'selected' : ''}>${local.nomeComplexo}</option>
+                						</c:forEach>
+                						</optgroup>
+        						</c:forEach>
+								</select>
+                            </td>
+                        </tr>
 	                    <tr>
 	                        <td>Acordo</td>
 	                        <td>

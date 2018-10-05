@@ -249,6 +249,10 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			}
 		}
 
+		if ((getLocal().getIdComplexo() != null) && (!getLocal().getIdComplexo().equals(QUALQUER_LISTA_OU_NENHUMA))) {
+			query.append(" and sol.local.idComplexo = " + getLocal().getIdComplexo());
+		}
+
 		final SimpleDateFormat dfUsuario = new SimpleDateFormat("dd/MM/yyyy");
 		final SimpleDateFormat dfHibernate = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -303,8 +307,9 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 				|| getAcordo() != null
 				|| getAtributoSolicitacao() != null
 				|| (getIdListaPrioridade() != null && getIdListaPrioridade() >= 0)
-				|| (getDescrSolicitacao() != null && !getDescrSolicitacao()
-						.trim().equals("")) || getPrioridade() != null;
+				|| (getDescrSolicitacao() != null && !getDescrSolicitacao().trim().equals("")) 
+				|| getPrioridade() != null
+				|| getLocal() != null;
 	}
 	
 	@SuppressWarnings("unchecked")

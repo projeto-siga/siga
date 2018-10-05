@@ -576,7 +576,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	
 		if (mob.doc().isFinalizado()) {
 			return !mob.isEmTransito()
-					&& (!mob.isGeral() || mob.doc().isExterno())
+					&& (!mob.isGeral() || (mob.doc().isExterno() && !mob.doc().jaTransferido()))
 					&& !mob.isJuntado()
 					&& !mob.isArquivado()
 					&& !mob.isVolumeEncerrado()

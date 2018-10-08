@@ -22,6 +22,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
@@ -61,9 +62,17 @@ public class AdminController extends WfController {
 	}
 
 	public void endProcessInstance(Long idTI, Long idPI, Date dtFim) throws Exception {
-		assertAcesso(ACESSO_ENCERRAR_INSTANCIA_DE_PROCESSO);
-		dtFim = dtFim == null ? new Date() : dtFim;
-
+		assertAcesso(ACESSO_ENCERRAR_INSTANCIA_DE_PROCESSO);		
+		
+		if (dtFim == null) {
+			dtFim = new Date();
+		} else {
+			  if (!Data.dataDentroSeculo21(dtFim)){
+				  throw new AplicacaoException("Data fim inválida, deve estar entre o ano 2000 e ano 2100");
+		
+			  }
+		}
+	
 		if (idTI != null) {
 			Wf.getInstance().getBL()
 					.encerrarProcessInstanceDaTarefa(idTI, dtFim);

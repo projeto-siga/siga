@@ -74,6 +74,8 @@ function popitup_movimentacao() {
 }	
 
 function submeter() {
+
+	document.getElementById("button_ok").onclick = function(){console.log("Aguarde requisição")};	
 	document.getElementById('frm').submit();
 }
 

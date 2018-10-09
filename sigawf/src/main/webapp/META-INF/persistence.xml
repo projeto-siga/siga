@@ -65,7 +65,7 @@
 				value="org.jboss.as.jpa.hibernate4.infinispan.InfinispanRegionFactory" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="none" />
-			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.show_sql" value="false" />
 		</properties>
 	</persistence-unit>
 </persistence>

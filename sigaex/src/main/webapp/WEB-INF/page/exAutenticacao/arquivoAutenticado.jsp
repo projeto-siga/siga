@@ -15,9 +15,9 @@
 			<h2>Acompanhamento e Autenticação de Documentos</h2>
 			<div>
 				<c:url var='pdfAssinado'
-					value='/app/externo/arquivoAutenticado_stream?jwt=${jwt}&assinado=true' />
+					value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&assinado=true' />
 				<c:url var='pdf'
-					value='/app/externo/arquivoAutenticado_stream?jwt=${jwt}&assinado=false' />
+					value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&assinado=false' />
 				<iframe src="${pdfAssinado}" width="100%" height="600"
 					align="center" style="margin-top: 10px;"> </iframe>
 			</div>
@@ -171,22 +171,22 @@
 				<ul>
 					<c:forEach var="assinatura" items="${assinaturas}" varStatus="loop">
 						<c:url var='arqAssinatura'
-							value='/app/externo/arquivoAutenticado_stream?jwt=${jwt}&idMov=${assinatura.idMov}' />
+							value='/public/app/arquivoAutenticado_stream?jwt=${jwt}&idMov=${assinatura.idMov}' />
 						<li><a href="${arqAssinatura}" target="_blank">${assinatura.descrMov}</a></li>
 					</c:forEach>
 				</ul>
 				<div id="dados-assinatura" style="visible: hidden">
 					<input type="hidden" name="ad_url_base" value="" /> <input
 						type="hidden" name="ad_url_next"
-						value="${request.contextPath}/app/externo/autenticar?jwt=${jwt}" />
+						value="${request.contextPath}/public/app/autenticar?jwt=${jwt}" />
 					<input type="hidden" name="ad_descr_0" value="${mov.referencia}" />
 					<input type="hidden" name="ad_url_pdf_0"
-						value="${request.contextPath}/app/externo/arquivoAutenticado_stream?jwt=${jwt}&assinado=false" />
+						value="${request.contextPath}/public/app/arquivoAutenticado_stream?jwt=${jwt}&assinado=false" />
 					<input type="hidden" name="ad_url_post_0"
-						value="${request.contextPath}/app/externo/autenticar?jwt=${jwt}&ass=1" />
+						value="${request.contextPath}/public/app/autenticar?jwt=${jwt}&ass=1" />
 					<!--  Edson: a assinatura com senha está desabilitada aqui, por enquanto -->
 					<input type="hidden" name="ad_url_post_password_0"
-						value="${request.contextPath}/app/externo/autenticar?jwt=${jwt}&ass=1" />
+						value="${request.contextPath}/public/app/autenticar?jwt=${jwt}&ass=1" />
 
 					<input type="hidden" name="ad_id_0"
 						value="${fn:replace(mov.referencia, ':', '_')}" /> <input

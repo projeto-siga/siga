@@ -201,7 +201,7 @@ public class ExAssinadorExternoController extends ExController {
 		return pdfd;
 	}
 
-	@Get("/app/assinador-popup/doc/{id}/hash")
+	@Get("/public/app/assinador-popup/doc/{id}/hash")
 	public void assinadorPopupHash(String id) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
@@ -239,7 +239,7 @@ public class ExAssinadorExternoController extends ExController {
 		}
 	}
 
-	@Put("/app/assinador-popup/doc/{id}/sign")
+	@Put("/public/app/assinador-popup/doc/{id}/sign")
 	public void assinadorPopupSave(String id) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);

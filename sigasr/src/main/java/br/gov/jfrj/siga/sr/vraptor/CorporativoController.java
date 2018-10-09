@@ -23,12 +23,14 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.Download;
+import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.sr.model.DadosRH;
 import br.gov.jfrj.siga.sr.model.DadosRH.Cargo;
@@ -41,32 +43,38 @@ import br.gov.jfrj.siga.sr.validator.SrValidator;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @Resource
-@Path("app/corporativo")
 public class CorporativoController extends SrController {
 
-		public CorporativoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em,  SrValidator srValidator, Validator validator) {
-			super(request, result, dao, so, em, srValidator);
-		}
-	
+	public CorporativoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em,
+			SrValidator srValidator, Validator validator) {
+		super(request, result, dao, so, em, srValidator);
+	}
+
+	@Get
+	@Path("public/app/corporativo/dadosrh")
 	public Download dadosrh() throws ParserConfigurationException, IOException {
+		String pwd = (String) Contexto.resource("siga.sr.corporativo.dadosrh.password");
+		if (pwd == null)
+			throw new RuntimeException("Para acessar este serviço, é necessário informar o parâmetro 'siga.sr.corporativo.dadosrh.password'.");
+		if (!pwd.equals(this.request.getHeader("Authorization")))
+			throw new RuntimeException(
+					"Falha de autenticação: serviço requer authorization header igual ao parâmero 'siga.sr.corporativo.dadosrh.password'.");
+
 		Map<Long, Cargo> mc = new TreeMap<Long, Cargo>();
 		Map<Long, Lotacao> ml = new TreeMap<Long, Lotacao>();
 		Map<Long, Funcao> mf = new TreeMap<Long, Funcao>();
 		Map<Long, Pessoa> mp = new TreeMap<Long, Pessoa>();
 		Map<Long, List<Papel>> mpp = new TreeMap<Long, List<Papel>>();
-		
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory
-				.newInstance();
+
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
 		List<DadosRH> l = DadosRH.AR.all().fetch();
 		for (DadosRH d : l) {
 			Pessoa p = d.getPessoa();
-			if (p != null
-					&& (!mp.containsKey(p.getPessoa_id()) || p.getLotacao_tipo_papel().equals("Principal"))
-					&& (p.getPessoa_situacao().equals(1)
-							|| p.getPessoa_situacao().equals(2) || p.getPessoa_situacao()
-								.equals(31) || p.getPessoa_situacao().equals(12)))
+			if (p != null && (!mp.containsKey(p.getPessoa_id()) || p.getLotacao_tipo_papel().equals("Principal"))
+					&& (p.getPessoa_situacao().equals(1) || p.getPessoa_situacao().equals(2)
+							|| p.getPessoa_situacao().equals(31) || p.getPessoa_situacao().equals(12)))
 				mp.put(p.getPessoa_id(), p);
 
 			Lotacao x = d.getLotacao();
@@ -86,7 +94,7 @@ public class CorporativoController extends SrController {
 				mpp.put(pp.getPapel_pessoa_id(), new ArrayList<Papel>());
 			if (pp != null)
 				mpp.get(pp.getPapel_pessoa_id()).add(pp);
-			
+
 			Orgao org = d.getOrgao();
 
 		}
@@ -169,14 +177,14 @@ public class CorporativoController extends SrController {
 			setAttr(e, "nacionalidade", p.getPessoa_nacionalidade());
 			pessoas.appendChild(e);
 			if (mpp.containsKey(p.getPessoa_id())) {
-				for (Papel papeis : mpp.get(p.getPessoa_id()))	{
-					Element papel = doc.createElement("papel"); 
-					setAttr(papel, "id", papeis.getPapel_id()); 
-					setAttr(papel, "tipo",papeis.getPapel_lotacao_tipo());
-					setAttr(papel, "cargo", papeis.getPapel_cargo_id()); 
-					setAttr(papel,"funcaoConfianca", papeis.getPapel_funcao_id()); 
-					setAttr(papel, "lotacao", papeis.getPapel_lotacao_id()); 
-					e.appendChild(papel);	
+				for (Papel papeis : mpp.get(p.getPessoa_id())) {
+					Element papel = doc.createElement("papel");
+					setAttr(papel, "id", papeis.getPapel_id());
+					setAttr(papel, "tipo", papeis.getPapel_lotacao_tipo());
+					setAttr(papel, "cargo", papeis.getPapel_cargo_id());
+					setAttr(papel, "funcaoConfianca", papeis.getPapel_funcao_id());
+					setAttr(papel, "lotacao", papeis.getPapel_lotacao_id());
+					e.appendChild(papel);
 				}
 			}
 		}
@@ -188,9 +196,9 @@ public class CorporativoController extends SrController {
 
 	private ByteArrayOutputStream converterParaXML(Document doc) {
 		DOMSource xmlSource = new DOMSource(doc);
-		
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		StreamResult resultXML =  new StreamResult(baos);
+		StreamResult resultXML = new StreamResult(baos);
 		try {
 			TransformerFactory.newInstance().newTransformer().transform(xmlSource, resultXML);
 		} catch (TransformerConfigurationException e) {
@@ -206,7 +214,7 @@ public class CorporativoController extends SrController {
 		return baos;
 	}
 
-	private  void setAttr(Element e, String name, Object value) {
+	private void setAttr(Element e, String name, Object value) {
 		if (value == null)
 			return;
 		if (value instanceof Date) {

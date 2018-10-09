@@ -48,7 +48,7 @@ import com.mashape.unirest.http.Unirest;
 
 @Resource
 public class ExAutenticacaoController extends ExController {
-	private static final String URL_EXIBIR = "/app/externo/autenticar";
+	private static final String URL_EXIBIR = "/public/app/autenticar";
 	private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
 	private static final String APPLICATION_PDF = "application/pdf";
 
@@ -70,7 +70,7 @@ public class ExAutenticacaoController extends ExController {
 
 	@Get
 	@Post
-	@Path("/app/externo/autenticar")
+	@Path("/public/app/autenticar")
 	public void autenticar(final String n, final String answer,
 			final String ass, final String assinaturaB64,
 			final String certificadoB64, final String atributoAssinavelDataHora)
@@ -161,7 +161,7 @@ public class ExAutenticacaoController extends ExController {
 		result.forwardTo(this).arquivoAutenticado(buildJwtToken(n));
 	}
 
-	@Get("/app/externo/arquivoAutenticado_stream")
+	@Get("/public/app/arquivoAutenticado_stream")
 	public Download arquivoAutenticado_stream(final String jwt,
 			final boolean assinado, final Long idMov,
 			final String certificadoB64) throws Exception {
@@ -240,7 +240,7 @@ public class ExAutenticacaoController extends ExController {
 	}
 
 	// antigo metodo arquivo();
-	@Get("/app/externo/arquivoAutenticado")
+	@Get("/public/app/arquivoAutenticado")
 	public void arquivoAutenticado(final String jwt) throws Exception {
 		if (jwt == null) {
 			setDefaultResults();

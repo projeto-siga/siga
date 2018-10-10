@@ -327,7 +327,16 @@
 			</ul>
 		</li>
 
-		<li><a id="apostilaSiga" href="/siga/arquivos/apostila_sigaex.pdf" target="_blank">Apostila SIGA-Doc</a>
+		<li>
+			<c:choose>
+				<c:when test="${not empty f:resource('siga.ex.manual.url')}">
+						<a id="apostilaSiga" href="${f:resource('siga.ex.manual.url')}" target="_blank">Apostila SIGA-Doc</a>
+				</c:when>
+				<c:otherwise>
+					<a id="apostilaSiga" href="/siga/arquivos/apostila_sigaex.pdf" target="_blank">Apostila SIGA-Doc</a>
+	
+				</c:otherwise>
+			</c:choose>
 		</li>
 		
 		<li><a href="/siga/?GLO=true">Logoff</a>

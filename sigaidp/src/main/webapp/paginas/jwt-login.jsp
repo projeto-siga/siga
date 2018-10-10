@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 
 <siga:pagina titulo="Página de Login" desabilitarbusca="sim"
 	desabilitarmenu="sim"
@@ -37,6 +38,10 @@
 						SetInnerHTMLFromAjaxResponse("${url}", document.getElementById('gc-ancora'));
 					</script>
 				</c:when>
+				<c:when test="${not empty f:resource('siga.cabecalho.titulo') && fn:contains(f:resource('siga.cabecalho.titulo'), 'Governo do Estado de São Paulo')}">
+					<c:import url="comentarioSP.jsp" />
+				</c:when>
+
 				<c:otherwise>
 					<c:import url="comentario.jsp" />
 				</c:otherwise>
@@ -104,15 +109,17 @@
 			<!-- /login box -->
 
 			<!-- Sidebar Navigation -->
-			<div class="gt-sidebar-nav gt-sidebar-nav-blue">
-				<h3>Links Úteis</h3>
-				<ul>
-					<li><a href="/siga/arquivos/apostila_sigaex.pdf">Apostila
-							SIGA-Doc</a></li>
-					<li><a href="/siga/arquivos/apostila_sigawf.pdf">Apostila
-							SIGA-Workflow</a></li>
-				</ul>
-			</div>
+			<c:if test="${not empty f:resource('siga.cabecalho.titulo') && !fn:contains(f:resource('siga.cabecalho.titulo'), 'Governo do Estado de São Paulo')}">
+				<div class="gt-sidebar-nav gt-sidebar-nav-blue">
+					<h3>Links Úteis</h3>
+					<ul>
+						<li><a href="/siga/arquivos/apostila_sigaex.pdf">Apostila
+								SIGA-Doc</a></li>
+						<li><a href="/siga/arquivos/apostila_sigawf.pdf">Apostila
+								SIGA-Workflow</a></li>
+					</ul>
+				</div>
+			</c:if>
 			<!-- /Sidebar Navigation -->
 			<!-- Sidebar Content -->
 		</div>

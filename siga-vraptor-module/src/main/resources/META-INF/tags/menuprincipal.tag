@@ -281,6 +281,11 @@
 						</li>
 					</c:if>
 					<c:if
+                        test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_ORGAO:Cadastrar Orgãos')}">
+                        <li><a href="/siga/app/orgaoUsuario/listar">Cadastro de Orgãos</a>
+                        </li>
+                    </c:if>
+					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;WF_ADMIN:Administrar SIGAWF')}">
 						<li><a href="/sigawf/app/admin/administrar">Administrar SIGA WF</a>
 						</li>

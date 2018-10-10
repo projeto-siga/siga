@@ -361,6 +361,21 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+    public CpOrgaoUsuario consultarPorId(final CpOrgaoUsuario o) {
+        final Query query = getSessao().getNamedQuery(
+                "consultarIdOrgaoUsuario");
+        query.setLong("idOrgaoUsu", o.getIdOrgaoUsu());
+
+        query.setCacheable(true);
+        query.setCacheRegion(CACHE_QUERY_HOURS);
+
+        final List<CpOrgaoUsuario> l = query.list();
+        if (l.size() != 1)
+            return null;
+        return l.get(0);
+    }
 
 	@SuppressWarnings("unchecked")
 	public CpOrgaoUsuario consultarPorSigla(final CpOrgaoUsuario o) {
@@ -1692,7 +1707,7 @@ public class CpDao extends ModeloDao {
 		// cfg.setProperty("hibernate.show_sql", "false");
 
 		// descomentar para inpecionar o SQL
-	    cfg.setProperty("hibernate.show_sql", "true");
+	    cfg.setProperty("hibernate.show_sql", "false");
 		// cfg.setProperty("hibernate.format_sql", "false");
 		// cfg.setProperty("hibernate.use_sql_comments", "true");
 		// Disable second-level cache.
@@ -2116,7 +2131,9 @@ public class CpDao extends ModeloDao {
 	public List<DpPessoa> consultarPorMatriculaEOrgao(Long matricula,
 			Long idOrgaoUsu, boolean pessoasFinalizadas, boolean ordemDesc) {
 		Criteria c = getSessao().createCriteria(DpPessoa.class);
-		c.add(Restrictions.eq("matricula", matricula));
+		if(matricula != null) {
+			c.add(Restrictions.eq("matricula", matricula));
+		}
 		c.add(Restrictions.eq("orgaoUsuario.idOrgaoUsu", idOrgaoUsu));
 
 		if (pessoasFinalizadas) {

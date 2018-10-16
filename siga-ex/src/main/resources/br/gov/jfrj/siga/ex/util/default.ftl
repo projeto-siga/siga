@@ -4182,6 +4182,32 @@ Pede deferimento.</span><br/><br/><br/>
 	[/@documento]													
 [/#macro]
 
+[#macro diminuirEspacamento texto=""]
+<style>
+  p {
+	margin-bottom:0px;
+	margin-top:0px;
+  }
+  ol {
+    margin-bottom:0px;
+	margin-top:0px;
+  }
+  ol li {
+    margin-bottom:0px;
+	margin-top:0px;
+  }
+  ul {
+    margin-bottom:0px;
+	margin-top:0px;
+  }
+  ul li {
+    margin-bottom:0px;
+	margin-top:0px;
+  }
+</style>
+${texto} 
+[/#macro]
+
 [#assign _pathBrasao = "contextpath/imagens/brasao2.png" /]
 [#assign _tituloGeral = "PODER JUDICIÁRIO" /]
 [#assign _subtituloGeral = "JUSTIÇA FEDERAL" /]

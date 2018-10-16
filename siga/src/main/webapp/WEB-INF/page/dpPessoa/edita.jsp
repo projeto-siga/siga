@@ -92,13 +92,17 @@
 	}
 
 	function validarEmail(campo) {
-		var RegExp = /\b[\w]+@[\w]+\.[\w]+/;
-
-		if (campo.value.search(RegExp) == -1) {
-				alert("E-mail inválido!");
-				return false;
+		if(campo.value != "") {
+			var RegExp = /\b[\w]+@[\w]+\.[\w]+/;
+	
+			if (campo.value.search(RegExp) == -1) {
+					alert("E-mail inválido!");
+					return false;
+			}
+			return true;
+		} else {
+			return false;
 		}
-		return true;
 	}
 
 	function data(campo) {
@@ -244,7 +248,7 @@
 							<label>E-mail:</label>
 						</td>
 						<td>
-							<input type="text" id="email" name="email" value="${email}" maxlength="60" size="60" onblur="validarEmail(this)" onkeyup="this.value = this.value.toLowerCase().trim()"/>
+							<input type="text" id="email" name="email" value="${email}" maxlength="60" size="60" onchange="validarEmail(this)" onkeyup="this.value = this.value.toLowerCase().trim()"/>
 						</td>
 					</tr>
 					
@@ -252,7 +256,7 @@
 					<tr class="button">
 						<td>
 							<input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-large gt-btn-left" /> 
-							<input type="button" value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
+							<input type="button" value="Cancela" onclick="voltar();" class="gt-btn-medium gt-btn-left" />
 						</td>
 					</tr>
 				</table>
@@ -266,6 +270,11 @@
 
 </siga:pagina>
 <script>
+function voltar() {
+	frm.action = 'listar';
+	frm.submit();
+}
+
 function carregarRelacionados(id) {
 	frm.action = 'carregarCombos';
 	frm.submit();

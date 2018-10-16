@@ -777,7 +777,7 @@ public class CpDao extends ModeloDao {
 				query = getSessao().getNamedQuery(
 						"consultarQuantidadeDpLotacaoInclusiveFechadas");
 
-			query.setString("nome", o.getNome().replace(' ', '%'));
+			query.setString("nome", o.getNome() != null ? o.getNome().replace(' ', '%') : "%");
 
 			if (o.getIdOrgaoUsu() != null)
 				query.setLong("idOrgaoUsu", o.getIdOrgaoUsu());

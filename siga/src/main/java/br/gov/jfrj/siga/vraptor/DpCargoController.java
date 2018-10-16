@@ -119,7 +119,7 @@ public class DpCargoController extends
 				offset = 0;
 			}
 			dpCargo.setIdOrgaoUsu(idOrgaoUsu);
-			dpCargo.setNome(nome);
+			dpCargo.setNome(Texto.removeAcento(nome));
 			setItens(CpDao.getInstance().consultarPorFiltro(dpCargo, offset, 10));
 			result.include("itens", getItens());
 			result.include("tamanho", dao().consultarQuantidade(dpCargo));
@@ -169,7 +169,20 @@ public class DpCargoController extends
 		
 		List<DpPessoa> listPessoa = null;
 		
-		DpCargo cargo;		
+		DpCargo cargo = new DpCargo();
+		cargo.setNomeCargo(Texto.removeAcento(Texto.removerEspacosExtra(nmCargo).trim()));
+		CpOrgaoUsuario ou = new CpOrgaoUsuario();
+		ou.setIdOrgaoUsu(idOrgaoUsu);
+		cargo.setOrgaoUsuario(ou);
+		
+		cargo = dao().getInstance().consultarPorNomeOrgao(cargo);
+		
+		if(cargo != null && !cargo.getId().equals(id)) {
+			throw new AplicacaoException("Nome do cargo já cadastrado!");
+		}
+		
+		cargo = new DpCargo();
+		
 		if (id == null) {
 			cargo = new DpCargo();
 			Date data = new Date(System.currentTimeMillis());
@@ -179,7 +192,7 @@ public class DpCargoController extends
 			listPessoa = dao().getInstance().consultarPessoasComCargo(id);
 			
 		}
-		cargo.setDescricao(nmCargo);
+		cargo.setDescricao(Texto.removerEspacosExtra(nmCargo).trim());
 		
 		if (idOrgaoUsu != null && idOrgaoUsu != 0 && (listPessoa == null || listPessoa.size() == 0)) {
 			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();

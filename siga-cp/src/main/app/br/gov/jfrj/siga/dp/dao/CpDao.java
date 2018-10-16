@@ -340,7 +340,7 @@ public class CpDao extends ModeloDao {
 			final int itemPagina) {
 		try {
 			final Query query = getSessao().getNamedQuery(
-					"consultarPorFiltroCpOrgao");
+					"consultarPorFiltroCpOrgaoUsuario");
 			if (offset > 0) {
 				query.setFirstResult(offset);
 			}
@@ -391,6 +391,21 @@ public class CpDao extends ModeloDao {
 			return null;
 		return l.get(0);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public CpOrgaoUsuario consultarPorNome(final CpOrgaoUsuario o) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarNomeOrgaoUsuario");
+		query.setString("nome", o.getNmOrgaoUsu());
+
+		query.setCacheable(true);
+		query.setCacheRegion(CACHE_QUERY_HOURS);
+
+		final List<CpOrgaoUsuario> l = query.list();
+		if (l.size() != 1)
+			return null;
+		return l.get(0);
+	}
 
 	public Selecionavel consultarPorSigla(final CpOrgaoUsuarioDaoFiltro flt) {
 		final CpOrgaoUsuario o = new CpOrgaoUsuario();
@@ -401,7 +416,7 @@ public class CpDao extends ModeloDao {
 	public int consultarQuantidade(final CpOrgaoUsuarioDaoFiltro o) {
 		try {
 			final Query query = getSessao().getNamedQuery(
-					"consultarQuantidadeCpOrgao");
+					"consultarQuantidadeCpOrgaoUsuario");
 			String s = o.getNome();
 			if (s != null)
 				s = s.replace(' ', '%');
@@ -456,6 +471,19 @@ public class CpDao extends ModeloDao {
 		final Query query = getSessao().getNamedQuery(
 				"consultarPorSiglaDpCargo");
 		query.setString("siglaCargo", o.getSiglaCargo());
+
+		final List<DpCargo> l = query.list();
+		if (l.size() != 1)
+			return null;
+		return l.get(0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public DpCargo consultarPorNomeOrgao(final DpCargo o) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarPorNomeDpCargoOrgao");
+		query.setString("nome", o.getNomeCargo());
+		query.setLong("idOrgaoUsuario", o.getOrgaoUsuario().getIdOrgaoUsu());
 
 		final List<DpCargo> l = query.list();
 		if (l.size() != 1)
@@ -552,6 +580,19 @@ public class CpDao extends ModeloDao {
 		else
 			query.setLong("idOrgaoUsu", 0);
 
+		final List<DpFuncaoConfianca> l = query.list();
+		if (l.size() != 1)
+			return null;
+		return l.get(0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public DpFuncaoConfianca consultarPorNomeOrgao(final DpFuncaoConfianca o) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarPorNomeOrgaoDpFuncaoConfianca");
+		query.setString("nome", o.getNomeFuncao());
+		query.setLong("idOrgaoUsuario", o.getOrgaoUsuario().getIdOrgaoUsu());
+		
 		final List<DpFuncaoConfianca> l = query.list();
 		if (l.size() != 1)
 			return null;
@@ -654,6 +695,21 @@ public class CpDao extends ModeloDao {
 						consultarPorSigla(o.getOrgaoUsuario()).getId());
 		else
 			query.setLong("idOrgaoUsu", 0);
+
+		query.setCacheable(true);
+		query.setCacheRegion(CACHE_QUERY_CONFIGURACAO);
+		final List<DpLotacao> l = query.list();
+		if (l.size() != 1)
+			return null;
+		return l.get(0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public DpLotacao consultarPorNomeOrgao(final DpLotacao o) {
+		final Query query = getSessao().getNamedQuery(
+				"consultarPorNomeOrgaoDpLotacao");
+		query.setString("nome", o.getNomeLotacao());
+		query.setLong("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());
 
 		query.setCacheable(true);
 		query.setCacheRegion(CACHE_QUERY_CONFIGURACAO);

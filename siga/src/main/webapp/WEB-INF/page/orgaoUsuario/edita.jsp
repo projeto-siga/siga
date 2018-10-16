@@ -79,7 +79,7 @@
 						<td>
 							<c:choose>
 								<c:when test="${empty siglaOrgaoUsuario || podeAlterarSigla}">
-									<input type="text" name="siglaOrgaoUsuario" id="siglaOrgaoUsuario" value="${siglaOrgaoUsuario}" maxlength="2" size="5" style="text-transform:uppercase"/>	
+									<input type="text" name="siglaOrgaoUsuario" id="siglaOrgaoUsuario" value="${siglaOrgaoUsuario}" maxlength="2" size="5" style="text-transform:uppercase" onkeyup="this.value = this.value.trim()"/>	
 								</c:when>
 								<c:otherwise>
 									<c:out value="${siglaOrgaoUsuario }"/>

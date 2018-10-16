@@ -281,7 +281,7 @@
 						</li>
 					</c:if>
 					<c:if
-                        test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_ORGAO:Cadastrar Orgãos')}">
+                        test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_ORGAO_USUARIO:Cadastrar Orgãos Usuário')}">
                         <li><a href="/siga/app/orgaoUsuario/listar">Cadastro de Orgãos</a>
                         </li>
                     </c:if>
@@ -293,6 +293,11 @@
                     <c:if
                         test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_LOTACAO:Cadastrar Lotação')}">
                         <li><a href="/siga/app/lotacao/listar">Cadastro de Lotação</a>
+                        </li>
+                    </c:if>
+                    <c:if
+                        test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_FUNCAO:Cadastrar Função de Confiança')}">
+                        <li><a href="/siga/app/funcao/listar">Cadastro de Função de Confiança</a>
                         </li>
                     </c:if>
 					<c:if

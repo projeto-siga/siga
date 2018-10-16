@@ -21,7 +21,7 @@
 			<h2>Anexação de Arquivo Auxiliar -
 				${mob.siglaEDescricaoCompleta}</h2>
 			<div class="gt-content-box gt-for-table">
-				<form action="anexar_arquivo_auxiliar_gravar" method="POST"
+				<form action="anexar_arquivo_auxiliar_gravar" method="POST" onsubmit="sbmt.disabled=true;"
 					enctype="multipart/form-data" class="form">
 					<input type="hidden" name="postback" value="1" /> <input
 						type="hidden" name="sigla" value="${sigla}" />
@@ -37,7 +37,7 @@
 						<tr>
 							<td colspan="2"><input type="submit" value="Ok"
 								class="gt-btn-medium gt-btn-left"
-								onclick="javascript: return validaSelecaoAnexo( this.form );" />
+								onclick="javascript: return validaSelecaoAnexo( this.form );" name="sbmt"/>
 								<input type="button" value="Voltar"
 								onclick="javascript:window.location.href='/sigaex/app/expediente/doc/exibir?sigla=${sigla}'"
 								class="gt-btn-medium gt-btn-left" /></td>

@@ -30,10 +30,7 @@ public class IntegracaoLdapViaWebService {
         MultivaluedMap<String, String> dadosForm = new MultivaluedMapImpl();
         dadosForm.add("login", login);
         dadosForm.add("newPassword", novaSenha);
-        final ClientResponse response = webResource 
-        									.type(MediaType.APPLICATION_FORM_URLENCODED)
-        									.accept("application/json")
-        									.post(ClientResponse.class, dadosForm);
+        final ClientResponse response = webResource.type(MediaType.APPLICATION_FORM_URLENCODED).accept("application/json").post(ClientResponse.class, dadosForm);
         if (response.getStatus() != 200)
         {
             throw new RuntimeException("Failed Http Error code " + response.getStatus());

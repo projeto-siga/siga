@@ -19,6 +19,7 @@
 package br.gov.jfrj.siga.integracao.ldap;
 
 import br.gov.jfrj.ldap.conf.LdapProperties;
+import br.gov.jfrj.siga.base.AplicacaoException;
 
 public class IntegracaoLdapProperties extends LdapProperties {
 	
@@ -30,6 +31,14 @@ public class IntegracaoLdapProperties extends LdapProperties {
 			return false;
 		}
 
+	}
+	
+	public String getEnderecoWebServiceLdap() {
+		try {
+			return this.obterPropriedade("ws.endereco");
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao obter o endereco do Web Service do LDAP", 9, e);
+		}
 	}
 
 	@Override

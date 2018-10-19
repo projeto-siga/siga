@@ -157,6 +157,11 @@
 			<groupId>jsptags</groupId>
 			<artifactId>pager-taglib</artifactId>
 		</dependency>
+		<dependency>
+		    <groupId>com.sun.jersey</groupId>
+		    <artifactId>jersey-client</artifactId>
+		    <version>1.9.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>siga</groupId>

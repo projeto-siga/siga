@@ -31,7 +31,6 @@ public class SigaJwtProvider {
 		try {
 			this.options = options;
 			defaultTTLToken = options.getTtlToken();
-			System.out.println("TTL: " + defaultTTLToken);
 		} catch (Exception e) {
 			throw new SigaJwtProviderException(
 					"Problema ao definir o algoritimo", e);

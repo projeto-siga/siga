@@ -1337,7 +1337,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable, Ca
 	public Map<String, String> getFormConfidencial(DpPessoa titular, DpLotacao lotaTitular) {
 		if (Ex.getInstance()
 				.getComp()
-				.podeAcessarDocumento(getTitular(), getLotaTitular(),
+				.podeAcessarDocumento(titular, lotaTitular,
 						getMobilGeral())) {
 			return getForm();
 		} else {

@@ -1322,6 +1322,17 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return m;
 	}
 
+	public Map<String, String> getFormConfidencial(DpPessoa titular, DpLotacao lotaTitular) {
+		if (Ex.getInstance()
+				.getComp()
+				.podeAcessarDocumento(getTitular(), getLotaTitular(),
+						getMobilGeral())) {
+			return getForm();
+		} else {
+			return new Hashtable<String, String>();
+		}
+	}
+	
 	/**
 	 * COMPLETAR
 	 */

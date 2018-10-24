@@ -62,6 +62,9 @@ public class SigaJwtFormServlet extends HttpServlet {
 			String modulo = extrairModulo(request);
 			SigaJwtBL jwtBL = inicializarJwtBL(modulo);
 
+			JSONObject obj = new JSONObject(usuarioLogado);
+			usuario = obj.getString("siglaPessoa");
+			
 			String token = jwtBL.criarToken(usuario, null, null, null);
 			response.addCookie(AuthJwtFormFilter.buildCookie(token));
 			response.sendRedirect(request.getParameter("cont"));

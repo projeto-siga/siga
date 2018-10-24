@@ -31,6 +31,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpServico;
+import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
@@ -40,6 +41,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.gi.service.GiService;
+import br.gov.jfrj.siga.ldap.SigaLDAP;
 
 /**
  * Esta classe implementa os métodos de gestão de identidade O acesso à esta
@@ -52,21 +54,57 @@ import br.gov.jfrj.siga.gi.service.GiService;
 @WebService(serviceName = "GiService", endpointInterface = "br.gov.jfrj.siga.gi.service.GiService", targetNamespace = "http://impl.service.gi.siga.jfrj.gov.br/")
 public class GiServiceImpl implements GiService {
 
-    @Override
+	@Override
 	public String login(String matricula, String senha) {
 		String resultado = "";
+		CpIdentidade id = null;
+
 		try {
-			final String hashAtual = GeraMessageDigest.executaHash(
-					senha.getBytes(), "MD5");
+
+			String urlLdap = System.getProperty("idp.ldap.url");
+			String domain = System.getProperty("idp.ldap.domain");
+
 			CpDao dao = CpDao.getInstance();
+			if (urlLdap != null) {
+				boolean autenticado = SigaLDAP.authenticateJndi(matricula, senha, urlLdap, domain);
+				DpPessoa pessoa = dao.consultarDpPessoaPorLoginAD(matricula);
 
-			DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
-			flt.setSigla(matricula);
+				if (pessoa != null) {
+					List<CpIdentidade> l = dao.consultaIdentidades(pessoa);
+					for (CpIdentidade i : l) {
+						if (i.getCpTipoIdentidade().isTipoLdap()) {
+							id = i;
+							break;
+						}
+					}
 
-		//	DpPessoa p = (DpPessoa) dao.consultarPorSigla(flt);
-			CpIdentidade id = null;
-			id = dao.consultaIdentidadeCadastrante(matricula, true);
-			if (id != null && id.getDscSenhaIdentidade().equals(hashAtual)) {
+					if (id == null) {
+						id = new CpIdentidade();
+						id.setCpTipoIdentidade(dao.consultar(CpTipoIdentidade.LDAP, CpTipoIdentidade.class, false));
+						id.setCpOrgaoUsuario(pessoa.getOrgaoUsuario());
+						id.setDpPessoa(pessoa);
+						id.setDtCriacaoIdentidade(dao.consultarDataEHoraDoServidor());
+						id.setNmLoginIdentidade(matricula);
+						id.setHisDtIni(id.getDtCriacaoIdentidade());
+						id.setHisAtivo(1);
+						dao.iniciarTransacao();
+						dao.gravarComHistorico(id, null);
+						dao.commitTransacao();
+					}
+				}
+			} else {
+
+				final String hashAtual = GeraMessageDigest.executaHash(senha.getBytes(), "MD5");
+
+				DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
+				flt.setSigla(matricula);
+
+				// DpPessoa p = (DpPessoa) dao.consultarPorSigla(flt);
+				id = dao.consultaIdentidadeCadastrante(matricula, true);
+				if (id != null && !id.getDscSenhaIdentidade().equals(hashAtual))
+					id = null;
+			}
+			if (id != null) {
 				resultado = parseLoginResult(id);
 			}
 

@@ -116,6 +116,18 @@
 	       	and pes.dataFimPessoa = null]]>
 	</query>
 
+	<query name="consultarPorMatriculaUnicaDpPessoa">
+		<![CDATA[select pes from DpPessoa pes where
+			pes.matricula = :matricula 
+	       	and pes.dataFimPessoa = null]]>
+	</query>
+	
+	<query name="consultarDpPessoaPorLoginAD">
+		<![CDATA[select pes from DpPessoa pes where
+			pes.siglaPessoa = :login 
+	       	and pes.dataFimPessoa = null]]>
+	</query>
+
 	<query name="consultarPorIdInicialDpPessoa">
 		<![CDATA[select pes from DpPessoa pes where
 			pes.idPessoaIni = :idPessoaIni

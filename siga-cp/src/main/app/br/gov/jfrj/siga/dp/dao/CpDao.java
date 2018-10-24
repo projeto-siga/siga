@@ -876,6 +876,38 @@ public class CpDao extends ModeloDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public DpPessoa consultarPorMatriculaUnica(final Long matricula) {
+		try {
+			final Query query = getSessao().getNamedQuery(
+					"consultarPorMatriculaUnicaDpPessoa");
+			query.setLong("matricula", matricula);
+
+			final List<DpPessoa> l = query.list();
+			if (l.size() != 1)
+				return null;
+			return l.get(0);
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public DpPessoa consultarDpPessoaPorLoginAD(final String login) {
+		try {
+			final Query query = getSessao().getNamedQuery(
+					"consultarDpPessoaPorLoginAD");
+			query.setString("login", login);
+
+			final List<DpPessoa> l = query.list();
+			if (l.size() != 1)
+				return null;
+			return l.get(0);
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
+
 	/**
 	 * retorna a pessoa pelo sesb+matricula
 	 * 

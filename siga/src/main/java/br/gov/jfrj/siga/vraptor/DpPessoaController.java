@@ -122,9 +122,18 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	public Selecionavel selecionarPorNome(final DpPessoaDaoFiltro flt)
 			throws AplicacaoException {
 		Selecionavel sel = null;
-
-		// Acrescenta o sesb e repete a busca
 		final String sigla = flt.getSigla();
+
+		// inserir codigo para busca por matricula unica no banco
+		try {
+			Long matricula = Long.valueOf(sigla);
+			sel = dao().consultarPorMatriculaUnica(matricula);
+			if (sel != null)
+				return sel;
+		} catch (Exception ex) {
+		}
+		
+		// Acrescenta o sesb e repete a busca
 		flt.setSigla(getTitular().getSesbPessoa() + sigla);
 		sel = dao().consultarPorSigla(flt);
 		if (sel != null)

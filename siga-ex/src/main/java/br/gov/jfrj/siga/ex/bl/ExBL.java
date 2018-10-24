@@ -18,11 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.bl;
 
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -51,6 +49,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,7 +58,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Criteria;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -70,18 +68,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
-
-import com.google.common.base.Strings;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 
 import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.itextpdf.Documento;
@@ -103,7 +89,7 @@ import br.gov.jfrj.siga.bluc.service.ValidateResponse;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -148,13 +134,29 @@ import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.util.BIE.ManipuladorEntrevista;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.ObjetoBase;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.parser.SiglaParser;
-import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.wf.service.WfService;
+
+import com.crivano.swaggerservlet.ISwaggerRequest;
+import com.crivano.swaggerservlet.ISwaggerResponse;
+import com.crivano.swaggerservlet.SwaggerAsyncResponse;
+import com.crivano.swaggerservlet.SwaggerCall;
+import com.google.common.base.Strings;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 public class ExBL extends CpBL {
 	private static final String MODELO_FOLHA_DE_ROSTO_EXPEDIENTE_INTERNO = "Folha de Rosto - Expediente Interno";
@@ -1924,6 +1926,14 @@ public class ExBL extends CpBL {
 
 			mov.setDescrMov(subscritor.getNomePessoa() + ":"
 					+ subscritor.getSigla());
+			
+			// Hash de auditoria
+			//
+			final byte[] pdf = doc.getConteudoBlobPdf();
+			byte[] sha256 = BlucService.calcSha256(pdf);
+			String cpf = Long.toString(subscritor.getCpfPessoa());
+			acrescentarHashDeAuditoria(mov, sha256,
+					autenticando, subscritor.getNomePessoa(), cpf, null);
 
 			gravarMovimentacao(mov);
 			concluirAlteracaoDocComRecalculoAcesso(doc);
@@ -2059,6 +2069,15 @@ public class ExBL extends CpBL {
 					+ subscritor.getSigla());
 
 			mov.setExMovimentacaoRef(movAlvo);
+			
+			// Hash de auditoria
+			//
+			final byte[] pdf = mov.getConteudoBlobpdf();
+			byte[] sha256 = BlucService.calcSha256(pdf);
+			String cpf = Long.toString(subscritor.getCpfPessoa());
+			acrescentarHashDeAuditoria(mov, sha256,
+					tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA, 
+					subscritor.getNomePessoa(), cpf, null);
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExMobil());
@@ -4273,6 +4292,7 @@ public class ExBL extends CpBL {
 		novaMov.setSubscritor(mov.getSubscritor());
 		novaMov.setTitular(mov.getTitular());
 		novaMov.setExPapel(mov.getExPapel());
+		acrescentarCamposDeAuditoria(novaMov);
 		return novaMov;
 	}
 
@@ -4649,9 +4669,6 @@ public class ExBL extends CpBL {
 		}
 
 		Date dt = dtMovIni != null ? dtMovIni : dao().dt();
-		ExMovimentacao mov;
-
-		mov = new ExMovimentacao();
 
 		try {
 			iniciarAlteracao();
@@ -4687,11 +4704,10 @@ public class ExBL extends CpBL {
 				if (m.equals(mob)
 						|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
 						|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) {
-
 					final ExTipoMovimentacao tpmov = dao().consultar(idTpMov,
 							ExTipoMovimentacao.class, false);
 
-					mov = criarNovaMovimentacaoTransferencia(
+					ExMovimentacao mov = criarNovaMovimentacaoTransferencia(
 							tpmov.getIdTpMov(), cadastrante, lotaCadastrante,
 							m, dtMov, dtFimMov,
 							(subscritor == null && fDespacho) ? cadastrante
@@ -5362,7 +5378,75 @@ public class ExBL extends CpBL {
 			if (mov.getResp() == null)
 				mov.setResp(cadastrante);
 		}
+		acrescentarCamposDeAuditoria(mov);
 		return mov;
+	}
+	
+	private void acrescentarCamposDeAuditoria(ExMovimentacao mov) {
+		String principal = ContextoPersistencia.getUserPrincipal();
+		if (principal != null) {
+			CpIdentidade identidade = dao().consultaIdentidadeCadastrante(principal, true);
+			mov.setAuditIdentidade(identidade);
+		}
+		RequestInfo ri = CurrentRequest.get();
+		if (ri != null) {
+			String ip = ri.getRequest().getHeader("X-Forwarded-For");
+			if (ip == null)
+				ip = ri.getRequest().getRemoteHost();
+			mov.setAuditIP(ip);
+		}
+	}
+	
+	private final int HASH_TIMEOUT_MILLISECONDS = 5000;
+	
+	private static class TimestampPostRequest implements ISwaggerRequest {
+		 String system;
+		 byte[] sha256;
+		 String tipo;
+		 String nome;
+		 String cpf;
+		 String json;
+	}
+
+	private static class TimestampPostResponse implements ISwaggerResponse {
+		 String jwt;
+		 String id;
+		 Date time;
+		 String url;
+		 String host;
+	}
+	
+	private void acrescentarHashDeAuditoria(ExMovimentacao mov, byte[] sha256,
+			boolean autenticar, String nome, String cpf, String json) {
+		try {
+			String timestampUrl = Cp.getInstance().getProp().timestampUrl();
+			if (timestampUrl == null)
+				return;
+			TimestampPostRequest req = new TimestampPostRequest();
+			req.system = Cp.getInstance().getProp().timestampSystem();
+			req.sha256 = sha256;
+			req.tipo = autenticar ? "auth" : "sign";
+			req.nome = nome;
+			req.cpf = cpf;
+			req.json = json;
+			SwaggerAsyncResponse<TimestampPostResponse> resp = SwaggerCall
+					.callAsync("obter timestamp", null, "POST", timestampUrl + "/timestamp",
+							req, TimestampPostResponse.class).get(
+							HASH_TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS);
+			if (resp != null && resp.getException() != null)
+				throw new RuntimeException(
+						"Exceção obtendo carimbo de tempo para a assinatura com senha",
+						resp.getException());
+			if (resp == null || resp.getResp() == null
+					|| resp.getResp() == null)
+				throw new RuntimeException(
+						"Carimbo de tempo para a assinatura com senha indisponível");
+			mov.setAuditHash(resp.getResp().jwt);
+		} catch (Exception e) {
+			throw new RuntimeException(
+					"Erro obtendo o carimbo de tempo para a assinatura com senha",
+					e);
+		}
 	}
 
 	private ExMovimentacao criarNovaMovimentacaoTransferencia(
@@ -5446,6 +5530,7 @@ public class ExBL extends CpBL {
 			if (mov.getResp() == null)
 				mov.setResp(cadastrante);
 		}
+		acrescentarCamposDeAuditoria(mov);
 		return mov;
 	}
 

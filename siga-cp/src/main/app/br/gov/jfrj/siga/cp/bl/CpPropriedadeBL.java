@@ -80,6 +80,12 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 	public String xjusPassword  ( ) throws Exception {
 		return this.obterPropriedade("xjus.password");
 	}
+	public String timestampUrl  ( ) throws Exception {
+		return this.obterPropriedade("timestamp.url");
+	}
+	public String timestampSystem  ( ) throws Exception {
+		return this.obterPropriedade("timestamp.system");
+	}
 	@Override
 	public String getPrefixoModulo() {
 		return "siga.cp";

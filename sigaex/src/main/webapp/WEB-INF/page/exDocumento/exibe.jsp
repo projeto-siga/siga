@@ -174,7 +174,7 @@
 
 					<c:choose>
 						<c:when test="${docVO.conteudoBlobHtmlString != null}">
-							<div class="gt-content-box" style="padding: 10px;">
+							<div class="gt-content-box siga-doc-html" style="padding: 10px;">
 								<table style="width: 100%">
 									<tr>
 										<td><tags:fixdocumenthtml>

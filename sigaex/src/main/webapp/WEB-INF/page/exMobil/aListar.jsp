@@ -374,7 +374,7 @@
 										"atendente lotação nome": '<c:out value="${documento[2].dpLotacaoIni.lotacaoAtual.descricao}" />';
 										<c:if test="${visualizacao == 4}">
 											<c:forEach var="campo" items="${campos.keySet()}">
-												,"${campos.get(campo)}": '<c:out value="${documento[0].form[campo]}" />'
+											,"${campos.get(campo)}": '<c:out value="${documento[0].getFormConfidencial(titular, lotaTitular)[campo]}" />'
 											</c:forEach>
 										</c:if>
 									},
@@ -585,7 +585,7 @@
 										</td>
 										<c:if test="${visualizacao == 3}">
 											<c:forEach var="campo" items="${campos.keySet()}">
-												<td>${documento[0].form[campo]}</td>
+												<td>${documento[0].getFormConfidencial(titular, lotaTitular)[campo]}</td>
 											</c:forEach>
 										</c:if>
 									</tr>

@@ -336,10 +336,13 @@ public class ExMobilController extends
 		if (visualizacao == 3 || visualizacao == 4) {
 			TreeMap campos = new TreeMap<String, String>();
 			for (Object[] oa : (List<Object[]>) this.getItens()) {
-				for (String s : ((ExDocumento) oa[0]).getForm().keySet()) {
-					Object nomeCampo = preprocessarNomeCampo(s);
-					if (nomeCampo != null)
-						campos.put(s, nomeCampo);
+				ExDocumento doc = (ExDocumento) oa[0];
+				if(Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), doc.getMobilGeral())) {
+					for (String s : doc.getForm().keySet()) {
+						Object nomeCampo = preprocessarNomeCampo(s);
+						if (nomeCampo != null)
+							campos.put(s, nomeCampo);
+					}
 				}
 			}
 			result.include("campos", campos);

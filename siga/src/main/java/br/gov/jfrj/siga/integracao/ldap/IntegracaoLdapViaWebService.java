@@ -23,7 +23,7 @@ public class IntegracaoLdapViaWebService {
 		return instancia;
 	}
 	
-	public synchronized boolean trocarSenha(String login, String novaSenha) {
+	public synchronized boolean trocarSenha(String login, String novaSenha) throws Exception {
 		final Client client = new Client();
 		String enderecoWSLDAP = props.getEnderecoWebServiceLdap();
         final WebResource webResource = client.resource(enderecoWSLDAP);
@@ -33,7 +33,7 @@ public class IntegracaoLdapViaWebService {
         final ClientResponse response = webResource.type(MediaType.APPLICATION_FORM_URLENCODED).accept("application/json").post(ClientResponse.class, dadosForm);
         if (response.getStatus() != 200)
         {
-            throw new RuntimeException("Failed Http Error code " + response.getStatus());
+            throw new Exception("Erro de acesso ao web service. HTTP error code: " + response.getStatus());
         }
         final String output = response.getEntity(String.class);
         
@@ -41,6 +41,6 @@ public class IntegracaoLdapViaWebService {
         if(output.contains(login))
         	return true;
 		
-		return false;
+        throw new Exception("Mensagem: " + output, new Exception("Erro ao trocar senha."));
 	}
 }

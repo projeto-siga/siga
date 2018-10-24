@@ -24,8 +24,10 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -407,14 +409,39 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return String.valueOf(getNumVia2());
 	}
 
-	public int compareTo(final ExMovimentacao o) {
+	private Integer tpMovDesempatePosicao(Long idTpMov) {
+		final List<Long> tpMovDesempate = Arrays.asList(new Long[] {ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA});
+
+		if (idTpMov == null)
+			return Integer.MAX_VALUE;
+		
+		int i = tpMovDesempate.indexOf(idTpMov);
+		if (i == -1)
+			return Integer.MAX_VALUE;
+		return i;
+	}
+	
+	public int compareTo(final ExMovimentacao mov) {
 		try {
-			final ExMovimentacao mov = (ExMovimentacao) o;
 			int i = 0;
 			if (getDtIniMov() != null)
 				i = getDtIniMov().compareTo(mov.getDtIniMov());
 			if (i != 0)
 				return i;
+			
+			if (getExTipoMovimentacao() != null && mov.getExTipoMovimentacao() != null) {
+				i = tpMovDesempatePosicao(getExTipoMovimentacao().getId()).compareTo(
+						tpMovDesempatePosicao(mov.getExTipoMovimentacao().getId()));
+				if (i != 0)
+					return i;
+			}
+			
 			i = getIdMov().compareTo(mov.getIdMov());
 			return i;
 		} catch (final Exception ex) {

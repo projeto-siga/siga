@@ -1692,7 +1692,7 @@ public class CpDao extends ModeloDao {
 		// cfg.setProperty("hibernate.show_sql", "false");
 
 		// descomentar para inpecionar o SQL
-	    cfg.setProperty("hibernate.show_sql", "true");
+	    // cfg.setProperty("hibernate.show_sql", "true");
 		// cfg.setProperty("hibernate.format_sql", "false");
 		// cfg.setProperty("hibernate.use_sql_comments", "true");
 		// Disable second-level cache.

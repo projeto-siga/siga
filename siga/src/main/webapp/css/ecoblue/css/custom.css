@@ -665,3 +665,7 @@ ul.inner li a {
     color: @dropdown-link-color;
     white-space: nowrap; 
 }
+
+.siga-doc-html{
+	word-break: break-word;
+}

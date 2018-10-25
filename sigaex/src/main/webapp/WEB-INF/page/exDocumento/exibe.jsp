@@ -174,7 +174,7 @@
 
 					<c:choose>
 						<c:when test="${docVO.conteudoBlobHtmlString != null}">
-							<div class="gt-content-box" style="padding: 10px;">
+							<div class="gt-content-box siga-doc-html" style="padding: 10px;">
 								<table style="width: 100%">
 									<tr>
 										<td><tags:fixdocumenthtml>
@@ -901,12 +901,14 @@
 					</div>
 
 					<div class="gt-sidebar-content">
-						<a title="Anexar um novo arquivo auxiliar"
-							style="float: right; margin-top: -3px;"
-							href="${linkTo[ExMovimentacaoController].anexarArquivoAuxiliar}?sigla=${sigla}"
-							${popup?'target="_blank" ':''}> <img
-							src="/siga/css/famfamfam/icons/add.png">
-						</a>
+						<c:if test="${docVO.podeAnexarArquivoAuxiliar}">
+							<a title="Anexar um novo arquivo auxiliar"
+								style="float: right; margin-top: -3px;"
+								href="${linkTo[ExMovimentacaoController].anexarArquivoAuxiliar}?sigla=${sigla}"
+								${popup?'target="_blank" ':''}> <img
+								src="/siga/css/famfamfam/icons/add.png">
+							</a>
+						</c:if>
 						<h3>Arquivos Auxiliares</h3>
 						<c:forEach var="mov" items="${m.movs}">
 							<c:if test="${mov.idTpMov == 64 and not mov.cancelada}">

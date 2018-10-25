@@ -52,12 +52,10 @@ public class UsuarioController extends SigaController {
 		if ("on".equals(usuario.getTrocarSenhaRede())) {
 			try{
 				//IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);
-				if (!IntegracaoLdapViaWebService.getInstancia().trocarSenha(nomeUsuario, senhaNova)) {
-					throw new Exception("Houve um erro ao trocar a senha atraves do WSLDAP.");
-				}
+				IntegracaoLdapViaWebService.getInstancia().trocarSenha(nomeUsuario, senhaNova);
 			} catch(Exception e){
-				throw new AplicacaoException("Não foi possível alterar a senha de rede e e-mail. "
-						+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Alterar Senha de Rede\"", 9, e);
+				throw new Exception("Não foi possível alterar a senha de rede e e-mail. "
+						+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Alterar Senha de Rede\"");
 			}
 		}
 

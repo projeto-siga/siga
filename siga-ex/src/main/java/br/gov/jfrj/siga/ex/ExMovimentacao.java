@@ -417,7 +417,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		return i;
 	}
 
-	public int compareTo(final ExMovimentacao o) {
+	public int compareTo(final ExMovimentacao mov) {
 		try {
 			int i = 0;
 			if (getDtIniMov() != null)

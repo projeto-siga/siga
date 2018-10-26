@@ -86,7 +86,7 @@ public class WfDao extends CpDao {
 	public List<TaskInstance> consultarTarefasAtivasPorDocumento(String siglaDoc) {
 		Query query = getSessao().getNamedQuery(
 				"consultarTarefasAtivasPorDocumento");
-		query.setParameter("siglaDoc", siglaDoc + "%");
+		query.setParameter("siglaDoc", siglaDoc);
 		return query.list();
 	}
 

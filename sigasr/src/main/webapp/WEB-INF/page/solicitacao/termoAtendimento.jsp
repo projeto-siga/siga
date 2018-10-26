@@ -60,17 +60,23 @@ function printpage()
 				(${solicitacao.local.nomeComplexo})
 				</c:if>
 			</p>
+			
+			
 		<c:if test="${not empty solicitacao.telPrincipal}">
 			<p>
 				<font style="font-size: 11pt; font-weight: bold; text-align: left;">
 					Telefone:&nbsp; </font> <font style="font-size: 11pt;">
 					${solicitacao.telPrincipal} 
+				</font>
+			</p>
 		</c:if>
 		<c:if test="${not empty solicitacao.endereco}">
 			<p>
 				<font style="font-size: 11pt; font-weight: bold; text-align: left;">
 					Endereco&nbsp; </font> <font style="font-size: 11pt;">
 					${solicitacao.endereco} 
+				</font>
+			</p>
 		</c:if>
 		</font>
 			</p>
@@ -98,6 +104,14 @@ function printpage()
 			${solicitacao.acaoAtual.siglaAcao} - ${solicitacao.acaoAtual.descricao}
 			</p>
 		</div>
+		<div style="clear:both;text-align:left;">
+		<c:forEach items="${atributos}" var="att">
+			<p style="float: left; font-size: 9pt; padding: 0px">
+				<font style="font-size: 11pt; font-weight: bold; text-align:left; ">${att.atributo.nomeAtributo}: &nbsp;</font>
+				<font style="font-size: 11pt;">${att.valorAtributoSolicitacao}</font>
+			</p>
+		</c:forEach>
+		</div>
 		
 		<div style="clear:both;">
 		<h3 style="font-size: 161.6%; font-weight: bold; color: #0E2029; text-align:center;">DADOS DA SOLICITA&Ccedil;&Atilde;O</h3>
@@ -118,7 +132,9 @@ function printpage()
 			</font>
 			<p style="text-align: left;">
 			________________________________________________________________________________________________________________
+			<br/><br/>
 			________________________________________________________________________________________________________________
+			<br/><br/>
 			________________________________________________________________________________________________________________
 			
 			</p>
@@ -137,19 +153,21 @@ function printpage()
 		<div style="height: 50px; text-align:center;">
 			<p> 
 			<font style="font-size: 11pt; font-weight: bold; text-align:center; ">
-			Data:&nbsp;__/__/____	__:__&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;
+			Data:&nbsp;____&nbsp;/&nbsp;____&nbsp;/&nbsp;________&nbsp;&nbsp;&nbsp;____&nbsp;:&nbsp;____<br/><br/><br/>
 			Assinatura:&nbsp;_______________________________________________________ 
 			</font>
 			</p>
 		</div>
 		<p></p>
-		
+		<br/><br/>
 		<div style="height: 80px; font-size: 11pt; font-weight: bold; text-align:center; ">
 			<div>
 			<p style="font-weight: normal; text-align: left;">
 		 	NOME DO T&Eacute;CNICO:
 		 	</p>
 		 	</div>
+		 	<br/><br/>
 			<div style="width: 45%; float: left; font-weight: normal; text-align:left;">
 		   	VISTO DO T&Eacute;CNICO:
 		   	</div>				

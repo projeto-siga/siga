@@ -867,7 +867,11 @@ public class SolicitacaoController extends SrController {
     	if (solicitacao.isFilha()){
     		solicitacao.setDescrSolicitacao(solicitacao.getDescricao());
     	}
+    	boolean todoOContexto = solicitacao.isParteDeArvore();
+    	Set<SrAtributoSolicitacao> atributos = solicitacao.getAtributoSolicitacaoSetAtual(todoOContexto);
+    	
         result.include(SOLICITACAO, solicitacao);
+        result.include("atributos", atributos);
     }
 
     @Path("app/solicitacao/desfazerUltimaMovimentacao")

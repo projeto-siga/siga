@@ -239,7 +239,7 @@
 		<attribute>
 			<name>debug</name>
 			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
+			<rtexprvalue>false</rtexprvalue>
 			<!--%%if "true", dumps to stdout debug information %%-->
 		</attribute>
 	</tag>
@@ -929,7 +929,7 @@
 		<attribute>
 			<name>debug</name> 
 			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
+			<rtexprvalue>false</rtexprvalue>
 			<!--%%if "true" than it dumps to STDOUT debug information%%-->
 		</attribute>
 	</tag>

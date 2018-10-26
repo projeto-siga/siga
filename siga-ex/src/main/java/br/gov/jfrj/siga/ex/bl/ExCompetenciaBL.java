@@ -2730,7 +2730,27 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO);
 	}
 
-	
+	/**
+	 * Retorna se é possível anexar um arquivo auxiliar no mob.
+	 * Regras:
+	 * <ul>
+	 * <li>Não pode haver configuração impeditiva.</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeAnexarArquivoAuxiliar(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {
+		
+		return getConf().podePorConfiguracao(titular, lotaTitular,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
+
 	/**
 	 * Retorna se é possível cancelar uma movimentação de vinculação de perfil,
 	 * passada através do parâmetro mov. As regras são as seguintes:

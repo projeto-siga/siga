@@ -19,6 +19,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdap;
+import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdapViaWebService;
 
 @Resource
 public class UsuarioController extends SigaController {
@@ -50,10 +51,11 @@ public class UsuarioController extends SigaController {
 		
 		if ("on".equals(usuario.getTrocarSenhaRede())) {
 			try{
-				IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);	
+				//IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);
+				IntegracaoLdapViaWebService.getInstancia().trocarSenha(nomeUsuario, senhaNova);
 			} catch(Exception e){
-				throw new AplicacaoException("Não foi possível alterar a senha de rede e e-mail. "
-						+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Alterar Senha de Rede\"", 9, e);
+				throw new Exception("Não foi possível alterar a senha de rede e e-mail. "
+						+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Alterar Senha de Rede\"");
 			}
 		}
 

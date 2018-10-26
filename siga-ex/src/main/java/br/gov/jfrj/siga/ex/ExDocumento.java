@@ -1322,6 +1322,17 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return m;
 	}
 
+	public Map<String, String> getFormConfidencial(DpPessoa titular, DpLotacao lotaTitular) {
+		if (Ex.getInstance()
+				.getComp()
+				.podeAcessarDocumento(titular, lotaTitular,
+						getMobilGeral())) {
+			return getForm();
+		} else {
+			return new Hashtable<String, String>();
+		}
+	}
+	
 	/**
 	 * COMPLETAR
 	 */
@@ -2461,7 +2472,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 	@Override
 	public boolean isInternoProduzido() {
-		return true;
+		if (getExTipoDocumento() == null)
+			return false;
+		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO);
 	}
 
 	public boolean temPerfil(DpPessoa titular, DpLotacao lotaTitular, long papel) {

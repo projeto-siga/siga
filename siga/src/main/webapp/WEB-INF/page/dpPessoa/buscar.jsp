@@ -77,7 +77,7 @@ function sbmt(offset) {
 		<td>Fim de Vigência</td>
 	</tr>
 
-	<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}"
+	<siga:paginador maxItens="10" maxIndices="${empty maxIndices ? 10 : maxIndices}" totalItens="${tamanho}"
 		itens="${pessoas}" var="pessoa">
 		<tr class="${evenorodd}">
 			<td align="center"><a

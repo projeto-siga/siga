@@ -281,6 +281,31 @@
 						</li>
 					</c:if>
 					<c:if
+                        test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_ORGAO_USUARIO:Cadastrar Orgãos Usuário')}">
+                        <li><a href="/siga/app/orgaoUsuario/listar">Cadastro de Orgãos</a>
+                        </li>
+                    </c:if>
+                    <c:if
+                        test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_CARGO:Cadastrar Cargo')}">
+                        <li><a href="/siga/app/cargo/listar">Cadastro de Cargo</a>
+                        </li>
+                    </c:if>
+                    <c:if
+                        test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_LOTACAO:Cadastrar Lotação')}">
+                        <li><a href="/siga/app/lotacao/listar">Cadastro de Lotação</a>
+                        </li>
+                    </c:if>
+                    <c:if
+                        test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_FUNCAO:Cadastrar Função de Confiança')}">
+                        <li><a href="/siga/app/funcao/listar">Cadastro de Função de Confiança</a>
+                        </li>
+                    </c:if>
+                    <c:if
+                        test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_PESSOA:Cadastrar Pessoa')}">
+                        <li><a href="/siga/app/pessoa/listar">Cadastro de Pessoa</a>
+                        </li>
+                    </c:if>
+					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;WF_ADMIN:Administrar SIGAWF')}">
 						<li><a href="/sigawf/app/admin/administrar">Administrar SIGA WF</a>
 						</li>
@@ -327,7 +352,16 @@
 			</ul>
 		</li>
 
-		<li><a id="apostilaSiga" href="/siga/arquivos/apostila_sigaex.pdf" target="_blank">Apostila SIGA-Doc</a>
+		<li>
+			<c:choose>
+				<c:when test="${not empty f:resource('siga.ex.manual.url')}">
+						<a id="apostilaSiga" href="${f:resource('siga.ex.manual.url')}" target="_blank">Apostila SIGA-Doc</a>
+				</c:when>
+				<c:otherwise>
+					<a id="apostilaSiga" href="/siga/arquivos/apostila_sigaex.pdf" target="_blank">Apostila SIGA-Doc</a>
+	
+				</c:otherwise>
+			</c:choose>
 		</li>
 		
 		<li><a href="/siga/?GLO=true">Logoff</a>

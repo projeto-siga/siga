@@ -337,8 +337,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 	@Column(name = "ip_audit", length = 20)
 	private String auditIP;
 
-	// Desabilitado enquanto não definirmos se a timestamp será habilitada no banco
-	// @Column(name = "hash_audit", length = 1024)
+	@Column(name = "hash_audit", length = 1024)
 	private String auditHash;
 
 	public void setNumPaginasOri(Integer numPaginasOri) {

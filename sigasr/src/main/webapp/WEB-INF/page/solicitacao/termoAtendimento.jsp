@@ -104,18 +104,20 @@ function printpage()
 			${solicitacao.acaoAtual.siglaAcao} - ${solicitacao.acaoAtual.descricao}
 			</p>
 		</div>
-		<div style="clear:both;text-align:left;">
-		<c:forEach items="${atributos}" var="att">
-			<p style="float: left; font-size: 9pt; padding: 0px">
-				<font style="font-size: 11pt; font-weight: bold; text-align:left; ">${att.atributo.nomeAtributo}: &nbsp;</font>
-				<font style="font-size: 11pt;">${att.valorAtributoSolicitacao}</font>
-			</p>
-		</c:forEach>
-		</div>
 		
 		<div style="clear:both;">
-		<h3 style="font-size: 161.6%; font-weight: bold; color: #0E2029; text-align:center;">DADOS DA SOLICITA&Ccedil;&Atilde;O</h3>
-		<p> 
+			<h3 style="font-size: 161.6%; font-weight: bold; color: #0E2029; text-align:center;">DADOS DA SOLICITA&Ccedil;&Atilde;O</h3>
+
+			<div style="clear:both;text-align:left;">
+			<c:forEach items="${atributos}" var="att">
+				<p>
+					<font style="font-size: 11pt; font-weight: bold; text-align:left; ">${att.atributo.nomeAtributo}: &nbsp;</font>
+					<font style="font-size: 11pt;">${att.valorAtributoSolicitacao}</font>
+				</p>
+			</c:forEach>
+			</div>
+			
+			<p> 
 			<font style="font-size: 11pt; font-weight: bold; text-align:left; ">
 			DESCRI&Ccedil;&Atilde;O:
 			</font>

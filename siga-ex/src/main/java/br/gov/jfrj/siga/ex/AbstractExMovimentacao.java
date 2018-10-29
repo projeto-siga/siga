@@ -39,6 +39,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -328,6 +329,16 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_marcador")
 	private CpMarcador marcador;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_identidade_audit")
+	private CpIdentidade auditIdentidade;
+
+	@Column(name = "ip_audit", length = 20)
+	private String auditIP;
+
+	@Column(name = "hash_audit", length = 1024)
+	private String auditHash;
 
 	public void setNumPaginasOri(Integer numPaginasOri) {
 		this.numPaginasOri = numPaginasOri;
@@ -653,5 +664,29 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 
 	public void setMarcador(CpMarcador marcador) {
 		this.marcador = marcador;
+	}
+
+	public CpIdentidade getAuditIdentidade() {
+		return auditIdentidade;
+	}
+
+	public void setAuditIdentidade(CpIdentidade auditIdentidade) {
+		this.auditIdentidade = auditIdentidade;
+	}
+
+	public String getAuditIP() {
+		return auditIP;
+	}
+
+	public void setAuditIP(String auditIP) {
+		this.auditIP = auditIP;
+	}
+
+	public String getAuditHash() {
+		return auditHash;
+	}
+
+	public void setAuditHash(String auditHash) {
+		this.auditHash = auditHash;
 	}
 }

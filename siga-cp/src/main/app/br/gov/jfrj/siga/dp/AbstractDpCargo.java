@@ -57,7 +57,8 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarQuantidadeDpCargo", query = "select count(o) from DpCargo o "
 				+ "  where upper(o.nomeCargoAI) like upper('%' || :nome || '%')"
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or o.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "   	and o.dataFimCargo = null") })
+				+ "   	and o.dataFimCargo = null"),
+		@NamedQuery(name = "consultarPorNomeDpCargoOrgao", query = "select cargo from DpCargo cargo where upper(cargo.nomeCargoAI) = upper(:nome) and cargo.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario")})
 public abstract class AbstractDpCargo extends Objeto implements Serializable {
 
 	@Id

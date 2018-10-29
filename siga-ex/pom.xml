@@ -251,6 +251,12 @@
 		<!-- habilitar para usar ExDaoTest.java <dependency> <groupId>com.oracle</groupId> 
 			<artifactId>ojdbc6</artifactId> <version>11.2.0.3.0</version> <scope>compile</scope> 
 			</dependency> -->
+			
+		<dependency>
+			<groupId>br.jus.trf2.xjus</groupId>
+			<artifactId>x-jus-record-api</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 
 

@@ -290,15 +290,13 @@ public class Documento {
 				float pw = doc.getPageSize().getWidth();
 				float ph = doc.getPageSize().getHeight();
 				double scale = Math.min(pw / w, ph / h);
-	
+				
 				// do my transformations :
 				cb.transform(AffineTransform.getScaleInstance(scale, scale));
 	
 				if (!internoProduzido) {
-					cb.transform(AffineTransform.getTranslateInstance(pw
-							* SAFETY_MARGIN, ph * SAFETY_MARGIN));
-					cb.transform(AffineTransform.getScaleInstance(
-							1.0f - 2 * SAFETY_MARGIN, 1.0f - 2 * SAFETY_MARGIN));
+					cb.transform(AffineTransform.getTranslateInstance(0, (ph * SAFETY_MARGIN)));
+					cb.transform(AffineTransform.getScaleInstance(1.0f - SAFETY_MARGIN, 1.0f - SAFETY_MARGIN));
 				}
 	
 				if (rot != 0) {

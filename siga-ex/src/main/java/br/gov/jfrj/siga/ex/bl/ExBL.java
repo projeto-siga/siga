@@ -1831,7 +1831,7 @@ public class ExBL extends CpBL {
 	public String assinarDocumentoComSenha(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final String matriculaSubscritor,
-			final String senhaSubscritor, final DpPessoa titular, final boolean autenticando, Boolean juntar, Boolean tramitar)
+			final String senhaSubscritor, final boolean validarSenha, final DpPessoa titular, final boolean autenticando, Boolean juntar, Boolean tramitar)
 			throws Exception {
 
 		DpPessoa subscritor = null;
@@ -1841,13 +1841,6 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Matrícula do Subscritor não foi informada.");
 
-		if (senhaSubscritor == null || senhaSubscritor.isEmpty())
-			throw new AplicacaoException(
-					"Senha do Subscritor não foi informada.");
-
-		final String hashAtual = GeraMessageDigest.executaHash(
-				senhaSubscritor.getBytes(), "MD5");
-
 		final CpIdentidade id = dao().consultaIdentidadeCadastrante(
 				matriculaSubscritor, true);
 		// se o usuário não existir
@@ -1856,10 +1849,19 @@ public class ExBL extends CpBL {
 
 		subscritor = id.getDpPessoa().getPessoaAtual();
 
-		boolean senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
+		if (validarSenha) {
+			if (senhaSubscritor == null || senhaSubscritor.isEmpty())
+				throw new AplicacaoException(
+						"Senha do Subscritor não foi informada.");
 
-		if (!senhaValida) {
-			throw new AplicacaoException("Senha do subscritor inválida.");
+			final String hashAtual = GeraMessageDigest.executaHash(
+					senhaSubscritor.getBytes(), "MD5");
+
+			boolean senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
+
+			if (!senhaValida) {
+				throw new AplicacaoException("Senha do subscritor inválida.");
+			}
 		}
 
 		if (!doc.isFinalizado())
@@ -1968,7 +1970,7 @@ public class ExBL extends CpBL {
 	public void assinarMovimentacaoComSenha(DpPessoa cadastrante,
 			DpLotacao lotaCadastrante, ExMovimentacao movAlvo,
 			final Date dtMov, final String matriculaSubscritor,
-			final String senhaSubscritor, long tpMovAssinatura)
+			final String senhaSubscritor, final boolean validarSenha, long tpMovAssinatura)
 			throws Exception {
 
 		DpPessoa subscritor = null;
@@ -1978,27 +1980,29 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Matrícula do Subscritor não foi informada.");
 
-		if (senhaSubscritor == null || senhaSubscritor.isEmpty())
-			throw new AplicacaoException(
-					"Senha do Subscritor não foi informada.");
-
-		final String hashAtual = GeraMessageDigest.executaHash(
-				senhaSubscritor.getBytes(), "MD5");
-
-		final CpIdentidade id = dao().consultaIdentidadeCadastrante(
-				matriculaSubscritor, true);
-		// se o usuário não existir
-		if (id == null)
-			throw new AplicacaoException("O usuário não está cadastrado.");
-
-		subscritor = id.getDpPessoa().getPessoaAtual();
-
-		boolean senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
-
-		if (!senhaValida) {
-			throw new AplicacaoException("Senha do subscritor inválida.");
+		if (validarSenha) {
+			if (senhaSubscritor == null || senhaSubscritor.isEmpty())
+				throw new AplicacaoException(
+						"Senha do Subscritor não foi informada.");
+	
+			final String hashAtual = GeraMessageDigest.executaHash(
+					senhaSubscritor.getBytes(), "MD5");
+	
+			final CpIdentidade id = dao().consultaIdentidadeCadastrante(
+					matriculaSubscritor, true);
+			// se o usuário não existir
+			if (id == null)
+				throw new AplicacaoException("O usuário não está cadastrado.");
+	
+			subscritor = id.getDpPessoa().getPessoaAtual();
+	
+			boolean senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
+	
+			if (!senhaValida) {
+				throw new AplicacaoException("Senha do subscritor inválida.");
+			}
 		}
-
+		
 		if (movAlvo != null) {
 			log.info("Assinando movimentacao: " + movAlvo.toString()
 					+ " Id da movimentação: " + movAlvo.getIdMov());

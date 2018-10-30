@@ -2616,7 +2616,7 @@ public class ExMovimentacaoController extends ExController {
 					.getBL()
 					.assinarDocumentoComSenha(getCadastrante(),
 							getLotaTitular(), doc, mov.getDtMov(),
-							nomeUsuarioSubscritor, senhaUsuarioSubscritor,
+							nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
 							mov.getTitular(), copia, juntar, tramitar);
 		} catch (final Exception e) {
 			httpError(e);
@@ -2650,7 +2650,7 @@ public class ExMovimentacaoController extends ExController {
 				.getBL()
 				.assinarMovimentacaoComSenha(getCadastrante(),
 						getLotaTitular(), mov, mov.getDtMov(),
-						nomeUsuarioSubscritor, senhaUsuarioSubscritor,
+						nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
 						tpMovAssinatura);
 
 		result.forwardTo(this).assinado(mob);

@@ -2262,7 +2262,7 @@ Pede deferimento.</span><br/><br/><br/>
 <!-- FIM ASSINATURA -->
 [/#macro]
 
-[#macro estiloBrasaoAEsquerda tipo exibeData=true tamanhoLetra="11pt" obs="" omitirCodigo=false width=65 height=65 exibirOrgao=true texto=""]
+[#macro estiloBrasaoAEsquerda tipo exibeData=true formatarOrgao=false numeracaoEsquerda=false tamanhoLetra="11pt" obs="" omitirCodigo=false width=65 height=65 exibirOrgao=true texto=""]
     [@primeiroCabecalho]
     <table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
     [@cabecalhoEsquerdaPrimeiraPagina width=width height=height exibirOrgao=exibirOrgao/]
@@ -2271,11 +2271,19 @@ Pede deferimento.</span><br/><br/><br/>
             <td width="100%">
                 <table width="100%">
                     <tr>
-                       <td align="right">
-                         [#if !omitirCodigo]                           
-                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;">${tipo} N&ordm; ${(doc.codigo)!}</p>
-                         [/#if]
-                       </td>
+                       [#if !numeracaoEsquerda]
+		                	<td align="right">
+		                    	[#if !omitirCodigo]                           
+		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;">${tipo} N&ordm; ${(doc.codigo)!}</p>
+		                        [/#if]
+		                    </td>
+	                    [#else]
+	                    	<td align="left">
+		                         [#if !omitirCodigo]                           
+		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br><br>${tipo} N&ordm; ${(doc.codigo)!}</p>
+		                         [/#if]
+		                    </td>
+	                    [/#if]
                     </tr>
                     
                     [#if exibeData]
@@ -2297,7 +2305,7 @@ Pede deferimento.</span><br/><br/><br/>
         <p>&nbsp;</p>
                 [#nested]
         <p>&nbsp;</p>
-        [@assinaturaCentro/]
+        [@assinaturaCentro formatarOrgao=formatarOrgao/]
     [/@letra]
         [#if obs != ""]
                 <p>&nbsp;</p>

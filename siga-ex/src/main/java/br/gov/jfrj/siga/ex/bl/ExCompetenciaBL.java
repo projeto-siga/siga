@@ -1808,7 +1808,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mob.isCancelada())
 			return false;
 
-		if (!mov.getLotaCadastrante().equivale(lotaTitular))
+		if ((!mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR)) 
+				&& !mov.getLotaCadastrante().equivale(lotaTitular))
 			return false;
 		
 		return getConf().podePorConfiguracao(titular, lotaTitular,

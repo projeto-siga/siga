@@ -2076,7 +2076,7 @@ public class ExBL extends CpBL {
 			
 			// Hash de auditoria
 			//
-			final byte[] pdf = mov.getConteudoBlobpdf();
+			final byte[] pdf = movAlvo.getConteudoBlobpdf();
 			byte[] sha256 = BlucService.calcSha256(pdf);
 			String cpf = Long.toString(subscritor.getCpfPessoa());
 			acrescentarHashDeAuditoria(mov, sha256,

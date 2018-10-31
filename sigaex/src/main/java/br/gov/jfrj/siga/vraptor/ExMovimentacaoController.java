@@ -2633,6 +2633,8 @@ public class ExMovimentacaoController extends ExController {
 			String tipoAssinaturaMov, String nomeUsuarioSubscritor,
 			String senhaUsuarioSubscritor, Boolean copia) throws Exception {
 		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA;
+		
+		try {
 
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setId(id);
@@ -2652,8 +2654,12 @@ public class ExMovimentacaoController extends ExController {
 						getLotaTitular(), mov, mov.getDtMov(),
 						nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
 						tpMovAssinatura);
+		} catch (final Exception e) {
+			httpError(e);
+			return;
+		}
 
-		result.forwardTo(this).assinado(mob);
+		result.use(Results.page()).forwardTo("/WEB-INF/page/ok.jsp");
 	}
 
 	@Get({ "/app/expediente/mov/cancelar_pedido_publicacao_boletim",

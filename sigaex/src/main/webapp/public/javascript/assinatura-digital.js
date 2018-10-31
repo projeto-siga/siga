@@ -1037,7 +1037,7 @@ function identificarOperacoes() {
 					+ operacao.codigo)[0].value;
 
 			var oChkPwd = document.getElementsByName("ad_password_"
-					+ operacao.codigo)[0];
+					+ operacao.codigo)[0] || document.getElementsByName("ad_password_0")[0];
 
 			if (oChkPwd == null) {
 				operacao.usePassword = false;

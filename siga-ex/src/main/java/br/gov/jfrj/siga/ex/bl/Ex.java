@@ -37,9 +37,9 @@ public class Ex extends
 	 * @return Instância de workflow
 	 */
 	public static Ex getInstance() {
-		if (!isInstantiated()) {
+		if (!isInstantiated(Ex.class)) {
 			synchronized (Cp.class) {
-				if (!isInstantiated()) {
+				if (!isInstantiated(Ex.class)) {
 					ExConfiguracaoBL confBL = new ExConfiguracaoBL();
 					ExConfiguracaoComparator comparator = new ExConfiguracaoComparator();
 					ExCompetenciaBL compBL = new ExCompetenciaBL();

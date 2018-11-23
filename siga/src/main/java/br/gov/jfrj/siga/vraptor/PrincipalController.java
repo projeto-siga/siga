@@ -1,7 +1,6 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -16,6 +15,7 @@ import com.mashape.unirest.http.Unirest;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Options;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -217,6 +217,16 @@ public class PrincipalController extends SigaController {
 			return sel;
 		}
 		return sel;
+	}
+	
+	@Options("/public/app/graphviz/svg")
+	public void graphvizProxyOptions() {
+//	        result.use(Results.status()).header("Allow", allowMethods);
+//	        result.use(Results.status()).header("Access-Control-Allow-Methods", allowMethods);
+//	        result.use(Results.status()).header("Access-Control-Allow-Headers", "Content-Type, accept, Authorization, X-Tenant, X-Filial, origin");
+
+			corsHeaders(response);
+        	result.use(Results.status()).noContent();
 	}
 	
 	@Post

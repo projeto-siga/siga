@@ -735,8 +735,8 @@ public class CpBL {
 		CpIdentidade identidade = dao().consultaIdentidadeCadastrante(principal, true);
 		CpAcesso acesso = new CpAcesso();
 		acesso.setCpIdentidade(identidade);
-		acesso.setDtInicio(new Date(iat * 1000));
-		acesso.setDtTermino(new Date(exp * 1000));
+		acesso.setDtInicio(new Date(iat * 1000L));
+		acesso.setDtTermino(new Date(exp * 1000L));
 		acesso.setTipo(tipo);
 		acesso.setAuditIP(auditIP);
 		dao().gravar(acesso);

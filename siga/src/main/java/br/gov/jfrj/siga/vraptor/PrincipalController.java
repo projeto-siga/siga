@@ -24,7 +24,9 @@ import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.SigaHTTP;
+import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -43,7 +45,15 @@ public class PrincipalController extends SigaController {
 	}
 
 	@Get("app/principal")
-	public void principal() {
+	public void principal(Boolean exibirAcessoAnterior) {
+		if (exibirAcessoAnterior != null && exibirAcessoAnterior) {
+			CpAcesso a = dao.consultarAcessoAnterior(so.getCadastrante());
+
+			String acessoAnteriorData = Data.formatDDMMYY_AS_HHMMSS(a.getDtInicio());
+			String acessoAnteriorMaquina = a.getAuditIP();
+			result.include("acessoAnteriorData", acessoAnteriorData);
+			result.include("acessoAnteriorMaquina", acessoAnteriorMaquina);
+		}
 	}
 
 	@Get("app/pagina_vazia")

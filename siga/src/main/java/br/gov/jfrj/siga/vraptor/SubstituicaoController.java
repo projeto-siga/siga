@@ -308,7 +308,7 @@ public class SubstituicaoController extends SigaController {
 		if (referer != null)
 			result.redirectTo(referer);
 		else
-			result.redirectTo(PrincipalController.class).principal();
+			result.redirectTo(PrincipalController.class).principal(false);
 	}	
 	
 	private void gravarFinalizar() {
@@ -361,7 +361,7 @@ public class SubstituicaoController extends SigaController {
 		if (referer != null)
 			result.redirectTo(referer);
 		else
-			result.redirectTo(PrincipalController.class).principal();
+			result.redirectTo(PrincipalController.class).principal(false);
 	}	
 	
 	public void exclui(Long id) throws Exception {
@@ -384,7 +384,7 @@ public class SubstituicaoController extends SigaController {
 				if (referer != null)
 					result.redirectTo(referer);
 				else
-					result.redirectTo(PrincipalController.class).principal();
+					result.redirectTo(PrincipalController.class).principal(false);
 			} else
 				throw new AplicacaoException("Usuário não tem permissão para excluir esta substituição");	
 		} else

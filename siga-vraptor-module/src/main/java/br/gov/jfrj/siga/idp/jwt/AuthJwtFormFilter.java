@@ -159,7 +159,7 @@ public class AuthJwtFormFilter implements Filter {
 			informarAutenticacaoInvalida(resp, e);
 			return;
 		}
-		resp.sendRedirect("/sigaidp/jwt/login?cont=" + URLEncoder.encode(
+		resp.sendRedirect("/siga/public/app/login?cont=" + URLEncoder.encode(
 				req.getRequestURL() + (req.getQueryString() != null ? "?" + req.getQueryString() : ""), "UTF-8"));
 	}
 

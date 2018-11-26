@@ -77,6 +77,7 @@ import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
+import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.Texto;
@@ -5392,10 +5393,7 @@ public class ExBL extends CpBL {
 		}
 		RequestInfo ri = CurrentRequest.get();
 		if (ri != null) {
-			String ip = ri.getRequest().getHeader("X-Forwarded-For");
-			if (ip == null)
-				ip = ri.getRequest().getRemoteHost();
-			mov.setAuditIP(ip);
+			mov.setAuditIP(HttpRequestUtils.getIpAudit(ri.getRequest()));
 		}
 	}
 	

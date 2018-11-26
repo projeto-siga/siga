@@ -25,13 +25,13 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import sun.misc.BASE64Encoder;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
-import br.gov.jfrj.siga.base.Criptografia;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.util.CPFUtils;
 import br.gov.jfrj.siga.base.util.MatriculaUtils;
+import br.gov.jfrj.siga.cp.AbstractCpAcesso.CpTipoAcessoEnum;
+import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpModelo;
@@ -729,6 +729,17 @@ public class CpBL {
 	private void appException(String message, Throwable cause)
 			throws AplicacaoException {
 		throw new AplicacaoException(message, 0, cause);
+	}
+
+	public void logAcesso(CpTipoAcessoEnum tipo, String principal, int iat, int exp, String auditIP) {
+		CpIdentidade identidade = dao().consultaIdentidadeCadastrante(principal, true);
+		CpAcesso acesso = new CpAcesso();
+		acesso.setCpIdentidade(identidade);
+		acesso.setDtInicio(new Date(iat * 1000));
+		acesso.setDtTermino(new Date(exp * 1000));
+		acesso.setTipo(tipo);
+		acesso.setAuditIP(auditIP);
+		dao().gravar(acesso);
 	}
 
 }

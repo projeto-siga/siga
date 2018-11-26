@@ -1,8 +1,10 @@
 package br.gov.jfrj.siga.idp.jwt.servlet;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.base.HttpRequestUtils;
+import br.gov.jfrj.siga.cp.AbstractCpAcesso;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.idp.jwt.SigaJwtProviderException;
@@ -63,9 +68,15 @@ public class SigaJwtFormServlet extends HttpServlet {
 			SigaJwtBL jwtBL = inicializarJwtBL(modulo);
 
 			String token = jwtBL.criarToken(usuario, null, null, null);
+			
+			Map<String, Object> decodedToken = jwtBL.validarToken(token);
+//			Cp.getInstance().getBL().logAcesso(AbstractCpAcesso.CpTipoAcessoEnum.AUTENTICACAO,
+//					(String) decodedToken.get("sub"), (Integer) decodedToken.get("iat"),
+//					(Integer) decodedToken.get("exp"), HttpRequestUtils.getIpAudit(request));
+
 			response.addCookie(AuthJwtFormFilter.buildCookie(token));
 			response.sendRedirect(request.getParameter("cont"));
-		} catch (RuntimeException e) {
+		} catch (Exception e) {
 			request.setAttribute("mensagem", e.getMessage());
 			request.getRequestDispatcher("/paginas/jwt-login.jsp").forward(
 					request, response);

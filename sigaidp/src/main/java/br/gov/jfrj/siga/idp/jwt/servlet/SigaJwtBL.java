@@ -157,6 +157,12 @@ public class SigaJwtBL {
 		return "{situacao:\"valido\"}";
 	}
 
+	public Map<String, Object> validarToken(String token) throws InvalidKeyException,
+			NoSuchAlgorithmException, IllegalStateException,
+			SignatureException, IOException, JWTVerifyException {
+		return provider.validarToken(token);
+	}
+
 	public String assertAcesso(String token, String matricula, String lotacao,
 			String servico) throws InvalidKeyException,
 			NoSuchAlgorithmException, IllegalStateException,

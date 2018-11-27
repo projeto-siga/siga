@@ -11,11 +11,11 @@
 		<c:if test="${not empty acessoAnteriorData}">
 			<div class="row">
 				<div class="col">
-					<p id="benvindo" class="alert alert-success mt-3 mb-0">Bem-vindo ao Siga, seu acesso anterior for realizado em ${acessoAnteriorData} na máquina ${acessoAnteriorMaquina}.</p>
+					<p id="bem-vindo" class="alert alert-success mt-3 mb-0">Último acesso em ${acessoAnteriorData} no endereço ${acessoAnteriorMaquina}.</p>
 					<script>
 						setTimeout(function() {
-							$('#benvindo').fadeTo(1000, 0, function() {
-								$('#benvindo').slideUp(1000);
+							$('#bem-vindo').fadeTo(1000, 0, function() {
+								$('#bem-vindo').slideUp(1000);
 							});
 						}, 5000);
 					</script>

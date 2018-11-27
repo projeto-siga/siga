@@ -2316,6 +2316,19 @@ public class CpDao extends ModeloDao {
 		return result.get(0);
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<CpAcesso> consultarAcessosRecentes(final DpPessoa pessoa) {
+		String sql = "from CpAcesso a where a.cpIdentidade.dpPessoa.idPessoaIni = :idPessoaIni order by a.dtInicio desc";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
+		query.setFirstResult(0);
+		query.setMaxResults(5);
+		List<CpAcesso> result = query.getResultList();
+		if (result == null || result.size() == 0)
+			return null;
+		return result;
+	}
+
 
 
 }

@@ -64,7 +64,7 @@ public abstract class AbstractDpCargo extends Objeto implements Serializable {
 	@Id
 	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_CARGO", unique = true, nullable = false)
-	@SequenceGenerator(name = "generator", sequenceName = "DP_CARGO_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.DP_CARGO_SEQ")
 	@Desconsiderar
 	private Long idCargo;
 

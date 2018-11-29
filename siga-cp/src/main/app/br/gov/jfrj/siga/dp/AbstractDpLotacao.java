@@ -89,7 +89,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 public abstract class AbstractDpLotacao extends DpResponsavel implements
 		Serializable {
 
-	@SequenceGenerator(name = "generator", sequenceName = "DP_LOTACAO_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.DP_LOTACAO_SEQ")
 	@Id
 	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_LOTACAO", unique = true, nullable = false)

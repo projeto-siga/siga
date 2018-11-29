@@ -41,7 +41,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 @MappedSuperclass
 public abstract class AbstractCpPapel extends HistoricoSuporte implements
 		Serializable {
-	@SequenceGenerator(name = "generator", sequenceName = "CP_PAPEL_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_PAPEL_SEQ")
 	@Id
 	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_PAPEL", unique = true, nullable = false)

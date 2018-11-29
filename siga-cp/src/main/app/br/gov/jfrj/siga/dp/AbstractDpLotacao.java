@@ -41,6 +41,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Where;
+
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @MappedSuperclass
@@ -143,6 +145,7 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	private Set<DpLotacao> dpLotacaoSubordinadosSet = new TreeSet<DpLotacao>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lotacao")
+	@Where(clause = "DATA_FIM_PESSOA is null")
 	@Desconsiderar
 	private Set<DpPessoa> dpPessoaLotadosSet = new TreeSet<DpPessoa>();
 

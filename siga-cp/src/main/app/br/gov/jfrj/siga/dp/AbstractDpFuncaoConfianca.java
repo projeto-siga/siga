@@ -66,7 +66,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 public abstract class AbstractDpFuncaoConfianca extends Objeto implements
 		Serializable {
 
-	@SequenceGenerator(name = "generator", sequenceName = "DP_FUNCAO_CONFIANCA_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.DP_FUNCAO_CONFIANCA_SEQ")
 	@Id
 	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_FUNCAO_CONFIANCA", unique = true, nullable = false)

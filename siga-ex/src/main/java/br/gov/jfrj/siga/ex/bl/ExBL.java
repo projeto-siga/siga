@@ -3262,9 +3262,6 @@ public class ExBL extends CpBL {
 			gravarMovimentacao(mov);
 			concluirAlteracao(mob);
 			
-			//Edson: comando necessário, pois o apensarDocumento, abaixo, vai precisar acessar as coleções
-			dao().getSessao().refresh(mob);
-			
 			if (mob.getNumSequencia() > 1) {
 				ExMobil mobApenso = mob.doc().getVolume(
 						mob.getNumSequencia() - 1);

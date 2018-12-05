@@ -102,11 +102,11 @@ import net.sf.ehcache.config.CacheConfiguration;
 
 public class CpDao extends ModeloDao {
 
-	public static final String CACHE_QUERY_SUBSTITUICAO = "query.substituicao";
-	public static final String CACHE_QUERY_CONFIGURACAO = "query.configuracao";
+	public static final String CACHE_QUERY_SUBSTITUICAO = "querySubstituicao";
+	public static final String CACHE_QUERY_CONFIGURACAO = "queryConfiguracao";
 	public static final String CACHE_CORPORATIVO = "corporativo";
-	public static final String CACHE_QUERY_SECONDS = "query.seconds";
-	public static final String CACHE_QUERY_HOURS = "query.hours";
+	public static final String CACHE_QUERY_SECONDS = "querySeconds";
+	public static final String CACHE_QUERY_HOURS = "queryHours";
 	public static final String CACHE_SECONDS = "seconds";
 
 	public static CpDao getInstance() {

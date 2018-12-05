@@ -41,6 +41,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Where;
+
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @MappedSuperclass
@@ -89,7 +91,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 public abstract class AbstractDpLotacao extends DpResponsavel implements
 		Serializable {
 
-	@SequenceGenerator(name = "generator", sequenceName = "DP_LOTACAO_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.DP_LOTACAO_SEQ")
 	@Id
 	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_LOTACAO", unique = true, nullable = false)
@@ -143,6 +145,7 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	private Set<DpLotacao> dpLotacaoSubordinadosSet = new TreeSet<DpLotacao>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lotacao")
+	@Where(clause = "DATA_FIM_PESSOA is null")
 	@Desconsiderar
 	private Set<DpPessoa> dpPessoaLotadosSet = new TreeSet<DpPessoa>();
 

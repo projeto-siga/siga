@@ -967,9 +967,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				&& getExModelo().getExClassCriacaoVia() != null) {
 			vias = getExModelo().getExClassCriacaoVia().getExViaSet();
 		} else {
-			if (getExClassificacao() != null)
-				/* vias = getExClassificacaoAtual().getExViaSet(); */
-				vias = getExClassificacao().getAtual().getExViaSet();
+			if (getExClassificacaoAtual() != null){				
+				if (getExClassificacaoAtual().getAtual() != null)
+					vias = getExClassificacaoAtual().getAtual().getExViaSet();
+				else
+					vias = getExClassificacaoAtual().getExViaSet();
+			}
 
 		}
 

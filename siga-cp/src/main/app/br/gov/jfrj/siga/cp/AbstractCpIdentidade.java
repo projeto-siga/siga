@@ -66,7 +66,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "or pes.situacaoFuncionalPessoa = '22' "
 				+ "or pes.situacaoFuncionalPessoa = '31') ") })
 public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
-	@SequenceGenerator(name = "generator", sequenceName = "CP_IDENTIDADE_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_IDENTIDADE_SEQ")
 	@Id
 	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_IDENTIDADE", unique = true, nullable = false)

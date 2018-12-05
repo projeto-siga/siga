@@ -43,7 +43,7 @@ public abstract class AbstractCpPersonalizacao extends Objeto implements
 		Serializable {
 
 	@Id
-	@SequenceGenerator(name = "generator", sequenceName = "CP_PERSONALIZACAO_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_PERSONALIZACAO_SEQ")
 	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_PERSONALIZACAO", unique = true, nullable = false)
 	private Long idPersonalizacao;

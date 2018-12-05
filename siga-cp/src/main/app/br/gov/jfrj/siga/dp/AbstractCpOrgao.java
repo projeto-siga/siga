@@ -48,7 +48,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 public abstract class AbstractCpOrgao extends HistoricoSuporte implements
 		Serializable {
 
-	@SequenceGenerator(name = "generator", sequenceName = "CP_ORGAO_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_ORGAO_SEQ")
 	@Id
 	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_ORGAO", unique = true, nullable = false)

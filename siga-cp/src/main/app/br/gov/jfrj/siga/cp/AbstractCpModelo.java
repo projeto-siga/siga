@@ -39,7 +39,7 @@ public abstract class AbstractCpModelo extends HistoricoAuditavelSuporte {
 
 	/** The primary key value. */
 
-	@SequenceGenerator(name = "generator", sequenceName = "CP_MODELO_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_MODELO_SEQ")
 	@Id
 	@GeneratedValue(generator = "generator")
 	@Column(name = "ID_MODELO", unique = true, nullable = false)

@@ -898,6 +898,9 @@ public class CpConfiguracaoBL {
 							CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO_OUTRA_LOTACAO);
 			for (CpConfiguracao c : configs) {
 				DpLotacao lotacaoAtual = c.getLotacao().getLotacaoAtual();
+				if (lotacaoAtual == null){
+					continue;
+				}
 				if (c.getHisAtivo() == 1
 						&& lotacaoAtual.getDataFim() == null
 						&& c.getDpPessoa().getIdInicial()

@@ -127,6 +127,8 @@ public class CpDao extends ModeloDao {
 		return ModeloDao.getInstance(CpDao.class);
 	}
 
+	private static Date ultimaData;
+
 	@SuppressWarnings("unchecked")
 	public List<CpOrgao> consultarPorFiltro(final CpOrgaoDaoFiltro o) {
 		return consultarPorFiltro(o, 0, 0);
@@ -1344,34 +1346,39 @@ public class CpDao extends ModeloDao {
 
 	public Date consultarDataUltimaAtualizacao() throws AplicacaoException {
 	//	Query sql = (Query) getSessao().getNamedQuery("consultarDataUltimaAtualizacao");
-		StatelessSession statelessSession = HibernateUtil.getSessionFactory().openStatelessSession();
-		Transaction transaction = statelessSession.beginTransaction();
-		try{
+		if(ultimaData == null){
 			
-			Query sql = (Query) statelessSession.getNamedQuery("consultarDataUltimaAtualizacao");
-			
-			sql.setCacheable(false);
-			List result = sql.list();
-			
-			Date dtIni = (Date) ((Object[]) (result.get(0)))[0];
-			Date dtFim = (Date) ((Object[]) (result.get(0)))[1];
-			transaction.commit();
-			return DateUtils.max(dtIni, dtFim);
-		}catch(Exception e){
-			try {
-				if (transaction instanceof org.hibernate.engine.transaction.internal.jta.JtaTransaction){
-					((org.hibernate.engine.transaction.internal.jta.JtaTransaction)transaction).getUserTransaction().rollback();
+			StatelessSession statelessSession = HibernateUtil.getSessionFactory().openStatelessSession();
+			Transaction transaction = statelessSession.beginTransaction();
+			try{
+				
+				Query sql = (Query) statelessSession.getNamedQuery("consultarDataUltimaAtualizacao");
+				
+				sql.setCacheable(false);
+				List result = sql.list();
+				
+				Date dtIni = (Date) ((Object[]) (result.get(0)))[0];
+				Date dtFim = (Date) ((Object[]) (result.get(0)))[1];
+				transaction.commit();
+				ultimaData = DateUtils.max(dtIni, dtFim);
+			}catch(Exception e){
+				try {
+					if (transaction instanceof org.hibernate.engine.transaction.internal.jta.JtaTransaction){
+						((org.hibernate.engine.transaction.internal.jta.JtaTransaction)transaction).getUserTransaction().rollback();
+					}
+				} catch (IllegalStateException | SecurityException
+						| SystemException e1) {
 				}
-			} catch (IllegalStateException | SecurityException
-					| SystemException e1) {
+				
+				return null;
+				
+			}finally{
+				statelessSession.close();
 			}
 			
-			return null;
-
-		}finally{
-			statelessSession.close();
 		}
 		
+		return ultimaData;
 	}
 
 	public Date dt() throws AplicacaoException {

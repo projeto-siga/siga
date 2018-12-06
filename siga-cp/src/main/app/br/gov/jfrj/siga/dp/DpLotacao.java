@@ -73,6 +73,8 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	@Formula(value = "REMOVE_ACENTO(NOME_LOTACAO)")
 	@Desconsiderar
 	private String nomeLotacaoAI;
+	@Desconsiderar
+	private DpLotacao lotacaoAtual;
 
 	public DpLotacao() {
 		super();
@@ -345,11 +347,17 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 	 * @throws SQLException 
 	 */
 	public DpLotacao getLotacaoAtual() {
+		if(lotacaoAtual != null){
+			return this.lotacaoAtual;
+		}
 		
-		if (this.getDataFim() != null)
-			return CpDao.getInstance().obterLotacaoAtual(this);
+		if (this.getDataFim() != null ){
+			this.lotacaoAtual =  CpDao.getInstance().obterLotacaoAtual(this);
+		}else{
+			this.lotacaoAtual = this;
+		}
 		
-		return this;
+		return lotacaoAtual;
 	}
 
 	public Long getHisIdIni() {

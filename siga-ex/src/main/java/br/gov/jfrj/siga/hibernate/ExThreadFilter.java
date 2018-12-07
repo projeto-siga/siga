@@ -49,36 +49,34 @@ public class ExThreadFilter extends ThreadFilter {
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
-	//	EntityManager em = ExStarter.emf.createEntityManager();
-	//	ContextoPersistencia.setEntityManager(em);
+		EntityManager em = ExStarter.emf.createEntityManager();
+		ContextoPersistencia.setEntityManager(em);
 
 		// Inicialização padronizada
-	//	CurrentRequest.set(new RequestInfo(config.getServletContext(),
-	//			(HttpServletRequest) request, (HttpServletResponse) response));
-	//	ModeloDao.freeInstance();
-	//	ExDao.getInstance();
-	//	try {
-	//		Ex.getInstance().getConf().limparCacheSeNecessario();
-	//	} catch (Exception e1) {
-	//		throw new RuntimeException(
-	//				"Não foi possível atualizar o cache de configurações", e1);
-	//	}
+		CurrentRequest.set(new RequestInfo(config.getServletContext(),
+				(HttpServletRequest) request, (HttpServletResponse) response));
+		ModeloDao.freeInstance();
+		ExDao.getInstance();
+		try {
+			Ex.getInstance().getConf().limparCacheSeNecessario();
+		} catch (Exception e1) {
+			throw new RuntimeException(
+					"Não foi possível atualizar o cache de configurações", e1);
+		}
 
-	//	em.getTransaction().begin();
-	//	if (em.getTransaction().isActive())
-	//		System.out.println("isActive");
+		em.getTransaction().begin();
 
 		try {
 			chain.doFilter(request, response);
-	//		em.getTransaction().commit();
+			em.getTransaction().commit();
 		} catch (Exception e) {
-		//	if (em.getTransaction().isActive())
-		//		em.getTransaction().rollback();
+			if (em.getTransaction().isActive())
+				em.getTransaction().rollback();
 
 			throw new ServletException(e);
 		} finally {
-	//		em.close();
-	//		ContextoPersistencia.setEntityManager(null);
+			em.close();
+			ContextoPersistencia.setEntityManager(null);
 		}
 	}
 

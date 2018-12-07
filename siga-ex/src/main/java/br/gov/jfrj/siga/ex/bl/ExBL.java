@@ -4824,6 +4824,9 @@ public class ExBL extends CpBL {
 			final DpPessoa responsavel, final DpPessoa subscritor,
 			final DpPessoa titular, final String descrMov,
 			String nmFuncaoSubscritor) throws AplicacaoException {
+		
+		if (true)
+			throw new RuntimeException("Tteste");
 
 		if (descrMov == null) {
 			if (responsavel == null && lotaResponsavel == null)

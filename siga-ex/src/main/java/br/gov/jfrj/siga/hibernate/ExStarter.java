@@ -19,6 +19,6 @@ public class ExStarter {
 
 	@PostConstruct
 	public void init() {
-		emf = Persistence.createEntityManagerFactory("default-ex");
+		emf = Persistence.createEntityManagerFactory("default");
 	}
 }

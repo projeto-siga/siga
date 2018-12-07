@@ -3094,7 +3094,7 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Classificação documental do modelo foi alterada. Edite e grave o documento para atualizá-lo.");
 
-		if (!doc.getExClassificacao().getAtual().isAtivo())
+		if (doc.getExClassificacao().getAtual() == null)
 			throw new AplicacaoException(
 					"Classificação documental encerrada. Edite o documento para escolher outra.");
 
@@ -3126,7 +3126,7 @@ public class ExBL extends CpBL {
 		try {
 			iniciarAlteracao();
 
-			doc.setExClassificacao(doc.getExClassificacao().getAtual()); /*
+			doc.setExClassificacao(doc.getExClassificacao().getAtual() != null ?  doc.getExClassificacao().getAtual() : doc.getExClassificacao()); /*
 																		 * atualizando
 																		 * a
 																		 * classificação
@@ -4164,8 +4164,10 @@ public class ExBL extends CpBL {
 
 		ExClassificacao classAtual = doc.getExClassificacaoAtual();
 		if (classAtual != null && !classAtual.isFechada())
-			novoDoc.setExClassificacao(classAtual.getAtual());
-
+			if (classAtual.getAtual() != null)
+				novoDoc.setExClassificacao(classAtual.getAtual());
+			else 
+				novoDoc.setExClassificacao(classAtual);
 		novoDoc.setDescrClassifNovo(doc.getDescrClassifNovo());
 		novoDoc.setExFormaDocumento(doc.getExFormaDocumento());
 

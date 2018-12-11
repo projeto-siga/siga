@@ -1218,7 +1218,7 @@ public class SrSolicitacao extends HistoricoSuporte implements SrSelecionavel {
     }
 
     public boolean podeImprimirTermoAtendimento(DpPessoa pess, DpLotacao lota) {
-    	return isAtivo() && estaCom(pess, lota);
+    	return isAtivo();
     }
 
     public boolean podeIncluirEmLista(DpPessoa pess, DpLotacao lota) {

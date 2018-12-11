@@ -249,7 +249,7 @@ public class SrSolicitacaoFiltro extends SrSolicitacao {
 			}
 		}
 
-		if ((getLocal().getIdComplexo() != null) && (!getLocal().getIdComplexo().equals(QUALQUER_LISTA_OU_NENHUMA))) {
+		if ((getLocal() != null) && (getLocal().getIdComplexo() != null) && (!getLocal().getIdComplexo().equals(QUALQUER_LISTA_OU_NENHUMA))) {
 			query.append(" and sol.local.idComplexo = " + getLocal().getIdComplexo());
 		}
 

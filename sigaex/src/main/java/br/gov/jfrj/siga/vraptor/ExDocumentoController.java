@@ -1881,7 +1881,7 @@ public class ExDocumentoController extends ExController {
 		exDocumentoDTO.setNivelAcesso(doc.getIdExNivelAcesso());
 
 		final ExClassificacao classif = doc.getExClassificacaoAtual();
-		if (classif != null) {
+		if (classif != null && classif.getAtual() != null) {
 			exDocumentoDTO.getClassificacaoSel().buscarPorObjeto(
 					classif.getAtual());
 		}

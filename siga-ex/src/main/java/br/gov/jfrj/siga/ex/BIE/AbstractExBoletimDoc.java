@@ -49,7 +49,7 @@ public abstract class AbstractExBoletimDoc extends Objeto implements
 
 	/** The composite primary key value. */
 	@Id
-	@GeneratedValue(strategy = IDENTITY)
+	@GeneratedValue
 	@Column(name = "ID_BOLETIM_DOC", unique = true, nullable = false)
 	private java.lang.Long idBoletimDoc;
 

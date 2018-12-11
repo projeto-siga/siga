@@ -211,19 +211,6 @@ public abstract class ThreadFilter implements Filter {
 		return mensagemErro;
 	}
 
-	public void registerTransactionClasses(Configuration cfg) {
-		// bruno.lacerda@avantiprima.com.br
-//		this.registerTransactionClass("hibernate.transaction.factory_class",cfg);
-		this.registerTransactionClass("hibernate.transaction.manager_lookup_class", cfg);
-	}
-
-	private void registerTransactionClass(String propertyName, Configuration cfg) {
-		String transactionFactoryClassName = System.getProperty(propertyName);
-		if (StringUtils.isNotBlank(transactionFactoryClassName)) {
-			cfg.setProperty(propertyName, transactionFactoryClassName);
-		}
-	}
-
 	@Override
 	public void destroy() {}
 

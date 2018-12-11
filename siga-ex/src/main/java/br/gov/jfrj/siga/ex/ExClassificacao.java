@@ -169,11 +169,8 @@ public class ExClassificacao extends AbstractExClassificacao implements
 	 * 
 	 */
 	public boolean isFechada() {
-		if (this.getHisDtFim() == null)
-
-			return false;
-
-		return getAtual().getHisDtFim() != null;
+		
+		return getHisDtFim() != null;
 	}
 
 	public ExClassificacao getAtual() {

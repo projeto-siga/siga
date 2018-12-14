@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
 <style>
 #passwordStrengthMet1, #passwordStrengthMet2 {
@@ -202,8 +203,9 @@ function refreshWindow(){
 	
 			<h1 class="gt-form-head">${titulo}</h1>
 
-			<h2 class="gt-form-head">Método 1 - Envio de senha nova para o
-				e-mail</h2>
+			<c:if test="${empty f:resource('siga.gi.omitir.metodo2') || f:resource('siga.gi.omitir.metodo2') != 'true'}">
+				<h2 class="gt-form-head">Método 1 - Envio de senha nova para o e-mail</h2>
+			</c:if>
 			<p id="msgExplicacao"></p>
 			<div class="gt-form gt-content-box">
 
@@ -219,8 +221,7 @@ function refreshWindow(){
 						</div>
 						<div class="gt-right-col gt-width-66">
 							<label>&nbsp;</label>
-							<p>Ex.: XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES,
-								etc.) e 99999 é o número da sua matrícula.</p>
+							<p>${f:resource('siga.gi.texto.novo.usuario')}</p>
 						</div>
 					</div>
 
@@ -263,7 +264,7 @@ function refreshWindow(){
 					<p id="msgEmail" class="oculto"></p>
 				</form>
 			</div>
-
+			<c:if test="${empty f:resource('siga.gi.omitir.metodo2') || f:resource('siga.gi.omitir.metodo2') != 'true'}">
 			<h2 class="gt-form-head">Método 2 - Alterar a senha com auxílio
 				de 2 pessoas</h2>
 			<p>
@@ -368,5 +369,6 @@ function refreshWindow(){
 					</div>
 				</form>
 			</div>
+			</c:if>
 		</div>
 </siga:pagina>

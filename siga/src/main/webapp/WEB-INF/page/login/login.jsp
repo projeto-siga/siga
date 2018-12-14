@@ -68,8 +68,7 @@
 							</div>
 
 							<div class="login-invalido-descricao">
-								<p>XX é a sigla do seu Órgão (T2, RJ, ES, etc.)</p>
-								<p>99999 é o número da matrícula.</p>
+								${f:resource('siga.gi.texto.login')}
 							</div>
 						</div>
 					</c:if>

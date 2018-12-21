@@ -135,8 +135,7 @@
 	<context-param>
 		<param-name>br.com.caelum.vraptor.packages</param-name>
 		<param-value>  
-        	br.gov.jfrj.siga.vraptor,
-        	br.com.caelum.vraptor.util.jpa  
+        	br.gov.jfrj.siga.vraptor  
    		</param-value>
 	</context-param>
 

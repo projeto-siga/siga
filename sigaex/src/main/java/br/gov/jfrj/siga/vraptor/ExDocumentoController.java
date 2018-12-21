@@ -2080,8 +2080,9 @@ public class ExDocumentoController extends ExController {
 					exDocumentoDTO.getClassificacaoSel().getId(),
 					ExClassificacao.class, false);
 
-			if (classificacao != null && !classificacao.isFechada()) {
-				doc.setExClassificacao(classificacao);
+			if (classificacao != null) {
+				ExClassificacao cAtual = classificacao.getAtual();
+				doc.setExClassificacao(cAtual);
 			} else {
 				doc.setExClassificacao(null);
 				exDocumentoDTO.getClassificacaoSel().apagar();

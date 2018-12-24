@@ -1943,7 +1943,7 @@ Pede deferimento.</span><br/><br/><br/>
     <!-- FIM SUBSCRITOR [#nested/] -->
 [/#macro]
 
-[#macro cabecalhoCentralizadoPrimeiraPagina]
+[#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho]
 <table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
     cellspacing="0" bgcolor="#FFFFFF">
     <tr bgcolor="#FFFFFF">
@@ -1964,16 +1964,18 @@ Pede deferimento.</span><br/><br/><br/>
                 </td>
             </tr>
             [/#if]
-            <tr>
-                <td width="100%" align="center">
-                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
-                [#if mov??]
-                    ${(mov.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
-                [#else]
-                    ${(doc.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
-                [/#if]</p>
-                </td>
-            </tr>
+            [#if orgaoCabecalho]
+	            <tr>
+	                <td width="100%" align="center">
+	                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
+	                [#if mov??]
+	                    ${(mov.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+	                [#else]
+	                    ${(doc.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+	                [/#if]</p>
+	                </td>
+	            </tr>
+            [/#if]
         </table>
         </td>
     </tr>
@@ -2321,9 +2323,9 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 
-[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt" formatarOrgao=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true]
+[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt" formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true]
     [@primeiroCabecalho]${topoPrimeiraPagina!}
-    [@cabecalhoCentralizadoPrimeiraPagina/]
+    [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
     [/@primeiroCabecalho]
     [@cabecalho]
     [@cabecalhoCentralizado/]

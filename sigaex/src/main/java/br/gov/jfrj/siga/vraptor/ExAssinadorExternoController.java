@@ -486,7 +486,7 @@ public class ExAssinadorExternoController extends ExController {
 		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
 	}
 
-	protected void jsonError(final Exception e) {
+	protected void jsonError(final Exception e) throws Exception {
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		e.printStackTrace(pw);
@@ -509,6 +509,8 @@ public class ExAssinadorExternoController extends ExController {
 
 		String s = json.toString();
 		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(500);
+		response.flushBuffer();
+		throw e;
 	}
 
 	private static JSONObject getJsonReq(HttpServletRequest request) {

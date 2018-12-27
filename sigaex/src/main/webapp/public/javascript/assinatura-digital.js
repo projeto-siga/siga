@@ -17,6 +17,8 @@ var gOperacoes;
 var gLogin;
 var gPassword;
 
+var gAssinando = false;
+
 var ittruSignAx;
 var ittruSignApplet;
 
@@ -46,6 +48,10 @@ function TestarAssinaturaDigital() {
 // pagina
 //
 function AssinarDocumentos(copia, politica, juntar, tramitar) {
+	if (gAssinando)
+		return;
+	gAssinando = true;
+	
 	if (politica != undefined)
 		gPolitica = politica;
 
@@ -54,8 +60,10 @@ function AssinarDocumentos(copia, politica, juntar, tramitar) {
 	var tipo = verificarTipoDeAssinatura();
 
 	if (tipo == 1 || tipo == 3) {
-		if (!TestarAssinaturaDigital())
+		if (!TestarAssinaturaDigital()) {
+			gAssinando = false;
 			return;
+		}
 	}
 
 	if (tipo == 1) {
@@ -195,6 +203,7 @@ var providerAssijusPopup = {
 			},
 			
 			endCallback: function() {
+				gAssinando = false;
 				if (this.errormsg.length > 0)
 					window.alert(this.errormsg);
 				else
@@ -274,6 +283,7 @@ var providerAssijus = {
 						+ "&endpointcallback=" + encodeURI(urlRedirect);
 			},
 			error : function(xhr) {
+				gAssinando = false;
 				result = "Erro na gravação da assinatura. " + xhr.responseText;
 			}
 		});
@@ -647,8 +657,7 @@ var providerPassword = {
 		} catch (Err) {
 			return Err.description;
 		}
-	},
-
+	}
 }
 
 //
@@ -951,6 +960,7 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 
 	if (provider != providerAssijusPopup && provider != providerAssijus) {
 		process.push(function() {
+			gAssinando = false;
 			if (gRet == undefined)
 				return;
 			Log("Concluído, redirecionando...");

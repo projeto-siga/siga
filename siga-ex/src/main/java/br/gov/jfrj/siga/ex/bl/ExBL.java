@@ -6964,13 +6964,13 @@ public class ExBL extends CpBL {
 	}
 
 	public List<ExAssinavelDoc> obterAssinaveis(DpPessoa titular,
-			DpLotacao lotaTitular) {
+			DpLotacao lotaTitular, boolean apenasRevisados) {
 		List<ExAssinavelDoc> assinaveis = new ArrayList<ExAssinavelDoc>();
 		Map<Long, ExAssinavelDoc> map = new HashMap<>();
 
 		// Acrescenta documentos
 		//
-		for (final ExDocumento doc : dao().listarDocPendenteAssinatura(titular)) {
+		for (final ExDocumento doc : dao().listarDocPendenteAssinatura(titular, apenasRevisados)) {
 			if (!doc.isFinalizado() || !doc.isEletronico())
 				continue;
 			ExAssinavelDoc ass = acrescentarDocAssinavel(assinaveis, map, titular, lotaTitular, doc);
@@ -7051,5 +7051,21 @@ public class ExBL extends CpBL {
 				.podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov));
 		assmov.setPodeAutenticar(podeAutenticar);
 		ass.getMovs().add(assmov);
+	}
+
+	public void revisar(DpPessoa cadastrante, DpLotacao lotaTitular, ExDocumento doc) {
+		try {
+			iniciarAlteracao();
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_REVISAO,
+					cadastrante, lotaTitular, doc.getMobilGeral(), null, cadastrante,
+					null, null, null, null);
+
+			gravarMovimentacao(mov);
+			concluirAlteracao(doc.getMobilGeral());
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao revisar documento.", 0, e);
+		}
 	}
 }

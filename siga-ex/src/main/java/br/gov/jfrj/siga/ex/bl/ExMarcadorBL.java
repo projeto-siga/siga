@@ -401,8 +401,12 @@ public class ExMarcadorBL {
 			acrescentarMarca(CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA, dt, ultMovNaoCanc.getResp(),
 					ultMovNaoCanc.getLotaResp());
 			if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()){
-					acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, dt, mob
-							.getExDocumento().getSubscritor(), null);
+				acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, dt, mob
+						.getExDocumento().getSubscritor(), null);
+			}
+			if (mob.getDoc().isRevisado()){
+				acrescentarMarca(CpMarcador.MARCADOR_PRONTO_PARA_ASSINAR, dt, mob
+						.getExDocumento().getSubscritor(), null);
 			}
 		}
 	}

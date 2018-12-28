@@ -68,12 +68,24 @@
 							<input type="text" id="nmLotacao" name="nmLotacao" value="${nmLotacao}" maxlength="100" size="100" />
 						</td>
 					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<label><font color="red">(Não cadastrar lotações abreviadas, inserir nome oficial constituído em legislação)</font></label>
+						</td>
+					</tr>
 					<tr>				
 						<td>
 							<label>Sigla:</label>
 						</td>
 						<td>
 							<input type="text" id="siglaLotacao" name="siglaLotacao" value="${siglaLotacao}" maxlength="20" size="20"  style="text-transform:uppercase" onkeyup="this.value = this.value.trim()"/>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<label><font color="red">(Sigla: Letras maiúsculas)</font></label>
 						</td>
 					</tr>
 					

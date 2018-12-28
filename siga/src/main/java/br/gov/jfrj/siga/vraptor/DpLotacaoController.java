@@ -1,7 +1,9 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -20,6 +22,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.GenericoSelecao;
 import br.gov.jfrj.siga.model.Selecionavel;
 
@@ -265,7 +268,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			
 		}
 		lotacao.setNomeLotacao(Texto.removerEspacosExtra(nmLotacao).trim());
-		lotacao.setSigla(siglaLotacao.toUpperCase());
+		lotacao.setSiglaLotacao(siglaLotacao.toUpperCase());
 		
 		if (idOrgaoUsu != null && idOrgaoUsu != 0 && (listPessoa == null || listPessoa.size() == 0)) {
 			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
@@ -288,4 +291,43 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		}
 		this.result.redirectTo(this).lista(0, null, "");
 	}
+	
+    @Get("/app/lotacao/ativarInativar")
+    public void ativarInativar(final Long id) throws Exception{
+
+        DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
+        
+        //ativar
+        if(lotacao.getDataFimLotacao() != null && !"".equals(lotacao.getDataFimLotacao())) {
+            lotacao.setDataFimLotacao(null);
+        } else {//inativar            
+            DpPessoaDaoFiltro pessoaFiltro = new DpPessoaDaoFiltro();
+            pessoaFiltro.setLotacao(lotacao);
+            pessoaFiltro.setNome("");
+            Integer qtdePessoa = dao().consultarQuantidade(pessoaFiltro);
+            Integer qtdeDocumento = dao().consultarQuantidadeDocumentosPorDpLotacao(lotacao);
+            
+            System.out.println(qtdePessoa);
+            System.out.println(qtdeDocumento);
+            
+            if(qtdePessoa > 0 || qtdeDocumento > 0) {
+            	throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa Lotação", 0);
+            } else {
+	            Calendar calendar = new GregorianCalendar();
+	            Date date = new Date();
+	            calendar.setTime(date);
+	            lotacao.setDataFimLotacao(calendar.getTime());
+	            
+	            try {
+		              dao().iniciarTransacao();
+		              dao().gravar(lotacao);
+		              dao().commitTransacao();            
+		          } catch (final Exception e) {
+		              dao().rollbackTransacao();
+		              throw new AplicacaoException("Erro na gravação", 0, e);
+		          }
+            }
+        }
+        this.result.redirectTo(this).lista(0, null, "");
+    }
 }

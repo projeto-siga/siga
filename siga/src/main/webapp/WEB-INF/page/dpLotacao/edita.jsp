@@ -88,7 +88,29 @@
 							<label><font color="red">(Sigla: Letras maiúsculas)</font></label>
 						</td>
 					</tr>
-					
+					<tr>
+						<td>
+							Localidade:
+						</td>
+						<td>
+							<select name="idLocalidade" value="${idLocalidade}">
+								<c:forEach items="${listaLocalidades}" var="item">
+									<option value="${item.id}"
+										${item.id == idLocalidade ? 'selected' : ''}>
+										${item.descricao}</option>
+								</c:forEach>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Situa&ccedil;&atilde;o:
+						</td>
+						<td>
+							<input type="radio" name="situacao" value="true" id="situacaoAtivo" ${empty dtFimLotacao ? 'checked' : ''}/>Ativo
+							<input type="radio" name="situacao" value="false" id="situacaoInativo" ${not empty dtFimLotacao ? 'checked' : ''}/>Inativo
+						</td>
+					</tr>
 					<tr class="button">
 						<td>
 							<input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-large gt-btn-left" /> 

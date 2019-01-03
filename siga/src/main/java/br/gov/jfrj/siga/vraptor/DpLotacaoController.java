@@ -17,7 +17,9 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.CpUF;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -182,6 +184,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			}
 			dpLotacao.setIdOrgaoUsu(idOrgaoUsu);
 			dpLotacao.setNome(Texto.removeAcento(nome));
+			dpLotacao.setBuscarFechadas(Boolean.TRUE);
 			setItens(CpDao.getInstance().consultarPorFiltro(dpLotacao, offset, 10));
 			result.include("itens", getItens());
 			result.include("tamanho", dao().consultarQuantidade(dpLotacao));
@@ -199,6 +202,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			result.include("siglaLotacao", lotacao.getSigla());
 			result.include("idOrgaoUsu", lotacao.getOrgaoUsuario().getId());
 			result.include("nmOrgaousu", lotacao.getOrgaoUsuario().getNmOrgaoUsu());
+			result.include("dtFimLotacao", lotacao.getDataFimLotacao());
 			
 			List<DpPessoa> list = dao().getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
 			if(list.size() == 0) {
@@ -214,6 +218,11 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			list.add(ou);
 			result.include("orgaosUsu", list);
 		}
+		
+		CpUF uf = new CpUF();
+		uf.setIdUF(Long.valueOf(19));
+		result.include("listaLocalidades", dao().consultarLocalidadesPorUF(uf));
+				
 		result.include("request",getRequest());
 		result.include("id",id);
 	}
@@ -306,10 +315,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
             pessoaFiltro.setNome("");
             Integer qtdePessoa = dao().consultarQuantidade(pessoaFiltro);
             Integer qtdeDocumento = dao().consultarQuantidadeDocumentosPorDpLotacao(lotacao);
-            
-            System.out.println(qtdePessoa);
-            System.out.println(qtdeDocumento);
-            
+                   
             if(qtdePessoa > 0 || qtdeDocumento > 0) {
             	throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa Lotação", 0);
             } else {

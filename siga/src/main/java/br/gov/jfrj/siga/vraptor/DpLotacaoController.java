@@ -199,10 +199,11 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		if (id != null) {
 			DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
 			result.include("nmLotacao",lotacao.getDescricao());
-			result.include("siglaLotacao", lotacao.getSigla());
+			result.include("siglaLotacao", lotacao.getSiglaLotacao());
 			result.include("idOrgaoUsu", lotacao.getOrgaoUsuario().getId());
 			result.include("nmOrgaousu", lotacao.getOrgaoUsuario().getNmOrgaoUsu());
 			result.include("dtFimLotacao", lotacao.getDataFimLotacao());
+			result.include("idLocalidade", lotacao.getLocalidade() != null ? lotacao.getLocalidade().getIdLocalidade() : Long.valueOf(0));
 			
 			List<DpPessoa> list = dao().getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
 			if(list.size() == 0) {
@@ -220,7 +221,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		}
 		
 		CpUF uf = new CpUF();
-		uf.setIdUF(Long.valueOf(19));
+		uf.setIdUF(Long.valueOf(26));
 		result.include("listaLocalidades", dao().consultarLocalidadesPorUF(uf));
 				
 		result.include("request",getRequest());
@@ -231,7 +232,9 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	public void editarGravar(final Long id, 
 							 final String nmLotacao, 
 							 final Long idOrgaoUsu,
-							 final String siglaLotacao) throws Exception{
+							 final String siglaLotacao,
+							 final String situacao,
+							 final Long idLocalidade) throws Exception{
 		assertAcesso("FE:Ferramentas;CAD_LOTACAO: Cadastrar Lotação");
 		
 		if(nmLotacao == null)
@@ -242,6 +245,9 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		
 		if(siglaLotacao == null)
 			throw new AplicacaoException("Sigla de lotação não informado");
+		
+		if(Long.valueOf(0).equals(idLocalidade))
+			throw new AplicacaoException("Localidade da lotação não informado");
 		
 		DpLotacao lotacao;
 		lotacao = new DpLotacao();
@@ -276,8 +282,34 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			listPessoa = dao().getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
 			
 		}
+		
+		//valida se pode inativar lotação
+		if(lotacao.getDataFim() == null && "false".equals(situacao)) {
+			DpPessoaDaoFiltro pessoaFiltro = new DpPessoaDaoFiltro();
+	        pessoaFiltro.setLotacao(lotacao);
+	        pessoaFiltro.setNome("");
+	        Integer qtdePessoa = dao().consultarQuantidade(pessoaFiltro);
+	        Integer qtdeDocumento = dao().consultarQuantidadeDocumentosPorDpLotacao(lotacao);
+	               
+	        if(qtdePessoa > 0 || qtdeDocumento > 0) {
+	        	throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa Lotação", 0);
+	        } else {
+	        	Calendar calendar = new GregorianCalendar();
+	            Date date = new Date();
+	            calendar.setTime(date);
+	            lotacao.setDataFimLotacao(calendar.getTime());
+	        }
+		} else if(lotacao.getDataFim() != null && "true".equals(situacao)){
+			lotacao.setDataFimLotacao(null);
+		}
+		
+        	
 		lotacao.setNomeLotacao(Texto.removerEspacosExtra(nmLotacao).trim());
 		lotacao.setSiglaLotacao(siglaLotacao.toUpperCase());
+		
+		CpLocalidade localidade = new CpLocalidade();
+		localidade.setIdLocalidade(idLocalidade);
+		lotacao.setLocalidade(dao().consultarLocalidade(localidade));
 		
 		if (idOrgaoUsu != null && idOrgaoUsu != 0 && (listPessoa == null || listPessoa.size() == 0)) {
 			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();

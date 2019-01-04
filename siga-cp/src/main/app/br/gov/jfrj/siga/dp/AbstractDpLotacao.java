@@ -163,6 +163,10 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_TP_LOTACAO")
 	private CpTipoLotacao cpTipoLotacao;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_LOCALIDADE")
+	private CpLocalidade localidade;
 
 	/**
 	 * @return the cpTipoLotacao
@@ -355,6 +359,14 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 
 	public void setDpPessoaLotadosSet(Set<DpPessoa> dpPessoaLotadosSet) {
 		this.dpPessoaLotadosSet = dpPessoaLotadosSet;
+	}
+
+	public CpLocalidade getLocalidade() {
+		return localidade;
+	}
+
+	public void setLocalidade(CpLocalidade localidade) {
+		this.localidade = localidade;
 	}
 
 }

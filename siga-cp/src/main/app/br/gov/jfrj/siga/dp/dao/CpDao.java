@@ -1016,7 +1016,7 @@ public class CpDao extends ModeloDao {
 
 		Query query = getSessao().createQuery(
 				"from CpLocalidade l where l.UF.idUF = "
-						+ cpuf.getIdUF().intValue());
+						+ cpuf.getIdUF().intValue() + " order by l.nmLocalidade");
 		List l = query.list();
 		return l;
 	}
@@ -1038,6 +1038,16 @@ public class CpDao extends ModeloDao {
 				"from CpLocalidade l order by l.nmLocalidade");
 		List l = query.list();
 		return l;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public CpLocalidade consultarLocalidade(CpLocalidade localidade) {
+
+		Query query = getSessao().createQuery(
+				"from CpLocalidade l where l.idLocalidade = :idLocalidade");
+		query.setLong("idLocalidade", localidade.getId());
+		List l = query.list();
+		return (CpLocalidade) l.get(0);
 	}
 
 	@SuppressWarnings("unchecked")

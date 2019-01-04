@@ -10,7 +10,8 @@
 	function validar() {
 		var nmLotacao = document.getElementsByName('nmLotacao')[0].value;
 		var siglaLotacao = document.getElementsByName('siglaLotacao')[0].value;		
-		var id = document.getElementsByName('id')[0].value;	
+		var id = document.getElementsByName('id')[0].value;
+		var idLocalidade = document.getElementsByName('idLocalidade')[0].value;	
 		if (nmLotacao==null || nmLotacao=="") {			
 			alert("Preencha o nome da Lotação.");
 			document.getElementById('nmLotacao').focus();		
@@ -18,7 +19,11 @@
 			if(siglaLotacao==null || siglaLotacao=="") {
 				alert("Preencha a sigla da Lotação.");
 			} else {
-				frm.submit();
+				if(idLocalidade == 0) {
+					alert("Preencha a localidade da Lotação.");	
+				} else {
+					frm.submit();
+				}
 			}
 		}			
 	}
@@ -94,6 +99,7 @@
 						</td>
 						<td>
 							<select name="idLocalidade" value="${idLocalidade}">
+								<option value="0">Selecione</option>
 								<c:forEach items="${listaLocalidades}" var="item">
 									<option value="${item.id}"
 										${item.id == idLocalidade ? 'selected' : ''}>

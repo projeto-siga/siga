@@ -21,6 +21,7 @@ package br.gov.jfrj.siga.base;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
 
 public class Contexto {
 	public static Object resource(String name) {
@@ -40,5 +41,14 @@ public class Contexto {
 			}
 		}
 		return null;
+	}
+	
+	public static String urlBase(HttpServletRequest request) {
+		String urlBase = System.getProperty("siga.base.url");
+		if (urlBase == null || urlBase.trim().length() == 0)
+			urlBase = request.getScheme() + "://"
+					+ request.getServerName() + ":"
+					+ request.getServerPort();
+		return urlBase;
 	}
 }

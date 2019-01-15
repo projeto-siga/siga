@@ -15,6 +15,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -61,7 +62,7 @@ public class TestesController extends SigaController {
 				incluirMatricula = "&matricula=" + matricula;
 			}
 
-			String urlBase = getURLBase();
+			String urlBase = Contexto.urlBase(request);
 			String URLSelecionar = "";
 			String uRLExibir = "";
 
@@ -159,11 +160,6 @@ public class TestesController extends SigaController {
 		} catch (Exception e) {
 			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
 		}
-	}
-
-	private String getURLBase() {
-		return MessageFormat.format("{0}://{1}:{2}", getRequest().getScheme(),
-				getRequest().getServerName(), getRequest().getServerPort());
 	}
 
 	private void testarOutrosModulos() {

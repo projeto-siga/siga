@@ -234,6 +234,9 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		DpLotacao lotacao;
 		lotacao = new DpLotacao();
 		lotacao.setSigla(siglaLotacao);
+		CpOrgaoUsuario ou = new CpOrgaoUsuario();
+		ou.setIdOrgaoUsu(idOrgaoUsu);
+		lotacao.setOrgaoUsuario(ou);
 		lotacao = dao().getInstance().consultarPorSigla(lotacao);
 		
 		if(lotacao != null && lotacao.getId() != null && !lotacao.getId().equals(id)) {
@@ -242,8 +245,6 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		
 		lotacao = new DpLotacao();
 		lotacao.setNomeLotacao(Texto.removeAcento(Texto.removerEspacosExtra(nmLotacao).trim()));
-		CpOrgaoUsuario ou = new CpOrgaoUsuario();
-		ou.setIdOrgaoUsu(idOrgaoUsu);
 		lotacao.setOrgaoUsuario(ou);
 		lotacao = dao().getInstance().consultarPorNomeOrgao(lotacao);
 		

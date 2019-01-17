@@ -22,6 +22,12 @@
 			}
 		}			
 	}
+
+	function removerEspacoEmBranco(vlr) {
+		while(vlr.indexOf(" ") != -1)
+			vlr = vlr.replace(" ", "");
+		return vlr;
+	}
 </script>
 
 <body>
@@ -73,7 +79,7 @@
 							<label>Sigla:</label>
 						</td>
 						<td>
-							<input type="text" id="siglaLotacao" name="siglaLotacao" value="${siglaLotacao}" maxlength="20" size="20"  style="text-transform:uppercase" onkeyup="this.value = this.value.trim()"/>
+							<input type="text" id="siglaLotacao" name="siglaLotacao" value="${siglaLotacao}" maxlength="20" size="20"  style="text-transform:uppercase" onkeyup="this.value = removerEspacoEmBranco(this.value)"/>
 						</td>
 					</tr>
 					

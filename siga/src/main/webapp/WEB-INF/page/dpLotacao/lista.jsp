@@ -68,17 +68,19 @@ function sbmt(offset) {
 									<c:url var="url" value="/app/lotacao/editar">
 										<c:param name="id" value="${lotacao.id}"></c:param>
 									</c:url>
-									<siga:link title="Alterar" url="${url}" />					
+									<c:url var="urlAtivarInativar" value="/app/lotacao/ativarInativar">
+										<c:param name="id" value="${lotacao.id}"></c:param>
+									</c:url>
+									<siga:link title="Alterar" url="${url}" />	
+									<c:choose>
+										<c:when test="${empty lotacao.dataFimLotacao}">
+											<siga:link title="Inativar" url="${urlAtivarInativar}" />		
+										</c:when>
+										<c:otherwise>
+											<siga:link title="Ativar" url="${urlAtivarInativar}" />
+										</c:otherwise>
+									</c:choose>				
 								</td>
-							<%--	<td align="left">									
-	 			 					<a href="javascript:if (confirm('Deseja excluir o orgão?')) location.href='/siga/app/orgao/excluir?id=${orgao.idOrgao}';">
-										<img style="display: inline;"
-										src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir orgão"							
-										onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
-										onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
-									</a>															
-								</td>
-							 --%>							
 							</tr>
 						</siga:paginador>
 					</tbody>
@@ -86,6 +88,7 @@ function sbmt(offset) {
 			</div>	
 			<div class="gt-table-buttons">
 					<c:url var="url" value="/app/lotacao/editar"></c:url>
+					<c:url var="urlAtivarInativar" value="/app/lotacao/ativarInativar"></c:url>
 					<input type="button" value="Incluir"
 						onclick="javascript:window.location.href='${url}'"
 						class="gt-btn-medium gt-btn-left">

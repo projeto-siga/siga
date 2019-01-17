@@ -266,7 +266,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			
 		}
 		lotacao.setNomeLotacao(Texto.removerEspacosExtra(nmLotacao).trim());
-		lotacao.setSigla(siglaLotacao.toUpperCase());
+		lotacao.setSiglaLotacao(siglaLotacao.toUpperCase());
 		
 		if (idOrgaoUsu != null && idOrgaoUsu != 0 && (listPessoa == null || listPessoa.size() == 0)) {
 			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();

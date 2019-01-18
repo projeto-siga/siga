@@ -1673,12 +1673,12 @@ public class CpDao extends ModeloDao {
 		if (entidade.getHisDtFim() != null && entidade.getHisIdcFim() == null)
 			entidade.setHisIdcFim(identidadeCadastrante);
 		entidade.setHisAtivo(entidade.getHisDtFim() == null ? 1 : 0);
-		getSessao().saveOrUpdate(entidade);
+		gravar(entidade);
 		if (entidade.getHisIdIni() == null && entidade.getId() != null) {
 			entidade.setHisIdIni(entidade.getId());
-			getSessao().update(entidade);
+			gravar(entidade);
 		}
-		getSessao().flush();
+		descarregar();
 		try {
 			invalidarCache(entidade);
 			// Edson: não há necessidade de limpar o cache de configs no próprio
@@ -1697,7 +1697,7 @@ public class CpDao extends ModeloDao {
 	public <T> T gravar(final T entidade) {
 		if (entidade instanceof CarimboDeTempo)
 			((CarimboDeTempo) entidade).setHisDtAlt(this.dt());
-		getSessao().saveOrUpdate(entidade);
+		super.gravar(entidade);
 		invalidarCache(entidade);
 		return entidade;
 	}

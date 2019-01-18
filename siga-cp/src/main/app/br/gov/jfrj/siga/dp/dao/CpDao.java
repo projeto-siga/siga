@@ -40,6 +40,11 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -83,6 +88,7 @@ import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpPersonalizacao;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
+import br.gov.jfrj.siga.dp.CpTipoMarca;
 import br.gov.jfrj.siga.dp.CpTipoPessoa;
 import br.gov.jfrj.siga.dp.CpUF;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -95,10 +101,6 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
 
 public class CpDao extends ModeloDao {
 
@@ -1014,7 +1016,7 @@ public class CpDao extends ModeloDao {
 
 		Query query = getSessao().createQuery(
 				"from CpLocalidade l where l.UF.idUF = "
-						+ cpuf.getIdUF().intValue());
+						+ cpuf.getIdUF().intValue() + " order by l.nmLocalidade");
 		List l = query.list();
 		return l;
 	}
@@ -1038,6 +1040,16 @@ public class CpDao extends ModeloDao {
 		return l;
 	}
 
+	@SuppressWarnings("unchecked")
+	public CpLocalidade consultarLocalidade(CpLocalidade localidade) {
+
+		Query query = getSessao().createQuery(
+				"from CpLocalidade l where l.idLocalidade = :idLocalidade");
+		query.setLong("idLocalidade", localidade.getId());
+		List l = query.list();
+		return (CpLocalidade) l.get(0);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public CpPersonalizacao consultarPersonalizacao(DpPessoa pes) {
 		final Query query = getSessao()
@@ -2329,6 +2341,20 @@ public class CpDao extends ModeloDao {
 		return result;
 	}
 
+	public int consultarQuantidadeDocumentosPorDpLotacao(final DpLotacao o) {
+        try {
+        	
+			SQLQuery sql = (SQLQuery) getSessao().getNamedQuery(
+					"consultarQuantidadeDocumentosPorDpLotacao");
 
+			sql.setLong("idLotacao", o.getId());
+            sql.setLong("idTipoMarca", CpTipoMarca.TIPO_MARCA_SIGA_EX);
+        	
+            final int l = ((BigDecimal) sql.uniqueResult()).intValue();
+            return l;
+        } catch (final NullPointerException e) {
+            return 0;
+        }
+    }
 
 }

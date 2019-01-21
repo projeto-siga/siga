@@ -1,9 +1,12 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,20 +30,45 @@ import br.gov.jfrj.siga.util.SigaJwtBL;
 @Resource
 public class LoginController extends SigaController {
 	HttpServletResponse response;
+	private ServletContext context;
 
-	public LoginController(HttpServletRequest request, HttpServletResponse response, Result result, CpDao dao,
-			SigaObjects so, EntityManager em) {
+	private static String convertStreamToString(java.io.InputStream is) {
+		if (is == null)
+			return null;
+		try (java.util.Scanner s = new java.util.Scanner(is, "UTF-8")) {
+			return s.useDelimiter("\\A").hasNext() ? s.next() : "";
+		}
+	}
+
+	public LoginController(HttpServletRequest request, HttpServletResponse response, ServletContext context,
+			Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
 		this.response = response;
+		this.context = context;
 	}
 
 	@Get("public/app/login")
-	public void login(String cont) {
+	public void login(String cont) throws IOException {
+		Map<String, String> manifest = new HashMap<>();
+		try (InputStream is = context.getResourceAsStream("/META-INF/VERSION.MF")) {
+			String m = convertStreamToString(is);
+			if (m != null) {
+				m = m.replaceAll("\r\n", "\n");
+				for (String s : m.split("\n")) {
+					String a[] = s.split(":", 2);
+					if (a.length == 2) {
+						manifest.put(a[0].trim(), a[1].trim());
+					}
+				}
+			}
+		}
+
+		result.include("versao", manifest.get("Siga-Versao"));
 		result.include("cont", cont);
 	}
 
 	@Post("public/app/login")
-	public void auth(String username, String password, String cont) {
+	public void auth(String username, String password, String cont) throws IOException {
 		try {
 			GiService giService = Service.getGiService();
 			String usuarioLogado = giService.login(username, password);

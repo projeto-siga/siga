@@ -13,6 +13,13 @@
 
 	<artifactId>siga</artifactId>
 
+	<properties>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.build.timestamp.format>dd/MM/yyyy HH:mm</maven.build.timestamp.format>
+	</properties>
+
 	<build>
 		<plugins>
 			<!-- vraptor static scan -->
@@ -41,8 +48,20 @@
 									<fileset
 										dir="${project.build.directory}/../../lib/static_scan_vraptor/"
 										includes="*.jar" />
-
 								</path>
+								<manifest
+									file="${project.build.directory}//${project.build.finalName}/META-INF/VERSION.MF">
+									<attribute name="Built-By" value="${user.name}" />
+									<attribute name="Build-Time" value="${maven.build.timestamp}" />
+									<attribute name="Build-Label" value="${project.version}" />
+									<attribute name="Siga-Versao" value="${siga.versao}" />
+									<attribute name="Specification-Title" value="Example" />
+									<attribute name="Specification-Version" value="${version}" />
+									<attribute name="Specification-Vendor" value="Example Organization" />
+									<attribute name="Implementation-Title" value="common" />
+									<attribute name="Implementation-Version" value="${version} ${TODAY}" />
+									<attribute name="Implementation-Vendor" value="Example Corp." />
+								</manifest>
 								<java classpathref="build.classpath"
 									classname="br.com.caelum.vraptor.scan.VRaptorStaticScanning"
 									fork="true">
@@ -52,6 +71,7 @@
 									<classpath
 										path="${project.build.directory}/${project.build.finalName}/WEB-INF/classes" />
 								</java>
+
 								<war destfile="${project.build.directory}/${project.build.finalName}.war"
 									webxml="${project.build.directory}/${project.build.finalName}/WEB-INF/web.xml">
 									<fileset
@@ -67,7 +87,6 @@
 				</executions>
 			</plugin>
 			<!-- end vraptor static scan -->
-
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

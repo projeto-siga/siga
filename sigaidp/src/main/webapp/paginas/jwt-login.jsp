@@ -60,6 +60,7 @@
 				<!-- login form -->
 				<form method="post" enctype="application/x-www-form-urlencoded"
 					class="gt-form">
+					<input type="hidden" value="${cont}"/>
 
 					<c:if test="${not empty mensagem}">
 						<div class="login-invalido">

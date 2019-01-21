@@ -41,6 +41,8 @@ public class SigaJwtFormServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		String cont = req.getParameter("cont");
+		req.setAttribute("cont", cont);
 		req.getRequestDispatcher("/paginas/jwt-login.jsp").forward(req, resp);
 	}
 
@@ -49,9 +51,10 @@ public class SigaJwtFormServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+		String senha = request.getParameter("password");
+		String usuario = request.getParameter("username");
+		String cont = request.getParameter("cont");
 		try {
-			String usuario = request.getParameter("username");
-			String senha = request.getParameter("password");
 
 			GiService giService = Service.getGiService();
 			String usuarioLogado = giService.login(usuario, senha);
@@ -64,8 +67,9 @@ public class SigaJwtFormServlet extends HttpServlet {
 
 			String token = jwtBL.criarToken(usuario, null, null, null);
 			response.addCookie(AuthJwtFormFilter.buildCookie(token));
-			response.sendRedirect(request.getParameter("cont"));
+			response.sendRedirect(cont);
 		} catch (RuntimeException e) {
+			request.setAttribute("cont", cont);
 			request.setAttribute("mensagem", e.getMessage());
 			request.getRequestDispatcher("/paginas/jwt-login.jsp").forward(
 					request, response);

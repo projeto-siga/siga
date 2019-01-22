@@ -45,6 +45,7 @@ import org.apache.commons.logging.LogFactory;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -213,9 +214,14 @@ public class Documento {
 			Set<ExMovimentacao> movsAssinatura) {
 		ArrayList<String> assinantes = new ArrayList<String>();
 		for (ExMovimentacao movAssinatura : movsAssinatura) {
-			String s = movAssinatura.getDescrMov().trim().toUpperCase();
-			s = s.split(":")[0];
-			s = s.intern();
+			String s;
+			if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_REVISAO)) {
+				s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
+			} else {
+				s = movAssinatura.getDescrMov().trim().toUpperCase();
+				s = s.split(":")[0];
+				s = s.intern();
+			}
 			if (!assinantes.contains(s)) {
 				assinantes.add(s);
 			}

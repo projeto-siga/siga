@@ -1196,6 +1196,29 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/*
+	 * Retorna se pode revisar um documento.
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeRevisarDocumento(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExDocumento doc) {
+		
+		if (doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
+			return false;
+		
+		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_REVISAO,
+				ExTipoMovimentacao.class, false);
+		
+		return getConf().podePorConfiguracao(null, null, null, null, doc.getExFormaDocumento(), doc.getExModelo(), null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
+	
+	/*
 	 * Retorna se pode autenticar uma movimentação que só foi assinada com senha.
 	 * 
 	 * @param titular

@@ -415,7 +415,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		if(inputStream == null) {
 			this.result.redirectTo(this).lista(0, null, "");
 		} else {
-			return new InputStreamDownload(inputStream, "application/text", "incosistencias.txt");	
+			return new InputStreamDownload(inputStream, "application/text", "inconsistencias.txt");	
 		}
 		return null;
 

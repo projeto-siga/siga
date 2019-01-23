@@ -2,6 +2,9 @@ package br.gov.jfrj.siga.base;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+
+import org.ocpsoft.prettytime.PrettyTime;
 
 public class Data {
 
@@ -24,5 +27,17 @@ public class Data {
 		}
 		return null;
 	}
+	
+	public static String calcularTempoRelativo(Date anterior) {
+		PrettyTime p = new PrettyTime(new Date(), new Locale("pt"));
 
+		String tempo = p.format(anterior);
+		tempo = tempo.replace(" atrás", "");
+		tempo = tempo.replace(" dias", " dias");
+		tempo = tempo.replace(" horas", "h");
+		tempo = tempo.replace(" minutos", "min");
+		tempo = tempo.replace(" segundos", "s");
+		tempo = tempo.replace("agora há pouco", "agora");
+		return tempo;
+	}
 }

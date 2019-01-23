@@ -1204,13 +1204,19 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean podeRevisarDocumento(final DpPessoa titular,
+	public boolean podeSolicitarAssinatura(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExDocumento doc) {
+		
+		if (!doc.isFinalizado())
+			return false;
 		
 		if (doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
 			return false;
 		
-		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_REVISAO,
+		if (doc.isAssinaturaSolicitada())
+			return false;
+		
+		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA,
 				ExTipoMovimentacao.class, false);
 		
 		return getConf().podePorConfiguracao(null, null, null, null, doc.getExFormaDocumento(), doc.getExModelo(), null,

@@ -1470,21 +1470,21 @@ public class ExMovimentacaoController extends ExController {
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
 	
-	@Get("/app/expediente/mov/revisar")
-	public void aRevisar(final String sigla) {
+	@Get("/app/expediente/mov/solicitar_assinatura")
+	public void aSolicitarAssinatura(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		final ExDocumento doc = buscarDocumento(builder);
 
 		if (!Ex.getInstance()
 				.getComp()
-				.podeRevisarDocumento(getTitular(), getLotaTitular(),
+				.podeSolicitarAssinatura(getTitular(), getLotaTitular(),
 						doc)) {
 			throw new AplicacaoException("Não é possível revisar");
 		}
 		Ex.getInstance()
 			.getBL()
-			.revisar(getCadastrante(), getLotaTitular(), doc);
+			.solicitarAssinatura(getCadastrante(), getLotaTitular(), doc);
 
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}

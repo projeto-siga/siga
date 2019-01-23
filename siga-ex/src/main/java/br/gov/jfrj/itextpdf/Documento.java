@@ -215,7 +215,7 @@ public class Documento {
 		ArrayList<String> assinantes = new ArrayList<String>();
 		for (ExMovimentacao movAssinatura : movsAssinatura) {
 			String s;
-			if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_REVISAO)) {
+			if (movAssinatura.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)) {
 				s = Texto.maiusculasEMinusculas(movAssinatura.getCadastrante().getNomePessoa());
 			} else {
 				s = movAssinatura.getDescrMov().trim().toUpperCase();

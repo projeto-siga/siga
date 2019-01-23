@@ -536,14 +536,14 @@ public class ExDocumentoVO extends ExVO {
 								mob.doc()));
 
 		vo.addAcao(
-				"spellcheck",
-				"Revisar",
+				"page_go	",
+				"Solicitar Assinatura",
 				"/app/expediente/mov",
-				"revisar",
+				"solicitar_assinatura",
 				Ex.getInstance()
 						.getComp()
-						.podeRevisarDocumento(titular, lotaTitular,
-								mob.doc()), "Ao cliacar em prosseguir, você estará indicando que revisou este documento e que ele deve ser incluído na lista para ser assinado em lote. Prosseguir?", 
+						.podeSolicitarAssinatura(titular, lotaTitular,
+								mob.doc()), "Ao clicar em prosseguir, você estará sinalizando que revisou este documento e que ele deve ser incluído na lista para ser assinado em lote. Prosseguir?", 
 								null, null, null, "once");
 
 		if (doc.isFinalizado() && doc.getNumExpediente() != null) {

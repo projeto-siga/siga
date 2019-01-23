@@ -116,13 +116,14 @@ public class ExAssinadorExternoController extends ExController {
 			List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL().obterAssinaveis(pes, pes.getLotacao(), true);
 			for (ExAssinavelDoc ass : assinaveis) {
 				if (ass.isPodeAssinar()) {
-					String revisores = ass.getDoc().getRevisoresCompleto();
-					
+					String solicitantesDeAssinatura = ass.getDoc().getSolicitantesDeAssinaturaCompleto();
+					if (solicitantesDeAssinatura != null)
+						solicitantesDeAssinatura = solicitantesDeAssinatura.replace("Revisado por", "Assinatura solicitada por");
 					ExAssinadorExternoListItem aei = new ExAssinadorExternoListItem();
 					aei.setId(makeId(ass.getDoc().getCodigoCompacto()));
 					aei.setSecret(docSecret(ass.getDoc()));
 					aei.setCode(ass.getDoc().getCodigo());
-					aei.setDescr(ass.getDoc().getDescrDocumento() + (revisores.length() != 0 ? " (" + revisores + ")" : ""));
+					aei.setDescr(ass.getDoc().getDescrDocumento() + (solicitantesDeAssinatura.length() != 0 ? " (" + solicitantesDeAssinatura + ")" : ""));
 					aei.setKind(ass.getDoc().getTipoDescr());
 					aei.setOrigin("Siga-Doc");
 					aei.setUrlView(permalink + ass.getDoc().getReferencia());

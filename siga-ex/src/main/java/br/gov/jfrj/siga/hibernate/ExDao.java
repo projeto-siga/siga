@@ -1604,9 +1604,9 @@ public class ExDao extends CpDao {
 		return (ExModelo) query.uniqueResult();
 	}
 
-	public List<ExDocumento> listarDocPendenteAssinatura(DpPessoa pessoa, boolean apenasRevisados) {
+	public List<ExDocumento> listarDocPendenteAssinatura(DpPessoa pessoa, boolean apenasComSolicitacaoDeAssinatura) {
 		final Query query = getSessao().getNamedQuery(
-				"listarDocPendenteAssinatura" + (apenasRevisados ? "ERevisado" : ""));
+				"listarDocPendenteAssinatura" + (apenasComSolicitacaoDeAssinatura ? "ERevisado" : ""));
 		query.setLong("idPessoaIni", pessoa.getIdPessoaIni());
 		return query.list();
 	}

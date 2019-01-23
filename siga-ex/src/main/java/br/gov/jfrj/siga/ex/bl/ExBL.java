@@ -6964,13 +6964,13 @@ public class ExBL extends CpBL {
 	}
 
 	public List<ExAssinavelDoc> obterAssinaveis(DpPessoa titular,
-			DpLotacao lotaTitular, boolean apenasRevisados) {
+			DpLotacao lotaTitular, boolean apenasComSolicitacaoDeAssinatura) {
 		List<ExAssinavelDoc> assinaveis = new ArrayList<ExAssinavelDoc>();
 		Map<Long, ExAssinavelDoc> map = new HashMap<>();
 
 		// Acrescenta documentos
 		//
-		for (final ExDocumento doc : dao().listarDocPendenteAssinatura(titular, apenasRevisados)) {
+		for (final ExDocumento doc : dao().listarDocPendenteAssinatura(titular, apenasComSolicitacaoDeAssinatura)) {
 			if (!doc.isFinalizado() || !doc.isEletronico())
 				continue;
 			ExAssinavelDoc ass = acrescentarDocAssinavel(assinaveis, map, titular, lotaTitular, doc);
@@ -7053,11 +7053,11 @@ public class ExBL extends CpBL {
 		ass.getMovs().add(assmov);
 	}
 
-	public void revisar(DpPessoa cadastrante, DpLotacao lotaTitular, ExDocumento doc) {
+	public void solicitarAssinatura(DpPessoa cadastrante, DpLotacao lotaTitular, ExDocumento doc) {
 		try {
 			iniciarAlteracao();
 			final ExMovimentacao mov = criarNovaMovimentacao(
-					ExTipoMovimentacao.TIPO_MOVIMENTACAO_REVISAO,
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA,
 					cadastrante, lotaTitular, doc.getMobilGeral(), null, cadastrante,
 					null, null, null, null);
 

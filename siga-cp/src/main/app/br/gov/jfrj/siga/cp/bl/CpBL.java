@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp.bl;
 
+import java.io.File;
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +42,7 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
+import br.gov.jfrj.siga.cp.util.Excel;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -740,6 +743,17 @@ public class CpBL {
 		acesso.setTipo(tipo);
 		acesso.setAuditIP(auditIP);
 		dao().gravar(acesso);
+	}
+	
+	public InputStream uploadLotacao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+		InputStream inputStream = null;
+		try {
+			Excel excel = new Excel();
+			inputStream = excel.uploadLotacao(file, orgaoUsuario, extensao);
+		} catch (Exception e) {
+			
+		}
+		return inputStream;
 	}
 
 }

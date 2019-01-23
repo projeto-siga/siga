@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,14 +11,20 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FileUtils;
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpUF;
@@ -368,4 +376,49 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
         }
         this.result.redirectTo(this).lista(0, null, "");
     }
+    
+    @Get("/app/lotacao/carregarExcel")
+	public void carregarExcel() {
+		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
+		} else {
+			result.include("nmOrgaousu", getTitular().getOrgaoUsuario().getNmOrgaoUsu());	
+		}
+		
+		result.use(Results.page()).forwardTo("/WEB-INF/page/dpLotacao/cargaLotacao.jsp");
+	}
+	
+	@Post("/app/lotacao/carga")
+	public Download carga( final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
+		InputStream inputStream = null;
+		try {
+			String nomeArquivo = arquivo.getFileName();
+			String extensao = nomeArquivo.substring(nomeArquivo.lastIndexOf("."), nomeArquivo.length());
+			
+			File file = new File("arq" + extensao);
+
+			file.createNewFile();
+			FileUtils.copyInputStreamToFile(arquivo.getFile(), file);
+			
+			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
+			if(idOrgaoUsu != null && !"".equals(idOrgaoUsu)) {
+				orgaoUsuario.setIdOrgaoUsu(idOrgaoUsu);
+			} else {
+				orgaoUsuario = getTitular().getOrgaoUsuario();
+			}
+			
+			CpBL cpbl = new CpBL();
+			inputStream = cpbl.uploadLotacao(file, orgaoUsuario, extensao);
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+		if(inputStream == null) {
+			this.result.redirectTo(this).lista(0, null, "");
+		} else {
+			return new InputStreamDownload(inputStream, "application/text", "incosistencias.txt");	
+		}
+		return null;
+
+	}
+
 }

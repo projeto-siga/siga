@@ -27,7 +27,7 @@ public class RequestLoggerFilter implements Filter {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
 			if (isAplicacaoException(e))
-				return; // swallow the AplicacaoException
+				throw e;
 			long duracao = System.currentTimeMillis() - inicio;
 			new RequestExceptionLogger(request, e, duracao, getLoggerName()).logar();
 			throw e;

@@ -1481,7 +1481,7 @@ public class ExBL extends CpBL {
 
 			if (e.getMessage().contains("junta"))
 				throw new AplicacaoException(
-						"O documento foi assinado com sucesso mas não foi possível juntar este documento ao documento pai. O erro da juntada foi - "
+						"Não foi possível juntar este documento ao documento pai. O erro da juntada foi - "
 								+ e.getMessage(), 0, e);
 
 			throw new AplicacaoException("Erro ao assinar documento.", 0, e);

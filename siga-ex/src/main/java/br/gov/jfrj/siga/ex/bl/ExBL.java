@@ -69,6 +69,22 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 
+import com.crivano.swaggerservlet.ISwaggerRequest;
+import com.crivano.swaggerservlet.ISwaggerResponse;
+import com.crivano.swaggerservlet.SwaggerAsyncResponse;
+import com.crivano.swaggerservlet.SwaggerCall;
+import com.google.common.base.Strings;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+
 import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.Service;
@@ -141,22 +157,6 @@ import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.wf.service.WfService;
-
-import com.crivano.swaggerservlet.ISwaggerRequest;
-import com.crivano.swaggerservlet.ISwaggerResponse;
-import com.crivano.swaggerservlet.SwaggerAsyncResponse;
-import com.crivano.swaggerservlet.SwaggerCall;
-import com.google.common.base.Strings;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 
 public class ExBL extends CpBL {
 	private static final String MODELO_FOLHA_DE_ROSTO_EXPEDIENTE_INTERNO = "Folha de Rosto - Expediente Interno";
@@ -3123,29 +3123,22 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Processos não podem possuir anexos antes da finalização. Exclua todos os anexos para poder finalizar. Os anexos poderão ser incluídos no primeiro volume após a finalização.");
 
+		Date dt = dao().dt();
+		Calendar c = Calendar.getInstance();
+		c.setTime(dt);
+		
+		if (doc.getDtDoc() != null) {
+			Calendar dtDocCalendar = Calendar.getInstance();
+			dtDocCalendar.setTime(doc.getDtDoc());
+			
+			if (c.before(dtDocCalendar))
+				throw new AplicacaoException(
+						"não é permitido criar documento com data futura");
+		}
+		
 		try {
-			iniciarAlteracao();
-
-			doc.setExClassificacao(doc.getExClassificacao().getAtual() != null ?  doc.getExClassificacao().getAtual() : doc.getExClassificacao()); /*
-																		 * atualizando
-																		 * a
-																		 * classificação
-																		 * do
-																		 * documento
-																		 */
-
-			Date dt = dao().dt();
-			Calendar c = Calendar.getInstance();
-			c.setTime(dt);
-
-			if (doc.getDtDoc() != null) {
-				Calendar dtDocCalendar = Calendar.getInstance();
-				dtDocCalendar.setTime(doc.getDtDoc());
-
-				if (c.before(dtDocCalendar))
-					throw new AplicacaoException(
-							"não é permitido criar documento com data futura");
-			}
+			// atualizando a classificacao do documento
+			doc.setExClassificacao(doc.getExClassificacao().getAtual() != null ?  doc.getExClassificacao().getAtual() : doc.getExClassificacao()); 
 
 			// Pega a data sem horas, minutos e segundos...
 			if (doc.getDtDoc() == null) {
@@ -3196,18 +3189,20 @@ public class ExBL extends CpBL {
 			} else {
 				criarVolume(cadastrante, lotaCadastrante, doc);
 			}
-			iniciarAlteracao();
-			
+
+			ContextoPersistencia.flushTransaction();
+
 			concluirAlteracaoDocComRecalculoAcesso(doc);			
+
+			ContextoPersistencia.flushTransaction();
 
 			if (setVias == null || setVias.size() == 0)
 				criarVia(cadastrante, lotaCadastrante, doc, null);
 
 			String s = processarComandosEmTag(doc, "finalizacao");
-
+			ContextoPersistencia.flushTransaction();
 			return s;
 		} catch (final Exception e) {
-			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao finalizar o documento: "
 					+ e.getMessage(), 0, e);
 		}

@@ -19,12 +19,15 @@ package br.com.caelum.vraptor.util.jpa;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
+import org.hibernate.Session;
+
 import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.core.InterceptorStack;
 import br.com.caelum.vraptor.interceptor.Interceptor;
 import br.com.caelum.vraptor.ioc.Component;
 import br.com.caelum.vraptor.resource.ResourceMethod;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 /**
  * An interceptor that manages Entity Manager Transaction. All requests are
@@ -52,14 +55,31 @@ public class JPATransactionInterceptor implements Interceptor {
 			transaction.begin();
 
 			stack.next(method, instance);
-			
+
 			transaction = manager.getTransaction();
 
 			if (!validator.hasErrors() && transaction.isActive()) {
+				// Executando flush no EM e a Session para garantir não nada
+				// ficará pendente.
+				manager.flush();
+				Session s = (Session) (manager.getDelegate());
+				s.flush();
 				transaction.commit();
 			}
 		} finally {
 			if (transaction != null && transaction.isActive()) {
+				manager.clear();
+				// Executando um clear na session do Hibernate para garantir que
+				// comandos enviados diretamente para a session, não via JPA,
+				// não tenham ficado em um cache e sejam executados depois do
+				// rollback
+				Session s = (Session) (manager.getDelegate());
+				s.clear();
+				try {
+					s.flush();
+				} catch (Exception e) {
+					// Do nothing, just making sure everything is flushed
+				}
 				transaction.rollback();
 			}
 		}

@@ -3190,17 +3190,17 @@ public class ExBL extends CpBL {
 				criarVolume(cadastrante, lotaCadastrante, doc);
 			}
 
-			ContextoPersistencia.flushTransaction();
+//			ContextoPersistencia.flushTransaction();
 
 			concluirAlteracaoDocComRecalculoAcesso(doc);			
 
-			ContextoPersistencia.flushTransaction();
+//			ContextoPersistencia.flushTransaction();
 
 			if (setVias == null || setVias.size() == 0)
 				criarVia(cadastrante, lotaCadastrante, doc, null);
 
 			String s = processarComandosEmTag(doc, "finalizacao");
-			ContextoPersistencia.flushTransaction();
+//			ContextoPersistencia.flushTransaction();
 			return s;
 		} catch (final Exception e) {
 			throw new AplicacaoException("Erro ao finalizar o documento: "

@@ -2562,8 +2562,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/assinar_gravar")
 	public void aAssinarGravar(final String sigla, final Boolean copia,
 			final String atributoAssinavelDataHora, String assinaturaB64,
-			final String certificadoB64, final Boolean juntar, final Boolean tramitar) throws AplicacaoException,
-			ServletException {
+			final String certificadoB64, final Boolean juntar, final Boolean tramitar) throws Exception {
 		try {
 
 			final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -4240,9 +4239,11 @@ public class ExMovimentacaoController extends ExController {
 		result.use(Results.http()).body("OK").setStatusCode(200);
 	}
 
-	protected void httpError(final Exception e) {
+	protected void httpError(final Exception e) throws Exception {
 		result.use(Results.http()).body("ERRO - " + e.getMessage())
 				.setStatusCode(500);
+		response.flushBuffer();
+		throw e;
 	}
 
 	@Get("/app/expediente/mov/assinado")

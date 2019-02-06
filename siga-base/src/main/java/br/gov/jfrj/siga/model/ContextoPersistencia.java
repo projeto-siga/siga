@@ -15,6 +15,12 @@ public class ContextoPersistencia {
 		return emByThread.get();
 	}
 	
+	static public void flushTransaction() {
+		em().flush();
+		em().getTransaction().commit();
+		em().getTransaction().begin();
+	}
+	
 
 	static public void setUserPrincipal(String userPrincipal) {
 		userPrincipalByThread.set(userPrincipal);

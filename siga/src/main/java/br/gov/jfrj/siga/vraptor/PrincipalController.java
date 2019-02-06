@@ -70,19 +70,13 @@ public class PrincipalController extends SigaController {
 		if (sel == null || sel.getDescricao() == null)
 			result.notFound();
 		else {
-			String urlBase = getRequest().getScheme() + "://"
-					+ getRequest().getServerName() + ":"
-					+ getRequest().getServerPort();
-			result.redirectTo(urlBase + sel.getDescricao());
+			result.redirectTo(Contexto.urlBase(request) + sel.getDescricao());
 		}
 	}
 
 	@Get("permalink/{sigla}/{parte}")
 	public void permalink(final String sigla, final String parte) {
-		String urlBase = getRequest().getScheme() + "://"
-				+ getRequest().getServerName() + ":"
-				+ getRequest().getServerPort();
-		result.redirectTo(urlBase + "/sigaex/app/expediente/mov/exibir?id="
+		result.redirectTo(Contexto.urlBase(request) + "/sigaex/app/expediente/mov/exibir?id="
 				+ parte);
 	}
 
@@ -154,10 +148,9 @@ public class PrincipalController extends SigaController {
 		final GenericoSelecao sel = new GenericoSelecao();
 		if (incluirMatricula == null)
 			incluirMatricula = "";
+		
+		String urlBase = Contexto.urlBase(request);
 
-		String urlBase = getRequest().getScheme() + "://"
-				+ getRequest().getServerName() + ":"
-				+ getRequest().getServerPort();
 		List<String> lurls = new ArrayList<>();
 
 		if (m1.find()) {

@@ -67,6 +67,7 @@ public class JPATransactionInterceptor implements Interceptor {
 				transaction.commit();
 			}
 		} finally {
+			transaction = manager.getTransaction();
 			if (transaction != null && transaction.isActive()) {
 				manager.clear();
 				// Executando um clear na session do Hibernate para garantir que

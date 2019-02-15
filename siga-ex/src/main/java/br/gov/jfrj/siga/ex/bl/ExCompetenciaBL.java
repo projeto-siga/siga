@@ -4056,6 +4056,21 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& podeSerMovimentado(mob);
 		// return true;
 	}
+	
+	public boolean podeTramitarPosAssinatura(final DpPessoa destinatario, final DpLotacao lotaDestinatario, 
+			final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
+
+		if (lotaDestinatario == null && destinatario == null) 
+			return false;
+		
+		if (!podeReceberPorConfiguracao(destinatario, lotaDestinatario))
+			return false;
+
+		return podeMovimentar(titular, lotaTitular, mob)
+				&& getConf().podePorConfiguracao(titular, lotaTitular,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
+						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
 
 
 	/**

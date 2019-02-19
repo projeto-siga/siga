@@ -4085,6 +4085,49 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& podeSerMovimentado(mob);
 		// return true;
 	}
+	
+	/**
+	 * Retorna se é possível fazer transferência imediatamente antes da tela de assinatura. As regras são as seguintes
+	 * para este móbil:
+	 * <ul>
+	 * <li><i>Destinatario esta definido</i>
+	 *  <li><i>Destinatario pode receber documento</i>
+	 *  <li><i>Se temporário, o documento está na mesma lotação do titular</i> 
+	 * <li><i>Se finalizado, podeMovimentar()</i>
+	 *  <li>Não pode haver configuração impeditiva</li> </ul>
+	 * 
+	 * @param destinatario
+	 * @param lotaDestinatario 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * 
+	 */
+	public boolean podeTramitarPosAssinatura(final DpPessoa destinatario, final DpLotacao lotaDestinatario, 
+			final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
+
+		if (lotaDestinatario == null && destinatario == null) 
+			return false;
+		
+		if (!podeReceberPorConfiguracao(destinatario, lotaDestinatario))
+			return false;
+		
+		if (!getConf().podePorConfiguracao(titular, lotaTitular,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR))
+			return false;
+
+		if(!mob.doc().isFinalizado()) { /* documento temporário e não sofreu movimentação. A lotação onde se encontra é a do cadastrante */
+			if (mob.doc().getLotaCadastrante() != null && !mob.doc().getLotaCadastrante().equivale(lotaTitular)) 
+				return false;			 	
+		} else {
+			return podeMovimentar(titular, lotaTitular, mob);				 
+		}
+		
+		return true;
+		
+	}
 
 
 	/**

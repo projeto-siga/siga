@@ -42,8 +42,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "EX_TIPO_MOVIMENTACAO", catalog = "SIGA")
-public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
-		Serializable, Selecionavel {
+public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements Serializable, Selecionavel {
 	/**
 	 * 
 	 */
@@ -67,7 +66,9 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
 
 	final static public long TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE = 9;
 
-	//TODO: remover o teste da existencia de tipo de movimentacao de eliminacao na hora da busca, pois isso aumenta muito o tempo do query. Se for o caso, criar um DNM_ELIMINADO.
+	// TODO: remover o teste da existencia de tipo de movimentacao de eliminacao
+	// na hora da busca, pois isso aumenta muito o tempo do query. Se for o
+	// caso, criar um DNM_ELIMINADO.
 	final static public long TIPO_MOVIMENTACAO_ELIMINACAO = 10;
 
 	final static public long TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO = 11;
@@ -139,39 +140,39 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
 	final static public long TIPO_MOVIMENTACAO_DESAPENSACAO = 42;
 
 	final static public long TIPO_MOVIMENTACAO_ENCERRAMENTO_DE_VOLUME = 43;
-	
+
 	final static public long TIPO_MOVIMENTACAO_VINCULACAO_PAPEL = 44;
-	
+
 	final static public long TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO = 45;
-	
+
 	final static public long TIPO_MOVIMENTACAO_SOBRESTAR = 46;
-	
+
 	final static public long TIPO_MOVIMENTACAO_DESOBRESTAR = 47;
-	
+
 	final static public long TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO = 48;
-	
+
 	final static public long TIPO_MOVIMENTACAO_INDICACAO_GUARDA_PERMANENTE = 49;
-	
+
 	final static public long TIPO_MOVIMENTACAO_REVERSAO_INDICACAO_GUARDA_PERMANENTE = 50;
-	
+
 	final static public long TIPO_MOVIMENTACAO_RECLASSIFICACAO = 51;
-	
+
 	final static public long TIPO_MOVIMENTACAO_AVALIACAO = 52;
-	
+
 	final static public long TIPO_MOVIMENTACAO_AVALIACAO_COM_RECLASSIFICACAO = 53;
-	
+
 	final static public long TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO = 54;
-	
+
 	final static public long TIPO_MOVIMENTACAO_RETIRADA_DE_EDITAL_DE_ELIMINACAO = 55;
-	
+
 	final static public long TIPO_MOVIMENTACAO_DESARQUIVAMENTO_INTERMEDIARIO = 56;
 
 	final static public long TIPO_MOVIMENTACAO_PENDENCIA_DE_ANEXACAO = 57;
-	
+
 	final static public long TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA = 58;
-	
+
 	final static public long TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA = 59;
-	
+
 	final static public long TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA = 60;
 
 	final static public long TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO = 61;
@@ -182,6 +183,7 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
 
 	final static public long TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR = 64;
 
+	final static public long TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA = 65;
 
 	public static boolean hasDespacho(long id) {
 		return id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO
@@ -192,8 +194,7 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
 	}
 
 	public static boolean hasDocumento(long id) {
-		return id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO
-				|| hasDespacho(id);
+		return id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO || hasDespacho(id);
 	}
 
 	/**
@@ -229,7 +230,7 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
 				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA
 				|| id == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA;
 	}
-	
+
 	/* Add customized code below */
 
 }

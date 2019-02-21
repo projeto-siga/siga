@@ -208,7 +208,7 @@
 							<table class="gt-table mov">
 								<thead>
 									<tr>
-										<th rowspan="2" align="center" style="padding: 5px 5px;">Data</th>
+										<th rowspan="2" align="center" style="padding: 5px 5px;">Tempo</th>
 										<th rowspan="2" style="padding: 5px 5px;">Lotação</th>
 										<th rowspan="2" style="padding: 5px 5px;">Evento</th>
 										<th rowspan="2" style="padding: 5px 5px;">Descrição</th>
@@ -220,8 +220,8 @@
 										test="${ (mov.idTpMov != 14 and mov.idTpMov != 64 and
 							          not mov.cancelada)}">
 										<tr class="${mov.classe} ${mov.disabled}">
-											<td align="center" style="padding: 5px 5px;">${mov.dtRegMovDDMMYY}</td>
-											<td style="padding: 5px 5px;">${mov.mov.lotaCadastrante.sigla}</td>
+											<td align="center" style="padding: 5px 5px;" title="${mov.dtRegMovDDMMYYHHMMSS}">${mov.tempoRelativo}</td>
+											<td style="padding: 5px 5px;" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>
 											<td style="padding: 5px 5px;">${mov.mov.exTipoMovimentacao.sigla}</td>
 											<td style="padding: 5px 5px; word-break: break-all;">${mov.descricao}
 												<c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
@@ -936,6 +936,7 @@
 												confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
 												idAjax="${mov.idMov}" classe="${acao.classe}" />
 										</c:forEach>
+										<siga:link title="${mov.mov.cadastrante.sigla}/${mov.mov.lotaCadastrante.sigla} - ${mov.tempoRelativo}" test="${true}" classe="${acao.classe}" />
 									</siga:links>
 								</p>
 							</c:if>

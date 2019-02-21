@@ -66,7 +66,7 @@ public class PrincipalController extends SigaController {
 
 	@Get("permalink/{sigla}")
 	public void permalink(final String sigla) {
-		GenericoSelecao sel = buscarGenericoPorSigla(sigla, null, null, null);
+		GenericoSelecao sel = buscarGenericoPorSigla(sigla, getTitular(), getLotaTitular(), (getTitular() != null) ? getTitular().getSiglaCompleta() : null);
 		if (sel == null || sel.getDescricao() == null)
 			result.notFound();
 		else {

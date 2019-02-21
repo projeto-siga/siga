@@ -159,8 +159,12 @@ public class AuthJwtFormFilter implements Filter {
 			informarAutenticacaoInvalida(resp, e);
 			return;
 		}
-		resp.sendRedirect("/siga/public/app/login?cont=" + URLEncoder.encode(
-				req.getRequestURL() + (req.getQueryString() != null ? "?" + req.getQueryString() : ""), "UTF-8"));
+		
+		String cont = req.getRequestURL() + (req.getQueryString() != null ? "?" + req.getQueryString() : "");
+		String base = System.getProperty("siga.base.url");
+		if (base != null && base.startsWith("https:") && cont.startsWith("http:"))
+			cont = "https" + cont.substring(4);
+		resp.sendRedirect("/siga/public/app/login?cont=" + URLEncoder.encode(cont, "UTF-8"));
 	}
 
 	private void informarAutenticacaoInvalida(HttpServletResponse resp, Exception e) throws IOException {

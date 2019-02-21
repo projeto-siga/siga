@@ -1196,6 +1196,35 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	}
 	
 	/*
+	 * Retorna se pode revisar um documento.
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeSolicitarAssinatura(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExDocumento doc) {
+		
+		if (!doc.isFinalizado())
+			return false;
+		
+		if (doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
+			return false;
+		
+		if (doc.isAssinaturaSolicitada())
+			return false;
+		
+		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA,
+				ExTipoMovimentacao.class, false);
+		
+		return getConf().podePorConfiguracao(null, null, null, null, doc.getExFormaDocumento(), doc.getExModelo(), null,
+				null, exTpMov, null, null, null, lotaTitular, titular, null,null,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+	}
+	
+	/*
 	 * Retorna se pode autenticar uma movimentação que só foi assinada com senha.
 	 * 
 	 * @param titular
@@ -4055,6 +4084,49 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				&& !mob.doc().isSemEfeito()
 				&& podeSerMovimentado(mob);
 		// return true;
+	}
+	
+	/**
+	 * Retorna se é possível fazer transferência imediatamente antes da tela de assinatura. As regras são as seguintes
+	 * para este móbil:
+	 * <ul>
+	 * <li><i>Destinatario esta definido</i>
+	 *  <li><i>Destinatario pode receber documento</i>
+	 *  <li><i>Se temporário, o documento está na mesma lotação do titular</i> 
+	 * <li><i>Se finalizado, podeMovimentar()</i>
+	 *  <li>Não pode haver configuração impeditiva</li> </ul>
+	 * 
+	 * @param destinatario
+	 * @param lotaDestinatario 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * 
+	 */
+	public boolean podeTramitarPosAssinatura(final DpPessoa destinatario, final DpLotacao lotaDestinatario, 
+			final DpPessoa titular, final DpLotacao lotaTitular, final ExMobil mob) {
+
+		if (lotaDestinatario == null && destinatario == null) 
+			return false;
+		
+		if (!podeReceberPorConfiguracao(destinatario, lotaDestinatario))
+			return false;
+		
+		if (!getConf().podePorConfiguracao(titular, lotaTitular,
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA,
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR))
+			return false;
+
+		if(!mob.doc().isFinalizado()) { /* documento temporário e não sofreu movimentação. A lotação onde se encontra é a do cadastrante */
+			if (mob.doc().getLotaCadastrante() != null && !mob.doc().getLotaCadastrante().equivale(lotaTitular)) 
+				return false;			 	
+		} else {
+			return podeMovimentar(titular, lotaTitular, mob);				 
+		}
+		
+		return true;
+		
 	}
 
 

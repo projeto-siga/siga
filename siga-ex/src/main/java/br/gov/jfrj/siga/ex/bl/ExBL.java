@@ -1749,13 +1749,12 @@ public class ExBL extends CpBL {
 		}
 
 		String s = null;
+		final ExMovimentacao mov;
 		try {
-			iniciarAlteracao();
-
 			if (usuarioDoToken != null && usuarioDoToken.equivale(cadastrante))
 				usuarioDoToken = cadastrante;
 
-			final ExMovimentacao mov = criarNovaMovimentacao(tpMovAssinatura,
+			 mov = criarNovaMovimentacao(tpMovAssinatura,
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
 					usuarioDoToken, null, null, null, null);
 
@@ -1772,6 +1771,12 @@ public class ExBL extends CpBL {
 			gravarMovimentacao(mov);
 			concluirAlteracaoDocComRecalculoAcesso(mov.getExMobil().getDoc());
 
+			ContextoPersistencia.flushTransaction();
+		} catch (final Exception e) {
+			throw new AplicacaoException("Erro ao assinar documento.", 0, e);
+		}
+
+		try {
 			// Verifica se o documento possui documento pai e faz a juntada
 			// automática. Caso o pai seja um volume de um processo, primeiro
 			// verifica se o volume está encerrado, se estiver procura o último
@@ -1792,26 +1797,31 @@ public class ExBL extends CpBL {
 				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc,
 						dtMov, cadastrante, cadastrante, mov);
 			}
+			
+			ContextoPersistencia.flushTransaction();
+		} catch (final Exception e) {
+			throw new AplicacaoException(
+					"Não foi possível juntar este documento ao documento pai. O erro da juntada foi - "
+							+ e.getMessage(), 0, e);
+		}
 
+		try {
 			if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura()) {
 				processarComandosEmTag(doc, "assinatura");
 			}
-
 		} catch (final Exception e) {
-			cancelarAlteracao();
-
-			if (e.getMessage().contains("junta"))
-				throw new AplicacaoException(
-						"Não foi possível juntar este documento ao documento pai. O erro da juntada foi - "
-								+ e.getMessage(), 0, e);
-
-			throw new AplicacaoException("Erro ao assinar documento.", 0, e);
+			throw new AplicacaoException("Erro ao executar procedimento pós-assinatura.", 0, e);
 		}
 
-		if (tramitar == null)
-			tramitar = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
-		if (tramitar)
-			trasferirAutomaticamente(cadastrante, lotaCadastrante, usuarioDoToken, doc, fPreviamenteAssinado);
+		try {
+			if (tramitar == null)
+				tramitar = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
+			if (tramitar)
+				trasferirAutomaticamente(cadastrante, lotaCadastrante, usuarioDoToken, doc, fPreviamenteAssinado);
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao tramitar automaticamente.", 0, e);
+		}
 
 		return s;
 	}
@@ -3191,17 +3201,17 @@ public class ExBL extends CpBL {
 				criarVolume(cadastrante, lotaCadastrante, doc);
 			}
 
-//			ContextoPersistencia.flushTransaction();
+			ContextoPersistencia.flushTransaction();
 
 			concluirAlteracaoDocComRecalculoAcesso(doc);			
 
-//			ContextoPersistencia.flushTransaction();
+			ContextoPersistencia.flushTransaction();
 
 			if (setVias == null || setVias.size() == 0)
 				criarVia(cadastrante, lotaCadastrante, doc, null);
 
 			String s = processarComandosEmTag(doc, "finalizacao");
-//			ContextoPersistencia.flushTransaction();
+			ContextoPersistencia.flushTransaction();
 			return s;
 		} catch (final Exception e) {
 			throw new AplicacaoException("Erro ao finalizar o documento: "
@@ -6959,13 +6969,13 @@ public class ExBL extends CpBL {
 	}
 
 	public List<ExAssinavelDoc> obterAssinaveis(DpPessoa titular,
-			DpLotacao lotaTitular) {
+			DpLotacao lotaTitular, boolean apenasComSolicitacaoDeAssinatura) {
 		List<ExAssinavelDoc> assinaveis = new ArrayList<ExAssinavelDoc>();
 		Map<Long, ExAssinavelDoc> map = new HashMap<>();
 
 		// Acrescenta documentos
 		//
-		for (final ExDocumento doc : dao().listarDocPendenteAssinatura(titular)) {
+		for (final ExDocumento doc : dao().listarDocPendenteAssinatura(titular, apenasComSolicitacaoDeAssinatura)) {
 			if (!doc.isFinalizado() || !doc.isEletronico())
 				continue;
 			ExAssinavelDoc ass = acrescentarDocAssinavel(assinaveis, map, titular, lotaTitular, doc);
@@ -7046,5 +7056,21 @@ public class ExBL extends CpBL {
 				.podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov));
 		assmov.setPodeAutenticar(podeAutenticar);
 		ass.getMovs().add(assmov);
+	}
+
+	public void solicitarAssinatura(DpPessoa cadastrante, DpLotacao lotaTitular, ExDocumento doc) {
+		try {
+			iniciarAlteracao();
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA,
+					cadastrante, lotaTitular, doc.getMobilGeral(), null, cadastrante,
+					null, null, null, null);
+
+			gravarMovimentacao(mov);
+			concluirAlteracao(doc.getMobilGeral());
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao revisar documento.", 0, e);
+		}
 	}
 }

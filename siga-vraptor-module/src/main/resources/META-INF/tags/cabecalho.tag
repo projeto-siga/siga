@@ -75,6 +75,8 @@ ${meta}
 	type="text/css" media="screen, projection">
 <link rel="stylesheet" href="/siga/css/ecoblue/css/custom.css"
 	type="text/css" media="screen, projection">
+<link type="application/opensearchdescription+xml" rel="search"
+	href="/siga/opensearchdescription.xml" />
 
 <!-- <link rel="StyleSheet" href="/sigalibs/siga.css" type="text/css"	title="SIGA Estilos" media="screen"> -->
 

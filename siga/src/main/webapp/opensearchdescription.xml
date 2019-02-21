@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+	<ShortName>Siga</ShortName>
+	<Description>Siga - Sistema Integrado de Gestão Administrativa</Description>
+	<Url type="text/html" method="get" template="/siga/permalink/{searchTerms}" />
+</OpenSearchDescription>

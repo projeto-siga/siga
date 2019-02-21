@@ -236,13 +236,13 @@ public class CpBL {
 		conf.setCpTipoConfiguracao(tpConf);
 		conf.setHisDtIni(dt);
 
-		dao().iniciarTransacao();
 		if (confOld != null) {
 			confOld.setHisDtFim(dt);
 			dao().gravarComHistorico(confOld, identidadeCadastrante);
 		}
 		dao().gravarComHistorico(conf, identidadeCadastrante);
-		dao().commitTransacao();
+		
+		comp.getConfiguracaoBL().limparCacheSeNecessario();
 
 		return conf;
 	}

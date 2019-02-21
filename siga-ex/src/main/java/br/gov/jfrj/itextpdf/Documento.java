@@ -974,9 +974,11 @@ public class Documento {
 	public static String realPath() {
 		RequestInfo ri = CurrentRequest.get();
 		
-		final String realPath = ri.getRequest().getScheme() + "://"
+		String realPath = ri.getRequest().getScheme() + "://"
 				+ ri.getRequest().getServerName() + ":"
 				+ ri.getRequest().getServerPort() + ri.getRequest().getContextPath();
+		if (realPath.endsWith("/siga-le"))
+			realPath = realPath.replace("/siga-le", "/sigaex");
 		return realPath;
 	}
 

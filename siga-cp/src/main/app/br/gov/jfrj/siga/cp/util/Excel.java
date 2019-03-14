@@ -21,6 +21,7 @@ import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpUF;
+import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -427,6 +428,105 @@ public class Excel {
 			return "Linha " + linha +": NOME repetido em outra linha do arquivo" + System.getProperty("line.separator");
 		} else {
 			nomes.add(nomeFuncao);	
+		}
+		return "";
+	}
+    
+    public InputStream uploadCargo(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+		InputStream retorno = null;
+		retorno = uploadExcelCargo(file, orgaoUsuario);
+
+		return retorno;
+	}
+    
+    public InputStream uploadExcelCargo(File file, CpOrgaoUsuario orgaoUsuario) {
+    	InputStream inputStream = null;
+    	StringBuffer problemas = new StringBuffer();
+
+    	try {
+			FileInputStream fis = new FileInputStream(file); 
+			XSSFWorkbook myWorkBook = new XSSFWorkbook (fis); 
+			XSSFSheet mySheet = myWorkBook.getSheetAt(0); 
+			Iterator<Row> rowIterator = mySheet.iterator(); 
+			String celula;
+			Integer linha = 0;
+			List<String> nomes = new ArrayList();
+			List<DpCargo> lista = new ArrayList(); 
+			Date data = new Date(System.currentTimeMillis());
+			
+			while (rowIterator.hasNext()) {
+				linha++;
+				DpCargo cargo = new DpCargo();
+				DpCargo ca = new DpCargo();
+				Row row = rowIterator.next(); //linha
+				
+				Iterator<Cell> cellIterator = row.cellIterator();
+				Cell cell;
+				
+				//NOME DA CARGO				
+				celula = retornaConteudo(row.getCell(0, Row.CREATE_NULL_AS_BLANK));
+				problemas.append(validarNomeCargo(nomes, celula.trim(), orgaoUsuario, linha, cargo, 100));
+				
+				if(problemas == null || "".equals(problemas.toString())) {
+					ca.setNomeCargo(celula.trim());
+				}
+
+				if(problemas == null || "".equals(problemas.toString())) {
+					ca.setDataInicio(data);
+					ca.setOrgaoUsuario(orgaoUsuario);
+					lista.add(ca);
+				}
+			}
+			if(problemas == null || "".equals(problemas.toString())) {
+				try {
+	            	for (DpCargo dpCargo : lista) {
+		            	CpDao.getInstance().iniciarTransacao();
+		    			CpDao.getInstance().gravar(dpCargo);
+		    			
+	    				if(dpCargo.getIdCargoIni() == null && dpCargo.getId() != null) {
+	    					dpCargo.setIdCargoIni(dpCargo.getId());
+	    					dpCargo.setIdeCargo(dpCargo.getId().toString());
+	        				CpDao.getInstance().gravar(dpCargo);
+	        			}
+					}
+	    			CpDao.getInstance().commitTransacao();			
+	    		} catch (final Exception e) {
+	    			CpDao.getInstance().rollbackTransacao();
+	    			throw new AplicacaoException("Erro na gravação", 0, e);
+	    		}
+			}
+		} catch (Exception ioe) {
+            ioe.printStackTrace();
+        }
+    	if(problemas == null || "".equals(problemas.toString())) {
+    		return null;
+    	}
+    	inputStream = new ByteArrayInputStream(problemas.toString().getBytes());
+    	return inputStream;
+    }
+    
+    public String validarNomeCargo(List<String> nomes, String nomeCargo, CpOrgaoUsuario orgaoUsuario, Integer linha, DpCargo cargo, Integer tamanho) {
+    	
+		if("".equals(nomeCargo)) {
+			return "Linha " + linha +": NOME em branco" + System.getProperty("line.separator");
+		} 
+		
+		if(nomeCargo.length() > tamanho){
+			return "Linha " + linha +": NOME com mais de 100 caracteres" + System.getProperty("line.separator");
+		}
+		cargo.setOrgaoUsuario(orgaoUsuario);
+		cargo.setNomeCargo(Texto.removeAcento(Texto.removerEspacosExtra(nomeCargo).trim()));
+		cargo = CpDao.getInstance().consultarPorNomeOrgao(cargo);
+		if(cargo != null) {
+			return "Linha " + linha +": NOME já cadastrado" + System.getProperty("line.separator");
+		}
+		if(!validarCaracterEspecial(nomeCargo)) {
+			return "Linha " + linha +": NOME com caracteres especiais" + System.getProperty("line.separator");
+		}
+		if(nomes.contains(nomeCargo)) {
+			return "Linha " + linha +": NOME repetido em outra linha do arquivo" + System.getProperty("line.separator");
+		} else {
+			nomes.add(nomeCargo);	
 		}
 		return "";
 	}

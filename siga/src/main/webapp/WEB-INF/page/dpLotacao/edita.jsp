@@ -131,7 +131,7 @@
 					<tr class="button">
 						<td>
 							<input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-large gt-btn-left" /> 
-							<input type="button" value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
+							<input type="button" value="Cancela" onclick="javascript:location.href='/siga/app/lotacao/listar';" class="gt-btn-medium gt-btn-left" />
 						</td>
 					</tr>
 				</table>

@@ -8,17 +8,16 @@
 
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
-			<h2>Cadastro de Lota&ccedil;&atilde;o</h2>
+			<h2>Cadastro de Fun&ccedil;&atilde;o de Confian&ccedil;a</h2>
 			<div class="gt-content-box gt-for-table">
 				<form action="carga" method="POST" enctype="multipart/form-data" class="form">
-					<input type="hidden" name="postback" value="1" /> <input
-						type="hidden" name="sigla" value="${sigla}" />
-
+					
 					<table class="gt-form-table">
-						<c:if test="${not empty msg}"><script type="text/javascript">alert('Arquivo processado com sucesso!');</script></c:if>			
 						<tr class="header">
 							<td colspan="2">Carga de Planilha</td>
 						</tr>
+						
+						<c:if test="${not empty msg}"><script type="text/javascript">alert('Arquivo processado com sucesso!');</script></c:if>
 						<tr><td colspan="2"></td></tr>
 						<tr>
 							<td  colspan="2"><b>Observa&ccedil;&otilde;es:</b></td>
@@ -32,8 +31,6 @@
 								  <dt>&#149;&#160;O sistema consistir&aacute; a exist&ecirc;ncia de duplicidade dos dados confrontando a planilha como banco de dados;</dt>
 								  <dt>&#149;&#160;A planilha deve conter os seguintes campos/formatos:</dt>
 								  <dd>- Nome: m&aacute;ximo de 100 caracteres alfanum&eacute;ricos (letras e n&uacute;meros)</dd>
-								  <dd>- Sigla: m&aacute;ximo de 20 caracteres alfanum&eacute;ricos (letras e n&uacute;meros)</dd>
-								  <dd>- Localidade: m&aacute;ximo de 256 caracteres alfanum&eacute;ricos. Somente nome de Munic&iacute;pios existentes no Estado.</dd>
 								</dl>
 							</td>
 						</tr>
@@ -63,7 +60,7 @@
 						<tr>
 							<td colspan="2">
 								<input type="submit" value="Ok"	class="gt-btn-medium gt-btn-left" onclick="javascript: return validaSelecaoAnexo( this.form );" name="sbmt"/>
-								<input type="button" value="Cancela" onclick="javascript:location.href='/siga/app/lotacao/editar';" class="gt-btn-medium gt-btn-left" />
+								<input type="button" value="Cancela" onclick="javascript:location.href='/siga/app/funcao/editar';" class="gt-btn-medium gt-btn-left" />
 							</td>
 						</tr>
 					</table>

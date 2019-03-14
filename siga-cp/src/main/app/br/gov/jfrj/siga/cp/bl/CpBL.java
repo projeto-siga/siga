@@ -755,5 +755,16 @@ public class CpBL {
 		}
 		return inputStream;
 	}
+	
+	public InputStream uploadFuncao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+		InputStream inputStream = null;
+		try {
+			Excel excel = new Excel();
+			inputStream = excel.uploadFuncao(file, orgaoUsuario, extensao);
+		} catch (Exception e) {
+			
+		}
+		return inputStream;
+	}
 
 }

@@ -415,8 +415,10 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			System.err.println(e.getMessage());
 		}
 		if(inputStream == null) {
-			this.result.redirectTo(this).lista(0, null, "");
+			result.include("msg", "Arquivo processado com sucesso!");
+			carregarExcel();
 		} else {
+			result.include("msg", "");
 			return new InputStreamDownload(inputStream, "application/text", "inconsistencias.txt");	
 		}
 		return null;

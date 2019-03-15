@@ -311,7 +311,7 @@ public class Excel {
     
     public Boolean validarCaracterEspecial(String celula) {
     	Boolean retorno = Boolean.TRUE;
-    	if(!celula.matches("[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ 0-9]+")) {
+    	if(!celula.matches("[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÊÈÍÏÓÔÕÖÚÇÑ 0-9]+")) {
     		retorno = Boolean.FALSE;
     	}
     	return retorno;

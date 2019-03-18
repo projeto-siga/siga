@@ -18,8 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
-import static javax.persistence.GenerationType.SEQUENCE;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -31,6 +29,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
@@ -40,36 +39,45 @@ import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
-@Entity
-@Table(name = "CP_GRUPO", schema = "CORPORATIVO")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "ID_TP_GRUPO", discriminatorType = DiscriminatorType.INTEGER)
+@MappedSuperclass
 @NamedQueries({
-	@NamedQuery(name = "consultarCpGrupoPorCpTipoGrupoId",
-			query = "from br.gov.jfrj.siga.cp.CpGrupo cpgrp " + 
-			" where ( cpgrp.cpTipoGrupo.idTpGrupo = :idTpGrupo) " +
-			" and cpgrp.hisDtFim = null " +
-			" order by cpgrp.siglaGrupo")
-})
+		@NamedQuery(name = "consultarCpGrupo", query = "from br.gov.jfrj.siga.cp.CpGrupo where dataFimGrupo is null order by siglaGrupo"),
+		@NamedQuery(name = "consultarQuantidadeCpGrupo", query = "select count(*) from br.gov.jfrj.siga.cp.CpGrupo where hisAtivo = 1"),
+		@NamedQuery(name = "consultarQuantidadeCpGrupoPorCpTipoGrupoId", query = "select count(*) from br.gov.jfrj.siga.cp.CpGrupo cpgrp where ( cpgrp.cpTipoGrupo.idTpGrupo = :idTpGrupo) and cpgrp.hisAtivo = 1"),
+		@NamedQuery(name = "consultarQuantidadeCpGrupoPorCpTipoGrupoIdENome", query = "select count(*) from br.gov.jfrj.siga.cp.CpGrupo cpgrp"
+				+ "		where ( cpgrp.cpTipoGrupo.idTpGrupo = :idTpGrupo)"
+				+ "		and (upper(cpgrp.siglaGrupo) like upper('%'||:siglaGrupo||'%') or upper(cpgrp.dscGrupo) like upper('%'||:siglaGrupo||'%'))"
+				+ "		and cpgrp.hisAtivo = 1"),
+		@NamedQuery(name = "consultarCpGrupoPorCpTipoGrupoIdENome", query = "from br.gov.jfrj.siga.cp.CpGrupo cpgrp"
+				+ "		where ( cpgrp.cpTipoGrupo.idTpGrupo = :idTpGrupo)"
+				+ "		and (upper(cpgrp.siglaGrupo) like upper('%'||:siglaGrupo||'%') or upper(cpgrp.dscGrupo) like upper('%'||:siglaGrupo||'%'))"
+				+ "		and cpgrp.hisAtivo = 1" + "		order by cpgrp.siglaGrupo"),
+		@NamedQuery(name = "consultarPorSiglaCpGrupo", query = "select g from br.gov.jfrj.siga.cp.CpGrupo g where"
+				+ "		upper(g.siglaGrupo) = upper(:siglaGrupo)"
+				+ "		and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or g.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "       	and g.hisAtivo = 1"),
+		@NamedQuery(name = "consultarCpGrupoPorCpTipoGrupoId", query = "from br.gov.jfrj.siga.cp.CpGrupo cpgrp "
+				+ " where ( cpgrp.cpTipoGrupo.idTpGrupo = :idTpGrupo) "
+				+ " and cpgrp.hisDtFim = null " + " order by cpgrp.siglaGrupo") })
 public abstract class AbstractCpGrupo extends HistoricoAuditavelSuporte {
-	@SequenceGenerator(name = "generator", sequenceName = "CP_GRUPO_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_GRUPO_SEQ")
 	@Id
 	@GeneratedValue(generator = "generator")
-	@Column(name = "ID_GRUPO", nullable = false)
+	@Column(name = "ID_GRUPO", unique = true, nullable = false)
 	@Desconsiderar
 	private Long idGrupo;
-	@Column(name = "SIGLA_GRUPO")
+	@Column(name = "SIGLA_GRUPO", length = 20)
 	private String siglaGrupo;
-	@Column(name = "DESC_GRUPO")
+	@Column(name = "DESC_GRUPO", length = 200)
 	private String dscGrupo;
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_TP_GRUPO", insertable = false, updatable = false)
+	@JoinColumn(name = "ID_TP_GRUPO", insertable = false, updatable = false, nullable = false)
 	private CpTipoGrupo cpTipoGrupo;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_GRUPO_PAI")
 	private CpGrupo cpGrupoPai;
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_ORGAO_USU")
+	@JoinColumn(name = "ID_ORGAO_USU", nullable = false)
 	private CpOrgaoUsuario orgaoUsuario;
 
 	/*

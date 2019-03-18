@@ -21,38 +21,52 @@
  */
 package br.gov.jfrj.siga.ex;
 
-import java.io.Serializable;
 import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 
 /**
  * A class that represents a row in the EX_TEMPORALIDADE table. You can
- * customize the behavior of this class by editing the class,
- * {@link ExTemporalidade()}.
+ * customize the behavior of this class by editing the class, {@link
+ * ExTemporalidade()}.
  */
+@MappedSuperclass
 public abstract class AbstractExTemporalidade extends HistoricoAuditavelSuporte {
-	/** The value of the simple descTemporalidade property. */
-	private java.lang.String descTemporalidade;
-
-	/**
-	 * The cached hash code value for this instance. Settting to 0 triggers
-	 * re-calculation.
-	 */
-	private int hashValue = 0;
-
 	/** The composite primary key value. */
+	@Id
+	@SequenceGenerator(sequenceName = "EX_TEMPORALIDADE_SEQ", name = "EX_TEMPORALIDADE_SEQ")
+	@GeneratedValue(generator = "EX_TEMPORALIDADE_SEQ")
+	@Column(name = "ID_TEMPORALIDADE", unique = true, nullable = false)
 	private Long idTemporalidade;
 
-	/** Valor em dias, meses ou anos*/
+	/** The value of the simple descTemporalidade property. */
+	@Column(name = "DESC_TEMPORALIDADE", nullable = false, length = 128)
+	private java.lang.String descTemporalidade;
+
+	/** Valor em dias, meses ou anos */
+	@Column(name = "VALOR_TEMPORALIDADE")
 	private Integer valorTemporalidade;
-	
-	private CpUnidadeMedida cpUnidadeMedida; 
-	
+
+	@ManyToOne
+	@JoinColumn(name = "ID_UNIDADE_MEDIDA", nullable = true)
+	private CpUnidadeMedida cpUnidadeMedida;
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "temporalidadeCorrente")
 	private Set<ExVia> exViaArqCorrenteSet;
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "temporalidadeIntermediario")
 	private Set<ExVia> exViaArqIntermediarioSet;
-	
 
 	/**
 	 * Simple constructor of AbstractExTemporalidade instances.
@@ -72,9 +86,10 @@ public abstract class AbstractExTemporalidade extends HistoricoAuditavelSuporte 
 		if ((rhs == null) || !(rhs instanceof ExTemporalidade))
 			return false;
 		final ExTemporalidade that = (ExTemporalidade) rhs;
-		if ((this.getIdTemporalidade() == null ? that.getIdTemporalidade() == null : this.getIdTemporalidade().equals(
-				that.getIdTemporalidade()))) {
-			if ((this.getDescTemporalidade() == null ? that.getDescTemporalidade() == null : this
+		if ((this.getIdTemporalidade() == null ? that.getIdTemporalidade() == null
+				: this.getIdTemporalidade().equals(that.getIdTemporalidade()))) {
+			if ((this.getDescTemporalidade() == null ? that
+					.getDescTemporalidade() == null : this
 					.getDescTemporalidade().equals(that.getDescTemporalidade())))
 				return true;
 		}
@@ -104,13 +119,12 @@ public abstract class AbstractExTemporalidade extends HistoricoAuditavelSuporte 
 	@Override
 	public int hashCode() {
 		int result = 17;
-		int idValue = this.getIdTemporalidade() == null ? 0 : this.getIdTemporalidade().hashCode();
+		int idValue = this.getIdTemporalidade() == null ? 0 : this
+				.getIdTemporalidade().hashCode();
 		result = result * 37 + idValue;
-		idValue = this.getDescTemporalidade() == null ? 0 : this.getDescTemporalidade().hashCode();
-		result = result * 37 + idValue;
-		this.hashValue = result;
-
-		return this.hashValue;
+		idValue = this.getDescTemporalidade() == null ? 0 : this
+				.getDescTemporalidade().hashCode();
+		return result * 37 + idValue;
 	}
 
 	/**
@@ -128,7 +142,6 @@ public abstract class AbstractExTemporalidade extends HistoricoAuditavelSuporte 
 	 * @param idTemporalidade
 	 */
 	public void setIdTemporalidade(final Long idTemporalidade) {
-		this.hashValue = 0;
 		this.idTemporalidade = idTemporalidade;
 	}
 

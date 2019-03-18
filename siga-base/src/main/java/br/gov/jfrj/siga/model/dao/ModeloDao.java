@@ -30,7 +30,6 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Example;
@@ -43,18 +42,16 @@ public abstract class ModeloDao {
 
 	private static final Logger log = Logger.getLogger(ModeloDao.class);
 
-	protected Session sessao;
-
-	protected StatelessSession sessaoStateless;
-
 	protected String cacheRegion = null;
 
 	private static final ThreadLocal<ModeloDao> threadDao = new ThreadLocal<ModeloDao>();
 
-	protected ModeloDao() {}
+	protected ModeloDao() {
+	}
 
 	@SuppressWarnings("unchecked")
-	protected static <T extends ModeloDao> T getInstance(Class<T> clazz, Session sessao) {
+	protected static <T extends ModeloDao> T getInstance(Class<T> clazz,
+			Session sessao) {
 		return getInstance(clazz, sessao, null);
 	}
 
@@ -74,18 +71,6 @@ public abstract class ModeloDao {
 		if (dao == null) {
 			try {
 				dao = clazz.newInstance();
-				if (sessao == null) {
-					Session s = HibernateUtil.getSessao();
-					dao.sessao = s;
-				} else {
-					dao.sessao = sessao;
-				}
-				if (sessaoStateless == null) {
-					StatelessSession stateless = HibernateUtil.getSessionFactory().openStatelessSession();
-					dao.sessaoStateless = stateless;
-				} else {
-					dao.sessaoStateless = sessaoStateless;
-				}
 			} catch (Exception e) {
 				throw new Error(e);
 			}
@@ -99,8 +84,6 @@ public abstract class ModeloDao {
 	}
 
 	public synchronized static void freeInstance() {
-		HibernateUtil.fechaSessaoSeEstiverAberta();
-
 		final ModeloDao dao = ModeloDao.threadDao.get();
 
 		// fecha o dao e a seï¿½ï¿½o do hibernate
@@ -147,58 +130,54 @@ public abstract class ModeloDao {
 	}
 
 	public void excluir(final Object entidade) {
+//		EntityManager em = ContextoPersistencia.em();
+//		if (em != null)
+//			em.remove(entidade);
+//		else
 		getSessao().delete(entidade);
+	}
+
+	public void descarregar() {
+//		EntityManager em = ContextoPersistencia.em();
+//		if (em != null)
+//			em.flush();
+//		else
+		getSessao().flush();
 	}
 
 	/**
 	 * @return Retorna o atributo sessao.
 	 */
 	public Session getSessao() {
-		if (sessao == null)
-			throw new IllegalStateException(
-					"Variável Session não foi atribuída para este DAO");
-		return sessao;
-	}
-
-	/**
-	 * @return Retorna o atributo sessaoStateless.
-	 */
-	public StatelessSession getSessaoStateless() {
-		if (sessaoStateless == null)
-			throw new IllegalStateException(
-					"Variável Session não foi atribuída para este DAO");
-		return sessaoStateless;
-	}
-
-	/**
-	 * @return Retorna a sessionFactory do Hibernate
-	 */
-	public SessionFactory getFabricaDeSessao() {
-		return HibernateUtil.getSessionFactory();
+		return HibernateUtil.getSessao();
 	}
 
 	public <T> T gravar(final T entidade) {
-
+//		EntityManager em = ContextoPersistencia.em();
+//		if (em != null)
+//			em.persist(entidade);
+//		else
 		getSessao().saveOrUpdate(entidade);
 		return entidade;
 	}
 
-	// Renato: desativei esse método pois ele não informar questões de cache ou de ordenação. É melhor termos métodos específicos, então.
-	//	public <T> List<T> listarTodos(Class<T> clazz) {
-	//		// Criteria crit = getSessao().createCriteria(getPersistentClass());
-	//		// return crit.list();
-	//		return findByCriteria(clazz);
-	//	}
+	// Renato: desativei esse método pois ele não informar questões de cache ou
+	// de ordenação. É melhor termos métodos específicos, então.
+	// public <T> List<T> listarTodos(Class<T> clazz) {
+	// // Criteria crit = getSessao().createCriteria(getPersistentClass());
+	// // return crit.list();
+	// return findByCriteria(clazz);
+	// }
 
 	/**
 	 * Use this inside subclasses as a convenience method.
 	 */
-	
+
 	@SuppressWarnings("unchecked")
 	protected <T> List<T> findByCriteria(Class<T> clazz, Criterion... criterion) {
 		return findByCriteria(clazz, criterion, null);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected <T> List<T> findByCriteria(Class<T> clazz,
 			final Criterion[] criterion, Order[] order) {
@@ -213,15 +192,16 @@ public abstract class ModeloDao {
 			}
 		return crit.list();
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	protected <T> List<T> findAndCacheByCriteria(String cacheRegion, Class<T> clazz, Criterion... criterion) {
+	protected <T> List<T> findAndCacheByCriteria(String cacheRegion,
+			Class<T> clazz, Criterion... criterion) {
 		return findAndCacheByCriteria(cacheRegion, clazz, criterion, null);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T> List<T> findAndCacheByCriteria(String cacheRegion, Class<T> clazz,
-			final Criterion[] criterion, Order[] order) {
+	protected <T> List<T> findAndCacheByCriteria(String cacheRegion,
+			Class<T> clazz, final Criterion[] criterion, Order[] order) {
 		final Criteria crit = getSessao().createCriteria(clazz);
 		if (criterion != null)
 			for (final Criterion c : criterion) {
@@ -251,23 +231,13 @@ public abstract class ModeloDao {
 	}
 
 	public static void iniciarTransacao() {
-		HibernateUtil.iniciarTransacao();
 	}
 
 	public static void commitTransacao() throws AplicacaoException {
-		HibernateUtil.commitTransacao();
 	}
 
 	public static void rollbackTransacao() {
-		HibernateUtil.rollbackTransacao();
 	}
-
-	//	public static void configurarHibernateParaDebug(Configuration cfg) {
-	//		cfg.setProperty("hibernate.show_sql", "true");
-	//		cfg.setProperty("hibernate.format_sql", "true");
-	//		cfg.setProperty("generate_statistics", "true");
-	//		cfg.setProperty("hibernate.use_sql_comments", "true");
-	//	}
 
 	/**
 	 * @return true se a sessão do Hibernate não for nula e estiver aberta.

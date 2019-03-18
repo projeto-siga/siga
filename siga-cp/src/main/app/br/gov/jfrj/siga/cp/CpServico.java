@@ -29,12 +29,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 
-@NamedQueries({
-		@NamedQuery(name = "consultarPorSiglaCpServico", query = "select org from CpServico org "
-				+ "where upper(org.siglaServico) like upper(:siglaServico) "
-				+ "and ((:idServicoPai = 0 and org.cpServicoPai is null) or org.cpServicoPai.idServico = :idServicoPai)"),
-		@NamedQuery(name = "consultarPorSiglaStringCpServico", query = "select org from CpServico org "
-				+ "where upper(org.siglaServico) like upper(:siglaServico)") })
 @Entity
 @Table(name = "CP_SERVICO", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
@@ -44,8 +38,9 @@ public class CpServico extends AbstractCpServico implements Selecionavel {
 	 * 
 	 */
 	public static final long serialVersionUID = 3624557793773660739L;
-	
-	public static ActiveRecord<CpServico> AR = new ActiveRecord<>(CpServico.class);
+
+	public static ActiveRecord<CpServico> AR = new ActiveRecord<>(
+			CpServico.class);
 
 	// SIGA e seus módulos
 

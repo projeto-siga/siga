@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+                            "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                            "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping package="br.gov.jfrj.siga.ex">
+	<class name="ExTpDocPublicacao" schema="SIGA" table="EX_TP_DOC_PUBLICACAO">
+		<id name="idDocPublicacao" column="ID_doc_publicacao" type="java.lang.Long">
+		<generator class="native"></generator>
+		</id>	
+		<property name="nmDocPublicacao" column="nm_doc_publicacao" type="java.lang.String" />
+		<property name="carater" column="CARATER" type="java.lang.String" />
+<!-- 		
+		<set name="exModeloSet" schema="SIGA" table="EX_MODELO_TP_DOC_PUBLICACAO" inverse="true">
+			<key column="ID_DOC_PUBLICACAO" />
+			<many-to-many class="ExModelo" column="ID_MOD" />
+		</set>
+ -->
+	</class>
+
+	<query name="consultarPorModelo">
+		<![CDATA[select docPubl from ExTpDocPublicacao docPubl left join docPubl.exModeloSet mod where mod.hisIdIni = :idMod]]>
+	</query>
+</hibernate-mapping>

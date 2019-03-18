@@ -2,8 +2,10 @@ package br.gov.jfrj.siga.sr.vraptor;
 
 import static br.gov.jfrj.siga.sr.util.SrSigaPermissaoPerfil.SALVAR_SOLICITACAO_AO_ABRIR;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -343,6 +345,12 @@ public class SolicitacaoController extends SrController {
         if (solicitacao.getDescrSolicitacao() == null || "".equals(solicitacao.getDescrSolicitacao().trim())) 
         	srValidator.addError("solicitacao.descrSolicitacao", "Descri&ccedil&atilde;o n&atilde;o informada");	
 
+        if (solicitacao.getTelPrincipal() == null || "".equals(solicitacao.getTelPrincipal().trim())) 
+        	srValidator.addError("solicitacao.telPrincipal", "Telefone n&atilde;o informado");	
+
+        if (solicitacao.getEndereco() == null || "".equals(solicitacao.getEndereco().trim())) 
+        	srValidator.addError("solicitacao.endereco", "Endere&ccedil;o de atendimento n&atilde;o informado");	
+
         validarFormReclassificar(solicitacao);
         
         return !srValidator.hasErrors(); 
@@ -444,7 +452,7 @@ public class SolicitacaoController extends SrController {
         	result.use(Results.json()).withoutRoot().from(solicitacaoListaVO).excludeAll().include("recordsFiltered").include("data").serialize();
         } else {
         	if (filtro == null){
-        		filtro = new SrSolicitacaoFiltro();
+        		filtro = novoFiltroZerado();
         	}
         	result.include("solicitacaoListaVO", new SrSolicitacaoListaVO(filtro, false, propriedade, popup, getLotaTitular(), getCadastrante()));
         	result.include("tipos", new String[] { "Pessoa", "Lota\u00e7\u00e3o" });
@@ -452,10 +460,21 @@ public class SolicitacaoController extends SrController {
         	result.include("filtro", filtro);
         	result.include("propriedade", propriedade);
         	result.include("popup", popup);
-        	result.include("listasPrioridade", SrLista.listar(false));
+        	result.include("locaisDisponiveis", filtro.getLocaisParaBusca());
+            result.include("listasPrioridade", SrLista.listar(false));
         	result.include("prioridadesEnum", SrPrioridade.values());
         }
     }
+    
+    private SrSolicitacaoFiltro novoFiltroZerado() {
+		SrSolicitacaoFiltro retorno = new SrSolicitacaoFiltro();
+		Date hoje = new Date();
+		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");  
+		retorno.setDtIni(formato.format(hoje));
+		retorno.setDtFim(formato.format(hoje));
+		retorno.setAtendente(getCadastrante());
+		return retorno;
+	}
 
 	@Path({ "app/solicitacao/editar", "app/solicitacao/editar/{sigla}"})
     public void editar(String sigla, SrSolicitacao solicitacao, String item, String acao, String descricao, Long solicitante) throws Exception {
@@ -860,7 +879,11 @@ public class SolicitacaoController extends SrController {
     	if (solicitacao.isFilha()){
     		solicitacao.setDescrSolicitacao(solicitacao.getDescricao());
     	}
+    	boolean todoOContexto = solicitacao.isParteDeArvore();
+    	Set<SrAtributoSolicitacao> atributos = solicitacao.getAtributoSolicitacaoSetAtual(todoOContexto);
+    	
         result.include(SOLICITACAO, solicitacao);
+        result.include("atributos", atributos);
     }
 
     @Path("app/solicitacao/desfazerUltimaMovimentacao")

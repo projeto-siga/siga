@@ -19,44 +19,42 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 import com.google.common.base.Throwables;
 
-@Intercepts(before=ExceptionHandlerInterceptor.class)
+@Intercepts(before = ExceptionHandlerInterceptor.class)
 @RequestScoped
 public class AplicacaoExceptionInterceptor implements Interceptor {
 
-    private final HttpServletRequest request;
-    private final HttpServletResponse response;
+	private final HttpServletRequest request;
+	private final HttpServletResponse response;
 
-    public AplicacaoExceptionInterceptor(HttpServletRequest request, HttpServletResponse response) {
-        this.request = request;
-    	this.response = response;
-    }
+	public AplicacaoExceptionInterceptor(HttpServletRequest request,
+			HttpServletResponse response) {
+		this.request = request;
+		this.response = response;
+	}
 
-    @Override
-    public void intercept(InterceptorStack stack, ResourceMethod method,
-                Object resourceInstance)
-        throws InterceptionException {
-    	try{
-    		stack.next(method, resourceInstance);
-    	}catch(ApplicationLogicException e){
-    		Throwable rootCause = Throwables.getRootCause(e);
-    		if (rootCause instanceof AplicacaoException){
-    			try {
-    				request.setAttribute("exceptionGeral", rootCause);
-    				String stackTrace = Arrays.toString(rootCause.getStackTrace()).replace(",", "\n");
-    				request.setAttribute("exceptionStackGeral", stackTrace);
+	@Override
+	public void intercept(InterceptorStack stack, ResourceMethod method,
+			Object resourceInstance) throws InterceptionException {
+		try {
+			stack.next(method, resourceInstance);
+		} catch (ApplicationLogicException e) {
+			Throwable rootCause = Throwables.getRootCause(e);
+			if (rootCause instanceof AplicacaoException) {
+				request.setAttribute("exceptionGeral", rootCause);
+				String stackTrace = Arrays.toString(rootCause.getStackTrace())
+						.replace(",", "\n");
+				request.setAttribute("exceptionStackGeral", stackTrace);
+				try {
 					response.sendError(400, rootCause.getMessage());
-					HibernateUtil.rollbackTransacao();
-					HibernateUtil.fechaSessaoSeEstiverAberta();
 				} catch (IOException e1) {
 					throw new RuntimeException(e1);
 				}
-    		}else{
-    			throw e;
-    		}
-    	}
-    }
-    
-    
+			}
+			throw e;
+
+		}
+	}
+
 	@Override
 	public boolean accepts(ResourceMethod method) {
 		return true;

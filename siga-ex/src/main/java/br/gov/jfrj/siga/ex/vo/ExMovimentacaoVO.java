@@ -62,6 +62,7 @@ import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -83,6 +84,7 @@ public class ExMovimentacaoVO extends ExVO {
 	String complemento;
 	Map<String, ExParteVO> parte = new TreeMap<String, ExParteVO>();
 	String dtRegMovDDMMYYHHMMSS;
+	private String tempoRelativo;
 	String dtFimMovDDMMYYHHMMSS;
 	String descrTipoMovimentacao;
 	long idMov;
@@ -104,6 +106,7 @@ public class ExMovimentacaoVO extends ExVO {
 
 		this.idMov = mov.getIdMov();
 		this.dtRegMovDDMMYYHHMMSS = mov.getDtRegMovDDMMYYHHMMSS();
+		this.tempoRelativo = Data.calcularTempoRelativo(mov.getDtIniMov());
 		this.descrTipoMovimentacao = mov.getDescrTipoMovimentacao();
 		this.cancelada = mov.getExMovimentacaoCanceladora() != null;
 
@@ -771,4 +774,7 @@ public class ExMovimentacaoVO extends ExVO {
 		// return jwt;
 	}
 
+	public String getTempoRelativo() {
+		return tempoRelativo;
+	}
 }

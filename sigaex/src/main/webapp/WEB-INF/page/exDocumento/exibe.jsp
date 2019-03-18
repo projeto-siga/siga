@@ -176,8 +176,6 @@
 						<c:when test="${docVO.conteudoBlobHtmlString != null}">
 							<div class="card-sidebar card border-alert bg-white mb-3">
 								<div class="card-body">
-
-
 									<tags:fixdocumenthtml>
 											${docVO.conteudoBlobHtmlString}
 										</tags:fixdocumenthtml>
@@ -208,7 +206,7 @@
 							<table class="gt-table mov">
 								<thead>
 									<tr>
-										<th rowspan="2" align="center" style="padding: 5px 5px;">Data</th>
+										<th rowspan="2" align="center" style="padding: 5px 5px;">Tempo</th>
 										<th rowspan="2" style="padding: 5px 5px;">Lotação</th>
 										<th rowspan="2" style="padding: 5px 5px;">Evento</th>
 										<th rowspan="2" style="padding: 5px 5px;">Descrição</th>
@@ -217,11 +215,11 @@
 								<c:set var="evenorodd" value="odd" />
 								<c:forEach var="mov" items="${m.movs}">
 									<c:if
-										test="${ (mov.idTpMov != 14 and
+										test="${ (mov.idTpMov != 14 and mov.idTpMov != 64 and
 							          not mov.cancelada)}">
 										<tr class="${mov.classe} ${mov.disabled}">
-											<td align="center" style="padding: 5px 5px;">${mov.dtRegMovDDMMYY}</td>
-											<td style="padding: 5px 5px;">${mov.mov.lotaCadastrante.sigla}</td>
+											<td align="center" style="padding: 5px 5px;" title="${mov.dtRegMovDDMMYYHHMMSS}">${mov.tempoRelativo}</td>
+											<td style="padding: 5px 5px;" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>
 											<td style="padding: 5px 5px;">${mov.mov.exTipoMovimentacao.sigla}</td>
 											<td style="padding: 5px 5px; word-break: break-all;">${mov.descricao}
 												<c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
@@ -911,46 +909,48 @@
 
 					<div class="card-sidebar card bg-light mb-3">
 						<div class="card-header">
+						<c:if test="${docVO.podeAnexarArquivoAuxiliar}">
 							<a title="Anexar um novo arquivo auxiliar"
 								style="float: right; margin-top: -3px;"
 								href="${linkTo[ExMovimentacaoController].anexarArquivoAuxiliar}?sigla=${sigla}"
 								${popup?'target="_blank" ':''}> <img
 								src="/siga/css/famfamfam/icons/add.png">
-							</a> Arquivos Auxiliares
+							</a>
+						</c:if>
+						<h3>Arquivos Auxiliares</h3>
 						</div>
 						<div class="card-body">
-
-							<c:forEach var="mov" items="${m.movs}">
-								<c:if test="${mov.idTpMov == 64 and not mov.cancelada}">
-									<p>
-										<siga:links inline="${true}" separator="${false}">
-											<c:forEach var="acao" items="${mov.acoes}">
-												<c:set var="acaourl" value="${acao.url}" />
+						<c:forEach var="mov" items="${m.movs}">
+							<c:if test="${mov.idTpMov == 64 and not mov.cancelada}">
+								<p>
+									<siga:links inline="${true}" separator="${false}">
+										<c:forEach var="acao" items="${mov.acoes}">
+											<c:set var="acaourl" value="${acao.url}" />
+											<c:set var="acaourl"
+												value="${fn:replace(acaourl, '__scheme__', pageContext.request.scheme)}" />
+											<c:set var="acaourl"
+												value="${fn:replace(acaourl, '__serverName__', pageContext.request.serverName)}" />
+											<c:set var="acaourl"
+												value="${fn:replace(acaourl, '__serverPort__', pageContext.request.serverPort)}" />
+											<c:set var="acaourl"
+												value="${fn:replace(acaourl, '__contextPath__', pageContext.request.contextPath)}" />
+											<c:set var="acaourl"
+												value="${fn:replace(acaourl, '__pathInfo__', pageContext.request.pathInfo)}" />
+											<c:if test="${acao.url == acaourl}">
 												<c:set var="acaourl"
-													value="${fn:replace(acaourl, '__scheme__', pageContext.request.scheme)}" />
-												<c:set var="acaourl"
-													value="${fn:replace(acaourl, '__serverName__', pageContext.request.serverName)}" />
-												<c:set var="acaourl"
-													value="${fn:replace(acaourl, '__serverPort__', pageContext.request.serverPort)}" />
-												<c:set var="acaourl"
-													value="${fn:replace(acaourl, '__contextPath__', pageContext.request.contextPath)}" />
-												<c:set var="acaourl"
-													value="${fn:replace(acaourl, '__pathInfo__', pageContext.request.pathInfo)}" />
-												<c:if test="${acao.url == acaourl}">
-													<c:set var="acaourl"
-														value="${pageContext.request.contextPath}${acao.url}" />
-												</c:if>
-												<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
-													pre="${acao.pre}" pos="${acao.pos}" url="${acaourl}"
-													test="${true}" popup="${acao.popup}"
-													confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
-													idAjax="${mov.idMov}" classe="${acao.classe}" />
-											</c:forEach>
-										</siga:links>
-									</p>
-								</c:if>
-							</c:forEach>
-						</div>
+													value="${pageContext.request.contextPath}${acao.url}" />
+											</c:if>
+											<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}"
+												pre="${acao.pre}" pos="${acao.pos}" url="${acaourl}"
+												test="${true}" popup="${acao.popup}"
+												confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
+												idAjax="${mov.idMov}" classe="${acao.classe}" />
+										</c:forEach>
+										<siga:link title="${mov.mov.cadastrante.sigla}/${mov.mov.lotaCadastrante.sigla} - ${mov.tempoRelativo}" test="${true}" classe="${acao.classe}" />
+									</siga:links>
+								</p>
+							</c:if>
+						</c:forEach>
 					</div>
 
 					<div class="gt-sidebar-content">

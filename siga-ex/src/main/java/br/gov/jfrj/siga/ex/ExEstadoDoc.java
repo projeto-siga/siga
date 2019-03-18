@@ -23,12 +23,25 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.gov.jfrj.siga.model.Selecionavel;
 
 /**
  * A class that represents a row in the 'EX_ESTADO_DOC' table. This class may be
  * customized as it is never re-generated after being created.
  */
+@Entity
+@BatchSize(size = 500)
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Table(name = "EX_ESTADO_DOC", catalog = "SIGA")
 public class ExEstadoDoc extends AbstractExEstadoDoc implements Serializable,
 		Selecionavel {
 
@@ -54,7 +67,7 @@ public class ExEstadoDoc extends AbstractExEstadoDoc implements Serializable,
 	final static public long ESTADO_DOC_DESCARTADO = 8;
 
 	final static public long ESTADO_DOC_JUNTADO = 9;
-	
+
 	final static public long ESTADO_DOC_JUNTADO_EXTERNO = 16;
 
 	final static public long ESTADO_CANCELADO = 10;
@@ -68,21 +81,20 @@ public class ExEstadoDoc extends AbstractExEstadoDoc implements Serializable,
 	final static public long ESTADO_DOC_ARQUIVADO_PERMANENTE = 13;
 
 	final static public long ESTADO_DOC_PENDENTE_DE_ASSINATURA = 15;
-	
-	final static public long ESTADO_DOC_JUNTADO_A_DOCUMENTO_EXTERNO = 16;
-	
-	final static public long ESTADO_DOC_A_REMETER_PARA_PUBLICACAO = 17;
-	
-	final static public long ESTADO_DOC_REMETIDO_PARA_PUBLICACAO = 18;
-	
-	final static public long ESTADO_DOC_A_REMETER_MANUALMENTE = 19;
-	
-	final static public long ESTADO_DOC_PUBLICADO = 20;
-	
-	final static public long ESTADO_DOC_PUBLICACAO_SOLICITADA = 21;
-	
-	final static public long ESTADO_DOC_DISPONIBILIZADO = 22;
 
+	final static public long ESTADO_DOC_JUNTADO_A_DOCUMENTO_EXTERNO = 16;
+
+	final static public long ESTADO_DOC_A_REMETER_PARA_PUBLICACAO = 17;
+
+	final static public long ESTADO_DOC_REMETIDO_PARA_PUBLICACAO = 18;
+
+	final static public long ESTADO_DOC_A_REMETER_MANUALMENTE = 19;
+
+	final static public long ESTADO_DOC_PUBLICADO = 20;
+
+	final static public long ESTADO_DOC_PUBLICACAO_SOLICITADA = 21;
+
+	final static public long ESTADO_DOC_DISPONIBILIZADO = 22;
 
 	/**
 	 * Simple constructor of ExEstadoDoc instances.

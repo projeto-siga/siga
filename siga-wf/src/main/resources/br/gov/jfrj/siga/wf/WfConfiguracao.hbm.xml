@@ -15,9 +15,9 @@
 		<property name="expressao" column="NM_EXPRESSAO"
 			type="java.lang.String" />
 		<many-to-one name="lotaAtor" column="ID_LOTA_ATOR"
-			class="br.gov.jfrj.siga.dp.DpLotacao" />
+			class="br.gov.jfrj.siga.dp.DpLotacao" lazy="false" />
 		<many-to-one name="ator" column="ID_ATOR"
-			class="br.gov.jfrj.siga.dp.DpPessoa" />
+			class="br.gov.jfrj.siga.dp.DpPessoa" lazy="false" />
 	</joined-subclass>
 	
 		<query name="consultarWfConfiguracoes">

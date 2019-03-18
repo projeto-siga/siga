@@ -17,6 +17,8 @@ var gOperacoes;
 var gLogin;
 var gPassword;
 
+var gAssinando = false;
+
 var ittruSignAx;
 var ittruSignApplet;
 
@@ -46,6 +48,10 @@ function TestarAssinaturaDigital() {
 // pagina
 //
 function AssinarDocumentos(copia, politica, juntar, tramitar) {
+	if (gAssinando)
+		return;
+	gAssinando = true;
+	
 	if (politica != undefined)
 		gPolitica = politica;
 
@@ -54,8 +60,10 @@ function AssinarDocumentos(copia, politica, juntar, tramitar) {
 	var tipo = verificarTipoDeAssinatura();
 
 	if (tipo == 1 || tipo == 3) {
-		if (!TestarAssinaturaDigital())
+		if (!TestarAssinaturaDigital()) {
+			gAssinando = false;
 			return;
+		}
 	}
 
 	if (tipo == 1) {
@@ -151,7 +159,7 @@ var providerAssijusPopup = {
 				console.log(id, 'hash')
 				var errormsg = this.errormsg;
 				$.ajax({
-					url : "/sigaex/app/assinador-popup/doc/" + id + "/hash",
+					url : "/sigaex/public/app/assinador-popup/doc/" + id + "/hash",
 					type : "GET",
 					async : false,
 					success : function(xhr) {
@@ -170,7 +178,7 @@ var providerAssijusPopup = {
 				console.log(sign)
 				var errormsg = this.errormsg;
 				$.ajax({
-					url : "/sigaex/app/assinador-popup/doc/" + id + "/sign",
+					url : "/sigaex/public/app/assinador-popup/doc/" + id + "/sign",
 					type : "PUT",
 					contentType: "application/json",
 					data : JSON.stringify(sign),
@@ -195,6 +203,7 @@ var providerAssijusPopup = {
 			},
 			
 			endCallback: function() {
+				gAssinando = false;
 				if (this.errormsg.length > 0)
 					window.alert(this.errormsg);
 				else
@@ -274,6 +283,7 @@ var providerAssijus = {
 						+ "&endpointcallback=" + encodeURI(urlRedirect);
 			},
 			error : function(xhr) {
+				gAssinando = false;
 				result = "Erro na gravação da assinatura. " + xhr.responseText;
 			}
 		});
@@ -647,8 +657,7 @@ var providerPassword = {
 		} catch (Err) {
 			return Err.description;
 		}
-	},
-
+	}
 }
 
 //
@@ -951,6 +960,7 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 
 	if (provider != providerAssijusPopup && provider != providerAssijus) {
 		process.push(function() {
+			gAssinando = false;
 			if (gRet == undefined)
 				return;
 			Log("Concluído, redirecionando...");
@@ -1037,7 +1047,7 @@ function identificarOperacoes() {
 					+ operacao.codigo)[0].value;
 
 			var oChkPwd = document.getElementsByName("ad_password_"
-					+ operacao.codigo)[0];
+					+ operacao.codigo)[0] || document.getElementsByName("ad_password_0")[0];
 
 			if (oChkPwd == null) {
 				operacao.usePassword = false;

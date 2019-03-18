@@ -62,6 +62,7 @@
 		<filter-name>AuthJwtFormFilter</filter-name>
 		<url-pattern>/paginas/*</url-pattern>
 		<url-pattern>/app/*</url-pattern>
+		<url-pattern>*.action</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
@@ -75,19 +76,6 @@
 		<url-pattern>*</url-pattern>
 	</filter-mapping>
 
-
-	<filter>
-		<filter-name>HibernateFilter</filter-name>
-		<filter-class>br.gov.jfrj.siga.util.HibernateThreadFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>HibernateFilter</filter-name>
-		<url-pattern>*.action</url-pattern>
-		<url-pattern>/servicos/*</url-pattern>
-		<url-pattern>/app/*</url-pattern>
-		<url-pattern>/public/app/*</url-pattern>
-		<url-pattern>/permalink/*</url-pattern>
-	</filter-mapping>
 
 	<filter>
 		<filter-name>ResponseHeaderFilter</filter-name>
@@ -104,6 +92,15 @@
 		<url-pattern>/botstrap/*</url-pattern>
 		<url-pattern>/css/*</url-pattern>
 		<url-pattern>/javascript/*</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>SigaFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.util.SigaThreadFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>SigaFilter</filter-name>
+		<url-pattern>/servicos/*</url-pattern>
 	</filter-mapping>
 
 	<filter>

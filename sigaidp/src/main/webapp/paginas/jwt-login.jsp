@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 
 <siga:pagina titulo="Página de Login" desabilitarbusca="sim"
 	desabilitarmenu="sim"
@@ -24,7 +25,6 @@
 			<div class="col col-sm-12 col-md-6">
 				<div class="jumbotron d-block mx-auto">
 					<h2 class="text-center pb-3">Autentica&ccedil;&atilde;o</h2>
-
 					<c:if test="${not empty mensagem}">
 						<div class="login-invalido">
 							<div class="login-invalido-titulo">
@@ -32,8 +32,7 @@
 							</div>
 
 							<div class="login-invalido-descricao">
-								<p>XX é a sigla do seu órgão (T2, RJ, ES, etc.)</p>
-								<p>99999 ￩ o número da matrícula.</p>
+								${f:resource('siga.gi.texto.login')}
 							</div>
 						</div>
 					</c:if>

@@ -34,6 +34,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -47,36 +49,51 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
  * {@link DpFuncaoConfianca}.
  */
 @MappedSuperclass
-public abstract class AbstractDpFuncaoConfianca extends Objeto implements Serializable {
+@NamedQueries({
+		@NamedQuery(name = "consultarPorSiglaDpFuncaoConfianca", query = "select fun from DpFuncaoConfianca fun where fun.idFuncao = :idFuncao"),
+		@NamedQuery(name = "consultarPorFiltroDpFuncaoConfianca", query = "from DpFuncaoConfianca fun "
+				+ "  where upper(fun.nmFuncaoConfiancaAI) like upper('%' || :nome || '%')"
+				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "   	and fun.dataFimFuncao = null"
+				+ "   	order by fun.nomeFuncao"),
+		@NamedQuery(name = "consultarQuantidadeDpFuncaoConfianca", query = "select count(fun) from DpFuncaoConfianca fun "
+				+ "  where upper(fun.nmFuncaoConfiancaAI) like upper('%' || :nome || '%')"
+				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "   	and fun.dataFimFuncao = null"
+				+ "   	order by fun.nomeFuncao"),
+		@NamedQuery(name = "consultarPorNomeOrgaoDpFuncaoConfianca", query = "select fun from DpFuncaoConfianca fun where upper(fun.nmFuncaoConfiancaAI) = upper(:nome) and fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario")})
 
-	@Column(name = "DT_FIM_FUNCAO_CONFIANCA")
+public abstract class AbstractDpFuncaoConfianca extends Objeto implements
+		Serializable {
+
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.DP_FUNCAO_CONFIANCA_SEQ")
+	@Id
+	@GeneratedValue(generator = "generator")
+	@Column(name = "ID_FUNCAO_CONFIANCA", unique = true, nullable = false)
 	@Desconsiderar
-	@Temporal(TemporalType.DATE)
+	private Long idFuncao;
+
+	@Desconsiderar
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DT_FIM_FUNCAO_CONFIANCA", length = 19)
 	private Date dataFimFuncao;
 
-	@Column(name = "DT_INI_FUNCAO_CONFIANCA")
 	@Desconsiderar
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DT_INI_FUNCAO_CONFIANCA", length = 19)
 	private Date dataInicioFuncao;
 
-	@Column(name = "CATEGORIA_FUNCAO_CONFIANCA")
+	@Column(name = "CATEGORIA_FUNCAO_CONFIANCA", length = 15)
 	private String categoriaFuncao;
 
 	@Column(name = "COD_FOLHA_FUNCAO_CONFIANCA")
 	private Integer codFolhaFuncao;
 
-	@SequenceGenerator(name = "generator", sequenceName = "DP_FUNCAO_CONFIANCA_SEQ")
-	@Id
-	@GeneratedValue(generator = "generator")
-	@Column(name = "ID_FUNCAO_CONFIANCA", nullable = false)
-	@Desconsiderar
-	private Long idFuncao;
-	
 	@Column(name = "ID_FUN_CONF_INI")
 	@Desconsiderar
 	private Long idFuncaoIni;
 
-	@Column(name = "IDE_FUNCAO_CONFIANCA")
+	@Column(name = "IDE_FUNCAO_CONFIANCA", length = 256)
 	private String ideFuncao;
 
 	@Column(name = "ID_FUNCAO_CONFIANCA_PAI")
@@ -85,15 +102,15 @@ public abstract class AbstractDpFuncaoConfianca extends Objeto implements Serial
 	@Column(name = "NIVEL_FUNCAO_CONFIANCA")
 	private Integer nivelFuncao;
 
-	@Column(name = "NOME_FUNCAO_CONFIANCA", nullable = false)
+	@Column(name = "NOME_FUNCAO_CONFIANCA", nullable = false, length = 100)
 	private String nomeFuncao;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_ORGAO_USU")
+	@JoinColumn(name = "ID_ORGAO_USU", nullable = false)
 	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
-	
-	@Column(name = "SIGLA_FUNCAO_CONFIANCA")
+
+	@Column(name = "SIGLA_FUNCAO_CONFIANCA", length = 30)
 	@Desconsiderar
 	private String siglaFuncaoConfianca;
 
@@ -116,9 +133,10 @@ public abstract class AbstractDpFuncaoConfianca extends Objeto implements Serial
 			return false;
 		final DpFuncaoConfianca that = (DpFuncaoConfianca) rhs;
 
-		if ((this.getIdFuncao() == null ? that.getIdFuncao() == null : this.getIdFuncao().equals(that.getIdFuncao()))) {
-			if ((this.getNomeFuncao() == null ? that.getNomeFuncao() == null : this.getNomeFuncao().equals(
-					that.getNomeFuncao())))
+		if ((this.getIdFuncao() == null ? that.getIdFuncao() == null : this
+				.getIdFuncao().equals(that.getIdFuncao()))) {
+			if ((this.getNomeFuncao() == null ? that.getNomeFuncao() == null
+					: this.getNomeFuncao().equals(that.getNomeFuncao())))
 				return true;
 
 		}
@@ -164,9 +182,11 @@ public abstract class AbstractDpFuncaoConfianca extends Objeto implements Serial
 	@Override
 	public int hashCode() {
 		int result = 17;
-		int idValue = this.getIdFuncao() == null ? 0 : this.getIdFuncao().hashCode();
+		int idValue = this.getIdFuncao() == null ? 0 : this.getIdFuncao()
+				.hashCode();
 		result = result * 37 + idValue;
-		idValue = this.getNomeFuncao() == null ? 0 : this.getNomeFuncao().hashCode();
+		idValue = this.getNomeFuncao() == null ? 0 : this.getNomeFuncao()
+				.hashCode();
 		result = result * 37 + idValue;
 
 		return result;
@@ -244,7 +264,8 @@ public abstract class AbstractDpFuncaoConfianca extends Objeto implements Serial
 	}
 
 	/**
-	 * @param siglaFuncaoConfianca the siglaFuncaoConfianca to set
+	 * @param siglaFuncaoConfianca
+	 *            the siglaFuncaoConfianca to set
 	 */
 	public void setSiglaFuncaoConfianca(String siglaFuncaoConfianca) {
 		this.siglaFuncaoConfianca = siglaFuncaoConfianca;

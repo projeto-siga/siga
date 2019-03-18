@@ -18,8 +18,17 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex;
 
-public class ExEmailNotificacao extends AbstractExEmailNotificacao{
-	
-	public ExEmailNotificacao() {}
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.BatchSize;
+
+@Entity
+@BatchSize(size = 500)
+@Table(name = "EX_EMAIL_NOTIFICACAO", catalog = "SIGA")
+public class ExEmailNotificacao extends AbstractExEmailNotificacao {
+
+	public ExEmailNotificacao() {
+	}
 
 }

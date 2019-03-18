@@ -45,6 +45,7 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -330,6 +331,11 @@ public class ExMovimentacaoController extends ExController {
 		if (mob != null && !mob.isGeral())
 			mob = mob.doc().getMobilGeral();
 
+		if(!Ex.getInstance().getComp()
+				.podeAnexarArquivoAuxiliar(getTitular(), getLotaTitular(), mob)) {
+			throw new AplicacaoException("Arquivo Auxiliar não pode ser anexado");
+		}
+
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia().setMob(mob);
 
@@ -348,6 +354,11 @@ public class ExMovimentacaoController extends ExController {
 		ExMobil mob = mobOriginal;
 		if (mob != null && !mob.isGeral())
 			mob = mob.doc().getMobilGeral();
+		
+		if(!Ex.getInstance().getComp()
+				.podeAnexarArquivoAuxiliar(getTitular(), getLotaTitular(), mob)) {
+			throw new AplicacaoException("Arquivo Auxiliar não pode ser anexado");
+		}
 		
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia().setMob(documentoBuilder.getMob()).setContentType(arquivo.getContentType())
@@ -565,8 +576,10 @@ public class ExMovimentacaoController extends ExController {
 		
 		AtivoEFixo af = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), CpTipoConfiguracao.TIPO_CONFIG_TRAMITE_AUTOMATICO);
 		
-		// Desabilita o trâmite quando não há destinatário
-		if (doc.getLotaDestinatario() == null && doc.getDestinatario() == null) {
+		// Habilita ou desabilita o trâmite 
+		if (!Ex.getInstance()
+				.getComp()
+				.podeTramitarPosAssinatura(doc.getDestinatario(), doc.getLotaDestinatario(), getTitular(), getLotaTitular(),doc.getMobilGeral())){
 			af.ativo = false;
 			af.fixo = true;
 		}
@@ -1458,6 +1471,26 @@ public class ExMovimentacaoController extends ExController {
 
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
+	
+	@Get("/app/expediente/mov/solicitar_assinatura")
+	public void aSolicitarAssinatura(final String sigla) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+		final ExDocumento doc = buscarDocumento(builder);
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeSolicitarAssinatura(getTitular(), getLotaTitular(),
+						doc)) {
+			throw new AplicacaoException("Não é possível revisar");
+		}
+		Ex.getInstance()
+			.getBL()
+			.solicitarAssinatura(getCadastrante(), getLotaTitular(), doc);
+
+		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+	}
+
 
 	@Get("/app/expediente/mov/referenciar")
 	public void aReferenciar(final String sigla) {
@@ -1710,6 +1743,9 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException(
 					"Destinatário não pode receber documentos");
 		}
+		
+		if (mov.getDtFimMov() != null && !Data.dataDentroSeculo21(mov.getDtFimMov()))
+			throw new AplicacaoException("Data de devolução inválida, deve estar entre o ano 2000 e ano 2100");	
 
 		if (!(Ex.getInstance()
 				.getComp()
@@ -2491,7 +2527,7 @@ public class ExMovimentacaoController extends ExController {
 	@Get("/app/expediente/mov/assinar_lote")
 	public void assina_lote() throws Exception {
 		final List<ExDocumento> itensComoSubscritor = dao()
-				.listarDocPendenteAssinatura(getTitular());
+				.listarDocPendenteAssinatura(getTitular(), false);
 		final List<ExDocumento> itensFinalizados = new ArrayList<ExDocumento>();
 
 		for (final ExDocumento doc : itensComoSubscritor) {
@@ -2519,7 +2555,7 @@ public class ExMovimentacaoController extends ExController {
 	@Get("/app/expediente/mov/assinar_tudo")
 	public void assina_tudo() throws Exception {
 		List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL()
-				.obterAssinaveis(getTitular(), getLotaTitular());
+				.obterAssinaveis(getTitular(), getLotaTitular(), false);
 
 		result.include("assinaveis", assinaveis);
 		result.include("request", getRequest());
@@ -2528,8 +2564,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/assinar_gravar")
 	public void aAssinarGravar(final String sigla, final Boolean copia,
 			final String atributoAssinavelDataHora, String assinaturaB64,
-			final String certificadoB64, final Boolean juntar, final Boolean tramitar) throws AplicacaoException,
-			ServletException {
+			final String certificadoB64, final Boolean juntar, final Boolean tramitar) throws Exception {
 		try {
 
 			final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -2602,7 +2637,7 @@ public class ExMovimentacaoController extends ExController {
 					.getBL()
 					.assinarDocumentoComSenha(getCadastrante(),
 							getLotaTitular(), doc, mov.getDtMov(),
-							nomeUsuarioSubscritor, senhaUsuarioSubscritor,
+							nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
 							mov.getTitular(), copia, juntar, tramitar);
 		} catch (final Exception e) {
 			httpError(e);
@@ -2619,6 +2654,8 @@ public class ExMovimentacaoController extends ExController {
 			String tipoAssinaturaMov, String nomeUsuarioSubscritor,
 			String senhaUsuarioSubscritor, Boolean copia) throws Exception {
 		long tpMovAssinatura = ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_MOVIMENTACAO_COM_SENHA;
+		
+		try {
 
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setId(id);
@@ -2636,10 +2673,14 @@ public class ExMovimentacaoController extends ExController {
 				.getBL()
 				.assinarMovimentacaoComSenha(getCadastrante(),
 						getLotaTitular(), mov, mov.getDtMov(),
-						nomeUsuarioSubscritor, senhaUsuarioSubscritor,
+						nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
 						tpMovAssinatura);
+		} catch (final Exception e) {
+			httpError(e);
+			return;
+		}
 
-		result.forwardTo(this).assinado(mob);
+		result.use(Results.page()).forwardTo("/WEB-INF/page/ok.jsp");
 	}
 
 	@Get({ "/app/expediente/mov/cancelar_pedido_publicacao_boletim",
@@ -3654,6 +3695,11 @@ public class ExMovimentacaoController extends ExController {
 		if (mov.getDtDispPublicacao() == null)
 			throw new AplicacaoException(
 					"A data desejada para a disponibilização precisa ser informada.");
+		
+		// Verifica se a data está entre o ano 2000 e o ano 2100
+		if (!Data.dataDentroSeculo21(mov.getDtDispPublicacao())) {
+				throw new AplicacaoException("Data de disponibilização inválida, deve estar entre o ano 2000 e ano 2100");
+		}
 
 		DatasPublicacaoDJE DJE = new DatasPublicacaoDJE(
 				mov.getDtDispPublicacao());
@@ -4195,9 +4241,11 @@ public class ExMovimentacaoController extends ExController {
 		result.use(Results.http()).body("OK").setStatusCode(200);
 	}
 
-	protected void httpError(final Exception e) {
+	protected void httpError(final Exception e) throws Exception {
 		result.use(Results.http()).body("ERRO - " + e.getMessage())
 				.setStatusCode(500);
+		response.flushBuffer();
+		throw e;
 	}
 
 	@Get("/app/expediente/mov/assinado")

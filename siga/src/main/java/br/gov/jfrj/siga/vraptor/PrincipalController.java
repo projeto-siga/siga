@@ -1,7 +1,6 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -16,6 +15,7 @@ import com.mashape.unirest.http.Unirest;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Options;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -24,7 +24,9 @@ import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.SigaHTTP;
+import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -43,7 +45,15 @@ public class PrincipalController extends SigaController {
 	}
 
 	@Get("app/principal")
-	public void principal() {
+	public void principal(Boolean exibirAcessoAnterior) {
+		if (exibirAcessoAnterior != null && exibirAcessoAnterior) {
+			CpAcesso a = dao.consultarAcessoAnterior(so.getCadastrante());
+
+			String acessoAnteriorData = Data.formatDDMMYY_AS_HHMMSS(a.getDtInicio());
+			String acessoAnteriorMaquina = a.getAuditIP();
+			result.include("acessoAnteriorData", acessoAnteriorData);
+			result.include("acessoAnteriorMaquina", acessoAnteriorMaquina);
+		}
 	}
 
 	@Get("app/pagina_vazia")
@@ -56,23 +66,17 @@ public class PrincipalController extends SigaController {
 
 	@Get("permalink/{sigla}")
 	public void permalink(final String sigla) {
-		GenericoSelecao sel = buscarGenericoPorSigla(sigla, null, null, null);
+		GenericoSelecao sel = buscarGenericoPorSigla(sigla, getTitular(), getLotaTitular(), (getTitular() != null) ? getTitular().getSiglaCompleta() : null);
 		if (sel == null || sel.getDescricao() == null)
 			result.notFound();
 		else {
-			String urlBase = getRequest().getScheme() + "://"
-					+ getRequest().getServerName() + ":"
-					+ getRequest().getServerPort();
-			result.redirectTo(urlBase + sel.getDescricao());
+			result.redirectTo(Contexto.urlBase(request) + sel.getDescricao());
 		}
 	}
 
 	@Get("permalink/{sigla}/{parte}")
 	public void permalink(final String sigla, final String parte) {
-		String urlBase = getRequest().getScheme() + "://"
-				+ getRequest().getServerName() + ":"
-				+ getRequest().getServerPort();
-		result.redirectTo(urlBase + "/sigaex/app/expediente/mov/exibir?id="
+		result.redirectTo(Contexto.urlBase(request) + "/sigaex/app/expediente/mov/exibir?id="
 				+ parte);
 	}
 
@@ -144,10 +148,9 @@ public class PrincipalController extends SigaController {
 		final GenericoSelecao sel = new GenericoSelecao();
 		if (incluirMatricula == null)
 			incluirMatricula = "";
+		
+		String urlBase = Contexto.urlBase(request);
 
-		String urlBase = getRequest().getScheme() + "://"
-				+ getRequest().getServerName() + ":"
-				+ getRequest().getServerPort();
 		List<String> lurls = new ArrayList<>();
 
 		if (m1.find()) {
@@ -217,6 +220,16 @@ public class PrincipalController extends SigaController {
 			return sel;
 		}
 		return sel;
+	}
+	
+	@Options("/public/app/graphviz/svg")
+	public void graphvizProxyOptions() {
+//	        result.use(Results.status()).header("Allow", allowMethods);
+//	        result.use(Results.status()).header("Access-Control-Allow-Methods", allowMethods);
+//	        result.use(Results.status()).header("Access-Control-Allow-Headers", "Content-Type, accept, Authorization, X-Tenant, X-Filial, origin");
+
+			corsHeaders(response);
+        	result.use(Results.status()).noContent();
 	}
 	
 	@Post

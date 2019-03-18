@@ -92,7 +92,6 @@ ${meta}
 
 <body onload="${onLoad}">
 	<c:if test="${popup!='true'}">
-
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand pt-0 pb-0" href="/siga"> <img
 				src="/siga/imagens/logo.png" height="38"><img

@@ -19,10 +19,11 @@
 package br.gov.jfrj.siga.model.prop;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeSet;
 
 /**
  * Superclasse abstrata responsável pela infraestrutura de tratamento de
@@ -138,48 +139,46 @@ public abstract class ModeloPropriedade {
 	public String obterPropriedade(String nome) throws Exception {
 		carregarPropriedades();
 		if (prefixo != null) {
-			VarredorPropriedades varredor = new VarredorPropriedades(prefixo,nome);
-			while(!varredor.isVarreduraCompleta()){
+			VarredorPropriedades varredor = new VarredorPropriedades(prefixo, nome);
+			while (!varredor.isVarreduraCompleta()) {
 				String value = propriedades.getProperty(varredor.getNext());
 				if (value != null)
 					return value.trim();
 			}
 
 		}
-		if (propriedades.getProperty(nome) !=null){
+		if (propriedades.getProperty(nome) != null) {
 			return propriedades.getProperty(nome).trim();
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Além do valor, retorna qual foi a propriedade lida.
-	 * */
-	public Map<String,String> obterDefinicaoPropriedade(String nome) throws Exception {
-		Map<String,String> defProp = new HashMap<String,String>();
+	 */
+	public Map<String, String> obterDefinicaoPropriedade(String nome) throws Exception {
+		Map<String, String> defProp = new HashMap<String, String>();
 		carregarPropriedades();
 		if (prefixo != null) {
-			VarredorPropriedades varredor = new VarredorPropriedades(prefixo,nome);
-			while(!varredor.isVarreduraCompleta()){
+			VarredorPropriedades varredor = new VarredorPropriedades(prefixo, nome);
+			while (!varredor.isVarreduraCompleta()) {
 				String nomePropriedade = varredor.getNext();
 				String value = propriedades.getProperty(nomePropriedade);
-				if (value != null){
+				if (value != null) {
 					defProp.put(nomePropriedade, value.trim());
 					return defProp;
 				}
-					
+
 			}
 
 		}
-		if (propriedades.getProperty(nome) !=null){
+		if (propriedades.getProperty(nome) != null) {
 			defProp.put(nome, propriedades.getProperty(nome).trim());
 			return defProp;
 		}
 		return null;
 	}
 
-	
-	
 	/**
 	 * obtém uma lista de propriedades que começam com um nome (parâmetro) que é
 	 * separado por um ponto e seguido de um numero sequencial. Ex: parâmetro
@@ -194,8 +193,7 @@ public abstract class ModeloPropriedade {
 	 * @return
 	 * @throws Exception
 	 */
-	public ArrayList<String> obterPropriedadeLista(String nome)
-			throws Exception {
+	public ArrayList<String> obterPropriedadeLista(String nome) throws Exception {
 		ArrayList<String> lista = new ArrayList<String>();
 		for (int i = 0; true; i++) {
 			String prp = obterPropriedade(nome + "." + String.valueOf(i));
@@ -231,14 +229,50 @@ public abstract class ModeloPropriedade {
 		}
 		return hashFinal;
 	}
-	
+
 	/**
-	 * Sobrescreve o valor de uma propriedade que foi carregada anteriormente. Se a propriedade não existir, cria a propriedade com o valor indicado.
-	 * @param nome - nome da propriedade
-	 * @param valor - novo valor da propriedade
+	 * 
+	 * Obtém um HashMap com as chaves e respectivos valores das propriedades
+	 * cuja chave contém o nome passado como parâmetro, esteja ou não essa
+	 * propriedade acompanhada do prefixo do módulo no arquivo de propriedades.
+	 * Seguindo essa ideia, para se obter todas as propriedades do módulo, basta
+	 * passar uma String vazia (não nula) como parâmetro.
+	 * 
+	 * @param nome
+	 *            nome do parâmetro a obter. Se atribuído o prefixo, o mesmo não
+	 *            deve estar contido.
+	 * @return
+	 */
+	public String toString() {
+		try {
+			carregarPropriedades();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		StringBuilder sb = new StringBuilder();
+		TreeSet<String> set = new TreeSet<>();
+		for (Object o : propriedades.keySet())
+			set.add((String) o);
+		for (String s : set) {
+			sb.append(s);
+			sb.append(": ");
+			sb.append(propriedades.getProperty(s));
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * Sobrescreve o valor de uma propriedade que foi carregada anteriormente.
+	 * Se a propriedade não existir, cria a propriedade com o valor indicado.
+	 * 
+	 * @param nome
+	 *            - nome da propriedade
+	 * @param valor
+	 *            - novo valor da propriedade
 	 * @throws Exception
 	 */
-	protected void setPropriedade(String nome, String valor) throws Exception{
+	protected void setPropriedade(String nome, String valor) throws Exception {
 		carregarPropriedades();
 		propriedades.setProperty(nome, valor);
 	}

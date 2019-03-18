@@ -83,6 +83,7 @@ public class ExDocumentoVO extends ExVO {
 	ExGraphRelacaoDocs dotRelacaoDocs;
 	ExGraphColaboracao dotColaboracao;
 	private List<Object> listaDeAcessos;
+	boolean podeAnexarArquivoAuxiliar;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo) {
@@ -106,9 +107,14 @@ public class ExDocumentoVO extends ExVO {
 		else
 			this.lotaCadastranteString = "";
 
-		if (doc.getExClassificacaoAtual() != null)
-			this.classificacaoDescricaoCompleta = doc.getExClassificacaoAtual()
-					.getAtual().getDescricaoCompleta();
+		if (doc.getExClassificacaoAtual() != null) {
+			if (doc.getExClassificacaoAtual().getAtual() != null)
+				this.classificacaoDescricaoCompleta = doc.getExClassificacaoAtual()
+						.getAtual().getDescricaoCompleta();
+			else
+				this.classificacaoDescricaoCompleta = doc.getExClassificacaoAtual()
+				.getDescricaoCompleta();
+		}
 		this.destinatarioString = doc.getDestinatarioString();
 		if (doc.getExNivelAcessoAtual() != null)
 			this.nmNivelAcesso = doc.getExNivelAcessoAtual().getNmNivelAcesso();
@@ -221,6 +227,8 @@ public class ExDocumentoVO extends ExVO {
 		this.originalNumero = doc.getNumExtDoc();
 		this.originalData = doc.getDtDocOriginalDDMMYYYY();
 		this.originalOrgao = doc.getOrgaoExterno() != null ? doc.getOrgaoExterno().getDescricao() : null;
+		
+		this.podeAnexarArquivoAuxiliar = Ex.getInstance().getComp().podeAnexarArquivoAuxiliar(titular, lotaTitular, mob);
 	}
 
 	public List<Object> getListaDeAcessos() {
@@ -242,6 +250,8 @@ public class ExDocumentoVO extends ExVO {
 			this.fisicoOuEletronico = "Documento Físico";
 			this.fDigital = false;
 		}
+		
+		this.podeAnexarArquivoAuxiliar = Ex.getInstance().getComp().podeAnexarArquivoAuxiliar(titular, lotaTitular, mob);
 	}
 
 	public void exibe() {
@@ -524,6 +534,17 @@ public class ExDocumentoVO extends ExVO {
 						.getComp()
 						.podeAutenticarDocumento(titular, lotaTitular,
 								mob.doc()));
+
+		vo.addAcao(
+				"page_go	",
+				"Solicitar Assinatura",
+				"/app/expediente/mov",
+				"solicitar_assinatura",
+				Ex.getInstance()
+						.getComp()
+						.podeSolicitarAssinatura(titular, lotaTitular,
+								mob.doc()), "Ao clicar em prosseguir, você estará sinalizando que revisou este documento e que ele deve ser incluído na lista para ser assinado em lote. Prosseguir?", 
+								null, null, null, "once");
 
 		if (doc.isFinalizado() && doc.getNumExpediente() != null) {
 			// documentos finalizados
@@ -851,6 +872,11 @@ public class ExDocumentoVO extends ExVO {
 		return originalOrgao;
 	}
 
-
-
+	public boolean getPodeAnexarArquivoAuxiliar() {
+		return podeAnexarArquivoAuxiliar;
+	}
+	
+	public void setPodeAnexarArquivoAuxiliar(boolean podeAnexar) {
+		this.podeAnexarArquivoAuxiliar = podeAnexar;
+	}
 }

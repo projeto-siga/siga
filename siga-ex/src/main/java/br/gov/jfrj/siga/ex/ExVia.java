@@ -21,12 +21,18 @@
  */
 package br.gov.jfrj.siga.ex;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 /**
  * A class that represents a row in the 'EX_VIA' table. This class may be
  * customized as it is never re-generated after being created.
  */
+@Entity
+@Table(name = "EX_VIA", catalog = "SIGA")
 public class ExVia extends AbstractExVia {
 	/**
 	 * 
@@ -39,12 +45,12 @@ public class ExVia extends AbstractExVia {
 	public ExVia() {
 	}
 
-//	public String getDestinacao() {
-//		if (getExTipoDestinacao() != null)
-//			return getExTipoDestinacao().getDescrTipoDestinacao();
-//		else
-//			return "";
-//	}
+	// public String getDestinacao() {
+	// if (getExTipoDestinacao() != null)
+	// return getExTipoDestinacao().getDescrTipoDestinacao();
+	// else
+	// return "";
+	// }
 
 	public String getLetraVia() {
 		if (getCodVia() != null)
@@ -68,4 +74,21 @@ public class ExVia extends AbstractExVia {
 
 	/* Add customized code below */
 
+	//
+	// Solução para não precisar criar HIS_ATIVO em todas as tabelas que herdam de HistoricoSuporte.
+	//
+	@Column(name = "HIS_ATIVO")
+	private Integer hisAtivo;
+
+	@Override
+	public Integer getHisAtivo() {
+		this.hisAtivo = super.getHisAtivo();
+		return this.hisAtivo;
+	}
+	
+	@Override
+	public void setHisAtivo(Integer hisAtivo) {
+		super.setHisAtivo(hisAtivo);
+		this.hisAtivo = getHisAtivo();
+	}
 }

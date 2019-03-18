@@ -23,9 +23,18 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.sql.Blob;
-import java.util.Arrays;
 
-import org.apache.commons.codec.binary.Hex;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -34,43 +43,59 @@ import br.gov.jfrj.siga.model.Assemelhavel;
  * A class that represents a row in the EX_MODELO table. You can customize the
  * behavior of this class by editing the class, {@link ExModelo()}.
  */
+@MappedSuperclass
+@NamedQueries({ @NamedQuery(name = "consultarModeloAtual", query = "select mod from ExModelo mod where mod.hisIdIni = :hisIdIni and mod.hisDtFim = null") })
 public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		implements Serializable {
+	/** The composite primary key value. */
+	@Id
+	@SequenceGenerator(sequenceName = "EX_MODELO_SEQ", name = "EX_MODELO_SEQ")
+	@GeneratedValue(generator = "EX_MODELO_SEQ")
+	@Column(name = "ID_MOD", unique = true, nullable = false)
+	private java.lang.Long idMod;
+
 	/** The value of the simple conteudoBlobMod property. */
+	@Column(name = "CONTEUDO_BLOB_MOD")
+	@Basic(fetch = FetchType.LAZY)
 	private Blob conteudoBlobMod;
 
 	/** The value of the simple conteudoTpBlob property. */
+	@Column(name = "CONTEUDO_TP_BLOB", length = 128)
 	private java.lang.String conteudoTpBlob;
 
 	/** The value of the simple descMod property. */
+	@Column(name = "DESC_MOD", length = 256)
 	private java.lang.String descMod;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_CLASS_CRIACAO_VIA")
 	private ExClassificacao exClassCriacaoVia;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_CLASSIFICACAO")
 	private ExClassificacao exClassificacao;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_FORMA_DOC")
 	private ExFormaDocumento exFormaDocumento;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_NIVEL_ACESSO")
 	private ExNivelAcesso exNivelAcesso;
-
-	/**
-	 * The cached hash code value for this instance. Settting to 0 triggers
-	 * re-calculation.
-	 */
-	private int hashValue = 0;
 
 	/** The value of the exModeloTipologiaSet one-to-many association. */
 
-	/** The composite primary key value. */
-	private java.lang.Long idMod;
-
+	@Column(name = "NM_ARQ_MOD", length = 256)
 	private java.lang.String nmArqMod;
 
 	/** The value of the simple nomeModelo property. */
+	@Column(name = "NM_MOD", nullable = false, length = 128)
 	private java.lang.String nmMod;
 
+	@Column(name = "NM_DIRETORIO", length = 128)
 	private java.lang.String nmDiretorio;
 
+	@Column(name = "HIS_IDE", length = 128)
 	private java.lang.String uuid;
 
 	// private Set classificacaoSet;
@@ -202,10 +227,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		int idValue = this.getIdMod() == null ? 0 : this.getIdMod().hashCode();
 		result = result * 37 + idValue;
 		idValue = this.getDescMod() == null ? 0 : this.getDescMod().hashCode();
-		result = result * 37 + idValue;
-		this.hashValue = result;
-
-		return this.hashValue;
+		return result * 37 + idValue;
 	}
 
 	/**
@@ -253,7 +275,6 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	 * @param idMod
 	 */
 	public void setIdMod(final java.lang.Long idMod) {
-		this.hashValue = 0;
 		this.idMod = idMod;
 	}
 
@@ -318,8 +339,8 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 				sother = sother.replace("\r\n", "\n");
 
 				if (!sthis.equals(sother)) {
-//					System.out.println(Hex.encodeHexString(abthis));
-//					System.out.println(Hex.encodeHexString(abother));
+					// System.out.println(Hex.encodeHexString(abthis));
+					// System.out.println(Hex.encodeHexString(abother));
 					return false;
 				}
 			} catch (UnsupportedEncodingException e) {

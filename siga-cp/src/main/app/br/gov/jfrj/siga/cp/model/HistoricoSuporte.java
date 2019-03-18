@@ -29,7 +29,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
 import br.gov.jfrj.siga.model.Objeto;
@@ -52,16 +51,15 @@ public abstract class HistoricoSuporte extends Objeto implements Historico, Asse
 	@Desconsiderar
 	private Date hisDtFim;
 
-	@Transient
-	// @Column(name = "HIS_ATIVO")
 	@Desconsiderar
-	private Integer hisAtivo;
+	@Transient
+	private Integer hisAtivoFake;
 
 	/**
 	 * Atribui o hisAtivo já que o mesmo é sempre calculado
 	 */
 	public void updateAtivo() {
-		this.hisAtivo = this.hisDtFim == null ? 1 : 0;
+		this.hisAtivoFake = this.hisDtFim == null ? 1 : 0;
 	}
 
 	public Long getHisIdIni() {
@@ -92,7 +90,7 @@ public abstract class HistoricoSuporte extends Objeto implements Historico, Asse
 
 	public Integer getHisAtivo() {
 		this.updateAtivo();
-		return hisAtivo;
+		return hisAtivoFake;
 	}
 
 	public boolean isAtivo() {
@@ -101,7 +99,6 @@ public abstract class HistoricoSuporte extends Objeto implements Historico, Asse
 
 	public void setHisAtivo(Integer hisAtivo) {
 		this.updateAtivo();
-		// this.hisAtivo = hisAtivo;
 	}
 
 	public boolean equivale(Object other) {

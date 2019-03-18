@@ -65,7 +65,7 @@
 						<c:forEach var="acao" items="${acoes}">
 							<siga:link icon="${acao.icone}" title="${acao.nomeNbsp}" pre="${acao.pre}" pos="${acao.pos}" 
 								url="${pageContext.request.contextPath}${acao.url}" test="${true}" popup="${acao.popup}" confirm="${acao.msgConfirmacao}" 
-								classe="${acao.classe}" />
+								classe="${acao.classe}" atalho="${true}" />
 						</c:forEach>
 					</siga:links>
 				</c:if>

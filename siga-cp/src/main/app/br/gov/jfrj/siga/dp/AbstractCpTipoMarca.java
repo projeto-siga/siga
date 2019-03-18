@@ -31,13 +31,14 @@ import javax.persistence.MappedSuperclass;
 import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
-public abstract class AbstractCpTipoMarca extends Objeto implements Serializable {
+public abstract class AbstractCpTipoMarca extends Objeto implements
+		Serializable {
 
 	@Id
-	@Column(name = "ID_TP_MARCA", nullable = false)
+	@Column(name = "ID_TP_MARCA", unique = true, nullable = false)
 	private Long idTpMarca;
 
-	@Column(name = "DESCR_TP_MARCA")
+	@Column(name = "DESCR_TP_MARCA", length = 30)
 	private String descrTipoMarca;
 
 	public Long getIdTpMarca() {

@@ -22,8 +22,6 @@
  */
 package br.gov.jfrj.siga.dp;
 
-import static javax.persistence.GenerationType.SEQUENCE;
-
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -33,27 +31,31 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 
 import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
-public abstract class AbstractCpPersonalizacao extends Objeto implements Serializable {
-	
-	@SequenceGenerator(name = "generator", sequenceName = "CP_PERSONALIZACAO_SEQ")
+@NamedQueries({ @NamedQuery(name = "consultarPersonalizacao", query = "select per from CpPersonalizacao per, DpPessoa pes where per.pessoa.idPessoa = pes.idPessoa and pes.idPessoaIni = :idPessoaIni") })
+public abstract class AbstractCpPersonalizacao extends Objeto implements
+		Serializable {
+
 	@Id
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_PERSONALIZACAO_SEQ")
 	@GeneratedValue(generator = "generator")
-	@Column(name = "ID_PERSONALIZACAO", nullable = false)
+	@Column(name = "ID_PERSONALIZACAO", unique = true, nullable = false)
 	private Long idPersonalizacao;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_PESSOA")
 	private DpPessoa pessoa;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_SUBSTITUINDO_PESSOA")
 	private DpPessoa pesSubstituindo;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_SUBSTITUINDO_LOTACAO")
 	private DpLotacao lotaSubstituindo;

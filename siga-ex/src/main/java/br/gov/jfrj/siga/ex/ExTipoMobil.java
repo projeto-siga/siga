@@ -20,14 +20,24 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
-import org.hibernate.annotations.Entity;
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
+@BatchSize(size = 500)
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Table(name = "EX_TIPO_MOBIL", catalog = "SIGA")
 public class ExTipoMobil extends AbstractExTipoMobil implements Serializable {
 
 	final static public long TIPO_MOBIL_GERAL = 1;
 	final static public long TIPO_MOBIL_VIA = 2;
 	final static public long TIPO_MOBIL_COPIA = 3;
 	final static public long TIPO_MOBIL_VOLUME = 4;
-	
+
 }

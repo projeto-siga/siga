@@ -21,27 +21,45 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+
 import br.gov.jfrj.siga.model.Objeto;
 
 /**
  * A class that represents a row in the EX_TIPO_DOCUMENTO table. You can
- * customize the behavior of this class by editing the class,
- * {@link ExTipoDocumento()}.
+ * customize the behavior of this class by editing the class, {@link
+ * ExTipoDocumento()}.
  */
-public abstract class AbstractExTipoDocumento extends Objeto implements Serializable {
-	/** The value of the simple descrTipoDocumento property. */
-	private java.lang.String descrTipoDocumento;
-
-	private Set<ExFormaDocumento> ExFormaDocumentoSet;
-
-	/**
-	 * The cached hash code value for this instance. Settting to 0 triggers
-	 * re-calculation.
-	 */
-	private int hashValue = 0;
+@MappedSuperclass
+public abstract class AbstractExTipoDocumento extends Objeto implements
+		Serializable {
+	private static final long serialVersionUID = 6112205776631788563L;
 
 	/** The composite primary key value. */
+	@Id
+	@SequenceGenerator(sequenceName = "EX_TIPO_DOCUMENTO_SEQ", name = "EX_TIPO_DOCUMENTO_SEQ")
+	@GeneratedValue(generator = "EX_TIPO_DOCUMENTO_SEQ")
+	@Column(name = "ID_TP_DOC", unique = true, nullable = false)
 	private java.lang.Long idTpDoc;
+
+	/** The value of the simple descrTipoDocumento property. */
+	@Column(name = "descr_tipo_documento", nullable = false, length = 256)
+	private java.lang.String descrTipoDocumento;
+
+	@ManyToMany(mappedBy = "exTipoDocumentoSet")
+	// @JoinTable(name = "EX_TP_FORMA_DOC", joinColumns = { @JoinColumn(name =
+	// "ID_TP_DOC") }, inverseJoinColumns = { @JoinColumn(name = "ID_FORMA_DOC")
+	// })
+	// @OrderBy(value = "DESCR_FORMA_DOC")
+	private Set<ExFormaDocumento> ExFormaDocumentoSet;
 
 	/**
 	 * Simple constructor of AbstractExTipoDocumento instances.
@@ -72,9 +90,12 @@ public abstract class AbstractExTipoDocumento extends Objeto implements Serializ
 			return false;
 		final ExTipoDocumento that = (ExTipoDocumento) rhs;
 		// se o codLotacao for nulo e o outro tambem
-		if ((this.getIdTpDoc() == null ? that.getIdTpDoc() == null : this.getIdTpDoc().equals(that.getIdTpDoc()))) {
-			if ((this.getDescrTipoDocumento() == null ? that.getDescrTipoDocumento() == null : this
-					.getDescrTipoDocumento().equals(that.getDescrTipoDocumento())))
+		if ((this.getIdTpDoc() == null ? that.getIdTpDoc() == null : this
+				.getIdTpDoc().equals(that.getIdTpDoc()))) {
+			if ((this.getDescrTipoDocumento() == null ? that
+					.getDescrTipoDocumento() == null : this
+					.getDescrTipoDocumento().equals(
+							that.getDescrTipoDocumento())))
 				return true;
 
 		}
@@ -114,15 +135,14 @@ public abstract class AbstractExTipoDocumento extends Objeto implements Serializ
 	public int hashCode() {
 
 		int result = 17;
-		int idValue = this.getIdTpDoc() == null ? 0 : this.getIdTpDoc().hashCode();
+		int idValue = this.getIdTpDoc() == null ? 0 : this.getIdTpDoc()
+				.hashCode();
 		result = result * 37 + idValue;
-		idValue = this.getDescrTipoDocumento() == null ? 0 : this.getDescrTipoDocumento().hashCode();
-		result = result * 37 + idValue;
-		this.hashValue = result;
-
-		return this.hashValue;
+		idValue = this.getDescrTipoDocumento() == null ? 0 : this
+				.getDescrTipoDocumento().hashCode();
+		return result * 37 + idValue;
 	}
-	
+
 	/**
 	 * Set the value of the DESCR_TIPO_DOCUMENTO column.
 	 * 
@@ -142,9 +162,7 @@ public abstract class AbstractExTipoDocumento extends Objeto implements Serializ
 	 * @param idTpDoc
 	 */
 	public void setIdTpDoc(final java.lang.Long idTpDoc) {
-		this.hashValue = 0;
 		this.idTpDoc = idTpDoc;
 	}
-	
-	
+
 }

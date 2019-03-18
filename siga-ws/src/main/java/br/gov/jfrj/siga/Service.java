@@ -23,16 +23,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
+
+import com.google.gson.Gson;
+import com.mashape.unirest.http.ObjectMapper;
+import com.mashape.unirest.http.Unirest;
 
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.gc.service.GcService;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.wf.service.WfService;
-
-import com.google.gson.Gson;
-import com.mashape.unirest.http.ObjectMapper;
-import com.mashape.unirest.http.Unirest;
 
 public abstract class Service {
 
@@ -75,7 +76,8 @@ public abstract class Service {
 			wf = getService(WfService.class,
 					System.getProperty("wfservice.endpoint"),
 					System.getProperty("wfservice.qname"),
-					System.getProperty("wfservice.servicename"));
+					System.getProperty("wfservice.servicename"),
+					System.getProperty("wfservice.url"));
 		return wf;
 	}
 
@@ -84,7 +86,8 @@ public abstract class Service {
 			ex = getService(ExService.class,
 					System.getProperty("exservice.endpoint"),
 					System.getProperty("exservice.qname"),
-					System.getProperty("exservice.servicename"));
+					System.getProperty("exservice.servicename"),
+					System.getProperty("exservice.url"));
 		return ex;
 	}
 
@@ -93,7 +96,8 @@ public abstract class Service {
 			gi = getService(GiService.class,
 					System.getProperty("giservice.endpoint"),
 					System.getProperty("giservice.qname"),
-					System.getProperty("giservice.servicename"));
+					System.getProperty("giservice.servicename"),
+					System.getProperty("giservice.url"));
 		return gi;
 	}
 
@@ -102,7 +106,8 @@ public abstract class Service {
 			gc = getService(GcService.class,
 					System.getProperty("gcservice.endpoint"),
 					System.getProperty("gcservice.qname"),
-					System.getProperty("gcservice.servicename"));
+					System.getProperty("gcservice.servicename"),
+					System.getProperty("gcservice.url"));
 		return gc;
 	}
 
@@ -114,7 +119,7 @@ public abstract class Service {
 
 	@SuppressWarnings("unchecked")
 	private static <E extends Remote> E getService(Class<E> remoteClass,
-			String wsdl, String qname, String serviceName) {
+			String wsdl, String qname, String serviceName, String url) {
 		URL wsdlURL;
 		try {
 			wsdlURL = new URL(wsdl);
@@ -126,7 +131,11 @@ public abstract class Service {
 		javax.xml.ws.Service service = javax.xml.ws.Service.create(wsdlURL,
 				SERVICE_NAME);
 		E e = service.getPort(remoteClass);
-
+		if (url != null) {
+			BindingProvider bp = (BindingProvider) e;
+			bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
+		}
+		
 		// Client client = ClientProxy.getClient(e);
 
 		// client.getInInterceptors().add(new LoggingInInterceptor());

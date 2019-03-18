@@ -21,33 +21,55 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+
 import br.gov.jfrj.siga.model.Objeto;
 
 /**
  * A class that represents a row in the EX_FORMA_DOCUMENTO table. You can
- * customize the behavior of this class by editing the class,
- * {@link ExFormaDocumento()}.
+ * customize the behavior of this class by editing the class, {@link
+ * ExFormaDocumento()}.
  */
-public abstract class AbstractExFormaDocumento extends Objeto implements Serializable {
+@MappedSuperclass
+@NamedQueries({ @NamedQuery(name = "consultarSiglaForma", query = "from ExFormaDocumento o where o.siglaFormaDoc = :sigla") })
+public abstract class AbstractExFormaDocumento extends Objeto implements
+		Serializable {
+	/** The composite primary key value. */
+	@Id
+	@SequenceGenerator(sequenceName = "EX_FORMA_DOCUMENTO_SEQ", name = "EX_FORMA_DOCUMENTO_SEQ")
+	@GeneratedValue(generator = "EX_FORMA_DOCUMENTO_SEQ")
+	@Column(name = "ID_FORMA_DOC", unique = true, nullable = false)
+	private Long idFormaDoc;
+
 	/** The value of the simple descrFormaDoc property. */
+	@Column(name = "DESCR_FORMA_DOC", nullable = false, length = 64)
 	private String descrFormaDoc;
 
 	/** The value of the exModeloSet one-to-many association. */
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exFormaDocumento")
 	private Set<ExModelo> exModeloSet;
 
-	private Set ExTipoDocumentoSet;
-	
+	@ManyToMany
+	@JoinTable(name = "EX_TP_FORMA_DOC", joinColumns = { @JoinColumn(name = "ID_FORMA_DOC") }, inverseJoinColumns = { @JoinColumn(name = "ID_TP_DOC") })
+	private Set<ExTipoDocumento> exTipoDocumentoSet;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_TIPO_FORMA_DOC", nullable = false)
 	private ExTipoFormaDoc exTipoFormaDoc;
 
-	/**
-	 * The cached hash code value for this instance. Settting to 0 triggers
-	 * re-calculation.
-	 */
-	private int hashValue = 0;
-
-	/** The composite primary key value. */
-	private Long idFormaDoc;
-
+	@Column(name = "SIGLA_FORMA_DOC", nullable = false, length = 3)
 	private String siglaFormaDoc;
 
 	/**
@@ -79,8 +101,8 @@ public abstract class AbstractExFormaDocumento extends Objeto implements Seriali
 			return false;
 		final ExFormaDocumento that = (ExFormaDocumento) rhs;
 
-		if ((this.getIdFormaDoc() == null ? that.getIdFormaDoc() == null : this.getIdFormaDoc().equals(
-				that.getIdFormaDoc())))
+		if ((this.getIdFormaDoc() == null ? that.getIdFormaDoc() == null : this
+				.getIdFormaDoc().equals(that.getIdFormaDoc())))
 			return true;
 		return false;
 	}
@@ -104,7 +126,7 @@ public abstract class AbstractExFormaDocumento extends Objeto implements Seriali
 	}
 
 	public Set<ExTipoDocumento> getExTipoDocumentoSet() {
-		return ExTipoDocumentoSet;
+		return exTipoDocumentoSet;
 	}
 
 	/**
@@ -120,9 +142,6 @@ public abstract class AbstractExFormaDocumento extends Objeto implements Seriali
 		return siglaFormaDoc;
 	}
 
-
-
-
 	/**
 	 * Implementation of the hashCode method conforming to the Bloch pattern
 	 * with the exception of array properties (these are very unlikely primary
@@ -133,11 +152,9 @@ public abstract class AbstractExFormaDocumento extends Objeto implements Seriali
 	@Override
 	public int hashCode() {
 		int result = 17;
-		final int idValue = this.getIdFormaDoc() == null ? 0 : this.getIdFormaDoc().hashCode();
-		result = result * 37 + idValue;
-		this.hashValue = result;
-
-		return this.hashValue;
+		final int idValue = this.getIdFormaDoc() == null ? 0 : this
+				.getIdFormaDoc().hashCode();
+		return result * 37 + idValue;
 
 	}
 
@@ -149,7 +166,7 @@ public abstract class AbstractExFormaDocumento extends Objeto implements Seriali
 	public void setDescrFormaDoc(final String descrFormaDoc) {
 		this.descrFormaDoc = descrFormaDoc;
 	}
-	
+
 	/**
 	 * Set the value of the ID_FORMA_DOC collection.
 	 * 
@@ -159,8 +176,9 @@ public abstract class AbstractExFormaDocumento extends Objeto implements Seriali
 		this.exModeloSet = exModeloSet;
 	}
 
-	public void setExTipoDocumentoSet(final Set<ExTipoDocumento> exTipoDocumentoSet) {
-		ExTipoDocumentoSet = exTipoDocumentoSet;
+	public void setExTipoDocumentoSet(
+			final Set<ExTipoDocumento> exTipoDocumentoSet) {
+		this.exTipoDocumentoSet = exTipoDocumentoSet;
 	}
 
 	/**
@@ -169,7 +187,6 @@ public abstract class AbstractExFormaDocumento extends Objeto implements Seriali
 	 * @param idFormaDoc
 	 */
 	public void setIdFormaDoc(final Long idFormaDoc) {
-		this.hashValue = 0;
 		this.idFormaDoc = idFormaDoc;
 	}
 

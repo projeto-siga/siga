@@ -23,12 +23,25 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.gov.jfrj.siga.model.Selecionavel;
 
 /**
  * A class that represents a row in the 'EX_TIPO_MOVIMENTACAO' table. This class
  * may be customized as it is never re-generated after being created.
  */
+@Entity
+@BatchSize(size = 500)
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Table(name = "EX_TIPO_MOVIMENTACAO", catalog = "SIGA")
 public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
 		Serializable, Selecionavel {
 	/**
@@ -168,6 +181,8 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements
 	final static public long TIPO_MOVIMENTACAO_COPIA = 63;
 
 	final static public long TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR = 64;
+
+	final static public long TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA = 65;
 
 
 	public static boolean hasDespacho(long id) {

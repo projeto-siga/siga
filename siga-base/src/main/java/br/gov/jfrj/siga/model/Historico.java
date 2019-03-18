@@ -20,15 +20,21 @@ package br.gov.jfrj.siga.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 public interface Historico extends Assemelhavel {
 	public Long getIdInicial();
 
 	public boolean equivale(Object other);
 
 	public Long getId();
-	
+
 	public void setId(Long id);
 
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "his_dt_ini", length = 19)
 	public Long getHisIdIni();
 
 	public void setHisIdIni(Long hisIdIni);
@@ -37,10 +43,13 @@ public interface Historico extends Assemelhavel {
 
 	public void setHisDtIni(Date hisDtIni);
 
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "his_dt_fim", length = 19)
 	public Date getHisDtFim();
 
 	public void setHisDtFim(Date hisDtFim);
 
+	@Column(name = "his_ativo", nullable = false)
 	public Integer getHisAtivo();
 
 	public void setHisAtivo(Integer hisAtivo);

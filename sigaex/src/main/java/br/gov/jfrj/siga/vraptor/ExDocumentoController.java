@@ -67,6 +67,7 @@ import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -1411,6 +1412,11 @@ public class ExDocumentoController extends ExController {
 					throw new Exception(
 							"Não é permitido criar documento com data futura");
 				}
+				
+				// Verifica se a data está entre o ano 2000 e o ano 2100
+				if (!Data.dataDentroSeculo21(exDocumentoDTO.getDoc().getDtDoc())) {
+					throw new AplicacaoException("Data inválida, deve estar entre o ano 2000 e ano 2100");
+				}
 
 				verificaDocumento(exDocumentoDTO.getDoc());
 			}
@@ -1875,7 +1881,7 @@ public class ExDocumentoController extends ExController {
 		exDocumentoDTO.setNivelAcesso(doc.getIdExNivelAcesso());
 
 		final ExClassificacao classif = doc.getExClassificacaoAtual();
-		if (classif != null) {
+		if (classif != null && classif.getAtual() != null) {
 			exDocumentoDTO.getClassificacaoSel().buscarPorObjeto(
 					classif.getAtual());
 		}
@@ -2074,8 +2080,9 @@ public class ExDocumentoController extends ExController {
 					exDocumentoDTO.getClassificacaoSel().getId(),
 					ExClassificacao.class, false);
 
-			if (classificacao != null && !classificacao.isFechada()) {
-				doc.setExClassificacao(classificacao);
+			if (classificacao != null) {
+				ExClassificacao cAtual = classificacao.getAtual();
+				doc.setExClassificacao(cAtual);
 			} else {
 				doc.setExClassificacao(null);
 				exDocumentoDTO.getClassificacaoSel().apagar();

@@ -675,3 +675,7 @@ ul.inner li a {
 DIV.card-sidebar DIV.card-body P {
 	margin-bottom: 0px;
 }
+
+.siga-doc-html{
+	word-break: break-word;
+}

@@ -1,9 +1,6 @@
 package br.gov.jfrj.siga.sr.interceptor;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-
-import org.hibernate.Session;
 
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
@@ -15,7 +12,6 @@ import br.com.caelum.vraptor.resource.ResourceMethod;
 import br.com.caelum.vraptor.util.jpa.extra.ParameterLoaderInterceptor;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.sr.model.Sr;
 import br.gov.jfrj.siga.vraptor.ParameterOptionalLoaderInterceptor;
 
@@ -24,17 +20,10 @@ import br.gov.jfrj.siga.vraptor.ParameterOptionalLoaderInterceptor;
 		ParameterOptionalLoaderInterceptor.class })
 public class ContextInterceptor implements Interceptor {
 
-	public ContextInterceptor(EntityManager em, Result result) throws Exception{
+	public ContextInterceptor(EntityManager em, Result result) throws Exception {
 		ContextoPersistencia.setEntityManager(em);
-		EntityTransaction t = em.getTransaction();
 		CpDao.freeInstance();
-		CpDao.getInstance((Session) em.getDelegate(), ((Session) em
-				.getDelegate()).getSessionFactory().openStatelessSession());
-		
-		//Edson: não sei por que o HibernateUtil precisa de uma sessao. Os Dao's
-				//que chamam essa classe já têm o objeto sessão 
-		HibernateUtil.configurarHibernate((Session)em.getDelegate());
-		
+		CpDao.getInstance();
 		Sr.getInstance().getConf().limparCacheSeNecessario();
 	}
 

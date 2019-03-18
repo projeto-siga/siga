@@ -37,24 +37,11 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-
-
 @Entity
 @Table(name = "DP_SUBSTITUICAO", schema = "CORPORATIVO")
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@NamedQueries({
-	@NamedQuery(name = "consultarSubstituicoesPermitidas", query = "from DpSubstituicao dps "+
-			" where (dps.dtIniSubst < sysdate or dps.dtIniSubst = null) "+
-			" and (dps.dtFimSubst > sysdate or dps.dtFimSubst = null) "+
-			" and ((dps.substituto = null and dps.lotaSubstituto.idLotacao in (select lot.idLotacao from DpLotacao as lot where lot.idLotacaoIni = :idLotaSubstitutoIni)) or "+
-			" dps.substituto.idPessoa in (select pes.idPessoa from DpPessoa as pes where pes.idPessoaIni = :idSubstitutoIni)) "+
-			" and dps.dtFimRegistro = null"),
-	@NamedQuery(name = "consultarOrdemData", query = "from DpSubstituicao as dps "+
-			" where ((dps.titular = null and dps.lotaTitular.idLotacao in (select lot.idLotacao from DpLotacao as lot where lot.idLotacaoIni = :idLotaTitularIni)) or "+
-			" dps.titular.idPessoa in (select pes.idPessoa from DpPessoa as pes where pes.idPessoaIni = :idTitularIni)) "+
-			" and dps.dtFimRegistro = null "+
-			" order by dps.dtIniSubst, dps.dtFimSubst ")
-})public class DpSubstituicao extends AbstractDpSubstituicao implements Serializable{
+public class DpSubstituicao extends AbstractDpSubstituicao implements
+		Serializable {
 
 	/**
 	 * 
@@ -62,57 +49,55 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 	public DpSubstituicao() {
 		super();
 	}
-	
+
 	public String getDtFimSubstDDMMYY() {
 		if (getDtFimSubst() != null) {
-			final SimpleDateFormat df = new SimpleDateFormat(
-					"dd/MM/yy");
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
 			return df.format(getDtFimSubst());
 		}
 		return "";
 	}
-	
+
 	public String getDtIniSubstDDMMYY() {
 		if (getDtIniSubst() != null) {
-			final SimpleDateFormat df = new SimpleDateFormat(
-					"dd/MM/yy");
+			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
 			return df.format(getDtIniSubst());
 		}
 		return "";
 	}
-	
-	public boolean isEmVoga(){
+
+	public boolean isEmVoga() {
 		Calendar dtFim = Calendar.getInstance();
 		Calendar dtIni = Calendar.getInstance();
 		Calendar now = Calendar.getInstance();
 		now.setTime(new Date());
-		if (getDtIniSubst()!=null){
+		if (getDtIniSubst() != null) {
 			dtIni.setTime(getDtIniSubst());
 			if (now.before(dtIni))
 				return false;
 		}
-		if (getDtFimSubst()!=null){
+		if (getDtFimSubst() != null) {
 			dtFim.setTime(getDtFimSubst());
 			if (now.after(dtFim))
 				return false;
 		}
 		return true;
 	}
-	
-	public boolean isFutura(){		
+
+	public boolean isFutura() {
 		Calendar dtIni = Calendar.getInstance();
 		Calendar now = Calendar.getInstance();
 		now.setTime(new Date());
-		if (getDtIniSubst()!=null){
+		if (getDtIniSubst() != null) {
 			dtIni.setTime(getDtIniSubst());
 			if (now.before(dtIni))
 				return true;
-		}		
+		}
 		return false;
 	}
-	
-	public boolean isTerminada(){
-		if (getDtFimSubst()==null)
+
+	public boolean isTerminada() {
+		if (getDtFimSubst() == null)
 			return false;
 		Calendar dtFim = Calendar.getInstance();
 		Calendar now = Calendar.getInstance();
@@ -121,14 +106,14 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 		if (now.after(dtFim))
 			return true;
 		return false;
-	}	
+	}
 
-	public boolean isExcluida(){
-		if (getDtFimRegistro()!=null)
+	public boolean isExcluida() {
+		if (getDtFimRegistro() != null)
 			return true;
 		return false;
-	}	
-	
+	}
+
 	@Override
 	public String toString() {
 		return "DpSubstituicao(" + String.valueOf(getIdSubstituicao() + ")");

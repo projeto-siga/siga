@@ -31,7 +31,7 @@ public class WfInterceptor implements Interceptor {
 		WfExecutionEnvironment ee = new WfExecutionEnvironment();
 
 		try {
-			ee.antes(null);
+			ee.antes();
 			stack.next(method, resourceInstance);
 			ee.depois();
 

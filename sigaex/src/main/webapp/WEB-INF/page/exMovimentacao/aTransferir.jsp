@@ -74,6 +74,8 @@ function popitup_movimentacao() {
 }	
 
 function submeter() {
+
+	document.getElementById("button_ok").onclick = function(){console.log("Aguarde requisição")};	
 	document.getElementById('frm').submit();
 }
 
@@ -138,10 +140,10 @@ $(function(){
 					<td>Data da devolução:</td>
 						<td>
 							<input type="text" name="dtDevolucaoMovString"onblur="javascript:verifica_data(this,0);" 
-								value="${dtDevolucaoMovString}"/> 
-							(Opcional)
+								value="${dtDevolucaoMovString}"/><br /><span style="color: red"> <b>Atenção: somente preencher a data de devolução se a intenção for, realmente, que o documento seja devolvido até esta data.</b></span>					 
+							
 						</td>
-					</tr>
+					</tr>					
 					<tr>
 						<td colspan=2>
 							<input type="checkbox" name="protocolo" value="mostrar" <c:if test="${protocolo}">checked</c:if>/>

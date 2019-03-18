@@ -113,14 +113,17 @@ public class ExAssinadorExternoController extends ExController {
 			if (pes == null)
 				throw new Exception("Nenhuma pessoa localizada com o CPF: " + sCpf);
 			List<ExAssinadorExternoListItem> list = new ArrayList<ExAssinadorExternoListItem>();
-			List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL().obterAssinaveis(pes, pes.getLotacao());
+			List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL().obterAssinaveis(pes, pes.getLotacao(), true);
 			for (ExAssinavelDoc ass : assinaveis) {
 				if (ass.isPodeAssinar()) {
+					String solicitantesDeAssinatura = ass.getDoc().getSolicitantesDeAssinaturaCompleto();
+					if (solicitantesDeAssinatura != null)
+						solicitantesDeAssinatura = solicitantesDeAssinatura.replace("Revisado por", "Assinatura solicitada por");
 					ExAssinadorExternoListItem aei = new ExAssinadorExternoListItem();
 					aei.setId(makeId(ass.getDoc().getCodigoCompacto()));
 					aei.setSecret(docSecret(ass.getDoc()));
 					aei.setCode(ass.getDoc().getCodigo());
-					aei.setDescr(ass.getDoc().getDescrDocumento());
+					aei.setDescr(ass.getDoc().getDescrDocumento() + (solicitantesDeAssinatura.length() != 0 ? " (" + solicitantesDeAssinatura + ")" : ""));
 					aei.setKind(ass.getDoc().getTipoDescr());
 					aei.setOrigin("Siga-Doc");
 					aei.setUrlView(permalink + ass.getDoc().getReferencia());
@@ -201,7 +204,7 @@ public class ExAssinadorExternoController extends ExController {
 		return pdfd;
 	}
 
-	@Get("/app/assinador-popup/doc/{id}/hash")
+	@Get("/public/app/assinador-popup/doc/{id}/hash")
 	public void assinadorPopupHash(String id) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
@@ -239,7 +242,7 @@ public class ExAssinadorExternoController extends ExController {
 		}
 	}
 
-	@Put("/app/assinador-popup/doc/{id}/sign")
+	@Put("/public/app/assinador-popup/doc/{id}/sign")
 	public void assinadorPopupSave(String id) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
@@ -486,7 +489,7 @@ public class ExAssinadorExternoController extends ExController {
 		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);
 	}
 
-	protected void jsonError(final Exception e) {
+	protected void jsonError(final Exception e) throws Exception {
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		e.printStackTrace(pw);
@@ -509,6 +512,8 @@ public class ExAssinadorExternoController extends ExController {
 
 		String s = json.toString();
 		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(500);
+		response.flushBuffer();
+		throw e;
 	}
 
 	private static JSONObject getJsonReq(HttpServletRequest request) {

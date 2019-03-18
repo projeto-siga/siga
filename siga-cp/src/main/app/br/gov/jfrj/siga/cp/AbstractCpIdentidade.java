@@ -29,6 +29,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -39,40 +41,73 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @MappedSuperclass
+// Ver um lugar melhor para queries assim ficarem quando não se estiver usando
+// XML
+@NamedQueries({
+		@NamedQuery(name = "consultarIdentidadeCadastrante", query = "select u from CpIdentidade u, DpPessoa pes "
+				+ "     where u.nmLoginIdentidade = :nmUsuario"
+				+ "      and u.dpPessoa.cpfPessoa = pes.cpfPessoa"
+				+ "      and pes.sesbPessoa = :sesbPessoa"
+				+ "      and pes.dataFimPessoa is null"),
+		@NamedQuery(name = "consultarIdentidades", query = "select u from CpIdentidade u , DpPessoa pes "
+				+ "     where pes.idPessoaIni = :idPessoaIni"
+				+ "      and u.dpPessoa = pes" + "      and u.hisDtFim is null"),
+		@NamedQuery(name = "consultarIdentidadeCadastranteAtiva", query = "select u from CpIdentidade u , DpPessoa pes "
+				+ "where u.nmLoginIdentidade = :nmUsuario "
+				+ "and pes.sesbPessoa = :sesbPessoa "
+				+ "and u.dpPessoa.cpfPessoa = pes.cpfPessoa "
+				+ "and (u.hisDtFim is null) "
+				+ "and (u.dtCancelamentoIdentidade is null) "
+				+ "and (u.dtExpiracaoIdentidade is null or u.dtExpiracaoIdentidade > current_date()) "
+				+ "and (pes.dataFimPessoa is null) "
+				+ "and (pes.situacaoFuncionalPessoa = '1' "
+				+ "or pes.situacaoFuncionalPessoa = '2' "
+				+ "or pes.situacaoFuncionalPessoa = '12' "
+				+ "or pes.situacaoFuncionalPessoa = '22' "
+				+ "or pes.situacaoFuncionalPessoa = '31') ") })
 public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
-	@SequenceGenerator(name = "generator", sequenceName = "CP_IDENTIDADE_SEQ")
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_IDENTIDADE_SEQ")
 	@Id
 	@GeneratedValue(generator = "generator")
-	@Column(name = "ID_IDENTIDADE", nullable = false)
+	@Column(name = "ID_IDENTIDADE", unique = true, nullable = false)
 	@Desconsiderar
 	private Long idIdentidade;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_ORGAO_USU")
+	@JoinColumn(name = "ID_ORGAO_USU", nullable = false)
 	private CpOrgaoUsuario cpOrgaoUsuario;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_TP_IDENTIDADE")
 	private CpTipoIdentidade cpTipoIdentidade;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_PESSOA")
 	private DpPessoa dpPessoa;
-	@Column(name = "SENHA_IDENTIDADE")
+
+	@Column(name = "SENHA_IDENTIDADE", length = 40)
 	private String dscSenhaIdentidade;
+
 	@Column(name = "SENHA_IDENTIDADE_CRIPTO")
 	private String dscSenhaIdentidadeCripto;
+
 	@Column(name = "SENHA_IDENTIDADE_CRIPTO_SINC")
 	@Desconsiderar
 	private String dscSenhaIdentidadeCriptoSinc;
-	@Column(name = "DATA_CANCELAMENTO_IDENTIDADE")
-	@Temporal(TemporalType.DATE)
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DATA_CANCELAMENTO_IDENTIDADE", length = 19)
 	private Date dtCancelamentoIdentidade;
-	@Column(name = "DATA_CRIACAO_IDENTIDADE")
-	@Temporal(TemporalType.DATE)
+
+	@Column(name = "DATA_CRIACAO_IDENTIDADE", length = 19)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dtCriacaoIdentidade;
-	@Column(name = "DATA_EXPIRACAO_IDENTIDADE")
-	@Temporal(TemporalType.DATE)
+
+	@Column(name = "DATA_EXPIRACAO_IDENTIDADE", length = 19)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dtExpiracaoIdentidade;
-	@Column(name = "LOGIN_IDENTIDADE")
+
+	@Column(name = "LOGIN_IDENTIDADE", length = 20)
 	private String nmLoginIdentidade;
 
 	/*

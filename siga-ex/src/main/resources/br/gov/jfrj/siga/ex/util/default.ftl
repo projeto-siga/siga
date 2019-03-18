@@ -1104,7 +1104,7 @@ LINHA  VARIÁVEL / CONTEÚDO
     [#if !gerar_formulario!false]
         <input id="${id}" type="checkbox" name="${var}_chk" value="Sim"
                [#if v=='Sim']checked[/#if] 
-               onclick="javascript: if (this.checked) document.getElementById('${var}').value = 'Sim'; else document.getElementById('${var}').value = 'Nao'; ${onclique!""}; ${jreler!""}" /> <label for="${id}" style="${negrito!""};${vermelho!""}">${titulo!""}</label>
+               onclick="javascript: if (this.checked) document.getElementById('${var}').value = 'Sim'; else document.getElementById('${var}').value = '{default}'; ${onclique!""}; ${jreler!""}" /> <label for="${id}" style="${negrito!""};${vermelho!""}">${titulo!""}</label>
 
     [#else]
     <span class="valor">${v}</span>
@@ -1943,7 +1943,7 @@ Pede deferimento.</span><br/><br/><br/>
     <!-- FIM SUBSCRITOR [#nested/] -->
 [/#macro]
 
-[#macro cabecalhoCentralizadoPrimeiraPagina]
+[#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=""]
 <table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
     cellspacing="0" bgcolor="#FFFFFF">
     <tr bgcolor="#FFFFFF">
@@ -1964,16 +1964,18 @@ Pede deferimento.</span><br/><br/><br/>
                 </td>
             </tr>
             [/#if]
-            <tr>
-                <td width="100%" align="center">
-                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
-                [#if mov??]
-                    ${(mov.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
-                [#else]
-                    ${(doc.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
-                [/#if]</p>
-                </td>
-            </tr>
+            [#if orgaoCabecalho??]
+	            <tr>
+	                <td width="100%" align="center">
+	                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
+	                [#if mov??]
+	                    ${(mov.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+	                [#else]
+	                    ${(doc.lotaTitular.orgaoUsuario.descricaoMaiusculas)!}
+	                [/#if]</p>
+	                </td>
+	            </tr>
+            [/#if]
         </table>
         </td>
     </tr>
@@ -2084,9 +2086,16 @@ Pede deferimento.</span><br/><br/><br/>
 </table>
 [/#macro]
 
-[#macro rodapeClassificacaoDocumental somenteTR=false]
+[#macro rodapeClassificacaoDocumental somenteTR=false texto=""]
 [#if !somenteTR]
 <table align="left" width="100%" bgcolor="#FFFFFF">
+[/#if]
+[#if texto?? && texto!=""]
+	<tr>
+		<td colspan="2" align="left" style="border-collapse: collapse; border-color: black; font-family:Arial; font-size:8pt;">
+			${texto} 
+		</td>
+	</tr>
 [/#if]
 <tr>
 <td width="70%" ></td>
@@ -2108,8 +2117,16 @@ Pede deferimento.</span><br/><br/><br/>
 [/#if]
 [/#macro]
 
-[#macro rodapeNumeracaoADireita]
+[#macro rodapeNumeracaoADireita texto=""]
 <table width="100%" border="0" cellpadding="0" bgcolor="#FFFFFF">
+	[#if texto?? && texto!=""]
+		<tr>
+			<td align="left" style="border-collapse: collapse; border-color: black; font-family:Arial; font-size:8pt;">
+				${texto} 
+			</td>
+		</tr>
+	[/#if]
+
     <tr>
         <td width="100%" align="right">#pg</td>
     </tr>
@@ -2247,7 +2264,7 @@ Pede deferimento.</span><br/><br/><br/>
 <!-- FIM ASSINATURA -->
 [/#macro]
 
-[#macro estiloBrasaoAEsquerda tipo exibeData=true tamanhoLetra="11pt" obs="" omitirCodigo=false width=65 height=65 exibirOrgao=true]
+[#macro estiloBrasaoAEsquerda tipo exibeData=true formatarOrgao=false numeracaoEsquerda=false tamanhoLetra="11pt" obs="" omitirCodigo=false width=65 height=65 exibirOrgao=true texto=""]
     [@primeiroCabecalho]
     <table width="100%" border="0" bgcolor="#FFFFFF"><tr><td>
     [@cabecalhoEsquerdaPrimeiraPagina width=width height=height exibirOrgao=exibirOrgao/]
@@ -2256,11 +2273,19 @@ Pede deferimento.</span><br/><br/><br/>
             <td width="100%">
                 <table width="100%">
                     <tr>
-                       <td align="right">
-                         [#if !omitirCodigo]                           
-                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;">${tipo} N&ordm; ${(doc.codigo)!}</p>
-                         [/#if]
-                       </td>
+                       [#if !numeracaoEsquerda]
+		                	<td align="right">
+		                    	[#if !omitirCodigo]                           
+		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;">${tipo} N&ordm; ${(doc.codigo)!}</p>
+		                        [/#if]
+		                    </td>
+	                    [#else]
+	                    	<td align="left">
+		                         [#if !omitirCodigo]                           
+		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br><br>${tipo} N&ordm; ${(doc.codigo)!}</p>
+		                         [/#if]
+		                    </td>
+	                    [/#if]
                     </tr>
                     
                     [#if exibeData]
@@ -2282,25 +2307,25 @@ Pede deferimento.</span><br/><br/><br/>
         <p>&nbsp;</p>
                 [#nested]
         <p>&nbsp;</p>
-        [@assinaturaCentro/]
+        [@assinaturaCentro formatarOrgao=formatarOrgao/]
     [/@letra]
         [#if obs != ""]
                 <p>&nbsp;</p>
                 ${obs}
         [/#if]
     [@primeiroRodape]
-    [@rodapeClassificacaoDocumental/]
+    [@rodapeClassificacaoDocumental texto=texto/]
     [/@primeiroRodape]
 
     [@rodape]
-    [@rodapeNumeracaoADireita/]
+    [@rodapeNumeracaoADireita texto=texto/]
     [/@rodape]
 [/#macro]
 
 
-[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt" formatarOrgao=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true]
+[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt" formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true]
     [@primeiroCabecalho]${topoPrimeiraPagina!}
-    [@cabecalhoCentralizadoPrimeiraPagina/]
+    [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
     [/@primeiroCabecalho]
     [@cabecalho]
     [@cabecalhoCentralizado/]
@@ -4165,6 +4190,32 @@ Pede deferimento.</span><br/><br/><br/>
 			</table>
 		FIM RODAPE -->		
 	[/@documento]													
+[/#macro]
+
+[#macro diminuirEspacamento texto=""]
+<style>
+  p {
+	margin-bottom:0px;
+	margin-top:0px;
+  }
+  ol {
+    margin-bottom:0px;
+	margin-top:0px;
+  }
+  ol li {
+    margin-bottom:0px;
+	margin-top:0px;
+  }
+  ul {
+    margin-bottom:0px;
+	margin-top:0px;
+  }
+  ul li {
+    margin-bottom:0px;
+	margin-top:0px;
+  }
+</style>
+${texto} 
 [/#macro]
 
 [#assign _pathBrasao = "contextpath/imagens/brasao2.png" /]

@@ -22,32 +22,44 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 
 import br.gov.jfrj.siga.model.Objeto;
 
 /**
  * A class that represents a row in the EX_TIPO_DESTINACAO table. You can
- * customize the behavior of this class by editing the class,
- * {@link ExTipoDestinacao()}.
+ * customize the behavior of this class by editing the class, {@link
+ * ExTipoDestinacao()}.
  */
-public abstract class AbstractExTipoDestinacao extends Objeto implements Serializable {
+@MappedSuperclass
+public abstract class AbstractExTipoDestinacao extends Objeto implements
+		Serializable {
+	/** The composite primary key value. */
+	@Id
+	@SequenceGenerator(sequenceName = "EX_TIPO_DESTINACAO_SEQ", name = "EX_TIPO_DESTINACAO_SEQ")
+	@GeneratedValue(generator = "EX_TIPO_DESTINACAO_SEQ")
+	@Column(name = "ID_TP_DESTINACAO", unique = true, nullable = false)
+	private java.lang.Long idTpDestinacao;
+
 	/** The value of the simple descrTipoDestinacao property. */
+	@Column(name = "DESCR_TIPO_DESTINACAO", nullable = false, length = 256)
 	private java.lang.String descrTipoDestinacao;
 
 	/** The value of the exViaSet one-to-many association. */
-	private java.util.Set exViaSet;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exTipoDestinacao")
+	private Set<ExVia> exViaSet;
 
 	/** The value of the simple facilitadorDest property. */
+	@Column(name = "FACILITADOR_DEST", length = 4000)
 	private java.lang.String facilitadorDest;
-
-	/**
-	 * The cached hash code value for this instance. Settting to 0 triggers
-	 * re-calculation.
-	 */
-	private int hashValue = 0;
-
-	/** The composite primary key value. */
-	private java.lang.Long idTpDestinacao;
 
 	/**
 	 * Simple constructor of AbstractExTipoDestinacao instances.
@@ -67,10 +79,12 @@ public abstract class AbstractExTipoDestinacao extends Objeto implements Seriali
 		if ((rhs == null) || !(rhs instanceof ExTipoDestinacao))
 			return false;
 		final ExTipoDestinacao that = (ExTipoDestinacao) rhs;
-		if ((this.getIdTpDestinacao() == null ? that.getIdTpDestinacao() == null : this.getIdTpDestinacao().equals(
-				that.getIdTpDestinacao()))) {
-			if ((this.getDescrTipoDestinacao() == null ? that.getDescrTipoDestinacao() == null : this
-					.getDescrTipoDestinacao().equals(that.getDescrTipoDestinacao())))
+		if ((this.getIdTpDestinacao() == null ? that.getIdTpDestinacao() == null
+				: this.getIdTpDestinacao().equals(that.getIdTpDestinacao()))) {
+			if ((this.getDescrTipoDestinacao() == null ? that
+					.getDescrTipoDestinacao() == null : this
+					.getDescrTipoDestinacao().equals(
+							that.getDescrTipoDestinacao())))
 				return true;
 
 		}
@@ -123,13 +137,12 @@ public abstract class AbstractExTipoDestinacao extends Objeto implements Seriali
 	@Override
 	public int hashCode() {
 		int result = 17;
-		int idValue = this.getIdTpDestinacao() == null ? 0 : this.getIdTpDestinacao().hashCode();
+		int idValue = this.getIdTpDestinacao() == null ? 0 : this
+				.getIdTpDestinacao().hashCode();
 		result = result * 37 + idValue;
-		idValue = this.getDescrTipoDestinacao() == null ? 0 : this.getDescrTipoDestinacao().hashCode();
-		result = result * 37 + idValue;
-		this.hashValue = result;
-
-		return this.hashValue;
+		idValue = this.getDescrTipoDestinacao() == null ? 0 : this
+				.getDescrTipoDestinacao().hashCode();
+		return result * 37 + idValue;
 	}
 
 	/**
@@ -137,7 +150,8 @@ public abstract class AbstractExTipoDestinacao extends Objeto implements Seriali
 	 * 
 	 * @param descrTipoDestinacao
 	 */
-	public void setDescrTipoDestinacao(final java.lang.String descrTipoDestinacao) {
+	public void setDescrTipoDestinacao(
+			final java.lang.String descrTipoDestinacao) {
 		this.descrTipoDestinacao = descrTipoDestinacao;
 	}
 
@@ -165,7 +179,6 @@ public abstract class AbstractExTipoDestinacao extends Objeto implements Seriali
 	 * @param idTpDestinacao
 	 */
 	public void setIdTpDestinacao(final java.lang.Long idTpDestinacao) {
-		this.hashValue = 0;
 		this.idTpDestinacao = idTpDestinacao;
 	}
 }

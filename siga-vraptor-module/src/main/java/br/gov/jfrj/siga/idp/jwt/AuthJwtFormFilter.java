@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.idp.jwt;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
@@ -16,6 +17,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.gov.jfrj.siga.base.HttpRequestUtils;
+import br.gov.jfrj.siga.cp.AbstractCpAcesso;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 import com.auth0.jwt.JWTVerifyException;
@@ -23,8 +27,12 @@ import com.auth0.jwt.JWTVerifyException;
 public class AuthJwtFormFilter implements Filter {
 
 	public static final String SIGA_JWT_AUTH_COOKIE_NAME = "siga-jwt-auth";
-	private static final int TIME_TO_EXPIRE_IN_S = 60 * 60 * 8; // 8h é o tempo de duração
-	private static final int TIME_TO_RENEW_IN_S = 60 * 60 * 7; // renova automaticamente 7h antes de expirar
+	private static final int TIME_TO_EXPIRE_IN_S = 60 * 60 * 8; // 8h é o tempo
+																// de duração
+	private static final int TIME_TO_RENEW_IN_S = 60 * 60 * 7; // renova
+																// automaticamente
+																// 7h antes de
+																// expirar
 
 	static final String PROVIDER_ISSUER = "sigaidp";
 	static long DEFAULT_TTL_TOKEN = 3600; // default 1 hora
@@ -32,10 +40,8 @@ public class AuthJwtFormFilter implements Filter {
 	private FilterConfig filterConfig;
 
 	private Map<String, Object> validarToken(String token)
-			throws IllegalArgumentException, SigaJwtInvalidException,
-			SigaJwtProviderException, InvalidKeyException,
-			NoSuchAlgorithmException, IllegalStateException,
-			SignatureException, IOException, JWTVerifyException {
+			throws IllegalArgumentException, SigaJwtInvalidException, SigaJwtProviderException, InvalidKeyException,
+			NoSuchAlgorithmException, IllegalStateException, SignatureException, IOException, JWTVerifyException {
 		if (token == null) {
 			throw new SigaJwtInvalidException("Token inválido");
 		}
@@ -43,10 +49,9 @@ public class AuthJwtFormFilter implements Filter {
 		return provider.validarToken(token);
 	}
 
-	private String renovarToken(String token) throws IllegalArgumentException,
-			SigaJwtProviderException, InvalidKeyException,
-			NoSuchAlgorithmException, IllegalStateException,
-			SignatureException, IOException, JWTVerifyException {
+	private String renovarToken(String token)
+			throws IllegalArgumentException, SigaJwtProviderException, InvalidKeyException, NoSuchAlgorithmException,
+			IllegalStateException, SignatureException, IOException, JWTVerifyException {
 		if (token == null) {
 			throw new RuntimeException("Token inválido");
 		}
@@ -56,8 +61,7 @@ public class AuthJwtFormFilter implements Filter {
 
 	public SigaJwtProvider getProvider() throws SigaJwtProviderException {
 		String password = System.getProperty("idp.jwt.modulo.pwd.sigaidp");
-		SigaJwtOptions options = new SigaJwtOptionsBuilder()
-				.setPassword(password).setModulo(null)
+		SigaJwtOptions options = new SigaJwtOptionsBuilder().setPassword(password).setModulo(null)
 				.setTTL(TIME_TO_EXPIRE_IN_S).build();
 		SigaJwtProvider provider = SigaJwtProvider.getInstance(options);
 		return provider;
@@ -66,8 +70,7 @@ public class AuthJwtFormFilter implements Filter {
 	private String extrairAuthorization(HttpServletRequest request) {
 		String auth = request.getHeader("Authorization");
 		if (auth != null) {
-			return request.getHeader("Authorization").replaceAll(".* ", "")
-					.trim();
+			return request.getHeader("Authorization").replaceAll(".* ", "").trim();
 		}
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
@@ -83,23 +86,28 @@ public class AuthJwtFormFilter implements Filter {
 		// TODO Auto-generated method stub
 	}
 
-	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain chain) throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
 
 		try {
-			String token = extrairAuthorization(req);
-			Map<String, Object> decodedToken = validarToken(token);
-			final long now = System.currentTimeMillis() / 1000L;
-			if ((Integer) decodedToken.get("exp") < now + TIME_TO_RENEW_IN_S) {
-				// Seria bom incluir o attributo HttpOnly
-				String tokenNew = renovarToken(token);
-				Cookie cookie = buildCookie(tokenNew);
-				resp.addCookie(cookie);
+			if (!req.getRequestURI().equals("/sigaex/autenticar.action")) {
+				String token = extrairAuthorization(req);
+				Map<String, Object> decodedToken = validarToken(token);
+				final long now = System.currentTimeMillis() / 1000L;
+				if ((Integer) decodedToken.get("exp") < now + TIME_TO_RENEW_IN_S) {
+					// Seria bom incluir o attributo HttpOnly
+					String tokenNew = renovarToken(token);
+					Map<String, Object> decodedNewToken = validarToken(token);
+					Cookie cookie = buildCookie(tokenNew);
+					resp.addCookie(cookie);
+//					Cp.getInstance().getBL().logAcesso(AbstractCpAcesso.CpTipoAcessoEnum.RENOVACAO_AUTOMATICA,
+//							(String) decodedNewToken.get("sub"), (Integer) decodedNewToken.get("iat"),
+//							(Integer) decodedNewToken.get("exp"), HttpRequestUtils.getIpAudit(req));
+				}
+				ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
 			}
-			ContextoPersistencia.setUserPrincipal((String) decodedToken
-					.get("sub"));
 			chain.doFilter(request, response);
 		} catch (AuthJwtException e) {
 			informarAutenticacaoProibida(resp, e);
@@ -122,6 +130,8 @@ public class AuthJwtFormFilter implements Filter {
 			} else {
 				throw new RuntimeException(e);
 			}
+		} finally {
+			ContextoPersistencia.removeUserPrincipal();
 		}
 	}
 
@@ -139,8 +149,8 @@ public class AuthJwtFormFilter implements Filter {
 		return cookie;
 	}
 
-	private void redirecionarParaFormDeLogin(HttpServletRequest req,
-			HttpServletResponse resp, Exception e) throws IOException {
+	private void redirecionarParaFormDeLogin(HttpServletRequest req, HttpServletResponse resp, Exception e)
+			throws IOException {
 		if (req.getHeader("X-Requested-With") != null) {
 			informarAutenticacaoInvalida(resp, e);
 			return;
@@ -149,11 +159,15 @@ public class AuthJwtFormFilter implements Filter {
 			informarAutenticacaoInvalida(resp, e);
 			return;
 		}
-		resp.sendRedirect("/sigaidp/jwt/login?cont=" + req.getRequestURI());
+		
+		String cont = req.getRequestURL() + (req.getQueryString() != null ? "?" + req.getQueryString() : "");
+		String base = System.getProperty("siga.base.url");
+		if (base != null && base.startsWith("https:") && cont.startsWith("http:"))
+			cont = "https" + cont.substring(4);
+		resp.sendRedirect("/siga/public/app/login?cont=" + URLEncoder.encode(cont, "UTF-8"));
 	}
 
-	private void informarAutenticacaoInvalida(HttpServletResponse resp,
-			Exception e) throws IOException {
+	private void informarAutenticacaoInvalida(HttpServletResponse resp, Exception e) throws IOException {
 		String mensagem = "Não foi possível autenticar o usuário, se não quiser perder o trabalho, use uma outra janela do navegador para entrar no sistema e fazer um novo login, depois volte nessa página e clique no botão de atualizar: ";
 		if (e.getCause() == null)
 			mensagem += e.getLocalizedMessage();
@@ -164,10 +178,8 @@ public class AuthJwtFormFilter implements Filter {
 		resp.getWriter().write(mensagem);
 	}
 
-	private void informarAutenticacaoProibida(HttpServletResponse resp,
-			Exception e) throws IOException {
-		String mensagem = e.getCause() != null ? e.getCause()
-				.getLocalizedMessage() : e.getLocalizedMessage();
+	private void informarAutenticacaoProibida(HttpServletResponse resp, Exception e) throws IOException {
+		String mensagem = e.getCause() != null ? e.getCause().getLocalizedMessage() : e.getLocalizedMessage();
 		resp.setStatus(403); // 403 Forbidden - The request was valid, but the
 								// server is refusing action. The user might not
 								// have the necessary permissions for a

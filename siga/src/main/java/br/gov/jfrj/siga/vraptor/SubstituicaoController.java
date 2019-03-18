@@ -18,6 +18,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -257,9 +258,16 @@ public class SubstituicaoController extends SigaController {
 			} catch (final NullPointerException e) {
 				subst.setDtFimSubst(null);
 			}
-
+			
 			if (subst.getDtIniSubst() == null)
 				subst.setDtIniSubst(new Date());
+			else {
+				if (!Data.dataDentroSeculo21(subst.getDtIniSubst()))
+					throw new AplicacaoException("Data inicial inválida, deve estar entre o ano 2000 e ano 2100");
+			}
+				
+			if(subst.getDtFimSubst() != null && !Data.dataDentroSeculo21(subst.getDtFimSubst()))
+				throw new AplicacaoException("Data final inválida, deve estar entre o ano 2000 e ano 2100");	
 
 			subst.setDtIniRegistro(new Date());
 
@@ -300,7 +308,7 @@ public class SubstituicaoController extends SigaController {
 		if (referer != null)
 			result.redirectTo(referer);
 		else
-			result.redirectTo(PrincipalController.class).principal();
+			result.redirectTo(PrincipalController.class).principal(false);
 	}	
 	
 	private void gravarFinalizar() {
@@ -353,7 +361,7 @@ public class SubstituicaoController extends SigaController {
 		if (referer != null)
 			result.redirectTo(referer);
 		else
-			result.redirectTo(PrincipalController.class).principal();
+			result.redirectTo(PrincipalController.class).principal(false);
 	}	
 	
 	public void exclui(Long id) throws Exception {
@@ -376,7 +384,7 @@ public class SubstituicaoController extends SigaController {
 				if (referer != null)
 					result.redirectTo(referer);
 				else
-					result.redirectTo(PrincipalController.class).principal();
+					result.redirectTo(PrincipalController.class).principal(false);
 			} else
 				throw new AplicacaoException("Usuário não tem permissão para excluir esta substituição");	
 		} else

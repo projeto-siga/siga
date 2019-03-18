@@ -20,6 +20,7 @@ package br.gov.jfrj.siga.ex;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * A class that represents a row in the EX_DOCUMENTO table. You can customize

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+                            "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                            "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
+
+<!-- Created Mon Nov 14 13:28:04 GMT-03:00 2005   -->
+<hibernate-mapping package="br.gov.jfrj.siga.ex">
+
+	<class name="ExEstadoDoc" schema="SIGA" table="EX_ESTADO_DOC">
+		<id name="idEstadoDoc" column="ID_ESTADO_DOC" type="long">
+			<generator class="native">
+				<param name="sequence">EX_ESTADO_DOC_SEQ</param>
+			</generator>
+		</id>
+
+		<property name="descEstadoDoc" column="DESC_ESTADO_DOC"
+			type="string" not-null="true" />
+
+<!-- 
+		<set name="deTpMovSet" schema="SIGA" table="EX_TP_MOV_ESTADO"
+			inverse="true">
+			<key column="ID_ESTADO_DOC" />
+			<many-to-many class="ExTipoMovimentacao" column="ID_TP_MOV" />
+		</set>
+
+		<set name="paraTpMovSet" schema="SIGA" table="EX_ESTADO_TP_MOV"
+			inverse="true">
+			<key column="ID_ESTADO_DOC" />
+			<many-to-many class="ExTipoMovimentacao" column="ID_TP_MOV" />
+		</set>
+
+		<set name="exMovimentacaoSet" inverse="true">
+			<key column="ID_ESTADO_DOC" />
+			<one-to-many class="ExMovimentacao" />
+		</set>
+ -->
+	</class>
+
+	<sql-query name="consultarPorResponsavel">
+		<![CDATA[select * from (
+		select est.id_Estado_Doc id, est.desc_Estado_Doc desc,
+		(select count(*) from SIGA.ex_movimentacao movR where (movR.id_resp = :resp || (movR.id_estado_doc = 11 && (movR.cadastrante.idPessoa = :resp || movR.subscritor.idPessoa = :resp))) and movR.dt_Fim_Mov is null and movR.id_estado_doc = est.id_estado_doc) c1 ,
+		(select count(*) from SIGA.ex_movimentacao movL where (movL.id_lota_resp = :lotaResp || (movL.id_estado_doc = 11 && (movL.lotaCadastrante.idlotacao = :lotaresp || movL.lotaSubscritor.idlotacao = :lotaresp))) and movL.dt_Fim_Mov is null and movL.id_estado_doc = est.id_estado_doc) c2
+		from SIGA.Ex_Estado_Doc est)
+		where c1 > 0 or c2 > 0
+		and id <> 9
+		]]>
+	</sql-query>
+
+	<sql-query name="consultarPorResponsavelSQL">
+		<return-scalar column="ID" type="integer"/> 
+	    <return-scalar column="DESCR" type="string"/> 
+	  	<return-scalar column="ORDEM" type="long"/> 
+	  	<return-scalar column="C1" type="integer"/> 
+		<return-scalar column="C2" type="integer"/>
+		<![CDATA[
+select * from 
+	(select * from 
+		(select est.id_Estado_Doc id, est.desc_Estado_Doc descr,  est.ordem_estado_doc ordem,
+			(select count(*) from SIGA.ex_movimentacao movR where 
+			(movR.id_resp in (select id_pessoa from CORPORATIVO.dp_pessoa where id_pessoa_inicial = :pessoa) 
+			or (movR.id_estado_doc = 11 and movR.id_cadastrante in (select id_pessoa from CORPORATIVO.dp_pessoa where id_pessoa_inicial = :pessoa))) 
+			and movR.dt_Fim_Mov is null and movR.id_estado_doc =  est.id_estado_doc) 
+			+ (select count(*) from SIGA.ex_documento docR where 
+			docR.id_cadastrante in (select id_pessoa from CORPORATIVO.dp_pessoa where id_pessoa_inicial = :pessoa) 
+			and docR.dt_finalizacao is null and 1 = est.id_estado_doc) c1,
+			(select count(*) from SIGA.ex_movimentacao movL where
+			(movL.id_lota_resp in (select id_lotacao from CORPORATIVO.dp_lotacao where id_lotacao_ini = :lotacao) 
+			or (movL.id_estado_doc = 11 and movL.id_lota_cadastrante in (select id_lotacao from CORPORATIVO.dp_lotacao where id_lotacao_ini = :lotacao))) 
+			and movL.dt_Fim_Mov is null and movL.id_estado_doc = est.id_estado_doc) 
+			+ (select count(*) from SIGA.ex_documento docL where 
+			docL.id_lota_cadastrante in (select id_lotacao from CORPORATIVO.dp_lotacao where id_lotacao_ini = :lotacao)
+			and docL.dt_finalizacao is null and 1 = est.id_estado_doc) c2 
+		from SIGA.Ex_Estado_Doc est)
+	where (c1 > 0 or c2 > 0) and id <> 9
+	union select * from
+		(select -2 id, 'Transferido(Eletrônico)' descr, 4,
+			(select count(*) from SIGA.ex_movimentacao movR where 
+			movR.id_subscritor in (select id_pessoa from CORPORATIVO.dp_pessoa where id_pessoa_inicial = :pessoa)  
+			and movR.dt_Fim_Mov is null and movR.id_estado_doc = est.id_estado_doc)  c1, 
+			(select count(*) from SIGA.ex_movimentacao movL where 
+			movL.id_lota_subscritor in (select id_lotacao from CORPORATIVO.dp_lotacao where id_lotacao_ini = :lotacao) 
+			and movL.dt_Fim_Mov is null and movL.id_estado_doc = est.id_estado_doc) c2 
+		from SIGA.Ex_Estado_Doc est where est.id_Estado_Doc=3 )
+	where (c1 > 0 or c2 > 0)
+	union select * from
+		(select -1 id, 'Transferido' descr, 3,
+			(select count(*) from SIGA.ex_movimentacao movR where 
+			movR.id_subscritor in (select id_pessoa from CORPORATIVO.dp_pessoa where id_pessoa_inicial = :pessoa)  
+			and movR.dt_Fim_Mov is null and movR.id_estado_doc = est.id_estado_doc)  c1, 
+			(select count(*) from SIGA.ex_movimentacao movL where 
+			movL.id_lota_subscritor in (select id_lotacao from CORPORATIVO.dp_lotacao where id_lotacao_ini = :lotacao) 
+			and movL.dt_Fim_Mov is null and movL.id_estado_doc = est.id_estado_doc) c2 
+		from SIGA.Ex_Estado_Doc est where est.id_Estado_Doc=3 )
+	where (c1 > 0 or c2 > 0))
+order by ordem
+	]]>
+	</sql-query>
+
+</hibernate-mapping>

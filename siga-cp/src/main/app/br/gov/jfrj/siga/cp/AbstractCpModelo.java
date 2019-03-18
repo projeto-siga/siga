@@ -38,20 +38,20 @@ public abstract class AbstractCpModelo extends HistoricoAuditavelSuporte {
 	private static final long serialVersionUID = -3468035660039727667L;
 
 	/** The primary key value. */
-	
-	@SequenceGenerator(name="generator", sequenceName="CP_MODELO_SEQ")
-	@Id 
-	@GeneratedValue(generator="generator")
-    @Column(name="ID_MODELO", nullable=false)
+
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_MODELO_SEQ")
+	@Id
+	@GeneratedValue(generator = "generator")
+	@Column(name = "ID_MODELO", unique = true, nullable = false)
 	@Desconsiderar
 	private java.lang.Long idMod;
 
 	/** The value of the simple conteudoBlobMod property. */
-@Column(name="CONTEUDO_BLOB_MOD")
+	@Column(name = "CONTEUDO_BLOB_MOD")
 	private Blob conteudoBlobMod;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="ID_ORGAO_USU")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ORGAO_USU")
 	private CpOrgaoUsuario cpOrgaoUsuario;
 
 	/**

@@ -23,12 +23,23 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 /**
  * A class that represents a row in the 'EX_TIPO_DESTINACAO' table. This class
  * may be customized as it is never re-generated after being created.
  */
+@Entity
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Table(name = "EX_TIPO_DESTINACAO", catalog = "SIGA")
 public class ExTipoDestinacao extends AbstractExTipoDestinacao implements
 		Serializable {
 	/**
@@ -39,7 +50,7 @@ public class ExTipoDestinacao extends AbstractExTipoDestinacao implements
 	public static final long TIPO_DESTINACAO_ELIMINACAO = 1;
 
 	public static final long TIPO_DESTINACAO_GUARDA_PERMANENTE = 2;
-	
+
 	public static final long TIPO_DESTINACAO_SETOR_COMPETENTE = 58;
 
 	// Edson: isto está estranho. Ver soluçao melhor.

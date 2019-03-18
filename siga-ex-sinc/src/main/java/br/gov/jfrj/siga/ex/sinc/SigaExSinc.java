@@ -91,8 +91,7 @@ public class SigaExSinc {
 
 	protected SortedSet<Sincronizavel> setNovo = new TreeSet<Sincronizavel>(sc);
 
-	protected SortedSet<Sincronizavel> setAntigo = new TreeSet<Sincronizavel>(
-			sc);
+	protected SortedSet<Sincronizavel> setAntigo = new TreeSet<Sincronizavel>(sc);
 
 	private String dataHora;
 
@@ -155,7 +154,8 @@ public class SigaExSinc {
 		logger.setLevel(logLevel);
 
 		if (modoLog) {
-			logComDestaque(">>>Iniciando em modo LOG!<<<\nUse -modoLog=false para sair do modo LOG e escrever as alterações");
+			logComDestaque(
+					">>>Iniciando em modo LOG!<<<\nUse -modoLog=false para sair do modo LOG e escrever as alterações");
 		}
 		log("MAX SINC = " + maxSinc);
 
@@ -186,7 +186,9 @@ public class SigaExSinc {
 		else
 			cfg = ExDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
 
-		HibernateUtil.configurarHibernate(cfg);
+		// Desabilitado para evitar o erro de compilação depois que foi feita a
+		// troca do Hibernate para o JPA
+		// HibernateUtil.configurarHibernate(cfg);
 
 		dt = new Date();
 		log("--- Processando  " + dt + "--- ");
@@ -234,16 +236,13 @@ public class SigaExSinc {
 						// + " Total file size to read (in bytes) : "
 						// + fis.available());
 						List<ExModelo> mods = importarXml(fis);
-						for (ExModelo mod : mods){
-						        String nmDiretorio = CalcularDiretorio(diretorio,
-						                file.getPath(), mod.getSubdiretorio());
-						        mod.setNmDiretorio(nmDiretorio);
-						        setNovo.add(mod);
+						for (ExModelo mod : mods) {
+							String nmDiretorio = CalcularDiretorio(diretorio, file.getPath(), mod.getSubdiretorio());
+							mod.setNmDiretorio(nmDiretorio);
+							setNovo.add(mod);
 						}
 					} catch (Exception e) {
-						throw new Exception(
-								"Não foi possível importar o XML de '"
-										+ file.getName() + "'.", e);
+						throw new Exception("Não foi possível importar o XML de '" + file.getName() + "'.", e);
 					}
 				}
 			}
@@ -258,12 +257,10 @@ public class SigaExSinc {
 			log(e.getMessage());
 		}
 		long total = (System.currentTimeMillis() - inicio) / 1000;
-		log("Tempo total de execução: " + total + " segundos (" + total / 60
-				+ " min)");
+		log("Tempo total de execução: " + total + " segundos (" + total / 60 + " min)");
 	}
 
-	protected static String CalcularDiretorio(String dir, String filepath,
-			String xmlpath) {
+	protected static String CalcularDiretorio(String dir, String filepath, String xmlpath) {
 		String s = filepath.replace("\\", "/");
 		// Remover o nome do arquivo
 		//
@@ -293,7 +290,7 @@ public class SigaExSinc {
 		XmlPullParser parser = new KXmlParser();
 
 		List<ExModelo> mods = new ArrayList<ExModelo>();
-		
+
 		try {
 			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
 			parser.setInput(in, null);
@@ -321,14 +318,10 @@ public class SigaExSinc {
 
 		try {
 			modelo.setIdExterna(parseStr(parser, "uuid"));
-			ExFormaDocumento forma = obterEspeciePelaDescricao(parseStr(parser,
-					"especie"));
-			ExClassificacao classificacao = obterClassificacaoPelaSigla(parseStr(
-					parser, "classificacao"));
-			ExClassificacao classCriacaoVia = obterClassificacaoPelaSigla(parseStr(
-					parser, "classCriacaoVia"));
-			ExNivelAcesso nivel = obterNivelAcessoPelaSigla(parseStr(parser,
-					"nivel"));
+			ExFormaDocumento forma = obterEspeciePelaDescricao(parseStr(parser, "especie"));
+			ExClassificacao classificacao = obterClassificacaoPelaSigla(parseStr(parser, "classificacao"));
+			ExClassificacao classCriacaoVia = obterClassificacaoPelaSigla(parseStr(parser, "classCriacaoVia"));
+			ExNivelAcesso nivel = obterNivelAcessoPelaSigla(parseStr(parser, "nivel"));
 
 			modelo.setNmMod(parseStr(parser, "nome"));
 			modelo.setDescMod(parseStr(parser, "descricao"));
@@ -342,8 +335,7 @@ public class SigaExSinc {
 
 			int token = parser.nextToken();
 			while (true) {
-				if (parser.getEventType() == XmlPullParser.END_TAG
-						&& parser.getName().equals("modelo")) {
+				if (parser.getEventType() == XmlPullParser.END_TAG && parser.getName().equals("modelo")) {
 					return modelo;
 				}
 				if (token == XmlPullParser.CDSECT) {
@@ -365,8 +357,7 @@ public class SigaExSinc {
 		return especie;
 	}
 
-	protected ExClassificacao obterClassificacaoPelaSigla(String s)
-			throws Exception {
+	protected ExClassificacao obterClassificacaoPelaSigla(String s) throws Exception {
 		if (s == null)
 			return null;
 		ExClassificacao classificacao = mapClassificacoes.get(s);
@@ -434,8 +425,7 @@ public class SigaExSinc {
 				log("");
 				log("");
 				log("***ATENÇÃO***: Limite de operações por sincronismo excedido!");
-				log("Operações a serem executadas: " + list.size()
-						+ "\nOperações permitidas: " + maxSinc);
+				log("Operações a serem executadas: " + list.size() + "\nOperações permitidas: " + maxSinc);
 				log("Ajuste o parâmetro -maxSinc=<VALOR> para permitir que o sincronismo seja efetivado!");
 				log("As alterações não serao efetivadas! Executando rollback...");
 				log("");
@@ -464,10 +454,8 @@ public class SigaExSinc {
 			return 10;
 		}
 		String servidor = pars[0];
-		if (!servidor.toLowerCase().contains("-prod")
-				&& !servidor.toLowerCase().contains("-desenv")
-				&& !servidor.toLowerCase().contains("-homolo")
-				&& !servidor.toLowerCase().contains("-treina")) {
+		if (!servidor.toLowerCase().contains("-prod") && !servidor.toLowerCase().contains("-desenv")
+				&& !servidor.toLowerCase().contains("-homolo") && !servidor.toLowerCase().contains("-treina")) {
 			System.err.println("Servidor não informado");
 			return 11;
 		}
@@ -514,24 +502,20 @@ public class SigaExSinc {
 	public List<Sincronizavel> importarTabela() {
 		List<Sincronizavel> l = new ArrayList<Sincronizavel>();
 
-		for (ExModelo o : ExDao.getInstance().listarTodosModelosOrdenarPorNome(null, 
-				null)) {
+		for (ExModelo o : ExDao.getInstance().listarTodosModelosOrdenarPorNome(null, null)) {
 			l.add(o);
 		}
 		return l;
 	}
 
 	private void importarListasDeTipos() {
-		for (ExFormaDocumento especie : ExDao.getInstance().listarTodos(
-				ExFormaDocumento.class, null))
+		for (ExFormaDocumento especie : ExDao.getInstance().listarTodos(ExFormaDocumento.class, null))
 			mapEspecies.put(especie.getDescricao(), especie);
 
-		for (ExClassificacao classificacao : ExDao.getInstance().listarAtivos(
-				ExClassificacao.class, null))
+		for (ExClassificacao classificacao : ExDao.getInstance().listarAtivos(ExClassificacao.class, null))
 			mapClassificacoes.put(classificacao.getSigla(), classificacao);
 
-		for (ExNivelAcesso nivel : ExDao.getInstance().listarTodos(
-				ExNivelAcesso.class, null))
+		for (ExNivelAcesso nivel : ExDao.getInstance().listarTodos(ExNivelAcesso.class, null))
 			mapNiveisDeAcesso.put(nivel.getNmNivelAcesso(), nivel);
 	}
 
@@ -541,15 +525,14 @@ public class SigaExSinc {
 
 	public void logEnd() throws Exception {
 		String sDest = ImportarXmlProperties.getString("lista.destinatario")
-				+ (!destinatariosExtras.trim().equals("") ? ","
-						+ destinatariosExtras : "");
+				+ (!destinatariosExtras.trim().equals("") ? "," + destinatariosExtras : "");
 		if (getDataHora() != null) {
 			log("Arquivo XML gerado em " + getDataHora() + "\n");
 		}
 
 		if (maxSinc != -1 && list != null && (list.size() > maxSinc)) {
-			logHandler
-					.setAssunto("Limite de operações por sincronismo superior a 200. Execute o sincronismo manualmente.");
+			logHandler.setAssunto(
+					"Limite de operações por sincronismo superior a 200. Execute o sincronismo manualmente.");
 		}
 
 		logHandler.setDestinatariosEmail(sDest.split(","));
@@ -655,8 +638,7 @@ public class SigaExSinc {
 
 	protected void exibirMensagemMaxSinc(List<Item> list) {
 		log("***ATENÇÃO***: Limite de operações por sincronismo excedido!");
-		log("Operações a serem executadas: " + list.size()
-				+ "\nOperações permitidas: " + maxSinc);
+		log("Operações a serem executadas: " + list.size() + "\nOperações permitidas: " + maxSinc);
 		log("Ajuste o parâmetro -maxSinc=<VALOR> para permitir que o sincronismo seja efetivado!");
 		log("As alterações não serão efetivadas! Executando rollback...");
 	}

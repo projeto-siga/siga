@@ -24,9 +24,15 @@ package br.gov.jfrj.siga.ex;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.BatchSize;
+
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 
@@ -34,7 +40,11 @@ import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
  * A class that represents a row in the 'EX_MODELO' table. This class may be
  * customized as it is never re-generated after being created.
  */
+@Entity
+@BatchSize(size = 500)
+@Table(name = "EX_MODELO", catalog = "SIGA")
 public class ExModelo extends AbstractExModelo implements Sincronizavel {
+	@Transient
 	private byte[] cacheConteudoBlobMod;
 
 	/**
@@ -182,5 +192,23 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel {
 		if (filename.contains("/"))
 			return filename.substring(0, filename.lastIndexOf("/"));
 		return null;
+	}
+
+	//
+	// Solução para não precisar criar HIS_ATIVO em todas as tabelas que herdam de HistoricoSuporte.
+	//
+	@Column(name = "HIS_ATIVO")
+	private Integer hisAtivo;
+
+	@Override
+	public Integer getHisAtivo() {
+		this.hisAtivo = super.getHisAtivo();
+		return this.hisAtivo;
+	}
+	
+	@Override
+	public void setHisAtivo(Integer hisAtivo) {
+		super.setHisAtivo(hisAtivo);
+		this.hisAtivo = getHisAtivo();
 	}
 }

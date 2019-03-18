@@ -34,6 +34,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -41,7 +43,26 @@ import javax.persistence.TemporalType;
 import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
-public abstract class AbstractDpSubstituicao extends Objeto implements Serializable {
+@NamedQueries({
+		@NamedQuery(name = "consultarSubstituicoesPermitidas", query = "from DpSubstituicao dps "
+				+ " where (dps.dtIniSubst < sysdate or dps.dtIniSubst = null) "
+				+ " and (dps.dtFimSubst > sysdate or dps.dtFimSubst = null) "
+				+ " and ((dps.substituto = null and dps.lotaSubstituto.idLotacao in (select lot.idLotacao from DpLotacao as lot where lot.idLotacaoIni = :idLotaSubstitutoIni)) or "
+				+ " dps.substituto.idPessoa in (select pes.idPessoa from DpPessoa as pes where pes.idPessoaIni = :idSubstitutoIni)) "
+				+ " and dps.dtFimRegistro = null"),
+		@NamedQuery(name = "consultarOrdemData", query = "from DpSubstituicao as dps "
+				+ " where ((dps.titular = null and dps.lotaTitular.idLotacao in (select lot.idLotacao from DpLotacao as lot where lot.idLotacaoIni = :idLotaTitularIni)) or "
+				+ " dps.titular.idPessoa in (select pes.idPessoa from DpPessoa as pes where pes.idPessoaIni = :idTitularIni)) "
+				+ " and dps.dtFimRegistro = null "
+				+ " order by dps.dtIniSubst, dps.dtFimSubst ") })
+public abstract class AbstractDpSubstituicao extends Objeto implements
+		Serializable {
+
+	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.DP_SUBSTITUICAO_SEQ")
+	@Id
+	@GeneratedValue(generator = "generator")
+	@Column(name = "ID_SUBSTITUICAO", unique = true, nullable = false)
+	private Long idSubstituicao;
 
 	@Column(name = "DT_FIM_SUBST")
 	@Temporal(TemporalType.DATE)
@@ -51,18 +72,12 @@ public abstract class AbstractDpSubstituicao extends Objeto implements Serializa
 	@Temporal(TemporalType.DATE)
 	private Date dtIniSubst;
 
-	@SequenceGenerator(name = "generator", sequenceName = "DP_SUBSTITUICAO_SEQ")
-	@Id
-	@GeneratedValue(generator = "generator")
-	@Column(name = "ID_SUBSTITUICAO", nullable = false)
-	private Long idSubstituicao;
-
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_LOTA_SUBSTITUTO")
+	@JoinColumn(name = "ID_LOTA_SUBSTITUTO", nullable = false)
 	private DpLotacao lotaSubstituto;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_LOTA_TITULAR")
+	@JoinColumn(name = "ID_LOTA_TITULAR", nullable = false)
 	private DpLotacao lotaTitular;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -72,18 +87,17 @@ public abstract class AbstractDpSubstituicao extends Objeto implements Serializa
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_TITULAR")
 	private DpPessoa titular;
-	
-	@Column(name = "DT_FIM_REG")
-	@Temporal(TemporalType.DATE)
+
+	@Column(name = "DT_FIM_REG", length = 19)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dtFimRegistro;
 
-	@Column(name = "DT_INI_REG")
-	@Temporal(TemporalType.DATE)
+	@Column(name = "DT_INI_REG", nullable = false, length = 19)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dtIniRegistro;
 
 	@Column(name = "ID_REG_INI")
 	private Long idRegistroInicial;
-	
 
 	/*
 	 * (non-Javadoc)

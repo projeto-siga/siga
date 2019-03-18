@@ -32,6 +32,7 @@
 		<filter-name>AuthJwtFormFilter</filter-name>
 		<url-pattern>/paginas/*</url-pattern>
 		<url-pattern>/app/*</url-pattern>
+		<url-pattern>*.action</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
@@ -85,16 +86,8 @@
 
 	<filter-mapping>
 		<filter-name>ExFilter</filter-name>
-		<url-pattern>*.pdf</url-pattern>
-		<url-pattern>*.html</url-pattern>
-		<url-pattern>*.action</url-pattern>
-		<url-pattern>/dwr/*</url-pattern>
-		<url-pattern>/anexo/*</url-pattern>
 		<url-pattern>/servicos/*</url-pattern>
 		<url-pattern>/apis/*</url-pattern>
-		<url-pattern>/app/*</url-pattern>
-		<url-pattern>/public/app/*</url-pattern>
-		<url-pattern>/public/api/*</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>

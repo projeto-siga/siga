@@ -23,8 +23,6 @@
  */
 package br.gov.jfrj.siga.cp;
 
-import static javax.persistence.GenerationType.SEQUENCE;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
@@ -37,10 +35,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -58,21 +59,47 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
  * CpClassificacao()}.
  */
 @MappedSuperclass
+@NamedQueries({
+		@NamedQuery(name = "consultarDataUltimaAtualizacao", query = ""
+				+ "select max(cpcfg.hisDtIni), max(cpcfg.hisDtFim) "
+				+ "from CpConfiguracao cpcfg"),
+		@NamedQuery(name = "consultarCpConfiguracoes", query = "from "
+				+ "CpConfiguracao cpcfg where (:idTpConfiguracao is null or "
+				+ "cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"),
+		@NamedQuery(name = "consultarCpConfiguracoesPorLotacaoPessoaServicoTipo", query = "from CpConfiguracao cpcfg"
+				+ "	where (cpcfg.dpPessoa.idPessoa = :idPessoa) "
+				+ "	and (cpcfg.lotacao.idLotacao = :idLotacao) "
+				+ "	and (cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao) "
+				+ "	and (cpcfg.cpServico.idServico = :idServico)"
+				+ "	and hisDtFim is null"),
+		@NamedQuery(name = "consultarCpConfiguracoesPorServico", query = "from CpConfiguracao cpcfg where  (cpcfg.cpServico.idServico = :idServico) and hisDtFim is null"),
+		@NamedQuery(name = "consultarCpConfiguracoesPorPessoa", query = "from CpConfiguracao cpcfg where (cpcfg.dpPessoa.idPessoa = :idPessoa) and hisDtFim is null"),
+		@NamedQuery(name = "consultarCpConfiguracoesHistoricasPorPessoa", query = "from CpConfiguracao cpcfg where (cpcfg.dpPessoa.idPessoa = :idPessoa) order by cpcfg.cpServico.idServico, cpcfg.hisDtIni"),
+		@NamedQuery(name = "consultarCpConfiguracoesPorPeriodo", query = "from CpConfiguracao cpcfg"
+				+ "	where (cpcfg.hisDtIni >= :dtInicioVigenciaIni)"
+				+ "	and (cpcfg.hisDtIni <= :dtInicioVigenciaFim) "
+				+ "	order by cpcfg.hisDtIni"),
+		@NamedQuery(name = "consultarCpConfiguracoesPorTipoLotacao", query = "from CpConfiguracao cpcfg where (cpcfg.cpTipoLotacao.idTpLotacao = :idTpLotacao) and hisDtFim is null"),
+		@NamedQuery(name = "consultarCpConfiguracoesPorTipo", query = " from "
+				+ "CpConfiguracao cpcfg where (cpcfg.cpTipoConfiguracao.idTpConfiguracao = :idTpConfiguracao)"
+				+ "and hisDtFim is null"),
+		@NamedQuery(name = "consultarCpConfiguracoesAtivas", query = " from "
+				+ "CpConfiguracao cpcfg where hisDtFim is null") })
 public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
-		implements Serializable,CpConvertableEntity {
+		implements Serializable, CpConvertableEntity {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 4514355304185987860L;
-	
+
 	@Id
 	@GeneratedValue(generator = "generator")
 	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_CONFIGURACAO_SEQ")
-	@Column(name = "ID_CONFIGURACAO", nullable = false)
+	@Column(name = "ID_CONFIGURACAO", unique = true, nullable = false)
 	@Desconsiderar
 	private Long idConfiguracao;
-	
+
 	@Column(name = "DESCR_CONFIGURACAO")
 	private String descrConfiguracao;
 
@@ -131,11 +158,11 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@NaoRecursivo
 	private CpGrupo cpGrupo;
 
-	@Column(name = "NM_EMAIL")
+	@Column(name = "NM_EMAIL", length = 50)
 	@NaoRecursivo
 	private String nmEmail;
 
-	@Column(name = "DESC_FORMULA")
+	@Column(name = "DESC_FORMULA", length = 1024)
 	@NaoRecursivo
 	private String dscFormula;
 
@@ -144,12 +171,14 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@NaoRecursivo
 	private CpTipoLotacao cpTipoLotacao;
 
-	@Column(name = "DT_INI_VIG_CONFIGURACAO")
+	// @Temporal(TemporalType.TIMESTAMP)
 	@Temporal(TemporalType.DATE)
+	@Column(name = "DT_INI_VIG_CONFIGURACAO", length = 19)
 	private Date dtIniVigConfiguracao;
 
-	@Column(name = "DT_FIM_VIG_CONFIGURACAO")
+	// @Temporal(TemporalType.TIMESTAMP)
 	@Temporal(TemporalType.DATE)
+	@Column(name = "DT_FIM_VIG_CONFIGURACAO", length = 19)
 	private Date dtFimVigConfiguracao;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -160,7 +189,7 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@Desconsiderar
 	private Set<CpConfiguracao> configuracoesPosteriores = new HashSet<CpConfiguracao>(
 			0);
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_OBJETO")
 	@NaoRecursivo
@@ -259,7 +288,7 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	public void setCargo(DpCargo cargo) {
 		this.cargo = cargo;
 	}
-	
+
 	public CpComplexo getComplexo() {
 		return complexo;
 	}

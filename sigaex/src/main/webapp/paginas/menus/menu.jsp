@@ -2,6 +2,124 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
+<c:if test="${false}">
+<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
+<li><a href="#">Documentos</a>
+	<ul>
+		<li><a href="/sigaex/app/expediente/doc/editar">Novo</a></li>
+		<li><a href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a>
+		</li>
+
+		<li><siga:monolink
+				href="${pageContext.request.contextPath}/app/expediente/mov/transferir_lote"
+				texto="Transferir em lote" /></li>
+		<li><siga:monolink
+				href="${pageContext.request.contextPath}/app/expediente/mov/receber_lote"
+				texto="Receber em lote" /></li>
+		<li><siga:monolink
+				href="${pageContext.request.contextPath}/app/expediente/mov/anotar_lote"
+				texto="Anotar em lote" /></li>
+			<li><siga:monolink
+					href="${pageContext.request.contextPath}/app/expediente/mov/assinar_tudo"
+					texto="Assinar em lote" /></li>
+		<%--
+		<c:catch>
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+				<li><siga:monolink
+						href="${pageContext.request.contextPath}/app/expediente/mov/assinar_lote"
+						texto="Assinar em lote" /></li>
+			</c:if>
+		</c:catch>
+		<c:catch>
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
+				<li><siga:monolink
+						href="${pageContext.request.contextPath}/app/expediente/mov/assinar_despacho_lote"
+						texto="Assinar Despacho em lote" /></li>
+			</c:if>
+		</c:catch>
+		--%>
+		<li><siga:monolink
+				href="${pageContext.request.contextPath}/app/expediente/mov/arquivar_corrente_lote"
+				texto="Arquivar em lote" /></li>
+		<c:catch>
+			<c:if
+				test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">
+				<li><siga:monolink
+						href="${pageContext.request.contextPath}/app/expediente/mov/arquivar_intermediario_lote"
+						texto="Arquivar Intermediário em lote" /></li>
+			</c:if>
+		</c:catch>
+		<c:catch>
+			<c:if
+				test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">
+				<li><siga:monolink
+						href="${pageContext.request.contextPath}/app/expediente/mov/arquivar_permanente_lote"
+						texto="Arquivar Permanente em lote" /></li>
+			</c:if>
+		</c:catch>
+		<c:catch>
+			<c:if
+				test="${f:testaCompetencia('atenderPedidoPublicacao',titular,lotaTitular,null)}">
+				<li><siga:monolink
+						href="${pageContext.request.contextPath}/app/expediente/mov/atender_pedido_publicacao"
+						texto="Gerenciar Publicação DJE" /></li>
+			</c:if>
+		</c:catch>
+
+		<c:catch>
+			<c:if
+				test="${f:testaCompetencia('gerenciarPublicacaoBoletimPorConfiguracao',titular,lotaTitular,null)}">
+				<li><a
+					href="${pageContext.request.contextPath}/app/expediente/configuracao/gerenciar_publicacao_boletim">Definir
+						Publicadores Boletim</a></li>
+			</c:if>
+		</c:catch>
+	</ul></li>
+
+<c:if
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas')}">
+	<li><a href="#">Ferramentas</a>
+		<ul>
+			<li><siga:monolink
+					href="${pageContext.request.contextPath}/app/forma/listar"
+					texto="Cadastro de Espécies" /></li>
+			<li><a href="/sigaex/app/modelo/listar">Cadastro de modelos</a>
+			</li>
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;DESP:Tipos de despacho')}">
+				<li><a href="/sigaex/app/despacho/tipodespacho/listar">Cadastro
+						de tipos de despacho</a></li>
+			</c:if>
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;CFG:Configurações')}">
+				<li><a href="/sigaex/app/expediente/configuracao/listar">Cadastro
+						de configurações</a></li>
+			</c:if>
+
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;EMAIL:Email de Notificação')}">
+				<li><a href="/sigaex/app/expediente/emailNotificacao/listar">Cadastro
+						de email de notificação</a></li>
+			</c:if>
+
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;PC:Plano de Classificação')}">
+				<li><a href="/sigaex/app/expediente/classificacao/listar">Classificação
+						Documental</a></li>
+			</c:if>
+			<c:if
+				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;FE:Ferramentas;TT:Tabela de Temporalidade')}">
+				<li><a
+					href="${pageContext.request.contextPath}/app/expediente/temporalidade/listar">Temporalidade
+						Documental</a></li>
+			</c:if>
+
+		</ul></li>
+</c:if>
+</c:if>
+
 <c:if
 	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
 	<li class="nav-item dropdown"><a class="nav-link dropdown-toggle"

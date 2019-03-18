@@ -68,6 +68,10 @@ public class Cp<TConf extends CpConfiguracaoBL, TComp extends CpCompetenciaBL, T
 		return instance != null;
 	}
 
+	public static boolean isInstantiated(Class<? extends Cp> clazz) {
+		return isInstantiated() && clazz.isAssignableFrom(instance.getClass());
+	}
+
 	public TComp getComp() {
 		return comp;
 	}

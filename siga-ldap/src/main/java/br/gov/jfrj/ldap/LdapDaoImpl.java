@@ -174,8 +174,7 @@ public class LdapDaoImpl implements ILdapDao {
 			// }
 
 		} catch (Exception e) {
-			throw new AplicacaoException(
-					"Não foi possível ler os atributos de " + dn, 9, e);
+			log.warning("Não foi possível ler os atributos de " + dn + " (provavelmente o objeto nao existe");
 		}
 
 		return attrs;

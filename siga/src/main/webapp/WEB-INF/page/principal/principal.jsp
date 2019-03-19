@@ -60,12 +60,13 @@
 				</div>
 			</c:if>
 		</div>
-	</div>
 
 		<c:if test="${not empty acessoAnteriorData}">
 			<div class="row">
 				<div class="col">
-					<p id="bem-vindo" class="alert alert-success mt-3 mb-0">Último acesso em ${acessoAnteriorData} no endereço ${acessoAnteriorMaquina}.</p>
+					<p id="bem-vindo" class="alert alert-success mt-3 mb-0">Último
+						acesso em ${acessoAnteriorData} no endereço
+						${acessoAnteriorMaquina}.</p>
 					<script>
 						setTimeout(function() {
 							$('#bem-vindo').fadeTo(1000, 0, function() {
@@ -163,6 +164,5 @@
 				</div>
 			</c:if>
 		</div>
-		<input type="hidden" id="idp" name="idp" value="${idp}">
 	</div>
 </siga:pagina>

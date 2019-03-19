@@ -917,7 +917,7 @@
 								src="/siga/css/famfamfam/icons/add.png">
 							</a>
 						</c:if>
-						<h3>Arquivos Auxiliares</h3>
+						Arquivos Auxiliares
 						</div>
 						<div class="card-body">
 						<c:forEach var="mov" items="${m.movs}">

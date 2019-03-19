@@ -4,12 +4,12 @@
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 
-<siga:pagina titulo="Página de Login" desabilitarbusca="sim"
+<siga:pagina titulo="PÃ¡gina de Login" desabilitarbusca="sim"
 	desabilitarmenu="sim"
 	incluirJs="/siga/javascript/jquery.placeholder.js">
 
 	<script type="text/javascript">
-		/*  converte para maiúscula a sigla do estado  */
+		/*  converte para maiï¿ºscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {
 			re = /^[a-zA-Z]{2}\d{3,6}$/;
 			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
@@ -20,51 +20,15 @@
 		}
 	</script>
 
-	<div class="gt-bd gt-cols clearfix">
-
-		<!-- main content -->
-		<div id="gc-ancora" class="gt-content">
-			<c:choose>
-				<c:when test="${f:resource('siga.gc.paginadelogin')}">
-					<c:url var="url" value="/../sigagc/publicKnowledge">
-						<c:param name="tags">^pagina-de-login</c:param>
-						<c:param name="estilo">inplace</c:param>
-						<c:param name="msgvazio">Ainda não existem informações para serem exibidas aqui. Por favor, clique <a
-								href="$1">aqui</a> para contribuir.</c:param>
-						<c:param name="titulo">Página de Login</c:param>
-						<c:param name="ts">${currentTimeMillis}</c:param>
-					</c:url>
-					<script type="text/javascript">
-						SetInnerHTMLFromAjaxResponse("${url}", document.getElementById('gc-ancora'));
-					</script>
-				</c:when>
-				<c:when test="${not empty f:resource('siga.cabecalho.titulo') && fn:contains(f:resource('siga.cabecalho.titulo'), 'Governo do Estado de São Paulo')}">
-					<c:import url="comentarioSP.jsp" />
-				</c:when>
-
-				<c:otherwise>
-					<c:import url="comentario.jsp" />
-				</c:otherwise>
-			</c:choose>
-			<h4>Versão: ${versao}</h4>
-		</div>
-		<!-- / main content -->
-
-		<!-- sidebar -->
-		<div class="gt-sidebar">
-			<!-- login form head -->
-			<div class="gt-mylogin-hd">Identificação</div>
-
-			<!-- login box -->
-			<div class="gt-mylogin-box">
-				<!-- login form -->
-				<form method="post" enctype="application/x-www-form-urlencoded"
-					class="gt-form">
-
+	<div class="container content pt-5">
+		<div class="row justify-content-center">
+			<div class="col col-sm-12 col-md-6">
+				<div class="jumbotron d-block mx-auto">
+					<h2 class="text-center pb-3">Autentica&ccedil;&atilde;o</h2>
 					<c:if test="${not empty mensagem}">
 						<div class="login-invalido">
 							<div class="login-invalido-titulo">
-								<p>${mensagem}</p>
+								<p class="alert alert-danger">${mensagem}</p>
 							</div>
 
 							<div class="login-invalido-descricao">
@@ -73,56 +37,37 @@
 						</div>
 					</c:if>
 
-					<!-- form row -->
-					<div class="gt-form-row">
-						<label class="gt-label">Matrícula</label> <input id="username"
-							type="text" name="username" placeholder="XX99999"
-							onblur="javascript:converteUsuario(this)" class="gt-form-text">
-					</div>
-					<!-- /form row -->
-
-					<!-- form row -->
-					<div class="gt-form-row">
-						<label class="gt-label">Senha</label> <input type="password"
-							name="password" class="gt-form-text">
-					</div>
-					<!-- /form row -->
-
-					<!-- form row -->
-					<div class="gt-form-row">
-						<input type="submit" value="Acessar"
-							class="gt-btn-medium gt-btn-right">
-					</div>
-					<!-- /form row -->
-
-					<p class="gt-forgot-password">
-						<a href="/siga/public/app/usuario/incluir_usuario">Sou um novo
-							usuário</a>
-					</p>
-					<p class="gt-forgot-password">
-						<a href="/siga/public/app/usuario/esqueci_senha">Esqueci minha senha</a>
-					</p>
-				</form>
-				<!-- /login form -->
-			</div>
-			<!-- /login box -->
-
-			<!-- Sidebar Navigation -->
-			<c:if test="${not empty f:resource('siga.cabecalho.titulo') && !fn:contains(f:resource('siga.cabecalho.titulo'), 'Governo do Estado de São Paulo')}">
-				<div class="gt-sidebar-nav gt-sidebar-nav-blue">
-					<h3>Links Úteis</h3>
-					<ul>
-						<li><a href="/siga/arquivos/apostila_sigaex.pdf">Apostila
-								SIGA-Doc</a></li>
-						<li><a href="/siga/arquivos/apostila_sigawf.pdf">Apostila
-								SIGA-Workflow</a></li>
-					</ul>
+					<!---->
+					<form role="form" method="post"
+						enctype="application/x-www-form-urlencoded">
+						<div class="form-group">
+							<label for="username">Usu&aacute;rio</label> <input id="username"
+								type="text" name="username" placeholder="XX99999"
+								onblur="javascript:converteUsuario(this)" autocorrect="off"
+								autocapitalize="none" class="form-control"">
+						</div>
+						<div class="form-group">
+							<label for="password">Senha</label> <input type="password"
+								name="password" id="password" placeholder="Senha"
+								class="form-control">
+						</div>
+						<div class="row pt-3">
+							<div class="col">
+								<div class="text-center">
+									<input type="submit" class="btn btn-primary" value="Enviar"></input>
+									<div class="mt-4">
+										<a href="/siga/public/app/usuario/incluir_usuario"
+											class="btn btn-secondary">Sou um novo usu&aacute;rio</a> <a
+											href="/siga/public/app/usuario/esqueci_senha"
+											class="btn btn-secondary">Esqueci minha senha</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
 				</div>
-			</c:if>
-			<!-- /Sidebar Navigation -->
-			<!-- Sidebar Content -->
+			</div>
 		</div>
-		<!-- / sidebar -->
 	</div>
 	<script type="text/javascript">
 		$('input, textarea').placeholder();

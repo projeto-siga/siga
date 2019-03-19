@@ -18,12 +18,14 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.service;
 
-import br.gov.jfrj.siga.Remote;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.jws.WebMethod;
-import java.util.Date;
-
 import javax.jws.WebService;
+
+import br.gov.jfrj.siga.Remote;
+
 
 @WebService(targetNamespace = "http://impl.service.ex.siga.jfrj.gov.br/")
 public interface ExService extends Remote {
@@ -82,5 +84,13 @@ public interface ExService extends Remote {
 	
 	public String criarDocumento(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma ,String nomeModelo, String classificacaoStr, 
 			String descricaoStr, Boolean eletronico, String nomeNivelDeAcesso, String conteudo, String siglaMobilPai, Boolean finalizar) throws Exception;
+	
+	@WebMethod
+	public String assinarSenhaGravar(String sigla, final Boolean copia, final Boolean juntar, final Boolean tramitar, String nomeUsuarioSubscritor,
+			String senhaUsuarioSubscritor, String siglaCadastrante) throws Exception;
+	
+	@WebMethod
+	public byte[] getArquivo(String arquivo, String tipoArquivo);
+
 
 }

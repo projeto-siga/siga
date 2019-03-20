@@ -45,7 +45,7 @@
 			<div class="gt-content clearfix">
 
 				<div id="caption" class="gt-error-page-hd">
-					<h2>Não Foi Possível Completar a Operação (${pageContext.getRequest().serverName})</h2>
+					<h2>Não Foi Possível Completar a Operação (${pageContext.request.serverName})</h2>
 				</div>
 
 				<div class="gt-content-box">

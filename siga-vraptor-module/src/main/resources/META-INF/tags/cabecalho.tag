@@ -123,6 +123,7 @@ ${meta}
 								matricula="${titular.siglaCompleta}" />
 							<button class="btn btn-outline-light my-2 my-sm-0" type="submit">Buscar</button>
 							<script type="text/javascript">
+								if (false) {
 								var lis = document.getElementsByTagName('li');
 
 								for (var i = 0, li; li = lis[i]; i++) {
@@ -130,21 +131,25 @@ ${meta}
 
 									if (link) {
 										link.onfocus = function() {
-											var ul = this.parentNode.getElementsByTagName('ul')[0];
+											var ul = this.parentNode
+													.getElementsByTagName('ul')[0];
 											if (ul) {
 												ul.style.display = 'block';
 											}
 										}
-										var ul = link.parentNode.getElementsByTagName('ul')[0];
+										var ul = link.parentNode
+												.getElementsByTagName('ul')[0];
 										if (ul) {
-											var ullinks = ul.getElementsByTagName('a');
+											var ullinks = ul
+													.getElementsByTagName('a');
 											var ullinksqty = ullinks.length;
 											var lastItem = ullinks[ullinksqty - 1];
 											if (lastItem) {
 												lastItem.onblur = function() {
 													this.parentNode.parentNode.style.display = 'none';
 													if (this.id == "relclassificados") {
-														var rel = document.getElementById("relatorios");
+														var rel = document
+																.getElementById("relatorios");
 														rel.style.display = 'none';
 													}
 												}
@@ -155,8 +160,10 @@ ${meta}
 										}
 									}
 								}
+								}
 
-								var fld = document.getElementsByName('buscar_genericoSel.sigla')[0];
+								var fld = document
+										.getElementsByName('buscar_genericoSel.sigla')[0];
 								//fld.setAttribute("class", "gt-search-text");
 								//fld.className = "gt-search-text";
 								fld.onfocus = function() {
@@ -173,12 +180,15 @@ ${meta}
 										ajax_buscar_generico();
 								};
 								fld.onkeypress = function(event) {
-									var fid = document.getElementsByName('buscar_genericoSel.id')[0];
+									var fid = document
+											.getElementsByName('buscar_genericoSel.id')[0];
 
 									event = (event) ? event : window.event
-									var keyCode = (event.which) ? event.which : event.keyCode;
+									var keyCode = (event.which) ? event.which
+											: event.keyCode;
 									if (keyCode == 13) {
-										if (fid.value == null || fid.value == "") {
+										if (fid.value == null
+												|| fid.value == "") {
 											fld.onblur();
 										}
 										return false;
@@ -188,11 +198,14 @@ ${meta}
 									}
 								};
 
-								self.resposta_ajax_buscar_generico = function(response, d1, d2, d3) {
-									var sigla = document.getElementsByName('buscar_genericoSel.sigla')[0].value;
+								self.resposta_ajax_buscar_generico = function(
+										response, d1, d2, d3) {
+									var sigla = document
+											.getElementsByName('buscar_genericoSel.sigla')[0].value;
 									var data = response.split(';');
 									if (data[0] == '1') {
-										retorna_buscar_generico(data[1], data[2], data[3]);
+										retorna_buscar_generico(data[1],
+												data[2], data[3]);
 										if (data[1] != null && data[1] != "") {
 											window.location.href = data[3];
 										}
@@ -207,10 +220,66 @@ ${meta}
 				</c:if>
 		</nav>
 
+		<div class="container-fluid content">
+			<div class="row bg-light pt-2 pb-2">
+				<!-- usuário -->
+				<div class="col col-sm-6">
+					<div class="gt-company">
+						<strong>${f:resource('siga.cabecalho.titulo')} <c:catch>
+								<c:if test="${not empty titular.orgaoUsuario.descricao}">- ${titular.orgaoUsuario.descricao}</c:if>
+							</c:catch>
+						</strong>
+					</div>
+					<!-- 
+					<div class="gt-version">
+						Sistema Integrado de Gest&atilde;o Administrativa
+						<c:if test="${not empty env}"> - <span style="color: red">${env}</span>
+						</c:if>
+					</div>
+					 -->
+				</div>
+				<c:if test="${not empty cadastrante}">
+					<div class="col col-sm-6">
+						<div class="text-right">
+							<div>
+								Olá, <strong><c:catch>
+										<c:out default="Convidado"
+											value="${f:maiusculasEMinusculas(cadastrante.nomePessoa)}" />
+										<c:choose>
+											<c:when test="${not empty cadastrante.lotacao}">
+						 - ${cadastrante.lotacao.sigla}</c:when>
+										</c:choose>
+									</c:catch> </strong> <span class="gt-util-separator">|</span> <a
+									href="/siga/public/app/logout">sair</a>
+							</div>
+							<div>
+								<c:catch>
+									<c:choose>
+										<c:when
+											test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong>${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
+											<span class="gt-util-separator">|</span>
+											<a href="/siga/app/substituicao/finalizar">finalizar</a>
+										</c:when>
+										<c:when
+											test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong>${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
+											<span class="gt-util-separator">|</span>
+											<a href="/siga/app/substituicao/finalizar">finalizar</a>
+										</c:when>
+										<c:otherwise></c:otherwise>
+									</c:choose>
+								</c:catch>
+							</div>
+						</div>
+					</div>
+				</c:if>
+			</div>
+		</div>
+
+
 		<div id="quadroAviso"
 			style="position: absolute; font-weight: bold; padding: 4px; color: white; visibility: hidden">-</div>
 
 	</c:if>
-	
+
 	<div id="carregando"
 		style="position: absolute; top: 0px; right: 0px; background-color: red; font-weight: bold; padding: 4px; color: white; display: none">Carregando...</div>

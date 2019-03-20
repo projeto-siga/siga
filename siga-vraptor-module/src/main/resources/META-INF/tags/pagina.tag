@@ -11,7 +11,6 @@
 <%@ attribute name="incluirJs"%>
 <%@ attribute name="compatibilidade"%>
 <%@ attribute name="desabilitarComplementoHEAD"%>
-
 <c:if test="${not empty pagina_de_erro}">
 	<c:set var="pagina_de_erro" scope="request" value="${pagina_de_erro}" />
 </c:if>
@@ -20,8 +19,11 @@
 
 <siga:cabecalho titulo="${titulo}" popup="${popup}" meta="${meta}"
 	onLoad="${onLoad}" desabilitarbusca="${desabilitarbusca}"
-	desabilitarmenu="${desabilitarmenu}" incluirJs="${incluirJs}" 
-	compatibilidade="${compatibilidade}" desabilitarComplementoHEAD="${desabilitarComplementoHEAD}"/>
+	desabilitarmenu="${desabilitarmenu}" incluirJs="${incluirJs}"
+	compatibilidade="${compatibilidade}"
+	desabilitarComplementoHEAD="${desabilitarComplementoHEAD}" />
+
+
 
 <jsp:doBody />
 

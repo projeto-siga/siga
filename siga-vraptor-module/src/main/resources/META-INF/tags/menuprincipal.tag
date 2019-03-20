@@ -35,8 +35,7 @@
 	}
 </script>
 
-<li ng-show="alreadyLoggedIn() &amp;&amp; usuario.refEmpresa"
-	class="nav-item dropdown"><a href="javascript:void(0);"
+<li class="nav-item dropdown"><a href="javascript:void(0);"
 	class="nav-link dropdown-toggle" data-toggle="dropdown"> Siga </a>
 	<ul class="dropdown-menu">
 		<li class="dropdown-submenu"><a href="javascript:void(0);"
@@ -298,12 +297,12 @@
 				</c:otherwise>
 			</c:choose></li>
 
-		<li><a class="dropdown-item" href="/siga/?GLO=true">Logoff</a></li>
+		<li><a class="dropdown-item" href="/siga/public/app/logout">Logoff</a></li>
 	</ul></li>
 
 <!-- insert menu -->
+<c:import url="/paginas/menus/menu.jsp"></c:import>
 <c:if test="${false}">
-	<c:import url="/paginas/menus/menu.jsp"></c:import>
 </c:if>
 
 

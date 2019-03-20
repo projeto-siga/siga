@@ -128,15 +128,3 @@
 			</c:if>
 		</c:forEach>
 </table>
-
-<c:if test="${apenasQuadro != true}">
-	<div class="mt-2">
-		<a class="btn btn-primary float-right btn-sm ml-2"
-			href="javascript: window.location.href='${pageContext.request.contextPath}/app/expediente/doc/editar'"
-			title="Criar novo expediente ou processo administrativo"> Novo
-			Documento </a> <a class="btn btn-primary float-right btn-sm ml-2"
-			href="javascript: window.location.href='${pageContext.request.contextPath}/app/expediente/doc/listar?primeiraVez=sim'"
-			title="Pesquisar expedientes e processos administrativos">
-			Pesquisar Documentos </a>
-	</div>
-</c:if>

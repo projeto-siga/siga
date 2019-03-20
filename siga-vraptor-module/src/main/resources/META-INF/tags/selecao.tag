@@ -244,13 +244,13 @@ self.ajax_${propriedade}${tipoSel} = function() {
 <input type="search" name="${inputNameTipoSel}.sigla" value="<c:out value="${requestScope[propriedadeTipoSel].sigla}"/>" id="formulario_${inputNameTipoSel}_sigla" 
 	onkeypress="return handleEnter(this, event)" ${requiredValue}
 	onblur="javascript: ajax_${propriedade}${tipoSel}();" <c:if test="${not empty onblur}">${onblur};</c:if> size="25"
-	onchange="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>" class="form-control mr-sm-2"
+	onchange="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>" class="form-control mr-sm-2" style="max-width: 10em; display: inline-block;"
 	${disabledTxt} />	
 	
 <c:if test="${buscar != 'nao'}">
 	<input type="button" id="${propriedade}${tipoSel}SelButton" value="..."
 		onclick="javascript: popitup_${propriedade}${tipoSel}('');"
-		${disabledBtn} theme="simple">
+		${disabledBtn} class="btn btn-outline-secondary">
 </c:if>
 
 <c:if test="${ocultardescricao != 'sim'}">

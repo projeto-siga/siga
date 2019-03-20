@@ -3,64 +3,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
-
 <siga:pagina titulo="P&aacute;gina Inicial"
 	incluirJs="/siga/javascript/principal.js">
 
 	<div class="container-fluid content">
-		<div class="row bg-light pt-2 pb-2">
-			<!-- usuário -->
-			<div class="col col-sm-6">
-				<div class="gt-company">
-					<strong>${f:resource('siga.cabecalho.titulo')} <c:catch>
-							<c:if test="${not empty titular.orgaoUsuario.descricao}">- ${titular.orgaoUsuario.descricao}</c:if>
-						</c:catch>
-					</strong>
-				</div>
-				<!-- 
-					<div class="gt-version">
-						Sistema Integrado de Gest&atilde;o Administrativa
-						<c:if test="${not empty env}"> - <span style="color: red">${env}</span>
-						</c:if>
-					</div>
-					 -->
-			</div>
-			<c:if test="${not empty cadastrante}">
-				<div class="col col-sm-6">
-					<div class="text-right">
-						<div>
-							Olá, <strong><c:catch>
-									<c:out default="Convidado"
-										value="${f:maiusculasEMinusculas(cadastrante.nomePessoa)}" />
-									<c:choose>
-										<c:when test="${not empty cadastrante.lotacao}">
-						 - ${cadastrante.lotacao.sigla}</c:when>
-									</c:choose>
-								</c:catch> </strong> <span class="gt-util-separator">|</span> <a
-								href="/sigaidp/jwt/logout">sair</a>
-						</div>
-						<div>
-							<c:catch>
-								<c:choose>
-									<c:when
-										test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong>${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
-										<span class="gt-util-separator">|</span>
-										<a href="/siga/app/substituicao/finalizar">finalizar</a>
-									</c:when>
-									<c:when
-										test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong>${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
-										<span class="gt-util-separator">|</span>
-										<a href="/siga/app/substituicao/finalizar">finalizar</a>
-									</c:when>
-									<c:otherwise></c:otherwise>
-								</c:choose>
-							</c:catch>
-						</div>
-					</div>
-				</div>
-			</c:if>
-		</div>
-
 		<c:if test="${not empty acessoAnteriorData}">
 			<div class="row">
 				<div class="col">
@@ -112,6 +58,18 @@
 							</div>
 						</div>
 					</div>
+
+					<div class="mt-2">
+						<a class="btn btn-primary float-right btn-sm ml-2"
+							href="javascript: window.location.href='/sigaex/app/expediente/doc/editar'"
+							title="Criar novo expediente ou processo administrativo">
+							Novo Documento </a> <a
+							class="btn btn-primary float-right btn-sm ml-2"
+							href="javascript: window.location.href='/sigaex/app/expediente/doc/listar?primeiraVez=sim'"
+							title="Pesquisar expedientes e processos administrativos">
+							Pesquisar Documentos </a>
+					</div>
+
 				</div>
 			</c:if>
 			<c:if

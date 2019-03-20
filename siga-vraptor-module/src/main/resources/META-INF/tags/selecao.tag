@@ -25,7 +25,7 @@
 <%@ attribute name="prefix" required="false"%>
 <%@ attribute name="matricula" required="false"%>
 
-<%@ attribute name="requiredValue" required="false" %>
+<%@ attribute name="requiredValue" required="false"%>
 
 <c:if test="${propriedade != null}">
 	<c:set var="propriedade" value="${fn:replace(propriedade,'.','')}" />
@@ -47,7 +47,8 @@
 
 <c:choose>
 	<c:when test="${empty tipo}">
-		<c:set var="acaoBusca" value="${requestScope[propriedadeSel].acaoBusca}" />
+		<c:set var="acaoBusca"
+			value="${requestScope[propriedadeSel].acaoBusca}" />
 		<c:set var="tipoSel" value="" scope="request" />
 	</c:when>
 	<c:otherwise>
@@ -222,8 +223,8 @@ self.ajax_${propriedade}${tipoSel} = function() {
 
 <c:if test="${tema != 'simple'}">
 	<tr>
-	<td>${titulo}</td>
-	<td>
+		<td>${titulo}</td>
+		<td>
 </c:if>
 <c:choose>
 	<c:when test="${desativar == 'sim'}">
@@ -235,60 +236,76 @@ self.ajax_${propriedade}${tipoSel} = function() {
 <c:if test="${empty onblur}">
 	<c:set var="onblur" value="${onchange}"></c:set>
 </c:if>
+<div class="form-control" style="padding: 0; height: 2.35em;">
+	<input type="hidden" name="req${inputNameTipoSel}" value=""
+		id="formulario_req${inputNameTipoSel}" /> <input type="hidden"
+		name="alterouSel" value="" id="alterouSel" /> <input type="hidden"
+		name="${inputNameTipoSel}.id"
+		value="<c:out value="${requestScope[propriedadeTipoSel].id}"/>"
+		id="formulario_${inputNameTipoSel}_id" /> <input type="hidden"
+		name="${inputNameTipoSel}.descricao"
+		value="<c:out value="${requestScope[propriedadeTipoSel].descricao}"/>"
+		id="formulario_${inputNameTipoSel}_descricao" /> <input type="hidden"
+		name="${inputNameTipoSel}.buscar"
+		value="<c:out value="${requestScope[propriedadeTipoSel].buscar}"/>"
+		id="formulario_${inputNameTipoSel}_buscar" /> <input type="search"
+		name="${inputNameTipoSel}.sigla"
+		value="<c:out value="${requestScope[propriedadeTipoSel].sigla}"/>"
+		id="formulario_${inputNameTipoSel}_sigla"
+		onkeypress="return handleEnter(this, event)" ${requiredValue}
+		onblur="javascript: ajax_${propriedade}${tipoSel}();"
+		<c:if test="${not empty onblur}">${onblur};</c:if> size="25"
+		onchange="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>"
+		class="mr-sm-2"
+		style="border: none; max-width: 10em; display: inline-block; margin: 1px; padding-left: 0.5em; height: 2.0em;"
+		${disabledTxt} />
 
-<input type="hidden" name="req${inputNameTipoSel}" value="" id="formulario_req${inputNameTipoSel}" />
-<input type="hidden" name="alterouSel" value="" id="alterouSel" />
-<input type="hidden" name="${inputNameTipoSel}.id" value="<c:out value="${requestScope[propriedadeTipoSel].id}"/>" id="formulario_${inputNameTipoSel}_id"/>
-<input type="hidden" name="${inputNameTipoSel}.descricao" value="<c:out value="${requestScope[propriedadeTipoSel].descricao}"/>" id="formulario_${inputNameTipoSel}_descricao"/>
-<input type="hidden" name="${inputNameTipoSel}.buscar" value="<c:out value="${requestScope[propriedadeTipoSel].buscar}"/>" id="formulario_${inputNameTipoSel}_buscar"/>
-<input type="search" name="${inputNameTipoSel}.sigla" value="<c:out value="${requestScope[propriedadeTipoSel].sigla}"/>" id="formulario_${inputNameTipoSel}_sigla" 
-	onkeypress="return handleEnter(this, event)" ${requiredValue}
-	onblur="javascript: ajax_${propriedade}${tipoSel}();" <c:if test="${not empty onblur}">${onblur};</c:if> size="25"
-	onchange="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>" class="form-control mr-sm-2" style="max-width: 10em; display: inline-block;"
-	${disabledTxt} />	
-	
-<c:if test="${buscar != 'nao'}">
-	<input type="button" id="${propriedade}${tipoSel}SelButton" value="..."
-		onclick="javascript: popitup_${propriedade}${tipoSel}('');"
-		${disabledBtn} class="btn btn-outline-secondary">
-</c:if>
+	<c:if test="${buscar != 'nao'}">
+		<input type="button" id="${propriedade}${tipoSel}SelButton"
+			value="..."
+			onclick="javascript: popitup_${propriedade}${tipoSel}('');"
+			${disabledBtn} class="btn btn-sm btn-link" style="height: 2.0em;">
+	</c:if>
 
-<c:if test="${ocultardescricao != 'sim'}">
-	<span id="${spanName}SelSpan">
-		<c:out value="${requestScope[propriedadeTipoSel].descricao}" escapeXml="false" />
-	</span>
-</c:if>
+	<c:if test="${ocultardescricao != 'sim'}">
+		<span style="width: 100%; display: inline" id="${spanName}SelSpan">
+			<c:out value="${requestScope[propriedadeTipoSel].descricao}"
+				escapeXml="false" />
+		</span>
+	</c:if>
 
 
-<c:if test="${not empty tipo}">
-	<c:choose>
-		<c:when test="${empty idInicial}">
-		    <c:set var="idSubstTexto" value="${propriedadeTipoSel}.id" />
-			<c:set var="idSubst" value="${requestScope[idSubstTexto]}" />
-		</c:when>
-		<c:otherwise>
-			<c:set var="idSubst" value="${idInicial}" />
-		</c:otherwise>
-	</c:choose>
-	<c:choose>
-		<c:when test="${empty siglaInicial}">
-			<c:set var="siglaSubstTexto" value="${propriedadeTipoSel}.sigla" />
-			<c:set var="siglaSubst" value="${requestScope[siglaSubstTexto]}" />
-		</c:when>
-		<c:otherwise>
-			<c:set var="siglaSubst" value="${siglaInicial}" />
-		</c:otherwise>
-	</c:choose>
-	<c:choose>
-		<c:when test="${empty descricaoInicial}">
-			<c:set var="descricaoSubstTexto" value="${propriedadeTipoSel}.descricao" />
-			<c:set var="descricaoSubst"  value="${requestScope[descricaoSubstTexto]}" />
-		</c:when>
-		<c:otherwise>
-			<c:set var="descricaoSubst" value="${descricaoInicial}" />
-		</c:otherwise>
-	</c:choose>
-	<script type="text/javascript">
+	<c:if test="${not empty tipo}">
+		<c:choose>
+			<c:when test="${empty idInicial}">
+				<c:set var="idSubstTexto" value="${propriedadeTipoSel}.id" />
+				<c:set var="idSubst" value="${requestScope[idSubstTexto]}" />
+			</c:when>
+			<c:otherwise>
+				<c:set var="idSubst" value="${idInicial}" />
+			</c:otherwise>
+		</c:choose>
+		<c:choose>
+			<c:when test="${empty siglaInicial}">
+				<c:set var="siglaSubstTexto" value="${propriedadeTipoSel}.sigla" />
+				<c:set var="siglaSubst" value="${requestScope[siglaSubstTexto]}" />
+			</c:when>
+			<c:otherwise>
+				<c:set var="siglaSubst" value="${siglaInicial}" />
+			</c:otherwise>
+		</c:choose>
+		<c:choose>
+			<c:when test="${empty descricaoInicial}">
+				<c:set var="descricaoSubstTexto"
+					value="${propriedadeTipoSel}.descricao" />
+				<c:set var="descricaoSubst"
+					value="${requestScope[descricaoSubstTexto]}" />
+			</c:when>
+			<c:otherwise>
+				<c:set var="descricaoSubst" value="${descricaoInicial}" />
+			</c:otherwise>
+		</c:choose>
+		<script type="text/javascript">
 		document.getElementsByName('${inputNameTipoSel}.id')[0].value = '${idSubst}';
 		document.getElementsByName('${inputNameTipoSel}.sigla')[0].value = '${siglaSubst}';
 		document.getElementsByName('${inputNameTipoSel}.descricao')[0].value = "${descricaoSubst}";
@@ -296,7 +313,8 @@ self.ajax_${propriedade}${tipoSel} = function() {
 			document.getElementById('${spanName}SelSpan').innerHTML = "${descricaoSubst}";
 		</c:if>
 	</script>
-</c:if>
+	</c:if>
+</div>
 
 <c:if test="${tema != 'simple'}">
 	</td>

@@ -121,45 +121,46 @@ ${meta}
 								ocultardescricao="sim" buscar="nao" siglaInicial=""
 								modulo="siga/public" urlAcao="buscar" urlSelecionar="selecionar"
 								matricula="${titular.siglaCompleta}" />
-							<button class="btn btn-outline-light my-2 my-sm-0" type="submit">Buscar</button>
+							<button class="btn btn-outline-light ml-2 my-2 my-sm-0" type="submit">Buscar</button>
 							<script type="text/javascript">
 								if (false) {
-								var lis = document.getElementsByTagName('li');
+									var lis = document
+											.getElementsByTagName('li');
 
-								for (var i = 0, li; li = lis[i]; i++) {
-									var link = li.getElementsByTagName('a')[0];
+									for (var i = 0, li; li = lis[i]; i++) {
+										var link = li.getElementsByTagName('a')[0];
 
-									if (link) {
-										link.onfocus = function() {
-											var ul = this.parentNode
+										if (link) {
+											link.onfocus = function() {
+												var ul = this.parentNode
+														.getElementsByTagName('ul')[0];
+												if (ul) {
+													ul.style.display = 'block';
+												}
+											}
+											var ul = link.parentNode
 													.getElementsByTagName('ul')[0];
 											if (ul) {
-												ul.style.display = 'block';
-											}
-										}
-										var ul = link.parentNode
-												.getElementsByTagName('ul')[0];
-										if (ul) {
-											var ullinks = ul
-													.getElementsByTagName('a');
-											var ullinksqty = ullinks.length;
-											var lastItem = ullinks[ullinksqty - 1];
-											if (lastItem) {
-												lastItem.onblur = function() {
-													this.parentNode.parentNode.style.display = 'none';
-													if (this.id == "relclassificados") {
-														var rel = document
-																.getElementById("relatorios");
-														rel.style.display = 'none';
+												var ullinks = ul
+														.getElementsByTagName('a');
+												var ullinksqty = ullinks.length;
+												var lastItem = ullinks[ullinksqty - 1];
+												if (lastItem) {
+													lastItem.onblur = function() {
+														this.parentNode.parentNode.style.display = 'none';
+														if (this.id == "relclassificados") {
+															var rel = document
+																	.getElementById("relatorios");
+															rel.style.display = 'none';
+														}
 													}
-												}
-												lastItem.parentNode.onblur = function() {
-													this.parentNode.style.display = '';
+													lastItem.parentNode.onblur = function() {
+														this.parentNode.style.display = '';
+													}
 												}
 											}
 										}
 									}
-								}
 								}
 
 								var fld = document
@@ -221,7 +222,7 @@ ${meta}
 		</nav>
 
 		<div class="container-fluid content">
-			<div class="row bg-light pt-2 pb-2">
+			<div class="row bg-light pt-2 pb-2 mb-3">
 				<!-- usuário -->
 				<div class="col col-sm-6">
 					<div class="gt-company">

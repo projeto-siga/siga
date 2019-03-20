@@ -697,3 +697,7 @@ DIV.card-sidebar DIV.card-body P {
 	margin-left: .1rem;
 	margin-right: .1rem;
 }
+
+div.form-group label {
+	margin-bottom: .10em;
+}

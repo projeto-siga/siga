@@ -5,12 +5,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -24,6 +28,7 @@ import br.gov.jfrj.siga.dp.CpUF;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class Excel {
@@ -317,6 +322,14 @@ public class Excel {
     	return retorno;
     }
     
+    public Boolean validarCaracter(String celula) {
+    	Boolean retorno = Boolean.TRUE;
+    	if(!celula.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ ]+")) {
+    		retorno = Boolean.FALSE;
+    	}
+    	return retorno;
+    }
+    
     public String retornaConteudo(Cell cell) {
     	String retorno = null;
     	
@@ -530,4 +543,347 @@ public class Excel {
 		}
 		return "";
 	}
+    
+    public InputStream uploadPessoa(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+		InputStream retorno = null;
+		retorno = uploadExcelPessoa(file, orgaoUsuario);
+
+		return retorno;
+	}
+    
+    public InputStream uploadExcelPessoa(File file, CpOrgaoUsuario orgaoUsuario) {
+    	InputStream inputStream = null;
+    	StringBuffer problemas = new StringBuffer();
+
+    	orgaoUsuario = CpDao.getInstance().consultarPorId(orgaoUsuario);
+    	try {
+			FileInputStream fis = new FileInputStream(file); 
+			XSSFWorkbook myWorkBook = new XSSFWorkbook (fis); 
+			XSSFSheet mySheet = myWorkBook.getSheetAt(0); 
+			Iterator<Row> rowIterator = mySheet.iterator(); 
+			String celula;
+			Integer linha = 0;
+//			List<String> nomes = new ArrayList();
+			List<DpPessoa> lista = new ArrayList(); 
+			Date data = new Date(System.currentTimeMillis());
+			DpCargo cargo = new DpCargo();
+			List<DpCargo> listaCargo = new ArrayList<DpCargo>();
+			List<DpFuncaoConfianca> listaFuncao = new ArrayList<DpFuncaoConfianca>();
+			List<DpLotacao> listaLotacao = new ArrayList<DpLotacao>();
+			DpFuncaoConfianca funcao = new DpFuncaoConfianca();
+			DpLotacao lotacao = new DpLotacao();
+			String cpf = "";
+			String dataString;
+			SimpleDateFormat formato = new SimpleDateFormat("ddMMyyyy");
+			Date date = null;
+			List<String> listaEmail = new ArrayList<String>();
+			List<String> listaCPF = new ArrayList<String>();
+			
+			while (rowIterator.hasNext()) {
+				linha++;
+				DpPessoa pessoa = new DpPessoa();
+				DpPessoa pe = new DpPessoa();
+				cargo = new DpCargo();
+				funcao = new DpFuncaoConfianca();
+				lotacao = new DpLotacao();
+				Row row = rowIterator.next(); //linha
+				
+				Iterator<Cell> cellIterator = row.cellIterator();
+				Cell cell;
+				
+				//SIGLA DO ORGAO				
+				celula = retornaConteudo(row.getCell(0, Row.CREATE_NULL_AS_BLANK));
+				if("".equals(celula.trim())) {
+					problemas.append("Linha " + linha +": ÓRGÃO em branco" + System.getProperty("line.separator"));
+				} else {
+					if(!celula.equalsIgnoreCase(orgaoUsuario.getSiglaOrgaoUsu())) {
+						problemas.append("Linha " + linha +": ÓRGÃO inválido" + System.getProperty("line.separator"));
+					}
+				}
+
+				//NOME DO CARGO
+				celula = retornaConteudo(row.getCell(1, Row.CREATE_NULL_AS_BLANK));
+				if(!"".equals(celula.trim())) {
+					cargo.setOrgaoUsuario(orgaoUsuario);
+					cargo.setNomeCargo(Texto.removeAcento(Texto.removerEspacosExtra(celula).trim()));
+					
+					for(DpCargo c : listaCargo) {
+						if(c.getNomeCargoAI().equalsIgnoreCase(cargo.getNomeCargo())) {
+							cargo = c;
+						}
+					}
+					if(cargo.getDataInicio() == null) {
+						cargo = CpDao.getInstance().consultarPorNomeOrgao(cargo);	
+					}
+										
+					if(cargo == null) {
+						problemas.append("Linha " + linha +": CARGO não cadastrado" + System.getProperty("line.separator"));
+					} else {
+						listaCargo.add(cargo);
+					}
+					if(cargo != null && cargo.getDataFimCargo() != null) {
+						problemas.append("Linha " + linha +": CARGO inativo" + System.getProperty("line.separator"));
+					}
+				} else {
+					problemas.append("Linha " + linha +": CARGO em branco" + System.getProperty("line.separator"));
+				}
+				
+				//NOME FUNCAO DE CONFIANCA
+				celula = retornaConteudo(row.getCell(2, Row.CREATE_NULL_AS_BLANK));
+				if(!"".equals(celula.trim())) {
+					funcao.setOrgaoUsuario(orgaoUsuario);
+					funcao.setNomeFuncao(Texto.removeAcento(Texto.removerEspacosExtra(celula).trim()));
+					
+					for(DpFuncaoConfianca f : listaFuncao) {
+						if(f.getNmFuncaoConfiancaAI().equalsIgnoreCase(funcao.getNomeFuncao())) {
+							funcao = f;
+						}
+					}
+					
+					if(funcao.getDataInicio() == null) {
+						funcao = CpDao.getInstance().consultarPorNomeOrgao(funcao);	
+					}
+					
+					if(funcao == null) {
+						problemas.append("Linha " + linha +": FUNÇÃO DE CONFIANÇA não cadastrada" + System.getProperty("line.separator"));
+					} else {
+						listaFuncao.add(funcao);
+					}
+					
+					if(funcao != null && funcao.getDataFimFuncao() != null) {
+						problemas.append("Linha " + linha +": FUNÇÃO DE CONFIANÇA inativa" + System.getProperty("line.separator"));
+					}
+				} else {
+					problemas.append("Linha " + linha +": FUNÇÃO DE CONFIANÇA em branco" + System.getProperty("line.separator"));
+				}
+				
+				//NOME DA LOTACAO
+				celula = retornaConteudo(row.getCell(3, Row.CREATE_NULL_AS_BLANK));
+				if(!"".equals(celula.trim())) {
+					lotacao.setOrgaoUsuario(orgaoUsuario);
+					lotacao.setNomeLotacao(Texto.removeAcento(Texto.removerEspacosExtra(celula).trim()));
+										
+					for(DpLotacao l : listaLotacao) {
+						if(l.getNomeLotacaoAI().equalsIgnoreCase(lotacao.getNomeLotacao())) {
+							lotacao = l;
+						}
+					}
+					
+					if(lotacao.getDataInicio() == null) {
+						lotacao = CpDao.getInstance().consultarPorNomeOrgao(lotacao);	
+					}					
+					
+					if(lotacao == null) {
+						problemas.append("Linha " + linha +": LOTAÇÃO não cadastrado" + System.getProperty("line.separator"));
+					} else {
+						listaLotacao.add(lotacao);
+					}
+					
+					if(lotacao != null && lotacao.getDataFimLotacao() != null) {
+						problemas.append("Linha " + linha +": LOTAÇÃO inativo" + System.getProperty("line.separator"));
+					}
+				} else {
+					problemas.append("Linha " + linha +": LOTAÇÃO em branco" + System.getProperty("line.separator"));
+				}
+				
+				//NOME DA PESSOA
+				celula = retornaConteudo(row.getCell(4, Row.CREATE_NULL_AS_BLANK));
+				problemas.append(validarNomePessoa(celula.trim(), linha, 60));
+				
+				if(problemas == null || "".equals(problemas.toString())) {
+					pe.setNomePessoa(celula.trim());
+				}
+				
+				//DATA DE NASCIMENTO
+				if(retornaConteudo(row.getCell(5, Row.CREATE_NULL_AS_BLANK)) != "") {
+					if(row.getCell(5).getCellType() == HSSFCell.CELL_TYPE_NUMERIC && HSSFDateUtil.isCellDateFormatted(row.getCell(5, Row.CREATE_NULL_AS_BLANK))){
+						date = row.getCell(5).getDateCellValue();
+						
+						if(date.compareTo(new Date()) > 0) {
+			    			problemas.append( "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.getProperty("line.separator"));
+			    		}
+					} else {
+						problemas.append("Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.getProperty("line.separator"));
+					}
+				}
+				//CPF
+				celula = retornaConteudo(row.getCell(6, Row.CREATE_NULL_AS_BLANK));
+				cpf = celula.replaceAll("[^0-9]", "");
+				if(!"".equals(cpf.trim())) {
+					
+					pessoa = CpDao.getInstance().consultarPorCpf(Long.valueOf(cpf));
+					
+					if(pessoa != null) {
+						problemas.append("Linha " + linha +": CPF já cadastrado" + System.getProperty("line.separator"));
+					}
+					
+					if(!validarCPF(cpf)) {
+						problemas.append("Linha " + linha +": CPF inválido" + System.getProperty("line.separator"));
+					}
+					
+					if(listaCPF.contains(cpf)) {
+						problemas.append("Linha " + linha +": CPF repetido em outra linha do arquivo" + System.getProperty("line.separator"));
+					}
+					listaCPF.add(cpf);
+				} else {
+					problemas.append("Linha " + linha +": CPF em branco" + System.getProperty("line.separator"));
+				}
+				
+				//EMAIL
+				celula = retornaConteudo(row.getCell(7, Row.CREATE_NULL_AS_BLANK)).trim();
+				
+				if(!"".equals(celula.trim())) {
+					
+					pessoa = CpDao.getInstance().consultarPorEmail(celula);
+					
+					if(pessoa != null) {
+						problemas.append("Linha " + linha +": E-MAIL já cadastrado" + System.getProperty("line.separator"));
+					}
+					
+					if(!celula.contains("@") || celula.indexOf("@") + 1 >= celula.length() || celula.indexOf("@") == 0) {
+						problemas.append("Linha " + linha +": E-MAIL inválido" + System.getProperty("line.separator"));
+					}
+					
+					if(celula.length() > 60) {
+						problemas.append("Linha " + linha +": E-MAIL com mais de 60 caracteres" + System.getProperty("line.separator"));
+					}
+					
+					if(listaEmail.contains(celula)) {
+						problemas.append("Linha " + linha +": E-MAIL repetido em outra linha do arquivo" + System.getProperty("line.separator"));
+					}
+					listaEmail.add(celula);
+				} else {
+					problemas.append("Linha " + linha +": E-MAIL em branco" + System.getProperty("line.separator"));
+				}
+				
+				if(problemas == null || "".equals(problemas.toString())) {
+					pe.setEmailPessoa(celula);
+					pe.setDataNascimento(date);
+					pe.setCpfPessoa(Long.valueOf(cpf));
+					pe.setOrgaoUsuario(orgaoUsuario);
+					pe.setLotacao(lotacao);
+					pe.setCargo(cargo);
+					pe.setFuncaoConfianca(funcao);
+					pe.setEmailPessoa(celula);
+					pe.setDataInicio(data);
+					pe.setSesbPessoa(orgaoUsuario.getSigla());
+					pe.setMatricula(Long.valueOf(0));
+					lista.add(pe);
+				}
+			}
+			if(problemas == null || "".equals(problemas.toString())) {
+				try {
+					CpDao.getInstance().iniciarTransacao();
+	            	for (DpPessoa dpPessoa : lista) {
+		    			CpDao.getInstance().gravar(dpPessoa);
+
+	    				if(dpPessoa.getIdPessoaIni() == null && dpPessoa.getId() != null) {
+	    					dpPessoa.setIdPessoaIni(dpPessoa.getId());
+	    					dpPessoa.setIdePessoa(dpPessoa.getId().toString());
+	    					dpPessoa.setMatricula(10000 + dpPessoa.getId());	
+	        				CpDao.getInstance().gravar(dpPessoa);
+	        			}
+					}
+	    			CpDao.getInstance().commitTransacao();			
+	    		} catch (final Exception e) {
+	    			CpDao.getInstance().rollbackTransacao();
+	    			throw new AplicacaoException("Erro na gravação", 0, e);
+	    		}
+			}
+		} catch (Exception ioe) {
+            ioe.printStackTrace();
+        }
+    	if(problemas == null || "".equals(problemas.toString())) {
+    		return null;
+    	}
+    	inputStream = new ByteArrayInputStream(problemas.toString().getBytes());
+    	return inputStream;
+    }
+    
+    public String validarData(String data, Integer linha, Integer tamanho) {
+    	
+    	data = data.replaceAll("[^0-9]", "");
+
+    	if(data.length() > 8) {
+    		return "Linha " + linha + ": DATA DE NASCIMENTO formato inválido" + System.getProperty("line.separator");
+    	}
+    	
+    	SimpleDateFormat formato = new SimpleDateFormat("ddMMyyyy");
+    	Date date = null;
+    	try {
+    		date = formato.parse(data);
+    	} catch (Exception e) {
+    		return "Linha " + linha + ": DATA DE NASCIMENTO formato inválido" + System.getProperty("line.separator");
+    	}
+    	
+    	return "";
+    }
+    
+    public String validarNomePessoa(String nomePessoa, Integer linha, Integer tamanho) {
+    	
+		if("".equals(nomePessoa)) {
+			return "Linha " + linha +": NOME em branco" + System.getProperty("line.separator");
+		} 
+		
+		if(nomePessoa.length() > tamanho){
+			return "Linha " + linha +": NOME com mais de 60 caracteres" + System.getProperty("line.separator");
+		}
+
+		if(!validarCaracter(nomePessoa)) {
+			return "Linha " + linha +": NOME com número ou caracteres especiais" + System.getProperty("line.separator");
+		}
+		return "";
+	}    
+    
+    public boolean validarCPF(String CPF) {
+        // considera-se erro CPF's formados por uma sequencia de numeros iguais
+        if (CPF.equals("00000000000") ||
+            CPF.equals("11111111111") ||
+            CPF.equals("22222222222") || CPF.equals("33333333333") ||
+            CPF.equals("44444444444") || CPF.equals("55555555555") ||
+            CPF.equals("66666666666") || CPF.equals("77777777777") ||
+            CPF.equals("88888888888") || CPF.equals("99999999999") ||
+            (CPF.length() != 11))
+            return(false);
+          
+        char dig10, dig11;
+        int sm, i, r, num, peso;
+          
+        try {
+        // Calculo do 1o. Digito Verificador
+            sm = 0;
+            peso = 10;
+            for (i=0; i<9; i++) {              
+	            num = (int)(CPF.charAt(i) - 48); 
+	            sm = sm + (num * peso);
+	            peso = peso - 1;
+            }
+          
+            r = 11 - (sm % 11);
+            if ((r == 10) || (r == 11))
+                dig10 = '0';
+            else dig10 = (char)(r + 48); // converte no respectivo caractere numerico
+          
+        // Calculo do 2o. Digito Verificador
+            sm = 0;
+            peso = 11;
+            for(i=0; i<10; i++) {
+	            num = (int)(CPF.charAt(i) - 48);
+	            sm = sm + (num * peso);
+	            peso = peso - 1;
+            }
+          
+            r = 11 - (sm % 11);
+            if ((r == 10) || (r == 11))
+                 dig11 = '0';
+            else dig11 = (char)(r + 48);
+          
+        // Verifica se os digitos calculados conferem com os digitos informados.
+            if ((dig10 == CPF.charAt(9)) && (dig11 == CPF.charAt(10)))
+                 return(true);
+            else return(false);
+        } catch (InputMismatchException erro) {
+            return(false);
+        }
+    }
 }

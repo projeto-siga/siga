@@ -759,6 +759,7 @@ var process = {
 	},
 	finalize : function() {
 		this.dialogo.dialog('destroy');
+		gAssinando = false;
 	},
 	nextStep : function() {
 		if (typeof this.steps[this.index] == 'string')

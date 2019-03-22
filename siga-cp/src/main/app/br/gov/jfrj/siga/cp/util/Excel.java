@@ -338,7 +338,7 @@ public class Excel {
 				retorno = cell.getStringCellValue();
 				break; 
 			case Cell.CELL_TYPE_NUMERIC:
-				retorno = String.valueOf((int)cell.getNumericCellValue());
+				retorno = String.valueOf(((Double)cell.getNumericCellValue()).longValue());
 				break; 
 			case Cell.CELL_TYPE_BLANK:
 				retorno = "";

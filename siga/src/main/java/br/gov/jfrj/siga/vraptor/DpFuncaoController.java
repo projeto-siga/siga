@@ -113,13 +113,15 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			}
 			dpFuncao.setIdOrgaoUsu(idOrgaoUsu);
 			dpFuncao.setNome(Texto.removeAcento(nome));
-			setItens(CpDao.getInstance().consultarPorFiltro(dpFuncao, offset, 10));
+			setItens(CpDao.getInstance().consultarPorFiltro(dpFuncao, offset, 15));
 			result.include("itens", getItens());
 			result.include("tamanho", dao().consultarQuantidade(dpFuncao));
 			
 			result.include("idOrgaoUsu", idOrgaoUsu);
 			result.include("nome", nome);
 		}
+		setItemPagina(15);
+		result.include("currentPageNumber", calculaPaginaAtual(offset));
 	}
 	
 	@Get("/app/funcao/editar")

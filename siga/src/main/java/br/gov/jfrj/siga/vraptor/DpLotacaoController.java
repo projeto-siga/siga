@@ -185,13 +185,15 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			dpLotacao.setIdOrgaoUsu(idOrgaoUsu);
 			dpLotacao.setNome(Texto.removeAcento(nome));
 			dpLotacao.setBuscarFechadas(Boolean.TRUE);
-			setItens(CpDao.getInstance().consultarPorFiltro(dpLotacao, offset, 10));
+			setItens(CpDao.getInstance().consultarPorFiltro(dpLotacao, offset, 15));
 			result.include("itens", getItens());
 			result.include("tamanho", dao().consultarQuantidade(dpLotacao));
 			
 			result.include("idOrgaoUsu", idOrgaoUsu);
 			result.include("nome", nome);
 		}
+		setItemPagina(15);
+		result.include("currentPageNumber", calculaPaginaAtual(offset));
 	}
 	
 	@Get("/app/lotacao/editar")

@@ -10,6 +10,7 @@ public class ValidateResponse {
 	private String cn;
 	private String policy;
 	private String errormsg;
+	private String status;
 
 	private Map<String, String> certdetails = new TreeMap<>();
 
@@ -65,5 +66,13 @@ public class ValidateResponse {
 
 	public void setCertdetails(Map<String, String> certdetails) {
 		this.certdetails = certdetails;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

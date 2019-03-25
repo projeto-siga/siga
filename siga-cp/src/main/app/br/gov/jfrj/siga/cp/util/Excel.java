@@ -7,7 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.List;
@@ -587,6 +589,7 @@ public class Excel {
 				funcao = new DpFuncaoConfianca();
 				lotacao = new DpLotacao();
 				Row row = rowIterator.next(); //linha
+				date = null;
 				
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Cell cell;
@@ -702,6 +705,28 @@ public class Excel {
 						if(date.compareTo(new Date()) > 0) {
 			    			problemas.append( "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.getProperty("line.separator"));
 			    		}
+					} else if(row.getCell(5).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+						problemas.append(validarData(String.valueOf(((Double)row.getCell(5, Row.CREATE_NULL_AS_BLANK).getNumericCellValue()).longValue()), linha));
+						if(problemas != null && problemas.toString().equals("")) {
+							dataString = String.valueOf(((Double)row.getCell(5).getNumericCellValue()).longValue()).replaceAll("[^0-9]", "");
+							date = formato.parse(dataString);	
+							
+							if(date.compareTo(new Date()) > 0) {
+				    			problemas.append( "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.getProperty("line.separator"));
+				    		}
+						}
+						
+					} else if(row.getCell(5).getCellType() == HSSFCell.CELL_TYPE_STRING) {
+						problemas.append(validarData(row.getCell(5, Row.CREATE_NULL_AS_BLANK).getStringCellValue(), linha));
+						if(problemas != null && problemas.toString().equals("")) {
+							dataString = row.getCell(5, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
+							date = formato.parse(dataString);	
+							
+							if(date.compareTo(new Date()) > 0) {
+				    			problemas.append( "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.getProperty("line.separator"));
+				    		}
+						}
+						
 					} else {
 						problemas.append("Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.getProperty("line.separator"));
 					}
@@ -800,23 +825,29 @@ public class Excel {
     	return inputStream;
     }
     
-    public String validarData(String data, Integer linha, Integer tamanho) {
-    	
-    	data = data.replaceAll("[^0-9]", "");
-
-    	if(data.length() > 8) {
-    		return "Linha " + linha + ": DATA DE NASCIMENTO formato inválido" + System.getProperty("line.separator");
-    	}
-    	
-    	SimpleDateFormat formato = new SimpleDateFormat("ddMMyyyy");
-    	Date date = null;
-    	try {
-    		date = formato.parse(data);
-    	} catch (Exception e) {
-    		return "Linha " + linha + ": DATA DE NASCIMENTO formato inválido" + System.getProperty("line.separator");
-    	}
-    	
-    	return "";
+    public String validarData(String date, Integer linha) {
+    	date = (date == null ? "" : date).replaceAll("[^0-9]*", "");  
+    	  
+        if (date.length() == 8) {  
+            Integer dia = Integer.valueOf(date.substring(0, 2));  
+            Integer mes = Integer.valueOf(date.substring(2, 4)) - 1;  
+            Integer ano = Integer.valueOf(date.substring(4, 8));  
+  
+            if (mes < 0 || mes > 11) {  
+            	return "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.getProperty("line.separator");
+            }  
+  
+            GregorianCalendar calendar = new GregorianCalendar();  
+            calendar.set(ano, mes, 1);  
+  
+            if (dia <= 0 || dia > calendar.getActualMaximum(Calendar.DAY_OF_MONTH)) {  
+            	return "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.getProperty("line.separator");
+            }  
+ 
+            return "";  
+        }  
+  
+        return "Linha " + linha + ": DATA DE NASCIMENTO inválida" + System.getProperty("line.separator");
     }
     
     public String validarNomePessoa(String nomePessoa, Integer linha, Integer tamanho) {

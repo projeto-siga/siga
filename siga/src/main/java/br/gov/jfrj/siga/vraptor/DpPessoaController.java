@@ -215,11 +215,11 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				dpPessoa.setCpf(Long.valueOf(cpfPesquisa.replace(".", "").replace("-", "")));
 			}
 			dpPessoa.setBuscarFechadas(Boolean.TRUE);
-			setItens(CpDao.getInstance().consultarPorFiltro(dpPessoa, offset, 10));
+			setItens(CpDao.getInstance().consultarPorFiltro(dpPessoa, offset, 15));
 			result.include("itens", getItens());
 			Integer tamanho = dao().consultarQuantidade(dpPessoa);
 			result.include("tamanho", tamanho);
-			result.include("maxIndices", tamanho/10+1);
+			result.include("maxIndices", tamanho/15+1);
 			
 			result.include("idOrgaoUsu", idOrgaoUsu);
 			result.include("nome", nome);
@@ -361,6 +361,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		result.include("cpf", cpf);
 		result.include("email", email);
 		result.include("cpfPesquisa", cpfPesquisa);
+		setItemPagina(15);
+		result.include("currentPageNumber", calculaPaginaAtual(offset));
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
 		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 			List<CpOrgaoUsuario> list1 = new ArrayList<CpOrgaoUsuario>();

@@ -120,13 +120,15 @@ public class DpCargoController extends
 			}
 			dpCargo.setIdOrgaoUsu(idOrgaoUsu);
 			dpCargo.setNome(Texto.removeAcento(nome));
-			setItens(CpDao.getInstance().consultarPorFiltro(dpCargo, offset, 10));
+			setItens(CpDao.getInstance().consultarPorFiltro(dpCargo, offset, 15));
 			result.include("itens", getItens());
 			result.include("tamanho", dao().consultarQuantidade(dpCargo));
 			
 			result.include("idOrgaoUsu", idOrgaoUsu);
 			result.include("nome", nome);
 		}
+		setItemPagina(15);
+		result.include("currentPageNumber", calculaPaginaAtual(offset));
 	}
 	
 	@Get("/app/cargo/editar")

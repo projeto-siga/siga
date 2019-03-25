@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.integracao.ldap;
+package br.gov.jfrj.siga.gi.integracao;
 
 import br.gov.jfrj.ldap.conf.LdapProperties;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -33,17 +33,33 @@ public class IntegracaoLdapProperties extends LdapProperties {
 
 	}
 	
-	public String getEnderecoWebServiceLdap() {
+	public String getEnderecoTrocaSenhaWebServiceLdap() {
 		try {
-			return this.obterPropriedade("ws.endereco");
+			return this.obterPropriedade("ws.endereco.trocaSenha");
 		} catch (Exception e) {
-			throw new AplicacaoException("Erro ao obter o endereco do Web Service do LDAP", 9, e);
+			throw new AplicacaoException("Erro ao obter o endereco do Web Service do LDAP (trocaSenha)", 9, e);
 		}
 	}
 
 	@Override
 	public String getPrefixoModulo() {
 		return "siga.integracao";
+	}
+
+	public String getEnderecoAutenticacaoWebServiceLdap() {
+		try {
+			return this.obterPropriedade("ws.endereco.autenticacao");
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao obter o endereco do Web Service do LDAP (autenticacao)", 9, e);
+		}
+	}
+
+	public String getEnderecoBuscaWebServiceLdap() {
+		try {
+			return this.obterPropriedade("ws.endereco.busca");
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro ao obter o endereco do Web Service do LDAP (busca)", 9, e);
+		}
 	}
 
 }

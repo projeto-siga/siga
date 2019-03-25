@@ -106,4 +106,8 @@ public class CpPropriedadeBL extends ModeloPropriedade {
 	public String getJWTModuloPwd(String modulo) throws Exception {
 		return System.getProperty("idp.jwt.modulo.pwd." + modulo);
 	}
+	
+	public String getModoAutenticacao(String orgao) throws Exception {
+		return this.obterPropriedade("autenticacao." + orgao.toLowerCase() + ".modo");
+	}
 }

@@ -765,12 +765,14 @@ public class Excel {
 						problemas.append("Linha " + linha +": E-MAIL já cadastrado" + System.getProperty("line.separator"));
 					}
 					
-					if(!celula.contains("@") || celula.indexOf("@") + 1 >= celula.length() || celula.indexOf("@") == 0) {
-						problemas.append("Linha " + linha +": E-MAIL inválido" + System.getProperty("line.separator"));
-					}
-					
 					if(celula.length() > 60) {
 						problemas.append("Linha " + linha +": E-MAIL com mais de 60 caracteres" + System.getProperty("line.separator"));
+					}
+					
+					if(celula.contains(" ")) {
+						problemas.append("Linha " + linha +": E-MAIL com espaço em branco" + System.getProperty("line.separator"));
+					} else if(!celula.matches("[a-zA-Z0-9._-][a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}")) {
+						problemas.append("Linha " + linha +": E-MAIL inválidos ou com caracteres inválidos" + System.getProperty("line.separator"));
 					}
 					
 					if(listaEmail.contains(celula)) {

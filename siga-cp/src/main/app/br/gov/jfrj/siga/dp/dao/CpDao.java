@@ -1031,6 +1031,21 @@ public class CpDao extends ModeloDao {
 		return l;
 	}
 
+	public CpLocalidade consultarLocalidadesPorNomeUF(final CpLocalidade localidade) {
+		Query query = getSessao().createQuery(
+				"from CpLocalidade lot where "
+				+ "      upper(TRANSLATE(lot.nmLocalidade,'âàãáÁÂÀÃéêÉÊíÍóôõÓÔÕüúÜÚçÇ''','AAAAAAAAEEEEIIOOOOOOUUUUCC ')) = upper(:nome) and lot.UF.id = :idUf");
+		query.setLong("idUf", localidade.getUF().getId());
+		query.setString("nome", localidade.getNmLocalidade());
+		
+		List l = query.list();
+		
+		if(l.size() != 1) {
+			return null;
+		}
+		return (CpLocalidade)l.get(0);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<CpLocalidade> consultarLocalidades() {
 

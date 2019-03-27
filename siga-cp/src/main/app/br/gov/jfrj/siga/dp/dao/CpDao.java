@@ -145,14 +145,32 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CpOrgao> consultarCpOrgaoOrdenadoPorNome() {
+	public List<CpOrgao> consultarCpOrgaoOrdenadoPorNome(Integer offset, Integer itemPagina) {
 		try {
 			final Query query = getSessao().getNamedQuery(
 					"consultarCpOrgaoOrdenadoPorNome");
+			if (offset > 0) {
+				query.setFirstResult(offset);
+			}
+			if (itemPagina > 0) {
+				query.setMaxResults(itemPagina);
+			}
 			final List<CpOrgao> l = query.list();
 			return l;
 		} catch (final NullPointerException e) {
 			return null;
+		}
+	}
+	
+	public int consultarQuantidadeOrgao() {
+		try {
+			final Query query = getSessao().getNamedQuery(
+					"consultarQuantidadeCpOrgaoTodos");
+			
+			final int l = ((Long) query.uniqueResult()).intValue();
+			return l;
+		} catch (final NullPointerException e) {
+			return 0;
 		}
 	}
 

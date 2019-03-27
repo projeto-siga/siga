@@ -3,7 +3,18 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
+<script type="text/javascript" language="Javascript1.1">
+function sbmt(offset) {
+	if (offset==null) {
+		offset=0;
+	}
+	frm.elements['offset'].value=offset;
+	frm.submit();
+}
+</script>
+<form name="frm" action="listar" class="form" method="POST>
 <siga:pagina titulo="Lista Orgão Externo">
+	<input type="hidden" name="offset" value="0" />
 	<!-- main content -->
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">		
@@ -21,7 +32,8 @@
 					</thead>
 					
 					<tbody>
-						<c:forEach var="orgao" items="${itens}">
+						<siga:paginador maxItens="15" maxIndices="10" totalItens="${tamanho}"
+							itens="${itens}" var="orgao">
 							<tr>
 								<td align="left">${orgao.descricao}</td>
 								<td align="left">${orgao.sigla}</td>
@@ -51,7 +63,7 @@
 								</td>
 							 --%>							
 							</tr>
-						</c:forEach>
+						</siga:paginador>
 					</tbody>
 				</table>				
 			</div>	
@@ -64,3 +76,4 @@
 		</div>			
 	</div>
 </siga:pagina>
+</form>

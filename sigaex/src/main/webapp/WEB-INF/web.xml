@@ -1,4 +1,4 @@
-<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+﻿<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
@@ -86,8 +86,16 @@
 
 	<filter-mapping>
 		<filter-name>ExFilter</filter-name>
-		<url-pattern>/servicos/*</url-pattern>
-		<url-pattern>/apis/*</url-pattern>
+        <url-pattern>*.pdf</url-pattern>
+        <url-pattern>*.html</url-pattern>
+        <url-pattern>*.action</url-pattern>
+        <url-pattern>/dwr/*</url-pattern>
+        <url-pattern>/anexo/*</url-pattern>
+        <url-pattern>/servicos/*</url-pattern>
+        <url-pattern>/apis/*</url-pattern>
+        <url-pattern>/app/*</url-pattern>
+        <url-pattern>/public/app/*</url-pattern>
+        <url-pattern>/public/api/*</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>

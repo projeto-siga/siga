@@ -49,6 +49,7 @@ public class ExThreadFilter extends ThreadFilter {
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
+		final StringBuilder csv = super.iniciaAuditoria(request);
 		EntityManager em = ExStarter.emf.createEntityManager();
 		ContextoPersistencia.setEntityManager(em);
 
@@ -78,6 +79,7 @@ public class ExThreadFilter extends ThreadFilter {
 			em.close();
 			ContextoPersistencia.setEntityManager(null);
 		}
+		super.terminaAuditoria(csv);
 	}
 
 	@Override

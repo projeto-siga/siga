@@ -19,8 +19,14 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.service.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URLEncoder;
+import java.security.MessageDigest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,10 +35,20 @@ import java.util.TreeSet;
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
+import com.lowagie.text.pdf.codec.Base64;
+
+import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.gov.jfrj.itextpdf.Documento;
+import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.bluc.service.BlucService;
+import br.gov.jfrj.siga.bluc.service.HashRequest;
+import br.gov.jfrj.siga.bluc.service.HashResponse;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -50,16 +66,18 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.ex.service.ExService;
+import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import br.gov.jfrj.siga.vraptor.ExDocumentoDTO;
 import br.gov.jfrj.siga.vraptor.ExMobilSelecao;
+import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 
 
 @WebService(serviceName = "ExService", endpointInterface = "br.gov.jfrj.siga.ex.service.ExService", targetNamespace = "http://impl.service.ex.siga.jfrj.gov.br/")
@@ -71,7 +89,7 @@ public class ExServiceImpl implements ExService {
 
 	public boolean isHideStackTrace() {
 		return hideStackTrace;
-	}
+	}		
 
 	public void setHideStackTrace(boolean hideStackTrace) {
 		this.hideStackTrace = hideStackTrace;
@@ -396,8 +414,8 @@ public class ExServiceImpl implements ExService {
 				final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
 				filter.setSigla(codigo);
 				mob = (ExMobil) dao().consultarPorSigla(filter);
-				//return Ex.getInstance().getBL().toJSON(mob);
-				return "";
+				return Ex.getInstance().getBL().toJSON(mob);
+				//return "";
 			}
 		} catch (Exception e) {
 			if (!isHideStackTrace())
@@ -684,5 +702,360 @@ public class ExServiceImpl implements ExService {
 			throw e;
 		}	
     }
+	
+	public String assinarSenhaGravar(String sigla, final Boolean copia, final Boolean juntar, final Boolean tramitar, String nomeUsuarioSubscritor,
+			String senhaUsuarioSubscritor, String siglaCadastrante) throws Exception {
+
+		ExMobil mob = buscarMobil(sigla);
+		ExDocumento doc = mob.getExDocumento();
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia().setMob(mob);
+		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+		
+		PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
+				siglaCadastrante);
+		
+		String resultado = null;
+
+		try {
+			resultado = Ex.getInstance()
+					.getBL()
+					.assinarDocumentoComSenha(cadastranteParser.getPessoa(),
+							cadastranteParser.getLotacao(), doc, mov.getDtMov(),
+							nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
+							mov.getTitular(), copia, juntar, tramitar);
+		} catch (Exception e) {
+			throw e;
+			
+		}
+		return resultado;
+
+	}
+	
+	
+	public byte[] getArquivo(String sigla, String tipoArquivo){
+		try {
+			
+			final boolean isPdf = tipoArquivo.equalsIgnoreCase("pdf");
+			final boolean isHtml = tipoArquivo.equalsIgnoreCase("html");
+			ExMobil mob = buscarMobil(sigla);
+			
+			if (mob == null) {
+				throw new AplicacaoException("A sigla informada não corresponde a um documento da base de dados.");
+			}
+
+			final ExMovimentacao mov = Documento.getMov(mob, sigla);
+			final boolean isArquivoAuxiliar = mov != null && mov.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR);
+			byte ab[] = null;
+			
+			if (isArquivoAuxiliar) {
+				ab = mov.getConteudoBlobMov2();
+			}
+			if (isPdf) {
+				ExDocumento doc = mob.getExDocumento();
+				ab = doc.getConteudoBlobPdf();
+				if (ab == null) {
+					throw new AplicacaoException("PDF inválido!");
+				}
+
+			}
+			if (isHtml) {
+				if (mov != null) {
+					ab = mov.getConteudoBlobHtml();
+				} 
+				ExDocumento doc = mob.getExDocumento();
+				ab = doc.getConteudoBlobHtml();
+				if (ab == null) {
+					throw new AplicacaoException("HTML inválido!");
+				}
+			}
+
+			return ab;
+		} catch (Exception e) {
+			throw new RuntimeException("erro na geração do documento.", e);
+		}
+	}
+	
+	public byte[] preverPdf(ExDocumentoDTO exDocumentoDTO, String siglaCadastrante, String[] vars) throws IOException, IllegalAccessException,
+			InvocationTargetException {
+
+		final boolean isDocNovo = (exDocumentoDTO == null);
+		buscarDocumento(true, exDocumentoDTO, siglaCadastrante);
+		if (exDocumentoDTO.getDoc() != null) {
+			if (isDocNovo) {
+				//escreverForm(exDocumentoDTO);
+			} else {
+				lerForm(exDocumentoDTO, vars, siglaCadastrante);
+			}
+		} else {
+			exDocumentoDTO.setDoc(new ExDocumento());
+			lerForm(exDocumentoDTO, vars, siglaCadastrante);
+		}
+
+
+		if (exDocumentoDTO.getIdMob() != null) {
+			exDocumentoDTO.setModelo(dao().consultar(exDocumentoDTO.getIdMob(),
+					ExModelo.class, false));
+		}
+
+		Ex.getInstance().getBL()
+				.processar(exDocumentoDTO.getDoc(), false, false);
+
+		return exDocumentoDTO.getDoc().getConteudoBlobPdf();
+	}
+	
+	private void buscarDocumento(boolean fPodeNaoExistir, ExDocumentoDTO exDocumentoDto, String siglaCadastrante) {
+		if (exDocumentoDto.getMob() == null
+				&& exDocumentoDto.getSigla() != null
+				&& exDocumentoDto.getSigla().length() != 0) {
+			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+			filter.setSigla(exDocumentoDto.getSigla());
+			exDocumentoDto.setMob((ExMobil) dao().consultarPorSigla(filter));
+			if (exDocumentoDto.getMob() != null) {
+				exDocumentoDto.setDoc(exDocumentoDto.getMob().getExDocumento());
+			}
+		} else if (exDocumentoDto.getMob() == null
+				&& exDocumentoDto.getDocumentoViaSel().getId() != null) {
+			exDocumentoDto
+					.setIdMob(exDocumentoDto.getDocumentoViaSel().getId());
+			exDocumentoDto.setMob(dao().consultar(exDocumentoDto.getIdMob(),
+					ExMobil.class, false));
+		} else if (exDocumentoDto.getMob() == null
+				&& exDocumentoDto.getIdMob() != null
+				&& exDocumentoDto.getIdMob() != 0) {
+			exDocumentoDto.setMob(dao().consultar(exDocumentoDto.getIdMob(),
+					ExMobil.class, false));
+		}
+		if (exDocumentoDto.getMob() != null) {
+			exDocumentoDto.setDoc(exDocumentoDto.getMob().doc());
+		}
+
+		if (exDocumentoDto.getDoc() != null && exDocumentoDto.getMob() == null) {
+			exDocumentoDto.setMob(exDocumentoDto.getDoc().getMobilGeral());
+		}
+
+		if (!fPodeNaoExistir && exDocumentoDto.getDoc() == null) {
+			throw new AplicacaoException("Documento não informado");
+		}
+		
+		if (exDocumentoDto.getDoc() == null) {
+			exDocumentoDto.setDoc(new ExDocumento());
+			exDocumentoDto.getDoc().setExTipoDocumento(
+					dao().consultar(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO,
+							ExTipoDocumento.class, false));
+			exDocumentoDto.setMob(new ExMobil());
+			exDocumentoDto.getMob().setExTipoMobil(
+					dao().consultar(ExTipoMobil.TIPO_MOBIL_GERAL,
+							ExTipoMobil.class, false));
+			exDocumentoDto.getMob().setNumSequencia(1);
+			exDocumentoDto.getMob().setExDocumento(exDocumentoDto.getDoc());
+
+			exDocumentoDto.getDoc().setExMobilSet(new TreeSet<ExMobil>());
+			exDocumentoDto.getDoc().getExMobilSet()
+					.add(exDocumentoDto.getMob());
+		}
+
+	}
+	
+	private void lerForm(ExDocumentoDTO exDocumentoDTO, String[] vars, String siglaCadastrante) throws IOException {
+		ExDocumento doc = exDocumentoDTO.getDoc();
+
+		if (exDocumentoDTO.getAnexar()) {
+			doc.setConteudoTpDoc(exDocumentoDTO.getConteudoTpDoc());
+			doc.setNmArqDoc(exDocumentoDTO.getNmArqDoc());
+		}
+
+		doc.setDescrDocumento(exDocumentoDTO.getDescrDocumento());
+		doc.setNmSubscritorExt(exDocumentoDTO.getNmSubscritorExt());
+		doc.setNmFuncaoSubscritor(exDocumentoDTO.getNmFuncaoSubscritor());
+		doc.setNumExtDoc(exDocumentoDTO.getNumExtDoc());
+		doc.setNumAntigoDoc(exDocumentoDTO.getNumAntigoDoc());
+		doc.setObsOrgao(exDocumentoDTO.getObsOrgao());
+		doc.setEletronico(exDocumentoDTO.getEletronico() == 1 ? true : false);
+		doc.setNmOrgaoExterno(exDocumentoDTO.getNmOrgaoExterno());
+		doc.setDescrClassifNovo(exDocumentoDTO.getDescrClassifNovo());
+		doc.setExNivelAcesso(dao().consultar(exDocumentoDTO.getNivelAcesso(),
+				ExNivelAcesso.class, false));
+		doc.setExTipoDocumento(dao().consultar(exDocumentoDTO.getIdTpDoc(),
+				ExTipoDocumento.class, false));
+
+		doc.setNmDestinatario(exDocumentoDTO.getNmDestinatario());
+
+		doc.setExModelo(null);
+		if (exDocumentoDTO.getIdMod() != 0) {
+			ExModelo modelo = dao().consultar(exDocumentoDTO.getIdMod(),
+					ExModelo.class, false);
+			if (modelo != null) {
+				doc.setExModelo(modelo.getModeloAtual());
+				if (!doc.isFinalizado()) {
+					doc.setExFormaDocumento(modelo.getExFormaDocumento());
+				}
+			}
+		}
+
+		if (exDocumentoDTO.getClassificacaoSel().getId() != null
+				&& exDocumentoDTO.getClassificacaoSel().getId() != 0) {
+
+			final ExClassificacao classificacao = dao().consultar(
+					exDocumentoDTO.getClassificacaoSel().getId(),
+					ExClassificacao.class, false);
+
+			if (classificacao != null) {
+				ExClassificacao cAtual = classificacao.getAtual();
+				doc.setExClassificacao(cAtual);
+			} else {
+				doc.setExClassificacao(null);
+				exDocumentoDTO.getClassificacaoSel().apagar();
+			}
+
+		} else {
+			doc.setExClassificacao(null);
+		}
+		if (exDocumentoDTO.getCpOrgaoSel().getId() != null) {
+			doc.setOrgaoExterno(dao().consultar(
+					exDocumentoDTO.getCpOrgaoSel().getId(), CpOrgao.class,
+					false));
+		} else {
+			doc.setOrgaoExterno(null);
+		}
+
+		if (doc.getCadastrante() == null && siglaCadastrante != null) {
+			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
+					siglaCadastrante);
+			doc.setCadastrante(cadastranteParser.getPessoa());
+			doc.setLotaCadastrante(cadastranteParser.getLotacao());
+		}
+
+		if (doc.getLotaCadastrante() == null) {
+			doc.setLotaCadastrante(doc.getCadastrante().getLotacao());
+		}
+		if (exDocumentoDTO.getSubscritorSel().getId() != null) {
+			PessoaLotacaoParser subscritorParser = new PessoaLotacaoParser(
+					exDocumentoDTO.getSubscritorSel().getSigla());
+			doc.setSubscritor(subscritorParser.getPessoa());
+			doc.setLotaSubscritor(subscritorParser.getLotacao());
+		} else {
+			doc.setSubscritor(null);
+		}
+
+		if (exDocumentoDTO.isSubstituicao()) {
+			if (exDocumentoDTO.getTitularSel().getId() != null) {
+				PessoaLotacaoParser titularParser = new PessoaLotacaoParser(
+						exDocumentoDTO.getTitularSel().getSigla());
+				doc.setTitular(titularParser.getPessoa());
+				doc.setLotaTitular(titularParser.getLotacao());
+			} else {
+				doc.setTitular(doc.getSubscritor());
+				doc.setLotaTitular(doc.getLotaSubscritor());
+			}
+		} else {
+			doc.setTitular(doc.getSubscritor());
+			doc.setLotaTitular(doc.getLotaSubscritor());
+		}
+
+		if (exDocumentoDTO.getDestinatarioSel().getId() != null) {
+			PessoaLotacaoParser destinatarioParser = new PessoaLotacaoParser(
+					exDocumentoDTO.getDestinatarioSel().getSigla());
+			
+			doc.setDestinatario(destinatarioParser.getPessoa());
+			doc.setLotaDestinatario(destinatarioParser.getLotacao());
+			doc.setOrgaoExternoDestinatario(null);
+		} else {
+			doc.setDestinatario(null);
+			if (exDocumentoDTO.getLotacaoDestinatarioSel().getId() != null) {
+				/*doc.setLotaDestinatario(daoLot(exDocumentoDTO
+						.getLotacaoDestinatarioSel().getId()));*/
+				doc.setOrgaoExternoDestinatario(null);
+			} else {
+				doc.setLotaDestinatario(null);
+
+				if (exDocumentoDTO.getOrgaoExternoDestinatarioSel().getId() != null) {
+					doc.setOrgaoExternoDestinatario(dao().consultar(
+							exDocumentoDTO.getOrgaoExternoDestinatarioSel()
+									.getId(), CpOrgao.class, false));
+
+				} else {
+					doc.setOrgaoExternoDestinatario(null);
+				}
+			}
+		}
+
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			doc.setDtDoc(df.parse(exDocumentoDTO.getDtDocString()));
+		} catch (final ParseException e) {
+			doc.setDtDoc(null);
+		} catch (final NullPointerException e) {
+			doc.setDtDoc(null);
+		}
+		if (doc.getDtRegDoc() == null)
+			doc.setDtRegDoc(dao().dt());
+
+		try {
+			doc.setDtDocOriginal(df.parse(exDocumentoDTO
+					.getDtDocOriginalString()));
+		} catch (final ParseException e) {
+			doc.setDtDocOriginal(null);
+		} catch (final NullPointerException e) {
+			doc.setDtDocOriginal(null);
+		}
+
+		if (exDocumentoDTO.getNumExpediente() != null) {
+			doc.setNumExpediente(new Long(exDocumentoDTO.getNumExpediente()));
+			doc.setAnoEmissao(new Long(exDocumentoDTO.getAnoEmissaoString()));
+		}
+
+		if (exDocumentoDTO.getMobilPaiSel().getId() != null) {
+			doc.setExMobilPai(dao().consultar(
+					exDocumentoDTO.getMobilPaiSel().getId(), ExMobil.class,
+					false));
+		} else {
+			doc.setExMobilPai(null);
+		}
+
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			final String marcacoes[] = { "<!-- INICIO NUMERO -->",
+					"<!-- FIM NUMERO -->", "<!-- INICIO NUMERO",
+					"FIM NUMERO -->", "<!-- INICIO TITULO", "FIM TITULO -->",
+					"<!-- INICIO MIOLO -->", "<!-- FIM MIOLO -->",
+					"<!-- INICIO CORPO -->", "<!-- FIM CORPO -->",
+					"<!-- INICIO CORPO", "FIM CORPO -->",
+					"<!-- INICIO ASSINATURA -->", "<!-- FIM ASSINATURA -->",
+					"<!-- INICIO ABERTURA -->", "<!-- FIM ABERTURA -->",
+					"<!-- INICIO ABERTURA", "FIM ABERTURA -->",
+					"<!-- INICIO FECHO -->", "<!-- FIM FECHO -->" };
+
+			final String as[] = vars;
+			if (as != null && as.length > 0) {
+				for (final String s : as) {
+					if (baos.size() > 0)
+						baos.write('&');
+					baos.write(s.getBytes());
+					baos.write('=');
+					/*if (param(s) != null) {
+						String parametro = param(s);
+						for (final String m : marcacoes) {
+							if (parametro.contains(m))
+								parametro = parametro.replaceAll(m, "");
+						}
+						if (!FuncoesEL.contemTagHTML(parametro)) {
+							if (parametro.contains("\"")) {
+								parametro = parametro.replace("\"", "&quot;");
+								setParam(s, parametro);
+							}
+						}
+
+						baos.write(URLEncoder.encode(parametro, "iso-8859-1")
+								.getBytes());
+					}*/
+				}
+				doc.setConteudoTpDoc("application/zip");
+				doc.setConteudoBlobForm(baos.toByteArray());
+			}
+		}
+	}
+
+	
+
 
 }

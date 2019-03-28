@@ -24,6 +24,12 @@ package br.gov.jfrj.siga.ex;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.BatchSize;
+
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -32,6 +38,8 @@ import br.gov.jfrj.siga.model.Assemelhavel;
  * A class that represents a row in the 'EX_TEMPORALIDADE' table. This class may
  * be customized as it is never re-generated after being created.
  */
+@Entity
+@Table(name = "EX_TEMPORALIDADE", catalog = "SIGA")
 public class ExTemporalidade extends AbstractExTemporalidade implements
 		Comparable {
 	/**
@@ -75,7 +83,7 @@ public class ExTemporalidade extends AbstractExTemporalidade implements
 		return valor;
 	}
 
-	public Date getPrazoAPartirDaData(Date dt){
+	public Date getPrazoAPartirDaData(Date dt) {
 		if (getCpUnidadeMedida() == null || getValorTemporalidade() == null)
 			return dt;
 		Calendar calFuturo = Calendar.getInstance();
@@ -103,5 +111,23 @@ public class ExTemporalidade extends AbstractExTemporalidade implements
 		int a = getValorEmDias();
 		int b = ((ExTemporalidade) o).getValorEmDias();
 		return a > b ? 1 : a < b ? -1 : 0;
+	}
+
+	//
+	// Solução para não precisar criar HIS_ATIVO em todas as tabelas que herdam de HistoricoSuporte.
+	//
+	@Column(name = "HIS_ATIVO")
+	private Integer hisAtivo;
+	
+	@Override
+	public Integer getHisAtivo() {
+		this.hisAtivo = super.getHisAtivo();
+		return this.hisAtivo;
+	}
+	
+	@Override
+	public void setHisAtivo(Integer hisAtivo) {
+		super.setHisAtivo(hisAtivo);
+		this.hisAtivo = getHisAtivo();
 	}
 }

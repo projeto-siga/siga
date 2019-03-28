@@ -35,27 +35,32 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.gov.jfrj.siga.model.Objeto;
 
 //Essa anotação é necessária por causa do mappedBy em CpFeriado que aponta pra cá
 @MappedSuperclass
-public abstract class AbstractCpOcorrenciaFeriado extends Objeto implements Serializable {
+public abstract class AbstractCpOcorrenciaFeriado extends Objeto implements
+		Serializable {
 
 	@Id
-	@Column(name = "ID_OCORRENCIA", nullable = false)
+	@Column(name = "ID_OCORRENCIA", unique = true, nullable = false)
 	private Long idOcorrencia;
 
 	@Column(name = "DT_INI_FERIADO", nullable = false)
+	@Temporal(TemporalType.DATE)
 	private Date dtIniFeriado;
-	
+
 	@Column(name = "DT_FIM_FERIADO", nullable = false)
+	@Temporal(TemporalType.DATE)
 	private Date dtFimFeriado;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_FERIADO")
 	private CpFeriado cpFeriado;
-	
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cpOcorrenciaFeriado")
 	private java.util.Set<CpAplicacaoFeriado> cpAplicacaoFeriadoSet;
 
@@ -99,13 +104,11 @@ public abstract class AbstractCpOcorrenciaFeriado extends Objeto implements Seri
 	public void setCpFeriado(CpFeriado cpFeriado) {
 		this.cpFeriado = cpFeriado;
 	}
-	
+
 	/**
-	 * Retorna a data de início formato dd/mm/aa ,
-	 * por exemplo, 01/02/10.
+	 * Retorna a data de início formato dd/mm/aa , por exemplo, 01/02/10.
 	 * 
-	 * @return Data no formato dd/mm/aa, por
-	 *         exemplo, 01/02/10.
+	 * @return Data no formato dd/mm/aa, por exemplo, 01/02/10.
 	 * 
 	 */
 	public String getDtRegIniDDMMYYYY() {
@@ -115,7 +118,7 @@ public abstract class AbstractCpOcorrenciaFeriado extends Objeto implements Seri
 		}
 		return "";
 	}
-	
+
 	public String getDtRegFimDDMMYYYY() {
 		if (getDtFimFeriado() != null) {
 			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");

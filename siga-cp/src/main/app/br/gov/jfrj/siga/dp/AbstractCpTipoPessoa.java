@@ -28,10 +28,10 @@ import br.gov.jfrj.siga.model.Objeto;
 public abstract class AbstractCpTipoPessoa extends Objeto{
 	
 	@Id
-	@Column(name = "ID_TP_PESSOA", nullable = false)
+	@Column(name = "ID_TP_PESSOA", unique = true, nullable = false)
 	private Integer idTpPessoa;
 	
-	@Column(name = "DESC_TP_PESSOA")
+	@Column(name = "DESC_TP_PESSOA", length = 60)
 	private String dscTpPessoa;
 	/**
 	 * @return the idTpPessoa

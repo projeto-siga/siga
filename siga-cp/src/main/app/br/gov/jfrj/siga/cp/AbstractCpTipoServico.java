@@ -31,16 +31,19 @@ import javax.persistence.MappedSuperclass;
 import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
-public class AbstractCpTipoServico extends Objeto{
+public class AbstractCpTipoServico extends Objeto {
 
 	@Id
-	@Column(name = "ID_TP_SERVICO", nullable = false)
+	@Column(name = "ID_TP_SERVICO", unique = true, nullable = false)
 	private Integer idCpTpServico;
-	@Column(name = "DESC_TP_SERVICO")
+
+	@Column(name = "DESC_TP_SERVICO", length = 60)
 	private String dscTpServico;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_SIT_CONFIGURACAO")
 	private CpSituacaoConfiguracao situacaoDefault;
+
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "cpTiposServicoSet")
 	private Set<CpSituacaoConfiguracao> cpSituacoesConfiguracaoSet;
 

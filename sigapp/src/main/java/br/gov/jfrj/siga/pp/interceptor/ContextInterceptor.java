@@ -37,7 +37,7 @@ public class ContextInterceptor implements Interceptor {
         try {
             ContextoPersistencia.setEntityManager(em);
             PpDao.freeInstance();
-            PpDao.getInstance((Session) em.getDelegate(), ((Session) em.getDelegate()).getSessionFactory().openStatelessSession());
+            PpDao.getInstance();
             stack.next(method, resourceInstance);
         } catch (Exception e) {
             throw new InterceptionException(e);

@@ -47,18 +47,18 @@ public abstract class AbstractCpComplexo extends Objeto implements Serializable 
 	private static final long serialVersionUID = 4514355304185987860L;
 
 	@Id
-	@Column(name = "ID_COMPLEXO", nullable = false)
+	@Column(name = "ID_COMPLEXO", unique = true, nullable = false)
 	@Desconsiderar
 	private Long idComplexo;
-	
-	@Column(name = "NOME_COMPLEXO")
+
+	@Column(name = "NOME_COMPLEXO", length = 100)
 	private String nomeComplexo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_LOCALIDADE")
 	@NaoRecursivo
 	private CpLocalidade localidade;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU")
 	private CpOrgaoUsuario orgaoUsuario;
@@ -95,6 +95,4 @@ public abstract class AbstractCpComplexo extends Objeto implements Serializable 
 		this.localidade = localidade;
 	}
 
-	
-	
 }

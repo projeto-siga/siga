@@ -107,50 +107,5 @@ public class ThreadFilterTest {
 		String retorno = this.threadFilter.montaMensagemErroExcecoes(null);
 		assertEquals("", retorno);
 	}
-
-	@Test
-	public void naoDeveAdicionarTransactionFactoryClassSeAClasseNaoForDeclaradaNoSigaProperties() throws Exception {
-		
-		Configuration cfg = new Configuration();
-		ThreadFilter tf = getThreadFilter();
-		tf.registerTransactionClasses( cfg );
-		
-		assertNull( cfg.getProperty( "hibernate.transaction.factory_class" ) );
-	}
-	
-	@Test
-	public void deveAdicionarTransactionFactoryClassSeAClasseForDeclaradaNoSigaProperties() throws Exception {
-		
-		System.setProperty( "hibernate.transaction.factory_class", "org.hibernate.transaction.JTATransactionFactory" );
-		
-		Configuration cfg = new Configuration();
-		ThreadFilter tf = getThreadFilter();
-		tf.registerTransactionClasses( cfg );
-		
-		// assertNotNull( cfg.getProperty( "hibernate.transaction.factory_class" ) );
-	}
-	
-	@Test
-	public void naoDeveAdicionarTransactionManagerLookupClassSeAClasseNaoForDeclaradaNoSigaProperties() throws Exception {
-		
-		Configuration cfg = new Configuration();
-		ThreadFilter tf = getThreadFilter();
-		tf.registerTransactionClasses( cfg );
-		
-		assertNull( cfg.getProperty( "hibernate.transaction.manager_lookup_class" ) );
-	}
-	
-	@Test
-	public void deveAdicionarTransactionManagerLookupClassSeAClasseForDeclaradaNoSigaProperties() throws Exception {
-		
-		System.setProperty( "hibernate.transaction.manager_lookup_class", "org.hibernate.transaction.JBossTransactionManagerLookup" );
-		
-		Configuration cfg = new Configuration();
-		ThreadFilter tf = getThreadFilter();
-		tf.registerTransactionClasses( cfg );
-		
-		assertNotNull( cfg.getProperty( "hibernate.transaction.manager_lookup_class" ) );
-	}
-	
 	
 }

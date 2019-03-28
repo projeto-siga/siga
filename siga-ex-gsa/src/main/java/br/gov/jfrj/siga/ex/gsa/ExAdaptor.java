@@ -56,8 +56,8 @@ import com.google.enterprise.adaptor.Response;
  * Example command line:
  * <p>
  *
- * java \ -jar siga-ex-gsa.one-jar
- * -Dgsa.hostname=myGSA -Dservidor=desenv \ -Djournal.reducedMem=true
+ * java \ -jar siga-ex-gsa.one-jar -Dgsa.hostname=myGSA -Dservidor=desenv \
+ * -Djournal.reducedMem=true
  */
 public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor, PollingIncrementalLister {
 	protected static final Logger log = Logger.getLogger(ExAdaptor.class.getName());
@@ -72,33 +72,31 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor, Poll
 		Configuration cfg;
 		String servidor = context.getConfig().getValue("servidor");
 		permalink = context.getConfig().getValue("url.permalink");
-		if (servidor.equals("prod")){
+		if (servidor.equals("prod")) {
 			cfg = ExDao.criarHibernateCfg(CpAmbienteEnumBL.PRODUCAO);
-		}			
-		else if (servidor.equals("homolo")){
+		} else if (servidor.equals("homolo")) {
 			cfg = ExDao.criarHibernateCfg(CpAmbienteEnumBL.HOMOLOGACAO);
-		}			
-		else if (servidor.equals("treina")){
+		} else if (servidor.equals("treina")) {
 			cfg = ExDao.criarHibernateCfg(CpAmbienteEnumBL.TREINAMENTO);
-		}			
-		else{
+		} else {
 			cfg = ExDao.criarHibernateCfg(CpAmbienteEnumBL.DESENVOLVIMENTO);
 		}
-		HibernateUtil.configurarHibernate(cfg);
+
+		// Desabilitado para evitar o erro de compilação depois que foi feita a
+		// troca do Hibernate para o JPA
+		// HibernateUtil.configurarHibernate(cfg);
 		context.setPollingIncrementalLister(this);
 	}
 
-	/** 
-	 * Get all doc ids from database. 
+	/**
+	 * Get all doc ids from database.
 	 **/
-	public void getDocIds(DocIdPusher pusher) throws IOException,
-	InterruptedException {
+	public void getDocIds(DocIdPusher pusher) throws IOException, InterruptedException {
 		this.dateLastUpdated = ExDao.getInstance().dt();
 		pushDocIds(pusher, new Date(0L));
 	}
-	
-	protected void pushDocIds(DocIdPusher pusher, Date date)
-			throws InterruptedException {
+
+	protected void pushDocIds(DocIdPusher pusher, Date date) throws InterruptedException {
 		try {
 			BufferingPusher outstream = new BufferingPusher(pusher);
 			ExDao dao = ExDao.getInstance();
@@ -117,7 +115,7 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor, Poll
 	}
 
 	public abstract String getIdsHql();
-	
+
 	public void addMetadata(Response resp, String title, String value) {
 		if (value == null)
 			return;
@@ -126,21 +124,21 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor, Poll
 		resp.addMetadata(title, value);
 	}
 
-	protected void loadSigaAllProperties(){
-		if(null == adaptorProperties){
+	protected void loadSigaAllProperties() {
+		if (null == adaptorProperties) {
 			InputStream propStream = null;
 			try {
 				propStream = new FileInputStream(new File(DEFAULT_CONFIG_FILE));
 				this.adaptorProperties = new Properties();
 				this.adaptorProperties.load(propStream);
 			} catch (FileNotFoundException e) {
-				log.warning("Arquivo de propriedades "+DEFAULT_CONFIG_FILE+"não encontrado!");
+				log.warning("Arquivo de propriedades " + DEFAULT_CONFIG_FILE + "não encontrado!");
 				log.warning("Propriedades do adaptor do Siga não serão carregadas.");
 			} catch (IOException e) {
-				log.warning("Não foi possível carregar as propriedades do arquivo "+DEFAULT_CONFIG_FILE);
+				log.warning("Não foi possível carregar as propriedades do arquivo " + DEFAULT_CONFIG_FILE);
 				log.warning("Propriedades do adaptor do Siga não serão carregadas.");
-			}finally {
-				if(propStream != null){
+			} finally {
+				if (propStream != null) {
 					try {
 						propStream.close();
 					} catch (IOException e) {
@@ -150,29 +148,30 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor, Poll
 			}
 		}
 	}
-	
+
 	/**
-	 * Obtém a data da última execução, caso o arquivo ou a data não
-	 * existam, salva a data informada por parâmetro e a define como 
-	 * a data da última execução.
+	 * Obtém a data da última execução, caso o arquivo ou a data não existam,
+	 * salva a data informada por parâmetro e a define como a data da última
+	 * execução.
+	 * 
 	 * @param lastModified
 	 * @param path
 	 */
-	protected void getLastModified(Date lastModified,String path){
+	protected void getLastModified(Date lastModified, String path) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		File lastModifiedFile = new File(path);
-		if(lastModifiedFile.exists()){
+		if (lastModifiedFile.exists()) {
 			try (BufferedReader br = new BufferedReader(new FileReader(lastModifiedFile))) {
-			    String line;
-			    while ((line = br.readLine()) != null) {
-			       this.dateLastUpdated = dateFormat.parse(line);
-			       log.fine("A data da última  atualização é "+line);
-			       break;
-			    }
-			}catch(Exception e){
+				String line;
+				while ((line = br.readLine()) != null) {
+					this.dateLastUpdated = dateFormat.parse(line);
+					log.fine("A data da última  atualização é " + line);
+					break;
+				}
+			} catch (Exception e) {
 				log.severe("Erro ao obter a data das ultimas alterações!");
 			}
-		}else{
+		} else {
 			String dateToSave = dateFormat.format(lastModified);
 			try {
 				FileOutputStream output = new FileOutputStream(lastModifiedFile);
@@ -184,23 +183,24 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor, Poll
 				log.info("verifique suas permissões e configurações");
 			} catch (IOException e) {
 				log.severe("Erro ao escrever no arquivo!");
-				log.severe("Erro: " + e.getMessage() );
+				log.severe("Erro: " + e.getMessage());
 			}
 			this.dateLastUpdated = lastModified;
-			log.fine("A data da última  atualização é "+dateToSave);
+			log.fine("A data da última  atualização é " + dateToSave);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Salva data no arquivo informado
+	 * 
 	 * @param lastModified
 	 * @param path
 	 */
-	protected void saveLastModified(Date lastModified,String path){
+	protected void saveLastModified(Date lastModified, String path) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		File lastModifiedFile = new File(path);
-		if(lastModifiedFile.exists()){
+		if (lastModifiedFile.exists()) {
 			lastModifiedFile.delete();
 		}
 		String dateToSave = dateFormat.format(lastModified);
@@ -214,7 +214,7 @@ public abstract class ExAdaptor extends AbstractAdaptor implements Adaptor, Poll
 			log.info("verifique suas permissões e configurações");
 		} catch (IOException e) {
 			log.severe("Erro ao escrever no arquivo!");
-			log.severe("Erro: " + e.getMessage() );
+			log.severe("Erro: " + e.getMessage());
 		}
 	}
 

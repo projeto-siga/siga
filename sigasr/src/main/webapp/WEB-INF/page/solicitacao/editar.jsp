@@ -174,12 +174,14 @@
 						
 							<label>Telefone</label> 
 							<input type="text" name="solicitacao.telPrincipal" id="telPrincipal" value="${solicitacao.telPrincipal}" maxlength="255" />
+							<siga:error name="solicitacao.telPrincipal"/>
 											
 						</div>
 						
 						<div class="gt-form-row-inline-block gt-width-33">
 							<label>Endereço de atendimento</label> 
 								<input type="text" name="solicitacao.endereco" id="endereco" value="${solicitacao.endereco}" size="65" maxlength="255" />
+								<siga:error name="solicitacao.endereco"/>
 						</div>
 					
 

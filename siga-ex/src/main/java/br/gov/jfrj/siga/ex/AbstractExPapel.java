@@ -21,16 +21,28 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.SortedSet;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 
 import br.gov.jfrj.siga.model.Objeto;
 
+@MappedSuperclass
 public abstract class AbstractExPapel extends Objeto implements Serializable {
 
+	@Id
+	@Column(name = "ID_PAPEL", unique = true, nullable = false)
 	private java.lang.Long idPapel;
+
+	@Column(name = "DESC_PAPEL", length = 20)
 	private java.lang.String descPapel;
 
 	@OneToMany(mappedBy = "exPapel")
+	@Sort(type = SortType.NATURAL)
 	private SortedSet<ExMovimentacao> exMovimentacaoSet;
 
 	public java.lang.Long getIdPapel() {

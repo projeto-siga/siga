@@ -20,13 +20,21 @@ package br.gov.jfrj.siga.dp;
 
 import java.text.SimpleDateFormat;
 
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
 /**
  * A class that represents a row in the EX_DOCUMENTO table. You can customize
  * the behavior of this class by editing the class, {@link ExDocumento()}.
  */
 @Entity
+@Table(name = "CP_MARCA", schema = "CORPORATIVO")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "ID_TP_MARCA", discriminatorType = DiscriminatorType.INTEGER)
 public abstract class CpMarca extends AbstractCPMarca {
 
 	public String getDtIniMarcaDDMMYYYY() {
@@ -36,7 +44,7 @@ public abstract class CpMarca extends AbstractCPMarca {
 		}
 		return "";
 	}
-	
+
 	public String getDtFimMarcaDDMMYYYY() {
 		if (getDtFimMarca() != null) {
 			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
@@ -47,12 +55,21 @@ public abstract class CpMarca extends AbstractCPMarca {
 
 	@Override
 	public String toString() {
-		return "CpMarca [Tipo=" +  ((getCpTipoMarca() != null) ? getCpTipoMarca().getDescrTipoMarca() : "null") + ", DtIni="
-				+ getDtIniMarca() + ", DtFim=" + getDtFimMarca()
-				+ ", Marcador=" + getCpMarcador().getDescrMarcador()
-				+ ", Pessoa=" + ((getDpPessoaIni() != null) ? getDpPessoaIni().getSiglaCompleta() : "null")
-				+ ", Lotacao=" + ((getDpLotacaoIni() != null) ? getDpLotacaoIni().getSiglaCompleta() : "null") + "]";
+		return "CpMarca [Tipo="
+				+ ((getCpTipoMarca() != null) ? getCpTipoMarca()
+						.getDescrTipoMarca() : "null")
+				+ ", DtIni="
+				+ getDtIniMarca()
+				+ ", DtFim="
+				+ getDtFimMarca()
+				+ ", Marcador="
+				+ getCpMarcador().getDescrMarcador()
+				+ ", Pessoa="
+				+ ((getDpPessoaIni() != null) ? getDpPessoaIni()
+						.getSiglaCompleta() : "null")
+				+ ", Lotacao="
+				+ ((getDpLotacaoIni() != null) ? getDpLotacaoIni()
+						.getSiglaCompleta() : "null") + "]";
 	}
 
-	
 }

@@ -5,7 +5,6 @@ import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
@@ -27,7 +26,7 @@ public class WfExecutionEnvironment {
 
 	private void fechaSessaoHibernate() {
 		try {
-			HibernateUtil.fechaSessaoSeEstiverAberta();
+			WfHibernateUtil.fechaSessaoSeEstiverAberta();
 		} catch (Exception ex) {
 			log.error(
 					"[fechaSessaoHibernate] - Ocorreu um erro ao fechar uma sessï¿½o do Hibernate",
@@ -75,30 +74,21 @@ public class WfExecutionEnvironment {
 		WfDao.commitTransacao();
 	}
 
-	public void antes(Session session) throws Exception {
-		if (session == null) {
-			HibernateUtil.getSessao();
-			ModeloDao.freeInstance();
-		} else {
-			HibernateUtil.setSessao(session);
-		}
+	public void antes() throws Exception {
+		WfHibernateUtil.getSessao();
+		ModeloDao.freeInstance();
 		WfDao.getInstance();
 		Wf.getInstance().getConf().limparCacheSeNecessario();
 
-		// Novo
-		if (session == null) {
-			WfContextBuilder.getConfiguration();
-			WfContextBuilder.createJbpmContext();
-		}
+		WfContextBuilder.getConfiguration();
+		WfContextBuilder.createJbpmContext();
 
-		// Novo
 		if (!WfDao.getInstance().sessaoEstahAberta())
 			throw new AplicacaoException(
 					"Erro: sessï¿½o do Hibernate estï¿½ fechada.");
 
-		if (session == null)
-			WfContextBuilder.getJbpmContext().getJbpmContext()
-					.setSession(WfDao.getInstance().getSessao());
+		WfContextBuilder.getJbpmContext().getJbpmContext()
+				.setSession(WfDao.getInstance().getSessao());
 
 		// Velho
 		// GraphSession s = WfContextBuilder.getJbpmContext()
@@ -115,8 +105,7 @@ public class WfExecutionEnvironment {
 		// if (session.getTransaction() != null)
 		// return;
 
-		if (session == null)
-			WfDao.iniciarTransacao();
+		WfDao.iniciarTransacao();
 	}
 
 }

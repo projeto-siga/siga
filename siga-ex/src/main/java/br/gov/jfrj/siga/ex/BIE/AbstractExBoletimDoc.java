@@ -18,21 +18,58 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.BIE;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.model.Objeto;
 
-public abstract class AbstractExBoletimDoc extends Objeto implements Serializable {
-	
+@MappedSuperclass
+@NamedQueries({
+		@NamedQuery(name = "consultarDocsDisponiveisParaInclusaoEmBoletim", query = "select bol.exDocumento from ExBoletimDoc bol where bol.boletim is null and bol.exDocumento.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"),
+		@NamedQuery(name = "consultarDocsInclusosNoBoletim", query = "select bol.exDocumento from ExBoletimDoc bol where bol.boletim.idDoc = :idDoc"),
+		@NamedQuery(name = "consultarBoletimEmQueODocumentoEstaIncluso", query = "from ExBoletimDoc bol where bol.exDocumento.idDoc = :idDoc"),
+		@NamedQuery(name = "consultarBoletim", query = "from ExBoletimDoc bol where bol.boletim.idDoc = :idDoc") })
+public abstract class AbstractExBoletimDoc extends Objeto implements
+		Serializable {
+
 	/** The composite primary key value. */
+	@Id
+	@GeneratedValue
+	@Column(name = "ID_BOLETIM_DOC", unique = true, nullable = false)
 	private java.lang.Long idBoletimDoc;
-	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_DOC", unique = true)
 	private ExDocumento exDocumento;
-	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_BOLETIM")
 	private ExDocumento boletim;
-	
+
 	public AbstractExBoletimDoc() {
+	}
+
+	public java.lang.Long getIdBoletimDoc() {
+		return idBoletimDoc;
+	}
+
+	public void setIdBoletimDoc(java.lang.Long idBoletimDoc) {
+		this.idBoletimDoc = idBoletimDoc;
 	}
 
 	public ExDocumento getExDocumento() {
@@ -49,14 +86,6 @@ public abstract class AbstractExBoletimDoc extends Objeto implements Serializabl
 
 	public void setBoletim(ExDocumento boletim) {
 		this.boletim = boletim;
-	}
-
-	public java.lang.Long getIdBoletimDoc() {
-		return idBoletimDoc;
-	}
-
-	public void setIdBoletimDoc(java.lang.Long idBoletimDoc) {
-		this.idBoletimDoc = idBoletimDoc;
 	}
 
 }

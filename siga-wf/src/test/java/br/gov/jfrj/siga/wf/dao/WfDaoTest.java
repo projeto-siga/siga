@@ -31,10 +31,9 @@ import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Objeto;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.util.WfExpressionAssignmentHandler;
+import br.gov.jfrj.siga.wf.util.WfHibernateUtil;
 import br.gov.jfrj.siga.wf.util.WfTaskInstance;
 
 /**
@@ -52,7 +51,7 @@ public class WfDaoTest extends TestCase {
 			Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
 			Configuration cfg = CpDao.criarHibernateCfg(ambiente);
 			// ModeloDao.configurarHibernateParaDebug(cfg);
-			HibernateUtil.configurarHibernate(cfg);
+			WfHibernateUtil.configurarHibernate(cfg);
 
 			dao = WfDao.getInstance();
 		}

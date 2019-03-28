@@ -2,6 +2,8 @@ package br.gov.jfrj.siga.model;
 
 import javax.persistence.EntityManager;
 
+import org.hibernate.Session;
+
 public class ContextoPersistencia {
 
 	private final static ThreadLocal<EntityManager> emByThread = new ThreadLocal<EntityManager>();
@@ -13,6 +15,13 @@ public class ContextoPersistencia {
 
 	static public EntityManager em() {
 		return emByThread.get();
+	}
+	
+	static public void flushTransaction() {
+		em().flush();
+		((Session) (em().getDelegate())).flush();
+		em().getTransaction().commit();
+		em().getTransaction().begin();
 	}
 	
 

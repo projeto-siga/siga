@@ -157,6 +157,11 @@
 			<groupId>jsptags</groupId>
 			<artifactId>pager-taglib</artifactId>
 		</dependency>
+		<dependency>
+		    <groupId>com.sun.jersey</groupId>
+		    <artifactId>jersey-client</artifactId>
+		    <version>1.9.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>siga</groupId>
@@ -213,6 +218,12 @@
 			<groupId>org.eclipse.birt.runtime.3_7_1</groupId>
 			<artifactId>Tidy</artifactId>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>4.2.0.Final</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>

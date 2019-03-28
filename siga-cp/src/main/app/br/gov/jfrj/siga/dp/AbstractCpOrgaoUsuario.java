@@ -27,53 +27,66 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
-public abstract class AbstractCpOrgaoUsuario extends Objeto implements Serializable {
+@NamedQueries({
+		@NamedQuery(name = "consultarSiglaOrgaoUsuario", query = "from CpOrgaoUsuario org where upper(org.siglaOrgaoUsu) = upper(:sigla) or upper(org.acronimoOrgaoUsu) = upper(:sigla)"),
+		@NamedQuery(name = "consultarCpOrgaoUsuario", query = "select u from CpOrgaoUsuario u order by u.siglaOrgaoUsu"), 
+		@NamedQuery(name = "consultarCpOrgaoUsuarioOrdenadoPorNome", query = "select u from CpOrgaoUsuario u order by u.nmOrgaoUsu"),
+		@NamedQuery(name = "consultarIdOrgaoUsuario", query = "from CpOrgaoUsuario org where upper(org.idOrgaoUsu) = upper(:idOrgaoUsu)"),
+		@NamedQuery(name = "consultarNomeOrgaoUsuario", query = "from CpOrgaoUsuario org where upper(org.nmOrgaoAI) = upper(:nome)"),
+		@NamedQuery(name = "consultarPorFiltroCpOrgaoUsuario", query = "from CpOrgaoUsuario org where (upper(org.nmOrgaoUsu) like upper('%' || :nome || '%'))	order by org.nmOrgaoUsu"),
+		@NamedQuery(name = "consultarQuantidadeCpOrgaoUsuario", query = "select count(org) from CpOrgaoUsuario org"
+				+ " where ((upper(org.nmOrgaoUsu) like upper('%' || :nome || '%')) or (upper(org.siglaOrgaoUsu) like upper('%' || :nome || '%'))) order by org.siglaOrgaoUsu")})
+
+public abstract class AbstractCpOrgaoUsuario extends Objeto implements
+		Serializable {
 
 	@Column(name = "CGC_ORGAO_USU")
 	private Integer cgcOrgaoUsu;
-	
+
 	@Column(name = "COD_ORGAO_USU")
 	private Integer codOrgaoUsu;
 
 	@Id
-	@Column(name = "ID_ORGAO_USU", nullable = false)
+	@Column(name = "ID_ORGAO_USU", unique = true, nullable = false)
 	private Long idOrgaoUsu;
 
-	@Column(name = "BAIRRO_ORGAO_USU")
+	@Column(name = "BAIRRO_ORGAO_USU", length = 50)
 	private String bairroOrgaoUsu;
 
-	@Column(name = "CEP_ORGAO_USU")
+	@Column(name = "CEP_ORGAO_USU", length = 8)
 	private String cepOrgaoUsu;
 
-	@Column(name = "END_ORGAO_USU")
+	@Column(name = "END_ORGAO_USU", length = 256)
 	private String enderecoOrgaoUsu;
 
-	@Column(name = "NM_RESP_ORGAO_USU")
+	@Column(name = "NM_RESP_ORGAO_USU", length = 60)
 	private String nmRespOrgaoUsu;
 
-	@Column(name = "RAZAO_SOCIAL_ORGAO_USU")
+	@Column(name = "RAZAO_SOCIAL_ORGAO_USU", length = 256)
 	private String razaoSocialOrgaoUsu;
 
-	@Column(name = "UF_ORGAO_USU")
+	@Column(name = "UF_ORGAO_USU", length = 2)
 	private String ufOrgaoUsu;
 
-	@Column(name = "SIGLA_ORGAO_USU")
+	@Column(name = "SIGLA_ORGAO_USU", length = 15)
 	private String siglaOrgaoUsu;
 
-	@Column(name = "MUNICIPIO_ORGAO_USU")
+	@Column(name = "MUNICIPIO_ORGAO_USU", length = 50)
 	private String municipioOrgaoUsu;
 
-	@Column(name = "NM_ORGAO_USU", nullable = false)
+	@Column(name = "NM_ORGAO_USU", nullable = false, length = 256)
 	private String nmOrgaoUsu;
 
-	@Column(name = "TEL_ORGAO_USU")
+	@Column(name = "TEL_ORGAO_USU", length = 10)
 	private String telOrgaoUsu;
-	
-	@Column(name = "ACRONIMO_ORGAO_USU")
+
+	@Column(name = "ACRONIMO_ORGAO_USU", length = 12)
 	private String acronimoOrgaoUsu;
 
 	/*

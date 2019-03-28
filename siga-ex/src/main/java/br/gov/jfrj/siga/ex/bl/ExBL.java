@@ -18,11 +18,9 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.bl;
 
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -51,6 +49,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,7 +58,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Criteria;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -71,6 +69,10 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 
+import com.crivano.swaggerservlet.ISwaggerRequest;
+import com.crivano.swaggerservlet.ISwaggerResponse;
+import com.crivano.swaggerservlet.SwaggerAsyncResponse;
+import com.crivano.swaggerservlet.SwaggerCall;
 import com.google.common.base.Strings;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -89,6 +91,7 @@ import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
+import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
@@ -102,7 +105,7 @@ import br.gov.jfrj.siga.bluc.service.ValidateResponse;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
-import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -147,12 +150,12 @@ import br.gov.jfrj.siga.ex.util.ProcessadorModeloFreemarker;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.util.BIE.ManipuladorEntrevista;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.ObjetoBase;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.parser.SiglaParser;
-import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.wf.service.WfService;
 
 public class ExBL extends CpBL {
@@ -348,17 +351,6 @@ public class ExBL extends CpBL {
 			a.setDtIniMarca(b.getDtIniMarca());
 			dao().gravar(a);
 		}
-	}
-
-	public static void main(String args[]) throws Exception {
-		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.PRODUCAO;
-		Configuration cfg = ExDao.criarHibernateCfg(ambiente);
-		HibernateUtil.configurarHibernate(cfg);
-		final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
-		filter.setSigla("JFRJ-EOF-2014/01573.01");
-		ExMobil mob = (ExMobil) ExDao.getInstance().consultarPorSigla(filter);
-		System.out.println(mob.doc().getExClassificacaoAtual());
-		int a = 0;
 	}
 
 	public void corrigirArquivamentosEmVolume(int primeiro, int ultimo,
@@ -1089,8 +1081,6 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao anexar documento.", 0, e);
 		}
-
-		alimentaFilaIndexacao(mob.getExDocumento(), true);
 	}
 
 	public void anexarArquivoAuxiliar(final DpPessoa cadastrante,
@@ -1137,8 +1127,6 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao anexar arquivo auxiliar.", 0, e);
 		}
-
-		alimentaFilaIndexacao(mob.getExDocumento(), true);
 	}
 
 	private void permitirOuNaoMovimentarDestinacao(ExMobil mob) {
@@ -1493,7 +1481,7 @@ public class ExBL extends CpBL {
 
 			if (e.getMessage().contains("junta"))
 				throw new AplicacaoException(
-						"O documento foi assinado com sucesso mas não foi possível juntar este documento ao documento pai. O erro da juntada foi - "
+						"Não foi possível juntar este documento ao documento pai. O erro da juntada foi - "
 								+ e.getMessage(), 0, e);
 
 			throw new AplicacaoException("Erro ao assinar documento.", 0, e);
@@ -1760,13 +1748,12 @@ public class ExBL extends CpBL {
 		}
 
 		String s = null;
+		final ExMovimentacao mov;
 		try {
-			iniciarAlteracao();
-
 			if (usuarioDoToken != null && usuarioDoToken.equivale(cadastrante))
 				usuarioDoToken = cadastrante;
 
-			final ExMovimentacao mov = criarNovaMovimentacao(tpMovAssinatura,
+			 mov = criarNovaMovimentacao(tpMovAssinatura,
 					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
 					usuarioDoToken, null, null, null, null);
 
@@ -1783,6 +1770,12 @@ public class ExBL extends CpBL {
 			gravarMovimentacao(mov);
 			concluirAlteracaoDocComRecalculoAcesso(mov.getExMobil().getDoc());
 
+			ContextoPersistencia.flushTransaction();
+		} catch (final Exception e) {
+			throw new AplicacaoException("Erro ao assinar documento.", 0, e);
+		}
+
+		try {
 			// Verifica se o documento possui documento pai e faz a juntada
 			// automática. Caso o pai seja um volume de um processo, primeiro
 			// verifica se o volume está encerrado, se estiver procura o último
@@ -1803,28 +1796,31 @@ public class ExBL extends CpBL {
 				juntarAoDocumentoAutuado(cadastrante, lotaCadastrante, doc,
 						dtMov, cadastrante, cadastrante, mov);
 			}
+			
+			ContextoPersistencia.flushTransaction();
+		} catch (final Exception e) {
+			throw new AplicacaoException(
+					"Não foi possível juntar este documento ao documento pai. O erro da juntada foi - "
+							+ e.getMessage(), 0, e);
+		}
 
+		try {
 			if (!fPreviamenteAssinado && !doc.isPendenteDeAssinatura()) {
 				processarComandosEmTag(doc, "assinatura");
 			}
-
 		} catch (final Exception e) {
-			cancelarAlteracao();
-
-			if (e.getMessage().contains("junta"))
-				throw new AplicacaoException(
-						"O documento foi assinado com sucesso mas não foi possível juntar este documento ao documento pai. O erro da juntada foi - "
-								+ e.getMessage(), 0, e);
-
-			throw new AplicacaoException("Erro ao assinar documento.", 0, e);
+			throw new AplicacaoException("Erro ao executar procedimento pós-assinatura.", 0, e);
 		}
 
-		if (tramitar == null)
-			tramitar = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
-		if (tramitar)
-			trasferirAutomaticamente(cadastrante, lotaCadastrante, usuarioDoToken, doc, fPreviamenteAssinado);
-
-		alimentaFilaIndexacao(doc, true);
+		try {
+			if (tramitar == null)
+				tramitar = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
+			if (tramitar)
+				trasferirAutomaticamente(cadastrante, lotaCadastrante, usuarioDoToken, doc, fPreviamenteAssinado);
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao tramitar automaticamente.", 0, e);
+		}
 
 		return s;
 	}
@@ -1845,7 +1841,7 @@ public class ExBL extends CpBL {
 	public String assinarDocumentoComSenha(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final String matriculaSubscritor,
-			final String senhaSubscritor, final DpPessoa titular, final boolean autenticando, Boolean juntar, Boolean tramitar)
+			final String senhaSubscritor, final boolean validarSenha, final DpPessoa titular, final boolean autenticando, Boolean juntar, Boolean tramitar)
 			throws Exception {
 
 		DpPessoa subscritor = null;
@@ -1855,13 +1851,6 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Matrícula do Subscritor não foi informada.");
 
-		if (senhaSubscritor == null || senhaSubscritor.isEmpty())
-			throw new AplicacaoException(
-					"Senha do Subscritor não foi informada.");
-
-		final String hashAtual = GeraMessageDigest.executaHash(
-				senhaSubscritor.getBytes(), "MD5");
-
 		final CpIdentidade id = dao().consultaIdentidadeCadastrante(
 				matriculaSubscritor, true);
 		// se o usuário não existir
@@ -1870,10 +1859,19 @@ public class ExBL extends CpBL {
 
 		subscritor = id.getDpPessoa().getPessoaAtual();
 
-		boolean senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
+		if (validarSenha) {
+			if (senhaSubscritor == null || senhaSubscritor.isEmpty())
+				throw new AplicacaoException(
+						"Senha do Subscritor não foi informada.");
 
-		if (!senhaValida) {
-			throw new AplicacaoException("Senha do subscritor inválida.");
+			final String hashAtual = GeraMessageDigest.executaHash(
+					senhaSubscritor.getBytes(), "MD5");
+
+			boolean senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
+
+			if (!senhaValida) {
+				throw new AplicacaoException("Senha do subscritor inválida.");
+			}
 		}
 
 		if (!doc.isFinalizado())
@@ -1940,6 +1938,14 @@ public class ExBL extends CpBL {
 
 			mov.setDescrMov(subscritor.getNomePessoa() + ":"
 					+ subscritor.getSigla());
+			
+			// Hash de auditoria
+			//
+			final byte[] pdf = doc.getConteudoBlobPdf();
+			byte[] sha256 = BlucService.calcSha256(pdf);
+			String cpf = Long.toString(subscritor.getCpfPessoa());
+			acrescentarHashDeAuditoria(mov, sha256,
+					autenticando, subscritor.getNomePessoa(), cpf, null);
 
 			gravarMovimentacao(mov);
 			concluirAlteracaoDocComRecalculoAcesso(doc);
@@ -1967,8 +1973,6 @@ public class ExBL extends CpBL {
 			tramitar = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
 		if (tramitar)
 			trasferirAutomaticamente(cadastrante, lotaCadastrante, subscritor, doc, fPreviamenteAssinado);
-
-		alimentaFilaIndexacao(doc, true);
 		return s;
 
 	}
@@ -1976,7 +1980,7 @@ public class ExBL extends CpBL {
 	public void assinarMovimentacaoComSenha(DpPessoa cadastrante,
 			DpLotacao lotaCadastrante, ExMovimentacao movAlvo,
 			final Date dtMov, final String matriculaSubscritor,
-			final String senhaSubscritor, long tpMovAssinatura)
+			final String senhaSubscritor, final boolean validarSenha, long tpMovAssinatura)
 			throws Exception {
 
 		DpPessoa subscritor = null;
@@ -1986,27 +1990,29 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Matrícula do Subscritor não foi informada.");
 
-		if (senhaSubscritor == null || senhaSubscritor.isEmpty())
-			throw new AplicacaoException(
-					"Senha do Subscritor não foi informada.");
-
-		final String hashAtual = GeraMessageDigest.executaHash(
-				senhaSubscritor.getBytes(), "MD5");
-
-		final CpIdentidade id = dao().consultaIdentidadeCadastrante(
-				matriculaSubscritor, true);
-		// se o usuário não existir
-		if (id == null)
-			throw new AplicacaoException("O usuário não está cadastrado.");
-
-		subscritor = id.getDpPessoa().getPessoaAtual();
-
-		boolean senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
-
-		if (!senhaValida) {
-			throw new AplicacaoException("Senha do subscritor inválida.");
+		if (validarSenha) {
+			if (senhaSubscritor == null || senhaSubscritor.isEmpty())
+				throw new AplicacaoException(
+						"Senha do Subscritor não foi informada.");
+	
+			final String hashAtual = GeraMessageDigest.executaHash(
+					senhaSubscritor.getBytes(), "MD5");
+	
+			final CpIdentidade id = dao().consultaIdentidadeCadastrante(
+					matriculaSubscritor, true);
+			// se o usuário não existir
+			if (id == null)
+				throw new AplicacaoException("O usuário não está cadastrado.");
+	
+			subscritor = id.getDpPessoa().getPessoaAtual();
+	
+			boolean senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
+	
+			if (!senhaValida) {
+				throw new AplicacaoException("Senha do subscritor inválida.");
+			}
 		}
-
+		
 		if (movAlvo != null) {
 			log.info("Assinando movimentacao: " + movAlvo.toString()
 					+ " Id da movimentação: " + movAlvo.getIdMov());
@@ -2077,6 +2083,15 @@ public class ExBL extends CpBL {
 					+ subscritor.getSigla());
 
 			mov.setExMovimentacaoRef(movAlvo);
+			
+			// Hash de auditoria
+			//
+			final byte[] pdf = movAlvo.getConteudoBlobpdf();
+			byte[] sha256 = BlucService.calcSha256(pdf);
+			String cpf = Long.toString(subscritor.getCpfPessoa());
+			acrescentarHashDeAuditoria(mov, sha256,
+					tpMovAssinatura == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA, 
+					subscritor.getNomePessoa(), cpf, null);
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mov.getExMobil());
@@ -2209,19 +2224,6 @@ public class ExBL extends CpBL {
 			throws FileNotFoundException, IOException {
 		try (FileOutputStream fout2 = new FileOutputStream(sFileName)) {
 			fout2.write(Base64.encode(data).getBytes());
-		}
-	}
-
-	public void alimentaFilaIndexacao(ExDocumento doc, boolean reindexar) {
-		try {
-			if (doc == null || (!doc.isIndexavel()))
-				return;
-			BufferedWriter out = new BufferedWriter(new FileWriter(
-					SigaExProperties.getString("siga.lucene.index.path")
-							+ "/siga-ex-lucene-index-fila/" + doc.getIdDoc()));
-			out.close();
-		} catch (IOException e) {
-			//
 		}
 	}
 
@@ -2794,10 +2796,6 @@ public class ExBL extends CpBL {
 			}
 
 			concluirAlteracao(null);
-
-			if (indexar)
-				alimentaFilaIndexacao(mob.getExDocumento(), true);
-
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao cancelar movimentação.", 0, e);
@@ -3078,7 +3076,6 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao excluir movimentação.", 0, e);
 		}
-		alimentaFilaIndexacao(mob.getExDocumento(), true);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -3107,7 +3104,7 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Classificação documental do modelo foi alterada. Edite e grave o documento para atualizá-lo.");
 
-		if (!doc.getExClassificacao().getAtual().isAtivo())
+		if (doc.getExClassificacao().getAtual() == null)
 			throw new AplicacaoException(
 					"Classificação documental encerrada. Edite o documento para escolher outra.");
 
@@ -3136,29 +3133,22 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Processos não podem possuir anexos antes da finalização. Exclua todos os anexos para poder finalizar. Os anexos poderão ser incluídos no primeiro volume após a finalização.");
 
+		Date dt = dao().dt();
+		Calendar c = Calendar.getInstance();
+		c.setTime(dt);
+		
+		if (doc.getDtDoc() != null) {
+			Calendar dtDocCalendar = Calendar.getInstance();
+			dtDocCalendar.setTime(doc.getDtDoc());
+			
+			if (c.before(dtDocCalendar))
+				throw new AplicacaoException(
+						"não é permitido criar documento com data futura");
+		}
+		
 		try {
-			iniciarAlteracao();
-
-			doc.setExClassificacao(doc.getExClassificacao().getAtual()); /*
-																		 * atualizando
-																		 * a
-																		 * classificação
-																		 * do
-																		 * documento
-																		 */
-
-			Date dt = dao().dt();
-			Calendar c = Calendar.getInstance();
-			c.setTime(dt);
-
-			if (doc.getDtDoc() != null) {
-				Calendar dtDocCalendar = Calendar.getInstance();
-				dtDocCalendar.setTime(doc.getDtDoc());
-
-				if (c.before(dtDocCalendar))
-					throw new AplicacaoException(
-							"não é permitido criar documento com data futura");
-			}
+			// atualizando a classificacao do documento
+			doc.setExClassificacao(doc.getExClassificacao().getAtual() != null ?  doc.getExClassificacao().getAtual() : doc.getExClassificacao()); 
 
 			// Pega a data sem horas, minutos e segundos...
 			if (doc.getDtDoc() == null) {
@@ -3209,20 +3199,20 @@ public class ExBL extends CpBL {
 			} else {
 				criarVolume(cadastrante, lotaCadastrante, doc);
 			}
-			iniciarAlteracao();
-			
+
+			ContextoPersistencia.flushTransaction();
+
 			concluirAlteracaoDocComRecalculoAcesso(doc);			
+
+			ContextoPersistencia.flushTransaction();
 
 			if (setVias == null || setVias.size() == 0)
 				criarVia(cadastrante, lotaCadastrante, doc, null);
 
 			String s = processarComandosEmTag(doc, "finalizacao");
-
-			alimentaFilaIndexacao(doc, true);
-
+			ContextoPersistencia.flushTransaction();
 			return s;
 		} catch (final Exception e) {
-			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao finalizar o documento: "
 					+ e.getMessage(), 0, e);
 		}
@@ -3275,9 +3265,6 @@ public class ExBL extends CpBL {
 
 			gravarMovimentacao(mov);
 			concluirAlteracao(mob);
-			
-			//Edson: comando necessário, pois o apensarDocumento, abaixo, vai precisar acessar as coleções
-			dao().getSessao().refresh(mob);
 			
 			if (mob.getNumSequencia() > 1) {
 				ExMobil mobApenso = mob.doc().getVolume(
@@ -3521,8 +3508,12 @@ public class ExBL extends CpBL {
 			}
 
 			// Verifica se a data está entre o ano 2000 e o ano 2100
-			if (doc.getDtDoc() != null && (doc.getDtDoc().before(new Date(100, 0, 1)) || doc.getDtDoc().after(new Date(200, 0, 1)))) {
-				throw new AplicacaoException("Data inválida");
+			if (doc.getDtDoc() != null && !Data.dataDentroSeculo21(doc.getDtDoc())) {
+				throw new AplicacaoException("Data inválida, deve estar entre o ano 2000 e ano 2100");
+			}
+			
+			if (doc.getDtDocOriginal() != null && !Data.dataDentroSeculo21(doc.getDtDocOriginal())) {
+				throw new AplicacaoException("Data original inválida, deve estar entre o ano 2000 e ano 2100");
 			}
 			// Obtem a descricao pela macro @descricao
 			if (doc.getExModelo().isDescricaoAutomatica()) {
@@ -4178,8 +4169,10 @@ public class ExBL extends CpBL {
 
 		ExClassificacao classAtual = doc.getExClassificacaoAtual();
 		if (classAtual != null && !classAtual.isFechada())
-			novoDoc.setExClassificacao(classAtual.getAtual());
-
+			if (classAtual.getAtual() != null)
+				novoDoc.setExClassificacao(classAtual.getAtual());
+			else 
+				novoDoc.setExClassificacao(classAtual);
 		novoDoc.setDescrClassifNovo(doc.getDescrClassifNovo());
 		novoDoc.setExFormaDocumento(doc.getExFormaDocumento());
 
@@ -4305,6 +4298,7 @@ public class ExBL extends CpBL {
 		novaMov.setSubscritor(mov.getSubscritor());
 		novaMov.setTitular(mov.getTitular());
 		novaMov.setExPapel(mov.getExPapel());
+		acrescentarCamposDeAuditoria(novaMov);
 		return novaMov;
 	}
 
@@ -4531,8 +4525,6 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
 		}
-
-		alimentaFilaIndexacao(doc, true);
 		return s;
 	}
 
@@ -4683,9 +4675,6 @@ public class ExBL extends CpBL {
 		}
 
 		Date dt = dtMovIni != null ? dtMovIni : dao().dt();
-		ExMovimentacao mov;
-
-		mov = new ExMovimentacao();
 
 		try {
 			iniciarAlteracao();
@@ -4721,11 +4710,10 @@ public class ExBL extends CpBL {
 				if (m.equals(mob)
 						|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA
 						|| idTpMov == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) {
-
 					final ExTipoMovimentacao tpmov = dao().consultar(idTpMov,
 							ExTipoMovimentacao.class, false);
 
-					mov = criarNovaMovimentacaoTransferencia(
+					ExMovimentacao mov = criarNovaMovimentacaoTransferencia(
 							tpmov.getIdTpMov(), cadastrante, lotaCadastrante,
 							m, dtMov, dtFimMov,
 							(subscritor == null && fDespacho) ? cadastrante
@@ -4841,7 +4829,6 @@ public class ExBL extends CpBL {
 			final DpPessoa responsavel, final DpPessoa subscritor,
 			final DpPessoa titular, final String descrMov,
 			String nmFuncaoSubscritor) throws AplicacaoException {
-
 		if (descrMov == null) {
 			if (responsavel == null && lotaResponsavel == null)
 				if (dtMov == null)
@@ -4870,9 +4857,6 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao fazer anotação.", 0, e);
 		}
-
-		alimentaFilaIndexacao(mob.getExDocumento(), true);
-
 	}
 
 	// Nato: removi: final HttpServletRequest request,
@@ -5004,7 +4988,6 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Erro ao tentar redefinir nível de acesso", 0, e);
 		}
-		alimentaFilaIndexacao(doc, true);
 	}
 
 	public void exigirAnexo(final DpPessoa cadastrante,
@@ -5400,7 +5383,75 @@ public class ExBL extends CpBL {
 			if (mov.getResp() == null)
 				mov.setResp(cadastrante);
 		}
+		acrescentarCamposDeAuditoria(mov);
 		return mov;
+	}
+	
+	private void acrescentarCamposDeAuditoria(ExMovimentacao mov) {
+		String principal = ContextoPersistencia.getUserPrincipal();
+		if (principal != null) {
+			CpIdentidade identidade = dao().consultaIdentidadeCadastrante(principal, true);
+			mov.setAuditIdentidade(identidade);
+		}
+		RequestInfo ri = CurrentRequest.get();
+		if (ri != null) {
+			String ip = ri.getRequest().getHeader("X-Forwarded-For");
+			if (ip == null)
+				ip = ri.getRequest().getRemoteHost();
+			mov.setAuditIP(ip);
+		}
+	}
+	
+	private final int HASH_TIMEOUT_MILLISECONDS = 5000;
+	
+	private static class TimestampPostRequest implements ISwaggerRequest {
+		 String system;
+		 byte[] sha256;
+		 String tipo;
+		 String nome;
+		 String cpf;
+		 String json;
+	}
+
+	private static class TimestampPostResponse implements ISwaggerResponse {
+		 String jwt;
+		 String id;
+		 Date time;
+		 String url;
+		 String host;
+	}
+	
+	private void acrescentarHashDeAuditoria(ExMovimentacao mov, byte[] sha256,
+			boolean autenticar, String nome, String cpf, String json) {
+		try {
+			String timestampUrl = Cp.getInstance().getProp().timestampUrl();
+			if (timestampUrl == null)
+				return;
+			TimestampPostRequest req = new TimestampPostRequest();
+			req.system = Cp.getInstance().getProp().timestampSystem();
+			req.sha256 = sha256;
+			req.tipo = autenticar ? "auth" : "sign";
+			req.nome = nome;
+			req.cpf = cpf;
+			req.json = json;
+			SwaggerAsyncResponse<TimestampPostResponse> resp = SwaggerCall
+					.callAsync("obter timestamp", null, "POST", timestampUrl + "/timestamp",
+							req, TimestampPostResponse.class).get(
+							HASH_TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS);
+			if (resp != null && resp.getException() != null)
+				throw new RuntimeException(
+						"Exceção obtendo carimbo de tempo para a assinatura com senha",
+						resp.getException());
+			if (resp == null || resp.getResp() == null
+					|| resp.getResp() == null)
+				throw new RuntimeException(
+						"Carimbo de tempo para a assinatura com senha indisponível");
+			mov.setAuditHash(resp.getResp().jwt);
+		} catch (Exception e) {
+			throw new RuntimeException(
+					"Erro obtendo o carimbo de tempo para a assinatura com senha",
+					e);
+		}
 	}
 
 	private ExMovimentacao criarNovaMovimentacaoTransferencia(
@@ -5484,6 +5535,7 @@ public class ExBL extends CpBL {
 			if (mov.getResp() == null)
 				mov.setResp(cadastrante);
 		}
+		acrescentarCamposDeAuditoria(mov);
 		return mov;
 	}
 
@@ -6291,7 +6343,6 @@ public class ExBL extends CpBL {
 			CpIdentidade identidadeCadastrante) throws AplicacaoException {
 		verificarDuplicacaoTermoCompleto(exClassNovo, exClassAntigo);
 		try {
-			exClassNovo.setClassificacoesPosteriores(null);
 			dao().gravarComHistorico(exClassNovo, exClassAntigo, dt,
 					identidadeCadastrante);
 			copiarReferencias(exClassNovo, exClassAntigo, dt,
@@ -6451,10 +6502,6 @@ public class ExBL extends CpBL {
 
 			Set<ExModelo> setExModeloCriacaoVia = new HashSet<ExModelo>();
 			exClassCopia.setExModeloCriacaoViaSet(setExModeloCriacaoVia);
-
-			Set<ExClassificacao> setPosteriores = new HashSet<ExClassificacao>();
-			exClassCopia.setClassificacoesPosteriores(setPosteriores);
-
 		} catch (Exception e) {
 			throw new AplicacaoException(
 					"Erro ao copiar as propriedades do modelo anterior.");

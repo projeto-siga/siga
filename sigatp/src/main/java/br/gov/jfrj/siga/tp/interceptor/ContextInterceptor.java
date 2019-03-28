@@ -19,13 +19,16 @@ import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 import br.gov.jfrj.siga.vraptor.ParameterOptionalLoaderInterceptor;
 
 /**
- * Interceptor que inicia a instancia do DAO a ser utilizado pelo sistema. O DAO deve ser utilizado quando se deseja realizar operacoes quando nao se pode utilizar o {@link ActiveRecord}.
+ * Interceptor que inicia a instancia do DAO a ser utilizado pelo sistema. O DAO
+ * deve ser utilizado quando se deseja realizar operacoes quando nao se pode
+ * utilizar o {@link ActiveRecord}.
  * 
  * @author db1.
  *
  */
 @RequestScoped
-@Intercepts(before = { ParameterLoaderInterceptor.class, ParameterOptionalLoaderInterceptor.class })
+@Intercepts(before = { ParameterLoaderInterceptor.class,
+		ParameterOptionalLoaderInterceptor.class })
 public class ContextInterceptor implements Interceptor {
 
 	private EntityManager em;
@@ -37,12 +40,13 @@ public class ContextInterceptor implements Interceptor {
 	}
 
 	@Override
-	public void intercept(InterceptorStack stack, ResourceMethod method, Object resourceInstance) throws InterceptionException {
+	public void intercept(InterceptorStack stack, ResourceMethod method,
+			Object resourceInstance) throws InterceptionException {
 		try {
 			ContextoPersistencia.setEntityManager(em);
 			MessagesBundle.set(localization);
 			TpDao.freeInstance();
-			TpDao.getInstance((Session) em.getDelegate(), ((Session) em.getDelegate()).getSessionFactory().openStatelessSession());
+			TpDao.getInstance();
 			stack.next(method, resourceInstance);
 		} catch (Exception e) {
 			throw new InterceptionException(e);

@@ -24,29 +24,35 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+
 import br.gov.jfrj.siga.model.Objeto;
 
 /**
  * A class that represents a row in the EX_TIPO_MOVIMENTACAO table. You can
- * customize the behavior of this class by editing the class,
- * {@link ExTipoMovimentacao()}.
+ * customize the behavior of this class by editing the class, {@link
+ * ExTipoMovimentacao()}.
  */
-public abstract class AbstractExTipoMovimentacao extends Objeto implements Serializable {
-	private Set<ExEstadoDoc> deEstadoDocSet;
-
-	/** The value of the simple descrTipoMovimentacao property. */
-	private java.lang.String descrTipoMovimentacao;
-
-	/**
-	 * The cached hash code value for this instance. Settting to 0 triggers
-	 * re-calculation.
-	 */
-	private int hashValue = 0;
-
+@MappedSuperclass
+@NamedQueries({ @NamedQuery(name = "consultarPorSiglaExTipoMovimentacao", query = "select tip from ExTipoMovimentacao tip where tip.descrTipoMovimentacao = :descrTipoMovimentacao") })
+public abstract class AbstractExTipoMovimentacao extends Objeto implements
+		Serializable {
 	/** The composite primary key value. */
+	@Id
+	@SequenceGenerator(sequenceName = "EX_TIPO_MOVIMENTACAO_SEQ", name = "EX_TIPO_MOVIMENTACAO_SEQ")
+	@GeneratedValue(generator = "EX_TIPO_MOVIMENTACAO_SEQ")
+	@Column(name = "ID_TP_MOV", unique = true, nullable = false)
 	private java.lang.Long idTpMov;
 
-	private Set<ExEstadoDoc> paraEstadoDocSet;
+	/** The value of the simple descrTipoMovimentacao property. */
+	@Column(name = "DESCR_TIPO_MOVIMENTACAO", nullable = false, length = 256)
+	private java.lang.String descrTipoMovimentacao;
 
 	/**
 	 * Simple constructor of AbstractExTipoMovimentacao instances.
@@ -77,17 +83,16 @@ public abstract class AbstractExTipoMovimentacao extends Objeto implements Seria
 			return false;
 		final ExTipoMovimentacao that = (ExTipoMovimentacao) rhs;
 		// se o codLotacao for nulo e o outro tambem
-		if ((this.getIdTpMov() == null ? that.getIdTpMov() == null : this.getIdTpMov().equals(that.getIdTpMov()))) {
-			if ((this.getDescrTipoMovimentacao() == null ? that.getDescrTipoMovimentacao() == null : this
-					.getDescrTipoMovimentacao().equals(that.getDescrTipoMovimentacao())))
+		if ((this.getIdTpMov() == null ? that.getIdTpMov() == null : this
+				.getIdTpMov().equals(that.getIdTpMov()))) {
+			if ((this.getDescrTipoMovimentacao() == null ? that
+					.getDescrTipoMovimentacao() == null : this
+					.getDescrTipoMovimentacao().equals(
+							that.getDescrTipoMovimentacao())))
 				return true;
 
 		}
 		return false;
-	}
-
-	public Set<ExEstadoDoc> getDeEstadoDocSet() {
-		return deEstadoDocSet;
 	}
 
 	/**
@@ -108,10 +113,6 @@ public abstract class AbstractExTipoMovimentacao extends Objeto implements Seria
 		return idTpMov;
 	}
 
-	public Set<ExEstadoDoc> getParaEstadoDocSet() {
-		return paraEstadoDocSet;
-	}
-
 	/**
 	 * Implementation of the hashCode method conforming to the Bloch pattern
 	 * with the exception of array properties (these are very unlikely primary
@@ -122,17 +123,12 @@ public abstract class AbstractExTipoMovimentacao extends Objeto implements Seria
 	@Override
 	public int hashCode() {
 		int result = 17;
-		int idValue = this.getIdTpMov() == null ? 0 : this.getIdTpMov().hashCode();
+		int idValue = this.getIdTpMov() == null ? 0 : this.getIdTpMov()
+				.hashCode();
 		result = result * 37 + idValue;
-		idValue = this.getDescrTipoMovimentacao() == null ? 0 : this.getDescrTipoMovimentacao().hashCode();
-		result = result * 37 + idValue;
-		this.hashValue = result;
-
-		return this.hashValue;
-	}
-
-	public void setDeEstadoDocSet(final Set<ExEstadoDoc> deEstadoDocSet) {
-		this.deEstadoDocSet = deEstadoDocSet;
+		idValue = this.getDescrTipoMovimentacao() == null ? 0 : this
+				.getDescrTipoMovimentacao().hashCode();
+		return result * 37 + idValue;
 	}
 
 	/**
@@ -140,7 +136,8 @@ public abstract class AbstractExTipoMovimentacao extends Objeto implements Seria
 	 * 
 	 * @param descrTipoMovimentacao
 	 */
-	public void setDescrTipoMovimentacao(final java.lang.String descrTipoMovimentacao) {
+	public void setDescrTipoMovimentacao(
+			final java.lang.String descrTipoMovimentacao) {
 		this.descrTipoMovimentacao = descrTipoMovimentacao;
 	}
 
@@ -151,9 +148,5 @@ public abstract class AbstractExTipoMovimentacao extends Objeto implements Seria
 	 */
 	public void setIdTpMov(final java.lang.Long idTpMov) {
 		this.idTpMov = idTpMov;
-	}
-
-	public void setParaEstadoDocSet(final Set<ExEstadoDoc> paraEstadoDocSet) {
-		this.paraEstadoDocSet = paraEstadoDocSet;
 	}
 }

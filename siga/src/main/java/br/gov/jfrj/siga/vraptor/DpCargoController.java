@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -13,7 +15,9 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpCargoDaoFiltro;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -97,4 +101,119 @@ public class DpCargoController extends
 			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
 		}
 	}
+	
+	@Get("app/cargo/listar")
+	public void lista(Integer offset, Long idOrgaoUsu, String nome) throws Exception {
+		
+		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
+		} else {
+			CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
+			List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
+			list.add(ou);
+			result.include("orgaosUsu", list);
+		}
+		if(idOrgaoUsu != null) {
+			DpCargoDaoFiltro dpCargo = new DpCargoDaoFiltro();
+			if(offset == null) {
+				offset = 0;
+			}
+			dpCargo.setIdOrgaoUsu(idOrgaoUsu);
+			dpCargo.setNome(Texto.removeAcento(nome));
+			setItens(CpDao.getInstance().consultarPorFiltro(dpCargo, offset, 10));
+			result.include("itens", getItens());
+			result.include("tamanho", dao().consultarQuantidade(dpCargo));
+			
+			result.include("idOrgaoUsu", idOrgaoUsu);
+			result.include("nome", nome);
+		}
+	}
+	
+	@Get("/app/cargo/editar")
+	public void edita(final Long id){
+		if (id != null) {
+			DpCargo cargo = dao().consultar(id, DpCargo.class, false);
+			result.include("nmCargo",cargo.getNomeCargo());
+			result.include("idOrgaoUsu", cargo.getOrgaoUsuario().getId());
+			result.include("nmOrgaousu", cargo.getOrgaoUsuario().getNmOrgaoUsu());
+			
+			List<DpPessoa> list = dao().getInstance().consultarPessoasComCargo(id);
+			if(list.size() == 0) {
+				result.include("podeAlterarOrgao", Boolean.TRUE);
+			}
+		}
+		
+		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
+		} else {
+			CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
+			List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
+			list.add(ou);
+			result.include("orgaosUsu", list);
+		}
+		result.include("request",getRequest());
+		result.include("id",id);
+	}
+	
+	@Post("/app/cargo/gravar")
+	public void editarGravar(final Long id, 
+							 final String nmCargo, 
+							 final Long idOrgaoUsu) throws Exception{
+		assertAcesso("FE:Ferramentas;CAD_CARGO: Cadastrar Cargo");
+		
+		if(nmCargo == null)
+			throw new AplicacaoException("Nome do cargo não informado");
+		
+		if(idOrgaoUsu == null)
+			throw new AplicacaoException("Órgão não informada");
+		
+		List<DpPessoa> listPessoa = null;
+		
+		DpCargo cargo = new DpCargo();
+		cargo.setNomeCargo(Texto.removeAcento(Texto.removerEspacosExtra(nmCargo).trim()));
+		CpOrgaoUsuario ou = new CpOrgaoUsuario();
+		ou.setIdOrgaoUsu(idOrgaoUsu);
+		cargo.setOrgaoUsuario(ou);
+		
+		cargo = dao().getInstance().consultarPorNomeOrgao(cargo);
+		
+		if(cargo != null && !cargo.getId().equals(id)) {
+			throw new AplicacaoException("Nome do cargo já cadastrado!");
+		}
+		
+		cargo = new DpCargo();
+		
+		if (id == null) {
+			cargo = new DpCargo();
+			Date data = new Date(System.currentTimeMillis());
+			cargo.setDataInicio(data);
+		} else {
+			cargo = dao().consultar(id, DpCargo.class, false);
+			listPessoa = dao().getInstance().consultarPessoasComCargo(id);
+			
+		}
+		cargo.setDescricao(Texto.removerEspacosExtra(nmCargo).trim());
+		
+		if (idOrgaoUsu != null && idOrgaoUsu != 0 && (listPessoa == null || listPessoa.size() == 0)) {
+			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
+			orgaoUsuario = dao().consultar(idOrgaoUsu, CpOrgaoUsuario.class, false);	
+			cargo.setOrgaoUsuario(orgaoUsuario);
+		}
+		
+		try {
+			dao().iniciarTransacao();
+			dao().gravar(cargo);
+			if(cargo.getIdCargoIni() == null && cargo.getId() != null) {
+				cargo.setIdCargoIni(cargo.getId());
+				cargo.setIdeCargo(cargo.getId().toString());
+				dao().gravar(cargo);
+			}
+			dao().commitTransacao();			
+		} catch (final Exception e) {
+			dao().rollbackTransacao();
+			throw new AplicacaoException("Erro na gravação", 0, e);
+		}
+		this.result.redirectTo(this).lista(0, null, "");
+	}
+
 }

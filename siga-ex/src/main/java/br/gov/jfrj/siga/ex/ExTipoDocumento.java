@@ -27,12 +27,25 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.gov.jfrj.siga.model.Selecionavel;
 
 /**
  * A class that represents a row in the 'EX_TIPO_DOCUMENTO' table. This class
  * may be customized as it is never re-generated after being created.
  */
+@Entity
+@BatchSize(size = 500)
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Table(name = "EX_TIPO_DOCUMENTO", catalog = "siga")
 public class ExTipoDocumento extends AbstractExTipoDocumento implements
 		Serializable, Selecionavel {
 

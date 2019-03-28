@@ -343,6 +343,12 @@ public class SolicitacaoController extends SrController {
         if (solicitacao.getDescrSolicitacao() == null || "".equals(solicitacao.getDescrSolicitacao().trim())) 
         	srValidator.addError("solicitacao.descrSolicitacao", "Descri&ccedil&atilde;o n&atilde;o informada");	
 
+        if (solicitacao.getTelPrincipal() == null || "".equals(solicitacao.getTelPrincipal().trim())) 
+        	srValidator.addError("solicitacao.telPrincipal", "Telefone n&atilde;o informado");	
+
+        if (solicitacao.getEndereco() == null || "".equals(solicitacao.getEndereco().trim())) 
+        	srValidator.addError("solicitacao.endereco", "Endere&ccedil;o de atendimento n&atilde;o informado");	
+
         validarFormReclassificar(solicitacao);
         
         return !srValidator.hasErrors(); 
@@ -452,7 +458,8 @@ public class SolicitacaoController extends SrController {
         	result.include("filtro", filtro);
         	result.include("propriedade", propriedade);
         	result.include("popup", popup);
-        	result.include("listasPrioridade", SrLista.listar(false));
+        	result.include("locaisDisponiveis", filtro.getLocaisParaBusca());
+            result.include("listasPrioridade", SrLista.listar(false));
         	result.include("prioridadesEnum", SrPrioridade.values());
         }
     }
@@ -860,7 +867,11 @@ public class SolicitacaoController extends SrController {
     	if (solicitacao.isFilha()){
     		solicitacao.setDescrSolicitacao(solicitacao.getDescricao());
     	}
+    	boolean todoOContexto = solicitacao.isParteDeArvore();
+    	Set<SrAtributoSolicitacao> atributos = solicitacao.getAtributoSolicitacaoSetAtual(todoOContexto);
+    	
         result.include(SOLICITACAO, solicitacao);
+        result.include("atributos", atributos);
     }
 
     @Path("app/solicitacao/desfazerUltimaMovimentacao")

@@ -27,11 +27,11 @@ package br.gov.jfrj.siga.dp;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
-
 
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.model.Historico;
@@ -185,4 +185,22 @@ public class CpOrgao extends AbstractCpOrgao implements Serializable,
 				.getIdInicial().longValue();
 	}
 
+
+	//
+	// Solução para não precisar criar HIS_ATIVO em todas as tabelas que herdam de HistoricoSuporte.
+	//
+	@Column(name = "HIS_ATIVO")
+	private Integer hisAtivo;
+
+	@Override
+	public Integer getHisAtivo() {
+		this.hisAtivo = super.getHisAtivo();
+		return this.hisAtivo;
+	}
+	
+	@Override
+	public void setHisAtivo(Integer hisAtivo) {
+		super.setHisAtivo(hisAtivo);
+		this.hisAtivo = getHisAtivo();
+	}
 }

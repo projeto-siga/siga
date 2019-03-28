@@ -107,9 +107,14 @@ public class ExDocumentoVO extends ExVO {
 		else
 			this.lotaCadastranteString = "";
 
-		if (doc.getExClassificacaoAtual() != null)
-			this.classificacaoDescricaoCompleta = doc.getExClassificacaoAtual()
-					.getAtual().getDescricaoCompleta();
+		if (doc.getExClassificacaoAtual() != null) {
+			if (doc.getExClassificacaoAtual().getAtual() != null)
+				this.classificacaoDescricaoCompleta = doc.getExClassificacaoAtual()
+						.getAtual().getDescricaoCompleta();
+			else
+				this.classificacaoDescricaoCompleta = doc.getExClassificacaoAtual()
+				.getDescricaoCompleta();
+		}
 		this.destinatarioString = doc.getDestinatarioString();
 		if (doc.getExNivelAcessoAtual() != null)
 			this.nmNivelAcesso = doc.getExNivelAcessoAtual().getNmNivelAcesso();
@@ -863,7 +868,4 @@ public class ExDocumentoVO extends ExVO {
 	public void setPodeAnexarArquivoAuxiliar(boolean podeAnexar) {
 		this.podeAnexarArquivoAuxiliar = podeAnexar;
 	}
-	
-
-
 }

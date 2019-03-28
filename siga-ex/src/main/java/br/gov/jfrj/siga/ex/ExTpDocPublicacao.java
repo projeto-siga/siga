@@ -25,9 +25,22 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+@Entity
+@BatchSize(size = 500)
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Table(name = "EX_TP_DOC_PUBLICACAO", catalog = "SIGA")
 public class ExTpDocPublicacao extends AbstractExTpDocPublicacao implements
 		Serializable {
-	
+
 	public static int TIPO_MATERIA_ATO_ORDINATORIO = 1;
 	public static int TIPO_MATERIA_DECISAO = 2;
 	public static int TIPO_MATERIA_DESPACHO = 3;
@@ -41,12 +54,12 @@ public class ExTpDocPublicacao extends AbstractExTpDocPublicacao implements
 	public static int TIPO_MATERIA_TERMOS_ADITIVOS = 125;
 	public static int TIPO_MATERIA_ATAS_DE_REGISTRO_DE_PRECOS = 126;
 
-	public String getIdDocPublicacaoString(){
+	public String getIdDocPublicacaoString() {
 		return getIdDocPublicacao().toString();
 	}
-	
-	public void setIdDocPublicacaoString(String id){
+
+	public void setIdDocPublicacaoString(String id) {
 		setIdDocPublicacao(Long.parseLong(id));
 	}
-	
+
 }

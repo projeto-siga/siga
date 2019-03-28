@@ -32,19 +32,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.lucene.analysis.br.BrazilianAnalyzer;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.apache.xerces.impl.dv.util.Base64;
-import org.hibernate.annotations.Entity;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.annotations.BatchSize;
 
 import br.gov.jfrj.itextpdf.Documento;
-import br.gov.jfrj.lucene.HtmlBridge;
-import br.gov.jfrj.lucene.PDFBridge;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.ex.util.Compactador;
@@ -60,7 +55,8 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
  */
 
 @Entity
-@Indexed
+@BatchSize(size = 500)
+@Table(name = "EX_MOVIMENTACAO", catalog = "SIGA")
 public class ExMovimentacao extends AbstractExMovimentacao implements
 		Serializable, Comparable<ExMovimentacao> {
 	/**
@@ -68,6 +64,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 */
 	private static final long serialVersionUID = 2559924666592487436L;
 
+	@Transient
 	private byte[] cacheConteudoBlobMov;
 
 	/**
@@ -100,8 +97,6 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 
 	/* Add customized code below */
 
-	@Field(name = "descrTipoMovimentacao", store = Store.COMPRESS)
-	@Analyzer(impl = BrazilianAnalyzer.class)
 	public String getDescrTipoMovimentacao() {
 		String s = getExTipoMovimentacao().getSigla();
 		if (getCadastrante() == null || getSubscritor() == null)
@@ -154,7 +149,6 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 
 	}
 
-	@Field(name = "idTpMov", store = Store.COMPRESS)
 	public Long getIdTpMov() {
 		return getExTipoMovimentacao().getIdTpMov();
 	}
@@ -173,7 +167,6 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * @return Data da movimentação no formato dd/mm/aa, por exemplo, 01/02/10.
 	 * 
 	 */
-	@Field(name = "dtMovDDMMYY", store = Store.COMPRESS)
 	public String getDtMovDDMMYY() {
 		if (getDtMov() != null) {
 			final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
@@ -339,8 +332,6 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * 
 	 * @return Descrição da movimentação.
 	 */
-	@Field(name = "descrMov", store = Store.COMPRESS)
-	@Analyzer(impl = BrazilianAnalyzer.class)
 	@Override
 	public String getDescrMov() {
 		// TODO Auto-generated method stub
@@ -402,7 +393,6 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * @return Número de sequência como uma String se for uma via e "" caso
 	 *         contrário.
 	 */
-	@Field(name = "numVia", index = Index.NO, store = Store.COMPRESS)
 	public String getNumViaString() {
 		if (getNumVia2() == 0)
 			return "";
@@ -426,7 +416,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 			return Integer.MAX_VALUE;
 		return i;
 	}
-	
+
 	public int compareTo(final ExMovimentacao mov) {
 		try {
 			int i = 0;
@@ -525,9 +515,6 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		setConteudoBlobMov2(conteudoZip);
 	}
 
-	@Field(name = "conteudoBlobMovHtml")
-	@Analyzer(impl = BrazilianAnalyzer.class)
-	@FieldBridge(impl = HtmlBridge.class)
 	public byte[] getConteudoBlobHtml() {
 		return getConteudoBlob("doc.htm");
 	}
@@ -543,9 +530,6 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		}
 	}
 
-	@Field(name = "conteudoBlobMovPdf")
-	@Analyzer(impl = BrazilianAnalyzer.class)
-	@FieldBridge(impl = PDFBridge.class)
 	public byte[] getConteudoBlobPdfNecessario() {
 		if (getConteudoBlobHtml() == null)
 			return getConteudoBlobpdf();
@@ -638,7 +622,6 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * 
 	 * @return Nome do arquivo anexado a movimentação.
 	 */
-	@Field(name = "nmArqmov", store = Store.COMPRESS)
 	public String getNmArqMov() {
 		String s = super.getNmArqMov();
 
@@ -655,7 +638,6 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 * 
 	 * @return Nome do arquivo anexado a movimentação sem extensão.
 	 */
-	@Field(name = "nmArqmov", store = Store.COMPRESS)
 	public String getNmArqMovSemExtensao() {
 		String s = super.getNmArqMov();
 

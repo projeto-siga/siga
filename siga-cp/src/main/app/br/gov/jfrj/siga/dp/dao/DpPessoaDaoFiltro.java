@@ -18,14 +18,19 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.dp.dao;
 
+import br.gov.jfrj.siga.dp.DpCargo;
+import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
 public class DpPessoaDaoFiltro extends DaoFiltroSelecionavel {
 	private DpLotacao lotacao;
+	private DpCargo cargo;
+	private DpFuncaoConfianca funcaoConfianca;
 
 	private String nome;
 	private Long idOrgaoUsu;
+	private Long cpf;
 	
 	private boolean buscarFechadas;
 	private String situacaoFuncionalPessoa;
@@ -68,5 +73,29 @@ public class DpPessoaDaoFiltro extends DaoFiltroSelecionavel {
 
 	public void setLotacao(final DpLotacao lotacao) {
 		this.lotacao = lotacao;
+	}
+	
+	public Long getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(Long cpf) {
+		this.cpf = cpf;
+	}
+	
+	public DpCargo getCargo() {
+		return cargo;
+	}
+
+	public void setCargo(DpCargo cargo) {
+		this.cargo = cargo;
+	}
+
+	public DpFuncaoConfianca getFuncaoConfianca() {
+		return funcaoConfianca;
+	}
+
+	public void setFuncaoConfianca(DpFuncaoConfianca funcaoConfianca) {
+		this.funcaoConfianca = funcaoConfianca;
 	}
 }

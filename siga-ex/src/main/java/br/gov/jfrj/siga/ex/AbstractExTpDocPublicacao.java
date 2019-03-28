@@ -26,18 +26,37 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+
 import br.gov.jfrj.siga.model.Objeto;
 
-public abstract class AbstractExTpDocPublicacao extends Objeto implements Serializable {
+@MappedSuperclass
+@NamedQueries({ @NamedQuery(name = "consultarPorModelo", query = "select docPubl from ExTpDocPublicacao docPubl left join docPubl.exModeloSet mod where mod.hisIdIni = :idMod") })
+public abstract class AbstractExTpDocPublicacao extends Objeto implements
+		Serializable {
 
+	@Id
+	@Column(name = "ID_DOC_PUBLICACAO", unique = true, nullable = false)
 	private Long idDocPublicacao;
 
+	@Column(name = "NM_DOC_PUBLICACAO", length = 256)
 	private String nmDocPublicacao;
 
+	@ManyToMany
+	@JoinTable(name = "EX_MODELO_TP_DOC_PUBLICACAO", joinColumns = { @JoinColumn(name = "ID_DOC_PUBLICACAO") }, inverseJoinColumns = { @JoinColumn(name = "ID_MOD") })
 	private Set<ExModelo> exModeloSet;
-	
+
+	@Column(name = "CARATER", length = 1)
 	private String carater;
-	
+
 	public Long getIdDocPublicacao() {
 		return idDocPublicacao;
 	}
@@ -54,14 +73,14 @@ public abstract class AbstractExTpDocPublicacao extends Objeto implements Serial
 		this.nmDocPublicacao = nmDocPublicacao;
 	}
 
-	public Set<ExModelo> getExModeloSet() {
-		return exModeloSet;
-	}
+	// public Set<ExModelo> getExModeloSet() {
+	// return exModeloSet;
+	// }
+	//
+	// public void setExModeloSet(final Set<ExModelo> exModeloSet) {
+	// this.exModeloSet = exModeloSet;
+	// }
 
-	public void setExModeloSet(final Set<ExModelo> exModeloSet) {
-		this.exModeloSet = exModeloSet;
-	}
-	
 	public String getCarater() {
 		return carater;
 	}

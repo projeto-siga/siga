@@ -18,23 +18,15 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.wf.util;
 
-import java.lang.reflect.Field;
-
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.hibernate.LockMode;
-import org.hibernate.Session;
 import org.jbpm.JbpmContext;
-import org.jbpm.db.GraphSession;
 import org.jbpm.db.JobSession;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.job.Job;
 import org.jbpm.job.executor.JobExecutorThread;
-import org.jbpm.persistence.JbpmPersistenceException;
 
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
-import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 
@@ -69,11 +61,10 @@ public class WfJobExecutorThread extends JobExecutorThread {
 		JbpmContext jbpmContext = null;
 		try {
 			Wf.setInstance(null);
-			ee.antes(null);
+			ee.antes();
 			WfDao.getInstance().getSessao().merge(j);
 
-			jbpmContext = WfContextBuilder.getJbpmContext()
-					.getJbpmContext();
+			jbpmContext = WfContextBuilder.getJbpmContext().getJbpmContext();
 
 			try {
 				JobSession jobSession = jbpmContext.getJobSession();
@@ -91,8 +82,8 @@ public class WfJobExecutorThread extends JobExecutorThread {
 
 				if (log.isDebugEnabled())
 					log.debug("executing " + job);
-					job.execute(jbpmContext);
-					jobSession.deleteJob(job);
+				job.execute(jbpmContext);
+				jobSession.deleteJob(job);
 			} catch (Exception e) {
 				jbpmContext.setRollbackOnly();
 				throw e;
@@ -103,12 +94,14 @@ public class WfJobExecutorThread extends JobExecutorThread {
 			ee.depois();
 		} catch (Exception e) {
 			ee.excecao();
-			if (!jbpmContext.isClosed()){
+			if (!jbpmContext.isClosed()) {
 				jbpmContext.close();
 			}
 			throw new ServletException(e);
 		} finally {
-			((org.hibernate.proxy.HibernateProxy)j.getProcessInstance()).getHibernateLazyInitializer().getSession().connection().close();
+			((org.hibernate.proxy.HibernateProxy) j.getProcessInstance())
+					.getHibernateLazyInitializer().getSession().connection()
+					.close();
 			ee.finalmente();
 		}
 	}

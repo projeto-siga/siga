@@ -34,13 +34,14 @@ import javax.persistence.OneToMany;
 import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
-public abstract class AbstractCpTipoMarcador extends Objeto implements Serializable {
+public abstract class AbstractCpTipoMarcador extends Objeto implements
+		Serializable {
 
 	@Id
-	@Column(name = "ID_TP_MARCADOR", nullable = false)
+	@Column(name = "ID_TP_MARCADOR", unique = true, nullable = false)
 	private Long idTpMarcador;
 
-	@Column(name = "DESCR_TIPO_MARCADOR")
+	@Column(name = "DESCR_TIPO_MARCADOR", length = 30)
 	private String descrTipoMarcador;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cpTipoMarcador")
@@ -69,6 +70,5 @@ public abstract class AbstractCpTipoMarcador extends Objeto implements Serializa
 	public void setCpMarcadorSet(Set<CpMarcador> cpMarcadorSet) {
 		this.cpMarcadorSet = cpMarcadorSet;
 	}
-	
 
 }

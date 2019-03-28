@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 
 <siga:pagina titulo="Página de Login" desabilitarbusca="sim"
 	desabilitarmenu="sim"
@@ -37,6 +38,10 @@
 						SetInnerHTMLFromAjaxResponse("${url}", document.getElementById('gc-ancora'));
 					</script>
 				</c:when>
+				<c:when test="${not empty f:resource('siga.cabecalho.titulo') && fn:contains(f:resource('siga.cabecalho.titulo'), 'Governo do Estado de São Paulo')}">
+					<c:import url="comentarioSP.jsp" />
+				</c:when>
+
 				<c:otherwise>
 					<c:import url="comentario.jsp" />
 				</c:otherwise>
@@ -55,6 +60,7 @@
 				<!-- login form -->
 				<form method="post" enctype="application/x-www-form-urlencoded"
 					class="gt-form">
+					<input type="hidden" value="${cont}"/>
 
 					<c:if test="${not empty mensagem}">
 						<div class="login-invalido">

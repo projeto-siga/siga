@@ -30,10 +30,37 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 
 import br.gov.jfrj.siga.model.Objeto;
 
 @MappedSuperclass
+@NamedNativeQueries({ @NamedNativeQuery(name = "consultarPaginaInicial", query = "SELECT"
+		+ "			  	m.id_marcador,"
+		+ "			  	m.descr_marcador,"
+		+ "			  	c.cont_pessoa,"
+		+ "			  	c.cont_lota"
+		+ "			FROM corporativo.cp_marcador m,"
+		+ "			    (SELECT"
+		+ "			   		id_marcador,"
+		+ "			   		SUM(CASE WHEN id_pessoa_ini = :idPessoaIni THEN 1 ELSE 0 END) cont_pessoa,"
+		+ "			   		SUM(CASE WHEN id_lotacao_ini = :idLotacaoIni THEN 1 ELSE 0 END) cont_lota"
+		+ "			   	FROM corporativo.cp_marca marca"
+		+ "			   	WHERE(dt_ini_marca IS NULL OR dt_ini_marca < sysdate)"
+		+ "			   		AND(dt_fim_marca IS NULL OR dt_fim_marca > sysdate)"
+		+ "			   		AND((id_pessoa_ini = :idPessoaIni) OR(id_lotacao_ini = :idLotacaoIni))"
+		+ "			   		AND ("
+		+ "			   				select id_tipo_forma_doc from siga.ex_forma_documento where id_forma_doc = ("
+		+ "			   					select id_forma_doc from siga.ex_documento where id_doc = ("
+		+ "			   						select id_doc from siga.ex_mobil where id_mobil = marca.id_ref"
+		+ "			   					)"
+		+ "			   				)"
+		+ "			   			) = :idTipoForma"
+		+ "			   	AND id_tp_marca = 1"
+		+ "			   	GROUP BY id_marcador) c"
+		+ "			WHERE m.id_marcador = c.id_marcador"
+		+ "			ORDER BY m.ord_marcador") })
 public abstract class AbstractCpMarcador extends Objeto implements Serializable {
 
 	@Id
@@ -42,7 +69,7 @@ public abstract class AbstractCpMarcador extends Objeto implements Serializable 
 
 	@Column(name = "DESCR_MARCADOR")
 	private String descrMarcador;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_TP_MARCADOR", nullable = false)
 	private CpTipoMarcador cpTipoMarcador;

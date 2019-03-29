@@ -59,8 +59,13 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
+import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 
 public class CpBL {
+	private static final String _MODO_AUTENTICACAO_BANCO = "banco";
+	private static final String _MODO_AUTENTICACAO_LDAP = "ldap";
+	
+	private static final String _MODO_AUTENTICACAO_DEFAULT = _MODO_AUTENTICACAO_BANCO;
 
 	CpCompetenciaBL comp;
 
@@ -454,6 +459,13 @@ public class CpBL {
 			CpIdentidade idCadastrante, final String senhaDefinida,
 			String[] senhaGerada, boolean marcarParaSinc)
 			throws AplicacaoException {
+		
+		String siglaOrgaoMatricula = MatriculaUtils.getSigla(matricula);
+		boolean autenticaPeloBanco = buscarModoAutenticacao(siglaOrgaoMatricula).equals(_MODO_AUTENTICACAO_BANCO);
+		if(!autenticaPeloBanco)
+			throw new AplicacaoException("O usuário deve usar no SIGA os mesmos dados de autenticação " + 
+											"usados nas estações de trabalho (rede). Em caso de dúvidas, " +
+											"entre em contato com a Central de Atendimento.");
 
 		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
 		final List<DpPessoa> listaPessoas = dao().listarPorCpf(longCpf);
@@ -593,41 +605,62 @@ public class CpBL {
 		}
 
 	}
-
+	
+    private String buscarModoAutenticacao(String orgao) {
+    	String retorno = _MODO_AUTENTICACAO_DEFAULT;
+    	CpPropriedadeBL props = new CpPropriedadeBL();
+    	try {
+			String modo = props.getModoAutenticacao(orgao);
+			if(modo != null) 
+				retorno = modo;
+		} catch (Exception e) {
+		}
+    	return retorno;
+    }
+    
 	public CpIdentidade trocarSenhaDeIdentidade(String senhaAtual,
 			String senhaNova, String senhaConfirma, String nomeUsuario,
 			CpIdentidade idCadastrante) throws NoSuchAlgorithmException,
 			AplicacaoException {
-		if (senhaAtual == null || senhaAtual.trim().length() == 0) {
-			throw new AplicacaoException("Senha atual não confere");
-		}
-		final String hashAtual = GeraMessageDigest.executaHash(
-				senhaAtual.getBytes(), "MD5");
-
-		final CpIdentidade id = dao().consultaIdentidadeCadastrante(
-				nomeUsuario, true);
-		// se o usuário não existir
+		
+		// usuario existe?
+		final CpIdentidade id = dao().consultaIdentidadeCadastrante(nomeUsuario, true);
 		if (id == null)
 			throw new AplicacaoException("O usuário não está cadastrado.");
 
-		boolean podeTrocar = id.getDscSenhaIdentidade().equals(hashAtual);
+		boolean autenticaPeloBanco = buscarModoAutenticacao(id.getCpOrgaoUsuario().getSiglaOrgaoUsu()).equals(_MODO_AUTENTICACAO_BANCO);
+		if(!autenticaPeloBanco)
+			throw new AplicacaoException("O usuário deve modificar sua senha usando a interface do Windows " + 
+										"(acionando as teclas Ctrl, Alt e Del / Delete, opção 'Alterar uma senha')" +
+										", ou entrando em contato com a Central de Atendimento.");
+		
+		// preencheu senha atual?
+		if (senhaAtual == null || senhaAtual.trim().length() == 0) {
+			throw new AplicacaoException("Senha atual não confere");
+		}
+		
+		boolean podeTrocar = false;
+		boolean podeTrocarSenhaAdm = false;
+		
+		podeTrocar = autenticarViaBanco(senhaAtual, id);
 
 		if (!podeTrocar) {
-			// tenta o modo administrador...
+			// tenta o modo administrador... Podendo autenticar o ADM pelo LDAP
 			String servico = "SIGA: Sistema Integrado de Gestão Administrativa;GI: Módulo de Gestão de Identidade;DEF_SENHA: Definir Senha";
 			try {
-				if (Cp.getInstance()
-						.getConf()
-						.podeUtilizarServicoPorConfiguracao(
-								idCadastrante.getDpPessoa(),
-								idCadastrante.getDpPessoa().getLotacao(),
-								servico)) {
-
-					if (hashAtual.equals(idCadastrante.getDscSenhaIdentidade())) {
-						podeTrocar = true;
+				boolean admTrocaSenha = Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(
+																				idCadastrante.getDpPessoa(),
+																				idCadastrante.getDpPessoa().getLotacao(),
+																				servico);
+				if (admTrocaSenha) {
+					if(buscarModoAutenticacao(idCadastrante.getCpOrgaoUsuario().getSiglaOrgaoUsu()).equals(_MODO_AUTENTICACAO_BANCO)) {
+						podeTrocarSenhaAdm = autenticarViaBanco(senhaAtual, idCadastrante);
 					} else {
-						throw new AplicacaoException("Senha atual não confere");
+						podeTrocarSenhaAdm = autenticarViaLdap(senhaAtual, idCadastrante);
 					}
+					
+					if(!podeTrocarSenhaAdm)
+						throw new AplicacaoException("Senha atual não confere");
 
 					try {
 						Correio.enviar(
@@ -661,7 +694,7 @@ public class CpBL {
 			}
 		}
 
-		if (podeTrocar && senhaNova.equals(senhaConfirma)) {
+		if ((podeTrocar || podeTrocarSenhaAdm) && senhaNova.equals(senhaConfirma)) {
 			try {
 				Date dt = dao().consultarDataEHoraDoServidor();
 				CpIdentidade idNova = new CpIdentidade();
@@ -801,6 +834,25 @@ public class CpBL {
 		}
 	}
 
+	private boolean autenticarViaBanco(String senhaAtual, final CpIdentidade id) throws NoSuchAlgorithmException {
+		String hashAtual = GeraMessageDigest.executaHash(senhaAtual.getBytes(), "MD5");
+		return id.getDscSenhaIdentidade().equals(hashAtual);
+	}
+	
+	private boolean autenticarViaLdap(String login, String senhaAtual) {
+		boolean podeTrocar;
+		try {
+			podeTrocar = IntegracaoLdapViaWebService.getInstancia().autenticarUsuario(login, senhaAtual);
+		} catch (Exception e) {
+			podeTrocar = false;
+		}
+		return podeTrocar;
+	}
+
+	private boolean autenticarViaLdap(String senhaAtual, final CpIdentidade id) {
+		return autenticarViaLdap(id.getNmLoginIdentidade(), senhaAtual);
+	}
+
 	public boolean podeAlterarSenha(String auxiliar1, String cpf1,
 			String senha1, String auxiliar2, String cpf2, String senha2,
 			String matricula, String cpf, String novaSenha)
@@ -847,21 +899,14 @@ public class CpBL {
 						"Problema ao localizar a identidade dos auxiliares!");
 			}
 
-			String hashSenha1 = null;
-			String hashSenha2 = null;
-			hashSenha1 = GeraMessageDigest
-					.executaHash(senha1.getBytes(), "MD5");
-			hashSenha2 = GeraMessageDigest
-					.executaHash(senha2.getBytes(), "MD5");
-
 			if (pesAux1.getIdInicial().equals(pesAux2.getIdInicial())
 					|| pesAux1.getIdInicial().equals(pessoa.getIdInicial())
 					|| pesAux2.getIdInicial().equals(pessoa.getIdInicial())) {
 				throw new AplicacaoException("As pessoas devem ser diferentes!");
 			}
 			;
-			if (!cpIdAux1.getDscSenhaIdentidade().equals(hashSenha1)
-					|| !cpIdAux2.getDscSenhaIdentidade().equals(hashSenha2)) {
+			if (!autenticarViaBanco(senha1, cpIdAux1)
+					|| !autenticarViaBanco(senha2, cpIdAux2)) {
 				throw new AplicacaoException("As senhas não conferem!");
 			}
 

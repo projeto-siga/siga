@@ -22,6 +22,7 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
+import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -30,6 +31,11 @@ import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdap;
 
 @Resource
 public class UsuarioController extends SigaController {
+
+	private static final String _MODO_AUTENTICACAO_BANCO = "banco";
+	private static final String _MODO_AUTENTICACAO_LDAP = "ldap";
+	
+	private static final String _MODO_AUTENTICACAO_DEFAULT = _MODO_AUTENTICACAO_BANCO;
 
 	private static final Logger LOG = Logger.getLogger(UsuarioAction.class);
 	
@@ -212,6 +218,16 @@ public class UsuarioController extends SigaController {
 	
 	@Post({"/app/usuario/esqueci_senha_gravar","/public/app/usuario/esqueci_senha_gravar"})
 	public void gravarEsqueciSenha(UsuarioAction usuario) throws Exception {
+		// caso LDAP, orientar troca pelo Windows / central
+		final CpIdentidade id = dao().consultaIdentidadeCadastrante(usuario.getMatricula(), true);
+		if (id == null)
+			throw new AplicacaoException("O usuário não está cadastrado.");
+		boolean autenticaPeloBanco = buscarModoAutenticacao(id.getCpOrgaoUsuario().getSiglaOrgaoUsu()).equals(_MODO_AUTENTICACAO_BANCO);
+		if(!autenticaPeloBanco)
+			throw new AplicacaoException("O usuário deve modificar sua senha usando a interface do Windows " + 
+										"(acionando as teclas Ctrl, Alt e Del / Delete, opção 'Alterar uma senha')" +
+										", ou entrando em contato com a Central de Atendimento.");
+		
 		String msgAD = "";
 		boolean senhaTrocadaAD = false;
 		
@@ -267,6 +283,18 @@ public class UsuarioController extends SigaController {
 	}
 
 	
+    private String buscarModoAutenticacao(String orgao) {
+    	String retorno = _MODO_AUTENTICACAO_DEFAULT;
+    	CpPropriedadeBL props = new CpPropriedadeBL();
+    	try {
+			String modo = props.getModoAutenticacao(orgao);
+			if(modo != null) 
+				retorno = modo;
+		} catch (Exception e) {
+		}
+    	return retorno;
+    }
+    
 	@Get({"/app/usuario/integracao_ldap","/public/app/usuario/integracao_ldap"})
 	public void isIntegradoLdap(String matricula) throws AplicacaoException {
 		try{

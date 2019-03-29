@@ -61,7 +61,7 @@ public class GiServiceImpl implements GiService {
 	private static final String _MODO_AUTENTICACAO_BANCO = "banco";
 	private static final String _MODO_AUTENTICACAO_LDAP = "ldap";
 	//TODO caso nao exista a propriedade no JBOSS, autenticar via banco
-	private static final String _MODO_AUTENTICACAO_DEFAULT = "banco";
+	private static final String _MODO_AUTENTICACAO_DEFAULT = _MODO_AUTENTICACAO_BANCO;
 	
     private boolean autenticaViaBanco(CpIdentidade identidade, String senha) {
     	try {
@@ -81,24 +81,29 @@ public class GiServiceImpl implements GiService {
 		}
     }
     
+    private String buscarModoAutenticacao(String orgao) {
+    	String retorno = _MODO_AUTENTICACAO_DEFAULT;
+    	CpPropriedadeBL props = new CpPropriedadeBL();
+    	try {
+			String modo = props.getModoAutenticacao(orgao);
+			if(modo != null) 
+				retorno = modo;
+		} catch (Exception e) {
+		}
+    	return retorno;
+    }
+    
     @Override
     public String login(String matricula, String senha) {
 		String resultado = "";
-		String modoAut = _MODO_AUTENTICACAO_DEFAULT;
 
 		CpIdentidade id = null;
 		CpDao dao = CpDao.getInstance();
 		id = dao.consultaIdentidadeCadastrante(matricula, true);
 		String orgaoLogin = id.getCpOrgaoUsuario().getSiglaOrgaoUsu();
-		
-		CpPropriedadeBL props = new CpPropriedadeBL();
-    	try {
-			String modo = props.getModoAutenticacao(orgaoLogin);
-			if(modo != null) 
-				modoAut = modo;
-		} catch (Exception e) {
-		}
     	
+		String modoAut = buscarModoAutenticacao(orgaoLogin);
+
 		try {
 			if(modoAut.equals(_MODO_AUTENTICACAO_BANCO)) {
 				if (autenticaViaBanco(id, senha)) {

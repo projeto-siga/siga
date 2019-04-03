@@ -300,7 +300,7 @@ public class ExAssinadorExternoController extends ExController {
 				long tpMov = autenticar ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
 						: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO;
 
-				Ex.getInstance().getBL().assinarMovimentacao(cadastrante, lotaCadastrante, mov, dt, assinatura, null,
+				Ex.getInstance().getBL().assinarMovimentacao(cadastrante, mov.getLotaTitular(), mov, dt, assinatura, null,
 						tpMov);
 				msg = "OK";
 			} else if (mob != null) {
@@ -308,7 +308,7 @@ public class ExAssinadorExternoController extends ExController {
 						: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
 				// Nato: Assinatura externa não deve produzir transferência. 
 				// Se preferir a configuração default, deveria trocar o último parâmetro por null.
-				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, lotaCadastrante, mob.doc(), dt, assinatura,
+				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, mob.doc().getLotaCadastrante(), mob.doc(), dt, assinatura,
 						null, tpMov, juntar, tramitar == null ? false : tramitar);
 				if (msg != null)
 					msg = "OK: " + msg;

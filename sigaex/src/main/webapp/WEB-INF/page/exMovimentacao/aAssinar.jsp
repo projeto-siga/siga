@@ -88,5 +88,5 @@
 		</div>
 	</div>
 
-	<tags:assinatura_rodape/>
+	<tags:assinatura_rodape nomeUsuarioSubscritor="${doc.subscritor.sigla}"/>
 </siga:pagina>

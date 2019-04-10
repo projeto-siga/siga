@@ -614,7 +614,7 @@ var providerPassword = {
 	inicializar : function(cont) {
 		try {
 			this.dialog = $(
-					'<div id="dialog-form" title="Assinar/Autenticar com Senha"><fieldset><label>Matrícula</label> <br /> <input id="nomeUsuarioSubscritor" type="text" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)" /><br /> <br /> <label>Senha</label><br /> <input type="password" id="senhaUsuarioSubscritor" class="text ui-widget-content ui-corner-all" autocomplete="off" /></fieldset></div>')
+					'<div id="dialog-form" title="Assinar/Autenticar com Senha"><fieldset><label>Matrícula</label> <br /> <input id="nomeUsuarioSubscritor" type="text" value="' + $('#nomeUsuarioSubscritor').val() + '" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)" /> <label>(modifique caso necessário)</label><br /> <br /> <label>Senha</label><br /> <input type="password" id="senhaUsuarioSubscritor" class="text ui-widget-content ui-corner-all" autocomplete="off" /></fieldset></div>')
 					.dialog({
 						title : "Identificação",
 						width : '50%',

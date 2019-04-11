@@ -643,6 +643,9 @@ var providerPassword = {
 						}
 					});
 			$(document).delegate('.ui-dialog', 'keyup', function(e) {
+				if((e.which == 13 || e.key === "Enter") && ($("#nomeUsuarioSubscritor").val() === "" || $("#senhaUsuarioSubscritor").val() === "")) {
+					return false;
+				}
 		        var tagName = e.target.tagName.toLowerCase();
 
 		        tagName = (tagName === 'input' && e.target.type === 'button') ? 'button' : tagName;

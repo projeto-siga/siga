@@ -101,11 +101,8 @@ function permitirInclusaoUsuario(response,param){
 
 /*  converte para maiúscula a sigla do estado  */
 function converteUsuario(nomeusuario){
-  re= /^[a-zA-Z0-9]{2}\d{4,6}$/;
   tmp = nomeusuario.value;
-  if (tmp.match(re)){      
-      nomeusuario.value=tmp.toUpperCase();
-  }
+  nomeusuario.value=tmp.toUpperCase();
 }
 
 function passwordStrength(password,metodo) {

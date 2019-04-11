@@ -1,9 +1,10 @@
-package br.gov.jfrj.siga.base.util;
+package br.gov.jfrj.siga.cp.util;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
+import static org.junit.Assert.*;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 
 public class MatriculaUtilsTest {
 	
@@ -24,25 +25,25 @@ public class MatriculaUtilsTest {
 	
 	@Test( expected = AplicacaoException.class )
 	public void deveLancarExcecaoCasoAParteNumericaDaMatriculaNaoForNumerica() throws Exception {
-		MatriculaUtils.getParteNumerica( "RJA" );
+		MatriculaUtils.getParteNumericaDaMatricula( "RJA" );
 	}
 	
 	@Test
 	public void deveRetornarParteNumericaDaMatricula() throws Exception {
 		long parteNumericaEsperada = 13286;
-		long parteNumericaAtual = MatriculaUtils.getParteNumerica( "RJ13286" );
+		long parteNumericaAtual = MatriculaUtils.getParteNumericaDaMatricula( "RJ13286" );
 		assertEquals( parteNumericaEsperada, parteNumericaAtual );
 	}
 	
 	@Test( expected = AplicacaoException.class )
 	public void deveLancarExcecaoCasoAParteNaoNumericaDaMatriculaSejaNumerica() throws Exception {
-		MatriculaUtils.getSigla( "999" );
+		MatriculaUtils.getSiglaDoOrgaoDaMatricula( "999" );
 	}
 	
 	@Test
 	public void deveRetornarSiglaDaMatricula() throws Exception {
 		String siglaEsperada = "RJ";
-		String siglaAtual = MatriculaUtils.getSigla( "RJ13286" );
+		String siglaAtual = MatriculaUtils.getSiglaDoOrgaoDaMatricula( "RJ13286" );
 		assertTrue( siglaEsperada.equals( siglaAtual ) );
 	}
 

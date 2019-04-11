@@ -80,6 +80,7 @@ import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
+import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
 import br.gov.jfrj.siga.dp.CpLocalidade;
@@ -964,8 +965,8 @@ public class CpDao extends ModeloDao {
 	 */
 	public DpPessoa getPessoaPorPrincipal(String principal) {
 		DpPessoa pessoaTemplate = new DpPessoa();
-		pessoaTemplate.setSesbPessoa(principal.substring(0, 2));
-		pessoaTemplate.setMatricula(Long.parseLong(principal.substring(2)));
+		pessoaTemplate.setSesbPessoa(MatriculaUtils.getSiglaDoOrgaoDaMatricula(principal));
+		pessoaTemplate.setMatricula(MatriculaUtils.getParteNumericaDaMatricula(principal));
 		DpPessoa pessoaNova = CpDao.getInstance().consultarPorSigla(
 				pessoaTemplate);
 		return pessoaNova;
@@ -1312,10 +1313,7 @@ public class CpDao extends ModeloDao {
 							: "consultarIdentidadeCadastrante");
 			qry.setString("nmUsuario", nmUsuario);
 			// Verifica se existe numeros no login do usuario
-			if (nmUsuario.substring(2).matches("^[0-9]*$"))
-				qry.setString("sesbPessoa", nmUsuario.substring(0, 2));
-			else
-				qry.setString("sesbPessoa", "RJ"); // se nnao ha numeros atribui
+			qry.setString("sesbPessoa", MatriculaUtils.getSiglaDoOrgaoDaMatricula(nmUsuario));
 			// RJ
 			// por default
 

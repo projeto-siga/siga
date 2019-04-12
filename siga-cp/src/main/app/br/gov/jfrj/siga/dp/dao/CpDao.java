@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -1312,10 +1313,13 @@ public class CpDao extends ModeloDao {
 					fAtiva ? "consultarIdentidadeCadastranteAtiva"
 							: "consultarIdentidadeCadastrante");
 			qry.setString("nmUsuario", nmUsuario);
-			// Verifica se existe numeros no login do usuario
-			qry.setString("sesbPessoa", MatriculaUtils.getSiglaDoOrgaoDaMatricula(nmUsuario));
-			// RJ
-			// por default
+			if(Pattern.matches( "\\d+", nmUsuario )) {
+				qry.setString("cpf", nmUsuario);
+				qry.setString("sesbPessoa", "");
+			} else {
+				qry.setString("cpf", "");
+				qry.setString("sesbPessoa", MatriculaUtils.getSiglaDoOrgaoDaMatricula(nmUsuario));
+			}
 
 			// Cache was disabled because it would interfere with the
 			// "change password" action.

@@ -53,8 +53,8 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "     where pes.idPessoaIni = :idPessoaIni"
 				+ "      and u.dpPessoa = pes" + "      and u.hisDtFim is null"),
 		@NamedQuery(name = "consultarIdentidadeCadastranteAtiva", query = "select u from CpIdentidade u , DpPessoa pes "
-				+ "where u.nmLoginIdentidade = :nmUsuario "
-				+ "and pes.sesbPessoa = :sesbPessoa "
+				+ "where ((u.nmLoginIdentidade = :nmUsuario and pes.sesbPessoa = :sesbPessoa and pes.sesbPessoa is not null) or "
+				+ " (pes.cpfPessoa = :cpf and pes.cpfPessoa is not null and pes.cpfPessoa <> 0)) "
 				+ "and u.dpPessoa.cpfPessoa = pes.cpfPessoa "
 				+ "and (u.hisDtFim is null) "
 				+ "and (u.dtCancelamentoIdentidade is null) "

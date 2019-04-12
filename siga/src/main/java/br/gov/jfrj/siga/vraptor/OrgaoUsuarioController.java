@@ -42,13 +42,15 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		}
 		CpOrgaoUsuarioDaoFiltro orgaoUsuario = new CpOrgaoUsuarioDaoFiltro();
 		orgaoUsuario.setNome(nome);
-		setItens(CpDao.getInstance().consultarPorFiltro(orgaoUsuario, offset, 10));
+		setItens(CpDao.getInstance().consultarPorFiltro(orgaoUsuario, offset, 15));
 		result.include("itens", getItens());
 		result.include("tamanho", dao().consultarQuantidade(orgaoUsuario));
 		result.include("nome", nome);
 		if(!"ZZ".equalsIgnoreCase(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaoUsuarioSiglaLogado", getTitular().getOrgaoUsuario().getSigla());
 		}
+		setItemPagina(15);
+		result.include("currentPageNumber", calculaPaginaAtual(offset));
 	}
 	
 	@Get("/app/orgaoUsuario/editar")

@@ -15,6 +15,7 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -205,7 +206,7 @@ public class UsuarioController extends SigaController {
 			throw new AplicacaoException( "A matrícula informada é nula ou inválida." );
 		}
 		
-		orgaoFlt.setSiglaOrgaoUsu(matricula.substring(0, 2));		
+		orgaoFlt.setSiglaOrgaoUsu(MatriculaUtils.getSiglaDoOrgaoDaMatricula(matricula));		
 		CpOrgaoUsuario orgaoUsu = dao.consultarPorSigla(orgaoFlt);
 		
 		if (orgaoUsu != null) {
@@ -239,7 +240,7 @@ public class UsuarioController extends SigaController {
 			throw new AplicacaoException( "A matrícula informada é nula ou inválida." );
 		}
 		
-		orgaoFlt.setSiglaOrgaoUsu(matricula.substring(0, 2));		
+		orgaoFlt.setSiglaOrgaoUsu(MatriculaUtils.getSiglaDoOrgaoDaMatricula(matricula));		
 		CpOrgaoUsuario orgaoUsu = dao.consultarPorSigla(orgaoFlt);
 		
 		if (orgaoUsu == null){
@@ -248,7 +249,7 @@ public class UsuarioController extends SigaController {
 
 		List<DpPessoa> lstPessoa = null;
 		try{
-			lstPessoa = dao.consultarPorMatriculaEOrgao(Long.valueOf(matricula.substring(2)), orgaoUsu.getId(), false, false);
+			lstPessoa = dao.consultarPorMatriculaEOrgao(MatriculaUtils.getParteNumericaDaMatricula(matricula), orgaoUsu.getId(), false, false);
 		}catch(Exception e){
 			throw new AplicacaoException("Formato de matrícula inválida.", 9, e);
 		}

@@ -35,10 +35,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -75,6 +81,7 @@ import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.CpPropriedadeBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
+import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpAplicacaoFeriado;
 import br.gov.jfrj.siga.dp.CpFeriado;
 import br.gov.jfrj.siga.dp.CpLocalidade;
@@ -83,6 +90,7 @@ import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpPersonalizacao;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
+import br.gov.jfrj.siga.dp.CpTipoMarca;
 import br.gov.jfrj.siga.dp.CpTipoPessoa;
 import br.gov.jfrj.siga.dp.CpUF;
 import br.gov.jfrj.siga.dp.DpCargo;
@@ -95,10 +103,6 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
 
 public class CpDao extends ModeloDao {
 
@@ -143,14 +147,32 @@ public class CpDao extends ModeloDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CpOrgao> consultarCpOrgaoOrdenadoPorNome() {
+	public List<CpOrgao> consultarCpOrgaoOrdenadoPorNome(Integer offset, Integer itemPagina) {
 		try {
 			final Query query = getSessao().getNamedQuery(
 					"consultarCpOrgaoOrdenadoPorNome");
+			if (offset > 0) {
+				query.setFirstResult(offset);
+			}
+			if (itemPagina > 0) {
+				query.setMaxResults(itemPagina);
+			}
 			final List<CpOrgao> l = query.list();
 			return l;
 		} catch (final NullPointerException e) {
 			return null;
+		}
+	}
+	
+	public int consultarQuantidadeOrgao() {
+		try {
+			final Query query = getSessao().getNamedQuery(
+					"consultarQuantidadeCpOrgaoTodos");
+			
+			final int l = ((Long) query.uniqueResult()).intValue();
+			return l;
+		} catch (final NullPointerException e) {
+			return 0;
 		}
 	}
 
@@ -944,8 +966,8 @@ public class CpDao extends ModeloDao {
 	 */
 	public DpPessoa getPessoaPorPrincipal(String principal) {
 		DpPessoa pessoaTemplate = new DpPessoa();
-		pessoaTemplate.setSesbPessoa(principal.substring(0, 2));
-		pessoaTemplate.setMatricula(Long.parseLong(principal.substring(2)));
+		pessoaTemplate.setSesbPessoa(MatriculaUtils.getSiglaDoOrgaoDaMatricula(principal));
+		pessoaTemplate.setMatricula(MatriculaUtils.getParteNumericaDaMatricula(principal));
 		DpPessoa pessoaNova = CpDao.getInstance().consultarPorSigla(
 				pessoaTemplate);
 		return pessoaNova;
@@ -1014,7 +1036,7 @@ public class CpDao extends ModeloDao {
 
 		Query query = getSessao().createQuery(
 				"from CpLocalidade l where l.UF.idUF = "
-						+ cpuf.getIdUF().intValue());
+						+ cpuf.getIdUF().intValue() + " order by l.nmLocalidade");
 		List l = query.list();
 		return l;
 	}
@@ -1028,6 +1050,21 @@ public class CpDao extends ModeloDao {
 		List l = query.list();
 		return l;
 	}
+	
+	public CpLocalidade consultarLocalidadesPorNomeUF(final CpLocalidade localidade) {
+		Query query = getSessao().createQuery(
+				"from CpLocalidade lot where "
+				+ "      upper(TRANSLATE(lot.nmLocalidade,'âàãáÁÂÀÃéêÉÊíÍóôõÓÔÕüúÜÚçÇ''','AAAAAAAAEEEEIIOOOOOOUUUUCC ')) = upper(:nome) and lot.UF.id = :idUf");
+		query.setLong("idUf", localidade.getUF().getId());
+		query.setString("nome", localidade.getNmLocalidade());
+		
+		List l = query.list();
+		
+		if(l.size() != 1) {
+			return null;
+		}
+		return (CpLocalidade)l.get(0);
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<CpLocalidade> consultarLocalidades() {
@@ -1036,6 +1073,16 @@ public class CpDao extends ModeloDao {
 				"from CpLocalidade l order by l.nmLocalidade");
 		List l = query.list();
 		return l;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public CpLocalidade consultarLocalidade(CpLocalidade localidade) {
+
+		Query query = getSessao().createQuery(
+				"from CpLocalidade l where l.idLocalidade = :idLocalidade");
+		query.setLong("idLocalidade", localidade.getId());
+		List l = query.list();
+		return (CpLocalidade) l.get(0);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1266,13 +1313,13 @@ public class CpDao extends ModeloDao {
 					fAtiva ? "consultarIdentidadeCadastranteAtiva"
 							: "consultarIdentidadeCadastrante");
 			qry.setString("nmUsuario", nmUsuario);
-			// Verifica se existe numeros no login do usuario
-			if (nmUsuario.substring(2).matches("^[0-9]*$"))
-				qry.setString("sesbPessoa", nmUsuario.substring(0, 2));
-			else
-				qry.setString("sesbPessoa", "RJ"); // se nnao ha numeros atribui
-			// RJ
-			// por default
+			if(Pattern.matches( "\\d+", nmUsuario )) {
+				qry.setString("cpf", nmUsuario);
+				qry.setString("sesbPessoa", "");
+			} else {
+				qry.setString("cpf", "");
+				qry.setString("sesbPessoa", MatriculaUtils.getSiglaDoOrgaoDaMatricula(nmUsuario));
+			}
 
 			// Cache was disabled because it would interfere with the
 			// "change password" action.
@@ -2329,6 +2376,19 @@ public class CpDao extends ModeloDao {
 		return result;
 	}
 
+	public int consultarQuantidadeDocumentosPorDpLotacao(final DpLotacao o) {
+        try {
+        	
+			SQLQuery sql = (SQLQuery) getSessao().getNamedQuery(
+					"consultarQuantidadeDocumentosPorDpLotacao");
 
-
+			sql.setLong("idLotacao", o.getId());
+            sql.setLong("idTipoMarca", CpTipoMarca.TIPO_MARCA_SIGA_EX);
+        	
+            final int l = ((BigDecimal) sql.uniqueResult()).intValue();
+            return l;
+        } catch (final NullPointerException e) {
+            return 0;
+        }
+    }
 }

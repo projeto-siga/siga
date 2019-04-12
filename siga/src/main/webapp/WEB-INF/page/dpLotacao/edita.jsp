@@ -10,7 +10,8 @@
 	function validar() {
 		var nmLotacao = document.getElementsByName('nmLotacao')[0].value;
 		var siglaLotacao = document.getElementsByName('siglaLotacao')[0].value;		
-		var id = document.getElementsByName('id')[0].value;	
+		var id = document.getElementsByName('id')[0].value;
+		var idLocalidade = document.getElementsByName('idLocalidade')[0].value;	
 		if (nmLotacao==null || nmLotacao=="") {			
 			alert("Preencha o nome da Lotação.");
 			document.getElementById('nmLotacao').focus();		
@@ -18,9 +19,18 @@
 			if(siglaLotacao==null || siglaLotacao=="") {
 				alert("Preencha a sigla da Lotação.");
 			} else {
-				frm.submit();
+				if(idLocalidade == 0) {
+					alert("Preencha a localidade da Lotação.");	
+				} else {
+					frm.submit();
+				}
 			}
 		}			
+	}
+	
+	function carregarExcel() {
+		document.form.action =  "carregarExcel";
+		document.form.submit();
 	}
 </script>
 
@@ -68,6 +78,12 @@
 							<input type="text" id="nmLotacao" name="nmLotacao" value="${nmLotacao}" maxlength="100" size="100" />
 						</td>
 					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<label><font color="#9f9f9f">(Inserir nome oficial, conforme legislação. Não abreviar. Iniciar cada palavra com letra maiúscula, exceto para palavras tais como: "de", "para", etc. Exemplo: Unidade do Arquivo Público do Estado)</font></label>
+						</td>
+					</tr>
 					<tr>				
 						<td>
 							<label>Sigla:</label>
@@ -76,11 +92,46 @@
 							<input type="text" id="siglaLotacao" name="siglaLotacao" value="${siglaLotacao}" maxlength="20" size="20"  style="text-transform:uppercase" onkeyup="this.value = this.value.trim()"/>
 						</td>
 					</tr>
-					
+					<tr>
+						<td></td>
+						<td>
+							<label><font color="#9f9f9f">(Sigla: Letras maiúsculas)</font></label>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Localidade:
+						</td>
+						<td>
+							<select name="idLocalidade" value="${idLocalidade}">
+								<option value="0">Selecione</option>
+								<c:forEach items="${listaLocalidades}" var="item">
+									<option value="${item.id}"
+										${item.id == idLocalidade ? 'selected' : ''}>
+										${item.descricao}</option>
+								</c:forEach>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Situa&ccedil;&atilde;o:
+						</td>
+						<td>
+							<input type="radio" name="situacao" value="true" id="situacaoAtivo" ${empty dtFimLotacao ? 'checked' : ''}/>Ativo
+							<input type="radio" name="situacao" value="false" id="situacaoInativo" ${not empty dtFimLotacao ? 'checked' : ''}/>Inativo
+						</td>
+					</tr>
+					<c:if test="${empty id}">
+						<tr class="button">
+							<td>Carregar planilha para inserir múltiplos registros:</td>
+							<td><input type="button" value="Carregar planilha" onclick="javascript:location.href='/siga/app/lotacao/carregarExcel';" class="gt-btn-medium gt-btn-left" /></td>
+						</tr>
+					</c:if>
 					<tr class="button">
 						<td>
 							<input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-large gt-btn-left" /> 
-							<input type="button" value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
+							<input type="button" value="Cancela" onclick="javascript:location.href='/siga/app/lotacao/listar';" class="gt-btn-medium gt-btn-left" />
 						</td>
 					</tr>
 				</table>

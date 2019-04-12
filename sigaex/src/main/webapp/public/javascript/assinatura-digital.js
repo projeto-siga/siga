@@ -1286,10 +1286,6 @@ function WaitForAppletLoad(applet_id, attempts, delay, onSuccessCallback,
 
 /* converte para maiúscula a sigla do estado */
 function converteUsuario(nomeusuario) {
-	re = /^[a-zA-Z]{2}\d{3,6}$/;
-	ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
 	tmp = nomeusuario.value;
-	if (tmp.match(re) || tmp.match(ret2)) {
-		nomeusuario.value = tmp.toUpperCase();
-	}
+	nomeusuario.value = tmp.toUpperCase();
 }

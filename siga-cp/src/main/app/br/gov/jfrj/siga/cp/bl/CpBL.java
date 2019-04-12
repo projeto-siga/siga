@@ -18,6 +18,8 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp.bl;
 
+import java.io.File;
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,7 +31,6 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.util.CPFUtils;
-import br.gov.jfrj.siga.base.util.MatriculaUtils;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso.CpTipoAcessoEnum;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
@@ -40,6 +41,8 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
+import br.gov.jfrj.siga.cp.util.Excel;
+import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -263,7 +266,7 @@ public class CpBL {
 	public CpIdentidade alterarSenhaDeIdentidade(String matricula, String cpf,
 			CpIdentidade idCadastrante, String[] senhaGerada)
 			throws AplicacaoException {
-		final long longmatricula = Long.parseLong(matricula.substring(2));
+		final long longmatricula = MatriculaUtils.getParteNumericaDaMatricula(matricula);
 		final DpPessoa pessoa = dao().consultarPorCpfMatricula(
 				Long.parseLong(cpf), longmatricula);
 
@@ -340,7 +343,7 @@ public class CpBL {
 			String[] senhaGerada, boolean marcarParaSinc)
 			throws AplicacaoException {
 
-		final long longMatricula = MatriculaUtils.getParteNumerica(matricula);
+		final long longMatricula = MatriculaUtils.getParteNumericaDaMatricula(matricula);
 		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
 
 		final DpPessoa pessoa = dao().consultarPorCpfMatricula(longCpf,
@@ -741,5 +744,48 @@ public class CpBL {
 		acesso.setAuditIP(auditIP);
 		dao().gravar(acesso);
 	}
+	
+	public InputStream uploadLotacao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+		InputStream inputStream = null;
+		try {
+			Excel excel = new Excel();
+			inputStream = excel.uploadLotacao(file, orgaoUsuario, extensao);
+		} catch (Exception e) {
+			
+		}
+		return inputStream;
+	}
+	
+	public InputStream uploadFuncao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+		InputStream inputStream = null;
+		try {
+			Excel excel = new Excel();
+			inputStream = excel.uploadFuncao(file, orgaoUsuario, extensao);
+		} catch (Exception e) {
+			
+		}
+		return inputStream;
+	}
 
+	public InputStream uploadCargo(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+		InputStream inputStream = null;
+		try {
+			Excel excel = new Excel();
+			inputStream = excel.uploadCargo(file, orgaoUsuario, extensao);
+		} catch (Exception e) {
+			
+		}
+		return inputStream;
+	}
+	
+	public InputStream uploadPessoa(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+		InputStream inputStream = null;
+		try {
+			Excel excel = new Excel();
+			inputStream = excel.uploadPessoa(file, orgaoUsuario, extensao);
+		} catch (Exception e) {
+			
+		}
+		return inputStream;
+	}
 }

@@ -286,9 +286,13 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				result.include("email", pessoa.getEmailPessoa());
 				result.include("idOrgaoUsu", pessoa.getOrgaoUsuario().getId());
 				result.include("nmOrgaousu", pessoa.getOrgaoUsuario().getNmOrgaoUsu());
-				result.include("dtNascimento", pessoa.getDtNascimentoDDMMYYYY());
+				if(pessoa.getDataNascimento() != null) {
+					result.include("dtNascimento", pessoa.getDtNascimentoDDMMYYYY());
+				}
 				result.include("idCargo", pessoa.getCargo().getId());
-				result.include("idFuncao", pessoa.getFuncaoConfianca().getId());
+				if( pessoa.getFuncaoConfianca() != null) {
+					result.include("idFuncao", pessoa.getFuncaoConfianca().getId());
+				}
 				result.include("idLotacao", pessoa.getLotacao().getId());
 			}
 		}
@@ -438,9 +442,6 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		
 		if(idCargo == null || idCargo == 0)
 			throw new AplicacaoException("Cargo não informado");
-
-		if(idFuncao == null || idFuncao == 0) 
-			throw new AplicacaoException("Função de Confiança não informado");
 		
 		if(idLotacao == null || idLotacao == 0)
 			throw new AplicacaoException("Lotação não informado");
@@ -448,40 +449,15 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		if(nmPessoa == null || nmPessoa.trim() == "")
 			throw new AplicacaoException("Nome não informado");
 		
-		if(dtNascimento == null || dtNascimento.trim() == "") 
-			throw new AplicacaoException("Data de nascimento não informado");
-		
 		if(cpf == null || cpf.trim() == "") 
 			throw new AplicacaoException("CPF não informado");
 		
 		if(email == null || email.trim() == "") 
 			throw new AplicacaoException("E-mail não informado");
 		
-		Date dtNasc = new Date();
-		dtNasc = SigaCalendar.converteStringEmData(dtNascimento);
-		
-		Calendar hj = Calendar.getInstance();
-		Calendar dtNasci = new GregorianCalendar();
-		dtNasci.setTime(dtNasc);
-		
-		if(hj.before(dtNasci)) {
-			throw new AplicacaoException("Data de nascimento inválida");
-		}
+
 		
 		DpPessoa pessoa = new DpPessoa();
-		
-		pessoa = CpDao.getInstance().consultarPorCpf(Long.valueOf(cpf.replace("-", "").replace(".", "")));
-		
-		if(pessoa != null && !pessoa.getId().equals(id) && pessoa.getDataFim() == null) {
-			throw new AplicacaoException("CPF já cadastrado!");
-		}
-		
-		pessoa = CpDao.getInstance().consultarPorEmail(Texto.removerEspacosExtra(email).trim().replace(" ","").toLowerCase());
-		if(pessoa != null && !pessoa.getId().equals(id) && pessoa.getDataFim() == null) {
-			throw new AplicacaoException("E-mail já cadastrado!");
-		}
-		
-		pessoa = new DpPessoa();
 		
 		if (id == null) {
 			Date data = new Date(System.currentTimeMillis());
@@ -492,10 +468,25 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			pessoa = dao().consultar(id, DpPessoa.class, false);
 		}
 		
+		if(dtNascimento != null && !"".equals(dtNascimento)) {
+			Date dtNasc = new Date();
+			dtNasc = SigaCalendar.converteStringEmData(dtNascimento);
+			
+			Calendar hj = Calendar.getInstance();
+			Calendar dtNasci = new GregorianCalendar();
+			dtNasci.setTime(dtNasc);
+			
+			if(hj.before(dtNasci)) {
+				throw new AplicacaoException("Data de nascimento inválida");
+			}
+			pessoa.setDataNascimento(dtNasc);
+		} else {
+			pessoa.setDataNascimento(null);
+		}
+		
 		pessoa.setNomePessoa(Texto.removerEspacosExtra(nmPessoa).trim());
 		pessoa.setCpfPessoa(Long.valueOf(cpf.replace("-", "").replace(".", "")));
 		pessoa.setEmailPessoa(Texto.removerEspacosExtra(email).trim().replace(" ","").toLowerCase());
-		pessoa.setDataNascimento(dtNasc);
 		
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
 		DpCargo cargo = new DpCargo();
@@ -511,7 +502,11 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		pessoa.setOrgaoUsuario(ou);
 		pessoa.setCargo(cargo);
 		pessoa.setLotacao(lotacao);
-		pessoa.setFuncaoConfianca(funcao);
+		if(idFuncao != null && idFuncao != 0) {
+			pessoa.setFuncaoConfianca(funcao);
+		} else {
+			pessoa.setFuncaoConfianca(null);
+		}
 		pessoa.setSesbPessoa(ou.getSigla());
 				
 		try {

@@ -41,18 +41,6 @@
 			return;	
 		}
 
-		if(idFuncao==null || idFuncao == 0) {
-			alert("Preencha a função da pessoa.");
-			document.getElementById('idFuncao').focus();
-			return;	
-		}
-
-		if(dtNascimento==null || dtNascimento == "") {
-			alert("Preencha a data de nascimento da pessoa.");
-			document.getElementById('dtNascimento').focus();
-			return;
-		}
-
 		if(cpf==null || cpf == "") {
 			alert("Preencha o CPF da pessoa.");
 			document.getElementById('cpf').focus();
@@ -69,7 +57,7 @@
 			return;
 		}
 
-		if(!data(dtNascimento)) {
+		if(dtNascimento != null && dtNascimento != "" && !data(dtNascimento)) {
 			return;
 		}
 

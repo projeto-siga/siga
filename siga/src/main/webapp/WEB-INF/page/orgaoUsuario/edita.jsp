@@ -29,6 +29,15 @@
 								
 		}			
 	}
+
+	function somenteLetras(){
+		tecla = event.keyCode;
+		if ((tecla >= 65 && tecla <= 90) || (tecla >= 97 && tecla <= 122)){
+		    return true;
+		}else{
+		   return false;
+		}
+	}
 </script>
 
 <body>
@@ -79,7 +88,7 @@
 						<td>
 							<c:choose>
 								<c:when test="${empty siglaOrgaoUsuario || podeAlterarSigla}">
-									<input type="text" name="siglaOrgaoUsuario" id="siglaOrgaoUsuario" value="${siglaOrgaoUsuario}" maxlength="2" size="5" style="text-transform:uppercase" onkeyup="this.value = this.value.trim()"/>	
+									<input type="text" name="siglaOrgaoUsuario" id="siglaOrgaoUsuario" value="${siglaOrgaoUsuario}" maxlength="5" size="5" style="text-transform:uppercase"  onKeypress="return somenteLetras(event);" onkeyup="this.value = this.value.trim()"/>	
 								</c:when>
 								<c:otherwise>
 									<c:out value="${siglaOrgaoUsuario }"/>

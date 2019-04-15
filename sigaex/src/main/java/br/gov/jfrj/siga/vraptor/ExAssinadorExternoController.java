@@ -241,9 +241,21 @@ public class ExAssinadorExternoController extends ExController {
 			jsonError(e);
 		}
 	}
+	
+	@Put("/public/app/assinador-externo/doc/{id}/sign")
+	public void assinadorExternoSave(String id) throws Exception {
+		try {
+			assertPassword();
+			
+			
+		} catch (Exception e) {
+			jsonError(e);
+		}
+		assinadorPopupSave(id, true);
+	}
 
 	@Put("/public/app/assinador-popup/doc/{id}/sign")
-	public void assinadorPopupSave(String id) throws Exception {
+	public void assinadorPopupSave(String id, boolean apenasComSolicitacaoDeAssinatura) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
 
@@ -275,6 +287,8 @@ public class ExAssinadorExternoController extends ExController {
 			String sigla = id2sigla(id) + ".pdf";
 
 			ExMobil mob = Documento.getMobil(sigla);
+			if (apenasComSolicitacaoDeAssinatura && !mob.doc().isAssinaturaSolicitada())
+				throw new Exception("Documento requer solicitação de assinatura. Provavelmente, o documento foi editado após a solicitação.");
 			ExMovimentacao mov = Documento.getMov(mob, sigla);
 
 			DpPessoa cadastrante = getCadastrante();
@@ -328,16 +342,6 @@ public class ExAssinadorExternoController extends ExController {
 		} catch (Exception e) {
 			jsonError(e);
 		}
-	}
-
-	@Put("/public/app/assinador-externo/doc/{id}/sign")
-	public void assinadorExternoSave(String id) throws Exception {
-		try {
-			assertPassword();
-		} catch (Exception e) {
-			jsonError(e);
-		}
-		assinadorPopupSave(id);
 	}
 
 	private class Signature {

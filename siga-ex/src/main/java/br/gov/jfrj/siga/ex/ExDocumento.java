@@ -2626,11 +2626,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public ExMovimentacao getMovSolicitacaoDeAssinatura() {
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
 
-		for (final ExMovimentacao mov : movs) {
-			if (!mov.isCancelada()
-					&& mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)
-				return mov;
-		}
+		if(movs != null)
+			for (final ExMovimentacao mov : movs) {
+				if (!mov.isCancelada()
+						&& mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)
+					return mov;
+			}
 		return null;
 	}
 }

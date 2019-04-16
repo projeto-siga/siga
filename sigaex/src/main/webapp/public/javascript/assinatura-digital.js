@@ -636,10 +636,12 @@ var providerPassword = {
 								cont();
 							},
 							"Cancelar" : function() {
+								gAssinando = false;
 								$(this).dialog('destroy').remove();
 							}
 						},
 						close : function() {
+							gAssinando = false;
 						}
 					});
 			$(document).delegate('.ui-dialog', 'keyup', function(e) {

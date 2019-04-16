@@ -98,7 +98,7 @@ public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte
 	@Column(name = "ID_CLASSIFICACAO", unique = true, nullable = false)
 	private Long idClassificacao;
 
-	@Column(name = "CODIFICACAO", nullable = false, length = 11)
+	@Column(name = "CODIFICACAO", nullable = false, length = 13)
 	private String codificacao;
 
 	@Column(name = "DESCR_CLASSIFICACAO", nullable = false, length = 4000)

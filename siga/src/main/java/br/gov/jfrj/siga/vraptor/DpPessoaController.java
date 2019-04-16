@@ -24,6 +24,8 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,15 +35,21 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FileUtils;
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -215,11 +223,11 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				dpPessoa.setCpf(Long.valueOf(cpfPesquisa.replace(".", "").replace("-", "")));
 			}
 			dpPessoa.setBuscarFechadas(Boolean.TRUE);
-			setItens(CpDao.getInstance().consultarPorFiltro(dpPessoa, offset, 10));
+			setItens(CpDao.getInstance().consultarPorFiltro(dpPessoa, offset, 15));
 			result.include("itens", getItens());
 			Integer tamanho = dao().consultarQuantidade(dpPessoa);
 			result.include("tamanho", tamanho);
-			result.include("maxIndices", tamanho/10+1);
+			result.include("maxIndices", tamanho/15+1);
 			
 			result.include("idOrgaoUsu", idOrgaoUsu);
 			result.include("nome", nome);
@@ -361,6 +369,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		result.include("cpf", cpf);
 		result.include("email", email);
 		result.include("cpfPesquisa", cpfPesquisa);
+		setItemPagina(15);
+		result.include("currentPageNumber", calculaPaginaAtual(offset));
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
 		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 			List<CpOrgaoUsuario> list1 = new ArrayList<CpOrgaoUsuario>();
@@ -520,5 +530,51 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			throw new AplicacaoException("Erro na gravação", 0, e);
 		}
 		lista(0, null, "", "", null, null, null);
+	}
+	
+	@Get("/app/pessoa/carregarExcel")
+	public void carregarExcel() {
+		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
+		} else {
+			result.include("nmOrgaousu", getTitular().getOrgaoUsuario().getNmOrgaoUsu());	
+		}
+		
+		result.use(Results.page()).forwardTo("/WEB-INF/page/dpPessoa/cargaPessoa.jsp");
+	}
+	
+	@Post("/app/pessoa/carga")
+	public Download carga( final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
+		InputStream inputStream = null;
+		try {
+			String nomeArquivo = arquivo.getFileName();
+			String extensao = nomeArquivo.substring(nomeArquivo.lastIndexOf("."), nomeArquivo.length());
+			
+			File file = new File("arq" + extensao);
+
+			file.createNewFile();
+			FileUtils.copyInputStreamToFile(arquivo.getFile(), file);
+			
+			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
+			if(idOrgaoUsu != null && !"".equals(idOrgaoUsu)) {
+				orgaoUsuario.setIdOrgaoUsu(idOrgaoUsu);
+			} else {
+				orgaoUsuario = getTitular().getOrgaoUsuario();
+			}
+			
+			CpBL cpbl = new CpBL();
+			inputStream = cpbl.uploadPessoa(file, orgaoUsuario, extensao);
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+		if(inputStream == null) {
+			result.include("msg", "Arquivo processado com sucesso!");
+			carregarExcel();
+		} else {
+			result.include("msg", "");
+			return new InputStreamDownload(inputStream, "application/text", "inconsistencias.txt");	
+		}
+		return null;
+
 	}
 }

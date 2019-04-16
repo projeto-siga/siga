@@ -252,11 +252,17 @@
 						</td>
 					</tr>
 					
+					<c:if test="${empty id}">
+						<tr class="button">
+							<td>Carregar planilha para inserir múltiplos registros:</td>
+							<td><input type="button" value="Carregar planilha" onclick="javascript:location.href='/siga/app/pessoa/carregarExcel';" class="gt-btn-medium gt-btn-left" /></td>
+						</tr>
+					</c:if>
 					
 					<tr class="button">
 						<td>
 							<input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-large gt-btn-left" /> 
-							<input type="button" value="Cancela" onclick="voltar();" class="gt-btn-medium gt-btn-left" />
+							<input type="button" value="Cancela" onclick="javascript:location.href='/siga/app/pessoa/listar';" class="gt-btn-medium gt-btn-left" />
 						</td>
 					</tr>
 				</table>

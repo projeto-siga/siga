@@ -479,8 +479,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 				idTpConf);
 	}
 
-	public boolean podePorConfiguracao(DpPessoa dpPessoa, long idTpConf)
-			throws Exception {
+	public boolean podePorConfiguracao(DpPessoa dpPessoa, long idTpConf) {
 		return podePorConfiguracao(null, null, null, null, null, null, null,
 				null, null, null, null, null, null, dpPessoa, null, null,idTpConf);
 	}

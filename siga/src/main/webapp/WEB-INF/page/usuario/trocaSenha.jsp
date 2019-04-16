@@ -110,8 +110,8 @@
 </script>
 
 <siga:pagina popup="false" titulo="Troca de Senha">
-	<!-- main content -->
-	<div class="gt-bd clearfix">
+	<!-- main content bootstrap -->
+	<div class="container-fluid">
 		<div class="gt-content clearfix">
 			<c:if test="${baseTeste}">
 				<div id="msgSenha"
@@ -119,70 +119,83 @@
 					Esta é uma versão de testes. Para sua segurança, NÃO utilize a
 					mesma senha da versão de PRODUÇÃO.</div>
 			</c:if>
+
 			<h1 class="gt-form-head">${param.titulo}</h1>
-
 			<h2>${mensagem}</h2>
-			<h2 class="gt-form-head">Trocar senha</h2>
-			<div class="gt-form gt-content-box tabela-senha">
-				<form action="trocar_senha_gravar"
-					onsubmit="return validateUsuarioForm(this);" method="post">
-					<input type="hidden" name="page" value="1" />
-					<h1>${mensagem }</h1>
 
-					<table>
-						<tr>
-							<td><label>Matrícula<a href="#"
-									title="Ex.:	XX99999, onde XX é a sigla do seu órgão (T2, RJ e ES) e 99999 é o número da sua matrícula."><img
-										style="position: relative; margin-top: -3px; top: +3px; left: +3px; z-index: 0;"
-										src="/siga/css/famfamfam/icons/information.png" /> </a>
-							</label></td>
-							<td><label>Senha atual</label></td>
-						</tr>
+			<div class="card bg-light mb-3" >
+				<div class="card-header"><h5>Trocar senha</h5></div>
 
-						<tr>
+				<div class="card-body">
+					<form action="trocar_senha_gravar"
+						onsubmit="return validateUsuarioForm(this);" method="post">
+						<input type="hidden" name="page" value="1" />
+						<h1>${mensagem }</h1>
+						<div class="row">
+							<div class="col-sm">
+								<div class="form-group">
+									<label for="exampleInputEmail1">Matrícula</label> <input
+										type="text" name="usuario.nomeUsuario"
+										onblur="javascript:converteUsuario(this)" class="form-control" />
+									<small id="emailHelp" class="form-text text-muted">Ex.:
+										XX99999, onde XX é a sigla do seu órgão (T2, RJ e ES) e 99999
+										é o número da sua matrícula.</small>
+								</div>
+							</div>
+							<div class="col-sm">
+								<div class="form-group">
+									<label for="exampleInputEmail1">Senha atual</label> <input
+										type="password" name="usuario.senhaAtual" class="form-control" />
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm">
+								<div class="form-group">
+									<label for="exampleInputEmail1">Nova Senha</label> <input
+										type="password" name="usuario.senhaNova" id="pass"
+										onkeyup="passwordStrength(this.value)" theme="simple"
+										class="form-control" /> <small id="emailHelp"
+										class="form-text text-muted">Utilize maiúsculas,
+										minúsculas e números para aumentar a força da senha.</small>
+								</div>
+							</div>
+							<div class="col-sm">
+								<div class="form-group">
+									<label for="exampleInputEmail1">Repetição da nova senha</label>
+									<input type="password" name="usuario.senhaConfirma" id="pass2"
+										class="form-control" />
+								</div>
+							</div>
+							<div class="col-sm">
+								<div class="form-group">
+									<label for="exampleInputEmail1">Força da nova senha</label>
+									<div id="passwordDescription">Senha não informada</div>
+									<div id="passwordStrength" class="strength0"></div>
+								</div>
+							</div>
 
-							<td><input type="text" name="usuario.nomeUsuario"
-									onblur="javascript:converteUsuario(this)"
-									class="gt-form-text" /></td>
-							<td><input type="password" name="usuario.senhaAtual" 
-									class="gt-form-text" /></td>
-						</tr>
 
-						<tr>
-							<td><label>Nova Senha<a href="#"
-									title="Utilize maiúsculas, minúsculas e números para aumentar a força da senha."><img
-										style="position: relative; margin-top: -3px; top: +3px; left: +3px;"
-										src="/siga/css/famfamfam/icons/information.png" /> </a>
-							</label></td>
-							<td><label>Repetição da nova senha</label></td>
-							<td><label>Força da nova senha</label></td>
-						</tr>
-
-						<tr>
-							<td><input type="password" name="usuario.senhaNova" id="pass"
-									onkeyup="passwordStrength(this.value)" theme="simple"
-									class="gt-form-text" /></td>
-
-							<td><input type="password" name="usuario.senhaConfirma" id="pass2"
-									class="gt-form-text" /></td>
-							<td><div id="passwordDescription">Senha não informada</div>
-								<div id="passwordStrength" class="strength0"></div></td>
-						</tr>
-						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;INT_LDAP:Integrar ao Ldap')}">
-							<tr>
-								<td><input type="checkbox" checked="checked"
-									id="trocarSenhaRede" name="usuario.trocarSenhaRede" style="float: left"
-									class="gt-form-checkbox"></input><label>Trocar também a
-										senha do computador, da rede e do e-mail</label></td>
-							</tr>
-						</c:if>
-						<tr>
-							<td><button type="submit" class="gt-btn-medium gt-btn-left">OK</button></td>
-						</tr>
-					</table>
-				</form>
+						</div>
+						<div class="row">
+							<div class="col-sm-1">
+								<button type="submit" class="btn btn-primary">OK</button>
+							</div>
+							<c:if
+								test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;INT_LDAP:Integrar ao Ldap')}">
+								<div class="col-sm-11">
+									<div class="form-check">
+										<input type="checkbox" checked="checked" id="trocarSenhaRede"
+											name="usuario.trocarSenhaRede" class="form-check-input"></input>
+										<label class="form-check-label" for="defaultCheck1">
+											Trocar também a senha do computador, da rede e do e-mail </label>
+									</div>
+								</div>
+							</c:if>
+						</div>
+					</form>
+				</div>
 			</div>
 		</div>
-	</div>
 </siga:pagina>
 

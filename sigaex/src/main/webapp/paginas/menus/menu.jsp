@@ -84,7 +84,7 @@
 
 		<li class="nav-item dropdown"><a href="javascript:void(0);"
 			class="nav-link dropdown-toggle" data-toggle="dropdown">
-				Ferramenteas </a>
+				Ferramentas </a>
 			<ul class="dropdown-menu">
 
 				<li><a class="dropdown-item" href="/sigaex/app/forma/listar">Cadastro

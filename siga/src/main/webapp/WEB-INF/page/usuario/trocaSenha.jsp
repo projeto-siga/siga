@@ -54,16 +54,21 @@
 	function validateUsuarioForm(form) {
 		var s = document.getElementById("passwordStrength").className;
 		if (s == "strength0" || s == "strength1" || s == "strength2") {
-			alert("Senha muito fraca. Por favor, utilize uma senha com pelo menos 6 caracteres incluindo letras maiúsculas, minúsculas e números");
+			mensagemAlerta("Senha muito fraca. Por favor, utilize uma senha com pelo menos 6 caracteres incluindo letras maiúsculas, minúsculas e números.");
 			return false;
 		}
 		var p1 = document.getElementById("pass").value;
 		var p2 = document.getElementById("pass2").value;
 		if (p1 != p2) {
-			alert("Repetição da nova senha não confere, favor redigitar.");
+			mensagemAlerta("Repetição da nova senha não confere, favor redigitar.");
 			return false;
 		}
 		return true;
+	}
+
+	function mensagemAlerta(mensagem) {
+		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
+		$('#alertaModal').modal();
 	}
 
 	function passwordStrength(password) {
@@ -193,6 +198,26 @@
 							</c:if>
 						</div>
 					</form>
+					<!-- Modal -->
+					<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+						<div class="modal-dialog" role="document">
+					    	<div class="modal-content">
+					      		<div class="modal-header">
+							        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
+							        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+							          <span aria-hidden="true">&times;</span>
+							    	</button>
+							    </div>
+						      	<div class="modal-body">
+						        	<p class="mensagem-Modal"></p>
+						      	</div>
+								<div class="modal-footer">
+								  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
+								</div>
+					    	</div>
+					  	</div>
+					</div>				
+					<!--Fim Modal -->
 				</div>
 			</div>
 		</div>

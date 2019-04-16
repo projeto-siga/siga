@@ -1849,23 +1849,6 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 
 	/**
-	 * verifica se um documento está sem efeito.
-	 */
-	public boolean isSolicitadaAssinatura() {
-		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
-
-		if (movs != null) {
-			for (final ExMovimentacao mov : movs) {
-				if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)
-						&& mov.getExMovimentacaoCanceladora() == null) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * verifica se um documento ainda está em rascunho, ou seja, se não está
 	 * finalizado ou se está finalizado mas é eletrônico.
 	 */
@@ -2643,11 +2626,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public ExMovimentacao getMovSolicitacaoDeAssinatura() {
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
 
-		for (final ExMovimentacao mov : movs) {
-			if (!mov.isCancelada()
-					&& mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)
-				return mov;
-		}
+		if(movs != null)
+			for (final ExMovimentacao mov : movs) {
+				if (!mov.isCancelada()
+						&& mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)
+					return mov;
+			}
 		return null;
 	}
 }

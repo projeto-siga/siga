@@ -1,20 +1,35 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
 <div class="d-none d-md-block">
 	<h2 class="gt-table-head">
 		<b>Bem-vindo ao SIGA.</b>
 	</h2>
 
-	<h3 class="gt-table-head" style="text-align: center">O QUE É O
-		SIGA?</h3>
+	<c:if test="${f:resource('siga.base.url') == 'http://siga.jfrj.jus.br' or f:resource('siga.base.url') == 'https://siga.jfrj.jus.br' }">
+		<hr/>
+	
+		<p style="font-size: 150%">Agora o Siga oferece a possibilidade de assinar documento com senha (sem token). Para isto, basta clicar na opção "Com Senha" na página de assinatura, e entrar com sua matrícula e a senha do Siga.</p>
 
-	<p>Sistema Integrado de Gestão Administrativa que dispõe dos
-		seguintes módulos: DOCUMENTOS (SIGA-DOC), FLUXOS DE TRABALHO,
-		SERVIÇOS, GESTÃO DO CONHECIMENTO, AGENDAS e TRANSPORTES. O uso de cada
-		módulo vai depender das permissões de cada usuário.</p>
+		<hr/>
+		
+		<p style="font-size: 150%">Experimente a nova aplicação para acesso ao Siga via celular:
+		<a href="https://siga.jfrj.jus.br/siga-le">${f:resource('siga.base.url')}/siga-le</a>
+		</p>
+		
+		<p align="center"><img width="15%" src="/siga/imagens/qr-code-http-siga-jfrj-jus-br-siga-le.png"></img></p>
+	</c:if>
+	<hr/>
+	<p style="font-size: 150%">Recomendamos o navegador Google Chrome para acesso ao SIGA.</p>
+	<hr/>
+	
 </div>
+
+
+
+<br> <c:if test="${param['completo'] eq 'true'}">
 
 <h4>
 	<br>NOVIDADES DA VERSÃO 6.0 
@@ -73,8 +88,6 @@
 		recebidos;</li>
 	<li>Maior satisfação dos usuários.</li>
 </ul>
-
-<br> <c:if test="${param['completo'] eq 'true'}">
 
 		<h3 class="gt-table-head">Veja abaixo as últimas novidades:</h3>
 

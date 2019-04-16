@@ -1216,6 +1216,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (doc.isAssinaturaSolicitada())
 			return false;
 		
+		if (!doc.getLotaSubscritor().equivale(lotaTitular))
+			return false;
+		
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA,
 				ExTipoMovimentacao.class, false);
 		
@@ -1758,8 +1761,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO_TRANSITORIO
 				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO
-				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO) {
-			return exUltMovNaoCanc.getLotaCadastrante().equivale(lotaTitular);
+				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO
+				|| exUltMovNaoCanc.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA) {
+			return exUltMovNaoCanc.getLotaTitular().equivale(lotaTitular);
 		} else {
 			if (exUltMovNaoCanc.getLotaResp() != null) {
 				if (!exUltMovNaoCanc.getLotaResp().equivale(lotaTitular))

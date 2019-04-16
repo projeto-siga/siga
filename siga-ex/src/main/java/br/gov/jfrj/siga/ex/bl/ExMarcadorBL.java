@@ -374,7 +374,7 @@ public class ExMarcadorBL {
 			if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()) {
 				acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, dt, mob.getExDocumento().getSubscritor(), null);
 			}
-			if (mob.getDoc().isSolicitadaAssinatura()) {
+			if (mob.getDoc().isAssinaturaSolicitada()) {
 				acrescentarMarca(CpMarcador.MARCADOR_PRONTO_PARA_ASSINAR, dt, mob.getExDocumento().getSubscritor(),
 						null);
 			}

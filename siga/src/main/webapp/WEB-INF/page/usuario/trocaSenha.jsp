@@ -112,7 +112,6 @@
 <siga:pagina popup="false" titulo="Troca de Senha">
 	<!-- main content bootstrap -->
 	<div class="container-fluid">
-		<div class="gt-content clearfix">
 			<c:if test="${baseTeste}">
 				<div id="msgSenha"
 					style="font-size: 12pt; color: red; font-weight: bold;">ATENÇÃO:

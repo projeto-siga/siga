@@ -138,7 +138,7 @@
 						<div class="row">
 							<div class="col-sm">
 								<div class="form-group">
-									<label for="exampleInputEmail1">Matrícula</label> <input
+									<label>Matrícula</label> <input
 										type="text" name="usuario.nomeUsuario"
 										onblur="javascript:converteUsuario(this)" class="form-control" />
 									<small id="emailHelp" class="form-text text-muted">Ex.:
@@ -148,7 +148,7 @@
 							</div>
 							<div class="col-sm">
 								<div class="form-group">
-									<label for="exampleInputEmail1">Senha atual</label> <input
+									<label>Senha atual</label> <input
 										type="password" name="usuario.senhaAtual" class="form-control" />
 								</div>
 							</div>
@@ -156,7 +156,7 @@
 						<div class="row">
 							<div class="col-sm">
 								<div class="form-group">
-									<label for="exampleInputEmail1">Nova Senha</label> <input
+									<label>Nova Senha</label> <input
 										type="password" name="usuario.senhaNova" id="pass"
 										onkeyup="passwordStrength(this.value)" theme="simple"
 										class="form-control" /> <small id="emailHelp"
@@ -166,14 +166,14 @@
 							</div>
 							<div class="col-sm">
 								<div class="form-group">
-									<label for="exampleInputEmail1">Repetição da nova senha</label>
+									<label>Repetição da nova senha</label>
 									<input type="password" name="usuario.senhaConfirma" id="pass2"
 										class="form-control" />
 								</div>
 							</div>
 							<div class="col-sm">
 								<div class="form-group">
-									<label for="exampleInputEmail1">Força da nova senha</label>
+									<label>Força da nova senha</label>
 									<div id="passwordDescription">Senha não informada</div>
 									<div id="passwordStrength" class="strength0"></div>
 								</div>
@@ -191,7 +191,7 @@
 									<div class="form-check">
 										<input type="checkbox" checked="checked" id="trocarSenhaRede"
 											name="usuario.trocarSenhaRede" class="form-check-input"></input>
-										<label class="form-check-label" for="defaultCheck1">
+										<label class="form-check-label" >
 											Trocar também a senha do computador, da rede e do e-mail </label>
 									</div>
 								</div>

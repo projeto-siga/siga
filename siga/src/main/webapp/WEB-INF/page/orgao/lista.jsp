@@ -12,15 +12,15 @@ function sbmt(offset) {
 	frm.submit();
 }
 </script>
-<form name="frm" action="listar" class="form" method="POST>
+<form name="frm" action="listar" class="form" method="GET">
+<input type="hidden" name="offset" value="0" />
 <siga:pagina titulo="Lista Orgão Externo">
-	<input type="hidden" name="offset" value="0" />
 	<!-- main content -->
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">		
-			<h2 class="gt-table-head">Orgãos Externos cadastrados</h2>
-			<div class="gt-content-box gt-for-table">
-				<table border="0" class="gt-table">
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >		
+			<div class="card-header"><h5>Orgãos Externos cadastrados</h5></div>
+			<div class="card-body">
+				<table border="0" class="table table-sm table-striped">
 					<thead>
 						<tr>
 							<th align="left">Nome</th>
@@ -51,7 +51,8 @@ function sbmt(offset) {
 									<c:url var="url" value="/app/orgao/editar">
 										<c:param name="id" value="${orgao.idOrgao}"></c:param>
 									</c:url>
-									<siga:link title="Alterar" url="${url}" />					
+									<input type="button" value="Alterar"
+													class="btn btn-primary" onclick="javascript:location.href='${url}'"/>				
 								</td>
 							<%--	<td align="left">									
 	 			 					<a href="javascript:if (confirm('Deseja excluir o orgão?')) location.href='/siga/app/orgao/excluir?id=${orgao.idOrgao}';">
@@ -65,14 +66,14 @@ function sbmt(offset) {
 							</tr>
 						</siga:paginador>
 					</tbody>
-				</table>				
-			</div>	
-			<div class="gt-table-buttons">
+				</table>
+				<div class="gt-table-buttons">
 					<c:url var="url" value="/app/orgao/editar"></c:url>
 					<input type="button" value="Incluir"
 						onclick="javascript:window.location.href='${url}'"
-						class="gt-btn-medium gt-btn-left">
+						class="btn btn-primary">
 				</div>				
+			</div>	
 		</div>			
 	</div>
 </siga:pagina>

@@ -24,34 +24,34 @@ function sbmt(offset) {
 	<input type="hidden" name="postback" value="1" />
 	<input type="hidden" name="offset" value="0" />
 
-	<table class="form" width="100%">
-		<tr class="header">
-			<td align="center" valign="top" colspan="4">Dados do Órgão Externo</td>
-		</tr>
-		<tr>
-			<td>
-				<label>Nome ou Sigla:</label>
-			</td>
-			<td>
-				<input type="text" name="sigla" value="${sigla}"/>
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2">
-				<div align="right">
-					<input type="submit" value="Pesquisar" />
+	<div class="container-fluid my-1">
+		<div class="card bg-light mb-3" >
+			<div class="card-header"><h5>Dados do Órgão Externo</h5></div>
+				<div class="card-body">
+					<div class="row">
+						<div class="col-sm-4">
+							<label>Nome ou Sigla:</label>
+						</div>
+						<div class="col-sm-5">
+							<input type="text" name="sigla" value="${sigla}" class="form-control"/>
+						</div>
+						<div class="col-sm-2">
+							<input type="submit" value="Pesquisar" class="btn btn-primary"/>
+						</div>
+					</div>
+					
 				</div>
-			</td>
-		</tr>
-	</table>
+			</div>
+		</div>
+	</div>
 </form>
 
 <br>
 
-<table class="list" width="100%">
+<table border="0" class="table table-sm table-striped">
 	<tr class="header">
-		<td align="center">Sigla</td>
-		<td align="left">Nome</td>
+		<th align="center">Sigla</th>
+		<th align="left">Nome</th>
 	</tr>
 	<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}"
 		itens="${itens}" var="item">

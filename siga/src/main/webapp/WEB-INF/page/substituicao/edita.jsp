@@ -5,84 +5,77 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
+<script>
+	function hideShowSel(combo) {
+		var sel1Span = document.getElementById('span'
+				+ combo.name.substring(4));
+		var sel2Span = document.getElementById('spanLota'
+				+ combo.name.substring(4));
+		if (combo.selectedIndex == 0) {
+			sel1Span.style.display = "";
+			sel2Span.style.display = "none";
+		} else {
+			sel1Span.style.display = "none";
+			sel2Span.style.display = "";
+		}
+	}
+
+	function verificaData() {
+		var dataFim = document.getElementById("dtFimSubst").value;
+		var dataInicio = document.getElementById("dtIniSubst").value;
+		var mensagem = "Data de fim vazia. A substituição ficará valendo até que seja manualmente cancelada.";
+		var atencao = " Atenção!";
+		if (!dataFim == "" || !dataFim == null) {
+			document.getElementById("atencao").innerHTML = "";
+			document.getElementById("atencao").value = "";
+			document.getElementById("dataFim").innerHTML = "";
+			document.getElementById("dataFim").value = "";
+		} else {
+			document.getElementById("dataFim").innerHTML = mensagem;
+			document.getElementById("dataFim").value = mensagem;
+			document.getElementById("atencao").innerHTML = atencao;
+			document.getElementById("atencao").value = atencao;
+		}
+		document.getElementById("dtFimSubst").focus;
+		return false;
+	}
+
+	function aviso() {
+		var dataFim = document.getElementById("dtFimSubst").value;
+		var dataInicio = document.getElementById("dtIniSubst").value;
+		var mensagem = "Caso a 'Data de Início' não seja informada, será assumida a data atual.<br/>Caso a 'Data de Fim' não seja informada, a substituição ficará valendo até que seja manualmente cancelada.";
+		var atencao = "Importante";
+		document.getElementById("dataFim").innerHTML = mensagem;
+		document.getElementById("dataFim").value = mensagem;
+		document.getElementById("atencao").innerHTML = atencao;
+		document.getElementById("atencao").value = atencao;
+		document.getElementById("dtFimSubst").focus;
+	}
+</script>   
 <siga:pagina titulo="Cadastro de substituição">
 	<!-- main content -->
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-
-
-			<script>
-				function hideShowSel(combo) {
-					var sel1Span = document.getElementById('span'
-							+ combo.name.substring(4));
-					var sel2Span = document.getElementById('spanLota'
-							+ combo.name.substring(4));
-					if (combo.selectedIndex == 0) {
-						sel1Span.style.display = "";
-						sel2Span.style.display = "none";
-					} else {
-						sel1Span.style.display = "none";
-						sel2Span.style.display = "";
-					}
-				}
-
-				function verificaData() {
-					var dataFim = document.getElementById("dtFimSubst").value;
-					var dataInicio = document.getElementById("dtIniSubst").value;
-					var mensagem = "Data de fim vazia. A substituição ficará valendo até que seja manualmente cancelada.";
-					var atencao = " Atenção!";
-					if (!dataFim == "" || !dataFim == null) {
-						document.getElementById("atencao").innerHTML = "";
-						document.getElementById("atencao").value = "";
-						document.getElementById("dataFim").innerHTML = "";
-						document.getElementById("dataFim").value = "";
-					} else {
-						document.getElementById("dataFim").innerHTML = mensagem;
-						document.getElementById("dataFim").value = mensagem;
-						document.getElementById("atencao").innerHTML = atencao;
-						document.getElementById("atencao").value = atencao;
-					}
-					document.getElementById("dtFimSubst").focus;
-					return false;
-				}
-
-				function aviso() {
-					var dataFim = document.getElementById("dtFimSubst").value;
-					var dataInicio = document.getElementById("dtIniSubst").value;
-					var mensagem = "Caso a 'Data de Início' não seja informada, será assumida a data atual.<br/>Caso a 'Data de Fim' não seja informada, a substituição ficará valendo até que seja manualmente cancelada.";
-					var atencao = "Importante";
-					document.getElementById("dataFim").innerHTML = mensagem;
-					document.getElementById("dataFim").value = mensagem;
-					document.getElementById("atencao").innerHTML = atencao;
-					document.getElementById("atencao").value = atencao;
-					document.getElementById("dtFimSubst").focus;
-				}
-			</script>   
-			<h2 class="gt-table-head">Cadastrar substituição</h2>
-			<div class="gt-content-box gt-for-table">
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header">
+				<h5>Dados da substituição</h5>
+			</div>
+			<div class="card-body">
+			
 				<form action="gravar" onsubmit="verificaData()" method="post">
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="substituicao.idSubstituicao" value="${substituicao.idSubstituicao}"/>
 					<c:set var="dataFim" value="" />
-					<table class="gt-form-table" width="100%">
-						<tr class="header">
-							<td colspan="2">Dados da substituição</td>
-						</tr>
-
-						<tr>
-							<td>Titular:</td>
-
-							<td>														
-
-								<select  name="tipoTitular" onchange="javascript:hideShowSel(this);">
+					<div class="row">
+						<div class="col-sm-2">
+							<div class="form-group">
+								<label for="tipoTitular">Titular</label>
+								<select  name="tipoTitular" onchange="javascript:hideShowSel(this);" class="form-control">
 									<c:forEach items="${listaTipoTitular}" var="item">
 										<option value="${item.key}" ${item.key == tipoTitular ? 'selected' : ''}>
 											${item.value}
 										</option>  
 									</c:forEach>
-								</select>									
-									
-								
+								</select>
 								<c:choose>
 									<c:when test="${tipoTitular == 1}">
 										<c:set var="titularStyle" value="" />
@@ -92,30 +85,32 @@
 										<c:set var="titularStyle" value="display:none" />
 										<c:set var="lotaTitularStyle" value="" />
 									</c:when>
-								</c:choose> 
-								
-								<span id="spanTitular" style="${titularStyle}"> 
+								</c:choose>
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<div class="form-group align-botton">
+								<span id="spanTitular" class="align-botton" style="${titularStyle}"> 
 									<siga:selecao modulo="siga" propriedade="titular" tema="simple" /> 
 								</span> 
-								<span id="spanLotaTitular" style="${lotaTitularStyle}"> 
+								<span id="spanLotaTitular" class="align-botton" style="${lotaTitularStyle}"> 
 									<siga:selecao modulo="siga" propriedade="lotaTitular" tema="simple" paramList="${strBuscarFechadas}"/> 
 								</span>
-							</td>
-						</tr>
-
-						<tr>
-							<td>Substituto:</td>
-
-							<td>
-								
-								<select  name="tipoSubstituto" onchange="javascript:hideShowSel(this);">
+							</div>									
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-2">
+							<div class="form-group">
+								<label for="tipoTitular">Substituto</label>
+								<select  name="tipoSubstituto" onchange="javascript:hideShowSel(this);" class="form-control">
 									<c:forEach items="${listaTipoSubstituto}" var="item">
 										<option value="${item.key}" ${item.key == tipoSubstituto ? 'selected' : ''}>
 											${item.value}
 										</option>  
 									</c:forEach>
 								</select>									
-									
+
 								<c:choose>
 									<c:when test="${tipoSubstituto == 1}">
 										<c:set var="substitutoStyle" value="" />
@@ -126,58 +121,60 @@
 										<c:set var="lotaSubstitutoStyle" value="" />
 									</c:when>
 								</c:choose> 
-								
+							</div>
+						</div>
+						<div class="col-sm-3 align-content-bottom">
+							<div class="form-group ">
 								<span id="spanSubstituto" style="${substitutoStyle}"> 
 									<siga:selecao modulo="siga" propriedade="substituto" tema="simple"/> 
 								</span> 
 								<span id="spanLotaSubstituto" style="${lotaSubstitutoStyle}"> 
 									<siga:selecao  modulo="siga" propriedade="lotaSubstituto" tema="simple" /> 
 								</span>
-							</td>
-						</tr>
-
-						<tr>
-							<td>Data de Início</td>
-							<td>
+							</div>									
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-2">
+							<div class="form-group">
+								<label for="tipoTitular">Data de Início</label>
 								<input type="text" id="dtIniSubst" name="dtIniSubst" label="Data de Início" value="${dtIniSubst}"
-									onblur="javascript:verifica_data(this, true);" theme="simple" />
-								(opcional)
-							</td>
-						</tr>
-
-						<tr>
-							<td>Data de Fim</td>
-							<td>
-								<input type="text" id="dtFimSubst" name="dtFimSubst" label="Data de Fim" value="${dtFimSubst}"
-									onblur="javascript:verifica_data(this, true);" theme="simple" />
-								(opcional)
-							</td>
-						</tr>
-
-						<!-- Incluido para retorno de mensagem de campo nao preenchido -->
-						<c:if test="${ empty dataFim }">
-							<tr>
-								<td align="right"><b><span id="atencao">
-								</b></span></td>
-								<td><span id="dataFim"></span></td>
-							</tr>
-						</c:if>
-
-						<c:set var="atencao" value="" />
-						<c:set var="dataFim" value="" />
-
-						<tr class="button">
-							<td colspan="2">
-							<input type="submit" value="Ok"
-								class="gt-btn-medium gt-btn-left" /> 
+									onblur="javascript:verifica_data(this, true);" theme="simple" class="form-control" />
+									<small id="emailHelp" class="form-text text-muted">(opcional)</small>
 								
-							<input type="button" value="Cancela" onclick="javascript:history.back();" 
-								class="gt-btn-medium gt-btn-left" />
-						</tr>
-					</table>
+							</div>
+						</div>
+						<div class="col-sm-2">
+							<div class="form-group">
+								<label for="tipoTitular">Data de Fim</label>
+								<input type="text" id="dtFimSubst" name="dtFimSubst" label="Data de Fim" value="${dtFimSubst}"
+									onblur="javascript:verifica_data(this, true);" theme="simple" class="form-control" />
+									<small id="emailHelp" class="form-text text-muted">(opcional)</small>
+							</div>
+						</div>
+					</div>
+					<c:if test="${ empty dataFim }">
+					<div class="row">
+						<div class="col-sm-1">
+							<div class="form-group">
+								<b><span id="atencao" ></span></b>
+							</div>
+						</div>
+						<div class="col-sm">
+							<div class="form-group">
+								<span id="dataFim"></span>					
+							</div>
+						</div>
+					</div>					
+					</c:if>
+					<div class="row">
+						<div class="col-sm-2">
+							<button type="submit" class="btn btn-primary">OK</button>
+							<button type="button"  class="btn btn-primary" onclick="javascript:history.back();">Cancela</button>
+						</div>						
+					</div>
 				</form>
 			</div>
-
 			<script>
 				aviso();
 			</script>

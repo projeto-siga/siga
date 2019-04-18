@@ -66,7 +66,7 @@
 			document.getElementById(el).focus();
 		}
 
-		function enableDisableAll(theElement) {				
+		function enableDisableAll(theElement) {
 			if (theElement.value == -1) {
 				document.getElementById('div_txtall').style.display = '';
 				document.getElementById('txtall').focus();
@@ -74,11 +74,11 @@
 				document.getElementById('div_txtall').style.display = 'none';
 			}
 		}
-		function updateTipoResponsavel(){
+		function updateTipoResponsavel() {
 
 			var objSelecionado = document.getElementById("tipoResponsavel");
-			
-			switch (parseInt(objSelecionado.value)){
+
+			switch (parseInt(objSelecionado.value)) {
 			case 1:
 				document.getElementById("selecaoLotaResponsavel").style.display = '';
 				document.getElementById("selecaoResponsavel").style.display = 'none';
@@ -98,319 +98,295 @@
 				document.getElementById("selecaoCpOrgaoObservacao").style.display = '';
 				break;
 
-			}		
+			}
 		}
 	</script>
-
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>
-				Transferência em Lote
-			</h2>
-			<div class="gt-content-box gt-for-table">
+	
+	
+	<!-- main content bootstrap -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3">
+			<div class="card-header">
+				<h5>Transferência em Lote</h5>
+			</div>
+			<div class="card-body">
 				<form name="frm" action="transferir_lote_gravar" method="post">
 					<input type="hidden" name="postback" value="1" />
-					<table class="gt-form-table">
-						<tr class="header">
-							<td colspan="2">
-								Transferência
-							</td>
-						</tr>
-						<tr>
-							<td>
-								Data:
-							</td>
-							<td>
-								<input type="text" name="dtMovString" id="dtMovString" onblur="javascript:verifica_data(this,0);" />
-							</td>
-						</tr>
-						<tr>
-							<td>
-								Responsável:
-							</td>
-							<td>
-								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga" />&nbsp;&nbsp;<input type="checkbox" name="substituicao" onclick="javascript:displayTitular(this);" />&nbsp;Substituto
-							</td>
-						</tr>
-						<c:choose>
-							<c:when test="${!substituicao}">
-								<tr id="tr_titular" style="display: none">
-							</c:when>
-							<c:otherwise>
-								<tr id="tr_titular" style="">
-							</c:otherwise>
-						</c:choose>
+					<div class="row">
+						<div class="col-sm-3">
+							<div class="form-group">
+								<label>Data</label> 
+								<input type="text" name="dtMovString" id="dtMovString" onblur="javascript:verifica_data(this,0);" class="form-control"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm">
+							<div class="form-group">
+								<label>Responsável</label> 
+								<siga:selecao tema="simple" propriedade="subscritor"
+										modulo="siga" />
+							</div>
+						</div>
+						<div class="col-sm">
+							<div class="form-group">
+							   <input type="checkbox" name="substituicao" onclick="javascript:displayTitular(this);" class="form-check-input"/>
+							   <label class="form-check-label" >Substituto</label>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	
 
-						<td>
-							Titular:
-						</td>
-						<input type="hidden" name="campos" value="${titularSel.id}" />
-						<td colspan="1">
-							<siga:selecao propriedade="titular" tema="simple" modulo="siga" />
-						</td>
-						</tr>
-						<tr>
-							<td>
-								Função do Responsável:
-							</td>
-							<td colspan="1">
-								<input type="hidden" name="campos" value="${nmFuncaoSubscritor}" />
-								<input type="text" name="nmFuncaoSubscritor" id="nmFuncaoSubscritor" value="${nmFuncaoSubscritor}" size="50" maxLength="128" />
-								(opcional)
-							</td>
-						</tr>
-						<tr>
-							<td>
-								Atendente
-							</td>
-							<td>
-								<select id="tipoResponsavel" name="tipoResponsavel" value="${tipoResponsavel}" onchange="javascript:updateTipoResponsavel();" >
-									<c:forEach var="item" items="${listaTipoResp}">
-										<option value="${item.key}">
-											${item.value}
-										</option>
-									</c:forEach>
-								</select>
-								<span id="selecaoLotaResponsavel">
-									<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga" />
-								</span>
-								<span id="selecaoResponsavel" style="display: none;">
-									<siga:selecao propriedade="responsavel" tema="simple" modulo="siga" />
-								</span>
-								<span id="selecaoCpOrgao" style="display: none;">
-									<siga:selecao propriedade="cpOrgao" tema="simple" modulo="siga" />
-								</span>
-							</td>
-
-						</tr>
-							<tr id="selecaoCpOrgaoObservacao" style="display: none;">
-								<td>
-									Observação
-								</td>
-								<td>
-									<input type="text" size="30" name="obsOrgao" id="obsOrgao"/>
+	<!-- main content bootstrap -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3">
+			<div class="card-header">
+				<h5>Transferência em Lote</h5>
+			</div>
+			<div class="card-body">
+				<div class="gt-content-box gt-for-table">
+					<form name="frm" action="transferir_lote_gravar" method="post">
+						<input type="hidden" name="postback" value="1" />
+							<tr>
+								<td>Data:</td>
+								<td><input type="text" name="dtMovString" id="dtMovString"
+									onblur="javascript:verifica_data(this,0);" /></td>
+							</tr>
+							<tr>
+								<td>Responsável:</td>
+								<td><siga:selecao tema="simple" propriedade="subscritor"
+										modulo="siga" />&nbsp;&nbsp;<input type="checkbox"
+									name="substituicao" onclick="javascript:displayTitular(this);" />&nbsp;Substituto
 								</td>
 							</tr>
-						<tr>
-							<td>
-								Despacho Único:
-							</td>
-							<td>
-								<div id="div_tpdall">
-									<select name="tpdall" id="tpdall" onchange="javascript:enableDisableAll(this);">
-										<c:forEach var="item" items="${tiposDespacho}">
-											<option value="${item.idTpDespacho}">
-												${item.descTpDespacho}
-											</option>
-										</c:forEach>
-									</select>																
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td>
-							</td>
-							<td>
-								<div id="div_txtall" style="display: none;">
-									<input type="text" name="txtall" id="txtall" maxlength="255" />
-								</div>
-							</td>
-						</tr>
-						<tr class="button">
-							<td colspan="2">
-								<input type="submit" value="Transferir">
-							</td>
-						</tr>
-					</table>
-			</div>
+							<c:choose>
+								<c:when test="${!substituicao}">
+									<tr id="tr_titular" style="display: none">
+								</c:when>
+								<c:otherwise>
+									<tr id="tr_titular" style="">
+								</c:otherwise>
+							</c:choose>
 
-			<c:forEach var="secao" begin="0" end="1">
-				<c:remove var="primeiro" />
-				<c:forEach var="m" items="${itens}">
-					<c:if
-						test="${(secao==0 and titular.idPessoaIni==m.ultimaMovimentacaoNaoCancelada.resp.idPessoaIni) or (secao==1 and titular.idPessoaIni!=m.ultimaMovimentacaoNaoCancelada.resp.idPessoaIni)}">
-						<c:if test="${empty primeiro}">
-							<br />
-							<h2>
-								Destinatário:
-								<c:choose>
-									<c:when test="${secao==0}">
+							<td>Titular:</td>
+							<input type="hidden" name="campos" value="${titularSel.id}" />
+							<td colspan="1"><siga:selecao propriedade="titular"
+									tema="simple" modulo="siga" /></td>
+							</tr>
+							<tr>
+								<td>Função do Responsável:</td>
+								<td colspan="1"><input type="hidden" name="campos"
+									value="${nmFuncaoSubscritor}" /> <input type="text"
+									name="nmFuncaoSubscritor" id="nmFuncaoSubscritor"
+									value="${nmFuncaoSubscritor}" size="50" maxLength="128" />
+									(opcional)</td>
+							</tr>
+							<tr>
+								<td>Atendente</td>
+								<td><select id="tipoResponsavel" name="tipoResponsavel"
+									value="${tipoResponsavel}"
+									onchange="javascript:updateTipoResponsavel();">
+										<c:forEach var="item" items="${listaTipoResp}">
+											<option value="${item.key}">${item.value}</option>
+										</c:forEach>
+								</select> <span id="selecaoLotaResponsavel"> <siga:selecao
+											propriedade="lotaResponsavel" tema="simple" modulo="siga" />
+								</span> <span id="selecaoResponsavel" style="display: none;"> <siga:selecao
+											propriedade="responsavel" tema="simple" modulo="siga" />
+								</span> <span id="selecaoCpOrgao" style="display: none;"> <siga:selecao
+											propriedade="cpOrgao" tema="simple" modulo="siga" />
+								</span></td>
+
+							</tr>
+							<tr id="selecaoCpOrgaoObservacao" style="display: none;">
+								<td>Observação</td>
+								<td><input type="text" size="30" name="obsOrgao"
+									id="obsOrgao" /></td>
+							</tr>
+							<tr>
+								<td>Despacho Único:</td>
+								<td>
+									<div id="div_tpdall">
+										<select name="tpdall" id="tpdall"
+											onchange="javascript:enableDisableAll(this);">
+											<c:forEach var="item" items="${tiposDespacho}">
+												<option value="${item.idTpDespacho}">
+													${item.descTpDespacho}</option>
+											</c:forEach>
+										</select>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td>
+									<div id="div_txtall" style="display: none;">
+										<input type="text" name="txtall" id="txtall" maxlength="255" />
+									</div>
+								</td>
+							</tr>
+							<tr class="button">
+								<td colspan="2"><input type="submit" value="Transferir"></td>
+							</tr>
+						</table>
+				</div>
+
+				<c:forEach var="secao" begin="0" end="1">
+					<c:remove var="primeiro" />
+					<c:forEach var="m" items="${itens}">
+						<c:if
+							test="${(secao==0 and titular.idPessoaIni==m.ultimaMovimentacaoNaoCancelada.resp.idPessoaIni) or (secao==1 and titular.idPessoaIni!=m.ultimaMovimentacaoNaoCancelada.resp.idPessoaIni)}">
+							<c:if test="${empty primeiro}">
+								<br />
+								<h2>
+									Destinatário:
+									<c:choose>
+										<c:when test="${secao==0}">
 										${titular.descricao}
 									</c:when>
-									<c:otherwise>
+										<c:otherwise>
 										${lotaTitular.descricao}
 									</c:otherwise>
-								</c:choose>
-							</h2>
-							<div class="gt-content-box gt-for-table">
-								<table class="gt-table">
-									<tr class="header">
-										<td rowspan="2" align="right">
-											Número
-										</td>
-										<td colspan="3" align="center">
-											Documento
-										</td>
-										<td colspan="2" align="center">
-											Última Movimentação
-										</td>
-										<td rowspan="2">
-											Descrição
-										</td>
-										<td rowspan="2" align="center">
-											<input type="checkbox" name="checkall" value="true" onclick="checkUncheckAll(this)" />
-										</td>
-										<td rowspan="2">
-											Despacho
-											<c:if test="${secao==0}">
-											</c:if>
-										</td>
-									</tr>
-									<tr class="header">
-										<td align="center">
-											Data
-										</td>
-										<td align="center">
-											Lotação
-										</td>
-										<td align="center">
-											Pessoa
-										</td>
-										<td align="center">
-											Data
-										</td>
-										<td align="center">
-											Pessoa
-										</td>
-									</tr>
-									<c:set var="primeiro" value="${true}" />
-									</c:if>
-
-									<c:choose>
-										<c:when test='${evenorodd == "even"}'>
-											<c:set var="evenorodd" value="odd" />
-										</c:when>
-										<c:otherwise>
-											<c:set var="evenorodd" value="even" />
-										</c:otherwise>
 									</c:choose>
-									<tr class="${evenorodd}">
-										<td width="11.5%" align="right">
-											<c:choose>
-												<c:when test='${param.popup!="true"}'>
-													<a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${m.sigla}">
-														${m.sigla}
-													</a>
-												</c:when>
-												<c:otherwise>
-													<a href="javascript:opener.retorna_${param.propriedade}('${m.id}','${m.sigla},'');">
-														${m.sigla}
-													</a>
-												</c:otherwise>
-											</c:choose>
-										</td>
-										<c:if test="${not m.geral}">
-											<td width="5%" align="center">
-												${m.doc.dtDocDDMMYY}
+								</h2>
+								<div class="gt-content-box gt-for-table">
+									<table class="gt-table">
+										<tr class="header">
+											<td rowspan="2" align="right">Número</td>
+											<td colspan="3" align="center">Documento</td>
+											<td colspan="2" align="center">Última Movimentação</td>
+											<td rowspan="2">Descrição</td>
+											<td rowspan="2" align="center"><input type="checkbox"
+												name="checkall" value="true" onclick="checkUncheckAll(this)" />
 											</td>
-											<td width="5%" align="center">
-												<siga:selecionado isVraptor="true" sigla="${m.doc.lotaSubscritor.sigla}"
-													descricao="${m.doc.lotaSubscritor.descricao}" />
+											<td rowspan="2">Despacho <c:if test="${secao==0}">
+												</c:if>
 											</td>
-											<td width="5%" align="center">
-												<siga:selecionado isVraptor="true" sigla="${m.doc.subscritor.iniciais}"
-													descricao="${m.doc.subscritor.descricao}" />
-											</td>
-											<td width="5%" align="center">
-												${m.ultimaMovimentacaoNaoCancelada.dtMovDDMMYY}
-											</td>
-											<td width="4%" align="center">
-												<siga:selecionado isVraptor="true" sigla="${m.ultimaMovimentacaoNaoCancelada.resp.iniciais}"
-													descricao="${m.ultimaMovimentacaoNaoCancelada.resp.descricao}" />
-											</td>
+										</tr>
+										<tr class="header">
+											<td align="center">Data</td>
+											<td align="center">Lotação</td>
+											<td align="center">Pessoa</td>
+											<td align="center">Data</td>
+											<td align="center">Pessoa</td>
+										</tr>
+										<c:set var="primeiro" value="${true}" />
 										</c:if>
-										<c:if test="${m.geral}">
-											<td width="5%" align="center">
-												${m.doc.dtDocDDMMYY}
+
+										<c:choose>
+											<c:when test='${evenorodd == "even"}'>
+												<c:set var="evenorodd" value="odd" />
+											</c:when>
+											<c:otherwise>
+												<c:set var="evenorodd" value="even" />
+											</c:otherwise>
+										</c:choose>
+										<tr class="${evenorodd}">
+											<td width="11.5%" align="right"><c:choose>
+													<c:when test='${param.popup!="true"}'>
+														<a
+															href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${m.sigla}">
+															${m.sigla} </a>
+													</c:when>
+													<c:otherwise>
+														<a
+															href="javascript:opener.retorna_${param.propriedade}('${m.id}','${m.sigla},'');">
+															${m.sigla} </a>
+													</c:otherwise>
+												</c:choose></td>
+											<c:if test="${not m.geral}">
+												<td width="5%" align="center">${m.doc.dtDocDDMMYY}</td>
+												<td width="5%" align="center"><siga:selecionado
+														isVraptor="true" sigla="${m.doc.lotaSubscritor.sigla}"
+														descricao="${m.doc.lotaSubscritor.descricao}" /></td>
+												<td width="5%" align="center"><siga:selecionado
+														isVraptor="true" sigla="${m.doc.subscritor.iniciais}"
+														descricao="${m.doc.subscritor.descricao}" /></td>
+												<td width="5%" align="center">
+													${m.ultimaMovimentacaoNaoCancelada.dtMovDDMMYY}</td>
+												<td width="4%" align="center"><siga:selecionado
+														isVraptor="true"
+														sigla="${m.ultimaMovimentacaoNaoCancelada.resp.iniciais}"
+														descricao="${m.ultimaMovimentacaoNaoCancelada.resp.descricao}" />
+												</td>
+											</c:if>
+											<c:if test="${m.geral}">
+												<td width="5%" align="center">${m.doc.dtDocDDMMYY}</td>
+												<td width="4%" align="center"><siga:selecionado
+														isVraptor="true" sigla="${m.doc.subscritor.iniciais}"
+														descricao="${m.doc.subscritor.descricao}" /></td>
+												<td width="4%" align="center"><siga:selecionado
+														isVraptor="true" sigla="${m.doc.lotaSubscritor.sigla}"
+														descricao="${m.doc.lotaSubscritor.descricao}" /></td>
+												<td width="5%" align="center"></td>
+												<td width="4%" align="center"></td>
+												<td width="4%" align="center"></td>
+												<td width="10.5%" align="center"></td>
+											</c:if>
+											<td width="44%">${f:descricaoConfidencial(m.doc, lotaTitular)}
 											</td>
-											<td width="4%" align="center">
-												<siga:selecionado isVraptor="true" sigla="${m.doc.subscritor.iniciais}" descricao="${m.doc.subscritor.descricao}" />
-											</td>
-											<td width="4%" align="center">
-												<siga:selecionado isVraptor="true" sigla="${m.doc.lotaSubscritor.sigla}" descricao="${m.doc.lotaSubscritor.descricao}" />
-											</td>
-											<td width="5%" align="center">
-											</td>
-											<td width="4%" align="center">
-											</td>
-											<td width="4%" align="center">
-											</td>
-											<td width="10.5%" align="center">
-											</td>
-										</c:if>
-										<td width="44%">
-											${f:descricaoConfidencial(m.doc, lotaTitular)}
-										</td>
-										<c:set var="x" scope="request">
+											<c:set var="x" scope="request">
 											chk_${m.id}
 										</c:set>
-										<c:remove var="x_checked" scope="request" />
-										<c:if test="${param[x] == 'true'}">
-											<c:set var="x_checked" scope="request">
+											<c:remove var="x_checked" scope="request" />
+											<c:if test="${param[x] == 'true'}">
+												<c:set var="x_checked" scope="request">
 												checked
 											</c:set>
-										</c:if>
-										<c:set var="tpd_x" scope="request">
+											</c:if>
+											<c:set var="tpd_x" scope="request">
 											tpd_${m.id}
 										</c:set>
-										<c:set var="txt_x" scope="request">
+											<c:set var="txt_x" scope="request">
 											txt_${m.id}
 										</c:set>
-										<c:set var="lbl_x" scope="request">
+											<c:set var="lbl_x" scope="request">
 											lbl_${m.id}
 										</c:set>
-										<td width="2%" align="center">
-											<input type="checkbox" name="${x}" value="true" ${x_checked}
-												onclick="javascript:displaySel(this, '${tpd_x}');" />
-										</td>
-										<td>
-											<c:remove var="style" />
-											<c:if test="${empty param[x]}">
-												<c:set var="style" value=" style=display:none" />
-											</c:if>
-											<div id="div_${tpd_x}" ${style}>
-												<select name="${tpd_x}" id="${tpd_x}" onchange="javascript:displayTxt(this, '${txt_x}');">
-													<c:forEach var="tpd" items="${tiposDespacho}">
-														<c:remove var="selected" />
-														<c:if test="${tpd.idTpDespacho == param[tpd_x]}">
-															<c:set var="selected" value="selected" />
-														</c:if>
-														<option value="${tpd.idTpDespacho}" ${selected}>
-															${tpd.descTpDespacho}
-														</option>
-													</c:forEach>
-												</select>
-												<c:remove var="style" />
-												<c:if test="${param[tpd_x] != -1}">
+											<td width="2%" align="center"><input type="checkbox"
+												name="${x}" value="true" ${x_checked}
+												onclick="javascript:displaySel(this, '${tpd_x}');" /></td>
+											<td><c:remove var="style" /> <c:if
+													test="${empty param[x]}">
 													<c:set var="style" value=" style=display:none" />
 												</c:if>
-												<div id="div_${txt_x}" ${style}>
-													<input type="text" name="${txt_x}" id="${txt_x}" value="${param[txt_x]}" maxlength="255" />
+												<div id="div_${tpd_x}" ${style}>
+													<select name="${tpd_x}" id="${tpd_x}"
+														onchange="javascript:displayTxt(this, '${txt_x}');">
+														<c:forEach var="tpd" items="${tiposDespacho}">
+															<c:remove var="selected" />
+															<c:if test="${tpd.idTpDespacho == param[tpd_x]}">
+																<c:set var="selected" value="selected" />
+															</c:if>
+															<option value="${tpd.idTpDespacho}" ${selected}>
+																${tpd.descTpDespacho}</option>
+														</c:forEach>
+													</select>
+													<c:remove var="style" />
+													<c:if test="${param[tpd_x] != -1}">
+														<c:set var="style" value=" style=display:none" />
+													</c:if>
+													<div id="div_${txt_x}" ${style}>
+														<input type="text" name="${txt_x}" id="${txt_x}"
+															value="${param[txt_x]}" maxlength="255" />
+													</div>
 												</div>
-											</div>
-											<div id="div_${lbl_x}" style="display: none">Despacho
-												Único
-											</div>
-										</td>
-									</tr>
-								</c:if>
-							</c:forEach>
-					<c:if test="${not empty primeiro}">
-						</table>
-						</div>
-					</c:if>
-				</c:forEach>
-			</form>
+												<div id="div_${lbl_x}" style="display: none">Despacho
+													Único</div></td>
+										</tr>
+										</c:if>
+										</c:forEach>
+										<c:if test="${not empty primeiro}">
+									</table>
+								</div>
+							</c:if>
+					</c:forEach>
+					</form>
+			</div>
 		</div>
 	</div>
 </siga:pagina>

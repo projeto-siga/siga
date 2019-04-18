@@ -25,65 +25,62 @@
 
 <body>
 
-<div class="gt-bd clearfix">
-	<div class="gt-content clearfix">		
+<div class="container-fluid">
+	<div class="card bg-light mb-3" >		
 		<form name="frm" action="${request.contextPath}/app/orgao/gravar" method="POST">
 			<input type="hidden" name="postback" value="1" /> 
 			<input type="hidden" name="id" value="${id}" /> 
-			<h1>Cadastro de Órgão Externo</h1>
-			<div class="gt-content-box gt-for-table">
-				<table class="gt-form-table" width="100%">
-					<tr class="header">
-						<td colspan="2">Dados do Orgão Externo</td>
-					</tr>
-					<tr><td></td></tr>
-					<tr>				
-						<td>
-							<label>Nome:</label>
-						</td>
-						<td>
-							<input type="text" id="nmOrgao" name="nmOrgao" value="${nmOrgao}" maxlength="80" size="80" />
-						</td>
-					</tr>
-					<tr><td></td></tr>
-					<tr>
-						<td>
-							<label>Sigla:</label>
-						</td>
-						<td>
-							<input type="text" name="siglaOrgao" id="siglaOrgao" value="${siglaOrgao}" maxlength="30" size="30" />
-						</td>	
-					</tr>
-					<tr>
-						<td>
-							<label>Ativo:</label>
-						</td>
-						<td>
-							<select name="ativo" value="${ativo}">
-								<option value="S"  ${ativo == 'S' ? 'selected' : ''}>Sim</option>  
-								<option value="N" ${ativo == 'N' ? 'selected' : ''}>Não</option>
-							</select>
-						</td>
-					</tr>
-					<tr>		
-						<td>Órgão Solicitante:</td>
-						<td>
-							<select name="idOrgaoUsu" value="${idOrgaoUsu}">
-								<c:forEach items="${orgaosUsu}" var="item">
-									<option value="${item.idOrgaoUsu}" ${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
-										${item.nmOrgaoUsu}
-									</option>  
-								</c:forEach>
-							</select>	
-						</td>
-					</tr>			
-					<tr class="button">
-						<td>
-							<input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-large gt-btn-left" /> 
-							<input type="button" value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
-						</td>
-					</tr>
-				</table>
+			<div class="card-header"><h5>Cadastro de Órgão Externo</h5></div>
+				<div class="card-body">
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Nome</label>
+								<input type="text" id="nmOrgao" name="nmOrgao" value="${nmOrgao}" maxlength="80" size="80" class="form-control"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-2">
+							<div class="form-group">
+								<label>Sigla</label>
+								<input type="text" name="siglaOrgao" id="siglaOrgao" value="${siglaOrgao}" maxlength="30" size="30" class="form-control"/>
+							</div>
+						</div>
+					</div>	
+					<div class="row">
+						<div class="col-sm-1">
+							<div class="form-group">
+								<label>Ativo</label>
+								<select name="ativo" value="${ativo}" class="form-control">
+									<option value="S"  ${ativo == 'S' ? 'selected' : ''}>Sim</option>  
+									<option value="N" ${ativo == 'N' ? 'selected' : ''}>Não</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-5">
+							<div class="form-group"><label>Órgão Solicitante</label>
+								<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control">
+									<c:forEach items="${orgaosUsu}" var="item">
+										<option value="${item.idOrgaoUsu}" ${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
+											${item.nmOrgaoUsu}
+										</option>  
+									</c:forEach>
+								</select>
+							</div>	
+						</div>
+					</div>		
+					<div class="row">
+						<div class="col-sm">
+							<div class="form-group">
+								<input type="button" value="Ok" onclick="javascript: validar();" class="btn btn-primary" /> 
+								<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-primary" />
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<br />
 		</form>

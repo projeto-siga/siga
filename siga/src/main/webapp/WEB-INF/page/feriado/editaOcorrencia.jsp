@@ -11,7 +11,7 @@
 	function validar() {
 		var dataIni = $('#dtIniFeriado').val();		
 		if (dataIni==null || dataIni=="") {			
-			alert("Preencha a data de início");
+			mensagemAlerta("Preencha a data de início");
 			document.getElementById('dtIniFeriado').focus();		
 		}else
 			frm.submit();					
@@ -31,74 +31,94 @@
 				($('#localidades').html('Todas'));
 			else 
 				($('#localidades').html(''));		
-	}		
+	}
+	function mensagemAlerta(mensagem) {
+		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
+		$('#alertaModal').modal();
+	}	
 	</script>
 <body>
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">		
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >		
 			<form name="frm" method="post" action="/siga/app/feriado/gravar-ocorrencia">
 				<input type="hidden" name="postback" value="1" />		
 				<input type="hidden" name="idOcorrencia" value="${idOcorrencia}" />
 				<input type="hidden" name="id" value="${id}" />   
 				<c:set var="aplicFer" value="${listaAplicacoes}" />
-				<h2 class="gt-table-head">Cadastrar ocorrência de feriado</h2>
-					<div class="gt-content-box gt-for-table">
-					<table class="gt-form-table">
-						<tr class="header">
-							<td colspan="2"><b>${dscFeriado}</h1></td>
-						</tr>
-						<tr>
-							<td width="20%">Data de Início</td>
-							<td width="80%" align="left">
-								<input type="text" name="dtIniFeriado" id="dtIniFeriado"  title="Data de Início"	onblur="javascript:verifica_data(this, true);" value="${dtIniFeriado}"/>
-							</td>
-						</tr>
-						<tr>
-							<td width="20%">Data de Fim</td>
-							<td width="80%" align="left">
-								<input name="dtFimFeriado" title="Data de Fim" onblur="javascript:verifica_data(this, true);" value="${dtFimFeriado}"/></td>	
-						</tr>
-						<tr>		
-							<td>Órgão:</td>
-							<td>
-								<select name="idOrgaoUsu">
-									<option value="0">[Todos]</option>
-									<c:forEach var="item" items="${orgaosUsu}">
-										<option value="${item.idOrgaoUsu}">${item.nmOrgaoUsu}</option>
-									</c:forEach>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td>Lotação:</td>
-							<td>
-								<siga:selecao tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" />
-							</td>
-						</tr>	
-						<tr>
-							<td>UF:</td>
-							<td>
-								<select name="idUF" onchange="javascript:listaLocalidades()">
-									<option value="0">[Todas]</option>
-									<c:forEach var="item" items="${listaUF}">
-										<option value="${item.idUF}">${item.nmUF}</option>
-									</c:forEach>
-								</select>
-							</td>
-						</tr>	
-						<tr>
-							<td>Localidade:</td>
-							<td>
-								<div style="display: inline" id="localidades">Todas</div>
-							</td>
-						</tr>								
-						<tr class="button">
-							<td colspan="2">
-								<input type="button" value="Ok" onclick="javascript:validar();" class="gt-btn-large gt-btn-left" />
-								<input type="button" value="Cancela" onclick="javascript:location.href='/siga/app/feriado/listar';" class="gt-btn-medium gt-btn-left" />
-							</td>				
-						</tr>
-					</table>
+				<div class="card-header"><h5>Cadastrar ocorrência de feriado</h5></div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-sm">
+								<div class="form-group"><b>${dscFeriado}</b></div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-2">
+								<div class="form-group">
+									<label>Data de Início</label>
+									<input type="text" name="dtIniFeriado" id="dtIniFeriado" title="Data de Início" onblur="javascript:verifica_data(this, true);" value="${dtIniFeriado}" class="form-control"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-2">
+								<div class="form-group">
+									<label>Data de Fim</label>
+									<input name="dtFimFeriado" title="Data de Fim" onblur="javascript:verifica_data(this, true);" value="${dtFimFeriado}" class="form-control" />	
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-4">
+								<div class="form-group">
+									<label>Órgão</label>
+									<select name="idOrgaoUsu" class="form-control" >
+										<option value="0">[Todos]</option>
+										<c:forEach var="item" items="${orgaosUsu}">
+											<option value="${item.idOrgaoUsu}">${item.nmOrgaoUsu}</option>
+										</c:forEach>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm">
+								<div class="form-group">		
+									<label>Lotação:</label>
+									<siga:selecao tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" />
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-2">
+								<div class="form-group">
+									<label>UF</label>
+									<select class="form-control" name="idUF" onchange="javascript:listaLocalidades()">
+										<option value="0">[Todas]</option>
+										<c:forEach var="item" items="${listaUF}">
+											<option value="${item.idUF}">${item.nmUF}</option>
+										</c:forEach>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm">
+								<div class="form-group">		
+									<label>Localidade</label>
+									<div style="display: inline" id="localidades">Todas</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm">
+								<div class="form-group">	
+									<input type="button" value="Ok" onclick="javascript:validar();" class="btn btn-primary" />
+									<input type="button" value="Cancela" onclick="javascript:location.href='/siga/app/feriado/listar';" class="btn btn-primary" />
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</form>
 		<br />	
@@ -136,7 +156,27 @@
 						</tbody>
 					</table>
 				</div>			
-			</c:if>			
+			</c:if>	
+			<!-- Modal -->
+			<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+			    	<div class="modal-content">
+			      		<div class="modal-header">
+					        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					          <span aria-hidden="true">&times;</span>
+					    	</button>
+					    </div>
+				      	<div class="modal-body">
+				        	<p class="mensagem-Modal"></p>
+				      	</div>
+						<div class="modal-footer">
+						  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
+						</div>
+			    	</div>
+			  	</div>
+			</div>				
+			<!--Fim Modal -->		
 		</div>
 	</div>
 </body>

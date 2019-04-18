@@ -71,7 +71,7 @@
 					</div>
 					<div class="col-sm-2">
 						<div class="form-group">
-							<input type="file" name="arquivo" accept=".xlsx" />				
+							<input type="file" name="arquivo" accept=".xlsx" class="form-control-file"/>				
 						</div>
 					</div>
 				</div>								

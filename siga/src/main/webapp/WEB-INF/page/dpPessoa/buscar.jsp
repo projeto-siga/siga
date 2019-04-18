@@ -69,29 +69,30 @@ function sbmt(offset) {
 			</form>
 			</div>
 		</div>
+		<br>
+	
+		<table class="table table-sm table-striped">
+			<thead class="thead-dark">
+				<tr>
+					<th align="center">Matrícula</th>
+					<th align="left">Nome</th>
+					<th align="center">Lotação</th>
+					<th align="center">Função</th>
+					<th>Fim de Vigência</th>
+				</tr>
+			</thead>
+			<siga:paginador maxItens="10" maxIndices="${empty maxIndices ? 10 : maxIndices}" totalItens="${tamanho}"
+				itens="${pessoas}" var="pessoa">
+				<tr class="${evenorodd}">
+					<td align="center"><a
+						href="javascript: opener.retorna_${propriedadeClean}('${pessoa.id}','${pessoa.sigla}','${pessoa.descricao}','${pessoa.funcaoConfianca}');">${pessoa.sigla}</a></td>
+					<td align="left">${pessoa.descricao}</td>
+					<td align="center">${pessoa.lotacao.sigla}</td>
+					<td align="center">${pessoa.funcaoConfianca.nomeFuncao}${buscarFechadas}</td>
+					<td align="left">${pessoa.dataFimPessoa}</td>
+				</tr>
+			</siga:paginador>
+		</table>
 	</div>
-	<br>
-
-	<table class="table table-sm table-striped">
-		<thead class="thead-dark">
-			<tr>
-				<th align="center">Matrícula</th>
-				<th align="left">Nome</th>
-				<th align="center">Lotação</th>
-				<th align="center">Função</th>
-				<th>Fim de Vigência</th>
-			</tr>
-		</thead>
-		<siga:paginador maxItens="10" maxIndices="${empty maxIndices ? 10 : maxIndices}" totalItens="${tamanho}"
-			itens="${pessoas}" var="pessoa">
-			<tr class="${evenorodd}">
-				<td align="center"><a
-					href="javascript: opener.retorna_${propriedadeClean}('${pessoa.id}','${pessoa.sigla}','${pessoa.descricao}','${pessoa.funcaoConfianca}');">${pessoa.sigla}</a></td>
-				<td align="left">${pessoa.descricao}</td>
-				<td align="center">${pessoa.lotacao.sigla}</td>
-				<td align="center">${pessoa.funcaoConfianca.nomeFuncao}${buscarFechadas}</td>
-				<td align="left">${pessoa.dataFimPessoa}</td>
-			</tr>
-		</siga:paginador>
-	</table>
+	
 </siga:pagina>

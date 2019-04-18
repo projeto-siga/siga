@@ -86,10 +86,11 @@
 										<c:set var="lotaTitularStyle" value="" />
 									</c:when>
 								</c:choose>
-							</div>
+							</div> 
 						</div>
 						<div class="col-sm-3">
-							<div class="form-group align-botton">
+							<div class="form-group">
+								<label>&nbsp;&nbsp;&nbsp;</label>
 								<span id="spanTitular" class="align-botton" style="${titularStyle}"> 
 									<siga:selecao modulo="siga" propriedade="titular" tema="simple" /> 
 								</span> 
@@ -123,8 +124,9 @@
 								</c:choose> 
 							</div>
 						</div>
-						<div class="col-sm-3 align-content-bottom">
+						<div class="col-sm-3">
 							<div class="form-group ">
+								<label>&nbsp;&nbsp;&nbsp;</label>
 								<span id="spanSubstituto" style="${substitutoStyle}"> 
 									<siga:selecao modulo="siga" propriedade="substituto" tema="simple"/> 
 								</span> 

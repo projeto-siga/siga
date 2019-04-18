@@ -16,12 +16,9 @@ function sbmt(offset) {
 <input type="hidden" name="offset" value="0" />
 <siga:pagina titulo="Lista Orgão Externo">
 	<!-- main content -->
-	<div class="container-fluid">
-		<div class="card bg-light mb-3" >		
-			<div class="card-header"><h5>Orgãos Externos cadastrados</h5></div>
-			<div class="card-body">
+		<h5>Orgãos Externos cadastrados</h5>
 				<table border="0" class="table table-sm table-striped">
-					<thead>
+					<thead class="thead-dark">
 						<tr>
 							<th align="left">Nome</th>
 							<th align="center">Sigla</th>
@@ -73,8 +70,6 @@ function sbmt(offset) {
 						onclick="javascript:window.location.href='${url}'"
 						class="btn btn-primary">
 				</div>				
-			</div>	
-		</div>			
-	</div>
+			
 </siga:pagina>
 </form>

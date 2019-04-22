@@ -141,7 +141,7 @@
 									<label>Matrícula</label> <input
 										type="text" name="usuario.nomeUsuario"
 										onblur="javascript:converteUsuario(this)" class="form-control" />
-									<small id="emailHelp" class="form-text text-muted">Ex.:
+									<small class="form-text text-muted">Ex.:
 										XX99999, onde XX é a sigla do seu órgão (T2, RJ e ES) e 99999
 										é o número da sua matrícula.</small>
 								</div>

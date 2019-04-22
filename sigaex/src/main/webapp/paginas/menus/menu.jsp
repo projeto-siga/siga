@@ -16,6 +16,11 @@
 				href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a></li>
 
 			<li><a class="dropdown-item"
+				href="/sigaex/app/mesa">Mesa Virtual</a></li>
+				
+			<div class="dropdown-divider"></div>
+			
+			<li><a class="dropdown-item"
 				href="/sigaex/app/expediente/mov/transferir_lote">Transferir em
 					lote</a></li>
 			<li><a class="dropdown-item"

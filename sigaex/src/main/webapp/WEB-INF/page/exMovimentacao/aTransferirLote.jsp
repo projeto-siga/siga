@@ -262,12 +262,12 @@
 											test="${secao==0}" />
 									</th>
 								</tr>
-								<tr class="table-active">
-									<td class="text-center">Data</td>
-									<td class="text-center">Lotação</td>
-									<td class="text-center">Pessoa</td>
-									<td class="text-center">Data</td>
-									<td class="text-center">Pessoa</td>
+								<tr >
+									<th class="text-center">Data</td>
+									<th class="text-center">Lotação</td>
+									<th class="text-center">Pessoa</td>
+									<th class="text-center">Data</td>
+									<th class="text-center">Pessoa</td>
 								</tr>
 							</thead>
 							<tbody class="table-bordered">

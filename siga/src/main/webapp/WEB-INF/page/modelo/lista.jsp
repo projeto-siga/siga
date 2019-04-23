@@ -82,25 +82,25 @@ CodeMirror.defineMode("freemarker", function(config, parserConfig) {
 });
 
 </script>
-	<div class="gt-bd clearfix">
-		<div class="gt-content">
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
 			<c:set var="i" value="${0}" />
 			<c:forEach var="modelo" items="${itens}">
 				<c:set var="i" value="${i+1}" />
-				<h3 class="gt-form-head">
+				<div class="card-header"><h5>
 					<c:if test="${not empty modelo.cpOrgaoUsuario}">Orgão Usuário: ${modelo.cpOrgaoUsuario.descricao}</c:if>
 					<c:if test="${empty modelo.cpOrgaoUsuario}">Edição de Modelos: GERAL</c:if>
-				</h3>
-				<div class="gt-form gt-content-box">
+				</h5></div>
+				<div class="card-body">
 					<form id="editar_${i}" name="editar_${i}"
 						action="/siga/modelo/gravar" method="post">
-						<div class="gt-form-row">
+						<div class="row mb-2">
 							<input type="hidden" name="id" value="${modelo.id}" /> <input
 								type="hidden" name="idOrgUsu"
 								value="${modelo.cpOrgaoUsuario.id}" />
 
 							<textarea id="conteudo${i}" style="width: 100%;" cols="1"
-								rows="1" name="conteudo"><c:out value="${modelo.conteudoBlobString}" escapeXml="true"
+								rows="1" name="conteudo" class="form-control"><c:out value="${modelo.conteudoBlobString}" escapeXml="true"
 										default="" /></textarea>
 							<c:if test="${empty modelo.cpOrgaoUsuario}">
 								<p align="right">Ctrl-I: Indentar, Crtl-S: Salvar</p>
@@ -109,11 +109,11 @@ CodeMirror.defineMode("freemarker", function(config, parserConfig) {
 							var editor${i} = CodeMirror.fromTextArea(document.getElementById("conteudo${i}"), {mode: "freemarker", tabMode: "indent", lineNumbers: true, electricChars: false, smartIndent: false, viewportMargin: Infinity});
 						</script>
 						</div>
-						<div class="gt-form-row">
+						<div class="row">
 							<input name="salvar_conteudo" type="submit" id="but_gravar${i}"
 								value="Salvar"
 								onclick="javascript: this.form.action='/siga/app/modelo/gravar'; "
-								class="gt-btn-medium gt-btn-left" />
+								class="btn btn-primary" />
 						</div>
 					</form>
 				</div>

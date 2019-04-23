@@ -1776,5 +1776,33 @@ public class ExDao extends CpDao {
 			return null;
 		}
 	}
+	
+	public List listarDocumentosPorPessoaOuLotacao(DpPessoa titular,
+			DpLotacao lotaTitular) {
+
+		long tempoIni = System.nanoTime();
+		Query query = getSessao()
+				.createQuery(
+						"select marca, marcador, mobil from ExMarca marca"
+								+ " inner join marca.cpMarcador marcador"
+								+ " inner join marca.exMobil mobil"
+								+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
+								+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
+								+ (titular != null ? " and (marca.dpPessoaIni = :titular)"
+										: " and (marca.dpLotacaoIni = :lotaTitular)"));
+
+		if (titular != null)
+			query.setLong("titular", titular.getIdPessoaIni());
+		else if (lotaTitular != null)
+			query.setLong("lotaTitular", lotaTitular.getIdLotacaoIni());
+
+		List l = query.list();
+ 		long tempoTotal = System.nanoTime() - tempoIni;
+		// System.out.println("consultarPorFiltroOtimizado: " + tempoTotal
+		// / 1000000 + " ms -> " + query + ", resultado: " + l);
+		return l;
+	}
+
+
 
 }

@@ -1216,7 +1216,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (doc.isAssinaturaSolicitada())
 			return false;
 		
-		if (!doc.getLotaSubscritor().equivale(lotaTitular))
+		if (doc.getLotaSubscritor() == null ||  !doc.getLotaSubscritor().equivale(lotaTitular))
 			return false;
 		
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA,

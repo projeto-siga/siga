@@ -33,81 +33,74 @@
 	</c:otherwise>
 </c:choose>
 
-	<div class="gt-bd clearfix">
-		<div class="gt-content">
-			<h2 class="gt-form-head">${titulo_pagina}</h2>
+<div class="container-fluid">
+	<div class="card bg-light mb-3" >
+		<div class="card-header"><h5>${titulo_pagina}</h5></div>
 
-			<div class="gt-form gt-content-box">
+			<div class="card-body">
 				<div id="divTemporalidade" class="clearfix">
 					<!-- left column -->
 					<form id="frmTemporalidade" action="gravar" method="post">
 						<input type="hidden" id="acao" name="acao" value="${acao}" />
 						<input type="hidden" id="idTemporalidade" name="idTemporalidade" value="${exTemporal.idTemporalidade}" />
-						<div class="gt-left-col">
-
-							<!-- form row -->
-							<div class="gt-form-row gt-width-66">
-								<label>Descrição</label> <input id="descTemporalidade" name="descTemporalidade" type="text" value="${exTemporal.descTemporalidade}" size="50"/>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label>Descrição</label>
+									<input id="descTemporalidade" name="descTemporalidade" type="text" value="${exTemporal.descTemporalidade}" size="50" class="form-control"/>
+								</div>
 							</div>
-							<!-- /form row -->
-	
-							<!-- form row -->
-							<div class="gt-form-row gt-width-66">
-								<label>Valor</label>
-								<select  id="valorTemporalidade" name="valorTemporalidade">
-									<option value="-1">[Sem valor]</option>								
-									<c:forEach begin="1" end="365" var="item">
-										<c:choose>
-											<c:when test="${exTemporal.valorTemporalidade==item}">
-												<option value="${item}" selected="selected">${item}</option>
-											</c:when>
-											<c:otherwise>
-												<option value="${item}">${item}</option>
-											</c:otherwise>
-										</c:choose>
-									</c:forEach>
-								</select>								
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label>Valor</label>
+									<select  id="valorTemporalidade" name="valorTemporalidade" class="form-control">
+										<option value="-1">[Sem valor]</option>								
+										<c:forEach begin="1" end="365" var="item">
+											<c:choose>
+												<c:when test="${exTemporal.valorTemporalidade==item}">
+													<option value="${item}" selected="selected">${item}</option>
+												</c:when>
+												<c:otherwise>
+													<option value="${item}">${item}</option>
+												</c:otherwise>
+											</c:choose>
+										</c:forEach>
+									</select>
+								</div>
 							</div>
-							<!-- /form row -->
-							
-							<!-- form row -->
-							<div class="gt-form-row gt-width-66">
-
-								<label>Unidade de Medida</label>
-								<select id="idCpUnidade" name="idCpUnidade"> 
-									<option value="-1">[Sem valor]</option>
-									<c:forEach items="${listaCpUnidade}" var="itemLista">
-										<c:choose>
-											<c:when test="${itemLista.idUnidadeMedida == exTemporal.cpUnidadeMedida.idUnidadeMedida}">
-												<option value="${itemLista.idUnidadeMedida}" selected="selected">${itemLista.descricao}</option>
-											</c:when>
-											<c:otherwise>
-												<option value="${itemLista.idUnidadeMedida}">${itemLista.descricao}</option>
-											</c:otherwise>
-										</c:choose>
-									</c:forEach>
-								</select>
-								
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label>Unidade de Medida</label>
+									<select id="idCpUnidade" name="idCpUnidade" class="form-control"> 
+										<option value="-1">[Sem valor]</option>
+										<c:forEach items="${listaCpUnidade}" var="itemLista">
+											<c:choose>
+												<c:when test="${itemLista.idUnidadeMedida == exTemporal.cpUnidadeMedida.idUnidadeMedida}">
+													<option value="${itemLista.idUnidadeMedida}" selected="selected">${itemLista.descricao}</option>
+												</c:when>
+												<c:otherwise>
+													<option value="${itemLista.idUnidadeMedida}">${itemLista.descricao}</option>
+												</c:otherwise>
+											</c:choose>
+										</c:forEach>
+									</select>
+								</div>
 							</div>
-							<!-- form row -->
-							
 						</div>
 					</form>
 				</div>
 				<div class="botoesTemporalidade">
 					<!-- form row -->
 					<div class="gt-form-row">
-						<a id="btGravarTemporalidade" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:gravarTemporalidade()">Gravar</a>
-							<p class="gt-cancel">
-							<c:choose>
-								<c:when test="${acao == 'editar_temporalidade'}">
-										ou <a href="excluir?idTemporalidade=${exTemporal.idTemporalidade}">excluir</a>
-								</c:when>
-								<c:otherwise>
-										ou <a href="${pageContext.request.contextPath}/app/expediente/temporalidade/listar">cancelar</a>
-								</c:otherwise>
-							</c:choose>
-							</p>
+						<input type="button" value="Gravar" onclick="javascript:gravarTemporalidade()" class="btn btn-primary" />
+						<c:choose>
+							<c:when test="${acao == 'editar_temporalidade'}">
+								<input type="button" value="Excluir" onclick="javascript:location.href='${pageContext.request.contextPath}/app/expediente/temporalidade/excluir?idTemporalidade=${exTemporal.idTemporalidade}';" class="btn btn-primary" />
+							</c:when>
+							<c:otherwise>
+								<input type="button" value="Cancelar" onclick="javascript:location.href='${pageContext.request.contextPath}/app/expediente/temporalidade/listar';" class="btn btn-primary" />
+							</c:otherwise>
+						</c:choose>
 						
 					</div>
 				</div>

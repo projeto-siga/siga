@@ -83,10 +83,11 @@ CodeMirror.defineMode("freemarker", function(config, parserConfig) {
 
 </script>
 	<div class="container-fluid">
-		<div class="card bg-light mb-3" >
+		
 			<c:set var="i" value="${0}" />
 			<c:forEach var="modelo" items="${itens}">
 				<c:set var="i" value="${i+1}" />
+				<div class="card bg-light mb-3" >
 				<div class="card-header"><h5>
 					<c:if test="${not empty modelo.cpOrgaoUsuario}">Orgão Usuário: ${modelo.cpOrgaoUsuario.descricao}</c:if>
 					<c:if test="${empty modelo.cpOrgaoUsuario}">Edição de Modelos: GERAL</c:if>
@@ -117,9 +118,10 @@ CodeMirror.defineMode("freemarker", function(config, parserConfig) {
 						</div>
 					</form>
 				</div>
+				</div>
 			</c:forEach>
 
-		</div>
+		
 	</div>
 
 	<script>

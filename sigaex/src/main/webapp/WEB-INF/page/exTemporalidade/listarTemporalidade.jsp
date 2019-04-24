@@ -15,8 +15,9 @@
 	}
 </script>
 <div class="container-fluid">
-	<h5>Temporalidade Documental</h5>	
-		
+	<div class="card bg-light mb-3" >
+		<div class="card-header"><h5>Temporalidade Documental</h5></div>
+			<div class="card-body">	
 			<table border="0" class="table table-sm table-striped">
 				<thead class="thead-dark">
 					<tr>
@@ -40,13 +41,14 @@
 					</c:forEach>
 				</tbody>
 			</table>
-			<form id="frmNovaTemporalidade" action="editar" method="get">
+			</div>
+		</div>	
+		<form id="frmNovaTemporalidade" action="editar" method="get">
 				<div class="gt-table-buttons">
 					<button type="button" class="btn btn-primary" onclick="javascript:novaTemporalidade()">Nova Temporalidade</button>
 				</div>
 				<input type="hidden" id="acao" name="acao" value="nova_temporalidade"/>
 			</form>
-		
 </div>
 
 </siga:pagina>

@@ -701,3 +701,39 @@ DIV.card-sidebar DIV.card-body P {
 div.form-group label {
 	margin-bottom: .10em;
 }
+
+.destaque {
+  color: red;
+}
+
+.td-middle {
+  vertical-align: middle;
+}
+
+table .table-group th {
+  border-top: 0;
+}
+
+table .table-head th {
+  border-top: 0;
+}
+
+.odd {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.xrp-label-container {
+  margin-top: 4px;
+  margin-bottom: 0px;
+}
+
+.xrp-label {
+  font-size: 13px;
+  margin-bottom: 4px;
+  margin-right: 8px;
+  line-height: 1.1;
+  padding-left: 7px;
+  padding-right: 7px;
+  border-radius: 0px;
+  border: 1px solid #ccc;
+}

@@ -26,9 +26,10 @@
 						<input type="hidden" name="id" /> 
 						<input type="hidden" name="postback" value="1" />
 						<div class="row">
-							<div class="col-sm">
+							<div class="col-sm-6">
 								<div class="form-group">
-									<label>Feriado</label> <input type="text" name="dscFeriado" id="dscFeriado" value="${dscFeriado}" maxlength="60" size="60" class="form-control"/>
+									<label>Feriado</label> 
+									<input type="text" name="dscFeriado" id="dscFeriado" value="${dscFeriado}" maxlength="60" size="60" class="form-control"/>
 								</div>
 							</div>
 						</div>
@@ -47,11 +48,9 @@
 					</form>
 				</div>
 			</div>
-			<div class="card bg-light mb-3">
-			<h5 class="card-header">Feriados cadastrados</h5>
-			<div class="card-body">
+			<h5>Feriados cadastrados</h5>
 				<table class="table table-sm table-striped">
-					<thead class="thead-light">
+					<thead class="thead-dark">
 						<tr>							
 							<th align="left" width="30%">Descrição</th>	
 							<th align="right" width="20%">Incluir ocorrência</th>
@@ -114,7 +113,6 @@
 						</c:forEach>
 					</tbody>
 				</table>				
-			</div>				
-		</div>	
+
 	</div>		
 </siga:pagina>

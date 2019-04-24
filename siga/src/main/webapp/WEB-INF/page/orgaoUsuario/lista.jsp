@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
+<siga:pagina titulo="Lista Orgão Usuário">
 <script type="text/javascript" language="Javascript1.1">
 function sbmt(offset) {
 	if (offset==null) {
@@ -12,32 +13,33 @@ function sbmt(offset) {
 	frm.submit();
 }
 </script>
-<form name="frm" action="listar" class="form" method="POST>
-<siga:pagina titulo="Lista Orgão Usuário">
+<form name="frm" action="listar" class="form" method="POST">
 <input type="hidden" name="offset" value="0" />
-		<div class="gt-bd clearfix">
-			<div class="gt-content clearfix">
-				<h2 class="gt-table-head">Dados do &Oacute;rg&atilde;o</h2>
-				<div class="gt-content-box gt-for-table">
-					<table border="0" class="gt-table">
-						<tr>
-							<td><label>Nome:</label></td>
-							<td><input type="text" id="nome" name="nome" value="${nome}" maxlength="100" size="30"/></td>
-						</tr>						
-					</table>
-				</div>
-				<div class="gt-table-buttons">
-					<input type="submit" value="Pesquisar" class="gt-btn-medium gt-btn-left"/>
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >		
+			<div class="card-header"><h5>Cadastro de &Oacute;rg&atilde;o</h5></div>
+				<div class="card-body">
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Nome</label>
+								<input type="text" id="nome" name="nome" value="${nome}" maxlength="100" size="30" class="form-control"/>
+							</div>						
+						</div>
+					</div>
+				
+					<div class="row">
+						<div class="col-sm-6">
+							<input type="submit" value="Pesquisar" class="btn btn-primary"/>
+						</div>
+					</div>
 				</div>
 			</div>
-		</div>
-	<!-- main content -->
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">		
-			<h2 class="gt-table-head">&Oacute;rg&atilde;os cadastrados</h2>
-			<div class="gt-content-box gt-for-table">
-				<table border="0" class="gt-table">
-					<thead>
+			
+			<!-- main content -->
+			<h5>&Oacute;rg&atilde;os cadastrados</h5>
+				<table border="0" class="table table-sm table-striped">
+					<thead class="thead-dark">
 						<tr>
 							<th algin="center">ID</th>
 							<th align="left">Nome</th>
@@ -59,7 +61,9 @@ function sbmt(offset) {
 										<c:param name="id" value="${orgaoUsuario.id}"></c:param>
 									</c:url>
 									<c:if test="${empty orgaoUsuarioSiglaLogado || orgaoUsuarioSiglaLogado eq orgaoUsuario.sigla}">
-									<siga:link title="Alterar" url="${url}" />
+									<input type="button" value="Alterar"
+										onclick="javascript:window.location.href='${url}'"
+										class="btn btn-primary">
 									</c:if>					
 								</td>
 							<%--	<td align="left">									
@@ -75,16 +79,16 @@ function sbmt(offset) {
 						</siga:paginador>
 					</tbody>
 				</table>				
-			</div>	
+			
 			<c:if test="${empty orgaoUsuarioSiglaLogado}">
 			<div class="gt-table-buttons">
 					<c:url var="url" value="/app/orgaoUsuario/editar"></c:url>
 					<input type="button" value="Incluir"
 						onclick="javascript:window.location.href='${url}'"
-						class="gt-btn-medium gt-btn-left">
+						class="btn btn-primary">
 				</div>	
 			</c:if>			
-		</div>			
-	</div>
-</siga:pagina>
+		</div>
+
 </form>
+</siga:pagina>

@@ -11,77 +11,95 @@
 		var nmCargo = document.getElementsByName('nmCargo')[0].value;	
 		var id = document.getElementsByName('id')[0].value;	
 		if (nmCargo==null || nmCargo=="") {			
-			alert("Preencha o nome do Cargo.");
+			mensagemAlerta("Preencha o nome do Cargo.");
 			document.getElementById('nmCargo').focus();		
 		}else {
 			frm.submit();
 		}			
 	}
+
+	function mensagemAlerta(mensagem) {
+		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
+		$('#alertaModal').modal();
+	}
 </script>
 
-<body>
-
-<div class="gt-bd clearfix">
-	<div class="gt-content clearfix">		
+<div class="container-fluid">
+	<div class="card bg-light mb-3" >
 		<form name="frm" action="${request.contextPath}/app/cargo/gravar" method="POST">
 			<input type="hidden" name="postback" value="1" />
 			<input type="hidden" name="id" value="${id}" />
-			<h1>Cadastro de Cargo</h1>
-			<div class="gt-content-box gt-for-table">
-				<table class="gt-form-table" width="100%">
-					<tr class="header">
-						<td colspan="2">Dados do Cargo</td>
-					</tr>
-					<tr><td></td></tr>
-					
-					<tr><td></td></tr>
-					<tr>
-						<td><label>Órgão:</label></td>
-						<td>
-							<c:choose>
-								<c:when test="${empty id || podeAlterarOrgao}">
-									<select name="idOrgaoUsu" value="${idOrgaoUsu}">
-										<c:forEach items="${orgaosUsu}" var="item">
-											<option value="${item.idOrgaoUsu}"
-												${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
-												${item.nmOrgaoUsu}</option>
-										</c:forEach>
-									</select>
-								</c:when>
-								<c:otherwise>
-									${nmOrgaousu}
-									<input type="hidden" name="idOrgaoUsu" value="${idOrgaoUsu}" />
-								</c:otherwise>
-							</c:choose>
-						</td>
-					</tr>
-					<tr>				
-						<td>
-							<label>Nome:</label>
-						</td>
-						<td>
-							<input type="text" id="nmCargo" name="nmCargo" value="${nmCargo}" maxlength="100" size="100" />
-						</td>
-					</tr>
+			<div class="card-header"><h5>Cadastro de Cargo</h5></div>
+				<div class="card-body">
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Órgão</label>
+								<c:choose>
+									<c:when test="${empty id || podeAlterarOrgao}">
+										<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control">
+											<c:forEach items="${orgaosUsu}" var="item">
+												<option value="${item.idOrgaoUsu}"
+													${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
+													${item.nmOrgaoUsu}</option>
+											</c:forEach>
+										</select>
+									</c:when>
+									<c:otherwise>
+										${nmOrgaousu}
+										<input type="hidden" name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control"/>
+									</c:otherwise>
+								</c:choose>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Nome</label>
+								<input type="text" id="nmCargo" name="nmCargo" value="${nmCargo}" maxlength="100" size="100" class="form-control"/>
+							</div>
+						</div>
+					</div>
 					<c:if test="${empty id}">
-						<tr class="button">
-							<td>Carregar planilha para inserir múltiplos registros:</td>
-							<td><input type="button" value="Carregar planilha" onclick="javascript:location.href='/siga/app/cargo/carregarExcel';" class="gt-btn-medium gt-btn-left" /></td>
-						</tr>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label>Carregar planilha para inserir múltiplos registros:</label>
+									<input type="button" value="Carregar planilha" onclick="javascript:location.href='/siga/app/cargo/carregarExcel';" class="btn btn-primary" />
+								</div>
+							</div>
+						</div>
 					</c:if>
-					<tr class="button">
-						<td>
-							<input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-large gt-btn-left" /> 
-							<input type="button" value="Cancela" onclick="javascript:location.href='/siga/app/cargo/listar';" class="gt-btn-medium gt-btn-left" />
-						</td>
-					</tr>
-				</table>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<input type="button" value="Ok" onclick="javascript: validar();" class="btn btn-primary" /> 
+								<input type="button" value="Cancela" onclick="javascript:location.href='/siga/app/cargo/listar';" class="btn btn-primary" />
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
-			<br />
 		</form>
+		<!-- Modal -->
+		<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+				        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+				          <span aria-hidden="true">&times;</span>
+				    	</button>
+				    </div>
+			      	<div class="modal-body">
+			        	<p class="mensagem-Modal"></p>
+			      	</div>
+					<div class="modal-footer">
+					  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
+					</div>
+		    	</div>
+		  	</div>
+		</div>				
+		<!--Fim Modal -->
 	</div>
 </div>
-
-</body>
-
 </siga:pagina>

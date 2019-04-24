@@ -59,8 +59,6 @@
 									<input type="text" name="dtIniFeriado" id="dtIniFeriado" title="Data de Início" onblur="javascript:verifica_data(this, true);" value="${dtIniFeriado}" class="form-control"/>
 								</div>
 							</div>
-						</div>
-						<div class="row">
 							<div class="col-sm-2">
 								<div class="form-group">
 									<label>Data de Fim</label>
@@ -80,9 +78,7 @@
 									</select>
 								</div>
 							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm">
+							<div class="col-sm-4">
 								<div class="form-group">		
 									<label>Lotação:</label>
 									<siga:selecao tipo="lotacao" propriedade="lotacao" tema="simple" modulo="siga" />
@@ -101,9 +97,7 @@
 									</select>
 								</div>
 							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm">
+							<div class="col-sm-4">
 								<div class="form-group">		
 									<label>Localidade</label>
 									<div style="display: inline" id="localidades">Todas</div>

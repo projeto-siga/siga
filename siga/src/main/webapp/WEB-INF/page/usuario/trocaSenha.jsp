@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <style>
@@ -138,17 +139,15 @@
 						<div class="row">
 							<div class="col-sm">
 								<div class="form-group">
-									<label for="exampleInputEmail1">Matrícula</label> <input
+									<label><fmt:message key = "usuario.matricula"/></label> <input
 										type="text" name="usuario.nomeUsuario"
 										onblur="javascript:converteUsuario(this)" class="form-control" />
-									<small id="emailHelp" class="form-text text-muted">Ex.:
-										XX99999, onde XX é a sigla do seu órgão (T2, RJ e ES) e 99999
-										é o número da sua matrícula.</small>
+									<small class="form-text text-muted"><fmt:message key = "usuario.help"/></small>
 								</div>
 							</div>
 							<div class="col-sm">
 								<div class="form-group">
-									<label for="exampleInputEmail1">Senha atual</label> <input
+									<label>Senha atual</label> <input
 										type="password" name="usuario.senhaAtual" class="form-control" />
 								</div>
 							</div>
@@ -156,7 +155,7 @@
 						<div class="row">
 							<div class="col-sm">
 								<div class="form-group">
-									<label for="exampleInputEmail1">Nova Senha</label> <input
+									<label>Nova Senha</label> <input
 										type="password" name="usuario.senhaNova" id="pass"
 										onkeyup="passwordStrength(this.value)" theme="simple"
 										class="form-control" /> <small id="emailHelp"
@@ -166,14 +165,14 @@
 							</div>
 							<div class="col-sm">
 								<div class="form-group">
-									<label for="exampleInputEmail1">Repetição da nova senha</label>
+									<label>Repetição da nova senha</label>
 									<input type="password" name="usuario.senhaConfirma" id="pass2"
 										class="form-control" />
 								</div>
 							</div>
 							<div class="col-sm">
 								<div class="form-group">
-									<label for="exampleInputEmail1">Força da nova senha</label>
+									<label>Força da nova senha</label>
 									<div id="passwordDescription">Senha não informada</div>
 									<div id="passwordStrength" class="strength0"></div>
 								</div>
@@ -191,7 +190,7 @@
 									<div class="form-check">
 										<input type="checkbox" checked="checked" id="trocarSenhaRede"
 											name="usuario.trocarSenhaRede" class="form-check-input"></input>
-										<label class="form-check-label" for="defaultCheck1">
+										<label class="form-check-label" >
 											Trocar também a senha do computador, da rede e do e-mail </label>
 									</div>
 								</div>

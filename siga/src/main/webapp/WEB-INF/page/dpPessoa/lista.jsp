@@ -4,7 +4,6 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<siga:pagina titulo="Listar Pessoas">
 <script type="text/javascript" language="Javascript1.1">
 function sbmt(offset) {
 	if (offset==null) {
@@ -53,143 +52,148 @@ function cpf_mask(v){
 	return v;
 	}
 </script>
-<form name="frm" action="listar" class="form" method="POST">
-	<input type="hidden" name="offset" value="0" />
-		<div class="gt-bd clearfix">
-			<div class="gt-content clearfix">
-				<h2 class="gt-table-head">Dados da Pessoa</h2>
-				<div class="gt-content-box gt-for-table">
-					<table border="0" class="gt-table">
-						<tr>
-							<td><label>Órgão:</label></td>
-							<td><select name="idOrgaoUsu" value="${idOrgaoUsu}" onchange="carregarRelacionados(this.value)">
-									<c:forEach items="${orgaosUsu}" var="item">
-										<option value="${item.idOrgaoUsu}"
-											${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
-											${item.nmOrgaoUsu}</option>
-									</c:forEach>
-							</select></td>
-						</tr>
-						<tr>
-							<td><label>Cargo:</label></td>
-							<td>
-								<select name="idCargoPesquisa" value="${idCargoPesquisa}">
-									<c:forEach items="${listaCargo}" var="item">
-										<option value="${item.idCargo}"
-											${item.idCargo == idCargoPesquisa ? 'selected' : ''}>
-											${item.descricao}</option>
-									</c:forEach>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td><label>Fun&ccedil;&atilde;o de Confian&ccedil;a:</label></td>
-							<td>
-								<select name="idFuncaoPesquisa" value="${idFuncaoPesquisa}">
-									<c:forEach items="${listaFuncao}" var="item">
-										<option value="${item.idFuncao}"
-											${item.idFuncao == idFuncaoPesquisa ? 'selected' : ''}>
-											${item.descricao}</option>
-									</c:forEach>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td><label>Lota&ccedil;&atilde;o:</label></td>
-							<td>
-								<select name="idLotacaoPesquisa" value="${idLotacaoPesquisa}">
-									<c:forEach items="${listaLotacao}" var="item">
-										<option value="${item.idLotacao}"
-											${item.idLotacao == idLotacaoPesquisa ? 'selected' : ''}>
-											${item.descricao}</option>
-									</c:forEach>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td><label>Nome:</label></td>
-							<td><input type="text" id="nome" name="nome" value="${nome}" maxlength="100" size="30"/></td>
-						</tr>
-						<tr>
-							<td><label>CPF:</label></td>
-							<td><input type="text" id="cpfPesquisa" name="cpfPesquisa" value="${cpfPesquisa}" maxlength="14" size="14" onkeyup="this.value = cpf_mask(this.value)"/></td>
-						</tr>
-						
-					</table>
+
+<siga:pagina titulo="Listar Pessoas">
+	<!-- main content -->
+	<div class="container-fluid">
+	<form name="frm" action="listar" class="form100" method="POST">
+		<input type="hidden" name="offset" value="0" />
+		<div class="card bg-light mb-3" >
+			<div class="card-header">
+				<h5>Dados da Pessoa</h5>
+			</div>
+			<div class="card-body">
+				<div class="row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="uidOrgaoUsu">Órgão</label>
+							<select name="idOrgaoUsu" value="${idOrgaoUsu}" onchange="carregarRelacionados(this.value)" class="form-control">
+								<c:forEach items="${orgaosUsu}" var="item">
+									<option value="${item.idOrgaoUsu}"
+										${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
+										${item.nmOrgaoUsu}</option>
+								</c:forEach>
+							</select>
+						</div>					
+					</div>					
+					<div class="col-md-2">
+						<div class="form-group">
+							<label for="idCargoPesquisa">Cargo</label>
+							<select name="idCargoPesquisa" value="${idCargoPesquisa}" class="form-control">
+								<c:forEach items="${listaCargo}" var="item">
+									<option value="${item.idCargo}"
+										${item.idCargo == idCargoPesquisa ? 'selected' : ''}>
+										${item.descricao}</option>
+								</c:forEach>
+							</select>
+						</div>					
+					</div>
+					<div class="col-md-2">
+						<div class="form-group">
+							<label for="idFuncaoPesquisa">Fun&ccedil;&atilde;o de Confian&ccedil;a</label>
+							<select name="idFuncaoPesquisa" value="${idFuncaoPesquisa}" class="form-control">
+								<c:forEach items="${listaFuncao}" var="item">
+									<option value="${item.idFuncao}"
+										${item.idFuncao == idFuncaoPesquisa ? 'selected' : ''}>
+										${item.descricao}</option>
+								</c:forEach>
+							</select>
+						</div>					
+					</div>
+					<div class="col-md-3">
+						<div class="form-group">
+							<label for="idLotacaoPesquisa">Lota&ccedil;&atilde;o</label>
+							<select name="idLotacaoPesquisa" value="${idLotacaoPesquisa}" class="form-control">
+								<c:forEach items="${listaLotacao}" var="item">
+									<option value="${item.idLotacao}"
+										${item.idLotacao == idLotacaoPesquisa ? 'selected' : ''}>
+										${item.descricao}</option>
+								</c:forEach>
+							</select>
+						</div>					
+					</div>
 				</div>
-				<div class="gt-table-buttons">
-					<input type="submit" value="Pesquisar" class="gt-btn-medium gt-btn-left"/>
+				<div class="row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="nome">Nome</label>
+							<input type="text" id="nome" name="nome" value="${nome}" maxlength="100" class="form-control"/>
+						</div>					
+					</div>					
+					<div class="col-md-2">
+						<div class="form-group">
+							<label for="nome">CPF</label>
+							<input type="text" id="cpfPesquisa" name="cpfPesquisa" value="${cpfPesquisa}" maxlength="14" onkeyup="this.value = cpf_mask(this.value)" class="form-control"/>
+						</div>					
+					</div>					
 				</div>
+				<div class="row">
+					<div class="col-sm-2">
+						<button type="submit" class="btn btn-primary">Pesquisar</button>
+					</div>
+				</div>				
+
+			
 			</div>
 		</div>
 	
-	
-	
-	<!-- main content -->
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">		
-			<h2 class="gt-table-head">Pessoas cadastradas</h2>
-			<div class="gt-content-box gt-for-table">
-				<table border="0" class="gt-table">
-					<thead>
-						<tr>
-							<th align="left">Nome</th>
-							<th align="left">CPF</th>
-							<th align="left">Data de Nascimento</th>
-							<th align="left">Matricula</th>
-							<th colspan="2" align="center">Op&ccedil;&otilde;es</th>					
-						</tr>
-					</thead>
-					
-					<tbody>
-						<siga:paginador maxItens="15" maxIndices="${empty maxIndices ? 10 : maxIndices}" totalItens="${tamanho}"
-							itens="${itens}" var="pessoa">
-							<tr>
-								<td align="left">${pessoa.descricao}</td>
-								<td align="left">${pessoa.cpfFormatado}</td>
-								<td align="left"><fmt:formatDate pattern = "dd/MM/yyyy" value = "${pessoa.dataNascimento}" /></td>
-								<td align="left">${pessoa.sigla}</td>
-								<td align="left">
-									<c:url var="url" value="/app/pessoa/editar">
-										<c:param name="id" value="${pessoa.id}"></c:param>
-									</c:url>
-									<c:url var="urlAtivarInativar" value="/app/pessoa/ativarInativar">
-										<c:param name="id" value="${pessoa.id}"></c:param>
-									</c:url>
-									<siga:link title="Alterar" url="${url}" />
-									<c:choose>
-										<c:when test="${empty pessoa.dataFimPessoa}">
-											<siga:link title="Inativar" url="${urlAtivarInativar}" />		
-										</c:when>
-										<c:otherwise>
-											<siga:link title="Ativar" url="${urlAtivarInativar}" />
-										</c:otherwise>
-									</c:choose>
-								</td>
-							<%--	<td align="left">									
-	 			 					<a href="javascript:if (confirm('Deseja excluir o orgão?')) location.href='/siga/app/orgao/excluir?id=${orgao.idOrgao}';">
-										<img style="display: inline;"
-										src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir orgão"							
-										onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
-										onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
-									</a>															
-								</td>
-							 --%>							
-							</tr>
-						</siga:paginador>
-					</tbody>
-				</table>				
-			</div>	
-			<div class="gt-table-buttons">
-					<c:url var="url" value="/app/pessoa/editar"></c:url>
-					<c:url var="urlAtivarInativar" value="/app/pessoa/ativarInativar"></c:url>
-					<input type="button" value="Incluir"
-						onclick="javascript:window.location.href='${url}'"
-						class="gt-btn-medium gt-btn-left">
-				</div>				
-		</div>			
+		<h3 class="gt-table-head">Pessoas cadastradas</h3>
+		<table border="0" class="table table-sm table-striped">
+			<thead class="thead-dark">
+				<tr>
+					<th align="left">Nome</th>
+					<th align="left">CPF</th>
+					<th align="left">Data de Nascimento</th>
+					<th align="left">Matricula</th>
+					<th colspan="2" align="center">Op&ccedil;&otilde;es</th>					
+				</tr>
+			</thead>
+			<tbody>
+				<siga:paginador maxItens="15" maxIndices="${empty maxIndices ? 10 : maxIndices}" totalItens="${tamanho}"
+					itens="${itens}" var="pessoa">
+					<tr>
+						<td align="left">${pessoa.descricao}</td>
+						<td align="left">${pessoa.cpfFormatado}</td>
+						<td align="left"><fmt:formatDate pattern = "dd/MM/yyyy" value = "${pessoa.dataNascimento}" /></td>
+						<td align="left">${pessoa.sigla}</td>
+						<td align="left">
+							<c:url var="url" value="/app/pessoa/editar">
+								<c:param name="id" value="${pessoa.id}"></c:param>
+							</c:url>
+							<c:url var="urlAtivarInativar" value="/app/pessoa/ativarInativar">
+								<c:param name="id" value="${pessoa.id}"></c:param>
+							</c:url>
+							<a href="${url}" class="btn btn-primary" role="button" aria-pressed="true" >Alterar</a>
+							<c:choose>
+								<c:when test="${empty pessoa.dataFimPessoa}">
+									<a href="${urlAtivarInativar}" class="btn btn-primary" role="button" aria-pressed="true" >Inativar</a>
+								</c:when>
+								<c:otherwise>
+									<a href="${urlAtivarInativar}" class="btn btn-primary" role="button" aria-pressed="true" >Ativar</a>
+								</c:otherwise>
+							</c:choose>
+						</td>
+					<%--	<td align="left">									
+			 					<a href="javascript:if (confirm('Deseja excluir o orgão?')) location.href='/siga/app/orgao/excluir?id=${orgao.idOrgao}';">
+								<img style="display: inline;"
+								src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir orgão"							
+								onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
+								onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
+							</a>															
+						</td>
+					 --%>							
+					</tr>
+				</siga:paginador>
+			</tbody>
+		</table>				
+		<div class="gt-table-buttons">
+				<c:url var="url" value="/app/pessoa/editar"></c:url>
+				<c:url var="urlAtivarInativar" value="/app/pessoa/ativarInativar"></c:url>
+				<input type="button" value="Incluir" onclick="javascript:window.location.href='${url}'" class="btn btn-primary">
+		</div>				
+	</form>
 	</div>
-</form>
+
 <script>
 function carregarRelacionados(id) {
 	frm.action = 'carregarCombos';

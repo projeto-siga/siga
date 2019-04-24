@@ -3,9 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-
-<siga:pagina titulo="Cadastro de Lota&ccedil;&atilde;o">
-
 <script type="text/javascript">
 	function validar() {
 		var nmLotacao = document.getElementsByName('nmLotacao')[0].value;
@@ -33,29 +30,24 @@
 		document.form.submit();
 	}
 </script>
-
-<body>
-
-<div class="gt-bd clearfix">
-	<div class="gt-content clearfix">		
-		<form name="frm" action="${request.contextPath}/app/lotacao/gravar" method="POST">
-			<input type="hidden" name="postback" value="1" />
-			<input type="hidden" name="id" value="${id}" />
-			<h1>Cadastro de Lota&ccedil;&atilde;o</h1>
-			<div class="gt-content-box gt-for-table">
-				<table class="gt-form-table" width="100%">
-					<tr class="header">
-						<td colspan="2">Dados da Lota&ccedil;&atilde;o</td>
-					</tr>
-					<tr><td></td></tr>
-					
-					<tr><td></td></tr>
-					<tr>
-						<td><label>&Oacute;rg&atilde;o:</label></td>
-						<td>
+<siga:pagina titulo="Cadastro de Lota&ccedil;&atilde;o">
+	<!-- main content -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header">
+				<h5>Dados da Lota&ccedil;&atilde;o</h5>
+			</div>
+			<div class="card-body">	
+			<form name="frm" action="${request.contextPath}/app/lotacao/gravar" method="POST">
+				<input type="hidden" name="postback" value="1" />
+				<input type="hidden" name="id" value="${id}" />
+				<div class="row">
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label for="idOrgaoUsu">&Oacute;rg&atilde;o</label>
 							<c:choose>
 								<c:when test="${empty id || podeAlterarOrgao}">
-									<select name="idOrgaoUsu" value="${idOrgaoUsu}">
+									<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control">
 										<c:forEach items="${orgaosUsu}" var="item">
 											<option value="${item.idOrgaoUsu}"
 												${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
@@ -65,45 +57,33 @@
 								</c:when>
 								<c:otherwise>
 									${nmOrgaousu}
-									<input type="hidden" name="idOrgaoUsu" value="${idOrgaoUsu}" />
+									<input type="hidden" name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control" />
 								</c:otherwise>
 							</c:choose>
-						</td>
-					</tr>
-					<tr>				
-						<td>
-							<label>Nome:</label>
-						</td>
-						<td>
-							<input type="text" id="nmLotacao" name="nmLotacao" value="${nmLotacao}" maxlength="100" size="100" />
-						</td>
-					</tr>
-					<tr>
-						<td></td>
-						<td>
-							<label><font color="#9f9f9f">(Inserir nome oficial, conforme legislação. Não abreviar. Iniciar cada palavra com letra maiúscula, exceto para palavras tais como: "de", "para", etc. Exemplo: Unidade do Arquivo Público do Estado)</font></label>
-						</td>
-					</tr>
-					<tr>				
-						<td>
-							<label>Sigla:</label>
-						</td>
-						<td>
-							<input type="text" id="siglaLotacao" name="siglaLotacao" value="${siglaLotacao}" maxlength="20" size="20"  style="text-transform:uppercase" onkeyup="this.value = this.value.trim()"/>
-						</td>
-					</tr>
-					<tr>
-						<td></td>
-						<td>
-							<label><font color="#9f9f9f">(Sigla: Letras maiúsculas)</font></label>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							Localidade:
-						</td>
-						<td>
-							<select name="idLocalidade" value="${idLocalidade}">
+						</div>
+					</div>
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label for="nmLotacao">Nome</label>
+							<input type="text" id="nmLotacao" name="nmLotacao" value="${nmLotacao}" maxlength="100" class="form-control" />
+							<small id="emailHelp" class="form-text text-muted">(Inserir nome oficial, conforme legislação. Não abreviar. Iniciar cada palavra com letra maiúscula, exceto para palavras tais como: "de", "para", etc. Exemplo: Unidade do Arquivo Público do Estado).</small>
+							
+						</div>
+					</div>
+					<div class="col-sm-2">
+						<div class="form-group">
+							<label for="siglaLotacao">Sigla</label>
+							<input type="text" id="siglaLotacao" name="siglaLotacao" value="${siglaLotacao}" maxlength="20" style="text-transform:uppercase" onkeyup="this.value = this.value.trim()" class="form-control"/>
+							<small id="emailHelp" class="form-text text-muted">(Sigla: Letras maiúsculas).</small>
+							
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="form-group">
+							<label for="idLocalidade">Localidade</label>
+							<select name="idLocalidade" value="${idLocalidade}" class="form-control">
 								<option value="0">Selecione</option>
 								<c:forEach items="${listaLocalidades}" var="item">
 									<option value="${item.id}"
@@ -111,36 +91,48 @@
 										${item.descricao}</option>
 								</c:forEach>
 							</select>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							Situa&ccedil;&atilde;o:
-						</td>
-						<td>
-							<input type="radio" name="situacao" value="true" id="situacaoAtivo" ${empty dtFimLotacao ? 'checked' : ''}/>Ativo
-							<input type="radio" name="situacao" value="false" id="situacaoInativo" ${not empty dtFimLotacao ? 'checked' : ''}/>Inativo
-						</td>
-					</tr>
-					<c:if test="${empty id}">
-						<tr class="button">
-							<td>Carregar planilha para inserir múltiplos registros:</td>
-							<td><input type="button" value="Carregar planilha" onclick="javascript:location.href='/siga/app/lotacao/carregarExcel';" class="gt-btn-medium gt-btn-left" /></td>
-						</tr>
-					</c:if>
-					<tr class="button">
-						<td>
-							<input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-large gt-btn-left" /> 
-							<input type="button" value="Cancela" onclick="javascript:location.href='/siga/app/lotacao/listar';" class="gt-btn-medium gt-btn-left" />
-						</td>
-					</tr>
-				</table>
+						</div>
+					</div>
+					<div class="col-sm-3">
+						<div class="form-group">
+							<label for="siglaLotacao">Situa&ccedil;&atilde;o</label><br/>
+							<div class="form-check-inline">
+								<label class="form-check-label">
+									<input type="radio" name="situacao" value="true" id="situacaoAtivo" ${empty dtFimLotacao ? 'checked' : ''} />Ativo
+								</label>
+							</div>							
+							<div class="form-check-inline">
+								<label class="form-check-label">
+									<input type="radio" name="situacao" value="false" id="situacaoInativo" ${not empty dtFimLotacao ? 'checked' : ''} />Inativo
+								</label>
+							</div>							
+						</div>
+					</div>
+				</div>
+				<c:if test="${empty id}">
+					<div class="row">
+						<div class="col-sm-3">
+							<div class="form-group">
+								<span>Carregar planilha para inserir múltiplos registros:</span>
+							</div>
+						</div>
+						<div class="col-sm-2">
+							<div class="form-group">
+								<input type="button" value="Carregar planilha" onclick="javascript:location.href='/siga/app/lotacao/carregarExcel';" class="btn btn-primary" />
+							</div>
+						</div>
+					</div>
+				</c:if>
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="form-group">
+							<button type="button" onclick="javascript: validar();" class="btn btn-primary" >Ok</button> 
+							<button type="button" onclick="javascript:location.href='/siga/app/lotacao/listar';" class="btn btn-primary" >Cancela</button>
+						</div>
+					</div>
+				</div>
+			</form>
 			</div>
-			<br />
-		</form>
+		</div>
 	</div>
-</div>
-
-</body>
-
 </siga:pagina>

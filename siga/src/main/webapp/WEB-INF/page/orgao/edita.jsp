@@ -11,15 +11,20 @@
 		var nmOrgao = document.getElementsByName('nmOrgao')[0].value;
 		var siglaOrgao = document.getElementsByName('siglaOrgao')[0].value;		
 		if (nmOrgao==null || nmOrgao=="") {			
-			alert("Preencha o nome do Órgão.");
+			mensagemAlerta("Preencha o nome do Órgão.");
 			document.getElementById('nmOrgao').focus();		
 		}else {
 			if (siglaOrgao==null || siglaOrgao=="") {			
-				alert("Preencha a sigla do Órgão.");
+				mensagemAlerta("Preencha a sigla do Órgão.");
 				document.getElementById('siglaOrgao').focus();	
 			}else 
 				frm.submit();				
 		}			
+	}
+
+	function mensagemAlerta(mensagem) {
+		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
+		$('#alertaModal').modal();
 	}
 </script>
 
@@ -84,6 +89,26 @@
 			</div>
 			<br />
 		</form>
+		<!-- Modal -->
+		<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+				        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+				          <span aria-hidden="true">&times;</span>
+				    	</button>
+				    </div>
+			      	<div class="modal-body">
+			        	<p class="mensagem-Modal"></p>
+			      	</div>
+					<div class="modal-footer">
+					  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
+					</div>
+		    	</div>
+		  	</div>
+		</div>				
+		<!--Fim Modal -->
 	</div>
 </div>
 

@@ -56,6 +56,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
+<meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
 <title>SIGA - ${titulo_pagina}</title>
 <meta http-equiv="X-UA-Compatible" content="${XUACompatible}" />
 <META HTTP-EQUIV="Expires" CONTENT="0">
@@ -167,18 +168,13 @@ ${meta}
 										.getElementsByName('buscar_genericoSel.sigla')[0];
 								//fld.setAttribute("class", "gt-search-text");
 								//fld.className = "gt-search-text";
-								fld.onfocus = function() {
-									if (this.value == 'Buscar') {
-										this.value = '';
-									}
-								};
+								fld.placeholder = 'Código';
 								fld.onblur = function() {
 									if (this.value == '') {
-										this.value = 'Buscar';
+										this.value = placeholder;
 										return;
 									}
-									if (this.value != 'Buscar')
-										ajax_buscar_generico();
+									ajax_buscar_generico();
 								};
 								fld.onkeypress = function(event) {
 									var fid = document

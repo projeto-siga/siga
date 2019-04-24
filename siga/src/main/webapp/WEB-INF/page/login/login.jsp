@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
@@ -37,7 +38,7 @@
 					<form role="form" method="post"
 						enctype="application/x-www-form-urlencoded">
 						<div class="form-group">
-							<label for="username">Usu&aacute;rio</label> <input id="username"
+							<label for="username"><fmt:message key = "usuario.matricula"/></label> <input id="username"
 								type="text" name="username" placeholder="XX99999"
 								onblur="javascript:converteUsuario(this)" autocorrect="off"
 								autocapitalize="none" class="form-control"">
@@ -53,7 +54,7 @@
 									<input type="submit" class="btn btn-primary" value="Enviar"></input>
 									<div class="mt-4">
 										<a href="/siga/public/app/usuario/incluir_usuario"
-											class="btn btn-secondary">Sou um novo usu&aacute;rio</a> <a
+											class="btn btn-secondary"><fmt:message key = "usuario.sounovo"/></a> <a
 											href="/siga/public/app/usuario/esqueci_senha"
 											class="btn btn-secondary">Esqueci minha senha</a>
 									</div>

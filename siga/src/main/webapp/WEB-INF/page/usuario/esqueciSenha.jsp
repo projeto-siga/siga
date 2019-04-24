@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
@@ -201,7 +202,7 @@ function refreshWindow(){
 			<div class="card-header"><h5>Esqueci Minha Senha</h5></div>
 			<div class="card-body">
 				<c:if test="${empty f:resource('siga.gi.omitir.metodo2') || f:resource('siga.gi.omitir.metodo2') != 'true'}">
-					<h6 class="gt-form-head">Método 1 - Envio de senha nova para o e-mail</h6>
+					<h6 class="gt-form-head"><fmt:message key = "usuario.metodo1"/></h6>
 				</c:if>
 
 				<div class="card bg-white" >
@@ -212,7 +213,7 @@ function refreshWindow(){
 							<div class="row">
 								<div class="col-sm-3">
 									<div class="form-group">
-										<label for="usuario.matricula">Matrícula</label>					
+										<label for="usuario.matricula"><fmt:message key = "usuario.matricula"/></label>					
 										<input type="text" name="usuario.matricula" id="txtMatricula"
 											onblur="javascript:converteUsuario(this);javascript:checkIntegradoAD(this);javascript:checkEmailValido(this);" 
 											class="form-control" />
@@ -221,7 +222,7 @@ function refreshWindow(){
 								<div class="col-sm-3">
 									<div class="form-group">
 										<label>&nbsp;</label>
-										<p>${f:resource('siga.gi.texto.novo.usuario')}</p>
+										<p><fmt:message key = "usuario.helpnovousuario"/></p>
 									</div>
 								</div>
 							</div>
@@ -290,9 +291,9 @@ function refreshWindow(){
 								<div class="row">
 									<div class="col-sm-4">
 										<div class="form-group">
-											<label for="usuario.auxiliar1">Matrícula</label>
+											<label for="usuario.auxiliar1"><fmt:message key = "usuario.matricula"/></label>
 											<input type="text"name="usuario.auxiliar1" onblur="javascript:converteUsuario(this)" class="form-control" />
-											<small id="emailHelp" class="form-text text-muted">Ex.: XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES, etc.) e 99999 é o número da matrícula da primeira pessoa que auxiliará na alteração de senha.</small>
+											<small id="emailHelp" class="form-text text-muted"><fmt:message key = "usuario.helpauxiliar1"/></small>
 										</div>
 									</div>
 									<div class="col-sm-4">
@@ -320,9 +321,9 @@ function refreshWindow(){
 								<div class="row">
 									<div class="col-sm-4">
 										<div class="form-group">
-											<label for="usuario.auxiliar2">Matrícula</label>
+											<label for="usuario.auxiliar2"><fmt:message key = "usuario.matricula"/></label>
 											<input type="text"name="usuario.auxiliar2" onblur="javascript:converteUsuario(this)" class="form-control" />
-											<small id="emailHelp" class="form-text text-muted">Ex.: XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES, etc.) e 99999 é o número da matrícula da primeira pessoa que auxiliará na alteração de senha.</small>
+											<small id="emailHelp" class="form-text text-muted"><fmt:message key = "usuario.helpauxiliar2"/></small>
 										</div>
 									</div>
 									<div class="col-sm-4">
@@ -350,9 +351,9 @@ function refreshWindow(){
 								<div class="row">
 									<div class="col-sm-4">
 										<div class="form-group">
-											<label for="usuario.matricula">Matrícula</label>
+											<label for="usuario.matricula"><fmt:message key = "usuario.matricula"/></label>
 											<input type="text"name="usuario.matricula" onblur="javascript:converteUsuario(this)" class="form-control" />
-											<small id="emailHelp" class="form-text text-muted">Ex.: XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES, etc.) e 99999 é o número da matrícula da primeira pessoa que auxiliará na alteração de senha.</small>
+											<small id="emailHelp" class="form-text text-muted"><fmt:message key = "usuario.helpalterarsenhade"/></small>
 										</div>
 									</div>
 									<div class="col-sm-4">

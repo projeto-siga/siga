@@ -15,6 +15,7 @@ function sbmt(offset) {
 <form name="frm" action="listar" class="form" method="GET">
 <input type="hidden" name="offset" value="0" />
 <siga:pagina titulo="Lista Orgão Externo">
+<div class="container-fluid">
 	<!-- main content -->
 		<h5>Orgãos Externos cadastrados</h5>
 				<table border="0" class="table table-sm table-striped">
@@ -70,6 +71,6 @@ function sbmt(offset) {
 						onclick="javascript:window.location.href='${url}'"
 						class="btn btn-primary">
 				</div>				
-			
+</div>			
 </siga:pagina>
 </form>

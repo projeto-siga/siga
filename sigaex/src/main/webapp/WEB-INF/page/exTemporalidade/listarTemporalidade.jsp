@@ -14,13 +14,11 @@
 		$('#frmNovaTemporalidade').submit();
 	}
 </script>
-<div class="gt-bd clearfix">
-	<div class="gt-content">
-	<h2 class="gt-table-head">Temporalidade Documental</h2>
-	
-		<div class="gt-content-box">
-			<table border="0" class="gt-table">
-				<thead>
+<div class="container-fluid">
+	<h5>Temporalidade Documental</h5>	
+		
+			<table border="0" class="table table-sm table-striped">
+				<thead class="thead-dark">
 					<tr>
 						<th>Descrição</th>
 						<th>Valor</th>
@@ -42,12 +40,13 @@
 					</c:forEach>
 				</tbody>
 			</table>
-		</div>
-		<form id="frmNovaTemporalidade" action="editar" method="get">
-			<div class="gt-table-buttons">
-				<a id="btNovaTemporalidade" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:novaTemporalidade()">Nova Temporalidade</a>
-			</div>
-			<input type="hidden" id="acao" name="acao" value="nova_temporalidade"/>
-		</form>
+			<form id="frmNovaTemporalidade" action="editar" method="get">
+				<div class="gt-table-buttons">
+					<button type="button" class="btn btn-primary" onclick="javascript:novaTemporalidade()">Nova Temporalidade</button>
+				</div>
+				<input type="hidden" id="acao" name="acao" value="nova_temporalidade"/>
+			</form>
+		
+</div>
 
 </siga:pagina>

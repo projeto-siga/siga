@@ -5,38 +5,40 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
-<div class="gt-content clearfix">
+<div class="card bg-light mb-3" >
 
-	<h2 style="margin-top: 20px;">${tpConfiguracao.dscTpConfiguracao}
+	<div class="card-header"><h5>${tpConfiguracao.dscTpConfiguracao}
 		<span style="float: right; font-size: 70%">(Situação default: </b>
 			${tpConfiguracao.situacaoDefault.dscSitConfiguracao})
 		</span>
-	</h2>
+	</h5></div>
 
-	<div class="gt-content-box gt-for-table">
+	<div class="card-body">
 
-		<table class="gt-table" width="100%">
-			<tr class="header">
-				<th align="center">Nível de acesso</th>
-				<th align="center">Pessoa</th>
-				<th align="center">Lotação</th>
-				<th align="center">Tipo de Lotação</th>
-				<th align="center">Função</th>
-				<th align="center">Órgão</th>
-				<th align="center">Órgão Objeto</th>
-				<th align="center">Cargo</th>
-				<th align="center">Tipo de Movimentação</th>
-				<th align="center">Origem</th>
-				<th align="center">Tipo de Espécie</th>
-				<th align="center">Espécie</th>
-				<th align="center">Modelo</th>
-				<th align="center">Via</th>
-				<th align="center">Classificação</th>
-				<th align="center">Vínculo</th>
-				<th align="center">Serviço</th>
-				<th align="center">Situação</th>
-				<th align="center" style="width: 70px;"></th>
-			</tr>
+		<table border="0" class="table table-sm table-striped">
+			<thead class="thead-dark">
+				<tr class="header">
+					<th align="center">Nível de acesso</th>
+					<th align="center">Pessoa</th>
+					<th align="center">Lotação</th>
+					<th align="center">Tipo de Lotação</th>
+					<th align="center">Função</th>
+					<th align="center">Órgão</th>
+					<th align="center">Órgão Objeto</th>
+					<th align="center">Cargo</th>
+					<th align="center">Tipo de Movimentação</th>
+					<th align="center">Origem</th>
+					<th align="center">Tipo de Espécie</th>
+					<th align="center">Espécie</th>
+					<th align="center">Modelo</th>
+					<th align="center">Via</th>
+					<th align="center">Classificação</th>
+					<th align="center">Vínculo</th>
+					<th align="center">Serviço</th>
+					<th align="center">Situação</th>
+					<th align="center" style="width: 70px;"></th>
+				</tr>
+			</thead>
 			<c:set var="evenorodd" value="" />
 			<c:set var="tamanho" value="0" />
 

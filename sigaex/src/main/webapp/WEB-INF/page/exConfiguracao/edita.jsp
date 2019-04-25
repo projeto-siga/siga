@@ -49,8 +49,8 @@
 
 	<body onload="aviso()">
 
-		<div class="gt-bd clearfix">
-			<div class="gt-content clearfix">
+		<div class="container-fluid">
+			<div class="card bg-light mb-3" >
 
 				<form action="editar_gravar">
 					<input type="hidden" name="postback" value="1" /> <input
@@ -59,12 +59,9 @@
 
 					<c:set var="dataFim" value="" />
 
-					<h1>Cadastro de configuração</h1>
-					<div class="gt-content-box gt-for-table">
+					<div class="card-header"><h5>Cadastro de configuração</h5></div>
+					<div class="card-body">
 						<table class="gt-form-table" width="100%">
-							<tr class="header">
-								<td colspan="2">Dados da configurção</td>
-							</tr>
 							<tr>
 								<td class="shrink"><b>Tipo de Configuração</b></td>
 								<td><c:choose>

@@ -1216,7 +1216,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (doc.isAssinaturaSolicitada())
 			return false;
 		
+<<<<<<< HEAD
 		if (doc.getLotaSubscritor() == null ||  !doc.getLotaSubscritor().equivale(lotaTitular))
+=======
+		if (!doc.getLotaSubscritor().equivale(lotaTitular) && !doc.getLotaSubscritor().equivale(titular.getLotacao()))
+>>>>>>> HOTFIX: DOC: Permitirndo que uma pessoa solicite assinatura mesmo quando está substituindo uma outra lotação
 			return false;
 		
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA,

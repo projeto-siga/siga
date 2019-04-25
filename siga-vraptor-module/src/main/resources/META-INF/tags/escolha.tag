@@ -19,7 +19,7 @@
 <c:set var="selectedOption" scope="request" value="${requestScope[var]}"></c:set>
 
 <c:set var="createSelect" scope="request" >true</c:set>
-	<select id="${id}" name="${var}" onchange="javascript:muda_escolha(this);" class="${classSelect}}">
+	<select id="${id}" name="${var}" onchange="javascript:muda_escolha(this);" class="form-control">
 		<jsp:doBody/>
 	</select>
 <c:remove var="createSelect"/>

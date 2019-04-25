@@ -95,7 +95,7 @@
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label>Espécie</label>
-								<select name="forma" value="${forma}" class="form-control">
+								<select name="forma" value="${forma}" class="custom-select">
 									<c:forEach var="item" items="${listaForma}">
 										<option value="${item.idFormaDoc}"
 											${item.idFormaDoc == forma ? 'selected' : ''}>${item.descrFormaDoc}</option>
@@ -106,7 +106,7 @@
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label>Nível de acesso</label>
-								<select name="nivel" value="${nivel}" class="form-control">
+								<select name="nivel" value="${nivel}" class="custom-select">
 									<option value="0">[Indeterminado]</option>
 									<c:forEach var="item" items="${listaNivelAcesso}">
 										<option value="${item.idNivelAcesso}"
@@ -131,13 +131,20 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-12">
+						<div class="col-sm-2">
 							<div class="form-group">
 								<label>Tipo do Modelo</label>
 								<siga:escolha id="tipoModelo" var="tipoModelo">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="form-group">
+								
 									<siga:opcao id="template/freemarker" texto="Freemarker">
 										<textarea id="conteudo" style="width: 100%;" cols="1" rows="1"
-											name="conteudo"><c:out value="${conteudo}"
+											name="conteudo" class="form-control"><c:out value="${conteudo}"
 												default="" /></textarea>
 										<p align="right">Ctrl-I: Indentar, Crtl-S: Salvar</p>
 									</siga:opcao>
@@ -155,7 +162,7 @@
 								<input type="submit" value="Ok" class="btn btn-primary" />
 								<input type="submit" name="submit" value="Aplicar" class="btn btn-primary" />
 								<input type="button" value="Desativar" class="btn btn-primary" onclick="location.href='desativar?id=${id}'" />
-								<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-primary" />
+								<input type="button" value="Cancelar" onclick="javascript:history.back();" class="btn btn-primary" />
 							</div>
 						</div>
 					</div>

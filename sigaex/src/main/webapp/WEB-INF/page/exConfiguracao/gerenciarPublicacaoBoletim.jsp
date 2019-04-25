@@ -5,7 +5,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Gerência de Publicação Boletim Interno">
+<siga:pagina titulo="Ger&ecirc;ncia de Publica&ccedil;&atilde;o Boletim Interno">
 	<script type="text/javascript">
 		function hideShowSel(combo){
 			var sel1Span = document.getElementById('span' + combo.name.substring(4));
@@ -26,102 +26,126 @@
 			frm.submit();
 		}
 	</script>
-	
-	<h1>Gerenciamento de permissões para solicitação de publicação no BI:</h1>
-	<br />
-	
-	<form id="frm" name="frm" action="${request.contextPath}/app/expediente/configuracao/gerenciar_publicacao_boletim_gravar" method="POST">
-		<input type="hidden" name="postback" value="1" />
-		<input type="hidden" name="gerenciaPublicacao" value="sim" />
-		<input type="hidden" name="idTpMov" value="36" />
-		<input type="hidden" name="idTpConfiguracao" value="1" />
-		
-		<table class="form">
-			<tr class="header">
-				<td colspan="2">Incluir Permissão de Publicação</td>
-			</tr>
-			<tr>
-				<td>Forma:</td>
-				<td>
-					<select name="idFormaDoc" onchange="javascript:sbmt();">
-						<option value="0">[Todas]</option>
-						<c:forEach var="forma" items="${listaFormas}">
-							<option value="${forma.idFormaDoc}">${forma.descrFormaDoc}</option>
-						</c:forEach>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Modelo:</td>
-				<td>
-					<select name="idMod">
-						<option value="0">[Todos]</option>
-						<c:forEach var="modelo" items="${listaModelosPorForma}">
-							<option value="${modelo.idMod}">${modelo.nmMod}</option>
-						</c:forEach>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Aplicar a:</td>
-				<td>
-					<select name="tipoPublicador" onchange="javascript:hideShowSel(this);">
-						<c:forEach var="tipoEntry" items="${listaTipoPublicador}">
-							<option value="${tipoEntry.key}">${tipoEntry.value}</option>
-						</c:forEach>
-					</select>
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >		
+			<div class="card-header"><h5>
+				Gerenciamento de permiss&otilde;es para solicita&ccedil;&atilde;o de publica&ccedil;&atilde;o no BI
+			</h5></div>	
+			<form id="frm" name="frm" action="${request.contextPath}/app/expediente/configuracao/gerenciar_publicacao_boletim_gravar" method="POST">
+				<input type="hidden" name="postback" value="1" />
+				<input type="hidden" name="gerenciaPublicacao" value="sim" />
+				<input type="hidden" name="idTpMov" value="36" />
+				<input type="hidden" name="idTpConfiguracao" value="1" />
+				
+				<div class="card-body">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="form-group">
+								<label>Incluir Permiss&atilde;o de Publica&ccedil;&atilde;o</label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Forma</label>
+								<select name="idFormaDoc" onchange="javascript:sbmt();" class="form-control">
+									<option value="0">[Todas]</option>
+									<c:forEach var="forma" items="${listaFormas}">
+										<option value="${forma.idFormaDoc}">${forma.descrFormaDoc}</option>
+									</c:forEach>
+								</select>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Modelo</label>
+								<select name="idMod" class="form-control">
+									<option value="0">[Todos]</option>
+									<c:forEach var="modelo" items="${listaModelosPorForma}">
+										<option value="${modelo.idMod}">${modelo.nmMod}</option>
+									</c:forEach>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Aplicar a</label>
+								<select name="tipoPublicador" onchange="javascript:hideShowSel(this);" class="form-control">
+									<c:forEach var="tipoEntry" items="${listaTipoPublicador}">
+										<option value="${tipoEntry.key}">${tipoEntry.value}</option>
+									</c:forEach>
+								</select>
+								
+								<c:choose>
+									<c:when test="${tipoPublicador == 1}">
+										<c:set var="publicadorStyle" value="" />
+										<c:set var="lotaPublicadorStyle">display:none</c:set>
+									</c:when>
+									<c:when test="${tipoPublicador == 2}">
+										<c:set var="publicadorStyle">display:none</c:set>
+										<c:set var="lotaPublicadorStyle" value="" />
+									</c:when>
+								</c:choose>
+								
+								
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<span id="spanPublicador" style="${publicadorStyle}"> 
+									<siga:selecao propriedade="pessoa" tema="simple" modulo="siga"/>
+								</span>
+								
+								<span id="spanLotaPublicador" style="${lotaPublicadorStyle}"> 
+									<siga:selecao propriedade="lotacao" tema="simple" modulo="siga"/>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-2">
+							<div class="form-group">
+								<label>Permiss&atilde;o</label>
+								<select name="idSituacao" class="form-control">
+									<c:forEach var="situacao" items="${listaSituacaoPodeNaoPode}">
+										<option value="${situacao.idSitConfiguracao}">${situacao.dscSitConfiguracao}</option>
+									</c:forEach>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="form-group">		
+								<input type="submit" value="Incluir" class="btn btn-primary">
+							</input>
+						</div>
+					</div>
 					
-					<c:choose>
-						<c:when test="${tipoPublicador == 1}">
-							<c:set var="publicadorStyle" value="" />
-							<c:set var="lotaPublicadorStyle">display:none</c:set>
-						</c:when>
-						<c:when test="${tipoPublicador == 2}">
-							<c:set var="publicadorStyle">display:none</c:set>
-							<c:set var="lotaPublicadorStyle" value="" />
-						</c:when>
-					</c:choose>
-					
-					<span id="spanPublicador" style="${publicadorStyle}"> 
-						<siga:selecao propriedade="pessoa" tema="simple" modulo="siga"/>
-					</span>
-					
-					<span id="spanLotaPublicador" style="${lotaPublicadorStyle}"> 
-						<siga:selecao propriedade="lotacao" tema="simple" modulo="siga"/>
-					</span>
-				</td>
-			</tr>
-			<tr>
-				<td>Permissão:</td>
-				<td>
-					<select name="idSituacao">
-						<c:forEach var="situacao" items="${listaSituacaoPodeNaoPode}">
-							<option value="${situacao.idSitConfiguracao}">${situacao.dscSitConfiguracao}</option>
-						</c:forEach>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td></td>
-				<td><input type="submit" value="Incluir"></td>
-			</tr>
-		</table>
-	</form>
+				</div>
+			</form>
+		</div>
+	</div>
 	<br />
 	<br />
 	
 	<c:forEach var="config" items="${itens}">
 		<h1>${config[0]}</h1>
 		
-		<table class="list">
-			<tr class="header">
-				<td align="center">Pessoa</td>
-				<td align="center">Lotação</td>
-				<td align="center">Permissão</td>
-				<td align="center">Data de Fim de Vigência</td>
-				<td align="center"></td>
-				<td></td>
-			</tr>
+		<table border="0" class="table table-sm table-striped">
+			<thead class="thead-dark">
+				<th align="center">Pessoa</th>
+				<th align="center">Lota&ccedil;&atilde;o</th>
+				<th align="center">Permiss&atilde;o</th>
+				<th align="center">Data de Fim de Vig&ecirc;ncia</th>
+				<th align="center"></th>
+				<th></th>
+			</thead>
 			
 			<c:set var="evenorodd" value="" />
 

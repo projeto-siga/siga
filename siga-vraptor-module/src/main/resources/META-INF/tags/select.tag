@@ -29,7 +29,7 @@
 <c:if test="${theme != 'simple'}">
 <tr><td>${label}</td><td>
 </c:if>
-<select id="${id}" name="${name}" <c:if test="${not empty onchange}">onchange="${onchange}"</c:if> class="select-siga" style="${style != null ? style : ''}">
+<select id="${id}" name="${name}" <c:if test="${not empty onchange}">onchange="${onchange}"</c:if> class="form-control" style="${style != null ? style : ''}">
 <c:choose>
     <c:when test="${ehEnum}">
         <c:if test="${not empty headerKey || not empty headerValue}">

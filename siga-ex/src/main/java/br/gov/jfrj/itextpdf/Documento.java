@@ -262,8 +262,10 @@ public class Documento {
 		try (ByteArrayOutputStream boA4 = new ByteArrayOutputStream()) {
 			/*-- Alterado de PdfWriter p/ PdfCopy(Essa classe permite manter os "stamps" originais do arquivo importado) 
 			por Marcos(CMSP) em 21/02/19 --*/
-			//PdfWriter writer = PdfWriter.getInstance(doc, boA4);
-			PdfCopy writer = new PdfCopy(doc, boA4);
+			//PdfCopy writer = new PdfCopy(doc, boA4);
+			/*-- Alerado de volta pois ficou desabilitado o redimensionamento do PDF de modo
+			 *   a que os códigos de barra 2D e 3D não ficassem por cima do texto. Por Renato em 25/04/2019 --*/
+			PdfWriter writer = PdfWriter.getInstance(doc, boA4);
 			doc.open();
 			PdfContentByte cb = writer.getDirectContent();
 	
@@ -338,7 +340,7 @@ public class Documento {
 				// put the page
 				cb.addTemplate(page, 0, 0);
 				/*-- Adicionado devido ao PdfCopy - por Marcos(CMSP) em 21/02/19 --*/
-				writer.addPage(page);
+				// writer.addPage(page);
 	
 				// draw a red rectangle at the page borders
 				//

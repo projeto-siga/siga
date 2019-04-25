@@ -205,5 +205,5 @@
 	</div>
 
 
-	<tags:assinatura_rodape nomeUsuarioSubscritor="${mov.exDocumento.subscritor.sigla}" />
+	<tags:assinatura_rodape />
 </siga:pagina>

@@ -76,7 +76,7 @@
 							<div class="form-group">
 					
 								<input type="submit" value="Ok"	class="btn btn-primary" onclick="javascript: return validaSelecaoAnexo( this.form );" name="sbmt"/>
-								<input type="button" value="Cancela" class="btn btn-primary" onclick="javascript:location.href='/siga/app/funcao/editar';" class="gt-btn-medium gt-btn-left" />
+								<input type="button" value="Cancelar" class="btn btn-primary" onclick="javascript:location.href='/siga/app/funcao/editar';"/>
 							</div>
 						</div>
 					</div>

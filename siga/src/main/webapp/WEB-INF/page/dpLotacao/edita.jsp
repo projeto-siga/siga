@@ -127,7 +127,7 @@
 					<div class="col-sm-2">
 						<div class="form-group">
 							<button type="button" onclick="javascript: validar();" class="btn btn-primary" >Ok</button> 
-							<button type="button" onclick="javascript:location.href='/siga/app/lotacao/listar';" class="btn btn-primary" >Cancela</button>
+							<button type="button" onclick="javascript:location.href='/siga/app/lotacao/listar';" class="btn btn-primary" >Cancelar</button>
 						</div>
 					</div>
 				</div>

@@ -6,7 +6,6 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-</script>
 <siga:pagina titulo="Lista de Formas">
 	<!-- main content -->
 	<div class="container-fluid">
@@ -83,6 +82,4 @@
 			</div>
 		</div>
 	</div>
-	
-</div></div>
 </siga:pagina>

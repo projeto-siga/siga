@@ -107,43 +107,43 @@
 		</div>
 	</div>
 <script> 
-	$("#gravar_sigla").change(function () {
-	    var sigla = $("#gravar_sigla").val().toUpperCase();
-		$("#gravar_sigla").attr("value", sigla);
-		var characterReg = /^[A-Za-z]{3}$/;
-		if(!characterReg.test(sigla)) {
-			$('#mensagem').html('Sigla inválida. A sigla deve ser formada por 3 letras.').css('color','#FF0000');
-			return;
-	    }	
+$("#gravar_sigla").change(function () {
+    var sigla = $("#gravar_sigla").val().toUpperCase();
+	$("#gravar_sigla").attr("value", sigla);
+	var characterReg = /^[A-Za-z]{3}$/;
+	if(!characterReg.test(sigla)) {
+		$('#mensagem').html('Sigla inválida. A sigla deve ser formada por 3 letras.').css('color','#FF0000');
+		return;
+    }	
+	$.ajax({				     				  
+		  url:'${pageContext.request.contextPath}/app/forma/verificar_sigla',
+		  type: "GET",
+		  data: {sigla : sigla, id : ${id} },
+		  success: function(data) {
+	    	$('#mensagem').html(data);				    
+	 	 }
+	});	
+});
+
+<c:if test="${not empty id}">
+	function montaTableCadastradas(tabelaAlvo, idTpConfiguracao, idTpMov, idFormaDoc){	
+		$('#' + tabelaAlvo).html('Carregando...');			
 		$.ajax({				     				  
-			  url:'${pageContext.request.contextPath}/app/forma/verificar_sigla',
+			  url:'/sigaex/app/expediente/configuracao/listar_cadastradas',
 			  type: "GET",
-			  data: {sigla : sigla, id : ${id} },
+			  data: { idTpConfiguracao : idTpConfiguracao, idTpMov : idTpMov, idFormaDoc : idFormaDoc, nmTipoRetorno : "forma", campoFixo : "True"},					    					   					 
 			  success: function(data) {
-		    	$('#mensagem').html(data);				    
+		    	$('#' + tabelaAlvo).html(data);				    
 		 	 }
 		});	
-	});
-
-	<c:if test="${not empty id}">
-		function montaTableCadastradas(tabelaAlvo, idTpConfiguracao, idTpMov, idFormaDoc){	
-			$('#' + tabelaAlvo).html('Carregando...');			
-			$.ajax({				     				  
-				  url:'/sigaex/app/expediente/configuracao/listar_cadastradas',
-				  type: "GET",
-				  data: { idTpConfiguracao : idTpConfiguracao, idTpMov : idTpMov, idFormaDoc : idFormaDoc, nmTipoRetorno : "forma", campoFixo : "True"},					    					   					 
-				  success: function(data) {
-			    	$('#' + tabelaAlvo).html(data);				    
-			 	 }
-			});	
-		}
-			
-		montaTableCadastradas('tableCadastradasEletronico', 4, 0 ,${id});
-		montaTableCadastradas('tableCadastradasCriar', 2, 0 ,${id});
-		montaTableCadastradas('tableCadastradasAssinar', 1, 11 ,${id});	
-		montaTableCadastradas('tableCadastradasAcessar', 6, 0 ,${id});
-		montaTableCadastradas('tableCadastradasNivelAcessoMaximo', 18, 0 ,${id});
-		montaTableCadastradas('tableCadastradasNivelAcessoMinimo', 19, 0 ,${id});			
-	</c:if>
+	}
+		
+	montaTableCadastradas('tableCadastradasEletronico', 4, 0 ,${id});
+	montaTableCadastradas('tableCadastradasCriar', 2, 0 ,${id});
+	montaTableCadastradas('tableCadastradasAssinar', 1, 11 ,${id});	
+	montaTableCadastradas('tableCadastradasAcessar', 6, 0 ,${id});
+	montaTableCadastradas('tableCadastradasNivelAcessoMaximo', 18, 0 ,${id});
+	montaTableCadastradas('tableCadastradasNivelAcessoMinimo', 19, 0 ,${id});			
+</c:if>
 </script>
 </siga:pagina>

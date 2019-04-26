@@ -8,92 +8,128 @@
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
 
 <siga:pagina titulo="Forma">
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
 		
-			<h2>Edição de Espécie Documental</h2>
+			<div class="card-header"><h5>Edição de Espécie Documental</h5></div>
 
-			<div class="gt-content-box gt-for-table">
+			<div class="card-body">
 			
-			<form name="frm" action="gravar"
-				theme="simple" method="POST">
+			<form name="frm" action="gravar" theme="simple" method="POST">
 				<input type="hidden" name="postback" value="1" />
 				<input type="hidden" name="id" value="${id}" id="forma_gravar_id" />
 			
-				<table class="gt-form-table">
-					<tr class="header">
-						<td colspan="2">Dados da Espécie Documental</td>
-					</tr>
-					<tr>
-						<td width="20%">Descrição:</td>
-						<td width="80%"><input type="text" value="${descricao}" name="descricao" size="80" /></td>
-					</tr>
-					<tr>
-						<td>Sigla:</td>
-						<td>
-							<input type="text" value="${sigla}" name="sigla" size="3" id="gravar_sigla" />
+				<div class="row">
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label>Descrição</label>
+							<input type="text" value="${descricao}" name="descricao" size="80" class="form-control"/>
+						</div>
+					</div>
+					<div class="col-sm-4">
+						<div class="form-group">		
+							<label>Sigla</label>
+							<input type="text" value="${sigla}" name="sigla" size="3" id="gravar_sigla" class="form-control"/>
 							<span id="mensagem"></span>
-						</td>
-					</tr>
-					<tr>
-						<td>Tipo:</td>
-						<td>
-							<select name="idTipoFormaDoc" value="${idTipoFormaDoc}">
+						</div>
+					</div>
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label>Tipo</label>
+							<select name="idTipoFormaDoc" value="${idTipoFormaDoc}" class="form-control">
 								<c:forEach var="tipo" items="${listaTiposFormaDoc}">
 									<option value="${tipo.idTipoFormaDoc}" ${tipo.idTipoFormaDoc == idTipoFormaDoc ? 'selected' : ''}>${tipo.descTipoFormaDoc}</option>	
 								</c:forEach>
 							</select>
-						</td>
-					</tr>
-
-					<tr>
-						<td>Origem:</td>
-						<td>
-						   <input type="checkbox" name="origemExterno" value="true" ${origemExterno ? 'checked' : ''} /> Externo &nbsp;
-						   <input type="checkbox" name="origemInternoProduzido" value="true" ${origemInternoProduzido ? 'checked' : ''} /> Interno Produzido &nbsp;
-						   <input type="checkbox" name="origemInternoImportado" value="true" ${origemInternoImportado ? 'checked' : ''} /> Interno Importado 
-						   <input type="checkbox" name="origemInternoCapturado" value="true" ${origemInternoCapturado ? 'checked' : ''} /> Interno Capturado 
-						   <input type="checkbox" name="origemExternoCapturado" value="true" ${origemExternoCapturado ? 'checked' : ''} /> Externo Capturado 
-						</td>
-					</tr>
-
-					<tr class="button">
-						<td colspan="2"><input type="submit" value="Ok"  class="gt-btn-medium gt-btn-left"/> <input type="submit" name="submit" value="Aplicar" class="gt-btn-medium gt-btn-left"/> <input type="button"
-							value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/></td>
-					</tr>
-				</table>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-1">
+						<label>Origem</label>
+					</div>
+					<div class="col-sm-10">
+						<div class="form-group">
+							
+							<div class="form-check form-check-inline">
+							  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="origemExterno" value="true" ${origemExterno ? 'checked' : ''}>
+							  <label class="form-check-label" for="inlineCheckbox1">Externo</label>
+							</div>
+							<div class="form-check form-check-inline">
+							  <input class="form-check-input" type="checkbox" id="inlineCheckbox2" name="origemInternoProduzido" value="true" ${origemInternoProduzido ? 'checked' : ''}>
+							  <label class="form-check-label" for="inlineCheckbox2">Interno Produzido</label>
+							</div>
+							<div class="form-check form-check-inline">
+							  <input class="form-check-input" type="checkbox" id="inlineCheckbox3" name="origemInternoImportado" value="true" ${origemInternoImportado ? 'checked' : ''}>
+							  <label class="form-check-label" for="inlineCheckbox3">Interno Importado</label>
+							</div>
+							<div class="form-check form-check-inline">
+							  <input class="form-check-input" type="checkbox" id="inlineCheckbox4" name="origemInternoCapturado" value="true" ${origemInternoCapturado ? 'checked' : ''}>
+							  <label class="form-check-label" for="inlineCheckbox3">Interno Capturado</label>
+							</div>
+							<div class="form-check form-check-inline">
+							  <input class="form-check-input" type="checkbox" id="inlineCheckbox5" name="origemExternoCapturado" value="true" ${origemExternoCapturado ? 'checked' : ''}>
+							  <label class="form-check-label" for="inlineCheckbox3">Externo Capturado</label>
+							</div>
+							
+							
+						</div>
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="form-group">
+							<input type="submit" value="Ok"  class="btn btn-primary"/>
+							<input type="submit" name="submit" value="Aplicar" class="btn btn-primary"/>
+							<input type="button"value="Cancelar" onclick="javascript:history.back();" class="btn btn-primary"/>
+						</div>
+					</div>
+				</div>
 			</form>
 		</div>
-			</div>
+		</div>
         <c:if test="${not empty id}">
         		<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasEletronico"></div>	
-				<div><a href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=4&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				<div>
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=4&nmTipoRetorno=forma&campoFixo=True'" />
+				</div>
 				</div>
 				
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasCriar"></div>	
-				<div><a href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=2&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				<div>
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=2&nmTipoRetorno=forma&campoFixo=True'" />
+				</div>	
 				</div>
 	
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasAssinar"></div>
-				<div><a href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=1&idTpMov=11&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>		
+				<div>
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=1&idTpMov=11&nmTipoRetorno=forma&campoFixo=True'" />
+				</div>		
 				</div>
 	
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasAcessar"></div>
-				<div><a href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=6&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>		
+				<div>
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=6&nmTipoRetorno=forma&campoFixo=True'" />
+				</div>		
 				</div>
 	
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasNivelAcessoMaximo"></div>	
-				<div><a href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=18&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				<div>
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=18&nmTipoRetorno=forma&campoFixo=True'" />
+				</div>	
 				</div>
 	
 				<div style="clear: both; margin-bottom: 20px;">		
 				<div id="tableCadastradasNivelAcessoMinimo"></div>	
-				<div><a href="/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=19&nmTipoRetorno=forma&campoFixo=True" style="margin-top: 10px;" class="gt-btn-medium">Novo</a></div>	
+				<div>
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idFormaDoc=${id}&idTpConfiguracao=19&nmTipoRetorno=forma&campoFixo=True'" />
+				</div>	
 				</div>
 			</div>
 		</c:if>

@@ -7,36 +7,37 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Lista de Formas">
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-		
-		<h2>Cadastro de Espécies Documentais</h2>
+	<div class="container-fluid mb-3">
+		<div class="card bg-light mb-3" >		
+			<div class="card-header"><h5>Cadastro de Esp&eacute;cies Documentais</h5></div>
 
-			<div class="gt-content-box gt-for-table">
+				<div class="card-body">
 
-	<form id="listar" name="listar" method="GET" class="form100">
-		<table class="gt-form-table">
-			<tr class="header">
-				<td align="center" valign="top" colspan="4">Ordenar Por</td>
-			</tr>
-			<tr>
-				<td style="width: 10%;">
-				   <input type="radio" name="ordenar" value="descricao" onclick="this.form.submit();">Descrição<br>
-				</td>
-				<td>
-				   <input type="radio" name="ordenar" value="sigla" onclick="this.form.submit();">Sigla
-				</td>
-			</tr>
-		</table>
-	</form>
-	</div>
-
-	<h3 style="margin-top: 25px;">Lista de Espécies Documentais</h3>
-	<div class="gt-content-box" style="margin-bottom: 25px;">
-	<table class="gt-table" width="100%">
-	<thead>
+					<form id="listar" name="listar" method="GET" class="form100">
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label>Ordenar Por</label>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<input type="radio" name="ordenar" value="descricao" onclick="this.form.submit();">Descri&ccedil;&atilde;o</input>
+									<input type="radio" name="ordenar" value="sigla" onclick="this.form.submit();">Sigla</input>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+	<h5>Lista de Esp&eacute;cies Documentais</h5>
+	
+	<table border="0" class="table table-sm table-striped">
+	<thead class="thead-dark">
 		<tr class="header">
-			<th>Descrição</th>
+			<th>Descri&ccedil;&atilde;o</th>
 			<th>Sigla</th>
 			<th>Tipo</th>
             <th>Origem</th>
@@ -68,10 +69,10 @@
 			<c:set var="tamanho" value="${tamanho + 1 }" />
 		</c:forEach>
 	</table>
-	</div>
+	
 	<form name="frm" action="editar" theme="simple"
 		method="GET">
-		<input type="submit" value="Novo" class="gt-btn-medium gt-btn-left"/>
+		<input type="submit" value="Novo" class="btn btn-primary"/>
 	</form>
-</div></div>
+</div>
 </siga:pagina>

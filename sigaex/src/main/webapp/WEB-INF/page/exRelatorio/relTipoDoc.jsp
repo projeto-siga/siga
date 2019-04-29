@@ -16,37 +16,22 @@ function sbmt() {
 	Documentos Criados
 </c:set>
 <input type="hidden" name="secaoUsuario" id="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
-<tr>
-	<td>
-		Lotação
-	</td>
-	<div id="divLotaDestinatario" style="display: none">
-		<td>
-			<siga:selecao propriedade="lotacaoDestinatario" tema="simple"
-				paramList="buscarFechadas=true" modulo="siga"/>
-		</td>
+<div class="row">
+	<div class="col-sm-6">
+		<label>Lota&ccedil;&atilde;o</label>
+			<siga:selecao propriedade="lotacaoDestinatario" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
 	</div>
-</tr>
-
-<tr>
-	<td>
-		Data Inicial
-	</td>
-	<td>
+	<div class="col-sm-2">
+		<label>Data Inicial</label>
 		<input type="text" name="dataInicial" id="dataInicial" onblur="javascript:verifica_data(this, true);comparaData(dataInicial,dataFinal);"
-			theme="simple" size="12" maxlength="10" />
-	</td>
-</tr>
-<tr>
-	<td>
-		Data Final
-	</td>
-	<td>
+			theme="simple" maxlength="10" class="form-control" />
+	</div>
+	<div class="col-sm-2">
+		<label>Data Final</label>
 		<input type="text" name="dataFinal" id="dataFinal" onblur="javascript:verifica_data(this,true);comparaData(dataInicial,dataFinal);"
-			theme="simple" size="12" maxlength="10" />
-	</td>
-</tr>
-
+			theme="simple" maxlength="10" class="form-control" />
+	</div>
+</div>
 <input type="hidden" name="lotacao" id="lotacao" value="${lotacaoDestinatarioSel.id}" />
 <input type="hidden" name="siglalotacao" id="siglalotacao" value="${lotacaoDestinatarioSel.sigla}" />
 <input type="hidden" name="lotacaoTitular" id="lotacaoTitular" value="${lotaTitular.siglaLotacao}" />

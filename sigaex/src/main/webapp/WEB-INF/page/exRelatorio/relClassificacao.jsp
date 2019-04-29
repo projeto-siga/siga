@@ -22,11 +22,9 @@
 	"${lotaTitular.orgaoUsuario.descricaoMaiusculas}"
 </c:set>
 
-<tr>
-	<td  width="30%">
-		Subárvore da Classificação documental (opcional):
-	</td>
-	<td>
-		<input type="text" id="codificacao" name="codificacao" onblur="javascript:aplicarMascara(this)"/>
-	</td>
-</tr>
+<div class="row">
+	<div class="col-sm-4">
+		<label>Subárvore da Classificação documental (opcional)</label>
+		<input type="text" id="codificacao" name="codificacao" onblur="javascript:aplicarMascara(this)" class="form-control"/>
+	</div>
+</div>

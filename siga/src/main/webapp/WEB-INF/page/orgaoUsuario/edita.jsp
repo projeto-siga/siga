@@ -96,7 +96,7 @@
 						<div class="col-sm-6">
 							<div class="form-group">
 								<input type="button" value="Ok" onclick="javascript: validar();" class="btn btn-primary" /> 
-								<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-primary" />
+								<input type="button" value="Cancelar" onclick="javascript:history.back();" class="btn btn-primary" />
 							</div>
 						</div>
 					</div>

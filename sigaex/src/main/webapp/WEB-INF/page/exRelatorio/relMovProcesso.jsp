@@ -16,43 +16,30 @@ function sbmt() {
 	Relatório de Movimentações de Processos
 </c:set>
 <input type="hidden" name="secaoUsuario" id="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
-<tr>
-	<td>
-		Lotação
-	</td>
-	<td>
+<div class="row">
+	<div class="col-sm-6">
+		<label>Lota&ccedil;&atilde;o</label>
 		<siga:selecao propriedade="lotacaoDestinatario" tema="simple" reler="sim" modulo="siga"/>
-	</td>
-</tr>
+	</div>
+	<div class="col-sm-4">
+		<label>Processo</label>
+		<input type="text" name="processo" id="processo" theme="simple" size="30" maxlength="19" class="form-control"/>
+	</div>
+</div>
 <input type="hidden" name="lotacao" id="lotacao" value="${lotacaoDestinatarioSel.id}" />
 <input type="hidden" name="siglalotacao" id="siglaLotacao" value="${lotacaoDestinatarioSel.sigla}" />
-<tr>
-	<td>
-		Processo
-	</td>
-	<td>
-		<input type="text" name="processo" id="processo" theme="simple" size="30" maxlength="19" />
-	</td>
-</tr>
-<tr>
-	<td>
-		Data Inicial
-	</td>
-	<td>
+<div class="row">
+	<div class="col-sm-2">
+		<label>Data Inicial</label>
 		<input type="text" name="dataInicial" id="dataInicial" onblur="javascript:verifica_data(this, true);comparaData(dataInicial,dataFinal);"
-			theme="simple" size="12" maxlength="10" />
-		</td>
-</tr>
-<tr>
-	<td>
-		Data Final
-	</td>
-	<td>
+			theme="simple" maxlength="10" class="form-control" />
+	</div>
+	<div class="col-sm-4">
+		<label>Data Final</label>
 		<input type="text" name="dataFinal" id="dataFinal" onblur="javascript:verifica_data(this,true);comparaData(dataInicial,dataFinal);"
-			theme="simple" size="12" maxlength="10" />
-	</td>
-</tr>
-
+			theme="simple" maxlength="10" class="form-control"/>
+	</div>
+</div>
 <input type="hidden" name="lotacaoTitular" id="lotacaoTitular" value="${lotaTitular.siglaLotacao}" />
 <input type="hidden" name="orgaoUsuario" id="orgaoUsuario" value="${lotaTitular.orgaoUsuario.idOrgaoUsu}" />
 <input type="hidden" name="idTit" id="idTit" value="${titular.id}" />

@@ -39,7 +39,6 @@
 		<module>sigatp</module>
   </modules>
 
-
 	<properties>
  		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
  		<siga.version>${project.version}</siga.version>

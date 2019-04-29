@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
@@ -447,8 +448,8 @@
 										<th colspan="3" align="center">Documento</th>
 										<th colspan="4" align="center">Situação</th>
 										<th rowspan="3">Tipo</th>
-										<th rowspan="3">Modelo</th>
-										<th rowspan="3">Descrição</th>
+										<th rowspan="3"><fmt:message key="documento.modelo2"/></th>
+										<th rowspan="3"><fmt:message key="documento.descricao"/></th>
 										<c:if test="${visualizacao == 1}">
 											<th rowspan="3">Última Anotação</th>
 										</c:if>
@@ -460,16 +461,16 @@
 									</tr>
 									<tr>
 										<th rowspan="2" align="center">Data</th>
-										<th colspan="2" align="center">Subscritor</th>
+										<th colspan="2" align="center"><fmt:message key="documento.subscritor"/></th>
 										<th rowspan="2" align="center">Data</th>
 										<th colspan="2" align="center">Atendente</th>
 										<th rowspan="2" align="center">Situação</th>
 									</tr>
 									<tr>
-										<th align="center">Lotação</th>
-										<th align="center">Pessoa</th>
-										<th align="center">Lotação</th>
-										<th align="center">Pessoa</th>
+										<th align="center"><fmt:message key="usuario.lotacao"/></th>
+										<th align="center"><fmt:message key="usuario.pessoa"/></th>
+										<th align="center"><fmt:message key="usuario.lotacao"/></th>
+										<th align="center"><fmt:message key="usuario.pessoa"/></th>
 									</tr>
 
 								</thead>
@@ -632,7 +633,7 @@
 						</div>
 
 						<div class="form-group col-md-2">
-							<label for="ultMovTipoResp">Pessoa/Lotação</label> <select
+							<label for="ultMovTipoResp"><fmt:message key="usuario.pessoa"/>/<fmt:message key="usuario.lotacao"/></label> <select
 								class="form-control" id="ultMovTipoResp" name="ultMovTipoResp"
 								onchange="javascript:alteraAtendente();">
 								<c:forEach items="${listaTipoResp}" var="item">
@@ -645,13 +646,13 @@
 						<c:if test="${ultMovTipoResp == 1}">
 							<div id="divUltMovResp" style="display:"
 								class="form-group col-md-4">
-								<label for="ultMovTipoResp">Pessoa</label>
+								<label for="ultMovTipoResp"><fmt:message key="usuario.pessoa"/></label>
 								<siga:selecao propriedade="ultMovResp" tema="simple"
 									paramList="buscarFechadas=true" modulo="siga" />
 							</div>
 							<div id="divUltMovLotaResp" style="display: none"
 								class="form-group col-md-4">
-								<label for="ultMovTipoResp">Lotação</label>
+								<label for="ultMovTipoResp"><fmt:message key="usuario.lotacao"/></label>
 								<siga:selecao propriedade="ultMovLotaResp" tema="simple"
 									paramList="buscarFechadas=true" modulo="siga" />
 							</div>
@@ -659,13 +660,13 @@
 						<c:if test="${ultMovTipoResp == 2}">
 							<div id="divUltMovResp" style="display: none"
 								class="form-group col-md-4">
-								<label for="ultMovTipoResp">Pessoa</label>
+								<label for="ultMovTipoResp"><fmt:message key="usuario.pessoa"/></label>
 								<siga:selecao propriedade="ultMovResp" tema="simple"
 									paramList="buscarFechadas=true" modulo="siga" />
 							</div>
 							<div id="divUltMovLotaResp" style="display:"
 								class="form-group col-md-4">
-								<label for="ultMovTipoResp">Lotação</label>
+								<label for="ultMovTipoResp"><fmt:message key="usuario.lotacao"/></label>
 								<siga:selecao propriedade="ultMovLotaResp" tema="simple"
 									paramList="buscarFechadas=true" modulo="siga" />
 							</div>
@@ -734,7 +735,7 @@
 						</div>
 
 						<div class="form-group col-md-6">
-							<label for="tipoForma">Modelo</label>
+							<label for="tipoForma"><fmt:message key="documento.modelo2"/></label>
 							<div style="display: inline" id="comboModeloDiv"></div>
 							<script type="text/javascript">
 							setTimeout("alteraForma()", 2000);
@@ -779,14 +780,14 @@
 
 						<div class="form-group col-md-3" id="trSubscritorExt"
 							style="display:${idTpDoc == 3 or idTpDoc == 4 ? '' : 'none'}">
-							<label for="nmSubscritorExt">Subscritor Antigo</label> <input
+							<label for="nmSubscritorExt"><fmt:message key="documento.subscritor.antigo"/></label> <input
 								class="form-control" type="text" label="Subscritor"
 								name="nmSubscritorExt" value="${nmSubscritorExt}" size="80" />
 						</div>
 
 						<div class="form-group col-md-6" id="trSubscritor"
 							style="display:${idTpDoc != 3 and idTpDoc != 4 ? '' : 'none'}">
-							<label for="subscritor">Subscritor</label>
+							<label for="subscritor"><fmt:message key="documento.subscritor"/></label>
 							<siga:selecao titulo="Subscritor:" propriedade="subscritor"
 								paramList="buscarFechadas=true" modulo="siga" tema="simple" />
 						</div>
@@ -794,7 +795,7 @@
 
 					<div class="form-row">
 						<div class="form-group col-md-2">
-							<label for="tipoCadastrante">Cadastrante</label> <select
+							<label for="tipoCadastrante"><fmt:message key="documento.cadastrante"/></label> <select
 								class="form-control" id="tipoCadastrante" name="tipoCadastrante"
 								onchange="javascript:alteraCadastranteDocumento();">
 								<c:forEach items="${listaTipoResp}" var="item">
@@ -807,13 +808,13 @@
 						<c:if test="${tipoCadastrante == 1}">
 							<div id="divCadastrante" style="display:"
 								class="form-group col-md-4">
-								<label for="ultMovTipoResp">Pessoa</label>
+								<label for="ultMovTipoResp"><fmt:message key="usuario.pessoa"/></label>
 								<siga:selecao propriedade="cadastrante" tema="simple"
 									paramList="buscarFechadas=true" modulo="siga" />
 							</div>
 							<div id="divLotaCadastrante" style="display: none"
 								class="form-group col-md-4">
-								<label for="ultMovTipoResp">Lotação</label>
+								<label for="ultMovTipoResp"><fmt:message key="usuario.lotacao"/></label>
 								<siga:selecao propriedade="lotaCadastrante" tema="simple"
 									paramList="buscarFechadas=true" modulo="siga" />
 							</div>
@@ -821,19 +822,19 @@
 						<c:if test="${tipoCadastrante == 2}">
 							<div id="divCadastrante" style="display: none"
 								class="form-group col-md-4">
-								<label for="ultMovTipoResp">Pessoa</label>
+								<label for="ultMovTipoResp"><fmt:message key="usuario.pessoa"/></label>
 								<siga:selecao propriedade="cadastrante" tema="simple"
 									paramList="buscarFechadas=true" modulo="siga" />
 							</div>
 							<div id="divLotaCadastrante" style="display:"
 								class="form-group col-md-4">
-								<label for="ultMovTipoResp">Lotação</label>
+								<label for="ultMovTipoResp"><fmt:message key="usuario.lotacao"/></label>
 								<siga:selecao propriedade="lotaCadastrante" tema="simple"
 									paramList="buscarFechadas=true" modulo="siga" />
 							</div>
 						</c:if>
 						<div class="form-group col-md-2">
-							<label for="tipoDestinatario">Destinatário</label> <select
+							<label for="tipoDestinatario"><fmt:message key="documento.destinatario"/></label> <select
 								class="form-control" id="tipoDestinatario"
 								name="tipoDestinatario"
 								onchange="javascript:alteraDestinatarioDocumento();">
@@ -847,14 +848,14 @@
 						<div id="divDestinatario"
 							style="display:${tipoDestinatario == 1 ? '':'none'}"
 							class="form-group col-md-4">
-							<label for="destinatario">Pessoa</label>
+							<label for="destinatario"><fmt:message key="usuario.pessoa"/></label>
 							<siga:selecao propriedade="destinatario" tema="simple"
 								paramList="buscarFechadas=true" modulo="siga" />
 						</div>
 						<div id="divLotaDestinatario"
 							style="display: ${tipoDestinatario == 2 ? '':'none'}"
 							class="form-group col-md-4">
-							<label for="lotacaoDestinatario">Lotação</label>
+							<label for="lotacaoDestinatario"><fmt:message key="usuario.lotacao"/></label>
 							<siga:selecao propriedade="lotacaoDestinatario" tema="simple"
 								paramList="buscarFechadas=true" modulo="siga" />
 						</div>
@@ -877,7 +878,7 @@
 
 					<div class="form-row">
 						<div class="form-group col-md-6">
-							<label for="classificacao">Descrição</label> <input
+							<label for="classificacao"><fmt:message key="documento.descricao"/></label> <input
 								class="form-control" type="text" name="descrDocumento"
 								value="${descrDocumento}" size="80" />
 						</div>

@@ -25,7 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.ResourceBundle;
 
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -84,6 +86,7 @@ public class ExDocumentoVO extends ExVO {
 	ExGraphColaboracao dotColaboracao;
 	private List<Object> listaDeAcessos;
 	boolean podeAnexarArquivoAuxiliar;
+	private static ResourceBundle bundle;
 
 	public ExDocumentoVO(ExDocumento doc, ExMobil mob, DpPessoa cadastrante, DpPessoa titular,
 			DpLotacao lotaTitular, boolean completo, boolean exibirAntigo) {
@@ -384,6 +387,13 @@ public class ExDocumentoVO extends ExVO {
 		this.dotColaboracao = new ExGraphColaboracao(doc);
 
 	}
+	
+    private static ResourceBundle getBundle() {
+        if (bundle == null) {
+        	bundle = ResourceBundle.getBundle("messages_" + SigaBaseProperties.getString("siga.local"));
+        }
+        return bundle;
+    }
 
 	/**
 	 * @param doc
@@ -400,7 +410,7 @@ public class ExDocumentoVO extends ExVO {
 		}
 
 		ExMobil mob = doc.getMobilGeral();
-
+		
 		vo.addAcao(
 				"folder_magnify",
 				"_Ver Dossiê",
@@ -411,7 +421,7 @@ public class ExDocumentoVO extends ExVO {
 
 		vo.addAcao(
 				"printer",
-				"Ver _Impressão",
+				getBundle().getString("documento.ver.impressao"),
 				"/app/arquivo",
 				"exibir",
 				Ex.getInstance().getComp()
@@ -600,14 +610,14 @@ public class ExDocumentoVO extends ExVO {
 				"duplicar",
 				Ex.getInstance().getComp()
 						.podeDuplicar(titular, lotaTitular, mob),
-				"Esta operação criará um expediente com os mesmos dados do atual. Prosseguir?",
+				getBundle().getString("documento.confirma.duplica"),
 				null, null, null, "once");
 
 		// test="${exibirCompleto != true}" />
 		int numUltMobil = doc.getNumUltimoMobil();
 		vo.addAcao(
 				"eye",
-				"Ver _Mais",
+				getBundle().getString("documento.ver.mais"),
 				"/app/expediente/doc",
 				"exibirAntigo",
 				Ex.getInstance()

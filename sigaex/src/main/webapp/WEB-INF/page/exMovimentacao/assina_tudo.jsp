@@ -7,6 +7,7 @@
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <siga:pagina
 	titulo="Assinatura em Lote de Documentos, Despachos e Anexos"
@@ -69,7 +70,7 @@
 
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
-			<h2>Assinatura em Lote de Documentos, Despachos e Anexos</h2>
+			<h2><fmt:message key="documento.assinatura.lote"/></h2>
 			<form name="frm" id="frm" cssClass="form" theme="simple">
 
 				<input type="hidden" name="postback" value="1" />
@@ -102,15 +103,15 @@
 						<table class="gt-table">
 							<thead>
 								<tr>
-									<th width="3%" style="text-align: center">Assi&shy;nar</th>
+									<th width="3%" style="text-align: center"><fmt:message key="documento.assinar"/></th>
 									<th width="3%" style="text-align: center">Auten&shy;ticar</th>
-									<th width="3%" style="text-align: center">Com Senha</th>
+									<th width="3%" style="text-align: center"><fmt:message key="documento.com.senha"/></th>
 									<th width="13%" rowspan="2">Número</th>
 									<th rowspan="2" style="text-align: center">Data</th>
 									<th width="10%" colspan="2" style="text-align: center">Cadastrante</th>
 									<th width="10%" colspan="2" style="text-align: center">Solicitante</th>
 									<th width="10%" rowspan="2" align="center">Tipo</th>
-									<th width="49%" rowspan="2" align="left">Descrição</th>
+									<th width="49%" rowspan="2" align="left"><fmt:message key="documento.descricao"/></th>
 								</tr>
 								<tr>
 									<th style="text-align: center"><input type="checkbox"

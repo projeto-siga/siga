@@ -671,6 +671,7 @@ public class CpConfiguracaoBL {
 
 	
 	protected boolean isUsuarioRoot(DpPessoa dpPessoa) {
+		// if (true) return false;
 		return dpPessoa != null
 				&& dpPessoa.getIdInicial().equals(ID_USUARIO_ROOT)
 				&& dpPessoa.getMatricula().equals(MATRICULA_USUARIO_ROOT)

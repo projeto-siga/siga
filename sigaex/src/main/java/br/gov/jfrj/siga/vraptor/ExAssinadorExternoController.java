@@ -45,6 +45,7 @@ import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.bluc.service.BlucService;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -113,7 +114,8 @@ public class ExAssinadorExternoController extends ExController {
 			if (pes == null)
 				throw new Exception("Nenhuma pessoa localizada com o CPF: " + sCpf);
 			List<ExAssinadorExternoListItem> list = new ArrayList<ExAssinadorExternoListItem>();
-			List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL().obterAssinaveis(pes, pes.getLotacao(), true);
+			boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(pes, CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
+			List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL().obterAssinaveis(pes, pes.getLotacao(), apenasComSolicitacaoDeAssinatura);
 			for (ExAssinavelDoc ass : assinaveis) {
 				if (ass.isPodeAssinar()) {
 					String solicitantesDeAssinatura = ass.getDoc().getSolicitantesDeAssinaturaCompleto();
@@ -251,11 +253,11 @@ public class ExAssinadorExternoController extends ExController {
 		} catch (Exception e) {
 			jsonError(e);
 		}
-		assinadorPopupSave(id, true);
+		assinadorPopupSave(id);
 	}
 
 	@Put("/public/app/assinador-popup/doc/{id}/sign")
-	public void assinadorPopupSave(String id, boolean apenasComSolicitacaoDeAssinatura) throws Exception {
+	public void assinadorPopupSave(String id) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
 
@@ -287,8 +289,6 @@ public class ExAssinadorExternoController extends ExController {
 			String sigla = id2sigla(id) + ".pdf";
 
 			ExMobil mob = Documento.getMobil(sigla);
-			if (apenasComSolicitacaoDeAssinatura && !mob.doc().isAssinaturaSolicitada())
-				throw new Exception("Documento requer solicitação de assinatura. Provavelmente, o documento foi editado após a solicitação.");
 			ExMovimentacao mov = Documento.getMov(mob, sigla);
 
 			DpPessoa cadastrante = getCadastrante();
@@ -310,6 +310,10 @@ public class ExAssinadorExternoController extends ExController {
 					throw new Exception("Não foi possível localizar a pessoa que representa o subscritor.");
 			}
 
+			boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(cadastrante, CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
+			if (apenasComSolicitacaoDeAssinatura && !mob.doc().isAssinaturaSolicitada())
+				throw new Exception("Documento requer solicitação de assinatura. Provavelmente, o documento foi editado após a solicitação.");
+			
 			String msg = null;
 
 			DpLotacao lotaCadastrante = cadastrante != null ? cadastrante.getLotacao() : null;

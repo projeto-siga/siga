@@ -1142,6 +1142,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			&& ((mob.doc().getSubscritor() != null && mob.doc().getSubscritor().equivale(titular)) || mob.doc().isCossignatario(titular)))
 			return true;
 		
+		// Se o subscritor ou algum cossignatário requer solicitação de assinatura, não deve permitir assinar sem ela
+		if (!mob.doc().isAssinaturaSolicitada()) {
+			if (!getConf().podePorConfiguracao(mob.doc().getSubscritor(), CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO))
+				return false;
+			for (DpPessoa cossig : mob.doc().getCosignatarios()) { 
+				if (!getConf().podePorConfiguracao(mob.doc().getSubscritor(), CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO))
+					return false;
+			}
+		}
+		
 		return (mob.doc().getSubscritor().equivale(titular)
 				|| (mob.doc().isExterno() && mob.doc().getCadastrante().equivale(titular))
 				|| (mob.doc().isCossignatario(titular) && mob.doc().isPendenteDeAssinatura() && mob.doc().isAssinadoPeloSubscritorComTokenOuSenha())
@@ -1216,7 +1226,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (doc.isAssinaturaSolicitada())
 			return false;
 		
-		if (!doc.getLotaSubscritor().equivale(lotaTitular))
+		if (doc.getLotaSubscritor() == null)
+			return false;
+		if (!doc.getLotaSubscritor().equivale(lotaTitular) && !doc.getLotaSubscritor().equivale(titular.getLotacao()))
 			return false;
 		
 		ExTipoMovimentacao exTpMov = ExDao.getInstance().consultar(ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA,

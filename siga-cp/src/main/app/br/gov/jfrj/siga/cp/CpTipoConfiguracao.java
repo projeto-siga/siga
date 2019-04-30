@@ -129,6 +129,8 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao  {
 	
 	public static final long TIPO_CONFIG_TRAMITE_AUTOMATICO = 38;
 	
+	public static final long TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO = 39;
+	
 	
 	// SIGA-WF
 

@@ -614,7 +614,7 @@ var providerPassword = {
 	inicializar : function(cont) {
 		try {
 			this.dialog = $(
-					'<div id="dialog-form" title="Assinar/Autenticar com Senha"><fieldset><label>Matrícula</label> <br /> <input id="nomeUsuarioSubscritor" type="text" value="' + $('#nomeUsuarioSubscritor').val() + '" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)" /> <label>(modifique caso necessário)</label><br /> <br /> <label>Senha</label><br /> <input type="password" id="senhaUsuarioSubscritor" class="text ui-widget-content ui-corner-all" autocomplete="off" /></fieldset></div>')
+					'<div id="dialog-form" title="Assinar/Autenticar com Senha"><fieldset><label>Matrícula</label> <br /> <input id="nomeUsuarioSubscritor" type="text" value="' + $('#siglaUsuarioCadastrante').val() + '" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)" /> <label>(modifique caso necessário)</label><br /> <br /> <label>Senha</label><br /> <input type="password" id="senhaUsuarioSubscritor" class="text ui-widget-content ui-corner-all" autocomplete="off" autofocus /></fieldset></div>')
 					.dialog({
 						title : "Identificação",
 						width : '50%',
@@ -636,10 +636,12 @@ var providerPassword = {
 								cont();
 							},
 							"Cancelar" : function() {
+								gAssinando = false;
 								$(this).dialog('destroy').remove();
 							}
 						},
 						close : function() {
+							gAssinando = false;
 						}
 					});
 			$(document).delegate('.ui-dialog', 'keyup', function(e) {

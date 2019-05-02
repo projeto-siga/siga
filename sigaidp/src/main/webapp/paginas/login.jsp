@@ -3,9 +3,16 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
-<siga:pagina titulo="Página de Login" desabilitarbusca="sim"
+
+
+<siga:pagina titulo="P�gina de Login" desabilitarbusca="sim"
 	desabilitarmenu="sim"
 	incluirJs="/siga/javascript/jquery.placeholder.js">
+	
+	<c:if test="${siga_cliente == 'GOVSP'}">
+		<c:redirect url="../../siga"/>
+	</c:if>
+
 
 	<script type="text/javascript">
 		/*  converte para maiúscula a sigla do estado  */
@@ -24,9 +31,10 @@
 	<div class="container-fluid content">
 		<div class="row">
 			<!-- sidebar -->
+		
 			<div class="col col-12 col-md-4 order-md-2 mt-3">
 				<!-- login form head -->
-				<div class="gt-mylogin-hd">Identificação</div>
+				<div class="gt-mylogin-hd">Identificação </div>
 
 				<!-- login box -->
 				<div class="gt-mylogin-box" style="margin-bottom: 0">

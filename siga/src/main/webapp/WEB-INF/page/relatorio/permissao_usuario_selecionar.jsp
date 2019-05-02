@@ -5,29 +5,52 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <siga:pagina titulo="Relatório de Permissão de Usuários">
-
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>Relatório de Permissão de Usuários</h2>
-			<div class="gt-content-box gt-for-table">
-				<form method="get" action="javascript:submeter()">
-					<table class="gt-form-table">
-						<tr class="">
-							<td><label>Matrícula: </label>
-							</td>
-							<td><siga:selecao tipo="pessoa" tema="simple"
-									propriedade="pessoa" modulo="siga"/>
-							</td>
-						</tr>
-						<tr class="">
-							<td colspan="2"><input class="gt-btn-medium gt-btn-left"
-								type="submit" value="Gerar..." />
-							</td>
-						</tr>
-					</table>
-				</form>
+	<!-- main content -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header">
+				<h5>Relatório de Permissão de Usuários</h5>
+			</div>
+			<div class="card-body">
+			<form method="get" action="javascript:submeter()">
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label>Matrícula</label>
+							<siga:selecao tipo="pessoa" tema="simple" propriedade="pessoa" modulo="siga"/>
+						</div>
+					</div>				
+				</div>
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary">Gerar...</button>
+						</div>
+					</div>				
+				</div>
+			</form>
 			</div>
 		</div>
+		<!-- Modal Alert-->
+		<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+				        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+				          <span aria-hidden="true">&times;</span>
+				    	</button>
+				    </div>
+			      	<div class="modal-body">
+			        	<p class="mensagem-Modal"></p>
+			      	</div>
+					<div class="modal-footer">
+					  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
+					</div>
+		    	</div>
+		  	</div>
+		</div>				
+		<!--Fim Modal Alert -->
 	</div>
 </siga:pagina>
 <script type="text/javascript">
@@ -37,8 +60,12 @@
 			if (t_strIdPessoa.value) {
 				location.href = 'emitir_permissao_usuario?idPessoa=' + t_strIdPessoa.value;
 			} else {
-				alert("Por favor, é necessário preencher o campo pessoa!");
+				mensagemAlerta("Por favor, é necessário preencher o campo pessoa!");
 			}
 		}
+	}
+	function mensagemAlerta(mensagem) {
+		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
+		$('#alertaModal').modal();
 	}
 </script>

@@ -6,75 +6,97 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Relatório de Alteração de Direitos de Utilização">
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>Relatório de Alteração de Direitos de Utilização</h2>
-			<div class="gt-content-box gt-for-table">
-				<table class="gt-form-table">
-					<tr class="">
-						<td><label>Data Inicial: </label></td>
-						<td><input name="itxDtInicio" id="itxDtInicio" tabindex="10"
-							type="text" size="10" maxlength="10"
-							onkeypress="return FormataData(this, event);"
-							onblur="javascript:verificarData(this);"></input></td>
-					</tr>
-					<tr class="">
-						<td><label>Data Final: </label></td>
-						<td><input name="itxDtFim" id="itxDtFim" tabindex="20"
-							type="text" size="10" maxlength="10"
-							onkeypress="return FormataData(this, event);"
-							onblur="javascript:verificarData(this);"></input></td>
-					</tr>
-					<tr>
-						<td><label>Órgão Usuário:</label>
-						</td>
-						<td><select name="idOrgaoUsuario" id="idOrgaoUsuario"
-							tabindex="30">
+	<!-- main content -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header">
+				<h5>Relatório de Alteração de Direitos de Utilização</h5>
+			</div>
+			<div class="card-body">
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="form-group">
+							<label for="itxDtInicio">Data Inicial</label>
+							<input name="itxDtInicio" id="itxDtInicio" tabindex="10" type="text" maxlength="10" onkeypress="return FormataData(this, event);"
+								 onblur="javascript:verificarData(this);" class="form-control"></input>						
+						</div>
+					</div>
+					<div class="col-sm-2">
+						<div class="form-group">
+							<label for="itxDtFim">Data Final</label>
+							<input name="itxDtFim" id="itxDtFim" tabindex="20" type="text" maxlength="10" onkeypress="return FormataData(this, event);"
+									onblur="javascript:verificarData(this);" class="form-control"></input>						
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label for="idOrgaoUsuario">Órgão Usuário</label>
+							<select name="idOrgaoUsuario" id="idOrgaoUsuario" tabindex="30" class="form-control">
 								<c:forEach var="ousu" items="${cpOrgaosUsuario}">
 									<option value="${ousu.idOrgaoUsu}">${ousu.nmOrgaoUsu}
 									</option>
 								</c:forEach>
-						</select></td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<button class="gt-btn-medium gt-btn-left" tabindex="40"
-								onclick="javascript:submeter();">Gerar...</button>
-						</td>
-					</tr>
-				</table>
+							</select>						
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="form-group">
+							<button class="btn btn-primary" tabindex="40" onclick="javascript:submeter();">Gerar...</button>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
+		<!-- Modal Alert-->
+		<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+				        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+				          <span aria-hidden="true">&times;</span>
+				    	</button>
+				    </div>
+			      	<div class="modal-body">
+			        	<p class="mensagem-Modal"></p>
+			      	</div>
+					<div class="modal-footer">
+					  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
+					</div>
+		    	</div>
+		  	</div>
+		</div>				
+		<!--Fim Modal Alert -->
 	</div>
 	<br />
-	<div id="div-tempo"
-		style="display: none; position: absolute; text-align: center; filter: alpha(opacity =         60); opacity: 0.4; background-color: #dcdcdc; vertical-align: middle; border-width: 2px; border-color: darkblue; border-style: solid;">
-		<div
-			style="position: absolute; font-family: sans-serif50 %; left: 40%; top: 50%; font-size: medium; large; font-weight: bolder; color: purple;">Aguarde...</div>
+	<div id="div-tempo" style="display: none; position: absolute; text-align: center; filter: alpha(opacity =         60); opacity: 0.4; background-color: #dcdcdc; vertical-align: middle; border-width: 2px; border-color: darkblue; border-style: solid;">
+		<div style="position: absolute; font-family: sans-serif50 %; left: 40%; top: 50%; font-size: medium; large; font-weight: bolder; color: purple;">Aguarde...</div>
 	</div>
 </siga:pagina>
 <script type="text/javascript">
 	function submeter() {
 		var t_nodDataInicio = document.getElementById("itxDtInicio");
 		if (!t_nodDataInicio) {
-			alert ("Data Inicial não preenchida !");
+			mensagemAlerta ("Data Inicial não preenchida !");
 			focus(t_nodDataInicio);
 			return false;
 		}
 		var t_strDataInicio = t_nodDataInicio.value;
 		if (!t_strDataInicio) {
-			alert ("Data Inicial não preenchida !");
+			mensagemAlerta ("Data Inicial não preenchida !");
 			focus(t_nodDataInicio);
 			return false;
 		}
 		var t_nodDataFim = document.getElementById("itxDtFim");
 		if (!t_nodDataFim) {
-			alert ("Data Final não preenchida !");
+			mensagemAlerta ("Data Final não preenchida !");
 			return false;
 		}
 		var t_strDataFim = t_nodDataFim.value;
 		if (!t_strDataFim) {
-			alert ("Data Final não preenchida !");
+			mensagemAlerta ("Data Final não preenchida !");
 			focus(t_nodDataFim);
 			return false;
 		}
@@ -104,30 +126,30 @@
 		}
 		var t_arr1CamposData = t_strData.split("/");
 		if (t_arr1CamposData.length != 3) {
-			alert("Por favor, digite a data no formato DD/MM/AAAA");
+			mensagemAlerta("Por favor, digite a data no formato DD/MM/AAAA");
 			focus(p_nodData);
 			return false;
 		}
 		var t_intDia = parseInt(t_arr1CamposData[0],10);
 		if (! ((t_intDia <= 31) && ( t_intDia >= 1))) {
-			alert("Dia inválido!");
+			mensagemAlerta("Dia inválido!");
 			focus(p_nodData);
 			return false;
 		}
 		var t_intMes = parseInt(t_arr1CamposData[1],10);
 		if (! ((t_intMes <= 12) && ( t_intDia >= 1))) {
-			alert("Mês inválido!");
+			mensagemAlerta("Mês inválido!");
 			focus(p_nodData);
 			return false;
 		}
 		if ((t_intMes == 2) && (t_intDia > 29)) {
-			alert("Dia inválido!");
+			mensagemAlerta("Dia inválido!");
 			focus(p_nodData);
 			return false;
 		}
 		var t_intAno = parseInt(t_arr1CamposData[2],10);
 		if (! ((t_intAno <= (new Date()).getFullYear()  ) && ( t_intAno >= 2010))) {
-			alert("Ano inválido! Deve estar entre 2010 e o da data atual.");
+			mensagemAlerta("Ano inválido! Deve estar entre 2010 e o da data atual.");
 			focus(p_nodData);
 			return false;
 		}
@@ -137,6 +159,10 @@
 	function focus(p_nodNodo) {
 		setTimeout( function () {p_nodNodo.focus()},50);
 	} 
+	function mensagemAlerta(mensagem) {
+		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
+		$('#alertaModal').modal();
+	}
 </script>
 <script type="text/javascript">
 	 /*

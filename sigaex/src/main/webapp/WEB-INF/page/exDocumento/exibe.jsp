@@ -1064,5 +1064,3 @@
         });
 	</script>
 </c:if>
-
-<siga:rodape />

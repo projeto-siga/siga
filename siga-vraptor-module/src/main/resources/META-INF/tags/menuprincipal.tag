@@ -35,8 +35,8 @@
 	}
 </script>
 
-<li class="nav-item dropdown"><a href="javascript:void(0);"
-	class="nav-link dropdown-toggle" data-toggle="dropdown"> Siga </a>
+<li class="nav-item dropdown">
+	<a href="javascript:void(0);" class="navbar-brand dropdown-toggle" data-toggle="dropdown"> SIGA</a>
 	<ul class="dropdown-menu">
 		<c:if test="${not empty f:resource('siga.pagina.inicial.url')}">
 			<li><a class="dropdown-item" href="/siga/app/principal?redirecionar=false">Quadros Quantitativos</a></li>

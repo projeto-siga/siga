@@ -383,5 +383,4 @@
 		</div>
 		</div>
 		</div>
-		<siga:rodape />
 </siga:pagina>

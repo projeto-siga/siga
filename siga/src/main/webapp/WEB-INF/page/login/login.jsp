@@ -58,7 +58,7 @@
 					<form role="form" method="post"
 						enctype="application/x-www-form-urlencoded">
 						<div class="form-group">
-							<label for="username"><fmt:message key = "usuario.matricula"/></label> 
+							<label for="username"><fmt:message key = "usuario.digite.usuario"/></label> 
 					
 						    <div class="input-group">
 						      <div class="input-group-prepend">

@@ -22,8 +22,7 @@
 		ReplaceInnerHTMLFromAjaxResponse(
 				'${pageContext.request.contextPath}/app/expediente/doc/carregar_lista_modelos?forma='
 						+ document.getElementById('idFormaDoc').value
-						+ '&idMod='
-						+ '${idMod}', null, document
+						+ '&idMod='	+ '${idMod}', null, document
 						.getElementById('comboModeloDiv'))
 	}
 
@@ -338,7 +337,7 @@
 		<c:if
 			test="${((empty primeiraVez) or (primeiraVez != 'sim')) and ((empty apenasRefresh) or (apenasRefresh != 1))}">
 			<c:if test="${not empty tamanho and tamanho > 0}">
-				<h2 class="mt-3">Documentos Encontrados</h2>
+				<h2 class="mt-3"><fmt:message key="documento.encontrados"/></h2>
 				<c:choose>
 					<c:when test="${visualizacao == 2 or visualizacao == 4}">
 						<div id="pivot" style="margin: 30px;"></div>
@@ -460,7 +459,7 @@
 										</c:if>
 									</tr>
 									<tr>
-										<th rowspan="2" align="center">Data</th>
+										<th rowspan="2" align="center"><fmt:message key="documento.data.assinatura"/></th>
 										<th colspan="2" align="center"><fmt:message key="documento.subscritor"/></th>
 										<th rowspan="2" align="center">Data</th>
 										<th colspan="2" align="center">Atendente</th>
@@ -598,7 +597,7 @@
 				</c:choose>
 			</c:if>
 			<c:if test="${empty tamanho or tamanho == 0}">
-				<h2 class="mt-3">Documentos Encontrados</h2>
+				<h2 class="mt-3"><fmt:message key="documento.encontrados"/></h2>
 				<p class="gt-notice-box">A pesquisa não retornou resultados.</p>
 			</c:if>
 		</c:if>

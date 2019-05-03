@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
@@ -63,7 +62,7 @@
 						<c:choose>
 							<c:when test="${possuiMaisQueUmModelo}">
 								<div class="form-group">
-									<label for="modelos-select"><fmt:message key="documento.modelo"/></label>
+									<label for="modelos-select">Modelo</label>
 									<div class="btn-group hierarchy-select form-control" data-resize="auto" id="modelos-select">
 										<button type="button" class="btn btn-sm btn-light border border-dark dropdown-toggle"
 											id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-disabled="true">
@@ -173,9 +172,9 @@
 							</div>
 						</div>
 					</div>
+				<c:if test='${exDocumentoDTO.tipoDocumento == "antigo"}'>
 				<input type="hidden" name="campos" value="numExtDoc" />
 				<input type="hidden" name="campos" value="numAntigoDoc" />
-				<c:if test='${exDocumentoDTO.tipoDocumento == "antigo"}'>
 				<div class="row">
 					<div class="col-sm-2">
 						<div class="form-group">
@@ -216,7 +215,7 @@
 									<input type="hidden" name="campos" value="substituicao" />
 									<input type="hidden" name="campos" value="personalizacao" />
 									<input type="hidden" id="temCossignatarios" value="${not empty exDocumentoDTO.doc.cosignatarios}" />
-									<label><fmt:message key="documento.subscritor"/></label>
+									<label>Subscritor</label>
 									<siga:selecao propriedade="subscritor" inputName="exDocumentoDTO.subscritor" modulo="siga" tema="simple" />
 								</div>
 							</div>
@@ -339,7 +338,7 @@
 					<input type="hidden" name="campos" value="preenchimento" />
 					<div class="col-sm-5">
 						<div class="form-group">
-							<label><fmt:message key="documento.preenchimento.automatico"/></label>
+							<label>Preenchimento Automático</label>
 							<select id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()" class="form-control">
 								<c:forEach items="${exDocumentoDTO.preenchimentos}" var="item">
 									<option value="${item.idPreenchimento}"
@@ -361,25 +360,25 @@
 					</div>
 				</div>
 				</c:if>
-				<c:if test='${exDocumentoDTO.modelo.exClassificacao==null}'>
-				<div class="row">
-					<c:if test="${exDocumentoDTO.modelo.exClassificacao!=null}">
-						<c:set var="desativarClassif" value="sim" />
-					</c:if>
-					<div class="col-sm-5">
-						<div class="form-group">
-						<input type="hidden" name="campos" value="classificacaoSel.id" /> 
-							<label>Classificação</label>
-							<siga:span id="classificacao" depende="forma;modelo">
-								<!-- OI -->
-								<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"
-									inputName="exDocumentoDTO.classificacao" urlAcao="buscar" urlSelecionar="selecionar" tema="simple" />
-								<!--  idAjax="classificacao" -->
-							</siga:span>
+				<div id="tr_personalizacao" style="display: ${exDocumentoDTO.modelo.exClassificacao!=null? 'none': ''};">
+					<div class="row">
+						<c:if test="${exDocumentoDTO.modelo.exClassificacao!=null}">
+							<c:set var="desativarClassif" value="sim" />
+						</c:if>
+						<div class="col-sm-5">
+							<div class="form-group">
+							<input type="hidden" name="campos" value="classificacaoSel.id" /> 
+								<label>Classificação</label>
+								<siga:span id="classificacao" depende="forma;modelo">
+									<!-- OI -->
+									<siga:selecao desativar="${desativarClassif}" modulo="sigaex" propriedade="classificacao"
+										inputName="exDocumentoDTO.classificacao" urlAcao="buscar" urlSelecionar="selecionar" tema="simple" />
+									<!--  idAjax="classificacao" -->
+								</siga:span>
+							</div>
 						</div>
-					</div>
-				</div>			
-				</c:if>
+					</div>			
+				</div>
 				<c:if test="${exDocumentoDTO.classificacaoSel.id!=null && exDocumentoDTO.classificacaoIntermediaria}">
 				<div class="row">
 					<div class="col-sm-5">

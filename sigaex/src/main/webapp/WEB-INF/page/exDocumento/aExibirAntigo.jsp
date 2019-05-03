@@ -486,4 +486,3 @@
 		SetInnerHTMLFromAjaxResponse("${url}",document.getElementById('gc'));
 	</script>
 </c:if>
-<siga:rodape />

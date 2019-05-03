@@ -17,35 +17,35 @@
 
 <%-- pageContext.setAttribute("sysdate", new java.util.Date()); --%>
 <siga:pagina titulo="Busca de ${cpTipoGrupo.dscTpGrupo}">
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>Cadastro de ${cpTipoGrupo.dscTpGrupo}</h2>
-			<div class="gt-content-box">
-				<table class="gt-table" width="100%">
-					<theader>
-					<th align="left">Sigla</th>
-					<th align="left">Descrição</th>
-					<th align="left">Sigla Grupo Pai</th>
-					</theader>
-					<c:set var="evenorodd" value="" />
-					<c:set var="tamanho" value="0" />
-					<siga:paginador maxItens="1000" maxIndices="10"
-						totalItens="${tamanho}" itens="${itens}" var="grupoItem">
-						<tr class="${evenorodd}">
-							<td align="left"><a
-								href="editar?idCpGrupo=${grupoItem.idGrupo }">${grupoItem.siglaGrupo}</a></td>
-							<td align="left"><a
-								href="editar?idCpGrupo=${grupoItem.idGrupo }">${grupoItem.dscGrupo}</a></td>
-							<td align="left"><a
-								href="editar?idCpGrupo=${grupoItem.idGrupo }">${grupoItem.cpGrupoPai.siglaGrupo}</a></td>
-						</tr>
-					</siga:paginador>
-				</table>
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header"><h5>Cadastro de ${cpTipoGrupo.dscTpGrupo}</h5></div>
+				<div class="card-body">
+					<table border="0" class="table table-sm table-striped">
+						<thead class="thead-dark">
+							<th align="left">Sigla</th>
+							<th align="left">Descrição</th>
+							<th align="left">Sigla Grupo Pai</th>
+						</thead>
+						<c:set var="evenorodd" value="" />
+						<c:set var="tamanho" value="0" />
+						<siga:paginador maxItens="1000" maxIndices="10"
+							totalItens="${tamanho}" itens="${itens}" var="grupoItem">
+							<tr class="${evenorodd}">
+								<td align="left"><a
+									href="editar?idCpGrupo=${grupoItem.idGrupo }">${grupoItem.siglaGrupo}</a></td>
+								<td align="left"><a
+									href="editar?idCpGrupo=${grupoItem.idGrupo }">${grupoItem.dscGrupo}</a></td>
+								<td align="left"><a
+									href="editar?idCpGrupo=${grupoItem.idGrupo }">${grupoItem.cpGrupoPai.siglaGrupo}</a></td>
+							</tr>
+						</siga:paginador>
+					</table>
+					<c:if test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir'))}">
+						<input type="button" value="Incluir" onclick="javascript:window.location.href='editar'" class="btn btn-primary">
+					</c:if>
+				</div>
 			</div>
-			<br /> 
-			<c:if test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir'))}">
-				<input type="button" value="Incluir" onclick="javascript:window.location.href='editar'" class="gt-btn-medium">
-			</c:if>
 		</div>
 	</div>
 </siga:pagina>

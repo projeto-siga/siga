@@ -186,5 +186,4 @@
 	</form>		
 	</div>	
 	<br />
-	<siga:rodape />
 </siga:pagina>

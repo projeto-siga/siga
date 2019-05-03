@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -42,6 +43,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -69,7 +71,8 @@ import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
 public class ExMobilController extends
 		ExSelecionavelController<ExMobil, ExMobilDaoFiltro> {
 	private static final String SIGA_DOC_FE_LD = "FE:Ferramentas;LD:Listar Documentos";
-
+	private static ResourceBundle bundle;
+	
 	public ExMobilController(HttpServletRequest request, Result result,
 			SigaObjects so, EntityManager em) {
 		super(request, result, ExDao.getInstance(), so, em);
@@ -527,7 +530,7 @@ public class ExMobilController extends
 
 	private Map<Integer, String> getListaTipoDest() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrícula");
+		map.put(1, getBundle().getString("usuario.matricula"));
 		map.put(2, "Órgão Integrado");
 		map.put(3, "Externo");
 		map.put(4, "Campo Livre");
@@ -676,4 +679,13 @@ public class ExMobilController extends
 		List<ExNivelAcesso> listaNivelAcesso = ExDao.getInstance().listarOrdemNivel();
 		result.include("listaNivelAcesso", listaNivelAcesso);
 	}
+
+    private static ResourceBundle getBundle() {
+    	if (SigaBaseProperties.getString("siga.local") == null) {
+    		bundle = ResourceBundle.getBundle("messages_TRF2");
+    	} else {
+    		bundle = ResourceBundle.getBundle("messages_" + SigaBaseProperties.getString("siga.local"));
+    	}
+        return bundle;
+    }
 }

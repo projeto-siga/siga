@@ -6,54 +6,61 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 	
 <siga:pagina titulo="Relatório de Acesso à Utilização de Serviço">
-
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>Relatório de Acesso à Utilização de Serviço</h2>
-			<div class="gt-content-box gt-for-table">
-				<form id="frm" method="post" action="#">
-					<table class="gt-form-table">
-						<tr class="">
-							<td><label>Serviço: </label></td>
-							<td><select name="idServico" id="idServico"
-								onchange="javascript: criarSituacoesServico()">
-									<c:forEach var="serv" items="${cpServicos}">
-										<option value="${serv.idServico}">
-											${serv.siglaServico} - ${serv.dscServico}</option>
-									</c:forEach>
-							</select></td>
-						</tr>
-						<tr>
-							<td><label>Situações: </label></td>
-							<td><input type="hidden" id="situacoesSelecionadas"
-								name="situacoesSelecionadas" />
-								<table id="situacoesServico"></table></td>
-						</tr>
-						<tr>
-							<td><label>Pessoas: </label></td>
-							<td><select name="idOrgaoUsuario" id="idOrgaoUsuario">
-									<option value="-1">Todos</option>
-									<c:forEach var="ousu" items="${cpOrgaosUsuario}">
-										<option value="${ousu.idOrgaoUsu}">
-											${ousu.nmOrgaoUsu}</option>
-									</c:forEach>
-							</select></td>
-						</tr>
-						<tr>
-							<td colspan="2">
-								<button class="gt-btn-medium gt-btn-left"
-									onClick="javascript:gerar(); return false;">Gerar...</button></td>
-						</tr>
-					</table>
-				</form>
+	<!-- main content -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header">
+				<h5>Relatório de Permissão de Usuários</h5>
+			</div>
+			<div class="card-body">
+			<form id="frm" method="post" action="#">
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label>Serviço</label>
+							<select name="idServico" id="idServico"	onchange="javascript: criarSituacoesServico()" class="form-control">
+								<c:forEach var="serv" items="${cpServicos}">
+									<option value="${serv.idServico}">
+										${serv.siglaServico} - ${serv.dscServico}</option>
+								</c:forEach>
+							</select>
+						</div>
+					</div>				
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label>Situações</label>
+							<input type="hidden" id="situacoesSelecionadas" name="situacoesSelecionadas" />
+							<table id="situacoesServico"></table>
+						</div>
+					</div>				
+				</div>
+				<div class="row">
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label>Pessoas</label>
+							<select name="idOrgaoUsuario" id="idOrgaoUsuario" class="form-control">
+								<option value="-1">Todos</option>
+								<c:forEach var="ousu" items="${cpOrgaosUsuario}">
+									<option value="${ousu.idOrgaoUsu}">
+										${ousu.nmOrgaoUsu}</option>
+								</c:forEach>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="form-group">
+							<button class="btn btn-primary" onClick="javascript:gerar(); return false;">Gerar...</button>
+						</div>
+					</div>				
+				</div>
+			</form>
 			</div>
 		</div>
 	</div>
-	<br />
-	<div id="div-tempo"
-		style="display: none; position: absolute; text-align: center; filter: alpha(opacity =     60); opacity: 0.4; background-color: #dcdcdc; vertical-align: middle; border-width: 2px; border-color: darkblue; border-style: solid;">
-		<div
-			style="position: absolute; font-family: sans-serif50 %; left: 40%; top: 50%; font-size: medium; large; font-weight: bolder; color: purple;">Aguarde...</div>
+	<div id="div-tempo" style="display: none; position: absolute; text-align: center; filter: alpha(opacity =     60); opacity: 0.4; background-color: #dcdcdc; vertical-align: middle; border-width: 2px; border-color: darkblue; border-style: solid;">
+		<div style="position: absolute; font-family: sans-serif50 %; left: 40%; top: 50%; font-size: medium; large; font-weight: bolder; color: purple;">Aguarde...</div>
 	</div>
 </siga:pagina>
 <script type="text/javascript">

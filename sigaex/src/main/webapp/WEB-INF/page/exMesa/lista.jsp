@@ -28,26 +28,20 @@
 
 		<div class="row">
 			<div class="col col-12 col-md-auto">
-				<h2 class="mb-3">Mesa Virtual</h2>
+				<h2 class="mb-3"><i class="fa fa-file-alt"></i> Mesa Virtual</h2>
 			</div>
 			<div class="col col-12 col-sm-4 col-md-auto ml-md-auto mb-3">
-				<a href="expediente/doc/editar" class="btn btn-outline-success form-control"> <img
-					src="/siga/css/famfamfam/icons/add.png" class="mr-1 mb-1" title="">
+				<a href="expediente/doc/editar" class="btn btn-outline-success form-control"> <i class="fas fa-plus-circle"></i>
 						Criar Documento</a>
 			</div>
 			<div class="col col-12 col-sm-4 col-md-auto mb-3">
 				<a href="expediente/doc/listar?primeiraVez=sim" class="btn btn-outline-primary form-control">
-					<img src="/siga/css/famfamfam/icons/magnifier.png"
-					class="mr-1 mb-1" title=""> Pesquisar 
+					<i class="fas fa-search"></i> Pesquisar 
 				</a>
 			</div>
 			<div class="col col-12 col-sm-4 col-md-auto" v-if="carregando || (!errormsg &amp;&amp; filtrados.length >= 0)">
 				<div class="input-group mb-3">
-					<div class="input-group-addon">
-						<span class="fa fa-search"></span>
-					</div>
-					<input type="text" class="form-control" placeholder="Filtrar"
-						v-model="filtro" ng-model-options="{ debounce: 200 }">
+					<input type="text" class="form-control" placeholder="Filtrar" v-model="filtro" ng-model-options="{ debounce: 200 }">
 				</div>
 			</div>
 			<div class="col col-sm-12" v-if="errormsg">
@@ -76,15 +70,15 @@
 				</p>
 			</div>
 		</div>
-
+		
 		<div class="row" v-if="filtrados.length > 0">
 			<div class="col-sm-12">
 				<table class="table table-sm table-borderless">
 					<tbody>
 						<template v-for="f in filtrados">
-						<tr v-if="f.grupoExibir" class="table-group">
-							<th colspan="6" class="pt-3 pb-0 pl-0">
-								<h4 class="mb-1">{{f.grupoNome}}</h4>
+						<tr v-if="f.grupoExibir" class="table-group alert alert-info align-middle">
+							<th colspan="6" class="pb-0 pl-0">
+								 <h5 class="mb-1 pl-2"><i class="fa fa-file"></i> {{f.grupoNome}}</h5>
 							</th>
 						</tr>
 						<tr v-if="f.grupoExibir" class="table-head">

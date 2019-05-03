@@ -32,7 +32,7 @@
 			<pg:pages>
 			 	<c:if test="${not firstpgpages}"> | </c:if>
 			 	<c:set var="firstpgpages" value="${false}"/>
-				<a href="javascript:sbmt(${(pageNumber-1)*maxItens});" <c:if test="${pageNumber == currentPageNumber}">class="current"</c:if>><c:out value="${pageNumber}" /></a>
+				<button type="button" class="btn btn-primary btn-sm active"  onclick="javascript:sbmt(${(pageNumber-1)*maxItens});" <c:if test="${pageNumber == currentPageNumber}">class="btn-secondary" disabled</c:if>><c:out value="${pageNumber}" /></button>
 			</pg:pages>
 		</p>
 	</div>

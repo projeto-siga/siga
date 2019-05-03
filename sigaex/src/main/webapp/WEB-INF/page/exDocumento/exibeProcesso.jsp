@@ -264,7 +264,6 @@
 </div>
 	<script src="/siga/bootstrap/js/bootstrap.min.js"></script>
 
-<siga:rodape />
 
 <script>
 	var path = '/sigaex/app/arquivo/exibir?arquivo=';

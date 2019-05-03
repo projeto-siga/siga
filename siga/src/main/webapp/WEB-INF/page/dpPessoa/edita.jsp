@@ -83,7 +83,7 @@
 
 	function validarEmail(campo) {
 		if(campo.value != "") {
-			var RegExp = /\b[\w]+@[\w]+\.[\w]+/;
+			var RegExp = /\b[\w]+@[\w-]+\.[\w]+/;
 	
 			if (campo.value.search(RegExp) == -1) {
 					alert("E-mail inválido!");

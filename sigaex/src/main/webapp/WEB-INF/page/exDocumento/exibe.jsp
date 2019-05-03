@@ -3,6 +3,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
@@ -207,7 +208,7 @@
 								<thead>
 									<tr>
 										<th rowspan="2" align="center" style="padding: 5px 5px;">Tempo</th>
-										<th rowspan="2" style="padding: 5px 5px;">Lotação</th>
+										<th rowspan="2" style="padding: 5px 5px;"><fmt:message key="usuario.lotacao"/></th>
 										<th rowspan="2" style="padding: 5px 5px;">Evento</th>
 										<th rowspan="2" style="padding: 5px 5px;">Descrição</th>
 									</tr>
@@ -781,7 +782,7 @@
 								<b>Suporte:</b> ${docVO.fisicoOuEletronico}
 							</p>
 							<p>
-								<b>Data:</b> ${docVO.dtDocDDMMYY}
+								<b><fmt:message key="documento.data.assinatura"/></b> ${docVO.dtDocDDMMYY}
 								<c:if test="${not empty docVO.originalData}">- <b>original:</b> ${docVO.originalData}</c:if>
 							</p>
 							<c:if test="${not empty docVO.originalNumero}">

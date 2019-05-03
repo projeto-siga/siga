@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="128kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
@@ -62,7 +63,8 @@
 						<c:choose>
 							<c:when test="${possuiMaisQueUmModelo}">
 								<div class="form-group">
-									<label for="modelos-select">Modelo</label>
+									<label for="modelos-select"><fmt:message key="documento.modelo"/></label>
+
 									<div class="btn-group hierarchy-select form-control" data-resize="auto" id="modelos-select">
 										<button type="button" class="btn btn-sm btn-light border border-dark dropdown-toggle"
 											id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-disabled="true">
@@ -215,7 +217,7 @@
 									<input type="hidden" name="campos" value="substituicao" />
 									<input type="hidden" name="campos" value="personalizacao" />
 									<input type="hidden" id="temCossignatarios" value="${not empty exDocumentoDTO.doc.cosignatarios}" />
-									<label>Subscritor</label>
+									<label><fmt:message key="documento.subscritor"/></label>
 									<siga:selecao propriedade="subscritor" inputName="exDocumentoDTO.subscritor" modulo="siga" tema="simple" />
 								</div>
 							</div>
@@ -338,7 +340,7 @@
 					<input type="hidden" name="campos" value="preenchimento" />
 					<div class="col-sm-5">
 						<div class="form-group">
-							<label>Preenchimento Automático</label>
+							<label><fmt:message key="documento.preenchimento.automatico"/></label>							
 							<select id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()" class="form-control">
 								<c:forEach items="${exDocumentoDTO.preenchimentos}" var="item">
 									<option value="${item.idPreenchimento}"
@@ -479,7 +481,7 @@
 									<c:when test='${exDocumentoDTO.tipoEmitente == 1}'>
 										<input type="hidden" name="campos" value="cpOrgaoSel.id" />
 										<siga:selecao propriedade="cpOrgao" inputName="exDocumentoDTO.cpOrgao" tema="simple" modulo="siga" />
-										<label for="exDocumentoDTO.nmSubscritorExt">Subscritor</label>
+										<label for="exDocumentoDTO.nmSubscritorExt"><fmt:message key="documento.subscritor"/></label>									
 										<input type="hidden" name="campos" value="nmSubscritorExt" />
 										<input type="text" name="exDocumentoDTO.nmSubscritorExt" size="30" maxLength="256" value="${exDocumentoDTO.nmSubscritorExt}" class="form-control"/>
 									</c:when>
@@ -515,7 +517,7 @@
 						<c:if test='${exDocumentoDTO.tipoDocumento == "interno"}'>
 							<c:if test="${not empty exDocumentoDTO.modelo.nmArqMod or exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker'}">
 								<button type="button" name="ver_doc" onclick="javascript: popitup_documento(false); return false;" class="btn btn-info" accesskey="v"><u>V</u>er Documento</button>
-								<button type="button" name="ver_doc_pdf" onclick="javascript: popitup_documento(true); return false;" class="btn btn-info" accesskey="i">Ver <u>I</u>mpressão</button>
+								<button type="button" name="ver_doc_pdf" onclick="javascript: popitup_documento(true); return false;" class="btn btn-info" accesskey="i"><fmt:message key="documento.btn.ver.impressao"/></button>
 							</c:if>
 						</c:if>
 					</div>

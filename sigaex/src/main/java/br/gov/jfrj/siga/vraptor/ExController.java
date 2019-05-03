@@ -253,10 +253,12 @@ public class ExController extends SigaController {
 		return context;
 	}
 
-	private static ResourceBundle getBundle() {
-        if (bundle == null) {
-        	bundle = ResourceBundle.getBundle("messages_" + SigaBaseProperties.getString("siga.local"));
-        }
+    private static ResourceBundle getBundle() {
+    	if (SigaBaseProperties.getString("siga.local") == null) {
+    		bundle = ResourceBundle.getBundle("messages_TRF2");
+    	} else {
+    		bundle = ResourceBundle.getBundle("messages_" + SigaBaseProperties.getString("siga.local"));
+    	}
         return bundle;
     }
 }

@@ -40,7 +40,7 @@
 						<img alt="" src="${login_box_logo}" width="${login_box_logo_size}" align="center"/>
 					</div>
 					
-					<h2 class="text-center pb-1 pt-2">Identificação</h2>
+					<h2 class="text-center pb-1 pt-2"><fmt:message key ="usuario.login.formulario"/></h2>
 
 					<c:if test="${not empty mensagem}">
 						<div class="login-invalido">

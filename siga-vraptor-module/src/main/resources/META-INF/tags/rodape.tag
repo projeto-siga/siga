@@ -64,7 +64,7 @@
 			});
 </script>
 
-<c:if test="${siga_cliente == 'GOVSP'}">
+<c:if test="${siga_cliente == 'GOVSP' and popup != true}">
 	<div class="bg-dark text-center pr-0 pl-0" style="height: 120px;">
 		<img src="/siga/imagens/logo-gesp-slogan-horizontal-cor-texto-branco.png" height="100" class="pt-4">
 	</div>

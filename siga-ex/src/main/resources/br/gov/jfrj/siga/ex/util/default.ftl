@@ -1056,7 +1056,7 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
     
     [#if !gerar_formulario!false]
-    <input type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""}/>
+    <input type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""} class="form-control" />
     [#else]
     <span class="valor">${v}</span>
     [/#if]
@@ -1166,7 +1166,7 @@ LINHA  VARIÁVEL / CONTEÚDO
                         [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
                            && (!((desconsiderarExtensao == 'true')!false)) )]
 [#else]
-<textarea id="${var}" name="${var}">${default!}${v?html}</textarea>
+<textarea id="${var}" name="${var}" class="form-control">${default!}${v?html}</textarea>
 [/#if]
             <table class="entrevista" width="100%">
                 <tr>
@@ -1411,7 +1411,7 @@ window.onload = function(){
                 [/#if]
 
                 [#if !gerar_formulario!false]
-                    <textarea cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""} style="width:100%;">${v}</textarea>
+                    <textarea cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""} style="width:100%;" class="form-control">${v}</textarea>
                 [#else]
                     <span class="valor">${v}</span>
                 [/#if]
@@ -3796,7 +3796,7 @@ Pede deferimento.</span><br/><br/><br/>
 
     [#if !gerar_formulario!false]
         <input type="hidden" name="vars" value="${var}" />
-		<input type="text" name="${var}" value="${v}" size="6" maxlength="5" onblur="javascript:verifica_hora(this, 'Sim');${jreler!}" />
+		<input type="text" name="${var}" value="${v}" size="6" maxlength="5" onblur="javascript:verifica_hora(this, 'Sim');${jreler!}" class="form-control"/>
     [#else]
 		<span class="valor">${v}</span>
     [/#if]

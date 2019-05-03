@@ -11,7 +11,7 @@
 
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
-<siga:pagina titulo="${docVO.sigla}" popup="${param.popup}" />
+<siga:pagina titulo="${docVO.sigla}" popup="${param.popup}" >
 
 <script>
 	if (${not empty f:resource('graphviz.url')}) {
@@ -1064,3 +1064,6 @@
         });
 	</script>
 </c:if>
+</div>
+</div>
+</siga:pagina>

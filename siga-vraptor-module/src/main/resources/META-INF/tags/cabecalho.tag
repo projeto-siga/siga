@@ -57,6 +57,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<c:choose>
+	<c:when test="${siga_cliente == 'GOVSP'}">
+		<meta name="theme-color" content="#35b44a">
+	</c:when>
+	<c:otherwise>
+		<meta name="theme-color" content="#007bff">
+	</c:otherwise>
+</c:choose>
 <title>SIGA - ${titulo_pagina}</title>
 <meta http-equiv="X-UA-Compatible" content="${XUACompatible}" />
 <META HTTP-EQUIV="Expires" CONTENT="0">

@@ -57,7 +57,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
-<meta name="theme-color" content="#6c757d">
 <title>SIGA - ${titulo_pagina}</title>
 <meta http-equiv="X-UA-Compatible" content="${XUACompatible}" />
 <META HTTP-EQUIV="Expires" CONTENT="0">
@@ -85,6 +84,7 @@ ${meta}
 	
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
+		<meta name="theme-color" content="#35b44">
 		<link rel="stylesheet" href="/siga/css/style_siga_govsp.css" type="text/css" media="screen, projection">
 		
 		<c:set var="body_color" value="body_color" scope="request" />
@@ -102,6 +102,7 @@ ${meta}
 		<c:set var="button_class_busca" value="btn-primary" />
 	</c:when>
 	<c:otherwise>
+		<meta name="theme-color" content="bg-primary">
 		<c:set var="ico_siga" value="siga.ico" />
 		<c:set var="menu_class" value="bg-primary" /> 
 		<c:set var="sub_menu_class" value="bg-light" />

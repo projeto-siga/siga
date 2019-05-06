@@ -58,13 +58,13 @@
 					<form role="form" method="post"
 						enctype="application/x-www-form-urlencoded">
 						<div class="form-group">
-							<label for="username"><fmt:message key = "usuario.digite.usuario"/></label> 
+							<label for="username"><fmt:message key="usuario.matricula"/></label> 
 					
 						    <div class="input-group">
 						      <div class="input-group-prepend">
 						        <span class="input-group-text" id="icon-user"><i class="fas fa-user"></i></span>
 						      </div>
-						      <input id="username" type="text" name="username" placeholder="XX99999" onblur="javascript:converteUsuario(this)" autocorrect="off"
+						      <input id="username" type="text" name="username" placeholder="<fmt:message key="usuario.digite.usuario"/>" onblur="javascript:converteUsuario(this)" autocorrect="off"
 								autocapitalize="none" class="form-control" aria-label="Usuário" aria-describedby="icon-user">
 						    </div>
 	

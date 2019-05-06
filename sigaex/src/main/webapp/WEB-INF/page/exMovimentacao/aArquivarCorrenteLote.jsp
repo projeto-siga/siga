@@ -131,16 +131,17 @@
 									<c:if test="${m.geral}">
 										<td width="2%" align="center"></td>
 										<td width="5%" align="center">${m.doc.dtDocDDMMYY}</td>
-										<td width="4%" align="center">
-											<siga:selecionado sigla="${m.doc.subscritor.iniciais}" descricao="${m.doc.subscritor.descricao}" />
-										</td>
-										<td width="4%" align="center">
+										<td width="5%" align="center">
 											<siga:selecionado sigla="${m.doc.lotaSubscritor.sigla}" descricao="${m.doc.lotaSubscritor.descricao}" />
 										</td>
+										<td width="5%" align="center">
+											<siga:selecionado sigla="${m.doc.subscritor.iniciais}" descricao="${m.doc.subscritor.descricao}" />
+										</td>
+										 
 										<td width="5%" align="center"></td>
 										<td width="4%" align="center"></td>
-										<td width="4%" align="center"></td>
-										<td width="10.5%" align="center"></td>
+										<!--<td width="4%" align="center"></td>
+										<td width="10.5%" align="center"></td> -->
 									</c:if>
 									<td width="44%">${f:descricaoSePuderAcessar(m.doc, titular, lotaTitular)}</td>
 								</tr>

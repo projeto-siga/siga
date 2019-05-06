@@ -3106,13 +3106,13 @@ Pede deferimento.</span><br/><br/><br/>
        [/#if]
 
        [#if botao == 'ambos']
-          <input type="button" name="cmdConfCopia" id="cmdConfCopia" onClick="javascript: incluiApplet(true,false)" value="Autenticar ${emLote!""}" class="gt-btn-large gt-btn-left">
-          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false,false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">       
+          <input type="button" name="cmdConfCopia" id="cmdConfCopia" onClick="javascript: incluiApplet(true,false)" value="Autenticar ${emLote!""}" class="btn btn-primary">
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false,false)" value="Assinar ${emLote!""}" class="btn btn-primary">       
        [#else]
-          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false)" value="Assinar ${emLote!""}" class="btn btn-primary">
        [/#if]
        [#if !ext_assinatura_config_remoto]
-        <input type="button" name="cmdConfigurar" id="cmdConfigurar" onClick="javascript: incluiApplet(false,true)" value="Configurar Assinador" class="gt-btn-large gt-btn-left">
+        <input type="button" name="cmdConfigurar" id="cmdConfigurar" onClick="javascript: incluiApplet(false,true)" value="Configurar Assinador" class="btn btn-primary">
        [/#if]
 
 
@@ -3268,13 +3268,13 @@ Pede deferimento.</span><br/><br/><br/>
        [/#if]
 
        [#if botao == 'ambos']
-          <input type="button" name="cmdConfCopia" id="cmdConfCopia" onClick="javascript: incluiApplet(true,false)" value="Conferir Cópia ${emLote!""}" class="gt-btn-large gt-btn-left">
-          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false,false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">       
+          <input type="button" name="cmdConfCopia" id="cmdConfCopia" onClick="javascript: incluiApplet(true,false)" value="Conferir Cópia ${emLote!""}" class="btn btn-primary">
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false,false)" value="Assinar ${emLote!""}" class="btn btn-primary">       
        [#else]
-          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false)" value="Assinar ${emLote!""}" class="btn btn-primary">
        [/#if]
        [#if !ext_assinatura_config_remoto]
-        <input type="button" name="cmdConfigurar" id="cmdConfigurar" onClick="javascript: incluiApplet(false,true)" value="Configurar Assinador" class="gt-btn-large gt-btn-left">
+        <input type="button" name="cmdConfigurar" id="cmdConfigurar" onClick="javascript: incluiApplet(false,true)" value="Configurar Assinador" class="btn btn-primary">
        [/#if]
 
 
@@ -3428,13 +3428,13 @@ Pede deferimento.</span><br/><br/><br/>
        [/#if]
 
        [#if botao == 'ambos']
-          <input type="button" name="cmdConfCopia" id="cmdConfCopia" onClick="javascript: incluiApplet(true,false)" value="Conferir Cópia ${emLote!""}" class="gt-btn-large gt-btn-left">
-          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false,false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">       
+          <input type="button" name="cmdConfCopia" id="cmdConfCopia" onClick="javascript: incluiApplet(true,false)" value="Conferir Cópia ${emLote!""}" class="btn btn-primary">
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false,false)" value="Assinar ${emLote!""}" class="btn btn-primary">       
        [#else]
-          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false)" value="Assinar ${emLote!""}" class="gt-btn-large gt-btn-left">
+          <input type="button" name="cmdAssinar" id="cmdAssinar" onClick="javascript: incluiApplet(false)" value="Assinar ${emLote!""}" class="btn btn-primary">
        [/#if]
        [#if !ext_assinatura_config_remoto]
-        <input type="button" name="cmdConfigurar" id="cmdConfigurar" onClick="javascript: incluiApplet(false,true)" value="Configurar Assinador" class="gt-btn-large gt-btn-left">
+        <input type="button" name="cmdConfigurar" id="cmdConfigurar" onClick="javascript: incluiApplet(false,true)" value="Configurar Assinador" class="btn btn-primary">
        [/#if]
 
 

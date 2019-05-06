@@ -63,26 +63,27 @@
 								<c:otherwise>${lotaTitular.descricao}</c:otherwise>
 							</c:choose></h2>
 						</h6>
-						<div class="card bg-light mb-3" >
-							<div class="card-body">
-							<table class="table table-sm">
-								<tr class="header">
-									<td rowspan="2" align="center">
-										<input type="checkbox" name="checkall" onclick="checkUncheckAll(this)" />
-									</td>
-									<td rowspan="2" align="right">Número</td>
-									<td rowspan="2" align="center">Destinação da via</td>
-									<td colspan="3" align="center">Documento</td>
-									<td colspan="2" align="center">Última Movimentação</td>
-									<td rowspan="2">Descrição</td>
-								</tr>
-								<tr class="header">
-									<td align="center">Data</td>
-									<td align="center">Lotação</td>
-									<td align="center">Pessoa</td>
-									<td align="center">Data</td>
-									<td align="center">Pessoa</td>
-								</tr>
+						<div>
+							<table class="table table-hover table-striped">
+								<thead class="thead-dark align-middle text-center">
+									<tr>
+										<th rowspan="2" align="center">
+											<input type="checkbox" name="checkall" onclick="checkUncheckAll(this)" />
+										</th>
+										<th rowspan="2" align="right">Número</th>
+										<th rowspan="2" align="center">Destinação da via</th>
+										<th colspan="3" align="center">Documento</th>
+										<th colspan="2" align="center">Última Movimentação</th>
+										<th rowspan="2">Descrição</th>
+									</tr>
+									<tr>
+										<th align="center">Data</th>
+										<th align="center">Lotação</th>
+										<th align="center">Pessoa</th>
+										<th align="center">Data</th>
+										<th align="center">Pessoa</th>
+									</tr>
+								</thead>
 								<c:set var="primeiro" value="${true}" />
 								</c:if>
 	
@@ -147,7 +148,6 @@
 								</c:forEach>
 								<c:if test="${not empty primeiro}">
 							</table>
-							</div>
 						</div>
 					</c:if>
 			</c:forEach>

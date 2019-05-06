@@ -8,24 +8,20 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-<siga:pagina titulo="Assinatura em Lote"
-						 onLoad="javascript: TestarAssinaturaDigital();"
-						 incluirJs="/sigaex/javascript/assinatura.js" compatibilidade="IE=EmulateIE9">
-
-	<script type="text/javascript" language="Javascript1.1">
-		/*  converte para maiúscula a sigla do estado  */
-		function converteUsuario(nomeusuario) {
-			re = /^[a-zA-Z]{2}\d{3,6}$/;
-			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
-			tmp = nomeusuario.value;
-			if (tmp.match(re) || tmp.match(ret2)) {
-				nomeusuario.value = tmp.toUpperCase();
-			}
+<siga:pagina titulo="Assinatura em Lote" onLoad="javascript: TestarAssinaturaDigital();" incluirJs="/sigaex/javascript/assinatura.js" compatibilidade="IE=EmulateIE9">
+<script type="text/javascript" language="Javascript1.1">
+	/*  converte para maiúscula a sigla do estado  */
+	function converteUsuario(nomeusuario) {
+		re = /^[a-zA-Z]{2}\d{3,6}$/;
+		ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
+		tmp = nomeusuario.value;
+		if (tmp.match(re) || tmp.match(ret2)) {
+			nomeusuario.value = tmp.toUpperCase();
 		}
-	</script>
+	}
+</script>
 
-	<script type="text/javascript" language="Javascript1.1">
-		
+<script type="text/javascript" language="Javascript1.1">
 	function checkUncheckAll(theElement) {
 		var theForm = theElement.form, z = 0;
 		for(z=0; z<theForm.length;z++) {
@@ -46,23 +42,16 @@
 		document.getElementById('div_' + el).style.display=sel.value == -1 ? '' : 'none';
 		document.getElementById(el).focus();
 	}
-	
-	
 </script>
-
-	<div  class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-        <h2>Assinatura em Lote</h2>
-        <form name="frm" id="frm" cssClass="form" theme="simple">
-		
+<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
+	<div class="container-fluid">
+	<form name="frm" id="frm" cssClass="form" theme="simple">
 		<input type="hidden" name="postback" value="1" />
-		<div class="gt-content-box gt-for-table">	
-		<table class="gt-form-table">
-			<tr class="header">
-				<td>Assinatura</td>
-			</tr>
-			<tr class="button">
-			<td>
+		<div class="card bg-light mb-3" >
+			<div class="card-header">
+				<h5>Assinatura</h5>
+			</div>
+			<div class="card-body">
 				<div id="dados-assinatura" style="visible: hidden">
 				    <c:set var="jspServer" value="${request.contextPath}/app/expediente/mov/assinar_gravar" />
 				    <c:set var="jspServerSenha" value="${request.contextPath}/app/expediente/mov/assinar_senha_gravar" />
@@ -83,104 +72,108 @@
 						<c:set var="botao" value="autenticando" />
 					</c:if>
 				    <c:set var="lote" value="true"/>	
-				</div>			
-				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
-					<c:import url="/javascript/inc_assina_js.jsp" />
-						<div id="capicom-div">
-							<c:if test="${not autenticando}">
-								<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Documento</a>
-							</c:if>
-							<c:if test="${autenticando}">
-								<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar Documento</a>
-							</c:if>
-						</div> 
-					<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
-					<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://drive.google.com/file/d/0B_WTuFAmL6ZERGhIczRBS0ZMaVE/view"><u>aqui</u></a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
-				<script type="text/javascript">
-					 if (window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgent.indexOf(" rv:11.0") > 0) {
-						 document.getElementById("capicom-div").style.display = "block";
-						 document.getElementById("ie-missing").style.display = "none";
-					} else {
-						 document.getElementById("capicom-div").style.display = "none";
-						 document.getElementById("ie-missing").style.display = "block";
-					}
-				 </script>
-		    
-				</c:if>
-			
-				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">		    
-			   		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}	
-	         	</c:if>
-	         	<c:if test="${(not empty documentosQuePodemSerAssinadosComSenha)}">
-	         		<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="gt-btn-large gt-btn-left">Assinar com Senha</a>  
-	         	</c:if>
-	        </td> 				
-			</tr>
-		</table>	
-		</div>			
-		<br />
+				</div>
+				<div class="row">
+					<div class="col-sm">
+						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;VBS:VBScript e CAPICOM')}">
+							<div class="form-group form-inline">
+							<c:import url="/javascript/inc_assina_js.jsp" />
+								<div id="capicom-div">
+									<c:if test="${not autenticando}">
+										<a id="bot-assinar" href="#" onclick="javascript: AssinarDocumentos('false', this);" class="gt-btn-alternate-large gt-btn-left">Assinar Documento</a>
+									</c:if>
+									<c:if test="${autenticando}">
+										<a id="bot-conferir" href="#" onclick="javascript: AssinarDocumentos('true', this);" class="gt-btn-alternate-large gt-btn-left">Autenticar Documento</a>
+									</c:if>
+								</div> 
+							<p id="ie-missing" style="display: none;">A assinatura digital utilizando padrão do SIGA-DOC só poderá ser realizada no Internet Explorer. No navegador atual, apenas a assinatura com <i>Applet Java</i> é permitida.</p>
+							<p id="capicom-missing" style="display: none;">Não foi possível localizar o componente <i>CAPICOM.DLL</i>. Para realizar assinaturas digitais utilizando o método padrão do SIGA-DOC, será necessário instalar este componente. O <i>download</i> pode ser realizado clicando <a href="https://drive.google.com/file/d/0B_WTuFAmL6ZERGhIczRBS0ZMaVE/view"><u>aqui</u></a>. Será necessário expandir o <i>ZIP</i> e depois executar o arquivo de instalação.</p>
+							<script type="text/javascript">
+								 if (window.navigator.userAgent.indexOf("MSIE ") > 0 || window.navigator.userAgent.indexOf(" rv:11.0") > 0) {
+									 document.getElementById("capicom-div").style.display = "block";
+									 document.getElementById("ie-missing").style.display = "none";
+								} else {
+									 document.getElementById("capicom-div").style.display = "none";
+									 document.getElementById("ie-missing").style.display = "block";
+								}
+							 </script>
+							</div>
+						</c:if>
+						<div class="form-group form-inline">
+							<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">		    
+						   		${f:obterExtensaoAssinador(lotaTitular.orgaoUsuario,request.scheme,request.serverName,request.serverPort,urlPath,jspServer,nextURL,botao,lote)}	
+				         	</c:if>
+				         	<c:if test="${(not empty documentosQuePodemSerAssinadosComSenha)}">
+				         		<a id="bot-assinar-senha" href="#" onclick="javascript: assinarComSenha();" class="btn btn-primary ml-3">Assinar com Senha</a>  
+				         	</c:if>
+				         </div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<c:if test="${(not empty itensSolicitados)}">			
-		    <h2>Documentos pendentes de assinatura: Como Subscritor</h2>			
-			<div  class="gt-content-box gt-for-table">
-		    <table class="gt-table">			    
-			    <tr>
-			        <th width="3%"></th>
-			        <th width="3%"></th>
-			        <th width="13%" align="left">Número</th>	
-			        <th  width="5%"></th>		       	        
-			        <th width="15%" colspan="2" align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cadastrante</th>	
-			        <th width="15%"></th>	 <th width="49%"></th>			       
-			    </tr>
-			    <tr>
-			        <th width="3%"></th>
-			        <th width="3%" align="right"><input type="checkbox" name="checkall"
-			    					onclick="checkUncheckAll(this)" /></th>	
-			     	<th width="13%"></th>													
-			        <th width="5%" align="center">Data</th>
-			        <th width="10%" align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lotacao</th>
-			        <th width="5%" align="left">Pessoa</th>			        
-			        <th width="15%" align="left">Tipo</th>
-			        <th width="49%" align="left">Descrição</th>				 
-			    </tr>	   		   
-			    <c:forEach var="doc" items="${itensSolicitados}">
-			        <c:set var="x" scope="request">chk_${doc.idDoc}</c:set>
-				    <c:remove var="x_checked" scope="request" />
-				    <c:if test="${param[x] == 'true'}">
-				       <c:set var="x_checked" scope="request">checked</c:set>
-				    </c:if>
-				   <c:set var="podeAssinarComSenha" value="${f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"/>
-                   <c:set var="classAssinarComSenha" value="nao-pode-assinar-senha"/>
-		           <c:if test="${podeAssinarComSenha}">
-		              <c:set var="classAssinarComSenha" value="pode-assinar-senha"/>
-		           </c:if>
-			        <tr class="even">
-				        <td width="3%"align="center">
-        		           <c:if test="${podeAssinarComSenha}">
-								<img src="/siga/css/famfamfam/icons/keyboard.png" alt="Permite assinatura com senha" title="Permite assinatura com senha" />
-						   </c:if> 
-				        </td>
-				        <td width="3%"align="center">
-				           <input type="checkbox" name="${x}"
-				           value="true" ${x_checked} class="${classAssinarComSenha}" />
-				        </td>
-     			        <td width="13%"align="left">
-				            <a href="/sigaex/app/expediente/doc/exibir?sigla=${doc.sigla}">${doc.codigo}</a>
-			            </td>
-			            <td width="5%" align="center">${doc.dtDocDDMMYY}</td>
-			            <td width="10%" align="center">${doc.lotaCadastrante.siglaLotacao}</td>
-			            <td width="5%" align="left">${doc.cadastrante.sigla}</td>			            
-			            <td width="15%" align="left">${doc.descrFormaDoc}</td>
-			            <td width="49%"align="left">${doc.descrDocumento}</td>			            				    
-			        </tr>			         		         
-			        <input type="hidden" name="pdf${x}" value="${doc.sigla}" />
-				    <input type="hidden" name="url${x}" value="/app/arquivo/exibir?arquivo=${doc.codigoCompacto}.pdf"/>
-			    </c:forEach>   
-			 </table>
+		    <h5>Documentos pendentes de assinatura: Como Subscritor</h5>			
+			<div>
+			    <table class="table table-hover table-striped">
+					<thead class="thead-dark align-middle text-center">			    
+					    <tr>
+					        <th width="3%"></th>
+					        <th width="3%"></th>
+					        <th width="13%" align="left">Número</th>	
+					        <th  width="5%"></th>		       	        
+					        <th width="15%" colspan="2" align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cadastrante</th>	
+					        <th width="15%"></th>	 <th width="49%"></th>			       
+					    </tr>
+					    <tr>
+					        <th width="3%"></th>
+					        <th width="3%" align="right"><input type="checkbox" name="checkall"
+					    					onclick="checkUncheckAll(this)" /></th>	
+					     	<th width="13%"></th>													
+					        <th width="5%" align="center">Data</th>
+					        <th width="10%" align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lotacao</th>
+					        <th width="5%" align="left">Pessoa</th>			        
+					        <th width="15%" align="left">Tipo</th>
+					        <th width="49%" align="left">Descrição</th>				 
+					    </tr>
+				    </thead>	   		   
+				    <c:forEach var="doc" items="${itensSolicitados}">
+				        <c:set var="x" scope="request">chk_${doc.idDoc}</c:set>
+					    <c:remove var="x_checked" scope="request" />
+					    <c:if test="${param[x] == 'true'}">
+					       <c:set var="x_checked" scope="request">checked</c:set>
+					    </c:if>
+					   <c:set var="podeAssinarComSenha" value="${f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"/>
+	                   <c:set var="classAssinarComSenha" value="nao-pode-assinar-senha"/>
+			           <c:if test="${podeAssinarComSenha}">
+			              <c:set var="classAssinarComSenha" value="pode-assinar-senha"/>
+			           </c:if>
+				        <tr class="even">
+					        <td width="3%"align="center">
+	        		           <c:if test="${podeAssinarComSenha}">
+									<img src="/siga/css/famfamfam/icons/keyboard.png" alt="Permite assinatura com senha" title="Permite assinatura com senha" />
+							   </c:if> 
+					        </td>
+					        <td width="3%"align="center">
+					           <input type="checkbox" name="${x}"
+					           value="true" ${x_checked} class="${classAssinarComSenha}" />
+					        </td>
+	     			        <td width="13%"align="left">
+					            <a href="/sigaex/app/expediente/doc/exibir?sigla=${doc.sigla}">${doc.codigo}</a>
+				            </td>
+				            <td width="5%" align="center">${doc.dtDocDDMMYY}</td>
+				            <td width="10%" align="center">${doc.lotaCadastrante.siglaLotacao}</td>
+				            <td width="5%" align="left">${doc.cadastrante.sigla}</td>			            
+				            <td width="15%" align="left">${doc.descrFormaDoc}</td>
+				            <td width="49%"align="left">${doc.descrDocumento}</td>			            				    
+				        </tr>			         		         
+				        <input type="hidden" name="pdf${x}" value="${doc.sigla}" />
+					    <input type="hidden" name="url${x}" value="/app/arquivo/exibir?arquivo=${doc.codigoCompacto}.pdf"/>
+				    </c:forEach>   
+				 </table>
 	         </div>
 	      </c:if>      		    
-	  </<form>
-	</div></div>	
+	  </form>
+	</div>	
 	
 	<c:if test="${(not empty documentosQuePodemSerAssinadosComSenha)}">
 		<div id="dialog-form" title="Assinar com Senha">
@@ -203,7 +196,7 @@
 		 <script> 
 		    dialog = $("#dialog-form").dialog({
 		      autoOpen: false,
-		      height: 210,
+		      height: 360,
 		      width: 350,
 		      modal: true,
 		      buttons: {
@@ -223,6 +216,15 @@
 
 		    dialogM = $("#dialog-message").dialog({
 		        autoOpen: false,
+				height: 230,
+				width: 550,
+				modal: true,
+				buttons: {
+				    "Ok": function() {
+				      dialogM.dialog( "close" );
+				    }
+				},
+		        
 		    });
 		
 		    function assinarComSenha() {

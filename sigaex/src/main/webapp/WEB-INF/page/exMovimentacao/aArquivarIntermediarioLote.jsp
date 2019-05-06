@@ -134,98 +134,98 @@
 			</script>
 		</pg:pager>
 		<c:forEach var="topico" items="${itens}">
-			<h6>${topico.titulo}</h6>
-			<div class="card bg-light mb-3" >
-				<div class="card-body">
-					<table class="table table-sm">
+			<h5>${topico.titulo}</h5>
+			<div>
+				<table class="table table-hover table-striped">
+					<thead class="thead-dark align-middle text-center">
 						<tr class="header">
-							<td rowspan="2" align="center">
+							<th rowspan="2" align="center">
 								<c:if test="${topico.selecionavel}">
 								<input type="checkbox"
 									name="checkall" onclick="checkUncheckAll(this)" />
 								</c:if>
-							</td>
-							<td rowspan="2" align="right">Número</td>
-							<td colspan="3" align="center">Documento</td>
-							<td colspan="2" align="center">Última Movimentação</td>
-							<td rowspan="2">Descrição</td>
+							</th>
+							<th rowspan="2" align="right">Número</th>
+							<th colspan="3" align="center">Documento</th>
+							<th colspan="2" align="center">Última Movimentação</th>
+							<th rowspan="2">Descrição</th>
 						</tr>
 						<tr class="header">
-							<td align="center">Data</td>
-							<td align="center">Lotação</td>
-							<td align="center">Pessoa</td>
-							<td align="center">Data</td>
-							<td align="center">Pessoa</td>
+							<th align="center">Data</th>
+							<th align="center">Lotação</th>
+							<th align="center">Pessoa</th>
+							<th align="center">Data</th>
+							<th align="center">Pessoa</th>
 						</tr>
-						<c:forEach var="item" items="${topico.itens}">
-							<c:set var="mob" value="${item.mob}" />
-							<c:set var="mar" value="${item.marca}" />
+					</thead>
+					<c:forEach var="item" items="${topico.itens}">
+						<c:set var="mob" value="${item.mob}" />
+						<c:set var="mar" value="${item.marca}" />
+						<c:choose>
+							<c:when test='${evenorodd == "even"}'>
+								<c:set var="evenorodd" value="odd" />
+							</c:when>
+							<c:otherwise>
+								<c:set var="evenorodd" value="even" />
+							</c:otherwise>
+						</c:choose>
+						<tr class="${evenorodd}">
 							<c:choose>
-								<c:when test='${evenorodd == "even"}'>
-									<c:set var="evenorodd" value="odd" />
+								<c:when test="${topico.selecionavel}">
+									<c:set var="x" scope="request">chk_${mob.id}</c:set>
+									<c:remove var="x_checked" scope="request" />
+									<c:if test="${param[x] == 'true'}">
+										<c:set var="x_checked" scope="request">checked</c:set>
+									</c:if>
+									<td width="2%" align="center"><input type="checkbox"
+										name="${x}" value="true" ${x_checked} /></td>
+								</c:when>
+								<c:otherwise><td width="2%" align="center"></td></c:otherwise>
+							</c:choose>
+							<td width="11.5%" align="right">
+								<c:choose>
+								<c:when test='${param.popup!="true"}'>							
+									<a href="javascript:void(0)"
+													onclick="javascript: window.open('${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mob.sigla}&popup=true', '_new', 'width=700,height=500,scrollbars=yes,resizable')">${mob.sigla}</a>
 								</c:when>
 								<c:otherwise>
-									<c:set var="evenorodd" value="even" />
+									<a
+										href="javascript:opener.retorna_${param.propriedade}('${mob.id}','${mob.sigla},'');">${mob.sigla}</a>
 								</c:otherwise>
-							</c:choose>
-							<tr class="${evenorodd}">
-								<c:choose>
-									<c:when test="${topico.selecionavel}">
-										<c:set var="x" scope="request">chk_${mob.id}</c:set>
-										<c:remove var="x_checked" scope="request" />
-										<c:if test="${param[x] == 'true'}">
-											<c:set var="x_checked" scope="request">checked</c:set>
-										</c:if>
-										<td width="2%" align="center"><input type="checkbox"
-											name="${x}" value="true" ${x_checked} /></td>
-									</c:when>
-									<c:otherwise><td width="2%" align="center"></td></c:otherwise>
 								</c:choose>
-								<td width="11.5%" align="right">
-									<c:choose>
-									<c:when test='${param.popup!="true"}'>							
-										<a href="javascript:void(0)"
-														onclick="javascript: window.open('${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mob.sigla}&popup=true', '_new', 'width=700,height=500,scrollbars=yes,resizable')">${mob.sigla}</a>
-									</c:when>
-									<c:otherwise>
-										<a
-											href="javascript:opener.retorna_${param.propriedade}('${mob.id}','${mob.sigla},'');">${mob.sigla}</a>
-									</c:otherwise>
-									</c:choose>
-								</td>
-								<c:if test="${not mob.geral}">
-									<td width="5%" align="center">${mob.doc.dtDocDDMMYYYY}</td>
-									<td width="5%" align="center"><siga:selecionado
-										sigla="${mob.doc.lotaSubscritor.sigla}"
-										descricao="${mob.doc.lotaSubscritor.descricao}" /></td>
-									<td width="5%" align="center"><siga:selecionado
-										sigla="${mob.doc.subscritor.iniciais}"
-										descricao="${mob.doc.subscritor.descricao}" /></td>
-									<td width="5%" align="center">${mob.ultimaMovimentacaoNaoCancelada.dtMovDDMMYY}</td>
-									<td width="4%" align="center"><siga:selecionado
-										sigla="${mob.ultimaMovimentacaoNaoCancelada.resp.iniciais}"
-										descricao="${mob.ultimaMovimentacaoNaoCancelada.resp.descricao}" /></td>
-								</c:if>
-								<c:if test="${mob.geral}">
-									<td width="2%" align="center"></td>
-									<td width="5%" align="center">${mob.doc.dtDocDDMMYYYY}</td>
-									<td width="4%" align="center"><siga:selecionado
-										sigla="${mob.doc.subscritor.iniciais}"
-										descricao="${mob.doc.subscritor.descricao}" /></td>
-									<td width="4%" align="center"><siga:selecionado
-										sigla="${mob.doc.lotaSubscritor.sigla}"
-										descricao="${mob.doc.lotaSubscritor.descricao}" /></td>
-									<td width="5%" align="center"></td>
-									<td width="4%" align="center"></td>
-									<td width="4%" align="center"></td>
-									<td width="10.5%" align="center"></td>
-								</c:if>
-								<td width="44%">${f:descricaoSePuderAcessar(mob.doc, titular,
-									lotaTitular)}</td>
-							</tr>
-						</c:forEach>
-					</table>
-				</div>
+							</td>
+							<c:if test="${not mob.geral}">
+								<td width="5%" align="center">${mob.doc.dtDocDDMMYYYY}</td>
+								<td width="5%" align="center"><siga:selecionado
+									sigla="${mob.doc.lotaSubscritor.sigla}"
+									descricao="${mob.doc.lotaSubscritor.descricao}" /></td>
+								<td width="5%" align="center"><siga:selecionado
+									sigla="${mob.doc.subscritor.iniciais}"
+									descricao="${mob.doc.subscritor.descricao}" /></td>
+								<td width="5%" align="center">${mob.ultimaMovimentacaoNaoCancelada.dtMovDDMMYY}</td>
+								<td width="4%" align="center"><siga:selecionado
+									sigla="${mob.ultimaMovimentacaoNaoCancelada.resp.iniciais}"
+									descricao="${mob.ultimaMovimentacaoNaoCancelada.resp.descricao}" /></td>
+							</c:if>
+							<c:if test="${mob.geral}">
+								<td width="2%" align="center"></td>
+								<td width="5%" align="center">${mob.doc.dtDocDDMMYYYY}</td>
+								<td width="4%" align="center"><siga:selecionado
+									sigla="${mob.doc.subscritor.iniciais}"
+									descricao="${mob.doc.subscritor.descricao}" /></td>
+								<td width="4%" align="center"><siga:selecionado
+									sigla="${mob.doc.lotaSubscritor.sigla}"
+									descricao="${mob.doc.lotaSubscritor.descricao}" /></td>
+								<td width="5%" align="center"></td>
+								<td width="4%" align="center"></td>
+								<td width="4%" align="center"></td>
+								<td width="10.5%" align="center"></td>
+							</c:if>
+							<td width="44%">${f:descricaoSePuderAcessar(mob.doc, titular,
+								lotaTitular)}</td>
+						</tr>
+					</c:forEach>
+				</table>
 			</div>
 		</c:forEach>
 	</form>

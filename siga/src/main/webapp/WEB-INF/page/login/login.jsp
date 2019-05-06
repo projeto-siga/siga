@@ -23,11 +23,13 @@
 		<c:set var="login_box_class" value="box_login" />
 		<c:set var="login_box_logo" value="/siga/imagens/logo-sem-papel-cor.png" />
 		<c:set var="login_box_logo_size" value="150" />
+		<c:set var="login_box_text" value="" />
 	</c:when>
 	<c:otherwise>
 		<c:set var="login_box_class" value="" />
 		<c:set var="login_box_logo" value="" />
 		<c:set var="login_box_logo_size" value="" />
+		<c:set var="login_box_text" value="<fmt:message key='usuario.login.formulario' />" />
 	</c:otherwise>
 </c:choose>
 
@@ -40,7 +42,7 @@
 						<img alt="" src="${login_box_logo}" width="${login_box_logo_size}" align="center"/>
 					</div>
 					
-					<h2 class="text-center pb-1 pt-2"><fmt:message key ="usuario.login.formulario"/></h2>
+					<h2 class="text-center pb-1 pt-2">${login_box_text}</h2>
 
 					<c:if test="${not empty mensagem}">
 						<div class="login-invalido">

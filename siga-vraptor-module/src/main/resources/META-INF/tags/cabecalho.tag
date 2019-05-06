@@ -57,7 +57,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
-<meta name="theme-color" content="#6c757d">
+<c:choose>
+	<c:when test="${siga_cliente == 'GOVSP'}">
+		<meta name="theme-color" content="#35b44a">
+	</c:when>
+	<c:otherwise>
+		<meta name="theme-color" content="#007bff">
+	</c:otherwise>
+</c:choose>
 <title>SIGA - ${titulo_pagina}</title>
 <meta http-equiv="X-UA-Compatible" content="${XUACompatible}" />
 <META HTTP-EQUIV="Expires" CONTENT="0">
@@ -85,6 +92,7 @@ ${meta}
 	
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
+		<meta name="theme-color" content="#35b44">
 		<link rel="stylesheet" href="/siga/css/style_siga_govsp.css" type="text/css" media="screen, projection">
 		
 		<c:set var="body_color" value="body_color" scope="request" />
@@ -102,6 +110,7 @@ ${meta}
 		<c:set var="button_class_busca" value="btn-primary" />
 	</c:when>
 	<c:otherwise>
+		<meta name="theme-color" content="bg-primary">
 		<c:set var="ico_siga" value="siga.ico" />
 		<c:set var="menu_class" value="bg-primary" /> 
 		<c:set var="sub_menu_class" value="bg-light" />
@@ -144,115 +153,118 @@ ${meta}
 				aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav mr-auto">
-					<!-- navigation -->
-					<siga:menuprincipal />
-					<!-- / navigation -->
-				</ul>
-
-
-				<c:if test="${desabilitarmenu != 'sim'}">
-					<!-- search -->
-					<c:if test="${desabilitarbusca != 'sim'}">
-						<form class="form-inline my-2 my-lg-0">
-							<siga:selecao propriedade="buscar" tipo="generico" tema="simple"
-								ocultardescricao="sim" buscar="nao" siglaInicial=""
-								modulo="siga/public" urlAcao="buscar" urlSelecionar="selecionar"
-								matricula="${titular.siglaCompleta}" />
-							<button class="btn ${button_class_busca} ml-2 my-2 my-sm-0" type="submit">Buscar</button>
-							<script type="text/javascript">
-								if (false) {
-									var lis = document
-											.getElementsByTagName('li');
-
-									for (var i = 0, li; li = lis[i]; i++) {
-										var link = li.getElementsByTagName('a')[0];
-
-										if (link) {
-											link.onfocus = function() {
-												var ul = this.parentNode
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA')}">
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav mr-auto">
+						<!-- navigation -->
+						<siga:menuprincipal />
+						<!-- / navigation -->
+					</ul>
+	
+	
+					<c:if test="${desabilitarmenu != 'sim'}">
+						<!-- search -->
+						<c:if test="${desabilitarbusca != 'sim'}">
+							<form class="form-inline my-2 my-lg-0">
+								<siga:selecao propriedade="buscar" tipo="generico" tema="simple"
+									ocultardescricao="sim" buscar="nao" siglaInicial=""
+									modulo="siga/public" urlAcao="buscar" urlSelecionar="selecionar"
+									matricula="${titular.siglaCompleta}" />
+								<button class="btn ${button_class_busca} ml-2 my-2 my-sm-0" type="submit">Buscar</button>
+								<script type="text/javascript">
+									if (false) {
+										var lis = document
+												.getElementsByTagName('li');
+	
+										for (var i = 0, li; li = lis[i]; i++) {
+											var link = li.getElementsByTagName('a')[0];
+	
+											if (link) {
+												link.onfocus = function() {
+													var ul = this.parentNode
+															.getElementsByTagName('ul')[0];
+													if (ul) {
+														ul.style.display = 'block';
+													}
+												}
+												var ul = link.parentNode
 														.getElementsByTagName('ul')[0];
 												if (ul) {
-													ul.style.display = 'block';
-												}
-											}
-											var ul = link.parentNode
-													.getElementsByTagName('ul')[0];
-											if (ul) {
-												var ullinks = ul
-														.getElementsByTagName('a');
-												var ullinksqty = ullinks.length;
-												var lastItem = ullinks[ullinksqty - 1];
-												if (lastItem) {
-													lastItem.onblur = function() {
-														this.parentNode.parentNode.style.display = 'none';
-														if (this.id == "relclassificados") {
-															var rel = document
-																	.getElementById("relatorios");
-															rel.style.display = 'none';
+													var ullinks = ul
+															.getElementsByTagName('a');
+													var ullinksqty = ullinks.length;
+													var lastItem = ullinks[ullinksqty - 1];
+													if (lastItem) {
+														lastItem.onblur = function() {
+															this.parentNode.parentNode.style.display = 'none';
+															if (this.id == "relclassificados") {
+																var rel = document
+																		.getElementById("relatorios");
+																rel.style.display = 'none';
+															}
+														}
+														lastItem.parentNode.onblur = function() {
+															this.parentNode.style.display = '';
 														}
 													}
-													lastItem.parentNode.onblur = function() {
-														this.parentNode.style.display = '';
-													}
 												}
 											}
 										}
 									}
-								}
-
-								var fld = document
-										.getElementsByName('buscar_genericoSel.sigla')[0];
-								//fld.setAttribute("class", "gt-search-text");
-								//fld.className = "gt-search-text";
-								fld.placeholder = 'Código';
-								fld.onblur = function() {
-									if (this.value == '') {
-										this.value = placeholder;
+	
+									var fld = document
+											.getElementsByName('buscar_genericoSel.sigla')[0];
+									//fld.setAttribute("class", "gt-search-text");
+									//fld.className = "gt-search-text";
+									fld.placeholder = 'Código';
+									fld.onblur = function() {
+										if (this.value == '') {
+											this.value = placeholder;
+											return;
+										}
+										ajax_buscar_generico();
+									};
+									fld.onkeypress = function(event) {
+										var fid = document
+												.getElementsByName('buscar_genericoSel.id')[0];
+	
+										event = (event) ? event : window.event
+										var keyCode = (event.which) ? event.which
+												: event.keyCode;
+										if (keyCode == 13) {
+											if (fid.value == null
+													|| fid.value == "") {
+												fld.onblur();
+											}
+											return false;
+										} else {
+											fid.value = '';
+											return true;
+										}
+									};
+	
+									self.resposta_ajax_buscar_generico = function(
+											response, d1, d2, d3) {
+										var sigla = document
+												.getElementsByName('buscar_genericoSel.sigla')[0].value;
+										var data = response.split(';');
+										if (data[0] == '1') {
+											retorna_buscar_generico(data[1],
+													data[2], data[3]);
+											if (data[1] != null && data[1] != "") {
+												window.location.href = data[3];
+											}
+											return;
+										}
+										retorna_buscar_generico('', '', '');
 										return;
 									}
-									ajax_buscar_generico();
-								};
-								fld.onkeypress = function(event) {
-									var fid = document
-											.getElementsByName('buscar_genericoSel.id')[0];
-
-									event = (event) ? event : window.event
-									var keyCode = (event.which) ? event.which
-											: event.keyCode;
-									if (keyCode == 13) {
-										if (fid.value == null
-												|| fid.value == "") {
-											fld.onblur();
-										}
-										return false;
-									} else {
-										fid.value = '';
-										return true;
-									}
-								};
-
-								self.resposta_ajax_buscar_generico = function(
-										response, d1, d2, d3) {
-									var sigla = document
-											.getElementsByName('buscar_genericoSel.sigla')[0].value;
-									var data = response.split(';');
-									if (data[0] == '1') {
-										retorna_buscar_generico(data[1],
-												data[2], data[3]);
-										if (data[1] != null && data[1] != "") {
-											window.location.href = data[3];
-										}
-										return;
-									}
-									retorna_buscar_generico('', '', '');
-									return;
-								}
-							</script>
-						</form>
+								</script>
+							</form>
+						</c:if>
 					</c:if>
-				</c:if>
+				</div>
+			</c:if>
 		</nav>
 
 		<div class="container-fluid content">

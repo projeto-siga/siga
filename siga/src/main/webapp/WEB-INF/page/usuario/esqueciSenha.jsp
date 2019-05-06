@@ -199,7 +199,7 @@ function refreshWindow(){
 				<p id="msgSenha" class="gt-error">ATENÇÃO: Esta é uma versão de testes. Para sua segurança, NÃO utilize a mesma senha da versão de PRODUÇÃO.</p>
 		</c:if>
 		<div class="card bg-light mb-3" >
-			<div class="card-header"><h5>Esqueci Minha Senha</h5></div>
+			<div class="card-header"><h5>${titulo}</h5></div>
 			<div class="card-body">
 				<c:if test="${empty f:resource('siga.gi.omitir.metodo2') || f:resource('siga.gi.omitir.metodo2') != 'true'}">
 					<h6 class="gt-form-head"><fmt:message key = "usuario.metodo1"/></h6>
@@ -213,7 +213,7 @@ function refreshWindow(){
 							<div class="row">
 								<div class="col-sm-3">
 									<div class="form-group">
-										<label for="usuario.matricula"><fmt:message key = "usuario.matricula"/></label>					
+										<label for="usuario.matricula">Matrícula</label>					
 										<input type="text" name="usuario.matricula" id="txtMatricula"
 											onblur="javascript:converteUsuario(this);javascript:checkIntegradoAD(this);javascript:checkEmailValido(this);" 
 											class="form-control" />

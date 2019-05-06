@@ -23,11 +23,13 @@
 		<c:set var="login_box_class" value="box_login" />
 		<c:set var="login_box_logo" value="/siga/imagens/logo-sem-papel-cor.png" />
 		<c:set var="login_box_logo_size" value="150" />
+		<c:set var="login_box_text" value="" />
 	</c:when>
 	<c:otherwise>
 		<c:set var="login_box_class" value="" />
 		<c:set var="login_box_logo" value="" />
 		<c:set var="login_box_logo_size" value="" />
+		<c:set var="login_box_text" value="<fmt:message key='usuario.login.formulario' />" />
 	</c:otherwise>
 </c:choose>
 
@@ -40,7 +42,7 @@
 						<img alt="" src="${login_box_logo}" width="${login_box_logo_size}" align="center"/>
 					</div>
 					
-					<h2 class="text-center pb-1 pt-2"><fmt:message key ="usuario.login.formulario"/></h2>
+					<h2 class="text-center pb-1 pt-2">${login_box_text}</h2>
 
 					<c:if test="${not empty mensagem}">
 						<div class="login-invalido">
@@ -58,13 +60,13 @@
 					<form role="form" method="post"
 						enctype="application/x-www-form-urlencoded">
 						<div class="form-group">
-							<label for="username"><fmt:message key = "usuario.matricula"/></label> 
+							<label for="username"><fmt:message key="usuario.matricula"/></label> 
 					
 						    <div class="input-group">
 						      <div class="input-group-prepend">
 						        <span class="input-group-text" id="icon-user"><i class="fas fa-user"></i></span>
 						      </div>
-						      <input id="username" type="text" name="username" placeholder="XX99999" onblur="javascript:converteUsuario(this)" autocorrect="off"
+						      <input id="username" type="text" name="username" placeholder="<fmt:message key="usuario.digite.usuario"/>" onblur="javascript:converteUsuario(this)" autocorrect="off"
 								autocapitalize="none" class="form-control" aria-label="Usuário" aria-describedby="icon-user">
 						    </div>
 	

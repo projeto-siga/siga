@@ -47,7 +47,7 @@
 		<input type="hidden" name="postback" value="1" />
 		<div class="card bg-light mb-3" >
 			<div class="card-header">
-				<h5>Assinatura</h5>
+				<h5>Assinatura de Despacho em Lote</h5>
 			</div>
 			<div class="card-body">
 				<div id="dados-assinatura" style="visible: hidden">

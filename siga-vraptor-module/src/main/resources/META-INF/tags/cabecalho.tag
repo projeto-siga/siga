@@ -153,7 +153,7 @@ ${meta}
 				aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
-			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA')}">
+			<c:if test="${siga_cliente == 'GOVSP' and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA')}">
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					<ul class="navbar-nav mr-auto">
 						<!-- navigation -->

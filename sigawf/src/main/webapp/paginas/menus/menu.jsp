@@ -71,7 +71,7 @@
 			<a href="javascript:void(0);" class="nav-link dropdown-toggle" data-toggle="dropdown">Relatórios </a>
 			<ul class="dropdown-menu navmenu-large">
 				<li class="dropdown-submenu">
-					<a href="#" class="nav-link dropdown-toggle">Apresentar Métricas</a>
+					<a href="#" class="dropdown-item dropdown-toggle">Apresentar Métricas</a>
 					<ul class="dropdown-menu">
 						<c:forEach var="pd" items="${processDefinitions}">
 							<li>

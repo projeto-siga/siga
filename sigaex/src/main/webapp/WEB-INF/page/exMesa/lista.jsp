@@ -32,11 +32,11 @@
 			</div>
 			<div class="col col-12 col-sm-4 col-md-auto ml-md-auto mb-3">
 				<a href="expediente/doc/editar" class="btn btn-outline-success form-control"> <i class="fas fa-plus-circle"></i>
-						Criar Documento</a>
+						<fmt:message key="documento.novo"/></a>
 			</div>
 			<div class="col col-12 col-sm-4 col-md-auto mb-3">
 				<a href="expediente/doc/listar?primeiraVez=sim" class="btn btn-outline-primary form-control">
-					<i class="fas fa-search"></i> Pesquisar 
+					<i class="fas fa-search"></i> <fmt:message key="documento.pesquisar"/> 
 				</a>
 			</div>
 			<div class="col col-12 col-sm-4 col-md-auto" v-if="carregando || (!errormsg &amp;&amp; filtrados.length >= 0)">

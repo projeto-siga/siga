@@ -59,7 +59,7 @@
 	
 				<!-- Modelo -->
 				<div class="row">
-					<div class="col-sm-8">
+					<div class="col-sm-7">
 						<c:choose>
 							<c:when test="${possuiMaisQueUmModelo}">
 								<div class="form-group">
@@ -70,7 +70,7 @@
 											id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-disabled="true">
 											<span class="selected-label pull-left">&nbsp;</span>
 										</button>
-										<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+										<div class="dropdown-menu form-control" aria-labelledby="dropdownMenuButton">
 											<div class="hs-searchbox">
 												<input type="text" class="form-control" autocomplete="off" placeholder="Pesquisar modelo...">
 											</div>

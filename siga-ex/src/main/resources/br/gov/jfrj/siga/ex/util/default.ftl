@@ -1373,7 +1373,7 @@ window.onload = function(){
 
     [#if !gerar_formulario!false]
         <input type="hidden" name="vars" value="${var}" />
-        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}">
+        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}" class="form-control">
                     [#list l as opcao]
                         <option[#if v == opcao] selected[/#if] value="${opcao}">${opcao}</option><br/>
             [/#list]
@@ -3929,7 +3929,7 @@ Pede deferimento.</span><br/><br/><br/>
 
     [#if !gerar_formulario!false]
         <input type="hidden" name="vars" value="${var}" />
-        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}">
+        <select name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}" class="form-control">
                     [#list l as opcao]
                         <option[#if v == opcao] selected[/#if] value="${opcao}">${opcao}</option><br/>
             [/#list]

@@ -59,8 +59,7 @@
 							<th colspan="2" align="right" width="20%">Opções de ocorrência</th>					
 						</tr>
 					</thead>
-					
-					<tbody>
+					<tbody class="table-bordered">
 						<c:forEach var="feriado" items="${itens}">
 							<tr>							
 								<c:url var="url" value="/app/feriado/listar">

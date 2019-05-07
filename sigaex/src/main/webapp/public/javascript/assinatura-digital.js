@@ -461,7 +461,7 @@ var providerIttruP11 = {
 	inicializar : function(cont) {
 		try {
 			this.dialog = $(
-					'<div id="dialog-form-pin" title="Assinar com token"><fieldset><label>PIN</label> <br/><input type="password" name="pin" id="pin" class="text ui-widget-content ui-corner-all" autocomplete="off"/></fieldset><fieldset><div id="certChoice"/></fieldset></div>')
+					'<div id="dialog-form-pin" title="Assinar com token"><div class="form-group"><label>PIN</label><input type="password" name="pin" id="pin" class="form-control" autocomplete="off"/></div><fieldset><div id="certChoice"/></fieldset></div>')
 					.dialog(
 							{
 								title : "Assinatura Digital (" + this.nome
@@ -614,7 +614,7 @@ var providerPassword = {
 	inicializar : function(cont) {
 		try {
 			this.dialog = $(
-					'<div id="dialog-form" title="Assinar/Autenticar com Senha"><fieldset><label>Matrícula</label> <br /> <input id="nomeUsuarioSubscritor" type="text" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)" /><br /> <br /> <label>Senha</label><br /> <input type="password" id="senhaUsuarioSubscritor" class="text ui-widget-content ui-corner-all" autocomplete="off" /></fieldset></div>')
+					'<div id="dialog-form" title="Assinar/Autenticar com Senha"><div class="form-group"><label>Matrícula</label><input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="form-control" onblur="javascript:converteUsuario(this)"/></div><div class="form-group"><label>Senha</label><br /> <input type="password" id="senhaUsuarioSubscritor" name="senhaUsuarioSubscritor"  class="form-control"  autocomplete="off" /></div></div>')
 					.dialog({
 						title : "Identificação",
 						width : '50%',

@@ -84,6 +84,8 @@
 										<th align="center">Pessoa</th>
 									</tr>
 								</thead>
+												<tbody class="table-bordered">
+								
 								<c:set var="primeiro" value="${true}" />
 								</c:if>
 	
@@ -147,6 +149,7 @@
 								</tr>
 								</c:if>
 								</c:forEach>
+								</tbody>
 								<c:if test="${not empty primeiro}">
 							</table>
 						</div>

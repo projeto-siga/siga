@@ -135,40 +135,42 @@
 					        <th width="15%" align="left">Tipo</th>
 					        <th width="49%" align="left">Descrição</th>				 
 					    </tr>
-				    </thead>	   		   
-				    <c:forEach var="doc" items="${itensSolicitados}">
-				        <c:set var="x" scope="request">chk_${doc.idDoc}</c:set>
-					    <c:remove var="x_checked" scope="request" />
-					    <c:if test="${param[x] == 'true'}">
-					       <c:set var="x_checked" scope="request">checked</c:set>
-					    </c:if>
-					   <c:set var="podeAssinarComSenha" value="${f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"/>
-	                   <c:set var="classAssinarComSenha" value="nao-pode-assinar-senha"/>
-			           <c:if test="${podeAssinarComSenha}">
-			              <c:set var="classAssinarComSenha" value="pode-assinar-senha"/>
-			           </c:if>
-				        <tr class="even">
-					        <td width="3%"align="center">
-	        		           <c:if test="${podeAssinarComSenha}">
-									<img src="/siga/css/famfamfam/icons/keyboard.png" alt="Permite assinatura com senha" title="Permite assinatura com senha" />
-							   </c:if> 
-					        </td>
-					        <td width="3%"align="center">
-					           <input type="checkbox" name="${x}"
-					           value="true" ${x_checked} class="${classAssinarComSenha}" />
-					        </td>
-	     			        <td width="13%"align="left">
-					            <a href="/sigaex/app/expediente/doc/exibir?sigla=${doc.sigla}">${doc.codigo}</a>
-				            </td>
-				            <td width="5%" align="center">${doc.dtDocDDMMYY}</td>
-				            <td width="10%" align="center">${doc.lotaCadastrante.siglaLotacao}</td>
-				            <td width="5%" align="left">${doc.cadastrante.sigla}</td>			            
-				            <td width="15%" align="left">${doc.descrFormaDoc}</td>
-				            <td width="49%"align="left">${doc.descrDocumento}</td>			            				    
-				        </tr>			         		         
-				        <input type="hidden" name="pdf${x}" value="${doc.sigla}" />
-					    <input type="hidden" name="url${x}" value="/app/arquivo/exibir?arquivo=${doc.codigoCompacto}.pdf"/>
-				    </c:forEach>   
+				    </thead>
+				    <tbody class="table-bordered">
+					    <c:forEach var="doc" items="${itensSolicitados}">
+					        <c:set var="x" scope="request">chk_${doc.idDoc}</c:set>
+						    <c:remove var="x_checked" scope="request" />
+						    <c:if test="${param[x] == 'true'}">
+						       <c:set var="x_checked" scope="request">checked</c:set>
+						    </c:if>
+						   <c:set var="podeAssinarComSenha" value="${f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"/>
+		                   <c:set var="classAssinarComSenha" value="nao-pode-assinar-senha"/>
+				           <c:if test="${podeAssinarComSenha}">
+				              <c:set var="classAssinarComSenha" value="pode-assinar-senha"/>
+				           </c:if>
+					        <tr class="even">
+						        <td width="3%"align="center">
+		        		           <c:if test="${podeAssinarComSenha}">
+										<img src="/siga/css/famfamfam/icons/keyboard.png" alt="Permite assinatura com senha" title="Permite assinatura com senha" />
+								   </c:if> 
+						        </td>
+						        <td width="3%"align="center">
+						           <input type="checkbox" name="${x}"
+						           value="true" ${x_checked} class="${classAssinarComSenha}" />
+						        </td>
+		     			        <td width="13%"align="left">
+						            <a href="/sigaex/app/expediente/doc/exibir?sigla=${doc.sigla}">${doc.codigo}</a>
+					            </td>
+					            <td width="5%" align="center">${doc.dtDocDDMMYY}</td>
+					            <td width="10%" align="center">${doc.lotaCadastrante.siglaLotacao}</td>
+					            <td width="5%" align="left">${doc.cadastrante.sigla}</td>			            
+					            <td width="15%" align="left">${doc.descrFormaDoc}</td>
+					            <td width="49%"align="left">${doc.descrDocumento}</td>			            				    
+					        </tr>			         		         
+					        <input type="hidden" name="pdf${x}" value="${doc.sigla}" />
+						    <input type="hidden" name="url${x}" value="/app/arquivo/exibir?arquivo=${doc.codigoCompacto}.pdf"/>
+					    </c:forEach>
+					</tbody>   
 				 </table>
 	         </div>
 	      </c:if>      		    

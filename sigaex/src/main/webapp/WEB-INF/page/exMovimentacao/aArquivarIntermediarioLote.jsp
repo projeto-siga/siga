@@ -158,6 +158,7 @@
 							<th align="center">Pessoa</th>
 						</tr>
 					</thead>
+				    <tbody class="table-bordered">
 					<c:forEach var="item" items="${topico.itens}">
 						<c:set var="mob" value="${item.mob}" />
 						<c:set var="mar" value="${item.marca}" />
@@ -225,6 +226,7 @@
 								lotaTitular)}</td>
 						</tr>
 					</c:forEach>
+					</tbody>
 				</table>
 			</div>
 		</c:forEach>

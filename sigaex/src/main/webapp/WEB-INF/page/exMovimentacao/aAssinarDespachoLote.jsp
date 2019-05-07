@@ -126,6 +126,7 @@
 				        <th width="40%" align="left">Descrição</th>
 				    </tr>
 				</thead>
+				<tbody class="table-bordered">
 			    <c:forEach var="mov" items="${itens}">
 			       <%--  <c:set var="x" scope="request">chk_${mov.exMobil.id}</c:set> --%>
 			        <c:set var="x" scope="request">chk_${mov.idMov}</c:set>
@@ -158,6 +159,7 @@
 					<input type="hidden" name="pdf${x}" value="${mov.referencia}" />
 					<input type="hidden" name="url${x}" value="/app/arquivo/exibir?arquivo=${mov.nmPdf}" />
 				</c:forEach>
+				</tbody>
 			 </table>
 	    	</div>
 		</c:if>

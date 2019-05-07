@@ -169,12 +169,14 @@
 			<form id="form-assinarSenha" method="post" action="/sigaex/app/expediente/mov/assinar_mov_login_senha_gravar" >
 				<input type="hidden" id="id" name="id" value="${mov.idMov}" />
 				<input type="hidden" id="tipoAssinaturaMov" name="tipoAssinaturaMov" value="A" />
-				<fieldset>
-					<label>Matrícula</label> <br/>
-					<input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)"/><br/><br/>
-					<label>Senha</label> <br/>
-					<input type="password" id="senhaUsuarioSubscritor" name="senhaUsuarioSubscritor"  class="text ui-widget-content ui-corner-all"  autocomplete="off" />
-				</fieldset>
+ 				<div class="form-group">
+ 					<label>Matrícula</label>
+ 					<input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="form-control" onblur="javascript:converteUsuario(this)"/>
+ 				</div>
+    			<div class="form-group">
+ 					<label>Senha</label>
+ 					<input type="password" id="senhaUsuarioSubscritor" name="senhaUsuarioSubscritor"  class="form-control"  autocomplete="off" />
+ 				</div>
 			</form>
 		</div>
 		<div id="dialog-message" title="Alerta">

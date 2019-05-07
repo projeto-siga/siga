@@ -153,7 +153,7 @@ ${meta}
 				aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
-			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA')}">
+			<c:if test="${siga_cliente == 'GOVSP' and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA')}">
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					<ul class="navbar-nav mr-auto">
 						<!-- navigation -->
@@ -274,7 +274,7 @@ ${meta}
 					<div class="gt-company">
 						<strong><span>${f:resource('siga.cabecalho.titulo')}</span> </strong>
 						 <c:catch>
-								<c:if test="${not empty titular.orgaoUsuario.descricao}"><span> <i class="fa fa-angle-right"></i> ${titular.orgaoUsuario.descricao}</span></h6></c:if>
+								<c:if test="${not empty titular.orgaoUsuario.descricao}"><span style="white-space: nowrap;"> <i class="fa fa-angle-right"></i> ${titular.orgaoUsuario.descricao}</span></h6></c:if>
 						 </c:catch>
 					</div>
 					
@@ -293,7 +293,7 @@ ${meta}
 											value="${f:maiusculasEMinusculas(cadastrante.nomePessoa)}" />
 										<c:choose>
 											<c:when test="${not empty cadastrante.lotacao}">
-						 						<i class="fa fa-building"></i> ${cadastrante.lotacao.sigla}
+						 						<span style="white-space: nowrap;"><i class="fa fa-building"></i> ${cadastrante.lotacao.sigla}</span>
 						 					</c:when>
 										</c:choose>
 									</c:catch> </strong> 

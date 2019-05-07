@@ -93,6 +93,7 @@
 							</thead>
 							<c:set var="primeiro" value="${true}" />
 					</c:if>
+					<tbody class="table-bordered">
 
 					<c:choose>
 						<c:when test='${evenorodd == "even"}'>
@@ -148,6 +149,7 @@
 						<td width="44%">${f:descricaoSePuderAcessar(m.doc, titular,
 						lotaTitular)}</td>
 					</tr>
+					</tbody>
 				</c:if>
 			</c:forEach>
 			<c:if test="${not empty primeiro}">

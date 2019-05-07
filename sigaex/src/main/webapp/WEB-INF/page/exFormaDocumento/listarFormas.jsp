@@ -44,6 +44,7 @@
 						            <th>Origem</th>
 								</tr>
 							</thead>
+							<tbody class="table-bordered">
 							<c:set var="evenorodd" value="" />
 							<c:set var="tamanho" value="0" />
 							<c:forEach var="forma" items="${itens}">
@@ -69,6 +70,7 @@
 								</c:choose>
 								<c:set var="tamanho" value="${tamanho + 1 }" />
 							</c:forEach>
+							</tbody>
 						</table>
 					</div>
 				</div>

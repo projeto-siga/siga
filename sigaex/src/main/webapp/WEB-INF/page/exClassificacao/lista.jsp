@@ -34,7 +34,7 @@
 							<th>Dest. Final</th>
 						</tr>
 					</thead>
-					<tbody class="align-middle text-center">
+					<tbody class="table-bordered align-middle text-center">
 						<c:forEach items="${classificacaoVigente}" var="cla">
 							<c:set var="nivel" value="${cla.nivel}"/>
 							<c:set var="numVias" value="${fn:length(cla.exViaSet)}" />

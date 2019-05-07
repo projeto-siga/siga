@@ -94,13 +94,15 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 </c:catch>
 
 <c:if test="${catchException!=null}">
-Erro: ${catchException.message}<br>
+	Erro: ${catchException.message}
+	<br>
 	<br>
 	<br>
 
 	<pre>
-Erro original:
-${exceptionStack}</pre>
+		Erro original:
+		${exceptionStack}
+	</pre>
 </c:if>
 
 

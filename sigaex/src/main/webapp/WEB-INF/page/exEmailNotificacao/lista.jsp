@@ -57,8 +57,7 @@
 									<th colspan=2> </th>											
 								</tr> 
 							</thead>
-							
-							<tbody>
+							<tbody class="table-bordered">
 								<c:forEach var="email" items="${itens}">
 									<tr>																		
 										<td align="left">

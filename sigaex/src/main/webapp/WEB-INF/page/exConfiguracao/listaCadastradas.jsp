@@ -39,6 +39,7 @@
 					<th align="center" style="width: 70px;"></th>
 				</tr>
 			</thead>
+			<tbody class="table-bordered">
 			<c:set var="evenorodd" value="" />
 			<c:set var="tamanho" value="0" />
 
@@ -118,6 +119,7 @@
 				</c:choose>
 				<c:set var="tamanho" value="${tamanho + 1 }" />
 			</c:forEach>
+			</tbody>
 		</table>
 	</div>
 </div>

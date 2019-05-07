@@ -5,29 +5,21 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <c:catch var="catchException">
-	<siga:pagina titulo="Siga - Logout" desabilitarbusca="sim"
-                 meta="<META HTTP-EQUIV='refresh' CONTENT='1;URL='/siga/'>" >
-
-		<div class="gt-bd clearfix">
-			<div class="gt-content clearfix">
-
-				<div class="gt-content-box">
-					<table width="100%">
-						<tr>
-							<td align="center" valign="middle">
-								<table class="form" width="50%">
-									<tr>
-										<td style="text-align: center; padding-top: 10px;">
-											<h3>Saindo...</h3>
-										</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
-						<tr></tr>
-					</table>
-				</div>
+	<siga:pagina titulo="Siga - Logout" desabilitarbusca="sim"  meta="<META HTTP-EQUIV='refresh' CONTENT='1;URL='/siga/'>" >
+		
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header">
+				<h5>
+					SIGA - Logout
+				</h5>
+			</div>
+			<div class="card-body">
+				<h3>Saindo...</h3>
 			</div>
 		</div>
+	</div>
+		
+	
 	</siga:pagina>
 </c:catch>

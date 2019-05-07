@@ -26,8 +26,7 @@
 						<th>Unid. Medida</th>
 					</tr>
 				</thead>
-	
-				<tbody>
+				<tbody class="table-bordered">
 					<c:forEach items="${temporalidadeVigente}" var="t">
 						<tr>
 							<td><a href="editar?idTemporalidade=${t.idTemporalidade}&acao=editar_temporalidade">${t.descTemporalidade}</a></td>

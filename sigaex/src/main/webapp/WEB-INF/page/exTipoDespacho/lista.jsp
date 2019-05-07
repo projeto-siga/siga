@@ -24,6 +24,7 @@
 						<th align="right">N&uacute;mero</th>
 						<th colspan="3">Descri&ccedil;&atilde;o</th>
 					</thead>
+					<tbody class="table-bordered">
 					<c:forEach var="tipoDespacho" items="${tiposDespacho}">
 						<tr>
 							<td>
@@ -37,6 +38,7 @@
 							</td>
 						</tr>
 					</c:forEach>
+					</tbody>
 				</table>
 				<form name="frm" id="frm" action="editar" theme="simple" method="get">
 				<input type="submit" id="editar_0" value="Novo" class="btn btn-primary"/>

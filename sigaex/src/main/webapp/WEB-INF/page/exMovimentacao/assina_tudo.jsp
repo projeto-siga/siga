@@ -163,7 +163,7 @@
 											value="false" />
 									</c:otherwise>
 								</c:choose></td>
-							<td class="text-left"><a target="_blank"
+							<td><a target="_blank"
 								href="/sigaex/app/expediente/doc/exibir?sigla=${assdoc.doc.sigla}">${assdoc.doc.codigo}</a>
 							</td>
 							<td class="text-center">${assdoc.doc.dtDocDDMMYY}</td>
@@ -221,7 +221,7 @@
 											name="ad_password_mov${assmov.mov.idMov}" id="${x}"
 											value="true" class="chk-senha" />
 									</c:if></td>
-								<td><a class="text-left" target="_blank"
+								<td><a class="pl-3" target="_blank"
 									href="/sigaex/app/arquivo/exibir?popup=true&id=688&arquivo=${assmov.mov.nmPdf}">${assmov.mov.referencia}</a>
 								</td>
 								<td class="text-center">${assmov.mov.dtRegMovDDMMYY}</td>

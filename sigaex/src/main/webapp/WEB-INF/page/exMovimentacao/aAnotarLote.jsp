@@ -60,81 +60,108 @@
 	
 </script>
 
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
+	<!-- main content bootstrap -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3">
+			<div class="card-header">
+				<h5>Anotação em Lote</h5>
+			</div>
+			<div class="card-body">
+				<form name="frm" action="anotar_lote_gravar" method="post">
+					<input type="hidden" name="postback" value="1" />
+					<div class="row">
+						<div class="col-sm-3">
+							<div class="form-group">
+								<label>Data</label> <input type="text" name="dtMovString"
+									id="dtMovString" onblur="javascript:verifica_data(this,0);"
+									class="form-control" />
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Responsável</label>
+								<siga:selecao tema="simple" propriedade="subscritor"
+									modulo="siga" />
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6 ml-3">
+							<div class="form-group">
+								<label>&nbsp;</label>
+								<input type="checkbox" name="substituicao"
+									onclick="javascript:displayTitular(this);"
+									class="form-check-input" /> 
+								<label class="form-check-label">Substituto</label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+							<c:choose>
+								<c:when test="${!substituicao}">
+									<div id="tr_titular" style="display: none;">
+								</c:when>
+								<c:otherwise>
+									<div id="tr_titular" style="">
+								</c:otherwise>
+							</c:choose>
+										<label>Titular:</label>
+										<input type="hidden" name="campos" value="${titularSel.id}" />
+										<siga:selecao propriedade="titular"	tema="simple" modulo="siga"/>
+									</div>
+							</div>
+						</div>
+					</div>
+			
+					<div class="row">
+						<div class="col-sm">
+							<div class="form-group">
+								<label>Função do Responsável</label> <input type="hidden"
+									name="campos" value="${nmFuncaoSubscritor}" /> <input
+									type="text" name="nmFuncaoSubscritor" id="nmFuncaoSubscritor"
+									value="${nmFuncaoSubscritor}" size="50" maxLength="128"
+									class="form-control" /> <small class="form-text text-muted">(opcional)</small>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm">
+							<div class="form-group">
+								<div class="row">
+									<label class="col-sm">Nota</label>
+								</div>
+								<div class="row">
+									<textarea class="col-sm ml-3" name="descrMov" value="${descrMov}" cols="60" rows="5"
+										onkeyup="corrige();tamanho();" onblur="tamanho();"
+										onclick="tamanho();"></textarea>
+									<div class="col-sm" id="Qtd">Restam&nbsp;255&nbsp;Caracteres</div>
+								</div>
+							</div>
+						</div>
+					</div>
 		
-			<h2>Anotação em Lote</h2>
+				<c:if test="${tipoResponsavel == 3}">
+					<div class="row">
+						<div class="col-sm">
+							<div class="form-group">
+								<label>Observação</label>
+								<input type="text" size="30" name="obsOrgao" id="obsOrgao" class="form-control" />
+							</div>
+						</div>
+					</div>
+				</c:if>
 
-			<div class="gt-content-box gt-for-table">
-
-
-	<form name="frm" action="anotar_lote_gravar"
-		method="post" theme="simple">
-				
-		<input type="hidden" name="postback" value="1" />
-		<table class="gt-form-table">
-			<tr>
-				<td>
-					<table class="form" width="100%">
-						<tr class="header">
-							<td colspan="2">Anotação</td>
-						</tr>
-						<tr>
-							<td>Data:</td>
-							<td><input type="text" name="dtMovString" value="${dtMovString}"
-								onblur="javascript:verifica_data(this,0);" /></td>
-						</tr>
-						<tr>
-							<td>Responsável:</td>
-							<td><siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
-							&nbsp;&nbsp;<input type="checkbox" theme="simple" name="substituicao" value="${substituicao}"
-								onclick="javascript:displayTitular(this);" />&nbsp;Substituto</td>
-						</tr>
-						<c:choose>
-							<c:when test="${!substituicao}">
-								<tr id="tr_titular" style="display: none">
-							</c:when>
-							<c:otherwise>
-								<tr id="tr_titular" style="">
-							</c:otherwise>
-						</c:choose>
-		
-						<td>Titular:</td>
-							<input type="hidden" name="campos" value="titularSel.id" />
-						<td colspan="3"><siga:selecao propriedade="titular"
-									tema="simple" modulo="siga"/></td>
-						</tr>
-						<tr>
-							<td>Função do Responsável:</td>
-							<td><input type="hidden" name="campos"
-								value="nmFuncaoSubscritor" /> <input type="text"
-								name="nmFuncaoSubscritor" value="${nmFuncaoSubscritor}" size="50" maxLength="128" theme="simple"/> (opcional)</td>
-						</tr>
-						<tr>
-							<td>Nota</td>
-							<td><textarea name="descrMov" value="${descrMov}" cols="60" rows="5"
-								onkeyup="corrige();tamanho();" onblur="tamanho();"
-								onclick="tamanho();"></textarea>
-							<div id="Qtd">Restam&nbsp;255&nbsp;Caracteres</div>
-							</td>
-						</tr>
-		
-						<c:if test="${tipoResponsavel == 3}">
-							<tr>
-								<td>Observação</td>
-								<td><input type="text" size="30" name="obsOrgao" value="${obsOrgao}"/></td>
-							</tr>
-						</c:if>
-		
-						<tr class="button">
-							<td colspan="2"><input type="submit" value="Ok" class="gt-btn-small gt-btn-left" /> <input type="button"
-								value="Cancela" onclick="javascript:history.back();" class="gt-btn-small gt-btn-left" /></td>
-						</tr>
-					</table>
-		
-				</td>
-			</tr>
-		</table>
+					<div class="row">
+						<div class="col-sm">
+							<input type="submit" value="Ok" class="btn btn-primary" />
+							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-primary ml-2" />
+						</div>
+					</div>
+				</div>
 		</div>
 		
 		<c:forEach var="secao" begin="0" end="1">
@@ -144,97 +171,90 @@
 					test="${(secao==0 and titular.idPessoaIni==m.ultimaMovimentacaoNaoCancelada.resp.idPessoaIni) or (secao==1 and titular.idPessoaIni!=m.ultimaMovimentacaoNaoCancelada.resp.idPessoaIni)}">
 					<c:if test="${empty primeiro}">
 						<br />
-						<h2>Atendente: <c:choose>
+						<h5>Atendente: <c:choose>
 							<c:when test="${secao==0}">${titular.descricao}</c:when>
 							<c:otherwise>${lotaTitular.descricao}</c:otherwise>
-						</c:choose></h2>
-						<div class="gt-content-box gt-for-table">
-
-						<table class="gt-table">
-							<tr class="header">
-								<td rowspan="2" align="center"><input type="checkbox"
-									name="checkall" onclick="checkUncheckAll(this)" /></td>
-								<td rowspan="2" align="right">Número</td>
-								<td rowspan="2" align="center">Destinação da via</td>
-								<td colspan="3" align="center">Documento</td>
-								<td colspan="2" align="center">Última Movimentação</td>
-								<td rowspan="2">Descrição</td>
-							</tr>
-							<tr class="header">
-								<td align="center">Data</td>
-								<td align="center">Lotação</td>
-								<td align="center">Pessoa</td>
-								<td align="center">Data</td>
-								<td align="center">Pessoa</td>
-							</tr>
+						</c:choose></h5>
+					<div>
+						<table class="table table-hover table-striped">
+							<thead class="thead-dark align-middle text-center">
+								<tr>
+									<th rowspan="2" class="text-right"><input type="checkbox"
+										name="checkall" onclick="checkUncheckAll(this)" /></th>
+									<th rowspan="2" class="text-right">Número</th>
+									<th rowspan="2" class="text-center">Destinação da via</th>
+									<th colspan="3" class="text-center">Documento</th>
+									<th colspan="2" class="text-center">Última Movimentação</th>
+									<th rowspan="2" class="text-left">Descrição</th>
+								</tr>
+								<tr class="header">
+									<th class="text-center">Data</th>
+									<th class="text-center">Lotação</th>
+									<th class="text-center">Pessoa</th>
+									<th class="text-center">Data</th>
+									<th class="text-center">Pessoa</th>
+								</tr>
+							</thead>
+							<tbody class="table-bordered">
 							<c:set var="primeiro" value="${true}" />
 							</c:if>
-
-							<c:choose>
-								<c:when test='${evenorodd == "even"}'>
-									<c:set var="evenorodd" value="odd" />
-								</c:when>
-								<c:otherwise>
-									<c:set var="evenorodd" value="even" />
-								</c:otherwise>
-							</c:choose>
-							<tr class="${evenorodd}">
-								<c:set var="x" scope="request">chk_${m.id}</c:set>
-								<c:remove var="x_checked" scope="request" />
-								<c:if test="${param[x] == 'true'}">
-									<c:set var="x_checked" scope="request">checked</c:set>
-								</c:if>
-								<td width="2%" align="center"><input type="checkbox"
-									name="${x}" value="true" ${x_checked} /></td>
-								<td width="11.5%" align="right"><c:choose>
-									<c:when test='${param.popup!="true"}'>										
-										<a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${m.sigla}">${m.sigla}</a>
-									</c:when>
-									<c:otherwise>
-										<a
-											href="javascript:opener.retorna_${param.propriedade}('${m.id}','${m.sigla},'');">${m.sigla}</a>
-									</c:otherwise>
-								</c:choose></td>
-								<c:if test="${not m.geral}">
-									<td width="2%" align="center">${f:destinacaoPorNumeroVia(m.doc,
-									m.numSequencia)}</td>
-									<td width="5%" align="center">${m.doc.dtDocDDMMYY}</td>
-									<td width="5%" align="center"><siga:selecionado
-										sigla="${m.doc.lotaSubscritor.sigla}"
-										descricao="${m.doc.lotaSubscritor.descricao}" /></td>
-									<td width="5%" align="center"><siga:selecionado
-										sigla="${m.doc.subscritor.iniciais}"
-										descricao="${m.doc.subscritor.descricao}" /></td>
-									<td width="5%" align="center">${m.ultimaMovimentacaoNaoCancelada.dtMovDDMMYY}</td>
-									<td width="4%" align="center"><siga:selecionado
-										sigla="${m.ultimaMovimentacaoNaoCancelada.resp.iniciais}"
-										descricao="${m.ultimaMovimentacaoNaoCancelada.resp.descricao}" /></td>
-								</c:if>
-								<c:if test="${m.geral}">
-									<td width="2%" align="center"></td>
-									<td width="5%" align="center">${m.doc.dtDocDDMMYY}</td>
-									<td width="4%" align="center"><siga:selecionado
-										sigla="${m.doc.subscritor.iniciais}"
-										descricao="${m.doc.subscritor.descricao}" /></td>
-									<td width="4%" align="center"><siga:selecionado
-										sigla="${m.doc.lotaSubscritor.sigla}"
-										descricao="${m.doc.lotaSubscritor.descricao}" /></td>
-									<td width="5%" align="center"></td>
-									<td width="4%" align="center"></td>
-									<td width="4%" align="center"></td>
-									<td width="10.5%" align="center"></td>
-								</c:if>
-								<td width="44%">${f:descricaoSePuderAcessar(m.doc, titular,
-								lotaTitular)}</td>
-							</tr>
+	
+								<tr>
+									<c:set var="x" scope="request">chk_${m.id}</c:set>
+									<c:remove var="x_checked" scope="request" />
+									<c:if test="${param[x] == 'true'}">
+										<c:set var="x_checked" scope="request">checked</c:set>
+									</c:if>
+									<td width="2%" align="center"><input type="checkbox"
+										name="${x}" value="true" ${x_checked} /></td>
+									<td width="11.5%" align="right"><c:choose>
+										<c:when test='${param.popup!="true"}'>										
+											<a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${m.sigla}">${m.sigla}</a>
+										</c:when>
+										<c:otherwise>
+											<a
+												href="javascript:opener.retorna_${param.propriedade}('${m.id}','${m.sigla},'');">${m.sigla}</a>
+										</c:otherwise>
+									</c:choose></td>
+									<c:if test="${not m.geral}">
+										<td width="2%" align="center">${f:destinacaoPorNumeroVia(m.doc,
+										m.numSequencia)}</td>
+										<td width="5%" align="center">${m.doc.dtDocDDMMYY}</td>
+										<td width="5%" align="center"><siga:selecionado
+											sigla="${m.doc.lotaSubscritor.sigla}"
+											descricao="${m.doc.lotaSubscritor.descricao}" /></td>
+										<td width="5%" align="center"><siga:selecionado
+											sigla="${m.doc.subscritor.iniciais}"
+											descricao="${m.doc.subscritor.descricao}" /></td>
+										<td width="5%" align="center">${m.ultimaMovimentacaoNaoCancelada.dtMovDDMMYY}</td>
+										<td width="4%" align="center"><siga:selecionado
+											sigla="${m.ultimaMovimentacaoNaoCancelada.resp.iniciais}"
+											descricao="${m.ultimaMovimentacaoNaoCancelada.resp.descricao}" /></td>
+									</c:if>
+									<c:if test="${m.geral}">
+										<td width="2%" align="center"></td>
+										<td width="5%" align="center">${m.doc.dtDocDDMMYY}</td>
+										<td width="4%" align="center"><siga:selecionado
+											sigla="${m.doc.subscritor.iniciais}"
+											descricao="${m.doc.subscritor.descricao}" /></td>
+										<td width="4%" align="center"><siga:selecionado
+											sigla="${m.doc.lotaSubscritor.sigla}"
+											descricao="${m.doc.lotaSubscritor.descricao}" /></td>
+										<td width="5%" align="center"></td>
+										<td width="4%" align="center"></td>
+										<td width="4%" align="center"></td>
+										<td width="10.5%" align="center"></td>
+									</c:if>
+									<td width="44%">${f:descricaoSePuderAcessar(m.doc, titular,
+									lotaTitular)}</td>
+								</tr>
 							</c:if>
 							</c:forEach>
 							<c:if test="${not empty primeiro}">
+							</tbody>
 						</table>
-						</div>
+					</div>
 					</c:if>
 			</c:forEach>
 	</form>
-	
-		</div></div>
 </siga:pagina>

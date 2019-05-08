@@ -82,19 +82,15 @@
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label>Responsável</label>
-								<siga:selecao tema="simple" propriedade="subscritor"
-									modulo="siga" />
+								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga" />
 							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col-sm-6 ml-3">
+						<div class="col-sm-2">
 							<div class="form-group">
-								<label>&nbsp;</label>
-								<input type="checkbox" name="substituicao"
-									onclick="javascript:displayTitular(this);"
-									class="form-check-input" /> 
-								<label class="form-check-label">Substituto</label>
+								<div class="form-check form-check-inline mt-4">
+									<input type="checkbox" name="substituicao" onclick="javascript:displayTitular(this);" class="form-check-input" /> 
+									<label class="form-check-label">Substituto</label>
+								</div>
 							</div>
 						</div>
 					</div>

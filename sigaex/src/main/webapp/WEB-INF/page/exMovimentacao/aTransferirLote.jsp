@@ -124,15 +124,15 @@
 						<div class="col-sm">
 							<div class="form-group">
 								<label>Responsável</label>
-								<siga:selecao tema="simple" propriedade="subscritor"
-									modulo="siga" />
+								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga" />
 							</div>
 						</div>
 						<div class="col-sm">
 							<div class="form-group">
-								<label>&nbsp;</label> <input type="checkbox" name="substituicao"
-									onclick="javascript:displayTitular(this);"
-									class="form-check-input" /> <label class="form-check-label">Substituto</label>
+								<div class="form-check form-check-inline mt-4">
+									<input type="checkbox" name="substituicao" onclick="javascript:displayTitular(this);" class="form-check-input" /> 
+									<label class="form-check-label">Substituto</label>
+								</div>
 							</div>
 						</div>
 					</div>

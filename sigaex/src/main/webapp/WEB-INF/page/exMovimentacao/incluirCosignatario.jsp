@@ -23,43 +23,40 @@
 		</script>
 	</c:if>
 
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-
-			<h2>Inclusão de Cossignatário- ${mob.siglaEDescricaoCompleta}</h2>
-
-			<div class="gt-content-box gt-for-table">
-
+	<!-- main content bootstrap -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3">
+			<div class="card-header">
+				<h5>
+					Inclusão de Cossignatário- ${mob.siglaEDescricaoCompleta}
+				</h5>
+			</div>
+			<div class="card-body">
 				<form action="incluir_cosignatario_gravar"
 					namespace="/expediente/mov" cssClass="form" method="post">
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}" />
-					<table class="gt-form-table">
-						<tr class="header">
-							<td colspan="2">
-								Dados do Cossignatário
-							</td>
-						</tr>
-
-						<siga:selecao titulo="Cossignatário:" propriedade="cosignatario" modulo="siga" />
-
-
-						<tr>
-							<td>
-							<label>
-								Função;Lotação;Localidade
-							</label>
-						</td>
-						<td>
-							<input type="text" name="funcaoCosignatario" size="50" value="${funcaoCosignatario}" maxlength="128" />
-						</td>
-						</tr>
-						<tr class="button">
-							<td colspan="2">
-							<input type="submit" value="Ok" class="gt-btn-small gt-btn-left" />
-							<input type="button" value="Cancela" onclick="javascript:history.back();" class="gt-btn-small gt-btn-left" />
-						</tr>
-					</table>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<siga:selecao titulo="Cossignatário" propriedade="cosignatario" modulo="siga" />
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Função; Lotação; Localidade</label>
+								<input class="form-control" type="text" name="funcaoCosignatario" size="50" value="${funcaoCosignatario}" maxlength="128" />
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<input type="submit" value="Ok" class="btn btn-primary" />
+							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
+						</div>
+					</div>
 				</form>
 			</div>
 		</div>

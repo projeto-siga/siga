@@ -76,68 +76,101 @@
 			}
 		</script>
 
-		<h2>Anotação - ${mob.siglaEDescricaoCompleta}</h2>
-		<form name="frm" action="anotar_gravar" method="post">
-			<input type="hidden" name="postback" value="1" /> <input
-				type="hidden" name="sigla" value="${sigla}" />
-			<table>
-				<tr class="header">
-					<td colspan="2">Anotação</td>
-				</tr>
-				<tr>
-					<td>Data:</td>
-					<td><input type="text" name="dtMovString"
-						value="${dtMovString}" onblur="javascript:verifica_data(this,0);" />
-					</td>
-				</tr>
-				<tr>
-					<td>Responsável:</td>
-					<td><siga:selecao tema="simple" propriedade="subscritor"
-							modulo="siga" /> &nbsp;&nbsp; <input type="checkbox"
-						theme="simple" name="substituicao" value="${substituicao}"
-						onclick="javascript:displayTitular(this);" /> Substituto</td>
-				</tr>
-				<c:choose>
-					<c:when test="${!substituicao}">
-						<tr id="tr_titular" style="display: none">
-					</c:when>
-					<c:otherwise>
-						<tr id="tr_titular" style="">
-					</c:otherwise>
-				</c:choose>
-				<td>Titular:</td>
-				<input type="hidden" name="campos" value="titularSel.id" />
-				<td colspan="3"><siga:selecao propriedade="titular"
-						tema="simple" modulo="siga" /></td>
-				</tr>
-				<tr>
-					<td>Função do Responsável:</td>
-					<td><input type="hidden" name="campos"
-						value="nmFuncaoSubscritor" /> <input type="text"
-						name="nmFuncaoSubscritor" value="${nmFuncaoSubscritor}" size="50"
-						maxLength="128" theme="simple" /> (opcional)</td>
-				</tr>
-				<tr>
-					<td>Nota</td>
-					<td><textarea name="descrMov" value="${descrMov}" cols="60"
-							rows="5" onkeydown="corrige();tamanho();" maxlength="255"
-							onblur="tamanho();" onclick="tamanho();"></textarea>
-						<div id="Qtd">Restam&nbsp;255&nbsp;Caracteres</div></td>
-				</tr>
-				<c:if test="${tipoResponsavel == 3}">
-					<tr>
-						<td>Observação</td>
-						<td><input type="text" value="${obsOrgao}" size="30"
-							name="obsOrgao" /></td>
-					</tr>
-				</c:if>
+	<!-- main content bootstrap -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3">
+			<div class="card-header">
+				<h5>
+					Anotação - ${mob.siglaEDescricaoCompleta}
+				</h5>
+			</div>
+			<div class="card-body">
+				<form name="frm" action="anotar_gravar" method="post">
+					<input type="hidden" name="postback" value="1" /> 
+					<input type="hidden" name="sigla" value="${sigla}" />
+					<div class="row">
+						<div class="col-sm-3">
+							<div class="form-group">
+								<label for="dtMovString">Data</label>
+								<input class="form-control" type="text" name="dtMovString"
+								value="${dtMovString}" onblur="javascript:verifica_data(this,0);" />
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Responsável</label>
+								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="checkbox" 
+									theme="simple" name="substituicao"  value="${substituicao}" 
+									onclick="javascript:displayTitular(this);" />
+								<label class="form-check-label">Substituto</label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+							<c:choose>
+								<c:when test="${!substituicao}">
+									<div id="tr_titular" style="display: none">
+								</c:when>
+								<c:otherwise>
+									<div id="tr_titular" style="">
+								</c:otherwise>
+							</c:choose>
+									<label>Titular</label>
+									<input class="form-control" type="hidden" name="campos" value="titularSel.id" />
+									<siga:selecao propriedade="titular" tema="simple" modulo="siga"/>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Função do Responsável</label>
+								<input class="form-control" type="hidden" name="campos" value="nmFuncaoSubscritor" />
+								<input class="form-control" type="text"
+									name="nmFuncaoSubscritor" value="${nmFuncaoSubscritor}" size="50"
+									maxLength="128" theme="simple" />
+								<small class="form-text text-muted">(opcional)</small>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label for="descrMov">Nota</label>
+								<textarea class="form-control" name="descrMov" value="${descrMov}" cols="60"
+									rows="5" onkeydown="corrige();tamanho();" maxlength="255"
+									onblur="tamanho();" onclick="tamanho();"></textarea>
+								<small class="form-text text-muted" id="Qtd">Restam&nbsp;255&nbsp;Caracteres</small>
+							</div>
+						</div>
+					</div>
+					<c:if test="${tipoResponsavel == 3}">
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label>Observação</label>
+									<input class="form-control" type="text" value="${obsOrgao}" size="30" name="obsOrgao" />
+								</div>
+							</div>
+						</div>
+					</c:if>
 
-				<tr class="button">
-					<td colspan="2"><input type="submit" value="Ok"
-						class="btn btn-primary" /> <input type="button" value="Cancela"
-						onclick="javascript:history.back();" class="btn btn-cancel" /></td>
-				</tr>
-			</table>
-		</form>
+					<div class="row">
+						<div class="col-sm-6">
+							<input type="submit" value="Ok" class="btn btn-primary" />
+							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
 </siga:pagina>

@@ -19,13 +19,13 @@
 <siga:pagina titulo="Busca de ${cpTipoGrupo.dscTpGrupo}">
 	<!-- main content -->
 	<div class="container-fluid">
-		<h3 class="gt-table-head">Cadastro de ${cpTipoGrupo.dscTpGrupo}</h3>
+		<h5>Cadastro de ${cpTipoGrupo.dscTpGrupo}</h5>
 		<table border="0" class="table table-sm table-striped">
 			<thead class="thead-dark">
 				<tr>
 					<th align="left">Sigla</th>
 					<th align="left">Descrição</th>
-					<th align="left">Sigla Grupo Pai</th>
+					<th align="left">Sigla Grupo Pai </th>
 				</tr>
 			</thead>
 			<c:set var="evenorodd" value="" />
@@ -42,11 +42,12 @@
 				</tr>
 			</siga:paginador>
 		</table>
-		<br /> 
-		<div class="gt-table-buttons">
-			<c:if test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir'))}">
-				<input type="button" value="Incluir" onclick="javascript:window.location.href='editar'" class="btn btn-primary">
-			</c:if>
-		</div>				
-	</div>
+		<c:if test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir'))}">
+			<div class="form-group row">
+				<div class="col-sm">
+					<input type="button" value="Incluir" onclick="javascript:window.location.href='editar'" class="btn btn-primary"></input>
+				</div>
+			</div>
+		</c:if>
+	</div>				
 </siga:pagina>

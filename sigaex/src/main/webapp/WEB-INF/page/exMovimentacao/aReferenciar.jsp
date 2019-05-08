@@ -24,68 +24,77 @@ function sbmt() {
 
 </script>
 
-<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>
-				Vinculação de Documento - ${mob.siglaEDescricaoCompleta}
-			</h2>
-			<div class="gt-content-box gt-for-table">
-				<form action="${request.contextPath}/app/expediente/mov/referenciar_gravar" enctype="multipart/form-data" method="post">
-					<input type="hidden" name="postback" value="1" />
-					<input type="hidden" name="sigla" value="${sigla}"/>
-					<table class="gt-form-table">
-						<tr class="header">
-							<td colspan="2">
-								Dados da Vinculação
-							</td>
-						</tr>
-						<c:choose>
-							<c:when test="${!doc.eletronico}">
-								<tr>
-									<td>
-										Data:
-									</td>
-									<td>
-										<input type="text" name="dtMovString" value="${dtMovString}" onblur="javascript:verifica_data(this, true);" />
-									<td>
-								</tr>
-								<tr>
-								<td>
-									Responsável:
-								</td>
-								<td>
+	<!-- main content bootstrap -->
+	<div class="container-fluid">
+		<form action="${request.contextPath}/app/expediente/mov/referenciar_gravar" enctype="multipart/form-data" method="post">
+			<input type="hidden" name="postback" value="1" />
+			<input type="hidden" name="sigla" value="${sigla}"/>
+			<div class="card bg-light mb-3">
+				<div class="card-header">
+					<h5>
+						Vinculação de Documento - ${mob.siglaEDescricaoCompleta}
+					</h5>
+				</div>
+				<div class="card-body">
+				<c:choose>
+					<c:when test="${!doc.eletronico}">
+						<div class="row">
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label for="dtMovString">Data:</label>
+									<input type="text" name="dtMovString" value="${dtMovString}" onblur="javascript:verifica_data(this, true);" class="form-control" />
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label>Responsável:</label>
 									<siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 									&nbsp;&nbsp;
-									<input type="checkbox" theme="simple" name="substituicao" onclick="javascript:displayTitular(this);" />
-									Substituto
-								</td>
-							</c:when>
-						</c:choose>
-						<c:choose>
-							<c:when test="${!substituicao}">
-								<tr id="tr_titular" style="display: none">
-							</c:when>
-							<c:otherwise>
-								<tr id="tr_titular" style="">
-							</c:otherwise>
-						</c:choose>
-						<td>
-							Titular:
-						</td>
-						<input type="hidden" name="campos" value="${titularSel.id}" />
-						<td colspan="3">
-							<siga:selecao propriedade="titular"tema="simple" modulo="siga"/></td>
-						</tr>
-						<siga:selecao titulo="Documento:" propriedade="documentoRef" urlAcao="expediente/buscar" urlSelecionar="expediente/selecionar" modulo="sigaex"/>
-						<tr class="button">
-							<td colspan="2">
-							<input type="submit" value="Ok" class="gt-btn-medium gt-btn-left"/>
-							<input type="button" value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/>
-						</tr>
-				</table>
-			</form>
-		</div>
+									<div class="form-check form-check-inline mt-4">
+										<input class="form-check-input" type="checkbox" theme="simple" name="substituicao" onclick="javascript:displayTitular(this);" />
+										<label class="form-check-label" for="exDocumentoDTO.substituicao">Substituto</label>
+									</div>
+								</div>
+							</div>
+						</div>
+					</c:when>
+				</c:choose>
+				<c:choose>
+					<c:when test="${!substituicao}">
+						<div id="tr_titular" style="display: none">
+					</c:when>
+					<c:otherwise>
+						<div id="tr_titular" style="">
+					</c:otherwise>
+				</c:choose>
+							<input type="hidden" name="campos" value="${titularSel.id}" />
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label>Titular</label>
+										<siga:selecao propriedade="titular"tema="simple" modulo="siga"/>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<siga:selecao titulo="Documento:" propriedade="documentoRef" urlAcao="expediente/buscar" urlSelecionar="expediente/selecionar" modulo="sigaex"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm">
+								<input type="submit" value="Ok" class="btn btn-primary mt-4"/>
+								<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-primary mt-4" />
+							</div>
+						</div>
+				</div>
+			</div>
+		</form>
 	</div>
-</div>
 
 </siga:pagina>

@@ -48,22 +48,22 @@
 						</div>
 			
 						<div class="card-body">
-								<p>
+								<p class="p-0 m-0">
 									<b>Documento ${doc.exTipoDocumento.descricao}:</b> ${doc.codigo}
 								</p>
-								<p>
+								<p class="p-0 m-0">
 									<b>Data:</b> ${doc.dtDocDDMMYY}
 								</p>
-								<p>
+								<p class="p-0 m-0">
 									<b>De:</b> ${doc.subscritorString}
 								</p>
-								<p>
+								<p class="p-0 m-0">
 									<b>Classificação:</b> ${doc.exClassificacao.descricaoCompleta}
 								</p>
-								<p>	
+								<p class="p-0 m-0">	
 									<b>Para:</b> ${doc.destinatarioString}
 								</p>
-								<p>
+								<p class="p-0 m-0">
 									<b>Descrição:</b> ${doc.descrDocumento}
 								</p>
 						</div>

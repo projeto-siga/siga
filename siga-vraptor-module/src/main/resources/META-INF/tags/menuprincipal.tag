@@ -83,15 +83,9 @@
 							</c:if>
 						</ul></li>
 				</c:if>
-
-				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:Módulo de Transportes')}">
-					<li><a class="dropdown-item" href="/sigatp/">Transportes</a></li>
-				</c:if>
 			</ul></li>
 		<c:if test="${not empty f:resource('gsa.url')}">
-			<li><a class="dropdown-item" href="/siga/app/busca">Busca
-					Textual</a></li>
+			<li><a class="dropdown-item" href="/siga/app/busca">Busca Textual</a></li>
 		</c:if>
 
 		<li class="dropdown-submenu"><a href="javascript:void(0);"

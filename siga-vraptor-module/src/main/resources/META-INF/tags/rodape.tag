@@ -1,5 +1,6 @@
 <%@ tag body-content="scriptless" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ attribute name="popup"%>
 <%@ attribute name="pagina_de_erro"%>
 <%@ attribute name="incluirJs"%>
@@ -64,10 +65,71 @@
 			});
 </script>
 
+
+
+
+
 <c:if test="${siga_cliente == 'GOVSP' and popup != true}">
-	<div class="bg-dark text-center pr-0 pl-0" style="height: 120px;">
-		<img src="/siga/imagens/logo-gesp-slogan-horizontal-cor-texto-branco.png" height="100" class="pt-4">
-	</div>
+	<footer class="bg-dark text-center text-white align-middle">
+		<div class="container">						
+			<div class="content pt-4">
+				<c:if test="${!f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA')}">
+					<div class="row">
+						<div class="col-md-4">
+							<div class="row">	
+								<div class="text-left text-white">
+									<h5>Sem Papel</h5>		              
+									<p class="">Eficiência, agilidade e respeito ao meio ambiente</p> 
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-6">
+									<a href="http://www10.trf2.jus.br/portal/" role="link"><img class="mx-auto d-block" src="/siga/imagens/topo-logo-trf2.png" style="width:100%"></a>
+								</div>
+								<div class="col-6">
+									<a href="http://www.prodesp.sp.gov.br/" role="link"><img class="mx-auto d-block" src="/siga/imagens/logo-prodesp-branco-e-azul.png" style="width:90%"></a>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4">		
+							<div style="padding-top:10px;">
+								<img class="" src="/siga/imagens/LogoSIGADoc.png" width="60%">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="row mt-2">
+								<div class="col-12">
+									<a href="http://www.saopaulo.sp.gov.br/" role="link"><img class="mx-auto d-block" src="/siga/imagens/logo-gesp-slogan-horizontal-cor-texto-branco.png" alt="" width="60%"></a></p>
+								</div>
+							</div>
+						</div>			
+					</div>
+				</c:if>
+				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA')}">
+					<div class="row mt-2">
+						<div class="col-md-4">
+							<div class="text-left text-white">
+								<h5>Sem Papel</h5>		              
+								<p class="">Eficiência, agilidade e respeito ao meio ambiente</p> 
+							</div>
+						</div>
+						<div class="col-md-4">
+							<a href="http://www.saopaulo.sp.gov.br/" role="link"><img class="mx-auto d-block" src="/siga/imagens/logo-gesp-slogan-horizontal-cor-texto-branco.png" alt="" width="40%"></a></p>
+						</div>
+						<div class="col-sm-4">
+							
+						</div>
+					</div>
+				</c:if>
+			</div>
+			
+			<hr>				
+			<div class="text-right text-white">
+				SIGA-Doc | Desenvolvido por Prodesp e TRF2				
+			</div>
+		</div>
+	</footer>
+
 </c:if>
 
 </body>

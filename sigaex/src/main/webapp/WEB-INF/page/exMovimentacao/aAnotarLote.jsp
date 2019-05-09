@@ -72,7 +72,8 @@
 					<div class="row">
 						<div class="col-sm-3">
 							<div class="form-group">
-								<label>Data</label> <input type="text" name="dtMovString"
+								<label>Data</label>
+								<input type="text" name="dtMovString"
 									id="dtMovString" onblur="javascript:verifica_data(this,0);"
 									class="form-control" />
 							</div>
@@ -125,21 +126,16 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm">
+						<div class="col-sm-6">
 							<div class="form-group">
-								<div class="row">
-									<label class="col-sm">Nota</label>
-								</div>
-								<div class="row">
-									<textarea class="col-sm ml-3" name="descrMov" value="${descrMov}" cols="60" rows="5"
-										onkeyup="corrige();tamanho();" onblur="tamanho();"
-										onclick="tamanho();"></textarea>
-									<div class="col-sm" id="Qtd">Restam&nbsp;255&nbsp;Caracteres</div>
-								</div>
+								<label for="descrMov">Nota</label>
+								<textarea class="form-control" name="descrMov" value="${descrMov}" cols="60" rows="5"
+									onkeyup="corrige();tamanho();" onblur="tamanho();"
+									onclick="tamanho();"></textarea>
+								<small class="form-text text-muted" id="Qtd">Restam&nbsp;255&nbsp;Caracteres</small>
 							</div>
 						</div>
 					</div>
-		
 				<c:if test="${tipoResponsavel == 3}">
 					<div class="row">
 						<div class="col-sm">
@@ -154,7 +150,7 @@
 					<div class="row">
 						<div class="col-sm">
 							<input type="submit" value="Ok" class="btn btn-primary" />
-							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-primary ml-2" />
+							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
 						</div>
 					</div>
 				</div>

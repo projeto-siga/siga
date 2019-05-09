@@ -3625,11 +3625,12 @@ Pede deferimento.</span><br/><br/><br/>
     <tr bgcolor="#FFFFFF">
         <td width="100%">
         <table width="100%" border="0" cellpadding="2">
-            [#if tipo == "PORTARIA EMARF"]
+[#--            [#if tipo == "PORTARIA EMARF"]
             <tr>
                 <td width="100%" align="center" valign="bottom"><img src="contextpath/imagens/brasaoemarf.jpg" width="65" height="65" /></td>
             </tr>
             [#else]
+--]            
             <tr>
                 <td width="100%" align="center" valign="bottom"><img src="${_pathBrasao}" width="65" height="65" /></td>
             </tr>
@@ -3657,7 +3658,7 @@ Pede deferimento.</span><br/><br/><br/>
                 [/#if]</p>
                 </td>
             </tr>
-            [/#if]
+[#--            [/#if] --]
         </table>
         </td>
     </tr>

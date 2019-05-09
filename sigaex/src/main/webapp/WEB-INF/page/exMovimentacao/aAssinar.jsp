@@ -8,18 +8,18 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <siga:pagina titulo="Documento" compatibilidade="IE=EmulateIE9">
-	<script type="text/javascript" language="Javascript1.1">
-		/*  converte para maiúscula a sigla do estado  */
-		function converteUsuario(nomeusuario) {
-			re = /^[a-zA-Z]{2}\d{3,6}$/;
-			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
-			tmp = nomeusuario.value;
-			if (tmp.match(re) || tmp.match(ret2)) {
-				nomeusuario.value = tmp.toUpperCase();
-			}
+<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
+<script type="text/javascript" language="Javascript1.1">
+	/*  converte para maiúscula a sigla do estado  */
+	function converteUsuario(nomeusuario) {
+		re = /^[a-zA-Z]{2}\d{3,6}$/;
+		ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
+		tmp = nomeusuario.value;
+		if (tmp.match(re) || tmp.match(ret2)) {
+			nomeusuario.value = tmp.toUpperCase();
 		}
-	</script>
-
+	}
+</script>
 	<c:if test="${not doc.eletronico}">
 		<script type="text/javascript">
 			$("html").addClass("fisico");
@@ -28,7 +28,6 @@
 
 	<!-- main content bootstrap -->
 	<div class="container-fluid">
-		
 			<div class="row mt-2">
 				<div class="col col-sm-12 col-md-8">
 					<c:if test="${doc.conteudo != ''}">
@@ -48,29 +47,26 @@
 						</div>
 			
 						<div class="card-body">
-								<p>
+								<p class="p-0 m-0">
 									<b>Documento ${doc.exTipoDocumento.descricao}:</b> ${doc.codigo}
 								</p>
-								<p>
+								<p class="p-0 m-0">
 									<b>Data:</b> ${doc.dtDocDDMMYY}
 								</p>
-								<p>
+								<p class="p-0 m-0">
 									<b>De:</b> ${doc.subscritorString}
 								</p>
-								<p>
+								<p class="p-0 m-0">
 									<b>Classificação:</b> ${doc.exClassificacao.descricaoCompleta}
 								</p>
-								<p>	
+								<p class="p-0 m-0">	
 									<b>Para:</b> ${doc.destinatarioString}
 								</p>
-								<p>
+								<p class="p-0 m-0">
 									<b>Descrição:</b> ${doc.descrDocumento}
 								</p>
 						</div>
 					</div>
-					
-					
-					
 					<c:set var="acao" value="assinar_gravar" />
 					<div class="gt-form-row gt-width-100" style="padding-top: 10px;">
 						<div id="dados-assinatura" style="visible: hidden">
@@ -95,14 +91,8 @@
 							tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" />
 					</div>
 				</div>
-					
-					
 				</div>
-				
 			</div>
-
-			
 	</div>
-
 	<tags:assinatura_rodape/>
 </siga:pagina>

@@ -25,7 +25,7 @@
 						<thead class="thead-dark">
 							<th align="left">Sigla</th>
 							<th align="left">Descrição</th>
-							<th align="left">Sigla Grupo Pai</th>
+							<th align="left">Sigla Grupo Pai aaaaaa</th>
 						</thead>
 						<c:set var="evenorodd" value="" />
 						<c:set var="tamanho" value="0" />
@@ -42,7 +42,13 @@
 						</siga:paginador>
 					</table>
 					<c:if test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir'))}">
-						<input type="button" value="Incluir" onclick="javascript:window.location.href='editar'" class="btn btn-primary">
+						<div class="row">
+							<div class="col-sm">
+								<div class="form-group">
+									<input type="button" value="Incluir" onclick="javascript:window.location.href='editar'" class="btn btn-primary">
+								</div>
+							</div>
+						</div>
 					</c:if>
 				</div>
 			</div>

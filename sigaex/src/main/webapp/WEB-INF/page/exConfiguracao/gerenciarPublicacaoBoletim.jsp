@@ -131,12 +131,8 @@
 			</form>
 		</div>
 	</div>
-	<br />
-	<br />
-	
 	<c:forEach var="config" items="${itens}">
-		<h1>${config[0]}</h1>
-		
+		<h5>${config[0]}</h5>
 		<table border="0" class="table table-sm table-striped">
 			<thead class="thead-dark">
 				<th align="center">Pessoa</th>
@@ -146,7 +142,7 @@
 				<th align="center"></th>
 				<th></th>
 			</thead>
-			
+			<tbody class="table-bordered">
 			<c:set var="evenorodd" value="" />
 
 			<c:forEach var="configuracao" items="${config[1]}">
@@ -190,6 +186,7 @@
 					</c:otherwise>
 				</c:choose>
 			</c:forEach>
+			</tbody>
 		</table>
 	</c:forEach>
 	

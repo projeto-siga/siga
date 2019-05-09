@@ -66,9 +66,6 @@
 </script>
 
 
-
-
-
 <c:if test="${siga_cliente == 'GOVSP' and popup != true}">
 	<footer class="bg-dark text-center text-white align-middle">
 		<div class="container">						

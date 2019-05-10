@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
@@ -26,7 +28,8 @@ import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdapViaWebService;
 public class UsuarioController extends SigaController {
 
 	private static final Logger LOG = Logger.getLogger(UsuarioAction.class);
-
+	private static ResourceBundle bundle;
+	
 	public UsuarioController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 
@@ -69,7 +72,7 @@ public class UsuarioController extends SigaController {
 	@Get({"/app/usuario/incluir_usuario","/public/app/usuario/incluir_usuario"})
 	public void incluirUsuario() {
 		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
-		result.include("titulo", "Novo Usuário");
+		result.include("titulo", getBundle().getString("usuario.novo"));
 		result.include("proxima_acao", "incluir_usuario_gravar");
 		result.forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
 		
@@ -123,7 +126,7 @@ public class UsuarioController extends SigaController {
 		}
 
 		result.include("mensagem", "Usuário cadastrado com sucesso." + msgComplemento);
-		result.include("titulo", "Novo Usuário");
+		result.include("titulo", getBundle().getString("usuario.novo"));
 		result.include("volta", "incluir");
 		result.redirectTo("/app/usuario/incluir_usuario");
 	}
@@ -269,5 +272,14 @@ public class UsuarioController extends SigaController {
 		
 		return false;
 	}
+
+	private static ResourceBundle getBundle() {
+    	if (SigaBaseProperties.getString("siga.local") == null) {
+    		bundle = ResourceBundle.getBundle("messages_TRF2");
+    	} else {
+    		bundle = ResourceBundle.getBundle("messages_" + SigaBaseProperties.getString("siga.local"));
+    	}
+        return bundle;
+    }
 	
 }

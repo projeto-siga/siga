@@ -912,13 +912,13 @@
 						<div class="card-header">
 						<c:if test="${docVO.podeAnexarArquivoAuxiliar}">
 							<a title="Anexar um novo arquivo auxiliar"
-								style="float: right; margin-top: -3px;"
+								style="font-size: 1.5em; color: gray; float: right; margin-top: -5px"
 								href="${linkTo[ExMovimentacaoController].anexarArquivoAuxiliar}?sigla=${sigla}"
-								${popup?'target="_blank" ':''}> <img
-								src="/siga/css/famfamfam/icons/add.png">
+								${popup?'target="_blank" ':''}> 
+								<i class="fas fa-plus-circle"></i>
 							</a>
 						</c:if>
-						Arquivos Auxiliares
+							Arquivos Auxiliares
 						</div>
 						<div class="card-body">
 						<c:forEach var="mov" items="${m.movs}">
@@ -947,7 +947,11 @@
 												confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
 												idAjax="${mov.idMov}" classe="${acao.classe}" />
 										</c:forEach>
-										<siga:link title="${mov.mov.cadastrante.sigla}/${mov.mov.lotaCadastrante.sigla} - ${mov.tempoRelativo}" test="${true}" classe="${acao.classe}" />
+										<div class="row ml-4 mb-3">
+											<small class="form-text text-muted mt-0">
+												<siga:link title="${mov.mov.cadastrante.sigla}/${mov.mov.lotaCadastrante.sigla} - ${mov.tempoRelativo}" test="${true}" classe="${acao.classe}" />
+											</small>
+										</div>
 									</siga:links>
 								</p>
 							</c:if>

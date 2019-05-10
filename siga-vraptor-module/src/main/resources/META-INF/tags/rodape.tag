@@ -1,5 +1,6 @@
 <%@ tag body-content="scriptless" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ attribute name="popup"%>
 <%@ attribute name="pagina_de_erro"%>
@@ -89,8 +90,8 @@
 							</div>
 						</div>
 						<div class="col-md-4">		
-							<div style="padding-top:10px;">
-								<img class="" src="/siga/imagens/LogoSIGADoc.png" width="60%">
+							<div style="padding-top:20px;">
+								<img class="" src="/siga/imagens/logo-siga-doc-sp.png" width="65%">
 							</div>
 						</div>
 						<div class="col-md-4">
@@ -122,7 +123,7 @@
 			
 			<hr>				
 			<div class="text-right text-white">
-				SIGA-Doc | Desenvolvido por Prodesp e TRF2				
+				SIGA-Doc <b>${siga.versao}</b> | Desenvolvido por Prodesp e TRF2				
 			</div>
 		</div>
 	</footer>

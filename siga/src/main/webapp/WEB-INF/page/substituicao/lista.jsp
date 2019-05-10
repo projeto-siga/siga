@@ -25,8 +25,7 @@
 									<th align="center">Opções</th>
 								</tr>
 							</thead>
-							
-							<tbody>
+							<tbody class="table-bordered">
 								<c:forEach var="substituicao" items="${itens}">
 									<tr>
 										<td align="left">
@@ -80,8 +79,7 @@
 											<th align="center">Opções</th>
 										</tr>
 									</thead>
-		
-									<tbody>
+									<tbody  class="table-bordered">
 										<c:forEach var="substTitular" items="${itensTitular}">
 											<tr>
 												<td align="left">

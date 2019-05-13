@@ -103,7 +103,7 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-		$('input, textarea').placeholder();
+		//$('input, textarea').placeholder();
 		$("#username").focus();
 
 		function getCookie(cname) {

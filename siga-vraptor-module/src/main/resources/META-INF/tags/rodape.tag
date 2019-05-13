@@ -71,16 +71,16 @@
 
 
 <c:if test="${siga_cliente == 'GOVSP' and popup != true}">
-	<footer class="bg-dark text-center text-white align-middle">
+	<footer class="text-center text-white align-middle" style="background-color: #20313b;">
 		<div class="container">						
-			<div class="content pt-4">
+			<div class="content pt-2">
 				<c:if test="${!f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA')}">
 					<div class="row">
 						<div class="col-md-4">
 							<div class="row">	
-								<div class="text-left text-white">
+								<div class="col-12 text-left text-white">
 									<h5>Sem Papel</h5>		              
-									<p class="">Eficiência, agilidade e respeito ao meio ambiente</p> 
+									<p>Eficiência, agilidade e respeito ao meio ambiente</p> 
 								</div>
 							</div>
 							<div class="row">
@@ -92,15 +92,15 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-md-4">		
-							<div style="padding-top:20px;">
-								<img class="" src="/siga/imagens/logo-siga-doc-sp.png" width="65%">
+						<div class="col-md-4 col-xs-3">		
+							<div style="padding-top:10px;">
+								<img class="" src="/siga/imagens/logo-siga-doc-sp-colorido.png" width="65%">
 							</div>
 						</div>
 						<div class="col-md-4">
 							<div class="row mt-2">
-								<div class="col-12">
-									<a href="http://www.saopaulo.sp.gov.br/" role="link"><img class="mx-auto d-block" src="/siga/imagens/logo-gesp-slogan-horizontal-cor-texto-branco.png" alt="" width="60%"></a></p>
+								<div class="col-12" style="padding-top:5px;">
+									<a href="http://www.saopaulo.sp.gov.br/" role="link"><img class="mx-auto d-block" src="/siga/imagens/logo-gesp-slogan-horizontal-cor-texto-branco.png" alt="Governo do Estado de São Paulo" width="50%"></a></p>
 								</div>
 							</div>
 						</div>			
@@ -109,24 +109,27 @@
 				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA')}">
 					<div class="row mt-2">
 						<div class="col-md-4">
-							<div class="text-left text-white">
+							<div class="text-left text-white small">
 								<h5>Sem Papel</h5>		              
 								<p class="">Eficiência, agilidade e respeito ao meio ambiente</p> 
 							</div>
 						</div>
 						<div class="col-md-4">
-							<a href="http://www.saopaulo.sp.gov.br/" role="link"><img class="mx-auto d-block" src="/siga/imagens/logo-gesp-slogan-horizontal-cor-texto-branco.png" alt="" width="40%"></a></p>
-						</div>
-						<div class="col-sm-4">
+							<div style="padding-top:10px;">
+								<img class="" src="/siga/imagens/logo-siga-doc-sp-colorido.png" width="50%">
+							</div>
 							
+						</div>
+						<div class="col-sm-4" style="padding-top:5px;">
+							<a href="http://www.saopaulo.sp.gov.br/" role="link"><img class="mx-auto d-block" src="/siga/imagens/logo-gesp-slogan-horizontal-cor-texto-branco.png" alt="Governo do Estado de São Paulo" width="40%"></a></p>
 						</div>
 					</div>
 				</c:if>
 			</div>
 			
-			<hr>				
+			<hr class="p-0 m-0 mb-1">			
 			<div class="text-right text-white">
-				SIGA-Doc <b>${siga.versao}</b> | Desenvolvido por Prodesp e TRF2				
+				<b>SIGA.doc</b> v${siga.versao} <i class="fa fa-code"></i> <span> Desenvolvido por Prodesp e TRF2 </span>				
 			</div>
 		</div>
 	</footer>

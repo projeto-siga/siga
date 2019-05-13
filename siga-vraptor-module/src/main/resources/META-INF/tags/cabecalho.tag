@@ -101,7 +101,7 @@ ${meta}
 			<c:set var="body_color" value="login_body_color" scope="request" />
 		</c:if>
 		
-		<c:set var="ico_siga" value="sem-papel.ico" />
+		<c:set var="ico_siga" value="siga-doc.ico" />
 		<c:set var="menu_class" value="menusp" />
 		<c:set var="sub_menu_class" value="submenusp" />
 		<c:set var="navbar_class" value="navbar-light" />

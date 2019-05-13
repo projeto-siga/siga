@@ -26,6 +26,7 @@ package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -33,6 +34,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Immutable;
 
 import br.gov.jfrj.siga.cp.CpConvertableEntity;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -43,7 +45,9 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
 @Table(name = "CP_ORGAO_USUARIO", schema = "CORPORATIVO")
-@Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@Immutable
+@Cacheable
+@Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 		Serializable, Selecionavel, Assemelhavel, CpConvertableEntity {
 	public static ActiveRecord<CpOrgaoUsuario> AR = new ActiveRecord<>(

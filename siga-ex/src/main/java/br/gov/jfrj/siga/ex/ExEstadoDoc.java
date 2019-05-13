@@ -30,7 +30,9 @@ import javax.persistence.Table;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Immutable;
 
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 /**
@@ -39,8 +41,9 @@ import br.gov.jfrj.siga.model.Selecionavel;
  */
 @Entity
 @BatchSize(size = 500)
+@Immutable
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(region = CpDao.CACHE_QUERY_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "EX_ESTADO_DOC", catalog = "SIGA")
 public class ExEstadoDoc extends AbstractExEstadoDoc implements Serializable,
 		Selecionavel {

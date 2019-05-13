@@ -18,15 +18,23 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Immutable;
 
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 
 @Entity
 @BatchSize(size = 500)
+@Immutable
+@Cacheable
+@Cache(region = CpDao.CACHE_QUERY_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "EX_PAPEL", catalog = "SIGA")
 public class ExPapel extends AbstractExPapel {
 	

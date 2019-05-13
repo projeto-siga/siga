@@ -170,9 +170,9 @@ ${meta}
 									ocultardescricao="sim" buscar="nao" siglaInicial=""
 									modulo="siga/public" urlAcao="buscar" urlSelecionar="selecionar"
 									matricula="${titular.siglaCompleta}" />
-								<button class="btn ${button_class_busca} ml-2 my-2 my-sm-0" type="submit">Buscar</button>
+								<button class="btn ${button_class_busca} ml-2 my-2 my-sm-0" type="button" onclick="javascript:buscarDocumentoPorCodigo();">Buscar</button>
 								<script type="text/javascript">
-									if (false) {
+									if (true) {
 										var lis = document
 												.getElementsByTagName('li');
 	
@@ -214,16 +214,8 @@ ${meta}
 	
 									var fld = document
 											.getElementsByName('buscar_genericoSel.sigla')[0];
-									//fld.setAttribute("class", "gt-search-text");
-									//fld.className = "gt-search-text";
 									fld.placeholder = 'Código';
-									fld.onblur = function() {
-										if (this.value == '') {
-											this.value = placeholder;
-											return;
-										}
-										ajax_buscar_generico();
-									};
+									fld.onblur = '';
 									fld.onkeypress = function(event) {
 										var fid = document
 												.getElementsByName('buscar_genericoSel.id')[0];
@@ -234,13 +226,21 @@ ${meta}
 										if (keyCode == 13) {
 											if (fid.value == null
 													|| fid.value == "") {
-												fld.onblur();
+												buscarDocumentoPorCodigo();
 											}
 											return false;
 										} else {
 											fid.value = '';
 											return true;
 										}
+									};
+
+									function buscarDocumentoPorCodigo() {
+										if (this.value == '') {
+											this.value = placeholder;
+											return;
+										}
+										ajax_buscar_generico();
 									};
 	
 									self.resposta_ajax_buscar_generico = function(

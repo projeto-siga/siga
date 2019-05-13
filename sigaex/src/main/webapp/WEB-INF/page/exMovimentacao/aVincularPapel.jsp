@@ -99,17 +99,15 @@ function alteraResponsavel()
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}"/>
 					<div class="row">
-						<div class="col-sm-3">
+						<div class="col-md-2 col-sm-3">
 							<div class="form-group">
-								<label for="dtMovString">Data:</label>
+								<label for="dtMovString">Data</label>
 								<input type="text" name="dtMovString" value="${dtMovString}" onblur="javascript:verifica_data(this,0);" class="form-control"/>
 							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col-sm-2">
+						<div class="col-sm-3">
 							<div class="form-group">
-								    <label>Responsável:</label>
+								    <label>Responsável</label>
 									<select class="form-control" id="tipoResponsavel"  name="tipoResponsavel" onchange="javascript:alteraResponsavel();">
 										<c:forEach items="${listaTipoRespPerfil}" var="item">
 											<option value="${item.key}" ${item.key == tipoResponsavel ? 'selected' : ''}>
@@ -134,7 +132,7 @@ function alteraResponsavel()
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-4">
+						<div class="col-sm-3">
 							<div class="form-group">
 								<label for="idPapel">Perfil</label>
 								<select class="form-control" name="idPapel">
@@ -148,7 +146,7 @@ function alteraResponsavel()
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-sm">
 							<input type="submit" value="Ok" class="btn btn-primary"/>
 							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-cancel ml-2"/>
 						</div>

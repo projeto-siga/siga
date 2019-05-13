@@ -96,8 +96,8 @@
 
 <c:set var="tam" value="${requestScope[propriedadeSel].tamanho}" />
 
-<c:set var="larguraPopup" value="600" />
-<c:set var="alturaPopup" value="400" />
+<c:set var="larguraPopup" value="800" />
+<c:set var="alturaPopup" value="600" />
 
 
 <script type="text/javascript">
@@ -212,9 +212,14 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	url = url + '&matricula=${matricula}';
 	</c:if>
 	url = url + '&sigla=' + sigla;
-	Siga.ajax(url, null, "GET", function(response){		
+	/*
+	Siga.ajax(url, null, "GET", function(response){
 		resposta_ajax_${propriedade}${tipoSel}(response);
-	});	
+	});	*/
+	$.get( url, function(response){
+		resposta_ajax_${propriedade}${tipoSel}(response);
+	});
+
 	//PassAjaxResponseToFunction(url, 'resposta_ajax_${propriedade}${tipoSel}', false);
 	
 }

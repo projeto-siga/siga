@@ -681,8 +681,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		// Portanto, quando vamos acessar alguma propriedade dele que seja do
 		// tipo LazyRead, obtemos um erro. O método lock, attacha ele novamente
 		// na seção atual.
-		if (cfg != null)
-			ExDao.getInstance().getSessao().lock(cfg, LockMode.NONE);
+		
+		// Dasabilitado porque estava dando erro de "Illegal attempt to associate a collection with two open sessions"
+		//if (cfg != null)
+		//	ExDao.getInstance().getSessao().lock(cfg, LockMode.NONE);
 
 		return cfg;
 	}

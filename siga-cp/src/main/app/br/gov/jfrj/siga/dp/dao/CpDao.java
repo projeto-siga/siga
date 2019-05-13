@@ -33,17 +33,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -101,6 +98,10 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
 
 public class CpDao extends ModeloDao {
 
@@ -1304,7 +1305,7 @@ public class CpDao extends ModeloDao {
 			// Cache was disabled because it would interfere with the
 			// "change password" action.
 			qry.setCacheable(true);
-			qry.setCacheRegion(CACHE_QUERY_SECONDS);
+			qry.setCacheRegion(CACHE_QUERY_HOURS);
 			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.list();
 			if (lista.size() == 0) {
 				throw new AplicacaoException(
@@ -2056,6 +2057,29 @@ public class CpDao extends ModeloDao {
 		}
 		return listaFinal;
 	}
+	
+	public CpModelo consultaCpModeloGeral() {
+		final Query qry = getSessao().getNamedQuery("consultarCpModeloGeral");
+		qry.setCacheable(true);
+		qry.setCacheRegion(CACHE_QUERY_SECONDS);
+
+		final List<CpModelo> lista = qry.list();
+		if (lista.size() > 0)
+			return lista.get(0);
+		else return null;
+	}
+
+	public CpModelo consultaCpModeloPorNome(String nome) {
+		final Query qry = getSessao().getNamedQuery("consultarCpModeloPorNome");
+		qry.setCacheable(true);
+		qry.setCacheRegion(CACHE_QUERY_SECONDS);
+		qry.setString("nome", nome);
+
+		final List<CpModelo> lista = qry.list();
+		if (lista.size() > 0)
+			return lista.get(0);
+		else return null;
+	}
 
 	public List<CpModelo> listarModelosOrdenarPorNome(String script)
 			throws Exception {
@@ -2304,6 +2328,8 @@ public class CpDao extends ModeloDao {
 			final Query qry = getSessao().getNamedQuery(
 					"consultarLotacaoAtualPelaLotacaoInicial");
 			qry.setLong("idLotacaoIni", lotacao.getIdLotacaoIni());
+			qry.setCacheable(true);
+			qry.setCacheRegion(CACHE_CORPORATIVO);
 			final DpLotacao lot = (DpLotacao) qry.uniqueResult();
 			return lot;
 		} catch (final IllegalArgumentException e) {
@@ -2320,6 +2346,8 @@ public class CpDao extends ModeloDao {
 			final Query qry = getSessao().getNamedQuery(
 					"consultarPessoaAtualPelaInicial");
 			qry.setLong("idPessoaIni", pessoa.getIdPessoaIni());
+			qry.setCacheable(true);
+			qry.setCacheRegion(CACHE_CORPORATIVO);
 			final DpPessoa pes = (DpPessoa) qry.uniqueResult();
 			return pes;
 		} catch (final IllegalArgumentException e) {

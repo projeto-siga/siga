@@ -62,7 +62,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Table(name = "DP_PESSOA", schema = "CORPORATIVO")
 @Entity
 @SqlResultSetMapping(name = "scalar", columns = @ColumnResult(name = "dt"))
-@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		Selecionavel, Historico, Sincronizavel, Comparable, DpConvertableEntity {
 	/**

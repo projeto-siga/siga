@@ -26,12 +26,13 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
 @Table(name = "CP_SERVICO", schema = "CORPORATIVO")
-@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpServico extends AbstractCpServico implements Selecionavel {
 
 	/**

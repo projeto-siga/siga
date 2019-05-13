@@ -35,12 +35,13 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
 @Table(name = "CP_LOCALIDADE", schema = "CORPORATIVO")
 @SuppressWarnings("serial")
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpLocalidade extends AbstractCpLocalidade implements Serializable,
 		Selecionavel {
 

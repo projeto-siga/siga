@@ -55,7 +55,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarIdentidadeCadastranteAtiva", query = "select u from CpIdentidade u , DpPessoa pes "
 				+ "where u.nmLoginIdentidade = :nmUsuario "
 				+ "and pes.sesbPessoa = :sesbPessoa "
-				+ "and u.dpPessoa.cpfPessoa = pes.cpfPessoa "
+				+ "and u.dpPessoa.idPessoaIni = pes.idPessoaIni "
 				+ "and (u.hisDtFim is null) "
 				+ "and (u.dtCancelamentoIdentidade is null) "
 				+ "and (u.dtExpiracaoIdentidade is null or u.dtExpiracaoIdentidade > current_date()) "

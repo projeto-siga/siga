@@ -24,11 +24,12 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 
 @Entity
 @Table(name = "CP_TIPO_CONFIGURACAO", schema = "CORPORATIVO")
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao  {
 
 	/**

@@ -213,9 +213,9 @@ public class ExDocumentoVO extends ExVO {
 			}
 		}
 
-		if (doc.getDocumentosPublicadosNoBoletim() != null) {
-			for (ExDocumento documentoPublicado : doc
-					.getDocumentosPublicadosNoBoletim()) {
+		List<ExDocumento> documentosPublicadosNoBoletim = doc.getDocumentosPublicadosNoBoletim();
+		if (documentosPublicadosNoBoletim != null) {
+			for (ExDocumento documentoPublicado : documentosPublicadosNoBoletim) {
 				documentosPublicados.add(new ExDocumentoVO(documentoPublicado));
 			}
 		}

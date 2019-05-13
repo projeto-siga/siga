@@ -119,6 +119,8 @@ public class ExDao extends CpDao {
 	public List<ExDocumento> consultarDocsInclusosNoBoletim(ExDocumento doc) {
 		final Query query = getSessao().getNamedQuery(
 				"consultarDocsInclusosNoBoletim");
+		query.setCacheable(true);
+		query.setCacheRegion(ExDao.CACHE_EX);
 
 		query.setLong("idDoc", doc.getIdDoc());
 		return query.list();
@@ -1637,6 +1639,9 @@ public class ExDao extends CpDao {
 		Query q = getSessao()
 				.getNamedQuery("consultarDescricaoExClassificacao");
 		q.setParameterList("listaCodificacao", pais);
+		q.setCacheable(true);
+		q.setCacheRegion(ExDao.CACHE_EX);
+		
 		List<String> result = q.list();
 		StringBuffer sb = new StringBuffer();
 		for (String descr : result) {

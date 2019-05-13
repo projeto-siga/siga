@@ -24,9 +24,11 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import br.gov.jfrj.siga.dp.dao.CpDao;
+
 @Entity
 @Table(schema = "CORPORATIVO", name = "CP_TIPO_SERVICO")
-@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpTipoServico extends AbstractCpTipoServico {
 	public static final int TIPO_SERVICO_DIRETORIO = 1;
 	public static final int TIPO_CONFIG_SISTEMA = 2;

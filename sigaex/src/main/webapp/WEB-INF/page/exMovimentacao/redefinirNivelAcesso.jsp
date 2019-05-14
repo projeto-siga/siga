@@ -24,19 +24,19 @@
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}"/>
 					<div class="row">
-						<div class="col-sm-3">
+						<div class="col-md-2 col-sm-3">
 							<div class="form-group">
 								<label for="dtMovString">Data</label>
 								<input class="form-control" type="text" name="dtMovString" onblur="javascript:verifica_data(this,0);" />
 							</div>
 						</div>
-					</div>
-					<div class="row">
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label>Responsável</label>
 								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>
 							</div>
+						</div>
+						<div class="col-sm-2 mt-4">
 							<div class="form-check form-check-inline">
 								<input class="form-check-input" type="checkbox" theme="simple" name="substituicao" onclick="javascript:displayTitular(this);" />
 								<label class="form-check-label">Substituto</label>
@@ -76,7 +76,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-sm">
 							<input type="submit" value="Ok" class="btn btn-primary"/> 
 							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-cancel ml-2"/> 
 						</div>

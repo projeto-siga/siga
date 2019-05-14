@@ -70,7 +70,7 @@
 				<form name="frm" action="anotar_lote_gravar" method="post">
 					<input type="hidden" name="postback" value="1" />
 					<div class="row">
-						<div class="col-sm-3">
+						<div class="col-md-2 col-sm-3">
 							<div class="form-group">
 								<label>Data</label>
 								<input type="text" name="dtMovString"
@@ -78,17 +78,15 @@
 									class="form-control" />
 							</div>
 						</div>
-					</div>
-					<div class="row">
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label>Responsável</label>
 								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga" />
 							</div>
 						</div>
-						<div class="col-sm-2">
+						<div class="col-sm-2 mt-4">
 							<div class="form-group">
-								<div class="form-check form-check-inline mt-4">
+								<div class="form-check form-check-inline">
 									<input type="checkbox" name="substituicao" onclick="javascript:displayTitular(this);" class="form-check-input" /> 
 									<label class="form-check-label">Substituto</label>
 								</div>
@@ -126,7 +124,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-sm">
 							<div class="form-group">
 								<label for="descrMov">Nota</label>
 								<textarea class="form-control" name="descrMov" value="${descrMov}" cols="60" rows="5"
@@ -138,7 +136,7 @@
 					</div>
 				<c:if test="${tipoResponsavel == 3}">
 					<div class="row">
-						<div class="col-sm">
+						<div class="col-sm-6">
 							<div class="form-group">
 								<label>Observação</label>
 								<input type="text" size="30" name="obsOrgao" id="obsOrgao" class="form-control" />

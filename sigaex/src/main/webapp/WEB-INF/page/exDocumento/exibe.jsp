@@ -204,13 +204,14 @@
 							css += "TABLE.mov TR.encerramento_volume { background-color: rgb(255, 218, 218);}</style>";
 							$(css).appendTo("head");
 						</script>
-							<table class="gt-table mov">
+							<table class="table table-responsive-sm">
 								<thead>
 									<tr>
-										<th rowspan="2" align="center" style="padding: 5px 5px;">Tempo</th>
-										<th rowspan="2" style="padding: 5px 5px;"><fmt:message key="usuario.lotacao"/></th>
-										<th rowspan="2" style="padding: 5px 5px;">Evento</th>
-										<th rowspan="2" style="padding: 5px 5px;">Descrição</th>
+										<th align="center">Tempo</th>
+										<th><fmt:message key="usuario.lotacao"/></th>
+										<th>Evento</th>
+										<th>Descrição</th>
+										<th></th>
 									</tr>
 								</thead>
 								<c:set var="evenorodd" value="odd" />
@@ -219,26 +220,32 @@
 										test="${ (mov.idTpMov != 14 and mov.idTpMov != 64 and
 							          not mov.cancelada)}">
 										<tr class="${mov.classe} ${mov.disabled}">
-											<td align="center" style="padding: 5px 5px;" title="${mov.dtRegMovDDMMYYHHMMSS}">${mov.tempoRelativo}</td>
-											<td style="padding: 5px 5px;" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>
-											<td style="padding: 5px 5px;">${mov.mov.exTipoMovimentacao.sigla}</td>
-											<td style="padding: 5px 5px; word-break: break-all;">${mov.descricao}
+											<td class="align-top" title="${mov.dtRegMovDDMMYYHHMMSS}">${mov.tempoRelativo}</td>
+											<td class="align-top" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>
+											<td class="align-top" >${mov.mov.exTipoMovimentacao.sigla}</td>
+											<td class="align-top" style="word-break: break-all;">
+												<span class="align-top">${mov.descricao}</span>
 												<c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
-												<c:set var="assinadopor" value="${true}" /> <siga:links
-													inline="${true}"
-													separator="${not empty mov.descricao and mov.descricao != null}">
-													<c:forEach var="acao" items="${mov.acoes}">
-														<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
-															pos="${acao.pos}"
-															url="${pageContext.request.contextPath}${acao.url}"
-															test="${true}" popup="${acao.popup}"
-															confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
-															idAjax="${mov.idMov}" classe="${acao.classe}" />
-														<c:if test='${assinadopor and mov.idTpMov == 2}'> ${mov.complemento}
-									<c:set var="assinadopor" value="${false}" />
-														</c:if>
-													</c:forEach>
-												</siga:links>
+												<c:set var="assinadopor" value="${true}" />
+											</td>
+											<td class="align-top" style="word-break: break-all;">
+												<span class="align-top">
+													<siga:links
+														inline="${true}"
+														separator="${not empty mov.descricao and mov.descricao != null}">
+														<c:forEach var="acao" items="${mov.acoes}">
+															<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}"
+																pos="${acao.pos}"
+																url="${pageContext.request.contextPath}${acao.url}"
+																test="${true}" popup="${acao.popup}"
+																confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}"
+																idAjax="${mov.idMov}" classe="${acao.classe}" />
+															<c:if test='${assinadopor and mov.idTpMov == 2}'> ${mov.complemento}
+																<c:set var="assinadopor" value="${false}" />
+															</c:if>
+														</c:forEach>
+													</siga:links>
+												</span>
 											</td>
 										</tr>
 										<c:choose>
@@ -838,28 +845,35 @@
 								<b>Classificação:</b> ${docVO.classificacaoDescricaoCompleta}
 							</p>
 							<c:if test="${not empty docVO.dadosComplementares}">${docVO.dadosComplementares}</c:if>
+						</div>
+					</div>
 
-							<c:if test="${not empty docVO.cossignatarios}">
+					<c:if test="${not empty docVO.cossignatarios}">
+						<div class="card-sidebar card bg-light mb-3">
+							<div class="card-header">
+								Cossignatários
+							</div>
+							<div class="card-body">
 								<div class="gt-sidebar-content" style="padding-top: 10px">
-									<h3>Cossignatários</h3>
 									<ul>
 										<c:forEach var="cossig" items="${docVO.cossignatarios}">
-											<li>${cossig.key.subscritor.nomePessoa}<c:if
-													test="${cossig.value}">&nbsp;
-					<a href="/sigaex/app/expediente/mov/excluir?id=${cossig.key.idMov}">Excluir</a>
-												</c:if>
+											<li>${cossig.key.subscritor.nomePessoa}
+											<c:if test="${cossig.value}">&nbsp;
+												<a class="btn btn-sm btn-light mb-2" href="/sigaex/app/expediente/mov/excluir?id=${cossig.key.idMov}">Excluir</a>
+											</c:if>
 											</li>
 										</c:forEach>
 									</ul>
 								</div>
-							</c:if>
+							</div>
 						</div>
-					</div>
-
+					</c:if>
 
 					<c:if test="${not empty docVO.doc.perfis}">
 						<div class="card-sidebar card bg-light mb-3">
-							<div class="card-header">Perfis</div>
+							<div class="card-header">
+								Perfis
+							</div>
 							<div class="card-body">
 								<c:forEach var="perfil" items="${docVO.doc.perfis}">
 									<p style="margin-bottom: 3px;">

@@ -183,7 +183,7 @@ public class UsuarioController extends SigaController {
 			msgAD = "<br/><br/><br/>ATENÇÃO: A senha de rede e e-mail NÃO foi alterada embora o seu órgão esteja configurado para integrar as senhas do SIGA, rede e e-mail.";
 		}
 		
-		result.include("mensagem", "A Senha foi alterada com sucesso e foi enviada para seu email" + msgAD);
+		result.include("mensagem", getBundle().getObject("usuario.esqueciminhasenha.sucesso") + msgAD);
 		result.include("volta", "esqueci");
 		result.include("titulo", "Esqueci Minha Senha");
 		result.redirectTo("/");
@@ -258,7 +258,7 @@ public class UsuarioController extends SigaController {
 		}
 
 		if (lstPessoa.size() == 0){
-			throw new AplicacaoException("O usuário não está cadastrado no banco de dados." );
+			throw new AplicacaoException(getBundle().getString("usuario.erro.naocadastrado"));
 		}
 		
 		if (lstPessoa != null && lstPessoa.size() == 1) {

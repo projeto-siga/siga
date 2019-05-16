@@ -46,12 +46,12 @@
 
 					<c:if test="${not empty mensagem}">
 						<div class="login-invalido">
-							<div class="login-invalido-titulo">
-								<p class="alert alert-danger">${mensagem}</p>
+							<div class="login-invalido-titulo ">
+								<p class="alert alert-danger d-none ${hide_only_TRF2}">${mensagem}</p>
 							</div>
 
 							<div class="login-invalido-descricao">
-								${f:resource('siga.gi.texto.login')}
+								<p class="alert alert-danger ${hide_only_GOVSP}"><fmt:message key="usuario.help"/></p>
 							</div>
 						</div>
 					</c:if>

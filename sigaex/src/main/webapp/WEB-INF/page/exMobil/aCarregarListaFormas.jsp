@@ -2,12 +2,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<select class="form-control" id="idFormaDoc" name="idFormaDoc"
-	onchange="javascript:alteraForma();">
-	<option value="0">[Todos]</option>
-	<c:forEach items="${todasFormasDocPorTipoForma}" var="item">
-		<option value="${item.idFormaDoc}"
-			${item.idFormaDoc == idFormaDoc ? 'selected' : ''}>
-			${item.descrFormaDoc}</option>
-	</c:forEach>
-</select>
+<div class="form-group">
+	<label>&nbsp;</label> 
+	<select class="form-control" id="idFormaDoc" name="idFormaDoc"
+		onchange="javascript:alteraForma();">
+		<option value="0">[Todos]</option>
+		<c:forEach items="${todasFormasDocPorTipoForma}" var="item">
+			<option value="${item.idFormaDoc}"
+				${item.idFormaDoc == idFormaDoc ? 'selected' : ''}>
+				${item.descrFormaDoc}</option>
+		</c:forEach>
+	</select>
+</div>

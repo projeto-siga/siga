@@ -51,7 +51,7 @@
 							</div>
 
 							<div class="login-invalido-descricao">
-								<p class="alert alert-danger ${hide_only_GOVSP}"><fmt:message key="usuario.help"/></p>
+								<p class="alert alert-danger ${hide_only_GOVSP}"><fmt:message key="usuario.falhaautenticacao"/></p>
 							</div>
 						</div>
 					</c:if>

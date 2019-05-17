@@ -108,6 +108,7 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
+import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -157,6 +158,11 @@ import br.gov.jfrj.siga.model.ObjetoBase;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 import br.gov.jfrj.siga.parser.SiglaParser;
+import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
+import br.gov.jfrj.siga.sinc.lib.Item;
+import br.gov.jfrj.siga.sinc.lib.Sincronizador;
+import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
+import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 import br.gov.jfrj.siga.wf.service.WfService;
 
 public class ExBL extends CpBL {
@@ -3603,6 +3609,10 @@ public class ExBL extends CpBL {
 
 			String s = processarComandosEmTag(doc, "gravacao");
 
+			// Incluir movimentações de definição automática de perfil.
+			if (!doc.isFinalizado()) 
+				incluirDefinicaoAutomaticaDePapel(cadastrante, lotaTitular, doc);
+
 			concluirAlteracaoDocComRecalculoAcesso(doc);
 
 			// Finaliza o documento automaticamente se ele for coloborativo
@@ -3633,6 +3643,108 @@ public class ExBL extends CpBL {
 		}
 		// System.out.println(System.currentTimeMillis() + " - FIM gravar");
 		return doc;
+	}
+	
+	private class MovimentacaoSincronizavel extends SincronizavelSuporte implements Sincronizavel, Comparable<MovimentacaoSincronizavel> {
+		@Desconsiderar
+		ExPapel papel;
+		@Desconsiderar
+		DpPessoa pessoa;
+		@Desconsiderar
+		DpLotacao lotacao;
+		@Desconsiderar
+		ExMovimentacao mov;
+		
+		MovimentacaoSincronizavel(ExPapel papel, DpPessoa pessoaIni, DpLotacao lotacaoIni, ExMovimentacao mov) {
+			this.papel = papel;
+			this.pessoa = pessoaIni;
+			this.lotacao = lotacaoIni;
+			this.mov = mov;
+			this.setIdExterna(papel + "|" + pessoaIni + "|" + lotacaoIni);
+		}
+		
+		@Override
+		public int compareTo(MovimentacaoSincronizavel o) {
+			return getIdExterna().compareTo(o.getIdExterna());
+		}
+
+
+	}
+
+	private void incluirDefinicaoAutomaticaDePapel(DpPessoa cadastrante, DpLotacao lotaCadastrante, ExDocumento doc) throws AplicacaoException, SQLException {
+		if (doc == null || doc.getTitular() == null || doc.getMobilGeral() == null)
+			return;
+		
+		SortedSet<MovimentacaoSincronizavel> setAntes = new TreeSet<>();
+		SortedSet<MovimentacaoSincronizavel> setDepois = new TreeSet<>();
+		
+		// Inclui em setAntes os papeis que já estão atribuídos de acordo com as movimentações de vínculo de papel
+		List<ExMovimentacao> movs = doc.getMobilGeral().getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL);
+		for (ExMovimentacao mov : movs) {
+			if (mov.isCancelada())
+				continue;
+			setAntes.add(new MovimentacaoSincronizavel(mov.getExPapel(), mov.getResp(), mov.getLotaResp(), mov));
+		}
+
+		// Inclui em setDepois os papeis que devem estar atribuídos ao documento
+		//
+		Date dt = dao().consultarDataEHoraDoServidor();
+		TreeSet<ExConfiguracao> lista = null;
+		ExConfiguracaoBL confBL = Ex.getInstance().getConf();
+		lista = (TreeSet)confBL.getListaPorTipo(CpTipoConfiguracao.TIPO_CONFIG_DEFINICAO_AUTOMATICA_DE_PAPEL);
+		if (lista != null) {
+			CpConfiguracao confFiltro = new CpConfiguracao();
+			confFiltro.setDpPessoa(doc.getTitular());
+			confFiltro.setLotacao(doc.getLotaTitular());
+			confBL.deduzFiltro(confFiltro);
+			Set<Integer> atributosDesconsiderados = new HashSet<>();
+			atributosDesconsiderados.add(CpConfiguracaoBL.PESSOA_OBJETO);
+			atributosDesconsiderados.add(CpConfiguracaoBL.LOTACAO_OBJETO);
+			for (ExConfiguracao conf : lista) {
+				if (//(!conf.ativaNaData(dt)) || 
+						conf.getExPapel() == null
+						|| (conf.getPessoaObjeto() == null && conf.getLotacaoObjeto() == null)
+						|| !confBL.atendeExigencias(confFiltro,
+								atributosDesconsiderados, conf, null))
+					continue;
+				setDepois.add(new MovimentacaoSincronizavel(conf.getExPapel(), conf.getPessoaObjeto(), conf.getLotacaoObjeto(), null));
+			}
+		}
+
+		
+		// O uso da classe Sincronizador nessa rotina acabou se tornando desnecessário pois não estamos tratando
+		// a exclusão nem a alteração. Convém simplificar isso depois.
+		Sincronizador sinc = new Sincronizador();
+		sinc.setSetNovo((SortedSet<Sincronizavel>)(SortedSet)setDepois);
+		sinc.setSetAntigo((SortedSet<Sincronizavel>)(SortedSet)setAntes);
+		List<Item> list = sinc.getEncaixe();
+		
+		for (Item i : list) {
+			switch (i.getOperacao()) {
+			case alterar:
+				throw new RuntimeException("Não deveria haver uma operação de alteração na lista.");
+			case incluir:
+				MovimentacaoSincronizavel novo = (MovimentacaoSincronizavel)i.getNovo();
+				final ExMovimentacao mov = criarNovaMovimentacao(
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL,
+						cadastrante, lotaCadastrante, doc.getMobilGeral(), dt, 
+						novo.pessoa != null ? novo.pessoa.getPessoaAtual() : null,
+						novo.lotacao != null ? novo.lotacao.getLotacaoAtual() : null, null, null, dt);
+				mov.setExPapel(novo.papel);
+				gravarMovimentacao(mov);
+				break;
+			case excluir:
+// Não vamos excluir pois pode ter sido incluído manualmente.
+//
+//				final ExMovimentacao movCancelamento = criarNovaMovimentacao(
+//						ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
+//						cadastrante, lotaCadastrante, doc.getMobilGeral(), dt, null, null,
+//						null, null, null);
+//				movCancelamento.setExMovimentacaoRef(((MovimentacaoSincronizavel)i.getAntigo()).mov);
+//				gravarMovimentacaoCancelamento(movCancelamento, ((MovimentacaoSincronizavel)i.getAntigo()).mov);
+				break;
+			}
+		}
 	}
 
 	private void processarResumo(ExDocumento doc) throws Exception,

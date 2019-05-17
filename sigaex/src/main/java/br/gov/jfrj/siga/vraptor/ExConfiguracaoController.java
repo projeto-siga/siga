@@ -25,7 +25,6 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -35,12 +34,11 @@ import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpTipoLotacao;
-import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
+import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
@@ -74,7 +72,7 @@ public class ExConfiguracaoController extends ExController {
 	
 	@Get("app/expediente/configuracao/editar")
 	public void edita(Long id, boolean campoFixo, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idMod,
-			Long idFormaDoc, Long idNivelAcesso, Long idSituacao, Long idTpConfiguracao, DpPessoaSelecao pessoaSel,
+			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Long idSituacao, Long idTpConfiguracao, DpPessoaSelecao pessoaSel,
 			DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel, DpFuncaoConfiancaSelecao funcaoSel,
 			ExClassificacaoSelecao classificacaoSel, DpPessoaSelecao pessoaObjetoSel,
 			DpLotacaoSelecao lotacaoObjetoSel, DpCargoSelecao cargoObjetoSel, DpFuncaoConfiancaSelecao funcaoObjetoSel, Long idOrgaoObjeto, Long idTpLotacao, String nmTipoRetorno)
@@ -86,8 +84,8 @@ public class ExConfiguracaoController extends ExController {
 			config = daoCon(id);
 		} else if (campoFixo) {
 			final ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia()
-					.setIdNivelAcesso(idNivelAcesso).setIdTpMov(idTpMov).setIdTpDoc(idTpDoc).setIdMod(idMod)
-					.setIdFormaDoc(idFormaDoc).setIdNivelAcesso(idNivelAcesso).setIdSituacao(idSituacao)
+					.setIdNivelAcesso(idNivelAcesso).setIdPapel(idPapel).setIdTpMov(idTpMov).setIdTpDoc(idTpDoc).setIdMod(idMod)
+					.setIdFormaDoc(idFormaDoc).setIdSituacao(idSituacao)
 					.setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel).setLotacaoSel(lotacaoSel)
 					.setCargoSel(cargoSel).setFuncaoSel(funcaoSel).setClassificacaoSel(classificacaoSel)
 					.setPessoaObjetoSel(pessoaObjetoSel).setLotacaoObjetoSel(lotacaoObjetoSel)
@@ -102,6 +100,7 @@ public class ExConfiguracaoController extends ExController {
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
 		result.include("listaSituacao", getListaSituacao());
 		result.include("listaNivelAcesso", getListaNivelAcesso());
+		result.include("listaPapel", getListaPapel());
 		result.include("orgaosUsu", getOrgaosUsu());
 		result.include("listaTiposMovimentacao", getListaTiposMovimentacao());
 		result.include("tiposFormaDoc", getTiposFormaDoc());
@@ -138,7 +137,7 @@ public class ExConfiguracaoController extends ExController {
 	@SuppressWarnings("all")
 	@Get("app/expediente/configuracao/editar_gravar")
 	public void editarGravar(Long id, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idTpFormaDoc, Long idMod,
-			Long idFormaDoc, Long idNivelAcesso, Long idSituacao, Long idTpConfiguracao, DpPessoaSelecao pessoaSel,
+			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Long idSituacao, Long idTpConfiguracao, DpPessoaSelecao pessoaSel,
 			DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel, DpFuncaoConfiancaSelecao funcaoSel,
 			ExClassificacaoSelecao classificacaoSel, DpPessoaSelecao pessoaObjeto_pessoaSel,
 			DpLotacaoSelecao lotacaoObjeto_lotacaoSel, DpCargoSelecao cargoObjeto_cargoSel, DpFuncaoConfiancaSelecao funcaoObjeto_funcaoSel, Long idOrgaoObjeto, Long idTpLotacao, String nmTipoRetorno,
@@ -146,7 +145,7 @@ public class ExConfiguracaoController extends ExController {
 
 		final ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setId(id)
 				.setTipoPublicador(null).setIdTpMov(idTpMov).setIdTpDoc(idTpDoc).setIdMod(idMod)
-				.setIdFormaDoc(idFormaDoc).setIdTpFormaDoc(idTpFormaDoc).setIdNivelAcesso(idNivelAcesso)
+				.setIdFormaDoc(idFormaDoc).setIdTpFormaDoc(idTpFormaDoc).setIdNivelAcesso(idNivelAcesso).setIdPapel(idPapel)
 				.setIdSituacao(idSituacao).setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel)
 				.setLotacaoSel(lotacaoSel).setCargoSel(cargoSel).setFuncaoSel(funcaoSel)
 				.setClassificacaoSel(classificacaoSel).setIdOrgaoObjeto(idOrgaoObjeto).setPessoaObjetoSel(pessoaObjeto_pessoaSel).setLotacaoObjetoSel(lotacaoObjeto_lotacaoSel)
@@ -465,6 +464,9 @@ public class ExConfiguracaoController extends ExController {
 		if (c.getExNivelAcesso() != null)
 			result.include("idNivelAcesso", c.getExNivelAcesso().getIdNivelAcesso());
 
+		if (c.getExPapel() != null)
+			result.include("idPapel", c.getExPapel().getIdPapel());
+
 		if (c.getCpSituacaoConfiguracao() != null)
 			result.include("idSituacao", c.getCpSituacaoConfiguracao().getIdSitConfiguracao());
 
@@ -565,6 +567,10 @@ public class ExConfiguracaoController extends ExController {
 
 	private List<ExNivelAcesso> getListaNivelAcesso() throws Exception {
 		return dao().listarOrdemNivel();
+	}
+
+	private List<ExPapel> getListaPapel() throws Exception {
+		return dao().listarExPapel();
 	}
 
 	private List<ExTipoDocumento> getListaTiposDocumento() throws Exception {

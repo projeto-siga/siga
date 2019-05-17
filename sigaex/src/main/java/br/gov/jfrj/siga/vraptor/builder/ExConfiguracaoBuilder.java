@@ -20,6 +20,7 @@ import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
+import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
@@ -37,6 +38,7 @@ public final class ExConfiguracaoBuilder {
 	private Long idFormaDoc; 
 	private Long idTpFormaDoc;
 	private Long idNivelAcesso; 
+	private Long idPapel; 
 	private Long idSituacao; 
 	private Long idTpConfiguracao;
 	private DpPessoaSelecao pessoaSel; 
@@ -110,6 +112,12 @@ public final class ExConfiguracaoBuilder {
 		if (idNivelAcesso != null && idNivelAcesso != 0) {
 			config.setExNivelAcesso(dao.consultar(idNivelAcesso,
 					ExNivelAcesso.class, false));
+		} else
+			config.setExNivelAcesso(null);
+
+		if (idPapel != null && idPapel != 0) {
+			config.setExPapel(dao.consultar(idPapel,
+					ExPapel.class, false));
 		} else
 			config.setExNivelAcesso(null);
 
@@ -223,6 +231,10 @@ public final class ExConfiguracaoBuilder {
 		return idNivelAcesso;
 	}
 
+	public Long getIdPapel() {
+		return idPapel;
+	}
+
 	public Long getIdSituacao() {
 		return idSituacao;
 	}
@@ -305,6 +317,11 @@ public final class ExConfiguracaoBuilder {
 
 	public ExConfiguracaoBuilder setIdNivelAcesso(Long idNivelAcesso) {
 		this.idNivelAcesso = idNivelAcesso;
+		return this;
+	}
+
+	public ExConfiguracaoBuilder setIdPapel(Long idPapel) {
+		this.idPapel = idPapel;
 		return this;
 	}
 

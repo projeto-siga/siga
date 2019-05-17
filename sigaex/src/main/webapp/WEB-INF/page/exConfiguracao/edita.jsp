@@ -98,6 +98,13 @@
 										headerKey="0" value="${idNivelAcesso}" /></td>
 							</tr>
 							<tr>
+								<td class="shrink">Perfil</td>
+								<td><siga:select name="idPapel"
+										list="listaPapel" theme="simple" listKey="idPapel"
+										listValue="descPapel" headerValue="[Indefinido]"
+										headerKey="0" value="${idPapel}" /></td>
+							</tr>
+							<tr>
 								<td class="shrink">Pessoa</td>
 								<td><siga:selecao propriedade="pessoa" tema="simple"
 										modulo="siga" /></td>

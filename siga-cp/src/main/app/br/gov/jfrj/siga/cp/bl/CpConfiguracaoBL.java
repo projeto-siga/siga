@@ -308,6 +308,7 @@ public class CpConfiguracaoBL {
 			if (cfg.getLotacaoObjeto() != null){
 				cfg.getLotacaoObjeto().getSigla();
 				cfg.getLotacaoObjeto().getOrgaoUsuario().getSigla();
+				cfg.getLotacaoObjeto().getDpPessoaLotadosSet().size();
 			}
 			if (cfg.getCargoObjeto() != null)
 				cfg.getCargoObjeto().getDescricao();

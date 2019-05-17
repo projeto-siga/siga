@@ -90,10 +90,10 @@ function checkEmailValido(){
 function permitirInclusaoUsuario(response,param){
 	if (response == '0'){
 		document.getElementById('painel-dados-usuario').style.display = 'block';
-		document.getElementById('msgEmail').className = 'oculto';
+		$("#msgErro").removeAttr("style").hide();
 	}else{
 		document.getElementById('painel-dados-usuario').style.display = 'none';
-		document.getElementById('msgEmail').className = 'email-invalido';
+		$("#msgErro").show();
 		$('#msgEmail').text(response);
 
 	}
@@ -184,8 +184,20 @@ function refreshWindow(){
 <siga:pagina titulo="${titulo}">
 	<!-- main content bootstrap -->
 	<div class="container-fluid">
+		<div class="row">
+			<div class="col">
+				<div id="msgErro" style="display:none">
+					<div id="msgEmail" class="alert alert-danger" >
+					</div>
+				</div>
+				<script>
+
+				</script>
+			</div>
+		</div>
+	
 		<c:if test="${not empty mensagem}">
-			<div id="mensagem" class="gt-success">${mensagem}</div>
+			<div id="mensagem" class="alert  alert-success">${mensagem} </div>
 			<script>
 				setTimeout(function() {
 					$('#mensagem').fadeTo(1000, 0, function() {
@@ -263,7 +275,7 @@ function refreshWindow(){
 									</div>
 								</div>					
 							</div>					
-							<p id="msgEmail" class="oculto"></p>
+							<p  class="oculto"></p>
 						</form>
 					</div>
 				</div>
@@ -413,7 +425,7 @@ function refreshWindow(){
 				  	</div>
 				</div>				
 				<!--Fim Modal -->
-			</div
-		</div
+			</div>
+		</div>
 	</div>		
 </siga:pagina>

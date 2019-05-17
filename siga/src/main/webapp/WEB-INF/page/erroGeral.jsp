@@ -79,7 +79,9 @@
 							<div class="col">
 								<div class="form-group">		
 									<input type="button" value="Voltar" class="btn btn-primary"  onclick="javascript:history.back();" />
-									<input type="button" id="show_stack" value="Mais detalhes" class="btn btn-primary" onclick="javascript: document.getElementById('caption').setAttribute('class',''); document.getElementById('stack').style.display=''; document.getElementById('show_stack').style.display='none';" />
+									<c:if test="${siga_cliente != 'GOVSP'}">
+										<input type="button" id="show_stack" value="Mais detalhes" class="btn btn-primary" onclick="javascript: document.getElementById('caption').setAttribute('class',''); document.getElementById('stack').style.display=''; document.getElementById('show_stack').style.display='none';" />
+									</c:if>
 								</div>
 							</div>
 						</div>

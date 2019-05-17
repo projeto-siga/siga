@@ -24,12 +24,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.util.CPFUtils;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso.CpTipoAcessoEnum;
 import br.gov.jfrj.siga.cp.CpAcesso;
@@ -49,6 +51,8 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class CpBL {
+
+	private static ResourceBundle bundle;
 
 	CpCompetenciaBL comp;
 
@@ -266,6 +270,12 @@ public class CpBL {
 	public CpIdentidade alterarSenhaDeIdentidade(String matricula, String cpf,
 			CpIdentidade idCadastrante, String[] senhaGerada)
 			throws AplicacaoException {
+		
+		final DpPessoa pessoaCpf = dao().consultarPorCpf(Long.parseLong(cpf));
+		if(pessoaCpf == null) {
+			throw new AplicacaoException("O CPF informado está incorreto, tente novamente!");
+		}
+		
 		final long longmatricula = MatriculaUtils.getParteNumericaDaMatricula(matricula);
 		final DpPessoa pessoa = dao().consultarPorCpfMatricula(
 				Long.parseLong(cpf), longmatricula);
@@ -328,7 +338,7 @@ public class CpBL {
 		} else {
 			if (pessoa == null) {
 				throw new AplicacaoException(
-						"Não foi encontrado usuário com matrícula e cpf informados.");
+						getBundle().getString("usuario.erro.cpfmatriculanaocadastrado"));
 			} else if (pessoa.getEmailPessoaAtual() == null) {
 				throw new AplicacaoException(
 						"Este usuário não possui e-mail cadastrado");
@@ -343,6 +353,11 @@ public class CpBL {
 			String[] senhaGerada, boolean marcarParaSinc)
 			throws AplicacaoException {
 
+		final DpPessoa pessoaCpf = dao().consultarPorCpf(Long.parseLong(cpf));
+		if(pessoaCpf == null) {
+			throw new AplicacaoException("O CPF informado está incorreto, tente novamente!");
+		}
+		
 		final long longMatricula = MatriculaUtils.getParteNumericaDaMatricula(matricula);
 		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
 
@@ -412,7 +427,11 @@ public class CpBL {
 			}
 
 		} else {
-			throw new AplicacaoException("Dados Incorretos!");
+			if (pessoa == null) {
+				throw new AplicacaoException(getBundle().getString("usuario.erro.cpfmatriculanaocadastrado"));
+			} else {
+				throw new AplicacaoException("Dados Incorretos!");
+			}
 		}
 
 	}
@@ -788,4 +807,14 @@ public class CpBL {
 		}
 		return inputStream;
 	}
+
+	private static ResourceBundle getBundle() {
+    	if (SigaBaseProperties.getString("siga.local") == null) {
+    		bundle = ResourceBundle.getBundle("messages_TRF2");
+    	} else {
+    		bundle = ResourceBundle.getBundle("messages_" + SigaBaseProperties.getString("siga.local"));
+    	}
+        return bundle;
+    }
+
 }

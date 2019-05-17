@@ -122,7 +122,7 @@ public class UsuarioController extends SigaController {
 		if (isIntegradoAoAD){
 				msgComplemento = "<br/> Atenção: Sua senha de rede e e-mail foi definida com sucesso.";
 		}else{
-			msgComplemento = "<br/> O seu login e senha foram enviados para seu email.";
+			msgComplemento = "<br/> " + getBundle().getString("usuario.primeiroacesso.sucessocomplemento");
 		}
 
 		result.include("mensagem", "Usuário cadastrado com sucesso." + msgComplemento);
@@ -186,7 +186,7 @@ public class UsuarioController extends SigaController {
 		result.include("mensagem", getBundle().getObject("usuario.esqueciminhasenha.sucesso") + msgAD);
 		result.include("volta", "esqueci");
 		result.include("titulo", "Esqueci Minha Senha");
-		result.redirectTo("/");
+		result.use(Results.page()).forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
 	}
 
 	

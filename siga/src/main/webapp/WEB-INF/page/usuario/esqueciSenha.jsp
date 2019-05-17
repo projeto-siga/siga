@@ -197,7 +197,7 @@ function refreshWindow(){
 		</div>
 	
 		<c:if test="${not empty mensagem}">
-			<div id="mensagem" class="gt-success">${mensagem}</div>
+			<div id="mensagem" class="alert  alert-success">${mensagem} </div>
 			<script>
 				setTimeout(function() {
 					$('#mensagem').fadeTo(1000, 0, function() {
@@ -425,7 +425,7 @@ function refreshWindow(){
 				  	</div>
 				</div>				
 				<!--Fim Modal -->
-			</div
-		</div
+			</div>
+		</div>
 	</div>		
 </siga:pagina>

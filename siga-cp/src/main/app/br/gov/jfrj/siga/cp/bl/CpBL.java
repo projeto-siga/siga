@@ -353,6 +353,11 @@ public class CpBL {
 			String[] senhaGerada, boolean marcarParaSinc)
 			throws AplicacaoException {
 
+		final DpPessoa pessoaCpf = dao().consultarPorCpf(Long.parseLong(cpf));
+		if(pessoaCpf == null) {
+			throw new AplicacaoException("O CPF informado está incorreto, tente novamente!");
+		}
+		
 		final long longMatricula = MatriculaUtils.getParteNumericaDaMatricula(matricula);
 		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
 
@@ -422,7 +427,11 @@ public class CpBL {
 			}
 
 		} else {
-			throw new AplicacaoException("Dados Incorretos!");
+			if (pessoa == null) {
+				throw new AplicacaoException(getBundle().getString("usuario.erro.cpfmatriculanaocadastrado"));
+			} else {
+				throw new AplicacaoException("Dados Incorretos!");
+			}
 		}
 
 	}

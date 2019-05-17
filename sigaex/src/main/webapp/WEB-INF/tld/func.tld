@@ -229,6 +229,16 @@
   <name>floatParaMonetario</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>java.lang.String floatParaMonetario(java.lang.Float)</function-signature>
+ </function>  
+ <function>
+  <name>monetarioParaBigDecimal</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.BigDecimal monetarioParaBigDecimal(java.lang.String)</function-signature>
+ </function>
+ <function>
+  <name>bigDecimalParaMonetario</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.String bigDecimalParaMonetario(java.lang.BigDecimal)</function-signature>
  </function>
  <function>
   <name>quebraLinhas</name>

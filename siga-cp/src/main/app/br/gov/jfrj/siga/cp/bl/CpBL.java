@@ -271,7 +271,8 @@ public class CpBL {
 			CpIdentidade idCadastrante, String[] senhaGerada)
 			throws AplicacaoException {
 		
-		final DpPessoa pessoaCpf = dao().consultarPorCpf(Long.parseLong(cpf));
+		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
+		final DpPessoa pessoaCpf = dao().consultarPorCpf(longCpf);
 		if(pessoaCpf == null) {
 			throw new AplicacaoException("O CPF informado está incorreto, tente novamente!");
 		}
@@ -353,13 +354,13 @@ public class CpBL {
 			String[] senhaGerada, boolean marcarParaSinc)
 			throws AplicacaoException {
 
+		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
 		final DpPessoa pessoaCpf = dao().consultarPorCpf(Long.parseLong(cpf));
 		if(pessoaCpf == null) {
 			throw new AplicacaoException("O CPF informado está incorreto, tente novamente!");
 		}
 		
 		final long longMatricula = MatriculaUtils.getParteNumericaDaMatricula(matricula);
-		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
 
 		final DpPessoa pessoa = dao().consultarPorCpfMatricula(longCpf,
 				longMatricula);

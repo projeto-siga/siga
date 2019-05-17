@@ -12,8 +12,8 @@
 	<script type="text/javascript" src="../../../javascript/exDocumentoEdita.js"></script>
 	<script type="text/javascript" src="/siga/javascript/jquery.blockUI.js"></script>
 	<script type="text/javascript" src="/siga/javascript/hierarchy-select/hierarchy-select.js"></script>
+
 	<div class="container-fluid">
-	
 		<div class="card bg-light mb-3" >
 			<div class="card-header">
 				<h5>
@@ -87,6 +87,7 @@
 										<input class="hidden hidden-field" name="exDocumentoDTO.idMod" readonly="readonly" onchange="alterouModeloSelect()"
 											aria-hidden="true" type="text" value="${exDocumentoDTO.idMod}" />
 									</div>
+									<small class="form-text text-muted"><fmt:message key="documento.help.modelo"/></small>
 								</div>
 							</c:when>
 							<c:otherwise>
@@ -99,7 +100,7 @@
 					</div>
 				</div>
 					<div class="row ${((exDocumentoDTO.tiposDocumento).size() != 1 or (exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData) or (exDocumentoDTO.listaNivelAcesso.size() != 1) or (!exDocumentoDTO.eletronicoFixo))? '': 'd-none'}">
-						<div class="col-sm-2 ${(exDocumentoDTO.tiposDocumento).size() != 1? '': 'd-none'}">
+						<div class="col-sm-2 ${(exDocumentoDTO.tiposDocumento).size() != 1? '': 'd-none'} ${hide_only_GOVSP}">
 							<div class="form-group">
 								<label for="exDocumentoDTO.idTpDoc">Origem</label>
 								<select name="exDocumentoDTO.idTpDoc" onkeypress="presskeySelect(event, this, null)" onmousedown="javascript:document.getElementById('clickSelect').value='true';"
@@ -112,13 +113,14 @@
 								</select>
 							</div>
 						</div>
-						<div class="col-sm-2 ${exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData? '': 'd-none'}">
+						<div class="col-sm-2 ${exDocumentoDTO.tipoDocumento != 'interno_capturado' and podeEditarData? '': 'd-none'}  ${hide_only_GOVSP}">
 							<div class="form-group">
 								<input type="hidden" name="campos" value="dtDocString" />						
-								<label for="exDocumentoDTO.dtDocString">Data</label>
+								<label class=" " for="exDocumentoDTO.dtDocString">Data</label>
 								<input type="text" name="exDocumentoDTO.dtDocString" size="10" onblur="javascript:verifica_data(this, true);" value="${exDocumentoDTO.dtDocString}" class="form-control"/>
 							</div>
 						</div>
+
 						<div class="col-sm-2 ${(exDocumentoDTO.listaNivelAcesso).size() != 1? '': 'd-none'}">
 							<div class="form-group">
 								<input type="hidden" name="campos" value="nivelAcesso" /> 
@@ -219,14 +221,17 @@
 									<input type="hidden" id="temCossignatarios" value="${not empty exDocumentoDTO.doc.cosignatarios}" />
 									<label><fmt:message key="documento.subscritor"/></label>
 									<siga:selecao propriedade="subscritor" inputName="exDocumentoDTO.subscritor" modulo="siga" tema="simple" />
+									<small class="form-text text-muted"><fmt:message key="documento.help.subscritor"/></small>
 								</div>
 							</div>
 							<div class="col-sm-2">
 								<div class="form-group">
 									<div class="form-check form-check-inline mt-4">
+										<fmt:message key="documento.help.substituto" var="documento_help_substituto" />
 										<input type="checkbox" name="exDocumentoDTO.substituicao" class="form-check-input" onclick="javascript:displayTitular(this);"
 											<c:if test="${exDocumentoDTO.substituicao}">checked</c:if> />
-										<label class="form-check-label" for="exDocumentoDTO.substituicao">Substituto</label>
+										<label class="form-check-label" for="exDocumentoDTO.substituicao">Substituto </label>
+										<a class="fas fa-info-circle text-secondary ml-1  ${hide_only_TRF2}" data-toggle="tooltip" data-trigger="click" data-placement="bottom" title="${documento_help_substituto}"></a>
 										<input type="checkbox" name="exDocumentoDTO.personalizacao" class="form-check-input ml-3"  onclick="javascript:displayPersonalizacao(this);" 
 											<c:if test="${exDocumentoDTO.personalizacao}">checked</c:if> />
 										<label class="form-check-label" for="exDocumentoDTO.personalizacao">Personalizar</label>
@@ -241,7 +246,7 @@
 					<div class="row">
 						<div class="col-sm-8">
 							<div class="form-group">
-								<label>Titular</label>
+								<label><fmt:message key="documento.titular"/></label>
 								<siga:selecao propriedade="titular" inputName="exDocumentoDTO.titular" tema="simple" modulo="siga" />
 							</div>
 						</div>
@@ -262,11 +267,11 @@
 						</div>
 						<div class="col-sm-2">
 							<div class="form-group">
-								<label>Lotação</label>
+								<label><fmt:message key="usuario.lotacao"/></label>
 								<input type="text" id="personalizarUnidade" maxlength="125" class="form-control">
 							</div>
 						</div>
-						<div class="col-sm-2">
+						<div class="col-sm-2 ${hide_only_GOVSP}">
 							<div class="form-group">
 								<label>Cidade</label>
 								<input type="text" id="personalizarLocalidade" maxlength="125" class="form-control">
@@ -282,7 +287,7 @@
 				</div>
 				<input type="hidden" name="campos" value="tipoDestinatario" />
 				<c:if test='${exDocumentoDTO.tipoDocumento != "interno_capturado" }'> 
-				<div class="row">
+				<div class="row ${hide_only_GOVSP}">
 					<div class="col-sm-2">
 						<div class="form-group">
 							<label>Destinatário</label>
@@ -355,9 +360,18 @@
 							<c:if test="${exDocumentoDTO.preenchimento==0}">
 								<c:set var="desabilitaBtn"> disabled </c:set>
 							</c:if> 
-							<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn btn-secondary mt-4" ${desabilitaBtn}>Alterar</button>
-							<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn btn-secondary mt-4" ${desabilitaBtn}>Remover</button>
-							<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn btn-secondary mt-4">Adicionar</button>
+							<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn-sm btn-secondary mt-4" ${desabilitaBtn}>
+								<i class="far fa-edit"></i>
+								<span class="${hide_only_GOVSP}">Alterar</span>
+							</button>
+							<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn-sm btn-secondary mt-4" ${desabilitaBtn}>
+								<i class="far fa-trash-alt"></i>
+								<span class="${hide_only_GOVSP}">Remover</span>
+							</button>
+							<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn-sm btn-secondary mt-4">
+								<i class="fas fa-plus"></i>
+								<span class="${hide_only_GOVSP}">Adicionar</span>
+							</button>
 						</div>
 					</div>
 				</div>
@@ -516,8 +530,9 @@
 						<button type="button" onclick="javascript: gravarDoc(); return false;" name="gravar" class="btn btn-primary" accesskey="o"><u>O</u>K</button> 
 						<c:if test='${exDocumentoDTO.tipoDocumento == "interno"}'>
 							<c:if test="${not empty exDocumentoDTO.modelo.nmArqMod or exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker'}">
-								<button type="button" name="ver_doc" onclick="javascript: popitup_documento(false); return false;" class="btn btn-info" accesskey="v"><u>V</u>er Documento</button>
+								<button type="button" name="ver_doc" onclick="javascript: popitup_documento(false); return false;" class="btn btn-info ${hide_only_GOVSP}" accesskey="v"><u>V</u>er Documento</button>
 								<button type="button" name="ver_doc_pdf" onclick="javascript: popitup_documento(true); return false;" class="btn btn-info" accesskey="i"><fmt:message key="documento.btn.ver.impressao"/></button>
+								<button type="button" name="voltar" onclick="javascript: history.back();" class="btn btn-info ${hide_only_TRF2}" accesskey="r">Volta<u>r</u></button>
 							</c:if>
 						</c:if>
 					</div>
@@ -577,4 +592,10 @@
 	//	if (typeof(frm.submitsave) == "undefined")
 	//		frm.submitsave = frm.submit;
 	// }
+
+	$('a[data-toggle="tooltip"]').tooltip({
+	    placement: 'bottom',
+	    trigger: 'click'
+	});
+
 </script>

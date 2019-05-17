@@ -50,8 +50,10 @@
 								<p class="alert alert-danger ${hide_only_GOVSP}">${mensagem}</p>
 							</div>
 
-							<div class="login-invalido-descricao">							
-								<p class="alert alert-danger ${hide_only_GOVSP}">${f:resource('siga.gi.texto.login')}</p>
+							<div class="login-invalido-descricao ">	
+								<div class="${hide_only_GOVSP}">
+									<p class="alert alert-danger">${f:resource('siga.gi.texto.login')}</p>
+								</div>														
 								<p class="alert alert-danger ${hide_only_TRF2}"><fmt:message key="usuario.falhaautenticacao"/></p>
 							</div>
 						</div>

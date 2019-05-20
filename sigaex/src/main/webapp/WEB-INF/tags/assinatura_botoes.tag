@@ -3,9 +3,12 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <%@ attribute name="assinar" required="false"%>
+<%@ attribute name="voltar" required="false"%>
 <%@ attribute name="autenticar" required="false"%>
 <%@ attribute name="assinarComSenha" required="false"%>
+<%@ attribute name="assinarComSenhaChecado" required="false"%>
 <%@ attribute name="autenticarComSenha" required="false"%>
+<%@ attribute name="autenticarComSenhaChecado" required="false"%>
 <%@ attribute name="idMovimentacao" required="false"%>
 <%@ attribute name="juntarAtivo" required="false"%>
 <%@ attribute name="juntarFixo" required="false"%>
@@ -35,6 +38,13 @@
 					</div>
 					
 				</c:if>
+				<c:if test="${assinarComSenhaChecado || autenticarComSenhaChecado}">
+					<div class="form-check">
+					  <input class="form-check-input" type="checkbox" accesskey="c"	 name="ad_password_0" id="ad_password_0" checked />
+					  <label class="form-check-label" for="ad_juntar_0"><u>C</u>om Senha</label>
+					</div>
+					
+				</c:if>
 		
 				<c:if test="${not empty juntarAtivo}">
 					<div class="form-check">
@@ -52,10 +62,14 @@
 							<c:if test="${tramitarFixo}">disabled</c:if> />
 					  	<label class="form-check-label" for="ad_tramitar_0">Tramitar</label>
 					</div>
-					
 				</c:if>
 			</p>
 		</div>
+		<c:if test="${not empty voltar and voltar}">
+			<div class="form-check">
+				<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
+			</div>
+		</c:if>
 	
 	</div>
 

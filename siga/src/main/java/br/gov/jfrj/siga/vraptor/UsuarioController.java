@@ -128,7 +128,7 @@ public class UsuarioController extends SigaController {
 		result.include("mensagem", "Usuário cadastrado com sucesso." + msgComplemento);
 		result.include("titulo", getBundle().getString("usuario.novo"));
 		result.include("volta", "incluir");
-		result.redirectTo("/app/usuario/incluir_usuario");
+		result.use(Results.page()).forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
 	}
 	
 	@Get({"/app/usuario/esqueci_senha","/public/app/usuario/esqueci_senha"})

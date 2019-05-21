@@ -197,8 +197,7 @@
 				</div>
 				</c:if>
 				<input type="hidden" name="exDocumentoDTO.desativarDocPai" value="${exDocumentoDTO.desativarDocPai}" />
-				<c:if test='${exDocumentoDTO.desativarDocPai}'>
-				<div class="row">
+				<div class="row d-none">
 					<div class="col-sm-8">
 						<div class="form-group">
 							<label>Documento Pai</label>
@@ -207,7 +206,6 @@
 						</div>
 					</div>
 				</div>
-				</c:if>					
 				<c:choose>
 					<c:when test='${exDocumentoDTO.tipoDocumento == "externo" or exDocumentoDTO.tipoDocumento == "externo_capturado"}'>
 					</c:when>

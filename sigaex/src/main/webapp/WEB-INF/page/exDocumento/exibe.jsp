@@ -264,10 +264,10 @@
 				</div>
 			</div>
 			<div class="col col-sm-12 col-md-4">
-				<div class="gt-sidebar">
-					<c:if test="${m.pendencias}">
-						<div class="gt-sidebar-content" id="pendencias">
-							Pendências
+				<c:if test="${m.pendencias}">
+					<div class="card-sidebar card bg-light mb-3">
+						<div class="card-header">Pendências</div>
+						<div class="card-body" id="pendencias">	
 							<c:if test="${not empty m.pendenciaProximoModelo}">
 								<p style="margin-bottom: 3px;">
 									<b style="color: rgb(195, 0, 0)">Próximo Documento:</b>
@@ -384,6 +384,7 @@
 									</c:forEach>
 								</ul>
 							</c:if>
+							</div>
 						</div>
 					</c:if>
 
@@ -567,23 +568,24 @@
 					<!-- Início mapa relação entre documentos -->
 					<c:if test="${docVO.dotRelacaoDocs.numNodos > 1}">
 						<!-- Sidebar List -->
-						<div class="gt-sidebar-content">
-							<h3 style="margin-bottom: 10px">Documentos Relacionados</h3>
-							<div id="outputRelacaoDocs" class="bg-light"
-								style="border: 0px; padding: 0px">
-								<c:forEach items="${docVO.dotRelacaoDocs.asMap}" var="mapa">
-									<p style="margin-bottom: 3px;">
-										<b>${mapa.key}:</b>
-									</p>
-									<ul>
-										<c:forEach var="mobRelacionado" items="${mapa.value}">
-											<li><a
-												href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mobRelacionado.sigla}"
-												title="${mobRelacionado.doc.descrDocumento}"
-												style="text-decoration: none"> ${mobRelacionado.sigla} </a></li>
-										</c:forEach>
-									</ul>
-								</c:forEach>
+						<div class="card-sidebar card bg-light mb-3">
+							<div class="card-header">Documentos Relacionados</div>
+							<div class="card-body">
+								<div id="outputRelacaoDocs" class="bg-light" style="border: 0px; padding: 0px">
+									<c:forEach items="${docVO.dotRelacaoDocs.asMap}" var="mapa">
+										<p style="margin-bottom: 3px;">
+											<b>${mapa.key}:</b>
+										</p>
+										<ul>
+											<c:forEach var="mobRelacionado" items="${mapa.value}">
+												<li><a
+													href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mobRelacionado.sigla}"
+													title="${mobRelacionado.doc.descrDocumento}"
+													style="text-decoration: none"> ${mobRelacionado.sigla} </a></li>
+											</c:forEach>
+										</ul>
+									</c:forEach>
+								</div>
 							</div>
 						</div>
 

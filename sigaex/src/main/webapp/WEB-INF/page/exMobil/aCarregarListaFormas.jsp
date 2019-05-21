@@ -3,7 +3,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <div class="form-group">
-	<label>&nbsp;</label> 
+	<label>Espécie</label> 
 	<select class="form-control" id="idFormaDoc" name="idFormaDoc"
 		onchange="javascript:alteraForma();">
 		<option value="0">[Todos]</option>

@@ -617,6 +617,16 @@
 						name="paramoffset" value="0" /> <input type="hidden"
 						name="p.offset" value="0" />
 
+					<c:if test="${siga_cliente == 'GOVSP'}">
+						<div class="form-row">
+							<div class="form-group col-md-6">
+								<label for="classificacao"><fmt:message key="documento.descricao"/></label> <input
+									class="form-control" type="text" name="descrDocumento"
+									value="${descrDocumento}" size="80" />
+							</div>
+						</div>
+					</c:if>
+
 					<div class="form-row">
 						<div class="form-group col-md-6">
 							<label for="ultMovIdEstadoDoc">Situação</label> <select
@@ -684,18 +694,20 @@
 								</c:forEach>
 							</select>
 						</div>
-						<div class="form-group col-md-3">
-							<label for="idTpDoc">Origem</label> <select class="form-control"
-								id="idTpDoc" name="idTpDoc"
-								onchange="javascript:alteraOrigem();">
+						<c:if test="${siga_cliente != 'GOVSP'}">
+							<div class="form-group col-md-3">
+								<label for="idTpDoc">Origem</label> <select class="form-control"
+									id="idTpDoc" name="idTpDoc"
+									onchange="javascript:alteraOrigem();">
 								<option value="0">[Todos]</option>
 								<c:forEach items="${tiposDocumento}" var="item">
 									<option value="${item.idTpDoc}"
 										${item.idTpDoc == idTpDoc ? 'selected' : ''}>
 										${item.descrTipoDocumento}</option>
 								</c:forEach>
-							</select>
-						</div>
+								</select>
+							</div>
+						</c:if>
 						<div class="form-group col-md-3">
 							<label for="dtDocString">Data Inicial</label> <input
 								class="form-control" type="text" name="dtDocString"
@@ -726,7 +738,6 @@
 						</div>
 
 						<div class="form-group col-md-3">
-							<label for="tipoForma">Espécie</label>
 							<div style="display: inline" id="comboFormaDiv"></div>
 							<script type="text/javascript">
 									alteraTipoDaForma();
@@ -734,7 +745,6 @@
 						</div>
 
 						<div class="form-group col-md-6">
-							<label for="tipoForma"><fmt:message key="documento.modelo2"/></label>
 							<div style="display: inline" id="comboModeloDiv"></div>
 							<script type="text/javascript">
 							setTimeout("alteraForma()", 2000);
@@ -874,15 +884,16 @@
 						</div>
 					</div>
 
-
-					<div class="form-row">
-						<div class="form-group col-md-6">
-							<label for="classificacao"><fmt:message key="documento.descricao"/></label> <input
-								class="form-control" type="text" name="descrDocumento"
-								value="${descrDocumento}" size="80" />
+					<c:if test="${siga_cliente != 'GOVSP'}">
+						<div class="form-row">
+							<div class="form-group col-md-6">
+								<label for="classificacao"><fmt:message key="documento.descricao"/></label> <input
+									class="form-control" type="text" name="descrDocumento"
+									value="${descrDocumento}" size="80" />
+							</div>
 						</div>
-					</div>
-
+					</c:if>
+					
 					${f:obterExtensaoBuscaTextual(lotaTitular.orgaoUsuario, fullText)}
 
 					<div class="form-row">

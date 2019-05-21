@@ -19,36 +19,30 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.service.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URLEncoder;
-import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
-import com.lowagie.text.pdf.codec.Base64;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONObject;
 
-import br.com.caelum.vraptor.interceptor.download.Download;
-import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.gov.jfrj.itextpdf.Documento;
-import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.bluc.service.BlucService;
-import br.gov.jfrj.siga.bluc.service.HashRequest;
-import br.gov.jfrj.siga.bluc.service.HashResponse;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -71,12 +65,13 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
 import br.gov.jfrj.siga.ex.service.ExService;
-import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import br.gov.jfrj.siga.vraptor.ExDocumentoController;
 import br.gov.jfrj.siga.vraptor.ExDocumentoDTO;
 import br.gov.jfrj.siga.vraptor.ExMobilSelecao;
+import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 
 
@@ -1032,22 +1027,6 @@ public class ExServiceImpl implements ExService {
 						baos.write('&');
 					baos.write(s.getBytes());
 					baos.write('=');
-					/*if (param(s) != null) {
-						String parametro = param(s);
-						for (final String m : marcacoes) {
-							if (parametro.contains(m))
-								parametro = parametro.replaceAll(m, "");
-						}
-						if (!FuncoesEL.contemTagHTML(parametro)) {
-							if (parametro.contains("\"")) {
-								parametro = parametro.replace("\"", "&quot;");
-								setParam(s, parametro);
-							}
-						}
-
-						baos.write(URLEncoder.encode(parametro, "iso-8859-1")
-								.getBytes());
-					}*/
 				}
 				doc.setConteudoTpDoc("application/zip");
 				doc.setConteudoBlobForm(baos.toByteArray());
@@ -1055,7 +1034,190 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 
+	@Override
+	public String preverPdf(String sigla, String cadastranteStr,
+			String subscritorStr, String destinatarioStr,
+			String destinatarioCampoExtraStr, String descricaoTipoDeDocumento,
+			String nomeForma, String nomeModelo, String classificacaoStr,
+			String descricaoStr, Boolean eletronico, String nomeNivelDeAcesso,
+			String conteudo, String siglaMobilPai, Boolean finalizar)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String finalizarDocumento(String sigla, String cadastrante) {
+		String novaSigla = "";
+		try{
+			ExMobil mob = buscarMobil(sigla);
+			ExDocumento doc = mob.getDoc();
+			PessoaLotacaoParser titularParser = new PessoaLotacaoParser(
+					cadastrante);
+			Ex.getInstance().getBL().finalizar(titularParser.getPessoa(), titularParser.getLotacao(),
+					doc);
+			novaSigla = doc.getSigla();
+		}catch(Exception e){
+			return "";
+		}
+
+		return novaSigla;
+	}
+
+	@Override
+	public String anexarArquivo(String sigla, String cadastrante,
+			String nomeArquivo, String contentType, byte[] arquivo) {
+		try{
+			final ExMobil mobOriginal = buscarMobil(sigla);
+			ExMobil mob = mobOriginal;
+			if (mob != null && !mob.isGeral())
+				mob = mob.doc().getMobilGeral();
+			final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+					.novaInstancia().setMob(mobOriginal).setContentType(contentType)
+					.setFileName(nomeArquivo);
+			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
+					cadastrante);
+			final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+			mov.setSubscritor(cadastranteParser.getPessoa());
+			mov.setTitular(cadastranteParser.getPessoa());
+			
+			Integer numBytes = 0;
+			if (arquivo == null) {
+				throw new AplicacaoException(
+						"Arquivo vazio não pode ser anexado.");
+			}
+			numBytes = arquivo.length;
+			if (numBytes > 10 * 1024 * 1024) {
+				throw new AplicacaoException("Não é permitida a anexação de arquivos com mais de 10MB.");
+			}
+			mov.setConteudoBlobMov2(arquivo);
+
+			try {
+				final byte[] ab = mov.getNmArqMov().getBytes();
+				for (int i = 0; i < ab.length; i++) {
+					if (ab[i] == -29) {
+						ab[i] = -61;
+					}
+				}
+				final String sNmArqMov = new String(ab, "utf-8");
+
+				Ex.getInstance().getBL()
+						.anexarArquivoAuxiliar(cadastranteParser.getPessoa(), cadastranteParser.getLotacao(), mob,
+								mov.getDtMov(), mov.getSubscritor(), sNmArqMov,
+								mov.getTitular(), mov.getLotaTitular(),
+								mov.getConteudoBlobMov2(), mov.getConteudoTpMov());
+			} catch (UnsupportedEncodingException ex) {
+				throw ex;
+			}
+			
+		}catch(Exception e){
+			return "";
+		}
+		return sigla;
+	}
 	
+
+	@Override
+	public Boolean excluirDocumento(String sigla, String titular) {
+		
+		ExMobil mob;
+		try {
+			mob = buscarMobil(sigla);
+			final ExDocumento doc = mob.getDoc();
+			
+			PessoaLotacaoParser titularParser = new PessoaLotacaoParser(
+					titular);
+
+			Ex.getInstance().getBL()
+					.excluirDocumento(doc, titularParser.getPessoa(), titularParser.getLotacao(), true);
+		} catch (Exception e) {
+			return false;
+		} 
+
+		return true;
+	}
+	
+	
+	@Override
+	public byte[] getConteudo(String sigla) throws Exception{
+		ExMobil mob = buscarMobil(sigla);
+		byte[] conteudoForm = mob.getDoc().getConteudoBlobForm();
+		
+		return conteudoForm;
+	}
+	
+	@Override
+	public String buscarDocsFilhos(String sigla){
+		String resultado = "";
+		try{
+			ExMobil mob = buscarMobil(sigla);
+			Set<ExDocumento> docs = mob.getExDocumentoFilhoSet();
+			JSONArray dArray = new JSONArray();
+			for(ExDocumento doc : docs){
+				JSONObject d = new JSONObject();
+				d.put("sigla", doc.getSigla());
+				d.put("lotacao", doc.getLotacao().getSigla());
+				d.put("paginas", doc.getContarNumeroDePaginas());
+				d.put("data", doc.getDtFinalizacaoDDMMYY());
+				dArray.put(d);
+			}
+			
+			resultado = dArray.toString();
+		}catch(Exception e){
+			return "";
+		}
+		return resultado;
+	}
+
+	@Override
+	public String atualizarConteudo(String siglaCadastrante, String sigla, String siglaMobilPai, String conteudo, Boolean finalizar){
+		
+		try{
+			ExMobil mob = buscarMobil(sigla);
+			ExDocumento doc = mob.getDoc();
+			
+			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
+					siglaCadastrante);
+			
+			if (conteudo == null)
+				conteudo = "";
+    		if(siglaMobilPai != null && !siglaMobilPai.isEmpty()) {
+    			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+    			filter.setSigla(siglaMobilPai);
+    			ExMobil mobPai = (ExMobil) dao().consultarPorSigla(filter);
+    			if (mobPai != null) {
+    	    		ExDocumento docPai = mobPai.getExDocumento();
+    				
+    				if(docPai.getExMobilPai() != null)
+    					throw new AplicacaoException("Não foi possível criar o documento pois o documento pai (" + docPai.getSigla() + ") já é documento filho.");
+    				
+    				if(docPai.isPendenteDeAssinatura())
+    					throw new AplicacaoException("Não foi possível criar o documento pois o documento pai (" + docPai.getSigla() + ") ainda não foi assinado.");
+    				
+    				doc.setExMobilPai(mobPai);
+    			}
+    		}
+			
+			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+				baos.write(conteudo.getBytes());
+			
+				doc.setConteudoTpDoc("application/zip");
+				doc.setConteudoBlobForm(baos.toByteArray());
+			}
+    		doc = Ex.getInstance()
+ 			       .getBL().gravar(cadastranteParser.getPessoa(), cadastranteParser.getPessoa(), cadastranteParser.getLotacao(), doc);
+     		
+     		if(finalizar)
+     			Ex.getInstance().getBL().finalizar(cadastranteParser.getPessoa(), cadastranteParser.getLotacao(), doc);
+			
+			
+		}catch(Exception e){
+			return "";
+		}
+		
+		return sigla;
+
+	}
 
 
 }

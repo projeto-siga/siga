@@ -119,6 +119,7 @@
 			<h2>
 				<c:if test="${empty ocultarCodigo}">${docVO.sigla}
 				</c:if>
+				<button type="button" name="voltar" onclick="javascript: history.back();" class="btn btn-secondary float-right ${hide_only_TRF2}" accesskey="r">Volta<u>r</u></button>
 			</h2>
 		</div>
 	</div>
@@ -795,8 +796,9 @@
 					</c:if>
 
 					<div class="card-sidebar card bg-light mb-3">
-						<tags:collapse title="Documento	${docVO.doc.exTipoDocumento.descricao}" id="DocDetalhes" collapseMode="${collapse_Expanded}">
-							<p>
+						<c:set var="docDetalhesTitle" scope="request" value="${pagina_de_erro}" />
+						<tags:collapse title="${siga_cliente=='GOVSP'?'Propriedades do Documento (':''}Documento ${docVO.doc.exTipoDocumento.descricao}${siga_cliente=='GOVSP'?')':''}" id="DocDetalhes" collapseMode="${collapse_Expanded}">
+							<p class="${hide_only_GOVSP}">
 								<b>Suporte:</b> ${docVO.fisicoOuEletronico}
 							</p>
 							<p>
@@ -808,17 +810,17 @@
 									<b>Número original:</b> ${docVO.originalNumero}
 								</p>
 							</c:if>
-							<p>
+							<p class="${hide_only_GOVSP}">
 								<b>De:</b> ${docVO.subscritorString}
 							</p>
-							<p>
+							<p class="${hide_only_GOVSP}">
 								<b>Para:</b> ${docVO.destinatarioString}
 							</p>
 							<p>
 								<b>Cadastrante:</b> ${docVO.cadastranteString}
 								${docVO.lotaCadastranteString}
 							</p>
-							<p>
+							<p class="${hide_only_GOVSP}">
 								<b>Espécie:</b> ${docVO.forma}
 							</p>
 							<p>
@@ -856,6 +858,19 @@
 
 						</tags:collapse>
 					</div>
+
+					<c:if test="${not empty m.getDescricaoCompletaEMarcadoresEmHtml(cadastrante,lotaTitular)}">
+						<div class="card-sidebar card bg-light mb-3">
+							<tags:collapse title="Situação do Documento" id="SituacaoDoc" collapseMode="${collapse_Expanded}">
+								<p class="font-weight-bold">
+									${m.getDescricaoCompletaEMarcadoresEmHtml(cadastrante,lotaTitular)}
+									<c:if test="${docVO.digital and not empty m.tamanhoDeArquivo}">
+								 		- ${m.tamanhoDeArquivo}
+									</c:if>
+								<p>
+							</tags:collapse>
+						</div>
+					</c:if>
 
 					<c:if test="${not empty docVO.cossignatarios}">
 						<div class="card-sidebar card bg-light mb-3">

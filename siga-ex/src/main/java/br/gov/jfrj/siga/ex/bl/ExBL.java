@@ -3707,7 +3707,14 @@ public class ExBL extends CpBL {
 						|| !confBL.atendeExigencias(confFiltro,
 								atributosDesconsiderados, conf, null))
 					continue;
-				setDepois.add(new MovimentacaoSincronizavel(conf.getExPapel(), conf.getPessoaObjeto(), conf.getLotacaoObjeto(), null));
+				DpPessoa po = null;
+				DpLotacao lo = null;
+				if (conf.getPessoaObjeto() != null)
+					po = dao().obterPessoaAtual(conf.getPessoaObjeto());
+				if (conf.getLotacaoObjeto() != null)
+					lo = dao().obterLotacaoAtual(conf.getLotacaoObjeto());
+				ExPapel p = dao().consultar(conf.getExPapel().getIdPapel(), ExPapel.class, false);
+				setDepois.add(new MovimentacaoSincronizavel(p, po, lo, null));
 			}
 		}
 

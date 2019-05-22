@@ -91,6 +91,7 @@ import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecao;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -1026,7 +1027,9 @@ public class ExDocumentoController extends ExController {
 					}
 				}
 			}
-		}		
+		}
+		
+		ContextoPersistencia.flushTransaction();
 
 		return msgDestinoDoc;
 

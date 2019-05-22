@@ -127,7 +127,7 @@
 	<c:forEach var="m" items="${docVO.mobs}" varStatus="loop">
 		<div class="row">
 			<div class="col">
-				<h3 style="margin-bottom: 0px;">
+				<h3 class="${hide_only_GOVSP} style="margin-bottom: 0px;">
 					${m.getDescricaoCompletaEMarcadoresEmHtml(cadastrante,lotaTitular)}
 					<c:if test="${docVO.digital and not empty m.tamanhoDeArquivo}">
 				 		- ${m.tamanhoDeArquivo}
@@ -860,7 +860,7 @@
 					</div>
 
 					<c:if test="${not empty m.getDescricaoCompletaEMarcadoresEmHtml(cadastrante,lotaTitular)}">
-						<div class="card-sidebar card bg-light mb-3">
+						<div class="card-sidebar card bg-light mb-3 ${hide_only_TRF2}">
 							<tags:collapse title="Situação do Documento" id="SituacaoDoc" collapseMode="${collapse_Expanded}">
 								<p class="font-weight-bold">
 									${m.getDescricaoCompletaEMarcadoresEmHtml(cadastrante,lotaTitular)}

@@ -91,6 +91,7 @@
 		<url-pattern>/app/expediente/doc/exibir</url-pattern>
 		<url-pattern>/app/expediente/doc/exibirAntigo</url-pattern>
 		<url-pattern>/app/expediente/doc/exibirProcesso</url-pattern>
+		<url-pattern>/app/expediente/doc/excluir</url-pattern>
 		<url-pattern>/app/arquivo/exibir</url-pattern>
 	</filter-mapping>
 

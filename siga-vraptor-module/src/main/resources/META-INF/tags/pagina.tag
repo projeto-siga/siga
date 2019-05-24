@@ -27,17 +27,6 @@
 	compatibilidade="${compatibilidade}"
 	desabilitarComplementoHEAD="${desabilitarComplementoHEAD}" />
 
-<c:choose>
-	<c:when test="${siga_cliente == 'GOVSP'}"> 
-		<c:set var="hide_only_GOVSP" scope="request"> d-none </c:set>
-		<c:set var="hide_only_TRF2" scope="request"> </c:set>
-	</c:when>
-	<c:otherwise>
-		<c:set var="hide_only_GOVSP" scope="request"> </c:set>
-		<c:set var="hide_only_TRF2" scope="request"> d-none </c:set>
-	</c:otherwise>
-</c:choose>
-
 <jsp:doBody />
 
 <siga:rodape popup="${popup}" incluirJs="${incluirJs}" />

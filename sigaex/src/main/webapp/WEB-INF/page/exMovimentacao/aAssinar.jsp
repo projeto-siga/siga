@@ -82,13 +82,27 @@
 							<input type="hidden" name="ad_kind_0" value="${doc.descrFormaDoc}" />
 						</div>
 						
-						<tags:assinatura_botoes
-							assinar="${assinando}"
-							autenticar="${autenticando}"
-							assinarComSenha="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-							autenticarComSenha="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-							juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}"
-							tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" />
+						<c:if test="${siga_cliente != 'GOVSP'}">
+							<tags:assinatura_botoes
+								assinar="${assinando}"
+								autenticar="${autenticando}"
+								assinarComSenha="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+								autenticarComSenha="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+								juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}"
+								tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" />
+						</c:if>
+						
+						<c:if test="${siga_cliente == 'GOVSP'}">
+							<tags:assinatura_botoes
+								assinar="${assinando}"
+								voltar="true"
+								autenticar="${autenticando}"
+								assinarComSenhaChecado="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+								autenticarComSenha="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+								juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}"
+								tramitarAtivo=""
+								 />
+						</c:if>
 					</div>
 				</div>
 				</div>

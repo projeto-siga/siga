@@ -89,6 +89,8 @@ ${meta}
 <script src="/siga/public/javascript/jquery/jquery-1.11.2.min.js" type="text/javascript"></script>
 	
 <link rel="stylesheet" href="/siga/fontawesome/css/all.css"	type="text/css" />
+
+<c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 	
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
@@ -108,6 +110,11 @@ ${meta}
 		<c:set var="navbar_logo" value="logo-sem-papel-cor.png" />
 		<c:set var="navbar_logo_size" value="50" />
 		<c:set var="button_class_busca" value="btn-primary" />
+		<c:set var="collapse_Tramitacao" scope="request" value="collapsible closed" />
+		<c:set var="collapse_NivelAcesso" scope="request" value="collapsible closed" />
+		<c:set var="collapse_ArqAuxiliares" scope="request" value="not collapsible" />
+		<c:set var="hide_only_GOVSP" scope="request"> d-none </c:set>
+		<c:set var="hide_only_TRF2" scope="request"> </c:set>
 	</c:when>
 	<c:otherwise>
 		<meta name="theme-color" content="bg-primary">
@@ -118,9 +125,15 @@ ${meta}
 		<c:set var="navbar_logo" value="logo-siga-novo-38px.png" />
 		<c:set var="navbar_logo_size" value="38" />
 		<c:set var="button_class_busca" value="btn-outline-light" />
+		<c:set var="collapse_Tramitacao" scope="request" value="collapsible expanded" />
+		<c:set var="collapse_NivelAcesso" scope="request" value="collapsible expanded" />
+		<c:set var="collapse_ArqAuxiliares" scope="request" value="not collapsible" />
+		<c:set var="hide_only_GOVSP" scope="request"> </c:set>
+		<c:set var="hide_only_TRF2" scope="request"> d-none </c:set>
 	</c:otherwise>
 </c:choose>
-	
+
+<link rel="stylesheet" href="/siga/css/style_siga.css" type="text/css" media="screen, projection">
 <link rel="shortcut icon" href="/siga/imagens/${ico_siga}" />
 
 

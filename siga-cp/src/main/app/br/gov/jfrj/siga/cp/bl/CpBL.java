@@ -272,8 +272,8 @@ public class CpBL {
 			throws AplicacaoException {
 		
 		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
-		final DpPessoa pessoaCpf = dao().consultarPorCpf(longCpf);
-		if(pessoaCpf == null) {
+		final List<DpPessoa> listaPessoas = dao().listarPorCpf(longCpf);
+		if(listaPessoas.isEmpty()) {
 			throw new AplicacaoException("O CPF informado está incorreto, tente novamente!");
 		}
 		
@@ -355,8 +355,8 @@ public class CpBL {
 			throws AplicacaoException {
 
 		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
-		final DpPessoa pessoaCpf = dao().consultarPorCpf(Long.parseLong(cpf));
-		if(pessoaCpf == null) {
+		final List<DpPessoa> listaPessoas = dao().listarPorCpf(longCpf);
+		if(listaPessoas.isEmpty()) {
 			throw new AplicacaoException("O CPF informado está incorreto, tente novamente!");
 		}
 		

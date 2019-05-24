@@ -736,12 +736,6 @@ public class Excel {
 				cpf = celula.replaceAll("[^0-9]", "");
 				if(!"".equals(cpf.trim())) {
 					
-					pessoa = CpDao.getInstance().consultarPorCpf(Long.valueOf(cpf));
-					
-					if(pessoa != null) {
-						problemas.append("Linha " + linha +": CPF já cadastrado" + System.getProperty("line.separator"));
-					}
-					
 					if(!validarCPF(cpf)) {
 						problemas.append("Linha " + linha +": CPF inválido" + System.getProperty("line.separator"));
 					}

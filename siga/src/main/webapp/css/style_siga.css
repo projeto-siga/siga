@@ -5,10 +5,10 @@
 .card-header .card-toggle:after {
 	font-family: 'Font Awesome 5 Free';
     font-weight: 900;
-    content: "\f0da"; 
     float: right;
     color: grey;
+    content: "\f0d7";
 }
 .card-header .card-toggle.collapsed:after {
-    content: "\f0d7";
+    content: "\f0da"; 
 }

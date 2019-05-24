@@ -91,6 +91,27 @@ public interface ExService extends Remote {
 	
 	@WebMethod
 	public byte[] getArquivo(String arquivo, String tipoArquivo);
+	
+	@WebMethod
+	public String preverPdf(String sigla, String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma ,String nomeModelo, String classificacaoStr, 
+			String descricaoStr, Boolean eletronico, String nomeNivelDeAcesso, String conteudo, String siglaMobilPai, Boolean finalizar) throws Exception;
 
-
+	@WebMethod
+	public String finalizarDocumento(String sigla, String cadastrante);
+	
+	@WebMethod
+	public String anexarArquivo(String sigla, String cadastrante,
+			String nomeArquivo, String contentType, byte[] arquivo);
+	
+	@WebMethod
+	public Boolean excluirDocumento(String sigla, String titular);
+	
+	@WebMethod
+	public byte[] getConteudo(String sigla) throws Exception;
+	
+	@WebMethod
+	public String buscarDocsFilhos(String sigla);
+	
+	@WebMethod
+	public String atualizarConteudo(String siglaCadastrante, String sigla, String siglaMobilPai, String conteudo, Boolean finalizar);
 }

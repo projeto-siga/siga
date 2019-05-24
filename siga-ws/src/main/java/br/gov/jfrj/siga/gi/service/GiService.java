@@ -18,10 +18,10 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.gi.service;
 
-import br.gov.jfrj.siga.Remote;
-
 import javax.jws.WebMethod;
 import javax.jws.WebService;
+
+import br.gov.jfrj.siga.Remote;
 
 @WebService(targetNamespace = "http://impl.service.gi.siga.jfrj.gov.br/")
 public interface GiService extends Remote {
@@ -37,4 +37,11 @@ public interface GiService extends Remote {
 
     @WebMethod
 	public String acesso(String matricula, String lotacao, String servico);
+    	
+    @WebMethod
+    public String buscarPessoa(String nomePessoa, String siglaLotacao, Integer offset, Integer itemPagina);
+    
+    @WebMethod
+    public String buscarLotacao(String nomePessoa, Integer offset, Integer itemPagina);
+
 }

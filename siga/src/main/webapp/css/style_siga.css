@@ -3,11 +3,12 @@
 /* Elementos para collapse de cards */  
 
 .card-header .card-toggle:after {
-    font-family: 'Glyphicons Halflings';
-    content: "\e114"; 
+	font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    content: "\f0da"; 
     float: right;
     color: grey;
 }
 .card-header .card-toggle.collapsed:after {
-    content: "\e080";
+    content: "\f0d7";
 }

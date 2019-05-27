@@ -45,16 +45,16 @@
 					<h2 class="text-center pb-1 pt-2">${login_box_text}</h2>
 
 					<c:if test="${not empty mensagem}">
-						<div class="login-invalido">
-							<div class="login-invalido-titulo ">
-								<p class="alert alert-danger ${hide_only_GOVSP}">${mensagem}</p>
+						<div class="login-invalido ">
+							<div class="login-invalido-titulo ${hide_only_GOVSP}">
+								<p class="alert alert-danger ">${mensagem}</p>
 							</div>
 
 							<div class="login-invalido-descricao ">	
 								<div class="${hide_only_GOVSP}">
 									<p class="alert alert-danger">${f:resource('siga.gi.texto.login')}</p>
 								</div>														
-								<p class="alert alert-danger ${hide_only_TRF2}"><fmt:message key="usuario.falhaautenticacao"/></p>
+								<p class="alert alert-danger ${hide_only_TRF2}">${mensagem}</p>
 							</div>
 						</div>
 					</c:if>

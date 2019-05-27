@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
@@ -21,6 +22,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -34,6 +36,7 @@ import br.gov.jfrj.siga.util.SigaJwtBL;
 public class LoginController extends SigaController {
 	HttpServletResponse response;
 	private ServletContext context;
+	private static ResourceBundle bundle;
 
 	private static String convertStreamToString(java.io.InputStream is) {
 		if (is == null)
@@ -49,6 +52,15 @@ public class LoginController extends SigaController {
 		this.response = response;
 		this.context = context;
 	}
+	
+    private static ResourceBundle getBundle() {
+    	if (SigaBaseProperties.getString("siga.local") == null) {
+    		bundle = ResourceBundle.getBundle("messages_TRF2");
+    	} else {
+    		bundle = ResourceBundle.getBundle("messages_" + SigaBaseProperties.getString("siga.local"));
+    	}
+        return bundle;
+    }
 
 	@Get("public/app/login")
 	public void login(String cont) throws IOException {
@@ -79,11 +91,11 @@ public class LoginController extends SigaController {
 			if( Pattern.matches( "\\d+", username) && username.length() == 11) {
 				List<CpIdentidade> lista = new CpDao().consultaIdentidadesCadastrante(username, Boolean.TRUE);
 				if(lista.size() > 1) {
-					throw new RuntimeException("Pessoas com mais de um usuário, favor efetuar login com a matricula!");
+					throw new RuntimeException("Pessoa com mais de um usuário, favor efetuar login com a matrícula!");
 				}
 			}
 			if (usuarioLogado == null || usuarioLogado.trim().length() == 0) {
-				throw new RuntimeException("Falha de autenticação!");
+				throw new RuntimeException(getBundle().getString("usuario.falhaautenticacao"));
 			}
 
 			String modulo = extrairModulo(request);

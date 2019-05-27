@@ -77,7 +77,7 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 							 final String siglaOrgaoUsuario,
 							 final String acao
 						) throws Exception{
-		assertAcesso("FE:Ferramentas;CAD_ORGAO_USUARIO: Cadastrar Orgãos Usuário");
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_ORGAO_USUARIO: Cadastrar Orgãos Usuário");
 		
 		if(nmOrgaoUsuario == null)
 			throw new AplicacaoException("Nome do órgão usuário não informado");

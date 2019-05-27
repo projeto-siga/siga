@@ -435,7 +435,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	@Post("/app/pessoa/gravar")
 	public void editarGravar(final Long id, final Long idOrgaoUsu, final Long idCargo, final Long idFuncao, final Long idLotacao, final String nmPessoa, final String dtNascimento, 
 			final String cpf, final String email) throws Exception{
-		assertAcesso("FE:Ferramentas;CAD_PESSOA:Cadastrar Pessoa");
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa");
 		
 		if(idOrgaoUsu == null || idOrgaoUsu == 0)
 			throw new AplicacaoException("Órgão não informado");

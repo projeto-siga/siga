@@ -375,6 +375,13 @@ public class ExMovimentacaoController extends ExController {
 					"O arquivo a ser anexado não foi selecionado!");
 		}
 		
+		String fileExtension = arquivo.getFileName().substring(arquivo.getFileName().lastIndexOf("."));
+		
+		if (fileExtension.equals(".bat") || fileExtension.equals(".exe") || fileExtension.equals(".sh") || fileExtension.equals(".dll") ) {
+			throw new AplicacaoException(
+					"Extensão " + fileExtension + " inválida para inclusão do arquivo.");
+		}
+		
 		Integer numBytes = 0;
 		try {
 			final byte[] baArquivo = toByteArray(arquivo);
@@ -1171,7 +1178,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/incluir_cosignatario_gravar")
 	public void aIncluirCosignatarioGravar(final String sigla,
 			final DpPessoaSelecao cosignatarioSel,
-			final String funcaoCosignatario, final Integer postback) {
+			final String funcaoCosignatario, final String  unidadeCosignatario, final Integer postback) {
 		this.setPostback(postback);
 
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
@@ -1179,9 +1186,15 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExDocumento doc = buscarDocumento(documentoBuilder);
 
+		String funcaoUnidadeCosignatario = funcaoCosignatario;
+		// Efetuar validação e concatenar o conteudo se for implantação GOVSP
+		if(isSigaSP() && (funcaoCosignatario != null && !funcaoCosignatario.isEmpty()) && (unidadeCosignatario != null && !unidadeCosignatario.isEmpty())) {
+			funcaoUnidadeCosignatario = funcaoUnidadeCosignatario + ";" + unidadeCosignatario; 
+		}
+		
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia().setMob(documentoBuilder.getMob())
-				.setDescrMov(funcaoCosignatario)
+				.setDescrMov(funcaoUnidadeCosignatario)
 				.setSubscritorSel(cosignatarioSel);
 
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
@@ -4288,5 +4301,12 @@ public class ExMovimentacaoController extends ExController {
     		bundle = ResourceBundle.getBundle("messages_" + SigaBaseProperties.getString("siga.local"));
     	}
         return bundle;
+    }
+    
+    private boolean isSigaSP() {
+    	if (SigaBaseProperties.getString("siga.local") != null && SigaBaseProperties.getString("siga.local").equals("GOVSP")) {
+    		return true;
+    	}
+    	return false;
     }
 }

@@ -170,7 +170,7 @@ public class DpCargoController extends
 	public void editarGravar(final Long id, 
 							 final String nmCargo, 
 							 final Long idOrgaoUsu) throws Exception{
-		assertAcesso("FE:Ferramentas;CAD_CARGO: Cadastrar Cargo");
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_CARGO: Cadastrar Cargo");
 		
 		if(nmCargo == null)
 			throw new AplicacaoException("Nome do cargo não informado");

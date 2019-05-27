@@ -375,6 +375,13 @@ public class ExMovimentacaoController extends ExController {
 					"O arquivo a ser anexado não foi selecionado!");
 		}
 		
+		String fileExtension = arquivo.getFileName().substring(arquivo.getFileName().lastIndexOf("."));
+		
+		if (fileExtension.equals(".bat") || fileExtension.equals(".exe") || fileExtension.equals(".sh") || fileExtension.equals(".dll") ) {
+			throw new AplicacaoException(
+					"Extensão " + fileExtension + " inválida para inclusão do arquivo.");
+		}
+		
 		Integer numBytes = 0;
 		try {
 			final byte[] baArquivo = toByteArray(arquivo);

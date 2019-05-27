@@ -61,10 +61,17 @@
 		function validaSelecaoAnexo(form) {
 			var result = true;
 			var arquivo = form.arquivo;
+			var fileExtension = arquivo.value.substring(arquivo.value.lastIndexOf("."));
+
 			if (arquivo == null || arquivo.value == '') {
 				alert("O arquivo a ser anexado não foi selecionado!");
 				result = false;
 			}
+
+ 			if (fileExtension == ".bat" || fileExtension == ".exe" || fileExtension == ".sh" || fileExtension == ".dll" ) {
+ 				alert("Extensão " + fileExtension + " inválida para inclusão do arquivo.");
+ 				result = false;
+ 			}
 			return result;
 		}
 	</script>

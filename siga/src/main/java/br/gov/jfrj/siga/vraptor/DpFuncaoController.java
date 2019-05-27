@@ -163,7 +163,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 	public void editarGravar(final Long id, 
 							 final String nmFuncao, 
 							 final Long idOrgaoUsu) throws Exception{
-		assertAcesso("FE:Ferramentas;CAD_FUNCAO:Cadastrar Função de Confiança");
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_FUNCAO:Cadastrar Função de Confiança");
 		
 		if(nmFuncao == null)
 			throw new AplicacaoException("Nome da função não informado");

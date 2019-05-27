@@ -245,7 +245,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 							 final String siglaLotacao,
 							 final String situacao,
 							 final Long idLocalidade) throws Exception{
-		assertAcesso("FE:Ferramentas;CAD_LOTACAO: Cadastrar Lotação");
+		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_LOTACAO: Cadastrar Lotação");
 		
 		if(nmLotacao == null)
 			throw new AplicacaoException("Nome da lotação não informado");

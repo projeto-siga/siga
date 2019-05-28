@@ -21,12 +21,11 @@ package br.gov.jfrj.siga.ex.vo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import org.jboss.logging.Logger;
 
-import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaCalendar;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -64,7 +63,6 @@ public class ExMobilVO extends ExVO {
 	Integer pagFinal;
 	String tamanhoDeArquivo;
 	boolean ocultar;
-	private static ResourceBundle bundle;
 	
 	public List<ExMovimentacaoVO> getMovs() {
 		return movs;
@@ -322,15 +320,6 @@ public class ExMobilVO extends ExVO {
 
 	}
 
-    private static ResourceBundle getBundle() {
-    	if (SigaBaseProperties.getString("siga.local") == null) {
-    		bundle = ResourceBundle.getBundle("messages_TRF2");
-    	} else {
-    		bundle = ResourceBundle.getBundle("messages_" + SigaBaseProperties.getString("siga.local"));
-    	}
-        return bundle;
-    }
-    
 	/**
 	 * @param mob
 	 * @param titular
@@ -348,7 +337,7 @@ public class ExMobilVO extends ExVO {
 					null, null, null, null, "once");
 
 			addAcao("printer",
-					getBundle().getString("documento.ver.impressao"),
+					SigaMessages.getMessage("documento.ver.impressao"),
 					"/app/arquivo",
 					"exibir",
 					Ex.getInstance().getComp()

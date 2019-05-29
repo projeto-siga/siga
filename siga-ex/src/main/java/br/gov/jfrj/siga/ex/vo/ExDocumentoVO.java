@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -394,6 +395,9 @@ public class ExDocumentoVO extends ExVO {
 	 */
 	private void addAcoes(ExDocumento doc, DpPessoa titular,
 			DpLotacao lotaTitular, boolean exibirAntigo) {
+		String iconVerImpressao;
+		String iconVerMais;
+		
 		ExVO vo = this;
 		for (ExMobilVO mobvo : mobs) {
 			if (mobvo.getMob().isGeral())
@@ -410,8 +414,16 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeVisualizarImpressao(titular, lotaTitular, mob));
 
+		if(SigaMessages.isSigaSP()) {
+			iconVerImpressao = "eye";
+			iconVerMais = "date_magnify";
+		} else {
+			iconVerImpressao = "printer";
+			iconVerMais = "eye";
+		}
+
 		vo.addAcao(
-				"printer",
+				iconVerImpressao,
 				SigaMessages.getMessage("documento.ver.impressao"),
 				"/app/arquivo",
 				"exibir",
@@ -419,7 +431,7 @@ public class ExDocumentoVO extends ExVO {
 						.podeVisualizarImpressao(titular, lotaTitular, mob),
 				null, "&popup=true&arquivo=" + doc.getReferenciaPDF(), null,
 				null, null);
-
+			
 		vo.addAcao(
 				"lock",
 				"Fina_lizar",
@@ -607,7 +619,7 @@ public class ExDocumentoVO extends ExVO {
 		// test="${exibirCompleto != true}" />
 		int numUltMobil = doc.getNumUltimoMobil();
 		vo.addAcao(
-				"eye",
+				iconVerMais,
 				SigaMessages.getMessage("documento.ver.mais"),
 				"/app/expediente/doc",
 				"exibirAntigo",

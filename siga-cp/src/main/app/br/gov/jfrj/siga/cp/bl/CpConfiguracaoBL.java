@@ -95,6 +95,19 @@ public class CpConfiguracaoBL {
 
 	public static int COMPLEXO = 10;
 
+	public static int PESSOA_OBJETO = 11;
+
+	public static int LOTACAO_OBJETO = 12;
+
+	public static int FUNCAO_OBJETO = 13;
+
+	public static int ORGAO_OBJETO = 14;
+
+	public static int CARGO_OBJETO = 15;
+
+	public static int COMPLEXO_OBJETO = 16;
+
+	
 	public Comparator<CpConfiguracao> getComparator() {
 		return comparator;
 	}
@@ -287,6 +300,25 @@ public class CpConfiguracaoBL {
 				cfg.getHisIdcIni().getDpPessoa().getDescricao();
 			if (cfg.getHisIdcFim() != null)
 				cfg.getHisIdcFim().getDpPessoa().getDescricao();
+
+			if (cfg.getOrgaoObjeto() != null)
+				cfg.getOrgaoObjeto().getDescricao();
+			if (cfg.getComplexoObjeto() != null)
+				cfg.getComplexoObjeto().getNomeComplexo();
+			if (cfg.getLotacaoObjeto() != null){
+				cfg.getLotacaoObjeto().getSigla();
+				cfg.getLotacaoObjeto().getOrgaoUsuario().getSigla();
+				cfg.getLotacaoObjeto().getDpPessoaLotadosSet().size();
+			}
+			if (cfg.getCargoObjeto() != null)
+				cfg.getCargoObjeto().getDescricao();
+			if (cfg.getFuncaoConfiancaObjeto() != null)
+				cfg.getFuncaoConfiancaObjeto().getDescricao();
+			if (cfg.getPessoaObjeto() != null) {
+				cfg.getPessoaObjeto().getDescricao();
+				cfg.getPessoaObjeto().getOrgaoUsuario().getSigla();
+				// cfg.getDpPessoa().getPessoaAtual().getDescricao();
+			}
 		}
 	}
 
@@ -568,12 +600,50 @@ public class CpConfiguracaoBL {
 						.contains(TIPO_LOTACAO))))
 			return false;
 
+		if (cfg.getPessoaObjeto() != null
+				&& ((cfgFiltro.getPessoaObjeto() != null
+						&& !cfg.getPessoaObjeto().equivale(cfgFiltro.getPessoaObjeto()) || ((cfgFiltro
+						.getPessoaObjeto() == null) && !atributosDesconsiderados
+						.contains(PESSOA_OBJETO)))))
+			return false;
+
+
+		if (cfg.getLotacaoObjeto() != null
+				&& ((cfgFiltro.getLotacaoObjeto() != null
+						&& !cfg.getLotacaoObjeto().equivale(cfgFiltro.getLotacaoObjeto()) || ((cfgFiltro
+						.getLotacaoObjeto() == null) && !atributosDesconsiderados
+						.contains(LOTACAO_OBJETO)))))
+			return false;
+
+		if (cfg.getComplexoObjeto() != null
+				&& ((cfgFiltro.getComplexoObjeto() != null
+						&& !cfg.getComplexoObjeto().equals(cfgFiltro.getComplexoObjeto()) || ((cfgFiltro
+						.getComplexoObjeto() == null) && !atributosDesconsiderados
+						.contains(COMPLEXO_OBJETO)))))
+			return false;
+
+		if (cfg.getFuncaoConfiancaObjeto() != null
+				&& ((cfgFiltro.getFuncaoConfiancaObjeto() != null && !cfg
+						.getFuncaoConfiancaObjeto().getIdFuncao()
+						.equals(cfgFiltro.getFuncaoConfiancaObjeto().getIdFuncao())) || ((cfgFiltro
+						.getFuncaoConfiancaObjeto() == null) && !atributosDesconsiderados
+						.contains(FUNCAO_OBJETO))))
+			return false;
+
+	
 		if (cfg.getOrgaoObjeto() != null
 				&& ((cfgFiltro.getOrgaoObjeto() != null && !cfg
 						.getOrgaoObjeto().getIdOrgaoUsu()
 						.equals(cfgFiltro.getOrgaoObjeto().getIdOrgaoUsu())) || ((cfgFiltro
 						.getOrgaoObjeto() == null) && !atributosDesconsiderados
-						.contains(ORGAO))))
+						.contains(ORGAO_OBJETO))))
+			return false;
+		
+		if (cfg.getCargoObjeto() != null
+				&& ((cfgFiltro.getCargoObjeto() != null && !cfg.getCargoObjeto()
+						.getIdCargo().equals(cfgFiltro.getCargoObjeto().getIdCargo())) || ((cfgFiltro
+						.getCargoObjeto() == null) && !atributosDesconsiderados
+						.contains(CARGO_OBJETO))))
 			return false;
 
 		return true;
@@ -764,6 +834,25 @@ public class CpConfiguracaoBL {
 						.getOrgaoUsuario());
 				cpConfiguracao.setCpTipoLotacao(cpConfiguracao.getLotacao().getCpTipoLotacao());
 			}
+
+		if (cpConfiguracao.getPessoaObjeto() != null) {
+			if (cpConfiguracao.getLotacaoObjeto() == null)
+				cpConfiguracao.setLotacaoObjeto(cpConfiguracao.getPessoaObjeto()
+						.getLotacao());
+			if (cpConfiguracao.getCargoObjeto() == null)
+				cpConfiguracao
+						.setCargoObjeto(cpConfiguracao.getPessoaObjeto().getCargo());
+			if (cpConfiguracao.getFuncaoConfiancaObjeto() == null)
+				cpConfiguracao.setFuncaoConfiancaObjeto(cpConfiguracao.getPessoaObjeto()
+						.getFuncaoConfianca());
+		}
+
+		if (cpConfiguracao.getLotacaoObjeto() != null)
+			if (cpConfiguracao.getOrgaoObjeto() == null){
+				cpConfiguracao.setOrgaoObjeto(cpConfiguracao.getLotacaoObjeto()
+						.getOrgaoUsuario());
+			}
+
 	}
 
 	public void destroy() {

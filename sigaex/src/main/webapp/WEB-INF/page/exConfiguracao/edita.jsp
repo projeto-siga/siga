@@ -98,6 +98,13 @@
 										headerKey="0" value="${idNivelAcesso}" /></td>
 							</tr>
 							<tr>
+								<td class="shrink">Perfil</td>
+								<td><siga:select name="idPapel"
+										list="listaPapel" theme="simple" listKey="idPapel"
+										listValue="descPapel" headerValue="[Indefinido]"
+										headerKey="0" value="${idPapel}" /></td>
+							</tr>
+							<tr>
 								<td class="shrink">Pessoa</td>
 								<td><siga:selecao propriedade="pessoa" tema="simple"
 										modulo="siga" /></td>
@@ -201,6 +208,26 @@
 								<td class="shrink">Classificação</td>
 								<td><siga:selecao propriedade="classificacao" tema="simple"
 										modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar" /></td>
+							</tr>
+							<tr>
+								<td class="shrink">Pessoa Objeto</td>
+								<td><siga:selecao tipo="pessoa" propriedade="pessoaObjeto" tema="simple"
+										modulo="siga" /></td>
+							</tr>
+							<tr>
+								<td class="shrink">Lotação Objeto</td>
+								<td><siga:selecao tipo="lotacao" propriedade="lotacaoObjeto" tema="simple"
+										modulo="siga" /></td>
+							</tr>
+							<tr>
+								<td class="shrink">Cargo Objeto</td>
+								<td><siga:selecao tipo="cargo" propriedade="cargoObjeto" tema="simple"
+										modulo="siga" /></td>
+							</tr>
+							<tr>
+								<td class="shrink">Função de Confiança Objeto</td>
+								<td><siga:selecao tipo="funcao" propriedade="funcaoObjeto" tema="simple"
+										modulo="siga" /></td>
 							</tr>
 							<tr>
 								<td class="shrink">Órgão Objeto</td>

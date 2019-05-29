@@ -17,6 +17,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.base.Optional;
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -36,6 +38,7 @@ import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
+import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
@@ -45,8 +48,6 @@ import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoComparator;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.builder.ExConfiguracaoBuilder;
-
-import com.google.common.base.Optional;
 
 @Resource
 public class ExConfiguracaoController extends ExController {
@@ -67,12 +68,14 @@ public class ExConfiguracaoController extends ExController {
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
 		result.include("orgaosUsu", getOrgaosUsu());
 	}
-
+	
+	
 	@Get("app/expediente/configuracao/editar")
 	public void edita(Long id, boolean campoFixo, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idMod,
-			Long idFormaDoc, Long idNivelAcesso, Long idSituacao, Long idTpConfiguracao, DpPessoaSelecao pessoaSel,
+			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Long idSituacao, Long idTpConfiguracao, DpPessoaSelecao pessoaSel,
 			DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel, DpFuncaoConfiancaSelecao funcaoSel,
-			ExClassificacaoSelecao classificacaoSel, Long idOrgaoObjeto, Long idTpLotacao, String nmTipoRetorno)
+			ExClassificacaoSelecao classificacaoSel, DpPessoaSelecao pessoaObjetoSel,
+			DpLotacaoSelecao lotacaoObjetoSel, DpCargoSelecao cargoObjetoSel, DpFuncaoConfiancaSelecao funcaoObjetoSel, Long idOrgaoObjeto, Long idTpLotacao, String nmTipoRetorno)
 			throws Exception {
 
 		ExConfiguracao config = new ExConfiguracao();
@@ -81,10 +84,12 @@ public class ExConfiguracaoController extends ExController {
 			config = daoCon(id);
 		} else if (campoFixo) {
 			final ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia()
-					.setIdNivelAcesso(idNivelAcesso).setIdTpMov(idTpMov).setIdTpDoc(idTpDoc).setIdMod(idMod)
-					.setIdFormaDoc(idFormaDoc).setIdNivelAcesso(idNivelAcesso).setIdSituacao(idSituacao)
+					.setIdNivelAcesso(idNivelAcesso).setIdPapel(idPapel).setIdTpMov(idTpMov).setIdTpDoc(idTpDoc).setIdMod(idMod)
+					.setIdFormaDoc(idFormaDoc).setIdSituacao(idSituacao)
 					.setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel).setLotacaoSel(lotacaoSel)
 					.setCargoSel(cargoSel).setFuncaoSel(funcaoSel).setClassificacaoSel(classificacaoSel)
+					.setPessoaObjetoSel(pessoaObjetoSel).setLotacaoObjetoSel(lotacaoObjetoSel)
+					.setCargoObjetoSel(cargoObjetoSel).setFuncaoObjetoSel(funcaoObjetoSel)
 					.setIdOrgaoObjeto(idOrgaoObjeto).setIdTpLotacao(idTpLotacao);
 
 			config = configuracaoBuilder.construir(dao());
@@ -95,6 +100,7 @@ public class ExConfiguracaoController extends ExController {
 		result.include("listaTiposConfiguracao", getListaTiposConfiguracao());
 		result.include("listaSituacao", getListaSituacao());
 		result.include("listaNivelAcesso", getListaNivelAcesso());
+		result.include("listaPapel", getListaPapel());
 		result.include("orgaosUsu", getOrgaosUsu());
 		result.include("listaTiposMovimentacao", getListaTiposMovimentacao());
 		result.include("tiposFormaDoc", getTiposFormaDoc());
@@ -131,17 +137,19 @@ public class ExConfiguracaoController extends ExController {
 	@SuppressWarnings("all")
 	@Get("app/expediente/configuracao/editar_gravar")
 	public void editarGravar(Long id, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idTpFormaDoc, Long idMod,
-			Long idFormaDoc, Long idNivelAcesso, Long idSituacao, Long idTpConfiguracao, DpPessoaSelecao pessoaSel,
+			Long idFormaDoc, Long idNivelAcesso, Long idPapel, Long idSituacao, Long idTpConfiguracao, DpPessoaSelecao pessoaSel,
 			DpLotacaoSelecao lotacaoSel, DpCargoSelecao cargoSel, DpFuncaoConfiancaSelecao funcaoSel,
-			ExClassificacaoSelecao classificacaoSel, Long idOrgaoObjeto, Long idTpLotacao, String nmTipoRetorno,
+			ExClassificacaoSelecao classificacaoSel, DpPessoaSelecao pessoaObjeto_pessoaSel,
+			DpLotacaoSelecao lotacaoObjeto_lotacaoSel, DpCargoSelecao cargoObjeto_cargoSel, DpFuncaoConfiancaSelecao funcaoObjeto_funcaoSel, Long idOrgaoObjeto, Long idTpLotacao, String nmTipoRetorno,
 			boolean campoFixo) throws Exception {
 
 		final ExConfiguracaoBuilder configuracaoBuilder = ExConfiguracaoBuilder.novaInstancia().setId(id)
 				.setTipoPublicador(null).setIdTpMov(idTpMov).setIdTpDoc(idTpDoc).setIdMod(idMod)
-				.setIdFormaDoc(idFormaDoc).setIdTpFormaDoc(idTpFormaDoc).setIdNivelAcesso(idNivelAcesso)
+				.setIdFormaDoc(idFormaDoc).setIdTpFormaDoc(idTpFormaDoc).setIdNivelAcesso(idNivelAcesso).setIdPapel(idPapel)
 				.setIdSituacao(idSituacao).setIdTpConfiguracao(idTpConfiguracao).setPessoaSel(pessoaSel)
 				.setLotacaoSel(lotacaoSel).setCargoSel(cargoSel).setFuncaoSel(funcaoSel)
-				.setClassificacaoSel(classificacaoSel).setIdOrgaoObjeto(idOrgaoObjeto).setIdOrgaoUsu(idOrgaoUsu)
+				.setClassificacaoSel(classificacaoSel).setIdOrgaoObjeto(idOrgaoObjeto).setPessoaObjetoSel(pessoaObjeto_pessoaSel).setLotacaoObjetoSel(lotacaoObjeto_lotacaoSel)
+				.setCargoObjetoSel(cargoObjeto_cargoSel).setFuncaoObjetoSel(funcaoObjeto_funcaoSel).setIdOrgaoUsu(idOrgaoUsu)
 				.setIdTpLotacao(idTpLotacao);
 
 		gravarConfiguracao(idTpConfiguracao, idSituacao, configuracaoBuilder.construir(dao()));
@@ -421,6 +429,10 @@ public class ExConfiguracaoController extends ExController {
 		DpFuncaoConfiancaSelecao funcaoConfiancaSelecao = new DpFuncaoConfiancaSelecao();
 		DpCargoSelecao cargoSelecao = new DpCargoSelecao();
 		ExClassificacaoSelecao classificacaoSelecao = new ExClassificacaoSelecao();
+		DpPessoaSelecao pessoaObjetoSelecao = new DpPessoaSelecao();
+		DpLotacaoSelecao lotacaoObjetoSelecao = new DpLotacaoSelecao();
+		DpFuncaoConfiancaSelecao funcaoConfiancaObjetoSelecao = new DpFuncaoConfiancaSelecao();
+		DpCargoSelecao cargoObjetoSelecao = new DpCargoSelecao();
 
 		if (c.getOrgaoUsuario() != null)
 			result.include("idOrgaoUsu", c.getOrgaoUsuario().getIdOrgaoUsu());
@@ -452,6 +464,9 @@ public class ExConfiguracaoController extends ExController {
 		if (c.getExNivelAcesso() != null)
 			result.include("idNivelAcesso", c.getExNivelAcesso().getIdNivelAcesso());
 
+		if (c.getExPapel() != null)
+			result.include("idPapel", c.getExPapel().getIdPapel());
+
 		if (c.getCpSituacaoConfiguracao() != null)
 			result.include("idSituacao", c.getCpSituacaoConfiguracao().getIdSitConfiguracao());
 
@@ -475,6 +490,18 @@ public class ExConfiguracaoController extends ExController {
 
 		if (c.getExClassificacao() != null)
 			classificacaoSelecao.buscarPorObjeto(c.getExClassificacao());
+
+		if (c.getPessoaObjeto() != null)
+			pessoaObjetoSelecao.buscarPorObjeto(c.getPessoaObjeto());
+
+		if (c.getLotacaoObjeto() != null)
+			lotacaoObjetoSelecao.buscarPorObjeto(c.getLotacaoObjeto());
+
+		if (c.getCargoObjeto() != null)
+			cargoObjetoSelecao.buscarPorObjeto(c.getCargoObjeto());
+
+		if (c.getFuncaoConfianca() != null)
+			funcaoConfiancaObjetoSelecao.buscarPorObjeto(c.getFuncaoConfiancaObjeto());
 
 		if (c.getOrgaoObjeto() != null)
 			result.include("idOrgaoObjeto", c.getOrgaoObjeto().getIdOrgaoUsu());
@@ -540,6 +567,10 @@ public class ExConfiguracaoController extends ExController {
 
 	private List<ExNivelAcesso> getListaNivelAcesso() throws Exception {
 		return dao().listarOrdemNivel();
+	}
+
+	private List<ExPapel> getListaPapel() throws Exception {
+		return dao().listarExPapel();
 	}
 
 	private List<ExTipoDocumento> getListaTiposDocumento() throws Exception {

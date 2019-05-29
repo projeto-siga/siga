@@ -1726,6 +1726,10 @@ public class ExDao extends CpDao {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, ExTipoDocumento.class);
 	}
 
+	public List<ExPapel> listarExPapel() {
+		return findAndCacheByCriteria(CACHE_QUERY_HOURS, ExPapel.class);
+	}
+
 	public List<ExEstadoDoc> listarExEstadosDoc() {
 		return findAndCacheByCriteria(CACHE_QUERY_HOURS, ExEstadoDoc.class);
 	}

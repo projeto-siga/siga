@@ -636,6 +636,7 @@ var providerPassword = {
 								cont();
 							},
 							"Cancelar" : function() {
+								gAssinando = false;
 								$(this).dialog('destroy').remove();
 							}
 						},
@@ -1095,6 +1096,7 @@ function GravarAssinatura(url, datatosend) {
 		error : function(xhr) {
 			// result = TrataErro(xhr.responseText ? xhr.responseText : xhr,
 			// "");
+			gAssinando = false;
 			result = "Erro na gravação da assinatura. " + xhr.responseText;
 		}
 	});

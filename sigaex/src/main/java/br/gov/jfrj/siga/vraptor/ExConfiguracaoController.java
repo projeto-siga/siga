@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -24,7 +23,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -57,7 +56,6 @@ public class ExConfiguracaoController extends ExController {
 	private static final String FORMA = "forma";
 	private static final String MODELO = "modelo";
 	private static final String VERIFICADOR_ACESSO = "FE:Ferramentas;CFG:Configurações";
-	private static ResourceBundle bundle;
 	
 	public ExConfiguracaoController(HttpServletRequest request, HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {
@@ -402,7 +400,7 @@ public class ExConfiguracaoController extends ExController {
 
 	private Map<Integer, String> getListaTipoPublicador() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, getBundle().getString("usuario.matricula"));
+		map.put(1, SigaMessages.getMessage("usuario.matricula"));
 		map.put(2, "Órgão Integrado");
 		return map;
 	}
@@ -552,13 +550,4 @@ public class ExConfiguracaoController extends ExController {
 	private List<CpTipoLotacao> getListaTiposLotacao() throws Exception {
 		return dao().listarTiposLotacao();
 	}
-
-    private static ResourceBundle getBundle() {
-    	if (SigaBaseProperties.getString("siga.local") == null) {
-    		bundle = ResourceBundle.getBundle("messages_TRF2");
-    	} else {
-    		bundle = ResourceBundle.getBundle("messages_" + SigaBaseProperties.getString("siga.local"));
-    	}
-        return bundle;
-    }
 }

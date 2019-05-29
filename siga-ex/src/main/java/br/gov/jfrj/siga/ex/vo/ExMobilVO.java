@@ -327,6 +327,14 @@ public class ExMobilVO extends ExVO {
 	 * @throws Exception
 	 */
 	private void addAcoes(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
+		String iconVerImpressao;
+
+		if(SigaMessages.isSigaSP()) {
+			iconVerImpressao = "eye";
+		} else {
+			iconVerImpressao = "printer";
+		}
+
 		if (!mob.isGeral()) {
 			addAcao("folder",
 					"_Ver Dossiê",
@@ -336,7 +344,7 @@ public class ExMobilVO extends ExVO {
 							.podeVisualizarImpressao(titular, lotaTitular, mob),
 					null, null, null, null, "once");
 
-			addAcao("printer",
+			addAcao(iconVerImpressao,
 					SigaMessages.getMessage("documento.ver.impressao"),
 					"/app/arquivo",
 					"exibir",

@@ -219,7 +219,6 @@
 									<input type="hidden" id="temCossignatarios" value="${not empty exDocumentoDTO.doc.cosignatarios}" />
 									<label><fmt:message key="documento.subscritor"/></label>
 									<siga:selecao propriedade="subscritor" inputName="exDocumentoDTO.subscritor" modulo="siga" tema="simple" />
-									<small class="form-text text-muted"><fmt:message key="documento.help.subscritor"/></small>
 								</div>
 							</div>
 							<div class="col-sm-2">
@@ -253,7 +252,7 @@
 				<input type="hidden" name="campos" value="nmFuncaoSubscritor" />
 				<input type="hidden" name="exDocumentoDTO.nmFuncaoSubscritor" maxlength="128" id="frm_nmFuncaoSubscritor" value="${exDocumentoDTO.nmFuncaoSubscritor}" />
 				<div id="tr_personalizacao" style="display: ${exDocumentoDTO.personalizacao? '': 'none'};">
-					<div class="row">
+					<div class="row ml-1">
 						<h6>Personalização</h6>
 					</div>
 					<div class="row">
@@ -276,7 +275,7 @@
 							</div>
 						</div>
 						<div class="col-sm-4">
-							<div class="form-group">
+							<div class="form-group ${hide_only_GOVSP}">
 								<label>Nome</label>
 								<input type="text" id="personalizarNome"  maxlength="125" class="form-control">
 							</div>
@@ -375,7 +374,7 @@
 				</div>
 				</c:if>
 				<div id="tr_personalizacao" style="display: ${exDocumentoDTO.modelo.exClassificacao!=null? 'none': ''};">
-					<div class="row">
+					<div class="row  ${hide_only_GOVSP}">
 						<c:if test="${exDocumentoDTO.modelo.exClassificacao!=null}">
 							<c:set var="desativarClassif" value="sim" />
 						</c:if>
@@ -394,7 +393,7 @@
 					</div>			
 				</div>
 				<c:if test="${exDocumentoDTO.classificacaoSel.id!=null && exDocumentoDTO.classificacaoIntermediaria}">
-				<div class="row">
+				<div class="row ${hide_only_GOVSP}">
 					<div class="col-sm-5">
 						<div class="form-group">
 							<label>Descrição da Classificação</label>
@@ -407,7 +406,7 @@
 				</c:if>	
 				
 				<c:choose>
-					<c:when test='${exDocumentoDTO.modelo.descricaoAutomatica or (not podeEditarDescricao)}'>
+					<c:when test='${exDocumentoDTO.modelo.descricaoAutomatica or (not podeEditarDescricao) or siga_cliente == "GOVSP"}'>
    					   <c:set var="displayDescricao" value="d-none" />
 					</c:when>
 					<c:otherwise>
@@ -529,7 +528,7 @@
 						<c:if test='${exDocumentoDTO.tipoDocumento == "interno"}'>
 							<c:if test="${not empty exDocumentoDTO.modelo.nmArqMod or exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker'}">
 								<button type="button" name="ver_doc" onclick="javascript: popitup_documento(false); return false;" class="btn btn-info ${hide_only_GOVSP}" accesskey="v"><u>V</u>er Documento</button>
-								<button type="button" name="ver_doc_pdf" onclick="javascript: popitup_documento(true); return false;" class="btn btn-info" accesskey="i"><fmt:message key="documento.btn.ver.impressao"/></button>
+								<button type="button" name="ver_doc_pdf" onclick="javascript: popitup_documento(true); return false;" class="btn btn-info" accesskey="i"><fmt:message key="documento.btn.ver.impressao2"/></button>
 								<button type="button" name="voltar" onclick="javascript: history.back();" class="btn btn-info ${hide_only_TRF2}" accesskey="r">Volta<u>r</u></button>
 							</c:if>
 						</c:if>

@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
@@ -48,6 +47,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
@@ -102,7 +102,6 @@ public class ExMovimentacaoController extends ExController {
 	private static final int DEFAULT_POSTBACK = 1;
 	private static final Logger LOGGER = Logger
 			.getLogger(ExMovimentacaoController.class);
-	private static ResourceBundle bundle;
 	
 	public ExMovimentacaoController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
@@ -3791,14 +3790,14 @@ public class ExMovimentacaoController extends ExController {
 	protected Map<Integer, String> getListaTipoResp() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Órgão Integrado");
-		map.put(2, getBundle().getString("usuario.matricula"));
+		map.put(2, SigaMessages.getMessage("usuario.matricula"));
 		map.put(3, "Externo");
 		return map;
 	}
 
 	private Map<Integer, String> getListaTipoRespPerfil() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, getBundle().getString("usuario.matricula"));
+		map.put(1, SigaMessages.getMessage("usuario.matricula"));
 		map.put(2, "Órgão Integrado");
 		return map;
 	}
@@ -4293,15 +4292,6 @@ public class ExMovimentacaoController extends ExController {
 			result.use(Results.http()).body(ExceptionUtils.getStackTrace(e)).setStatusCode(500);
 		}
 	}
-
-    private static ResourceBundle getBundle() {
-    	if (SigaBaseProperties.getString("siga.local") == null) {
-    		bundle = ResourceBundle.getBundle("messages_TRF2");
-    	} else {
-    		bundle = ResourceBundle.getBundle("messages_" + SigaBaseProperties.getString("siga.local"));
-    	}
-        return bundle;
-    }
     
     private boolean isSigaSP() {
     	if (SigaBaseProperties.getString("siga.local") != null && SigaBaseProperties.getString("siga.local").equals("GOVSP")) {

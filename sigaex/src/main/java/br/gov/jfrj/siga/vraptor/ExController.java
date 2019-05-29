@@ -23,7 +23,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
@@ -33,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -56,8 +55,6 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.util.ExProcessadorModelo;
 
 public class ExController extends SigaController {
-	private static ResourceBundle bundle;
-
 	HttpServletResponse response;
 	ServletContext context;
 
@@ -227,7 +224,7 @@ public class ExController extends SigaController {
 
 	protected Map<Integer, String> getListaTipoResp() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, getBundle().getString("usuario.matricula"));
+		map.put(1, SigaMessages.getMessage("usuario.matricula"));
 		map.put(2, "Órgão Integrado");
 		return map;
 	}
@@ -252,13 +249,4 @@ public class ExController extends SigaController {
 	protected ServletContext getContext() {
 		return context;
 	}
-
-    private static ResourceBundle getBundle() {
-    	if (SigaBaseProperties.getString("siga.local") == null) {
-    		bundle = ResourceBundle.getBundle("messages_TRF2");
-    	} else {
-    		bundle = ResourceBundle.getBundle("messages_" + SigaBaseProperties.getString("siga.local"));
-    	}
-        return bundle;
-    }
 }

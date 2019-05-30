@@ -534,7 +534,7 @@ public class ExMobilVO extends ExVO {
 					Ex.getInstance()
 							.getComp()
 							.podeCancelarMovimentacao(titular, lotaTitular, mob),
-					"Confirma o cancelamento da última movimentação("
+					SigaMessages.getMessage("documento.confirma.cancelamento") + "("
 							+ mob.getDescricaoUltimaMovimentacaoNaoCancelada()
 							+ ")?", null, null, null, "once"); // popup,
 		// exibir+completo,

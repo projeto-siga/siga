@@ -27,6 +27,7 @@ import com.auth0.jwt.JWTVerifyException;
 public class AuthJwtFormFilter implements Filter {
 
 	public static final String SIGA_JWT_AUTH_COOKIE_NAME = "siga-jwt-auth";
+	public static final String SIGA_JWT_AUTH_COOKIE_DOMAIN = ".homologacao.sp.gov.br";//System.getProperty("idp.jwt.modulo.cookie.domain");
 	private static final int TIME_TO_EXPIRE_IN_S = 60 * 60 * 8; // 8h é o tempo
 																// de duração
 	private static final int TIME_TO_RENEW_IN_S = 60 * 60 * 7; // renova
@@ -138,6 +139,7 @@ public class AuthJwtFormFilter implements Filter {
 	public static Cookie buildCookie(String tokenNew) {
 		Cookie cookie = new Cookie(SIGA_JWT_AUTH_COOKIE_NAME, tokenNew);
 		cookie.setPath("/");
+		cookie.setDomain(SIGA_JWT_AUTH_COOKIE_DOMAIN);
 		// cookie.setSecure(true);
 		return cookie;
 	}
@@ -145,6 +147,7 @@ public class AuthJwtFormFilter implements Filter {
 	public static Cookie buildEraseCookie() {
 		Cookie cookie = new Cookie(SIGA_JWT_AUTH_COOKIE_NAME, "");
 		cookie.setPath("/");
+		cookie.setDomain(SIGA_JWT_AUTH_COOKIE_DOMAIN);
 		cookie.setMaxAge(0);
 		return cookie;
 	}

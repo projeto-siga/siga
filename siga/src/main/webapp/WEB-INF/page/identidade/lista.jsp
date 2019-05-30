@@ -28,26 +28,15 @@
 					<input type="hidden" name="apenasRefresh" value="0" />
 					<input type="hidden" name="p.offset" value="0" />
 					
-					<table class="gt-form-table">
-						<colgroup>
-							<col width="15%"></col>
-						</colgroup>
-
-						<tr class="header">
-							<td align="center" valign="top" colspan="4">
-								Selecione a Pessoa
-							</td>
-						</tr>
-
-						<siga:selecao titulo="Matrícula" propriedade="pessoa" modulo="siga" />
-
-						<tr>
-							<td colspan="4">
-								<siga:monobotao inputType="submit"
-									value="Buscar" cssClass="gt-btn-medium gt-btn-left" />
-							</td>
-						</tr>
-					</table>
+					<div class="card w-75 mx-auto">
+						<div class="card-header">
+							Selecione a Pessoa
+						</div>
+						<div class="card-body">
+							<siga:selecao titulo="Matrícula" propriedade="pessoa" modulo="siga" />
+							<siga:monobotao inputType="submit" value="Buscar" cssClass="btn btn-primary" />
+						</div>
+					</div>
 				</form>
 			</div>
 		</div>

@@ -13,6 +13,8 @@
 <script src="/siga/javascript/siga.js"
 	type="text/javascript" charset="utf-8"></script>
 
+<script src="/siga/javascript/picketlink.js" type="text/javascript" charset="utf-8"></script>
+
 <script
 	src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"
 	type="text/javascript"></script>

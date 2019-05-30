@@ -3683,7 +3683,9 @@ public class ExBL extends CpBL {
 		for (ExMovimentacao mov : movs) {
 			if (mov.isCancelada())
 				continue;
-			setAntes.add(new MovimentacaoSincronizavel(mov.getExPapel(), mov.getResp(), mov.getLotaResp(), mov));
+			setAntes.add(new MovimentacaoSincronizavel(mov.getExPapel(), 
+					mov.getResp() != null ? mov.getResp().getPessoaAtual() : null, 
+					mov.getLotaResp() != null ? mov.getLotaResp().getLotacaoAtual() : null, mov));
 		}
 
 		// Inclui em setDepois os papeis que devem estar atribuídos ao documento
@@ -4372,7 +4374,6 @@ public class ExBL extends CpBL {
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO:
-			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL:
 				ExMovimentacao novaMov = duplicarMovimentacao(cadastrante,
 						lotaCadastrante, mov);
 				novaMov.setExMobil(novoDoc.getMobilGeral());

@@ -3684,8 +3684,8 @@ public class ExBL extends CpBL {
 			if (mov.isCancelada())
 				continue;
 			setAntes.add(new MovimentacaoSincronizavel(mov.getExPapel(), 
-					mov.getResp() != null ? mov.getResp().getPessoaAtual() : null, 
-					mov.getLotaResp() != null ? mov.getLotaResp().getLotacaoAtual() : null, mov));
+					mov.getSubscritor() != null ? mov.getSubscritor().getPessoaAtual() : null, 
+					(mov.getSubscritor() == null && mov.getLotaSubscritor() != null) ? mov.getLotaSubscritor().getLotacaoAtual() : null, mov));
 		}
 
 		// Inclui em setDepois os papeis que devem estar atribuídos ao documento

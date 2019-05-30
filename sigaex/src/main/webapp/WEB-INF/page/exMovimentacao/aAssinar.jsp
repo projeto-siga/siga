@@ -29,8 +29,8 @@
 	<!-- main content bootstrap -->
 	<div class="container-fluid">
 			<div class="row mt-2">
-				<div class="col col-sm-12 col-md-8">
-					<c:if test="${doc.conteudo != ''}">
+				<c:if test="${doc.conteudoBlobHtmlStringComReferencias != null}">
+					<div class="col col-sm-12 col-md-8">
 						<div class="card-sidebar card border-alert bg-white mb-3" id="conteudo">
 							<div class="card-body">
 								<tags:fixdocumenthtml>
@@ -38,9 +38,15 @@
 								</tags:fixdocumenthtml>
 							</div>
 						</div>
-					</c:if>
-				</div>
+					</div>
+				</c:if>
+				<c:if test="${doc.conteudoBlobHtmlStringComReferencias != null}">
 				<div class="col col-sm-12 col-md-4">
+				</c:if>
+				<c:if test="${doc.conteudoBlobHtmlStringComReferencias == null}">
+				<div class="col col-sm-12 col-md-12">
+				</c:if>
+
 					<div class="card bg-light mb-3">
 						<div class="card-header">
 							<h5>Confirme os dados do documento abaixo</h5>

@@ -99,8 +99,8 @@
 							<td class="d-none d-md-block">{{f.descr}}</td>
 							<c:if test="${siga_cliente == 'GOVSP'}">
 								<td v-if="f.dataDevolucao == 'ocultar'"></td>
-								<td v-if="f.dataDevolucao == 'alerta'"><i class="fa fa-exclamation-triangle" style="color:yellow; background-color: black"></i></td>
-								<td v-if="f.dataDevolucao == 'atrasado'"><i class="fa fa-exclamation-triangle" style="color:red; background-color: black"></i></td>
+								<td v-if="f.dataDevolucao == 'alerta'"><i class="fa fa-exclamation-triangle text-warning"></i></td>
+								<td v-if="f.dataDevolucao == 'atrasado'"><i class="fa fa-exclamation-triangle text-danger"></i></td>
 							</c:if>
 							<td>{{f.origem}}</td>
 							<td class="d-none d-md-block" style="padding: 0;"><div

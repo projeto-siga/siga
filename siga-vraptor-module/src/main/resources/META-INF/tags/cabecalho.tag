@@ -227,7 +227,7 @@ ${meta}
 	
 									var fld = document
 											.getElementsByName('buscar_genericoSel.sigla')[0];
-									fld.placeholder = 'Código';
+									fld.placeholder = 'Número de Documento';
 									fld.onblur = '';
 									fld.onkeypress = function(event) {
 										var fid = document

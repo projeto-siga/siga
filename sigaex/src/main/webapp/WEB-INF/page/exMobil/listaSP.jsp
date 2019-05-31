@@ -9,6 +9,20 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib tagdir="/WEB-INF/tags/mod" prefix="mod"%>
 
+<script type="text/javascript" language="Javascript1.1">
+	function csv(id, action) {
+		var frm = document.getElementById(id);
+		sbmtAction(id, action);
+		frm.action = 'listar';
+	}
+</script>
+<div class="row mb-3">
+	<div class="col">		
+		<siga:monobotao inputType="button"
+							onclique="csv('listar', '/sigaex/app/expediente/doc/exportarCsv');"
+							value="Exportar" cssClass="btn btn-primary" />
+	</div>
+</div>
 <c:choose>
 	<c:when test="${visualizacao == 2 or visualizacao == 4}">
 		<div id="pivot" style="margin: 30px;"></div>

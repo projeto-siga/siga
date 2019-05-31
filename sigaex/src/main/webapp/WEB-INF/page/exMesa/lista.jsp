@@ -85,8 +85,11 @@
 							<th class="d-none d-md-block">Tempo</th>
 							<th>Código</th>
 							<th class="d-none d-md-block">Descrição</th>
+							<c:if test="${siga_cliente == 'GOVSP'}">
+								<th></th>
+							</c:if>
 							<th>Origem</th>
-							<th class="d-none d-md-block">Etiquetas</th>
+							<th class="d-none d-md-block"><fmt:message key = "usuario.mesavirtual.etiquetas"/></th>
 							<th v-show="filtradosTemAlgumErro">Atenção</th>
 						</tr>
 						<tr v-bind:class="{odd: f.odd}">
@@ -94,6 +97,11 @@
 							<td><a :href="'expediente/doc/exibir?sigla=' + f.codigo">{{f.sigla}}</a><span
 								class="d-inline d-md-none"> - {{f.descr}}</span></td>
 							<td class="d-none d-md-block">{{f.descr}}</td>
+							<c:if test="${siga_cliente == 'GOVSP'}">
+								<td v-if="f.dataDevolucao == 'ocultar'"></td>
+								<td v-if="f.dataDevolucao == 'alerta'"><i class="fa fa-exclamation-triangle text-warning"></i></td>
+								<td v-if="f.dataDevolucao == 'atrasado'"><i class="fa fa-exclamation-triangle text-danger"></i></td>
+							</c:if>
 							<td>{{f.origem}}</td>
 							<td class="d-none d-md-block" style="padding: 0;"><div
 									class="xrp-label-container">
@@ -177,7 +185,7 @@
 		      a = this.filtrarPorSubstring(
 		        a,
 		        this.filtro,
-		        "grupoNome,tempoRelativo,sigla,codigo,descr,origem,situacao,errormsg,list.nome".split(
+		        "grupoNome,tempoRelativo,sigla,codigo,descr,origem,situacao,errormsg,list.nome,dataDevolucao".split(
 		          ","
 		        )
 		      );

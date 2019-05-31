@@ -578,8 +578,6 @@ public class Excel {
 			String dataString;
 			SimpleDateFormat formato = new SimpleDateFormat("ddMMyyyy");
 			Date date = null;
-			List<String> listaEmail = new ArrayList<String>();
-			List<String> listaCPF = new ArrayList<String>();
 			
 			while (rowIterator.hasNext()) {
 				linha++;
@@ -657,7 +655,7 @@ public class Excel {
 						problemas.append("Linha " + linha +": FUNÇÃO DE CONFIANÇA inativa" + System.getProperty("line.separator"));
 					}
 				} else {
-					problemas.append("Linha " + linha +": FUNÇÃO DE CONFIANÇA em branco" + System.getProperty("line.separator"));
+					funcao = null;
 				}
 				
 				//NOME DA LOTACAO
@@ -735,15 +733,9 @@ public class Excel {
 				celula = retornaConteudo(row.getCell(6, Row.CREATE_NULL_AS_BLANK));
 				cpf = celula.replaceAll("[^0-9]", "");
 				if(!"".equals(cpf.trim())) {
-					
 					if(!validarCPF(cpf)) {
 						problemas.append("Linha " + linha +": CPF inválido" + System.getProperty("line.separator"));
 					}
-					
-					if(listaCPF.contains(cpf)) {
-						problemas.append("Linha " + linha +": CPF repetido em outra linha do arquivo" + System.getProperty("line.separator"));
-					}
-					listaCPF.add(cpf);
 				} else {
 					problemas.append("Linha " + linha +": CPF em branco" + System.getProperty("line.separator"));
 				}
@@ -752,12 +744,6 @@ public class Excel {
 				celula = retornaConteudo(row.getCell(7, Row.CREATE_NULL_AS_BLANK)).trim();
 				
 				if(!"".equals(celula.trim())) {
-					
-					pessoa = CpDao.getInstance().consultarPorEmail(celula);
-					
-					if(pessoa != null) {
-						problemas.append("Linha " + linha +": E-MAIL já cadastrado" + System.getProperty("line.separator"));
-					}
 					
 					if(celula.length() > 60) {
 						problemas.append("Linha " + linha +": E-MAIL com mais de 60 caracteres" + System.getProperty("line.separator"));
@@ -768,11 +754,6 @@ public class Excel {
 					} else if(!celula.matches("[a-zA-Z0-9._-][a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}")) {
 						problemas.append("Linha " + linha +": E-MAIL inválidos ou com caracteres inválidos" + System.getProperty("line.separator"));
 					}
-					
-					if(listaEmail.contains(celula)) {
-						problemas.append("Linha " + linha +": E-MAIL repetido em outra linha do arquivo" + System.getProperty("line.separator"));
-					}
-					listaEmail.add(celula);
 				} else {
 					problemas.append("Linha " + linha +": E-MAIL em branco" + System.getProperty("line.separator"));
 				}

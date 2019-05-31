@@ -657,9 +657,7 @@
 							</select>
 						</div>
 					</div>
-
-					<siga:monobotao inputType="submit" value="Buscar"
-						cssClass="btn btn-primary" />
+					<input type="submit" value="Buscar" class="btn btn-primary"/>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;FE:Ferramentas;LD:Listar Documentos')}">
 						<siga:monobotao inputType="button"

@@ -130,7 +130,7 @@
 			
 			<hr class="p-0 m-0 mb-1">			
 			<div class="text-right text-white">
-				<b>SIGA.doc</b> 8.0.5 <c:if test="${siga.versao != ''}">${siga.versao}</c:if> <span style="white-space:nowrap;"><i class="fa fa-code"></i> Desenvolvido por Prodesp e TRF2 </span>				
+				<b>SIGA.doc</b> <c:if test="${siga.versao != ''}">${siga.versao}</c:if> <span style="white-space:nowrap;"><i class="fa fa-code"></i> Desenvolvido por Prodesp e TRF2 </span>				
 			</div>
 		</div>
 	</footer>

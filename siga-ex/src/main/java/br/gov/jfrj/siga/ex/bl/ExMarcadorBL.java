@@ -322,6 +322,9 @@ public class ExMarcadorBL {
 			case (int) ExPapel.PAPEL_GESTOR:
 				m = CpMarcador.MARCADOR_COMO_GESTOR;
 				break;
+			case (int) ExPapel.PAPEL_REVISOR:
+				m = CpMarcador.MARCADOR_COMO_REVISOR;
+				break;
 			case (int) ExPapel.PAPEL_INTERESSADO:
 				m = CpMarcador.MARCADOR_COMO_INTERESSADO;
 				break;

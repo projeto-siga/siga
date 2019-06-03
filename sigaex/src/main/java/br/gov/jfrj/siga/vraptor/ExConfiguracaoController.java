@@ -512,6 +512,10 @@ public class ExConfiguracaoController extends ExController {
 		result.include("funcaoSel", funcaoConfiancaSelecao);
 		result.include("classificacaoSel", classificacaoSelecao);
 
+		result.include("pessoaObjeto_pessoaSel", pessoaObjetoSelecao);
+		result.include("lotacaoObjeto_lotacaoSel", lotacaoObjetoSelecao);
+		result.include("cargoObjeto_cargoSel", cargoObjetoSelecao);
+		result.include("funcaoObjeto_funcaoSel", funcaoConfiancaObjetoSelecao);
 	}
 
 	@SuppressWarnings("all")

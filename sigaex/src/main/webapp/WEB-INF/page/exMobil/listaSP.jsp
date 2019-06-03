@@ -12,8 +12,10 @@
 <script type="text/javascript" language="Javascript1.1">
 	function csv(id, action) {
 		var frm = document.getElementById(id);
+		frm.method = "POST";
 		sbmtAction(id, action);
 		frm.action = 'listar';
+		frm.method = "GET";
 	}
 </script>
 <div class="row mb-3">

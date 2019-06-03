@@ -20,9 +20,7 @@
 </script>
 <div class="row mb-3">
 	<div class="col">		
-		<siga:monobotao inputType="button"
-							onclique="csv('listar', '/sigaex/app/expediente/doc/exportarCsv');"
-							value="Exportar" cssClass="btn btn-primary" />
+		<button type="button" class="btn btn-outline-success" title="Exportar para CSV"	onclick="javascript:csv('listar', '/sigaex/app/expediente/doc/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>	
 	</div>
 </div>
 <c:choose>

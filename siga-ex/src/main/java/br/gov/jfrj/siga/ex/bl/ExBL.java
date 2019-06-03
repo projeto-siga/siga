@@ -3767,10 +3767,11 @@ public class ExBL extends CpBL {
 		}
 	}
 	
-	private void removerPapel(ExDocumento doc, long idPapel) throws AplicacaoException, SQLException {
+	private void removerPapel(ExDocumento doc, long idPapel) throws Exception {
 		ExMovimentacao movCancelamento = null;
 		List<ExMovimentacao> movs = doc.getMobilGeral().getMovimentacoesPorTipo(
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL);
+		boolean removido = false;
 		for (ExMovimentacao mov : movs) {
 			if (mov.isCancelada()
 					|| !mov.getExPapel().getIdPapel().equals(idPapel))
@@ -3784,7 +3785,10 @@ public class ExBL extends CpBL {
 				movCancelamento.setExMovimentacaoRef(mov);
 			}
 			gravarMovimentacaoCancelamento(movCancelamento, mov);
+			removido = true;
 		}
+		if (removido)
+			concluirAlteracaoDocComRecalculoAcesso(doc);
 	}
 
 	private void processarResumo(ExDocumento doc) throws Exception,

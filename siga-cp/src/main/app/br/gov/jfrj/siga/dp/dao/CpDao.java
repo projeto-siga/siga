@@ -33,10 +33,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -115,6 +115,9 @@ public class CpDao extends ModeloDao {
 	public static CpDao getInstance() {
 		return ModeloDao.getInstance(CpDao.class);
 	}
+	
+	static Map<String, CpServico> cacheServicos = null;
+
 
 	@SuppressWarnings("unchecked")
 	public List<CpOrgao> consultarPorFiltro(final CpOrgaoDaoFiltro o) {
@@ -180,6 +183,22 @@ public class CpDao extends ModeloDao {
 			return null;
 		return l.get(0);
 	}
+	
+	public synchronized void inicializarCacheDeServicos() {
+		cacheServicos = new TreeMap<>();
+		List<CpServico> l = listarTodos(CpServico.class, "siglaServico");
+		for (CpServico s : l) {
+			cacheServicos.put(s.getSigla(), s);
+		}
+	}
+	
+	public CpServico acrescentarServico(CpServico srv) {
+		iniciarTransacao();
+		CpServico srvGravado = gravar(srv);
+		commitTransacao();
+		cacheServicos.put(srv.getSigla(), srv);
+		return srvGravado;
+	}
 
 	@SuppressWarnings("unchecked")
 	public CpServico consultarPorSigla(final CpServico o) {
@@ -204,67 +223,33 @@ public class CpDao extends ModeloDao {
 
 	@SuppressWarnings("unchecked")
 	public CpServico consultarCpServicoPorChave(String chave) {
-		// Cria uma cache region especifica da classe para garantir que os
-		// objetos armazenados por uma aplicacacao seja recuperados por outra.
-		// Isso causa ClassCastException.
-		final String cRegion = CACHE_CORPORATIVO + "_"
-				+ this.getClass().getSimpleName();
-		Cache cache = CacheManager.getInstance().getCache(cRegion);
-		if (cache == null) {
-			CacheManager manager = CacheManager.getInstance();
-			manager.addCache(cRegion);
-			cache = manager.getCache(cRegion);
-			CacheConfiguration config;
-			config = cache.getCacheConfiguration();
-			config.setEternal(false);
-			config.setMaxElementsInMemory(10000);
-			config.setOverflowToDisk(false);
-			config.setMaxElementsOnDisk(0);
-		}
-		Element element;
-		if ((element = cache.get(chave)) != null) {
-			return (CpServico) element.getValue();
-		}
-
 		StringBuilder sb = new StringBuilder(50);
 		boolean supress = false;
+		boolean separator = false;
 		for (int i = 0; i < chave.length(); i++) {
 			final char ch = chave.charAt(i);
 			if (ch == ';') {
-				sb.append('-');
 				supress = false;
+				separator = true;
 				continue;
 			}
 			if (ch == ':') {
 				supress = true;
 				continue;
 			}
-			if (!supress)
+			if (!supress) {
+				if (separator) {
+					sb.append('-');
+					separator = false;
+				}
 				sb.append(ch);
+			}
 		}
 		String sigla = sb.toString();
 
-		final Query query = getSessao().getNamedQuery(
-				"consultarPorSiglaStringCpServico");
-		query.setString("siglaServico", sigla);
-
-		query.setCacheable(true);
-		query.setCacheRegion(CACHE_QUERY_HOURS);
-
-		final List<CpServico> l = query.list();
-		if (l.size() != 1)
-			return null;
-
-		// Forca a carga de algums campos para garantir o lazy load.
-		CpServico srv = (CpServico) l.get(0).getImplementation();
-
-		if (srv.getCpServicoPai() != null) {
-			Object o1 = srv.getCpServicoPai().getDescricao();
-		}
-		Object o2 = srv.getCpTipoServico().getDscTpServico();
-
-		cache.put(new Element(chave, srv));
-		return l.get(0);
+		if (cacheServicos == null) 
+			inicializarCacheDeServicos();
+		return cacheServicos.get(sigla);
 	}
 
 	public Selecionavel consultarPorSigla(final CpOrgaoDaoFiltro flt) {
@@ -2386,7 +2371,6 @@ public class CpDao extends ModeloDao {
 
 	public int consultarQuantidadeDocumentosPorDpLotacao(final DpLotacao o) {
         try {
-        	
 			SQLQuery sql = (SQLQuery) getSessao().getNamedQuery(
 					"consultarQuantidadeDocumentosPorDpLotacao");
 
@@ -2399,5 +2383,6 @@ public class CpDao extends ModeloDao {
             return 0;
         }
     }
+
 
 }

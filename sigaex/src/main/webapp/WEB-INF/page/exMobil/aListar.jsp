@@ -427,7 +427,7 @@
 							</select>
 						</div>
 						<c:if test="${siga_cliente != 'GOVSP'}">
-							<div class="form-group col-md-3 ${hide_only_GOVSP}">
+							<div class="form-group col-md-3">
 								<label for="idTpDoc">Origem</label> <select class="form-control"
 									id="idTpDoc" name="idTpDoc"
 									onchange="javascript:alteraOrigem();">
@@ -498,7 +498,7 @@
 						</div>
 						<c:if test="${siga_cliente == 'GOVSP'}">
 							<div class="form-group col-md-3">
-								<label for="anoEmissaoString">Número</label>
+								<label for="numExpediente">Número</label>
 							    <input type="text" size="7" name="numExpediente" value="${numExpediente}" maxlength="6" class="form-control" />
 							</div>
 						</c:if>

@@ -21,13 +21,20 @@
 			<c:if test="${not empty assinar and assinar}">
 				<a id="bot-assinar" accesskey="s" href="#"
 					onclick="javascript: AssinarDocumentos(false, ${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;POL:Política ICP-Brasil')});"
-					class="btn btn-primary m-3" role="button"><i class="fa fa-signature"></i> A<u>s</u>sinar</a>
+					class="btn btn-primary btn-block m-3" role="button"><i class="fa fa-signature"></i> A<u>s</u>sinar</a>
 			</c:if>
 			<c:if test="${not empty autenticar and autenticar}">
 				<a id="bot-autenticar" accesskey="u" href="#"
 					onclick="javascript: AssinarDocumentos(true, ${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC;ASS;POL')});"
-					class="btn btn-primary m-3" role="button"><i class="fa fa-stamp"></i> A<u>u</u>tenticar</a>
+					class="btn btn-primary btn-block m-3" role="button"><i class="fa fa-stamp"></i> A<u>u</u>tenticar</a>
 			</c:if>
+			
+			<c:if test="${not empty voltar and voltar}">
+
+				<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-secondary btn-block m-3" />
+
+			</c:if>
+				
 		</div>
 		<div class="col-7">
 			<p>
@@ -65,11 +72,7 @@
 				</c:if>
 			</p>
 		</div>
-		<c:if test="${not empty voltar and voltar}">
-			<div class="form-check">
-				<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
-			</div>
-		</c:if>
+
 	
 	</div>
 

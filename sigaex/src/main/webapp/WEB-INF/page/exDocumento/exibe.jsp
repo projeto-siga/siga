@@ -802,7 +802,7 @@
 								<b>Suporte:</b> ${docVO.fisicoOuEletronico}
 							</p>
 							<p>
-								<b><fmt:message key="documento.data.assinatura"/></b> ${docVO.dtDocDDMMYY}
+								<b><fmt:message key="documento.data.assinatura"/>:</b> ${docVO.dtDocDDMMYY}
 								<c:if test="${not empty docVO.originalData}">- <b>original:</b> ${docVO.originalData}</c:if>
 							</p>
 							<c:if test="${not empty docVO.originalNumero}">

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
@@ -40,7 +41,14 @@ function sbmt(offset) {
 				<div class="row">
 					<div class="col-sm">
 						<div class="form-group">
-							<siga:selecao titulo="Lotação" urlAcao="buscar" propriedade="lotacao" modulo="siga"/>
+							<c:choose>
+								<c:when test="${siga_cliente == 'GOVSP'}">
+									<siga:selecao titulo="Unidade" urlAcao="buscar" propriedade="lotacao" modulo="siga"/>
+								</c:when>
+								<c:otherwise>
+									<siga:selecao titulo="Lotação" urlAcao="buscar" propriedade="lotacao" modulo="siga"/>
+								</c:otherwise>	
+							</c:choose>						
 						</div>
 					</div>
 				</div>
@@ -76,7 +84,7 @@ function sbmt(offset) {
 				<tr>
 					<th align="center">Matrícula</th>
 					<th align="left">Nome</th>
-					<th align="center">Lotação</th>
+					<th align="center"><fmt:message key="usuario.lotacao"/></th>
 					<th align="center">Função</th>
 					<th>Fim de Vigência</th>
 				</tr>

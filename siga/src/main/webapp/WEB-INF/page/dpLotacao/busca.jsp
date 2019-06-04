@@ -2,6 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <c:set var="propriedadeClean"
@@ -22,7 +23,7 @@
 	<div class="container-fluid">
 		<div class="card bg-light mb-3" >
 			<div class="card-header">
-				<h5>Dados da Lotação</h5>
+				<h5>Dados da <fmt:message key="usuario.lotacao"/></h5>
 			</div>
 			<div class="card-body">
 			<form name="frm" action="${request.contextPath}/app/lotacao/buscar" class="form" method="POST">

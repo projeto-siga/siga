@@ -83,7 +83,7 @@
 						</tr>
 						<tr v-if="f.grupoExibir" class="table-head">
 							<th class="d-none d-md-block">Tempo</th>
-							<th>Código</th>
+							<th><fmt:message key = "usuario.mesavirtual.codigo"/></th>
 							<th class="d-none d-md-block">Descrição</th>
 							<c:if test="${siga_cliente == 'GOVSP'}">
 								<th></th>

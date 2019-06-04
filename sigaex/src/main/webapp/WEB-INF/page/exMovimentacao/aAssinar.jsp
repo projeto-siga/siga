@@ -86,7 +86,7 @@
 						</div>
 					</div>			
 
-					<div class="card bg-light pb-2">
+					<div class="card bg-light mb-4">
 					  <div class="card-body">
 					  	<c:set var="acao" value="assinar_gravar" />
 					    <div class="gt-form-row gt-width-100" style="padding-top: 10px;">

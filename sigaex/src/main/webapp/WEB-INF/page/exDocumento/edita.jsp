@@ -354,7 +354,7 @@
 	  				</div>
 					<div class="col-sm-3">
 						<div class="form-group">
-							<c:if test="${exDocumentoDTO.preenchimento==0}">
+							<c:if test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
 								<c:set var="desabilitaBtn"> disabled </c:set>
 							</c:if> 
 							<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn-sm btn-secondary mt-4" ${desabilitaBtn}>
@@ -435,8 +435,11 @@
 					<div class="col-sm-8">
 						<div class="form-group">
 							<input type="hidden" name="campos" value="descrDocumento" />
-							<label>Arquivo PDF</label>
-							<input type="file" name="arquivo" accept="application/pdf" onchange="testpdf(this.form)" />
+							<label> <fmt:message key = "usuario.novodocumento.arquivo"/></label>
+							<br>
+							  <div class="form-group">
+							    <input type="file" class="form-control-file" id="arquivo" name="arquivo" accept="application/pdf" onchange="testpdf(this.form)">
+							  </div>
 						</div>
 					</div>
 				</div>						

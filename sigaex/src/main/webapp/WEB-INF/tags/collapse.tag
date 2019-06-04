@@ -4,6 +4,7 @@
 <%@ attribute name="collapseMode"%>
 <%@ attribute name="title"%>
 <%@ attribute name="id"%>
+<%@ attribute name="classInfo"%>
 
 <c:choose>
 	<c:when test="${(collapseMode == 'collapsible closed') or (collapseMode == 'collapsible expanded') or (collapseMode == 'collapsible')}">
@@ -14,7 +15,7 @@
 						${title}
 					</a>
 				</div>
-				<div class="card-body collapse" id="collapse${id}">
+				<div class="card-body collapse ${classInfo}" id="collapse${id}">
 			</c:when>
 			<c:otherwise>
 				<div class="card-header" id="head${id}">
@@ -22,17 +23,17 @@
 						${title}
 					</a>
 				</div>
-				<div class="card-body collapse show" id="collapse${id}">
+				<div class="card-body collapse show  ${classInfo}" id="collapse${id}">
 			</c:otherwise>
 		</c:choose>
 	</c:when>
 	<c:otherwise>
 		<div class="card-header">
-			<a href="#collapse${id}" class="text-dark">
+			<a href="#collapse${id}" class="text-dark disable">
 				${title}
 			</a>
 		</div>
-		<div class="card-body">
+		<div class="card-body ${classInfo}">
 	</c:otherwise>
 </c:choose>
 <jsp:doBody />

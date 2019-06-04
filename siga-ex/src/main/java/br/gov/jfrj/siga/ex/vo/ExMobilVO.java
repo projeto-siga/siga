@@ -337,7 +337,7 @@ public class ExMobilVO extends ExVO {
 
 		if (!mob.isGeral()) {
 			addAcao("folder",
-					"_Ver Dossiê",
+					SigaMessages.getMessage("documento.ver.dossie"),
 					"/app/expediente/doc",
 					"exibirProcesso",
 					Ex.getInstance().getComp()

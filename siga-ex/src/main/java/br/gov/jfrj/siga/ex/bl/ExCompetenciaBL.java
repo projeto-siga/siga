@@ -2311,7 +2311,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		if (!mob.doc().isCapturado() && !mob.doc().isPendenteDeAssinatura())
 			return false;
-		if (!mob.doc().getLotaCadastrante().equivale(lotaTitular)
+		if (!lotaTitular.equivale(mob.doc().getLotaCadastrante())
 				&& (mob.doc().getSubscritor() != null && !mob.doc()
 						.getSubscritor().equivale(titular))
 				&& (mob.doc().getTitular() != null && !mob.doc().getTitular()

@@ -50,15 +50,8 @@
 						</script>
 					</div>
 				</c:if>
-				
-				
-				<c:if test="${doc.conteudoBlobHtmlStringComReferencias != null}">
-				<div class="col col-sm-12 col-md-4">
-				</c:if>
-				<c:if test="${doc.pdf != null}">
-				<div class="col col-sm-12 col-md-4">
-				</c:if>
 
+				<div class="col col-sm-12 col-md-4">
 					<div class="card bg-light mb-3">
 						<div class="card-header">
 							<h5>Confirme os dados do documento abaixo</h5>

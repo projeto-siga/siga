@@ -437,7 +437,9 @@
 							<input type="hidden" name="campos" value="descrDocumento" />
 							<label> <fmt:message key = "usuario.novodocumento.arquivo"/></label>
 							<br>
-							<input type="file" name="arquivo" accept="application/pdf" onchange="testpdf(this.form)" />
+							  <div class="form-group">
+							    <input type="file" class="form-control-file" id="arquivo" name="arquivo" accept="application/pdf" onchange="testpdf(this.form)">
+							  </div>
 						</div>
 					</div>
 				</div>						

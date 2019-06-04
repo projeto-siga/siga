@@ -24,6 +24,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -253,7 +254,7 @@ public class ExMobilController extends
 			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
-			final Long ultMovEstadoDoc, final Integer paramoffset) {
+			final Long ultMovEstadoDoc, final Integer paramoffset) throws UnsupportedEncodingException {
 			
 		getP().setOffset(paramoffset);
 		this.setPostback(postback);
@@ -354,8 +355,7 @@ public class ExMobilController extends
 			texto.append(";");
 			texto.append(System.getProperty("line.separator"));
 		}
-		
-		inputStream = new ByteArrayInputStream(texto.toString().getBytes());
+		inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));
 		
 		return new InputStreamDownload(inputStream, "text/csv", "documentos.csv");	
 	}

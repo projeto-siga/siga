@@ -408,7 +408,7 @@ public class ExDocumentoVO extends ExVO {
 		
 		vo.addAcao(
 				"folder_magnify",
-				"_Ver Dossiê",
+				SigaMessages.getMessage("documento.ver.dossie"),
 				"/app/expediente/doc",
 				"exibirProcesso",
 				Ex.getInstance().getComp()

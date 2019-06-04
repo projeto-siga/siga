@@ -354,7 +354,7 @@
 	  				</div>
 					<div class="col-sm-3">
 						<div class="form-group">
-							<c:if test="${exDocumentoDTO.preenchimento==0}">
+							<c:if test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
 								<c:set var="desabilitaBtn"> disabled </c:set>
 							</c:if> 
 							<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn-sm btn-secondary mt-4" ${desabilitaBtn}>

@@ -40,11 +40,23 @@
 						</div>
 					</div>
 				</c:if>
+				<c:if test="${doc.pdf != null && doc.conteudoBlobHtmlStringComReferencias == null}">
+					<div class="col col-sm-12 col-md-8">
+						<iframe style="display: block;" name="painel" id="painel"
+							src="/sigaex/app/arquivo/exibir?arquivo=${doc.referenciaPDF}"
+							width="100%" height="400" frameborder="0" scrolling="auto"></iframe>
+						<script>
+							$(document).ready(function(){resize();$(window).resize(function(){resize();});});
+						</script>
+					</div>
+				</c:if>
+				
+				
 				<c:if test="${doc.conteudoBlobHtmlStringComReferencias != null}">
 				<div class="col col-sm-12 col-md-4">
 				</c:if>
-				<c:if test="${doc.conteudoBlobHtmlStringComReferencias == null}">
-				<div class="col col-sm-12 col-md-12">
+				<c:if test="${doc.pdf != null}">
+				<div class="col col-sm-12 col-md-4">
 				</c:if>
 
 					<div class="card bg-light mb-3">
@@ -72,44 +84,51 @@
 									<b>Descrição:</b> ${doc.descrDocumento}
 								</p>
 						</div>
-					</div>
-					<c:set var="acao" value="assinar_gravar" />
-					<div class="gt-form-row gt-width-100" style="padding-top: 10px;">
-						<div id="dados-assinatura" style="visible: hidden">
-							<input type="hidden" name="ad_url_base" value="" />
-							<input type="hidden" name="ad_url_next" value="/sigaex/app/expediente/doc/exibir?sigla=${sigla}" />
-							<input type="hidden" name="ad_descr_0" value="${sigla}" /> 
-							<input type="hidden" name="ad_url_pdf_0" value="/sigaex/app/arquivo/exibir?arquivo=${doc.codigoCompacto}.pdf" />
-							<input type="hidden" name="ad_url_post_0" value="/sigaex/app/expediente/mov/assinar_gravar" />
-							<input type="hidden" name="ad_url_post_password_0" value="/sigaex/app/expediente/mov/assinar_senha_gravar" />
+					</div>			
+
+					<div class="card bg-light pb-2">
+					  <div class="card-body">
+					  	<c:set var="acao" value="assinar_gravar" />
+					    <div class="gt-form-row gt-width-100" style="padding-top: 10px;">
+							<div id="dados-assinatura" style="visible: hidden">
+								<input type="hidden" name="ad_url_base" value="" />
+								<input type="hidden" name="ad_url_next" value="/sigaex/app/expediente/doc/exibir?sigla=${sigla}" />
+								<input type="hidden" name="ad_descr_0" value="${sigla}" /> 
+								<input type="hidden" name="ad_url_pdf_0" value="/sigaex/app/arquivo/exibir?arquivo=${doc.codigoCompacto}.pdf" />
+								<input type="hidden" name="ad_url_post_0" value="/sigaex/app/expediente/mov/assinar_gravar" />
+								<input type="hidden" name="ad_url_post_password_0" value="/sigaex/app/expediente/mov/assinar_senha_gravar" />
+								
+								<input type="hidden" name="ad_id_0" value="${doc.codigoCompacto}" />
+								<input type="hidden" name="ad_description_0" value="${doc.descrDocumento}" />
+								<input type="hidden" name="ad_kind_0" value="${doc.descrFormaDoc}" />
+							</div>
 							
-							<input type="hidden" name="ad_id_0" value="${doc.codigoCompacto}" />
-							<input type="hidden" name="ad_description_0" value="${doc.descrDocumento}" />
-							<input type="hidden" name="ad_kind_0" value="${doc.descrFormaDoc}" />
+							<c:if test="${siga_cliente != 'GOVSP'}">
+								<tags:assinatura_botoes
+									assinar="${assinando}"
+									autenticar="${autenticando}"
+									assinarComSenha="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+									autenticarComSenha="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+									juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}"
+									tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" />
+							</c:if>
+							
+							<c:if test="${siga_cliente == 'GOVSP'}">
+								<tags:assinatura_botoes
+									assinar="${assinando}"
+									voltar="true"
+									autenticar="${autenticando}"
+									assinarComSenhaChecado="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+									autenticarComSenhaChecado="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+									juntarAtivo=""
+									tramitarAtivo=""
+									 />
+							</c:if>
 						</div>
-						
-						<c:if test="${siga_cliente != 'GOVSP'}">
-							<tags:assinatura_botoes
-								assinar="${assinando}"
-								autenticar="${autenticando}"
-								assinarComSenha="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-								autenticarComSenha="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-								juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}"
-								tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" />
-						</c:if>
-						
-						<c:if test="${siga_cliente == 'GOVSP'}">
-							<tags:assinatura_botoes
-								assinar="${assinando}"
-								voltar="true"
-								autenticar="${autenticando}"
-								assinarComSenhaChecado="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-								autenticarComSenha="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-								juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}"
-								tramitarAtivo=""
-								 />
-						</c:if>
+					  </div>
 					</div>
+					
+					
 				</div>
 				</div>
 			</div>

@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ attribute name="var" required="false"%>
 <%@ attribute name="id" required="false"%>
+<%@ attribute name="classSelect"%>
 
 <script language="javascript" type="text/javascript">
 	function muda_escolha(id) 
@@ -18,7 +19,7 @@
 <c:set var="selectedOption" scope="request" value="${requestScope[var]}"></c:set>
 
 <c:set var="createSelect" scope="request" >true</c:set>
-	<select id="${id}" name="${var}" onchange="javascript:muda_escolha(this);">
+	<select id="${id}" name="${var}" onchange="javascript:muda_escolha(this);" class="form-control">
 		<jsp:doBody/>
 	</select>
 <c:remove var="createSelect"/>

@@ -33,8 +33,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.persistence.ColumnResult;
 import javax.persistence.Entity;
@@ -50,6 +48,7 @@ import org.hibernate.annotations.Formula;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -192,11 +191,10 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		if (sigla == null) {
 			sigla = "";
 		}
-		final Pattern p1 = Pattern.compile("^([A-Za-z][A-Za-z0-9])([0-9]+)");
-		final Matcher m = p1.matcher(sigla);
-		if (m.find()) {
-			setSesbPessoa(m.group(1).toUpperCase());
-			setMatricula(Long.parseLong(m.group(2)));
+		
+		if(sigla != null && !"".equals(sigla)) {
+			setSesbPessoa(MatriculaUtils.getSiglaDoOrgaoDaMatricula(sigla.toUpperCase()).toUpperCase());
+			setMatricula(MatriculaUtils.getParteNumericaDaMatricula(sigla.toUpperCase()));
 		}
 	}
 

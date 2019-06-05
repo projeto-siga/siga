@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="32kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <siga:pagina titulo="P&aacute;gina Inicial"
@@ -63,11 +64,11 @@
 						<a class="btn btn-primary float-right btn-sm ml-2"
 							href="javascript: window.location.href='/sigaex/app/expediente/doc/editar'"
 							title="Criar novo expediente ou processo administrativo">
-							Novo Documento </a> <a
+							<fmt:message key = "documento.novo"/></a> <a
 							class="btn btn-primary float-right btn-sm ml-2"
 							href="javascript: window.location.href='/sigaex/app/expediente/doc/listar?primeiraVez=sim'"
 							title="Pesquisar expedientes e processos administrativos">
-							Pesquisar Documentos </a>
+							<fmt:message key = "documento.pesquisar"/></a>
 					</div>
 
 				</div>

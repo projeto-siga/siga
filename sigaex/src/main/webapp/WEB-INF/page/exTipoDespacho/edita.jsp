@@ -7,41 +7,48 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
 <siga:pagina titulo="Tipo de Despacho">
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>Cadastro de Tipos de despacho</h2>
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header"><h5>Cadastro de Tipos de despacho</h5></div>
 
-			<div class="gt-content-box gt-for-table">
+			<div class="card-body">
 				<form name="frm" action="gravar" theme="simple" method="POST">
 
-					<table class="gt-form-table">
 						<c:if test="${!empty exTipoDespacho.idTpDespacho}">
 							<input type="hidden" name="exTipoDespacho.idTpDespacho" value="${exTipoDespacho.idTpDespacho}"/>
-							<tr>
-								<td width="10%">Código:</td>
-								<td>
-									<fmt:formatNumber pattern="0000000" value="${exTipoDespacho.idTpDespacho}" />
-								</td>
-							</tr>
+							<div class="row">
+								<div class="col-sm-1">
+									<div class="form-group">
+										<label>C&oacute;digo</label>
+										<label class="form-control"><fmt:formatNumber pattern="0000000" value="${exTipoDespacho.idTpDespacho}"/></label>
+									</div>
+								</div>
+							</div>
 						</c:if>
-						<tr>
-							<td width="10%">Descrição:</td>
-							<td>
-								<textarea name="exTipoDespacho.descTpDespacho" cols="60" rows="5" class="gt-text-area">${exTipoDespacho.descTpDespacho}</textarea>
-							</td>
-						</tr>
-						<tr>
-							<td width="10%">Ativo:</td>
-							<td>
-								<input type="checkbox" name="exTipoDespacho.fgAtivo" <c:if test="${exTipoDespacho.fgAtivo == 'S'}">checked</c:if> />
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2">
-								<input type="submit" value="OK" class="gt-btn-small" />
-							</td>
-						</tr>
-					</table>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label>Descri&ccedil;&atilde;o</label>
+									<textarea name="exTipoDespacho.descTpDespacho" cols="60" rows="5" class="form-control">${exTipoDespacho.descTpDespacho}</textarea>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-check">
+									  <input class="form-check-input" type="checkbox" value="" id="defaultCheck1"  name="exTipoDespacho.fgAtivo" <c:if test="${exTipoDespacho.fgAtivo == 'S'}">checked</c:if> >
+									  <label class="form-check-label" for="defaultCheck1">Ativo</label>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<input type="submit" value="OK" class="btn btn-primary" />
+								</div>
+							</div>
+						</div>
+
 				</form>
 			</div>
 		</div>

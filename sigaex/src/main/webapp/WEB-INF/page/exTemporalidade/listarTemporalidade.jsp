@@ -14,21 +14,19 @@
 		$('#frmNovaTemporalidade').submit();
 	}
 </script>
-<div class="gt-bd clearfix">
-	<div class="gt-content">
-	<h2 class="gt-table-head">Temporalidade Documental</h2>
-	
-		<div class="gt-content-box">
-			<table border="0" class="gt-table">
-				<thead>
+<div class="container-fluid">
+	<div class="card bg-light mb-3" >
+		<div class="card-header"><h5>Temporalidade Documental</h5></div>
+			<div class="card-body">	
+			<table border="0" class="table table-sm table-striped">
+				<thead class="thead-dark">
 					<tr>
 						<th>Descrição</th>
 						<th>Valor</th>
 						<th>Unid. Medida</th>
 					</tr>
 				</thead>
-	
-				<tbody>
+				<tbody class="table-bordered">
 					<c:forEach items="${temporalidadeVigente}" var="t">
 						<tr>
 							<td><a href="editar?idTemporalidade=${t.idTemporalidade}&acao=editar_temporalidade">${t.descTemporalidade}</a></td>
@@ -42,12 +40,14 @@
 					</c:forEach>
 				</tbody>
 			</table>
-		</div>
-		<form id="frmNovaTemporalidade" action="editar" method="get">
-			<div class="gt-table-buttons">
-				<a id="btNovaTemporalidade" class="gt-btn-large gt-btn-left" style="cursor: pointer;" onclick="javascript:novaTemporalidade()">Nova Temporalidade</a>
 			</div>
-			<input type="hidden" id="acao" name="acao" value="nova_temporalidade"/>
-		</form>
+		</div>	
+		<form id="frmNovaTemporalidade" action="editar" method="get">
+				<div class="gt-table-buttons">
+					<button type="button" class="btn btn-primary" onclick="javascript:novaTemporalidade()">Nova Temporalidade</button>
+				</div>
+				<input type="hidden" id="acao" name="acao" value="nova_temporalidade"/>
+			</form>
+</div>
 
 </siga:pagina>

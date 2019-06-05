@@ -11,47 +11,68 @@
 
 <script language="Javascript1.1" type="text/javascript">
 function confirma(){
- return confirm ('Essa movimentação não poderá ser desfeita. Prosseguir?');
+	var mensagem = "Essa movimentação não poderá ser desfeita. Prosseguir?";
+	mensagemConfirmacao(mensagem, confirmar)
+}
+
+function mensagemConfirmacao(mensagem, funcaoConfirmacao) {
+	$('#modalConfirmacao').find('.modal-body').html(mensagem);
+	$('#btnConfirmacao').click(funcaoConfirmacao);
+	$('#modalConfirmacao').modal();
+}
+
+var confirmar = function () {
+	document.formulario.submit();
 }
 </script>
-
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-		
-			<h2>Registro de Publica&ccedil;&atilde;o do Boletim Interno -
-				${doc.codigo}
-			</h2>
-
-			<div class="gt-content-box gt-for-table">
-				<form action="boletim_publicar_gravar" namespace="/expediente/mov" cssClass="form" method="get">
-					<input type="hidden" name="postback" value="1" />
-					<input type="hidden" name="sigla" value="${sigla}"/>
-	
-					<table class="gt-form-table">
-						<colgroup>
-						<col style="width:30%;"/>
-						<col style="width:70%;"/>
-						</colgroup>
-						<tr class="header">
-							<td colspan="2">Dados da Publica&ccedil;&atilde;o</td>
-						</tr>
-						<tr class="tdLabel">
-							<td>
-								Data da Publica&ccedil;&atilde;o:
-							</td>
-							<td>
-								<input type="text" name="dtPubl" onblur="javascript:verifica_data(this,0);" label="Data da Publicação" value="${dtPubl}"/>
-							</td>
-						</tr>
-						
-						<tr class="button">
-							<td colspan="2">
-								<input type="submit" value="Ok" onclick="javascript: return confirma();" class="gt-btn-medium gt-btn-left"/> 
-								<input type="button" value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/>
-						</tr>
-					</table>
-				</form>
+	<!-- main content -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header">
+				<h5>Registro de Publica&ccedil;&atilde;o do Boletim Interno - ${doc.codigo}</h5>
+			</div>
+			<div class="card-body">
+			<form name="formulario" id="formulario" action="boletim_publicar_gravar" namespace="/expediente/mov" cssClass="form" method="get">
+				<input type="hidden" name="postback" value="1" />
+				<input type="hidden" name="sigla" value="${sigla}"/>
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="form-group">
+							<label>Data da Publica&ccedil;&atilde;o</label> 
+							<input type="text" name="dtPubl" onblur="javascript:verifica_data(this,0);" label="Data da Publicação" value="${dtPubl}" class="form-control"/>
+						</div>
+					</div>
+				</div>				
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="form-group">
+							<button type="button" onclick="javascript: confirma();" class="btn btn-primary">Ok</button> 
+							<button type="button" onclick="javascript:history.back();" class="btn btn-primary">Cancela</button>
+						</div>
+					</div>
+				</div>
+			</form>				
 			</div>
 		</div>
-	</div>			
+		<!-- Modal Confirmacao -->
+		<div class="modal fade" id="modalConfirmacao" tabindex="-1" role="dialog" aria-labelledby="modalConfirmacao" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+				        <h5 class="modal-title" id="exampleModalLabel">Confirma��o</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+					</div>
+			      	<div class="modal-body">
+					</div>
+				    <div class="modal-footer">
+				    	<button id="btnConfirmacao" type="button" class="btn btn-primary">Ok</button>
+				        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+				    </div>
+		  		</div>
+		  	</div>
+		</div>			
+		<!-- Fim Modal Confirmacao-->
+	</div>
 </siga:pagina>

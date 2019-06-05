@@ -7,28 +7,52 @@
 
 
 <siga:pagina titulo="Relatório de Histórico de Permissões do Usuário">
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>Relatório de Histórico de Permissões do Usuário</h2>
-			<div class="gt-content-box gt-for-table">
-				<form method="get" action="javascript:submeter()">
-					<table class="gt-form-table">
-						<tr class="">
-							<td><label>Matrícula: </label>
-							</td>
-							<td><siga:selecao tipo="pessoa" tema="simple"
-									propriedade="pessoa" modulo="siga"/>
-							</td>
-						</tr>
-						<tr class="">
-							<td colspan="2"><input class="gt-btn-medium gt-btn-left"
-								type="submit" value="Gerar..."></input>
-							</td>
-						</tr>
-					</table>
-				</form>
+	<!-- main content -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header">
+				<h5>Relatório de Histórico de Permissões do Usuário</h5>
+			</div>
+			<div class="card-body">
+			<form method="get" action="javascript:submeter()">
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label>Matrícula</label>
+							<siga:selecao tipo="pessoa" tema="simple" propriedade="pessoa" modulo="siga"/>
+						</div>
+					</div>				
+				</div>
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary">Gerar...</button>
+						</div>
+					</div>				
+				</div>
+			</form>
 			</div>
 		</div>
+		<!-- Modal Alert-->
+		<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+				        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+				          <span aria-hidden="true">&times;</span>
+				    	</button>
+				    </div>
+			      	<div class="modal-body">
+			        	<p class="mensagem-Modal"></p>
+			      	</div>
+					<div class="modal-footer">
+					  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
+					</div>
+		    	</div>
+		  	</div>
+		</div>				
+		<!--Fim Modal Alert -->
 	</div>
 	<br />
 	<div id="div-tempo"
@@ -49,10 +73,15 @@ function submeter() {
 					}
 			, 50); 
 		} else {
-			alert("Por favor, é necessário preencher o campo pessoa!");
+			mensagemAlerta("Por favor, é necessário preencher o campo pessoa!");
 		}
 	}
 }
+function mensagemAlerta(mensagem) {
+	$('#alertaModal').find('.mensagem-Modal').text(mensagem);
+	$('#alertaModal').modal();
+}
+
 </script>
 <script type="text/javascript">
 	 /*

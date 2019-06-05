@@ -29,41 +29,47 @@
 	}		
 </script>
 
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
 
-			<h2>Configurações Cadastradas</h2>
+			<div class="card-header"><h5>Configurações Cadastradas</h5></div>
 
-			<div class="gt-content-box gt-for-table">
+			<div class="card-body">
 				<input type="hidden" name="postback" value="1" />
-				<table class="gt-form-table">
-					<tr class="header">
-						<td colspan="2">Dados da Pesquisa</td>
-					</tr>
-					<tr>
-						<td><b>Tipo de Configuração</b> 
+				
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Tipo de Configuração</label> 
 								<siga:select name="idTpConfiguracao"
 									list="listaTiposConfiguracao" listKey="idTpConfiguracao"
 									id="idTpConfiguracao" headerValue="[Indefinido]" headerKey="0"
-									listValue="dscTpConfiguracao" theme="simple" /> <b>Órgão</b> 
+									listValue="dscTpConfiguracao" theme="simple" />
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Órgão</label> 
 								<siga:select
 									name="idOrgaoUsu" id="idOrgaoUsu" list="orgaosUsu" listKey="idOrgaoUsu"
 									listValue="nmOrgaoUsu" theme="simple" headerValue="[Todos]"
-									headerKey="0" /></td>
-					</tr>
-					<tr>
-						<td><input type="button" value="Pesquisar"
-							class="gt-btn-medium gt-btn-left"
-							onclick="javascript:montaTableCadastradas();" /> <input
-							type="button" value="Incluir Configuração"
-							class="gt-btn-large gt-btn-left"
-							onclick="javascript:window.location.href='editar'"></td>
-					</tr>
-				</table>
+									headerKey="0" />
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<input type="button" value="Pesquisar" class="btn btn-primary" onclick="javascript:montaTableCadastradas();" />
+							<input type="button" value="Incluir Configuração" class="btn btn-primary" onclick="javascript:window.location.href='editar'"/>
+						</div>
+					</div>
+				
+					
 			</div>
-			<div class="gt-content clearfix">
-				<div id="tableCadastradas"></div>
-			</div>
+			
 		</div>
+		<div id="tableCadastradas"></div>	
+		
 	</div>
+	
 </siga:pagina>

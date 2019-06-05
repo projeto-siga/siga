@@ -44,6 +44,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarPorSiglaExataCpOrgao", query = "select org from CpOrgao org where upper(org.siglaOrgao) = upper(:siglaOrgao) and org.ativo='S'"),
 		@NamedQuery(name = "consultarPorFiltroCpOrgao", query = "from CpOrgao org where ((upper(org.nmOrgaoAI) like upper('%' || :nome || '%')) or (upper(org.siglaOrgao) like upper('%' || :nome || '%'))) and org.ativo='S' order by org.nmOrgao"),
 		@NamedQuery(name = "consultarQuantidadeCpOrgao", query = "select count(org) from CpOrgao org where ((upper(org.nmOrgaoAI) like upper('%' || :nome || '%')) or (upper(org.siglaOrgao) like upper('%' || :nome || '%'))) and org.ativo='S' order by org.nmOrgao"),
+		@NamedQuery(name = "consultarQuantidadeCpOrgaoTodos", query = "select count(org) from CpOrgao org"),
 		@NamedQuery(name = "consultarCpOrgaoOrdenadoPorNome", query = "from CpOrgao org order by org.nmOrgao") })
 public abstract class AbstractCpOrgao extends HistoricoSuporte implements
 		Serializable {

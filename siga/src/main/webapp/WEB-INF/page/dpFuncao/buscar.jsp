@@ -24,46 +24,52 @@ function sbmt(offset) {
 	<input type="hidden" name="postback" value="1" />
 	<input type="hidden" name="offset" value="0" />
 
-	<table class="form" width="100%">
-		<tr class="header">
-			<td align="center" valign="top" colspan="4">Dados da Função de Confiança</td>
-		</tr>
-		<tr>
-			<td><label>Nome:</label> </td>
-			<td><input type="text" value="${nome}" name="nome"/></td>
-		</tr>
-		
-		<tr>
-			<td>
-				<label>Órgão:</label>
-			</td>
-			<td>
-				<select name="idOrgaoUsu" value="${idOrgaoUsu}">
-					<c:forEach items="${orgaosUsu}" var="item">
-						<option value="${item.idOrgaoUsu}" ${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
-							${item.nmOrgaoUsu}
-						</option>  
-					</c:forEach>
-				</select>	
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2">
-				<div align="right">
-					<input type="submit" value="Pesquisar" />
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header">
+			<h5>Dados da Função de Confiança</h5>
+		</div>
+		<div class="card-body">
+			<div class="row">
+				<div class="col-sm">
+					<div class="form-group">
+						<label>Nome</label> 
+						<input type="text" value="${nome}" name="nome" class="form-control"/>
+					</div>
 				</div>
-			</td>
-		</tr>
-	</table>
+			</div>
+			<div class="row">
+				<div class="col-sm">
+					<div class="form-group">
+						<label>Órgão</label>
+						<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control">
+							<c:forEach items="${orgaosUsu}" var="item">
+								<option value="${item.idOrgaoUsu}" ${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
+									${item.nmOrgaoUsu}
+								</option>  
+							</c:forEach>
+						</select>	
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm">
+					<input type="submit" value="Pesquisar" class="btn btn-primary"/>
+				</div>
+			</div>
+		</div>
+	</div>
 </form>
 
 <br>
 
-<table class="list" width="100%">
-	<tr class="header">
-		<td align="center">Sigla</td>
-		<td align="left">Nome</td>
-	</tr>
+<table  class="table table-sm table-striped">
+	<thead class="thead-dark">
+		<tr class="header">
+			<th align="center">Sigla</th>
+			<th align="left">Nome</th>
+		</tr>
+	</thead>
 	<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}"
 		itens="${itens}" var="item">
 		<tr class="${evenorodd}">

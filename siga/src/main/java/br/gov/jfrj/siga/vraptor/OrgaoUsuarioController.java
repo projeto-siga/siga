@@ -36,7 +36,6 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 	}
 	
 	@Get("app/orgaoUsuario/listar")
-	@Post("app/orgaoUsuario/listar")
 	public void lista(Integer offset, String nome) throws Exception {
 		if(offset == null) {
 			offset = 0;

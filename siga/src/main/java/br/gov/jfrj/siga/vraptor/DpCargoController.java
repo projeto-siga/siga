@@ -111,7 +111,6 @@ public class DpCargoController extends
 	}
 	
 	@Get("app/cargo/listar")
-	@Post("app/cargo/listar")
 	public void lista(Integer offset, Long idOrgaoUsu, String nome) throws Exception {
 		
 		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {

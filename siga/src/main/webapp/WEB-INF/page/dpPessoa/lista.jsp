@@ -56,7 +56,7 @@ function cpf_mask(v){
 <siga:pagina titulo="Listar Pessoas">
 	<!-- main content -->
 	<div class="container-fluid">
-	<form name="frm" action="listar" class="form100" method="POST">
+	<form name="frm" action="listar" class="form100" method="GET">
 		<input type="hidden" name="offset" value="0" />
 		<div class="card bg-light mb-3" >
 			<div class="card-header">
@@ -196,8 +196,10 @@ function cpf_mask(v){
 
 <script>
 function carregarRelacionados(id) {
+	frm.method = "POST";
 	frm.action = 'carregarCombos';
 	frm.submit();
+	frm.method = "GET";
 }
 </script>
 </siga:pagina>

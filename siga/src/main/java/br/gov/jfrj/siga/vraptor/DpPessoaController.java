@@ -177,7 +177,6 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 	
 	@Get("app/pessoa/listar")
-	@Post("app/pessoa/listar")
 	public void lista(Integer offset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa) throws Exception {
 		result.include("request",getRequest());
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();

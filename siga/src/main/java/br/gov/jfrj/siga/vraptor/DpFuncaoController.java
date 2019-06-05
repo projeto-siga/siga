@@ -103,7 +103,6 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		}
 	}
 	
-	@Post("app/funcao/listar")
 	@Get("app/funcao/listar")
 	public void lista(Integer offset, Long idOrgaoUsu, String nome) throws Exception {
 		

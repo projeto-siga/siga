@@ -35,9 +35,13 @@
 	}
 </script>
 
-<li class="nav-item dropdown"><a href="javascript:void(0);"
-	class="nav-link dropdown-toggle" data-toggle="dropdown"> Siga </a>
+<li class="nav-item dropdown">
+	<a href="javascript:void(0);" class="navbar-brand dropdown-toggle" data-toggle="dropdown"> SIGA</a>
 	<ul class="dropdown-menu">
+		<c:if test="${not empty f:resource('siga.pagina.inicial.url')}">
+			<li><a class="dropdown-item" href="/siga/app/principal?redirecionar=false">Quadros Quantitativos</a></li>
+		</c:if>
+	
 		<li class="dropdown-submenu"><a href="javascript:void(0);"
 			class="dropdown-item dropdown-toggle">Módulos</a>
 			<ul class="dropdown-menu">
@@ -79,15 +83,9 @@
 							</c:if>
 						</ul></li>
 				</c:if>
-
-				<c:if
-					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:Módulo de Transportes')}">
-					<li><a class="dropdown-item" href="/sigatp/">Transportes</a></li>
-				</c:if>
 			</ul></li>
 		<c:if test="${not empty f:resource('gsa.url')}">
-			<li><a class="dropdown-item" href="/siga/app/busca">Busca
-					Textual</a></li>
+			<li><a class="dropdown-item" href="/siga/app/busca">Busca Textual</a></li>
 		</c:if>
 
 		<li class="dropdown-submenu"><a href="javascript:void(0);"
@@ -153,27 +151,27 @@
 							href="/siga/app/gi/perfil/listar">Perfil de Acesso</a></li>
 					</c:if>
 					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_ORGAO_USUARIO:Cadastrar Orgãos Usuário')}">
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;CAD_ORGAO_USUARIO:Cadastrar Orgãos Usuário')}">
 						<li><a class="dropdown-item"
 							href="/siga/app/orgaoUsuario/listar">Cadastro de Orgãos</a></li>
 					</c:if>
 					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_CARGO:Cadastrar Cargo')}">
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;CAD_CARGO:Cadastrar Cargo')}">
 						<li><a class="dropdown-item" href="/siga/app/cargo/listar">Cadastro
 								de Cargo</a></li>
 					</c:if>
 					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_LOTACAO:Cadastrar Lotação')}">
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;CAD_LOTACAO:Cadastrar Lotação')}">
 						<li><a class="dropdown-item" href="/siga/app/lotacao/listar">Cadastro
 								de Lotação</a></li>
 					</c:if>
 					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_FUNCAO:Cadastrar Função de Confiança')}">
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;CAD_FUNCAO:Cadastrar Função de Confiança')}">
 						<li><a class="dropdown-item" href="/siga/app/funcao/listar">Cadastro
 								de Função de Confiança</a></li>
 					</c:if>
 					<c:if
-						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;CAD_PESSOA:Cadastrar Pessoa')}">
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;CAD_PESSOA:Cadastrar Pessoa')}">
 						<li><a class="dropdown-item" href="/siga/app/pessoa/listar">Cadastro
 								de Pessoa</a></li>
 					</c:if>

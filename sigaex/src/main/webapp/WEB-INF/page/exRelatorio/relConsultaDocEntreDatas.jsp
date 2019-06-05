@@ -17,47 +17,36 @@ function sbmt() {
 </c:set>
 <input type="hidden" name="secaoUsuario" id="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
 <input type="hidden" name="campos" value="idTpDoc" />
-<tr>
-	<td>Origem:</td>
-	<td>
-		<select name="origem">
+<div class="row">
+	<div class="col-sm-2">
+		<label>Origem</label>
+		<select name="origem" class="form-control">
 			<c:forEach items="${listaExTipoDocumento}" var="item">
 				<option value="${item.idTpDoc}">
 					${item.descrTipoDocumento}
 				</option>  
 			</c:forEach>
 		</select>
-	</td>
-</tr>
-<tr>
-	<td>
-		Lotação
-	</td>
-	<td>
+	</div>
+	<div class="col-sm-6">
+		<label>Lotação</label>
 		<siga:selecao propriedade="lotacaoDestinatario" tema="simple" reler="sim" modulo="siga"/>
-	</td>
-</tr>
-<input type="hidden" name="lotacao" value="${lotacaoDestinatarioSel.id}" />
-<input type="hidden" name="siglalotacao" value="${lotacaoDestinatarioSel.sigla}" />
-<tr>
-	<td>
-		Data Inicial
-	</td>
-	<td>
+	</div>
+	<input type="hidden" name="lotacao" value="${lotacaoDestinatarioSel.id}" />
+	<input type="hidden" name="siglalotacao" value="${lotacaoDestinatarioSel.sigla}" />
+</div>
+<div class="row">
+	<div class="col-sm-2">
+		<label>Data Inicial</label>
 		<input type="text" name="dataInicial" id="dataInicial" onblur="javascript:verifica_data(this, true);comparaData(dataInicial,dataFinal);"
-			theme="simple" size="12" maxlength="10" />
-	</td>
-</tr>
-<tr>
-	<td>
-		Data Final
-	</td>
-	<td>
+			theme="simple" maxlength="10" class="form-control" />
+	</div>
+	<div class="col-sm-2">
+		<label>Data Final</label>
 		<input type="text" name="dataFinal" id="dataFinal" onblur="javascript:verifica_data(this,true);comparaData(dataInicial,dataFinal);"
-			theme="simple" size="12" maxlength="10" />
-	</td>
-</tr>
-
+			theme="simple" maxlength="10" class="form-control" />
+	</div>
+</div>
 <input type="hidden" name="lotacaoTitular" value="${lotaTitular.siglaLotacao}" />
 <input type="hidden" name="orgaoUsuario" value="${lotaTitular.orgaoUsuario.idOrgaoUsu}" />
 <input type="hidden" name="idTit" value="${titular.id}" />

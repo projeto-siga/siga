@@ -18,18 +18,21 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp.bl;
 
+import java.io.File;
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.util.CPFUtils;
-import br.gov.jfrj.siga.base.util.MatriculaUtils;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso.CpTipoAcessoEnum;
 import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
@@ -40,12 +43,16 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
+import br.gov.jfrj.siga.cp.util.Excel;
+import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class CpBL {
+
+	private static ResourceBundle bundle;
 
 	CpCompetenciaBL comp;
 
@@ -263,7 +270,14 @@ public class CpBL {
 	public CpIdentidade alterarSenhaDeIdentidade(String matricula, String cpf,
 			CpIdentidade idCadastrante, String[] senhaGerada)
 			throws AplicacaoException {
-		final long longmatricula = Long.parseLong(matricula.substring(2));
+		
+		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
+		final List<DpPessoa> listaPessoas = dao().listarPorCpf(longCpf);
+		if(listaPessoas.isEmpty()) {
+			throw new AplicacaoException("O CPF informado está incorreto, tente novamente!");
+		}
+		
+		final long longmatricula = MatriculaUtils.getParteNumericaDaMatricula(matricula);
 		final DpPessoa pessoa = dao().consultarPorCpfMatricula(
 				Long.parseLong(cpf), longmatricula);
 
@@ -325,7 +339,7 @@ public class CpBL {
 		} else {
 			if (pessoa == null) {
 				throw new AplicacaoException(
-						"Não foi encontrado usuário com matrícula e cpf informados.");
+						getBundle().getString("usuario.erro.cpfmatriculanaocadastrado"));
 			} else if (pessoa.getEmailPessoaAtual() == null) {
 				throw new AplicacaoException(
 						"Este usuário não possui e-mail cadastrado");
@@ -340,8 +354,13 @@ public class CpBL {
 			String[] senhaGerada, boolean marcarParaSinc)
 			throws AplicacaoException {
 
-		final long longMatricula = MatriculaUtils.getParteNumerica(matricula);
 		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
+		final List<DpPessoa> listaPessoas = dao().listarPorCpf(longCpf);
+		if(listaPessoas.isEmpty()) {
+			throw new AplicacaoException("O CPF informado está incorreto, tente novamente!");
+		}
+		
+		final long longMatricula = MatriculaUtils.getParteNumericaDaMatricula(matricula);
 
 		final DpPessoa pessoa = dao().consultarPorCpfMatricula(longCpf,
 				longMatricula);
@@ -409,7 +428,11 @@ public class CpBL {
 			}
 
 		} else {
-			throw new AplicacaoException("Dados Incorretos!");
+			if (pessoa == null) {
+				throw new AplicacaoException(getBundle().getString("usuario.erro.cpfmatriculanaocadastrado"));
+			} else {
+				throw new AplicacaoException("Dados Incorretos!");
+			}
 		}
 
 	}
@@ -741,5 +764,58 @@ public class CpBL {
 		acesso.setAuditIP(auditIP);
 		dao().gravar(acesso);
 	}
+	
+	public InputStream uploadLotacao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+		InputStream inputStream = null;
+		try {
+			Excel excel = new Excel();
+			inputStream = excel.uploadLotacao(file, orgaoUsuario, extensao);
+		} catch (Exception e) {
+			
+		}
+		return inputStream;
+	}
+	
+	public InputStream uploadFuncao(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+		InputStream inputStream = null;
+		try {
+			Excel excel = new Excel();
+			inputStream = excel.uploadFuncao(file, orgaoUsuario, extensao);
+		} catch (Exception e) {
+			
+		}
+		return inputStream;
+	}
+
+	public InputStream uploadCargo(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+		InputStream inputStream = null;
+		try {
+			Excel excel = new Excel();
+			inputStream = excel.uploadCargo(file, orgaoUsuario, extensao);
+		} catch (Exception e) {
+			
+		}
+		return inputStream;
+	}
+	
+	public InputStream uploadPessoa(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+		InputStream inputStream = null;
+		try {
+			Excel excel = new Excel();
+			inputStream = excel.uploadPessoa(file, orgaoUsuario, extensao);
+		} catch (Exception e) {
+			
+		}
+		return inputStream;
+	}
+
+	private static ResourceBundle getBundle() {
+    	if (SigaBaseProperties.getString("siga.local") == null) {
+    		bundle = ResourceBundle.getBundle("messages_TRF2");
+    	} else {
+    		bundle = ResourceBundle.getBundle("messages_" + SigaBaseProperties.getString("siga.local"));
+    	}
+        return bundle;
+    }
 
 }

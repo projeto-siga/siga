@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.dp.dao;
 
+import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 
@@ -56,7 +57,7 @@ public class DpLotacaoDaoFiltro extends DaoFiltroSelecionavel {
 		if (siglaCompleta == null)
 			return;
 
-		String orgaoUsu = siglaCompleta.substring(0, 2);
+		String orgaoUsu = MatriculaUtils.getSiglaDoOrgaoDaLotacao(siglaCompleta);
 		CpOrgaoUsuario cpOrgaoUsuario = new CpOrgaoUsuario();
 		cpOrgaoUsuario.setSigla(orgaoUsu);
 		CpOrgaoUsuario orgaoUsuario = CpDao.getInstance().consultarPorSigla(cpOrgaoUsuario);
@@ -65,6 +66,6 @@ public class DpLotacaoDaoFiltro extends DaoFiltroSelecionavel {
 			idOrgaoUsu = orgaoUsuario.getId();
 		}
 
-		setSigla(siglaCompleta.substring(2));
+		setSigla(MatriculaUtils.getSiglaDaLotacao(siglaCompleta));
 	}
 }

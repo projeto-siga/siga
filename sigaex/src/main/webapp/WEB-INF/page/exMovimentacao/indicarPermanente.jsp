@@ -15,67 +15,67 @@ function sbmt() {
 </script>
 
 <siga:pagina titulo="Movimentação">
-
 <c:if test="${not mob.doc.eletronico}">
 	<script type="text/javascript">$("html").addClass("fisico");$("body").addClass("fisico");</script>
 </c:if>
-
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-		
-			<h2>Indicação para Guarda Permanente - ${mob.siglaEDescricaoCompleta}</h2>
-
-			<div class="gt-content-box gt-for-table">
-
+	<!-- main content -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header">
+				<h5>Indicação para Guarda Permanente - ${mob.siglaEDescricaoCompleta}</h5>
+			</div>
+			<div class="card-body">
 			<form action="${request.contextPath}/app/expediente/mov/indicar_permanente_gravar" enctype="multipart/form-data" method="post">
 				<input type="hidden" name="postback" value="1" />
 				<input type="hidden" name="sigla" value="${sigla}" />
-
-				<table class="gt-form-table">
-					<tr class="header">
-						<td colspan="2">Dados da indicação</td>
-					</tr>
-					<tr>
-						<td>Data:</td>
-						<td>
-							<input type="text" name="dtMovString"/>
-						</td>
-					</tr>
-					
-					<tr>
-						<td>Responsável:</td>
-						<td>
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="form-group">
+							<label>Data</label> 
+							<input type="text" name="dtMovString" class="form-control"/>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label>Responsável</label> 
 							<siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>&nbsp;
-							<input type="checkbox" theme="simple" name="substituicao" onclick="javascript:displayTitular(this);"/>&nbsp;Substituto
-						</td>
-					</tr>
-					<c:set var="style" value="" />
-					<c:if test="${!substituicao}">
-						<c:set var="style" value="display:none" />
-					</c:if>
-					<tr id="tr_titular" style="">
-						<td>Titular:</td>
-							<input type="hidden" name="campos" value="titularSel.id" />
-						<td>
+						</div>
+					</div>
+					<div class="col-sm-2">
+						<div class="form-group">
+							<div class="form-check form-check-inline mt-4">
+								<input type="checkbox" theme="simple" name="substituicao" onclick="javascript:displayTitular(this);"/>
+								<label class="form-check-label" for="substituicao">Substituto</label>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6" id="tr_titular" style="display: ${exDocumentoDTO.substituicao ? '' : 'none'};">
+					<input type="hidden" name="campos" value="titularSel.id" />
+						<div class="form-group">
+							<label>Titular</label>
 							<siga:selecao propriedade="titular" tema="simple" modulo="siga"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<label>Motivo:</label>
-						</td>
-						<td>
-							<input type="text" name="descrMov" maxlength="80"size="80" />
-						</td>
-					</tr>
-					<tr class="button">
-					<td colspan="2">
-						<input type="submit" value="Ok" class="gt-btn-small gt-btn-left" /> 
-						<input type="button" value="Cancela" onclick="javascript:history.back();" class="gt-btn-small gt-btn-left" />
-					</td>
-				</tr>
-			</table>
-		</form>
-		
-		</div></div></div>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label>Motivo</label>
+							<input type="text" name="descrMov" maxlength="80" class="form-control"/>
+						</div>
+					</div>
+				</div>
+								
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary" >Ok</button>
+							<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancela</button>
+						</div>
+					</div>
+				</div>
+			</form>
+			</div>
+		</div>
+	</div>
 </siga:pagina>

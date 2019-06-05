@@ -8,8 +8,7 @@
 <c:import context="/siga" url="/WEB-INF/page/principal/cabecalho.jsp" />
 
 <center>
-<table width="729" border="1" cellspacing="0" cellpadding="0"
-	bordercolor="#FFFFFF" bgcolor="#FFFFFF">
+<table class="table table-borderless" width="729" border="1" cellspacing="0" cellpadding="0">
 	<tr align="left">
 		<td>Ocorreu o erro interno do servidor. Tente novamente.</td>
 	</tr>

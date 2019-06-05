@@ -3,9 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-
-<siga:pagina titulo="Cadastro de Pessoa">
-
 <script type="text/javascript">
 	function validar() {
 		var idOrgaoUsu = document.getElementsByName('idOrgaoUsu')[0].value;
@@ -18,49 +15,37 @@
 		var email = document.getElementsByName('email')[0].value;
 		var id = document.getElementsByName('id')[0].value;	
 		if (nmPessoa==null || nmPessoa=="") {			
-			alert("Preencha o nome da pessoa.");
+			mensagemAlerta("Preencha o nome da pessoa.");
 			document.getElementById('nmPessoa').focus();
 			return;	
 		}
 
 		if(idOrgaoUsu==null || idOrgaoUsu == 0) {
-			alert("Preencha o órgão da pessoa.");
+			mensagemAlerta("Preencha o órgão da pessoa.");
 			document.getElementById('idOrgaoUsu').focus();
 			return;	
 		}
 		
 		if(idCargo==null || idCargo == 0) {
-			alert("Preencha o cargo da pessoa.");
+			mensagemAlerta("Preencha o cargo da pessoa.");
 			document.getElementById('idCargo').focus();
 			return;	
 		}
 
 		if(idLotacao==null || idLotacao == 0) {
-			alert("Preencha a lotação da pessoa.");
+			mensagemAlerta("Preencha a lotação da pessoa.");
 			document.getElementById('idLotacao').focus();
 			return;	
 		}
 
-		if(idFuncao==null || idFuncao == 0) {
-			alert("Preencha a função da pessoa.");
-			document.getElementById('idFuncao').focus();
-			return;	
-		}
-
-		if(dtNascimento==null || dtNascimento == "") {
-			alert("Preencha a data de nascimento da pessoa.");
-			document.getElementById('dtNascimento').focus();
-			return;
-		}
-
 		if(cpf==null || cpf == "") {
-			alert("Preencha o CPF da pessoa.");
+			mensagemAlerta("Preencha o CPF da pessoa.");
 			document.getElementById('cpf').focus();
 			return;
 		}
 
 		if(email==null || email == "") {
-			alert("Preencha o e-mail da pessoa.");
+			mensagemAlerta("Preencha o e-mail da pessoa.");
 			document.getElementById('email').focus();
 			return;
 		}
@@ -69,7 +54,7 @@
 			return;
 		}
 
-		if(!data(dtNascimento)) {
+		if(dtNascimento != null && dtNascimento != "" && !data(dtNascimento)) {
 			return;
 		}
 
@@ -79,6 +64,11 @@
 		frm.submit();
 	}
 
+	function mensagemAlerta(mensagem) {
+		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
+		$('#alertaModal').modal();
+	}
+	
 	function mascaraData( v)
 	{
     	v=v.replace(/\D/g,"");
@@ -93,7 +83,7 @@
 
 	function validarEmail(campo) {
 		if(campo.value != "") {
-			var RegExp = /\b[\w]+@[\w]+\.[\w]+/;
+			var RegExp = /\b[\w]+@[\w-]+\.[\w]+/;
 	
 			if (campo.value.search(RegExp) == -1) {
 					alert("E-mail inválido!");
@@ -108,7 +98,7 @@
 	function data(campo) {
 		var reg = /(([0-2]{1}[0-9]{1}|3[0-1]{1})\/(0[0-9]{1}|1[0-2]{1})\/[0-9]{4})/g; //valida dd/mm/aaaa
 		if(campo.search(reg) == -1) {
-			alert('Data inválida!');
+			mensagemAlerta('Data inválida!');
 			return false;
 		}
 		return true;
@@ -125,7 +115,7 @@
         if ((Resto == 10) || (Resto == 11))  Resto = 0;
         if (Resto != parseInt(strCPF.substring(9, 10)) ) {
         	
-        	alert('CPF Inválido!');
+        	mensagemAlerta('CPF Inválido!');
             return false;
 		}
         Soma = 0;
@@ -135,7 +125,7 @@
         if ((Resto == 10) || (Resto == 11))  Resto = 0;
         if (Resto != parseInt(strCPF.substring(10, 11) ) ) {
         	
-        	alert('CPF Inválido!');
+        	mensagemAlerta('CPF Inválido!');
         	return false;
         }
         return true;
@@ -154,121 +144,141 @@
    	}
 </script>
 
-<body>
-
-<div class="gt-bd clearfix">
-	<div class="gt-content clearfix">		
-		<form name="frm" action="${request.contextPath}/app/pessoa/gravar" method="POST">
-			<input type="hidden" name="postback" value="1" />
-			<input type="hidden" name="id" value="${id}" />
-			<h1>Cadastro de Pessoa</h1>
-			<div class="gt-content-box gt-for-table">
-				<table class="gt-form-table" width="100%">
-					<tr class="header">
-						<td colspan="2">Dados da Pessoa</td>
-					</tr>
-					<tr><td></td></tr>
-					
-					<tr><td></td></tr>
-					<tr>
-						<td><label>&Oacute;rg&atilde;o:</label></td>
-						<td>
-							<select name="idOrgaoUsu" value="${idOrgaoUsu}"  onchange="carregarRelacionados(this.value)">
+<siga:pagina titulo="Cadastro de Pessoa">
+	<!-- main content -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header">
+				<h5>Dados da Pessoa</h5>
+			</div>
+			<div class="card-body">
+			<form name="frm" action="${request.contextPath}/app/pessoa/gravar" method="POST">
+				<input type="hidden" name="postback" value="1" />
+				<input type="hidden" name="id" value="${id}" />
+				<div class="row">
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label for="idOrgaoUsu">&Oacute;rg&atilde;o</label>
+							<select name="idOrgaoUsu" value="${idOrgaoUsu}"  onchange="carregarRelacionados(this.value)" class="form-control">
 								<c:forEach items="${orgaosUsu}" var="item">
 									<option value="${item.idOrgaoUsu}"
 										${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
 										${item.nmOrgaoUsu}</option>
 								</c:forEach>
 							</select>
-						</td>
-					</tr>
-					<tr>
-						<td><label>Cargo:</label></td>
-						<td>
-							<select name="idCargo" value="${idCargo}">
+						</div>
+					</div>
+					<div class="col-sm-2">
+						<div class="form-group">
+							<label for="idCargo">Cargo</label>
+							<select name="idCargo" value="${idCargo}" class="form-control">
 								<c:forEach items="${listaCargo}" var="item">
 									<option value="${item.idCargo}"
 										${item.idCargo == idCargo ? 'selected' : ''}>
 										${item.descricao}</option>
 								</c:forEach>
 							</select>
-						</td>
-					</tr>
-					<tr>
-						<td><label>Fun&ccedil;&atilde;o de Confian&ccedil;a:</label></td>
-						<td>
-							<select name="idFuncao" value="${idFuncao}">
+						</div>
+					</div>
+					<div class="col-sm-2">
+						<div class="form-group">
+							<label for="idFuncao">Fun&ccedil;&atilde;o de Confian&ccedil;a</label>
+							<select name="idFuncao" value="${idFuncao}" class="form-control">
 								<c:forEach items="${listaFuncao}" var="item">
 									<option value="${item.idFuncao}"
 										${item.idFuncao == idFuncao ? 'selected' : ''}>
 										${item.descricao}</option>
 								</c:forEach>
 							</select>
-						</td>
-					</tr>
-					<tr>
-						<td><label>Lota&ccedil;&atilde;o:</label></td>
-						<td>
-							<select name="idLotacao" value="${idLotacao}">
+						</div>
+					</div>
+					<div class="col-sm-2">
+						<div class="form-group">
+							<label for="idLotacao">Lota&ccedil;&atilde;o</label>
+							<select name="idLotacao" value="${idLotacao}" class="form-control">
 								<c:forEach items="${listaLotacao}" var="item">
 									<option value="${item.idLotacao}"
 										${item.idLotacao == idLotacao ? 'selected' : ''}>
 										${item.descricao}</option>
 								</c:forEach>
 							</select>
-						</td>
-					</tr>
-					
-					<tr>				
-						<td>
-							<label>Nome:</label>
-						</td>
-						<td>
-							<input type="text" id="nmPessoa" name="nmPessoa" value="${nmPessoa}" maxlength="60" size="60" />
-						</td>
-					</tr>
-					<tr>				
-						<td>
-							<label>Data de Nascimento:</label>
-						</td>
-						<td>
-							<input type="text" id="dtNascimento" name="dtNascimento" value="${dtNascimento}" maxlength="10" size="10" onkeyup="this.value = mascaraData( this.value )"/>
-						</td>
-					</tr>
-					<tr>				
-						<td>
-							<label>CPF:</label>
-						</td>
-						<td>
-							<input type="text" id="cpf" name="cpf" value="${cpf}" maxlength="14" size="14" onkeyup="this.value = cpf_mask(this.value)"/>
-						</td>
-					</tr>
-					<tr>				
-						<td>
-							<label>E-mail:</label>
-						</td>
-						<td>
-							<input type="text" id="email" name="email" value="${email}" maxlength="60" size="60" onchange="validarEmail(this)" onkeyup="this.value = this.value.toLowerCase().trim()"/>
-						</td>
-					</tr>
-					
-					
-					<tr class="button">
-						<td>
-							<input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-large gt-btn-left" /> 
-							<input type="button" value="Cancela" onclick="voltar();" class="gt-btn-medium gt-btn-left" />
-						</td>
-					</tr>
-				</table>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label for="nmPessoa">Nome</label>
+							<input type="text" id="nmPessoa" name="nmPessoa" value="${nmPessoa}" maxlength="60" class="form-control" />
+						</div>
+					</div>
+					<div class="col-sm-2">
+						<div class="form-group">
+							<label for="nmPessoa">Data de Nascimento</label>
+							<input type="text" id="dtNascimento" name="dtNascimento" value="${dtNascimento}" maxlength="10" onkeyup="this.value = mascaraData( this.value )" class="form-control" />
+						</div>
+					</div>
+					<div class="col-sm-2">
+						<div class="form-group">
+							<label for="nmPessoa">CPF</label>
+							<input type="text" id="cpf" name="cpf" value="${cpf}" maxlength="14" onkeyup="this.value = cpf_mask(this.value)" class="form-control" />
+						</div>
+					</div>
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label for="nmPessoa">E-mail</label>
+							<input type="text" id="email" name="email" value="${email}" maxlength="60" onchange="validarEmail(this)" onkeyup="this.value = this.value.toLowerCase().trim()" class="form-control" />
+						</div>
+					</div>
+				</div>
+				<c:if test="${empty id}">
+					<div class="row">
+						<div class="col-sm-3">
+							<div class="form-group">
+								<span>Carregar planilha para inserir múltiplos registros:</span>
+							</div>
+						</div>
+						<div class="col-sm-2">
+							<div class="form-group">
+								<input type="button" value="Carregar planilha" onclick="javascript:location.href='/siga/app/pessoa/carregarExcel';" class="btn btn-primary" />
+							</div>
+						</div>
+					</div>
+				</c:if>
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="form-group">
+							<button type="button" onclick="javascript: validar();" class="btn btn-primary" >Ok</button> 
+							<button type="button" onclick="javascript:location.href='/siga/app/pessoa/listar';" class="btn btn-primary" >Cancelar</button>
+						</div>
+					</div>
+				</div>
+			</form>
+			<!-- Modal -->
+			<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+			    	<div class="modal-content">
+			      		<div class="modal-header">
+					        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					          <span aria-hidden="true">&times;</span>
+					    	</button>
+					    </div>
+				      	<div class="modal-body">
+				        	<p class="mensagem-Modal"></p>
+				      	</div>
+						<div class="modal-footer">
+						  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
+						</div>
+			    	</div>
+			  	</div>
+			</div>				
+			<!--Fim Modal -->
 			</div>
-			<br />
-		</form>
+		</div>
 	</div>
-</div>
-
-</body>
-
 </siga:pagina>
+
 <script>
 function voltar() {
 	frm.action = 'listar';

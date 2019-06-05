@@ -84,72 +84,73 @@ function alteraResponsavel()
 }
 
 </script>
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>
-				Definição de Perfil - ${mob.siglaEDescricaoCompleta}
-			</h2>
-			<div class="gt-content-box gt-for-table">
+
+	<!-- main content bootstrap -->
+	<div class="container-fluid">
+		<h5>
+			Definição de Perfil - ${mob.siglaEDescricaoCompleta}
+		</h5>
+		<div class="card bg-light mb-3">
+			<div class="card-header">
+				<h5>Vinculação</h5>
+			</div>
+			<div class="card-body">
 				<form name="frm" action="vincularPapel_gravar" method="post">
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}"/>
-					<table class="gt-form-table">
-						<tr class="header">
-							<td colspan="2">
-								Vinculação
-							</td>
-						</tr>
-						<tr>
-							<td>
-								Data:
-							</td>
-							<td>
-								<input type="text" name="dtMovString" value="${dtMovString}" onblur="javascript:verifica_data(this,0);" />
-							</td>
-						</tr>
-						<tr>
-						    <td>
-						    	Responsável:
-						    </td>
-							<td>
-			
-								<select id="tipoResponsavel"  name="tipoResponsavel" onchange="javascript:alteraResponsavel();">
-									<c:forEach items="${listaTipoRespPerfil}" var="item">
-										<option value="${item.key}" ${item.key == tipoResponsavel ? 'selected' : ''}>
-											${item.value}
-										</option>  
-									</c:forEach>
-								</select>		
-								<span id="selecaoResponsavel">
-									<siga:selecao propriedade="responsavel" tema="simple" modulo="siga"/>
-								</span>
-								<span id="selecaoLotaResponsavel">
-									<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"/>
-								</span>		
-								<script>alteraResponsavel();</script>			  
-							</td>
-					    </tr>
-						<tr>
-							<td>
-								Perfil
-							</td>
-							<td>
-								<select  name="idPapel">
+					<div class="row">
+						<div class="col-md-2 col-sm-3">
+							<div class="form-group">
+								<label for="dtMovString">Data</label>
+								<input type="text" name="dtMovString" value="${dtMovString}" onblur="javascript:verifica_data(this,0);" class="form-control"/>
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<div class="form-group">
+								    <label>Responsável</label>
+									<select class="form-control" id="tipoResponsavel"  name="tipoResponsavel" onchange="javascript:alteraResponsavel();">
+										<c:forEach items="${listaTipoRespPerfil}" var="item">
+											<option value="${item.key}" ${item.key == tipoResponsavel ? 'selected' : ''}>
+												${item.value}
+											</option>  
+										</c:forEach>
+									</select>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+									<span id="selecaoResponsavel">
+										<label>&nbsp;</label>
+										<siga:selecao propriedade="responsavel" tema="simple" modulo="siga"/>
+									</span>
+									<span id="selecaoLotaResponsavel">
+										<label>&nbsp;</label>
+										<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"/>
+									</span>		
+									<script>alteraResponsavel();</script>			  
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-3">
+							<div class="form-group">
+								<label for="idPapel">Perfil</label>
+								<select class="form-control" name="idPapel">
 									<c:forEach items="${listaExPapel}" var="item">
 										<option value="${item.idPapel}" ${item.idPapel == idPapel ? 'selected' : ''}>
 											${item.descPapel}
 										</option>  
 									</c:forEach>
 								</select>
-							</td>
-						</tr>
-						<tr class="button">
-							<td colspan="2">
-								<input type="submit" value="Ok" class="gt-btn-medium gt-btn-left"/>
-								<input type="button" value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/>
-							</td>
-						</tr>
-					</table>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm">
+							<input type="submit" value="Ok" class="btn btn-primary"/>
+							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-cancel ml-2"/>
+						</div>
+					</div>
 				</form>
 			</div>
 		</div>

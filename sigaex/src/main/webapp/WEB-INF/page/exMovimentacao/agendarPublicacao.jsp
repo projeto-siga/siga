@@ -58,10 +58,15 @@
 		}
 	</script>
 
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">		
-			<h2>Agendamento de Publicação - ${mob.siglaEDescricaoCompleta}</h2>
-			<div class="gt-content-box gt-for-table">
+	<!-- main content bootstrap -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3">
+			<div class="card-header">
+				<h5>
+					Agendamento de Publicação - ${mob.siglaEDescricaoCompleta}
+				</h5>
+			</div>
+			<div class="card-body">
 				<form name="frm" action="${request.contextPath}/app/expediente/mov/agendar_publicacao_gravar" method="post">
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}"/>
@@ -76,125 +81,122 @@
 						</c:otherwise>
 					</c:choose>
 					
-					<table class="gt-form-table">
-						<colgroup>
-							<col  style="width:30%"/>
-							<col  style="width:70%"/>
-						</colgroup>
-						
-						<tr class="header">
-							<td colspan="2">Dados do Agendamento</td>
-						</tr>
-						<c:choose>
-							<c:when test="${cadernoDJEObrigatorio}">
-								<c:set var="disabledTpMat">true</c:set> 
-								<input type="hidden" name="tipoMateria" value="${tipoMateria}" />
-								<tr>
-									<td>Tipo de Matéria:</td>
-									<td>
-										<c:choose>
-											<c:when test="${tipoMateria eq 'A'}">
-												Administrativa 
-											</c:when>
-											<c:otherwise>
-												Judicial
-											</c:otherwise>
-										</c:choose>
-									</td>
-								</tr>
-							</c:when>
-							<c:otherwise>
-								<tr>
-									<td>
+					<div class="row">
+						<div class="col-sm">
+							<div class="form-group">
+								<c:choose>
+									<c:when test="${cadernoDJEObrigatorio}">
+										<c:set var="disabledTpMat">true</c:set> 
+										<input type="hidden" name="tipoMateria" value="${tipoMateria}" />
+											<label>Tipo de Matéria: 
+												<c:choose>
+													<c:when test="${tipoMateria eq 'A'}">
+														Administrativa 
+													</c:when>
+													<c:otherwise>
+														Judicial
+													</c:otherwise>
+												</c:choose>
+											</label>
+										</tr>
+									</c:when>
+									<c:otherwise>
 										<label>Tipo de Matéria:</label>
-									</td>
-									<td>
-										<input type="radio" name="tipoMateria" value="J"/>Judicial
-										<input type="radio" name="tipoMateria" value="A"/>Administrativa
-									</td>
-								</tr>
-							</c:otherwise>
-						</c:choose>
-						<tr>
-							<td>Próxima data para disponibilização:</td>
-							<td>${proximaDataDisponivelStr}</td>
-						</tr>
-						
-						<tr>
-							<td>
-								<label>Data para disponibilização:</label>
-							</td>
-							<td>
-								<input type="text" name="dtDispon" id="dt_dispon" onblur="javascript:verifica_data(this,true);prever_data();"/>
-							</td>
-						</tr>
-						
-						<tr>
-							<td>Data de publicação:</td>
-							<td>
-								<div id="dt_publ" />
-							</td>
-						</tr>				
-						<tr>									
-							<td>Lotação de Publicação:</td>
+										<div>
+											<div class="form-check form-check-inline">
+												<input class="form-check-input" id="idTipoMateriaJ" type="radio" name="tipoMateria" value="J"/>
+												<label class="form-check-label" for="idTipoMateriaJ">Judicial</label>
+											</div>
+											<div class="form-check form-check-inline">
+												<input class="form-check-input" id="idTipoMateriaA" type="radio" name="tipoMateria" value="A"/>
+												<label class="form-check-label" for="idTipoMateriaA">Administrativa</label>
+											</div>
+										</div>
+									</c:otherwise>
+								</c:choose>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-3">
+							<div class="form-group">
+								<label>Próxima data para disponibilização</label>
+								<input class="form-control" value readonly>${proximaDataDisponivelStr}</input>
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<div class="form-group">
+								<label>Data para disponibilização</label>
+								<input class="form-control" type="text" name="dtDispon" id="dt_dispon" onblur="javascript:verifica_data(this,true);prever_data();"/>
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<div class="form-group">
+								<label>Data de publicação</label>
+								<input class="form-control" id="dt_publ" value readonly/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-9">
+							<div class="form-group">
+								<label>Lotação de Publicação</label>
 							
-							<c:choose>
-								<c:when test="${podeAtenderPedidoPubl}">
-									<td>
-										<siga:selecao tema="simple" propriedade="lotaSubscritor" modulo="siga" />
-									</td>
-								</c:when>
-									
-								<c:otherwise>
-									<td>
-										<select id="idLotPublicacao" name="idLotPublicacao" onchange="javascript:buscaNomeLota();">
-											<c:forEach items="${listaLotPubl}" var="item">
-												<option value="${item.idLotacao}">${item.siglaLotacao}</option>
-											</c:forEach>
-										</select>
-										&nbsp;&nbsp;&nbsp;&nbsp;<span id="nomeLota"></span>
-									</td>							
-								</c:otherwise>
-							</c:choose>
-						</tr>	
-						
-						<tr>
-							<td>Descrição do documento:</td>
-							<td>
-								<textarea name="descrPublicacao" cols="80" id="descrPublicacao" rows="5" class="gt-form-textarea" onkeyup="contaLetras();">${descrPublicacao}</textarea>	
-							</td>
-						</tr>	
-						
-						<tr>
-							<td></td>
-							<td>
-								<div id="Qtd">Restam&nbsp;${tamMaxDescr}&nbsp;caracteres</div>
-							</td>
-						</tr>						
-						<tr>
-							<td colspan="2">
-								<input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-medium gt-btn-left" ${disabled}/>
-								<input type="button" value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
-								<a href="${request.contextPath}/app/arquivo/download?arquivo=${mob.referenciaRTF}" class="gt-btn-large gt-btn-left">Visualizar Publicação</a>
-							</td>
-						</tr>
-					</table>
+									<c:choose>
+										<c:when test="${podeAtenderPedidoPubl}">
+											<siga:selecao tema="simple" propriedade="lotaSubscritor" modulo="siga" />
+										</c:when>
+										
+										<c:otherwise>
+											<select class="form-control" id="idLotPublicacao" name="idLotPublicacao" onchange="javascript:buscaNomeLota();">
+												<c:forEach items="${listaLotPubl}" var="item">
+													<option value="${item.idLotacao}">${item.siglaLotacao}</option>
+												</c:forEach>
+											</select>
+											<span id="nomeLota"></span>
+										</c:otherwise>
+									</c:choose>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm">
+							<div class="form-group">
+								<label>Descrição do documento</label>
+								<textarea class="form-control" name="descrPublicacao" cols="80" id="descrPublicacao" rows="5" class="gt-form-textarea" onkeyup="contaLetras();">${descrPublicacao}</textarea>	
+								<small class="form-text text-muted" id="Qtd">Restam&nbsp;${tamMaxDescr}&nbsp;caracteres</small>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm">
+							<input type="button" value="Ok" onclick="javascript: validar();" class="btn btn-primary" ${disabled}/>
+							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-primary ml-2" />
+							<a href="${request.contextPath}/app/arquivo/download?arquivo=${mob.referenciaRTF}" class="btn btn-primary ml-2">Visualizar Publicação</a>
+						</div>
+					</div>
+					
 				</form>	
 				<span style="font-weight:bold; color: red">${mensagem}</span>			
 			</div>
 			
 			<br/>
-			<span style="margin-left: 0.5cm;color: red;"><b>Atenção:</b></span>
-			<ul>
-				<li><span style="font-weight:bold">Data para
-				Disponibilização</span> - data em que a matéria efetivamente aparece no
-				site</li>
-				<li><span style="font-weight:bold">Data de Publicação</span> -
-				a Data de Disponibilização + 1, conforme prevê art. 4º, parágrafo 3º
-				da Lei 11419 / 2006</li>
-				<li><span style="font-weight:bold">Visualizar Publicação</span> -
-				Permite visualizar o documento antes de ser enviado para o DJE.</li>
-			</ul>
+			
+			<div class="row mb-3 ml-2">
+				<div class="col-sm">
+					<span class="text-danger font-weight-bold">Atenção:</span>
+					<ul>
+						<li><span class="font-weight-bold">Data para
+						Disponibilização</span> - data em que a matéria efetivamente aparece no
+						site</li>
+						<li><span class="font-weight-bold">Data de Publicação</span> -
+						a Data de Disponibilização + 1, conforme prevê art. 4º, parágrafo 3º
+						da Lei 11419 / 2006</li>
+						<li><span class="font-weight-bold">Visualizar Publicação</span> -
+						Permite visualizar o documento antes de ser enviado para o DJE.</li>
+					</ul>
+				</div>
+			</div>
 		</div>
 	</div>
 	

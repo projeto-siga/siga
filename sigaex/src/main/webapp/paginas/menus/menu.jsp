@@ -16,6 +16,11 @@
 				href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a></li>
 
 			<li><a class="dropdown-item"
+				href="/sigaex/app/mesa">Mesa Virtual</a></li>
+				
+			<div class="dropdown-divider"></div>
+			
+			<li><a class="dropdown-item"
 				href="/sigaex/app/expediente/mov/transferir_lote">Transferir em
 					lote</a></li>
 			<li><a class="dropdown-item"
@@ -84,7 +89,7 @@
 
 		<li class="nav-item dropdown"><a href="javascript:void(0);"
 			class="nav-link dropdown-toggle" data-toggle="dropdown">
-				Ferramenteas </a>
+				Ferramentas </a>
 			<ul class="dropdown-menu">
 
 				<li><a class="dropdown-item" href="/sigaex/app/forma/listar">Cadastro

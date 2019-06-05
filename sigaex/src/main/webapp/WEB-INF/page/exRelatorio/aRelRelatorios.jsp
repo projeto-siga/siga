@@ -116,34 +116,26 @@ function visualizarRelatorio(rel) {
 		<c:set var="tipoRelatorio" scope="request">relExpedientes.jrxml</c:set>
 	</c:otherwise>
 </c:choose>
-
-<div class="gt-bd clearfix">
-	<div class="gt-content clearfix">
-		<h2>
-			${titulo_pagina}
-		</h2>
-		<div class="gt-content-box gt-for-table">
-			<form name="frmRelatorios" action="${actionName}" theme="simple" method="get" enctype="multipart/form-data">
-				<input type="hidden" name="postback" value="1" />
-				<input type="hidden" name="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
-				<input type="hidden" name="tipoRelatorio" value="${tipoRelatorio}" />		
-				<table class="gt-form-table">
-					<tr class="header">
-						<td colspan="2">
-							Dados do Relatório
-						</td>
-					</tr>
-					<%-- <c:url name="url" id="url" value="${pageContext.request.contextPath}/app/expediente/rel/relRelatorios">
-					</c:url> --%>
-	 				<c:import url="/WEB-INF/page/exRelatorio/${nomeRelatorio}"/>
- 					<tr class="button">
-						<td colspan="2">
-							<input type="button" value="Gerar" onclick="javascript:visualizarRelatorio('${pageContext.request.contextPath}/app/expediente/rel/${actionName}');" />
-						</td>
-					</tr>
-				</table>
-			</form>
-		</div>	
+<!-- main content -->
+<div class="container-fluid">
+	<div class="card bg-light mb-3" >
+		<div class="card-header">
+			<h5>${titulo_pagina}</h5>
+		</div>
+		<div class="card-body">
+		<form name="frmRelatorios" action="${actionName}" theme="simple" method="get" enctype="multipart/form-data">
+			<input type="hidden" name="postback" value="1" />
+			<input type="hidden" name="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
+			<input type="hidden" name="tipoRelatorio" value="${tipoRelatorio}" />		
+			<c:import url="/WEB-INF/page/exRelatorio/${nomeRelatorio}"/>
+		
+			<div class="row mt-2">
+				<div class="col-sm-8">
+					<button type="button" onclick="javascript:visualizarRelatorio('${pageContext.request.contextPath}/app/expediente/rel/${actionName}');" class="btn btn-primary">Gerar</button>
+				</div>
+			</div>
+		</form>
+		</div>
 	</div>
 </div>
 </siga:pagina>

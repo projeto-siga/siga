@@ -16,14 +16,11 @@ function sbmt() {
 	Despachos e Transferências
 </c:set>
 <input type="hidden" name="secaoUsuario" id="secaoUsuario" value="${lotaTitular.orgaoUsuario.descricaoMaiusculas}" />
-<tr>
-	<td>
-		Órgão:
-	</td>
-	<td>
-		<select name="orgaoUsu" id="orgaoUsu">
+<div class="row">
+	<div class="col-sm-4">
+		<label>&Oacute;rg&atilde;o</label>
+		<select name="orgaoUsu" id="orgaoUsu" class="form-control">
 			<option value="0">
-			
 			</option>
 			<c:forEach var="item" items="${orgaosUsu}">
 				<option value="${item.idOrgaoUsu}">
@@ -31,37 +28,25 @@ function sbmt() {
 				</option>
 			</c:forEach>			
 		</select>
-	</td>
-<tr>
-	<td width="15%">
-		Lotação:
-	</td>
-	<td>
+	</div>
+	<div class="col-sm-6">
+		<label>Lota&ccedil;&atilde;o</label>
 		<siga:selecao propriedade="lotacaoDestinatario" tema="simple" modulo="siga"/>
-	</td>
-</tr>
-
-
+	</div>
+</div>
 <input type="hidden" name="lotacao" id="lotacao" value="${lotacaoDestinatarioSel.id}" />
 <input type="hidden" name="siglalotacao" id="siglalotacao" value="${lotacaoDestinatarioSel.sigla}" />
-<tr>
-	<td>
-		Data Inicial
-	</td>
-	<td>
+<div class="row">
+	<div class="col-sm-2">
+		<label>Data Inicial</label>
 		<input type="text" name="dataInicial" id="dataInicial" onblur="javascript:verifica_data(this, true);comparaData(dataInicial,dataFinal);"
-			theme="simple" size="12" maxlength="10" />
-	</td>
-</tr>
-<tr>
-	<td>
-		Data Final
-	</td>
-	<td>
+				theme="simple" maxlength="10" class="form-control" />
+	</div>
+	<div class="col-sm-2">
+		<label>Data Final</label>
 		<input type="text" name="dataFinal" id="dataFinal" onblur="javascript:verifica_data(this,true);comparaData(dataInicial,dataFinal);"
-		theme="simple" size="12" maxlength="10" />
-	</td>
-</tr>
-
+				theme="simple" maxlength="10" class="form-control" />
+	</div>
+</div>
 <input type="hidden" name="lotacaoTitular" id="lotacaoTitular" value="${lotaTitular.siglaLotacao}" />
 <input type="hidden" name="idTit" id="idTit" value="${titular.id}" />

@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 
@@ -89,10 +90,10 @@ function checkEmailValido(){
 function permitirInclusaoUsuario(response,param){
 	if (response == '0'){
 		document.getElementById('painel-dados-usuario').style.display = 'block';
-		document.getElementById('msgEmail').className = 'oculto';
+		$("#msgErro").removeAttr("style").hide();
 	}else{
 		document.getElementById('painel-dados-usuario').style.display = 'none';
-		document.getElementById('msgEmail').className = 'email-invalido';
+		$("#msgErro").show();
 		$('#msgEmail').text(response);
 
 	}
@@ -101,11 +102,8 @@ function permitirInclusaoUsuario(response,param){
 
 /*  converte para maiúscula a sigla do estado  */
 function converteUsuario(nomeusuario){
-  re= /^[a-zA-Z0-9]{2}\d{4,6}$/;
   tmp = nomeusuario.value;
-  if (tmp.match(re)){      
-      nomeusuario.value=tmp.toUpperCase();
-  }
+  nomeusuario.value=tmp.toUpperCase();
 }
 
 function passwordStrength(password,metodo) {
@@ -148,18 +146,22 @@ function validateUsuarioForm(form,metodo) {
 	}
 	var s = document.getElementById('passwordStrength' + metodo).className;
 	if (s == "strength0" || s == "strength1" || s == "strength2") {
-		alert("Senha muito fraca. Por favor, utilize uma senha com pelo menos 6 caracteres incluindo letras maiúsculas, minúsculas e números");
+		mensagemAlerta("Senha muito fraca. Por favor, utilize uma senha com pelo menos 6 caracteres incluindo letras maiúsculas, minúsculas e números");
 		return false;
 	}
 	var p1 = document.getElementById("pass" + metodo).value;
 	var p2 = document.getElementById("pass2" + metodo).value;
 	if (p1 != p2) {
-		alert("Repetição da nova senha não confere, favor redigitar.");
+		mensagemAlerta("Repetição da nova senha não confere, favor redigitar.");
 		return false; 
 	}
 	return true;
 }
 
+function mensagemAlerta(mensagem) {
+	$('#alertaModal').find('.mensagem-Modal').text(mensagem);
+	$('#alertaModal').modal();
+}
 
 function refreshWindow(){
 	var e=document.getElementById("refreshed");
@@ -179,196 +181,251 @@ function refreshWindow(){
 <input type="hidden" id="refreshed" value="no">
 <body onload="javascript:refreshWindow()" />
 
-
 <siga:pagina titulo="${titulo}">
-	<!-- main content -->
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-		
-			<c:if test="${not empty mensagem}">
-					<div id="mensagem" class="gt-success">${mensagem}</div>
-					<script>
-						setTimeout(function() {
-							$('#mensagem').fadeTo(1000, 0, function() {
-								$('#mensagem').slideUp(1000);
-								window.location.replace("/siga");
-							});
-						}, 5000); // <-- time in milliseconds
-					</script>
-			</c:if>
-		
-			<c:if test="${baseTeste}">
-					<p id="msgSenha" class="gt-error">ATENÇÃO: Esta é uma versão de testes. Para sua segurança, NÃO utilize a mesma senha da versão de PRODUÇÃO.</p>
-			</c:if>
-	
-			<h1 class="gt-form-head">${titulo}</h1>
-
-			<c:if test="${empty f:resource('siga.gi.omitir.metodo2') || f:resource('siga.gi.omitir.metodo2') != 'true'}">
-				<h2 class="gt-form-head">Método 1 - Envio de senha nova para o e-mail</h2>
-			</c:if>
-			<p id="msgExplicacao"></p>
-			<div class="gt-form gt-content-box">
-
-				<form action="${proxima_acao}" onsubmit="return validateUsuarioForm(this,'Met1');" method="post">
-					<input type="hidden" name="usuario.metodo" value="1" />
-					<input type="hidden" name="usuario.page" value="1" />
-					<div class="gt-form-row gt-width-100">
-						<div class="gt-left-col gt-width-33">
-							<label>Matrícula</label>
-							<input type="text" name="usuario.matricula" id="txtMatricula"
-								onblur="javascript:converteUsuario(this);javascript:checkIntegradoAD(this);javascript:checkEmailValido(this);" 
-								class="gt-form-text" />
-						</div>
-						<div class="gt-right-col gt-width-66">
-							<label>&nbsp;</label>
-							<p>${f:resource('siga.gi.texto.novo.usuario')}</p>
-						</div>
+	<!-- main content bootstrap -->
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col">
+				<div id="msgErro" style="display:none">
+					<div id="msgEmail" class="alert alert-danger" >
 					</div>
+				</div>
+				<script>
 
-					
-					<div id="painel-dados-usuario">
-
-						<div class="gt-form-row gt-width-33">
-							<label>CPF</label>
-							<input name="usuario.cpf" type="text" class="gt-form-text" />
-						</div>
-						
-						<div class="gt-form-row gt-width-100" id="dadosIntegracaoAD" style="display: none;">
-	
-								<div class="gt-left-col gt-width-33">
-									<label>Nova Senha</label>
-									<input type="password" name="usuario.senhaNova" id="passMet1"
-										onkeyup="passwordStrength(this.value,'Met1')" 
-										class="gt-form-text" />
-								</div>
-	
-	
-								<div class="gt-left-col gt-width-33">
-									<label>Repetição da nova senha</label>
-									<input type="password" name="usuario.senhaConfirma" id="pass2Met1"
-										onblur="javascript:converteUsuario(this)" 
-										class="gt-form-text" />
-								</div>
-	
-								<div class="gt-left-col gt-width-33">
-									<label>Força da senha</label>
-									<div id="passwordDescriptionMet1">Senha não informada</div>
-									<div id="passwordStrengthMet1" class="strength0"></div>
-								</div>
-						</div>
-						
-						<div class="gt-form-row">
-							<button type="submit" class="gt-btn-medium gt-btn-left">OK</button>
-						</div>
-					</div>
-					<p id="msgEmail" class="oculto"></p>
-				</form>
+				</script>
 			</div>
-			<c:if test="${empty f:resource('siga.gi.omitir.metodo2') || f:resource('siga.gi.omitir.metodo2') != 'true'}">
-			<h2 class="gt-form-head">Método 2 - Alterar a senha com auxílio
-				de 2 pessoas</h2>
-			<p>
-				O sistema altera a senha da pessoa conforme solicitado, porém é
-				necessário o apoio de mais 2 pessoas para completar o processo. <br />
-				As pessoas auxiliares devem estar na mesma lotação da pessoa
-				indicada para ter a senha substituída ou devem estar na lotação
-				imediatamente superior na hierarquia organizacional.
-			</p>
-			<div class="gt-form gt-content-box">
-				<form action="${proxima_acao}"
-					onsubmit="return validateUsuarioForm(this,'Met2');" method="post">
-					<input type="hidden" name="usuario.metodo" value="2" />
-
-					<h4>Dados do primeiro auxiliar:</h4>
-					<div class="gt-form-row gt-width-100">
-						<div class="gt-left-col gt-width-33">
-							<label>Matrícula<a href="#"
-								title="Ex.: XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES, etc.) e 99999 é o número da matrícula da primeira pessoa que auxiliará na alteração de senha."><img
-									style="position: relative; margin-top: -3px; top: +3px; left: +3px;"
-									src="/siga/css/famfamfam/icons/information.png" /> </a> </label>
-							<input type="text"name="usuario.auxiliar1" onblur="javascript:converteUsuario(this)" class="gt-form-text" />
-						</div>
-						<div class="gt-left-col gt-width-33">
-							<label>CPF</label>
-							<input type="text" name="usuario.cpf1" class="gt-form-text" />
-						</div>
-
-						<div class="gt-left-col gt-width-33">
-							<label>Senha</label>
-							<input type="password" name="usuario.senha1"
-								onblur="javascript:converteUsuario(this)" 
-								class="gt-form-text" />
-						</div>
-					</div>
-
-					<h4>Dados do segundo auxiliar:</h4>
-					<div class="gt-form-row gt-width-100">
-						<div class="gt-left-col gt-width-33">
-							<label>Matrícula<a href="#"
-								title="Ex.: XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES, etc.) e 99999 é o número da matrícula da segunda pessoa que auxiliará na alteração de senha."><img
-									style="position: relative; margin-top: -3px; top: +3px; left: +3px;"
-									src="/siga/css/famfamfam/icons/information.png" /> </a> </label>
-							<input type="text" name="usuario.auxiliar2"
-								onblur="javascript:converteUsuario(this)" 
-								class="gt-form-text" />
-						</div>
-						<div class="gt-left-col gt-width-33">
-							<label>CPF</label>
-							<input type="text" name="usuario.cpf2" class="gt-form-text" />
-						</div>
-
-						<div class="gt-left-col gt-width-33">
-							<label>Senha</label>
-							<input type="password" name="usuario.senha2"
-								onblur="javascript:converteUsuario(this)" 
-								class="gt-form-text" />
-						</div>
-					</div>
-
-					<h4>Alterar senha de:</h4>
-					<div class="gt-form-row gt-width-100">
-						<div class="gt-left-col gt-width-33">
-							<label>Matrícula<a href="#"
-								title="Ex.: XX99999, onde XX é a sigla do seu órgão (T2, RJ, ES, etc.) e 99999 é o número da matrícula do usuário que terá a senha alterada."><img
-									style="position: relative; margin-top: -3px; top: +3px; left: +3px;"
-									src="/siga/css/famfamfam/icons/information.png" /> </a> </label>
-							<input type="text" name="usuario.matricula"
-								onblur="javascript:converteUsuario(this)" 
-								class="gt-form-text" />
-						</div>
-						<div class="gt-left-col gt-width-33">
-							<label>CPF</label>
-							<input type="text" name="usuario.cpf" class="gt-form-text" />
-						</div>
-					</div>
-					<div class="gt-form-row gt-width-100">
-
-						<div class="gt-left-col gt-width-33">
-							<label>Nova Senha</label>
-							<input type="password" name="usuario.senhaNova" id="passMet2"
-								onkeyup="passwordStrength(this.value,'Met2')" 
-								class="gt-form-text" />
-						</div>
-
-						<div class="gt-left-col gt-width-33">
-							<label>Repetição da nova senha</label>
-							<input type="password" name="senhaConfirma" id="pass2Met2"
-								onblur="javascript:converteUsuario(this)"
-								class="gt-form-text" />
-						</div>
-
-						<div class="gt-left-col gt-width-33">
-							<label>Força da senha</label>
-							<div id="passwordDescriptionMet2">Senha não informada</div>
-							<div id="passwordStrengthMet2" class="strength0"></div>
-						</div>
-					</div>
-
-					<div class="gt-form-row">
-						<button type="submit" class="gt-btn-medium gt-btn-left" >OK</button>
-					</div>
-				</form>
-			</div>
-			</c:if>
 		</div>
+	
+		<c:if test="${not empty mensagem}">
+			<div id="mensagem" class="alert  alert-success">${mensagem} </div>
+			<script>
+				setTimeout(function() {
+					$('#mensagem').fadeTo(1000, 0, function() {
+						$('#mensagem').slideUp(1000);
+						window.location.replace("/siga");
+					});
+				}, 5000); // <-- time in milliseconds
+			</script>
+		</c:if>
+		<c:if test="${baseTeste}">
+				<p id="msgSenha" class="gt-error">ATENÇÃO: Esta é uma versão de testes. Para sua segurança, NÃO utilize a mesma senha da versão de PRODUÇÃO.</p>
+		</c:if>
+		<div class="card bg-light mb-3" >
+			<div class="card-header"><h5>${titulo}</h5></div>
+			<div class="card-body">
+				<c:if test="${empty f:resource('siga.gi.omitir.metodo2') || f:resource('siga.gi.omitir.metodo2') != 'true'}">
+					<h6 class="gt-form-head"><fmt:message key = "usuario.metodo1"/></h6>
+				</c:if>
+
+				<div class="card bg-white" >
+					<div class="mx-2 mb-2" >
+						<form action="${proxima_acao}" onsubmit="return validateUsuarioForm(this,'Met1');" method="post">
+							<input type="hidden" name="usuario.metodo" value="1" />
+							<input type="hidden" name="usuario.page" value="1" />
+							<div class="row">
+								<div class="col-sm-3">
+									<div class="form-group">
+										<label for="usuario.matricula">Matrícula</label>					
+										<input type="text" name="usuario.matricula" id="txtMatricula"
+											onblur="javascript:converteUsuario(this);javascript:checkIntegradoAD(this);javascript:checkEmailValido(this);" 
+											class="form-control" />
+									</div>
+								</div>
+								<div class="col-sm-3">
+									<div class="form-group">
+										<label>&nbsp;</label>
+										<p><fmt:message key = "usuario.helpnovousuario"/></p>
+									</div>
+								</div>
+							</div>
+							<div id="painel-dados-usuario">
+								<div class="row">
+									<div class="col-sm-3">
+										<div class="form-group">
+											<label for="usuario.cpf">CPF</label>
+											<input name="usuario.cpf" type="text" class="form-control" />
+										</div>
+									</div>
+								</div>
+								
+								<div id="dadosIntegracaoAD" style="display: none;">
+									<div class="row">
+										<div class="col-sm-4">
+											<label for="usuario.senhaNova">Nova Senha</label>
+											<input type="password" name="usuario.senhaNova" id="passMet1"
+												onkeyup="passwordStrength(this.value,'Met1')" 
+												class="form-control" />
+										</div>
+										<div class="col-sm-4">
+											<label for="usuario.senhaConfirma">Repetição da nova senha</label>
+											<input type="password" name="usuario.senhaConfirma" id="pass2Met1"
+												onblur="javascript:converteUsuario(this)" 
+												class="form-control"/>
+										</div>
+										<div class="col-sm-4">
+											<label>Força da senha</label>
+											<div id="passwordDescriptionMet1">Senha não informada</div>
+											<div id="passwordStrengthMet1" class="strength0"></div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-1">
+										<button type="submit" class="btn btn-primary">OK</button>
+									</div>
+								</div>					
+							</div>					
+							<p  class="oculto"></p>
+						</form>
+					</div>
+				</div>
+				<c:if test="${empty f:resource('siga.gi.omitir.metodo2') || f:resource('siga.gi.omitir.metodo2') != 'true'}">
+					<br/>
+					<h6 class="gt-form-head">Método 2 - Alterar a senha com auxílio de 2 pessoas</h6>			
+					<p>
+						O sistema altera a senha da pessoa conforme solicitado, porém é
+						necessário o apoio de mais 2 pessoas para completar o processo. <br />
+						As pessoas auxiliares devem estar na mesma lotação da pessoa
+						indicada para ter a senha substituída ou devem estar na lotação
+						imediatamente superior na hierarquia organizacional.
+					</p>
+					<div class="card bg-white" >
+						<div class="mx-2 mb-2" >
+							<form action="${proxima_acao}" onsubmit="return validateUsuarioForm(this,'Met2');" method="post">
+								<input type="hidden" name="usuario.metodo" value="2" />
+								<div class="row">
+									<div class="col-sm">
+										<div class="form-group">
+											<h6>Dados do primeiro auxiliar:</h6>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="usuario.auxiliar1"><fmt:message key = "usuario.matricula"/></label>
+											<input type="text"name="usuario.auxiliar1" onblur="javascript:converteUsuario(this)" class="form-control" />
+											<small id="emailHelp" class="form-text text-muted"><fmt:message key = "usuario.helpauxiliar1"/></small>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="usuario.cpf1">CPF</label>
+											<input type="text" name="usuario.cpf1" class="form-control" />
+										</div>
+									</div>				
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="usuario.senha1">Senha</label>
+											<input type="password" name="usuario.senha1" onblur="javascript:converteUsuario(this)" 
+												class="form-control" />
+										</div>
+									</div>
+								</div>
+					
+								<div class="row">
+									<div class="col-sm">
+										<div class="form-group">
+											<h6>Dados do segundo auxiliar:</h6>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="usuario.auxiliar2"><fmt:message key = "usuario.matricula"/></label>
+											<input type="text"name="usuario.auxiliar2" onblur="javascript:converteUsuario(this)" class="form-control" />
+											<small id="emailHelp" class="form-text text-muted"><fmt:message key = "usuario.helpauxiliar2"/></small>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="usuario.cpf2">CPF</label>
+											<input type="text" name="usuario.cpf2" class="form-control" />
+										</div>
+									</div>				
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="usuario.senha2">Senha</label>
+											<input type="password" name="usuario.senha2" onblur="javascript:converteUsuario(this)" 
+												class="form-control" />
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-sm">
+										<div class="form-group">
+											<h6>Alterar senha de:</h6>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="usuario.matricula"><fmt:message key = "usuario.matricula"/></label>
+											<input type="text"name="usuario.matricula" onblur="javascript:converteUsuario(this)" class="form-control" />
+											<small id="emailHelp" class="form-text text-muted"><fmt:message key = "usuario.helpalterarsenhade"/></small>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="usuario.cpf2">CPF</label>
+											<input type="text" name="usuario.cpf2" class="form-control" />
+										</div>
+									</div>				
+								</div>
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="usuario.senha2">Nova Senha</label>
+											<input type="password" name="usuario.senhaNova" id="passMet2" onkeyup="passwordStrength(this.value,'Met2')" class="form-control" />
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="senhaConfirma">Repetição da nova senha</label>
+											<input type="password" name="senhaConfirma" id="pass2Met2" onblur="javascript:converteUsuario(this)" class="form-control" />
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="senhaConfirma">Força da senha</label>
+											<div id="passwordDescriptionMet2">Senha não informada</div>
+											<div id="passwordStrengthMet2" class="strength0"></div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-1">
+										<button type="submit" class="btn btn-primary">OK</button>
+									</div>
+								</div>					
+							</form>
+						</div>				
+					</div>
+				</c:if>
+				<!-- Modal -->
+				<div class="modal fade" id="alertaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+				    	<div class="modal-content">
+				      		<div class="modal-header">
+						        <h5 class="modal-title" id="alertaModalLabel">Alerta</h5>
+						        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+						          <span aria-hidden="true">&times;</span>
+						    	</button>
+						    </div>
+					      	<div class="modal-body">
+					        	<p class="mensagem-Modal"></p>
+					      	</div>
+							<div class="modal-footer">
+							  <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
+							</div>
+				    	</div>
+				  	</div>
+				</div>				
+				<!--Fim Modal -->
+			</div>
+		</div>
+	</div>		
 </siga:pagina>

@@ -1320,13 +1320,14 @@ public class CpDao extends ModeloDao {
 			final Query qry = getSessao().getNamedQuery(
 					fAtiva ? "consultarIdentidadeCadastranteAtiva"
 							: "consultarIdentidadeCadastrante");
-			qry.setString("nmUsuario", nmUsuario);
 			if(Pattern.matches( "\\d+", nmUsuario )) {
-				qry.setString("cpf", nmUsuario);
-				qry.setString("sesbPessoa", "");
+				qry.setLong("cpf", Long.valueOf(nmUsuario));
+				qry.setString("nmUsuario", null);
+				qry.setString("sesbPessoa", null);
 			} else {
-				qry.setString("cpf", "");
+				qry.setString("nmUsuario", nmUsuario);
 				qry.setString("sesbPessoa", MatriculaUtils.getSiglaDoOrgaoDaMatricula(nmUsuario));
+				qry.setString("cpf", null);
 			}
 
 			// Cache was disabled because it would interfere with the

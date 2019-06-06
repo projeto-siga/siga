@@ -177,6 +177,9 @@ public class DpCargoController extends
 		if(idOrgaoUsu == null)
 			throw new AplicacaoException("Órgão não informada");
 		
+		if(nmCargo != null && !nmCargo.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9.]+")) 
+			throw new AplicacaoException("Nome com caracteres não permitidos");
+				
 		List<DpPessoa> listPessoa = null;
 		
 		DpCargo cargo = new DpCargo();

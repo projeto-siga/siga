@@ -18,37 +18,39 @@
 	}
 	</script>
 	
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-				
-			<h2>Cadastro de Feriados</h2>
-				<div class="gt-content-box gt-for-table" style="width: 80% !important;">
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >		
+			<div class="card-header"><h5>Cadastro de Feriados</h5></div>
+				<div class="card-body">
 					<form method="post" name="frm" action="/siga/app/feriado/salvar">
 						<input type="hidden" name="id" /> 
 						<input type="hidden" name="postback" value="1" />
-						<table class="gt-form-table">
-							<tr>
-								<td width="4%" align="right">Feriado:</td>
-								<td><input type="text" name="dscFeriado" id="dscFeriado" value="${dscFeriado}" maxlength="60" size="60" /></td>
-							</tr>
-							<tr>	
-								<td colspan="2"><input type="button" value="Salvar" onclick="javascript: validar();"
-										class="gt-btn-medium gt-btn-left" />	
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label>Feriado</label> 
+									<input type="text" name="dscFeriado" id="dscFeriado" value="${dscFeriado}" maxlength="60" size="60" class="form-control"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<input type="button" value="Salvar" onclick="javascript: validar();"
+										class="btn btn-primary" />	
 									<input  type="button" value="Excluir" onclick="javascript:if (confirm('Deseja excluir o feriado?')) location.href='/siga/app/feriado/excluir?id=${id}';"
-									       class="gt-btn-medium gt-btn-left" />											
+									       class="btn btn-primary" />											
 									<input  type="button" value="Voltar" onclick="javascript:location.href='/siga';"
-									       class="gt-btn-medium gt-btn-left" />	
-								</td>
-							</tr>
-						</table>
+									       class="btn btn-primary" />
+								</div>	
+							</div>
+						</div>
 					</form>
 				</div>
-				
-				
-			<h2 class="gt-table-head">Feriados cadastrados</h2>
-			<div class="gt-content-box gt-for-table" style="width: 80% !important;">
-				<table class="gt-table">
-					<thead>
+			</div>
+			<h5>Feriados cadastrados</h5>
+				<table class="table table-sm table-striped">
+					<thead class="thead-dark">
 						<tr>							
 							<th align="left" width="30%">Descrição</th>	
 							<th align="right" width="20%">Incluir ocorrência</th>
@@ -57,8 +59,7 @@
 							<th colspan="2" align="right" width="20%">Opções de ocorrência</th>					
 						</tr>
 					</thead>
-					
-					<tbody>
+					<tbody class="table-bordered">
 						<c:forEach var="feriado" items="${itens}">
 							<tr>							
 								<c:url var="url" value="/app/feriado/listar">
@@ -71,14 +72,13 @@
 									<a href="${url}">${feriado.dscFeriado}</a>
 								</td>
 								<td align="center" rowspan="${feriado.quantidadeOcorrencias+1}">
-									<siga:links inline="${true}" separator="${false}">
-										<siga:link title="Incluir" url="${urlI}" />
-									</siga:links>
+									<input type="button" value="Incluir"
+										class="btn btn-primary" onclick="javascript:location.href='${urlI}'"/>	
 								</td>
 								<c:choose>									
 									<c:when test="${(not empty feriado.cpOcorrenciaFeriadoSet)}">
 										<c:forEach var="ocorrencia" items="${feriado.cpOcorrenciaFeriadoSet}">	
-										<tr>											
+																					
 											<td align="left">${ocorrencia.dtRegIniDDMMYYYY}</td>
 											<td align="left">${ocorrencia.dtRegFimDDMMYYYY}</td>
 											<td align="left">
@@ -86,9 +86,8 @@
 													<c:param name="idOcorrencia">${ocorrencia.idOcorrencia}</c:param>
 													<c:param name="id">${feriado.id}</c:param>
 												</c:url>
-												<siga:links inline="${true}" separator="${false}">
-													<siga:link title="Alterar" url="${url}" />
-												</siga:links>					
+												<input type="button" value="Alterar"
+													class="btn btn-primary" onclick="javascript:location.href='${url}'"/>					
 											</td>
 											<td align="center" width="10%">									
 		 			 							<a href="javascript:if (confirm('Deseja excluir a ocorrência do feriado?')) location.href='/siga/app/feriado/excluir-ocorrencia?idOcorrencia=${ocorrencia.idOcorrencia}';">
@@ -98,7 +97,7 @@
 													onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
 												</a>															
 											</td>
-										</tr>																	
+																											
 										</c:forEach>										
 									</c:when>
 									<c:otherwise>										
@@ -113,7 +112,6 @@
 						</c:forEach>
 					</tbody>
 				</table>				
-			</div>				
-		</div>	
+
 	</div>		
 </siga:pagina>

@@ -33,9 +33,15 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 	}
 	
 	@Get("app/orgao/listar")
-	public void lista() throws Exception {
-		setItens(CpDao.getInstance().consultarCpOrgaoOrdenadoPorNome());
+	public void lista(Integer offset) throws Exception {
+		if(offset == null) {
+			offset = 0;
+		}
+		setItens(CpDao.getInstance().consultarCpOrgaoOrdenadoPorNome(offset, 15));
 		result.include("itens", getItens());
+		result.include("tamanho", dao().consultarQuantidadeOrgao());
+		setItemPagina(15);
+		result.include("currentPageNumber", calculaPaginaAtual(offset));
 	}
 	
 	public void selecionarPorNome(){
@@ -56,7 +62,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 			}
 		} else
 			throw new AplicacaoException("ID não informada");
-		this.result.redirectTo(this).lista();
+		this.result.redirectTo(this).lista(0);
 	}
 	
 	@Get("/app/orgao/editar")
@@ -112,7 +118,7 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 			dao().rollbackTransacao();
 			throw new AplicacaoException("Erro na gravação", 0, e);
 		}
-		this.result.redirectTo(this).lista();
+		this.result.redirectTo(this).lista(0);
 	}
 	
 	public CpOrgao daoOrgao(long id) {

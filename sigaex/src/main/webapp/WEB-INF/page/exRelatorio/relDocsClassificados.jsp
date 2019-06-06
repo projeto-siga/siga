@@ -17,24 +17,16 @@
 
 <c:set var="titulo_pagina" scope="request">Relatório de Classificação Documental</c:set>
 <c:set var="secaoUsuario" scope="request">"${lotaTitular.orgaoUsuario.descricaoMaiusculas}"</c:set>
-
-<tr>
-	<td width="30%">
-		Lotação:
-	</td>
-	<td>
+<div class="row">
+	<div class="col-sm-6">
+		<label>Lotação</label>
 		<siga:selecao propriedade="lotacaoDestinatario" tema="simple" modulo="siga"/>
-	</td>
-</tr>
-<tr>
-	<td>
-		Subárvore da Classificação documental (opcional):
-	</td>
-	<td>
-		<input type="text" id="codificacao" name="codificacao" onblur="javascript:aplicarMascara(this)"/>
-	</td>
-</tr>
-
+	</div>
+	<div class="col-sm-4">
+		<label>Subárvore da Classificação documental (opcional)</label>
+		<input type="text" id="codificacao" name="codificacao" onblur="javascript:aplicarMascara(this)" class="form-control"/>
+	</div>
+</div>
 <input type="hidden" name="orgaoUsuario" value="${lotaTitular.orgaoUsuario.idOrgaoUsu}" />
 
 

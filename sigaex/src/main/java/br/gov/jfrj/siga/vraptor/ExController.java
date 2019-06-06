@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -54,7 +55,6 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.util.ExProcessadorModelo;
 
 public class ExController extends SigaController {
-
 	HttpServletResponse response;
 	ServletContext context;
 
@@ -224,7 +224,7 @@ public class ExController extends SigaController {
 
 	protected Map<Integer, String> getListaTipoResp() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrícula");
+		map.put(1, SigaMessages.getMessage("usuario.matricula"));
 		map.put(2, "Órgão Integrado");
 		return map;
 	}

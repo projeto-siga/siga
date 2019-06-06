@@ -1,38 +1,60 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 
-<siga:pagina titulo="PÃ¡gina de Login" desabilitarbusca="sim"
+<siga:pagina titulo="Página de Login" desabilitarbusca="sim"
 	desabilitarmenu="sim"
 	incluirJs="/siga/javascript/jquery.placeholder.js">
 
 	<script type="text/javascript">
 		/*  converte para maiï¿ºscula a sigla do estado  */
 		function converteUsuario(nomeusuario) {
-			re = /^[a-zA-Z]{2}\d{3,6}$/;
-			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
 			tmp = nomeusuario.value;
-			if (tmp.match(re) || tmp.match(ret2)) {
-				nomeusuario.value = tmp.toUpperCase();
-			}
+			nomeusuario.value = tmp.toUpperCase();
 		}
 	</script>
+	
+	
+	<c:choose>
+	<c:when test="${siga_cliente == 'GOVSP'}">
+		<c:set var="login_box_class" value="box_login" />
+		<c:set var="login_box_logo" value="/siga/imagens/logo-sem-papel-cor.png" />
+		<c:set var="login_box_logo_size" value="150" />
+		<c:set var="login_box_text" value="" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="login_box_class" value="" />
+		<c:set var="login_box_logo" value="" />
+		<c:set var="login_box_logo_size" value="" />
+		<c:set var="login_box_text" value="<fmt:message key='usuario.login.formulario' />" />
+	</c:otherwise>
+</c:choose>
 
-	<div class="container content pt-5">
+	<div class="container content pt-2">
 		<div class="row justify-content-center">
-			<div class="col col-sm-12 col-md-6">
-				<div class="jumbotron d-block mx-auto">
-					<h2 class="text-center pb-3">Autentica&ccedil;&atilde;o</h2>
+			<div class="col col-sm-12 col-md-5">
+				<div class="jumbotron d-block mx-auto ${login_box_class}">
+
+					<div class="text-center">
+						<img alt="" src="${login_box_logo}" width="${login_box_logo_size}" align="center"/>
+					</div>
+					
+					<h2 class="text-center pb-1 pt-2">${login_box_text}</h2>
+
 					<c:if test="${not empty mensagem}">
-						<div class="login-invalido">
-							<div class="login-invalido-titulo">
-								<p class="alert alert-danger">${mensagem}</p>
+						<div class="login-invalido ">
+							<div class="login-invalido-titulo ${hide_only_GOVSP}">
+								<p class="alert alert-danger ">${mensagem}</p>
 							</div>
 
-							<div class="login-invalido-descricao">
-								${f:resource('siga.gi.texto.login')}
+							<div class="login-invalido-descricao ">	
+								<div class="${hide_only_GOVSP}">
+									<p class="alert alert-danger">${f:resource('siga.gi.texto.login')}</p>
+								</div>														
+								<p class="alert alert-danger ${hide_only_TRF2}">${mensagem}</p>
 							</div>
 						</div>
 					</c:if>
@@ -41,25 +63,39 @@
 					<form role="form" method="post"
 						enctype="application/x-www-form-urlencoded">
 						<div class="form-group">
-							<label for="username">Usu&aacute;rio</label> <input id="username"
-								type="text" name="username" placeholder="XX99999"
-								onblur="javascript:converteUsuario(this)" autocorrect="off"
-								autocapitalize="none" class="form-control"">
+							<label for="username"><fmt:message key="usuario.matricula"/></label> 
+					
+						    <div class="input-group">
+						      <div class="input-group-prepend">
+						        <span class="input-group-text" id="icon-user"><i class="fas fa-user"></i></span>
+						      </div>
+						      <input id="username" type="text" name="username" placeholder="<fmt:message key="usuario.digite.usuario"/>" onblur="javascript:converteUsuario(this)" autocorrect="off"
+								autocapitalize="none" class="form-control" aria-label="Usuário" aria-describedby="icon-user">
+						    </div>
+	
 						</div>
 						<div class="form-group">
-							<label for="password">Senha</label> <input type="password"
-								name="password" id="password" placeholder="Senha"
-								class="form-control">
+							<label for="password">Senha</label>
+							<div class="input-group">
+						      <div class="input-group-prepend">
+						        <span class="input-group-text" id="icon-pass"><i class="fas fa-lock"></i></span>
+						      </div>
+						      <input type="password" name="password" id="password" placeholder="Senha"
+								class="form-control" aria-label="Usuário" aria-describedby="icon-pass">
+						    </div>
+						
 						</div>
 						<div class="row pt-3">
 							<div class="col">
 								<div class="text-center">
-									<input type="submit" class="btn btn-primary" value="Enviar"></input>
+									<button type="submit" class="btn btn-lg btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> Entrar</button>
+									
+									<hr class="my-4">
 									<div class="mt-4">
 										<a href="/siga/public/app/usuario/incluir_usuario"
-											class="btn btn-secondary">Sou um novo usu&aacute;rio</a> <a
+											class="btn btn-secondary btn-block mb-2"><fmt:message key = "usuario.sounovo"/></a> <a
 											href="/siga/public/app/usuario/esqueci_senha"
-											class="btn btn-secondary">Esqueci minha senha</a>
+											class="btn btn-secondary btn-block">Esqueci minha senha</a>
 									</div>
 								</div>
 							</div>
@@ -70,7 +106,7 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-		$('input, textarea').placeholder();
+		//$('input, textarea').placeholder();
 		$("#username").focus();
 
 		function getCookie(cname) {

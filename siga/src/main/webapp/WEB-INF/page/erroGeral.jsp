@@ -41,58 +41,53 @@
 	This is a useless buffer to fill the page to 513 bytes to avoid display of Friendly Error Pages in Internet Explorer
 	-->
 
-		<div class="gt-bd clearfix">
-			<div class="gt-content clearfix">
-
-				<div id="caption" class="gt-error-page-hd">
-					<h2>Não Foi Possível Completar a Operação (${pageContext.request.serverName})</h2>
+		<div class="container-fluid">
+			<div class="card bg-light mb-3" >
+				<div class="card-header">
+					<h5>
+						Não Foi Possível Completar a Operação (${pageContext.request.serverName})
+					</h5>
 				</div>
 
-				<div class="gt-content-box">
-					<table width="100%">
-						<tr>
-							<td align="center" valign="middle">
-								<table class="form" width="50%">
+				<div class="card-body">
+					<div class="row">
+						<div class="col">
+							<div class="form-group">
 									<c:catch>
 										<c:if test="${not empty exceptionGeral}">
 											<c:if test="${not empty exceptionGeral.message}">
-												<tr>
-													<td style="text-align: center; padding-top: 10px;"><h3>${exceptionGeral.message}</h3>
-													</td>
-												</tr>
+												<h3>${exceptionGeral.message}</h3>
 											</c:if>
 											<c:if test="${not empty exceptionGeral.cause}">
-												<tr>
-													<td style="text-align: center;"><h4>${exceptionGeral.cause.message}</h4></td>
-												</tr>
+												<h4>${exceptionGeral.cause.message}</h4>
 											</c:if>
 										</c:if>
 									</c:catch>
-								</table>
-							</td>
-						</tr>
-						<tr>
-							<td style="text-align: center; padding:0;">
-								<div style="display: none; padding: 8pt;" align="left" id="stack">
-									<pre style="font-size: 8pt;">${exceptionStackGeral}</pre>
 								</div>
-							</td>
-						</tr>
-					</table>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col">
+								<div class="form-group">
+									<div style="display: none; padding: 8pt;" align="left" id="stack">
+										<pre style="font-size: 8pt;">${exceptionStackGeral}</pre>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col">
+								<div class="form-group">		
+									<input type="button" value="Voltar" class="btn btn-primary"  onclick="javascript:history.back();" />
+									<c:if test="${siga_cliente != 'GOVSP'}">
+										<input type="button" id="show_stack" value="Mais detalhes" class="btn btn-primary" onclick="javascript: document.getElementById('caption').setAttribute('class',''); document.getElementById('stack').style.display=''; document.getElementById('show_stack').style.display='none';" />
+									</c:if>
+								</div>
+							</div>
+						</div>
 				</div>
-
-				<div style="padding-top:10px;float: right;">
-					<table>
-						<tr>
-							<td><input type="button" value="Voltar" class="gt-btn-medium gt-btn-left"  onclick="javascript:history.back();" /></td>
-							<td><input type="button" id="show_stack" value="Mais detalhes" class="gt-btn-large gt-btn-right" onclick="javascript: document.getElementById('caption').setAttribute('class',''); document.getElementById('stack').style.display=''; document.getElementById('show_stack').style.display='none';" /></td>
-						</tr>
-					</table>
-				</div>
-				
 			</div>
 		</div>
-
 	</siga:pagina>
 </c:catch>
 

@@ -22,6 +22,9 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,10 +41,15 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -50,6 +58,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
+import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -69,7 +78,7 @@ import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
 public class ExMobilController extends
 		ExSelecionavelController<ExMobil, ExMobilDaoFiltro> {
 	private static final String SIGA_DOC_FE_LD = "FE:Ferramentas;LD:Listar Documentos";
-
+	
 	public ExMobilController(HttpServletRequest request, Result result,
 			SigaObjects so, EntityManager em) {
 		super(request, result, ExDao.getInstance(), so, em);
@@ -233,6 +242,122 @@ public class ExMobilController extends
 			l = l2;
 		}
 		return l;
+	}
+	
+	@Post
+	@Path("app/expediente/doc/exportarCsv")
+	public Download exportarCsv(final String popup, final String primeiraVez, final String propriedade, final Integer postback, final int apenasRefresh,
+			final Long ultMovIdEstadoDoc, final int ordem, final int visualizacao, final Integer ultMovTipoResp, final DpPessoaSelecao ultMovRespSel,
+			final DpLotacaoSelecao ultMovLotaRespSel, final Long orgaoUsu, final Long idTpDoc, final String dtDocString, final String dtDocFinalString,
+			final Long idTipoFormaDoc, final Long idFormaDoc, final Long idMod, final String anoEmissaoString, final String numExpediente,
+			final String numExtDoc, final CpOrgaoSelecao cpOrgaoSel, final String numAntigoDoc, final DpPessoaSelecao subscritorSel, String nmSubscritorExt,
+			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
+			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
+			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
+			final Long ultMovEstadoDoc, final Integer paramoffset) throws UnsupportedEncodingException {
+			
+		getP().setOffset(paramoffset);
+		this.setPostback(postback);
+
+		final ExMobilBuilder builder = ExMobilBuilder.novaInstancia();
+
+		builder.setPostback(postback).setUltMovTipoResp(ultMovTipoResp)
+				.setUltMovRespSel(ultMovRespSel)
+				.setUltMovLotaRespSel(ultMovLotaRespSel).setOrgaoUsu(orgaoUsu)
+				.setIdTpDoc(idTpDoc).setCpOrgaoSel(cpOrgaoSel)
+				.setSubscritorSel(subscritorSel)
+				.setTipoCadastrante(tipoCadastrante)
+				.setCadastranteSel(cadastranteSel)
+				.setLotaCadastranteSel(lotaCadastranteSel)
+				.setTipoDestinatario(tipoDestinatario)
+				.setDestinatarioSel(destinatarioSel)
+				.setLotacaoDestinatarioSel(lotacaoDestinatarioSel)
+				.setOrgaoExternoDestinatarioSel(orgaoExternoDestinatarioSel)
+				.setClassificacaoSel(classificacaoSel).setOffset(paramoffset);
+
+		builder.processar(getLotaTitular());
+
+		final ExMobilDaoFiltro flt = createDaoFiltro();
+		long tempoIni = System.currentTimeMillis();
+		setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,
+				getTitular(), getLotaTitular()));
+		
+		List lista = dao().consultarPorFiltroOtimizado(flt,
+				builder.getOffset(), getTamanho(), getTitular(),
+				getLotaTitular());
+
+		InputStream inputStream = null;
+		StringBuffer texto = new StringBuffer();
+		texto.append(";Responsável pela Assinatura;;;Responsável pela situação atual" + System.getProperty("line.separator"));
+		texto.append("Número;Unidade;Usuário;Data;Unidade;Usuário;Data;Situação;Documento;Descrição" + System.getProperty("line.separator"));
+		
+		
+		ExDocumento e = new ExDocumento();
+		ExMobil m = new ExMobil();
+		ExMarca ma = new ExMarca();
+		String descricao = "";
+		
+		for (Object object : lista) {
+			e = (ExDocumento)(((Object[])object)[0]);
+			m = (ExMobil)(((Object[])object)[1]);
+			ma = (ExMarca)(((Object[])object)[2]);
+			
+					
+			texto.append(m.getCodigo()+";");
+			if(e.getLotaSubscritor() != null && e.getLotaSubscritor().getSigla() != null) {
+				texto.append(e.getLotaSubscritor().getSigla());
+			}
+			texto.append(";");
+			
+			if(e.getSubscritor() != null && e.getSubscritor().getIniciais() != null) {
+				texto.append(e.getSubscritor().getIniciais());
+			}
+			texto.append(";");
+			
+			if(e.getDtDocDDMMYY() != null) {
+				texto.append(e.getDtDocDDMMYY());
+			}
+			texto.append(";");
+			
+			if(ma.getDpLotacaoIni() != null && ma.getDpLotacaoIni().getLotacaoAtual() != null && ma.getDpLotacaoIni().getLotacaoAtual().getSigla() != null) {
+				texto.append(ma.getDpLotacaoIni().getLotacaoAtual().getSigla());
+			}
+			texto.append(";");
+			
+			if(ma.getDpPessoaIni() != null && ma.getDpPessoaIni().getIniciais() != null) {
+				texto.append(ma.getDpPessoaIni().getIniciais());
+			}
+			texto.append(";");
+			
+			if(ma.getDtIniMarcaDDMMYYYY() != null) {
+				texto.append(ma.getDtIniMarcaDDMMYYYY());
+			}
+			texto.append(";");
+			
+			if(ma.getCpMarcador() != null && ma.getCpMarcador().getDescrMarcador() != null) {
+				texto.append(ma.getCpMarcador().getDescrMarcador());
+			}
+			texto.append(";");
+			
+			if(e.getNmMod() != null) {
+				texto.append(e.getNmMod());
+			}
+			texto.append(";");
+			
+			if(e.getTitular() != null && e.getTitular().getLotacao() != null) {
+				descricao = Ex.getInstance().getBL().descricaoSePuderAcessar(e, e.getTitular(), e.getTitular().getLotacao());
+				
+				if(descricao != null) {
+					texto.append(descricao.replaceAll("\n", "").replaceAll("\t", "").replaceAll("\r",""));
+				}
+					
+			}
+			texto.append(";");
+			texto.append(System.getProperty("line.separator"));
+		}
+		inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));
+		
+		return new InputStreamDownload(inputStream, "text/csv", "documentos.csv");	
 	}
 
 	@Get("app/expediente/doc/listar")
@@ -527,7 +652,7 @@ public class ExMobilController extends
 
 	private Map<Integer, String> getListaTipoDest() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrícula");
+		map.put(1, SigaMessages.getMessage("usuario.matricula"));
 		map.put(2, "Órgão Integrado");
 		map.put(3, "Externo");
 		map.put(4, "Campo Livre");
@@ -676,4 +801,5 @@ public class ExMobilController extends
 		List<ExNivelAcesso> listaNivelAcesso = ExDao.getInstance().listarOrdemNivel();
 		result.include("listaNivelAcesso", listaNivelAcesso);
 	}
+
 }

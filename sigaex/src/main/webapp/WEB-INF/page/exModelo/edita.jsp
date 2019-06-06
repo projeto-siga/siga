@@ -47,79 +47,104 @@
 	<script src="/siga/codemirror/mode/htmlmixed/htmlmixed.js"></script>
 	<script type="text/javascript" src="/siga/javascript/jquery.blockUI.js"></script>
 
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
 
-			<h2>Edição de Modelo</h2>
+			<div class="card-header"><h5>Edição de Modelo</h5></div>
 
-			<div class="gt-content-box gt-for-table">
+			<div class="card-body">
 
 				<form name="frm" id="frm" action="gravar" method="POST">
 					<input type="hidden" name="postback" value="1" /> <input
 						type="hidden" name="id" value="${id}" id="modelo_gravar_id" />
 
-					<table class="gt-form-table">
-						<tr class="header">
-							<td colspan="2">Dados do Modelo</td>
-						</tr>
-						<tr>
-							<td width="20%">Nome:</td>
-							<td width="80%"><input type="text" name="nome"
-								value="${nome}" size="80" /></td>
-						</tr>
-						<tr>
-							<td>Descrição:</td>
-							<td><input type="text" name="descricao" value="${descricao}"
-								size="80" /></td>
-						</tr>
-						<tr>
-							<td>Classificação:</td>
-							<td><siga:selecao tema="simple" propriedade="classificacao"
-									modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar" /></td>
-						</tr>
-
-						<tr>
-							<td>Classificação para criação de vias:</td>
-							<td><siga:selecao tema="simple" modulo="sigaex"
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Nome</label>
+								<input type="text" name="nome"	value="${nome}" size="80" class="form-control"/>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Descrição</label>
+								<input type="text" name="descricao" value="${descricao}" size="80" class="form-control"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="form-group">
+								<label>Classificação</label>
+								<siga:selecao tema="simple" propriedade="classificacao"
+									modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="form-group">
+								<label>Classificação para criação de vias</label>		
+								<siga:selecao tema="simple" modulo="sigaex"
 									propriedade="classificacaoCriacaoVias" urlAcao="buscar"
-									urlSelecionar="selecionar" /></td>
-						</tr>
-						<tr>
-							<td>Espécie:</td>
-							<td><select name="forma" value="${forma}">
+									urlSelecionar="selecionar"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Espécie</label>
+								<select name="forma" value="${forma}" class="custom-select">
 									<c:forEach var="item" items="${listaForma}">
 										<option value="${item.idFormaDoc}"
 											${item.idFormaDoc == forma ? 'selected' : ''}>${item.descrFormaDoc}</option>
 									</c:forEach>
-							</select></td>
-						</tr>
-
-						<tr>
-							<td>Nivel de acesso:</td>
-							<td><select name="nivel" value="${nivel}">
+								</select>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Nível de acesso</label>
+								<select name="nivel" value="${nivel}" class="custom-select">
 									<option value="0">[Indeterminado]</option>
 									<c:forEach var="item" items="${listaNivelAcesso}">
 										<option value="${item.idNivelAcesso}"
 											${item.idNivelAcesso == nivel ? 'selected' : ''}>${item.nmNivelAcesso}</option>
 									</c:forEach>
-							</select></td>
-						</tr>
-						<tr>
-							<td>Diretório:</td>
-							<td><input type="text" name="diretorio" value="${diretorio}"
-								size="80" /></td>
-						</tr>
-						<tr>
-							<td>Identificador para sincronismo:</td>
-							<td><input readonly type="text" name="uuid" value="${uuid}"
-								size="80" /></td>
-						</tr>
-						<tr>
-							<td>Tipo do Modelo:</td>
-							<td><siga:escolha id="tipoModelo" var="tipoModelo">
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Diretório</label>
+								<input type="text" name="diretorio" value="${diretorio}" size="80" class="form-control"/>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Identificador para sincronismo</label>
+								<input readonly type="text" name="uuid" value="${uuid}" size="80" class="form-control"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-2">
+							<div class="form-group">
+								<label>Tipo do Modelo</label>
+								<siga:escolha id="tipoModelo" var="tipoModelo">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="form-group">
+								
 									<siga:opcao id="template/freemarker" texto="Freemarker">
 										<textarea id="conteudo" style="width: 100%;" cols="1" rows="1"
-											name="conteudo"><c:out value="${conteudo}"
+											name="conteudo" class="form-control"><c:out value="${conteudo}"
 												default="" /></textarea>
 										<p align="right">Ctrl-I: Indentar, Crtl-S: Salvar</p>
 									</siga:opcao>
@@ -127,20 +152,20 @@
 									&nbsp;&nbsp;&nbsp;&nbsp;Nome do arquivo:
 									<input type="text" name="arquivo" size="80" value="${arquivo}" />
 									</siga:opcao>
-								</siga:escolha></td>
-						</tr>
-						<tr class="button">
-							<td colspan="2"><input type="submit" value="Ok"
-								class="gt-btn-medium gt-btn-left" /> <input type="submit"
-								name="submit" value="Aplicar" class="gt-btn-medium gt-btn-left" />
-								<input type="button" value="Desativar"
-								class="gt-btn-medium gt-btn-left"
-								onclick="location.href='desativar?id=${id}'" /> <input
-								type="button" value="Cancela"
-								onclick="javascript:history.back();"
-								class="gt-btn-medium gt-btn-left" /></td>
-						</tr>
-					</table>
+								</siga:escolha>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="form-group">
+								<input type="submit" value="Ok" class="btn btn-primary" />
+								<input type="submit" name="submit" value="Aplicar" class="btn btn-primary" />
+								<input type="button" value="Desativar" class="btn btn-primary" onclick="location.href='desativar?id=${id}'" />
+								<input type="button" value="Cancelar" onclick="javascript:history.back();" class="btn btn-primary" />
+							</div>
+						</div>
+					</div>
 				</form>
 			</div>
 		</div>
@@ -148,63 +173,49 @@
 			<div style="clear: both; margin-bottom: 20px;">
 				<div id="tableCadastradasEletronico"></div>
 				<div>
-					<a
-						href="/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=4&nmTipoRetorno=modelo&campoFixo=True"
-						style="margin-top: 10px;" class="gt-btn-medium">Novo</a>
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=4&nmTipoRetorno=modelo&campoFixo=True'" />
 				</div>
 			</div>
 
 			<div style="clear: both; margin-bottom: 20px;">
 				<div id="tableCadastradasCriar"></div>
 				<div>
-					<a
-						href="/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=2&nmTipoRetorno=modelo&campoFixo=True"
-						style="margin-top: 10px;" class="gt-btn-medium">Novo</a>
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=2&nmTipoRetorno=modelo&campoFixo=True'" />
 				</div>
 			</div>
 
 			<div style="clear: both; margin-bottom: 20px;">
 				<div id="tableCadastradasAssinar"></div>
 				<div>
-					<a
-						href="/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=1&idTpMov=11&nmTipoRetorno=modelo&campoFixo=True"
-						style="margin-top: 10px;" class="gt-btn-medium">Novo</a>
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=1&idTpMov=11&nmTipoRetorno=modelo&campoFixo=True'" />
 				</div>
 			</div>
 
 			<div style="clear: both; margin-bottom: 20px;">
 				<div id="tableCadastradasAssinarComSenha"></div>
 				<div>
-					<a
-						href="/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=1&idTpMov=58&nmTipoRetorno=modelo&campoFixo=True"
-						style="margin-top: 10px;" class="gt-btn-medium">Novo</a>
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=1&idTpMov=58&nmTipoRetorno=modelo&campoFixo=True'" />
 				</div>
 			</div>
 
 			<div style="clear: both; margin-bottom: 20px;">
 				<div id="tableCadastradasAcessar"></div>
 				<div>
-					<a
-						href="/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=6&nmTipoRetorno=modelo"
-						style="margin-top: 10px;" class="gt-btn-medium">Novo</a>
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=6&nmTipoRetorno=modelo'" />
 				</div>
 			</div>
 
 			<div style="clear: both; margin-bottom: 20px;">
 				<div id="tableCadastradasNivelAcessoMaximo"></div>
 				<div>
-					<a
-						href="/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=18&nmTipoRetorno=modelo&campoFixo=True"
-						style="margin-top: 10px;" class="gt-btn-medium">Novo</a>
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=18&nmTipoRetorno=modelo&campoFixo=True'" />
 				</div>
 			</div>
 
 			<div style="clear: both; margin-bottom: 20px;">
 				<div id="tableCadastradasNivelAcessoMinimo"></div>
 				<div>
-					<a
-						href="/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=19&nmTipoRetorno=modelo&campoFixo=True"
-						style="margin-top: 10px;" class="gt-btn-medium">Novo</a>
+					<input type="button" value="Novo" class="btn btn-primary" onclick="location.href='/sigaex/app/expediente/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=19&nmTipoRetorno=modelo&campoFixo=True'" />
 				</div>
 			</div>
 	</div>

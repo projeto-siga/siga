@@ -38,6 +38,7 @@
 					<th align="center">Class. Documental para Vias</th>
 				</tr>
 			</thead>
+			<tbody class="table-bordered">
 			<c:set var="evenorodd" value="" />
 			<c:set var="tamanho" value="0" />
 			<c:forEach var="modelo" items="${itens}">
@@ -64,6 +65,7 @@
 				</c:choose>
 				<c:set var="tamanho" value="${tamanho + 1 }" />
 			</c:forEach>
+			</tbody>
 		</table>
 		<form>
 			<div class="gt-table-buttons">

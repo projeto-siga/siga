@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
+<siga:pagina titulo="Listar Cargos">
 <script type="text/javascript" language="Javascript1.1">
 function sbmt(offset) {
 	if (offset==null) {
@@ -12,83 +13,81 @@ function sbmt(offset) {
 	frm.submit();
 }
 </script>
-<form name="frm" action="listar" class="form" method="POST>
-<siga:pagina titulo="Listar Cargos">
-	<input type="hidden" name="offset" value="0" />
-		<div class="gt-bd clearfix">
-			<div class="gt-content clearfix">
-				<h2 class="gt-table-head">Dados do Cargo</h2>
-				<div class="gt-content-box gt-for-table">
-					<table border="0" class="gt-table">
-						<tr>
-							<td><label>Órgão:</label></td>
-							<td><select name="idOrgaoUsu" value="${idOrgaoUsu}">
-									<c:forEach items="${orgaosUsu}" var="item">
-										<option value="${item.idOrgaoUsu}"
-											${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
-											${item.nmOrgaoUsu}</option>
-									</c:forEach>
-							</select></td>
-						</tr>
-						<tr>
-							<td><label>Nome:</label></td>
-							<td><input type="text" id="nome" name="nome" value="${nome}" maxlength="100" size="30"/></td>
-						
-					</table>
+<form name="frm" action="listar" class="form" method="POST">
+<input type="hidden" name="offset" value="0" />	
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >		
+			<div class="card-header"><h5>Cadastro de Cargo</h5></div>
+			<div class="card-body">
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label>Órgão</label>
+							<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control">
+								<c:forEach items="${orgaosUsu}" var="item">
+									<option value="${item.idOrgaoUsu}"
+										${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
+										${item.nmOrgaoUsu}</option>
+								</c:forEach>
+							</select>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label>Nome</label>
+							<input type="text" id="nome" name="nome" value="${nome}" maxlength="100" size="30" class="form-control"/>
+						</div>
+					</div>
 				</div>
-				<div class="gt-table-buttons">
-					<input type="submit" value="Pesquisar" class="gt-btn-medium gt-btn-left"/>
+				<div class="row">
+					<div class="col-sm">
+						<div class="form-group">
+							<input value="Pesquisar" class="btn btn-primary" onclick="javascript: sbmt(0);"/>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-	
-	
-	
-	<!-- main content -->
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">		
-			<h2 class="gt-table-head">Cargos cadastrados</h2>
-			<div class="gt-content-box gt-for-table">
-				<table border="0" class="gt-table">
-					<thead>
-						<tr>
-							<th align="left">Nome</th>
-							<th colspan="2" align="center">Op&ccedil;&otilde;es</th>					
-						</tr>
-					</thead>
-					
-					<tbody>
-						<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}"
-							itens="${itens}" var="cargo">
-							<tr>
-								<td align="left">${cargo.descricao}</td>
-								<td align="left">
-									<c:url var="url" value="/app/cargo/editar">
-										<c:param name="id" value="${cargo.id}"></c:param>
-									</c:url>
-									<siga:link title="Alterar" url="${url}" />					
-								</td>
-							<%--	<td align="left">									
-	 			 					<a href="javascript:if (confirm('Deseja excluir o orgão?')) location.href='/siga/app/orgao/excluir?id=${orgao.idOrgao}';">
-										<img style="display: inline;"
-										src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir orgão"							
-										onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
-										onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
-									</a>															
-								</td>
-							 --%>							
-							</tr>
-						</siga:paginador>
-					</tbody>
-				</table>				
-			</div>	
-			<div class="gt-table-buttons">
-					<c:url var="url" value="/app/cargo/editar"></c:url>
-					<input type="button" value="Incluir"
-						onclick="javascript:window.location.href='${url}'"
-						class="gt-btn-medium gt-btn-left">
-				</div>				
-		</div>			
-	</div>
-</siga:pagina>
+		<h5>Cargos cadastrados</h5>
+		
+		<table border="0" class="table table-sm table-striped">
+			<thead class="thead-dark">
+				<tr>
+					<th align="left">Nome</th>
+					<th colspan="2" align="center">Op&ccedil;&otilde;es</th>					
+				</tr>
+			</thead>
+			<tbody class="table-bordered">
+				<siga:paginador maxItens="15" maxIndices="10" totalItens="${tamanho}"
+					itens="${itens}" var="cargo">
+					<tr>
+						<td align="left">${cargo.descricao}</td>
+						<td align="left">
+							<c:url var="url" value="/app/cargo/editar">
+								<c:param name="id" value="${cargo.id}"></c:param>
+							</c:url>
+							<input type="button" value="Alterar"
+											class="btn btn-primary" onclick="javascript:location.href='${url}'"/>				
+						</td>
+					<%--	<td align="left">									
+			 					<a href="javascript:if (confirm('Deseja excluir o orgão?')) location.href='/siga/app/orgao/excluir?id=${orgao.idOrgao}';">
+								<img style="display: inline;"
+								src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir orgão"							
+								onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';" 
+								onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';"/>
+							</a>															
+						</td>
+					 --%>							
+					</tr>
+				</siga:paginador>
+			</tbody>
+		</table>	
+		<div class="form-group row">
+			<div class="col-sm">
+				<c:url var="url" value="/app/cargo/editar"></c:url>
+				<input type="button" value="Incluir" onclick="javascript:window.location.href='${url}'" class="btn btn-primary">
+			</div>				
+		</div>
+	</div>			
 </form>
+</siga:pagina>

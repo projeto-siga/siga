@@ -84,14 +84,13 @@ $(function(){
 });
 
 </script>
-
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-		
-			<h2>Tramitar - ${mob.siglaEDescricaoCompleta}</h2>
-			
-			<div class="gt-content-box gt-for-table">
-			
+	<!-- main content -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header">
+				<h5>Tramitar - ${mob.siglaEDescricaoCompleta}</h5>
+			</div>
+			<div class="card-body">
 			<form name="frm" id="frm" action="transferir_gravar" method="post">
 				<input type="hidden" name="id" value="${id}" />
 				<input type="hidden" name="postback" value="1" />
@@ -99,72 +98,92 @@ $(function(){
 				<input type="hidden" name="sigla" value="${sigla}" id="transferir_gravar_sigla" />
 				<input type="hidden" name="mobilPaiSel.sigla" value="" id="transferir_gravar_pai" />
 				<input type="hidden" name="despachando" value="" id="transferir_gravar_despachando" />
-				<table class="gt-form-table">
-					<c:if test="${not doc.eletronico}">
-						<tr>
-							<td><span style="color: red"><b>Atenção:</b></span></td>
-							<td><span style="color: red"><b>Este documento
-							não é digital, portanto, além de transferi-lo pelo sistema,<br />
-							é necessário imprimi-lo e enviá-lo por papel.</b></span></td>
-						</tr>
-					</c:if>
-					<tr>
-						<td>Destinatário:</td>
-						<td>
-						<select name="tipoResponsavel" onchange="javascript:sbmt();" >
-							<c:forEach items="${listaTipoResp}" var="item">
-								<option value="${item.key}" ${item.key == tipoResponsavel ? 'selected' : ''}>
-									${item.value}
-								</option>  
-							</c:forEach>
-						</select> 
-						<c:choose>
-							<c:when test="${tipoResponsavel == 1}">
-								<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"/>
-							</c:when>
-							<c:when test="${tipoResponsavel == 2}">
-								<siga:selecao propriedade="responsavel" tema="simple" modulo="siga"/>
-							</c:when>
-							<c:when test="${tipoResponsavel == 3}">
-								<siga:selecao propriedade="cpOrgao" tema="simple" modulo="siga"/>
-							</c:when>
-						</c:choose></td>
-					</tr>
+
+				<c:if test="${not doc.eletronico}">
+				<div class="row">
+					<div class="col-sm">
+						<div class="form-group">
+							<span style="color: red"><b>Atenção:</b></span>
+							<span style="color: red"><b>Este documento não é digital, portanto, além de transferi-lo pelo sistema, é necessário imprimi-lo e enviá-lo por papel.</b></span>
+						</div>
+					</div>
+				</div>
+				</c:if>
+				<c:if test="${tipoResponsavel == 3}">
+				<div class="row">
+					<div class="col-sm">
+						<div class="form-group">
+							<span style="color: red">Atenção: O trâmite para órgão externo não acarreta o envio digital do documento. Portanto, além de fazer esta operação, será necessário imprimir o documento e remetê-lo fisicamente ou realizar o trâmite por algum outro sistema em uso pelo órgão destinatário.</span>
+						</div>
+					</div>
+				</div>
+				</c:if>
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="form-group">
+							<label>Destinatário</label> 
+							<select name="tipoResponsavel" onchange="javascript:sbmt();" class="form-control" >
+								<c:forEach items="${listaTipoResp}" var="item">
+									<option value="${item.key}" ${item.key == tipoResponsavel ? 'selected' : ''}>
+										${item.value}
+									</option>  
+								</c:forEach>
+							</select> 
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label>&nbsp;&nbsp;&nbsp;</label> 
+							<c:choose>
+								<c:when test="${tipoResponsavel == 1}">
+									<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"/>
+								</c:when>
+								<c:when test="${tipoResponsavel == 2}">
+									<siga:selecao propriedade="responsavel" tema="simple" modulo="siga"/>
+								</c:when>
+								<c:when test="${tipoResponsavel == 3}">
+									<siga:selecao propriedade="cpOrgao" tema="simple" modulo="siga"/>
+								</c:when>
+							</c:choose></td>
+						</div>
+					</div>
+				</div>				
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="form-group">
+							<label>Data da devolução</label> 
+							<input type="text" name="dtDevolucaoMovString"onblur="javascript:verifica_data(this,0);" value="${dtDevolucaoMovString}" class="form-control"/>					 
+							<small class="form-text text-muted">Atenção: somente preencher a data de devolução se a intenção for, realmente, que o documento seja devolvido até esta data.</small>
+						</div>
+					</div>
+					<div class="col-sm-3">
+						<div class="form-group">
+							<div class="form-check form-check-inline mt-4">
+							  <input class="form-check-input" type="checkbox" name="protocolo" id="protocolo" value="mostrar" <c:if test="${protocolo}">checked</c:if>/>
+							  <label class="form-check-label" for="protocolo">Mostrar protocolo ao concluir o trâmite</label>
+							</div>
+						</div>
+					</div>
 					<c:if test="${tipoResponsavel == 3}">
-					<tr>
-						<td></td>
-						<td style="color: red; font-size: 11px">Atenção: O trâmite para órgão externo não acarreta o envio digital do documento. Portanto, além de fazer esta operação, será necessário imprimir o documento e remetê-lo fisicamente ou realizar o trâmite por algum outro sistema em uso pelo órgão destinatário.</td>
-					</tr>
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label>Observação</label> 
+							<input type="text" name="dtDevolucaoMovString"onblur="javascript:verifica_data(this,0);" value="${dtDevolucaoMovString}" class="form-control"/>					 
+							<small class="form-text text-muted">Atenção: somente preencher a data de devolução se a intenção for, realmente, que o documento seja devolvido até esta data.</small>
+						</div>
+					</div>
 					</c:if>
-					<tr>
-					<td>Data da devolução:</td>
-						<td>
-							<input type="text" name="dtDevolucaoMovString"onblur="javascript:verifica_data(this,0);" 
-								value="${dtDevolucaoMovString}"/><br /><span style="color: red"> <b>Atenção: somente preencher a data de devolução se a intenção for, realmente, que o documento seja devolvido até esta data.</b></span>					 
-							
-						</td>
-					</tr>					
-					<tr>
-						<td colspan=2>
-							<input type="checkbox" name="protocolo" value="mostrar" <c:if test="${protocolo}">checked</c:if>/>
-							&nbsp;Mostrar protocolo ao concluir o trâmite
-						</td>
-					</tr>
-					<c:if test="${tipoResponsavel == 3}">
-						<tr>
-							<td>Observação</td>
-							<td>
-								<input type="text" size="30" name="obsOrgao" value="${obsOrgao}" />
-							</td>
-						</tr>
-					</c:if>
-					<tr>
-						<td colspan="2">
-							<a accesskey="o" id="button_ok" onclick="javascript:submeter();" class="gt-btn-medium gt-btn-left once"><u>O</u>k</a>
-							<input type="button" value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left"/>
-						</td>
-					</tr>
-				</table>
+				</div>
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="form-group">
+							<a accesskey="o" id="button_ok" onclick="javascript:submeter();" class="btn btn-primary"><u>O</u>k</a>
+							<button type="button"  onclick="javascript:history.back();" class="btn btn-primary">Cancela</button>
+						</div>
+					</div>
+				</div>				
 			</form>
-	</div></div></div>
+			</div>
+		</div>
+	</div>
 </siga:pagina>

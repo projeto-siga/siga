@@ -312,231 +312,255 @@
 	} 
 </script>
 <siga:pagina titulo="Edição de ${cpTipoGrupo.dscTpGrupo}">
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>${cpTipoGrupo.dscTpGrupo}</h2>
-			<div class="gt-content-box gt-for-table">
-				<form name="formulario" id="formulario" method="post" cssClass="form">
-					<table class="gt-form-table">
-						<tr class="header">
-							<td colspan=2>Dados de ${cpTipoGrupo.dscTpGrupo}</td>
-						</tr>
-						<input type="hidden" name="idCpTipoGrupo" value="${idCpTipoGrupo}" />
-						<input type="hidden" name="idCpGrupo" value="${idCpGrupo}" />
-						<tr>
-							<c:choose>
-								<c:when test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir'))}">
-									<td><label name="lblsiglaGrupo">Sigla</label></td>
-									<td><input type="text" name="siglaGrupo" size="20" value="${siglaGrupo}"/></td>
-								</c:when>
-								<c:otherwise>
-									<td><label name="lblsiglaGrupo">${siglaGrupo}</label></td>
-									<td><input type="hidden" name="siglaGrupo" value="${siglaGrupo}"/></td>
-								</c:otherwise>
-							</c:choose>
-						</tr>
-						<tr>
-							<td><label name="lblDscGrupo">Descrição</label></td>
-							<td><input type="text" name="dscGrupo" size="40" value="${dscGrupo}"/></td>
-						</tr>
-						<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir') and not empty idCpGrupo and cpTipoGrupo.idTpGrupo == 2}">
-							<table class="gt-form-table">
-								<tr class="header" >
-									<td colspan="2">Gestores do Grupo</td>
-								</tr>
-								<tr>
-									<td colspan="2"><siga:selecao titulo="Nova Lotação Gestora:" urlAcao="buscar" propriedade="lotacaoGestora" modulo="siga"/></td>
-								</tr>
-								<c:forEach var="conf" items="${confGestores}">
-									<tr>
-										<td>${conf.lotacao.sigla} <span class="gt-cancel"><a href="excluirGestorGrupo?idConfGestor=${conf.id}&idCpGrupo=${idCpGrupo}">(excluir)</a></span></td>
-									</tr>
-								</c:forEach>
-								<tr>
-									<td><input type="button" id="btnGravarGestor" value="Incluir" onclick="javascript:gravarGestorGrupo()" class="gt-btn-medium gt-btn-left"/></td>
-								</tr>
-							</table>
-						</c:if>
-						<c:if test="${cpTipoGrupo.idTpGrupo == 1}">
-							<siga:selecao titulo="Pai:" propriedade="grupoPai" modulo="siga"/>
-						</c:if>
-					</table>
-
-					<br />
-
-					<table class="gt-form-table">
-						<tr class="header">
-							<td>Configurações de ${cpTipoGrupo.dscTpGrupo}</td>
-						</tr>
-						<c:forEach var="configuracaoGrupo" items="${configuracoesGrupo}">
-							<tr class="">
-								<td valign="top">
-									<select id="tipoConfiguracao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}" name="codigoTipoConfiguracaoSelecionada" onchange="javascript:solicitarInformacao('${configuracaoGrupo.cpConfiguracao.idConfiguracao}');">
-									  <option value="-1">[Remover]</option>									              
-							          <c:forEach items="${tiposConfiguracaoGrupoParaTipoDeGrupo}" var="item">
-							           <option value="${item.codigo}" ${item.codigo == configuracaoGrupo.tipo.codigo ? 'selected' : ''}>
-							            ${item.descricao}
-							           </option>  
-							          </c:forEach>
-							         </select>
-							         
-									<input type="hidden" name="conteudoConfiguracaoSelecionada"
-										id="conteudo_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
-										value="" /> 
-									
-									<input type="hidden" name="idConfiguracao"
-										id="id_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
-										value="${configuracaoGrupo.cpConfiguracao.idConfiguracao}" />
-
-
-
-									<!-- MATRÍCULA -->
-									<div
-										style="display:
-										<c:choose> 
-											<c:when test="${configuracaoGrupo.tipo.codigo == 0}">inline</c:when>
-											<c:otherwise>none</c:otherwise>
-										</c:choose>;"
-										id="matricula_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">
-										<siga:selecao tipo="pessoa" tema="simple"
-											propriedade="matricula_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
-											siglaInicial="${configuracaoGrupo.siglaConteudoConfiguracao}"
-											idInicial="${configuracaoGrupo.idConteudoConfiguracao}"
-											descricaoInicial="${configuracaoGrupo.descricaoConteudoConfiguracao}"
-                                            modulo="siga"/>
-									</div> <!-- LOTACAO -->
-									<div
-										style="display: 
-										<c:choose> 
-											<c:when test="${configuracaoGrupo.tipo.codigo == 1}">inline</c:when>
-											<c:otherwise>none</c:otherwise>
-										</c:choose>;"
-										id="lotacao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
-										class="">
-										<siga:selecao tipo="lotacao" tema="simple"
-											propriedade="lotacao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
-											siglaInicial="${configuracaoGrupo.siglaConteudoConfiguracao}"
-											idInicial="${configuracaoGrupo.idConteudoConfiguracao}"
-											descricaoInicial="${configuracaoGrupo.descricaoConteudoConfiguracao}"
-                                            modulo="siga"/>
-									</div> <!-- CARGO -->
-									<div
-										style="display: 
-										<c:choose> 
-											<c:when test="${configuracaoGrupo.tipo.codigo == 2}">inline</c:when>
-											<c:otherwise>none</c:otherwise>
-										</c:choose>;"
-										id="cargo_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">
-										<siga:selecao tipo="cargo" tema="simple"
-											propriedade="cargo_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
-											siglaInicial="${configuracaoGrupo.siglaConteudoConfiguracao}"
-											idInicial="${configuracaoGrupo.idConteudoConfiguracao}"
-											descricaoInicial="${configuracaoGrupo.descricaoConteudoConfiguracao}"
-                                            modulo="siga"/>
-									</div> <!-- funcao -->
-									<div
-										style="display: 
-										<c:choose> 
-											<c:when test="${configuracaoGrupo.tipo.codigo == 3}">inline</c:when>
-											<c:otherwise>none</c:otherwise>
-										</c:choose>;"
-										id="funcao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">
-										<siga:selecao tipo="funcao" tema="simple"
-											propriedade="funcao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
-											siglaInicial="${configuracaoGrupo.siglaConteudoConfiguracao}"
-											idInicial="${configuracaoGrupo.idConteudoConfiguracao}"
-											descricaoInicial="${configuracaoGrupo.descricaoConteudoConfiguracao}"
-                                            modulo="siga"/>
-									</div> <!-- EMAIL -->
-									<div
-										style="display: 
-										<c:choose> 
-											<c:when test="${configuracaoGrupo.tipo.codigo == 4}">inline</c:when>
-											<c:otherwise>none</c:otherwise>
-										</c:choose>;"
-										id="texto_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">
-										<input type="text" size="64" maxlength="64"
-											id="formulario_texto_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
-											name="formulario_texto_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
-											value="${configuracaoGrupo.conteudoConfiguracao}" />
-									</div> <!-- FORMULA -->
-									<div
-										style="display: 
-										<c:choose> 
-											<c:when test="${configuracaoGrupo.tipo.codigo == 5}">inline</c:when>
-											<c:otherwise>none</c:otherwise>
-										</c:choose>;"
-										id="area_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">
-										<textarea rows="3" cols="64"
-											id="formulario_area_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
-											name="formulario_area_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">${configuracaoGrupo.conteudoConfiguracao}</textarea>
-									</div>
-								</td>
-							</tr>
+	<div class="container-fluid">
+		<form name="formulario" id="formulario" method="post" cssClass="form">
+			<div class="card bg-light mb-3" >
+				<div class="card-header"><h5>${cpTipoGrupo.dscTpGrupo}</h5></div>
+				<div class="card-body">
+					<input type="hidden" name="idCpTipoGrupo" value="${idCpTipoGrupo}" />
+					<input type="hidden" name="idCpGrupo" value="${idCpGrupo}" />
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<c:choose>
+									<c:when test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir'))}">
+										<label name="lblsiglaGrupo">Sigla</label>
+										<input type="text" name="siglaGrupo" size="20" value="${siglaGrupo}" class="form-control"/>
+									</c:when>
+									<c:otherwise>
+										<label name="lblsiglaGrupo">${siglaGrupo}</label>
+										<input type="hidden" name="siglaGrupo" value="${siglaGrupo}" class="form-control"/>
+									</c:otherwise>
+								</c:choose>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label name="lblDscGrupo">Descrição</label>
+								<input type="text" name="dscGrupo" size="40" value="${dscGrupo}" class="form-control"/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+						
+			<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;INC:Incluir') and not empty idCpGrupo and cpTipoGrupo.idTpGrupo == 2}">
+				<div class="card bg-light mb-3" >	
+					<div class="card-header"><h5>Gestores do Grupo</h5></div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col">
+								<div class="form-group">
+									<siga:selecao titulo="Nova Lotação Gestora" urlAcao="buscar" propriedade="lotacaoGestora" modulo="siga"/>
+								</div>
+							</div>
+						</div>
+						
+						<c:forEach var="conf" items="${confGestores}">
+							<div class="row">
+								<div class="col-sm-6">
+									${conf.lotacao.sigla} <span class="gt-cancel"><a href="excluirGestorGrupo?idConfGestor=${conf.id}&idCpGrupo=${idCpGrupo}">(excluir)</a></span>
+								</div>
+							</div>
 						</c:forEach>
-						<tr>
-							<td>&nbsp;</td>
-						</tr>
-						<tr class="header">
-							<td>Nova configuração</td>
-						</tr>
-						<tr class="">
-						  
-						
-						
-							<td>
-							
-								<select id="tipoConfiguracao_${idConfiguracaoNova}" name="codigoTipoConfiguracaoNova" onchange="javascript:solicitarInformacao('${idConfiguracaoNova}');">
-								   <option value="-1" selected >[Nenhuma]</option>              
-						          <c:forEach items="${tiposConfiguracaoGrupoParaTipoDeGrupo}" var="item">
-						           <option value="${item.codigo}">
-						            ${item.descricao}
-						           </option>  
-						          </c:forEach>
-						         </select>
-						         
-						         					         
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<input type="button" id="btnGravarGestor" value="Incluir" onclick="javascript:gravarGestorGrupo()" class="btn btn-primary"/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</c:if>
+			<c:if test="${cpTipoGrupo.idTpGrupo == 1}">
+				<siga:selecao titulo="Pai:" propriedade="grupoPai" modulo="siga"/>
+			</c:if>
 
-								<div style="display: none;" id="matricula_${idConfiguracaoNova}">
-									<siga:selecao tipo="pessoa" tema="simple"
-										propriedade="matricula_${idConfiguracaoNova}"modulo="siga"/>
+			<div class="card bg-light mb-3" >	
+				<div class="card-header"><h5>Configurações de ${cpTipoGrupo.dscTpGrupo}</h5></div>
+					<div class="card-body">
+						<c:forEach var="configuracaoGrupo" items="${configuracoesGrupo}">
+							<div class="row">
+								<div class="col-sm-2">
+									<div class="form-group">
+										<select class="form-control" id="tipoConfiguracao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}" name="codigoTipoConfiguracaoSelecionada" onchange="javascript:solicitarInformacao('${configuracaoGrupo.cpConfiguracao.idConfiguracao}');">
+										  <option value="-1">[Remover]</option>									              
+								          <c:forEach items="${tiposConfiguracaoGrupoParaTipoDeGrupo}" var="item">
+								           <option value="${item.codigo}" ${item.codigo == configuracaoGrupo.tipo.codigo ? 'selected' : ''}>
+								            ${item.descricao}
+								           </option>  
+								          </c:forEach>
+								         </select>
+								         
+										<input type="hidden" name="conteudoConfiguracaoSelecionada"
+											id="conteudo_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
+											value="" /> 
+										
+										<input type="hidden" name="idConfiguracao"
+											id="id_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
+											value="${configuracaoGrupo.cpConfiguracao.idConfiguracao}" />
+	
+									</div>
 								</div>
-								<div style="display: none;" id="lotacao_${idConfiguracaoNova}">
-									<siga:selecao tipo="lotacao" tema="simple"
-										propriedade="lotacao_${idConfiguracaoNova}" modulo="siga"/>
+							</div>
+							<div class="row">
+								<div class="col">
+									<div class="form-group">
+										<!-- MATRÍCULA -->
+										<div
+											style="display:
+											<c:choose> 
+												<c:when test="${configuracaoGrupo.tipo.codigo == 0}">inline</c:when>
+												<c:otherwise>none</c:otherwise>
+											</c:choose>;"
+											id="matricula_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">
+											<siga:selecao tipo="pessoa" tema="simple"
+												propriedade="matricula_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
+												siglaInicial="${configuracaoGrupo.siglaConteudoConfiguracao}"
+												idInicial="${configuracaoGrupo.idConteudoConfiguracao}"
+												descricaoInicial="${configuracaoGrupo.descricaoConteudoConfiguracao}"
+	                                            modulo="siga"/>
+										</div> <!-- LOTACAO -->
+										<div
+											style="display: 
+											<c:choose> 
+												<c:when test="${configuracaoGrupo.tipo.codigo == 1}">inline</c:when>
+												<c:otherwise>none</c:otherwise>
+											</c:choose>;"
+											id="lotacao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
+											class="">
+											<siga:selecao tipo="lotacao" tema="simple"
+												propriedade="lotacao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
+												siglaInicial="${configuracaoGrupo.siglaConteudoConfiguracao}"
+												idInicial="${configuracaoGrupo.idConteudoConfiguracao}"
+												descricaoInicial="${configuracaoGrupo.descricaoConteudoConfiguracao}"
+	                                            modulo="siga"/>
+										</div> <!-- CARGO -->
+										<div
+											style="display: 
+											<c:choose> 
+												<c:when test="${configuracaoGrupo.tipo.codigo == 2}">inline</c:when>
+												<c:otherwise>none</c:otherwise>
+											</c:choose>;"
+											id="cargo_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">
+											<siga:selecao tipo="cargo" tema="simple"
+												propriedade="cargo_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
+												siglaInicial="${configuracaoGrupo.siglaConteudoConfiguracao}"
+												idInicial="${configuracaoGrupo.idConteudoConfiguracao}"
+												descricaoInicial="${configuracaoGrupo.descricaoConteudoConfiguracao}"
+	                                            modulo="siga"/>
+										</div> <!-- funcao -->
+										<div
+											style="display: 
+											<c:choose> 
+												<c:when test="${configuracaoGrupo.tipo.codigo == 3}">inline</c:when>
+												<c:otherwise>none</c:otherwise>
+											</c:choose>;"
+											id="funcao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">
+											<siga:selecao tipo="funcao" tema="simple"
+												propriedade="funcao_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
+												siglaInicial="${configuracaoGrupo.siglaConteudoConfiguracao}"
+												idInicial="${configuracaoGrupo.idConteudoConfiguracao}"
+												descricaoInicial="${configuracaoGrupo.descricaoConteudoConfiguracao}"
+	                                            modulo="siga"/>
+										</div> <!-- EMAIL -->
+										<div
+											style="display: 
+											<c:choose> 
+												<c:when test="${configuracaoGrupo.tipo.codigo == 4}">inline</c:when>
+												<c:otherwise>none</c:otherwise>
+											</c:choose>;"
+											id="texto_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">
+											<input class="form-control" type="text" size="64" maxlength="64"
+												id="formulario_texto_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
+												name="formulario_texto_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
+												value="${configuracaoGrupo.conteudoConfiguracao}" />
+										</div> <!-- FORMULA -->
+										<div
+											style="display: 
+											<c:choose> 
+												<c:when test="${configuracaoGrupo.tipo.codigo == 5}">inline</c:when>
+												<c:otherwise>none</c:otherwise>
+											</c:choose>;"
+											id="area_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">
+											<textarea class="form-control" rows="3" cols="64"
+												id="formulario_area_${configuracaoGrupo.cpConfiguracao.idConfiguracao}"
+												name="formulario_area_${configuracaoGrupo.cpConfiguracao.idConfiguracao}">${configuracaoGrupo.conteudoConfiguracao}</textarea>
+										</div>
+									</div>
 								</div>
-								<div style="display: none;" id="cargo_${idConfiguracaoNova}">
-									<siga:selecao tipo="cargo" tema="simple"
-										propriedade="cargo_${idConfiguracaoNova}" modulo="siga"/>
+							</div>
+						</c:forEach>
+					</div>
+				</div>
+				<div class="card bg-light mb-3" >	
+					<div class="card-header"><h5>Nova configuração</h5></div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-sm-2">
+								<div class="form-group">
+						  			<select class="form-control" id="tipoConfiguracao_${idConfiguracaoNova}" name="codigoTipoConfiguracaoNova" onchange="javascript:solicitarInformacao('${idConfiguracaoNova}');">
+										   <option value="-1" selected >[Nenhuma]</option>              
+								          <c:forEach items="${tiposConfiguracaoGrupoParaTipoDeGrupo}" var="item">
+								           <option value="${item.codigo}">
+								            ${item.descricao}
+								           </option>  
+								          </c:forEach>
+								         </select>
 								</div>
-								<div style="display: none;" id="funcao_${idConfiguracaoNova}">
-									<siga:selecao tipo="funcao" tema="simple"
-										propriedade="funcao_${idConfiguracaoNova}" modulo="siga"/>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col">
+								<div class="form-group">
+									<div style="display: none;" id="matricula_${idConfiguracaoNova}">
+											<siga:selecao tipo="pessoa" tema="simple"
+												propriedade="matricula_${idConfiguracaoNova}"modulo="siga"/>
+									</div>
+									<div style="display: none;" id="lotacao_${idConfiguracaoNova}">
+										<siga:selecao tipo="lotacao" tema="simple"
+											propriedade="lotacao_${idConfiguracaoNova}" modulo="siga"/>
+									</div>
+									<div style="display: none;" id="cargo_${idConfiguracaoNova}">
+										<siga:selecao tipo="cargo" tema="simple"
+											propriedade="cargo_${idConfiguracaoNova}" modulo="siga"/>
+									</div>
+									<div style="display: none;" id="funcao_${idConfiguracaoNova}">
+										<siga:selecao tipo="funcao" tema="simple"
+											propriedade="funcao_${idConfiguracaoNova}" modulo="siga"/>
+									</div>
+									<div style="display: none;" id="texto_${idConfiguracaoNova}">
+										<input class="form-control" type="text" size="64" maxlength="64"
+											name="formulario_texto_${idConfiguracaoNova}"
+											id="formulario_texto_${idConfiguracaoNova}" />
+									</div>
+									<div style="display: none;" id="area_${idConfiguracaoNova}">
+										<textarea class="form-control" rows="3" cols="64"
+											name="formulario_area_${idConfiguracaoNova}"
+											id="formulario_area_${idConfiguracaoNova}"></textarea>
+									</div> <input type="hidden" name="conteudoConfiguracaoNova"
+										id="conteudo_${idConfiguracaoNova}" value="" />
 								</div>
-								<div style="display: none;" id="texto_${idConfiguracaoNova}">
-									<input type="text" size="64" maxlength="64"
-										name="formulario_texto_${idConfiguracaoNova}"
-										id="formulario_texto_${idConfiguracaoNova}" />
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<input type="button" id="btnGravar" value="Gravar" onclick="javascript:gravarGrupo()" class="btn btn-primary"/>
+									<c:if test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;EXC:Excluir'))}">
+										<input type="button" id="btnExcluir" value="Excluir" onclick="javascript:excluirGrupo()" class="btn btn-primary"/>
+									</c:if>
+									<input type="button" id="btnSair" value="Sair" onclick="javascript:sair()" class="btn btn-primary"/>
 								</div>
-								<div style="display: none;" id="area_${idConfiguracaoNova}">
-									<textarea rows="3" cols="64"
-										name="formulario_area_${idConfiguracaoNova}"
-										id="formulario_area_${idConfiguracaoNova}"></textarea>
-								</div> <input type="hidden" name="conteudoConfiguracaoNova"
-								id="conteudo_${idConfiguracaoNova}" value="" /></td>
-						</tr>
-						<tr>
-							<td>
-								<input type="button" id="btnGravar" value="Gravar" onclick="javascript:gravarGrupo()" class="gt-btn-medium gt-btn-left"/>
-								<c:if test="${cpTipoGrupo.idTpGrupo != 2 or (cpTipoGrupo.idTpGrupo == 2 and f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;GDISTR;EXC:Excluir'))}">
-									<input type="button" id="btnExcluir" value="Excluir" onclick="javascript:excluirGrupo()" class="gt-btn-medium gt-btn-left"/>
-								</c:if>
-								<input type="button" id="btnSair" value="Sair" onclick="javascript:sair()" class="gt-btn-medium gt-btn-left"/>
-							</td>
-						</tr>
-					</table>
-				</form>
+							</div>
+						</div>
+					</div>
+				<div>
+				
 			</div>
 		</div>
+		</form>
 	</div>
 </siga:pagina>

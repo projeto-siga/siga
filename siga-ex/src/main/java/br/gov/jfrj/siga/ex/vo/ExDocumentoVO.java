@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
+import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -384,7 +386,7 @@ public class ExDocumentoVO extends ExVO {
 		this.dotColaboracao = new ExGraphColaboracao(doc);
 
 	}
-
+	
 	/**
 	 * @param doc
 	 * @param titular
@@ -393,6 +395,9 @@ public class ExDocumentoVO extends ExVO {
 	 */
 	private void addAcoes(ExDocumento doc, DpPessoa titular,
 			DpLotacao lotaTitular, boolean exibirAntigo) {
+		String iconVerImpressao;
+		String iconVerMais;
+		
 		ExVO vo = this;
 		for (ExMobilVO mobvo : mobs) {
 			if (mobvo.getMob().isGeral())
@@ -400,25 +405,33 @@ public class ExDocumentoVO extends ExVO {
 		}
 
 		ExMobil mob = doc.getMobilGeral();
-
+		
 		vo.addAcao(
 				"folder_magnify",
-				"_Ver Dossiê",
+				SigaMessages.getMessage("documento.ver.dossie"),
 				"/app/expediente/doc",
 				"exibirProcesso",
 				Ex.getInstance().getComp()
 						.podeVisualizarImpressao(titular, lotaTitular, mob));
 
+		if(SigaMessages.isSigaSP()) {
+			iconVerImpressao = "eye";
+			iconVerMais = "date_magnify";
+		} else {
+			iconVerImpressao = "printer";
+			iconVerMais = "eye";
+		}
+
 		vo.addAcao(
-				"printer",
-				"Ver _Impressão",
+				iconVerImpressao,
+				SigaMessages.getMessage("documento.ver.impressao"),
 				"/app/arquivo",
 				"exibir",
 				Ex.getInstance().getComp()
 						.podeVisualizarImpressao(titular, lotaTitular, mob),
 				null, "&popup=true&arquivo=" + doc.getReferenciaPDF(), null,
 				null, null);
-
+			
 		vo.addAcao(
 				"lock",
 				"Fina_lizar",
@@ -600,14 +613,14 @@ public class ExDocumentoVO extends ExVO {
 				"duplicar",
 				Ex.getInstance().getComp()
 						.podeDuplicar(titular, lotaTitular, mob),
-				"Esta operação criará um expediente com os mesmos dados do atual. Prosseguir?",
+				SigaMessages.getMessage("documento.confirma.duplica"),
 				null, null, null, "once");
 
 		// test="${exibirCompleto != true}" />
 		int numUltMobil = doc.getNumUltimoMobil();
 		vo.addAcao(
-				"eye",
-				"Ver _Mais",
+				iconVerMais,
+				SigaMessages.getMessage("documento.ver.mais"),
 				"/app/expediente/doc",
 				"exibirAntigo",
 				Ex.getInstance()

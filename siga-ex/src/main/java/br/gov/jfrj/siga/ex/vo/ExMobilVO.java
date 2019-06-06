@@ -25,6 +25,7 @@ import java.util.List;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.SigaCalendar;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -62,7 +63,7 @@ public class ExMobilVO extends ExVO {
 	Integer pagFinal;
 	String tamanhoDeArquivo;
 	boolean ocultar;
-
+	
 	public List<ExMovimentacaoVO> getMovs() {
 		return movs;
 	}
@@ -326,17 +327,25 @@ public class ExMobilVO extends ExVO {
 	 * @throws Exception
 	 */
 	private void addAcoes(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
+		String iconVerImpressao;
+
+		if(SigaMessages.isSigaSP()) {
+			iconVerImpressao = "eye";
+		} else {
+			iconVerImpressao = "printer";
+		}
+
 		if (!mob.isGeral()) {
 			addAcao("folder",
-					"_Ver Dossiê",
+					SigaMessages.getMessage("documento.ver.dossie"),
 					"/app/expediente/doc",
 					"exibirProcesso",
 					Ex.getInstance().getComp()
 							.podeVisualizarImpressao(titular, lotaTitular, mob),
 					null, null, null, null, "once");
 
-			addAcao("printer",
-					"Ver _Impressão",
+			addAcao(iconVerImpressao,
+					SigaMessages.getMessage("documento.ver.impressao"),
 					"/app/arquivo",
 					"exibir",
 					Ex.getInstance().getComp()
@@ -525,7 +534,7 @@ public class ExMobilVO extends ExVO {
 					Ex.getInstance()
 							.getComp()
 							.podeCancelarMovimentacao(titular, lotaTitular, mob),
-					"Confirma o cancelamento da última movimentação("
+					SigaMessages.getMessage("documento.confirma.cancelamento") + "("
 							+ mob.getDescricaoUltimaMovimentacaoNaoCancelada()
 							+ ")?", null, null, null, "once"); // popup,
 		// exibir+completo,

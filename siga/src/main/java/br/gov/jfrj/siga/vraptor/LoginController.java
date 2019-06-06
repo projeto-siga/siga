@@ -3,7 +3,9 @@ package br.gov.jfrj.siga.vraptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
@@ -19,7 +21,9 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.gi.service.GiService;
@@ -46,7 +50,7 @@ public class LoginController extends SigaController {
 		this.response = response;
 		this.context = context;
 	}
-
+	
 	@Get("public/app/login")
 	public void login(String cont) throws IOException {
 		Map<String, String> manifest = new HashMap<>();
@@ -72,8 +76,15 @@ public class LoginController extends SigaController {
 		try {
 			GiService giService = Service.getGiService();
 			String usuarioLogado = giService.login(username, password);
+			
+			if( Pattern.matches( "\\d+", username) && username.length() == 11) {
+				List<CpIdentidade> lista = new CpDao().consultaIdentidadesCadastrante(username, Boolean.TRUE);
+				if(lista.size() > 1) {
+					throw new RuntimeException("Pessoa com mais de um usuário, favor efetuar login com a matrícula!");
+				}
+			}
 			if (usuarioLogado == null || usuarioLogado.trim().length() == 0) {
-				throw new RuntimeException("Falha de autenticação!");
+				throw new RuntimeException(SigaMessages.getMessage("usuario.falhaautenticacao"));
 			}
 
 			String modulo = extrairModulo(request);

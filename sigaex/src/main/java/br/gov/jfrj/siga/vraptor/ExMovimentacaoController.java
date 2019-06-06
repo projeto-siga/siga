@@ -47,6 +47,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
@@ -101,7 +102,7 @@ public class ExMovimentacaoController extends ExController {
 	private static final int DEFAULT_POSTBACK = 1;
 	private static final Logger LOGGER = Logger
 			.getLogger(ExMovimentacaoController.class);
-
+	
 	public ExMovimentacaoController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em, Validator validator) {
@@ -371,6 +372,13 @@ public class ExMovimentacaoController extends ExController {
 		if (arquivo.getFile() == null) {
 			throw new AplicacaoException(
 					"O arquivo a ser anexado não foi selecionado!");
+		}
+		
+		String fileExtension = arquivo.getFileName().substring(arquivo.getFileName().lastIndexOf("."));
+		
+		if (fileExtension.equals(".bat") || fileExtension.equals(".exe") || fileExtension.equals(".sh") || fileExtension.equals(".dll") ) {
+			throw new AplicacaoException(
+					"Extensão " + fileExtension + " inválida para inclusão do arquivo.");
 		}
 		
 		Integer numBytes = 0;
@@ -1169,7 +1177,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/incluir_cosignatario_gravar")
 	public void aIncluirCosignatarioGravar(final String sigla,
 			final DpPessoaSelecao cosignatarioSel,
-			final String funcaoCosignatario, final Integer postback) {
+			final String funcaoCosignatario, final String  unidadeCosignatario, final Integer postback) {
 		this.setPostback(postback);
 
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
@@ -1177,9 +1185,15 @@ public class ExMovimentacaoController extends ExController {
 
 		final ExDocumento doc = buscarDocumento(documentoBuilder);
 
+		String funcaoUnidadeCosignatario = funcaoCosignatario;
+		// Efetuar validação e concatenar o conteudo se for implantação GOVSP
+		if(isSigaSP() && (funcaoCosignatario != null && !funcaoCosignatario.isEmpty()) && (unidadeCosignatario != null && !unidadeCosignatario.isEmpty())) {
+			funcaoUnidadeCosignatario = funcaoUnidadeCosignatario + ";" + unidadeCosignatario; 
+		}
+		
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia().setMob(documentoBuilder.getMob())
-				.setDescrMov(funcaoCosignatario)
+				.setDescrMov(funcaoUnidadeCosignatario)
 				.setSubscritorSel(cosignatarioSel);
 
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
@@ -3776,14 +3790,14 @@ public class ExMovimentacaoController extends ExController {
 	protected Map<Integer, String> getListaTipoResp() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, "Órgão Integrado");
-		map.put(2, "Matrícula");
+		map.put(2, SigaMessages.getMessage("usuario.matricula"));
 		map.put(3, "Externo");
 		return map;
 	}
 
 	private Map<Integer, String> getListaTipoRespPerfil() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
-		map.put(1, "Matrícula");
+		map.put(1, SigaMessages.getMessage("usuario.matricula"));
 		map.put(2, "Órgão Integrado");
 		return map;
 	}
@@ -4278,5 +4292,11 @@ public class ExMovimentacaoController extends ExController {
 			result.use(Results.http()).body(ExceptionUtils.getStackTrace(e)).setStatusCode(500);
 		}
 	}
-
+    
+    private boolean isSigaSP() {
+    	if (SigaBaseProperties.getString("siga.local") != null && SigaBaseProperties.getString("siga.local").equals("GOVSP")) {
+    		return true;
+    	}
+    	return false;
+    }
 }

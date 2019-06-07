@@ -265,7 +265,7 @@ public class SigaLibsEL {
 
 	public static Boolean podeUtilizarServicoPorConfiguracao(DpPessoa titular,
 			DpLotacao lotaTitular, Integer idServico) throws Exception {
-		return Cp
+		Boolean b = Cp
 				.getInstance()
 				.getConf()
 				.podePorConfiguracao(
@@ -274,6 +274,7 @@ public class SigaLibsEL {
 						dao().consultar(idServico.longValue(), CpServico.class,
 								false),
 						CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
+		return b;
 	}
 
 	public static Boolean podePorConfiguracao(DpPessoa titular,
@@ -294,7 +295,6 @@ public class SigaLibsEL {
 
 	public static Boolean podeUtilizarServicoPorConfiguracao(DpPessoa titular,
 			DpLotacao lotaTitular, String servicoPath) throws Exception {
-
 		return Cp
 				.getInstance()
 				.getConf()

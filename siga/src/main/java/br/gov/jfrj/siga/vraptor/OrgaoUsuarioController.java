@@ -93,8 +93,9 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		orgaoUsuario.setSiglaOrgaoUsu(Texto.removerEspacosExtra(siglaOrgaoUsuario.toUpperCase().trim()));
 		orgaoUsuario = dao().consultarPorSigla(orgaoUsuario);
 		
-		if(orgaoUsuario != null && 
-				!orgaoUsuario.getIdOrgaoUsu().equals(id)) {
+		if((orgaoUsuario != null &&
+				!orgaoUsuario.getIdOrgaoUsu().equals(id)) || (orgaoUsuario != null &&
+				orgaoUsuario.getIdOrgaoUsu().equals(id) && acao.equalsIgnoreCase("i"))) {
 			throw new AplicacaoException("Sigla já cadastrada para outro órgão");
 		}
 		

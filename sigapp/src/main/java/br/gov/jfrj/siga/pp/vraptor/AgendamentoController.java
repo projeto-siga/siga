@@ -34,7 +34,7 @@ public class AgendamentoController extends PpController {
     }
 
     @Path("/hoje")
-    public void hoje() {
+    public void hoje(String selFiltraSala) { 
 		String matriculaSessao = getCadastrante().getMatricula().toString();
 		String sesb_pessoaSessao = getCadastrante().getSesbPessoa().toString();
 		UsuarioForum objUsuario = UsuarioForum.findByMatricula(matriculaSessao, sesb_pessoaSessao);
@@ -49,6 +49,10 @@ public class AgendamentoController extends PpController {
 				if(j+1<listaDeSalas.size()){
 					criterioSalas = criterioSalas + ",";
 				}
+			}
+			System.out.println(selFiltraSala);
+			if(selFiltraSala!=null && (!selFiltraSala.equals("")) ){
+				criterioSalas = "'"+selFiltraSala+"'";
 			}
 			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 			// pega a data de hoje
@@ -69,7 +73,7 @@ public class AgendamentoController extends PpController {
                 List<Locais> listLocais = Locais.AR.find("cod_forum='" + objUsuario.getForumFk().getCod_forum() + "'").fetch();
                 // lista auxiliar para filtrar os agendamentos  (ja buscou todos)
                 List<Agendamentos> auxAgendamentos = new ArrayList<Agendamentos>();
-             // varre listAgendamentos
+                // varre listAgendamentos
                 for (int i = 0; i < listAgendamentos.size(); i++) {
                 	// filtra listAgendamentos deixando de fora os locais que nao sao do forum do usuario ?
                     for (int ii = 0; ii < listLocais.size(); ii++) {
@@ -85,6 +89,7 @@ public class AgendamentoController extends PpController {
                 result.include("listAgendamentos", listAgendamentos);
                 result.include("listPeritos", listPeritos);
                 result.include("dataHoje", dtt);
+                result.include("listLocais", listaDeSalas);
             }
 		} else {
 		    redirecionaPaginaErro("Usu&aacute;rio sem permiss&atilde;o." , null);
@@ -332,7 +337,7 @@ public class AgendamentoController extends PpController {
 				em.getTransaction().begin();
 				// persiste o lote de horários 
 				for (int i = 0; i < lote; i++) {
-					System.out.println("Hora a persistir: " + hrAux);
+					//System.out.println("Hora a persistir: " + hrAux);
 					if(hrAux.trim().length() < 2){
 						//acerta o tamanho do conteúdo da hora de hrAux
 						hrAux="0"+hrAux; 
@@ -406,7 +411,6 @@ public class AgendamentoController extends PpController {
             redirecionaPaginaErro("Usu&aacute;rio sem permiss&atilde;o", null);
         }
     }
-
     @Path("/update")
     public void update(String cod_sala, String data_ag, String hora_ag, String processo, String periciado, String perito_juizo, String perito_parte, String orgao_ag){
         processo = verificaCampoEInicializaCasoNull(processo);
@@ -831,11 +835,11 @@ public class AgendamentoController extends PpController {
                     hrr = hrr.substring(0, 2) + ":" + hrr.substring(2, 4);
                     listHorasLivres.set(listHorasLivres.indexOf(hrr), "");
                 }
-            } catch (Exception e) {
+            }catch (Exception e) {
                 e.printStackTrace();
                 if (e.getMessage().equals("-1")) {
                     listHorasLivres.clear();
-                    listHorasLivres.add("Erro de horario invalido na base.");
+                    listHorasLivres.add("Erro de horario invalido na base. Um lote excedeu o ultimo horario permitido, que e 18:00min");
                 }
             } finally {
                 result.include("listHorasLivres", listHorasLivres);

@@ -238,7 +238,38 @@
 									</div>
 								</div>
 							</div>
+							
+							
 							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label>Pessoa Objeto</label>
+										<siga:selecao tipo="pessoa" propriedade="pessoaObjeto"
+											tema="simple" modulo="siga" />
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label>Lotação Objeto</label>
+										<siga:selecao tipo="lotacao" propriedade="lotacaoObjeto"
+											tema="simple" modulo="siga" />
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label>Cargo Objeto</label>
+										<siga:selecao tipo="cargo" propriedade="cargoObjeto"
+											tema="simple" modulo="siga" />
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label>Função de Confiança Objeto</label>
+										<siga:selecao tipo="funcao" propriedade="funcaoObjeto"
+											tema="simple" modulo="siga" />
+									</div>
+								</div>
+	
 								<div class="col-sm-6">
 									<div class="form-group">
 										<label>Órgão Objeto</label>
@@ -257,8 +288,6 @@
 									</div>
 								</div>
 							</div>
-							
-						
 					</div>
 				</form>
 			</div>

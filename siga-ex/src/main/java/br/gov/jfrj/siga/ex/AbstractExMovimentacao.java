@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
@@ -39,6 +40,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.BatchSize;
+
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -50,17 +53,14 @@ import br.gov.jfrj.siga.dp.DpPessoa;
  * the behavior of this class by editing the class, {@link ExMovimentacao()}.
  */
 @MappedSuperclass
-@NamedQueries({
-		@NamedQuery(name = "consultarPorSigla", query = "select mob from ExMobil mob"
-				+ "                inner join fetch mob.exDocumento doc"
-				+ "                where ("
-				+ "                mob.numSequencia=:numSequencia"
-				+ "                and mob.exTipoMobil.idTipoMobil=:idTipoMobil"
-				+ "                and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "                and doc.idDoc=mob.exDocumento.idDoc"
-				+ "                and doc.anoEmissao=:anoEmissao"
-				+ "                and doc.exFormaDocumento.idFormaDoc=:idFormaDoc"
-				+ "                and doc.numExpediente=:numExpediente)"),
+@NamedQueries({ @NamedQuery(name = "consultarPorSigla", query = "select mob from ExMobil mob"
+		+ "                inner join fetch mob.exDocumento doc" + "                where ("
+		+ "                mob.numSequencia=:numSequencia"
+		+ "                and mob.exTipoMobil.idTipoMobil=:idTipoMobil"
+		+ "                and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+		+ "                and doc.idDoc=mob.exDocumento.idDoc" + "                and doc.anoEmissao=:anoEmissao"
+		+ "                and doc.exFormaDocumento.idFormaDoc=:idFormaDoc"
+		+ "                and doc.numExpediente=:numExpediente)"),
 		// Somente os "em andamento" ou "pendentes de assinatura"
 		@NamedQuery(name = "consultarParaTransferirEmLote", query = "select mob from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"
@@ -89,8 +89,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 				+ "                where mar.cpMarcador.idMarcador=51              "
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"
-				+ "                )"),
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)" + "                )"),
 		// Somente os "a recolher para arquivo permanente"
 		@NamedQuery(name = "consultarParaArquivarPermanenteEmLote", query = "select mob, mar from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where mar.cpMarcador.idMarcador=50      "
@@ -102,8 +101,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 				+ "                where mar.cpMarcador.idMarcador=50              "
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"
-				+ "                )"),
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)" + "                )"),
 		// Somente os "a eliminar"
 		@NamedQuery(name = "consultarAEliminar", query = "select mob, mar from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where (mar.cpMarcador.idMarcador=7)"
@@ -118,13 +116,10 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 				+ "                and (:dtIni is null or mob.exDocumento.dtDoc >= :dtIni)"
 				+ "                and (:dtFim is null or mob.exDocumento.dtDoc <= :dtFim)"
 				+ "                and (mar.dtIniMarca is null or mar.dtIniMarca < sysdate)"
-				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)"
-				+ "                )"),
+				+ "                and (mar.dtFimMarca is null or mar.dtFimMarca > sysdate)" + "                )"),
 		// Somente os "em edital de eliminação"
-		@NamedQuery(name = "consultarEmEditalEliminacao", query = "select mob, mar"
-				+ "                from ExMobil mob"
-				+ "                join mob.exMarcaSet mar"
-				+ "                join mob.exDocumento doc"
+		@NamedQuery(name = "consultarEmEditalEliminacao", query = "select mob, mar" + "                from ExMobil mob"
+				+ "                join mob.exMarcaSet mar" + "                join mob.exDocumento doc"
 				+ "                where (mar.cpMarcador.idMarcador=52)"
 				+ "                and mar.dpLotacaoIni.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
 				+ "                and (:dtIni is null or doc.dtDoc >= :dtIni)"
@@ -154,22 +149,19 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 				+ "                ) order by mar.dtIniMarca desc"),
 		// Somente os "em andamento" ou "pendentes de assinatura"
 		@NamedQuery(name = "consultarMovimentacoesPorLotacaoEntreDatas", query = "select mov from ExMovimentacao mov"
-				+ "                inner join mov.exMobil mob"
-				+ "                inner join mob.exDocumento doc"
+				+ "                inner join mov.exMobil mob" + "                inner join mob.exDocumento doc"
 				+ "                inner join mov.lotaResp lot"
 				+ "                where (doc.idDoc=mob.exDocumento.idDoc"
 				+ "                and mob.idMobil=mov.exMobil.idMobil"
 				+ "                and lot.idLotacao=mov.lotaResp.idLotacao"
-				+ "                and (lot.idLotacaoIni=:lotaTitular or 0 = :lotaTitular)"
-				+ "                )"),
+				+ "                and (lot.idLotacaoIni=:lotaTitular or 0 = :lotaTitular)" + "                )"),
 		// Voltar todas as movimentacoes realizadas por uma determinada pessoa
 		// em um exato momento. Usado principalmente para gerar segunda-via de
 		// protocolos.
 		@NamedQuery(name = "consultarMovimentacoes", query = "from ExMovimentacao mov"
 				+ "                where mov.cadastrante.idPessoaIni=:pessoaIni and mov.dtIniMov=to_date(:data, 'DD/MM/YYYY HH24:MI:SS')          "
 				+ "                ) order by mov.idMov"), })
-public abstract class AbstractExMovimentacao extends ExArquivo implements
-		Serializable {
+public abstract class AbstractExMovimentacao extends ExArquivo implements Serializable {
 	@Id
 	@SequenceGenerator(sequenceName = "EX_MOVIMENTACAO_SEQ", name = "EX_MOVIMENTACAO_SEQ")
 	@GeneratedValue(generator = "EX_MOVIMENTACAO_SEQ")
@@ -187,6 +179,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 	@Column(name = "conteudo_tp_mov", length = 128)
 	private String conteudoTpMov;
 
+	@BatchSize(size=1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMovimentacaoRef")
 	private java.util.Set<ExMovimentacao> exMovimentacaoReferenciadoraSet;
 
@@ -471,8 +464,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 		this.dtMov = dtMov;
 	}
 
-	public void setExMovimentacaoCanceladora(
-			final ExMovimentacao exMovimentacaoCanceladora) {
+	public void setExMovimentacaoCanceladora(final ExMovimentacao exMovimentacaoCanceladora) {
 		this.exMovimentacaoCanceladora = exMovimentacaoCanceladora;
 	}
 
@@ -484,8 +476,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 		this.exClassificacao = exClassificacao;
 	}
 
-	public void setExTipoMovimentacao(
-			final ExTipoMovimentacao exTipoMovimentacao) {
+	public void setExTipoMovimentacao(final ExTipoMovimentacao exTipoMovimentacao) {
 		this.exTipoMovimentacao = exTipoMovimentacao;
 	}
 
@@ -557,8 +548,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements
 		return exMovimentacaoReferenciadoraSet;
 	}
 
-	public void setExMovimentacaoReferenciadoraSet(
-			java.util.Set<ExMovimentacao> exMovimentacaoReferenciadoraSet) {
+	public void setExMovimentacaoReferenciadoraSet(java.util.Set<ExMovimentacao> exMovimentacaoReferenciadoraSet) {
 		this.exMovimentacaoReferenciadoraSet = exMovimentacaoReferenciadoraSet;
 	}
 

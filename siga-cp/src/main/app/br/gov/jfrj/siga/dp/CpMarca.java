@@ -27,11 +27,14 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.BatchSize;
+
 /**
  * A class that represents a row in the EX_DOCUMENTO table. You can customize
  * the behavior of this class by editing the class, {@link ExDocumento()}.
  */
 @Entity
+@BatchSize(size = 500)
 @Table(name = "CP_MARCA", schema = "CORPORATIVO")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "ID_TP_MARCA", discriminatorType = DiscriminatorType.INTEGER)

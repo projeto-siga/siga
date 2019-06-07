@@ -290,7 +290,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 	name="${inputNameTipoSel}.buscar"
 	value="<c:out value="${requestScope[propriedadeTipoSel].buscar}"/>"
 	id="formulario_${inputNameTipoSel}_buscar" />
-	<c:if test="${not empty tipo}">
+	<c:if test="${not empty tipo and (not empty idInicial or not empty siglaInicial or not empty descricaoInicial)}">
 		<c:choose>
 			<c:when test="${empty idInicial}">
 				<c:set var="idSubstTexto" value="${propriedadeTipoSel}.id" />
@@ -333,4 +333,5 @@ self.ajax_${propriedade}${tipoSel} = function() {
 <c:if test="${tema != 'simple'}">
 		</div>
 	</div>
+
 </c:if>

@@ -337,5 +337,5 @@ function visualizarImpressao() {
 		</div>
 	</div>
 
-	<tags:assinatura_rodape/>
+	<tags:assinatura_rodape />
 </siga:pagina>

@@ -5,7 +5,7 @@
 	<br>
 	<div class="ui-accordion-header"  style="position:absolute;left:5%;">
 		<h3>
-			TRF2/STI/COSADM - vs.: SigaPP 2018.05.03
+			TRF2/STI/COSADM - vs.: SigaPP 2019.2.8
 		</h3>
 		<h5>
 			tscosadm@trf2.jus.br

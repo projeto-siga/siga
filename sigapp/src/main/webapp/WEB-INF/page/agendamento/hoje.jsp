@@ -1,15 +1,24 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-
 <siga:pagina titulo="Agendadas Hoje">
 	<link rel="stylesheet" href="/sigapp/stylesheets/jquery-ui.css" type="text/css" media="screen, projection" />
 	<center class="ui-tabs"> <h4> Per&iacute;cias marcadas para hoje:</h4>
 		<c:if test="${listAgendamentos != null}">
 			<h4>${dataHoje}</h4>
 	 	</c:if>
+	 	<form name="frm_filtro" action="${linkTo[AgendamentoController].hoje}" method="get">
+	 	 <select name="selFiltraSala" onchange="document.frm_filtro.submit();">
+	 	 <option value="" selected="selected">filtre pela sala</option>
+	 	 <option value="">Todas as salas</option>
+	 	  <c:if test="${listLocais != null}">
+	 	    <c:forEach items="${listLocais}" var="sala">
+	 	      <option value="${sala.cod_local}">${sala.local}</option>
+	 	    </c:forEach>        
+	 	  </c:if>
+	 	 </select>
+	 	</form> 
 	</center>
 	<form action="${linkTo[AgendamentoController].hojePrint}" method="get" style="position: relative; left: 10%;">
 		<input type="hidden" name="frm_data_ag" value="${dataHoje}" />

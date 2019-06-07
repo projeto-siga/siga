@@ -15,31 +15,35 @@
 
 	<div class="card-body">
 
-		<table border="0" class="table table-sm table-striped">
-			<thead class="thead-dark">
-				<tr class="header">
-					<th align="center">Nível de acesso</th>
-					<th align="center">Pessoa</th>
-					<th align="center">Lotação</th>
-					<th align="center">Tipo de Lotação</th>
-					<th align="center">Função</th>
-					<th align="center">Órgão</th>
-					<th align="center">Órgão Objeto</th>
-					<th align="center">Cargo</th>
-					<th align="center">Tipo de Movimentação</th>
-					<th align="center">Origem</th>
-					<th align="center">Tipo de Espécie</th>
-					<th align="center">Espécie</th>
-					<th align="center">Modelo</th>
-					<th align="center">Via</th>
-					<th align="center">Classificação</th>
-					<th align="center">Vínculo</th>
-					<th align="center">Serviço</th>
-					<th align="center">Situação</th>
-					<th align="center" style="width: 70px;"></th>
-				</tr>
-			</thead>
-			<tbody class="table-bordered">
+
+		<table class="gt-table" width="100%">
+			<tr class="header">
+				<th align="center">Nível de acesso</th>
+				<th align="center">Pessoa</th>
+				<th align="center">Lotação</th>
+				<th align="center">Tipo de Lotação</th>
+				<th align="center">Função</th>
+				<th align="center">Órgão</th>
+				<th align="center">Órgão Objeto</th>
+				<th align="center">Cargo</th>
+				<th align="center">Tipo de Movimentação</th>
+				<th align="center">Origem</th>
+				<th align="center">Tipo de Espécie</th>
+				<th align="center">Espécie</th>
+				<th align="center">Modelo</th>
+				<th align="center">Via</th>
+				<th align="center">Classificação</th>
+				<th align="center">Vínculo</th>
+				<th align="center">Serviço</th>
+
+				<th align="center">Pessoa Objeto</th>
+				<th align="center">Lotação Objeto</th>
+				<th align="center">Cargo Objeto</th>
+				<th align="center">Função Objeto</th>
+
+				<th align="center">Situação</th>
+				<th align="center" style="width: 70px;"></th>
+			</tr>
 			<c:set var="evenorodd" value="" />
 			<c:set var="tamanho" value="0" />
 
@@ -72,6 +76,20 @@
 					<td><c:if test="${not empty configuracao.exClassificacao}">${configuracao.exClassificacao.classificacaoAtual.codificacao}</c:if></td>
 					<td><c:if test="${not empty configuracao.exPapel}">${configuracao.exPapel.descPapel}</c:if></td>
 					<td><c:if test="${not empty configuracao.cpServico}">${configuracao.cpServico.dscServico}</c:if></td>
+					
+					<td>
+						<c:if test="${not empty configuracao.pessoaObjeto}">
+							<siga:selecionado sigla="${configuracao.pessoaObjeto.iniciais}" descricao="${configuracao.pessoaObjeto.descricao}" />
+						</c:if>
+					</td>
+					<td>
+						<c:if test="${not empty configuracao.lotacaoObjeto}">
+							<siga:selecionado sigla="${configuracao.lotacaoObjeto.sigla}" descricao="${configuracao.lotacaoObjeto.descricao}" />
+						</c:if>
+					</td>
+					<td><c:if test="${not empty configuracao.cargoObjeto}">${configuracao.cargoObjeto.nomeCargo}</c:if></td>
+					<td><c:if test="${not empty configuracao.funcaoConfiancaObjeto}">${configuracao.funcaoConfiancaObjeto.nomeFuncao}</c:if></td>
+					
 					<td><c:if test="${not empty configuracao.cpSituacaoConfiguracao}">${configuracao.cpSituacaoConfiguracao.dscSitConfiguracao}</c:if></td>
 					<td>
 						<c:if test="${not empty nmTipoRetorno}">

@@ -111,10 +111,10 @@
 				value="10000" />
 			<property
 				name="hibernate.cache.infinispan.querySubstituicao.expiration.lifespan"
-				value="3600000" />
+				value="10000" />
 			<property
 				name="hibernate.cache.infinispan.querySubstituicao.expiration.max_idle"
-				value="300000" />
+				value="10000" />
 
 
 			<!-- Cache Region CACHE_SECONDS -->
@@ -141,10 +141,10 @@
 				value="10000" />
 			<property
 				name="hibernate.cache.infinispan.corporativo.expiration.lifespan"
-				value="5000" />
+				value="300000" />
 			<property
 				name="hibernate.cache.infinispan.corporativo.expiration.max_idle"
-				value="5000" />
+				value="300000" />
 
 		</properties>
 	</persistence-unit>

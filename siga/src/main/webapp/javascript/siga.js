@@ -1,5 +1,19 @@
 var newwindow = '';
 
+function testpdf(x) {
+	padrao = /\.pdf/;
+	a = x.arquivo.value;
+	if(a.length > 3) {
+		a = a.substr(0, a.length - 3) + a.substring(a.length - 3, a.length).toLowerCase();
+	}
+	OK = padrao.exec(a);
+	if (a != '' && !OK) {
+		window.alert("Somente é permitido anexar arquivo PDF!");
+		x.arquivo.value = '';
+		x.arquivo.focus();
+	}
+}
+
 /*function popitup(url) {
 	if (!newwindow.closed && newwindow.location) {
 		console.log("teste 1"); 

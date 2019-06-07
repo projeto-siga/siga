@@ -170,6 +170,9 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		if(idOrgaoUsu == null)
 			throw new AplicacaoException("Órgão não informado");
 		
+		if(nmFuncao != null && !nmFuncao.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9.]+")) 
+			throw new AplicacaoException("Nome com caracteres não permitidos");
+		
 		DpFuncaoConfianca funcao = new DpFuncaoConfianca();
 		
 		funcao.setNomeFuncao(Texto.removeAcento(Texto.removerEspacosExtra(nmFuncao).trim()));

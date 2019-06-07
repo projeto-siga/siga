@@ -411,13 +411,14 @@ public class Excel {
 	    			throw new AplicacaoException("Erro na gravação", 0, e);
 	    		}
 			}
+			if(problemas == null || "".equals(problemas.toString())) {
+	    		return null;
+	    	}
+	    	inputStream = new ByteArrayInputStream(problemas.toString().getBytes("ISO-8859-1"));
 		} catch (Exception ioe) {
             ioe.printStackTrace();
         }
-    	if(problemas == null || "".equals(problemas.toString())) {
-    		return null;
-    	}
-    	inputStream = new ByteArrayInputStream(problemas.toString().getBytes());
+    	
     	return inputStream;
     }
     
@@ -437,7 +438,7 @@ public class Excel {
 			return "Linha " + linha +": NOME já cadastrado" + System.getProperty("line.separator");
 		}
 		if(!validarCaracterEspecial(nomeFuncao)) {
-			return "Linha " + linha +": NOME com caracteres especiais" + System.getProperty("line.separator");
+			return "Linha " + linha +": NOME com caracteres não permitidos" + System.getProperty("line.separator");
 		}
 		if(nomes.contains(nomeFuncao)) {
 			return "Linha " + linha +": NOME repetido em outra linha do arquivo" + System.getProperty("line.separator");

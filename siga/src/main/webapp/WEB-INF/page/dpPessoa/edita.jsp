@@ -142,6 +142,10 @@
         }
     	return v;
    	}
+
+	function validarNome(campo) {
+		campo.value = campo.value.replace(/[^a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ'' ]/g,'');
+	}
 </script>
 
 <siga:pagina titulo="Cadastro de Pessoa">
@@ -209,7 +213,7 @@
 					<div class="col-sm-4">
 						<div class="form-group">
 							<label for="nmPessoa">Nome</label>
-							<input type="text" id="nmPessoa" name="nmPessoa" value="${nmPessoa}" maxlength="60" class="form-control" />
+							<input type="text" id="nmPessoa" name="nmPessoa" value="${nmPessoa}" maxlength="60" class="form-control" onkeyup="validarNome(this)"/>
 						</div>
 					</div>
 					<div class="col-sm-2">

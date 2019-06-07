@@ -454,7 +454,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		if(email == null || email.trim() == "") 
 			throw new AplicacaoException("E-mail não informado");
 		
-
+		if(nmPessoa != null && !nmPessoa.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ'' ]+")) 
+			throw new AplicacaoException("Nome com caracteres não permitidos");
 		
 		DpPessoa pessoa = new DpPessoa();
 		

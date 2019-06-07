@@ -402,7 +402,7 @@ public class Excel {
 	    				if(dpFuncaoConfianca.getIdFuncaoIni() == null && dpFuncaoConfianca.getId() != null) {
 	    					dpFuncaoConfianca.setIdFuncaoIni(dpFuncaoConfianca.getId());
 	    					dpFuncaoConfianca.setIdeFuncao(dpFuncaoConfianca.getId().toString());
-	        				CpDao.getInstance().gravar(dpFuncaoConfianca);
+	    					CpDao.getInstance().gravar(dpFuncaoConfianca);
 	        			}
 					}
 	    			CpDao.getInstance().commitTransacao();			
@@ -839,8 +839,8 @@ public class Excel {
 			return "Linha " + linha +": NOME com mais de 60 caracteres" + System.getProperty("line.separator");
 		}
 
-		if(!validarCaracter(nomePessoa)) {
-			return "Linha " + linha +": NOME com número ou caracteres especiais" + System.getProperty("line.separator");
+		if(nomePessoa != null && !nomePessoa.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ'' ]+")) {
+			return "Linha " + linha +": NOME caracteres não permitidos" + System.getProperty("line.separator");
 		}
 		return "";
 	}    

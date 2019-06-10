@@ -59,14 +59,14 @@
 	
 				<!-- Modelo -->
 				<div class="row">
-					<div class="col-sm-7">
+					<div class="col-sm-12">
 						<c:choose>
 							<c:when test="${possuiMaisQueUmModelo}">
 								<div class="form-group">
 									<label for="modelos-select"><fmt:message key="documento.modelo"/></label>
 
-									<div class="btn-group hierarchy-select form-control" data-resize="auto" id="modelos-select">
-										<button type="button" class="btn btn-sm btn-light border border-dark dropdown-toggle"
+									<div class="btn-group hierarchy-select form-control p-0" data-resize="auto" id="modelos-select">
+										<button type="button" class="btn btn-light dropdown-toggle bg-white"
 											id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-disabled="true">
 											<span class="selected-label pull-left">&nbsp;</span>
 										</button>

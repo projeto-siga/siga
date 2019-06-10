@@ -340,39 +340,39 @@
 				<c:if test='${ exDocumentoDTO.tipoDocumento == "interno" }'>
 				<div class="row">
 					<input type="hidden" name="campos" value="preenchimento" />
-					<div class="col-sm-5">
+					<div class="col-sm-12">
 						<div class="form-group">
 							<label><fmt:message key="documento.preenchimento.automatico"/></label>							
-							<select id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()" class="form-control">
-								<c:forEach items="${exDocumentoDTO.preenchimentos}" var="item">
-									<option value="${item.idPreenchimento}"
-										${item.idPreenchimento == exDocumentoDTO.preenchimento ? 'selected' : ''}>
-										${item.nomePreenchimento}</option>
-								</c:forEach>
-							</select>
-						</div>
-	  				</div>
-					<div class="col-sm-3">
-						<div class="form-group">
-							<c:if test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
-								<c:set var="desabilitaBtn"> disabled </c:set>
-							</c:if> 
-							<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn-sm btn-secondary mt-4" ${desabilitaBtn}>
-								<i class="far fa-edit"></i>
-								<span class="${hide_only_GOVSP}">Alterar</span>
-							</button>
-							<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn-sm btn-secondary mt-4" ${desabilitaBtn}>
-								<i class="far fa-trash-alt"></i>
-								<span class="${hide_only_GOVSP}">Remover</span>
-							</button>
-							<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn-sm btn-secondary mt-4">
-								<i class="fas fa-plus"></i>
-								<span class="${hide_only_GOVSP}">Adicionar</span>
-							</button>
+							<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+								<div class="input-group">
+									<select id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()" class="form-control">
+										<c:forEach items="${exDocumentoDTO.preenchimentos}" var="item">
+											<option value="${item.idPreenchimento}"
+												${item.idPreenchimento == exDocumentoDTO.preenchimento ? 'selected' : ''}>
+												${item.nomePreenchimento}</option>
+										</c:forEach>
+									</select>
+								</div>
+								<c:if test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
+									<c:set var="desabilitaBtn"> disabled </c:set>
+								</c:if> 
+								<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn-sm btn-secondary ml-2" ${desabilitaBtn}>
+									<i class="far fa-edit"></i>
+									<span class="${hide_only_GOVSP}">Alterar</span>
+								</button>
+								<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn-sm btn-secondary ml-2" ${desabilitaBtn}>
+									<i class="far fa-trash-alt"></i>
+									<span class="${hide_only_GOVSP}">Remover</span>
+								</button>
+								<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn-sm btn-secondary ml-2">
+									<i class="fas fa-plus"></i>
+									<span class="${hide_only_GOVSP}">Adicionar</span>
+								</button>
+							</div>
 						</div>
 					</div>
 				</div>
-				</c:if>
+			</c:if>
 				<div id="tr_personalizacao" style="display: ${exDocumentoDTO.modelo.exClassificacao!=null? 'none': ''};">
 					<div class="row  ${hide_only_GOVSP}">
 						<c:if test="${exDocumentoDTO.modelo.exClassificacao!=null}">

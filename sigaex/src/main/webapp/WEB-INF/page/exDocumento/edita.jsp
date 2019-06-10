@@ -29,7 +29,7 @@
 				</h5>
 			</div>
 			<div class="card-body">
-			<form id="frm" name="frm" theme="simple" method="post" enctype="multipart/form-data">
+			<form id="frm" name="frm" theme="simple" method="post" enctype="multipart/form-data" class="mb-0">
 				<input type="hidden" id="idTamanhoMaximoDescricao" name="exDocumentoDTO.tamanhoMaximoDescricao" value="${exDocumentoDTO.tamanhoMaximoDescricao}" /> 
 				<input type="hidden" id="alterouModelo" name="exDocumentoDTO.alterouModelo" /> 
 				<input type="hidden" id="clickSelect" name="clickSelect" /> 
@@ -523,7 +523,7 @@
 						</div>
 					</c:if>
 				</c:if>	
-				<div class="row mt-2">
+				<div class="row mt-4">
 					<div class="col-sm-8">
 						<button type="button" onclick="javascript: gravarDoc(); return false;" name="gravar" class="btn btn-primary" accesskey="o"><u>O</u>K</button> 
 						<c:if test='${exDocumentoDTO.tipoDocumento == "interno"}'>

@@ -229,8 +229,8 @@ self.ajax_${propriedade}${tipoSel} = function() {
 <c:if test="${tema != 'simple'}">
 	<div class="form-group row">
 		<label for="formulario_${inputNameTipoSel}_sigla"
-			class="col-sm-2 col-form-label">${titulo}</label>
-		<div class="col-sm-10">
+			class="col-sm-2x col-form-label">${titulo}</label>
+		<div class="col-sm-10x">
 </c:if>
 <c:choose>
 	<c:when test="${desativar == 'sim'}">
@@ -242,7 +242,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 <c:if test="${empty onblur}">
 	<c:set var="onblur" value="${onchange}"></c:set>
 </c:if>
-<div class="input-group">
+
 	<input type="hidden" name="req${inputNameTipoSel}" value=""
 		id="formulario_req${inputNameTipoSel}" /> <input type="hidden"
 		name="alterouSel" value="" id="alterouSel" /> <input type="hidden"
@@ -254,27 +254,27 @@ self.ajax_${propriedade}${tipoSel} = function() {
 		id="formulario_${inputNameTipoSel}_descricao" /> <input type="hidden"
 		name="${inputNameTipoSel}.buscar"
 		value="<c:out value="${requestScope[propriedadeTipoSel].buscar}"/>"
-		id="formulario_${inputNameTipoSel}_buscar" /> <input type="search"
+		id="formulario_${inputNameTipoSel}_buscar" /> 
+<div class="input-group"><input type="search"
 		name="${inputNameTipoSel}.sigla"
 		value="<c:out value="${requestScope[propriedadeTipoSel].sigla}"/>"
 		id="formulario_${inputNameTipoSel}_sigla"
 		onkeypress="return handleEnter(this, event)" ${requiredValue}
 		onblur="javascript: ajax_${propriedade}${tipoSel}();"
-		<c:if test="${not empty onblur}">${onblur};</c:if> size="25"
+		<c:if test="${not empty onblur}">${onblur};</c:if>
 		onchange="<c:if test="${not empty onchange}">javascript: ${onchange};</c:if>"
-		class="form-control" ${disabledTxt} />
+		class="form-control" style="width: 1%;" ${disabledTxt} />
 	<c:if test="${buscar != 'nao'}">
 		<div class="input-group-append">
 			<input type="button" id="${propriedade}${tipoSel}SelButton"
 				value="..."
 				onclick="javascript: popitup_${propriedade}${tipoSel}('');"
-				${disabledBtn} class="btn btn-secondary">
+				${disabledBtn} class="btn btn-secondary" style="border-bottom-right-radius: 0.25em;border-top-right-radius: 0.25em;">
 		</div>
 	</c:if>
 	<c:if test="${ocultardescricao != 'sim'}">
-		<div class="input-group-append col-6">
+		<div class="input-group-append ml-2" style="width: 60%;">
 			<input class="form-control" id="${spanName}SelSpan"
-				style="width: 100%;"
 				value="<c:out value="${requestScope[propriedadeTipoSel].descricao}" escapeXml="false" />"
 				readonly />
 		</div>

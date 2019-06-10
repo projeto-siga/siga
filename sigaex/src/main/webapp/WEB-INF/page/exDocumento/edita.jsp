@@ -421,9 +421,7 @@
 						<div class="col-sm-8">
 							<div class="form-group">
 								<label>Descrição</label>
-								<textarea name="exDocumentoDTO.descrDocumento" cols="80" rows="2" id="descrDocumento" class="form-control" >
-									${exDocumentoDTO.descrDocumento}
-								</textarea>
+								<textarea name="exDocumentoDTO.descrDocumento" cols="80" rows="2" id="descrDocumento" class="form-control">${exDocumentoDTO.descrDocumento}</textarea>
 								<small class="form-text text-muted">(preencher o campo acima com palavras-chave, sempre usando substantivos, gênero masculino e
 									singular).</small>
 							</div>

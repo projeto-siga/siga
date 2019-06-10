@@ -70,7 +70,7 @@ public class Mesa {
 		//
 		EM_ELABORACAO("Em Elaboração", "far fa-lightbulb"),
 		//
-		AGUARDANDO_ANDAMENTO("Aguardando Andamento", "far fa-lightbulb"),
+		AGUARDANDO_ANDAMENTO("Aguardando Andamento", "far fa-clock"),
 		//
 		CAIXA_DE_SAIDA("Caixa de Saída", "fas fa-inbox"),
 		//

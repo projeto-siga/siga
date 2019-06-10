@@ -282,7 +282,7 @@
 							</div>	
 							<div class="row">
 								<div class="col-sm-12">
-									<div class="form-group">
+									<div class="form-group mb-0">
 										<input type="submit" value="Ok"	class="btn btn-primary" /> 
 										<input type="button" value="Cancelar" onclick="javascript:history.back();" class="btn btn-primary" />
 									</div>

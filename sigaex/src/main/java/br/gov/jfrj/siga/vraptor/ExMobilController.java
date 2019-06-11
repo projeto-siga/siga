@@ -343,15 +343,13 @@ public class ExMobilController extends
 				texto.append(e.getNmMod());
 			}
 			texto.append(";");
-			
-			if(e.getTitular() != null && e.getTitular().getLotacao() != null) {
-				descricao = Ex.getInstance().getBL().descricaoSePuderAcessar(e, e.getTitular(), e.getTitular().getLotacao());
 				
-				if(descricao != null) {
-					texto.append(descricao.replaceAll("\n", "").replaceAll("\t", "").replaceAll("\r",""));
-				}
-					
+			descricao = Ex.getInstance().getBL().descricaoSePuderAcessar(e, getTitular(), getTitular().getLotacao());
+			
+			if(descricao != null) {
+				texto.append(descricao.replaceAll("\n", "").replaceAll("\t", "").replaceAll("\r",""));
 			}
+			
 			texto.append(";");
 			texto.append(System.getProperty("line.separator"));
 		}

@@ -158,8 +158,8 @@ public class Excel {
 		if(lotacao != null) {
 			return "Linha " + linha +": NOME já cadastrado" + System.getProperty("line.separator");
 		}
-		if(!validarCaracterEspecial(nomeLotacao)) {
-			return "Linha " + linha +": NOME com caracteres especiais" + System.getProperty("line.separator");
+		if(nomeLotacao != null && !nomeLotacao.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9.,-]+")) {
+			return "Linha " + linha +": NOME com caracteres não permitidos" + System.getProperty("line.separator");
 		}
 		if(nomes.contains(nomeLotacao)) {
 			return "Linha " + linha +": NOME repetido em outra linha do arquivo" + System.getProperty("line.separator");
@@ -184,8 +184,8 @@ public class Excel {
 		if(lotacao != null) {
 			return "Linha " + linha +": SIGLA já cadastrada" + System.getProperty("line.separator");
 		}
-		if(!validarCaracterEspecial(siglaLotacao) || siglaLotacao.contains(" ")) {
-			return "Linha " + linha +": SIGLA com caracteres especiais" + System.getProperty("line.separator");
+		if(siglaLotacao != null && !siglaLotacao.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ0-9/-]+")) {
+			return "Linha " + linha +": SIGLA com caracteres não permitidos" + System.getProperty("line.separator");
 		} 
 		
 		if(siglas.contains(siglaLotacao)) {
@@ -306,19 +306,19 @@ public class Excel {
 	    			throw new AplicacaoException("Erro na gravação", 0, e);
 	    		}
 			}
+			if(problemas == null || "".equals(problemas.toString())) {
+	    		return null;
+	    	}
+	    	inputStream = new ByteArrayInputStream(problemas.getBytes("ISO-8859-1"));
 		} catch (Exception ioe) {
             ioe.printStackTrace();
         }
-    	if(problemas == null || "".equals(problemas.toString())) {
-    		return null;
-    	}
-    	inputStream = new ByteArrayInputStream(problemas.getBytes());
     	return inputStream;
     }
     
     public Boolean validarCaracterEspecial(String celula) {
     	Boolean retorno = Boolean.TRUE;
-    	if(!celula.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9]+")) {
+    	if(!celula.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9.]+")) {
     		retorno = Boolean.FALSE;
     	}
     	return retorno;
@@ -402,7 +402,7 @@ public class Excel {
 	    				if(dpFuncaoConfianca.getIdFuncaoIni() == null && dpFuncaoConfianca.getId() != null) {
 	    					dpFuncaoConfianca.setIdFuncaoIni(dpFuncaoConfianca.getId());
 	    					dpFuncaoConfianca.setIdeFuncao(dpFuncaoConfianca.getId().toString());
-	        				CpDao.getInstance().gravar(dpFuncaoConfianca);
+	    					CpDao.getInstance().gravar(dpFuncaoConfianca);
 	        			}
 					}
 	    			CpDao.getInstance().commitTransacao();			
@@ -411,13 +411,14 @@ public class Excel {
 	    			throw new AplicacaoException("Erro na gravação", 0, e);
 	    		}
 			}
+			if(problemas == null || "".equals(problemas.toString())) {
+	    		return null;
+	    	}
+	    	inputStream = new ByteArrayInputStream(problemas.toString().getBytes("ISO-8859-1"));
 		} catch (Exception ioe) {
             ioe.printStackTrace();
         }
-    	if(problemas == null || "".equals(problemas.toString())) {
-    		return null;
-    	}
-    	inputStream = new ByteArrayInputStream(problemas.toString().getBytes());
+    	
     	return inputStream;
     }
     
@@ -437,7 +438,7 @@ public class Excel {
 			return "Linha " + linha +": NOME já cadastrado" + System.getProperty("line.separator");
 		}
 		if(!validarCaracterEspecial(nomeFuncao)) {
-			return "Linha " + linha +": NOME com caracteres especiais" + System.getProperty("line.separator");
+			return "Linha " + linha +": NOME com caracteres não permitidos" + System.getProperty("line.separator");
 		}
 		if(nomes.contains(nomeFuncao)) {
 			return "Linha " + linha +": NOME repetido em outra linha do arquivo" + System.getProperty("line.separator");
@@ -510,13 +511,14 @@ public class Excel {
 	    			throw new AplicacaoException("Erro na gravação", 0, e);
 	    		}
 			}
+			if(problemas == null || "".equals(problemas.toString())) {
+	    		return null;
+	    	}
+	    	inputStream = new ByteArrayInputStream(problemas.toString().getBytes("ISO-8859-1"));
 		} catch (Exception ioe) {
             ioe.printStackTrace();
         }
-    	if(problemas == null || "".equals(problemas.toString())) {
-    		return null;
-    	}
-    	inputStream = new ByteArrayInputStream(problemas.toString().getBytes());
+    	
     	return inputStream;
     }
     
@@ -536,7 +538,7 @@ public class Excel {
 			return "Linha " + linha +": NOME já cadastrado" + System.getProperty("line.separator");
 		}
 		if(!validarCaracterEspecial(nomeCargo)) {
-			return "Linha " + linha +": NOME com caracteres especiais" + System.getProperty("line.separator");
+			return "Linha " + linha +": NOME com caracteres não permitidos" + System.getProperty("line.separator");
 		}
 		if(nomes.contains(nomeCargo)) {
 			return "Linha " + linha +": NOME repetido em outra linha do arquivo" + System.getProperty("line.separator");
@@ -837,8 +839,8 @@ public class Excel {
 			return "Linha " + linha +": NOME com mais de 60 caracteres" + System.getProperty("line.separator");
 		}
 
-		if(!validarCaracter(nomePessoa)) {
-			return "Linha " + linha +": NOME com número ou caracteres especiais" + System.getProperty("line.separator");
+		if(nomePessoa != null && !nomePessoa.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ'' ]+")) {
+			return "Linha " + linha +": NOME caracteres não permitidos" + System.getProperty("line.separator");
 		}
 		return "";
 	}    

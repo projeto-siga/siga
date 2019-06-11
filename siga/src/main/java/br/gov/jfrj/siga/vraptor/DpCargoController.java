@@ -111,7 +111,6 @@ public class DpCargoController extends
 	}
 	
 	@Get("app/cargo/listar")
-	@Post("app/cargo/listar")
 	public void lista(Integer offset, Long idOrgaoUsu, String nome) throws Exception {
 		
 		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
@@ -178,6 +177,9 @@ public class DpCargoController extends
 		if(idOrgaoUsu == null)
 			throw new AplicacaoException("Órgão não informada");
 		
+		if(nmCargo != null && !nmCargo.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9.]+")) 
+			throw new AplicacaoException("Nome com caracteres não permitidos");
+				
 		List<DpPessoa> listPessoa = null;
 		
 		DpCargo cargo = new DpCargo();

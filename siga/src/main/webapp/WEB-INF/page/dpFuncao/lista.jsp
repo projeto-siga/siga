@@ -13,7 +13,7 @@ function sbmt(offset) {
 	frm.submit();
 }
 </script>
-<form name="frm" action="listar" class="form" method="POST">
+<form name="frm" action="listar" class="form" method="GET">
 	<input type="hidden" name="offset" value="0" />
 		<div class="container-fluid">
 			<div class="card bg-light mb-3" >

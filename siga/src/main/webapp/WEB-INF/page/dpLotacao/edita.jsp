@@ -29,6 +29,14 @@
 		document.form.action =  "carregarExcel";
 		document.form.submit();
 	}
+
+	function validarNome(campo) {
+		campo.value = campo.value.replace(/[^a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9.,-]/g,'');
+	}
+
+	function validarSigla(campo) {
+		campo.value = campo.value.replace(/[^a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ0-9/-]/g,'');
+	}
 </script>
 <siga:pagina titulo="Cadastro de Lota&ccedil;&atilde;o">
 	<!-- main content -->
@@ -65,7 +73,7 @@
 					<div class="col-sm-4">
 						<div class="form-group">
 							<label for="nmLotacao">Nome</label>
-							<input type="text" id="nmLotacao" name="nmLotacao" value="${nmLotacao}" maxlength="100" class="form-control" />
+							<input type="text" id="nmLotacao" name="nmLotacao" value="${nmLotacao}" maxlength="100" class="form-control" onkeyup="validarNome(this)"/>
 							<small id="emailHelp" class="form-text text-muted">(Inserir nome oficial, conforme legislação. Não abreviar. Iniciar cada palavra com letra maiúscula, exceto para palavras tais como: "de", "para", etc. Exemplo: Unidade do Arquivo Público do Estado).</small>
 							
 						</div>
@@ -73,7 +81,7 @@
 					<div class="col-sm-2">
 						<div class="form-group">
 							<label for="siglaLotacao">Sigla</label>
-							<input type="text" id="siglaLotacao" name="siglaLotacao" value="${siglaLotacao}" maxlength="20" style="text-transform:uppercase" onkeyup="this.value = this.value.trim()" class="form-control"/>
+							<input type="text" id="siglaLotacao" name="siglaLotacao" value="${siglaLotacao}" maxlength="20" style="text-transform:uppercase" onkeyup="validarSigla(this)" class="form-control"/>
 							<small id="emailHelp" class="form-text text-muted">(Sigla: Letras maiúsculas).</small>
 							
 						</div>
@@ -126,8 +134,8 @@
 				<div class="row">
 					<div class="col-sm-2">
 						<div class="form-group">
-							<button type="button" onclick="javascript: validar();" class="btn btn-primary" >Ok</button> 
-							<button type="button" onclick="javascript:location.href='/siga/app/lotacao/listar';" class="btn btn-primary" >Cancelar</button>
+							<button type="button" onclick="javascript: validar();" class="btn btn-primary" >Ok</button>
+							<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancelar</button>
 						</div>
 					</div>
 				</div>

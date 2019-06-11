@@ -83,7 +83,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "  where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' "
 				+ "  || :nome || '%')))"
 				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "  group by lot.idLotacaoIni)"),
+				+ "  group by lot.idLotacaoIni) order by upper(nomeLotacaoAI)"),
 		@NamedQuery(name = "consultarQuantidadeDpLotacaoInclusiveFechadas", query = "select count(distinct lot.idLotacaoIni)"
 				+ "	from DpLotacao lot"
 				+ "	where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"

@@ -26,64 +26,69 @@
 		</script>
 	</c:if>
 
-	<div class="gt-bd" style="padding-bottom: 0px;">
-		<div class="gt-content">
-
-			<h2>Confirme os dados do documento abaixo:</h2>
-
-			<div class="gt-content-box" style="padding: 10px;">
-				<table class="message" width="100%">
-					<tr class="header">
-						<td width="50%"><b>Documento
-								${doc.exTipoDocumento.descricao}:</b> ${doc.codigo}</td>
-						<td><b>Data:</b> ${doc.dtDocDDMMYY}</td>
-					</tr>
-					<tr class="header">
-						<td><b>De:</b> ${doc.subscritorString}</td>
-						<td><b>Classificação:</b>
-							${doc.exClassificacao.descricaoCompleta}</td>
-					</tr>
-					<tr class="header">
-						<td><b>Para:</b> ${doc.destinatarioString}</td>
-						<td><b>Descrição:</b> ${doc.descrDocumento}</td>
-					</tr>
-					<c:if test="${doc.conteudo != ''}">
-						<tr>
-							<td colspan="2">
-								<div id="conteudo" style="padding-top: 10px;">
-									<tags:fixdocumenthtml>
+	<div class="container-fluid">
+		<div class="card bg-light mb-3">
+			<div class="card-header">
+				<h5>Confirme os dados do documento abaixo:</h5>
+			</div>
+			<div id="divClassificacao" class="card-body bg-white">
+				<div class="gt-content-box" style="padding: 10px;">
+					<table class="message" width="100%">
+						<tr class="header">
+							<td width="50%"><b>Documento
+									${doc.exTipoDocumento.descricao}:</b> ${doc.codigo}</td>
+							<td><b>Data:</b> ${doc.dtDocDDMMYY}</td>
+						</tr>
+						<tr class="header">
+							<td><b>De:</b> ${doc.subscritorString}</td>
+							<td><b>Classificação:</b>
+								${doc.exClassificacao.descricaoCompleta}</td>
+						</tr>
+						<tr class="header">
+							<td><b>Para:</b> ${doc.destinatarioString}</td>
+							<td><b>Descrição:</b> ${doc.descrDocumento}</td>
+						</tr>
+						<c:if test="${doc.conteudo != ''}">
+							<tr>
+								<td colspan="2">
+									<div id="conteudo" style="padding-top: 10px;">
+										<tags:fixdocumenthtml>
 										${doc.conteudoBlobHtmlStringComReferencias}
 									</tags:fixdocumenthtml>
-								</div>
-							</td>
-						</tr>
-					</c:if>
-				</table>
+									</div>
+								</td>
+							</tr>
+						</c:if>
+					</table>
 
-			</div>
-
-			<c:set var="acao" value="assinar_gravar" />
-			<div class="gt-form-row gt-width-100" style="padding-top: 10px;">
-				<div id="dados-assinatura" style="visible: hidden">
-					<input type="hidden" name="ad_url_base" value="" />
-					<input type="hidden" name="ad_url_next" value="/sigaex/app/expediente/doc/exibir?sigla=${sigla}" />
-					<input type="hidden" name="ad_descr_0" value="${sigla}" /> 
-					<input type="hidden" name="ad_url_pdf_0" value="/sigaex/app/arquivo/exibir?arquivo=${doc.codigoCompacto}.pdf" />
-					<input type="hidden" name="ad_url_post_0" value="/sigaex/app/expediente/mov/assinar_gravar" />
-					<input type="hidden" name="ad_url_post_password_0" value="/sigaex/app/expediente/mov/assinar_senha_gravar" />
-					
-					<input type="hidden" name="ad_id_0" value="${doc.codigoCompacto}" />
-					<input type="hidden" name="ad_description_0" value="${doc.descrDocumento}" />
-					<input type="hidden" name="ad_kind_0" value="${doc.descrFormaDoc}" />
 				</div>
-				
-				<tags:assinatura_botoes
-					assinar="${assinando}"
-					autenticar="${autenticando}"
-					assinarComSenha="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-					autenticarComSenha="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-					juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}"
-					tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" />
+
+				<c:set var="acao" value="assinar_gravar" />
+				<div class="gt-form-row gt-width-100" style="padding-top: 10px;">
+					<div id="dados-assinatura" style="visible: hidden">
+						<input type="hidden" name="ad_url_base" value="" /> <input
+							type="hidden" name="ad_url_next"
+							value="/sigaex/app/expediente/doc/exibir?sigla=${sigla}" /> <input
+							type="hidden" name="ad_descr_0" value="${sigla}" /> <input
+							type="hidden" name="ad_url_pdf_0"
+							value="/sigaex/app/arquivo/exibir?arquivo=${doc.codigoCompacto}.pdf" />
+						<input type="hidden" name="ad_url_post_0"
+							value="/sigaex/app/expediente/mov/assinar_gravar" /> <input
+							type="hidden" name="ad_url_post_password_0"
+							value="/sigaex/app/expediente/mov/assinar_senha_gravar" /> <input
+							type="hidden" name="ad_id_0" value="${doc.codigoCompacto}" /> <input
+							type="hidden" name="ad_description_0"
+							value="${doc.descrDocumento}" /> <input type="hidden"
+							name="ad_kind_0" value="${doc.descrFormaDoc}" />
+					</div>
+
+					<tags:assinatura_botoes assinar="${assinando}"
+						autenticar="${autenticando}"
+						assinarComSenha="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+						autenticarComSenha="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+						juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}"
+						tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" />
+				</div>
 			</div>
 		</div>
 	</div>

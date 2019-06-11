@@ -138,6 +138,8 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao  {
 	
 	public static final long TIPO_CONFIG_DEFINICAO_AUTOMATICA_DE_PAPEL = 40;
 	
+	public static final long TIPO_CONFIG_JUNTADA_AUTOMATICA = 41;
+	
 	
 	// SIGA-WF
 

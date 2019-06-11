@@ -205,7 +205,7 @@
 							css += "TABLE.mov TR.encerramento_volume { background-color: rgb(255, 218, 218);}</style>";
 							$(css).appendTo("head");
 						</script>
-							<table class="table table-responsive-sm">
+							<table class="table table-sm table-responsive-sm">
 								<thead>
 									<tr>
 										<th align="center">Tempo</th>

@@ -90,7 +90,7 @@
 				</c:if>
 			</c:forEach>
 			<c:if test="${temmov}">
-					<table class="table table-hover table-striped mov mt-2">
+					<table class="table table-sm table-hover table-striped mov mt-2">
 						<thead class="thead-dark align-middle text-center">
 							<tr>
 								<th class="text-center" rowspan="2">
@@ -218,12 +218,12 @@
 										</siga:links>
 									</td>
 									<c:if test="${exibirCompleto != 'true' and mov.duracaoSpan > 0}">
-										<td class="duracaoborderbottom text-center" rowspan="${mov.duracaoSpan}">
+										<td class="duracaoborderbottom text-center bg-white" rowspan="${mov.duracaoSpan}">
 											${mov.duracao}
 										</td>
 									</c:if>
 									<c:if test="${exibirCompleto == 'true' and mov.duracaoSpanExibirCompleto > 0}">
-										<td class="duracaoborderbottom text-center" rowspan="${mov.duracaoSpanExibirCompleto}">
+										<td class="duracaoborderbottom text-center bg-white" rowspan="${mov.duracaoSpanExibirCompleto}">
 											${mov.duracao}
 										</td>
 									</c:if>

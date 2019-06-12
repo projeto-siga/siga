@@ -797,7 +797,7 @@
 
 					<div class="card-sidebar card bg-light mb-3">
 						<c:set var="docDetalhesTitle" scope="request" value="${pagina_de_erro}" />
-						<tags:collapse title="${siga_cliente=='GOVSP'?'Propriedades do Documento (':''}Documento ${docVO.doc.exTipoDocumento.descricao}${siga_cliente=='GOVSP'?')':''}" id="DocDetalhes" collapseMode="${collapse_Expanded}">
+						<tags:collapse title="${siga_cliente=='GOVSP'?'Propriedades do Documento (':'Documento '}${docVO.doc.exTipoDocumento.descricao}${siga_cliente=='GOVSP'?')':''}" id="DocDetalhes" collapseMode="${collapse_Expanded}">
 							<p class="${hide_only_GOVSP}">
 								<b>Suporte:</b> ${docVO.fisicoOuEletronico}
 							</p>

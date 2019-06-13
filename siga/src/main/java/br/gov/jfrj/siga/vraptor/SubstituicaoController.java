@@ -124,7 +124,8 @@ public class SubstituicaoController extends SigaController {
 	
 	@Get("/app/substituicao/editar")
 	public void edita(Long id) throws Exception {
-		String buscarFechadas = "buscarFechadas="+podeCadastrarQualquerSubstituicao();
+		//String buscarFechadas = "buscarFechadas="+podeCadastrarQualquerSubstituicao();
+		String buscarFechadas = "buscarFechadas=true";
 		result.include("strBuscarFechadas", buscarFechadas);
 		
 		if (id != null) {
@@ -191,7 +192,8 @@ public class SubstituicaoController extends SigaController {
 					  ) throws Exception {
 		
 		
-		Long lotacaoPai;
+		Long lotacaoIniPai;
+		Long lotacaoIniAvo;
 
 		DpSubstituicao subst = new DpSubstituicao();
 		
@@ -222,12 +224,15 @@ public class SubstituicaoController extends SigaController {
 					throw new AplicacaoException("A lotação titular não foi informada");
 				
 				subst.setLotaTitular(dao().consultar(this.lotaTitularSel.getId(), DpLotacao.class, false));
-				lotacaoPai = subst.getLotaTitular().getIdLotacaoPai();
+				lotacaoIniPai = subst.getLotaTitular().getIdLotacaoIniPai();
+				lotacaoIniAvo = subst.getLotaTitular().getLotacaoPai().getIdLotacaoIniPai();
+				
 				
 				if (!subst.getLotaTitular().getIdLotacao().equals(getCadastrante().getIdLotacao()) 
 						&& !podeCadastrarQualquerSubstituicao()) 
-					if ((lotacaoPai == null) || !(lotacaoPai.equals(getCadastrante().getIdLotacao())))
-						throw new AplicacaoException("Lotação titular não permitida. Apenas um usuário da própria lotação ou da lotação imediatamente superior pode defini-la como titular.");
+					if ((lotacaoIniPai == null) || !(lotacaoIniPai.equals(getCadastrante().getIdLotacaoIni())) &&
+						(lotacaoIniAvo == null) || !(lotacaoIniAvo.equals(getCadastrante().getIdLotacaoIni()))) 
+						throw new AplicacaoException("Lotação titular não permitida. Apenas usuários da própria lotação ou lotados até 2 lotações superiores na hierarquia podem defini-la como titular.");
 				
 			}
 			if (tipoSubstituto == 1) {

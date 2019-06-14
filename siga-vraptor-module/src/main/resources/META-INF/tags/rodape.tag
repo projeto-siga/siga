@@ -89,7 +89,7 @@
 			
 			<hr class="p-0 m-0 mb-1">			
 			<div class="text-right text-white">
-				<b>SIGA.doc</b> 8.0.8 <c:if test="${siga.versao != ''}">${siga.versao}</c:if>				
+				<b>SIGA.doc</b> 8.0.9 <c:if test="${siga.versao != ''}">${siga.versao}</c:if>				
 			</div>
 		</div>
 	</footer>

@@ -122,5 +122,5 @@
 			return "";
 		}
 	</script>
-	<script src="../../../javascript/service-worker.js" async></script>
+	<script src="../../javascript/service-worker.js" async></script>
 </siga:pagina>

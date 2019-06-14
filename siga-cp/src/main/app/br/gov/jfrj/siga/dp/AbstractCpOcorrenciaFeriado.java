@@ -30,11 +30,13 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -46,6 +48,8 @@ public abstract class AbstractCpOcorrenciaFeriado extends Objeto implements
 		Serializable {
 
 	@Id
+	@SequenceGenerator(sequenceName = "CORPORATIVO.CP_OCORRENCIA_FERIADO_SEQ", name = "CORPORATIVO.CP_OCORRENCIA_FERIADO_SEQ")
+	@GeneratedValue(generator = "CORPORATIVO.CP_OCORRENCIA_FERIADO_SEQ")
 	@Column(name = "ID_OCORRENCIA", unique = true, nullable = false)
 	private Long idOcorrencia;
 

@@ -30,7 +30,7 @@ public class SigaMessages {
 	}
 
 	public static boolean isSigaSP() {
-    	if (SigaBaseProperties.getString("siga.local") != null && SigaBaseProperties.getString("siga.local").equals("GOVSP")) {
+    	if (SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
     		return true;
     	}
     	return false;

@@ -195,6 +195,31 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 	@NaoRecursivo
 	private CpOrgaoUsuario orgaoObjeto;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_LOTACAO_OBJETO")
+	@NaoRecursivo
+	private DpLotacao lotacaoObjeto;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_COMPLEXO_OBJETO")
+	@NaoRecursivo
+	private CpComplexo complexoObjeto;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_CARGO_OBJETO")
+	@NaoRecursivo
+	private DpCargo cargoObjeto;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_FUNCAO_CONFIANCA_OBJETO")
+	@NaoRecursivo
+	private DpFuncaoConfianca funcaoConfiancaObjeto;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_PESSOA_OBJETO")
+	@NaoRecursivo
+	private DpPessoa pessoaObjeto;
+
 	public Set<CpConfiguracao> getConfiguracoesPosteriores() {
 		return configuracoesPosteriores;
 	}
@@ -420,6 +445,46 @@ public abstract class AbstractCpConfiguracao extends HistoricoAuditavelSuporte
 
 	public void setOrgaoObjeto(CpOrgaoUsuario orgaoObjeto) {
 		this.orgaoObjeto = orgaoObjeto;
+	}
+
+	public DpLotacao getLotacaoObjeto() {
+		return lotacaoObjeto;
+	}
+
+	public void setLotacaoObjeto(DpLotacao lotacaoObjeto) {
+		this.lotacaoObjeto = lotacaoObjeto;
+	}
+
+	public CpComplexo getComplexoObjeto() {
+		return complexoObjeto;
+	}
+
+	public void setComplexoObjeto(CpComplexo complexoObjeto) {
+		this.complexoObjeto = complexoObjeto;
+	}
+
+	public DpCargo getCargoObjeto() {
+		return cargoObjeto;
+	}
+
+	public void setCargoObjeto(DpCargo cargoObjeto) {
+		this.cargoObjeto = cargoObjeto;
+	}
+
+	public DpFuncaoConfianca getFuncaoConfiancaObjeto() {
+		return funcaoConfiancaObjeto;
+	}
+
+	public void setFuncaoConfiancaObjeto(DpFuncaoConfianca funcaoConfiancaObjeto) {
+		this.funcaoConfiancaObjeto = funcaoConfiancaObjeto;
+	}
+
+	public DpPessoa getPessoaObjeto() {
+		return pessoaObjeto;
+	}
+
+	public void setPessoaObjeto(DpPessoa pessoaObjeto) {
+		this.pessoaObjeto = pessoaObjeto;
 	}
 
 }

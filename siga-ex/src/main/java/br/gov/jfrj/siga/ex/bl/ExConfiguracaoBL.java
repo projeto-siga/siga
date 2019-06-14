@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
+import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpPerfil;
 import br.gov.jfrj.siga.cp.CpServico;
@@ -273,7 +274,9 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			ExTipoMovimentacao exTpMov, DpCargo cargo,
 			CpOrgaoUsuario cpOrgaoUsu, DpFuncaoConfianca dpFuncaoConfianca,
 			DpLotacao dpLotacao, DpPessoa dpPessoa, ExNivelAcesso nivelAcesso, CpTipoLotacao cpTpLotacao,
-			long idTpConf) {
+			long idTpConf, DpPessoa pessoaObjeto, 
+			DpLotacao lotacaoObjeto, CpComplexo complexoObjeto, DpCargo cargoObjeto, 
+			DpFuncaoConfianca funcaoConfiancaObjeto, CpOrgaoUsuario orgaoObjeto) {
 
 		if (isUsuarioRoot(dpPessoa)){
 			return true;
@@ -300,6 +303,13 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 			config.setExVia(exVia);
 			config.setExTipoMovimentacao(exTpMov);
 			config.setExNivelAcesso(nivelAcesso);
+			
+			config.setPessoaObjeto(pessoaObjeto);
+			config.setLotacaoObjeto(lotacaoObjeto);
+			config.setComplexoObjeto(complexoObjeto);
+			config.setCargoObjeto(cargoObjeto);
+			config.setFuncaoConfiancaObjeto(funcaoConfiancaObjeto);
+			config.setOrgaoObjeto(orgaoObjeto);
 
 			CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(config,
 					new int[] { 0 }, null);
@@ -318,6 +328,25 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 		}		
 		return false;
 	}
+	
+	public boolean podePorConfiguracao(CpServico cpServico,
+			ExTipoFormaDoc exTipoFormaDoc, ExPapel exPapel,
+			ExTipoDocumento exTpDoc, ExFormaDocumento exFormaDoc,
+			ExModelo exMod, ExClassificacao exClassificacao, ExVia exVia,
+			ExTipoMovimentacao exTpMov, DpCargo cargo,
+			CpOrgaoUsuario cpOrgaoUsu, DpFuncaoConfianca dpFuncaoConfianca,
+			DpLotacao dpLotacao, DpPessoa dpPessoa, ExNivelAcesso nivelAcesso, CpTipoLotacao cpTpLotacao,
+			long idTpConf) {
+		return podePorConfiguracao(cpServico,
+				exTipoFormaDoc, exPapel,
+				exTpDoc, exFormaDoc,
+				exMod, exClassificacao, exVia,
+				exTpMov, cargo,
+				cpOrgaoUsu, dpFuncaoConfianca,
+				dpLotacao, dpPessoa, nivelAcesso, cpTpLotacao,
+				idTpConf, null, null, null, null, null, null);
+	}
+
 
 	/**
 	 * 
@@ -479,8 +508,7 @@ public class ExConfiguracaoBL extends CpConfiguracaoBL {
 				idTpConf);
 	}
 
-	public boolean podePorConfiguracao(DpPessoa dpPessoa, long idTpConf)
-			throws Exception {
+	public boolean podePorConfiguracao(DpPessoa dpPessoa, long idTpConf) {
 		return podePorConfiguracao(null, null, null, null, null, null, null,
 				null, null, null, null, null, null, dpPessoa, null, null,idTpConf);
 	}

@@ -30,6 +30,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -47,6 +49,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @BatchSize(size = 500)
 //@AttributeOverride(name = "hisAtivo", column = @Column(name = "HIS_ATIVO"))
 @Table(name = "EX_CLASSIFICACAO", catalog = "SIGA")
+@Cache(region = ExDao.CACHE_EX, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class ExClassificacao extends AbstractExClassificacao implements
 		Serializable, Selecionavel {
 	/**

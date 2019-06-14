@@ -55,7 +55,7 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
 @Table(name = "DP_LOTACAO", schema = "CORPORATIVO")
-@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpLotacao extends AbstractDpLotacao implements Serializable,
 		Selecionavel, Historico, Sincronizavel, Comparable, DpConvertableEntity {
 	private static final long serialVersionUID = 5628179687234082413L;

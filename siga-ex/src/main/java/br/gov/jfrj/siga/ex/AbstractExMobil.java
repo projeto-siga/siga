@@ -36,6 +36,7 @@ import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
@@ -128,14 +129,17 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 	@Column(name = "NUM_SEQUENCIA", nullable = false)
 	private java.lang.Integer numSequencia;
 
+	@BatchSize(size=1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobil")
 	@Sort(type = SortType.NATURAL)
 	private SortedSet<ExMovimentacao> exMovimentacaoSet;
 
+	@BatchSize(size=1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobilRef")
 	@Sort(type = SortType.NATURAL)
 	private SortedSet<ExMovimentacao> exMovimentacaoReferenciaSet;
 
+	@BatchSize(size=1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobilPai")
 	private java.util.Set<ExDocumento> exDocumentoFilhoSet;
 

@@ -25,6 +25,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
 /**
@@ -33,6 +37,7 @@ import br.gov.jfrj.siga.model.Assemelhavel;
  */
 @Entity
 @Table(name = "EX_VIA", catalog = "SIGA")
+@Cache(region = ExDao.CACHE_EX, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class ExVia extends AbstractExVia {
 	/**
 	 * 

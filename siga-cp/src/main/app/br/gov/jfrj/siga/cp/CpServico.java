@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -25,13 +26,17 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Immutable;
 
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 @Entity
 @Table(name = "CP_SERVICO", schema = "CORPORATIVO")
-@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@Immutable
+@Cacheable
+@Cache(region = CpDao.CACHE_QUERY_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpServico extends AbstractCpServico implements Selecionavel {
 
 	/**

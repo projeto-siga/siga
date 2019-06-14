@@ -78,6 +78,16 @@ public class ExController extends SigaController {
 		}
 	}
 
+	protected  String getNomeServidor() {
+		return getRequest().getServerName();
+	}
+
+	protected  String getNomeServidorComPorta() {
+		if (getRequest().getServerPort() > 0)
+			return getRequest().getServerName() + ":" + getRequest().getServerPort();
+		return getRequest().getServerName();
+	}
+
 	protected  List<ExNivelAcesso> getListaNivelAcesso(ExTipoDocumento exTpDoc, ExFormaDocumento forma, ExModelo exMod, ExClassificacao classif) {
 		List<ExNivelAcesso> listaNiveis = ExDao.getInstance().listarOrdemNivel();
 		ArrayList<ExNivelAcesso> niveisFinal = new ArrayList<ExNivelAcesso>();

@@ -2,9 +2,9 @@ package br.gov.jfrj.siga.sr.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -138,7 +138,7 @@ public class SrAtributo extends HistoricoSuporte implements SrSelecionavel, Sele
 	}
 
 	public Set<String> getPreDefinidoSet() {
-		Set<String> preDefinidos = new HashSet<String>();
+		Set<String> preDefinidos = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
 		if (getTipoAtributo() == SrTipoAtributo.VL_PRE_DEFINIDO) {
 			preDefinidos.addAll(Arrays.asList(getDescrPreDefinido().split(";")));
 		}

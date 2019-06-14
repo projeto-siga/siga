@@ -238,7 +238,38 @@
 									</div>
 								</div>
 							</div>
+							
+							
 							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label>Pessoa Objeto</label>
+										<siga:selecao tipo="pessoa" propriedade="pessoaObjeto"
+											tema="simple" modulo="siga" />
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label>Lotação Objeto</label>
+										<siga:selecao tipo="lotacao" propriedade="lotacaoObjeto"
+											tema="simple" modulo="siga" />
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label>Cargo Objeto</label>
+										<siga:selecao tipo="cargo" propriedade="cargoObjeto"
+											tema="simple" modulo="siga" />
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label>Função de Confiança Objeto</label>
+										<siga:selecao tipo="funcao" propriedade="funcaoObjeto"
+											tema="simple" modulo="siga" />
+									</div>
+								</div>
+	
 								<div class="col-sm-6">
 									<div class="form-group">
 										<label>Órgão Objeto</label>
@@ -251,14 +282,12 @@
 							</div>	
 							<div class="row">
 								<div class="col-sm-12">
-									<div class="form-group">
+									<div class="form-group mb-0">
 										<input type="submit" value="Ok"	class="btn btn-primary" /> 
 										<input type="button" value="Cancelar" onclick="javascript:history.back();" class="btn btn-primary" />
 									</div>
 								</div>
 							</div>
-							
-						
 					</div>
 				</form>
 			</div>

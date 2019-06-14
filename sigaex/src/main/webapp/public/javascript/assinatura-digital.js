@@ -159,7 +159,7 @@ var providerAssijusPopup = {
 				console.log(id, 'hash')
 				var errormsg = this.errormsg;
 				$.ajax({
-					url : "/sigaex/public/app/assinador-popup/doc/" + id + "/hash",
+					url : "/sigaex/app/assinador-popup/doc/" + id + "/hash",
 					type : "GET",
 					async : false,
 					success : function(xhr) {
@@ -178,7 +178,7 @@ var providerAssijusPopup = {
 				console.log(sign)
 				var errormsg = this.errormsg;
 				$.ajax({
-					url : "/sigaex/public/app/assinador-popup/doc/" + id + "/sign",
+					url : "/sigaex/app/assinador-popup/doc/" + id + "/sign",
 					type : "PUT",
 					contentType: "application/json",
 					data : JSON.stringify(sign),
@@ -461,7 +461,7 @@ var providerIttruP11 = {
 	inicializar : function(cont) {
 		try {
 			this.dialog = $(
-					'<div id="dialog-form-pin" title="Assinar com token"><div class="form-group"><label>PIN</label><input type="password" name="pin" id="pin" class="form-control" autocomplete="off"/></div><fieldset><div id="certChoice"/></fieldset></div>')
+					'<div id="dialog-form-pin" title="Assinar com token"><fieldset><label>PIN</label> <br/><input type="password" name="pin" id="pin" class="text ui-widget-content ui-corner-all" autocomplete="off"/></fieldset><fieldset><div id="certChoice"/></fieldset></div>')
 					.dialog(
 							{
 								title : "Assinatura Digital (" + this.nome
@@ -614,7 +614,7 @@ var providerPassword = {
 	inicializar : function(cont) {
 		try {
 			this.dialog = $(
-					'<div id="dialog-form" title="Assinar/Autenticar com Senha"><div class="form-group"><label>Matrícula</label><input id="nomeUsuarioSubscritor" type="text" name="nomeUsuarioSubscritor" class="form-control" onblur="javascript:converteUsuario(this)"/></div><div class="form-group"><label>Senha</label><br /> <input type="password" id="senhaUsuarioSubscritor" name="senhaUsuarioSubscritor"  class="form-control"  autocomplete="off" /></div></div>')
+					'<div id="dialog-form" title="Assinar/Autenticar com Senha"><fieldset><label>Matrícula</label> <br /> <input id="nomeUsuarioSubscritor" type="text" value="' + $('#siglaUsuarioCadastrante').val() + '" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)" /> <label>(modifique caso necessário)</label><br /> <br /> <label>Senha</label><br /> <input type="password" id="senhaUsuarioSubscritor" class="text ui-widget-content ui-corner-all" autocomplete="off" autofocus /></fieldset></div>')
 					.dialog({
 						title : "Identificação",
 						width : '50%',
@@ -641,9 +641,13 @@ var providerPassword = {
 							}
 						},
 						close : function() {
+							gAssinando = false;
 						}
 					});
 			$(document).delegate('.ui-dialog', 'keyup', function(e) {
+				if((e.which == 13 || e.key === "Enter") && ($("#nomeUsuarioSubscritor").val() === "" || $("#senhaUsuarioSubscritor").val() === "")) {
+					return false;
+				}
 		        var tagName = e.target.tagName.toLowerCase();
 
 		        tagName = (tagName === 'input' && e.target.type === 'button') ? 'button' : tagName;
@@ -760,6 +764,7 @@ var process = {
 	},
 	finalize : function() {
 		this.dialogo.dialog('destroy');
+		gAssinando = false;
 	},
 	nextStep : function() {
 		if (typeof this.steps[this.index] == 'string')
@@ -1096,7 +1101,6 @@ function GravarAssinatura(url, datatosend) {
 		error : function(xhr) {
 			// result = TrataErro(xhr.responseText ? xhr.responseText : xhr,
 			// "");
-			gAssinando = false;
 			result = "Erro na gravação da assinatura. " + xhr.responseText;
 		}
 	});
@@ -1288,6 +1292,10 @@ function WaitForAppletLoad(applet_id, attempts, delay, onSuccessCallback,
 
 /* converte para maiúscula a sigla do estado */
 function converteUsuario(nomeusuario) {
+	re = /^[a-zA-Z]{2}\d{3,6}$/;
+	ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
 	tmp = nomeusuario.value;
-	nomeusuario.value = tmp.toUpperCase();
+	if (tmp.match(re) || tmp.match(ret2)) {
+		nomeusuario.value = tmp.toUpperCase();
+	}
 }

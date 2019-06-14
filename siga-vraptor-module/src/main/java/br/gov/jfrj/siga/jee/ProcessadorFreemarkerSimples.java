@@ -106,7 +106,7 @@ public class ProcessadorFreemarkerSimples implements TemplateLoader {
 					}
 					if (mod != null)
 						return mod.getConteudoBlobString() == null ? "" : mod.getConteudoBlobString();
-					return null;
+					return "";
 				}
 			});
 	

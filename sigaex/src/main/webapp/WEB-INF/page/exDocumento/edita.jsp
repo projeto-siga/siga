@@ -356,15 +356,15 @@
 								<c:if test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
 									<c:set var="desabilitaBtn"> disabled </c:set>
 								</c:if> 
-								<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn-sm btn-secondary ml-2" ${desabilitaBtn}>
+								<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn btn-sm btn-secondary ml-2" ${desabilitaBtn}>
 									<i class="far fa-edit"></i>
 									<span class="${hide_only_GOVSP}">Alterar</span>
 								</button>
-								<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn-sm btn-secondary ml-2" ${desabilitaBtn}>
+								<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn btn-sm btn-secondary ml-2" ${desabilitaBtn}>
 									<i class="far fa-trash-alt"></i>
 									<span class="${hide_only_GOVSP}">Remover</span>
 								</button>
-								<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn-sm btn-secondary ml-2">
+								<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn btn-sm btn-secondary ml-2">
 									<i class="fas fa-plus"></i>
 									<span class="${hide_only_GOVSP}">Adicionar</span>
 								</button>

@@ -15,7 +15,7 @@
 <%@ attribute name="tramitarAtivo" required="false"%>
 <%@ attribute name="tramitarFixo" required="false"%>
 
-<div class="col">
+<div class="col pt-2 pb-2">
 	<c:if test="${not empty assinar and assinar}">
 		<a id="bot-assinar" accesskey="s" href="#"
 			onclick="javascript: AssinarDocumentos(false, ${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;POL:Política ICP-Brasil')});"
@@ -30,10 +30,7 @@
 	</c:if>
 
 	<c:if test="${not empty voltar and voltar}">
-
-		<input type="button" value="Voltar"
-			onclick="javascript:history.back();" class="btn btn-secondar mr-2" />
-
+		<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-secondary mr-2" />
 	</c:if>
 
 	<c:if test="${assinarComSenha || autenticarComSenha}">

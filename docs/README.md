@@ -1,7 +1,11 @@
 Manual do Siga
 ==============
 
-Para compilar o manual do Siga é necessário:
+Utilizamos o site ReadTheDocs.io para compilar automaticamente o manual do Siga-Doc a partir das informações contidas nesse diretório.
+
+A última versão do manual pode ser acessada em HTML clicando [aqui](https://siga-doc.readthedocs.io/pt/latest/) ou em PDF clicando [aqui](https://buildmedia.readthedocs.org/media/pdf/siga-doc/latest/siga-doc.pdf).
+
+##### Para compilar o manual do Siga é necessário:
 
 1. Instalar a linguagem [Python](https://www.python.org/)
 2. Instalar o Sphinx:

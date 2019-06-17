@@ -18,15 +18,23 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Immutable;
+
+import br.gov.jfrj.siga.dp.dao.CpDao;
+
+import br.gov.jfrj.siga.dp.dao.CpDao;
 
 @Entity
+@Immutable
+@Cacheable
+@Cache(region = CpDao.CACHE_QUERY_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(schema = "CORPORATIVO", name="CP_TIPO_PAPEL")
-@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpTipoPapel extends AbstractCpTipoPapel {
 
 }

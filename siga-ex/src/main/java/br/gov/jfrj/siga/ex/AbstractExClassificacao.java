@@ -37,10 +37,13 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
+import br.gov.jfrj.siga.hibernate.ExDao;
 
 /**
  * A class that represents a row in the EX_CLASSIFICACAO table. You can
@@ -108,6 +111,7 @@ public abstract class AbstractExClassificacao extends HistoricoAuditavelSuporte
 	private String descrClassificacaoSemAcento;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exClassificacao")
+	@Cache(region = ExDao.CACHE_EX, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 	private Set<ExVia> exViaSet;
 
 	@Column(name = "OBS", length = 4000)

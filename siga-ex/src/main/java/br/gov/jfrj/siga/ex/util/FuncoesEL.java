@@ -549,6 +549,15 @@ public class FuncoesEL {
 			return null;
 		}
 	}
+	
+	public static BigDecimal monetarioParaBigDecimal(String monetario) {
+        try {
+            return new BigDecimal(monetario.replace(".", "").replace(",", "."));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 
 	public static String mesModData(String data) {
 		String split[] = data.split("/");
@@ -578,6 +587,29 @@ public class FuncoesEL {
 			}
 		}
 	}
+	
+	public static String bigDecimalParaMonetario(BigDecimal valor1) {
+        BigDecimal valor2;
+        if (valor1.compareTo(BigDecimal.ZERO) < 0) {       // It could be  ... if (valor1.signum() == -1) 
+            valor2 = valor1;
+            DecimalFormat formatter = new DecimalFormat("#,##0.00");
+            String s = formatter.format(valor2);
+            if (s.substring(s.length() - 3, s.length() - 2).equals(".")) {
+                return s.replace(".", "*").replace(",", ".").replace("*", ",");
+            } else {
+                return "-" + s;
+            }
+        } else {
+            DecimalFormat formatter = new DecimalFormat("#,##0.00");
+            String s = formatter.format(valor1);
+            if (s.substring(s.length() - 3, s.length() - 2).equals(".")) {
+                return s.replace(".", "*").replace(",", ".").replace("*", ",");
+            } else {
+                return s;
+            }
+        }
+    }
+
 
 	public static String stringParaMinuscula(String string) {
 		String stringAux1 = string.substring(0, 1);

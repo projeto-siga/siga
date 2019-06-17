@@ -36,6 +36,7 @@ public class Mesa {
 		public String origem;
 		public String grupo;
 		public String grupoNome;
+		public String grupoIcone;
 		public String grupoOrdem;
 		public String dataDevolucao;
 		public List<Marca> list;
@@ -59,30 +60,32 @@ public class Mesa {
 	}
 
 	public enum GrupoDeMarcadorEnum {
-		ALERTA("Alertas", "hourglass-end"),
+		ALERTA("Alertas", "fas fa-hourglass-end"),
 		//
-		A_ASSINAR("Pendente de Assinatura", "inbox"),
+		A_REVISAR("Pendente de Revisão", "fas fa-glasses"),
 		//
-		CAIXA_DE_ENTRADA("Caixa de Entrada", "inbox"),
+		A_ASSINAR("Pendente de Assinatura", "fas fa-key"),
 		//
-		EM_ELABORACAO("Em Elaboração", "inbox"),
+		CAIXA_DE_ENTRADA("Caixa de Entrada", "fas fa-inbox"),
 		//
-		AGUARDANDO_ANDAMENTO("Aguardando Andamento", "lightbulb"),
+		EM_ELABORACAO("Em Elaboração", "fas fa-lightbulb"),
 		//
-		CAIXA_DE_SAIDA("Caixa de Saída", "inbox"),
+		AGUARDANDO_ANDAMENTO("Aguardando Andamento", "fas fa-clock"),
 		//
-		ACOMPANHANDO("Acompanhando", "key"),
+		CAIXA_DE_SAIDA("Caixa de Saída", "fas fa-inbox"),
 		//
-		MONITORANDO("Monitorando", "hourglass-half"),
+		ACOMPANHANDO("Acompanhando", "fas fa-tags"),
+		//
+		MONITORANDO("Monitorando", "fas fa-hourglass-half"),
 		//
 		AGUARDANDO_ACAO_DE_TEMPORALIDADE("Aguardando Ação de Temporalidade",
-				"hourglass-half"),
+				"fas fa-hourglass-half"),
 		//
-		OUTROS("Outros", "paper-plane"),
+		OUTROS("Outros", "fas fa-inbox"),
 		//
-		QUALQUER("Qualquer", "inbox"),
+		QUALQUER("Qualquer", "fas fa-inbox"),
 		//
-		NENHUM("Nenhum", "inbox");
+		NENHUM("Nenhum", "fas fa-inbox");
 
 		private final String nome;
 		private final String icone;
@@ -95,101 +98,101 @@ public class Mesa {
 
 	public enum MarcadorEnum {
 		//
-		EM_ELABORACAO(1, "Em Elaboração", "lightbulb", "",
+		EM_ELABORACAO(1, "Em Elaboração", "fas fa-lightbulb", "",
 				GrupoDeMarcadorEnum.EM_ELABORACAO),
 		//
-		EM_ANDAMENTO(2, "Aguardando Andamento", "clock-o", "",
+		EM_ANDAMENTO(2, "Aguardando Andamento", "fas fa-clock", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
-		A_RECEBER(3, "A Receber", "inbox", "",
+		A_RECEBER(3, "A Receber", "fas fa-inbox", "",
 				GrupoDeMarcadorEnum.CAIXA_DE_ENTRADA),
 		//
-		EXTRAVIADO(4, "Extraviado", "inbox", "", GrupoDeMarcadorEnum.ALERTA),
+		EXTRAVIADO(4, "Extraviado", "fas fa-inbox", "", GrupoDeMarcadorEnum.ALERTA),
 		//
-		A_ARQUIVAR(5, "A Arquivar", "inbox", "", GrupoDeMarcadorEnum.OUTROS),
+		A_ARQUIVAR(5, "A Arquivar", "fas fa-inbox", "", GrupoDeMarcadorEnum.OUTROS),
 		//
-		ARQUIVADO_CORRENTE(6, "Arquivado Corrente", "inbox", "",
+		ARQUIVADO_CORRENTE(6, "Arquivado Corrente", "fas fa-inbox", "",
 				GrupoDeMarcadorEnum.OUTROS),
 		//
-		A_ELIMINAR(7, "A Eliminar", "inbox", "",
+		A_ELIMINAR(7, "A Eliminar", "fas fa-inbox", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ACAO_DE_TEMPORALIDADE),
 		//
-		ELIMINADO(8, "Eliminado", "power-off", "", GrupoDeMarcadorEnum.OUTROS),
+		ELIMINADO(8, "Eliminado", "fas fa-power-off", "", GrupoDeMarcadorEnum.OUTROS),
 		//
-		JUNTADO(9, "Juntado", "lock", "", GrupoDeMarcadorEnum.OUTROS),
+		JUNTADO(9, "Juntado", "fas fa-lock", "", GrupoDeMarcadorEnum.OUTROS),
 		//
-		JUNTADO_EXTERNO(16, "Juntado Externo", "lock", "",
+		JUNTADO_EXTERNO(16, "Juntado Externo", "fas fa-lock", "",
 				GrupoDeMarcadorEnum.OUTROS),
 		//
-		CANCELADO(10, "Cancelado", "ban", "", GrupoDeMarcadorEnum.OUTROS),
+		CANCELADO(10, "Cancelado", "fas fa-ban", "", GrupoDeMarcadorEnum.OUTROS),
 		//
-		TRANSFERIDO_A_ORGAO_EXTERNO(11, "Tranferido a Órgão Externo", "inbox",
+		TRANSFERIDO_A_ORGAO_EXTERNO(11, "Tranferido a Órgão Externo", "fas fa-paper-plane",
 				"", GrupoDeMarcadorEnum.OUTROS),
 
 		//
-		ARQUIVADO_INTERMEDIARIO(12, "Arquivado Intermediário", "inbox", "",
+		ARQUIVADO_INTERMEDIARIO(12, "Arquivado Intermediário", "fas fa-inbox", "",
 				GrupoDeMarcadorEnum.OUTROS),
 		//
-		CAIXA_DE_ENTRADA(14, "A Receber", "inbox", "",
+		CAIXA_DE_ENTRADA(14, "A Receber", "fas fa-inbox", "",
 				GrupoDeMarcadorEnum.CAIXA_DE_ENTRADA),
 		//
-		ARQUIVADO_PERMANENTE(13, "Arquivado Permanente", "inbox", "",
+		ARQUIVADO_PERMANENTE(13, "Arquivado Permanente", "fas fa-inbox", "",
 				GrupoDeMarcadorEnum.OUTROS),
 		//
-		PENDENTE_DE_ASSINATURA(15, "Pendente de Assinatura", "key", "",
+		PENDENTE_DE_ASSINATURA(15, "Pendente de Assinatura", "fas fa-key", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
-		JUNTADO_A_DOCUMENTO_EXTERNO(16, "Juntado a Documento Externo", "inbox",
+		JUNTADO_A_DOCUMENTO_EXTERNO(16, "Juntado a Documento Externo", "fas fa-inbox",
 				"", GrupoDeMarcadorEnum.OUTROS),
 		//
-		A_REMETER_PARA_PUBLICACAO(17, "A Remeter para Publicação", "inbox", "",
+		A_REMETER_PARA_PUBLICACAO(17, "A Remeter para Publicação", "fas fa-scroll", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 
 		//
-		REMETIDO_PARA_PUBLICACAO(18, "Remetido para Publicação", "inbox", "",
+		REMETIDO_PARA_PUBLICACAO(18, "Remetido para Publicação", "fas fa-scroll", "",
 				GrupoDeMarcadorEnum.OUTROS),
 		//
-		A_REMETER_MANUALMENTE(19, "A Remeter Manualmente", "inbox", "",
+		A_REMETER_MANUALMENTE(19, "A Remeter Manualmente", "fas fa-scroll", "",
 				GrupoDeMarcadorEnum.OUTROS),
 		//
-		PUBLICADO(20, "Publicado", "inbox", "", GrupoDeMarcadorEnum.OUTROS),
+		PUBLICADO(20, "Publicado", "fas fa-scroll", "", GrupoDeMarcadorEnum.OUTROS),
 		//
-		PUBLICACAO_SOLICITADA(21, "Publicação Solicitada", "inbox", "",
+		PUBLICACAO_SOLICITADA(21, "Publicação Solicitada", "fas fa-scroll", "",
 				GrupoDeMarcadorEnum.OUTROS),
 		//
-		DISPONIBILIZADO(22, "Disponibilizado", "inbox", "",
+		DISPONIBILIZADO(22, "Disponibilizado", "fas fa-scroll", "",
 				GrupoDeMarcadorEnum.OUTROS),
 
 		//
-		EM_TRANSITO(23, "Em Trâmite Físico", "inbox", "",
+		EM_TRANSITO(23, "Em Trâmite Físico", "fas fa-truck", "",
 				GrupoDeMarcadorEnum.CAIXA_DE_SAIDA),
 		//
-		EM_TRANSITO_ELETRONICO(24, "Em Trâmite", "inbox", "",
+		EM_TRANSITO_ELETRONICO(24, "Em Trâmite", "fas fa-shipping-fast", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
-		COMO_SUBSCRITOR(25, "Como Subscritor", "key", "",
+		COMO_SUBSCRITOR(25, "Como Subscritor", "fas fa-key", "",
 				GrupoDeMarcadorEnum.A_ASSINAR),
 		//
-		APENSADO(26, "Apensado", "inbox", "",
+		APENSADO(26, "Apensado", "fas fa-compress-arrows-alt", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
-		MARCADOR_COMO_GESTOR(27, "Gestor", "pushpin", "",
+		MARCADOR_COMO_GESTOR(27, "Gestor", "fas fa-tag", "",
 				GrupoDeMarcadorEnum.ACOMPANHANDO),
 
 		//
-		MARCADOR_COMO_INTERESSADO(28, "Interessado", "pushpin", "",
+		MARCADOR_COMO_INTERESSADO(28, "Interessado", "fas fa-tag", "",
 				GrupoDeMarcadorEnum.ACOMPANHANDO),
 		//
 		DESPACHO_PENDENTE_DE_ASSINATURA(29, "Despacho Pendente de Assinatura",
-				"key", "", GrupoDeMarcadorEnum.ALERTA),
+				"fas fa-key", "", GrupoDeMarcadorEnum.ALERTA),
 		//
-		ANEXO_PENDENTE_DE_ASSINATURA(30, "Anexo Pendente de Assinatura", "key",
+		ANEXO_PENDENTE_DE_ASSINATURA(30, "Anexo Pendente de Assinatura", "fas fa-key",
 				"", GrupoDeMarcadorEnum.ALERTA),
 		//
-		SOBRESTADO(31, "Sobrestado", "hourglass-1", "",
+		SOBRESTADO(31, "Sobrestado", "fas fa-hourglass-start", "",
 				GrupoDeMarcadorEnum.ACOMPANHANDO),
 		//
-		SEM_EFEITO(32, "Sem Efeito", "power-off", "",
+		SEM_EFEITO(32, "Sem Efeito", "fas fa-power-off", "",
 				GrupoDeMarcadorEnum.NENHUM),
 
 		//
@@ -200,7 +203,7 @@ public class Mesa {
 		//
 		POPULAR(38, "Popular", "inbox", "", GrupoDeMarcadorEnum.ALERTA),
 		//
-		REVISAR(39, "A Revisar", "search", "",
+		REVISAR(39, "A Revisar", "fas fa-glasses", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
 		TOMAR_CIENCIA(40, "Tomar Ciência", "inbox", "",
@@ -235,15 +238,15 @@ public class Mesa {
 		SOLICITACAO_COMO_SOLICITANTE(49, "Solicitante", "inbox", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
-		RECOLHER_PARA_ARQUIVO_PERMANENTE(50, "Recolher Arq. Permante", "inbox",
+		RECOLHER_PARA_ARQUIVO_PERMANENTE(50, "Recolher Arq. Permante", "fas fa-inbox",
 				"", GrupoDeMarcadorEnum.AGUARDANDO_ACAO_DE_TEMPORALIDADE),
 
 		//
 		TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO(51,
-				"Transferir Arq. Intermediário", "inbox", "",
+				"Transferir Arq. Intermediário", "fas fa-inbox", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ACAO_DE_TEMPORALIDADE),
 		//
-		EM_EDITAL_DE_ELIMINACAO(52, "Em Edital de Eliminação", "inbox", "",
+		EM_EDITAL_DE_ELIMINACAO(52, "Em Edital de Eliminação", "fas fa-inbox", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
 		SOLICITACAO_FECHADO_PARCIAL(53, "Fechado Parcial", "inbox", "",
@@ -252,35 +255,35 @@ public class Mesa {
 		SOLICITACAO_EM_CONTROLE_QUALIDADE(54, "Em Controle de Qualidade",
 				"inbox", "", GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
-		A_DEVOLVER(56, "A Devolver", "inbox", "",
+		A_DEVOLVER(56, "A Devolver", "fas fa-exchange-alt", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 
 		//
-		AGUARDANDO(57, "Aguardando", "inbox", "",
+		AGUARDANDO(57, "Aguardando", "fas fa-clock", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
-		A_DEVOLVER_FORA_DO_PRAZO(58, "A Devolver Fora do Prazo", "inbox", "",
+		A_DEVOLVER_FORA_DO_PRAZO(58, "A Devolver Fora do Prazo", "fas fa-exchange-alt", "",
 				GrupoDeMarcadorEnum.ALERTA),
 		//
 		AGUARDANDO_DEVOLUCAO_FORA_DO_PRAZO(59,
-				"Aguardando Devolução Fora Do Prazo", "inbox", "",
+				"Aguardando Devolução Fora Do Prazo", "fas fa-exchange-alt", "",
 				GrupoDeMarcadorEnum.ALERTA),
 		//
-		PENDENTE_DE_ANEXACAO(60, "Pendente de Anexação", "inbox", "",
+		PENDENTE_DE_ANEXACAO(60, "Pendente de Anexação", "fas fa-arrow-alt-circle-up", "",
 				GrupoDeMarcadorEnum.ALERTA),
 		//
 		SOLICITACAO_EM_ELABORACAO(61, "Em Elaboração", "inbox", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 
 		//
-		DOCUMENTO_ASSINADO_COM_SENHA(62, "Assinado com Senha", "inbox", "",
+		DOCUMENTO_ASSINADO_COM_SENHA(62, "Assinado com Senha", "fas fa-key", "",
 				GrupoDeMarcadorEnum.NENHUM),
 		//
 		MOVIMENTACAO_ASSINADA_COM_SENHA(63, "Movimentação Ass. com Senha",
-				"inbox", "", GrupoDeMarcadorEnum.NENHUM),
+				"fas fa-key", "", GrupoDeMarcadorEnum.NENHUM),
 		//
 		MOVIMENTACAO_CONFERIDA_COM_SENHA(64,
-				"Movimentação Autenticada com Senha", "inbox", "",
+				"Movimentação Autenticada com Senha", "fas fa-key", "",
 				GrupoDeMarcadorEnum.NENHUM),
 		//
 		SOLICITACAO_FORA_DO_PRAZO(65, "Fora do Prazo", "inbox", "",
@@ -290,11 +293,11 @@ public class Mesa {
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 
 		//
-		PENDENTE_DE_COLABORACAO(67, "Pendente de Colaboração", "inbox", "",
+		PENDENTE_DE_COLABORACAO(67, "Pendente de Colaboração", "fas fa-users-cog", "",
 				GrupoDeMarcadorEnum.CAIXA_DE_ENTRADA),
 		//
 		FINALIZAR_DOCUMENTO_COLABORATIVO(68,
-				"Finalizar Documento Colaborativo", "inbox", "",
+				"Finalizar Documento Colaborativo", "fas fa-users-cog", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
 		SOLICITACAO_NECESSITA_PROVIDENCIA(69, "Necessita Providência", "inbox",
@@ -303,16 +306,19 @@ public class Mesa {
 		COMO_EXECUTOR(70, "Executor", "inbox", "",
 				GrupoDeMarcadorEnum.ACOMPANHANDO),
 		//
-		MARCADOR_PRONTO_PARA_ASSINAR(71, "Pronto para Assinar", "key", "",
+		MARCADOR_PRONTO_PARA_ASSINAR(71, "Pronto para Assinar", "fas fa-check-circle", "",
 				GrupoDeMarcadorEnum.A_ASSINAR),
 		//
-		URGENTE(1000, "Urgente", "inbox", "", GrupoDeMarcadorEnum.ALERTA),
+		MARCADOR_COMO_REVISOR(72, "Como Revisor", "fas fa-glasses", "",
+				GrupoDeMarcadorEnum.A_REVISAR),
+		//
+		URGENTE(1000, "Urgente", "fas fa-bomb", "", GrupoDeMarcadorEnum.ALERTA),
 
 		//
-		IDOSO(1001, "Idoso", "inbox", "", GrupoDeMarcadorEnum.ALERTA),
+		IDOSO(1001, "Idoso", "fas fa-user-tag", "", GrupoDeMarcadorEnum.ALERTA),
 
 		//
-		RETENCAO_INSS(1002, "Retenção de INSS", "inbox", "",
+		RETENCAO_INSS(1002, "Retenção de INSS", "fas fa-tag", "",
 				GrupoDeMarcadorEnum.ALERTA);
 
 		private MarcadorEnum(int id, String nome, String icone,
@@ -425,6 +431,7 @@ public class Mesa {
 			r.grupoOrdem = Integer.toString(GrupoDeMarcadorEnum
 					.valueOf(r.grupo).ordinal());
 			r.grupoNome = GrupoDeMarcadorEnum.valueOf(r.grupo).nome;
+			r.grupoIcone = GrupoDeMarcadorEnum.valueOf(r.grupo).icone;
 
 			r.list = new ArrayList<Marca>();
 
@@ -463,6 +470,7 @@ public class Mesa {
 					r.grupo = mar.grupo.name();
 					r.grupoOrdem = Integer.toString(mar.grupo.ordinal());
 					r.grupoNome = mar.grupo.nome;
+					r.grupoIcone = mar.grupo.icone;
 				}
 
 				r.list.add(t);

@@ -29,7 +29,7 @@
 				</h5>
 			</div>
 			<div class="card-body">
-			<form id="frm" name="frm" theme="simple" method="post" enctype="multipart/form-data">
+			<form id="frm" name="frm" theme="simple" method="post" enctype="multipart/form-data" class="mb-0">
 				<input type="hidden" id="idTamanhoMaximoDescricao" name="exDocumentoDTO.tamanhoMaximoDescricao" value="${exDocumentoDTO.tamanhoMaximoDescricao}" /> 
 				<input type="hidden" id="alterouModelo" name="exDocumentoDTO.alterouModelo" /> 
 				<input type="hidden" id="clickSelect" name="clickSelect" /> 
@@ -59,14 +59,14 @@
 	
 				<!-- Modelo -->
 				<div class="row">
-					<div class="col-sm-7">
+					<div class="col-sm-12">
 						<c:choose>
 							<c:when test="${possuiMaisQueUmModelo}">
 								<div class="form-group">
 									<label for="modelos-select"><fmt:message key="documento.modelo"/></label>
 
-									<div class="btn-group hierarchy-select form-control" data-resize="auto" id="modelos-select">
-										<button type="button" class="btn btn-sm btn-light border border-dark dropdown-toggle"
+									<div class="btn-group hierarchy-select form-control p-0" data-resize="auto" id="modelos-select">
+										<button type="button" class="btn btn-light dropdown-toggle bg-white"
 											id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-disabled="true">
 											<span class="selected-label pull-left">&nbsp;</span>
 										</button>
@@ -340,39 +340,39 @@
 				<c:if test='${ exDocumentoDTO.tipoDocumento == "interno" }'>
 				<div class="row">
 					<input type="hidden" name="campos" value="preenchimento" />
-					<div class="col-sm-5">
+					<div class="col-sm-12">
 						<div class="form-group">
 							<label><fmt:message key="documento.preenchimento.automatico"/></label>							
-							<select id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()" class="form-control">
-								<c:forEach items="${exDocumentoDTO.preenchimentos}" var="item">
-									<option value="${item.idPreenchimento}"
-										${item.idPreenchimento == exDocumentoDTO.preenchimento ? 'selected' : ''}>
-										${item.nomePreenchimento}</option>
-								</c:forEach>
-							</select>
-						</div>
-	  				</div>
-					<div class="col-sm-3">
-						<div class="form-group">
-							<c:if test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
-								<c:set var="desabilitaBtn"> disabled </c:set>
-							</c:if> 
-							<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn-sm btn-secondary mt-4" ${desabilitaBtn}>
-								<i class="far fa-edit"></i>
-								<span class="${hide_only_GOVSP}">Alterar</span>
-							</button>
-							<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn-sm btn-secondary mt-4" ${desabilitaBtn}>
-								<i class="far fa-trash-alt"></i>
-								<span class="${hide_only_GOVSP}">Remover</span>
-							</button>
-							<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn-sm btn-secondary mt-4">
-								<i class="fas fa-plus"></i>
-								<span class="${hide_only_GOVSP}">Adicionar</span>
-							</button>
+							<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+								<div class="input-group">
+									<select id="preenchimento" name="exDocumentoDTO.preenchimento" onchange="javascript:carregaPreench()" class="form-control">
+										<c:forEach items="${exDocumentoDTO.preenchimentos}" var="item">
+											<option value="${item.idPreenchimento}"
+												${item.idPreenchimento == exDocumentoDTO.preenchimento ? 'selected' : ''}>
+												${item.nomePreenchimento}</option>
+										</c:forEach>
+									</select>
+								</div>
+								<c:if test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
+									<c:set var="desabilitaBtn"> disabled </c:set>
+								</c:if> 
+								<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn btn-sm btn-secondary ml-2" ${desabilitaBtn}>
+									<i class="far fa-edit"></i>
+									<span class="${hide_only_GOVSP}">Alterar</span>
+								</button>
+								<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn btn-sm btn-secondary ml-2" ${desabilitaBtn}>
+									<i class="far fa-trash-alt"></i>
+									<span class="${hide_only_GOVSP}">Remover</span>
+								</button>
+								<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn btn-sm btn-secondary ml-2">
+									<i class="fas fa-plus"></i>
+									<span class="${hide_only_GOVSP}">Adicionar</span>
+								</button>
+							</div>
 						</div>
 					</div>
 				</div>
-				</c:if>
+			</c:if>
 				<div id="tr_personalizacao" style="display: ${exDocumentoDTO.modelo.exClassificacao!=null? 'none': ''};">
 					<div class="row  ${hide_only_GOVSP}">
 						<c:if test="${exDocumentoDTO.modelo.exClassificacao!=null}">
@@ -421,9 +421,7 @@
 						<div class="col-sm-8">
 							<div class="form-group">
 								<label>Descrição</label>
-								<textarea name="exDocumentoDTO.descrDocumento" cols="80" rows="2" id="descrDocumento" class="form-control" >
-									${exDocumentoDTO.descrDocumento}
-								</textarea>
+								<textarea name="exDocumentoDTO.descrDocumento" cols="80" rows="2" id="descrDocumento" class="form-control">${exDocumentoDTO.descrDocumento}</textarea>
 								<small class="form-text text-muted">(preencher o campo acima com palavras-chave, sempre usando substantivos, gênero masculino e
 									singular).</small>
 							</div>
@@ -525,7 +523,7 @@
 						</div>
 					</c:if>
 				</c:if>	
-				<div class="row mt-2">
+				<div class="row mt-4">
 					<div class="col-sm-8">
 						<button type="button" onclick="javascript: gravarDoc(); return false;" name="gravar" class="btn btn-primary" accesskey="o"><u>O</u>K</button> 
 						<c:if test='${exDocumentoDTO.tipoDocumento == "interno"}'>

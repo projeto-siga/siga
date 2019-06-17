@@ -67,7 +67,7 @@
 	titulo="Configuração de Permissões para Instaciação de Procedimentos">
 	<div class="gt-bd clearfix">
 		<div class="gt-content clearfix">
-			<h2>Configuração de Permissão para Instanciar Procidimento</h2>
+			<h2>Configuração de Permissão para Instanciar Procedimento</h2>
 			<div class="gt-content-box gt-for-table">
 				<form id="formulario" action="" method="POST" cssClass="form">
 					<input type="hidden" name="procedimento" value="${procedimento}" />
@@ -88,7 +88,7 @@
 					<table class="gt-form-table" style="table-layout: fixed;">
 						<c:if test="${not empty listaPermissao}">
 							<tr class="header">
-								<td width="100%">Permissão para Instanciar Procidimento
+								<td width="100%">Permissão para Instanciar Procedimento
 									concedida para:</td>
 							</tr>
 

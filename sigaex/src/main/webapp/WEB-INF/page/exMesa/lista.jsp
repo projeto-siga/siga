@@ -78,7 +78,7 @@
 						<template v-for="f in filtrados">
 						<tr v-if="f.grupoExibir" class="table-group alert alert-info align-middle">
 							<th colspan="6" class="pb-0 pl-0">
-								 <h5 class="mb-1 pl-2"><i class="fa fa-file"></i> {{f.grupoNome}}</h5>
+								 <h5 class="mb-1 pl-2"><i :class="f.grupoIcone"></i> {{f.grupoNome}}</h5>
 							</th>
 						</tr>
 						<tr v-if="f.grupoExibir" class="table-head">
@@ -108,7 +108,7 @@
 									<!-- class="list-unstyled blog-tags" -->
 									<span v-for="m in f.list" :title="m.titulo"><button
 											class="btn btn-default btn-sm xrp-label">
-											<i :class="'fa fa-' + m.icone"></i> {{m.nome}}<span
+											<i :class="m.icone"></i> {{m.nome}}<span
 												v-if="m.pessoa &amp;&amp; !m.daPessoa"> -
 												{{m.pessoa}}</span><span
 												v-if="m.unidade &amp;&amp; (!m.daLotacao || (!m.daPessoa && !m.deOutraPessoa))">

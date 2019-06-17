@@ -16,6 +16,8 @@
 <script src="/siga/javascript/siga.js"
 	type="text/javascript" charset="utf-8"></script>
 
+<script src="/siga/javascript/picketlink.js" type="text/javascript" charset="utf-8"></script>
+
 <script
 	src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"
 	type="text/javascript"></script>
@@ -89,7 +91,7 @@
 			
 			<hr class="p-0 m-0 mb-1">			
 			<div class="text-right text-white">
-				<b>SIGA.doc</b> 8.0.8 <c:if test="${siga.versao != ''}">${siga.versao}</c:if>				
+				<b>SIGA.doc</b> 8.0.9 <c:if test="${siga.versao != ''}">${siga.versao}</c:if>				
 			</div>
 		</div>
 	</footer>

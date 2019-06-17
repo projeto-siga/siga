@@ -44,7 +44,7 @@
 		</div>
 		<div class="gt-form-row gt-width-66" id="vlPreDefinidos" style="display: none;">
 			<label>Valores pré-definidos (Separados por ponto-e-vígula(;))</label> 
-			<input maxlength="255" type="text"
+			<input maxlength="512" type="text"
 				name="atributo.descrPreDefinido"
 				id="descrPreDefinido"
 				value="${descrPreDefinido}" size="60" />

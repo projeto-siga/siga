@@ -158,7 +158,7 @@
 					</div>
 					<div class="row">
 						<div class="col-sm-12">
-							<div class="form-group">
+							<div class="form-group mb-0">
 								<input type="submit" value="Ok" class="btn btn-primary" />
 								<input type="submit" name="submit" value="Aplicar" class="btn btn-primary" />
 								<input type="button" value="Desativar" class="btn btn-primary" onclick="location.href='desativar?id=${id}'" />

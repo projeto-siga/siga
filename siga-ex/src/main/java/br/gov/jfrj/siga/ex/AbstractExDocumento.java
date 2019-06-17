@@ -38,6 +38,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
@@ -377,10 +378,12 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@JoinColumn(name = "ID_ORGAO_DESTINATARIO")
 	private CpOrgao orgaoExternoDestinatario;
 
+	@BatchSize(size=1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exDocumento")
 	@Sort(type = SortType.NATURAL)
 	private java.util.SortedSet<ExMobil> exMobilSet = new TreeSet<ExMobil>();
 
+	@BatchSize(size=1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exDocumento")
 	private java.util.Set<ExBoletimDoc> exBoletimDocSet;
 

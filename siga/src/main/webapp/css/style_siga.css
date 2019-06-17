@@ -12,7 +12,7 @@
 .card-header .card-toggle.collapsed:after {
     content: "\f0da"; 
 }
-/* Botão circular */
+/* Botï¿½o circular */
 .btn-circle {
     width: 30px;
     height: 30px;
@@ -49,3 +49,9 @@
 	width: 100%;
 	box-sizing: border-box; 
 }
+
+html body {
+	/* background-color: #e2eaee; */
+}
+
+

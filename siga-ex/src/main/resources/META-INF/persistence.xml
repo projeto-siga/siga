@@ -164,11 +164,28 @@
 				value="10000" />
 			<property
 				name="hibernate.cache.infinispan.corporativo.expiration.lifespan"
-				value="5000" />
+				value="300000" />
 			<property
 				name="hibernate.cache.infinispan.corporativo.expiration.max_idle"
-				value="5000" />
+				value="300000" />
 			
+
+			<!-- Cache Region CACHE_EX -->
+			<property name="hibernate.cache.infinispan.ex.eviction.strategy"
+				value="LRU" />
+			<property
+				name="hibernate.cache.infinispan.ex.eviction.wake_up_interval"
+				value="2500" />
+			<property
+				name="hibernate.cache.infinispan.ex.eviction.max_entries"
+				value="10000" />
+			<property
+				name="hibernate.cache.infinispan.ex.expiration.lifespan"
+				value="300000" />
+			<property
+				name="hibernate.cache.infinispan.ex.expiration.max_idle"
+				value="300000" />
+				
 		</properties>
 	</persistence-unit>
 </persistence>

@@ -162,7 +162,8 @@ public class Notificador {
 			if (!m.isCancelada()
 					&& m.getExTipoMovimentacao()
 							.getIdTpMov()
-							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)) {
+							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)
+					&& !m.getExPapel().getIdPapel().equals(ExPapel.PAPEL_REVISOR)) {
 				
 				try {
 					if (m.getSubscritor() != null) {

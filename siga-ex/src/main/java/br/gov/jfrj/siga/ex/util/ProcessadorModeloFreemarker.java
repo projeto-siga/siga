@@ -23,10 +23,16 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpModelo;
@@ -120,23 +126,29 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 	public void closeTemplateSource(Object arg0) throws IOException {
 	}
 
+	static LoadingCache<String, String> cache = CacheBuilder.newBuilder().maximumSize(1000)
+			.expireAfterWrite(5, TimeUnit.MINUTES).build(new CacheLoader<String, String>() {
+				public String load(String source) throws Exception {
+					CpModelo mod;
+					if ("DEFAULT".equals(source)) {
+						return FreemarkerDefault.getDefaultTemplate();
+					} else if ("GERAL".equals(source)) {
+						mod = ExDao.getInstance().consultaCpModeloGeral();
+					} else {
+						mod = ExDao.getInstance().consultaCpModeloPorNome(source);
+					}
+					if (mod != null)
+						return mod.getConteudoBlobString() == null ? "" : mod.getConteudoBlobString();
+					return "";
+				}
+			});
+	
 	public Object findTemplateSource(String source) throws IOException {
-		List<CpModelo> l = ExDao.getInstance().consultaCpModelos();
-		for (CpModelo mod : l) {
-			if ("DEFAULT".equals(source) ) {
-				return FreemarkerDefault.getDefaultTemplate();
-			} else if ("GERAL".equals(source)
-					&& mod.getCpOrgaoUsuario() == null) {
-				return mod.getConteudoBlobString() == null ? "" : mod
-						.getConteudoBlobString();
-			} else if (mod.getCpOrgaoUsuario() != null
-					&& mod.getCpOrgaoUsuario().getAcronimoOrgaoUsu()
-							.equals(source)) {
-				return mod.getConteudoBlobString() == null ? "" : mod
-						.getConteudoBlobString();
-			}
+		try {
+			return cache.get(source);
+		} catch (ExecutionException e) {
+			throw new IOException("Não foi possível obter o template: " + source, e);
 		}
-		return null;
 	}
 
 	public long getLastModified(Object arg0) {

@@ -29,7 +29,9 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Immutable;
 
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 /**
@@ -37,8 +39,9 @@ import br.gov.jfrj.siga.hibernate.ExDao;
  * may be customized as it is never re-generated after being created.
  */
 @Entity
+@Immutable
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(region = CpDao.CACHE_QUERY_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "EX_TIPO_DESTINACAO", catalog = "SIGA")
 public class ExTipoDestinacao extends AbstractExTipoDestinacao implements
 		Serializable {

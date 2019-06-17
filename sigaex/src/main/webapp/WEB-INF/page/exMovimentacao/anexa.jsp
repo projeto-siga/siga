@@ -26,17 +26,6 @@
 			ExMovimentacaoForm.submit();
 		}
 
-		function testpdf(x) {
-			padrao = /\.pdf/;
-			a = x.arquivo.value;
-			OK = padrao.exec(a);
-			if (a != '' && !OK) {
-				window.alert("Somente é permitido anexar arquivo PDF!");
-				x.arquivo.value = '';
-				x.arquivo.focus();
-			}
-		}
-
 		function checkUncheckAll(theElement) {
 			var theForm = theElement.form, z = 0;
 			for (z = 0; z < theForm.length; z++) {
@@ -347,5 +336,5 @@
 		
 		
 	</div>
-	<tags:assinatura_rodape/>
+	<tags:assinatura_rodape />
 </siga:pagina>

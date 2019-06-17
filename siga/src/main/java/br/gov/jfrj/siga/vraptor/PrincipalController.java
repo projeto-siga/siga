@@ -37,9 +37,9 @@ import br.gov.jfrj.siga.model.GenericoSelecao;
 @Resource
 public class PrincipalController extends SigaController {
 	HttpServletResponse response;
-	
-	public PrincipalController(HttpServletRequest request, HttpServletResponse response, Result result,
-			CpDao dao, SigaObjects so, EntityManager em) {
+
+	public PrincipalController(HttpServletRequest request, HttpServletResponse response, Result result, CpDao dao,
+			SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
 		this.response = response;
 	}
@@ -56,12 +56,12 @@ public class PrincipalController extends SigaController {
 		
 		if (exibirAcessoAnterior != null && exibirAcessoAnterior) {
 			CpAcesso a = dao.consultarAcessoAnterior(so.getCadastrante());
-			if (a == null)
-				return;
-			String acessoAnteriorData = Data.formatDDMMYY_AS_HHMMSS(a.getDtInicio());
-			String acessoAnteriorMaquina = a.getAuditIP();
-			result.include("acessoAnteriorData", acessoAnteriorData);
-			result.include("acessoAnteriorMaquina", acessoAnteriorMaquina);
+			if (a != null) {
+				String acessoAnteriorData = Data.formatDDMMYY_AS_HHMMSS(a.getDtInicio());
+				String acessoAnteriorMaquina = a.getAuditIP();
+				result.include("acessoAnteriorData", acessoAnteriorData);
+				result.include("acessoAnteriorMaquina", acessoAnteriorMaquina);
+			}
 		}
 	}
 
@@ -75,7 +75,8 @@ public class PrincipalController extends SigaController {
 
 	@Get("permalink/{sigla}")
 	public void permalink(final String sigla) {
-		GenericoSelecao sel = buscarGenericoPorSigla(sigla, getTitular(), getLotaTitular(), (getTitular() != null) ? getTitular().getSiglaCompleta() : null);
+		GenericoSelecao sel = buscarGenericoPorSigla(sigla, getTitular(), getLotaTitular(),
+				(getTitular() != null) ? getTitular().getSiglaCompleta() : null);
 		if (sel == null || sel.getDescricao() == null)
 			result.notFound();
 		else {
@@ -85,8 +86,7 @@ public class PrincipalController extends SigaController {
 
 	@Get("permalink/{sigla}/{parte}")
 	public void permalink(final String sigla, final String parte) {
-		result.redirectTo(Contexto.urlBase(request) + "/sigaex/app/expediente/mov/exibir?id="
-				+ parte);
+		result.redirectTo(Contexto.urlBase(request) + "/sigaex/app/expediente/mov/exibir?id=" + parte);
 	}
 
 	@Get("public/app/generico/selecionar")
@@ -100,12 +100,10 @@ public class PrincipalController extends SigaController {
 				lot = pes.getLotacao();
 				incluirMatricula = "&matricula=" + matricula;
 			} else {
-				incluirMatricula = "&matricula="
-						+ getTitular().getSiglaCompleta();
+				incluirMatricula = "&matricula=" + getTitular().getSiglaCompleta();
 			}
 
-			final GenericoSelecao sel = buscarGenericoPorSigla(sigla, pes, lot,
-					incluirMatricula);
+			final GenericoSelecao sel = buscarGenericoPorSigla(sigla, pes, lot, incluirMatricula);
 
 			if (sel.getId() == null) {
 				if (Cp.getInstance().getProp().xjusUrl() != null) {
@@ -113,9 +111,9 @@ public class PrincipalController extends SigaController {
 					sel.setSigla(sigla);
 					sel.setDescricao("/siga/app/xjus?q=" + sigla);
 				} else if (Cp.getInstance().getProp().gsaUrl() != null) {
-						sel.setId(-1L);
-						sel.setSigla(sigla);
-						sel.setDescricao("/siga/app/busca?q=" + sigla);
+					sel.setId(-1L);
+					sel.setSigla(sigla);
+					sel.setDescricao("/siga/app/busca?q=" + sigla);
 				} else {
 					throw new Exception("Elemento não encontrado");
 				}
@@ -123,15 +121,13 @@ public class PrincipalController extends SigaController {
 
 			result.include("sel", sel);
 			result.include("request", getRequest());
-			result.use(Results.page()).forwardTo(
-					"/WEB-INF/jsp/ajax_retorno.jsp");
+			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_retorno.jsp");
 		} catch (Exception e) {
 			result.use(Results.page()).forwardTo("/WEB-INF/jsp/ajax_vazio.jsp");
 		}
 	}
 
-	private GenericoSelecao buscarGenericoPorSigla(String sigla, DpPessoa pes,
-			DpLotacao lot, String incluirMatricula) {
+	private GenericoSelecao buscarGenericoPorSigla(String sigla, DpPessoa pes, DpLotacao lot, String incluirMatricula) {
 
 		sigla = sigla.trim().toUpperCase();
 
@@ -140,7 +136,7 @@ public class PrincipalController extends SigaController {
 			mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
 			mapAcronimo.put(ou.getSiglaOrgaoUsu(), ou);
 		}
-		
+
 		StringBuilder acronimos = new StringBuilder();
 		for (String s : mapAcronimo.keySet()) {
 			if (acronimos.length() > 0)
@@ -148,16 +144,14 @@ public class PrincipalController extends SigaController {
 			acronimos.append(s);
 		}
 
-		final Pattern p1 = Pattern
-				.compile("^(?<orgao>"
-						+ acronimos.toString()
-						+ ")?-?(?:(?<especie>[A-Za-z]{3})|(?<modulo>SR|TMPSR|GC|TMPGC|TP))-?([0-9][0-9A-Za-z\\.\\-\\/]*)$");
+		final Pattern p1 = Pattern.compile("^(?<orgao>" + acronimos.toString()
+				+ ")?-?(?:(?<especie>[A-Za-z]{3})|(?<modulo>SR|TMPSR|GC|TMPGC|TP))-?([0-9][0-9A-Za-z\\.\\-\\/]*)$");
 		final Matcher m1 = p1.matcher(sigla);
 
 		final GenericoSelecao sel = new GenericoSelecao();
 		if (incluirMatricula == null)
 			incluirMatricula = "";
-		
+
 		String urlBase = Contexto.urlBase(request);
 
 		List<String> lurls = new ArrayList<>();
@@ -169,39 +163,32 @@ public class PrincipalController extends SigaController {
 
 			if (especie != null) {
 				// Documentos
-				lurls.add(urlBase
-						+ "/sigaex/public/app/expediente/selecionar?sigla="
-						+ sigla + incluirMatricula
+				lurls.add(urlBase + "/sigaex/public/app/expediente/selecionar?sigla=" + sigla + incluirMatricula
 						+ ";/sigaex/app/expediente/doc/exibir?sigla=");
 			} else if (modulo != null) {
 				switch (modulo) {
 				case "SR": // Solicitacoes
 				case "TMPSR":
-					lurls.add(urlBase
-							+ "/sigasr/public/app/solicitacao/selecionar?sigla="
-							+ sigla + incluirMatricula);
+					lurls.add(urlBase + "/sigasr/public/app/solicitacao/selecionar?sigla=" + sigla + incluirMatricula);
 					break;
 				case "GC": // Conhecimentos
 				case "TMPGC":
-					lurls.add(urlBase + "/sigagc/public/app/selecionar?sigla="
-							+ sigla + incluirMatricula);
+					lurls.add(urlBase + "/sigagc/public/app/selecionar?sigla=" + sigla + incluirMatricula);
 					break;
 				case "TP": // Transportes
-					lurls.add(urlBase + "/sigatp"
-							+ "/app/documento/selecionar?sigla=" + sigla
-							+ incluirMatricula
+					lurls.add(urlBase + "/sigatp" + "/app/documento/selecionar?sigla=" + sigla + incluirMatricula
 							+ ";/sigatp/app/documento/exibir?sigla=");
 					break;
 				}
 			}
 		} else {
 			// Pessoas
-			lurls.add(urlBase + "/siga/public/app/pessoa/selecionar?sigla=" + sigla
-					+ incluirMatricula + ";/siga/app/pessoa/exibir?sigla=");
+			lurls.add(urlBase + "/siga/public/app/pessoa/selecionar?sigla=" + sigla + incluirMatricula
+					+ ";/siga/app/pessoa/exibir?sigla=");
 
 			// Lotacoes
-			lurls.add(urlBase + "/siga/public/app/lotacao/selecionar?sigla=" + sigla
-					+ incluirMatricula + ";/siga/app/lotacao/exibir?sigla=");
+			lurls.add(urlBase + "/siga/public/app/lotacao/selecionar?sigla=" + sigla + incluirMatricula
+					+ ";/siga/app/lotacao/exibir?sigla=");
 		}
 
 		final SigaHTTP http = new SigaHTTP();
@@ -230,17 +217,19 @@ public class PrincipalController extends SigaController {
 		}
 		return sel;
 	}
-	
+
 	@Options("/public/app/graphviz/svg")
 	public void graphvizProxyOptions() {
-//	        result.use(Results.status()).header("Allow", allowMethods);
-//	        result.use(Results.status()).header("Access-Control-Allow-Methods", allowMethods);
-//	        result.use(Results.status()).header("Access-Control-Allow-Headers", "Content-Type, accept, Authorization, X-Tenant, X-Filial, origin");
+		// result.use(Results.status()).header("Allow", allowMethods);
+		// result.use(Results.status()).header("Access-Control-Allow-Methods",
+		// allowMethods);
+		// result.use(Results.status()).header("Access-Control-Allow-Headers",
+		// "Content-Type, accept, Authorization, X-Tenant, X-Filial, origin");
 
-			corsHeaders(response);
-        	result.use(Results.status()).noContent();
+		corsHeaders(response);
+		result.use(Results.status()).noContent();
 	}
-	
+
 	@Post
 	@Consumes("text/vnd.graphviz")
 	@Path("/public/app/graphviz/svg")
@@ -249,17 +238,15 @@ public class PrincipalController extends SigaController {
 		if (url == null)
 			throw new Exception("Parâmetro graphviz.url precisa ser informado");
 		corsHeaders(response);
-		
+
 		String body = Unirest.post(url).header("Content-Type", "text/vnd.graphviz").body(dot).asString().getBody();
 		return new ByteArrayDownload(body.getBytes(), "image/svg+xml", "graphic.svg");
 	}
-	
+
 	public static void corsHeaders(HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", "*");
-		response.addHeader("Access-Control-Allow-Methods",
-				"GET,POST,DELETE,PUT,OPTIONS");
-		response.addHeader("Access-Control-Allow-Headers",
-				"Content-Type,Authorization");
+		response.addHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,OPTIONS");
+		response.addHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
 	}
 
 }

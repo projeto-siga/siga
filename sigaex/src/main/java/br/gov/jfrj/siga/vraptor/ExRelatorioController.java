@@ -40,13 +40,20 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -66,14 +73,6 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioDocumentosSubo
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioModelos;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 @Resource
 public class ExRelatorioController extends ExController {
@@ -330,7 +329,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
 		parametros.put("orgaoUsuario", getRequest().getParameter("orgaoUsuario"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
-		parametros.put("link_siga", Contexto.urlBase(request) + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
 				+ "app/expediente/doc/exibir?sigla=");
 
 		final RelatorioDocumentosSubordinados rel = new RelatorioDocumentosSubordinados(parametros);
@@ -354,7 +353,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
 		parametros.put("orgaoUsuario", getRequest().getParameter("orgaoUsuario"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
-		parametros.put("link_siga", Contexto.urlBase(request) + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 
 		final RelMovimentacaoDocSubordinados rel = new RelMovimentacaoDocSubordinados(parametros);
@@ -378,7 +377,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
 		parametros.put("orgaoUsuario", getRequest().getParameter("orgaoUsuario"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
-		parametros.put("link_siga", Contexto.urlBase(request) + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 
 		final RelDocSubordinadosCriados rel = new RelDocSubordinadosCriados(parametros);
@@ -410,7 +409,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", Contexto.urlBase(request) + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 
 		parametros.put("orgaoUsuario", getRequest().getParameter("orgaoUsuario"));
@@ -446,7 +445,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", Contexto.urlBase(request) + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 
 		parametros.put("orgaoUsuario", getRequest().getParameter("orgaoUsuario"));
@@ -477,7 +476,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", Contexto.urlBase(request) + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 
 		parametros.put("orgaoUsuario", getRequest().getParameter("orgaoUsuario"));
@@ -508,7 +507,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", Contexto.urlBase(request) + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 
 		if (!getRequest().getParameter("orgaoUsu").isEmpty()) {
@@ -541,7 +540,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", Contexto.urlBase(request) + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 
 		parametros.put("lotacaoTitular", getRequest().getParameter("lotacaoTitular"));
@@ -572,7 +571,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("processo", getRequest().getParameter("processo"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", Contexto.urlBase(request) + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 
 		final RelMovProcesso rel = new RelMovProcesso(parametros);

@@ -1,12 +1,21 @@
 package br.gov.jfrj.siga.cp;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Immutable;
+
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ActiveRecord;
 
 @Entity
+@Immutable
+@Cacheable
+@Cache(region = CpDao.CACHE_QUERY_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "CP_UNIDADE_MEDIDA", schema = "CORPORATIVO")
 public class CpUnidadeMedida extends AbstractCpUnidadeMedida {
 

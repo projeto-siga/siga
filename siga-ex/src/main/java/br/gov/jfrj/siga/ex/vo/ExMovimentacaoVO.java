@@ -132,7 +132,9 @@ public class ExMovimentacaoVO extends ExVO {
 		desabilitada = mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().isCancelada()
 				|| mov.getExMovimentacaoCanceladora() != null
 				|| mov.getIdTpMov().equals(TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);
-
+		
+		if (mov.getIdTpMov().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL))
+			complemento = (mov.getSubscritor() != null ? mov.getSubscritor().getDescricao() : mov.getLotaSubscritor() != null ? mov.getLotaSubscritor().getDescricao() : null) + " - " + mov.getExPapel().getDescPapel() + ". ";
 	}
 
 	/**
@@ -720,21 +722,20 @@ public class ExMovimentacaoVO extends ExVO {
 			DpLotacao lotaTitular, String pwd) {
 		String token;
 
-
 		final JWTSigner signer = new JWTSigner(getWebdavPassword());
 		final HashMap<String, Object> claims = new HashMap<String, Object>();
 
-//		final long iat = System.currentTimeMillis() / 1000L; // issued at claim
-//		final long exp = iat + 48 * 60 * 60L; // token expires in 48 hours
-//		claims.put("exp", exp);
-//		claims.put("iat", iat);
+		// final long iat = System.currentTimeMillis() / 1000L; // issued at
+		// claim
+		// final long exp = iat + 48 * 60 * 60L; // token expires in 48 hours
+		// claims.put("exp", exp);
+		// claims.put("iat", iat);
 
-		//Nato: tive que colocar tudo em uma string só para reduzir o tamanho do JWT, pois o Word tem uma limitação no tamanho máximo da URL.
-		claims.put("d", mov.mob().getReferencia() + "|" + 
-			cadastrante.getSiglaCompleta() + "|" + 
-			titular.getSiglaCompleta() + "|" + 
-			lotaTitular.getSiglaCompleta());
-//		claims.put("mob", mov.mob().getReferencia());
+		// Nato: tive que colocar tudo em uma string só para reduzir o tamanho
+		// do JWT, pois o Word tem uma limitação no tamanho máximo da URL.
+		claims.put("d", mov.mob().getReferencia() + "|" + cadastrante.getSiglaCompleta() + "|"
+				+ titular.getSiglaCompleta() + "|" + lotaTitular.getSiglaCompleta());
+		// claims.put("mob", mov.mob().getReferencia());
 		// claims.put("cad",cadastrante.getSiglaCompleta());
 		// claims.put("tit",titular.getSiglaCompleta());
 		// claims.put("lot",lotaTitular.getSiglaCompleta());
@@ -758,7 +759,8 @@ public class ExMovimentacaoVO extends ExVO {
 	public static Map<String, Object> getWebdavDecodedToken(String token) {
 		final JWTVerifier verifier = new JWTVerifier(getWebdavPassword());
 		try {
-			Map<String, Object> map = verifier.verify(token.replace("~", ".").replace(JWT_FIXED_HEADER_REPLACEMENT, JWT_FIXED_HEADER));
+			Map<String, Object> map = verifier
+					.verify(token.replace("~", ".").replace(JWT_FIXED_HEADER_REPLACEMENT, JWT_FIXED_HEADER));
 			String a[] = map.get("d").toString().split("\\|");
 			map.put("mob", a[0]);
 			map.put("cad", a[1]);

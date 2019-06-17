@@ -633,13 +633,15 @@
 						</div>
 					</c:if>
 					
-					${f:obterExtensaoBuscaTextual(lotaTitular.orgaoUsuario, fullText)}
+					${f:obterExtensaoBuscaTextual(lotaTitular.orgaoUsuario, fullText)} 
 
 					<div class="form-row">
 						<div class="form-group col-md-6">
 							<label for="classificacao">Classificação</label>
-							<siga:selecao propriedade="classificacao" modulo="sigaex"
+							<siga:selecao propriedade="classificacao" modulo="sigaex" tema="simple"
 								urlAcao="buscar" urlSelecionar="selecionar" />
+
+								
 						</div>
 
 						<div class="form-group col-md-3">

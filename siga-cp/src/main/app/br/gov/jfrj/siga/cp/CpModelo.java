@@ -28,7 +28,11 @@ import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.gov.jfrj.siga.cp.util.Blob;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.CpDaoUtil;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
@@ -36,8 +40,10 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @Entity
 @Table(name = "CP_MODELO", schema = "CORPORATIVO")
 @NamedQueries({
-		@NamedQuery(name = "consultarCpModelos", query = "select u from CpModelo u where u.hisDtFim is null"),
-		@NamedQuery(name = "consultarPorIdInicialCpModelo", query = "select mod from CpModelo mod where mod.hisIdIni = :idIni and mod.hisDtFim = null") })
+	@NamedQuery(name = "consultarCpModelos", query = "select u from CpModelo u where u.hisDtFim is null"),
+	@NamedQuery(name = "consultarCpModeloGeral", query = "select u from CpModelo u where u.cpOrgaoUsuario is null and u.hisDtFim is null"),
+	@NamedQuery(name = "consultarCpModeloPorNome", query = "select u from CpModelo u where u.cpOrgaoUsuario.acronimoOrgaoUsu = :nome and u.hisDtFim is null"),
+	@NamedQuery(name = "consultarPorIdInicialCpModelo", query = "select mod from CpModelo mod where mod.hisIdIni = :idIni and mod.hisDtFim = null") })
 public class CpModelo extends AbstractCpModelo {
 	private static final long serialVersionUID = 1256614496347273713L;
 

@@ -136,11 +136,11 @@ public class AuthJwtFormFilter implements Filter {
 			ContextoPersistencia.removeUserPrincipal();
 		}
 	}
-
+	
 	public static Cookie buildCookie(String tokenNew) {
 		Cookie cookie = new Cookie(SIGA_JWT_AUTH_COOKIE_NAME, tokenNew);
 		cookie.setPath("/");
-		if ( SigaBaseProperties.getString("siga.local").equals("GOVSP") && SIGA_JWT_AUTH_COOKIE_DOMAIN != null){
+		if ("GOVSP".equals(SigaBaseProperties.getString("siga.local")) && SIGA_JWT_AUTH_COOKIE_DOMAIN != null){
 			cookie.setDomain(SIGA_JWT_AUTH_COOKIE_DOMAIN);
 		}
 		
@@ -151,7 +151,7 @@ public class AuthJwtFormFilter implements Filter {
 	public static Cookie buildEraseCookie() {
 		Cookie cookie = new Cookie(SIGA_JWT_AUTH_COOKIE_NAME, "");
 		cookie.setPath("/");
-		if ( SigaBaseProperties.getString("siga.local").equals("GOVSP") && SIGA_JWT_AUTH_COOKIE_DOMAIN != null){
+		if ("GOVSP".equals(SigaBaseProperties.getString("siga.local")) && SIGA_JWT_AUTH_COOKIE_DOMAIN != null){
 			cookie.setDomain(SIGA_JWT_AUTH_COOKIE_DOMAIN);
 		}
 		cookie.setMaxAge(0);

@@ -45,6 +45,7 @@ import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.bluc.service.BlucService;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -113,7 +114,8 @@ public class ExAssinadorExternoController extends ExController {
 			if (pes == null)
 				throw new Exception("Nenhuma pessoa localizada com o CPF: " + sCpf);
 			List<ExAssinadorExternoListItem> list = new ArrayList<ExAssinadorExternoListItem>();
-			List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL().obterAssinaveis(pes, pes.getLotacao(), true);
+			boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(pes, CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
+			List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL().obterAssinaveis(pes, pes.getLotacao(), apenasComSolicitacaoDeAssinatura);
 			for (ExAssinavelDoc ass : assinaveis) {
 				if (ass.isPodeAssinar()) {
 					String solicitantesDeAssinatura = ass.getDoc().getSolicitantesDeAssinaturaCompleto();
@@ -204,7 +206,7 @@ public class ExAssinadorExternoController extends ExController {
 		return pdfd;
 	}
 
-	@Get("/public/app/assinador-popup/doc/{id}/hash")
+	@Get("/app/assinador-popup/doc/{id}/hash")
 	public void assinadorPopupHash(String id) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
@@ -241,8 +243,20 @@ public class ExAssinadorExternoController extends ExController {
 			jsonError(e);
 		}
 	}
+	
+	@Put("/public/app/assinador-externo/doc/{id}/sign")
+	public void assinadorExternoSave(String id) throws Exception {
+		try {
+			assertPassword();
+			
+			
+		} catch (Exception e) {
+			jsonError(e);
+		}
+		assinadorPopupSave(id);
+	}
 
-	@Put("/public/app/assinador-popup/doc/{id}/sign")
+	@Put("/app/assinador-popup/doc/{id}/sign")
 	public void assinadorPopupSave(String id) throws Exception {
 		try {
 			JSONObject req = getJsonReq(request);
@@ -296,6 +310,10 @@ public class ExAssinadorExternoController extends ExController {
 					throw new Exception("Não foi possível localizar a pessoa que representa o subscritor.");
 			}
 
+			boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(cadastrante, CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
+			if (apenasComSolicitacaoDeAssinatura && !mob.doc().isAssinaturaSolicitada())
+				throw new Exception("Documento requer solicitação de assinatura. Provavelmente, o documento foi editado após a solicitação.");
+			
 			String msg = null;
 
 			DpLotacao lotaCadastrante = cadastrante != null ? cadastrante.getLotacao() : null;
@@ -303,7 +321,7 @@ public class ExAssinadorExternoController extends ExController {
 				long tpMov = autenticar ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_DOCUMENTO
 						: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_MOVIMENTACAO;
 
-				Ex.getInstance().getBL().assinarMovimentacao(cadastrante, lotaCadastrante, mov, dt, assinatura, null,
+				Ex.getInstance().getBL().assinarMovimentacao(cadastrante, mov.getLotaTitular(), mov, dt, assinatura, null,
 						tpMov);
 				msg = "OK";
 			} else if (mob != null) {
@@ -311,7 +329,7 @@ public class ExAssinadorExternoController extends ExController {
 						: ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO;
 				// Nato: Assinatura externa não deve produzir transferência. 
 				// Se preferir a configuração default, deveria trocar o último parâmetro por null.
-				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, lotaCadastrante, mob.doc(), dt, assinatura,
+				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, getLotaTitular(), mob.doc(), dt, assinatura,
 						null, tpMov, juntar, tramitar == null ? false : tramitar);
 				if (msg != null)
 					msg = "OK: " + msg;
@@ -328,16 +346,6 @@ public class ExAssinadorExternoController extends ExController {
 		} catch (Exception e) {
 			jsonError(e);
 		}
-	}
-
-	@Put("/public/app/assinador-externo/doc/{id}/sign")
-	public void assinadorExternoSave(String id) throws Exception {
-		try {
-			assertPassword();
-		} catch (Exception e) {
-			jsonError(e);
-		}
-		assinadorPopupSave(id);
 	}
 
 	private class Signature {

@@ -8,123 +8,116 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <siga:pagina titulo="Documento" compatibilidade="IE=EmulateIE9">
-<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
-<script type="text/javascript" language="Javascript1.1">
-	/*  converte para maiúscula a sigla do estado  */
-	function converteUsuario(nomeusuario) {
-		re = /^[a-zA-Z]{2}\d{3,6}$/;
-		ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
-		tmp = nomeusuario.value;
-		if (tmp.match(re) || tmp.match(ret2)) {
-			nomeusuario.value = tmp.toUpperCase();
+	<script type="text/javascript" language="Javascript1.1">
+		/*  converte para maiúscula a sigla do estado  */
+		function converteUsuario(nomeusuario) {
+			re = /^[a-zA-Z]{2}\d{3,6}$/;
+			ret2 = /^[a-zA-Z]{1}\d{3,6}$/;
+			tmp = nomeusuario.value;
+			if (tmp.match(re) || tmp.match(ret2)) {
+				nomeusuario.value = tmp.toUpperCase();
+			}
 		}
-	}
-</script>
+	</script>
+
 	<c:if test="${not doc.eletronico}">
 		<script type="text/javascript">
 			$("html").addClass("fisico");
 		</script>
 	</c:if>
 
-	<!-- main content bootstrap -->
 	<div class="container-fluid">
-			<div class="row mt-2">
-				<c:if test="${doc.conteudoBlobHtmlStringComReferencias != null}">
-					<div class="col col-sm-12 col-md-8">
-						<div class="card-sidebar card border-alert bg-white mb-3" id="conteudo">
-							<div class="card-body">
-								<tags:fixdocumenthtml>
-									${doc.conteudoBlobHtmlStringComReferencias}
-								</tags:fixdocumenthtml>
-							</div>
-						</div>
-					</div>
-				</c:if>
-				<c:if test="${doc.pdf != null && doc.conteudoBlobHtmlStringComReferencias == null}">
-					<div class="col col-sm-12 col-md-8">
-						<iframe style="display: block;" name="painel" id="painel"
-							src="/sigaex/app/arquivo/exibir?arquivo=${doc.referenciaPDF}"
-							width="100%" height="400" frameborder="0" scrolling="auto"></iframe>
-						<script>
-							$(document).ready(function(){resize();$(window).resize(function(){resize();});});
-						</script>
-					</div>
-				</c:if>
-
-				<div class="col col-sm-12 col-md-4">
-					<div class="card bg-light mb-3">
-						<div class="card-header">
-							<h5>Confirme os dados do documento abaixo</h5>
-						</div>
-			
-						<div class="card-body">
-								<p class="p-0 m-0">
-									<b>Documento ${doc.exTipoDocumento.descricao}:</b> ${doc.codigo}
-								</p>
-								<p class="p-0 m-0">
-									<b>Data:</b> ${doc.dtDocDDMMYY}
-								</p>
-								<p class="p-0 m-0">
-									<b>De:</b> ${doc.subscritorString}
-								</p>
-								<p class="p-0 m-0">
-									<b>Classificação:</b> ${doc.exClassificacao.descricaoCompleta}
-								</p>
-								<p class="p-0 m-0">	
-									<b>Para:</b> ${doc.destinatarioString}
-								</p>
-								<p class="p-0 m-0">
-									<b>Descrição:</b> ${doc.descrDocumento}
-								</p>
-						</div>
-					</div>			
-
-					<div class="card bg-light mb-4">
-					  <div class="card-body">
-					  	<c:set var="acao" value="assinar_gravar" />
-					    <div class="gt-form-row gt-width-100" style="padding-top: 10px;">
-							<div id="dados-assinatura" style="visible: hidden">
-								<input type="hidden" name="ad_url_base" value="" />
-								<input type="hidden" name="ad_url_next" value="/sigaex/app/expediente/doc/exibir?sigla=${sigla}" />
-								<input type="hidden" name="ad_descr_0" value="${sigla}" /> 
-								<input type="hidden" name="ad_url_pdf_0" value="/sigaex/app/arquivo/exibir?arquivo=${doc.codigoCompacto}.pdf" />
-								<input type="hidden" name="ad_url_post_0" value="/sigaex/app/expediente/mov/assinar_gravar" />
-								<input type="hidden" name="ad_url_post_password_0" value="/sigaex/app/expediente/mov/assinar_senha_gravar" />
-								
-								<input type="hidden" name="ad_id_0" value="${doc.codigoCompacto}" />
-								<input type="hidden" name="ad_description_0" value="${doc.descrDocumento}" />
-								<input type="hidden" name="ad_kind_0" value="${doc.descrFormaDoc}" />
-							</div>
-							
-							<c:if test="${siga_cliente != 'GOVSP'}">
-								<tags:assinatura_botoes
-									assinar="${assinando}"
-									autenticar="${autenticando}"
-									assinarComSenha="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-									autenticarComSenha="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-									juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}"
-									tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" />
-							</c:if>
-							
-							<c:if test="${siga_cliente == 'GOVSP'}">
-								<tags:assinatura_botoes
-									assinar="${assinando}"
-									voltar="true"
-									autenticar="${autenticando}"
-									assinarComSenhaChecado="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-									autenticarComSenhaChecado="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-									juntarAtivo=""
-									tramitarAtivo=""
-									 />
-							</c:if>
-						</div>
-					  </div>
-					</div>
-					
-					
-				</div>
-				</div>
+		<div class="card bg-light mb-3">
+			<div class="card-header">
+				<h5>Confirme os dados do documento abaixo:</h5>
 			</div>
+			<div class="card-body">
+				<p class="p-0 m-0">
+					<b>Documento ${doc.exTipoDocumento.descricao}:</b> ${doc.codigo}
+				</p>
+				<p class="p-0 m-0">
+					<b>Data:</b> ${doc.dtDocDDMMYY}
+				</p>
+				<p class="p-0 m-0">
+					<b>Classificação:</b> ${doc.exClassificacao.descricaoCompleta}
+				</p>
+				<p class="p-0 m-0">
+					<b>Descrição:</b> ${doc.descrDocumento}
+				</p>
+				<p class="p-0 m-0">
+					<b>De:</b> ${doc.subscritorString}
+				</p>
+				<p class="p-0 m-0">	
+					<b>Para:</b> ${doc.destinatarioString}
+				</p>
+			</div>
+
+			<c:if test="${doc.conteudoBlobHtmlStringComReferencias != null}">
+				<div id="divClassificacao" class="card-body bg-white border">
+					<div class="gt-content-box" style="padding: 10px;">
+						<table class="message" width="100%">
+							<tr>
+								<td colspan="2">
+									<div id="conteudo" style="padding-top: 10px;">
+										<tags:fixdocumenthtml>
+											${doc.conteudoBlobHtmlStringComReferencias}
+										</tags:fixdocumenthtml>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</c:if>
+			<c:if test="${doc.pdf != null && doc.conteudoBlobHtmlStringComReferencias == null}">
+				<div class="card-body bg-white">
+					<iframe style="display: block;" name="painel" id="painel"
+						src="/sigaex/app/arquivo/exibir?arquivo=${doc.referenciaPDF}"
+						width="100%" height="400" frameborder="0" scrolling="auto"></iframe>
+					<script>
+						$(document).ready(function(){resize();$(window).resize(function(){resize();});});
+					</script>
+				</div>
+			</c:if>
+
+			<c:set var="acao" value="assinar_gravar" />
+				<div class="card-footer" style="padding-top: 10px;">
+					<div id="dados-assinatura" style="visible: hidden">
+						<input type="hidden" name="ad_url_base" value="" /> <input
+							type="hidden" name="ad_url_next"
+							value="/sigaex/app/expediente/doc/exibir?sigla=${sigla}" /> <input
+							type="hidden" name="ad_descr_0" value="${sigla}" /> <input
+							type="hidden" name="ad_url_pdf_0"
+							value="/sigaex/app/arquivo/exibir?arquivo=${doc.codigoCompacto}.pdf" />
+						<input type="hidden" name="ad_url_post_0"
+							value="/sigaex/app/expediente/mov/assinar_gravar" /> <input
+							type="hidden" name="ad_url_post_password_0"
+							value="/sigaex/app/expediente/mov/assinar_senha_gravar" /> <input
+							type="hidden" name="ad_id_0" value="${doc.codigoCompacto}" /> <input
+							type="hidden" name="ad_description_0"
+							value="${doc.descrDocumento}" /> <input type="hidden"
+							name="ad_kind_0" value="${doc.descrFormaDoc}" />
+					</div>
+
+					<c:if test="${siga_cliente != 'GOVSP'}">
+						<tags:assinatura_botoes assinar="${assinando}"
+							autenticar="${autenticando}"
+							assinarComSenha="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+							autenticarComSenha="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+							juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}"
+							tramitarAtivo="${tramitarAtivo}" tramitarFixo="${tramitarFixo}" />
+					</c:if>
+
+					<c:if test="${siga_cliente == 'GOVSP'}">
+						<tags:assinatura_botoes assinar="${assinando}" voltar="true"
+							autenticar="${autenticando}"
+							assinarComSenhaChecado="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+							autenticarComSenhaChecado="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
+							juntarAtivo="" tramitarAtivo="" />
+					</c:if>
+			</div>
+		</div>
 	</div>
-	<tags:assinatura_rodape/>
+
+	<tags:assinatura_rodape />
 </siga:pagina>

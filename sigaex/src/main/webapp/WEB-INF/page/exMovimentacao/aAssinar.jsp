@@ -32,22 +32,24 @@
 				<h5>Confirme os dados do documento abaixo:</h5>
 			</div>
 			<div class="card-body">
-				<table class="message" width="100%">
-					<tr class="header">
-						<td width="50%"><b>Documento
-								${doc.exTipoDocumento.descricao}:</b> ${doc.codigo}</td>
-						<td><b>Data:</b> ${doc.dtDocDDMMYY}</td>
-					</tr>
-					<tr class="header">
-						<td><b>De:</b> ${doc.subscritorString}</td>
-						<td><b>Classificação:</b>
-							${doc.exClassificacao.descricaoCompleta}</td>
-					</tr>
-					<tr class="header">
-						<td><b>Para:</b> ${doc.destinatarioString}</td>
-						<td><b>Descrição:</b> ${doc.descrDocumento}</td>
-					</tr>
-				</table>
+				<p class="p-0 m-0">
+					<b>Documento ${doc.exTipoDocumento.descricao}:</b> ${doc.codigo}
+				</p>
+				<p class="p-0 m-0">
+					<b>Data:</b> ${doc.dtDocDDMMYY}
+				</p>
+				<p class="p-0 m-0">
+					<b>Classificação:</b> ${doc.exClassificacao.descricaoCompleta}
+				</p>
+				<p class="p-0 m-0">
+					<b>Descrição:</b> ${doc.descrDocumento}
+				</p>
+				<p class="p-0 m-0">
+					<b>De:</b> ${doc.subscritorString}
+				</p>
+				<p class="p-0 m-0">	
+					<b>Para:</b> ${doc.destinatarioString}
+				</p>
 			</div>
 
 			<c:if test="${doc.conteudoBlobHtmlStringComReferencias != null}">

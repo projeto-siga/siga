@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
@@ -18,6 +19,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -284,11 +286,53 @@ public class SubstituicaoController extends SigaController {
 			}
 
 			subst = dao().gravar(subst);
-
+			
 			if (subst.getIdRegistroInicial() == null)
 				subst.setIdRegistroInicial(subst.getIdSubstituicao());
 
 			subst = dao().gravar(subst);
+			
+			Set<DpPessoa> pessoasParaEnviarEmail;
+			
+			String textoEmail = "Informamos que " 
+			        + getCadastrante().getNomePessoa() + " matrícula: " + getCadastrante().getSesbPessoa() + getCadastrante().getMatricula()
+					+ " cadastrou uma substituição da ";
+			
+					
+					if (tipoSubstituto == 1) {
+						textoEmail = textoEmail + " matrícula: " + subst.getSubstituto().getSesbPessoa() + subst.getSubstituto().getMatricula();
+						pessoasParaEnviarEmail = subst.getSubstituto().getLotacao().getDpPessoaLotadosSet();
+						
+					} else {
+						textoEmail = textoEmail + " lotação: " + subst.getLotaSubstituto().getSigla() + " - " + subst.getLotaSubstituto().getNomeLotacao();
+						pessoasParaEnviarEmail = subst.getLotaSubstituto().getDpPessoaLotadosSet();
+					}
+					
+					textoEmail = textoEmail + " para";
+					
+					if (tipoTitular ==1) {
+						textoEmail = textoEmail + " matricula: " + subst.getTitular().getSesbPessoa() + subst.getTitular().getMatricula();
+						pessoasParaEnviarEmail.addAll(subst.getTitular().getLotacao().getDpPessoaLotadosSet());
+					} else {
+						textoEmail = textoEmail + " lotação: " + subst.getLotaTitular().getSigla() + " - " + subst.getLotaTitular().getNomeLotacao();
+						pessoasParaEnviarEmail.addAll(subst.getLotaTitular().getDpPessoaLotadosSet());
+					}
+			
+					textoEmail = textoEmail + " com inicio em " + subst.getDtIniSubstDDMMYY().toString() + " e término em " + subst.getDtFimSubstDDMMYY().toString() + "."
+					+ "\n\n Atenção: esta é uma "
+					+ "mensagem automática. Por favor, não responda.";
+					
+	//		String assunto = "Cadastro de Substituição - TESTE DE IMPLEMENTAçÃO DE ENVIOD E EMAIL - FAVOR DESCONSIDERA";
+			String assunto = "Cadastro de Substituição";
+					
+			List<String> listaDeEmails= new ArrayList<String>();
+			listaDeEmails.add(getCadastrante().getEmailPessoa());
+			for (DpPessoa pessoa : pessoasParaEnviarEmail)	{
+				listaDeEmails.add(pessoa.getEmailPessoa()); 
+			}
+			
+			Correio.enviar(listaDeEmails.toArray(new String[listaDeEmails.size()]),assunto, textoEmail);
+			
 			result.redirectTo(this).lista();
 
 			dao().commitTransacao();

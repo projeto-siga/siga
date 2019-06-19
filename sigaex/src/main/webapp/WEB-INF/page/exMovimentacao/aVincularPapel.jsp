@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <siga:pagina titulo="Movimentação">
 
@@ -88,11 +89,11 @@ function alteraResponsavel()
 	<!-- main content bootstrap -->
 	<div class="container-fluid">
 		<h5>
-			Definição de Perfil - ${mob.siglaEDescricaoCompleta}
+			<fmt:message key="documento.definicao.perfil"/> - ${mob.siglaEDescricaoCompleta}
 		</h5>
 		<div class="card bg-light mb-3">
 			<div class="card-header">
-				<h5>Vinculação</h5>
+				<h5><fmt:message key="documento.vinculacao"/></h5>
 			</div>
 			<div class="card-body">
 				<form name="frm" action="vincularPapel_gravar" method="post">
@@ -150,7 +151,7 @@ function alteraResponsavel()
 					<div class="row">
 						<div class="col-sm">
 							<input type="submit" value="Ok" class="btn btn-primary"/>
-							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-cancel ml-2"/>
+							<input type="button" value=<fmt:message key="botao.cancela"/> onclick="javascript:history.back();" class="btn btn-cancel ml-2"/>
 						</div>
 					</div>
 				</form>

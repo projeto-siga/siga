@@ -480,7 +480,7 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeFazerAnotacao(titular, lotaTitular, mob));
 
-		vo.addAcao("folder_user", "Definir Perfil", "/app/expediente/mov",
+		vo.addAcao("folder_user", SigaMessages.getMessage("documento.definir.perfil"), "/app/expediente/mov",
 				"vincularPapel", Ex.getInstance().getComp()
 						.podeFazerVinculacaoPapel(titular, lotaTitular, mob));
 

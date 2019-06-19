@@ -99,12 +99,14 @@ function alteraResponsavel()
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}"/>
 					<div class="row">
+						<c:if test="${siga_cliente != 'GOVSP'}">
 						<div class="col-md-2 col-sm-3">
 							<div class="form-group">
 								<label for="dtMovString">Data</label>
 								<input type="text" name="dtMovString" value="${dtMovString}" onblur="javascript:verifica_data(this,0);" class="form-control"/>
 							</div>
 						</div>
+						</c:if>
 						<div class="col-sm-3">
 							<div class="form-group">
 								    <label>Responsável</label>

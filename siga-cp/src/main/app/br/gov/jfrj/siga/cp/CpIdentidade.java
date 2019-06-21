@@ -39,10 +39,11 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
+
+
 @Entity
-@Immutable
 @Cacheable
-@Cache(region = CpDao.CACHE_SECONDS, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "CP_IDENTIDADE", schema = "CORPORATIVO")
 public class CpIdentidade extends AbstractCpIdentidade {
 

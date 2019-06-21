@@ -1995,10 +1995,21 @@ public class ExMovimentacaoController extends ExController {
 					"Não é possível fazer vinculação de papel");
 		}
 
+		final List<ExPapel> papeis = this.getListaExPapel();
+		
+		if (SigaMessages.isSigaSP()) {
+			for (Iterator<ExPapel> iter = papeis.listIterator(); iter.hasNext(); ) {
+			    ExPapel p = iter.next();
+			    if (p.getIdPapel() != ExPapel.PAPEL_GESTOR && p.getIdPapel() != ExPapel.PAPEL_INTERESSADO) {
+			        iter.remove();
+			    }
+			}
+		}
+		
 		result.include("sigla", sigla);
 		result.include("mob", builder.getMob());
 		result.include("listaTipoRespPerfil", this.getListaTipoRespPerfil());
-		result.include("listaExPapel", this.getListaExPapel());
+		result.include("listaExPapel", papeis);
 		result.include("responsavelSel", new DpPessoaSelecao());
 		result.include("lotaResponsavelSel", new DpLotacaoSelecao());
 	}

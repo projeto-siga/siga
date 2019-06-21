@@ -6,6 +6,7 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="libs"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
@@ -247,7 +248,7 @@
 					<c:if test="${m.apensos.size() gt 1}">
 						s
 					</c:if>
-					Filho
+					<fmt:message key="documento.filho"/>
 					<c:if test="${m.apensos.size() gt 1}">
 						s
 					</c:if>

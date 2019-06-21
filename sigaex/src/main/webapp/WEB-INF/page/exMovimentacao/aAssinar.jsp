@@ -44,12 +44,14 @@
 				<p class="p-0 m-0">
 					<b>Descrição:</b> ${doc.descrDocumento}
 				</p>
+				<c:if test="${siga_cliente != 'GOVSP'}">
 				<p class="p-0 m-0">
 					<b>De:</b> ${doc.subscritorString}
 				</p>
 				<p class="p-0 m-0">	
 					<b>Para:</b> ${doc.destinatarioString}
 				</p>
+				</c:if>
 			</div>
 
 			<c:if test="${doc.conteudoBlobHtmlStringComReferencias != null}">

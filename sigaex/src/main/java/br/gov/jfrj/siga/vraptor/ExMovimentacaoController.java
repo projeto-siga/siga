@@ -2981,6 +2981,7 @@ public class ExMovimentacaoController extends ExController {
 
 	@Get({"/app/expediente/mov/cancelar", "/expediente/mov/cancelar.action"})
 	public void cancelar(Long id) throws Exception {
+		String descrMov;
 		ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class, false);
 
 		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia()
@@ -2989,6 +2990,13 @@ public class ExMovimentacaoController extends ExController {
 		ExDocumento doc = buscarDocumento(builder, true);
 		validarCancelar(mov, builder.getMob());
 
+		if (SigaMessages.isSigaSP()) {
+			descrMov = mov.getDescrTipoMovimentacao();
+		} else {
+			descrMov = "";
+		}
+		
+		result.include("descrMov", descrMov);
 		result.include("mob", builder.getMob());
 		result.include("id", id);
 		result.include("sigla", doc.getSigla());

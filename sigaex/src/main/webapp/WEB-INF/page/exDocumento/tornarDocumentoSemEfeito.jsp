@@ -24,7 +24,7 @@ function sbmt() {
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
-				<h5>Tornar Documento Sem Efeito - ${mob.siglaEDescricaoCompleta}</h5>
+				<h5><fmt:message key="documento.tornar.sem.efeito"/> - ${mob.siglaEDescricaoCompleta}</h5>
 			</div>
 			<div class="card-body">
 				<form action="tornarDocumentoSemEfeitoGravar" enctype="multipart/form-data" method="post">

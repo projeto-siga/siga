@@ -19,17 +19,21 @@
 				href="/sigaex/app/mesa">Mesa Virtual</a></li>
 				
 			<div class="dropdown-divider"></div>
+			<c:catch>
+				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRAMITE:Trâmite;LOTE:Em Lote')}">
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/mov/transferir_lote">Transferir em
+							lote</a></li>
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/mov/receber_lote">Receber em lote</a></li>
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/mov/anotar_lote">Anotar em lote</a></li>
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/mov/assinar_tudo">Assinar
+							Documentos, Despachos e Anexos</a></li>
+				</c:if>
+			</c:catch>
 			
-			<li><a class="dropdown-item"
-				href="/sigaex/app/expediente/mov/transferir_lote">Transferir em
-					lote</a></li>
-			<li><a class="dropdown-item"
-				href="/sigaex/app/expediente/mov/receber_lote">Receber em lote</a></li>
-			<li><a class="dropdown-item"
-				href="/sigaex/app/expediente/mov/anotar_lote">Anotar em lote</a></li>
-			<li><a class="dropdown-item"
-				href="/sigaex/app/expediente/mov/assinar_tudo">Assinar
-					Documentos, Despachos e Anexos</a></li>
 
 			<c:catch>
 				<c:if
@@ -46,9 +50,13 @@
 							Despacho em lote</a></li>
 				</c:if>
 			</c:catch>
-			<li><a class="dropdown-item"
-				href="/sigaex/app/expediente/mov/arquivar_corrente_lote">Arquivar
-					em lote</a></li>
+			<c:catch>
+				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRAMITE:Trâmite;LOTE:Em Lote')}">
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/mov/arquivar_corrente_lote">Arquivar
+							em lote</a></li>
+				</c:if>
+			</c:catch>
 			<c:catch>
 				<c:if
 					test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">

@@ -121,9 +121,15 @@
 						</c:if>
 					</c:when>
 					<c:otherwise>
-						<li><a class="dropdown-item"
-							href="${serverAndPort}/siga/app/substituicao/listar">Gerenciar
-								possíveis substitutos</a></li>
+						<c:catch>
+							<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;ADM:Administração')}">
+								<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;ADM;GER:Gerenciar Substitutos')}">
+								<li><a class="dropdown-item"
+									href="${serverAndPort}/siga/app/substituicao/listar">Gerenciar
+										possíveis substitutos</a></li>
+								</c:if>
+							</c:if>
+						</c:catch>
 					</c:otherwise>
 				</c:choose>
 			</ul></li>
@@ -254,32 +260,33 @@
 				</ul></li>
 		</c:if>
 
-		<li class="dropdown-submenu"><a href="javascript:void(0);"
-			class="dropdown-item dropdown-toggle">Substituir</a>
-			<ul class="dropdown-menu navmenu-large">
-				<c:forEach var="substituicao" items="${meusTitulares}">
-					<li><a class="dropdown-item"
-						style="border-left: 0px; float: right; padding-left: 0.5em; padding-right: 0.5em;"
-						href="javascript:if (confirm('Deseja excluir substituição?')) location.href='/siga/app/substituicao/exclui?id=${substituicao.idSubstituicao}&porMenu=true';">
-							<img style="display: inline;"
-							src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir"
-							onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';"
-							onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';">
-					</a> <a class="dropdown-item"
-						href="/siga/app/substituicao/substituirGravar?id=${substituicao.idSubstituicao}">
-							<c:choose>
-								<c:when test="${not empty substituicao.titular}">
-									${f:maiusculasEMinusculas(substituicao.titular.pessoaAtual.nomePessoa)}
-								</c:when>
-								<c:otherwise>
-									${f:maiusculasEMinusculas(substituicao.lotaTitular.lotacaoAtual.nomeLotacao)}
-								</c:otherwise>
-							</c:choose>
-					</a></li>
-				</c:forEach>
-
-			</ul></li>
-
+		<c:if test="${not empty meusTitulares}">
+			<li class="dropdown-submenu"><a href="javascript:void(0);"
+				class="dropdown-item dropdown-toggle">Substituir</a>
+				<ul class="dropdown-menu navmenu-large">
+					<c:forEach var="substituicao" items="${meusTitulares}">
+						<li><a class="dropdown-item"
+							style="border-left: 0px; float: right; padding-left: 0.5em; padding-right: 0.5em;"
+							href="javascript:if (confirm('Deseja excluir substituição?')) location.href='/siga/app/substituicao/exclui?id=${substituicao.idSubstituicao}&porMenu=true';">
+								<img style="display: inline;"
+								src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir"
+								onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';"
+								onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';">
+						</a> <a class="dropdown-item"
+							href="/siga/app/substituicao/substituirGravar?id=${substituicao.idSubstituicao}">
+								<c:choose>
+									<c:when test="${not empty substituicao.titular}">
+										${f:maiusculasEMinusculas(substituicao.titular.pessoaAtual.nomePessoa)}
+									</c:when>
+									<c:otherwise>
+										${f:maiusculasEMinusculas(substituicao.lotaTitular.lotacaoAtual.nomeLotacao)}
+									</c:otherwise>
+								</c:choose>
+						</a></li>
+					</c:forEach>
+	
+				</ul></li>
+		</c:if>
 
 		<li><c:choose>
 				<c:when test="${not empty f:resource('siga.ex.manual.url')}">

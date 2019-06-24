@@ -20,9 +20,11 @@ package br.gov.jfrj.siga.gi.service.impl;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.jws.WebService;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -95,6 +97,82 @@ public class GiServiceImpl implements GiService {
 			e.printStackTrace();
 		}
 		return resultado;
+	}
+    
+    @Override
+	public String perfilAcessoPorCpf(String cpf) {
+		String resultado = "";
+		try {
+			if( Pattern.matches( "\\d+", cpf) && cpf.length() == 11) {
+				List<CpIdentidade> lista = new CpDao().consultaIdentidadesCadastrante(cpf, Boolean.TRUE);
+				if(!lista.isEmpty()) {
+					resultado = parseAcessosResult(lista);
+				} else {
+					resultado = "Não foi possível buscar acessos. Acessos não localizados.";
+				}
+			} else {
+				resultado = "Não foi possível buscar acessos. CPF inválido.";
+			}
+
+		} catch (AplicacaoException e) {
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+    
+	private String parseAcessosResult(List<CpIdentidade> lista) {
+		JSONArray acessos = new JSONArray();
+
+		try {
+			if (!lista.isEmpty()) {
+		        for (CpIdentidade identidade : lista) {
+		    		JSONObject pessoa = new JSONObject();
+		    		JSONObject lotacao = new JSONObject();
+		    		JSONObject cargo = new JSONObject();
+		    		JSONObject funcao = new JSONObject();
+		    		
+		        	//Pessoa
+		        	DpPessoa p = identidade.getPessoaAtual();
+		        	pessoa.put("siglaPessoa", p.getSiglaCompleta());
+		        	pessoa.put("nomePessoa", p.getNomePessoa());
+		        	
+		        	//Lotacao Pessoa
+		        	DpLotacao l = p.getLotacao();
+		        	lotacao.put("idLotacao", l.getId());
+		        	lotacao.put("nomeLotacao", l.getNomeLotacao());
+		        	lotacao.put("siglaLotacao", l.getSigla());
+		        	
+		        	//Cargo Pessoa
+					DpCargo c = p.getCargo();
+					if (c!=null){
+						cargo.put("idCargo", c.getId());
+						cargo.put("nomeCargo", c.getNomeCargo());
+					}
+					//Função Pessoa
+					DpFuncaoConfianca f = p.getFuncaoConfianca();
+					if (f !=null){
+						funcao.put("idFuncaoConfianca", f.getId());
+						funcao.put("nomeFuncaoConfianca", f.getNomeFuncao());
+					}
+					
+					pessoa.put("lotacao", lotacao);
+					pessoa.put("cargo", cargo);
+					pessoa.put("funcaoConfianca", funcao);
+					
+					acessos.put(pessoa);
+					
+		        }
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			return acessos.toString();
+		} catch (Exception e) {
+			return "";
+		}
+		
 	}
 
 	private String parseLoginResult(CpIdentidade id) {

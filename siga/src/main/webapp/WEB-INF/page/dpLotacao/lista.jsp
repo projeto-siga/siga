@@ -2,6 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <siga:pagina titulo="Listar Lota&ccedil;&atilde;o">
 <script type="text/javascript" language="Javascript1.1">
@@ -19,7 +20,7 @@ function sbmt(offset) {
 		<input type="hidden" name="offset" value="0" />
 		<div class="card bg-light mb-3" >
 			<div class="card-header">
-				<h5>Dados da Lota&ccedil;&atilde;o</h5>
+				<h5>Dados da <fmt:message key="usuario.lotacao"/></h5>
 			</div>
 			<div class="card-body">
 				<div class="row">

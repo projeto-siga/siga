@@ -37,4 +37,7 @@ public interface GiService extends Remote {
 
     @WebMethod
 	public String acesso(String matricula, String lotacao, String servico);
+        
+    @WebMethod
+	public String perfilAcessoPorCpf(String cpf);
 }

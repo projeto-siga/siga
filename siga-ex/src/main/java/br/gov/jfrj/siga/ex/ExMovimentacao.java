@@ -41,6 +41,7 @@ import org.hibernate.annotations.BatchSize;
 
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
@@ -101,7 +102,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		String s = getExTipoMovimentacao().getSigla();
 		if (getCadastrante() == null || getSubscritor() == null)
 			return s;
-		if (!getSubscritor().getId().equals(getCadastrante().getId()))
+		if (!getSubscritor().getId().equals(getCadastrante().getId())
+			&& !SigaMessages.isSigaSP())
 			s = s + " de Ordem";
 		if (getExMovimentacaoCanceladora() != null)
 			s = s + " (Cancelada)";

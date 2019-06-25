@@ -12,7 +12,7 @@
 	<script src='https://www.google.com/recaptcha/api.js'></script>
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-4">
+			<div class="col col-12 col-sm-4">
 				<div class="card bg-light mb-3" >
 					<div class="card-header">
 						<h5>
@@ -47,7 +47,7 @@
 					</div>	
 				</div>
 			</div>
-			<div class="col-8">
+			<div class="col">
 			
 				<div class="card mb-3" >
 				  <div class="card-header">

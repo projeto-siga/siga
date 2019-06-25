@@ -374,7 +374,7 @@
 						</div>
 
 						<div class="form-group col-md-2">
-							<label for="ultMovTipoResp"><fmt:message key="tela.pesquisa.pessoa"/>/<fmt:message key="usuario.lotacao"/></label> <select
+							<label for="ultMovTipoResp"><fmt:message key="usuario.pessoa"/>/<fmt:message key="usuario.lotacao"/></label> <select
 								class="form-control" id="ultMovTipoResp" name="ultMovTipoResp"
 								onchange="javascript:alteraAtendente();">
 								<c:forEach items="${listaTipoResp}" var="item">

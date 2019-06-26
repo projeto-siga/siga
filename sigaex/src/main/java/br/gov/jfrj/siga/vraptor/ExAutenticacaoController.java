@@ -13,6 +13,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.HttpHost;
+
 import nl.captcha.Captcha;
 import nl.captcha.noise.StraightLineNoiseProducer;
 import br.com.caelum.vraptor.Get;
@@ -92,6 +94,8 @@ public class ExAutenticacaoController extends ExController {
 
 		boolean success = false;
 		if (gRecaptchaResponse != null) {
+			Unirest.setProxy(new HttpHost(System.getProperty("http.proxyHost"),
+					Integer.parseInt(System.getProperty("http.proxyPort"))));
 			HttpResponse<JsonNode> result = Unirest
 					.post("https://www.google.com/recaptcha/api/siteverify")
 					.header("accept", "application/json")

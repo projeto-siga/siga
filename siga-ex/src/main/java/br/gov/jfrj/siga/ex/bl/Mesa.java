@@ -319,7 +319,12 @@ public class Mesa {
 
 		//
 		RETENCAO_INSS(1002, "Retenção de INSS", "fas fa-tag", "",
-				GrupoDeMarcadorEnum.ALERTA);
+				GrupoDeMarcadorEnum.ALERTA),
+		//
+		PRIORITARIO(1003, "Prioritário", "fas fa-star", "", GrupoDeMarcadorEnum.ALERTA),
+		//		
+		RESTRICAO_ACESSO(1004, "Restrição de Acesso", "fas fa-user-secret", "", GrupoDeMarcadorEnum.ALERTA);
+		//		
 
 		private MarcadorEnum(int id, String nome, String icone,
 				String descricao, GrupoDeMarcadorEnum grupo) {

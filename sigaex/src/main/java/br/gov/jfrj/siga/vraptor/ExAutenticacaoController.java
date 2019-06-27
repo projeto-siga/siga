@@ -54,8 +54,6 @@ public class ExAutenticacaoController extends ExController {
 	private static final String URL_EXIBIR = "/public/app/autenticar";
 	private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
 	private static final String APPLICATION_PDF = "application/pdf";
-	private static final String HTTP_PROXY_HOST = System.getProperty("http.proxyHost");
-	private static final String HTTP_PROXY_PORT = System.getProperty("http.proxyPort");
 
 	public ExAutenticacaoController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
@@ -86,6 +84,9 @@ public class ExAutenticacaoController extends ExController {
 		String recaptchaSiteKey = getRecaptchaSiteKey();
 		String recaptchaSitePassword = getRecaptchaSitePassword();
 		result.include("recaptchaSiteKey", recaptchaSiteKey);
+		
+		final String HTTP_PROXY_HOST = System.getProperty("http.proxyHost");
+		final String HTTP_PROXY_PORT = System.getProperty("http.proxyPort");
 
 		if (n == null || n.trim().length() == 0) {
 			setDefaultResults();

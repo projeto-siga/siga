@@ -28,7 +28,7 @@ import com.auth0.jwt.JWTVerifyException;
 public class AuthJwtFormFilter implements Filter {
 
 	public static final String SIGA_JWT_AUTH_COOKIE_NAME = "siga-jwt-auth";
-	public static final String SIGA_JWT_AUTH_COOKIE_DOMAIN = System.getProperty("idp.jwt.modulo.cookie.domain");
+	public static final String SIGA_JWT_AUTH_COOKIE_DOMAIN = SigaBaseProperties.getString("idp.jwt.modulo.cookie.domain");
 	private static final int TIME_TO_EXPIRE_IN_S = 60 * 60 * 8; // 8h é o tempo
 																// de duração
 	private static final int TIME_TO_RENEW_IN_S = 60 * 60 * 7; // renova

@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Set;
 
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -1212,6 +1213,11 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		if (!doc.isEletronico() || !doc.getAutenticacoesComTokenOuSenha().isEmpty())
 			return false;
+		
+		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")) &&
+				!Long.valueOf(100).equals(doc.getExFormaDocumento().getId())) {
+			return false;
+		}
 		
 		return doc.isExternoCapturado() || doc.isInternoCapturado() || doc.getAssinaturasComSenha().size() > 0;
 	}

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +18,6 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
@@ -272,9 +272,21 @@ public class SubstituicaoController extends SigaController {
 				if (!Data.dataDentroSeculo21(subst.getDtIniSubst()))
 					throw new AplicacaoException("Data inicial inválida, deve estar entre o ano 2000 e ano 2100");
 			}
+			
+			if (subst.getDtFimSubst() == null) {
+				throw new AplicacaoException("Não é possível informar uma data final nula.");
 				
-			if(subst.getDtFimSubst() != null && !Data.dataDentroSeculo21(subst.getDtFimSubst()))
-				throw new AplicacaoException("Data final inválida, deve estar entre o ano 2000 e ano 2100");	
+			} else if (getIntervaloDeDiasEntreDatas(subst.getDtIniSubst(), subst.getDtFimSubst()) < 0) {
+				throw new AplicacaoException("Não é possível informar uma data final anterior a data inicial.");
+			} else if (getIntervaloDeDiasEntreDatas(subst.getDtIniSubst(), subst.getDtFimSubst()) > 120) {
+				throw new AplicacaoException("Período informado : " + getIntervaloDeDiasEntreDatas(subst.getDtIniSubst(), subst.getDtFimSubst()) + " dias. Não é possível cadastrar um período de substituição maior que 120 dias.");
+			}
+			else {
+				if(subst.getDtFimSubst() != null && !Data.dataDentroSeculo21(subst.getDtFimSubst()))
+					throw new AplicacaoException("Data final inválida, deve estar entre o ano 2000 e ano 2100");	
+			} 
+				
+	
 
 			subst.setDtIniRegistro(new Date());
 
@@ -294,13 +306,13 @@ public class SubstituicaoController extends SigaController {
 			
 			Set<DpPessoa> pessoasParaEnviarEmail;
 			
-			String textoEmail = "Informamos que " 
-			        + getCadastrante().getNomePessoa() + " matrícula: " + getCadastrante().getSesbPessoa() + getCadastrante().getMatricula()
+			String textoEmail = "Informamos que a matrícula: "  + getCadastrante().getSesbPessoa() + getCadastrante().getMatricula()
+			        + " - " + getCadastrante().getNomePessoa()  
 					+ " cadastrou uma substituição da ";
 			
 					
 					if (tipoSubstituto == 1) {
-						textoEmail = textoEmail + " matrícula: " + subst.getSubstituto().getSesbPessoa() + subst.getSubstituto().getMatricula();
+						textoEmail = textoEmail + " matrícula: " + subst.getSubstituto().getSesbPessoa() + subst.getSubstituto().getMatricula() + " - " + subst.getSubstituto().getNomePessoa();
 						pessoasParaEnviarEmail = subst.getSubstituto().getLotacao().getDpPessoaLotadosSet();
 						
 					} else {
@@ -311,7 +323,7 @@ public class SubstituicaoController extends SigaController {
 					textoEmail = textoEmail + " para";
 					
 					if (tipoTitular ==1) {
-						textoEmail = textoEmail + " matricula: " + subst.getTitular().getSesbPessoa() + subst.getTitular().getMatricula();
+						textoEmail = textoEmail + " matricula: " + subst.getTitular().getSesbPessoa() + subst.getTitular().getMatricula() + " - " + subst.getTitular().getNomePessoa();;
 						pessoasParaEnviarEmail.addAll(subst.getTitular().getLotacao().getDpPessoaLotadosSet());
 					} else {
 						textoEmail = textoEmail + " lotação: " + subst.getLotaTitular().getSigla() + " - " + subst.getLotaTitular().getNomeLotacao();
@@ -445,5 +457,12 @@ public class SubstituicaoController extends SigaController {
 		}
 		
 	}	
+	
+	private long getIntervaloDeDiasEntreDatas(Date firstDate, Date secondDate) {
+	 
+	    long diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
+	    long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+		return diff;
+	}
 
 }

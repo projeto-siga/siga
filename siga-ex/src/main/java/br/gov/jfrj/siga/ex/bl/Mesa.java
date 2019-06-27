@@ -415,8 +415,7 @@ public class Mesa {
 							.parseInt(((dataMovimentacao.getTime() - dataHoje.getTime() - +3600000L) / 86400000L)
 									+ "");
 
-					String qtdDias = SigaBaseProperties
-							.getString("siga.qtdDiasDevolucao");
+					String qtdDias = System.getProperty("siga.qtdDiasDevolucao");
 					
 					if(qtdDias == null){
 						qtdDias = "5";

@@ -27,6 +27,7 @@ import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.HashRequest;
 import br.gov.jfrj.siga.bluc.service.HashResponse;
@@ -53,6 +54,8 @@ public class ExAutenticacaoController extends ExController {
 	private static final String URL_EXIBIR = "/public/app/autenticar";
 	private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
 	private static final String APPLICATION_PDF = "application/pdf";
+	private static final String HTTP_PROXY_HOST = System.getProperty("http.proxyHost");
+	private static final String HTTP_PROXY_PORT = System.getProperty("http.proxyPort");
 
 	public ExAutenticacaoController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
@@ -94,8 +97,10 @@ public class ExAutenticacaoController extends ExController {
 
 		boolean success = false;
 		if (gRecaptchaResponse != null) {
-			Unirest.setProxy(new HttpHost(System.getProperty("http.proxyHost"),
-					Integer.parseInt(System.getProperty("http.proxyPort"))));
+			if (!"".equals(HTTP_PROXY_HOST) && !"".equals(HTTP_PROXY_PORT)){
+				Unirest.setProxy(new HttpHost(HTTP_PROXY_HOST, Integer.parseInt(HTTP_PROXY_PORT)));
+			}
+
 			HttpResponse<JsonNode> result = Unirest
 					.post("https://www.google.com/recaptcha/api/siteverify")
 					.header("accept", "application/json")

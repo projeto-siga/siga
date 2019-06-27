@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
@@ -38,7 +39,7 @@
 		<div class="row">
 			<div class="col offset-sm-3 col-sm-6">
 				<div class="jumbotron">
-					<h2>Marcação - ${mob.siglaEDescricaoCompleta}</h2>
+					<h2><fmt:message key="documento.marcacao"/> ${mob.sigla}</h2>
 					<form name="frm" action="vincularPapel_gravar" method="post">
 						<input type="hidden" name="postback" value="1" /> <input
 							type="hidden" name="sigla" value="${sigla}" />

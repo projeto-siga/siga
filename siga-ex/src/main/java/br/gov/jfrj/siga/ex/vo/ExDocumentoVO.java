@@ -546,7 +546,7 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance()
 						.getComp()
 						.podeAutenticarDocumento(titular, lotaTitular,
-								mob.doc()));
+								mob.getExDocumento()));
 
 		vo.addAcao(
 				"page_go	",

@@ -1215,7 +1215,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			return false;
 		
 		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")) &&
-				!Long.valueOf(100).equals(doc.getExFormaDocumento().getId())) {
+				!Long.valueOf(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO).equals(Long.valueOf(doc.getExTipoDocumento().getId())) &&
+				!Long.valueOf(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO).equals(Long.valueOf(doc.getExTipoDocumento().getId()))				
+				) {
 			return false;
 		}
 		

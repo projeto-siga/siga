@@ -92,7 +92,13 @@ public class UsuarioAutenticado {
 			throws AplicacaoException, SQLException {
 		Date dt = dao().consultarDataEHoraDoServidor();
 		if (!id.ativaNaData(dt)) {
-			throw new AplicacaoException("O acesso não será permitido porque identidade está inativa desde '"+ id.getDtExpiracaoDDMMYYYY() + "'.");
+			CpIdentidade idAtual = dao().obterIdentidadeAtual(id);
+			if (!id.getId().equals(idAtual.getId())) { 
+				dao().invalidarCache(id);
+				id = idAtual;
+			}
+			if (!id.ativaNaData(dt)) 
+				throw new AplicacaoException("O acesso não será permitido porque identidade está inativa desde '"+ id.getDtExpiracaoDDMMYYYY() + "'.");
 		}
 		if (id.isBloqueada()) {
 			throw new AplicacaoException("O acesso não será permitido porque esta identidade está bloqueada.");

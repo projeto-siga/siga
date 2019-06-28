@@ -12,7 +12,10 @@ import br.com.caelum.vraptor.interceptor.Interceptor;
 import br.com.caelum.vraptor.ioc.Component;
 import br.com.caelum.vraptor.resource.ResourceMethod;
 import br.com.caelum.vraptor.util.jpa.JPATransactionInterceptor;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 @Component
 @Intercepts(before = JPATransactionInterceptor.class)
@@ -38,6 +41,15 @@ public class GiInterceptor implements Interceptor {
 			Object instance) {
 
 		ContextoPersistencia.setEntityManager(this.manager);
+		
+		ModeloDao.freeInstance();
+		CpDao.getInstance();
+		try {
+			Cp.getInstance().getConf().limparCacheSeNecessario();
+		} catch (Exception e1) {
+			throw new RuntimeException(
+					"Não foi possível atualizar o cache de configurações", e1);
+		}
 
 		try {
 			stack.next(method, instance);

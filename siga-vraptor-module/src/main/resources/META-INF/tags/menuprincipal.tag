@@ -182,6 +182,10 @@
 								de Pessoa</a></li>
 					</c:if>
 					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;ENV:Envio de E-mail para Novos Usuários')}">
+						<li><a class="dropdown-item" href="/siga/app/pessoa/enviarEmail">Envio de E-mail para Novos Usuários</a></li>
+					</c:if>
+					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;WF_ADMIN:Administrar SIGAWF')}">
 						<li><a class="dropdown-item"
 							href="/sigawf/app/admin/administrar">Administrar SIGA WF</a></li>

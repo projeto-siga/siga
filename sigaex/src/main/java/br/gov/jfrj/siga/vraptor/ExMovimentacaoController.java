@@ -1187,7 +1187,7 @@ public class ExMovimentacaoController extends ExController {
 
 		String funcaoUnidadeCosignatario = funcaoCosignatario;
 		// Efetuar validação e concatenar o conteudo se for implantação GOVSP
-		if(isSigaSP() && (funcaoCosignatario != null && !funcaoCosignatario.isEmpty()) && (unidadeCosignatario != null && !unidadeCosignatario.isEmpty())) {
+		if(SigaMessages.isSigaSP() && (funcaoCosignatario != null && !funcaoCosignatario.isEmpty()) && (unidadeCosignatario != null && !unidadeCosignatario.isEmpty())) {
 			funcaoUnidadeCosignatario = funcaoUnidadeCosignatario + ";" + unidadeCosignatario; 
 		}
 		
@@ -2942,6 +2942,50 @@ public class ExMovimentacaoController extends ExController {
 		result.include("titularSel", new DpPessoaSelecao());
 	}
 
+	@Get("/app/expediente/mov/cancelar_ciencia")
+	public void aCancelarCiencia(String sigla)
+			throws Exception {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+		ExMovimentacao movCiencia = null;
+
+		buscarDocumento(builder);
+
+		final ExMobil mob = builder.getMob();
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeCancelarCiencia(getTitular(), getLotaTitular(), mob))
+			throw new AplicacaoException(
+					"Usuário não tem permissão de cancelar ciência.");
+
+		Set <ExMovimentacao> setMovCiente = mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA);
+
+		if (setMovCiente != null) {
+			for (ExMovimentacao mov : setMovCiente) {
+				if (mov.getCadastrante() != null &&  mov.getCadastrante().equivale(getTitular())) {
+					movCiencia = mov;
+				}
+			}
+		} else {
+			throw new AplicacaoException("Não existe ciência a ser cancelada para este usuário.");
+		}
+		
+		if (movCiencia != null && !movCiencia.isCancelada()) {
+			try {
+				Ex.getInstance()
+						.getBL()
+						.cancelar(getTitular(), getLotaTitular(), builder.getMob(),
+								movCiencia, null, null, null,
+								"Ciência: " + movCiencia.getDescrMov());
+			} catch (final Exception e) {
+				throw e;
+			}
+		}
+
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+	
 	private void validarCancelamentoJuntada(ExMobil mob) {
 		if (!Ex.getInstance().getComp()
 				.podeCancelarJuntada(getTitular(), getLotaTitular(), mob))
@@ -4312,10 +4356,71 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
     
-    private boolean isSigaSP() {
-    	if (SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
-    		return true;
-    	}
-    	return false;
-    }
+	@Get("/app/expediente/mov/ciencia")
+	public void aCiencia(final String sigla) {
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		final ExDocumento documento = buscarDocumento(documentoBuilder);
+
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia().setMob(documentoBuilder.getMob());
+
+		final ExMovimentacao movimentacao = movimentacaoBuilder
+				.construir(dao());
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeFazerCiencia(getTitular(), getLotaTitular(),
+						documentoBuilder.getMob())) {
+			throw new AplicacaoException("Não é possível fazer ciência");
+		}
+
+		result.include("sigla", sigla);
+		result.include("mob", documentoBuilder.getMob());
+		result.include("mov", movimentacao);
+		result.include("doc", documento);
+		result.include("descrMov", movimentacaoBuilder.getDescrMov());
+	}
+
+	@Post("/app/expediente/mov/ciencia_gravar")
+	public void ciencia_gravar(final Integer postback, final String sigla, final String descrMov) {
+		if(!SigaMessages.isSigaSP()) {
+			throw new AplicacaoException("Não é possível fazer ciência do documento neste ambiente.");
+		}
+
+		this.setPostback(postback);
+		
+		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder
+				.novaInstancia();
+
+		final ExMovimentacao mov = builder.construir(dao());
+
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		buscarDocumento(documentoBuilder);
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeFazerCiencia(getTitular(), getLotaTitular(),
+						documentoBuilder.getMob())) {
+			throw new AplicacaoException("Não é possível fazer ciência do documento.");
+		}
+
+		mov.setDtMov(dao().dt());
+		mov.setSubscritor(getCadastrante());
+		mov.setResp(getCadastrante());
+		mov.setLotaResp(getLotaTitular());
+		mov.setDescrMov(descrMov);
+		
+		Ex.getInstance()
+				.getBL()
+				.registrarCiencia(getCadastrante(), getLotaTitular(),
+						documentoBuilder.getMob(), mov.getDtMov(),
+						mov.getLotaResp(), mov.getResp(), mov.getSubscritor(),
+						mov.getDescrMov());
+
+		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+	}
 }

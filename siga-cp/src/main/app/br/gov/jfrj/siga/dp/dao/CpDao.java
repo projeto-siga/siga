@@ -1106,6 +1106,77 @@ public class CpDao extends ModeloDao {
 		query.setDate("dt", dt);
 		return query.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DpPessoa> consultarPorFiltroSemIdentidade(final DpPessoaDaoFiltro flt,
+			final int offset, final int itemPagina) {
+		try {
+			final Query query;
+
+			query = getSessao().getNamedQuery("consultarPorFiltroDpPessoaSemIdentidade");
+			
+			if (offset > 0) {
+				query.setFirstResult(offset);
+			}
+			if (itemPagina > 0) {
+				query.setMaxResults(itemPagina);
+			}
+			query.setString("nome",
+					flt.getNome().toUpperCase().replace(' ', '%'));
+
+			if(flt.getCpf() != null && !"".equals(flt.getCpf())) {
+				query.setLong("cpf", Long.valueOf(flt.getCpf()));
+			} else {
+				query.setLong("cpf", 0);
+			}
+			
+			if (flt.getIdOrgaoUsu() != null)
+				query.setLong("idOrgaoUsu", flt.getIdOrgaoUsu());
+			else
+				query.setLong("idOrgaoUsu", 0);
+
+			if (flt.getLotacao() != null)
+				query.setLong("lotacao", flt.getLotacao().getId());
+			else
+				query.setLong("lotacao", 0);
+
+			final List<DpPessoa> l = query.list();
+			return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
+	
+	public int consultarQuantidadeDpPessoaSemIdentidade(final DpPessoaDaoFiltro flt) {
+		try {
+			final Query query;
+			query = getSessao().getNamedQuery("consultarQuantidadeDpPessoaSemIdentidade");
+			
+			query.setString("nome",
+					flt.getNome().toUpperCase().replace(' ', '%'));
+
+			if(flt.getCpf() != null && !"".equals(flt.getCpf())) {
+				query.setLong("cpf", Long.valueOf(flt.getCpf()));
+			} else {
+				query.setLong("cpf", 0);
+			}
+			
+			if (flt.getIdOrgaoUsu() != null)
+				query.setLong("idOrgaoUsu", flt.getIdOrgaoUsu());
+			else
+				query.setLong("idOrgaoUsu", 0);
+
+			if (flt.getLotacao() != null)
+				query.setLong("lotacao", flt.getLotacao().getId());
+			else
+				query.setLong("lotacao", 0);
+
+			final int l = ((Long) query.uniqueResult()).intValue();
+			return l;
+		} catch (final NullPointerException e) {
+			return 0;
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<DpPessoa> consultarPorFiltro(final DpPessoaDaoFiltro flt,

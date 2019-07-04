@@ -295,8 +295,6 @@ public class ExDocumentoVO extends ExVO {
 				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO_DE_VOLUME);
 		movimentacoesPermitidas
 				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA);
-		movimentacoesPermitidas
-				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA);		
 
 		List<Long> marcasGeralPermitidas = new ArrayList<Long>();
 		marcasGeralPermitidas.add(CpMarcador.MARCADOR_A_ELIMINAR);
@@ -397,6 +395,8 @@ public class ExDocumentoVO extends ExVO {
 	 */
 	private void addAcoes(ExDocumento doc, DpPessoa titular,
 			DpLotacao lotaTitular, boolean exibirAntigo) {
+		String iconVerImpressao;
+		String iconVerMais;
 		
 		ExVO vo = this;
 		for (ExMobilVO mobvo : mobs) {
@@ -414,8 +414,16 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeVisualizarImpressao(titular, lotaTitular, mob));
 
+		if(SigaMessages.isSigaSP()) {
+			iconVerImpressao = "eye";
+			iconVerMais = "date_magnify";
+		} else {
+			iconVerImpressao = "printer";
+			iconVerMais = "eye";
+		}
+
 		vo.addAcao(
-				SigaMessages.getMessage("icon.ver.impressao"),
+				iconVerImpressao,
 				SigaMessages.getMessage("documento.ver.impressao"),
 				"/app/arquivo",
 				"exibir",
@@ -611,7 +619,7 @@ public class ExDocumentoVO extends ExVO {
 		// test="${exibirCompleto != true}" />
 		int numUltMobil = doc.getNumUltimoMobil();
 		vo.addAcao(
-				SigaMessages.getMessage("icon.ver.mais"),
+				iconVerMais,
 				SigaMessages.getMessage("documento.ver.mais"),
 				"/app/expediente/doc",
 				"exibirAntigo",

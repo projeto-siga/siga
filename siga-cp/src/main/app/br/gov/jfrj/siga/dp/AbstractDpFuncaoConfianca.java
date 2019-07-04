@@ -61,7 +61,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "   	and fun.dataFimFuncao = null"
 				+ "   	order by fun.nomeFuncao"),
-		@NamedQuery(name = "consultarPorNomeOrgaoDpFuncaoConfianca", query = "select fun from DpFuncaoConfianca fun where upper(fun.nmFuncaoConfiancaAI) = upper(:nome) and fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario")})
+		@NamedQuery(name = "consultarPorNomeOrgaoDpFuncaoConfianca", query = "select fun from DpFuncaoConfianca fun where upper(REMOVE_ACENTO(fun.nomeFuncao)) = upper(REMOVE_ACENTO(:nome)) and fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario")})
 
 public abstract class AbstractDpFuncaoConfianca extends Objeto implements
 		Serializable {

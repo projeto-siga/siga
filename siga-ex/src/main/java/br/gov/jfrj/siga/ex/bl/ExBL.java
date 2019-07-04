@@ -2890,8 +2890,7 @@ public class ExBL extends CpBL {
 
 		} else if (movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM
 				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO
-				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA
-				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA) {
+				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA) {
 			if (!getComp().podeCancelar(titular, lotaTitular, mob, movCancelar))
 				throw new AplicacaoException(
 						"não é permitido cancelar esta movimentação.");
@@ -5561,30 +5560,7 @@ public class ExBL extends CpBL {
 			mov.setAuditIP(HttpRequestUtils.getIpAudit(ri.getRequest()));
 		}
 	}
-
-	public void registrarCiencia(final DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, final ExMobil mob,
-			final Date dtMov, DpLotacao lotaResponsavel,
-			final DpPessoa responsavel, final DpPessoa subscritor,
-			final String descrMov) throws AplicacaoException {
-
-		try {
-			iniciarAlteracao();
-			final ExMovimentacao mov = criarNovaMovimentacao(
-					ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA,
-					cadastrante, lotaCadastrante, mob, dtMov, cadastrante,
-					null, null, null, null);
-
-			mov.setDescrMov(descrMov);
-
-			gravarMovimentacao(mov);
-			concluirAlteracao(mov.getExMobil());
-		} catch (final Exception e) {
-			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao fazer ciência.", 0, e);
-		}
-	}
-		
+	
 	private final int HASH_TIMEOUT_MILLISECONDS = 5000;
 	
 	private static class TimestampPostRequest implements ISwaggerRequest {

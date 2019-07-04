@@ -154,10 +154,6 @@
 			<c:if test="${ (mov.idTpMov != 14 and not mov.cancelada)}">
 				<c:set var="temmov" value="${true}" />
 			</c:if>
-			<c:if test="${ (mov.idTpMov == 66 and not mov.cancelada and 
-				mov.mov.cadastrante == cadastrante and mov.mov.lotaCadastrante == lotaTitular)}">
-				<c:set var="descrCiencia" value="${mov.descricao}" />
-			</c:if>
 		</c:forEach>
 		<div class="row mt-2">
 			<div class="col col-sm-12 col-md-8">
@@ -863,14 +859,6 @@
 						</tags:collapse>
 					</div>
 
-					<c:if test="${not empty descrCiencia}">
-						<div class="card-sidebar card bg-light mb-3 ${hide_only_TRF2}">
-							<tags:collapse title="Ciência" id="Ciencia" collapseMode="${collapse_Expanded}">
-								<p>${descrCiencia}</p>
-							</tags:collapse>
-						</div>
-					</c:if>
-
 					<c:if test="${not empty m.getDescricaoCompletaEMarcadoresEmHtml(cadastrante,lotaTitular)}">
 						<div class="card-sidebar card bg-light mb-3 ${hide_only_TRF2}">
 							<tags:collapse title="Situação do Documento" id="SituacaoDoc" collapseMode="${collapse_Expanded}">
@@ -879,7 +867,7 @@
 									<c:if test="${docVO.digital and not empty m.tamanhoDeArquivo}">
 								 		- ${m.tamanhoDeArquivo}
 									</c:if>
-								</p>
+								<p>
 							</tags:collapse>
 						</div>
 					</c:if>

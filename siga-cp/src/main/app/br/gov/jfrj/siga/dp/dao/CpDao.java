@@ -1404,6 +1404,28 @@ public class CpDao extends ModeloDao {
 							+ nmUsuario + "'.", 0, e);
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpIdentidade> consultaIdentidadesPorCpf(
+			final String nmUsuario) throws AplicacaoException {
+		try {
+			final Query qry = getSessao().getNamedQuery("consultarIdentidadeCadastranteAtiva");
+			
+			qry.setLong("cpf", Long.valueOf(nmUsuario));
+			qry.setString("nmUsuario", null);
+			qry.setString("sesbPessoa", null);
+			
+			qry.setCacheable(true);
+			qry.setCacheRegion(CACHE_QUERY_SECONDS);
+			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.list();
+			
+			return lista;
+		} catch (Throwable e) {
+			throw new AplicacaoException(
+					"Ocorreu um erro tentando localizar a identidade do usuario '"
+							+ nmUsuario + "'.", 0, e);
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<CpIdentidade> consultaIdentidades(final DpPessoa pessoa) {

@@ -24,6 +24,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -549,14 +551,14 @@ public class Excel {
 		return "";
 	}
     
-    public InputStream uploadPessoa(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+    public InputStream uploadPessoa(File file, CpOrgaoUsuario orgaoUsuario, String extensao, CpIdentidade identidade) {
 		InputStream retorno = null;
-		retorno = uploadExcelPessoa(file, orgaoUsuario);
+		retorno = uploadExcelPessoa(file, orgaoUsuario, identidade);
 
 		return retorno;
 	}
     
-    public InputStream uploadExcelPessoa(File file, CpOrgaoUsuario orgaoUsuario) {
+    public InputStream uploadExcelPessoa(File file, CpOrgaoUsuario orgaoUsuario, CpIdentidade identidade) {
     	InputStream inputStream = null;
     	StringBuffer problemas = new StringBuffer();
 
@@ -783,6 +785,9 @@ public class Excel {
 			if(problemas == null || "".equals(problemas.toString())) {
 				try {
 					CpDao.getInstance().iniciarTransacao();
+					CpIdentidade usu = null;
+					CpIdentidade usuarioExiste = null;
+					List<CpIdentidade> lista1 = new ArrayList<CpIdentidade>();
 	            	for (DpPessoa dpPessoa : lista) {
 		    			CpDao.getInstance().gravar(dpPessoa);
 
@@ -791,6 +796,28 @@ public class Excel {
 	    					dpPessoa.setIdePessoa(dpPessoa.getId().toString());
 	    					dpPessoa.setMatricula(10000 + dpPessoa.getId());	
 	        				CpDao.getInstance().gravar(dpPessoa);
+	        				
+	        				lista1.clear();
+	        				lista1 = CpDao.getInstance().consultaIdentidadesPorCpf(dpPessoa.getCpfPessoa().toString());
+	        				
+	        				if(lista1.size() > 0) {
+	        					usuarioExiste = lista1.get(0);
+	        					usu = new CpIdentidade();
+	        					usu.setCpTipoIdentidade(CpDao.getInstance().consultar(1,
+	        										CpTipoIdentidade.class, false));
+	        					usu.setDscSenhaIdentidade(usuarioExiste.getDscSenhaIdentidade());
+	        					usu.setDtCriacaoIdentidade(CpDao.getInstance()
+	        							.consultarDataEHoraDoServidor());
+	        					usu.setCpOrgaoUsuario(dpPessoa.getOrgaoUsuario());
+	        					usu.setHisDtIni(usu.getDtCriacaoIdentidade());
+	        					usu.setHisAtivo(1);
+	        					
+		        				if(usu != null) {
+		        					usu.setNmLoginIdentidade(dpPessoa.getSesbPessoa() + dpPessoa.getMatricula());
+		        					usu.setDpPessoa(dpPessoa);
+		        					CpDao.getInstance().gravarComHistorico(usu, identidade);
+		        				}
+	        				}
 	        			}
 					}
 	    			CpDao.getInstance().commitTransacao();			

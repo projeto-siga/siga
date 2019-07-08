@@ -264,6 +264,11 @@
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
+				<artifactId>siga-vraptor-module-old</artifactId>
+				<version>${siga.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>siga</groupId>
 				<artifactId>siga-jwt</artifactId>
 				<version>${siga.version}</version>
 			</dependency>

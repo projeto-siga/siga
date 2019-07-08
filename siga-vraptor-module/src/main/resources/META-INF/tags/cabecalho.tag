@@ -121,7 +121,12 @@ ${meta}
 		<c:set var="ico_siga" value="siga.ico" />
 		<c:set var="menu_class" value="bg-primary" /> 
 		<c:set var="sub_menu_class" value="bg-light" />
-		<c:set var="navbar_class" value="navbar-dark" />
+		
+		<c:set var="navbar_class" value="navbar-dark bg-primary" />
+		<c:if test="${f:resource('isBaseTest')}">
+			<c:set var="navbar_class" value="navbar-dark bg-secondary" />
+		</c:if>
+		
 		<c:set var="navbar_logo" value="logo-siga-novo-38px.png" />
 		<c:set var="navbar_logo_size" value="38" />
 		<c:set var="button_class_busca" value="btn-outline-light" />
@@ -149,7 +154,7 @@ ${meta}
 
 <body onload="${onLoad}" class="${body_color}">
 	<c:if test="${popup!='true'}">
-		<nav class="navbar navbar-expand-lg ${navbar_class} ${menu_class}">
+   		<nav class="navbar navbar-expand-lg ${navbar_class} ${menu_class}">
 			<a class="navbar-brand pt-0 pb-0" href="/siga"> <img
 				src="/siga/imagens/${navbar_logo}" height="${navbar_logo_size}">
 			</a>

@@ -120,7 +120,7 @@ ${meta}
 		<meta name="theme-color" content="bg-primary">
 		<c:set var="ico_siga" value="siga.ico" />
 		<c:set var="menu_class" value="bg-primary" /> 
-		<c:set var="sub_menu_class" value="bg-light" />
+		<c:set var="sub_menu_class" value="bg-secondary text-white" />
 		
 		<c:set var="navbar_class" value="navbar-dark bg-primary" />
 		<c:if test="${f:resource('isBaseTest')}">
@@ -315,7 +315,7 @@ ${meta}
 						 					</c:when>
 										</c:choose>
 									</c:catch> </strong> 
-									<button class="btn btn-danger btn-sm ml-3" type="button" onclick="javascript:location.href='/siga/public/app/logout'"><i class="fas fa-sign-out-alt"></i> Sair</button>
+									<a class="ml-3" onclick="javascript:location.href='/siga/public/app/logout'"><i class="fas fa-sign-out-alt"></i> Sair</a>
 								</span>
 							<div>
 								<c:catch>

@@ -1,4 +1,4 @@
-/*Identidade Visual do SIGA.doc para o Governo do Estado de São Paulo */
+/*Identidade Visual do SIGA.doc para o Governo do Estado de Sï¿½o Paulo */
 
 .menusp {
 	background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);}
@@ -23,3 +23,6 @@
 	border-radius:8px;border: 1px solid #dadce0;
 }
 
+p.gt-table-action-list a.link-tag {
+	margin-top: 0.4em;
+}

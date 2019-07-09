@@ -159,10 +159,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.axis</groupId>
-			<artifactId>axis</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>javax.xml</groupId>
 			<artifactId>jaxrpc-api</artifactId>
 		</dependency>

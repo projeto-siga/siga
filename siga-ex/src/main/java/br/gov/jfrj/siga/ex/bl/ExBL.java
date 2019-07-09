@@ -53,7 +53,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.axis.encoding.Base64;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Criteria;
 import org.hibernate.ObjectNotFoundException;
@@ -1623,7 +1622,7 @@ public class ExBL extends CpBL {
 					throw new Exception(
 							"BluC não conseguiu produzir o envelope AD-RB. "
 									+ enveloperesp.getErrormsg());
-				cms = Base64.decode(enveloperesp.getEnvelope());
+				cms = bluc.b642bytearray(enveloperesp.getEnvelope());
 			} else {
 				cms = pkcs7;
 			}
@@ -2233,20 +2232,7 @@ public class ExBL extends CpBL {
 		// dao().excluir(mov);
 		// }
 	}
-
-	/**
-	 * @param sFileName
-	 * @param data
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	private void writeB64File(String sFileName, final byte[] data)
-			throws FileNotFoundException, IOException {
-		try (FileOutputStream fout2 = new FileOutputStream(sFileName)) {
-			fout2.write(Base64.encode(data).getBytes());
-		}
-	}
-
+	
 	public void assinarMovimentacao(DpPessoa cadastrante,
 			DpLotacao lotaCadastrante, ExMovimentacao movAlvo,
 			final Date dtMov, final byte[] pkcs7, final byte[] certificado,
@@ -2295,7 +2281,7 @@ public class ExBL extends CpBL {
 					throw new Exception(
 							"BluC não conseguiu produzir o envelope AD-RB. "
 									+ enveloperesp.getErrormsg());
-				cms = Base64.decode(enveloperesp.getEnvelope());
+				cms = bluc.b642bytearray(enveloperesp.getEnvelope());
 			} else {
 				cms = pkcs7;
 			}
@@ -6944,7 +6930,7 @@ public class ExBL extends CpBL {
 			String s = null;
 			byte ab[] = br.gov.jfrj.siga.cp.util.Blob.toByteArray(src);
 			if (ab != null)
-				s = Base64.encode(ab);
+				s = BlucService.bytearray2b64(ab);
 			return new JsonPrimitive(s);
 		}
 
@@ -6952,7 +6938,7 @@ public class ExBL extends CpBL {
 				JsonDeserializationContext context) throws JsonParseException {
 			String s = json.getAsString();
 			if (s != null) {
-				byte ab[] = Base64.decode(s);
+				byte ab[] = BlucService.b642bytearray(s);
 				return HibernateUtil.getSessao().getLobHelper().createBlob(ab);
 			}
 			return null;

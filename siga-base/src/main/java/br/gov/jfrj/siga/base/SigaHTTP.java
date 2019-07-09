@@ -54,7 +54,6 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.picketlink.common.util.StringUtil;
 
 /**
  *
@@ -160,7 +159,7 @@ public class SigaHTTP {
 			// Verifica se retornou o form de autenticao do
 			// picketlink
 			if (html.contains(HTTP_POST_BINDING)) {
-				if (StringUtil.isNullOrEmpty(idpSession)) {
+				if (idpSession == null || idpSession.trim().length() == 0) {
 					return "";
 				}
 

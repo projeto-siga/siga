@@ -327,13 +327,6 @@ public class ExMobilVO extends ExVO {
 	 * @throws Exception
 	 */
 	private void addAcoes(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
-		String iconVerImpressao;
-
-		if(SigaMessages.isSigaSP()) {
-			iconVerImpressao = "eye";
-		} else {
-			iconVerImpressao = "printer";
-		}
 
 		if (!mob.isGeral()) {
 			addAcao("folder",
@@ -344,7 +337,7 @@ public class ExMobilVO extends ExVO {
 							.podeVisualizarImpressao(titular, lotaTitular, mob),
 					null, null, null, null, "once");
 
-			addAcao(iconVerImpressao,
+			addAcao(SigaMessages.getMessage("icon.ver.impressao"),
 					SigaMessages.getMessage("documento.ver.impressao"),
 					"/app/arquivo",
 					"exibir",
@@ -363,6 +356,13 @@ public class ExMobilVO extends ExVO {
 									mob), null,
 					"criandoAnexo=true&mobilPaiSel.sigla=" + getSigla(), null,
 					null, null);
+			
+			addAcao("overlays",
+					"Ciência",
+					"/app/expediente/mov",
+					"ciencia",
+					Ex.getInstance().getComp()
+							.podeFazerCiencia(titular, lotaTitular, mob));
 			
 			if (mob.temAnexos()) {
 				addAcao("script_key", "Assinar Anexos " + (mob.isVia() ? "da Via" : "do Volume"),
@@ -523,7 +523,9 @@ public class ExMobilVO extends ExVO {
 		if (mob.getExDocumento().isFinalizado()
 				&& mob.getUltimaMovimentacaoNaoCancelada() != null
 				&& mob.getUltimaMovimentacaoNaoCancelada()
-						.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
+					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA
+				&& mob.getUltimaMovimentacaoNaoCancelada()
+					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
 				&& mob.getUltimaMovimentacaoNaoCancelada()
 				.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO)
 			addAcao("arrow_undo",
@@ -554,6 +556,12 @@ public class ExMobilVO extends ExVO {
 				.getInstance().getComp().podeAutuar(titular, lotaTitular, mob),
 				null, "idMobilAutuado=" + mob.getId() + "&autuando=true", null,
 				null, null);
+
+		addAcao("arrow_undo", "Desfazer Ciência", "/app/expediente/mov",
+				"cancelar_ciencia", Ex.getInstance().getComp()
+						.podeCancelarCiencia(titular, lotaTitular, mob), null,
+				null, null, null, null);
+
 	}
 
 	public String getMarcadoresEmHtml(DpPessoa pess, DpLotacao lota) {

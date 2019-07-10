@@ -2,13 +2,13 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.util.List;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import br.com.caelum.vraptor.ioc.Component;
-import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.gov.jfrj.siga.acesso.ConheceUsuario;
 import br.gov.jfrj.siga.acesso.UsuarioAutenticado;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -24,7 +24,6 @@ import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
-@Component
 @RequestScoped
 public class SigaObjects implements ConheceUsuario {
 	private static Log log = LogFactory.getLog(SigaObjects.class);
@@ -45,6 +44,11 @@ public class SigaObjects implements ConheceUsuario {
 
 	private String mensagem;
 
+	public SigaObjects() throws Exception {
+		this(null);
+	}
+
+	@Inject
 	public SigaObjects(HttpServletRequest request) throws Exception {
 		super();
 		this.request = request;

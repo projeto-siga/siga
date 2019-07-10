@@ -31,11 +31,10 @@ import javax.crypto.Cipher;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import br.com.caelum.vraptor.Consumes;
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.ldap.ILdapDao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -43,7 +42,7 @@ import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdap;
 import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdapProperties;
 
 @Path("/app/admin/ldap")
-@Resource
+@Controller
 public class AdminController extends SigaController {
 	
 	public AdminController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {

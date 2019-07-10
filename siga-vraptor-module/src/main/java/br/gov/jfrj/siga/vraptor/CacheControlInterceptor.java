@@ -1,13 +1,13 @@
 package br.gov.jfrj.siga.vraptor;
 
+import javax.enterprise.context.RequestScoped;
 import javax.servlet.http.HttpServletResponse;
 
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
+import br.com.caelum.vraptor.controller.ControllerMethod;
 import br.com.caelum.vraptor.core.InterceptorStack;
 import br.com.caelum.vraptor.interceptor.Interceptor;
-import br.com.caelum.vraptor.ioc.RequestScoped;
-import br.com.caelum.vraptor.resource.ResourceMethod;
 
 @Intercepts
 @RequestScoped
@@ -21,12 +21,12 @@ public class CacheControlInterceptor
     }
 
     @Override
-    public boolean accepts(ResourceMethod method) {
+    public boolean accepts(ControllerMethod method) {
     	return !method.containsAnnotation(CacheControl.class);
     }
 
     @Override
-    public void intercept(InterceptorStack stack, ResourceMethod method,
+    public void intercept(InterceptorStack stack, ControllerMethod method,
                 Object resourceInstance)
         throws InterceptionException {
         // set the expires to past

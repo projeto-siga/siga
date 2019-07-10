@@ -3,7 +3,7 @@ package br.gov.jfrj.siga.feature.converter.entity.vraptor;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import br.com.caelum.vraptor.Converter;
+import br.com.caelum.vraptor.converter.Converter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class BaseEntityConverter<T> implements Converter<T> {
@@ -11,7 +11,7 @@ public class BaseEntityConverter<T> implements Converter<T> {
 	public static final Long ID_VAZIO = 0L;
 	
 	@Override
-	public T convert(String idString, Class<? extends T> type, ResourceBundle bundle) {
+	public T convert(String idString, Class<? extends T> type) {
 		if (idString != null && !idString.isEmpty()) {
 			Long id = Long.valueOf(idString);
 

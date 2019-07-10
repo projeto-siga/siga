@@ -6,15 +6,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.com.caelum.vraptor.Intercepts;
-import br.com.caelum.vraptor.Validator;
+import br.com.caelum.vraptor.controller.ControllerMethod;
 import br.com.caelum.vraptor.core.InterceptorStack;
 import br.com.caelum.vraptor.interceptor.Interceptor;
-import br.com.caelum.vraptor.ioc.Component;
-import br.com.caelum.vraptor.resource.ResourceMethod;
 import br.com.caelum.vraptor.util.jpa.JPATransactionInterceptor;
+import br.com.caelum.vraptor.validator.Validator;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
-@Component
 @Intercepts(before = JPATransactionInterceptor.class)
 public class GiInterceptor implements Interceptor {
 
@@ -34,7 +32,7 @@ public class GiInterceptor implements Interceptor {
 		this.context = context;
 	}
 
-	public void intercept(InterceptorStack stack, ResourceMethod method,
+	public void intercept(InterceptorStack stack, ControllerMethod method,
 			Object instance) {
 
 		ContextoPersistencia.setEntityManager(this.manager);
@@ -46,7 +44,7 @@ public class GiInterceptor implements Interceptor {
 		}
 	}
 
-	public boolean accepts(ResourceMethod method) {
+	public boolean accepts(ControllerMethod method) {
 		return true; // Will intercept all requests
 	}
 }

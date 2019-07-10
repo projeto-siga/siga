@@ -42,6 +42,8 @@ import java.util.regex.Pattern;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Produces;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -102,7 +104,6 @@ import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 
 public class CpDao extends ModeloDao {

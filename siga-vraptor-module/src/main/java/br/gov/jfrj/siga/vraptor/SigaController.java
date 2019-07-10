@@ -17,8 +17,10 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.collect.Lists;
+
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -31,12 +33,10 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
-import com.google.common.collect.Lists;
-
 public class SigaController {
-	public SigaObjects so;
+	protected SigaObjects so;
 
-	public Result result;
+	protected Result result;
 
 	protected HttpServletRequest request;
 
@@ -89,6 +89,13 @@ public class SigaController {
 
 	protected Integer getPostback() {
 		return postback;
+	}
+	
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public SigaController() {
+		super();
 	}
 	
 	@SuppressWarnings("unchecked")

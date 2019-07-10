@@ -33,9 +33,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Query;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -55,7 +55,7 @@ import br.gov.jfrj.siga.vraptor.suporte.ConfiguracaoConfManual;
 
 //MIGRAÇÃO VRAPTOR DA CLASSE WEB-WORK "package br.gov.jfrj.webwork.action.SelfConfigAction"
 
-@Resource
+@Controller
 public class ServicoController 	extends SigaController {
 	
 	

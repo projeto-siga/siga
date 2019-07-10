@@ -177,9 +177,9 @@
 			<artifactId>pager-taglib</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>com.sun.jersey</groupId>
-		    <artifactId>jersey-client</artifactId>
-		    <version>1.9.1</version>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>1.9.1</version>
 		</dependency>
 
 		<dependency>
@@ -237,11 +237,18 @@
 			<groupId>org.eclipse.birt.runtime.3_7_1</groupId>
 			<artifactId>Tidy</artifactId>
 		</dependency>
-		
+
+		<!-- https://mvnrepository.com/artifact/javax.enterprise/cdi-api -->
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<version>1.1</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			<version>4.2.0.Final</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

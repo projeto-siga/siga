@@ -211,10 +211,10 @@ public abstract class ModeloDao {
 			for (final Order o : order) {
 				crit.addOrder(o);
 			}
-		if (cacheRegion != null) {
-			crit.setCacheable(true);
-			crit.setCacheRegion(cacheRegion);
-		}
+//		if (cacheRegion != null) {
+//			crit.setCacheable(true);
+//			crit.setCacheRegion(cacheRegion);
+//		}
 		return crit.list();
 	}
 

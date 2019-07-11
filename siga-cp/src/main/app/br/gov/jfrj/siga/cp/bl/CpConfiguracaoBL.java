@@ -204,7 +204,7 @@ public class CpConfiguracaoBL {
 		SessionFactory sfCpDao = CpDao.getInstance().getSessao()
 				.getSessionFactory();
 
-		sfCpDao.evict(CpConfiguracao.class);
+		// sfCpDao.evict(CpConfiguracao.class);
 
 		List<CpConfiguracao> alteracoes = dao().consultarConfiguracoesDesde(
 				dtUltimaAtualizacaoCache);

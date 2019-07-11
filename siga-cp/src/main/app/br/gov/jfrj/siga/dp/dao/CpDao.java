@@ -975,8 +975,8 @@ public class CpDao extends ModeloDao {
 					"consultarPorIdInicialDpPessoa");
 			query.setLong("idPessoaIni", idInicial);
 
-			query.setCacheable(true);
-			query.setCacheRegion(CACHE_QUERY_HOURS);
+//			query.setCacheable(true);
+//			query.setCacheRegion(CACHE_QUERY_HOURS);
 
 			final List<DpPessoa> l = query.list();
 			if (l.size() != 1)
@@ -1319,8 +1319,8 @@ public class CpDao extends ModeloDao {
 
 			// Cache was disabled because it would interfere with the
 			// "change password" action.
-			qry.setCacheable(true);
-			qry.setCacheRegion(CACHE_QUERY_SECONDS);
+//			qry.setCacheable(true);
+//			qry.setCacheRegion(CACHE_QUERY_SECONDS);
 			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.list();
 			if (lista.size() == 0) {
 				throw new AplicacaoException(
@@ -1750,10 +1750,10 @@ public class CpDao extends ModeloDao {
 			return;
 		SessionFactory sfCpDao = CpDao.getInstance().getSessao()
 				.getSessionFactory();
-		if (entidade instanceof DpSubstituicao) {
-			sfCpDao.evict(DpSubstituicao.class);
-			sfCpDao.evictQueries(CACHE_QUERY_SUBSTITUICAO);
-		}
+//		if (entidade instanceof DpSubstituicao) {
+//			sfCpDao.evict(DpSubstituicao.class);
+//			sfCpDao.evictQueries(CACHE_QUERY_SUBSTITUICAO);
+//		}
 	}
 
 	static public Configuration criarHibernateCfg(String datasource)
@@ -1794,7 +1794,7 @@ public class CpDao extends ModeloDao {
 		Configuration cfg = new Configuration();
 
 		// Isto e para manter o naming strategy do hibernate 3.5 na versao 3.6
-		cfg.setNamingStrategy(DefaultNamingStrategy.INSTANCE);
+//		cfg.setNamingStrategy(DefaultNamingStrategy.INSTANCE);
 		cfg.setProperty("hibernate.connection.url", prop.urlConexao());
 		cfg.setProperty("hibernate.connection.username", prop.usuario());
 		cfg.setProperty("hibernate.connection.password", prop.senha());
@@ -1952,46 +1952,46 @@ public class CpDao extends ModeloDao {
 			config.setMaxElementsOnDisk(0);
 		}
 
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoLotacao",
-				"transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpLotacao",
-				"transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoPessoa",
-				"transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpPessoa",
-				"transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy(
-				"br.gov.jfrj.siga.dp.DpFuncaoConfianca", "transactional",
-				CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpOrgaoUsuario",
-				"transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpCargo",
-				"transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpOrgao",
-				"transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpLocalidade",
-				"transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpUF",
-				"transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpFeriado",
-				"transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoServico",
-				"transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpServico",
-				"transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy(
-				"br.gov.jfrj.siga.cp.CpTipoConfiguracao", "transactional",
-				CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoIdentidade",
-				"transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoPapel",
-				"transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoGrupo",
-				"transactional", CACHE_CORPORATIVO);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpIdentidade",
-				"transactional", CACHE_SECONDS);
-		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpSubstituicao",
-				"transactional", CACHE_QUERY_SUBSTITUICAO);
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoLotacao",
+//				"transactional", CACHE_CORPORATIVO);
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpLotacao",
+//				"transactional", CACHE_CORPORATIVO);
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpTipoPessoa",
+//				"transactional", CACHE_CORPORATIVO);
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpPessoa",
+//				"transactional", CACHE_CORPORATIVO);
+//		cfg.setCacheConcurrencyStrategy(
+//				"br.gov.jfrj.siga.dp.DpFuncaoConfianca", "transactional",
+//				CACHE_CORPORATIVO);
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpOrgaoUsuario",
+//				"transactional", CACHE_CORPORATIVO);
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpCargo",
+//				"transactional", CACHE_CORPORATIVO);
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpOrgao",
+//				"transactional", CACHE_CORPORATIVO);
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpLocalidade",
+//				"transactional", CACHE_CORPORATIVO);
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpUF",
+//				"transactional", CACHE_CORPORATIVO);
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.CpFeriado",
+//				"transactional", CACHE_CORPORATIVO);
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoServico",
+//				"transactional", CACHE_CORPORATIVO);
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpServico",
+//				"transactional", CACHE_CORPORATIVO);
+//		cfg.setCacheConcurrencyStrategy(
+//				"br.gov.jfrj.siga.cp.CpTipoConfiguracao", "transactional",
+//				CACHE_CORPORATIVO);
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoIdentidade",
+//				"transactional", CACHE_CORPORATIVO);
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoPapel",
+//				"transactional", CACHE_CORPORATIVO);
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpTipoGrupo",
+//				"transactional", CACHE_CORPORATIVO);
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpIdentidade",
+//				"transactional", CACHE_SECONDS);
+//		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpSubstituicao",
+//				"transactional", CACHE_QUERY_SUBSTITUICAO);
 
 		return cfg;
 	}

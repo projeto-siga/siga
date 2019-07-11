@@ -19,25 +19,15 @@
 package br.rj.jfrj.siga.dp;
 
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.jdbc.Work;
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Criptografia;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
@@ -56,7 +46,9 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import junit.framework.TestCase;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 public class CpDaoTest extends TestCase {
 
@@ -407,46 +399,46 @@ public class CpDaoTest extends TestCase {
 		CpDao.freeInstance();
 	}
 
-	public static void printSchema(SessionFactory fact, Configuration cfg) {
-		Dialect dialect = Dialect.getDialect(cfg.getProperties());
-		// printDropSchemaScript(cfg, dialect);
-		// printSchemaCreationScript(cfg, dialect);
-		printSchemaUpdateScript(fact, cfg, dialect);
-	}
-
-	public static void printSchemaCreationScript(final Configuration cfg,
-			final Dialect dialect) {
-		String[] schemaCreationScript = cfg
-				.generateSchemaCreationScript(dialect);
-		for (String stmt : schemaCreationScript) {
-			System.out.println(stmt + ";");
-		}
-	}
-
-	public static void printDropSchemaScript(final Configuration cfg,
-			final Dialect dialect) {
-		String[] dropSchemaScript = cfg.generateDropSchemaScript(dialect);
-		for (String stmt : dropSchemaScript) {
-			System.out.println(stmt + ";");
-		}
-	}
-
-	public static void printSchemaUpdateScript(final SessionFactory sf,
-			final Configuration cfg, final Dialect dialect) {
-		HibernateUtil.getSessao().doWork(new Work() {
-			@Override
-			public void execute(Connection conn) throws SQLException {
-				DatabaseMetadata metadata = new DatabaseMetadata(conn, dialect);
-				String[] schemaUpdateScript = cfg.generateSchemaUpdateScript(
-						dialect, metadata);
-
-				for (String stmt : schemaUpdateScript) {
-					System.out.println(stmt + ";");
-				}
-
-			}
-		});
-
-	}
+//	public static void printSchema(SessionFactory fact, Configuration cfg) {
+//		Dialect dialect = Dialect.getDialect(cfg.getProperties());
+//		// printDropSchemaScript(cfg, dialect);
+//		// printSchemaCreationScript(cfg, dialect);
+//		printSchemaUpdateScript(fact, cfg, dialect);
+//	}
+//
+//	public static void printSchemaCreationScript(final Configuration cfg,
+//			final Dialect dialect) {
+//		String[] schemaCreationScript = cfg
+//				.generateSchemaCreationScript(dialect);
+//		for (String stmt : schemaCreationScript) {
+//			System.out.println(stmt + ";");
+//		}
+//	}
+//
+//	public static void printDropSchemaScript(final Configuration cfg,
+//			final Dialect dialect) {
+//		String[] dropSchemaScript = cfg.generateDropSchemaScript(dialect);
+//		for (String stmt : dropSchemaScript) {
+//			System.out.println(stmt + ";");
+//		}
+//	}
+//
+//	public static void printSchemaUpdateScript(final SessionFactory sf,
+//			final Configuration cfg, final Dialect dialect) {
+//		HibernateUtil.getSessao().doWork(new Work() {
+//			@Override
+//			public void execute(Connection conn) throws SQLException {
+//				DatabaseMetadata metadata = new DatabaseMetadata(conn, dialect);
+//				String[] schemaUpdateScript = cfg.generateSchemaUpdateScript(
+//						dialect, metadata);
+//
+//				for (String stmt : schemaUpdateScript) {
+//					System.out.println(stmt + ";");
+//				}
+//
+//			}
+//		});
+//
+//	}
 
 }

@@ -1,5 +1,7 @@
 package br.gov.jfrj.siga.util;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -9,10 +11,11 @@ import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.controller.ControllerMethod;
 import br.com.caelum.vraptor.core.InterceptorStack;
 import br.com.caelum.vraptor.interceptor.Interceptor;
-import br.com.caelum.vraptor.util.jpa.JPATransactionInterceptor;
+import br.com.caelum.vraptor.jpa.JPATransactionInterceptor;
 import br.com.caelum.vraptor.validator.Validator;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
+@RequestScoped
 @Intercepts(before = JPATransactionInterceptor.class)
 public class GiInterceptor implements Interceptor {
 
@@ -22,8 +25,15 @@ public class GiInterceptor implements Interceptor {
 	private HttpServletResponse response;
 	private ServletContext context;
 
-	public GiInterceptor(EntityManager manager, Validator validator,
-			ServletContext context, HttpServletRequest request,
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	protected GiInterceptor() {
+		this(null, null, null, null, null);
+	};
+
+	@Inject
+	public GiInterceptor(EntityManager manager, Validator validator, ServletContext context, HttpServletRequest request,
 			HttpServletResponse response) {
 		this.manager = manager;
 		this.validator = validator;
@@ -32,8 +42,7 @@ public class GiInterceptor implements Interceptor {
 		this.context = context;
 	}
 
-	public void intercept(InterceptorStack stack, ControllerMethod method,
-			Object instance) {
+	public void intercept(InterceptorStack stack, ControllerMethod method, Object instance) {
 
 		ContextoPersistencia.setEntityManager(this.manager);
 

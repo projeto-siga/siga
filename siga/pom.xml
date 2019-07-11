@@ -224,7 +224,7 @@
 		<dependency>
 			<groupId>br.com.caelum.vraptor</groupId>
 			<artifactId>vraptor-jpa</artifactId>
-			<version>1.0.2</version>
+			<version>4.0.5</version>
 			<exclusions>
 				<exclusion>  <!-- declare the exclusion here -->
 					<groupId>org.eclipse.persistence</groupId>
@@ -244,12 +244,6 @@
 			<artifactId>cdi-api</artifactId>
 			<version>1.1</version>
 			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

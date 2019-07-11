@@ -58,7 +58,8 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "  where upper(o.nomeCargoAI) like upper('%' || :nome || '%')"
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or o.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "   	and o.dataFimCargo = null"),
-		@NamedQuery(name = "consultarPorNomeDpCargoOrgao", query = "select cargo from DpCargo cargo where upper(cargo.nomeCargoAI) = upper(:nome) and cargo.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario")})
+		@NamedQuery(name = "consultarPorNomeDpCargoOrgao", query = "select cargo from DpCargo cargo "
+				+ " where upper(REMOVE_ACENTO(cargo.nomeCargo)) = upper(REMOVE_ACENTO(:nome)) and cargo.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario")})
 public abstract class AbstractDpCargo extends Objeto implements Serializable {
 
 	@Id

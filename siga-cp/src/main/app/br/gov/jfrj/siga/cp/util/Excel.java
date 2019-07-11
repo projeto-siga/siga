@@ -24,6 +24,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -154,7 +156,7 @@ public class Excel {
 			return "Linha " + linha +": NOME com mais de 100 caracteres" + System.getProperty("line.separator");
 		}
 		lotacao.setOrgaoUsuario(orgaoUsuario);
-		lotacao.setNomeLotacao(Texto.removeAcento(Texto.removerEspacosExtra(nomeLotacao).trim()));
+		lotacao.setNomeLotacao(nomeLotacao);
 		lotacao = CpDao.getInstance().consultarPorNomeOrgao(lotacao);
 		if(lotacao != null) {
 			return "Linha " + linha +": NOME já cadastrado" + System.getProperty("line.separator");
@@ -162,10 +164,10 @@ public class Excel {
 		if(nomeLotacao != null && !nomeLotacao.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9.,-]+")) {
 			return "Linha " + linha +": NOME com caracteres não permitidos" + System.getProperty("line.separator");
 		}
-		if(nomes.contains(nomeLotacao)) {
+		if(nomes.contains(Texto.removeAcento(Texto.removerEspacosExtra(nomeLotacao).trim().toUpperCase()))) {
 			return "Linha " + linha +": NOME repetido em outra linha do arquivo" + System.getProperty("line.separator");
 		} else {
-			nomes.add(nomeLotacao);	
+			nomes.add(Texto.removeAcento(Texto.removerEspacosExtra(nomeLotacao).trim().toUpperCase()));	
 		}
 		return "";
 	}
@@ -189,10 +191,10 @@ public class Excel {
 			return "Linha " + linha +": SIGLA com caracteres não permitidos" + System.getProperty("line.separator");
 		} 
 		
-		if(siglas.contains(siglaLotacao)) {
+		if(siglas.contains(Texto.removeAcento(Texto.removerEspacosExtra(siglaLotacao).trim().toUpperCase()))) {
 			return "Linha " + linha +": SIGLA repetida em outra linha do arquivo" + System.getProperty("line.separator");
 		} else {
-			siglas.add(siglaLotacao);	
+			siglas.add(Texto.removeAcento(Texto.removerEspacosExtra(siglaLotacao).trim().toUpperCase()));	
 		}
 		return "";
 	}
@@ -433,7 +435,7 @@ public class Excel {
 			return "Linha " + linha +": NOME com mais de 100 caracteres" + System.getProperty("line.separator");
 		}
 		funcao.setOrgaoUsuario(orgaoUsuario);
-		funcao.setNomeFuncao(Texto.removeAcento(Texto.removerEspacosExtra(nomeFuncao).trim()));
+		funcao.setNomeFuncao(nomeFuncao);
 		funcao = CpDao.getInstance().consultarPorNomeOrgao(funcao);
 		if(funcao != null) {
 			return "Linha " + linha +": NOME já cadastrado" + System.getProperty("line.separator");
@@ -441,10 +443,10 @@ public class Excel {
 		if(!validarCaracterEspecial(nomeFuncao)) {
 			return "Linha " + linha +": NOME com caracteres não permitidos" + System.getProperty("line.separator");
 		}
-		if(nomes.contains(nomeFuncao)) {
+		if(nomes.contains(Texto.removeAcento(Texto.removerEspacosExtra(nomeFuncao).trim().toUpperCase()))) {
 			return "Linha " + linha +": NOME repetido em outra linha do arquivo" + System.getProperty("line.separator");
 		} else {
-			nomes.add(nomeFuncao);	
+			nomes.add(Texto.removeAcento(Texto.removerEspacosExtra(nomeFuncao).trim().toUpperCase()));	
 		}
 		return "";
 	}
@@ -533,7 +535,7 @@ public class Excel {
 			return "Linha " + linha +": NOME com mais de 100 caracteres" + System.getProperty("line.separator");
 		}
 		cargo.setOrgaoUsuario(orgaoUsuario);
-		cargo.setNomeCargo(Texto.removeAcento(Texto.removerEspacosExtra(nomeCargo).trim()));
+		cargo.setNomeCargo(nomeCargo);
 		cargo = CpDao.getInstance().consultarPorNomeOrgao(cargo);
 		if(cargo != null) {
 			return "Linha " + linha +": NOME já cadastrado" + System.getProperty("line.separator");
@@ -541,22 +543,22 @@ public class Excel {
 		if(!validarCaracterEspecial(nomeCargo)) {
 			return "Linha " + linha +": NOME com caracteres não permitidos" + System.getProperty("line.separator");
 		}
-		if(nomes.contains(nomeCargo)) {
+		if(nomes.contains(Texto.removeAcento(Texto.removerEspacosExtra(nomeCargo).trim()).toUpperCase())) {
 			return "Linha " + linha +": NOME repetido em outra linha do arquivo" + System.getProperty("line.separator");
 		} else {
-			nomes.add(nomeCargo);	
+			nomes.add(Texto.removeAcento(Texto.removerEspacosExtra(nomeCargo).trim().toUpperCase()));	
 		}
 		return "";
 	}
     
-    public InputStream uploadPessoa(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+    public InputStream uploadPessoa(File file, CpOrgaoUsuario orgaoUsuario, String extensao, CpIdentidade identidade) {
 		InputStream retorno = null;
-		retorno = uploadExcelPessoa(file, orgaoUsuario);
+		retorno = uploadExcelPessoa(file, orgaoUsuario, identidade);
 
 		return retorno;
 	}
     
-    public InputStream uploadExcelPessoa(File file, CpOrgaoUsuario orgaoUsuario) {
+    public InputStream uploadExcelPessoa(File file, CpOrgaoUsuario orgaoUsuario, CpIdentidade identidade) {
     	InputStream inputStream = null;
     	StringBuffer problemas = new StringBuffer();
 
@@ -617,6 +619,7 @@ public class Excel {
 						}
 					}
 					if(cargo.getDataInicio() == null) {
+						cargo.setNomeCargo(celula.trim());
 						cargo = CpDao.getInstance().consultarPorNomeOrgao(cargo);	
 					}
 										
@@ -645,6 +648,7 @@ public class Excel {
 					}
 					
 					if(funcao.getDataInicio() == null) {
+						funcao.setNomeFuncao(celula.trim());
 						funcao = CpDao.getInstance().consultarPorNomeOrgao(funcao);	
 					}
 					
@@ -674,6 +678,7 @@ public class Excel {
 					}
 					
 					if(lotacao.getDataInicio() == null) {
+						lotacao.setNomeLotacao(celula.trim());
 						lotacao = CpDao.getInstance().consultarPorNomeOrgao(lotacao);	
 					}					
 					
@@ -780,6 +785,9 @@ public class Excel {
 			if(problemas == null || "".equals(problemas.toString())) {
 				try {
 					CpDao.getInstance().iniciarTransacao();
+					CpIdentidade usu = null;
+					CpIdentidade usuarioExiste = null;
+					List<CpIdentidade> lista1 = new ArrayList<CpIdentidade>();
 	            	for (DpPessoa dpPessoa : lista) {
 		    			CpDao.getInstance().gravar(dpPessoa);
 
@@ -788,6 +796,28 @@ public class Excel {
 	    					dpPessoa.setIdePessoa(dpPessoa.getId().toString());
 	    					dpPessoa.setMatricula(10000 + dpPessoa.getId());	
 	        				CpDao.getInstance().gravar(dpPessoa);
+	        				
+	        				lista1.clear();
+	        				lista1 = CpDao.getInstance().consultaIdentidadesPorCpf(dpPessoa.getCpfPessoa().toString());
+	        				
+	        				if(lista1.size() > 0) {
+	        					usuarioExiste = lista1.get(0);
+	        					usu = new CpIdentidade();
+	        					usu.setCpTipoIdentidade(CpDao.getInstance().consultar(1,
+	        										CpTipoIdentidade.class, false));
+	        					usu.setDscSenhaIdentidade(usuarioExiste.getDscSenhaIdentidade());
+	        					usu.setDtCriacaoIdentidade(CpDao.getInstance()
+	        							.consultarDataEHoraDoServidor());
+	        					usu.setCpOrgaoUsuario(dpPessoa.getOrgaoUsuario());
+	        					usu.setHisDtIni(usu.getDtCriacaoIdentidade());
+	        					usu.setHisAtivo(1);
+	        					
+		        				if(usu != null) {
+		        					usu.setNmLoginIdentidade(dpPessoa.getSesbPessoa() + dpPessoa.getMatricula());
+		        					usu.setDpPessoa(dpPessoa);
+		        					CpDao.getInstance().gravarComHistorico(usu, identidade);
+		        				}
+	        				}
 	        			}
 					}
 	    			CpDao.getInstance().commitTransacao();			

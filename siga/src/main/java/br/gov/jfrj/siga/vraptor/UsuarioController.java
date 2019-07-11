@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -14,8 +15,10 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -49,18 +52,33 @@ public class UsuarioController extends SigaController {
 		String senhaConfirma = usuario.getSenhaConfirma();
 		String nomeUsuario = usuario.getNomeUsuario().toUpperCase();
 		
-		CpIdentidade idNova = Cp.getInstance().getBL().trocarSenhaDeIdentidade(
-				senhaAtual, senhaNova, senhaConfirma, nomeUsuario,
-				getIdentidadeCadastrante());
-		
-		if ("on".equals(usuario.getTrocarSenhaRede())) {
-			try{
-				//IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);
-				IntegracaoLdapViaWebService.getInstancia().trocarSenha(nomeUsuario, senhaNova);
-			} catch(Exception e){
-				throw new Exception("Não foi possível alterar a senha de rede e e-mail. "
-						+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Alterar Senha de Rede\"");
+		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+			List <CpIdentidade> lista1 = new ArrayList<CpIdentidade>();
+			CpIdentidade i = null;
+			nomeUsuario = nomeUsuario.replace(".", "").replace("-", "");
+			if(!nomeUsuario.matches("[0-9]*")) {
+				i = CpDao.getInstance().consultaIdentidadeCadastrante(nomeUsuario, Boolean.TRUE);
 			}
+			lista1 = CpDao.getInstance().consultaIdentidadesPorCpf(i == null ? nomeUsuario : i.getDpPessoa().getCpfPessoa().toString());
+			
+			Cp.getInstance().getBL().trocarSenhaDeIdentidadeGovSp(
+				senhaAtual, senhaNova, senhaConfirma, nomeUsuario,
+				getIdentidadeCadastrante(),lista1);
+			
+		} else {
+			CpIdentidade idNova = Cp.getInstance().getBL().trocarSenhaDeIdentidade(
+					senhaAtual, senhaNova, senhaConfirma, nomeUsuario,
+					getIdentidadeCadastrante());
+			if ("on".equals(usuario.getTrocarSenhaRede())) {
+				try{
+					//IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);
+					IntegracaoLdapViaWebService.getInstancia().trocarSenha(nomeUsuario, senhaNova);
+				} catch(Exception e){
+					throw new Exception("Não foi possível alterar a senha de rede e e-mail. "
+							+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Alterar Senha de Rede\"");
+				}
+			}
+			
 		}
 
 		result.include("mensagem", "A senha foi alterada com sucesso. <br/><br/><br/>OBS: A senha de rede e e-mail também foi alterada.");	

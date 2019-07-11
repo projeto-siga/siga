@@ -50,6 +50,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
@@ -513,7 +514,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			pessoa.setFuncaoConfianca(null);
 		}
 		pessoa.setSesbPessoa(ou.getSigla());
-				
+		
 		try {
 			dao().iniciarTransacao();
 			dao().gravar(pessoa);
@@ -523,6 +524,27 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				pessoa.setMatricula(10000 + pessoa.getId());
 				pessoa.setIdePessoa(pessoa.getMatricula().toString());
 				dao().gravar(pessoa);
+				
+				List<CpIdentidade> lista = CpDao.getInstance().consultaIdentidadesPorCpf(cpf.replace(".", "").replace("-", ""));
+				CpIdentidade usu = null;
+				if(lista.size() > 0) {
+					CpIdentidade usuarioExiste = lista.get(0);
+					usu = new CpIdentidade();
+					usu.setCpTipoIdentidade(dao().consultar(1,
+										CpTipoIdentidade.class, false));
+					usu.setDscSenhaIdentidade(usuarioExiste.getDscSenhaIdentidade());
+					usu.setDtCriacaoIdentidade(dao()
+							.consultarDataEHoraDoServidor());
+					usu.setCpOrgaoUsuario(ou);
+					usu.setHisDtIni(usu.getDtCriacaoIdentidade());
+					usu.setHisAtivo(1);
+				}
+				
+				if(usu != null) {
+					usu.setNmLoginIdentidade(pessoa.getSesbPessoa() + pessoa.getMatricula());
+					usu.setDpPessoa(pessoa);
+					dao().gravarComHistorico(usu, getIdentidadeCadastrante());
+				}
 			}
 			dao().commitTransacao();			
 		} catch (final Exception e) {
@@ -563,7 +585,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			}
 			
 			CpBL cpbl = new CpBL();
-			inputStream = cpbl.uploadPessoa(file, orgaoUsuario, extensao);
+			inputStream = cpbl.uploadPessoa(file, orgaoUsuario, extensao, getIdentidadeCadastrante());
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}

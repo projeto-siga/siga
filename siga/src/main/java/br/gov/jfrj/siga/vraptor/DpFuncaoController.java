@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,6 +36,15 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 
 	private Long orgaoUsu;
 	
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public DpFuncaoController() {
+		this(null, null, null, null);
+	}
+
+	@Inject
 	public DpFuncaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 		

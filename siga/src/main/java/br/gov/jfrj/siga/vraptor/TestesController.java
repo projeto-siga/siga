@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,6 +32,15 @@ public class TestesController extends SigaController {
 	private static final String ERRO = "<span style=\"color: red;\">ERRO</span>";
 	private static final String SIGA_TESTES_ACTION = "/siga/public/app/testes/testes";
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public TestesController() {
+		this(null, null, null, null, null);
+	}
+
+	@Inject
 	public TestesController(HttpServletRequest request, Result result,
 			CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);

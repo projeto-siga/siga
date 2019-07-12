@@ -61,7 +61,6 @@ public class CpDaoTest extends TestCase {
 		if (false) {
 			CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
 			Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
-			Configuration cfg = CpDao.criarHibernateCfg(ambiente);
 			// HibernateUtil.configurarHibernate(cfg);
 
 			dao = CpDao.getInstance();
@@ -170,24 +169,6 @@ public class CpDaoTest extends TestCase {
 				null, null);
 
 		assertEquals(grpRecebido, grpNovo);
-	}
-
-	public void testPesquisarConfiguracaoPorTipoLotacao()
-			throws AplicacaoException, Exception, IllegalAccessException {
-		if (true)
-			return;
-		CpTipoLotacao t_ctlTipoLotacao = dao.consultar(101L,
-				CpTipoLotacao.class, false);
-		final Query query = dao.getSessao().getNamedQuery(
-				"consultarCpConfiguracoesPorTipoLotacao");
-		query.setLong("idTpLotacao", t_ctlTipoLotacao.getIdTpLotacao());
-		ArrayList<CpConfiguracao> t_arlConfigServicos = (ArrayList<CpConfiguracao>) query
-				.list();
-		ArrayList<CpServico> t_arlServicos = new ArrayList<CpServico>();
-		for (CpConfiguracao t_cfgConfiguracao : t_arlConfigServicos) {
-			t_arlServicos.add(t_cfgConfiguracao.getCpServico());
-		}
-		assertTrue(t_arlServicos.size() > 0);
 	}
 
 	public void testConsultarTipoServico() {
@@ -361,9 +342,6 @@ public class CpDaoTest extends TestCase {
 
 		CpAmbienteEnumBL ambiente = CpAmbienteEnumBL.DESENVOLVIMENTO;
 		Cp.getInstance().getProp().setPrefixo(ambiente.getSigla());
-
-		Configuration cfg = CpDao.criarHibernateCfg(ambiente);
-		// HibernateUtil.configurarHibernate(cfg);
 
 		CpDao dao = CpDao.getInstance();
 

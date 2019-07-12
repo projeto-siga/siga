@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,6 +37,15 @@ public class DpCargoController extends
 	
 	private Long orgaoUsu;
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public DpCargoController() {
+		this(null, null, null, null, null);
+	}
+
+	@Inject
 	public DpCargoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
 	}

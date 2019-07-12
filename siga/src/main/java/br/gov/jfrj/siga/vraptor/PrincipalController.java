@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,6 +39,14 @@ import br.gov.jfrj.siga.model.GenericoSelecao;
 public class PrincipalController extends SigaController {
 	HttpServletResponse response;
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public PrincipalController() {
+		super();
+	}
+
+	@Inject
 	public PrincipalController(HttpServletRequest request, HttpServletResponse response, Result result, CpDao dao,
 			SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);

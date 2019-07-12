@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,6 +21,15 @@ import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 @Controller
 public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<CpOrgaoUsuario, DaoFiltroSelecionavel>{
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public OrgaoUsuarioController() {
+		this(null, null, null, null);
+	}
+
+	@Inject
 	public OrgaoUsuarioController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 		// TODO Auto-generated constructor stub
@@ -137,7 +147,6 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 			dao().iniciarTransacao();
 			dao().gravar(orgaoUsuario);
 			dao().commitTransacao();
-			dao().getSessao().flush();
 		} catch (final Exception e) {
 			dao().rollbackTransacao();
 			throw new AplicacaoException("Erro na gravação", 0, e);

@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.net.URI;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,6 +27,15 @@ public class BuscaTextualController extends SigaController {
 	private static final String IDP_JSESSIONID = "IDP-JSESSIONID";
 	private static final String GSA_SESSION_ID = "GSA_SESSION_ID";
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public BuscaTextualController() {
+		this(null, null, null, null, null);
+	}
+
+	@Inject
 	public BuscaTextualController(HttpServletRequest request, Result result,
 			CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);

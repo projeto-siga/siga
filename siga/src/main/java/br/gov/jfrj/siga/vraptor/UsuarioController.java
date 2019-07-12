@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.vraptor;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,6 +31,15 @@ public class UsuarioController extends SigaController {
 	private static final Logger LOG = Logger.getLogger(UsuarioAction.class);
 	private static ResourceBundle bundle;
 	
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public UsuarioController() {
+		this(null, null, null, null);
+	}
+
+	@Inject
 	public UsuarioController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 

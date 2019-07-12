@@ -21,6 +21,7 @@ package br.gov.jfrj.siga.vraptor;
 import java.text.MessageFormat;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,6 +39,15 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Controller
 public class PerfilJEEController extends GrupoController {
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public PerfilJEEController() {
+		this(null, null, null, null);
+	}
+
+	@Inject
 	public PerfilJEEController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 		

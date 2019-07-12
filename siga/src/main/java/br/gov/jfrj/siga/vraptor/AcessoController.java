@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -67,6 +68,15 @@ public class AcessoController extends GiControllerSupport {
 	private String itensHTML;
 	private String itemHTML;
 	
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public AcessoController() {
+		this(null, null, null, null);
+	}
+
+	@Inject
 	public AcessoController(HttpServletRequest request, Result result,SigaObjects so, EntityManager em) {
 		
 		super(request, result, CpDao.getInstance(), so, em);

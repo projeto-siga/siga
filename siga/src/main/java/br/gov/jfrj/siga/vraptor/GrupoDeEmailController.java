@@ -21,6 +21,7 @@ package br.gov.jfrj.siga.vraptor;
 import java.text.MessageFormat;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -41,6 +42,15 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Controller
 public class GrupoDeEmailController extends GrupoController {
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public GrupoDeEmailController() {
+		this(null, null, null, null);
+	}
+
+	@Inject
 	public GrupoDeEmailController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 		result.on(AplicacaoException.class).forwardTo(this).appexception();

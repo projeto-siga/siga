@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -87,6 +88,15 @@ public class ServicoController 	extends SigaController {
 	//
 	
 	
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ServicoController() {
+		this(null, null, null, null);
+	}
+
+	@Inject
 	public ServicoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 
@@ -273,9 +283,7 @@ public class ServicoController 	extends SigaController {
 		CpTipoLotacao t_ctlTipoLotacao = obterTipoDeLotacaoEfetiva();
 		if (t_ctlTipoLotacao == null)
 			return t_arlServicos;
-		final Query query = dao.getSessao().getNamedQuery("consultarCpConfiguracoesPorTipoLotacao");
-		query.setLong("idTpLotacao", t_ctlTipoLotacao.getIdTpLotacao());
-		ArrayList<CpConfiguracao> t_arlConfigServicos = (ArrayList<CpConfiguracao>) query.list();
+		List<CpConfiguracao> t_arlConfigServicos = dao.consultarCpConfiguracoesPorTipoLotacao(t_ctlTipoLotacao.getIdTpLotacao());
 		for (CpConfiguracao t_cfgConfiguracao : t_arlConfigServicos) {
 			t_arlServicos.add(t_cfgConfiguracao.getCpServico());
 		}

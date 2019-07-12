@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.vraptor;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,6 +21,15 @@ import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 @Controller
 public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, DaoFiltroSelecionavel>{
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public OrgaoController() {
+		this(null, null, null, null);
+	}
+
+	@Inject
 	public OrgaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 		// TODO Auto-generated constructor stub

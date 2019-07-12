@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -48,6 +49,15 @@ public class SubstituicaoController extends SigaController {
 	}	
 		
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public SubstituicaoController() {
+		this(null, null, null, null);
+	}
+
+	@Inject
 	public SubstituicaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 

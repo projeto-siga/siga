@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.vraptor;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,6 +28,15 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class GiControllerSupport extends SigaController {
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public GiControllerSupport() {
+		this(null, null, null, null, null);
+	}
+
+	@Inject
 	public GiControllerSupport(HttpServletRequest request, Result result,
 			CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);

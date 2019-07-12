@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -41,6 +42,15 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 
 	private Long orgaoUsu;
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public DpLotacaoController() {
+		this(null, null, null, null, null);
+	}
+
+	@Inject
 	public DpLotacaoController(HttpServletRequest request, Result result,
 			CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);

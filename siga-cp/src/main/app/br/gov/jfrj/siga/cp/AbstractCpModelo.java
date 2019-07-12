@@ -26,6 +26,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
@@ -48,9 +49,10 @@ public abstract class AbstractCpModelo extends HistoricoAuditavelSuporte {
 	private java.lang.Long idMod;
 
 	/** The value of the simple conteudoBlobMod property. */
+	@Lob
 	@Basic(fetch = FetchType.LAZY)
 	@Column(name = "CONTEUDO_BLOB_MOD")
-	private Blob conteudoBlobMod;
+	private byte[] conteudoBlobMod;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU")
@@ -70,7 +72,7 @@ public abstract class AbstractCpModelo extends HistoricoAuditavelSuporte {
 	 * 
 	 * @return java.lang.String
 	 */
-	public Blob getConteudoBlobMod() {
+	public byte[] getConteudoBlobMod() {
 		return this.conteudoBlobMod;
 	}
 
@@ -88,7 +90,7 @@ public abstract class AbstractCpModelo extends HistoricoAuditavelSuporte {
 	 * 
 	 * @param conteudoBlobMod
 	 */
-	public void setConteudoBlobMod(Blob conteudoBlobMod) {
+	public void setConteudoBlobMod(byte[] conteudoBlobMod) {
 		this.conteudoBlobMod = conteudoBlobMod;
 	}
 

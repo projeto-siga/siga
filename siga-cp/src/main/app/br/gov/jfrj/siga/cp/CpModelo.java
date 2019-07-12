@@ -19,6 +19,7 @@
 package br.gov.jfrj.siga.cp;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,12 +29,6 @@ import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import br.gov.jfrj.siga.cp.util.Blob;
-import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.dp.dao.CpDaoUtil;
 import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
@@ -87,17 +82,16 @@ public class CpModelo extends AbstractCpModelo {
 			throws UnsupportedEncodingException {
 		if (conteudo != null && conteudo.trim().length() == 0)
 			conteudo = null;
-		setConteudoBlobMod(conteudo != null ? CpDaoUtil.createBlob(conteudo)
+		setConteudoBlobMod(conteudo != null ? conteudo.getBytes(StandardCharsets.ISO_8859_1)
 				: null);
 		cacheConteudo = conteudo;
 	}
 
 	@PostLoad
-	private void updateCache() throws UnsupportedEncodingException {
+	private void updateCache() {
 		if (getConteudoBlobMod() == null)
 			return;
-		cacheConteudo = new String(Blob.toByteArray(getConteudoBlobMod()),
-				"ISO-8859-1");
+		cacheConteudo = new String(getConteudoBlobMod(), StandardCharsets.ISO_8859_1);
 	}
 
 	//

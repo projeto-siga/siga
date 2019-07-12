@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,6 +21,15 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Controller
 public class IdentidadeController extends GiControllerSupport {
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public IdentidadeController() {
+		this(null, null, null, null);
+	}
+
+	@Inject
 	public IdentidadeController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 

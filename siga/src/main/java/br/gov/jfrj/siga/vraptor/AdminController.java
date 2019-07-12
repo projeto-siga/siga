@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import javax.crypto.Cipher;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -45,6 +46,15 @@ import br.gov.jfrj.siga.integracao.ldap.IntegracaoLdapProperties;
 @Controller
 public class AdminController extends SigaController {
 	
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public AdminController() {
+		this(null, null, null, null);
+	}
+
+	@Inject
 	public AdminController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 		assertAcesso("FE;LDAP_ADMIN:Administrar Integracao LDAP");

@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.util.HashMap;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,6 +20,15 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Controller
 public class XjusController extends SigaController {
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public XjusController() {
+		this(null, null, null, null, null);
+	}
+
+	@Inject
 	public XjusController(HttpServletRequest request, Result result, CpDao dao,
 			SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);

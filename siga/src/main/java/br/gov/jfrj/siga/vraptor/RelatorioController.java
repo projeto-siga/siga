@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -50,6 +51,15 @@ import net.sf.jasperreports.engine.JRException;
 
 @Controller
 public class RelatorioController extends SigaController {
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public RelatorioController() {
+		this(null, null, null, null);
+	}
+
+	@Inject
 	public RelatorioController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 		

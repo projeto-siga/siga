@@ -67,7 +67,7 @@
 								<label>Nível de Acesso</label>
 								<select class="form-control" name="nivelAcesso" theme="simple" value="1">
 							      <c:forEach var="item" items="${listaNivelAcesso}">
-							      	<c:if test="${(siga_cliente ne 'GOVSP') || ( (item.idNivelAcesso eq 5) || (item.idNivelAcesso eq 6) )}">
+							      	<c:if test="${(siga_cliente ne 'GOVSP') || ( (item.idNivelAcesso eq 5) )}">
 								        <option value="${item.idNivelAcesso}"  <c:if test="${item.idNivelAcesso == nivelAcesso}">selected</c:if> >
 								          <c:out value="${item.nmNivelAcesso}" />
 								        </option>

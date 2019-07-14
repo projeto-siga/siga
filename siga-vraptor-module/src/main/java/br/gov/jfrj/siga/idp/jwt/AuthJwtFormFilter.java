@@ -175,7 +175,7 @@ public class AuthJwtFormFilter implements Filter {
 		if (base != null && base.startsWith("https:") && cont.startsWith("http:"))
 			cont = "https" + cont.substring(4);
 		
-		if (SigaMessages.isSigaSP() && SigaBaseProperties.getString("siga.integracao.com.login.SSO").equals("true")) {
+		if (SigaMessages.isSigaSP() && "true".equals(SigaBaseProperties.getString("siga.integracao.com.login.SSO"))) {
 			resp.sendRedirect(SigaBaseProperties.getString("siga.url.sempapel"));
 		} else {
 			resp.sendRedirect("/siga/public/app/login?cont=" + URLEncoder.encode(cont, "UTF-8"));

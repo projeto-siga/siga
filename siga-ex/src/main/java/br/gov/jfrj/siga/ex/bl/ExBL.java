@@ -96,6 +96,7 @@ import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.SetUtils;
 import br.gov.jfrj.siga.bluc.service.BlucService;
@@ -3181,9 +3182,15 @@ public class ExBL extends CpBL {
 
 			if (doc.getOrgaoUsuario() == null)
 				doc.setOrgaoUsuario(doc.getLotaCadastrante().getOrgaoUsuario());
-
-			if (doc.getNumExpediente() == null)
-				doc.setNumExpediente(obterProximoNumero(doc));
+			
+			/* Desabilita para São Paulo numeração realizada pelo Java. Numeração controlada pela table EX_DOCUMENTO_NUMERACAO*/ 
+			if (!SigaMessages.isSigaSP()) {
+				if (doc.getNumExpediente() == null)
+					doc.setNumExpediente(obterProximoNumero(doc));
+			} else{
+				//Set Ano da Emissao do Documento
+				doc.setAnoEmissao((long) c.get(Calendar.YEAR));
+			}
 
 			doc.setDtFinalizacao(dt);
 

@@ -17,6 +17,7 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
@@ -89,11 +90,16 @@ public class UsuarioController extends SigaController {
 
 	@Get({"/app/usuario/incluir_usuario","/public/app/usuario/incluir_usuario"})
 	public void incluirUsuario() {
-		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
-		result.include("titulo", getBundle().getString("usuario.novo"));
-		result.include("proxima_acao", "incluir_usuario_gravar");
-		result.forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
-		
+		if (!SigaMessages.isSigaSP()) {
+			result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
+			result.include("titulo", getBundle().getString("usuario.novo"));
+			result.include("proxima_acao", "incluir_usuario_gravar");
+			result.forwardTo("/WEB-INF/page/usuario/esqueciSenha.jsp");
+		} else {
+			result.include("mensagem", "Não é possível entrar nesta tela neste ambiente.");
+			result.redirectTo("/");
+		}
+			
 	}
 	
 	@Post({"/app/usuario/incluir_usuario_gravar","/public/app/usuario/incluir_usuario_gravar"})

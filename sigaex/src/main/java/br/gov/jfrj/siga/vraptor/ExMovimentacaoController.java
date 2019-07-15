@@ -1816,10 +1816,8 @@ public class ExMovimentacaoController extends ExController {
 					.getUltimaMovimentacao();
 			
 			if (SigaMessages.isSigaSP()) {
-				final byte pdf[];
-				pdf = Documento.generatePdf("/app/expediente/mov/protocolo_unitario_sp?popup=false&sigla=" + sigla
+				result.redirectTo("/app/expediente/mov/protocolo_unitario_sp?popup=false&sigla=" + sigla
 						+ "&id=" + ultimaMovimentacao.getIdMov());
-				//result.redirectTo(");
 			} else {
 				result.redirectTo("/app/expediente/mov/protocolo_unitario?popup=false&sigla=" + sigla
 						+ "&id=" + ultimaMovimentacao.getIdMov());

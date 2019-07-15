@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
+import org.json.JSONObject;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Get;
@@ -42,6 +43,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.itextpdf.ConversorHtml;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
@@ -79,11 +81,13 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExAssinadorExternoListItem;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelDoc;
 import br.gov.jfrj.siga.ex.bl.ExAssinavelMov;
+import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.PublicacaoDJEBL;
 import br.gov.jfrj.siga.ex.vo.ExMobilVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import br.gov.jfrj.siga.vraptor.ExUtilController.Html2PdfResp;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 
@@ -816,6 +820,29 @@ public class ExMovimentacaoController extends ExController {
 
 	@Get("app/expediente/mov/protocolo_unitario")
 	public void protocolo(boolean popup, final String sigla, final Long id) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+		final ExDocumento doc = buscarDocumento(builder);
+		ExMovimentacao mov = null;
+
+		if (id != null)
+			mov = dao().consultar(id, ExMovimentacao.class, false);
+		else
+			mov = new ExMovimentacao();
+
+		ArrayList<Object> lista = new ArrayList<Object>();
+		final Object[] ao = { doc, mov };
+		lista.add(ao);
+		result.include("cadastrante", getCadastrante());
+		result.include("mov", mov);
+		result.include("itens", lista);
+		result.include("lotaTitular", getLotaTitular());
+		result.include("popup", popup);
+	}
+	
+	@Get
+	@Path("app/expediente/mov/protocolo_unitario_sp")
+	public void protocoloSP(boolean popup, final String sigla, final Long id) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		final ExDocumento doc = buscarDocumento(builder);
@@ -1720,7 +1747,7 @@ public class ExMovimentacaoController extends ExController {
 			final DpLotacaoSelecao lotaResponsavelSel,
 			final DpPessoaSelecao responsavelSel,
 			final CpOrgaoSelecao cpOrgaoSel, final String dtDevolucaoMovString,
-			final String obsOrgao, final String protocolo) {
+			final String obsOrgao, final String protocolo) throws Exception {
 		this.setPostback(postback);
 
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -1787,9 +1814,17 @@ public class ExMovimentacaoController extends ExController {
 		if (protocolo != null && protocolo.equals(OPCAO_MOSTRAR)) {
 			ExMovimentacao ultimaMovimentacao = builder.getMob()
 					.getUltimaMovimentacao();
-				
-			result.redirectTo("/app/expediente/mov/protocolo_unitario?popup=false&sigla=" + sigla
-					+ "&id=" + ultimaMovimentacao.getIdMov());
+			
+			if (SigaMessages.isSigaSP()) {
+				final byte pdf[];
+				pdf = Documento.generatePdf("/app/expediente/mov/protocolo_unitario_sp?popup=false&sigla=" + sigla
+						+ "&id=" + ultimaMovimentacao.getIdMov());
+				//result.redirectTo(");
+			} else {
+				result.redirectTo("/app/expediente/mov/protocolo_unitario?popup=false&sigla=" + sigla
+						+ "&id=" + ultimaMovimentacao.getIdMov());
+			}
+			
 			
 		} else {
 			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getExDocumento().getSigla());

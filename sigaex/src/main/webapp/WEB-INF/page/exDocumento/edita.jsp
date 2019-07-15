@@ -79,8 +79,12 @@
 													<li class="dropdown-item" data-value="${item.value}"
 														data-level="${item.level}" data-search="${item.searchText}"
 														${item.group ? 'data-group' : ''}
-														${item.selected ? 'data-default-selected' : ''}><a
-														href="#">${item.text}</a></li>
+														${item.selected ? 'data-default-selected' : ''}>
+														<a href="#">${item.text}</a>
+														<c:if test="${!item.group}">
+															<p class="mb-0"><small><b>Palavras-chave: </b>${item.keywords}</small></p>
+														</c:if>
+													</li>
 												</c:forEach>
 											</ul>
 										</div>

@@ -21,19 +21,41 @@
 	margin-left: 0;
 	margin-bottom: 0;
 	padding: 0;
+	background-color: #eaeaea;
 }
 
-.hierarchy-select.btn-group .dropdown-menu li a {
+.hierarchy-select.btn-group .dropdown-menu li:nth-child(odd) {
+	background-color: #fff !important;
+}
+
+
+.hierarchy-select.btn-group .dropdown-menu li a:link { 
+	text-decoration:none;
+	color: #000;
+} 
+
+.hierarchy-select.btn-group .dropdown-menu li a{
 	padding-top: 0 !important;
-	padding-bottom: 0;
+	padding-bottom: 0; 
 }
 
-.hierarchy-select.btn-group .dropdown-menu li.active a {
-    color: #fff;
+.hierarchy-select.btn-group .dropdown-menu li p{
+	padding: 3px 20px;
+}
+
+.hierarchy-select.btn-group .dropdown-menu li.active  {
+    color: #fff !important;
+    background-color : #0069d9 !important;
+}
+
+.hierarchy-select.btn-group .dropdown-menu li.active a:link  {
+    color: #fff !important;
 }
 
 .hierarchy-select.btn-group .dropdown-menu li.group a {
-    color: #aaa;
+	background-color : #555;
+	padding: 8px !important;
+    color: #eee;
 }
 
 .hierarchy-select.btn-group .hs-searchbox {
@@ -70,39 +92,39 @@
 	vertical-align: middle
 }
 
-.hierarchy-select.btn-group .dropdown-menu li[data-level='2']>a {
+.hierarchy-select.btn-group .dropdown-menu li[data-level='2']> {
 	padding-left: 40px
 }
 
-.hierarchy-select.btn-group .dropdown-menu li[data-level='3']>a {
+.hierarchy-select.btn-group .dropdown-menu li[data-level='3']> {
 	padding-left: 60px
 }
 
-.hierarchy-select.btn-group .dropdown-menu li[data-level='4']>a {
+.hierarchy-select.btn-group .dropdown-menu li[data-level='4']> {
 	padding-left: 80px
 }
 
-.hierarchy-select.btn-group .dropdown-menu li[data-level='5']>a {
+.hierarchy-select.btn-group .dropdown-menu li[data-level='5']> {
 	padding-left: 100px
 }
 
-.hierarchy-select.btn-group .dropdown-menu li[data-level='6']>a {
+.hierarchy-select.btn-group .dropdown-menu li[data-level='6']> {
 	padding-left: 120px
 }
 
-.hierarchy-select.btn-group .dropdown-menu li[data-level='7']>a {
+.hierarchy-select.btn-group .dropdown-menu li[data-level='7']> {
 	padding-left: 140px
 }
 
-.hierarchy-select.btn-group .dropdown-menu li[data-level='8']>a {
+.hierarchy-select.btn-group .dropdown-menu li[data-level='8']> {
 	padding-left: 160px
 }
 
-.hierarchy-select.btn-group .dropdown-menu li[data-level='9']>a {
+.hierarchy-select.btn-group .dropdown-menu li[data-level='9']> {
 	padding-left: 180px
 }
 
-.hierarchy-select.btn-group .dropdown-menu li[data-level='10']>a {
+.hierarchy-select.btn-group .dropdown-menu li[data-level='10']> {
 	padding-left: 200px
 }
 

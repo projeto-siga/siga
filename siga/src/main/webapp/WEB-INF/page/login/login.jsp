@@ -92,10 +92,12 @@
 									
 									<hr class="my-4">
 									<div class="mt-4">
-										<a href="/siga/public/app/usuario/incluir_usuario"
-											class="btn btn-secondary btn-block mb-2"><fmt:message key = "usuario.sounovo"/></a> <a
-											href="/siga/public/app/usuario/esqueci_senha"
-											class="btn btn-secondary btn-block">Esqueci minha senha</a>
+										<c:if test="${siga_cliente != 'GOVSP'}">
+											<a href="/siga/public/app/usuario/incluir_usuario"
+												class="btn btn-secondary btn-block mb-2"><fmt:message key = "usuario.sounovo"/></a> 
+										</c:if>
+										<a href="/siga/public/app/usuario/esqueci_senha"
+										class="btn btn-secondary btn-block">Esqueci minha senha</a>
 									</div>
 								</div>
 							</div>

@@ -40,6 +40,13 @@ public class UsuarioController extends SigaController {
 		result.on(Exception.class).forwardTo(this).exception();
 	}
 	
+	@Get({"/app/usuario/dados_pessoais", "/public/app/usuario/dados_pessoais"})
+	public void dadosPessoais() {
+		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));
+	}
+
+	
+	
 	@Get({"/app/usuario/trocar_senha", "/public/app/usuario/trocar_senha"})
 	public void trocaSenha() {
 		result.include("baseTeste", Boolean.valueOf(System.getProperty("isBaseTest").trim()));

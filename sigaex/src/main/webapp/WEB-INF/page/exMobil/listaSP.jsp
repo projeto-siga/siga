@@ -245,7 +245,14 @@
 									<c:set var="estilo" value="confidencial" />
 								</c:if>
 								<td class="${estilo}" width="38%">
-									${f:descricaoSePuderAcessar(documento[0], titular, lotaTitular)}
+									<c:choose>
+										<c:when test="${siga_cliente == 'GOVSP'}">
+											${documento[0].descrDocumento }
+										</c:when>
+										<c:otherwise>
+											${f:descricaoSePuderAcessar(documento[0], titular, lotaTitular)}
+										</c:otherwise>
+									</c:choose>
 								</td>
 								<c:if test="${visualizacao == 1}">
 									<td class="${estilo}" width="38%">

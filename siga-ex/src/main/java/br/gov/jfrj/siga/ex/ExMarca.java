@@ -18,9 +18,10 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex;
 
+import java.util.Date;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * A class that represents a row in the EX_DOCUMENTO table. You can customize
@@ -65,6 +66,37 @@ public class ExMarca extends AbstractExMarca implements Comparable {
 		if (i != 0)
 			return i;
 		return 0;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(this.getCpMarcador().getDescrMarcador());
+
+		if (getDtIniMarca() != null && getDtIniMarca().after(new Date())) {
+			sb.append("a partir de ");
+			sb.append(getDtIniMarcaDDMMYYYY());
+		}
+
+		if (getDtFimMarca() != null) {
+			sb.append(" até ");
+			sb.append(getDtFimMarcaDDMMYYYY());
+		}
+
+		if (getDpLotacaoIni() != null || getDpPessoaIni() != null) {
+			sb.append(" [");
+			if (getDpLotacaoIni() != null) {
+				sb.append(getDpLotacaoIni().getLotacaoAtual().getSigla());
+			}
+			if (getDpPessoaIni() != null) {
+				if (getDpLotacaoIni() != null)
+					sb.append(", ");
+				sb.append(getDpPessoaIni().getPessoaAtual().getSigla());
+			}
+			sb.append("]");
+		}
+		return sb.toString();
 	}
 
 }

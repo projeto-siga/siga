@@ -6,6 +6,7 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <siga:pagina titulo="Documento" compatibilidade="IE=EmulateIE9">
 	<script type="text/javascript" language="Javascript1.1">
@@ -36,7 +37,7 @@
 					<b>Documento ${doc.exTipoDocumento.descricao}:</b> ${doc.codigo}
 				</p>
 				<p class="p-0 m-0">
-					<b>Data:</b> ${doc.dtDocDDMMYY}
+					<b><fmt:message key="tela.assinar.data"/>:</b> ${doc.dtDocDDMMYY}
 				</p>
 				<p class="p-0 m-0">
 					<b>Classificação:</b> ${doc.exClassificacao.descricaoCompleta}

@@ -13,7 +13,7 @@
 
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-8">
+			<div class="col col-12 col-sm-8">
 				<div class="card bg-light mb-3" >
 					<div class="card-header">
 						<h5>
@@ -33,7 +33,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-4">
+			<div class="col">
 				<div class="row">
 					<div class="col">
 						<div class="card bg-light mb-3" >
@@ -124,11 +124,11 @@
 		
 								<c:if
 									test="${m.mob.geral or true or (((mob.geral or (mob.id == m.mob.id)) and (exibirCompleto or (m.mob.ultimaMovimentacaoNaoCancelada != null) ) ))}">
-									<h5 style="margin-top: 10px; margin-bottom: 0px;">
+									<li style="margin-top: 10px; margin-bottom: 0px;">
 										${m.getDescricaoCompletaEMarcadoresEmHtml(cadastrante,lotaTitular)}
 										<c:if test="${docVO.digital and not empty m.tamanhoDeArquivo}">	- ${m.tamanhoDeArquivo}
 									 	</c:if>
-									</h5>
+									</li>
 									<c:set var="ocultarCodigo" value="${true}" />
 									<c:set var="dtUlt" value="" />
 									<c:set var="temmov" value="${false}" />

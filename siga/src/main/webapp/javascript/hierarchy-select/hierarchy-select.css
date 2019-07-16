@@ -21,41 +21,30 @@
 	margin-left: 0;
 	margin-bottom: 0;
 	padding: 0;
-	background-color: #eaeaea;
 }
-
-.hierarchy-select.btn-group .dropdown-menu li:nth-child(odd) {
-	background-color: #fff !important;
-}
-
-
-.hierarchy-select.btn-group .dropdown-menu li a:link { 
-	text-decoration:none;
-	color: #000;
-} 
 
 .hierarchy-select.btn-group .dropdown-menu li a{
 	padding-top: 0 !important;
 	padding-bottom: 0; 
+	text-decoration:none;
+	color: #000 !important;;
 }
 
 .hierarchy-select.btn-group .dropdown-menu li p{
 	padding: 3px 20px;
 }
 
-.hierarchy-select.btn-group .dropdown-menu li.active  {
-    color: #fff !important;
-    background-color : #0069d9 !important;
+.hierarchy-select.btn-group .dropdown-menu li.active small {
+    color: #eee !important;
 }
 
-.hierarchy-select.btn-group .dropdown-menu li.active a:link  {
+.hierarchy-select.btn-group .dropdown-menu li.active a {
     color: #fff !important;
 }
 
 .hierarchy-select.btn-group .dropdown-menu li.group a {
-	background-color : #555;
 	padding: 8px !important;
-    color: #eee;
+    color: #aaa !important;;
 }
 
 .hierarchy-select.btn-group .hs-searchbox {

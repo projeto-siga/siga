@@ -3209,7 +3209,12 @@ public class ExBL extends CpBL {
 			}
 
 			Set<ExVia> setVias = doc.getSetVias();
-
+			
+			//Libera gravação e obtém numero gerado para processar documento
+			dao().gravar(doc);
+			ContextoPersistencia.flushTransaction();
+			doc.setNumExpediente(obterNumeroGerado(doc));
+			
 			processar(doc, false, false);
 
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
@@ -3272,6 +3277,12 @@ public class ExBL extends CpBL {
 			}
 		}
 
+		return num;
+	}
+	
+	
+	public Long obterNumeroGerado(ExDocumento doc) throws Exception {
+		Long num = dao().obterNumeroGerado(doc);
 		return num;
 	}
 

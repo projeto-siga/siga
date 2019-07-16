@@ -531,6 +531,26 @@ public class Mesa {
 			map.get(mobil).add(mm);
 		}
 
+		if (SigaBaseProperties.getBooleanValue("siga.mesa.carrega.lotacao")) {
+			List<Object[]> lLota = dao.listarDocumentosPorPessoaOuLotacao(null,
+					lotaTitular);
+	
+			for (Object[] reference : lLota) {
+				ExMarca marca = (ExMarca) reference[0];
+				if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_CAIXA_DE_ENTRADA) {
+					CpMarcador marcador = (CpMarcador) reference[1];
+					ExMobil mobil = (ExMobil) reference[2];
+		
+					if (!map.containsKey(mobil))
+						map.put(mobil, new ArrayList<MeM>());
+					MeM mm = new MeM();
+					mm.marca = marca;
+					mm.marcador = marcador;
+					map.get(mobil).add(mm);
+				}
+			}
+		}
+			
 		return Mesa.listarReferencias(TipoDePainelEnum.UNIDADE, map, titular,
 				titular.getLotacao(), dao.consultarDataEHoraDoServidor());
 	}

@@ -144,10 +144,10 @@
 					</tr>
 					<tr>
 						<th rowspan="1" align="center">Unidade</th>
-						<th colspan="1" align="center">Usuário</th>
+						<th colspan="1" align="center">Matrícula</th>
 						<th rowspan="1" align="center">Data</th>
 						<th rowspan="1" align="center">Unidade</th>
-						<th colspan="1" align="center">Usuário</th>
+						<th colspan="1" align="center">Matrícula</th>
 						<th rowspan="1" align="center">Data</th>
 						<th rowspan="1" align="center">Situação</th>
 					</tr>

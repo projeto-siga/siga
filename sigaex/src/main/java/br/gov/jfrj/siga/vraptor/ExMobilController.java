@@ -626,7 +626,13 @@ public class ExMobilController extends
 	private List<String> getListaAnos() {
 		final ArrayList<String> lst = new ArrayList<String>();
 		final Calendar cal = Calendar.getInstance();
-		for (Integer ano = cal.get(Calendar.YEAR); ano >= 1990; ano--) {
+		
+		Integer anoAux = 1990;
+		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+			anoAux = 2018;
+		}
+		
+		for (Integer ano = cal.get(Calendar.YEAR); ano >= anoAux; ano--) {
 			lst.add(ano.toString());
 		}
 		return lst;

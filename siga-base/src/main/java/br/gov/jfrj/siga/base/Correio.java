@@ -55,6 +55,14 @@ public class Correio {
 				SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
 				to, assunto, conteudo, null);
 	}
+	
+	public static void enviar(final String[] destinatarios, final String assunto,
+			final String conteudo) throws Exception {
+
+		Correio.enviar(
+				SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
+				destinatarios, assunto, conteudo, null);
+	}
 
 	public static void enviar(final String remetente,
 			final String[] destinatarios, final String assunto,

@@ -65,11 +65,11 @@ public abstract class AbstractDpSubstituicao extends Objeto implements
 	private Long idSubstituicao;
 
 	@Column(name = "DT_FIM_SUBST")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dtFimSubst;
 
 	@Column(name = "DT_INI_SUBST")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dtIniSubst;
 
 	@ManyToOne(fetch = FetchType.LAZY)

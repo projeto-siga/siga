@@ -80,9 +80,11 @@
 														data-level="${item.level}" data-search="${item.searchText}"
 														${item.group ? 'data-group' : ''}
 														${item.selected ? 'data-default-selected' : ''}>
-														<a href="#">${item.text}</a>
+														<c:if test="${item.group}">
+															<a href="#">${item.text}</a>
+														</c:if>
 														<c:if test="${!item.group}">
-															<p class="mb-0"><small><b>Palavras-chave: </b>${item.keywords}</small></p>
+															<a href="#" class="d-inline">${item.text}<small class="pl-2 text-muted">${item.keywords}</small></a>
 														</c:if>
 													</li>
 												</c:forEach>

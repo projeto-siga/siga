@@ -89,29 +89,44 @@ public interface ExService extends Remote {
 	public String assinarSenhaGravar(String sigla, final Boolean copia, final Boolean juntar, final Boolean tramitar, String nomeUsuarioSubscritor,
 			String senhaUsuarioSubscritor, String siglaCadastrante) throws Exception;
 	
-	@WebMethod
-	public byte[] getArquivo(String arquivo, String tipoArquivo);
-	
-	@WebMethod
-	public String preverPdf(String sigla, String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma ,String nomeModelo, String classificacaoStr, 
-			String descricaoStr, Boolean eletronico, String nomeNivelDeAcesso, String conteudo, String siglaMobilPai, Boolean finalizar) throws Exception;
+//	@WebMethod
+//	public byte[] getArquivo(String arquivo, String tipoArquivo);
+
 
 	@WebMethod
-	public String finalizarDocumento(String sigla, String cadastrante);
+	public String finalizarDocumento(String sigla, String cadastrante) throws Exception;
 	
 	@WebMethod
 	public String anexarArquivo(String sigla, String cadastrante,
-			String nomeArquivo, String contentType, byte[] arquivo);
+			String nomeArquivo, String contentType, byte[] arquivo) throws Exception;
 	
 	@WebMethod
-	public Boolean excluirDocumento(String sigla, String titular);
+	public Boolean excluirDocumento(String sigla, String titular) throws Exception;
 	
 	@WebMethod
 	public byte[] getConteudo(String sigla) throws Exception;
 	
 	@WebMethod
-	public String buscarDocsFilhos(String sigla);
+	public String buscarDocsFilhos(String sigla) throws Exception;
 	
 	@WebMethod
-	public String atualizarConteudo(String siglaCadastrante, String sigla, String siglaMobilPai, String conteudo, Boolean finalizar);
+	public String atualizarConteudo(String siglaCadastrante, String sigla, String siglaMobilPai, String conteudo, Boolean finalizar) throws Exception;
+	
+	@WebMethod
+	public String incluirCossignatario(String sigla, String titular, String cossignatario, String funcaoCossignatario) throws Exception;
+	
+	@WebMethod
+	public String listarCossignatarios(String sigla, String titular) throws Exception;
+	
+	@WebMethod
+	public Boolean excluirMov(String sigla, String titular, Long idMov) throws Exception;
+	
+	@WebMethod
+	public byte[] getArquivo(String arquivo, boolean completo, boolean semMarcas) throws Exception;
+	
+	@WebMethod
+	public String consultarProcesso(String sigla) throws Exception;
+	
+	@WebMethod
+	public String buscarClassificacao(String descricao, String codigo, Integer offset, Integer itemPagina) throws Exception;
 }

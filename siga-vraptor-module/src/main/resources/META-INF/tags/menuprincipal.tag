@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <script type="text/javascript">
 	function getServidorSiga(cname) {
@@ -36,7 +37,7 @@
 </script>
 
 <li class="nav-item dropdown">
-	<a href="javascript:void(0);" class="navbar-brand dropdown-toggle" data-toggle="dropdown"> SIGA</a>
+	<a href="javascript:void(0);" class="navbar-brand dropdown-toggle" data-toggle="dropdown"> <fmt:message key="menu.titulo"/></a>
 	<ul class="dropdown-menu">
 		<c:if test="${not empty f:resource('siga.pagina.inicial.url')}">
 			<li><a class="dropdown-item" href="/siga/app/principal?redirecionar=false">Quadros Quantitativos</a></li>
@@ -295,8 +296,7 @@
 		<li><c:choose>
 				<c:when test="${not empty f:resource('siga.ex.manual.url')}">
 					<a class="dropdown-item" id="apostilaSiga"
-						href="${f:resource('siga.ex.manual.url')}" target="_blank">Apostila
-						SIGA-Doc</a>
+						href="${f:resource('siga.ex.manual.url')}" target="_blank">Manual</a>
 				</c:when>
 				<c:otherwise>
 					<a class="dropdown-item" id="apostilaSiga"

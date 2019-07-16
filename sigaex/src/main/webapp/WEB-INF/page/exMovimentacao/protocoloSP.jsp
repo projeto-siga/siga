@@ -103,7 +103,7 @@
 				<c:if test="${popup != true}">
 					<input type="button" value="Voltar"
 						class="gt-btn-medium gt-btn-left"
-						onclick="javascript:history.back();history.back();" />
+						onclick="javascript:history.back();history.back();history.back();" />
 				</c:if>
 			</form>
 			<br /> <br />

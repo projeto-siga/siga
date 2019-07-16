@@ -29,6 +29,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
@@ -296,9 +297,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@Column(name = "FG_ELETRONICO", nullable = false, length = 1)
 	private String fgEletronico;
 
+	@Lob
 	@Column(name = "CONTEUDO_BLOB_DOC")
 	@Basic(fetch = FetchType.LAZY)
-	private Blob conteudoBlobDoc;
+	private byte[] conteudoBlobDoc;
 
 	@Column(name = "NUM_SEQUENCIA")
 	private Integer numSequencia;
@@ -443,7 +445,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	/**
 	 * COMPLETAR
 	 */
-	public Blob getConteudoBlobDoc() {
+	public byte[] getConteudoBlobDoc() {
 		return this.conteudoBlobDoc;
 	}
 
@@ -789,7 +791,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 * 
 	 * @param conteudoBlobDoc
 	 */
-	public void setConteudoBlobDoc(Blob conteudoBlobDoc) {
+	public void setConteudoBlobDoc(byte[] conteudoBlobDoc) {
 		this.conteudoBlobDoc = conteudoBlobDoc;
 	}
 

@@ -22,7 +22,6 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.Date;
 
 import javax.persistence.Basic;
@@ -31,6 +30,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
@@ -172,9 +172,10 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@JoinColumn(name = "id_cadastrante")
 	private DpPessoa cadastrante;
 
+	@Lob
 	@Column(name = "conteudo_blob_mov")
 	@Basic(fetch = FetchType.LAZY)
-	private Blob conteudoBlobMov;
+	private byte[] conteudoBlobMov;
 
 	@Column(name = "conteudo_tp_mov", length = 128)
 	private String conteudoTpMov;
@@ -360,7 +361,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		return cadastrante;
 	}
 
-	public Blob getConteudoBlobMov() {
+	public byte[] getConteudoBlobMov() {
 		return conteudoBlobMov;
 	}
 
@@ -436,7 +437,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		this.cadastrante = cadastrante;
 	}
 
-	public void setConteudoBlobMov(Blob conteudoBlobMov) {
+	public void setConteudoBlobMov(byte[] conteudoBlobMov) {
 		this.conteudoBlobMov = conteudoBlobMov;
 	}
 

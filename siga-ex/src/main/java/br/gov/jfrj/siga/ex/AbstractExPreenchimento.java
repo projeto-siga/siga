@@ -28,6 +28,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
@@ -70,8 +71,9 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 	@Column(name = "EX_NOME_PREENCHIMENTO", nullable = false, length = 256)
 	private String nomePreenchimento;
 
+	@Lob
 	@Column(name = "PREENCHIMENTO_BLOB")
-	private java.sql.Blob preenchimentoBlob;
+	private byte[] preenchimentoBlob;
 
 	/**
 	 * Simple constructor of AbstractExTipoDespacho instances.
@@ -107,11 +109,11 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 		this.idPreenchimento = idPreenchimento;
 	}
 
-	public java.sql.Blob getPreenchimentoBlob() {
+	public byte[] getPreenchimentoBlob() {
 		return preenchimentoBlob;
 	}
 
-	public void setPreenchimentoBlob(java.sql.Blob preenchimentoBlob) {
+	public void setPreenchimentoBlob(byte[] preenchimentoBlob) {
 		this.preenchimentoBlob = preenchimentoBlob;
 	}
 

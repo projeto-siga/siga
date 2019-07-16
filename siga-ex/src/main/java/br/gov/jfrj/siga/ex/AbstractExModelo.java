@@ -30,6 +30,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
@@ -55,9 +56,10 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	private java.lang.Long idMod;
 
 	/** The value of the simple conteudoBlobMod property. */
+	@Lob
 	@Column(name = "CONTEUDO_BLOB_MOD")
 	@Basic(fetch = FetchType.LAZY)
-	private Blob conteudoBlobMod;
+	private byte[] conteudoBlobMod;
 
 	/** The value of the simple conteudoTpBlob property. */
 	@Column(name = "CONTEUDO_TP_BLOB", length = 128)
@@ -142,7 +144,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	 * 
 	 * @return java.lang.String
 	 */
-	public Blob getConteudoBlobMod() {
+	public byte[] getConteudoBlobMod() {
 		return this.conteudoBlobMod;
 	}
 
@@ -235,7 +237,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	 * 
 	 * @param conteudoBlobMod
 	 */
-	public void setConteudoBlobMod(Blob conteudoBlobMod) {
+	public void setConteudoBlobMod(byte[] conteudoBlobMod) {
 		this.conteudoBlobMod = conteudoBlobMod;
 	}
 
@@ -327,10 +329,9 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		} else {
 			if (other.getConteudoBlobMod() == null)
 				return false;
-			byte[] abthis = br.gov.jfrj.siga.cp.util.Blob
-					.toByteArray(getConteudoBlobMod());
-			byte[] abother = br.gov.jfrj.siga.cp.util.Blob.toByteArray(other
-					.getConteudoBlobMod());
+			byte[] abthis = getConteudoBlobMod();
+			byte[] abother = other
+					.getConteudoBlobMod();
 			try {
 				String sthis = new String(abthis, "UTF-8");
 				String sother = new String(abother, "UTF-8");

@@ -449,7 +449,7 @@
 						<div class="form-group col-md-3">
 							<label for="dtDocFinalString">Data Final</label> <input
 								class="form-control" type="text" name="dtDocFinalString"
-								id="dtDocFinalString" value="${dtDocString}"
+								id="dtDocFinalString" value="${dtDocFinalString}"
 								onblur="javascript:verifica_data(this,0);" />
 						</div>
 					</div>

@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
@@ -130,8 +131,8 @@
 					    					onclick="checkUncheckAll(this)" /></th>	
 					     	<th width="13%"></th>													
 					        <th width="5%" align="center">Data</th>
-					        <th width="10%" align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lotacao</th>
-					        <th width="5%" align="left">Pessoa</th>			        
+					        <th width="10%" align="right"><fmt:message key="usuario.lotacao"/></th>
+					        <th width="5%" align="left"><fmt:message key="usuario.pessoa2"/></th>			        
 					        <th width="15%" align="left">Tipo</th>
 					        <th width="49%" align="left">Descrição</th>				 
 					    </tr>

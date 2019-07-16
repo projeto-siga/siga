@@ -57,6 +57,7 @@ import org.hibernate.jdbc.Work;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
@@ -1709,8 +1710,17 @@ public class ExDao extends CpDao {
 	public List<CpMarcador> listarCpMarcadoresGerais() {
 		CpTipoMarcador marcador = consultar(CpTipoMarcador.TIPO_MARCADOR_GERAL,
 				CpTipoMarcador.class, false);
-		return findByCriteria(CpMarcador.class,
-				Restrictions.eq("cpTipoMarcador", marcador));
+		
+		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+			return findByCriteria(CpMarcador.class,
+					Restrictions.and(
+							Restrictions.eq("cpTipoMarcador", marcador),
+							Restrictions.ne("idMarcador", CpMarcador.MARCADOR_COMO_REVISOR), 
+							Restrictions.ne("idMarcador", CpMarcador.MARCADOR_PRONTO_PARA_ASSINAR)));
+		} else {
+			return findByCriteria(CpMarcador.class,
+					Restrictions.eq("cpTipoMarcador", marcador));
+		}
 	}
 
 	public List<ExTpDocPublicacao> listarExTiposDocPublicacao() {

@@ -364,19 +364,10 @@ public class ExBL extends CpBL {
 		Long ini = System.currentTimeMillis();
 		List<ExDocumento> list = new ArrayList<ExDocumento>();
 
-		Query query = dao().getSessao().createQuery(
-				"select distinct(doc.idDoc) from ExMarca mar "
-						+ "inner join mar.exMobil mob "
-						+ "inner join mob.exDocumento doc "
-						+ "where mar.cpMarcador.idMarcador = 6"
-						+ "and mob.exTipoMobil.idTipoMobil = 4 "
-						+ (primeiro > 0 ? "and doc.idDoc > " + primeiro : "")
-						+ (ultimo > 0 ? "and doc.idDoc < " + ultimo : "")
-						+ " order by doc.idDoc");
-
 		int index = 0;
 
-		List<Long> ids = query.list();
+		List<Long> ids = dao().arquivamentosEmVolumes(primeiro, ultimo);
+
 
 		for (Long id : ids) {
 			index++;
@@ -399,10 +390,7 @@ public class ExBL extends CpBL {
 							.getBL()
 							.arquivarCorrente(pess, lota, doc.getMobilGeral(),
 									mov.getDtIniMov(), null, pess, false);
-				// if (index % 10 == 0){
-				dao().getSessao().clear();
-				// System.gc();
-				// }
+				dao().em().clear();
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
@@ -472,174 +460,6 @@ public class ExBL extends CpBL {
 		}
 
 		return numeroDePaginas;
-	}
-
-	public void numerarTudo(int aPartirDe) {
-		List<ExDocumento> list = new ArrayList<ExDocumento>();
-
-		final Criteria countCrit = dao().getSessao()
-				.createCriteria(ExDocumento.class)
-				.add(Restrictions.gt("idDoc", new Long(aPartirDe)));
-		countCrit.setProjection(Projections.rowCount());
-		Integer totalDocs = ((Long) countCrit.uniqueResult()).intValue();
-
-		final Criteria crit = dao().getSessao()
-				.createCriteria(ExDocumento.class)
-				.add(Restrictions.gt("idDoc", new Long(aPartirDe)));
-		crit.setMaxResults(60);
-		crit.addOrder(Order.asc("idDoc"));
-
-		int index = 0;
-
-		do {
-			long inicio = System.currentTimeMillis();
-			// System.gc();
-			iniciarAlteracao();
-			crit.setFirstResult(index);
-			list = crit.list();
-			for (ExDocumento doc : list) {
-				index++;
-				try {
-					for (ExMovimentacao m : doc.getExMovimentacaoSet()) {
-						m.setNumPaginas(m.getContarNumeroDePaginas());
-						dao().gravar(m);
-					}
-				} catch (Throwable e) {
-					System.out.println("Erro ao marcar o doc " + doc);
-					e.printStackTrace();
-				}
-				if (index % 50 == 0) {
-					// System.gc();
-				}
-				System.out.print(doc.getIdDoc() + " ok - ");
-			}
-			ExDao.commitTransacao();
-			dao().getSessao().clear();
-			long duracao = System.currentTimeMillis() - inicio;
-			System.out.println();
-			System.out.println(new SimpleDateFormat("HH:mm:ss")
-					.format(new Date())
-					+ " "
-					+ String.valueOf(index)
-					+ " numerados de " + totalDocs);
-		} while (list.size() > 0);
-
-		// System.gc();
-	}
-
-	public void marcarTudo() {
-		marcarTudo(0, 0, true, false, new PrintWriter(System.out));
-	}
-
-	public void marcarTudoTemporalidade(int aPartirDe) throws Exception {
-		marcarTudo(aPartirDe, 0, true, true, new PrintWriter(System.out));
-	}
-
-	public void marcarTudo(int primeiro, int ultimo, boolean efetivar,
-			boolean apenasTemporalidade, PrintWriter out) {
-
-		List<ExDocumento> list = new ArrayList<ExDocumento>();
-
-		final Criteria countCrit = dao().getSessao()
-				.createCriteria(ExDocumento.class)
-				.add(Restrictions.ge("idDoc", new Long(primeiro)));
-		if (ultimo != 0)
-			countCrit.add(Restrictions.le("idDoc", new Long(ultimo)));
-		countCrit.setProjection(Projections.rowCount());
-
-		final Criteria crit = dao().getSessao()
-				.createCriteria(ExDocumento.class)
-				.add(Restrictions.ge("idDoc", new Long(primeiro)));
-		if (ultimo != 0)
-			crit.add(Restrictions.le("idDoc", new Long(ultimo)));
-		crit.setMaxResults(5);
-		crit.addOrder(Order.asc("idDoc"));
-
-		out.println("-----------------------------------------------");
-		out.print(new SimpleDateFormat("HH:mm:ss").format(new Date()));
-		out.print(" - Remarcando documentos.");
-		out.print(" Primeiro: ");
-		out.println(primeiro);
-		if (ultimo != 0) {
-			out.print(" Ultimo: ");
-			out.println(ultimo);
-		}
-		if (efetivar)
-			out.println("***EFETIVAR!!***");
-		out.println("-----------------------------------------------");
-
-		int index = 0;
-
-		do {
-			long inicio = System.currentTimeMillis();
-			if (efetivar)
-				iniciarAlteracao();
-			crit.setFirstResult(index);
-			list = crit.list();
-			for (ExDocumento doc : list) {
-				index++;
-				StringBuilder msg = new StringBuilder();
-				try {
-
-					StringBuilder marcasAnteriores = new StringBuilder();
-					for (ExMobil mob : doc.getExMobilSet()) {
-						marcasAnteriores.append(mob.isGeral() ? "0" : mob
-								.getNumSequencia());
-						marcasAnteriores.append(" - ");
-						marcasAnteriores
-								.append(mob
-										.getMarcadoresDescrCompleta(apenasTemporalidade));
-						atualizarMarcasTemporalidade(mob);
-					}
-					StringBuilder marcasPosteriores = new StringBuilder();
-					for (ExMobil mob : doc.getExMobilSet()) {
-						marcasPosteriores.append(mob.isGeral() ? "0" : mob
-								.getNumSequencia());
-						marcasPosteriores.append(" - ");
-						marcasPosteriores
-								.append(mob
-										.getMarcadoresDescrCompleta(apenasTemporalidade));
-					}
-
-					if (!marcasAnteriores.toString().equals(
-							marcasPosteriores.toString())) {
-						msg.append("Marcas:");
-						msg.append("\n\tAntes: ");
-						msg.append(marcasAnteriores);
-						msg.append("\n\tDepois: ");
-						msg.append(marcasPosteriores);
-					}
-
-				} catch (Throwable e) {
-					msg.append("ERRO: ");
-					msg.append(e.getMessage());
-					e.printStackTrace(out);
-				}
-
-				if (msg.length() > 0) {
-					msg.insert(0, "\n");
-					msg.insert(0, doc.getCodigo());
-					msg.insert(0, " - ");
-					msg.insert(0,
-							new SimpleDateFormat("HH:mm:ss").format(new Date()));
-					msg.insert(0, "\n");
-					out.println(msg);
-				}
-
-			}
-			if (efetivar) {
-				ExDao.commitTransacao();
-				// System.gc();
-			}
-			dao().getSessao().clear();
-		} while (list.size() > 0);
-
-		out.println("\n-----------------------------------------------");
-		out.print(new SimpleDateFormat("HH:mm:ss").format(new Date()));
-		out.println(" - Fim");
-		out.println("-----------------------------------------------");
-
-		// System.gc();
 	}
 
 	public void agendarPublicacaoBoletim(final DpPessoa cadastrante,
@@ -6221,7 +6041,7 @@ public class ExBL extends CpBL {
 			throws AplicacaoException, Exception {
 
 		if (mob.doc().isEletronico()) {
-			dao().getSessao().refresh(mob);
+			dao().em().refresh(mob);
 			// Verifica se é Processo e conta o número de páginas para verificar
 			// se tem que encerrar o volume
 			if (mob.doc().isProcesso()) {
@@ -6923,23 +6743,22 @@ public class ExBL extends CpBL {
 		return list;
 	}
 
-	private static class BlobSerializer implements
-			JsonSerializer<java.sql.Blob>, JsonDeserializer<java.sql.Blob> {
-		public JsonElement serialize(java.sql.Blob src, Type srcType,
+	private static class ByteArraySerializer implements
+			JsonSerializer<byte[]>, JsonDeserializer<byte[]> {
+		public JsonElement serialize(byte[] src, Type srcType,
 				JsonSerializationContext context) {
 			String s = null;
-			byte ab[] = br.gov.jfrj.siga.cp.util.Blob.toByteArray(src);
-			if (ab != null)
-				s = BlucService.bytearray2b64(ab);
+			if (src != null)
+				s = BlucService.bytearray2b64(src);
 			return new JsonPrimitive(s);
 		}
 
-		public Blob deserialize(JsonElement json, Type type,
+		public byte[] deserialize(JsonElement json, Type type,
 				JsonDeserializationContext context) throws JsonParseException {
 			String s = json.getAsString();
 			if (s != null) {
 				byte ab[] = BlucService.b642bytearray(s);
-				return HibernateUtil.getSessao().getLobHelper().createBlob(ab);
+				return ab;
 			}
 			return null;
 		}
@@ -7100,7 +6919,7 @@ public class ExBL extends CpBL {
 		ObjetoBaseSerializer hps = new ObjetoBaseSerializer();
 
 		Gson gson = new GsonBuilder()
-				.registerTypeAdapter(java.sql.Blob.class, new BlobSerializer())
+				.registerTypeAdapter(java.sql.Blob.class, new ByteArraySerializer())
 				// .registerTypeAdapter(ObjetoBase.class, hps)
 				.setPrettyPrinting()
 				.setFieldNamingPolicy(
@@ -7110,7 +6929,7 @@ public class ExBL extends CpBL {
 		String jsonOutput = gson.toJson(mob);
 
 		// Importante para que as alterações do "prune" não sejam salvas no BD.
-		dao().getSessao().clear();
+		dao().em().clear();
 
 		return jsonOutput;
 	}

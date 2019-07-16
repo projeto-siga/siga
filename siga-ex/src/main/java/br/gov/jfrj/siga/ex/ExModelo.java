@@ -65,15 +65,13 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel {
 	/* Add customized code below */
 	public void setConteudoBlobMod2(final byte[] blob) {
 		if (blob != null)
-			setConteudoBlobMod(HibernateUtil.getSessao().getLobHelper()
-					.createBlob(blob));
+			setConteudoBlobMod(blob);
 		cacheConteudoBlobMod = blob;
 	}
 
 	public byte[] getConteudoBlobMod2() {
 		if (cacheConteudoBlobMod == null)
-			cacheConteudoBlobMod = br.gov.jfrj.siga.cp.util.Blob
-					.toByteArray(getConteudoBlobMod());
+			cacheConteudoBlobMod = getConteudoBlobMod();
 		return cacheConteudoBlobMod;
 	}
 

@@ -68,7 +68,7 @@
 									<p></p>
 									<siga:selecao tema='simple'  titulo="Documento Pai" propriedade="documentoRef" urlAcao="buscar" urlSelecionar="selecionar" modulo="sigaex"/>
 								</siga:opcao>
-								<siga:opcao id='2' texto="Documento Externo ao Siga-Doc" >
+								<siga:opcao id='2' texto="Documento Externo ${siga_cliente=='GOVSP'?'':'ao Siga-Doc'}" >
 									<input type="text" theme='simple' name="idDocumentoPaiExterno" value="${idDocumentoPaiExterno}" class="form-control mt-3"/>
 								</siga:opcao>
 							</siga:escolha>

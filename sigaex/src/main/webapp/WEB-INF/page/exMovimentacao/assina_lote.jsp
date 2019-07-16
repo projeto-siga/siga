@@ -108,11 +108,13 @@
 												Documento</a>
 										</c:if>
 									</div>
-									<p id="ie-missing" style="display: none;">
-										A assinatura digital utilizando padrão do SIGA-DOC só poderá
-										ser realizada no Internet Explorer. No navegador atual, apenas
-										a assinatura com <i>Applet Java</i> é permitida.
-									</p>
+									<c:if test="${siga_cliente != 'GOVSP'}">
+										<p id="ie-missing" style="display: none;">
+											A assinatura digital utilizando padrão do SIGA-DOC só poderá
+											ser realizada no Internet Explorer. No navegador atual,
+											apenas a assinatura com <i>Applet Java</i> é permitida.
+										</p>
+									</c:if>
 									<p id="capicom-missing" style="display: none;">
 										Não foi possível localizar o componente <i>CAPICOM.DLL</i>.
 										Para realizar assinaturas digitais utilizando o método padrão

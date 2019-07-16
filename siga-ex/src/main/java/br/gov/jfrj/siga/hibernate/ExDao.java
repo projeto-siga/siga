@@ -183,6 +183,14 @@ public class ExDao extends CpDao {
 
 		return (Long) query.uniqueResult();
 	}
+	
+	
+	public Long obterNumeroGerado(final ExDocumento doc)
+			throws SQLException {
+		Query query = getSessao().getNamedQuery("obterNumeroGerado");
+		query.setLong("idDoc", doc.getIdDoc());
+		return (Long) query.uniqueResult();
+	}
 
 	public List consultarPorFiltro(final ExMobilDaoFiltro flt) {
 		return consultarPorFiltro(flt, 0, 0);

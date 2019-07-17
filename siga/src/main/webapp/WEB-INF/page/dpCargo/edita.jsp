@@ -24,7 +24,7 @@
 	}
 
 	function validarNome(campo) {
-		campo.value = campo.value.replace(/[^a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9.]/g,'');
+		campo.value = campo.value.replace(/[^a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9.]/g,'');
 	}
 </script>
 

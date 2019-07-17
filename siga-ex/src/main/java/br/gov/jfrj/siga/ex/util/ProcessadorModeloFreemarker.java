@@ -139,7 +139,7 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 					}
 					if (mod != null)
 						return mod.getConteudoBlobString() == null ? "" : mod.getConteudoBlobString();
-					return null;
+					return "";
 				}
 			});
 	

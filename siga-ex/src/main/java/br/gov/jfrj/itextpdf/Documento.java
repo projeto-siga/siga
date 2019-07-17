@@ -45,6 +45,7 @@ import org.apache.commons.logging.LogFactory;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -486,7 +487,12 @@ public class Documento {
 					tarjar("SEM EFEITO", over, helv, r);
 				} else if (copia) {
 					tarjar("CÓPIA", over, helv, r);
-				} else if (!SigaExProperties.isAmbienteProducao()) {
+				} else if (SigaMessages.isSigaSP() && ("treinamento".equals(SigaExProperties.getAmbiente())) ) {
+					tarjar("CAPACITAÇÃO", over, helv, r);
+				} else if (SigaMessages.isSigaSP() && ("homolog".equals(SigaExProperties.getAmbiente())) ) {
+					tarjar("HOMOLOGAÇÃO", over, helv, r);
+				}
+				else if (!SigaMessages.isSigaSP() && !SigaExProperties.isAmbienteProducao()) {
 					tarjar("INVÁLIDO", over, helv, r);
 				}
 	

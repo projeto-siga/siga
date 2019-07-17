@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -58,13 +59,13 @@ import org.apache.commons.beanutils.BeanUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.Download;
-import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
-import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.observer.download.Download;
+import br.com.caelum.vraptor.observer.download.InputStreamDownload;
+import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
@@ -99,12 +100,20 @@ import br.gov.jfrj.siga.util.ListaHierarquica;
 import br.gov.jfrj.siga.util.ListaHierarquicaItem;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 
-@Resource
+@Controller
 public class ExDocumentoController extends ExController {
 
 	private static final String URL_EXIBIR = "/app/expediente/doc/exibir?sigla={0}";
 	private static final String URL_EDITAR = "/app/expediente/doc/editar?sigla={0}";
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExDocumentoController() {
+		this(null, null, null, null, null, null);
+	}
+
+	@Inject
 	public ExDocumentoController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {
@@ -275,7 +284,7 @@ public class ExDocumentoController extends ExController {
 		final ExPreenchimento exPreenchimento = dao()
 				.consultar(exDocumentoDTO.getPreenchimento(),
 						ExPreenchimento.class, false);
-		final String strBanco = new String(exPreenchimento.getPreenchimentoBA());
+		final String strBanco = new String(exPreenchimento.getPreenchimentoBlob());
 		final String arrStrBanco[] = strBanco.split("&");
 		String strBancoLimpa = new String();
 
@@ -2285,9 +2294,7 @@ public class ExDocumentoController extends ExController {
 					ExModelo.class, false));
 		}
 
-		final DpLotacao lota = new DpLotacao();
-		lota.setIdLotacaoIni(getLotaTitular().getIdLotacaoIni());
-		final List<DpLotacao> lotacaoSet = dao().consultar(lota, null);
+		final List<DpLotacao> lotacaoSet = dao().listarPorIdInicialDpLotacao(getLotaTitular().getIdLotacaoIni());
 
 		exDocumentoDTO.getPreenchSet().add(
 				new ExPreenchimento(0, null, " [Em branco] ", null));

@@ -1,35 +1,36 @@
 package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import nl.captcha.Captcha;
-import nl.captcha.noise.StraightLineNoiseProducer;
+import com.auth0.jwt.JWTSigner;
+import com.auth0.jwt.JWTVerifier;
+import com.lowagie.text.pdf.codec.Base64;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
-import br.com.caelum.vraptor.interceptor.download.Download;
-import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.observer.download.Download;
+import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.bluc.service.BlucService;
 import br.gov.jfrj.siga.bluc.service.HashRequest;
 import br.gov.jfrj.siga.bluc.service.HashResponse;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -39,19 +40,21 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
-import com.auth0.jwt.JWTSigner;
-import com.auth0.jwt.JWTVerifier;
-import com.lowagie.text.pdf.codec.Base64;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-
-@Resource
+@Controller
 public class ExAutenticacaoController extends ExController {
 	private static final String URL_EXIBIR = "/public/app/autenticar";
 	private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
 	private static final String APPLICATION_PDF = "application/pdf";
 
+
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExAutenticacaoController() {
+		this(null, null, null, null, null, null);
+	}
+
+	@Inject
 	public ExAutenticacaoController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {

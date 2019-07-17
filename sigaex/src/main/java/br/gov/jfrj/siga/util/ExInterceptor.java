@@ -5,14 +5,15 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.directwebremoting.guice.RequestScoped;
+
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
-import br.com.caelum.vraptor.Validator;
+import br.com.caelum.vraptor.controller.ControllerMethod;
 import br.com.caelum.vraptor.core.InterceptorStack;
 import br.com.caelum.vraptor.interceptor.Interceptor;
-import br.com.caelum.vraptor.ioc.Component;
-import br.com.caelum.vraptor.resource.ResourceMethod;
-import br.com.caelum.vraptor.util.jpa.JPATransactionInterceptor;
+import br.com.caelum.vraptor.jpa.JPATransactionInterceptor;
+import br.com.caelum.vraptor.validator.Validator;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
@@ -20,7 +21,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
-@Component
+@RequestScoped
 @Intercepts(before = JPATransactionInterceptor.class)
 public class ExInterceptor implements Interceptor {
 
@@ -30,8 +31,7 @@ public class ExInterceptor implements Interceptor {
 	private HttpServletResponse response;
 	private ServletContext context;
 
-	public ExInterceptor(EntityManager manager, Validator validator,
-			ServletContext context, HttpServletRequest request,
+	public ExInterceptor(EntityManager manager, Validator validator, ServletContext context, HttpServletRequest request,
 			HttpServletResponse response) {
 		this.manager = manager;
 		this.validator = validator;
@@ -68,24 +68,21 @@ public class ExInterceptor implements Interceptor {
 	// }
 	// }
 
-	public void intercept(InterceptorStack stack, ResourceMethod method,
-			Object instance) {
+	public void intercept(InterceptorStack stack, ControllerMethod method, Object instance) {
 
 		// EntityManager em = ExStarter.emf.createEntityManager();
 
 		ContextoPersistencia.setEntityManager(this.manager);
 
 		// Inicialização padronizada
-		CurrentRequest.set(new RequestInfo(this.context, this.request,
-				this.response));
+		CurrentRequest.set(new RequestInfo(this.context, this.request, this.response));
 
 		ModeloDao.freeInstance();
 		ExDao.getInstance();
 		try {
 			Ex.getInstance().getConf().limparCacheSeNecessario();
 		} catch (Exception e1) {
-			throw new RuntimeException(
-					"Não foi possível atualizar o cache de configurações", e1);
+			throw new RuntimeException("Não foi possível atualizar o cache de configurações", e1);
 		}
 
 		try {
@@ -97,7 +94,7 @@ public class ExInterceptor implements Interceptor {
 		}
 	}
 
-	public boolean accepts(ResourceMethod method) {
+	public boolean accepts(ControllerMethod method) {
 		return true; // Will intercept all requests
 	}
 }

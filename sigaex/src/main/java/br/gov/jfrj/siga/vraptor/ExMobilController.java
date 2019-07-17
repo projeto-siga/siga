@@ -37,16 +37,17 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.Download;
-import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.observer.download.Download;
+import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaMessages;
@@ -74,35 +75,23 @@ import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
 
-@Resource
+@Controller
 public class ExMobilController extends
 		ExSelecionavelController<ExMobil, ExMobilDaoFiltro> {
 	private static final String SIGA_DOC_FE_LD = "FE:Ferramentas;LD:Listar Documentos";
 	
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExMobilController() {
+		this(null, null, null, null);
+	}
+
+	@Inject
 	public ExMobilController(HttpServletRequest request, Result result,
 			SigaObjects so, EntityManager em) {
 		super(request, result, ExDao.getInstance(), so, em);
 		setItemPagina(50);
-	}
-
-	@Get("app/expediente/doc/marcar_tudo")
-	public void aMarcarTudo() {
-		assertAcesso("");
-		
-		Ex.getInstance().getBL().marcarTudo();
-		result.redirectTo("/app/expediente/doc/finalizou_rotina");
-	}
-
-	@Get("app/expediente/doc/numerar_tudo")
-	public void aNumerarTudo() {
-		assertAcesso("");
-		
-		int aPartirDe = 0;
-		if (param("apartir") != null) {
-			aPartirDe = paramInteger("apartir");
-		}
-		Ex.getInstance().getBL().numerarTudo(aPartirDe);
-		result.redirectTo("/app/expediente/doc/finalizou_rotina");
 	}
 
 	@Get("app/expediente/doc/marcar")

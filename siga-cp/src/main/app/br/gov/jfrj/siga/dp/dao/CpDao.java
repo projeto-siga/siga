@@ -743,6 +743,17 @@ public class CpDao extends ModeloDao {
 		return l.get(0);
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<DpLotacao> listarPorIdInicialDpLotacao(final Long idInicial) {
+		final Query query = em().createNamedQuery(
+				"listarPorIdInicialDpLotacao");
+		query.setParameter("idLotacaoIni", idInicial);
+
+		query.setHint("org.hibernate.cacheable", true);
+		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
+		return query.getResultList();
+	}
+
 	public Selecionavel consultarPorSigla(final DpLotacaoDaoFiltro flt) {
 		final DpLotacao o = new DpLotacao();
 		o.setSigla(flt.getSigla());

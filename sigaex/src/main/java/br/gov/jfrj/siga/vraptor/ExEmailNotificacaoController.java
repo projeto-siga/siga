@@ -28,13 +28,14 @@ package br.gov.jfrj.siga.vraptor;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.logging.Logger;
 
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -45,12 +46,20 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExEmailNotificacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
-@Resource
+@Controller
 public class ExEmailNotificacaoController extends SigaController{
 
 	private static final Logger LOGGER = Logger.getLogger(ExEmailNotificacaoController.class);
 	private static final String VERIFICADOR_ACESSO = "DOC:Módulo de Documentos;FE:Ferramentas;EMAIL:Email de Notificação";
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExEmailNotificacaoController() {
+		this(null, null, null, null);
+	}
+
+	@Inject
 	public ExEmailNotificacaoController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 	}
@@ -63,7 +72,7 @@ public class ExEmailNotificacaoController extends SigaController{
 	public void lista() {
 		try {
 			assertAcesso(VERIFICADOR_ACESSO);
-			result.include("itens", ExDao.getInstance().consultar(new ExEmailNotificacao(), null));
+			result.include("itens", ExDao.getInstance().listarTodos(ExEmailNotificacao.class, null));
 		} catch (AplicacaoException e) {
 			throw new AplicacaoException(e.getMessage(), 0, e);
 		}catch (Exception ex) { 

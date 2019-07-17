@@ -35,24 +35,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.Download;
-import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.observer.download.Download;
+import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -73,8 +66,16 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioDocumentosSubo
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioModelos;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
-@Resource
+@Controller
 public class ExRelatorioController extends ExController {
 
 	private static final String ACESSO_CLSD_DOCS = "CLSD:Classificação Documental;DOCS:Relação de documentos classificados";
@@ -88,6 +89,14 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_FORMS = "FORMS:Relação de formulários";
 	private static final String APPLICATION_PDF = "application/pdf";
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExRelatorioController() {
+		this(null, null, null, null, null, null);
+	}
+
+	@Inject
 	public ExRelatorioController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so,
 			EntityManager em) {
 		super(request, response, context, result, CpDao.getInstance(), so, em);
@@ -389,7 +398,7 @@ public class ExRelatorioController extends ExController {
 
 	@SuppressWarnings("unchecked")
 	private List<ExTipoFormaDoc> getListaExTipoFormaDoc() {
-		final List<ExTipoFormaDoc> listaQry = (List<ExTipoFormaDoc>) HibernateUtil.getSessao().createQuery("from ExTipoFormaDoc").list();
+		final List<ExTipoFormaDoc> listaQry = (List<ExTipoFormaDoc>) dao.listarTodos(ExTipoFormaDoc.class, null);
 		final List<ExTipoFormaDoc> resultado = new LinkedList<ExTipoFormaDoc>();
 		final ExTipoFormaDoc todos = new ExTipoFormaDoc();
 		todos.setDescTipoFormaDoc("(Todos)");

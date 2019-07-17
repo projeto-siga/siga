@@ -424,37 +424,34 @@
 						<jsp:useBean id="now" class="java.util.Date" />
 						<div class="card-sidebar card bg-light mb-3">
 							<tags:collapse title="${docVO.outrosMobsLabel}" id="OutrosMob" collapseMode="${collapse_Expanded}">
+								<a title="Atualizar marcas"
+								style="float: right; margin-top: -3px;"
+								href="${linkTo[ExDocumentoController].aAtualizarMarcasDoc}?sigla=${sigla}"
+								${popup?'target="_blank" ':''}> <img
+								src="/siga/css/famfamfam/icons/arrow_refresh.png">
+								
+							</a>
 								<ul style="list-style-type: none; margin: 0; padding: 0;">
 									<c:forEach var="entry" items="${docVO.marcasPorMobil}">
+										<c:if test="${not empty entry.value}">
 										<c:set var="outroMob" value="${entry.key}" />
+										<c:set var="mobNome" value="${outroMob.isGeral() ? 'Geral' : outroMob.terminacaoSigla}" />
 										<li><c:choose>
-												<c:when test="${outroMob.numSequencia == m.mob.numSequencia}">
-													<i><b>${outroMob.terminacaoSigla}</b></i>
+												<c:when test="${(not outroMob.geral) and outroMob.numSequencia == m.mob.numSequencia}">
+													<i><b>${mobNome}</b></i>
 												</c:when>
 												<c:otherwise>
 													<a
 														href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${outroMob.sigla}"
 														title="${outroMob.doc.descrDocumento}"
 														style="text-decoration: none">
-														${outroMob.terminacaoSigla} </a>
+														${mobNome} </a>
 												</c:otherwise>
 											</c:choose> &nbsp;-&nbsp; <c:forEach var="marca" items="${entry.value}"
-												varStatus="loop">
-									${marca.cpMarcador.descrMarcador} 
-									<c:if test="${marca.dtIniMarca gt now}">
-										a partir de ${marca.dtIniMarcaDDMMYYYY}
-									</c:if>
-												<c:if test="${not empty marca.dtFimMarca}"> 
-										até ${marca.dtFimMarcaDDMMYYYY}
-									</c:if>
-												<c:if test="${not empty marca.dpLotacaoIni}">
-										[${marca.dpLotacaoIni.lotacaoAtual.sigla}
-										<c:if test="${not empty marca.dpPessoaIni}">
-											&nbsp;${marca.dpPessoaIni.pessoaAtual.sigla}
+											varStatus="loop">
+											${marca}<c:if test="${!loop.last}">,</c:if> 
+										</c:forEach></li>
 										</c:if>
-										]
-									</c:if>
-											</c:forEach></li>
 									</c:forEach>
 								</ul>
 							</tags:collapse>

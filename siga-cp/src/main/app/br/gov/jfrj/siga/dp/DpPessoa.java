@@ -87,6 +87,12 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 			return null;
 		return getLotacao().getIdLotacao();
 	}
+	
+	public Long getIdLotacaoIni() {
+		if (getLotacao() == null)
+			return null;
+		return getLotacao().getIdLotacaoIni();
+	}
 
 	public boolean isFechada() {
 		if (getDataFimPessoa() == null)

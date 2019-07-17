@@ -15,7 +15,6 @@ import br.com.caelum.vraptor.interceptor.Interceptor;
 import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.com.caelum.vraptor.resource.ResourceMethod;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 import com.google.common.base.Throwables;
 
@@ -49,8 +48,8 @@ public class AplicacaoExceptionInterceptor implements Interceptor {
 				} catch (IOException e1) {
 					throw new RuntimeException(e1);
 				}
-			}
-			throw e;
+			} else
+			    throw e;
 
 		}
 	}

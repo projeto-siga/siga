@@ -130,6 +130,12 @@ public class DpLotacao extends AbstractDpLotacao implements Serializable,
 			return null;
 		return Long.valueOf(getLotacaoPai().getIdLotacao());
 	}
+	
+	public Long getIdLotacaoIniPai() {
+		if (getLotacaoPai() == null)
+			return null;
+		return Long.valueOf(getLotacaoPai().getIdLotacaoIni());
+	}
 
 	public String getSigla() {
 		String s = getSiglaLotacao();

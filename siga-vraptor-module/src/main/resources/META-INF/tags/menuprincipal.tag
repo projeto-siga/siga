@@ -294,9 +294,9 @@
 		</c:if>
 
 		<li><c:choose>
-				<c:when test="${not empty f:resource('siga.ex.manual.url')}">
-					<a class="dropdown-item" id="apostilaSiga"
-						href="${f:resource('siga.ex.manual.url')}" target="_blank">Manual</a>
+				<c:when test="${f:resource('siga.local') eq 'GOVSP'}">
+				 <a class="dropdown-item" id="apostilaSiga"
+						href="/siga/arquivos/Manual-Basico-de-Operacoes-Sistema-SP-Sem-Papel-Documentos-Digitais.pdf" target="_blank">Manual</a>
 				</c:when>
 				<c:otherwise>
 					<a class="dropdown-item" id="apostilaSiga"

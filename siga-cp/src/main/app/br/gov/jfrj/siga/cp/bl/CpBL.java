@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -253,6 +254,49 @@ public class CpBL {
 
 		return conf;
 	}
+	
+	public String alterarSenha(String cpf, String email, String matricula)
+			throws AplicacaoException {
+		
+		String resultado = "";
+		try {
+			if( Pattern.matches( "\\d+", cpf) && cpf.length() == 11) {
+				List<CpIdentidade> lista = null;
+				
+				if(matricula != null) {
+					final long longmatricula = MatriculaUtils.getParteNumericaDaMatricula(matricula);
+					DpPessoa pessoa = dao().consultarPorCpfMatricula(
+							Long.parseLong(cpf), longmatricula);
+					lista = dao().consultaIdentidades(pessoa);
+				}
+				
+				if(email != null) {
+					lista = dao().consultaIdentidadesPorCpfEmail(cpf, email);
+				}
+				
+				if(!lista.isEmpty()) {
+					lista = dao().consultaIdentidadesPorCpf(cpf);
+				}
+				if(!lista.isEmpty()) {
+					String[] senhaGerada = new String[1];
+					senhaGerada[0] = GeraMessageDigest.geraSenha();
+					for (CpIdentidade cpIdentidade : lista) {
+						Cp.getInstance().getBL().alterarSenhaDeIdentidade(cpIdentidade.getNmLoginIdentidade(),
+								cpIdentidade.getDpPessoa().getCpfPessoa().toString(), null,senhaGerada);
+					}
+					resultado = "OK";
+				} else {
+					resultado = "Usuário não localizado.";
+				}
+			} else {
+				resultado = "Usuário não localizado.";
+			}
+
+		} catch (AplicacaoException e) {
+			e.printStackTrace();
+		}
+		return resultado;
+	}
 
 	/**
 	 * Altera a senha da identidade.
@@ -290,9 +334,9 @@ public class CpBL {
 			CpIdentidade id = dao().consultaIdentidadeCadastrante(matricula,
 					true);
 			if (id != null) {
-				final String novaSenha = GeraMessageDigest.geraSenha();
-				if (senhaGerada != null) {
-					senhaGerada[0] = novaSenha;
+				String novaSenha = GeraMessageDigest.geraSenha();
+				if (senhaGerada[0] != null) {
+					novaSenha = senhaGerada[0];
 				}
 				try {
 					Date dt = dao().consultarDataEHoraDoServidor();

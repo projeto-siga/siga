@@ -532,7 +532,7 @@ public class Mesa {
 		}
 
 		if (SigaBaseProperties.getBooleanValue("siga.mesa.carrega.lotacao")) {
-			List<Object[]> lLota = dao.listarDocumentosPorPessoaOuLotacao(null,
+			List<Object[]> lLota = dao.listarDocumentosCxEntradaPorPessoaOuLotacao(null,
 					lotaTitular);
 	
 			for (Object[] reference : lLota) {

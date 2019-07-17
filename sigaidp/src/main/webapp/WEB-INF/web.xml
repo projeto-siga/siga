@@ -47,10 +47,6 @@
 			<param-value>SAMEORIGIN</param-value>
 		</init-param>
 		<init-param>
-			<param-name>X-XSS-Protection</param-name>
-			<param-value>1; mode=block</param-value>
-		</init-param>
-		<init-param>
 			<param-name>X-Content-Type-Options</param-name>
 			<param-value>nosniff</param-value>
 		</init-param>

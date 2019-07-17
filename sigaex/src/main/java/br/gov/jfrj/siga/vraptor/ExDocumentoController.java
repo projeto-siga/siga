@@ -773,7 +773,7 @@ public class ExDocumentoController extends ExController {
 				escapeHtml(jsonHierarquiaDeModelos));
 
 		// Desabilita a proteção contra injeção maldosa de html e js
-		//this.response.addHeader("X-XSS-Protection", "0");
+		this.response.addHeader("X-XSS-Protection", "0");
 		return exDocumentoDTO;
 	}
 

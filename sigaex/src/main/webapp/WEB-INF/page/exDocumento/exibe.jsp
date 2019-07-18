@@ -82,7 +82,6 @@
 			ifr.height = 300;
 		console.log("resize foi chamado!");
 	}
-
 </script>
 
 <c:if test="${not docVO.digital}">
@@ -119,7 +118,7 @@
 			<h2>
 				<c:if test="${empty ocultarCodigo}">${docVO.sigla}
 				</c:if>
-				<button type="button" name="voltar" onclick="javascript: history.back();" class="btn btn-secondary float-right ${hide_only_TRF2}" accesskey="r">Volta<u>r</u></button>
+				<button type="button" name="voltar" onclick="${(empty param.linkVolta) ? 'javascript:window.location.href=\'/siga\';' : 'javascript:'.concat(param.linkVolta) }" class="btn btn-secondary float-right ${hide_only_TRF2}" accesskey="r">Volta<u>r</u></button>
 			</h2>
 		</div>
 	</div>

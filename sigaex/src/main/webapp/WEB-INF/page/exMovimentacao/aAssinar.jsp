@@ -113,6 +113,7 @@
 
 					<c:if test="${siga_cliente == 'GOVSP'}">
 						<tags:assinatura_botoes assinar="${assinando}" voltar="true"
+							linkVoltar="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}"
 							autenticar="${autenticando}"
 							assinarComSenhaChecado="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
 							autenticarComSenhaChecado="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"

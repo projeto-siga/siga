@@ -348,7 +348,11 @@ public class Mesa {
 		}
 
 		public String getNome() {
-			return nome;
+			if (SigaMessages.isSigaSP() && nome.equals("Como Subscritor")) {
+				return "Responsável pela Assinatura";
+			} else {
+				return nome;
+			}
 		}
 
 		private final int id;

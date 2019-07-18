@@ -47,6 +47,7 @@ import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
@@ -674,9 +675,15 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		}
 			
 		List<DpPessoa> lista = CpDao.getInstance().consultarPorFiltroSemIdentidade(dpPessoa, 0, 0);
+		String cpfAnterior = "";
 		for (DpPessoa dpPessoa2 : lista) {
+			
+			if(!cpfAnterior.equals(dpPessoa2.getCpfPessoa().toString())) {
+				senhaGerada[0] = GeraMessageDigest.geraSenha();
+			}
 			Cp.getInstance().getBL().criarIdentidade(dpPessoa2.getSesbPessoa() + dpPessoa2.getMatricula(), dpPessoa2.getCpfFormatado(),
 					getIdentidadeCadastrante(), null, senhaGerada, Boolean.FALSE);
+			cpfAnterior = dpPessoa2.getCpfPessoa().toString();
 		}
 		this.result.redirectTo(this).enviaEmail(0, idOrgaoUsu, nome, cpfPesquisa, idLotacaoPesquisa);
 	}

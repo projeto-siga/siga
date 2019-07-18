@@ -40,4 +40,7 @@ public interface GiService extends Remote {
         
     @WebMethod
 	public String perfilAcessoPorCpf(String cpf);
+    
+    @WebMethod
+	public String esqueciSenha(String cpf, String email);
 }

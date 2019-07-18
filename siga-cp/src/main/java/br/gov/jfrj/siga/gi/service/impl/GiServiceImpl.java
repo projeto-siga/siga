@@ -317,4 +317,15 @@ public class GiServiceImpl implements GiService {
 		}
 		return resultado;
 	}
+	
+	@Override
+	public String esqueciSenha(String cpf, String email) {
+		String resultado = "";
+		try {
+			resultado = Cp.getInstance().getBL().alterarSenha(cpf, email, null);
+		} catch (Exception e) {
+			return "";
+		}
+		return resultado;
+	}
 }

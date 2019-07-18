@@ -32,7 +32,7 @@ public class BuscaTextualController extends SigaController {
 	 * @deprecated CDI eyes only
 	 */
 	public BuscaTextualController() {
-		this(null, null, null, null, null);
+		super();
 	}
 
 	@Inject

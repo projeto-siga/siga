@@ -94,17 +94,18 @@ public class CpDao extends ModeloDao {
 
 	public static final String CACHE_QUERY_SUBSTITUICAO = "querySubstituicao";
 	public static final String CACHE_QUERY_CONFIGURACAO = "queryConfiguracao";
-	public static final String CACHE_CORPORATIVO = "corporativo";
 	public static final String CACHE_QUERY_SECONDS = "querySeconds";
 	public static final String CACHE_QUERY_HOURS = "queryHours";
+	public static final String CACHE_CORPORATIVO = "corporativo";
+	public static final String CACHE_HOURS = "hours";
 	public static final String CACHE_SECONDS = "seconds";
+	
+
+	private static Map<String, CpServico> cacheServicos = null;
 
 	public static CpDao getInstance() {
 		return ModeloDao.getInstance(CpDao.class);
 	}
-	
-	static Map<String, CpServico> cacheServicos = null;
-
 
 	@SuppressWarnings("unchecked")
 	public List<CpOrgao> consultarPorFiltro(final CpOrgaoDaoFiltro o) {
@@ -189,20 +190,24 @@ public class CpDao extends ModeloDao {
 		return l.get(0);
 	}
 	
-	public synchronized void inicializarCacheDeServicos() {
-		cacheServicos = new TreeMap<>();
-		List<CpServico> l = listarTodos(CpServico.class, "siglaServico");
-		for (CpServico s : l) {
-			cacheServicos.put(s.getSigla(), s);
+	public void inicializarCacheDeServicos() {
+		synchronized (CpDao.class) {
+			cacheServicos = new TreeMap<>();
+			List<CpServico> l = listarTodos(CpServico.class, "siglaServico");
+			for (CpServico s : l) {
+				cacheServicos.put(s.getSigla(), s);
+			}
 		}
 	}
 	
 	public CpServico acrescentarServico(CpServico srv) {
-		iniciarTransacao();
-		CpServico srvGravado = gravar(srv);
-		commitTransacao();
-		cacheServicos.put(srv.getSigla(), srv);
-		return srvGravado;
+		synchronized (CpDao.class) {
+			iniciarTransacao();
+			CpServico srvGravado = gravar(srv);
+			commitTransacao();
+			cacheServicos.put(srv.getSigla(), srv);
+			return srvGravado;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -210,14 +215,13 @@ public class CpDao extends ModeloDao {
 		final Query query = em().createNamedQuery(
 				"consultarPorSiglaCpServico");
 		query.setParameter("siglaServico", o.getSiglaServico());
-		query.setParameter("idServicoPai", o.getCpServicoPai() == null ? 0 : o
+		query.setParameter("idServicoPai", o.getCpServicoPai() == null ? 0L : o
 				.getCpServicoPai().getIdServico());
 
 		// Renato: Comentei a linha abaixo pois nao entendi porque foi feito
 		// dessa forma.
 		// query.setFlushMode(FlushMode.MANUAL);
 		query.setHint("org.hibernate.cacheable", true);
-		query.setHint("org.hibernate.cacheRegion", true);
 		query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_HOURS);
 
 		final List<CpServico> l = query.getResultList();
@@ -1462,9 +1466,11 @@ public class CpDao extends ModeloDao {
 		CriteriaQuery<CpConfiguracao> q = cb().createQuery(CpConfiguracao.class);
 		Root<CpConfiguracao> c = q.from(CpConfiguracao.class);
 		q.select(c);
-		Predicate confsAtivas = cb().greaterThan(cb().parameter(Date.class, "hisDtIni"), desde);
-		Predicate confsInativas = cb().greaterThanOrEqualTo(cb().parameter(Date.class, "hisDtFim"), desde);
-		q.where(cb().or(confsAtivas, confsInativas));
+		if (desde != null) {
+			Predicate confsAtivas = cb().greaterThan(cb().parameter(Date.class, "hisDtIni"), desde);
+			Predicate confsInativas = cb().greaterThanOrEqualTo(cb().parameter(Date.class, "hisDtFim"), desde);
+			q.where(cb().or(confsAtivas, confsInativas));
+		}
 		return em().createQuery(q).getResultList();
 	}
 
@@ -1550,7 +1556,7 @@ public class CpDao extends ModeloDao {
 		Root<T> c = q.from(clazz);
 		q.select(c);
 		if (orderBy != null) {
-			q.orderBy(cb().asc(cb().parameter(clazz, orderBy)));
+			q.orderBy(cb().asc(c.get(orderBy)));
 		}
 		return em().createQuery(q).getResultList();
 	}
@@ -2002,7 +2008,7 @@ public class CpDao extends ModeloDao {
 					"consultarLotacaoAtualPelaLotacaoInicial");
 			qry.setParameter("idLotacaoIni", lotacao.getIdLotacaoIni());
 			qry.setHint("org.hibernate.cacheable", true); 
-			qry.setHint("org.hibernate.cacheRegion", CACHE_CORPORATIVO);
+			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
 			final DpLotacao lot = (DpLotacao) qry.getSingleResult();
 			return lot;
 		} catch (final IllegalArgumentException e) {
@@ -2019,7 +2025,7 @@ public class CpDao extends ModeloDao {
 					"consultarPessoaAtualPelaInicial");
 			qry.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
 			qry.setHint("org.hibernate.cacheable", true); 
-			qry.setHint("org.hibernate.cacheRegion", CACHE_CORPORATIVO);
+			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
 			final DpPessoa pes = (DpPessoa) qry.getSingleResult();
 			return pes;
 		} catch (final IllegalArgumentException e) {
@@ -2076,7 +2082,7 @@ public class CpDao extends ModeloDao {
 				"consultarPorIdInicialDpPessoaInclusiveFechadas");
 		qry.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
 		qry.setHint("org.hibernate.cacheable", true); 
-		qry.setHint("org.hibernate.cacheRegion", CACHE_CORPORATIVO);
+		qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
 		return qry.getResultList();
 	}
 

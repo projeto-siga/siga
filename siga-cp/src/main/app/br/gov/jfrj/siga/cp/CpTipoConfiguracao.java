@@ -33,7 +33,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 @Table(name = "CP_TIPO_CONFIGURACAO", schema = "CORPORATIVO")
 @Immutable
 @Cacheable
-@Cache(region = CpDao.CACHE_QUERY_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	/**

@@ -54,7 +54,7 @@ public class SubstituicaoController extends SigaController {
 	 * @deprecated CDI eyes only
 	 */
 	public SubstituicaoController() {
-		this(null, null, null, null);
+		super();
 	}
 
 	@Inject

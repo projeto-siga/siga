@@ -37,7 +37,7 @@ public class TestesController extends SigaController {
 	 * @deprecated CDI eyes only
 	 */
 	public TestesController() {
-		this(null, null, null, null, null);
+		super();
 	}
 
 	@Inject

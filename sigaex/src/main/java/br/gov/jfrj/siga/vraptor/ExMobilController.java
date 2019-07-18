@@ -84,7 +84,7 @@ public class ExMobilController extends
 	 * @deprecated CDI eyes only
 	 */
 	public ExMobilController() {
-		this(null, null, null, null);
+		super();
 	}
 
 	@Inject

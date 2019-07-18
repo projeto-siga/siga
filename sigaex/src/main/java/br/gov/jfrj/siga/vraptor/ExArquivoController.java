@@ -69,7 +69,7 @@ public class ExArquivoController extends ExController {
 	 * @deprecated CDI eyes only
 	 */
 	public ExArquivoController() {
-		this(null, null, null, null, null, null);
+		super();
 	}
 
 	@Inject

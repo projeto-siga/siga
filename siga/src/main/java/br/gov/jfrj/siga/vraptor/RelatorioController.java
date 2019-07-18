@@ -56,7 +56,7 @@ public class RelatorioController extends SigaController {
 	 * @deprecated CDI eyes only
 	 */
 	public RelatorioController() {
-		this(null, null, null, null);
+		super();
 	}
 
 	@Inject

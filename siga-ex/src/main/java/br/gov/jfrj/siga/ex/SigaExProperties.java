@@ -33,8 +33,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.prop.ext.ModeloPropriedade;
+import br.gov.jfrj.siga.model.prop.ModeloPropriedade;
 
 public class SigaExProperties extends ModeloPropriedade {
 	/*

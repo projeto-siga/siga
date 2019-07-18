@@ -49,7 +49,7 @@ public class GiInterceptor implements Interceptor {
 		try {
 			stack.next(method, instance);
 		} finally {
-			ContextoPersistencia.setEntityManager(null);
+			// ContextoPersistencia.setEntityManager(null);
 		}
 	}
 

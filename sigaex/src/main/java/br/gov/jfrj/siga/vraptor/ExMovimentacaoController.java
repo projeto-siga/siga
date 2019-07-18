@@ -100,7 +100,7 @@ public class ExMovimentacaoController extends ExController {
 	 * @deprecated CDI eyes only
 	 */
 	public ExMovimentacaoController() {
-		this(null, null, null, null, null, null, null);
+		super();
 	}
 
 	@Inject

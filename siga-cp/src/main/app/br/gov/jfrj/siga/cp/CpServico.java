@@ -36,7 +36,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
 @Table(name = "CP_SERVICO", schema = "CORPORATIVO")
 @Immutable
 @Cacheable
-@Cache(region = CpDao.CACHE_QUERY_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpServico extends AbstractCpServico implements Selecionavel {
 
 	/**

@@ -59,7 +59,7 @@ public class FeriadoController extends SigaController {
 	 * @deprecated CDI eyes only
 	 */
 	public FeriadoController() {
-		this(null, null, null, null);
+		super();
 	}
 
 	@Inject

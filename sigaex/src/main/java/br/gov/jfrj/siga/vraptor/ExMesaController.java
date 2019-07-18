@@ -46,7 +46,7 @@ public class ExMesaController extends ExController {
 	 * @deprecated CDI eyes only
 	 */
 	public ExMesaController() {
-		this(null, null, null, null, null, null);
+		super();
 	}
 
 	@Inject

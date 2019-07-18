@@ -51,7 +51,7 @@ public class AdminController extends SigaController {
 	 * @deprecated CDI eyes only
 	 */
 	public AdminController() {
-		this(null, null, null, null);
+		super();
 	}
 
 	@Inject

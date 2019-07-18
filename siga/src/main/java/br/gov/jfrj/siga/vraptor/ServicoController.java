@@ -93,7 +93,7 @@ public class ServicoController 	extends SigaController {
 	 * @deprecated CDI eyes only
 	 */
 	public ServicoController() {
-		this(null, null, null, null);
+		super();
 	}
 
 	@Inject

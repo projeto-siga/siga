@@ -40,7 +40,7 @@ public class ExFormulariosReportController extends ExController {
 	 * @deprecated CDI eyes only
 	 */
 	public ExFormulariosReportController() {
-		this(null, null, null, null, null, null, null);
+		super();
 	}
 
 	@Inject

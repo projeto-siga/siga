@@ -55,7 +55,7 @@ public class ExUtilController extends ExController {
 	 * @deprecated CDI eyes only
 	 */
 	public ExUtilController() {
-		this(null, null, null, null, null, null, null);
+		super();
 	}
 
 	@Inject

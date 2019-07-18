@@ -30,7 +30,7 @@ public class ExTemporalidadeController extends ExController {
 	 * @deprecated CDI eyes only
 	 */
 	public ExTemporalidadeController() {
-		this(null, null, null, null, null, null);
+		super();
 	}
 
 	@Inject

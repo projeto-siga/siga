@@ -47,7 +47,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	 * @deprecated CDI eyes only
 	 */
 	public DpLotacaoController() {
-		this(null, null, null, null, null);
+		super();
 	}
 
 	@Inject

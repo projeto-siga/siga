@@ -48,7 +48,7 @@ public class ModeloController extends SigaController {
 	 * @deprecated CDI eyes only
 	 */
 	public ModeloController() {
-		this(null, null, null, null);
+		super();
 	}
 
 	@Inject

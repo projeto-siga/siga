@@ -25,7 +25,7 @@ public class XjusController extends SigaController {
 	 * @deprecated CDI eyes only
 	 */
 	public XjusController() {
-		this(null, null, null, null, null);
+		super();
 	}
 
 	@Inject

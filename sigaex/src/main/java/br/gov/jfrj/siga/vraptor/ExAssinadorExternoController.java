@@ -73,7 +73,7 @@ public class ExAssinadorExternoController extends ExController {
 	 * @deprecated CDI eyes only
 	 */
 	public ExAssinadorExternoController() {
-		this(null, null, null, null, null, null, null);
+		super();
 	}
 
 	@Inject	public ExAssinadorExternoController(HttpServletRequest request, HttpServletResponse response,

@@ -29,7 +29,7 @@ public class ExFormaDocumentoController extends ExController {
 	 * @deprecated CDI eyes only
 	 */
 	public ExFormaDocumentoController() {
-		this(null, null, null, null, null, null);
+		super();
 	}
 
 	@Inject

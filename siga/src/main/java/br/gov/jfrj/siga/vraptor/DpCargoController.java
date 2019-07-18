@@ -42,7 +42,7 @@ public class DpCargoController extends
 	 * @deprecated CDI eyes only
 	 */
 	public DpCargoController() {
-		this(null, null, null, null, null);
+		super();
 	}
 
 	@Inject

@@ -64,6 +64,13 @@ public class ExController extends SigaController {
 		}
 	}
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExController() {
+		super();
+	}
+
 	public ExController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, CpDao dao, SigaObjects so,
 			EntityManager em) {
 		super(request, result, dao, so, em);

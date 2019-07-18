@@ -33,7 +33,7 @@ public class GiControllerSupport extends SigaController {
 	 * @deprecated CDI eyes only
 	 */
 	public GiControllerSupport() {
-		this(null, null, null, null, null);
+		super();
 	}
 
 	@Inject

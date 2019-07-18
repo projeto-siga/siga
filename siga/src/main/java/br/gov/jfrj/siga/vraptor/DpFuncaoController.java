@@ -41,7 +41,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 	 * @deprecated CDI eyes only
 	 */
 	public DpFuncaoController() {
-		this(null, null, null, null);
+		super();
 	}
 
 	@Inject

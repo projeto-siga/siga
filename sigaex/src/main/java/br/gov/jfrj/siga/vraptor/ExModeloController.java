@@ -51,7 +51,7 @@ public class ExModeloController extends ExSelecionavelController {
 	 * @deprecated CDI eyes only
 	 */
 	public ExModeloController() {
-		this(null, null, null, null, null);
+		super();
 	}
 
 	@Inject

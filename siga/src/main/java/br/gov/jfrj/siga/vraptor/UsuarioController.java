@@ -36,7 +36,7 @@ public class UsuarioController extends SigaController {
 	 * @deprecated CDI eyes only
 	 */
 	public UsuarioController() {
-		this(null, null, null, null);
+		super();
 	}
 
 	@Inject

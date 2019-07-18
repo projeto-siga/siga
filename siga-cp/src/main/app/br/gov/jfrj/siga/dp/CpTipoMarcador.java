@@ -35,7 +35,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 @Entity
 @Immutable
 @Cacheable
-@Cache(region = CpDao.CACHE_QUERY_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "CP_TIPO_MARCADOR", schema = "CORPORATIVO")
 public class CpTipoMarcador extends AbstractCpTipoMarcador {
 	public static final long TIPO_MARCADOR_SISTEMA = 1L;

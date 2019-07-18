@@ -44,7 +44,7 @@ public class PerfilJEEController extends GrupoController {
 	 * @deprecated CDI eyes only
 	 */
 	public PerfilJEEController() {
-		this(null, null, null, null);
+		super();
 	}
 
 	@Inject

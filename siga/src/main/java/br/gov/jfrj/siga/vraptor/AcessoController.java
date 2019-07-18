@@ -73,7 +73,7 @@ public class AcessoController extends GiControllerSupport {
 	 * @deprecated CDI eyes only
 	 */
 	public AcessoController() {
-		this(null, null, null, null);
+		super();
 	}
 
 	@Inject

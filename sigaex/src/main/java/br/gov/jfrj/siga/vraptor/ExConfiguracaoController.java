@@ -63,7 +63,7 @@ public class ExConfiguracaoController extends ExController {
 	 * @deprecated CDI eyes only
 	 */
 	public ExConfiguracaoController() {
-		this(null, null, null, null, null, null);
+		super();
 	}
 
 	@Inject

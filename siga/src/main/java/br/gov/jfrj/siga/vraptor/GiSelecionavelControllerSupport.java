@@ -36,7 +36,7 @@ public abstract class GiSelecionavelControllerSupport<T extends Selecionavel, Da
 	 * @deprecated CDI eyes only
 	 */
 	public GiSelecionavelControllerSupport() {
-		this(null, null, null, null, null);
+		super();
 	}
 
 	@Inject

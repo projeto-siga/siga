@@ -47,7 +47,7 @@ public class GrupoDeEmailController extends GrupoController {
 	 * @deprecated CDI eyes only
 	 */
 	public GrupoDeEmailController() {
-		this(null, null, null, null);
+		super();
 	}
 
 	@Inject

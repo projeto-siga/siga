@@ -56,7 +56,7 @@ public class ExEmailNotificacaoController extends SigaController{
 	 * @deprecated CDI eyes only
 	 */
 	public ExEmailNotificacaoController() {
-		this(null, null, null, null);
+		super();
 	}
 
 	@Inject

@@ -31,7 +31,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
-import org.hibernate.SessionFactory;
 import org.hibernate.proxy.HibernateProxy;
 import org.mvel2.MVEL;
 
@@ -899,7 +898,7 @@ public class CpConfiguracaoBL {
 					.podePorConfiguracao(titular, lotaTitular, srvRecuperado,
 							CpTipoConfiguracao.TIPO_CONFIG_UTILIZAR_SERVICO);
 		} catch (Exception e) {
-			return false;
+			throw new RuntimeException("Não foi possível calcular acesso ao serviço " + servicoPath, e);
 		}
 	}
 

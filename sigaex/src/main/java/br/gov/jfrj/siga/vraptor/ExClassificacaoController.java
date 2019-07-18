@@ -64,7 +64,7 @@ public class ExClassificacaoController
 	 * @deprecated CDI eyes only
 	 */
 	public ExClassificacaoController() {
-		this(null, null, null, null);
+		super();
 	}
 
 	@Inject

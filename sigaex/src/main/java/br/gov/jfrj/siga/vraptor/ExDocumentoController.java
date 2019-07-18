@@ -110,7 +110,7 @@ public class ExDocumentoController extends ExController {
 	 * @deprecated CDI eyes only
 	 */
 	public ExDocumentoController() {
-		this(null, null, null, null, null, null);
+		super();
 	}
 
 	@Inject

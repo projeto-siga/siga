@@ -160,7 +160,7 @@
 				<div>
 					<c:if test="${f:resource('isWorkflowEnabled')}">
 						<c:if
-							test="${ (primeiroMobil) and (docVO.tipoFormaDocumento == 'processo_administrativo')}">
+							test="${ (primeiroMobil == true) and (docVO.tipoFormaDocumento == 'processo_administrativo')}">
 							<div id="${docVO.sigla}" depende=";wf;" class="wf_div"></div>
 							<!--ajax:${doc.codigo}-${i}-->
 							<!--/ajax:${doc.codigo}-${i}-->

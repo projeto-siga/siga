@@ -44,7 +44,7 @@ public class ExTipoDespachoController extends ExController {
 	 * @deprecated CDI eyes only
 	 */
 	public ExTipoDespachoController() {
-		this(null, null, null, null, null, null);
+		super();
 	}
 
 	@Inject

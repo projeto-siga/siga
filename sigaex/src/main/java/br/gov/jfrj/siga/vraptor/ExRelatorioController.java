@@ -93,7 +93,7 @@ public class ExRelatorioController extends ExController {
 	 * @deprecated CDI eyes only
 	 */
 	public ExRelatorioController() {
-		this(null, null, null, null, null, null);
+		super();
 	}
 
 	@Inject

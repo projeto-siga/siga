@@ -48,7 +48,7 @@ public class ExGadgetController extends ExController {
 	 * @deprecated CDI eyes only
 	 */
 	public ExGadgetController() {
-		this(null, null, null, null, null, null);
+		super();
 	}
 
 	@Inject

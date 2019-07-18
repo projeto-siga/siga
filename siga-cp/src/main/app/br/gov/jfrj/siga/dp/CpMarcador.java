@@ -37,7 +37,7 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 @Entity
 @Immutable
 @Cacheable
-@Cache(region = CpDao.CACHE_QUERY_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(region = CpDao.CACHE_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "CP_MARCADOR", schema = "CORPORATIVO")
 public class CpMarcador extends AbstractCpMarcador {
 

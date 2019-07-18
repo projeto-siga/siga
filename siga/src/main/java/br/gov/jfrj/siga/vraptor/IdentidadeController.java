@@ -26,7 +26,7 @@ public class IdentidadeController extends GiControllerSupport {
 	 * @deprecated CDI eyes only
 	 */
 	public IdentidadeController() {
-		this(null, null, null, null);
+		super();
 	}
 
 	@Inject

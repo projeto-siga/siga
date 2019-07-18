@@ -28,6 +28,7 @@ import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -130,7 +131,7 @@ public class ExDao extends CpDao {
 		final Query query = em().createNamedQuery(
 				"consultarDocsInclusosNoBoletim");
 		query.setHint("org.hibernate.cacheable", true);
-		query.setHint("org.hibernate.cacheRegion", ExDao.CACHE_EX);
+		query.setHint("org.hibernate.cacheRegion", ExDao.CACHE_QUERY_SECONDS);
 
 		query.setParameter("idDoc", doc.getIdDoc());
 		return query.getResultList();
@@ -1179,12 +1180,12 @@ public class ExDao extends CpDao {
 		}
 		// pais = Arrays.copyOf(pais, pais.length+1);
 		// pais[pais.length-1]= exClass.getCodificacao();
-
+		
 		Query q = em()
 				.createNamedQuery("consultarDescricaoExClassificacao");
-		q.setParameter("listaCodificacao", pais);
+		q.setParameter("listaCodificacao", Arrays.asList(pais));
 		q.setHint("org.hibernate.cacheable", true);
-		q.setHint("org.hibernate.cacheRegion", ExDao.CACHE_EX);
+		q.setHint("org.hibernate.cacheRegion", ExDao.CACHE_QUERY_SECONDS);
 		
 		List<String> result = q.getResultList();
 		StringBuffer sb = new StringBuffer();
@@ -1341,8 +1342,8 @@ public class ExDao extends CpDao {
 								+ " inner join marca.exMobil mobil"
 								+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
 								+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
-								+ (titular != null ? " and (marca.dpPessoaIni = :titular)"
-										: " and (marca.dpLotacaoIni = :lotaTitular)"));
+								+ (titular != null ? " and (marca.dpPessoaIni.idPessoa = :titular)"
+										: " and (marca.dpLotacaoIni.idLotacao = :lotaTitular)"));
 
 		if (titular != null)
 			query.setParameter("titular", titular.getIdPessoaIni());

@@ -43,6 +43,13 @@ public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltro
 
 	private static ResourceBundle bundle;
 
+	/**
+	 * @deprecated CDI eyes only
+	 */
+	public ExSelecionavelController() {
+		super();
+	}
+
 	public ExSelecionavelController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
 	}

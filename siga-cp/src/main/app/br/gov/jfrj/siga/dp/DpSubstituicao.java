@@ -41,7 +41,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 
 @Entity
 @Table(name = "DP_SUBSTITUICAO", schema = "CORPORATIVO")
-@Cache(region = CpDao.CACHE_QUERY_SUBSTITUICAO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@Cache(region = CpDao.CACHE_SECONDS, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class DpSubstituicao extends AbstractDpSubstituicao implements
 		Serializable {
 

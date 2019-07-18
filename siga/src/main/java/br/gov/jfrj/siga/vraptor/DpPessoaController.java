@@ -76,7 +76,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	 * @deprecated CDI eyes only
 	 */
 	public DpPessoaController() {
-		this(null, null, null, null, null);
+		super();
 	}
 
 	@Inject

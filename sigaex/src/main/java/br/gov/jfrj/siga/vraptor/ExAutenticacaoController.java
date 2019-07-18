@@ -51,7 +51,7 @@ public class ExAutenticacaoController extends ExController {
 	 * @deprecated CDI eyes only
 	 */
 	public ExAutenticacaoController() {
-		this(null, null, null, null, null, null);
+		super();
 	}
 
 	@Inject

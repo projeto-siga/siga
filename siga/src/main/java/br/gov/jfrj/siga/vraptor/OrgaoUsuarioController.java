@@ -26,7 +26,7 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 	 * @deprecated CDI eyes only
 	 */
 	public OrgaoUsuarioController() {
-		this(null, null, null, null);
+		super();
 	}
 
 	@Inject

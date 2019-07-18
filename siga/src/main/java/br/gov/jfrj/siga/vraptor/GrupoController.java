@@ -77,7 +77,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * @deprecated CDI eyes only
 	 */
 	public GrupoController() {
-		this(null, null, null, null, null);
+		super();
 	}
 
 	@Inject

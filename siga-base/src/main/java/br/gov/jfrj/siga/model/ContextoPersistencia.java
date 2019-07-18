@@ -14,7 +14,10 @@ public class ContextoPersistencia {
 	}
 
 	static public EntityManager em() {
-		return emByThread.get();
+		EntityManager em = emByThread.get();
+		if (em == null) 
+			throw new RuntimeException("EM nulo!");
+		return em;
 	}
 
 	static public void flushTransaction() {

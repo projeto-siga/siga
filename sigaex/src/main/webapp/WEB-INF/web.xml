@@ -103,17 +103,7 @@
 	<filter-mapping>
 		<filter-name>vraptor</filter-name>
 		<url-pattern>/app/*</url-pattern>
-		<dispatcher>FORWARD</dispatcher>
-		<dispatcher>REQUEST</dispatcher>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>vraptor</filter-name>
 		<url-pattern>/public/app/*</url-pattern>
-		<dispatcher>FORWARD</dispatcher>
-		<dispatcher>REQUEST</dispatcher>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>vraptor</filter-name>
 		<url-pattern>*.action</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>

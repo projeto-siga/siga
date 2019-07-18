@@ -387,7 +387,7 @@ public class Mesa {
 
 			r.codigo = mobil.getCodigoCompacto();
 			r.sigla = mobil.getSigla();
-			r.descr = mobil.doc().getDescrCurta();
+			r.descr = mobil.doc().getDescrCurta(80);
 
 			if (mobil.doc().getSubscritor() != null
 					&& mobil.doc().getSubscritor().getLotacao() != null)

@@ -425,8 +425,8 @@ public class CpBL {
 						novaSenha = GeraMessageDigest.geraSenha();
 					}
 
-					if (senhaGerada != null) {
-						senhaGerada[0] = novaSenha;
+					if (senhaGerada[0] != null) {
+						novaSenha = senhaGerada[0];
 					}
 					try {
 						CpIdentidade idNova = new CpIdentidade();

@@ -7,7 +7,7 @@
 		<version>1.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>siga-vraptor-module-old</artifactId>
-	<name>siga-vraptor-module</name>
+	<name>siga-vraptor-module-old</name>
 
 	<dependencies>
 

@@ -15,10 +15,10 @@
 		<module>siga-sinc-lib</module>
 		<module>siga-cp-sinc</module>
 		<module>siga-ldap</module>
+		<module>siga-vraptor-module-old</module>
 		<module>siga-vraptor-module</module>
 		<module>siga-dump</module>
 		<module>siga</module>
-		<module>sigaidp</module>
 		<module>sigawf</module>
 		<module>siga-wf</module>
 		<module>sigaex</module>
@@ -36,7 +36,6 @@
  		<module>siga-integration-test</module> -->
     	<module>siga-ldap-cli</module>
 		<module>siga-jwt</module>
-		<module>sigatp</module>
   </modules>
 
 

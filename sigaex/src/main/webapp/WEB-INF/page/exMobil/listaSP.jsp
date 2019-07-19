@@ -173,7 +173,7 @@
 									<c:choose>
 										<c:when test="${podeAcessar eq true}">
 											<a
-												href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento[1].sigla}">
+												href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento[1].sigla}&linkVolta=history.back();">
 												${documento[1].codigo} </a>
 										</c:when>
 										<c:otherwise> 

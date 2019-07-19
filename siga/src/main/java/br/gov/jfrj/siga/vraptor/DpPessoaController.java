@@ -226,6 +226,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				dpPessoa.setCpf(Long.valueOf(cpfPesquisa.replace(".", "").replace("-", "")));
 			}
 			dpPessoa.setBuscarFechadas(Boolean.TRUE);
+			dpPessoa.setId(Long.valueOf(0));
 			setItens(CpDao.getInstance().consultarPorFiltro(dpPessoa, offset, 15));
 			result.include("itens", getItens());
 			Integer tamanho = dao().consultarQuantidade(dpPessoa);
@@ -261,6 +262,25 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				pessoa.setDataFimPessoa(calendar.getTime());
 				
 			} else {//ativar
+				//não pode ativar caso já exista uma pessoa com mesmo órgão, cargo, função de confiança, lotação e cpf
+				
+				DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
+				dpPessoa.setIdOrgaoUsu(pessoa.getOrgaoUsuario().getId());
+				dpPessoa.setCargo(pessoa.getCargo());
+				dpPessoa.setFuncaoConfianca(pessoa.getFuncaoConfianca());
+				dpPessoa.setLotacao(pessoa.getLotacao());
+				dpPessoa.setCpf(pessoa.getCpfPessoa());
+				dpPessoa.setNome("");
+				dpPessoa.setId(id);
+				
+				dpPessoa.setBuscarFechadas(Boolean.FALSE);
+				Integer tamanho = dao().consultarQuantidade(dpPessoa);
+				
+				if(tamanho > 0) {
+					throw new AplicacaoException("Já existe outro usuário ativo com estes dados: Órgão, Cargo, Função, Unidade e CPF");
+				}
+				
+				
 				pessoa.setDataFimPessoa(null);
 			}
 			
@@ -515,6 +535,23 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			pessoa.setFuncaoConfianca(null);
 		}
 		pessoa.setSesbPessoa(ou.getSigla());
+		
+		//ÓRGÃO / CARGO / FUNÇÃO DE CONFIANÇA / LOTAÇÃO e CPF iguais.
+		DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
+		dpPessoa.setIdOrgaoUsu(pessoa.getOrgaoUsuario().getId());
+		dpPessoa.setCargo(pessoa.getCargo());
+		dpPessoa.setFuncaoConfianca(pessoa.getFuncaoConfianca());
+		dpPessoa.setLotacao(pessoa.getLotacao());
+		dpPessoa.setCpf(pessoa.getCpfPessoa());
+		dpPessoa.setNome("");
+		dpPessoa.setId(id);
+		
+		dpPessoa.setBuscarFechadas(Boolean.FALSE);
+		Integer tamanho = dao().consultarQuantidade(dpPessoa);
+		
+		if(tamanho > 0) {
+			throw new AplicacaoException("Usuário já cadastrado com estes dados: Órgão, Cargo, Função, Unidade e CPF");
+		}
 		
 		try {
 			dao().iniciarTransacao();

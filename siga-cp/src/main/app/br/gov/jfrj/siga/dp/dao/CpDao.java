@@ -1184,9 +1184,14 @@ public class CpDao extends ModeloDao {
 		try {
 			final Query query;
 
-			if (!flt.isBuscarFechadas())
+			if (!flt.isBuscarFechadas()) {
 				query = getSessao().getNamedQuery("consultarPorFiltroDpPessoa");
-			else
+				if(flt.getId() != null && !"".equals(flt.getId())) {
+					query.setLong("id", Long.valueOf(flt.getId()));
+				} else {
+					query.setLong("id", 0);
+				}
+			} else
 				query = getSessao().getNamedQuery(
 						"consultarPorFiltroDpPessoaInclusiveFechadas");
 
@@ -1256,10 +1261,14 @@ public class CpDao extends ModeloDao {
 		try {
 			final Query query;
 
-			if (!flt.isBuscarFechadas())
+			if (!flt.isBuscarFechadas()) {
 				query = getSessao()
 						.getNamedQuery("consultarQuantidadeDpPessoa");
-			else
+				if (flt.getId() != null)
+					query.setLong("id", flt.getId());
+				else
+					query.setLong("id", 0);
+			} else
 				query = getSessao().getNamedQuery(
 						"consultarQuantidadeDpPessoaInclusiveFechadas");
 

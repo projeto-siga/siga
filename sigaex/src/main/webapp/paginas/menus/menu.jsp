@@ -45,9 +45,9 @@
 			<c:catch>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-					<li><a class="dropdown-item"
+					<span class="${hide_only_GOVSP}"><li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/assinar_despacho_lote">Assinar
-							Despacho em lote</a></li>
+							Despacho em lote</a></li></span>
 				</c:if>
 			</c:catch>
 			<c:catch>

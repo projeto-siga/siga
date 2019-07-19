@@ -96,6 +96,7 @@ import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.SetUtils;
 import br.gov.jfrj.siga.bluc.service.BlucService;
@@ -2890,7 +2891,8 @@ public class ExBL extends CpBL {
 
 		} else if (movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM
 				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO
-				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA) {
+				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA
+				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA) {
 			if (!getComp().podeCancelar(titular, lotaTitular, mob, movCancelar))
 				throw new AplicacaoException(
 						"não é permitido cancelar esta movimentação.");
@@ -3180,9 +3182,15 @@ public class ExBL extends CpBL {
 
 			if (doc.getOrgaoUsuario() == null)
 				doc.setOrgaoUsuario(doc.getLotaCadastrante().getOrgaoUsuario());
-
-			if (doc.getNumExpediente() == null)
-				doc.setNumExpediente(obterProximoNumero(doc));
+			
+			/* Desabilita para São Paulo numeração realizada pelo Java. Numeração controlada pela table EX_DOCUMENTO_NUMERACAO*/ 
+			if (!SigaMessages.isSigaSP()) {
+				if (doc.getNumExpediente() == null)
+					doc.setNumExpediente(obterProximoNumero(doc));
+			} else{
+				//Set Ano da Emissao do Documento
+				doc.setAnoEmissao((long) c.get(Calendar.YEAR));
+			}
 
 			doc.setDtFinalizacao(dt);
 
@@ -3201,7 +3209,12 @@ public class ExBL extends CpBL {
 			}
 
 			Set<ExVia> setVias = doc.getSetVias();
-
+			
+			//Libera gravação e obtém numero gerado para processar documento
+			dao().gravar(doc);
+			ContextoPersistencia.flushTransaction();
+			doc.setNumExpediente(obterNumeroGerado(doc));
+			
 			processar(doc, false, false);
 
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
@@ -3264,6 +3277,12 @@ public class ExBL extends CpBL {
 			}
 		}
 
+		return num;
+	}
+	
+	
+	public Long obterNumeroGerado(ExDocumento doc) throws Exception {
+		Long num = dao().obterNumeroGerado(doc);
 		return num;
 	}
 
@@ -5560,7 +5579,30 @@ public class ExBL extends CpBL {
 			mov.setAuditIP(HttpRequestUtils.getIpAudit(ri.getRequest()));
 		}
 	}
-	
+
+	public void registrarCiencia(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExMobil mob,
+			final Date dtMov, DpLotacao lotaResponsavel,
+			final DpPessoa responsavel, final DpPessoa subscritor,
+			final String descrMov) throws AplicacaoException {
+
+		try {
+			iniciarAlteracao();
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA,
+					cadastrante, lotaCadastrante, mob, dtMov, cadastrante,
+					null, null, null, null);
+
+			mov.setDescrMov(descrMov);
+
+			gravarMovimentacao(mov);
+			concluirAlteracao(mov.getExMobil());
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao fazer ciência.", 0, e);
+		}
+	}
+		
 	private final int HASH_TIMEOUT_MILLISECONDS = 5000;
 	
 	private static class TimestampPostRequest implements ISwaggerRequest {

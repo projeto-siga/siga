@@ -49,6 +49,7 @@ import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
@@ -343,9 +344,12 @@ public class ExMobilController extends
 				texto.append(e.getNmMod());
 			}
 			texto.append(";");
-				
-			descricao = Ex.getInstance().getBL().descricaoSePuderAcessar(e, getTitular(), getTitular().getLotacao());
 			
+			if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+				descricao = e.getDescrDocumento();
+			} else {
+				descricao = Ex.getInstance().getBL().descricaoSePuderAcessar(e, getTitular(), getTitular().getLotacao());
+			}
 			if(descricao != null) {
 				texto.append(descricao.replaceAll("\n", "").replaceAll("\t", "").replaceAll("\r",""));
 			}
@@ -622,7 +626,13 @@ public class ExMobilController extends
 	private List<String> getListaAnos() {
 		final ArrayList<String> lst = new ArrayList<String>();
 		final Calendar cal = Calendar.getInstance();
-		for (Integer ano = cal.get(Calendar.YEAR); ano >= 1990; ano--) {
+		
+		Integer anoAux = 1990;
+		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+			anoAux = 2018;
+		}
+		
+		for (Integer ano = cal.get(Calendar.YEAR); ano >= anoAux; ano--) {
 			lst.add(ano.toString());
 		}
 		return lst;

@@ -188,6 +188,8 @@ public class ExTipoMovimentacao extends AbstractExTipoMovimentacao implements Se
 
 	final static public long TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA = 65;
 	
+	final static public long TIPO_MOVIMENTACAO_CIENCIA = 66;
+	
 	final static public long TIPO_MOVIMENTACAO_AUTUAR = 67;
 
 	public static boolean hasDespacho(long id) {

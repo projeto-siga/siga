@@ -75,6 +75,9 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "			where org.idOrgaoUsu = :idOrgaoUsu"
 				+ "			and frm.idFormaDoc = :idFormaDoc"
 				+ "			and doc.anoEmissao = :anoEmissao"),
+		@NamedQuery(name = "obterNumeroGerado", query = "select doc.numExpediente"
+						+ "			from ExDocumento doc"
+						+ "			where doc.idDoc = :idDoc"),
 		@NamedQuery(name = "consultarPorSiglaDocumento", query = "from ExDocumento doc"
 				+ "		where ("
 				+ "		doc.anoEmissao=:anoEmissao"

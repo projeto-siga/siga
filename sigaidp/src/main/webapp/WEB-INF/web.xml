@@ -29,6 +29,33 @@
 		<filter-name>RequestLoggerFilter</filter-name>
 		<url-pattern>*</url-pattern>
 	</filter-mapping>
+
+
+	<filter>
+		<filter-name>ResponseHeaderFilterEx</filter-name>
+		<filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
+		<init-param>
+			<param-name>Cache-Control</param-name>
+			<param-value>no-cache, no-store, private, must-revalidate, max-age=0, no-transform</param-value>
+		</init-param>
+		<init-param>
+			<param-name>Pragma</param-name>
+			<param-value>no-cache</param-value>
+		</init-param>
+		<init-param>
+			<param-name>X-Frame-Options</param-name>
+			<param-value>SAMEORIGIN</param-value>
+		</init-param>
+		<init-param>
+			<param-name>X-Content-Type-Options</param-name>
+			<param-value>nosniff</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilterEx</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>jwt</web-resource-name>

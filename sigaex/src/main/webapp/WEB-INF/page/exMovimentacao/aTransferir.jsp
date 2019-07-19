@@ -2,7 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
@@ -113,7 +113,7 @@ $(function(){
 				<div class="row">
 					<div class="col-sm">
 						<div class="form-group">
-							<span style="color: red">Atenção: O trâmite para órgão externo não acarreta o envio digital do documento. Portanto, além de fazer esta operação, será necessário imprimir o documento e remetê-lo fisicamente ou realizar o trâmite por algum outro sistema em uso pelo órgão destinatário.</span>
+							<span style="color: red"><fmt:message key="tela.tramitar.atencao"/></span>
 						</div>
 					</div>
 				</div>
@@ -156,20 +156,21 @@ $(function(){
 							<small class="form-text text-muted">Atenção: somente preencher a data de devolução se a intenção for, realmente, que o documento seja devolvido até esta data.</small>
 						</div>
 					</div>
+					<c:if test="${tipoResponsavel == 3}">
+					<c:if test="${siga_cliente == 'GOVSP'}">
 					<div class="col-sm-3">
 						<div class="form-group">
 							<div class="form-check form-check-inline mt-4">
 							  <input class="form-check-input" type="checkbox" name="protocolo" id="protocolo" value="mostrar" <c:if test="${protocolo}">checked</c:if>/>
-							  <label class="form-check-label" for="protocolo">Mostrar protocolo ao concluir o trâmite</label>
+							  <label class="form-check-label" for="protocolo"><fmt:message key="tela.tramitar.checkbox"/></label>
 							</div>
 						</div>
 					</div>
-					<c:if test="${tipoResponsavel == 3}">
+					</c:if>
 					<div class="col-sm-4">
 						<div class="form-group">
 							<label>Observação</label> 
-							<input type="text" name="dtDevolucaoMovString"onblur="javascript:verifica_data(this,0);" value="${dtDevolucaoMovString}" class="form-control"/>					 
-							<small class="form-text text-muted">Atenção: somente preencher a data de devolução se a intenção for, realmente, que o documento seja devolvido até esta data.</small>
+							<input type="text" size="30" name="obsOrgao" value="${obsOrgao}" class="form-control"/>			 
 						</div>
 					</div>
 					</c:if>

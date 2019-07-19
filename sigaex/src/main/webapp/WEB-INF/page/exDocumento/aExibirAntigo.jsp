@@ -120,24 +120,24 @@
 							</tr>
 							<tr>
 								<th class="text-left">
-									Lotação
+									<fmt:message key="usuario.lotacao"/>
 								</th>
 								<th class="text-left">
-									Pessoa
+									<fmt:message key="usuario.pessoa"/>
 								</th>
 								<c:if test="${ (exibirCompleto == 'true')}">
 									<th class="text-left">
-										Lotação
+										<fmt:message key="usuario.lotacao"/>
 									</th>
 									<th class="text-left">
-										Pessoa
+										<fmt:message key="usuario.pessoa"/>
 									</th>
 								</c:if>
 								<th class="text-left">
-									Lotação
+									<fmt:message key="usuario.lotacao"/>
 								</th>
 								<th class="text-left">
-									Pessoa
+									<fmt:message key="usuario.pessoa"/>
 								</th>
 							</tr>
 						</thead>

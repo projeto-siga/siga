@@ -537,6 +537,112 @@ public class CpBL {
 					"Senha Atual não confere e/ou Senha nova diferente de confirmação");
 		}
 	}
+	
+	public CpIdentidade trocarSenhaDeIdentidadeGovSp(String senhaAtual,
+			String senhaNova, String senhaConfirma, String nomeUsuario,
+			CpIdentidade idCadastrante, List<CpIdentidade> listaIdentidades) throws NoSuchAlgorithmException,
+			AplicacaoException {
+		if (senhaAtual == null || senhaAtual.trim().length() == 0) {
+			throw new AplicacaoException("Senha atual não confere");
+		}
+		final String hashAtual = GeraMessageDigest.executaHash(
+				senhaAtual.getBytes(), "MD5");
+
+		final CpIdentidade id = dao().consultaIdentidadeCadastrante(
+				nomeUsuario, true);
+		// se o usuário não existir
+		if (id == null)
+			throw new AplicacaoException("O usuário não está cadastrado.");
+
+		boolean podeTrocar = Boolean.FALSE;
+		
+		for (CpIdentidade cpIdentidade : listaIdentidades) {
+			if(cpIdentidade.getDscSenhaIdentidade().equals(hashAtual)) {
+				podeTrocar = Boolean.TRUE;
+				break;
+			}
+		}
+
+		if (!podeTrocar) {
+			// tenta o modo administrador...
+			String servico = "SIGA: Sistema Integrado de Gestão Administrativa;GI: Módulo de Gestão de Identidade;DEF_SENHA: Definir Senha";
+			try {
+				if (Cp.getInstance()
+						.getConf()
+						.podeUtilizarServicoPorConfiguracao(
+								idCadastrante.getDpPessoa(),
+								idCadastrante.getDpPessoa().getLotacao(),
+								servico)) {
+
+					if (hashAtual.equals(idCadastrante.getDscSenhaIdentidade())) {
+						podeTrocar = true;
+					} else {
+						throw new AplicacaoException("Senha atual não confere");
+					}
+
+					try {
+						Correio.enviar(
+								id.getDpPessoa().getEmailPessoaAtual(),
+								"Troca de Senha",
+								"O Administrador do sistema alterou a senha do seguinte usuário, para efetuar "
+										+ "uma manutenção no sistema: "
+										+ "\n"
+										+ "\n - Nome: "
+										+ id.getDpPessoa().getNomePessoa()
+										+ "\n - Matricula: "
+										+ id.getDpPessoa().getSigla()
+										+ "\n - Senha: "
+										+ senhaNova
+										+ "\n\n Antes de utiliza-lo novamente, altere a sua senha "
+										+ "ou solicite uma nova através da opção 'esqueci minha senha'"
+										+ "\n\n Atenção: esta é uma "
+										+ "mensagem automática. Por favor, não responda.");
+					} catch (Exception e) {
+						System.out
+								.println("Erro: Não foi possível enviar e-mail para o usuário informando que o administrador do sistema alterou sua senha."
+										+ "\n"
+										+ "\n - Nome: "
+										+ id.getDpPessoa().getNomePessoa()
+										+ "\n - Matricula: "
+										+ id.getDpPessoa().getSigla());
+					}
+				}
+			} catch (Exception e1) {
+
+			}
+		}
+
+		if (podeTrocar && senhaNova.equals(senhaConfirma)) {
+			try {
+				Date dt = dao().consultarDataEHoraDoServidor();
+				final String hashNova = GeraMessageDigest.executaHash(
+						senhaNova.getBytes(), "MD5");
+				
+				dao().iniciarTransacao();
+				CpIdentidade i = null;
+				for (CpIdentidade cpIdentidade : listaIdentidades) {
+					i = new CpIdentidade();
+					PropertyUtils.copyProperties(i,cpIdentidade);
+					i.setIdIdentidade(null);
+					i.setDtCriacaoIdentidade(dt);
+					i.setDscSenhaIdentidade(hashNova);
+					i.setDscSenhaIdentidadeCripto(null);
+					i.setDscSenhaIdentidadeCriptoSinc(null);
+					dao().gravarComHistorico(i, cpIdentidade, dt, idCadastrante);
+				}
+				
+				dao().commitTransacao();
+				return null;
+			} catch (final Exception e) {
+				dao().rollbackTransacao();
+				throw new AplicacaoException(
+						"Ocorreu um erro durante a gravação", 0, e);
+			}
+		} else {
+			throw new AplicacaoException(
+					"Senha Atual não confere e/ou Senha nova diferente de confirmação");
+		}
+	}
 
 	public boolean podeAlterarSenha(String auxiliar1, String cpf1,
 			String senha1, String auxiliar2, String cpf2, String senha2,
@@ -798,11 +904,11 @@ public class CpBL {
 		return inputStream;
 	}
 	
-	public InputStream uploadPessoa(File file, CpOrgaoUsuario orgaoUsuario, String extensao) {
+	public InputStream uploadPessoa(File file, CpOrgaoUsuario orgaoUsuario, String extensao, CpIdentidade i) {
 		InputStream inputStream = null;
 		try {
 			Excel excel = new Excel();
-			inputStream = excel.uploadPessoa(file, orgaoUsuario, extensao);
+			inputStream = excel.uploadPessoa(file, orgaoUsuario, extensao, i);
 		} catch (Exception e) {
 			
 		}

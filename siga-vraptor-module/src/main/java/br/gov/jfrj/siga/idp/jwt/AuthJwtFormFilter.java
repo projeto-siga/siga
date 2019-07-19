@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -173,7 +174,13 @@ public class AuthJwtFormFilter implements Filter {
 		String base = System.getProperty("siga.base.url");
 		if (base != null && base.startsWith("https:") && cont.startsWith("http:"))
 			cont = "https" + cont.substring(4);
-		resp.sendRedirect("/siga/public/app/login?cont=" + URLEncoder.encode(cont, "UTF-8"));
+		
+		if (SigaMessages.isSigaSP() && "true".equals(SigaBaseProperties.getString("siga.integracao.com.login.SSO"))) {
+			resp.sendRedirect(SigaBaseProperties.getString("siga.url.sempapel"));
+		} else {
+			resp.sendRedirect("/siga/public/app/login?cont=" + URLEncoder.encode(cont, "UTF-8"));
+		}
+		
 	}
 
 	private void informarAutenticacaoInvalida(HttpServletResponse resp, Exception e) throws IOException {

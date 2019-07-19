@@ -283,12 +283,14 @@ ${meta}
 		<div class="container-fluid content">
 			<div class="row pt-2 pb-2 mb-3 ${sub_menu_class}" >
 				<!-- usuário -->
-				<div class="col col-sm-6">
-					<div class="gt-company">
-						<strong><span>${f:resource('siga.cabecalho.titulo')}</span> </strong>
-						 <c:catch>
-								<c:if test="${not empty titular.orgaoUsuario.descricao}"><span style="white-space: nowrap;"> <i class="fa fa-angle-right"></i> ${titular.orgaoUsuario.descricao}</span></h6></c:if>
-						 </c:catch>
+				<div class="col col-12 col-sm-6">
+					<div class="gt-company d-inline align-middle">
+						<span class="h-100">
+							<strong><span>${f:resource('siga.cabecalho.titulo')}</span> </strong>
+							 <c:catch>
+									<c:if test="${not empty titular.orgaoUsuario.descricao}"><span style="white-space: nowrap;"> <i class="fa fa-angle-right"></i> ${titular.orgaoUsuario.descricao}</span></h6></c:if>
+							 </c:catch>
+						</span>
 					</div>
 					
 					<!-- 
@@ -300,40 +302,69 @@ ${meta}
 					 -->
 				</div>
 				<c:if test="${not empty cadastrante}">
-					<div class="col col-sm-6 text-right">
-								<span class="align-middle">Olá, <i class="fa fa-user"></i> <strong><c:catch>
-										<c:out default="Convidado"
-											value="${f:maiusculasEMinusculas(cadastrante.nomePessoa)}" />
-										<c:choose>
-											<c:when test="${not empty cadastrante.lotacao}">
-						 						<span style="white-space: nowrap;"><i class="fa fa-building"></i> ${cadastrante.lotacao.sigla}</span>
-						 					</c:when>
-										</c:choose>
-									</c:catch> </strong> 
-									<button class="btn btn-danger btn-sm ml-3" type="button" onclick="javascript:location.href='/siga/public/app/logout'"><i class="fas fa-sign-out-alt"></i> Sair</button>
-								</span>
-							<div>
+					<div class="col col-12 col-sm-6 text-right">
+						<div class="dropdown d-inline">
+							<span class="align-middle">Olá, <i class="fa fa-user"></i> 
 								<c:catch>
-									<c:choose>
-										<c:when
-											test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong>${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
-											<span class="gt-util-separator">|</span>
-											<a href="/siga/app/substituicao/finalizar">finalizar</a>
-										</c:when>
-										<c:when
-											test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong>${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
-											<span class="gt-util-separator">|</span>
-											<a href="/siga/app/substituicao/finalizar">finalizar</a>
-										</c:when>
-										<c:otherwise></c:otherwise>
-									</c:choose>
-								</c:catch>
-							</div>
+									<strong data-toggle="tooltip" data-placement="top" title="${cadastrante.sigla}">									
+											<c:out default="Convidado" value="${f:maiusculasEMinusculas(cadastrante.nomePessoa)}" />
+									</strong>
+									<c:if test="${not empty cadastrante.lotacao}">
+										<c:if test="${cadastrante.lotacoes[1] != null}">
+											<button class="btn btn-light btn-sm dropdown-toggle ml-1" type="button" id="dropdownLotaMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										</c:if>
+					 						<strong>
+					 							<span style="white-space: nowrap;"><i class="fa fa-building"></i> ${cadastrante.lotacao.sigla}</span>
+					 						</strong>
+										<c:if test="${cadastrante.lotacoes[1] != null}">
+											</button>
+											<div class="dropdown-menu" aria-labelledby="dropdownLotaMenuButton">
+												<c:forEach var="lota" items="${cadastrante.lotacoes}">
+													<c:if test="${!(lota[0]==cadastrante.sigla || lota[1]==cadastrante.lotacao)}">
+														<a class="dropdown-item" href="/siga/app/swapUser?username=${lota[0]}">
+															${lota[1]} (${lota[0]})
+															<p class="mb-0"><small>${lota[2]}</small></p>
+														</a>
+													</c:if>
+												</c:forEach>
+											</div>
+										</c:if>
+				 					</c:if>
+								</c:catch> 
+							</span>
+						</div>
+						<button class="btn btn-danger btn-sm ml-3 mt-1 align-bottom" type="button" onclick="javascript:location.href='/siga/public/app/logout'"><i class="fas fa-sign-out-alt"></i> Sair</button>
+						<div class="d-inline">
+							<c:catch>
+								<c:choose>
+									<c:when
+										test="${not empty titular && titular.idPessoa!=cadastrante.idPessoa}">Substituindo: <strong>${f:maiusculasEMinusculas(titular.nomePessoa)}</strong>
+										<span class="gt-util-separator">|</span>
+										<a href="/siga/app/substituicao/finalizar">finalizar</a>
+									</c:when>
+									<c:when
+										test="${not empty lotaTitular && lotaTitular.idLotacao!=cadastrante.lotacao.idLotacao}">Substituindo: <strong>${f:maiusculasEMinusculas(lotaTitular.nomeLotacao)}</strong>
+										<span class="gt-util-separator">|</span>
+										<a href="/siga/app/substituicao/finalizar">finalizar</a>
+									</c:when>
+									<c:otherwise></c:otherwise>
+								</c:choose>
+							</c:catch>
+						</div>
 					</div>
 				</c:if>
 			</div>
+			<div class="row ${mensagemCabec==null?'d-none':''}" >
+				<div class="col" >
+					<div class="alert ${msgCabecClass} fade show" role="alert">
+						${mensagemCabec}
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>			
+				</div>
+			</div>
 		</div>
-
 
 		<div id="quadroAviso"
 			style="position: absolute; font-weight: bold; padding: 4px; color: white; visibility: hidden">-</div>

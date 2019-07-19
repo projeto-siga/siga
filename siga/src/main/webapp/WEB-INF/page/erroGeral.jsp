@@ -66,15 +66,17 @@
 								</div>
 							</div>
 						</div>
-						<div class="row">
-							<div class="col">
-								<div class="form-group">
-									<div style="display: none; padding: 8pt;" align="left" id="stack">
-										<pre style="font-size: 8pt;">${exceptionStackGeral}</pre>
+						<c:if test="${siga_cliente != 'GOVSP'}">
+							<div class="row">
+								<div class="col">
+									<div class="form-group">
+										<div style="display: none; padding: 8pt;" align="left" id="stack">
+											<pre style="font-size: 8pt;">${exceptionStackGeral}</pre>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
+						</c:if>
 						<div class="row">
 							<div class="col">
 								<div class="form-group">		

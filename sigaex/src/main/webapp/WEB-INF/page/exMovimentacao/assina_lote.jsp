@@ -161,7 +161,7 @@
 				</div>
 			</div>
 			<c:if test="${(not empty itensSolicitados)}">
-				<h5>Documentos pendentes de assinatura: Como Subscritor</h5>
+				<h5>Documentos pendentes de assinatura: <fmt:message key="tela.assina.lote.subscritor" /></h5>
 				<div>
 					<table class="table table-hover table-striped">
 						<thead class="thead-dark align-middle text-center">

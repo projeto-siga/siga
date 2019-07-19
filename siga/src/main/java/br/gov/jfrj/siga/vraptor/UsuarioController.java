@@ -170,9 +170,14 @@ public class UsuarioController extends SigaController {
 		switch (usuario.getMetodo()) {
 		case 1:
 //			verificarMetodoIntegracaoAD(usuario.getMatricula());
-			String[] senhaGerada = new String[1];
-			Cp.getInstance().getBL().alterarSenhaDeIdentidade(usuario.getMatricula(),
-					usuario.getCpf(), getIdentidadeCadastrante(),senhaGerada);
+			
+			if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+				Cp.getInstance().getBL().alterarSenha(usuario.getCpf(), null, usuario.getMatricula());
+			} else {
+				String[] senhaGerada = new String[1];
+				Cp.getInstance().getBL().alterarSenhaDeIdentidade(usuario.getMatricula(),
+						usuario.getCpf(), getIdentidadeCadastrante(),senhaGerada);
+			}
 			break;
 		case 2:
 			if (!Cp.getInstance().getBL().podeAlterarSenha(usuario.getAuxiliar1(), usuario.getCpf1(),

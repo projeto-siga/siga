@@ -4,6 +4,7 @@
 
 <%@ attribute name="assinar" required="false"%>
 <%@ attribute name="voltar" required="false"%>
+<%@ attribute name="linkVoltar" required="false"%>
 <%@ attribute name="autenticar" required="false"%>
 <%@ attribute name="assinarComSenha" required="false"%>
 <%@ attribute name="assinarComSenhaChecado" required="false"%>
@@ -30,7 +31,7 @@
 	</c:if>
 
 	<c:if test="${not empty voltar and voltar}">
-		<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-secondary mr-2" />
+		<input type="button" value="Voltar" onclick="${(empty linkVoltar) ? 'javascript:history.back();' : 'javascript:window.location.href=\''.concat(linkVoltar).concat('\';')}" class="btn btn-secondary mr-2" />
 	</c:if>
 
 	<c:if test="${assinarComSenha || autenticarComSenha}">

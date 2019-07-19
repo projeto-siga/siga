@@ -79,7 +79,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " and pes.dataFimPessoa = null"
 				+ " and pes.id not in (select pes1.idPessoa from CpIdentidade i inner join i.dpPessoa pes1 where (upper(pes1.nomePessoaAI) like upper('%' || :nome || '%')) "
 				+ 			" and (pes1.cpfPessoa = :cpf or :cpf = 0) and pes1.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu and (pes1.lotacao.idLotacao = :lotacao or :lotacao = 0) and pes1.dataFimPessoa = null)"
-				+ "   	order by pes.nomePessoa"),
+				+ "   	order by pes.cpfPessoa"),
 		@NamedQuery(name = "consultarQuantidadeDpPessoaSemIdentidade", query = "select count(pes) from DpPessoa pes "
 				+ "  where (upper(pes.nomePessoaAI) like upper('%' || :nome || '%'))"
 				+ " and (pes.cpfPessoa = :cpf or :cpf = 0)"
@@ -96,6 +96,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "	and (:lotacao = null or :lotacao = 0 or pes.lotacao.idLotacao = :lotacao)"
 				+ " and (:cargo = null or :cargo = 0 or pes.cargo.idCargo = :cargo) "
 		      	+ " and (:funcao = null or :funcao = 0 or pes.funcaoConfianca.idFuncao = :funcao) "
+				+ " and (pes.id <> :id or :id = 0)"
 				+ "	and (:situacaoFuncionalPessoa = null or :situacaoFuncionalPessoa = '' or pes.situacaoFuncionalPessoa = :situacaoFuncionalPessoa)"
 				+ "   	and pes.dataFimPessoa = null"
 				+ "   	order by pes.nomePessoa"),

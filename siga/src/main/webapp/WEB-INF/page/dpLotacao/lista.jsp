@@ -53,7 +53,7 @@ function sbmt(offset) {
 			</div>
 		</div>
 		
-		<h3 class="gt-table-head">Lota&ccedil;&otilde;es cadastradas</h3>
+		<h3 class="gt-table-head"><fmt:message key="usuario.lotacoes"/> cadastradas</h3>
 		<table border="0" class="table table-sm table-striped">
 			<thead class="thead-dark">
 				<tr>

@@ -2,8 +2,10 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,6 +41,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.util.TipoMobilComparatorInverso;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
@@ -84,6 +87,7 @@ public class ExAutenticacaoController extends ExController {
 		String recaptchaSiteKey = getRecaptchaSiteKey();
 		String recaptchaSitePassword = getRecaptchaSitePassword();
 		result.include("recaptchaSiteKey", recaptchaSiteKey);
+		result.include("n", n);
 		
 		final String HTTP_PROXY_HOST = System.getProperty("http.proxyHost");
 		final String HTTP_PROXY_PORT = System.getProperty("http.proxyPort");
@@ -160,7 +164,7 @@ public class ExAutenticacaoController extends ExController {
 		}
 
 		setDefaultResults();
-		result.include("n", n);
+		
 		result.include("assinaturas", assinaturas);
 		result.include("mov", mov);
 		result.include("mostrarBotaoAssinarExterno", mostrarBotaoAssinarExterno);
@@ -258,7 +262,7 @@ public class ExAutenticacaoController extends ExController {
 			return;
 		}
 		String n = verifyJwtToken(jwt).get("n").toString();
-
+		
 		ExArquivo arq = Ex.getInstance().getBL().buscarPorNumeroAssinatura(n);
 		Set<ExMovimentacao> assinaturas = arq.getAssinaturasDigitais();
 
@@ -284,10 +288,26 @@ public class ExAutenticacaoController extends ExController {
 					mob = doc.getPrimeiraVia();
 				}
 			}
-
+			List<ExMovimentacao> lista = new ArrayList<ExMovimentacao>();
+			lista.addAll(doc.getAutenticacoesComSenha());
+			
+			DpPessoa p = new DpPessoa();    
+			DpLotacao l = new DpLotacao();
+			
+			p = doc.getSubscritor();
+			l = doc.getLotaSubscritor();
+			
+			if(p == null && !lista.isEmpty()) {
+				p = lista.get(0).getSubscritor();
+			}
+			
+			if(l == null && !lista.isEmpty()) {
+				l = lista.get(0).getLotaSubscritor();
+			}
+			
 			final ExDocumentoVO docVO = new ExDocumentoVO(doc, mob,
-					getCadastrante(), doc.getSubscritor(),
-					doc.getLotaSubscritor(), true, false);
+					getCadastrante(), p,
+					l, true, false);
 
 			docVO.exibe();
 

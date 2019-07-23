@@ -139,7 +139,7 @@ public abstract class ExArquivo extends Objeto {
 			sMensagem += getAssinantesCompleto();
 			sMensagem += "Documento Nº: " + getSiglaAssinatura()
 					+ " - consulta à autenticidade em "
-					+ SigaExProperties.getEnderecoAutenticidadeDocs();
+					+ SigaExProperties.getEnderecoAutenticidadeDocs() + "?n="+getSiglaAssinatura();
 		}
 		return sMensagem;
 	}

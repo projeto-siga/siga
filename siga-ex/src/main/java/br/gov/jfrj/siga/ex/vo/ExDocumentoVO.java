@@ -614,7 +614,7 @@ public class ExDocumentoVO extends ExVO {
 				SigaMessages.getMessage("icon.ver.mais"),
 				SigaMessages.getMessage("documento.ver.mais"),
 				"/app/expediente/doc",
-				"exibirAntigo",
+				SigaMessages.getMessage("documento.acao.exibirAntigo"),
 				Ex.getInstance()
 						.getComp()
 						.podeExibirInformacoesCompletas(titular, lotaTitular,

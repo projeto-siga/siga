@@ -1080,6 +1080,49 @@ public class ExDocumentoController extends ExController {
 		result.include("popup", popup);
 	}
 
+	@Get("app/expediente/doc/exibirHistorico")
+	public void aExibirHistorico(final String sigla, final boolean popup) throws Exception {
+		assertAcesso("");
+
+		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
+
+		exDocumentoDTO.setSigla(sigla);
+		buscarDocumento(false, exDocumentoDTO);
+
+		assertAcesso(exDocumentoDTO);
+
+		if (Ex.getInstance()
+				.getComp()
+				.podeReceberEletronico(getTitular(), getLotaTitular(),
+						exDocumentoDTO.getMob())) {
+			Ex.getInstance()
+					.getBL()
+					.receber(getCadastrante(), getLotaTitular(),
+							exDocumentoDTO.getMob(), new Date());
+		}
+
+		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
+				exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
+				getLotaTitular(), true, true);
+
+		if (exDocumentoDTO.getMob().isEliminado()) {
+			throw new AplicacaoException(
+					"Documento "
+							+ exDocumentoDTO.getMob().getSigla()
+							+ " eliminado, conforme o termo "
+							+ exDocumentoDTO
+									.getMob()
+									.getUltimaMovimentacaoNaoCancelada(
+											ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO)
+									.getExMobilRef());
+		}
+		result.include("msg", exDocumentoDTO.getMsg());
+		result.include("docVO", docVO);
+		result.include("mob", exDocumentoDTO.getMob());
+		result.include("currentTimeMillis", System.currentTimeMillis());
+		result.include("popup", popup);
+	}
+
 	@Get({ "/app/expediente/doc/exibir", "/expediente/doc/exibir.action" })
 	public void exibe(final boolean conviteEletronico, final String sigla,
 			final ExDocumentoDTO exDocumentoDTO, final Long idmob)

@@ -66,6 +66,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " and (:cpf = null or :cpf = 0 or pes.cpfPessoa = :cpf) "
 				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "	and (:lotacao = null or :lotacao = 0 or pes.lotacao.idLotacao = :lotacao)"
+				+ " and (pes.id <> :id or :id = 0)"
 				+ " and (:cargo = null or :cargo = 0 or pes.cargo.idCargo = :cargo) "
 		      	+ " and (:funcao = null or :funcao = 0 or pes.funcaoConfianca.idFuncao = :funcao) "
 				+ "	and (:situacaoFuncionalPessoa = null or pes.situacaoFuncionalPessoa = :situacaoFuncionalPessoa)"

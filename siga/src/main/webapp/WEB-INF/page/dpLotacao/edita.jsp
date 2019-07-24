@@ -31,11 +31,11 @@
 	}
 
 	function validarNome(campo) {
-		campo.value = campo.value.replace(/[^a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9.,-]/g,'');
+		campo.value = campo.value.replace(/[^a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9./,-]/g,'');
 	}
 
 	function validarSigla(campo) {
-		campo.value = campo.value.replace(/[^a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ0-9/-]/g,'');
+		campo.value = campo.value.replace(/[^a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ0-9/,-]/g,'');
 	}
 </script>
 <siga:pagina titulo="Cadastro de Lota&ccedil;&atilde;o">

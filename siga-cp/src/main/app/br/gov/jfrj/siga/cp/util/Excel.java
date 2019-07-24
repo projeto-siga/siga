@@ -163,7 +163,7 @@ public class Excel {
 		if(lotacao != null) {
 			return "Linha " + linha +": NOME já cadastrado" + System.getProperty("line.separator");
 		}
-		if(nomeLotacao != null && !nomeLotacao.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9.,-]+")) {
+		if(nomeLotacao != null && !nomeLotacao.matches("[a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9.,/-]+")) {
 			return "Linha " + linha +": NOME com caracteres não permitidos" + System.getProperty("line.separator");
 		}
 		if(nomes.contains(Texto.removeAcento(Texto.removerEspacosExtra(nomeLotacao).trim().toUpperCase()))) {
@@ -189,7 +189,7 @@ public class Excel {
 		if(lotacao != null) {
 			return "Linha " + linha +": SIGLA já cadastrada" + System.getProperty("line.separator");
 		}
-		if(siglaLotacao != null && !siglaLotacao.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ0-9/-]+")) {
+		if(siglaLotacao != null && !siglaLotacao.matches("[a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ0-9,/-]+")) {
 			return "Linha " + linha +": SIGLA com caracteres não permitidos" + System.getProperty("line.separator");
 		} 
 		

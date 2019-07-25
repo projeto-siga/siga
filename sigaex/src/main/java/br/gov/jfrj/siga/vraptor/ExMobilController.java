@@ -306,12 +306,12 @@ public class ExMobilController extends
 					
 			texto.append(m.getCodigo()+";");
 			if(e.getLotaSubscritor() != null && e.getLotaSubscritor().getSigla() != null) {
-				texto.append(e.getLotaSubscritor().getSigla());
+				texto.append(e.getLotaSubscritor().getSigla().replaceAll(";",","));
 			}
 			texto.append(";");
 			
 			if(e.getSubscritor() != null && e.getSubscritor().getIniciais() != null) {
-				texto.append(e.getSubscritor().getIniciais());
+				texto.append(e.getSubscritor().getIniciais().replaceAll(";",","));
 			}
 			texto.append(";");
 			
@@ -321,12 +321,12 @@ public class ExMobilController extends
 			texto.append(";");
 			
 			if(ma.getDpLotacaoIni() != null && ma.getDpLotacaoIni().getLotacaoAtual() != null && ma.getDpLotacaoIni().getLotacaoAtual().getSigla() != null) {
-				texto.append(ma.getDpLotacaoIni().getLotacaoAtual().getSigla());
+				texto.append(ma.getDpLotacaoIni().getLotacaoAtual().getSigla().replaceAll(";",","));
 			}
 			texto.append(";");
 			
 			if(ma.getDpPessoaIni() != null && ma.getDpPessoaIni().getIniciais() != null) {
-				texto.append(ma.getDpPessoaIni().getIniciais());
+				texto.append(ma.getDpPessoaIni().getIniciais().replaceAll(";",","));
 			}
 			texto.append(";");
 			
@@ -336,12 +336,12 @@ public class ExMobilController extends
 			texto.append(";");
 			
 			if(ma.getCpMarcador() != null && ma.getCpMarcador().getDescrMarcador() != null) {
-				texto.append(ma.getCpMarcador().getDescrMarcador());
+				texto.append(ma.getCpMarcador().getDescrMarcador().replaceAll(";",","));
 			}
 			texto.append(";");
 			
 			if(e.getNmMod() != null) {
-				texto.append(e.getNmMod());
+				texto.append(e.getNmMod().replaceAll(";",","));
 			}
 			texto.append(";");
 			
@@ -351,7 +351,7 @@ public class ExMobilController extends
 				descricao = Ex.getInstance().getBL().descricaoSePuderAcessar(e, getTitular(), getTitular().getLotacao());
 			}
 			if(descricao != null) {
-				texto.append(descricao.replaceAll("\n", "").replaceAll("\t", "").replaceAll("\r",""));
+				texto.append(descricao.replaceAll("\n", "").replaceAll("\t", "").replaceAll("\r","").replaceAll(";",","));
 			}
 			
 			texto.append(";");

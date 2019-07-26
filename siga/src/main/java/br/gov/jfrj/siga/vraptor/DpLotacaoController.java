@@ -267,7 +267,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		
 		DpLotacao lotacao;
 		lotacao = new DpLotacao();
-		lotacao.setSigla(siglaLotacao);
+		lotacao.setSiglaLotacao(siglaLotacao);
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
 		ou.setIdOrgaoUsu(idOrgaoUsu);
 		lotacao.setOrgaoUsuario(ou);

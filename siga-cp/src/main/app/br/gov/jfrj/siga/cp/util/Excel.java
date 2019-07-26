@@ -157,20 +157,12 @@ public class Excel {
 		if(nomeLotacao.length() > tamanho){
 			return "Linha " + linha +": NOME com mais de 100 caracteres" + System.getProperty("line.separator");
 		}
-		lotacao.setOrgaoUsuario(orgaoUsuario);
-		lotacao.setNomeLotacao(nomeLotacao);
-		lotacao = CpDao.getInstance().consultarPorNomeOrgao(lotacao);
-		if(lotacao != null) {
-			return "Linha " + linha +": NOME já cadastrado" + System.getProperty("line.separator");
-		}
+
 		if(nomeLotacao != null && !nomeLotacao.matches("[a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9.,/-]+")) {
 			return "Linha " + linha +": NOME com caracteres não permitidos" + System.getProperty("line.separator");
 		}
-		if(nomes.contains(Texto.removeAcento(Texto.removerEspacosExtra(nomeLotacao).trim().toUpperCase()))) {
-			return "Linha " + linha +": NOME repetido em outra linha do arquivo" + System.getProperty("line.separator");
-		} else {
-			nomes.add(Texto.removeAcento(Texto.removerEspacosExtra(nomeLotacao).trim().toUpperCase()));	
-		}
+		nomes.add(Texto.removeAcento(Texto.removerEspacosExtra(nomeLotacao).trim().toUpperCase()));	
+
 		return "";
 	}
 	
@@ -189,7 +181,7 @@ public class Excel {
 		if(lotacao != null) {
 			return "Linha " + linha +": SIGLA já cadastrada" + System.getProperty("line.separator");
 		}
-		if(siglaLotacao != null && !siglaLotacao.matches("[a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ0-9,/-]+")) {
+		if(siglaLotacao != null && !siglaLotacao.matches("[a-zA-ZçÇ0-9,/-]+")) {
 			return "Linha " + linha +": SIGLA com caracteres não permitidos" + System.getProperty("line.separator");
 		} 
 		

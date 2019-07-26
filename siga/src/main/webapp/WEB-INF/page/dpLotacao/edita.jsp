@@ -35,7 +35,7 @@
 	}
 
 	function validarSigla(campo) {
-		campo.value = campo.value.replace(/[^a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ0-9/,-]/g,'');
+		campo.value = campo.value.replace(/[^a-zA-ZçÇ0-9/,-]/g,'');
 	}
 </script>
 <siga:pagina titulo="Cadastro de Lota&ccedil;&atilde;o">

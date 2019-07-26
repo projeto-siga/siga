@@ -262,7 +262,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		if(nmLotacao != null && !nmLotacao.matches("[a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9.,/-]+")) 
 			throw new AplicacaoException("Nome com caracteres não permitidos");
 		
-		if(siglaLotacao != null && !siglaLotacao.matches("[a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ0-9,/-]+")) 
+		if(siglaLotacao != null && !siglaLotacao.matches("[a-zA-ZçÇ0-9,/-]+")) 
 			throw new AplicacaoException("Sigla com caracteres não permitidos");
 		
 		DpLotacao lotacao;
@@ -275,15 +275,6 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		
 		if(lotacao != null && lotacao.getId() != null && !lotacao.getId().equals(id)) {
 			throw new AplicacaoException("Sigla já cadastrada para outra lotação");
-		}
-		
-		lotacao = new DpLotacao();
-		lotacao.setNomeLotacao(Texto.removeAcento(Texto.removerEspacosExtra(nmLotacao).trim()));
-		lotacao.setOrgaoUsuario(ou);
-		lotacao = dao().getInstance().consultarPorNomeOrgao(lotacao);
-		
-		if(lotacao != null && !lotacao.getId().equals(id)) {
-			throw new AplicacaoException("Nome da lotação já cadastrado!");
 		}
 		
 		List<DpPessoa> listPessoa = null;

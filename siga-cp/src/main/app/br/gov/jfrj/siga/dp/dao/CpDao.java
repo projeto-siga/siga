@@ -695,7 +695,7 @@ public class CpDao extends ModeloDao {
 	public DpLotacao consultarPorSigla(final DpLotacao o) {
 		final Query query = getSessao().getNamedQuery(
 				"consultarPorSiglaDpLotacao");
-		query.setString("siglaLotacao", o.getSigla());
+		query.setString("siglaLotacao", o.getSiglaLotacao());
 		if (o.getOrgaoUsuario() != null)
 			if (o.getOrgaoUsuario().getIdOrgaoUsu() != null)
 				query.setLong("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());

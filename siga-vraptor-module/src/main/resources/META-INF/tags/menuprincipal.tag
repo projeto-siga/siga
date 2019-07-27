@@ -170,7 +170,7 @@
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;CAD_LOTACAO:Cadastrar Lotação')}">
 						<li><a class="dropdown-item" href="/siga/app/lotacao/listar">Cadastro
-								de Lotação</a></li>
+								de <fmt:message key="usuario.lotacao"/></a></li>
 					</c:if>
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;CAD_FUNCAO:Cadastrar Função de Confiança')}">

@@ -15,15 +15,16 @@
 			<li><a class="dropdown-item"
 				href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a></li>
 
-			<li><a class="dropdown-item"
-				href="/sigaex/app/mesa">Mesa Virtual</a></li>
-				
+			<li><a class="dropdown-item" href="/sigaex/app/mesa">Mesa
+					Virtual</a></li>
+
 			<div class="dropdown-divider"></div>
 			<c:catch>
-				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRAMITE:Trâmite;LOTE:Em Lote')}">
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRAMITE:Trâmite;LOTE:Em Lote')}">
 					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/mov/transferir_lote">Transferir em
-							lote</a></li>
+						href="/sigaex/app/expediente/mov/transferir_lote">Transferir
+							em lote</a></li>
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/receber_lote">Receber em lote</a></li>
 					<li><a class="dropdown-item"
@@ -33,7 +34,7 @@
 							Documentos, Despachos e Anexos</a></li>
 				</c:if>
 			</c:catch>
-			
+
 
 			<c:catch>
 				<c:if
@@ -45,13 +46,15 @@
 			<c:catch>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-					<span class="${hide_only_GOVSP}"><li><a class="dropdown-item"
-						href="/sigaex/app/expediente/mov/assinar_despacho_lote">Assinar
-							Despacho em lote</a></li></span>
+					<span class="${hide_only_GOVSP}"><li><a
+							class="dropdown-item"
+							href="/sigaex/app/expediente/mov/assinar_despacho_lote">Assinar
+								Despacho em lote</a></li></span>
 				</c:if>
 			</c:catch>
 			<c:catch>
-				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRAMITE:Trâmite;LOTE:Em Lote')}">
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRAMITE:Trâmite;LOTE:Em Lote')}">
 					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/mov/arquivar_corrente_lote">Arquivar
 							em lote</a></li>
@@ -244,4 +247,32 @@
 
 			</ul></li>
 	</c:if>
+
+	<li class="nav-item dropdown"><a href="javascript:void(0);"
+		class="nav-link dropdown-toggle" data-toggle="dropdown"> Gestão </a>
+		<ul class="dropdown-menu">
+			<li><a class="dropdown-item" href="#"> Indicadores de Gestão
+			</a></li>
+
+			<li><a class="dropdown-item" href="#"> Documentos por Volume
+			</a></li>
+
+			<li><a class="dropdown-item" href="#"> Documentos Fora do
+					Prazo </a></li>
+
+			<li><a class="dropdown-item" href="#"> Documentos por
+					Devolução Programada </a></li>
+
+			<li><a class="dropdown-item" href="#"> Tempo médio por
+					Situação </a></li>
+
+			<li><a class="dropdown-item" href="#"> Tempo médio
+					Tramitação por Espécie Documental </a></li>
+
+			<li><a class="dropdown-item" href="#"> Volume de Tramitação
+					por Nome de documento </a></li>
+			<li><a class="dropdown-item" href="#"> Total de documentos
+					por Órgão Interessado </a></li>
+
+		</ul></li>
 </c:if>

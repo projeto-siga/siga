@@ -33,15 +33,15 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 	}
 	
 	@Get("app/orgao/listar")
-	public void lista(Integer offset) throws Exception {
-		if(offset == null) {
-			offset = 0;
+	public void lista(Integer paramoffset) throws Exception {
+		if(paramoffset == null) {
+			paramoffset = 0;
 		}
-		setItens(CpDao.getInstance().consultarCpOrgaoOrdenadoPorNome(offset, 15));
+		setItens(CpDao.getInstance().consultarCpOrgaoOrdenadoPorNome(paramoffset, 15));
 		result.include("itens", getItens());
 		result.include("tamanho", dao().consultarQuantidadeOrgao());
 		setItemPagina(15);
-		result.include("currentPageNumber", calculaPaginaAtual(offset));
+		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 	}
 	
 	public void selecionarPorNome(){
@@ -129,17 +129,17 @@ public class OrgaoController extends SigaSelecionavelControllerSupport<CpOrgao, 
 	@Post
 	@Path({"/app/orgao/buscar","/orgao/buscar.action"})
 	public void busca(final String sigla,
-			     	  final Integer offset,
+			     	  final Integer paramoffset,
 			     	  final String postback,
 			     	  final String propriedade) throws Exception {
-		this.getP().setOffset(offset);
+		this.getP().setOffset(paramoffset);
 		this.aBuscar(sigla, postback);
 		
 		result.include("itens",this.getItens());
 		result.include("tamanho",this.getTamanho());
 		result.include("request",getRequest());
 		result.include("sigla",sigla);
-		result.include("offset",offset);
+		result.include("offset",paramoffset);
 		result.include("postback",postback);
 		result.include("propriedade",propriedade);
 	}

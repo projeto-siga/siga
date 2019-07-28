@@ -13,11 +13,12 @@ function sbmt(offset) {
 		document.getElementById('idOrgaoUsu')[0].focus();
 		return;	
 	}
-	
-	if (offset==null) {
-		offset=0;
+
+	if (offset == null) {
+		offset = 0;
 	}
-	frm.elements['offset'].value=offset;
+	frm.elements["paramoffset"].value = offset;
+	frm.elements["p.offset"].value = offset;
 	frm.submit();
 }
 
@@ -77,7 +78,8 @@ function cpf_mask(v){
 	<!-- main content -->
 	<div class="container-fluid">
 	<form name="frm" id="enviarEmail" action="enviarEmail" class="form100" method="GET">
-		<input type="hidden" name="offset" value="0" />
+		<input type="hidden" name="paramoffset" value="0" />
+		<input type="hidden" name="p.offset" value="0" />
 		<input type="hidden" name="retornarEnvioEmail" value="true" />
 		<div class="card bg-light mb-3" >
 			<div class="card-header">
@@ -145,7 +147,7 @@ function cpf_mask(v){
 				</tr>
 			</thead>
 			<tbody>
-				<siga:paginador maxItens="15" maxIndices="${empty maxIndices ? 10 : maxIndices}" totalItens="${tamanho}"
+				<siga:paginador maxItens="15" maxIndices="10" totalItens="${tamanho}"
 					itens="${itens}" var="pessoa">
 					<tr>
 						<td align="left">${pessoa.descricao}</td>

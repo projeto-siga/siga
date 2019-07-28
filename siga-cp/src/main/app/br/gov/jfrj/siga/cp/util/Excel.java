@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
@@ -35,6 +36,7 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 
 public class Excel {
 	
@@ -155,20 +157,12 @@ public class Excel {
 		if(nomeLotacao.length() > tamanho){
 			return "Linha " + linha +": NOME com mais de 100 caracteres" + System.getProperty("line.separator");
 		}
-		lotacao.setOrgaoUsuario(orgaoUsuario);
-		lotacao.setNomeLotacao(nomeLotacao);
-		lotacao = CpDao.getInstance().consultarPorNomeOrgao(lotacao);
-		if(lotacao != null) {
-			return "Linha " + linha +": NOME já cadastrado" + System.getProperty("line.separator");
-		}
-		if(nomeLotacao != null && !nomeLotacao.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9.,-]+")) {
+
+		if(nomeLotacao != null && !nomeLotacao.matches("[a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9.,/-]+")) {
 			return "Linha " + linha +": NOME com caracteres não permitidos" + System.getProperty("line.separator");
 		}
-		if(nomes.contains(Texto.removeAcento(Texto.removerEspacosExtra(nomeLotacao).trim().toUpperCase()))) {
-			return "Linha " + linha +": NOME repetido em outra linha do arquivo" + System.getProperty("line.separator");
-		} else {
-			nomes.add(Texto.removeAcento(Texto.removerEspacosExtra(nomeLotacao).trim().toUpperCase()));	
-		}
+		nomes.add(Texto.removeAcento(Texto.removerEspacosExtra(nomeLotacao).trim().toUpperCase()));	
+
 		return "";
 	}
 	
@@ -187,7 +181,7 @@ public class Excel {
 		if(lotacao != null) {
 			return "Linha " + linha +": SIGLA já cadastrada" + System.getProperty("line.separator");
 		}
-		if(siglaLotacao != null && !siglaLotacao.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ0-9/-]+")) {
+		if(siglaLotacao != null && !siglaLotacao.matches("[a-zA-ZçÇ0-9,/-]+")) {
 			return "Linha " + linha +": SIGLA com caracteres não permitidos" + System.getProperty("line.separator");
 		} 
 		
@@ -584,6 +578,9 @@ public class Excel {
 			SimpleDateFormat formato = new SimpleDateFormat("ddMMyyyy");
 			Date date = null;
 			
+			DpPessoaDaoFiltro dpPessoaFiltro = new DpPessoaDaoFiltro();
+			Integer tamanho = 0;
+						
 			while (rowIterator.hasNext()) {
 				linha++;
 				DpPessoa pessoa = new DpPessoa();
@@ -740,6 +737,7 @@ public class Excel {
 				//CPF
 				celula = retornaConteudo(row.getCell(6, Row.CREATE_NULL_AS_BLANK));
 				cpf = celula.replaceAll("[^0-9]", "");
+				cpf = StringUtils.leftPad(cpf, 11, "0");
 				if(!"".equals(cpf.trim())) {
 					if(!validarCPF(cpf)) {
 						problemas.append("Linha " + linha +": CPF inválido" + System.getProperty("line.separator"));
@@ -764,6 +762,31 @@ public class Excel {
 					}
 				} else {
 					problemas.append("Linha " + linha +": E-MAIL em branco" + System.getProperty("line.separator"));
+				}
+				
+				if(cargo != null && lotacao != null && cpf != null && !"".equals(cpf) && !Long.valueOf(0).equals(Long.valueOf(cpf))) {
+					dpPessoaFiltro = new DpPessoaDaoFiltro();
+					dpPessoaFiltro.setIdOrgaoUsu(orgaoUsuario.getId());
+					dpPessoaFiltro.setCargo(cargo);
+					dpPessoaFiltro.setFuncaoConfianca(funcao);
+					dpPessoaFiltro.setLotacao(lotacao);
+					dpPessoaFiltro.setCpf(Long.valueOf(cpf));
+					dpPessoaFiltro.setNome("");
+					
+					dpPessoaFiltro.setBuscarFechadas(Boolean.FALSE);
+					tamanho = CpDao.getInstance().consultarQuantidade(dpPessoaFiltro);
+					
+					if(tamanho > 0) {
+						problemas.append("Linha " + linha +": Usuário já cadastrado com estes dados: Órgão, Cargo, Função, Unidade e CPF" + System.getProperty("line.separator"));
+					}
+				}
+				if(!lista.isEmpty()) {
+					for (DpPessoa p : lista) { //repetido em outra linha do arquivo
+						if(p.getCpfPessoa().equals(Long.valueOf(cpf)) && p.getCargo().equals(cargo) && p.getLotacao().equals(lotacao) &&
+								((p.getFuncaoConfianca() == null && funcao == null) || (p.getFuncaoConfianca() != null && p.getFuncaoConfianca().equals(funcao)))) {
+							problemas.append("Linha " + linha +": Usuário repetido em outra linha do arquivo com estes dados: Órgão, Cargo, Função, Unidade e CPF" + System.getProperty("line.separator"));
+						}
+					}
 				}
 				
 				if(problemas == null || "".equals(problemas.toString())) {

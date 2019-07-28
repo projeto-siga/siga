@@ -102,7 +102,7 @@ function cpf_mask(v){
 					</div>
 					<div class="col-md-3">
 						<div class="form-group">
-							<label for="idLotacaoPesquisa">Lota&ccedil;&atilde;o</label>
+							<label for="idLotacaoPesquisa"><fmt:message key="usuario.lotacao"/></label>
 							<select name="idLotacaoPesquisa" value="${idLotacaoPesquisa}" class="form-control">
 								<c:forEach items="${listaLotacao}" var="item">
 									<option value="${item.idLotacao}"

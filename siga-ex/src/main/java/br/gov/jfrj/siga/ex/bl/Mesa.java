@@ -348,7 +348,11 @@ public class Mesa {
 		}
 
 		public String getNome() {
-			return nome;
+			if (SigaMessages.isSigaSP() && nome.equals("Como Subscritor")) {
+				return "Responsável pela Assinatura";
+			} else {
+				return nome;
+			}
 		}
 
 		private final int id;
@@ -383,7 +387,7 @@ public class Mesa {
 
 			r.codigo = mobil.getCodigoCompacto();
 			r.sigla = mobil.getSigla();
-			r.descr = mobil.doc().getDescrCurta();
+			r.descr = mobil.doc().getDescrCurta(80);
 
 			if (mobil.doc().getSubscritor() != null
 					&& mobil.doc().getSubscritor().getLotacao() != null)

@@ -56,6 +56,7 @@ public class ResponseHeaderFilter implements Filter {
 			chain.doFilter(req, response);
 		} catch (Throwable ex) {
 			log.error(ex.getMessage(), ex);
+			throw new ServletException(ex);
 		}
 
 	}

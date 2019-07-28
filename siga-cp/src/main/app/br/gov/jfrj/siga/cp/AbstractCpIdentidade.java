@@ -64,7 +64,20 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "or pes.situacaoFuncionalPessoa = '2' "
 				+ "or pes.situacaoFuncionalPessoa = '12' "
 				+ "or pes.situacaoFuncionalPessoa = '22' "
-				+ "or pes.situacaoFuncionalPessoa = '31') ") })
+				+ "or pes.situacaoFuncionalPessoa = '31') "),
+		@NamedQuery(name = "consultarIdentidadeCpfEmail", query = "select u from CpIdentidade u , DpPessoa pes "
+				+ "where (pes.cpfPessoa is not null and pes.cpfPessoa <> 0 and pes.cpfPessoa = :cpf)"
+				+ "and pes.emailPessoa = :email "
+				+ "and u.dpPessoa.idPessoaIni = pes.idPessoaIni "
+				+ "and u.hisDtFim is null "
+				+ "and u.dtCancelamentoIdentidade is null "
+				+ "and (u.dtExpiracaoIdentidade is null or u.dtExpiracaoIdentidade > current_date()) "
+				+ "and pes.dataFimPessoa is null "
+				+ "and (pes.situacaoFuncionalPessoa = '1' "
+				+ "or pes.situacaoFuncionalPessoa = '2' "
+				+ "or pes.situacaoFuncionalPessoa = '12' "
+				+ "or pes.situacaoFuncionalPessoa = '22' "
+				+ "or pes.situacaoFuncionalPessoa = '31')")})
 public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_IDENTIDADE_SEQ")
 	@Id

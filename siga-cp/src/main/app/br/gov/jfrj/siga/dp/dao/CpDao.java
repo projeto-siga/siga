@@ -695,7 +695,7 @@ public class CpDao extends ModeloDao {
 	public DpLotacao consultarPorSigla(final DpLotacao o) {
 		final Query query = getSessao().getNamedQuery(
 				"consultarPorSiglaDpLotacao");
-		query.setString("siglaLotacao", o.getSigla());
+		query.setString("siglaLotacao", o.getSiglaLotacao());
 		if (o.getOrgaoUsuario() != null)
 			if (o.getOrgaoUsuario().getIdOrgaoUsu() != null)
 				query.setLong("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());
@@ -1184,9 +1184,14 @@ public class CpDao extends ModeloDao {
 		try {
 			final Query query;
 
-			if (!flt.isBuscarFechadas())
+			if (!flt.isBuscarFechadas()) {
 				query = getSessao().getNamedQuery("consultarPorFiltroDpPessoa");
-			else
+				if(flt.getId() != null && !"".equals(flt.getId())) {
+					query.setLong("id", Long.valueOf(flt.getId()));
+				} else {
+					query.setLong("id", 0);
+				}
+			} else
 				query = getSessao().getNamedQuery(
 						"consultarPorFiltroDpPessoaInclusiveFechadas");
 
@@ -1256,10 +1261,14 @@ public class CpDao extends ModeloDao {
 		try {
 			final Query query;
 
-			if (!flt.isBuscarFechadas())
+			if (!flt.isBuscarFechadas()) {
 				query = getSessao()
 						.getNamedQuery("consultarQuantidadeDpPessoa");
-			else
+				if (flt.getId() != null)
+					query.setLong("id", flt.getId());
+				else
+					query.setLong("id", 0);
+			} else
 				query = getSessao().getNamedQuery(
 						"consultarQuantidadeDpPessoaInclusiveFechadas");
 
@@ -1414,6 +1423,27 @@ public class CpDao extends ModeloDao {
 			qry.setLong("cpf", Long.valueOf(nmUsuario));
 			qry.setString("nmUsuario", null);
 			qry.setString("sesbPessoa", null);
+			
+			qry.setCacheable(true);
+			qry.setCacheRegion(CACHE_QUERY_SECONDS);
+			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.list();
+			
+			return lista;
+		} catch (Throwable e) {
+			throw new AplicacaoException(
+					"Ocorreu um erro tentando localizar a identidade do usuario '"
+							+ nmUsuario + "'.", 0, e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpIdentidade> consultaIdentidadesPorCpfEmail(
+			final String nmUsuario, String email) throws AplicacaoException {
+		try {
+			final Query qry = getSessao().getNamedQuery("consultarIdentidadeCpfEmail");
+			
+			qry.setLong("cpf", Long.valueOf(nmUsuario));
+			qry.setString("email", email);
 			
 			qry.setCacheable(true);
 			qry.setCacheRegion(CACHE_QUERY_SECONDS);

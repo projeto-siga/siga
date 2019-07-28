@@ -6408,8 +6408,8 @@ public class ExBL extends CpBL {
 				|| modNovo.getNmMod().trim().length() == 0)
 			throw new AplicacaoException(
 					"não é possível salvar um modelo sem informar o nome.");
-		if (modNovo.getDescMod() == null
-				|| modNovo.getDescMod().trim().length() == 0)
+		if ((modNovo.getDescMod() == null
+				|| modNovo.getDescMod().trim().length() == 0) && (SigaBaseProperties.getString("siga.local") == null || !"GOVSP".equals(SigaBaseProperties.getString("siga.local"))))
 			throw new AplicacaoException(
 					"não é possível salvar um modelo sem informar a descrição.");
 		try {

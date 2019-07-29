@@ -88,7 +88,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	@Get
 	@Post
 	@Path({"/app/pessoa/buscar","/app/cosignatario/buscar", "/pessoa/buscar.action", "/cosignatario/buscar.action"})
-	public void buscar(String sigla, String postback, Integer offset, Long idOrgaoUsu, DpLotacaoSelecao lotacaoSel) throws Exception {
+	public void buscar(String sigla, String postback, Integer paramoffset, Long idOrgaoUsu, DpLotacaoSelecao lotacaoSel) throws Exception {
 		final DpLotacao lotacaoTitular = getLotaTitular();
 		if ( postback == null && lotacaoTitular != null ) {
 			orgaoUsu = lotacaoTitular.getIdOrgaoUsuario();
@@ -98,7 +98,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		if (lotacaoSel != null && lotacaoSel.getId() != null && lotacaoSel.getId() > 0){
 			this.lotacaoSel = lotacaoSel;
 		}
-		this.getP().setOffset(offset);
+		this.getP().setOffset(paramoffset);
 		
 		if (sigla == null){
 			sigla = "";
@@ -115,8 +115,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		result.include("idOrgaoUsu",orgaoUsu);
 		result.include("sigla",sigla);
 		result.include("postbak",postback);
-		result.include("offset",offset);
-		result.include("maxIndices", getTamanho()/10 + 1);
+		result.include("offset",paramoffset);
 	}
 	
 	@Get("/app/pessoa/exibir")
@@ -181,7 +180,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 	
 	@Get("app/pessoa/listar")
-	public void lista(Integer offset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa) throws Exception {
+	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa) throws Exception {
 		result.include("request",getRequest());
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
 		CpOrgaoUsuario ou = new CpOrgaoUsuario(); 
@@ -202,8 +201,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		}
 		if(idOrgaoUsu != null && ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) || CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario()).getId().equals(idOrgaoUsu))) {
 			DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
-			if(offset == null) {
-				offset = 0;
+			if(paramoffset == null) {
+				paramoffset = 0;
 			}
 			dpPessoa.setIdOrgaoUsu(idOrgaoUsu);
 			dpPessoa.setNome(Texto.removeAcento(nome != null ? nome : ""));
@@ -227,11 +226,10 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			}
 			dpPessoa.setBuscarFechadas(Boolean.TRUE);
 			dpPessoa.setId(Long.valueOf(0));
-			setItens(CpDao.getInstance().consultarPorFiltro(dpPessoa, offset, 15));
+			setItens(CpDao.getInstance().consultarPorFiltro(dpPessoa, paramoffset, 15));
 			result.include("itens", getItens());
 			Integer tamanho = dao().consultarQuantidade(dpPessoa);
 			result.include("tamanho", tamanho);
-			result.include("maxIndices", tamanho/15+1);
 			
 			result.include("idOrgaoUsu", idOrgaoUsu);
 			result.include("nome", nome);
@@ -240,7 +238,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			result.include("idFuncaoPesquisa", idFuncaoPesquisa);
 			result.include("idLotacaoPesquisa", idLotacaoPesquisa);
 			
-			carregarCombos(null, idOrgaoUsu, null, null, null, null, cpfPesquisa, offset, Boolean.FALSE);
+			carregarCombos(null, idOrgaoUsu, null, null, null, null, cpfPesquisa, paramoffset, Boolean.FALSE);
 
 		}
 	}
@@ -387,7 +385,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 	
 	@Post("/app/pessoa/carregarCombos")
-	public void carregarCombos(final Long id, final Long idOrgaoUsu, final String nmPessoa, final String dtNascimento, final String cpf, final String email, final String cpfPesquisa, final Integer offset, Boolean retornarEnvioEmail) {
+	public void carregarCombos(final Long id, final Long idOrgaoUsu, final String nmPessoa, final String dtNascimento, final String cpf, final String email, final String cpfPesquisa, final Integer paramoffset, Boolean retornarEnvioEmail) {
 		result.include("request",getRequest());
 		result.include("id", id);
 		result.include("idOrgaoUsu", idOrgaoUsu);
@@ -397,7 +395,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		result.include("email", email);
 		result.include("cpfPesquisa", cpfPesquisa);
 		setItemPagina(15);
-		result.include("currentPageNumber", calculaPaginaAtual(offset));
+		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
 		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 			List<CpOrgaoUsuario> list1 = new ArrayList<CpOrgaoUsuario>();
@@ -449,7 +447,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		listaFuncao.addAll(dao().getInstance().consultarPorFiltro(funcao));
 		result.include("listaFuncao", listaFuncao);
 		
-		if(offset == null) {
+		if(paramoffset == null) {
 			result.use(Results.page()).forwardTo("/WEB-INF/page/dpPessoa/edita.jsp");
 		} else if(retornarEnvioEmail != null && retornarEnvioEmail) { 
 			result.use(Results.page()).forwardTo("/WEB-INF/page/dpPessoa/enviaEmail.jsp");
@@ -639,7 +637,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 	
 	@Get("app/pessoa/enviarEmail")
-	public void enviaEmail(Integer offset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idLotacaoPesquisa) throws Exception {
+	public void enviaEmail(Integer paramoffset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idLotacaoPesquisa) throws Exception {
 		result.include("request",getRequest());
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
 		CpOrgaoUsuario ou = new CpOrgaoUsuario(); 
@@ -660,8 +658,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		}
 		if(idOrgaoUsu != null && ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) || CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario()).getId().equals(idOrgaoUsu))) {
 			DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
-			if(offset == null) {
-				offset = 0;
+			if(paramoffset == null) {
+				paramoffset = 0;
 			}
 			dpPessoa.setIdOrgaoUsu(idOrgaoUsu);
 			dpPessoa.setNome(Texto.removeAcento(nome != null ? nome : ""));
@@ -675,18 +673,17 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				dpPessoa.setCpf(Long.valueOf(cpfPesquisa.replace(".", "").replace("-", "")));
 			}
 			dpPessoa.setBuscarFechadas(Boolean.TRUE);
-			setItens(CpDao.getInstance().consultarPorFiltroSemIdentidade(dpPessoa, offset, 15));
+			setItens(CpDao.getInstance().consultarPorFiltroSemIdentidade(dpPessoa, paramoffset, 15));
 			result.include("itens", getItens());
 			Integer tamanho = dao().consultarQuantidadeDpPessoaSemIdentidade(dpPessoa);
 			result.include("tamanho", tamanho);
-			result.include("maxIndices", tamanho/15+1);	
 			
 			result.include("idOrgaoUsu", idOrgaoUsu);
 			result.include("nome", nome);
 			result.include("cpfPesquisa", cpfPesquisa);
 			result.include("idLotacaoPesquisa", idLotacaoPesquisa);
 			
-			carregarCombos(null, idOrgaoUsu, null, null, null, null, cpfPesquisa, offset, Boolean.TRUE);
+			carregarCombos(null, idOrgaoUsu, null, null, null, null, cpfPesquisa, paramoffset, Boolean.TRUE);
 		}
 	}
 	

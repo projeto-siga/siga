@@ -22,7 +22,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
@@ -33,6 +35,8 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaCalendar;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.CPFUtils;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso.CpTipoAcessoEnum;
 import br.gov.jfrj.siga.cp.CpAcesso;
@@ -47,9 +51,12 @@ import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.util.Excel;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpCargo;
+import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 
 public class CpBL {
 
@@ -967,5 +974,147 @@ public class CpBL {
     	}
         return bundle;
     }
+	
+	
+	public String criarUsuario(final Long id, final Long idOrgaoUsu, final Long idCargo, final Long idFuncao, final Long idLotacao, final String nmPessoa, final String dtNascimento, 
+			final String cpf, final String email) throws Exception{
+		
+		if(idOrgaoUsu == null || idOrgaoUsu == 0)
+			throw new AplicacaoException("Órgão não Localizado");
+		
+		if(idCargo == null || idCargo == 0)
+			throw new AplicacaoException("Cargo não Localizado");
+		
+		if(idLotacao == null || idLotacao == 0)
+			throw new AplicacaoException("Lotação não Localizado");
+		
+		if(nmPessoa == null || nmPessoa.trim() == "")
+			throw new AplicacaoException("Nome não informado");
+		
+		if(cpf == null || cpf.trim() == "") 
+			throw new AplicacaoException("CPF não informado");
+		
+		if(email == null || email.trim() == "") 
+			throw new AplicacaoException("E-mail não informado");
+		
+		if(nmPessoa != null && !nmPessoa.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ'' ]+")) 
+			throw new AplicacaoException("Nome com caracteres não permitidos");
+		
+		
+		DpPessoa pessoa = new DpPessoa();
+		
+		if (id == null) {
+			Date data = new Date(System.currentTimeMillis());
+			pessoa.setDataInicio(data);
+			pessoa.setMatricula(0L);
+			pessoa.setSituacaoFuncionalPessoa(SituacaoFuncionalEnum.APENAS_ATIVOS.getValor()[0]);
+		} else {
+			pessoa = dao().consultar(id, DpPessoa.class, false);
+		}
+		
+		if(dtNascimento != null && !"".equals(dtNascimento)) {
+			Date dtNasc = new Date();
+			dtNasc = SigaCalendar.converteStringEmData(dtNascimento);
+			
+			Calendar hj = Calendar.getInstance();
+			Calendar dtNasci = new GregorianCalendar();
+			dtNasci.setTime(dtNasc);
+			
+			if(hj.before(dtNasci)) {
+				throw new AplicacaoException("Data de nascimento inválida");
+			}
+			pessoa.setDataNascimento(dtNasc);
+		} else {
+			pessoa.setDataNascimento(null);
+		}
+		
+		pessoa.setNomePessoa(Texto.removerEspacosExtra(nmPessoa).trim());
+		pessoa.setCpfPessoa(Long.valueOf(cpf.replace("-", "").replace(".", "")));
+		pessoa.setEmailPessoa(Texto.removerEspacosExtra(email).trim().replace(" ","").toLowerCase());
+		
+		CpOrgaoUsuario ou = new CpOrgaoUsuario();
+		DpCargo cargo = new DpCargo();
+		DpFuncaoConfianca funcao = new DpFuncaoConfianca();
+		DpLotacao lotacao = new DpLotacao();
+		
+		ou.setIdOrgaoUsu(idOrgaoUsu);
+		ou = CpDao.getInstance().consultarPorId(ou);
+		cargo.setId(idCargo);
+		lotacao.setId(idLotacao);
+		funcao.setIdFuncao(idFuncao);
+		
+		pessoa.setOrgaoUsuario(ou);
+		pessoa.setCargo(cargo);
+		pessoa.setLotacao(lotacao);
+		
+		if(idFuncao != null && idFuncao != 0) {
+			pessoa.setFuncaoConfianca(funcao);
+		} else {
+			pessoa.setFuncaoConfianca(null);
+		}
+		pessoa.setSesbPessoa(ou.getSigla());
+		
+		//ÓRGÃO / CARGO / FUNÇÃO DE CONFIANÇA / LOTAÇÃO e CPF iguais.
+		DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
+		dpPessoa.setIdOrgaoUsu(pessoa.getOrgaoUsuario().getId());
+		dpPessoa.setCargo(pessoa.getCargo());
+		dpPessoa.setFuncaoConfianca(pessoa.getFuncaoConfianca());
+		dpPessoa.setLotacao(pessoa.getLotacao());
+		dpPessoa.setCpf(pessoa.getCpfPessoa());
+		dpPessoa.setNome("");
+		dpPessoa.setId(id);
+		
+		dpPessoa.setBuscarFechadas(Boolean.FALSE);
+		Integer tamanho = dao().consultarQuantidade(dpPessoa);
+		
+		if(tamanho > 0) {
+			throw new AplicacaoException("Usuário já cadastrado com estes dados: Órgão, Cargo, Função, Unidade e CPF");
+		}
+		
+		try {
+			dao().iniciarTransacao();
+			dao().gravar(pessoa);
+			if(pessoa.getIdPessoaIni() == null && pessoa.getId() != null) {
+				pessoa.setIdPessoaIni(pessoa.getId());
+				pessoa.setIdePessoa(pessoa.getId().toString());
+				pessoa.setMatricula(10000 + pessoa.getId());
+				pessoa.setIdePessoa(pessoa.getMatricula().toString());
+				dao().gravar(pessoa);
+				
+				List<CpIdentidade> lista = CpDao.getInstance().consultaIdentidadesPorCpf(cpf.replace(".", "").replace("-", ""));
+				CpIdentidade usu = null;
+				if(lista.size() > 0) {
+					CpIdentidade usuarioExiste = lista.get(0);
+					usu = new CpIdentidade();
+					usu.setCpTipoIdentidade(dao().consultar(1,
+										CpTipoIdentidade.class, false));
+					usu.setDscSenhaIdentidade(usuarioExiste.getDscSenhaIdentidade());
+					usu.setDtCriacaoIdentidade(dao()
+							.consultarDataEHoraDoServidor());
+					usu.setCpOrgaoUsuario(ou);
+					usu.setHisDtIni(usu.getDtCriacaoIdentidade());
+					usu.setHisAtivo(1);
+				}
+				
+				if(usu != null) {
+					usu.setNmLoginIdentidade(pessoa.getSesbPessoa() + pessoa.getMatricula());
+					usu.setDpPessoa(pessoa);
+					//dao().gravarComHistorico(usu, getIdentidadeCadastrante());
+				}
+			}
+			dao().commitTransacao();			
+		} catch (final Exception e) {
+			dao().rollbackTransacao();
+			throw new AplicacaoException("Erro na gravação", 0, e);
+		}
+		
+		
+		
+		
+		return "Usuário cadastrado com sucesso: " + pessoa.getSesbPessoa() + pessoa.getMatricula();
+		
+		
+	}
+	
 
 }

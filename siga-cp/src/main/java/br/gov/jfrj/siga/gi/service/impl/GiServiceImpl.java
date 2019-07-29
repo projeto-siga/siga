@@ -344,7 +344,7 @@ public class GiServiceImpl implements GiService {
 				throw new AplicacaoException("Cargo não informado");
 			
 			if(lotacao == null || "".equals(lotacao.trim()))
-				throw new AplicacaoException("Lotação não informado");
+				throw new AplicacaoException("Unidade não informada");
 			
 			if(nmPessoa == null || "".equals(nmPessoa.trim()))
 				throw new AplicacaoException("Nome não informado");

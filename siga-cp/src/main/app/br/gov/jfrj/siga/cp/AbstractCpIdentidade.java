@@ -54,17 +54,17 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "      and u.dpPessoa = pes" + "      and u.hisDtFim is null"),
 		@NamedQuery(name = "consultarIdentidadeCadastranteAtiva", query = "select u from CpIdentidade u , DpPessoa pes "
 				+ "where ((u.nmLoginIdentidade = :nmUsuario and pes.sesbPessoa = :sesbPessoa and pes.sesbPessoa is not null) or "
-				+ " (pes.cpfPessoa is not null and pes.cpfPessoa <> 0 and pes.cpfPessoa = :cpf)) "
+				+ " (pes.cpfPessoa is not null and pes.cpfPessoa <> :cpfZero and pes.cpfPessoa = :cpf)) "
 				+ "and u.dpPessoa.idPessoaIni = pes.idPessoaIni "
 				+ "and u.hisDtFim is null "
 				+ "and u.dtCancelamentoIdentidade is null "
 				+ "and (u.dtExpiracaoIdentidade is null or u.dtExpiracaoIdentidade > current_date()) "
 				+ "and pes.dataFimPessoa is null "
-				+ "and (pes.situacaoFuncionalPessoa = '1' "
-				+ "or pes.situacaoFuncionalPessoa = '2' "
-				+ "or pes.situacaoFuncionalPessoa = '12' "
-				+ "or pes.situacaoFuncionalPessoa = '22' "
-				+ "or pes.situacaoFuncionalPessoa = '31') "),
+				+ "and (pes.situacaoFuncionalPessoa = :sfp1 "
+				+ "or pes.situacaoFuncionalPessoa = :sfp2 "
+				+ "or pes.situacaoFuncionalPessoa = :sfp12 "
+				+ "or pes.situacaoFuncionalPessoa = :sfp22 "
+				+ "or pes.situacaoFuncionalPessoa = :sfp31) "),
 		@NamedQuery(name = "consultarIdentidadeCpfEmail", query = "select u from CpIdentidade u , DpPessoa pes "
 				+ "where (pes.cpfPessoa is not null and pes.cpfPessoa <> 0 and pes.cpfPessoa = :cpf)"
 				+ "and pes.emailPessoa = :email "

@@ -1395,7 +1395,16 @@ public class CpDao extends ModeloDao {
 				qry.setString("sesbPessoa", MatriculaUtils.getSiglaDoOrgaoDaMatricula(nmUsuario));
 				qry.setString("cpf", null);
 			}
+			
+			/* Constantes para Evitar Parse Oracle */
+			qry.setString("cpfZero","0");
+			qry.setString("sfp1","1");
+			qry.setString("sfp2","2");
+			qry.setString("sfp12","12");
+			qry.setString("sfp22","22");
+			qry.setString("sfp31","31");
 
+			
 			// Cache was disabled because it would interfere with the
 			// "change password" action.
 			qry.setCacheable(true);
@@ -1423,6 +1432,14 @@ public class CpDao extends ModeloDao {
 			qry.setLong("cpf", Long.valueOf(nmUsuario));
 			qry.setString("nmUsuario", null);
 			qry.setString("sesbPessoa", null);
+			
+			/* Constantes para Evitar Parse Oracle */
+			qry.setString("cpfZero","0");
+			qry.setString("sfp1","1");
+			qry.setString("sfp2","2");
+			qry.setString("sfp12","12");
+			qry.setString("sfp22","22");
+			qry.setString("sfp31","31");
 			
 			qry.setCacheable(true);
 			qry.setCacheRegion(CACHE_QUERY_SECONDS);

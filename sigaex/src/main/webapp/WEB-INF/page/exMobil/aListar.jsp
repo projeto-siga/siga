@@ -456,8 +456,7 @@
 					
 					<div id="trTipo" style="display:${idTpDoc == 3 ? 'none' : ''}"
 						class="form-row">
-						<c:if test="${siga_cliente != 'GOVSP'}">
-						<div class="form-group col-md-3">
+						<div class="form-group col-md-3 ${hide_only_GOVSP}">
 							<label for="tipoForma">Tipo da Espécie</label> <select
 								class="form-control" id="tipoForma" name="idTipoFormaDoc"
 								onchange="javascript:alteraTipoDaForma();">
@@ -469,7 +468,6 @@
 								</c:forEach>
 							</select>
 						</div>
-						</c:if>
 
 						<div class="form-group col-md-3">
 							<div style="display: inline" id="comboFormaDiv"></div>
@@ -702,4 +700,11 @@
 	<script>
 		alteraOrigem();
 	</script>
+	<c:if test="${siga_cliente == 'GOVSP'}">
+		<script>
+		$(document).ready(function() {
+			alteraTipoDaForma()
+		});
+		</script>
+	</c:if>
 </siga:pagina>

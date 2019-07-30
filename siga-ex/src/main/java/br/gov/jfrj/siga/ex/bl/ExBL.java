@@ -5927,6 +5927,7 @@ public class ExBL extends CpBL {
 					provSet.add(mod);
 			modeloSetFinal = provSet;
 		}
+		
 		if (despachando) {
 			provSet = new ArrayList<ExModelo>();
 			for (ExModelo mod : modeloSetFinal)
@@ -5934,7 +5935,15 @@ public class ExBL extends CpBL {
 						CpTipoConfiguracao.TIPO_CONFIG_DESPACHAVEL))
 					provSet.add(mod);
 			modeloSetFinal = provSet;
-		}
+		} else {
+			provSet = new ArrayList<ExModelo>();
+			for (ExModelo mod : modeloSetFinal)
+				if (getConf().podePorConfiguracao(titular, lotaTitular, mod,
+						CpTipoConfiguracao.TIPO_CONFIG_CRIAR_COMO_NOVO))
+					provSet.add(mod);
+			modeloSetFinal = provSet;
+		}		
+		
 		if (autuando) {
 			provSet = new ArrayList<ExModelo>();
 			for (ExModelo mod : modeloSetFinal)

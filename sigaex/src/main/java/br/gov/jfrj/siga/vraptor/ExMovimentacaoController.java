@@ -1751,15 +1751,17 @@ public class ExMovimentacaoController extends ExController {
 			final String obsOrgao, final String protocolo) throws Exception {
 		this.setPostback(postback);
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        Date dtDevolucao = sdf.parse(dtDevolucaoMovString);		
-		
-        if (SigaMessages.isSigaSP()) {
-        	if (!DateUtils.isSameDay(new Date(), dtDevolucao) && dtDevolucao.before(new Date())) {
-				throw new AplicacaoException(
-						"Data de devolução não pode ser anterior à data de hoje.");
-        	}
-        }
+		if(dtDevolucaoMovString != null && !"".equals(dtDevolucaoMovString.trim())) {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	        Date dtDevolucao = sdf.parse(dtDevolucaoMovString);		
+			
+	        if (SigaMessages.isSigaSP()) {
+	        	if (!DateUtils.isSameDay(new Date(), dtDevolucao) && dtDevolucao.before(new Date())) {
+					throw new AplicacaoException(
+							"Data de devolução não pode ser anterior à data de hoje.");
+	        	}
+	        }
+		}
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder);

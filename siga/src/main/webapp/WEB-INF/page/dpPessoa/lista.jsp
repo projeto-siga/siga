@@ -102,14 +102,14 @@ function cpf_mask(v){
 							</select>
 						</div>					
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-4">
 						<div class="form-group">
 							<label for="idLotacaoPesquisa"><fmt:message key="usuario.lotacao"/></label>
 							<select name="idLotacaoPesquisa" value="${idLotacaoPesquisa}" class="form-control">
 								<c:forEach items="${listaLotacao}" var="item">
-									<option value="${item.idLotacao}"
-										${item.idLotacao == idLotacaoPesquisa ? 'selected' : ''}>
-										${item.descricao}</option>
+									<option value="${item.idLotacao}" ${item.idLotacao == idLotacaoPesquisa ? 'selected' : ''}>
+										<c:if test="${item.descricao ne 'Selecione'}">${item.siglaLotacao} / </c:if>${item.descricao}
+									</option>
 								</c:forEach>
 							</select>
 						</div>					

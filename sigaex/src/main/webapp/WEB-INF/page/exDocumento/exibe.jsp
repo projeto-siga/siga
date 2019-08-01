@@ -443,20 +443,26 @@
 												</c:otherwise>
 											</c:choose> &nbsp;-&nbsp; <c:forEach var="marca" items="${entry.value}"
 												varStatus="loop">
-									${marca.cpMarcador.descrMarcador} 
-									<c:if test="${marca.dtIniMarca gt now}">
-										a partir de ${marca.dtIniMarcaDDMMYYYY}
-									</c:if>
-												<c:if test="${not empty marca.dtFimMarca}"> 
-										até ${marca.dtFimMarcaDDMMYYYY}
-									</c:if>
-												<c:if test="${not empty marca.dpLotacaoIni}">
-										[${marca.dpLotacaoIni.lotacaoAtual.sigla}
-										<c:if test="${not empty marca.dpPessoaIni}">
-											&nbsp;${marca.dpPessoaIni.pessoaAtual.sigla}
-										</c:if>
-										]
-									</c:if>
+												<c:if test="${marca.cpMarcador.idMarcador ne '56' && marca.cpMarcador.idMarcador ne '57' && marca.cpMarcador.idMarcador ne '58' && siga_cliente eq 'GOVSP'}">
+												
+														${marca.cpMarcador.descrMarcador}
+														<c:if test="${marca.dtIniMarca gt now}">
+															a partir de ${marca.dtIniMarcaDDMMYYYY}
+														</c:if>
+																	<c:if test="${not empty marca.dtFimMarca}"> 
+															até ${marca.dtFimMarcaDDMMYYYY}
+														</c:if>
+																	<c:if test="${not empty marca.dpLotacaoIni}">
+															[${marca.dpLotacaoIni.lotacaoAtual.sigla}
+															<c:if test="${not empty marca.dpPessoaIni}">
+																&nbsp;${marca.dpPessoaIni.pessoaAtual.sigla}
+															</c:if>
+															]
+														</c:if>
+									
+												</c:if>
+									
+									
 											</c:forEach></li>
 									</c:forEach>
 								</ul>

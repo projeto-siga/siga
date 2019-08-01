@@ -310,11 +310,15 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				if(pessoa.getDataNascimento() != null) {
 					result.include("dtNascimento", pessoa.getDtNascimentoDDMMYYYY());
 				}
-				result.include("idCargo", pessoa.getCargo().getId());
+				if(pessoa.getCargo() != null) {
+					result.include("idCargo", pessoa.getCargo().getId());
+				}
 				if( pessoa.getFuncaoConfianca() != null) {
 					result.include("idFuncao", pessoa.getFuncaoConfianca().getId());
 				}
-				result.include("idLotacao", pessoa.getLotacao().getId());
+				if(pessoa.getLotacao() != null) {
+					result.include("idLotacao", pessoa.getLotacao().getId());
+				}
 			}
 		}
 		if(id == null || (ou.getId() != null && ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) || CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario()).getId().equals(ou.getId())))) {

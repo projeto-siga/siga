@@ -196,14 +196,14 @@
 							</select>
 						</div>
 					</div>
-					<div class="col-sm-2">
+					<div class="col-sm-4">
 						<div class="form-group">
 							<label for="idLotacao">Lota&ccedil;&atilde;o</label>
 							<select name="idLotacao" value="${idLotacao}" class="form-control">
 								<c:forEach items="${listaLotacao}" var="item">
-									<option value="${item.idLotacao}"
-										${item.idLotacao == idLotacao ? 'selected' : ''}>
-										${item.descricao}</option>
+									<option value="${item.idLotacao}" ${item.idLotacao == idLotacao ? 'selected' : ''}>
+										<c:if test="${item.descricao ne 'Selecione'}">${item.siglaLotacao} / </c:if>${item.descricao}
+									</option>
 								</c:forEach>
 							</select>
 						</div>

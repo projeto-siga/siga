@@ -36,6 +36,7 @@ import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaCalendar;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.base.util.CPFUtils;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso.CpTipoAcessoEnum;
@@ -363,18 +364,68 @@ public class CpBL {
 					dao().iniciarTransacao();
 					dao().gravarComHistorico(idNova, id, dt, idCadastrante);
 					dao().commitTransacao();
-					Correio.enviar(
-							pessoa.getEmailPessoaAtual(),
-							"Alteração de senha ",
-							"\n"
-									+ idNova.getDpPessoa().getNomePessoa()
-									+ "\nMatricula: "
-									+ idNova.getDpPessoa().getSigla()
-									+ "\n"
-									+ "\nSua senha foi alterada para: "
-									+ novaSenha
-									+ "\n\n Atenção: esta é uma "
-									+ "mensagem automática. Por favor, não responda. ");
+
+					if (SigaMessages.isSigaSP()) {
+						String[] destinanarios = { pessoa.getEmailPessoaAtual()};
+						Correio.enviar(
+							SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
+							destinanarios,
+							"Esqueci Minha Senha",
+							"",
+							"<table>"
+							+ "<tbody>"
+							+ "<tr>"
+							+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
+							+ "<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' "
+							+ "alt='SP Sem Papel' width='108' height='50' /></td>"
+							+ "</tr>"
+							+ "<tr>"
+							+ "<td style='background-color: #bbb; padding: 0 20px;'>"
+							+ "<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>"
+							+ "</td>"
+							+ "</tr>"
+							+ "<tr style='height: 310px;'>"
+							+ "<td style='height: 310px; padding: 10px 20px;'>"
+							+ "<div>"
+							+ "<h4><span style='color: #808080;'>Prezado Servidor(a) "
+							+ "<strong>" + idNova.getDpPessoa().getNomePessoa() + "</strong>"
+							+ " do(a) "
+							+ "<strong>" + idNova.getDpPessoa().getOrgaoUsuario().getDescricao() + "</strong>" 
+							+",</span></h4>"
+							+ "<p><span style='color: #808080;'>Voc&ecirc; est&aacute; recebendo sua nova senha para acesso "
+							+ "ao Portal SP Sem Papel.</span></p>"
+							+ "<p><span style='color: #808080;'><strong>"
+							+ "<p><span style='color: #808080;'>Sua matr&iacute;cula &eacute;:&nbsp;&nbsp;<strong>"
+							+ idNova.getDpPessoa().getSigla()
+							+ "</strong></span></p>"
+							+ "<p><span style='color: #808080;'>Sua senha &eacute;:&nbsp;&nbsp;<strong>"
+							+ novaSenha
+							+ "</strong></span></p>"
+							+ "</div>"
+							+ "</td>"
+							+ "</tr>"
+							+ "<tr>"
+							+ "<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>"
+							+ "<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>"
+							+ "</td>"
+							+ "</tr>"
+							+ "</tbody>"
+							+ "</table>"
+							);
+					} else {
+						Correio.enviar(
+								pessoa.getEmailPessoaAtual(),
+								"Alteração de senha ",
+								"\n"
+										+ idNova.getDpPessoa().getNomePessoa()
+										+ "\nMatricula: "
+										+ idNova.getDpPessoa().getSigla()
+										+ "\n"
+										+ "\nSua senha foi alterada para: "
+										+ novaSenha
+										+ "\n\n Atenção: esta é uma "
+										+ "mensagem automática. Por favor, não responda. ");
+					}
 
 					return idNova;
 				} catch (final Exception e) {
@@ -451,15 +502,71 @@ public class CpBL {
 
 						dao().iniciarTransacao();
 						dao().gravarComHistorico(idNova, idCadastrante);
-						Correio.enviar(
+						dao().commitTransacao();
+						
+						if (SigaMessages.isSigaSP()) {
+							String[] destinanarios = { pessoa.getEmailPessoaAtual()};
+							
+							Correio.enviar(
+								SigaBaseProperties.getString("servidor.smtp.usuario.remetente"),
+								destinanarios,
+								"Novo Usuário",
+								"",
+								"<table>"
+								+ "<tbody>"
+								+ "<tr>"
+								+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
+								+ "<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' "
+								+ "alt='SP Sem Papel' width='108' height='50' /></td>"
+								+ "</tr>"
+								+ "<tr>"
+								+ "<td style='background-color: #bbb; padding: 0 20px;'>"
+								+ "<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>"
+								+ "</td>"
+								+ "</tr>"
+								+ "<tr style='height: 310px;'>"
+								+ "<td style='height: 310px; padding: 10px 20px;'>"
+								+ "<div>"
+								+ "<p><span style='color: #808080;'>Prezado Servidor(a) "
+								+ "<strong>" + idNova.getDpPessoa().getNomePessoa() + "</strong>"
+								+ " do(a) "
+								+ "<strong>" + idNova.getDpPessoa().getOrgaoUsuario().getDescricao() + "</strong>" 
+								+",</span></h4>"
+								+ "<p><span style='color: #808080;'>Voc&ecirc; est&aacute; recebendo sua matr&iacute;cula e senha para acesso "
+								+ "ao Portal SP Sem Papel, para acesso ao servi&ccedil;o Documentos Digitais.</span></p>"
+								+ "<p><span style='color: #808080;'>Ao usar o portal para cria&ccedil;&atilde;o de documentos, voc&ecirc; est&aacute; "
+								+ "produzindo documento nato-digital, confirme seus dados cadastrais, nome, cargo e unidade "
+								+ "antes de iniciar o uso e assinar documentos.</span></p>"
+								+ "<p><span style='color: #808080;'>Realize sua capacita&ccedil;&atilde;o no AVA e utilize o ambiente "
+								+ "de capacita&ccedil;&atilde;o para testes e treinamento.</span></p>"
+								+ "<p><span style='color: #808080;'>Sua matr&iacute;cula &eacute;:&nbsp;&nbsp;<strong>"
+								+ matricula
+								+ "</strong></span></p>"
+								+ "<p><span style='color: #808080;'>Sua senha &eacute;:&nbsp;&nbsp;<strong>"
+								+ novaSenha
+								+ "</strong></span></p>"
+								+ "</div>"
+								+ "</td>"
+								+ "</tr>"
+								+ "<tr>"
+								+ "<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>"
+								+ "<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>"
+								+ "</td>"
+								+ "</tr>"
+								+ "</tbody>"
+								+ "</table>"
+								);
+						} else {
+							Correio.enviar(
 								pessoa.getEmailPessoaAtual(),
 								"Novo Usuário",
 								"Seu login é: "
-										+ matricula
-										+ "\n e sua senha é "
-										+ novaSenha
-										+ "\n\n Atenção: esta é uma "
-										+ "mensagem automática. Por favor não responda ");
+								+ matricula
+								+ "\n e sua senha é "
+								+ novaSenha
+								+ "\n\n Atenção: esta é uma "
+								+ "mensagem automática. Por favor não responda ");
+						}
 						dao().commitTransacao();
 						return idNova;
 					} catch (final Exception e) {

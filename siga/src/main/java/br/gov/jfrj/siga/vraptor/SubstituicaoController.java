@@ -195,7 +195,7 @@ public class SubstituicaoController extends SigaController {
 		
 		
 		Long lotacaoIniPai;
-		Long lotacaoIniAvo;
+		Long lotacaoIniAvo = null;
 
 		DpSubstituicao subst = new DpSubstituicao();
 		
@@ -227,8 +227,8 @@ public class SubstituicaoController extends SigaController {
 				
 				subst.setLotaTitular(dao().consultar(this.lotaTitularSel.getId(), DpLotacao.class, false));
 				lotacaoIniPai = subst.getLotaTitular().getIdLotacaoIniPai();
-				lotacaoIniAvo = subst.getLotaTitular().getLotacaoPai().getIdLotacaoIniPai();
-				
+				if(lotacaoIniPai != null)
+					lotacaoIniAvo = subst.getLotaTitular().getLotacaoPai().getIdLotacaoIniPai();
 				
 				if (!subst.getLotaTitular().getIdLotacao().equals(getCadastrante().getIdLotacao()) 
 						&& !podeCadastrarQualquerSubstituicao()) 
@@ -334,7 +334,6 @@ public class SubstituicaoController extends SigaController {
 					+ "\n\n Atenção: esta é uma "
 					+ "mensagem automática. Por favor, não responda.";
 					
-	//		String assunto = "Cadastro de Substituição - TESTE DE IMPLEMENTAçÃO DE ENVIOD E EMAIL - FAVOR DESCONSIDERA";
 			String assunto = "Cadastro de Substituição";
 					
 			List<String> listaDeEmails= new ArrayList<String>();

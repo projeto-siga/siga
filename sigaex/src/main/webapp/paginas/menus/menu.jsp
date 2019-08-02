@@ -248,34 +248,35 @@
 			</ul></li>
 	</c:if>
 
-	<c:if test="${false}">
-	<li class="nav-item dropdown"><a href="javascript:void(0);"
-		class="nav-link dropdown-toggle" data-toggle="dropdown"> Gestão </a>
-		<ul class="dropdown-menu">
-			<li><a class="dropdown-item" href="#"> Indicadores de Gestão
-			</a></li>
+	<c:if test="${true}">
+		<li class="nav-item dropdown"><a href="javascript:void(0);"
+			class="nav-link dropdown-toggle" data-toggle="dropdown"> Gestão </a>
+			<ul class="dropdown-menu">
+				<li><a class="dropdown-item" href="#"> Indicadores de
+						Gestão </a></li>
 
-			<li><a class="dropdown-item" href="#"> Documentos por Volume
-			</a></li>
+				<li><a class="dropdown-item"
+					href="/sigaex/app/expediente/rel/relRelatorios?nomeArquivoRel=relDocumentosPorVolume.jsp&primeiraVez=sim">
+						Documentos por Volume </a></li>
 
-			<li><a class="dropdown-item" href="#"> Documentos Fora do
-					Prazo </a></li>
+				<li><a class="dropdown-item" href="#"> Documentos Fora do
+						Prazo </a></li>
 
-			<li><a class="dropdown-item" href="#"> Documentos por
-					Devolução Programada </a></li>
+				<li><a class="dropdown-item" href="#"> Documentos por
+						Devolução Programada </a></li>
 
-			<li><a class="dropdown-item" href="#"> Tempo médio por
-					Situação </a></li>
+				<li><a class="dropdown-item" href="#"> Tempo médio por
+						Situação </a></li>
 
-			<li><a class="dropdown-item" href="#"> Tempo médio
-					Tramitação por Espécie Documental </a></li>
+				<li><a class="dropdown-item" href="#"> Tempo médio
+						Tramitação por Espécie Documental </a></li>
 
-			<li><a class="dropdown-item" href="#"> Volume de Tramitação
-					por Nome de documento </a></li>
-			<li><a class="dropdown-item" href="#"> Total de documentos
-					por Órgão Interessado </a></li>
+				<li><a class="dropdown-item" href="#"> Volume de Tramitação
+						por Nome de documento </a></li>
+				<li><a class="dropdown-item" href="#"> Total de documentos
+						por Órgão Interessado </a></li>
 
-		</ul></li>
+			</ul></li>
 	</c:if>
 
 </c:if>

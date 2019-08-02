@@ -49,12 +49,15 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
@@ -73,6 +76,7 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioDocumentosSubo
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioModelos;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 @Resource
 public class ExRelatorioController extends ExController {
@@ -88,14 +92,32 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_FORMS = "FORMS:Relação de formulários";
 	private static final String APPLICATION_PDF = "application/pdf";
 
-	public ExRelatorioController(HttpServletRequest request, HttpServletResponse response, ServletContext context, Result result, SigaObjects so,
-			EntityManager em) {
+	public ExRelatorioController(HttpServletRequest request,
+			HttpServletResponse response, ServletContext context,
+			Result result, SigaObjects so, EntityManager em) {
 		super(request, response, context, result, CpDao.getInstance(), so, em);
 	}
 
-	@Get("app/expediente/rel/relRelatorios")
-	public void aRelRelatorios(final String nomeArquivoRel) {
-		final DpLotacaoSelecao lotacaoDestinatarioSel = new DpLotacaoSelecao();
+	@Get
+	@Post
+	@Path("app/expediente/rel/relRelatorios")
+	public void aRelRelatorios(final String nomeArquivoRel,
+			final String primeiraVez, DpLotacaoSelecao lotacaoDestinatarioSel,
+			DpLotacaoSelecao lotacaoSel, DpPessoaSelecao usuarioSel,
+			String dataInicial, String dataFinal) {
+
+		if (lotacaoDestinatarioSel == null) {
+			lotacaoDestinatarioSel = new DpLotacaoSelecao();
+		}
+
+		if (lotacaoSel == null) {
+			lotacaoSel = new DpLotacaoSelecao();
+		}
+
+		if (usuarioSel == null) {
+			usuarioSel = new DpPessoaSelecao();
+		}
+
 		result.include("nomeArquivoRel", nomeArquivoRel);
 
 		if (nomeArquivoRel.equals("relDocumentosSubordinados.jsp")) {
@@ -130,6 +152,9 @@ public class ExRelatorioController extends ExController {
 			fazerResultsParaRelOrgao(lotacaoDestinatarioSel);
 		} else if (nomeArquivoRel.equals("relTipoDoc.jsp")) {
 			fazerResultsParaRelTipoDoc(lotacaoDestinatarioSel);
+		} else if (nomeArquivoRel.equals("relDocumentosPorVolume.jsp")) {
+			fazerResultsParaRelDocumentosPorVolume(lotacaoSel, usuarioSel,
+					primeiraVez, dataInicial, dataFinal);
 		} else {
 			throw new AplicacaoException("Modelo de relatório não definido!");
 		}
@@ -142,14 +167,16 @@ public class ExRelatorioController extends ExController {
 		result.include("mascaraJavascript", this.getMascaraJavascript());
 	}
 
-	private void fazerResultsParaRelConsultaDocEntreDatas(final DpLotacaoSelecao lotacaoDestinatarioSel) {
+	private void fazerResultsParaRelConsultaDocEntreDatas(
+			final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		result.include("listaExTipoDocumento", getTiposDocumento());
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
 		result.include("titular", this.getTitular());
 	}
 
-	private void fazerResultsParaRelCrDocSubordinados(final DpLotacaoSelecao lotacaoDestinatarioSel) {
+	private void fazerResultsParaRelCrDocSubordinados(
+			final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		result.include("titular", this.getTitular());
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("listaTipoRel", this.getListaTipoRel());
@@ -157,7 +184,8 @@ public class ExRelatorioController extends ExController {
 		result.include("listaExTipoFormaDoc", this.getListaExTipoFormaDoc());
 	}
 
-	private void fazerResultsParaRelDocClassificados(final DpLotacaoSelecao lotacaoDestinatarioSel) {
+	private void fazerResultsParaRelDocClassificados(
+			final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("mascaraEntrada", this.getMascaraEntrada());
 		result.include("mascaraSaida", this.getMascaraSaida());
@@ -165,7 +193,8 @@ public class ExRelatorioController extends ExController {
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
 	}
 
-	private void fazerResultsParaRelDocumentosSubordinados(final DpLotacaoSelecao lotacaoDestinatarioSel) {
+	private void fazerResultsParaRelDocumentosSubordinados(
+			final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		result.include("listaTipoRel", this.getListaTipoRel());
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
 		result.include("listaExTipoFormaDoc", this.getListaExTipoFormaDoc());
@@ -173,7 +202,8 @@ public class ExRelatorioController extends ExController {
 		result.include("titular", this.getTitular());
 	}
 
-	private void fazerResultsParaRelExpedientes(final DpLotacaoSelecao lotacaoDestinatarioSel) {
+	private void fazerResultsParaRelExpedientes(
+			final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
 
@@ -188,19 +218,22 @@ public class ExRelatorioController extends ExController {
 		result.include("lotaTitular", this.getLotaTitular());
 	}
 
-	private void fazerResultsParaRelMovCad(final DpLotacaoSelecao lotacaoDestinatarioSel) {
+	private void fazerResultsParaRelMovCad(
+			final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
 		result.include("titular", this.getTitular());
 	}
 
-	private void fazerResultsParaRelMovimentacao(final DpLotacaoSelecao lotacaoDestinatarioSel) {
+	private void fazerResultsParaRelMovimentacao(
+			final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
 		result.include("titular", this.getTitular());
 	}
 
-	private void fazerResultsParaRelMovimentacaoDosSubordinados(final DpLotacaoSelecao lotacaoDestinatarioSel) {
+	private void fazerResultsParaRelMovimentacaoDosSubordinados(
+			final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("listaTipoRel", this.getListaTipoRel());
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
@@ -208,28 +241,101 @@ public class ExRelatorioController extends ExController {
 		result.include("titular", this.getTitular());
 	}
 
-	private void fazerResultsParaRelMovInconsistentes(final DpLotacaoSelecao lotacaoDestinatarioSel) {
+	private void fazerResultsParaRelMovInconsistentes(
+			final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
 	}
 
-	private void fazerResultsParaRelMovProcesso(final DpLotacaoSelecao lotacaoDestinatarioSel) {
+	private void fazerResultsParaRelMovProcesso(
+			final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
 		result.include("titular", this.getTitular());
 	}
 
-	private void fazerResultsParaRelOrgao(final DpLotacaoSelecao lotacaoDestinatarioSel) {
+	private void fazerResultsParaRelOrgao(
+			final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("orgaosUsu", this.getOrgaosUsu());
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
 		result.include("titular", this.getTitular());
 	}
 
-	private void fazerResultsParaRelTipoDoc(final DpLotacaoSelecao lotacaoDestinatarioSel) {
+	private void fazerResultsParaRelTipoDoc(
+			final DpLotacaoSelecao lotacaoDestinatarioSel) {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
 		result.include("titular", this.getTitular());
+	}
+
+	private void fazerResultsParaRelDocumentosPorVolume(
+			final DpLotacaoSelecao lotacaoSel,
+			final DpPessoaSelecao usuarioSel, final String primeiraVez,
+			String dataInicial, String dataFinal) {
+		result.include("usuario", usuarioSel);
+		result.include("lotacao", lotacaoSel);
+		result.include("lotacaoSel", lotacaoSel);
+		result.include("usuarioSel", usuarioSel);
+		result.include("dataInicial", dataInicial);
+		result.include("dataFinal", dataFinal);
+		result.include("lotaTitular", this.getLotaTitular());
+		result.include("titular", this.getTitular());
+		result.include("botao", "pesquisar");
+		result.include("primeiraVez", primeiraVez);
+	}
+
+	@Get
+	@Path("app/expediente/rel/resultRelDocumentosPorVolume")
+	public void aResultRelDocumentosPorVolume(final DpLotacaoSelecao lotacaoSel,
+			final DpPessoaSelecao usuarioSel, final String primeiraVez,
+			String dataInicial, String dataFinal) {
+
+		result.include("usuario", usuarioSel);
+		result.include("lotacao", lotacaoSel);
+		result.include("lotacaoSel", lotacaoSel);
+		result.include("usuarioSel", usuarioSel);
+		result.include("dataInicial", dataInicial);
+		result.include("dataFinal", dataFinal);
+		result.include("lotaTitular", this.getLotaTitular());
+		result.include("titular", this.getTitular());
+		result.include("botao", "pesquisar");
+		result.include("primeiraVez", primeiraVez);
+
+		if (primeiraVez == null || !primeiraVez.equals("sim")) {
+		}
+
+		/*
+		 * assertAcesso(ACESSO_DATAS);
+		 * 
+		 * final Map<String, String> parametros = new HashMap<String, String>();
+		 * 
+		 * parametros.put("origem", getRequest().getParameter("origem"));
+		 * parametros.put("lotacao",
+		 * getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		 * parametros.put("secaoUsuario", getRequest()
+		 * .getParameter("secaoUsuario")); parametros.put("dataInicial",
+		 * getRequest().getParameter("dataInicial"));
+		 * parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
+		 * parametros.put("link_siga", "http://" + getRequest().getServerName()
+		 * + ":" + getRequest().getServerPort() + getRequest().getContextPath()
+		 * + "/app/expediente/doc/exibir?sigla=");
+		 * 
+		 * parametros.put("orgaoUsuario", getRequest()
+		 * .getParameter("orgaoUsuario")); parametros.put("lotacaoTitular",
+		 * getRequest().getParameter("lotacaoTitular")); parametros.put("idTit",
+		 * getRequest().getParameter("idTit"));
+		 * 
+		 * final RelConsultaDocEntreDatas rel = new RelConsultaDocEntreDatas(
+		 * parametros);
+		 * 
+		 * try { rel.gerar(); } catch (Exception e) { throw new
+		 * AplicacaoException(e.getMessage()); }
+		 * 
+		 * final InputStream inputStream = new ByteArrayInputStream(
+		 * rel.getRelatorioPDF()); return new InputStreamDownload(inputStream,
+		 * APPLICATION_PDF, "emiteRelDocEntreDatas");
+		 */
 	}
 
 	private Map<Integer, String> getListaTipoRel() {
@@ -241,8 +347,9 @@ public class ExRelatorioController extends ExController {
 	}
 
 	@Get("app/expediente/rel/emiteRelFormularios")
-	public Download aRelFormularios(final String secaoUsuario, final String orgaoUsuario, final String lotacaoTitular, final String idTit,
-			final String nomeArquivoRel) throws Exception {
+	public Download aRelFormularios(final String secaoUsuario,
+			final String orgaoUsuario, final String lotacaoTitular,
+			final String idTit, final String nomeArquivoRel) throws Exception {
 
 		assertAcesso(ACESSO_FORMS);
 
@@ -254,12 +361,16 @@ public class ExRelatorioController extends ExController {
 
 		final RelatorioModelos rel = new RelatorioModelos(parametros);
 		rel.gerar();
-		final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
-		return new InputStreamDownload(inputStream, APPLICATION_PDF, "emiteRelFormularios");
+		final InputStream inputStream = new ByteArrayInputStream(
+				rel.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"emiteRelFormularios");
 	}
 
 	@Get("app/expediente/rel/emiteRelExpedientes")
-	public Download aRelExpedientes(final DpLotacaoSelecao lotacaoDestinatarioSel) throws JRException, ParseException {
+	public Download aRelExpedientes(
+			final DpLotacaoSelecao lotacaoDestinatarioSel) throws JRException,
+			ParseException {
 		final String dataInicio = param("dataInicio");
 		final String dataFim = param("dataFim");
 
@@ -269,8 +380,10 @@ public class ExRelatorioController extends ExController {
 		parameters.put("dataInicio", dataInicio);
 		parameters.put("dataFim", dataFim);
 
-		if (lotacaoDestinatarioSel != null && lotacaoDestinatarioSel.getId() != null) {
-			final DpLotacao lota = dao().consultar(lotacaoDestinatarioSel.getId(), DpLotacao.class, false);
+		if (lotacaoDestinatarioSel != null
+				&& lotacaoDestinatarioSel.getId() != null) {
+			final DpLotacao lota = dao().consultar(
+					lotacaoDestinatarioSel.getId(), DpLotacao.class, false);
 
 			if (lota == null) {
 				throw new AplicacaoException("Lotação inexistente");
@@ -296,23 +409,31 @@ public class ExRelatorioController extends ExController {
 
 		final InputStream inputStream = aGeraRelatorio(parameters);
 
-		return new InputStreamDownload(inputStream, APPLICATION_PDF, "emiteRelDocumentosSubordinados");
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"emiteRelDocumentosSubordinados");
 	}
 
-	private InputStream aGeraRelatorio(final Map<String, Object> parameters) throws JRException {
-		final String cam = (String) getContext().getRealPath("/WEB-INF/page/exRelatorio/");
-		final JasperDesign design = JRXmlLoader.load(cam + "/" + (String) parameters.get("tipoRelatorio"));
+	private InputStream aGeraRelatorio(final Map<String, Object> parameters)
+			throws JRException {
+		final String cam = (String) getContext().getRealPath(
+				"/WEB-INF/page/exRelatorio/");
+		final JasperDesign design = JRXmlLoader.load(cam + "/"
+				+ (String) parameters.get("tipoRelatorio"));
 		final JasperReport jr = JasperCompileManager.compileReport(design);
-		final JasperPrint relGerado = JasperFillManager.fillReport(jr, parameters);
-		return new ByteArrayInputStream(JasperExportManager.exportReportToPdf(relGerado));
+		final JasperPrint relGerado = JasperFillManager.fillReport(jr,
+				parameters);
+		return new ByteArrayInputStream(
+				JasperExportManager.exportReportToPdf(relGerado));
 	}
 
 	@Get("app/expediente/rel/emiteRelModelos")
 	public Download aRelModelos() throws Exception {
 		final RelatorioModelos rm = new RelatorioModelos(null);
 		rm.gerar();
-		final InputStream inputStream = new ByteArrayInputStream(rm.getRelatorioPDF());
-		return new InputStreamDownload(inputStream, APPLICATION_PDF, "emiteRelDocumentosSubordinados");
+		final InputStream inputStream = new ByteArrayInputStream(
+				rm.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"emiteRelDocumentosSubordinados");
 	}
 
 	@Get("app/expediente/rel/emiteRelDocumentosSubordinados")
@@ -321,22 +442,33 @@ public class ExRelatorioController extends ExController {
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
-		parametros.put("lotacao", getRequest().getParameter("lotacaoDestinatarioSel.id"));
-		parametros.put("tipoFormaDoc", getRequest().getParameter("tipoFormaDoc"));
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		parametros.put("tipoFormaDoc", getRequest()
+				.getParameter("tipoFormaDoc"));
 		parametros.put("tipoRel", getRequest().getParameter("tipoRel"));
-		parametros.put("incluirSubordinados", getRequest().getParameter("incluirSubordinados"));
-		parametros.put("lotacaoTitular", getRequest().getParameter("lotacaoTitular"));
-		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
-		parametros.put("orgaoUsuario", getRequest().getParameter("orgaoUsuario"));
+		parametros.put("incluirSubordinados",
+				getRequest().getParameter("incluirSubordinados"));
+		parametros.put("lotacaoTitular",
+				getRequest().getParameter("lotacaoTitular"));
+		parametros.put("secaoUsuario", getRequest()
+				.getParameter("secaoUsuario"));
+		parametros.put("orgaoUsuario", getRequest()
+				.getParameter("orgaoUsuario"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
-		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName()
+				+ ":" + getRequest().getServerPort()
+				+ getRequest().getContextPath()
 				+ "app/expediente/doc/exibir?sigla=");
 
-		final RelatorioDocumentosSubordinados rel = new RelatorioDocumentosSubordinados(parametros);
+		final RelatorioDocumentosSubordinados rel = new RelatorioDocumentosSubordinados(
+				parametros);
 		rel.gerar();
 
-		final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
-		return new InputStreamDownload(inputStream, APPLICATION_PDF, "emiteRelDocumentosSubordinados");
+		final InputStream inputStream = new ByteArrayInputStream(
+				rel.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"emiteRelDocumentosSubordinados");
 	}
 
 	@Get("app/expediente/rel/emiteRelMovDocsSubordinados")
@@ -345,22 +477,33 @@ public class ExRelatorioController extends ExController {
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
-		parametros.put("lotacao", getRequest().getParameter("lotacaoDestinatarioSel.id"));
-		parametros.put("tipoFormaDoc", getRequest().getParameter("tipoFormaDoc"));
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		parametros.put("tipoFormaDoc", getRequest()
+				.getParameter("tipoFormaDoc"));
 		parametros.put("tipoRel", getRequest().getParameter("tipoRel"));
-		parametros.put("incluirSubordinados", getRequest().getParameter("incluirSubordinados"));
-		parametros.put("lotacaoTitular", getRequest().getParameter("lotacaoTitular"));
-		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
-		parametros.put("orgaoUsuario", getRequest().getParameter("orgaoUsuario"));
+		parametros.put("incluirSubordinados",
+				getRequest().getParameter("incluirSubordinados"));
+		parametros.put("lotacaoTitular",
+				getRequest().getParameter("lotacaoTitular"));
+		parametros.put("secaoUsuario", getRequest()
+				.getParameter("secaoUsuario"));
+		parametros.put("orgaoUsuario", getRequest()
+				.getParameter("orgaoUsuario"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
-		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName()
+				+ ":" + getRequest().getServerPort()
+				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 
-		final RelMovimentacaoDocSubordinados rel = new RelMovimentacaoDocSubordinados(parametros);
+		final RelMovimentacaoDocSubordinados rel = new RelMovimentacaoDocSubordinados(
+				parametros);
 		rel.gerar();
 
-		final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
-		return new InputStreamDownload(inputStream, APPLICATION_PDF, "emiteRelMovDocsSubordinados");
+		final InputStream inputStream = new ByteArrayInputStream(
+				rel.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"emiteRelMovDocsSubordinados");
 	}
 
 	@Get("app/expediente/rel/emiteRelDocsSubCriados")
@@ -369,27 +512,39 @@ public class ExRelatorioController extends ExController {
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
-		parametros.put("lotacao", getRequest().getParameter("lotacaoDestinatarioSel.id"));
-		parametros.put("tipoFormaDoc", getRequest().getParameter("tipoFormaDoc"));
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		parametros.put("tipoFormaDoc", getRequest()
+				.getParameter("tipoFormaDoc"));
 		parametros.put("tipoRel", getRequest().getParameter("tipoRel"));
-		parametros.put("incluirSubordinados", getRequest().getParameter("incluirSubordinados"));
-		parametros.put("lotacaoTitular", getRequest().getParameter("lotacaoTitular"));
-		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
-		parametros.put("orgaoUsuario", getRequest().getParameter("orgaoUsuario"));
+		parametros.put("incluirSubordinados",
+				getRequest().getParameter("incluirSubordinados"));
+		parametros.put("lotacaoTitular",
+				getRequest().getParameter("lotacaoTitular"));
+		parametros.put("secaoUsuario", getRequest()
+				.getParameter("secaoUsuario"));
+		parametros.put("orgaoUsuario", getRequest()
+				.getParameter("orgaoUsuario"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
-		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName()
+				+ ":" + getRequest().getServerPort()
+				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 
-		final RelDocSubordinadosCriados rel = new RelDocSubordinadosCriados(parametros);
+		final RelDocSubordinadosCriados rel = new RelDocSubordinadosCriados(
+				parametros);
 		rel.gerar();
 
-		final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
-		return new InputStreamDownload(inputStream, APPLICATION_PDF, "emiteRelDocsSubCriados");
+		final InputStream inputStream = new ByteArrayInputStream(
+				rel.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"emiteRelDocsSubCriados");
 	}
 
 	@SuppressWarnings("unchecked")
 	private List<ExTipoFormaDoc> getListaExTipoFormaDoc() {
-		final List<ExTipoFormaDoc> listaQry = (List<ExTipoFormaDoc>) HibernateUtil.getSessao().createQuery("from ExTipoFormaDoc").list();
+		final List<ExTipoFormaDoc> listaQry = (List<ExTipoFormaDoc>) HibernateUtil
+				.getSessao().createQuery("from ExTipoFormaDoc").list();
 		final List<ExTipoFormaDoc> resultado = new LinkedList<ExTipoFormaDoc>();
 		final ExTipoFormaDoc todos = new ExTipoFormaDoc();
 		todos.setDescTipoFormaDoc("(Todos)");
@@ -405,27 +560,36 @@ public class ExRelatorioController extends ExController {
 		final Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("origem", getRequest().getParameter("origem"));
-		parametros.put("lotacao", getRequest().getParameter("lotacaoDestinatarioSel.id"));
-		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		parametros.put("secaoUsuario", getRequest()
+				.getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName()
+				+ ":" + getRequest().getServerPort()
+				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 
-		parametros.put("orgaoUsuario", getRequest().getParameter("orgaoUsuario"));
-		parametros.put("lotacaoTitular", getRequest().getParameter("lotacaoTitular"));
+		parametros.put("orgaoUsuario", getRequest()
+				.getParameter("orgaoUsuario"));
+		parametros.put("lotacaoTitular",
+				getRequest().getParameter("lotacaoTitular"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
 
-		final RelConsultaDocEntreDatas rel = new RelConsultaDocEntreDatas(parametros);
-		
+		final RelConsultaDocEntreDatas rel = new RelConsultaDocEntreDatas(
+				parametros);
+
 		try {
 			rel.gerar();
 		} catch (Exception e) {
 			throw new AplicacaoException(e.getMessage());
 		}
 
-		final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
-		return new InputStreamDownload(inputStream, APPLICATION_PDF, "emiteRelDocEntreDatas");
+		final InputStream inputStream = new ByteArrayInputStream(
+				rel.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"emiteRelDocEntreDatas");
 	}
 
 	@Get("app/expediente/rel/emiteRelMovimentacao")
@@ -436,27 +600,36 @@ public class ExRelatorioController extends ExController {
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
 		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
-			throw new Exception("O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
+			throw new Exception(
+					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
 		}
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
-		parametros.put("lotacao", getRequest().getParameter("lotacaoDestinatarioSel.id"));
-		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		parametros.put("secaoUsuario", getRequest()
+				.getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName()
+				+ ":" + getRequest().getServerPort()
+				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 
-		parametros.put("orgaoUsuario", getRequest().getParameter("orgaoUsuario"));
-		parametros.put("lotacaoTitular", getRequest().getParameter("lotacaoTitular"));
+		parametros.put("orgaoUsuario", getRequest()
+				.getParameter("orgaoUsuario"));
+		parametros.put("lotacaoTitular",
+				getRequest().getParameter("lotacaoTitular"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
 
 		final RelMovimentacao rel = new RelMovimentacao(parametros);
 		rel.gerar();
 
-		final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
-		return new InputStreamDownload(inputStream, APPLICATION_PDF, "emiteRelMovimentacao");
+		final InputStream inputStream = new ByteArrayInputStream(
+				rel.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"emiteRelMovimentacao");
 	}
 
 	@Get("app/expediente/rel/emiteRelMovCad")
@@ -467,27 +640,36 @@ public class ExRelatorioController extends ExController {
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
 		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
-			throw new Exception("O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
+			throw new Exception(
+					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
 		}
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
-		parametros.put("lotacao", getRequest().getParameter("lotacaoDestinatarioSel.id"));
-		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		parametros.put("secaoUsuario", getRequest()
+				.getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName()
+				+ ":" + getRequest().getServerPort()
+				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 
-		parametros.put("orgaoUsuario", getRequest().getParameter("orgaoUsuario"));
-		parametros.put("lotacaoTitular", getRequest().getParameter("lotacaoTitular"));
+		parametros.put("orgaoUsuario", getRequest()
+				.getParameter("orgaoUsuario"));
+		parametros.put("lotacaoTitular",
+				getRequest().getParameter("lotacaoTitular"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
 
 		final RelMovCad rel = new RelMovCad(parametros);
 		rel.gerar();
 
-		final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
-		return new InputStreamDownload(inputStream, APPLICATION_PDF, "emiteRelMovCad");
+		final InputStream inputStream = new ByteArrayInputStream(
+				rel.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"emiteRelMovCad");
 	}
 
 	@Get("app/expediente/rel/emiteRelOrgao")
@@ -498,29 +680,37 @@ public class ExRelatorioController extends ExController {
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
 		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
-			throw new Exception("O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
+			throw new Exception(
+					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
 		}
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
-		parametros.put("lotacao", getRequest().getParameter("lotacaoDestinatarioSel.id"));
-		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		parametros.put("secaoUsuario", getRequest()
+				.getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName()
+				+ ":" + getRequest().getServerPort()
+				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 
 		if (!getRequest().getParameter("orgaoUsu").isEmpty()) {
 			parametros.put("orgao", getRequest().getParameter("orgaoUsu"));
 		}
-		parametros.put("lotacaoTitular", getRequest().getParameter("lotacaoTitular"));
+		parametros.put("lotacaoTitular",
+				getRequest().getParameter("lotacaoTitular"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
 
 		final RelOrgao rel = new RelOrgao(parametros);
 		rel.gerar();
 
-		final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
-		return new InputStreamDownload(inputStream, APPLICATION_PDF, "emiteRelOrgao");
+		final InputStream inputStream = new ByteArrayInputStream(
+				rel.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"emiteRelOrgao");
 	}
 
 	@Get("app/expediente/rel/emiteRelTipoDoc")
@@ -531,26 +721,34 @@ public class ExRelatorioController extends ExController {
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
 		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
-			throw new Exception("O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
+			throw new Exception(
+					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
 		}
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
-		parametros.put("lotacao", getRequest().getParameter("lotacaoDestinatarioSel.id"));
-		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		parametros.put("secaoUsuario", getRequest()
+				.getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName()
+				+ ":" + getRequest().getServerPort()
+				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 
-		parametros.put("lotacaoTitular", getRequest().getParameter("lotacaoTitular"));
+		parametros.put("lotacaoTitular",
+				getRequest().getParameter("lotacaoTitular"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
 
 		final RelTipoDoc rel = new RelTipoDoc(parametros);
 		rel.gerar();
 
-		final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
-		return new InputStreamDownload(inputStream, APPLICATION_PDF, "emiteRelTipoDoc");
+		final InputStream inputStream = new ByteArrayInputStream(
+				rel.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"emiteRelTipoDoc");
 	}
 
 	@Get("app/expediente/rel/emiteRelMovProcesso")
@@ -561,24 +759,31 @@ public class ExRelatorioController extends ExController {
 		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
 		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
-			throw new Exception("O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
+			throw new Exception(
+					"O relatório retornará muitos resultados. Favor reduzir o intervalo entre as datas.");
 		}
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
-		parametros.put("lotacao", getRequest().getParameter("lotacaoDestinatarioSel.id"));
-		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoDestinatarioSel.id"));
+		parametros.put("secaoUsuario", getRequest()
+				.getParameter("secaoUsuario"));
 		parametros.put("processo", getRequest().getParameter("processo"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
+		parametros.put("link_siga", "http://" + getRequest().getServerName()
+				+ ":" + getRequest().getServerPort()
+				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
 
 		final RelMovProcesso rel = new RelMovProcesso(parametros);
 		rel.gerar();
 
-		final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
-		return new InputStreamDownload(inputStream, APPLICATION_PDF, "emiteRelMovProcesso");
+		final InputStream inputStream = new ByteArrayInputStream(
+				rel.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"emiteRelMovProcesso");
 	}
 
 	@Get("app/expediente/rel/aRelClassificacao")
@@ -587,13 +792,16 @@ public class ExRelatorioController extends ExController {
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 		parametros.put("codificacao", getRequest().getParameter("codificacao"));
-		parametros.put("secaoUsuario", getRequest().getParameter("secaoUsuario"));
+		parametros.put("secaoUsuario", getRequest()
+				.getParameter("secaoUsuario"));
 
 		final RelClassificacao rel = new RelClassificacao(parametros);
 		rel.gerar();
 
-		final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
-		return new InputStreamDownload(inputStream, APPLICATION_PDF, "aRelClassificacao");
+		final InputStream inputStream = new ByteArrayInputStream(
+				rel.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"aRelClassificacao");
 	}
 
 	@Get("app/expediente/rel/emiteRelClassDocDocumentos")
@@ -602,12 +810,15 @@ public class ExRelatorioController extends ExController {
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 		String codificacao = getRequest().getParameter("codificacao");
-		String idLotacao = getRequest().getParameter("lotacaoDestinatarioSel.id");
+		String idLotacao = getRequest().getParameter(
+				"lotacaoDestinatarioSel.id");
 		String idOrgaoUsu = getRequest().getParameter("orgaoUsuario");
 		String secaoUsuario = getRequest().getParameter("secaoUsuario");
 
-		if ((codificacao == null || codificacao.length() == 0) && (idLotacao == null || idLotacao.length() == 0)) {
-			throw new AplicacaoException("Especifique pelo menos um dos parâmetros!");
+		if ((codificacao == null || codificacao.length() == 0)
+				&& (idLotacao == null || idLotacao.length() == 0)) {
+			throw new AplicacaoException(
+					"Especifique pelo menos um dos parâmetros!");
 		}
 
 		parametros.put("codificacao", codificacao);
@@ -618,8 +829,10 @@ public class ExRelatorioController extends ExController {
 		final RelDocsClassificados rel = new RelDocsClassificados(parametros);
 		rel.gerar();
 
-		final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
-		return new InputStreamDownload(inputStream, APPLICATION_PDF, "emiteRelClassDocDocumentos");
+		final InputStream inputStream = new ByteArrayInputStream(
+				rel.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"emiteRelClassDocDocumentos");
 	}
 
 	protected void assertAcesso(final String pathServico) {

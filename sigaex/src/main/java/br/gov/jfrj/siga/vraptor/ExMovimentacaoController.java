@@ -48,6 +48,7 @@ import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.bluc.service.BlucService;
@@ -1750,6 +1751,17 @@ public class ExMovimentacaoController extends ExController {
 			final String obsOrgao, final String protocolo) throws Exception {
 		this.setPostback(postback);
 
+		if(dtDevolucaoMovString != null && !"".equals(dtDevolucaoMovString.trim())) {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	        Date dtDevolucao = sdf.parse(dtDevolucaoMovString);		
+			
+	        if (SigaMessages.isSigaSP()) {
+	        	if (!DateUtils.isSameDay(new Date(), dtDevolucao) && dtDevolucao.before(new Date())) {
+					throw new AplicacaoException(
+							"Data de devolução não pode ser anterior à data de hoje.");
+	        	}
+	        }
+		}
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder);

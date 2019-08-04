@@ -666,17 +666,17 @@ public class Excel {
 				celula = retornaConteudo(row.getCell(3, Row.CREATE_NULL_AS_BLANK));
 				if(!"".equals(celula.trim())) {
 					lotacao.setOrgaoUsuario(orgaoUsuario);
-					lotacao.setNomeLotacao(Texto.removeAcento(Texto.removerEspacosExtra(celula).trim()));
+					lotacao.setSiglaLotacao(Texto.removeAcento(Texto.removerEspacosExtra(celula).trim()));
 										
 					for(DpLotacao l : listaLotacao) {
-						if(l.getNomeLotacaoAI().equalsIgnoreCase(lotacao.getNomeLotacao())) {
+						if(l.getSiglaLotacao().equalsIgnoreCase(lotacao.getSiglaLotacao())) {
 							lotacao = l;
 						}
 					}
 					
 					if(lotacao.getDataInicio() == null) {
-						lotacao.setNomeLotacao(celula.trim());
-						lotacao = CpDao.getInstance().consultarPorNomeOrgao(lotacao);	
+						lotacao.setSiglaLotacao(celula.trim());
+						lotacao = CpDao.getInstance().consultarPorSigla(lotacao);	
 					}					
 					
 					if(lotacao == null) {

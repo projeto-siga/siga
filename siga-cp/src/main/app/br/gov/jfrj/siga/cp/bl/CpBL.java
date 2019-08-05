@@ -30,6 +30,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.StringUtils;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
@@ -290,7 +291,7 @@ public class CpBL {
 					senhaGerada[0] = GeraMessageDigest.geraSenha();
 					for (CpIdentidade cpIdentidade : lista) {
 						Cp.getInstance().getBL().alterarSenhaDeIdentidade(cpIdentidade.getNmLoginIdentidade(),
-								cpIdentidade.getDpPessoa().getCpfPessoa().toString(), null,senhaGerada);
+								StringUtils.leftPad(cpIdentidade.getDpPessoa().getCpfPessoa().toString(), 11, "0"), null,senhaGerada);
 					}
 					resultado = "OK";
 				} else {

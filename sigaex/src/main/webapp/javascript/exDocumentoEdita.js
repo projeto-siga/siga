@@ -6,8 +6,11 @@ function displayPersonalizacao(thisElement) {
 	var thatElement = document.getElementById('tr_personalizacao');
 	if (thisElement.checked)
 		thatElement.style.display = '';
-	else
+	else {
 		thatElement.style.display = 'none';
+		document.getElementById('personalizarFuncao').value = '';
+		document.getElementById('personalizarUnidade').value = '';
+	}
 }
 
 function personalizacaoSeparar() {

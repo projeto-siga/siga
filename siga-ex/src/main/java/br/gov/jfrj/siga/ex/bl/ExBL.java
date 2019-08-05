@@ -1599,7 +1599,8 @@ public class ExBL extends CpBL {
 					"Não é possível assinar o documento pois a descrição está vazia. Edite-o e informe uma descrição.");
 
 		if (!doc.isFinalizado())
-			finalizar(cadastrante, lotaCadastrante, doc);
+			finalizar(cadastrante, lotaCadastrante, doc);	
+		
 		
 		boolean fPreviamenteAssinado = !doc.isPendenteDeAssinatura();
 
@@ -1768,6 +1769,13 @@ public class ExBL extends CpBL {
 					"Só é permitida a assinatura digital do subscritor e dos cossignatários do documento",
 					0, e);
 		}
+		
+		if (usuarioDoToken != null) {
+			if(doc.isAssinadoPelaPessoaComTokenOuSenha(usuarioDoToken))
+				throw new AplicacaoException(
+						"Documento já assinado pelo(a) subscritor(a) ou cossignatário(a).");
+		}
+		
 
 		String s = null;
 		final ExMovimentacao mov;
@@ -1889,6 +1897,14 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException("O usuário não está cadastrado.");
 
 		subscritor = id.getDpPessoa().getPessoaAtual();
+		
+		if (subscritor != null) {
+			if(doc.isAssinadoPelaPessoaComTokenOuSenha(subscritor))
+				throw new AplicacaoException(
+						"Documento já assinado pelo(a) subscritor(a) ou cossignatário(a).");
+		}
+		
+
 
 		if (validarSenha) {
 			if (senhaSubscritor == null || senhaSubscritor.isEmpty())

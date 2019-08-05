@@ -2571,8 +2571,8 @@ public class ExBL extends CpBL {
 
 			if (mov.getExNivelAcesso() == null)
 				mov.setExNivelAcesso(ultMov.getExNivelAcesso());
-
-			if (ultMov.getExTipoMovimentacao().getId() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO) {
+			
+			if(!mob.sofreuMov(ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA_EXTERNO, ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_JUNTADA)) {				
 				mov.setExMovimentacaoRef(mov.getExMobil()
 						.getUltimaMovimentacao(
 								ExTipoMovimentacao.TIPO_MOVIMENTACAO_JUNTADA));

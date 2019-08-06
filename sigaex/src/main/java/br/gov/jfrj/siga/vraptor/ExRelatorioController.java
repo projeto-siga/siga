@@ -58,10 +58,8 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
@@ -70,7 +68,6 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelClassificacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelConsultaDocEntreDatas;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocSubordinadosCriados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocsClassificados;
-import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocsOrgaoInteressado;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocumentosProduzidos;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovCad;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovProcesso;
@@ -97,7 +94,6 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_SUBORD = "SUBORD:Relatório de documentos em setores subordinados";
 	private static final String ACESSO_FORMS = "FORMS:Relação de formulários";
 	private static final String ACESSO_IGESTAO = "IGESTAO:Relatório de Indicadores de Gestão";
-	private static final String ACESSO_RELINTERESSADO = "RELINTERESSADO:Relatório de Documentos por Órgão Interessado";
 	private static final String APPLICATION_PDF = "application/pdf";
 
 	public ExRelatorioController(HttpServletRequest request,
@@ -958,33 +954,6 @@ public class ExRelatorioController extends ExController {
 		result.include("usuarioSel", usuarioSel);
 		result.include("dataInicial", dataInicial);
 		result.include("dataFinal", dataFinal);
-	}
-
-	@Get("app/expediente/rel/emiteRelDocsOrgaoInteressado")
-	public Download aRelDocsOrgaoInteressado() throws Exception {
-		assertAcesso(ACESSO_RELINTERESSADO);
-		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
-		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
-		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
-			throw new Exception("O intervalo entre as datas é muito grande, por favor reduza-o.");
-		}
-
-		final Map<String, String> parametros = new HashMap<String, String>();
-
-		parametros.put("orgaoUsu", getRequest().getParameter("orgaoUsu"));
-		parametros.put("lotacao", getRequest().getParameter("lotacaoSel.id"));
-		parametros.put("usuario", getRequest().getParameter("usuarioSel.id"));
-		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
-		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
-				+ "/app/expediente/doc/exibir?sigla=");
-
-		final RelDocsOrgaoInteressado rel = new RelDocsOrgaoInteressado(parametros);
-		rel.gerar();
-		
-		final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
-		return new InputStreamDownload(inputStream, APPLICATION_PDF, "RelDocsOrgaoInteressado");
 	}
 
 	protected void assertAcesso(final String pathServico) {

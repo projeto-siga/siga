@@ -31,6 +31,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
+import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.mvel2.MVEL;
 
@@ -66,6 +67,8 @@ public class CpConfiguracaoBL {
 	public static final long CPF_ROOT = 11111111111L;
 	public static final long ID_ORGAO_ROOT = 9999999999L;
 	public static final String SIGLA_ORGAO_ROOT = "ZZ";
+	
+	private final static org.jboss.logging.Logger log = org.jboss.logging.Logger.getLogger(CpConfiguracaoBL.class);
 
 	protected Date dtUltimaAtualizacaoCache = null;
 	protected boolean cacheInicializado = false;
@@ -275,8 +278,10 @@ public class CpConfiguracaoBL {
 			}
 			if (cfg.getCargo() != null)
 				cfg.getCargo().getDescricao();
-			if (cfg.getFuncaoConfianca() != null)
+			if (cfg.getFuncaoConfianca() != null) {
 				cfg.getFuncaoConfianca().getDescricao();
+				cfg.setFuncaoConfianca((DpFuncaoConfianca) Hibernate.unproxy(cfg.getFuncaoConfianca()));
+			}
 			if (cfg.getDpPessoa() != null) {
 				cfg.getDpPessoa().getDescricao();
 				cfg.getDpPessoa().getOrgaoUsuario().getSigla();
@@ -690,49 +695,54 @@ public class CpConfiguracaoBL {
 			DpFuncaoConfianca dpFuncaoConfianca, DpPessoa dpPessoa,
 			CpServico cpServico, CpIdentidade cpIdentidade, CpGrupo cpGrupo,
 			CpTipoLotacao cpTpLotacao, long idTpConf) throws Exception {
-
-		if (isUsuarioRoot(dpPessoa)){
-			return true;
+		try {
+			if (isUsuarioRoot(dpPessoa)){
+				return true;
+			}
+			
+			if (cpIdentidade !=null && isUsuarioRoot(cpIdentidade.getDpPessoa())){
+				return true;
+			}
+			
+			CpConfiguracao cfgFiltro = createNewConfiguracao();
+	
+			cfgFiltro.setCargo(cargo);
+			cfgFiltro.setOrgaoUsuario(cpOrgaoUsu);
+			cfgFiltro.setFuncaoConfianca(dpFuncaoConfianca);
+			cfgFiltro.setLotacao(dpLotacao);
+			cfgFiltro.setDpPessoa(dpPessoa);
+			cfgFiltro.setCpServico(cpServico);
+			cfgFiltro.setCpIdentidade(cpIdentidade);
+			cfgFiltro.setCpTipoLotacao(dpLotacao != null ? dpLotacao
+					.getCpTipoLotacao() : null);
+			cfgFiltro.setCpGrupo(cpGrupo);
+			cfgFiltro.setCpTipoLotacao(cpTpLotacao);
+			
+	
+			cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
+					CpTipoConfiguracao.class, false));
+			
+	
+			CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(cfgFiltro,
+					new int[] { 0 }, null);
+	
+			CpSituacaoConfiguracao situacao;
+	
+			if (cfg != null) {
+				situacao = cfg.getCpSituacaoConfiguracao();
+			} else {
+				situacao = cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault();
+			}
+	
+			if (situacao != null
+					&& situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
+				return true;
+			return false;
+		} catch (Exception ex) {
+			log.error(ex);
+			ex.printStackTrace();
+			throw ex;
 		}
-		
-		if (cpIdentidade !=null && isUsuarioRoot(cpIdentidade.getDpPessoa())){
-			return true;
-		}
-		
-		CpConfiguracao cfgFiltro = createNewConfiguracao();
-
-		cfgFiltro.setCargo(cargo);
-		cfgFiltro.setOrgaoUsuario(cpOrgaoUsu);
-		cfgFiltro.setFuncaoConfianca(dpFuncaoConfianca);
-		cfgFiltro.setLotacao(dpLotacao);
-		cfgFiltro.setDpPessoa(dpPessoa);
-		cfgFiltro.setCpServico(cpServico);
-		cfgFiltro.setCpIdentidade(cpIdentidade);
-		cfgFiltro.setCpTipoLotacao(dpLotacao != null ? dpLotacao
-				.getCpTipoLotacao() : null);
-		cfgFiltro.setCpGrupo(cpGrupo);
-		cfgFiltro.setCpTipoLotacao(cpTpLotacao);
-		
-
-		cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
-				CpTipoConfiguracao.class, false));
-		
-
-		CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(cfgFiltro,
-				new int[] { 0 }, null);
-
-		CpSituacaoConfiguracao situacao;
-
-		if (cfg != null) {
-			situacao = cfg.getCpSituacaoConfiguracao();
-		} else {
-			situacao = cfgFiltro.getCpTipoConfiguracao().getSituacaoDefault();
-		}
-
-		if (situacao != null
-				&& situacao.getIdSitConfiguracao() == CpSituacaoConfiguracao.SITUACAO_PODE)
-			return true;
-		return false;
 	}
 
 	

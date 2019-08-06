@@ -49,6 +49,9 @@ public class GiInterceptor implements Interceptor {
 		try {
 			stack.next(method, instance);
 		} finally {
+			// Renato Crivano: precisei desabilitar a linha abaixo porque parece que o vRaptor4
+			// retorna do stack.next() antes de processar o JSP.
+			//
 			// ContextoPersistencia.setEntityManager(null);
 		}
 	}

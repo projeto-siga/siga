@@ -31,20 +31,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-import javax.persistence.Parameter;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 
-import org.hibernate.PropertyNotFoundException;
-import org.hibernate.SQLQuery;
-import org.hibernate.mapping.Collection;
-import org.hibernate.property.access.spi.BuiltInPropertyAccessStrategies;
-import org.hibernate.property.access.spi.Getter;
-import org.hibernate.property.access.spi.PropertyAccess;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.Texto;
@@ -100,33 +92,6 @@ public class ExDao extends CpDao {
 	public ExDao() {
 	}
 
-	public void setQueryProperties(Query query, Object bean) {
-		Class clazz = bean.getClass();
-		Set<Parameter<?>> params = query.getParameters();
-		for ( Parameter<?> namedParam : params ) {
-			try {
-				final PropertyAccess propertyAccess = BuiltInPropertyAccessStrategies.BASIC.getStrategy().buildPropertyAccess(
-						clazz,
-						namedParam.getName());
-				final Getter getter = propertyAccess.getGetter();
-				final Class retType = getter.getReturnType();
-				final Object object = getter.get( bean );
-				if ( Collection.class.isAssignableFrom( retType ) ) {
-					query.setParameter( namedParam.getName(), (Collection) object );
-				}
-				else if ( retType.isArray() ) {
-					query.setParameter( namedParam.getName(), (Object[]) object );
-				}
-				else {
-					query.setParameter(namedParam.getName(), object);
-				}
-			}
-			catch (PropertyNotFoundException pnfe) {
-				// ignore
-			}
-		}
-	}
-	
 	public List<ExDocumento> consultarDocsInclusosNoBoletim(ExDocumento doc) {
 		final Query query = em().createNamedQuery(
 				"consultarDocsInclusosNoBoletim");
@@ -234,7 +199,7 @@ public class ExDao extends CpDao {
 		if (itemPagina > 0) {
 			query.setMaxResults(itemPagina);
 		}
-		setQueryProperties(query, flt);
+		HibernateBeanProperties.setQueryProperties(query, flt);
 		query.setParameter("titular",
 				titular.getIdPessoaIni() != null ? titular.getIdPessoaIni() : 0);
 		query.setParameter(
@@ -449,7 +414,7 @@ public class ExDao extends CpDao {
 			if (itemPagina > 0) {
 				query.setMaxResults(itemPagina);
 			}
-			setQueryProperties(query, flt);
+			HibernateBeanProperties.setQueryProperties(query, flt);
 			if (titular.getIdPessoaIni() != null)
 				query.setParameter("titular", titular.getIdPessoaIni());
 			else
@@ -472,7 +437,7 @@ public class ExDao extends CpDao {
 	public Integer consultarQuantidadePorFiltro(final ExMobilDaoFiltro flt,
 			DpPessoa titular, DpLotacao lotaTitular) {
 		Query query = em().createNamedQuery("consultarQuantidadePorFiltro");
-		setQueryProperties(query, flt);
+		HibernateBeanProperties.setQueryProperties(query, flt);
 		query.setParameter("titular", titular.getIdPessoaIni());
 		query.setParameter("lotaTitular", lotaTitular.getIdLotacaoIni());
 		long tempoIni = System.nanoTime();
@@ -503,7 +468,7 @@ public class ExDao extends CpDao {
 			if (flt.getNumSequencia() == null) {
 				final Query query = em().createNamedQuery(
 						"consultarPorSiglaDocumento");
-				setQueryProperties(query, flt);
+				HibernateBeanProperties.setQueryProperties(query, flt);
 
 				final List<ExDocumento> l = query.getResultList();
 
@@ -514,7 +479,7 @@ public class ExDao extends CpDao {
 			}
 
 			final Query query = em().createNamedQuery("consultarPorSigla");
-			setQueryProperties(query, flt);
+			HibernateBeanProperties.setQueryProperties(query, flt);
 
 			final List<ExMobil> l = query.getResultList();
 
@@ -578,7 +543,7 @@ public class ExDao extends CpDao {
 
 		if (pess != null) {
 			query = em().createNamedQuery("consultarEmailporPessoa");
-			query.setParameter("idPessoaIni", pess.getIdPessoaIni());
+			query.setParameter("idPessoaIni", pess.getPessoaInicial());
 		} else {
 			query = em().createNamedQuery("consultarEmailporLotacao");
 
@@ -591,12 +556,12 @@ public class ExDao extends CpDao {
 	public List consultarPaginaInicial(DpPessoa pes, DpLotacao lot,
 			Integer idTipoForma) {
 		try {
-			SQLQuery sql = (SQLQuery) em().createNamedQuery(
+			Query sql = em().createNamedQuery(
 					"consultarPaginaInicial");
 
 			sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
 			sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni());
-			sql.setInteger("idTipoForma", idTipoForma);
+			sql.setParameter("idTipoForma", idTipoForma);
 
 			List result = sql.getResultList();
 
@@ -1254,7 +1219,9 @@ public class ExDao extends CpDao {
 	public List<CpMarcador> listarCpMarcadoresGerais() {
 		CpTipoMarcador marcador = consultar(CpTipoMarcador.TIPO_MARCADOR_GERAL,
 				CpTipoMarcador.class, false);
-		return findByCriteria(CpMarcador.class, cb().equal(cb().parameter(CpTipoMarcador.class, "cpTipoMarcador"), marcador));
+		List<CpMarcador> l = new ArrayList<>();
+		l.addAll(marcador.getCpMarcadorSet());
+		return l;
 	}
 
 	public List<ExTpDocPublicacao> listarExTiposDocPublicacao() {

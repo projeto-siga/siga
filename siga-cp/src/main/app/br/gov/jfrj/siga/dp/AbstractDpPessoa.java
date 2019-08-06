@@ -60,21 +60,21 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarPorOrgaoUsuDpPessoaInclusiveFechadas", query = "from DpPessoa pes where pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"),
 		@NamedQuery(name = "consultarPorFiltroDpPessoa", query = "from DpPessoa pes "
 				+ "  where ((upper(pes.nomePessoaAI) like upper('%' || :nome || '%')) or ((pes.sesbPessoa || pes.matricula) like upper('%' || :nome || '%')))"
-				+ " and (:cpf = null or :cpf = 0 or pes.cpfPessoa = :cpf) "
-				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ "	and (:lotacao = null or :lotacao = 0 or pes.lotacao.idLotacao = :lotacao)"
-				+ " and (:cargo = null or :cargo = 0 or pes.cargo.idCargo = :cargo) "
-		      	+ " and (:funcao = null or :funcao = 0 or pes.funcaoConfianca.idFuncao = :funcao) "
+				+ " and (:cpf = null or :cpf = 0L or pes.cpfPessoa = :cpf) "
+				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "	and (:lotacao = null or :lotacao = 0L or pes.lotacao.idLotacao = :lotacao)"
+				+ " and (:cargo = null or :cargo = 0L or pes.cargo.idCargo = :cargo) "
+		      	+ " and (:funcao = null or :funcao = 0L or pes.funcaoConfianca.idFuncao = :funcao) "
 				+ "	and (:situacaoFuncionalPessoa = null or pes.situacaoFuncionalPessoa = :situacaoFuncionalPessoa)"
 				+ "   	and pes.dataFimPessoa = null"
 				+ "   	order by pes.nomePessoa"),
 		@NamedQuery(name = "consultarQuantidadeDpPessoa", query = "select count(pes) from DpPessoa pes "
 				+ "  where ((upper(pes.nomePessoaAI) like upper('%' || :nome || '%')) or ((pes.sesbPessoa || pes.matricula) like upper('%' || :nome || '%'))) "
-				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ " and (:cpf = null or :cpf = 0 or pes.cpfPessoa = :cpf) "
-				+ "	and (:lotacao = null or :lotacao = 0 or pes.lotacao.idLotacao = :lotacao)"
-				+ " and (:cargo = null or :cargo = 0 or pes.cargo.idCargo = :cargo) "
-		      	+ " and (:funcao = null or :funcao = 0 or pes.funcaoConfianca.idFuncao = :funcao) "
+				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ " and (:cpf = null or :cpf = 0L or pes.cpfPessoa = :cpf) "
+				+ "	and (:lotacao = null or :lotacao = 0L or pes.lotacao.idLotacao = :lotacao)"
+				+ " and (:cargo = null or :cargo = 0L or pes.cargo.idCargo = :cargo) "
+		      	+ " and (:funcao = null or :funcao = 0L or pes.funcaoConfianca.idFuncao = :funcao) "
 				+ "	and (:situacaoFuncionalPessoa = null or :situacaoFuncionalPessoa = '' or pes.situacaoFuncionalPessoa = :situacaoFuncionalPessoa)"
 				+ "   	and pes.dataFimPessoa = null"
 				+ "   	order by pes.nomePessoa"),
@@ -82,26 +82,26 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "	select max(pes.idPessoa)"
 				+ "	from DpPessoa pes"
 				+ "	where ((upper(pes.nomePessoaAI) like upper('%' || :nome || '%')) or ((pes.sesbPessoa || pes.matricula) like upper('%' || :nome || '%')))"
-				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ " and (:cpf = null or :cpf = 0 or pes.cpfPessoa like '%' || :cpf || '%') "
-				+ "  	and (:lotacao = null or :lotacao = 0 or pes.lotacao.idLotacao = :lotacao)"
-				+ " and (:cargo = null or :cargo = 0 or pes.cargo.idCargo = :cargo) "
-				+ " and (:funcao = null or :funcao = 0 or pes.funcaoConfianca.idFuncao = :funcao) "
+				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ " and (:cpf = null or :cpf = 0L or pes.cpfPessoa = :cpf) "
+				+ "  	and (:lotacao = null or :lotacao = 0L or pes.lotacao.idLotacao = :lotacao)"
+				+ " and (:cargo = null or :cargo = 0L or pes.cargo.idCargo = :cargo) "
+				+ " and (:funcao = null or :funcao = 0L or pes.funcaoConfianca.idFuncao = :funcao) "
 				+ "	group by pes.idPessoaIni) order by pes.nomePessoa"),
 		@NamedQuery(name = "consultarQuantidadeDpPessoaInclusiveFechadas", query = "select count(distinct pes.idPessoaIni)"
 				+ "		from DpPessoa pes"
 				+ "		where ((upper(pes.nomePessoaAI) like upper('%' || :nome || '%')) or ((pes.sesbPessoa || pes.matricula) like upper('%' || :nome || '%')))"
-				+ "  			and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
-				+ " and (:cpf = null or :cpf = 0 or pes.cpfPessoa like '%' || :cpf || '%') "
-				+ "  			and (:lotacao = null or :lotacao = 0 or pes.lotacao.idLotacao = :lotacao)"
-				+ " and (:cargo = null or :cargo = 0 or pes.cargo.idCargo = :cargo) "
-	      		+ " and (:funcao = null or :funcao = 0 or pes.funcaoConfianca.idFuncao = :funcao) "),
+				+ "  			and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ " and (:cpf = null or :cpf = 0L or pes.cpfPessoa = :cpf) "
+				+ "  			and (:lotacao = null or :lotacao = 0L or pes.lotacao.idLotacao = :lotacao)"
+				+ " and (:cargo = null or :cargo = 0L or pes.cargo.idCargo = :cargo) "
+	      		+ " and (:funcao = null or :funcao = 0L or pes.funcaoConfianca.idFuncao = :funcao) "),
 		@NamedQuery(name = "consultarPorCpfMatricula", query = "from DpPessoa pes "
 				+ "  where pes.cpfPessoa = :cpfPessoa"
 				+ "    and pes.matricula = :matricula"
 				+ "    and pes.dataFimPessoa is null"),
 		@NamedQuery(name = "consultarAtivasNaDataOrgao", query = "from DpPessoa pes "
-				+ "  where (:idOrgaoUsu = null or :idOrgaoUsu = 0 or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "  where (:idOrgaoUsu = null or :idOrgaoUsu = 0L or pes.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "  and  ((pes.dataInicioPessoa < :dt and pes.dataFimPessoa >= :dt )"
 				+ "  or (pes.dataInicioPessoa < :dt and pes.dataFimPessoa is null ))"),
 		@NamedQuery(name = "consultarPessoasComFuncaoConfianca", query = "from DpPessoa p where p.funcaoConfianca.idFuncao = :idFuncaoConfianca and p.dataFimPessoa is null"),
@@ -255,24 +255,24 @@ public abstract class AbstractDpPessoa extends DpResponsavel implements
 	@Desconsiderar
 	private DpPessoa pessoaInicial;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "ID_LOTACAO")
 	private DpLotacao lotacao;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "ID_CARGO")
 	private DpCargo cargo;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "ID_FUNCAO_CONFIANCA")
 	private DpFuncaoConfianca funcaoConfianca;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "ID_ORGAO_USU")
 	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "ID_TP_PESSOA")
 	private CpTipoPessoa cpTipoPessoa;
 

@@ -42,12 +42,6 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.hibernate.Criteria;
-import org.hibernate.SQLQuery;
-import org.hibernate.criterion.Property;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.SimpleExpression;
-
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.cp.CpAcesso;
@@ -669,7 +663,7 @@ public class CpDao extends ModeloDao {
 			if (o.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
 			else
-				query.setParameter("idOrgaoUsu", 0);
+				query.setParameter("idOrgaoUsu", 0L);
 
 			query.setHint("org.hibernate.cacheable", true);
 			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
@@ -791,7 +785,7 @@ public class CpDao extends ModeloDao {
 			if (o.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
 			else
-				query.setParameter("idOrgaoUsu", 0);
+				query.setParameter("idOrgaoUsu", 0L);
 
 			query.setHint("org.hibernate.cacheable", true);
 			query.setHint("org.hibernate.cacheRegion", CACHE_QUERY_CONFIGURACAO);
@@ -1135,28 +1129,28 @@ public class CpDao extends ModeloDao {
 			if(flt.getCpf() != null && !"".equals(flt.getCpf())) {
 				query.setParameter("cpf", Long.valueOf(flt.getCpf()));
 			} else {
-				query.setParameter("cpf", 0);
+				query.setParameter("cpf", 0L);
 			}
 			
 			if (flt.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", flt.getIdOrgaoUsu());
 			else
-				query.setParameter("idOrgaoUsu", 0);
+				query.setParameter("idOrgaoUsu", 0L);
 
 			if (flt.getLotacao() != null)
 				query.setParameter("lotacao", flt.getLotacao().getId());
 			else
-				query.setParameter("lotacao", 0);
+				query.setParameter("lotacao", 0L);
 
 			if (flt.getCargo() != null)
 				query.setParameter("cargo", flt.getCargo().getId());
 			else
-				query.setParameter("cargo", 0);
+				query.setParameter("cargo", 0L);
 			
 			if (flt.getFuncaoConfianca() != null)
 				query.setParameter("funcao", flt.getFuncaoConfianca().getId());
 			else
-				query.setParameter("funcao", 0);
+				query.setParameter("funcao", 0L);
 
 			final List<DpPessoa> l = query.getResultList();
 			return l;
@@ -1202,26 +1196,26 @@ public class CpDao extends ModeloDao {
 			if (flt.getCpf() != null)
 				query.setParameter("cpf", flt.getCpf());
 			else
-				query.setParameter("cpf", 0);
+				query.setParameter("cpf", 0L);
 			
 			if (flt.getIdOrgaoUsu() != null)
 				query.setParameter("idOrgaoUsu", flt.getIdOrgaoUsu());
 			else
-				query.setParameter("idOrgaoUsu", 0);
+				query.setParameter("idOrgaoUsu", 0L);
 			if (flt.getLotacao() != null)
 				query.setParameter("lotacao", flt.getLotacao().getId());
 			else
-				query.setParameter("lotacao", 0);
+				query.setParameter("lotacao", 0L);
 			
 			if (flt.getCargo() != null)
 				query.setParameter("cargo", flt.getCargo().getId());
 			else
-				query.setParameter("cargo", 0);
+				query.setParameter("cargo", 0L);
 			
 			if (flt.getFuncaoConfianca() != null)
 				query.setParameter("funcao", flt.getFuncaoConfianca().getId());
 			else
-				query.setParameter("funcao", 0);
+				query.setParameter("funcao", 0L);
 
 			final int l = ((Long) query.getSingleResult()).intValue();
 			return l;
@@ -1451,7 +1445,7 @@ public class CpDao extends ModeloDao {
 	}
 
 	public Date consultarDataEHoraDoServidor() throws AplicacaoException {
-		SQLQuery sql = (SQLQuery) em().createNamedQuery(
+		Query sql = em().createNamedQuery(
 				"consultarDataEHoraDoServidor");
 
 		List result = sql.getResultList();
@@ -2064,11 +2058,11 @@ public class CpDao extends ModeloDao {
 
 	public int consultarQuantidadeDocumentosPorDpLotacao(final DpLotacao o) {
         try {
-			SQLQuery sql = (SQLQuery) em().createNamedQuery(
+			Query sql = em().createNamedQuery(
 					"consultarQuantidadeDocumentosPorDpLotacao");
 
-			sql.setLong("idLotacao", o.getId());
-            sql.setLong("idTipoMarca", CpTipoMarca.TIPO_MARCA_SIGA_EX);
+			sql.setParameter("idLotacao", o.getId());
+            sql.setParameter("idTipoMarca", CpTipoMarca.TIPO_MARCA_SIGA_EX);
         	
             final int l = ((BigDecimal) sql.getSingleResult()).intValue();
             return l;

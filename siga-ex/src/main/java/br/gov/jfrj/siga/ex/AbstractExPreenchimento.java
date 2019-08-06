@@ -47,8 +47,8 @@ import br.gov.jfrj.siga.model.Objeto;
 @NamedQueries({
 		@NamedQuery(name = "consultarPorFiltroExPreenchimento", query = "from ExPreenchimento pre "
 				+ "	      where upper(pre.nomePreenchimento) like upper('%' || :nomePreenchimento || '%') "
-				+ "			and (:lotacao = null or :lotacao = 0 or pre.dpLotacao = :lotacao)"
-				+ "			and (:modelo=null or :modelo = 0 or pre.exModelo.hisIdIni = :modelo)"),
+				+ "			and (:lotacao = null or :lotacao = 0L or pre.dpLotacao = :lotacao)"
+				+ "			and (:modelo=null or :modelo = 0L or pre.exModelo.hisIdIni = :modelo)"),
 		@NamedQuery(name = "excluirPorIdExPreenchimento", query = "delete from ExPreenchimento where idPreenchimento = :id") })
 public abstract class AbstractExPreenchimento extends Objeto implements
 		Serializable {

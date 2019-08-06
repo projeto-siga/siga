@@ -57,11 +57,11 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarPorIdDpLotacao", query = "select lot from DpLotacao lot where lot.idLotacao = :idLotacao"),
 		@NamedQuery(name = "consultarPorSiglaDpLotacao", query = "select lot from DpLotacao lot where"
 				+ "      upper(lot.siglaLotacao) = upper(:siglaLotacao)"
-				+ "      and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "      and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "	     and lot.dataFimLotacao = null"),
 		@NamedQuery(name = "consultarPorSiglaDpLotacaoComLike", query = "select lot from DpLotacao lot where"
 				+ "        upper(lot.siglaLotacao) like upper('%' || :siglaLotacao || '%') "
-				+ "        and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "        and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "        and lot.dataFimLotacao = null"),
 		@NamedQuery(name = "consultarPorIdInicialDpLotacao", query = "select lot from DpLotacao lot where lot.idLotacaoIni = :idLotacaoIni and lot.dataFimLotacao = null"),
 		@NamedQuery(name = "consultarPorIdInicialDpLotacaoInclusiveFechada", query = "select lot from DpLotacao lot where lot.idLotacao = (select max(idLotacao) from DpLotacao where idLotacaoIni = :idLotacaoIni)"),
@@ -70,12 +70,12 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "  where "
 				+ "     ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) "
 				+ "          or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"
-				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "	and lot.dataFimLotacao = null"
 				+ "	order by lot.nomeLotacao"),
 		@NamedQuery(name = "consultarQuantidadeDpLotacao", query = "select count(lot) from DpLotacao lot "
 				+ "  where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"
-				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "	and lot.dataFimLotacao = null"
 				+ "	order by lot.nomeLotacao"),
 		@NamedQuery(name = "consultarPorFiltroDpLotacaoInclusiveFechadas", query = "from DpLotacao where idLotacao in ("
@@ -83,12 +83,12 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "  from DpLotacao lot"
 				+ "  where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' "
 				+ "  || :nome || '%')))"
-				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "  group by lot.idLotacaoIni)"),
 		@NamedQuery(name = "consultarQuantidadeDpLotacaoInclusiveFechadas", query = "select count(distinct lot.idLotacaoIni)"
 				+ "	from DpLotacao lot"
 				+ "	where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%')) or (upper(lot.siglaLotacao) like upper('%' || :nome || '%')))"
-				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"),
+				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"),
 		@NamedQuery(name = "consultarPorNomeOrgaoDpLotacao", query = "select lot from DpLotacao lot where upper(lot.nomeLotacaoAI) = upper(:nome) and lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu")})
 @NamedNativeQueries({
 		@NamedNativeQuery(name = "consultarQuantidadeDocumentosPorDpLotacao", query = "SELECT count(1) FROM corporativo.dp_lotacao lotacao"

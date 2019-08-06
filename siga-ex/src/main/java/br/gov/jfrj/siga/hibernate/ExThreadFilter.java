@@ -21,6 +21,7 @@ package br.gov.jfrj.siga.hibernate;
 import java.io.IOException;
 
 import javax.persistence.EntityManager;
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -29,14 +30,13 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.gov.jfrj.siga.base.auditoria.filter.ThreadFilter;
 import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
-public class ExThreadFilter extends ThreadFilter {
+public class ExThreadFilter implements Filter {
 
 	private FilterConfig config;
 
@@ -45,23 +45,21 @@ public class ExThreadFilter extends ThreadFilter {
 		this.config = config;
 	}
 
-	public void doFiltro(final ServletRequest request,
-			final ServletResponse response, final FilterChain chain)
+	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
 		EntityManager em = ExStarter.emf.createEntityManager();
 		ContextoPersistencia.setEntityManager(em);
 
 		// Inicialização padronizada
-		CurrentRequest.set(new RequestInfo(config.getServletContext(),
-				(HttpServletRequest) request, (HttpServletResponse) response));
+		CurrentRequest.set(new RequestInfo(config.getServletContext(), (HttpServletRequest) request,
+				(HttpServletResponse) response));
 		ModeloDao.freeInstance();
 		ExDao.getInstance();
 		try {
 			Ex.getInstance().getConf().limparCacheSeNecessario();
 		} catch (Exception e1) {
-			throw new RuntimeException(
-					"Não foi possível atualizar o cache de configurações", e1);
+			throw new RuntimeException("Não foi possível atualizar o cache de configurações", e1);
 		}
 
 		em.getTransaction().begin();
@@ -81,8 +79,6 @@ public class ExThreadFilter extends ThreadFilter {
 	}
 
 	@Override
-	protected String getLoggerName() {
-		return "br.gov.jfrj.siga.ex";
+	public void destroy() {
 	}
-
 }

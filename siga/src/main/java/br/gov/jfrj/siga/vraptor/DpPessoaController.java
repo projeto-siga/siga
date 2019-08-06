@@ -110,8 +110,11 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			sigla = "";
 		}
 		
+		try {
 		super.aBuscar(sigla, postback);
-		
+		} catch (Exception ex) {
+			throw ex;
+		}
 		result.include("param", getRequest().getParameterMap());
 		result.include("request",getRequest());
 		result.include("itens",getItens());

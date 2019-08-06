@@ -77,6 +77,9 @@ public class ExInterceptor {
 		} catch (Exception e) {
 			throw new InterceptionException(e);
 		} finally {
+			// Renato Crivano: precisei desabilitar a linha abaixo porque parece que o vRaptor4
+			// retorna do stack.next() antes de processar o JSP.
+			//
 			// ContextoPersistencia.setEntityManager(null);
 		}
 	}

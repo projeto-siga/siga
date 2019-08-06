@@ -5,6 +5,8 @@ import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -24,6 +26,7 @@ import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
+import com.auth0.jwt.JWTAudienceException;
 import com.auth0.jwt.JWTVerifyException;
 
 public class AuthJwtFormFilter implements Filter {
@@ -76,13 +79,37 @@ public class AuthJwtFormFilter implements Filter {
 			return request.getHeader("Authorization").replaceAll(".* ", "").trim();
 		}
 		Cookie[] cookies = request.getCookies();
+		String token = null;
+		ArrayList<String> tokens = new ArrayList<String>();
+		
+		//Estrutura Otimizada para Verificação de JWT prevendo múltiplos subdomínios
 		if (cookies != null) {
+			//Percorre lista cookie e extrai tokens
 			for (Cookie c : cookies) {
-				if (SIGA_JWT_AUTH_COOKIE_NAME.equals(c.getName()))
-					return c.getValue();
+				if (SIGA_JWT_AUTH_COOKIE_NAME.equals(c.getName())) {
+					tokens.add(c.getValue());
+				}
 			}
+			if (!tokens.isEmpty()) {
+				//Se houver apenas 1, retorna para rotina principal validar
+				if (tokens.size() == 1) {
+					return tokens.get(0);
+				} else {
+					//Se houver mais de 1, tenta localizar algum token válido
+					for (String t : tokens) {
+						token = t;
+						try {
+							validarToken(token);
+							return token; //Se houver algum Token Válido Retorna para Rotina Principal
+						} catch (Exception e) {
+							//Passa para Próximo Token. 
+						}		
+					}
+					return token; //Se não há nenhum token válido na lista, retorna para rotina explorar o erro	
+				}
+			}		
 		}
-		return null;
+		return null; //Se não há Tokens
 	}
 
 	public void destroy() {

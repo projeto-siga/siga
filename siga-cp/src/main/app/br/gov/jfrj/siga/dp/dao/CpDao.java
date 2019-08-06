@@ -1029,8 +1029,8 @@ public class CpDao extends ModeloDao {
 	public List<CpLocalidade> consultarLocalidadesPorUF(final CpUF cpuf) {
 
 		Query query = getSessao().createQuery(
-				"from CpLocalidade l where l.UF.idUF = "
-						+ cpuf.getIdUF().intValue() + " order by l.nmLocalidade");
+				"from CpLocalidade l where l.UF.idUF = :idUf order by remove_acento(upper(l.nmLocalidade))");
+		query.setInteger("idUf", cpuf.getIdUF().intValue());
 		List l = query.list();
 		return l;
 	}

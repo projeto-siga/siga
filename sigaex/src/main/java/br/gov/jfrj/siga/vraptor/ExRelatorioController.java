@@ -29,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -51,13 +52,16 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
+import br.com.caelum.vraptor.Put;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
@@ -66,17 +70,19 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelClassificacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelConsultaDocEntreDatas;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocSubordinadosCriados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocsClassificados;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocsOrgaoInteressado;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocumentosProduzidos;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovCad;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovProcesso;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacaoDocSubordinados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelOrgao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTipoDoc;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelVolumeTramitacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioDocumentosSubordinados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioModelos;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
-import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 
 @Resource
 public class ExRelatorioController extends ExController {
@@ -90,6 +96,8 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_MVSUB = "MVSUB:Relatório de movimentação de documentos em setores subordinados";
 	private static final String ACESSO_SUBORD = "SUBORD:Relatório de documentos em setores subordinados";
 	private static final String ACESSO_FORMS = "FORMS:Relação de formulários";
+	private static final String ACESSO_IGESTAO = "IGESTAO:Relatório de Indicadores de Gestão";
+	private static final String ACESSO_RELINTERESSADO = "RELINTERESSADO:Relatório de Documentos por Órgão Interessado";
 	private static final String APPLICATION_PDF = "application/pdf";
 
 	public ExRelatorioController(HttpServletRequest request,
@@ -152,9 +160,6 @@ public class ExRelatorioController extends ExController {
 			fazerResultsParaRelOrgao(lotacaoDestinatarioSel);
 		} else if (nomeArquivoRel.equals("relTipoDoc.jsp")) {
 			fazerResultsParaRelTipoDoc(lotacaoDestinatarioSel);
-		} else if (nomeArquivoRel.equals("relDocumentosPorVolume.jsp")) {
-			fazerResultsParaRelDocumentosPorVolume(lotacaoSel, usuarioSel,
-					primeiraVez, dataInicial, dataFinal);
 		} else {
 			throw new AplicacaoException("Modelo de relatório não definido!");
 		}
@@ -267,22 +272,6 @@ public class ExRelatorioController extends ExController {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("lotacaoDestinatarioSel", lotacaoDestinatarioSel);
 		result.include("titular", this.getTitular());
-	}
-
-	private void fazerResultsParaRelDocumentosPorVolume(
-			final DpLotacaoSelecao lotacaoSel,
-			final DpPessoaSelecao usuarioSel, final String primeiraVez,
-			String dataInicial, String dataFinal) {
-		result.include("usuario", usuarioSel);
-		result.include("lotacao", lotacaoSel);
-		result.include("lotacaoSel", lotacaoSel);
-		result.include("usuarioSel", usuarioSel);
-		result.include("dataInicial", dataInicial);
-		result.include("dataFinal", dataFinal);
-		result.include("lotaTitular", this.getLotaTitular());
-		result.include("titular", this.getTitular());
-		result.include("botao", "pesquisar");
-		result.include("primeiraVez", primeiraVez);
 	}
 
 	@Get
@@ -833,6 +822,169 @@ public class ExRelatorioController extends ExController {
 				rel.getRelatorioPDF());
 		return new InputStreamDownload(inputStream, APPLICATION_PDF,
 				"emiteRelClassDocDocumentos");
+	}
+
+	@Get
+	@Path("app/expediente/rel/relIndicadoresGestao")
+	public void relIndicadoresGestao(final Long orgao, final DpLotacaoSelecao lotacaoSel,
+			final DpPessoaSelecao usuarioSel, 
+			String dataInicial, String dataFinal, boolean primeiraVez) throws Exception {
+
+		long orgaoUsu = (long) 0;
+		try {
+			assertAcesso(ACESSO_IGESTAO);
+			orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
+			
+			if (!primeiraVez) {
+				if (dataInicial != null && dataFinal != null) {
+					if (orgaoUsu != orgao) {
+						throw new Exception("Não é permitido consultas de outros órgãos.");
+					}
+						
+					final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+					final Date dtIni = df.parse(dataInicial);
+					final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+					if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
+						throw new Exception("O intervalo entre as datas é muito grande, por favor reduza-o.");
+					}
+	
+					final Map<String, String> parametros = new HashMap<String, String>();
+//					parametros.put("orgao", orgao.toString());
+					parametros.put("lotacao", getRequest().getParameter("lotacaoSel.id"));
+					parametros.put("usuario", getRequest().getParameter("usuarioSel.id"));
+					parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
+					parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
+					parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
+							+ "/app/expediente/doc/exibir?sigla=");
+	
+					final RelDocumentosProduzidos rel = new RelDocumentosProduzidos(parametros);
+					rel.gerar();
+					rel.processarDadosTramitados();
+	
+					List<String> indicadoresProducao = new ArrayList();
+		
+					for (int i=0; i < rel.listDados.size(); i++) {
+						indicadoresProducao.add(rel.listDados.get(i));
+					}
+					result.include("indicadoresProducao", indicadoresProducao);
+					result.include("totalDocumentos", rel.totalDocumentos.toString());
+					result.include("totalPaginas", rel.totalPaginas.toString());
+					result.include("totalTramitados", rel.totalTramitados.toString());
+		
+					final RelVolumeTramitacao relVol = new RelVolumeTramitacao(parametros);
+					relVol.gerar();
+					List<String> volumeTramitacao = new ArrayList();
+		
+					for (int i=0; i < relVol.listColunas.size(); i++) {
+						volumeTramitacao.add("<td class='w-80'>" + relVol.listColunas.get(i) 
+								+ "</td><td class='align-right'>" + relVol.listDados.get(i) + "</td>");
+					}
+					result.include("volumeTramitacao", volumeTramitacao);
+				} else {
+					throw new Exception("Data inicial ou data final não informada.");
+				}
+			}
+		} catch (Exception e) {
+			result.include("mensagemCabec", e.getMessage());
+			result.include("msgCabecClass", "alert-danger");
+		}
+		result.include("primeiraVez", false);
+		result.include("orgao", orgaoUsu);
+		result.include("usuario", usuarioSel);
+		result.include("lotacao", lotacaoSel);
+		result.include("lotacaoSel", lotacaoSel);
+		result.include("usuarioSel", usuarioSel);
+		result.include("dataInicial", dataInicial);
+		result.include("dataFinal", dataFinal);
+	}
+
+	@Get
+	@Path("app/expediente/rel/relDocumentosPorVolume")
+	public void relDocumentosPorVolume(final Long orgao, final DpLotacaoSelecao lotacaoSel,
+			final DpPessoaSelecao usuarioSel, 
+			String dataInicial, String dataFinal, boolean primeiraVez) throws Exception {
+
+		long orgaoUsu = (long) 0;
+		try {
+			assertAcesso(ACESSO_IGESTAO);
+			orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
+			
+			if (!primeiraVez) {
+				if (dataInicial != null && dataFinal != null) {
+					if (orgaoUsu != orgao) {
+						throw new Exception("Não é permitido consultas de outros órgãos.");
+					}
+						
+					final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+					final Date dtIni = df.parse(dataInicial);
+					final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+					if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
+						throw new Exception("O intervalo entre as datas é muito grande, por favor reduza-o.");
+					}
+	
+					final Map<String, String> parametros = new HashMap<String, String>();
+//					parametros.put("orgao", orgao.toString());
+					parametros.put("lotacao", getRequest().getParameter("lotacaoSel.id"));
+					parametros.put("usuario", getRequest().getParameter("usuarioSel.id"));
+					parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
+					parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
+					parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
+							+ "/app/expediente/doc/exibir?sigla=");
+	
+					final RelDocumentosProduzidos rel = new RelDocumentosProduzidos(parametros);
+					rel.gerar();
+	
+					List<String> indicadoresProducao = new ArrayList();
+		
+					for (int i=0; i < rel.listDados.size(); i++) {
+						indicadoresProducao.add(rel.listDados.get(i));
+					}
+					result.include("indicadoresProducao", indicadoresProducao);
+					result.include("totalDocumentos", rel.totalDocumentos.toString());
+					result.include("totalPaginas", rel.totalPaginas.toString());
+				} else {
+					throw new Exception("Data inicial ou data final não informada.");
+				}
+			}
+		} catch (Exception e) {
+			result.include("mensagemCabec", e.getMessage());
+			result.include("msgCabecClass", "alert-danger");
+		}
+		result.include("primeiraVez", false);
+		result.include("orgao", orgaoUsu);
+		result.include("usuario", usuarioSel);
+		result.include("lotacao", lotacaoSel);
+		result.include("lotacaoSel", lotacaoSel);
+		result.include("usuarioSel", usuarioSel);
+		result.include("dataInicial", dataInicial);
+		result.include("dataFinal", dataFinal);
+	}
+
+	@Get("app/expediente/rel/emiteRelDocsOrgaoInteressado")
+	public Download aRelDocsOrgaoInteressado() throws Exception {
+		assertAcesso(ACESSO_RELINTERESSADO);
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		final Date dtIni = df.parse(getRequest().getParameter("dataInicial"));
+		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
+			throw new Exception("O intervalo entre as datas é muito grande, por favor reduza-o.");
+		}
+
+		final Map<String, String> parametros = new HashMap<String, String>();
+
+		parametros.put("orgaoUsu", getRequest().getParameter("orgaoUsu"));
+		parametros.put("lotacao", getRequest().getParameter("lotacaoSel.id"));
+		parametros.put("usuario", getRequest().getParameter("usuarioSel.id"));
+		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
+		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
+		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
+				+ "/app/expediente/doc/exibir?sigla=");
+
+		final RelDocsOrgaoInteressado rel = new RelDocsOrgaoInteressado(parametros);
+		rel.gerar();
+		
+		final InputStream inputStream = new ByteArrayInputStream(rel.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF, "RelDocsOrgaoInteressado");
 	}
 
 	protected void assertAcesso(final String pathServico) {

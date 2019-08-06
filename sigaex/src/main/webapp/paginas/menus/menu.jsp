@@ -248,15 +248,15 @@
 			</ul></li>
 	</c:if>
 
-	<c:if test="${true}">
+	<c:if test="${false}">
 		<li class="nav-item dropdown"><a href="javascript:void(0);"
 			class="nav-link dropdown-toggle" data-toggle="dropdown"> Gestão </a>
 			<ul class="dropdown-menu">
-				<li><a class="dropdown-item" href="#"> Indicadores de
-						Gestão </a></li>
-
+				<li><a class="dropdown-item" 
+					href="/sigaex/app/expediente/rel/relIndicadoresGestao?primeiraVez=true">
+						Indicadores de Gestão</a></li>
 				<li><a class="dropdown-item"
-					href="/sigaex/app/expediente/rel/relRelatorios?nomeArquivoRel=relDocumentosPorVolume.jsp&primeiraVez=sim">
+					href="/sigaex/app/expediente/rel/relDocumentosPorVolume?primeiraVez=true">
 						Documentos por Volume </a></li>
 
 				<li><a class="dropdown-item" href="#"> Documentos Fora do
@@ -273,9 +273,9 @@
 
 				<li><a class="dropdown-item" href="#"> Volume de Tramitação
 						por Nome de documento </a></li>
-				<li><a class="dropdown-item" href="#"> Total de documentos
-						por Órgão Interessado </a></li>
-
+				<li><a class="dropdown-item" 
+					href="/sigaex/app/expediente/rel/relDocsOrgaoInteressado?primeiraVez=true">
+						Total de documentos por Órgão Interessado</a></li>
 			</ul></li>
 	</c:if>
 

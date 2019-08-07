@@ -18,6 +18,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
@@ -139,27 +140,10 @@ public class AuthJwtFormFilter implements Filter {
 				ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
 			}
 			chain.doFilter(request, response);
-		} catch (AuthJwtException e) {
-			informarAutenticacaoProibida(resp, e);
-			return;
-		} catch (SigaJwtProviderException e) {
-			informarAutenticacaoProibida(resp, e);
-			return;
-		} catch (JWTVerifyException e) {
-			if ("jwt expired".equals(e.getMessage()))
-				redirecionarParaFormDeLogin(req, resp, e);
-			else
-				throw new RuntimeException(e);
-		} catch (SigaJwtInvalidException e) {
+		//Mudado para erro genérico para evitar exploração do mecanismo de autenticação.	
+		} catch (Exception e) {
 			redirecionarParaFormDeLogin(req, resp, e);
 			return;
-		} catch (Exception e) {
-			if (e.getCause() instanceof AuthJwtException) {
-				informarAutenticacaoProibida(resp, e);
-				return;
-			} else {
-				throw new RuntimeException(e);
-			}
 		} finally {
 			ContextoPersistencia.removeUserPrincipal();
 		}
@@ -196,6 +180,9 @@ public class AuthJwtFormFilter implements Filter {
 			informarAutenticacaoInvalida(resp, e);
 			return;
 		}
+		//Envia Mensagem para Tela de Login
+		HttpSession session = req.getSession(false);
+		session.setAttribute("mensagem", SigaMessages.getMessage("login.erro.jwt"));
 		
 		String cont = req.getRequestURL() + (req.getQueryString() != null ? "?" + req.getQueryString() : "");
 		String base = System.getProperty("siga.base.url");

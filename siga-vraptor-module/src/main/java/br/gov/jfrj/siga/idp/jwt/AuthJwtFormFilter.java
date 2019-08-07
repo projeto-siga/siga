@@ -180,9 +180,12 @@ public class AuthJwtFormFilter implements Filter {
 			informarAutenticacaoInvalida(resp, e);
 			return;
 		}
-		//Envia Mensagem para Tela de Login
-		HttpSession session = req.getSession(false);
-		session.setAttribute("mensagem", SigaMessages.getMessage("login.erro.jwt"));
+		
+		if (e.getClass() != SigaJwtInvalidException.class) {
+			//Envia Mensagem para Tela de Login
+			HttpSession session = req.getSession(false);
+			session.setAttribute("mensagem", SigaMessages.getMessage("login.erro.jwt"));
+		}
 		
 		String cont = req.getRequestURL() + (req.getQueryString() != null ? "?" + req.getQueryString() : "");
 		String base = System.getProperty("siga.base.url");

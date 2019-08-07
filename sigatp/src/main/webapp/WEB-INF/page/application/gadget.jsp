@@ -5,8 +5,7 @@
 <%@ taglib prefix="tptags" uri="/WEB-INF/tpTags.tld"%>
 
 
-<div class="gt-content-box gt-for-table">
-	<table border="0" class="gt-table">
+	<table class="table-hover" style="width: 100%">
 		<thead>
 			<tr>
 				<th width="50%">Descri&ccedil;&atilde;o</th>
@@ -24,11 +23,9 @@
 		</c:if>
 		</tbody>
 	</table>
-</div>
-<br />
 
-<form action="${linkTo[RequisicaoController].incluir}" enctype='multipart/form-data'>
-	<div id="rightbottom"></div>
-	<br>
-	<input type="submit" value="<fmt:message key='views.botoes.novo' />" class="gt-btn-large gt-btn-right"/>
-</form>	
+<div class="mt-2">
+	<a class="btn btn-primary float-right btn-sm ml-2"
+		href="${linkTo[RequisicaoController].incluir}"
+		title="<fmt:message key='views.botoes.novo' />"><fmt:message key='views.botoes.novo' /></a>
+</div>

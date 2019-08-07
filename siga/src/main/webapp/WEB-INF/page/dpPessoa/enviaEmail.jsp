@@ -161,7 +161,9 @@ function cpf_mask(v){
 		</table>				
 		<div class="gt-table-buttons">
 			<c:url var="url" value="/app/pessoa/enviar"></c:url>
-			<input type="button" value="Enviar E-mail" onclick="enviar()" class="btn btn-primary">
+			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+			  Enviar E-mail
+			</button>
 		</div>				
 	</form>
 	<!-- Modal -->
@@ -184,6 +186,28 @@ function cpf_mask(v){
 	  	</div>
 	</div>				
 	<!--Fim Modal -->
+	
+	<!-- Modal -->
+	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	        Deseja realmente enviar e-mail para Novo(s) Usuário(s)?
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-primary" onclick="enviar()">OK</button>
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+	
 	</div>
 
 <script>

@@ -420,6 +420,15 @@ public class ExDocumentoController extends ExController {
 			final String[] vars, String jsonHierarquiaDeModelos)
 			throws IllegalAccessException, InvocationTargetException,
 			IOException {
+		
+		if(exDocumentoDTO != null && exDocumentoDTO
+				.getSigla() != null) {
+			buscarDocumento(false, exDocumentoDTO);
+			if(exDocumentoDTO.getDoc()!= null && exDocumentoDTO.getDoc().isFinalizado() && 
+					exDocumentoDTO.getDoc().getExModelo() != null && !exDocumentoDTO.getIdMod().equals(exDocumentoDTO.getDoc().getExModelo().getId())) {
+				throw new AplicacaoException("Modelo não pode ser alterado");
+			}
+		}
 		result.forwardTo(this)
 				.edita(exDocumentoDTO, null, vars,
 						exDocumentoDTO.getMobilPaiSel(),
@@ -771,6 +780,7 @@ public class ExDocumentoController extends ExController {
 		result.include("hierarquiaDeModelos", lh.getList());
 		result.include("jsonHierarquiaDeModelos",
 				escapeHtml(jsonHierarquiaDeModelos));
+		result.include("podeEditarModelo", exDocumentoDTO.getDoc().isFinalizado());
 
 		// Desabilita a proteção contra injeção maldosa de html e js
 		this.response.addHeader("X-XSS-Protection", "0");

@@ -27,7 +27,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -40,15 +42,22 @@ import javax.xml.ws.handler.MessageContext;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 
+import br.com.caelum.vraptor.Post;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
+import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
+import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -67,6 +76,7 @@ import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
+import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.ExDocumentoController;
 import br.gov.jfrj.siga.vraptor.ExDocumentoDTO;
@@ -728,7 +738,7 @@ public class ExServiceImpl implements ExService {
 	}
 	
 	
-	public byte[] getArquivo(String sigla, String tipoArquivo){
+	public byte[] getArquivo5(String sigla, String tipoArquivo){
 		try {
 			
 			final boolean isPdf = tipoArquivo.equalsIgnoreCase("pdf");
@@ -1034,17 +1044,6 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 
-	@Override
-	public String preverPdf(String sigla, String cadastranteStr,
-			String subscritorStr, String destinatarioStr,
-			String destinatarioCampoExtraStr, String descricaoTipoDeDocumento,
-			String nomeForma, String nomeModelo, String classificacaoStr,
-			String descricaoStr, Boolean eletronico, String nomeNivelDeAcesso,
-			String conteudo, String siglaMobilPai, Boolean finalizar)
-			throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public String finalizarDocumento(String sigla, String cadastrante) {
@@ -1127,6 +1126,11 @@ public class ExServiceImpl implements ExService {
 			
 			PessoaLotacaoParser titularParser = new PessoaLotacaoParser(
 					titular);
+			
+			if (titularParser.getLotacao() == null)
+				titularParser
+						.setLotacao(titularParser.getPessoa().getLotacao());
+			
 
 			Ex.getInstance().getBL()
 					.excluirDocumento(doc, titularParser.getPessoa(), titularParser.getLotacao(), true);
@@ -1147,7 +1151,7 @@ public class ExServiceImpl implements ExService {
 	}
 	
 	@Override
-	public String buscarDocsFilhos(String sigla){
+	public String buscarDocsFilhos(String sigla) throws Exception{
 		String resultado = "";
 		try{
 			ExMobil mob = buscarMobil(sigla);
@@ -1159,18 +1163,21 @@ public class ExServiceImpl implements ExService {
 				d.put("lotacao", doc.getLotacao().getSigla());
 				d.put("paginas", doc.getContarNumeroDePaginas());
 				d.put("data", doc.getDtFinalizacaoDDMMYY());
+				d.put("dataAssinatura", doc.getDtAssinatura());
 				dArray.put(d);
 			}
 			
 			resultado = dArray.toString();
 		}catch(Exception e){
-			return "";
+			if (!isHideStackTrace())
+				e.printStackTrace(System.out);
+			throw e;
 		}
 		return resultado;
 	}
 
 	@Override
-	public String atualizarConteudo(String siglaCadastrante, String sigla, String siglaMobilPai, String conteudo, Boolean finalizar){
+	public String atualizarConteudo(String siglaCadastrante, String sigla, String siglaMobilPai, String conteudo, Boolean finalizar) throws Exception{
 		
 		try{
 			ExMobil mob = buscarMobil(sigla);
@@ -1178,6 +1185,10 @@ public class ExServiceImpl implements ExService {
 			
 			PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
 					siglaCadastrante);
+			
+			if (cadastranteParser.getLotacao() == null)
+				cadastranteParser
+						.setLotacao(cadastranteParser.getPessoa().getLotacao());
 			
 			if (conteudo == null)
 				conteudo = "";
@@ -1212,10 +1223,232 @@ public class ExServiceImpl implements ExService {
 			
 			
 		}catch(Exception e){
-			return "";
+			if (!isHideStackTrace())
+				e.printStackTrace(System.out);
+			throw e;
 		}
 		
 		return sigla;
+
+	}
+	
+	//TODO CRIAR METODO PARA ATUALIZAR TUDO DO DOCUMENTO, IGUAL AO CRIAR, SO QUE PASSANDO A SIGLA
+	
+	
+	public String incluirCossignatario(String sigla, String titular, String cossignatario, String funcaoCossignatario) throws Exception{
+		
+		try{
+			ExMobil mob = buscarMobil(sigla);
+			ExDocumento doc = mob.getDoc();
+			
+			PessoaLotacaoParser cossignatarioParser = new PessoaLotacaoParser(cossignatario);
+			
+			PessoaLotacaoParser titularParser = new PessoaLotacaoParser(titular);
+			
+			if (titularParser.getLotacao() == null)
+				titularParser
+						.setLotacao(titularParser.getPessoa().getLotacao());
+			
+			
+			ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+					.novaInstancia()
+					.setDescrMov(funcaoCossignatario)
+					.setMob(mob);
+			ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+			mov.setSubscritor(cossignatarioParser.getPessoa());
+			
+			if (!Ex.getInstance()
+					.getComp()
+					.podeIncluirCosignatario(titularParser.getPessoa(), titularParser.getLotacao(),
+							mob)) {
+				throw new AplicacaoException("Não é possível incluir cossignatário");
+			}
+			
+			Ex.getInstance()
+			.getBL()
+			.incluirCosignatario(titularParser.getPessoa(), titularParser.getLotacao(), doc,
+					mov.getDtMov(), mov.getSubscritor(), mov.getDescrMov());
+			
+
+			
+		}catch(Exception e){
+			if (!isHideStackTrace())
+				e.printStackTrace(System.out);
+			throw e;
+		}
+		
+		return sigla;
+	}
+	
+	public String listarCossignatarios(String sigla, String titular) throws Exception{
+		
+		try{
+			
+			PessoaLotacaoParser titularParser = new PessoaLotacaoParser(
+					titular);
+			
+			if (titularParser.getLotacao() == null)
+				titularParser
+						.setLotacao(titularParser.getPessoa().getLotacao());
+			
+			JSONArray cossignatarios = new JSONArray();
+
+			ExMobil mob = buscarMobil(sigla);
+			ExDocumento doc = mob.getDoc();
+			for (ExMovimentacao movCossig : doc.getMovsCosignatario()){
+				JSONObject movJson = new JSONObject();
+				movJson.put("idMov", movCossig.getIdMov());
+				movJson.put("nomePessoa", movCossig.getSubscritor().getNomePessoa());
+				
+				boolean podeExcluir = Ex.getInstance()
+				.getComp()
+				.podeExcluirCosignatario(titularParser.getPessoa(), titularParser.getLotacao(),
+						doc.getMobilGeral(), movCossig);
+				
+				movJson.put("podeExcluir", podeExcluir);
+				cossignatarios.put(movJson);
+				
+			}
+			
+			return cossignatarios.toString();
+			
+		}catch(Exception e){
+			if (!isHideStackTrace())
+				e.printStackTrace(System.out);
+			throw e;
+		}
+
+	}
+	
+	public Boolean excluirMov(String sigla, String titular, Long idMov) throws Exception{
+		try{
+			ExMobil mob = buscarMobil(sigla);			
+			PessoaLotacaoParser titularParser = new PessoaLotacaoParser(
+					titular);
+			
+			if (titularParser.getLotacao() == null)
+				titularParser
+						.setLotacao(titularParser.getPessoa().getLotacao());
+
+			Ex.getInstance()
+					.getBL()
+					.excluirMovimentacao(titularParser.getPessoa(), titularParser.getLotacao(), mob,
+							idMov);
+			
+			return true;
+			
+		}catch(Exception e){
+			if (!isHideStackTrace())
+				e.printStackTrace(System.out);
+			throw e;
+		
+		}
+
+	}
+	
+	public byte[] getArquivo(String arquivo, boolean completo, boolean semMarcas) throws Exception{
+		
+		final boolean isPdf = arquivo.endsWith(".pdf");
+		boolean estampar = !semMarcas;
+		
+		try{
+			final ExMobil mob = Documento.getMobil(arquivo);
+			if (mob == null) {
+				throw new AplicacaoException("A sigla informada não corresponde a um documento da base de dados.");
+			}
+			final ExMovimentacao mov = Documento.getMov(mob, arquivo);
+			final boolean isArquivoAuxiliar = mov != null && mov.getExTipoMovimentacao().getId().equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR);
+			byte ab[] = null;
+			if (isArquivoAuxiliar) {
+				ab = mov.getConteudoBlobMov2();
+			}
+			if (isPdf) {
+				if (mov != null && !completo && !estampar) {
+					ab = mov.getConteudoBlobpdf();
+				} else {
+					ab = Documento.getDocumento(mob, mov, completo, estampar, null, null);
+				}
+				if (ab == null) {
+					throw new Exception("PDF inválido!");
+				}
+			}
+
+			return ab;
+
+		}catch(Exception e){
+			if (!isHideStackTrace())
+				e.printStackTrace(System.out);
+			throw e;
+		}
+		
+	}
+	
+	public String consultarProcesso(String sigla) throws Exception{
+		try{
+			ExMobil mob = buscarMobil(sigla);
+			
+			JSONArray dArray = new JSONArray();
+			for(ExArquivoNumerado arquivo : mob.getDoc().getUltimoVolume().getArquivosNumerados()){
+				JSONObject d = new JSONObject();
+				d.put("referenciaPDF", arquivo.getReferenciaPDF());
+				d.put("referenciaPDFCompleto", arquivo.getReferenciaPDFCompleto());
+				d.put("lotacao", arquivo.getArquivo().getLotacao().getSigla());
+				d.put("pagina",arquivo.getPaginaInicial());
+				
+				d.put("data", arquivo.getData());
+				d.put("sigla", arquivo.getMobil().getSigla());
+				d.put("siglaAssinatura", arquivo.getArquivo().getSiglaAssinatura());
+				d.put("dataAssinatura", arquivo.getMobil().getDoc().getDtAssinatura());
+				
+				dArray.put(d);
+			}
+			
+			return dArray.toString();
+			
+		}catch(Exception e){
+			if (!isHideStackTrace())
+				e.printStackTrace(System.out);
+			throw e;
+		}
+	}
+	
+	public String buscarClassificacao(String descricao, String codigo, Integer offset, Integer itemPagina) throws Exception{
+		if (descricao != null){ 
+			descricao = descricao.toUpperCase();
+		}
+		
+		try {
+			
+			CpDao dao = CpDao.getInstance();
+			
+			final ExClassificacaoDaoFiltro flt = new ExClassificacaoDaoFiltro();
+			flt.setDescricao(descricao);
+			if (codigo != null) {
+				flt.setSigla(codigo);
+			}
+			
+			List<ExClassificacao> itens = dao.consultarPorFiltro(flt, offset, itemPagina);
+			
+			JSONArray lArray = new JSONArray();
+			for(ExClassificacao classificacao : itens){
+				JSONObject l = new JSONObject();
+				l.put("nome", classificacao.getNome());
+				l.put("descricao", classificacao.getDescricao());
+				l.put("codAssunto", classificacao.getCodAssunto());
+				l.put("sigla", classificacao.getSigla());
+				l.put("isAtivo", classificacao.isAtivo());
+				l.put("id", classificacao.getId());
+
+				lArray.put(l);
+			}
+
+			return lArray.toString();
+			
+		}catch (Exception e) {
+			if (!isHideStackTrace())
+				e.printStackTrace(System.out);
+			throw e;
+		}
 
 	}
 

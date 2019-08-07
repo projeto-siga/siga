@@ -44,6 +44,7 @@
 		<class>br.gov.jfrj.siga.dp.CpTipoMarcador</class>
 		<class>br.gov.jfrj.siga.dp.CpMarca</class>
 		<class>br.gov.jfrj.siga.dp.CpTipoMarca</class>
+		<class>br.gov.jfrj.siga.cp.CpAcesso</class>
 
 		<properties>
 			<property name="hibernate.current_session_context_class"

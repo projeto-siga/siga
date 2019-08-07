@@ -1485,6 +1485,26 @@ public class ExMovimentacaoController extends ExController {
 
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
+	
+	@Get("/app/expediente/mov/solicitar_assinatura")
+	public void aSolicitarAssinatura(final String sigla) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+		final ExDocumento doc = buscarDocumento(builder);
+
+		if (!Ex.getInstance()
+				.getComp()
+				.podeSolicitarAssinatura(getTitular(), getLotaTitular(),
+						doc)) {
+			throw new AplicacaoException("Não é possível revisar");
+		}
+		Ex.getInstance()
+			.getBL()
+			.solicitarAssinatura(getCadastrante(), getLotaTitular(), doc);
+
+		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
+	}
+
 
 	@Get("/app/expediente/mov/referenciar")
 	public void aReferenciar(final String sigla) {
@@ -2521,7 +2541,7 @@ public class ExMovimentacaoController extends ExController {
 	@Get("/app/expediente/mov/assinar_lote")
 	public void assina_lote() throws Exception {
 		final List<ExDocumento> itensComoSubscritor = dao()
-				.listarDocPendenteAssinatura(getTitular());
+				.listarDocPendenteAssinatura(getTitular(), false);
 		final List<ExDocumento> itensFinalizados = new ArrayList<ExDocumento>();
 
 		for (final ExDocumento doc : itensComoSubscritor) {
@@ -2549,7 +2569,7 @@ public class ExMovimentacaoController extends ExController {
 	@Get("/app/expediente/mov/assinar_tudo")
 	public void assina_tudo() throws Exception {
 		List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL()
-				.obterAssinaveis(getTitular(), getLotaTitular());
+				.obterAssinaveis(getTitular(), getLotaTitular(), false);
 
 		result.include("assinaveis", assinaveis);
 		result.include("request", getRequest());

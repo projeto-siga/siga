@@ -8,6 +8,20 @@
 	incluirJs="/siga/javascript/principal.js">
 
 	<div class="container-fluid content">
+		<c:if test="${not empty acessoAnteriorData}">
+			<div class="row">
+				<div class="col">
+					<p id="bem-vindo" class="alert alert-success mt-3 mb-0">Último acesso em ${acessoAnteriorData} no endereço ${acessoAnteriorMaquina}.</p>
+					<script>
+						setTimeout(function() {
+							$('#bem-vindo').fadeTo(1000, 0, function() {
+								$('#bem-vindo').slideUp(1000);
+							});
+						}, 5000);
+					</script>
+				</div>
+			</div>
+		</c:if>
 		<c:if test="${not empty mensagem}">
 			<div class="row">
 				<div style="">
@@ -20,6 +34,7 @@
 						}, 5000);
 					</script>
 				</div>
+			</div>
 		</c:if>
 		<div class="row">
 			<c:if

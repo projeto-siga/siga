@@ -17,6 +17,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.gov.jfrj.siga.base.HttpRequestUtils;
+import br.gov.jfrj.siga.cp.AbstractCpAcesso;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 import com.auth0.jwt.JWTVerifyException;
@@ -96,8 +99,12 @@ public class AuthJwtFormFilter implements Filter {
 				if ((Integer) decodedToken.get("exp") < now + TIME_TO_RENEW_IN_S) {
 					// Seria bom incluir o attributo HttpOnly
 					String tokenNew = renovarToken(token);
+					Map<String, Object> decodedNewToken = validarToken(token);
 					Cookie cookie = buildCookie(tokenNew);
 					resp.addCookie(cookie);
+//					Cp.getInstance().getBL().logAcesso(AbstractCpAcesso.CpTipoAcessoEnum.RENOVACAO_AUTOMATICA,
+//							(String) decodedNewToken.get("sub"), (Integer) decodedNewToken.get("iat"),
+//							(Integer) decodedNewToken.get("exp"), HttpRequestUtils.getIpAudit(req));
 				}
 				ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
 			}
@@ -157,7 +164,7 @@ public class AuthJwtFormFilter implements Filter {
 		String base = System.getProperty("siga.base.url");
 		if (base != null && base.startsWith("https:") && cont.startsWith("http:"))
 			cont = "https" + cont.substring(4);
-		resp.sendRedirect("/sigaidp/jwt/login?cont=" + URLEncoder.encode(
+		resp.sendRedirect("/siga/public/app/login?cont=" + URLEncoder.encode(
 				cont, "UTF-8"));
 	}
 

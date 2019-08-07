@@ -40,11 +40,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
-
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -60,6 +55,7 @@ import org.hibernate.jdbc.Work;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
+import br.gov.jfrj.siga.cp.CpAcesso;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpGrupo;
 import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
@@ -95,9 +91,14 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.model.CarimboDeTempo;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
 
 public class CpDao extends ModeloDao {
 
@@ -1704,12 +1705,12 @@ public class CpDao extends ModeloDao {
 		if (entidade.getHisDtFim() != null && entidade.getHisIdcFim() == null)
 			entidade.setHisIdcFim(identidadeCadastrante);
 		entidade.setHisAtivo(entidade.getHisDtFim() == null ? 1 : 0);
-		getSessao().saveOrUpdate(entidade);
+		gravar(entidade);
 		if (entidade.getHisIdIni() == null && entidade.getId() != null) {
 			entidade.setHisIdIni(entidade.getId());
-			getSessao().update(entidade);
+			gravar(entidade);
 		}
-		getSessao().flush();
+		descarregar();
 		try {
 			invalidarCache(entidade);
 			// Edson: não há necessidade de limpar o cache de configs no próprio
@@ -1728,7 +1729,7 @@ public class CpDao extends ModeloDao {
 	public <T> T gravar(final T entidade) {
 		if (entidade instanceof CarimboDeTempo)
 			((CarimboDeTempo) entidade).setHisDtAlt(this.dt());
-		getSessao().saveOrUpdate(entidade);
+		super.gravar(entidade);
 		invalidarCache(entidade);
 		return entidade;
 	}
@@ -2333,5 +2334,33 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public CpAcesso consultarAcessoAnterior(final DpPessoa pessoa) {
+		String sql = "from CpAcesso a where a.cpIdentidade.dpPessoa.idPessoaIni = :idPessoaIni order by a.dtInicio desc";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
+		query.setFirstResult(1);
+		query.setMaxResults(1);
+		List<CpAcesso> result = query.getResultList();
+		if (result == null || result.size() == 0)
+			return null;
+		return result.get(0);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<CpAcesso> consultarAcessosRecentes(final DpPessoa pessoa) {
+		String sql = "from CpAcesso a where a.cpIdentidade.dpPessoa.idPessoaIni = :idPessoaIni order by a.dtInicio desc";
+		javax.persistence.Query query = ContextoPersistencia.em().createQuery(sql);
+		query.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
+		query.setFirstResult(0);
+		query.setMaxResults(5);
+		List<CpAcesso> result = query.getResultList();
+		if (result == null || result.size() == 0)
+			return null;
+		return result;
+	}
+
+
 
 }

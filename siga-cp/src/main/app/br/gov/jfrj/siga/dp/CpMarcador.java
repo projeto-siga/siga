@@ -173,6 +173,8 @@ public class CpMarcador extends AbstractCpMarcador {
 	
 	final static public long MARCADOR_COMO_EXECUTOR = 70;
 	
+	final static public long MARCADOR_PRONTO_PARA_ASSINAR = 71;
+	
 	final static public long MARCADOR_URGENTE = 1000;
 	
 	final static public long MARCADOR_IDOSO = 1001;

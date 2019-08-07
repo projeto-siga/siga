@@ -93,6 +93,7 @@ import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
+import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Par;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.Texto;
@@ -5395,10 +5396,7 @@ public class ExBL extends CpBL {
 		}
 		RequestInfo ri = CurrentRequest.get();
 		if (ri != null) {
-			String ip = ri.getRequest().getHeader("X-Forwarded-For");
-			if (ip == null)
-				ip = ri.getRequest().getRemoteHost();
-			mov.setAuditIP(ip);
+			mov.setAuditIP(HttpRequestUtils.getIpAudit(ri.getRequest()));
 		}
 	}
 	
@@ -6971,13 +6969,13 @@ public class ExBL extends CpBL {
 	}
 
 	public List<ExAssinavelDoc> obterAssinaveis(DpPessoa titular,
-			DpLotacao lotaTitular) {
+			DpLotacao lotaTitular, boolean apenasComSolicitacaoDeAssinatura) {
 		List<ExAssinavelDoc> assinaveis = new ArrayList<ExAssinavelDoc>();
 		Map<Long, ExAssinavelDoc> map = new HashMap<>();
 
 		// Acrescenta documentos
 		//
-		for (final ExDocumento doc : dao().listarDocPendenteAssinatura(titular)) {
+		for (final ExDocumento doc : dao().listarDocPendenteAssinatura(titular, apenasComSolicitacaoDeAssinatura)) {
 			if (!doc.isFinalizado() || !doc.isEletronico())
 				continue;
 			ExAssinavelDoc ass = acrescentarDocAssinavel(assinaveis, map, titular, lotaTitular, doc);
@@ -7058,5 +7056,21 @@ public class ExBL extends CpBL {
 				.podeAssinarMovimentacaoComSenha(titular, lotaTitular, mov));
 		assmov.setPodeAutenticar(podeAutenticar);
 		ass.getMovs().add(assmov);
+	}
+
+	public void solicitarAssinatura(DpPessoa cadastrante, DpLotacao lotaTitular, ExDocumento doc) {
+		try {
+			iniciarAlteracao();
+			final ExMovimentacao mov = criarNovaMovimentacao(
+					ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA,
+					cadastrante, lotaTitular, doc.getMobilGeral(), null, cadastrante,
+					null, null, null, null);
+
+			gravarMovimentacao(mov);
+			concluirAlteracao(doc.getMobilGeral());
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException("Erro ao revisar documento.", 0, e);
+		}
 	}
 }

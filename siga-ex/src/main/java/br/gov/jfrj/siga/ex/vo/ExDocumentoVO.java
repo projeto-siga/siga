@@ -535,6 +535,17 @@ public class ExDocumentoVO extends ExVO {
 						.podeAutenticarDocumento(titular, lotaTitular,
 								mob.doc()));
 
+		vo.addAcao(
+				"page_go	",
+				"Solicitar Assinatura",
+				"/app/expediente/mov",
+				"solicitar_assinatura",
+				Ex.getInstance()
+						.getComp()
+						.podeSolicitarAssinatura(titular, lotaTitular,
+								mob.doc()), "Ao clicar em prosseguir, você estará sinalizando que revisou este documento e que ele deve ser incluído na lista para ser assinado em lote. Prosseguir?", 
+								null, null, null, "once");
+
 		if (doc.isFinalizado() && doc.getNumExpediente() != null) {
 			// documentos finalizados
 			if (mob.temAnexos()) {

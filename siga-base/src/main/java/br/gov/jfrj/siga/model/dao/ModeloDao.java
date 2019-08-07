@@ -30,7 +30,6 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Example;
@@ -131,7 +130,19 @@ public abstract class ModeloDao {
 	}
 
 	public void excluir(final Object entidade) {
+//		EntityManager em = ContextoPersistencia.em();
+//		if (em != null)
+//			em.remove(entidade);
+//		else
 		getSessao().delete(entidade);
+	}
+
+	public void descarregar() {
+//		EntityManager em = ContextoPersistencia.em();
+//		if (em != null)
+//			em.flush();
+//		else
+		getSessao().flush();
 	}
 
 	/**
@@ -142,7 +153,10 @@ public abstract class ModeloDao {
 	}
 
 	public <T> T gravar(final T entidade) {
-
+//		EntityManager em = ContextoPersistencia.em();
+//		if (em != null)
+//			em.persist(entidade);
+//		else
 		getSessao().saveOrUpdate(entidade);
 		return entidade;
 	}

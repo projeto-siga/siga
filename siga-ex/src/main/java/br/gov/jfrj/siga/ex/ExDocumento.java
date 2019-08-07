@@ -1680,6 +1680,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REGISTRO_ASSINATURA_DOCUMENTO);
 	}
 
+	public Set<ExMovimentacao> getSolicitantesDeAssinatura() {
+		if (getMobilGeral() == null)
+			return new TreeSet<ExMovimentacao>();
+		return getMobilGeral()
+				.getMovsNaoCanceladas(
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA,
+						true);
+	}
+
 	public Set<ExMovimentacao> getAssinaturasComTokenOuSenha() {
 		Set<ExMovimentacao> set = new TreeSet<ExMovimentacao>();
 		set.addAll(getAssinaturasComSenha());
@@ -1768,6 +1777,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return retorno;
 	}
 
+	public String getSolicitantesDeAssinaturaCompleto() {
+		String retorno = "";
+		String revisores = Documento
+				.getAssinantesString(getSolicitantesDeAssinatura());
+
+		if (revisores.length() > 0)
+			retorno = "Revisado por " + revisores + "";
+		return retorno;
+	}
+	
 	public boolean isPendenteDeAssinatura() {
 
 		// Edson: não deve estar pendente de assinatura se estiver em
@@ -1822,6 +1841,23 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		for (ExMovimentacao assinatura : getAssinaturasComTokenOuSenha()) {
 			if (assinatura.getSubscritor().equivale(subscritor))
 				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * verifica se um documento está sem efeito.
+	 */
+	public boolean isSolicitadaAssinatura() {
+		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
+
+		if (movs != null) {
+			for (final ExMovimentacao mov : movs) {
+				if ((mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)
+						&& mov.getExMovimentacaoCanceladora() == null) {
+					return true;
+				}
+			}
 		}
 		return false;
 	}
@@ -2593,6 +2629,17 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				return true;
 		}
 
+		return false;
+	}
+
+	public boolean isAssinaturaSolicitada() {
+		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
+
+		for (final ExMovimentacao mov : movs) {
+			if (!mov.isCancelada()
+					&& mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)
+				return true;
+		}
 		return false;
 	}
 }

@@ -160,7 +160,7 @@ ${meta}
 						 - ${cadastrante.lotacao.sigla}</c:when>
 												</c:choose>
 											</c:catch> </strong> <span class="gt-util-separator">|</span> <a
-											href="/sigaidp/jwt/logout">sair</a>
+											href="/siga/public/app/logout">sair</a>
 									</p>
 									<p style="text-align: right; padding-top: 10px;">
 										<c:catch>

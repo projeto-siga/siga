@@ -95,38 +95,38 @@
 							<h2 class="mt-3">
 								<fmt:message key="documento.encontrados" />
 							</h2>
-						</c:if>
-						<table class="gt-table table table-sm table-hover">
-							<thead class="thead-light">
-								<tr>
-									<th rowspan="1" align="center"><b>Documentos
-											Produzidos: ${totalDocumentos}</b></th>
-									<th colspan="1" align="center"><b>Páginas Produzidas:
-											${totalPaginas}</b></th>
-								</tr>
-							</thead>
-						</table>
-						<c:if test="${indicadoresProducao.size() > 0}">
 							<table class="gt-table table table-sm table-hover">
-								<thead class="thead-dark">
+								<thead class="thead-light">
 									<tr>
-										<th rowspan="1" align="center">Unidade</th>
-										<th colspan="1" align="center">Nome do documento</th>
-										<th rowspan="1" align="center">Quantidade</th>
+										<th rowspan="1" align="center"><b>Documentos
+												Produzidos: ${totalDocumentos}</b></th>
+										<th colspan="1" align="center"><b>Páginas Produzidas:
+												${totalPaginas}</b></th>
 									</tr>
 								</thead>
-								<c:forEach var="campos" items="${indicadoresProducao}">
-									<th rowspan="2" align="left">${campos}</th>
-								</c:forEach>
-								<tr>
-									<th rowspan="1" align="center"></th>
-									<th colspan="1" align="center"></th>
-									<th rowspan="1" align="right"><button type="button"
-											onclick="javascript:visualizarRelatorio('${pageContext.request.contextPath}/app/expediente/rel/resultRelDocumentosPorVolume');"
-											class="btn btn-primary float-right">Relatório
-											completo</button></th>
-								</tr>
 							</table>
+							<c:if test="${indicadoresProducao.size() > 0}">
+								<table class="gt-table table table-sm table-hover">
+									<thead class="thead-dark">
+										<tr>
+											<th rowspan="1" align="center">Unidade</th>
+											<th colspan="1" align="center">Nome do documento</th>
+											<th rowspan="1" align="center">Quantidade</th>
+										</tr>
+									</thead>
+									<c:forEach var="campos" items="${indicadoresProducao}">
+										<th rowspan="2" align="left">${campos}</th>
+									</c:forEach>
+									<tr>
+										<th rowspan="1" align="center"></th>
+										<th colspan="1" align="center"></th>
+										<th rowspan="1" align="right"><button type="button"
+												onclick="javascript:visualizarRelatorio('${pageContext.request.contextPath}/app/expediente/rel/resultRelDocumentosPorVolume');"
+												class="btn btn-primary float-right">Relatório
+												completo</button></th>
+									</tr>
+								</table>
+							</c:if>
 						</c:if>
 					</c:if>
 				</form>

@@ -73,10 +73,11 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			// Total de documentos criados (por orgao, lotação ou usuário)
 			String addSelect = "mov.lotaResp.siglaLotacao, "
 							+ "doc.exModelo.nmMod, "
-							+ "count(distinct doc.idDoc), "
+							+ "count(distinct doc.idDoc) as qtd, "
 							+ "sum(doc.numPaginas) ";
 			String addWhere = "group by mov.lotaResp.siglaLotacao,"
-							+ "doc.exModelo.nmMod ";
+							+ "doc.exModelo.nmMod"
+							+ " order by 1, 3";
 			Iterator it = obtemDados(d, addSelect, addWhere, ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO);
 			totalPaginas = 0L;
 			totalDocumentos = 0L;

@@ -921,7 +921,7 @@ public class ExRelatorioController extends ExController {
 			String dataFinal, boolean primeiraVez) throws Exception {
 
 		long orgaoUsu = (long) 0;
-		
+
 		List<String> indicadoresProducao = new ArrayList();
 		try {
 			assertAcesso(ACESSO_RELDOCVOL);
@@ -964,25 +964,36 @@ public class ExRelatorioController extends ExController {
 							parametros);
 					rel.gerar();
 
+					String unidadeAtual = "";
+
 					for (int i = 0; i < rel.listDados.size(); i++) {
 
-						String resultado = "<thead>"
-								+ "<tr>"
-								+ "<th rowspan='1' align='center'>" + rel.listDados.get(i) + "</th>";
-						
+						String resultado = "";
+
+						if (!unidadeAtual.equals(rel.listDados.get(i))) {
+							resultado = "<thead>" + "<tr>"
+									+ "<th rowspan='1' align='center'>"
+									+ rel.listDados.get(i) + "</th>";
+							unidadeAtual = rel.listDados.get(i);
+						} else {
+							resultado = "<thead>" + "<tr>"
+									+ "<th rowspan='1' align='center'></th>";
+						}
+
 						i++;
-						
-						resultado += "<th colspan='1' align='center'>" + rel.listDados.get(i) + "</th>";
-						
+
+						resultado += "<th colspan='1' align='center'>"
+								+ rel.listDados.get(i) + "</th>";
+
 						i++;
-						
-						resultado += "<th rowspan='1' align='center'>" + rel.listDados.get(i) + "</th>"
-								+ "</tr>"
+
+						resultado += "<th rowspan='1' align='center'>"
+								+ rel.listDados.get(i) + "</th>" + "</tr>"
 								+ "</thead>";
 
 						indicadoresProducao.add(resultado);
 					}
-					
+
 					result.include("totalDocumentos",
 							rel.totalDocumentos.toString());
 					result.include("totalPaginas", rel.totalPaginas.toString());
@@ -1000,6 +1011,7 @@ public class ExRelatorioController extends ExController {
 			result.include("primeiraVez", false);
 		}
 
+		result.include("tamanho", indicadoresProducao.size());
 		result.include("indicadoresProducao", indicadoresProducao);
 		result.include("orgao", orgaoUsu);
 		result.include("usuario", usuarioSel);
@@ -1008,29 +1020,30 @@ public class ExRelatorioController extends ExController {
 		result.include("usuarioSel", usuarioSel);
 		result.include("dataInicial", dataInicial);
 		result.include("dataFinal", dataFinal);
-		result.include("tamanho", "10");
 	}
 
 	@Path("app/expediente/rel/emiteRelDocsPorVolumeDetalhes")
-	public Download aRelDocsPorVolumeDetalhes(final Long idOrgaoUsu, final DpLotacaoSelecao lotacaoSel,
-			final DpPessoaSelecao usuarioSel, 
-			String dataInicial, String dataFinal, boolean primeiraVez) throws Exception {
+	public Download aRelDocsPorVolumeDetalhes(final Long idOrgaoUsu,
+			final DpLotacaoSelecao lotacaoSel,
+			final DpPessoaSelecao usuarioSel, String dataInicial,
+			String dataFinal, boolean primeiraVez) throws Exception {
 		assertAcesso(ACESSO_RELDOCVOL);
 
 		long orgaoUsu = (long) 0;
 		orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 
-//		if (orgaoUsu != idOrgaoUsu) {
-//			throw new Exception("Não é permitido consultas de outros órgãos.");
-//		}
-		
+		// if (orgaoUsu != idOrgaoUsu) {
+		// throw new Exception("Não é permitido consultas de outros órgãos.");
+		// }
+
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		final Date dtIni = df.parse(dataInicial);
 		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
-			throw new Exception("O intervalo entre as datas é muito grande, por favor reduza-o.");
+			throw new Exception(
+					"O intervalo entre as datas é muito grande, por favor reduza-o.");
 		}
-		
+
 		final Map<String, String> parametros = new HashMap<String, String>();
 
 		parametros.put("lotacao", getRequest().getParameter("lotacaoSel.id"));
@@ -1038,7 +1051,8 @@ public class ExRelatorioController extends ExController {
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
 
-		final RelDocumentosProduzidos rel = new RelDocumentosProduzidos(parametros);
+		final RelDocumentosProduzidos rel = new RelDocumentosProduzidos(
+				parametros);
 		rel.gerarDetalhes();
 
 		final InputStream inputStream = new ByteArrayInputStream(

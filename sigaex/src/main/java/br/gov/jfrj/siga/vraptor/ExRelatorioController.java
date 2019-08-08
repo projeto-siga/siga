@@ -94,6 +94,7 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_SUBORD = "SUBORD:Relatório de documentos em setores subordinados";
 	private static final String ACESSO_FORMS = "FORMS:Relação de formulários";
 	private static final String ACESSO_IGESTAO = "IGESTAO:Relatório de Indicadores de Gestão";
+	private static final String ACESSO_RELDOCVOL = "RELDOCVOL:Relatório de documentos por volume";
 	private static final String APPLICATION_PDF = "application/pdf";
 
 	public ExRelatorioController(HttpServletRequest request,
@@ -822,7 +823,7 @@ public class ExRelatorioController extends ExController {
 
 	@Get
 	@Path("app/expediente/rel/relIndicadoresGestao")
-	public void relIndicadoresGestao(final Long orgao, final DpLotacaoSelecao lotacaoSel,
+	public void relIndicadoresGestao(final Long idOrgaoUsu, final DpLotacaoSelecao lotacaoSel,
 			final DpPessoaSelecao usuarioSel, 
 			String dataInicial, String dataFinal, boolean primeiraVez) throws Exception {
 
@@ -833,7 +834,7 @@ public class ExRelatorioController extends ExController {
 			
 			if (!primeiraVez) {
 				if (dataInicial != null && dataFinal != null) {
-					if (orgaoUsu != orgao) {
+					if (orgaoUsu != idOrgaoUsu) {
 						throw new Exception("Não é permitido consultas de outros órgãos.");
 					}
 						
@@ -873,7 +874,7 @@ public class ExRelatorioController extends ExController {
 		
 					for (int i=0; i < relVol.listColunas.size(); i++) {
 						volumeTramitacao.add("<td class='w-80'>" + relVol.listColunas.get(i) 
-								+ "</td><td class='align-right'>" + relVol.listDados.get(i) + "</td>");
+								+ "</td><td class='text-right'>" + relVol.listDados.get(i) + "</td>");
 					}
 					result.include("volumeTramitacao", volumeTramitacao);
 				} else {
@@ -885,9 +886,7 @@ public class ExRelatorioController extends ExController {
 			result.include("msgCabecClass", "alert-danger");
 		}
 		result.include("primeiraVez", false);
-		result.include("orgao", orgaoUsu);
-		result.include("usuario", usuarioSel);
-		result.include("lotacao", lotacaoSel);
+		result.include("idOrgaoUsu", orgaoUsu);
 		result.include("lotacaoSel", lotacaoSel);
 		result.include("usuarioSel", usuarioSel);
 		result.include("dataInicial", dataInicial);
@@ -896,18 +895,18 @@ public class ExRelatorioController extends ExController {
 
 	@Get
 	@Path("app/expediente/rel/relDocumentosPorVolume")
-	public void relDocumentosPorVolume(final Long orgao, final DpLotacaoSelecao lotacaoSel,
+	public void relDocumentosPorVolume(final Long idOrgaoUsu, final DpLotacaoSelecao lotacaoSel,
 			final DpPessoaSelecao usuarioSel, 
 			String dataInicial, String dataFinal, boolean primeiraVez) throws Exception {
 
 		long orgaoUsu = (long) 0;
 		try {
-			assertAcesso(ACESSO_IGESTAO);
+			assertAcesso(ACESSO_RELDOCVOL);
 			orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 			
 			if (!primeiraVez) {
 				if (dataInicial != null && dataFinal != null) {
-					if (orgaoUsu != orgao) {
+					if (orgaoUsu != idOrgaoUsu) {
 						throw new Exception("Não é permitido consultas de outros órgãos.");
 					}
 						
@@ -919,7 +918,7 @@ public class ExRelatorioController extends ExController {
 					}
 	
 					final Map<String, String> parametros = new HashMap<String, String>();
-//					parametros.put("orgao", orgao.toString());
+//					parametros.put("orgao", idOrgaoUsu.toString());
 					parametros.put("lotacao", getRequest().getParameter("lotacaoSel.id"));
 					parametros.put("usuario", getRequest().getParameter("usuarioSel.id"));
 					parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
@@ -947,13 +946,49 @@ public class ExRelatorioController extends ExController {
 			result.include("msgCabecClass", "alert-danger");
 		}
 		result.include("primeiraVez", false);
-		result.include("orgao", orgaoUsu);
+		result.include("idOrgaoUsu", orgaoUsu);
 		result.include("usuario", usuarioSel);
 		result.include("lotacao", lotacaoSel);
 		result.include("lotacaoSel", lotacaoSel);
 		result.include("usuarioSel", usuarioSel);
 		result.include("dataInicial", dataInicial);
 		result.include("dataFinal", dataFinal);
+	}
+
+	@Path("app/expediente/rel/emiteRelDocsPorVolumeDetalhes")
+	public Download aRelDocsPorVolumeDetalhes(final Long idOrgaoUsu, final DpLotacaoSelecao lotacaoSel,
+			final DpPessoaSelecao usuarioSel, 
+			String dataInicial, String dataFinal, boolean primeiraVez) throws Exception {
+		assertAcesso(ACESSO_RELDOCVOL);
+
+		long orgaoUsu = (long) 0;
+		orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
+
+//		if (orgaoUsu != idOrgaoUsu) {
+//			throw new Exception("Não é permitido consultas de outros órgãos.");
+//		}
+		
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		final Date dtIni = df.parse(dataInicial);
+		final Date dtFim = df.parse(getRequest().getParameter("dataFinal"));
+		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
+			throw new Exception("O intervalo entre as datas é muito grande, por favor reduza-o.");
+		}
+		
+		final Map<String, String> parametros = new HashMap<String, String>();
+
+		parametros.put("lotacao", getRequest().getParameter("lotacaoSel.id"));
+		parametros.put("usuario", getRequest().getParameter("usuarioSel.id"));
+		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
+		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
+
+		final RelDocumentosProduzidos rel = new RelDocumentosProduzidos(parametros);
+		rel.gerarDetalhes();
+
+		final InputStream inputStream = new ByteArrayInputStream(
+				rel.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"relDocumentosPorVolumeDetalhes");
 	}
 
 	protected void assertAcesso(final String pathServico) {

@@ -1,6 +1,7 @@
-	package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
+package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
-	import java.text.DateFormat;
+import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,15 +15,18 @@ import java.util.Set;
 
 import net.sf.jasperreports.engine.JRException;
 
-	import org.hibernate.Query;
+import org.hibernate.Query;
 
-	import ar.com.fdvs.dj.domain.builders.DJBuilderException;
+import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 	public class RelDocumentosProduzidos extends RelatorioTemplate {
@@ -56,8 +60,6 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 					
 			this.addColuna("Unidade", 20, RelatorioRapido.ESQUERDA, false);
 			this.addColuna("Nome do Documento", 40, RelatorioRapido.ESQUERDA, false);
-////			" da Lotação " + lotacao.getSigla();
-////			" do Usuário " + pessoa.getSigla();
 			this.addColuna("Quantidade", 60, RelatorioRapido.ESQUERDA, false);
 			return this;
 
@@ -70,13 +72,12 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			
 			// Total de documentos criados (por orgao, lotação ou usuário)
 			String addSelect = "mov.lotaResp.siglaLotacao, "
-							+ "doc.exModelo.descMod, "
+							+ "doc.exModelo.nmMod, "
 							+ "count(distinct doc.idDoc), "
 							+ "sum(doc.numPaginas) ";
-			String addWhere = "and mov.exTipoMovimentacao.idTpMov =  1 "
-							+ "group by mov.lotaResp.siglaLotacao,"
-							+ "doc.exModelo.descMod ";
-			Iterator it = obtemDados(d, addSelect, addWhere);
+			String addWhere = "group by mov.lotaResp.siglaLotacao,"
+							+ "doc.exModelo.nmMod ";
+			Iterator it = obtemDados(d, addSelect, addWhere, ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO);
 			totalPaginas = 0L;
 			totalDocumentos = 0L;
 			
@@ -103,13 +104,88 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			return d;
 		}
 
+		public void gerarDetalhes() throws Exception {
+			relatorio = configurarRelatorioDetalhes();
+			Collection dados = processarDadosDetalhes();
+			if (dados != null && dados.size() > 0) {
+				relatorio.setDados(dados);
+			} else {
+				throw new Exception("Não há dados para gerar o relatório!");
+			}
+
+		}
+		
+		private AbstractRelatorioBaseBuilder configurarRelatorioDetalhes()
+				throws DJBuilderException, JRException {
+
+			this.setTitle("Documentos Por Volume");
+			this.listColunas.add("Unidade");
+			this.listColunas.add("Nome do Documento");
+			this.listColunas.add("Número do Documento");
+					
+			this.addColuna("Unidade", 20, RelatorioRapido.ESQUERDA, false);
+			this.addColuna("Nome do Documento", 60, RelatorioRapido.ESQUERDA, false);
+			this.addColuna("Número do Documento", 30, RelatorioRapido.ESQUERDA, false);
+			return this;
+
+		}
+
+		private Collection processarDadosDetalhes() throws Exception {
+
+			List<String> d = new ArrayList<String>();
+			ExDao dao = ExDao.getInstance();
+			ExMobil mob = null;
+			String siglaDoc = "";
+			
+			String addSelect = "mov.lotaResp.siglaLotacao, "
+							+ "doc.exModelo.nmMod, "
+							+ "mob.idMobil, "
+							+ "doc.numPaginas ";
+
+			String addWhere = "order by mov.lotaResp.siglaLotacao, "
+							+ "doc.exModelo.nmMod, "
+							+ "mob.idMobil ";
+
+			Iterator it = obtemDados(d, addSelect, addWhere, ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO);
+			totalPaginas = 0L;
+			totalDocumentos = 0L;
+
+			while (it.hasNext()) {
+				Object[] obj = (Object[]) it.next();
+				String lotaDoc = (String) obj[0];
+				String modeloDoc = (String) obj[1];
+				BigDecimal idMobil = new BigDecimal(obj[2].toString());
+				if (idMobil != null) {
+					mob = dao.consultar(new Long(idMobil.longValue()),
+							ExMobil.class, false);
+					siglaDoc = mob.getSigla();
+				}
+				Long pags = Long.valueOf(obj[3].toString());
+
+				listDados.add(lotaDoc);
+				listDados.add(modeloDoc);
+				listDados.add(siglaDoc);
+				d.add(lotaDoc);
+				d.add(modeloDoc);
+				d.add(siglaDoc);
+				
+				totalDocumentos = totalDocumentos + 1; 
+				totalPaginas = totalPaginas + pags; 
+			}
+			if (d.size() == 0) {
+				throw new Exception("Não foram encontrados documentos para os dados informados.");
+			}
+			
+			return d;
+		}
+
 		public void processarDadosTramitados() throws Exception {
 			List<String> d = new ArrayList<String>();
 			
 			// Total de documentos tramitadas pelo menos uma vez (por lotação ou usuário)
 			String addSelect = "count(distinct doc.idDoc) ";
-			String addWhere = "and (mov.exTipoMovimentacao.idTpMov =  3) ";
-			Iterator it = obtemDados(d, addSelect, addWhere);
+			String addWhere = "";
+			Iterator it = obtemDados(d, addSelect, addWhere, ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
 
 			if (it.hasNext()) {
 				totalTramitados = (Long) it.next();
@@ -118,7 +194,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			}
 		}
 			
-		private Iterator obtemDados(List<String> d, String addSelect, String addWhere)
+		private Iterator obtemDados(List<String> d, String addSelect, String addWhere, Long idTpMov)
 				throws ParseException {
 
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -146,6 +222,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 							+ "from ExMovimentacao mov inner join mov.exMobil mob "
 							+ "inner join mob.exDocumento doc "
 							+ "where mov.dtIniMov between :dtini and :dtfim "
+							+ "and mov.exTipoMovimentacao.idTpMov = :idTpMov "
 							+ queryOrgao
 							+ queryLotacao
 							+ queryUsuario
@@ -164,6 +241,8 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 //						orgao.getId());
 //			}
 //
+			query.setParameter("idTpMov", idTpMov);
+
 			if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
 				query.setLong("orgao", Long.valueOf((String) parametros.get("orgao")));
 			}

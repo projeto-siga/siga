@@ -581,9 +581,9 @@ public class SigaCpSinc {
 		if (result != 0)
 			System.exit(result);
 
-		logger.addHandler(logHandler);
-		logger.setLevel(logLevel);
+		logBegin();
 		
+
 		
 		if (modoLog) {
 			logComDestaque(">>>Iniciando em modo LOG!<<<\nUse -modoLog=false para sair do modo LOG e escrever as alterações");
@@ -1200,10 +1200,8 @@ public class SigaCpSinc {
 		logger.log(new LogRecord(logLevel, s));
 	}
 
+	
 	public void logEnd() throws Exception {
-		String sDest = ImportarXmlProperties.getString("lista.destinatario")
-				+ (!destinatariosExtras.trim().equals("") ? ","
-						+ destinatariosExtras : "");
 		if (getDataHora() != null) {
 			log("Arquivo XML gerado em " + getDataHora() + "\n");
 		}
@@ -1212,7 +1210,16 @@ public class SigaCpSinc {
 			logHandler.setAssunto("Limite de operações por sincronismo superior a 200. Execute o sincronismo manualmente.");
 		}
 		
+
+	}
+
+	private void logBegin() {
+		String sDest = ImportarXmlProperties.getString("lista.destinatario")
+				+ (!destinatariosExtras.trim().equals("") ? ","
+						+ destinatariosExtras : "");
 		logHandler.setDestinatariosEmail(sDest.split(","));
+		logger.addHandler(logHandler);
+		logger.setLevel(logLevel);
 
 	}
 

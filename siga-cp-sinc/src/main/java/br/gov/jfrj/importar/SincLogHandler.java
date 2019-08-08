@@ -13,6 +13,7 @@ import br.gov.jfrj.siga.base.SigaBaseProperties;
  */
 public class SincLogHandler extends Handler {
 
+	private static final String MSG_ERRO_EMAIL = "Não foi possível enviar o e-mail!";
 	private StringBuffer sb = new StringBuffer();
 	private String[] destinatariosEmail;
 	private String assunto = "Log de Importação";
@@ -42,7 +43,8 @@ public class SincLogHandler extends Handler {
 		try {
 			enviarEmail();
 		} catch (Exception e) {
-			throw new RuntimeException("Não foi possível enviar o e-mail!");
+			System.out.println(MSG_ERRO_EMAIL);
+			throw new RuntimeException(MSG_ERRO_EMAIL);
 		}
 	}
 	

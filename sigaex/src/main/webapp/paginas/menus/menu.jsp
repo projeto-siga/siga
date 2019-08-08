@@ -248,7 +248,7 @@
 			</ul></li>
 	</c:if>
 
-	<c:if test="${false}">
+	<c:if test="${true}">
 		<li class="nav-item dropdown"><a href="javascript:void(0);"
 			class="nav-link dropdown-toggle" data-toggle="dropdown"> Gestão </a>
 			<ul class="dropdown-menu">

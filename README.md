@@ -1,39 +1,6 @@
 Siga - Sistema de Gestão Administrativa
 =======================================
 
-
-Tecnologias são usadas nesse projeto:
-
-- maven
-- junit
-- jettison
-- commons-fileupload
-- commons-beanutils
-- commons-collections
-- mail
-- axis
-- jasperreports
-- DynamicJasper
-- freemarker
-- webwork
-- oscore
-- xercesImpl
-- htmlcleaner
-- kxml2
-- Tidy
-- pdfbox
-- qrcode
-- itext-rtf
-- itext
-- simplecaptcha
-- opencloud
-- ckeditor-java-core
-- gson
-- spring
-- jai-codec
-- jaxen
-- hibernate
-
 O Siga é composto de diversos módulos:
 
 - Siga-Doc: Gestão Documental

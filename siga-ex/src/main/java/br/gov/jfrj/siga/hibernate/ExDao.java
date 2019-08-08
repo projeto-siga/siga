@@ -36,6 +36,8 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 
 import org.jboss.logging.Logger;
 
@@ -1076,11 +1078,10 @@ public class ExDao extends CpDao {
 		CriteriaQuery<ExModelo> q = cb().createQuery(ExModelo.class);
 		Root<ExModelo> c = q.from(ExModelo.class);
 		q.select(c);
-		q.where(cb().equal(cb().parameter(String.class, "nmMod"), sModelo));
-		q.where(cb().equal(cb().parameter(Integer.class, "hisAtivo"), 1));
+		q.where(cb().equal(c.get("nmMod"), sModelo), cb().equal(c.get("hisAtivo"), 1));
 		if (sForma != null) {
 			c.join("exFormaDocumento", JoinType.INNER);
-			q.where(cb().equal(cb().parameter(String.class, "exFormaDocumento.descrFormaDoc"), sForma));
+			q.where(cb().equal(c.get("exFormaDocumento.descrFormaDoc"), sForma));
 		}
 		return em().createQuery(q).getSingleResult();
 	}

@@ -168,7 +168,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "				and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "				and (:anoEmissao = null or :anoEmissao = 0L or doc.anoEmissao = :anoEmissao)"
 				+ "				and (:numExpediente = null or :numExpediente = 0L or doc.numExpediente = :numExpediente)"
-				+ "				and (:idTpDoc = null or :idTpDoc = 0 or doc.exTipoDocumento.idTpDoc = :idTpDoc)"
+				+ "				and (:idTpDoc = null or :idTpDoc = 0L or doc.exTipoDocumento.idTpDoc = :idTpDoc)"
 				+ "				and (:idTipoFormaDoc = null or :idTipoFormaDoc = 0L or doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc = :idTipoFormaDoc)"
 				+ "				and (:idFormaDoc = null or :idFormaDoc = 0L or doc.exFormaDocumento.idFormaDoc = :idFormaDoc)"
 				+ "				and (:classificacaoSelId = null or :classificacaoSelId = 0L or doc.exClassificacao.idClassificacao = :classificacaoSelId)"

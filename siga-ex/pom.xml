@@ -73,7 +73,7 @@
 							<classpath path="maven.runtime.classpath" />
 							<classpath path="maven.plugin.classpath" />
 						</taskdef>
-						<instrument verbose="true">
+						<instrument>
 							<fileset dir="${project.build.outputDirectory}/br/gov/jfrj/siga/ex">
 								<include name="*.class" />
 							</fileset>

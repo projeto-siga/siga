@@ -31,7 +31,7 @@
 			<div class="card-header"><h5>
 				Gerenciamento de permiss&otilde;es para solicita&ccedil;&atilde;o de publica&ccedil;&atilde;o no BI
 			</h5></div>	
-			<form id="frm" name="frm" action="${request.contextPath}/app/expediente/configuracao/gerenciar_publicacao_boletim_gravar" method="POST">
+			<form id="frm" name="frm" action="${request.contextPath}/app/expediente/configuracao/gerenciar_publicacao_boletim_gravar" method="post">
 				<input type="hidden" name="postback" value="1" />
 				<input type="hidden" name="gerenciaPublicacao" value="sim" />
 				<input type="hidden" name="idTpMov" value="36" />

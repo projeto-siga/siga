@@ -99,6 +99,24 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 
 	@Column(name = "HIS_IDE", length = 128)
 	private java.lang.String uuid;
+	
+	//
+	// Solução para não precisar criar HIS_ATIVO em todas as tabelas que herdam de HistoricoSuporte.
+	//
+	@Column(name = "HIS_ATIVO")
+	private Integer hisAtivo;
+
+	@Override
+	public Integer getHisAtivo() {
+		this.hisAtivo = super.getHisAtivo();
+		return this.hisAtivo;
+	}
+	
+	@Override
+	public void setHisAtivo(Integer hisAtivo) {
+		super.setHisAtivo(hisAtivo);
+		this.hisAtivo = getHisAtivo();
+	}
 
 	// private Set classificacaoSet;
 

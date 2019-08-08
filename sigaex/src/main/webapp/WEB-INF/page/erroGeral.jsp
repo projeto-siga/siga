@@ -49,7 +49,7 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 			<div class="card bg-light mb-3" >
 				<div class="card-header">
 					<h5>
-						N&atilde;o Foi Poss&iacute;vel Completar a Opera&ccedil;&atilde;o (${pageContext.getRequest().serverName})
+						N&atilde;o Foi Poss&iacute;vel Completar a Opera&ccedil;&atilde;o (${pageContext.request.serverName})
 					</h5>
 				</div>
 

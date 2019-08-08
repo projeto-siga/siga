@@ -53,12 +53,12 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 		@NamedQuery(name = "consultarPorSiglaDpFuncaoConfianca", query = "select fun from DpFuncaoConfianca fun where fun.idFuncao = :idFuncao"),
 		@NamedQuery(name = "consultarPorFiltroDpFuncaoConfianca", query = "from DpFuncaoConfianca fun "
 				+ "  where upper(fun.nmFuncaoConfiancaAI) like upper('%' || :nome || '%')"
-				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "   	and fun.dataFimFuncao = null"
 				+ "   	order by fun.nomeFuncao"),
 		@NamedQuery(name = "consultarQuantidadeDpFuncaoConfianca", query = "select count(fun) from DpFuncaoConfianca fun "
 				+ "  where upper(fun.nmFuncaoConfiancaAI) like upper('%' || :nome || '%')"
-				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "   	and fun.dataFimFuncao = null"
 				+ "   	order by fun.nomeFuncao"),
 		@NamedQuery(name = "consultarPorNomeOrgaoDpFuncaoConfianca", query = "select fun from DpFuncaoConfianca fun where upper(fun.nmFuncaoConfiancaAI) = upper(:nome) and fun.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario")})

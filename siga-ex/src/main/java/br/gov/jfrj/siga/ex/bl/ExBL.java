@@ -3376,14 +3376,14 @@ public class ExBL extends CpBL {
 
 			// a estrutura try catch abaixo foi colocada de modo a impedir que
 			// os erros na formatação impeçam a gravação do documento
-			try {
+			//try {
 				processar(doc, false, false);
-			} catch (Throwable t) {
-				System.out.println("gravação doc " + doc.getCodigo() + ", "
-						+ new Date().toString() + " - erro na formatação - "
-						+ t.getMessage());
-				t.printStackTrace();
-			}
+			//} catch (Throwable t) {
+			//	System.out.println("gravação doc " + doc.getCodigo() + ", "
+			//			+ new Date().toString() + " - erro na formatação - "
+			//			+ t.getMessage());
+			//	t.printStackTrace();
+			//}
 
 			// System.out.println("monitorando gravacao IDDoc " + doc.getIdDoc()
 			// + ", PESSOA " + doc.getCadastrante().getIdPessoa()
@@ -5018,7 +5018,7 @@ public class ExBL extends CpBL {
 			if ((doc.getExModelo() != null && ("template/freemarker".equals(doc
 					.getExModelo().getConteudoTpBlob()) || doc.getExModelo()
 					.getNmArqMod() != null))
-					|| doc.getExTipoDocumento().getIdTpDoc() == 2) {
+					|| doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_FOLHA_DE_ROSTO) {
 				if (doc.getConteudoBlobForm() != null) {
 				}
 				if (gravar && transacao) {

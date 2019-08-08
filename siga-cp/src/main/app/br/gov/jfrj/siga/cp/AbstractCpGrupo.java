@@ -54,7 +54,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "		and cpgrp.hisAtivo = 1" + "		order by cpgrp.siglaGrupo"),
 		@NamedQuery(name = "consultarPorSiglaCpGrupo", query = "select g from br.gov.jfrj.siga.cp.CpGrupo g where"
 				+ "		upper(g.siglaGrupo) = upper(:siglaGrupo)"
-				+ "		and (:idOrgaoUsu = null or :idOrgaoUsu = 0 or g.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+				+ "		and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or g.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "       	and g.hisAtivo = 1"),
 		@NamedQuery(name = "consultarCpGrupoPorCpTipoGrupoId", query = "from br.gov.jfrj.siga.cp.CpGrupo cpgrp "
 				+ " where ( cpgrp.cpTipoGrupo.idTpGrupo = :idTpGrupo) "

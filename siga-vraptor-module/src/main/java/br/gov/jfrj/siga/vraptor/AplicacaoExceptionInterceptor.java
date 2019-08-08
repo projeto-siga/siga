@@ -7,8 +7,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jboss.resteasy.core.ResourceMethod;
-
 import com.google.common.base.Throwables;
 
 import br.com.caelum.vraptor.InterceptionException;

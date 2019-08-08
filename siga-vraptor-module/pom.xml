@@ -62,5 +62,11 @@
 			<groupId>org.mvel</groupId>
 			<artifactId>mvel2</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 </project>

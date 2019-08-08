@@ -191,22 +191,4 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel {
 			return filename.substring(0, filename.lastIndexOf("/"));
 		return null;
 	}
-
-	//
-	// Solução para não precisar criar HIS_ATIVO em todas as tabelas que herdam de HistoricoSuporte.
-	//
-	@Column(name = "HIS_ATIVO")
-	private Integer hisAtivo;
-
-	@Override
-	public Integer getHisAtivo() {
-		this.hisAtivo = super.getHisAtivo();
-		return this.hisAtivo;
-	}
-	
-	@Override
-	public void setHisAtivo(Integer hisAtivo) {
-		super.setHisAtivo(hisAtivo);
-		this.hisAtivo = getHisAtivo();
-	}
 }

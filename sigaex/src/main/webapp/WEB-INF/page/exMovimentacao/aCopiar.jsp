@@ -74,7 +74,7 @@ function sbmt() {
 						</td>
 						<input type="hidden" name="campos" value="${titularSel.id}" />
 						<td colspan="3">
-							<siga:selecao propriedade="titular"tema="simple" modulo="siga"/></td>
+							<siga:selecao propriedade="titular" tema="simple" modulo="siga"/></td>
 						</tr>
 						<siga:selecao titulo="Documento:" propriedade="documentoRef" urlAcao="expediente/buscar" urlSelecionar="expediente/selecionar" modulo="sigaex"/>
 						<tr class="button">

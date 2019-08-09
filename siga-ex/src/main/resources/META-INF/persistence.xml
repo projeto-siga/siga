@@ -99,7 +99,10 @@
 			<property name="hibernate.hbm2ddl.auto" value="none" />
 			<property name="hibernate.show_sql" value="false" />
 			
-						<!-- Cache Region QUERY_CACHE_SECONDS -->
+			<!-- Desabilita o novo gerador de IDs para manter a compatibilidade -->
+			<property name="hibernate.id.new_generator_mappings" value="false"/>
+			
+			<!-- Cache Region QUERY_CACHE_SECONDS -->
 			<property name="hibernate.cache.infinispan.querySeconds.eviction.strategy"
 				value="LRU" />
 			<property

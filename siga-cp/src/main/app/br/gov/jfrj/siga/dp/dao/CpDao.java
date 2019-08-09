@@ -1531,16 +1531,20 @@ public class CpDao extends ModeloDao {
 	@SuppressWarnings("unchecked")
 	public <T> List<T> listarAtivos(Class<T> clazz, String dtFim,
 			long idOrgaoUsu) {
-			return findByCriteria(clazz, cb().isNull(cb().parameter(CpModelo.class, "hisDtFim")), cb().equal(cb().parameter(DpPessoa.class, "orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
+		final CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<T> crit = criteriaBuilder.createQuery(clazz);
+		Root<T> root = crit.from(clazz);
+		crit.where(cb().isNull(cb().parameter(CpModelo.class, "hisDtFim")), cb().equal(cb().parameter(DpPessoa.class, "orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
+		return em().createQuery(crit).getResultList();
 	}
 
 	public <T> List<T> listarAtivos(Class<T> clazz, String orderBy) {
 		CriteriaQuery<T> q = cb().createQuery(clazz);
 		Root<T> c = q.from(clazz);
 		q.select(c);
-		q.where(cb().equal(cb().parameter(clazz, "hisAtivo"), 1));
+		q.where(cb().equal(c.get("hisAtivo"), 1));
 		if (orderBy != null) {
-			q.orderBy(cb().asc(cb().parameter(clazz, orderBy)));
+			q.orderBy(cb().asc(c.get(orderBy)));
 		}
 		return em().createQuery(q).getResultList();
 	}
@@ -1803,7 +1807,11 @@ public class CpDao extends ModeloDao {
 
 	@SuppressWarnings("unchecked")
 	public List<CpServico> listarServicosPorPai(CpServico servicoPai) {
-		return findByCriteria(CpServico.class, cb().equal(cb().parameter(CpServico.class, "cpServicoPai"), servicoPai));
+		CriteriaQuery<CpServico> q = cb().createQuery(CpServico.class);
+		Root<CpServico> c = q.from(CpServico.class);
+		q.select(c);
+		q.where(cb().equal(c.get("cpServicoPai"), servicoPai));
+		return em().createQuery(q).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1857,9 +1865,12 @@ public class CpDao extends ModeloDao {
 	}
 
 	public List<CpMarcador> listarMarcadores(Long[] ids) {
-		return findAndCacheByCriteria(CACHE_QUERY_HOURS, CpMarcador.class,
-				new Predicate[] { cb().parameter(CpMarcador.class, "descrMarcador").in(ids) },
-				new Order[] {  cb().asc(cb().parameter(CpMarcador.class, "descrMarcador")) });
+		CriteriaQuery<CpMarcador> q = cb().createQuery(CpMarcador.class);
+		Root<CpMarcador> c = q.from(CpMarcador.class);
+		q.select(c);
+		q.where(c.get("idMarcador").in(ids));
+		q.orderBy(cb().asc(c.get("descrMarcador")));
+		return em().createQuery(q).getResultList();
 	}
 
 	protected CriteriaBuilder cb() {

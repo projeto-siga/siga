@@ -28,6 +28,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
@@ -128,36 +129,46 @@ public abstract class ModeloDao {
 	 */
 
 	@SuppressWarnings("unchecked")
-	protected <T> List<T> findByCriteria(Class<T> clazz, Predicate... criterion) {
-		return findAndCacheByCriteria(null, clazz, criterion, null);
+	protected <T> List<T> findByCriteria(Class<T> clazz) {
+		return findAndCacheByCriteria(null, clazz);
 	}
 
 	@SuppressWarnings("unchecked")
 	protected <T> List<T> findAndCacheByCriteria(String cacheRegion, Class<T> clazz) {
-		return findAndCacheByCriteria( cacheRegion, clazz, null, null);
-	}
-
-	@SuppressWarnings("unchecked")
-	protected <T> List<T> findAndCacheByCriteria(String cacheRegion, Class<T> clazz, final Predicate[] criterion,
-			Order[] order) {
 		final CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
 		CriteriaQuery<T> crit = criteriaBuilder.createQuery(clazz);
 
 		Root<T> root = crit.from(clazz);
-		if (criterion != null)
-			for (final Predicate c : criterion) {
-				crit.where(criterion);
-			}
-		if (order != null)
-			for (final Order o : order) {
-				crit.orderBy(o);
-			}
-		// if (cacheRegion != null) {
-		// crit.setCacheable(true);
-		// crit.setCacheRegion(cacheRegion);
-		// }
-		return em().createQuery(crit).getResultList();
+		TypedQuery<T> query = em().createQuery(crit);
+		if (cacheRegion != null) {
+			query.setHint("org.hibernate.cacheable", true); 
+			query.setHint("org.hibernate.cacheRegion", cacheRegion);
+		}
+		return query.getResultList();
 	}
+
+//	@SuppressWarnings("unchecked")
+//	protected <T> List<T> findAndCacheByCriteria1(String cacheRegion, Class<T> clazz, final Predicate[] criterion,
+//			Order[] order) {
+//		final CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+//		CriteriaQuery<T> crit = criteriaBuilder.createQuery(clazz);
+//
+//		Root<T> root = crit.from(clazz);
+////		if (criterion != null)
+////			for (final Predicate c : criterion) {
+////				crit.where(criterion);
+////			}
+////		if (order != null)
+////			for (final Order o : order) {
+////				crit.orderBy(o);
+////			}
+//		TypedQuery<T> query = em().createQuery(crit);
+//		if (cacheRegion != null) {
+//			query.setHint("org.hibernate.cacheable", true); 
+//			query.setHint("org.hibernate.cacheRegion", cacheRegion);
+//		}
+//		return query.getResultList();
+//	}
 
 	public <T> T consultarPorSigla(final T exemplo) {
 		return null;

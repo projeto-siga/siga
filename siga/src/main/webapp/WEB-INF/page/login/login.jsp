@@ -100,7 +100,7 @@
 									<div class="mt-3">
 									    <div class="d-flex justify-content-between">
 									    	   	<div>
-									    		Versão: ${siga.versao}
+									    		Versão: ${versao}
 									    	    </div>
 									    	    <div>
 									    		<a class="text-top" href="http://www-desen4.jf.trf2.gov.br/portal/sistemas-open-source-disponibilizados-pelo-trf2-vii/" target="_blank" class="btn btn-link">sobre</a> 

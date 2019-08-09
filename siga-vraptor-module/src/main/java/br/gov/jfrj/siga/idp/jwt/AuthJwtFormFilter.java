@@ -121,7 +121,7 @@ public class AuthJwtFormFilter implements Filter {
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
-
+		
 		try {
 			if (!req.getRequestURI().equals("/sigaex/autenticar.action")) {
 				String token = extrairAuthorization(req);
@@ -181,11 +181,13 @@ public class AuthJwtFormFilter implements Filter {
 			return;
 		}
 		
+		//Envia Mensagem para Tela de Login
+		HttpSession session = req.getSession(false);	
 		if (e.getClass() != SigaJwtInvalidException.class) {
-			//Envia Mensagem para Tela de Login
-			HttpSession session = req.getSession(false);
-			session.setAttribute("mensagem", SigaMessages.getMessage("login.erro.jwt"));
-		}
+			session.setAttribute("loginMensagem", SigaMessages.getMessage("login.erro.jwt"));
+		} else 
+			session.setAttribute("loginMensagem", "");
+
 		
 		String cont = req.getRequestURL() + (req.getQueryString() != null ? "?" + req.getQueryString() : "");
 		String base = System.getProperty("siga.base.url");

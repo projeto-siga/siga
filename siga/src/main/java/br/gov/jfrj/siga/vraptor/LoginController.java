@@ -67,7 +67,7 @@ public class LoginController extends SigaController {
 			}
 		}
 
-		result.include("versao", manifest.get("Siga-Versao"));
+		result.include("siga.versao", manifest.get("Siga-Versao"));
 		result.include("cont", cont);
 	}
 
@@ -90,7 +90,7 @@ public class LoginController extends SigaController {
 			gravaCookieComToken(username, cont);
 			
 		} catch (Exception e) {
-			result.include("mensagem", e.getMessage());
+			result.include("loginMensagem", e.getMessage());
 			result.forwardTo(this).login(cont);
 		}
 	}

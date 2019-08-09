@@ -117,7 +117,8 @@
 							autenticar="${autenticando}"
 							assinarComSenhaChecado="${assinando and f:podeAssinarComSenha(titular,lotaTitular,doc.mobilGeral)}"
 							autenticarComSenhaChecado="${autenticando and f:podeAutenticarComSenha(titular,lotaTitular,doc.mobilGeral)}"
-							juntarAtivo="" tramitarAtivo="" />
+							juntarAtivo="${juntarAtivo}" juntarFixo="${juntarFixo}" 
+							tramitarAtivo="" />
 					</c:if>
 			</div>
 		</div>

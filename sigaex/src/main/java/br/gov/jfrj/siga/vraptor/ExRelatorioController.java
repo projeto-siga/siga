@@ -273,24 +273,37 @@ public class ExRelatorioController extends ExController {
 
 	@Get
 	@Path("app/expediente/rel/resultRelDocumentosPorVolume")
-	public void aResultRelDocumentosPorVolume(
+	public Download aResultRelDocumentosPorVolume(final Long orgao,
 			final DpLotacaoSelecao lotacaoSel,
-			final DpPessoaSelecao usuarioSel, final String primeiraVez,
-			String dataInicial, String dataFinal) {
+			final DpPessoaSelecao usuarioSel, String dataInicial,
+			String dataFinal, boolean primeiraVez) throws Exception{
+		
+		final Map<String, String> parametros = new HashMap<String, String>();
+		
+		// parametros.put("orgao", orgao.toString());
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoSel.id"));
+		parametros.put("usuario",
+				getRequest().getParameter("usuarioSel.id"));
+		parametros.put("dataInicial",
+				getRequest().getParameter("dataInicial"));
+		parametros.put("dataFinal",
+				getRequest().getParameter("dataFinal"));
+		parametros.put("link_siga", "http://"
+				+ getRequest().getServerName() + ":"
+				+ getRequest().getServerPort()
+				+ getRequest().getContextPath()
+				+ "/app/expediente/doc/exibir?sigla=");
 
-		result.include("usuario", usuarioSel);
-		result.include("lotacao", lotacaoSel);
-		result.include("lotacaoSel", lotacaoSel);
-		result.include("usuarioSel", usuarioSel);
-		result.include("dataInicial", dataInicial);
-		result.include("dataFinal", dataFinal);
-		result.include("lotaTitular", this.getLotaTitular());
-		result.include("titular", this.getTitular());
-		result.include("botao", "pesquisar");
-		result.include("primeiraVez", primeiraVez);
+		final RelDocumentosProduzidos rel = new RelDocumentosProduzidos(
+				parametros);
+		rel.gerarDetalhes();
 
-		if (primeiraVez == null || !primeiraVez.equals("sim")) {
-		}
+		final InputStream inputStream = new ByteArrayInputStream(
+				rel.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"resultRelDocumentosPorVolume");
+
 
 		/*
 		 * assertAcesso(ACESSO_DATAS);
@@ -971,7 +984,7 @@ public class ExRelatorioController extends ExController {
 						String resultado = "";
 
 						if (!unidadeAtual.equals(rel.listDados.get(i))) {
-							resultado = "<thead>" + "<tr>"
+							resultado = "<thead class='thead-light'>" + "<tr>"
 									+ "<th rowspan='1' align='center'>"
 									+ rel.listDados.get(i) + "</th>";
 							unidadeAtual = rel.listDados.get(i);

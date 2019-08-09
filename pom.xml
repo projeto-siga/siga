@@ -30,6 +30,7 @@
 		<module>sigagc</module>
 		<module>sigasr</module>
  		<module>sigapp</module>
+ 		<module>sigatp</module>
 		<!--<module>sigari</module>
  		<module>siga-cp-sinc</module> 
  		<module>siga-dump</module>

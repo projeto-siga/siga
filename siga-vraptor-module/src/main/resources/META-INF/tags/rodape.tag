@@ -91,7 +91,7 @@
 			
 			<hr class="p-0 m-0 mb-1">			
 			<div class="text-right text-white">
-				<b>SIGA.doc </b>8.0.1.24
+				<b>SIGA.doc </b>8.0.1.25 ${siga.versao}
 			</div>
 		</div>
 	</footer>

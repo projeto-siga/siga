@@ -90,7 +90,7 @@ public class LoginController extends SigaController {
 			gravaCookieComToken(username, cont);
 			
 		} catch (Exception e) {
-			result.include("mensagem", e.getMessage());
+			result.include("loginMensagem", e.getMessage());
 			result.forwardTo(this).login(cont);
 		}
 	}

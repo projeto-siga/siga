@@ -25,6 +25,7 @@ public class SigaJwtProvider {
 	static final String PROVIDER_ISSUER = "sigaidp";
 	private long defaultTTLToken = 3600; // default 1 hora
 	private SigaJwtOptions options;
+	private static final String SIGA_JWT_AUDIENCE = System.getProperty("idp.jwt.modulo.cookie.domain");
 
 	private SigaJwtProvider(SigaJwtOptions options)
 			throws SigaJwtProviderException {
@@ -65,6 +66,11 @@ public class SigaJwtProvider {
 		claims.put("sub", subject);
 		claims.put("iss", PROVIDER_ISSUER);
 		claims.put("mod", options.getModulo());
+		
+		if ("GOVSP".equals(System.getProperty("siga.local")) && SIGA_JWT_AUDIENCE != null){
+			claims.put("aud", SIGA_JWT_AUDIENCE);
+		}
+		
 
 		if (claimsMap != null) {
 			for (String claimName : claimsMap.keySet()) {
@@ -110,7 +116,13 @@ public class SigaJwtProvider {
 			throws InvalidKeyException, NoSuchAlgorithmException,
 			IllegalStateException, SignatureException, IOException,
 			JWTVerifyException {
-		final JWTVerifier verifier = new JWTVerifier(options.getPassword());
+		final JWTVerifier verifier;
+		if ("GOVSP".equals(System.getProperty("siga.local")) && SIGA_JWT_AUDIENCE != null){
+			verifier = new JWTVerifier(options.getPassword(), SIGA_JWT_AUDIENCE);
+		} else {
+			verifier = new JWTVerifier(options.getPassword());
+		}
+		
 		return verifier.verify(token);
 
 	}

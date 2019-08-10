@@ -5,6 +5,8 @@ import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -16,6 +18,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
@@ -24,6 +27,7 @@ import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
+import com.auth0.jwt.JWTAudienceException;
 import com.auth0.jwt.JWTVerifyException;
 
 public class AuthJwtFormFilter implements Filter {
@@ -76,13 +80,37 @@ public class AuthJwtFormFilter implements Filter {
 			return request.getHeader("Authorization").replaceAll(".* ", "").trim();
 		}
 		Cookie[] cookies = request.getCookies();
+		String token = null;
+		ArrayList<String> tokens = new ArrayList<String>();
+		
+		//Estrutura Otimizada para Verificação de JWT prevendo múltiplos subdomínios
 		if (cookies != null) {
+			//Percorre lista cookie e extrai tokens
 			for (Cookie c : cookies) {
-				if (SIGA_JWT_AUTH_COOKIE_NAME.equals(c.getName()))
-					return c.getValue();
+				if (SIGA_JWT_AUTH_COOKIE_NAME.equals(c.getName())) {
+					tokens.add(c.getValue());
+				}
 			}
+			if (!tokens.isEmpty()) {
+				//Se houver apenas 1, retorna para rotina principal validar
+				if (tokens.size() == 1) {
+					return tokens.get(0);
+				} else {
+					//Se houver mais de 1, tenta localizar algum token válido
+					for (String t : tokens) {
+						token = t;
+						try {
+							validarToken(token);
+							return token; //Se houver algum Token Válido Retorna para Rotina Principal
+						} catch (Exception e) {
+							//Passa para Próximo Token. 
+						}		
+					}
+					return token; //Se não há nenhum token válido na lista, retorna para rotina explorar o erro	
+				}
+			}		
 		}
-		return null;
+		return null; //Se não há Tokens
 	}
 
 	public void destroy() {
@@ -93,7 +121,7 @@ public class AuthJwtFormFilter implements Filter {
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
-
+		
 		try {
 			if (!req.getRequestURI().equals("/sigaex/autenticar.action")) {
 				String token = extrairAuthorization(req);
@@ -112,27 +140,10 @@ public class AuthJwtFormFilter implements Filter {
 				ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
 			}
 			chain.doFilter(request, response);
-		} catch (AuthJwtException e) {
-			informarAutenticacaoProibida(resp, e);
-			return;
-		} catch (SigaJwtProviderException e) {
-			informarAutenticacaoProibida(resp, e);
-			return;
-		} catch (JWTVerifyException e) {
-			if ("jwt expired".equals(e.getMessage()))
-				redirecionarParaFormDeLogin(req, resp, e);
-			else
-				throw new RuntimeException(e);
-		} catch (SigaJwtInvalidException e) {
+		//Mudado para erro genérico para evitar exploração do mecanismo de autenticação.	
+		} catch (Exception e) {
 			redirecionarParaFormDeLogin(req, resp, e);
 			return;
-		} catch (Exception e) {
-			if (e.getCause() instanceof AuthJwtException) {
-				informarAutenticacaoProibida(resp, e);
-				return;
-			} else {
-				throw new RuntimeException(e);
-			}
 		} finally {
 			ContextoPersistencia.removeUserPrincipal();
 		}
@@ -169,6 +180,14 @@ public class AuthJwtFormFilter implements Filter {
 			informarAutenticacaoInvalida(resp, e);
 			return;
 		}
+		
+		//Envia Mensagem para Tela de Login
+		HttpSession session = req.getSession(false);	
+		if (e.getClass() != SigaJwtInvalidException.class) {
+			session.setAttribute("loginMensagem", SigaMessages.getMessage("login.erro.jwt"));
+		} else 
+			session.setAttribute("loginMensagem", "");
+
 		
 		String cont = req.getRequestURL() + (req.getQueryString() != null ? "?" + req.getQueryString() : "");
 		String base = System.getProperty("siga.base.url");

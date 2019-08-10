@@ -154,11 +154,6 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 		while (it.hasNext()) {
 			Object[] obj = (Object[]) it.next();
 
-			if (obj[0] == null || obj[1] == null || obj[2] == null
-					|| obj[3] == null) {
-				System.out.println("Caiu");
-			}
-
 			String lotaDoc = (String) obj[0];
 			String modeloDoc = (String) obj[1];
 			BigDecimal idMobil = new BigDecimal(obj[2].toString());
@@ -239,20 +234,6 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 						+ "and mov.exTipoMovimentacao.idTpMov = :idTpMov "
 						+ queryOrgao + queryLotacao + queryUsuario + addWhere);
 
-		// if (parametros.get("orgao") != null && parametros.get("orgao") != "")
-		// {
-		// Query qryLota = HibernateUtil.getSessao().createQuery(
-		// "from CpOrgaoUsuario org where org.idOrgaoUsu = " +
-		// parametros.get("orgao"));
-		//
-		// Set<CpOrgaoUsuario> orgaoSet = new HashSet<CpOrgaoUsuario>();
-		// CpOrgaoUsuario orgao = (CpOrgaoUsuario)qryLota.list().get(0);
-		// orgaoSet.add(orgao);
-		//
-		// query.setParameter("orgao",
-		// orgao.getId());
-		// }
-		//
 		query.setParameter("idTpMov", idTpMov);
 
 		if (parametros.get("orgao") != null && parametros.get("orgao") != "") {

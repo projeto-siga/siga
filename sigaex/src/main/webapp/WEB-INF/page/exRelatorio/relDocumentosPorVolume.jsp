@@ -121,7 +121,7 @@
 										<th rowspan="1" align="center"></th>
 										<th colspan="1" align="center"></th>
 										<th rowspan="1" align="right"><button type="button"
-												onclick="javascript:visualizarRelatorio('${pageContext.request.contextPath}/app/expediente/rel/resultRelDocumentosPorVolume');"
+												onclick="javascript:visualizarRelatorio('${pageContext.request.contextPath}/app/expediente/rel/emiteRelDocsPorVolumeDetalhes');"
 												class="btn btn-primary float-right">Relatório
 												completo</button></th>
 									</tr>

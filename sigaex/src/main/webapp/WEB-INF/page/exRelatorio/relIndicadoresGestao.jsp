@@ -9,11 +9,6 @@
 
 <siga:pagina titulo="Relatório">
 	<script type="text/javascript" language="Javascript1.1">
-// 		function sbmt() {
-// 			frmRelatorios.action = '${pageContext.request.contextPath}/app/expediente/rel/relIndicadoresGestao';
-// 			frmRelatorios.submit();
-// 		}
-
 		var newwindow = '';
 		function visualizarRelatorio(rel) {
 			if (!newwindow.closed && newwindow.location) {
@@ -47,6 +42,7 @@
 
 	<!-- main content -->
 	<div class="container-fluid">
+		<fmt:setLocale value="pt-BR" />
 		<div class="card bg-light mb-3">
 			<div class="card-header">
 				<h4>Relatórios Gerenciais</h4>
@@ -54,19 +50,15 @@
 			</div>
 			<div class="card-body d-flex">
 				<form name="frmRelatorios" action="/sigaex/app/expediente/rel/relIndicadoresGestao" theme="simple" method="get">
-					<input type="hidden" name="postback" value="1" /> 
-
 					<div class="row">
 						<div class="col-sm-1 mt-4">
 							<strong>Período </strong>
 						</div>
 						<div class="form-group col-sm-2">
 							<label>De</label>
-<!-- 							<input type="text" name="dataInicial" id="dataInicial" onblur="javascript:verifica_data(this, true);comparaData(dataInicial,dataFinal);" -->
-<!-- 								theme="simple" maxlength="10" class="form-control" /> -->
 							<input class="form-control" type="text" name="dataInicial"
-								id="dataFinal" value="${dataInicial}" onblur="javascript:verifica_data(this,0);" />
-						</div>
+								id="dataInicial" value="${dataInicial}" onblur="javascript:verifica_data(this,0);" />
+					    </div>
 						<div class="form-group col-sm-2">
 							<label>até</label>
 							<input class="form-control" type="text" name="dataFinal"
@@ -75,7 +67,7 @@
 						</div>
 						<div class="form-group col-sm-3">
 							<label><fmt:message key="usuario.lotacao"/></label>
-							<siga:selecao propriedade="lotacao" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
+							<siga:selecao propriedade="lotacao" siglaInicial="${lotacao}" tema="simple" paramList="buscarFechadas=true" modulo="siga"/>
 						</div>
 						<div class="form-group col-sm-4">
 							<label><fmt:message key="usuario.matricula"/></label>
@@ -90,22 +82,28 @@
 					</div>
 					<div class="row">
 					<c:if test="${totalDocumentos != null}">
-						<div class="col-sm-6">
+						<div class="col-sm-4">
 							<div class="card">
 								<div class="card-header">Indicadores de Produção</div>
 								<div class="card-body">
 									<table class="table table-sm table-hover table-striped">
 										<tr class="card-text col-sm-6">
 											<td class='w-80'>Total de Documentos Produzidos</td>
-											<td class='align-right'>${totalDocumentos}</td>
+											<td class='text-right'>
+												<fmt:formatNumber type="number" pattern="###,###,###,##0" value="${totalDocumentos}" />
+											</td>
 										</tr>
 										<tr>
 											<td class='w-80'>Total de Páginas Geradas</td>
-											<td class='align-right'>${totalPaginas}</td>
+											<td class='text-right'>
+												<fmt:formatNumber type = "number" pattern = "###,###,###,##0" value = "${totalPaginas}" />
+											</td>
 										</tr>
 										<tr>
 											<td class='w-80'>Total de Documentos Tramitados</td>
-											<td class='align-right'>${totalTramitados}</td>
+											<td class='text-right'>
+												<fmt:formatNumber type = "number" pattern = "###,###,###,##0" value = "${totalTramitados}" />
+											</td>
 										</tr>
 									</table>
 								</div>
@@ -113,7 +111,7 @@
 						</div>
 					</c:if>
 					<c:if test="${volumeTramitacao != null}">
-						<div class="col-sm-6">
+						<div class="col-sm-8">
 							<div class="card">
 								<div class="card-header">Documentos Por Volume de Tramitação (Top 5)</div>
 								<div class="card-body">
@@ -129,11 +127,6 @@
 						</div>		
 					</c:if>
 					</div>
-					<input type="hidden" name="orgao" id="orgao" value="${orgao}" />
-					<input type="hidden" name="lotacaoId" id="lotacaoId" value="${lotacaoSel.id}" />
-					<input type="hidden" name="siglaLotacao" id="siglaLotacao" value="${lotacaoSel.sigla}" />
-					<input type="hidden" name="usuarioId" id="usuarioId" value="${usuarioSel.id}" />
-					<input type="hidden" name="siglaUsuario" id="siglaUsuario" value="${usuarioSel.sigla}" />
 				</form>
 			</div>
 		</div>

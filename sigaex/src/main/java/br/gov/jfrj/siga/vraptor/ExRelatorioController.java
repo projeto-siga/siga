@@ -61,6 +61,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.SigaExProperties;
@@ -837,19 +838,30 @@ public class ExRelatorioController extends ExController {
 
 	@Get
 	@Path("app/expediente/rel/relIndicadoresGestao")
-	public void relIndicadoresGestao(final Long orgao,
-			final DpLotacaoSelecao lotacaoSel,
+	public void relIndicadoresGestao(final DpLotacaoSelecao lotacaoSel,
 			final DpPessoaSelecao usuarioSel, String dataInicial,
 			String dataFinal, boolean primeiraVez) throws Exception {
 
-		long orgaoUsu = (long) 0;
 		try {
 			assertAcesso(ACESSO_IGESTAO);
+
+			long orgaoUsu = 0L;
+			long orgaoSelId = 0L;
+			if (lotacaoSel.getId() != null) {
+				DpLotacao lota = dao().consultar(
+						lotacaoSel.getId(), DpLotacao.class, false);
+				orgaoSelId = lota.getIdOrgaoUsuario();
+			}
+			if (usuarioSel.getId() != null) {
+				DpPessoa usu = dao().consultar(
+						usuarioSel.getId(), DpPessoa.class, false);
+				orgaoSelId = usu.getOrgaoUsuario().getIdOrgaoUsu();
+			}
 			orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 
 			if (!primeiraVez) {
 				if (dataInicial != null && dataFinal != null) {
-					if (orgaoUsu != orgao) {
+					if (orgaoUsu != orgaoSelId) {
 						throw new Exception(
 								"Não é permitido consultas de outros órgãos.");
 					}
@@ -865,7 +877,6 @@ public class ExRelatorioController extends ExController {
 					}
 
 					final Map<String, String> parametros = new HashMap<String, String>();
-					// parametros.put("orgao", orgao.toString());
 					parametros.put("lotacao",
 							getRequest().getParameter("lotacaoSel.id"));
 					parametros.put("usuario",
@@ -919,7 +930,6 @@ public class ExRelatorioController extends ExController {
 			result.include("msgCabecClass", "alert-danger");
 		}
 		result.include("primeiraVez", false);
-		result.include("idOrgaoUsu", orgaoUsu);
 		result.include("lotacaoSel", lotacaoSel);
 		result.include("usuarioSel", usuarioSel);
 		result.include("dataInicial", dataInicial);
@@ -928,21 +938,31 @@ public class ExRelatorioController extends ExController {
 
 	@Get
 	@Path("app/expediente/rel/relDocumentosPorVolume")
-	public void relDocumentosPorVolume(final Long orgao,
-			final DpLotacaoSelecao lotacaoSel,
+	public void relDocumentosPorVolume(final DpLotacaoSelecao lotacaoSel,
 			final DpPessoaSelecao usuarioSel, String dataInicial,
 			String dataFinal, boolean primeiraVez) throws Exception {
-
-		long orgaoUsu = (long) 0;
 
 		List<String> indicadoresProducao = new ArrayList();
 		try {
 			assertAcesso(ACESSO_RELDOCVOL);
+
+			long orgaoUsu = 0L;
+			long orgaoSelId = 0L;
+			if (lotacaoSel.getId() != null) {
+				DpLotacao lota = dao().consultar(
+						lotacaoSel.getId(), DpLotacao.class, false);
+				orgaoSelId = lota.getIdOrgaoUsuario();
+			}
+			if (usuarioSel.getId() != null) {
+				DpPessoa usu = dao().consultar(
+						usuarioSel.getId(), DpPessoa.class, false);
+				orgaoSelId = usu.getOrgaoUsuario().getIdOrgaoUsu();
+			}
 			orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 
 			if (!primeiraVez) {
 				if (dataInicial != null && dataFinal != null) {
-					if (orgaoUsu != orgao) {
+					if (orgaoUsu != orgaoSelId) {
 						throw new Exception(
 								"Não é permitido consultas de outros órgãos.");
 					}
@@ -958,7 +978,6 @@ public class ExRelatorioController extends ExController {
 					}
 
 					final Map<String, String> parametros = new HashMap<String, String>();
-					// parametros.put("orgao", orgao.toString());
 					parametros.put("lotacao",
 							getRequest().getParameter("lotacaoSel.id"));
 					parametros.put("usuario",
@@ -1026,23 +1045,32 @@ public class ExRelatorioController extends ExController {
 
 		result.include("tamanho", indicadoresProducao.size());
 		result.include("indicadoresProducao", indicadoresProducao);
-		result.include("orgao", orgaoUsu);
-		result.include("usuario", usuarioSel);
-		result.include("lotacao", lotacaoSel);
 		result.include("lotacaoSel", lotacaoSel);
 		result.include("usuarioSel", usuarioSel);
 		result.include("dataInicial", dataInicial);
 		result.include("dataFinal", dataFinal);
 	}
 
+
+
 	@Path("app/expediente/rel/emiteRelDocsPorVolumeDetalhes")
-	public Download aRelDocsPorVolumeDetalhes(final Long idOrgaoUsu,
-			final DpLotacaoSelecao lotacaoSel,
+	public Download aRelDocsPorVolumeDetalhes(final DpLotacaoSelecao lotacaoSel,
 			final DpPessoaSelecao usuarioSel, String dataInicial,
 			String dataFinal, boolean primeiraVez) throws Exception {
 		assertAcesso(ACESSO_RELDOCVOL);
 
-		long orgaoUsu = (long) 0;
+		long orgaoUsu = 0L;
+		long orgaoSelId = 0L;
+		if (lotacaoSel.getId() != null) {
+			DpLotacao lota = dao().consultar(
+					lotacaoSel.getId(), DpLotacao.class, false);
+			orgaoSelId = lota.getIdOrgaoUsuario();
+		}
+		if (usuarioSel.getId() != null) {
+			DpPessoa usu = dao().consultar(
+					usuarioSel.getId(), DpPessoa.class, false);
+			orgaoSelId = usu.getOrgaoUsuario().getIdOrgaoUsu();
+		}
 		orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 
 		// if (orgaoUsu != idOrgaoUsu) {
@@ -1067,7 +1095,7 @@ public class ExRelatorioController extends ExController {
 		final RelDocumentosProduzidos rel = new RelDocumentosProduzidos(
 				parametros);
 		rel.gerarDetalhes();
-
+		
 		final InputStream inputStream = new ByteArrayInputStream(
 				rel.getRelatorioPDF());
 		return new InputStreamDownload(inputStream, APPLICATION_PDF,

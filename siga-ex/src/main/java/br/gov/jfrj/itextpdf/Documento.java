@@ -24,6 +24,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.security.MessageDigest;
 import java.sql.SQLException;
@@ -36,6 +37,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -416,7 +418,11 @@ public class Documento {
 				// mas sim da identificação do sistema Siga-Doc. É importante para a continuidade
 				// do projeto que se faça essa divulgação.
 				
-				final Image logo = Image.getInstance("http://localhost:8080/siga/imagens/logo-siga-novo-166px.png");
+				InputStream stream = Documento.class.getClassLoader()
+						.getResourceAsStream("/br/gov/jfrj/itextpdf/logo-siga-novo-166px.png");
+				byte[] ab = IOUtils.toByteArray(stream);
+				final Image logo = Image.getInstance(ab);
+//				
 				logo.scaleToFit(image39.getHeight(), image39.getHeight());
 				logo.setAbsolutePosition(r.getWidth() - image39.getHeight()
 						+ (STAMP_BORDER_IN_CM - PAGE_BORDER_IN_CM) * CM_UNIT,

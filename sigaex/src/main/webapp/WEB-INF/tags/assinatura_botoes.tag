@@ -52,8 +52,8 @@
 	</c:if>
 
 	<c:if test="${not empty juntarAtivo}">
-		<div class="form-check form-check-inline mr-2">
-			<input class="form-check-input" type="checkbox" name="ad_juntar_0"
+		<div class="form-check form-check-inline mr-2 ${hide_only_GOVSP}">
+			<input class="form-check-input " type="checkbox" name="ad_juntar_0"
 				id="ad_juntar_0" <c:if test="${juntarAtivo}">checked</c:if>
 				<c:if test="${juntarFixo}">disabled</c:if> /> <label
 				class="form-check-label" for="ad_juntar_0">Juntar</label>
@@ -61,7 +61,7 @@
 	</c:if>
 
 	<c:if test="${not empty tramitarAtivo}">
-		<div class="form-check form-check-inline mr-2">
+		<div class="form-check form-check-inline mr-2 ">
 			<input class="form-check-input" type="checkbox" name="ad_tramitar_0"
 				id="ad_tramitar_0" <c:if test="${tramitarAtivo}">checked</c:if>
 				<c:if test="${tramitarFixo}">disabled</c:if> /> <label

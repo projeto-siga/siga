@@ -150,6 +150,8 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 		totalPaginas = 0L;
 		totalDocumentos = 0L;
 
+		String lotacaoAnterior = "";
+		
 		while (it.hasNext()) {
 			Object[] obj = (Object[]) it.next();
 
@@ -168,10 +170,17 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 				pags = Long.valueOf(obj[3].toString());
 			}
 
-			listDados.add(lotaDoc);
+			if(!lotacaoAnterior.equals(lotaDoc)){
+				listDados.add(lotaDoc);
+				d.add(lotaDoc);
+				lotacaoAnterior = lotaDoc;
+			} else {
+				listDados.add(" ");
+				d.add(" ");
+			}
 			listDados.add(modeloDoc);
 			listDados.add(siglaDoc);
-			d.add(lotaDoc);
+			
 			d.add(modeloDoc);
 			d.add(siglaDoc);
 

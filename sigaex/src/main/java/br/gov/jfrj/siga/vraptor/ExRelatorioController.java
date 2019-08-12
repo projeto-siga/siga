@@ -1087,6 +1087,7 @@ public class ExRelatorioController extends ExController {
 
 		final Map<String, String> parametros = new HashMap<String, String>();
 
+		parametros.put("orgao", param("SEção teste"));
 		parametros.put("lotacao", getRequest().getParameter("lotacaoSel.id"));
 		parametros.put("usuario", getRequest().getParameter("usuarioSel.id"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
@@ -1094,7 +1095,10 @@ public class ExRelatorioController extends ExController {
 
 		final RelDocumentosProduzidos rel = new RelDocumentosProduzidos(
 				parametros);
+		rel.setTemplateFile("RelatorioBaseGestao.jrxml");
 		rel.gerarDetalhes();
+		parametros.put("totalDocumentos", rel.totalDocumentos.toString());
+		parametros.put("totalPaginas", rel.totalPaginas.toString());
 		
 		final InputStream inputStream = new ByteArrayInputStream(
 				rel.getRelatorioPDF());

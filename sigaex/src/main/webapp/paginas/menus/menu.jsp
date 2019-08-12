@@ -259,12 +259,12 @@
 						href="/sigaex/app/expediente/rel/relIndicadoresGestao?primeiraVez=true">
 							Indicadores de Gestão</a></li>
 				</c:if>
-<%-- 				<c:if --%>
-<%-- 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;RELDOCVOL: Relatório de documentos por volume')}"> --%>
-<!-- 					<li><a class="dropdown-item" -->
-<!-- 						href="/sigaex/app/expediente/rel/relDocumentosPorVolume?primeiraVez=true"> -->
-<!-- 							Documentos por Volume </a></li> -->
-<%-- 				</c:if> --%>
+				<c:if
+ 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;RELDOCVOL: Relatório de documentos por volume')}">
+					<li><a class="dropdown-item"
+ 						href="/sigaex/app/expediente/rel/relDocumentosPorVolume?primeiraVez=true">
+ 							Documentos por Volume </a></li>
+ 				</c:if>
 <!-- 				<li><a class="dropdown-item" href="#"> Documentos Fora do -->
 <!-- 						Prazo </a></li> -->
 

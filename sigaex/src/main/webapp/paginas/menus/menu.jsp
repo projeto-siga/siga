@@ -248,35 +248,42 @@
 			</ul></li>
 	</c:if>
 
-	<c:if test="${false}">
+	<c:if
+		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios')}">
 		<li class="nav-item dropdown"><a href="javascript:void(0);"
 			class="nav-link dropdown-toggle" data-toggle="dropdown"> Gestão </a>
 			<ul class="dropdown-menu">
-				<li><a class="dropdown-item" 
-					href="/sigaex/app/expediente/rel/relIndicadoresGestao?primeiraVez=true">
-						Indicadores de Gestão</a></li>
-				<li><a class="dropdown-item"
-					href="/sigaex/app/expediente/rel/relDocumentosPorVolume?primeiraVez=true">
-						Documentos por Volume </a></li>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;IGESTAO: Relatório de Indicadores de Gestão')}">
+					<li><a class="dropdown-item" 
+						href="/sigaex/app/expediente/rel/relIndicadoresGestao?primeiraVez=true">
+							Indicadores de Gestão</a></li>
+				</c:if>
+				<c:if
+ 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;RELDOCVOL: Relatório de documentos por volume')}">
+					<li><a class="dropdown-item"
+ 						href="/sigaex/app/expediente/rel/relDocumentosPorVolume?primeiraVez=true">
+ 							Documentos por Volume </a></li>
+ 				</c:if>
+<!-- 				<li><a class="dropdown-item" href="#"> Documentos Fora do -->
+<!-- 						Prazo </a></li> -->
 
-				<li><a class="dropdown-item" href="#"> Documentos Fora do
-						Prazo </a></li>
+<!-- 				<li><a class="dropdown-item" href="#"> Documentos por -->
+<!-- 						Devolução Programada </a></li> -->
 
-				<li><a class="dropdown-item" href="#"> Documentos por
-						Devolução Programada </a></li>
+<!-- 				<li><a class="dropdown-item" href="#"> Tempo médio por -->
+<!-- 						Situação </a></li> -->
 
-				<li><a class="dropdown-item" href="#"> Tempo médio por
-						Situação </a></li>
+<!-- 				<li><a class="dropdown-item" href="#"> Tempo médio -->
+<!-- 						Tramitação por Espécie Documental </a></li> -->
 
-				<li><a class="dropdown-item" href="#"> Tempo médio
-						Tramitação por Espécie Documental </a></li>
-
-				<li><a class="dropdown-item" href="#"> Volume de Tramitação
-						por Nome de documento </a></li>
-				<li><a class="dropdown-item" 
-					href="/sigaex/app/expediente/rel/relDocsOrgaoInteressado?primeiraVez=true">
-						Total de documentos por Órgão Interessado</a></li>
-			</ul></li>
+<!-- 				<li><a class="dropdown-item" href="#"> Volume de Tramitação -->
+<!-- 						por Nome de documento </a></li> -->
+<!-- 				<li><a class="dropdown-item"  -->
+<!-- 					href="/sigaex/app/expediente/rel/relDocsOrgaoInteressado?primeiraVez=true"> -->
+<!-- 						Total de documentos por Órgão Interessado</a></li> -->
+			</ul>
+		</li>
 	</c:if>
 
 </c:if>

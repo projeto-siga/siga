@@ -46,10 +46,10 @@
 		<div class="card bg-light mb-3">
 			<div class="card-header">
 				<h4>Relatórios Gerenciais</h4>
-				<h5>Indicadores de Gestão - Órgão ${lotaTitular.orgaoUsuario.descricaoMaiusculas}</h5>
+				<h5>Relatório de Cobrança - Órgão ${lotaTitular.orgaoUsuario.descricaoMaiusculas}</h5>
 			</div>
 			<div class="card-body d-flex">
-				<form name="frmRelatorios" action="/sigaex/app/expediente/rel/relIndicadoresGestao" theme="simple" method="get">
+				<form name="frmRelatorios" action="/sigaex/app/expediente/rel/relCobranca" theme="simple" method="get">
 					<div class="row">
 						<div class="col-sm-1 mt-4">
 							<strong>Período </strong>
@@ -80,53 +80,84 @@
 							<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-cancel ml-2 mt-auto" />
 						</div>
 					</div>
-					<div class="row">
 					<c:if test="${totalDocumentos != null}">
-						<div class="col-sm-4">
-							<div class="card">
-								<div class="card-header">Indicadores de Produção</div>
-								<div class="card-body">
-									<table class="table table-sm table-hover table-striped">
-										<tr class="card-text col-sm-6">
-											<td class='w-80'>Total de Documentos Produzidos</td>
-											<td class='text-right'>
-												<fmt:formatNumber type="number" pattern="###,###,###,##0" value="${totalDocumentos}" />
-											</td>
-										</tr>
-										<tr>
-											<td class='w-80'>Total de Páginas Geradas</td>
-											<td class='text-right'>
-												<fmt:formatNumber type = "number" pattern = "###,###,###,##0" value = "${totalPaginas}" />
-											</td>
-										</tr>
-										<tr>
-											<td class='w-80'>Total de Documentos Tramitados</td>
-											<td class='text-right'>
-												<fmt:formatNumber type = "number" pattern = "###,###,###,##0" value = "${totalTramitados}" />
-											</td>
-										</tr>
-									</table>
-								</div>
-							</div>		
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="card">
+									<div class="card-header">Indicadores de Produção</div>
+									<div class="card-body">
+										<table class="table table-sm table-hover table-striped">
+											<tr class="card-text col-sm-6">
+												<td class='w-80'>Total de Documentos Produzidos</td>
+												<td class='text-right'>
+													<fmt:formatNumber type="number" pattern="###,###,###,##0" value="${totalDocumentos}" />
+												</td>
+											</tr>
+											<tr>
+												<td class='w-80'>Total de Páginas Geradas</td>
+												<td class='text-right'>
+													<fmt:formatNumber type = "number" pattern = "###,###,###,##0" value = "${totalPaginas}" />
+												</td>
+											</tr>
+											<tr>
+												<td class='w-80'>Total de MBytes dos Documentos)</td>
+												<td class='text-right'>
+													<fmt:formatNumber type = "number" pattern = "###,###,###,##0" value = "${totalBlobsDoc}" />
+												</td>
+											</tr>
+											<tr>
+												<td class='w-80'>Total de MBytes dos Anexos</td>
+												<td class='text-right'>
+													<fmt:formatNumber type = "number" pattern = "###,###,###,##0" value = "${totalBlobsAnexos}" />
+												</td>
+											</tr>
+										</table>
+									</div>
+								</div>		
+							</div>
 						</div>
 					</c:if>
-					<c:if test="${volumeTramitacao != null}">
-						<div class="col-sm-8">
-							<div class="card">
-								<div class="card-header">Documentos Por Volume de Tramitação (Top 5)</div>
-								<div class="card-body">
-									<table class="table table-sm table-hover table-striped">
-										<tr>
-											<c:forEach items="${volumeTramitacao}" var="item">
-												<tr class="card-text col-sm-6">${item}</tr>
-											</c:forEach>
-										</tr>
-									</table>
-								</div>
-							</div>
-						</div>		
+					<c:if test="${listLinhas != null}">
+						<div class="row">
+							<table class="table table-hover table-striped">
+								<thead class="thead-dark align-middle text-center">
+									<tr>
+										<th class="text-left">Unidade</th>
+										<th class="text-left">Nome do Documento</th>
+										<th class="text-left">Núm.</th>
+										<th class="text-left">Qtd. Pág.</th>
+										<th class="text-left">Tam.Doc.</th>
+										<th class="text-left">Tam.Anexos</th>
+									</tr>
+								</thead>
+								<tbody class="table-bordered">
+								<c:forEach items="${listLinhas}" var="item" varStatus="status">
+									<tr>
+										<td>
+											${item[0]}
+										</td>
+										<td>
+											${item[1]}
+										</td>
+										<td>
+											${item[2]}
+										</td>
+										<td>
+											${item[3]}
+										</td>
+										<td>
+											${item[4]}
+										</td>
+										<td>
+											${item[5]}
+										</td>
+									</tr>
+								</c:forEach> 
+								</tbody>
+							</table>
+						</div>
 					</c:if>
-					</div>
+					<input type="hidden" name="orgao" id="orgao" value="${orgao}" />
 				</form>
 			</div>
 		</div>

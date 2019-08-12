@@ -73,7 +73,7 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 
 		// Total de documentos criados (por orgao, lotação ou usuário)
 		String addSelect = "mov.lotaResp.siglaLotacao, "
-				+ "doc.exModelo.nmMod, " + "count(distinct doc.idDoc) as qtd, "
+				+ "doc.exModelo.nmMod, " + "count(doc.idDoc) as qtd, "
 				+ "sum(doc.numPaginas) ";
 		String addWhere = "group by mov.lotaResp.siglaLotacao,"
 				+ "doc.exModelo.nmMod" + " order by 1, 3";
@@ -139,10 +139,10 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 		ExMobil mob = null;
 		String siglaDoc = "";
 
-		String addSelect = "mov.lotaResp.siglaLotacao, "
+		String addSelect = "distinct doc.lotaCadastrante.siglaLotacao, "
 				+ "doc.exModelo.nmMod, " + "mob.idMobil, " + "doc.numPaginas ";
 
-		String addWhere = "order by mov.lotaResp.siglaLotacao, "
+		String addWhere = "order by doc.lotaCadastrante.siglaLotacao, "
 				+ "doc.exModelo.nmMod, " + "mob.idMobil ";
 
 		Iterator it = obtemDados(d, addSelect, addWhere,

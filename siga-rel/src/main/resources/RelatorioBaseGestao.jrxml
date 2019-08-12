@@ -9,10 +9,11 @@
 	<parameter name="dataInicial" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="dataFinal" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="siglalotacao" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="orgao" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="totalDocumentos" class="java.lang.Long" isForPrompting="false"/>
-	<parameter name="totalPaginas" class="java.lang.Long" isForPrompting="false"/>
-	<parameter name="lotacao" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="orgaoUsuario" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="totalDocumentos" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="totalPaginas" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="lotacaoRel" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="titulo" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[select 
 f.id_forma_doc, 
@@ -65,7 +66,7 @@ order by descr_forma_doc,nm_mod]]>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.0" lineStyle="Solid"/>
 				</graphicElement>
-				<imageExpression><![CDATA["brasao.png"]]></imageExpression>
+				<imageExpression><![CDATA["brasao_sp.png"]]></imageExpression>
 			</image>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
 				<reportElement key="textField-1" mode="Opaque" x="479" y="7" width="55" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="5504f09b-5570-4a84-a922-40e54f506dad"/>
@@ -95,22 +96,8 @@ order by descr_forma_doc,nm_mod]]>
 				</textElement>
 				<text><![CDATA[Emissão:]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" mode="Opaque" x="71" y="40" width="199" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e9fa113e-050b-4372-8e21-6eef2a149cf5"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="styled">
-					<font fontName="Arial" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{orgao}]]></textFieldExpression>
-			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Opaque" x="137" y="96" width="90" height="15" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="bd4bffa5-033e-4ec7-9aad-5ff1593f1eaf"/>
+				<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Opaque" x="137" y="96" width="220" height="15" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="bd4bffa5-033e-4ec7-9aad-5ff1593f1eaf"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -121,7 +108,7 @@ order by descr_forma_doc,nm_mod]]>
 					<font fontName="Arial" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{orgao}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{orgaoUsuario}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement key="staticText-14" mode="Opaque" x="97" y="80" width="40" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="4fd50225-5610-443c-8a88-1969a47675eb"/>
@@ -138,7 +125,7 @@ order by descr_forma_doc,nm_mod]]>
 				<text><![CDATA[De]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Opaque" x="137" y="113" width="90" height="15" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="8eca0773-87fc-493c-b130-4fb66900787f"/>
+				<reportElement key="textField" stretchType="RelativeToBandHeight" mode="Opaque" x="137" y="113" width="152" height="15" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="8eca0773-87fc-493c-b130-4fb66900787f"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -149,7 +136,7 @@ order by descr_forma_doc,nm_mod]]>
 					<font fontName="Arial" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{lotacao}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{lotacaoRel}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement key="staticText-14" mode="Opaque" x="227" y="80" width="40" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="f4f6bb3e-bffa-43e5-828f-71ae55d06773"/>
@@ -290,6 +277,19 @@ order by descr_forma_doc,nm_mod]]>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{dataInicial}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="71" y="37" width="408" height="22" uuid="40c5de77-2f0a-4205-836f-9b7d0bba8c03"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{titulo}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

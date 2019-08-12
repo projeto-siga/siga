@@ -119,8 +119,7 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 
 	private AbstractRelatorioBaseBuilder configurarRelatorioDetalhes()
 			throws DJBuilderException, JRException {
-
-		this.setTitle("Documentos Por Volume");
+		
 		this.listColunas.add("Unidade");
 		this.listColunas.add("Nome do Documento");
 		this.listColunas.add("Número do Documento");

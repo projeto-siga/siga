@@ -1061,10 +1061,16 @@ public class ExRelatorioController extends ExController {
 
 		long orgaoUsu = 0L;
 		long orgaoSelId = 0L;
+		
+		final Map<String, String> parametros = new HashMap<String, String>();
+		
 		if (lotacaoSel.getId() != null) {
 			DpLotacao lota = dao().consultar(
 					lotacaoSel.getId(), DpLotacao.class, false);
 			orgaoSelId = lota.getIdOrgaoUsuario();
+			parametros.put("lotacaoRel", lota.getDescricao());
+		} else {
+			parametros.put("lotacaoRel", "Todas");
 		}
 		if (usuarioSel.getId() != null) {
 			DpPessoa usu = dao().consultar(
@@ -1085,14 +1091,12 @@ public class ExRelatorioController extends ExController {
 					"O intervalo entre as datas é muito grande, por favor reduza-o.");
 		}
 
-		final Map<String, String> parametros = new HashMap<String, String>();
-
-		parametros.put("orgao", param("SEção teste"));
-		parametros.put("lotacao", getRequest().getParameter("lotacaoSel.id"));
+		parametros.put("titulo", "Documentos Por Volume");
+		parametros.put("orgaoUsuario", getLotaTitular().getOrgaoUsuario().getNmOrgaoUsu());
 		parametros.put("usuario", getRequest().getParameter("usuarioSel.id"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-
+		
 		final RelDocumentosProduzidos rel = new RelDocumentosProduzidos(
 				parametros);
 		rel.setTemplateFile("RelatorioBaseGestao.jrxml");

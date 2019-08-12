@@ -133,7 +133,7 @@
 				<c:if test="${siga_cliente != 'GOVSP'}">
 					<div>
 						<siga:link icon="application_view_list" classe="mt-3 once" title="Visualizar&nbsp;_Movimentações"
-							url="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}"
+							url="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}" atalho="${true}"
 							test="${true}" />
 						<div class="form-control d-inline-block col-sm-6 align-bottom pb-1 mt-3 mr-2">
 							<siga:link icon="wrench" title="Preferência:" test="${true}" url="" />

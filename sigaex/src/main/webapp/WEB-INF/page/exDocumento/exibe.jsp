@@ -232,6 +232,7 @@
 											<td class="align-top" style="word-break: break-all;">
 												<span class="align-top">
 													<siga:links
+														buttons="${false}"
 														inline="${true}"
 														separator="${not empty mov.descricao and mov.descricao != null}">
 														<c:forEach var="acao" items="${mov.acoes}">
@@ -953,7 +954,7 @@
 								<c:forEach var="mov" items="${m.movs}">
 									<c:if test="${mov.idTpMov == 64 and not mov.cancelada}">
 										<p>
-											<siga:links inline="${true}" separator="${false}">
+											<siga:links buttons="${false}" inline="${true}" separator="${false}">
 												<c:forEach var="acao" items="${mov.acoes}">
 													<c:set var="acaourl" value="${acao.url}" />
 													<c:set var="acaourl"

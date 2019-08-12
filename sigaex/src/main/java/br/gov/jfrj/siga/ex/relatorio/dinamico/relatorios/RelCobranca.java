@@ -82,6 +82,11 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
+			String queryOrgao = "";
+			if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
+				queryOrgao = "and doc.orgaoUsuario.idOrgaoUsu = :orgao ";
+			}
+
 			String queryLotacao = "";
 			if (parametros.get("lotacao") != null
 					&& parametros.get("lotacao") != "") {
@@ -104,7 +109,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 							+ "where mov.dtIniMov between :dtini and :dtfim "
 //							+ "where (:dtIni is null or doc.dtDoc >= :dtini) "
 //							+ "	and (:dtFim is null or doc.dtDoc <= :dtfim) "
-							+ "	and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu "
+							+ queryOrgao
 							+ queryLotacao
 							+ "	and mov.exTipoMovimentacao.idTpMov = '1' "
 //							+ "		or mov.exTipoMovimentacao.idTpMov = '64') "
@@ -114,7 +119,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 							);
 			
 			if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
-				query.setLong("idOrgaoUsu", Long.valueOf((String) parametros.get("orgao")));
+				query.setLong("orgao", Long.valueOf((String) parametros.get("orgao")));
 			}
 			
 			if (parametros.get("lotacao") != null && parametros.get("lotacao") != "") {

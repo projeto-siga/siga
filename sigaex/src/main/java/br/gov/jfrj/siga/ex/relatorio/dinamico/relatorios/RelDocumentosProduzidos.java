@@ -72,10 +72,10 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 		List<String> d = new ArrayList<String>();
 
 		// Total de documentos criados (por orgao, lotação ou usuário)
-		String addSelect = "mov.lotaResp.siglaLotacao, "
+		String addSelect = "doc.lotaCadastrante.siglaLotacao, "
 				+ "doc.exModelo.nmMod, " + "count(doc.idDoc) as qtd, "
 				+ "sum(doc.numPaginas) ";
-		String addWhere = "group by mov.lotaResp.siglaLotacao,"
+		String addWhere = "group by doc.lotaCadastrante.siglaLotacao,"
 				+ "doc.exModelo.nmMod" + " order by 1, 3";
 		Iterator it = obtemDados(d, addSelect, addWhere,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO);
@@ -200,7 +200,7 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 
 		// Total de documentos tramitadas pelo menos uma vez (por lotação ou
 		// usuário)
-		String addSelect = "count(distinct doc.idDoc) ";
+		String addSelect = "count(doc.idDoc) ";
 		String addWhere = "";
 		Iterator it = obtemDados(d, addSelect, addWhere,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);

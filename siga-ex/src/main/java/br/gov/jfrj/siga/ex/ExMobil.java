@@ -248,8 +248,12 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			descricaoCurta = "";
 		}
 
+		// Retornando apenas a descrição curta, pois depois da migração para BS4, a descrição é
+		// apresentada dentro de um <input> na interface.
+		if (true)
+			return descricaoCurta;
+		
 		s = s + "', 'documento', " + winProp + ")\">" + descricaoCurta + "</a>";
-
 		return s;
 	}
 

@@ -949,7 +949,7 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 				var id = gNome ? gNome.split(':')[1] : null;
 				var DadosDoPost = "id=" + id + "&sigla=" + gNome
 						+ "&nomeUsuarioSubscritor=" + gLogin
-						+ "&senhaUsuarioSubscritor=" + gPassword + "&copia="
+						+ "&senhaUsuarioSubscritor=" + encodeURIComponent(gPassword) + "&copia="
 						+ gAutenticar;
 				if (gTramitar !== undefined) {
 					DadosDoPost = DadosDoPost + "&tramitar=" + gTramitar;

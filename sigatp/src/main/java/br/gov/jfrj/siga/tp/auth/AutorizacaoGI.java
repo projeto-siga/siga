@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Query;
+
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.ioc.Component;
 import br.com.caelum.vraptor.ioc.RequestScoped;
@@ -13,6 +15,7 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.tp.model.RequisicaoTransporte;
 import br.gov.jfrj.siga.tp.model.TpDao;
 import br.gov.jfrj.siga.tp.vraptor.i18n.MessagesBundle;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
@@ -32,10 +35,14 @@ public class AutorizacaoGI {
 	public static final String CP_COMPLEXO_ADMINISTRADOR = "cpComplexoAdministrador";
 	private SigaObjects so;
 	private Map<String, Boolean> statusPermissoes = new HashMap<String, Boolean>();
+	private CpComplexo complexoPadrao;
+	private CpComplexo complexoAdministrador;
 
-	public AutorizacaoGI(SigaObjects so) {
+	public AutorizacaoGI(SigaObjects so) throws Exception {
 		this.so = so;
 		this.statusPermissoes = new HashMap<String, Boolean>();
+        this.setComplexoPadrao(recuperarComplexoPadrao());
+        this.setComplexoAdministrador(recuperarComplexoAdministrador());
 	}
 
 	/**
@@ -144,32 +151,69 @@ public class AutorizacaoGI {
 		return recuperarComplexoPadrao(so.getTitular());
 	}
 
-	private CpComplexo recuperarComplexoPadrao(DpPessoa dpPessoa) throws Exception {
-		long TIPO_CONFIG_COMPLEXO_PADRAO = 400;
-		CpTipoConfiguracao tpConf = CpTipoConfiguracao.AR.findById(TIPO_CONFIG_COMPLEXO_PADRAO);
-		CpSituacaoConfiguracao cpSituacaoConfiguracaoPode = CpSituacaoConfiguracao.AR.findById(1L); 
-		CpSituacaoConfiguracao cpSituacaoConfiguracaoPadrao = CpSituacaoConfiguracao.AR.findById(5L); 
-		List<CpConfiguracao> configuracoes = null;
-		CpComplexo cpComplexo = null;
+    @SuppressWarnings("unchecked")
+	public CpComplexo recuperarComplexoPadrao(DpPessoa dpPessoa) {
+        
+        long TIPO_CONFIG_COMPLEXO_PADRAO = 400;
+        List<CpConfiguracao> configuracoes = null;
+        CpComplexo cpComplexo = null;
 
-		// Recuperando Configuracao Pode para uma lotacao especifica
-		Object[] parametros =  {dpPessoa.getLotacao().getIdLotacaoIni(), cpSituacaoConfiguracaoPode, dpPessoa.getOrgaoUsuario(),tpConf};
-		configuracoes = CpConfiguracao.AR.find("((lotacao.idLotacaoIni = ? and cpSituacaoConfiguracao = ?) and orgaoUsuario = ?  and cpTipoConfiguracao = ? and hisIdcFim is null  )", parametros).fetch();
-		if (configuracoes != null && configuracoes.size() > 0) {
-			cpComplexo = configuracoes.get(0).getComplexo();
-		} else {
-		
-		// Recuperando Configuracao default para um orgao especifico
-		Object[] parametros1 =  {cpSituacaoConfiguracaoPadrao, dpPessoa.getOrgaoUsuario(),tpConf};
-		configuracoes = CpConfiguracao.AR.find("((cpSituacaoConfiguracao = ?) and orgaoUsuario = ?  and cpTipoConfiguracao = ? and hisIdcFim is null  )", parametros1).fetch();
-			if (configuracoes != null && configuracoes.size() > 0) {
-				cpComplexo = configuracoes.get(0).getComplexo();
-			}
-		}
-		if (cpComplexo == null) {
-            throw new NullPointerException(MessagesBundle.getMessage("cpComplexo.null.exception"));
-		}
-		
+        // Recuperando Configuracao Pode para uma lotacao especifica de um orgão
+        
+    	String qrl = 	"SELECT cp FROM CpConfiguracao cp " +  
+    	" WHERE  cp.lotacao.idLotacaoIni = :lotacaoIni"  	+
+    	" AND    cp.orgaoUsuario.idOrgaoUsu = :orgaoUsuarioId"		+
+    	" AND    cp.cpTipoConfiguracao.idTpConfiguracao = " + TIPO_CONFIG_COMPLEXO_PADRAO +
+    	" AND    cp.cpSituacaoConfiguracao.idSitConfiguracao = :cpSituacaoConfiguracaoId" +
+    	" AND    cp.hisIdcFim is null";
+
+    	Query qry = RequisicaoTransporte.AR.em().createQuery(qrl);
+    	qry.setParameter("lotacaoIni", dpPessoa.getLotacao().getIdLotacaoIni());
+    	qry.setParameter("orgaoUsuarioId",dpPessoa.getOrgaoUsuario().getId());
+    	qry.setParameter("cpSituacaoConfiguracaoId", 1L);
+    	configuracoes = (List<CpConfiguracao>) qry.getResultList();
+        
+        if (configuracoes != null && !configuracoes.isEmpty()) {
+            cpComplexo = configuracoes.get(0).getComplexo();
+        } else {
+            // Recuperando Configuracao default para um orgao especifico
+        	
+        	qrl = 	"SELECT cp FROM CpConfiguracao cp" +  
+        	    	" WHERE  cp.lotacao is null"  	+
+        	    	" AND    cp.orgaoUsuario.idOrgaoUsu = :orgaoUsuarioId"		+
+        	    	" AND    cp.cpTipoConfiguracao.idTpConfiguracao = " + TIPO_CONFIG_COMPLEXO_PADRAO +
+        	    	" AND    cp.cpSituacaoConfiguracao.idSitConfiguracao = :cpSituacaoConfiguracaoId" +
+        	    	" AND    cp.hisIdcFim is null";
+        	qry = RequisicaoTransporte.AR.em().createQuery(qrl);
+        	qry.setParameter("orgaoUsuarioId",dpPessoa.getOrgaoUsuario().getId());
+        	qry.setParameter("cpSituacaoConfiguracaoId", 5L);
+        	configuracoes = (List<CpConfiguracao>) qry.getResultList();
+        	
+        	if (configuracoes != null && !configuracoes.isEmpty()) {
+                cpComplexo = configuracoes.get(0).getComplexo();
+            }
+        }
+        if (cpComplexo == null) {
+            throw new NullPointerException(MessagesBundle.getMessage("cpComplexo.null.exception", ""));
+        }
+
 		return cpComplexo;
 	}
+
+	public CpComplexo getComplexoPadrao() {
+		return complexoPadrao;
+	}
+
+	public void setComplexoPadrao(CpComplexo complexoPadrao) {
+		this.complexoPadrao = complexoPadrao;
+	}
+
+	public CpComplexo getComplexoAdministrador() {
+		return complexoAdministrador;
+	}
+
+	public void setComplexoAdministrador(CpComplexo complexoAdministrador) {
+		this.complexoAdministrador = complexoAdministrador;
+	}
+	
 }

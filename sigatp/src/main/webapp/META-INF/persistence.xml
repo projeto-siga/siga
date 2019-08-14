@@ -103,8 +103,87 @@
 
 			<property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="none" />
-			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.show_sql" value="false" />
 			<property name="hibernate.default_schema" value="sigatp"/>
+			
+			
+						<!-- Cache Region QUERY_CACHE_SECONDS -->
+			<property name="hibernate.cache.infinispan.querySeconds.eviction.strategy"
+				value="LRU" />
+			<property
+				name="hibernate.cache.infinispan.querySeconds.eviction.wake_up_interval"
+				value="2500" />
+			<property
+				name="hibernate.cache.infinispan.querySeconds.eviction.max_entries"
+				value="10000" />
+			<property
+				name="hibernate.cache.infinispan.querySeconds.expiration.lifespan"
+				value="5000" />
+			<property
+				name="hibernate.cache.infinispan.querySeconds.expiration.max_idle"
+				value="5000" />
+
+			<!-- Cache Region CACHE_QUERY_HOURS -->
+			<property name="hibernate.cache.infinispan.queryHours.eviction.strategy"
+				value="LRU" />
+			<property
+				name="hibernate.cache.infinispan.queryHours.eviction.wake_up_interval"
+				value="2500" />
+			<property
+				name="hibernate.cache.infinispan.queryHours.eviction.max_entries"
+				value="10000" />
+			<property name="hibernate.cache.infinispan.queryHours.expiration.lifespan"
+				value="36000000" />
+			<property name="hibernate.cache.infinispan.queryHours.expiration.max_idle"
+				value="3600000" />
+
+			<!-- Cache Region CACHE_QUERY_SUBSTITUICAO -->
+			<property
+				name="hibernate.cache.infinispan.querySubstituicao.eviction.strategy"
+				value="LRU" />
+			<property
+				name="hibernate.cache.infinispan.querySubstituicao.eviction.wake_up_interval"
+				value="2500" />
+			<property
+				name="hibernate.cache.infinispan.querySubstituicao.eviction.max_entries"
+				value="10000" />
+			<property
+				name="hibernate.cache.infinispan.querySubstituicao.expiration.lifespan"
+				value="10000" />
+			<property
+				name="hibernate.cache.infinispan.querySubstituicao.expiration.max_idle"
+				value="10000" />
+
+
+			<!-- Cache Region CACHE_SECONDS -->
+			<property name="hibernate.cache.infinispan.seconds.eviction.strategy"
+				value="LRU" />
+			<property
+				name="hibernate.cache.infinispan.seconds.eviction.wake_up_interval"
+				value="2500" />
+			<property name="hibernate.cache.infinispan.seconds.eviction.max_entries"
+				value="10000" />
+			<property name="hibernate.cache.infinispan.seconds.expiration.lifespan"
+				value="5000" />
+			<property name="hibernate.cache.infinispan.seconds.expiration.max_idle"
+				value="5000" />
+
+			<!-- Cache Region CACHE_CORPORATIVO -->
+			<property name="hibernate.cache.infinispan.corporativo.eviction.strategy"
+				value="LRU" />
+			<property
+				name="hibernate.cache.infinispan.corporativo.eviction.wake_up_interval"
+				value="2500" />
+			<property
+				name="hibernate.cache.infinispan.corporativo.eviction.max_entries"
+				value="10000" />
+			<property
+				name="hibernate.cache.infinispan.corporativo.expiration.lifespan"
+				value="300000" />
+			<property
+				name="hibernate.cache.infinispan.corporativo.expiration.max_idle"
+				value="300000" />
+			
 		</properties>
 	</persistence-unit>
 </persistence>

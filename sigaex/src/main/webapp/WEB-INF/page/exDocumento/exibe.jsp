@@ -948,7 +948,16 @@
 											<ul>
 												<c:forEach var="acesso" items="${docVO.listaDeAcessos}"
 													varStatus="loop">
-													<li>${acesso.sigla}</li>
+													<li>
+														<c:choose>
+															<c:when test="${siga_cliente == 'GOVSP'}">
+																${acesso.descricao} (${acesso.sigla})
+															</c:when>
+															<c:otherwise>
+																${acesso.sigla}
+															</c:otherwise>
+														</c:choose>
+													</li>
 												</c:forEach>
 											</ul>
 										</c:otherwise>

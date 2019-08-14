@@ -140,10 +140,32 @@ public class AuthJwtFormFilter implements Filter {
 				ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
 			}
 			chain.doFilter(request, response);
-		//Mudado para erro genérico para evitar exploração do mecanismo de autenticação.	
-		} catch (Exception e) {
+		/* Exceções de Sessão o erro não é exposto ao usuário e redireciona para Login */	
+		} catch (AuthJwtException e) {
 			redirecionarParaFormDeLogin(req, resp, e);
 			return;
+		} catch (SigaJwtProviderException e) {
+			redirecionarParaFormDeLogin(req, resp, e);
+			return;
+		} catch (JWTVerifyException e) {
+			if ("jwt expired".equals(e.getMessage()))
+				redirecionarParaFormDeLogin(req, resp, e);
+			else
+				throw new RuntimeException(e);
+		} catch (SigaJwtInvalidException e) {
+			redirecionarParaFormDeLogin(req, resp, e);
+			return;
+		} catch (SignatureException e) {
+			redirecionarParaFormDeLogin(req, resp, e);
+			return;
+		} catch (Exception e) {
+			if (e.getCause() instanceof AuthJwtException) {
+				redirecionarParaFormDeLogin(req, resp, e);
+				return;
+			} else {
+				/* Erro não gerado pela sessão adiciona na stack */
+				throw new RuntimeException(e);
+			}
 		} finally {
 			ContextoPersistencia.removeUserPrincipal();
 		}

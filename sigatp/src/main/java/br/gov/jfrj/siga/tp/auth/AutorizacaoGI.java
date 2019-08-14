@@ -52,19 +52,31 @@ public class AutorizacaoGI {
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	public CpComplexo recuperarComplexoAdministrador() throws Exception {
 		String SERVICO_COMPLEXO_ADMINISTRADOR = "SIGA-TP-ADMMISSAOCOMPLEXO";
-		CpServico cpServico = TpDao.find(CpServico.class, "siglaServico", SERVICO_COMPLEXO_ADMINISTRADOR).first();
-		CpSituacaoConfiguracao cpSituacaoConfiguracaoPode = TpDao.findById(CpSituacaoConfiguracao.class, 1L);
 		List<CpConfiguracao> configuracoes = null;
-		CpComplexo cpComplexo = null;
+        CpComplexo cpComplexo = null;
 
-		// and dtHistDtFim IS NOT NULL
-		Object[] parametros = { so.getTitular().getIdPessoaIni(), cpSituacaoConfiguracaoPode.getIdSitConfiguracao(), cpServico };
-		configuracoes = TpDao.find(CpConfiguracao.class, "(dpPessoa.idPessoaIni = ? and cpSituacaoConfiguracao.idSitConfiguracao = ? and cpServico = ? and hisIdcFim is null )", parametros).fetch();
+        // Recuperando ComplexoAdministrador para uma lotacao especifica de um orgão
+        
+    	String qrl = 	"SELECT cp FROM CpConfiguracao cp " +  
+    	" WHERE  cp.dpPessoa.idPessoaIni = :idPessoaIni"  	+
+    	" AND    cp.orgaoUsuario.idOrgaoUsu = :orgaoUsuarioId"		+
+    	" AND    cp.cpSituacaoConfiguracao.idSitConfiguracao = :cpSituacaoConfiguracaoId " + 
+    	" AND    cp.cpServico.siglaServico = '" + SERVICO_COMPLEXO_ADMINISTRADOR + "'" +
+    	" AND    cp.hisIdcFim is null"; 
 
-		if (configuracoes != null)
-			cpComplexo = configuracoes.get(0).getComplexo();
+    	Query qry = RequisicaoTransporte.AR.em().createQuery(qrl);
+    	qry.setParameter("idPessoaIni", so.getTitular().getIdPessoaIni());
+    	qry.setParameter("orgaoUsuarioId",so.getTitular().getOrgaoUsuario().getId());
+    	qry.setParameter("cpSituacaoConfiguracaoId", 1L);
+    	configuracoes = (List<CpConfiguracao>) qry.getResultList();
+        
+        if (configuracoes != null && !configuracoes.isEmpty() && configuracoes.size() > 0) {
+            cpComplexo = configuracoes.get(0).getComplexo();
+        }
+
 		return cpComplexo;
 	}
 

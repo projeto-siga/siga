@@ -427,7 +427,7 @@ function limpaCampos()
 										Data
 									</th>
 									<th colspan="2" align="center">
-										Subscritor
+										<fmt:message key="documento.subscritor"/>
 									</th>
 									<th rowspan="2" align="center">
 										Data
@@ -441,16 +441,16 @@ function limpaCampos()
 								</tr>
 								<tr>
 									<th align="center">
-										Lotação
+										<fmt:message key="usuario.lotacao"/>
 									</th>
 									<th align="center">
-										Pessoa
+										<fmt:message key="usuario.pessoa2"/>
 									</th>
 									<th align="center">
-										Lotação
+										<fmt:message key="usuario.lotacao"/>
 									</th>
 									<th align="center">
-										Pessoa
+										<fmt:message key="usuario.pessoa2"/>
 									</th>
 								</tr>
 							</thead>
@@ -644,7 +644,7 @@ function limpaCampos()
 								<div class="row">
 									<div class="col-sm-4">
 										<div class="form-group">
-											<label>Pessoa/Lotação</label> 
+											<label><fmt:message key="usuario.pessoa"/>/<fmt:message key="usuario.lotacao"/></label> 
 											<select id="ultMovTipoResp" name="ultMovTipoResp" onchange="javascript:alteraAtendente();" class="form-control">
 												<c:forEach items="${listaTipoResp}" var="item">
 													<option value="${item.key}" ${item.key == ultMovTipoResp ? 'selected' : ''}>
@@ -949,7 +949,7 @@ function limpaCampos()
 								<div class="row">
 									<div class="col-sm-6">
 										<div class="form-group">
-											<label>Classificação</label>	
+											<label><fmt:message key="tela.pesquisa.classificacao"/></label>	
 											<siga:selecao titulo="Classificação:" propriedade="classificacao" tema="simple" modulo="sigaex" urlAcao="buscar" urlSelecionar="selecionar"/>
 										</div>
 									</div>

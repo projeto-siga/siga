@@ -2,7 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <script type="text/javascript">
 	function validar() {
@@ -63,11 +63,11 @@
 								notificação para:</th>
 						</tr>
 						<tr>
-							<th align="left" width="15%">Pessoa</th>
-							<th align="right" width="15%">Lotacao</th>
+							<th align="left" width="15%"><fmt:message key="usuario.pessoa"/></th>
+							<th align="right" width="15%"><fmt:message key="usuario.lotacao"/></th>
 							<th align="right" width="25%">Email</th>
-							<th align="right" width="15%">Pessoa</th>
-							<th align="right" width="15%">Lotação</th>
+							<th align="right" width="15%"><fmt:message key="usuario.pessoa"/></th>
+							<th align="right" width="15%"><fmt:message key="usuario.lotacao"/></th>
 							<th colspan=2></th>
 						</tr>
 					</thead>

@@ -184,7 +184,7 @@ ${meta}
 									modulo="siga/public" urlAcao="buscar" urlSelecionar="selecionar"
 									matricula="${titular.siglaCompleta}" />
 								<button class="btn ${button_class_busca} ml-2 my-2 my-sm-0" type="button" onclick="javascript:buscarDocumentoPorCodigo();">Buscar</button>
-								<button id="link" class="btn btn-success ml-2 my-2 my-sm-0" type="button">&nbsp;<i class="fa fa-question"></i>&nbsp;</button>
+								<button id="link" class="btn btn-outline-success ml-2 my-2 my-sm-0" type="button">Tutoriais</button>
 
 								<div id="tutorialModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="tutorialModalLabel" aria-hidden="true" >
 								    <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 80% !important;">

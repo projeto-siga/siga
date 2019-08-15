@@ -92,8 +92,11 @@
 		<li class="dropdown-submenu"><a href="javascript:void(0);"
 			class="dropdown-item dropdown-toggle">Administração</a>
 			<ul class="dropdown-menu">
-				<li><a class="dropdown-item"
-					href="/siga/app/usuario/trocar_senha">Trocar senha</a></li>
+				<c:if test="${!f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;ADM;TSEN:Ocultar Trocar Senha')}">
+					<li><a class="dropdown-item"
+						href="/siga/app/usuario/trocar_senha">Trocar senha</a></li>
+				</c:if>
+				
 				<%--
 					<li><a href="/siga/substituicao/substituir.action">Entrar
 							como substituto</a>

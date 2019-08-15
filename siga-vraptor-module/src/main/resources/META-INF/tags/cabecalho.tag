@@ -65,7 +65,16 @@
 		<meta name="theme-color" content="#007bff">
 	</c:otherwise>
 </c:choose>
-<title>SIGA - ${titulo_pagina}</title>
+<title>
+<c:choose>
+	<c:when test="${siga_cliente == 'GOVSP'}">
+		SP Sem Papel - ${titulo_pagina}
+	</c:when>
+	<c:otherwise>
+		SIGA - ${titulo_pagina}	
+	</c:otherwise>
+</c:choose>
+</title>
 <meta http-equiv="X-UA-Compatible" content="${XUACompatible}" />
 <META HTTP-EQUIV="Expires" CONTENT="0">
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">

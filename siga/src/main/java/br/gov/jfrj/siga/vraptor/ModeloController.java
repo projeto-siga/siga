@@ -55,9 +55,6 @@ public class ModeloController extends SigaController {
 	public ModeloController(HttpServletRequest request, Result result,
 			SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
-
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 	}
 
 	public CpModelo daoMod(long id) {

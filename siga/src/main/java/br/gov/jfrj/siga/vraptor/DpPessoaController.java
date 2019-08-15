@@ -84,9 +84,6 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
 		
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
-		
 		setSel(new DpPessoa());
 		setItemPagina(10);
 	}

@@ -53,8 +53,6 @@ public class GrupoDeEmailController extends GrupoController {
 	@Inject
 	public GrupoDeEmailController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 		prepare();
 		
 		setItemPagina(10);

@@ -42,9 +42,6 @@ public class UsuarioController extends SigaController {
 	@Inject
 	public UsuarioController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
-
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 	}
 	
 	@Get({"/app/usuario/trocar_senha", "/public/app/usuario/trocar_senha"})

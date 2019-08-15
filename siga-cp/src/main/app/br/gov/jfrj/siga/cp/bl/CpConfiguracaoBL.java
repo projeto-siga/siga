@@ -926,16 +926,19 @@ public class CpConfiguracaoBL {
 		ArrayList<ConfiguracaoGrupo> aCfgGrp = new ArrayList<ConfiguracaoGrupo>();
 		ConfiguracaoGrupoFabrica fabrica = new ConfiguracaoGrupoFabrica();
 		try {
-			for (CpConfiguracao cfg : Cp
+			TreeSet<CpConfiguracao> l = Cp
 					.getInstance()
 					.getConf()
 					.getListaPorTipo(
-							/* tpCfgPertencer */CpTipoConfiguracao.TIPO_CONFIG_PERTENCER)) {
-				if (cfg.getCpGrupo() == null || !cfg.getCpGrupo().equivale(grp)
-						|| cfg.getHisDtFim() != null)
-					continue;
-				ConfiguracaoGrupo cfgGrp = fabrica.getInstance(cfg);
-				aCfgGrp.add(cfgGrp);
+							/* tpCfgPertencer */CpTipoConfiguracao.TIPO_CONFIG_PERTENCER);
+			if (l != null) {
+				for (CpConfiguracao cfg : l) {
+					if (cfg.getCpGrupo() == null || !cfg.getCpGrupo().equivale(grp)
+							|| cfg.getHisDtFim() != null)
+						continue;
+					ConfiguracaoGrupo cfgGrp = fabrica.getInstance(cfg);
+					aCfgGrp.add(cfgGrp);
+				}
 			}
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro obtendo configurações", 0, e);

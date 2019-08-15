@@ -7,25 +7,39 @@
 <c:catch var="selectException">
 	<c:if test="${empty exceptionGeral or empty exceptionStackGeral}">
 		<%
-			
  			java.lang.Throwable t = (Throwable) pageContext.getRequest().getAttribute("exception");
 			if (t == null){
 				t = (Throwable) exception;
 			}
  			if (t != null) {
- 				if (!t.getClass().getSimpleName().equals("AplicacaoException") && t.getCause() != null) {
- 					if (t.getCause().getClass().getSimpleName().equals("AplicacaoException")) {
- 						t = t.getCause();
- 					} else if (t.getCause().getCause() != null && t.getCause().getCause().getClass().getSimpleName().equals("AplicacaoException")) {
- 						t = t.getCause().getCause();
- 					}
+ 				while (t.getCause() != null && t != t.getCause()) {
+ 					if (t.getClass().getSimpleName().equals("AplicacaoException"))
+						break;
+ 					t = t.getCause();
  				}
-// 				// Get the ErrorData
  				pageContext.getRequest().setAttribute("exceptionGeral", t);
  				java.io.StringWriter sw = new java.io.StringWriter();
  				java.io.PrintWriter pw = new java.io.PrintWriter(sw);
  				t.printStackTrace(pw);
- 				pageContext.getRequest().setAttribute("exceptionStackGeral", sw.toString());
+ 				String s = sw.toString();
+ 				String[] lines = s.split(System.getProperty("line.separator"));
+ 				for (int i=0; i<lines.length; i++) {
+ 					if (lines[i].contains("br.com.caelum.vraptor.core.DefaultReflectionProvider.invoke")) {
+ 						for (int j=i-1; j>0; j--) {
+ 							if (lines[j].trim().startsWith("at br.") && !lines[j].contains("$Proxy$_$$_WeldClientProxy")) {
+				 				StringBuilder sb = new StringBuilder();
+ 								for (int k=0; k<=j; k++) {
+ 				 					sb.append(lines[k]);
+ 				 					sb.append(System.getProperty("line.separator"));
+ 								}
+ 								s = sb.toString();
+ 								break;
+ 							}			
+ 						}
+ 						break;
+ 					}
+ 				}
+ 				pageContext.getRequest().setAttribute("exceptionStackGeral", s);
  			}
 		%>
 	</c:if>
@@ -80,7 +94,7 @@
 								<div class="form-group">		
 									<input type="button" value="Voltar" class="btn btn-primary"  onclick="javascript:history.back();" />
 									<c:if test="${siga_cliente != 'GOVSP'}">
-										<input type="button" id="show_stack" value="Mais detalhes" class="btn btn-primary" onclick="javascript: document.getElementById('caption').setAttribute('class',''); document.getElementById('stack').style.display=''; document.getElementById('show_stack').style.display='none';" />
+										<input type="button" id="show_stack" value="Mais detalhes" class="btn btn-primary" onclick="javascript: document.getElementById('stack').style.display=''; document.getElementById('show_stack').style.display='none';" />
 									</c:if>
 								</div>
 							</div>

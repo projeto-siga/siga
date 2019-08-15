@@ -37,8 +37,8 @@ import java.util.regex.Pattern;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -1416,13 +1416,15 @@ public class CpDao extends ModeloDao {
 			CriteriaQuery<DpPessoa> q = cb().createQuery(DpPessoa.class);
 			Root<DpPessoa> c = q.from(DpPessoa.class);
 			q.select(c);
-			c.join("cargo", JoinType.LEFT);
-			q.where(cb().equal(cb().parameter(Long.class, "lotacao.id"), lot.getId()));
-			if (somenteServidor) 
-				q.where(cb().parameter(String.class, "cargo.nomeCargo").in(values));
-			q.where(cb().parameter(Long.class, "situacaoFuncionalPessoa").in(situacoesFuncionais.getValor()));
-			q.where(cb().isNull(cb().parameter(Date.class, "dataFimPessoa")));
-			q.orderBy(cb().asc(cb().parameter(String.class, "nomePessoa")));
+			Join<DpPessoa, DpLotacao> joinLotacao = c.join("lotacao", JoinType.LEFT);
+			q.where(cb().equal(joinLotacao.get("idLotacao"), lot.getId()));
+			if (somenteServidor) { 
+				Join<DpPessoa, DpCargo> joinCargo = c.join("cargo", JoinType.LEFT);
+				q.where(joinCargo.get("nomeCargo").in(values));
+			}
+			q.where(c.get("situacaoFuncionalPessoa").in(situacoesFuncionais.getValor()));
+			q.where(cb().isNull(c.get("dataFimPessoa")));
+			q.orderBy(cb().asc(c.get("nomePessoa")));
 			lstCompleta.addAll((List<DpPessoa>) em().createQuery(q).getResultList());
 		}
 		return lstCompleta;
@@ -1461,8 +1463,8 @@ public class CpDao extends ModeloDao {
 		Root<CpConfiguracao> c = q.from(CpConfiguracao.class);
 		q.select(c);
 		if (desde != null) {
-			Predicate confsAtivas = cb().greaterThan(cb().parameter(Date.class, "hisDtIni"), desde);
-			Predicate confsInativas = cb().greaterThanOrEqualTo(cb().parameter(Date.class, "hisDtFim"), desde);
+			Predicate confsAtivas = cb().greaterThan(c.<Date>get("hisDtIni"), desde);
+			Predicate confsInativas = cb().greaterThanOrEqualTo(c.<Date>get("hisDtFim"), desde);
 			q.where(cb().or(confsAtivas, confsInativas));
 		}
 		return em().createQuery(q).getResultList();
@@ -1534,7 +1536,7 @@ public class CpDao extends ModeloDao {
 		final CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
 		CriteriaQuery<T> crit = criteriaBuilder.createQuery(clazz);
 		Root<T> root = crit.from(clazz);
-		crit.where(cb().isNull(cb().parameter(CpModelo.class, "hisDtFim")), cb().equal(cb().parameter(DpPessoa.class, "orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
+		crit.where(cb().isNull(root.get("hisDtFim")), cb().equal(root.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
 		return em().createQuery(crit).getResultList();
 	}
 
@@ -1563,8 +1565,8 @@ public class CpDao extends ModeloDao {
 		CriteriaQuery<T> q = cb().createQuery(clazz);
 		Root<T> c = q.from(clazz);
 		q.select(c);
-		q.where(cb().equal(cb().parameter(clazz, "hisIdIni"), hisIdIni));
-		q.where(cb().equal(cb().parameter(clazz, "hisAtivo"), 1));
+		q.where(cb().equal(c.get("hisIdIni"), hisIdIni));
+		q.where(cb().equal(c.get("hisAtivo"), 1));
 
 		T obj = null;
 		try {
@@ -1750,9 +1752,9 @@ public class CpDao extends ModeloDao {
 		c.join("cpOrgaoUsuario", JoinType.LEFT);
 		q.select(c);
 		
-		q.where(cb().isNull(cb().parameter(CpModelo.class, "hisDtFim")));
+		q.where(cb().isNull(c.get("hisDtFim")));
 		
-		q.orderBy(cb().desc(cb().parameter(CpModelo.class, "cpOrgaoUsuario.siglaOrgaoUsu")));
+		q.orderBy(cb().desc(c.get("cpOrgaoUsuario.siglaOrgaoUsu")));
 		List<CpModelo> l = new ArrayList<CpModelo>();
 		for (CpModelo mod : (List<CpModelo>) em().createQuery(q).getResultList())
 			if (script != null && script.trim().length() != 0) {
@@ -1950,19 +1952,19 @@ public class CpDao extends ModeloDao {
 		q.select(c);
 
 		if(matricula != null) {
-			q.where(cb().equal(cb().parameter(DpPessoa.class, "matricula"), matricula));
+			q.where(cb().equal(c.get("matricula"), matricula));
 		}
-		q.where(cb().equal(cb().parameter(DpPessoa.class, "orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
+		q.where(cb().equal(c.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
 
 		if (pessoasFinalizadas) {
-			q.where(cb().isNotNull(cb().parameter(DpPessoa.class, "dataFimPessoa")));
+			q.where(cb().isNotNull(c.get("dataFimPessoa")));
 		} else {
-			q.where(cb().isNull(cb().parameter(DpPessoa.class, "dataFimPessoa")));
+			q.where(cb().isNull(c.get("dataFimPessoa")));
 		}
 		if (ordemDesc) {
-			q.orderBy(cb().desc(cb().parameter(DpPessoa.class, "dataInicioPessoa")));
+			q.orderBy(cb().desc(c.get("dataInicioPessoa")));
 		} else {
-			q.orderBy(cb().asc(cb().parameter(DpPessoa.class, "dataInicioPessoa")));
+			q.orderBy(cb().asc(c.get("dataInicioPessoa")));
 		}
 
 		return em().createQuery(q).getResultList();
@@ -1974,10 +1976,10 @@ public class CpDao extends ModeloDao {
 			CriteriaQuery<DpLotacao> q = cb().createQuery(DpLotacao.class);
 			Root<DpLotacao> c = q.from(DpLotacao.class);
 			q.select(c);
-			q.where(cb().equal(cb().parameter(DpLotacao.class, "ideLotacao"), idExterna));
-			q.where(cb().equal(cb().parameter(DpLotacao.class, "orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
-			q.where(cb().isNotNull(cb().parameter(DpLotacao.class, "dataFimLotacao")));
-			q.orderBy(cb().desc(cb().parameter(DpLotacao.class, "dataInicioLotacao")));
+			q.where(cb().equal(c.get("ideLotacao"), idExterna));
+			q.where(cb().equal(c.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
+			q.where(cb().isNotNull(c.get("dataFimLotacao")));
+			q.orderBy(cb().desc(c.get("dataInicioLotacao")));
 			return em().createQuery(q).getResultList();
 		}
 
@@ -1985,10 +1987,10 @@ public class CpDao extends ModeloDao {
 			CriteriaQuery<DpCargo> q = cb().createQuery(DpCargo.class);
 			Root<DpCargo> c = q.from(DpCargo.class);
 			q.select(c);
-			q.where(cb().equal(cb().parameter(DpCargo.class, "ideCargo"), idExterna));
-			q.where(cb().equal(cb().parameter(DpCargo.class, "orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
-			q.where(cb().isNotNull(cb().parameter(DpCargo.class, "dataFimCargo")));
-			q.orderBy(cb().desc(cb().parameter(DpCargo.class, "dataInicioCargo")));
+			q.where(cb().equal(c.get("ideCargo"), idExterna));
+			q.where(cb().equal(c.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
+			q.where(cb().isNotNull(c.get("dataFimCargo")));
+			q.orderBy(cb().desc(c.get("dataInicioCargo")));
 			return em().createQuery(q).getResultList();
 		}
 
@@ -1996,10 +1998,10 @@ public class CpDao extends ModeloDao {
 			CriteriaQuery<DpFuncaoConfianca> q = cb().createQuery(DpFuncaoConfianca.class);
 			Root<DpFuncaoConfianca> c = q.from(DpFuncaoConfianca.class);
 			q.select(c);
-			q.where(cb().equal(cb().parameter(DpFuncaoConfianca.class, "ideFuncao"), idExterna));
-			q.where(cb().equal(cb().parameter(DpFuncaoConfianca.class, "orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
-			q.where(cb().isNotNull(cb().parameter(DpFuncaoConfianca.class, "dataFimFuncao")));
-			q.orderBy(cb().desc(cb().parameter(DpFuncaoConfianca.class, "dataInicioFuncao")));
+			q.where(cb().equal(c.get("ideFuncao"), idExterna));
+			q.where(cb().equal(c.get("orgaoUsuario.idOrgaoUsu"), idOrgaoUsu));
+			q.where(cb().isNotNull(c.get("dataFimFuncao")));
+			q.orderBy(cb().desc(c.get("dataInicioFuncao")));
 			return em().createQuery(q).getResultList();
 		}
 

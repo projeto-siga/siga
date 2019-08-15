@@ -133,9 +133,9 @@
 		<servlet-name>GiService</servlet-name>
 		<url-pattern>/servicos/GiService</url-pattern>
 	</servlet-mapping>
-<!-- 	
+ 	
 	<error-page>
 		<location>/WEB-INF/page/erroGeral.jsp</location>
 	</error-page>
- -->
+
 </web-app>

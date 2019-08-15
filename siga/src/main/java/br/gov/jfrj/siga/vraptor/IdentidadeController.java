@@ -32,9 +32,6 @@ public class IdentidadeController extends GiControllerSupport {
 	@Inject
 	public IdentidadeController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
-
-		result.on(AplicacaoException.class).forwardTo(this).appexception();
-		result.on(Exception.class).forwardTo(this).exception();
 	}
 	
 	@Get("/app/gi/identidade/listar")

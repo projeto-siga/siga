@@ -44,8 +44,7 @@
 		<div class="card bg-light mb-3">
 			<div class="card-header">
 				<h4>Relatórios Gerenciais</h4>
-				<h5>Indicadores de Gestão - Órgão
-					${lotaTitular.orgaoUsuario.descricaoMaiusculas}</h5>
+				<h5>Documentos por Volume</h5>
 			</div>
 			<div class="card-body d-flex">
 				<form name="frmRelatorios"

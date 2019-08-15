@@ -238,7 +238,7 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 				"select " + addSelect
 						+ "from ExMovimentacao mov inner join mov.exMobil mob "
 						+ "inner join mob.exDocumento doc "
-						+ "where mov.dtIniMov between :dtini and :dtfim "
+						+ "where mov.dtIniMov >= :dtini and mov.dtIniMov < :dtfim "
 						+ "and mov.exTipoMovimentacao.idTpMov = :idTpMov "
 						+ queryOrgao + queryLotacao + queryUsuario + addWhere);
 

@@ -797,7 +797,7 @@ public class ExRelatorioController extends ExController {
 				parametros.put("dataInicial",
 						getRequest().getParameter("dataInicial"));
 				parametros.put("dataFinal",
-						getRequest().getParameter("dataFinal"));
+						somaUmDia(getRequest().getParameter("dataFinal")));
 				parametros.put("link_siga", "http://"
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
@@ -829,7 +829,7 @@ public class ExRelatorioController extends ExController {
 				for (int i = 0; i < relVol.listColunas.size(); i++) {
 					volumeTramitacao.add("<td class='w-80'>"
 							+ relVol.listColunas.get(i)
-							+ "</td><td class='align-right'>"
+							+ "</td><td class='text-right'>"
 							+ relVol.listDados.get(i) + "</td>");
 				}
 				result.include("volumeTramitacao", volumeTramitacao);
@@ -874,7 +874,7 @@ public class ExRelatorioController extends ExController {
 				parametros.put("dataInicial",
 						getRequest().getParameter("dataInicial"));
 				parametros.put("dataFinal",
-						getRequest().getParameter("dataFinal"));
+						somaUmDia(getRequest().getParameter("dataFinal")));
 				parametros.put("link_siga", "http://"
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
@@ -976,7 +976,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("lotacao", getRequest().getParameter("lotacaoSel.id"));
 		parametros.put("usuario", getRequest().getParameter("usuarioSel.id"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
-		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
+		parametros.put("dataFinal", somaUmDia(getRequest().getParameter("dataFinal")));
 		final RelDocumentosProduzidos rel = new RelDocumentosProduzidos(
 				parametros);
 		rel.setTemplateFile("RelatorioBaseGestao.jrxml");
@@ -1014,15 +1014,21 @@ public class ExRelatorioController extends ExController {
 		final SimpleDateFormat df = new SimpleDateFormat(
 				"dd/MM/yyyy");
 		final Date dtIni = df.parse(dataInicial);
-		Date dtFim = df.parse(dataFinal);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(dtFim);
-        cal.add(Calendar.DATE, 1);
-        dtFim = cal.getTime();
+		final Date dtFim = df.parse(dataFinal);
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
 			throw new Exception(
 					"O intervalo máximo entre as datas deve ser de um ano.");
 		}
+	}
+
+	private String somaUmDia (String dataFinal) throws Exception {
+		final SimpleDateFormat df = new SimpleDateFormat(
+				"dd/MM/yyyy");
+		Date dtFim = df.parse(dataFinal);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dtFim);
+        cal.add(Calendar.DATE, 1);
+        return df.format(cal.getTime());
 	}
 	
 	private Long getIdOrgaoSel (final DpLotacaoSelecao lotacaoSel,	

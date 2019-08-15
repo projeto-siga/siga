@@ -738,7 +738,7 @@ var process = {
 		var progressDialog = $(
 				'<div class="modal fade" tabindex="-1" role="dialog" id="senhaDialog"><div class="modal-dialog" role="document"><div class="modal-content">'
 				+ '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Assinatura Digital (' + provider.nome
-				+ ") " + gCertAlias + '</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+				+ ')</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
 				+ '<div class="modal-body"><p id="vbslog">Iniciando...</p><div id="progressbar-ad"></div></div>'
 				+ '<div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button><button type="button" id="senhaOk" class="btn btn-primary">OK</button></div>'
 				+ '</div></div></div>')

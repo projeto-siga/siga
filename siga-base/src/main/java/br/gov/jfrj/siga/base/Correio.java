@@ -80,6 +80,7 @@ public class Correio {
 		}
 
 		boolean servidorDisponivel = false;
+		String causa = " ";
 		for (String servidorEmail : listaServidoresEmail) {
 			try {
 				enviarParaServidor(servidorEmail, remetente, destinatarios,
@@ -87,9 +88,10 @@ public class Correio {
 				servidorDisponivel = true;
 				break;
 			} catch (Exception e) {
-				logger.warning("Servidor de e-mail '" + servidorEmail
-						+ "' indisponível: " + e.getMessage() + ", causa: "
-						+ e.getCause().getMessage());
+				if (e.getCause() != null)
+					causa =  ", causa: " + e.getCause().getMessage();
+					logger.warning("Servidor de e-mail '" + servidorEmail
+							+ "' indisponível: " + e.getMessage() + causa);
 			}
 		}
 

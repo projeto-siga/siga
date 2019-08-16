@@ -18,7 +18,7 @@
 	</context-param>
 	<context-param>
     	<param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
-    	<param-value>messages_TRF2</param-value>
+    	<param-value>messages_GOVSP</param-value>
   	</context-param>
  
 

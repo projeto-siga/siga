@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  * Copyright (c) 2006 - 2011 SJRJ.
  * 
@@ -25,6 +24,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -42,6 +42,7 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.BatchSize;
 
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -171,14 +172,6 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_cadastrante")
 	private DpPessoa cadastrante;
-
-	@Lob
-	@Column(name = "conteudo_blob_mov")
-	@Basic(fetch = FetchType.LAZY)
-	private byte[] conteudoBlobMov;
-
-	@Column(name = "conteudo_tp_mov", length = 128)
-	private String conteudoTpMov;
 
 	@BatchSize(size=1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMovimentacaoRef")
@@ -334,6 +327,10 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@Column(name = "hash_audit", length = 1024)
 	private String auditHash;
 
+	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ID_ARQ")
+	private CpArquivo cpArquivo;
+
 	public void setNumPaginasOri(Integer numPaginasOri) {
 		this.numPaginasOri = numPaginasOri;
 	}
@@ -359,14 +356,6 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	public DpPessoa getCadastrante() {
 		return cadastrante;
-	}
-
-	public byte[] getConteudoBlobMov() {
-		return conteudoBlobMov;
-	}
-
-	public String getConteudoTpMov() {
-		return conteudoTpMov;
 	}
 
 	public String getDescrMov() {
@@ -435,14 +424,6 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 
 	public void setCadastrante(final DpPessoa cadastrante) {
 		this.cadastrante = cadastrante;
-	}
-
-	public void setConteudoBlobMov(byte[] conteudoBlobMov) {
-		this.conteudoBlobMov = conteudoBlobMov;
-	}
-
-	public void setConteudoTpMov(final String conteudoTpMov) {
-		this.conteudoTpMov = conteudoTpMov;
 	}
 
 	public void setDescrMov(final String descrMov) {
@@ -680,4 +661,44 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	public void setAuditHash(String auditHash) {
 		this.auditHash = auditHash;
 	}
+	
+	public CpArquivo getCpArquivo() {
+		return cpArquivo;
+	}
+
+	public void setCpArquivo(CpArquivo cpArquivo) {
+		this.cpArquivo = cpArquivo;
+	}
+
+	public java.lang.String getConteudoTpMov() {
+		if (getCpArquivo() == null)
+			return null;
+		return getCpArquivo().getConteudoTpArq();
+	}
+
+	public void setConteudoTpMov(final java.lang.String conteudoTpMod) {
+		if (getCpArquivo() == null) {
+			CpArquivo arq = new CpArquivo();
+			setCpArquivo(arq);
+			// ExDao.getInstance().gravar(arq);
+		}
+		getCpArquivo().setConteudoTpArq(conteudoTpMod);
+	}
+
+	public byte[] getConteudoBlobMov() {
+		if (getCpArquivo() == null)
+			return null;
+		return getCpArquivo().getConteudoBlobArq();
+	}
+
+	public void setConteudoBlobMov(byte[] createBlob) {
+		if (getCpArquivo() == null) {
+			CpArquivo arq = new CpArquivo();
+			setCpArquivo(arq);
+			// ExDao.getInstance().gravar(arq);
+		}
+		getCpArquivo().setConteudoBlobArq(createBlob);
+	}
+
+
 }

@@ -24,6 +24,7 @@ package br.gov.jfrj.siga.ex;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.sql.Blob;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -380,9 +382,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * blob do documento.
 	 */
 	public byte[] getConteudoBlobDoc2() {
-
-		if (cacheConteudoBlobDoc == null)
-			cacheConteudoBlobDoc = getConteudoBlobDoc();
+		if (cacheConteudoBlobDoc == null && getCpArquivo() != null)
+			cacheConteudoBlobDoc = getCpArquivo().getConteudoBlobArq();
 		return cacheConteudoBlobDoc;
 
 	}
@@ -2632,4 +2633,5 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			}
 		return null;
 	}
+
 }

@@ -19,11 +19,11 @@
 package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.Date;
 import java.util.TreeSet;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -43,6 +43,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -241,9 +242,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@Column(name = "NUM_EXPEDIENTE")
 	private java.lang.Long numExpediente;
 
-	@Column(name = "CONTEUDO_TP_DOC", length = 128)
-	private java.lang.String conteudoTpDoc;
-
 	@Column(name = "DESCR_DOCUMENTO", length = 4000)
 	private java.lang.String descrDocumento;
 
@@ -296,11 +294,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	@Column(name = "FG_ELETRONICO", nullable = false, length = 1)
 	private String fgEletronico;
-
-	@Lob
-	@Column(name = "CONTEUDO_BLOB_DOC")
-	@Basic(fetch = FetchType.LAZY)
-	private byte[] conteudoBlobDoc;
 
 	@Column(name = "NUM_SEQUENCIA")
 	private Integer numSequencia;
@@ -397,6 +390,10 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@JoinColumn(name = "ID_MOB_AUTUADO")
 	private ExMobil exMobilAutuado;
 
+	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ID_ARQ")
+	private CpArquivo cpArquivo;
+
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
 	 */
@@ -440,20 +437,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	 */
 	public DpPessoa getCadastrante() {
 		return cadastrante;
-	}
-
-	/**
-	 * COMPLETAR
-	 */
-	public byte[] getConteudoBlobDoc() {
-		return this.conteudoBlobDoc;
-	}
-
-	/**
-	 * COMPLETAR
-	 */
-	public java.lang.String getConteudoTpDoc() {
-		return this.conteudoTpDoc;
 	}
 
 	/**
@@ -786,29 +769,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.cadastrante = cadastrante;
 	}
 
-	/**
-	 * Set the value of the CONTEUDO_BLOB_DOC column.
-	 * 
-	 * @param conteudoBlobDoc
-	 */
-	public void setConteudoBlobDoc(byte[] conteudoBlobDoc) {
-		this.conteudoBlobDoc = conteudoBlobDoc;
-	}
-
-	/**
-	 * Set the value of the CONTEUDO_TP_DOC column.
-	 * 
-	 * @param conteudoTpDoc
-	 */
-	public void setConteudoTpDoc(final java.lang.String conteudoTpDoc) {
-		this.conteudoTpDoc = conteudoTpDoc;
-	}
-
-	/*
-	 * public void setFgPessoal(final String fgPessoal) { this.fgPessoal =
-	 * fgPessoal; }
-	 */
-
 	public void setDescrClassifNovo(java.lang.String descrClassifNovo) {
 		this.descrClassifNovo = descrClassifNovo;
 	}
@@ -1065,4 +1025,45 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	public void setDtAltDoc(java.util.Date dtAltDoc) {
 		this.dtAltDoc = dtAltDoc;
 	}
+	
+	
+	public CpArquivo getCpArquivo() {
+		return cpArquivo;
+	}
+
+	public void setCpArquivo(CpArquivo cpArquivo) {
+		this.cpArquivo = cpArquivo;
+	}
+
+	public java.lang.String getConteudoTpBlob() {
+		if (getCpArquivo() == null)
+			return null;
+		return getCpArquivo().getConteudoTpArq();
+	}
+
+	public void setConteudoTpBlob(final java.lang.String conteudoTpMod) {
+		if (getCpArquivo() == null) {
+			CpArquivo arq = new CpArquivo();
+			setCpArquivo(arq);
+			// ExDao.getInstance().gravar(arq);
+		}
+		getCpArquivo().setConteudoTpArq(conteudoTpMod);
+	}
+
+	public byte[] getConteudoBlobDoc() {
+		if (getCpArquivo() == null)
+			return null;
+		return getCpArquivo().getConteudoBlobArq();
+	}
+
+	public void setConteudoBlobDoc(byte[] createBlob) {
+		if (getCpArquivo() == null) {
+			CpArquivo arq = new CpArquivo();
+			setCpArquivo(arq);
+			// ExDao.getInstance().gravar(arq);
+		}
+		getCpArquivo().setConteudoBlobArq(createBlob);
+	}
+
+
 }

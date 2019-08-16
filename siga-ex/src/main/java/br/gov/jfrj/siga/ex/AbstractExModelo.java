@@ -22,21 +22,20 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.sql.Blob;
 
-import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
@@ -54,16 +53,6 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	@GeneratedValue(generator = "EX_MODELO_SEQ")
 	@Column(name = "ID_MOD", unique = true, nullable = false)
 	private java.lang.Long idMod;
-
-	/** The value of the simple conteudoBlobMod property. */
-	@Lob
-	@Column(name = "CONTEUDO_BLOB_MOD")
-	@Basic(fetch = FetchType.LAZY)
-	private byte[] conteudoBlobMod;
-
-	/** The value of the simple conteudoTpBlob property. */
-	@Column(name = "CONTEUDO_TP_BLOB", length = 128)
-	private java.lang.String conteudoTpBlob;
 
 	/** The value of the simple descMod property. */
 	@Column(name = "DESC_MOD", length = 256)
@@ -84,6 +73,10 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_NIVEL_ACESSO")
 	private ExNivelAcesso exNivelAcesso;
+
+	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ID_ARQ")
+	private CpArquivo cpArquivo;
 
 	/** The value of the exModeloTipologiaSet one-to-many association. */
 
@@ -155,24 +148,6 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		}
 		return false;
 
-	}
-
-	/**
-	 * Return the value of the CONTEUDO_BLOB_MOD column.
-	 * 
-	 * @return java.lang.String
-	 */
-	public byte[] getConteudoBlobMod() {
-		return this.conteudoBlobMod;
-	}
-
-	/**
-	 * Return the value of the CONTEUDO_TP_BLOB column.
-	 * 
-	 * @return java.lang.String
-	 */
-	public java.lang.String getConteudoTpBlob() {
-		return this.conteudoTpBlob;
 	}
 
 	/**
@@ -251,24 +226,6 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	}
 
 	/**
-	 * Set the value of the CONTEUDO_BLOB_MOD column.
-	 * 
-	 * @param conteudoBlobMod
-	 */
-	public void setConteudoBlobMod(byte[] conteudoBlobMod) {
-		this.conteudoBlobMod = conteudoBlobMod;
-	}
-
-	/**
-	 * Set the value of the CONTEUDO_TP_BLOB column.
-	 * 
-	 * @param conteudoTpBlob
-	 */
-	public void setConteudoTpBlob(final java.lang.String conteudoTpBlob) {
-		this.conteudoTpBlob = conteudoTpBlob;
-	}
-
-	/**
 	 * Set the value of the DESC_MOD column.
 	 * 
 	 * @param descMod
@@ -341,8 +298,8 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		if (getClass() != obj.getClass())
 			return false;
 		AbstractExModelo other = (AbstractExModelo) obj;
-		if (conteudoBlobMod == null) {
-			if (other.conteudoBlobMod != null)
+		if (getConteudoBlobMod() == null) {
+			if (other.getConteudoBlobMod() != null)
 				return false;
 		} else {
 			if (other.getConteudoBlobMod() == null)
@@ -366,10 +323,10 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 				throw new RuntimeException(e);
 			}
 		}
-		if (conteudoTpBlob == null) {
-			if (other.conteudoTpBlob != null)
+		if (getConteudoTpBlob() == null) {
+			if (other.getConteudoTpBlob() != null)
 				return false;
-		} else if (!conteudoTpBlob.equals(other.conteudoTpBlob))
+		} else if (!getConteudoTpBlob().equals(other.getConteudoTpBlob()))
 			return false;
 		if (descMod == null) {
 			if (other.descMod != null)
@@ -412,6 +369,44 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 		} else if (!nmMod.equals(other.nmMod))
 			return false;
 		return true;
+	}
+
+	public CpArquivo getCpArquivo() {
+		return cpArquivo;
+	}
+
+	public void setCpArquivo(CpArquivo cpArquivo) {
+		this.cpArquivo = cpArquivo;
+	}
+
+	public java.lang.String getConteudoTpBlob() {
+		if (getCpArquivo() == null)
+			return null;
+		return getCpArquivo().getConteudoTpArq();
+	}
+
+	public void setConteudoTpBlob(final java.lang.String conteudoTpMod) {
+		if (getCpArquivo() == null) {
+			CpArquivo arq = new CpArquivo();
+			setCpArquivo(arq);
+			// ExDao.getInstance().gravar(arq);
+		}
+		getCpArquivo().setConteudoTpArq(conteudoTpMod);
+	}
+
+	public byte[] getConteudoBlobMod() {
+		if (getCpArquivo() == null)
+			return null;
+		return getCpArquivo().getConteudoBlobArq();
+	}
+
+	public void setConteudoBlobMod(byte[] createBlob) {
+		if (getCpArquivo() == null) {
+			CpArquivo arq = new CpArquivo();
+			setCpArquivo(arq);
+			// ExDao.getInstance().gravar(arq);
+		}
+		getCpArquivo().setConteudoBlobArq(createBlob);
 	}
 
 }

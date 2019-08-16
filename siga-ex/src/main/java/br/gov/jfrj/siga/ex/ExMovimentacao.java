@@ -1174,4 +1174,5 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		}
 		return "Outro";
 	}
+	
 }

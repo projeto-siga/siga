@@ -112,8 +112,15 @@
 								<div class="card-body">
 									<table class="table table-sm table-hover table-striped">
 										<tr>
-											<c:forEach items="${volumeTramitacao}" var="item">
-												<tr class="card-text col-sm-6">${item}</tr>
+											<c:forEach items="${volumeTramitacao}" var="linhaTramitacao">
+												<tr class="card-text col-sm-6">
+													<td class='w-80'>
+														${linhaTramitacao[0]}
+													</td>
+													<td class='text-right'>
+														<fmt:formatNumber type="number" pattern="###,###,###,##0" value="${linhaTramitacao[1]}" />
+													</td>
+												</tr>
 											</c:forEach>
 										</tr>
 									</table>

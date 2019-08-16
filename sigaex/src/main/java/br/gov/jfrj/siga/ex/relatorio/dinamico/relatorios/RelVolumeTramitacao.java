@@ -22,6 +22,7 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 	public class RelVolumeTramitacao extends RelatorioTemplate {
@@ -89,11 +90,13 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 									+ queryOrgao
 									+ queryLotacao
 									+ queryUsuario
-									+ "and mov.exTipoMovimentacao.idTpMov =  3 "
+									+ "and mov.exTipoMovimentacao.idTpMov = :idTpMov "
+									+ "and mov.exMovimentacaoCanceladora is null "
 									+ "group by doc.exModelo.nmMod "
 									+ "order by count(doc.idDoc) desc "
 									);
 
+			query.setLong("idTpMov", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
 			if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
 				query.setLong("orgao", Long.valueOf((String) parametros.get("orgao")));
 			}

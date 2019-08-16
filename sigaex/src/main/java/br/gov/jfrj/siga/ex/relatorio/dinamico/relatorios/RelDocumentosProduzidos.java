@@ -201,7 +201,7 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 		// Total de documentos tramitadas pelo menos uma vez (por lotação ou
 		// usuário)
 		String addSelect = "count(doc.idDoc) ";
-		String addWhere = "";
+		String addWhere = "and mov.exMovimentacaoCanceladora is null ";
 		Iterator it = obtemDados(d, addSelect, addWhere,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
 

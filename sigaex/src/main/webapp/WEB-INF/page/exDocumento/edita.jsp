@@ -66,7 +66,7 @@
 									<label for="modelos-select"><fmt:message key="documento.modelo"/></label>
 
 									<div class="btn-group hierarchy-select form-control p-0" data-resize="auto" id="modelos-select">
-										<button type="button" class="btn btn-light dropdown-toggle bg-white"
+										<button type="button" class="btn btn-light dropdown-toggle bg-white"  <c:if test='${podeEditarModelo}'>disabled</c:if>
 											id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-disabled="true">
 											<span class="selected-label pull-left">&nbsp;</span>
 										</button>
@@ -79,8 +79,14 @@
 													<li class="dropdown-item" data-value="${item.value}"
 														data-level="${item.level}" data-search="${item.searchText}"
 														${item.group ? 'data-group' : ''}
-														${item.selected ? 'data-default-selected' : ''}><a
-														href="#">${item.text}</a></li>
+														${item.selected ? 'data-default-selected' : ''}>
+														<c:if test="${item.group}">
+															<a href="#">${item.text}</a>
+														</c:if>
+														<c:if test="${!item.group}">
+															<a href="#" class="d-inline">${item.text}<small class="pl-2 text-muted">${item.keywords}</small></a>
+														</c:if>
+													</li>
 												</c:forEach>
 											</ul>
 										</div>
@@ -356,15 +362,15 @@
 								<c:if test="${empty exDocumentoDTO.preenchimento or exDocumentoDTO.preenchimento==0}">
 									<c:set var="desabilitaBtn"> disabled </c:set>
 								</c:if> 
-								<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn-sm btn-secondary ml-2" ${desabilitaBtn}>
+								<button type="button" name="btnAlterar" onclick="javascript:alteraPreench()" class="btn btn-sm btn-secondary ml-2" ${desabilitaBtn}>
 									<i class="far fa-edit"></i>
 									<span class="${hide_only_GOVSP}">Alterar</span>
 								</button>
-								<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn-sm btn-secondary ml-2" ${desabilitaBtn}>
+								<button type="button" name="btnRemover" onclick="javascript:removePreench()" class="btn btn-sm btn-secondary ml-2" ${desabilitaBtn}>
 									<i class="far fa-trash-alt"></i>
 									<span class="${hide_only_GOVSP}">Remover</span>
 								</button>
-								<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn-sm btn-secondary ml-2">
+								<button type="button"  name="btnAdicionar" onclick="javascript:adicionaPreench()" class="btn btn-sm btn-secondary ml-2">
 									<i class="fas fa-plus"></i>
 									<span class="${hide_only_GOVSP}">Adicionar</span>
 								</button>

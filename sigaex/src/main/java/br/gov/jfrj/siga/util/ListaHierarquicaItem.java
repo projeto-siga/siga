@@ -7,6 +7,7 @@ public class ListaHierarquicaItem {
 	public int level;
 	public String text;
 	public String searchText;
+	public String keywords;
 	public Long value;
 	public boolean group;
 	public boolean selected;
@@ -19,6 +20,17 @@ public class ListaHierarquicaItem {
 		this.level = level;
 		this.text = text;
 		this.searchText = searchText;
+		this.value = value;
+		this.group = group;
+		this.selected = selected;
+	}
+	
+	public ListaHierarquicaItem(int level, String text, String searchText, String keywords, Long value, boolean group,
+			boolean selected) {
+		this.level = level;
+		this.text = text;
+		this.searchText = searchText;
+		this.keywords = keywords;
 		this.value = value;
 		this.group = group;
 		this.selected = selected;
@@ -46,5 +58,9 @@ public class ListaHierarquicaItem {
 
 	public boolean getSelected() {
 		return selected;
+	}
+	
+	public String getKeywords() {
+		return keywords;
 	}
 }

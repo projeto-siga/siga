@@ -185,6 +185,10 @@ public class CpMarcador extends AbstractCpMarcador {
 
 	final static public long MARCADOR_RETENCAO_INSS = 1002;
 
+	final static public long MARCADOR_PRIORITARIO = 1003;
+
+	final static public long MARCADOR_RESTRICAO_ACESSO = 1004;
+
 	public static ActiveRecord<CpMarcador> AR = new ActiveRecord<>(CpMarcador.class);
 
 	public CpMarcador() {

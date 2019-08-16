@@ -55,13 +55,13 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	@Get
 	@Post
 	@Path({"/app/lotacao/buscar", "/lotacao/buscar.action"})
-	public void busca(String sigla, Long idOrgaoUsu, Integer offset, String postback) throws Exception{
+	public void busca(String sigla, Long idOrgaoUsu, Integer paramoffset, String postback) throws Exception{
 		if (postback == null)
 			orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 		else
 			orgaoUsu = idOrgaoUsu;
 		
-		this.getP().setOffset(offset);
+		this.getP().setOffset(paramoffset);
 		
 		if (sigla == null)
 			sigla = "";
@@ -76,7 +76,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		result.include("idOrgaoUsu",orgaoUsu);
 		result.include("sigla",sigla);
 		result.include("postbak",postback);
-		result.include("offset",offset);
+		result.include("offset",paramoffset);
 	}
 
 	@Override
@@ -175,7 +175,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	}
 	
 	@Get("app/lotacao/listar")
-	public void lista(Integer offset, Long idOrgaoUsu, String nome) throws Exception {
+	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome) throws Exception {
 		
 		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
@@ -187,13 +187,13 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		}
 		if(idOrgaoUsu != null) {
 			DpLotacaoDaoFiltro dpLotacao = new DpLotacaoDaoFiltro();
-			if(offset == null) {
-				offset = 0;
+			if(paramoffset == null) {
+				paramoffset = 0;
 			}
 			dpLotacao.setIdOrgaoUsu(idOrgaoUsu);
 			dpLotacao.setNome(Texto.removeAcento(nome));
 			dpLotacao.setBuscarFechadas(Boolean.TRUE);
-			setItens(CpDao.getInstance().consultarPorFiltro(dpLotacao, offset, 15));
+			setItens(CpDao.getInstance().consultarPorFiltro(dpLotacao, paramoffset, 15));
 			result.include("itens", getItens());
 			result.include("tamanho", dao().consultarQuantidade(dpLotacao));
 			
@@ -201,7 +201,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			result.include("nome", nome);
 		}
 		setItemPagina(15);
-		result.include("currentPageNumber", calculaPaginaAtual(offset));
+		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 	}
 	
 	@Get("/app/lotacao/editar")
@@ -259,9 +259,15 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		if(Long.valueOf(0).equals(idLocalidade))
 			throw new AplicacaoException("Localidade da lotação não informado");
 		
+		if(nmLotacao != null && !nmLotacao.matches("[a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9.,/-]+")) 
+			throw new AplicacaoException("Nome com caracteres não permitidos");
+		
+		if(siglaLotacao != null && !siglaLotacao.matches("[a-zA-ZçÇ0-9,/-]+")) 
+			throw new AplicacaoException("Sigla com caracteres não permitidos");
+		
 		DpLotacao lotacao;
 		lotacao = new DpLotacao();
-		lotacao.setSigla(siglaLotacao);
+		lotacao.setSiglaLotacao(siglaLotacao);
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
 		ou.setIdOrgaoUsu(idOrgaoUsu);
 		lotacao.setOrgaoUsuario(ou);
@@ -269,15 +275,6 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		
 		if(lotacao != null && lotacao.getId() != null && !lotacao.getId().equals(id)) {
 			throw new AplicacaoException("Sigla já cadastrada para outra lotação");
-		}
-		
-		lotacao = new DpLotacao();
-		lotacao.setNomeLotacao(Texto.removeAcento(Texto.removerEspacosExtra(nmLotacao).trim()));
-		lotacao.setOrgaoUsuario(ou);
-		lotacao = dao().getInstance().consultarPorNomeOrgao(lotacao);
-		
-		if(lotacao != null && !lotacao.getId().equals(id)) {
-			throw new AplicacaoException("Nome da lotação já cadastrado!");
 		}
 		
 		List<DpPessoa> listPessoa = null;

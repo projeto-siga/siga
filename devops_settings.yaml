@@ -3,13 +3,11 @@ solicitante:
   sobrenome: "DevOps"
 
 homologacao:
-  pre_aprovado: false
+  pre_aprovado: true
   restricao_horario_inicio: "07:00"
   restricao_horario_fim: "23:00"
 
 producao:
   pre_aprovado: false
-  restricao_horario_inicio: "19:00"
-
-  restricao_horario_fim: "23:59"
-
+  restricao_horario_inicio: "07:00"
+  restricao_horario_fim: "23:00"

@@ -31,6 +31,7 @@ public class DpPessoaDaoFiltro extends DaoFiltroSelecionavel {
 	private String nome;
 	private Long idOrgaoUsu;
 	private Long cpf;
+	private Long id;
 	
 	private boolean buscarFechadas;
 	private String situacaoFuncionalPessoa;
@@ -97,5 +98,13 @@ public class DpPessoaDaoFiltro extends DaoFiltroSelecionavel {
 
 	public void setFuncaoConfianca(DpFuncaoConfianca funcaoConfianca) {
 		this.funcaoConfianca = funcaoConfianca;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 }

@@ -13,7 +13,8 @@
 		if (offset == null) {
 			offset = 0;
 		}
-		frm.elements['offset'].value = offset;
+		frm.elements["paramoffset"].value = offset;
+		frm.elements["p.offset"].value = offset;
 		frm.submit();
 	}
 </script>
@@ -30,7 +31,8 @@
 				<input type="hidden" name="buscarFechadas" value="${param['buscarFechadas']}" /> 
 				<input type="hidden" name="propriedade" value="${param.propriedade}" /> 
 				<input type="hidden" name="postback" value="1" /> 
-				<input type="hidden" name="offset" value="0" />
+				<input type="hidden" name="paramoffset" value="0" />
+				<input type="hidden" name="p.offset" value="0" />
 				<div class="row">
 					<div class="col-sm">
 						<div class="form-group">

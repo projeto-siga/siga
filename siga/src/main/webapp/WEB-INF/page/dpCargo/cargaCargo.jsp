@@ -34,7 +34,7 @@
 								    </ul>
 								    <nav id="navbar-exemplo2" class="navbar navbar-light bg-light">
 								    <ul class="nav nav-pills">
-								    	<li class="nav-item">- Nome: m&aacute;ximo de 100 caracteres alfanum&eacute;ricos (letras e n&uacute;meros)</li>
+								    	<li class="nav-item">- Nome: m&aacute;ximo de 100 caracteres alfanum&eacute;ricos e ponto (letras, n&uacute;meros e ".")</li>
 								    </ul>
 								    </nav>
 								</nav>

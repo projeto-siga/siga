@@ -82,7 +82,6 @@
 			ifr.height = 300;
 		console.log("resize foi chamado!");
 	}
-
 </script>
 
 <c:if test="${not docVO.digital}">
@@ -119,7 +118,7 @@
 			<h2>
 				<c:if test="${empty ocultarCodigo}">${docVO.sigla}
 				</c:if>
-				<button type="button" name="voltar" onclick="javascript: history.back();" class="btn btn-secondary float-right ${hide_only_TRF2}" accesskey="r">Volta<u>r</u></button>
+				<button type="button" name="voltar" onclick="${(empty param.linkVolta) ? 'javascript:window.location.href=\'/siga\';' : 'javascript:'.concat(param.linkVolta) }" class="btn btn-secondary float-right ${hide_only_TRF2}" accesskey="r">Volta<u>r</u></button>
 			</h2>
 		</div>
 	</div>
@@ -153,6 +152,10 @@
 		<c:forEach var="mov" items="${m.movs}">
 			<c:if test="${ (mov.idTpMov != 14 and not mov.cancelada)}">
 				<c:set var="temmov" value="${true}" />
+			</c:if>
+			<c:if test="${ (mov.idTpMov == 66 and not mov.cancelada and 
+				mov.mov.cadastrante == cadastrante and mov.mov.lotaCadastrante == lotaTitular)}">
+				<c:set var="descrCiencia" value="${mov.descricao}" />
 			</c:if>
 		</c:forEach>
 		<div class="row mt-2">
@@ -448,11 +451,28 @@
 														style="text-decoration: none">
 														${mobNome} </a>
 												</c:otherwise>
-											</c:choose> &nbsp;-&nbsp; <c:forEach var="marca" items="${entry.value}"
-											varStatus="loop">
-											${marca}<c:if test="${!loop.last}">,</c:if> 
-										</c:forEach></li>
-										</c:if>
+											</c:choose> &nbsp;-&nbsp; <c:forEach var="marca" items="${entry.value}"	varStatus="loop">
+												<c:if test="${marca.cpMarcador.idMarcador ne '56' && marca.cpMarcador.idMarcador ne '57' && marca.cpMarcador.idMarcador ne '58' && siga_cliente eq 'GOVSP'}">
+												    	${marca.cpMarcador.descrMarcador}
+														<c:if test="${marca.dtIniMarca gt now}">
+															a partir de ${marca.dtIniMarcaDDMMYYYY}
+														</c:if>
+														<c:if test="${not empty marca.dtFimMarca}"> 
+															até ${marca.dtFimMarcaDDMMYYYY}
+														</c:if>
+														<c:if test="${not empty marca.dpLotacaoIni}">
+															[${marca.dpLotacaoIni.lotacaoAtual.sigla}
+															    <c:if test="${not empty marca.dpPessoaIni}">
+																    &nbsp;${marca.dpPessoaIni.pessoaAtual.sigla}
+															    </c:if>
+															]
+														</c:if>
+									
+												</c:if>
+												<c:if test="${siga_cliente ne 'GOVSP'}">
+												    ${marca}<c:if test="${!lopp.last}">,</c:if>
+												</c:if>
+											</c:forEach></li>
 									</c:forEach>
 								</ul>
 							</tags:collapse>
@@ -795,7 +815,7 @@
 
 					<div class="card-sidebar card bg-light mb-3">
 						<c:set var="docDetalhesTitle" scope="request" value="${pagina_de_erro}" />
-						<tags:collapse title="${siga_cliente=='GOVSP'?'Propriedades do Documento (':''}Documento ${docVO.doc.exTipoDocumento.descricao}${siga_cliente=='GOVSP'?')':''}" id="DocDetalhes" collapseMode="${collapse_Expanded}">
+						<tags:collapse title="${siga_cliente=='GOVSP'?'Propriedades do Documento (':'Documento '}${docVO.doc.exTipoDocumento.descricao}${siga_cliente=='GOVSP'?')':''}" id="DocDetalhes" collapseMode="${collapse_Expanded}">
 							<p class="${hide_only_GOVSP}">
 								<b>Suporte:</b> ${docVO.fisicoOuEletronico}
 							</p>
@@ -857,6 +877,14 @@
 						</tags:collapse>
 					</div>
 
+					<c:if test="${not empty descrCiencia}">
+						<div class="card-sidebar card bg-light mb-3 ${hide_only_TRF2}">
+							<tags:collapse title="Ciência" id="Ciencia" collapseMode="${collapse_Expanded}">
+								<p>${descrCiencia}</p>
+							</tags:collapse>
+						</div>
+					</c:if>
+
 					<c:if test="${not empty m.getDescricaoCompletaEMarcadoresEmHtml(cadastrante,lotaTitular)}">
 						<div class="card-sidebar card bg-light mb-3 ${hide_only_TRF2}">
 							<tags:collapse title="Situação do Documento" id="SituacaoDoc" collapseMode="${collapse_Expanded}">
@@ -865,7 +893,7 @@
 									<c:if test="${docVO.digital and not empty m.tamanhoDeArquivo}">
 								 		- ${m.tamanhoDeArquivo}
 									</c:if>
-								<p>
+								</p>
 							</tags:collapse>
 						</div>
 					</c:if>
@@ -929,7 +957,16 @@
 											<ul>
 												<c:forEach var="acesso" items="${docVO.listaDeAcessos}"
 													varStatus="loop">
-													<li>${acesso.sigla}</li>
+													<li>
+														<c:choose>
+															<c:when test="${siga_cliente == 'GOVSP'}">
+																${acesso.descricao} (${acesso.sigla})
+															</c:when>
+															<c:otherwise>
+																${acesso.sigla}
+															</c:otherwise>
+														</c:choose>
+													</li>
 												</c:forEach>
 											</ul>
 										</c:otherwise>

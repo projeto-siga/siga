@@ -144,10 +144,10 @@
 					</tr>
 					<tr>
 						<th rowspan="1" align="center">Unidade</th>
-						<th colspan="1" align="center">Usuário</th>
+						<th colspan="1" align="center">Matrícula</th>
 						<th rowspan="1" align="center">Data</th>
 						<th rowspan="1" align="center">Unidade</th>
-						<th colspan="1" align="center">Usuário</th>
+						<th colspan="1" align="center">Matrícula</th>
 						<th rowspan="1" align="center">Data</th>
 						<th rowspan="1" align="center">Situação</th>
 					</tr>
@@ -173,7 +173,7 @@
 									<c:choose>
 										<c:when test="${podeAcessar eq true}">
 											<a
-												href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento[1].sigla}">
+												href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento[1].sigla}&linkVolta=history.back();">
 												${documento[1].codigo} </a>
 										</c:when>
 										<c:otherwise> 
@@ -245,7 +245,14 @@
 									<c:set var="estilo" value="confidencial" />
 								</c:if>
 								<td class="${estilo}" width="38%">
-									${f:descricaoSePuderAcessar(documento[0], titular, lotaTitular)}
+									<c:choose>
+										<c:when test="${siga_cliente == 'GOVSP'}">
+											${documento[0].descrDocumento }
+										</c:when>
+										<c:otherwise>
+											${f:descricaoSePuderAcessar(documento[0], titular, lotaTitular)}
+										</c:otherwise>
+									</c:choose>
 								</td>
 								<c:if test="${visualizacao == 1}">
 									<td class="${estilo}" width="38%">

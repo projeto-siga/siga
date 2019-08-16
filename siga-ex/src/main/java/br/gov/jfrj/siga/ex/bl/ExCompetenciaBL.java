@@ -24,6 +24,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Set;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
+import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
@@ -1213,6 +1216,13 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (!doc.isEletronico() || !doc.getAutenticacoesComTokenOuSenha().isEmpty())
 			return false;
 		
+		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")) &&
+				!Long.valueOf(ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO).equals(Long.valueOf(doc.getExTipoDocumento().getId())) &&
+				!Long.valueOf(ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO).equals(Long.valueOf(doc.getExTipoDocumento().getId()))				
+				) {
+			return false;
+		}
+		
 		return doc.isExternoCapturado() || doc.isInternoCapturado() || doc.getAssinaturasComSenha().size() > 0;
 	}
 	
@@ -1869,6 +1879,70 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				mov.getIdTpMov(),
 				CpTipoConfiguracao.TIPO_CONFIG_CANCELAR_MOVIMENTACAO);
+	}
+
+	/**
+	 * Retorna se é possível cancelar uma ciência de documento
+	 * <ul>
+	 * <li>Precisa ser via ou volume</li>
+	 * <li>Móbil não pode estar em trânsito</li>
+	 * <li>Móbil não pode estar cancelado</li>
+	 * <li>Não pode cancelar ciência se a última mov não for Ciência, Definir Marcação ou Definir Perfil
+	 * <li>Última mov de ciência não pode ter sido cancelada</li>
+	 * <li>Somente o usuário que criou a ciência pode desfazer a mesma</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeCancelarCiencia(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {
+		ExMovimentacao movCiencia = null;
+
+		if (!mob.isVia() && !mob.isVolume())
+			return false;
+		
+		if (mob.isEmTransito()
+				|| mob.isCancelada())
+				return false;
+
+		final ExMovimentacao ultMovNaoCancelada = mob
+				.getUltimaMovimentacaoNaoCancelada();
+		final ExMovimentacao ultMov = mob.getUltimaMovimentacao();
+		
+		if (ultMov == null || ultMovNaoCancelada == null)
+			return false;
+
+		if (ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA &&
+				ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO &&
+				ultMovNaoCancelada.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)
+			return false;
+		
+		Set <ExMovimentacao> setMovCiente = mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA);
+
+		if (setMovCiente == null) 
+			return false;
+		
+		for (ExMovimentacao mov : setMovCiente) {
+			if (mov.getCadastrante() != null &&  mov.getCadastrante().equivale(titular)) {
+				movCiencia = mov;
+				break;
+			}
+		}
+		
+		if (movCiencia == null || movCiencia.isCancelada())
+				return false;
+		
+		return (mob.isCiente(titular)
+				&& getConf()
+					.podePorConfiguracao(
+						titular,
+						lotaTitular,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
+						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
 	}
 
 	/**
@@ -2554,8 +2628,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		
 		return (mob.getExDocumento().isFinalizado())								
 				&& !mob.isEmTransito()
-				&& podeMovimentar(titular, lotaTitular, mob);
-
+				&& podeMovimentar(titular, lotaTitular, mob)
+				&& getConf().podePorConfiguracao(titular, lotaTitular, mob.getDoc().getExTipoDocumento(), mob.getDoc().getExFormaDocumento(), 
+						mob.getDoc().getExModelo(), CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO);
+		
 	}
 	
 	/**
@@ -4340,7 +4416,53 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return resposta.booleanValue();
 	}
+	/*
+	 * Retorna se é possível incluir ciencia do documento a que pertence o
+	 * móbil passado por parâmetro, conforme as seguintes condições:
+	 * <ul>
+	 * <li>Modelo do documento pode incluir documentos</li>
+	 * <li>Documento não foi tramitado</li>
+	 * <li>Documento tem de estar assinado ou autenticado</li>
+	 * <li>Documento não pode estar juntado a outro</li>
+	 * <li>Usuario não fez ciência ainda</li>
+	 * <li>Não pode haver configuração impeditiva</li>
+	 * </ul>
+	 * 
+	 * @param titular
+	 * @param lotaTitular
+	 * @param mob
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean podeFazerCiencia(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {
 
+		if (mob.doc().isExternoCapturado() && mob.getDoc().getAutenticacoesComTokenOuSenha().isEmpty())
+				return false;
+		
+		return (SigaMessages.isSigaSP()
+					&& !mob.doc().isPendenteDeAssinatura() 
+					&& !mob.isCiente(titular) 
+					&& !mob.isEmTransito() 
+					&& !mob.isEliminado() 
+					&& !mob.isJuntado()
+					&& !mob.isArquivado()
+					&& !mob.isVolumeEncerrado()
+					&& !getConf()
+							.podePorConfiguracao(
+									titular, 
+									lotaTitular, 
+									mob.getDoc().getExTipoDocumento(), 
+									mob.getDoc().getExFormaDocumento(), 
+									mob.getDoc().getExModelo(), CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO)
+					&& getConf()
+							.podePorConfiguracao(
+									titular,
+									lotaTitular,
+									ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA,
+									CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
+	}
+	
 	/**
 	 * Método genérico que recebe função por String e concatena com o método de
 	 * checagem de permissão correspondente. Por exemplo, para a função
@@ -4466,8 +4588,9 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		final boolean podeMovimentar = podeMovimentar(titular, lotaTitular, mob);
 
 		return (!mob.isGeral() && mob.doc().isExpediente()
-				&& !mob.doc().isPendenteDeAssinatura() && !mob.isEmTransito() && podeMovimentar);
-
+				&& !mob.doc().isPendenteDeAssinatura() && !mob.isEmTransito() && podeMovimentar && getConf().podePorConfiguracao(titular, lotaTitular,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_AUTUAR,
+						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR));
 	}
 
 }

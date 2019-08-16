@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@ page language="java" contentType="text/html; charset=iso-8859-1"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
@@ -24,7 +24,7 @@ function sbmt() {
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
-				<h5>Tornar Documento Sem Efeito - ${mob.siglaEDescricaoCompleta}</h5>
+				<h5><fmt:message key="documento.tornar.sem.efeito"/> - ${mob.siglaEDescricaoCompleta}</h5>
 			</div>
 			<div class="card-body">
 				<form action="tornarDocumentoSemEfeitoGravar" enctype="multipart/form-data" method="post">

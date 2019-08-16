@@ -49,6 +49,7 @@ import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
@@ -305,12 +306,12 @@ public class ExMobilController extends
 					
 			texto.append(m.getCodigo()+";");
 			if(e.getLotaSubscritor() != null && e.getLotaSubscritor().getSigla() != null) {
-				texto.append(e.getLotaSubscritor().getSigla());
+				texto.append(e.getLotaSubscritor().getSigla().replaceAll(";",","));
 			}
 			texto.append(";");
 			
 			if(e.getSubscritor() != null && e.getSubscritor().getIniciais() != null) {
-				texto.append(e.getSubscritor().getIniciais());
+				texto.append(e.getSubscritor().getIniciais().replaceAll(";",","));
 			}
 			texto.append(";");
 			
@@ -320,12 +321,12 @@ public class ExMobilController extends
 			texto.append(";");
 			
 			if(ma.getDpLotacaoIni() != null && ma.getDpLotacaoIni().getLotacaoAtual() != null && ma.getDpLotacaoIni().getLotacaoAtual().getSigla() != null) {
-				texto.append(ma.getDpLotacaoIni().getLotacaoAtual().getSigla());
+				texto.append(ma.getDpLotacaoIni().getLotacaoAtual().getSigla().replaceAll(";",","));
 			}
 			texto.append(";");
 			
 			if(ma.getDpPessoaIni() != null && ma.getDpPessoaIni().getIniciais() != null) {
-				texto.append(ma.getDpPessoaIni().getIniciais());
+				texto.append(ma.getDpPessoaIni().getIniciais().replaceAll(";",","));
 			}
 			texto.append(";");
 			
@@ -335,23 +336,24 @@ public class ExMobilController extends
 			texto.append(";");
 			
 			if(ma.getCpMarcador() != null && ma.getCpMarcador().getDescrMarcador() != null) {
-				texto.append(ma.getCpMarcador().getDescrMarcador());
+				texto.append(ma.getCpMarcador().getDescrMarcador().replaceAll(";",","));
 			}
 			texto.append(";");
 			
 			if(e.getNmMod() != null) {
-				texto.append(e.getNmMod());
+				texto.append(e.getNmMod().replaceAll(";",","));
 			}
 			texto.append(";");
 			
-			if(e.getTitular() != null && e.getTitular().getLotacao() != null) {
-				descricao = Ex.getInstance().getBL().descricaoSePuderAcessar(e, e.getTitular(), e.getTitular().getLotacao());
-				
-				if(descricao != null) {
-					texto.append(descricao.replaceAll("\n", "").replaceAll("\t", "").replaceAll("\r",""));
-				}
-					
+			if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+				descricao = e.getDescrDocumento();
+			} else {
+				descricao = Ex.getInstance().getBL().descricaoSePuderAcessar(e, getTitular(), getTitular().getLotacao());
 			}
+			if(descricao != null) {
+				texto.append(descricao.replaceAll("\n", "").replaceAll("\t", "").replaceAll("\r","").replaceAll(";",","));
+			}
+			
 			texto.append(";");
 			texto.append(System.getProperty("line.separator"));
 		}
@@ -624,7 +626,13 @@ public class ExMobilController extends
 	private List<String> getListaAnos() {
 		final ArrayList<String> lst = new ArrayList<String>();
 		final Calendar cal = Calendar.getInstance();
-		for (Integer ano = cal.get(Calendar.YEAR); ano >= 1990; ano--) {
+		
+		Integer anoAux = 1990;
+		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+			anoAux = 2018;
+		}
+		
+		for (Integer ano = cal.get(Calendar.YEAR); ano >= anoAux; ano--) {
 			lst.add(ano.toString());
 		}
 		return lst;

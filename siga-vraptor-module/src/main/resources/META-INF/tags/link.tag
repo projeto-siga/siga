@@ -61,18 +61,18 @@
 					href="javascript:${linkConfirm}popitup('${url}');">${img}${title}</a>
 			</c:when>
 			<c:when test="${not empty ajax and ajax != false}">
-				<span id="spanAjax_${idAjax}"> <a class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''} link-tag" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
+				<span id="spanAjax_${idAjax}"> <a class="${classe} btn btn-sm btn-light" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 					href="javascript: SetInnerHTMLFromAjaxResponse('${url}', 'spanAjax_${idAjax}');">${img}${title}</a>
 				</span>
 			</c:when>
 			<c:otherwise>
 				<c:choose>
 					<c:when test="${not empty linkConfirm}">
-						<a class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''} link-tag" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
+						<a class="${classe} btn btn-sm btn-light" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 							href="javascript:${linkConfirm}location.href='${url}';">${img}${title}</a>
 					</c:when>
 					<c:otherwise>
-						<a class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''} link-tag" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if> href="${url}">${img}${title}</a>
+						<a class="${classe} btn btn-sm btn-light" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if> href="${url}">${img}${title}</a>
 					</c:otherwise>
 				</c:choose>
 			</c:otherwise>

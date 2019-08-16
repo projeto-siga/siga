@@ -4,6 +4,7 @@
 
 <%@ attribute name="assinar" required="false"%>
 <%@ attribute name="voltar" required="false"%>
+<%@ attribute name="linkVoltar" required="false"%>
 <%@ attribute name="autenticar" required="false"%>
 <%@ attribute name="assinarComSenha" required="false"%>
 <%@ attribute name="assinarComSenhaChecado" required="false"%>
@@ -15,7 +16,7 @@
 <%@ attribute name="tramitarAtivo" required="false"%>
 <%@ attribute name="tramitarFixo" required="false"%>
 
-<div class="col">
+<div class="col pt-2 pb-2">
 	<c:if test="${not empty assinar and assinar}">
 		<a id="bot-assinar" accesskey="s" href="#"
 			onclick="javascript: AssinarDocumentos(false, ${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;POL:Política ICP-Brasil')});"
@@ -30,10 +31,7 @@
 	</c:if>
 
 	<c:if test="${not empty voltar and voltar}">
-
-		<input type="button" value="Voltar"
-			onclick="javascript:history.back();" class="btn btn-secondar mr-2" />
-
+		<input type="button" value="Voltar" onclick="${(empty linkVoltar) ? 'javascript:history.back();' : 'javascript:window.location.href=\''.concat(linkVoltar).concat('\';')}" class="btn btn-secondary mr-2" />
 	</c:if>
 
 	<c:if test="${assinarComSenha || autenticarComSenha}">
@@ -54,8 +52,8 @@
 	</c:if>
 
 	<c:if test="${not empty juntarAtivo}">
-		<div class="form-check form-check-inline mr-2">
-			<input class="form-check-input" type="checkbox" name="ad_juntar_0"
+		<div class="form-check form-check-inline mr-2 ${hide_only_GOVSP}">
+			<input class="form-check-input " type="checkbox" name="ad_juntar_0"
 				id="ad_juntar_0" <c:if test="${juntarAtivo}">checked</c:if>
 				<c:if test="${juntarFixo}">disabled</c:if> /> <label
 				class="form-check-label" for="ad_juntar_0">Juntar</label>
@@ -63,7 +61,7 @@
 	</c:if>
 
 	<c:if test="${not empty tramitarAtivo}">
-		<div class="form-check form-check-inline mr-2">
+		<div class="form-check form-check-inline mr-2 ">
 			<input class="form-check-input" type="checkbox" name="ad_tramitar_0"
 				id="ad_tramitar_0" <c:if test="${tramitarAtivo}">checked</c:if>
 				<c:if test="${tramitarFixo}">disabled</c:if> /> <label

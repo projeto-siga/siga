@@ -22,6 +22,10 @@
 		$('#alertaModal').find('.mensagem-Modal').text(mensagem);
 		$('#alertaModal').modal();
 	}
+
+	function validarNome(campo) {
+		campo.value = campo.value.replace(/[^a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9.]/g,'');
+	}
 </script>
 
 <body>
@@ -58,7 +62,7 @@
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label>Nome</label>
-								<input type="text" id="nmFuncao" name="nmFuncao" value="${nmFuncao}" maxlength="100" size="100" class="form-control"/>
+								<input type="text" id="nmFuncao" name="nmFuncao" value="${nmFuncao}" maxlength="100" size="100" class="form-control" onkeyup="validarNome(this)"/>
 							</div>
 						</div>
 					</div>
@@ -76,7 +80,7 @@
 						<div class="col-sm-6">
 							<div class="form-group">
 								<input type="button" value="Ok" onclick="javascript: validar();" class="btn btn-primary" /> 
-								<input type="button" value="Cancelar" onclick="javascript:location.href='/siga/app/funcao/listar';" class="btn btn-primary" />
+								<input type="button" value="Cancelar" onclick="javascript:history.back();" class="btn btn-primary" />
 							</div>
 						</div>
 					</div>

@@ -87,29 +87,10 @@ public class LoginController extends SigaController {
 				throw new RuntimeException(SigaMessages.getMessage("usuario.falhaautenticacao"));
 			}
 
-			String modulo = extrairModulo(request);
-			SigaJwtBL jwtBL = inicializarJwtBL(modulo);
-
-			String token = jwtBL.criarToken(username, null, null, null);
-
-			Map<String, Object> decodedToken = jwtBL.validarToken(token);
-			Cp.getInstance().getBL().logAcesso(AbstractCpAcesso.CpTipoAcessoEnum.AUTENTICACAO,
-					(String) decodedToken.get("sub"), (Integer) decodedToken.get("iat"),
-					(Integer) decodedToken.get("exp"), HttpRequestUtils.getIpAudit(request));
-
-			response.addCookie(AuthJwtFormFilter.buildCookie(token));
-
-			if (cont != null) {
-				if (cont.contains("?"))
-					cont += "&";
-				else
-					cont += "?";
-				cont += "exibirAcessoAnterior=true";
-				result.redirectTo(cont);
-			} else
-				result.redirectTo("/");
+			gravaCookieComToken(username, cont);
+			
 		} catch (Exception e) {
-			result.include("mensagem", e.getMessage());
+			result.include("loginMensagem", e.getMessage());
 			result.forwardTo(this).login(cont);
 		}
 	}
@@ -136,6 +117,67 @@ public class LoginController extends SigaController {
 		return jwtBL;
 	}
 
+	@Get("app/swapUser")
+	public void authSwap(String username, String cont) throws IOException {
+		
+		try {
+			if (!SigaMessages.isSigaSP()) 
+				throw new ServletException("Funcionalidade não disponível neste ambiente.");
+
+			CpIdentidade usuarioSwap = CpDao.getInstance().consultaIdentidadeCadastrante(username, true);
+			
+			if (usuarioSwap == null)
+				throw new ServletException("Usuário não permitido para acesso com a chave " + username + ".");
+			
+			List<CpIdentidade> idsCpf = CpDao.getInstance().consultaIdentidadesCadastrante(so.getIdentidadeCadastrante().getDpPessoa().getCpfPessoa().toString(), true);
+			
+			boolean usuarioPermitido = false;
+			for (CpIdentidade identCpf : idsCpf) {
+				if (identCpf.getNmLoginIdentidade().equals(username)) {
+					usuarioPermitido = true;
+					break;
+				}
+			}
+			if (!usuarioPermitido)
+				throw new ServletException("Usuário não permitido para acesso com a chave " + username + ".");
+				
+			if (!so.getIdentidadeCadastrante().getDscSenhaIdentidade().equals(usuarioSwap.getDscSenhaIdentidade())) 
+				throw new ServletException("Senha do usuário atual não confere com a do usuário da lotação.");
+
+			this.response.addCookie(AuthJwtFormFilter.buildEraseCookie());
+
+			gravaCookieComToken(username, cont);
+			
+		} catch (Exception e) {
+			result.include("mensagemCabec", e.getMessage());
+			result.include("msgCabecClass", "alert-warning alert-dismissible");
+		}
+	}
+
+	private void gravaCookieComToken(String username, String cont) throws Exception {
+		String modulo = extrairModulo(request);
+		SigaJwtBL jwtBL = inicializarJwtBL(modulo);
+
+		String token = jwtBL.criarToken(username, null, null, null);
+
+		Map<String, Object> decodedToken = jwtBL.validarToken(token);
+		Cp.getInstance().getBL().logAcesso(AbstractCpAcesso.CpTipoAcessoEnum.AUTENTICACAO,
+				(String) decodedToken.get("sub"), (Integer) decodedToken.get("iat"),
+				(Integer) decodedToken.get("exp"), HttpRequestUtils.getIpAudit(request));
+
+		response.addCookie(AuthJwtFormFilter.buildCookie(token));
+
+		if (cont != null) {
+			if (cont.contains("?"))
+				cont += "&";
+			else
+				cont += "?";
+			cont += "exibirAcessoAnterior=true";
+			result.redirectTo(cont);
+		} else
+			result.redirectTo("/");
+	}
+	
 	private String extrairModulo(HttpServletRequest request) throws IOException, ServletException {
 		String opcoes = request.getHeader("Jwt-Options");
 		if (opcoes != null) {

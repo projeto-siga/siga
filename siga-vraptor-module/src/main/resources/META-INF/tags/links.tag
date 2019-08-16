@@ -2,11 +2,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ attribute name="inline"%>
 <%@ attribute name="separator"%>
+<%@ attribute name="buttons"%>
 <%@ attribute name="estilo"%>
 
 <c:remove var="linkSeparator" scope="request" />
 <c:remove var="linkInline" scope="request" />
 
+<c:set var="linkBotoes" value="${empty buttons || buttons != false}" scope="request" />
 <c:if test="${not empty separator and separator != false}">
 	<c:set var="linkSeparator" value="${true}" scope="request" />
 </c:if>

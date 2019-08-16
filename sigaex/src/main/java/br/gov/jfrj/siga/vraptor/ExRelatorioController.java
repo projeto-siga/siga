@@ -339,7 +339,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("orgaoUsuario", getRequest().getParameter("orgaoUsuario"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
 		parametros.put("link_siga", "http://" + getRequest().getServerName() + ":" + getRequest().getServerPort() + getRequest().getContextPath()
-				+ "app/expediente/doc/exibir?sigla=");
+				+ "/app/expediente/doc/exibir?sigla=");
 
 		final RelatorioDocumentosSubordinados rel = new RelatorioDocumentosSubordinados(parametros);
 		rel.gerar();

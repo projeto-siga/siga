@@ -35,13 +35,13 @@ begin
                                          -- d.id_doc=:old.id_doc and
                                           mb.id_doc = doc.id_doc and
                                           mb.id_doc = :old.id_doc and
-                                          m.id_tp_mov = 11 and
+                                          (m.id_tp_mov = 11 or m.id_tip_mov = 58) and
                                           m.id_mov_canceladora is null and
                                           m.id_mobil = mb.id_mobil);
                 
                 if  QTD_DOC_VAR <> 0
                 then
-                     raise_application_error( -20101,'Não é permitido alterar: eletrônico, com conteúdo, tipo mov. 11 e sem mov. canceladora.' );
+                     raise_application_error( -20101,'Não é permitido alterar: eletrônico, com conteúdo, tipo mov. 11 ou 58 e sem mov. canceladora.' );
                 end if;
              end if;
                 

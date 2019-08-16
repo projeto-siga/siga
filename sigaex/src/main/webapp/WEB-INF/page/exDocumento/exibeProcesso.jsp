@@ -64,13 +64,13 @@
         
         if ($('#TelaCheia').hasClass('btn-secondary')) {
 	 		b.classList.remove("btn-secondary");
-	 		b.setAttribute("class", "btn btn-primary btn-sm align-center");
+	 		b.setAttribute("class", "mt-3 ml-2 btn btn-primary btn-sm align-center");
 	 		b.textContent = "Abrir Índice";
 	 		var divDocRight = document.getElementById('right-col');
 	 		divDocRight.setAttribute("class", "col-sm-12");
 		} else {
 	 		b.classList.remove("btn-primary");
-	 		b.setAttribute("class", "btn btn-secondary btn-sm align-center");
+	 		b.setAttribute("class", "mt-3 ml-2 btn btn-secondary btn-sm align-center");
 	 		b.textContent = "Tela cheia";
 	 		var divDocRight = document.getElementById('right-col');
 	 		divDocRight.setAttribute("class", "col-sm-9");
@@ -116,7 +116,7 @@
 				</c:otherwise>
 			</c:choose>
 			<siga:links inline="${true}">
-				<div class="row d-inline position-fixed fixed-bottom">
+				<div class="d-inline position-fixed fixed-bottom">
 					<div class="float-right mr-3 opacity-80">
 						<p>
 							<a class="btn btn-light btn-circle" href="#inicio"> 
@@ -133,9 +133,13 @@
 				<c:if test="${siga_cliente != 'GOVSP'}">
 					<div>
 						<siga:link icon="application_view_list" classe="mt-3 once" title="Visualizar&nbsp;_Movimentações"
-							url="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}"
+							url="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}" atalho="${true}"
 							test="${true}" />
-						<div class="form-control d-inline-block col-sm-6 align-bottom pb-1 mt-3 mr-2">
+						<button type="button" class="mt-3 ml-2 btn btn-secondary btn-sm align-center" id="TelaCheia" data-toggle="button" aria-pressed="false" autocomplete="off"
+							accesskey="t" onclick="javascript: telaCheia(this);">
+							<u>T</u>ela Cheia
+						</button>
+						<div class="d-inline-block col-sm-6 align-bottom pb-1 mt-3 mr-2">
 							<siga:link icon="wrench" title="Preferência:" test="${true}" url="" />
 							<input type="radio" id="radioHTML" name="formato" value="html" accesskey="h" checked="checked" onclick="exibir(htmlAtual,pdfAtual,'');">
 								&nbsp;<u>H</u>TML&nbsp;
@@ -146,12 +150,6 @@
 							<input class="ml-2" type="radio" id="radioPDFSemMarcas" name="formato" accesskey="s" value="pdfsemmarcas" onclick="exibir(htmlAtual,pdfAtual,'semmarcas/');">
 								&nbsp;PDF <u>s</u>em marcas - <a id="pdfsemmarcaslink" accesskey="b"> a<u>b</u>rir</a>
 							</input>
-						</div>
-						<div class="mt-3">
-							<button type="button" class="btn btn-secondary btn-sm align-center" id="TelaCheia" data-toggle="button" aria-pressed="false" autocomplete="off"
-								accesskey="t" onclick="javascript: telaCheia(this);">
-								<u>T</u>ela Cheia
-							</button>
 						</div>
 					</div>
 				</c:if>

@@ -33,6 +33,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.ColumnResult;
 import javax.persistence.Entity;
@@ -86,6 +88,12 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		if (getLotacao() == null)
 			return null;
 		return getLotacao().getIdLotacao();
+	}
+	
+	public Long getIdLotacaoIni() {
+		if (getLotacao() == null)
+			return null;
+		return getLotacao().getIdLotacaoIni();
 	}
 
 	public boolean isFechada() {
@@ -195,7 +203,7 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		if(sigla != null && !"".equals(sigla)) {
 			setSesbPessoa(MatriculaUtils.getSiglaDoOrgaoDaMatricula(sigla.toUpperCase()).toUpperCase());
 			setMatricula(MatriculaUtils.getParteNumericaDaMatricula(sigla.toUpperCase()));
-		}
+		} 
 	}
 
 	public String getNomePessoaAI() {

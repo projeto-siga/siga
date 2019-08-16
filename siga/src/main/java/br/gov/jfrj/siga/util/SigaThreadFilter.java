@@ -10,7 +10,10 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.dao.ModeloDao;
 
 public class SigaThreadFilter implements Filter {
 
@@ -23,6 +26,15 @@ public class SigaThreadFilter implements Filter {
 			throws IOException, ServletException {
 		EntityManager em = SigaStarter.emf.createEntityManager();
 		ContextoPersistencia.setEntityManager(em);
+		
+		ModeloDao.freeInstance();
+		CpDao.getInstance();
+		try {
+			Cp.getInstance().getConf().limparCacheSeNecessario();
+		} catch (Exception e1) {
+			throw new RuntimeException(
+					"Não foi possível atualizar o cache de configurações", e1);
+		}
 
 		em.getTransaction().begin();
 

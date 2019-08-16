@@ -2043,6 +2043,21 @@ public class CpDao extends ModeloDao {
 		}
 	}
 	
+	public CpIdentidade obterIdentidadeAtual(final CpIdentidade u) {
+		try {
+			final Query qry = em().createNamedQuery(
+					"consultarIdentidadeAtualPelaInicial");
+			qry.setParameter("idIni", u.getHisIdIni());
+			final CpIdentidade id = (CpIdentidade) qry.getSingleResult();
+			return id;
+		} catch (final IllegalArgumentException e) {
+			throw e;
+
+		} catch (final Exception e) {
+			return null;
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	public CpAcesso consultarAcessoAnterior(final DpPessoa pessoa) {
 		String sql = "from CpAcesso a where a.cpIdentidade.dpPessoa.idPessoaIni = :idPessoaIni order by a.dtInicio desc";

@@ -1376,6 +1376,21 @@ public class ExBL extends CpBL {
 			return true;
 		return false;
 	}
+	
+	public boolean deveJuntarAutomaticamente(DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc) {
+		final Long idSit = Ex
+				.getInstance()
+				.getConf()
+				.buscaSituacao(doc.getExModelo(),
+						doc.getExTipoDocumento(),
+						titular, lotaTitular,
+						CpTipoConfiguracao.TIPO_CONFIG_JUNTADA_AUTOMATICA)
+				.getIdSitConfiguracao();
+
+		if (idSit == ExSituacaoConfiguracao.SITUACAO_OBRIGATORIO || idSit == ExSituacaoConfiguracao.SITUACAO_DEFAULT)
+			return true;
+		return false;
+	}
 
 	public String assinarDocumento(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
@@ -1597,7 +1612,10 @@ public class ExBL extends CpBL {
 			// verifica se o volume está encerrado, se estiver procura o último
 			// volume para juntar.
 
-			if (doc.getExMobilPai() != null && (juntar == null || juntar)) {
+			if (juntar == null)
+				juntar = deveJuntarAutomaticamente(cadastrante, lotaCadastrante, doc);
+			
+			if (doc.getExMobilPai() != null && juntar) {
 				if (doc.getExMobilPai().getDoc().isProcesso()
 						&& doc.getExMobilPai().isVolumeEncerrado()) {
 					doc.setExMobilPai(doc.getExMobilPai().doc()
@@ -1774,7 +1792,10 @@ public class ExBL extends CpBL {
 
 			// Verifica se o documento possui documento pai e faz a juntada
 			// automática.
-			if (doc.getExMobilPai() != null && (juntar == null || juntar)) {
+			if (juntar == null)
+				juntar = deveJuntarAutomaticamente(cadastrante, lotaCadastrante, doc);
+			
+			if (doc.getExMobilPai() != null && juntar) {
 				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov,
 						subscritor, titular, mov);
 			}
@@ -3002,6 +3023,8 @@ public class ExBL extends CpBL {
 
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
 			dao().gravar(doc);
+			
+			ContextoPersistencia.flush();
 
 			if (doc.getExFormaDocumento().getExTipoFormaDoc().isExpediente()) {
 				for (final ExVia via : setVias) {

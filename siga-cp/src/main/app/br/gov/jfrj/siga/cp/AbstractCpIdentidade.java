@@ -64,7 +64,12 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "or pes.situacaoFuncionalPessoa = '2' "
 				+ "or pes.situacaoFuncionalPessoa = '12' "
 				+ "or pes.situacaoFuncionalPessoa = '22' "
-				+ "or pes.situacaoFuncionalPessoa = '31') ") })
+				+ "or pes.situacaoFuncionalPessoa = '31') "),
+		@NamedQuery(name = "consultarIdentidadeAtualPelaInicial", query = "from CpIdentidade u "
+				+ "		where u.hisDtIni = "
+				+ "		(select max(p.hisDtIni) from CpIdentidade p where p.hisIdIni = :idIni)"
+				+ "		 and u.hisIdIni = :idIni"),
+		})
 public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 	@SequenceGenerator(name = "generator", sequenceName = "CORPORATIVO.CP_IDENTIDADE_SEQ")
 	@Id

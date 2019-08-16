@@ -3,14 +3,10 @@ package br.gov.jfrj.siga.gc.util;
 import java.io.IOException;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-
-import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.auditoria.filter.ThreadFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;

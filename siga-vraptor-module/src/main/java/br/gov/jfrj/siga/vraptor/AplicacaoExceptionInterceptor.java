@@ -48,8 +48,8 @@ public class AplicacaoExceptionInterceptor implements Interceptor {
 				} catch (IOException e1) {
 					throw new RuntimeException(e1);
 				}
-			}
-			throw e;
+			} else
+			    throw e;
 
 		}
 	}

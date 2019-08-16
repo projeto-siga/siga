@@ -583,14 +583,16 @@ public class ExMovimentacaoController extends ExController {
 					.processarComandosEmTag(doc, "pre_assinatura");
 		}
 		
-		AtivoEFixo af = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), CpTipoConfiguracao.TIPO_CONFIG_TRAMITE_AUTOMATICO);
+		AtivoEFixo afTramite = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), CpTipoConfiguracao.TIPO_CONFIG_TRAMITE_AUTOMATICO);
+		
+		AtivoEFixo afJuntada = obterAtivoEFixo(doc.getExModelo(), doc.getExTipoDocumento(), CpTipoConfiguracao.TIPO_CONFIG_JUNTADA_AUTOMATICA);
 		
 		// Habilita ou desabilita o trâmite 
 		if (!Ex.getInstance()
 				.getComp()
 				.podeTramitarPosAssinatura(doc.getDestinatario(), doc.getLotaDestinatario(), getTitular(), getLotaTitular(),doc.getMobilGeral())){
-			af.ativo = false;
-			af.fixo = true;
+			afTramite.ativo = false;
+			afTramite.fixo = true;
 		}
 		
 		result.include("sigla", sigla);
@@ -599,10 +601,10 @@ public class ExMovimentacaoController extends ExController {
 		result.include("lotaTitular", this.getLotaTitular());
 		result.include("autenticando", autenticando);
 		result.include("assinando", assinando);
-		result.include("juntarAtivo", doc.getPai() != null ? true : null);
-		result.include("juntarFixo", doc.getPai() != null ? false : null);
-		result.include("tramitarAtivo", af.ativo);
-		result.include("tramitarFixo", af.fixo);
+		result.include("juntarAtivo", doc.getPai() != null && afJuntada.ativo ? true : null);
+		result.include("juntarFixo", doc.getPai() != null && afJuntada.fixo ? false : null);
+		result.include("tramitarAtivo", afTramite.ativo);
+		result.include("tramitarFixo", afTramite.fixo);
 	}
 	
 	public static class AtivoEFixo {

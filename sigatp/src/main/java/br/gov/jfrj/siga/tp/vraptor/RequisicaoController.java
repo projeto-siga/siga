@@ -166,11 +166,11 @@ public class RequisicaoController extends TpController {
         redirecionarSeErroAoSalvar(requisicaoTransporte, checkRetorno, checkSemPassageiros);
 
         DpPessoa dpPessoa = recuperaPessoa(requisicaoTransporte.getIdSolicitante());
-        checarSolicitante(dpPessoa.getIdInicial(), recuperarComplexoPadrao().getIdComplexo(), true);
+        checarSolicitante(dpPessoa.getIdInicial(), autorizacaoGI.getComplexoPadrao().getIdComplexo(), true);
 
         requisicaoTransporte.setCpOrgaoUsuario(getTitular().getOrgaoUsuario());
 
-        requisicaoTransporte.setCpComplexo(recuperarComplexoPadrao());
+        requisicaoTransporte.setCpComplexo(autorizacaoGI.getComplexoPadrao());
 
         requisicaoTransporte.setSequence(requisicaoTransporte.getCpOrgaoUsuario());
         boolean novaRequisicao = false;
@@ -239,7 +239,7 @@ public class RequisicaoController extends TpController {
 
     private void carregarRequisicoesUltimosDiasInformadosPorEstados(EstadoRequisicao[] estadosRequisicao) {
         StringBuilder criterioBusca = new StringBuilder();
-		int totalDias = Integer.parseInt(Parametro.buscarValorEmVigor("total.dias.pesquisa", getTitular(), recuperarComplexoPadrao()));
+		int totalDias = Integer.parseInt(Parametro.buscarValorEmVigor("total.dias.pesquisa", getTitular(), autorizacaoGI.getComplexoPadrao()));
         criterioBusca.append("((dataHoraRetornoPrevisto is null and dataHoraSaidaPrevista >= ?) or (dataHoraRetornoPrevisto >= ?)) and cpOrgaoUsuario = ? ");
         Calendar ultimosdias = Calendar.getInstance();
         ultimosdias.add(Calendar.DATE, -totalDias);
@@ -268,9 +268,9 @@ public class RequisicaoController extends TpController {
                 }
 
                 if (autorizacaoGI.ehAdministradorMissaoPorComplexo()) {
-                    parametrosFiltrado[parametros.length] = getComplexoAdministrado();
+                    parametrosFiltrado[parametros.length] = autorizacaoGI.getComplexoAdministrador();
                 } else {
-                    parametrosFiltrado[parametros.length] = recuperarComplexoPadrao();
+                    parametrosFiltrado[parametros.length] = autorizacaoGI.getComplexoPadrao();
                 }
                 parametros = parametrosFiltrado;
             }
@@ -348,7 +348,7 @@ public class RequisicaoController extends TpController {
     private void redirecionarSeErroAoSalvar(RequisicaoTransporte requisicaoTransporte, boolean checkRetorno, boolean checkSemPassageiros) throws Exception {
         if (validator.hasErrors()) {
             carregarTiposDeCarga(requisicaoTransporte);
-            recuperarERenderizarTiposDePassageiro(getTitular(), recuperarComplexoPadrao());
+            recuperarERenderizarTiposDePassageiro(getTitular(), autorizacaoGI.getComplexoPadrao());
             carregarFinalidades();
 
             result.include(REQUISICAO_TRANSPORTE, requisicaoTransporte);
@@ -367,7 +367,7 @@ public class RequisicaoController extends TpController {
 
     protected void carregarFinalidades() throws Exception {
     	boolean mostrarOutra;
-		mostrarOutra = autorizacaoGI.ehAdministrador() ? true : Boolean.valueOf(Parametro.buscarValorEmVigor("mostrarTipoFinalidadeOutra", getTitular(), recuperarComplexoPadrao()));
+		mostrarOutra = autorizacaoGI.ehAdministrador() ? true : Boolean.valueOf(Parametro.buscarValorEmVigor("mostrarTipoFinalidadeOutra", getTitular(), autorizacaoGI.getComplexoPadrao()));
     	List<FinalidadeRequisicao> finalidades = FinalidadeRequisicao.listarParaCombo(mostrarOutra);
      	result.include("finalidades", finalidades);
      	result.include("mostrarDetalhes", mostrarOutra);
@@ -381,10 +381,10 @@ public class RequisicaoController extends TpController {
         requisicaoTransporte.setIdSolicitante(dpPessoa.getId());
 
         carregarTiposDeCarga(requisicaoTransporte);
-        recuperarERenderizarTiposDePassageiro(getTitular(), recuperarComplexoPadrao());
+        recuperarERenderizarTiposDePassageiro(getTitular(), autorizacaoGI.getComplexoPadrao());
         carregarFinalidades();
 
-        recuperarERenderizarTiposDePassageiro(getTitular(), recuperarComplexoPadrao());
+        recuperarERenderizarTiposDePassageiro(getTitular(), autorizacaoGI.getComplexoPadrao());
         result.include(TIPOS_REQUISICAO, TipoRequisicao.values());
         result.include(REQUISICAO_TRANSPORTE, requisicaoTransporte);
     }
@@ -396,7 +396,7 @@ public class RequisicaoController extends TpController {
         requisicaoTransporte.setIdSolicitante(requisicaoTransporte.getSolicitante().getId());
 
         carregarTiposDeCarga(requisicaoTransporte);
-        recuperarERenderizarTiposDePassageiro(getTitular(), recuperarComplexoPadrao());
+        recuperarERenderizarTiposDePassageiro(getTitular(), autorizacaoGI.getComplexoPadrao());
         carregarFinalidades();
         boolean checkRetorno = requisicaoTransporte.getDataHoraRetornoPrevisto() == null ? false : true;
 
@@ -425,13 +425,13 @@ public class RequisicaoController extends TpController {
                 }
             }
         } else if (autorizacaoGI.ehAdministradorMissaoPorComplexo()) {
-            if (!getComplexoAdministrado().getIdComplexo().equals(idComplexo) && escrita) {
+            if (!autorizacaoGI.getComplexoAdministrador().getIdComplexo().equals(idComplexo) && escrita) {
                 try {
                     throw new Exception(MessagesBundle.getMessage(REQUISICOES_CHECAR_SOLICITANTE_EXCEPTION));
                 } catch (Exception e) {
                     tratarExcecoes(e);
                 }
-            } else if (autorizacaoGI.ehAprovador() && (!recuperarComplexoPadrao().getIdComplexo().equals(idComplexo) && escrita)) {
+            } else if (autorizacaoGI.ehAprovador() && (!autorizacaoGI.getComplexoPadrao().getIdComplexo().equals(idComplexo) && escrita)) {
                 try {
                     throw new Exception(MessagesBundle.getMessage(REQUISICOES_CHECAR_SOLICITANTE_EXCEPTION));
                 } catch (Exception e) {
@@ -448,7 +448,7 @@ public class RequisicaoController extends TpController {
         requisicaoTransporte.setIdSolicitante(requisicaoTransporte.getSolicitante().getId());
         MenuMontador.instance(result).recuperarMenuRequisicoes(id, false, false);
         carregarTiposDeCarga(requisicaoTransporte);
-        recuperarERenderizarTiposDePassageiro(getTitular(), recuperarComplexoPadrao());
+        recuperarERenderizarTiposDePassageiro(getTitular(), autorizacaoGI.getComplexoPadrao());
         carregarFinalidades();
         result.include(REQUISICAO_TRANSPORTE, requisicaoTransporte);
     }
@@ -462,7 +462,7 @@ public class RequisicaoController extends TpController {
         }
 
         result.include("tipoDePassageiro", tipoDePassageiro);
-        recuperarERenderizarTiposDePassageiro(getTitular(), recuperarComplexoPadrao());
+        recuperarERenderizarTiposDePassageiro(getTitular(), autorizacaoGI.getComplexoPadrao());
         result.include("checkSemPassageiros", checkSemPassageiros);
     }
 
@@ -475,7 +475,7 @@ public class RequisicaoController extends TpController {
     public void buscarPelaSequence(boolean popUp, String sequence) throws Exception  {
         RequisicaoTransporte requisicaoTransporte = recuperarPelaSigla(sequence, popUp);
         carregarTiposDeCarga(requisicaoTransporte);
-        recuperarERenderizarTiposDePassageiro(getTitular(), recuperarComplexoPadrao());
+        recuperarERenderizarTiposDePassageiro(getTitular(), autorizacaoGI.getComplexoPadrao());
         carregarFinalidades();
 
         result.include(TIPOS_REQUISICAO, TipoRequisicao.values());

@@ -427,7 +427,7 @@
 							<tags:collapse title="${docVO.outrosMobsLabel}" id="OutrosMob" collapseMode="${collapse_Expanded}">
 								<a title="Atualizar marcas"
 								style="float: right; margin-top: -3px;"
-								href="${linkTo[ExDocumentoController].aAtualizarMarcasDoc}?sigla=${sigla}"
+								href="${linkTo[ExDocumentoController].aAtualizarMarcasDoc(sigla)}?sigla=${sigla}"
 								${popup?'target="_blank" ':''}> <img
 								src="/siga/css/famfamfam/icons/arrow_refresh.png">
 								

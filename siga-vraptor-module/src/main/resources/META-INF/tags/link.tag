@@ -57,7 +57,7 @@
 	<c:if test="${not empty url}">
 		<c:choose>
 			<c:when test="${not empty popup and popup != false}">
-				<a class="${classe} ${linkBotoes ? 'btn btn-sm btn-info link-tag' : ''}" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
+				<a class="${classe} ${linkBotoes ? 'btn btn-sm btn-light link-tag' : ''}" <c:if test="${not empty accesskey}">accesskey="${accesskey}"</c:if>
 					href="javascript:${linkConfirm}popitup('${url}');">${img}${title}</a>
 			</c:when>
 			<c:when test="${not empty ajax and ajax != false}">

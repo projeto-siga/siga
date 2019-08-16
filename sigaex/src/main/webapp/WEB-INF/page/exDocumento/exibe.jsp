@@ -437,7 +437,6 @@
 							</a>
 								<ul style="list-style-type: none; margin: 0; padding: 0;">
 									<c:forEach var="entry" items="${docVO.marcasPorMobil}">
-										<c:if test="${not empty entry.value}">
 										<c:set var="outroMob" value="${entry.key}" />
 										<c:set var="mobNome" value="${outroMob.isGeral() ? 'Geral' : outroMob.terminacaoSigla}" />
 										<li><c:choose>
@@ -451,7 +450,8 @@
 														style="text-decoration: none">
 														${mobNome} </a>
 												</c:otherwise>
-											</c:choose> &nbsp;-&nbsp; <c:forEach var="marca" items="${entry.value}"	varStatus="loop">
+											</c:choose> &nbsp;-&nbsp; 
+											<c:forEach var="marca" items="${entry.value}" varStatus="loop">
 												<c:if test="${marca.cpMarcador.idMarcador ne '56' && marca.cpMarcador.idMarcador ne '57' && marca.cpMarcador.idMarcador ne '58' && siga_cliente eq 'GOVSP'}">
 												    	${marca.cpMarcador.descrMarcador}
 														<c:if test="${marca.dtIniMarca gt now}">
@@ -472,7 +472,8 @@
 												<c:if test="${siga_cliente ne 'GOVSP'}">
 												    ${marca}<c:if test="${!lopp.last}">,</c:if>
 												</c:if>
-											</c:forEach></li>
+											</c:forEach>
+										</li>
 									</c:forEach>
 								</ul>
 							</tags:collapse>

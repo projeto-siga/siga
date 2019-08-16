@@ -189,37 +189,36 @@ ${meta}
 									modulo="siga/public" urlAcao="buscar" urlSelecionar="selecionar"
 									matricula="${titular.siglaCompleta}" />
 								<button class="btn ${button_class_busca} ml-2 my-2 my-sm-0" type="button" onclick="javascript:buscarDocumentoPorCodigo();">Buscar</button>
-								<button id="link" class="btn btn-outline-success ml-2 my-2 my-sm-0" type="button">Tutoriais</button>
-
-								<div id="tutorialModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="tutorialModalLabel" aria-hidden="true" >
-								    <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 80% !important;">
-								        <div class="modal-content" >
-								            <div class="modal-header bg-success">
-								            	<h5 class="modal-title text-white" id="exampleModalLongTitle">Tutoriais SP Sem Papel</h5>
-								                <button type="button" class="close text-white" data-dismiss="modal" aria-hidden="true">×</button>
-								            </div>
-									        <div class="modal-body bg-light">
-								                <iframe width="100%" height="600" frameborder="0" allowfullscreen=""></iframe>
-								            </div>
-
-								        </div>
-								    </div>
-								</div>
-								<script>
-								    $('#link').click(function () {
-								        var src = 'https://vimeopro.com/fcav/spsempapel';
-								        $('#tutorialModal').modal('show');
-								        $('#tutorialModal iframe').attr('src', src);
-								    });
-								
-								    $('#tutorialModal button').click(function () {
-								        $('#tutorialModal iframe').removeAttr('src');
-								    });
-								</script>
-								
-
-								
-								
+								<c:if test="${siga_cliente eq 'GOVSP'}">
+									<button id="btnTutorial" class="btn btn-outline-success ml-2 my-2 my-sm-0" type="button">Tutoriais</button>
+	
+									<div id="tutorialModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="tutorialModalLabel" aria-hidden="true" >
+									    <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 80% !important;">
+									        <div class="modal-content" >
+									            <div class="modal-header bg-success">
+									            	<h5 class="modal-title text-white" >Tutoriais SP Sem Papel</h5>
+									                <button type="button" class="close text-white" data-dismiss="modal" aria-hidden="true">×</button>
+									            </div>
+										        <div class="modal-body bg-light">
+									                <iframe width="100%" height="600" frameborder="0" allowfullscreen=""></iframe>
+									            </div>
+	
+									        </div>
+									    </div>
+									</div>
+									<script>
+									    $('#btnTutorial').click(function () {
+									        var src = 'https://vimeopro.com/fcav/spsempapel';
+									        $('#tutorialModal').modal('show');
+									        $('#tutorialModal iframe').attr('src', src);
+									    });
+									
+									    $('#tutorialModal button').click(function () {
+									        $('#tutorialModal iframe').removeAttr('src');
+									    });
+									</script>
+								</c:if>
+																
 								<script type="text/javascript">
 									if (false) {
 										var lis = document

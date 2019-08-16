@@ -99,16 +99,18 @@
 										<a href="/siga/public/app/usuario/esqueci_senha"
 										class="btn btn-secondary btn-block">Esqueci minha senha</a>
 									</div>
-									<div class="mt-3">
-									    <div class="d-flex justify-content-between">
-									    	   	<div>
-									    		Versão: ${versao}
-									    	    </div>
-									    	    <div>
-									    		<a class="text-top" href="http://www-desen4.jf.trf2.gov.br/portal/sistemas-open-source-disponibilizados-pelo-trf2-vii/" target="_blank" class="btn btn-link">sobre</a> 
-									    	    </div>
-									    </div>
-									</div>
+									<c:if test="${siga_cliente ne 'GOVSP'}">
+										<div class="mt-3">
+										    <div class="d-flex justify-content-between">
+										    	   	<div>
+										    		Versão: ${versao}
+										    	    </div>
+										    	    <div>
+										    		<a class="text-top" href="http://www-desen4.jf.trf2.gov.br/portal/sistemas-open-source-disponibilizados-pelo-trf2-vii/" target="_blank" class="btn btn-link">sobre</a> 
+										    	    </div>
+										    </div>
+										</div>
+									</c:if>
 								</div>
 							</div>
 						</div>

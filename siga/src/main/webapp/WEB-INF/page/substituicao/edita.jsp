@@ -88,7 +88,7 @@
 								</c:choose>
 							</div> 
 						</div>
-						<div class="col-sm-3">
+						<div class="col-sm-10">
 							<div class="form-group">
 								<label>&nbsp;&nbsp;&nbsp;</label>
 								<span id="spanTitular" class="align-botton" style="${titularStyle}"> 
@@ -124,7 +124,7 @@
 								</c:choose> 
 							</div>
 						</div>
-						<div class="col-sm-3">
+						<div class="col-sm-10">
 							<div class="form-group ">
 								<label>&nbsp;&nbsp;&nbsp;</label>
 								<span id="spanSubstituto" style="${substitutoStyle}"> 

@@ -28,11 +28,13 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 
 import br.gov.jfrj.siga.model.Objeto;
 
@@ -41,6 +43,9 @@ import br.gov.jfrj.siga.model.Objeto;
 public abstract class AbstractCpFeriado extends Objeto implements Serializable {
 
 	@Id
+	@SequenceGenerator(name = "CP_FERIADO_SEQ", sequenceName = "CORPORATIVO"
+			+ ".CP_FERIADO_SEQ")
+	@GeneratedValue(generator = "CP_FERIADO_SEQ")
 	@Column(name = "ID_FERIADO", unique = true, nullable = false)
 	private Integer idFeriado;
 

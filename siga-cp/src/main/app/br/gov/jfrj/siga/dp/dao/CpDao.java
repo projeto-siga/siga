@@ -1749,12 +1749,12 @@ public class CpDao extends ModeloDao {
 			throws Exception {
 		CriteriaQuery<CpModelo> q = cb().createQuery(CpModelo.class);
 		Root<CpModelo> c = q.from(CpModelo.class);
-		c.join("cpOrgaoUsuario", JoinType.LEFT);
+		Join<CpModelo, CpOrgaoUsuario> joinOrgao = c.join("cpOrgaoUsuario", JoinType.LEFT);
 		q.select(c);
 		
 		q.where(cb().isNull(c.get("hisDtFim")));
 		
-		q.orderBy(cb().desc(c.get("cpOrgaoUsuario.siglaOrgaoUsu")));
+		q.orderBy(cb().desc(joinOrgao.get("siglaOrgaoUsu")));
 		List<CpModelo> l = new ArrayList<CpModelo>();
 		for (CpModelo mod : (List<CpModelo>) em().createQuery(q).getResultList())
 			if (script != null && script.trim().length() != 0) {

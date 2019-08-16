@@ -69,6 +69,11 @@
 							href="javascript: window.location.href='/sigaex/app/expediente/doc/listar?primeiraVez=sim'"
 							title="Pesquisar expedientes e processos administrativos">
 							<fmt:message key = "documento.pesquisar"/></a>
+							<a
+							class="btn btn-primary float-right btn-sm ml-2"
+							href="javascript: window.location.href='/sigaex/app/mesa'"
+							title="Exibir os documentos que estão na mesa virtual">
+							Mesa Virtual</a>
 					</div>
 
 				</div>

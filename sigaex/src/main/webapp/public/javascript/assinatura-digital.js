@@ -622,7 +622,7 @@ var providerPassword = {
 					.modal();
 			
 			senhaDialog.on('shown.bs.modal', function () {
-				$('#senhaOk').click(function () {
+				senhaDialog.find('#senhaOk').click(function () {
 					gLogin = $("#nomeUsuarioSubscritor").val();
 					gPassword = $("#senhaUsuarioSubscritor").val();
 					gAssinando = false;
@@ -723,6 +723,7 @@ var providers = [ providerAssijusPopup, providerAssijus, providerIttruAx, provid
 //
 
 var process = {
+	progressDialog : undefined,
 	steps : [],
 	index : 0,
 	reset : function() {
@@ -735,8 +736,8 @@ var process = {
 	run : function() {
 		window.scrollTo(0, 0);
 		
-		var progressDialog = $(
-				'<div class="modal fade" tabindex="-1" role="dialog" id="senhaDialog"><div class="modal-dialog" role="document"><div class="modal-content">'
+		this.progressDialog = progressDialog = $(
+				'<div class="modal fade" tabindex="-1" role="dialog" id="progressDialog"><div class="modal-dialog" role="document"><div class="modal-content">'
 				+ '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Assinatura Digital (' + provider.nome
 				+ ')</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
 				+ '<div class="modal-body"><p id="vbslog">Iniciando...</p><div id="progressbar-ad"></div></div>'
@@ -744,15 +745,16 @@ var process = {
 				+ '</div></div></div>')
 				.modal();
 		
+		var dlg = this.progressDialog;
 		var runFunction = this;
-		progressDialog.on('shown.bs.modal', function () {
-			runFunction.progressbar = $('#progressbar-ad').progressbar();
+		this.progressDialog.on('shown.bs.modal', function () {
+			runFunction.progressbar = dlg.find('#progressbar-ad').progressbar();
 			runFunction.nextStep();
 		});
 		
-		progressDialog.on('hidden.bs.modal', function () {
+		this.progressDialog.on('hidden.bs.modal', function () {
 			gAssinando = false;
-			progressDialog.modal('dispose');
+			dlg.modal('dispose');
 		});
 		
 		
@@ -777,7 +779,7 @@ var process = {
 		
 	},
 	finalize : function() {
-		progressDialog.modal('dispose');
+		this.progressDialog.modal('hide');
 		gAssinando = false;
 	},
 	nextStep : function() {

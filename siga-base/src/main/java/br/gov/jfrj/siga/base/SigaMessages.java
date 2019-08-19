@@ -16,11 +16,7 @@ public class SigaMessages {
 	public static String getMessage(String key) {
 		try {
 	    	if (bundle == null) {
-		    	if (SigaBaseProperties.getString("siga.local") == null) {
-		    		bundle = ResourceBundle.getBundle("messages_TRF2");
-		    	} else {
-		    		bundle = ResourceBundle.getBundle("messages_" + SigaBaseProperties.getString("siga.local"));
-		    	}
+		    	bundle = getBundle();
 	    	}
 		    String message = bundle.getString(key);
 			return message;
@@ -35,4 +31,20 @@ public class SigaMessages {
     	}
     	return false;
     }
+	
+	public static String getLocalizationContext() {
+		String messages = System.getProperty("siga.messages");
+		if (messages == null) {
+			messages = "messages";
+			if (SigaBaseProperties.getString("siga.local") != null) {
+	    		messages += "_" + SigaBaseProperties.getString("siga.local");
+	    	}
+		}
+		return messages;
+	}
+	
+	public static ResourceBundle getBundle() {
+		return ResourceBundle.getBundle(getLocalizationContext());
+    }
+
 }

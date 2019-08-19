@@ -16,11 +16,6 @@
 		<param-name>br.com.caelum.vraptor.packages</param-name>
 		<param-value>br.gov.jfrj.siga.vraptor</param-value>
 	</context-param>
-	<context-param>
-    	<param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
-    	<param-value>messages_GOVSP</param-value>
-  	</context-param>
- 
 
 	<jsp-config>
 		<jsp-property-group>

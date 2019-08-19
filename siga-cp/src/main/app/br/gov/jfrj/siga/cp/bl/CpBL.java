@@ -62,8 +62,6 @@ import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 
 public class CpBL {
 
-	private static ResourceBundle bundle;
-
 	CpCompetenciaBL comp;
 
 	public CpCompetenciaBL getComp() {
@@ -442,7 +440,7 @@ public class CpBL {
 		} else {
 			if (pessoa == null) {
 				throw new AplicacaoException(
-						getBundle().getString("usuario.erro.cpfmatriculanaocadastrado"));
+						SigaMessages.getBundle().getString("usuario.erro.cpfmatriculanaocadastrado"));
 			} else if (pessoa.getEmailPessoaAtual() == null) {
 				throw new AplicacaoException(
 						"Este usuário não possui e-mail cadastrado");
@@ -588,7 +586,7 @@ public class CpBL {
 
 		} else {
 			if (pessoa == null) {
-				throw new AplicacaoException(getBundle().getString("usuario.erro.cpfmatriculanaocadastrado"));
+				throw new AplicacaoException(SigaMessages.getBundle().getString("usuario.erro.cpfmatriculanaocadastrado"));
 			} else {
 				throw new AplicacaoException("Dados Incorretos!");
 			}
@@ -1074,16 +1072,6 @@ public class CpBL {
 		return inputStream;
 	}
 
-	private static ResourceBundle getBundle() {
-    	if (SigaBaseProperties.getString("siga.local") == null) {
-    		bundle = ResourceBundle.getBundle("messages_TRF2");
-    	} else {
-    		bundle = ResourceBundle.getBundle("messages_" + SigaBaseProperties.getString("siga.local"));
-    	}
-        return bundle;
-    }
-	
-	
 	public String criarUsuario(final Long id, final Long idOrgaoUsu, final Long idCargo, final Long idFuncao, final Long idLotacao, final String nmPessoa, final String dtNascimento, 
 			final String cpf, final String email) throws Exception{
 		

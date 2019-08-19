@@ -43,13 +43,13 @@ public class DpCargoController extends
 	@Get
 	@Post
 	@Path({"/app/cargo/buscar","/cargo/buscar.action"})
-	public void busca(String nome, Long idOrgaoUsu, Integer offset, String postback) throws Exception{
+	public void busca(String nome, Long idOrgaoUsu, Integer paramoffset, String postback) throws Exception{
 		if (postback == null)
 			orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 		else
 			orgaoUsu = idOrgaoUsu;
 		
-		this.getP().setOffset(offset);
+		this.getP().setOffset(paramoffset);
 		
 		if (nome == null)
 			nome = "";
@@ -64,7 +64,7 @@ public class DpCargoController extends
 		result.include("idOrgaoUsu",orgaoUsu);
 		result.include("nome",nome);
 		result.include("postbak",postback);
-		result.include("offset",offset);
+		result.include("offset",paramoffset);
 	}
 
 	@Override
@@ -111,8 +111,7 @@ public class DpCargoController extends
 	}
 	
 	@Get("app/cargo/listar")
-	@Post("app/cargo/listar")
-	public void lista(Integer offset, Long idOrgaoUsu, String nome) throws Exception {
+	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome) throws Exception {
 		
 		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
@@ -124,12 +123,12 @@ public class DpCargoController extends
 		}
 		if(idOrgaoUsu != null) {
 			DpCargoDaoFiltro dpCargo = new DpCargoDaoFiltro();
-			if(offset == null) {
-				offset = 0;
+			if(paramoffset == null) {
+				paramoffset = 0;
 			}
 			dpCargo.setIdOrgaoUsu(idOrgaoUsu);
 			dpCargo.setNome(Texto.removeAcento(nome));
-			setItens(CpDao.getInstance().consultarPorFiltro(dpCargo, offset, 15));
+			setItens(CpDao.getInstance().consultarPorFiltro(dpCargo, paramoffset, 15));
 			result.include("itens", getItens());
 			result.include("tamanho", dao().consultarQuantidade(dpCargo));
 			
@@ -137,7 +136,7 @@ public class DpCargoController extends
 			result.include("nome", nome);
 		}
 		setItemPagina(15);
-		result.include("currentPageNumber", calculaPaginaAtual(offset));
+		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 	}
 	
 	@Get("/app/cargo/editar")
@@ -178,6 +177,9 @@ public class DpCargoController extends
 		if(idOrgaoUsu == null)
 			throw new AplicacaoException("Órgão não informada");
 		
+		if(nmCargo != null && !nmCargo.matches("[a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9.]+")) 
+			throw new AplicacaoException("Nome com caracteres não permitidos");
+				
 		List<DpPessoa> listPessoa = null;
 		
 		DpCargo cargo = new DpCargo();

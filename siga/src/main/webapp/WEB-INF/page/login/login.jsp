@@ -44,17 +44,17 @@
 					
 					<h2 class="text-center pb-1 pt-2">${login_box_text}</h2>
 
-					<c:if test="${not empty mensagem}">
+					<c:if test="${not empty loginMensagem}">
 						<div class="login-invalido ">
 							<div class="login-invalido-titulo ${hide_only_GOVSP}">
-								<p class="alert alert-danger ">${mensagem}</p>
+								<p class="alert alert-danger ">${loginMensagem}</p>
 							</div>
 
 							<div class="login-invalido-descricao ">	
 								<div class="${hide_only_GOVSP}">
 									<p class="alert alert-danger">${f:resource('siga.gi.texto.login')}</p>
 								</div>														
-								<p class="alert alert-danger ${hide_only_TRF2}">${mensagem}</p>
+								<p class="alert alert-danger ${hide_only_TRF2}">${loginMensagem}</p>
 							</div>
 						</div>
 					</c:if>
@@ -92,21 +92,25 @@
 									
 									<hr class="my-4">
 									<div class="mt-4">
-										<a href="/siga/public/app/usuario/incluir_usuario"
-											class="btn btn-secondary btn-block mb-2"><fmt:message key = "usuario.sounovo"/></a> <a
-											href="/siga/public/app/usuario/esqueci_senha"
-											class="btn btn-secondary btn-block">Esqueci minha senha</a>
+										<c:if test="${siga_cliente != 'GOVSP'}">
+											<a href="/siga/public/app/usuario/incluir_usuario"
+												class="btn btn-secondary btn-block mb-2"><fmt:message key = "usuario.sounovo"/></a> 
+										</c:if>
+										<a href="/siga/public/app/usuario/esqueci_senha"
+										class="btn btn-secondary btn-block">Esqueci minha senha</a>
 									</div>
-									<div class="mt-3">
-									    <div class="d-flex justify-content-between">
-									    	   	<div>
-									    		Versão: ${versao}
-									    	    </div>
-									    	    <div>
-									    		<a class="text-top" href="http://www-desen4.jf.trf2.gov.br/portal/sistemas-open-source-disponibilizados-pelo-trf2-vii/" target="_blank" class="btn btn-link">sobre</a> 
-									    	    </div>
-									    </div>
-									</div>
+									<c:if test="${siga_cliente ne 'GOVSP'}">
+										<div class="mt-3">
+										    <div class="d-flex justify-content-between">
+										    	   	<div>
+										    		Versão: ${versao}
+										    	    </div>
+										    	    <div>
+										    		<a class="text-top" href="http://www-desen4.jf.trf2.gov.br/portal/sistemas-open-source-disponibilizados-pelo-trf2-vii/" target="_blank" class="btn btn-link">sobre</a> 
+										    	    </div>
+										    </div>
+										</div>
+									</c:if>
 								</div>
 							</div>
 						</div>
@@ -132,4 +136,5 @@
 			return "";
 		}
 	</script>
+	<script src="../../javascript/service-worker.js" async></script>
 </siga:pagina>

@@ -2,13 +2,14 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <siga:pagina titulo="Dados do Servidor">
 	<!-- main content -->
 	<div class="container-fluid">
 		<div class="card bg-light mb-3" >
 			<div class="card-header">
-				<h5>Dados do Servidor</h5>
+				<h5>Dados do <fmt:message key="usuario.servidor"/></h5>
 			</div>
 			<div class="card-body">
 				<div class="row">
@@ -25,7 +26,7 @@
 				<div class="row">
 					<div class="col-sm-3">
 						<div class="form-group">
-							<label>Lotação</label>
+							<label><fmt:message key="usuario.lotacao"/></label>
 						</div>
 					</div>
 					<div class="col-sm-3">
@@ -69,7 +70,7 @@
 			<thead class="thead-dark">
 				<tr>
 					<th align="right">Data</th>
-					<th align="right">Lotacao</th>
+					<th align="right"><fmt:message key="usuario.lotacao"/></th>
 					<th align="right">Função</th>
 					<th align="right">Padrão</th>
 				</tr>

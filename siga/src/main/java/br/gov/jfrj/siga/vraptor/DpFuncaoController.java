@@ -72,13 +72,13 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 	@Get
 	@Post
 	@Path({"/app/funcao/buscar", "/funcao/buscar.action"})
-	public void buscar(String nome, String postback, Integer offset, Long idOrgaoUsu) throws Exception {
+	public void buscar(String nome, String postback, Integer paramoffset, Long idOrgaoUsu) throws Exception {
 		if (postback == null){
 			orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
 		}else{
 			orgaoUsu = idOrgaoUsu;
 		}
-		this.getP().setOffset(offset);
+		this.getP().setOffset(paramoffset);
 		super.aBuscar(nome,postback);
 		
 		result.include("param", getRequest().getParameterMap());
@@ -89,7 +89,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		result.include("idOrgaoUsu",orgaoUsu);
 		result.include("nome",nome);
 		result.include("postbak",postback);
-		result.include("offset",offset);
+		result.include("offset",paramoffset);
 	}
 
 	@Get("/app/funcao/selecionar")
@@ -103,9 +103,8 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		}
 	}
 	
-	@Post("app/funcao/listar")
 	@Get("app/funcao/listar")
-	public void lista(Integer offset, Long idOrgaoUsu, String nome) throws Exception {
+	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome) throws Exception {
 		
 		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
@@ -117,12 +116,12 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		}
 		if(idOrgaoUsu != null) {
 			DpFuncaoConfiancaDaoFiltro dpFuncao = new DpFuncaoConfiancaDaoFiltro();
-			if(offset == null) {
-				offset = 0;
+			if(paramoffset == null) {
+				paramoffset = 0;
 			}
 			dpFuncao.setIdOrgaoUsu(idOrgaoUsu);
 			dpFuncao.setNome(Texto.removeAcento(nome));
-			setItens(CpDao.getInstance().consultarPorFiltro(dpFuncao, offset, 15));
+			setItens(CpDao.getInstance().consultarPorFiltro(dpFuncao, paramoffset, 15));
 			result.include("itens", getItens());
 			result.include("tamanho", dao().consultarQuantidade(dpFuncao));
 			
@@ -130,7 +129,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 			result.include("nome", nome);
 		}
 		setItemPagina(15);
-		result.include("currentPageNumber", calculaPaginaAtual(offset));
+		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 	}
 	
 	@Get("/app/funcao/editar")
@@ -170,6 +169,9 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		
 		if(idOrgaoUsu == null)
 			throw new AplicacaoException("Órgão não informado");
+		
+		if(nmFuncao != null && !nmFuncao.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9.]+")) 
+			throw new AplicacaoException("Nome com caracteres não permitidos");
 		
 		DpFuncaoConfianca funcao = new DpFuncaoConfianca();
 		

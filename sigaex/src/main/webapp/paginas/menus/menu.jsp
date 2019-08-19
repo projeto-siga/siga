@@ -15,21 +15,26 @@
 			<li><a class="dropdown-item"
 				href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a></li>
 
-			<li><a class="dropdown-item"
-				href="/sigaex/app/mesa">Mesa Virtual</a></li>
-				
+			<li><a class="dropdown-item" href="/sigaex/app/mesa">Mesa
+					Virtual</a></li>
+
 			<div class="dropdown-divider"></div>
-			
-			<li><a class="dropdown-item"
-				href="/sigaex/app/expediente/mov/transferir_lote">Transferir em
-					lote</a></li>
-			<li><a class="dropdown-item"
-				href="/sigaex/app/expediente/mov/receber_lote">Receber em lote</a></li>
-			<li><a class="dropdown-item"
-				href="/sigaex/app/expediente/mov/anotar_lote">Anotar em lote</a></li>
-			<li><a class="dropdown-item"
-				href="/sigaex/app/expediente/mov/assinar_tudo">Assinar
-					Documentos, Despachos e Anexos</a></li>
+			<c:catch>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRAMITE:Trâmite;LOTE:Em Lote')}">
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/mov/transferir_lote">Transferir
+							em lote</a></li>
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/mov/receber_lote">Receber em lote</a></li>
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/mov/anotar_lote">Anotar em lote</a></li>
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/mov/assinar_tudo">Assinar
+							Documentos, Despachos e Anexos</a></li>
+				</c:if>
+			</c:catch>
+
 
 			<c:catch>
 				<c:if
@@ -41,14 +46,20 @@
 			<c:catch>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
-					<li><a class="dropdown-item"
-						href="/sigaex/app/expediente/mov/assinar_despacho_lote">Assinar
-							Despacho em lote</a></li>
+					<span class="${hide_only_GOVSP}"><li><a
+							class="dropdown-item"
+							href="/sigaex/app/expediente/mov/assinar_despacho_lote">Assinar
+								Despacho em lote</a></li></span>
 				</c:if>
 			</c:catch>
-			<li><a class="dropdown-item"
-				href="/sigaex/app/expediente/mov/arquivar_corrente_lote">Arquivar
-					em lote</a></li>
+			<c:catch>
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRAMITE:Trâmite;LOTE:Em Lote')}">
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/mov/arquivar_corrente_lote">Arquivar
+							em lote</a></li>
+				</c:if>
+			</c:catch>
 			<c:catch>
 				<c:if
 					test="${f:podeArquivarPermanentePorConfiguracao(titular,lotaTitular)}">
@@ -236,4 +247,43 @@
 
 			</ul></li>
 	</c:if>
+
+	<c:if
+		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios')}">
+		<li class="nav-item dropdown"><a href="javascript:void(0);"
+			class="nav-link dropdown-toggle" data-toggle="dropdown"> Gestão </a>
+			<ul class="dropdown-menu">
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;IGESTAO: Relatório de Indicadores de Gestão')}">
+					<li><a class="dropdown-item" 
+						href="/sigaex/app/expediente/rel/relIndicadoresGestao?primeiraVez=true">
+							Indicadores de Gestão</a></li>
+				</c:if>
+				<c:if
+ 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;RELDOCVOL: Relatório de documentos por volume')}">
+					<li><a class="dropdown-item"
+ 						href="/sigaex/app/expediente/rel/relDocumentosPorVolume?primeiraVez=true">
+ 							Documentos por Volume </a></li>
+ 				</c:if>
+<!-- 				<li><a class="dropdown-item" href="#"> Documentos Fora do -->
+<!-- 						Prazo </a></li> -->
+
+<!-- 				<li><a class="dropdown-item" href="#"> Documentos por -->
+<!-- 						Devolução Programada </a></li> -->
+
+<!-- 				<li><a class="dropdown-item" href="#"> Tempo médio por -->
+<!-- 						Situação </a></li> -->
+
+<!-- 				<li><a class="dropdown-item" href="#"> Tempo médio -->
+<!-- 						Tramitação por Espécie Documental </a></li> -->
+
+<!-- 				<li><a class="dropdown-item" href="#"> Volume de Tramitação -->
+<!-- 						por Nome de documento </a></li> -->
+<!-- 				<li><a class="dropdown-item"  -->
+<!-- 					href="/sigaex/app/expediente/rel/relDocsOrgaoInteressado?primeiraVez=true"> -->
+<!-- 						Total de documentos por Órgão Interessado</a></li> -->
+			</ul>
+		</li>
+	</c:if>
+
 </c:if>

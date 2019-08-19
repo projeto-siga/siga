@@ -70,20 +70,24 @@ This is a useless buffer to fill the page to 513 bytes to avoid display of Frien
 							</div>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col">
-							<div class="form-group">
-								<div style="display: none; padding: 8pt;" align="left" id="stack">
-									<pre style="font-size: 8pt;">${exceptionStackGeral}</pre>
+					<c:if test="${siga_cliente != 'GOVSP'}">
+						<div class="row">
+							<div class="col">
+								<div class="form-group">
+									<div style="display: none; padding: 8pt;" align="left" id="stack">
+										<pre style="font-size: 8pt;">${exceptionStackGeral}</pre>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
+					</c:if>
 					<div class="row">
 						<div class="col">
 							<div class="form-group">		
 								<input type="button" value="Voltar" class="btn btn-primary"  onclick="javascript:history.back();" />
-								<input type="button" id="show_stack" value="Mais detalhes" class="btn btn-primary" onclick="javascript: document.getElementById('stack').style.display=''; document.getElementById('show_stack').style.display='none';" />
+								<c:if test="${siga_cliente != 'GOVSP'}">
+									<input type="button" id="show_stack" value="Mais detalhes" class="btn btn-primary" onclick="javascript: document.getElementById('stack').style.display=''; document.getElementById('show_stack').style.display='none';" />
+								</c:if>
 							</div>
 						</div>
 					</div>

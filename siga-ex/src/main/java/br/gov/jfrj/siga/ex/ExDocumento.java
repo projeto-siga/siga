@@ -510,6 +510,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 
 	/**
+	 * Retorna um descrição do documento com um máximo de caracteres.
+	 */
+	public java.lang.String getDescrCurta(long qtdCaracteres) {
+		if (getDescrDocumento() == null)
+			return "[sem descrição]";
+		if (getDescrDocumento().length() > qtdCaracteres)
+			return getDescrDocumento().substring(0, (int) (qtdCaracteres - 1)) + "...";
+		else
+			return getDescrDocumento();
+	}
+
+	/**
 	 * Retorna a descrição completa do documento.
 	 */
 	@Override

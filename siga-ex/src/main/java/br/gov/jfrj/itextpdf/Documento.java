@@ -41,6 +41,25 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Contexto;
+import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.ex.ExArquivoNumerado;
+import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.ExMovimentacao;
+import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
+import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.bl.CurrentRequest;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.RequestInfo;
+import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
+import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
+import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+
+import com.lowagie.text.Chunk;
 import com.lowagie.text.Annotation;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -515,7 +534,12 @@ public class Documento {
 					tarjar("SEM EFEITO", over, helv, r);
 				} else if (copia) {
 					tarjar("CÓPIA", over, helv, r);
-				} else if (!SigaExProperties.isAmbienteProducao()) {
+				} else if (SigaMessages.isSigaSP() && ("treinamento".equals(SigaExProperties.getAmbiente())) ) {
+					tarjar("CAPACITAÇÃO", over, helv, r);
+				} else if (SigaMessages.isSigaSP() && ("homolog".equals(SigaExProperties.getAmbiente())) ) {
+					tarjar("HOMOLOGAÇÃO", over, helv, r);
+				}
+				else if (!SigaMessages.isSigaSP() && !SigaExProperties.isAmbienteProducao()) {
 					tarjar("INVÁLIDO", over, helv, r);
 				}
 	

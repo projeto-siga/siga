@@ -6,15 +6,17 @@
 <siga:pagina titulo="Listar Fun&ccedil;&otilde;es de Confian&ccedil;a">
 <script type="text/javascript" language="Javascript1.1">
 function sbmt(offset) {
-	if (offset==null) {
-		offset=0;
+	if (offset == null) {
+		offset = 0;
 	}
-	frm.elements['offset'].value=offset;
+	frm.elements["paramoffset"].value = offset;
+	frm.elements["p.offset"].value = offset;
 	frm.submit();
 }
 </script>
-<form name="frm" action="listar" class="form" method="POST">
-	<input type="hidden" name="offset" value="0" />
+<form name="frm" action="listar" class="form" method="GET">
+	<input type="hidden" name="paramoffset" value="0" />
+	<input type="hidden" name="p.offset" value="0" />
 		<div class="container-fluid">
 			<div class="card bg-light mb-3" >
 				<div class="card-header"><h5>Cadastro de Fun&ccedil;&atilde;o de Confian&ccedil;a</h5></div>

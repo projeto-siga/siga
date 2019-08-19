@@ -57,6 +57,7 @@ import org.hibernate.jdbc.Work;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.bl.CpAmbienteEnumBL;
@@ -180,6 +181,14 @@ public class ExDao extends CpDao {
 		query.setLong("idFormaDoc", doc.getExFormaDocumento().getId());
 		query.setLong("anoEmissao", anoEmissao);
 
+		return (Long) query.uniqueResult();
+	}
+	
+	
+	public Long obterNumeroGerado(final ExDocumento doc)
+			throws SQLException {
+		Query query = getSessao().getNamedQuery("obterNumeroGerado");
+		query.setLong("idDoc", doc.getIdDoc());
 		return (Long) query.uniqueResult();
 	}
 
@@ -1709,8 +1718,17 @@ public class ExDao extends CpDao {
 	public List<CpMarcador> listarCpMarcadoresGerais() {
 		CpTipoMarcador marcador = consultar(CpTipoMarcador.TIPO_MARCADOR_GERAL,
 				CpTipoMarcador.class, false);
-		return findByCriteria(CpMarcador.class,
-				Restrictions.eq("cpTipoMarcador", marcador));
+		
+		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+			return findByCriteria(CpMarcador.class,
+					Restrictions.and(
+							Restrictions.eq("cpTipoMarcador", marcador),
+							Restrictions.ne("idMarcador", CpMarcador.MARCADOR_COMO_REVISOR), 
+							Restrictions.ne("idMarcador", CpMarcador.MARCADOR_PRONTO_PARA_ASSINAR)));
+		} else {
+			return findByCriteria(CpMarcador.class,
+					Restrictions.eq("cpTipoMarcador", marcador));
+		}
 	}
 
 	public List<ExTpDocPublicacao> listarExTiposDocPublicacao() {
@@ -1800,6 +1818,32 @@ public class ExDao extends CpDao {
 								+ (titular != null ? " and (marca.dpPessoaIni = :titular)"
 										: " and (marca.dpLotacaoIni = :lotaTitular)"));
 
+		if (titular != null)
+			query.setLong("titular", titular.getIdPessoaIni());
+		else if (lotaTitular != null)
+			query.setLong("lotaTitular", lotaTitular.getIdLotacaoIni());
+
+		List l = query.list();
+ 		long tempoTotal = System.nanoTime() - tempoIni;
+		// System.out.println("consultarPorFiltroOtimizado: " + tempoTotal
+		// / 1000000 + " ms -> " + query + ", resultado: " + l);
+		return l;
+	}
+
+	public List listarDocumentosCxEntradaPorPessoaOuLotacao(DpPessoa titular,
+			DpLotacao lotaTitular) {
+
+		long tempoIni = System.nanoTime();
+		Query query = getSessao()
+				.createQuery(
+						"select marca, marcador, mobil from ExMarca marca"
+								+ " inner join marca.cpMarcador marcador"
+								+ " inner join marca.exMobil mobil"
+								+ " where (marca.dtIniMarca is null or marca.dtIniMarca < sysdate)"
+								+ " and (marca.dtFimMarca is null or marca.dtFimMarca > sysdate)"
+								+ " and (marca.cpMarcador.idMarcador = 14)"
+								+ (titular != null ? " and (marca.dpPessoaIni = :titular)"
+										: " and (marca.dpLotacaoIni = :lotaTitular)"));
 		if (titular != null)
 			query.setLong("titular", titular.getIdPessoaIni());
 		else if (lotaTitular != null)

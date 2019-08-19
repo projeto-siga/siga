@@ -420,6 +420,15 @@ public class ExDocumentoController extends ExController {
 			final String[] vars, String jsonHierarquiaDeModelos)
 			throws IllegalAccessException, InvocationTargetException,
 			IOException {
+		
+		if(exDocumentoDTO != null && exDocumentoDTO
+				.getSigla() != null) {
+			buscarDocumento(false, exDocumentoDTO);
+			if(exDocumentoDTO.getDoc()!= null && exDocumentoDTO.getDoc().isFinalizado() && 
+					exDocumentoDTO.getDoc().getExModelo() != null && !exDocumentoDTO.getIdMod().equals(exDocumentoDTO.getDoc().getExModelo().getId())) {
+				throw new AplicacaoException("Modelo não pode ser alterado");
+			}
+		}
 		result.forwardTo(this)
 				.edita(exDocumentoDTO, null, vars,
 						exDocumentoDTO.getMobilPaiSel(),
@@ -733,7 +742,7 @@ public class ExDocumentoController extends ExController {
 		if (jsonHierarquiaDeModelos == null || !modeloEncontrado) {
 			lh = new ListaHierarquica();
 			for (ExModelo m : getModelos(exDocumentoDTO)) {
-				lh.add(m.getNmMod(), m.getId(),
+				lh.add(m.getNmMod(),m.getDescMod(), m.getId(),
 						m.getId().equals(exDocumentoDTO.getIdMod()));
 			}
 
@@ -771,6 +780,7 @@ public class ExDocumentoController extends ExController {
 		result.include("hierarquiaDeModelos", lh.getList());
 		result.include("jsonHierarquiaDeModelos",
 				escapeHtml(jsonHierarquiaDeModelos));
+		result.include("podeEditarModelo", exDocumentoDTO.getDoc().isFinalizado());
 
 		// Desabilita a proteção contra injeção maldosa de html e js
 		this.response.addHeader("X-XSS-Protection", "0");
@@ -1076,6 +1086,49 @@ public class ExDocumentoController extends ExController {
 		result.include("docVO", docVO);
 		result.include("mob", exDocumentoDTO.getMob());
 		result.include("exibirCompleto", exibirCompleto);
+		result.include("currentTimeMillis", System.currentTimeMillis());
+		result.include("popup", popup);
+	}
+
+	@Get("app/expediente/doc/exibirHistorico")
+	public void aExibirHistorico(final String sigla, final boolean popup) throws Exception {
+		assertAcesso("");
+
+		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
+
+		exDocumentoDTO.setSigla(sigla);
+		buscarDocumento(false, exDocumentoDTO);
+
+		assertAcesso(exDocumentoDTO);
+
+		if (Ex.getInstance()
+				.getComp()
+				.podeReceberEletronico(getTitular(), getLotaTitular(),
+						exDocumentoDTO.getMob())) {
+			Ex.getInstance()
+					.getBL()
+					.receber(getCadastrante(), getLotaTitular(),
+							exDocumentoDTO.getMob(), new Date());
+		}
+
+		final ExDocumentoVO docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
+				exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
+				getLotaTitular(), true, true);
+
+		if (exDocumentoDTO.getMob().isEliminado()) {
+			throw new AplicacaoException(
+					"Documento "
+							+ exDocumentoDTO.getMob().getSigla()
+							+ " eliminado, conforme o termo "
+							+ exDocumentoDTO
+									.getMob()
+									.getUltimaMovimentacaoNaoCancelada(
+											ExTipoMovimentacao.TIPO_MOVIMENTACAO_ELIMINACAO)
+									.getExMobilRef());
+		}
+		result.include("msg", exDocumentoDTO.getMsg());
+		result.include("docVO", docVO);
+		result.include("mob", exDocumentoDTO.getMob());
 		result.include("currentTimeMillis", System.currentTimeMillis());
 		result.include("popup", popup);
 	}

@@ -3838,7 +3838,7 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO,
-				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR);
+				CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR) && !(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")));
 	}
 
 	/**

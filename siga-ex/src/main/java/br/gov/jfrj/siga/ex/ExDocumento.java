@@ -52,6 +52,7 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -687,9 +688,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			lotaBase = getLotaCadastrante();
 
 		if (s == null && lotaBase != null) {
-			s = lotaBase.getLocalidadeString();
+			if (SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))
+						&& lotaBase.getLocalidade() != null && lotaBase.getLocalidade().getNmLocalidade() != null) {
+				s = lotaBase.getLocalidade().getNmLocalidade();	
+			} else {
+				s = lotaBase.getLocalidadeString();	
+			}
 		}
-
 		return s;
 	}
 

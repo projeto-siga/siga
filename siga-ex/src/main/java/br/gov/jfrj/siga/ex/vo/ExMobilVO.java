@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.jboss.logging.Logger;
 
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -527,7 +528,10 @@ public class ExMobilVO extends ExVO {
 				&& mob.getUltimaMovimentacaoNaoCancelada()
 					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
 				&& mob.getUltimaMovimentacaoNaoCancelada()
-				.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO)
+					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO
+				&& (SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")) && 
+							mob.getUltimaMovimentacaoNaoCancelada().getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA &&
+							mob.getDoc().getCadastrante().equals(titular)))
 			addAcao("arrow_undo",
 					"Desfa_zer "
 							+ mob.getDescricaoUltimaMovimentacaoNaoCancelada(),

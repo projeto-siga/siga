@@ -1447,6 +1447,9 @@ public class CpDao extends ModeloDao {
 	}
 
 	public Date consultarDataEHoraDoServidor() throws AplicacaoException {
+		if (ContextoPersistencia.dt() != null)
+			return ContextoPersistencia.dt();
+		
 		Query sql = em().createNamedQuery(
 				"consultarDataEHoraDoServidor");
 
@@ -1455,7 +1458,9 @@ public class CpDao extends ModeloDao {
 			throw new AplicacaoException(
 					"Nao foi possivel obter a data e a hora atuais do servidor.");
 
-		return (Date) ((result.get(0)));
+		Date dt = (Date) ((result.get(0)));
+		ContextoPersistencia.setDt(dt);
+		return dt;
 	}
 
 	public List<CpConfiguracao> consultarConfiguracoesDesde(Date desde) {

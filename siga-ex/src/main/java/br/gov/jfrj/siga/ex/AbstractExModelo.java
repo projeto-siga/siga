@@ -386,12 +386,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	}
 
 	public void setConteudoTpBlob(final java.lang.String conteudoTpMod) {
-		if (getCpArquivo() == null) {
-			CpArquivo arq = new CpArquivo();
-			setCpArquivo(arq);
-			// ExDao.getInstance().gravar(arq);
-		}
-		getCpArquivo().setConteudoTpArq(conteudoTpMod);
+		setCpArquivo(CpArquivo.updateConteudoTp(getCpArquivo(), conteudoTpMod)); 
 	}
 
 	public byte[] getConteudoBlobMod() {
@@ -401,12 +396,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	}
 
 	public void setConteudoBlobMod(byte[] createBlob) {
-		if (getCpArquivo() == null) {
-			CpArquivo arq = new CpArquivo();
-			setCpArquivo(arq);
-			// ExDao.getInstance().gravar(arq);
-		}
-		getCpArquivo().setConteudoBlobArq(createBlob);
+		setCpArquivo(CpArquivo.updateConteudo(getCpArquivo(), createBlob));
 	}
 
 }

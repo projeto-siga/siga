@@ -122,6 +122,7 @@ public class ExConfiguracaoController extends ExController {
 		result.include("configuracao", config);
 	}
 
+	@Transacional
 	@SuppressWarnings("all")
 	@Get("app/expediente/configuracao/excluir")
 	public void excluir(Long id, String nmTipoRetorno, Long idMod, Long idFormaDoc) throws Exception {
@@ -144,6 +145,7 @@ public class ExConfiguracaoController extends ExController {
 		escreveFormRetornoExclusao(nmTipoRetorno, idMod, idFormaDoc);
 	}
 
+	@Transacional
 	@SuppressWarnings("all")
 	@Get("app/expediente/configuracao/editar_gravar")
 	public void editarGravar(Long id, Long idOrgaoUsu, Long idTpMov, Long idTpDoc, Long idTpFormaDoc, Long idMod,
@@ -166,6 +168,7 @@ public class ExConfiguracaoController extends ExController {
 		escreveFormRetorno(nmTipoRetorno, campoFixo, configuracaoBuilder);
 	}
 
+	@Transacional
 	@Post("app/expediente/configuracao/gerenciar_publicacao_boletim_gravar")
 	public void gerenciarPublicacaoBoletimGravar(Integer postback, String gerenciaPublicacao, Long idTpMov,
 			Long idTpConfiguracao, Long idFormaDoc, Long idMod, Integer tipoPublicador, Long idSituacao,
@@ -281,6 +284,7 @@ public class ExConfiguracaoController extends ExController {
 		}
 	}
 
+	@Transacional
 	@SuppressWarnings("static-access")
 	private void gravarConfiguracao(Long idTpConfiguracao, Long idSituacao, final ExConfiguracao config) {
 		assertAcesso(VERIFICADOR_ACESSO);

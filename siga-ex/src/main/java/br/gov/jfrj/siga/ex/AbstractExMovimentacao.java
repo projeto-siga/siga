@@ -676,13 +676,8 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 		return getCpArquivo().getConteudoTpArq();
 	}
 
-	public void setConteudoTpMov(final java.lang.String conteudoTpMod) {
-		if (getCpArquivo() == null) {
-			CpArquivo arq = new CpArquivo();
-			setCpArquivo(arq);
-			// ExDao.getInstance().gravar(arq);
-		}
-		getCpArquivo().setConteudoTpArq(conteudoTpMod);
+	public void setConteudoTpMov(final java.lang.String conteudoTp) {
+		setCpArquivo(CpArquivo.updateConteudoTp(getCpArquivo(), conteudoTp)); 
 	}
 
 	public byte[] getConteudoBlobMov() {
@@ -692,12 +687,7 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	}
 
 	public void setConteudoBlobMov(byte[] createBlob) {
-		if (getCpArquivo() == null) {
-			CpArquivo arq = new CpArquivo();
-			setCpArquivo(arq);
-			// ExDao.getInstance().gravar(arq);
-		}
-		getCpArquivo().setConteudoBlobArq(createBlob);
+		setCpArquivo(CpArquivo.updateConteudo(getCpArquivo(), createBlob));
 	}
 
 

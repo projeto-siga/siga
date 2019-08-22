@@ -137,6 +137,7 @@ public class ExAutenticacaoController extends ExController {
 				certificado = null;
 
 			try {
+				SigaTransacionalInterceptor.upgradeParaTransacional();
 				Ex.getInstance()
 						.getBL()
 						.assinarMovimentacao(

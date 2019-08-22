@@ -187,6 +187,7 @@ public class ExClassificacaoController
 		return exClass;
 	}
 
+	@Transacional
 	@Get("app/expediente/classificacao/gravar")
 	public void gravar(ExClassificacao exClassificacao,
 			String codificacaoAntiga, String acao) throws Exception {
@@ -269,6 +270,7 @@ public class ExClassificacaoController
 		}
 	}
 
+	@Transacional
 	@Get("app/expediente/classificacao/excluir")
 	public void excluir(String codificacao) throws Exception {
 		assertAcesso(ACESSO_SIGA_DOC_FE_PC);
@@ -289,6 +291,7 @@ public class ExClassificacaoController
 		}
 	}
 
+	@Transacional
 	@Post("app/expediente/classificacao/gravarVia")
 	public void gravarVia(String acao, String codificacao, Long idVia, String obsVia, Long idDestino, Long idTemporalidadeArqCorr,
 			Long idTemporalidadeArqInterm, Long idDestinacaoFinal) throws Exception {
@@ -390,6 +393,7 @@ public class ExClassificacaoController
 		}
 	}
 
+	@Transacional
 	@Get("app/expediente/classificacao/excluirVia")
 	public void excluirVia(Long idVia, String codificacao, String acao)
 			throws Exception {

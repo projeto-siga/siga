@@ -3464,7 +3464,7 @@ public class ExBL extends CpBL {
 			if (t != null && t instanceof AplicacaoException)
 				throw (AplicacaoException) t;
 			else
-				throw new AplicacaoException("Erro na gravação", 0, e);
+				throw new Exception("Erro na gravação", e);
 		}
 		try {
 
@@ -3691,7 +3691,7 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro na gravação", 0, e);
+			throw new Exception("Erro na gravação", e);
 
 		}
 
@@ -3708,7 +3708,7 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro na gravação", 0, e);
+			throw new Exception("Erro na gravação", e);
 
 		}
 
@@ -3844,8 +3844,8 @@ public class ExBL extends CpBL {
 			throw e;
 		} catch (final Exception e) {
 			ExDao.rollbackTransacao();
-			throw new AplicacaoException("Ocorreu um Erro durante a Operação",
-					0, e);
+			throw new Exception("Ocorreu um Erro durante a Operação",
+					e);
 		}
 
 	}
@@ -3904,7 +3904,7 @@ public class ExBL extends CpBL {
 	public void incluirCosignatario(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final DpPessoa subscritor,
-			final String funcaoCosignatario) throws AplicacaoException {
+			final String funcaoCosignatario) throws Exception {
 
 		try {
 			if (subscritor == null) {
@@ -3926,7 +3926,7 @@ public class ExBL extends CpBL {
 			concluirAlteracaoDocComRecalculoAcesso(doc);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao incluir Cossignatário.", 0, e);
+			throw new Exception("Erro ao incluir Cossignatário.", e);
 		}
 	}
 
@@ -3934,7 +3934,7 @@ public class ExBL extends CpBL {
 			final DpPessoa docTitular, final DpLotacao lotaCadastrante,
 			final String idDocExterno, final ExMobil mob, ExMobil mobPai,
 			final Date dtMov, final DpPessoa subscritor,
-			final DpPessoa titular, final String idDocEscolha) {
+			final DpPessoa titular, final String idDocEscolha) throws Exception {
 
 		if (idDocEscolha.equals("1")) {
 
@@ -4065,13 +4065,13 @@ public class ExBL extends CpBL {
 			
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao juntar documento.", 0, e);
+			throw new Exception("Erro ao juntar documento.", e);
 		}
 
 }
 
 	public ExDocumento refazer(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) {
+			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
 
 		// As alterações devem ser feitas em cancelardocumento.
 		try {
@@ -4094,13 +4094,13 @@ public class ExBL extends CpBL {
 			return novoDoc;
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao refazer o documento.", 0, e);
+			throw new Exception("Erro ao refazer o documento.", e);
 		}
 	}
 
 	// Nato: removi: HttpServletRequest request
 	public ExDocumento duplicar(DpPessoa cadastrante,
-			final DpLotacao lotaCadastrante, ExDocumento doc) {
+			final DpLotacao lotaCadastrante, ExDocumento doc) throws Exception {
 
 		try {
 			iniciarAlteracao();
@@ -4113,7 +4113,7 @@ public class ExBL extends CpBL {
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao duplicar o documento.", 0, e);
+			throw new Exception("Erro ao duplicar o documento.", e);
 		}
 	}
 
@@ -4236,8 +4236,8 @@ public class ExBL extends CpBL {
 					concluirAlteracaoDoc(novaMov.getExDocumento());
 				} catch (final Exception e) {
 					cancelarAlteracao();
-					throw new AplicacaoException(
-							"Erro ao gravar movimentacao.", 0, e);
+					throw new Exception(
+							"Erro ao gravar movimentacao.", e);
 				}
 			}
 		}
@@ -4285,7 +4285,7 @@ public class ExBL extends CpBL {
 	// pois nao eram utilizados
 	public void receber(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob, final Date dtMov)
-			throws AplicacaoException {
+			throws Exception {
 
 
 		SortedSet<ExMobil> set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
@@ -4311,11 +4311,11 @@ public class ExBL extends CpBL {
 			concluirAlteracao(null);
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao receber documento.", 0, e);
+			throw new Exception("Erro ao receber documento.", e);
 		}
 	}
 
-	public void receberEletronico(ExMovimentacao mov) throws AplicacaoException {
+	public void receberEletronico(ExMovimentacao mov) throws Exception {
 
 		// try {
 		// iniciarAlteracao();
@@ -4340,7 +4340,7 @@ public class ExBL extends CpBL {
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor,
 			final DpPessoa titular, final String descrMov)
-			throws AplicacaoException {
+			throws Exception {
 
 		try {
 			iniciarAlteracao();
@@ -4356,15 +4356,15 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException(
-					"Erro ao indicar para guarda permenente.", 0, e);
+			throw new Exception(
+					"Erro ao indicar para guarda permenente.", e);
 		}
 	}
 
 	public void reverterIndicacaoPermanente(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final Date dtMov, final DpPessoa subscritor,
-			final DpPessoa titular, String descrMov) throws AplicacaoException {
+			final DpPessoa titular, String descrMov) throws Exception {
 
 		try {
 			iniciarAlteracao();
@@ -4380,15 +4380,15 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException(
-					"Erro ao reverter indicação para guarda permenente.", 0, e);
+			throw new Exception(
+					"Erro ao reverter indicação para guarda permenente.", e);
 		}
 	}
 
 	public void referenciarDocumento(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final ExMobil mobRef, final Date dtMov, final DpPessoa subscritor,
-			final DpPessoa titular) throws AplicacaoException {
+			final DpPessoa titular) throws Exception {
 
 		if (mobRef == null)
 			throw new AplicacaoException(
@@ -4422,14 +4422,14 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao vincular documento.", 0, e);
+			throw new Exception("Erro ao vincular documento.", e);
 		}
 	}
 
 	public void copiar(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExMobil mob,
 			final ExMobil mobRef, final Date dtMov, final DpPessoa subscritor,
-			final DpPessoa titular) throws AplicacaoException {
+			final DpPessoa titular) throws Exception {
 		
 		final ExMobil mobRefGeral = mobRef.doc().getMobilGeral();
 
@@ -4465,14 +4465,14 @@ public class ExBL extends CpBL {
 			concluirAlteracao(mov.getExMobil());
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao copiar documento.", 0, e);
+			throw new Exception("Erro ao copiar documento.", e);
 		}
 	}
 
 	public String RegistrarAssinatura(final DpPessoa cadastrante,
 			final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, final DpPessoa subscritor, final DpPessoa titular)
-			throws AplicacaoException {
+			throws Exception {
 		boolean fPreviamenteAssinado = !doc.isPendenteDeAssinatura();
 
 		if (!doc.isFinalizado())
@@ -4502,7 +4502,7 @@ public class ExBL extends CpBL {
 				s = processarComandosEmTag(doc, "assinatura");
 		} catch (final Exception e) {
 			cancelarAlteracao();
-			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
+			throw new Exception("Erro ao registrar assinatura.", e);
 		}
 		return s;
 	}

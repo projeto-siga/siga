@@ -174,7 +174,7 @@ public class ExController extends SigaController {
 		return null;
 	}
 
-	public ExConfiguracao criarExConfiguracaoPorCpConfiguracao(CpConfiguracao configuracaoBaseParaExConfiguracao) {
+	protected ExConfiguracao criarExConfiguracaoPorCpConfiguracao(CpConfiguracao configuracaoBaseParaExConfiguracao) {
 		ExConfiguracao exConfiguracao = new ExConfiguracao();
 
 		if (configuracaoBaseParaExConfiguracao.isAtivo())

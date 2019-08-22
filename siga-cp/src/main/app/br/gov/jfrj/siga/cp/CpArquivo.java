@@ -19,25 +19,33 @@
 package br.gov.jfrj.siga.cp;
 
 import java.io.Serializable;
-import java.sql.Blob;
+import java.util.Arrays;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Immutable;
+
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 /**
  * A class that represents a row in the CP_ARQUIVO table. You can customize the
  * behavior of this class by editing the class, {@link CpArquivo()}.
  */
 @Entity
+@Immutable
 @Table(name = "CP_ARQUIVO", schema = "CORPORATIVO")
 public class CpArquivo implements Serializable {
 
@@ -45,10 +53,10 @@ public class CpArquivo implements Serializable {
 
 	@Id
 	@SequenceGenerator(sequenceName = "CORPORATIVO.CP_ARQUIVO_SEQ", name = "CP_ARQUIVO_SEQ")
-	@GeneratedValue(generator = "CP_ARQUIVO_SEQ") 
+	@GeneratedValue(generator = "CP_ARQUIVO_SEQ")
 	@Column(name = "ID_ARQ")
 	private java.lang.Long idArq;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "ID_ORGAO_USU")
 	private CpOrgaoUsuario orgaoUsuario;
@@ -56,9 +64,9 @@ public class CpArquivo implements Serializable {
 	@Column(name = "CONTEUDO_TP_ARQ", length = 128)
 	private java.lang.String conteudoTpArq;
 
-	@Lob
-	@Column(name = "CONTEUDO_BLOB_ARQ")
-	private byte[] conteudoBlobArq;
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@PrimaryKeyJoinColumn
+	private CpArquivoBlob arquivoBlob;
 
 	/**
 	 * Simple constructor of AbstractExDocumento instances.
@@ -78,16 +86,76 @@ public class CpArquivo implements Serializable {
 		return conteudoTpArq;
 	}
 
-	public void setConteudoTpArq(java.lang.String conteudoTpArq) {
+	private void setConteudoTpArq(java.lang.String conteudoTpArq) {
 		this.conteudoTpArq = conteudoTpArq;
 	}
 
+	public CpOrgaoUsuario getOrgaoUsuario() {
+		return orgaoUsuario;
+	}
+
+	public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
+		this.orgaoUsuario = orgaoUsuario;
+	}
+
+	private CpArquivoBlob getArquivoBlob() {
+		return arquivoBlob;
+	}
+
+	private void setArquivoBlob(CpArquivoBlob arquivoBlob) {
+		this.arquivoBlob = arquivoBlob;
+	}
+
 	public byte[] getConteudoBlobArq() {
-		return conteudoBlobArq;
+		if (this.arquivoBlob == null) {
+			this.arquivoBlob = new CpArquivoBlob();
+			this.arquivoBlob.setArquivo(this);
+		}
+		return this.arquivoBlob.getConteudoBlobArq();
 	}
 
-	public void setConteudoBlobArq(byte[] conteudoBlobArq) {
-		this.conteudoBlobArq = conteudoBlobArq;
+	private void setConteudoBlobArq(byte[] createBlob) {
+		if (this.arquivoBlob == null) {
+			this.arquivoBlob = new CpArquivoBlob();
+			this.arquivoBlob.setArquivo(this);
+		}
+		this.arquivoBlob.setConteudoBlobArq(createBlob);
 	}
 
+	public static CpArquivo forUpdate(CpArquivo old) {
+		if (old != null) {
+			if (old.getIdArq() != null) {
+				CpArquivo arq = new CpArquivo();
+				arq.setConteudoTpArq(old.getConteudoTpArq());
+				arq.setOrgaoUsuario(old.getOrgaoUsuario());
+				if (old.getArquivoBlob() != null) {
+					arq.setArquivoBlob(new CpArquivoBlob());
+					arq.getArquivoBlob().setArquivo(arq);
+					arq.getArquivoBlob().setConteudoBlobArq(old.getArquivoBlob().getConteudoBlobArq());
+				}
+				ContextoPersistencia.em().remove(old);
+				return arq;
+			} else
+				return old;
+		} else
+			return new CpArquivo();
+	}
+
+	public static CpArquivo updateConteudoTp(CpArquivo old, String conteudoTp) {
+		if (old == null || !Texto.equals(old.getConteudoTpArq(), conteudoTp)) {
+			CpArquivo arq = CpArquivo.forUpdate(old);
+			arq.setConteudoTpArq(conteudoTp);
+			return arq;
+		}
+		return old;
+	}
+
+	public static CpArquivo updateConteudo(CpArquivo old, byte[] conteudo) {
+		if (old == null || !Arrays.equals(old.getConteudoBlobArq(), conteudo)) {
+			CpArquivo arq = CpArquivo.forUpdate(old);
+			arq.setConteudoBlobArq(conteudo);
+			return arq;
+		}
+		return old;
+	}
 }

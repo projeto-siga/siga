@@ -94,6 +94,7 @@ public class ExMobilController extends
 		setItemPagina(50);
 	}
 
+	@Transacional
 	@Get("app/expediente/doc/marcar")
 	public void aMarcar() {
 		assertAcesso("");
@@ -473,7 +474,7 @@ public class ExMobilController extends
 		return s;
 	}
 	
-	public ExClassificacao daoClassificacao(long id) {
+	protected ExClassificacao daoClassificacao(long id) {
 		return dao().consultar(id, ExClassificacao.class, false);
 	}
 

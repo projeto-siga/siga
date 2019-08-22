@@ -65,6 +65,7 @@ public class ExTemporalidadeController extends ExController {
 		result.include("listaCpUnidade", listaCpUnidade);
 	}
 
+	@Transacional
 	@Post("app/expediente/temporalidade/gravar")
 	public void gravar(final Long idTemporalidade, final String acao, final String descTemporalidade, Integer valorTemporalidade, final Long idCpUnidade) {
 		assertAcesso(ACESSO_FE_TT);
@@ -118,6 +119,7 @@ public class ExTemporalidadeController extends ExController {
 		exTemporal.setCpUnidadeMedida(cpUnidade);
 	}
 
+	@Transacional
 	@Get("app/expediente/temporalidade/excluir")
 	public void excluir(final Long idTemporalidade) {
 		assertAcesso(ACESSO_FE_TT);

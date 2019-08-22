@@ -22,14 +22,12 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.TreeSet;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
@@ -43,6 +41,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
+import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.dp.CpOrgao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -57,43 +56,30 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 @MappedSuperclass
 @NamedQueries({
 		@NamedQuery(name = "obterProximoNumeroSub", query = "select max(doc.numExpediente)+1"
-				+ "			from ExDocumento doc"
-				+ "			inner join doc.subscritor sub "
-				+ "			inner join doc.exFormaDocumento frm "
-				+ "			where doc.anoEmissao = :anoEmissao"
-				+ "			and sub.sesbPessoa = :sesb"
-				+ "			and frm.idFormaDoc = :idFormaDoc"),
+				+ "			from ExDocumento doc" + "			inner join doc.subscritor sub "
+				+ "			inner join doc.exFormaDocumento frm " + "			where doc.anoEmissao = :anoEmissao"
+				+ "			and sub.sesbPessoa = :sesb" + "			and frm.idFormaDoc = :idFormaDoc"),
 		@NamedQuery(name = "obterProximoNumeroCad", query = "select max(doc.numExpediente)+1 "
-				+ "			from ExDocumento doc"
-				+ "			inner join doc.cadastrante sub "
-				+ "			inner join doc.exFormaDocumento frm "
-				+ "			where doc.anoEmissao = :anoEmissao"
-				+ "			and sub.sesbPessoa = :sesb"
-				+ "			and frm.idFormaDoc = :idFormaDoc"),
+				+ "			from ExDocumento doc" + "			inner join doc.cadastrante sub "
+				+ "			inner join doc.exFormaDocumento frm " + "			where doc.anoEmissao = :anoEmissao"
+				+ "			and sub.sesbPessoa = :sesb" + "			and frm.idFormaDoc = :idFormaDoc"),
 		@NamedQuery(name = "obterProximoNumero", query = "select max(doc.numExpediente)+1"
-				+ "			from ExDocumento doc"
-				+ "			inner join doc.exFormaDocumento frm"
-				+ "			inner join doc.orgaoUsuario org"
-				+ "			where org.idOrgaoUsu = :idOrgaoUsu"
-				+ "			and frm.idFormaDoc = :idFormaDoc"
-				+ "			and doc.anoEmissao = :anoEmissao"),
-		@NamedQuery(name = "consultarPorSiglaDocumento", query = "from ExDocumento doc"
-				+ "		where ("
+				+ "			from ExDocumento doc" + "			inner join doc.exFormaDocumento frm"
+				+ "			inner join doc.orgaoUsuario org" + "			where org.idOrgaoUsu = :idOrgaoUsu"
+				+ "			and frm.idFormaDoc = :idFormaDoc" + "			and doc.anoEmissao = :anoEmissao"),
+		@NamedQuery(name = "consultarPorSiglaDocumento", query = "from ExDocumento doc" + "		where ("
 				+ "		doc.anoEmissao=:anoEmissao"
 				+ "		and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "		and doc.exFormaDocumento.idFormaDoc=:idFormaDoc"
 				+ "		and doc.numExpediente=:numExpediente" + "		)"),
 		@NamedQuery(name = "consultarPorModeloEAssinatura", query = "from ExDocumento d where d.idDoc in (select doc.idDoc from ExDocumento as doc join doc.exMobilSet as mob join mob.exMovimentacaoSet as mov"
 				+ "			where (mov.exTipoMovimentacao.idTpMov = 11 or mov.exTipoMovimentacao.idTpMov = 25)"
-				+ "			and mov.exMovimentacaoCanceladora = null"
-				+ "			and doc.exModelo.idMod = :idMod"
-				+ "			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu"
-				+ "			group by doc.idDoc"
+				+ "			and mov.exMovimentacaoCanceladora = null" + "			and doc.exModelo.idMod = :idMod"
+				+ "			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu" + "			group by doc.idDoc"
 				+ "			having min(mov.dtIniMov) between :dataIni and :dataFim)"),
 		@NamedQuery(name = "consultarPorFiltro", query = "select doc, mob, label "
 				+ "			from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc"
-				+ "			"
-				+ "			where ("
+				+ "			" + "			where ("
 				+ "				:descrDocumento = null or :descrDocumento = '' or ("
 				+ "					doc.exNivelAcesso.grauNivelAcesso < 21 and label.cpMarcador.idMarcador != 1 and label.cpMarcador.idMarcador != 10"
 				+ "				) or ( "
@@ -103,11 +89,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "					or (:lotaTitular!=null and :lotaTitular!=0 and doc.destinatario = null and doc.lotaDestinatario in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
 				+ "					or (:lotaTitular!=null and :lotaTitular!=0 and label.dpLotacaoIni in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
 				+ "					or (:titular!=null and :titular!=0 and label.dpPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
-				+ "				)"
-				+ "			)"
-				+ "			"
-				+ "			and ("
-				+ "				("
+				+ "				)" + "			)" + "			" + "			and (" + "				("
 				+ "					(:ultMovIdEstadoDoc = null or :ultMovIdEstadoDoc = 0L) and not (label.cpMarcador.idMarcador in (3, 14, 25))"
 				+ "				) 	or label.cpMarcador.idMarcador = :ultMovIdEstadoDoc"
 				+ "			) and (:ultMovRespSelId = null or :ultMovRespSelId = 0L or label.dpPessoaIni.idPessoa = :ultMovRespSelId)"
@@ -123,10 +105,8 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "			and (:idTipoFormaDoc = null or :idTipoFormaDoc = 0L or doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc = :idTipoFormaDoc)"
 				+ "			and (:classificacaoSelId = null or :classificacaoSelId = 0L or doc.exClassificacao.idClassificacao = :classificacaoSelId)"
 				+ "			and (:descrDocumento = null or :descrDocumento = '' or upper(doc.descrDocumentoAI) like upper('%' || :descrDocumento || '%'))"
-				+ "			"
-				+ "			and (:dtDoc = null or doc.dtDoc >= :dtDoc)"
-				+ "			and (:dtDocFinal = null or doc.dtDoc <= :dtDocFinal)"
-				+ "			"
+				+ "			" + "			and (:dtDoc = null or doc.dtDoc >= :dtDoc)"
+				+ "			and (:dtDocFinal = null or doc.dtDoc <= :dtDocFinal)" + "			"
 				+ "			and (:numAntigoDoc = null or :numAntigoDoc = '' or upper (doc.numAntigoDoc) like upper('%' || :numAntigoDoc || '%'))	"
 				+ "			"
 				+ "			and (:destinatarioSelId = null or :destinatarioSelId = 0L or doc.destinatario.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :destinatarioSelId))"
@@ -143,8 +123,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "			" + "			order by doc.dtDoc desc"),
 		@NamedQuery(name = "consultarQuantidadePorFiltro", query = "select count(doc) "
 				+ "				from ExMarca label inner join label.exMobil mob inner join label.exMobil.exDocumento doc"
-				+ "				"
-				+ "				where ("
+				+ "				" + "				where ("
 				+ "					:descrDocumento = null or :descrDocumento = '' or ("
 				+ "						doc.exNivelAcesso.grauNivelAcesso < 21 and label.cpMarcador.idMarcador != 1 and label.cpMarcador.idMarcador != 10"
 				+ "					) or ( "
@@ -154,10 +133,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "						or (:lotaTitular!=null and :lotaTitular!=0 and doc.destinatario = null and doc.lotaDestinatario in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
 				+ "						or (:lotaTitular!=null and :lotaTitular!=0 and label.dpLotacaoIni in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotaTitular))"
 				+ "						or (:titular!=null and :titular!=0 and label.dpPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :titular))"
-				+ "					)"
-				+ "				)"
-				+ "				"
-				+ "				and ("
+				+ "					)" + "				)" + "				" + "				and ("
 				+ "					("
 				+ "						(:ultMovIdEstadoDoc = null or :ultMovIdEstadoDoc = 0L) and not (label.cpMarcador.idMarcador in (3, 14, 25))"
 				+ "					) 	or label.cpMarcador.idMarcador = :ultMovIdEstadoDoc"
@@ -174,10 +150,8 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "				and (:idFormaDoc = null or :idFormaDoc = 0L or doc.exFormaDocumento.idFormaDoc = :idFormaDoc)"
 				+ "				and (:classificacaoSelId = null or :classificacaoSelId = 0L or doc.exClassificacao.idClassificacao = :classificacaoSelId)"
 				+ "				and (:descrDocumento = null or :descrDocumento = '' or upper(doc.descrDocumentoAI) like upper('%' || :descrDocumento || '%'))"
-				+ "				"
-				+ "				and (:dtDoc = null or doc.dtDoc >= :dtDoc)"
-				+ "				and (:dtDocFinal = null or doc.dtDoc <= :dtDocFinal)"
-				+ "				"
+				+ "				" + "				and (:dtDoc = null or doc.dtDoc >= :dtDoc)"
+				+ "				and (:dtDocFinal = null or doc.dtDoc <= :dtDocFinal)" + "				"
 				+ "				and (:numAntigoDoc = null or :numAntigoDoc = '' or upper (doc.numAntigoDoc) like upper('%' || :numAntigoDoc || '%'))	"
 				+ "				"
 				+ "				and (:destinatarioSelId = null or :destinatarioSelId = 0L or doc.destinatario.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :destinatarioSelId))"
@@ -208,8 +182,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "			(select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = 71 and label.dpPessoaIni=:idPessoaIni)) order by doc.dtDoc desc"),
 		@NamedQuery(name = "consultarExDocumentoClassificados", query = "select doc from ExDocumento doc left join fetch doc.exClassificacao"
 				+ "		where doc.exClassificacao.codificacao like :mascara"
-				+ "		and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario"
-				+ "		and doc.dtFinalizacao is not null"),
+				+ "		and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario" + "		and doc.dtFinalizacao is not null"),
 		@NamedQuery(name = "consultarExDocumentoClassificadosPorLotacao", query = "select doc from ExDocumento doc left join fetch doc.exClassificacao"
 				+ "		where doc.exClassificacao.codificacao like :mascara"
 				+ "			and (doc.lotaTitular.id = :idLotacao)"
@@ -221,8 +194,7 @@ import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 				+ "					and doc.dtFinalizacao is not null"
 				+ "					and doc.dtFinalizacao between :dataInicial and :dataFinal"
 				+ "				order by  doc.dtFinalizacao") })
-public abstract class AbstractExDocumento extends ExArquivo implements
-		Serializable {
+public abstract class AbstractExDocumento extends ExArquivo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -373,12 +345,12 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	@JoinColumn(name = "ID_ORGAO_DESTINATARIO")
 	private CpOrgao orgaoExternoDestinatario;
 
-	@BatchSize(size=1)
+	@BatchSize(size = 1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exDocumento")
 	@Sort(type = SortType.NATURAL)
 	private java.util.SortedSet<ExMobil> exMobilSet = new TreeSet<ExMobil>();
 
-	@BatchSize(size=1)
+	@BatchSize(size = 1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exDocumento")
 	private java.util.Set<ExBoletimDoc> exBoletimDocSet;
 
@@ -490,8 +462,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Retorna o objeto de relacionamento boletim x documentos relacionado a
-	 * este documento
+	 * Retorna o objeto de relacionamento boletim x documentos relacionado a este
+	 * documento
 	 * 
 	 * @return
 	 */
@@ -595,14 +567,14 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 
 	/**
 	 * Retorna a lotação destinatária do documento
-	 * */
+	 */
 	public DpLotacao getLotaDestinatario() {
 		return lotaDestinatario;
 	}
 
 	/**
 	 * Retorna a lotação subscritora do documento
-	 * */
+	 */
 	public DpLotacao getLotaSubscritor() {
 		return lotaSubscritor;
 	}
@@ -679,9 +651,8 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Retorna o número de sequência do documento. Não é o número do expediente.
-	 * No caso de ser um subprocesso, retorna o número que gera o código .01,
-	 * .02, etc.
+	 * Retorna o número de sequência do documento. Não é o número do expediente. No
+	 * caso de ser um subprocesso, retorna o número que gera o código .01, .02, etc.
 	 * 
 	 * @return
 	 */
@@ -738,17 +709,16 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * Implementation of the hashCode method conforming to the Bloch pattern
-	 * with the exception of array properties (these are very unlikely primary
-	 * key types).
+	 * Implementation of the hashCode method conforming to the Bloch pattern with
+	 * the exception of array properties (these are very unlikely primary key
+	 * types).
 	 * 
 	 * @return int
 	 */
 	@Override
 	public int hashCode() {
 		int result = 17;
-		final int idDocValue = this.getIdDoc() == null ? 0 : this.getIdDoc()
-				.hashCode();
+		final int idDocValue = this.getIdDoc() == null ? 0 : this.getIdDoc().hashCode();
 		return result * 37 + idDocValue;
 	}
 
@@ -762,8 +732,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * @param cadastrante
-	 *            Atribui a cadastrante o valor.
+	 * @param cadastrante Atribui a cadastrante o valor.
 	 */
 	public void setCadastrante(final DpPessoa cadastrante) {
 		this.cadastrante = cadastrante;
@@ -783,8 +752,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * @param destinatario
-	 *            Atribui a destinatario o valor.
+	 * @param destinatario Atribui a destinatario o valor.
 	 */
 	public void setDestinatario(final DpPessoa destinatario) {
 		this.destinatario = destinatario;
@@ -871,24 +839,21 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * @param lotaCadastrante
-	 *            Atribui a lotaCadastrante o valor.
+	 * @param lotaCadastrante Atribui a lotaCadastrante o valor.
 	 */
 	public void setLotaCadastrante(final DpLotacao lotaCadastrante) {
 		this.lotaCadastrante = lotaCadastrante;
 	}
 
 	/**
-	 * @param lotaDestinatario
-	 *            Atribui a lotaDestinatario o valor.
+	 * @param lotaDestinatario Atribui a lotaDestinatario o valor.
 	 */
 	public void setLotaDestinatario(final DpLotacao lotaDestinatario) {
 		this.lotaDestinatario = lotaDestinatario;
 	}
 
 	/**
-	 * @param lotaSubscritor
-	 *            Atribui a lotaSubscritor o valor.
+	 * @param lotaSubscritor Atribui a lotaSubscritor o valor.
 	 */
 	public void setLotaSubscritor(final DpLotacao lotaSubscritor) {
 		this.lotaSubscritor = lotaSubscritor;
@@ -908,8 +873,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * @param nomeDestinatario
-	 *            Atribui a nomeDestinatario o valor.
+	 * @param nomeDestinatario Atribui a nomeDestinatario o valor.
 	 */
 	public void setNmDestinatario(final String nomeDestinatario) {
 		this.nmDestinatario = nomeDestinatario;
@@ -975,8 +939,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	/**
-	 * @param subscritor
-	 *            Atribui a subscritor o valor.
+	 * @param subscritor Atribui a subscritor o valor.
 	 */
 	public void setSubscritor(final DpPessoa subscritor) {
 		this.subscritor = subscritor;
@@ -1025,8 +988,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	public void setDtAltDoc(java.util.Date dtAltDoc) {
 		this.dtAltDoc = dtAltDoc;
 	}
-	
-	
+
 	public CpArquivo getCpArquivo() {
 		return cpArquivo;
 	}
@@ -1035,19 +997,14 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		this.cpArquivo = cpArquivo;
 	}
 
-	public java.lang.String getConteudoTpBlob() {
+	public java.lang.String getConteudoTpDoc() {
 		if (getCpArquivo() == null)
 			return null;
 		return getCpArquivo().getConteudoTpArq();
 	}
 
-	public void setConteudoTpBlob(final java.lang.String conteudoTpMod) {
-		if (getCpArquivo() == null) {
-			CpArquivo arq = new CpArquivo();
-			setCpArquivo(arq);
-			// ExDao.getInstance().gravar(arq);
-		}
-		getCpArquivo().setConteudoTpArq(conteudoTpMod);
+	public void setConteudoTpDoc(final java.lang.String conteudoTp) {
+		setCpArquivo(CpArquivo.updateConteudoTp(getCpArquivo(), conteudoTp)); 
 	}
 
 	public byte[] getConteudoBlobDoc() {
@@ -1057,13 +1014,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 	}
 
 	public void setConteudoBlobDoc(byte[] createBlob) {
-		if (getCpArquivo() == null) {
-			CpArquivo arq = new CpArquivo();
-			setCpArquivo(arq);
-			// ExDao.getInstance().gravar(arq);
-		}
-		getCpArquivo().setConteudoBlobArq(createBlob);
+		setCpArquivo(CpArquivo.updateConteudo(getCpArquivo(), createBlob));
 	}
-
 
 }

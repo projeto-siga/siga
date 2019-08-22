@@ -23,6 +23,7 @@ package br.gov.jfrj.siga.ex;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -35,6 +36,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.model.Objeto;
 
@@ -71,9 +73,9 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 	@Column(name = "EX_NOME_PREENCHIMENTO", nullable = false, length = 256)
 	private String nomePreenchimento;
 
-	@Lob
-	@Column(name = "PREENCHIMENTO_BLOB")
-	private byte[] preenchimentoBlob;
+	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ID_ARQ")
+	private CpArquivo cpArquivo;
 
 	/**
 	 * Simple constructor of AbstractExTipoDespacho instances.
@@ -109,21 +111,13 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 		this.idPreenchimento = idPreenchimento;
 	}
 
-	public byte[] getPreenchimentoBlob() {
-		return preenchimentoBlob;
-	}
-
-	public void setPreenchimentoBlob(byte[] preenchimentoBlob) {
-		this.preenchimentoBlob = preenchimentoBlob;
-	}
-
 	@Override
 	public boolean equals(final Object rhs) {
 		if ((rhs == null) || !(rhs instanceof ExPreenchimento))
 			return false;
 		final ExPreenchimento that = (ExPreenchimento) rhs;
 		if ((this.getIdPreenchimento() == null ? that.getIdPreenchimento() == null
-				: this.getIdPreenchimento().equals(that.getPreenchimentoBlob())))
+				: this.getIdPreenchimento().equals(that.getIdPreenchimento())))
 			return true;
 		return false;
 
@@ -151,5 +145,34 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 	public void setNomePreenchimento(String nomePreenchimento) {
 		this.nomePreenchimento = nomePreenchimento;
 	}
+	
+	public CpArquivo getCpArquivo() {
+		return cpArquivo;
+	}
+
+	public void setCpArquivo(CpArquivo cpArquivo) {
+		this.cpArquivo = cpArquivo;
+	}
+
+	public java.lang.String getConteudoTp() {
+		if (getCpArquivo() == null)
+			return null;
+		return getCpArquivo().getConteudoTpArq();
+	}
+
+	public void setConteudoTp(final java.lang.String conteudoTp) {
+		setCpArquivo(CpArquivo.updateConteudoTp(getCpArquivo(), conteudoTp)); 
+	}
+
+	public byte[] getConteudo() {
+		if (getCpArquivo() == null)
+			return null;
+		return getCpArquivo().getConteudoBlobArq();
+	}
+
+	public void setConteudo(byte[] createBlob) {
+		setCpArquivo(CpArquivo.updateConteudo(getCpArquivo(), createBlob));
+	}
+
 
 }

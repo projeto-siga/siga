@@ -467,12 +467,15 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		if (listaLotacoes.size() == 0) {
 			List<CpIdentidade> idsCpf = CpDao.getInstance().consultaIdentidadesCadastrante(getCpfPessoa().toString(), true);
 			for (CpIdentidade identCpf : idsCpf) {
-			//				if (!this.getPessoaInicial().equals(identCpf.getDpPessoa())) { 
 				List<String> listaUserLota = new ArrayList<String>();
 				listaUserLota.add(identCpf.getNmLoginIdentidade());
 				listaUserLota.add(identCpf.getDpPessoa().getLotacao().getSiglaLotacao());
-				listaUserLota.add(identCpf.getDpPessoa().getFuncaoConfianca().getNomeFuncao() + "/" +
-						identCpf.getDpPessoa().getCargo().getNomeCargo());
+				if (identCpf.getDpPessoa().getFuncaoConfianca() != null) {
+					listaUserLota.add(identCpf.getDpPessoa().getFuncaoConfianca().getNomeFuncao() + "/" +
+							identCpf.getDpPessoa().getCargo().getNomeCargo());
+				} else {
+					listaUserLota.add("");
+				}
 				listaLotacoes.add(listaUserLota);
 			}
 		}

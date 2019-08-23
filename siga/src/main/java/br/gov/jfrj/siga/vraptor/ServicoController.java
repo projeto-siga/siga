@@ -218,14 +218,14 @@ public class ServicoController 	extends SigaController {
 	/**
 	*@param dpPessoasDaLotacao the dpPessoasDaLotacao to set
 	*/
-	public void setDpPessoasDaLotacao(List<DpPessoa> dpPessoasDaLotacao) {
+	private void setDpPessoasDaLotacao(List<DpPessoa> dpPessoasDaLotacao) {
 		this.dpPessoasDaLotacao = dpPessoasDaLotacao;
 	}
 	
 	/**
 	 * @param cpConfiguracoesAdotadas the cpConfiguracoesAdotadas to set
 	 */
-	public void setCpConfiguracoesAdotadas(
+	private void setCpConfiguracoesAdotadas(
 			List<CpConfiguracao> cpConfiguracoesAdotadas) {
 		this.cpConfiguracoesAdotadas = cpConfiguracoesAdotadas;
 	}
@@ -247,7 +247,7 @@ public class ServicoController 	extends SigaController {
 	/**
 	* @param cpTipoConfiguracaoUtilizador the cpTipoConfiguracaoUtilizador to set
 	*/
-	public void setCpTipoConfiguracaoUtilizador(
+	private void setCpTipoConfiguracaoUtilizador(
 			CpTipoConfiguracao cpTipoConfiguracaoUtilizador) {
 		this.cpTipoConfiguracaoUtilizador = cpTipoConfiguracaoUtilizador;
 	}
@@ -267,7 +267,7 @@ public class ServicoController 	extends SigaController {
 	/**
 	* @param cpTipoConfiguracaoAConfigurar the cpTipoConfiguracaoAConfigurar to set
 	*/
-	public void setCpTipoConfiguracaoAConfigurar(
+	private void setCpTipoConfiguracaoAConfigurar(
 			CpTipoConfiguracao cpTipoConfiguracaoAConfigurar) {
 		this.cpTipoConfiguracaoAConfigurar = cpTipoConfiguracaoAConfigurar;
 	}
@@ -291,7 +291,7 @@ public class ServicoController 	extends SigaController {
 	/**
 	* @param cpServicosDisponiveis the cpServicosDisponiveis to set
 	*/
-	public void setCpServicosDisponiveis(List<CpServico> cpServicosDisponiveis) {
+	private void setCpServicosDisponiveis(List<CpServico> cpServicosDisponiveis) {
 		this.cpServicosDisponiveis = cpServicosDisponiveis;
 	}
 	
@@ -325,6 +325,7 @@ public class ServicoController 	extends SigaController {
 	}
 	
 
+	@Transacional
 	@Post("/app/gi/servico/inserirPessoaExtra")
 	public void aInserirPessoaExtra() throws Exception{
 		DpPessoa pes = dao.consultar(paramLong("pessoaExtra_pessoaSel.id"), DpPessoa.class,false);
@@ -355,6 +356,7 @@ public class ServicoController 	extends SigaController {
 	
 	
 	
+	@Transacional
 	@Get("/app/gi/servico/excluir-pessoa-extra/{id}")
 	public void excluirPessoaExtra(Long id) throws Exception{
 		DpPessoa pes = dao().consultar(id, DpPessoa.class,false);
@@ -364,6 +366,7 @@ public class ServicoController 	extends SigaController {
 		result.redirectTo(this).edita();
 	}
 	
+	@Transacional
 	@Get("/app/gi/servico/gravar")
 	public void gravar(String idPessoaConfiguracao, 
 					String idServicoConfiguracao, 
@@ -415,12 +418,12 @@ public class ServicoController 	extends SigaController {
    }
 
 
-	public String getRespostaXMLStringRPC() {
+	private String getRespostaXMLStringRPC() {
 		return respostaXMLStringRPC;
 	}
 
 
-	public void setRespostaXMLStringRPC(String respostaXMLStringRPC) {
+	private void setRespostaXMLStringRPC(String respostaXMLStringRPC) {
 		this.respostaXMLStringRPC = respostaXMLStringRPC;
 	}
 }

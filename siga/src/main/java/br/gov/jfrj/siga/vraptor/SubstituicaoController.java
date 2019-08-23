@@ -187,6 +187,7 @@ public class SubstituicaoController extends SigaController {
 		result.include("lotaSubstitutoSel", lotaSubstitutoSel);//tipoSubstituto=2
 	}
 	
+	@Transacional
 	@Post("/app/substituicao/gravar")
 	public void gravar(DpSubstituicao substituicao
 					  ,Integer tipoTitular
@@ -363,6 +364,7 @@ public class SubstituicaoController extends SigaController {
 
 	}
 	
+	@Transacional
 	@Get("/app/substituicao/finalizar")
 	public void finalizar() throws Exception {
 		try {
@@ -392,6 +394,7 @@ public class SubstituicaoController extends SigaController {
 		dao().gravar(per);
 	}
 	
+	@Transacional
 	@Get("/app/substituicao/substituirGravar")
 	public void substituirGravar(Long id) throws Exception {
 		try {
@@ -432,8 +435,8 @@ public class SubstituicaoController extends SigaController {
 			result.redirectTo(PrincipalController.class).principal(false, null);
 	}	
 	
+	@Transacional
 	public void exclui(Long id) throws Exception {
-		
 		try{
 		
 		if (id != null) {

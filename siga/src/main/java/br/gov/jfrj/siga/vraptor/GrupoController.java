@@ -251,6 +251,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 	 * @throws InstantiationException
 	 * @throws InvocationTargetException
 	 */
+	@Transacional
 	protected Long aGravar(Long idCpGrupo, String siglaGrupo, String dscGrupo,
 			CpGrupoDeEmailSelecao grupoPaiSel,
 			Integer codigoTipoConfiguracaoNova,

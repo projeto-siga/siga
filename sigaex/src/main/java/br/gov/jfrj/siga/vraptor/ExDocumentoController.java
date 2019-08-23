@@ -235,7 +235,6 @@ public class ExDocumentoController extends ExController {
 			IllegalAccessException, InvocationTargetException {
 		assertAcesso("");
 
-		ModeloDao.iniciarTransacao();
 		final ExPreenchimento exPreenchimento = dao()
 				.consultar(exDocumentoDTO.getPreenchimento(),
 						ExPreenchimento.class, false);
@@ -243,7 +242,7 @@ public class ExDocumentoController extends ExController {
 		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars,
 				campos));
 		dao().gravar(exPreenchimento);
-		ModeloDao.commitTransacao();
+		SigaTransacionalInterceptor.downgradeParaNaoTransacional();
 
 		exDocumentoDTO.setPreenchimento(exPreenchimento.getIdPreenchimento());
 
@@ -855,12 +854,12 @@ public class ExDocumentoController extends ExController {
 			InvocationTargetException, IOException {
 		assertAcesso("");
 
-		ModeloDao.iniciarTransacao();
 		final ExPreenchimento exemplo = dao()
 				.consultar(exDocumentoDTO.getPreenchimento(),
 						ExPreenchimento.class, false);
 		dao().excluir(exemplo);
-		ModeloDao.commitTransacao();
+		SigaTransacionalInterceptor.downgradeParaNaoTransacional();
+
 		exDocumentoDTO.setPreenchimento(0L);
 		result.forwardTo(this).edita(exDocumentoDTO, null, vars,
 				exDocumentoDTO.getMobilPaiSel(),
@@ -1332,7 +1331,7 @@ public class ExDocumentoController extends ExController {
 	@Post("/app/expediente/doc/gravar")
 	public void gravar(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos,
-			final UploadedFile arquivo, String jsonHierarquiaDeModelos) {
+			final UploadedFile arquivo, String jsonHierarquiaDeModelos) throws Exception {
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();
 
@@ -1527,7 +1526,7 @@ public class ExDocumentoController extends ExController {
 			}
 
 		} catch (final Exception e) {
-			throw new AplicacaoException("Erro na gravação", 0, e);
+			throw new Exception("Erro na gravação", e);
 		}
 
 		if (param("ajax") != null && param("ajax").equals("true")) {
@@ -1552,7 +1551,6 @@ public class ExDocumentoController extends ExController {
 			IllegalAccessException, InvocationTargetException {
 		assertAcesso("");
 
-		ModeloDao.iniciarTransacao();
 		final ExPreenchimento exPreenchimento = new ExPreenchimento();
 
 		final DpLotacao provLota = getLotaTitular();
@@ -1567,7 +1565,7 @@ public class ExDocumentoController extends ExController {
 		exPreenchimento.setPreenchimentoBA(getByteArrayFormPreenchimento(vars,
 				campos));
 		dao().gravar(exPreenchimento);
-		ModeloDao.commitTransacao();
+		SigaTransacionalInterceptor.downgradeParaNaoTransacional();
 
 		exDocumentoDTO.setPreenchimento(exPreenchimento.getIdPreenchimento());
 

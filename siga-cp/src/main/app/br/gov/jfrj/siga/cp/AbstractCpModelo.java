@@ -21,6 +21,7 @@ package br.gov.jfrj.siga.cp;
 import java.sql.Blob;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -48,15 +49,13 @@ public abstract class AbstractCpModelo extends HistoricoAuditavelSuporte {
 	@Desconsiderar
 	private java.lang.Long idMod;
 
-	/** The value of the simple conteudoBlobMod property. */
-	@Lob
-	@Basic(fetch = FetchType.LAZY)
-	@Column(name = "CONTEUDO_BLOB_MOD")
-	private byte[] conteudoBlobMod;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU")
 	private CpOrgaoUsuario cpOrgaoUsuario;
+
+	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ID_ARQ")
+	private CpArquivo cpArquivo;
 
 	/**
 	 * Return the value of the primary key column.
@@ -67,14 +66,6 @@ public abstract class AbstractCpModelo extends HistoricoAuditavelSuporte {
 		return idMod;
 	}
 
-	/**
-	 * Return the value of the CONTEUDO_BLOB_MOD column.
-	 * 
-	 * @return java.lang.String
-	 */
-	public byte[] getConteudoBlobMod() {
-		return this.conteudoBlobMod;
-	}
 
 	/**
 	 * /** Set the simple primary key value that identifies this object.
@@ -85,15 +76,6 @@ public abstract class AbstractCpModelo extends HistoricoAuditavelSuporte {
 		this.idMod = idMod;
 	}
 
-	/**
-	 * Set the value of the CONTEUDO_BLOB_MOD column.
-	 * 
-	 * @param conteudoBlobMod
-	 */
-	public void setConteudoBlobMod(byte[] conteudoBlobMod) {
-		this.conteudoBlobMod = conteudoBlobMod;
-	}
-
 	public CpOrgaoUsuario getCpOrgaoUsuario() {
 		return cpOrgaoUsuario;
 	}
@@ -102,4 +84,32 @@ public abstract class AbstractCpModelo extends HistoricoAuditavelSuporte {
 		this.cpOrgaoUsuario = cpOrgaoUsuario;
 	}
 
+	public CpArquivo getCpArquivo() {
+		return cpArquivo;
+	}
+
+	public void setCpArquivo(CpArquivo cpArquivo) {
+		this.cpArquivo = cpArquivo;
+	}
+
+	public java.lang.String getConteudoTpBlob() {
+		if (getCpArquivo() == null)
+			return null;
+		return getCpArquivo().getConteudoTpArq();
+	}
+
+	public void setConteudoTpBlob(final java.lang.String conteudoTpMod) {
+		setCpArquivo(CpArquivo.updateConteudoTp(getCpArquivo(), conteudoTpMod)); 
+	}
+
+	public byte[] getConteudoBlobMod() {
+		if (getCpArquivo() == null)
+			return null;
+		return getCpArquivo().getConteudoBlobArq();
+	}
+
+	public void setConteudoBlobMod(byte[] createBlob) {
+		setCpArquivo(CpArquivo.updateConteudo(getCpArquivo(), createBlob));
+		setConteudoTpBlob("template/freemarker");
+	}
 }

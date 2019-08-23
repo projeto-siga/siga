@@ -49,6 +49,7 @@ public class IdentidadeController extends GiControllerSupport {
 		return (pessoaSel == null) ? new DpPessoaSelecao() : pessoaSel;
 	}
 	
+	@Transacional
 	@Get("/app/gi/identidade/editar_gravar")
 	public void aEditarGravar(DpPessoaSelecao pessoaSel, String dtExpiracao, Long id) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");
@@ -70,6 +71,7 @@ public class IdentidadeController extends GiControllerSupport {
 		result.forwardTo(this).lista(pessoaSel);
 	}
 
+	@Transacional
 	@Get("/app/gi/identidade/cancelar")
 	public void aCancelar(Long id, DpPessoaSelecao pessoaSel) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");
@@ -82,6 +84,7 @@ public class IdentidadeController extends GiControllerSupport {
 		result.forwardTo(this).lista(pessoaSel);
 	}
 
+	@Transacional
 	@Get("/app/gi/identidade/desbloquear")
 	public void aBloquear(Long id, DpPessoaSelecao pessoaSel) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");
@@ -93,6 +96,7 @@ public class IdentidadeController extends GiControllerSupport {
 			throw new AplicacaoException("Não foi informada id");
 	}
 
+	@Transacional
 	@Get("/app/gi/identidade/bloquear")
 	public void aDesbloquear(Long id, DpPessoaSelecao pessoaSel) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");
@@ -104,6 +108,7 @@ public class IdentidadeController extends GiControllerSupport {
 			throw new AplicacaoException("Não foi informada id");
 	}
 
+	@Transacional
 	@Get("/app/gi/identidade/bloquear_pessoa")
 	public void aBloquearPessoa(DpPessoaSelecao pessoaSel) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");
@@ -116,6 +121,7 @@ public class IdentidadeController extends GiControllerSupport {
 			throw new AplicacaoException("Não foi informada a pessoa");
 	}
 
+	@Transacional
 	@Get("/app/gi/identidade/desbloquear_pessoa")
 	public void aDesbloquearPessoa(DpPessoaSelecao pessoaSel) throws Exception {
 		assertAcesso("ID:Gerenciar identidades");

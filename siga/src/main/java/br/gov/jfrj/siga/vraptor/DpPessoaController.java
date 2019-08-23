@@ -133,7 +133,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	 }
 
 	@Override
-	public DpPessoaDaoFiltro createDaoFiltro() {
+	protected DpPessoaDaoFiltro createDaoFiltro() {
 		final DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
 		flt.setNome(Texto.removeAcentoMaiusculas(getNome()));
 		if (lotacaoSel != null){
@@ -150,7 +150,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 
 	@Override
-	public Selecionavel selecionarPorNome(final DpPessoaDaoFiltro flt)
+	protected Selecionavel selecionarPorNome(final DpPessoaDaoFiltro flt)
 			throws AplicacaoException {
 		Selecionavel sel = null;
 
@@ -251,6 +251,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		}
 	}
 	
+	@Transacional
 	@Get("/app/pessoa/ativarInativar")
 	public void ativarInativar(final Long id, Integer offset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa) throws Exception{
 		CpOrgaoUsuario ou = new CpOrgaoUsuario();
@@ -442,6 +443,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		}
 	}
 	
+	@Transacional
 	@Post("/app/pessoa/gravar")
 	public void editarGravar(final Long id, final Long idOrgaoUsu, final Long idCargo, final Long idFuncao, final Long idLotacao, final String nmPessoa, final String dtNascimento, 
 			final String cpf, final String email) throws Exception{
@@ -548,6 +550,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		result.use(Results.page()).forwardTo("/WEB-INF/page/dpPessoa/cargaPessoa.jsp");
 	}
 	
+	@Transacional
 	@Post("/app/pessoa/carga")
 	public Download carga( final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
 		InputStream inputStream = null;

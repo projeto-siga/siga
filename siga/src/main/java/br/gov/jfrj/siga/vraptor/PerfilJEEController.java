@@ -93,6 +93,7 @@ public class PerfilJEEController extends GrupoController {
 		result.include("idConfiguracaoNova", getIdConfiguracaoNova());
 	}
 	
+	@Transacional
 	@SuppressWarnings("unchecked")
 	@Post("/app/gi/perfilJEE/gravar")
 	public void gravar(Long idCpGrupo

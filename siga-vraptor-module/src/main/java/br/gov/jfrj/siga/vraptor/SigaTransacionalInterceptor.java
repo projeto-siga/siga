@@ -88,6 +88,7 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 			commit(transaction);
 
 		} finally {
+			ContextoPersistencia.setDt(null);
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 				beanManager.fireEvent(new AfterRollback());
@@ -124,8 +125,19 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 	public static void upgradeParaTransacional() {
 		SigaTransacionalInterceptor thiz = current.get();
 		if (thiz != null && thiz.transaction == null) {
-			System.out.println("*** " + thiz.method.toString() + " - UPGRADE para Transacional");
+			System.out.println("*** UPGRADE para Transacional - " + thiz.method.toString());
 			enableAutoFlush();
+			thiz.transaction = thiz.manager.getTransaction();
+			thiz.transaction.begin();
+		}
+	}
+
+	public static void downgradeParaNaoTransacional() {
+		SigaTransacionalInterceptor thiz = current.get();
+		if (thiz != null && thiz.transaction != null) {
+			thiz.commit(thiz.transaction);
+			System.out.println("*** DOWNGRADE para NÃO Transacional - " + thiz.method.toString());
+			disableAutoFlush();
 			thiz.transaction = thiz.manager.getTransaction();
 			thiz.transaction.begin();
 		}

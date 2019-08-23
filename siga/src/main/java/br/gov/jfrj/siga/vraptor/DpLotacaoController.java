@@ -87,7 +87,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	}
 
 	@Override
-	public DpLotacaoDaoFiltro createDaoFiltro() {
+	protected DpLotacaoDaoFiltro createDaoFiltro() {
 		final DpLotacaoDaoFiltro flt = new DpLotacaoDaoFiltro();
 		flt.setNome(Texto.removeAcentoMaiusculas(getNome()));
 		/*
@@ -108,7 +108,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	}
 
 	@Override
-	public Selecionavel selecionarPorNome(final DpLotacaoDaoFiltro flt)
+	protected Selecionavel selecionarPorNome(final DpLotacaoDaoFiltro flt)
 			throws AplicacaoException {
 		// Procura por nome
 		flt.setNome(Texto.removeAcentoMaiusculas(flt.getSigla()));
@@ -245,6 +245,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		result.include("id",id);
 	}
 	
+	@Transacional
 	@Post("/app/lotacao/gravar")
 	public void editarGravar(final Long id, 
 							 final String nmLotacao, 
@@ -351,6 +352,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		this.result.redirectTo(this).lista(0, null, "");
 	}
 	
+	@Transacional
     @Get("/app/lotacao/ativarInativar")
     public void ativarInativar(final Long id) throws Exception{
 
@@ -398,6 +400,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		result.use(Results.page()).forwardTo("/WEB-INF/page/dpLotacao/cargaLotacao.jsp");
 	}
 	
+	@Transacional
 	@Post("/app/lotacao/carga")
 	public Download carga( final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
 		InputStream inputStream = null;

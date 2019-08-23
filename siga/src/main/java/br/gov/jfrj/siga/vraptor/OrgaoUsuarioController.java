@@ -78,6 +78,7 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		result.include("id",id);
 	}
 	
+	@Transacional
 	@Post("/app/orgaoUsuario/gravar")
 	public void editarGravar(final Long id, 
 							 final String nmOrgaoUsuario,
@@ -156,7 +157,7 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		this.result.redirectTo(this).lista(0, "");
 	}
 	
-	public CpOrgaoUsuario daoOrgaoUsuario(long id) {
+	private CpOrgaoUsuario daoOrgaoUsuario(long id) {
 		return dao().consultar(id, CpOrgaoUsuario.class, false);
 	}	
 }

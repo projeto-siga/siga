@@ -72,6 +72,7 @@ public class LoginController extends SigaController {
 		result.include("cont", cont);
 	}
 
+	@Transacional
 	@Post("public/app/login")
 	public void auth(String username, String password, String cont) throws IOException {
 		try {

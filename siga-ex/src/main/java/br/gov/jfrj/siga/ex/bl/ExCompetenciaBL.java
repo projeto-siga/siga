@@ -2324,7 +2324,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	 */
 	public boolean podeEditar(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) {
-
 		if (mob.doc().isEletronico()){
 			if (!mob.doc().getAssinaturasEAutenticacoesComTokenOuSenhaERegistros().isEmpty())
 				return false;

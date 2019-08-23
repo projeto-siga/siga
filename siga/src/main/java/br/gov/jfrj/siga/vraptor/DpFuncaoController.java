@@ -64,7 +64,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 	}
 	
 	@Override
-	public Selecionavel selecionarPorNome(final DpFuncaoConfiancaDaoFiltro flt)
+	protected Selecionavel selecionarPorNome(final DpFuncaoConfiancaDaoFiltro flt)
 			throws AplicacaoException {
 		// Procura por nome
 		flt.setNome(Texto.removeAcentoMaiusculas(flt.getSigla()));
@@ -166,6 +166,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		result.include("id",id);
 	}
 	
+	@Transacional
 	@Post("/app/funcao/gravar")
 	public void editarGravar(final Long id, 
 							 final String nmFuncao, 
@@ -241,6 +242,7 @@ public class DpFuncaoController extends SigaSelecionavelControllerSupport<DpFunc
 		result.use(Results.page()).forwardTo("/WEB-INF/page/dpFuncao/cargaFuncao.jsp");
 	}
 	
+	@Transacional
 	@Post("/app/funcao/carga")
 	public Download carga( final UploadedFile arquivo, Long idOrgaoUsu) throws Exception {
 		InputStream inputStream = null;

@@ -80,7 +80,7 @@ begin
                                          -- d.id_doc=:old.id_doc and
                                           mb.id_doc = doc.id_doc and
                                           mb.id_doc = :old.id_doc and
-                                          m.id_tp_mov = 11 and
+                                          (m.id_tp_mov = 11 or m.id_tp_mov = 58) and
                                           m.id_mov_canceladora is null and
                                           m.id_mobil = mb.id_mobil);
                

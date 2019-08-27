@@ -1019,7 +1019,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	public String getConferentesString() {
 		return Documento.getAssinantesString(getApenasConferenciasCopia());
 	}
-
+	
 	public String getAssinantesCompleto() {
 		String conferentes = getConferentesString();
 		String assinantesToken = getAssinantesComTokenString();

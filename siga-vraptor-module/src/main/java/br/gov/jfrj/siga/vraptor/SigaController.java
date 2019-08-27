@@ -9,8 +9,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -345,14 +343,7 @@ public class SigaController {
 	}
 
 	protected List<CpOrgaoUsuario> getOrgaosUsu() throws AplicacaoException {
-		List<CpOrgaoUsuario> lista = dao().listarOrgaosUsuarios();
-		Collections.sort(lista, new Comparator<CpOrgaoUsuario>() {
-			public int compare(CpOrgaoUsuario orgao1, CpOrgaoUsuario orgao2) {
-				return orgao1.getAcronimoOrgaoUsu().compareTo(orgao2.getAcronimoOrgaoUsu());
-			}
-		});
-		
-		return lista;
+		return dao().listarOrgaosUsuarios();
 	}
 	
 	protected Paginador getP() {

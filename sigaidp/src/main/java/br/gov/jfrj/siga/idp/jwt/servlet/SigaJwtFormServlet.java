@@ -81,8 +81,10 @@ public class SigaJwtFormServlet extends HttpServlet {
 //					(Integer) decodedToken.get("exp"), HttpRequestUtils.getIpAudit(request));
 
 			response.addCookie(AuthJwtFormFilter.buildCookie(token));
+ 
 			response.sendRedirect(request.getParameter("cont"));
 		} catch (Exception e) {
+
 			request.setAttribute("mensagem", e.getMessage());
 			request.getRequestDispatcher("/paginas/jwt-login.jsp").forward(
 					request, response);

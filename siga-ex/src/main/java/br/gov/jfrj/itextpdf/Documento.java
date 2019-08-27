@@ -260,7 +260,10 @@ public class Documento {
 		// "EEE MMM dd HH:mm:ss zzz yyyy");
 		// doc.add(new Meta("creationdate", sdf.format(new Date(0L))));
 		try (ByteArrayOutputStream boA4 = new ByteArrayOutputStream()) {
-			PdfWriter writer = PdfWriter.getInstance(doc, boA4);
+			/*-- Alterado de PdfWriter p/ PdfCopy(Essa classe permite manter os "stamps" originais do arquivo importado) 
+			por Marcos(CMSP) em 21/02/19 --*/
+			//PdfWriter writer = PdfWriter.getInstance(doc, boA4);
+			PdfCopy writer = new PdfCopy(doc, boA4);
 			doc.open();
 			PdfContentByte cb = writer.getDirectContent();
 	
@@ -332,6 +335,8 @@ public class Documento {
 	
 				// put the page
 				cb.addTemplate(page, 0, 0);
+				/*-- Adicionado devido ao PdfCopy - por Marcos(CMSP) em 21/02/19 --*/
+				writer.addPage(page);
 	
 				// draw a red rectangle at the page borders
 				//
@@ -970,9 +975,13 @@ public class Documento {
 	}
 	
 	public static String realPath() {
-		RequestInfo ri = CurrentRequest.get();
 		
+		RequestInfo ri = CurrentRequest.get();		
 		String realPath = Contexto.urlBase(ri.getRequest()) + ri.getRequest().getContextPath();
+		
+		if (realPath.endsWith("/siga-le"))
+			realPath = realPath.replace("/siga-le", "/sigaex");
+		
 		return realPath;
 	}
 

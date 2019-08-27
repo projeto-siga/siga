@@ -20,7 +20,8 @@
 				texto="Anotar em lote" /></li>
 			<li><siga:monolink
 					href="${pageContext.request.contextPath}/app/expediente/mov/assinar_tudo"
-					texto="Assinar Documentos, Despachos e Anexos" /></li>
+					texto="Assinar em lote" /></li>
+		<%--
 		<c:catch>
 			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;ASS:Assinatura digital;EXT:Extensão')}">
@@ -37,6 +38,7 @@
 						texto="Assinar Despacho em lote" /></li>
 			</c:if>
 		</c:catch>
+		--%>
 		<li><siga:monolink
 				href="${pageContext.request.contextPath}/app/expediente/mov/arquivar_corrente_lote"
 				texto="Arquivar em lote" /></li>

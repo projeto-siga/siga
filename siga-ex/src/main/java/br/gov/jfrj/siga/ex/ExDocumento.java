@@ -2633,13 +2633,18 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 
 	public boolean isAssinaturaSolicitada() {
+		ExMovimentacao m = getMovSolicitacaoDeAssinatura();
+		return m != null;
+	}
+
+	public ExMovimentacao getMovSolicitacaoDeAssinatura() {
 		final Set<ExMovimentacao> movs = getMobilGeral().getExMovimentacaoSet();
 
 		for (final ExMovimentacao mov : movs) {
 			if (!mov.isCancelada()
 					&& mov.getExTipoMovimentacao().getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA)
-				return true;
+				return mov;
 		}
-		return false;
+		return null;
 	}
 }

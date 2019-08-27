@@ -107,18 +107,21 @@
 									<th width="3%" style="text-align: center">Com Senha</th>
 									<th width="13%" rowspan="2">Número</th>
 									<th rowspan="2" style="text-align: center">Data</th>
-									<th width="15%" colspan="2" style="text-align: center">Cadastrante</th>
-									<th width="15%" rowspan="2" align="center">Tipo</th>
+									<th width="10%" colspan="2" style="text-align: center">Cadastrante</th>
+									<th width="10%" colspan="2" style="text-align: center">Solicitante</th>
+									<th width="10%" rowspan="2" align="center">Tipo</th>
 									<th width="49%" rowspan="2" align="left">Descrição</th>
 								</tr>
 								<tr>
-
 									<th style="text-align: center"><input type="checkbox"
 										id="checkall-assinar" /></th>
 									<th style="text-align: center"><input type="checkbox"
 										id="checkall-autenticar" /></th>
 									<th style="text-align: center"><input type="checkbox"
 										id="checkall-senha" /></th>
+									<th style="text-align: center">Lotação</th>
+									<th style="text-align: center">Pessoa</th>
+									<th style="text-align: center">Lotação</th>
 									<th style="text-align: center">Pessoa</th>
 								</tr>
 							</thead>
@@ -164,6 +167,8 @@
 										<td style="text-align: center">${assdoc.doc.dtDocDDMMYY}</td>
 										<td style="text-align: center">${assdoc.doc.lotaCadastrante.siglaLotacao}</td>
 										<td style="text-align: center">${assdoc.doc.cadastrante.sigla}</td>
+										<td style="text-align: center">${assdoc.doc.movSolicitacaoDeAssinatura.lotaCadastrante.sigla}</td>
+										<td style="text-align: center">${assdoc.doc.movSolicitacaoDeAssinatura.cadastrante.sigla}</td>
 										<td>${assdoc.doc.descrFormaDoc}</td>
 										<td>${assdoc.doc.descrDocumento}</td>
 									</tr>

@@ -44,6 +44,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.TipoMobilComparatorInverso;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.unirest.proxy.GoogleRecaptcha;
 
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
@@ -88,9 +89,6 @@ public class ExAutenticacaoController extends ExController {
 		String recaptchaSitePassword = getRecaptchaSitePassword();
 		result.include("recaptchaSiteKey", recaptchaSiteKey);
 		result.include("n", n);
-		
-		final String HTTP_PROXY_HOST = System.getProperty("http.proxyHost");
-		final String HTTP_PROXY_PORT = System.getProperty("http.proxyPort");
 
 		if (n == null || n.trim().length() == 0) {
 			setDefaultResults();
@@ -102,19 +100,20 @@ public class ExAutenticacaoController extends ExController {
 
 		boolean success = false;
 		if (gRecaptchaResponse != null) {
-			if (!"".equals(HTTP_PROXY_HOST) && !"".equals(HTTP_PROXY_PORT)){
-				Unirest.setProxy(new HttpHost(HTTP_PROXY_HOST, Integer.parseInt(HTTP_PROXY_PORT)));
+			JsonNode body = null;
+			if (GoogleRecaptcha.isProxySetted()) {
+				body = GoogleRecaptcha.validarRecaptcha(recaptchaSitePassword, gRecaptchaResponse, request.getRemoteAddr());
+			} else {
+    			HttpResponse<JsonNode> result = Unirest
+    					.post("https://www.google.com/recaptcha/api/siteverify")
+    					.header("accept", "application/json")
+    					.header("Content-Type", "application/json")
+    					.queryString("secret", getRecaptchaSitePassword())
+    					.queryString("response", gRecaptchaResponse)
+    					.queryString("remoteip", request.getRemoteAddr()).asJson();
+	
+				body = result.getBody();
 			}
-
-			HttpResponse<JsonNode> result = Unirest
-					.post("https://www.google.com/recaptcha/api/siteverify")
-					.header("accept", "application/json")
-					.header("Content-Type", "application/json")
-					.queryString("secret", getRecaptchaSitePassword())
-					.queryString("response", gRecaptchaResponse)
-					.queryString("remoteip", request.getRemoteAddr()).asJson();
-
-			JsonNode body = result.getBody();
 			String hostname = request.getServerName();
 			if (body.getObject().getBoolean("success")) {
 				String retHostname = body.getObject().getString("hostname");

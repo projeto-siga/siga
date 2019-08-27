@@ -17,7 +17,7 @@ public class GoogleRecaptcha {
 	private static String proxyHost;
 	private static int proxyPort;
 
-	public static boolean podeUtilizar() {
+	public static boolean isProxySetted() {
 		return proxyHost != null && proxyPort > 0;
 	}
 	
@@ -53,10 +53,10 @@ public class GoogleRecaptcha {
 			Proxy proxy = new Proxy(Proxy.Type.HTTP, socketAddress);
 
 			connection = (HttpURLConnection) url.openConnection(proxy);
-
+			connection.setRequestProperty("Content-Length", "0");
 			connection.addRequestProperty("accept", "application/json");
 			connection.addRequestProperty("Content-Type", "application/json");
-			connection.setRequestMethod("POST");
+			connection.setRequestMethod("GET");
 
 			connection.setDoInput(true);
 			connection.setDoOutput(true);

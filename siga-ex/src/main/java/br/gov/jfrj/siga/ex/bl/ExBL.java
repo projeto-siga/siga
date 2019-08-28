@@ -5390,7 +5390,12 @@ public class ExBL extends CpBL {
 							.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO)
 							&& ExTipoMovimentacao.hasDocumento(mov
 									.getExMovimentacaoRef().getIdTpMov()))) {
-				attrs.put("nmArqMod", "certidaoDesentranhamento.jsp");
+				if (SigaMessages.isSigaSP()){
+					attrs.put("nmArqMod", "certidaoDesentranhamentoGOVSP.jsp");
+				}else {
+					attrs.put("nmArqMod", "certidaoDesentranhamento.jsp");
+				}
+				
 			} else {
 				if (mov.getExTipoDespacho() != null) {
 					attrs.put("despachoTexto", mov.getExTipoDespacho()

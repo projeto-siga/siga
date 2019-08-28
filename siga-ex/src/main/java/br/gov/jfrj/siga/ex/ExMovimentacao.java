@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -284,11 +285,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 	 *         de fevereiro de 2010", por exemplo.
 	 */
 	public String getDtExtenso() {
-		SimpleDateFormat df1 = new SimpleDateFormat();
+        SimpleDateFormat df1 = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy.", new Locale("pt", "BR"));
 		try {
-			df1.applyPattern("dd/MM/yyyy");
-			df1.applyPattern("dd 'de' MMMM 'de' yyyy.");
-
 			String s = getNmLocalidade();
 
 			DpLotacao lotaBase = null;

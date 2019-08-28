@@ -12,6 +12,7 @@ import java.util.GregorianCalendar;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -398,10 +399,9 @@ public class ExDocumentoDTO {
 	}
 
 	public String getDtDocExtenso() {
-		final SimpleDateFormat df1 = new SimpleDateFormat();
+		final SimpleDateFormat df1 = new SimpleDateFormat("dd/MM/yyyy",new Locale("pt", "BR"));
 		Date minhaData = null;
 
-		df1.applyPattern("dd/MM/yyyy");
 		try {
 			minhaData = df1.parse(getDtDocString());
 		} catch (final ParseException e) {

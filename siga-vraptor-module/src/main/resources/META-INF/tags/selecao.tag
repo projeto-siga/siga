@@ -260,7 +260,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 </c:if>
 
 
-<c:if test="${not empty tipo}">
+<c:if test="${not empty tipo and (not empty idInicial or not empty siglaInicial or not empty descricaoInicial)}">
 	<c:choose>
 		<c:when test="${empty idInicial}">
 		    <c:set var="idSubstTexto" value="${propriedadeTipoSel}.id" />

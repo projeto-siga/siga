@@ -44,6 +44,8 @@ public class ExPapel extends AbstractExPapel {
 	
 	final static public long PAPEL_AUTORIZADOR = 6;
 
+	final static public long PAPEL_REVISOR = 7;
+
 	public String getComoNomeDeVariavel() {
 		String s = getDescPapel().trim().toLowerCase();
 		s = Texto.removeAcento(s);

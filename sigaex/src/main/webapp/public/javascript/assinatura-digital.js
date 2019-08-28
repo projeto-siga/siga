@@ -159,7 +159,7 @@ var providerAssijusPopup = {
 				console.log(id, 'hash')
 				var errormsg = this.errormsg;
 				$.ajax({
-					url : "/sigaex/public/app/assinador-popup/doc/" + id + "/hash",
+					url : "/sigaex/app/assinador-popup/doc/" + id + "/hash",
 					type : "GET",
 					async : false,
 					success : function(xhr) {
@@ -178,7 +178,7 @@ var providerAssijusPopup = {
 				console.log(sign)
 				var errormsg = this.errormsg;
 				$.ajax({
-					url : "/sigaex/public/app/assinador-popup/doc/" + id + "/sign",
+					url : "/sigaex/app/assinador-popup/doc/" + id + "/sign",
 					type : "PUT",
 					contentType: "application/json",
 					data : JSON.stringify(sign),

@@ -1825,13 +1825,19 @@ public class ExBL extends CpBL {
 			if (tramitar)
 				trasferirAutomaticamente(cadastrante, lotaCadastrante, usuarioDoToken, doc, fPreviamenteAssinado);
 		} catch (final Exception e) {
-			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao tramitar automaticamente.", 0, e);
+		}
+
+		try {
+			if (doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
+				removerPapel(doc, ExPapel.PAPEL_REVISOR);
+		} catch (final Exception e) {
+			throw new AplicacaoException("Erro ao remover revisores.", 0, e);
 		}
 
 		return s;
 	}
-
+	
 	private void trasferirAutomaticamente(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
 			DpPessoa assinante, final ExDocumento doc, boolean fPreviamenteAssinado) {
 		if (doc.getLotaDestinatario() == null && doc.getDestinatario() == null)
@@ -1980,8 +1986,15 @@ public class ExBL extends CpBL {
 			tramitar = deveTramitarAutomaticamente(cadastrante, lotaCadastrante, doc);
 		if (tramitar)
 			trasferirAutomaticamente(cadastrante, lotaCadastrante, subscritor, doc, fPreviamenteAssinado);
-		return s;
 
+		try {
+			if (doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
+				removerPapel(doc, ExPapel.PAPEL_REVISOR);
+		} catch (final Exception e) {
+			throw new AplicacaoException("Erro ao remover revisores.", 0, e);
+		}
+
+		return s;
 	}
 
 	public void assinarMovimentacaoComSenha(DpPessoa cadastrante,
@@ -3611,7 +3624,7 @@ public class ExBL extends CpBL {
 
 			// Incluir movimentações de definição automática de perfil.
 			if (!doc.isFinalizado()) 
-				incluirDefinicaoAutomaticaDePapel(cadastrante, lotaTitular, doc);
+				atualizarDefinicaoAutomaticaDePapel(cadastrante, lotaTitular, doc);
 
 			concluirAlteracaoDocComRecalculoAcesso(doc);
 
@@ -3671,7 +3684,7 @@ public class ExBL extends CpBL {
 
 	}
 
-	private void incluirDefinicaoAutomaticaDePapel(DpPessoa cadastrante, DpLotacao lotaCadastrante, ExDocumento doc) throws AplicacaoException, SQLException {
+	private void atualizarDefinicaoAutomaticaDePapel(DpPessoa cadastrante, DpLotacao lotaCadastrante, ExDocumento doc) throws AplicacaoException, SQLException {
 		if (doc == null || doc.getTitular() == null || doc.getMobilGeral() == null)
 			return;
 		
@@ -3681,9 +3694,11 @@ public class ExBL extends CpBL {
 		// Inclui em setAntes os papeis que já estão atribuídos de acordo com as movimentações de vínculo de papel
 		List<ExMovimentacao> movs = doc.getMobilGeral().getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL);
 		for (ExMovimentacao mov : movs) {
-			if (mov.isCancelada())
+			if (mov.isCancelada() || mov.getCadastrante() != null)
 				continue;
-			setAntes.add(new MovimentacaoSincronizavel(mov.getExPapel(), mov.getResp(), mov.getLotaResp(), mov));
+			setAntes.add(new MovimentacaoSincronizavel(mov.getExPapel(), 
+					mov.getSubscritor() != null ? mov.getSubscritor().getPessoaAtual() : null, 
+					(mov.getSubscritor() == null && mov.getLotaSubscritor() != null) ? mov.getLotaSubscritor().getLotacaoAtual() : null, mov));
 		}
 
 		// Inclui em setDepois os papeis que devem estar atribuídos ao documento
@@ -3734,24 +3749,46 @@ public class ExBL extends CpBL {
 				MovimentacaoSincronizavel novo = (MovimentacaoSincronizavel)i.getNovo();
 				final ExMovimentacao mov = criarNovaMovimentacao(
 						ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL,
-						cadastrante, lotaCadastrante, doc.getMobilGeral(), dt, 
+						null, null, doc.getMobilGeral(), dt, 
 						novo.pessoa != null ? novo.pessoa.getPessoaAtual() : null,
 						novo.lotacao != null ? novo.lotacao.getLotacaoAtual() : null, null, null, dt);
 				mov.setExPapel(novo.papel);
 				gravarMovimentacao(mov);
 				break;
 			case excluir:
-// Não vamos excluir pois pode ter sido incluído manualmente.
-//
-//				final ExMovimentacao movCancelamento = criarNovaMovimentacao(
-//						ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
-//						cadastrante, lotaCadastrante, doc.getMobilGeral(), dt, null, null,
-//						null, null, null);
-//				movCancelamento.setExMovimentacaoRef(((MovimentacaoSincronizavel)i.getAntigo()).mov);
-//				gravarMovimentacaoCancelamento(movCancelamento, ((MovimentacaoSincronizavel)i.getAntigo()).mov);
+				final ExMovimentacao movCancelamento = criarNovaMovimentacao(
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
+						null, null, doc.getMobilGeral(), dt, null, null,
+						null, null, null);
+				movCancelamento.setExMovimentacaoRef(((MovimentacaoSincronizavel)i.getAntigo()).mov);
+				gravarMovimentacaoCancelamento(movCancelamento, ((MovimentacaoSincronizavel)i.getAntigo()).mov);
 				break;
 			}
 		}
+	}
+	
+	private void removerPapel(ExDocumento doc, long idPapel) throws Exception {
+		ExMovimentacao movCancelamento = null;
+		List<ExMovimentacao> movs = doc.getMobilGeral().getMovimentacoesPorTipo(
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL);
+		boolean removido = false;
+		for (ExMovimentacao mov : movs) {
+			if (mov.isCancelada()
+					|| !mov.getExPapel().getIdPapel().equals(idPapel))
+				continue;
+			if (movCancelamento == null) {
+				Date dt = dao().consultarDataEHoraDoServidor();
+				movCancelamento = criarNovaMovimentacao(
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
+						null, null, doc.getMobilGeral(), dt, null, null,
+						null, null, null);
+				movCancelamento.setExMovimentacaoRef(mov);
+			}
+			gravarMovimentacaoCancelamento(movCancelamento, mov);
+			removido = true;
+		}
+		if (removido)
+			concluirAlteracaoDocComRecalculoAcesso(doc);
 	}
 
 	private void processarResumo(ExDocumento doc) throws Exception,
@@ -4372,7 +4409,6 @@ public class ExBL extends CpBL {
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO:
 			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANOTACAO:
-			case (int) ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL:
 				ExMovimentacao novaMov = duplicarMovimentacao(cadastrante,
 						lotaCadastrante, mov);
 				novaMov.setExMobil(novoDoc.getMobilGeral());

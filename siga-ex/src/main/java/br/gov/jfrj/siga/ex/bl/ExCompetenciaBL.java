@@ -2341,7 +2341,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 						.getSubscritor().equivale(titular))
 				&& (mob.doc().getTitular() != null && !mob.doc().getTitular()
 						.equivale(titular)))
-			if(!mob.getExDocumento().temPerfil(titular, lotaTitular, ExPapel.PAPEL_GESTOR))
+			if(!mob.getExDocumento().temPerfil(titular, lotaTitular, ExPapel.PAPEL_GESTOR)
+					&& !mob.getExDocumento().temPerfil(titular, lotaTitular, ExPapel.PAPEL_REVISOR))
 				return false;
 		
 		if (!getConf().podePorConfiguracao(titular, lotaTitular, mob.doc().getExFormaDocumento(),
@@ -2824,10 +2825,10 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		if (mov.isCancelada())
 			return false;
 		
-		if ((mov.getSubscritor()!= null && mov.getSubscritor().equivale(titular))||( mov.getSubscritor()==null && mov.getLotaSubscritor()!=null && mov.getLotaSubscritor().equivale(lotaTitular)))
+		if ((mov.getSubscritor() != null && mov.getSubscritor().equivale(titular))||( mov.getSubscritor()==null && mov.getLotaSubscritor()!=null && mov.getLotaSubscritor().equivale(lotaTitular)))
 			return true;
 
-		if ((mov.getCadastrante()!= null && mov.getCadastrante().equivale(titular))||( mov.getCadastrante()==null && mov.getLotaCadastrante().equivale(lotaTitular)))
+		if ((mov.getCadastrante() != null && mov.getCadastrante().equivale(titular)) || (mov.getCadastrante()==null && mov.getLotaCadastrante() != null && mov.getLotaCadastrante().equivale(lotaTitular)))
 			return true;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,
@@ -3080,7 +3081,8 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 							.getSubscritor().equivale(titular))
 					&& (mob.doc().getTitular() != null && !mob.doc()
 							.getTitular().equivale(titular))
-					&& !mob.getExDocumento().temPerfil(titular, lotaTitular, ExPapel.PAPEL_GESTOR))
+					&& !mob.getExDocumento().temPerfil(titular, lotaTitular, ExPapel.PAPEL_GESTOR)
+					&& !mob.getExDocumento().temPerfil(titular, lotaTitular, ExPapel.PAPEL_REVISOR))
 				return false;
 		return getConf().podePorConfiguracao(titular, lotaTitular,
 				CpTipoConfiguracao.TIPO_CONFIG_FINALIZAR);

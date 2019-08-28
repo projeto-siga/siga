@@ -2870,7 +2870,8 @@ public class ExBL extends CpBL {
 						"não é possível cancelar vinculação de documento");
 
 		} else if (movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_AGENDAMENTO_DE_PUBLICACAO_BOLETIM
-				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO) {
+				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_EM_EDITAL_DE_ELIMINACAO
+				&& movCancelar.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_SOLICITACAO_DE_ASSINATURA) {
 			if (!getComp().podeCancelar(titular, lotaTitular, mob, movCancelar))
 				throw new AplicacaoException(
 						"não é permitido cancelar esta movimentação.");
@@ -3484,12 +3485,17 @@ public class ExBL extends CpBL {
 		 * ); }
 		 */
 		
+		if (doc.isAssinaturaSolicitada()) {
+			ExMovimentacao m = doc.getMovSolicitacaoDeAssinatura();
+			cancelar(titular, lotaTitular, m.getExMobil(), m, null, null, null, "Edição após solicitação de assinatura");
+		}
+		
 		try {
 			Date dt = dao().dt();
-
+			
 			// System.out.println(System.currentTimeMillis() + " - INI gravar");
 			iniciarAlteracao();
-
+			
 			if (doc.getCadastrante() == null)
 				doc.setCadastrante(cadastrante);
 			if (doc.getLotaCadastrante() == null) {

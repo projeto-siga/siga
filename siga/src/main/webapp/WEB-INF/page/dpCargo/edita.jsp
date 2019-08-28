@@ -63,11 +63,16 @@
 							<input type="text" id="nmCargo" name="nmCargo" value="${nmCargo}" maxlength="100" size="100" />
 						</td>
 					</tr>
-					
+					<c:if test="${empty id}">
+						<tr class="button">
+							<td>Carregar planilha para inserir múltiplos registros:</td>
+							<td><input type="button" value="Carregar planilha" onclick="javascript:location.href='/siga/app/cargo/carregarExcel';" class="gt-btn-medium gt-btn-left" /></td>
+						</tr>
+					</c:if>
 					<tr class="button">
 						<td>
 							<input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-large gt-btn-left" /> 
-							<input type="button" value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
+							<input type="button" value="Cancela" onclick="javascript:location.href='/siga/app/cargo/listar';" class="gt-btn-medium gt-btn-left" />
 						</td>
 					</tr>
 				</table>

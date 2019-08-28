@@ -2568,8 +2568,9 @@ public class ExMovimentacaoController extends ExController {
 
 	@Get("/app/expediente/mov/assinar_tudo")
 	public void assina_tudo() throws Exception {
+		boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(getTitular(), CpTipoConfiguracao.TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO);
 		List<ExAssinavelDoc> assinaveis = Ex.getInstance().getBL()
-				.obterAssinaveis(getTitular(), getLotaTitular(), false);
+				.obterAssinaveis(getTitular(), getLotaTitular(), apenasComSolicitacaoDeAssinatura);
 
 		result.include("assinaveis", assinaveis);
 		result.include("request", getRequest());

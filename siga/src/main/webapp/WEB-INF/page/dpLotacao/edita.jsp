@@ -33,6 +33,11 @@
 			vlr = vlr.replace(" ", "");
 		return vlr;
 	}
+
+	function carregarExcel() {
+		document.form.action =  "carregarExcel";
+		document.form.submit();
+	}
 </script>
 
 <body>
@@ -82,7 +87,7 @@
 					<tr>
 						<td></td>
 						<td>
-							<label><font color="red">(Não cadastrar lotações abreviadas, inserir nome oficial constituído em legislação)</font></label>
+							<label><font color="#9f9f9f">(Inserir nome oficial, conforme legislação. Não abreviar. Iniciar cada palavra com letra maiúscula, exceto para palavras tais como: "de", "para", etc. Exemplo: Unidade do Arquivo Público do Estado)</font></label>
 						</td>
 					</tr>
 					<tr>				
@@ -96,7 +101,7 @@
 					<tr>
 						<td></td>
 						<td>
-							<label><font color="red">(Sigla: Letras maiúsculas)</font></label>
+							<label><font color="#9f9f9f">(Sigla: Letras maiúsculas)</font></label>
 						</td>
 					</tr>
 					<tr>
@@ -123,10 +128,16 @@
 							<input type="radio" name="situacao" value="false" id="situacaoInativo" ${not empty dtFimLotacao ? 'checked' : ''}/>Inativo
 						</td>
 					</tr>
+					<c:if test="${empty id}">
+						<tr class="button">
+							<td>Carregar planilha para inserir múltiplos registros:</td>
+							<td><input type="button" value="Carregar planilha" onclick="javascript:location.href='/siga/app/lotacao/carregarExcel';" class="gt-btn-medium gt-btn-left" /></td>
+						</tr>
+					</c:if>
 					<tr class="button">
 						<td>
 							<input type="button" value="Ok" onclick="javascript: validar();" class="gt-btn-large gt-btn-left" /> 
-							<input type="button" value="Cancela" onclick="javascript:history.back();" class="gt-btn-medium gt-btn-left" />
+							<input type="button" value="Cancela" onclick="javascript:location.href='/siga/app/lotacao/listar';" class="gt-btn-medium gt-btn-left" />
 						</td>
 					</tr>
 				</table>

@@ -59,7 +59,7 @@ function sbmt(offset) {
 					</thead>
 					
 					<tbody>
-						<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}"
+						<siga:paginador maxItens="15" maxIndices="10" totalItens="${tamanho}"
 							itens="${itens}" var="lotacao">
 							<tr>
 								<td align="left">${lotacao.descricao}</td>

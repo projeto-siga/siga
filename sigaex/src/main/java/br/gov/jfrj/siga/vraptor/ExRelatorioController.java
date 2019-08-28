@@ -71,6 +71,7 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelClassificacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelConsultaDocEntreDatas;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocSubordinadosCriados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocsClassificados;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocumentosForaPrazo;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelDocumentosProduzidos;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovCad;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovProcesso;
@@ -98,6 +99,7 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_FORMS = "FORMS:Relação de formulários";
 	private static final String ACESSO_IGESTAO = "IGESTAO:Relatório de Indicadores de Gestão";
 	private static final String ACESSO_RELDOCVOL = "RELDOCVOL:Relatório de documentos por volume";
+	private static final String ACESSO_RELFORAPRAZO = "RELFORAPRAZO:Relatório de documentos fora do prazo";
 	private static final String APPLICATION_PDF = "application/pdf";
 
 	public ExRelatorioController(HttpServletRequest request,
@@ -798,8 +800,8 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("usuarioSel.id"));
 				parametros.put("dataInicial",
 						getRequest().getParameter("dataInicial"));
-				parametros.put("dataFinal",
-						somaUmDia(getRequest().getParameter("dataFinal")));
+				parametros.put("dataFinal", somaUmDia(getRequest()
+						.getParameter("dataFinal")));
 				parametros.put("link_siga", "http://"
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
@@ -826,10 +828,10 @@ public class ExRelatorioController extends ExController {
 				final RelVolumeTramitacao relVol = new RelVolumeTramitacao(
 						parametros);
 				relVol.gerar();
-				List<List<String>> volumeTramitacao = new ArrayList <List<String>>();
-				
+				List<List<String>> volumeTramitacao = new ArrayList<List<String>>();
+
 				for (int i = 0; i < relVol.listColunas.size(); i++) {
-					List<String> linhaTramitacao = new ArrayList <String>();
+					List<String> linhaTramitacao = new ArrayList<String>();
 					linhaTramitacao.add(relVol.listColunas.get(i));
 					linhaTramitacao.add(relVol.listDados.get(i));
 					volumeTramitacao.add(linhaTramitacao);
@@ -878,8 +880,8 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("usuarioSel.id"));
 				parametros.put("dataInicial",
 						getRequest().getParameter("dataInicial"));
-				parametros.put("dataFinal",
-						somaUmDia(getRequest().getParameter("dataFinal")));
+				parametros.put("dataFinal", somaUmDia(getRequest()
+						.getParameter("dataFinal")));
 				parametros.put("link_siga", "http://"
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
@@ -952,7 +954,7 @@ public class ExRelatorioController extends ExController {
 
 		List<String> indicadoresProducao = new ArrayList();
 		try {
-			assertAcesso(ACESSO_RELDOCVOL);
+			assertAcesso(ACESSO_RELFORAPRAZO);
 
 			final Map<String, String> parametros = new HashMap<String, String>();
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
@@ -964,6 +966,18 @@ public class ExRelatorioController extends ExController {
 							"Não é permitido consultas de outros órgãos.");
 				}
 				consistePeriodo(dataInicial, dataFinal);
+
+				final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+				final Date dtIni = df.parse(dataInicial);
+				final Date dtFim = df.parse(dataFinal);
+				Date dataHoje = new Date(System.currentTimeMillis());
+				dataHoje = df.parse(df.format(dataHoje));
+
+				if (dtIni.compareTo(dataHoje) >= 0
+						|| dtFim.compareTo(dataHoje) >= 0) {
+					throw new Exception(
+							"Data inicial ou data final não pode ser igual ou maior que a data atual.");
+				}
 
 				parametros.put("orgao", orgaoSelId.toString());
 				parametros.put("lotacao",
@@ -980,7 +994,7 @@ public class ExRelatorioController extends ExController {
 						+ getRequest().getContextPath()
 						+ "/app/expediente/doc/exibir?sigla=");
 
-				final RelDocumentosProduzidos rel = new RelDocumentosProduzidos(
+				final RelDocumentosForaPrazo rel = new RelDocumentosForaPrazo(
 						parametros);
 				rel.gerar();
 
@@ -1008,6 +1022,11 @@ public class ExRelatorioController extends ExController {
 					i++;
 
 					resultado += "<th rowspan='1' align='center'>"
+							+ rel.listDados.get(i) + "</th>";
+
+					i++;
+
+					resultado += "<th rowspan='1' align='center'>"
 							+ rel.listDados.get(i) + "</th>" + "</tr>"
 							+ "</thead>";
 
@@ -1016,7 +1035,6 @@ public class ExRelatorioController extends ExController {
 
 				result.include("totalDocumentos",
 						rel.totalDocumentos.toString());
-				result.include("totalPaginas", rel.totalPaginas.toString());
 			}
 		} catch (Exception e) {
 			result.include("mensagemCabec", e.getMessage());
@@ -1077,7 +1095,8 @@ public class ExRelatorioController extends ExController {
 		parametros.put("lotacao", getRequest().getParameter("lotacaoSel.id"));
 		parametros.put("usuario", getRequest().getParameter("usuarioSel.id"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
-		parametros.put("dataFinal", somaUmDia(getRequest().getParameter("dataFinal")));
+		parametros.put("dataFinal",
+				somaUmDia(getRequest().getParameter("dataFinal")));
 		final RelDocumentosProduzidos rel = new RelDocumentosProduzidos(
 				parametros);
 		rel.setTemplateFile("RelatorioBaseGestao.jrxml");
@@ -1121,17 +1140,16 @@ public class ExRelatorioController extends ExController {
 		}
 	}
 
-	private String somaUmDia (String dataFinal) throws Exception {
-		final SimpleDateFormat df = new SimpleDateFormat(
-				"dd/MM/yyyy");
+	private String somaUmDia(String dataFinal) throws Exception {
+		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		Date dtFim = df.parse(dataFinal);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(dtFim);
-        cal.add(Calendar.DATE, 1);
-        return df.format(cal.getTime());
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dtFim);
+		cal.add(Calendar.DATE, 1);
+		return df.format(cal.getTime());
 	}
-	
-	private Long getIdOrgaoSel (final DpLotacaoSelecao lotacaoSel,	
+
+	private Long getIdOrgaoSel(final DpLotacaoSelecao lotacaoSel,
 			final DpPessoaSelecao usuarioSel, Long orgaoUsu) {
 		Long orgaoSelId = 0L;
 		if (lotacaoSel.getId() != null) {

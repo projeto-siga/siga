@@ -278,8 +278,8 @@ public class SubstituicaoController extends SigaController {
 				
 			} else if (getIntervaloDeDiasEntreDatas(subst.getDtIniSubst(), subst.getDtFimSubst()) < 0) {
 				throw new AplicacaoException("Não é possível informar uma data final anterior a data inicial.");
-			} else if (getIntervaloDeDiasEntreDatas(subst.getDtIniSubst(), subst.getDtFimSubst()) > 120) {
-				throw new AplicacaoException("Período informado : " + getIntervaloDeDiasEntreDatas(subst.getDtIniSubst(), subst.getDtFimSubst()) + " dias. Não é possível cadastrar um período de substituição maior que 120 dias.");
+			} else if (getIntervaloDeDiasEntreDatas(subst.getDtIniSubst(), subst.getDtFimSubst()) > 720) {
+				throw new AplicacaoException("Período informado : " + getIntervaloDeDiasEntreDatas(subst.getDtIniSubst(), subst.getDtFimSubst()) + " dias. Não é possível cadastrar um período de substituição maior que 2 anos.");
 			}
 			else {
 				if(subst.getDtFimSubst() != null && !Data.dataDentroSeculo21(subst.getDtFimSubst()))

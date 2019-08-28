@@ -58,4 +58,10 @@ public class ExPapel extends AbstractExPapel {
 		return sb.toString();
 	}
 
+	@Override
+	public String toString() {
+		if (getDescPapel() == null)
+			return null;
+		return getComoNomeDeVariavel();
+	}
 }

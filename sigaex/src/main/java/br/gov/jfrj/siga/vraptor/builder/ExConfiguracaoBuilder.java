@@ -20,6 +20,7 @@ import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
+import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
@@ -37,6 +38,7 @@ public final class ExConfiguracaoBuilder {
 	private Long idFormaDoc; 
 	private Long idTpFormaDoc;
 	private Long idNivelAcesso; 
+	private Long idPapel; 
 	private Long idSituacao; 
 	private Long idTpConfiguracao;
 	private DpPessoaSelecao pessoaSel; 
@@ -44,6 +46,10 @@ public final class ExConfiguracaoBuilder {
 	private DpCargoSelecao cargoSel; 
 	private DpFuncaoConfiancaSelecao funcaoSel; 
 	private ExClassificacaoSelecao classificacaoSel;
+	private DpPessoaSelecao pessoaObjetoSel; 
+	private DpLotacaoSelecao lotacaoObjetoSel; 
+	private DpCargoSelecao cargoObjetoSel; 
+	private DpFuncaoConfiancaSelecao funcaoObjetoSel; 
 	private Long idOrgaoObjeto;
 	private Long id;
 	private Integer tipoPublicador;
@@ -109,6 +115,12 @@ public final class ExConfiguracaoBuilder {
 		} else
 			config.setExNivelAcesso(null);
 
+		if (idPapel != null && idPapel != 0) {
+			config.setExPapel(dao.consultar(idPapel,
+					ExPapel.class, false));
+		} else
+			config.setExNivelAcesso(null);
+
 		if (idSituacao != null && idSituacao != 0) {
 			config.setCpSituacaoConfiguracao(dao.consultar(idSituacao,
 					CpSituacaoConfiguracao.class, false));
@@ -154,6 +166,28 @@ public final class ExConfiguracaoBuilder {
 		} else
 			config.setExClassificacao(null);
 		
+
+		if (pessoaObjetoSel != null && pessoaObjetoSel.getId() != null) {
+			config.setPessoaObjeto(dao.consultar(pessoaObjetoSel.getId(), DpPessoa.class, false));
+		} else
+			config.setPessoaObjeto(null);
+
+		if (lotacaoObjetoSel != null && lotacaoObjetoSel.getId() != null) {
+			config.setLotacaoObjeto(dao.consultar(lotacaoObjetoSel.getId(), DpLotacao.class, false));
+		} else
+			config.setLotacaoObjeto(null);
+
+		if (cargoObjetoSel != null && cargoObjetoSel.getId() != null) {
+			config.setCargoObjeto(dao.consultar(cargoObjetoSel.getId(), DpCargo.class, false));
+		} else
+			config.setCargoObjeto(null);
+
+		if (funcaoObjetoSel != null && funcaoObjetoSel.getId() != null) {
+			config.setFuncaoConfiancaObjeto(dao.consultar(funcaoObjetoSel.getId(),
+					DpFuncaoConfianca.class, false));
+		} else
+			config.setFuncaoConfiancaObjeto(null);
+
 		if (idOrgaoObjeto != null && idOrgaoObjeto != 0) {
 			config.setOrgaoObjeto(dao.consultar(idOrgaoObjeto,
 					CpOrgaoUsuario.class, false));
@@ -197,6 +231,10 @@ public final class ExConfiguracaoBuilder {
 		return idNivelAcesso;
 	}
 
+	public Long getIdPapel() {
+		return idPapel;
+	}
+
 	public Long getIdSituacao() {
 		return idSituacao;
 	}
@@ -223,6 +261,23 @@ public final class ExConfiguracaoBuilder {
 
 	public ExClassificacaoSelecao getClassificacaoSel() {
 		return classificacaoSel;
+	}
+
+
+	public DpPessoaSelecao getPessoaObjetoSel() {
+		return pessoaObjetoSel;
+	}
+
+	public DpLotacaoSelecao getLotacaoObjetoSel() {
+		return lotacaoObjetoSel;
+	}
+
+	public DpCargoSelecao getCargoObjetoSel() {
+		return cargoObjetoSel;
+	}
+
+	public DpFuncaoConfiancaSelecao getFuncaoObjetoSel() {
+		return funcaoObjetoSel;
 	}
 
 	public Long getIdOrgaoObjeto() {
@@ -265,6 +320,11 @@ public final class ExConfiguracaoBuilder {
 		return this;
 	}
 
+	public ExConfiguracaoBuilder setIdPapel(Long idPapel) {
+		this.idPapel = idPapel;
+		return this;
+	}
+
 	public ExConfiguracaoBuilder setIdSituacao(Long idSituacao) {
 		this.idSituacao = idSituacao;
 		return this;
@@ -297,6 +357,26 @@ public final class ExConfiguracaoBuilder {
 
 	public ExConfiguracaoBuilder setClassificacaoSel(ExClassificacaoSelecao classificacaoSel) {
 		this.classificacaoSel = classificacaoSel;
+		return this;
+	}
+
+	public ExConfiguracaoBuilder setPessoaObjetoSel(DpPessoaSelecao pessoaObjetoSel) {
+		this.pessoaObjetoSel = pessoaObjetoSel;
+		return this;
+	}
+
+	public ExConfiguracaoBuilder setLotacaoObjetoSel(DpLotacaoSelecao lotacaoObjetoSel) {
+		this.lotacaoObjetoSel = lotacaoObjetoSel;
+		return this;
+	}
+
+	public ExConfiguracaoBuilder setCargoObjetoSel(DpCargoSelecao cargoObjetoSel) {
+		this.cargoObjetoSel = cargoObjetoSel;
+		return this;
+	}
+
+	public ExConfiguracaoBuilder setFuncaoObjetoSel(DpFuncaoConfiancaSelecao funcaoObjetoSel) {
+		this.funcaoObjetoSel = funcaoObjetoSel;
 		return this;
 	}
 

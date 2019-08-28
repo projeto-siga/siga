@@ -271,9 +271,11 @@
 						href="/sigaex/app/expediente/rel/relDocumentosForaPrazo?primeiraVez=true">
 							Documentos Fora do Prazo </a></li>
 				</c:if>
-
-				<!-- 				<li><a class="dropdown-item" href="#"> Documentos por -->
-				<!-- 						Devolução Programada </a></li> -->
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;RELDEVPROGRAMADA:Relatório de documentos devolção programada')}">
+					<li><a class="dropdown-item" href="/sigaex/app/expediente/rel/relDocumentosDevolucaoProgramada?primeiraVez=true"> Documentos por
+							Devolução Programada </a></li>
+				</c:if>
 
 				<!-- 				<li><a class="dropdown-item" href="#"> Tempo médio por -->
 				<!-- 						Situação </a></li> -->

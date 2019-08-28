@@ -100,6 +100,7 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_IGESTAO = "IGESTAO:Relatório de Indicadores de Gestão";
 	private static final String ACESSO_RELDOCVOL = "RELDOCVOL:Relatório de documentos por volume";
 	private static final String ACESSO_RELFORAPRAZO = "RELFORAPRAZO:Relatório de documentos fora do prazo";
+	private static final String ACESSO_RELDEVPROGRAMADA = "RELDEVPROGRAMADA:Relatório de documentos devolção programada";
 	private static final String APPLICATION_PDF = "application/pdf";
 
 	public ExRelatorioController(HttpServletRequest request,
@@ -977,6 +978,114 @@ public class ExRelatorioController extends ExController {
 						|| dtFim.compareTo(dataHoje) >= 0) {
 					throw new Exception(
 							"Data inicial ou data final não pode ser igual ou maior que a data atual.");
+				}
+
+				parametros.put("orgao", orgaoSelId.toString());
+				parametros.put("lotacao",
+						getRequest().getParameter("lotacaoSel.id"));
+				parametros.put("usuario",
+						getRequest().getParameter("usuarioSel.id"));
+				parametros.put("dataInicial",
+						getRequest().getParameter("dataInicial"));
+				parametros.put("dataFinal",
+						getRequest().getParameter("dataFinal"));
+				parametros.put("link_siga", "http://"
+						+ getRequest().getServerName() + ":"
+						+ getRequest().getServerPort()
+						+ getRequest().getContextPath()
+						+ "/app/expediente/doc/exibir?sigla=");
+
+				final RelDocumentosForaPrazo rel = new RelDocumentosForaPrazo(
+						parametros);
+				rel.gerar();
+
+				String unidadeAtual = "";
+
+				for (int i = 0; i < rel.listDados.size(); i++) {
+
+					String resultado = "";
+
+					if (!unidadeAtual.equals(rel.listDados.get(i))) {
+						resultado = "<thead class='thead-light'>" + "<tr>"
+								+ "<th rowspan='1' align='center'>"
+								+ rel.listDados.get(i) + "</th>";
+						unidadeAtual = rel.listDados.get(i);
+					} else {
+						resultado = "<thead>" + "<tr>"
+								+ "<th rowspan='1' align='center'></th>";
+					}
+
+					i++;
+
+					resultado += "<th colspan='1' align='center'>"
+							+ rel.listDados.get(i) + "</th>";
+
+					i++;
+
+					resultado += "<th rowspan='1' align='center'>"
+							+ rel.listDados.get(i) + "</th>";
+
+					i++;
+
+					resultado += "<th rowspan='1' align='center'>"
+							+ rel.listDados.get(i) + "</th>" + "</tr>"
+							+ "</thead>";
+
+					indicadoresProducao.add(resultado);
+				}
+
+				result.include("totalDocumentos",
+						rel.totalDocumentos.toString());
+			}
+		} catch (Exception e) {
+			result.include("mensagemCabec", e.getMessage());
+			result.include("msgCabecClass", "alert-danger");
+		}
+
+		if (primeiraVez == false) {
+			result.include("primeiraVez", false);
+		}
+
+		result.include("tamanho", indicadoresProducao.size());
+		result.include("indicadoresProducao", indicadoresProducao);
+		result.include("lotacaoSel", lotacaoSel);
+		result.include("usuarioSel", usuarioSel);
+		result.include("dataInicial", dataInicial);
+		result.include("dataFinal", dataFinal);
+	}
+
+	@Get
+	@Path("app/expediente/rel/relDocumentosDevolucaoProgramada")
+	public void relDocumentosDevolucaoProgramada(
+			final DpLotacaoSelecao lotacaoSel,
+			final DpPessoaSelecao usuarioSel, String dataInicial,
+			String dataFinal, boolean primeiraVez) throws Exception {
+
+		List<String> indicadoresProducao = new ArrayList();
+		try {
+			assertAcesso(ACESSO_RELDEVPROGRAMADA);
+
+			final Map<String, String> parametros = new HashMap<String, String>();
+			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
+			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
+
+			if (!primeiraVez) {
+				if (orgaoUsu != orgaoSelId) {
+					throw new Exception(
+							"Não é permitido consultas de outros órgãos.");
+				}
+				consistePeriodo(dataInicial, dataFinal);
+
+				final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+				final Date dtIni = df.parse(dataInicial);
+				final Date dtFim = df.parse(dataFinal);
+				Date dataHoje = new Date(System.currentTimeMillis());
+				dataHoje = df.parse(df.format(dataHoje));
+
+				if (dtIni.compareTo(dataHoje) < 0
+						|| dtFim.compareTo(dataHoje) < 0) {
+					throw new Exception(
+							"Data inicial ou data final não pode ser menor que a data atual.");
 				}
 
 				parametros.put("orgao", orgaoSelId.toString());

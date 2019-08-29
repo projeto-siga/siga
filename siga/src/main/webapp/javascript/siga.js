@@ -174,12 +174,14 @@ function verifica_data(data, naoObriga) {
 				|| (mes == "") || (ano == "")) {
 			msg = msg
 			+ "A data deve estar num dos seguintes formatos: DD/MM/AAAA ou DDMMAAAA\n";
+			data.style.color = "red";
 			alert(msg);
 			return;
 		}
 
 		if (isNaN(dia) || isNaN(mes) || isNaN(ano)) {
 			msg = msg + "A data só pode conter caracteres numéricos\n";
+			data.style.color = "red";
 			alert(msg);
 			return;
 		}
@@ -197,8 +199,8 @@ function verifica_data(data, naoObriga) {
 		}
 
 		if (msg.length > 0) {
+			data.style.color = "red";
 			alert(msg);
-			data.focus();
 			return;
 		}
 		if (dia.length < 2) {
@@ -217,6 +219,7 @@ function verifica_data(data, naoObriga) {
 			ano = "2" + ano.substring(ano.length - 3, ano.length);
 		}
 		data.value = dia + "/" + mes + "/" + ano;
+		data.style.color = "black";
 	}
 }
 

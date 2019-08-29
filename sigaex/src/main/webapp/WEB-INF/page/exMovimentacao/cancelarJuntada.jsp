@@ -1,8 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@ page language="java" contentType="text/html; charset=iso-8859-1"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
@@ -12,55 +12,72 @@
 	<script type="text/javascript">$("html").addClass("fisico");$("body").addClass("fisico");</script>
 </c:if>
 
-	<div class="gt-bd clearfix">
-		<div class="gt-content clearfix">
-			<h2>Cancelamento de Juntada de Documento - ${mob.siglaEDescricaoCompleta}</h2>
-			<div class="gt-content-box gt-for-table">
+	<!-- main content bootstrap -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3">
+			<div class="card-header">
+				<h5>
+					<fmt:message key="documento.cancelamento.juntada"/> - ${mob.siglaEDescricaoCompleta}
+				</h5>
+			</div>
+			<div class="card-body">
 				<form action="${request.contextPath}/app/expediente/mov/cancelar_juntada_gravar" method="post">
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}" />
-					
-					<table class="gt-form-table">
-						<tr class="header">
-							<td colspan="2">Dados do cancelamento de juntada</td>
-						</tr>
-						<tr>
-							<td>
-								<label>Data:</label>
-							</td>
-							<td>
-								<input type="text" name="dtMovString" onblur="javascript:verifica_data(this, true);"/>
-							</td>
-						</tr>
-						<tr>
-							<td>Responsável:</td>
-							<td>
+					<div class="row">
+						<div class="col-md-2 col-sm-3">
+							<div class="form-group">
+								<label for="dtMovString">Data</label>
+								<input class="form-control" type="text" name="dtMovString" onblur="javascript:verifica_data(this, true);"/>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Responsável</label>
 								<siga:selecao tema="simple" propriedade="subscritor" modulo="siga"/>&nbsp;
-								<input type="checkbox" theme="simple" name="substituicao" onclick="javascript:displayTitular(this);" />&nbsp;Substituto
-							</td>
-						</tr>
-						<c:set var="style" value="" />
-						<c:if test="${!substituicao}">
-							<c:set var="style" value="display:none" />
-						</c:if>
-						<tr id="tr_titular" style="${style}">
-							<td>Titular:</td>
-							<input type="hidden" name="campos" value="titularSel.id" />
-							<td><siga:selecao propriedade="titular" tema="simple" modulo="siga"/></td>
-						</tr>
-						<tr>
-							<td>
-								<label>Motivo:</label>
-							</td>
-							<td>
-								<input type="text" name="descrMov" maxlength="80" size="80" />
-							</td>
-						</tr>
-						<tr class="button">
-							<td colspan="2"><input type="submit" value="Ok" class="gt-btn-small gt-btn-left" /> <input type="button"
-								value="Cancela" onclick="javascript:history.back();" class="gt-btn-small gt-btn-left" /></td>
-						</tr>
-					</table>
+							</div>
+						</div>
+						<div class="col-sm-2 mt-4">
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="checkbox" 
+									theme="simple" name="substituicao"  value="${substituicao}" 
+									onclick="javascript:displayTitular(this);" />
+								<label class="form-check-label">Substituto</label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+							<c:choose>
+								<c:when test="${!substituicao}">
+									<div id="tr_titular" style="display: none">
+								</c:when>
+								<c:otherwise>
+									<div id="tr_titular" style="">
+								</c:otherwise>
+							</c:choose>
+										<label>Titular</label>
+										<input class="form-control" type="hidden" name="campos" value="titularSel.id" />
+										<siga:selecao propriedade="titular" tema="simple" modulo="siga"/>
+									</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm">
+							<div class="form-group">
+								<label>Motivo</label>
+								<input class="form-control" type="text" name="descrMov" maxlength="80" size="80" />
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm">
+							<input type="submit" value="Ok" class="btn btn-primary" />
+							<input type="button" value=<fmt:message key="botao.cancela"/> onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
+						</div>
+					</div>
 				</form>
 			</div>
 		</div>

@@ -32,8 +32,8 @@
 								<dt>&#149;&#160;Ap&oacute;s realizar a carga, os dados ser&atilde;o inseridos automaticamente na base de dados;</dt>
 								<dt>&#149;&#160;O sistema consistir&aacute; a exist&ecirc;ncia de duplicidade dos dados confrontando a planilha como banco de dados;</dt>
 								<dt>&#149;&#160;A planilha deve conter os seguintes campos/formatos:</dt>
-								<dd>- Nome: m&aacute;ximo de 100 caracteres alfanum&eacute;ricos (letras e n&uacute;meros)</dd>
-								<dd>- Sigla: m&aacute;ximo de 20 caracteres alfanum&eacute;ricos (letras e n&uacute;meros)</dd>
+								<dd>- Nome: m&aacute;ximo de 100 caracteres alfanum&eacute;ricos, hífen , vírgula e ponto (letras, n&uacute;meros, "-", "," e ".")</dd>
+								<dd>- Sigla: m&aacute;ximo de 20 caracteres alfanum&eacute;ricos, barra e hífen (letras, n&uacute;meros, "/" e "-")</dd>
 								<dd>- Localidade: m&aacute;ximo de 256 caracteres alfanum&eacute;ricos. Somente nome de Munic&iacute;pios existentes no Estado.</dd>
 							</dl>
 						</div>

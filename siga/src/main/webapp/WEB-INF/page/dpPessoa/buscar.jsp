@@ -10,10 +10,11 @@
 
 <script type="text/javascript" language="Javascript1.1">
 function sbmt(offset) {
-	if (offset==null) {
-		offset=0;
+	if (offset == null) {
+		offset = 0;
 	}
-	frm.elements['offset'].value=offset;
+	frm.elements["paramoffset"].value = offset;
+	frm.elements["p.offset"].value = offset;
 	frm.submit();
 }
 </script>
@@ -28,7 +29,8 @@ function sbmt(offset) {
 			<form name="frm" action="${request.contextPath}/app/pessoa/buscar" class="form100" method="POST">
 				<input type="hidden" name="propriedade" value="${param.propriedade}" />
 				<input type="hidden" name="postback" value="1" />
-				<input type="hidden" name="offset" value="0" />
+				<input type="hidden" name="paramoffset" value="0" />
+				<input type="hidden" name="p.offset" value="0" />
 				<input type="hidden" name="buscarFechadas" value="${param['buscarFechadas']}" />
 				<div class="row">
 					<div class="col-sm">
@@ -89,7 +91,7 @@ function sbmt(offset) {
 					<th>Fim de Vigência</th>
 				</tr>
 			</thead>
-			<siga:paginador maxItens="10" maxIndices="${empty maxIndices ? 10 : maxIndices}" totalItens="${tamanho}"
+			<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}"
 				itens="${pessoas}" var="pessoa">
 				<tr class="${evenorodd}">
 					<td align="center"><a

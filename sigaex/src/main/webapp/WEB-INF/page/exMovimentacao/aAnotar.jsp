@@ -88,7 +88,7 @@
 				<form name="frm" action="anotar_gravar" method="post">
 					<input type="hidden" name="postback" value="1" /> 
 					<input type="hidden" name="sigla" value="${sigla}" />
-					<div class="row">
+					<div class="row ${hide_only_GOVSP}">
 						<div class="col-md-2 col-sm-3">
 							<div class="form-group">
 								<label for="dtMovString">Data</label>
@@ -111,7 +111,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="row">
+					<div class="row ${hide_only_GOVSP}">
 						<div class="col-sm-6">
 							<div class="form-group">
 							<c:choose>
@@ -129,7 +129,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="row">
+					<div class="row ${hide_only_GOVSP}">
 						<div class="col-sm">
 							<div class="form-group">
 								<label>Função do Responsável</label>

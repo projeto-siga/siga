@@ -695,7 +695,7 @@ public class CpDao extends ModeloDao {
 	public DpLotacao consultarPorSigla(final DpLotacao o) {
 		final Query query = getSessao().getNamedQuery(
 				"consultarPorSiglaDpLotacao");
-		query.setString("siglaLotacao", o.getSigla());
+		query.setString("siglaLotacao", o.getSiglaLotacao());
 		if (o.getOrgaoUsuario() != null)
 			if (o.getOrgaoUsuario().getIdOrgaoUsu() != null)
 				query.setLong("idOrgaoUsu", o.getOrgaoUsuario().getIdOrgaoUsu());
@@ -1029,8 +1029,8 @@ public class CpDao extends ModeloDao {
 	public List<CpLocalidade> consultarLocalidadesPorUF(final CpUF cpuf) {
 
 		Query query = getSessao().createQuery(
-				"from CpLocalidade l where l.UF.idUF = "
-						+ cpuf.getIdUF().intValue() + " order by l.nmLocalidade");
+				"from CpLocalidade l where l.UF.idUF = :idUf order by remove_acento(upper(l.nmLocalidade))");
+		query.setInteger("idUf", cpuf.getIdUF().intValue());
 		List l = query.list();
 		return l;
 	}
@@ -1106,6 +1106,77 @@ public class CpDao extends ModeloDao {
 		query.setDate("dt", dt);
 		return query.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DpPessoa> consultarPorFiltroSemIdentidade(final DpPessoaDaoFiltro flt,
+			final int offset, final int itemPagina) {
+		try {
+			final Query query;
+
+			query = getSessao().getNamedQuery("consultarPorFiltroDpPessoaSemIdentidade");
+			
+			if (offset > 0) {
+				query.setFirstResult(offset);
+			}
+			if (itemPagina > 0) {
+				query.setMaxResults(itemPagina);
+			}
+			query.setString("nome",
+					flt.getNome().toUpperCase().replace(' ', '%'));
+
+			if(flt.getCpf() != null && !"".equals(flt.getCpf())) {
+				query.setLong("cpf", Long.valueOf(flt.getCpf()));
+			} else {
+				query.setLong("cpf", 0);
+			}
+			
+			if (flt.getIdOrgaoUsu() != null)
+				query.setLong("idOrgaoUsu", flt.getIdOrgaoUsu());
+			else
+				query.setLong("idOrgaoUsu", 0);
+
+			if (flt.getLotacao() != null)
+				query.setLong("lotacao", flt.getLotacao().getId());
+			else
+				query.setLong("lotacao", 0);
+
+			final List<DpPessoa> l = query.list();
+			return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
+	
+	public int consultarQuantidadeDpPessoaSemIdentidade(final DpPessoaDaoFiltro flt) {
+		try {
+			final Query query;
+			query = getSessao().getNamedQuery("consultarQuantidadeDpPessoaSemIdentidade");
+			
+			query.setString("nome",
+					flt.getNome().toUpperCase().replace(' ', '%'));
+
+			if(flt.getCpf() != null && !"".equals(flt.getCpf())) {
+				query.setLong("cpf", Long.valueOf(flt.getCpf()));
+			} else {
+				query.setLong("cpf", 0);
+			}
+			
+			if (flt.getIdOrgaoUsu() != null)
+				query.setLong("idOrgaoUsu", flt.getIdOrgaoUsu());
+			else
+				query.setLong("idOrgaoUsu", 0);
+
+			if (flt.getLotacao() != null)
+				query.setLong("lotacao", flt.getLotacao().getId());
+			else
+				query.setLong("lotacao", 0);
+
+			final int l = ((Long) query.uniqueResult()).intValue();
+			return l;
+		} catch (final NullPointerException e) {
+			return 0;
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<DpPessoa> consultarPorFiltro(final DpPessoaDaoFiltro flt,
@@ -1113,9 +1184,14 @@ public class CpDao extends ModeloDao {
 		try {
 			final Query query;
 
-			if (!flt.isBuscarFechadas())
+			if (!flt.isBuscarFechadas()) {
 				query = getSessao().getNamedQuery("consultarPorFiltroDpPessoa");
-			else
+				if(flt.getId() != null && !"".equals(flt.getId())) {
+					query.setLong("id", Long.valueOf(flt.getId()));
+				} else {
+					query.setLong("id", 0);
+				}
+			} else
 				query = getSessao().getNamedQuery(
 						"consultarPorFiltroDpPessoaInclusiveFechadas");
 
@@ -1185,10 +1261,14 @@ public class CpDao extends ModeloDao {
 		try {
 			final Query query;
 
-			if (!flt.isBuscarFechadas())
+			if (!flt.isBuscarFechadas()) {
 				query = getSessao()
 						.getNamedQuery("consultarQuantidadeDpPessoa");
-			else
+				if (flt.getId() != null)
+					query.setLong("id", flt.getId());
+				else
+					query.setLong("id", 0);
+			} else
 				query = getSessao().getNamedQuery(
 						"consultarQuantidadeDpPessoaInclusiveFechadas");
 
@@ -1315,7 +1395,16 @@ public class CpDao extends ModeloDao {
 				qry.setString("sesbPessoa", MatriculaUtils.getSiglaDoOrgaoDaMatricula(nmUsuario));
 				qry.setString("cpf", null);
 			}
+			
+			/* Constantes para Evitar Parse Oracle */
+			qry.setString("cpfZero","0");
+			qry.setString("sfp1","1");
+			qry.setString("sfp2","2");
+			qry.setString("sfp12","12");
+			qry.setString("sfp22","22");
+			qry.setString("sfp31","31");
 
+			
 			// Cache was disabled because it would interfere with the
 			// "change password" action.
 			qry.setCacheable(true);
@@ -1326,6 +1415,65 @@ public class CpDao extends ModeloDao {
 						"Nao foi possivel localizar a identidade do usuario '"
 								+ nmUsuario + "'.");
 			}
+			return lista;
+		} catch (Throwable e) {
+			throw new AplicacaoException(
+					"Ocorreu um erro tentando localizar a identidade do usuario '"
+							+ nmUsuario + "'.", 0, e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpIdentidade> consultaIdentidadesPorCpf(
+			final String nmUsuario) throws AplicacaoException {
+		try {
+			final Query qry = getSessao().getNamedQuery("consultarIdentidadeCadastranteAtiva");
+			
+			qry.setLong("cpf", Long.valueOf(nmUsuario));
+			qry.setString("nmUsuario", null);
+			qry.setString("sesbPessoa", null);
+			
+			/* Constantes para Evitar Parse Oracle */
+			qry.setString("cpfZero","0");
+			qry.setString("sfp1","1");
+			qry.setString("sfp2","2");
+			qry.setString("sfp12","12");
+			qry.setString("sfp22","22");
+			qry.setString("sfp31","31");
+			
+			qry.setCacheable(true);
+			qry.setCacheRegion(CACHE_QUERY_SECONDS);
+			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.list();
+			
+			return lista;
+		} catch (Throwable e) {
+			throw new AplicacaoException(
+					"Ocorreu um erro tentando localizar a identidade do usuario '"
+							+ nmUsuario + "'.", 0, e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CpIdentidade> consultaIdentidadesPorCpfEmail(
+			final String nmUsuario, String email) throws AplicacaoException {
+		try {
+			final Query qry = getSessao().getNamedQuery("consultarIdentidadeCpfEmail");
+			
+			qry.setLong("cpf", Long.valueOf(nmUsuario));
+			qry.setString("email", email);
+			
+			/* Constantes para Evitar Parse Oracle */
+			qry.setString("cpfZero","0");
+			qry.setString("sfp1","1");
+			qry.setString("sfp2","2");
+			qry.setString("sfp12","12");
+			qry.setString("sfp22","22");
+			qry.setString("sfp31","31");
+			
+			qry.setCacheable(true);
+			qry.setCacheRegion(CACHE_QUERY_SECONDS);
+			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.list();
+			
 			return lista;
 		} catch (Throwable e) {
 			throw new AplicacaoException(

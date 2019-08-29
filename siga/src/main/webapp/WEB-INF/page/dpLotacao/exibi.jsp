@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <script>
 	if (${not empty f:resource('graphviz.url')}) {
@@ -69,7 +70,7 @@
 	<div class="container-fluid">
 		<div class="card bg-light mb-3" >
 			<div class="card-header">
-				<h5>Dados da Lotação</h5>
+				<h5>Dados da <fmt:message key="usuario.lotacao"/></h5>
 			</div>
 			<div class="card-body">
 				<div class="row">
@@ -88,7 +89,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="row">
+				<div class="row ${hide_only_GOVSP}">
 					<div class="col-sm">
 						<div class="form-group">
 							<label>Lotação Pai</label>
@@ -100,8 +101,8 @@
 				</div>
 			</div>
 		</div>
-		<h3 class="gt-table-head">Lotações Subordinadas</h3>
-		<table border="0" class="table table-sm table-striped">
+		<h3 class="gt-table-head ${hide_only_GOVSP}">Lotações Subordinadas</h3>
+		<table border="0" class="table table-sm table-striped  ${hide_only_GOVSP}">
 			<thead class="thead-dark">
 				<tr>
 					<th align="right">Sigla</th>
@@ -124,7 +125,7 @@
 			</tbody>
 		</table>
 		<br /> <br />
-		<h3 class="gt-table-head">Magistrados/ Servidores</h3>
+		<h3 class="gt-table-head"><fmt:message key="tela.lotacao.magistrados.servidores"/></h3>
 		<table border="0" class="table table-sm table-striped">
 			<thead class="thead-dark">
 				<tr>
@@ -156,10 +157,12 @@
 			</tbody>
 		</table>
 		<br /> <br />
-		<h3 class="gt-table-head">Organograma</h3>
+		<h3 class="gt-table-head ${hide_only_GOVSP}">Organograma</h3>
 		<div id="organograma"></div>
 	</div>
-<script>
-	buildSvg('organograma', '${graph}');
-</script>
+<c:if test='${siga_cliente == "GOVSP"}'>
+	<script>
+		buildSvg('organograma', '${graph}');
+	</script>
+</c:if>
 </siga:pagina>

@@ -75,7 +75,7 @@
         },
         setSelected: function(li) {
             if (li.length) {
-                var text = li.children('a').text();
+                var text = li.children('a').text().substring(0,li.children('a').text().length - li.children('a').children('small').text().length);
                 var value = li.data('value');
                 this.$selectedLabel.html(text);
                 this.$hiddenField.val(value).change();

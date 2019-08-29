@@ -6,6 +6,7 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <siga:pagina titulo="Protocolo de Transferência" popup="true">
 	<style>
@@ -66,13 +67,13 @@
 						</tr>
 						<tr>
 							<th>Data</th>
-							<th>Lotação</th>
-							<th>Pessoa</th>
+							<th><fmt:message key="usuario.lotacao"/></th>
+							<th><fmt:message key="usuario.pessoa2"/></th>
 							<th>Data</th>
-							<th>Lotação</th>
-							<th>Pessoa</th>
-							<th>Lotação</th>
-							<th>Pessoa</th>
+							<th><fmt:message key="usuario.lotacao"/></th>
+							<th><fmt:message key="usuario.pessoa2"/></th>
+							<th><fmt:message key="usuario.lotacao"/></th>
+							<th><fmt:message key="usuario.pessoa2"/></th>
 						</tr>
 
 					<c:forEach var="i" items="${itens}">

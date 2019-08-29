@@ -33,14 +33,13 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 	}
 	
 	@Get("app/orgaoUsuario/listar")
-	@Post("app/orgaoUsuario/listar")
-	public void lista(Integer offset, String nome) throws Exception {
-		if(offset == null) {
-			offset = 0;
+	public void lista(Integer paramoffset, String nome) throws Exception {
+		if(paramoffset == null) {
+			paramoffset = 0;
 		}
 		CpOrgaoUsuarioDaoFiltro orgaoUsuario = new CpOrgaoUsuarioDaoFiltro();
 		orgaoUsuario.setNome(nome);
-		setItens(CpDao.getInstance().consultarPorFiltro(orgaoUsuario, offset, 15));
+		setItens(CpDao.getInstance().consultarPorFiltro(orgaoUsuario, paramoffset, 15));
 		result.include("itens", getItens());
 		result.include("tamanho", dao().consultarQuantidade(orgaoUsuario));
 		result.include("nome", nome);
@@ -48,7 +47,7 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 			result.include("orgaoUsuarioSiglaLogado", getTitular().getOrgaoUsuario().getSigla());
 		}
 		setItemPagina(15);
-		result.include("currentPageNumber", calculaPaginaAtual(offset));
+		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 	}
 	
 	@Get("/app/orgaoUsuario/editar")

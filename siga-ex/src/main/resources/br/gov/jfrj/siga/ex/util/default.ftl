@@ -1943,7 +1943,7 @@ Pede deferimento.</span><br/><br/><br/>
     <!-- FIM SUBSCRITOR [#nested/] -->
 [/#macro]
 
-[#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=""]
+[#macro cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho=true]
 <table style="float:none; clear:both;" width="100%" align="left" border="0" cellpadding="0"
     cellspacing="0" bgcolor="#FFFFFF">
     <tr bgcolor="#FFFFFF">
@@ -1964,7 +1964,7 @@ Pede deferimento.</span><br/><br/><br/>
                 </td>
             </tr>
             [/#if]
-            [#if orgaoCabecalho??]
+            [#if orgaoCabecalho]
 	            <tr>
 	                <td width="100%" align="center">
 	                <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">

@@ -20,11 +20,11 @@
 
 <script type="text/javascript" language="Javascript1.1">
 	function sbmt(offset) {
-		if (offset==null) {
-			offset=0;
+		if (offset == null) {
+			offset = 0;
 		}
-		frm.elements["offset"].value=offset; 
-		frm.elements["paramoffset"].value=offset; 
+		frm.elements["paramoffset"].value = offset;
+		frm.elements["p.offset"].value = offset;
 		frm.submit();
 	}
 	
@@ -47,7 +47,7 @@
 					<input type="hidden" name="propriedade" value="${param.propriedade}" />
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="paramoffset" value="0" />
-					<input type="hidden" name="offset" value="0" />
+					<input type="hidden" name="p.offset" value="0" />
 					<input type="hidden" id="nivelAlterado" name="nivelAlterado" />
 
 					<div class="row">

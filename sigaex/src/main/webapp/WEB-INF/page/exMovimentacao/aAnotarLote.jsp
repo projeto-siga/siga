@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
@@ -179,10 +180,10 @@
 								</tr>
 								<tr class="header">
 									<th class="text-center">Data</th>
-									<th class="text-center">Lotação</th>
-									<th class="text-center">Pessoa</th>
+									<th class="text-center"><fmt:message key="usuario.lotacao"/></th>
+									<th class="text-center"><fmt:message key="usuario.pessoa2"/></th>
 									<th class="text-center">Data</th>
-									<th class="text-center">Pessoa</th>
+									<th class="text-center"><fmt:message key="usuario.pessoa2"/></th>
 								</tr>
 							</thead>
 							<tbody class="table-bordered">

@@ -6,10 +6,11 @@
 
 <script type="text/javascript" language="Javascript1.1">
 function sbmt(offset) {
-	if (offset==null) {
-		offset=0;
+	if (offset == null) {
+		offset = 0;
 	}
-	frm.elements['offset'].value=offset;
+	frm.elements["paramoffset"].value = offset;
+	frm.elements["p.offset"].value = offset;
 	frm.submit();
 }
 function validarCPF(Objcpf){
@@ -56,8 +57,9 @@ function cpf_mask(v){
 <siga:pagina titulo="Listar Pessoas">
 	<!-- main content -->
 	<div class="container-fluid">
-	<form name="frm" action="listar" class="form100" method="POST">
-		<input type="hidden" name="offset" value="0" />
+	<form name="frm" action="listar" class="form100" method="GET">
+		<input type="hidden" name="paramoffset" value="0" />
+		<input type="hidden" name="p.offset" value="0" />
 		<div class="card bg-light mb-3" >
 			<div class="card-header">
 				<h5>Dados da Pessoa</h5>
@@ -100,14 +102,14 @@ function cpf_mask(v){
 							</select>
 						</div>					
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-4">
 						<div class="form-group">
-							<label for="idLotacaoPesquisa">Lota&ccedil;&atilde;o</label>
+							<label for="idLotacaoPesquisa"><fmt:message key="usuario.lotacao"/></label>
 							<select name="idLotacaoPesquisa" value="${idLotacaoPesquisa}" class="form-control">
 								<c:forEach items="${listaLotacao}" var="item">
-									<option value="${item.idLotacao}"
-										${item.idLotacao == idLotacaoPesquisa ? 'selected' : ''}>
-										${item.descricao}</option>
+									<option value="${item.idLotacao}" ${item.idLotacao == idLotacaoPesquisa ? 'selected' : ''}>
+										<c:if test="${item.descricao ne 'Selecione'}">${item.siglaLotacao} / </c:if>${item.descricao}
+									</option>
 								</c:forEach>
 							</select>
 						</div>					
@@ -149,7 +151,7 @@ function cpf_mask(v){
 				</tr>
 			</thead>
 			<tbody>
-				<siga:paginador maxItens="15" maxIndices="${empty maxIndices ? 10 : maxIndices}" totalItens="${tamanho}"
+				<siga:paginador maxItens="15" maxIndices="10" totalItens="${tamanho}"
 					itens="${itens}" var="pessoa">
 					<tr>
 						<td align="left">${pessoa.descricao}</td>
@@ -196,8 +198,10 @@ function cpf_mask(v){
 
 <script>
 function carregarRelacionados(id) {
+	frm.method = "POST";
 	frm.action = 'carregarCombos';
 	frm.submit();
+	frm.method = "GET";
 }
 </script>
 </siga:pagina>

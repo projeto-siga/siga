@@ -47,8 +47,12 @@ import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.SigaCalendar;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.CpTipoIdentidade;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
@@ -84,7 +88,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	@Get
 	@Post
 	@Path({"/app/pessoa/buscar","/app/cosignatario/buscar", "/pessoa/buscar.action", "/cosignatario/buscar.action"})
-	public void buscar(String sigla, String postback, Integer offset, Long idOrgaoUsu, DpLotacaoSelecao lotacaoSel) throws Exception {
+	public void buscar(String sigla, String postback, Integer paramoffset, Long idOrgaoUsu, DpLotacaoSelecao lotacaoSel) throws Exception {
 		final DpLotacao lotacaoTitular = getLotaTitular();
 		if ( postback == null && lotacaoTitular != null ) {
 			orgaoUsu = lotacaoTitular.getIdOrgaoUsuario();
@@ -94,7 +98,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		if (lotacaoSel != null && lotacaoSel.getId() != null && lotacaoSel.getId() > 0){
 			this.lotacaoSel = lotacaoSel;
 		}
-		this.getP().setOffset(offset);
+		this.getP().setOffset(paramoffset);
 		
 		if (sigla == null){
 			sigla = "";
@@ -111,8 +115,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		result.include("idOrgaoUsu",orgaoUsu);
 		result.include("sigla",sigla);
 		result.include("postbak",postback);
-		result.include("offset",offset);
-		result.include("maxIndices", getTamanho()/10 + 1);
+		result.include("offset",paramoffset);
 	}
 	
 	@Get("/app/pessoa/exibir")
@@ -177,8 +180,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 	
 	@Get("app/pessoa/listar")
-	@Post("app/pessoa/listar")
-	public void lista(Integer offset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa) throws Exception {
+	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idCargoPesquisa, Long idFuncaoPesquisa, Long idLotacaoPesquisa) throws Exception {
 		result.include("request",getRequest());
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
 		CpOrgaoUsuario ou = new CpOrgaoUsuario(); 
@@ -187,20 +189,20 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			list.remove(0);
 			result.include("orgaosUsu", list);
 			if(idOrgaoUsu == null) {
-				carregarCombos(null, list.get(0).getId(), null, null, null, null, null, 0);
+				carregarCombos(null, list.get(0).getId(), null, null, null, null, null, 0, Boolean.FALSE);
 			}
 		} else {
 			ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
 			list.add(ou);
 			result.include("orgaosUsu", list);
 			if(idOrgaoUsu == null) {
-				carregarCombos(null, ou.getId(), null, null, null, null, null, 0);
+				carregarCombos(null, ou.getId(), null, null, null, null, null, 0, Boolean.FALSE);
 			}
 		}
 		if(idOrgaoUsu != null && ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) || CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario()).getId().equals(idOrgaoUsu))) {
 			DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
-			if(offset == null) {
-				offset = 0;
+			if(paramoffset == null) {
+				paramoffset = 0;
 			}
 			dpPessoa.setIdOrgaoUsu(idOrgaoUsu);
 			dpPessoa.setNome(Texto.removeAcento(nome != null ? nome : ""));
@@ -223,11 +225,11 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				dpPessoa.setCpf(Long.valueOf(cpfPesquisa.replace(".", "").replace("-", "")));
 			}
 			dpPessoa.setBuscarFechadas(Boolean.TRUE);
-			setItens(CpDao.getInstance().consultarPorFiltro(dpPessoa, offset, 15));
+			dpPessoa.setId(Long.valueOf(0));
+			setItens(CpDao.getInstance().consultarPorFiltro(dpPessoa, paramoffset, 15));
 			result.include("itens", getItens());
 			Integer tamanho = dao().consultarQuantidade(dpPessoa);
 			result.include("tamanho", tamanho);
-			result.include("maxIndices", tamanho/15+1);
 			
 			result.include("idOrgaoUsu", idOrgaoUsu);
 			result.include("nome", nome);
@@ -236,7 +238,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			result.include("idFuncaoPesquisa", idFuncaoPesquisa);
 			result.include("idLotacaoPesquisa", idLotacaoPesquisa);
 			
-			carregarCombos(null, idOrgaoUsu, null, null, null, null, cpfPesquisa, offset);
+			carregarCombos(null, idOrgaoUsu, null, null, null, null, cpfPesquisa, paramoffset, Boolean.FALSE);
 
 		}
 	}
@@ -258,6 +260,25 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				pessoa.setDataFimPessoa(calendar.getTime());
 				
 			} else {//ativar
+				//não pode ativar caso já exista uma pessoa com mesmo órgão, cargo, função de confiança, lotação e cpf
+				
+				DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
+				dpPessoa.setIdOrgaoUsu(pessoa.getOrgaoUsuario().getId());
+				dpPessoa.setCargo(pessoa.getCargo());
+				dpPessoa.setFuncaoConfianca(pessoa.getFuncaoConfianca());
+				dpPessoa.setLotacao(pessoa.getLotacao());
+				dpPessoa.setCpf(pessoa.getCpfPessoa());
+				dpPessoa.setNome("");
+				dpPessoa.setId(id);
+				
+				dpPessoa.setBuscarFechadas(Boolean.FALSE);
+				Integer tamanho = dao().consultarQuantidade(dpPessoa);
+				
+				if(tamanho > 0) {
+					throw new AplicacaoException("Já existe outro usuário ativo com estes dados: Órgão, Cargo, Função, Unidade e CPF");
+				}
+				
+				
 				pessoa.setDataFimPessoa(null);
 			}
 			
@@ -289,11 +310,15 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				if(pessoa.getDataNascimento() != null) {
 					result.include("dtNascimento", pessoa.getDtNascimentoDDMMYYYY());
 				}
-				result.include("idCargo", pessoa.getCargo().getId());
+				if(pessoa.getCargo() != null) {
+					result.include("idCargo", pessoa.getCargo().getId());
+				}
 				if( pessoa.getFuncaoConfianca() != null) {
 					result.include("idFuncao", pessoa.getFuncaoConfianca().getId());
 				}
-				result.include("idLotacao", pessoa.getLotacao().getId());
+				if(pessoa.getLotacao() != null) {
+					result.include("idLotacao", pessoa.getLotacao().getId());
+				}
 			}
 		}
 		if(id == null || (ou.getId() != null && ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) || CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario()).getId().equals(ou.getId())))) {
@@ -364,7 +389,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 	
 	@Post("/app/pessoa/carregarCombos")
-	public void carregarCombos(final Long id, final Long idOrgaoUsu, final String nmPessoa, final String dtNascimento, final String cpf, final String email, final String cpfPesquisa, final Integer offset) {
+	public void carregarCombos(final Long id, final Long idOrgaoUsu, final String nmPessoa, final String dtNascimento, final String cpf, final String email, final String cpfPesquisa, final Integer paramoffset, Boolean retornarEnvioEmail) {
 		result.include("request",getRequest());
 		result.include("id", id);
 		result.include("idOrgaoUsu", idOrgaoUsu);
@@ -374,7 +399,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		result.include("email", email);
 		result.include("cpfPesquisa", cpfPesquisa);
 		setItemPagina(15);
-		result.include("currentPageNumber", calculaPaginaAtual(offset));
+		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
 		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 			List<CpOrgaoUsuario> list1 = new ArrayList<CpOrgaoUsuario>();
@@ -411,7 +436,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		l.setNomeLotacao("Selecione");
 		l.setId(0L);
 		listaLotacao.add(l);
-		listaLotacao.addAll(dao().getInstance().consultarPorFiltro(lotacao));
+		if(idOrgaoUsu != null && idOrgaoUsu != 0)
+			listaLotacao.addAll(dao().getInstance().consultarPorFiltro(lotacao));
 		result.include("listaLotacao", listaLotacao);
 		
 		DpFuncaoConfiancaDaoFiltro funcao = new DpFuncaoConfiancaDaoFiltro();
@@ -425,8 +451,10 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		listaFuncao.addAll(dao().getInstance().consultarPorFiltro(funcao));
 		result.include("listaFuncao", listaFuncao);
 		
-		if(offset == null) {
+		if(paramoffset == null) {
 			result.use(Results.page()).forwardTo("/WEB-INF/page/dpPessoa/edita.jsp");
+		} else if(retornarEnvioEmail != null && retornarEnvioEmail) { 
+			result.use(Results.page()).forwardTo("/WEB-INF/page/dpPessoa/enviaEmail.jsp");
 		} else {
 			result.use(Results.page()).forwardTo("/WEB-INF/page/dpPessoa/lista.jsp");
 		}
@@ -455,7 +483,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		if(email == null || email.trim() == "") 
 			throw new AplicacaoException("E-mail não informado");
 		
-
+		if(nmPessoa != null && !nmPessoa.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ'' ]+")) 
+			throw new AplicacaoException("Nome com caracteres não permitidos");
 		
 		DpPessoa pessoa = new DpPessoa();
 		
@@ -508,7 +537,24 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			pessoa.setFuncaoConfianca(null);
 		}
 		pessoa.setSesbPessoa(ou.getSigla());
-				
+		
+		//ÓRGÃO / CARGO / FUNÇÃO DE CONFIANÇA / LOTAÇÃO e CPF iguais.
+		DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
+		dpPessoa.setIdOrgaoUsu(pessoa.getOrgaoUsuario().getId());
+		dpPessoa.setCargo(pessoa.getCargo());
+		dpPessoa.setFuncaoConfianca(pessoa.getFuncaoConfianca());
+		dpPessoa.setLotacao(pessoa.getLotacao());
+		dpPessoa.setCpf(pessoa.getCpfPessoa());
+		dpPessoa.setNome("");
+		dpPessoa.setId(id);
+		
+		dpPessoa.setBuscarFechadas(Boolean.FALSE);
+		Integer tamanho = dao().consultarQuantidade(dpPessoa);
+		
+		if(tamanho > 0) {
+			throw new AplicacaoException("Usuário já cadastrado com estes dados: Órgão, Cargo, Função, Unidade e CPF");
+		}
+		
 		try {
 			dao().iniciarTransacao();
 			dao().gravar(pessoa);
@@ -518,6 +564,27 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 				pessoa.setMatricula(10000 + pessoa.getId());
 				pessoa.setIdePessoa(pessoa.getMatricula().toString());
 				dao().gravar(pessoa);
+				
+				List<CpIdentidade> lista = CpDao.getInstance().consultaIdentidadesPorCpf(cpf.replace(".", "").replace("-", ""));
+				CpIdentidade usu = null;
+				if(lista.size() > 0) {
+					CpIdentidade usuarioExiste = lista.get(0);
+					usu = new CpIdentidade();
+					usu.setCpTipoIdentidade(dao().consultar(1,
+										CpTipoIdentidade.class, false));
+					usu.setDscSenhaIdentidade(usuarioExiste.getDscSenhaIdentidade());
+					usu.setDtCriacaoIdentidade(dao()
+							.consultarDataEHoraDoServidor());
+					usu.setCpOrgaoUsuario(ou);
+					usu.setHisDtIni(usu.getDtCriacaoIdentidade());
+					usu.setHisAtivo(1);
+				}
+				
+				if(usu != null) {
+					usu.setNmLoginIdentidade(pessoa.getSesbPessoa() + pessoa.getMatricula());
+					usu.setDpPessoa(pessoa);
+					dao().gravarComHistorico(usu, getIdentidadeCadastrante());
+				}
 			}
 			dao().commitTransacao();			
 		} catch (final Exception e) {
@@ -558,7 +625,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			}
 			
 			CpBL cpbl = new CpBL();
-			inputStream = cpbl.uploadPessoa(file, orgaoUsuario, extensao);
+			inputStream = cpbl.uploadPessoa(file, orgaoUsuario, extensao, getIdentidadeCadastrante());
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
@@ -571,5 +638,91 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		}
 		return null;
 
+	}
+	
+	@Get("app/pessoa/enviarEmail")
+	public void enviaEmail(Integer paramoffset, Long idOrgaoUsu, String nome, String cpfPesquisa, Long idLotacaoPesquisa) throws Exception {
+		result.include("request",getRequest());
+		List<CpOrgaoUsuario> list = new ArrayList<CpOrgaoUsuario>();
+		CpOrgaoUsuario ou = new CpOrgaoUsuario(); 
+		if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
+			list = dao().listarOrgaosUsuarios();
+			list.remove(0);
+			result.include("orgaosUsu", list);
+			if(idOrgaoUsu == null) {
+				carregarCombos(null, idOrgaoUsu, null, null, null, null, null, 0, Boolean.TRUE);
+			}
+		} else {
+			ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
+			list.add(ou);
+			result.include("orgaosUsu", list);
+			if(idOrgaoUsu == null) {
+				carregarCombos(null, ou.getId(), null, null, null, null, null, 0, Boolean.TRUE);
+			}
+		}
+		if(idOrgaoUsu != null && ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) || CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario()).getId().equals(idOrgaoUsu))) {
+			DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
+			if(paramoffset == null) {
+				paramoffset = 0;
+			}
+			dpPessoa.setIdOrgaoUsu(idOrgaoUsu);
+			dpPessoa.setNome(Texto.removeAcento(nome != null ? nome : ""));
+			
+			if(idLotacaoPesquisa != null) {
+				DpLotacao lotacao = new DpLotacao();
+				lotacao.setId(idLotacaoPesquisa);
+				dpPessoa.setLotacao(lotacao);
+			}
+			if(cpfPesquisa != null && !"".equals(cpfPesquisa)) {
+				dpPessoa.setCpf(Long.valueOf(cpfPesquisa.replace(".", "").replace("-", "")));
+			}
+			dpPessoa.setBuscarFechadas(Boolean.TRUE);
+			setItens(CpDao.getInstance().consultarPorFiltroSemIdentidade(dpPessoa, paramoffset, 15));
+			result.include("itens", getItens());
+			Integer tamanho = dao().consultarQuantidadeDpPessoaSemIdentidade(dpPessoa);
+			result.include("tamanho", tamanho);
+			
+			result.include("idOrgaoUsu", idOrgaoUsu);
+			result.include("nome", nome);
+			result.include("cpfPesquisa", cpfPesquisa);
+			result.include("idLotacaoPesquisa", idLotacaoPesquisa);
+			
+			carregarCombos(null, idOrgaoUsu, null, null, null, null, cpfPesquisa, paramoffset, Boolean.TRUE);
+		}
+	}
+	
+	@Get("app/pessoa/enviar")
+	public void enviar(Long idOrgaoUsu, String nome, String cpfPesquisa, Long idLotacaoPesquisa) throws Exception {
+		String[] senhaGerada = new String[1];
+		
+		if(idOrgaoUsu == null || idOrgaoUsu == 0)
+			throw new AplicacaoException("Órgão não informado");
+		
+		DpPessoaDaoFiltro dpPessoa = new DpPessoaDaoFiltro();
+
+		dpPessoa.setIdOrgaoUsu(idOrgaoUsu);
+		dpPessoa.setNome(Texto.removeAcento(nome != null ? nome : ""));
+		
+		if(idLotacaoPesquisa != null) {
+			DpLotacao lotacao = new DpLotacao();
+			lotacao.setId(idLotacaoPesquisa);
+			dpPessoa.setLotacao(lotacao);
+		}
+		if(cpfPesquisa != null && !"".equals(cpfPesquisa)) {
+			dpPessoa.setCpf(Long.valueOf(cpfPesquisa.replace(".", "").replace("-", "")));
+		}
+			
+		List<DpPessoa> lista = CpDao.getInstance().consultarPorFiltroSemIdentidade(dpPessoa, 0, 0);
+		String cpfAnterior = "";
+		for (DpPessoa dpPessoa2 : lista) {
+			
+			if(!cpfAnterior.equals(dpPessoa2.getCpfPessoa().toString())) {
+				senhaGerada[0] = GeraMessageDigest.geraSenha();
+			}
+			Cp.getInstance().getBL().criarIdentidade(dpPessoa2.getSesbPessoa() + dpPessoa2.getMatricula(), dpPessoa2.getCpfFormatado(),
+					getIdentidadeCadastrante(), null, senhaGerada, Boolean.FALSE);
+			cpfAnterior = dpPessoa2.getCpfPessoa().toString();
+		}
+		this.result.redirectTo(this).enviaEmail(0, idOrgaoUsu, nome, cpfPesquisa, idLotacaoPesquisa);
 	}
 }

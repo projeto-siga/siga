@@ -4,6 +4,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <script type="text/javascript">
 	submitOk = function() {
@@ -26,8 +27,8 @@
 	<thead>
 		<tr>
 			<th width="50%">Situação</th>
-			<th width="25%" style="text-align: right">Atendente</th>
-			<th width="25%" style="text-align: right">Lotação</th>
+			<th width="25%" style="text-align: right"><fmt:message key="quadro.atendente"/></th>
+			<th width="25%" style="text-align: right"><fmt:message key="usuario.lotacao"/></th>
 		</tr>
 	</thead>
 	<tbody>

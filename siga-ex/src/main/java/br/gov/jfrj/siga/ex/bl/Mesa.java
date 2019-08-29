@@ -68,24 +68,24 @@ public class Mesa {
 		//
 		CAIXA_DE_ENTRADA("Caixa de Entrada", "fas fa-inbox"),
 		//
-		EM_ELABORACAO("Em Elaboração", "far fa-lightbulb"),
+		EM_ELABORACAO("Em Elaboração", "fas fa-lightbulb"),
 		//
-		AGUARDANDO_ANDAMENTO("Aguardando Andamento", "far fa-clock"),
+		AGUARDANDO_ANDAMENTO("Aguardando Andamento", "fas fa-clock"),
 		//
 		CAIXA_DE_SAIDA("Caixa de Saída", "fas fa-inbox"),
 		//
 		ACOMPANHANDO("Acompanhando", "fas fa-tags"),
 		//
-		MONITORANDO("Monitorando", "far fa-hourglass-half"),
+		MONITORANDO("Monitorando", "fas fa-hourglass-half"),
 		//
 		AGUARDANDO_ACAO_DE_TEMPORALIDADE("Aguardando Ação de Temporalidade",
-				"far fa-hourglass-half"),
+				"fas fa-hourglass-half"),
 		//
-		OUTROS("Outros", "far fa-inbox"),
+		OUTROS("Outros", "fas fa-inbox"),
 		//
-		QUALQUER("Qualquer", "far fa-inbox"),
+		QUALQUER("Qualquer", "fas fa-inbox"),
 		//
-		NENHUM("Nenhum", "far fa-inbox");
+		NENHUM("Nenhum", "fas fa-inbox");
 
 		private final String nome;
 		private final String icone;
@@ -98,23 +98,23 @@ public class Mesa {
 
 	public enum MarcadorEnum {
 		//
-		EM_ELABORACAO(1, "Em Elaboração", "far fa-lightbulb", "",
+		EM_ELABORACAO(1, "Em Elaboração", "fas fa-lightbulb", "",
 				GrupoDeMarcadorEnum.EM_ELABORACAO),
 		//
-		EM_ANDAMENTO(2, "Aguardando Andamento", "far fa-clock", "",
+		EM_ANDAMENTO(2, "Aguardando Andamento", "fas fa-clock", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
-		A_RECEBER(3, "A Receber", "far fa-inbox", "",
+		A_RECEBER(3, "A Receber", "fas fa-inbox", "",
 				GrupoDeMarcadorEnum.CAIXA_DE_ENTRADA),
 		//
-		EXTRAVIADO(4, "Extraviado", "far fa-inbox", "", GrupoDeMarcadorEnum.ALERTA),
+		EXTRAVIADO(4, "Extraviado", "fas fa-inbox", "", GrupoDeMarcadorEnum.ALERTA),
 		//
-		A_ARQUIVAR(5, "A Arquivar", "far fa-inbox", "", GrupoDeMarcadorEnum.OUTROS),
+		A_ARQUIVAR(5, "A Arquivar", "fas fa-inbox", "", GrupoDeMarcadorEnum.OUTROS),
 		//
-		ARQUIVADO_CORRENTE(6, "Arquivado Corrente", "far fa-inbox", "",
+		ARQUIVADO_CORRENTE(6, "Arquivado Corrente", "fas fa-inbox", "",
 				GrupoDeMarcadorEnum.OUTROS),
 		//
-		A_ELIMINAR(7, "A Eliminar", "far fa-inbox", "",
+		A_ELIMINAR(7, "A Eliminar", "fas fa-inbox", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ACAO_DE_TEMPORALIDADE),
 		//
 		ELIMINADO(8, "Eliminado", "fas fa-power-off", "", GrupoDeMarcadorEnum.OUTROS),
@@ -126,23 +126,23 @@ public class Mesa {
 		//
 		CANCELADO(10, "Cancelado", "fas fa-ban", "", GrupoDeMarcadorEnum.OUTROS),
 		//
-		TRANSFERIDO_A_ORGAO_EXTERNO(11, "Tranferido a Órgão Externo", "far fa-paper-plane",
+		TRANSFERIDO_A_ORGAO_EXTERNO(11, "Tranferido a Órgão Externo", "fas fa-paper-plane",
 				"", GrupoDeMarcadorEnum.OUTROS),
 
 		//
-		ARQUIVADO_INTERMEDIARIO(12, "Arquivado Intermediário", "far fa-inbox", "",
+		ARQUIVADO_INTERMEDIARIO(12, "Arquivado Intermediário", "fas fa-inbox", "",
 				GrupoDeMarcadorEnum.OUTROS),
 		//
-		CAIXA_DE_ENTRADA(14, "A Receber", "far fa-inbox", "",
+		CAIXA_DE_ENTRADA(14, "A Receber", "fas fa-inbox", "",
 				GrupoDeMarcadorEnum.CAIXA_DE_ENTRADA),
 		//
-		ARQUIVADO_PERMANENTE(13, "Arquivado Permanente", "far fa-inbox", "",
+		ARQUIVADO_PERMANENTE(13, "Arquivado Permanente", "fas fa-inbox", "",
 				GrupoDeMarcadorEnum.OUTROS),
 		//
 		PENDENTE_DE_ASSINATURA(15, "Pendente de Assinatura", "fas fa-key", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
-		JUNTADO_A_DOCUMENTO_EXTERNO(16, "Juntado a Documento Externo", "far fa-inbox",
+		JUNTADO_A_DOCUMENTO_EXTERNO(16, "Juntado a Documento Externo", "fas fa-inbox",
 				"", GrupoDeMarcadorEnum.OUTROS),
 		//
 		A_REMETER_PARA_PUBLICACAO(17, "A Remeter para Publicação", "fas fa-scroll", "",
@@ -238,15 +238,15 @@ public class Mesa {
 		SOLICITACAO_COMO_SOLICITANTE(49, "Solicitante", "inbox", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
-		RECOLHER_PARA_ARQUIVO_PERMANENTE(50, "Recolher Arq. Permante", "far fa-inbox",
+		RECOLHER_PARA_ARQUIVO_PERMANENTE(50, "Recolher Arq. Permante", "fas fa-inbox",
 				"", GrupoDeMarcadorEnum.AGUARDANDO_ACAO_DE_TEMPORALIDADE),
 
 		//
 		TRANSFERIR_PARA_ARQUIVO_INTERMEDIARIO(51,
-				"Transferir Arq. Intermediário", "far fa-inbox", "",
+				"Transferir Arq. Intermediário", "fas fa-inbox", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ACAO_DE_TEMPORALIDADE),
 		//
-		EM_EDITAL_DE_ELIMINACAO(52, "Em Edital de Eliminação", "far fa-inbox", "",
+		EM_EDITAL_DE_ELIMINACAO(52, "Em Edital de Eliminação", "fas fa-inbox", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
 		SOLICITACAO_FECHADO_PARCIAL(53, "Fechado Parcial", "inbox", "",
@@ -259,7 +259,7 @@ public class Mesa {
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 
 		//
-		AGUARDANDO(57, "Aguardando", "far fa-clock", "",
+		AGUARDANDO(57, "Aguardando", "fas fa-clock", "",
 				GrupoDeMarcadorEnum.AGUARDANDO_ANDAMENTO),
 		//
 		A_DEVOLVER_FORA_DO_PRAZO(58, "A Devolver Fora do Prazo", "fas fa-exchange-alt", "",
@@ -269,7 +269,7 @@ public class Mesa {
 				"Aguardando Devolução Fora Do Prazo", "fas fa-exchange-alt", "",
 				GrupoDeMarcadorEnum.ALERTA),
 		//
-		PENDENTE_DE_ANEXACAO(60, "Pendente de Anexação", "far fa-arrow-alt-circle-up", "",
+		PENDENTE_DE_ANEXACAO(60, "Pendente de Anexação", "fas fa-arrow-alt-circle-up", "",
 				GrupoDeMarcadorEnum.ALERTA),
 		//
 		SOLICITACAO_EM_ELABORACAO(61, "Em Elaboração", "inbox", "",
@@ -319,7 +319,12 @@ public class Mesa {
 
 		//
 		RETENCAO_INSS(1002, "Retenção de INSS", "fas fa-tag", "",
-				GrupoDeMarcadorEnum.ALERTA);
+				GrupoDeMarcadorEnum.ALERTA),
+		//
+		PRIORITARIO(1003, "Prioritário", "fas fa-star", "", GrupoDeMarcadorEnum.ALERTA),
+		//		
+		RESTRICAO_ACESSO(1004, "Restrição de Acesso", "fas fa-user-secret", "", GrupoDeMarcadorEnum.ALERTA);
+		//		
 
 		private MarcadorEnum(int id, String nome, String icone,
 				String descricao, GrupoDeMarcadorEnum grupo) {
@@ -343,7 +348,11 @@ public class Mesa {
 		}
 
 		public String getNome() {
-			return nome;
+			if (SigaMessages.isSigaSP() && nome.equals("Como Subscritor")) {
+				return "Responsável pela Assinatura";
+			} else {
+				return nome;
+			}
 		}
 
 		private final int id;
@@ -378,7 +387,7 @@ public class Mesa {
 
 			r.codigo = mobil.getCodigoCompacto();
 			r.sigla = mobil.getSigla();
-			r.descr = mobil.doc().getDescrCurta();
+			r.descr = mobil.doc().getDescrCurta(80);
 
 			if (mobil.doc().getSubscritor() != null
 					&& mobil.doc().getSubscritor().getLotacao() != null)
@@ -526,6 +535,26 @@ public class Mesa {
 			map.get(mobil).add(mm);
 		}
 
+		if (SigaBaseProperties.getBooleanValue("siga.mesa.carrega.lotacao")) {
+			List<Object[]> lLota = dao.listarDocumentosCxEntradaPorPessoaOuLotacao(null,
+					lotaTitular);
+	
+			for (Object[] reference : lLota) {
+				ExMarca marca = (ExMarca) reference[0];
+				if (marca.getCpMarcador().getIdMarcador() == CpMarcador.MARCADOR_CAIXA_DE_ENTRADA) {
+					CpMarcador marcador = (CpMarcador) reference[1];
+					ExMobil mobil = (ExMobil) reference[2];
+		
+					if (!map.containsKey(mobil))
+						map.put(mobil, new ArrayList<MeM>());
+					MeM mm = new MeM();
+					mm.marca = marca;
+					mm.marcador = marcador;
+					map.get(mobil).add(mm);
+				}
+			}
+		}
+			
 		return Mesa.listarReferencias(TipoDePainelEnum.UNIDADE, map, titular,
 				titular.getLotacao(), dao.consultarDataEHoraDoServidor());
 	}

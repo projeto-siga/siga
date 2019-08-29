@@ -295,6 +295,8 @@ public class ExDocumentoVO extends ExVO {
 				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ENCERRAMENTO_DE_VOLUME);
 		movimentacoesPermitidas
 				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_COPIA);
+		movimentacoesPermitidas
+				.add(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CIENCIA);		
 
 		List<Long> marcasGeralPermitidas = new ArrayList<Long>();
 		marcasGeralPermitidas.add(CpMarcador.MARCADOR_A_ELIMINAR);
@@ -395,8 +397,6 @@ public class ExDocumentoVO extends ExVO {
 	 */
 	private void addAcoes(ExDocumento doc, DpPessoa titular,
 			DpLotacao lotaTitular, boolean exibirAntigo) {
-		String iconVerImpressao;
-		String iconVerMais;
 		
 		ExVO vo = this;
 		for (ExMobilVO mobvo : mobs) {
@@ -414,16 +414,8 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeVisualizarImpressao(titular, lotaTitular, mob));
 
-		if(SigaMessages.isSigaSP()) {
-			iconVerImpressao = "eye";
-			iconVerMais = "date_magnify";
-		} else {
-			iconVerImpressao = "printer";
-			iconVerMais = "eye";
-		}
-
 		vo.addAcao(
-				iconVerImpressao,
+				SigaMessages.getMessage("icon.ver.impressao"),
 				SigaMessages.getMessage("documento.ver.impressao"),
 				"/app/arquivo",
 				"exibir",
@@ -480,7 +472,7 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance().getComp()
 						.podeFazerAnotacao(titular, lotaTitular, mob));
 
-		vo.addAcao("folder_user", "Definir Perfil", "/app/expediente/mov",
+		vo.addAcao("folder_user", SigaMessages.getMessage("documento.definir.perfil"), "/app/expediente/mov",
 				"vincularPapel", Ex.getInstance().getComp()
 						.podeFazerVinculacaoPapel(titular, lotaTitular, mob));
 
@@ -546,7 +538,7 @@ public class ExDocumentoVO extends ExVO {
 				Ex.getInstance()
 						.getComp()
 						.podeAutenticarDocumento(titular, lotaTitular,
-								mob.doc()));
+								mob.getExDocumento()));
 
 		vo.addAcao(
 				"page_go	",
@@ -619,10 +611,10 @@ public class ExDocumentoVO extends ExVO {
 		// test="${exibirCompleto != true}" />
 		int numUltMobil = doc.getNumUltimoMobil();
 		vo.addAcao(
-				iconVerMais,
+				SigaMessages.getMessage("icon.ver.mais"),
 				SigaMessages.getMessage("documento.ver.mais"),
 				"/app/expediente/doc",
-				"exibirAntigo",
+				SigaMessages.getMessage("documento.acao.exibirAntigo"),
 				Ex.getInstance()
 						.getComp()
 						.podeExibirInformacoesCompletas(titular, lotaTitular,

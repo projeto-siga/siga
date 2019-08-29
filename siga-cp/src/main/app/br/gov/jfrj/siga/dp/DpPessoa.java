@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -49,6 +50,7 @@ import org.hibernate.annotations.Formula;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Texto;
+import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.util.MatriculaUtils;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -72,13 +74,15 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 	private static final long serialVersionUID = -5743631829922578717L;
 	public static final ActiveRecord<DpPessoa> AR = new ActiveRecord<>(
 			DpPessoa.class);
-
 	@Formula(value = "REMOVE_ACENTO(NOME_PESSOA)")
 	@Desconsiderar
 	private String nomePessoaAI;
 
 	@Transient
 	private Long idSitConfiguracaoConfManual;
+
+	@Transient
+	private List <List<String>> listaLotacoes = new ArrayList <List<String>>();
 
 	public DpPessoa() {
 
@@ -433,6 +437,39 @@ public class DpPessoa extends AbstractDpPessoa implements Serializable,
 		return this;
 	}
 
+	/**
+	 * Devolve as lotacoes que o cadastrante pode acessar
+	 * 
+	 * @return Retorna as lotações que o cadastrante pode acessar
+	 */
+	public List <List<String>> getLotacoes() {
+		
+		if (listaLotacoes.size() == 0) {
+			List<CpIdentidade> idsCpf = CpDao.getInstance().consultaIdentidadesCadastrante(getCpfPessoa().toString(), true);
+			for (CpIdentidade identCpf : idsCpf) {
+			//				if (!this.getPessoaInicial().equals(identCpf.getDpPessoa())) { 
+				List<String> listaUserLota = new ArrayList<String>();
+				listaUserLota.add(identCpf.getNmLoginIdentidade());
+				listaUserLota.add(identCpf.getDpPessoa().getLotacao().getSiglaLotacao());
+				listaUserLota.add(identCpf.getDpPessoa().getFuncaoConfianca().getNomeFuncao() + "/" +
+						identCpf.getDpPessoa().getCargo().getNomeCargo());
+				listaLotacoes.add(listaUserLota);
+			}
+		}
+
+		return listaLotacoes;
+	}
+	
+	/**
+	 * Seta as lotacoes que o cadastrante pode acessar
+	 * 
+	 * @param listaLota
+	 *            * lista de lotacoes que o cadastrante pode acessar
+	 */
+	public void setLotacoes(List <List<String>> listaLota) {
+		listaLotacoes = listaLota;
+	}
+	
 	/**
 	 * retorna se ativo na data
 	 * 

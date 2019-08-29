@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:jsp="http://java.sun.com/xml/ns/javaee/jsp"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+	<display-name>Siga Identity Provider</display-name>
+	<description>Este projeto e o centralizador do processo de autenticacao do siga</description>
+	<jsp-config>
+		<jsp-property-group>
+			<url-pattern>*.jsp</url-pattern>
+			<page-encoding>UTF-8</page-encoding>
+		</jsp-property-group>
+	</jsp-config>
+	<listener>
+		<listener-class>org.picketlink.identity.federation.web.listeners.IDPHttpSessionListener</listener-class>
+	</listener>
+	<session-config>
+		<session-timeout>150</session-timeout>
+	</session-config>
+	<welcome-file-list>
+		<welcome-file>/hosted/index.jsp</welcome-file>
+	</welcome-file-list>
+	<distributable />
+	<filter>
+		<filter-name>RequestLoggerFilter</filter-name>
+		<filter-class>br.gov.jfrj.siga.base.log.RequestLoggerFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>RequestLoggerFilter</filter-name>
+		<url-pattern>*</url-pattern>
+	</filter-mapping>
+
+
+	<filter>
+		<filter-name>ResponseHeaderFilterEx</filter-name>
+		<filter-class>br.gov.jfrj.siga.jee.ResponseHeaderFilter</filter-class>
+		<init-param>
+			<param-name>Cache-Control</param-name>
+			<param-value>no-cache, no-store, private, must-revalidate, max-age=0, no-transform</param-value>
+		</init-param>
+		<init-param>
+			<param-name>Pragma</param-name>
+			<param-value>no-cache</param-value>
+		</init-param>
+		<init-param>
+			<param-name>X-Frame-Options</param-name>
+			<param-value>SAMEORIGIN</param-value>
+		</init-param>
+		<init-param>
+			<param-name>X-Content-Type-Options</param-name>
+			<param-value>nosniff</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>ResponseHeaderFilterEx</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>jwt</web-resource-name>
+			<url-pattern>/jwt/*</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Area restrita</web-resource-name>
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>sigausuario</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>js</web-resource-name>
+			<url-pattern>/javascript/*</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<realm-name>Siga IDP</realm-name>
+		<form-login-config>
+			<form-login-page>/paginas/login.jsp</form-login-page>
+			<form-error-page>/paginas/loginInvalido.jsp</form-error-page>
+		</form-login-config>
+	</login-config>
+	<security-role>
+		<role-name>sigausuario</role-name>
+	</security-role>
+	<security-role>
+		<role-name>sigaadministrador</role-name>
+	</security-role>
+	<security-role>
+		<role-name>sigadesenvolvimento</role-name>
+	</security-role>
+	<security-role>
+		<role-name>superusuario</role-name>
+	</security-role>
+	<servlet>
+		<description></description>
+		<display-name>IDPServlet</display-name>
+		<servlet-name>IDPServlet</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.picketlink.servlet.IDPServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>IDPServlet</servlet-name>
+		<url-pattern>/IDPServlet</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description></description>
+		<display-name>SigaJwtProviderServlet</display-name>
+		<servlet-name>SigaJwtProviderServlet</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.idp.jwt.servlet.SigaJwtProviderServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SigaJwtProviderServlet</servlet-name>
+		<url-pattern>/jwt/api/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<description></description>
+		<display-name>SigaJwtFormServlet</display-name>
+		<servlet-name>SigaJwtFormServlet</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.idp.jwt.servlet.SigaJwtFormServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SigaJwtFormServlet</servlet-name>
+		<url-pattern>/jwt/login</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<description></description>
+		<display-name>SigaJwtFormLogoutServlet</display-name>
+		<servlet-name>SigaJwtFormLogoutServlet</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.idp.jwt.servlet.SigaJwtFormLogoutServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SigaJwtFormLogoutServlet</servlet-name>
+		<url-pattern>/jwt/logout</url-pattern>
+	</servlet-mapping>
+
+</web-app>

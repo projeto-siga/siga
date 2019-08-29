@@ -444,7 +444,7 @@ public class Documento {
 	
 				over.setRGBColorFill(255, 255, 255);
 				logo.setAnnotation(new Annotation(0, 0, 0, 0, 
-						"https://github.com/projeto-siga/siga")); 
+						"https://linksiga.trf2.jus.br")); 
 				over.addImage(logo);
 				
 	

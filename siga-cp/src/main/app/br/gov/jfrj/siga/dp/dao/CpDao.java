@@ -102,7 +102,6 @@ import br.gov.jfrj.siga.model.dao.DaoFiltro;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 
 public class CpDao extends ModeloDao {
@@ -2561,5 +2560,63 @@ public class CpDao extends ModeloDao {
         }
     }
 
+	public List<CpOrgaoUsuario> consultarOrgaosMarcadosComo (final Long orgaoUsuId,
+			final Long lotacaoId, final Long usuarioId, Date dataInicial, Date dataFinal, Long idMarcador) {
+		String queryOrgao = "";
+		if (orgaoUsuId != null) {
+			queryOrgao = "and doc.orgaoUsuario.idOrgaoUsu = :orgao ";
+		}
+		String queryLotacao = "";
+		if (lotacaoId != null) {
+			queryLotacao = "and doc.lotaCadastrante.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :idLotacao) ";
+		}
+		String queryUsuario = "";
+		if (usuarioId != null) {
+			queryUsuario = "and mov.cadastrante.idPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :idUsuario) ";
+		}
+		String queryTemp = 
+				"select distinct "
+					+ "(select orgaoUsu from CpOrgaoUsuario orgaoUsu where "
+					+ "		(orgaoUsu1 is null or orgaoUsu.idOrgaoUsu = orgaoUsu1.idOrgaoUsu) "	
+					+ "		and (orgaoUsu2 is null or orgaoUsu.idOrgaoUsu = orgaoUsu2.idOrgaoUsu)) "
+					+ "from ExMarca mar " 
+					+ "inner join mar.exMobil mob " 
+					+ "inner join mob.exDocumento doc "
+					+ "inner join mar.cpMarcador as marcador "
+					+ "full join mar.dpLotacaoIni.orgaoUsuario orgaoUsu1 "
+					+ "full join mar.dpPessoaIni.orgaoUsuario orgaoUsu2 "
+					+ "where doc.dtDoc between :dtini and :dtfim "
+					+ queryOrgao
+					+ queryLotacao
+					+ queryUsuario
+					+ "and marcador.idMarcador = :idMarcador " 
+					+ "and (dt_ini_marca is null or dt_ini_marca < sysdate) " 
+					+ "and (dt_fim_marca is null or dt_fim_marca > sysdate) " 
+				;
+		
+		Query query = getSessao().createQuery(queryTemp
+					);
+				
+		query.setLong("idMarcador", idMarcador);
+
+		if (orgaoUsuId != null) {
+			query.setLong("orgao", orgaoUsuId);
+		}
+		if (lotacaoId != null) {
+			query.setParameter("idLotacao", lotacaoId);
+		}
+		if (usuarioId != null) {
+			query.setParameter("idUsuario", usuarioId);
+		}
+		query.setDate("dtini", dataInicial);
+		query.setDate("dtfim", dataFinal);
+		
+		List<CpOrgaoUsuario> l = query.list();
+		
+		if(l.size() == 0) {
+			return null;
+		}
+		return l;
+	}
 
 }

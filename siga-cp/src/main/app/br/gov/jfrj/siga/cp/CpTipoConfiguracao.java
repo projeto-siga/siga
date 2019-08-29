@@ -34,13 +34,14 @@ import br.gov.jfrj.siga.model.ActiveRecord;
 @Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_QUERY_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
-public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao  {
+public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao {
 
 	/**
 	 * 
 	 */
 	public static final long serialVersionUID = 3624557793773660738L;
-	public static final ActiveRecord<CpTipoConfiguracao> AR = new ActiveRecord<CpTipoConfiguracao>(CpTipoConfiguracao.class);
+	public static final ActiveRecord<CpTipoConfiguracao> AR = new ActiveRecord<CpTipoConfiguracao>(
+			CpTipoConfiguracao.class);
 
 	// SIGA-EX
 
@@ -101,45 +102,48 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao  {
 	public static final long TIPO_CONFIG_CORRIGIR_ERRO = 28;
 
 	public static final long TIPO_CONFIG_CANCELAR_MOVIMENTACAO = 29;
-	
+
 	public static final long TIPO_CONFIG_DESPACHAVEL = 30;
-	
+
 	public static final long TIPO_CONFIG_DESTINATARIO = 31;
-	
+
 	public static final long TIPO_CONFIG_UTILIZAR_EXTENSAO_EDITOR = 32;
-	
+
 	public static final long TIPO_CONFIG_UTILIZAR_EXTENSAO_CONVERSOR_HTML = 33;
-	
+
 	public static final long TIPO_CONFIG_SR_DESIGNACAO = 300;
-	
+
 	public static final long TIPO_CONFIG_SR_ASSOCIACAO_TIPO_ATRIBUTO = 301;
 
 	public static final long TIPO_CONFIG_SR_PERMISSAO_USO_LISTA = 302;
-	
+
 	public static final long TIPO_CONFIG_SR_DEFINICAO_INCLUSAO_AUTOMATICA = 303;
-	
+
 	public static final long TIPO_CONFIG_SR_ABRANGENCIA_ACORDO = 304;
 
 	public static final long TIPO_CONFIG_SR_ASSOCIACAO_PESQUISA = 305;
-	
+
 	public static final long TIPO_CONFIG_SR_ESCALONAMENTO_SOL_FILHA = 306;
 
 	public static final long TIPO_CONFIG_REINICIAR_NUMERACAO_TODO_ANO = 34;
-	
+
 	public static final long TIPO_CONFIG_AUTUAVEL = 35;
 
 	public static final long TIPO_CONFIG_EDITAR_DATA = 36;
 
 	public static final long TIPO_CONFIG_EDITAR_DESCRICAO = 37;
-	
+
 	public static final long TIPO_CONFIG_TRAMITE_AUTOMATICO = 38;
-	
+
 	public static final long TIPO_CONFIG_PODE_ASSINAR_SEM_SOLICITACAO = 39;
-	
+
 	public static final long TIPO_CONFIG_DEFINICAO_AUTOMATICA_DE_PAPEL = 40;
 	
-	public static final long TIPO_CONFIG_JUNTADA_AUTOMATICA = 41;
-	
+	public static final long TIPO_CONFIG_INCLUIR_DOCUMENTO = 41;
+
+	public static final long TIPO_CONFIG_CRIAR_COMO_NOVO = 42;
+
+	public static final long TIPO_CONFIG_JUNTADA_AUTOMATICA = 43;
 	
 	// SIGA-WF
 
@@ -160,5 +164,5 @@ public class CpTipoConfiguracao extends AbstractCpTipoConfiguracao  {
 
 	public CpTipoConfiguracao() {
 	}
-	
+
 }

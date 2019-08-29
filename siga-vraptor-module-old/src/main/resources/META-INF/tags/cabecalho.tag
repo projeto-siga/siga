@@ -80,9 +80,7 @@ ${meta}
 
 <!-- <link rel="StyleSheet" href="/sigalibs/siga.css" type="text/css"	title="SIGA Estilos" media="screen"> -->
 
-<script src="/siga/javascript/ajax.js" type="text/javascript"></script>
-<script src="/siga/javascript/static_javascript.js"
-	type="text/javascript" charset="utf-8"></script>
+<script src="/siga/javascript/siga.js" 	type="text/javascript" charset="utf-8"></script>
 <script src="/siga/javascript/picketlink.js" type="text/javascript"
 	charset="utf-8"></script>
 

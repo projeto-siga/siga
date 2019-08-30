@@ -23,6 +23,7 @@ import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -66,7 +67,6 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			this.listColunas.add("Data Documento");
 			this.listColunas.add("Data TMP");
 			this.listColunas.add("Cadastrante");
-//			this.listColunas.add("Titular");
 			this.listColunas.add("Págs. Doc.");
 			this.listColunas.add("Tam. Doc.");
 			this.listColunas.add("Tam. Doc. (no Oracle)");
@@ -74,25 +74,23 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			this.listColunas.add("Págs. Anexo");
 			this.listColunas.add("Tam. Anexo");
 			this.listColunas.add("Tam. Anexo (no Oracle)");
-			this.addColuna("Sigla Órgão", 10, RelatorioRapido.ESQUERDA, false);
+			this.addColuna("Sigla Órgão", 5, RelatorioRapido.ESQUERDA, false);
 			this.addColuna("Órgão", 10, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Sigla Unidade", 10, RelatorioRapido.ESQUERDA, false);
+			this.addColuna("Sigla Unidade", 5, RelatorioRapido.ESQUERDA, false);
 			this.addColuna("Unidade", 10, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Nome do Documento", 30, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Núm.", 20, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Data Documento", 5, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Data TMP", 5, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Cadastrante", 5, RelatorioRapido.ESQUERDA, false);
-//			this.addColuna("Titular", 5, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Págs. Doc.", 5, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Tam. Doc.", 5, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Tam. Doc. (no Oracle)", 5, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Qtd. Anexos", 5, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Págs. Anexo", 5, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Tam. Anexo", 5, RelatorioRapido.ESQUERDA, false);
-			this.addColuna("Tam. Anexo (no Oracle)", 5, RelatorioRapido.ESQUERDA, false);
+			this.addColuna("Nome do Documento", 20, RelatorioRapido.ESQUERDA, false);
+			this.addColuna("Núm.", 10, RelatorioRapido.ESQUERDA, false);
+			this.addColuna("Data Documento", 4, RelatorioRapido.ESQUERDA, false);
+			this.addColuna("Data TMP", 4, RelatorioRapido.ESQUERDA, false);
+			this.addColuna("Cadastrante", 4, RelatorioRapido.ESQUERDA, false);
+			this.addColuna("Págs. Doc.", 4, RelatorioRapido.ESQUERDA, false);
+			this.addColuna("Tam. Doc.", 4, RelatorioRapido.ESQUERDA, false);
+			this.addColuna("Tam. Doc. (no Oracle)", 4, RelatorioRapido.ESQUERDA, false);
+			this.addColuna("Qtd. Anexos", 4, RelatorioRapido.ESQUERDA, false);
+			this.addColuna("Págs. Anexo", 4, RelatorioRapido.ESQUERDA, false);
+			this.addColuna("Tam. Anexo", 4, RelatorioRapido.ESQUERDA, false);
+			this.addColuna("Tam. Anexo (no Oracle)", 4, RelatorioRapido.ESQUERDA, false);
 			return this;
-
 		}
 
 		@Override
@@ -105,86 +103,45 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 			String queryOrgao = "";
 			if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
-//				queryOrgao = " AND DOC.ID_ORGAO_USU = :orgao ";
 				queryOrgao = "and doc.orgaoUsuario.idOrgaoUsu = :orgao ";
 			}
 
 			String queryLotacao = "";
 			if (parametros.get("lotacao") != null
 					&& parametros.get("lotacao") != "") {
-//				queryLotacao = " AND DOC.ID_LOTA_CADASTRANTE IN (SELECT L.ID_LOTACAO FROM CORPORATIVO.DP_LOTACAO AS L WHERE L.ID_LOTACAO_INI = :idLotacao) ";
 				queryLotacao = " and doc.lotaCadastrante.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :idLotacao) ";
+			}
+
+			String queryUsuario = "";
+			if (parametros.get("usuario") != null
+					&& parametros.get("usuario") != "") {
+				queryUsuario = "and doc.cadastrante.idPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :usuario) ";
 			}
 			
 			Query query = HibernateUtil
 					.getSessao()
-//					.createSQLQuery(
-//						"SELECT " 
-//						+ "ORG.SIGLA_ORGAO_USU, " 
-//						+ "ORG.NM_ORGAO_USU, "
-//						+ "LOTA.SIGLA_LOTACAO, " 
-//						+ "LOTA.NOME_LOTACAO, " 
-//						+ "MOD.NM_MOD MODELO, " 
-//						+ "DOC.ANO_EMISSAO, "
-//						+ "DOC.ID_DOC.NUM_EXPEDIENTE, "
-//						+ "CONVERT (varchar(10), DOC.DT_DOC, 103) AS [DD/MM/YYYY], "
-//						+ "CONVERT (varchar(10), DOC.DT_REG_DOC, 103) AS [DD/MM/YYYY], "
-//						+ "PES1.MATRICULA, "
-////						+ "PES2.MATRICULA, "
-//						+ "DOC.NUM_PAGINAS, "
-//						+ "LENGTH(DOC.CONTEUDO_BLOB_DOC), "
-////						+ "LENGTH(MOV.CONTEUDO_BLOB_MOV), " 
-//						+ "DOC.ID_DOC, "
-//						+ "MOB.ID_MOBIL, "
-////						+ "MOV.ID_MOV "
-//						+ "FROM SIGA.EX_MOBIL MOB "
-//						+ "		RIGHT OUTER JOIN SIGA.EX_DOCUMENTO DOC ON mob.ID_DOC=DOC.ID_DOC and mob.id_tipo_mobil = 1 " 
-//						+ "		inner join CORPORATIVO.CP_ORGAO_USUARIO ORG on ORG.ID_ORGAO_USU = DOC.ID_ORGAO_USU "
-//						+ "		LEFT OUTER join CORPORATIVO.DP_LOTACAO LOTA on LOTA.ID_LOTACAO = DOC.ID_LOTA_CADASTRANTE "  
-//						+ "		LEFT OUTER join SIGA.EX_MODELO MOD on MOD.ID_MOD = DOC.ID_MOD "
-//						+ "		LEFT OUTER join CORPORATIVO.DP_PESSOA PES1 on PES1.ID_PESSOA = DOC.ID_CADASTRANTE "
-//						+ "		LEFT OUTER join CORPORATIVO.DP_PESSOA PES2 on PES2.ID_PESSOA = DOC.ID_TITULAR "
-////						+ "		FULL JOIN SIGA.EX_MOVIMENTACAO MOV ON mov.id_mobil=mob.id_mobil "
-////						+ "		and mov.id_tp_mov = 64 AND mov.id_mov_canceladora IS NULL " 
-//						+ "WHERE doc.dt_reg_doc between :dtini and :dtfim "
-//						+ queryOrgao
-//						+ queryLotacao
-//						+ "ORDER BY "
-//						+ "ORG.NM_ORGAO_USU, "
-//						+ "LOTA.NOME_LOTACAO, " 
-//						+ "MOD.NM_MOD, " 
-//						+ "DOC.ID_DOC, " 
-//						+ "DOC.DT_REG_DOC " 
 					.createQuery(
 						"select " 
 						+ "doc, " 
 						+ "mob, "
-//						+ "mov " 
 						+ "length(doc.conteudoBlobDoc) "
-//						+ "sum(length(mov.conteudoBlobMov)) "
 						+ "from ExMobil mob "
 						+ "		right outer join mob.exDocumento doc " 
 						+ "		inner join doc.orgaoUsuario org "
 						+ "		left outer join doc.lotaCadastrante lota "
 						+ "		left outer join doc.exModelo mod "
 						+ "		left outer join doc.cadastrante pes1 "
-//						+ "		full join mob.exMovimentacao on "
-//						+ "			(mov.exTipoMovimentacao.idTpMov = 64 "
-//						+ "			and mov.exMovimentacaoCanceladora is null) "
-//						+ "		LEFT OUTER join CORPORATIVO.DP_PESSOA PES2 on PES2.ID_PESSOA = DOC.ID_TITULAR "
 						+ "where doc.dtRegDoc between :dtini and :dtfim "
 						+ "and mob.exTipoMobil.idTipoMobil = 1" 
 						+ queryOrgao
 						+ queryLotacao
-//						+ "		and (mov.exTipoMovimentacao.idTpMov = :idTpMov "
-//						+ "				and mov.exMovimentacaoCanceladora is null) "
+						+ queryUsuario
 						+ "order by doc.orgaoUsuario.nmOrgaoUsu, "
 						+ "		doc.lotaCadastrante.nomeLotacao, "
 						+ "		doc.exModelo.nmMod, "
 						+ "		doc.idDoc, "
 						+ "		doc.dtRegDoc "
 							);
-//			query.setLong("idTpMov", ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR);
 
 			if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
 				query.setLong("orgao", Long.valueOf((String) parametros.get("orgao")));
@@ -200,6 +157,18 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 				
 				query.setParameter("idLotacao",
 						lotacao.getIdInicial());
+			}
+
+			if (parametros.get("usuario") != null && parametros.get("usuario") != "") {
+				Query qryPes = HibernateUtil.getSessao().createQuery(
+						"from DpPessoa pes where pes.idPessoa = "
+								+ parametros.get("usuario"));
+
+				Set<DpPessoa> pessoaSet = new HashSet<DpPessoa>();
+				DpPessoa pessoa = (DpPessoa) qryPes.list().get(0);
+				pessoaSet.add(pessoa);
+
+				query.setParameter("usuario", pessoa.getIdPessoaIni());
 			}
 
 			Date dtini = formatter.parse((String) parametros.get("dataInicial"));
@@ -218,10 +187,6 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 				Object[] obj = (Object[]) it.next();
 				ExDocumento doc = (ExDocumento) obj[0];
 				ExMobil mob = (ExMobil) obj[1];
-//				ExMovimentacao movAnexo = (ExMovimentacao) obj[2];
-//				BigDecimal idMobil = (BigDecimal) obj[11];
-//				ExMobil mob = new ExMobil();
-//				ExDocumento doc = new ExDocumento();
 				Long pags = 0L;
 				Long pagsBlobDoc = 0L;
 				Long pagsBlobAnexo = 0L;
@@ -250,7 +215,11 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 									blob = mov.getConteudoBlobMov2();
 									lenBlobAnexo = lenBlobAnexo + blob.length;
 									lenBlobAnexoBanco = lenBlobAnexoBanco + blob.length;
-									pagsBlobAnexo = pagsBlobAnexo + (long) (blob.length / 51200);
+									long numPag = (long) blob.length / 51200;
+									if (numPag < 1) {
+										numPag = 1;
+									}
+									pagsBlobAnexo = pagsBlobAnexo + numPag;
 								}
 							}
 						}
@@ -284,10 +253,10 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 				listDados.add(pags.toString());
 				listDados.add(lenBlobDoc.toString());
 				listDados.add(lenBlobDocBanco.toString()); 
-				listDados.add(qtdAnexos.toString()); //QTD ANEXOS
-				listDados.add(pagsBlobAnexo.toString()); //PAGS ANEXOS
-				listDados.add(lenBlobAnexo.toString()); //TAM BLOB ANEXOS
-				listDados.add(lenBlobAnexoBanco.toString()); //TAM BLOB ANEXOS (no banco)
+				listDados.add(qtdAnexos.toString()); 
+				listDados.add(pagsBlobAnexo.toString()); 
+				listDados.add(lenBlobAnexo.toString()); 
+				listDados.add(lenBlobAnexoBanco.toString()); 
 				for (String dado : listDados) {
 					d.add(dado);
 				}

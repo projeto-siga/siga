@@ -38,6 +38,7 @@
 			}
 			return false;
 		}
+
 		function geraCsv(arq) {
 		    var csv = [];
 		    var rows = document.querySelectorAll("table tr");
@@ -49,17 +50,14 @@
 		    }
 		    downloadCSV(csv.join("\n"), arq);
 		}	
+
 		function downloadCSV(csv, filename) {
-		    var csvFile;
-		    var downloadLink;
-		    csvFile = new Blob([csv],{encoding:"ISO-8859-1",type:"text/csv;charset=ISO-8859-1"});
-		    downloadLink = document.createElement("a");
-		    downloadLink.download = filename;
-		    downloadLink.href = window.URL.createObjectURL(csvFile);
-		    downloadLink.style.display = "none";
-		    document.body.appendChild(downloadLink);
-		    downloadLink.click();
-		}			
+			var link = window.document.createElement("a");
+			link.setAttribute("href", "data:text/csv;charset=utf-8,%EF%BB%BF" + encodeURI(csv));
+		    link.style.display = "none";
+			link.setAttribute("download", filename);
+			link.click();
+		}	
 	</script>
 
 	<!-- main content -->
@@ -94,7 +92,7 @@
 						<div class="col-sm-2">
 							<div class="form-group">
 								<div class="form-check form-check-inline mt-4">
-									<input type="checkbox" name="getAll" />
+									<input type="checkbox" name="getAll" ${getAll ? 'checked=\'checked\'' : ''}	 />
 									<label class="form-check-label ml-1" for="getAll">Sem Dados dos Anexos</label>
 								</div>
 							</div>
@@ -148,7 +146,6 @@
 					<c:if test="${listLinhas != null}">
 						<div class="row mb-3">
 							<div class="col">		
-<!-- 								<button type="button" class="btn btn-outline-success" title="Exportar para CSV"	onclick="javascript:csv('listar', '/sigaex/app/expediente/rel/relArmazenamento/exportarCsv');"><i class="fa fa-file-csv"></i> Exportar</button>	 -->
 								<button type="button" class="btn btn-outline-success" title="Exportar para CSV"	onclick="geraCsv('DocsProduzidos.csv')"><i class="fa fa-file-csv"></i> Exportar</button>	
 							</div>
 						</div>

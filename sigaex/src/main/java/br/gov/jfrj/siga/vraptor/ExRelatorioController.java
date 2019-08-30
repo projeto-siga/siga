@@ -27,6 +27,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -62,6 +63,7 @@ import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -69,8 +71,12 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExMarca;
+import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelClassificacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelArmazenamento;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelConsultaDocEntreDatas;
@@ -90,6 +96,8 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioDocumentosSubo
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioModelos;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
+import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
+import br.gov.jfrj.siga.vraptor.builder.ExMobilBuilder;
 
 @Resource
 public class ExRelatorioController extends ExController {
@@ -861,16 +869,17 @@ public class ExRelatorioController extends ExController {
 	@Get
 	@Path("app/expediente/rel/relDocsOrgaoInteressado")
 	public void relDocsOrgaoInteressado(final DpLotacaoSelecao lotacaoSel,
-			final DpPessoaSelecao usuarioSel, String dataInicial, String dataFinal, 
-			final Long orgaoPesqId, boolean primeiraVez) throws Exception {
+			final DpPessoaSelecao usuarioSel, String dataInicial,
+			String dataFinal, final Long orgaoPesqId, boolean primeiraVez)
+			throws Exception {
 
 		try {
 			assertAcesso(ACESSO_ORGAOINT);
 
 			final Map<String, String> parametros = new HashMap<String, String>();
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
-			Long orgaoSelId = getIdOrgaoSel (lotacaoSel, usuarioSel, orgaoUsu);
-			
+			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
+
 			if (!primeiraVez) {
 				if (orgaoUsu != orgaoSelId) {
 					throw new AplicacaoException(
@@ -886,8 +895,8 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("usuarioSel.id"));
 				parametros.put("dataInicial",
 						getRequest().getParameter("dataInicial"));
-				parametros.put("dataFinal",
-						somaUmDia(getRequest().getParameter("dataFinal")));
+				parametros.put("dataFinal", somaUmDia(getRequest()
+						.getParameter("dataFinal")));
 				parametros.put("link_siga", "http://"
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
@@ -905,7 +914,8 @@ public class ExRelatorioController extends ExController {
 				result.include("listLinhas", rel.listLinhas);
 				result.include("totalDocumentos",
 						rel.totalDocumentos.toString());
-				result.include("orgaoPesqName", CpDao.getInstance().consultarPorId(ou).getNmOrgaoUsu());
+				result.include("orgaoPesqName", CpDao.getInstance()
+						.consultarPorId(ou).getNmOrgaoUsu());
 			}
 		} catch (AplicacaoException e) {
 			result.include("mensagemCabec", e.getMessage());
@@ -923,13 +933,14 @@ public class ExRelatorioController extends ExController {
 	@Get
 	@Path("app/expediente/rel/carregar_lista_orgaos")
 	public void aCarregarListaOrgaos(final DpLotacaoSelecao lotacaoSel,
-			final DpPessoaSelecao usuarioSel, String dataInicial, String dataFinal, 
-			final Long orgaoPesqId, boolean primeiraVez) throws Exception {
+			final DpPessoaSelecao usuarioSel, String dataInicial,
+			String dataFinal, final Long orgaoPesqId, boolean primeiraVez)
+			throws Exception {
 		try {
 			assertAcesso(ACESSO_ORGAOINT);
 
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
-			Long orgaoSelId = getIdOrgaoSel (lotacaoSel, usuarioSel, orgaoUsu);
+			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
 
 			if (orgaoUsu != orgaoSelId) {
 				throw new AplicacaoException(
@@ -938,8 +949,10 @@ public class ExRelatorioController extends ExController {
 			consistePeriodo(dataInicial, dataFinal);
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-			List listOrgaos = dao().consultarOrgaosMarcadosComo(orgaoUsu, lotacaoSel.getId(), usuarioSel.getId(),
-					formatter.parse((String) dataInicial), formatter.parse((String) somaUmDia(dataFinal)), 
+			List listOrgaos = dao().consultarOrgaosMarcadosComo(orgaoUsu,
+					lotacaoSel.getId(), usuarioSel.getId(),
+					formatter.parse((String) dataInicial),
+					formatter.parse((String) somaUmDia(dataFinal)),
 					CpMarcador.MARCADOR_COMO_INTERESSADO);
 			if (listOrgaos == null) {
 				throw new AplicacaoException(
@@ -957,8 +970,10 @@ public class ExRelatorioController extends ExController {
 		result.include("usuarioSel", usuarioSel);
 		result.include("dataInicial", dataInicial);
 		result.include("dataFinal", dataFinal);
-		result.use(Results.page()).forwardTo("/WEB-INF/page/exRelatorio/relDocsOrgaoInteressado.jsp");
+		result.use(Results.page()).forwardTo(
+				"/WEB-INF/page/exRelatorio/relDocsOrgaoInteressado.jsp");
 	}
+
 	@Get
 	@Path("app/expediente/rel/relDocumentosPorVolume")
 	public void relDocumentosPorVolume(final DpLotacaoSelecao lotacaoSel,
@@ -1301,7 +1316,8 @@ public class ExRelatorioController extends ExController {
 			orgaoSelId = orgaoUsu;
 		}
 		if (orgaoUsu != orgaoSelId) {
-			throw new AplicacaoException("Não é permitido consultas de outros órgãos.");
+			throw new AplicacaoException(
+					"Não é permitido consultas de outros órgãos.");
 		}
 
 		consistePeriodo(dataInicial, dataFinal);
@@ -1333,35 +1349,37 @@ public class ExRelatorioController extends ExController {
 	public void relArmazenamento(final Long orgaoPesqId,
 			final DpLotacaoSelecao lotacaoSel,
 			final DpPessoaSelecao usuarioSel, final String dataInicial,
-			final String dataFinal,  final boolean getAll, boolean primeiraVez) throws Exception {
+			final String dataFinal, final boolean getAll, boolean primeiraVez)
+			throws Exception {
 
 		List<CpOrgaoUsuario> listOrgaos = new ArrayList<CpOrgaoUsuario>();
-		
+
 		try {
 			assertAcesso(ACESSO_ARMAZ);
 
 			final Map<String, String> parametros = new HashMap<String, String>();
 			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
-			if("ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) ||
-				"PD".equals(getTitular().getOrgaoUsuario().getSigla())) {
+			if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())
+					|| "PD".equals(getTitular().getOrgaoUsuario().getSigla())) {
 				listOrgaos = dao().listarOrgaosUsuarios();
 			} else {
-				CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(getTitular().getOrgaoUsuario());
+				CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(
+						getTitular().getOrgaoUsuario());
 				listOrgaos.add(ou);
 			}
 
 			if (!primeiraVez) {
-				if(!("ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) || 
-					 "PD".equals(getTitular().getOrgaoUsuario().getSigla())) 
+				if (!("ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) || "PD"
+						.equals(getTitular().getOrgaoUsuario().getSigla()))
 						&& !orgaoUsu.equals(orgaoPesqId)) {
-						throw new AplicacaoException(
-								"Não é permitido consultas de outros órgãos.");
+					throw new AplicacaoException(
+							"Não é permitido consultas de outros órgãos.");
 				}
 				consistePeriodo(dataInicial, dataFinal);
-				if(orgaoPesqId != 0) {
+				if (orgaoPesqId != 0) {
 					parametros.put("orgao", orgaoPesqId.toString());
 				}
-				if(getAll) {
+				if (getAll) {
 					parametros.put("getAll", "true");
 				}
 				parametros.put("lotacao",
@@ -1370,8 +1388,8 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("usuarioSel.id"));
 				parametros.put("dataInicial",
 						getRequest().getParameter("dataInicial"));
-				parametros.put("dataFinal",
-						somaUmDia(getRequest().getParameter("dataFinal")));
+				parametros.put("dataFinal", somaUmDia(getRequest()
+						.getParameter("dataFinal")));
 				parametros.put("link_siga", "http://"
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
@@ -1384,11 +1402,13 @@ public class ExRelatorioController extends ExController {
 				result.include("getAll", getAll);
 				result.include("orgaoPesqId", orgaoPesqId);
 				result.include("listLinhas", rel.listLinhas);
+				result.include("listColunas", rel.listColunas);
 				result.include("totalDocumentos",
 						rel.totalDocumentos.toString());
 				result.include("totalPaginas", rel.totalPaginas.toString());
 				result.include("totalBlobsDoc", rel.totalBlobsDoc.toString());
-				result.include("totalBlobsAnexos", rel.totalBlobsAnexos.toString());
+				result.include("totalBlobsAnexos",
+						rel.totalBlobsAnexos.toString());
 			}
 		} catch (AplicacaoException e) {
 			result.include("mensagemCabec", e.getMessage());
@@ -1405,7 +1425,7 @@ public class ExRelatorioController extends ExController {
 		result.include("dataInicial", dataInicial);
 		result.include("dataFinal", dataFinal);
 	}
-		
+
 	protected void assertAcesso(final String pathServico) {
 		super.assertAcesso("REL:Gerar relatórios;" + pathServico);
 	}
@@ -1425,7 +1445,8 @@ public class ExRelatorioController extends ExController {
 	private void consistePeriodo(String dataInicial, String dataFinal)
 			throws Exception {
 		if (dataInicial == null || dataFinal == null) {
-			throw new AplicacaoException("Data inicial ou data final não informada.");
+			throw new AplicacaoException(
+					"Data inicial ou data final não informada.");
 		}
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		final Date dtIni = df.parse(dataInicial);
@@ -1462,5 +1483,109 @@ public class ExRelatorioController extends ExController {
 			orgaoSelId = orgaoUsu;
 		}
 		return orgaoSelId;
+	}
+
+	@Post
+	@Path("app/expediente/rel/exportCsv")
+	public Download exportCsv(final Long orgaoPesqId,	final DpLotacaoSelecao lotacaoSel,
+				final DpPessoaSelecao usuarioSel, final String dataInicial,
+				final String dataFinal, final boolean getAll, boolean primeiraVez) throws Exception {
+		List<CpOrgaoUsuario> listOrgaos = new ArrayList<CpOrgaoUsuario>();
+		List<String> listColunas = new ArrayList<String>();
+		List<List<String>> listLinhas = new ArrayList<List<String>>();
+
+		try {
+			assertAcesso(ACESSO_ARMAZ);
+
+			final Map<String, String> parametros = new HashMap<String, String>();
+			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
+			if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())
+					|| "PD".equals(getTitular().getOrgaoUsuario().getSigla())) {
+				listOrgaos = dao().listarOrgaosUsuarios();
+			} else {
+				CpOrgaoUsuario ou = CpDao.getInstance().consultarPorSigla(
+						getTitular().getOrgaoUsuario());
+				listOrgaos.add(ou);
+			}
+
+			if (!primeiraVez) {
+				if (!("ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) || "PD"
+						.equals(getTitular().getOrgaoUsuario().getSigla()))
+						&& !orgaoUsu.equals(orgaoPesqId)) {
+					throw new AplicacaoException(
+							"Não é permitido consultas de outros órgãos.");
+				}
+				consistePeriodo(dataInicial, dataFinal);
+				if (orgaoPesqId != 0) {
+					parametros.put("orgao", orgaoPesqId.toString());
+				}
+				if (getAll) {
+					parametros.put("getAll", "true");
+				}
+				parametros.put("lotacao",
+						getRequest().getParameter("lotacaoSel.id"));
+				parametros.put("usuario",
+						getRequest().getParameter("usuarioSel.id"));
+				parametros.put("dataInicial",
+						getRequest().getParameter("dataInicial"));
+				parametros.put("dataFinal", somaUmDia(getRequest()
+						.getParameter("dataFinal")));
+				parametros.put("link_siga", "http://"
+						+ getRequest().getServerName() + ":"
+						+ getRequest().getServerPort()
+						+ getRequest().getContextPath()
+						+ "/app/expediente/doc/exibir?sigla=");
+
+				final RelArmazenamento rel = new RelArmazenamento(parametros);
+				rel.gerar();
+				listColunas = rel.listColunas;
+				listLinhas = rel.listLinhas;
+				
+				result.include("getAll", getAll);
+				result.include("orgaoPesqId", orgaoPesqId);
+				result.include("listLinhas", rel.listLinhas);
+				result.include("listColunas", rel.listColunas);
+				result.include("totalDocumentos",
+						rel.totalDocumentos.toString());
+				result.include("totalPaginas", rel.totalPaginas.toString());
+				result.include("totalBlobsDoc", rel.totalBlobsDoc.toString());
+				result.include("totalBlobsAnexos",
+						rel.totalBlobsAnexos.toString());
+			}
+		} catch (AplicacaoException e) {
+			result.include("mensagemCabec", e.getMessage());
+			result.include("msgCabecClass", "alert-danger");
+		}
+
+		if (primeiraVez == false) {
+			result.include("primeiraVez", false);
+		}
+
+		result.include("listOrgaos", listOrgaos);
+		result.include("lotacaoSel", lotacaoSel);
+		result.include("usuarioSel", usuarioSel);
+		result.include("dataInicial", dataInicial);
+		result.include("dataFinal", dataFinal);
+		
+//		relArmazenamento(orgaoPesqId, lotacaoSel, usuarioSel, 
+//				dataInicial, dataFinal, getAll, primeiraVez);
+//
+		InputStream inputStream = null;
+		StringBuffer texto = new StringBuffer();
+		for (String col : listColunas) { 
+			texto.append(col);
+			texto.append(";");
+		}
+		texto.append(System.getProperty("line.separator"));
+		for (List<String> rowCols : listLinhas) { 
+			for (String rowCol : rowCols) { 
+				texto.append(rowCol);
+				texto.append(";");
+			}
+			texto.append(System.getProperty("line.separator"));
+		}
+			
+		inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));
+		return new InputStreamDownload(inputStream, "text/csv", "RelDocsArmazenados.csv");	
 	}
 }

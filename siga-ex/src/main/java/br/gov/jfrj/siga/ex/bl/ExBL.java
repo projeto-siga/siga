@@ -6448,12 +6448,16 @@ public class ExBL extends CpBL {
 		if (!forma.isSiglaValida())
 			throw new AplicacaoException(
 					"Sigla inválida. A sigla deve ser formada por 3 letras.");
+		
+		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")) && forma.getExTipoDocumentoSet().isEmpty())
+			throw new AplicacaoException(
+					"Selecione uma origem.");
 
 		ExFormaDocumento formaConsulta = dao().consultarPorSigla(forma);
 		if ((forma.getIdFormaDoc() == null && formaConsulta != null)
 				|| (forma.getIdFormaDoc() != null && formaConsulta != null && !formaConsulta
 						.getIdFormaDoc().equals(forma.getIdFormaDoc())))
-			throw new AplicacaoException("Esta sigla já estásendo utilizada.");
+			throw new AplicacaoException("Esta sigla já está sendo utilizada.");
 
 		try {
 			ExDao.iniciarTransacao();

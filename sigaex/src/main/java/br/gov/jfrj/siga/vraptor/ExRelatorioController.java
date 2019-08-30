@@ -1351,7 +1351,9 @@ public class ExRelatorioController extends ExController {
 			}
 
 			if (!primeiraVez) {
-				if(!"ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) && !orgaoUsu.equals(orgaoPesqId)) {
+				if(!("ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) || 
+					 "PD".equals(getTitular().getOrgaoUsuario().getSigla())) 
+						&& !orgaoUsu.equals(orgaoPesqId)) {
 						throw new AplicacaoException(
 								"Não é permitido consultas de outros órgãos.");
 				}
@@ -1461,5 +1463,4 @@ public class ExRelatorioController extends ExController {
 		}
 		return orgaoSelId;
 	}
-
 }

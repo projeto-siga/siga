@@ -69,7 +69,7 @@
 				<h5>Relatório de Cobrança - Órgão ${lotaTitular.orgaoUsuario.descricaoMaiusculas}</h5>
 			</div>
 			<div class="card-body d-flex">
-				<form name="frmRelatorios" action="/sigaex/app/expediente/rel/relArmazenamento" theme="simple" method="get">
+				<form name="frmRelatorios" id="frmRelatorios" action="/sigaex/app/expediente/rel/exportCsv" theme="simple" method="POST">
 					<div class="row">
 						<div class="col-md-6">
 							<div class="form-group">
@@ -97,7 +97,6 @@
 								</div>
 							</div>
 						</div>
-						
 					</div>
 					<div class="row">
 						<div class="form-group col-sm-4">
@@ -105,8 +104,7 @@
 							<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-cancel ml-2 mt-auto" />
 						</div>
 					</div>
-<%-- 					<c:if test="${totalDocumentos != null}"> --%>
-					<c:if test="${false}">
+					<c:if test="${totalDocumentos != null}">
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="card">
@@ -144,12 +142,6 @@
 						</div>
 					</c:if>
 					<c:if test="${listLinhas != null}">
-						<div class="row mb-3">
-							<div class="col">		
-								<button type="button" class="btn btn-outline-success" title="Exportar para CSV"	onclick="geraCsv('DocsProduzidos.csv')"><i class="fa fa-file-csv"></i> Exportar</button>	
-							</div>
-						</div>
-						<div class="row">
 							<table class="table table-hover table-striped">
 								<thead class="thead-dark align-middle text-center">
 									<tr>
@@ -226,7 +218,6 @@
 								</c:forEach> 
 								</tbody>
 							</table>
-						</div>
 					</c:if>
 				</form>
 			</div>

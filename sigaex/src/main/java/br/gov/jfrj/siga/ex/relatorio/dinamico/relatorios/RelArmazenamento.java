@@ -246,7 +246,8 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 				listDados.add(doc.getLotaCadastrante().getSigla());
 				listDados.add(doc.getLotaCadastrante().getNomeLotacao());
 				listDados.add(doc.getNmMod()); //
-				listDados.add("<a href=" + parametros.get("link_siga") + siglaDoc + ">" + siglaDoc + "</a>" + alert);
+//				listDados.add("<a href=" + parametros.get("link_siga") + siglaDoc + ">" + siglaDoc + "</a>" + alert);
+				listDados.add(siglaDoc);
 				listDados.add(doc.getDtDocDDMMYY()); 
 				listDados.add(doc.getDtRegDocDDMMYY());
 				listDados.add(doc.getCadastrante().getSigla());

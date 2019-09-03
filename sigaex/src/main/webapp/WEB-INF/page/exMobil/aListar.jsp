@@ -652,7 +652,7 @@
 						</div>
 					</c:if>
 					
-					${f:obterExtensaoBuscaTextual(lotaTitular.orgaoUsuario, fullText)} 
+					${f:obterExtensaoBuscaTextualbs4(lotaTitular.orgaoUsuario, fullText)} 
 
 					<div class="form-row">
 						<div class="form-group col-md-6">

@@ -9,47 +9,6 @@
 
 <siga:pagina titulo="Relatório">
 	<script type="text/javascript" language="Javascript1.1">
-		var newwindow = '';
-		function visualizarRelatorio(rel) {
-			if (!newwindow.closed && newwindow.location) {
-			} else {
-				var popW = 600;
-				var popH = 400;
-				var winleft = (screen.width - popW) / 2;
-				var winUp = (screen.height - popH) / 2;
-				winProp = 'width=' + popW + ',height=' + popH + ',left='
-						+ winleft + ',top=' + winUp
-						+ ',scrollbars=yes,resizable'
-				newwindow = window.open('', '', winProp);
-				newwindow.name = 'doc';
-			}
-
-			newwindow.opener = self;
-			t = frmRelatorios.target;
-			a = frmRelatorios.action;
-			frmRelatorios.target = newwindow.name;
-			frmRelatorios.action = rel;
-			frmRelatorios.submit();
-			frmRelatorios.target = t;
-			frmRelatorios.action = a;
-
-			if (window.focus) {
-				newwindow.focus()
-			}
-			return false;
-		}
-
-		function geraCsv(arq) {
-		    var csv = [];
-		    var rows = document.querySelectorAll("table tr");
-		    for (var i = 0; i < rows.length; i++) {
-		        var row = [], cols = rows[i].querySelectorAll("td, th");
-		        for (var j = 0; j < cols.length; j++) 
-		            row.push(decodeURIComponent(cols[j].innerText));
-		        csv.push(row.join(";"));        
-		    }
-		    downloadCSV(csv.join("\n"), arq);
-		}	
 
 		function downloadCSV(csv, filename) {
 			var link = window.document.createElement("a");
@@ -58,6 +17,32 @@
 			link.setAttribute("download", filename);
 			link.click();
 		}	
+		function exportCsv(){
+		    var frmRel = document.getElementById("frmRelatorios");
+		    var fd = new FormData(frmRel);
+			$.ajax({
+		        url: "/sigaex/app/expediente/rel/exportCsv",
+		        type: "POST",
+		        dataType: "csv",
+		        data: fd,
+		        cache: false,
+		        processData: false,
+		        contentType: false, 
+		        success: function(result){
+		        },
+		        beforeSend: function(){
+		            $('.alert').text("Gerando arquivo CSV...");
+		            $('.alert').closest(".row").css({display:"block alert alert-warning"});
+		        },
+		        complete: function(data){
+				    var csv = [];
+		            csv.push(data.responseText);
+				    downloadCSV(csv.join("\n"), "DocRelatorio.csv");
+		        	
+		            $('.alert').closest(".row").css({display:"none"});
+		        }
+		    });
+		}
 	</script>
 
 	<!-- main content -->
@@ -100,125 +85,10 @@
 					</div>
 					<div class="row">
 						<div class="form-group col-sm-4">
-							<input type="submit" value="Pesquisar" class="btn btn-primary mt-auto" />
+							<input type="button" value="Pesquisar" class="btn btn-primary mt-auto" onclick="javascript:exportCsv();"/>
 							<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-cancel ml-2 mt-auto" />
 						</div>
 					</div>
-					<c:if test="${totalDocumentos != null}">
-						<div class="row">
-							<div class="col-sm-12">
-								<div class="card">
-									<div class="card-header">Indicadores de Produção</div>
-									<div class="card-body">
-										<table class="table table-sm table-hover table-striped">
-											<tr class="card-text col-sm-6">
-												<td class='w-80'>Total de Documentos Produzidos</td>
-												<td class='text-right'>
-													<fmt:formatNumber type="number" pattern="###,###,###,##0" value="${totalDocumentos}" />
-												</td>
-											</tr>
-											<tr>
-												<td class='w-80'>Total de Páginas Geradas</td>
-												<td class='text-right'>
-													<fmt:formatNumber type = "number" pattern = "###,###,###,##0" value = "${totalPaginas}" />
-												</td>
-											</tr>
-											<tr>
-												<td class='w-80'>Total de MBytes dos Documentos</td>
-												<td class='text-right'>
-													<fmt:formatNumber type = "number" pattern = "###,###,###,##0" value = "${totalBlobsDoc}" />
-												</td>
-											</tr>
-											<tr>
-												<td class='w-80'>Total de MBytes dos Anexos</td>
-												<td class='text-right'>
-													<fmt:formatNumber type = "number" pattern = "###,###,###,##0" value = "${totalBlobsAnexos}" />
-												</td>
-											</tr>
-										</table>
-									</div>
-								</div>		
-							</div>
-						</div>
-					</c:if>
-					<c:if test="${listLinhas != null}">
-							<table class="table table-hover table-striped">
-								<thead class="thead-dark align-middle text-center">
-									<tr>
-										<th class="text-left">Sigla Órgão</th>
-										<th class="text-left">Órgão</th>
-										<th class="text-left">Sigla Unidade</th>
-										<th class="text-left">Unidade</th>
-										<th class="text-left">Nome do Documento</th>
-										<th class="text-left">Núm.</th>
-										<th class="text-center w-5">Data Documento</th>
-										<th class="text-center w-5">Data TMP</th>
-										<th class="text-center w-5">Cadastrante</th>
-										<th class="text-right w-5">Págs. Doc.</th>
-										<th class="text-right w-5">Tam.Doc.</th>
-										<th class="text-right w-5">Tam.Doc. (no Oracle)</th>
-										<th class="text-right w-5">Qtd. Anexos</th>
-										<th class="text-right w-5">Págs. Anexos</th>
-										<th class="text-right w-5">Tam.Anexos</th>
-										<th class="text-right w-5">Tam.Anexos (no Oracle)</th>
-									</tr>
-								</thead>
-								<tbody class="table-bordered">
-								<c:forEach items="${listLinhas}" var="item" varStatus="status">
-									<tr>
-										<td>
-											${item[0]}
-										</td>
-										<td>
-											${item[1]}
-										</td>
-										<td>
-											${item[2]}
-										</td>
-										<td>
-											${item[3]}
-										</td>
-										<td>
-											${item[4]}
-										</td>
-										<td>
-											${item[5]}
-										</td>
-										<td>
-											${item[6]}
-										</td>
-										<td>
-											${item[7]}
-										</td>
-										<td class="text-right">
-											${item[8]}
-										</td>
-										<td class="text-right">
-											${item[9]}
-										</td>
-										<td class="text-right">
-											${item[10]}
-										</td>
-										<td class="text-right">
-											${item[11]}
-										</td>
-										<td class="text-right">
-											${item[12]}
-										</td>
-										<td class="text-right">
-											${item[13]}
-										</td>
-										<td class="text-right">
-											${item[14]}
-										</td>
-										<td class="text-right">
-											${item[15]}
-										</td>
-									</tr>
-								</c:forEach> 
-								</tbody>
-							</table>
-					</c:if>
 				</form>
 			</div>
 		</div>

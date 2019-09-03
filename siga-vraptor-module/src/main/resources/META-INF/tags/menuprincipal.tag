@@ -40,9 +40,11 @@
 	<a href="javascript:void(0);" class="navbar-brand dropdown-toggle" data-toggle="dropdown"> <fmt:message key="menu.titulo"/></a>
 	<ul class="dropdown-menu">
 		<c:if test="${not empty f:resource('siga.pagina.inicial.url')}">
-			<li><a class="dropdown-item" href="/siga/app/principal?redirecionar=false">Quadros Quantitativos</a></li>
+				<li><a class="dropdown-item" href="/siga/app/principal?redirecionar=false">Quadros Quantitativos</a></li>
 		</c:if>
-	
+		<c:if test="${f:resource('siga.local') ne 'GOVSP'}">
+		    <li class="dropdown-item"><a href="/siga/app/principal" class="text-dark" >Página Inicial</a></li>		
+		</c:if>
 		<li class="dropdown-submenu"><a href="javascript:void(0);"
 			class="dropdown-item dropdown-toggle">Módulos</a>
 			<ul class="dropdown-menu">
@@ -85,8 +87,10 @@
 						</ul></li>
 				</c:if>
 			</ul></li>
-		<c:if test="${not empty f:resource('gsa.url')}">
-			<li><a class="dropdown-item" href="/siga/app/busca">Busca Textual</a></li>
+		<c:if test="${f:resource('siga.local') eq 'GOVSP'}">
+			<c:if test="${not empty f:resource('gsa.url')}">
+				<li><a class="dropdown-item" href="/siga/app/busca">Busca Textual</a></li>
+			</c:if>
 		</c:if>
 
 		<li class="dropdown-submenu"><a href="javascript:void(0);"

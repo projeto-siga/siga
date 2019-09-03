@@ -2618,5 +2618,18 @@ public class CpDao extends ModeloDao {
 		}
 		return l;
 	}
+	
+	public Integer quantidadeDocumentos(DpPessoa pes) {
+		try {
+			SQLQuery sql = (SQLQuery) getSessao().getNamedQuery(
+					"quantidadeDocumentos");
 
+			sql.setLong("idPessoaIni", pes.getIdPessoaIni());
+			List result = sql.list();
+			final int l = ((BigDecimal) sql.uniqueResult()).intValue();
+            return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
 }

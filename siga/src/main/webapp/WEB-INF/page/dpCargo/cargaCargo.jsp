@@ -8,7 +8,7 @@
 
 	<div class="container-fluid">
 		<div class="card bg-light mb-3" >
-			<div class="card-header"><h5>Cadastro de Cargo</h5></div>
+			<div class="card-header"><h5>Carga de Planilha Cargo</h5></div>
 			<div class="card-body">
 				<form action="carga" method="POST" enctype="multipart/form-data" class="form">
 					<c:if test="${not empty msg}"><script type="text/javascript">alert('Arquivo processado com sucesso!');</script></c:if>

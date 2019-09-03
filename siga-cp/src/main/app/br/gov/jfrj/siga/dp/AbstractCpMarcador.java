@@ -60,7 +60,22 @@ import br.gov.jfrj.siga.model.Objeto;
 		+ "			   	AND id_tp_marca = 1"
 		+ "			   	GROUP BY id_marcador) c"
 		+ "			WHERE m.id_marcador = c.id_marcador"
-		+ "			ORDER BY m.ord_marcador") })
+		+ "			ORDER BY m.ord_marcador"),
+@NamedNativeQuery(name = "quantidadeDocumentos", query = "SELECT"
+		+ "		count(1)"
+		+ "	FROM corporativo.cp_marca marca"
+		+ "	WHERE(dt_ini_marca IS NULL OR dt_ini_marca < sysdate)"
+		+ "		AND(dt_fim_marca IS NULL OR dt_fim_marca > sysdate)"
+		+ "		AND(id_pessoa_ini = :idPessoaIni)"
+		+ "		AND ("
+		+ "				select id_tipo_forma_doc from siga.ex_forma_documento where id_forma_doc = ("
+		+ "					select id_forma_doc from siga.ex_documento where id_doc = ("
+		+ "						select id_doc from siga.ex_mobil where id_mobil = marca.id_ref"
+		+ "					)"
+		+ "				)"
+		+ "			) in (1, 2)"
+		+ "	AND id_tp_marca = 1"
+		+ "	and id_marcador not in (9,8,10,11,12 ,13,16, 18, 20 , 21, 22, 24 ,26, 32, 62, 63, 64, 7, 50, 51)")})
 public abstract class AbstractCpMarcador extends Objeto implements Serializable {
 
 	@Id

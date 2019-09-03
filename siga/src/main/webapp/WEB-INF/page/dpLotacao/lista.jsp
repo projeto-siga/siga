@@ -22,7 +22,7 @@ function sbmt(offset) {
 		<input type="hidden" name="p.offset" value="0" />
 		<div class="card bg-light mb-3" >
 			<div class="card-header">
-				<h5>Dados da <fmt:message key="usuario.lotacao"/></h5>
+				<h5>Cadastro de <fmt:message key="usuario.lotacao"/></h5>
 			</div>
 			<div class="card-body">
 				<div class="row">

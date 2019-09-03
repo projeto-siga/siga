@@ -495,6 +495,10 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			pessoa.setSituacaoFuncionalPessoa(SituacaoFuncionalEnum.APENAS_ATIVOS.getValor()[0]);
 		} else {
 			pessoa = dao().consultar(id, DpPessoa.class, false);
+			Integer qtde = dao().quantidadeDocumentos(pessoa);
+			if(qtde > 0 && !idLotacao.equals(pessoa.getLotacao().getId())) {
+				throw new AplicacaoException("A unidade da pessoa não pode ser alterada, pois existem documentos pendentes");	
+			}
 		}
 		
 		if(dtNascimento != null && !"".equals(dtNascimento)) {

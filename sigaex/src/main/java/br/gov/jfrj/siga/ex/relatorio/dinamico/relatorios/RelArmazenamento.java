@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
 import java.math.BigDecimal;
+import java.sql.Blob;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.SigaExProperties;
+import br.gov.jfrj.siga.ex.util.Compactador;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
@@ -103,44 +105,70 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 			String queryOrgao = "";
 			if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
-				queryOrgao = "and doc.orgaoUsuario.idOrgaoUsu = :orgao ";
+				queryOrgao = " AND DOC.ID_ORGAO_USU = :orgao ";
+//				queryOrgao = "and doc.orgaoUsuario.idOrgaoUsu = :orgao ";
 			}
 
 			String queryLotacao = "";
 			if (parametros.get("lotacao") != null
 					&& parametros.get("lotacao") != "") {
-				queryLotacao = " and doc.lotaCadastrante.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :idLotacao) ";
+//				queryLotacao = " and doc.lotaCadastrante.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :idLotacao) ";
+				queryLotacao = " AND DOC.ID_LOTA_CADASTRANTE IN (SELECT L.ID_LOTACAO FROM CORPORATIVO.DP_LOTACAO AS L WHERE L.ID_LOTACAO_INI = :idLotacao) ";
 			}
 
 			String queryUsuario = "";
 			if (parametros.get("usuario") != null
 					&& parametros.get("usuario") != "") {
-				queryUsuario = "and doc.cadastrante.idPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :usuario) ";
+				queryUsuario = " AND DOC.ID_CADASTRANTE IN (SELECT P.ID_PESSOA FROM CORPORATIVO.DP_PESSOA AS P WHERE P.ID_PESSOA_INI = :usuario) ";
+//				queryUsuario = "and doc.cadastrante.idPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :usuario) ";
 			}
 			
 			Query query = HibernateUtil
 					.getSessao()
-					.createQuery(
-						"select " 
-						+ "doc, " 
-						+ "mob, "
-						+ "length(doc.conteudoBlobDoc) "
-						+ "from ExMobil mob "
-						+ "		right outer join mob.exDocumento doc " 
-						+ "		inner join doc.orgaoUsuario org "
-						+ "		left outer join doc.lotaCadastrante lota "
-						+ "		left outer join doc.exModelo mod "
-						+ "		left outer join doc.cadastrante pes1 "
-						+ "where doc.dtRegDoc between :dtini and :dtfim "
-						+ "and mob.exTipoMobil.idTipoMobil = 1" 
+					.createSQLQuery(
+						"SELECT " 
+							+ "DOC.ID_DOC, "
+							+ "MOB.ID_MOBIL, "
+							+ "MOV.ID_MOV, "
+							+ "ORG.SIGLA_ORGAO_USU, " 
+							+ "ORG.NM_ORGAO_USU ORGAO, "
+							+ "LOTA.SIGLA_LOTACAO, " 
+							+ "LOTA.NOME_LOTACAO LOTACAO, " 
+							+ "MOD.NM_MOD MODELO, " 
+							+ "DOC.ANO_EMISSAO, "
+							+ "DOC.NUM_EXPEDIENTE, "
+							+ "DOC.DT_DOC, " 
+							+ "DOC.DT_REG_DOC, " 
+//							+ "CONVERT (VARCHAR(10), DOC.DT_DOC, 103) AS [DD/MM/YYYY], "
+//							+ "CONVERT (VARCHAR(10), DOC.DT_REG_DOC, 103) AS [DD/MM/YYYY], "
+							+ "DOC.ID_CADASTRANTE, "
+							+ "DOC.NUM_PAGINAS, "
+							+ "DOC.CONTEUDO_BLOB_DOC, "
+							+ "LENGTH(DOC.CONTEUDO_BLOB_DOC), "
+							+ "LENGTH(MOV.CONTEUDO_BLOB_MOV), " 
+							+ "MOV.CONTEUDO_BLOB_MOV, " 
+							+ "MOV.CONTEUDO_TP_MOV, " 
+							+ "FRM.SIGLA_FORMA_DOC " 
+						+ "FROM SIGA.EX_MOBIL MOB "
+						+ "RIGHT OUTER JOIN SIGA.EX_DOCUMENTO DOC ON mob.ID_DOC=DOC.ID_DOC and mob.id_tipo_mobil = 1 " 
+						+ "inner join CORPORATIVO.CP_ORGAO_USUARIO ORG on ORG.ID_ORGAO_USU = DOC.ID_ORGAO_USU "
+						+ "LEFT OUTER join CORPORATIVO.DP_LOTACAO LOTA on LOTA.ID_LOTACAO = DOC.ID_LOTA_CADASTRANTE "  
+						+ "LEFT OUTER join SIGA.EX_MODELO MOD on MOD.ID_MOD = DOC.ID_MOD "
+						+ "LEFT OUTER join SIGA.EX_FORMA_DOCUMENTO FRM on FRM.ID_FORMA_DOC = MOD.ID_FORMA_DOC "
+						+ "FULL JOIN SIGA.EX_MOVIMENTACAO MOV ON mov.id_mobil=mob.id_mobil and mov.id_tp_mov = 64 AND mov.id_mov_canceladora IS NULL " 
+						+ "WHERE doc.dt_reg_doc > :dtini and doc.dt_reg_doc < :dtfim " 
 						+ queryOrgao
 						+ queryLotacao
-						+ queryUsuario
-						+ "order by doc.orgaoUsuario.nmOrgaoUsu, "
-						+ "		doc.lotaCadastrante.nomeLotacao, "
-						+ "		doc.exModelo.nmMod, "
-						+ "		doc.idDoc, "
-						+ "		doc.dtRegDoc "
+						+ queryUsuario 
+//						+ "GROUP BY "
+//						+ "ORG.NM_ORGAO_USU, " 
+//						+ "LOTA.NOME_LOTACAO, " 
+//						+ "MOD.NM_MOD, "
+//						+ "doc.id_doc, "
+//						+ "DOC.DT_DOC, "
+//						+ "doc.dt_reg_doc, "
+//						+ "doc.num_expediente "
+						+ "ORDER BY ORGAO, LOTACAO, MODELO, DOC.ID_DOC, MOV.ID_MOV "
 							);
 
 			if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
@@ -182,91 +210,102 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			totalPaginas = 0L;
 			totalBlobsDoc = 0L;
 			totalBlobsAnexos = 0L;
-
-			while (it.hasNext()) {
+			if (it.hasNext()) {
 				Object[] obj = (Object[]) it.next();
-				ExDocumento doc = (ExDocumento) obj[0];
-				ExMobil mob = (ExMobil) obj[1];
-				Long pags = 0L;
-				Long pagsBlobDoc = 0L;
-				Long pagsBlobAnexo = 0L;
-				Long qtdAnexos = 0L;
-				Long lenBlobDoc = 0L;
-				Long lenBlobDocBanco = 0L;
-				Long lenBlobAnexo = 0L;
-				Long lenBlobAnexoBanco = 0L;
-				String siglaDoc = "";
-				String alert = "";
-				byte[] blob = null;
-				if (parametros.get("getAll") == null || parametros.get("getAll") != "true") {
-					try {
-						List <ExMovimentacao> movs = mob.getMovimentacoesPorTipo(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR);
-						
-						for ( ExMovimentacao mov : movs) {
-							if (!mov.isCancelada()) {
-								blob = mov.getConteudoBlobpdf();
+				
+				while (it.hasNext()) {
+	//				ExDocumento doc = (ExDocumento) obj[0];
+	//				ExMobil mob = (ExMobil) obj[1];
+					Long pags = 0L;
+					Long pagsBlobDoc = 0L;
+					Long pagsBlobAnexo = 0L;
+					Long qtdAnexos = 0L;
+					Long lenBlobDoc = 0L;
+					Long lenBlobDocBanco = 0L;
+					Long lenBlobAnexo = 0L;
+					Long lenBlobAnexoBanco = 0L;
+					String siglaDoc = "";
+					String alert = "";
+					siglaDoc = obj[0].toString();
+					List<String> listDados = new ArrayList();
+					listDados.add(obj[3].toString()); // sigla orgao
+					listDados.add(obj[4].toString()); // nome orgao
+					listDados.add(obj[5].toString()); // sigla lotacao 
+					listDados.add(obj[6].toString()); // nome lotacao
+					listDados.add(obj[7].toString()); //nome modelo
+	//				listDados.add("<a href=" + parametros.get("link_siga") + siglaDoc + ">" + siglaDoc + "</a>" + alert);
+					listDados.add(siglaDoc);
+					if (obj[10] != null) {
+						listDados.add(obj[10].toString()); // Data documento
+					} else {
+						listDados.add("");
+					}
+					listDados.add(obj[11].toString()); // Data reg 
+					listDados.add(obj[12].toString()); // id cadastrante
+//					siglaDoc = ExDocumento.getCodigo(Long.valueOf(obj[0].toString()), obj[4].toString(), obj[3].toString(), obj[19].toString(), 
+//							Long.valueOf(obj[8].toString()), Long.valueOf(obj[7].toString()), 0, 1L, 0, 
+//							null, null, null, null, 
+//							null, null, null, null, null); 
+					if (obj[13] != null) {
+						pags = Long.valueOf(obj[13].toString());
+					}
+					byte[] blob = null;
+					if (obj[14] != null) {
+						blob = br.gov.jfrj.siga.cp.util.Blob.toByteArray((Blob) obj[14]);
+						final Compactador zip = new Compactador();
+						byte[] blobDescompactado = zip.descompactarStream(blob, "doc.pdf");
+						if (blobDescompactado != null) {
+							lenBlobDoc = (long) blobDescompactado.length;
+						}
+					}
+					if (obj[15] != null) {
+						lenBlobDocBanco = Long.valueOf(obj[15].toString());
+					}
+					
+					if (parametros.get("getAll") == null || parametros.get("getAll") != "true") {
+						while (siglaDoc.equals(obj[0].toString())) {
+							if (obj[17] != null) {
 								qtdAnexos = qtdAnexos + 1;
-								if (blob != null) {
-									lenBlobAnexo = lenBlobAnexo + blob.length;
+	//							String conteudoTpMov = obj[18].toString();
+								blob = br.gov.jfrj.siga.cp.util.Blob.toByteArray((Blob) obj[17]);
+								lenBlobAnexo = lenBlobAnexo + blob.length;
+								try {
 									pagsBlobAnexo = pagsBlobAnexo + (long) Documento.getNumberOfPages(blob);
-									blob = mov.getConteudoBlobMov2();
 									lenBlobAnexoBanco = lenBlobAnexoBanco + blob.length;
-								} else {
-									blob = mov.getConteudoBlobMov2();
-									lenBlobAnexo = lenBlobAnexo + blob.length;
-									lenBlobAnexoBanco = lenBlobAnexoBanco + blob.length;
+								} catch (Exception e) {
 									long numPag = (long) blob.length / 51200;
 									if (numPag < 1) {
 										numPag = 1;
 									}
 									pagsBlobAnexo = pagsBlobAnexo + numPag;
+									lenBlobAnexoBanco = lenBlobAnexoBanco + blob.length;
 								}
 							}
+							if (it.hasNext()) {
+								obj = (Object[]) it.next();
+							} else {
+								continue;
+							}
 						}
-					} catch (Exception e) {
-						alert = "<strong> - Doc. sem mobil </strong>";
+						listDados.add(pags.toString());
+						listDados.add(lenBlobDoc.toString());
+						listDados.add(lenBlobDocBanco.toString()); 
+						listDados.add(qtdAnexos.toString()); 
+						listDados.add(pagsBlobAnexo.toString()); 
+						listDados.add(lenBlobAnexo.toString()); 
+						listDados.add(lenBlobAnexoBanco.toString()); 
+						for (String dado : listDados) {
+							d.add(dado);
+						}
+						listLinhas.add(listDados);
+						totalDocumentos = totalDocumentos + 1; 
+						totalPaginas = totalPaginas + pags; 
+						totalBlobsDoc = totalBlobsDoc + lenBlobDoc; 
+						totalBlobsAnexos = totalBlobsAnexos + lenBlobAnexo; 
 					}
 				}
-				siglaDoc = doc.getSigla(); 
-				if (doc.getNumPaginas() != null) {
-					pags = doc.getNumPaginas().longValue();
-				}
-				lenBlobDoc = (long) doc.getNumBytes();
-				blob = doc.getConteudoBlobPdf();
-				if (blob != null) {
-					lenBlobDoc = (long) blob.length;
-				}
-				if (obj[2] != null) {
-					lenBlobDocBanco = Long.valueOf(obj[2].toString());
-				}
-				
-				List<String> listDados = new ArrayList();
-				listDados.add(doc.getOrgaoUsuario().getSigla());
-				listDados.add(doc.getOrgaoUsuario().getNmOrgaoUsu());
-				listDados.add(doc.getLotaCadastrante().getSigla());
-				listDados.add(doc.getLotaCadastrante().getNomeLotacao());
-				listDados.add(doc.getNmMod()); //
-//				listDados.add("<a href=" + parametros.get("link_siga") + siglaDoc + ">" + siglaDoc + "</a>" + alert);
-				listDados.add(siglaDoc);
-				listDados.add(doc.getDtDocDDMMYY()); 
-				listDados.add(doc.getDtRegDocDDMMYY());
-				listDados.add(doc.getCadastrante().getSigla());
-				listDados.add(pags.toString());
-				listDados.add(lenBlobDoc.toString());
-				listDados.add(lenBlobDocBanco.toString()); 
-				listDados.add(qtdAnexos.toString()); 
-				listDados.add(pagsBlobAnexo.toString()); 
-				listDados.add(lenBlobAnexo.toString()); 
-				listDados.add(lenBlobAnexoBanco.toString()); 
-				for (String dado : listDados) {
-					d.add(dado);
-				}
-				listLinhas.add(listDados);
-				totalDocumentos = totalDocumentos + 1; 
-				totalPaginas = totalPaginas + pags; 
-				totalBlobsDoc = totalBlobsDoc + lenBlobDoc; 
-				totalBlobsAnexos = totalBlobsAnexos + lenBlobAnexo; 
 			}
+
 			if (listLinhas.size() == 0) {
 				throw new AplicacaoException("Não foram encontrados documentos para os dados informados.");
 			}

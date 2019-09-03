@@ -1508,7 +1508,7 @@ public class ExRelatorioController extends ExController {
 				listOrgaos.add(ou);
 			}
 
-			if (!primeiraVez) {
+//			if (!primeiraVez) {
 				if (!("ZZ".equals(getTitular().getOrgaoUsuario().getSigla()) || "PD"
 						.equals(getTitular().getOrgaoUsuario().getSigla()))
 						&& !orgaoUsu.equals(orgaoPesqId)) {
@@ -1522,14 +1522,16 @@ public class ExRelatorioController extends ExController {
 				if (getAll) {
 					parametros.put("getAll", "true");
 				}
-				parametros.put("lotacao",
-						getRequest().getParameter("lotacaoSel.id"));
-				parametros.put("usuario",
+				if (!getRequest().getParameter("lotacaoSel.id").equals("")) {
+					parametros.put("lotacao",
+							getRequest().getParameter("lotacaoSel.id"));
+				}
+				if (!getRequest().getParameter("usuarioSel.id").equals("")) {
+					parametros.put("usuario",
 						getRequest().getParameter("usuarioSel.id"));
-				parametros.put("dataInicial",
-						getRequest().getParameter("dataInicial"));
-				parametros.put("dataFinal", somaUmDia(getRequest()
-						.getParameter("dataFinal")));
+				}
+				parametros.put("dataInicial", dataInicial);
+				parametros.put("dataFinal", somaUmDia(dataFinal));
 				parametros.put("link_siga", "http://"
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
@@ -1541,35 +1543,34 @@ public class ExRelatorioController extends ExController {
 				listColunas = rel.listColunas;
 				listLinhas = rel.listLinhas;
 				
-				result.include("getAll", getAll);
-				result.include("orgaoPesqId", orgaoPesqId);
-				result.include("listLinhas", rel.listLinhas);
-				result.include("listColunas", rel.listColunas);
-				result.include("totalDocumentos",
-						rel.totalDocumentos.toString());
-				result.include("totalPaginas", rel.totalPaginas.toString());
-				result.include("totalBlobsDoc", rel.totalBlobsDoc.toString());
-				result.include("totalBlobsAnexos",
-						rel.totalBlobsAnexos.toString());
-			}
+//				result.include("getAll", getAll);
+//				result.include("orgaoPesqId", orgaoPesqId);
+//				result.include("listLinhas", rel.listLinhas);
+//				result.include("listColunas", rel.listColunas);
+//				result.include("totalDocumentos",
+//						rel.totalDocumentos.toString());
+//				result.include("totalPaginas", rel.totalPaginas.toString());
+//				result.include("totalBlobsDoc", rel.totalBlobsDoc.toString());
+//				result.include("totalBlobsAnexos",
+//						rel.totalBlobsAnexos.toString());
+//			}
 		} catch (AplicacaoException e) {
 			result.include("mensagemCabec", e.getMessage());
 			result.include("msgCabecClass", "alert-danger");
+			result.use(Results.page()).forwardTo(
+					"/WEB-INF/page/exRelatorio/relArmazenamento.jsp");
 		}
 
-		if (primeiraVez == false) {
-			result.include("primeiraVez", false);
-		}
-
+//		if (primeiraVez == false) {
+//			result.include("primeiraVez", false);
+//		}
+//
 		result.include("listOrgaos", listOrgaos);
 		result.include("lotacaoSel", lotacaoSel);
 		result.include("usuarioSel", usuarioSel);
 		result.include("dataInicial", dataInicial);
 		result.include("dataFinal", dataFinal);
 		
-//		relArmazenamento(orgaoPesqId, lotacaoSel, usuarioSel, 
-//				dataInicial, dataFinal, getAll, primeiraVez);
-//
 		InputStream inputStream = null;
 		StringBuffer texto = new StringBuffer();
 		for (String col : listColunas) { 
@@ -1585,7 +1586,8 @@ public class ExRelatorioController extends ExController {
 			texto.append(System.getProperty("line.separator"));
 		}
 			
-		inputStream = new ByteArrayInputStream(texto.toString().getBytes("ISO-8859-1"));
-		return new InputStreamDownload(inputStream, "text/csv", "RelDocsArmazenados.csv");	
+		inputStream = new ByteArrayInputStream(texto.toString().getBytes("UTF-8"));
+		return new InputStreamDownload(inputStream, "text/csv", "RelDocs" + dataInicial 
+				+ "-" + dataFinal + ".csv");	
 	}
 }

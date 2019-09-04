@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -282,14 +283,16 @@ public class SubstituicaoController extends SigaController {
 				
 			} else if (getIntervaloDeDiasEntreDatas(subst.getDtIniSubst(), subst.getDtFimSubst()) < 0) {
 				throw new AplicacaoException("Não é possível informar uma data final anterior a data inicial.");
-			} else if (getIntervaloDeDiasEntreDatas(subst.getDtIniSubst(), subst.getDtFimSubst()) > 720) {
-				throw new AplicacaoException("Período informado : " + getIntervaloDeDiasEntreDatas(subst.getDtIniSubst(), subst.getDtFimSubst()) + " dias. Não é possível cadastrar um período de substituição maior que 2 anos.");
-			}
-			else {
-				if(subst.getDtFimSubst() != null && !Data.dataDentroSeculo21(subst.getDtFimSubst()))
-					throw new AplicacaoException("Data final inválida, deve estar entre o ano 2000 e ano 2100");	
-			} 
+			} else {
+				Calendar c = Calendar.getInstance();
+				c.setTime(subst.getDtIniSubst());
+				c.add(Calendar.YEAR, 2);  
 				
+				if (c.getTime().compareTo(subst.getDtFimSubst()) < 0)  {
+					throw new AplicacaoException("Não é possível cadastrar período de substituição maior que 2 anos.");
+			} else if (subst.getDtFimSubst() != null && !Data.dataDentroSeculo21(subst.getDtFimSubst()))
+					throw new AplicacaoException("Data final inválida, deve estar entre o ano 2000 e ano 2100");
+			}				 
 	
 
 			subst.setDtIniRegistro(new Date());

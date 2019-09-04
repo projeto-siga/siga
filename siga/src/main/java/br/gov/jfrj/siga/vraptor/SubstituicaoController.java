@@ -194,8 +194,7 @@ public class SubstituicaoController extends SigaController {
 					  ) throws Exception {
 		
 		
-		Long lotacaoIniPai;
-		Long lotacaoIniAvo;
+		Long lotacaoPai, lotacaoAvo = null, lotacaoIniPai, lotacaoIniAvo = null;	
 
 		DpSubstituicao subst = new DpSubstituicao();
 		
@@ -227,13 +226,18 @@ public class SubstituicaoController extends SigaController {
 				
 				subst.setLotaTitular(dao().consultar(this.lotaTitularSel.getId(), DpLotacao.class, false));
 				lotacaoIniPai = subst.getLotaTitular().getIdLotacaoIniPai();
-				lotacaoIniAvo = subst.getLotaTitular().getLotacaoPai().getIdLotacaoIniPai();
-				
+				lotacaoPai = subst.getLotaTitular().getIdLotacaoPai();
+				if(lotacaoPai != null)
+					lotacaoAvo = subst.getLotaTitular().getLotacaoPai().getIdLotacaoPai();
+				if(lotacaoIniPai != null)
+					lotacaoIniAvo = subst.getLotaTitular().getLotacaoPai().getIdLotacaoIniPai();
 				
 				if (!subst.getLotaTitular().getIdLotacao().equals(getCadastrante().getIdLotacao()) 
 						&& !podeCadastrarQualquerSubstituicao()) 
-					if ((lotacaoIniPai == null) || !(lotacaoIniPai.equals(getCadastrante().getIdLotacaoIni())) &&
-						(lotacaoIniAvo == null) || !(lotacaoIniAvo.equals(getCadastrante().getIdLotacaoIni()))) 
+					if (!(!(lotacaoIniPai == null) && (lotacaoIniPai.equals(getCadastrante().getIdLotacaoIni())) ||
+						  !(lotacaoIniAvo == null) && (lotacaoIniAvo.equals(getCadastrante().getIdLotacaoIni())) || 
+						  !(lotacaoPai == null) && (lotacaoPai.equals(getCadastrante().getIdLotacao())) ||
+						  !(lotacaoAvo == null) && (lotacaoAvo.equals(getCadastrante().getIdLotacao()))))
 						throw new AplicacaoException("Lotação titular não permitida. Apenas usuários da própria lotação ou lotados até 2 lotações superiores na hierarquia podem defini-la como titular.");
 				
 			}
@@ -334,7 +338,6 @@ public class SubstituicaoController extends SigaController {
 					+ "\n\n Atenção: esta é uma "
 					+ "mensagem automática. Por favor, não responda.";
 					
-	//		String assunto = "Cadastro de Substituição - TESTE DE IMPLEMENTAçÃO DE ENVIOD E EMAIL - FAVOR DESCONSIDERA";
 			String assunto = "Cadastro de Substituição";
 					
 			List<String> listaDeEmails= new ArrayList<String>();

@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with SIGA.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package br.gov.jfrj.siga.hibernate;
+package br.gov.jfrj.siga.ex.util;
 
 import java.io.IOException;
 
@@ -36,7 +36,7 @@ import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 
-public class ExThreadFilter extends ThreadFilter {
+public class ExLogAcessoDocsFilter extends ThreadFilter {
 
 	private FilterConfig config;
 
@@ -49,40 +49,24 @@ public class ExThreadFilter extends ThreadFilter {
 			final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
-		EntityManager em = ExStarter.emf.createEntityManager();
-		ContextoPersistencia.setEntityManager(em);
+		final StringBuilder csv = super.iniciaAuditoria(request);
 
 		// Inicialização padronizada
 		CurrentRequest.set(new RequestInfo(config.getServletContext(),
 				(HttpServletRequest) request, (HttpServletResponse) response));
-		ModeloDao.freeInstance();
-		ExDao.getInstance();
-		try {
-			Ex.getInstance().getConf().limparCacheSeNecessario();
-		} catch (Exception e1) {
-			throw new RuntimeException(
-					"Não foi possível atualizar o cache de configurações", e1);
-		}
-
-		em.getTransaction().begin();
 
 		try {
 			chain.doFilter(request, response);
-			em.getTransaction().commit();
 		} catch (Exception e) {
-			if (em.getTransaction().isActive())
-				em.getTransaction().rollback();
-
 			throw new ServletException(e);
 		} finally {
-			em.close();
-			ContextoPersistencia.setEntityManager(null);
+			super.terminaAuditoria(csv);
 		}
 	}
 
 	@Override
 	protected String getLoggerName() {
-		return "br.gov.jfrj.siga.ex";
+		return "br.gov.jfrj.siga.ex.LogAcessoDocs";
 	}
 
 }

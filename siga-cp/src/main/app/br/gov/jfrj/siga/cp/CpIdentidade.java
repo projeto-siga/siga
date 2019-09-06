@@ -21,10 +21,9 @@ package br.gov.jfrj.siga.cp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -38,8 +37,9 @@ import br.gov.jfrj.siga.model.Assemelhavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 
 @Entity
+@Cacheable
+@Cache(region = CpDao.CACHE_QUERY_SUBSTITUICAO, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Table(name = "CP_IDENTIDADE", schema = "CORPORATIVO")
-@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpIdentidade extends AbstractCpIdentidade {
 
 	public DpPessoa getPessoaAtual() {

@@ -41,10 +41,6 @@ public abstract class AbstractExPapel extends Objeto implements Serializable {
 	@Column(name = "DESC_PAPEL", length = 20)
 	private java.lang.String descPapel;
 
-	@OneToMany(mappedBy = "exPapel")
-	@Sort(type = SortType.NATURAL)
-	private SortedSet<ExMovimentacao> exMovimentacaoSet;
-
 	public java.lang.Long getIdPapel() {
 		return idPapel;
 	}
@@ -59,14 +55,6 @@ public abstract class AbstractExPapel extends Objeto implements Serializable {
 
 	public void setDescPapel(java.lang.String descPapel) {
 		this.descPapel = descPapel;
-	}
-
-	public SortedSet<ExMovimentacao> getExMovimentacaoSet() {
-		return exMovimentacaoSet;
-	}
-
-	public void setExMovimentacaoSet(SortedSet<ExMovimentacao> exMovimentacaoSet) {
-		this.exMovimentacaoSet = exMovimentacaoSet;
 	}
 
 }

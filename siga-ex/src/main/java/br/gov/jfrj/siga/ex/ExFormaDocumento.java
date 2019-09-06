@@ -28,6 +28,10 @@ import java.util.regex.Pattern;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.Selecionavel;
 
 /**
@@ -36,6 +40,7 @@ import br.gov.jfrj.siga.model.Selecionavel;
  */
 @Entity
 @Table(name = "EX_FORMA_DOCUMENTO", catalog = "SIGA")
+@Cache(region = ExDao.CACHE_EX, usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class ExFormaDocumento extends AbstractExFormaDocumento implements
 		Serializable, Selecionavel, Comparable<ExFormaDocumento> {
 	

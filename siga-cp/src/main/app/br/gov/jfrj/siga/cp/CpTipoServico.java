@@ -18,15 +18,23 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.cp;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Immutable;
+
+import br.gov.jfrj.siga.dp.dao.CpDao;
+
+import br.gov.jfrj.siga.dp.dao.CpDao;
 
 @Entity
+@Immutable
+@Cacheable
+@Cache(region = CpDao.CACHE_QUERY_HOURS, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(schema = "CORPORATIVO", name = "CP_TIPO_SERVICO")
-@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class CpTipoServico extends AbstractCpTipoServico {
 	public static final int TIPO_SERVICO_DIRETORIO = 1;
 	public static final int TIPO_CONFIG_SISTEMA = 2;

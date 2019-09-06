@@ -695,7 +695,6 @@ public class CpConfiguracaoBL {
 			CpServico cpServico, CpIdentidade cpIdentidade, CpGrupo cpGrupo,
 			CpTipoLotacao cpTpLotacao, long idTpConf) throws Exception {
 
-		
 		if (isUsuarioRoot(dpPessoa)){
 			return true;
 		}
@@ -721,6 +720,7 @@ public class CpConfiguracaoBL {
 
 		cfgFiltro.setCpTipoConfiguracao(CpDao.getInstance().consultar(idTpConf,
 				CpTipoConfiguracao.class, false));
+		
 
 		CpConfiguracao cfg = (CpConfiguracao) buscaConfiguracao(cfgFiltro,
 				new int[] { 0 }, null);
@@ -863,7 +863,6 @@ public class CpConfiguracaoBL {
 	@SuppressWarnings("static-access")
 	public Boolean podeUtilizarServicoPorConfiguracao(DpPessoa titular,
 			DpLotacao lotaTitular, String servicoPath) {
-		
 		try {
 			if (titular == null || lotaTitular == null)
 				return false;
@@ -892,9 +891,7 @@ public class CpConfiguracaoBL {
 						srv.setDscServico(sDesc);
 						srv.setCpServicoPai(srvPai);
 						srv.setCpTipoServico(tpsrv);
-						dao().iniciarTransacao();
-						srvRecuperado = dao().gravar(srv);
-						dao().commitTransacao();
+						dao().acrescentarServico(srv);
 					}
 					srvPai = srvRecuperado;
 				}

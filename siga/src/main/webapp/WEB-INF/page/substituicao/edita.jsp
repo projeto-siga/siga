@@ -23,7 +23,7 @@
 	function verificaData() {
 		var dataFim = document.getElementById("dtFimSubst").value;
 		var dataInicio = document.getElementById("dtIniSubst").value;
-		var mensagem = "Data de fim vazia. A substituição ficará valendo até que seja manualmente cancelada.";
+		var mensagem = "Data de fim é obrigatória e limitada a 2 anos após Data de Início.";
 		var atencao = " Atenção!";
 		if (!dataFim == "" || !dataFim == null) {
 			document.getElementById("atencao").innerHTML = "";
@@ -43,7 +43,7 @@
 	function aviso() {
 		var dataFim = document.getElementById("dtFimSubst").value;
 		var dataInicio = document.getElementById("dtIniSubst").value;
-		var mensagem = "Caso a 'Data de Início' não seja informada, será assumida a data atual.<br/>Caso a 'Data de Fim' não seja informada, a substituição ficará valendo até que seja manualmente cancelada.";
+		var mensagem = "Caso a 'Data de Início' não seja informada, será assumida a data atual.<br/>A 'Data de Fim' é obrigatória e limitada a 2 anos após Data de Início. O usuário é responsável por gerir suas substituições";
 		var atencao = "Importante";
 		document.getElementById("dataFim").innerHTML = mensagem;
 		document.getElementById("dataFim").value = mensagem;
@@ -151,7 +151,7 @@
 								<label for="tipoTitular">Data de Fim</label>
 								<input type="text" id="dtFimSubst" name="dtFimSubst" label="Data de Fim" value="${dtFimSubst}"
 									onblur="javascript:verifica_data(this, true);" theme="simple" class="form-control" />
-									<small id="emailHelp" class="form-text text-muted">(opcional)</small>
+									<small id="emailHelp" class="form-text text-muted">(obrigatório e limitado a 2 anos a partir da data inicial)</small>
 							</div>
 						</div>
 					</div>

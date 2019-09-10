@@ -40,7 +40,8 @@
 				    downloadCSV(csv.join("\n"), "DocRelatorio.csv");
 		        	
 		            $('.alert').closest(".row").css({display:"none"});
-		        }
+		        },
+		        timeout: 600000
 		    });
 		}
 	</script>
@@ -78,9 +79,14 @@
 							<div class="form-group">
 								<div class="form-check form-check-inline mt-4">
 									<input type="checkbox" name="getAll" ${getAll ? 'checked=\'checked\'' : ''}	 />
-									<label class="form-check-label ml-1" for="getAll">Sem Dados dos Anexos</label>
+									<label class="form-check-label ml-1" for="getAll">Sem Dados de Compactação</label>
 								</div>
 							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-sm-6">
+							<input type="text" name="emailDest" class="form-control" />
 						</div>
 					</div>
 					<div class="row">

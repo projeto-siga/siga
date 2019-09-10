@@ -250,25 +250,39 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 						pags = Long.valueOf(obj[13].toString());
 					}
 					byte[] blob = null;
-					if (obj[14] != null) {
-						blob = br.gov.jfrj.siga.cp.util.Blob.toByteArray((Blob) obj[14]);
-						final Compactador zip = new Compactador();
-						byte[] blobDescompactado = zip.descompactarStream(blob, "doc.pdf");
-						if (blobDescompactado != null) {
-							lenBlobDoc = (long) blobDescompactado.length;
+					if (parametros.get("getAll") == null || parametros.get("getAll") != "true") {
+						if (obj[14] != null) {
+							blob = br.gov.jfrj.siga.cp.util.Blob.toByteArray((Blob) obj[14]);
+							final Compactador zip = new Compactador();
+							try {
+								byte[] blobDescompactado = zip.descompactarStream(blob, "doc.pdf");
+								if (blobDescompactado != null) {
+									lenBlobDoc = (long) blobDescompactado.length;
+								}
+								blobDescompactado = zip.descompactarStream(blob, "doc.form");
+								if (blobDescompactado != null) {
+									lenBlobDoc = (long) blobDescompactado.length + lenBlobDoc;
+								}
+								blobDescompactado = zip.descompactarStream(blob, "doc.htm");
+								if (blobDescompactado != null) {
+									lenBlobDoc = (long) blobDescompactado.length + lenBlobDoc;
+								}
+							} catch (Exception e) {
+								String msg = "Erro lenBlobDoc.";
+							}
 						}
 					}
 					if (obj[15] != null) {
 						lenBlobDocBanco = Long.valueOf(obj[15].toString());
 					}
 					
-					if (parametros.get("getAll") == null || parametros.get("getAll") != "true") {
-						while (siglaDoc.equals(obj[0].toString())) {
-							if (obj[17] != null) {
-								qtdAnexos = qtdAnexos + 1;
-	//							String conteudoTpMov = obj[18].toString();
-								blob = br.gov.jfrj.siga.cp.util.Blob.toByteArray((Blob) obj[17]);
-								lenBlobAnexo = lenBlobAnexo + blob.length;
+					while (siglaDoc.equals(obj[0].toString())) {
+						if (obj[17] != null) {
+							qtdAnexos = qtdAnexos + 1;
+//							String conteudoTpMov = obj[18].toString();
+							blob = br.gov.jfrj.siga.cp.util.Blob.toByteArray((Blob) obj[17]);
+							lenBlobAnexo = lenBlobAnexo + blob.length;
+							if (parametros.get("getAll") == null || parametros.get("getAll") != "true") {
 								try {
 									pagsBlobAnexo = pagsBlobAnexo + (long) Documento.getNumberOfPages(blob);
 									lenBlobAnexoBanco = lenBlobAnexoBanco + blob.length;
@@ -281,28 +295,28 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 									lenBlobAnexoBanco = lenBlobAnexoBanco + blob.length;
 								}
 							}
-							if (it.hasNext()) {
-								obj = (Object[]) it.next();
-							} else {
-								continue;
-							}
 						}
-						listDados.add(pags.toString());
-						listDados.add(lenBlobDoc.toString());
-						listDados.add(lenBlobDocBanco.toString()); 
-						listDados.add(qtdAnexos.toString()); 
-						listDados.add(pagsBlobAnexo.toString()); 
-						listDados.add(lenBlobAnexo.toString()); 
-						listDados.add(lenBlobAnexoBanco.toString()); 
-						for (String dado : listDados) {
-							d.add(dado);
+						if (it.hasNext()) {
+							obj = (Object[]) it.next();
+						} else {
+							continue;
 						}
-						listLinhas.add(listDados);
-						totalDocumentos = totalDocumentos + 1; 
-						totalPaginas = totalPaginas + pags; 
-						totalBlobsDoc = totalBlobsDoc + lenBlobDoc; 
-						totalBlobsAnexos = totalBlobsAnexos + lenBlobAnexo; 
 					}
+					listDados.add(pags.toString());
+					listDados.add(lenBlobDoc.toString());
+					listDados.add(lenBlobDocBanco.toString()); 
+					listDados.add(qtdAnexos.toString()); 
+					listDados.add(pagsBlobAnexo.toString()); 
+					listDados.add(lenBlobAnexo.toString()); 
+					listDados.add(lenBlobAnexoBanco.toString()); 
+					for (String dado : listDados) {
+						d.add(dado);
+					}
+					listLinhas.add(listDados);
+					totalDocumentos = totalDocumentos + 1; 
+					totalPaginas = totalPaginas + pags; 
+					totalBlobsDoc = totalBlobsDoc + lenBlobDoc; 
+					totalBlobsAnexos = totalBlobsAnexos + lenBlobAnexo; 
 				}
 			}
 

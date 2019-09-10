@@ -63,6 +63,7 @@ import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
@@ -1489,7 +1490,8 @@ public class ExRelatorioController extends ExController {
 	@Path("app/expediente/rel/exportCsv")
 	public Download exportCsv(final Long orgaoPesqId,	final DpLotacaoSelecao lotacaoSel,
 				final DpPessoaSelecao usuarioSel, final String dataInicial,
-				final String dataFinal, final boolean getAll, boolean primeiraVez) throws Exception {
+				final String dataFinal, final boolean getAll, boolean primeiraVez,
+				final String emailDest) throws Exception {
 		List<CpOrgaoUsuario> listOrgaos = new ArrayList<CpOrgaoUsuario>();
 		List<String> listColunas = new ArrayList<String>();
 		List<List<String>> listLinhas = new ArrayList<List<String>>();
@@ -1585,6 +1587,12 @@ public class ExRelatorioController extends ExController {
 			}
 			texto.append(System.getProperty("line.separator"));
 		}
+		
+		Correio.enviar(
+				emailDest,
+				"Relatório Armazenamento " + dataInicial + "-" + dataFinal,
+				texto.toString()
+				);
 			
 		inputStream = new ByteArrayInputStream(texto.toString().getBytes("UTF-8"));
 		return new InputStreamDownload(inputStream, "text/csv", "RelDocs" + dataInicial 

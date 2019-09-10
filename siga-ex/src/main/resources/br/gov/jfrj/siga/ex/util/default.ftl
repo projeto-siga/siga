@@ -1982,7 +1982,7 @@ Pede deferimento.</span><br/><br/><br/>
 </table>
 [/#macro]
 
-[#macro cabecalhoCentralizado]
+[#macro cabecalhoCentralizado orgaoCabecalho=true]
 <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
     <tr bgcolor="#FFFFFF">
         <td width="100%">
@@ -1999,6 +1999,7 @@ Pede deferimento.</span><br/><br/><br/>
                 </td>
             </tr>
             [/#if]
+            [#if orgaoCabecalho?? && orgaoCabecalho] 
             <tr>
                 <td width="100%" align="center">
                 <p style="font-family: AvantGarde Bk BT, Arial; font-size: 8pt;">
@@ -2009,6 +2010,7 @@ Pede deferimento.</span><br/><br/><br/>
                 [/#if]</p>
                 </td>
             </tr>
+           [/#if]
         </table>
         </td>
     </tr>
@@ -2328,7 +2330,7 @@ Pede deferimento.</span><br/><br/><br/>
     [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
     [/@primeiroCabecalho]
     [@cabecalho]
-    [@cabecalhoCentralizado/]
+    [@cabecalhoCentralizado orgaoCabecalho/]
     [/@cabecalho]
     [@letra tamanhoLetra]
         [#if !numeracaoCentralizada]

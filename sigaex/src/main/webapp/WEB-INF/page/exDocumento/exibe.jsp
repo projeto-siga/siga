@@ -209,12 +209,12 @@
 							$(css).appendTo("head");
 						</script>
 							<table class="table table-sm table-responsive-sm table-striped">
-								<thead>
+								<thead class="thead-dark align-middle text-center">
 									<tr>
-										<th align="center">Tempo</th>
-										<th><fmt:message key="usuario.lotacao"/></th>
-										<th>Evento</th>
-										<th>Descrição</th>
+										<th class="text-left">Tempo</th>
+										<th class="text-left"><fmt:message key="usuario.lotacao"/></th>
+										<th class="text-left">Evento</th>
+										<th class="text-left">Descrição</th>
 										<th></th>
 									</tr>
 								</thead>
@@ -224,17 +224,14 @@
 										test="${ (mov.idTpMov != 14 and mov.idTpMov != 64 and
 							          not mov.cancelada)}">
 										<tr class="${mov.classe} ${mov.disabled}">
-											<td class="align-top" title="${mov.dtRegMovDDMMYYHHMMSS}">${mov.tempoRelativo}</td>
-											<td class="align-top" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>
-											<td class="align-top" >${mov.mov.exTipoMovimentacao.sigla}</td>
-											<td class="align-top" style="word-break: break-all;">
-												<span class="align-top">${mov.descricao}</span>
+											<td class="text-left" title="${mov.dtRegMovDDMMYYHHMMSS}">${mov.tempoRelativo}</td>
+											<td class="text-left" title="${mov.mov.cadastrante.descricao} - ${mov.mov.lotaCadastrante.descricao}">${mov.mov.lotaCadastrante.sigla}</td>
+											<td class="text-left" >${mov.mov.exTipoMovimentacao.sigla}</td>
+											<td class="text-left">
+												${mov.descricao}
 												<c:if test='${mov.idTpMov != 2}'> ${mov.complemento} </c:if>
 												<c:set var="assinadopor" value="${true}" />
-											</td>
-											<td class="align-top" style="word-break: break-all;">
-												<span class="align-top">
-													<siga:links
+												<siga:links
 														buttons="${false}"
 														inline="${true}"
 														separator="${not empty mov.descricao and mov.descricao != null}">
@@ -249,8 +246,7 @@
 																<c:set var="assinadopor" value="${false}" />
 															</c:if>
 														</c:forEach>
-													</siga:links>
-												</span>
+												</siga:links>
 											</td>
 										</tr>
 										<c:choose>

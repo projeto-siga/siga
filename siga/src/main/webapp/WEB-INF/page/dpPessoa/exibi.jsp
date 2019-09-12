@@ -16,10 +16,7 @@
 					<div class="col-sm-3">
 						<div class="form-group">
 							<label>Nome</label>
-							<siga:selecionado 
-									sigla="${pessoa.lotacao.sigla} - ${pessoa.lotacao.descricaoAmpliada}"
-									descricao="${pessoa.lotacao.descricaoAmpliada}"
-									lotacaoParam="${pessoa.lotacao.orgaoUsuario.sigla}${pessoa.lotacao.sigla}" />
+							<span>${pessoa.nomePessoa}</span>							
 						</div>
 					</div>
 				</div>
@@ -27,6 +24,10 @@
 					<div class="col-sm-3">
 						<div class="form-group">
 							<label><fmt:message key="usuario.lotacao"/></label>
+							<siga:selecionado 
+									sigla="${pessoa.lotacao.sigla} - ${pessoa.lotacao.descricaoAmpliada}"
+									descricao="${pessoa.lotacao.descricaoAmpliada}"
+									lotacaoParam="${pessoa.lotacao.orgaoUsuario.sigla}${pessoa.lotacao.sigla}" />
 						</div>
 					</div>
 					<div class="col-sm-3">

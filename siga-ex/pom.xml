@@ -74,10 +74,10 @@
 							<classpath path="maven.plugin.classpath" />
 						</taskdef>
 						<instrument>
-							<fileset dir="${project.build.outputDirectory}/br/gov/jfrj/siga/ex">
+<!-- 							<fileset dir="${project.build.outputDirectory}/br/gov/jfrj/siga/ex">
 								<include name="*.class" />
 							</fileset>
-						</instrument>
+ -->						</instrument>
 					</tasks>
 				</configuration>
 				<dependencies>

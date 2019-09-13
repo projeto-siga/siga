@@ -85,46 +85,6 @@
 					<packagingExcludes>WEB-INF/lib/siga-ext-*.jar</packagingExcludes>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>1.3.1</version>
-				<executions>
-					<execution>
-						<id>enforce-property</id>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<requireProperty>
-									<property>siga.versao</property>
-									<message>
-										${line.separator}
-										${line.separator}
-	DEFINA A PROPRIEDADE siga.versao !
-	${line.separator}
-	-Dsiga.versao=a.b.c.d
-										${line.separator}
-										${line.separator}
-									</message>
-									<regex>(develop|(release-|hotfix-)?\d{1,}\.\d{1,}\.\d{1,}(\.\d{1,})?)(-alfa|-beta|-teste)?(-\d.*)?</regex>
-									<regexMessage>
-										${line.separator}
-										${line.separator}
-	FORMATO INVALIDO DO PARAMETRO siga.versao.
-										${line.separator}
-	Exemplos: 3.10.0, 3.11.1.5, release-1.0.0, hotfix-1.2.3.4, develop, 4.5.0-beta										
-										${line.separator}
-										${line.separator}
-									</regexMessage>
-								</requireProperty>
-							</rules>
-							<fail>true</fail>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 

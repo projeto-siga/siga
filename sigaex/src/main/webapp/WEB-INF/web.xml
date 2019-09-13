@@ -42,10 +42,6 @@
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 
-	<listener>
-		<listener-class>br.gov.jfrj.siga.jee.BouncyCastleServletContextListener</listener-class>
-	</listener>
-
 	<filter>
 		<filter-name>RequestLoggerFilter</filter-name>
 		<filter-class>br.gov.jfrj.siga.base.log.RequestLoggerFilter</filter-class>

@@ -106,7 +106,7 @@
 										    		Versão: ${versao}
 										    	    </div>
 										    	    <div>
-										    		<a class="text-top" href="http://www-desen4.jf.trf2.gov.br/portal/sistemas-open-source-disponibilizados-pelo-trf2-vii/" target="_blank" class="btn btn-link">sobre</a> 
+										    		<a class="text-top" href="http://linksiga.trf2.jus.br" target="_blank" class="btn btn-link">Sobre o siga</a> 
 										    	    </div>
 										    </div>
 										</div>

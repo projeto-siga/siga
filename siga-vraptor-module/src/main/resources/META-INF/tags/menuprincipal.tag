@@ -43,7 +43,7 @@
 				<li><a class="dropdown-item" href="/siga/app/principal?redirecionar=false">Quadros Quantitativos</a></li>
 		</c:if>
 		<c:if test="${f:resource('siga.local') ne 'GOVSP'}">
-		    <li class="dropdown-item"><a href="/siga/app/principal" class="text-dark" >Página Inicial</a></li>		
+		    <li><a class="dropdown-item" href="/siga/app/principal">Página Inicial</a></li>		
 		</c:if>
 		<li class="dropdown-submenu"><a href="javascript:void(0);"
 			class="dropdown-item dropdown-toggle">Módulos</a>

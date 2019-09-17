@@ -77,6 +77,8 @@ ${meta}
 
 <link rel="stylesheet" href="/siga/bootstrap/css/bootstrap.min.css"	type="text/css" media="screen, projection" />
 
+<link rel="stylesheet" href="/siga/css/menuhover.css" type="text/css"/>
+
 <!-- 
 <link rel="stylesheet" href="/siga/css/ecoblue/css/ecoblue.css"
 	type="text/css" media="screen, projection">
@@ -173,14 +175,13 @@ ${meta}
 			</button>
 			<c:if test="${siga_cliente != 'GOVSP' or f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA')}">
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul class="navbar-nav mr-auto">
-						<!-- navigation -->
-						<siga:menuprincipal />
-						<!-- / navigation -->
-					</ul>
-	
-	
 					<c:if test="${desabilitarmenu != 'sim'}">
+						<ul class="navbar-nav mr-auto">
+							<!-- navigation -->
+							<siga:menuprincipal />
+							<!-- / navigation -->
+						</ul>
+	
 						<!-- search -->
 						<c:if test="${desabilitarbusca != 'sim'}">
 							<form class="form-inline my-2 my-lg-0">

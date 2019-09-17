@@ -74,6 +74,13 @@
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TP:Módulo de Transportes')}">
 					<li><a class="dropdown-item" href="/sigatp/">Transportes</a></li>
 				</c:if>
+				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SE:Módulo de Servicos Externos')}">
+					<li><a class="dropdown-item" href="/sigade/">Dados Externos</a></li>
+				</c:if>
+					
+				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GO:Gestão Orçamentária')}">
+					<li><a class="dropdown-item" href="/sigago/">Gestão Orçamentária</a></li>
+				</c:if>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP:Agendamento de perícias do INSS')}">
 					<li class="dropdown-submenu"><a href="javascript:void(0);"

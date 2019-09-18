@@ -60,6 +60,8 @@ public class Mesa {
 	}
 
 	public enum GrupoDeMarcadorEnum {
+		PRONTO_PARA_ASSINAR("Pronto para Assinar", "fas fa-inbox"),
+		//
 		ALERTA("Alertas", "fas fa-hourglass-end"),
 		//
 		A_REVISAR("Pendente de Revisão", "fas fa-glasses"),
@@ -307,7 +309,7 @@ public class Mesa {
 				GrupoDeMarcadorEnum.ACOMPANHANDO),
 		//
 		MARCADOR_PRONTO_PARA_ASSINAR(71, "Pronto para Assinar", "fas fa-check-circle", "",
-				GrupoDeMarcadorEnum.A_ASSINAR),
+				GrupoDeMarcadorEnum.PRONTO_PARA_ASSINAR),
 		//
 		MARCADOR_COMO_REVISOR(72, "Como Revisor", "fas fa-glasses", "",
 				GrupoDeMarcadorEnum.A_REVISAR),

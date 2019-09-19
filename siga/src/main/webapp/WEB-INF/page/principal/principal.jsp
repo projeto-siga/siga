@@ -12,7 +12,7 @@
 <!-- begin Wootric code -->
 <script type="text/javascript">
   window.wootricSettings = {
-    email:'joaoluis@trf2.jus.br',// TODO: Required to uniquely identify a user. Email is recommended but this can be any unique identifier.
+    email:'opiniao_siga@trf2.jus.br',// TODO: Required to uniquely identify a user. Email is recommended but this can be any unique identifier.
     created_at: 1234567890, // TODO: The current logged in user's sign-up date as a Unix timestamp.
     account_token: 'NPS-89f8dfcd'
   };

@@ -91,8 +91,10 @@ import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovProcesso;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacao;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelMovimentacaoDocSubordinados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelOrgao;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTempoTramitacaoPorEspecie;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelTipoDoc;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelVolumeTramitacao;
+import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelVolumeTramitacaoPorModelo;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioDocumentosSubordinados;
 import br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios.RelatorioModelos;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
@@ -117,9 +119,11 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_ORGAOINT = "ORGAOINT:Relatório de Documentos Por Órgão Interessado";
 	private static final String ACESSO_RELFORAPRAZO = "RELFORAPRAZO:Relatório de documentos fora do prazo";
 	private static final String ACESSO_RELDEVPROGRAMADA = "RELDEVPROGRAMADA:Relatório de documentos devolção programada";
+	private static final String ACESSO_TRAMESP = "TRAMESP: Tempo Médio de Tramitação Por Espécie Documental";
+	private static final String ACESSO_VOLTRAMMOD = "VOLTRAMMOD: Volume de Tramitação Por Nome do Documento";
 	private static final String ACESSO_ARMAZ = "ARMAZ:Relatório de Páginas e Armazenamento Por Documento";
 	private static final String APPLICATION_PDF = "application/pdf";
-
+	
 	public ExRelatorioController(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context,
 			Result result, SigaObjects so, EntityManager em) {
@@ -976,6 +980,195 @@ public class ExRelatorioController extends ExController {
 	}
 
 	@Get
+	@Path("app/expediente/rel/relTempoTramitacaoPorEspecie")
+	public void relTempoTramitacaoPorEspecie(final DpLotacaoSelecao lotacaoSel,
+			final DpPessoaSelecao usuarioSel, String dataInicial,
+			String dataFinal, boolean primeiraVez)
+			throws Exception {
+
+		try {
+			assertAcesso(ACESSO_TRAMESP);
+
+			final Map<String, String> parametros = new HashMap<String, String>();
+			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
+			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
+
+			if (!primeiraVez) {
+				if (orgaoUsu != orgaoSelId) {
+					throw new AplicacaoException(
+							"Não é permitido consultas de outros órgãos.");
+				}
+				consistePeriodo(dataInicial, dataFinal);
+
+				parametros.put("orgao", orgaoSelId.toString());
+				parametros.put("lotacao",
+						getRequest().getParameter("lotacaoSel.id"));
+				parametros.put("usuario",
+						getRequest().getParameter("usuarioSel.id"));
+				parametros.put("dataInicial",
+						getRequest().getParameter("dataInicial"));
+				parametros.put("dataFinal", somaUmDia(getRequest()
+						.getParameter("dataFinal")));
+				parametros.put("link_especie", "http://"
+						+ getRequest().getServerName() + ":"
+						+ getRequest().getServerPort()
+						+ getRequest().getContextPath()
+						+ "/app/expediente/rel/emiteRelTempoTramitacaoPorEspecie");
+				parametros.put("link_siga", "http://"
+						+ getRequest().getServerName() + ":"
+						+ getRequest().getServerPort()
+						+ getRequest().getContextPath()
+						+ "/app/expediente/doc/exibir?sigla=");
+
+				final RelTempoTramitacaoPorEspecie rel = new RelTempoTramitacaoPorEspecie(
+						parametros);
+				rel.gerar();
+
+				result.include("listColunas", rel.listColunas);
+				result.include("listLinhas", rel.listLinhas);
+				result.include("listEspecie", rel.listEspecie);
+				result.include("totalDocumentos",
+						rel.totalDocumentos.toString());
+			}
+		} catch (AplicacaoException e) {
+			result.include("mensagemCabec", e.getMessage());
+			result.include("msgCabecClass", "alert-danger");
+		}
+
+		result.include("primeiraVez", false);
+		result.include("lotacaoSel", lotacaoSel);
+		result.include("usuarioSel", usuarioSel);
+		result.include("dataInicial", dataInicial);
+		result.include("dataFinal", dataFinal);
+	}
+
+	@Get 
+	@Path("app/expediente/rel/emiteRelTempoTramitacaoPorEspecie")
+	public Download aRelTempoTramitacaoPorEspecie(final String idFormaDoc,
+			final String descrFormaDoc, final DpLotacaoSelecao lotacaoSel,
+			final DpPessoaSelecao usuarioSel, String dataInicial,
+			String dataFinal) throws Exception {
+
+		assertAcesso(ACESSO_TRAMESP);
+		final Map<String, String> parametros = new HashMap<String, String>();
+		Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
+		Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
+
+		if (orgaoUsu != orgaoSelId) {
+			throw new AplicacaoException(
+					"Não é permitido consultas de outros órgãos.");
+		}
+		consistePeriodo(dataInicial, dataFinal);
+
+		parametros.put("titulo", "Tempo Médio de Tramitação Por Espécie Documental");
+		parametros.put("orgaoUsuario", getLotaTitular().getOrgaoUsuario()
+				.getNmOrgaoUsu());
+		parametros.put("descrEspecie", descrFormaDoc);
+
+		parametros.put("orgao", orgaoSelId.toString());
+		parametros.put("especie", idFormaDoc);
+		parametros.put("lotacao",
+				getRequest().getParameter("lotacaoSel.id"));
+		parametros.put("usuario",
+				getRequest().getParameter("usuarioSel.id"));
+		parametros.put("dataInicial",
+				getRequest().getParameter("dataInicial"));
+		parametros.put("dataFinal", somaUmDia(getRequest()
+				.getParameter("dataFinal")));
+		parametros.put("link_siga", "http://"
+				+ getRequest().getServerName() + ":"
+				+ getRequest().getServerPort()
+				+ getRequest().getContextPath()
+				+ "/app/expediente/doc/exibir?sigla=");
+
+		final RelTempoTramitacaoPorEspecie rel = new RelTempoTramitacaoPorEspecie(
+				parametros);
+		rel.setTemplateFile("RelatorioBaseTempoTramitacaoPorEspecie.jrxml");
+		rel.gerar();
+		parametros.put("totalDocumentos", rel.totalDocumentos.toString());
+		if (getRequest().getParameter("lotacaoSel.descricao") != "" )
+			parametros.put("lotacaoRel",
+				getRequest().getParameter("lotacaoSel.descricao"));
+		else
+			parametros.put("lotacaoRel","Todas");
+
+		final InputStream inputStream = new ByteArrayInputStream(
+				rel.getRelatorioPDF());
+		return new InputStreamDownload(inputStream, APPLICATION_PDF,
+				"relTempoTramitacaoPorEspecie");
+	}
+
+	@Get
+	@Path("app/expediente/rel/relVolumeTramitacaoPorModelo")
+	public void relVolumeTramitacaoPorModelo(final DpLotacaoSelecao lotacaoSel,
+			final DpPessoaSelecao usuarioSel, String dataInicial,
+			String dataFinal, String idMod, boolean primeiraVez)
+			throws Exception {
+
+		try {
+			assertAcesso(ACESSO_VOLTRAMMOD);
+
+			final Map<String, String> parametros = new HashMap<String, String>();
+			Long orgaoUsu = getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu();
+			Long orgaoSelId = getIdOrgaoSel(lotacaoSel, usuarioSel, orgaoUsu);
+
+			if (!primeiraVez) {
+				if (orgaoUsu != orgaoSelId) {
+					throw new AplicacaoException(
+							"Não é permitido consultas de outros órgãos.");
+				}
+				consistePeriodo(dataInicial, dataFinal);
+
+				parametros.put("orgao", orgaoSelId.toString());
+				parametros.put("lotacao",
+						getRequest().getParameter("lotacaoSel.id"));
+				parametros.put("usuario",
+						getRequest().getParameter("usuarioSel.id"));
+				parametros.put("dataInicial",
+						getRequest().getParameter("dataInicial"));
+				parametros.put("dataFinal", somaUmDia(getRequest()
+						.getParameter("dataFinal")));
+				parametros.put("link_modelo", "http://"
+						+ getRequest().getServerName() + ":"
+						+ getRequest().getServerPort()
+						+ getRequest().getContextPath()
+						+ "/app/expediente/rel/relVolumeTramitacaoPorModelo");
+				parametros.put("link_siga", "http://"
+						+ getRequest().getServerName() + ":"
+						+ getRequest().getServerPort()
+						+ getRequest().getContextPath()
+						+ "/app/expediente/doc/exibirHistorico?sigla=");
+				final RelVolumeTramitacaoPorModelo rel = new RelVolumeTramitacaoPorModelo(
+						parametros);
+				if (idMod == null) {
+					rel.processarModelos();
+					result.include("listModelos", rel.listModelos);
+					result.include("totalDocumentos",
+							rel.totalDocumentos.toString());
+					result.include("totalTramites",
+							rel.totalTramites.toString());
+				} else {
+					parametros.put("idMod", idMod);
+					rel.gerar();
+					result.include("listColunas", rel.listColunas);
+					result.include("listLinhas", rel.listLinhas);
+					result.include("totalModeloTramites",
+							rel.totalModeloTramites.toString());
+				}
+			}
+		} catch (AplicacaoException e) {
+			result.include("mensagemCabec", e.getMessage());
+			result.include("msgCabecClass", "alert-danger");
+		}
+
+		result.include("primeiraVez", false);
+		result.include("lotacaoSel", lotacaoSel);
+		result.include("usuarioSel", usuarioSel);
+		result.include("dataInicial", dataInicial);
+		result.include("dataFinal", dataFinal);
+	}
+
+	@Get
 	@Path("app/expediente/rel/relDocumentosPorVolume")
 	public void relDocumentosPorVolume(final DpLotacaoSelecao lotacaoSel,
 			final DpPessoaSelecao usuarioSel, String dataInicial,
@@ -1452,6 +1645,10 @@ public class ExRelatorioController extends ExController {
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		final Date dtIni = df.parse(dataInicial);
 		final Date dtFim = df.parse(dataFinal);
+		if (dtFim.getTime() - dtIni.getTime() < 0L) {
+			throw new AplicacaoException(
+					"Data inicial maior que a data final.");
+		}		
 		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
 			throw new AplicacaoException(
 					"O intervalo máximo entre as datas deve ser de um ano.");

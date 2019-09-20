@@ -33,6 +33,7 @@
 				<c:if test="${empty ocultarCodigo}">
 					${docVO.sigla}
 				</c:if>
+				<button type="button" name="voltar" onclick="javascript:history.back();" class="btn btn-secondary float-right ${hide_only_TRF2}" accesskey="r">Volta<u>r</u></button>
 			</h2>
 		</div>
 	</div>

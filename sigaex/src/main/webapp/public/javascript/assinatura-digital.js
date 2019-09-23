@@ -632,7 +632,8 @@ var providerPassword = {
 			});
 			
 			senhaDialog.on('hidden.bs.modal', function () {
-				senhaDialog.modal('dispose');
+				// senhaDialog.modal('dispose');
+				$('#senhaDialog').remove();
 			});
 			
 			
@@ -736,7 +737,7 @@ var process = {
 		window.scrollTo(0, 0);
 		
 		var progressDialog = $(
-				'<div class="modal fade" tabindex="-1" role="dialog" id="senhaDialog"><div class="modal-dialog" role="document"><div class="modal-content">'
+				'<div class="modal fade" tabindex="-1" role="dialog" id="progressDialog"><div class="modal-dialog" role="document"><div class="modal-content">'
 				+ '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Assinatura Digital (' + provider.nome
 				+ ')</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
 				+ '<div class="modal-body"><p id="vbslog">Iniciando...</p><div id="progressbar-ad"></div></div>'
@@ -752,32 +753,12 @@ var process = {
 		
 		progressDialog.on('hidden.bs.modal', function () {
 			gAssinando = false;
-			progressDialog.modal('dispose');
+			// progressDialog.modal('dispose');
+			$('#progressDialog').remove();
 		});
-		
-		
-//		this.dialogo = $(
-//				'<div id="dialog-ad" title="Assinatura Digital"><p id="vbslog">Iniciando...</p><div id="progressbar-ad"></div></div>')
-//				.dialog(
-//						{
-//							title : "Assinatura Digital (" + provider.nome
-//									+ ") " + gCertAlias,
-//							width : '50%',
-//							height : 'auto',
-//							resizable : false,
-//							autoOpen : true,
-//							position : {
-//								my : "center top+25%",
-//								at : "center top",
-//								of : window
-//							},
-//							modal : true,
-//							closeText : "hide"
-//						});
-		
 	},
 	finalize : function() {
-		progressDialog.modal('dispose');
+		$('#progressDialog').modal('hide');
 		gAssinando = false;
 	},
 	nextStep : function() {
@@ -787,7 +768,7 @@ var process = {
 			var ret = this.steps[this.index++]();
 			if ((typeof ret == 'string') && ret != "OK") {
 				this.finalize();
-				alert(ret, 0, "Não foi possível completar a operação");
+				ModalAlert(ret, "Não foi possível completar a operação");
 				return;
 			}
 		}
@@ -805,6 +786,22 @@ var process = {
 		}
 	}
 };
+
+function ModalAlert(err, title) {
+	var alertDialog = $(
+			'<div class="modal fade" tabindex="-1" role="dialog" id="alertDialog"><div class="modal-dialog" role="document"><div class="modal-content">'
+			+ '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">' + title
+			+ '</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+			+ '<div class="modal-body"><p>' + err + '</p></div>'
+			+ '<div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button></div>'
+			+ '</div></div></div>')
+			.modal();
+	
+	alertDialog.on('hidden.bs.modal', function () {
+		// alertDialog.modal('dispose');
+		$('#alertDialog').remove();
+	});
+}
 
 function Erro(err) {
 	alert("Ocorreu um erro durante o processo de assinatura: " + err.message);

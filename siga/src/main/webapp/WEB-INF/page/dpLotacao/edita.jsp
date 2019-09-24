@@ -32,7 +32,7 @@
 	}
 
 	function validarNome(campo) {
-		campo.value = campo.value.replace(/[^a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9./,-]/g,'');
+		campo.value = campo.value.replace(/[^a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ\' 0-9./,-]/g,'');
 	}
 
 	function validarSigla(campo) {

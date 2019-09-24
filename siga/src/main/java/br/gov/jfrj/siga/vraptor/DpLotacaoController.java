@@ -259,7 +259,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		if(Long.valueOf(0).equals(idLocalidade))
 			throw new AplicacaoException("Localidade da lotação não informado");
 		
-		if(nmLotacao != null && !nmLotacao.matches("[a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9.,/-]+")) 
+		if(nmLotacao != null && !nmLotacao.matches("[\'a-zA-ZàáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ 0-9.,/-]+")) 
 			throw new AplicacaoException("Nome com caracteres não permitidos");
 		
 		if(siglaLotacao != null && !siglaLotacao.matches("[a-zA-ZçÇ0-9,/-]+")) 

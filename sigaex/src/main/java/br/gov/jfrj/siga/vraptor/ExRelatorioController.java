@@ -416,7 +416,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("orgaoUsuario", getRequest()
 				.getParameter("orgaoUsuario"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
-		parametros.put("link_siga", "https://" + getRequest().getServerName()
+		parametros.put("link_siga", linkHttp() + getRequest().getServerName()
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
 				+ "app/expediente/doc/exibir?sigla=");
@@ -451,7 +451,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("orgaoUsuario", getRequest()
 				.getParameter("orgaoUsuario"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
-		parametros.put("link_siga", "https://" + getRequest().getServerName()
+		parametros.put("link_siga", linkHttp() + getRequest().getServerName()
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
@@ -486,7 +486,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("orgaoUsuario", getRequest()
 				.getParameter("orgaoUsuario"));
 		parametros.put("idTit", getRequest().getParameter("idTit"));
-		parametros.put("link_siga", "https://" + getRequest().getServerName()
+		parametros.put("link_siga", linkHttp() + getRequest().getServerName()
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
@@ -526,7 +526,7 @@ public class ExRelatorioController extends ExController {
 				.getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", "https://" + getRequest().getServerName()
+		parametros.put("link_siga", linkHttp() + getRequest().getServerName()
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
@@ -572,7 +572,7 @@ public class ExRelatorioController extends ExController {
 				.getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", "https://" + getRequest().getServerName()
+		parametros.put("link_siga", linkHttp() + getRequest().getServerName()
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
@@ -612,7 +612,7 @@ public class ExRelatorioController extends ExController {
 				.getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", "https://" + getRequest().getServerName()
+		parametros.put("link_siga", linkHttp() + getRequest().getServerName()
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
@@ -652,7 +652,7 @@ public class ExRelatorioController extends ExController {
 				.getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", "https://" + getRequest().getServerName()
+		parametros.put("link_siga", linkHttp() + getRequest().getServerName()
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
@@ -693,7 +693,7 @@ public class ExRelatorioController extends ExController {
 				.getParameter("secaoUsuario"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", "https://" + getRequest().getServerName()
+		parametros.put("link_siga", linkHttp() + getRequest().getServerName()
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
@@ -732,7 +732,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("processo", getRequest().getParameter("processo"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", getRequest().getParameter("dataFinal"));
-		parametros.put("link_siga", "https://" + getRequest().getServerName()
+		parametros.put("link_siga", linkHttp() + getRequest().getServerName()
 				+ ":" + getRequest().getServerPort()
 				+ getRequest().getContextPath()
 				+ "/app/expediente/doc/exibir?sigla=");
@@ -824,7 +824,7 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("dataInicial"));
 				parametros.put("dataFinal", somaUmDia(getRequest()
 						.getParameter("dataFinal")));
-				parametros.put("link_siga", "https://"
+				parametros.put("link_siga", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
@@ -902,7 +902,7 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("dataInicial"));
 				parametros.put("dataFinal", somaUmDia(getRequest()
 						.getParameter("dataFinal")));
-				parametros.put("link_siga", "https://"
+				parametros.put("link_siga", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
@@ -1009,12 +1009,12 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("dataInicial"));
 				parametros.put("dataFinal", somaUmDia(getRequest()
 						.getParameter("dataFinal")));
-				parametros.put("link_especie", "https://"
+				parametros.put("link_especie", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
 						+ "/app/expediente/rel/emiteRelTempoTramitacaoPorEspecie");
-				parametros.put("link_siga", "https://"
+				parametros.put("link_siga", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
@@ -1075,7 +1075,7 @@ public class ExRelatorioController extends ExController {
 				getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal", somaUmDia(getRequest()
 				.getParameter("dataFinal")));
-		parametros.put("link_siga", "https://"
+		parametros.put("link_siga", linkHttp()
 				+ getRequest().getServerName() + ":"
 				+ getRequest().getServerPort()
 				+ getRequest().getContextPath()
@@ -1128,12 +1128,12 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("dataInicial"));
 				parametros.put("dataFinal", somaUmDia(getRequest()
 						.getParameter("dataFinal")));
-				parametros.put("link_modelo", "https://"
+				parametros.put("link_modelo", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
 						+ "/app/expediente/rel/relVolumeTramitacaoPorModelo");
-				parametros.put("link_siga", "https://"
+				parametros.put("link_siga", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
@@ -1201,7 +1201,7 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("dataInicial"));
 				parametros.put("dataFinal", somaUmDia(getRequest()
 						.getParameter("dataFinal")));
-				parametros.put("link_siga", "https://"
+				parametros.put("link_siga", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
@@ -1307,7 +1307,7 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("dataInicial"));
 				parametros.put("dataFinal",
 						getRequest().getParameter("dataFinal"));
-				parametros.put("link_siga", "https://"
+				parametros.put("link_siga", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
@@ -1415,7 +1415,7 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("dataInicial"));
 				parametros.put("dataFinal",
 						getRequest().getParameter("dataFinal"));
-				parametros.put("link_siga", "https://"
+				parametros.put("link_siga", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
@@ -1584,7 +1584,7 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("dataInicial"));
 				parametros.put("dataFinal", somaUmDia(getRequest()
 						.getParameter("dataFinal")));
-				parametros.put("link_siga", "https://"
+				parametros.put("link_siga", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
@@ -1682,7 +1682,17 @@ public class ExRelatorioController extends ExController {
 		}
 		return orgaoSelId;
 	}
-
+	
+	private String linkHttp() {
+		String url = request.getRequestURL().toString();		
+        String pattern = "^(https)://.*$";
+        if (url.matches(pattern)){
+            return "https://";
+        }else{
+            return "http://";
+	    }
+	}
+	
 	@Post
 	@Path("app/expediente/rel/exportCsv")
 	public Download exportCsv(final Long orgaoPesqId,	final DpLotacaoSelecao lotacaoSel,
@@ -1731,7 +1741,7 @@ public class ExRelatorioController extends ExController {
 				}
 				parametros.put("dataInicial", dataInicial);
 				parametros.put("dataFinal", somaUmDia(dataFinal));
-				parametros.put("link_siga", "https://"
+				parametros.put("link_siga", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()

@@ -371,8 +371,10 @@ public class ExMarcadorBL {
 
 	public void acrescentarMarcadoresPendenciaDeAssinatura() {
 		if (mob.doc().isPendenteDeAssinatura()) {
-			acrescentarMarca(CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA, mob.doc().getDtRegDoc(), ultMovNaoCanc.getResp(),
-					ultMovNaoCanc.getLotaResp());
+			DpPessoa resp = ultMovNaoCanc != null ? ultMovNaoCanc.getResp() : mob.doc().getCadastrante();
+			DpLotacao lotaResp  = ultMovNaoCanc != null ? ultMovNaoCanc.getLotaResp() : mob.doc().getLotaCadastrante();
+			acrescentarMarca(CpMarcador.MARCADOR_PENDENTE_DE_ASSINATURA, mob.doc().getDtRegDoc(), resp,
+					lotaResp);
 			if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()) {
 				acrescentarMarca(CpMarcador.MARCADOR_COMO_SUBSCRITOR, mob.doc().getDtRegDoc(), mob.getExDocumento().getSubscritor(), null);
 				ExMovimentacao m = mob.doc().getMovSolicitacaoDeAssinatura();

@@ -460,13 +460,6 @@ public class CpBL {
 			String[] senhaGerada, boolean marcarParaSinc)
 			throws AplicacaoException {
 		
-		String siglaOrgaoMatricula = MatriculaUtils.getSigla(matricula);
-		boolean autenticaPeloBanco = buscarModoAutenticacao(siglaOrgaoMatricula).equals(_MODO_AUTENTICACAO_BANCO);
-		if(!autenticaPeloBanco)
-			throw new AplicacaoException("O usuário deve usar no SIGA os mesmos dados de autenticação " + 
-											"usados nas estações de trabalho (rede). Em caso de dúvidas, " +
-											"entre em contato com a Central de Atendimento.");
-
 		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
 		final List<DpPessoa> listaPessoas = dao().listarPorCpf(longCpf);
 		if(listaPessoas.isEmpty()) {
@@ -477,6 +470,9 @@ public class CpBL {
 
 		final DpPessoa pessoa = dao().consultarPorCpfMatricula(longCpf,
 				longMatricula);
+		
+		String siglaOrgaoMatricula = MatriculaUtils.getSiglaDoOrgaoDaMatricula(matricula);
+		boolean autenticaPeloBanco = buscarModoAutenticacao(siglaOrgaoMatricula).equals(_MODO_AUTENTICACAO_BANCO);
 
 		if (pessoa != null && matricula.equals(pessoa.getSigla())) {
 			CpIdentidade id;
@@ -487,20 +483,24 @@ public class CpBL {
 			}
 			if (id == null) {
 				if (pessoa.getEmailPessoaAtual() != null) {
-					String novaSenha = null;
-					if (senhaDefinida != null && senhaDefinida.length() > 0) {
-						novaSenha = senhaDefinida;
-					} else {
-						novaSenha = GeraMessageDigest.geraSenha();
-					}
-
-					if (senhaGerada[0] != null) {
-						novaSenha = senhaGerada[0];
+					String novaSenha = "";
+					if(!autenticaPeloBanco) {
+						if (senhaDefinida != null && senhaDefinida.length() > 0) {
+							novaSenha = senhaDefinida;
+						} else {
+							novaSenha = GeraMessageDigest.geraSenha();
+						}
+	
+						if (senhaGerada[0] != null) {
+							novaSenha = senhaGerada[0];
+						}
 					}
 					try {
 						CpIdentidade idNova = new CpIdentidade();
-						final String hashNova = GeraMessageDigest.executaHash(
-								novaSenha.getBytes(), "MD5");
+						String hashNova = "";
+						if(autenticaPeloBanco) {
+							hashNova = GeraMessageDigest.executaHash(novaSenha.getBytes(), "MD5");
+						}
 						idNova.setDscSenhaIdentidade(hashNova);
 						idNova.setNmLoginIdentidade(matricula);
 						idNova.setDpPessoa(pessoa);
@@ -523,60 +523,12 @@ public class CpBL {
 								destinanarios,
 								"Novo Usuário",
 								"",
-								"<table>"
-								+ "<tbody>"
-								+ "<tr>"
-								+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
-								+ "<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' "
-								+ "alt='SP Sem Papel' width='108' height='50' /></td>"
-								+ "</tr>"
-								+ "<tr>"
-								+ "<td style='background-color: #bbb; padding: 0 20px;'>"
-								+ "<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>"
-								+ "</td>"
-								+ "</tr>"
-								+ "<tr style='height: 310px;'>"
-								+ "<td style='height: 310px; padding: 10px 20px;'>"
-								+ "<div>"
-								+ "<p><span style='color: #808080;'>Prezado Servidor(a) "
-								+ "<strong>" + idNova.getDpPessoa().getNomePessoa() + "</strong>"
-								+ " do(a) "
-								+ "<strong>" + idNova.getDpPessoa().getOrgaoUsuario().getDescricao() + "</strong>" 
-								+",</span></h4>"
-								+ "<p><span style='color: #808080;'>Voc&ecirc; est&aacute; recebendo sua matr&iacute;cula e senha para acesso "
-								+ "ao Portal SP Sem Papel, para acesso ao servi&ccedil;o Documentos Digitais.</span></p>"
-								+ "<p><span style='color: #808080;'>Ao usar o portal para cria&ccedil;&atilde;o de documentos, voc&ecirc; est&aacute; "
-								+ "produzindo documento nato-digital, confirme seus dados cadastrais, nome, cargo e unidade "
-								+ "antes de iniciar o uso e assinar documentos.</span></p>"
-								+ "<p><span style='color: #808080;'>Realize sua capacita&ccedil;&atilde;o no AVA e utilize o ambiente "
-								+ "de capacita&ccedil;&atilde;o para testes e treinamento.</span></p>"
-								+ "<p><span style='color: #808080;'>Sua matr&iacute;cula &eacute;:&nbsp;&nbsp;<strong>"
-								+ matricula
-								+ "</strong></span></p>"
-								+ "<p><span style='color: #808080;'>Sua senha &eacute;:&nbsp;&nbsp;<strong>"
-								+ novaSenha
-								+ "</strong></span></p>"
-								+ "</div>"
-								+ "</td>"
-								+ "</tr>"
-								+ "<tr>"
-								+ "<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>"
-								+ "<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>"
-								+ "</td>"
-								+ "</tr>"
-								+ "</tbody>"
-								+ "</table>"
-								);
+								textoEmailNovoUsuarioSP(idNova, matricula, novaSenha, autenticaPeloBanco));
 						} else {
 							Correio.enviar(
 								pessoa.getEmailPessoaAtual(),
 								"Novo Usuário",
-								"Seu login é: "
-								+ matricula
-								+ "\n e sua senha é "
-								+ novaSenha
-								+ "\n\n Atenção: esta é uma "
-								+ "mensagem automática. Por favor não responda ");
+								textoEmailNovoUsuario(matricula, novaSenha, autenticaPeloBanco));
 						}
 						dao().commitTransacao();
 						return idNova;
@@ -606,7 +558,79 @@ public class CpBL {
 
 	}
 	
-    private String buscarModoAutenticacao(String orgao) {
+    private String textoEmailNovoUsuario(String matricula, String novaSenha, boolean autenticaPeloBanco) {
+    	StringBuffer retorno = new StringBuffer();
+
+    	retorno.append("Seu login é: ");
+		retorno.append(matricula);
+		retorno.append("\n e sua senha é ");
+		if(autenticaPeloBanco) {
+			retorno.append(novaSenha);
+		}	else {
+			retorno.append("a mesma usada para logon na rede (Windows).");
+		}
+		retorno.append("\n\n Atenção: esta é uma ");
+		retorno.append("mensagem automática. Por favor não responda ");
+		
+		return retorno.toString();
+	}
+
+	private String textoEmailNovoUsuarioSP(CpIdentidade identidade, String matricula, String novaSenha, boolean autenticaPeloBanco) {
+		StringBuffer retorno = new StringBuffer();
+
+		retorno.append("<table>");
+		retorno.append("<tbody>");
+		retorno.append("<tr>");
+		retorno.append("<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>");
+		retorno.append("<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' ");
+		retorno.append("alt='SP Sem Papel' width='108' height='50' /></td>");
+		retorno.append("</tr>");
+		retorno.append("<tr>");
+		retorno.append("<td style='background-color: #bbb; padding: 0 20px;'>");
+		retorno.append("<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>");
+		retorno.append("</td>");
+		retorno.append("</tr>");
+		retorno.append("<tr style='height: 310px;'>");
+		retorno.append("<td style='height: 310px; padding: 10px 20px;'>");
+		retorno.append("<div>");
+		retorno.append("<p><span style='color: #808080;'>Prezado Servidor(a) ");
+		retorno.append("<strong>" + identidade.getDpPessoa().getNomePessoa() + "</strong>");
+		retorno.append(" do(a) ");
+		retorno.append("<strong>" + identidade.getDpPessoa().getOrgaoUsuario().getDescricao() + "</strong>");
+		retorno.append(",</span></h4>");
+		retorno.append("<p><span style='color: #808080;'>Voc&ecirc; est&aacute; recebendo sua matr&iacute;cula e senha para acesso ");
+		retorno.append("ao Portal SP Sem Papel, para acesso ao servi&ccedil;o Documentos Digitais.</span></p>");
+		retorno.append("<p><span style='color: #808080;'>Ao usar o portal para cria&ccedil;&atilde;o de documentos, voc&ecirc; est&aacute; ");
+		retorno.append("produzindo documento nato-digital, confirme seus dados cadastrais, nome, cargo e unidade ");
+		retorno.append("antes de iniciar o uso e assinar documentos.</span></p>");
+		retorno.append("<p><span style='color: #808080;'>Realize sua capacita&ccedil;&atilde;o no AVA e utilize o ambiente ");
+		retorno.append("de capacita&ccedil;&atilde;o para testes e treinamento.</span></p>");
+		retorno.append("<p><span style='color: #808080;'>Sua matr&iacute;cula &eacute;:&nbsp;&nbsp;<strong>");
+		retorno.append(matricula);
+		retorno.append("</strong></span></p>");
+		if(autenticaPeloBanco) {
+			retorno.append("<p><span style='color: #808080;'>Sua senha &eacute;:&nbsp;&nbsp;<strong>");
+			retorno.append(novaSenha);
+			retorno.append("</strong></span></p>");
+		} else {
+	        retorno.append("<p><span style='color: #808080;'>");
+			retorno.append("Sua senha &eacute; a mesma usada para logon na rede (Windows).");
+			retorno.append("</span></p>");
+		}
+		retorno.append("</div>");
+		retorno.append("</td>");
+		retorno.append("</tr>");
+		retorno.append("<tr>");
+		retorno.append("<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>");
+		retorno.append("<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>");
+		retorno.append("</td>");
+		retorno.append("</tr>");
+		retorno.append("</tbody>");
+		retorno.append("</table>");		
+		return retorno.toString();
+	}
+
+	private String buscarModoAutenticacao(String orgao) {
     	String retorno = _MODO_AUTENTICACAO_DEFAULT;
     	CpPropriedadeBL props = new CpPropriedadeBL();
     	try {

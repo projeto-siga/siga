@@ -13,16 +13,10 @@ import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.webdav.DavExtensionConfig;
-import net.sf.webdav.ITransaction;
-import net.sf.webdav.IWebdavStore;
-import net.sf.webdav.StoredObject;
-
 import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.itextpdf.Documento;
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -32,6 +26,10 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.vo.ExMovimentacaoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import net.sf.webdav.DavExtensionConfig;
+import net.sf.webdav.ITransaction;
+import net.sf.webdav.IWebdavStore;
+import net.sf.webdav.StoredObject;
 
 public class ExWebdavStore implements IWebdavStore {
 	private static final Logger log = Logger.getLogger(ExWebdavStore.class);
@@ -99,14 +97,24 @@ public class ExWebdavStore implements IWebdavStore {
 	@Override
 	public InputStream getResourceContent(ITransaction t, String uri) {
 		log.error("getResourceContent:" + uri);
-		byte[] ab = getContent(uri);
+		byte[] ab;
+		try {
+			ab = getContent(uri);
+		} catch (Exception e) {
+			throw new RuntimeException("Não foi possível obter o conteúdo do arquivo auxiliar", e);
+		}
 		return new ByteArrayInputStream(ab);
 	}
 
 	@Override
 	public long getResourceLength(ITransaction t, String uri) {
 		log.error("getResourceLength:" + uri);
-		byte[] ab = getContent(uri);
+		byte[] ab;
+		try {
+			ab = getContent(uri);
+		} catch (Exception e) {
+			throw new RuntimeException("Não foi possível obter o tamanho do arquivo auxiliar", e);
+		}
 		return ab != null ? ab.length : 0;
 	}
 
@@ -147,15 +155,15 @@ public class ExWebdavStore implements IWebdavStore {
 	@Override
 	public void removeObject(ITransaction t, String uri) {
 		log.error("removeObject:" + uri);
-		ExMovimentacao mov = getMov(new Context(uri));
 		try {
+			ExMovimentacao mov = getMov(new Context(uri));
 			Ex.getInstance()
 					.getBL()
 					.cancelar(null, null, mov.getExMobil(), mov, null, null,
 							null, null);
 		} catch (Exception e) {
-			throw new AplicacaoException(
-					"Não foi possível remover o arquivo auxiliar.", 0, e);
+			throw new RuntimeException(
+					"Não foi possível remover o arquivo auxiliar.", e);
 		}
 	}
 
@@ -178,15 +186,15 @@ public class ExWebdavStore implements IWebdavStore {
 		try {
 			mob = Documento.getMobil(ctx.mobilSigla);
 		} catch (Exception e) {
-			throw new AplicacaoException("Erro obtendo o documento.", 0, e);
+			throw new RuntimeException("Erro obtendo o documento.", e);
 		}
 		byte[] ab;
 		try {
 			ab = IOUtils.toByteArray(content);
 		} catch (IOException e) {
-			throw new AplicacaoException(
+			throw new RuntimeException(
 					"Não foi possível obter o conteúdo a ser gravado no arquivo auxiliar.",
-					0, e);
+					e);
 		}
 		try {
 			ExDao dao = ExDao.getInstance();
@@ -199,13 +207,13 @@ public class ExWebdavStore implements IWebdavStore {
 							cadastrante.getLotacao(), mob, null, titular,
 							ctx.nmArq, titular, lotaTitular, ab, contentType);
 		} catch (Exception e) {
-			throw new AplicacaoException(
-					"Não foi possível gravar o arquivo auxiliar.", 0, e);
+			throw new RuntimeException(
+					"Não foi possível gravar o arquivo auxiliar.", e);
 		}
 		return 0;
 	}
 
-	private byte[] getContent(String uri) {
+	private byte[] getContent(String uri) throws Exception {
 		ExMovimentacao mov = getMov(new Context(uri));
 
 		byte ab[] = null;
@@ -213,20 +221,20 @@ public class ExWebdavStore implements IWebdavStore {
 		return ab;
 	}
 
-	private ExMovimentacao getMov(Context ctx) {
+	private ExMovimentacao getMov(Context ctx) throws Exception {
 		ExMobil mob;
 		try {
 			mob = Documento.getMobil(ctx.mobilSigla);
 		} catch (Exception e) {
-			throw new AplicacaoException("Erro obtendo o documento.", 0, e);
+			throw new Exception("Erro obtendo o documento.", e);
 		}
 		if (mob == null) {
-			throw new AplicacaoException(
+			throw new Exception(
 					"A sigla informada não corresponde a um documento da base de dados.");
 		}
 		// if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(),
 		// getLotaTitular(), mob)) {
-		// throw new AplicacaoException("Documento " + mob.getSigla() + "
+		// throw new RuntimeException("Documento " + mob.getSigla() + "
 		// inacessível ao usuário " + getTitular().getSigla() + "/"
 		// + getLotaTitular().getSiglaCompleta() + ".");
 		// }
@@ -234,14 +242,14 @@ public class ExWebdavStore implements IWebdavStore {
 		try {
 			mov = getMov(mob, ctx.nmArq);
 		} catch (Exception e) {
-			throw new AplicacaoException("Erro obtendo a movimentação.", 0, e);
+			throw new Exception("Erro obtendo a movimentação.", e);
 		}
 		final boolean isArquivoAuxiliar = mov != null
 				&& mov.getExTipoMovimentacao()
 						.getId()
 						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR);
 		if (!isArquivoAuxiliar) {
-			throw new AplicacaoException(
+			throw new RuntimeException(
 					"A sigla informada não corresponde a um arquivo auxiliar.");
 		}
 		return mov;
@@ -304,7 +312,7 @@ public class ExWebdavStore implements IWebdavStore {
 			String a[] = uri.split("/");
 			String pwd = ExMovimentacaoVO.getWebdavPassword();
 			if (pwd == null)
-				throw new AplicacaoException(
+				throw new RuntimeException(
 						"Propriedade siga.ex.webdav.pwd precisa ser configurada");
 
 			Map<String, Object> jwt = ExMovimentacaoVO

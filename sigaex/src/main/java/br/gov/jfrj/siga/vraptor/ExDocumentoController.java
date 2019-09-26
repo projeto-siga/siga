@@ -946,8 +946,10 @@ public class ExDocumentoController extends ExController {
 				mobUlt = mobUlt.getGrandeMestre();
 
 			if (mobUlt.getUltimaMovimentacaoNaoCancelada() != null) {
-				dest = mobUlt.getUltimaMovimentacaoNaoCancelada().getResp()
-						.getPessoaAtual();
+				if (mobUlt.getUltimaMovimentacaoNaoCancelada().getResp() != null) {
+					dest = mobUlt.getUltimaMovimentacaoNaoCancelada().getResp()
+							.getPessoaAtual();
+				}
 				lotaDest = mobUlt.getUltimaMovimentacaoNaoCancelada()
 						.getLotaResp().getLotacaoAtual();
 			}
@@ -2312,10 +2314,16 @@ public class ExDocumentoController extends ExController {
 		ExMobil mobPai = null;
 		if (exDocumentoDTO.getMobilPaiSel().buscarPorSigla())
 			mobPai = exDocumentoDTO.getMobilPaiSel().buscarObjeto();
+
+		boolean isEditandoAnexo = false;
+		if (exDocumentoDTO.getMob().getExDocumento().getExMobilPai() != null 
+				|| exDocumentoDTO.isCriandoAnexo())
+			isEditandoAnexo = true;		
+		
 		exDocumentoDTO.setModelos(Ex
 				.getInstance()
 				.getBL()
-				.obterListaModelos(tipo, null, exDocumentoDTO.isCriandoAnexo(),
+				.obterListaModelos(tipo, null, isEditandoAnexo,
 						exDocumentoDTO.getCriandoSubprocesso(), mobPai,
 						headerValue, true, getTitular(), getLotaTitular(),
 						exDocumentoDTO.getAutuando()));

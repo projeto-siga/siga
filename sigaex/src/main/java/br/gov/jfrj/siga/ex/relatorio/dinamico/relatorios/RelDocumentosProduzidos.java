@@ -75,10 +75,11 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 		String addSelect = "doc.lotaCadastrante.siglaLotacao, "
 				+ "doc.exModelo.nmMod, " + "count(doc.idDoc) as qtd, "
 				+ "sum(doc.numPaginas) ";
-		String addWhere = "group by doc.lotaCadastrante.siglaLotacao,"
-				+ "doc.exModelo.nmMod" + " order by 1, 3";
-		Iterator it = obtemDados(d, addSelect, addWhere,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO);
+		String addWhere = " and mov.exTipoMovimentacao.idTpMov = "
+				+ Long.valueOf(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO) 
+ 				+ " group by doc.lotaCadastrante.siglaLotacao,"
+				+ " doc.exModelo.nmMod" + " order by 1, 3";
+		Iterator it = obtemDados(d, addSelect, addWhere);
 		totalPaginas = 0L;
 		totalDocumentos = 0L;
 
@@ -142,11 +143,12 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 		String addSelect = "distinct doc.lotaCadastrante.siglaLotacao, "
 				+ "doc.exModelo.nmMod, " + "mob.idMobil, " + "doc.numPaginas ";
 
-		String addWhere = "order by doc.lotaCadastrante.siglaLotacao, "
+		String addWhere = " and mov.exTipoMovimentacao.idTpMov = "
+				+ Long.valueOf(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO) 
+ 				+ "order by doc.lotaCadastrante.siglaLotacao, "
 				+ "doc.exModelo.nmMod, " + "mob.idMobil ";
 
-		Iterator it = obtemDados(d, addSelect, addWhere,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_CRIACAO);
+		Iterator it = obtemDados(d, addSelect, addWhere);
 		totalPaginas = 0L;
 		totalDocumentos = 0L;
 
@@ -200,10 +202,17 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 
 		// Total de documentos tramitadas pelo menos uma vez (por lotação ou
 		// usuário)
-		String addSelect = "count(doc.idDoc) ";
-		String addWhere = "and mov.exMovimentacaoCanceladora is null ";
-		Iterator it = obtemDados(d, addSelect, addWhere,
-				ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
+		String addSelect = "count(distinct doc.idDoc) ";
+		String addWhere = "and (mov.exTipoMovimentacao.idTpMov = "
+				+ Long.valueOf(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA) 
+ 				+ " or mov.exTipoMovimentacao.idTpMov = " 
+				+ Long.valueOf(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA) 
+				+ " or mov.exTipoMovimentacao.idTpMov = "  
+				+ Long.valueOf(ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA) 
+				+ " or mov.exTipoMovimentacao.idTpMov = "  
+				+ Long.valueOf(ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA) 
+				+ ") and mov.exMovimentacaoCanceladora is null ";
+		Iterator it = obtemDados(d, addSelect, addWhere);
 
 		if (it.hasNext()) {
 			totalTramitados = (Long) it.next();
@@ -213,7 +222,7 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 	}
 
 	private Iterator obtemDados(List<String> d, String addSelect,
-			String addWhere, Long idTpMov) throws ParseException {
+			String addWhere) throws ParseException {
 
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -225,24 +234,21 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 		String queryLotacao = "";
 		if (parametros.get("lotacao") != null
 				&& parametros.get("lotacao") != "") {
-			queryLotacao = "and mov.lotaCadastrante.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotacao) ";
+			queryLotacao = "and doc.lotaCadastrante.idLotacao in (select l.idLotacao from DpLotacao as l where l.idLotacaoIni = :lotacao) ";
 		}
 
 		String queryUsuario = "";
 		if (parametros.get("usuario") != null
 				&& parametros.get("usuario") != "") {
-			queryUsuario = "and mov.cadastrante.idPessoaIni in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :usuario) ";
+			queryUsuario = "and doc.cadastrante.idPessoa in (select p.idPessoa from DpPessoa as p where p.idPessoaIni = :usuario) ";
 		}
 
 		Query query = HibernateUtil.getSessao().createQuery(
 				"select " + addSelect
 						+ "from ExMovimentacao mov inner join mov.exMobil mob "
 						+ "inner join mob.exDocumento doc "
-						+ "where mov.dtIniMov >= :dtini and mov.dtIniMov < :dtfim "
-						+ "and mov.exTipoMovimentacao.idTpMov = :idTpMov "
+						+ "where doc.dtRegDoc >= :dtini and doc.dtRegDoc < :dtfim "
 						+ queryOrgao + queryLotacao + queryUsuario + addWhere);
-
-		query.setParameter("idTpMov", idTpMov);
 
 		if (parametros.get("orgao") != null && parametros.get("orgao") != "") {
 			query.setLong("orgao",

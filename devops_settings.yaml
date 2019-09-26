@@ -10,4 +10,4 @@ homologacao:
 producao:
   pre_aprovado: false
   restricao_horario_inicio: "23:00"
-  restricao_horario_fim: "23:59"
+  restricao_horario_fim: "23:50"

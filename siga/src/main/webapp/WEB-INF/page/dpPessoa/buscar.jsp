@@ -95,7 +95,7 @@ function sbmt(offset) {
 				itens="${pessoas}" var="pessoa">
 				<tr class="${evenorodd}">
 					<td align="center"><a
-						href="javascript: opener.retorna_${propriedadeClean}('${pessoa.id}','${pessoa.sigla}','${pessoa.descricao}','${pessoa.funcaoConfianca}');">${pessoa.sigla}</a></td>
+						href="javascript: opener.retorna_${propriedadeClean}('${pessoa.id}','${pessoa.sigla}','${fn:replace(pessoa.descricao,'\'','&#8217;')}','${pessoa.funcaoConfianca}');">${pessoa.sigla}</a></td>
 					<td align="left">${pessoa.descricao}</td>
 					<td align="center">${pessoa.lotacao.sigla}</td>
 					<td align="center">${pessoa.funcaoConfianca.nomeFuncao}${buscarFechadas}</td>

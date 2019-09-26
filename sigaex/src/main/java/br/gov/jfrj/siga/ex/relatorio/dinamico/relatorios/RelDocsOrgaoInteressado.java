@@ -221,7 +221,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			return d;
 		}
 		
-		private class listComparator implements Comparator<List<String>> {
+		class listComparator implements Comparator<List<String>> {
 			@Override
 			public int compare(List<String> list1, List<String> list2) {
 				DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -240,27 +240,19 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 					dt2 = cal.getTime();
 				}
 						
-				if (list1.get(0).compareTo(list2.get(0)) > 0) {
+				if ((list1.get(0) + list1.get(1)).compareTo(list2.get(0) + list2.get(1)) > 0) {
 					return 1; 
 				} else {
-					if (list1.get(0).compareTo(list2.get(0)) < 0) {
+					if ((list1.get(0) + list1.get(1)).compareTo(list2.get(0) + list2.get(1)) < 0) {
 						return -1; 
 					} else {
-						if (list1.get(1).compareTo(list2.get(1)) > 0) { 
+						if (dt1.after(dt2)) {
 							return 1;
 						} else {
-							if (list1.get(1).compareTo(list2.get(1)) < 0) { 
+							if (dt1.before(dt2)) {
 								return -1;
 							} else {
-								if (dt1.after(dt2)) {
-									return 1;
-								} else {
-									if (dt1.before(dt2)) {
-										return -1;
-									} else {
-										return 0;
-									}
-								}
+								return 0;
 							}
 						}
 					}

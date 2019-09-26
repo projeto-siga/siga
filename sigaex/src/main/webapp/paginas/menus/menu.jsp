@@ -146,10 +146,10 @@
 	<c:if
 		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios')}">
 
-		<li class="nav-item dropdown"><a href="javascript:void(0);"
+		<li id="menuRelatorios" class="nav-item dropdown"><a href="javascript:void(0);"
 			class="nav-link dropdown-toggle" data-toggle="dropdown">
 				Relatórios </a>
-			<ul class="dropdown-menu">
+			<ul id="subMenuRelatorios" class="dropdown-menu">
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;FORMS:Relação de formulários')}">
 					<li><a class="dropdown-item"
@@ -250,9 +250,9 @@
 
 	<c:if
 		test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios')}">
-		<li class="nav-item dropdown"><a href="javascript:void(0);"
+		<li id="menuGestao" class="nav-item dropdown"><a href="javascript:void(0);"
 			class="nav-link dropdown-toggle" data-toggle="dropdown"> Gestão </a>
-			<ul class="dropdown-menu">
+			<ul id="subMenuGestao" class="dropdown-menu">
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;IGESTAO: Relatório de Indicadores de Gestão')}">
 					<li><a class="dropdown-item"
@@ -295,8 +295,29 @@
 						href="/sigaex/app/expediente/rel/relDocsOrgaoInteressado?primeiraVez=true">
 							Total de documentos por Órgão Interessado</a></li>
 				</c:if>
+				<c:if
+ 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;TRAMESP: Tempo Médio de Tramitação Por Espécie Documental')}">
+					<li><a class="dropdown-item" 
+						href="/sigaex/app/expediente/rel/relTempoTramitacaoPorEspecie?primeiraVez=true">
+							Tempo Médio de Tramitação Por Espécie Documental</a></li>
+				</c:if>
+				<c:if
+ 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;VOLTRAMMOD: Volume de Tramitação Por Nome do Documento')}">
+					<li><a class="dropdown-item" 
+						href="/sigaex/app/expediente/rel/relVolumeTramitacaoPorModelo?primeiraVez=true">
+							Volume de Tramitação Por Nome do Documento</a></li>
+				</c:if>
 			</ul>
 		</li>
 	</c:if>
-
+	<script type="text/javascript" language="Javascript1.1">
+		ulRel = document.getElementById('subMenuGestao');
+		if (ulRel.children.length == 0) {
+			$('#menuGestao').addClass('d-none');
+		}
+		ulRel = document.getElementById('subMenuRelatorios');
+		if (ulRel.children.length == 0) { 
+			$('#menuRelatorios').addClass('d-none');
+		}
+	</script>
 </c:if>

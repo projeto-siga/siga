@@ -4963,6 +4963,17 @@ public class ExBL extends CpBL {
 
 					gravarMovimentacao(mov);
 					concluirAlteracaoParcialComRecalculoAcesso(m);
+					
+					List<ExMovimentacao> listaMovimentacao = new ArrayList<ExMovimentacao>();
+					listaMovimentacao.addAll(m.doc().getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
+					if(!listaMovimentacao.isEmpty()) {
+						List<ExDocumento> listaDocumentos = new ArrayList<ExDocumento>();
+						listaDocumentos.addAll(mob.getDoc().getExDocumentoFilhoSet());
+						
+						for (ExDocumento exDocumento : listaDocumentos) {
+							concluirAlteracaoParcialComRecalculoAcesso(exDocumento.getMobilGeral());
+						}
+					}
 				}
 			}
 			
@@ -5168,6 +5179,91 @@ public class ExBL extends CpBL {
 			cancelarAlteracao();
 			throw new AplicacaoException(
 					"Erro ao tentar redefinir nível de acesso", 0, e);
+		}
+	}
+	
+	public void restringirAcesso(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExDocumento doc,
+			final Date dtMov, DpLotacao lotaResponsavel,
+			final DpPessoa responsavel, final List <DpPessoa> listaSubscritor,
+			final DpPessoa titular, String nmFuncaoSubscritor,
+			ExNivelAcesso nivelAcesso) throws AplicacaoException {
+
+		if (nivelAcesso == null) {
+			throw new AplicacaoException(
+					"não foram informados dados para a redefinição do nível de acesso");
+		}
+
+		try {
+			iniciarAlteracao();
+			
+			List <ExDocumento> documentos = new ArrayList<>();
+			documentos.add(doc);
+			documentos.addAll(doc.getExDocumentoFilhoSet());
+			for (ExDocumento exDocumento : documentos) {
+				for (DpPessoa subscritor : listaSubscritor) {
+					final ExMovimentacao mov = criarNovaMovimentacao(
+							ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO,
+							cadastrante, lotaCadastrante, exDocumento.getMobilGeral(), dtMov,
+							subscritor, null, titular, null, dtMov);
+
+					mov.setNmFuncaoSubscritor(nmFuncaoSubscritor);
+					mov.setDescrMov("Nível de acesso do documento alterado de "
+							+ exDocumento.getExNivelAcessoAtual().getNmNivelAcesso() + " para "
+							+ nivelAcesso.getNmNivelAcesso() + ". Restrição de acesso adicionada para " + subscritor.getDescricaoIniciaisMaiusculas());
+
+					mov.setExNivelAcesso(nivelAcesso);
+					exDocumento.setExNivelAcesso(nivelAcesso);
+
+					gravarMovimentacao(mov);
+					concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
+				}
+			}
+			
+			
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException(
+					"Erro ao tentar redefinir nível de acesso", 0, e);
+		}
+	}
+	
+	public void desfazerRestringirAcesso(final DpPessoa cadastrante,
+			final DpLotacao lotaCadastrante, final ExDocumento doc, final Date dtMov, ExNivelAcesso nivelAcesso) throws AplicacaoException {
+		try {
+			iniciarAlteracao();
+			List<ExMovimentacao> listaMov = new ArrayList<ExMovimentacao>();
+			List <ExDocumento> documentos = new ArrayList<>();
+			documentos.add(doc);
+			documentos.addAll(doc.getExDocumentoFilhoSet());
+			for (ExDocumento exDocumento : documentos) {
+				listaMov = new ArrayList<>();
+				listaMov.addAll(exDocumento.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
+				for (ExMovimentacao exMov : listaMov) {
+					final ExMovimentacao mov = criarNovaMovimentacao(
+							ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO,
+							cadastrante, lotaCadastrante, exDocumento.getMobilGeral(), dtMov,
+							exMov.getSubscritor(), null, null, null, dtMov);
+	
+					mov.setDescrMov("Nível de acesso do documento alterado de "
+							+ exDocumento.getExNivelAcessoAtual().getNmNivelAcesso() + " para "
+							+ nivelAcesso.getNmNivelAcesso() + ". Restrição de acesso retirada para " + exMov.getSubscritor().getDescricaoIniciaisMaiusculas());
+	
+					exMov.setExMovimentacaoCanceladora(mov);
+					mov.setExNivelAcesso(nivelAcesso);
+					exDocumento.setExNivelAcesso(nivelAcesso);
+	
+					gravarMovimentacao(mov);
+					gravarMovimentacao(exMov);
+					
+					
+					concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
+				}
+			}
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new AplicacaoException(
+					"Erro ao tentar desfazer restrigir acesso", 0, e);
 		}
 	}
 

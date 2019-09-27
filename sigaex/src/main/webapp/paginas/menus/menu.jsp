@@ -273,25 +273,31 @@
 				</c:if>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;RELDEVPROGRAMADA:Relatório de documentos devolção programada')}">
-					<li><a class="dropdown-item" href="/sigaex/app/expediente/rel/relDocumentosDevolucaoProgramada?primeiraVez=true"> Documentos por
-							Devolução Programada </a></li>
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/rel/relDocumentosDevolucaoProgramada?primeiraVez=true">
+							Documentos por Devolução Programada </a></li>
 				</c:if>
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;ARMAZ:Relatório de Páginas e Armazenamento Por Documento')}">
-					<li><a class="dropdown-item" href="/sigaex/app/expediente/rel/relArmazenamento?primeiraVez=true">Relatório de 
-							Páginas e Armazenamento Por Documento </a></li>
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/rel/relArmazenamento?primeiraVez=true">Relatório
+							de Páginas e Armazenamento Por Documento </a></li>
 				</c:if>
-				<!-- 				<li><a class="dropdown-item" href="#"> Tempo médio por -->
-				<!-- 						Situação </a></li> -->
+				<c:if
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;RELTEMPOMEDIOSITUACAO:Tempo médio por Situação')}">
+					<li><a class="dropdown-item"
+						href="/sigaex/app/expediente/rel/relTempoMedioSituacao?primeiraVez=true">
+							Tempo médio por Situação </a></li>
+				</c:if>
 
 				<!-- 				<li><a class="dropdown-item" href="#"> Tempo médio -->
 				<!-- 						Tramitação por Espécie Documental </a></li> -->
 
-<!-- 				<li><a class="dropdown-item" href="#"> Volume de Tramitação -->
-<!-- 						por Nome de documento </a></li> -->
+				<!-- 				<li><a class="dropdown-item" href="#"> Volume de Tramitação -->
+				<!-- 						por Nome de documento </a></li> -->
 				<c:if
- 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;ORGAOINT: Relatório de Documentos Por Órgão Interessado')}">
-					<li><a class="dropdown-item" 
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;REL:Gerar relatórios;ORGAOINT: Relatório de Documentos Por Órgão Interessado')}">
+					<li><a class="dropdown-item"
 						href="/sigaex/app/expediente/rel/relDocsOrgaoInteressado?primeiraVez=true">
 							Total de documentos por Órgão Interessado</a></li>
 				</c:if>

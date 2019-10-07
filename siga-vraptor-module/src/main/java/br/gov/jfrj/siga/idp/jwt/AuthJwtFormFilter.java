@@ -28,6 +28,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 import com.auth0.jwt.JWTAudienceException;
+import com.auth0.jwt.JWTExpiredException;
 import com.auth0.jwt.JWTVerifyException;
 
 public class AuthJwtFormFilter implements Filter {
@@ -205,7 +206,7 @@ public class AuthJwtFormFilter implements Filter {
 		
 		//Envia Mensagem para Tela de Login
 		HttpSession session = req.getSession(false);	
-		if (e.getClass() != SigaJwtInvalidException.class) {
+		if (e.getClass() != SigaJwtInvalidException.class && e.getClass() != JWTExpiredException.class)  {
 			session.setAttribute("loginMensagem", SigaMessages.getMessage("login.erro.jwt"));
 		} else 
 			session.setAttribute("loginMensagem", "");

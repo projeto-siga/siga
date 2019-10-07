@@ -49,7 +49,7 @@ public abstract class MatriculaUtils {
 
 		final Pattern p1 = Pattern.compile("^(?<orgao>" + acronimos
 				+ "){0,1}-?(?<complemento>[0-9"
-				+ (!complementoNumerico ? "A-Za-z" : "") + "]{1,10})$");
+				+ (!complementoNumerico ? "A-Za-z\\-" : "") + "]{1,10})$");
 		final Matcher m1 = p1.matcher(junto);
 
 		if (m1.find()) {

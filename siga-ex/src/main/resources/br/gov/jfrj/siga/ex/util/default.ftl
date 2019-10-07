@@ -2382,13 +2382,13 @@ Pede deferimento.</span><br/><br/><br/>
                        [#if !numeracaoEsquerda]
 		                	<td align="right">
 		                    	[#if !omitirCodigo]                           
-		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;">${tipo} N&ordm; ${(doc.codigo)!}</p>
+		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;">${tipo} SIGA N&ordm; ${(doc.codigo)!}</p>
 		                        [/#if]
 		                    </td>
 	                    [#else]
 	                    	<td align="left">
 		                         [#if !omitirCodigo]                           
-		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br><br>${tipo} N&ordm; ${(doc.codigo)!}</p>
+		                           <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br><br>${tipo} SIGA N&ordm; ${(doc.codigo)!}</p>
 		                         [/#if]
 		                    </td>
 	                    [/#if]
@@ -2442,7 +2442,7 @@ Pede deferimento.</span><br/><br/><br/>
               <tr>
               <td align="left">
               [#if !omitirCodigo]
-                    <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE]${tipo}[#if tipo != ""] N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
+                    <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE]${tipo}[#if tipo != ""] SIGA N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
               [/#if]
               </td>
               </tr>
@@ -2457,7 +2457,7 @@ Pede deferimento.</span><br/><br/><br/>
               <tr>
               <td align="center">
                   <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>
-                  [@numeroDJE] [#if tipo != ""] ${tipo} N&ordm; ${(doc.codigo)!}[/#if] [/@numeroDJE]
+                  [@numeroDJE] [#if tipo != ""] ${tipo} SIGA N&ordm; ${(doc.codigo)!}[/#if] [/@numeroDJE]
                   [#if !dataAntesDaAssinatura && doc?? && doc.dtD??] de ${doc.dtD} de ${doc.dtMMMM} de ${doc.dtYYYY}[/#if]</p>
               </td>
               </tr>
@@ -2524,7 +2524,7 @@ Pede deferimento.</span><br/><br/><br/>
 <table align="center" width="60%" border="1" cellspacing="1" bgcolor="#000000">
 	<tr>
 		<td width="30%" bgcolor="#FFFFFF" align="center"><br />
-		<b>Processo N&ordm;</b><br />
+		<b>Processo SIGA N&ordm;</b><br />
 		<br /></td>
 	</tr>
 	<tr>
@@ -3784,7 +3784,7 @@ Pede deferimento.</span><br/><br/><br/>
               <tr>
               <td align="left">
               [#if !omitirCodigo]
-                <p style="font-family:Arial;align:center;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE][#if tipo != ""] ${tipo} N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
+                <p style="font-family:Arial;align:center;font-weight:bold;font-size:11pt;"><br/>[@numeroDJE][#if tipo != ""] ${tipo} SIGA N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]</p>
               [/#if]
               </td>
               </tr>
@@ -3799,7 +3799,7 @@ Pede deferimento.</span><br/><br/><br/>
               <tr>
               <td align="center">
                   <p style="font-family:Arial;font-weight:bold;font-size:11pt;"><br/>
-                  [@numeroDJE] [#if tipo != ""] ${tipo} N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]
+                  [@numeroDJE] [#if tipo != ""] ${tipo} SIGA N&ordm; ${(doc.codigo)!} [/#if] [/@numeroDJE]
                   [#if !dataAntesDaAssinatura && doc?? && doc.dtD??] de ${doc.dtD!} de ${doc.dtMMMM!} de ${doc.dtYYYY!}[/#if]</p>
               </td>
               </tr>

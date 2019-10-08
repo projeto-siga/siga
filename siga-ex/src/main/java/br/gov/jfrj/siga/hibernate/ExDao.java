@@ -492,7 +492,13 @@ public class ExDao extends CpDao {
 					&& (flt.getIdTipoMobil() == null || flt.getIdTipoMobil() == ExTipoMobil.TIPO_MOBIL_GERAL)) {
 				final ExDocumento d = consultar(flt.getIdDoc(),
 						ExDocumento.class, false);
-				return d.getMobilGeral();
+				
+				try {
+					return d.getMobilGeral();
+				} catch (Exception e2) {
+					throw new AplicacaoException("Não foi possível localizar o documento");
+				}
+				
 			}
 
 			if (flt.getAnoEmissao() == null)

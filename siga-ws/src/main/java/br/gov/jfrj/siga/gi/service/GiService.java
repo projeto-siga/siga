@@ -45,6 +45,6 @@ public interface GiService extends Remote {
 	public String esqueciSenha(String cpf, String email);
     
     @WebMethod
-	public String criarUsuario(String orgaoUsu, String lotacao, String cargo, String funcao, String nmPessoa, String dtNascimento,String cpf, String email);
+	public String criarUsuario(String cadastranteStr, String orgaoUsu, String lotacao, String cargo, String funcao, String nmPessoa, String dtNascimento,String cpf, String email);
         
 }

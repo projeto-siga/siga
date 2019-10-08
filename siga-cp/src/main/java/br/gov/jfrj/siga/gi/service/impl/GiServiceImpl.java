@@ -332,7 +332,7 @@ public class GiServiceImpl implements GiService {
 	}
 
 	@Override
-	public String criarUsuario(String orgaoUsu,String lotacao, String cargo, String funcao,String nmPessoa, String dtNascimento, String cpf, String email) {
+	public String criarUsuario(String cadastranteStr, String orgaoUsu,String lotacao, String cargo, String funcao,String nmPessoa, String dtNascimento, String cpf, String email) {
 		
 		String resultado = "";
 		try {
@@ -409,7 +409,7 @@ public class GiServiceImpl implements GiService {
 				}	
 			}
 		
-			resultado = Cp.getInstance().getBL().criarUsuario(null, idOrgaoUsu, idCargoUsu, idFuncaoUsu, idLotacaoUsu, nmPessoa, dtNascimento, cpf, email);
+			resultado = Cp.getInstance().getBL().criarUsuario(cadastranteStr, null, idOrgaoUsu, idCargoUsu, idFuncaoUsu, idLotacaoUsu, nmPessoa, dtNascimento, cpf, email);
 
 		} catch (Exception e) {
 			return e.getMessage();

@@ -23,6 +23,7 @@ import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.Texto;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpLocalidade;
@@ -230,9 +231,13 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			result.include("orgaosUsu", list);
 		}
 		
-		CpUF uf = new CpUF();
-		uf.setIdUF(Long.valueOf(26));
-		result.include("listaLocalidades", dao().consultarLocalidadesPorUF(uf));
+		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+			CpUF uf = new CpUF();
+			uf.setIdUF(Long.valueOf(26));
+			result.include("listaLocalidades", dao().consultarLocalidadesPorUF(uf));
+		} else {
+			result.include("listaLocalidades", dao().consultarLocalidades());
+		}
 				
 		result.include("request",getRequest());
 		result.include("id",id);

@@ -2375,7 +2375,20 @@ Pede deferimento.</span><br/><br/><br/>
             [/@mioloDJE]
         [#else]
             [#nested]
-            [#if dataAntesDaAssinatura]<p style="text-align:center">[#if mov??]${mov.dtExtenso!}[#else]${doc.dtExtenso!}[/#if]</p>[/#if]
+      		[#assign data = func.dataAtual(doc) /]
+            [#if dataAntesDaAssinatura]
+            	<p style="text-align:center">
+            	[#if mov??] 
+            		${mov.dtExtenso!}
+            	[#else] 
+            		[#if data != ""]
+            			${data}
+            		[#else]
+            			${doc.dtExtenso!}
+            		[/#if]
+            	[/#if]
+            	</p>
+            [/#if]
             <p>&nbsp;</p>
             [#if mov??]
                 [@assinaturaMovCentro formatarOrgao=formatarOrgao/]

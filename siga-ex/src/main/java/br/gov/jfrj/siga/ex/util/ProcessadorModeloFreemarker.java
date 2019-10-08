@@ -74,7 +74,7 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 
 		root.putAll(attrs);
 		root.put("param", params);
-
+		
 		if (attrs.containsKey("entrevista"))
 			root.put("gerar_entrevista", true);
 		if (attrs.containsKey("processar_modelo"))
@@ -120,6 +120,8 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 					.replace("\n", "<br/>").replace("\r", "");
 		} catch (IOException e) {
 			return "Erro executando template FreeMarker\n\n" + e.getMessage();
+		} finally {
+			root = null;
 		}
 	}
 

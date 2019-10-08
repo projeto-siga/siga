@@ -623,156 +623,6 @@ public class CpBL {
 
 	}
 
-	public CpIdentidade criarIdentidadeWS(String matricula, String cpf,
-			final String senhaDefinida, String[] senhaGerada,
-			boolean marcarParaSinc) throws AplicacaoException {
-
-		Long longCpf = CPFUtils.getLongValueValidaSimples(cpf);
-		final List<DpPessoa> listaPessoas = dao().listarPorCpf(longCpf);
-		if (listaPessoas.isEmpty()) {
-			throw new AplicacaoException(
-					"O CPF informado está incorreto, tente novamente!");
-		}
-
-		final long longMatricula = MatriculaUtils
-				.getParteNumericaDaMatricula(matricula);
-
-		final DpPessoa pessoa = dao().consultarPorCpfMatricula(longCpf,
-				longMatricula);
-
-		if (pessoa != null && matricula.equals(pessoa.getSigla())) {
-			CpIdentidade id;
-			try {
-				id = dao().consultaIdentidadeCadastrante(matricula, true);
-			} catch (Exception e1) {
-				id = null;
-			}
-			if (id == null) {
-				if (pessoa.getEmailPessoaAtual() != null) {
-					String novaSenha = null;
-					if (senhaDefinida != null && senhaDefinida.length() > 0) {
-						novaSenha = senhaDefinida;
-					} else {
-						novaSenha = GeraMessageDigest.geraSenha();
-					}
-
-					if (senhaGerada[0] != null) {
-						novaSenha = senhaGerada[0];
-					}
-					try {
-						CpIdentidade idNova = new CpIdentidade();
-						final String hashNova = GeraMessageDigest.executaHash(
-								novaSenha.getBytes(), "MD5");
-						idNova.setDscSenhaIdentidade(hashNova);
-						idNova.setNmLoginIdentidade(matricula);
-						idNova.setDpPessoa(pessoa);
-						idNova.setDtCriacaoIdentidade(dao()
-								.consultarDataEHoraDoServidor());
-						idNova.setCpOrgaoUsuario(pessoa.getOrgaoUsuario());
-						idNova.setCpTipoIdentidade(dao().consultar(1,
-								CpTipoIdentidade.class, false));
-						idNova.setHisDtIni(idNova.getDtCriacaoIdentidade());
-
-						if (SigaMessages.isSigaSP()) {
-							String[] destinanarios = { pessoa
-									.getEmailPessoaAtual() };
-
-							Correio.enviar(
-									SigaBaseProperties
-											.getString("servidor.smtp.usuario.remetente"),
-									destinanarios,
-									"Novo Usuário",
-									"",
-									"<table>"
-											+ "<tbody>"
-											+ "<tr>"
-											+ "<td style='height: 80px; background-color: #f6f5f6; padding: 10px 20px;'>"
-											+ "<img style='padding: 10px 0px; text-align: center;' src='http://www.documentos.spsempapel.sp.gov.br/siga/imagens/logo-sem-papel-cor.png' "
-											+ "alt='SP Sem Papel' width='108' height='50' /></td>"
-											+ "</tr>"
-											+ "<tr>"
-											+ "<td style='background-color: #bbb; padding: 0 20px;'>"
-											+ "<h3 style='height: 20px;'>Governo do Estado de S&atilde;o Paulo</h3>"
-											+ "</td>"
-											+ "</tr>"
-											+ "<tr style='height: 310px;'>"
-											+ "<td style='height: 310px; padding: 10px 20px;'>"
-											+ "<div>"
-											+ "<p><span style='color: #808080;'>Prezado Servidor(a) "
-											+ "<strong>"
-											+ idNova.getDpPessoa()
-													.getNomePessoa()
-											+ "</strong>"
-											+ " do(a) "
-											+ "<strong>"
-											+ idNova.getDpPessoa()
-													.getOrgaoUsuario()
-													.getDescricao()
-											+ "</strong>"
-											+ ",</span></h4>"
-											+ "<p><span style='color: #808080;'>Voc&ecirc; est&aacute; recebendo sua matr&iacute;cula e senha para acesso "
-											+ "ao Portal SP Sem Papel, para acesso ao servi&ccedil;o Documentos Digitais.</span></p>"
-											+ "<p><span style='color: #808080;'>Ao usar o portal para cria&ccedil;&atilde;o de documentos, voc&ecirc; est&aacute; "
-											+ "produzindo documento nato-digital, confirme seus dados cadastrais, nome, cargo e unidade "
-											+ "antes de iniciar o uso e assinar documentos.</span></p>"
-											+ "<p><span style='color: #808080;'>Realize sua capacita&ccedil;&atilde;o no AVA e utilize o ambiente "
-											+ "de capacita&ccedil;&atilde;o para testes e treinamento.</span></p>"
-											+ "<p><span style='color: #808080;'>Sua matr&iacute;cula &eacute;:&nbsp;&nbsp;<strong>"
-											+ matricula
-											+ "</strong></span></p>"
-											+ "<p><span style='color: #808080;'>Sua senha &eacute;:&nbsp;&nbsp;<strong>"
-											+ novaSenha
-											+ "</strong></span></p>"
-											+ "</div>"
-											+ "</td>"
-											+ "</tr>"
-											+ "<tr>"
-											+ "<td style='height: 18px; padding: 0 20px; background-color: #eaecee;'>"
-											+ "<p><span style='color: #aaa;'><strong>Aten&ccedil;&atilde;o:</strong> esta &eacute; uma mensagem autom&aacute;tica. Por favor n&atilde;o responda&nbsp;</span></p>"
-											+ "</td>"
-											+ "</tr>"
-											+ "</tbody>"
-											+ "</table>");
-						} else {
-							Correio.enviar(
-									pessoa.getEmailPessoaAtual(),
-									"Novo Usuário",
-									"Seu login é: "
-											+ matricula
-											+ "\n e sua senha é "
-											+ novaSenha
-											+ "\n\n Atenção: esta é uma "
-											+ "mensagem automática. Por favor não responda ");
-						}
-						dao().commitTransacao();
-						return idNova;
-					} catch (final Exception e) {
-						dao().rollbackTransacao();
-						throw new AplicacaoException(
-								"Ocorreu um erro durante a gravação no banco de dados ou no envio do email",
-								0, e);
-					}
-				} else {
-					throw new AplicacaoException(
-							"Este usuário não possui e-mail cadastrado");
-				}
-
-			} else {
-				throw new AplicacaoException(
-						"Usuário já está cadastrado no sistema");
-			}
-
-		} else {
-			if (pessoa == null) {
-				throw new AplicacaoException(getBundle().getString(
-						"usuario.erro.cpfmatriculanaocadastrado"));
-			} else {
-				throw new AplicacaoException("Dados Incorretos!");
-			}
-		}
-
-	}
-
 	public CpIdentidade trocarSenhaDeIdentidade(String senhaAtual,
 			String senhaNova, String senhaConfirma, String nomeUsuario,
 			CpIdentidade idCadastrante) throws NoSuchAlgorithmException,
@@ -1433,4 +1283,33 @@ public class CpBL {
 
 	}
 
+	public String inativarUsuario(final Long idUsuario) {
+		CpOrgaoUsuario ou = new CpOrgaoUsuario();
+		DpPessoa pessoa = dao().consultar(idUsuario, DpPessoa.class, false);
+		ou.setIdOrgaoUsu(pessoa.getOrgaoUsuario().getId());
+		ou = CpDao.getInstance().consultarPorId(ou);
+
+		pessoa = dao().consultar(idUsuario, DpPessoa.class, false);
+		// inativar
+		if (pessoa.getDataFimPessoa() == null
+				|| "".equals(pessoa.getDataFimPessoa())) {
+			Calendar calendar = new GregorianCalendar();
+			Date date = new Date();
+			calendar.setTime(date);
+			pessoa.setDataFimPessoa(calendar.getTime());
+
+		}
+
+		try {
+			dao().iniciarTransacao();
+			dao().gravar(pessoa);
+			dao().commitTransacao();
+		} catch (final Exception e) {
+			dao().rollbackTransacao();
+			throw new AplicacaoException("Erro na gravação", 0, e);
+		}
+
+		return "Usuário inativado com sucesso: " + pessoa.getSesbPessoa()
+				+ pessoa.getMatricula();
+	}
 }

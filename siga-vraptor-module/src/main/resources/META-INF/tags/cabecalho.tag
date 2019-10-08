@@ -264,7 +264,15 @@ ${meta}
 									var fld = document
 											.getElementsByName('buscar_genericoSel.sigla')[0];
 									fld.placeholder = 'Número de Documento';
-									fld.onblur = '';
+									fld.onblur = function() {
+										if (this.value == '') {
+											this.value = 'Buscar';
+											return;
+										}
+										if (this.value != 'Buscar')
+											ajax_buscar_generico();
+									};
+
 									fld.onkeypress = function(event) {
 										var fid = document
 												.getElementsByName('buscar_genericoSel.id')[0];

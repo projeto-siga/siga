@@ -1366,7 +1366,7 @@ window.onload = function(){
 [/#macro]
 
 
-[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" pontuacao=":" atts={}]
+[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" onchange="" pontuacao=":" atts={}]
     [#local l=opcoes?split(";")]
     [#if .vars[var]??]
         [#local v = .vars[var]/]
@@ -1904,7 +1904,7 @@ Pede deferimento.</span><br/><br/><br/>
     [@selecionavel tipo="lotacao" titulo=titulo var=var reler=reler relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
 [/#macro]
 
-[#macro data titulo var reler=false idAjax="" default="" onSelect="" obrigatorio=false atts={} ]
+[#macro data titulo var reler=false idAjax="" default="" onSelect="" obrigatorio=false atts={} attsDatepicker={}]
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');\""]
     [#elseif reler == true]
@@ -1941,6 +1941,7 @@ Pede deferimento.</span><br/><br/><br/>
         
  
  [#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
+ [#assign attsDatepickerHtml][#list attsDatepicker?keys as k]${k}: ${attsDatepicker[k]},[/#list][/#assign]
 <input type="text" id ="${var}" name="${var}" value="${v}" size="10" maxlength="10" onblur="javascript:verifica_data(this[#if !obrigatorio], 'Sim'[/#if]);${jreler!}" class="campoData" ${attsHtml} />
     [#else]
     <span class="valor">${v}</span>
@@ -1948,9 +1949,7 @@ Pede deferimento.</span><br/><br/><br/>
     <script>
     	$('.campoData').mousedown(function() {
   			$('.campoData').datepicker({
-            	onSelect: function(){
-                    ${onSelect}
-				}
+            	${attsDatepickerHtml}				
 			});
 		});
 	</script>

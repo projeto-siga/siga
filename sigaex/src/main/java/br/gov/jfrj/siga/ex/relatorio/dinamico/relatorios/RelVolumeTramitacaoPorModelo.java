@@ -39,6 +39,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 		public Long totalDocumentos;
 		public Long totalTramites;
 		public Long totalModeloTramites;
+		public String modelo;
 
 		public RelVolumeTramitacaoPorModelo (Map parametros) throws DJBuilderException {
 			super(parametros);
@@ -58,20 +59,18 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 				throws DJBuilderException, JRException {
 
 			this.listColunas.add("Unidade");
-			this.listColunas.add("Espécie Documental");
-			this.listColunas.add("Nome do Documento");
 			this.listColunas.add("Número do Documento");
 			this.listColunas.add("Cadastrante");
-			this.listColunas.add("Resp. Assinatura / Autenticação");
+			this.listColunas.add("Resp. Assinatura");
 			this.listColunas.add("Dt Assinatura / Autenticação");
+			this.listColunas.add("Tramitações");
 					
 			this.addColuna(this.listColunas.get(0), 10, RelatorioRapido.ESQUERDA, false);
-			this.addColuna(this.listColunas.get(1), 20, RelatorioRapido.ESQUERDA, false);
-			this.addColuna(this.listColunas.get(2), 30, RelatorioRapido.ESQUERDA, false);
-			this.addColuna(this.listColunas.get(3), 20, RelatorioRapido.ESQUERDA, false);
-			this.addColuna(this.listColunas.get(4), 15, RelatorioRapido.CENTRO, false);
-			this.addColuna(this.listColunas.get(5), 15, RelatorioRapido.CENTRO, false);
-			this.addColuna(this.listColunas.get(6), 20, RelatorioRapido.CENTRO, false);
+			this.addColuna(this.listColunas.get(1), 30, RelatorioRapido.ESQUERDA, false);
+			this.addColuna(this.listColunas.get(2), 20, RelatorioRapido.CENTRO, false);
+			this.addColuna(this.listColunas.get(3), 20, RelatorioRapido.CENTRO, false);
+			this.addColuna(this.listColunas.get(4), 20, RelatorioRapido.CENTRO, false);
+			this.addColuna(this.listColunas.get(5), 5, RelatorioRapido.CENTRO, false);
 			return this;
 
 		}
@@ -98,6 +97,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 					.createQuery(
 						"select "
 						+ "mod.hisIdIni, "
+						+ "forma.descrFormaDoc, "
 						+ "mod.nmMod, "
 						+ "count(distinct doc.idDoc), "
 						+ "count(mov.idMov) "
@@ -105,17 +105,20 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 						+ "inner join mov.exMobil mob " 
 						+ "inner join mob.exDocumento doc "
 						+ "left outer join doc.exModelo mod "
+						+ "left outer join doc.exFormaDocumento forma "
 						+ "where (mov.exTipoMovimentacao.idTpMov = :idTpMov1 "
 						+ "		or mov.exTipoMovimentacao.idTpMov = :idTpMov2 "
 						+ "		or mov.exTipoMovimentacao.idTpMov = :idTpMov3 "
 						+ "		or mov.exTipoMovimentacao.idTpMov = :idTpMov4) "
 						+ " 	and mov.exMovimentacaoCanceladora is null "
 						+ "		and doc.dtRegDoc >= :dtini and doc.dtRegDoc < :dtfim "
+						+ "		and doc.dtFinalizacao is not null "
 						+ queryOrgao
 						+ queryLotacao
 						+ queryUsuario
 						+ "group by "
 						+ "mod.hisIdIni, "
+						+ "forma.descrFormaDoc, "
 						+ "mod.nmMod "
 						+ "order by mod.nmMod "
 						);
@@ -143,12 +146,13 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 				modelo = "<a href='#' class='text-primary' onclick=\"javascript:visualizarRelatorio('" 
 						+ parametros.get("link_modelo") + "','"  
 						+ idMod + "');\">" 
-						+ obj[1].toString() + "</a>";
-				qtdDocs = Long.valueOf(obj[2].toString()); 
-				if (obj[3].toString() != null)
-					qtdTram = Long.valueOf(obj[3].toString());
+						+ obj[2].toString() + "</a>";
+				qtdDocs = Long.valueOf(obj[3].toString()); 
+				if (obj[4].toString() != null)
+					qtdTram = Long.valueOf(obj[4].toString());
 
 				List<String> listDados = new ArrayList();
+				listDados.add(obj[1].toString()); 
 				listDados.add(modelo); 
 				listDados.add(qtdTram.toString()); 
 				listModelos.add(listDados);
@@ -197,7 +201,8 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			Date dtini = formatter.parse((String) parametros.get("dataInicial"));
 			query.setDate("dtini", dtini);
 			Date dtfim = formatter.parse((String) parametros.get("dataFinal"));
-			query.setDate("dtfim", dtfim);
+			Date dtfimMaisUm = new Date( dtfim.getTime() + 86400000L );
+			query.setDate("dtfim", dtfimMaisUm);
 		}
 
 		@Override
@@ -233,6 +238,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 						+ "doc.anoEmissao, "
 						+ "doc.numExpediente, "
 						+ "lota.siglaLotacao, "
+						+ "lota.nomeLotacao, "
 						+ "forma.descrFormaDoc, "
 						+ "mod.idMod, "
 						+ "mod.nmMod, "
@@ -256,6 +262,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 						+ "		or mov.exTipoMovimentacao.idTpMov = :idTpMov4) "
 						+ " 	and mov.exMovimentacaoCanceladora is null "
 						+ "		and doc.dtRegDoc >= :dtini and doc.dtRegDoc < :dtfim "
+						+ "		and doc.dtFinalizacao is not null "
 						+ queryModelo
 						+ queryOrgao
 						+ queryLotacao
@@ -268,6 +275,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 						+ "doc.anoEmissao, "
 						+ "doc.numExpediente, "
 						+ "lota.siglaLotacao, "
+						+ "lota.nomeLotacao, "
 						+ "forma.descrFormaDoc, "
 						+ "mod.idMod, "
 						+ "mod.nmMod, "
@@ -294,7 +302,6 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			String especie = "";
 			String lotacao = "";
 			String idMod = "";
-			String modelo = "";
 			String siglaDoc = "";
 			String cadastrante = "";
 			String subscritor = "";
@@ -305,10 +312,10 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 
 			while (it.hasNext()) {
 				obj = (Object[]) it.next();
-				lotacao = obj[6].toString(); 
-				especie = obj[7].toString();
-				idMod = obj[8].toString();
-				modelo = obj[9].toString();
+				lotacao = obj[6].toString() + " / " + obj[7].toString(); 
+				especie = obj[8].toString();
+				idMod = obj[9].toString();
+				modelo = obj[10].toString();
 						
 				String codigoDoc = ExDocumento.getCodigo(Long.valueOf(obj[0].toString()), obj[1].toString(),
 						obj[2].toString(), obj[3].toString(), Long.valueOf(obj[4].toString()),
@@ -317,29 +324,28 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 				
 				siglaDoc = "<a href=" + parametros.get("link_siga") 
 						+ codigoDoc + ">" + codigoDoc + "</a>";
-				cadastrante = obj[10].toString() + obj[11].toString(); 
-				if (obj[12] != null) {
-					subscritor = obj[12].toString() + obj[13].toString(); 
+				cadastrante = obj[11].toString() + obj[12].toString(); 
+				if (obj[13] != null) {
+					subscritor = obj[13].toString() + obj[14].toString(); 
 				} else {
-					subscritor = obj[10].toString() + obj[11].toString() + " (Autentic.)"; 
+					subscritor = obj[11].toString() + obj[12].toString() + " (Autentic.)"; 
 				}
 				SimpleDateFormat formatFull = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-				Date dt = formatFull.parse(obj[14].toString());
+				Date dt = formatFull.parse(obj[15].toString());
 				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 				dtAssinatura = format.format(dt);				
-				qtdTram = Long.valueOf(obj[15].toString());
+				qtdTram = Long.valueOf(obj[16].toString());
 
 				List<String> listDados = new ArrayList();
 				listDados.add(lotacao); 
-				listDados.add(especie); 
-				listDados.add(modelo); 
 				listDados.add(siglaDoc);
 				listDados.add(cadastrante); 
 				listDados.add(subscritor); 
 				listDados.add(dtAssinatura); 
+				listDados.add(qtdTram.toString()); 
 				listLinhas.add(listDados);
 				totalModeloTramites += qtdTram;
-				if (gcCounter > 1000) {
+				if (gcCounter > 200) {
 					gcCounter = 0;
 					System.gc();
 				} else {

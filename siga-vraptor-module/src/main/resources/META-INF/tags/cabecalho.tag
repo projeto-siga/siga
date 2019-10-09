@@ -409,9 +409,9 @@ ${meta}
 					</div>
 				</c:if>
 			</div>
-			<div class="row ${mensagemCabec==null?'d-none':''}" >
+			<div class="row ${mensagemCabec==null?'d-none':''}" id=mensagemCabecId" >
 				<div class="col" >
-					<div class="alert ${msgCabecClass} fade show" role="alert">
+					<div class="alert ${msgCabecClass} fade show" id="mensagemCabec" role="alert">
 						${mensagemCabec}
 						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 							<span aria-hidden="true">&times;</span>

@@ -83,13 +83,19 @@
 								<div class="card-body">
 									<table class="table table-sm table-hover table-striped">
 										<tr class="card-text col-sm-6">
-											<td class='w-80'>Total de Documentos Produzidos</td>
+											<td class='w-80'>Total de Documentos Produzidos
+												<a class="fas fa-info-circle text-secondary ml-1" data-toggle="tooltip" data-trigger="click" data-placement="bottom" 
+													title="Composto por documentos Internos Produzidos, Internos/Externos Capturados"></a>
+											</td>
 											<td class='text-right'>
 												<fmt:formatNumber type="number" pattern="###,###,###,##0" value="${totalDocumentos}" />
 											</td>
 										</tr>
 										<tr>
-											<td class='w-80'>Total de Páginas Geradas</td>
+											<td class='w-80'>Total de Páginas Geradas
+												<a class="fas fa-info-circle text-secondary ml-1" data-toggle="tooltip" data-trigger="click" data-placement="bottom" 
+													title="Páginas dos documentos Produzidos, Capturados e Anexados"></a>
+											</td>
 											<td class='text-right'>
 												<fmt:formatNumber type = "number" pattern = "###,###,###,##0" value = "${totalPaginas}" />
 											</td>
@@ -134,3 +140,9 @@
 		</div>
 	</div>
 </siga:pagina>
+<script type="text/javascript">
+	$('a[data-toggle="tooltip"]').tooltip({
+	    placement: 'bottom',
+	    trigger: 'click'
+	});
+</script>

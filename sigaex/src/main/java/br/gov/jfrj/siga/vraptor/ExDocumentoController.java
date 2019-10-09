@@ -946,8 +946,10 @@ public class ExDocumentoController extends ExController {
 				mobUlt = mobUlt.getGrandeMestre();
 
 			if (mobUlt.getUltimaMovimentacaoNaoCancelada() != null) {
-				dest = mobUlt.getUltimaMovimentacaoNaoCancelada().getResp()
-						.getPessoaAtual();
+				if (mobUlt.getUltimaMovimentacaoNaoCancelada().getResp() != null) {
+					dest = mobUlt.getUltimaMovimentacaoNaoCancelada().getResp()
+							.getPessoaAtual();
+				}
 				lotaDest = mobUlt.getUltimaMovimentacaoNaoCancelada()
 						.getLotaResp().getLotacaoAtual();
 			}

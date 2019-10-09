@@ -19,12 +19,13 @@
 package br.gov.jfrj.siga.ex.bl;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Set;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpComplexo;
@@ -4011,6 +4012,39 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 		return podeBotaoAgendarPublicacaoBoletim(titular, lotaTitular, mob)
 				&& (agora.get(Calendar.HOUR_OF_DAY) < 17 
 					|| podeGerenciarPublicacaoBoletimPorConfiguracao(titular, lotaTitular, mob));
+	}
+	
+	public boolean podeRestrigirAcesso(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {
+		return (getConf()
+				.podePorConfiguracao(
+						titular,
+						lotaTitular,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO,
+						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) &&
+				(!getConf().podePorConfiguracao(
+							titular,
+							lotaTitular,
+							mob.doc().getExModelo(),
+							CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO) || mob.getDoc().getPai()==null) ;
+	}
+	
+	public boolean podeDesfazerRestricaoAcesso(final DpPessoa titular,
+			final DpLotacao lotaTitular, final ExMobil mob) {
+		List<ExMovimentacao> lista = new ArrayList<ExMovimentacao>();
+		lista.addAll(mob.getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
+		return (!lista.isEmpty() &&
+				getConf()
+				.podePorConfiguracao(
+						titular,
+						lotaTitular,
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO,
+						CpTipoConfiguracao.TIPO_CONFIG_MOVIMENTAR)) &&
+				(!getConf().podePorConfiguracao(
+							titular,
+							lotaTitular,
+							mob.doc().getExModelo(),
+							CpTipoConfiguracao.TIPO_CONFIG_INCLUIR_DOCUMENTO) || mob.getDoc().getPai()==null) ;
 	}
 
 	/**

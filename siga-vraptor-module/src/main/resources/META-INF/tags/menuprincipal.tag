@@ -51,7 +51,7 @@
 		</c:if>
 		<li class="dropdown-submenu"><a href="javascript:void(0);"
 			class="dropdown-item dropdown-toggle">Módulos</a>
-			<ul class="dropdown-menu">
+			<ul class="dropdown-menu dropdown-menu-item">
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
 					<li><a class="dropdown-item"
@@ -104,7 +104,7 @@
 						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados')}">
 						<li class="dropdown-submenu"><a href="javascript:void(0);"
 							class="dropdown-item dropdown-toggle">Pessoas</a>
-							<ul class="dropdown-menu">
+							<ul class="dropdown-menu dropdown-menu-item">
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: Módulo de Adicional de Qualificação')}">
 									<li><a class="dropdown-item"
@@ -158,7 +158,7 @@
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP:Agendamento de perícias do INSS')}">
 						<li class="dropdown-submenu"><a href="javascript:void(0);"
 							class="dropdown-item dropdown-toggle">Agendas</a>
-							<ul class="dropdown-menu">
+							<ul class="dropdown-menu dropdown-menu-item">
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP')}">
 									<li><a class="dropdown-item" href="/sigapp/">Perícias

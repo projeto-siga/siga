@@ -206,11 +206,9 @@ public class AuthJwtFormFilter implements Filter {
 		
 		//Envia Mensagem para Tela de Login
 		HttpSession session = req.getSession(false);	
-		if (e.getClass() != SigaJwtInvalidException.class && e.getClass() != JWTExpiredException.class)  {
-			session.setAttribute("loginMensagem", SigaMessages.getMessage("login.erro.jwt"));
-		} else 
-			session.setAttribute("loginMensagem", "");
-
+		if (session != null) {
+			session.setAttribute("loginMensagem", (e.getClass() != SigaJwtInvalidException.class && e.getClass() != JWTExpiredException.class)?SigaMessages.getMessage("login.erro.jwt"):"");
+		}
 		
 		String cont = req.getRequestURL() + (req.getQueryString() != null ? "?" + req.getQueryString() : "");
 		String base = System.getProperty("siga.base.url");

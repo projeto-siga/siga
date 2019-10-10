@@ -5308,14 +5308,14 @@ public class ExBL extends CpBL {
 	
 					exMov.setExMovimentacaoCanceladora(mov);
 					mov.setExNivelAcesso(nivelAcesso);
-					exDocumento.setExNivelAcesso(nivelAcesso);
 	
 					gravarMovimentacao(mov);
 					gravarMovimentacao(exMov);
 					
 					
-					concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
 				}
+				exDocumento.setExNivelAcesso(nivelAcesso);
+				concluirAlteracaoComRecalculoAcesso(exDocumento.getMobilGeral());
 			}
 		} catch (final Exception e) {
 			cancelarAlteracao();

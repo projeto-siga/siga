@@ -1892,25 +1892,27 @@ public class ExBL extends CpBL {
 		
 
 		//Verificar se é substituto
-		if (subscritor.getId() != doc.getSubscritor().getId()) {
-			if(Ex.getInstance().getComp().podeAssinarPorComSenha(cadastrante, lotaCadastrante)) {
-				DpSubstituicao dpSubstituicao = new DpSubstituicao();
-				dpSubstituicao.setSubstituto(subscritor);
-				dpSubstituicao.setLotaSubstituto(subscritor.getLotacao());
-				List<DpSubstituicao> itens = dao().consultarSubstituicoesPermitidas(dpSubstituicao);
-				
-				//Comparar Titular com doc subscritor
-				for (DpSubstituicao tit : itens) {
-					if (tit.getTitular().equivale(doc.getSubscritor())) {
-						fValido = true ;
-						fSubstituindo = true;
-						
-						final ExMovimentacao movsub;
-						movsub = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
-							cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
-							subscritor, null, null, null, null);
-						movsub.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla());
-						gravarMovimentacao(movsub);
+		if (!autenticando) {
+			if (subscritor.getId() != doc.getSubscritor().getId()) {
+				if(Ex.getInstance().getComp().podeAssinarPorComSenha(cadastrante, lotaCadastrante)) {
+					DpSubstituicao dpSubstituicao = new DpSubstituicao();
+					dpSubstituicao.setSubstituto(subscritor);
+					dpSubstituicao.setLotaSubstituto(subscritor.getLotacao());
+					List<DpSubstituicao> itens = dao().consultarSubstituicoesPermitidas(dpSubstituicao);
+					
+					//Comparar Titular com doc subscritor
+					for (DpSubstituicao tit : itens) {
+						if (tit.getTitular().equivale(doc.getSubscritor())) {
+							fValido = true ;
+							fSubstituindo = true;
+							
+							final ExMovimentacao movsub;
+							movsub = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
+								cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
+								subscritor, null, null, null, null);
+							movsub.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla());
+							gravarMovimentacao(movsub);
+						}
 					}
 				}
 			}

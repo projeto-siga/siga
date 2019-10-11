@@ -932,7 +932,7 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 				provider.assinar(signable);
 			}
 		} else {
-			if ($('#siglaUsuarioCadastrante').val() != $('#siglaUsuSubscritor').val()) {
+			if ( ($('#siglaUsuSubscritor').val() != "") && $('#siglaUsuarioCadastrante').val() != $('#siglaUsuSubscritor').val()) {
 				if (!confirm("DESEJA ASSINAR O DOCUMENTO POR \""+ $('#nomeUsuSubscritor').val() + "\" - \"" + $('#siglaUsuSubscritor').val() +"\"")) {
 					gAssinando = false;
 					$(this).dialog('destroy').remove();				

@@ -528,7 +528,9 @@ public class ExMobilVO extends ExVO {
 				&& mob.getUltimaMovimentacaoNaoCancelada()
 					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_INCLUSAO_DE_COSIGNATARIO
 				&& mob.getUltimaMovimentacaoNaoCancelada()
-					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO)
+					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO
+				&& mob.getUltimaMovimentacaoNaoCancelada()
+					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO)
 			addAcao("arrow_undo",
 					"Desfa_zer "
 							+ mob.getDescricaoUltimaMovimentacaoNaoCancelada(),

@@ -116,6 +116,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
+import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExArquivo;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
@@ -1860,6 +1861,7 @@ public class ExBL extends CpBL {
 
 		DpPessoa subscritor = null;
 		boolean fValido = false;
+		boolean fSubstituindo = false;
 
 		if (matriculaSubscritor == null || matriculaSubscritor.isEmpty())
 			throw new AplicacaoException(
@@ -1885,6 +1887,32 @@ public class ExBL extends CpBL {
 
 			if (!senhaValida) {
 				throw new AplicacaoException("Senha do subscritor inválida.");
+			}
+		}
+		
+
+		//Verificar se é substituto
+		if (subscritor.getId() != doc.getSubscritor().getId()) {
+			if(Ex.getInstance().getComp().podeAssinarPorComSenha(cadastrante, lotaCadastrante)) {
+				DpSubstituicao dpSubstituicao = new DpSubstituicao();
+				dpSubstituicao.setSubstituto(subscritor);
+				dpSubstituicao.setLotaSubstituto(subscritor.getLotacao());
+				List<DpSubstituicao> itens = dao().consultarSubstituicoesPermitidas(dpSubstituicao);
+				
+				//Comparar Titular com doc subscritor
+				for (DpSubstituicao tit : itens) {
+					if (tit.getTitular().equivale(doc.getSubscritor())) {
+						fValido = true ;
+						fSubstituindo = true;
+						
+						final ExMovimentacao movsub;
+						movsub = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
+							cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
+							subscritor, null, null, null, null);
+						movsub.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla());
+						gravarMovimentacao(movsub);
+					}
+				}
 			}
 		}
 
@@ -1929,6 +1957,7 @@ public class ExBL extends CpBL {
 								continue;
 							}
 						}
+					
 				}
 	
 				if (fValido == false)
@@ -1944,24 +1973,30 @@ public class ExBL extends CpBL {
 		String s = null;
 		try {
 			iniciarAlteracao();
-
-			final ExMovimentacao mov = criarNovaMovimentacao(autenticando ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA :
-					ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
-					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
-					subscritor, null, null, null, null);
-
-			mov.setDescrMov(subscritor.getNomePessoa() + ":"
-					+ subscritor.getSigla());
+			final ExMovimentacao mov;
 			
 			// Hash de auditoria
 			//
 			final byte[] pdf = doc.getConteudoBlobPdf();
 			byte[] sha256 = BlucService.calcSha256(pdf);
-			String cpf = Long.toString(subscritor.getCpfPessoa());
-			acrescentarHashDeAuditoria(mov, sha256,
-					autenticando, subscritor.getNomePessoa(), cpf, null);
-
+			DpPessoa assinante;
+			
+			if (!fSubstituindo) {
+				assinante = subscritor;
+			} else {
+				assinante = doc.getSubscritor();
+			}
+			
+			mov = criarNovaMovimentacao(autenticando ? ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA :
+				ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA,
+				cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
+				assinante, null, null, null, null);
+			mov.setDescrMov(assinante.getNomePessoa() + ":" + assinante.getSigla());
+			String cpf = Long.toString(assinante.getCpfPessoa());
+			acrescentarHashDeAuditoria(mov, sha256,	autenticando, assinante.getNomePessoa(), cpf, null);
+	
 			gravarMovimentacao(mov);
+						
 			concluirAlteracaoDocComRecalculoAcesso(doc);
 
 			// Verifica se o documento possui documento pai e faz a juntada
@@ -1976,8 +2011,10 @@ public class ExBL extends CpBL {
 						dtMov, cadastrante, cadastrante, mov);
 			}
 
-			if (!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
+			if (!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha()) {
 				s = processarComandosEmTag(doc, "assinatura");
+			}
+				
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new AplicacaoException("Erro ao registrar assinatura.", 0, e);
@@ -4338,15 +4375,17 @@ public class ExBL extends CpBL {
 			if (funcao != null) {
 				obterMetodoPorString(funcao, doc);
 			}
-			
-			//Gerar movimentação REFAZER para Mobil Pai
-			final ExMovimentacao mov = criarNovaMovimentacao(
-					ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFAZER,
-					cadastrante, lotaCadastrante, doc.getExMobilPai(), null, null, null,
-					null, null, null);
-			mov.setDescrMov("Documento refeito. <br /> Documento Cancelado: " + doc.getSigla() + ".<br /> Novo Documento:  " + novoDoc);
-			
-			gravarMovimentacao(mov);
+
+			//Gerar movimentação REFAZER para Mobil Pai se existir
+			if (doc.getExMobilPai() != null) {
+				final ExMovimentacao mov = criarNovaMovimentacao(
+						ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFAZER,
+						cadastrante, lotaCadastrante, doc.getExMobilPai(), null, null, null,
+						null, null, null);
+				mov.setDescrMov("Documento refeito. <br /> Documento Cancelado: " + doc.getSigla() + ".<br /> Novo Documento:  " + novoDoc);			
+				gravarMovimentacao(mov);
+			}
+
 
 			concluirAlteracaoDocComRecalculoAcesso(novoDoc);
 			// atualizarWorkflow(doc, null);
@@ -5515,9 +5554,13 @@ public class ExBL extends CpBL {
 				mapFromUrlEncodedForm(attrs, form);
 			}
 		}
+		
 		if (acao != null)
 			attrs.put(acao, "1");
 		attrs.put("doc", doc);
+		
+
+		
 		// rw.setAttribute("modelo", doc.getExModelo());
 		if (mov == null) {
 			if (doc.getExModelo() != null) {

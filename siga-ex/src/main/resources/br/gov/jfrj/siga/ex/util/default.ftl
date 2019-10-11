@@ -2185,40 +2185,50 @@ Pede deferimento.</span><br/><br/><br/>
             [@fimSubscritor]${(doc.subscritor.idPessoa)}[/@fimSubscritor]
         [/#if]
         
-                [#if (doc.mobilGeral.exMovimentacaoSet)??]
-        [#list doc.mobilGeral.exMovimentacaoSet as mov]
-                    [#if (mov.exTipoMovimentacao.idTpMov)! == 24]
-                        [@inicioSubscritor]${(mov.subscritor.idPessoa)}[/@inicioSubscritor]
-                        <br/><br/><br/>
-                        [#if mov.nmSubscritor??]
-                            ${mov.nmSubscritor}
-                        [#else]
-                            ${(mov.subscritor.nomePessoa)!}
-                        [/#if]      
-                        <br>
-                        [#if mov.nmFuncao??]
-                            ${mov.nmFuncao}
-                        [#elseif (mov.titular.funcaoConfianca.nomeFuncao)??]
-                            ${mov.titular.funcaoConfianca.nomeFuncao} 
-                                [#if substituicao!false && ((doc.titular.idPessoa)!-1) != ((doc.subscritor.idPessoa)!-1)] EM EXERCÍCIO [/#if]
-                        [#elseif (mov.subscritor.funcaoConfianca.nomeFuncao)??]
-                            ${mov.subscritor.funcaoConfianca.nomeFuncao}
-                        [#else]
-                            ${(mov.subscritor.cargo.nomeCargo)!}
-                        [/#if]
-                        [#if formatarOrgao]
-                            <br>
-                            [#if mov.nmLotacao??]
-                                ${mov.nmLotacao}
-                            [#else]
-                                ${mov.titular.lotacao.nomeLotacao}
-                            [/#if]
-                        [/#if]
-                        [@fimSubscritor]${(mov.subscritor.idPessoa)}[/@fimSubscritor]
-            [/#if]
+
+	    [#if func.assinadoPor(doc)??]
+       		 <br/>${func.assinadoPor(doc)}
+    	[/#if]
+
+        
+        [#if (doc.mobilGeral.exMovimentacaoSet)??]
+       		[#list doc.mobilGeral.exMovimentacaoSet as mov]
+
+	            [#if (mov.exTipoMovimentacao.idTpMov)! == 24]
+	                [@inicioSubscritor]${(mov.subscritor.idPessoa)}[/@inicioSubscritor]
+	                    <br/><br/><br/>
+	                    [#if mov.nmSubscritor??]
+	                        ${mov.nmSubscritor}
+	                    [#else]
+	                        ${(mov.subscritor.nomePessoa)!}
+	                    [/#if]      
+	                    <br>
+	                    [#if mov.nmFuncao??]
+	                        ${mov.nmFuncao}
+	                    [#elseif (mov.titular.funcaoConfianca.nomeFuncao)??]
+	                        ${mov.titular.funcaoConfianca.nomeFuncao} 
+	                            [#if substituicao!false && ((doc.titular.idPessoa)!-1) != ((doc.subscritor.idPessoa)!-1)] EM EXERCÍCIO [/#if]
+	                    [#elseif (mov.subscritor.funcaoConfianca.nomeFuncao)??]
+	                        ${mov.subscritor.funcaoConfianca.nomeFuncao}
+	                    [#else]
+	                        ${(mov.subscritor.cargo.nomeCargo)!}
+	                    [/#if]
+	                    [#if formatarOrgao]
+	                        <br>
+	                        [#if mov.nmLotacao??]
+	                            ${mov.nmLotacao}
+	                        [#else]
+	                            ${mov.titular.lotacao.nomeLotacao}
+	                        [/#if]
+	                    [/#if]
+	                [@fimSubscritor]${(mov.subscritor.idPessoa)}[/@fimSubscritor]
+	    		[/#if]
+ 		
+	    		
         [/#list]
-            [/#if]
+      [/#if]
     [/#if]
+
     [#if textoFinal??]
         <br/>${textoFinal}
     [/#if]

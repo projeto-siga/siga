@@ -530,7 +530,11 @@ public class ExMobilVO extends ExVO {
 				&& mob.getUltimaMovimentacaoNaoCancelada()
 					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONTROLE_DE_COLABORACAO
 				&& mob.getUltimaMovimentacaoNaoCancelada()
-					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO)
+					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO
+				&& mob.getUltimaMovimentacaoNaoCancelada()
+					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_REFAZER
+				&& mob.getUltimaMovimentacaoNaoCancelada()
+					.getExTipoMovimentacao().getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA)
 			addAcao("arrow_undo",
 					"Desfa_zer "
 							+ mob.getDescricaoUltimaMovimentacaoNaoCancelada(),

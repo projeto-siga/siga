@@ -596,7 +596,7 @@ public class ExMovimentacaoController extends ExController {
 			af.ativo = false;
 			af.fixo = true;
 		}
-		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")) && (doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao()))) {
 			Ex.getInstance().getBL().gravar(getCadastrante(), getTitular(), getLotaTitular(), doc);
 		}
 		result.include("sigla", sigla);

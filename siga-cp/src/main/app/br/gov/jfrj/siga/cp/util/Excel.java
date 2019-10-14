@@ -434,9 +434,10 @@ public class Excel {
 		if(funcao != null) {
 			return "Linha " + linha +": NOME já cadastrado" + System.getProperty("line.separator");
 		}
-		if(!validarCaracterEspecial(nomeFuncao)) {
+		
+		if(!nomeFuncao.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9.-]+")) {
 			return "Linha " + linha +": NOME com caracteres não permitidos" + System.getProperty("line.separator");
-		}
+    	}
 		if(nomes.contains(Texto.removeAcento(Texto.removerEspacosExtra(nomeFuncao).trim().toUpperCase()))) {
 			return "Linha " + linha +": NOME repetido em outra linha do arquivo" + System.getProperty("line.separator");
 		} else {

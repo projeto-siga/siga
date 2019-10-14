@@ -351,7 +351,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		// https://regex101.com/r/NJidBr/2
 		// Ao acessar, clique em "Switch to unit tests"
 		final Pattern p1 = Pattern.compile("^(?<orgao>" + acronimos
-				+ ")?-?(?<especie>[A-Za-z]{3})?-?(?:(?<sonumero>[0-9]{1,5})|(?:(?<ano>\\d{4}?)/?)(?<numero>[0-9]{1,5})(?<subnumero>\\.?[0-9]{1,3})??)(?:(?<via>(?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|(?:-?V(?<volume>[0-9]{1,2})))?$");
+				+ ")?-?(?<especie>[A-Za-z]{3})?-?(?:(?<sonumero>[0-9]{1,6})|(?:(?<ano>\\d{4}?)/?)(?<numero>[0-9]{1,6})(?<subnumero>\\.?[0-9]{1,3})??)(?:(?<via>(?:-?[a-zA-Z]{1})|(?:-[0-9]{1,2}))|(?:-?V(?<volume>[0-9]{1,2})))?$");
 		final Matcher m2 = p2.matcher(sigla);
 		final Matcher m1 = p1.matcher(sigla);
 

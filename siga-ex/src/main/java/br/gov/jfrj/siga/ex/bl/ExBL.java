@@ -1889,43 +1889,6 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException("Senha do subscritor inválida.");
 			}
 		}
-		
-
-		//Verificar se é substituto
-		if (!autenticando) {
-			if (subscritor.getId() != doc.getSubscritor().getId()) {
-				if(Ex.getInstance().getComp().podeAssinarPorComSenha(cadastrante, lotaCadastrante)) {
-					DpSubstituicao dpSubstituicao = new DpSubstituicao();
-					dpSubstituicao.setSubstituto(subscritor);
-					dpSubstituicao.setLotaSubstituto(subscritor.getLotacao());
-					List<DpSubstituicao> itens = dao().consultarSubstituicoesPermitidas(dpSubstituicao);
-					
-					//Comparar Titular com doc subscritor
-					for (DpSubstituicao tit : itens) {
-						if (tit.getTitular().equivale(doc.getSubscritor())) {
-							fValido = true ;
-							fSubstituindo = true;
-							
-							final ExMovimentacao movsub;
-							movsub = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
-								cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
-								subscritor, null, null, null, null);
-							movsub.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla());
-							gravarMovimentacao(movsub);
-						}
-					}
-				}
-			}
-		}
-
-		if (!doc.isFinalizado())
-			finalizar(cadastrante, lotaCadastrante, doc);
-		
-		boolean fPreviamenteAssinado = doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha();
-
-		if (!doc.isFinalizado())
-			throw new AplicacaoException(
-					"não é possível registrar assinatura de um documento não finalizado");
 
 		if (doc.isCancelado())
 			throw new AplicacaoException(
@@ -1959,7 +1922,32 @@ public class ExBL extends CpBL {
 								continue;
 							}
 						}
-					
+					//Verificar se é substituto
+					if (!fValido) {
+						if (subscritor.getId() != doc.getSubscritor().getId()) {
+							if(Ex.getInstance().getComp().podeAssinarPorComSenha(cadastrante, lotaCadastrante)) {
+								DpSubstituicao dpSubstituicao = new DpSubstituicao();
+								dpSubstituicao.setSubstituto(subscritor);
+								dpSubstituicao.setLotaSubstituto(subscritor.getLotacao());
+								List<DpSubstituicao> itens = dao().consultarSubstituicoesPermitidas(dpSubstituicao);
+								
+								//Comparar Titular com doc subscritor
+								for (DpSubstituicao tit : itens) {
+									if (tit.getTitular().equivale(doc.getSubscritor())) {
+										fValido = true ;
+										fSubstituindo = true;
+										
+										final ExMovimentacao movsub;
+										movsub = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
+											cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
+											subscritor, null, null, null, null);
+										movsub.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla());
+										gravarMovimentacao(movsub);
+									}
+								}
+							}
+						}
+					}
 				}
 	
 				if (fValido == false)
@@ -1971,6 +1959,16 @@ public class ExBL extends CpBL {
 						0, e);
 			}
 		}
+		
+		if (!doc.isFinalizado())
+			finalizar(cadastrante, lotaCadastrante, doc);
+		
+		boolean fPreviamenteAssinado = doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha();
+
+		if (!doc.isFinalizado())
+			throw new AplicacaoException(
+					"não é possível registrar assinatura de um documento não finalizado");
+
 
 		String s = null;
 		try {

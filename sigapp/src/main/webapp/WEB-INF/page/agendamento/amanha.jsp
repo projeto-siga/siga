@@ -12,6 +12,17 @@
 		<c:if test="${listAgendamentos != null}">
 	 	</c:if>
 	 	<h4> ${dataAmanha} &nbsp (${diaSemana}) </h4>
+	 	<form name="frm_filtro" action="${linkTo[AgendamentoController].amanha}" method="get">
+	 	 <select name="selFiltraSala" onchange="document.frm_filtro.submit();">
+	 	 <option value="" selected="selected">filtre pela sala</option>
+	 	 <option value="">Todas as salas</option>
+	 	  <c:if test="${listLocais != null}">
+	 	    <c:forEach items="${listLocais}" var="sala">
+	 	      <option value="${sala.cod_local}">${sala.local}</option>
+	 	    </c:forEach>        
+	 	  </c:if>
+	 	 </select>
+	 	</form> 
  </center>
  <form action="${linkTo[AgendamentoController].amanhaPrint}" method="get" style="position: relative; left: 10%;">
 		<input type="hidden" name="frm_data_ag" value="${dataAmanha}" />

@@ -64,33 +64,6 @@
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 
-	<security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Paginas do Sistema</web-resource-name>
-            <url-pattern>/*</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>sigausuario</role-name>
-        </auth-constraint>
-    </security-constraint>
-
-	<security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Recursos Publicos</web-resource-name>
-            <url-pattern>/public/*</url-pattern>
-            <url-pattern>/rest/*</url-pattern>
-        </web-resource-collection>
-    </security-constraint>
-
-	<login-config>
-		<auth-method>FORM</auth-method>
-		<realm-name>SigaPP</realm-name>
-		<form-login-config>
-			<form-login-page>/paginas/login.jsp</form-login-page>
-			<form-error-page>/paginas/loginInvalido.jsp</form-error-page>
-		</form-login-config>
-	</login-config>
-
 	<error-page>
         <error-code>500</error-code>
         <location>/WEB-INF/page/erroGeral.jsp</location>

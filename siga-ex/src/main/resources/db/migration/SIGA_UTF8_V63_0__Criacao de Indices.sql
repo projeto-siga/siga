@@ -132,4 +132,4 @@ compute STATISTICS nologging;
 
 CREATE INDEX siga.bol_boletim_fk 
   ON siga.ex_boletim_doc (id_boletim) TABLESPACE corporativo_data_ts ONLINE 
-INITRANS 20 compute STATISTICS nologging; 
+INITRANS 20 compute STATISTICS nologging;

@@ -928,6 +928,14 @@ public class CpDao extends ModeloDao {
 		final DpPessoa pes = (DpPessoa) qry.uniqueResult();
 		return pes;
 	}
+	
+	public int consultarQtdePorEmailIgualCpfDiferente(final String email, final long cpf) {
+		final Query qry = getSessao().getNamedQuery("consultarPorEmailIgualCpfDiferente");
+		qry.setString("emailPessoa", email);
+		qry.setLong("cpf", cpf);
+		final int l = ((Long) qry.uniqueResult()).intValue();
+		return l;
+	}
 
 	@SuppressWarnings("unchecked")
 	public DpPessoa consultarPorSigla(final DpPessoa o) {

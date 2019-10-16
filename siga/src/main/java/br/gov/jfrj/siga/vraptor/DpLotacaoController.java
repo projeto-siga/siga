@@ -288,7 +288,10 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		} else {
 			lotacao = dao().consultar(id, DpLotacao.class, false);
 			listPessoa = dao().getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE);
-			
+			if(dao().consultarQtdeDocCriadosPossePorDpLotacao(id) > 0 && 
+					(!lotacao.getNomeLotacao().equalsIgnoreCase(Texto.removerEspacosExtra(nmLotacao).trim()) || !lotacao.getSiglaLotacao().equalsIgnoreCase(siglaLotacao.toUpperCase().trim()))) {
+				throw new AplicacaoException("Não é permitido a alteração do nome e sigla da unidade após criação de documento ou tramitação de documento para unidade.");
+			}
 		}
 		
 		//valida se pode inativar lotação

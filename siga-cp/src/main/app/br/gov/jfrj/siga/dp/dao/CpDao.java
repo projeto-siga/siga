@@ -2641,4 +2641,18 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
+	
+	public Integer consultarQtdeDocCriadosPossePorDpLotacao(Long idLotacao) {
+		try {
+			SQLQuery sql = (SQLQuery) getSessao().getNamedQuery(
+					"consultarQtdeDocCriadosPossePorDpLotacao");
+
+			sql.setLong("idLotacao", idLotacao);
+			List result = sql.list();
+			final int l = ((BigDecimal) sql.uniqueResult()).intValue();
+            return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
 }

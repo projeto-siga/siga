@@ -126,7 +126,7 @@
 	<c:if test="${empty loginMensagem}">
 		<c:set var="avisoTituloCabec" value="Aviso Importante" />
 		<c:set var="avisoCabec" value="O sistema está passando por instabilidade. A equipe técnica está integralmente
-			atuando para resolver a questão com a maior brevidade possível, assim que normalizado informaremos." />	
+			atuando para resolver a questão com a maior brevidade possível, assim que normalizado será informado." />	
 		<div class="${avisoCabec==null?'d-none':''}" id="avisoCabecId" >
 			<div id="avisoCabecModal" class="modal" tabindex="-1" role="dialog">
 			  <div class="modal-dialog" role="document">

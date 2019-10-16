@@ -86,6 +86,7 @@ function gravarDoc() {
 	if (typeof (onSave) == "function")
 		onSave();
 
+	document.getElementById("btnGravar").disabled = true;
 	frm.submit();
 }
 
@@ -168,6 +169,8 @@ function validar(silencioso) {
 }
 
 function aviso(msg, silencioso) {
+	document.getElementById("btnGravar").disabled = false;
+	
 	if (silencioso)
 		avisoVermelho('O documento não pôde ser salvo: ' + msg);
 	else

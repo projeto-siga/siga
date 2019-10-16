@@ -17,7 +17,6 @@
 		}
 	</script>
 	
-	
 	<c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
 		<c:set var="login_box_class" value="box_login" />
@@ -124,5 +123,35 @@
 			return "";
 		}
 	</script>
+	<c:if test="${empty loginMensagem}">
+		<c:set var="avisoTituloCabec" value="Aviso Importante" />
+		<c:set var="avisoCabec" value="O sistema está passando por instabilidade. A equipe técnica está integralmente
+			atuando para resolver a questão com a maior brevidade possível, assim que normalizado informaremos." />	
+		<div class="${avisoCabec==null?'d-none':''}" id="avisoCabecId" >
+			<div id="avisoCabecModal" class="modal" tabindex="-1" role="dialog">
+			  <div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h5 class="modal-title">${avisoTituloCabec}</h5>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+			          <span aria-hidden="true">&times;</span>
+			        </button>
+			      </div>
+			      <div class="modal-body">
+			        <p>${avisoCabec}</p>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			$(window).load(function() {
+				$('#avisoCabecModal').modal('show');
+			});
+		</script>
+	</c:if>	
 	<script src="../../javascript/service-worker.js" async></script>
 </siga:pagina>

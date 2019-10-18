@@ -614,7 +614,7 @@ var providerPassword = {
 	inicializar : function(cont) {
 		try {
 			var senhaDialog = $(
-					'<div class="modal fade" tabindex="-1" role="dialog" id="senhaDialog"><div class="modal-dialog" role="document"><div class="modal-content">'
+					'<div class="modal fade" tabindex="-1" role="dialog" id="senhaDialog"><div class="modal-dialog modal-dialog-centered" role="document"><div class="modal-content">'
 					+ '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Identificação</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
 					+ '<div class="modal-body"><fieldset><label>Matrícula</label> <br /> <input id="nomeUsuarioSubscritor" type="text" value="' + $('#siglaUsuarioCadastrante').val() + '" class="text ui-widget-content ui-corner-all" onblur="javascript:converteUsuario(this)" /> <label>(modifique caso necessário)</label><br /> <br /> <label>Senha</label><br /> <input type="password" id="senhaUsuarioSubscritor" class="text ui-widget-content ui-corner-all" autocomplete="off" autofocus /></fieldset></div>'
 					+ '<div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button><button type="button" id="senhaOk" class="btn btn-primary">OK</button></div>'
@@ -633,7 +633,9 @@ var providerPassword = {
 			});
 			
 			senhaDialog.on('hidden.bs.modal', function () {
-				// senhaDialog.modal('dispose');
+				// gAssinando = flag necessario para reabrir a janela mediante cancelamento ou fechamento da modal
+				// pelo usuário por causa da função AssinarDocumentos que é chamada pelo botão assinar
+				gAssinando = false;
 				$('#senhaDialog').remove();
 			});
 			

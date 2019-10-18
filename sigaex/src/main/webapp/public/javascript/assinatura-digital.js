@@ -622,6 +622,7 @@ var providerPassword = {
 					.modal();
 			
 			senhaDialog.on('shown.bs.modal', function () {
+				$(this).find('[autofocus]').focus();
 				$('#senhaOk').click(function () {
 					gLogin = $("#nomeUsuarioSubscritor").val();
 					gPassword = $("#senhaUsuarioSubscritor").val();

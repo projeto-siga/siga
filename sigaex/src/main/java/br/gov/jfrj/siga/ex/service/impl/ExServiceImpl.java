@@ -709,6 +709,35 @@ public class ExServiceImpl implements ExService {
 		}	
     }
 	
+	public String autenticarDocumento(String sigla, final Boolean juntar, final Boolean tramitar, String nomeUsuarioSubscritor,
+			String senhaUsuarioSubscritor, String siglaCadastrante) throws Exception {
+
+		ExMobil mob = buscarMobil(sigla);
+		ExDocumento doc = mob.getExDocumento();
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia().setMob(mob);
+		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+		
+		PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(
+				siglaCadastrante);
+		
+		String resultado = null;
+
+		try {
+			resultado = Ex.getInstance()
+					.getBL()
+					.assinarDocumentoComSenha(cadastranteParser.getPessoa(),
+							cadastranteParser.getLotacao(), doc, mov.getDtMov(),
+							nomeUsuarioSubscritor, senhaUsuarioSubscritor, true,
+							mov.getTitular(), true, juntar, tramitar);
+		} catch (Exception e) {
+			throw e;
+			
+		}
+		return resultado;
+
+	}
+	
 	public String criarDocumentoCapturado(String cadastranteStr, String subscritorStr, String destinatarioStr, String destinatarioCampoExtraStr, String descricaoTipoDeDocumento, String nomeForma ,String nomeModelo, String classificacaoStr, 
 			String descricaoStr, Boolean eletronico, String nomeNivelDeAcesso, String conteudo, String siglaMobilPai, Boolean finalizar, byte[] arquivo) throws Exception {
     	try {

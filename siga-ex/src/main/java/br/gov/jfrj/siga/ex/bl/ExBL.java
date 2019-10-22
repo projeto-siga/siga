@@ -3248,9 +3248,13 @@ public class ExBL extends CpBL {
 			Set<ExVia> setVias = doc.getSetVias();
 			
 			//Libera gravação e obtém numero gerado para processar documento
-			dao().gravar(doc);
-			ContextoPersistencia.flushTransaction();
-			doc.setNumExpediente(obterNumeroGerado(doc));
+			//Não necessita da numeração e processamento para documento capturado.
+			//TODO: Trazer rotina de numeração da Trigger para Java. Dando Lock apenas na EX_DOCUMENTO_NUMERACAO. Contra: Se transação falhar abaixo o número será perdido
+			if (!doc.isCapturado()) {
+				dao().gravar(doc);
+				ContextoPersistencia.flushTransaction();
+				doc.setNumExpediente(obterNumeroGerado(doc));
+			}
 			
 			processar(doc, false, false);
 
@@ -4375,7 +4379,7 @@ public class ExBL extends CpBL {
 			if (funcao != null) {
 				obterMetodoPorString(funcao, doc);
 			}
-
+			
 			//Gerar movimentação REFAZER para Mobil Pai se existir
 			if (doc.getExMobilPai() != null) {
 				final ExMovimentacao mov = criarNovaMovimentacao(
@@ -4385,8 +4389,7 @@ public class ExBL extends CpBL {
 				mov.setDescrMov("Documento refeito. <br /> Documento Cancelado: " + doc.getSigla() + ".<br /> Novo Documento:  " + novoDoc);			
 				gravarMovimentacao(mov);
 			}
-
-
+			
 			concluirAlteracaoDocComRecalculoAcesso(novoDoc);
 			// atualizarWorkflow(doc, null);
 			return novoDoc;

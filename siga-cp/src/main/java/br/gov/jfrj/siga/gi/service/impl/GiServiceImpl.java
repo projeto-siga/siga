@@ -131,6 +131,7 @@ public class GiServiceImpl implements GiService {
 			if (!lista.isEmpty()) {
 				for (CpIdentidade identidade : lista) {
 					JSONObject pessoa = new JSONObject();
+					JSONObject orgao = new JSONObject();
 					JSONObject lotacao = new JSONObject();
 					JSONObject cargo = new JSONObject();
 					JSONObject funcao = new JSONObject();
@@ -139,6 +140,12 @@ public class GiServiceImpl implements GiService {
 					DpPessoa p = identidade.getPessoaAtual();
 					pessoa.put("siglaPessoa", p.getSiglaCompleta());
 					pessoa.put("nomePessoa", p.getNomePessoa());
+					
+					// Orgao Pessoa
+					CpOrgaoUsuario o = p.getOrgaoUsuario();
+					orgao.put("idOrgao", o.getId());
+					orgao.put("nomeOrgao", o.getNmOrgaoAI());
+					orgao.put("siglaOrgao", o.getSigla());
 
 					// Lotacao Pessoa
 					DpLotacao l = p.getLotacao();
@@ -159,6 +166,7 @@ public class GiServiceImpl implements GiService {
 						funcao.put("nomeFuncaoConfianca", f.getNomeFuncao());
 					}
 
+					pessoa.put("orgao", orgao);
 					pessoa.put("lotacao", lotacao);
 					pessoa.put("cargo", cargo);
 					pessoa.put("funcaoConfianca", funcao);

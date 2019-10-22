@@ -42,7 +42,7 @@ CREATE INDEX corporativo.cp_ident_cp_ident_id_ini_fk
   ON corporativo.cp_identidade (his_id_ini) TABLESPACE corporativo_data_ts 
 ONLINE INITRANS 20 compute STATISTICS nologging; 
 
-CREATE INDEX corporativo.iacs_cp_marca_00001 
+CREATE INDEX corporativo.iacs_cp_marca_00002 
   ON corporativo.cp_marca (id_mobil) TABLESPACE corporativo_data_ts ONLINE 
 INITRANS 20 compute STATISTICS nologging; 
 
@@ -132,4 +132,4 @@ compute STATISTICS nologging;
 
 CREATE INDEX siga.bol_boletim_fk 
   ON siga.ex_boletim_doc (id_boletim) TABLESPACE corporativo_data_ts ONLINE 
-INITRANS 20 compute STATISTICS nologging; 
+INITRANS 20 compute STATISTICS nologging;

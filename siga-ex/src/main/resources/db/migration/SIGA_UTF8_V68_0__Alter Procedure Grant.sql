@@ -1,3 +1,5 @@
+/** SOLUÇÃO NÃO IMPLEMENTADA DEVIDO A COMPORTAMENTO NÃO ADEQUADO EM ORACLE RAC.
+
 -------------------------------------------
 --	SCRIPT:Readequação da Estrutura de Numeração do Documento
 -------------------------------------------
@@ -30,3 +32,4 @@ BEGIN
 
 END CREATE_SQ_NUMERACAO_DOCUMENTO;
 /
+**/

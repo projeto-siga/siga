@@ -1,10 +1,11 @@
+/** SOLUÇÃO NÃO IMPLEMENTADA DEVIDO A COMPORTAMENTO NÃO ADEQUADO EM ORACLE RAC.
 -------------------------------------------
 --	SCRIPT:Readequação da Estrutura de Numeração do Documento
 -------------------------------------------
   ALTER SESSION SET CURRENT_SCHEMA=siga;
 --------------------------------------------------------
   
-/* DROP ALL SEQUENCES OF NUMERACAO DOCUMENTO */
+-- DROP ALL SEQUENCES OF NUMERACAO DOCUMENTO 
 begin
   for sq in (select sequence_name 
               from   all_sequences 
@@ -16,7 +17,7 @@ begin
 end;
 /
 
-/* CREATE ALL SEQUENCES NUMERACAO DOCUMENTO */
+-- CREATE ALL SEQUENCES NUMERACAO DOCUMENTO 
 begin
   for doc in (SELECT org.id_orgao_usu ,
                        frm.id_forma_doc ,
@@ -40,3 +41,4 @@ begin
   end loop;             
 end;
 /
+**/

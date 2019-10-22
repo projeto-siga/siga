@@ -1,3 +1,5 @@
+/** SOLUÇÃO NÃO IMPLEMENTADA DEVIDO A COMPORTAMENTO NÃO ADEQUADO EM ORACLE RAC.
+
 -------------------------------------------
 --	SCRIPT:Readequação da Estrutura de Numeração do Documento
 -------------------------------------------
@@ -23,9 +25,9 @@ create or replace TRIGGER "SIGA"."EX_DOCUMENTO_INSERT_TRG" BEFORE INSERT ON "EX_
 	          PID_FORMA_DOC := :new.ID_FORMA_DOC;
 	          PANO_EMISSAO := :new.ANO_EMISSAO;
               
-              /* TODO: Verificar e criar sequence */
+              --TODO: Verificar e criar sequence
 	
-              /* Obtém numeracao atraves da SQ do ORGAO+FORMA+ANO */
+              -- Obtém numeracao atraves da SQ do ORGAO+FORMA+ANO 
               sq_name := 'SQ_EX_DOC_' || PID_ORGAO_USU || '_' || PID_FORMA_DOC || '_' || PANO_EMISSAO;
               stmt := 'SELECT "SIGA"."' || sq_name || '".NEXTVAL FROM DUAL ';
               dbms_output.put_line (stmt);
@@ -37,3 +39,4 @@ create or replace TRIGGER "SIGA"."EX_DOCUMENTO_INSERT_TRG" BEFORE INSERT ON "EX_
 	    end if;
 	end;
 /
+**/

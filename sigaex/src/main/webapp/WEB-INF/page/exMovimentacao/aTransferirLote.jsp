@@ -202,7 +202,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="row">
+			<div class="row d-none">
 				<div class="col-sm-4">
 					<div class="form-group" id="div_tpdall">
 						<label>Despacho Único</label> <select name="tpdall" id="tpdall"
@@ -259,7 +259,7 @@
 									<th rowspan="2" align="center"><input type="checkbox"
 										name="checkall" value="true" onclick="checkUncheckAll(this)" />
 									</th>
-									<th rowspan="2" class="col-5">Despacho <c:if
+									<th rowspan="2" class="col-5 d-none">Despacho <c:if
 											test="${secao==0}" />
 									</th>
 								</tr>
@@ -336,7 +336,7 @@
 									<td align="center" class="align-middle text-center"><input type="checkbox" name="${x}"
 										value="true" ${x_checked} id="${x}"
 										onclick="javascript:displaySel(this, '${tpd_x}');" /></td>
-									<td align="center" class="align-middle text-center">
+									<td align="center" class="align-middle text-center d-none">
 											<c:remove var="style" /> 
 											<c:if test="${empty param[x]}">
 												<c:set var="style" value=" style=display:none" />

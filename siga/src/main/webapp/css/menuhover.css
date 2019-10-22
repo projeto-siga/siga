@@ -8,6 +8,10 @@
     pointer-events: none;
 } 
 
+.navbar-nav li:hover > ul.dropdown-menu {
+    display: block;
+}
+
 .dropdown-submenu {
     position:relative;
 }

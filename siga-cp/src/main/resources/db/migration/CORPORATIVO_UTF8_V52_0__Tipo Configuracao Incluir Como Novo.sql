@@ -1,0 +1,1 @@
+insert into CORPORATIVO.CP_TIPO_CONFIGURACAO values(42, 'Criar Como Novo', 1);  

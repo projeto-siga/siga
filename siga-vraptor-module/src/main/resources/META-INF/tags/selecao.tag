@@ -229,8 +229,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 <c:if test="${tema != 'simple'}">
 	<div class="form-group">
 		<label for="formulario_${inputNameTipoSel}_sigla"
-			class="col-sm-2x col-form-label">${titulo}</label>
-		<div class="col-sm-10x">
+			class="col-sm-2x col-form-labelx">${titulo}</label>
 </c:if>
 <c:choose>
 	<c:when test="${desativar == 'sim'}">

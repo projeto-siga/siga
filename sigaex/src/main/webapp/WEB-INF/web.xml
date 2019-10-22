@@ -113,6 +113,7 @@
 
 	<filter-mapping>
 		<filter-name>ExFilter</filter-name>
+		<url-pattern>/webdav/*</url-pattern>
 		<url-pattern>/servicos/*</url-pattern>
 		<url-pattern>/apis/*</url-pattern>
 	</filter-mapping>
@@ -240,7 +241,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>webdav</servlet-name>
-		<url-pattern>/public/app/webdav/*</url-pattern>
+		<url-pattern>/webdav/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

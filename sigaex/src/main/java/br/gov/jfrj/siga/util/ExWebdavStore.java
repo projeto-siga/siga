@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,16 +14,11 @@ import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.webdav.DavExtensionConfig;
-import net.sf.webdav.ITransaction;
-import net.sf.webdav.IWebdavStore;
-import net.sf.webdav.StoredObject;
-
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.itextpdf.Documento;
-import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -31,12 +27,13 @@ import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.vo.ExMovimentacaoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
+import net.sf.webdav.DavExtensionConfig;
+import net.sf.webdav.ITransaction;
+import net.sf.webdav.IWebdavStore;
+import net.sf.webdav.StoredObject;
 
 public class ExWebdavStore implements IWebdavStore {
 	private static final Logger log = Logger.getLogger(ExWebdavStore.class);
-
-	private static DavExtensionConfig config = new DavExtensionConfig();
 
 	private static class Transaction implements ITransaction {
 		Principal principal;
@@ -56,119 +53,148 @@ public class ExWebdavStore implements IWebdavStore {
 	}
 
 	public ExWebdavStore(File f) {
-		log.error("criando" + f);
+		log.info("criando" + f);
 	}
 
 	@Override
 	public ITransaction begin(Principal principal) {
-		// log.error("begin");
+		log.info("begin");
 		return new Transaction(principal);
 	}
 
 	@Override
 	public void checkAuthentication(ITransaction t) {
-		// log.error("checkAuthentication");
+		log.info("checkAuthentication");
 		return;
 	}
 
 	@Override
 	public void commit(ITransaction t) {
-		// log.error("commit");
+		log.info("commit");
 		return;
 	}
 
 	@Override
 	public void createFolder(ITransaction t, String uri) {
-		log.error("createFolter:" + uri);
+		log.info("createFolter:" + uri);
 		return;
 	}
 
 	@Override
 	public void createResource(ITransaction t, String uri) {
-		log.error("createResource:" + uri);
+		log.info("createResource:" + uri);
 		return;
 	}
 
 	@Override
 	public String[] getChildrenNames(ITransaction t, String uri) {
-		log.error("getChildrenNames:" + uri);
-		// return new String[] { "TMP11962_32790.docx" };
+		log.info("getChildrenNames:" + uri);
+		try {
+			Ret ret = getMovs(new Context(uri));
+			int i = 0;
+			String[] s = new String[ret.movs.size()];
+			for (ExMovimentacao m : ret.movs) {
+				s[i] = m.getNmArqMov();
+				i++;
+			}
+			log.info(s);
+			return s;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return new String[] {};
 	}
 
 	@Override
 	public InputStream getResourceContent(ITransaction t, String uri) {
-		log.error("getResourceContent:" + uri);
-		byte[] ab = getContent(uri);
+		log.info("getResourceContent:" + uri);
+		byte[] ab;
+		try {
+			ab = getContent(uri);
+		} catch (Exception e) {
+			throwException("Não foi possível obter o conteúdo do arquivo auxiliar", e);
+			return null;
+		}
+		log.info(ab);
 		return new ByteArrayInputStream(ab);
 	}
 
 	@Override
 	public long getResourceLength(ITransaction t, String uri) {
-		log.error("getResourceLength:" + uri);
-		byte[] ab = getContent(uri);
+		log.info("getResourceLength:" + uri);
+		byte[] ab;
+		try {
+			ab = getContent(uri);
+		} catch (Exception e) {
+			throwException("Não foi possível obter o tamanho do arquivo auxiliar", e);
+			return 0;
+		}
 		return ab != null ? ab.length : 0;
 	}
 
 	@Override
 	public StoredObject getStoredObject(ITransaction t, String uri) {
-		log.error("getStoredObject:" + uri);
-		if ("".equals(uri) || "/".equals(uri) || uri.endsWith("/")
-				|| uri.split("/").length == 2) {
-			Date dt = new Date(2000, 1, 1);
+		log.info("getStoredObject:" + uri);
+		Ret ret = null;
+		try {
+			if (uri.startsWith("/!"))
+				ret = getMovs(new Context(uri));
+		} catch (Exception e) {
+			log.info(" - null");
+			return null;
+		}
+		Date dt = new Date(10, 1, 1);
+		if ("".equals(uri) || "/".equals(uri) || uri.endsWith("/") || uri.split("/").length == 2) {
 			StoredObject o = new StoredObject();
+			if (ret != null)
+				dt = ret.mob.doc().getDtRegDoc();
 			o.setFolder(true);
 			o.setCreationDate(dt);
 			o.setLastModified(dt);
 			o.setResourceLength(0);
-			log.error(" - folder");
+			log.info(" - folder" + ReflectionToStringBuilder.toString(o));
 			return o;
-		}
-		ExMovimentacao mov = null;
-		try {
-			mov = getMov(new Context(uri));
-		} catch (Exception e) {
-			log.error(" - null");
-			return null;
 		}
 		StoredObject o = new StoredObject();
 		o.setFolder(false);
-		Date dt = mov.getDtIniMov();
+		dt = ret.mov.getDtIniMov();
 		o.setCreationDate(dt);
 		o.setLastModified(dt);
+		o.setMimeType(getContentType(ret.mov.getNmArqMov()));
+		o.setEtag("teste");
+		// o.setNullResource(false);
+		// o.setResourceTypes(new ArrayList<String>());
 
 		byte ab[] = null;
-		ab = mov.getConteudoBlobMov2();
+		ab = ret.mov.getConteudoBlobMov2();
+
 		o.setResourceLength(ab != null ? ab.length : 0);
-		log.error(" - resource");
+		log.info(" - resource" + ReflectionToStringBuilder.toString(o));
 		return o;
 	}
 
 	@Override
 	public void removeObject(ITransaction t, String uri) {
-		log.error("removeObject:" + uri);
-		ExMovimentacao mov = getMov(new Context(uri));
+		log.info("removeObject:" + uri);
 		try {
-			Ex.getInstance()
-					.getBL()
-					.cancelar(null, null, mov.getExMobil(), mov, null, null,
-							null, null);
+			ExMovimentacao mov = getMovs(new Context(uri)).mov;
+			Ex.getInstance().getBL().cancelar(null, null, mov.getExMobil(), mov, null, null, null, null);
 		} catch (Exception e) {
-			throw new AplicacaoException(
-					"Não foi possível remover o arquivo auxiliar.", 0, e);
+			throwException("Não foi possível remover o arquivo auxiliar.", e);
 		}
 	}
 
 	@Override
 	public void rollback(ITransaction t) {
-		log.error("rollback:");
+		log.info("rollback:");
 		return;
 	}
 
 	@Override
-	public long setResourceContent(ITransaction t, String uri,
-			InputStream content, String contentType, String encoding) {
-		log.error("setResourceContent:" + uri);
+	public long setResourceContent(ITransaction t, String uri, InputStream content, String contentType,
+			String encoding) {
+		log.info("setResourceContent:" + uri);
 		Context ctx = new Context(uri);
 
 		if (contentType == null)
@@ -178,73 +204,82 @@ public class ExWebdavStore implements IWebdavStore {
 		try {
 			mob = Documento.getMobil(ctx.mobilSigla);
 		} catch (Exception e) {
-			throw new AplicacaoException("Erro obtendo o documento.", 0, e);
+			throwException("Erro obtendo o documento.", e);
 		}
 		byte[] ab;
 		try {
 			ab = IOUtils.toByteArray(content);
 		} catch (IOException e) {
-			throw new AplicacaoException(
-					"Não foi possível obter o conteúdo a ser gravado no arquivo auxiliar.",
-					0, e);
+			throwException("Não foi possível obter o conteúdo a ser gravado no arquivo auxiliar.", e);
+			return 0;
 		}
 		try {
 			ExDao dao = ExDao.getInstance();
 			DpPessoa cadastrante = dao.getPessoaFromSigla(ctx.cadastranteSigla);
 			DpPessoa titular = dao.getPessoaFromSigla(ctx.titularSigla);
 			DpLotacao lotaTitular = dao.getLotacaoFromSigla(ctx.unidadeSigla);
-			Ex.getInstance()
-					.getBL()
-					.anexarArquivoAuxiliar(cadastrante,
-							cadastrante.getLotacao(), mob, null, titular,
-							ctx.nmArq, titular, lotaTitular, ab, contentType);
+			Ex.getInstance().getBL().anexarArquivoAuxiliar(cadastrante, cadastrante.getLotacao(), mob, null, titular,
+					ctx.nmArq, titular, lotaTitular, ab, contentType);
 		} catch (Exception e) {
-			throw new AplicacaoException(
-					"Não foi possível gravar o arquivo auxiliar.", 0, e);
+			throwException("Não foi possível gravar o arquivo auxiliar.", e);
 		}
-		return 0;
+		return ab.length;
 	}
 
-	private byte[] getContent(String uri) {
-		ExMovimentacao mov = getMov(new Context(uri));
+	private byte[] getContent(String uri) throws Exception {
+		ExMovimentacao mov = getMovs(new Context(uri)).mov;
 
 		byte ab[] = null;
 		ab = mov.getConteudoBlobMov2();
 		return ab;
 	}
 
-	private ExMovimentacao getMov(Context ctx) {
+	private static class Ret {
 		ExMobil mob;
+		List<ExMovimentacao> movs;
+		ExMovimentacao mov;
+	}
+
+	private Ret getMovs(Context ctx) throws Exception {
+		Ret ret = new Ret();
+
 		try {
-			mob = Documento.getMobil(ctx.mobilSigla);
+			ret.mob = Documento.getMobil(ctx.mobilSigla);
 		} catch (Exception e) {
-			throw new AplicacaoException("Erro obtendo o documento.", 0, e);
+			throw new Exception("Erro obtendo o documento.", e);
 		}
-		if (mob == null) {
-			throw new AplicacaoException(
-					"A sigla informada não corresponde a um documento da base de dados.");
+		if (ret.mob == null) {
+			throw new Exception("A sigla informada não corresponde a um documento da base de dados.");
 		}
-		// if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(),
+		// (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(),
 		// getLotaTitular(), mob)) {
-		// throw new AplicacaoException("Documento " + mob.getSigla() + "
+		// return throwException("Documento " + mob.getSigla() + "
 		// inacessível ao usuário " + getTitular().getSigla() + "/"
 		// + getLotaTitular().getSiglaCompleta() + ".");
 		// }
-		ExMovimentacao mov;
+		ret.movs = new ArrayList<>();
 		try {
-			mov = getMov(mob, ctx.nmArq);
+			for (ExMovimentacao m : ret.mob.getExMovimentacaoSet()) {
+				if (m.getExTipoMovimentacao().getId()
+						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) && !m.isCancelada()
+						&& m.getNmArqMov() != null)
+					ret.movs.add(m);
+			}
 		} catch (Exception e) {
-			throw new AplicacaoException("Erro obtendo a movimentação.", 0, e);
+			throw new Exception("Erro obtendo a movimentação.", e);
 		}
-		final boolean isArquivoAuxiliar = mov != null
-				&& mov.getExTipoMovimentacao()
-						.getId()
-						.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR);
-		if (!isArquivoAuxiliar) {
-			throw new AplicacaoException(
-					"A sigla informada não corresponde a um arquivo auxiliar.");
+
+		ExMovimentacao mov;
+		if (ctx.nmArq != null && ctx.nmArq.length() > 0) {
+			for (ExMovimentacao m : ret.movs)
+				if (!m.isCancelada() && m.getNmArqMov() != null && m.getNmArqMov().equals(ctx.nmArq)) {
+					ret.mov = m;
+					break;
+				}
+			if (ret.mov == null)
+				throwException("A sigla informada não corresponde a um arquivo auxiliar.", null);
 		}
-		return mov;
+		return ret;
 	}
 
 	// private String getSigla(String uri) {
@@ -252,46 +287,6 @@ public class ExWebdavStore implements IWebdavStore {
 	// "").replace(".xlsx", "").replace(".xls", "")
 	// .replace("_", ":");
 	// }
-
-	private static class ContextOld {
-		String mobilSigla;
-		String cadastranteSigla;
-		String titularSigla;
-		String unidadeSigla;
-		String nmArq;
-
-		public ContextOld(String uri) {
-			mobilSigla = getMobilSigla(uri);
-			cadastranteSigla = getCadastranteSigla(uri);
-			titularSigla = getTitularSigla(uri);
-			unidadeSigla = getUnidadeSigla(uri);
-			nmArq = getNmArq(uri);
-		}
-
-		private String getMobilSigla(String uri) {
-			return uri.split("_")[0].replace("/", "");
-		}
-
-		private String getCadastranteSigla(String uri) {
-			return uri.split("_")[1];
-		}
-
-		private String getTitularSigla(String uri) {
-			return uri.split("_")[2];
-		}
-
-		private String getUnidadeSigla(String uri) {
-			String s = uri.split("_")[3];
-			if (s.contains("/"))
-				s = s.substring(0, s.indexOf("/"));
-			return s;
-		}
-
-		private String getNmArq(String uri) {
-			return uri.substring(uri.lastIndexOf("/") + 1);
-		}
-
-	}
 
 	private static class Context {
 		String mobilSigla;
@@ -304,17 +299,17 @@ public class ExWebdavStore implements IWebdavStore {
 			String a[] = uri.split("/");
 			String pwd = ExMovimentacaoVO.getWebdavPassword();
 			if (pwd == null)
-				throw new AplicacaoException(
-						"Propriedade siga.ex.webdav.pwd precisa ser configurada");
+				throwException("Propriedade siga.ex.webdav.pwd precisa ser configurada", null);
 
-			Map<String, Object> jwt = ExMovimentacaoVO
-					.getWebdavDecodedToken(a[1]);
+			Map<String, Object> jwt = ExMovimentacaoVO.getWebdavDecodedToken(a[1]);
 
 			mobilSigla = jwt.get("mob").toString();
 			cadastranteSigla = jwt.get("cad").toString();
 			titularSigla = jwt.get("tit").toString();
 			unidadeSigla = jwt.get("lot").toString();
 			nmArq = getNmArq(uri);
+			if (nmArq != null && nmArq.equals(a[1]))
+				nmArq = null;
 		}
 
 		private String getNmArq(String uri) {
@@ -325,12 +320,9 @@ public class ExWebdavStore implements IWebdavStore {
 
 	private ExMovimentacao getMov(ExMobil mob, String nmArq) {
 		for (ExMovimentacao m : mob.getExMovimentacaoSet()) {
-			if (m.getExTipoMovimentacao()
-					.getId()
-					.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR)
-					&& !m.isCancelada()
-					&& m.getNmArqMov() != null
-					&& m.getNmArqMov().equals(nmArq))
+			if (m.getExTipoMovimentacao().getId()
+					.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR) && !m.isCancelada()
+					&& m.getNmArqMov() != null && m.getNmArqMov().equals(nmArq))
 				return m;
 		}
 		return null;
@@ -338,68 +330,78 @@ public class ExWebdavStore implements IWebdavStore {
 
 	private String getContentType(String nmArq) {
 		nmArq = nmArq.toLowerCase();
-		if (nmArq.endsWith("docx"))
+		if (nmArq.endsWith(".docx"))
 			return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-		if (nmArq.endsWith("docx"))
+		if (nmArq.endsWith(".doc"))
 			return "application/msword";
-		if (nmArq.endsWith("xlsx"))
+		if (nmArq.endsWith(".xlsx"))
 			return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-		if (nmArq.endsWith("xls"))
+		if (nmArq.endsWith(".xls"))
 			return "application/vnd.ms-excel";
-		if (nmArq.endsWith("pptx"))
+		if (nmArq.endsWith(".pptx"))
 			return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
-		if (nmArq.endsWith("ppt"))
+		if (nmArq.endsWith(".ppt"))
 			return "application/vnd.ms-powerpoint";
 		return null;
 	}
 
+	private static void throwException(String s, Throwable t) {
+		log.error(s, t);
+		throw new RuntimeException(s, t);
+	}
+
 	@Override
 	public void addNamespace(HashMap<String, String> arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public Principal createPrincipal(HttpServletRequest request) {
-		return new Principal() {
+	public Principal createPrincipal(HttpServletRequest req) {
+		Principal p = new Principal() {
+
 			@Override
 			public String getName() {
-				return ContextoPersistencia.getUserPrincipal();
+				return "TESTE";
 			}
+			
 		};
+		return req.getUserPrincipal();
 	}
 
 	@Override
 	public void destroy() {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
-	public Map<String, String> getAdditionalProperties(String arg0,
-			Vector<String> arg1) {
-		// report not supported at all
-		return null;
+	public Map<String, String> getAdditionalProperties(String arg0, Vector<String> arg1) {
+		return new HashMap<String, String>();
 	}
 
 	@Override
 	public DavExtensionConfig getConfig() {
-		return config;
+		// TODO Auto-generated method stub
+		return new DavExtensionConfig();
 	}
 
 	@Override
 	public List<String> getReportSubEntries(String arg0, String arg1) {
-		// report not supported at all
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean supportsMoveOperation() {
-		return false;
+	public void moveResource(ITransaction arg0, String arg1, String arg2) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
-	public void moveResource(ITransaction transaction, String sourceUri,
-			String destinationUri) {
-		throw new UnsupportedOperationException(
-				"Operação de mover não é suportada");
+	public boolean supportsMoveOperation() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

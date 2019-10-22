@@ -1238,9 +1238,6 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 	public boolean podeSolicitarAssinatura(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExDocumento doc) {
 		
-		if (!doc.isFinalizado())
-			return false;
-		
 		if (doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha())
 			return false;
 		

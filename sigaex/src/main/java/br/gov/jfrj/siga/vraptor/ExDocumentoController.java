@@ -68,6 +68,7 @@ import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
+import br.gov.jfrj.siga.base.SigaBaseProperties;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -902,11 +903,48 @@ public class ExDocumentoController extends ExController {
 								+ " cancelado ");
 				}
 			} else  {
-				throw new AplicacaoException("Documento "
-						+ exDocumentoDTO.getMob().getSigla()
-						+ " inacessível ao usuário " + getTitular().getSigla()
-						+ "/" + getLotaTitular().getSiglaCompleta() + "." + s
-						+ " " + msgDestinoDoc);
+				if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+					String a[] = exDocumentoDTO.getMob().doc().getListaDeAcessosString().split(",");
+					CpDao cpdao = CpDao.getInstance();
+					DpPessoa p = null;
+					DpLotacao l = null;
+					String parteNumerica = null;
+					s = "(";
+					for (int i = 0; i < a.length; i++) {
+						
+						parteNumerica = a[i].replaceAll("[^0123456789]", "");
+						if(parteNumerica != null && !"".equals(parteNumerica)) {
+							p = new DpPessoa();
+							p.setMatricula(Long.valueOf(parteNumerica));  
+							p.setSesbPessoa(a[i].replaceAll("[^a-zA-Z]", ""));
+							p = cpdao.consultarPorSigla(p);
+							s += p.getNomePessoa() + "("+a[i]+")";
+						} else {
+							l = new DpLotacao();
+							l.setSigla(a[i].replace(exDocumentoDTO.getDoc().getOrgaoUsuario().getSigla(), ""));
+							l = cpdao.consultarPorSigla(l);
+							s += "("+l.getNomeLotacao()+")";
+						}
+						s += (i+1 == a.length) ? "" : ",";
+					}
+					s += ")";
+					
+					
+					s = " "
+							+ exDocumentoDTO.getMob().doc().getExNivelAcessoAtual()
+									.getNmNivelAcesso() + " " + s;
+					throw new AplicacaoException("Documento "
+							+ exDocumentoDTO.getMob().getSigla()
+							+ " inacessível ao usuário " + getTitular().getNomePessoa() + "(" +getTitular().getSigla()
+							+ "/" + getLotaTitular().getSiglaCompleta() + ")." + s
+							+ " " + msgDestinoDoc);
+				} else {
+					throw new AplicacaoException("Documento "
+							+ exDocumentoDTO.getMob().getSigla()
+							+ " inacessível ao usuário " + getTitular().getSigla()
+							+ "/" + getLotaTitular().getSiglaCompleta() + "." + s
+							+ " " + msgDestinoDoc);
+				}
 			}
 		}
 	}
@@ -1534,6 +1572,10 @@ public class ExDocumentoController extends ExController {
 			exBL.gravar(getCadastrante(), getTitular(), getLotaTitular(),
 					exDocumentoDTO.getDoc());
 
+			if(exDocumentoDTO.getDoc().getExMobilPai() != null && Ex.getInstance().getComp().podeRestrigirAcesso(getTitular(), getLotaTitular(), exDocumentoDTO.getDoc().getExMobilPai())) {
+				exBL.copiarRestringir(exDocumentoDTO.getDoc().getMobilGeral(), exDocumentoDTO.getDoc().getExMobilPai().getDoc().getMobilGeral(), getCadastrante(), getTitular(), exDocumentoDTO.getDoc().getData());
+			}
+			
 			if (!exDocumentoDTO.getDoc().isFinalizado()
 					&& (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO || exDocumentoDTO
 							.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO))

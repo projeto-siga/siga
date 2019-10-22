@@ -2,6 +2,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <script type="text/javascript">
 	function validar() {
@@ -33,7 +34,8 @@
 		}
 
 		if(idLotacao==null || idLotacao == 0) {
-			mensagemAlerta("Preencha a lotação da pessoa.");
+			var msg="<fmt:message key='usuario.lotacao'/>";
+			mensagemAlerta("Preencha a "+msg.toLowerCase()+" da pessoa.");
 			document.getElementById('idLotacao').focus();
 			return;	
 		}
@@ -198,7 +200,7 @@
 					</div>
 					<div class="col-sm-4">
 						<div class="form-group">
-							<label for="idLotacao">Lota&ccedil;&atilde;o</label>
+							<label for="idLotacao"><fmt:message key="usuario.lotacao"/></label>
 							<select name="idLotacao" value="${idLotacao}" class="form-control">
 								<c:forEach items="${listaLotacao}" var="item">
 									<option value="${item.idLotacao}" ${item.idLotacao == idLotacao ? 'selected' : ''}>

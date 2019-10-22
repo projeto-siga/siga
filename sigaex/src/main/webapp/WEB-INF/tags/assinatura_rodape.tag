@@ -4,6 +4,15 @@
 
 <script src="/sigaex/public/javascript/assinatura-digital.js"></script>
 <input type="hidden" id="siglaUsuarioCadastrante" value="${cadastrante.sigla}"/>
+<input type="hidden" id="siglaUsuSubscritor" value="${doc.subscritor.sigla}"/>
+<input type="hidden" id="nomeUsuSubscritor" value="${doc.subscritor.nomePessoa}"/>
+
+<c:forEach items="${doc.getMobilGeral().getMovimentacoesPorTipo(24)}" var="currentItem" varStatus="stat">
+  <c:set var="cossignatarios" value="${stat.first ? '' : cossignatarios} ${currentItem.subscritor.sigla}" />
+</c:forEach>
+
+<input type="hidden" id="siglaUsuCossignatarios" value="${cossignatarios}"/>
+
 <c:if
 	test="${not empty f:resource('siga.ex.assinador.externo.popup.url')}">
 	<script src="/siga/bootstrap/js/bootstrap.min.js"></script>

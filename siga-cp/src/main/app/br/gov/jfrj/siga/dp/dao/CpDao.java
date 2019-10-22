@@ -928,6 +928,14 @@ public class CpDao extends ModeloDao {
 		final DpPessoa pes = (DpPessoa) qry.uniqueResult();
 		return pes;
 	}
+	
+	public int consultarQtdePorEmailIgualCpfDiferente(final String email, final long cpf) {
+		final Query qry = getSessao().getNamedQuery("consultarPorEmailIgualCpfDiferente");
+		qry.setString("emailPessoa", email);
+		qry.setLong("cpf", cpf);
+		final int l = ((Long) qry.uniqueResult()).intValue();
+		return l;
+	}
 
 	@SuppressWarnings("unchecked")
 	public DpPessoa consultarPorSigla(final DpPessoa o) {
@@ -2585,7 +2593,8 @@ public class CpDao extends ModeloDao {
 					+ "inner join mar.cpMarcador as marcador "
 					+ "full join mar.dpLotacaoIni.orgaoUsuario orgaoUsu1 "
 					+ "full join mar.dpPessoaIni.orgaoUsuario orgaoUsu2 "
-					+ "where doc.dtDoc between :dtini and :dtfim "
+					+ "where doc.dtDoc >= :dtini and doc.dtDoc < :dtfim "
+					+ "		and doc.dtFinalizacao is not null "
 					+ queryOrgao
 					+ queryLotacao
 					+ queryUsuario
@@ -2594,8 +2603,7 @@ public class CpDao extends ModeloDao {
 					+ "and (dt_fim_marca is null or dt_fim_marca > sysdate) " 
 				;
 		
-		Query query = getSessao().createQuery(queryTemp
-					);
+		Query query = getSessao().createQuery(queryTemp);
 				
 		query.setLong("idMarcador", idMarcador);
 
@@ -2609,7 +2617,8 @@ public class CpDao extends ModeloDao {
 			query.setParameter("idUsuario", usuarioId);
 		}
 		query.setDate("dtini", dataInicial);
-		query.setDate("dtfim", dataFinal);
+		Date dtfimMaisUm = new Date( dataFinal.getTime() + 86400000L );
+		query.setDate("dtfim", dtfimMaisUm);
 		
 		List<CpOrgaoUsuario> l = query.list();
 		
@@ -2625,6 +2634,20 @@ public class CpDao extends ModeloDao {
 					"quantidadeDocumentos");
 
 			sql.setLong("idPessoaIni", pes.getIdPessoaIni());
+			List result = sql.list();
+			final int l = ((BigDecimal) sql.uniqueResult()).intValue();
+            return l;
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
+	
+	public Integer consultarQtdeDocCriadosPossePorDpLotacao(Long idLotacao) {
+		try {
+			SQLQuery sql = (SQLQuery) getSessao().getNamedQuery(
+					"consultarQtdeDocCriadosPossePorDpLotacao");
+
+			sql.setLong("idLotacao", idLotacao);
 			List result = sql.list();
 			final int l = ((BigDecimal) sql.uniqueResult()).intValue();
             return l;

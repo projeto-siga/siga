@@ -50,8 +50,9 @@
 						<table class="table table-hover table-striped">
 							<thead class="thead-dark align-middle text-center">
 								<tr>
+									<th class="text-left w-80">Espécie Documental</th>
 									<th class="text-left w-80">Nome do Documento</th>
-									<th class="text-right w-10 mx-5">Quantidade</th>
+									<th class="text-right w-10 mx-5">Tramitações</th>
 								</tr>
 							</thead>
 							<tbody class="table-bordered">
@@ -60,9 +61,12 @@
 									<td>
 										${itemModelo[0]}
 									</td>
+									<td>
+										${itemModelo[1]}
+									</td>
 									<td class="mx-auto">
 										<div class="text-right mx-5">
-											<fmt:formatNumber type="number" pattern="###,###,###,##0" value="${itemModelo[1]}" />
+											<fmt:formatNumber type="number" pattern="###,###,###,##0" value="${itemModelo[2]}" />
 										</div>
 									</td>
 								</tr>
@@ -75,9 +79,9 @@
 							<thead class="thead-light">
 								<tr>
 									<th><strong>Nome do Documento : 
-										${listLinhas[0][2]}
+										${modelo}
 									</strong></th>
-									<th><strong>Total de Tramitacoes : 
+									<th><strong>Total de Tramitações : 
 										<fmt:formatNumber type="number" pattern="###,###,###,##0" value="${totalModeloTramites}" />
 									</strong></th>
 								</tr>
@@ -92,7 +96,6 @@
 									<th class="text-center w-10">${listColunas[3]}</th>
 									<th class="text-center w-10">${listColunas[4]}</th>
 									<th class="text-center w-10">${listColunas[5]}</th>
-									<th class="text-center w-10">${listColunas[6]}</th>
 								</tr>
 							</thead>
 							<tbody class="table-bordered">
@@ -101,7 +104,7 @@
 									<td>
 										${item[0]}
 									</td>
-									<td class="text-center">
+									<td>
 										${item[1]}
 									</td>
 									<td class="text-center">
@@ -115,9 +118,6 @@
 									</td>
 									<td class="text-center">
 										${item[5]}
-									</td>
-									<td class="text-center">
-										${item[6]}
 									</td>
 								</tr>
 							</c:forEach> 

@@ -284,8 +284,9 @@ public class RelDocumentosProduzidos extends RelatorioTemplate {
 		Date dtini = formatter.parse((String) parametros.get("dataInicial"));
 		query.setDate("dtini", dtini);
 		Date dtfim = formatter.parse((String) parametros.get("dataFinal"));
-		query.setDate("dtfim", dtfim);
-
+		Date dtfimMaisUm = new Date( dtfim.getTime() + 86400000L );
+		query.setDate("dtfim", dtfimMaisUm);
+		
 		Iterator it = query.list().iterator();
 		return it;
 	}

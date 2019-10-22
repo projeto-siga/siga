@@ -434,9 +434,10 @@ public class Excel {
 		if(funcao != null) {
 			return "Linha " + linha +": NOME já cadastrado" + System.getProperty("line.separator");
 		}
-		if(!validarCaracterEspecial(nomeFuncao)) {
+		
+		if(!nomeFuncao.matches("[a-zA-ZáâãéêíóôõúçÁÂÃÉÊÍÓÔÕÚÇ 0-9.-]+")) {
 			return "Linha " + linha +": NOME com caracteres não permitidos" + System.getProperty("line.separator");
-		}
+    	}
 		if(nomes.contains(Texto.removeAcento(Texto.removerEspacosExtra(nomeFuncao).trim().toUpperCase()))) {
 			return "Linha " + linha +": NOME repetido em outra linha do arquivo" + System.getProperty("line.separator");
 		} else {
@@ -577,6 +578,8 @@ public class Excel {
 			String dataString;
 			SimpleDateFormat formato = new SimpleDateFormat("ddMMyyyy");
 			Date date = null;
+			int i = 0;
+			String email = "";
 			
 			DpPessoaDaoFiltro dpPessoaFiltro = new DpPessoaDaoFiltro();
 			Integer tamanho = 0;
@@ -590,6 +593,8 @@ public class Excel {
 				lotacao = new DpLotacao();
 				Row row = rowIterator.next(); //linha
 				date = null;
+				i = 0;
+				email = "";
 				
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Cell cell;
@@ -747,7 +752,8 @@ public class Excel {
 				}
 				
 				//EMAIL
-				celula = retornaConteudo(row.getCell(7, Row.CREATE_NULL_AS_BLANK)).trim();
+				celula = retornaConteudo(row.getCell(7, Row.CREATE_NULL_AS_BLANK)).trim().toLowerCase();
+				email = celula;
 				
 				if(!"".equals(celula.trim())) {
 					
@@ -762,6 +768,12 @@ public class Excel {
 					}
 				} else {
 					problemas.append("Linha " + linha +": E-MAIL em branco" + System.getProperty("line.separator"));
+				}
+				
+				i = CpDao.getInstance().consultarQtdePorEmailIgualCpfDiferente(Texto.removerEspacosExtra(celula).trim().replace(" ",""), Long.valueOf(cpf));
+				
+				if(i > 0) {
+					problemas.append("Linha " + linha +": E-MAIL informado está cadastrado para outro CPF" + System.getProperty("line.separator"));
 				}
 				
 				if(cargo != null && lotacao != null && cpf != null && !"".equals(cpf) && !Long.valueOf(0).equals(Long.valueOf(cpf))) {
@@ -785,6 +797,9 @@ public class Excel {
 						if(p.getCpfPessoa().equals(Long.valueOf(cpf)) && p.getCargo().equals(cargo) && p.getLotacao().equals(lotacao) &&
 								((p.getFuncaoConfianca() == null && funcao == null) || (p.getFuncaoConfianca() != null && p.getFuncaoConfianca().equals(funcao)))) {
 							problemas.append("Linha " + linha +": Usuário repetido em outra linha do arquivo com estes dados: Órgão, Cargo, Função, Unidade e CPF" + System.getProperty("line.separator"));
+						}
+						if(email != null && email.equals(p.getEmailPessoa()) && cpf != null && !Long.valueOf(cpf).equals(p.getCpfPessoa())) {
+							problemas.append("Linha " + linha +": E-MAIL informado está cadastrado para outro CPF no arquivo" + System.getProperty("line.separator"));
 						}
 					}
 				}

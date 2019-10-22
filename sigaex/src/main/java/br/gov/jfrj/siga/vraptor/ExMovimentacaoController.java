@@ -596,7 +596,7 @@ public class ExMovimentacaoController extends ExController {
 			af.ativo = false;
 			af.fixo = true;
 		}
-		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local"))) {
+		if(SigaBaseProperties.getString("siga.local") != null && "GOVSP".equals(SigaBaseProperties.getString("siga.local")) && (doc.getDtFinalizacao() != null && !DateUtils.isToday(doc.getDtFinalizacao()))) {
 			Ex.getInstance().getBL().gravar(getCadastrante(), getTitular(), getLotaTitular(), doc);
 		}
 		result.include("sigla", sigla);
@@ -710,7 +710,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 	
 	@Post("app/expediente/mov/restringir_acesso_gravar")
-	public void restringirAcessoGravar(final String sigla, final String usu, final Long nivelAcesso) {
+	public void restringirAcessoGravar(final String sigla, final String usu, final Long nivelAcesso) throws Exception {
 		String usuarios[] = usu.split(";");
 		
 		List<DpPessoa> listaSubscritor = new ArrayList<DpPessoa>();
@@ -751,7 +751,10 @@ public class ExMovimentacaoController extends ExController {
 						null, mov.getLotaResp(), mov.getResp(),
 						listaSubscritor, mov.getTitular(),
 						mov.getNmFuncaoSubscritor(), exTipoSig);
-		ExDocumentoController.redirecionarParaExibir(result, sigla);
+
+		result.include("msgCabecClass", "alert-warning");
+		result.include("mensagemCabec", "Somente os usuários definidos terão acesso aos documentos, os usuários das tramitações anteriores deixarão de visualizar/ter acesso.");
+		result.forwardTo(ExDocumentoController.class).exibe(false, sigla, null, null);
 	}
 
 	@Post("app/expediente/mov/redefinir_nivel_acesso_gravar")
@@ -1134,6 +1137,9 @@ public class ExMovimentacaoController extends ExController {
 						movimentacaoBuilder.getMob(), mov.getExMobilRef(),
 						mov.getDtMov(), mov.getSubscritor(), mov.getTitular(),
 						idDocumentoEscolha);
+		
+		
+		
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
@@ -2214,6 +2220,23 @@ public class ExMovimentacaoController extends ExController {
 						builder.getMob())) {
 			throw new AplicacaoException(
 					"Não é possível fazer vinculação de papel");
+		}
+		
+		if(responsavelSel != null) {
+			Boolean podeVincular = Boolean.FALSE;
+			List<ExMovimentacao> listaMov = new ArrayList<ExMovimentacao>();
+			listaMov.addAll(builder.getMob().getDoc().getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_RESTRINGIR_ACESSO));
+		
+			for (ExMovimentacao exMovimentacao : listaMov) {
+				if(exMovimentacao.getSubscritor().equals(responsavelSel.getObjeto())) {
+					podeVincular = Boolean.TRUE;
+					break;
+				}
+			}
+			if(!listaMov.isEmpty() && !podeVincular) {
+				throw new AplicacaoException(
+						"Acompanhamento do documento não pode ser cadastrado para o usuário selecionado.");
+			}
 		}
 
 		Ex.getInstance()

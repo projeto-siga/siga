@@ -932,6 +932,14 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 				provider.assinar(signable);
 			}
 		} else {
+			if (( ($('#siglaUsuSubscritor').val() != "") && ($('#siglaUsuarioCadastrante').val() != $('#siglaUsuSubscritor').val()) )
+					&& !$('#siglaUsuCossignatarios').val().includes($('#siglaUsuarioCadastrante').val()) ) {
+				if (!confirm("DESEJA ASSINAR O DOCUMENTO POR \""+ $('#nomeUsuSubscritor').val() + "\" - \"" + $('#siglaUsuSubscritor').val() +"\"")) {
+					gAssinando = false;
+					$(this).dialog('destroy').remove();				
+				}
+			}
+			
 			process.push("gNome='" + o.nome + "'; gAutenticar = "
 					+ (o.hasOwnProperty('autenticar') ? o.autenticar : Copia)
 					 + "; gTramitar = "
@@ -944,6 +952,7 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar) {
 			process.push(function() {
 				Log(gNome + ": Gravando assinatura com senha de " + gLogin)
 			});
+
 
 			process.push(function() {
 				var id = gNome ? gNome.split(':')[1] : null;

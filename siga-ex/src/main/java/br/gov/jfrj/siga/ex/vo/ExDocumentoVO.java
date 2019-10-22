@@ -578,7 +578,7 @@ public class ExDocumentoVO extends ExVO {
 		
 		vo.addAcao(
 				"arrow_undo",
-				"Desfazer Restrição de Acesso",
+				"Redefinir Acesso Padrão",
 				"/app/expediente/mov",
 				"desfazer_restricao_acesso",
 				Ex.getInstance()

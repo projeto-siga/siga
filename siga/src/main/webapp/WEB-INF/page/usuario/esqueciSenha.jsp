@@ -163,6 +163,46 @@ function mensagemAlerta(mensagem) {
 	$('#alertaModal').modal();
 }
 
+function validarCPF(Objcpf){
+	var strCPF = Objcpf.replace(".","").replace(".","").replace("-","").replace("/","");
+    var Soma;
+    var Resto;
+    Soma = 0;
+	
+    for (i=1; i<=9; i++) Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (11 - i);
+    Resto = (Soma * 10) % 11;
+	
+    if ((Resto == 10) || (Resto == 11))  Resto = 0;
+    if (Resto != parseInt(strCPF.substring(9, 10)) ) {
+    	
+    	alert('CPF Inválido!');
+        return false;
+	}
+    Soma = 0;
+    for (i = 1; i <= 10; i++) Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (12 - i);
+    Resto = (Soma * 10) % 11;
+
+    if ((Resto == 10) || (Resto == 11))  Resto = 0;
+    if (Resto != parseInt(strCPF.substring(10, 11) ) ) {
+    	
+    	alert('CPF Inválido!');
+    	return false;
+    }
+    return true;
+         
+}
+function cpf_mask(v){
+	v=v.replace(/\D/g,"");
+	v=v.replace(/(\d{3})(\d)/,"$1.$2");
+	v=v.replace(/(\d{3})(\d)/,"$1.$2");
+	v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+
+	if(v.length == 14) {
+    	validarCPF(v);
+    }
+	return v;
+	}
+	
 function refreshWindow(){
 	var e=document.getElementById("refreshed");
 	if(e.value=="no")e.value="yes";
@@ -243,7 +283,8 @@ function refreshWindow(){
 									<div class="col-sm-3">
 										<div class="form-group">
 											<label for="usuario.cpf">CPF</label>
-											<input name="usuario.cpf" type="text" class="form-control" />
+											<input name="usuario.cpf" id="idCpf" type="text" class="form-control" 
+												maxlength="14" onkeyup="this.value = cpf_mask(this.value)" value="${valCpf}"/>
 										</div>
 									</div>
 								</div>
@@ -311,7 +352,7 @@ function refreshWindow(){
 									<div class="col-sm-4">
 										<div class="form-group">
 											<label for="usuario.cpf1">CPF</label>
-											<input type="text" name="usuario.cpf1" class="form-control" />
+											<input type="text" name="usuario.cpf1" id="idCpf1" class="form-control" maxlength="14" onkeyup="this.value = cpf_mask(this.value)" />
 										</div>
 									</div>				
 									<div class="col-sm-4">
@@ -341,7 +382,7 @@ function refreshWindow(){
 									<div class="col-sm-4">
 										<div class="form-group">
 											<label for="usuario.cpf2">CPF</label>
-											<input type="text" name="usuario.cpf2" class="form-control" />
+											<input type="text" name="usuario.cpf2" id="idCpf2" class="form-control" maxlength="14" onkeyup="this.value = cpf_mask(this.value)" />
 										</div>
 									</div>				
 									<div class="col-sm-4">
@@ -371,7 +412,7 @@ function refreshWindow(){
 									<div class="col-sm-4">
 										<div class="form-group">
 											<label for="usuario.cpf2">CPF</label>
-											<input type="text" name="usuario.cpf2" class="form-control" />
+											<input type="text" name="usuario.cpf2" id="idCpf3" class="form-control" maxlength="14" onkeyup="this.value = cpf_mask(this.value)" />
 										</div>
 									</div>				
 								</div>
@@ -385,7 +426,7 @@ function refreshWindow(){
 									<div class="col-sm-4">
 										<div class="form-group">
 											<label for="senhaConfirma">Repetição da nova senha</label>
-											<input type="password" name="senhaConfirma" id="pass2Met2" onblur="javascript:converteUsuario(this)" class="form-control" />
+											<input type="password" name="senhaConfirma" id="pass2Met2" class="form-control" />
 										</div>
 									</div>
 									<div class="col-sm-4">

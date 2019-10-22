@@ -1,8 +1,10 @@
 package br.gov.jfrj.siga.ex.relatorio.dinamico.relatorios;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -59,16 +61,16 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			this.listColunas.add("Unidade");
 			this.listColunas.add("Nome do Documento");
 			this.listColunas.add("No. Documento");
-			this.listColunas.add("Tempo Médio (dias)");
+			this.listColunas.add("Tempo Tramitação (dias)");
 			this.listColunas.add("Cadastrante");
 			this.listColunas.add("Resp. Assinatura / Autenticação");
 					
-			this.addColuna(this.listColunas.get(0), 10, RelatorioRapido.ESQUERDA, false);
+			this.addColuna(this.listColunas.get(0), 15, RelatorioRapido.ESQUERDA, false);
 			this.addColuna(this.listColunas.get(1), 30, RelatorioRapido.ESQUERDA, false);
 			this.addColuna(this.listColunas.get(2), 20, RelatorioRapido.CENTRO, false);
-			this.addColuna(this.listColunas.get(3), 10, RelatorioRapido.CENTRO, false);
-			this.addColuna(this.listColunas.get(4), 20, RelatorioRapido.CENTRO, false);
-			this.addColuna(this.listColunas.get(5), 20, RelatorioRapido.CENTRO, false);
+			this.addColuna(this.listColunas.get(3), 15, RelatorioRapido.CENTRO, false);
+			this.addColuna(this.listColunas.get(4), 15, RelatorioRapido.CENTRO, false);
+			this.addColuna(this.listColunas.get(5), 15, RelatorioRapido.CENTRO, false);
 			return this;
 
 		}
@@ -110,6 +112,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 						+ "forma.idFormaDoc, "
 						+ "forma.descrFormaDoc, "
 						+ "lota.siglaLotacao, "
+						+ "lota.nomeLotacao, "
 						+ "mod.nmMod, "
 						+ "cad.sesbPessoa, "
 						+ "cad.matricula, "
@@ -129,15 +132,18 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 						+ "		or mov.exTipoMovimentacao.idTpMov = :idTpMov3 "
 						+ "		or mov.exTipoMovimentacao.idTpMov = :idTpMov4 "
 						+ "		or mov.exTipoMovimentacao.idTpMov = :idTpMov5 "
-						+ "		or mov.exTipoMovimentacao.idTpMov = :idTpMov6) "
+						+ "		or mov.exTipoMovimentacao.idTpMov = :idTpMov6 "
+						+ "		or mov.exTipoMovimentacao.idTpMov = :idTpMov7) "
 						+ " 	and mov.exMovimentacaoCanceladora is null "
 						+ "		and doc.dtRegDoc >= :dtini and doc.dtRegDoc < :dtfim "
+						+ "		and doc.dtFinalizacao is not null "
 						+ queryEspecie
 						+ queryOrgao
 						+ queryLotacao
 						+ queryUsuario
 						+ "order by forma.descrFormaDoc, "
 						+ "lota.siglaLotacao, "
+						+ "doc.idDoc, "
 						+ "mob.idMobil, "
 						+ "mov.idMov "
 						);
@@ -147,7 +153,8 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			query.setLong("idTpMov3", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
 			query.setLong("idTpMov4", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA);
 			query.setLong("idTpMov5", ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE);
-			query.setLong("idTpMov6", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO);			
+			query.setLong("idTpMov6", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE);
+			query.setLong("idTpMov7", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO);			
 			
 			if (parametros.get("especie") != null && parametros.get("especie") != "") {
 				query.setLong("especie", Long.valueOf((String) parametros.get("especie")));
@@ -180,7 +187,8 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			Date dtini = formatter.parse((String) parametros.get("dataInicial"));
 			query.setDate("dtini", dtini);
 			Date dtfim = formatter.parse((String) parametros.get("dataFinal"));
-			query.setDate("dtfim", dtfim);
+			Date dtfimMaisUm = new Date( dtfim.getTime() + 86400000L );
+			query.setDate("dtfim", dtfimMaisUm);
 			
 			Iterator it = query.list().iterator();
 
@@ -191,13 +199,19 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			String siglaDoc = "";
 			String cadastrante = "";
 			String subscritor = "";
+			Long dtMov1 = 0L;
+			Long dtMov2 = 0L;
+			int gcCounter = 0;
+			Long dtCancel = 0L;
 			Object[] obj = null;
+			boolean tramitou = false;
 
 			while (it.hasNext()) {
 				obj = (Object[]) it.next();
 				ExMobil mob = (ExMobil) obj[0];
 				ExDocumento doc = (ExDocumento) mob.getDoc();
-				Long id1 = doc.getIdDoc();
+				Long idDoc1 = doc.getIdDoc();
+				Long idMob1 = mob.getId();
 				ExMovimentacao mov1 = (ExMovimentacao) obj[1];
 				Long qtdDias = 0L;
 				Long qtdTram = 0L;
@@ -205,60 +219,110 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 				while (it.hasNext()) {
 					idFormaDoc = obj[2].toString(); 
 					especie = obj[3].toString();
-					lotacao = obj[4].toString(); 
-					modelo = obj[5].toString(); 
+					lotacao = obj[4].toString() + "/" + obj[5].toString(); 
+					modelo = obj[6].toString(); 
 					siglaDoc = doc.getSigla();
-					cadastrante = obj[6].toString() + obj[7].toString(); 
+					cadastrante = obj[7].toString() + obj[8].toString(); 
 					if (obj[9] != null) {
-						subscritor = obj[8].toString() + obj[9].toString(); 
+						subscritor = obj[9].toString() + obj[10].toString(); 
 					} else {
-						subscritor = obj[6].toString() + obj[7].toString() + " (Autentic.)"; 
+						subscritor = obj[7].toString() + obj[8].toString() + " (Autentic.)"; 
 					}
 
 					obj = (Object[]) it.next();
 					mob = (ExMobil) obj[0];
 					doc = (ExDocumento) mob.getDoc();
-					Long id2 = doc.getIdDoc();
+					Long idMob2 = mob.getId();
+					Long idDoc2 = doc.getIdDoc();
 					ExMovimentacao mov2 = (ExMovimentacao) obj[1];
+					dtMov1 = getOnlyDate(mov1.getDtMov());
+					dtMov2 = getOnlyDate(mov2.getDtMov());
+					if (mov1.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
+						dtCancel = getOnlyDate(mov1.getDtMov());
+					}
 					
-					if (id1 == id2) {
-						if (mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE 
-								&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) 
-							qtdTram += 1L;
-							qtdDias = (mov2.getDtMov().getTime() - mov1.getDtMov().getTime()) / 86400000;
+					if (idDoc1 == idDoc2) {
+						if (idMob1 == idMob2) {
+							if (!(mov2.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE 
+									&& mov1.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE)
+									&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO
+									&& ((mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE 
+										&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE)
+										|| tramitou)) {
+								if (mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE) { 
+									qtdTram += 1L;
+								}
+								qtdDias += (dtMov2 - dtMov1);
+								tramitou = true;
+							}
+						} else {
+							if (mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE 
+									&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
+								qtdTram += 1L;
+								if (dtCancel == 0) {
+									qtdDias += (getOnlyDate(new Date()) - dtMov1);
+								} else {
+									qtdDias += (dtCancel - dtMov1);
+								}
+							}
+							if (mov2.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESARQUIVAMENTO_CORRENTE 
+								|| mov2.getIdTpMov() == ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE) {									
+								tramitou = false;
+							} else {
+								tramitou = true;
+							}
+						}
 					} else {
 						if (mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE 
-								&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
+							&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
 							qtdTram += 1L;
-							qtdDias = (new Date().getTime() - mov1.getDtMov().getTime()) / 86400000;
+							if (dtCancel == 0) {
+								qtdDias += (getOnlyDate(new Date()) - dtMov1);
+							} else {
+								qtdDias += (dtCancel - dtMov1);
+							}
 						}
 						if (qtdTram != 0) {
 							addLinha(idFormaDoc, especie, lotacao, modelo, siglaDoc, cadastrante,
-									subscritor, (qtdDias / qtdTram), listDocs);
+									subscritor, qtdDias, listDocs);
 						}
 						qtdDias = 0L;
 						qtdTram = 0L;
+						dtCancel = 0L;
+						tramitou = false;
 					}
-					id1 = id2;
+					if (gcCounter > 200) {
+						gcCounter = 0;
+						System.gc();
+					} else {
+						gcCounter += 1;
+					}
 					mov1 = mov2;
+					idDoc1 = idDoc2;
+					idMob1 = idMob2;
 				}
 				// Grava e totaliza o ultimo documento / especie
 				siglaDoc = doc.getSigla();
 				if (obj[9] != null) {
-					subscritor = obj[8].toString() + obj[9].toString(); 
+					subscritor = obj[9].toString() + obj[10].toString(); 
 				} else {
-					subscritor = obj[6].toString() + obj[7].toString() + " (Autentic.)"; 
+					subscritor = obj[7].toString() + obj[8].toString() + " (Autentic.)"; 
 				}
 				ExMovimentacao mov2 = (ExMovimentacao) obj[1];
-				if (mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE 
-						&& mov1.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO) {
+				dtMov2 = getOnlyDate(mov2.getDtMov());
+				if (mov2.getIdTpMov() != ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE) {
 					qtdTram += 1L;
-					qtdDias = (new Date().getTime() - mov1.getDtMov().getTime()) / 86400000;
+					if (dtCancel == 0) {
+						qtdDias += (getOnlyDate(new Date()) - dtMov2);
+					} else {
+						qtdDias += (dtCancel - dtMov2);
+					}
 				}
 				if (qtdTram != 0) { 
-					addLinha(obj[2].toString(), obj[3].toString(), obj[4].toString(), obj[5].toString(), 
-							siglaDoc, obj[6].toString() + obj[7].toString(),
-							subscritor, (qtdDias / qtdTram), listDocs);
+					addLinha(obj[2].toString(), obj[3].toString(), 
+							obj[4].toString() + "/" + obj[5].toString(), 
+							obj[6].toString(), siglaDoc, obj[7].toString() + obj[8].toString(),
+							subscritor, qtdDias, listDocs);
 				}
 			}
 			if (listDocs.size() == 0) {
@@ -289,7 +353,6 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 				lin.set(2, "<a href=" + parametros.get("link_siga") 
 						+ lin.get(2) + ">" + lin.get(2) + "</a>");
 			}
-			
 			return d;
 		}
 
@@ -327,7 +390,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 					+ lastIdFormaDoc + "','" + lastEspecie + "');\">" 
 					+ lastEspecie + "</a>");
 			dadosEspecie.add(totalEspecieDocs.toString());
-			Long media = totalEspecieDias / totalEspecieDocs;
+			Long media = (long) ((((double) totalEspecieDias / (double) totalEspecieDocs)) + 0.5);
 			dadosEspecie.add(media.toString());
 			listEspecie.add(dadosEspecie);
 		}
@@ -346,6 +409,11 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			listDocs.add(listDados);
 		}
 
+		private static long getOnlyDate(Date dtFull) throws ParseException {
+		    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		    return formatter.parse(formatter.format(dtFull)).getTime() / 86400000 ;
+		}		
+		
 		class listComparator implements Comparator<List<String>> {
 			@Override
 			public int compare(List<String> list1, List<String> list2) {
@@ -371,5 +439,4 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 						return 0;
 			}
 		}
-	}
-	
+	}	

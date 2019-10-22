@@ -96,7 +96,12 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 			+ " AND(dt_fim_marca IS NULL OR dt_fim_marca > sysdate)"
 			+ " AND id_marcador not in (1,10,32)"
 			+ " AND lotacao.id_lotacao_ini = :idLotacao"
-			+ " AND id_tp_marca = :idTipoMarca ")	})
+			+ " AND id_tp_marca = :idTipoMarca "),
+		@NamedNativeQuery(name = "consultarQtdeDocCriadosPossePorDpLotacao", query = "SELECT count(1) FROM siga.ex_documento doc "
+			+ " left join corporativo.dp_lotacao lot on doc.id_lota_cadastrante = lot.id_lotacao "
+			+ " left join siga.ex_mobil mob on mob.id_doc = doc.id_doc "
+			+ " left join corporativo.cp_marca marca on marca.id_ref = mob.ID_MOBIL"
+			+ " where lot.id_lotacao_ini = :idLotacao or marca.ID_LOTACAO_INI = :idLotacao")})
 
 public abstract class AbstractDpLotacao extends DpResponsavel implements
 		Serializable {

@@ -3,6 +3,7 @@
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <siga:pagina titulo="Cadastro de Pessoa">
 	<!-- main content -->
@@ -33,7 +34,7 @@
 								<dd>- Sigla do &Oacute;rgão;</dd>
 								<dd>- Nome do Cargo;</dd>
 								<dd>- Nome da Fun&ccedil;&atilde;o de Confian&ccedil;a;</dd>
-								<dd>- Nome da Lota&ccedil;&atilde;o;</dd>
+								<dd>- Nome da <fmt:message key="usuario.lotacao"/>;</dd>
 								<dd>- Nome: m&aacute;ximo de 60 caracteres;</dd>
 								<dd>- Data de nascimento (8 n&uacute;meros dd/mm/aaaa);</dd>
 								<dd>- CPF: m&aacute;ximo de 11 caracteres num&eacute;ricos;</dd>

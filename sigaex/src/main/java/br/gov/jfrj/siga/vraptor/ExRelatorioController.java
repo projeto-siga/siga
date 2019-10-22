@@ -32,7 +32,6 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -816,8 +815,8 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("usuarioSel.id"));
 				parametros.put("dataInicial",
 						getRequest().getParameter("dataInicial"));
-				parametros.put("dataFinal", somaUmDia(getRequest()
-						.getParameter("dataFinal")));
+				parametros.put("dataFinal", getRequest()
+						.getParameter("dataFinal"));
 				parametros.put("link_siga", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
@@ -854,7 +853,7 @@ public class ExRelatorioController extends ExController {
 				}
 				result.include("volumeTramitacao", volumeTramitacao);
 			}
-		} catch (AplicacaoException e) {
+		} catch (Exception e) {
 			result.include("mensagemCabec", e.getMessage());
 			result.include("msgCabecClass", "alert-danger");
 		}
@@ -894,8 +893,8 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("usuarioSel.id"));
 				parametros.put("dataInicial",
 						getRequest().getParameter("dataInicial"));
-				parametros.put("dataFinal", somaUmDia(getRequest()
-						.getParameter("dataFinal")));
+				parametros.put("dataFinal", getRequest()
+						.getParameter("dataFinal"));
 				parametros.put("link_siga", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
@@ -951,7 +950,7 @@ public class ExRelatorioController extends ExController {
 			List listOrgaos = dao().consultarOrgaosMarcadosComo(orgaoUsu,
 					lotacaoSel.getId(), usuarioSel.getId(),
 					formatter.parse((String) dataInicial),
-					formatter.parse((String) somaUmDia(dataFinal)),
+					formatter.parse((String) dataFinal),
 					CpMarcador.MARCADOR_COMO_INTERESSADO);
 			if (listOrgaos == null) {
 				throw new AplicacaoException(
@@ -1001,8 +1000,8 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("usuarioSel.id"));
 				parametros.put("dataInicial",
 						getRequest().getParameter("dataInicial"));
-				parametros.put("dataFinal", somaUmDia(getRequest()
-						.getParameter("dataFinal")));
+				parametros.put("dataFinal", getRequest()
+						.getParameter("dataFinal"));
 				parametros.put("link_especie", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
@@ -1067,8 +1066,8 @@ public class ExRelatorioController extends ExController {
 				getRequest().getParameter("usuarioSel.id"));
 		parametros.put("dataInicial",
 				getRequest().getParameter("dataInicial"));
-		parametros.put("dataFinal", somaUmDia(getRequest()
-				.getParameter("dataFinal")));
+		parametros.put("dataFinal",  getRequest()
+				.getParameter("dataFinal"));
 		parametros.put("link_siga", linkHttp()
 				+ getRequest().getServerName() + ":"
 				+ getRequest().getServerPort()
@@ -1120,8 +1119,8 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("usuarioSel.id"));
 				parametros.put("dataInicial",
 						getRequest().getParameter("dataInicial"));
-				parametros.put("dataFinal", somaUmDia(getRequest()
-						.getParameter("dataFinal")));
+				parametros.put("dataFinal",  getRequest()
+						.getParameter("dataFinal"));
 				parametros.put("link_modelo", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
@@ -1148,6 +1147,7 @@ public class ExRelatorioController extends ExController {
 					result.include("listLinhas", rel.listLinhas);
 					result.include("totalModeloTramites",
 							rel.totalModeloTramites.toString());
+					result.include("modelo", rel.modelo);
 				}
 			}
 		} catch (AplicacaoException e) {
@@ -1193,8 +1193,8 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("usuarioSel.id"));
 				parametros.put("dataInicial",
 						getRequest().getParameter("dataInicial"));
-				parametros.put("dataFinal", somaUmDia(getRequest()
-						.getParameter("dataFinal")));
+				parametros.put("dataFinal",  getRequest()
+						.getParameter("dataFinal"));
 				parametros.put("link_siga", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
@@ -1406,7 +1406,7 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("dataInicial"));
 				parametros.put("dataFinal",
 						getRequest().getParameter("dataFinal"));
-				parametros.put("link_siga", "http://"
+				parametros.put("link_siga", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
@@ -1621,7 +1621,7 @@ public class ExRelatorioController extends ExController {
 		parametros.put("usuario", getRequest().getParameter("usuarioSel.id"));
 		parametros.put("dataInicial", getRequest().getParameter("dataInicial"));
 		parametros.put("dataFinal",
-				somaUmDia(getRequest().getParameter("dataFinal")));
+				 getRequest().getParameter("dataFinal"));
 		final RelDocumentosProduzidos rel = new RelDocumentosProduzidos(
 				parametros);
 		rel.setTemplateFile("RelatorioBaseGestao.jrxml");
@@ -1666,7 +1666,7 @@ public class ExRelatorioController extends ExController {
 					throw new AplicacaoException(
 							"Não é permitido consultas de outros órgãos.");
 				}
-				consistePeriodo(dataInicial, dataFinal);
+				consistePeriodo(dataInicial, dataFinal, false);
 				if (orgaoPesqId != 0) {
 					parametros.put("orgao", orgaoPesqId.toString());
 				}
@@ -1679,8 +1679,8 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("usuarioSel.id"));
 				parametros.put("dataInicial",
 						getRequest().getParameter("dataInicial"));
-				parametros.put("dataFinal", somaUmDia(getRequest()
-						.getParameter("dataFinal")));
+				parametros.put("dataFinal", 
+						getRequest().getParameter("dataFinal"));
 				parametros.put("link_siga", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
@@ -1733,32 +1733,43 @@ public class ExRelatorioController extends ExController {
 		return SigaExProperties.getExClassificacaoMascaraJavascript();
 	}
 
-	private void consistePeriodo(String dataInicial, String dataFinal)
+	private void consistePeriodo(String dataInicial, String dataFinal) throws Exception {
+		consistePeriodo(dataInicial, dataFinal, true);
+	}
+	
+	private void consistePeriodo(String dataInicial, String dataFinal, boolean mesmoMes)
 			throws Exception {
 		if (dataInicial == null || dataFinal == null) {
 			throw new AplicacaoException(
 					"Data inicial ou data final não informada.");
 		}
 		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		
 		final Date dtIni = df.parse(dataInicial);
 		final Date dtFim = df.parse(dataFinal);
+		
 		if (dtFim.getTime() - dtIni.getTime() < 0L) {
 			throw new AplicacaoException(
 					"Data inicial maior que a data final.");
 		}		
-		if (dtFim.getTime() - dtIni.getTime() > 31536000000L) {
+		if (mesmoMes && !dataInicial.substring(2,9).equals(dataFinal.substring(2,9))) {
+			throw new AplicacaoException(
+					"Período informado deve ser dentro do mesmo mês/ano.");
+		}
+		if (!mesmoMes && (dtFim.getTime() - dtIni.getTime() > 31536000000L)) {
 			throw new AplicacaoException(
 					"O intervalo máximo entre as datas deve ser de um ano.");
 		}
 	}
 
-	private String somaUmDia(String dataFinal) throws Exception {
-		final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		Date dtFim = df.parse(dataFinal);
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(dtFim);
-		cal.add(Calendar.DATE, 1);
-		return df.format(cal.getTime());
+	private String linkHttp() {
+		String url = request.getRequestURL().toString();		
+        String pattern = "^(https)://.*$";
+        if (url.matches(pattern)){
+            return "https://";
+        }else{
+            return "http://";
+	    }
 	}
 
 	private Long getIdOrgaoSel(final DpLotacaoSelecao lotacaoSel,
@@ -1778,16 +1789,6 @@ public class ExRelatorioController extends ExController {
 			orgaoSelId = orgaoUsu;
 		}
 		return orgaoSelId;
-	}
-	
-	private String linkHttp() {
-		String url = request.getRequestURL().toString();		
-        String pattern = "^(https)://.*$";
-        if (url.matches(pattern)){
-            return "https://";
-        }else{
-            return "http://";
-	    }
 	}
 	
 	@Post
@@ -1837,7 +1838,7 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("usuarioSel.id"));
 				}
 				parametros.put("dataInicial", dataInicial);
-				parametros.put("dataFinal", somaUmDia(dataFinal));
+				parametros.put("dataFinal", dataFinal);
 				parametros.put("link_siga", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()

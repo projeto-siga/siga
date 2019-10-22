@@ -107,9 +107,26 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 					.getSessao()
 					.createQuery(
 						"select "
-						+ "mob "
+						+ "doc.idDoc, "
+						+ "doc.orgaoUsuario.siglaOrgaoUsu, "
+						+ "doc.orgaoUsuario.acronimoOrgaoUsu, "
+						+ "doc.exFormaDocumento.siglaFormaDoc, "
+						+ "doc.anoEmissao, "
+						+ "doc.numExpediente, "
+						+ "lota.siglaLotacao, "
+						+ "lota.nomeLotacao, "
+						+ "mod.nmMod, "
+						+ "cad.sesbPessoa, "
+						+ "cad.matricula, "
+						+ "subs.sesbPessoa, "
+						+ "subs.matricula, "
+						+ "doc.dtDoc "
 						+ "from ExMobil mob "
-						+ "inner join mob.exDocumento doc " 
+						+ "inner join mob.exDocumento doc "
+						+ "left outer join doc.exModelo mod "
+						+ "left outer join doc.lotaCadastrante lota "
+						+ "left outer join doc.cadastrante cad "
+						+ "left outer join doc.subscritor subs "
 						+ "where "
 						+ "		mob in (select distinct(mob1) from ExMobil mob1 join mob1.exMarcaSet label"
 						+ "			left outer join label.dpLotacaoIni.orgaoUsuario orgaoUsu "
@@ -119,12 +136,15 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 						+ "			or label.dpPessoaIni.orgaoUsuario.idOrgaoUsu = :orgaoPesqId) "
 						+ "			and (label.dtIniMarca is null or label.dtIniMarca < sysdate) " 
 						+ "			and (label.dtFimMarca is null or label.dtFimMarca > sysdate)) "
-						+ "		and doc.dtDoc between :dtini and :dtfim "
+						+ "		and doc.dtDoc >= :dtini and doc.dtDoc < :dtfim "
+						+ "		and doc.dtFinalizacao is not null "
 						+ queryOrgao
 						+ queryLotacao
 						+ queryUsuario
-						+ "order by doc.lotaCadastrante.siglaLotacao, "
-						+ "doc.exModelo.nmMod "
+						+ "order by "
+						+ "lota.siglaLotacao, "
+						+ "lota.nomeLotacao, "
+						+ "mod.nmMod "
 						);
 
 			query.setLong("idMarcador", CpMarcador.MARCADOR_COMO_INTERESSADO);
@@ -157,60 +177,60 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			Date dtini = formatter.parse((String) parametros.get("dataInicial"));
 			query.setDate("dtini", dtini);
 			Date dtfim = formatter.parse((String) parametros.get("dataFinal"));
-			query.setDate("dtfim", dtfim);
+			Date dtfimMaisUm = new Date( dtfim.getTime() + 86400000L );
+			query.setDate("dtfim", dtfimMaisUm);
 			
 			Iterator it = query.list().iterator();
 
 			totalDocumentos = 0L;
 			Long lastMobilId = 0L;
+			Object[] obj = null;
+			int gcCounter = 0; 
+			String lotacao;
+			String modelo;
+			String siglaDoc;
+			String cadastrante;
+			String subscritor;
+			String dtAssinatura;
 
 			while (it.hasNext()) {
-				ExMobil mob = (ExMobil) it.next();
-				List<String> listDados = new ArrayList();
+				obj = (Object[]) it.next();
+				lotacao = obj[6].toString() + " / " + obj[7].toString(); 
+				modelo = obj[8].toString();
+						
+				String codigoDoc = ExDocumento.getCodigo(Long.valueOf(obj[0].toString()), obj[1].toString(),
+						obj[2].toString(), obj[3].toString(), Long.valueOf(obj[4].toString()),
+						Long.valueOf(obj[5].toString()), null, null, null, null, 
+						null, null, null, null, null, null, null, null);
 				
-				if (mob.getId() != lastMobilId) {
-					String siglaDoc = "<a href=" + parametros.get("link_siga") 
-							+ mob.getSigla() + ">" + mob.getSigla() + "</a>";
-					ExDocumento doc = mob.getDoc();
-					String lotaDoc = doc.getLotaCadastrante().getSigla();
-					String cadastranteDoc = doc.getLotaCadastrante().getSigla() + " / " + doc.getCadastranteString();
-					String subscritorDoc = "";
-					String dataAssinaturaDoc = "";
-
-					Query qryAssinaturas = HibernateUtil.getSessao().createQuery(
-							"select mov "
-							+ "from ExMovimentacao mov "
-							+ "inner join mov.exMobil mob "
-							+ "where mob.idMobil = :idMob "
-							+ "		and (mov.exTipoMovimentacao.idTpMov = :idTpMovAssinaCert "
-							+ "		or mov.exTipoMovimentacao.idTpMov = :idTpMovAssinaSenha) "
-							);
-					qryAssinaturas.setLong("idMob", mob.getIdMobil());
-					qryAssinaturas.setLong("idTpMovAssinaCert", ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO);
-					qryAssinaturas.setLong("idTpMovAssinaSenha", ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA);
-								
-					if (qryAssinaturas.list().size() != 0) {
-						subscritorDoc = doc.getLotaSubscritor().getSigla() + " / " + doc.getSubscritor().getSigla();
-						dataAssinaturaDoc = formatter.format(doc.getDtAssinatura());
-					}
-					
-					listDados.add(lotaDoc);
-					listDados.add(doc.getNmMod());
-					listDados.add(siglaDoc);
-					listDados.add(cadastranteDoc);
-					listDados.add(subscritorDoc);
-					listDados.add(dataAssinaturaDoc);
-					listLinhas.add(listDados);
-					d.add(lotaDoc);
-					d.add(doc.getNmMod());
-					d.add(siglaDoc);
-					d.add(cadastranteDoc);
-					d.add(subscritorDoc);
-					d.add(dataAssinaturaDoc);
-					
-					totalDocumentos = totalDocumentos + 1; 
+				siglaDoc = "<a href=" + parametros.get("link_siga") 
+						+ codigoDoc + ">" + codigoDoc + "</a>";
+				cadastrante = obj[9].toString() + obj[10].toString(); 
+				if (obj[11] != null) {
+					subscritor = obj[11].toString() + obj[12].toString(); 
+				} else {
+					subscritor = obj[9].toString() + obj[10].toString() + " (Autentic.)"; 
 				}
-				lastMobilId = mob.getId();
+				SimpleDateFormat formatFull = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+				Date dt = formatFull.parse(obj[13].toString());
+				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+				dtAssinatura = format.format(dt);				
+
+				List<String> listDados = new ArrayList();
+				listDados.add(lotacao);
+				listDados.add(modelo);
+				listDados.add(siglaDoc);
+				listDados.add(cadastrante);
+				listDados.add(subscritor);
+				listDados.add(dtAssinatura);
+				listLinhas.add(listDados);
+				totalDocumentos = totalDocumentos + 1; 
+				if (gcCounter > 200) {
+					gcCounter = 0;
+					System.gc();
+				} else {
+					gcCounter += 1;
+				}
 			}
 			if (listLinhas.size() == 0) {
 				throw new Exception("Não foram encontrados documentos para os dados informados.");
@@ -218,6 +238,11 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 			
 			listComparator comparator = new listComparator();
 			Collections.sort(listLinhas, comparator);
+			for (List<String> lin : listLinhas) {
+				for (String dado : lin) {
+					d.add(dado);
+				}
+			}
 			return d;
 		}
 		

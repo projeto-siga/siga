@@ -185,7 +185,7 @@
 						<configuration>
 							<images>
 								<image>
-									<name>wnameless/oracle-xe-11g:latest</name>
+									<name>christophesurmont/oracle-xe-11g</name>
 									<alias>db.server</alias>
 									<run>
 										<ports>

@@ -77,7 +77,6 @@ public class UsuarioController extends SigaController {
 					getIdentidadeCadastrante());
 			if ("on".equals(usuario.getTrocarSenhaRede())) {
 				try{
-					//IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);
 					IntegracaoLdapViaWebService.getInstancia().trocarSenha(nomeUsuario, senhaNova);
 				} catch(Exception e){
 					throw new Exception("Não foi possível alterar a senha de rede e e-mail. "
@@ -93,55 +92,6 @@ public class UsuarioController extends SigaController {
 		result.redirectTo("/app/principal");
 	}
 	
-	@Get({"/app/usuario/dados_recuperacao", "/public/app/usuario/dados_recuperacao"})
-	public void dadosRecuperacao() {
-		
-		//TODO verificar se a tabela de dados de recuperacao existe; caso negativo monstrar erro e nao mostrar o formulario
-		result.include("mensagem", "1");
-	}
-
-	@Post({"/app/usuario/dados_recuperacao_gravar","/public/app/usuario/dados_recuperacao_gravar"})
-	public void gravarDadosRecuperacao(UsuarioAction usuario) throws Exception {
-		
-		String senhaAtual = usuario.getSenhaAtual();
-		String email = usuario.getEmailRecuperacao();
-		String celular = usuario.getCelularRecuperacao();
-		
-		boolean erroDadosIncompletos = false;
-		
-		if(email.isEmpty() && celular.isEmpty())
-			erroDadosIncompletos = true;
-		
-		if(erroDadosIncompletos) {
-			result.include("mensagem", "Erro! Forneça ao menos um dos dados de recuperação.");
-			result.forwardTo("/WEB-INF/page/usuario/dadosRecuperacao.jsp");
-			return;
-		}
-		
-		String senhaNova = usuario.getSenhaNova();
-		String senhaConfirma = usuario.getSenhaConfirma();
-		String nomeUsuario = usuario.getNomeUsuario().toUpperCase();
-		
-		CpIdentidade idNova = Cp.getInstance().getBL().trocarSenhaDeIdentidade(
-				senhaAtual, senhaNova, senhaConfirma, nomeUsuario,
-				getIdentidadeCadastrante());
-		
-		if ("on".equals(usuario.getTrocarSenhaRede())) {
-			try{
-				//IntegracaoLdap.getInstancia().atualizarSenhaLdap(idNova,senhaNova);
-				IntegracaoLdapViaWebService.getInstancia().trocarSenha(nomeUsuario, senhaNova);
-			} catch(Exception e){
-				throw new Exception("Não foi possível alterar a senha de rede e e-mail. "
-						+ "Tente novamente em alguns instantes ou repita a operação desmarcando a caixa \"Alterar Senha de Rede\"");
-			}
-		}
-
-		result.include("mensagem", "A senha foi alterada com sucesso. <br/><br/><br/>OBS: A senha de rede e e-mail também foi alterada.");	
-		result.include("volta", "troca");
-		result.include("titulo", "Troca de Senha");
-		result.redirectTo("/app/principal");
-	}
-
 	@Get({"/app/usuario/incluir_usuario","/public/app/usuario/incluir_usuario"})
 	public void incluirUsuario() {
 		if (!SigaMessages.isSigaSP()) {

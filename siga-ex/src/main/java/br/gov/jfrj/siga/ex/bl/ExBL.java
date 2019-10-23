@@ -4309,9 +4309,9 @@ public class ExBL extends CpBL {
 			if(!movs.isEmpty())
 				removerPendenciaDeDevolucao(movs, mob);
 				
-			if(podeRestringir) {
-                this.copiarRestringir(mob, mobPai, cadastrante, titular, dtMov);
-            }	
+			if(Ex.getInstance().getComp().podeRestrigirAcesso(cadastrante, lotaCadastrante, mob)) {
+				this.copiarRestringir(mob, mobPai, cadastrante, titular, dtMov);
+			}		
 			concluirAlteracaoComRecalculoAcesso(mov.getExMobil());
 			
 		} catch (final Exception e) {

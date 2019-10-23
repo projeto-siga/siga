@@ -484,7 +484,7 @@ public class CpBL {
 			if (id == null) {
 				if (pessoa.getEmailPessoaAtual() != null) {
 					String novaSenha = "";
-					if(!autenticaPeloBanco) {
+					if(autenticaPeloBanco) {
 						if (senhaDefinida != null && senhaDefinida.length() > 0) {
 							novaSenha = senhaDefinida;
 						} else {

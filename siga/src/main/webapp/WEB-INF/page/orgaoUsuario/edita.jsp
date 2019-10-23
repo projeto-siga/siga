@@ -81,7 +81,7 @@
 								<label>Sigla</label>
 								<c:choose>
 									<c:when test="${empty siglaOrgaoUsuario || podeAlterarSigla}">
-										<input type="text" name="siglaOrgaoUsuario" id="siglaOrgaoUsuario" value="${siglaOrgaoUsuario}" maxlength="5" size="5" style="text-transform:uppercase"  onKeypress="return somenteLetras(event);" onkeyup="this.value = this.value.trim()" class="form-control"/>	
+										<input type="text" name="siglaOrgaoUsuario" id="siglaOrgaoUsuario" value="${siglaOrgaoUsuario}" maxlength="10" size="10" style="text-transform:uppercase"  onKeypress="return somenteLetras(event);" onkeyup="this.value = this.value.trim()" class="form-control"/>	
 									</c:when>
 									<c:otherwise>
 										<label class="form-control">${siglaOrgaoUsuario }</label>

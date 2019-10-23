@@ -84,7 +84,7 @@ public class OrgaoUsuarioController extends SigaSelecionavelControllerSupport<Cp
 		if(siglaOrgaoUsuario == null)
 			throw new AplicacaoException("Sigla do órgão usuário não informada");
 		
-		if(!siglaOrgaoUsuario.matches("[a-zA-Z]{1,5}"))
+		if(!siglaOrgaoUsuario.matches("[a-zA-Z]{1,10}"))
 			throw new AplicacaoException("Sigla do órgão inválida");
 		
 		CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();

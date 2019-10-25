@@ -574,7 +574,7 @@ public class ExDocumentoVO extends ExVO {
 				"Restrição de Acesso",
 				"/app/expediente/mov",
 				"restringir_acesso",
-				Ex.getInstance().getComp().podeRestrigirAcesso(titular, lotaTitular, mob));
+				Ex.getInstance().getComp().podeRestrigirAcesso(doc.getCadastrante(), doc.getCadastrante().getLotacao(), mob));
 		
 		vo.addAcao(
 				"arrow_undo",
@@ -583,8 +583,7 @@ public class ExDocumentoVO extends ExVO {
 				"desfazer_restricao_acesso",
 				Ex.getInstance()
 						.getComp()
-						.podeDesfazerRestricaoAcesso(titular,
-								lotaTitular, mob),
+						.podeDesfazerRestricaoAcesso(doc.getCadastrante(), doc.getCadastrante().getLotacao(), mob),
 				"Esta operação anulará as Restrições de Acesso. Prosseguir?",
 				null, null, null, "once");
 		

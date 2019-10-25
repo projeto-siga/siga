@@ -1573,7 +1573,7 @@ public class ExDocumentoController extends ExController {
 			exBL.gravar(getCadastrante(), getTitular(), getLotaTitular(),
 					exDocumentoDTO.getDoc());
 
-			if(exDocumentoDTO.getDoc().getExMobilPai() != null && Ex.getInstance().getComp().podeRestrigirAcesso(getTitular(), getLotaTitular(), exDocumentoDTO.getDoc().getExMobilPai())) {
+			if(exDocumentoDTO.getDoc().getExMobilPai() != null && Ex.getInstance().getComp().podeRestrigirAcesso(getCadastrante(), getLotaCadastrante(), exDocumentoDTO.getDoc().getExMobilPai())) {
 				exBL.copiarRestringir(exDocumentoDTO.getDoc().getMobilGeral(), exDocumentoDTO.getDoc().getExMobilPai().getDoc().getMobilGeral(), getCadastrante(), getTitular(), exDocumentoDTO.getDoc().getData());
 			}
 			

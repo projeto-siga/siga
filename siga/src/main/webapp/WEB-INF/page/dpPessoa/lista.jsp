@@ -51,10 +51,15 @@ function cpf_mask(v){
     	validarCPF(v);
     }
 	return v;
-	}
+}
 </script>
 
 <siga:pagina titulo="Listar Pessoas">
+	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+
 	<!-- main content -->
 	<div class="container-fluid">
 	<form name="frm" action="listar" class="form100" method="GET">
@@ -66,7 +71,7 @@ function cpf_mask(v){
 			</div>
 			<div class="card-body">
 				<div class="row">
-					<div class="col-md-4">
+					<div class="col-md-3">
 						<div class="form-group">
 							<label for="uidOrgaoUsu">Órgão</label>
 							<select name="idOrgaoUsu" value="${idOrgaoUsu}" onchange="carregarRelacionados(this.value)" class="form-control">
@@ -78,7 +83,7 @@ function cpf_mask(v){
 							</select>
 						</div>					
 					</div>					
-					<div class="col-md-2">
+					<div class="col-md-3">
 						<div class="form-group">
 							<label for="idCargoPesquisa">Cargo</label>
 							<select name="idCargoPesquisa" value="${idCargoPesquisa}" class="form-control">
@@ -90,7 +95,7 @@ function cpf_mask(v){
 							</select>
 						</div>					
 					</div>
-					<div class="col-md-2">
+					<div class="col-md-3">
 						<div class="form-group">
 							<label for="idFuncaoPesquisa">Fun&ccedil;&atilde;o de Confian&ccedil;a</label>
 							<select name="idFuncaoPesquisa" value="${idFuncaoPesquisa}" class="form-control">
@@ -102,10 +107,13 @@ function cpf_mask(v){
 							</select>
 						</div>					
 					</div>
-					<div class="col-md-4">
+				</div>
+				<div class="row">
+					<div class="col-md-9" >
 						<div class="form-group">
 							<label for="idLotacaoPesquisa"><fmt:message key="usuario.lotacao"/></label>
-							<select name="idLotacaoPesquisa" value="${idLotacaoPesquisa}" class="form-control">
+							<select class="form-control" id="idLotacaoPesquisa" style="width: 100%"  
+									name="idLotacaoPesquisa" value="${idLotacaoPesquisa}">
 								<c:forEach items="${listaLotacao}" var="item">
 									<option value="${item.idLotacao}" ${item.idLotacao == idLotacaoPesquisa ? 'selected' : ''}>
 										<c:if test="${item.descricao ne 'Selecione'}">${item.siglaLotacao} / </c:if>${item.descricao}
@@ -203,5 +211,35 @@ function carregarRelacionados(id) {
 	frm.submit();
 	frm.method = "GET";
 }
+
+$(document).ready(function() {
+    $('#idLotacaoPesquisa').select2({
+        matcher: function(args, texto) {
+            if ($.trim(args.term) === '') {
+                return texto;
+            }
+            if (typeof texto.text === 'undefined') {
+                return null;
+            }
+        	var terms = (args.term + "").split(" ");
+            var strRegex = "";
+            for (var i=0; i < terms.length; i++){
+            	if (terms[i] != "") { 
+                	var strRegex = strRegex + "(?=.*" + terms[i] + ")";
+            	}
+            }
+            var tester = new RegExp(strRegex, "i");
+            if (tester.test(texto.text)){
+                var modifiedData = $.extend({}, texto, true);
+                return modifiedData;
+            } else {
+            	return null;
+            }
+        },
+        theme: "bootstrap",
+    	width: "resolve",
+    	language: "pt-BR"
+    });
+});	
 </script>
 </siga:pagina>

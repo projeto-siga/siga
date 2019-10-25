@@ -60,13 +60,9 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
+import br.gov.jfrj.siga.gi.service.GiService;
 
 public class CpBL {
-	private static final String _MODO_AUTENTICACAO_BANCO = "banco";
-	private static final String _MODO_AUTENTICACAO_LDAP = "ldap";
-	
-	private static final String _MODO_AUTENTICACAO_DEFAULT = _MODO_AUTENTICACAO_BANCO;
-
 	CpCompetenciaBL comp;
 
 	public CpCompetenciaBL getComp() {
@@ -472,7 +468,7 @@ public class CpBL {
 				longMatricula);
 		
 		String siglaOrgaoMatricula = MatriculaUtils.getSiglaDoOrgaoDaMatricula(matricula);
-		boolean autenticaPeloBanco = buscarModoAutenticacao(siglaOrgaoMatricula).equals(_MODO_AUTENTICACAO_BANCO);
+		boolean autenticaPeloBanco = buscarModoAutenticacao(siglaOrgaoMatricula).equals(GiService._MODO_AUTENTICACAO_BANCO);
 
 		if (pessoa != null && matricula.equals(pessoa.getSigla())) {
 			CpIdentidade id;
@@ -631,7 +627,7 @@ public class CpBL {
 	}
 
 	private String buscarModoAutenticacao(String orgao) {
-    	String retorno = _MODO_AUTENTICACAO_DEFAULT;
+    	String retorno = GiService._MODO_AUTENTICACAO_DEFAULT;
     	CpPropriedadeBL props = new CpPropriedadeBL();
     	try {
 			String modo = props.getModoAutenticacao(orgao);
@@ -652,7 +648,7 @@ public class CpBL {
 		if (id == null)
 			throw new AplicacaoException("O usuário não está cadastrado.");
 
-		boolean autenticaPeloBanco = buscarModoAutenticacao(id.getCpOrgaoUsuario().getSiglaOrgaoUsu()).equals(_MODO_AUTENTICACAO_BANCO);
+		boolean autenticaPeloBanco = buscarModoAutenticacao(id.getCpOrgaoUsuario().getSiglaOrgaoUsu()).equals(GiService._MODO_AUTENTICACAO_BANCO);
 		if(!autenticaPeloBanco)
 			throw new AplicacaoException("O usuário deve modificar sua senha usando a interface do Windows " + 
 										"(acionando as teclas Ctrl, Alt e Del / Delete, opção 'Alterar uma senha')" +
@@ -677,7 +673,7 @@ public class CpBL {
 																				idCadastrante.getDpPessoa().getLotacao(),
 																				servico);
 				if (admTrocaSenha) {
-					if(buscarModoAutenticacao(idCadastrante.getCpOrgaoUsuario().getSiglaOrgaoUsu()).equals(_MODO_AUTENTICACAO_BANCO)) {
+					if(buscarModoAutenticacao(idCadastrante.getCpOrgaoUsuario().getSiglaOrgaoUsu()).equals(GiService._MODO_AUTENTICACAO_BANCO)) {
 						podeTrocarSenhaAdm = autenticarViaBanco(senhaAtual, idCadastrante);
 					} else {
 						podeTrocarSenhaAdm = autenticarViaLdap(senhaAtual, idCadastrante);

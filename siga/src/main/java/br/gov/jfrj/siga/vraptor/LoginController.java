@@ -84,13 +84,20 @@ public class LoginController extends SigaController {
 				}
 			}
 			if (usuarioLogado == null || usuarioLogado.trim().length() == 0) {
-				throw new RuntimeException(SigaMessages.getMessage("usuario.falhaautenticacao"));
+				StringBuffer mensagem = new StringBuffer();
+				mensagem.append(SigaMessages.getMessage("usuario.falhaautenticacao"));
+				if(giService.buscarModoAutenticacao(username).equals(GiService._MODO_AUTENTICACAO_LDAP)) {
+					mensagem.append(" ");
+					mensagem.append(SigaMessages.getMessage("usuario.autenticacaovialdap"));
+				}
+				
+				throw new RuntimeException(mensagem.toString());
 			}
 
 			gravaCookieComToken(username, cont);
 			
 		} catch (Exception e) {
-			result.include("loginMensagem", e.getMessage());
+			result.include("loginMensagem", e.getMessage()); // aqui adicionar tente com a senha de rede windows 
 			result.forwardTo(this).login(cont);
 		}
 	}

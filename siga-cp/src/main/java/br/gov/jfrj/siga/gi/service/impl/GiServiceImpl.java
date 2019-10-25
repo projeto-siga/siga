@@ -58,12 +58,12 @@ import br.gov.jfrj.siga.gi.service.GiService;
 @WebService(serviceName = "GiService", endpointInterface = "br.gov.jfrj.siga.gi.service.GiService", targetNamespace = "http://impl.service.gi.siga.jfrj.gov.br/")
 public class GiServiceImpl implements GiService {
 	
-	private static final String _MODO_AUTENTICACAO_BANCO = "banco";
-	private static final String _MODO_AUTENTICACAO_LDAP = "ldap";
-	//TODO caso nao exista a propriedade no JBOSS, autenticar via banco
-	private static final String _MODO_AUTENTICACAO_DEFAULT = _MODO_AUTENTICACAO_BANCO;
-	
     private boolean autenticaViaBanco(CpIdentidade identidade, String senha) {
+    	// caso o campo senha esteja vazio ou nulo, retorna false. 
+    	// Não autentica usuários com senha em branco.
+    	if(identidade.getDscSenhaIdentidade() == null || identidade.getDscSenhaIdentidade().equals("")) 
+    		return false;
+    	
     	try {
     		final String hashAtual = GeraMessageDigest.executaHash(senha.getBytes(), "MD5");
     		if (identidade != null && identidade.getDscSenhaIdentidade().equals(hashAtual)) return true;
@@ -81,7 +81,15 @@ public class GiServiceImpl implements GiService {
 		}
     }
     
-    private String buscarModoAutenticacao(String orgao) {
+    public String buscarModoAutenticacao(String login) {
+    	CpIdentidade id = null;
+		CpDao dao = CpDao.getInstance();
+		id = dao.consultaIdentidadeCadastrante(login, true);
+		return buscarModoAutenticacao(id);
+    }
+
+    private String buscarModoAutenticacao(CpIdentidade id) {
+    	String orgao = id.getCpOrgaoUsuario().getSiglaOrgaoUsu();
     	String retorno = _MODO_AUTENTICACAO_DEFAULT;
     	CpPropriedadeBL props = new CpPropriedadeBL();
     	try {
@@ -100,9 +108,7 @@ public class GiServiceImpl implements GiService {
 		CpIdentidade id = null;
 		CpDao dao = CpDao.getInstance();
 		id = dao.consultaIdentidadeCadastrante(matricula, true);
-		String orgaoLogin = id.getCpOrgaoUsuario().getSiglaOrgaoUsu();
-    	
-		String modoAut = buscarModoAutenticacao(orgaoLogin);
+		String modoAut = buscarModoAutenticacao(id);
 
 		try {
 			if(modoAut.equals(_MODO_AUTENTICACAO_BANCO)) {

@@ -112,14 +112,14 @@
 }
 
 .modal-body{
-   max-height: 95%;
-   height: 95%;
+   max-height: 97%;
+   height: 97%;
    overflow-y: auto; /*habilita o overflow no corpo da modal*/
 }
 
 .embed-responsive {
-   max-height: calc(100% - 30px);
-   height: calc(100% - 30px);
+   max-height: 100%;
+   height: 100%;
 }
 
 

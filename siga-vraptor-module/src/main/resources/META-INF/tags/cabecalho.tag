@@ -267,6 +267,11 @@ ${meta}
 									var fld = document
 											.getElementsByName('buscar_genericoSel.sigla')[0];
 									fld.placeholder = 'Número de Documento';
+									fld.onfocus = function() {
+										if (this.value == 'Buscar') {
+											this.value = '';
+										}
+									};
 									fld.onblur = function() {
 										if (this.value == '') {
 											this.value = 'Buscar';

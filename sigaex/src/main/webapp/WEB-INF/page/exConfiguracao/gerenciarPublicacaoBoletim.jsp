@@ -134,7 +134,7 @@
 	<c:forEach var="config" items="${itens}">
 		<h5>${config[0]}</h5>
 		<table border="0" class="table table-sm table-striped">
-			<thead class="thead-dark">
+			<thead class="${thead_color}">
 				<th align="center">Pessoa</th>
 				<th align="center">Lota&ccedil;&atilde;o</th>
 				<th align="center">Permiss&atilde;o</th>

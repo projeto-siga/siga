@@ -41,7 +41,7 @@ function sbmt(offset) {
 			<!-- main content -->
 			<h5>&Oacute;rg&atilde;os cadastrados</h5>
 				<table border="0" class="table table-sm table-striped">
-					<thead class="thead-dark">
+					<thead class="${thead_color}">
 						<tr>
 							<th algin="center">ID</th>
 							<th align="left">Nome</th>

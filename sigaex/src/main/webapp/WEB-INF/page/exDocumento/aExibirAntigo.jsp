@@ -92,7 +92,7 @@
 			</c:forEach>
 			<c:if test="${temmov}">
 					<table class="table table-sm table-hover table-striped mov mt-2">
-						<thead class="thead-dark align-middle text-center">
+						<thead class="${thead_color} align-middle text-center">
 							<tr>
 								<th class="text-center" rowspan="2">
 									Data

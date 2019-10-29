@@ -50,7 +50,7 @@
 		<div class="row">
 			<div class="col-sm">
 				<table id="tableOrder" class="table table-sm table-striped">
-					<thead class="thead-dark">
+					<thead class="${thead_color}">
 						<tr class="header">
 							<th class="th-sm">Descri&ccedil;&atilde;o</th>
 							<th>Sigla</th>

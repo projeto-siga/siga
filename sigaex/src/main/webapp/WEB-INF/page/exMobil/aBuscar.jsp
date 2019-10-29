@@ -396,7 +396,7 @@ function limpaCampos()
 				<c:if test="${not empty tamanho and tamanho > 0}">
 					<div class="gt-content-box gt-for-table">
 						<table class="table table-striped table-hover ">
-							<thead class="thead-dark">
+							<thead class="${thead_color}">
 								<tr>
 									<th rowspan="3" align="right">
 										Número

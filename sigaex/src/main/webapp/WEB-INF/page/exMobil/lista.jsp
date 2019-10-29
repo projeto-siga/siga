@@ -112,7 +112,7 @@
 	<c:otherwise>
 		<div class="gt-content-box gt-for-table">
 			<table class="gt-table table table-sm table-hover">
-				<thead class="thead-dark">
+				<thead class="${thead_color}">
 					<tr>
 						<th rowspan="3" align="right">Número</th>
 						<th colspan="3" align="center">Documento</th>

@@ -107,7 +107,7 @@
 							</table>
 							<c:if test="${indicadoresProducao.size() > 0}">
 								<table class="gt-table table table-sm table-hover">
-									<thead class="thead-dark">
+									<thead class="${thead_color}">
 										<tr>
 											<th rowspan="1" align="center">Unidade</th>
 											<th colspan="1" align="center">Nome do documento</th>

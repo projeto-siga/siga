@@ -45,9 +45,13 @@ function sbmt(offset) {
 						<div class="form-group">
 							<c:choose>
 								<c:when test="${siga_cliente == 'GOVSP'}">
+								    <!-- parteFuncao para fechar window -->
+								    <c:set var="parteFuncao" value="opener" />
 									<siga:selecao titulo="Unidade" urlAcao="buscar" propriedade="lotacao" modulo="siga"/>
 								</c:when>
 								<c:otherwise>
+								    <!-- parteFuncao para fechar modal -->
+								    <c:set var="parteFuncao" value="parent" />
 									<siga:selecao titulo="Lotação" urlAcao="buscar" propriedade="lotacao" modulo="siga"/>
 								</c:otherwise>	
 							</c:choose>						
@@ -81,8 +85,8 @@ function sbmt(offset) {
 		</div>
 		<br>
 	
-		<table class="table table-sm table-striped">
-			<thead class="thead-dark">
+		<table class="table table-sm table-striped table-responsive">
+			<thead class="${thead_color}">
 				<tr>
 					<th align="center">Matrícula</th>
 					<th align="left">Nome</th>
@@ -95,7 +99,7 @@ function sbmt(offset) {
 				itens="${pessoas}" var="pessoa">
 				<tr class="${evenorodd}">
 					<td align="center"><a
-						href="javascript: opener.retorna_${propriedadeClean}('${pessoa.id}','${pessoa.sigla}','${pessoa.descricao}','${pessoa.funcaoConfianca}');">${pessoa.sigla}</a></td>
+						href="javascript: ${parteFuncao}.retorna_${propriedadeClean}('${pessoa.id}','${pessoa.sigla}','${pessoa.descricao}','${pessoa.funcaoConfianca}');">${pessoa.sigla}</a></td>
 					<td align="left">${pessoa.descricao}</td>
 					<td align="center">${pessoa.lotacao.sigla}</td>
 					<td align="center">${pessoa.funcaoConfianca.nomeFuncao}${buscarFechadas}</td>

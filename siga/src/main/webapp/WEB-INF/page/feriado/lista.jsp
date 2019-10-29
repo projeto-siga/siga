@@ -50,7 +50,7 @@
 			</div>
 			<h5>Feriados cadastrados</h5>
 				<table class="table table-sm table-striped">
-					<thead class="thead-dark">
+					<thead class="${thead_color}">
 						<tr>							
 							<th align="left" width="30%">Descrição</th>	
 							<th align="right" width="20%">Incluir ocorrência</th>

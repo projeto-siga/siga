@@ -101,6 +101,8 @@ ${meta}
 		
 		<c:set var="body_color" value="body_color" scope="request" />
 		
+		<c:set var="thead_color" value="thead-dark" scope="request" />
+		
 		<c:if test="${desabilitarmenu == 'sim'}">
 			<c:set var="body_color" value="login_body_color" scope="request" />
 		</c:if>
@@ -120,6 +122,7 @@ ${meta}
 	</c:when>
 	<c:otherwise>
 		<meta name="theme-color" content="bg-primary">
+				<c:set var="thead_color" value="thead-light" scope="request" />
 		<c:set var="ico_siga" value="siga.ico" />
 		<c:set var="menu_class" value="bg-primary" /> 
 		<c:set var="sub_menu_class" value="bg-secondary text-white" />

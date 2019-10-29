@@ -20,6 +20,17 @@ function sbmt(offset) {
 }
 </script>
 
+<c:choose>
+	<c:when test="${siga_cliente == 'GOVSP'}">
+	    <!-- parteFuncao para fechar window -->
+	    <c:set var="parteFuncao" value="opener" />
+	</c:when>
+	<c:otherwise>
+	    <!-- parteFuncao para fechar modal -->
+	    <c:set var="parteFuncao" value="parent" />
+	</c:otherwise>	
+</c:choose>	
+
 <form name="frm" action="${request.contextPath}/app/funcao/buscar"  cssClass="form">
 	<input type="hidden" name="propriedade" value="${param.propriedade}" />
 	<input type="hidden" name="postback" value="1" />
@@ -66,7 +77,7 @@ function sbmt(offset) {
 <br>
 
 <table  class="table table-sm table-striped">
-	<thead class="thead-dark">
+	<thead class="${thead_color}">
 		<tr class="header">
 			<th align="center">Sigla</th>
 			<th align="left">Nome</th>
@@ -76,7 +87,7 @@ function sbmt(offset) {
 		itens="${itens}" var="item">
 		<tr class="${evenorodd}">
 			<td width="10%" align="center"><a
-				href="javascript: opener.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
+				href="javascript: ${parteFuncao}.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
 			<td width="90%" align="left">${item.descricao}</td>
 		</tr>
 	</siga:paginador>

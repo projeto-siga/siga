@@ -77,7 +77,7 @@
 		</div>
 		<c:if test="${(not empty elementos)}">
 		<table class="table table-sm table-striped">
-			<thead class="thead-dark">
+			<thead class="${thead_color}">
 				<tr>
 					<c:if test="${i == 1}">
 						<td rowspan="2" align="center"><input type="checkbox"

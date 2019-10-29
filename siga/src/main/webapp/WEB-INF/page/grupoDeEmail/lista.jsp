@@ -22,7 +22,7 @@
 			<div class="card-header"><h5>Cadastro de ${cpTipoGrupo.dscTpGrupo}</h5></div>
 				<div class="card-body">
 					<table border="0" class="table table-sm table-striped">
-						<thead class="thead-dark">
+						<thead class="${thead_color}">
 							<th align="left">Sigla</th>
 							<th align="left">Descrição</th>
 							<th align="left">Sigla Grupo Pai aaaaaa</th>

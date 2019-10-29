@@ -54,7 +54,7 @@
 		<c:choose>
 			<c:when test="${not empty itens}">
 				<table border="0" class="table table-sm table-striped">
-					<thead class="thead-dark">
+					<thead class="${thead_color}">
 						<tr>
 							<th style="text-align: center;" colspan="2">Destinatário da
 								Movimentação</th>

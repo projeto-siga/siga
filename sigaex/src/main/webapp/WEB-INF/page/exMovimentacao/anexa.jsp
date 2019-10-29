@@ -218,7 +218,7 @@
 						type="hidden" name="copia" id="copia" value="false" />
 
 					<table class="table table-stripped mov">
-						<thead class="thead-dark">
+						<thead class="${thead_color}">
 							<tr>
 								<th></th>
 								<th align="center" rowspan="2">&nbsp;&nbsp;&nbsp;Data</th>

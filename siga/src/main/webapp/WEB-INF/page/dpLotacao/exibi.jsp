@@ -103,7 +103,7 @@
 		</div>
 		<h3 class="gt-table-head ${hide_only_GOVSP}">Lotações Subordinadas</h3>
 		<table border="0" class="table table-sm table-striped  ${hide_only_GOVSP}">
-			<thead class="thead-dark">
+			<thead class="${thead_color}">
 				<tr>
 					<th align="right">Sigla</th>
 					<th align="right">Nome</th>
@@ -127,7 +127,7 @@
 		<br /> <br />
 		<h3 class="gt-table-head"><fmt:message key="tela.lotacao.magistrados.servidores"/></h3>
 		<table border="0" class="table table-sm table-striped">
-			<thead class="thead-dark">
+			<thead class="${thead_color}">
 				<tr>
 					<th align="right">Nome</th>
 					<th align="right">Matricula</th>

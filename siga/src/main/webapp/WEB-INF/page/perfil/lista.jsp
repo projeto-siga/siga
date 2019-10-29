@@ -21,7 +21,7 @@
 	<div class="container-fluid">
 		<h5>Cadastro de ${cpTipoGrupo.dscTpGrupo}</h5>
 		<table border="0" class="table table-sm table-striped">
-			<thead class="thead-dark">
+			<thead class="${thead_color}">
 				<tr>
 					<th align="left">Sigla</th>
 					<th align="left">Descrição</th>

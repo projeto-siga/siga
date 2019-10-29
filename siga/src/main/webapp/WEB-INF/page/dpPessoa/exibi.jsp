@@ -68,7 +68,7 @@
 			</div>
 		</div>
 		<table border="0" class="table table-sm table-striped">
-			<thead class="thead-dark">
+			<thead class="${thead_color}">
 				<tr>
 					<th align="right">Data</th>
 					<th align="right"><fmt:message key="usuario.lotacao"/></th>

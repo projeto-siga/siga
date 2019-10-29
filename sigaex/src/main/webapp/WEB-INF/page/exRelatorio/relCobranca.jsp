@@ -120,7 +120,7 @@
 					<c:if test="${listLinhas != null}">
 						<div class="row">
 							<table class="table table-hover table-striped">
-								<thead class="thead-dark align-middle text-center">
+								<thead class="${thead_color} align-middle text-center">
 									<tr>
 										<th class="text-left">Unidade</th>
 										<th class="text-left">Nome do Documento</th>

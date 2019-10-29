@@ -19,6 +19,17 @@ function sbmt(offset) {
 }
 </script>
 
+<c:choose>
+	<c:when test="${siga_cliente == 'GOVSP'}">
+	    <!-- parteFuncao para fechar window -->
+	    <c:set var="parteFuncao" value="opener" />
+	</c:when>
+	<c:otherwise>
+	    <!-- parteFuncao para fechar modal -->
+	    <c:set var="parteFuncao" value="parent" />
+	</c:otherwise>	
+</c:choose>	
+
 <form name="frm" action="${request.contextPath}/app/gi/perfil/buscar" class="form" method="POST">
 	<table class="form" width="100%">
 		<input type="hidden" name="buscarFechadas" value="${param['buscarFechadas']}" />
@@ -48,17 +59,20 @@ function sbmt(offset) {
 
 <br>
 
-<table class="list" width="100%">
+<table class="table table-sm table-striped">
+			<thead class="${thead_color}">
+			
 	<tr class="header">
 		<td align="center">Sigla</td>
 		<td align="left">Nome</td>
 		<td>Fim de Vigência</td>
 	</tr>
+	</thead>
 	<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}"
 		itens="${itens}" var="item">
 		<tr class="${evenorodd}">
 			<td width="10%" align="center"><a
-				href="javascript: opener.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
+				href="javascript: ${parteFuncao}.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
 			<td width="70%" align="left">${item.descricao}</td>
 			<td align="left" width="20%">${item.hisDtFim}</td>
 		</tr>

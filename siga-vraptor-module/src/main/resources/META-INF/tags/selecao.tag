@@ -45,6 +45,9 @@
 
 <c:set var="propriedadeSel" value="${propriedade}Sel" />
 
+<c:set var="req" value="${pageContext.request}" />
+<c:set var="urlBase" value="${fn:replace(req.requestURL, req.requestURI, '')}"/>
+
 <c:choose>
 	<c:when test="${empty tipo}">
 		<c:set var="acaoBusca"
@@ -99,12 +102,34 @@
 <c:set var="larguraPopup" value="800" />
 <c:set var="alturaPopup" value="600" />
 
+<style type="text/css">
+
+.modal-dialog,
+
+.modal-content {
+  border-radius: 0 !important;
+  height: 100%;
+}
+
+.modal-body{
+   max-height: 95%;
+   height: 95%;
+   overflow-y: auto; /*habilita o overflow no corpo da modal*/
+}
+
+.embed-responsive {
+   max-height: calc(100% - 30px);
+   height: calc(100% - 30px);
+}
+
+
+</style>
 
 <script type="text/javascript">
 
 self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
     try {
-		newwindow_${propriedade}.close();
+    	document.getElementById('btnsenhaDialog${propriedade}').click(); 
     } catch (E) {
     } finally {
     }
@@ -143,40 +168,56 @@ self.retorna_${propriedade}${tipoSel} = function(id, sigla, descricao) {
 	</c:otherwise>
 </c:choose>
 
+//
+//Provider: modal que simula window
+//
+var modalsimulawindow${propriedade} = 	function(url) {
+		try {
+			var urlInterna = url;
+			var senhaDialog${propriedade}  = $(
+					'<div class="modal" tabindex="-1" role="dialog" id="senhaDialog${propriedade}">'
+				+	'  <div class="modal-dialog modal-lg" role="document">'
+				+	'    <div class="modal-content">'
+				+	'    <div class="modal-header">'
+				+	'	        <button type="button" id="btnsenhaDialog${propriedade}" class="close" aria-label="Close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>'				
+				+   '    </div>'
+				+	'      <div class="modal-body">'
+				+	'	   	   <div class="embed-responsive embed-responsive-16by9">'
+				+	'	   	      <iframe id="iframe${propriedade}" class="embed-responsive-item" src="' + urlInterna + '" allowfullscreen></iframe>'
+				+	'	  	   </div>'
+				+	'	      </div>'
+				+	'	    </div>'
+				+	'	  </div>'
+				+	'	</div>').modal();
+			
+	
+			senhaDialog${propriedade}.on('shown.bs.modal', function () {
+			    $(this).find('iframe${propriedade}').attr('src', urlInterna);
+			});
+			
+			senhaDialog${propriedade}.on('hidden.bs.modal', function () {
+				$('#senhaDialog${propriedade}').remove();
+			});
+		
+			return "AGUARDE";
+		} catch (Err) {
+			return Err.description;
+		}
+	}
+
+
 self.newwindow_${propriedade} = '';
 self.popitup_${propriedade}${tipoSel} = function(sigla) {
 
-	var url = '/${urlPrefix}${urlBuscar}?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI($.trim(sigla)) +'${selecaoParams}';
-		
-	if (!newwindow_${propriedade}.closed && newwindow_${propriedade}.location) {
-		newwindow_${propriedade}.location.href = url;
-	} else {
+	var url =  '${urlBase}/${urlPrefix}${urlBuscar}?propriedade=${propriedade}${tipoSel}&sigla='+encodeURI($.trim(sigla)) +'${selecaoParams}&modal=true';
 	
-		var popW;
-		var popH;
-		
-		<c:choose>
-			<c:when test="${tam eq 'grande'}">
-				 popW = screen.width*0.75;
-				 popH = screen.height*0.75;
-			</c:when>
-			<c:otherwise>
-				 popW = ${larguraPopup};
-				 popH = ${alturaPopup};	
-			</c:otherwise>
-		</c:choose>
-			var winleft = (screen.width - popW) / 2;
-			var winUp = (screen.height - popH) / 2;	
-		winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
-		newwindow_${propriedade}=window.open(url,'${propriedade}${tipoSel}',winProp);
-	}
-	newwindow_${propriedade}.opener = self;
+	newwindow_${propriedade} = modalsimulawindow${propriedade};
 	
-	if (window.focus) {
-		newwindow_${propriedade}.focus()
-	}
+	modalsimulawindow${propriedade}(url);
+
 	return false;
 }
+
 
 self.resposta_ajax_${propriedade}${tipoSel} = function(response, d1, d2, d3) {
 	var sigla = document.getElementsByName('${inputNameTipoSel}.sigla')[0].value;
@@ -278,6 +319,7 @@ self.ajax_${propriedade}${tipoSel} = function() {
 		</div>
 	</c:if>
 </div>
+
 
 <c:if
 	test="${not empty tipo and (not empty idInicial or not empty siglaInicial or not empty descricaoInicial)}">

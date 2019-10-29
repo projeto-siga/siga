@@ -35,7 +35,7 @@
 		</div>
 
 		<table class="table table-hover ">
-			<thead class="thead-dark align-middle text-center">
+			<thead class="${thead_color} align-middle text-center">
 				<tr>
 					<th>Codificação</th>
 					<th class="text-left">Descrição</th>

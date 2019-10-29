@@ -19,6 +19,18 @@
 	}
 </script>
 
+<c:choose>
+	<c:when test="${siga_cliente == 'GOVSP'}">
+	    <!-- parteFuncao para fechar window -->
+	    <c:set var="parteFuncao" value="opener" />
+	</c:when>
+	<c:otherwise>
+	    <!-- parteFuncao para fechar modal -->
+	    <c:set var="parteFuncao" value="parent" />
+	</c:otherwise>	
+</c:choose>	
+
+
 <siga:pagina titulo="Busca de Órgão Integrado" popup="true">
 	<!-- main content -->
 	<div class="container-fluid">
@@ -70,7 +82,7 @@
 		<br />
 
 		<table class="table table-sm table-striped">
-			<thead class="thead-dark">
+			<thead class="${thead_color}">
 				<tr>
 					<th align="center">Sigla</th>
 					<th align="left">Nome</th>
@@ -80,7 +92,7 @@
 			<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}" itens="${itens}" var="item">
 				<tr class="${evenorodd}">
 					<td width="10%" align="center"><a
-						href="javascript: opener.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
+						href="javascript: ${parteFuncao}.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
 					<td width="70%" align="left">${item.descricao}</td>
 					<td align="left" width="20%">${item.dataFimLotacao}</td>
 				</tr>

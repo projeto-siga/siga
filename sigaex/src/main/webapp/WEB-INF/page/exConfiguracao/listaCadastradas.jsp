@@ -14,7 +14,7 @@
 
 
 <table class="table table-sm table-striped" width="100%">
-	<tr class="thead-dark">
+	<tr class="${thead_color}">
 		<th align="center">Nível de acesso</th>
 		<th align="center">Pessoa</th>
 		<th align="center">Lotação</th>

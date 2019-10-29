@@ -209,7 +209,7 @@
 							$(css).appendTo("head");
 						</script>
 							<table class="table table-sm table-responsive-sm table-striped">
-								<thead class="thead-dark align-middle text-center">
+								<thead class="${thead_color} align-middle text-center">
 									<tr>
 										<th class="text-left">Tempo</th>
 										<th class="text-left"><fmt:message key="usuario.lotacao"/></th>

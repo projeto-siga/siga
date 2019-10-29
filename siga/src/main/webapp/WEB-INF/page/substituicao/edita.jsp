@@ -92,10 +92,10 @@
 							<div class="form-group">
 								<label>&nbsp;&nbsp;&nbsp;</label>
 								<span id="spanTitular" class="align-botton" style="${titularStyle}"> 
-									<siga:selecao modulo="siga" propriedade="titular" tema="simple" /> 
+									<siga:selecaoSwitch modulo="siga" propriedade="titular" tema="simple" /> 
 								</span> 
 								<span id="spanLotaTitular" class="align-botton" style="${lotaTitularStyle}"> 
-									<siga:selecao modulo="siga" propriedade="lotaTitular" tema="simple" paramList="${strBuscarFechadas}"/> 
+									<siga:selecaoSwitch modulo="siga" propriedade="lotaTitular" tema="simple" paramList="${strBuscarFechadas}"/> 
 								</span>
 							</div>									
 						</div>
@@ -128,10 +128,10 @@
 							<div class="form-group ">
 								<label>&nbsp;&nbsp;&nbsp;</label>
 								<span id="spanSubstituto" style="${substitutoStyle}"> 
-									<siga:selecao modulo="siga" propriedade="substituto" tema="simple"/> 
+									<siga:selecaoSwitch modulo="siga" propriedade="substituto" tema="simple"/> 
 								</span> 
 								<span id="spanLotaSubstituto" style="${lotaSubstitutoStyle}"> 
-									<siga:selecao  modulo="siga" propriedade="lotaSubstituto" tema="simple" /> 
+									<siga:selecaoSwitch  modulo="siga" propriedade="lotaSubstituto" tema="simple" /> 
 								</span>
 							</div>									
 						</div>

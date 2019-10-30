@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -311,27 +312,27 @@ public class SubstituicaoController extends SigaController {
 
 			subst = dao().gravar(subst);
 			
-			Set<DpPessoa> pessoasParaEnviarEmail;
+			Set<DpPessoa> pessoasParaEnviarEmail = new HashSet<DpPessoa>();
 			
 			String textoEmail = "Informamos que a matrícula: "  + getCadastrante().getSesbPessoa() + getCadastrante().getMatricula()
 			        + " - " + getCadastrante().getNomePessoa()  
 					+ " cadastrou uma substituição da ";
-			
 					
+						
 					if (tipoSubstituto == 1) {
 						textoEmail = textoEmail + " matrícula: " + subst.getSubstituto().getSesbPessoa() + subst.getSubstituto().getMatricula() + " - " + subst.getSubstituto().getNomePessoa();
-						pessoasParaEnviarEmail = subst.getSubstituto().getLotacao().getDpPessoaLotadosSet();
+						pessoasParaEnviarEmail.add(subst.getSubstituto());
 						
 					} else {
 						textoEmail = textoEmail + " lotação: " + subst.getLotaSubstituto().getSigla() + " - " + subst.getLotaSubstituto().getNomeLotacao();
-						pessoasParaEnviarEmail = subst.getLotaSubstituto().getDpPessoaLotadosSet();
+						pessoasParaEnviarEmail.addAll(subst.getLotaSubstituto().getDpPessoaLotadosSet());
 					}
 					
 					textoEmail = textoEmail + " para";
 					
 					if (tipoTitular ==1) {
 						textoEmail = textoEmail + " matricula: " + subst.getTitular().getSesbPessoa() + subst.getTitular().getMatricula() + " - " + subst.getTitular().getNomePessoa();;
-						pessoasParaEnviarEmail.addAll(subst.getTitular().getLotacao().getDpPessoaLotadosSet());
+						pessoasParaEnviarEmail.add(subst.getTitular());
 					} else {
 						textoEmail = textoEmail + " lotação: " + subst.getLotaTitular().getSigla() + " - " + subst.getLotaTitular().getNomeLotacao();
 						pessoasParaEnviarEmail.addAll(subst.getLotaTitular().getDpPessoaLotadosSet());

@@ -39,7 +39,7 @@
 <li class="nav-item dropdown"><a href="javascript:void(0);"
 	class="navbar-brand dropdown-toggle" data-toggle="dropdown"> <fmt:message
 			key="menu.titulo" /></a>
-	<ul class="dropdown-menu dropdown-menu-right">
+	<ul class="dropdown-menu">
 		<c:if test="${not empty f:resource('siga.pagina.inicial.url')}">
 			<li><a class="dropdown-item"
 				href="/siga/app/principal?redirecionar=false">Quadros
@@ -51,7 +51,7 @@
 		</c:if>
 		<li class="dropdown-submenu"><a href="javascript:void(0);"
 			class="dropdown-item dropdown-toggle">Módulos</a>
-			<ul class="dropdown-menu dropdown-menu-right">
+			<ul class="dropdown-menu">
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
 					<li><a class="dropdown-item"
@@ -104,7 +104,7 @@
 						f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;TERC: Módulo de Terceirizados')}">
 						<li class="dropdown-submenu"><a href="javascript:void(0);"
 							class="dropdown-item dropdown-toggle">Pessoas</a>
-							<ul class="dropdown-menu dropdown-menu-right">
+							<ul class="dropdown-menu">
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;AQ: Módulo de Adicional de Qualificação')}">
 									<li><a class="dropdown-item"
@@ -158,7 +158,7 @@
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP:Agendamento de perícias do INSS')}">
 						<li class="dropdown-submenu"><a href="javascript:void(0);"
 							class="dropdown-item dropdown-toggle">Agendas</a>
-							<ul class="dropdown-menu dropdown-menu-right">
+							<ul class="dropdown-menu">
 								<c:if
 									test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;PP')}">
 									<li><a class="dropdown-item" href="/sigapp/">Perícias
@@ -178,7 +178,7 @@
 
 		<li class="dropdown-submenu"><a href="javascript:void(0);"
 			class="dropdown-item dropdown-toggle">Administração</a>
-			<ul class="dropdown-menu dropdown-menu-right">
+			<ul class="dropdown-menu">
 				<li><a class="dropdown-item"
 					href="/siga/app/usuario/trocar_senha">Trocar senha</a></li>
 				<%--
@@ -230,7 +230,7 @@
 			test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade')}">
 			<li class="dropdown-submenu"><a href="javascript:void(0);"
 				class="dropdown-item dropdown-toggle">Gestão de Identidade</a>
-				<ul class="dropdown-menu dropdown-menu-right">
+				<ul class="dropdown-menu">
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;ID:Gerenciar identidades')}">
 						<li><a class="dropdown-item"
@@ -304,7 +304,7 @@
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;REL:Gerar relatórios')}">
 						<li class="dropdown-submenu"><a href="javascript:void(0);"
 							class="dropdown-item dropdown-toggle">Relatórios</a>
-							<ul class="dropdown-menu dropdown-menu-right">
+							<ul class="dropdown-menu">
 								<li><a class="dropdown-item"
 									href="/siga/app/gi/relatorio/selecionar_acesso_servico">Acesso
 										aos Serviços</a></li>
@@ -327,7 +327,7 @@
 			test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;FE:Ferramentas')}">
 			<li class="dropdown-submenu"><a href="javascript:void(0);"
 				class="dropdown-item dropdown-toggle">Ferramentas</a>
-				<ul class="dropdown-menu dropdown-menu-right">
+				<ul class="dropdown-menu">
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;FE;MODVER:Visualizar modelos')}">
 						<li><a class="dropdown-item" href="/siga/app/modelo/listar">Cadastro
@@ -359,17 +359,18 @@
 
 		<c:if test="${not empty meusTitulares}">
 			<li class="dropdown-submenu"><a href="javascript:void(0);"
-				class="dropdown-item dropdown-toggle">Substituir</a>
-				<ul class="dropdown-menu dropdown-menu-right navmenu-large">
+				class="dropdown-item dropdown-toggle dropleft">Substituir</a>
+				<ul class="dropdown-menu navmenu-large">
 					<c:forEach var="substituicao" items="${meusTitulares}">
-						<li><a class="dropdown-item"
+						<div class="dropdown-item" href="#">
+						<li><a class="text-light"
 							style="border-left: 0px; float: right; padding-left: 0.5em; padding-right: 0.5em;"
 							href="javascript:if (confirm('Deseja excluir substituição?')) location.href='/siga/app/substituicao/exclui?id=${substituicao.idSubstituicao}&porMenu=true';">
 								<img style="display: inline;"
 								src="/siga/css/famfamfam/icons/cancel_gray.png" title="Excluir"
 								onmouseover="this.src='/siga/css/famfamfam/icons/cancel.png';"
 								onmouseout="this.src='/siga/css/famfamfam/icons/cancel_gray.png';">
-						</a> <a class="dropdown-item"
+						</a> <a class=""
 							href="/siga/app/substituicao/substituirGravar?id=${substituicao.idSubstituicao}">
 								<c:choose>
 									<c:when test="${not empty substituicao.titular}">
@@ -380,6 +381,7 @@
 									</c:otherwise>
 								</c:choose>
 						</a></li>
+						</div>
 					</c:forEach>
 
 				</ul></li>

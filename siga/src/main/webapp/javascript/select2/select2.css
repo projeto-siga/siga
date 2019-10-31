@@ -253,8 +253,10 @@
   box-shadow: none;
   -webkit-appearance: textfield; }
 
+.select2-container--bootstrap .select2-results > .select2-results__options, 
 .select2-container--default .select2-results > .select2-results__options {
-  max-height: 200px;
+  font-size: 0.8em;
+  max-height: 400px !important;
   overflow-y: auto; }
 
 .select2-container--default .select2-results__option[role=group] {

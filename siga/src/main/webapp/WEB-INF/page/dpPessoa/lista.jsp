@@ -71,7 +71,7 @@ function cpf_mask(v){
 			</div>
 			<div class="card-body">
 				<div class="row">
-					<div class="col-md-3">
+					<div class="col-md-4">
 						<div class="form-group">
 							<label for="uidOrgaoUsu">Órgão</label>
 							<select name="idOrgaoUsu" value="${idOrgaoUsu}" onchange="carregarRelacionados(this.value)" class="form-control">
@@ -83,7 +83,7 @@ function cpf_mask(v){
 							</select>
 						</div>					
 					</div>					
-					<div class="col-md-3">
+					<div class="col-md-2">
 						<div class="form-group">
 							<label for="idCargoPesquisa">Cargo</label>
 							<select name="idCargoPesquisa" value="${idCargoPesquisa}" class="form-control">
@@ -95,7 +95,7 @@ function cpf_mask(v){
 							</select>
 						</div>					
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-2">
 						<div class="form-group">
 							<label for="idFuncaoPesquisa">Fun&ccedil;&atilde;o de Confian&ccedil;a</label>
 							<select name="idFuncaoPesquisa" value="${idFuncaoPesquisa}" class="form-control">
@@ -107,10 +107,8 @@ function cpf_mask(v){
 							</select>
 						</div>					
 					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-9" >
-						<div class="form-group">
+					<div class="col-md-4" >
+						<div class="form-group" id="idLotacaoGroup">
 							<label for="idLotacaoPesquisa"><fmt:message key="usuario.lotacao"/></label>
 							<select class="form-control" id="idLotacaoPesquisa" style="width: 100%"  
 									name="idLotacaoPesquisa" value="${idLotacaoPesquisa}">
@@ -214,14 +212,19 @@ function carregarRelacionados(id) {
 
 $(document).ready(function() {
     $('#idLotacaoPesquisa').select2({
-        matcher: function(args, texto) {
-            if ($.trim(args.term) === '') {
-                return texto;
+        matcher: function(argument, selectOptionText) {
+            if ($.trim(argument.term) === '') {
+                return selectOptionText;
             }
-            if (typeof texto.text === 'undefined') {
+            if (typeof selectOptionText === 'undefined') {
                 return null;
             }
-        	var terms = (args.term + "").split(" ");
+            var args = argument.term.toString();
+            var texto = selectOptionText.text.toString().toLowerCase();
+            var non_asciis = {'a': '[àáâãäå]', 'c': 'ç', 'e': '[èéêë]', 'i': '[ìíîï]', 'n': 'ñ', 'o': '[òóôõö]', 'u': '[ùúûűü]'};
+            for (i in non_asciis) { texto = texto.toLowerCase().replace(new RegExp(non_asciis[i], 'g'), i); }
+            
+        	var terms = (args + "").split(" ");
             var strRegex = "";
             for (var i=0; i < terms.length; i++){
             	if (terms[i] != "") { 
@@ -229,8 +232,8 @@ $(document).ready(function() {
             	}
             }
             var tester = new RegExp(strRegex, "i");
-            if (tester.test(texto.text)){
-                var modifiedData = $.extend({}, texto, true);
+            if (tester.test(texto) || tester.test(selectOptionText.text) ){
+                var modifiedData = $.extend({}, selectOptionText, true);
                 return modifiedData;
             } else {
             	return null;
@@ -240,6 +243,13 @@ $(document).ready(function() {
     	width: "resolve",
     	language: "pt-BR"
     });
+    $('#idLotacaoGroup').on('keyup', function(event) {
+        if (event.key == "Escape") {
+       		$('#idLotacaoPesquisa').val('0');
+       		$('#idLotacaoPesquisa').trigger('change');
+        }
+    });
+
 });	
 </script>
 </siga:pagina>

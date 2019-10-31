@@ -151,6 +151,11 @@
 </script>
 
 <siga:pagina titulo="Cadastro de Pessoa">
+	<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+	<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
+	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+	<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+
 	<!-- main content -->
 	<div class="container-fluid">
 		<div class="card bg-light mb-3" >
@@ -162,7 +167,7 @@
 				<input type="hidden" name="postback" value="1" />
 				<input type="hidden" name="id" value="${id}" />
 				<div class="row">
-					<div class="col-sm-4">
+					<div class="col-md-4">
 						<div class="form-group">
 							<label for="idOrgaoUsu">&Oacute;rg&atilde;o</label>
 							<select name="idOrgaoUsu" value="${idOrgaoUsu}"  onchange="carregarRelacionados(this.value)" class="form-control">
@@ -174,7 +179,7 @@
 							</select>
 						</div>
 					</div>
-					<div class="col-sm-2">
+					<div class="col-md-2">
 						<div class="form-group">
 							<label for="idCargo">Cargo</label>
 							<select name="idCargo" value="${idCargo}" class="form-control">
@@ -186,10 +191,10 @@
 							</select>
 						</div>
 					</div>
-					<div class="col-sm-2">
+					<div class="col-md-2">
 						<div class="form-group">
 							<label for="idFuncao">Fun&ccedil;&atilde;o de Confian&ccedil;a</label>
-							<select name="idFuncao" value="${idFuncao}" class="form-control">
+							<select id="idFuncao" name="idFuncao" value="${idFuncao}" class="form-control">
 								<c:forEach items="${listaFuncao}" var="item">
 									<option value="${item.idFuncao}"
 										${item.idFuncao == idFuncao ? 'selected' : ''}>
@@ -198,10 +203,10 @@
 							</select>
 						</div>
 					</div>
-					<div class="col-sm-4">
-						<div class="form-group">
+					<div class="col-md-4">
+						<div class="form-group" id="idLotacaoGroup">
 							<label for="idLotacao"><fmt:message key="usuario.lotacao"/></label>
-							<select name="idLotacao" value="${idLotacao}" class="form-control">
+							<select id="idLotacao" style="width: 100%" name="idLotacao" value="${idLotacao}" class="form-control">
 								<c:forEach items="${listaLotacao}" var="item">
 									<option value="${item.idLotacao}" ${item.idLotacao == idLotacao ? 'selected' : ''}>
 										<c:if test="${item.descricao ne 'Selecione'}">${item.siglaLotacao} / </c:if>${item.descricao}
@@ -212,25 +217,25 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-4">
+					<div class="col-md-4">
 						<div class="form-group">
 							<label for="nmPessoa">Nome</label>
 							<input type="text" id="nmPessoa" name="nmPessoa" value="${nmPessoa}" maxlength="60" class="form-control" onkeyup="validarNome(this)"/>
 						</div>
 					</div>
-					<div class="col-sm-2">
+					<div class="col-md-2">
 						<div class="form-group">
 							<label for="nmPessoa">Data de Nascimento</label>
 							<input type="text" id="dtNascimento" name="dtNascimento" value="${dtNascimento}" maxlength="10" onkeyup="this.value = mascaraData( this.value )" class="form-control" />
 						</div>
 					</div>
-					<div class="col-sm-2">
+					<div class="col-md-2">
 						<div class="form-group">
 							<label for="nmPessoa">CPF</label>
 							<input type="text" id="cpf" name="cpf" value="${cpf}" maxlength="14" onkeyup="this.value = cpf_mask(this.value)" class="form-control" />
 						</div>
 					</div>
-					<div class="col-sm-4">
+					<div class="col-md-4">
 						<div class="form-group">
 							<label for="nmPessoa">E-mail</label>
 							<input type="text" id="email" name="email" value="${email}" maxlength="60" onchange="validarEmail(this)" onkeyup="this.value = this.value.toLowerCase().trim()" class="form-control" />
@@ -239,12 +244,12 @@
 				</div>
 				<c:if test="${empty id}">
 					<div class="row">
-						<div class="col-sm-3">
+						<div class="col-md-4 col-sm-6">
 							<div class="form-group">
 								<span>Carregar planilha para inserir múltiplos registros:</span>
 							</div>
 						</div>
-						<div class="col-sm-2">
+						<div class="col-md-2 col-sm-2">
 							<div class="form-group">
 								<input type="button" value="Carregar planilha" onclick="javascript:location.href='/siga/app/pessoa/carregarExcel';" class="btn btn-primary" />
 							</div>
@@ -252,7 +257,7 @@
 					</div>
 				</c:if>
 				<div class="row">
-					<div class="col-sm-2">
+					<div class="col-sm-12">
 						<div class="form-group">
 							<button type="button" onclick="javascript: validar();" class="btn btn-primary" >Ok</button> 
 							<button type="button" onclick="javascript:history.back();" class="btn btn-primary" >Cancelar</button>
@@ -308,4 +313,45 @@ function carregarRelacionados(id) {
 		*/
 
 }
+
+$(document).ready(function() {
+    $('#idLotacao').select2({
+        matcher: function(argument, selectOptionText) {
+            if ($.trim(argument.term) === '') {
+                return selectOptionText;
+            }
+            if (typeof selectOptionText === 'undefined') {
+                return null;
+            }
+            var args = argument.term.toString();
+            var texto = selectOptionText.text.toString().toLowerCase();
+            var non_asciis = {'a': '[àáâãäå]', 'c': 'ç', 'e': '[èéêë]', 'i': '[ìíîï]', 'n': 'ñ', 'o': '[òóôõö]', 'u': '[ùúûűü]'};
+            for (i in non_asciis) { texto = texto.toLowerCase().replace(new RegExp(non_asciis[i], 'g'), i); }
+            
+        	var terms = (args + "").split(" ");
+            var strRegex = "";
+            for (var i=0; i < terms.length; i++){
+            	if (terms[i] != "") { 
+                	var strRegex = strRegex + "(?=.*" + terms[i] + ")";
+            	}
+            }
+            var tester = new RegExp(strRegex, "i");
+            if (tester.test(texto) || tester.test(selectOptionText.text) ){
+                var modifiedData = $.extend({}, selectOptionText, true);
+                return modifiedData;
+            } else {
+            	return null;
+            }
+        },
+        theme: "bootstrap",
+    	width: "resolve",
+    	language: "pt-BR"
+    });
+    $('#idLotacaoGroup').on('keyup', function(event) {
+        if (event.key == "Escape") {
+       		$('#idLotacao').val('0');
+       		$('#idLotacao').trigger('change');
+        }
+    });
+});	
 </script>

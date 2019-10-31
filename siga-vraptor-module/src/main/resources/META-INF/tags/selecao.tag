@@ -3,6 +3,7 @@
 
 <%@ attribute name="titulo" required="false"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://localhost/libstag" prefix="f"%>
 <%@ attribute name="propriedade"%>
 <%@ attribute name="reler" required="false"%>
 <%@ attribute name="relertab" required="false"%>
@@ -46,7 +47,14 @@
 <c:set var="propriedadeSel" value="${propriedade}Sel" />
 
 <c:set var="req" value="${pageContext.request}" />
+<c:set var="base" value="${f:resource('siga.base.url')}"/>
 <c:set var="urlBase" value="${fn:replace(req.requestURL, req.requestURI, '')}"/>
+<c:if test="${not empty f:resource('siga.base.url')}">
+	<c:if test = "${fn:startsWith(f:resource('siga.base.url'), 'https') }">
+		<c:set var="urlBase" value="${fn:replace(urlBase, 'http', 'https')}"/>
+	</c:if>
+</c:if>
+
 
 <c:choose>
 	<c:when test="${empty tipo}">

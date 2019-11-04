@@ -112,20 +112,20 @@
 
 <style type="text/css">
 
-.modal-dialog,
+.modal-selecao .modal-dialog ,
 
-.modal-content {
+.modal-selecao .modal-content {
   border-radius: 0 !important;
   height: 100%;
 }
 
-.modal-body{
+.modal-selecao .modal-body  {
    max-height: 97%;
    height: 97%;
    overflow-y: auto; /*habilita o overflow no corpo da modal*/
 }
 
-.embed-responsive {
+.modal-selecao .embed-responsive  {
    max-height: 100%;
    height: 100%;
 }
@@ -183,7 +183,7 @@ var modalsimulawindow${propriedade} = 	function(url) {
 		try {
 			var urlInterna = url;
 			var senhaDialog${propriedade}  = $(
-					'<div class="modal" tabindex="-1" role="dialog" id="senhaDialog${propriedade}">'
+					'<div class="modal modal-selecao" tabindex="-1" role="dialog" id="senhaDialog${propriedade}">'
 				+	'  <div class="modal-dialog modal-lg" role="document">'
 				+	'    <div class="modal-content">'
 				+	'    <div class="modal-header">'

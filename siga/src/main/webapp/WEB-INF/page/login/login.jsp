@@ -147,11 +147,13 @@
 			  </div>
 			</div>
 		</div>
-		<script type="text/javascript">
-			$(window).load(function() {
-				$('#avisoCabecModal').modal('show');
-			});
-		</script>
+		<c:if test="${fAviso}">
+			<script type="text/javascript">
+				$(window).load(function() {
+					$('#avisoCabecModal').modal('show');
+				});
+			</script>
+		</c:if>	
 	</c:if>	
 	<script src="../../javascript/service-worker.js" async></script>
 </siga:pagina>

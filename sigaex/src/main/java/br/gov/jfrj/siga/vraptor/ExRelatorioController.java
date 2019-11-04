@@ -1263,9 +1263,9 @@ public class ExRelatorioController extends ExController {
 	@Path("app/expediente/rel/relDocumentosForaPrazo")
 	public void relDocumentosForaPrazo(final DpLotacaoSelecao lotacaoSel,
 			final DpPessoaSelecao usuarioSel, String dataInicial,
-			String dataFinal, boolean primeiraVez) throws Exception {
+			String dataFinal, String idMod, String idLotaResp, String unidade, String descrModelo,
+			String dataVencida, String totalDocsVencidos, boolean primeiraVez) throws Exception {
 
-		List<String> indicadoresProducao = new ArrayList();
 		try {
 			assertAcesso(ACESSO_RELFORAPRAZO);
 
@@ -1301,65 +1301,37 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("dataInicial"));
 				parametros.put("dataFinal",
 						getRequest().getParameter("dataFinal"));
+				String parametrosLink = "";
 				parametros.put("link_siga", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
-						+ "/app/expediente/doc/exibir?sigla=");
+						+ "/app/expediente/rel/relDocumentosForaPrazo");
 
 				final RelDocumentosForaPrazo rel = new RelDocumentosForaPrazo(
 						parametros);
-				rel.gerar();
 
-				String unidadeAtual = "";
-
-				for (int i = 0; i < rel.listDados.size(); i++) {
-
-					String resultado = "";
-
-					if (!unidadeAtual.equals(rel.listDados.get(i))) {
-						resultado = "<thead class='thead-light'>" + "<tr>"
-								+ "<th rowspan='1' align='center'>"
-								+ rel.listDados.get(i) + "</th>";
-						unidadeAtual = rel.listDados.get(i);
-					} else {
-						resultado = "<thead>" + "<tr>"
-								+ "<th rowspan='1' align='center'></th>";
-					}
-
-					i++;
-
-					resultado += "<th colspan='1' align='center'>"
-							+ rel.listDados.get(i) + "</th>";
-
-					i++;
-
-					resultado += "<th rowspan='1' align='center'>"
-							+ rel.listDados.get(i) + "</th>";
-
-					i++;
-
-					resultado += "<th rowspan='1' align='center'>"
-							+ rel.listDados.get(i) + "</th>" + "</tr>"
-							+ "</thead>";
-
-					indicadoresProducao.add(resultado);
+				if (idMod == null) {
+					rel.gerar();
+					result.include("listModelos", rel.listModelos);
+				} else {
+					parametros.put("idMod", idMod);
+					parametros.put("idLotaResp", idLotaResp);
+					parametros.put("dataVencida", dataVencida);
+					rel.processarDadosDetalhe();
+					result.include("listDocs", rel.listDocs);
+					result.include("unidade", unidade);
+					result.include("descrModelo", descrModelo);
+					result.include("dataVencida", dataVencida);
 				}
-
-				result.include("totalDocumentos",
-						rel.totalDocumentos.toString());
+				result.include("totalDocs", rel.totalDocs);
 			}
 		} catch (Exception e) {
 			result.include("mensagemCabec", e.getMessage());
 			result.include("msgCabecClass", "alert-danger");
 		}
 
-		if (primeiraVez == false) {
-			result.include("primeiraVez", false);
-		}
-
-		result.include("tamanho", indicadoresProducao.size());
-		result.include("indicadoresProducao", indicadoresProducao);
+		result.include("primeiraVez", false);
 		result.include("lotacaoSel", lotacaoSel);
 		result.include("usuarioSel", usuarioSel);
 		result.include("dataInicial", dataInicial);
@@ -1474,9 +1446,8 @@ public class ExRelatorioController extends ExController {
 	public void relDocumentosDevolucaoProgramada(
 			final DpLotacaoSelecao lotacaoSel,
 			final DpPessoaSelecao usuarioSel, String dataInicial,
-			String dataFinal, boolean primeiraVez) throws Exception {
-
-		List<String> indicadoresProducao = new ArrayList();
+			String dataFinal, String idMod, String idLotaResp, String unidade, String descrModelo,
+			String dataVencida, String totalDocsVencidos, boolean primeiraVez) throws Exception {
 		try {
 			assertAcesso(ACESSO_RELDEVPROGRAMADA);
 
@@ -1512,65 +1483,37 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("dataInicial"));
 				parametros.put("dataFinal",
 						getRequest().getParameter("dataFinal"));
+				String parametrosLink = "";
 				parametros.put("link_siga", linkHttp()
 						+ getRequest().getServerName() + ":"
 						+ getRequest().getServerPort()
 						+ getRequest().getContextPath()
-						+ "/app/expediente/doc/exibir?sigla=");
+						+ "/app/expediente/rel/relDocumentosDevolucaoProgramada");
 
 				final RelDocumentosForaPrazo rel = new RelDocumentosForaPrazo(
 						parametros);
-				rel.gerar();
 
-				String unidadeAtual = "";
-
-				for (int i = 0; i < rel.listDados.size(); i++) {
-
-					String resultado = "";
-
-					if (!unidadeAtual.equals(rel.listDados.get(i))) {
-						resultado = "<thead class='thead-light'>" + "<tr>"
-								+ "<th rowspan='1' align='center'>"
-								+ rel.listDados.get(i) + "</th>";
-						unidadeAtual = rel.listDados.get(i);
-					} else {
-						resultado = "<thead>" + "<tr>"
-								+ "<th rowspan='1' align='center'></th>";
-					}
-
-					i++;
-
-					resultado += "<th colspan='1' align='center'>"
-							+ rel.listDados.get(i) + "</th>";
-
-					i++;
-
-					resultado += "<th rowspan='1' align='center'>"
-							+ rel.listDados.get(i) + "</th>";
-
-					i++;
-
-					resultado += "<th rowspan='1' align='center'>"
-							+ rel.listDados.get(i) + "</th>" + "</tr>"
-							+ "</thead>";
-
-					indicadoresProducao.add(resultado);
+				if (idMod == null) {
+					rel.gerar();
+					result.include("listModelos", rel.listModelos);
+				} else {
+					parametros.put("idMod", idMod);
+					parametros.put("idLotaResp", idLotaResp);
+					parametros.put("dataVencida", dataVencida);
+					rel.processarDadosDetalhe();
+					result.include("listDocs", rel.listDocs);
+					result.include("unidade", unidade);
+					result.include("descrModelo", descrModelo);
+					result.include("dataVencida", dataVencida);
 				}
-
-				result.include("totalDocumentos",
-						rel.totalDocumentos.toString());
+				result.include("totalDocs", rel.totalDocs);
 			}
 		} catch (Exception e) {
 			result.include("mensagemCabec", e.getMessage());
 			result.include("msgCabecClass", "alert-danger");
 		}
 
-		if (primeiraVez == false) {
-			result.include("primeiraVez", false);
-		}
-
-		result.include("tamanho", indicadoresProducao.size());
-		result.include("indicadoresProducao", indicadoresProducao);
+		result.include("primeiraVez", false);
 		result.include("lotacaoSel", lotacaoSel);
 		result.include("usuarioSel", usuarioSel);
 		result.include("dataInicial", dataInicial);

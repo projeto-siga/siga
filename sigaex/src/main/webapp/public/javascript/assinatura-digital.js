@@ -193,8 +193,6 @@ var providerAssijusPopup = {
 						cont();
 					}
 				});
-				var success = true;
-				cont({success: success});
 			},
 			
 			errorCallback: function(id, err, cont) {

@@ -2100,19 +2100,19 @@ Pede deferimento.</span><br/><br/><br/>
 	</tr>
 [/#if]
 <tr>
-<td width="70%" ></td>
-<td width="30%" >
-<table align="right" width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" bgcolor="#000000">
-<tr>
-<td align="center" width="60%" style="border-collapse: collapse; border-color: black; font-family:Arial; font-size:8pt;" bgcolor="#FFFFFF">
-	<i>Classif. documental</i>
-</td>
-<td align="center" width="40%" style="border-collapse: collapse; border-color: black; font-family:Arial;font-size:8pt;" bgcolor="#FFFFFF">
-	<span>${(doc.exClassificacao.sigla)!}</span>
-</td>
-</tr>
-</table>
-</td>
+	<td width="60%" ></td>
+	<td width="40%" >
+		<table align="right" width="100%" border="1" style="border-color: black; border-spacing: 0px; border-collapse: collapse" bgcolor="#000000">
+			<tr>
+				<td align="center" width="55%" style="border-collapse: collapse; border-color: black; font-family:Arial; font-size:8pt;" bgcolor="#FFFFFF">
+					<i>Classif. documental</i>
+				</td>
+				<td align="center" width="45%" style="border-collapse: collapse; border-color: black; font-family:Arial;font-size:8pt;" bgcolor="#FFFFFF">
+					<span>${(doc.exClassificacao.sigla)!}</span>
+				</td>
+			</tr>
+		</table>
+	</td>
 </tr>
 [#if !somenteTR]
 </table>
@@ -2124,7 +2124,7 @@ Pede deferimento.</span><br/><br/><br/>
 	[#if texto?? && texto!=""]
 		<tr>
 			<td align="left" style="border-collapse: collapse; border-color: black; font-family:Arial; font-size:8pt;">
-				${texto} 
+				${texto}
 			</td>
 		</tr>
 	[/#if]
@@ -2184,12 +2184,6 @@ Pede deferimento.</span><br/><br/><br/>
         [#if (doc.subscritor)??]
             [@fimSubscritor]${(doc.subscritor.idPessoa)}[/@fimSubscritor]
         [/#if]
-        
-
-	    [#if func.assinadoPor(doc)??]
-       		 <br/>${func.assinadoPor(doc)}
-    	[/#if]
-
         
         [#if (doc.mobilGeral.exMovimentacaoSet)??]
        		[#list doc.mobilGeral.exMovimentacaoSet as mov]

@@ -8,38 +8,6 @@
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
 <siga:pagina titulo="Relatório">
-	<script type="text/javascript" language="Javascript1.1">
-		var newwindow = '';
-		function visualizarRelatorio(rel) {
-			if (!newwindow.closed && newwindow.location) {
-			} else {
-				var popW = 600;
-				var popH = 400;
-				var winleft = (screen.width - popW) / 2;
-				var winUp = (screen.height - popH) / 2;
-				winProp = 'width=' + popW + ',height=' + popH + ',left='
-						+ winleft + ',top=' + winUp
-						+ ',scrollbars=yes,resizable'
-				newwindow = window.open('', '', winProp);
-				newwindow.name = 'doc';
-			}
-
-			newwindow.opener = self;
-			t = frmRelatorios.target;
-			a = frmRelatorios.action;
-			frmRelatorios.target = newwindow.name;
-			frmRelatorios.action = rel;
-			frmRelatorios.submit();
-			frmRelatorios.target = t;
-			frmRelatorios.action = a;
-
-			if (window.focus) {
-				newwindow.focus()
-			}
-			return false;
-		}
-	</script>
-
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
 			<div class="card-header">
@@ -51,75 +19,51 @@
 					action="/sigaex/app/expediente/rel/relTempoMedioSituacao"
 					theme="simple" method="get">
 					<input type="hidden" name="postback" value="1" />
-
-					<div class="form-row">
-						<div class="form-group col-md-2">
-							<label for="dtDocString">Data Inicial</label> <input
-								class="form-control" type="text" name="dataInicial"
-								id="dataInicial" onblur="javascript:verifica_data(this,0);"
-								value="${dataInicial}" />
-						</div>
-						<div class="form-group col-md-2">
-							<label for="dtDocFinalString">Data Final</label> <input
-								class="form-control" type="text" name="dataFinal" id="dataFinal"
-								onblur="javascript:verifica_data(this,0);" value="${dataFinal}" />
-						</div>
-
-						<div class="form-group col-md-4">
-							<label><fmt:message key="usuario.lotacao" /></label>
-							<siga:selecao propriedade="lotacao" tema="simple" reler="sim"
-								modulo="siga" />
-						</div>
-						<div class="form-group col-md-4">
-							<label><fmt:message key="usuario.matricula" /></label>
-							<siga:selecao propriedade="usuario" tema="simple"
-								paramList="buscarFechadas=true" modulo="siga" />
-						</div>
+					<div class="row">
+						<jsp:include page="relGestaoInput.jsp" />
 						<div class="form-group col-md-4">
 							<input type="submit" value="Pesquisar" class="btn btn-primary" />
 							<input type="button" value="Voltar"
 								onclick="javascript:history.back();" class="btn btn-primary" />
 						</div>
-						<input type="hidden" name="lotacaoId" value="${lotacaoSel.id}" />
-						<input type="hidden" name="siglalotacao"
-							value="${lotacaoSel.sigla}" /> <input type="hidden"
-							name="usuarioId" value="${usuarioSel.id}" /> <input
-							type="hidden" name="siglaUsuario" value="${usuarioSel.sigla}" />
-						<input type="hidden" name="lotacaoTitular"
-							value="${lotaTitular.siglaLotacao}" /> <input type="hidden"
-							name="orgao" id="orgao" value="${orgao}" /> <input type="hidden"
-							name="idTit" value="${titular.id}" /> <input type="hidden"
-							name="nomeArquivoRel" value="${nomeArquivoRel}" />
 					</div>
-					<c:if test="${primeiraVez == false}">
-						<c:if test="${not empty tamanho and tamanho > 0}">
-							<h2 class="mt-3">
-								<fmt:message key="documento.encontrados" />
-							</h2>
-							<table class="gt-table table table-sm table-hover">
-								<thead class="thead-light">
-									<tr>
-										<th rowspan="1" align="center"><b>Documentos
-												Produzidos: ${totalDocumentos}</b></th>
-									</tr>
-								</thead>
-							</table>
-							<c:if test="${indicadoresProducao.size() > 0}">
-								<table class="gt-table table table-sm table-hover">
-									<thead class="thead-dark">
-										<tr>
-											<th rowspan="1" align="center">Unidade</th>
-											<th colspan="1" align="center">Nome do documento</th>
-											<th colspan="1" align="center">Situação</th>
-											<th rowspan="1" align="center">Tempo médio em dias</th>
-										</tr>
-									</thead>
-									<c:forEach var="campos" items="${indicadoresProducao}">
-										<th rowspan="2" align="left">${campos}</th>
-									</c:forEach>
-								</table>
-							</c:if>
-						</c:if>
+					<c:if test="${listModelos != null}">
+						<table class="table table-sm table-hover">
+							<thead class="thead-light">
+								<tr>
+								</tr>
+							</thead>
+						</table>
+						<table class="table table-hover table-striped">
+							<thead class="thead-dark align-middle text-center">
+								<tr>
+									<th class="text-left w-20">Unidade</th>
+									<th class="text-left w-40">Nome do documento</th>
+									<th class="text-left w-20">Situação</th>
+									<th class="text-right w-20 mx-5">Tempo médio em dias</th>
+								</tr>
+							</thead>
+							<tbody class="table-bordered">
+							<c:forEach items="${listModelos}" var="itemModelos">
+								<tr>
+									<td>
+										${itemModelos[0]}
+									</td>
+									<td>
+										${itemModelos[1]}
+									</td>
+									<td>
+										${itemModelos[2]}
+									</td>
+									<td class="mx-auto">
+										<div class="text-right mx-5">
+											<fmt:formatNumber type="number" pattern="###,###,###,##0" value="${itemModelos[3]}" />
+										</div>
+									</td>
+								</tr>
+							</c:forEach> 
+							</tbody>
+						</table>
 					</c:if>
 				</form>
 			</div>

@@ -3970,7 +3970,7 @@ public class ExBL extends CpBL {
 		// ultMov.setDtFimMov(new Date());
 		// ExDao.getInstance().gravar(ultMov);
 		// }
-		if (!mov.getExTipoMovimentacao().getIdTpMov()
+		if (mov.getExTipoMovimentacao().getIdTpMov()
 				.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR))
 			mov.setNumPaginas(mov.getContarNumeroDePaginas());
 		dao().gravar(mov);

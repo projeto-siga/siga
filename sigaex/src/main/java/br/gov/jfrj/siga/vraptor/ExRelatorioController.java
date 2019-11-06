@@ -1359,16 +1359,6 @@ public class ExRelatorioController extends ExController {
 				}
 				consistePeriodo(dataInicial, dataFinal);
 
-				final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-				final Date dtIni = df.parse(dataInicial);
-				final Date dtFim = df.parse(dataFinal);
-
-
-				if (dtIni.getMonth() != dtFim.getMonth()) {
-					throw new AplicacaoException(
-							"Data inicial e data final não pode ser de meses diferentes");
-				}
-
 				parametros.put("orgao", orgaoSelId.toString());
 				parametros.put("lotacao",
 						getRequest().getParameter("lotacaoSel.id"));
@@ -1378,51 +1368,12 @@ public class ExRelatorioController extends ExController {
 						getRequest().getParameter("dataInicial"));
 				parametros.put("dataFinal",
 						getRequest().getParameter("dataFinal"));
-				parametros.put("link_siga", linkHttp()
-						+ getRequest().getServerName() + ":"
-						+ getRequest().getServerPort()
-						+ getRequest().getContextPath()
-						+ "/app/expediente/doc/exibir?sigla=");
 
 				final RelTempoMedioSituacao rel = new RelTempoMedioSituacao(
 						parametros);
 				rel.gerar();
 
-				String unidadeAtual = "";
-
-				for (int i = 0; i < rel.listDados.size(); i++) {
-
-					String resultado = "";
-
-					if (!unidadeAtual.equals(rel.listDados.get(i))) {
-						resultado = "<thead class='thead-light'>" + "<tr>"
-								+ "<th rowspan='1' align='center'>"
-								+ rel.listDados.get(i) + "</th>";
-						unidadeAtual = rel.listDados.get(i);
-					} else {
-						resultado = "<thead>" + "<tr>"
-								+ "<th rowspan='1' align='center'></th>";
-					}
-
-					i++;
-
-					resultado += "<th colspan='1' align='center'>"
-							+ rel.listDados.get(i) + "</th>";
-
-					i++;
-
-					resultado += "<th rowspan='1' align='center'>"
-							+ rel.listDados.get(i) + "</th>";
-
-					i++;
-
-					resultado += "<th rowspan='1' align='center'>"
-							+ rel.listDados.get(i) + "</th>" + "</tr>"
-							+ "</thead>";
-
-					indicadoresProducao.add(resultado);
-				}
-
+				result.include("listModelos", rel.listModelos);
 			}
 		} catch (Exception e) {
 			result.include("mensagemCabec", e.getMessage());

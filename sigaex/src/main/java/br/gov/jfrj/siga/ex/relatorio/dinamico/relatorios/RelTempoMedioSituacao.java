@@ -20,6 +20,7 @@ import ar.com.fdvs.dj.domain.builders.DJBuilderException;
 import br.gov.jfrj.relatorio.dinamico.AbstractRelatorioBaseBuilder;
 import br.gov.jfrj.relatorio.dinamico.RelatorioRapido;
 import br.gov.jfrj.relatorio.dinamico.RelatorioTemplate;
+import br.gov.jfrj.siga.dp.CpMarcador;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
@@ -28,8 +29,7 @@ import br.gov.jfrj.siga.model.dao.HibernateUtil;
 public class RelTempoMedioSituacao extends RelatorioTemplate {
 
 	public List<String> listColunas;
-	public List<String> listDados;
-	public Long totalDocumentos;
+	public List<List<String>> listModelos;
 
 	public RelTempoMedioSituacao(Map parametros) throws DJBuilderException {
 		super(parametros);
@@ -40,7 +40,7 @@ public class RelTempoMedioSituacao extends RelatorioTemplate {
 			throw new DJBuilderException("Parâmetro dataFinal não informado!");
 		}
 		listColunas = new ArrayList<String>();
-		listDados = new ArrayList<String>();
+		listModelos = new ArrayList<List<String>>();
 	}
 
 	@Override
@@ -68,25 +68,32 @@ public class RelTempoMedioSituacao extends RelatorioTemplate {
 		List<String> d = new ArrayList<String>();
 
 		Iterator it = obtemDados(d);
-		totalDocumentos = 0L;
 		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-
+		String lotaAnt = "";
+		
 		while (it.hasNext()) {
 			Object[] obj = (Object[]) it.next();
 			String lotaDoc = (String) obj[0];
 			String modeloDoc = (String) obj[1];
-			listDados.add(lotaDoc);
+			List<String> listDados = new ArrayList();
+
+			if (!lotaDoc.equals(lotaAnt)) {
+				listDados.add(lotaDoc);
+				lotaAnt = lotaDoc;
+			} else {
+				listDados.add("");
+			}
 			listDados.add(modeloDoc);
 			listDados.add(obj[2].toString());
 			listDados.add(obj[3].toString());
-			d.add(lotaDoc);
-			d.add(modeloDoc);
-			d.add(obj[2].toString());
-			d.add(obj[3].toString());
-			Long docs = Long.valueOf(obj[3].toString());
-			totalDocumentos = totalDocumentos + docs;
-
+			listModelos.add(listDados);
 		}
+		for (List<String> lin : listModelos) {
+			for (String dado : lin) {
+				d.add(dado);
+			}
+		}
+		
 		if (d.size() == 0) {
 			throw new Exception(
 					"Não foram encontrados documentos para os dados informados.");
@@ -102,103 +109,134 @@ public class RelTempoMedioSituacao extends RelatorioTemplate {
 		String queryLotacao = "";
 		if (parametros.get("lotacao") != null
 				&& parametros.get("lotacao") != "") {
-			queryLotacao = " AND INICIO_MARCACAO.ID_LOTA_CADASTRANTE IN ( SELECT CORPORATIVO.DP_LOTACAO.ID_LOTACAO FROM CORPORATIVO.DP_LOTACAO WHERE CORPORATIVO.DP_LOTACAO.ID_LOTACAO_INI = :lotacao ) ";
+			queryLotacao = " AND DOCA.ID_LOTA_CADASTRANTE IN ( SELECT LOTA.ID_LOTACAO FROM CORPORATIVO.DP_LOTACAO LOTA WHERE LOTA.ID_LOTACAO_INI = :lotacao ) ";
 		}
 
 		String queryUsuario = "";
 		if (parametros.get("usuario") != null
 				&& parametros.get("usuario") != "") {
-			queryUsuario = " AND CORPORATIVO.DP_PESSOA.ID_PESSOA_INICIAL IN ( SELECT CORPORATIVO.DP_PESSOA.ID_PESSOA FROM CORPORATIVO.DP_PESSOA WHERE CORPORATIVO.DP_PESSOA.ID_PESSOA_INICIAL = :usuario ) ";
+			queryUsuario = " AND DOCA.ID_CADASTRANTE IN ( SELECT PES.ID_PESSOA FROM CORPORATIVO.DP_PESSOA PES WHERE PES.ID_PESSOA_INICIAL = :usuario ) ";
 		}
 
 		Query query = HibernateUtil
 				.getSessao()
 				.createSQLQuery(
-						"SELECT SIGLA_LOTACAO, "
-								+ " NM_MOD, "
-								+ " SITUACAO, "
-								+ " CEIL(SUM(MEDIA) / COUNT(*)) MEDIA "
-								+ " FROM ( "
-								+ " SELECT SIGLA_LOTACAO, "
-								+ " ID_DOC, "
-								+ " NM_MOD, "
-								+ " 'URGENTE' SITUACAO, "
-								+ " SUM(DIAS) TOTAL_DIAS, "
-								+ " (COUNT(*) * 2) QTD_MOVIMENTACOES, "
-								+ " CEIL(SUM(DIAS) / (COUNT(*) * 2)) MEDIA "
-								+ " FROM ( SELECT (CORPORATIVO.DP_LOTACAO.SIGLA_LOTACAO || ' - ' || CORPORATIVO.DP_LOTACAO.NOME_LOTACAO) SIGLA_LOTACAO, "
-								+ " SIGA.EX_DOCUMENTO.ID_DOC, "
-								+ " SIGA.EX_MODELO.NM_MOD, "
-								+ " (trunc(FIM_MARCACAO.DT_MOV) - trunc(INICIO_MARCACAO.DT_MOV)) dias "
-								+ " FROM SIGA.EX_MOVIMENTACAO INICIO_MARCACAO "
-								+ " INNER JOIN SIGA.EX_MOVIMENTACAO FIM_MARCACAO "
-								+ " ON INICIO_MARCACAO.ID_MOV_CANCELADORA = FIM_MARCACAO.ID_MOV "
-								+ " AND INICIO_MARCACAO.ID_MOV = FIM_MARCACAO.ID_MOV_REF "
-								+ " INNER JOIN CORPORATIVO.DP_PESSOA "
-								+ " ON CORPORATIVO.DP_PESSOA.ID_PESSOA = INICIO_MARCACAO.ID_CADASTRANTE "
-								+ " INNER JOIN SIGA.EX_MOBIL "
-								+ " ON SIGA.EX_MOBIL.ID_MOBIL = INICIO_MARCACAO.ID_MOBIL "
-								+ " INNER JOIN SIGA.EX_DOCUMENTO "
-								+ " ON SIGA.EX_DOCUMENTO.ID_DOC = SIGA.EX_MOBIL.ID_DOC "
-								+ " INNER JOIN SIGA.EX_MODELO "
-								+ " ON SIGA.EX_MODELO.ID_MOD = SIGA.EX_DOCUMENTO.ID_MOD "
-								+ " INNER JOIN CORPORATIVO.DP_LOTACAO "
-								+ " ON CORPORATIVO.DP_LOTACAO.ID_LOTACAO = SIGA.EX_DOCUMENTO.ID_LOTA_CADASTRANTE "
-								+ " WHERE INICIO_MARCACAO.ID_TP_MOV = 62 "
-								+ " AND FIM_MARCACAO.ID_TP_MOV = 14 "
-								+ " AND INICIO_MARCACAO.ID_MARCADOR = 1000 "
-								+ " AND (trunc(FIM_MARCACAO.DT_MOV) - trunc(INICIO_MARCACAO.DT_MOV)) > 0 "
-								+ " AND SIGA.EX_DOCUMENTO.ID_ORGAO_USU = :orgao "
-								+ " AND SIGA.EX_DOCUMENTO.DT_DOC >= :dtini "
-								+ " AND SIGA.EX_DOCUMENTO.DT_DOC <= :dtfim	"
-								+ queryLotacao
-								+ queryUsuario
-								+ " ) "
-								+ " GROUP BY SIGLA_LOTACAO, "
-								+ " ID_DOC, "
-								+ " NM_MOD "
-								+ " UNION "
-								+ " SELECT SIGLA_LOTACAO, "
-								+ " ID_DOC, "
-								+ " NM_MOD, "
-								+ " 'CAIXA DE ENTRADA' SITUACAO, "
-								+ " SUM(DIAS) TOTAL_DIAS, "
-								+ " (COUNT(*) * 2) QTD_MOVIMENTACOES, "
-								+ " CEIL(SUM(DIAS) / (COUNT(*) * 2)) MEDIA "
-								+ " FROM (SELECT (CORPORATIVO.DP_LOTACAO.SIGLA_LOTACAO || ' - ' || CORPORATIVO.DP_LOTACAO.NOME_LOTACAO) SIGLA_LOTACAO,"
-								+ " SIGA.EX_DOCUMENTO.ID_DOC, "
-								+ " SIGA.EX_MODELO.NM_MOD, "
-								+ " (trunc(FIM_MARCACAO.DT_MOV) - trunc(INICIO_MARCACAO.DT_MOV)) dias "
-								+ " FROM SIGA.EX_MOVIMENTACAO INICIO_MARCACAO "
-								+ " INNER JOIN SIGA.EX_MOVIMENTACAO FIM_MARCACAO "
-								+ " ON INICIO_MARCACAO.ID_MOBIL = FIM_MARCACAO.ID_MOBIL "
-								+ " INNER JOIN CORPORATIVO.DP_PESSOA "
-								+ " ON CORPORATIVO.DP_PESSOA.ID_PESSOA = INICIO_MARCACAO.ID_CADASTRANTE "
-								+ " INNER JOIN SIGA.EX_MOBIL "
-								+ " ON SIGA.EX_MOBIL.ID_MOBIL = INICIO_MARCACAO.ID_MOBIL "
-								+ " INNER JOIN SIGA.EX_DOCUMENTO "
-								+ " ON SIGA.EX_DOCUMENTO.ID_DOC = SIGA.EX_MOBIL.ID_DOC "
-								+ " INNER JOIN SIGA.EX_MODELO "
-								+ " ON SIGA.EX_MODELO.ID_MOD = SIGA.EX_DOCUMENTO.ID_MOD "
-								+ " INNER JOIN CORPORATIVO.DP_LOTACAO "
-								+ " ON CORPORATIVO.DP_LOTACAO.ID_LOTACAO = SIGA.EX_DOCUMENTO.ID_LOTA_CADASTRANTE "
-								+ " WHERE INICIO_MARCACAO.ID_TP_MOV = 3 "
-								+ " AND FIM_MARCACAO.ID_TP_MOV = 4 "
-								+ " AND (trunc(FIM_MARCACAO.DT_MOV) - trunc(INICIO_MARCACAO.DT_MOV)) > 0 "
-								+ " AND SIGA.EX_DOCUMENTO.ID_ORGAO_USU = :orgao "
-								+ " AND SIGA.EX_DOCUMENTO.DT_DOC >= :dtini "
-								+ " AND SIGA.EX_DOCUMENTO.DT_DOC <= :dtfim	"
-								+ queryLotacao
-								+ queryUsuario
-								+ " ) "
-								+ " GROUP BY SIGLA_LOTACAO, "
-								+ " ID_DOC, "
-								+ " NM_MOD "
-								+ " ) "
-								+ " GROUP BY SIGLA_LOTACAO, "
-								+ " NM_MOD, "
-								+ " SITUACAO ORDER BY 4 DESC " );
+						"SELECT "
+					    + "(LOTA.SIGLA_LOTACAO || ' - ' || LOTA.NOME_LOTACAO) LOTADESCR, "
+					    + "MOD.NM_MOD, "
+					    + "SITUACAO, "
+					    + "ROUND(SUM(MEDIA) / COUNT(MEDIA), 0) MEDIA "  
+					    + "FROM "
+					    + "    ( SELECT "
+					    + "        ID_LOTA_CADASTRANTE, "
+					    + "        ID_DOC, "
+					    + "        ID_MOD, "
+					    + "        SITUACAO, "
+					    + "        SUM(DIAS) TOTAL_DIAS, "
+					    + "        ROUND(SUM(DIAS) / (COUNT(ID_DOC)), 0) MEDIA "   
+					    + "        FROM "
+					    + "        ( SELECT "
+					    + "            'CAIXA DE ENTRADA' SITUACAO, "
+					    + "            ID_DOC, ID_MOD, ID_LOTA_CADASTRANTE, "
+					    + "            (TRUNC(DT_INI_MOV2) - TRUNC(DT_INI_MOV1)) DIAS FROM "
+					    + "            (SELECT MOV1.ID_DOC, MOV1.ID_MOD, MOV1.ID_LOTA_CADASTRANTE, " 
+					    + "                MOV1.ID_TP_MOV TPMOV1, "
+					    + "                LEAD (MOV1.ID_TP_MOV, 1) OVER (PARTITION BY MOV1.ID_MOBIL ORDER BY MOV1.ID_MOBIL, MOV1.ID_MOV) TPMOV2, "
+					    + "                MOV1.DT_INI_MOV DT_INI_MOV1, "
+					    + "                LEAD (MOV1.DT_INI_MOV, 1) OVER (PARTITION BY MOV1.ID_MOBIL ORDER BY MOV1.ID_MOBIL, MOV1.ID_MOV) DT_INI_MOV2 " 
+					    + "                FROM "
+					    + "                      (SELECT DOCA.ID_DOC, MOVA.ID_MOBIL, MOVA.ID_MOV, MOVA.ID_TP_MOV, MOVA.DT_INI_MOV, DOCA.ID_LOTA_CADASTRANTE, DOCA.ID_CADASTRANTE, DOCA.ID_MOD, MOVA.ID_MOV_CANCELADORA "   
+					    + "                       FROM SIGA.EX_MOVIMENTACAO MOVA "
+					    + "                       INNER JOIN SIGA.EX_MOBIL MOBA ON MOBA.ID_MOBIL = MOVA.ID_MOBIL "
+					    + "                       INNER JOIN SIGA.EX_DOCUMENTO DOCA ON DOCA.ID_DOC = MOBA.ID_DOC "  
+					    + "                       WHERE "
+						+ "							DOCA.ID_ORGAO_USU = :orgao "
+						+ queryLotacao
+						+ queryUsuario
+					    + "                         AND DOCA.DT_FINALIZACAO >= :dtini AND DOCA.DT_FINALIZACAO <= :dtfim "
+					    + "                         AND (MOVA.ID_TP_MOV = :idTpMovTransf "
+					    + "							  OR MOVA.ID_TP_MOV = :idTpMovDespTransf "							
+					    + "							  OR MOVA.ID_TP_MOV = :idTpMovDespTransfExt "							
+					    + "							  OR MOVA.ID_TP_MOV = :idTpMovTransfExt "							
+					    + "                           OR MOVA.ID_TP_MOV = :idTpMovRecebimento "
+					    + "                           OR MOVA.ID_TP_MOV = :idTpMovTornarSemEfeito "
+					    + "                           OR MOVA.ID_TP_MOV = :idTpMovArqCorrente) "
+					    + "                         AND MOVA.ID_MOV_CANCELADORA IS NULL "
+					    + "                       ORDER BY MOVA.ID_MOBIL, MOVA.ID_MOV "
+					    + "                       ) "
+					    + "				MOV1 ) "
+					    + "            WHERE "
+					    + "                ( TPMOV2 = :idTpMovRecebimento "
+					    + "						OR TPMOV2 = :idTpMovArqCorrente "
+					    + "						OR TPMOV2 = :idTpMovTornarSemEfeito ) "
+					    + "                AND ( TPMOV1 = :idTpMovTransf "
+					    + "						OR TPMOV1 = :idTpMovDespTransf "
+					    + "                		OR TPMOV1 = :idTpMovDespTransfExt "
+					    + "						OR TPMOV1 = :idTpMovTransfExt ) "
+						+ "		UNION ALL "
+					    + "        SELECT "
+					    + "            'URGENTE' SITUACAO, "
+					    + "            ID_DOC, ID_MOD, ID_LOTA_CADASTRANTE, "
+					    + "            (TRUNC(DT_INI_MOV2) - TRUNC(DT_INI_MOV1)) DIAS FROM "
+					    + "            (SELECT MOV1.ID_DOC, MOV1.ID_MOD, MOV1.ID_LOTA_CADASTRANTE, " 
+					    + "                MOV1.ID_TP_MOV TPMOV1, "
+					    + "                LEAD (MOV1.ID_TP_MOV, 1) OVER (PARTITION BY MOV1.ID_MOBIL ORDER BY MOV1.ID_MOBIL, MOV1.ID_MOV) TPMOV2, "
+					    + "                MOV1.DT_INI_MOV DT_INI_MOV1, "
+					    + "                LEAD (MOV1.DT_INI_MOV, 1) OVER (PARTITION BY MOV1.ID_MOBIL ORDER BY MOV1.ID_MOBIL, MOV1.ID_MOV) DT_INI_MOV2 " 
+					    + "                FROM "
+					    + "                      (SELECT DOCA.ID_DOC, MOVA.ID_MOBIL, MOVA.ID_MOV, MOVA.ID_TP_MOV, MOVA.DT_INI_MOV, DOCA.ID_LOTA_CADASTRANTE, DOCA.ID_CADASTRANTE, DOCA.ID_MOD, MOVA.ID_MOV_CANCELADORA "   
+					    + "                       FROM SIGA.EX_MOVIMENTACAO MOVA "
+					    + "                       INNER JOIN SIGA.EX_MOBIL MOBA ON MOBA.ID_MOBIL = MOVA.ID_MOBIL " 
+					    + "                       INNER JOIN SIGA.EX_DOCUMENTO DOCA ON DOCA.ID_DOC = MOBA.ID_DOC "  
+					    + "                       WHERE "
+						+ "						    DOCA.ID_ORGAO_USU = :orgao "
+						+ queryLotacao
+						+ queryUsuario
+					    + "                         AND DOCA.DT_FINALIZACAO >= :dtini AND DOCA.DT_FINALIZACAO <= :dtfim "
+					    + "                         AND ( ( MOVA.ID_TP_MOV = :idTpMovMarcacao "
+					    + "									AND MOVA.ID_MARCADOR = :idMarcadorUrgente "
+					    + "									AND MOVA.ID_MOV_CANCELADORA IS NOT NULL ) "  
+					    + "                             OR ( MOVA.ID_TP_MOV = :idTpMovCancelar "
+					    + "										AND MOVA.ID_MOV_REF IN "
+					    + "                                 	(SELECT ID_MOV FROM SIGA.EX_MOVIMENTACAO WHERE "
+					    + "											ID_TP_MOV = :idTpMovMarcacao "
+					    + "											AND ID_MARCADOR = :idMarcadorUrgente "
+					    + "											AND ID_MOV_CANCELADORA IS NOT NULL) ) ) "
+					    + "                            ORDER BY MOVA.ID_MOBIL, MOVA.ID_MOV "
+					    + "                        ) MOV1 ) "
+					    + "             WHERE "
+					    + "                    TPMOV1 = :idTpMovMarcacao "
+					    + "                    AND TPMOV2 = :idTpMovCancelar "
+					    + "		) "
+						+ "		GROUP BY "
+						+ "		ID_LOTA_CADASTRANTE, "
+						+ "		ID_DOC, "
+						+ "		ID_MOD, "
+						+ "		SITUACAO "
+						+ "	) TAB_AUX "
+						+ "INNER JOIN SIGA.EX_MODELO MOD ON MOD.ID_MOD = TAB_AUX.ID_MOD "
+						+ "INNER JOIN CORPORATIVO.DP_LOTACAO LOTA ON LOTA.ID_LOTACAO = TAB_AUX.ID_LOTA_CADASTRANTE "          
+						+ "GROUP BY "
+						+ "    (LOTA.SIGLA_LOTACAO || ' - ' || LOTA.NOME_LOTACAO), "
+						+ "    MOD.NM_MOD, "
+						+ "    SITUACAO " 
+						+ "ORDER BY "
+						+ "	   LOTADESCR, "
+						+ "    SITUACAO, " 
+						+ "    MEDIA DESC " 
+					);
 
+		query.setLong("idTpMovMarcacao", ExTipoMovimentacao.TIPO_MOVIMENTACAO_MARCACAO);
+		query.setLong("idMarcadorUrgente", CpMarcador.MARCADOR_URGENTE);
+		query.setLong("idTpMovTransf", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA);
+		query.setLong("idTpMovDespTransf", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA);
+		query.setLong("idTpMovDespTransfExt", ExTipoMovimentacao.TIPO_MOVIMENTACAO_DESPACHO_TRANSFERENCIA_EXTERNA);
+		query.setLong("idTpMovTransfExt", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TRANSFERENCIA_EXTERNA);
+		query.setLong("idTpMovArqCorrente", ExTipoMovimentacao.TIPO_MOVIMENTACAO_ARQUIVAMENTO_CORRENTE);
+		query.setLong("idTpMovRecebimento", ExTipoMovimentacao.TIPO_MOVIMENTACAO_RECEBIMENTO);			
+		query.setLong("idTpMovTornarSemEfeito", ExTipoMovimentacao.TIPO_MOVIMENTACAO_TORNAR_SEM_EFEITO);			
+		query.setLong("idTpMovCancelar", ExTipoMovimentacao.TIPO_MOVIMENTACAO_CANCELAMENTO_DE_MOVIMENTACAO);			
+		
 		if (parametros.get("lotacao") != null
 				&& parametros.get("lotacao") != "") {
 			Query qryLota = HibernateUtil.getSessao().createQuery(
@@ -227,15 +265,11 @@ public class RelTempoMedioSituacao extends RelatorioTemplate {
 
 		query.setLong("orgao", Long.valueOf((String) parametros.get("orgao")));
 
-		/*
 		Date dtini = formatter.parse((String) parametros.get("dataInicial"));
 		query.setDate("dtini", dtini);
 		Date dtfim = formatter.parse((String) parametros.get("dataFinal"));
-		query.setDate("dtfim", dtfim);
-*/
-		
-		query.setString("dtini", (String) parametros.get("dataInicial"));
-		query.setString("dtfim", (String) parametros.get("dataFinal"));
+		Date dtfimMaisUm = new Date( dtfim.getTime() + 86400000L );
+		query.setDate("dtfim", dtfimMaisUm);
 		
 		Iterator it = query.list().iterator();
 		return it;

@@ -1085,7 +1085,7 @@ public class FuncoesEL {
 		}
 		return retorno;
 	}	
-	
+
 	public String assinadoPor(ExDocumento doc) {
 		String retorno = "";	
 		List<ExMovimentacao> mov;
@@ -1093,7 +1093,7 @@ public class FuncoesEL {
 			if (doc.isFinalizado()) {
 				mov = doc.getMobilGeral().getMovimentacoesPorTipo(72);
 				for (ExMovimentacao movAssPor : mov) {
-					retorno = "DOCUMENTO ASSINADO POR  \"" +  movAssPor.getSubscritor().getNomePessoa() + "\" - \"" + movAssPor.getSubscritor().getSigla()+ "\"";
+					retorno = "Documento assinado POR  \"" +  movAssPor.getSubscritor().getNomePessoa() + "\" - \"" + movAssPor.getSubscritor().getSigla()+ "\"";
 				}
 				return retorno;
 			}

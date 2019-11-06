@@ -49,6 +49,11 @@ function sbmt(offset) {
 								    <c:set var="parteFuncao" value="opener" />
 									<siga:selecao titulo="Unidade" urlAcao="buscar" propriedade="lotacao" modulo="siga"/>
 								</c:when>
+								<c:when test="${param.modal != true}">
+								    <!-- parteFuncao para fechar window -->
+								    <c:set var="parteFuncao" value="opener" />
+									<siga:selecao titulo="Lotação" urlAcao="buscar" propriedade="lotacao" modulo="siga"/>
+								</c:when>
 								<c:otherwise>
 								    <!-- parteFuncao para fechar modal -->
 								    <c:set var="parteFuncao" value="parent" />

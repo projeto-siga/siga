@@ -20,7 +20,7 @@
 </script>
 
 <c:choose>
-	<c:when test="${siga_cliente == 'GOVSP'}">
+	<c:when test="${(siga_cliente == 'GOVSP') or (param.modal != true)}">
 	    <!-- parteFuncao para fechar window -->
 	    <c:set var="parteFuncao" value="opener" />
 	</c:when>

@@ -31,7 +31,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
+
+import org.hibernate.annotations.Where;
 
 import br.gov.jfrj.siga.cp.CpUnidadeMedida;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
@@ -62,9 +65,13 @@ public abstract class AbstractExTemporalidade extends HistoricoAuditavelSuporte 
 	@JoinColumn(name = "ID_UNIDADE_MEDIDA", nullable = true)
 	private CpUnidadeMedida cpUnidadeMedida;
 
+	@OrderBy(value="codVia")
+	@Where(clause="HIS_ATIVO = 1")
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "temporalidadeCorrente")
 	private Set<ExVia> exViaArqCorrenteSet;
 
+	@OrderBy(value="codVia")
+	@Where(clause="HIS_ATIVO = 1")
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "temporalidadeIntermediario")
 	private Set<ExVia> exViaArqIntermediarioSet;
 

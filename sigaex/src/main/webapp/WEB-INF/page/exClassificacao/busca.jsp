@@ -37,7 +37,7 @@
 </script>
 
 <c:choose>
-	<c:when test="${(siga_cliente == 'GOVSP') or (param.modal != true)}">
+	<c:when test="${param.modal != true}">
 	    <!-- parteFuncao para fechar window -->
 	    <c:set var="parteFuncao" value="opener" />
 	</c:when>
@@ -61,6 +61,7 @@
 					<input type="hidden" name="paramoffset" value="0" />
 					<input type="hidden" name="p.offset" value="0" />
 					<input type="hidden" id="nivelAlterado" name="nivelAlterado" />
+				    <input type="hidden" name="modal" value="${param['modal']}" />					
 
 					<div class="row">
 						<div class="col">

@@ -20,7 +20,7 @@ function sbmt(offset) {
 }
 </script>
 <c:choose>
-	<c:when test="${(siga_cliente == 'GOVSP') or (param.modal != true)}">
+	<c:when test="${param.modal != true}">
 	    <!-- parteFuncao para fechar window -->
 	    <c:set var="parteFuncao" value="opener" />
 	</c:when>
@@ -35,6 +35,7 @@ function sbmt(offset) {
 		<input type="hidden" name="postback" value="1" />
 		<input type="hidden" name="paramoffset" value="0" />
 		<input type="hidden" name="p.offset" value="0" />
+		<input type="hidden" name="modal" value="${param['modal']}" />
 
 	<div class="container-fluid">
 		<div class="card bg-light mb-3" >

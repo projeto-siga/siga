@@ -32,6 +32,7 @@ function sbmt(offset) {
 				<input type="hidden" name="paramoffset" value="0" />
 				<input type="hidden" name="p.offset" value="0" />
 				<input type="hidden" name="buscarFechadas" value="${param['buscarFechadas']}" />
+				<input type="hidden" name="modal" value="${param['modal']}" />
 				<div class="row">
 					<div class="col-sm">
 						<div class="form-group">
@@ -45,19 +46,20 @@ function sbmt(offset) {
 						<div class="form-group">
 							<c:choose>
 								<c:when test="${siga_cliente == 'GOVSP'}">
-								    <!-- parteFuncao para fechar window -->
-								    <c:set var="parteFuncao" value="opener" />
 									<siga:selecao titulo="Unidade" urlAcao="buscar" propriedade="lotacao" modulo="siga"/>
 								</c:when>
+								<c:otherwise>
+									<siga:selecao titulo="Lotação" urlAcao="buscar" propriedade="lotacao" modulo="siga"/>
+								</c:otherwise>	
+							</c:choose>	
+							<c:choose>
 								<c:when test="${param.modal != true}">
 								    <!-- parteFuncao para fechar window -->
 								    <c:set var="parteFuncao" value="opener" />
-									<siga:selecao titulo="Lotação" urlAcao="buscar" propriedade="lotacao" modulo="siga"/>
 								</c:when>
 								<c:otherwise>
 								    <!-- parteFuncao para fechar modal -->
 								    <c:set var="parteFuncao" value="parent" />
-									<siga:selecao titulo="Lotação" urlAcao="buscar" propriedade="lotacao" modulo="siga"/>
 								</c:otherwise>	
 							</c:choose>						
 						</div>

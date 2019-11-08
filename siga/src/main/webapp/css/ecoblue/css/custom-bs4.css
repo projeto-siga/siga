@@ -1,0 +1,739 @@
+/*
+Template:	GT-502
+File:		custom.css - Use this file to add any custom styles you need
+
+If you add styles to this template, be sure to include it in your template files.
+*/
+
+div.entrevista-grupo {
+	margin-top: 1em;
+} 
+
+table td.shrink {
+    white-space:nowrap
+}
+table td.expand {
+    width: 99%
+}
+
+html.fisico {
+	background-color: #f1e9c6 !important;
+}
+
+body.fisico {
+	background-color: #f1e9c6 !important;
+}
+
+tr.fisicoeven td {
+/*
+	background-color: #f1e9c6 !important;
+	color: #917c1e !important;
+*/
+	color: #bba226 !important;
+}
+
+tr.fisicoeven:hover td {
+	background-color: #faf7e7;
+}
+
+/* Left Sidebar, 2 Column */
+.gt-cols-2 .gt-sidebar {
+	width: 35% !important;
+}
+.gt-cols-2 .gt-content {
+	width: 60% !important;
+}
+
+.gt-form.gt-content-box {
+	margin-bottom: 20px !important;
+}
+
+.gt-for-table {
+	width: 100% !important;
+	padding: 0;
+	margin: 0;
+}
+
+.gt-for-table-custom td, 
+.gt-for-table-custom th {
+	padding: 5px;
+}
+
+.gt-hd-top {
+	height: auto !important;
+}
+
+.gt-content-box {
+	/*width: 100% !important;
+	height: auto !important;*/
+}
+
+.gt-table {
+	width: 100% !important;
+	height: auto !important;
+}
+
+.gt-table-nowrap {
+	width: 100% !important;
+	height: auto !important;
+	table-layout:fixed !important;
+	border-bottom: 1px solid #ccc !important;
+}	
+
+.gt-celula-nowrap {
+		white-space:nowrap;
+		overflow: hidden;        /* Ellipsis won't work without this. */
+        text-overflow: ellipsis; /* The most important part */
+        border-bottom: 1px solid #ccc !important;
+    }
+
+.gt-success {
+	margin-bottom: 1em;
+}
+
+.gt-hd .gt-company {
+	margin-left: 35px;
+	padding-left: 35px;
+	margin-bottom: 0;
+	padding-top: 10px;
+	color: #fff;
+	font-size: 100%;
+	font-weight: bold;
+	display: block;
+}
+
+.gt-hd .gt-version {
+	margin-left: 35px;
+	margin-bottom: 0;
+	padding-top: 10px;
+	color: #fff;
+	font-size: 100%;
+	font-weight: normal;
+	display: block;
+}
+
+.le-action-list {
+	color: #999;
+	margin: 0;
+	padding-bottom: 3px;
+	padding-left: 1px;
+	line-height: 175% !important;
+}
+
+P.gt-table-action-list {
+	margin: 0;
+}
+
+/*
+.gt-table-action-list img {
+	vertical-align: text-bottom;
+}
+
+.gt-table-action-list .gt-separator {
+	margin: 0 3px;
+}
+
+.gt-table-action-list a {
+	display: inline-block;
+}
+
+.gt-table-action-list a:link,.gt-table .gt-table-action-list a:visited {
+	color: #877b6d;
+	text-decoration: none !important;
+}
+
+.gt-table-action-list a:hover {
+	color: #654926;
+	text-decoration: none !important;
+}
+
+.gt-table-action-list span {
+	
+}
+*/
+
+.table-action-list a:link,.gt-table .table-action-list a:visited {
+	color: #877b6d;
+	text-decoration: none !important;
+}
+
+
+/* Login Box Styles */
+.gt-mylogin-hd {
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 0px;
+	margin-bottom: 10px;
+	font-size: 161.6%;
+	font-weight: bold;
+	color: #0e2029;
+}
+
+.gt-mylogin-box {
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding: 1.5em 3em;
+	margin-bottom: 1.5em;
+}
+
+.gt-mylogin-box .gt-form .gt-form-text {
+	font-size: 116%;
+}
+
+.gt-mylogin-box .gt-remember-me {
+	display: block;
+	padding: 12px 0 0 0;
+	font-size: 85%;
+	font-weight: normal;
+	color: #666666;
+	float: left;
+	display: inline;
+}
+
+/* Formularios que são organizados na forma de tabelas */
+.gt-form-table {
+	width: 100%;
+}
+
+.gt-form-table .header {
+	font-weight: bold;
+	font-size: 100%;
+	padding: 7px 10px;
+	color: #333;
+	border-bottom: 1px solid #ccc !important;
+	background-color: #f4f7f8;
+	border-radius: 10px;
+}
+
+.gt-form-table td {
+	padding: 7px 10px;
+	font-size: 100%;
+	color: #365b6d;
+	font-weight: bold;
+}
+
+.gt-form-table h4 {
+	font-size: 108%;
+	color: #365b6d;
+	margin-bottom: 0;
+}
+
+.gt-form-table a:link,.gt-form-table a:visited {
+	color: #365b6d;
+	text-decoration: none;
+}
+
+.gt-form-table td a:hover {
+	text-decoration: underline;
+}
+
+/* Table Buttons */
+.gt-form-table tr.button input { /*	margin: 10px 0 40px 0; */
+	display: block;
+	height: 38px;
+	line-height: 38px;
+	text-align: center;
+	font-weight: bold;
+	color: #fff !important;
+	text-decoration: none !important;
+	font-size: 13px;
+	border: none;
+	padding: 0;
+	margin: 0;
+	width: 126px;
+	background: url(../images/gt/btn-blue-medium.png) no-repeat 0 0
+		transparent;
+}
+
+.gt-form-table tr .gt-cancel {
+	color: #666666;
+}
+.gt-form-table tr .gt-cancel a:link, .gt-form-table tr .gt-cancel a:visited {
+	color: #cc0000;
+	text-decoration: underline;
+}
+.gt-form-table tr .gt-cancel a:hover {
+	text-decoration: none;
+}
+
+.gt-form-table tr .gt-cancel {
+	color: #666666;
+	line-height: 37px;
+	margin-bottom: 0;
+}
+
+.gt-form-table-buttons:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+.gt-form-table-buttons {
+	display: inline-block;
+}
+/* Hides from IE-mac \*/
+* html .gt-form-table-buttons {
+	height: 1%;
+}
+
+.gt-form-table-buttons {
+	display: block;
+}
+/* End hide from IE-mac */
+
+/* Table Pager, Table Select Box */
+.gt-form-table-controls {
+	font-size: 93%;
+	padding: 7px 10px;
+}
+
+table.mov TR.disabled td {
+	color: #bbb;
+}
+
+.siga-table {
+/*	background-color: white; */
+}
+
+.siga-table a:link,.siga-table a:visited {
+	text-decoration: none;
+}
+
+
+/*
+Author: Craig Erskine
+Description: Dynamic Menu System - Horizontal/Vertical
+*/
+ul#navmenu-h {
+	list-style: none;
+	position: relative;
+	z-index: 10;
+}
+
+ul#navmenu-h ul {
+	width: 200px; /* Sub Menu Width */
+	/* margin: 0; */
+	list-style: none;
+	display: none;
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 20;
+}
+
+.navmenu-large {
+	width: 400px !important; /* Sub Menu Width */
+}
+
+.gt-nav ul li a {
+	display: block;
+	padding: 0 1.5em;
+	font-weight: bold;
+	line-height: 120%;
+	min-height: 20px;
+	padding-top: 11px;
+	padding-bottom: 11px;
+	font-size: 116%;
+	float: left;
+	display: inline;
+	font-size: 116%;
+}
+
+/* Login Box Styles */
+.gt-error-page-hd {
+	width: auto;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 250px;
+	margin-bottom: 10px;
+}
+
+ul#navmenu-h ul ul {
+	top: 0;
+	left: 100%;
+	z-index: 30;
+}
+
+ul#navmenu-h ul ul ul {
+	top: 0;
+	left: 100%;
+	z-index: 40;
+}
+
+ul#navmenu-h li {
+	float: left;
+	display: inline;
+	position: relative;
+}
+
+ul#navmenu-h ul li {
+	width: 100%;
+	display: block;
+}
+
+/* Root Menu */
+ul#navmenu-h a {
+	border-top: 1px solid transparent;
+	border-left: 1px solid transparent;
+	border-right: 1px solid transparent;
+	float: left;
+	display: block;
+	background-image: none;
+}
+
+/* Root Menu Hover Persistence */
+ul#navmenu-h a:hover,ul#navmenu-h li:hover a,ul#navmenu-h li.iehover a {
+	margin: 0px;
+	border-top: 1px solid #FFF;
+	border-left: 1px solid #FFF;
+	border-right: 1px solid #FFF;
+	background: #BBB;
+	color: #FFF;
+	border-top: 1px solid #FFF;
+}
+
+/* 2nd Menu */
+ul#navmenu-h li:hover li a,ul#navmenu-h li.iehover li a {
+	padding-top: 6px;
+	padding-bottom: 5px;
+	float: none;
+	background: #BBB;
+	float: none;
+}
+
+/* 2nd Menu Hover Persistence */
+ul#navmenu-h li:hover li a:hover,ul#navmenu-h li:hover li:hover a,ul#navmenu-h li.iehover li a:hover,ul#navmenu-h li.iehover li.iehover a
+	{
+	background: #999;
+}
+
+/* 3rd Menu */
+ul#navmenu-h li:hover li:hover li a,ul#navmenu-h li.iehover li.iehover li a
+	{
+	background: #999;
+}
+
+/* 3rd Menu Hover Persistence */
+ul#navmenu-h li:hover li:hover li a:hover,ul#navmenu-h li:hover li:hover li:hover a,ul#navmenu-h li.iehover li.iehover li a:hover,ul#navmenu-h li.iehover li.iehover li.iehover a
+	{
+	background: #666;
+}
+
+/* 4th Menu */
+ul#navmenu-h li:hover li:hover li:hover li a,ul#navmenu-h li.iehover li.iehover li.iehover li a
+	{
+	background: #666;
+}
+
+/* 4th Menu Hover */
+ul#navmenu-h li:hover li:hover li:hover li a:hover,ul#navmenu-h li.iehover li.iehover li.iehover li a:hover
+	{
+	background: #333;
+}
+
+/* Hover Function - Do Not Move */
+ul#navmenu-h li:hover ul ul,ul#navmenu-h li:hover ul ul ul,ul#navmenu-h li.iehover ul ul,ul#navmenu-h li.iehover ul ul ul
+	{
+	display: none;
+}
+
+ul#navmenu-h li:hover ul,ul#navmenu-h ul li:hover ul,ul#navmenu-h ul ul li:hover ul,ul#navmenu-h li.iehover ul,ul#navmenu-h ul li.iehover ul,ul#navmenu-h ul ul li.iehover ul
+	{
+	display: block;
+}
+
+.gt-content-box ol, ul, li {margin-left:1em; margin-bottom:0;padding-left:0em;}
+
+
+table.entrevista {
+	padding: 0px;
+	/*background-color: #fff;*/
+	border-radius: 0px;
+}
+
+table.entrevista TR.header {
+	font-weight: bold;
+	font-size: 100%;
+	padding: 0px;
+	color: #333;
+	border-bottom: 1px solid #ccc !important;
+	/*background-color: #fff;*/
+	border-radius: 0px;
+}
+
+table.entrevista tr TD{
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-top: 0.1em;
+	padding-bottom: 0.1em;
+}
+
+ 
+table.parte {
+	padding: 0px;
+	background-color: #fff;
+	border-radius: 0px;
+	margin:  1em 0px 1em 0px;
+}
+
+table.parte TR.header {
+	font-weight: bold;
+	font-size: 100%;
+	margin: .2em 0px .2em 0px;
+	color: #333;
+	border-bottom: 1px solid #ccc !important;
+	/*background-color: #fff;*/
+	border-radius: 0px;
+}
+
+table.parte tr TD{
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+}
+
+
+table.side-bar-light-table {
+	width: 100%;
+	font-size: 85%;
+}
+
+table.side-bar-light-table  tbody TH {
+	border: 1px solid gray;
+}
+
+table.side-bar-light-table tbody tr td {
+	backgroud: black;
+	padding-left: 0.2em;
+	padding-right: 0.2em;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+}
+
+div.gt-tag-cloud {
+	padding: 10px !important;
+}
+
+div.gt-tag-cloud a {
+	text-decoration: none !important;
+}
+
+div.gt-tag-cloud a:hover {
+	text-decoration: underline !important;
+}
+
+del {
+	text-decoration: line-through !important;
+}
+
+a.link-sem-estilo {
+	text-decoration: none;
+}
+
+div.login-invalido p {
+	color: red;
+}
+
+div#carregando {
+	position:absolute;
+	top:35px;
+	right:0px;
+	background-color:red;
+	font-weight:bold;
+	padding:4px;
+	color:white;
+	display:none;
+}
+
+.escondido {
+    display: none;
+}
+
+.erro {
+	color: red;
+    font-weight: bold;
+    font-size: 10pt;
+}
+
+.sucesso {
+	color: green;
+    font-weight: bold;
+}
+
+input, textarea { color: #000; }
+.placeholder { color: #aaa; }
+
+fieldset[disabled=disabled] {
+	opacity: 0.4;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+}
+
+input[type=checkbox]:disabled+label{
+	opacity: 0.4;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+}
+
+div .gt-error:empty {
+   display: none;
+}
+
+/*
+ * style.css 
+ */
+ /*
+.container, .container-fluid {
+ padding-right: 15px;
+ padding-left: 15px;
+ background-color: #f9f9f9;
+}
+.row {
+ margin-bottom: 20px;
+}
+[class*="col-"], header, footer, nav, aside, section, div[role="main"] {
+ padding-top: 15px;
+ padding-bottom: 15px;
+ background-color: #f5f5f5;
+ background-color: rgba(86,61,124,.15);
+ border: 1px solid #ddd;
+ border: 1px solid rgba(86,61,124,.2);
+ text-align: center;
+ height: auto;
+}
+div[role="main"] {
+ background-color: #fff;
+}
+div[role="main"], nav, aside {
+ min-height: 600px;
+}
+.hidden{
+	display: none;
+}
+*/
+header#topo {
+    border: none;
+    background-color: transparent;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.gsa-info div {
+    border: none;
+    background-color: transparent;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.gsa-info{
+	border-bottom: 0px solid black;
+    margin-bottom: 5px;
+}
+#gsa-no-results li {
+	text-decoration: none;
+	list-style: none;
+}
+nav#gsa-pagination {
+	min-height: 100px;
+}
+
+.gsa-permalink, .gsa-permalink:link, .gsa-permalink:hover, .gsa-permalink:active {
+	font-weight: bold;
+	color: inherit;
+    text-decoration: none;
+    
+}
+
+.gsa-cache, .gsa-cache:link, .gsa-cache:hover, .gsa-cache:active {
+	color: inherit;
+    text-decoration: none;
+    
+}
+
+a.page-link:link, a.page-link:visited {
+    color: #365b6d;
+    text-decoration: none;
+}
+
+.hidden {
+	display: none;
+}
+
+ul.inner li a {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: @line-height-base;
+    color: @dropdown-link-color;
+    white-space: nowrap; 
+}
+
+DIV.card-sidebar DIV.card-body P {
+	margin-bottom: 0px;
+}
+
+.siga-doc-html{
+	word-break: break-word;
+}
+
+.dropdown-submenu {
+	position: relative;
+}
+
+.dropdown-submenu a::after {
+	transform: rotate(-90deg);
+	position: absolute;
+	right: 6px;
+	top: .8em;
+}
+
+.dropdown-submenu .dropdown-menu {
+	top: 0;
+	left: 100%;
+	margin-left: .1rem;
+	margin-right: .1rem;
+}
+
+div.form-group label {
+	margin-bottom: .10em;
+}
+
+.destaque {
+  color: red;
+}
+
+.td-middle {
+  vertical-align: middle;
+}
+
+table .table-group th {
+  border-top: 0;
+}
+
+table .table-head th {
+  border-top: 0;
+}
+
+.odd {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.xrp-label-container {
+  margin-top: 4px;
+  margin-bottom: 0px;
+}
+
+.xrp-label {
+  font-size: 13px;
+  margin-bottom: 4px;
+  margin-right: 8px;
+  line-height: 1.1;
+  padding-left: 7px;
+  padding-right: 7px;
+  border-radius: 0px;
+  border: 1px solid #ccc;
+}

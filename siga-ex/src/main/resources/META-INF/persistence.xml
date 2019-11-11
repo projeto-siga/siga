@@ -71,6 +71,7 @@
 		<class>br.gov.jfrj.siga.ex.ExSituacaoConfiguracao</class>
 		<class>br.gov.jfrj.siga.ex.ExMarca</class>
 		<class>br.gov.jfrj.siga.ex.ExConfiguracao</class>
+		<class>br.gov.jfrj.siga.ex.ExDocumentoNumeracao</class>
 
 		<properties>
 			<property name="hibernate.current_session_context_class"

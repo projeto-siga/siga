@@ -24,7 +24,6 @@
  */
 package br.gov.jfrj.siga.hibernate;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -39,17 +38,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 
-import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
-import org.hibernate.FlushMode;
+import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -71,6 +67,7 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExDocumentoNumeracao;
 import br.gov.jfrj.siga.ex.ExEmailNotificacao;
 import br.gov.jfrj.siga.ex.ExEstadoDoc;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
@@ -89,7 +86,6 @@ import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
-import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
@@ -97,7 +93,6 @@ import br.gov.jfrj.siga.hibernate.ext.IExMobilDaoFiltro;
 import br.gov.jfrj.siga.hibernate.ext.IMontadorQuery;
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
-import br.gov.jfrj.siga.persistencia.Aguarde;
 import br.gov.jfrj.siga.persistencia.ExClassificacaoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExDocumentoDaoFiltro;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -185,12 +180,91 @@ public class ExDao extends CpDao {
 	}
 	
 	
-	public Long obterNumeroGerado(final ExDocumento doc)
+	/*****************************/
+	public ExDocumentoNumeracao obterNumeroDocumento(Long idOrgaoUsu, Long idFormaDoc, Long anoEmissao, Boolean lock )
 			throws SQLException {
-		Query query = getSessao().getNamedQuery("obterNumeroGerado");
-		query.setLong("idDoc", doc.getIdDoc());
-		return (Long) query.uniqueResult();
+	    
+		final Query query = getSessao().getNamedQuery("ExDocumentoNumeracao.obterDocumentoNumeracao");
+		query.setParameter("idOrgaoUsu", idOrgaoUsu);
+		query.setParameter("idFormaDoc", idFormaDoc);
+		query.setParameter("anoEmissao", anoEmissao);
+		query.setLong("flAtivo", 1);
+		
+		if (lock) {
+			query.setLockMode("this", LockMode.PESSIMISTIC_WRITE);
+		}
+		
+		return (ExDocumentoNumeracao) query.uniqueResult();		
 	}
+	
+	public Long obterNumeroGerado(Long idOrgaoUsu, Long idFormaDoc, Long anoEmissao)
+			throws SQLException {
+	    
+		final Query query = getSessao().getNamedQuery("ExDocumentoNumeracao.obterNumeroGerado");
+		query.setParameter("idOrgaoUsu", idOrgaoUsu);
+		query.setParameter("idFormaDoc", idFormaDoc);
+		query.setParameter("anoEmissao", anoEmissao);
+		query.setLong("flAtivo", 1);
+		
+		return (Long) query.uniqueResult();		
+	}
+	
+
+	public void incrementNumeroDocumento(Long docNumeracao)
+			throws SQLException {
+		
+		final Query query = getSessao().getNamedQuery("ExDocumentoNumeracao.incrementaNumeroDocumento");
+		query.setLong("increment", 1L);
+		query.setLong("id", docNumeracao);
+		
+		query.executeUpdate();
+		
+	}
+	
+	public void insertNumeroDocumento(Long idOrgaoUsu, Long idFormaDoc, Long anoEmissao)
+			throws SQLException {
+	    
+		final Query query = getSessao().getNamedQuery("ExDocumentoNumeracao.insertRangeNumeroDocumento");
+		query.setParameter("idOrgaoUsu", idOrgaoUsu);
+		query.setParameter("idFormaDoc", idFormaDoc);
+		query.setParameter("anoEmissao", anoEmissao);
+		query.setParameter("nrDocumento", 1L);
+		
+		query.executeUpdate();
+
+	}
+	
+	public Long existeRangeNumeroDocumento(Long idOrgaoUsu, Long idFormaDoc)
+			throws SQLException {
+	    
+		final Query query = getSessao().getNamedQuery("ExDocumentoNumeracao.existeRangeDocumentoNumeracao");
+		query.setParameter("idOrgaoUsu", idOrgaoUsu);
+		query.setParameter("idFormaDoc", idFormaDoc);
+		query.setParameter("rownum", 1L);
+		
+		return (Long) query.uniqueResult();
+
+	}
+	
+	
+	public void updateMantemRangeNumeroDocumento(Long docNumeracao)
+			throws SQLException {
+		
+		final Query query = getSessao().getNamedQuery("ExDocumentoNumeracao.mantemRangeNumeroDocumento");
+		
+		Calendar c = Calendar.getInstance();
+		
+		query.setLong("anoEmissao", c.get(Calendar.YEAR));
+		query.setLong("flAtivo", 1);
+		query.setLong("increment", 1L);
+		query.setLong("id", docNumeracao);
+		
+		query.executeUpdate();
+		
+	}
+	
+	/*****************************/
+
 
 	public List consultarPorFiltro(final ExMobilDaoFiltro flt) {
 		return consultarPorFiltro(flt, 0, 0);
@@ -1593,6 +1667,13 @@ public class ExDao extends CpDao {
 		return (ExModelo) crit.uniqueResult();
 	}
 
+	public ExFormaDocumento consultarExFormaPorId(Long idFormaDoc) {
+		final Criteria crit = getSessao()
+				.createCriteria(ExFormaDocumento.class);
+		crit.add(Restrictions.eq("idFormaDoc", idFormaDoc));
+		return (ExFormaDocumento) crit.uniqueResult();
+	}
+	
 	public ExFormaDocumento consultarExForma(String sForma) {
 		final Criteria crit = getSessao()
 				.createCriteria(ExFormaDocumento.class);

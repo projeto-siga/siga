@@ -36,12 +36,14 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgao;
+import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpResponsavel;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExDocumentoNumeracao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
@@ -50,13 +52,12 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExSituacaoConfiguracao;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
-import br.gov.jfrj.siga.ex.bl.CurrentRequest;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.bl.ExConfiguracaoBL;
-import br.gov.jfrj.siga.ex.bl.RequestInfo;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.ExMobilSelecao;
@@ -684,5 +685,74 @@ public class ExServiceImpl implements ExService {
 			throw e;
 		}	
     }
+
+	public String obterNumeracaoExpediente(Long idOrgaoUsu, Long idFormaDoc, Long anoEmissao) throws Exception {
+		try {
+			Long idDocNumeracao = null;
+			Long nrDocumento = 0L;
+			
+			//Inicio transação
+			ExDao.iniciarTransacao();	
+			
+			//Verifica se Range atual existe
+			ExDocumentoNumeracao docNumeracao = dao().obterNumeroDocumento(idOrgaoUsu, idFormaDoc, anoEmissao, true);
+
+			if (docNumeracao == null) {
+				CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
+				ExFormaDocumento formaDocumento = new ExFormaDocumento();
+				orgaoUsuario.setIdOrgaoUsu(idOrgaoUsu);
+				formaDocumento.setIdFormaDoc(idFormaDoc);
+				
+				orgaoUsuario = dao().consultarPorId(orgaoUsuario);
+				formaDocumento = dao().consultarExFormaPorId(idFormaDoc);
+				
+				idDocNumeracao = dao().existeRangeNumeroDocumento(idOrgaoUsu, idFormaDoc);
+				
+				if ( (idDocNumeracao != null) && !Ex.getInstance().getComp().podeReiniciarNumeracao(orgaoUsuario, formaDocumento)) { //Existe Range Anterior e Não pode Resetar numeracao
+					dao().updateMantemRangeNumeroDocumento(idDocNumeracao);
+		
+				} else { //Não existe ou deve resetar numeração
+					ExDocumentoNumeracao documentoNumeracao = new ExDocumentoNumeracao();
+					
+					documentoNumeracao.setIdOrgaoUsu(idOrgaoUsu);
+					documentoNumeracao.setIdFormaDoc(idFormaDoc);
+					documentoNumeracao.setFlAtivo("1");
+					documentoNumeracao.setAnoEmissao(anoEmissao);
+
+					nrDocumento = 1L;
+					documentoNumeracao.setNrDocumento(nrDocumento);
+					documentoNumeracao.setNrInicial(nrDocumento);
+					
+					dao().gravar(documentoNumeracao);
+
+					documentoNumeracao = null;
+				}
+				
+				orgaoUsuario = null;
+				formaDocumento = null;
+
+			} else { //Range vigente. Só incrementa
+				idDocNumeracao = docNumeracao.getIdDocumentoNumeracao();
+				dao().incrementNumeroDocumento(idDocNumeracao);
+			}
+
+			ExDao.commitTransacao();				
+			if (nrDocumento != 1L) { //Obtém Número Gerado antes de liberar registro
+				nrDocumento = dao().obterNumeroGerado(idOrgaoUsu, idFormaDoc, anoEmissao);
+			}
+
+			//Fim transação
+			ContextoPersistencia.flushTransaction();
+			
+			//Retorno em String para WS
+			return nrDocumento.toString();			
+			
+		} catch (Exception e) {
+			throw new AplicacaoException("Ocorreu um problema na obtenção do número do documento definitivo: "
+					+ e.getMessage(), 0, e);
+		}	
+	}
+	
+	
 
 }

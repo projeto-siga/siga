@@ -55,6 +55,7 @@ import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.ExTipoMovimentacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.dao.DaoFiltro;
 
 public class ExCompetenciaBL extends CpCompetenciaBL {
 
@@ -4577,7 +4578,14 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 				doc.getExFormaDocumento(),
 				CpTipoConfiguracao.TIPO_CONFIG_REINICIAR_NUMERACAO_TODO_ANO);
 	}
-
+	
+	
+	public boolean podeReiniciarNumeracao(CpOrgaoUsuario orgaoUsuario, ExFormaDocumento formaDocumento) throws Exception {
+		return getConf().podePorConfiguracao(orgaoUsuario,
+				formaDocumento,
+				CpTipoConfiguracao.TIPO_CONFIG_REINICIAR_NUMERACAO_TODO_ANO);
+	}
+	
 
 	/**
 

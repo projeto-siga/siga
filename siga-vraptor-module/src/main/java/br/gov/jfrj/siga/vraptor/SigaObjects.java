@@ -18,6 +18,7 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
+import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.CpOrgaoUsuarioDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
@@ -102,6 +103,16 @@ public class SigaObjects implements ConheceUsuario {
 		dpSubstituicao.setSubstituto(getCadastrante());
 		dpSubstituicao.setLotaSubstituto(getCadastrante().getLotacao());
 		List<DpSubstituicao> itens = dao().consultarSubstituicoesPermitidas(dpSubstituicao);
+
+		return itens;
+	}
+	
+	public List<DpVisualizacao> getMeusDelegados() throws Exception {
+		if (getCadastrante() == null)
+			return null;
+		DpVisualizacao dpVisualizacao = new DpVisualizacao();
+		dpVisualizacao.setDelegado(getCadastrante());
+		List<DpVisualizacao> itens = dao().consultarVisualizacoesPermitidas(dpVisualizacao);
 
 		return itens;
 	}

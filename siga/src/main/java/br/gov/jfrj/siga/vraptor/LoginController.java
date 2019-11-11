@@ -66,7 +66,8 @@ public class LoginController extends SigaController {
 				}
 			}
 		}
-
+		
+		result.include("fAviso", false);
 		result.include("versao", manifest.get("Siga-Versao"));
 		result.include("cont", cont);
 	}

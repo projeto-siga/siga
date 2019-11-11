@@ -95,6 +95,7 @@ import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
+import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.model.CarimboDeTempo;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -1369,6 +1370,40 @@ public class CpDao extends ModeloDao {
 			return null;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DpVisualizacao> consultarVisualizacoesPermitidas(
+			final DpVisualizacao exemplo) throws SQLException {
+		try {
+			Query query = null;
+			query = getSessao().getNamedQuery(
+					"consultarVisualizacoesPermitidas");
+			query.setLong("idDelegadoIni", exemplo.getDelegado()
+					.getIdPessoaIni());
+			query.setCacheable(true);
+			query.setCacheRegion(CACHE_QUERY_SUBSTITUICAO);
+			return query.list();
+		} catch (final IllegalArgumentException e) {
+			throw e;
+		} catch (final Exception e) {
+			return null;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DpVisualizacao> consultarOrdemData(final DpVisualizacao exemplo)
+			throws SQLException {
+		try {
+			Query query = null;
+			query = getSessao().getNamedQuery("consultarOrdem");
+			query.setLong("idTitularIni", exemplo.getTitular().getIdPessoaIni());
+			return query.list();
+		} catch (final IllegalArgumentException e) {
+			throw e;
+		} catch (final Exception e) {
+			return null;
+		}
+	}
 
 	public CpIdentidade consultaIdentidadeCadastrante(final String nmUsuario,
 			boolean fAtiva) throws AplicacaoException {
@@ -1907,6 +1942,10 @@ public class CpDao extends ModeloDao {
 		if (entidade instanceof DpSubstituicao) {
 			sfCpDao.evict(DpSubstituicao.class);
 			sfCpDao.evictQueries(CACHE_QUERY_SUBSTITUICAO);
+		} else if (entidade instanceof DpVisualizacao) {
+			sfCpDao.evict(DpVisualizacao.class);
+			sfCpDao.evictQueries(CACHE_QUERY_SUBSTITUICAO);
+			
 		}
 	}
 
@@ -2145,6 +2184,8 @@ public class CpDao extends ModeloDao {
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.cp.CpIdentidade",
 				"transactional", CACHE_SECONDS);
 		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpSubstituicao",
+				"transactional", CACHE_QUERY_SUBSTITUICAO);
+		cfg.setCacheConcurrencyStrategy("br.gov.jfrj.siga.dp.DpVisualizacao",
 				"transactional", CACHE_QUERY_SUBSTITUICAO);
 
 		return cfg;

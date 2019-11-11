@@ -123,6 +123,7 @@ import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
 import br.gov.jfrj.siga.ex.ExDocumento;
+import br.gov.jfrj.siga.ex.ExDocumentoNumeracao;
 import br.gov.jfrj.siga.ex.ExEditalEliminacao;
 import br.gov.jfrj.siga.ex.ExFormaDocumento;
 import br.gov.jfrj.siga.ex.ExMarca;
@@ -143,6 +144,7 @@ import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.SigaExProperties;
 import br.gov.jfrj.siga.ex.bl.BIE.BoletimInternoBL;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
+import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.util.GeradorRTF;
@@ -1889,6 +1891,16 @@ public class ExBL extends CpBL {
 				throw new AplicacaoException("Senha do subscritor inválida.");
 			}
 		}
+		
+		
+		if (!doc.isFinalizado())
+			finalizar(cadastrante, lotaCadastrante, doc);
+				
+		boolean fPreviamenteAssinado = doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha();
+
+		if (!doc.isFinalizado())
+			throw new AplicacaoException(
+					"não é possível registrar assinatura de um documento não finalizado");
 
 		if (doc.isCancelado())
 			throw new AplicacaoException(
@@ -1922,6 +1934,7 @@ public class ExBL extends CpBL {
 								continue;
 							}
 						}
+					
 					//Verificar se é substituto
 					if (!fValido) {
 						if (subscritor.getId() != doc.getSubscritor().getId()) {
@@ -1936,13 +1949,6 @@ public class ExBL extends CpBL {
 									if (tit.getTitular().equivale(doc.getSubscritor())) {
 										fValido = true ;
 										fSubstituindo = true;
-										
-										final ExMovimentacao movsub;
-										movsub = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
-											cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
-											subscritor, null, null, null, null);
-										movsub.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla());
-										gravarMovimentacao(movsub);
 									}
 								}
 							}
@@ -1959,16 +1965,6 @@ public class ExBL extends CpBL {
 						0, e);
 			}
 		}
-		
-		if (!doc.isFinalizado())
-			finalizar(cadastrante, lotaCadastrante, doc);
-		
-		boolean fPreviamenteAssinado = doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha();
-
-		if (!doc.isFinalizado())
-			throw new AplicacaoException(
-					"não é possível registrar assinatura de um documento não finalizado");
-
 
 		String s = null;
 		try {
@@ -1984,6 +1980,16 @@ public class ExBL extends CpBL {
 			if (!fSubstituindo) {
 				assinante = subscritor;
 			} else {
+				
+				//Cria movimentação de Assinatura POR
+				final ExMovimentacao movsub;
+				movsub = criarNovaMovimentacao(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_POR_COM_SENHA,
+					cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov,
+					subscritor, null, null, null, null);
+				movsub.setDescrMov(subscritor.getNomePessoa() + ":" + subscritor.getSigla());
+				gravarMovimentacao(movsub);
+				
+				
 				assinante = doc.getSubscritor();
 			}
 			
@@ -3220,13 +3226,14 @@ public class ExBL extends CpBL {
 			if (doc.getOrgaoUsuario() == null)
 				doc.setOrgaoUsuario(doc.getLotaCadastrante().getOrgaoUsuario());
 			
-			/* Desabilita para São Paulo numeração realizada pelo Java. Numeração controlada pela table EX_DOCUMENTO_NUMERACAO*/ 
+			/* Desabilita para São Paulo numeração realizada pelo Select Max. 
+			 * Numeração controlada pela table EX_DOCUMENTO_NUMERACAO*/ 
 			if (!SigaMessages.isSigaSP()) {
 				if (doc.getNumExpediente() == null)
 					doc.setNumExpediente(obterProximoNumero(doc));
 			} else{
-				//Set Ano da Emissao do Documento
 				doc.setAnoEmissao((long) c.get(Calendar.YEAR));
+				doc.setNumExpediente(obterNumeroDocumento(doc));
 			}
 
 			doc.setDtFinalizacao(dt);
@@ -3246,16 +3253,7 @@ public class ExBL extends CpBL {
 			}
 
 			Set<ExVia> setVias = doc.getSetVias();
-			
-			//Libera gravação e obtém numero gerado para processar documento
-			//Não necessita da numeração e processamento para documento capturado.
-			//TODO: Trazer rotina de numeração da Trigger para Java. Dando Lock apenas na EX_DOCUMENTO_NUMERACAO. Contra: Se transação falhar abaixo o número será perdido
-			if (!doc.isCapturado()) {
-				dao().gravar(doc);
-				ContextoPersistencia.flushTransaction();
-				doc.setNumExpediente(obterNumeroGerado(doc));
-			}
-			
+		
 			processar(doc, false, false);
 
 			doc.setNumPaginas(doc.getContarNumeroDePaginas());
@@ -3322,11 +3320,17 @@ public class ExBL extends CpBL {
 	}
 	
 	
-	public Long obterNumeroGerado(ExDocumento doc) throws Exception {
-		Long num = dao().obterNumeroGerado(doc);
-		return num;
+	public Long obterNumeroDocumento(ExDocumento doc) throws Exception {
+		//Obtém Número definitivo de documento de acordo com órgão/forma/ano via WS para desacoplamento da transação
+		ExService exService = Service.getExService();
+		String numeroDocumento = null;
+		
+		numeroDocumento = exService.obterNumeracaoExpediente(doc.getOrgaoUsuario().getIdOrgaoUsu(), doc.getExFormaDocumento().getIdFormaDoc(), doc.getAnoEmissao());
+		 
+		return Long.parseLong(numeroDocumento);
 	}
-
+	
+	
 	public void criarVolume(DpPessoa cadastrante, DpLotacao lotaCadastrante,
 			ExDocumento doc) throws AplicacaoException {
 		try {
@@ -3970,7 +3974,7 @@ public class ExBL extends CpBL {
 		// ultMov.setDtFimMov(new Date());
 		// ExDao.getInstance().gravar(ultMov);
 		// }
-		if (!mov.getExTipoMovimentacao().getIdTpMov()
+		if (mov.getExTipoMovimentacao().getIdTpMov()
 				.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ANEXACAO_DE_ARQUIVO_AUXILIAR))
 			mov.setNumPaginas(mov.getContarNumeroDePaginas());
 		dao().gravar(mov);

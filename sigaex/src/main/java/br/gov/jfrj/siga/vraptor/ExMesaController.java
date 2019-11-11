@@ -22,6 +22,7 @@
 
 package br.gov.jfrj.siga.vraptor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -35,6 +36,9 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.cp.CpAcesso;
+import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.ex.bl.Mesa;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
@@ -47,7 +51,7 @@ public class ExMesaController extends ExController {
 	}
 
 	@Get("app/mesa")
-	public void lista(Boolean exibirAcessoAnterior) {
+	public void lista(Boolean exibirAcessoAnterior, Long idVisualizacao) {
 		if (exibirAcessoAnterior != null && exibirAcessoAnterior) {
 			CpAcesso a = dao.consultarAcessoAnterior(so.getCadastrante());
 			if (a == null)
@@ -57,11 +61,28 @@ public class ExMesaController extends ExController {
 			result.include("acessoAnteriorData", acessoAnteriorData);
 			result.include("acessoAnteriorMaquina", acessoAnteriorMaquina);
 		}
+		if(idVisualizacao != null) {
+			DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
+			if(vis != null && vis.getDelegado().equals(getTitular())) {
+				result.include("idVisualizacao", idVisualizacao);
+				result.include("visualizacao", vis);
+			} else {
+				result.include("idVisualizacao", 0);
+			}
+		} else {
+			result.include("idVisualizacao", 0);
+		}
 	}
 
 	@Get("app/mesa.json")
-	public void json() throws Exception {
-		List<br.gov.jfrj.siga.ex.bl.Mesa.MesaItem> l = Mesa.getMesa(dao(), getTitular(), getLotaTitular());
+	public void json(Long idVisualizacao) throws Exception {
+		List<br.gov.jfrj.siga.ex.bl.Mesa.MesaItem> l = new ArrayList<br.gov.jfrj.siga.ex.bl.Mesa.MesaItem>();
+		if(idVisualizacao != null && !idVisualizacao.equals(Long.valueOf(0)) && Cp.getInstance().getConf().podePorConfiguracao(getCadastrante(), getCadastrante().getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
+			DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
+			l = Mesa.getMesa(dao(), vis.getTitular(), vis.getTitular().getLotacao());
+		} else {
+			l = Mesa.getMesa(dao(), getTitular(), getLotaTitular());
+		}
 
 		String s = ExAssinadorExternoController.gson.toJson(l);
 		result.use(Results.http()).addHeader("Content-Type", "application/json").body(s).setStatusCode(200);

@@ -70,7 +70,7 @@ public class ExArquivoController extends ExController {
 
 	@Get("/app/arquivo/exibir")
 	public Download aExibir(final String sigla, final boolean popup, final String arquivo, byte[] certificado, String hash, final String HASH_ALGORITHM,
-			final String certificadoB64, boolean completo, final boolean semmarcas) {
+			final String certificadoB64, boolean completo, final boolean semmarcas, final Long idVisualizacao) {
 		try {
 			final String servernameport = getRequest().getServerName() + ":" + getRequest().getServerPort();
 			final String contextpath = getRequest().getContextPath();
@@ -101,7 +101,7 @@ public class ExArquivoController extends ExController {
 			if (mob == null) {
 				throw new AplicacaoException("A sigla informada não corresponde a um documento da base de dados.");
 			}
-			if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob)) {
+			if (!Ex.getInstance().getComp().podeAcessarDocumento(getTitular(), getLotaTitular(), mob) && !podeVisualizarDocumento(mob, getTitular(), idVisualizacao)) {
 				throw new AplicacaoException("Documento " + mob.getSigla() + " inacessível ao usuário " + getTitular().getSigla() + "/"
 						+ getLotaTitular().getSiglaCompleta() + ".");
 			}

@@ -17,6 +17,8 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.collect.Lists;
+
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.HttpResult;
@@ -29,9 +31,8 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
+import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-
-import com.google.common.collect.Lists;
 
 public class SigaController {
 	public SigaObjects so;
@@ -110,6 +111,7 @@ public class SigaController {
 		result.include("titular", getTitular());
 		result.include("lotaTitular", getLotaTitular());
 		result.include("meusTitulares", getMeusTitulares());
+		result.include("meusDelegados", getMeusDelegados());
 		result.include("identidadeCadastrante",getIdentidadeCadastrante());
 	}
 
@@ -121,6 +123,19 @@ public class SigaController {
 			}
 			resolveLazy(substituicoes);
 			return substituicoes;
+		} catch (Exception e) {
+			throw new AplicacaoException("Erro", 500, e);
+		}
+	}
+	
+	protected List<DpVisualizacao> getMeusDelegados() {
+		try {
+			List<DpVisualizacao> visualizacoes = so.getMeusDelegados();
+			if (visualizacoes == null) {
+				return Lists.newArrayList();
+			}
+//			resolveLazy(visualizacoes);
+			return visualizacoes;
 		} catch (Exception e) {
 			throw new AplicacaoException("Erro", 500, e);
 		}

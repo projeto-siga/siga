@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.vraptor;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,6 +37,9 @@ import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpSituacaoConfiguracao;
 import br.gov.jfrj.siga.cp.CpTipoConfiguracao;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.DpVisualizacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExConfiguracao;
@@ -258,5 +262,27 @@ public class ExController extends SigaController {
 
 	protected ServletContext getContext() {
 		return context;
+	}
+	
+	protected Boolean podeVisualizarDocumento(final ExMobil mob, DpPessoa titular, Long idVisualizacao) throws Exception {
+		Boolean retorno = Boolean.FALSE;
+		
+		if(Cp.getInstance().getConf()
+				.podePorConfiguracao(getCadastrante(), getCadastrante().getLotacao(), CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO)) {
+			if(idVisualizacao != null && !idVisualizacao.equals(Long.valueOf(0))) {
+				DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
+				
+				if(vis.getDelegado().equals(titular)) {
+					if(Ex.getInstance()
+							.getComp()
+							.podeAcessarDocumento(vis.getTitular(), vis.getTitular().getLotacao(),
+									mob)) {
+						retorno = Boolean.TRUE;
+					}
+				}
+			}
+		}
+		
+		return retorno;
 	}
 }

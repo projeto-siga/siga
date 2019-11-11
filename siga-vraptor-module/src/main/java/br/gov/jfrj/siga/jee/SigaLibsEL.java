@@ -28,11 +28,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
-
 import org.mvel2.templates.CompiledTemplate;
 import org.mvel2.templates.TemplateCompiler;
 import org.mvel2.templates.TemplateRuntime;
@@ -49,6 +44,10 @@ import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
 
 public class SigaLibsEL {
 	private static String month[] = new String[] { "Jan", "Fev", "Mar", "Abr",
@@ -463,6 +462,11 @@ public class SigaLibsEL {
 //	}
 	public static String maximoCaracteres(String s, Integer max) {
 		return Texto.maximoCaracteres(s, max);
+	}
+	
+	public static Boolean podeDelegarVisualizacao(DpPessoa cadastrante, DpLotacao lotacaoCadastrante) throws Exception {
+		return Cp.getInstance().getConf()
+				.podePorConfiguracao(cadastrante, lotacaoCadastrante, CpTipoConfiguracao.TIPO_CONFIG_DELEGAR_VISUALIZACAO);
 	}
 
 }

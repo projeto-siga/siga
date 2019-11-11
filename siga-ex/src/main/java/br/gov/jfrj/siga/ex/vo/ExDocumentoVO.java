@@ -389,6 +389,41 @@ public class ExDocumentoVO extends ExVO {
 
 	}
 	
+	public void addAcoesVisualizar(ExDocumentoVO docVO, Long idVisualizacao) {
+		ExVO vo = new ExVO();
+		
+		int numUltMobil = doc.getNumUltimoMobil();
+		vo.addAcao(
+				SigaMessages.getMessage("icon.ver.mais"),
+				SigaMessages.getMessage("documento.ver.mais"),
+				"/app/expediente/doc",
+				SigaMessages.getMessage("documento.acao.exibirAntigo")+ "?sigla="+doc+"&idVisualizacao="+idVisualizacao,
+				Boolean.TRUE, 
+						numUltMobil < 20 ? "" : "Exibir todos os " + numUltMobil + " volumes do processo simultaneamente pode exigir um tempo maior de processamento. Deseja exibi-los?", 
+						null, null, null, null);
+		
+		vo.addAcao(
+				SigaMessages.getMessage("icon.ver.impressao"),
+				SigaMessages.getMessage("documento.ver.impressao"),
+				"/app/arquivo",
+				"exibir",
+				Boolean.TRUE,
+				null, "&popup=true&arquivo=" + doc.getReferenciaPDF()+"&idVisualizacao="+idVisualizacao, null,
+				null, null);
+		
+		vo.addAcao(
+				"folder_magnify",
+				SigaMessages.getMessage("documento.ver.dossie"),
+				"/app/expediente/doc",
+				"exibirProcesso?sigla="+doc+"&idVisualizacao="+idVisualizacao,
+				Boolean.TRUE);
+		
+			
+		docVO.getMobs().get(0).setAcoes(vo.getAcoes());
+		
+		
+	}
+	
 	/**
 	 * @param doc
 	 * @param titular

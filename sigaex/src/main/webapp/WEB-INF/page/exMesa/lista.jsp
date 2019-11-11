@@ -30,6 +30,11 @@
 			<div class="col col-12 col-md-auto">
 				<h2 class="mb-3"><i class="fa fa-file-alt"></i> Mesa Virtual</h2>
 			</div>
+			<div class="col my-1" style="vertical-align: text-bottom;"> 
+				<span class="h-100  d-inline-block my-2" style="vertical-align: text-bottom;">
+					<c:if test="${not empty visualizacao}"><b>(Delegante: ${visualizacao.titular.nomePessoa})</b></c:if> 
+				</span> 
+			</div> 
 			<div class="col col-12 col-sm-4 col-md-auto ml-md-auto mb-3">
 				<a href="expediente/doc/editar" class="btn btn-outline-success form-control"> <i class="fas fa-plus-circle"></i>
 						<fmt:message key="documento.novo"/></a>
@@ -94,8 +99,17 @@
 						</tr>
 						<tr v-bind:class="{odd: f.odd}">
 							<td class="d-none d-md-block" :title="f.datahora">{{f.tempoRelativo}}</td>
-							<td><a :href="'expediente/doc/exibir?sigla=' + f.codigo">{{f.sigla}}</a><span
-								class="d-inline d-md-none"> - {{f.descr}}</span></td>
+							<td>
+								<c:choose>
+									<c:when test="${not empty idVisualizacao && idVisualizacao != 0}">
+										<a :href="'expediente/doc/visualizar?sigla=' + f.codigo + '&idVisualizacao='+${idVisualizacao}">{{f.sigla}}</a>
+									</c:when>
+									<c:otherwise>
+										<a :href="'expediente/doc/exibir?sigla=' + f.codigo">{{f.sigla}}</a>
+									</c:otherwise>
+								</c:choose>
+								<span class="d-inline d-md-none"> - {{f.descr}}</span>
+							</td>
 							<td class="d-none d-md-block">{{f.descr}}</td>
 							<c:if test="${siga_cliente == 'GOVSP'}">
 								<td v-if="f.dataDevolucao == 'ocultar'"></td>
@@ -222,7 +236,7 @@
 		        }
 		      }
 		      var self = this
-		      httpGet('mesa.json', function(text) {
+		      httpGet('mesa.json?idVisualizacao='+${idVisualizacao}, function(text) {
 		          self.carregando = false;
 		          self.lista.length = 0;
 		          var list = JSON.parse(text);

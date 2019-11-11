@@ -3,6 +3,7 @@
 <%@ taglib uri="/WEB-INF/tld/func.tld" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/libstag" prefix="fx"%>
 
 <c:if
 	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
@@ -16,8 +17,22 @@
 				href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a></li>
 
 			<li><a class="dropdown-item" href="/sigaex/app/mesa">Mesa
-					Virtual</a></li>
-
+					Virtual </a></li>
+			
+			
+			<c:if test="${not empty meusDelegados && fx:podeDelegarVisualizacao(cadastrante, cadastrante.lotacao)}">
+				<li class="dropdown-submenu"><a href="javascript:void(0);"
+					class="dropdown-item dropdown-toggle">Mesa Virtual Delegada</a>
+					<ul class="dropdown-menu navmenu-large">
+						<c:forEach var="visualizacao" items="${meusDelegados}">
+							<li><a class="dropdown-item"
+								href="/siga/app/visualizacao/visualizacaoGravar?idVisualizacao=${visualizacao.idVisualizacao}">
+											${f:maiusculasEMinusculas(visualizacao.titular.nomePessoa)}
+							</a></li>
+						</c:forEach>
+		
+					</ul></li>
+			</c:if>
 			<div class="dropdown-divider"></div>
 			<c:catch>
 				<c:if

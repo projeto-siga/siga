@@ -691,9 +691,6 @@ public class ExServiceImpl implements ExService {
 			Long idDocNumeracao = null;
 			Long nrDocumento = 0L;
 			
-			//Inicio transação
-			ExDao.iniciarTransacao();	
-			
 			//Verifica se Range atual existe
 			ExDocumentoNumeracao docNumeracao = dao().obterNumeroDocumento(idOrgaoUsu, idFormaDoc, anoEmissao, true);
 
@@ -736,18 +733,18 @@ public class ExServiceImpl implements ExService {
 				dao().incrementNumeroDocumento(idDocNumeracao);
 			}
 
-			ExDao.commitTransacao();				
+	
 			if (nrDocumento != 1L) { //Obtém Número Gerado antes de liberar registro
 				nrDocumento = dao().obterNumeroGerado(idOrgaoUsu, idFormaDoc, anoEmissao);
 			}
 
-			//Fim transação
 			ContextoPersistencia.flushTransaction();
 			
 			//Retorno em String para WS
 			return nrDocumento.toString();			
 			
 		} catch (Exception e) {
+			//ExDao.rollbackTransacao();
 			throw new AplicacaoException("Ocorreu um problema na obtenção do número do documento definitivo: "
 					+ e.getMessage(), 0, e);
 		}	

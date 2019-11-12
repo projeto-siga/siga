@@ -214,7 +214,7 @@ public class ExDao extends CpDao {
 			throws SQLException {
 		
 		final Query query = getSessao().getNamedQuery("ExDocumentoNumeracao.incrementaNumeroDocumento");
-		//query.setLong("increment", 1L);
+		query.setLong("increment", 1L);
 		query.setLong("id", docNumeracao);
 		
 		query.executeUpdate();
@@ -256,7 +256,7 @@ public class ExDao extends CpDao {
 		
 		query.setLong("anoEmissao", c.get(Calendar.YEAR));
 		query.setLong("flAtivo", 1);
-		//query.setLong("increment", 1L);
+		query.setLong("increment", 1L);
 		query.setLong("id", docNumeracao);
 		
 		query.executeUpdate();

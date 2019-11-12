@@ -29,13 +29,13 @@ import java.math.BigDecimal;
 			+ "and e.idFormaDoc = :idFormaDoc "
 			+ "and e.anoEmissao = :anoEmissao "
 			+ "and e.flAtivo = :flAtivo"),
-	@NamedQuery(name="ExDocumentoNumeracao.incrementaNumeroDocumento", query="UPDATE ExDocumentoNumeracao e SET e.nrDocumento = e.nrDocumento + :increment WHERE e.idDocumentoNumeracao = :id"),
+	@NamedQuery(name="ExDocumentoNumeracao.incrementaNumeroDocumento", query="UPDATE ExDocumentoNumeracao e SET e.nrDocumento = e.nrDocumento + 1 WHERE e.idDocumentoNumeracao = :id"),
 	@NamedQuery(name="ExDocumentoNumeracao.existeRangeDocumentoNumeracao", query="SELECT e.idDocumentoNumeracao FROM ExDocumentoNumeracao e "
 			+ "where e.idOrgaoUsu = :idOrgaoUsu "
 			+ "and e.idFormaDoc = :idFormaDoc "
 			+ "and rownum = :rownum "
 			+ "Order by e.anoEmissao desc"),
-	@NamedQuery(name="ExDocumentoNumeracao.mantemRangeNumeroDocumento", query="UPDATE ExDocumentoNumeracao e SET e.nrDocumento = e.nrDocumento + :increment, e.anoEmissao = :anoEmissao,  e.flAtivo = :flAtivo WHERE e.idDocumentoNumeracao = :id")
+	@NamedQuery(name="ExDocumentoNumeracao.mantemRangeNumeroDocumento", query="UPDATE ExDocumentoNumeracao e SET e.nrDocumento = e.nrDocumento + 1, e.anoEmissao = :anoEmissao,  e.flAtivo = :flAtivo WHERE e.idDocumentoNumeracao = :id")
 
 	
 })

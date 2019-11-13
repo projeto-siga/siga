@@ -3233,10 +3233,13 @@ public class ExBL extends CpBL {
 
 			Set<ExVia> setVias = doc.getSetVias();
 			
+			
+			if (SigaMessages.isSigaSP()) {
 			//Libera gravação e obtém numero gerado para processar documento
-			dao().gravar(doc);
-			ContextoPersistencia.flushTransaction();
-			doc.setNumExpediente(obterNumeroGerado(doc));
+				dao().gravar(doc);
+				ContextoPersistencia.flushTransaction();
+				doc.setNumExpediente(obterNumeroGerado(doc));
+			}	
 			
 			processar(doc, false, false);
 

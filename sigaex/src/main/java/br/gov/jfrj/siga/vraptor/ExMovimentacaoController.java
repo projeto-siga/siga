@@ -3222,6 +3222,39 @@ public class ExMovimentacaoController extends ExController {
 		result.include("titularSel", new DpPessoaSelecao());
 		result.include("request", getRequest());
 	}
+	
+	@Get({"/app/expediente/mov/cancelarPerfil"})
+	public void cancelarPerfil(String sigla, Long idPessoa, Long idLotacao) throws Exception {
+		
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+		ExDocumento doc = buscarDocumento(builder);
+		
+		List<ExMovimentacao> lista = new ArrayList<ExMovimentacao>();
+		lista.addAll(doc.getMobilGeral().getExMovimentacaoSet());
+		
+		for (ExMovimentacao mov : lista) {
+			if (!mov.isCancelada()
+					&& mov.getExTipoMovimentacao()
+							.getId()
+							.equals(ExTipoMovimentacao.TIPO_MOVIMENTACAO_VINCULACAO_PAPEL)) {
+				if((idPessoa != null && mov != null && mov.getSubscritor() != null && mov.getSubscritor().getId().equals(idPessoa)) 
+						|| (idLotacao != null && mov != null && mov.getLotaSubscritor() != null && mov.getLotaSubscritor().getId().equals(idLotacao))) {
+					Ex.getInstance()
+						.getBL()
+						.cancelar(getTitular(), getLotaTitular(), builder.getMob(),
+								mov, null, null, null,
+								mov.getDescrMov());
+				} 
+			}
+		}
+		
+		result.include("mob", builder.getMob());
+		result.include("sigla", doc.getSigla());
+		result.include("subscritorSel", new DpPessoaSelecao());
+		result.include("titularSel", new DpPessoaSelecao());
+		result.include("request", getRequest());
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
 
 	@Post("/app/expediente/mov/cancelar_movimentacao_gravar")
 	public void cancelarMovimentacaoGravar(Integer postback, Long id,

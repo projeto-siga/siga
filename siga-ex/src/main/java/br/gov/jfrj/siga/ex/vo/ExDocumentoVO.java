@@ -56,6 +56,7 @@ public class ExDocumentoVO extends ExVO {
 	String outrosMobsLabel;
 	String nomeCompleto;
 	String dtDocDDMMYY;
+	String dataPrimeiraAssinatura;
 	String subscritorString;
 	String originalNumero;
 	String originalData;
@@ -101,6 +102,7 @@ public class ExDocumentoVO extends ExVO {
 
 		this.nomeCompleto = doc.getNomeCompleto();
 		this.dtDocDDMMYY = doc.getDtDocDDMMYY();
+		this.dataPrimeiraAssinatura = this.obterDataPrimeiraAssinatura(doc);
 		this.subscritorString = doc.getSubscritorString();
 		this.cadastranteString = doc.getCadastranteString();
 		if (doc.getLotaCadastrante() != null)
@@ -424,6 +426,30 @@ public class ExDocumentoVO extends ExVO {
 		
 	}
 	
+	public String obterDataPrimeiraAssinatura(ExDocumento doc) {
+		String retorno = "";
+		
+		List<ExMovimentacao> lista = new ArrayList<ExMovimentacao>();
+		lista.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_COM_SENHA));
+		lista.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_ASSINATURA_DIGITAL_DOCUMENTO));
+		lista.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoMovimentacao.TIPO_MOVIMENTACAO_CONFERENCIA_COPIA_COM_SENHA));
+		
+		if(lista.isEmpty()) {
+			return retorno;
+		} else if(lista.size() == 1) {
+			retorno = lista.get(0).getDtMovDDMMYYYY();
+		} else {
+			Long i = Long.valueOf(0);
+			for (ExMovimentacao exMovimentacao : lista) {
+				if(exMovimentacao.getIdMov() < i || i.equals(Long.valueOf(0))) {
+					i = exMovimentacao.getIdMov();
+					retorno = exMovimentacao.getDtMovDDMMYYYY();
+				}
+			}
+		}
+		return retorno;
+	}
+	
 	/**
 	 * @param doc
 	 * @param titular
@@ -741,6 +767,14 @@ public class ExDocumentoVO extends ExVO {
 
 	public String getClasse() {
 		return classe;
+	}
+
+	public String getDataPrimeiraAssinatura() {
+		return dataPrimeiraAssinatura;
+	}
+
+	public void setDataPrimeiraAssinatura(String dataPrimeiraAssinatura) {
+		this.dataPrimeiraAssinatura = dataPrimeiraAssinatura;
 	}
 
 	public String getClassificacaoDescricaoCompleta() {

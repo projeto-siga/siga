@@ -811,8 +811,17 @@
 								<b>Suporte:</b> ${docVO.fisicoOuEletronico}
 							</p>
 							<p>
-								<b><fmt:message key="documento.data.assinatura"/>:</b> ${docVO.dtDocDDMMYY}
-								<c:if test="${not empty docVO.originalData}">- <b>original:</b> ${docVO.originalData}</c:if>
+								<b><fmt:message key="documento.data.assinatura"/>:</b> 
+								<c:choose>
+									<c:when test="${siga_cliente=='GOVSP'}">
+										${docVO.dataPrimeiraAssinatura}
+									</c:when>
+									<c:otherwise>
+										${docVO.dtDocDDMMYY}
+										<c:if test="${not empty docVO.originalData}">- <b>original:</b> ${docVO.originalData}</c:if>
+									</c:otherwise>
+								</c:choose>
+								
 							</p>
 							<c:if test="${not empty docVO.originalNumero}">
 								<p>

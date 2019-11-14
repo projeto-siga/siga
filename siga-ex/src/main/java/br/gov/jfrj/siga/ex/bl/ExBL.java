@@ -2569,13 +2569,19 @@ public class ExBL extends CpBL {
 				if (mobPai.isArquivado())
 					throw new AplicacaoException(
 							"não é possível fazer o desentranhamento porque o documento ao qual este está juntado encontra-se arquivado.");
-
-				final ExMovimentacao ultMovPai = mobPai.getUltimaMovimentacao();
+				
+				
+				ExMovimentacao ultMovDoc = null; 
+				if (mobPai.isApensado()) {
+					ultMovDoc = (mobPai.getGrandeMestre().getUltimaMovimentacaoNaoCancelada());
+				} else {
+					ultMovDoc = mobPai.getUltimaMovimentacaoNaoCancelada();
+				}	
 
 				mov.setExMobilRef(mobPai);
 
-				mov.setLotaResp(ultMovPai.getLotaResp());
-				mov.setResp(ultMovPai.getResp());
+				mov.setLotaResp(ultMovDoc.getLotaResp());
+				mov.setResp(ultMovDoc.getResp());
 				
 				if (mobPai.getMobilPrincipal().isNumeracaoUnicaAutomatica()) {
 					List<ExArquivoNumerado> ans = mov.getExMobil()

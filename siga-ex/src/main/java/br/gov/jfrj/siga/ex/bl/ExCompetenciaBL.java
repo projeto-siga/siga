@@ -1600,11 +1600,16 @@ public class ExCompetenciaBL extends CpCompetenciaBL {
 			if (mobPai == null)
 				return false;
 		}
+		
+		ExMobil mobUlt = mobPai;
+		if (mobPai.isApensado()) {			
+			mobUlt = mobPai.getGrandeMestre();			
+		}
 
 		if (mob.isEmTransito()
 				|| mob.isCancelada()
 				|| (!mob.isJuntadoExterno() && !podeMovimentar(titular,
-						lotaTitular, mobPai)) || (!mob.isJuntado()))
+						lotaTitular, mobUlt)) || (!mob.isJuntado()))
 			return false;
 
 		return getConf().podePorConfiguracao(titular, lotaTitular,

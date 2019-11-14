@@ -164,8 +164,9 @@ public class ExMarcadorBL {
 				mAnterior = m;
 			}
 		}
-
-		calcularMarcadoresTransferencia(dt);
+		
+		if (!mob.isArquivado())
+			calcularMarcadoresTransferencia(dt);
 
 		// Acrescentar marcas manuais (Urgente, Idoso, etc)
 		if (m == CpMarcador.MARCADOR_EM_ANDAMENTO) {
